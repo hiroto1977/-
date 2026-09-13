@@ -22,6 +22,71 @@
  * 繰り越し、日の数字が必ず変わる (0 日は前月末、32 日は翌月 1〜4 日)。
  */
 
+/**
+ * **年・月・日から UTC のミリ秒を作る。`Date.UTC` を直接呼ばない理由がここに在る。**
+ * (2026-09-13 · パス 200)
+ *
+ * `Date.UTC(year, …)` は **年 0〜99 を 1900〜1999 に写す** (ECMA-262 の
+ * `MakeFullYear`)。この写し替えは黙って起き、出てくるのは「明らかに変な値」では
+ * なく**もっともらしい日付**である。パス 199 で消費税の申告期限に同じ形を見つけた
+ * ので、日付を組み立てる側を総当たりしたら**この共有モジュール自身が同じ穴を
+ * 持っていた** —— 実測 (直す前):
+ *
+ * | 呼び | 返っていた物 | あるべき値 |
+ * | --- | --- | --- |
+ * | `addIsoDays('0026-03-31', 0)` | **`1926-03-31`** | `0026-03-31` |
+ * | `addIsoDays('0099-12-31', 1)` | **`2000-01-01`** | `0100-01-01` |
+ * | `isoDaysBetween('0026-03-31', '2026-03-31')` | **36,525 日 (約 100 年)** | 730,485 日 (2000 年) |
+ *
+ * **`0 日足して日付が変わる**のが決定的である —— 往復が恒等でない関数は、どんな
+ * 解釈をしても壊れている。`isCalendarDate('0026-03-31')` は `true` を返すので、
+ * 形の判定 (`collectionShapes` の日付欄・販売記録・相談日・基準日・気分ログ) は
+ * すべてこの値を受け取り、そこから先の日数計算が 1900 年ずれる。
+ *
+ * **直し方**: 閏年である 2000 年で組み立ててから `setUTCFullYear` で年を差し替える。
+ * `Date.UTC(2000, 1, 29)` は実在するので 2 月 29 日を一度は作れ、そこから
+ * `setUTCFullYear(y)` が**目標の年の暦で**繰り上げを決める。実測で確かめた境界:
+ *
+ * | 入力 | 結果 | 暦に在るか |
+ * | --- | --- | --- |
+ * | `0004-02-29` (4 は閏年) | `0004-02-29` | ○ |
+ * | `0000-02-29` (0 は 400 で割れる = 閏年) | `0000-02-29` | ○ |
+ * | `1900-02-29` (100 で割れ 400 で割れない) | `1900-03-01` | × (繰り上がる) |
+ * | `2026-02-29` | `2026-03-01` | × |
+ * | `2026-04-31` | `2026-05-01` | × |
+ *
+ * **`Date.UTC(2000, …)` で一度作るのを、年を直接渡す形に戻してはいけない** ——
+ * 戻すと 0〜99 の写し替えが復活する。`shared/__tests__/dateAssemblyCensus.test.ts`
+ * が「このファイルの外で `Date.UTC` に変数の年を渡していないか」を走査で留める。
+ *
+ * ## 使ってはいけない所 (この罠をパス 200 で 2 回踏んだ)
+ *
+ * **`day` には「その日の数字」だけを渡す。`0` や `day + n` のような繰り上がり待ちの
+ * 値を渡してはいけない** —— 繰り上がりは**2000 年の暦で**解決されてから年が
+ * 差し替わるので、目標の年とずれる。実測した誤り:
+ *
+ * | 書きたかった事 | 誤った呼び | 出る値 | 正しい値 |
+ * | --- | --- | --- | --- |
+ * | 2026 年 2 月の末日 | `utcMsFromParts(2026, 3, 0)` | **3/1** (2000 年は閏年なので 2/29 を経由) | 2/28 |
+ * | 2026-02-28 の 2 日後 | `utcMsFromParts(2026, 2, 30)` | **3/1** | 3/2 |
+ *
+ * だから:
+ * - **日を足す/引く**のはミリ秒で (`+ n * 86_400_000`。`addIsoDays` がそうしている)。
+ * - **月末日**は「翌月 1 日の 1 日前」で求める (`lastDayOfMonth` がそうしている)。
+ */
+export function utcMsFromParts(year: number, month: number, day: number): number {
+  // 2000 年は 400 で割れる閏年なので 2 月 29 日を必ず作れる。ここで年を渡さないのが要点。
+  //
+  // **変数名を `d` にしない。** `timestampPrintCensus` (パス 185) の走査は
+  // ファイル単位で `const d = new Date(…)` と `d.<読み口>` を突き合わせるので
+  // (AST を持たないリポジトリなので**スコープを見られない**)、同じファイルの
+  // 別の関数に居る `d.toISOString()` と衝突して偽陽性になる。ここは
+  // `setUTCFullYear` と `getTime` しか呼んでおらず、どちらも走査の読み口ではない。
+  const built = new Date(Date.UTC(2000, month - 1, day));
+  built.setUTCFullYear(year);
+  return built.getTime();
+}
+
 export interface ParsedDate {
   readonly year: number;
   readonly month: number;
@@ -42,7 +107,7 @@ export function parseIsoDate(iso: unknown): ParsedDate | null {
   if (month < 1 || month > 12) return null;
   if (m[3] === undefined) return { year, month, day: null };
   const day = Number(m[3]);
-  const probe = new Date(Date.UTC(year, month - 1, day));
+  const probe = new Date(utcMsFromParts(year, month, day));
   if (probe.getUTCDate() !== day) return null;
   return { year, month, day };
 }
@@ -152,7 +217,7 @@ export function addIsoDays(iso: unknown, n: number): string | null {
   // **`isoDateFromTimestamp` を通す** —— 表せる範囲の判定と `split('T')` の
   // 切り方をここで写すと、同じ処理が 2 通りになる (パス 188 が 3 か所の写しを
   // 1 つにまとめた場所である。`timestampPrintCensus` が写しを掴む)。
-  return isoDateFromTimestamp(Date.UTC(p.year, p.month - 1, p.day) + n * 86_400_000);
+  return isoDateFromTimestamp(utcMsFromParts(p.year, p.month, p.day) + n * 86_400_000);
 }
 
 /**
@@ -165,6 +230,6 @@ export function isoDaysBetween(from: unknown, to: unknown): number | null {
   const a = parseIsoDate(from);
   const b = parseIsoDate(to);
   if (a === null || a.day === null || b === null || b.day === null) return null;
-  const ms = Date.UTC(b.year, b.month - 1, b.day) - Date.UTC(a.year, a.month - 1, a.day);
+  const ms = utcMsFromParts(b.year, b.month, b.day) - utcMsFromParts(a.year, a.month, a.day);
   return Math.round(ms / 86_400_000);
 }

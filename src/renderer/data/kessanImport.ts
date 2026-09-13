@@ -14,6 +14,7 @@
  * 繰越利益剰余金に置いて貸借を合わせる。逆算したことは行の出所と注記で示す。
  */
 import type { KpiActual } from './kpiActuals';
+import { utcMsFromParts } from '../../shared/isoDate';
 import type { BalanceSheet } from './balanceSheet';
 import type { SubmissionProfile } from './bankSubmission';
 import { ACCOUNTS, amountOf, balanceTotals, incomeTotals } from './statementAccounts';
@@ -93,7 +94,13 @@ export function firstDayLabel(period: string): string {
 /** 事業年度（至）「2026年3月31日」。 */
 export function lastDayLabel(period: string): string {
   const m = PERIOD_RE.exec(period)!;
-  const last = new Date(Date.UTC(Number(m[1]), Number(m[2]), 0)).getUTCDate();
+  // **翌月 1 日の 1 日前** = 当月末日。`day: 0` を `utcMsFromParts` に渡すと
+  // 繰り下がりが 2000 年の暦で解決され、2 月が閏年のずれで 3/1 になる
+  // (経緯は `shared/isoDate.ts` の `utcMsFromParts`)。
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const firstOfNext = mo === 12 ? utcMsFromParts(y + 1, 1, 1) : utcMsFromParts(y, mo + 1, 1);
+  const last = new Date(firstOfNext - 86_400_000).getUTCDate();
   return `${monthLabel(period)}${last}日`;
 }
 

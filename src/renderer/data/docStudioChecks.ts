@@ -15,6 +15,7 @@
  */
 
 import type { StudioDoc } from './docStudioData';
+import { utcMsFromParts } from '../../shared/isoDate';
 import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
 import { namedShareholderCount, totalHeldShares } from './shareholders';
 // 明細の金額はこの厳しい読み取りで計算される。橋を掛けるために読む (パス 94)。
@@ -80,7 +81,7 @@ export function parseJpDate(raw: string | undefined): number | null {
   // 月だけは先に弾く。Date.UTC は 0 月を前年12月、13月を翌年1月として受け取ってしまい、
   // 日は動かないので後段の照合をすり抜ける。
   if (mo < 1 || mo > 12) return null;
-  const t = Date.UTC(y, mo - 1, d);
+  const t = utcMsFromParts(y, mo, d);
   // 2月30日・4月31日・0日のような実在しない日は Date.UTC が別の月へ繰り上げ／繰り下げるため、
   // 日が入力どおりに戻ってこない。日の照合だけで足りる（月は上で範囲を保証済み）。
   if (new Date(t).getUTCDate() !== d) return null;

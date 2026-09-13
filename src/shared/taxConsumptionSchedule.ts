@@ -24,6 +24,7 @@
  */
 
 import { floorHundred } from './num';
+import { utcMsFromParts } from './isoDate';
 import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from './taxConsumption';
 
 /** 現行法における消費税（国税）の割合。標準10% = 国税7.8% + 地方2.2%。 */
@@ -245,8 +246,12 @@ export interface FinalSettlement {
 // --- 日付ユーティリティ（すべて UTC。表示は YYYY-MM-DD） -----------------
 
 function lastDayOfMonth(year: number, month1: number): Date {
-  // month1 は 1-12。翌月 0 日 = 当月末日。
-  return new Date(Date.UTC(year, month1, 0));
+  // month1 は 1-12。**翌月 1 日の 1 日前** = 当月末日。
+  // `utcMsFromParts(year, month1 + 1, 0)` と書いてはいけない —— 繰り下がりが
+  // 2000 年の暦で解決されるので、2 月の末日が閏年のずれで 3/1 になる
+  // (パス 200 でこの罠を踏んだ。経緯は `isoDate.ts` の `utcMsFromParts`)。
+  const firstOfNext = month1 === 12 ? utcMsFromParts(year + 1, 1, 1) : utcMsFromParts(year, month1 + 1, 1);
+  return new Date(firstOfNext - 86_400_000);
 }
 
 function iso(d: Date): string {
@@ -484,7 +489,7 @@ export function planInterim(input: ScheduleInput, p: ScheduleParams = DEFAULT_SC
 export function finalDueDate(input: ScheduleInput): string | null {
   if (!isRepresentableFiscalPeriod(input)) return null;
   if (input.filer === 'individual') {
-    return iso(nextBusinessDay(new Date(Date.UTC(input.fiscalEndYear + 1, 2, 31))));
+    return iso(nextBusinessDay(new Date(utcMsFromParts(input.fiscalEndYear + 1, 3, 31))));
   }
   return dueMonthEndAfter(input.fiscalEndYear, input.fiscalEndMonth, input.extendedDeadline ? 3 : 2);
 }

@@ -141,6 +141,18 @@ export function rawDatePrints(src: string): string[] {
   return out;
 }
 
+/*
+ * **走査の限界: (b) はファイル単位で名前を突き合わせるのでスコープを見られない。**
+ * (2026-09-13 · パス 200 で踏んだ)
+ *
+ * このリポジトリは AST パーサを持たない方針なので、`const d = new Date(…)` と
+ * `d.<読み口>` が**同じ関数に居るか**は判定できない。`isoDate.ts` に
+ * `const d = new Date(Date.UTC(2000, …))` (読み口は `setUTCFullYear` と `getTime`
+ * だけ = 危なくない) を足したら、**別の関数の `d.toISOString()` と衝突して**
+ * 鳴った。偽陽性だが、規則を緩めるより**短い変数名を避ける**方が安い
+ * (`d` は 1 文字なのでどのファイルでも衝突しうる)。台帳の免除にはしない ——
+ * 免除は「危ない形を許す」入口になるので、名前で避ける。
+ */
 /** 引数が、同じ範囲で `new Date()` (引数なし) を受けた識別子か。 */
 function isCopyOfNow(arg: string, code: string): boolean {
   if (!/^[A-Za-z_$][\w$]*$/.test(arg)) return false;

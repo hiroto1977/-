@@ -13,7 +13,7 @@
  * `taxConsumptionBusiness.ts` にあります。
  */
 
-import { isCalendarDate, parseIsoDate } from './isoDate';
+import { utcMsFromParts, isCalendarDate, parseIsoDate } from './isoDate';
 import { localIsoDate } from './localDate';
 
 /** 簡易課税の事業区分。 */
@@ -118,7 +118,10 @@ export type TwentyPercentMeasureStatus = 'active' | 'period-dependent' | 'ended'
 function shiftIsoDate(iso: string, years: number, days: number): string | null {
   const p = parseIsoDate(iso);
   if (p === null || p.day === null) return null;
-  const d = new Date(Date.UTC(p.year + years, p.month - 1, p.day + days));
+  // **年は部品で足し、日はミリ秒で足す。** `day + days` を `utcMsFromParts` へ
+  // 渡すと繰り上がりが 2000 年の暦で解決され、2 月をまたぐと 1 日ずれる
+  // (パス 200 でこの罠を踏んだ。経緯は `isoDate.ts` の `utcMsFromParts`)。
+  const d = new Date(utcMsFromParts(p.year + years, p.month, p.day) + days * 86_400_000);
   const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
   const dd = String(d.getUTCDate()).padStart(2, '0');
   return `${d.getUTCFullYear()}-${mm}-${dd}`;
