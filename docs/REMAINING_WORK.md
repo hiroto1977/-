@@ -26098,6 +26098,103 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 203 (2026-09-13) — **パス 202 の「分母のほとんどは無害だろう」は外れていた。機械的に呼べる 14 件のうち 14 件が非有限を返すか投げた**
+
+パス 202 は「比較だけの関門」49 件 (46 関数) を母集団として数え、**1 件だけ**を
+実測で直して「残り 48 件を安全とは言わない」と書いた。その 48 件を測った。
+
+### 結果
+
+機械的に呼べる (export + 全引数 number) のは **14 件**。そのうち
+**14 件が非有限を返すか投げた** (18 通りの呼び出しで測って 16 通りが該当)。
+「分母のほとんどは無害だろう」という私の見立ては外れていた ——
+パス 198 の教訓 (「測る前に書いた severity は外れる」) がそのまま当てはまる。
+
+| 入口 | 直す前 | 直した後 |
+| --- | --- | --- |
+| `calcBaseIncomeTax(NaN)` | **TypeError で落ちる** | `0` |
+| `marginalIncomeTaxRate(NaN)` | **TypeError で落ちる** | `0` |
+| `straightLineSchedule(NaN, 10)` | **10 年分すべて `NaN` の償却表** (行数は正しいので表として成立して見える) | `[]` |
+| `calcEarthquakeInsuranceDeduction(NaN)` | `{incomeTax: NaN, residentTax: NaN}` | `{0, 0}` |
+| `computeRunwayMonths(1e6, NaN)` | `NaN` か月 | `null` (算定不能) |
+| `acceptRateOf(5, NaN)` | `NaN` % | `null` |
+| `yearsToDouble(NaN)` | `NaN` 年 | `null` |
+| `noBreakEvenNote(NaN, 10)` | **「10 期のうち NaN 期は…」という文章** | `null` |
+| `unrunnableSkillsNote(NaN)` | **「このうち NaN 件は実行できません」** | `undefined` |
+| `floorTaxableThousand` / `calcConsumptionTax` / `roundRefund` / `straightLineAnnual` / `monthlyPayment` | `NaN` / `Infinity` | `0` |
+
+### `calcBaseIncomeTax` が落ちる理由は残す価値がある
+
+速算表の `find` の下にこう**書かれていた**:
+
+> `// Infinity 上限ブラケットが必ず最後に存在するため bracket は常に定義される。`
+
+**それは有限な入力についてだけ成り立つ。** `NaN <= Infinity` は false なので
+`find` は `undefined` を返し、`bracket!.rate` が `TypeError` で落ちる。
+画面から呼べば枠が文面になる (`PageErrorBoundary`)。
+
+**前提を書いたコメントと、前提を消す `!` が並んでいるときは疑う。**
+コメントは「なぜ安全か」を説明しているつもりで、実際には
+**その前提が成り立つ入力の範囲**を書いていなかった。
+
+### 直し方は戻り値の契約で決まる
+
+| 契約 | 非有限のとき | 理由 |
+| --- | --- | --- |
+| `number` (金額・税額) | `0` (`nonNeg`) | 既に `<= 0` の枝が在り、そこへ値を届ける |
+| `number \| null` | **`null`** (`finiteOrNull`・パス 198 で足した) | 「算定不能」の道が既に在る。**0 は「0 である」という主張になる** |
+| 文 | 文を出さない | **NaN を文章に埋めない** |
+
+`computeRunwayMonths` を 0 に倒すと「資金が尽きている」という診断になる ——
+`null` でなければならない理由がここにある。
+
+### 走査が挙げなかった側も見る
+
+`noBreakEvenNote(missing, total)` は `if (missing <= 0)` しか持たないので
+走査は `missing` だけを挙げた。だが `total` も**文章に埋め込まれる** ——
+`noBreakEvenNote(3, NaN)` は「NaN 期のうち 3 期は…」になる。
+**走査は「関門に出てくる名前」しか見られない。**
+
+だから新しい関門 `src/shared/__tests__/nonFiniteEntryPoints.test.ts` は
+**走査ではなく振る舞いを測る**: 台帳の 16 入口 × 各数値の位置 × 非有限 3 形
+(`NaN` / `±Infinity`) を総当たりし、返り値の中に非有限な数が在るか・
+**文に "NaN" / "Infinity" が入っているか**・投げるかを見る。
+
+### 対照 (5 件・うち 1 件は鳴らなかった。それも記録)
+
+| | 何を壊したか | 結果 |
+| --- | --- | --- |
+| H1 | `calcBaseIncomeTax` の入口の消毒だけを外す | **鳴らない** |
+| H1b | `calcBaseIncomeTax` と `floorTaxableThousand` の両方を外す | TypeError が戻る ✅ |
+| H1c | `marginalIncomeTaxRate` だけを外す | TypeError が戻る ✅ |
+| H2 | `straightLineSchedule` の消毒を外す | NaN の償却表が戻る ✅ |
+| H3 | `noBreakEvenNote` の文の守りを外す | 文に NaN が戻る (4 通り) ✅ |
+
+**H1 が鳴らなかったのは守りが重なっているため。** 下流の
+`floorTaxableThousand` が既に 0 に倒すので、あの経路で**荷重を持っているのは
+そちら**で、`calcBaseIncomeTax` 自身の消毒は重ね着である。
+**鳴らない対照は「合格」ではなく、その対照についての報せ** ——
+H1b / H1c まで測って初めて「守られている」と言える。両方を残したのは、
+`marginalIncomeTaxRate` のように**下流に守りが無い経路が同じファイルに在る**ため。
+
+### ついでに直した私自身の不始末
+
+`monthlyPayment` に消毒を入れたとき、**関門は消毒した値・計算は生の値**という
+2 通りの読み方を作ってしまった (`kpi.ts` で同じ形を直した直後に)。
+しかも Stryker の pragma をその理由コメントから引き離し、
+**`lint:mutation-scope` が「理由の無い pragma が 2 個 → 3 個に増えた」と鳴った。**
+消毒を入口 1 か所にまとめ、pragma を理由の隣へ戻した。
+
+### 次に見るところ
+
+- **機械的に呼べなかった 32 件** (非 export・object 引数・boolean 引数・配列引数)。
+  `sma/ema/rsi` の `period` はコード定数なので届かないが、
+  `calcRetirementTax` / `calcSocialInsurance` / `solveGrossForTakeHoughChecked` /
+  `calcNetSalary` のような**申告に届く経路**は手で組んで測る価値がある。
+- 入口の台帳と走査の**双方向の突き合わせ** (走査が挙げた 46 関数のうち
+  台帳に無いものを鳴らす)。今は台帳が片側だけで、16 という数は手で選んでいる。
+- パス 202 の残り: アローの仮引数 7 件・式の床 147 件の上流。
+
 ## パス 202 (2026-09-13) — **比較だけの「測れるか」判定は NaN を通す。天井側 (`Math.min`) と走査の直し**
 
 パス 201 の双子として天井側を数えた。`Math.min(1, NaN)` も `NaN` なので同じ形が

@@ -97,7 +97,8 @@ export type FilerKind = 'individual' | 'corporate';
 export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent' | 'thirty-percent';
 
 /** 還付額の端数処理: 1円未満切捨て。ただし 1円未満の正値は 1円とする。 */
-export function roundRefund(n: number): number {
+export function roundRefund(raw: number): number {
+  const n = nonNeg(raw);
   if (n <= 0) return 0;
   // 1円未満切捨て。ただし正の値が1円未満なら1円（Math.floor(1) === 1 なので
   // 「1未満なら1」の分岐は Math.max に畳める）。

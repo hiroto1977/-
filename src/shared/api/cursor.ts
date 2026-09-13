@@ -18,6 +18,7 @@
  * 混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
  */
 
+import { finiteOrNull } from '../num';
 import { isoDateFromTimestamp } from '../isoDate';
 
 /** Cursor Admin API の基底 URL。 */
@@ -130,6 +131,8 @@ export function toIsoDate(epochMs: number | undefined): string {
  * 提案が全部拒否されたことは違う）。
  */
 export function acceptRateOf(accepted: number, total: number): number | null {
+  // 非有限は「率 0%」ではなく「算定不能」(既に `null` の道が在る)。
+  if (finiteOrNull(accepted) === null || finiteOrNull(total) === null) return null;
   if (total <= 0) return null;
   return Math.round((accepted / total) * 1000) / 10;
 }

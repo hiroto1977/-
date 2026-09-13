@@ -1,4 +1,4 @@
-import { nonNeg } from './num';
+import { nonNeg, finiteOrNull } from './num';
 /**
  * 家計・貯蓄計画 (savings planning) — 概算試算。
  *
@@ -108,6 +108,8 @@ export function requiredMonthlyContribution(
  * 年率が 0 以下なら null (倍増しない / 算定不能)。
  */
 export function yearsToDouble(annualRatePct: number): number | null {
+  // 非有限は「0 年で倍になる」ではなく「算定不能」。
+  if (finiteOrNull(annualRatePct) === null) return null;
   if (annualRatePct <= 0) return null;
   return Math.round((72 / annualRatePct) * 10) / 10;
 }

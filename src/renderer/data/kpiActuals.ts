@@ -10,6 +10,7 @@
  * (enforced by `lint:imports`); both derive from docs/ARCHITECTURE.md §3.
  */
 
+import { finiteOrNull } from '../../shared/num';
 import { isCalendarMonth } from '../../shared/isoDate';
 
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
@@ -504,6 +505,10 @@ export function finiteBep(bep: number): number | null {
  * 読まれるが、実際は「**その期はどんな売上でも赤字**」という最も重い状態である。
  */
 export function noBreakEvenNote(missing: number, total: number): string | null {
+  // **NaN を文章に埋めない。** 直す前は `noBreakEvenNote(NaN, 10)` が
+  // 「10 期のうち NaN 期は…」を返していた。`total` も埋め込まれるので
+  // **走査が挙げなかった側 (`if` に出てこない `total`) も見る** —— パス 203。
+  if (finiteOrNull(missing) === null || finiteOrNull(total) === null) return null;
   if (missing <= 0) return null;
   return `${total} 期のうち ${missing} 期は限界利益が 0 以下のため、損益分岐点が存在しません（どれだけ売っても固定費を回収できない状態）。その期はグラフに点を打っていません。`;
 }

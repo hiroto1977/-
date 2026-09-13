@@ -572,7 +572,14 @@ export function addMonths(month: string, n: number): string {
  * 月利 i = annualRate/12 のとき、返済額 = P × i / (1 − (1+i)^-n)。
  * 無利息 (rate=0) は単純に P/n。元本・回数が非正なら 0。
  */
-export function monthlyPayment(principal: number, annualRate: number, months: number): number {
+export function monthlyPayment(rawPrincipal: number, rawRate: number, rawMonths: number): number {
+  // 非有限は関門を素通りする (`NaN <= 0` も `NaN > 0` も false)。入口で 1 度だけ
+  // 倒し、**以降は消毒した値だけを使う** —— パス 203。生の仮引数を下で読むと
+  // 「関門は消毒した値・計算は生の値」という 2 通りの読み方になる (`kpi.ts` で
+  // 同じ形を直したばかり)。
+  const principal = nonNeg(rawPrincipal);
+  const months = nonNeg(rawMonths);
+  const annualRate = nonNeg(rawRate);
   // principal<=0→<0 は principal===0 が下流で 0 を返すため等価。ConditionalExpression(false) は
   // months=0 で /0=Infinity になり monthlyPayment(…,0) テストで撃墜可 (手動変異で確認済) だが、
   // 内部呼出しが多い本関数では Stryker perTest が直接テストを当該 mutant に帰属できない盲点。

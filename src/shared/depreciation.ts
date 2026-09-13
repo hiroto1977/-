@@ -8,6 +8,7 @@
  * 償却します。正確な税額は税理士・国税庁ツールでご確認ください。
  */
 
+import { nonNeg } from './num';
 import { isCalendarDate } from './isoDate';
 
 const yen = (n: number): number => Math.round(n);
@@ -22,7 +23,11 @@ export interface DepreciationYear {
 }
 
 /** 定額法の年間償却費 = 取得価額 ÷ 耐用年数 (償却率 = 1/n の簡便)。 */
-export function straightLineAnnual(acquisitionCost: number, usefulLife: number): number {
+export function straightLineAnnual(rawCost: number, rawLife: number): number {
+  // 非有限は関門を素通りする (`NaN <= 0` も `NaN > 0` も false)。入口で
+  // 倒してから比較する —— パス 203。
+  const acquisitionCost = nonNeg(rawCost);
+  const usefulLife = nonNeg(rawLife);
   // acquisitionCost===0 は yen(0/life)=0 と計算経路も一致するため <=→< は equivalent。
   // Stryker disable next-line EqualityOperator
   if (acquisitionCost <= 0) return 0;
@@ -56,7 +61,12 @@ export function isSchedulableLife(usefulLife: number): boolean {
 }
 
 /** 定額法の償却スケジュール (最終年に備忘価額 1 円を残す)。 */
-export function straightLineSchedule(acquisitionCost: number, usefulLife: number): DepreciationYear[] {
+export function straightLineSchedule(rawCost: number, rawLife: number): DepreciationYear[] {
+  // 非有限は関門を素通りする (`NaN <= 0` も false)。入口で倒してから比較する ——
+  // パス 203。直す前は `straightLineSchedule(NaN, 10)` が **10 年分すべて
+  // `NaN` の償却表**を返していた (行数は正しいので、表としては成立して見える)。
+  const acquisitionCost = nonNeg(rawCost);
+  const usefulLife = nonNeg(rawLife);
   // usefulLife <= 0 はループ条件 (y <= usefulLife) が 1 度も回らず [] を返すため
   // ここでは判定不要 (冗長)。acquisitionCost のみ早期 return する。
   if (acquisitionCost <= 0) return [];

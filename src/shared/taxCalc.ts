@@ -29,8 +29,9 @@ import {
 export function floorTaxableThousand(taxableIncome: number): number {
   // `<= 0` を `< 0` にしても 0 のとき `Math.floor(0/1000)*1000` = 0 で同じ。
   // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
-  if (taxableIncome <= 0) return 0;
-  return Math.floor(taxableIncome / 1_000) * 1_000;
+  const income = nonNeg(taxableIncome);
+  if (income <= 0) return 0;
+  return Math.floor(income / 1_000) * 1_000;
 }
 
 // --- 所得税 (速算表ベース、2024 年度) -----------------------------------
@@ -77,9 +78,15 @@ export function calcBaseIncomeTax(taxableIncome: number): number {
   // 0 のときは下の速算表でも 0 円になるので、この早期 return は結果を
   // 変えない (読みやすさのために置いている)。
   // Stryker disable next-line ConditionalExpression,EqualityOperator: 0 での結果が同じ (実測)
-  if (taxableIncome <= 0) return 0;
+  // **非有限は速算表の `find` を全部すり抜け、`bracket!` が投げる。**
+  // 下の「Infinity 上限ブラケットが必ず最後に在るので bracket は常に定義される」は
+  // **有限な入力についてだけ成り立つ** —— `NaN <= Infinity` は false なので
+  // `find` は undefined を返し、`!` が型検査器の異議を消していた (パス 203 で実測:
+  // `calcBaseIncomeTax(NaN)` は TypeError で落ちていた。画面なら枠が文面になる)。
+  const income = nonNeg(taxableIncome);
+  if (income <= 0) return 0;
   // 課税される所得金額の 1,000 円未満を切り捨ててから速算表を適用する。
-  const floored = floorTaxableThousand(taxableIncome);
+  const floored = floorTaxableThousand(income);
   // 境界を `<` にしても税額は変わらない。速算表の控除額の列が
   // 「境界で前後の式が一致する」ように作られているためで、実装の緩さでは
   // ない (`__tests__/taxCalc.test.ts` の連続性の検査を参照)。定数を打ち
@@ -292,8 +299,9 @@ export const CONSUMPTION_TAX_REDUCED = 0.08;
 export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION_TAX_STANDARD): number {
   // `<= 0` → `< 0` は等価: 税抜 0 のとき `yen(0 × rate)` = 0 でどちらも 0。
   // Stryker disable next-line EqualityOperator: 0 では税額 0 で結果が同じ
-  if (netAmount <= 0) return 0;
-  return yen(netAmount * rate);
+  const net = nonNeg(netAmount);
+  if (net <= 0) return 0;
+  return yen(net * nonNeg(rate));
 }
 
 // --- 給与所得控除 (正式テーブル, 令和2年分以降) -------------------------
@@ -529,8 +537,10 @@ export function calcFurusatoResidentCredit(
 
 /** 所得税の限界税率 (速算表の該当ブラケットの率) を返す。 */
 export function marginalIncomeTaxRate(taxableIncome: number): number {
-  if (taxableIncome <= 0) return 0;
-  const bracket = INCOME_TAX_BRACKETS.find((b) => taxableIncome <= b.upTo);
+  // 非有限は `find` を全部すり抜けて `bracket!` が投げる (`calcBaseIncomeTax` と同じ)。
+  const income = nonNeg(taxableIncome);
+  if (income <= 0) return 0;
+  const bracket = INCOME_TAX_BRACKETS.find((b) => income <= b.upTo);
   return bracket!.rate;
 }
 

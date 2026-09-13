@@ -9,6 +9,7 @@
  * 何も算定しない (null) ため、デモ値が経営判断に混入しない。
  */
 
+import { finiteOrNull } from '../../shared/num';
 import {
   BALANCE_SHEET_STALE_AFTER_MONTHS,
   balanceSheetFreshness,
@@ -128,6 +129,9 @@ export function accountingRecency(
  * 現預金が 0 以下なら 0。結果は 0.1 か月単位に丸める。
  */
 export function computeRunwayMonths(cash: number, avgMonthlyNet: number): number | null {
+  // **非有限は「0 か月」ではなく「算定不能」。** この関数は既に `null` の道を
+  // 持っているので、そこへ流す (0 に倒すと「資金が尽きている」という主張になる)。
+  if (finiteOrNull(cash) === null || finiteOrNull(avgMonthlyNet) === null) return null;
   if (avgMonthlyNet >= 0) return null;
   // cash===0 では計算経路でも 0/(-avgMonthlyNet)=0 になり <= → < は equivalent。
   // Stryker disable next-line EqualityOperator

@@ -325,7 +325,8 @@ export function calcLifeInsuranceDeduction(p: LifeInsurancePremiums): DeductionP
 // 国税庁 No.1145。所得税は支払額 (上限5万)、住民税は1/2 (上限2.5万)。
 
 /** 地震保険料から控除額を計算する。 */
-export function calcEarthquakeInsuranceDeduction(premium: number): DeductionPair {
+export function calcEarthquakeInsuranceDeduction(rawPremium: number): DeductionPair {
+  const premium = nonNeg(rawPremium);
   // Stryker disable next-line EqualityOperator,ConditionalExpression: premium<=0 早期returnは計算経路でも{0,0}で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
   return {

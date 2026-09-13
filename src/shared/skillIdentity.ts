@@ -1,3 +1,4 @@
+import { finiteOrNull } from './num';
 /**
  * **スキルの「実行に使う名前」と「画面に出す題」を分ける** (2026-09-12 · パス 179)。
  *
@@ -87,6 +88,8 @@ export function skillOptionText(choice: SkillChoice, all: readonly SkillChoice[]
  * 件数だけを言い、理由は各行に出す —— まとめて書くと行との対応が消える。
  */
 export function unrunnableSkillsNote(count: number): string | undefined {
+  // NaN を文章に埋めない (直す前は「このうち NaN 件は実行できません」)。
+  if (finiteOrNull(count) === null) return undefined;
   if (count <= 0) return undefined;
   return `このうち ${count} 件は実行できません (一覧の各行に理由を出しています)。`;
 }
