@@ -23,6 +23,7 @@
  * 扱われるため、https ページからでも mixed content ブロックはされない (CORS だけが壁)。
  */
 
+import { countChars } from '../../shared/inputCeiling';
 import {
   DEFAULT_OLLAMA_PORT,
   DEFAULT_SETUP_MODEL,
@@ -471,10 +472,10 @@ export async function chatOllama(
   const url = buildOllamaUrl(base, '/api/chat', pageHostname)!;
 
   // 天井超えは切らずに断る (main 版と同じ判断・同じ文面 —— パス 114)。
-  if (system.length > MAX_OLLAMA_SYSTEM_CHARS) {
+  if (countChars(system) > MAX_OLLAMA_SYSTEM_CHARS) {
     return { ok: false, kind: 'too-long', message: inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS) };
   }
-  if (prompt.length > MAX_OLLAMA_PROMPT_CHARS) {
+  if (countChars(prompt) > MAX_OLLAMA_PROMPT_CHARS) {
     return { ok: false, kind: 'too-long', message: inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS) };
   }
 

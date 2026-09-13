@@ -51,7 +51,7 @@ export function CeilingNotice({
       role="alert"
       style={{ color: 'var(--danger)', fontSize: 12, lineHeight: 1.5 }}
     >
-      ⚠ {refusedCeilingNote(label, value.length, max)}
+      ⚠ {refusedCeilingNote(label, value, max)}
     </div>
   );
 }

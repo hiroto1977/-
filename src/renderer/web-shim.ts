@@ -62,6 +62,7 @@ import {
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
+import { clampToCeiling, countChars } from '../shared/inputCeiling';
 import {
   MAX_RECORD_NOTE_CHARS,
   isRecordEntryServiceId,
@@ -490,17 +491,17 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
     if (!isBusinessCategoryId(r.categoryId) || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + r.categoryId);
     if (typeof r.rank !== 'number') throw new Error('rank is not a number');
     if (!Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
-    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
+    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || countChars(r.rationale) > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
     if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) throw new Error('invalid actionItems');
     const actionItems: string[] = [];
     for (const a of r.actionItems) {
-      if (typeof a !== 'string' || a.length === 0 || a.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid actionItem entry');
+      if (typeof a !== 'string' || a.length === 0 || countChars(a) > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid actionItem entry');
       actionItems.push(a);
     }
     if (!Array.isArray(r.riskFactors) || r.riskFactors.length === 0 || r.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) throw new Error('invalid riskFactors');
     const riskFactors: string[] = [];
     for (const f of r.riskFactors) {
-      if (typeof f !== 'string' || f.length === 0 || f.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid riskFactor entry');
+      if (typeof f !== 'string' || f.length === 0 || countChars(f) > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid riskFactor entry');
       riskFactors.push(f);
     }
     out.push({ categoryId: r.categoryId, rank: r.rank, rationale: r.rationale, actionItems, riskFactors });
@@ -724,7 +725,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   const text = payload['text'];
   const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
   if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
-  if (text.length > MAX_ANALYZE_TEXT_CHARS)
+  if (countChars(text) > MAX_ANALYZE_TEXT_CHARS)
     return err('action_failed', `text が長すぎます (${MAX_ANALYZE_TEXT_CHARS} 字以内)`);
 
   let apiKey: string | null = null;
@@ -821,7 +822,7 @@ export function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
     const r = (item as { role?: unknown }).role;
     const c = (item as { content?: unknown }).content;
     if ((r !== 'user' && r !== 'assistant') || typeof c !== 'string') continue;
-    const content = c.trim().slice(0, MAX_ASSISTANT_CONTENT_CHARS);
+    const content = clampToCeiling(c.trim(), MAX_ASSISTANT_CONTENT_CHARS);
     if (content.length > 0) out.push({ role: r, content });
   }
   return out.slice(-MAX_ASSISTANT_MESSAGES);
@@ -852,7 +853,7 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
+  const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -923,7 +924,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
+  const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -1406,7 +1407,7 @@ const shim = {
         : [];
       return ok<ActionData<'talent/judge-leader'>>({
         fitness: judgeLeaderFitness(flagged),
-        candidate: typeof p.candidate === 'string' ? p.candidate.slice(0, MAX_LEADER_CANDIDATE_CHARS) : '',
+        candidate: typeof p.candidate === 'string' ? clampToCeiling(p.candidate, MAX_LEADER_CANDIDATE_CHARS) : '',
       }) as ActionResult<T>;
     }
 
@@ -1713,7 +1714,9 @@ const shim = {
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
     if (action === 'record-entry' && isRecordEntryServiceId(serviceId)) {
       const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
-      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
+      // 天井は**文字**で数える —— 画面が「2000 字まで」と刷る数・main の 4 つの
+      // handler と同じ単位 (`p.note.length` はコード単位・パス 195)。
+      if (typeof p.note !== 'string' || p.note.length === 0 || countChars(p.note) > MAX_RECORD_NOTE_CHARS) {
         return err(
           'action_failed',
           `${serviceId}.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`,

@@ -70,6 +70,7 @@
  * 実機は `scripts/e2e/core.cjs` の `writeCeiling` suite。
  *
  */
+import { countChars } from './inputCeiling';
 
 /** 文字列の欄。 */
 export interface WriteFieldRule {
@@ -304,7 +305,10 @@ export function checkWriteField(value: unknown, rule: WriteFieldRule): WriteFiel
   if (value === undefined || value === null) return rule.required ? 'missing' : null;
   if (typeof value !== 'string') return 'not-string';
   if (value.trim().length === 0) return rule.required ? 'missing' : null;
-  if (value.length > rule.max) return 'too-long';
+  // 単位は **文字** (`countChars`) —— 画面の断り (`charsOverCeiling`) と
+  // 同じ単位で数える。`value.length` だとコード単位になり、絵文字の多い
+  // 本文が「2000 字まで」と刷ってある欄で 1000 字で断られる (パス 195)。
+  if (countChars(value) > rule.max) return 'too-long';
   if (hasForbiddenControl(value, rule.multiline)) return 'control-chars';
   if (rule.choices !== undefined && !rule.choices.includes(value)) return 'not-allowed';
   return null;

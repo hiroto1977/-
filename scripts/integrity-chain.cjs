@@ -305,6 +305,14 @@ const PROTECTED = [
   'src/shared/atlassianSite.ts',            // テナント名の検証 (送り先が変わる)
   'src/shared/scanTarget.ts',               // 走査先の検証
   'src/shared/escape.ts',                   // 出口のエスケープ
+  // 2026-09-13 (パス 195) に足した。**ここも保護の閉包が教えてくれた。**
+  // 入力の天井を「文字」で数え・文字境界で切る唯一の場所にしたので、
+  // `vault.ts` (トークンの天井)・`pkce.ts` (認可コードの天井)・`localWrite.ts`
+  // (保存失敗の理由の切り詰め) が読むようになり、`chain:verify` が
+  // 「保護対象が保護されていない物を読んでいる」と鳴らした。黙って
+  // `countChars` を `length` へ戻されると、**述べる数と守る数がずれ**、
+  // 天井の半分で断る / 孤立サロゲートを保存側へ渡す状態に戻る。
+  'src/shared/inputCeiling.ts',             // 天井を数える・切る唯一の場所 (単位は「字」)
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
   // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が

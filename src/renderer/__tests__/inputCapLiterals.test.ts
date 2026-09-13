@@ -249,10 +249,13 @@ describe('画面と検証が同じ天井を読む (パス 167)', () => {
     const page = read('src/renderer/pages/TeamRadarPage.tsx');
     const main = read('src/main/clients/teamradar.ts');
     expect(page).toContain('maxLength={MAX_CHART_TITLE_CHARS}');
-    expect(main).toContain('title.length <= MAX_CHART_TITLE_CHARS');
+    // パス 195: 天井の単位を「字」に揃えたので `countChars(title)` を通る。
+    expect(main).toContain('countChars(title) <= MAX_CHART_TITLE_CHARS');
     // 字面が戻っていないこと (対照: この 2 つの綴りが実際に在ったので、当たる規則である)。
     expect(page, '画面が字面の 64 に戻っている').not.toContain('maxLength={64}');
-    expect(main, '書き出しが字面の 120 に戻っている').not.toContain('title.length <= 120');
+    expect(main, '書き出しが字面の 120 に戻っている').not.toContain('<= 120');
+    // 対照: 規則が字面に当たる (空の検査でない)。
+    expect('  if (countChars(title) <= 120) {').toContain('<= 120');
   });
 
   it('★ 貼る欄の天井は code の天井より広い (量が違うので別の名前で持つ)', () => {

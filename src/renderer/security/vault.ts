@@ -17,6 +17,7 @@
  *  - 詳細: docs/BROWSER_REDESIGN.md §3.1.1 + /tmp/vault-recovery-design.md
  */
 
+import { countChars } from '../../shared/inputCeiling';
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
 import { webCryptoUnavailableReason } from './webCrypto';
@@ -831,7 +832,7 @@ class BrowserVault implements Vault {
     if (typeof serviceId !== 'string' || serviceId.length === 0 || serviceId.length > 64) {
       throw new Error('serviceId が不正です');
     }
-    if (typeof token !== 'string' || token.length === 0 || token.length > MAX_TOKEN_CHARS) {
+    if (typeof token !== 'string' || token.length === 0 || countChars(token) > MAX_TOKEN_CHARS) {
       throw new Error(`token が不正です (1-${MAX_TOKEN_CHARS} 字)`);
     }
     const db = await openDb();

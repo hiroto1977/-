@@ -67,8 +67,13 @@ describe('ollama のチャット入力の上限は 1 つだけ', () => {
     for (const [label, text] of BUILDS) {
       const c = code(text);
       expect(c, `${label} が黙って切っている`).not.toMatch(cut);
-      expect(c, `${label} が prompt の天井で断っていない`).toMatch(/\.length\s*>\s*MAX_OLLAMA_PROMPT_CHARS\b/);
-      expect(c, `${label} が system の天井で断っていない`).toMatch(/\.length\s*>\s*MAX_OLLAMA_SYSTEM_CHARS\b/);
+      // パス 195: 単位を「字」に揃えたので `countChars(...)` を通る (対照は下の `cut`)。
+      expect(c, `${label} が prompt の天井で断っていない`).toMatch(
+        /countChars\([^)]*\)\s*>\s*MAX_OLLAMA_PROMPT_CHARS\b/,
+      );
+      expect(c, `${label} が system の天井で断っていない`).toMatch(
+        /countChars\([^)]*\)\s*>\s*MAX_OLLAMA_SYSTEM_CHARS\b/,
+      );
       // 文面は共有の 1 つ (家系ごとに書かない)。
       expect(c, `${label} が文面を写している`).toContain(
         "inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS)",

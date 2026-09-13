@@ -12,7 +12,7 @@ import { emotionThresholds } from '../../shared/parameters';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
-import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
+import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import { CeilingNotice } from '../components/CeilingNotice';
 import type { ActionData } from '../../shared/actionData';
 
@@ -334,7 +334,8 @@ export function EmotionsPage() {
               // 画面が知れない (パス 167 で業務メモに入れたのと同じ形)。
               const raw = e.target.value;
               setMoodNoteOverflow(charsOverCeiling(raw, MAX_MOOD_NOTE_CHARS));
-              setMoodNote(raw.slice(0, MAX_MOOD_NOTE_CHARS));
+              // 文字境界で切る (パス 195 —— `slice` はサロゲート対を割る)。
+              setMoodNote(clampToCeiling(raw, MAX_MOOD_NOTE_CHARS));
             }}
             style={inputStyle}
           />

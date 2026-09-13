@@ -737,7 +737,7 @@ export function BusinessPage() {
      * (`'too-long'`) は `maxLength` のせいで 1 度も通っていなかった。ここが最後の砦。
      */
     if (charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS) > 0) {
-      setAdvisorError(refusedCeilingNote('質問', advisorQuestion.length, MAX_ADVISOR_QUESTION_CHARS));
+      setAdvisorError(refusedCeilingNote('質問', advisorQuestion, MAX_ADVISOR_QUESTION_CHARS));
       return;
     }
     setAdvisorBusy(true);

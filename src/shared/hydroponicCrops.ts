@@ -21,6 +21,7 @@
  * 値の正しさ (この品目は本当に 12 日で採れるか) はここでは見ない ——
  * 利用者の実測が最も正しい。見るのは**桁と形**だけ。
  */
+import { countChars } from './inputCeiling';
 import { hasControlChar } from './controlChars';
 import { readNumeric } from './readNumeric';
 import { HYDROPONIC_CROPS, type HydroponicCrop } from './hydroponics';
@@ -116,7 +117,7 @@ export function cropIssues(raw: unknown): string[] {
   if (typeof r.id !== 'string' || !CROP_ID_RE.test(r.id)) issues.push('品目の id が不正です');
   const label = typeof r.label === 'string' ? r.label.trim() : '';
   if (label === '') issues.push('品目名を入力してください');
-  else if (label.length > MAX_CROP_LABEL_CHARS) issues.push(`品目名は ${MAX_CROP_LABEL_CHARS} 文字までです`);
+  else if (countChars(label) > MAX_CROP_LABEL_CHARS) issues.push(`品目名は ${MAX_CROP_LABEL_CHARS} 文字までです`);
   // 改行やタブが select の 1 行に入ると崩れる。判定はアプリで 1 つの `hasControlChar`。
   else if (hasControlChar(label)) issues.push('品目名に改行や制御文字は使えません');
   const valid = new Set<CropNumericField>();

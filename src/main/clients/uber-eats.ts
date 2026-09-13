@@ -1,5 +1,6 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import type { ActionData } from '../../shared/actionData';
+import { countChars } from '../../shared/inputCeiling';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 import { adviseService } from '../../shared/serviceAdvisor';
 
@@ -15,6 +16,14 @@ import { adviseService } from '../../shared/serviceAdvisor';
  * パートナー資格を取得して live を有効化する際は、この fetcher 内で fetch を
  * 行い同じ shape で返し、`SERVICE_DATA_ORIGIN` を 'remote' へ直す
  * (`lint:data-origin` が直し忘れを落とす)。
+ *
+ * **メモの天井は「文字」で数える** (2026-09-13 · パス 195) —— 画面が「2,000 字まで」と
+ * 刷る数と同じ単位。`note.length` は UTF-16 のコード単位なので、絵文字や BMP 外の
+ * 漢字を含むメモを**天井の半分で断って**いた。`countChars` は `shared/inputCeiling.ts`
+ * の 1 つで、画面の `charsOverCeiling` と同じ物を読む。
+ *
+ * (この注記を `Stryker disable` の隣に置いてはいけない —— `lint:mutation-scope` が
+ *  それを pragma の理由として数え、「理由の無い pragma」が黙って減る。実測で 4 → 3。)
  */
 
 export interface UberEatsSnapshot {
@@ -69,7 +78,7 @@ interface RecordEntryPayload {
 async function recordEntry(ctx: ActionContext): Promise<ActionData<'uber-eats/record-entry'>> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
   // Stryker disable all
-  if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
+  if (typeof p.note !== 'string' || p.note.length === 0 || countChars(p.note) > MAX_RECORD_NOTE_CHARS) {
     throw new Error(`uber-eats.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`);
   }
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {

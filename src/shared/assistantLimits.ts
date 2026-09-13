@@ -1,3 +1,4 @@
+import { clampToCeiling, countChars } from './inputCeiling';
 /**
  * アシスタントの入出力の上限 —— **両ビルドで 1 つだけ持つ。**
  *
@@ -103,7 +104,7 @@ export function latestTurnTooLong(raw: unknown): boolean {
   if (last === null || typeof last !== 'object') return false;
   const content = (last as { content?: unknown }).content;
   // `sanitize*` と同じく前後の空白は数えない (同じ発話を片方が通し片方が断らないように)。
-  return typeof content === 'string' && content.trim().length > MAX_ASSISTANT_CONTENT_CHARS;
+  return typeof content === 'string' && countChars(content.trim()) > MAX_ASSISTANT_CONTENT_CHARS;
 }
 
 /**
@@ -127,7 +128,7 @@ export function inputTooLongMessage(label: string, max: number = MAX_ASSISTANT_C
  * 別の入口から起きる。** 判断は 1 つなので関数にして、3 経路が同じ物を読む。
  */
 export function capAssistantReply(text: string): string {
-  return text.length > MAX_ASSISTANT_REPLY_CHARS
-    ? text.slice(0, MAX_ASSISTANT_REPLY_CHARS) + ASSISTANT_REPLY_TRUNCATED_NOTICE
+  return countChars(text) > MAX_ASSISTANT_REPLY_CHARS
+    ? clampToCeiling(text, MAX_ASSISTANT_REPLY_CHARS) + ASSISTANT_REPLY_TRUNCATED_NOTICE
     : text;
 }

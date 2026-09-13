@@ -3,7 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
-import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
+import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
 import {
   SCORE_MAX as MEMBER_SCORE_MAX,
@@ -369,7 +369,8 @@ export function TeamRadarPage() {
       const m = { ...next[memberIdx]! };
       const notes = { ...(m.notes ?? {}) };
       if (text.length === 0) delete notes[axisIdx];
-      else notes[axisIdx] = text.slice(0, MAX_MEMBER_NOTE_CHARS);
+      // 文字境界で切る (パス 195 —— `slice` はサロゲート対を割る)。
+      else notes[axisIdx] = clampToCeiling(text, MAX_MEMBER_NOTE_CHARS);
       m.notes = notes;
       next[memberIdx] = m;
       return next;

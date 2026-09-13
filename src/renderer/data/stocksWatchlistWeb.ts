@@ -15,6 +15,7 @@
  * ブラウザ専用依存を持たない) なので単体テストできる。
  */
 
+import { countChars } from '../../shared/inputCeiling';
 import { round2 } from '../../shared/num';
 import { isoDateFromTimestamp, parseTimestamp } from '../../shared/isoDate';
 import { MAX_TICKER_CHARS } from '../../shared/advisorQuestionLimits';
@@ -31,7 +32,7 @@ export function isSafeSymbol(value: unknown): value is string {
   if (typeof value !== 'string') return false;
   // 空文字は下の regex (`+` で 1 文字以上を要求) が弾くため、length===0 の明示判定は
   // 冗長 (equivalent mutant 排除のため上限のみ残す)。
-  if (value.length > MAX_TICKER_CHARS) return false;
+  if (countChars(value) > MAX_TICKER_CHARS) return false;
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
 

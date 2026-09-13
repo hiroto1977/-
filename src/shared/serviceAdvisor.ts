@@ -29,6 +29,7 @@
  * 受け取った側 (利用者) がどう判断するかは書かない。免責は「規則で組み立てた参考情報」と言い切り、
  * 投資系は「投資助言ではありません」を残す (`main/clients/__tests__/*.test.ts` が片ごとに留めている)。
  */
+import { countChars } from './inputCeiling';
 import type { ServiceAdvisorResponse } from './advisorTypes';
 import type { RecordEntryServiceId } from './recordEntryLimits';
 import { jpy } from './formatters';
@@ -197,7 +198,7 @@ function readRows(raw: unknown, tag: string, field: string, min: number): Parsed
 /** 名前。前後の空白を落として 1〜{@link MAX_ADVICE_NAME_CHARS} 字。 */
 function readName(raw: unknown, tag: string, field: string): Parsed<string> {
   const name = typeof raw === 'string' ? raw.trim() : '';
-  if (name.length === 0 || name.length > MAX_ADVICE_NAME_CHARS) {
+  if (name.length === 0 || countChars(name) > MAX_ADVICE_NAME_CHARS) {
     return fail(`${tag}: ${field} は 1〜${MAX_ADVICE_NAME_CHARS} 文字で指定してください`);
   }
   return { ok: true, value: name };

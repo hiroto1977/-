@@ -269,7 +269,7 @@ export function VillagePage() {
        * 端末内の規則ベースの応答 (`reply`) は既に出ているので、止めるのは AI への送信だけ。
        */
       if (charsOverCeiling(text, MAX_ASSISTANT_CONTENT_CHARS) > 0) {
-        const note = refusedCeilingNote('話しかけた文', text.length, MAX_ASSISTANT_CONTENT_CHARS);
+        const note = refusedCeilingNote('話しかけた文', text, MAX_ASSISTANT_CONTENT_CHARS);
         setVoiceBubble(targetId, note);
         speak(note);
         return;

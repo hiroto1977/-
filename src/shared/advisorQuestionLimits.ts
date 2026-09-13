@@ -1,3 +1,4 @@
+import { countChars } from './inputCeiling';
 /**
  * アドバイザーの「質問」が受け取る入力の規則 —— **両ビルドで 1 つだけ持つ。**
  *
@@ -50,7 +51,7 @@ export type AdvisorQuestionProblem = 'empty' | 'too-long' | 'control-chars';
 
 export function checkAdvisorQuestion(question: unknown): AdvisorQuestionProblem | null {
   if (typeof question !== 'string' || question.length === 0) return 'empty';
-  if (question.length > MAX_ADVISOR_QUESTION_CHARS) return 'too-long';
+  if (countChars(question) > MAX_ADVISOR_QUESTION_CHARS) return 'too-long';
   // CR / LF / NUL。要求本文とログの両方で行を割られないようにする。
   if (/[\r\n\0]/.test(question)) return 'control-chars';
   return null;

@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import { countChars } from '../../shared/inputCeiling';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
@@ -412,7 +413,7 @@ export async function exportTeamRadarSvgImpl(
     : buildTeamRadarSnapshot({ kind: 'saved', state: validateTeamRadarState(chart) });
   // 天井は `shared/teamRadarState.ts` が 1 つだけ持つ (パス 167 —— ここが字面で 120、
   // 画面の `maxLength` が字面で 64 と**既にずれていた**)。
-  const titleStr = typeof title === 'string' && title.length > 0 && title.length <= MAX_CHART_TITLE_CHARS
+  const titleStr = typeof title === 'string' && title.length > 0 && countChars(title) <= MAX_CHART_TITLE_CHARS
     ? title
     : 'チームレーダーチャート';
   const svg = renderTeamRadarSvg(snap, { title: titleStr });

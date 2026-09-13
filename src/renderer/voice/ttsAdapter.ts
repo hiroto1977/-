@@ -1,3 +1,4 @@
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 /**
  * ttsAdapter — 音声合成（Text-to-Speech）のアダプタ。`window.speechSynthesis`
  * （Web Speech API）をガード付きで包み、非対応環境では無音で degrade する。
@@ -264,7 +265,7 @@ export function speak(text: string, opts: SpeakOptions = {}, win?: TtsWindow): b
     // **予備側へ入る入力が存在しない**ので落とした。
     // 総量の天井 (パス 113)。先頭 MAX_SPOKEN_CHARS 字 + 「続きは画面で」。
     const bounded =
-      prepared.length > MAX_SPOKEN_CHARS ? prepared.slice(0, MAX_SPOKEN_CHARS) + SPOKEN_TRUNCATED_NOTICE : prepared;
+      countChars(prepared) > MAX_SPOKEN_CHARS ? clampToCeiling(prepared, MAX_SPOKEN_CHARS) + SPOKEN_TRUNCATED_NOTICE : prepared;
     const chunks = splitIntoUtterances(bounded);
     for (const chunk of chunks) {
       const u = new Utter(chunk);

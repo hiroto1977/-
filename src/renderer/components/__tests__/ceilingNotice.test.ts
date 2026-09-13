@@ -56,7 +56,7 @@ describe('天井を超えた本文の断り (CeilingNotice · パス 172)', () =
     const node = container.querySelector('[data-ceiling-notice]');
     expect(node, '断りの節が無い').not.toBeNull();
     // 文面は `shared/inputCeiling.ts` が 1 つ持つ —— ここで書き写さない。
-    expect(node!.textContent).toContain(refusedCeilingNote('本文', 11, 10));
+    expect(node!.textContent).toContain(refusedCeilingNote('本文', 'あ'.repeat(11), 10));
     // 実際の数字が入っていることも確かめる (関数を呼ぶだけの自己参照にしない)。
     expect(node!.textContent).toContain('10 字までです');
     expect(node!.textContent).toContain('いま 11 字あり、1 字超えています');

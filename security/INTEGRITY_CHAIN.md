@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 178
+- ブロック数: 181
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `781a89c3713f97df70f5b10448fe93f35b6a9264f44523a173b4b1d6f2007532`
-- 保護対象: 70 ファイル
+- 末尾(tip)ハッシュ: `df0135fbbcecf63056df967ecc0d3f1066a1ec7e896143dc981ed490909f60c2`
+- 保護対象: 71 ファイル
 
 ## ブロック
 
@@ -191,6 +191,9 @@
 | 175 | `ad1c9a552a1fffdc` | `13893b909040ef22` | `e2f7eacb42e3cb68` | update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts |
 | 176 | `20dfa75dd8e55ea1` | `e2f7eacb42e3cb68` | `f8b634ca56505704` | update integrity-chain.cjs,public-host-guard.cjs,proxy.ts |
 | 177 | `32a23823dfb8765f` | `f8b634ca56505704` | `781a89c3713f97df` | update manifest.webmanifest |
+| 178 | `bf6d7facedc77e05` | `781a89c3713f97df` | `bdf2a0cbc9bd7e20` | update localWrite.ts,pkce.ts,vault.ts |
+| 179 | `61652a96ff1a5874` | `bdf2a0cbc9bd7e20` | `67f759ceadfc90e4` | update integrity-chain.cjs,inputCeiling.ts |
+| 180 | `54e2597aafc6db7b` | `67f759ceadfc90e4` | `df0135fbbcecf630` | update inputCeiling.ts |
 
 ## 保護対象ファイル
 
@@ -257,6 +260,7 @@
 - `src/shared/externalUrlGate.ts`
 - `src/shared/httpLimits.ts`
 - `src/shared/imageUrlGate.ts`
+- `src/shared/inputCeiling.ts`
 - `src/shared/ollama.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`

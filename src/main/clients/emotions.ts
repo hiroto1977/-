@@ -20,6 +20,7 @@
  * complexity.
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { app } from 'electron';
 import {
   MAX_ANALYSES,
@@ -216,7 +217,7 @@ async function logMood(ctx: ActionContext): Promise<ActionData<'emotions/log-moo
   // ブラウザ版の `log-mood` も素通しだった (同日実測・`emotionsLimits.ts` の訂正を参照)。
   // 今は両方がこの定数を見る。保存先が際限なく育つのを止める。
   const noteStr = String(note ?? '');
-  if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
+  if (countChars(noteStr) > MAX_MOOD_NOTE_CHARS) {
     throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
   }
   const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: noteStr };
@@ -309,7 +310,7 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   }
   // 上限はブラウザ版だけが持っていた (2026-08-23)。**境界の側が緩かった**ので
   // 揃える —— この本文は Anthropic の要求本文へそのまま載る。
-  if (text.length > MAX_ANALYZE_TEXT_CHARS) {
+  if (countChars(text) > MAX_ANALYZE_TEXT_CHARS) {
     throw new Error(`text exceeds ${MAX_ANALYZE_TEXT_CHARS} chars`);
   }
   if (!ctx.token) throw new Error('Anthropic API key required for analyze-text');
@@ -349,7 +350,7 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   const entry: AnalysisEntry = {
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: Date.now(),
-    excerpt: (source ? `[${source}] ` : '') + text.slice(0, MAX_ANALYSIS_EXCERPT_CHARS),
+    excerpt: (source ? `[${source}] ` : '') + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS),
     ...normalized,
   };
 

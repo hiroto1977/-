@@ -16,6 +16,7 @@
  *     local Ollama is older than MIN_SAFE_VERSION.
  */
 
+import { countChars } from '../../shared/inputCeiling';
 import {
   FetchError,
   redactForMessage,
@@ -267,10 +268,10 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   // 貼った長文の末尾 (質問はたいてい末尾に在る) が届かないまま答えが返っていた。
   // アシスタント (`assistant.ts`) はパス 112 で同じ形を断つと決めている —— 端末内の
   // モデルでも形は同じで、文面は同じ関数 (`inputTooLongMessage`) が持つ。
-  if (systemStr.length > MAX_OLLAMA_SYSTEM_CHARS) {
+  if (countChars(systemStr) > MAX_OLLAMA_SYSTEM_CHARS) {
     throw new Error(inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS));
   }
-  if (promptStr.length > MAX_OLLAMA_PROMPT_CHARS) {
+  if (countChars(promptStr) > MAX_OLLAMA_PROMPT_CHARS) {
     throw new Error(inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS));
   }
 

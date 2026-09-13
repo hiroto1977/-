@@ -1,4 +1,5 @@
 import { promises as fs } from 'node:fs';
+import { countChars } from '../../shared/inputCeiling';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -386,7 +387,7 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
   }
   // 指示文の天井 (パス 112)。それまで prompt に天井が無く、貼り付けた物が丸ごと有料 API へ
   // 出ていた。1 発話の天井はアシスタントと同じ 1 つ (`MAX_ASSISTANT_CONTENT_CHARS`)。
-  if (prompt.length > MAX_ASSISTANT_CONTENT_CHARS) throw new Error(inputTooLongMessage('プロンプト'));
+  if (countChars(prompt) > MAX_ASSISTANT_CONTENT_CHARS) throw new Error(inputTooLongMessage('プロンプト'));
 
   const body = await readSkillBody(id);
 

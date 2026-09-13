@@ -96,8 +96,11 @@ describe('両ビルドと skills が同じ判断を読む (写していない)',
 
   it('★ skills の prompt はアシスタントと同じ天井を読む (自前の数を持たない)', () => {
     const skills = code('main/clients/skills.ts');
-    expect(skills).toContain('prompt.length > MAX_ASSISTANT_CONTENT_CHARS');
+    // パス 195: 単位を「字」に揃えたので `countChars(prompt)` を通る。
+    expect(skills).toContain('countChars(prompt) > MAX_ASSISTANT_CONTENT_CHARS');
     expect(skills).toContain("inputTooLongMessage('プロンプト')");
-    expect(skills).not.toMatch(/prompt\.length > \d/);
+    // 字面の数に戻っていないこと (対照つき)。
+    expect(skills).not.toMatch(/countChars\(prompt\) > \d/);
+    expect('countChars(prompt) > 8192').toMatch(/countChars\(prompt\) > \d/);
   });
 });

@@ -1,4 +1,5 @@
 import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import { countChars } from '../../shared/inputCeiling';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../../shared/advisorResponseLimits';
 import { seededNoise } from '../../shared/seededNoise';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
@@ -544,7 +545,7 @@ export function validateBusinessAdvisorJson(
       throw new Error('business-advisor recommendation has empty rationale');
     }
     // Stryker restore ConditionalExpression
-    if (rec.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) {
+    if (countChars(rec.rationale) > MAX_ADVISOR_RATIONALE_CHARS) {
       throw new Error('business-advisor recommendation rationale exceeds 600 chars');
     }
     if (!Array.isArray(rec.actionItems) || rec.actionItems.length === 0) {
@@ -555,7 +556,7 @@ export function validateBusinessAdvisorJson(
     }
     const actionItems: string[] = [];
     for (const ai of rec.actionItems) {
-      if (typeof ai !== 'string' || ai.length === 0 || ai.length > MAX_ADVISOR_ITEM_CHARS) {
+      if (typeof ai !== 'string' || ai.length === 0 || countChars(ai) > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor actionItem entry is not a 1-240 char string');
       }
       actionItems.push(ai);
@@ -568,7 +569,7 @@ export function validateBusinessAdvisorJson(
     }
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > MAX_ADVISOR_ITEM_CHARS) {
+      if (typeof rf !== 'string' || rf.length === 0 || countChars(rf) > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor riskFactor entry is not a 1-240 char string');
       }
       riskFactors.push(rf);

@@ -21,6 +21,7 @@
  * 本フェーズでは file:// と hosted の両方で動く共通フローとして
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
+import { countChars } from '../../shared/inputCeiling';
 import { redactForMessage } from '../../shared/redact';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -217,7 +218,7 @@ export async function exchangeGoogleCode(
   fetchImpl: typeof fetch = fetch,
 ): Promise<TokenResult> {
   const { code, verifier, expectedState, receivedState, clientId, redirectUri } = args;
-  if (typeof code !== 'string' || code.length === 0 || code.length > MAX_AUTH_CODE_CHARS) {
+  if (typeof code !== 'string' || code.length === 0 || countChars(code) > MAX_AUTH_CODE_CHARS) {
     throw new Error('code が不正です');
   }
   if (typeof verifier !== 'string' || verifier.length === 0) {

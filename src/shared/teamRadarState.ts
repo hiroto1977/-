@@ -24,6 +24,7 @@
  * 読めなかったときは {@link unreadableTeamRadarNote} を画面へ渡す。
  */
 
+import { clampToCeiling, countChars } from './inputCeiling';
 import { localIsoDate } from './localDate';
 
 // --- Axes ----------------------------------------------------------------
@@ -169,7 +170,7 @@ export function validateMembers(raw: unknown): readonly TeamMember[] {
       throw new Error(`duplicate member id: ${m['id']}`);
     }
     seenIds.add(m['id']);
-    if (typeof m['name'] !== 'string' || m['name'].length === 0 || m['name'].length > MAX_MEMBER_NAME_CHARS) {
+    if (typeof m['name'] !== 'string' || m['name'].length === 0 || countChars(m['name']) > MAX_MEMBER_NAME_CHARS) {
       throw new Error(`member name must be a 1-${MAX_MEMBER_NAME_CHARS} char string`);
     }
     if (!Array.isArray(m['scores']) || m['scores'].length !== AXIS_COUNT) {
@@ -193,7 +194,7 @@ export function validateMembers(raw: unknown): readonly TeamMember[] {
         if (!Number.isInteger(idx) || idx < 0 || idx >= AXIS_COUNT) {
           throw new Error(`note key must be 0-${AXIS_COUNT - 1}: ${k}`);
         }
-        if (typeof v !== 'string' || v.length > MAX_MEMBER_NOTE_CHARS) {
+        if (typeof v !== 'string' || countChars(v) > MAX_MEMBER_NOTE_CHARS) {
           throw new Error(`note value must be a 0-${MAX_MEMBER_NOTE_CHARS} char string`);
         }
         notes[idx] = v;
@@ -216,11 +217,11 @@ export function validateTeamRadarState(raw: unknown): TeamRadarState {
   const o = raw as Record<string, unknown>;
   const members = validateMembers(o['members'] ?? []);
   const department = o['department'];
-  if (typeof department !== 'string' || department.length === 0 || department.length > MAX_DEPARTMENT_CHARS) {
+  if (typeof department !== 'string' || department.length === 0 || countChars(department) > MAX_DEPARTMENT_CHARS) {
     throw new Error(`department must be a 1-${MAX_DEPARTMENT_CHARS} char string`);
   }
   const evaluatedAt = o['evaluatedAt'];
-  if (typeof evaluatedAt !== 'string' || evaluatedAt.length === 0 || evaluatedAt.length > MAX_EVALUATED_AT_CHARS) {
+  if (typeof evaluatedAt !== 'string' || evaluatedAt.length === 0 || countChars(evaluatedAt) > MAX_EVALUATED_AT_CHARS) {
     throw new Error(`evaluatedAt must be a 1-${MAX_EVALUATED_AT_CHARS} char string`);
   }
   const rawAxes = o['axes'];
@@ -230,7 +231,7 @@ export function validateTeamRadarState(raw: unknown): TeamRadarState {
   }
   const axes: string[] = [];
   for (const a of rawAxes) {
-    if (typeof a !== 'string' || a.length === 0 || a.length > MAX_AXIS_LABEL_CHARS) {
+    if (typeof a !== 'string' || a.length === 0 || countChars(a) > MAX_AXIS_LABEL_CHARS) {
       throw new Error(`axis label must be a 1-${MAX_AXIS_LABEL_CHARS} char string: ${String(a)}`);
     }
     axes.push(a);
@@ -352,10 +353,10 @@ export function readStoredTeamRadar(raw: string | null): StoredTeamRadar {
    * **保存した状態が読むたびに短くなる**形だった。
    */
   const dept = typeof o['department'] === 'string' && o['department'].length > 0
-    ? o['department'].slice(0, MAX_DEPARTMENT_CHARS)
+    ? clampToCeiling(o['department'], MAX_DEPARTMENT_CHARS)
     : DEFAULT_TEAM_RADAR_STATE.department;
   const at = typeof o['evaluatedAt'] === 'string' && o['evaluatedAt'].length > 0
-    ? o['evaluatedAt'].slice(0, MAX_EVALUATED_AT_CHARS)
+    ? clampToCeiling(o['evaluatedAt'], MAX_EVALUATED_AT_CHARS)
     : localIsoDate();
   return { kind: 'saved', state: { department: dept, evaluatedAt: at, members } };
 }

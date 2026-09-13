@@ -1,4 +1,5 @@
 import { isoDateFromTimestamp } from '../../shared/isoDate';
+import { countChars } from '../../shared/inputCeiling';
 import {
   watchlistPrices,
   paperAccountExportNote,
@@ -866,7 +867,7 @@ export function isSafeSymbol(value: unknown): value is string {
   // string would pass otherwise), but the cap is pinned by the
   // 'A.repeat(17) → false' test elsewhere.
   // Stryker disable next-line ConditionalExpression
-  if (value.length === 0 || value.length > MAX_TICKER_CHARS) return false;
+  if (value.length === 0 || countChars(value) > MAX_TICKER_CHARS) return false;
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
 
@@ -1184,7 +1185,7 @@ export function validateAdvisorJson(
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) {
       throw new Error('recommendation has empty rationale');
     }
-    if (rec.rationale.length > MAX_STOCK_ADVISOR_RATIONALE_CHARS) {
+    if (countChars(rec.rationale) > MAX_STOCK_ADVISOR_RATIONALE_CHARS) {
       throw new Error(`recommendation rationale exceeds ${MAX_STOCK_ADVISOR_RATIONALE_CHARS} chars`);
     }
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) {
@@ -1192,7 +1193,7 @@ export function validateAdvisorJson(
     }
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > MAX_STOCK_ADVISOR_RISK_CHARS) {
+      if (typeof rf !== 'string' || rf.length === 0 || countChars(rf) > MAX_STOCK_ADVISOR_RISK_CHARS) {
         throw new Error(`riskFactor entry is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`);
       }
       riskFactors.push(rf);

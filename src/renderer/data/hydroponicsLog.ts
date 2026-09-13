@@ -15,7 +15,7 @@
  * 「N 件は読めませんでした」と言えるようにする。
  */
 
-import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
+import { charsOverCeiling, countChars, refusedCeilingNote } from '../../shared/inputCeiling';
 import { isCalendarDate } from '../../shared/isoDate';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 import {
@@ -267,7 +267,7 @@ function parseNote(v: unknown, label: string): string {
   if (blank(v)) return '';
   const s = String(v).trim();
   const over = charsOverCeiling(s, MAX_HYDROPONICS_NOTE_CHARS);
-  if (over > 0) throw new Error(refusedCeilingNote(label, s.length, MAX_HYDROPONICS_NOTE_CHARS));
+  if (over > 0) throw new Error(refusedCeilingNote(label, s, MAX_HYDROPONICS_NOTE_CHARS));
   return s;
 }
 
@@ -331,8 +331,9 @@ export function parseBatch(input: {
 }): CultivationBatchRecord {
   const id = typeof input.id === 'string' ? input.id.trim() : '';
   if (id === '') throw new Error('ロット名を入力してください');
-  if (id.length > MAX_BATCH_ID_CHARS) {
-    throw new Error(refusedCeilingNote('ロット名', id.length, MAX_BATCH_ID_CHARS));
+  // 天井は**文字**で数える (`countChars`) —— 断りの文と同じ単位 (パス 195)。
+  if (countChars(id) > MAX_BATCH_ID_CHARS) {
+    throw new Error(refusedCeilingNote('ロット名', id, MAX_BATCH_ID_CHARS));
   }
   if (typeof input.cropId !== 'string' || input.cropId === '') throw new Error('品目を選んでください');
   if (!isCalendarDate(input.sowDate)) throw new Error('播種日は YYYY-MM-DD 形式の実在する日付で入力してください');

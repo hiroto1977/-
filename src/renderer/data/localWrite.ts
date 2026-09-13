@@ -17,6 +17,7 @@
  * 呼び出し側は `ok` を見て画面に出す。**投げない**のは、保存の失敗で入力中の画面を
  * 落とすと打ち込んだ物まで消えるため —— 画面には残し、警告して控えを促す。
  */
+import { clampToCeiling } from '../../shared/inputCeiling';
 
 /** 書き込みの結果。失敗しても入力は画面に残るので、`message` は「どうすればよいか」まで書く。 */
 export type LocalWriteResult = { readonly ok: true } | { readonly ok: false; readonly message: string };
@@ -96,7 +97,7 @@ export function writeLocalString(key: string, json: string): LocalWriteResult {
  */
 export function describeStorageError(err: unknown): string {
   if (err instanceof Error) return err.name || 'Error';
-  return String(err).slice(0, MAX_REASON_CHARS);
+  return clampToCeiling(String(err), MAX_REASON_CHARS);
 }
 
 /** 理由の文面に載せる長さの上限 (安全上限。台帳には載せない)。 */

@@ -6,6 +6,7 @@
  * 行う (Vault のキーを使うため)。ここは純粋ロジック + localStorage のみ。
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   MAX_ANALYSES,
   MAX_ANALYSIS_EXCERPT_CHARS,
@@ -168,7 +169,7 @@ export function logMood(payload: unknown, now: number = Date.now()): ActionData<
   // 青天井だと保管庫のメタや proxy 設定など**別機能の書き込みが先に落ちる**。
   // `saveStore` は setItem を包んでいないので、溢れた時点で例外がそのまま出る。
   const noteStr = String(note ?? '');
-  if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
+  if (countChars(noteStr) > MAX_MOOD_NOTE_CHARS) {
     throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
   }
   // 日付: 省略 (undefined / null) は利用者の時計の今日。暦に無ければ断る (main 版と同じ判断 —— パス 115)。
@@ -255,7 +256,7 @@ export function recordAnalysis(
     // Stryker disable next-line StringLiteral,MethodExpression
     id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: now,
-    excerpt: (source ? `[${source}] ` : '') + text.slice(0, MAX_ANALYSIS_EXCERPT_CHARS),
+    excerpt: (source ? `[${source}] ` : '') + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS),
     ...normalized,
   };
   const store = loadStoreForWrite();

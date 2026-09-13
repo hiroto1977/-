@@ -87,6 +87,9 @@ const CAP_MARKS: readonly RegExp[] = [
   /\blatestTurnTooLong\s*\(/,
   /\bcheckAdvisorQuestion\s*\(/,
   /\.length\s*>\s*MAX_[A-Z0-9_]+\b/,
+  // パス 195 で単位を「字」に揃えたので、天井の比較は `countChars(...)` を通る。
+  // **古い綴りも残す** —— どちらでも「天井で断っている」ことは示せる。
+  /\bcountChars\s*\([^)]*\)\s*>\s*MAX_[A-Z0-9_]+\b/,
 ];
 
 /** 黙って切る印。母集団の handler は**届いてはいけない** (パス 112 / 114 の規則)。 */

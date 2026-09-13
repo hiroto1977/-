@@ -13,6 +13,7 @@
  * 免責 (ADVISOR_DISCLAIMER) を必ず付ける。
  */
 
+import { countChars } from '../../shared/inputCeiling';
 import { escapeXml, escapeMarkdownInline } from '../../shared/escape';
 import { portfolioEquity } from '../../shared/paperAccount';
 import { ratioPctOrDash } from '../../shared/num';
@@ -564,11 +565,11 @@ export function validateAdvisorJson(
       throw new Error(`recommendation has invalid rank: ${String(rec.rank)}`);
     }
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) throw new Error('recommendation has empty rationale');
-    if (rec.rationale.length > MAX_STOCK_ADVISOR_RATIONALE_CHARS) throw new Error(`recommendation rationale exceeds ${MAX_STOCK_ADVISOR_RATIONALE_CHARS} chars`);
+    if (countChars(rec.rationale) > MAX_STOCK_ADVISOR_RATIONALE_CHARS) throw new Error(`recommendation rationale exceeds ${MAX_STOCK_ADVISOR_RATIONALE_CHARS} chars`);
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) throw new Error('recommendation has no riskFactors');
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > MAX_STOCK_ADVISOR_RISK_CHARS) throw new Error(`riskFactor entry is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`);
+      if (typeof rf !== 'string' || rf.length === 0 || countChars(rf) > MAX_STOCK_ADVISOR_RISK_CHARS) throw new Error(`riskFactor entry is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`);
       riskFactors.push(rf);
     }
     out.push({ symbol: rec.symbol, rank: rec.rank, rationale: rec.rationale, riskFactors });

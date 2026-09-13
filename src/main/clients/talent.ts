@@ -1,4 +1,5 @@
 import { promises as fs } from 'node:fs';
+import { clampToCeiling } from '../../shared/inputCeiling';
 import os from 'node:os';
 import path from 'node:path';
 import {
@@ -183,7 +184,7 @@ export async function judgeLeaderImpl(ctx: ActionContext): Promise<JudgeResult> 
   const flagged = Array.isArray(raw) ? raw.filter((f): f is string => typeof f === 'string') : [];
   return {
     fitness: judgeLeaderFitness(flagged),
-    candidate: typeof name === 'string' ? name.slice(0, MAX_LEADER_CANDIDATE_CHARS) : '',
+    candidate: typeof name === 'string' ? clampToCeiling(name, MAX_LEADER_CANDIDATE_CHARS) : '',
   };
 }
 

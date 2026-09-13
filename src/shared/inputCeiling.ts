@@ -29,13 +29,79 @@
  */
 
 /**
+ * **「1 字」を数える単位は、文字 (コードポイント) である。** (2026-09-13 · パス 195)
+ *
+ * ## なぜ `value.length` ではないか
+ *
+ * JavaScript の `String.length` は **UTF-16 のコード単位**を数える。BMP の外の
+ * 文字 —— 絵文字、JIS 2004 で入った漢字 (𠮟 U+20B9F など) —— は**1 文字で 2**
+ * 数える。画面は「2000 字まで」と刷るので、そこがずれると 2 つの害が同時に出る。
+ * 実測 (`'a' + '😀'.repeat(1000)` = 2001 コード単位 / **1001 文字**):
+ *
+ * | | 直す前 | 直した後 |
+ * | --- | --- | --- |
+ * | 断りの文 | 「**1 字**超えていた」 | 出ない (1001 字は 2000 字の中) |
+ * | 実際の字数 | 2000 字の天井に対し **999 字下回っている** | 同じ |
+ * | 欄に残る物 | 末尾が**孤立サロゲート** `0xd83d` (`isWellFormed()` が false) | 絵文字のまま |
+ * | UTF-8 を往復したあと | 末尾が **`�`** に化ける (送った物と届く物が違う) | 変わらない |
+ * | main の検証 | `note.length` 2000 ≤ 2000 なので**通す** | 1001 字なので通す |
+ *
+ * つまり「天井を超えた」と言いながら**超えていない**入力から 1 文字の半分を
+ * 削り、壊れた文字列を保存側へ渡していた。**述べる数と、守る数と、切る位置は、
+ * 同じ単位で数えなければならない。**
+ *
+ * ## 規準は既に在った
+ *
+ * `shared/textWrap.ts` は同じ問題をすでに解いている ——
+ * 「添字で回すとサロゲートペア（絵文字など）が途中で割れる」ので `for…of` で
+ * コードポイント単位に進める。折り返しだけが正しく、天井は間違っていた。
+ *
+ * ## 書記素クラスタではなくコードポイントにする理由
+ *
+ * 人が数える「1 字」に最も近いのは書記素クラスタ (👨‍👩‍👧 は 1 字・5 コードポイント)
+ * だが、`Intl.Segmenter` は環境差があり、**天井は環境で変わってはいけない**
+ * (同じ文が端末によって通り／通らないでは、断りの文が説明にならない)。
+ * コードポイントは `for…of` だけで決まり、どの環境でも同じ数になる。
+ * 結合文字を含む文は人の数え方より多く数えるが、**多く数える側は安全側**
+ * (天井を越えさせない) なので、この差は害にならない。
+ */
+export function countChars(value: string): number {
+  let n = 0;
+  for (const _ch of value) n += 1; // 1 文字ずつ進む (値は使わない)
+  return n;
+}
+
+/**
+ * 天井までを**文字境界で**切る。
+ *
+ * `value.slice(0, max)` はコード単位で切るのでサロゲート対を割り、末尾に
+ * 孤立サロゲートを残す (上の表)。ここは 1 文字ずつ積むので割れない。
+ *
+ * `max` が 0 以下なら空文字 —— 負の天井は呼び出し側の誤りだが、投げずに
+ * 「1 文字も入らない」に倒す (入力中の画面を落とさない)。
+ */
+export function clampToCeiling(value: string, max: number): string {
+  if (max <= 0) return '';
+  let out = '';
+  let n = 0;
+  for (const ch of value) {
+    if (n >= max) break;
+    out += ch;
+    n += 1;
+  }
+  return out;
+}
+
+/**
  * 天井を何字超えているか (超えていなければ 0)。
  *
  * **前後の空白を落としてから数えない** —— 画面の欄が持っている文字数をそのまま言う。
  * 空白を落とした長さで述べると、利用者が見ている字数と違う数が出る。
+ *
+ * 単位は {@link countChars} (文字) —— `value.length` ではない理由は上に書いた。
  */
 export function charsOverCeiling(value: string, max: number): number {
-  return Math.max(0, value.length - max);
+  return Math.max(0, countChars(value) - max);
 }
 
 /**
@@ -57,7 +123,16 @@ export function clampedCeilingNote(label: string, over: number, max: number): st
  * **今の字数と超過分の両方**を言う —— 「長すぎます」だけでは、どれだけ削れば
  * 送れるのかが読めない (パス 157 で「できない指示」を直したのと同じ理由)。
  */
-export function refusedCeilingNote(label: string, length: number, max: number): string {
+export function refusedCeilingNote(label: string, value: string, max: number): string {
+  /*
+   * **第 2 引数は文字列そのもので、数ではない。** (パス 195)
+   *
+   * 以前は `length: number` を取り、呼び出し側 6 か所がどれも `value.length`
+   * (コード単位) を渡していた —— つまり**文面の数だけが別の単位**だった。
+   * 引数を文字列にすると `.length` を渡す道が型で消える (「口はあるが
+   * 繋がっていない」を作らないための、いつもの手)。
+   */
+  const length = countChars(value);
   const over = Math.max(0, length - max);
   return (
     `${label}は ${max} 字までです。いま ${length} 字あり、${over} 字超えています。`

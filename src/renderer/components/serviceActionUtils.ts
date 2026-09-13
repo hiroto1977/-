@@ -9,6 +9,7 @@
  * 4 つの main handler とブラウザ版が定数を読んでいるのに、**画面側の 2 か所
  * (ここと `ServiceActionPanel.tsx` の `maxLength`) だけが写し**だった。
  */
+import { clampToCeiling } from '../../shared/inputCeiling';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 
 /** 全角英数記号 (U+FF01–U+FF5E) → 半角 (U+0021–U+007E) へ変換。 */
@@ -74,5 +75,7 @@ export function sanitizeNote(raw: string, maxLen = MAX_RECORD_NOTE_CHARS): strin
   for (const ch of raw) {
     if (!isStrippableControlChar(ch.charCodeAt(0))) stripped += ch;
   }
-  return stripped.trim().slice(0, maxLen);
+  // **切るのは文字境界で。** `slice` はコード単位で切るのでサロゲート対を割り、
+  // 孤立サロゲート (`isWellFormed()` が false) を保存側へ渡していた (パス 195)。
+  return clampToCeiling(stripped.trim(), maxLen);
 }

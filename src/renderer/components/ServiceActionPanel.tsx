@@ -1,7 +1,7 @@
 import { useReducer, useState } from 'react';
 import { MAX_RECORD_NOTE_CHARS, type RecordEntryServiceId } from '../../shared/recordEntryLimits';
 import { parseTimestamp } from '../../shared/isoDate';
-import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
+import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 import type { AdviceInputFor } from '../../shared/serviceAdvisor';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
@@ -165,7 +165,9 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
             // ブラウザが貼り付けを切ってしまい、落ちたことを画面が知れない。
             const raw = e.target.value;
             setNoteOverflow(charsOverCeiling(raw, MAX_RECORD_NOTE_CHARS));
-            setNote(raw.slice(0, MAX_RECORD_NOTE_CHARS));
+            // 切るのは**文字境界**で (`clampToCeiling`)。`raw.slice` はコード単位で
+            // 切るのでサロゲート対を割り、孤立サロゲートが欄と payload に残った (パス 195)。
+            setNote(clampToCeiling(raw, MAX_RECORD_NOTE_CHARS));
           }}
           placeholder="メモ (例: 売上記録 / 修繕費発生)"
           style={inputStyle}

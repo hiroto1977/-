@@ -98,6 +98,17 @@ describe('1 つの欄の判定', () => {
     expect(checkWriteField('a'.repeat(MAX_WRITE_ID_CHARS), ID)).toBeNull();
     expect(checkWriteField('a'.repeat(MAX_WRITE_ID_CHARS + 1), ID)).toBe('too-long');
     expect(checkWriteField('a'.repeat(MAX_WRITE_TEXT_CHARS), TEXT)).toBeNull();
+
+    /*
+     * **★ 天井の単位は「字」である** (2026-09-13 · パス 195)。
+     *
+     * `checkWriteField` は `value.length` (UTF-16 コード単位) で見ていた。
+     * ASCII だけで留めていたので差が出ず、**絵文字の多い本文が天井の半分で
+     * 断られていた** —— 画面は「20,000 字まで」と刷る。
+     * 対照: `countChars` を `value.length` に戻すとこの 2 行が落ちる。
+     */
+    expect(checkWriteField('😀'.repeat(MAX_WRITE_TEXT_CHARS), TEXT)).toBeNull();
+    expect(checkWriteField('😀'.repeat(MAX_WRITE_TEXT_CHARS + 1), TEXT)).toBe('too-long');
     expect(checkWriteField('a'.repeat(MAX_WRITE_TEXT_CHARS + 1), TEXT)).toBe('too-long');
   });
 
