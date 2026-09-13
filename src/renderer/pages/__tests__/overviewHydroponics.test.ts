@@ -292,14 +292,22 @@ describe('経営サマリー — 水耕栽培の設備入力の番人 (黙って
     await click(box);
   };
 
-  it('読めない値は fatal の文言を出し、aria-invalid が立つ (保存すると 0 で入る)', async () => {
+  it('読めない値は fatal の文言を出し、aria-invalid が立つ (保存は断る)', async () => {
     await mountOverview();
     await act(async () => { changeInput(q.numInput('床面積 (m²)'), '百'); });
     expect(q.numInput('床面積 (m²)').getAttribute('aria-invalid')).toBe('true');
     expect(guardMessage('床面積 (m²)')).toContain('「百」を数値として読み取れません。0 ㎡ として計算されています。');
     await click(q.button('保存して経営サマリーへ反映'));
+    // **パス 214 で「保存すると 0 で入る」から「保存しない」へ変えた。** この検査は
+    // 見出しにまで `(保存すると 0 で入る)` と書いて**欠陥を期待値として固定していた** ——
+    // 床面積が測れないまま 0 で保存されると、経営サマリーが `営業利益 −￥6,000,000` を
+    // 出し、それが金融機関等提出用の書面まで届く。パス 213 の `teamPayroll.test.ts` と
+    // **同じ形を 2 パス連続で踏んだ**。⛔ の欄が在れば書かない (`refusedSave.test.ts`)。
     const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
-    expect(setups[0]!.data.floorAreaSqm).toBe(0);
+    expect(setups).toEqual([]);
+    // ⚠️ 文言の「0 ㎡ として計算されています」はこの欄については既に正しくない ——
+    // `guardNumber` は自分の値を読む段や保存が断るかを知らない。順序は
+    // 「残りの欄を断りで覆う → そのうえで文面から 0 の句を落とす」(REMAINING_WORK パス 214)。
   });
 
   it('単位語つき (10万) は単位を外すよう促す', async () => {

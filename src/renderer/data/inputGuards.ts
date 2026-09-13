@@ -234,6 +234,21 @@ export function refusalNote(labels: readonly string[]): string | null {
   return `${labels.join('・')}が入力できる範囲の外なので、この判定は算定していません（赤い欄を範囲内に直すと判定が出ます）。`;
 }
 
+/**
+ * **⛔ の欄が在るときに「書かなかった」ことを述べる文** (パス 214)。
+ *
+ * `refusalNote` は**判定**を算定しなかったと述べる。保存はそれとは別の事柄で、
+ * 同じ文面を流用すると嘘になる —— 判定は出し直せるが、**保存した値は残り、
+ * 以後すべての集計・書面がそれを読む**。実測 (パス 214): 経営サマリーの
+ * 水耕栽培は `床面積 = −9999` を ⛔ と表示したまま保存でき、画面は
+ * 「保存しました。経営サマリーに反映されています。」と述べ、そのあと
+ * 営業利益 −￥6,000,000 を出していた (金融機関等提出用の書面まで届く)。
+ */
+export function saveRefusalNote(labels: readonly string[]): string | null {
+  if (labels.length === 0) return null;
+  return `${labels.join('・')}が入力できる範囲の外なので、保存していません（赤い欄を範囲内に直すと保存できます）。`;
+}
+
 /** 画面のバッジ表示用の件数。 */
 export function guardCounts(issues: readonly GuardIssue[]): { fatal: number; warn: number } {
   return {

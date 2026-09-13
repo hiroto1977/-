@@ -70,7 +70,8 @@ import {
   type CropNumericField,
 } from '../../shared/hydroponicCrops';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { usePlan } from '../plan/usePlan';
 import { localIsoDate } from '../../shared/localDate';
 import { buildBusinessOverview } from '../data/overview';
@@ -351,6 +352,12 @@ function HydroponicsPanel({
   const [saved, setSaved] = useState(false);
   const [lowK, setLowK] = useState(base.lowPotassium === true);
   const submit = useSubmitGuard();
+  /**
+   * **保存を断る欄** (パス 214)。`form` の鍵は `HYDRO_SPECS` と同じ集合なので、
+   * 宣言をそのまま母集団にできる (手で並べ直さない)。
+   */
+  const refusedSetup = refusedFields(HYDRO_SPECS, form);
+  const refusedSetupLabels = refusalLabels(HYDRO_SPECS, refusedSetup, Object.keys(HYDRO_SPECS) as (keyof typeof HYDRO_SPECS)[]);
   const [ec, setEc] = useState('');
   const [ph, setPh] = useState('');
 
@@ -398,6 +405,11 @@ function HydroponicsPanel({
    * 経営サマリーは前回保存した設定のまま計算し続ける。
    */
   const saveSetup = async (): Promise<void> => {
+    // **⛔ の欄が 1 つでも在れば書かない** (パス 214)。判定を出さないのとは別の事柄で、
+    // 保存した値は残り、以後すべての集計と書面がそれを読む —— 実測では
+    // `床面積 = −9999` が保存でき、画面は「保存しました。経営サマリーに反映されて
+    // います。」と述べたあと営業利益 −￥6,000,000 を出していた。
+    if (refusedSetup.length > 0) { setSaved(false); return; }
     await onSave({
       cropId: crop.id,
       floorAreaSqm: n(form.floorAreaSqm),
@@ -566,6 +578,9 @@ function HydroponicsPanel({
         >
           保存して経営サマリーへ反映
         </button>
+        {/* **押せるままにして理由を出す。** 無効にするだけでは「なぜ押せないか」が
+            どこにも書かれない (⛔ は欄の側に在るが、離れた位置の欄だと見えない)。 */}
+        <RefusedFieldsNote labels={refusedSetupLabels} kind="save" />
       </div>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -607,6 +622,11 @@ function HydroponicsPanel({
           </div>
         )}
       </div>
+      {/* **緑の一文に `refusedSetup` の門は要らない。** 入力欄の `onChange` が
+          `setSaved(false)` を呼ぶので、欄を ⛔ にした時点で印は落ちる ——
+          対照 G2 (門を外す) が鳴らなかったことでそれが分かった (足した条件は
+          到達不能だった)。**鳴らない対照は報せ**なので、条件は消して性質だけを
+          検査で留める (`refusedSave.test.ts` の「保存に成功した後で欄を壊すと」)。 */}
       {saved && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。経営サマリーに反映されています。</div>}
     </div>
   );
