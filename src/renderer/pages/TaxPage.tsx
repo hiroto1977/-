@@ -6,7 +6,7 @@ import { invoiceTransitionCurrentLabel, invoiceTransitionScheduleLabel } from '.
 import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
-import { DASH, jpy } from '../../shared/formatters';
+import { DASH, jpy, jpyOrDash } from '../../shared/formatters';
 import { localIsoDate } from '../../shared/localDate';
 import { parseAmountInput } from '../components/serviceActionUtils';
 import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
@@ -120,6 +120,15 @@ import {
 } from '../../shared/taxRegistrationLicense';
 import { stampDutyAmount, type DocumentType } from '../../shared/taxStampDuty';
 import { estimateRealEstatePurchaseTaxCost } from '../../shared/taxRealEstateTransactionCost';
+
+/**
+ * 丸める前に「算定不能」を保つ (パス 208)。
+ *
+ * `Math.round(null)` は **0** —— `null` を数として扱う JS の暗黙変換で、
+ * 「算定していない」が「0 円」に化ける。仕向国側は端数処理を仮定していないので
+ * 表示のためだけに丸めており、その丸めが判定を作ってはいけない。
+ */
+const roundOrNull = (n: number | null): number | null => (n === null ? null : Math.round(n));
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -1973,13 +1982,16 @@ export function TaxPage() {
           </div>
 
           <div className="stat-grid" data-import-stats data-exempted={String(importTax.exempted)}>
+            {/* **課税価格は関税率に依らないので出し続ける** (パス 208)。
+                率が ⛔ のときに消えるのは関税から下だけ —— 理由は
+                `importTax.notes` が欄の名前で述べる。 */}
             <Stat label="課税価格 (1,000円未満切捨て)" value={jpy(importTax.customsValue)} />
-            <Stat label="関税 (100円未満切捨て)" value={jpy(importTax.duty)} />
-            <Stat label="消費税の課税標準" value={jpy(importTax.consumptionBase)} />
-            <Stat label="消費税 (国税)" value={jpy(importTax.nationalTax)} />
-            <Stat label="地方消費税" value={jpy(importTax.localTax)} />
-            <Stat label="税の合計" value={jpy(importTax.totalTax)} />
-            <Stat label="通関までの原価" value={jpy(importTax.landedCost)} positive />
+            <Stat label="関税 (100円未満切捨て)" value={jpyOrDash(importTax.duty)} />
+            <Stat label="消費税の課税標準" value={jpyOrDash(importTax.consumptionBase)} />
+            <Stat label="消費税 (国税)" value={jpyOrDash(importTax.nationalTax)} />
+            <Stat label="地方消費税" value={jpyOrDash(importTax.localTax)} />
+            <Stat label="税の合計" value={jpyOrDash(importTax.totalTax)} />
+            <Stat label="通関までの原価" value={jpyOrDash(importTax.landedCost)} positive />
           </div>
           {importTax.notes.map((n, i) => (
             <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
@@ -2036,13 +2048,18 @@ export function TaxPage() {
           <div className="stat-grid" data-export-stats>
             <Stat label="日本の輸出関税" value={jpy(0)} />
             <Stat label="日本の消費税（輸出免税）" value={jpy(0)} />
-            <Stat label="輸出税（日本以外の場合）" value={jpy(Math.round(exportTax.exportDuty))} />
+            {/* 3 つの率のうち断られた物に応じて、そこから下だけが「—」になる
+                (パス 208)。**仕向国の課税価格は率に依らないので出し続ける。**
+                `Math.round` は `null` を 0 にしてしまうので、丸める前に分ける。 */}
+            <Stat label="輸出税（日本以外の場合）" value={jpyOrDash(roundOrNull(exportTax.exportDuty))} />
             <Stat label="仕向国の課税価格" value={jpy(Math.round(exportTax.destCustomsValue))} />
-            <Stat label="仕向国の関税" value={jpy(Math.round(exportTax.destDuty))} />
-            <Stat label="仕向国の付加価値税" value={jpy(Math.round(exportTax.destVat))} />
-            <Stat label="仕向国の税 合計" value={jpy(Math.round(exportTax.destTotalTax))} />
-            <Stat label="売手の負担" value={jpy(Math.round(exportTax.sellerBurden))} positive={exportTax.sellerBurden === 0} />
-            <Stat label="買手の負担" value={jpy(Math.round(exportTax.buyerBurden))} />
+            <Stat label="仕向国の関税" value={jpyOrDash(roundOrNull(exportTax.destDuty))} />
+            <Stat label="仕向国の付加価値税" value={jpyOrDash(roundOrNull(exportTax.destVat))} />
+            <Stat label="仕向国の税 合計" value={jpyOrDash(roundOrNull(exportTax.destTotalTax))} />
+            {/* **算定不能を「負担なし」(緑) にしない** —— `positive` は
+                「0 円で済む」という判定なので、算定していないときは付けない。 */}
+            <Stat label="売手の負担" value={jpyOrDash(roundOrNull(exportTax.sellerBurden))} positive={exportTax.sellerBurden === 0} />
+            <Stat label="買手の負担" value={jpyOrDash(roundOrNull(exportTax.buyerBurden))} />
           </div>
           {exportTax.notes.map((n, i) => (
             <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>

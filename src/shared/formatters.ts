@@ -39,3 +39,16 @@ export function jpy(n: number): string {
   if (!Number.isFinite(n)) return DASH;
   return `¥${n.toLocaleString('ja-JP')}`;
 }
+
+/**
+ * 算定不能 (`null`) なら `—`、そうでなければ {@link jpy}。
+ *
+ * **綴りを 1 つにするためにここに置いた** (2026-09-13 · パス 208) ——
+ * `MutualFundsPage` と `TaxPage` が同じ 1 行を別々に持っていた。
+ * `null` (計算側が「算定していない」と言っている) と非有限 (金額として
+ * 刷れない値が届いた = 最後の床) を**同じ見た目**に畳むのはここだけの約束で、
+ * 理由は画面がその場で述べる責任を持つ (`jpy` の doc comment と同じ方針)。
+ */
+export function jpyOrDash(n: number | null | undefined): string {
+  return n == null ? DASH : jpy(n);
+}

@@ -24,7 +24,7 @@ import {
   fundDemoMixNote,
   type HoldingEntry,
 } from '../data/investments';
-import { DASH, jpy } from '../../shared/formatters';
+import { DASH, jpy, jpyOrDash } from '../../shared/formatters';
 import {
   calcCompoundingFutureValue,
   calcTotalReturn,
@@ -74,7 +74,7 @@ const EMPTY_HOLDING_FORM = { code: '', name: '', units: '', navPerUnit: '', valu
  * 刷っていた。いまは計算側が `null` を返し、ここが「—」に落とす。
  * **理由は欄のすぐ下の `GuardedNumber` の ⛔ と、節の脚注が述べる。**
  */
-const jpyOrDash = (n: number | null): string => (n === null ? DASH : jpy(n));
+// `jpyOrDash` は `shared/formatters.ts` に 1 つ置いてある (パス 208 で TaxPage と共有した)。
 
 export function MutualFundsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
