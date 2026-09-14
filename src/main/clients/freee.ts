@@ -146,7 +146,9 @@ export async function fetchFreeeSnapshot(ctx: FetchContext): Promise<FreeeSnapsh
     { headers },
     fetchCtx,
   );
-  const company = companies.companies[0];
+  // 封筒は `jsonFetch` が見る (パス 262)。**欄はここで守る** —— `{}` の応答では
+  // `companies.companies` が undefined で、`[0]` が投げていた (実測)。
+  const company = (companies.companies ?? [])[0];
   if (!company) {
     return { companyName: '', monthly: [], intake: NO_DEAL_INTAKE, fetchedAt: new Date().toISOString() };
   }

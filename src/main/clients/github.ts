@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { optionalString, requireNumber, requireObject, requireString } from '../../shared/apiResponse';
 import {
   GITHUB_ISSUE_FIELDS,
   GITHUB_LABELS,
@@ -138,15 +139,24 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
     }),
   );
 
+  /*
+   * **画面に出る欄を 1 つずつ要求する** (パス 262)。封筒は `jsonFetch` が
+   * 見るが、`{}` の応答では 6 欄すべてが `undefined` のまま
+   * スナップショットへ入り、`publicRepos` / `followers` は
+   * **数として画面に刷られる** —— 14 のクライアントのうち、壊れた応答が
+   * 「エラー」ではなく「データ」として画面へ届くのはここだけだった (実測)。
+   * 名前と会社は元から `null` を取り得る欄なので任意のままにする。
+   */
+  const u = requireObject(user, 'GitHub API');
   return {
     user: {
-      login: user.login,
-      name: user.name ?? user.login,
-      company: user.company ?? '',
-      avatarUrl: user.avatar_url,
-      profileUrl: user.html_url,
-      publicRepos: user.public_repos,
-      followers: user.followers,
+      login: requireString(u, 'login', 'GitHub API'),
+      name: optionalString(u, 'name') ?? requireString(u, 'login', 'GitHub API'),
+      company: optionalString(u, 'company') ?? '',
+      avatarUrl: requireString(u, 'avatar_url', 'GitHub API'),
+      profileUrl: requireString(u, 'html_url', 'GitHub API'),
+      publicRepos: requireNumber(u, 'public_repos', 'GitHub API'),
+      followers: requireNumber(u, 'followers', 'GitHub API'),
     },
     pullRequests: pulls,
   };

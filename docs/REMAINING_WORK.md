@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **141** モジュール / 両ビルドが import **46** / うち否定で答えられる **23**（うち未読 **5**）。これは分母であって欠陥の一覧ではない。
+shared **141** モジュール / 両ビルドが import **47** / うち否定で答えられる **23**（うち未読 **5**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -31654,6 +31654,105 @@ rejected = dropped - overflow   ← 残りは必ず filter が落とした分
   `isValidProbability` が持つ。氏名の `id` (`MEMBER_ID_RE`) は画面が作るので
   利用者には見えない — 文には入れていない。
 
+## パス 262 (2026-09-14) — **`as T` は封筒も確かめない。`null` の応答で 12 クライアントが V8 の型エラーを画面へ漏らしていた**
+
+パス 261 の残りとして自分で書いた一行をそのまま実行した ——
+「読み取り (snapshot) 側の `jsonFetch<T>` は手つかず」。
+
+### まず母集団を数え直した (記録した数が違っていた)
+
+パス 261 は「74 クライアントぶん残っている」と書いた。**74 は `jsonFetch` の
+型引数の数**で、**応答を読むクライアントの数ではない**。76 の `LIVE_FETCHERS`
+すべてに壊れた 200 を返す `fetch` を注入して数えると:
+
+```
+  実際に ctx.fetch を呼ぶ            14 件
+    github(2) wordpress(1) notion(1) drive(1) calendar(2) gmail(1) slack(2)
+    canva(2) cloudflare(2) ollama(2) microsoft-365(3) base(1) freee(1) cursor(3)
+  呼ばない                           62 件
+    同梱の見本をそのまま返す (投資・士業・食事宅配ほか 60) か、
+    資格情報の形で先に断る (atlassian / youtube)
+  ctx.fetch を無視して素の fetch を呼ぶ   0 件
+```
+
+### 実測 —— 壊れた 200 で何が起きるか
+
+```
+  本文 null   12 件が生の型エラーを投げる
+                Cannot read properties of null (reading 'files')     drive
+                Cannot read properties of null (reading 'ok')        slack
+                Cannot read properties of null (reading 'success')   cloudflare
+                … github(items) wordpress(sites) notion(results) calendar(items)
+                   gmail(messages) canva(items) microsoft-365(value) base(items)
+                   freee(companies)
+  本文 {}     github だけは**エラーにならずデータとして通る**
+                user.login / avatarUrl / profileUrl = undefined
+                user.publicRepos / followers = undefined ← **数として画面に刷られる**
+```
+
+**形は 1 つ**: クライアントは**欄**は守っていた (`data.files ?? []`) が、**封筒**は
+仮定していた。`??` は `null.files` の**後**に評価されるので届かない。文面は
+相手先も理由も言わず、画面には V8 の英語がそのまま出る。
+
+### 直した所
+
+- **漏斗 1 か所**。`jsonFetch<T>` が「先頭は JSON のオブジェクト」を要求する
+  (`clients/types.ts`)。12 か所へ同じ行を写すより、通り道が 1 本のほうが
+  次に足す人にも掛かる。`readJsonBody` に `!ok` と `JSON.parse` を切り出した。
+- **例外は 1 つだけ、別の名前で**。`cursor` は `CursorJsonFetch =
+  (url, init) => Promise<unknown>` を**契約として宣言し**、3 つの応答を
+  `normalizeMembers` / `normalizeUsage` / `normalizeSpend` で自分で正規化する
+  (配列を直接返す形も包んだ形も読む)。最初これに気付かず全部へ掛け、
+  **cursor の既存の検査 3 件が正しく落ちた** ——「包み方に依存しない」読み手を
+  断っていた。`jsonFetchAny` に分け、ブラウザ版 (`web-shim` の
+  `getProxyJsonFetch`) と同じ「素の JSON」を渡す形に揃えた。
+- **画面へ出る欄は別に要求する** (封筒とは別の問題)。`github` の 6 欄を
+  `requireString` / `requireNumber` (パス 261 の `shared/apiResponse.ts`) で要求し、
+  `name` / `company` は元から `null` を取り得るので任意のまま。
+  `freee` は `(companies.companies ?? [])[0]` で事業所なしを空の
+  スナップショットへ倒す (投げない)。
+
+### 検査と対照
+
+`clients/__tests__/malformedResponseCensus.test.ts` (29 本)。probe を**門にした**:
+全 76 を `null` / `[]` / `{}` / `"text"` / `0` / `true` の 6 種で回し、
+**生の型エラーを漏らさない**かつ**`undefined` / NaN の葉を返さない**を見る。
+`global fetch` は落とすので、`ctx.fetch` を無視する経路が増えれば鳴る。
+通信する 14 件の台帳は**双方向** (増えても減っても落ちる) —— これが無いと
+「全部が見本を返すので全部 ok」という*空の合格*になりうる。
+
+対照 3 本、いずれも鳴った:
+- 漏斗の封筒の要求を外す → **6 件**落ち、12 クライアントの型エラーが 1 件ずつ並ぶ
+- `freee` の `?? []` を外す → **3 件**落ちる (`reading '0'`)
+- `github` の欄の要求を外す → **7 件**落ち、`undefined` 6 欄が 1 行で出る
+
+### 自分の検査が 1 度間違えた (記録)
+
+「cursor は厳しい口を**使っていない**」を**原文の grep** で書いて落とした ——
+`cursor.ts` の docblock が理由を説明するために `jsonFetch<T>` という綴りを
+引いているので、綴りを探す検査が**自分の説明文に当たった**。CLAUDE.md の
+「不在を主張する検査には標本を添える」の家系で、**振る舞いで書き直した**:
+他の 13 が断る本文 (裸の配列・`null`) を cursor は読んで空として扱う、を
+隣のサービスの断りと並べて留める。
+
+### 出荷物の大きさ
+
+**byte 単位で不変** (11,854,414 B / 3,267,160 B)。直したのは `src/main/` だけで、
+ブラウザ版はこの 13 クライアントを 1 つも読み込まない (読み取りは
+`liveRead.ts` の `cursor` だけ・書き込みはパス 261 で直した `saasWriteWeb.ts`)。
+
+### 残り
+
+- **cursor は `null` の応答を「空」として画面に出す** (実測)。3 つの照会のうち
+  1 つが壊れても、他の 2 つは正しく出るので**全体を断るのは惜しい** ——
+  パス 153 の `freee` の `intake` と同じ形 (「何件をどう扱ったか」を値の隣に置き、
+  画面が刷る) が要る。**今回は直していない**: 3 つの正規化 + スナップショットの欄 +
+  画面 + ブラウザ版の対称 + 検査で、別のパスの大きさになる。
+- 封筒は見たが、**欄の中身を要求したのは `github` と `freee` だけ**。残り 12 は
+  「欄が空なら空として出る」ままで、それが害かは 1 件ずつ読まないと決まらない
+  (`slack` の `ok !== true` のように自分で見ている物も在る)。母集団として記録する。
+- パス 261 と同じく、通した文字列の**長さ**はどの経路でも見ていない。
+
 ## パス 261 (2026-09-14) — **外部サービスへの書き込みを「できた」と報告していた。応答が何も答えていなくても**
 
 パス 260 の残りを測ろうとして (「10 MiB の本文がそのまま `JSON.parse` に渡る」)、
@@ -31722,6 +31821,10 @@ VirusTotal は同じ `.map()` / 同じ算術をしていた。非対称ではな
   74 クライアントぶん残っている。害の多くは「画面の欄が空になる」で、パス
   62 / 80 / 98 / 116 が下流に形の判定を置いているが、**それが全部を覆うかは
   測っていない**。母集団としてここに記録する。
+  **訂正 (パス 262)**: 74 は `jsonFetch` の**型引数の数**で、応答を読む
+  クライアントの数ではない。実測では**通信するのは 14 件**で、うち 12 が
+  `null` の本文で生の型エラーを漏らし、1 件 (`github`) が壊れた値をデータとして
+  通していた。害も「欄が空になる」より重かった (画面に V8 の英語が出る)。
 - 判定の census (`lint:shared-judgement`) は「負の**値**を返す」述語を母集団に
   するので、**投げて断る規則はそこに入らない**。`securityResponse` は両ビルドが
   import するのに「否定で答えられる」23 に数えられていない。走査の限界であって
