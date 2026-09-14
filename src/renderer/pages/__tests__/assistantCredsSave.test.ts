@@ -185,3 +185,56 @@ describe('アシスタントの API キー保存', () => {
     expect(messages()).toContain('少なくとも 1 つの API キー');
   });
 });
+
+/**
+ * **JSON の包みが、外側の関門を素通りさせていた。**
+ *
+ * この欄は複数プロバイダの鍵を `JSON.stringify(creds)` 1 本にまとめて
+ * `assistant` スロットへ入れる。`serviceHub.setToken` は
+ * `shared/tokenInput.ts` の `checkTokenInput` を通すのに、**見ているのは
+ * 包んだ後の文字列**である。`JSON.stringify` は制御文字を `\u0000` の 6 文字へ
+ * 逃がすので、包みの中に制御文字が在っても外側からは「制御文字なし」に見え、
+ * そのまま保存される。
+ *
+ * 取り出す側 (`clients/assistant.ts`) は JSON を解いて中の鍵をそのまま
+ * `'x-api-key': ctx.token` に載せるので、**制御文字は復活する**。`new Headers()`
+ * が投げ、その文面に鍵が入って画面へ出る
+ * (`shared/__tests__/headerValueLeak.test.ts` が実測)。
+ *
+ * 直し方は「黙って落とす」ではなく**理由つきで断る** —— このリポジトリが
+ * 外へ出す欄で繰り返し選んできた側 (パス 183 ほか)。落とすと「保存しました」と
+ * 言いながらその鍵だけ入っていない状態になる。
+ */
+describe('エージェント資格情報 — 包む前に 1 欄ずつ検証する', () => {
+  const NUL = String.fromCharCode(0);
+
+  it('★ 制御文字を含む欄が 1 つでもあれば保存せず、どの欄かを言う', async () => {
+    await mountAssistant();
+    type(input('Anthropic API キー'), `sk-ant-${NUL}broken`);
+    await act(async () => saveButton().click());
+    await settle();
+    expect(saved, '包んで保存してしまっている').toHaveLength(0);
+    expect(messages()).toContain('保存できませんでした');
+    expect(messages()).toContain('anthropic');
+    expect(messages()).toContain('制御文字');
+  });
+
+  it('★ 正しい欄が隣にあっても、まとめて断る (一部だけ黙って保存しない)', async () => {
+    await mountAssistant();
+    type(input('Anthropic API キー'), 'sk-ant-good-key');
+    type(input('OpenAI API キー'), `sk-${NUL}bad`);
+    await act(async () => saveButton().click());
+    await settle();
+    expect(saved).toHaveLength(0);
+    expect(messages()).toContain('openai');
+  });
+
+  it('対照: 制御文字が無ければこれまでどおり包んで保存する', async () => {
+    await mountAssistant();
+    type(input('Anthropic API キー'), 'sk-ant-good-key');
+    await act(async () => saveButton().click());
+    await settle();
+    expect(saved).toHaveLength(1);
+    expect(JSON.parse(saved[0]!)).toEqual({ anthropic: 'sk-ant-good-key' });
+  });
+});

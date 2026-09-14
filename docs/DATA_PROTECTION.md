@@ -415,6 +415,43 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
     **既に正しく**（解錠には掛けず、設定・変更にのみ掛ける）、`ENTROPY_BITS` は
     `recoveryVersion` という移行の仕組みを持つので放置した。
 
+22. **資格情報の入口は 1 つの規則を通る／プラットフォームの例外文面から鍵を復元させない**
+    —— `pages/SettingsPage.tsx` + `pages/AssistantPage.tsx` + `shared/redact.ts`
+    （2026-09-14 · パス 244）。`shared/tokenInput.ts` は冒頭で「この規則を main と
+    renderer で同じにするために在る」と宣言しているのに、`checkTokenInput` を通していたのは
+    `main.ts` の `secrets:set` と `web-shim.ts` の `setToken` の **2 か所だけ**だった。
+    通っていなかった 2 経路:
+    - **設定画面の資格情報スロット 9 枚**（anthropic / github / notion / slack / wordpress /
+      atlassian / canva / cloudflare / security）は `getVault().setToken()` を直接叩き、
+      `value.length === 0` という弱い写しだけを持っていた。`vault.setToken` 側も
+      型・空・`MAX_TOKEN_CHARS` しか見ない。**ブラウザ版でこの 9 つを入力する口はここだけ。**
+    - **アシスタントのエージェント資格情報**は複数プロバイダの鍵を `JSON.stringify` 1 本に
+      まとめてから `setToken` へ渡す。`JSON.stringify` は制御文字を `\u0000` の 6 文字へ
+      逃がすので、**包みの外からは「制御文字なし」に見える**。取り出す側
+      (`clients/assistant.ts`) は JSON を解いて中の鍵をそのまま `'x-api-key'` に載せるので
+      制御文字は復活する。
+    何が起きるか: 制御文字を含む値は `Authorization: Bearer …` / `hibp-api-key: …` に載り、
+    `new Headers()` が **値ごと引用符で抱えた文面**で投げる
+    （`Headers.append: "<値>" is an invalid header value.`）。`limitedFetch` は `fetch` の例外を
+    そのまま再送出し、`main.ts` の `safeErrorMessage` を通って画面の赤いバッジへ出る。
+    `redact.ts` の 3 規則はどれも「ヘッダ名が在る」か「方式 (Bearer/Basic) が在る」ことに
+    掛かっているが、**この文面はヘッダ名を含まない** —— まさに同ファイルが接頭辞を持たない
+    3 形 (Cloudflare 40 字 / LINE / Discord) を裸で伏せない根拠として挙げていた
+    「ヘッダ名・JSON 項目名の規則が受け持つ」という前提が崩れる 1 本だった。
+    2026-09-14 の実測 (10 経路): `hibp-api-key` / `x-apikey` の 64 桁 16 進は**丸ごと**素通り
+    （規則が 0 件当たる）、`Authorization` の 8 経路は改行で分断された後半 20〜86 字が裸で残る
+    （`Bearer …{16,}` に届かないため）。
+    直した 3 か所: 2 つの入口を `checkTokenInput` へ通し（**理由つきで断る**。アシスタントは
+    どの欄かを言う）、`redact.ts` に「末尾が ` is an invalid header value` の引用はまとめて伏せる
+    （方式だけ残す）」規則を足した。**入口が原因・伏字は結果の遮断**で、両方入れてある。
+    `shared/__tests__/headerValueLeak.test.ts` は期待文面を写経せず**実物の `Headers` に
+    毎回投げさせ**、「値が文面に入ること」自体も主張する（Node が文面を変えた日に空の検査へ
+    化けないため）。**併せて測った境目**: `<input>` の値の消毒 (value sanitization) は CR / LF を
+    **要素の側で**落とすので、この欄から入るのは改行ではなく NUL / 垂直タブなどの
+    他の C0 制御文字である（最初は「折り返して貼った改行」で書いており、それだと
+    この経路では何も守らない検査になっていた）。ヘッダ名が不正な場合の双子
+    (`"…" is an invalid header name.`) は伏せない —— あちらの引用は名前で、伏せると原因が読めない。
+
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 
 | 優先 | 対策 | 主に効く脅威 | 備考 |

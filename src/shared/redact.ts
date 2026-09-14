@@ -126,6 +126,43 @@ export function redactSecrets(input: string): string {
       // に再び当たることもない (`[` も除外文字に入っている)。
       .replace(/\b(Bearer|Basic)\s+[^\s"'\\,;)[\]}]{16,}/g, '$1 [REDACTED]')
       /*
+       * **プラットフォーム自身のエラー文面 —— ヘッダ名を持たない引用。**
+       *
+       * 上の 3 規則はどれも「ヘッダ名が在る」か「方式が在る」ことに掛かって
+       * いる。このファイルの冒頭は、接頭辞を持たない 3 形 (Cloudflare の 40 字 /
+       * LINE / Discord) を裸では伏せない理由として
+       * **「ヘッダ名・JSON 項目名の規則が受け持つ」**と宣言している ——
+       * つまり安全の根拠は「その値は必ず名前と一緒に現れる」という前提である。
+       *
+       * その前提が崩れる経路が 1 本在った。値に HTTP ヘッダとして不正なバイト
+       * (LF / NUL) が混ざると `new Headers()` が投げ、undici の文面は
+       *
+       *   Headers.append: "<値>" is an invalid header value.
+       *
+       * ——**値だけを引用符で抱え、ヘッダ名を含まない**。`limitedFetch` は
+       * `fetch` の例外をそのまま再送出し、`main.ts` の `safeErrorMessage` を
+       * 通って画面の赤いバッジに出る。2026-09-14 の実測 (10 経路):
+       *
+       *   hibp-api-key / x-apikey  64 桁 16 進が**丸ごと**素通り (規則が 0 件当たる)
+       *   Authorization ×8         `Bearer [REDACTED]\n<後半>` —— 改行で分断された
+       *                            後半 20〜86 字が裸で残る (`{16,}` に届かないため)
+       *
+       * 名前が無いので名前には掛けられない。**引用の中身をまとめて伏せる** ——
+       * ただし方式 (Bearer / Basic) は秘密ではなく原因究明に要るので残す
+       * (上の規則と同じ判断)。
+       *
+       * 末尾の `value` を要求するので、**ヘッダ名が不正な場合の双子**
+       * (`"…" is an invalid header name.`) は伏せない —— あちらの引用は
+       * 名前であって秘密ではなく、伏せると原因が読めなくなる。
+       *
+       * 文面の頭ではなく**末尾の句**に掛けるのは、同じ句を使う別の入口
+       * (`Request constructor: …`) にも同じだけ効かせるためである。
+       */
+      .replace(
+        /"((?:Bearer|Basic)\s)?[^"]{16,}"(?=\s+is an invalid header value)/g,
+        (_m, scheme?: string) => `"${scheme ?? ''}[REDACTED]"`,
+      )
+      /*
        * 発行元が分かる接頭辞。`AIza…` は Google の API キー — このアプリは
        * YouTube で `?key=…` の形の URL に載せて送るので、URL ごとどこかへ
        * 書き出されたときに備えてここでも拾う。

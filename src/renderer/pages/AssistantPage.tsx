@@ -41,6 +41,7 @@ import {
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
+import { checkTokenInput } from '../../shared/tokenInput';
 import type { ActionData } from '../../shared/actionData';
 
 interface ChatMessage {
@@ -323,10 +324,37 @@ export function AssistantPage() {
       return;
     }
     const creds: Record<string, string> = {};
+    /*
+     * **包む前に 1 欄ずつ検証する。**
+     *
+     * `setToken` は `shared/tokenInput.ts` の規則を通すが、見ているのは
+     * `JSON.stringify` した**後**の文字列である。`JSON.stringify` は制御文字を
+     * `\u0000` の 6 文字へ逃がすので、包みの中に制御文字が在っても外側からは
+     * 「制御文字なし」に見え、そのまま保存される。取り出す側
+     * (`clients/assistant.ts`) は JSON を解いて中の鍵をそのまま
+     * `'x-api-key': ctx.token` に載せるので**制御文字は復活し**、
+     * `new Headers()` が投げる文面に鍵が入って画面へ出る
+     * (`shared/__tests__/headerValueLeak.test.ts` が実測)。
+     *
+     * **黙って落とさず断る。** 落とすと「保存しました」と言いながらその鍵だけ
+     * 入っていない状態になる (このリポジトリが外へ出す欄で繰り返し選んできた側 ——
+     * パス 183 ほか)。どの欄かを言わないと打ち直しようがないので、名前も出す。
+     */
+    const refused: string[] = [];
     (Object.keys(credsForm) as Array<keyof AgentCredsForm>).forEach((k) => {
       const v = credsForm[k].trim();
-      if (v) creds[k] = v;
+      if (!v) return;
+      const checked = checkTokenInput(v);
+      if (!checked.ok) {
+        refused.push(`${k}: ${checked.message}`);
+        return;
+      }
+      creds[k] = checked.value;
     });
+    if (refused.length > 0) {
+      setCredsMessage(`保存できませんでした — ${refused.join(' / ')}`);
+      return; // 入力は残す (打ち直しのため)
+    }
     if (Object.keys(creds).length === 0) {
       setCredsMessage('少なくとも 1 つの API キー / URL を入力してください');
       return;

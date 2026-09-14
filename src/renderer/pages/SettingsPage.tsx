@@ -14,6 +14,7 @@ import { issueInviteCode } from '../plan/internalLicense';
 import { getVault, MAX_TOKEN_CHARS, MIN_PASSWORD_LENGTH } from '../security/vault';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
+import { checkTokenInput } from '../../shared/tokenInput';
 import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
 import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
 import { isBrowserBuild } from '../runtimeMode';
@@ -205,13 +206,41 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
 
   async function save() {
     setErr(null);
-    if (value.length === 0) {
-      setErr('入力してください');
+    /*
+     * **同じ規則を通す。**
+     *
+     * `shared/tokenInput.ts` の冒頭は「この規則を main と renderer で同じに
+     * するために在る」と書いてある。ところが実際に通していたのは
+     * `main.ts` の `secrets:set` と `web-shim.ts` の `setToken` の 2 か所だけで、
+     * **この経路 (保管庫を直接叩く資格情報スロット 9 枚) は弱い写し**
+     * —— `value.length === 0` だけ —— を持っていた (2026-09-14 実測)。
+     * ブラウザ版でこの 9 つを入力する口はここしかない。
+     *
+     * 何が起きるか: 制御文字の混ざった値は
+     * `Authorization: Bearer …` / `hibp-api-key: …` に載る。`new Headers()` が
+     * 「is an invalid header value」で投げ、**その文面に値が入って**画面の
+     * 赤いバッジへ出る (`shared/__tests__/headerValueLeak.test.ts` が実測。
+     * 伏字の側もこの形に当たるよう直したが、**そちらは結果の遮断**であって
+     * 原因はここ)。同じ値を `serviceHub.setToken` に渡せば
+     * 「改行や制御文字が含まれています」と理由つきで断られる ——
+     * **隣の口が断る物を、この口が受け取っていた。**
+     *
+     * 通り抜けるのは改行ではなく **NUL や垂直タブ**である —— HTML の値の消毒が
+     * `<input>` の値から CR / LF だけを要素の側で落とすため
+     * (`__tests__/settingsCredentialSave.test.ts` の「前提」が実物で測っている)。
+     *
+     * 長さの天井はここでは見ない。`CeilingNotice` + `valueOver` が保管庫の
+     * `MAX_TOKEN_CHARS` (8,192 —— `checkTokenInput` の 65,536 より厳しい) で
+     * 既に「保存」を無効にしている (パス 167 / 196)。
+     */
+    const checked = checkTokenInput(value);
+    if (!checked.ok) {
+      setErr(checked.message);
       return;
     }
     setBusy(true);
     try {
-      await getVault().setToken(slot.vaultKey, value);
+      await getVault().setToken(slot.vaultKey, checked.value);
       setValue('');
       setEditing(false);
       await refresh();
@@ -371,7 +400,11 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
           ⚠ {unreadable}
         </div>
       )}
-      {err && <div style={{ fontSize: 11, color: '#ef4444' }}>{err}</div>}
+      {err && (
+        <div data-credential-error={slot.vaultKey} role="alert" style={{ fontSize: 11, color: '#ef4444' }}>
+          {err}
+        </div>
+      )}
     </div>
   );
 }

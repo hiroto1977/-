@@ -26103,6 +26103,123 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 244 (2026-09-14) — **資格情報の入口が 2 通りの規則を持ち、プラットフォームの例外文面が鍵をそのまま画面へ出していた**
+
+`shared/tokenInput.ts` の冒頭は「この規則を main と renderer で**同じ**にするために在る」と
+宣言している。実際に `checkTokenInput` を呼んでいる場所を数えたら **2 か所**だった:
+
+```
+src/main/main.ts:326        secrets:set (デスクトップ版)
+src/renderer/web-shim.ts:1147  setToken  (ブラウザ版・serviceHub 経由)
+```
+
+通っていなかった経路が 2 本ある。
+
+### (1) 設定画面の資格情報スロット 9 枚 — 保管庫を直接叩く
+
+`SettingsPage.tsx` の `CredentialRow.save()` は `getVault().setToken(slot.vaultKey, value)` を
+直接呼び、持っていた関門は `value.length === 0` **だけ**だった。`vault.setToken` 側も
+型・空・`MAX_TOKEN_CHARS` しか見ない。対象は anthropic / github / notion / slack / wordpress /
+atlassian / canva / cloudflare / **security** の 9 つで、**ブラウザ版でこの 9 つを入力する口は
+ここしかない**。
+
+### (2) アシスタントのエージェント資格情報 — JSON の包みが外側の関門を素通りさせる
+
+`AssistantPage.saveAgentCreds` は複数プロバイダの鍵を `JSON.stringify(creds)` 1 本にまとめてから
+`setToken` へ渡す。関門は通るが、見ているのは**包んだ後**の文字列である。`JSON.stringify` は
+制御文字を `\u0000` の 6 文字へ逃がすので、包みの中に制御文字が在っても外からは
+「制御文字なし」に見える。取り出す側 (`clients/assistant.ts`) は JSON を解いて中の鍵を
+そのまま `'x-api-key': ctx.token` に載せるので、**制御文字は復活する**。
+
+### 何が起きるか — プラットフォーム自身の例外文面がヘッダ名を持たない
+
+制御文字を含む値は `Authorization: Bearer …` / `hibp-api-key: …` に載る。`new Headers()` は
+投げるが、undici の文面は
+
+```
+Headers.append: "<値>" is an invalid header value.
+```
+
+—— **値だけを引用符で抱え、ヘッダ名を含まない**。`limitedFetch` は `fetch` の例外をそのまま
+再送出し、`main.ts` の `safeErrorMessage` を通って画面の赤いバッジへ出る。
+
+`redact.ts` の 3 規則はどれも「ヘッダ名が在る」か「方式 (Bearer / Basic) が在る」ことに
+掛かっている。同ファイルは接頭辞を持たない 3 形 (Cloudflare 40 字 / LINE / Discord) を
+裸で伏せない根拠として
+
+> あちらはヘッダ名・JSON 項目名の規則が受け持ち、
+> `redactionCoverage.test.ts` がその「受け持てている」ことを測る
+
+と書いている —— つまり安全の根拠は **「その値は必ず名前と一緒に現れる」**という前提で、
+この文面はその前提が崩れる 1 本だった。census がヘッダ名つきの標本に規則を当てていたので、
+**この形は 1 度も測られていなかった**。
+
+実測 (10 経路・改行を値の中央に挟む):
+
+```
+FULL-LEAK  security / HIBP        hibp-api-key   64 桁 16 進が丸ごと (規則が 0 件当たる)
+FULL-LEAK  security / VirusTotal  x-apikey       同じ
+  partial  anthropic              x-api-key      sk-ant-[REDACTED] + 後半 27 字
+  partial  cloudflare/canva/…×7   Authorization  Bearer [REDACTED] + 後半 20〜86 字
+```
+
+`Bearer …{16,}` は改行で分断された値の**前半しか**伏せられない。
+
+### 直した 3 か所 (原因 2 + 結果の遮断 1)
+
+1. `SettingsPage.CredentialRow.save()` → `checkTokenInput` を通し、**理由つきで断る**。
+   長さの天井はここでは見ない (`CeilingNotice` + `valueOver` が保管庫の `MAX_TOKEN_CHARS`
+   —— より厳しい —— で既にボタンを止めている)。
+2. `AssistantPage.saveAgentCreds()` → **包む前に 1 欄ずつ**検証し、どの欄かを言って断る。
+   黙って落とすと「保存しました」と言いながらその鍵だけ入っていない状態になる。
+3. `redact.ts` に規則を 1 本: 末尾が ` is an invalid header value` の引用はまとめて伏せる
+   (方式だけ残す)。**ヘッダ名が不正な場合の双子** (`"…" is an invalid header name.`) は
+   伏せない —— あちらの引用は名前で、伏せると原因が読めない。文面の頭ではなく末尾の句に
+   掛けるのは、同じ句を使う別の入口 (`Request constructor: …`) にも効かせるため。
+
+入口が**原因**、伏字は**結果の遮断**である。両方入れてある (パス 242 で「原因は塞いでいない」と
+書いたのとは逆の形 —— 今回は原因の側が特定できている)。
+
+### 自分の間違いを 2 つ、測って直した
+
+**(a) 最初の漏れ検出器が過小報告していた。** 「秘密の先頭 20 字が連続して現れるか」で見ており、
+改行を挟む位置が行ごとに違うので `github` を「漏れなし」と報告した。実際は分断されただけで
+全部そこに在った。改行を抜いてから丸ごと含むかを見る形に替えたら **3 経路が FULL-LEAK**、
+残り 8 経路も partial だった。**鳴らない検査は「合格」ではなく、その検査についての報せ。**
+
+**(b) 「折り返して貼った改行」という筋書きが外れていた。** HTML の値の消毒
+(value sanitization) は `<input>` の値から **CR / LF を要素の側で**落とすので、この欄から
+改行は入らない。落とすのは改行だけなので、**NUL や垂直タブなど他の C0 制御文字は素通りする**。
+検査に「前提」の 1 本を置いて境目を実物で留めた —— 気付かずに「改行を断る」とだけ書いていたら、
+この経路では**どの入力でも通る空の検査**になっていた。
+
+また `Headers` は**末尾**の改行を投げない (undici が OWS を落とす) ので、末尾だけの改行は
+漏れの筋ではない。これも測って確かめた。
+
+### 検査
+
+- `src/shared/__tests__/headerValueLeak.test.ts` (新規 15 件) —— 期待文面を**写経せず**、
+  毎回実物の `Headers` に投げさせて採る。「値が文面に入ること」自体も主張するので、
+  Node が文面を変えた日に空の検査へ化けない。対照 3 本 (方式は残る / 短い引用は残る /
+  ヘッダ例外と無関係な長い引用は伏せない)。
+- `src/renderer/pages/__tests__/settingsCredentialSave.test.ts` (新規 7 件)。
+- `src/renderer/pages/__tests__/assistantCredsSave.test.ts` に 3 件追加。
+- 検査を先に書いた: 15 のうち 10・7 のうち 3 (途中で 6/6 落ちたのは私の harness の誤り —
+  `IS_REACT_ACT_ENVIRONMENT` と `.form-error` セレクタ)・3 のうち 2 が落ちた。
+- `data-credential-error` を `CredentialRow` の `{err}` に足した (このファイルの
+  `data-credential-unreadable` / `data-forget-error` と同じ流儀)。
+
+### 残り (この pass では触っていない)
+
+- **`main.ts` の `secrets:set` を通らない保存経路がもう 1 本ある** ——
+  `secrets.ts:392` の `setToken(serviceId, JSON.stringify(tokens))` (OAuth トークンの保管)。
+  中身は認可サーバが発行した値なので制御文字は入りにくいが、**「入りにくい」は関門ではない**。
+  同じ JSON 包みの形なので (2) と同型。
+- `SettingsPage.tsx:1911-1914` の Google トークン 4 本も保管庫直書きで同じ形。
+- `redactionCoverage.test.ts` の census は今もヘッダ名つきの標本だけを見ている。
+  **「名前を持たない文面」の母集団を数える走査は無い** —— 今回は 1 本見つけて塞いだだけで、
+  他に何本あるかは測っていない。
+
 ## パス 242 (2026-09-14) — **検査が 1 つも落ちていないのに CI が赤くなった — 1 秒タイマーの 1 発**
 
 パス 241 (文書だけ) の push で CI が落ちた。**私の差分のせいではない。** 中身:
