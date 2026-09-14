@@ -1570,6 +1570,14 @@
       "leafCount": 71,
       "note": "update recordCipher.ts,vault.ts,cryptoParams.ts",
       "hash": "540801a9343cac0d55288c76e2ee38595d7ce6986d8a15f8ac0949ddefee0dd0"
+    },
+    {
+      "index": 187,
+      "prevHash": "540801a9343cac0d55288c76e2ee38595d7ce6986d8a15f8ac0949ddefee0dd0",
+      "merkleRoot": "18cc4589d4c75ad6881cfa42300c176d9f24c866220ad44cb6a33b8b8a5f6c80",
+      "leafCount": 71,
+      "note": "update dataCrypto.ts,cryptoParams.ts",
+      "hash": "7f73963a4badea7f69413ae92541bea933822705304c8544d0f761295dbfa2a7"
     }
   ],
   "tipManifest": {
@@ -1617,7 +1625,7 @@
     "src/renderer/security/LockScreen.tsx": "a05a31d56248d1c9b9cebad5d9bde1c0628f635b59d1787f8b843a5f993526f9",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
-    "src/renderer/security/dataCrypto.ts": "ceb236748dbfe82b3bb6b41ee0977945f91870b871da3cadf2e408c89cead054",
+    "src/renderer/security/dataCrypto.ts": "b17e4b5b8fbbc383342fe6b0145da3306dd5ee3cd524da85c7bec341b7f1b956",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
@@ -1630,7 +1638,7 @@
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
     "src/shared/atlassianSite.ts": "5810fde838f479ba095ec4dad9774020ee87c6e980bf7bff4a3c61bb2c4c0b90",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
-    "src/shared/cryptoParams.ts": "49d2360be4e3a313466e56522b7244292606c90d9745af73640d959412a206e5",
+    "src/shared/cryptoParams.ts": "0fe808ee71235f71deaf24200a910b87039adf30ac73325084843490bdaad2f1",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "01b2f3904381ca98950ac331aa0558b1a6fda14e2a7e7c85b6b5bd1b6f9b9ce6",

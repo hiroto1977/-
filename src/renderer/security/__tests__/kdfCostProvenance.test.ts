@@ -2,7 +2,13 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import { webcrypto } from 'node:crypto';
-import { LEGACY_KDF_ITERATIONS, PBKDF2_ITERATIONS } from '../../../shared/cryptoParams';
+import {
+  LEGACY_KDF_ITERATIONS,
+  MIN_SALT_BYTES,
+  MIN_STORED_SALT_BYTES,
+  PBKDF2_ITERATIONS,
+} from '../../../shared/cryptoParams';
+import { assertSaltBytes, saltBytesOk, encryptString, decryptString } from '../dataCrypto';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { join } from 'node:path';
 import { _resetVaultForTests, getVault } from '../vault';
@@ -244,5 +250,71 @@ describe('凍結値は凍結されていること (パス 239)', () => {
     // はならない**。この検査は上げた日に落ちる —— そのとき落とすべきなのは
     // この行であって、凍結値ではない。
     expect(LEGACY_KDF_ITERATIONS).toBe(PBKDF2_ITERATIONS);
+  });
+});
+
+describe('ソルトの床も、保存物と生成物で別 (パス 240)', () => {
+  /*
+   * 反復回数と同じ形が隣の欄に在った。`MIN_SALT_BYTES` は
+   *   - 新しいソルトの**長さ** (`randomSaltB64` / `encryptString` が採る)
+   *   - 保存済みソルトを受け入れる**床** (`assertSaltBytes` / `saltBytesOk`)
+   * の両方を兼ねており、**1 バイト上げるだけで既存のバックアップと
+   * レコード封緘が全部開かなくなった**。
+   *
+   * 危険は `deriveAesKey` の注記に書かれていたが、**上げる編集をするのは
+   * `shared/cryptoParams.ts` の宣言行**で、そこには「増やすのは自由」と
+   * しか書いていなかった。注記は動かす側に置き、床は凍結した。
+   */
+  it('★ 検証の床は凍結値で、生成の長さとは別の宣言である', () => {
+    const src = readOriginalSource(join(process.cwd(), 'src/shared/cryptoParams.ts'));
+    const frozen = /export const MIN_STORED_SALT_BYTES = ([^;]+);/.exec(src);
+    const gen = /export const MIN_SALT_BYTES = ([^;]+);/.exec(src);
+    expect(frozen).not.toBeNull();
+    expect(gen).not.toBeNull();
+    // どちらも数値リテラル (片方が他方の別名になると仕組みごと無力になる)。
+    expect(/^[0-9_]+$/.test((frozen?.[1] ?? '').trim())).toBe(true);
+    expect(/^[0-9_]+$/.test((gen?.[1] ?? '').trim())).toBe(true);
+    // 標本: 規則が実際に別名を落とすこと。
+    expect(/^[0-9_]+$/.test('MIN_SALT_BYTES')).toBe(false);
+  });
+
+  it('★ 検証する関数は、生成側の定数を読まない', () => {
+    const src = readOriginalSource(join(process.cwd(), 'src/renderer/security/dataCrypto.ts'));
+    // 比較の行そのものを取り出して、凍結値を見ていることを確かめる。
+    const assertBody = /export function assertSaltBytes[\s\S]{0,400}?\n\}/.exec(src)?.[0] ?? '';
+    expect(assertBody).toContain('MIN_STORED_SALT_BYTES');
+    expect(assertBody).not.toMatch(/salt\.length < MIN_SALT_BYTES/);
+    // 標本: この正規表現が本当に welded な書き方へ当たること。
+    expect('  if (salt.length < MIN_SALT_BYTES) {').toMatch(/salt\.length < MIN_SALT_BYTES/);
+    // 生成側は動かしてよい定数のままであること (凍結値に張り替えてしまうと、
+    // 床を上げても新しいソルトが伸びない = 上げた意味が無くなる)。
+    expect(src).toContain('const SALT_BYTES = MIN_SALT_BYTES;');
+  });
+
+  it('★ 凍結値ちょうどの長さのソルトは、投げる道も真偽の道も受け入れる', () => {
+    const atFloor = new Uint8Array(MIN_STORED_SALT_BYTES);
+    expect(() => assertSaltBytes(atFloor)).not.toThrow();
+    expect(saltBytesOk(btoa(String.fromCharCode(...atFloor)))).toBe(true);
+    // 1 バイト足りなければ、両方の道が断る (床が生きている証拠)。
+    const below = new Uint8Array(MIN_STORED_SALT_BYTES - 1);
+    expect(() => assertSaltBytes(below)).toThrow(/ソルト/);
+    expect(saltBytesOk(btoa(String.fromCharCode(...below)))).toBe(false);
+    // 空も断る。
+    expect(() => assertSaltBytes(new Uint8Array(0))).toThrow(/ソルト/);
+  });
+
+  it('★ 今日は生成 == 凍結値。生成側だけを上げても読めなくならない関係', () => {
+    // 一致しているのは「まだ上げていない」からで、**上げたあとも一致し続けて
+    // はならない**。凍結値が生成側を超えることも在ってはならない (超えると
+    // 生成したばかりのソルトが自分の床を割る)。
+    expect(MIN_STORED_SALT_BYTES).toBe(MIN_SALT_BYTES);
+    expect(MIN_STORED_SALT_BYTES).toBeLessThanOrEqual(MIN_SALT_BYTES);
+  });
+
+  it('★ 凍結値の長さで封緘したバックアップは、そのまま開く', async () => {
+    const bundle = await encryptString('秘密の中身', 'passphrase-1234');
+    // 出荷の封緘が凍結値を割っていないこと (割っていれば自分で書いた物を開けない)。
+    expect(atob(bundle.salt).length).toBeGreaterThanOrEqual(MIN_STORED_SALT_BYTES);
+    await expect(decryptString(bundle, 'passphrase-1234')).resolves.toBe('秘密の中身');
   });
 });

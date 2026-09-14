@@ -16,6 +16,7 @@ import { webCryptoUnavailableReason } from './webCrypto';
 import {
   AES_GCM_IV_BYTES,
   MIN_SALT_BYTES,
+  MIN_STORED_SALT_BYTES,
   PBKDF2_ITERATIONS as SHARED_ITERATIONS,
 } from '../../shared/cryptoParams';
 
@@ -81,14 +82,29 @@ export function assertKdfIterations(iterations: number): void {
  * 短いソルトは鍵そのものを壊さないが、**利用者をまたいだ事前計算**を
  * 成り立たせる。保管領域へ書ける相手 (拡張機能・同一生成元の別ページ) が
  * salt を固定値へ差し替えれば、KCV に対する総当たりを使い回せる。
+ *
+ * **ただしこの床が止めるのは「短い」ソルトだけである。** 同じ相手は 16 バイトの
+ * 固定値も置けるので、上の攻撃そのものは長さでは防げない (防ぐにはメタを別の鍵で
+ * 認証する必要があり、KCV はソルトから導出されるので自分を守れない)。
+ * 多層防御の 1 枚として残す —— パス 240 で測って明記した。
+ *
+ * 見るのは**凍結値** `MIN_STORED_SALT_BYTES`。生成側の `MIN_SALT_BYTES` を
+ * 見てはならない —— あちらを上げた日に、正当な過去のソルトが一斉に床を割る。
  */
 export function assertSaltBytes(salt: Uint8Array): void {
-  if (salt.length < MIN_SALT_BYTES) {
+  if (salt.length < MIN_STORED_SALT_BYTES) {
     throw new Error('暗号化データのソルトが短すぎます');
   }
 }
 
-/** 生成側も同じ床から採る。片方だけ動くと「下回らせない」が崩れる。 */
+/**
+ * 生成側は**動かしてよい定数**から採る (パス 240)。
+ *
+ * 2026-09-14 まで `MIN_SALT_BYTES` が生成と検証を兼ねており、「片方だけ動くと
+ * 『下回らせない』が崩れる」という理由で welded にしてあった。その理由は
+ * 生成については正しいが、**検証を一緒に動かす必要は無かった** —— 動かした
+ * 瞬間に既存の保存物が全部落ちる。検証は凍結値へ分けた。
+ */
 const SALT_BYTES = MIN_SALT_BYTES;
 const IV_BYTES = AES_GCM_IV_BYTES;
 
@@ -248,7 +264,9 @@ export function randomSaltB64(): string {
  */
 export function saltBytesOk(saltB64: string): boolean {
   try {
-    return fromBase64(saltB64).length >= MIN_SALT_BYTES;
+    // `assertSaltBytes` と同じ**凍結値**を見る (パス 240)。2 か所が違う床を見ると
+    // 「投げる道では開くのに、真偽を返す道では degraded」という食い違いになる。
+    return fromBase64(saltB64).length >= MIN_STORED_SALT_BYTES;
   } catch {
     return false; // base64 として読めない = 使えない salt
   }
@@ -274,8 +292,13 @@ export function saltBytesOk(saltB64: string): boolean {
  * `iterations` は呼ぶ側が渡せる (既定はこのモジュールの定数)。既定しか渡って
  * いない今は範囲内だが、保存値を渡す呼び出しが足された日に効く床として通す。
  *
- * **床を上げるときの注意**: 生成側 (`randomSaltB64`) も `MIN_SALT_BYTES` を
- * 読むので、床を上げると**既存の正当な salt が床を割る**。その日は移行が要る。
+ * **床を上げるときの注意は、もう要らない** (パス 240)。検証が見るのは凍結値
+ * `MIN_STORED_SALT_BYTES` で、生成側の `MIN_SALT_BYTES` を上げても既存の
+ * 正当な salt は開き続ける。それまでは 1 つの定数が両方を兼ねていたので、
+ * 「床を上げると既存の正当な salt が床を割る。その日は移行が要る」と
+ * ここに書いてあった —— **危険の在り処は正しく書けていたが、上げる編集を
+ * するのは `shared/cryptoParams.ts` の宣言行**で、そこには「増やすのは自由」
+ * としか書いていなかった。注記は使う側ではなく**動かす側**に置く。
  */
 export async function deriveAesKey(password: string, saltB64: string, iterations = ITERATIONS): Promise<CryptoKey> {
   if (password.length === 0) throw new Error('パスワードを入力してください');
