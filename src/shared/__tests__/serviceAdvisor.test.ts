@@ -338,6 +338,53 @@ describe('投資信託の提案 — 画面の数字から組む', () => {
       title: '年初来リターン: A',
       rationale: 'A の年初来リターンは 7.3% です (比較対象は他にありません)。',
     });
+    // **在り得ない値 (元本超の損失) は比較に入れず、名指しして断る** (パス 226)。
+    // 直す前: 「年初来マイナスの銘柄: A —— A は年初来 -250.0% です。最高は B の 4.0%。
+    // マイナスの銘柄は保有目的を確認してください」= 存在しない損失についての助言。
+    const impossible = adviseMutualFunds({
+      holdings: [
+        { name: 'A', valuation: 600, ytdReturnPct: -250, demo: false },
+        { name: 'B', valuation: 400, ytdReturnPct: 4.0, demo: false },
+      ],
+      totalValuation: 1000,
+      unrealizedGainPct: 0,
+    });
+    expect(impossible.recommendations[1]).toEqual({
+      title: '年初来リターンに在り得ない値: A',
+      rationale:
+        '年初来リターンが -100% より下の銘柄が 1 件あります（買いのみの投資信託で元本を超えて失うことは'
+        + 'ありません）。入力を確認してください —— この銘柄は銘柄間の比較とリスク (標準偏差) から除いています。',
+    });
+    // 比較は残った 1 銘柄だけ —— 「最低は A の -250.0%」とは言わない
+    expect(impossible.recommendations[2]).toEqual({
+      title: '年初来リターン: B',
+      rationale: 'B の年初来リターンは 4.0% です (比較対象は他にありません)。',
+    });
+    for (const gone of ['-250.0%', '年初来マイナスの銘柄']) expect(all(impossible), gone).not.toContain(gone);
+    // 在り得ない値だけなら「未入力」とは言わない (入力はされている)
+    const onlyImpossible = adviseMutualFunds({
+      holdings: [{ name: 'A', valuation: 600, ytdReturnPct: -250, demo: false }],
+      totalValuation: 600,
+      unrealizedGainPct: 0,
+    });
+    expect(onlyImpossible.recommendations[2]).toEqual({
+      title: '年初来リターンは比較できません',
+      rationale: '年初来リターンが入力された銘柄は在り得ない値だけなので、銘柄間の比較はしません。',
+    });
+    expect(all(onlyImpossible)).not.toContain('年初来リターンは未入力');
+    // 対照: 下限ちょうど (−100% = 全額失った) は在りうるので、今までどおり比較に入る
+    const floor = adviseMutualFunds({
+      holdings: [
+        { name: 'A', valuation: 600, ytdReturnPct: -100, demo: false },
+        { name: 'B', valuation: 400, ytdReturnPct: 4.0, demo: false },
+      ],
+      totalValuation: 1000,
+      unrealizedGainPct: 0,
+    });
+    expect(floor.recommendations[1]).toEqual({
+      title: '年初来マイナスの銘柄: A',
+      rationale: 'A は年初来 -100.0% です。最高は B の 4.0%。マイナスの銘柄は保有目的を確認してください。',
+    });
     expect(single.recommendations[2]?.title).toBe('含み益 0.0%');
   });
 });

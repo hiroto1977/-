@@ -10,6 +10,8 @@ import {
   calcStdDev,
   calcDcaSimulation,
   ytdReturnRisk,
+  isImpossibleReturnPct,
+  RETURN_FLOOR_PCT,
 } from '../mutualFundsMetrics';
 
 describe('calcCompoundingFutureValue', () => {
@@ -369,23 +371,58 @@ describe('calcDcaSimulation', () => {
 describe('ytdReturnRisk — 未入力 (null) を 0% として入れない (パス 122)', () => {
   it('★ null を除いた銘柄だけで標準偏差を取り、除外した数を言う', () => {
     const r = ytdReturnRisk([2, 4, 4, 4, 5, 5, 7, 9, null, null]);
-    expect(r).toEqual({ stdDevPct: 2, measured: 8, unmeasured: 2 });
+    expect(r).toEqual({ stdDevPct: 2, measured: 8, unmeasured: 2, impossible: 0 });
     // 旧: null を 0 として入れると σ が変わる —— 同じ系列に 0 を 2 つ足した版は 2 ではない
     expect(calcStdDev([2, 4, 4, 4, 5, 5, 7, 9, 0, 0])).not.toBe(2);
   });
 
   it('画面の見本 4 銘柄 (14.2 / 11.8 / 3.4 / 8.7): 空欄 1 件を除けば 4.04%、0% として入れると 5.25%', () => {
-    expect(ytdReturnRisk([14.2, 11.8, 3.4, 8.7, null])).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1 });
+    expect(ytdReturnRisk([14.2, 11.8, 3.4, 8.7, null])).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1, impossible: 0 });
     expect(calcStdDev([14.2, 11.8, 3.4, 8.7, 0])).toBe(5.25);
   });
 
   it('測った 0% は除外しない (未入力と 0% を混ぜない)', () => {
-    expect(ytdReturnRisk([0, 0])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0 });
-    expect(ytdReturnRisk([5, 0, null])).toEqual({ stdDevPct: 2.5, measured: 2, unmeasured: 1 });
+    expect(ytdReturnRisk([0, 0])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0, impossible: 0 });
+    expect(ytdReturnRisk([5, 0, null])).toEqual({ stdDevPct: 2.5, measured: 2, unmeasured: 1, impossible: 0 });
   });
 
   it('入力された銘柄が無ければ null で、数だけ言う', () => {
-    expect(ytdReturnRisk([null, null])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 2 });
-    expect(ytdReturnRisk([])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0 });
+    expect(ytdReturnRisk([null, null])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 2, impossible: 0 });
+    expect(ytdReturnRisk([])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0, impossible: 0 });
+  });
+});
+
+describe('ytdReturnRisk — 在り得ない値 (元本超の損失) を集約に入れない (パス 226)', () => {
+  /** 画面の見本 4 銘柄。数を写さず、リターンの並びだけを検査の中で持つ。 */
+  const DEMO = [14.2, 11.8, 3.4, 8.7] as const;
+
+  it('★ −100% より下の銘柄を除き、除いた数を「未入力」と別に数える', () => {
+    const r = ytdReturnRisk([...DEMO, -250]);
+    expect(r).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 0, impossible: 1 });
+    // 対照: 除かないと 4.04% ではなく 103.87% —— 2 つが同じなら、この検査は何も見ていない
+    expect(calcStdDev([...DEMO, -250])).toBe(103.87);
+    expect(calcStdDev([...DEMO])).toBe(4.04);
+  });
+
+  it('未入力と在り得ない値は別々に数える (どちらも measured には入らない)', () => {
+    expect(ytdReturnRisk([...DEMO, null, -250, -100.5]))
+      .toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1, impossible: 2 });
+  });
+
+  it('在り得ない値だけなら stdDevPct は null で、measured 0 と言う', () => {
+    expect(ytdReturnRisk([-250, -1000])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0, impossible: 2 });
+  });
+
+  it('下限 −100% ちょうどは在りうる (全額失った) —— 境界は除かない', () => {
+    expect(RETURN_FLOOR_PCT).toBe(-100);
+    expect(isImpossibleReturnPct(-100)).toBe(false);
+    expect(isImpossibleReturnPct(-100.000001)).toBe(true);
+    expect(ytdReturnRisk([-100, -100])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0, impossible: 0 });
+  });
+
+  it('上端 (書き手の 1000%) は読む側では落とさない —— 打ち間違いの門と事実は別の規則', () => {
+    // 1 年で 10 倍を超える投信は実在しうるので、読む側で捨てると**測った値を捨てる**。
+    expect(isImpossibleReturnPct(1500)).toBe(false);
+    expect(ytdReturnRisk([...DEMO, 1500])).toEqual({ stdDevPct: 596.2, measured: 5, unmeasured: 0, impossible: 0 });
   });
 });

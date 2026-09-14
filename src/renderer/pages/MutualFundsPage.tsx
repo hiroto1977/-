@@ -36,6 +36,8 @@ import {
   MAX_HOLDING_YEARS,
   isMeasurableCostRate,
   isMeasurableHoldingYears,
+  isImpossibleReturnPct,
+  RETURN_FLOOR_PCT,
 } from '../../shared/mutualFundsMetrics';
 import {
   requiredMonthlyContribution,
@@ -468,7 +470,19 @@ export function MutualFundsPage() {
               <br />
             </>
           )}
-          ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは年初来リターンが入力された {risk.measured} 銘柄の母標準偏差です{risk.unmeasured > 0 ? ` (未入力 ${risk.unmeasured} 銘柄は除外)` : ''}{risk.measured === 0 ? ' —— 入力された銘柄が無いので算定しません' : ''}。概算であり投資助言ではありません。
+          {/* **在り得ない値を除いた数を言う** (パス 226)。除くだけでは、標準偏差が
+              4.04% のままである理由 (−250% の行を外した) が画面から分からない。 */}
+          {risk.impossible > 0 && (
+            <>
+              <strong data-impossible-returns={risk.impossible}>
+                年初来リターンが {RETURN_FLOOR_PCT}% より下の銘柄が {risk.impossible} 件あります
+              </strong>
+              —— 買いのみの投資信託で元本を超えて失うことはないので、リスク (標準偏差) と銘柄間の比較から
+              除いています。一覧の ⛔ の行を確認してください。
+              <br />
+            </>
+          )}
+          ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは年初来リターンが入力された {risk.measured} 銘柄の母標準偏差です{risk.unmeasured > 0 ? ` (未入力 ${risk.unmeasured} 銘柄は除外)` : ''}{risk.impossible > 0 ? ` (在り得ない値 ${risk.impossible} 銘柄は除外)` : ''}{risk.measured === 0 ? ' —— 入力された銘柄が無いので算定しません' : ''}。概算であり投資助言ではありません。
         </div>
       </Section>
 
@@ -640,12 +654,27 @@ export function MutualFundsPage() {
                     </span>
                   )}
                 </td>
-                {/* 未入力 (null) は「—」で色を付けない。「+0.0%」(緑) と刷ると測った 0% と見分けが付かない (パス 122)。 */}
+                {/* 未入力 (null) は「—」で色を付けない。「+0.0%」(緑) と刷ると測った 0% と見分けが付かない (パス 122)。
+                    **在り得ない値 (元本超の損失) は ⛔ を付ける** (パス 226) —— 赤だけでは実在の大損と同じ顔で、
+                    集約から外したことも分からない。 */}
                 <td
-                  style={{ ...tdNum, color: h.ytdReturnPct === null ? 'var(--text-mute)' : h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444' }}
-                  title={h.ytdReturnPct === null ? '年初来リターンは未入力です (0% ではありません)' : undefined}
+                  style={{
+                    ...tdNum,
+                    color: h.ytdReturnPct === null
+                      ? 'var(--text-mute)'
+                      : isImpossibleReturnPct(h.ytdReturnPct)
+                        ? '#f59e0b'
+                        : h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444',
+                  }}
+                  title={h.ytdReturnPct === null
+                    ? '年初来リターンは未入力です (0% ではありません)'
+                    : isImpossibleReturnPct(h.ytdReturnPct)
+                      ? `年初来リターンとして在り得ない値です (${RETURN_FLOOR_PCT}% より下)。買いのみの投資信託で元本を超えて失うことはありません —— リスク (標準偏差) と銘柄間の比較からは除いています。編集して入力を確認してください。`
+                      : undefined}
                 >
-                  {h.ytdReturnPct === null ? '—' : `${h.ytdReturnPct >= 0 ? '+' : ''}${h.ytdReturnPct.toFixed(1)}%`}
+                  {h.ytdReturnPct === null
+                    ? '—'
+                    : `${isImpossibleReturnPct(h.ytdReturnPct) ? '⛔ ' : h.ytdReturnPct >= 0 ? '+' : ''}${h.ytdReturnPct.toFixed(1)}%`}
                 </td>
                 <td style={tdStyle}>
                   {h.user && (

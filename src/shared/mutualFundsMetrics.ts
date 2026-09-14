@@ -331,6 +331,56 @@ export interface YtdReturnRisk {
   readonly measured: number;
   /** 年初来リターンが未入力 (null) で除外した銘柄数。画面はこの数を注記に刷る。 */
   readonly unmeasured: number;
+  /**
+   * **リターンとして在り得ない値**で除外した銘柄数 (パス 226)。画面はこの数も刷る。
+   *
+   * 「未入力」とは別に数える —— 未入力は測っていないだけだが、こちらは
+   * **測った値が事実に反している** (下の {@link RETURN_FLOOR_PCT} を参照)。
+   */
+  readonly impossible: number;
+}
+
+/**
+ * 年初来リターンの**下限は事実である** —— 買いのみの投資信託で元本を超えて失うことはないので、
+ * −100% より下のリターンは存在しない (−100% ちょうどは「全額失った」で在りうる)。
+ *
+ * ## 書き手の帯と、読む側の規則は別物である (パス 226 の実測・2026-09-14)
+ *
+ * `parseHoldingEntry` は **−100〜1000%** を強制するが、復元の入口は「null か数値」しか
+ * 見ない (パス 224 で `per-field` = 意図された差と裁定した組)。だから古い版・手で直した
+ * JSON・別の道具が書いた控えは範囲外の値を持ち込める。そのとき:
+ *
+ * | 混ぜた値 | 標準偏差 (見本 4 銘柄は 4.04%) |
+ * | --- | ---: |
+ * | `+1500%` | 596.2% |
+ * | `+99999%` | 39995.79% |
+ * | `−250%` | **103.87%** |
+ *
+ * **上端と下端は同じ種類の規則ではない。** 上端 (1000%) は**打ち間違いの門**で、
+ * 集中投資の投信が 1 年で 10 倍になることは実際に在りうる —— 読む側で落とすと
+ * **測った値を捨てる**ことになる。下端は**事実**なので読む側にも効く。
+ *
+ * ## 届く先は 3 面 (実測)
+ *
+ * | 面 | −250% を混ぜた時に出る物 |
+ * | --- | --- |
+ * | 一覧のセル | `-250.0%` を**赤** —— 実在の大損と同じ顔で、在り得ない旨を言わない |
+ * | リスク (標準偏差) | 4.04% → **103.87%**。注記は「入力された 5 銘柄の母標準偏差」だけで、**どの行が動かしたかを言わない** |
+ * | 改善提案 | 「⚠ 年初来マイナスの銘柄: X —— X は年初来 **-250.0%** です。…保有目的を確認してください」 |
+ *
+ * セルは目に見えるが、あとの 2 面は**派生した集約・文章の中で在り得ない 1 行が見えなくなる**。
+ * だから下端は「読む側の規則」にする —— 集約から外し、**外した数を言う**。
+ */
+export const RETURN_FLOOR_PCT = -100;
+
+/**
+ * リターンとして在り得ない値か (下限より下)。
+ *
+ * 非有限はここまで来ない —— `normalizeHolding` の `numOrNull` が
+ * `Number.isFinite` で `null` (未入力) に倒すので、「測っていない」側で落ちる。
+ */
+export function isImpossibleReturnPct(pct: number): boolean {
+  return pct < RETURN_FLOOR_PCT;
 }
 
 /**
@@ -340,12 +390,15 @@ export interface YtdReturnRisk {
  */
 export function ytdReturnRisk(returns: readonly (number | null)[]): YtdReturnRisk {
   const measured: number[] = [];
-  for (const r of returns) if (r !== null) measured.push(r);
-  return {
-    stdDevPct: calcStdDev(measured),
-    measured: measured.length,
-    unmeasured: returns.length - measured.length,
-  };
+  let unmeasured = 0;
+  let impossible = 0;
+  for (const r of returns) {
+    if (r === null) { unmeasured += 1; continue; }
+    // **在り得ない値は集約に入れない** (パス 226)。1 件で標準偏差が 4.04% → 103.87% になる。
+    if (isImpossibleReturnPct(r)) { impossible += 1; continue; }
+    measured.push(r);
+  }
+  return { stdDevPct: calcStdDev(measured), measured: measured.length, unmeasured, impossible };
 }
 
 export interface DcaSimulation {

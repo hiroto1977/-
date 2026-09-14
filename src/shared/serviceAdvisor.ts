@@ -34,6 +34,7 @@ import type { ServiceAdvisorResponse } from './advisorTypes';
 import type { RecordEntryServiceId } from './recordEntryLimits';
 import { jpy } from './formatters';
 import { round1 } from './num';
+import { RETURN_FLOOR_PCT, isImpossibleReturnPct } from './mutualFundsMetrics';
 
 // --- しきい値 (既定。台帳 `parameters.ts` が同じ定数を参照する) ----------------
 
@@ -580,14 +581,32 @@ export function adviseMutualFunds(input: MutualFundsAdviceInput): ServiceAdvisor
   }
 
   // 2. 年初来リターン —— 入力された銘柄だけで最高と最低を比べる。
-  const withYtd = rows.filter((h) => h.ytdReturnPct !== null);
+  // **在り得ない値 (元本超の損失) は比較に入れない** (パス 226)。入れると「最低は X の -250.0% です。
+  // マイナスの銘柄は保有目的を確認してください」と、存在しない損失について助言してしまう。
+  const impossibleYtd = rows.filter((h) => h.ytdReturnPct !== null && isImpossibleReturnPct(h.ytdReturnPct));
+  if (impossibleYtd.length > 0) {
+    recommendations.push({
+      title: `年初来リターンに在り得ない値: ${impossibleYtd.map((h) => h.name).join(' / ')}`,
+      rationale:
+        `年初来リターンが ${RETURN_FLOOR_PCT}% より下の銘柄が ${impossibleYtd.length} 件あります` +
+        '（買いのみの投資信託で元本を超えて失うことはありません）。入力を確認してください —— ' +
+        'この銘柄は銘柄間の比較とリスク (標準偏差) から除いています。',
+    });
+  }
+  const withYtd = rows.filter((h) => h.ytdReturnPct !== null && !isImpossibleReturnPct(h.ytdReturnPct));
   const best = maxBy(withYtd, (h) => h.ytdReturnPct as number);
   const worst = minBy(withYtd, (h) => h.ytdReturnPct as number);
   if (best === null || worst === null) {
-    recommendations.push({
-      title: '年初来リターンは未入力',
-      rationale: '年初来リターンが入力された銘柄が無いため、銘柄間の比較はしません。',
-    });
+    // 在り得ない値だけが在るときは「未入力」ではない —— 入力はされていて、値が事実に反している。
+    recommendations.push(impossibleYtd.length > 0
+      ? {
+        title: '年初来リターンは比較できません',
+        rationale: '年初来リターンが入力された銘柄は在り得ない値だけなので、銘柄間の比較はしません。',
+      }
+      : {
+        title: '年初来リターンは未入力',
+        rationale: '年初来リターンが入力された銘柄が無いため、銘柄間の比較はしません。',
+      });
   } else if (withYtd.length === 1) {
     recommendations.push({
       title: `年初来リターン: ${best.name}`,
