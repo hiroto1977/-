@@ -13,6 +13,7 @@ import { PLUGIN_CATALOG } from '../../shared/connectors/pluginCatalog';
 import {
   resolveHookPlan,
   requiredPermissionFor,
+  UNKNOWN_CAPABILITY_PERMISSION,
   type HookDispatchStep,
 } from '../../shared/connectors/pluginRuntime';
 import { executeFreeConnector, type ExecutionResult } from '../data/connectorExecution';
@@ -297,7 +298,7 @@ export function ConnectorsPage() {
                 {steps.map((s: HookDispatchStep) => (
                   <tr key={s.connectorId}>
                     <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{s.connectorId}</td>
-                    <td style={{ ...tdStyle, fontSize: 12 }}>{requiredPermissionFor(s.capability)}</td>
+                    <td style={{ ...tdStyle, fontSize: 12 }}>{requiredPermissionFor(s.capability) ?? UNKNOWN_CAPABILITY_PERMISSION}</td>
                     <td style={{ ...tdStyle, color: s.permitted ? 'var(--success)' : '#ef4444' }}>
                       {s.permitted ? '✅ 実行可' : '⛔ 権限不足'}
                     </td>

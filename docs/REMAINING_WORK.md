@@ -26103,6 +26103,130 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 235 (2026-09-14) — **`?? 既定` は prototype の鍵に発火しない — 5 度直した欠陥に、門が無かった**
+
+### 見つけ方 (パス 234 の隣から、別の軸へ)
+
+パス 231〜234 は 4 回続けて「画面へ出る文言の伏字」を掘っていた。235 の入口も同じ seam
+(`BackupPanel` の裸の `e.message`) で、48 か所の `setState(e.message)` を数えて
+「0/48 が伏字を通っていない」まで測った。**が、それは配線の話であって欠陥ではなかった** ——
+`liveRead` の文言は唯一の呼び出し元 (`web-shim.ts:1362`) の `err()` が伏せ、
+`describeStorageError` は意図して `message` を出さず、`web-shim` の 28 か所は
+`err()` / 明示の `redactForMessage` を通る。到達する漏洩の実証が無いまま 48 か所を
+書き換えるのは方針であって修理ではないので、軸を替えた。
+
+替えた先は `liveRead.ts:90-93` のコメントが名指ししている**別の欠陥**である:
+
+> 素の添字だと `'constructor'` 等がプロトタイプ側の値を返して「対応済み」に見えてしまう
+
+`Record<string, X>` の素の添字は、表に無い鍵でも `Object.prototype` 側の値を返す
+(`'constructor'` → `Object`、`'toString'` → 関数、`'__proto__'` → `Object.prototype`)。
+返るのは **truthy な継承値**なので
+
+```ts
+TABLE[key] ?? FALLBACK   // ← 表に無ければ FALLBACK … ではない
+```
+
+の `??` は素通りする。`noUncheckedIndexedAccess: true` でも型が足すのは `| undefined`
+だけで `| Function` ではないので、**型検査器はこの穴を見ない**。
+
+このリポジトリは同じ間違いを **5 か所で踏んで直していた** ——
+`liveRead.ts` / `manualData.ts` / `collectionShapes.ts` / `DocstudioPage.tsx` (2 か所) /
+`main/clients/stocks.ts`。5 回とも**踏んでから**直しており、6 回目を止める物は無かった。
+
+### 測り方 (綴りではなく振る舞い)
+
+`TABLE[expr]` の grep は 57 件当たるが、その大半は鍵が union に絞られていて安全で、
+危険なのは鍵が `string` の側 —— **綴りからは決まらない**。そこで走査を振る舞いへ移し
+(パス 224 と同じ理由)、公開されている 1 引数の関数を prototype の 8 鍵で駆動し、
+**返り値が prototype 由来かどうか**を見た。実測 **6 件が漏れていた**:
+
+| 関数 | 何を決める関数か |
+|---|---|
+| `requiredPermissionFor` (`connectors/pluginRuntime.ts`) | **プラグインの必要権限** |
+| `legalStatusOf` (`data/docLegalStatus.ts`) | 書式の**法的な位置づけ** |
+| `docLabel` (`data/businessTriage.ts`) | 書類の表示名 |
+| `verdictLabel` (`shared/managementScorecard.ts`) | 経営判定の表示名 |
+| `categoryLabel` / `evasionLabel` (`shared/securityRange.ts`) | 脅威分類・回避手法の表示名 |
+
+**到達性は今日 0 である。** 6 件すべて、呼び出し元が鍵を union
+(`isConnectorCapability` が境界で弾く) か内部の定数に絞っている。それでも直す理由は
+2 つある: (1) 6 件のうち 4 件は「表に無ければ既定へ倒す」を**散文で約束**しており、
+その約束が破れていた (`legalStatusOf` は「`optional` に倒さず `unclassified` を返す ——
+仕分けを忘れた新しい書式が『任意』として黙って混ざると、法定のものを見落とす側の
+誤りになる」と書いてある)。(2) `docLabel` は表を
+`Readonly<Record<string, string | undefined>>` へ**わざわざ cast して** `?? doc` を
+書いていた —— つまり書き手は「表に無い鍵」を考えており、`??` がその完全な関門だと
+読んだ。読み違えるのが自然な形は、部品に畳むしかない。
+
+### 直し方
+
+- **`src/shared/lookup.ts`** (新) —— `lookup(table, key)` / `has(table, key)`。
+  `Object.hasOwn` を通すので、表に無ければ必ず `undefined` を返し、呼ぶ側の
+  `?? 既定` が**必ず発火する**。冒頭に 5 か所の前例を一覧で残す。
+- 6 件を `lookup` へ通す。`requiredPermissionFor` は返りを
+  **`PluginPermission | null`** に広げた —— 番兵の文字列を `PluginPermission` として
+  返すと `PLUGIN_PERMISSIONS` に無い値が union の一員を名乗る (型が嘘になる)。
+  `null` なら呼ぶ側が「権限が定まらない」を必ず書く: `pluginPermissionGaps` は
+  判定を待たずに欠落として載せ、`resolveHookPlan` は `permitted:false`、
+  画面は `UNKNOWN_CAPABILITY_PERMISSION` (`(不明な capability)`) を刷る。
+- **`src/shared/__tests__/prototypeKeyLookup.test.ts`** (新・常設ゲート) ——
+  表を宣言しているモジュールの 1 引数の引き手を総当たりで駆動する。
+  実測 **files=109 / modules=109 / calls=2,431**、床は 70 / 70 / 1,600。
+  母集団の選別は `readOriginalSource` を通す (Stryker の sandbox で綴りが
+  書き換わると母集団が痩せて走査が黙る —— `originalSourcePolicy` の規則 2)。
+
+### 計器の罠 2 つ (どちらも対照が教えた)
+
+1. **`Object.prototype.__proto__` は `null`。** 最初の漏れ判定は「返り値が
+   `Object.prototype[k]` のいずれかと等しいか」で、比較の集合に `'__proto__'` を
+   入れていた。結果、**null を返す関数すべてが誤検知**になり、4,907 呼び出しのうち
+   大量の `=> LEAKED null` が出た (`checkAdvisorQuestion` は正しかった)。
+   駆動する鍵に `__proto__` は入れる (入口としては本物) が、**同一性の比較には入れない**。
+2. **鍵の型で母集団を絞ってはいけない。** 走査の副作用を避けるため対象を
+   「表を持つモジュール」に絞ったとき、その判定を `Record<\s*string\s*,` と書いた ——
+   つまり「鍵が `string` の表」だけ。**危ないのは鍵が union の側**である
+   (型は `Record<ConnectorCapability, …>` で union を名乗りながら、実行時には
+   union の外が届く)。絞った走査は 6 件のうち `docLegalStatus` しか駆動せず、
+   **`requiredPermissionFor` を素の添字へ戻す対照が鳴らなかった**。
+   判定を `Record<\s*\w/` へ広げて初めて鳴った。**鳴らない対照は合格ではなく、
+   その走査についての報せである。**
+
+### 対照 (4 本、すべて鳴らした)
+
+1. `legalStatusOf` を素の添字へ戻す → ゲートが 8 鍵ぶん名指しして落ちる。
+2. `requiredPermissionFor` を素の添字へ戻す → 落ちる (**母集団を広げた後のみ**)。
+3. `lookup()` 自身を素の添字にする → ゲートと `lookup` の直接検査の両方が落ちる。
+4. `verdictLabel` / `categoryLabel` / `docLabel` を素の添字へ戻す → 3 つとも名指しされる。
+
+### 空振りとして閉じた調べ (再び疑わないための記録)
+
+- **#14 伏字の 48 か所** —— renderer の `setState(e.message)` は 48 か所あり
+  0 件が `safeErrorMessage` を通らないが、到達する漏洩は実証できなかった。
+  `vault.ts` の throw はアプリ定数 (`パスワードが違います` ほか)、
+  `describeProxyEndpointFailure` は定数、`parseBackupFile` は
+  `'バックアップファイルが JSON として読めません'` を投げ `e` を捨てる、
+  `throw new Error(...${token|value|secret|password|key|raw|body}` の走査は
+  `src/renderer` + `src/shared` で **0 行**。配線としては直す価値が在るが、
+  「見つけた欠陥」ではない。
+- **#15 `Object.hasOwn` を既に通している 5 か所 + 2 か所** ——
+  `credentialUse` / `dataOrigin` / `templateSvg` / `collectionShapes` /
+  `stocks` / `DocstudioPage` ×2 は正しい。`lookupVat` / `canLiveRead` /
+  `hasCollectionShape` は駆動して**漏れ無し**を確認した。
+- **#16 到達性** —— 6 件すべて今日の呼び出し元では union / 内部定数。
+  境界を緩めた日に鳴る床として置いた、と明示する。
+
+### 残作業
+
+- 走査の範囲は **1 引数の公開関数 × 4 ディレクトリ**である。画面部品 (`.tsx` の
+  component)・2 引数以上の引き手・`main/` は外に在る (`main/clients/stocks.ts` は
+  既に `Object.hasOwn` を通しているが、駆動はしていない)。広げるなら
+  「表を持つモジュールの**全**公開関数を、引数の形を推測して駆動する」形になり、
+  副作用の危険が上がる —— 今は範囲を狭く保ち、ゲートの散文に範囲を書いた。
+- 表を引く**画面の中の 50 件**(`SEVERITY_COLOR[t.severity]` など色とラベル) は
+  鍵が union で、prototype の鍵が届いても React の子として関数が出るだけ。
+  到達性が見えないので今回は触っていない。
+
 ## パス 234 (2026-09-14) — **空振り 3 件。ただし「なぜ `e` を捨てるのか」が書かれていなかった**
 
 **このパスは欠陥を 1 件も見つけていない。** 見つけたのは、既に正しい判断が

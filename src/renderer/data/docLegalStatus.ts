@@ -31,6 +31,8 @@
  * 年次有給休暇管理簿だけは根拠が施行規則24条の7で **3年**。ここは
  * 混同されやすいので個別に持たせている。
  */
+import { lookup } from '../../shared/lookup';
+
 
 export type LegalStatus = 'mandatory' | 'conditional' | 'optional' | 'unclassified';
 
@@ -306,7 +308,7 @@ const UNCLASSIFIED: DocLegalInfo = { status: 'unclassified' };
  * 法定のものを見落とす側の誤りになる。
  */
 export function legalStatusOf(docId: string): DocLegalInfo {
-  return DOC_LEGAL_STATUS[docId] ?? UNCLASSIFIED;
+  return lookup(DOC_LEGAL_STATUS, docId) ?? UNCLASSIFIED;
 }
 
 export const STATUS_LABEL: Readonly<Record<LegalStatus, string>> = {

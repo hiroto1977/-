@@ -15,6 +15,8 @@
  *
  * 純粋・決定論的 (同じコーパスには常に同じ結果)。LLM 呼び出しはしない。
  */
+import { lookup } from './lookup';
+
 
 /** 脅威カテゴリ。benign = 無害 (検知すべきでない)。 */
 export type ThreatCategory =
@@ -70,11 +72,11 @@ const EVASION_JA: Readonly<Record<Evasion, string>> = {
 
 /** カテゴリの日本語表示名。 */
 export function categoryLabel(c: ThreatCategory): string {
-  return CATEGORY_JA[c];
+  return lookup(CATEGORY_JA, c) ?? c;
 }
 /** 回避手法の日本語表示名。 */
 export function evasionLabel(e: Evasion): string {
-  return EVASION_JA[e];
+  return lookup(EVASION_JA, e) ?? e;
 }
 
 /** 正規化後 text にマーカー群のいずれかが含まれるか。 */

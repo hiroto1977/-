@@ -7,6 +7,8 @@
  * fundingQualityScore 等) が算出済みの値で、本モジュールは IO を持ちません。
  * しきい値は中小企業の一般的な目安であり、業種・規模で適正値は異なります。
  */
+import { lookup } from './lookup';
+
 
 /** スコアカードに渡す経営指標 (各領域の算出済み値)。すべて任意。 */
 export interface ManagementMetricsInput {
@@ -67,7 +69,7 @@ export const VERDICT_UNSCORED_LABEL = '未算定';
  * を直に引いていた)。**言葉を決める場所は 1 つ。**
  */
 export function verdictLabel(v: ScorecardVerdict | null): string {
-  return v === null ? VERDICT_UNSCORED_LABEL : VERDICT_LABEL[v];
+  return v === null ? VERDICT_UNSCORED_LABEL : (lookup(VERDICT_LABEL, v) ?? VERDICT_UNSCORED_LABEL);
 }
 
 /** 総合スコアカード。 */

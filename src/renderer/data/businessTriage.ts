@@ -36,6 +36,7 @@
 import { PROFESSIONAL_MAP, type ProfessionalId, type ProfessionalProfile } from './professionalMap';
 import { sheetOfDoc } from './kessanSheets';
 import { STUDIO_TEMPLATES } from './docStudioData';
+import { lookup } from '../../shared/lookup';
 
 /** 自社分として作る場合の扱い。 */
 export type OwnUse =
@@ -82,7 +83,7 @@ export const EXTRA_DOC_LABEL: Readonly<Record<ExtraDocId, string>> = {
 export function docLabel(doc: string): string {
   const template = STUDIO_TEMPLATES.find((d) => d.id === doc);
   if (template) return template.label;
-  return (EXTRA_DOC_LABEL as Readonly<Record<string, string | undefined>>)[doc] ?? doc;
+  return lookup(EXTRA_DOC_LABEL as Readonly<Record<string, string>>, doc) ?? doc;
 }
 
 /** 契約書に共通の注意（個別の注意が無い書式で使う）。 */
