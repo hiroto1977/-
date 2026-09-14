@@ -1,3 +1,4 @@
+import { countChars } from './inputCeiling';
 /**
  * `emotions` の action が受け取る入力の上限 —— **両ビルドで 1 つだけ持つ。**
  *
@@ -139,8 +140,33 @@ export function packAnalyzeText(
   const taken: string[] = [];
   let length = 0;
   for (const row of rows) {
-    // 2 行目以降は連結の `\n` も数える。ここを忘れると行数ぶんだけ上限を超える。
-    const cost = row.length + (taken.length === 0 ? 0 : 1);
+    /*
+     * **予算は文字で積む** (2026-09-14 · パス 254)。
+     *
+     * 2026-09-14 まで `row.length` —— **UTF-16 のコード単位**だった。門の側
+     * (`main/clients/emotions.ts` と `web-shim.ts`) はどちらも
+     * `countChars(text) > MAX_ANALYZE_TEXT_CHARS` と**文字**で測るので、
+     * 予算だけが別の単位で組まれていた。
+     *
+     * 実測 (絵文字 10 個の件名 600 行 —— Gmail の件名は絵文字を含みやすい):
+     *
+     * |  | 入った行 | 外した行 | 送った文字数 |
+     * | --- | --- | --- | --- |
+     * | `.length` (直す前) | 238 | **362** | **2,617** |
+     * | `countChars` (今) | 454 | 146 | 4,993 |
+     *
+     * 門は 5,000 **文字**まで受けるのに、2,617 字送った時点で 362 行を落とし、
+     * 画面は「1 回に送れるのは 5000 字までのため、残り 362 件は含みません」と
+     * **成り立たない理由**を述べていた。**述べる数と、守る数は、同じ単位で
+     * 数えなければならない** (パス 195)。
+     *
+     * 向きは安全側 (コード単位 ≥ 文字数なので、門を超える本文は作れない) ——
+     * 壊れていたのは送信量ではなく**分析の網羅と断りの真偽**である。
+     *
+     * 2 行目以降は連結の `\n` も数える。ここを忘れると行数ぶんだけ上限を超える
+     * (`\n` は 1 文字 = 1 コード単位なので、単位を変えても 1 のまま)。
+     */
+    const cost = countChars(row) + (taken.length === 0 ? 0 : 1);
     if (length + cost > max) break;
     taken.push(row);
     length += cost;

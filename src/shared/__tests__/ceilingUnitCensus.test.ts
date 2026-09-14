@@ -121,6 +121,90 @@ export function codeUnitUses(src: string, given: readonly string[]): { name: str
   return out;
 }
 
+/**
+ * **予算を積む形は、比較でも切り取りでもない** (2026-09-14 · パス 254 で足した)。
+ *
+ * パス 252 の走査は 2 つの形だけを見ていた —— `.length` と定数の**比較**、
+ * `.slice(0, 定数)` の**切り取り**。ところが `emotionsLimits.packAnalyzeText` は
+ * どちらでもなかった:
+ *
+ * ```
+ *   export function packAnalyzeText(rows, max: number = MAX_ANALYZE_TEXT_CHARS) {
+ *     const cost = row.length + (…);     // ← 予算に足す (比較でも切り取りでもない)
+ *     if (length + cost > max) break;    // ← 比べているのは `max` (引数)
+ *   }
+ * ```
+ *
+ * 定数は**既定引数**に居るので比較の右辺には現れず、`.length` は加算の中に在る。
+ * **パス 252 の走査はこれを 1 件も掴まなかった** —— 綴りで数える走査の、この一日で
+ * 7 度目の死角である。
+ *
+ * 規則: **文字の定数を既定引数に持つ関数の中で、文字列そのものを `.length` で
+ * 測ってはいけない。** 予算はその定数と比べられるので、積む単位も文字でなければ
+ * ならない。
+ *
+ * ## 「文字列そのもの」をどう見分けるか —— 2 つの形だけを掴む
+ *
+ * 最初に書いた規則は「本体に `.length` が現れてはいけない」で、**満たせなかった**。
+ * 直した後の `packAnalyzeText` にも `rows.length` (行数) と `taken.length`
+ * (詰めた件数) が在り、どちらも**個数**なので正しい。配列の長さを禁じる規則は
+ * この関数を書き直させるだけで、単位の話を 1 つも守らない。
+ *
+ * だから掴むのは、文字列だと**宣言から分かる**値だけ:
+ *
+ * 1. `for (const row of …)` の**要素** —— `row.length`
+ *    (文字列の一覧を畳む関数はここで必ず 1 行を測る。パス 254 の欠陥はこの形)
+ * 2. `: string` と宣言された**引数** —— `text.length`
+ *
+ * 限界は測ってある: 分割代入の要素 (`for (const [a, b] of …)`)・`let` で受けた
+ * 文字列・`.map()` の引数は掴まない。掴めない形が来たら足す —— **走査の網は
+ * 狭いほうを選び、広いふりはしない**。
+ */
+function bodyOf(code: string, from: number): string {
+  const open = code.indexOf('{', from);
+  if (open < 0) return '';
+  let depth = 0;
+  for (let i = open; i < code.length; i += 1) {
+    if (code[i] === '{') depth += 1;
+    else if (code[i] === '}') {
+      depth -= 1;
+      if (depth === 0) return code.slice(open, i + 1);
+    }
+  }
+  return code.slice(open);
+}
+
+/** その関数の中で「文字列だと宣言から分かる」名前 (for…of の要素と `: string` の引数)。 */
+function stringNames(params: string, body: string): string[] {
+  const out = new Set<string>();
+  for (const m of body.matchAll(/for\s*\(\s*(?:const|let|var)\s+(\w+)\s+of\b/g)) out.add(m[1]!);
+  for (const m of params.matchAll(/(\w+)\s*:\s*string\b/g)) out.add(m[1]!);
+  return [...out];
+}
+
+/** 文字の定数を既定引数に持つ関数のうち、文字列を `.length` で測っている物。 */
+export function charBudgetFunctions(
+  src: string,
+  names: readonly string[],
+): { fn: string; line: number; via: string }[] {
+  if (names.length === 0) return [];
+  const code = stripNonCode(src);
+  const alt = withLocalAliases(src, names).join('|');
+  const out: { fn: string; line: number; via: string }[] = [];
+  const re = new RegExp(String.raw`function\s+(\w+)\s*\(([^)]*\b(?:${alt})\b[^)]*)\)`, 'g');
+  for (let m = re.exec(code); m !== null; m = re.exec(code)) {
+    // 既定引数の形 (`= 定数`) であることを確かめる —— ただ型に出てくるだけの物は除く。
+    if (!new RegExp(String.raw`=\s*(?:${alt})\b`).test(m[2]!)) continue;
+    const body = bodyOf(code, m.index + m[0].length);
+    const via = stringNames(m[2]!, body).filter((n) =>
+      new RegExp(String.raw`\b${n}\.length\b`).test(body),
+    );
+    if (via.length === 0) continue;
+    out.push({ fn: m[1]!, line: code.slice(0, m.index).split('\n').length, via: via.join(', ') });
+  }
+  return out;
+}
+
 describe('天井と床の単位 — 文字の定数をコード単位で扱っていない (パス 252)', () => {
   const files = sourceFiles();
   const names = charUnitConstants(files);
@@ -206,6 +290,90 @@ describe('天井と床の単位 — 文字の定数をコード単位で扱っ�
       'const MAX_SYSTEM = MAX_ASSISTANT_SYSTEM_CHARS;\nconst sys = clampToCeiling(system, MAX_SYSTEM);',
     ].join('\n');
     expect(codeUnitUses(ok, probe), '正しい綴りかコメント・文字列を掴んでいる').toEqual([]);
+  });
+
+  it('★ 文字の定数を既定引数に持つ関数が、文字列を .length で測っていない (パス 254)', () => {
+    const bad: string[] = [];
+    for (const file of files) {
+      const rel = path.relative(SRC, file).split(path.sep).join('/');
+      for (const f of charBudgetFunctions(readOriginalSource(file), names)) {
+        bad.push(`${rel}:${f.line} ${f.fn}() — ${f.via}`);
+      }
+    }
+    expect(bad, '予算を .length で積んでいる — countChars を通す').toEqual([]);
+  });
+
+  it('★ 対照: パス 254 で直した形を、走査が実際に掴む', () => {
+    const probe = ['MAX_ANALYZE_TEXT_CHARS'];
+    // 形 1: for…of の要素を測る (パス 254 の欠陥そのもの)。
+    const loop = [
+      'export function packAnalyzeText(rows: readonly string[], max: number = MAX_ANALYZE_TEXT_CHARS): B {',
+      '  const taken: string[] = [];',
+      '  let length = 0;',
+      '  for (const row of rows) {',
+      '    const cost = row.length + (taken.length === 0 ? 0 : 1);',
+      '    if (length + cost > max) break;',
+      '  }',
+      '  return { included: taken.length, omitted: rows.length - taken.length };',
+      '}',
+    ].join('\n');
+    expect(charBudgetFunctions(loop, probe), '直す前の形を掴めていない').toEqual([
+      { fn: 'packAnalyzeText', line: 1, via: 'row' },
+    ]);
+    // 形 2: `: string` の引数を測る。
+    const param = [
+      'export function fits(text: string, max: number = MAX_ANALYZE_TEXT_CHARS): boolean {',
+      '  return text.length <= max;',
+      '}',
+    ].join('\n');
+    expect(charBudgetFunctions(param, probe).map((f) => f.via), '引数の形を掴めていない').toEqual([
+      'text',
+    ]);
+    // 別名を 1 段辿る (パス 252 の対照が暴いた死角 — ここでも効くことを見る)。
+    const aliased = [
+      'const MAX_TEXT = MAX_ANALYZE_TEXT_CHARS;',
+      'export function fits(text: string, max: number = MAX_TEXT): boolean {',
+      '  return text.length <= max;',
+      '}',
+    ].join('\n');
+    expect(charBudgetFunctions(aliased, probe).map((f) => f.fn), '別名を辿れていない').toEqual([
+      'fits',
+    ]);
+  });
+
+  it('★ 対照: 直した後の形・個数の .length・定数を持たない関数は掴まない', () => {
+    const probe = ['MAX_ANALYZE_TEXT_CHARS'];
+    // 直した後の実物 —— `rows.length` と `taken.length` は**個数**なので掴まない。
+    const after = [
+      'export function packAnalyzeText(rows: readonly string[], max: number = MAX_ANALYZE_TEXT_CHARS): B {',
+      '  const taken: string[] = [];',
+      '  let length = 0;',
+      '  for (const row of rows) {',
+      '    const cost = countChars(row) + (taken.length === 0 ? 0 : 1);',
+      '    if (length + cost > max) break;',
+      '  }',
+      '  return { included: taken.length, omitted: rows.length - taken.length };',
+      '}',
+    ].join('\n');
+    expect(charBudgetFunctions(after, probe), '直した後の形を掴んでいる').toEqual([]);
+    // 定数を既定引数に持たない関数は、文字列を測っていても規則の外。
+    const unrelated = 'export function other(text: string): number { return text.length; }';
+    expect(charBudgetFunctions(unrelated, probe)).toEqual([]);
+    // 定数が**型**にだけ現れる形も外 (既定引数ではない)。
+    const typeOnly = [
+      'export function g(text: string, cap: typeof MAX_ANALYZE_TEXT_CHARS): number {',
+      '  return text.length + cap;',
+      '}',
+    ].join('\n');
+    expect(charBudgetFunctions(typeOnly, probe)).toEqual([]);
+    // コメントと文字列の中の綴りは掴まない。
+    const quoted = [
+      '// export function bad(text: string, max = MAX_ANALYZE_TEXT_CHARS) { return text.length; }',
+      'const doc = "function bad(text: string, max = MAX_ANALYZE_TEXT_CHARS) { text.length }";',
+    ].join('\n');
+    expect(charBudgetFunctions(quoted, probe)).toEqual([]);
+    // 名前を 1 つも渡さなければ空 (母集団が空のとき黙って通らないことは下のゲートが見る)。
+    expect(charBudgetFunctions(after, [])).toEqual([]);
   });
 
   it('★ パス 252 で直した 3 家系が、いま正しい綴りを読む', () => {

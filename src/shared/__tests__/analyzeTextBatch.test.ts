@@ -11,6 +11,7 @@ import {
   analyzeBatchNote,
   packAnalyzeText,
 } from '../emotionsLimits';
+import { countChars } from '../inputCeiling';
 
 describe('packAnalyzeText', () => {
   it('全部入るなら全部入れ、外した件数は 0', () => {
@@ -73,6 +74,50 @@ describe('analyzeBatchNote', () => {
   it('全部入るなら述べることは無い', () => {
     expect(analyzeBatchNote(packAnalyzeText(['a', 'b']))).toBeNull();
     expect(analyzeBatchNote(packAnalyzeText([]))).toBeNull();
+  });
+
+  /**
+   * **予算は文字で積む** (2026-09-14 · パス 254)。
+   *
+   * 2026-09-14 まで `row.length` —— **UTF-16 のコード単位**だった。門
+   * (`main/clients/emotions.ts` と `web-shim.ts`) は `countChars(text) > 上限` と
+   * **文字**で測るので、予算だけが別の単位で組まれていた。
+   *
+   * 標本は**絵文字**を選ぶ (BMP 外なので 1 文字 = 2 コード単位)。Gmail の件名・
+   * Slack のチャンネル名は絵文字を含みやすく、この 2 画面が `packAnalyzeText` の
+   * 実際の呼び手である。
+   */
+  it('★ 予算を文字で積む — 絵文字の行はコード単位の半分しか食わない', () => {
+    // 1 行 = 絵文字 5 個 = 5 文字 = 10 コード単位。上限 20 字。
+    const rows = Array.from({ length: 10 }, () => '\u{1F600}'.repeat(5));
+    const out = packAnalyzeText(rows, 20);
+    /*
+     * 文字で積む: 5 + (5+1) + (5+1) = 17 ≦ 20、4 行目で 23 > 20 → 3 行。
+     * コード単位で積む写し: 10 + 11 = 21 > 20 → **1 行**しか入らない。
+     * 差は 2 行なので、単位を戻すとこの検査は必ず落ちる。
+     */
+    expect(out.included).toBe(3);
+    expect(out.omitted).toBe(7);
+    expect(countChars(out.text)).toBe(17);
+    // 同じ本文をコード単位で測れば 32 (絵文字 15 個 × 2 + 改行 2) —— **門はこちらを見ていない**。
+    expect(out.text.length).toBe(32);
+  });
+
+  /**
+   * **門が受ける量まで詰める。** 断りの文面は「1 回に送れるのは N 字まで」と言う
+   * ので、詰め終わった本文は N 字に近いところまで届いていなければ、
+   * その理由は成り立たない (実測: 5,000 字の門に 2,617 字送って 362 行落としていた)。
+   */
+  it('★ 断りの理由が成り立つ — 詰めた本文は上限の近くまで届く', () => {
+    const rows = Array.from({ length: 600 }, () => '\u{1F600}'.repeat(10));
+    const out = packAnalyzeText(rows);
+    expect(out.omitted).toBeGreaterThan(0);
+    const chars = countChars(out.text);
+    expect(chars).toBeLessThanOrEqual(MAX_ANALYZE_TEXT_CHARS);
+    // あと 1 行 (11 文字) 入れれば超える = 上限まで使い切っている。
+    expect(chars + 11).toBeGreaterThan(MAX_ANALYZE_TEXT_CHARS);
+    // コード単位で積む写しはここで 2,617 字しか送らない (半分未満)。
+    expect(chars).toBeGreaterThan(MAX_ANALYZE_TEXT_CHARS / 2);
   });
 
   it('件数と理由の両方を言う', () => {

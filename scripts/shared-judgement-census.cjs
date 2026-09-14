@@ -91,7 +91,15 @@ const VERDICTS = {
     + '満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。'
     + '呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)',
   atlassianSite: '**非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ)',
-  emotionsLimits: '未読 (AI へ送る入力の天井)',
+  emotionsLimits:
+    '対称 (実測・パス 254) —— analyze-text の門は両ビルドとも '
+    + '`countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、'
+    + 'log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。'
+    + 'packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が '
+    + '押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに '
+    + 'packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で '
+    + '2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と '
+    + '**成り立たない理由**を述べていた。パス 254 で countChars へ直した',
   eraseReport:
     '意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも '
     + '両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。'

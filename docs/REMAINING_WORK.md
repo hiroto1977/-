@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **22**（うち未読 **8**）。これは分母であって欠陥の一覧ではない。
+shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **22**（うち未読 **7**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -26585,7 +26585,7 @@ shared **138** モジュール / 両ビルドが import **44** / うち否定で
 | `api/cursor` | 1 | 1 | 対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の 消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
-| `emotionsLimits` | 1 | 5 | 未読 (AI へ送る入力の天井) |
+| `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
 | `eraseReport` | 2 | 3 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
 | `externalUrlGate` | 1 | 1 | 閉じている (パス 241 で 3 経路を実測) |
 | `freeeIntake` | 1 | 5 | 未読 (取り込みの取りこぼし) |
@@ -31287,3 +31287,101 @@ SettingsPage を 1 件多く数えていた。母集団は走査で導くこと�
   (業務メモ・気分のメモ・付箋コメント) はパス 167 が `maxLength` を外してあるので
   この直しが効くが、上の 14 件は「ブラウザに任せる」という別の選択をしている
   (黙って切られる)。**次に見る所。**
+
+## パス 254 (2026-09-14) — **予算をコード単位で積み、門は文字で測る。そして私の走査は 0x08 で黙っていた**
+
+パス 252 は「述べる数と守る数の単位を揃える」を閉じたつもりだった。走査は 2 つの形
+(`.length` と定数の**比較**・`.slice(0, 定数)` の**切り取り**) を見ていた。
+`emotionsLimits.packAnalyzeText` は**どちらでもなかった**。
+
+### 欠陥 1 — 一覧から AI へ送る本文の予算だけが、別の単位だった
+
+```ts
+export function packAnalyzeText(rows, max: number = MAX_ANALYZE_TEXT_CHARS) {
+  const cost = row.length + (taken.length === 0 ? 0 : 1);  // ← コード単位
+  if (length + cost > max) break;                          // ← 比べるのは引数 max
+}
+```
+
+門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` と**文字**で測る
+(`main/clients/emotions.ts:313` / `web-shim.ts:733`)。**予算だけがコード単位**だった。
+
+実測 (絵文字 10 個の件名 600 行 —— Gmail の件名・Slack のチャンネル名は絵文字を含みやすい。
+この 2 画面が `packAnalyzeText` の実際の呼び手):
+
+| | 入った行 | 外した行 | 送った文字数 |
+| --- | --- | --- | --- |
+| `.length` (直す前) | 238 | **362** | **2,617** |
+| `countChars` (今) | 454 | 146 | 4,993 |
+
+門は 5,000 **文字**まで受けるのに、2,617 字送った時点で 362 行を落とし、画面は
+「1 回に送れるのは 5000 字までのため、残り 362 件は含みません」と**成り立たない理由**を
+述べていた。向きは安全側 (コード単位 ≧ 文字数なので門は超えられない) —— 壊れていたのは
+送信量ではなく**分析の網羅と、断りの真偽**である。
+
+直し: `countChars(row)` 1 か所。行数の `rows.length` と件数の `taken.length` は
+**個数**なのでそのまま (単位の話ではない)。
+
+### 欠陥 2 (自分の道具) — **正規表現に 0x08 が埋まり、走査が「欠陥 0 件」で通っていた**
+
+欠陥 1 を掴む走査 (`ceilingUnitCensus.test.ts` の `charBudgetFunctions`) を書いたとき、
+単語境界を heredoc 越しに書いてしまい、ソースに **BACKSPACE (0x08) が 4 バイト**埋まった:
+
+```
+String.raw`function\s+(\w+)\s*\(([^)]*<BS>(?:${alt})<BS>[^)]*)\)`
+```
+
+BACKSPACE を要求する正規表現は**何にも当たらない**。走査は `[]` を返し、実物を見る検査は
+**緑で通った**。エディタでも `git diff` でも見えない。気づいたのは対照を回したときで、
+`charBudgetFunctions` を手で書き写した版は掴むのに本物は掴まない、という食い違いから
+1 バイトずつ突き止めた。**不在を主張する検査の、最も静かな壊れ方**である。
+
+### 直した 3 つ目 —— 規則が満たせなかった
+
+最初の規則は「文字の定数を既定引数に持つ関数の本体に `.length` が現れてはいけない」で、
+**直した後の実物でも鳴った** (`rows.length` / `taken.length`)。配列の長さを禁じる規則は
+関数を書き直させるだけで、単位の話を 1 つも守らない。掴むのは**文字列だと宣言から分かる値**
+だけに狭めた:
+
+1. `for (const row of …)` の**要素** —— 文字列の一覧を畳む関数はここで必ず 1 行を測る
+2. `: string` と宣言された**引数**
+
+掴めない形 (分割代入・`let` で受けた文字列・`.map()` の引数) は散文に書いた。
+**走査の網は狭いほうを選び、広いふりはしない。**
+
+### ゲートを足した —— `lint:charset` に制御文字・不可視文字 (4 群)
+
+0x08 を止められる検査は 1 つも無かった。`lint:charset` は「文字体系の混入」を見る門なので、
+そこへ 4 群を足した (合計 10 群):
+
+| 群 | 範囲 | なぜ |
+| --- | --- | --- |
+| 制御文字 (C0/DEL) | `\x00-\x08` `\x0b-\x1f` `\x7f` | 今日の事故そのもの。タブと改行は除く・CR は含める (実測 0 件) |
+| 制御文字 (C1) | `-` | 同種 |
+| 双方向制御 | `‎‏‪-‮⁦-⁩` | **Trojan Source (CVE-2021-42574)** —— 読める物と走る物が違うソースを作れる。レビューは読める側しか見ない |
+| 不可視文字 | `­​⁠-⁤﻿` | 幅 0 の空白・BOM |
+
+- **ZWJ (U+200D) / ZWNJ (U+200C) は入れない** —— 絵文字の連結に必要で、このリポジトリは
+  文字数の数え方を測るために意図して標本に使う (実測 17 件)。JS の識別子に使えないので
+  名前を偽装する道も無い。陰性対照で「鳴らない」ことを留めた。
+- 実測した正当な出現 **12 件**を台帳へ理由つきで載せた (NUL の標本 1・不可視文字を剥がす
+  `normalizeMnemonic` の標本 8・**CSV の BOM 3** —— 無いと Excel が UTF-8 を読まない)。
+  鍵は**コードポイント** (`<path>::U+FEFF`) —— 字を直接書くと台帳が検査対象の字を抱える。
+- 自己検査に**鳴る標本 4 + 鳴らない標本 3** を足し、生存の床を `INVISIBLE_RANGES` にも広げた
+  (この門は 2026-08-25 に「6 種のうち 4 種が完全に無音」だった前科がある)。
+- ESLint の `no-control-regex` は**この規則の目的そのもの**なので、理由つきで 1 行だけ黙らせた。
+
+### 対照 (全部鳴った)
+
+| 壊した物 | 期待 | 実際 |
+| --- | --- | --- |
+| `countChars(row)` → `row.length` | 走査が掴む | `shared/emotionsLimits.ts:136 packAnalyzeText() — row` |
+| 同上 | 振る舞いの検査が落ちる | `included: expected 1 to be 3` / `2,628 字で打ち止め` |
+| 双方向制御の範囲を `￹` に潰す | 標本と生存の床の**両方**が鳴る | `✗ RLO: 0 件 (期待 1)` + `✗ 鳴る標本を持たない文字体系が 1 件` |
+
+### 残した物
+
+- **制御文字の走査は `.ts .tsx .md .json .cjs` の 5 拡張子だけ**を見る
+  (`lint:charset` の既存の範囲)。`.sh` / `.yml` / `.html` は外。次に広げる所。
+- `emotionsLimits` の census 裁定を「未読」から「対称 (実測)」へ。**未読は 8 → 7**
+  (`freeeIntake` `funding` `hydroponicsControl` `isoDate` `radarPlot` `serviceAdvisor` `talent`)。

@@ -65,6 +65,47 @@ const SCRIPT_RANGES = [
 ];
 
 /**
+ * **制御文字・不可視文字。** (2026-09-14 · パス 254 で足した)
+ *
+ * ## 実測した事故 —— 走査を黙らせた 1 バイト
+ *
+ * パス 254 で `ceilingUnitCensus.test.ts` に走査を書いたとき、正規表現の
+ * 単語境界を heredoc 越しに書いてしまい、**ソースには 0x08 (BACKSPACE) が
+ * 4 つ埋まった**。BACKSPACE を要求する正規表現は**何にも当たらない**ので、
+ * 走査は空を返し「欠陥 0 件」として**通った** —— しかもその走査は、
+ * 直したばかりの欠陥をもう一度掴めるかを見る側だった。
+ *
+ * エディタでも `git diff` でも見えない。気づいたのは対照を回したときで、
+ * それまでは緑だった。**不在を主張する検査の、最も静かな壊れ方**である。
+ *
+ * ## 双方向制御文字は攻撃手法である
+ *
+ * U+202A〜U+202E / U+2066〜U+2069 は表示順を変えるので、**読める物と走る物が
+ * 違うソース**を作れる (Trojan Source · CVE-2021-42574)。コードレビューは
+ * 読める側しか見ないので、人の目では止まらない。
+ *
+ * ## 例外にするもの
+ *
+ * ZWJ (U+200D) と ZWNJ (U+200C) は**含めない**。絵文字の連結 (家族・旗の
+ * 合字) に必要で、このリポジトリは文字数の数え方を測るために意図して標本に
+ * 使う (`inputCeiling.ts` / `textWrap.test.ts` で実測 17 件)。JS の識別子に
+ * 使えない文字なので、名前を偽装する道も無い。
+ *
+ * 正当な出現 (NUL の標本・不可視文字を剥がす検査の標本・CSV の BOM) は下の
+ * ALLOWLIST に**コードポイントを鍵として**載せる —— 字を直接書くとこの
+ * ファイル自身が検査対象になる (上のコメントが「4 度出ている」と言う罠)。
+ */
+const INVISIBLE_RANGES = [
+  // Tab (0x09) and LF (0x0A) are excluded. CR (0x0D) is included -- measured 0.
+  // 制御文字を探す規則は制御文字を書くしかない。この規則の目的そのもの。
+  // eslint-disable-next-line no-control-regex
+  { name: '制御文字 (C0/DEL)', re: /[\x00-\x08\x0b-\x1f\x7f]/g },
+  { name: '制御文字 (C1)', re: /[\u0080-\u009f]/g },
+  { name: '双方向制御 (Trojan Source)', re: /[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g },
+  { name: '不可視文字', re: /[\u00ad\u200b\u2060-\u2064\ufeff]/g },
+];
+
+/**
  * 簡体字 → 対応する日本語表記。
  *
  * **収録基準**: 簡体字であり、かつ**日本語として通用しない**字だけ。
@@ -144,6 +185,55 @@ const ALLOWLIST = new Map([
   [
     'orchestration/knowledge-merge-plan.json::식',
     { n: 1, why: '同上（修正記録の引用）' },
+  ],
+  // --- 制御文字・不可視文字の正当な出現 (2026-09-14 ・ パス 254 で実測) ---
+  [
+    'src/shared/__tests__/safeFilename.test.ts::U+0000',
+    { n: 1, why: 'ファイル名の消毒を測る標本 — NUL を実物として渡している' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+200B',
+    { n: 1, why: 'normalizeMnemonic が不可視文字を剥がすことの標本 (ZWSP)' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+200E',
+    { n: 1, why: '同上 (LRM)' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+200F',
+    { n: 1, why: '同上 (RLM)' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+202A',
+    { n: 1, why: '同上 (LRE)' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+202C',
+    { n: 1, why: '同上 (PDF)' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+2060',
+    { n: 1, why: '同上 (WORD JOINER)' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+2063',
+    { n: 1, why: '同上 (INVISIBLE SEPARATOR)' },
+  ],
+  [
+    'src/renderer/security/__tests__/mnemonic.test.ts::U+FEFF',
+    { n: 1, why: '同上 (BOM) — 貼り付けの先頭に付くので剥がす' },
+  ],
+  [
+    'src/renderer/components/FinancialAnalysis.tsx::U+FEFF',
+    { n: 1, why: 'CSV 書き出しの BOM — これが無いと Excel が UTF-8 を読まない' },
+  ],
+  [
+    'src/renderer/pages/SalesPage.tsx::U+FEFF',
+    { n: 1, why: '同上 (販売記録の CSV)' },
+  ],
+  [
+    'src/renderer/pages/KpiPage.tsx::U+FEFF',
+    { n: 1, why: '同上 (KPI 実績の CSV)' },
   ],
 ]);
 
@@ -231,6 +321,24 @@ function scanText(rel, text, allow = ALLOWLIST) {
     }
   }
 
+  /*
+   * 制御文字・不可視文字は**コードポイントを鍵にする** —— 字そのものを
+   * 鍵にすると台帳 (このファイル) が検査対象の字を抱えることになる。
+   */
+  for (const { name, re } of INVISIBLE_RANGES) {
+    re.lastIndex = 0;
+    for (const m of text.matchAll(re)) {
+      const cp = `U+${m[0].codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}`;
+      const key = `${rel}::${cp}`;
+      seenKeys.add(key);
+      if (allowed(key)) continue;
+      findings.push({
+        rel, line: lineOf(text, m.index), char: cp, kind: name,
+        hint: null, context: context(text, m.index),
+      });
+    }
+  }
+
   for (const [simp, jp] of Object.entries(SIMPLIFIED)) {
     let from = 0;
     for (;;) {
@@ -286,6 +394,18 @@ function selfTest() {
     ['タイ文字 (U+0E01)', String.fromCodePoint(0x0e01), 1],
     ['デーヴァナーガリー (U+0915)', String.fromCodePoint(0x0915), 1],
     ['ヘブライ文字 (U+05D0)', String.fromCodePoint(0x05d0), 1],
+    /*
+     * 制御・不可視群 (2026-09-14 ・ パス 254)。標本はコードポイントから組む
+     * —— 字を直接書くとこのファイル自身が検査に引っかかる。
+     */
+    ['C0 BACKSPACE (実際に走査を黍らせた 1 バイト)', String.fromCodePoint(0x08), 1],
+    ['C1 NEL (U+0085)', String.fromCodePoint(0x85), 1],
+    ['双方向制御 RLO (U+202E ・ Trojan Source)', String.fromCodePoint(0x202e), 1],
+    ['不可視 ZWSP (U+200B)', String.fromCodePoint(0x200b), 1],
+    // ★ 陰性対照: 通すと決めた字と、普通の空白は鳴ってはいけない。
+    ['ZWJ (U+200D) は絵文字の連結なので鳴らない', String.fromCodePoint(0x200d), 0],
+    ['ZWNJ (U+200C) も同じ', String.fromCodePoint(0x200c), 0],
+    ['タブと改行は鳴らない', '\ta\nb', 0],
   ];
 
   let failed = 0;
@@ -307,7 +427,7 @@ function selfTest() {
    * だった (台帳が拾ったのはハングルだけ)。
    */
   const positiveTexts = cases.filter(([, , want]) => want > 0).map(([, text]) => text);
-  const uncoveredRanges = SCRIPT_RANGES.filter(
+  const uncoveredRanges = [...SCRIPT_RANGES, ...INVISIBLE_RANGES].filter(
     (r) => !positiveTexts.some((t) => t.match(r.re) !== null),
   );
   if (uncoveredRanges.length > 0) {
@@ -315,7 +435,10 @@ function selfTest() {
     console.log(`  ✗ 鳴る標本を持たない文字体系が ${uncoveredRanges.length} 件:`);
     for (const r of uncoveredRanges) console.log(`      - ${r.name}`);
   } else {
-    console.log(`  ✓ 全 ${SCRIPT_RANGES.length} 種の文字体系に鳴る標本がある`);
+    console.log(
+      `  ✓ 全 ${SCRIPT_RANGES.length + INVISIBLE_RANGES.length} 種 (文字体系 ${SCRIPT_RANGES.length}`
+        + ` + 制御・不可視 ${INVISIBLE_RANGES.length}) に鳴る標本がある`,
+    );
   }
 
   // 台帳は双方向 — 載っていれば黙り、載っているのに現れなければ古い。
@@ -398,7 +521,8 @@ function main() {
   const tableProblems = checkTable();
 
   console.log(
-    `Checked ${files.length} file(s) for ${SCRIPT_RANGES.length} 文字体系 + ` +
+    `Checked ${files.length} file(s) for ${SCRIPT_RANGES.length} 文字体系 + `
+      + `${INVISIBLE_RANGES.length} 制御・不可視群 + ` +
       `${Object.keys(SIMPLIFIED).length} 簡体字（既知 ${ALLOWLIST.size} 件は台帳で除外）` +
       `／表の不変条件 ${Object.keys(SIMPLIFIED).length} 項目`,
   );
@@ -409,7 +533,12 @@ function main() {
     failed = true;
     console.error(`\n❌ ${findings.length} 件の混入を検出しました\n`);
     for (const f of findings) {
-      const fix = f.hint === null ? '日本語に置き換えてください' : `→ ${f.hint}`;
+      const invisible = INVISIBLE_RANGES.some((r) => r.name === f.kind);
+      const fix = f.hint !== null
+        ? `→ ${f.hint}`
+        : invisible
+          ? '削ってください (エスケープが意図なら \\x.. / \\u.... と書く)'
+          : '日本語に置き換えてください';
       console.error(`  ${f.rel}:${f.line}  [${f.kind}] 「${f.char}」 ${fix}`);
       console.error(`    …${f.context}…`);
     }
