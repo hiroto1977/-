@@ -34,6 +34,7 @@ import {
   type HydroponicReading,
 } from '../../shared/hydroponicsControl';
 import { latestRecord } from './latestRecord';
+import { relationIssue } from './recordRelations';
 
 /** 測定の記録。1 レコード = 1 回の測定。 */
 export const HYDROPONICS_READINGS_COLLECTION = 'hydroponics-readings';
@@ -347,29 +348,24 @@ export function parseBatch(input: {
     if (!isCalendarDate(v)) throw new Error(`${label}は YYYY-MM-DD 形式の実在する日付で入力してください`);
     return v;
   };
-  const transplantedDate = day(input.transplantedDate, '定植日');
-  const harvestedDate = day(input.harvestedDate, '収穫日');
-  // **日付の前後を確かめる** —— 播種より前に定植・収穫はできない。
-  if (transplantedDate !== null && transplantedDate < input.sowDate) {
-    throw new Error('定植日が播種日より前になっています');
-  }
-  if (harvestedDate !== null && harvestedDate < input.sowDate) {
-    throw new Error('収穫日が播種日より前になっています');
-  }
-  if (transplantedDate !== null && harvestedDate !== null && harvestedDate < transplantedDate) {
-    throw new Error('収穫日が定植日より前になっています');
-  }
-  return {
+  const out: CultivationBatchRecord = {
     id,
     cropId: input.cropId,
     sowDate: input.sowDate,
     panels,
     state: input.state,
-    transplantedDate,
-    harvestedDate,
+    transplantedDate: day(input.transplantedDate, '定植日'),
+    harvestedDate: day(input.harvestedDate, '収穫日'),
+    // **養液交換日には前後の関係を課さない** —— 播種の前に培養液を仕込むのは
+    // 通常の作業なので、播種日より前の交換日は正当 (2026-09-14 に一度
+    // 「これも欠陥」と読み違えた)。
     solutionChangedDate: day(input.solutionChangedDate, '養液交換日'),
     note: parseNote(input.note, 'ロットのメモ'),
   };
+  // **日付の前後は台帳が持つ** —— 復元の入口 (`collectionShapes`) と同じ規則を読む。
+  const issue = relationIssue(HYDROPONICS_BATCHES_COLLECTION, out);
+  if (issue !== null) throw new Error(issue);
+  return out;
 }
 
 
@@ -426,15 +422,9 @@ export function parseControlRecord(input: Readonly<Record<string, unknown>>): Hy
     harvestNoticeDays: days('harvestNoticeDays', '収穫の予告日数'),
   };
 
-  // **下限 ≦ 上限** を組ごとに確かめる。逆だと全項目が「範囲外」になる。
-  const pairs: readonly (readonly [number, number, string])[] = [
-    [out.waterTempLowC, out.waterTempHighC, '養液温度'],
-    [out.airTempLowC, out.airTempHighC, '室温'],
-    [out.humidityLowPct, out.humidityHighPct, '相対湿度'],
-    [out.co2LowPpm, out.co2HighPpm, 'CO₂'],
-  ];
-  for (const [low, high, label] of pairs) {
-    if (low > high) throw new Error(`${label}の下限が上限を超えています`);
-  }
+  // **下限 ≦ 上限は台帳が持つ** (逆だと全項目が「範囲外」になる)。
+  // 復元の入口 (`collectionShapes`) が同じ台帳を読むので、両方の門が同じ規則。
+  const issue = relationIssue(HYDROPONICS_CONTROL_COLLECTION, out);
+  if (issue !== null) throw new Error(issue);
   return out;
 }

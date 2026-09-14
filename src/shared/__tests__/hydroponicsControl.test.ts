@@ -744,3 +744,54 @@ describe('今日やること', () => {
     expect(tasks.some((t) => t.id === 'adjust:ec'), '★ 品目ごとの適正域を見ていません').toBe(true);
   });
 });
+
+/**
+ * 日付の前後が逆のロットは、日程を作らない (パス 223)。
+ *
+ * 2 つの入口 (画面 / 復元) が `recordRelations.ts` の台帳で断るようになったが、
+ * **その関門より前に保存された記録**は残りうる。畳まずに計算していたときは
+ * 播種 2026-09-10 / 定植 2026-08-01 のロットに **収穫予定 2026-08-11** ——
+ * 播種の 1 か月前 —— を `harvestCountedFrom: 'actual-transplant'` (実績起算)
+ * として返していた。**もっともらしい嘘より、計算できないと言う。**
+ */
+describe('batchSchedule — 前後が逆なら null (パス 223)', () => {
+  const crop = DEFAULT_CROP_LIST[0]!;
+  const base = {
+    id: 'lot-1',
+    cropId: crop.id,
+    sowDate: '2026-09-10',
+    panels: 4,
+    state: 'growing' as const,
+    transplantedDate: null,
+    harvestedDate: null,
+    solutionChangedDate: null,
+    note: '',
+  };
+
+  it('前後が正しければ日程を返す (対照)', () => {
+    expect(batchSchedule(base, crop)).not.toBeNull();
+    expect(batchSchedule({ ...base, transplantedDate: '2026-10-05' }, crop)).not.toBeNull();
+  });
+
+  it('定植が播種より前なら null (畳む前は播種の 1 か月前の収穫予定を返していた)', () => {
+    expect(batchSchedule({ ...base, transplantedDate: '2026-08-01' }, crop)).toBeNull();
+  });
+
+  it('収穫が播種より前なら null', () => {
+    expect(batchSchedule({ ...base, harvestedDate: '2026-01-01', state: 'harvested' }, crop)).toBeNull();
+  });
+
+  it('収穫が定植より前なら null', () => {
+    expect(
+      batchSchedule({ ...base, transplantedDate: '2026-10-05', harvestedDate: '2026-09-20', state: 'harvested' }, crop),
+    ).toBeNull();
+  });
+
+  it('同じ日は通る (播種と定植が同日の水耕は在りうる)', () => {
+    expect(batchSchedule({ ...base, transplantedDate: base.sowDate }, crop)).not.toBeNull();
+  });
+
+  it('養液交換日が播種より前でも日程は出る (播種前に培養液を仕込むのは通常の作業)', () => {
+    expect(batchSchedule({ ...base, solutionChangedDate: '2026-09-01' }, crop)).not.toBeNull();
+  });
+});

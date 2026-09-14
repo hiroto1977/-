@@ -665,11 +665,30 @@ export interface BatchSchedule {
   readonly growOutDays: number;
 }
 
-/** ロットの工程。日付か日数が読めなければ `null`。 */
+/**
+ * ロットの工程。日付か日数が読めない、または**日付の前後が逆**なら `null`。
+ *
+ * 前後の関係は 2 つの入口 (画面の `parseBatch` / 復元の `COLLECTION_SHAPES`) が
+ * `recordRelations.ts` の台帳で断るが、**その関門より前に保存された記録**は
+ * 残りうる。畳まずに計算すると、播種 2026-09-10 / 定植 2026-08-01 のロットに
+ * 収穫予定 **2026-08-11** —— 播種の 1 か月前 —— を `harvestCountedFrom:
+ * 'actual-transplant'` (実績起算) として返していた (2026-09-14 実測・パス 223)。
+ * ここで `null` を返せば、呼び手は既に持っている「日程が計算できません」の枝へ
+ * 落ちる —— **もっともらしい嘘より、計算できないと言う。**
+ */
 export function batchSchedule(batch: CultivationBatch, crop: HydroponicCrop): BatchSchedule | null {
   const { nurseryDays, growOutDays } = crop;
   if (!Number.isInteger(nurseryDays) || nurseryDays < 0) return null;
   if (!Number.isInteger(growOutDays) || growOutDays < 1) return null;
+  if (batch.transplantedDate !== null && batch.transplantedDate < batch.sowDate) return null;
+  if (batch.harvestedDate !== null && batch.harvestedDate < batch.sowDate) return null;
+  if (
+    batch.transplantedDate !== null &&
+    batch.harvestedDate !== null &&
+    batch.harvestedDate < batch.transplantedDate
+  ) {
+    return null;
+  }
   const transplantDue = addIsoDays(batch.sowDate, nurseryDays);
   if (transplantDue === null) return null;
   const from = batch.transplantedDate ?? transplantDue;
@@ -907,7 +926,7 @@ export function dailyTasks(input: ControlInput): readonly ControlTask[] {
       tasks.push({
         id: `batch:${b.id}:schedule-unreadable`,
         label: 'ロットの日程が計算できません',
-        why: `ロット ${b.id} の播種日か品目の日数が読めません。`,
+        why: `ロット ${b.id} の播種日・品目の日数が読めないか、日付の前後が逆になっています (播種 → 定植 → 収穫)。`,
         severity: 'warn',
         dueDate: null,
         overdueDays: null,

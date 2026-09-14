@@ -25,6 +25,7 @@ import { CONSULTATION_STATUSES } from './shigyoDirectory';
 import { METRIC_UNITS } from './overviewOverrides';
 import { ROLE_ORDER } from '../../shared/team';
 import { isCalendarDate, isCalendarDateOrMonth } from '../../shared/isoDate';
+import { relationsHold } from './recordRelations';
 import { BATCH_STATE_LABELS } from '../../shared/hydroponicsControl';
 
 type Rec = Record<string, unknown>;
@@ -92,8 +93,8 @@ const KPI_SHAPE = shape({
   laborCost: opt(num),
 });
 
-/** collection 名 → 中身の判定。名前は各モジュールの `*_COLLECTION` 定数と同じ文字列。 */
-export const COLLECTION_SHAPES: Readonly<Record<string, CollectionShape>> = {
+/** 欄ごとの判定だけ (関係は下の `withRelations` が足す)。 */
+const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
   'sales-entries': shape({ date: calendarDate, channel: oneOf(() => SALES_CHANNELS), amount: num, orders: num, note: opt(str) }),
   'kpi-actuals': KPI_SHAPE,
   'kpi-budgets': KPI_SHAPE,
@@ -233,6 +234,24 @@ export const COLLECTION_SHAPES: Readonly<Record<string, CollectionShape>> = {
   // コネクタの出力は payload の形が実行計画ごとに違う。宛先と鍵だけ。
   'connector-output': shape({ connectorId: str, key: str, payload: any }),
 };
+
+/**
+ * 型の検査を通った記録に、**欄と欄の関係**も当てる (パス 223)。
+ *
+ * 画面の入口 (`hydroponicsLog.ts`) と**同じ台帳** (`recordRelations.ts`) を読む ——
+ * 2026-09-14 まで画面は関係を 7 件断っていたのに、ここは 0/7 しか見ておらず、
+ * 復元・古い保存・手で直した JSON が「播種の 1 か月前に収穫予定」のような記録を
+ * そのまま通していた。関係を 2 か所に書くと必ず片方が古びるので、台帳は 1 つ。
+ */
+function withRelations(name: string, base: CollectionShape): CollectionShape {
+  const check = (data: Rec): boolean => base(data) && relationsHold(name, data);
+  return Object.assign(check, { fields: base.fields });
+}
+
+/** collection 名 → 中身の判定。名前は各モジュールの `*_COLLECTION` 定数と同じ文字列。 */
+export const COLLECTION_SHAPES: Readonly<Record<string, CollectionShape>> = Object.fromEntries(
+  Object.entries(FIELD_SHAPES).map(([name, base]) => [name, withRelations(name, base)]),
+);
 
 /**
  * その collection の中身として通るか。知らない collection は通す (前方互換)。
