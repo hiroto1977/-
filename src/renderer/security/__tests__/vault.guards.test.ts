@@ -210,6 +210,52 @@ describe('token の長さ', () => {
   });
 });
 
+/**
+ * **保管層の床 (2026-09-14 · パス 245)。**
+ *
+ * パス 244 は資格情報の入口を `checkTokenInput` へ通したが、保管庫を**直接**
+ * 叩く書き込みが残っていた —— `SettingsPage.tsx` の Google トークン 4 本
+ * (`v.setToken('drive', tok.accessToken)` ほか) は画面の関門を通らない。
+ * 中身は認可サーバの発行値なので制御文字は入りにくいが、**「入りにくい」は
+ * 関門ではない**。制御文字がヘッダに載ると `new Headers()` が値ごと文面に
+ * 載せて投げ、その文面は画面へ出る (`shared/__tests__/headerValueLeak.test.ts`)。
+ *
+ * 規則の綴りは `shared/tokenInput.ts` の `hasControlChars` だけが持つ。
+ */
+describe('token の制御文字 — 保管層の床', () => {
+  const NUL = String.fromCharCode(0);
+
+  it('★ 制御文字を含む token は断る (呼び出し側が関門を忘れても入らない)', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await expect(vault.setToken('svc', `ya29.${NUL}broken`)).rejects.toThrow('制御文字');
+    expect(await vault.getToken('svc'), '断ったのに書かれている').toBeNull();
+  });
+
+  it('★ 改行も同じく断る', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await expect(
+      vault.setToken('svc', `ya29.${String.fromCharCode(10)}x`),
+    ).rejects.toThrow('制御文字');
+  });
+
+  it('対照: 制御文字が無ければこれまでどおり保存する', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await vault.setToken('svc', 'ya29.a-normal_token');
+    expect(await vault.getToken('svc')).toBe('ya29.a-normal_token');
+  });
+
+  it('限界: JSON で包んだ値は床を通る (中は包む側の画面が断る)', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    const wrapped = JSON.stringify({ anthropic: `sk-ant-${NUL}broken` });
+    await vault.setToken('assistant', wrapped);
+    expect(await vault.getToken('assistant')).toBe(wrapped);
+  });
+});
+
 describe('保存していない serviceId', () => {
   it('null を返す (例外にしない)', async () => {
     const vault = getVault();

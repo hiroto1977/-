@@ -2,6 +2,7 @@ import { app, safeStorage } from 'electron';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { ServiceId } from '../shared/serviceId';
+import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../shared/tokenInput';
 import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
 import { hasUsableAccessToken } from '../shared/vaultToken';
 import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
@@ -241,6 +242,26 @@ async function upgradePlainValues(store: Record<string, string>): Promise<Record
 }
 
 export async function setToken(serviceId: string, token: string): Promise<void> {
+  /*
+   * **保管層の床 (2026-09-14 · パス 245)。**
+   *
+   * ここには検証が**1 つも無かった** —— 長さも制御文字も見ず、規則はすべて
+   * `main.ts` の `secrets:set` ハンドラ側 (`checkTokenInput`) に在った。
+   * ところが `setOAuthTokens` は**ハンドラを経由しない**ので、OAuth の
+   * TokenSet はどの関門も通らずここへ来る。
+   *
+   * 中身は認可サーバの発行値なので制御文字は入りにくいが、**「入りにくい」は
+   * 関門ではない**。制御文字がヘッダに載ると `new Headers()` が値ごと文面に
+   * 載せて投げ、その文面は `safeErrorMessage` を通って画面へ出る
+   * (`shared/__tests__/headerValueLeak.test.ts` が 10 経路で実測)。
+   *
+   * 長さはここでは見ない —— ハンドラ側の `MAX_TOKEN_INPUT_CHARS` と
+   * 読み出し側のファイル上限が持っており、3 か所目を作ると必ずずれる。
+   *
+   * **限界**: `JSON.stringify` は制御文字をエスケープ列へ逃がすので、包んだ
+   * TokenSet は床を通る。包みの中は包む側で断るしかない (画面側はパス 244)。
+   */
+  if (hasControlChars(token)) throw new Error(CONTROL_CHAR_MESSAGE);
   return withWriteLock(async () => {
     const store = await readStoreForWrite();
     const upgraded = await upgradePlainValues(store);

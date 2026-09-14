@@ -452,6 +452,25 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
     この経路では何も守らない検査になっていた）。ヘッダ名が不正な場合の双子
     (`"…" is an invalid header name.`) は伏せない —— あちらの引用は名前で、伏せると原因が読めない。
 
+23. **資格情報の保管層そのものが制御文字を断る（入口を数えない床）** ——
+    `renderer/security/vault.ts` + `main/secrets.ts` + `shared/tokenInput.ts` の
+    `hasControlChars`（2026-09-14 · パス 245）。項目 22 は入口 2 本を関門へ通したが、
+    **関門を持つ層を通らない書き込みが 2 本残っていた**: `secrets.setOAuthTokens`
+    （規則は `main.ts` の IPC ハンドラに在り、ここは経由しない —— `secrets.setToken`
+    自身には検証が 1 つも無かった）と `SettingsPage` の Google トークン 4 本
+    （保管庫を直接叩く）。中身は認可サーバの発行値なので制御文字は入りにくいが、
+    **「入りにくい」は関門ではない**。入口を 1 本ずつ数えて塞ぐ形は数え漏らした
+    本数だけ穴が残るので、**両ビルドの保管層に床を置いた**。規則の綴りは
+    `hasControlChars` 1 つで、`checkTokenInput` もそこを読む（同じ規則を 3 通りに
+    綴ると必ず食い違う —— パス 201 の消毒 5 通りと同じ形）。長さは床に置かない
+    （ハンドラ・保管庫・読み出しが既に 3 つ持っており、4 つ目を作るとずれる）。
+    **限界を検査に明示**: `JSON.stringify` は制御文字をエスケープ列へ逃がすので、
+    包んだ値（`assistant` の資格情報・OAuth の `TokenSet`）は床を通る。包みの中は
+    包む側で断るしかなく、画面側は項目 22 で直したが **`setOAuthTokens` の
+    `TokenSet` の各欄はまだ断っていない**（`shared/vaultToken.ts` の
+    `hasUsableAccessToken` が既に形を見ているので、そこへ寄せるのが筋）。
+    限界は散文だけでなく**通る側の標本**として検査に書いてある。
+
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 
 | 優先 | 対策 | 主に効く脅威 | 備考 |

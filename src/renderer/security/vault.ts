@@ -18,6 +18,7 @@
  */
 
 import { countChars } from '../../shared/inputCeiling';
+import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../../shared/tokenInput';
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
 import { webCryptoUnavailableReason } from './webCrypto';
@@ -884,6 +885,25 @@ class BrowserVault implements Vault {
     if (typeof token !== 'string' || token.length === 0 || countChars(token) > MAX_TOKEN_CHARS) {
       throw new Error(`token が不正です (1-${MAX_TOKEN_CHARS} 字)`);
     }
+    /*
+     * **保管層の床 (2026-09-14 · パス 245)。**
+     *
+     * パス 244 は資格情報の**入口**を `shared/tokenInput.ts` の規則へ通したが、
+     * ここを**直接**叩く書き込みが残っていた —— `SettingsPage.tsx` の Google
+     * トークン 4 本 (`v.setToken('drive', tok.accessToken)` ほか) は画面の関門を
+     * 経由しない。中身は認可サーバの発行値なので制御文字は入りにくいが、
+     * **「入りにくい」は関門ではない**。制御文字がヘッダに載ると
+     * `new Headers()` が値ごと文面に載せて投げ、その文面は画面へ出る
+     * (`shared/__tests__/headerValueLeak.test.ts` が 10 経路で実測)。
+     *
+     * 入口を 1 本ずつ数えて塞ぐ形は「n か所のうち n-1 か所を直した」を生むので、
+     * **床はここに置く**。規則の綴りは `hasControlChars` だけが持つ。
+     *
+     * **限界**: `JSON.stringify` は制御文字をエスケープ列へ逃がすので、
+     * 包んだ値 (assistant のマルチプロバイダ資格情報) は床を通る。包みの中は
+     * 包む側の画面が断る (`AssistantPage.saveAgentCreds`・パス 244)。
+     */
+    if (hasControlChars(token)) throw new Error(CONTROL_CHAR_MESSAGE);
     const db = await openDb();
     try {
       // 待っている間に施錠されていたら、**書かずに**施錠の文言で落とす。

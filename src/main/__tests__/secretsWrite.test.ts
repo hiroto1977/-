@@ -423,6 +423,48 @@ describe('壊れた保存ファイルへの備え', () => {
 });
 
 // ---------------------------------------------------------------------------
+// 保管層の床 — 呼び出し側が関門を忘れても制御文字は入らない (パス 245)
+// ---------------------------------------------------------------------------
+
+/**
+ * `secrets.setToken` には検証が**1 つも無かった** —— 長さも制御文字も見ず、
+ * 規則はすべて `main.ts` の IPC ハンドラ側 (`checkTokenInput`) に在った。
+ * ところが `setOAuthTokens` は**ハンドラを経由しない**。
+ *
+ * 中身は認可サーバの発行値なので制御文字は入りにくいが、**「入りにくい」は
+ * 関門ではない**。制御文字がヘッダに載ると `new Headers()` が値ごと文面に
+ * 載せて投げ、その文面は `safeErrorMessage` を通って画面へ出る
+ * (`shared/__tests__/headerValueLeak.test.ts` が 10 経路で実測)。
+ */
+describe('setToken の制御文字 — 保管層の床', () => {
+  const NUL = String.fromCharCode(0);
+
+  it('★ 制御文字を含む token は断り、ファイルに書かない', async () => {
+    const { setToken, listConfiguredServices } = await import('../secrets');
+    await expect(setToken('github', `ghp_${NUL}broken`)).rejects.toThrow('制御文字');
+    expect(await listConfiguredServices(), '断ったのに書かれている').toEqual([]);
+  });
+
+  it('★ 改行も同じく断る', async () => {
+    const { setToken } = await import('../secrets');
+    await expect(setToken('github', `ghp_${String.fromCharCode(10)}x`)).rejects.toThrow('制御文字');
+  });
+
+  it('対照: 制御文字が無ければこれまでどおり保存する', async () => {
+    const { setToken, getToken } = await import('../secrets');
+    await setToken('github', 'ghp_a_normal_token');
+    expect(await getToken('github')).toBe('ghp_a_normal_token');
+  });
+
+  it('限界: JSON で包んだ TokenSet は床を通る (中は包む側が断る)', async () => {
+    const { setOAuthTokens, getOAuthTokens } = await import('../secrets');
+    // `JSON.stringify` が制御文字をエスケープ列へ逃がすので、床には見えない
+    await setOAuthTokens('github', { accessToken: `at${NUL}x` });
+    expect((await getOAuthTokens('github'))?.accessToken).toBe(`at${NUL}x`);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // OAuth の TokenSet の保存と読み出し
 // ---------------------------------------------------------------------------
 

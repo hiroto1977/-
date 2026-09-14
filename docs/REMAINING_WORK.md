@@ -26103,6 +26103,72 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 245 (2026-09-14) — **入口を 1 本ずつ塞ぐのをやめて、保管層に床を置いた (パス 244 の残件 2 本)**
+
+パス 244 は入口 2 本を `checkTokenInput` へ通し、**残件として 2 本を記録した**。
+その形のまま次のパスへ送ると「n か所のうち n-1 か所を直した」になる (このリポジトリが
+パス 66 で 1 度やっている) ので、同じ日のうちに閉じる。
+
+### 残っていた 2 本 — どちらも「関門を持つ層」を通らない
+
+```
+main/secrets.ts    setOAuthTokens → setToken(id, JSON.stringify(tokens))
+                   規則は main.ts:326 の IPC ハンドラに在るが、ここは通らない
+                   → setToken 自身には検証が 1 つも無い (長さも制御文字も見ない)
+
+SettingsPage.tsx   v.setToken('drive'|'calendar'|'gmail'|'google-access', tok.accessToken)
+                   画面の関門 (パス 244 で入れた) を通らず保管庫を直接叩く
+                   → vault.setToken は型・空・MAX_TOKEN_CHARS だけを見る
+```
+
+どちらも中身は認可サーバが発行した値なので制御文字は入りにくい。
+**だが「入りにくい」は関門ではない。**
+
+### 直し方 — 入口を数えるのをやめる
+
+入口を 1 本ずつ数えて塞ぐ形は、数え漏らした本数だけ穴が残る。**保管層に床を置く**:
+
+- `vault.setToken` (ブラウザ) と `secrets.setToken` (デスクトップ) が
+  `hasControlChars` で断る。
+- **規則の綴りは 1 つ** —— `shared/tokenInput.ts` の `hasControlChars` を述語として
+  切り出し、`checkTokenInput` もそこを読む。同じ規則を 3 通りに綴ると必ず食い違う
+  (パス 201 で消毒の綴りが 5 通りに割れ、そのうち 1 つだけが有限を見ていなかった
+  のと同じ形)。文面も `CONTROL_CHAR_MESSAGE` 1 つ。
+- 長さは床に置かない —— ハンドラ側の `MAX_TOKEN_INPUT_CHARS` (65,536)・
+  保管庫の `MAX_TOKEN_CHARS` (8,192)・読み出し側のファイル上限が既に持っており、
+  3 か所目を作ると必ずずれる。
+
+### 正直な限界 (検査で明示的に留めた)
+
+**床は包みの中を見られない。** `JSON.stringify` は制御文字をエスケープ列へ逃がすので、
+包んだ値 (`assistant` のマルチプロバイダ資格情報・OAuth の `TokenSet`) は
+どちらの床も通る。包みの中は**包む側**で断るしかなく、画面側はパス 244 で直した
+(`AssistantPage.saveAgentCreds`)。`setOAuthTokens` の側は**まだ断っていない** ——
+`TokenSet` の各欄を検証する口を作るかは次の判断 (`shared/vaultToken.ts` の
+`hasUsableAccessToken` が既に形を見ているので、そこに寄せるのが筋)。
+
+この限界は検査の中に**通る側の標本**として書いてある (「限界: JSON で包んだ値は床を
+通る」)。散文だけに書くと、将来床を強めたときに検査が黙って通り続ける。
+
+### 検査 (先に書いた)
+
+- `shared/__tests__/credentialStoreFloor.test.ts` (新規 4 件) —— 述語そのものと、
+  **`checkTokenInput` が同じ述語を使っていること** (同じ入力で同じ答え。2 通りに
+  割れていたらどちらかの入力で食い違う)。
+- `renderer/security/__tests__/vault.guards.test.ts` に 4 件 (★2 + 対照 + 限界)。
+- `main/__tests__/secretsWrite.test.ts` に 4 件 (★2 + 対照 + 限界)。
+- 落ちた数: 4 のうち 3・4 のうち 2・4 のうち 2。
+  (`listConfigured` という存在しない export を書いて 1 件余分に落とした ——
+   床は既に効いていた。正しい名前は `listConfiguredServices`。)
+
+chain #189 (secrets.ts / tokenInput.ts / vault.ts)。
+
+### 残り
+
+- `setOAuthTokens` の `TokenSet` の各欄 (上記のとおり、床では届かない)。
+- **「名前を持たない文面」の母集団を数える走査は無い** (パス 244 からの持ち越し。
+  1 本塞いだだけで、他に何本あるかは測っていない)。
+
 ## パス 244 (2026-09-14) — **資格情報の入口が 2 通りの規則を持ち、プラットフォームの例外文面が鍵をそのまま画面へ出していた**
 
 `shared/tokenInput.ts` の冒頭は「この規則を main と renderer で**同じ**にするために在る」と
