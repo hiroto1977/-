@@ -79,7 +79,9 @@ const VERDICTS = {
   externalUrlGate: '閉じている (パス 241 で 3 経路を実測)',
   freeeIntake: '未読 (取り込みの取りこぼし)',
   funding: '未読 (計算の判定)',
-  httpLimits: '対称 (部分実測・パス 248) —— 呼び出し側の網は main だけ',
+  httpLimits:
+    '対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。'
+    + 'ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない)',
   hydroponicsControl: '未読 (計算の判定)',
   isoDate: '未読 (日付の読み取り)',
   ollama: '**非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ)',

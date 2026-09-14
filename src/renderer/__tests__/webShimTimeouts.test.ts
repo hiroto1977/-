@@ -4,9 +4,20 @@ import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES } from '../../shared/h
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
+/*
+ * **サービスごとに正しい形の資格情報を返す。** 1 つの文字列を全部に返すと、
+ * Atlassian (`{email,token,site}` の JSON) と Security (`{hibp,vt}` の JSON) は
+ * 資格情報の解析で弾かれて**送信に到達しない** —— つまり「signal が無い」ではなく
+ * 「測れていない」状態になる。下の総当たりは `seen.length >= 1` を先に見るので
+ * 空撃ちには気付けるが、気付いてから直すより最初から形を合わせる。
+ */
+const VAULT_TOKENS: Readonly<Record<string, string>> = {
+  atlassian: JSON.stringify({ email: 'a@b.c', token: 'tok', site: 'https://x.atlassian.net' }),
+  security: JSON.stringify({ hibp: 'hk', vt: 'vk' }),
+};
 vi.mock('../security/vault', () => ({
   getVault: () => ({
-    getToken: async () => 'sk-ant-key',
+    getToken: async (id: string) => VAULT_TOKENS[id] ?? 'sk-ant-key',
     status: async () => 'unlocked',
     setToken: async () => {},
     clearToken: async () => {},
@@ -19,6 +30,30 @@ vi.mock('../library/library', () => ({
 vi.mock('electron', () => ({
   contextBridge: { exposeInMainWorld: () => {} },
   ipcRenderer: { invoke: () => Promise.resolve() },
+}));
+
+/*
+ * **プロキシの境目で signal を受け取る。**
+ *
+ * 締切を掛けているのは `web-shim.ts` の `getProxyTransport` で、それは
+ * `fetchViaProxy` を `withBodyDeadline` で包む。したがって「`fetchViaProxy` に
+ * signal が届いているか」は「プロキシ経由の経路に締切が掛かっているか」と同値。
+ * 地球規模の `fetch` を立てるより、この境目で測るほうが狭くて確実である。
+ */
+const proxySpy = vi.hoisted(() => ({ seen: [] as { url: string; signal?: AbortSignal }[] }));
+vi.mock('../network/proxy', () => ({
+  inspectStoredProxyConfig: async () => ({
+    config: { url: 'https://proxy.example/', sharedSecret: '' },
+    rejected: null,
+    unreadable: null,
+  }),
+  getStoredProxyConfig: async () => ({ url: 'https://proxy.example/', sharedSecret: '' }),
+  fetchViaProxy: (url: string, init: { signal?: AbortSignal }) => {
+    proxySpy.seen.push({ url: String(url), signal: init?.signal });
+    return new Promise<Response>((_res, rej) => {
+      init?.signal?.addEventListener('abort', () => rej(new Error('aborted')));
+    });
+  },
 }));
 
 /*
@@ -208,5 +243,125 @@ describe('応答の大きさにも上限が付く', () => {
 
   it('上限の値は main と同じものを使う', () => {
     expect(MAX_HTTP_RESPONSE_BYTES).toBe(10 * 1024 * 1024);
+  });
+});
+
+/*
+ * **プロキシを通る書き込みを、母集団から総当たりする。**
+ *
+ * 上の 3 本は**手で選んだ**経路 (有料 LLM / GitHub 課題作成 / 更新確認) で、
+ * いずれもプロキシを通らない直呼びである。**プロキシ経由の書き込みは
+ * 1 本も叩かれていなかった** (2026-09-14 · パス 249 に実測)。
+ *
+ * 締切は `getProxyTransport` が `withBodyDeadline` で掛けているので構造上は
+ * 通るはずだが、それは**実装側の主張**であって測定ではない。`Transport` が
+ * 必須の型であることは「何かが渡る」ことしか強制せず、**素の `fetch` も
+ * その形を満たす** ((url, init) => Promise<Response>)。main の網
+ * (`main/clients/__tests__/fetchTimeouts.test.ts`) が既知の 6 経路を列挙して
+ * 叩くのと同じことを、こちらでもする。
+ *
+ * **母集団は台帳ではなく実装から導く** —— `web-shim.ts` の分岐を走査して
+ * 「`runProxyBearer` か `getProxyTransport` を使う action」を集め、下の表と
+ * 1 件ずつ突き合わせる。プロキシ経由の書き込みが 1 本増えたら、表に
+ * 足すまでここが落ちる (パス 117 で片方向の台帳が登録漏れを見落とした形の裏返し)。
+ */
+
+/** `web-shim.ts` の分岐から「プロキシを通る action」を集める。 */
+export function proxyRoutedActions(source: string): string[] {
+  const keys: string[] = [];
+  const re = /serviceId === '([a-z0-9-]+)' && action === '([a-z-]+)'/g;
+  const starts: { key: string; at: number }[] = [];
+  for (let m = re.exec(source); m !== null; m = re.exec(source)) {
+    starts.push({ key: `${m[1]}/${m[2]}`, at: m.index });
+  }
+  /*
+   * **1 つの条件が複数の action を受けることが在る** ——
+   * `if ((serviceId === 'notion' && …) || (serviceId === 'slack' && …)) { … }`
+   * の形で、本体は 1 つ。鍵の次の鍵までを本体とみなすと、**前の鍵が本体を
+   * 持たない**ことになって落ちる (2026-09-14 に実測: notion が消えた)。
+   * 鍵と鍵の間に `{` が無ければ同じ条件の続きとみなして束ねる。
+   */
+  const groups: { keys: string[]; at: number }[] = [];
+  for (let i = 0; i < starts.length; i += 1) {
+    const prev = groups[groups.length - 1];
+    const between = i === 0 ? '{' : source.slice(starts[i - 1]!.at, starts[i]!.at);
+    if (prev !== undefined && !between.includes('{')) prev.keys.push(starts[i]!.key);
+    else groups.push({ keys: [starts[i]!.key], at: starts[i]!.at });
+  }
+  for (let g = 0; g < groups.length; g += 1) {
+    const body = source.slice(groups[g]!.at, groups[g + 1]?.at ?? source.length);
+    // `runProxyBearer<unknown>(` のように**型引数が挟まる**呼び方が在る。
+    // 最初は `runProxyBearer\(` だけを見ていて notion / slack を落とした
+    // (2026-09-14 に実測。名前で引く走査が綴りの変種で黙る、この日 2 度目の形)。
+    if (/runProxyBearer[<(]|getProxyTransport\(\)/.test(body)) keys.push(...groups[g]!.keys);
+  }
+  return keys.sort();
+}
+
+/** 台帳: プロキシを通る書き込みと、関門を通る最小の payload。 */
+const PROXY_WRITES: Readonly<Record<string, Record<string, unknown>>> = {
+  'atlassian/create-issue': { projectKey: 'ABC', summary: 's' },
+  'calendar/create-event': { summary: 's', start: '2026-09-14T10:00:00Z', end: '2026-09-14T11:00:00Z' },
+  'canva/create-folder': { name: 'n' },
+  'cloudflare/create-dns-record': { zoneId: 'z', type: 'A', name: 'a.example', content: '203.0.113.1' },
+  'cloudflare/purge-cache': { zoneId: 'z', purgeEverything: true },
+  'drive/create-folder': { name: 'n' },
+  'gmail/create-draft': { to: 'a@b.c', subject: 's' },
+  'notion/create-page': { parentPageId: 'p', title: 't' },
+  'security/check-email-breach': { email: 'a@b.c' },
+  'security/scan-url': { url: 'https://example.com/' },
+  'slack/send-message': { channel: 'C1', text: 't' },
+  'wordpress/create-post-draft': { siteId: 's', title: 't' },
+};
+
+describe('プロキシを通る書き込みにも、例外なく打ち切りが付く (母集団の総当たり)', () => {
+  beforeEach(() => {
+    proxySpy.seen.length = 0;
+    localStorage.clear();
+  });
+
+  it('★ 台帳が実装の母集団と 1 件ずつ一致する (黙って増えない)', () => {
+    const measured = proxyRoutedActions(readOriginalSource('src/renderer/web-shim.ts'));
+    // 走査の生死の床 —— 0 件を「問題なし」と読まない。
+    expect(measured.length, '走査が死んでいる (分岐の綴りが変わった?)').toBeGreaterThanOrEqual(10);
+    expect(measured).toEqual(Object.keys(PROXY_WRITES).sort());
+  });
+
+  it('★ 走査の対照: プロキシを使わない分岐は拾わない', () => {
+    const sample = [
+      "if (serviceId === 'aaa' && action === 'bbb') { return ok(await runProxyBearer('aaa', f)); }",
+      "if (serviceId === 'ccc' && action === 'ddd') { return ok(await localOnly(payload)); }",
+      // ★ 型引数が挟まる呼び方も拾う (これを落として notion / slack が消えていた)。
+      "if (serviceId === 'eee' && action === 'fff') { return runProxyBearer<unknown>('eee', f); }",
+      "if (serviceId === 'ggg' && action === 'hhh') { const t = await getProxyTransport(); }",
+      // ★ 1 つの条件が 2 つの action を受ける形 (notion / slack の実物と同じ)。
+      "if (\n  (serviceId === 'iii' && action === 'jjj') ||\n  (serviceId === 'kkk' && action === 'lll')\n) {\n  return runProxyBearer<unknown>(serviceId, f);\n}",
+    ].join('\n');
+    expect(proxyRoutedActions(sample)).toEqual([
+      'aaa/bbb',
+      'eee/fff',
+      'ggg/hhh',
+      'iii/jjj',
+      'kkk/lll',
+    ]);
+  });
+
+  it.each(Object.keys(PROXY_WRITES).sort())('%s に signal が渡る', async (key) => {
+    const [serviceId, action] = key.split('/') as [string, string];
+    const hub = await loadHub();
+    const call = hub.invoke(serviceId, action, PROXY_WRITES[key]!);
+    for (let i = 0; i < 200 && proxySpy.seen.length === 0; i += 1) {
+      await new Promise((r) => setTimeout(r, 5));
+    }
+    expect(
+      proxySpy.seen.length,
+      '送信に到達していない — payload が関門で弾かれたか、経路が変わった (検査が空虚)',
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      proxySpy.seen[0]!.signal,
+      '打ち切りの手段 (AbortSignal) が渡っていない — 素の fetch / 生の transport に戻っている',
+    ).toBeInstanceOf(AbortSignal);
+    expect(proxySpy.seen[0]!.signal?.aborted, 'まだ打ち切られてはいない').toBe(false);
+    void call.catch(() => {});
   });
 });
