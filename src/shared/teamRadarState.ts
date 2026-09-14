@@ -332,6 +332,26 @@ export function readStoredTeamRadar(raw: string | null): StoredTeamRadar {
   try {
     parsed = JSON.parse(raw) as unknown;
   } catch {
+    /*
+     * **`e` を捨てるのは意図である** (2026-09-14 · パス 234 で理由を記録)。
+     *
+     * V8 の `JSON.parse` の文言は**入力を 30 字ほど引用する**。実測:
+     *
+     * ```
+     *   JSON.parse('{"name":"山田太郎","email":"taro@example.com","eval":oops}')
+     *     → Unexpected token 'o', ..."m","eval":oops}" is not valid JSON
+     *   JSON.parse('not json at all: 山田太郎 taro@example.com')
+     *     → Unexpected token 'o', "not json at"... is not valid JSON
+     * ```
+     *
+     * ここが読むのは**利用者の氏名・メールアドレス・評価**が入った保管値なので、
+     * `e.message` をそのまま `reason` に載せると、壊れた保管値の断片が画面の
+     * 注記として刷られる。位置だけの文言 (末尾のごみ) なら無害だが、
+     * **早い位置で失敗すると先頭 30 字が引用される** —— どちらになるかは
+     * 壊れ方で決まるので、**文言は定数に固定する**。
+     *
+     * この定数は検査が**等値で**留めてある (`e.message` に変えると必ず落ちる)。
+     */
     return { kind: 'unreadable', reason: 'JSON として読めません' };
   }
   if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
