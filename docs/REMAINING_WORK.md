@@ -26103,6 +26103,56 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 236 (2026-09-14) — **監査して外れた 6 面。守りの境界は既に閉じていた**
+
+### なぜ書くか
+
+パス 235 が「`?? 既定` は prototype の鍵に発火しない」を直したあと、残作業として
+「走査の範囲は 1 引数の公開関数 × 4 ディレクトリで、`main/` は外」と書いた。
+`main/` は**鍵が本当に外から来る唯一の場所** (IPC は renderer が任意の値を送れる)
+なので、そこを見に行った。**6 面すべて既に閉じていた。** 欠陥は 1 件も無い。
+
+空振りを書き残すのは、**次の周回が同じ 6 面を歩き直さないため**である。
+「どこを既に確かめたか」が残らないと、走査は毎回ゼロから始まる。
+
+### 見た面と判定
+
+| 面 | 判定 | 根拠 |
+|---|---|---|
+| `fetch:snapshot` (IPC) | 閉 | `isServiceId` で絞ったうえ `Object.hasOwn(LIVE_FETCHERS, serviceId)` |
+| `action:invoke` (IPC) | 閉 | `isServiceId` + action の形 (1〜64 字) + `Object.hasOwn(actions, action)` |
+| `oauth:authorize` (IPC) | 閉 | `Object.hasOwn(OAUTH_CONFIGS, serviceId)` |
+| ブラウザ版 `invoke` | 閉 | 表を引かず `serviceId === … && action === …` の比較で分岐する = **汚せる表が無い** |
+| `shellOpenGate` (`shell.openPath` / `showItemInFolder`) | 閉 | `realpath` で実体まで辿ってから閉じ込め・`+ path.sep` で兄弟取り違えを塞ぐ・拡張子は 8 種の許可制で実行され得る物は 1 つも無い・長さ上限・NUL / 改行を解決前に落とす |
+| 画像の沈み先 (`<img src>` / CSS `url()`) | 閉 | 母集団は 3 で完結。`DataList.tsx:76` と `StatusBar.tsx:179` は `safeImageSrc` の戻り、`AssistantPage.tsx:520` は `safeCssUrl`。走査が拾った `url(` 19 件は**全部 `base64url` という関数名**の誤検知 |
+
+ついでに `network/proxy.ts` の SSRF 判定も読んだ: loopback・link-local・
+クラウドメタデータ (169.254.169.254 ほか)・IPv6 の括弧形・末尾ドット・`.local`・
+NAT64 / 6to4・IPv4 射影 IPv6・`https://public.com\@169.254.169.254/` 型の
+資格情報埋め込みによるホスト誤認 —— いずれも明示的に塞いである。
+
+### 自分の誤りの訂正
+
+この周回の途中で「`action:invoke` から `Object.hasOwn` を外しても何も落ちない
+(パス 235 のゲートは `main/` を見ないから)」と判断し、検査を足そうとした。
+**これは誤りだった。** `main/__tests__/mainIpc.test.ts` に
+「プロトタイプ由来の action 名では呼ばない」という検査が既に在り、
+`__proto__` / `constructor` / `toString` / `valueOf` / `hasOwnProperty` の
+5 鍵を action 名として駆動している。しかも**文言まで照合している** ——
+散文がその理由を書いている: 「形の断りは『登録されていません』とは別の文言。
+ここを混ぜると、形の検査を外しても未登録側が拾って同じ code になり、気付けない」。
+`fetch:snapshot` 側も同じ理由で文言を見る。足そうとした不変条件は既に在り、
+**私の計画より筋が通っていた。**
+
+### 残作業 (パス 235 から引き継ぐもの。今回は縮まなかった)
+
+- 総当たりの範囲は **1 引数の公開関数 × 4 ディレクトリ**のまま。
+  画面部品 (`.tsx` の component)・2 引数以上の引き手は依然として外。
+  `main/` は**検査で個別に留まっている**ことが分かったので、
+  ゲートを広げる動機はパス 235 の時点より弱い。
+- 画面の中の表引き 50 件 (`SEVERITY_COLOR[t.severity]` など) は鍵が union で、
+  prototype の鍵が届いても React の子として関数が出るだけ。到達性が見えない。
+
 ## パス 235 (2026-09-14) — **`?? 既定` は prototype の鍵に発火しない — 5 度直した欠陥に、門が無かった**
 
 ### 見つけ方 (パス 234 の隣から、別の軸へ)
