@@ -25,6 +25,25 @@
 
 import { hasControlChar } from './controlChars';
 
+/**
+ * Atlassian の資格情報 JSON の各欄の長さの天井 —— **両ビルドが同じ値を読む。**
+ *
+ * 2026-09-14 まで、この 3 つは main (`clients/atlassian.ts`) だけが持っていた
+ * (`MAX_EMAIL` 254 / `MAX_TOKEN` 1024 / `MAX_SITE` 256)。**理由もそこに書かれていた**
+ * —— 「Length caps prevent multi-MB strings from OOMing the basicAuth Buffer
+ * allocation」。ブラウザ版 (`data/saasWriteWeb.ts`) は email だけ 254 を**手で写し**、
+ * token と site には天井が無く、同じ `btoa(\`${'${email}'}:${'${token}'}\`)` を通していた。
+ *
+ * つまり `normalizeAtlassianSiteResult` (下) を共有した時点で**述語は 1 つになったが、
+ * その周りの欄の検査は片方だけ**だった —— パス 246 / 247 が数えている形そのもの。
+ * 値は main が持っていた物をそのまま動かさずに移し、両方がここを読む。
+ *
+ * これは**安全上限**なので `parameters.ts` の台帳には載せない (CLAUDE.md の規約)。
+ */
+export const MAX_ATLASSIAN_EMAIL = 254;
+export const MAX_ATLASSIAN_TOKEN = 1024;
+export const MAX_ATLASSIAN_SITE = 256;
+
 export type AtlassianSiteFailure = 'control-char' | 'not-a-url' | 'not-https' | 'not-atlassian';
 
 export type AtlassianSiteResult =

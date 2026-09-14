@@ -498,6 +498,39 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
     `setOAuthTokens` は今も `TokenSet` の各欄を検証しない（読み出しで断るので egress は
     閉じたが、保存はできてしまう）。**この形の一般化 —— 「述語は共有したが動作が
     両ビルドで違う」箇所が他に何件あるか —— は測っていない。**
+    （**2026-09-14 · パス 247 で測った**: 21 件。パス 248 でそれをゲート
+    `lint:shared-judgement` にし、読んだ 2 件が両方とも非対称だった → 下の 25。）
+
+25. **共有した述語の「周り」も両ビルドで揃える（Atlassian の欄の天井・Ollama の許可経路）** ——
+    `shared/atlassianSite.ts` の `MAX_ATLASSIAN_EMAIL` / `MAX_ATLASSIAN_TOKEN` /
+    `MAX_ATLASSIAN_SITE` と `main/clients/ollama.ts` の `ALLOWED_ENDPOINTS`
+    （2026-09-14 · パス 248）。上の 24 が見つけた形の母集団 21 件を
+    `lint:shared-judgement`（37 ゲート目）で機械に持たせ、危険の高い順に 3 件読んだ
+    ところ 2 件が非対称だった。
+
+    - **Atlassian**: 送り先ホストを絞る述語（`normalizeAtlassianSiteResult`）は共有して
+      いたのに、**その前段の欄の天井が main にしかなかった** —— main は email 254 /
+      token 1024 / site 256 を見て、ブラウザ版は email だけ（254 を手で写し）。
+      main 側には理由まで書かれていた（「Length caps prevent multi-MB strings from
+      OOMing the basicAuth Buffer allocation」）のに、ブラウザ版も同じ
+      `btoa(email:token)` を通る。**危険度は低い** —— 値は利用者自身の保管庫から来るので
+      第三者への流出経路ではなく、壊れた・巨大な保存値に対する頑丈さの差である。
+      3 つの天井を shared へ移し、両ビルドがそれを読む（**安全上限なので
+      `parameters.ts` の台帳には載せない**）。ついでに、ブラウザ版の既存の検査は
+      `over-long` を名前に持ちながら**測っていたのは email だけ**だった（残り 2 つに
+      測る天井が無かった）ので、境界（ちょうど / +1）を足した。
+    - **Ollama**: 叩いてよい経路の台帳 `OLLAMA_READ_PATHS`（`/api/version` `/api/tags`
+      `/api/chat`）はブラウザ版が `buildOllamaUrl` 経由で読んでいたが、**main は同じ
+      3 本を手で書き写していた**。その写しの上のコメントは危うさを正確に書いており ——
+      `/api/pull` `/api/create` `/api/push` `/api/copy` `/api/delete` `/api/blobs`
+      `/api/upload` は CVE-2024-37032 (Probllama) と CVE-2024-39719/20/21/22 の経路
+      である —— **つまりこの集合そのものが守りの本体**だった。**測った対照**: 台帳に
+      `/api/pull` を足したとき、手写しのままなら既存の検査
+      `refuses every CVE-prone Ollama endpoint` は**通った**（main の門は広がらないが
+      **ブラウザ版の門だけが黙って広がる**）。台帳から組み立てる今の形なら**落ちる**。
+      同ファイルのコメントが言っていた「the currently UNPATCHED out-of-bounds-read」も
+      落とした —— その OOB read は 0.17.1 で修正済みで、**パス 139 が同じ嘘を別の
+      ファイルで直している**。版のことは台帳（`OLLAMA_ADVISORIES`）が持つ。
 
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 

@@ -88,6 +88,7 @@ jobs:
       - run: npm run lint:collection-time
       - run: npm run lint:parameter-prose
       - run: npm run lint:zero-fold
+      - run: npm run lint:shared-judgement
       - run: npm run lint:rate-freshness
       - run: npm run verify:orchestration
       - run: npm run vault:check

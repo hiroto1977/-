@@ -28,6 +28,9 @@ import {
   describeWriteFieldFailure,
 } from '../../shared/writeFieldLimits';
 import {
+  MAX_ATLASSIAN_EMAIL,
+  MAX_ATLASSIAN_SITE,
+  MAX_ATLASSIAN_TOKEN,
   normalizeAtlassianSiteResult,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
@@ -238,7 +241,6 @@ export async function sendSlackMessage(
 // --- Atlassian (Jira): create-issue (CORS ブロック → プロキシ経由) ---------
 // トークンは {email, token, site} の JSON。ブラウザでは btoa で Basic 認証。
 
-const MAX_ATLASSIAN_EMAIL = 254;
 
 interface AtlassianCreds {
   email: string;
@@ -256,8 +258,8 @@ export function parseAtlassianToken(raw: string): AtlassianCreds {
   }
   if (
     typeof obj.email !== 'string' || obj.email.length === 0 || obj.email.length > MAX_ATLASSIAN_EMAIL ||
-    typeof obj.token !== 'string' || obj.token.length === 0 ||
-    typeof obj.site !== 'string' || obj.site.length === 0
+    typeof obj.token !== 'string' || obj.token.length === 0 || obj.token.length > MAX_ATLASSIAN_TOKEN ||
+    typeof obj.site !== 'string' || obj.site.length === 0 || obj.site.length > MAX_ATLASSIAN_SITE
   ) {
     throw new Error('Atlassian トークンの email / token / site が欠けているか不正です');
   }

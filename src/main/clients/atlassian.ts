@@ -1,4 +1,7 @@
 import {
+  MAX_ATLASSIAN_EMAIL,
+  MAX_ATLASSIAN_SITE,
+  MAX_ATLASSIAN_TOKEN,
   normalizeAtlassianSiteResult,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
@@ -34,9 +37,11 @@ interface AtlassianCreds {
  *  caps defend against local-FS tampering that swaps secrets.json
  *  for a payload with multi-MB strings → main process OOM on the
  *  basicAuth Buffer allocation. */
-const MAX_EMAIL = 254;
-const MAX_TOKEN = 1024;
-const MAX_SITE = 256;
+// 天井の値は `shared/atlassianSite.ts` が 1 つだけ持つ (ブラウザ版も同じ物を読む)。
+// 既存の綴りは残す —— 下の条件式 3 本とその検査がこの名前を使っている。
+const MAX_EMAIL = MAX_ATLASSIAN_EMAIL;
+const MAX_TOKEN = MAX_ATLASSIAN_TOKEN;
+const MAX_SITE = MAX_ATLASSIAN_SITE;
 
 export function parseAtlassianToken(raw: string): AtlassianCreds {
   let parsed: unknown;

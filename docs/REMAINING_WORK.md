@@ -26103,6 +26103,167 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 248 (2026-09-14) — **パス 247 の 21 を機械に持たせ、そのついでに読んだ 2 件が両方とも非対称だった**
+
+パス 247 は「この 21 を散文に書いただけでは腐る (パス 85 / 95 で 2 度やった)」と書いて
+終わっていた。その一手 —— 母集団を生成ブロックにするゲート —— を入れ、**入れるついでに
+危険の高い順で 2 件読んだ。2 件とも非対称で、2 件とも直した。**
+
+### 1. ゲート `lint:shared-judgement` (36 → 37 ゲート)
+
+`scripts/shared-judgement-census.cjs`。`lint:zero-fold` と同じ形で、
+`docs/REMAINING_WORK.md` の生成ブロックに件数と顔ぶれを書き出す。実測:
+
+```
+src/shared/ のモジュール                                        138
+  両ビルド (src/main + src/renderer) が import しているもの        44
+    うち export が否定で答えられるもの (null / false / ok:false)   21
+      うち未読                                                   13
+```
+
+(内訳はパス 247 の 16 件 —— 17 件のうち `externalUrlGate` はパス 241 で閉じている ——
+から、このパスで読んだ 3 件 `ollama` / `atlassianSite` / `httpLimits` を引いた数。
+`talent` は「パス 121 が両ビルドを同じ関数へ寄せた」記録が在るが、
+**否定の枝そのものは読んでいない**ので未読に数える —— 「寄せたのだから対称だろう」は
+パス 246 で外れた推論である。)
+
+**台帳は両方向に鳴る** —— 母集団に入ったのに `VERDICTS` に無ければ落ち、`VERDICTS`
+に在るのに母集団から消えても落ちる。片方向だとパス 117 の形 (台帳の鍵だけを見て
+登録漏れを見落とす) に戻る。走査の生死の床も置いた (110 / 34 / 16)。
+
+**走査そのものの対照**として、self-test に「`vaultToken` が母集団に在るか」を入れた ——
+パス 247 の初版 (シンボル単位) はこれを落としており、それが走査を書き直した理由である。
+モジュール単位へ戻すとこの 1 行が落ちるので、退行が鳴る。
+
+判断は機械化していない。**対称かどうかは読まないと決まらない** —— だから台帳の値は
+「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
+
+<!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
+shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **21**（うち未読 **13**）。これは分母であって欠陥の一覧ではない。
+
+| shared モジュール | main | renderer | 判定 |
+| --- | ---: | ---: | --- |
+| `advisorQuestionLimits` | 2 | 4 | 未読 (AI へ送る入力の天井) |
+| `api/cursor` | 1 | 1 | 未読 (Bearer を載せる egress) |
+| `assistantLimits` | 3 | 5 | 未読 (AI へ送る入力の天井) |
+| `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
+| `emotionsLimits` | 1 | 5 | 未読 (AI へ送る入力の天井) |
+| `eraseReport` | 2 | 3 | 未読 (消去の報告) |
+| `externalUrlGate` | 1 | 1 | 閉じている (パス 241 で 3 経路を実測) |
+| `freeeIntake` | 1 | 5 | 未読 (取り込みの取りこぼし) |
+| `funding` | 1 | 1 | 未読 (計算の判定) |
+| `httpLimits` | 4 | 5 | 対称 (部分実測・パス 248) —— 呼び出し側の網は main だけ |
+| `hydroponicsControl` | 1 | 5 | 未読 (計算の判定) |
+| `isoDate` | 2 | 23 | 未読 (日付の読み取り) |
+| `ollama` | 1 | 4 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
+| `radarPlot` | 1 | 2 | 未読 (作図) |
+| `scanTarget` | 1 | 2 | 対称 (実測・パス 247) |
+| `serviceAdvisor` | 4 | 4 | 未読 (助言の生成) |
+| `talent` | 1 | 3 | 未読 (パス 121 が両ビルドを同じ `readStoredTalent` へ寄せているが、否定の枝そのものは未確認 —— 「寄せたのだから対称だろう」はパス 246 で外れた推論なので、読むまで未読と書く) |
+| `tokenInput` | 2 | 4 | 閉じている (パス 245 で両ビルドの保管層に床) |
+| `updateCheck` | 1 | 2 | 未読 (更新確認の egress) |
+| `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
+| `writeFieldLimits` | 11 | 12 | 対称 (実測・パス 247) |
+<!-- shared-judgement-census:end -->
+
+### 2. ★ `ollama` —— 許可する経路の台帳を、読んでいるのはブラウザ版だけだった
+
+どの Ollama API を叩いてよいかは `src/shared/ollama.ts` の `OLLAMA_READ_PATHS`
+(`/api/version` `/api/tags` `/api/chat`) が持つ。ブラウザ版は `buildOllamaUrl` →
+この台帳で門にしていた。**main (`clients/atlassian.ts` ではなく `clients/ollama.ts`) は
+同じ 3 本を手で書き写していた。**
+
+```
+  shared    OLLAMA_READ_PATHS = ['/api/version','/api/tags','/api/chat']   ← 台帳
+  renderer  buildOllamaUrl(base, path) が台帳を読む                         ← 読んでいる
+  main      ALLOWED_ENDPOINTS = new Set([`${BASE}/api/version`, …])         ← 手写し
+```
+
+この写しの上のコメントは、危うさを正確に書いていた ——
+`/api/pull` `/api/create` `/api/push` `/api/copy` `/api/delete` `/api/blobs`
+`/api/upload` は CVE-2024-37032 (Probllama) と CVE-2024-39719/20/21/22 の経路である。
+つまり**この 3 本という集合が守りの本体**であり、それが 2 か所に別々に書かれていた。
+
+**測った対照 (両方向・パス 248 で実測):**
+
+| やったこと | 結果 |
+|---|---|
+| 台帳に `/api/pull` を足す・main は**手写しのまま** | 既存の検査 `refuses every CVE-prone Ollama endpoint` は **通った** —— main の門は広がらないが、**ブラウザ版の門だけが黙って広がる**。どの検査も鳴らない |
+| 台帳に `/api/pull` を足す・main は**台帳から組み立てる** (今回の直し) | 同じ検査が **落ちる** (4 件) |
+
+直したのは 1 行 (`ALLOWED_ENDPOINTS` を `OLLAMA_READ_PATHS.map(...)` にする) で、
+足したのは検査 4 件 —— 台帳の全経路が main 側で許されること・台帳に無い経路は
+両ビルドで落ちること (前提つき)・`buildOllamaUrl` と `isAllowedEndpoint` が同じ答えを
+出すこと・**台帳は今日 3 本**であること (増えた日に鳴る合図)。
+
+ついでに、同じファイルのコメント 2 か所が言っていた
+「the currently UNPATCHED out-of-bounds-read」を落とした —— その OOB read は
+0.17.1 で修正済みで、**パス 139 が同じ嘘を別のファイルで直している**。
+版のことは台帳 (`OLLAMA_ADVISORIES`) が持つので、コメントに書くと修正版が出た日に
+そこだけ古びる。
+
+### 3. ★ `atlassianSite` —— 述語は共有したが、その周りの欄の天井が main にしか無かった
+
+`normalizeAtlassianSiteResult` (https + `*.atlassian.net` に絞る・ホスト名から組み直す)
+は両ビルドが共有している。**その前段の欄の検査が非対称だった:**
+
+| 欄 | main (`clients/atlassian.ts`) | ブラウザ版 (`data/saasWriteWeb.ts`) |
+|---|---|---|
+| email | `> MAX_EMAIL` (254) | `> MAX_ATLASSIAN_EMAIL` (254 を**手で写した**) |
+| token | `> MAX_TOKEN` (1024) | **天井なし** |
+| site | `> MAX_SITE` (256) | **天井なし** |
+
+しかも main 側には**理由まで書いてあった** ——
+「Length caps prevent multi-MB strings from OOMing the basicAuth Buffer allocation」。
+ブラウザ版も同じ `btoa(\`${email}:${token}\`)` を通る。**危険度は低い**
+(値は自分の保管庫から来るので、これは第三者に資格情報が渡る穴ではなく、
+壊れた・巨大な保存値に対する頑丈さの差である) —— が、
+「述語だけ共有して周りは写す」というまさにこの形で、片方が弱い。
+
+3 つの天井を `shared/atlassianSite.ts` に移し、両ビルドがそれを読む
+(値は main が持っていた物のまま。**安全上限なので `parameters.ts` には載せない** ——
+CLAUDE.md の規約)。
+
+**このとき見つけたもう 1 つ**: ブラウザ版の既存の検査は
+`rejects each missing/empty/over-long/non-string field individually` という名前なのに、
+**over-long を測っていたのは email だけ**だった (token と site には測る天井が無かった)。
+名前が中身より広い検査で、これは「不在を主張する検査には標本を添える」の裏側の形である。
+境界 (ちょうど / +1) を token と site にも足した。
+
+**測った対照:** ブラウザ版の token の天井を外すと、足した検査が落ちる (1 件)。
+
+### 4. 読んだ結果 —— `httpLimits` は対称だが、呼び出し側の網が片方にしか無い
+
+`httpLimits` (応答サイズ・締切) は危険の高い順で 1 番目に挙げていた物。読んだ結果:
+`readBodyWithCap` / `isOverCap` / `withBodyDeadline` は両ビルドが同じ物を通しており、
+断りの翻訳も両方に在る (main の `FetchError` / ブラウザ版の `kind: 'too-large'`)。
+**述語も断りも対称。**
+
+ただし限界が 1 つ在り、これは残作業として書く ——
+`httpLimits` の注記自身が「中心の口に守りを入れても、**その口を使っていない経路**は
+守られない。実装側からは見えないので**呼び出し側から測るしかない**」と書いていて、
+その**呼び出し側から測る網は main にしか無い** (`main/clients/__tests__/fetchTimeouts.test.ts`)。
+ブラウザ版に同じ網は無い (実測: `src/renderer/**/__tests__` で
+`readBodyWithCap|withBodyDeadline|withTimeout` に触れるのは 2 ファイルだけで、
+どちらも「その関数の検査」であって「全経路が通っているかの網」ではない)。
+
+### 読んでいない 13 件
+
+`advisorQuestionLimits` `api/cursor` `assistantLimits` `emotionsLimits` `eraseReport`
+`freeeIntake` `funding` `hydroponicsControl` `isoDate` `radarPlot` `serviceAdvisor`
+`talent` `updateCheck` —— 台帳 (`VERDICTS`) に `未読` として載っており、母集団から落ちたり
+黙って増えたりすればゲートが鳴る。危険の高い順で残っているのは
+`api/cursor` (Bearer を載せる egress) → `updateCheck` (egress) →
+`assistantLimits` / `advisorQuestionLimits` / `emotionsLimits` (AI へ送る入力の天井)。
+
+### 次の一手
+
+ブラウザ版に**呼び出し側から測る網** (上の 4) を作る。main の
+`fetchTimeouts.test.ts` と同じ形で、`src/renderer` の `fetch(` を呼ぶ経路を列挙して
+「締切と上限を通しているか」を数える。これは `httpLimits` の注記が
+「実装側からは見えない」と言っている物そのもので、**片方にしか無い網は
+片方しか守らない**。
+
 ## パス 247 (2026-09-14) — **「述語は共有したが、no のあとの動作が両ビルドで違う」の母集団を初めて数えた (21 件・うち 4 件を読んだ)**
 
 パス 246 の残件「この形の一般化を測っていない」を測った。**数だけ出して判断は散文が持つ**

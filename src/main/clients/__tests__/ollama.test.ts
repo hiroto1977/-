@@ -8,7 +8,13 @@ import {
   MIN_SAFE_VERSION,
   ACTIONS,
 } from '../ollama';
-import { OLLAMA_ADVISORIES_VERIFIED_ON, advisoryLedgerNotice } from '../../../shared/ollama';
+import {
+  OLLAMA_ADVISORIES_VERIFIED_ON,
+  OLLAMA_READ_PATHS,
+  advisoryLedgerNotice,
+  buildOllamaUrl,
+  type OllamaReadPath,
+} from '../../../shared/ollama';
 import { FetchError } from '../types';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
@@ -765,7 +771,7 @@ describe('ACTIONS["chat"]', () => {
   });
 });
 
-// --- endpoint allowlist (defense-in-depth against the unpatched OOB read)
+// --- endpoint allowlist (defense-in-depth against the endpoints in OLLAMA_ADVISORIES)
 
 describe('isAllowedEndpoint', () => {
   it('permits /api/version, /api/tags, /api/chat on 127.0.0.1:11434', () => {
@@ -793,6 +799,67 @@ describe('isAllowedEndpoint', () => {
   it('refuses path-traversal attempts past the base URL', () => {
     expect(isAllowedEndpoint('http://127.0.0.1:11434/api/chat/../pull')).toBe(false);
     expect(isAllowedEndpoint('http://127.0.0.1:11434/api/version?x=1')).toBe(false);
+  });
+});
+
+/**
+ * **許可表は台帳から組み立てる (写しではない)。**
+ *
+ * 2026-09-14 まで、main は `/api/version` `/api/tags` `/api/chat` の 3 本を
+ * **手で書き写して** `ALLOWED_ENDPOINTS` を作っていた。ブラウザ版は
+ * `buildOllamaUrl` → `OLLAMA_READ_PATHS` で同じ 3 本を**台帳から**見ていた。
+ * つまり台帳を 1 本増やせば**ブラウザ版の門だけが広がり**、main の写しに足せば
+ * **台帳とブラウザ版が知らないまま main だけが広がる** —— そしてどちらの向きでも
+ * 既存の検査は 1 つも鳴らなかった (両方が同じ 3 本を独立に literal で留めていたため)。
+ *
+ * 台帳の危うさは注記が書いているとおり: `/api/pull` `/api/create` `/api/push`
+ * `/api/copy` `/api/delete` `/api/blobs` `/api/upload` は CVE-2024-37032
+ * (Probllama) と CVE-2024-39719/20/21/22 の経路である。
+ */
+describe('endpoint 許可表は shared の台帳 (OLLAMA_READ_PATHS) から組み立てる', () => {
+  it('★ 台帳の全経路が main 側で許される (走査の生死つき)', () => {
+    // 台帳が空になったら「全部許される」が真空で通る。母集団の床を先に置く。
+    expect(OLLAMA_READ_PATHS.length).toBeGreaterThan(0);
+    for (const apiPath of OLLAMA_READ_PATHS) {
+      expect(isAllowedEndpoint(`http://127.0.0.1:11434${apiPath}`)).toBe(true);
+    }
+  });
+
+  it('★ 台帳に無い経路は main 側でも許されない (前提つき)', () => {
+    const notInLedger = [
+      '/api/pull',
+      '/api/create',
+      '/api/push',
+      '/api/copy',
+      '/api/delete',
+      '/api/blobs',
+      '/api/upload',
+      '/api/generate',
+      '/api/embeddings',
+      '/api/ps',
+      '/',
+    ];
+    for (const apiPath of notInLedger) {
+      // 前提: この経路は本当に台帳の外か。台帳に入った日はここが鳴る。
+      expect(OLLAMA_READ_PATHS as readonly string[]).not.toContain(apiPath);
+      expect(isAllowedEndpoint(`http://127.0.0.1:11434${apiPath}`)).toBe(false);
+    }
+  });
+
+  it('★ ブラウザ版の門 (buildOllamaUrl) と同じ台帳で同じ答えになる', () => {
+    for (const apiPath of OLLAMA_READ_PATHS) {
+      const url = `http://127.0.0.1:11434${apiPath}`;
+      expect(buildOllamaUrl('http://127.0.0.1:11434', apiPath)).toBe(url);
+      expect(isAllowedEndpoint(url)).toBe(true);
+    }
+    // 対照: 台帳の外は両方で落ちる (main は false、ブラウザ版は null)。
+    const danger = '/api/pull' as OllamaReadPath;
+    expect(buildOllamaUrl('http://127.0.0.1:11434', danger)).toBeNull();
+    expect(isAllowedEndpoint(`http://127.0.0.1:11434${danger}`)).toBe(false);
+  });
+
+  it('台帳は今日 3 本 — 増えたらこの行が鳴り、両ビルドの門を読み直す合図になる', () => {
+    expect([...OLLAMA_READ_PATHS]).toEqual(['/api/version', '/api/tags', '/api/chat']);
   });
 });
 

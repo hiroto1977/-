@@ -838,7 +838,10 @@ const KNOWN_SUPPRESSIONS = [
   // TS の helper (`localIsoDate`) を .cjs から import できないのは orchestrate.cjs と同じ。
   '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/dependency-audit-report.cjs :: 1',
   'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
-  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
+  // 2026-09-14 (パス 248): 3 → 2。許可表を `OLLAMA_READ_PATHS` から組み立てるようにした際、
+  // ヘッダの docblock が同じ経路名を**もう一度**並べていたのをやめた —— 2 か所で数え上げても
+  // 守りは増えず、抑止する字面が増えるだけである。今の 2 行はどちらも `ALLOWED_ENDPOINTS` の注記。
+  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 2',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
   // 2026-09-09 (パス 139): 3 → 8。脆弱性の台帳 OLLAMA_ADVISORIES の要約 5 行が「呼ばない口」の名前を
   // 事実として書く (Probllama = /api/pull、CVE-2024-39719/39721 と CVE-2026-7482 = /api/create、

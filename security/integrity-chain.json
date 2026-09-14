@@ -1602,10 +1602,18 @@
       "leafCount": 71,
       "note": "update secrets.ts,vaultToken.ts",
       "hash": "a4581b8db1377e1b9cbb4008a92fdc1b16c26737557a7d3a6cefd34a51594252"
+    },
+    {
+      "index": 191,
+      "prevHash": "a4581b8db1377e1b9cbb4008a92fdc1b16c26737557a7d3a6cefd34a51594252",
+      "merkleRoot": "b8a80c2a515f4d131c9f6c85ed78b5a7609e56704d3c8dcc5b9d4d5089d64733",
+      "leafCount": 71,
+      "note": "update ci.yml,atlassianSite.ts",
+      "hash": "7e915fc8f9d06c05e8f8c4ac5984d1ac1728f052987d614cdf3d139b99bc36fb"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "c750cdaa3344323f22ca2e3c397f692048615905e3e449641a3faa852ad4affd",
+    ".github/workflows/ci.yml": "dfac9051e35662e61d446a5bcd4d74218ee1d3423fdc56034edf84c44c897d7f",
     ".github/workflows/pages.yml": "3b3202789c03c79a7d55129027327cd52f0ad3189ebf2c2478af09a5c98f2a39",
     ".github/workflows/release.yml": "3201579d407a46e557d38566e288de8e8740d38679eff02e313c8dcfeb12e7d9",
     "assets/manifest.webmanifest": "598731c94b6a5cf47d332df053afde8f8918423ea4c7194bb79d5cdff1cdddcc",
@@ -1660,7 +1668,7 @@
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
-    "src/shared/atlassianSite.ts": "5810fde838f479ba095ec4dad9774020ee87c6e980bf7bff4a3c61bb2c4c0b90",
+    "src/shared/atlassianSite.ts": "e0876c488724b6a8c6998adda2a813c31c019c35f99fac627890c2f91a5fd78f",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "0fe808ee71235f71deaf24200a910b87039adf30ac73325084843490bdaad2f1",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",

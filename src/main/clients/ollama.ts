@@ -6,9 +6,12 @@
  *   - URL pinned to http://127.0.0.1:11434 — cannot be reconfigured at
  *     runtime even via a compromised renderer, so the IPC channel can
  *     never trick main into hitting a different host.
- *   - Only the read endpoints we need: /api/version, /api/tags, /api/chat.
- *     The dangerous ones (/api/pull, /api/create, /api/push) are
- *     deliberately NEVER called from this client.
+ *   - Only the read endpoints the shared ledger permits
+ *     (`OLLAMA_READ_PATHS` in src/shared/ollama.ts — the same ledger the
+ *     browser build gates on). The CVE-prone write endpoints are not in it,
+ *     so they are refused at the fetch boundary. They are enumerated once,
+ *     at `ALLOWED_ENDPOINTS` below — listing them twice adds forbidden
+ *     spellings for lint:forbidden to suppress without adding any defence.
  *   - Strict model-name validation (no path traversal in `model:` field).
  *   - Hard request timeout (30s) via AbortController.
  *   - Response body truncated to MAX_RESPONSE_BYTES.
@@ -30,6 +33,7 @@ import {
   MAX_OLLAMA_PROMPT_CHARS,
   MAX_OLLAMA_SYSTEM_CHARS,
   MIN_SAFE_VERSION,
+  OLLAMA_READ_PATHS,
   adviseFromBody,
   buildWarnings,
   compareVersions,
@@ -54,19 +58,28 @@ const REQUEST_TIMEOUT_MS = 30_000;
 // **揃えるか、違う理由を書くか**は、どちらが正しいか分かる人が決めること。
 const MAX_RESPONSE_BYTES = 10 * 1024 * 1024; // 10 MB
 
-/** Hard allowlist of Ollama endpoints this client is permitted to touch.
- *  Enforced at the fetch boundary so that even an accidental future
- *  call to /api/pull, /api/create, /api/push, /api/copy, /api/delete,
- *  /api/blobs, or /api/upload is refused at runtime — these are the
- *  endpoints implicated in CVE-2024-37032 (Probllama) and the
- *  CVE-2024-39719/20/21/22 quartet, and they are also the attack
- *  vector for the currently UNPATCHED out-of-bounds-read in Ollama's
- *  model / engine file parser. We never need them for snapshot+chat. */
-const ALLOWED_ENDPOINTS = new Set<string>([
-  `${OLLAMA_BASE}/api/version`,
-  `${OLLAMA_BASE}/api/tags`,
-  `${OLLAMA_BASE}/api/chat`,
-]);
+/**
+ * Hard allowlist of Ollama endpoints this client is permitted to touch.
+ * Enforced at the fetch boundary so that even an accidental future call to
+ * /api/pull, /api/create, /api/push, /api/copy, /api/delete, /api/blobs or
+ * /api/upload is refused at runtime — those are the endpoints implicated in
+ * CVE-2024-37032 (Probllama), the CVE-2024-39719/20/21/22 quartet and the
+ * model / engine file-parser bugs listed in `OLLAMA_ADVISORIES`
+ * (`src/shared/ollama.ts`). Snapshot + chat never need them.
+ *
+ * **どの経路を許すかは `OLLAMA_READ_PATHS` (shared) が 1 つだけ持つ。**
+ * 2026-09-14 まで、ここは同じ 3 本を**手で書き写して**いた —— ブラウザ版は
+ * `parseOllamaEndpoint` を通して台帳を読み、こちらは読んでいなかったので、
+ * 台帳に 1 本足せば片方の門だけが広がり (逆も同じ)、**どちらの検査も鳴らない**。
+ * 綴りを写すのをやめて台帳から組み立てる。ここは base が固定なので、
+ * 台帳の相対パスを 1 つの base に付けるだけでよい。
+ *
+ * (`OLLAMA_ADVISORIES` の版は台帳が持つ。ここに「未修正」と書くと、
+ * 修正版が出た日にこのコメントだけが古びる —— 実際に 1 度そうなった。)
+ */
+const ALLOWED_ENDPOINTS = new Set<string>(
+  OLLAMA_READ_PATHS.map((apiPath) => `${OLLAMA_BASE}${apiPath}`),
+);
 
 export function isAllowedEndpoint(url: string): boolean {
   return ALLOWED_ENDPOINTS.has(url);

@@ -18,6 +18,11 @@ import {
   parseSecurityKeys,
   checkEmailBreach,
 } from '../saasWriteWeb';
+import {
+  MAX_ATLASSIAN_EMAIL,
+  MAX_ATLASSIAN_SITE,
+  MAX_ATLASSIAN_TOKEN,
+} from '../../../shared/atlassianSite';
 
 function jsonResponse(status: number, body: unknown): Response {
   return {
@@ -301,11 +306,38 @@ describe('parseAtlassianToken', () => {
     expect(() => parseAtlassianToken(JSON.stringify({ ...ok, site: 7 }))).toThrow(/欠けている|不正/);
     // ちょうど上限 (254) は許容、超過 (255) は拒否 (境界)。
     const at254 = 'a'.repeat(252) + '@b'; // length 254
-    expect(at254.length).toBe(254);
+    // 254 は台帳の値。ここに数字を写しているので、台帳と一致することを先に言う。
+    expect(MAX_ATLASSIAN_EMAIL).toBe(254);
+    expect(at254.length).toBe(MAX_ATLASSIAN_EMAIL);
     expect(parseAtlassianToken(JSON.stringify({ ...ok, email: at254 })).email).toBe(at254);
     const at255 = 'a'.repeat(253) + '@b';
     expect(at255.length).toBe(255);
     expect(() => parseAtlassianToken(JSON.stringify({ ...ok, email: at255 }))).toThrow(/欠けている|不正/);
+  });
+
+  /**
+   * ★ この上の検査の名前は「over-long」と言うが、**測っていたのは email だけ**だった
+   * (2026-09-14 · パス 248)。token と site には天井が**無かった**ので測る物が無く、
+   * main (`clients/atlassian.ts`) はどちらも持っていて理由まで書いていた ——
+   * 「Length caps prevent multi-MB strings from OOMing the basicAuth Buffer allocation」。
+   * こちらも同じ `btoa(email:token)` を通す。天井は `shared/atlassianSite.ts` に 1 つ。
+   */
+  it('★ token と site にも天井が在り、境界で切り替わる (main と同じ値)', () => {
+    const ok = { email: 'a@b', token: 't', site: 'https://x.atlassian.net' };
+
+    const tokenAtCap = 'k'.repeat(MAX_ATLASSIAN_TOKEN);
+    expect(parseAtlassianToken(JSON.stringify({ ...ok, token: tokenAtCap })).token).toBe(tokenAtCap);
+    const tokenOver = 'k'.repeat(MAX_ATLASSIAN_TOKEN + 1);
+    expect(() => parseAtlassianToken(JSON.stringify({ ...ok, token: tokenOver }))).toThrow(/欠けている|不正/);
+
+    // site はホスト名から組み直されるので、天井ちょうどでも通ることを実際の綴りで確かめる。
+    const host = 'h'.repeat(MAX_ATLASSIAN_SITE - 'https://'.length - '.atlassian.net'.length);
+    const siteAtCap = `https://${host}.atlassian.net`;
+    expect(siteAtCap.length).toBe(MAX_ATLASSIAN_SITE);
+    expect(parseAtlassianToken(JSON.stringify({ ...ok, site: siteAtCap })).site).toBe(siteAtCap);
+    const siteOver = `https://${host}x.atlassian.net`;
+    expect(siteOver.length).toBe(MAX_ATLASSIAN_SITE + 1);
+    expect(() => parseAtlassianToken(JSON.stringify({ ...ok, site: siteOver }))).toThrow(/欠けている|不正/);
   });
   it('rejects control chars in email or token (exact message)', () => {
     expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b\n', token: 't', site: 'https://x.atlassian.net' }))).toThrow(
