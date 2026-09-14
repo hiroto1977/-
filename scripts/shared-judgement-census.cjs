@@ -70,7 +70,11 @@ const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
  * それは判断ではなく願望である (パス 247 の方針)。
  */
 const VERDICTS = {
-  advisorQuestionLimits: '未読 (AI へ送る入力の天井)',
+  advisorQuestionLimits:
+    '対称 (実測・パス 251) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / '
+    + "control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、"
+    + 'ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、'
+    + 'その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った',
   'api/cursor':
     '対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び '
     + '(main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の '

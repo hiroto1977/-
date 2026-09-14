@@ -26103,6 +26103,82 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 251 (2026-09-14) — **断る理由は 3 つ全部扱われていた。断りの「言語」が両ビルドで割れていて、それが画面に出る (母集団 118)**
+
+未読 11 件のうち AI へ送る入力の天井から `advisorQuestionLimits` を読んだ。
+
+### `advisorQuestionLimits` — 理由の扱いは対称 (実測)
+
+`checkAdvisorQuestion` は 3 つの理由を返す (`empty` / `too-long` / `control-chars`)。
+**呼ぶ所 3 つすべてが 3 つとも 1 つずつ扱っている** —— パス 246 の形
+(「述語は共有したが no のあとが片方だけ」) には**なっていない**:
+
+| 呼ぶ所 | empty | too-long | control-chars |
+|---|---|---|---|
+| `main/clients/stocks.ts:1245` | ✓ | ✓ | ✓ |
+| `main/clients/business.ts:635` | ✓ | ✓ | ✓ |
+| `renderer/web-shim.ts:519` | ✓ | ✓ | ✓ |
+
+### ★ ただし、同じ断りが**言語ごと**に割れている
+
+```
+  ブラウザ版   err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`)
+  main         throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`)
+```
+
+**main の文字列は画面に出る。** `main.ts:482` の action invoke は
+`catch (err) { return { ok: false, code: 'action_failed', message: safeErrorMessage(err) } }`
+で、`safeErrorMessage` (`shared/redact.ts`) は**秘密を隠して長さを切るだけ**で、
+文面はそのまま通す。つまり**日本語向けのアプリで、同じ入力間違いが
+ブラウザ版では日本語・デスクトップ版では英語で説明される。**
+
+### 母集団を測った —— 118 件 (これは分母であって欠陥の一覧ではない)
+
+```
+  src/main/clients/** の throw / new FetchError の文面          147
+    うち CJK を 1 文字も含まないもの (= 英語)                   118
+
+      stocks.ts    37/37      templates.ts  5/5     slack.ts        2/2
+      business.ts  25/25      security.ts   4/5     types.ts        2/5
+      shopify.ts   21/21      skills.ts     3/3     gmail / index /
+      ollama.ts     7/7       cloudflare.ts 2/2     microsoft-365  各 1
+      emotions.ts   6/7
+```
+
+**対照として、main の中でも揃っていない**: `clients/atlassian.ts` は
+`new FetchError('Atlassian token の email / token / site が欠けているか、形式が不正です')`
+と**日本語で**投げる。つまり main の中に 2 つの流儀が在る。
+
+**判断は読まないと決まらない。** 118 件には
+
+- **利用者の入力に対する断り** (上の advisor の 6 件はここ。画面に出て、
+  利用者が直せる) と
+- **開発者向けの内部ガード** (`universe entry has unsafe symbol` のように、
+  壊れた payload や renderer の不具合でしか起きない)
+
+の両方が混ざっており、後者を日本語にしても誰も得をしない。
+**どちらかは 1 件ずつ読むまで決まらない**ので、ここでは数だけ出す。
+
+**明文の方針は無い** (実測: `docs/` と CLAUDE.md に文面の言語についての規約は
+0 件)。だから「規約違反」ではなく「**決めていない**」が正しい書き方である。
+
+### 次の一手
+
+118 件を「利用者の入力への断り」と「内部ガード」に分け、前者だけを共有の
+文面へ寄せる (パス 246 の `brokenStoredCredentialMessage` と同じ形)。
+分ける基準の候補: **その action の payload から到達できるか** ——
+`checkWriteFields` / `checkAdvisorQuestion` のような入力の関門が返した理由に
+由来する文面は前者、型ガード (`isSafeSymbol` / `isBusinessCategoryId` など) に
+由来する文面は後者。この分類自体を機械が数えられる形にできるなら、
+`lint:shared-judgement` と同じく生成ブロックにする。
+
+### 未読 10 件
+
+`assistantLimits` `emotionsLimits` `eraseReport` `freeeIntake` `funding`
+`hydroponicsControl` `isoDate` `radarPlot` `serviceAdvisor` `talent`。
+
+このパスは台帳と文書だけ (製品コード・検査の変更なし)。
+
 ## パス 250 (2026-09-14) — **未読 13 件のうち危険の高い 2 件を読んだ (どちらも対称・ただし締切の値だけ割れていた)**
 
 `lint:shared-judgement` の未読 13 件を危険の高い順に当たる。今回は egress の 2 件。
@@ -26289,11 +26365,11 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **21**（うち未読 **11**）。これは分母であって欠陥の一覧ではない。
+shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **21**（うち未読 **10**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
-| `advisorQuestionLimits` | 2 | 4 | 未読 (AI へ送る入力の天井) |
+| `advisorQuestionLimits` | 2 | 4 | 対称 (実測・パス 251) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った |
 | `api/cursor` | 1 | 1 | 対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の 消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `assistantLimits` | 3 | 5 | 未読 (AI へ送る入力の天井) |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
