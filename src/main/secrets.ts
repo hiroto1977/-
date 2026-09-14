@@ -4,7 +4,9 @@ import path from 'node:path';
 import type { ServiceId } from '../shared/serviceId';
 import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../shared/tokenInput';
 import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
-import { brokenStoredCredentialMessage, hasUsableAccessToken } from '../shared/vaultToken';
+import {
+  brokenStoredCredentialMessage, checkTokenSetForStorage, hasUsableAccessToken,
+} from '../shared/vaultToken';
 import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
 
 const FILE_NAME = 'service-hub-secrets.json';
@@ -426,8 +428,25 @@ function isTokenSet(parsed: unknown): parsed is TokenSet {
   return hasUsableAccessToken(parsed);
 }
 
+/**
+ * OAuth の TokenSet を保存する。**書く前に見る** (2026-09-14 ・ パス 259)。
+ *
+ * この関数は `secrets:set` の IPC ハンドラを**経由しない**ので
+ * (上の `setToken` の注記が名指している)、`checkTokenInput` の天井も
+ * 制御文字の関門もかかっていなかった。中身は認可サーバの応答本文で、
+ * `oauth.ts` の `JSON.parse(…) as TokenResponse` は型を名乗るだけで何も見ない。
+ *
+ * 判定は共有の `checkTokenSetForStorage` 1 つ (理由と実測はそちら)。
+ * **切らずに投げる** —— 切ると壊れた資格情報が保存されてしまうし、
+ * 呼び出し側 2 つはどちらも catch を持っているので投げる方が正しく伝わる:
+ * 接続の経路 (`main.ts`) は `authorize_failed` として画面に出し、
+ * 更新の経路 (`getValidToken`) は**既存の良いトークンを上書きせず**に済ませる。
+ */
 export async function setOAuthTokens(serviceId: ServiceId, tokens: TokenSet): Promise<void> {
-  await setToken(serviceId, JSON.stringify(tokens));
+  const check = checkTokenSetForStorage(tokens);
+  if (!check.ok) throw new Error(check.message);
+  // 測った文字列そのものを渡す (もう 1 度 stringify しない)。
+  await setToken(serviceId, check.serialized);
 }
 
 export async function getOAuthTokens(serviceId: ServiceId): Promise<TokenSet | null> {

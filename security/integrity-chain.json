@@ -1642,6 +1642,14 @@
       "leafCount": 71,
       "note": "update migrate.sh",
       "hash": "9da7169a68d4522e0146dfb91f887f190fbbd9d29e13e8f557982ed464ad29ed"
+    },
+    {
+      "index": 196,
+      "prevHash": "9da7169a68d4522e0146dfb91f887f190fbbd9d29e13e8f557982ed464ad29ed",
+      "merkleRoot": "18f586e7be21a7e162c4cf5ded892256d3ba27172cbcfa35670524e1fd25c63d",
+      "leafCount": 71,
+      "note": "update secrets.ts,vaultToken.ts",
+      "hash": "366767004bfcda84e2e0dbeb8f0d46b8b854bebdd1359c83706ebec7bcb6955d"
     }
   ],
   "tipManifest": {
@@ -1675,7 +1683,7 @@
     "src/main/eraseAll.ts": "cd9f8c1a01b64330f62f27d27ba14083c342f27452e20c95ae4f37d03358dbaa",
     "src/main/main.ts": "6ca3bb1be7c51e9bbb0d9edf883090c066b16436cec146a07d3c0d2b4898f3d3",
     "src/main/oauth.ts": "3d3e5b5516b44f9da1a7449e194adeae0dd42575c89a3b8a56cd10f4f44c345f",
-    "src/main/secrets.ts": "bfea8c34ab0dcc57da2e58c77a8e9166c61cda110146f390fbbeed8122d5a601",
+    "src/main/secrets.ts": "be9459125976403b0c23444b53c7da21b80502768c24cecc337122529b006ef4",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "6985953d4e8253f5ece972ac22e5294c8aaa64293d7ff2e57e80dc21411aa667",
     "src/renderer/data/assistantMarkdown.ts": "7d08dc362233f8ca3d52257e84c2bd6c95ad34d3ea97d5208359aa730d969d6b",
@@ -1715,6 +1723,6 @@
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
     "src/shared/scanTarget.ts": "354916a61ce7cc7711931754c916ec813bd32be3b88de6908414a3ad2d9e6ded",
     "src/shared/tokenInput.ts": "6249a157a3434f2bc10232810df10912ff8dbfaf3ed84d4f7cf23c0f67740a08",
-    "src/shared/vaultToken.ts": "73baece9c313fc2fd26f5e013b026cd07d26679e46f9082d98d70f1ae0b2a599"
+    "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7"
   }
 }

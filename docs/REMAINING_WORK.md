@@ -31652,3 +31652,120 @@ rejected = dropped - overflow   ← 残りは必ず filter が落とした分
 - 施策の「達成確率は 0〜100」は `<input type="number">` の `max` に依らず
   `isValidProbability` が持つ。氏名の `id` (`MEMBER_ID_RE`) は画面が作るので
   利用者には見えない — 文には入れていない。
+
+## パス 259 (2026-09-14) — **認可サーバの応答 1 つで、全サービスの資格情報が読めなくなる**
+
+パス 245 が保管層に制御文字の床を置いたとき、**限界も一緒に記録していた** ——
+「`JSON.stringify` は制御文字をエスケープ列へ逃がすので、包んだ TokenSet は床を通る。
+包みの中は包む側で断るしかない」。その包む側 (`setOAuthTokens`) は、残作業に
+「書き込み側の検証が無い」として残っていた。読んだら、記録より重かった。
+
+### 検証が 1 つも無い経路
+
+```
+  認可サーバの HTTP 応答本文
+    → oauth.ts:755 / :796  JSON.parse(…) as TokenResponse   ← 裸のキャスト・検証 0
+    → tokenResponseToSet    欄をそのまま写す
+    → setOAuthTokens        JSON.stringify して保管層へ      ← 関門 0
+    → setToken              hasControlChars(包んだ文字列)     ← 中が見えない
+```
+
+`setOAuthTokens` は `secrets:set` の IPC ハンドラを**経由しない**ので、
+入口の関門 (`checkTokenInput` の `MAX_TOKEN_INPUT_CHARS` = 65,536 字と制御文字) が
+1 つも掛かっていなかった。`secrets.ts` の注記は「長さはハンドラ側と読み出し側の
+ファイル上限が持つ」と述べているが、**その「ハンドラ側」を通らない呼び出しが
+これである**。2 つの注記はそれぞれ局所的に正しく、合わせると穴になっていた。
+
+### 実測 (2026-09-14) — 読む・書く・消すのすべてが塞がる
+
+`tokenResponseToSet` に敵対的な応答を入れると:
+
+| `access_token` | 結果 |
+| --- | --- |
+| CRLF 入り | `hasControlChars` true・**`usable` true** → 生きた Bearer になる |
+| NUL 入り | 同上 |
+| 数値 / オブジェクト / null / 欄が無い | 保存はされ、読み出しで `usable` false (**保存済みと数えた上で全呼び出しが失敗**) |
+| 1.2 MB の文字列 | **通る** |
+
+最後の 1 行が最も重い。1.2 MB の `access_token` を保存すると:
+
+```
+  secrets ファイル       1,600,128 B  (読み出しの上限 MAX_STORE_SIZE = 1,048,576 B)
+  getToken('github')     null         ← 無関係のサービスの資格情報
+  getToken('stripe')     null
+  listConfiguredServices THROW  SecretsUnreadableError
+  .prev (控え)           1,600,128 B  ← パス 134 は新しい内容を控えへ置くので良い写しも無い
+  setToken (登録し直し)   拒否
+  clearToken (消す)       拒否
+```
+
+**読む・書く・消す・控え のすべてが塞がる。** UI から出る道が無く、
+`service-hub-secrets.json` を手で消すしかない。リモートの応答本文 1 つで
+到達する資格情報ストアのサービス拒否である。
+
+なお**画面への資格情報の漏れは既に閉じている** —— CRLF 入りのトークンを Bearer に
+載せると `new Headers()` が値ごと文面に載せて投げるが、`safeErrorMessage` が
+`Headers.append: "Bearer [REDACTED]" is an invalid header value.` へ落とす
+(パス 244 の規則が効いている。実測で確認した)。残っていたのは漏れではなく
+**可用性と診断**の側だった。
+
+### 直し — 包む側に関門を 1 つ
+
+`shared/vaultToken.ts` (TokenSet の規則が既に住んでいる場所) に
+`checkTokenSetForStorage` を置いた:
+
+1. `hasUsableAccessToken` を通らなければ断る (`no-access-token`)
+2. **包む前に**どの文字列欄でも `hasControlChars` を見る (`control-char`・欄名を言う)
+3. `JSON.stringify` の結果を `countChars` で測り、**ハンドラと同じ定数**
+   `MAX_TOKEN_INPUT_CHARS` を超えたら断る (`too-long`)
+4. 包めない物 (循環参照 / BigInt) も投げずに断る (`unserializable`)
+
+**天井は 3 つ目の数を作らない** —— `secrets.ts` の注記が「3 か所目を作ると必ず
+ずれる」と述べているとおり、ハンドラの定数をそのまま読む。測るのは**実際に
+ファイルへ行く文字列 (包んだ後)** で、`serialized` をそのまま返して呼び出し側が
+書く —— 測った物と書く物が違うと関門は意味を失う (パス 57 の形)。
+
+欄数を数える必要も無い: 20,000 個の短い欄を持つ応答も、包んだ後の長さで落ちる。
+
+`setOAuthTokens` は**切らずに投げる**。切ると壊れた資格情報が保存されるうえ、
+呼び出し側 2 つはどちらも catch を持っているので投げる方が正しく伝わる ——
+接続の経路 (`main.ts`) は `authorize_failed` として画面に出し、更新の経路
+(`getValidToken`) は**既存の良いトークンを上書きせず**に済ませる。
+
+### 対照 (鳴った)
+
+| 壊した物 | 実際 |
+| --- | --- |
+| `setOAuthTokens` の関門を外す (元の `JSON.stringify` に戻す) | **4 本**落ちた: 大きすぎる token・制御文字・使えない token・「床には見えないが包む側が断る」 |
+
+**パス 245 自身の検査も 1 本落ちた** —— 「限界: JSON で包んだ TokenSet は床を通る
+(中は包む側が断る)」が、包む側が断るようになったので成り立たなくなった。
+**両方の事実を同じ検査に留めた** (床には今も見えない・それでも保存は起きない) ——
+「床には見えない」を落とすと、次に包む側を増やした人が「床があるから大丈夫」と読める。
+
+### 検査
+
+`npm test` 723 files / **16,592 tests** green (静的 `it()` 14,122 → **14,133**、+11)・
+`verify:all` 37 ゲート green・`perf` green (LITE 138 ms / FULL 410 ms)。
+整合性チェーンは `secrets.ts` が保護対象なのでブロック **#196** を採掛した
+(採掛前に検査 2 本が鳴った —— Merkle ルートと tipManifest)。
+
+**出荷物は byte 単位で不変** (11,851,171 B / 3,263,917 B) ——
+`checkTokenSetForStorage` を呼ぶのは `main/secrets.ts` だけなので、
+ブラウザ版からは **tree-shaking で丸こと落ちている**
+(出荷 HTML に `checkTokenSetForStorage` は **0 件**、実測)。
+ブラウザ版の保管庫 (`vault.setToken`) には OAuth の TokenSet を包んで入れる経路が
+無いので、今回の関門は main 側だけで足りる。**ただしその非対称は測った上での判断で、
+ブラウザ版に OAuth の保存経路ができた日には同じ関門が要る**。
+
+### 残した物
+
+- **`oauth.ts` の `as TokenResponse` (2 か所) はそのまま**。今回の関門は
+  「保存する物」を見るので保存の経路は閉じたが、`tokenResponseToSet` の戻り値を
+  保存せずに使う経路が将来できれば、また外を通る。キャスト自体を
+  検証つきの parse へ替えるのが本筋で、別のパスにする。
+- `expires_in` の型は見ていない (文字列 `'3600'` は数値へ強制され通り、`1e308` は
+  `expiresAt` が `Infinity` になるが、読み出し側がパス 98 で非有限を
+  「期限が記録されていない」として扱う)。**害が測れなかったので触っていない。**
+- ハードリセット (パス 137) が塞がった store から出る道になるかは未測定。
+  `unlink` なので効くはずだが、確かめていないので書かない。

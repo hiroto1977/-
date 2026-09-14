@@ -1,3 +1,6 @@
+import { countChars } from './inputCeiling';
+import { hasControlChars, MAX_TOKEN_INPUT_CHARS } from './tokenInput';
+
 /**
  * 保存された資格情報から `Authorization` ヘッダへ載せる文字列を取り出す —
  * アプリ全体で 1 つだけ持つ。
@@ -107,4 +110,87 @@ export function bearerFromStoredToken(raw: string): string | null {
   // 上の「JSON ですらない」がここで合流する。
   if (parsed === null || typeof parsed !== 'object') return raw;
   return hasUsableAccessToken(parsed) ? parsed.accessToken : null;
+}
+
+/**
+ * **保存する前に TokenSet を見る** (2026-09-14 ・ パス 259)。
+ *
+ * ## なぜ包む側に置くのか
+ *
+ * パス 245 は保管層 (`secrets.setToken` / `vault.setToken`) に制御文字の床を
+ * 置い、そのとき**限界も記録していた** ——
+ * 「`JSON.stringify` は制御文字をエスケープ列へ逃がすので、包んだ TokenSet は
+ * 床を通る。包みの中は包む側で断るしかない」。これがその包む側である。
+ *
+ * 実測 (2026-09-14): `hasControlChars('ab' + CR + LF + 'cd')` は true だが、
+ * `hasControlChars(JSON.stringify({accessToken: それ}))` は **false**。読み戻すと
+ * 制御文字は**本物に戻る**ので、Bearer に乗せた瞬間に
+ * `new Headers()` が値ごと文面に載せて投げる。
+ *
+ * ## なぜ長さをここで見るのか
+ *
+ * TokenSet は認可サーバの応答本文から来る (`oauth.ts` の
+ * `JSON.parse(…) as TokenResponse` は**検証をしない**)。入口の関門
+ * (`checkTokenInput`) は IPC ハンドラ側に在るが、`setOAuthTokens` は
+ * **ハンドラを経由しない**のでどの天井もかかっていなかった。
+ *
+ * 実測した帰結 (2026-09-14): 1.2 MB の `access_token` を返す応答 1 つで
+ * 保管ファイルが 1,600,128 B になり、読み出しの天井
+ * (`MAX_STORE_SIZE` = 1 MB) を越えて**全サービスの資格情報が読めなくなる**。
+ * 控え (`.prev`) も同じ大きさになり (パス 134)、`setToken` も `clearToken` も
+ * 拒否される —— 読む・書く・消すのすべてが塞がる。
+ *
+ * 天井はハンドラと**同じ定数** (`MAX_TOKEN_INPUT_CHARS`) を読む。
+ * 3 つ目の数を作ると必ずずれる (`secrets.ts` の注記が述べているとおり)。
+ * 測るのは**実際にファイルへ行く文字列 (包んだ後)** で、
+ * そのまま返す —— 測った物と書く物が違うと関門は意味を失う (パス 57)。
+ */
+export type TokenSetRejectReason = 'no-access-token' | 'control-char' | 'too-long' | 'unserializable';
+
+export type TokenSetCheck =
+  | { readonly ok: true; readonly serialized: string }
+  | { readonly ok: false; readonly reason: TokenSetRejectReason; readonly message: string };
+
+export function checkTokenSetForStorage(tokens: unknown): TokenSetCheck {
+  if (!hasUsableAccessToken(tokens)) {
+    return {
+      ok: false,
+      reason: 'no-access-token',
+      message: '認可サーバの応答に使えるアクセストークンがありません',
+    };
+  }
+  // 制御文字は**包む前に**見る。包んでからではエスケープ列になり見えない。
+  const fields = tokens as Record<string, unknown>;
+  for (const key of Object.keys(fields)) {
+    const value = fields[key];
+    if (typeof value === 'string' && hasControlChars(value)) {
+      return {
+        ok: false,
+        reason: 'control-char',
+        message: `認可サーバの応答の ${key} に改行・制御文字が含まれています`,
+      };
+    }
+  }
+  let serialized: string;
+  try {
+    serialized = JSON.stringify(tokens);
+  } catch {
+    // 循環参照 / BigInt。**実の呼び出し側 2 つはここへ到達しない** ——
+    // どちらも `JSON.parse` の結果を渡すので、そのどちらも入れない。
+    // 残すのは「関門が投げてはいけない」からで、次の呼び出し側のため。
+    return {
+      ok: false,
+      reason: 'unserializable',
+      message: '認可サーバの応答を保存できる形にできません',
+    };
+  }
+  const chars = countChars(serialized);
+  if (chars > MAX_TOKEN_INPUT_CHARS) {
+    return {
+      ok: false,
+      reason: 'too-long',
+      message: `認可サーバの応答が長すぎます (${chars} 文字 / 上限 ${MAX_TOKEN_INPUT_CHARS} 文字)`,
+    };
+  }
+  return { ok: true, serialized };
 }

@@ -539,11 +539,22 @@ describe('setToken の制御文字 — 保管層の床', () => {
     expect(await getToken('github')).toBe('ghp_a_normal_token');
   });
 
-  it('限界: JSON で包んだ TokenSet は床を通る (中は包む側が断る)', async () => {
-    const { setOAuthTokens, getOAuthTokens } = await import('../secrets');
-    // `JSON.stringify` が制御文字をエスケープ列へ逃がすので、床には見えない
-    await setOAuthTokens('github', { accessToken: `at${NUL}x` });
-    expect((await getOAuthTokens('github'))?.accessToken).toBe(`at${NUL}x`);
+  /**
+   * 床の限界は今も同じ (`JSON.stringify` が逃がす) が、
+   * **包む側が断るようになった** (2026-09-14 ・ パス 259)。
+   *
+   * 両方を同じ検査に留める —— 「床には見えない」を落とすと、
+   * 次に包む側を増やした人が「床があるから大丈夥」と読める。
+   */
+  it('★ 床には見えないが、包む側 (setOAuthTokens) が断る', async () => {
+    const { setOAuthTokens, listConfiguredServices } = await import('../secrets');
+    const { hasControlChars } = await import('../../shared/tokenInput');
+    // 床の限界そのものを标本で示す。
+    expect(hasControlChars(`at${NUL}x`)).toBe(true);
+    expect(hasControlChars(JSON.stringify({ accessToken: `at${NUL}x` }))).toBe(false);
+    // それでも包む側が断るので、保存は起きない。
+    await expect(setOAuthTokens('github', { accessToken: `at${NUL}x` })).rejects.toThrow('制御文字');
+    expect(await listConfiguredServices(), '断ったのに書かれている').toEqual([]);
   });
 });
 
@@ -720,5 +731,77 @@ describe('getValidToken — 更新経路', () => {
     await getValidToken('github');
     await getValidToken('github');
     expect(refreshCalls).toBe(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// setOAuthTokens の関門 (2026-09-14 ・ パス 259)
+// ---------------------------------------------------------------------------
+
+/**
+ * **認可サーバの応答 1 つで保管庫全体が塞がってはいけない。**
+ *
+ * `setOAuthTokens` は `secrets:set` の IPC ハンドラを経由しないので、
+ * 入口の天井 (`MAX_TOKEN_INPUT_CHARS`) も制御文字の関門もかかっていなかった。
+ * 中身は `oauth.ts` の `JSON.parse(…) as TokenResponse` から来るので、
+ * 実行時の型は相手次第である。
+ *
+ * 実測した帰結 (直す前): 1.2 MB の access_token を保存すると
+ * 保管ファイルが 1,600,128 B になり、読み出しの天井 (`MAX_STORE_SIZE` = 1 MB)
+ * を越えて github / stripe とも `null`、`listConfiguredServices` は throw、
+ * `.prev` も同じ大きさ (パス 134 は新しい内容を控へ置く)、
+ * `setToken` も `clearToken` も拒否 —— 読む・書く・消すのすべてが塞がった。
+ */
+describe('setOAuthTokens — 書く前に見る (ハンドラを経由しない十字路)', () => {
+  const CR = String.fromCharCode(13);
+  const LF = String.fromCharCode(10);
+
+  it('★ 大きすぎる access_token を断り、他サービスの資格情報を殺さない', async () => {
+    const m = await import('../secrets');
+    await m.setToken('github', 'ghp_REAL_1');
+    await m.setToken('stripe', 'sk_live_REAL_2');
+
+    await expect(
+      m.setOAuthTokens('gmail', { accessToken: 'A'.repeat(1_200_000) }),
+    ).rejects.toThrow(/長すぎます/);
+
+    // ファイルは読み出しの天井を越えていない。
+    const stat = await fs.stat(storePath());
+    expect(stat.size).toBeLessThan(1024 * 1024);
+
+    // ★ 他の資格情報は生きている (ここが欲しい不変条件)。
+    vi.resetModules();
+    const m2 = await import('../secrets');
+    expect(await m2.getToken('github')).toBe('ghp_REAL_1');
+    expect(await m2.getToken('stripe')).toBe('sk_live_REAL_2');
+    expect(await m2.listConfiguredServices()).toEqual(['github', 'stripe']);
+    // 登録し直す道と消す道も残っている。
+    await expect(m2.setToken('github', 'ghp_NEW')).resolves.toBeUndefined();
+    await expect(m2.clearToken('stripe')).resolves.toBeUndefined();
+  });
+
+  it('★ 制御文字入りの access_token を断る (包んでからでは床に見えない)', async () => {
+    const m = await import('../secrets');
+    await expect(
+      m.setOAuthTokens('gmail', { accessToken: 'good' + CR + LF + 'X-Injected: 1' }),
+    ).rejects.toThrow(/制御文字/);
+    // 1 バイトも書かない。
+    await expect(fs.stat(storePath())).rejects.toThrow();
+  });
+
+  it('★ 使えない access_token を断る (保存済みとして数えた上で全呼び出しが失敗する形を作らない)', async () => {
+    const m = await import('../secrets');
+    for (const tokens of [{ accessToken: '' }, { access_token: 'snake' }, {}]) {
+      await expect(m.setOAuthTokens('gmail', tokens as never)).rejects.toThrow(
+        /アクセストークン/,
+      );
+    }
+  });
+
+  it('普通の TokenSet はこれまでと同じように保存される (対照)', async () => {
+    const m = await import('../secrets');
+    const tokens = { accessToken: 'ya29.ok', refreshToken: '1//r', expiresAt: 42 };
+    await m.setOAuthTokens('gmail', tokens);
+    expect(await m.getOAuthTokens('gmail')).toEqual(tokens);
   });
 });
