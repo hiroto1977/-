@@ -26103,6 +26103,70 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 247 (2026-09-14) — **「述語は共有したが、no のあとの動作が両ビルドで違う」の母集団を初めて数えた (21 件・うち 4 件を読んだ)**
+
+パス 246 の残件「この形の一般化を測っていない」を測った。**数だけ出して判断は散文が持つ**
+形 (`lint:zero-fold` / パス 85 と同じ方針) —— これは分母であって欠陥の一覧ではない。
+
+### 母集団
+
+```
+src/shared/ のモジュールを両ビルドが import しているもの            44
+  うち、export が否定で答えられるもの (null / false / ok:false)    21
+```
+
+`advisorQuestionLimits` `api/cursor` `assistantLimits` `atlassianSite` `emotionsLimits`
+`eraseReport` `externalUrlGate` `freeeIntake` `funding` `httpLimits` `hydroponicsControl`
+`isoDate` `ollama` `radarPlot` `scanTarget` `serviceAdvisor` `talent` `tokenInput`
+`updateCheck` `vaultToken` `writeFieldLimits`
+
+### ★ 最初の走査は、パス 246 の欠陥を見落とす形だった
+
+初版は**シンボル単位**で数えた (両ビルドが**同じ名前**を import しているか) —— 128 シンボル・
+うち判定の形をしたもの 19。**この走査では `vaultToken` が出てこない。** パス 246 の欠陥は
+
+```
+main      hasUsableAccessToken   を import
+renderer  bearerFromStoredToken  を import   ← 同じモジュールの別のシンボル
+```
+
+だったので、「同じシンボル」を要求した時点で母集団から落ちる。**モジュール単位**に広げると
+`vaultToken` が入る (上の 21 件に在る)。走査を書いた直後に、その走査が**今日直した当の欠陥を
+拾えるか**を確かめて分かった —— 拾えなかった。
+
+これは走査そのものの対照であり、パス 203 で「走査を直したら、その走査で出した数も測り直す」
+と書いたのと同じ形である。
+
+### 読んだ 4 件の判定
+
+| モジュール | 呼ぶ所 | 判定 |
+|---|---|---|
+| `vaultToken` | main 1 / renderer 1 | **欠陥だった** —— パス 246 で直した (main が生の JSON を Bearer に載せていた) |
+| `tokenInput` | main 2 / renderer 4 | **閉じている** —— パス 245 で両ビルドの保管層に床を置いた |
+| `writeFieldLimits` | main 11 / renderer 12 | **対称 (実測)** —— ブラウザ版が実装する 11 家系すべてが同じ `checkWriteFields` を通す。main だけに在る 2 件 (microsoft-365 の sendMail / createEvent) は**ブラウザ版に書き込みの経路自体が無い** (`saasWriteWeb.ts` にも `web-shim.ts` にも microsoft-365 の書き込みは 0 件) ので、関門の抜けではなく機能の非搭載 |
+| `scanTarget` | main 1 / renderer 1 | **対称 (実測)** —— どちらも `if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason])` で、後続は `checked.url` を使う。ブラウザ版には「main 側と同じ検証を同じ実装で通す」という注記まで在る |
+
+### 読んでいない 17 件
+
+`advisorQuestionLimits` `api/cursor` `assistantLimits` `atlassianSite` `emotionsLimits`
+`eraseReport` `externalUrlGate` `freeeIntake` `funding` `httpLimits` `hydroponicsControl`
+`isoDate` `ollama` `radarPlot` `serviceAdvisor` `talent` `updateCheck`
+
+`externalUrlGate` はパス 241 で 3 経路すべて閉じていることを測っている (再訪不要)。
+残り 16 件は**まだ読んでいない** —— 「対称だろう」とは書かない。危険の高い順に当たるなら
+egress か書き込みを門にしている物から: `httpLimits` (応答サイズ) → `atlassianSite` (ホスト制限)
+→ `ollama` (モデル名・版) → `assistantLimits` / `advisorQuestionLimits` / `emotionsLimits`
+(AI へ送る入力の天井) → `api/cursor`。
+
+### 次の一手 — 数を機械に持たせる
+
+**この 21 という数を散文に書いただけでは腐る** (パス 85 / パス 95 で 2 度やった)。
+`lint:zero-fold` と同じ形で「両ビルドが import する shared モジュールのうち否定で答えられる
+ものの件数」を生成ブロックにし、黙って増えないようにするのが次の一手。判断は機械化できない
+(対称かどうかは読まないと決まらない) が、**母集団が変わったことは機械が言える**。
+
+このパスは文書だけ (コード変更なし・出荷物は byte 単位で不変)。
+
 ## パス 246 (2026-09-14) — **デスクトップ版が refresh token を相手先 API へ Bearer として送っていた。しかも緑の検査がそれを留めていた**
 
 パス 245 の残件「`setOAuthTokens` の `TokenSet` の各欄」を閉じに行って、**書き込み側ではなく
