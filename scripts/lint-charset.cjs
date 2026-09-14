@@ -249,7 +249,42 @@ const ALLOWLIST = new Map([
 const SCAN_DIRS = ['src', 'docs', 'orchestration', 'scripts', 'security', 'assets', '.github'];
 /** 直下のファイルは再帰では拾えない (`.` を足すと全部を二重に数えてしまう)。 */
 const SCAN_ROOT_FILES = true;
-const SCAN_EXTS = new Set(['.ts', '.tsx', '.md', '.json', '.cjs']);
+/*
+ * 走査する拡張子 (2026-09-14 ・ パス 255 で 5 → 16 へ広げた)。
+ *
+ * パス 254 で制御・不可視文字の規則を足したとき、走査は `.ts .tsx .md .json .cjs`
+ * の 5 つだけを読んでいた。外に居た 38 ファイルの中には、**制御文字が入ると
+ * 一番困る物**が並んでいた:
+ *
+ *   assets/sw.js            出荷する Service Worker (2026-07 の監査で 1 度見落とされている)
+ *   src/renderer/index.html 単一 HTML に畳み込まれて利用者に届く
+ *   src/renderer/styles.css 同じ
+ *   eslint.config.js        他の全ゲートを支配する
+ *   .github/workflows/*.yml `run:` の中はそのまま実行される (Trojan Source の的)
+ *   scripts/*.sh            同じ
+ *
+ * 広げた時点の実測は **0 件** なので、台帳に何も述す必要がない (純粋な網の拡張)。
+ *
+ * **入れない物**: `.snap` (検査出力からの生成物 —— `vitest -u` で書き直るので
+ * 台帳でなく元を直す場面だし、`knowledge-vault/` を飛ばしているのと同じ扱い)、
+ * `.tsbuildinfo` (ビルドのキャッシュ)、画像などのバイナリ。
+ */
+const SCAN_EXTS = new Set([
+  '.ts', '.tsx', '.md', '.json', '.cjs',
+  '.sh', '.yml', '.yaml', '.html', '.css', '.js', '.mjs', '.svg', '.webmanifest',
+  '.txt', '.example',
+]);
+
+/**
+ * 走査が生きていることの床。
+ *
+ * この門は**緑であることが正常**なので、`SCAN_DIRS` の名前が変わる・
+ * `SKIP_DIRS` が広がると「0 ファイルを調べて問題なし」で通る。
+ * 2026-09-08 に lint:imports / lint:regex / lint:workflow-security / lint:shell に
+ * 置いた床と同じ規則 —— **死んだ走査は「合格」ではなく失敗である**。
+ * 実測 1,425 ファイル (2026-09-14 ・ パス 255) に対して床は 1,000。
+ */
+const MIN_SCANNED_FILES = 1000;
 const SKIP_DIRS = new Set([
   'node_modules', '.git', 'dist', 'dist-electron', 'dist-chunks',
   'knowledge-vault', 'knowledge-graph', 'coverage', 'tmp-screenshots',
@@ -441,6 +476,22 @@ function selfTest() {
     );
   }
 
+  /*
+   * The widened extension set must really contain the files that ship or govern.
+   * Shrinking SCAN_EXTS must ring here (2026-09-14 / pass 255).
+   */
+  const mustScan = ['.sh', '.yml', '.html', '.css', '.js', '.svg'];
+  const missingExts = mustScan.filter((e) => !SCAN_EXTS.has(e));
+  if (missingExts.length > 0) failed += 1;
+  console.log(
+    `  ${missingExts.length === 0 ? '\u2713' : '\u2717'} 出荷物とゲートを支配する拡張子 (${mustScan.length}): ${missingExts.length} missing (期待 0)`,
+  );
+
+  // The floor must be above zero, or a dead scan passes.
+  const floorSane = MIN_SCANNED_FILES > 0;
+  if (!floorSane) failed += 1;
+  console.log(`  ${floorSane ? '\u2713' : '\u2717'} MIN_SCANNED_FILES > 0: ${MIN_SCANNED_FILES}`);
+
   // 台帳は双方向 — 載っていれば黙り、載っているのに現れなければ古い。
   const allow = new Map([['t.md::债', { n: 1, why: '理由' }]]);
   const muted = scanText('t.md', '债務の話', allow);
@@ -528,6 +579,18 @@ function main() {
   );
 
   let failed = false;
+
+  /*
+   * 走査が生きているか (2026-09-14 / パス 255)
+   * 何も見ていない門は「問題なし」と同じ出力を出すので、件数で床を引く。
+   */
+  if (files.length < MIN_SCANNED_FILES) {
+    failed = true;
+    console.error(
+      `\n❌ 走査したファイルが ${files.length} 件しかありません (床 ${MIN_SCANNED_FILES})`
+        + ' —— SCAN_DIRS / SKIP_DIRS / SCAN_EXTS のどれかが実物からずれています。',
+    );
+  }
 
   if (findings.length > 0) {
     failed = true;
