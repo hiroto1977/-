@@ -26103,6 +26103,80 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 250 (2026-09-14) — **未読 13 件のうち危険の高い 2 件を読んだ (どちらも対称・ただし締切の値だけ割れていた)**
+
+`lint:shared-judgement` の未読 13 件を危険の高い順に当たる。今回は egress の 2 件。
+
+### `api/cursor` — 対称 (実測)
+
+**両ビルドが同じ `fetchCursorSnapshotWith` を呼ぶ:**
+
+```
+  main      clients/cursor.ts:50      jsonFetch (締切 + 応答上限 + 失敗の整形)
+  renderer  network/liveRead.ts:66    プロキシ経由の jsonFetch (getProxyJsonFetch)
+```
+
+正規化 (`normalizeUsage` / `buildCursorSnapshot`) は shared に 1 つだけで、
+否定 (`acceptRate === null` = 提案が 0 件で率が定まらない) の消費者は
+`CursorPage` **1 つだけ** —— `'—'` を刷り、`overCounted` の日には ⚠️ と
+「率だけを見て判断しないでください」の注記を出す。**割れる余地が無い。**
+
+応答の上限も揃っている: ブラウザ版は `fetchViaProxy` が封筒ごと
+`readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES)` で切り、その定数は
+`MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES` と**同じ物を指している**
+(値を 2 か所に書いていない)。`LIVE_READERS` は 1 件 (cursor) だけで、
+プロキシを通らない読み取りは存在しない。
+
+**★ 走査の scope をまた間違えた**: `normalizeUsage` / `buildCursorSnapshot` /
+`cursorHeaders` / `CURSOR_API_BASE` の利用者を `src/main` と `src/renderer` だけで
+数えて **0 件**と出し、一瞬「死んだ export か」と読みかけた。**使っているのは
+`shared/api/cursor.ts` 自身の中**で、走査範囲がそれを含んでいなかった。
+この日 5 度目の「走査の綴り・範囲の選び方で答えが変わる」形である
+(パス 249 の 3 件 + パス 248 の抑止台帳 + これ)。
+
+### `updateCheck` — 述語も失敗経路も対称。**締切の値だけ割れている**
+
+失敗の寄せ方が**行単位で同じ**:
+
+```
+  if (!res.ok)  → evaluateUpdate(current, null)
+  形が違う      → parseLatestRelease が null → evaluateUpdate(current, null)
+  catch         → evaluateUpdate(current, null)
+```
+
+本文の上限も両方 `MAX_HTTP_RESPONSE_BYTES`。画面は共有の `describeUpdate` を読む。
+main 側のコメントは 2026-08-31 にこう書いている ——
+「ブラウザ版は `readCappedText` を通しているのに**こちらだけ `res.json()` の
+素通しだった**。**同じ問いに答えが 2 つある状態を残さない**」。
+
+**その 6 行上に、同じ要求の締切が 2 つある。**
+
+| | 値 | 出所 |
+|---|---|---|
+| main (`main.ts:243`) | 10,000 ms | **素の literal** |
+| ブラウザ版 (`web-shim.ts` の `timedFetch`) | 30,000 ms | `DEFAULT_HTTP_TIMEOUT_MS` |
+
+**欠陥ではない** —— どちらも待ちを打ち切るので「固まったまま」にはならず、
+失敗経路も同じ `evaluateUpdate(current, null)` である。**理由が書かれていない
+差**であり、本文の上限について同じコメントが直したのとまったく同じ形が、
+締切について残っている。
+
+**値は動かさない。** 「利用者を何秒待たせてから判定不能にするか」は製品の
+決めごとで、このリポジトリには**同じ状況の先例が在る** ——
+`main/clients/ollama.ts` の応答上限 10 MB / ブラウザ版 2 MB について
+「どこにも理由が書かれておらず、意図した差なのか流されたのか判別できなかった。
+値は動かしていない。**揃えるか、違う理由を書くか**は、どちらが正しいか分かる人が
+決めること」。同じ扱いにして、**差を台帳に載せる**ところまでをやる。
+
+### 未読 11 件
+
+`advisorQuestionLimits` `assistantLimits` `emotionsLimits` `eraseReport`
+`freeeIntake` `funding` `hydroponicsControl` `isoDate` `radarPlot`
+`serviceAdvisor` `talent`。危険の高い順では次は AI へ送る入力の天井 3 つ
+(`assistantLimits` / `advisorQuestionLimits` / `emotionsLimits`)。
+
+このパスは台帳と文書だけ (製品コード・検査の変更なし)。
+
 ## パス 249 (2026-09-14) — **自分の「網が無い」という主張が誤りで、その訂正の途中で同じ形をもう 2 度踏んだ**
 
 パス 248 の「次の一手」としてブラウザ版の網を作りに行ったら、**網は既に在った。**
@@ -26215,12 +26289,12 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **21**（うち未読 **13**）。これは分母であって欠陥の一覧ではない。
+shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **21**（うち未読 **11**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
 | `advisorQuestionLimits` | 2 | 4 | 未読 (AI へ送る入力の天井) |
-| `api/cursor` | 1 | 1 | 未読 (Bearer を載せる egress) |
+| `api/cursor` | 1 | 1 | 対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の 消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `assistantLimits` | 3 | 5 | 未読 (AI へ送る入力の天井) |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `emotionsLimits` | 1 | 5 | 未読 (AI へ送る入力の天井) |
@@ -26237,7 +26311,7 @@ shared **138** モジュール / 両ビルドが import **44** / うち否定で
 | `serviceAdvisor` | 4 | 4 | 未読 (助言の生成) |
 | `talent` | 1 | 3 | 未読 (パス 121 が両ビルドを同じ `readStoredTalent` へ寄せているが、否定の枝そのものは未確認 —— 「寄せたのだから対称だろう」はパス 246 で外れた推論なので、読むまで未読と書く) |
 | `tokenInput` | 2 | 4 | 閉じている (パス 245 で両ビルドの保管層に床) |
-| `updateCheck` | 1 | 2 | 未読 (更新確認の egress) |
+| `updateCheck` | 1 | 2 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い) |
 | `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
 | `writeFieldLimits` | 11 | 12 | 対称 (実測・パス 247) |
 <!-- shared-judgement-census:end -->

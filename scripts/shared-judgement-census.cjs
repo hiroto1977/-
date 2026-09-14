@@ -71,7 +71,10 @@ const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
  */
 const VERDICTS = {
   advisorQuestionLimits: '未読 (AI へ送る入力の天井)',
-  'api/cursor': '未読 (Bearer を載せる egress)',
+  'api/cursor':
+    '対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び '
+    + '(main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の '
+    + '消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ',
   assistantLimits: '未読 (AI へ送る入力の天井)',
   atlassianSite: '**非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ)',
   emotionsLimits: '未読 (AI へ送る入力の天井)',
@@ -92,7 +95,11 @@ const VERDICTS = {
     '未読 (パス 121 が両ビルドを同じ `readStoredTalent` へ寄せているが、否定の枝そのものは未確認 —— '
     + '「寄せたのだから対称だろう」はパス 246 で外れた推論なので、読むまで未読と書く)',
   tokenInput: '閉じている (パス 245 で両ビルドの保管層に床)',
-  updateCheck: '未読 (更新確認の egress)',
+  updateCheck:
+    '対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と '
+    + '3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、'
+    + '画面は共有の describeUpdate を読む。**ただし締切の値だけ割れている** '
+    + '(main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い)',
   vaultToken: '**欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた)',
   writeFieldLimits: '対称 (実測・パス 247)',
 };
