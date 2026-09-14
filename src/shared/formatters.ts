@@ -52,3 +52,48 @@ export function jpy(n: number): string {
 export function jpyOrDash(n: number | null | undefined): string {
   return n == null ? DASH : jpy(n);
 }
+
+/**
+ * 百分率を `12.3%` 形式に整形する。**非有限 (`Infinity` / `NaN`) は `—`。**
+ *
+ * ## なぜ金額と同じ床が要るか (2026-09-14 · パス 229)
+ *
+ * 床は `jpy` にだけ在った。パス 198 は「`¥∞` と `¥NaN` が金額として読める形で
+ * 画面に出ていた」ので**金額の funnel** に床を置いたが、**率の側には funnel が
+ * 無かった** —— 同じ判断が 3 か所に写されていて、どれも非有限を素通ししていた:
+ *
+ * | 綴り | 使う面 |
+ * | --- | --- |
+ * | `shared/num.ts` の `ratioPctOrDash` | **両ビルド** + HTML / Markdown の書き出し (`main/clients/stocks.ts` / `renderer/data/stocksAnalysisWeb.ts` / `StocksPage`) |
+ * | `OverviewPage.tsx` の `pctOrDash` (丸めない) | 経営サマリー 11 タイル (労働分配率・自己資本比率・流動比率・当座比率・ROA・ROE・固定比率 ほか) |
+ * | `OverviewPage.tsx` の `pct1OrDash` | 経営サマリー 13 タイル (営業利益率・粗利率・限界利益率・安全余裕率・原価率 ほか) |
+ * | `RealEstatePage.tsx` の `pct1OrDash` | 不動産 9 か所 |
+ *
+ * **写しは 3 つだと思って数え直したら 4 つだった。** 経営サマリーには
+ * 丸めない `pctOrDash` (`${n}%`) がもう 1 つ在り、`toFixed` を通らないぶん
+ * `NaN` / `Infinity` がいっそう素のまま出る。
+ *
+ * `NaN.toFixed(1)` は `'NaN'`、`Infinity.toFixed(1)` は `'Infinity'` なので、
+ * 4 つとも `NaN%` / `Infinity%` を刷れた。名前が `…OrDash` なのに**算定不能の
+ * 代表値である `NaN` だけ素通しする**のは、名前の約束と食い違っている。
+ *
+ * **今日そこへ非有限が届く経路は測った範囲で 0 件である** (`winRate` は
+ * `wins / completed` の整数比・経営サマリーの率はパス 205 の `saneMonthlyKpi` を
+ * 通る)。床を置くのは「今漏れているから」ではなく、**上流の関門が変わっても
+ * 約束が保たれるようにするため**で、それが funnel に床を置く理由そのものである
+ * (`jpy` の doc comment と同じ)。
+ *
+ * `0%` は「測った結果が 0」であり「測っていない」とは別物 —— その区別は
+ * 呼び出し側が `null` で持ち回る (`ratioPctOrDash` / `num.ts` の `finiteOrNull`)。
+ */
+export function pct(n: number, digits?: number): string {
+  if (!Number.isFinite(n)) return DASH;
+  // `digits` を省くと**丸めない** —— 経営サマリーの元の `${n}%` と同じ出力に
+  // なるので、床を足すだけで刷る字は 1 文字も変わらない。
+  return `${digits === undefined ? n : n.toFixed(digits)}%`;
+}
+
+/** 算定不能 (`null` / `undefined`) なら `—`、そうでなければ {@link pct}。{@link jpyOrDash} の率版。 */
+export function pctOrDash(n: number | null | undefined, digits?: number): string {
+  return n == null ? DASH : pct(n, digits);
+}

@@ -1,3 +1,5 @@
+import { DASH, pct } from './formatters';
+
 /**
  * 数値の共通処理 — 同じ 1 行が写経されていたものを 1 箇所に集める。
  *
@@ -110,5 +112,8 @@ export function assertNonNegativeFinite(value: number, label: string): void {
  * コピーの数だけ食い違う)。
  */
 export function ratioPctOrDash(n: number | null | undefined, digits = 0): string {
-  return n == null ? '—' : `${(n * 100).toFixed(digits)}%`;
+  // **非有限の床は `pct` が持つ** (パス 229)。ここに `toFixed` を直に書いていた
+  // あいだ、`NaN` は `'NaN%'`・`Infinity` は `'Infinity%'` として刷れた ——
+  // 金額側 (`jpy`) にはパス 198 で床が在ったのに、率側には funnel が無かった。
+  return n == null ? DASH : pct(n * 100, digits);
 }

@@ -73,6 +73,7 @@ import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { usePlan } from '../plan/usePlan';
+import { pctOrDash } from '../../shared/formatters';
 import { localIsoDate } from '../../shared/localDate';
 import { buildBusinessOverview } from '../data/overview';
 import {
@@ -143,13 +144,15 @@ const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) :
 const NO_BEP_REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
 const bepDisplay = (bep: number): { value: string; sub?: string } =>
   Number.isFinite(bep) ? { value: yen.format(Math.round(bep)) } : { value: '—', sub: NO_BEP_REASON };
-const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
 /**
  * 小数第 1 位の比率。算定不能 (null) は「—」 —— **`0.0%` は「その比率が 0 である」
  * という主張**であり、「割れない」とは別のこと (経緯は `data/overview.ts` の
  * `pctOfRevenue`)。
  */
-const pct1OrDash = (n: number | null) => (n === null ? '—' : `${n.toFixed(1)}%`);
+// **綴りは `shared/formatters.ts` の `pctOrDash` が 1 つ持つ** (パス 229)。
+// ここに `toFixed` を直に書いていたあいだ、`NaN` は `'NaN%'` として刷れた ——
+// 金額側 (`jpyOrDash` → `jpy`) にはパス 198 で非有限の床が在ったのに、率側には無かった。
+const pct1OrDash = (n: number | null) => pctOrDash(n, 1);
 /**
  * 節の見出しに載せる総合スコア。
  *

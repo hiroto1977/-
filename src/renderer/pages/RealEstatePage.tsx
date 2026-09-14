@@ -25,7 +25,7 @@ import {
   yieldScopeNote,
   type PropertyEntry,
 } from '../data/investments';
-import { DASH, jpy } from '../../shared/formatters';
+import { DASH, jpy, pctOrDash } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { refusalLabels, refusalNote, refusedFields, readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
@@ -318,7 +318,8 @@ const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
  * 主張であり、「割れない」とは別のこと (経緯は `data/investments.ts` の
  * `portfolioYield`)。
  */
-const pct1OrDash = (n: number | null, digits = 1) => (n === null ? '—' : `${n.toFixed(digits)}%`);
+// **綴りは `shared/formatters.ts` の `pctOrDash` が 1 つ持つ** (パス 229・理由は同ファイル)。
+const pct1OrDash = (n: number | null, digits = 1) => pctOrDash(n, digits);
 /**
  * L 表記。**算定不能 (null) は「—」** —— 未入力から「0 L」という測定値を作らない。
  * (RO 回収率を空にすると「年間節水量 0 L」= 循環設備が何も回収していない、に見えた。)

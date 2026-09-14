@@ -154,19 +154,8 @@ function setVal(input: HTMLInputElement, value: string): void {
  *     ので (「100 以下で入力してください」)、数字が「現れた」ように見える。
  *   - `label` の中 —— 入力欄の見出しも天井を述べる。同じ理由。
  */
-function readings(): Map<string, string> {
-  const m = new Map<string, string>();
-  const seen = new Map<string, number>();
+function eachLabelValue(add: (label: string, value: string) => void): void {
   const txt = (e: Element | undefined): string => (e?.textContent ?? '').replace(/\s+/g, ' ').trim();
-  const add = (label: string, value: string): void => {
-    // ラベルが空/長すぎる物は見出しでなく本文なので採らない。値に数字が無ければ
-    // 比べる意味が無い (「—」になった側は鍵が消えるだけで、消失として扱われる)。
-    if (label === '' || label.length > 80) return;
-    if (!/[0-9]/.test(value)) return;
-    const n = (seen.get(label) ?? 0) + 1;
-    seen.set(label, n);
-    m.set(`${label}#${n}`, value);
-  };
   const done = new Set<Element>();
   for (const grid of Array.from(container.querySelectorAll('.stat-grid'))) {
     for (const card of Array.from(grid.children)) {
@@ -188,13 +177,68 @@ function readings(): Map<string, string> {
     if (el.querySelector('input, select, textarea, button') !== null) continue;
     add(txt(a), txt(b));
   }
+}
+
+/** 比べるための組。**値に数字が無い物は採らない** (理由は上の doc comment)。 */
+function readings(): Map<string, string> {
+  const m = new Map<string, string>();
+  const seen = new Map<string, number>();
+  eachLabelValue((label, value) => {
+    // ラベルが空/長すぎる物は見出しでなく本文なので採らない。
+    if (label === '' || label.length > 80) return;
+    if (!/[0-9]/.test(value)) return;
+    const n = (seen.get(label) ?? 0) + 1;
+    seen.set(label, n);
+    m.set(`${label}#${n}`, value);
+  });
   return m;
+}
+
+/**
+ * **壊れた値の印。** 刷れてはいけない字だけを挙げる。
+ *
+ * `∞` 単体は**入っていない** —— 経営サマリーの「組織メンバー / シート 0 / ∞
+ * (残り 無制限)」は正しい表示である。危ないのは**金額の ∞** で、それは
+ * パス 84 (`￥∞` = 損益分岐点) とパス 198 (`¥∞` = 将来評価額) が直した形なので、
+ * 通貨記号込みで挙げる。`NaN` / `Infinity` / `undefined` / `[object Object]` は
+ * 2026-09-14 の実測で全 76 画面の**値の側に 0 件**だった (`NaN` の 1 件は
+ * チャート自己診断の**ラベル**「path に NaN や空が無い」で、値は「OK」)。
+ */
+const BROKEN_READINGS = ['NaN', 'Infinity', 'undefined', '[object Object]', '¥∞', '￥∞'] as const;
+
+/**
+ * **数字を持たない「壊れた値」を読む** (パス 229)。
+ *
+ * `readings()` は `/[0-9]/` で漏斗を掛けるが、`¥NaN` / `¥∞` / `NaN%` /
+ * `Infinity%` は**どれも数字を 1 つも含まない**。つまり組が丸ごと落ち、上の
+ * 不変条件からは「タイルが消えた = 段ごと断った」と読めて**合格になる**。
+ *
+ * 実測 (2026-09-14 · 対照 ①): `OverviewPage` の `pct1OrDash` を
+ * `NaN%` を刷る形へ変えて 13 タイルを壊しても、この走査は **6/6 緑**だった。
+ * 落ちたのは画面ごとに手で書いた主張 4 本 (3 ファイル) だけ —— つまり
+ * **「誰かが書いた所だけ」守られていて、新しい画面・新しいタイルは素通りする**。
+ * 一般の網がその家系を見られないのでは、網の意味が無い。
+ *
+ * ここは差分ではなく**絶対の主張**である。`NaN%` は ⛔ を踏む前から出ていても
+ * 出てはいけない (差分で見ると「前も後も NaN%」なので変化 0 件になる)。
+ */
+function brokenReadings(): string[] {
+  const hits: string[] = [];
+  eachLabelValue((label, value) => {
+    if (label === '' || label.length > 80) return;
+    for (const bad of BROKEN_READINGS) {
+      if (value.includes(bad)) hits.push(`${label} = ${JSON.stringify(value)} [${bad}]`);
+    }
+  });
+  return hits;
 }
 
 interface Moved { readonly key: string; readonly field: string; readonly detail: readonly string[] }
 
 interface Sweep {
   readonly moved: readonly Moved[];
+  /** 壊れた値 (`NaN` / `Infinity` / `¥∞` ほか) を刷った組。`画面/状態` つき。 */
+  readonly broken: readonly string[];
   /** ⛔ を作れた回数。**0 なら上の主張は何も確かめていない。** */
   readonly fatalProbes: number;
   /** 踏んだ欄の総数 (走査が痩せたら落ちる床のため)。 */
@@ -214,6 +258,7 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
   document.body.appendChild(container);
   root = createRoot(container);
   const moved: Moved[] = [];
+  const broken: string[] = [];
   let fatalProbes = 0;
   let fields = 0;
   let readingCount = 0;
@@ -229,6 +274,8 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
     // 入力欄は断りに差し替わる段より上に在るので、番号は描き直しても動かない。
     readingCount = readings().size;
     liveClock = container.querySelectorAll('[data-live-clock]').length;
+    // 既定の状態でも見る —— 壊れた値は ⛔ を踏む前から出ていることがある。
+    for (const b of brokenReadings()) broken.push(`${def.id} [既定] ${b}`);
     const count = container.querySelectorAll('input[data-guard]').length;
     for (let idx = 0; idx < count; idx += 1) {
       const at = (): HTMLInputElement | undefined =>
@@ -245,6 +292,7 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
         await settle();
         if (input.getAttribute('data-guard') === 'fatal') {
           fatalProbes += 1;
+          for (const b of brokenReadings()) broken.push(`${def.id} [⛔ ${label}=${probe}] ${b}`);
           const after = readings();
           const detail: string[] = [];
           for (const [k, was] of before) {
@@ -266,7 +314,7 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
     }
     container.remove();
   }
-  return { moved, fatalProbes, fields, readings: readingCount, liveClock };
+  return { moved, broken, fatalProbes, fields, readings: readingCount, liveClock };
 }
 
 /**
@@ -278,12 +326,13 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
  * なく、絞り込みそのもので 0 になっていた)。1 つの `beforeAll` に寄せれば
  * 主張の間に順序の依存が無くなる。
  */
-const RESULT = { moved: [] as Moved[], fatalProbes: 0, fields: 0, readings: 0, liveClock: 0 };
+const RESULT = { moved: [] as Moved[], broken: [] as string[], fatalProbes: 0, fields: 0, readings: 0, liveClock: 0 };
 
 beforeAll(async () => {
   for (const def of SERVICES) {
     const r = await sweepPage(def);
     RESULT.moved.push(...r.moved);
+    RESULT.broken.push(...r.broken);
     RESULT.fatalProbes += r.fatalProbes;
     RESULT.fields += r.fields;
     RESULT.readings += r.readings;
@@ -348,6 +397,38 @@ describe('⛔ の欄から「別の数」を作らない (パス 210・全画面
       stale,
       '台帳に載っているが、もう別の数を出していない —— 直したなら台帳から消すこと',
     ).toEqual([]);
+  });
+
+  it('★ 画面が「壊れた値」を刷っていない (パス 229・数字を持たないので差分では見えない)', () => {
+    // 実測 2026-09-14: **0 件** (全 76 画面の既定状態 + ⛔ 112 組)。
+    // この主張が要る理由は `brokenReadings` の doc comment に在る —— 上の
+    // 「別の数が出ていない」は `/[0-9]/` の漏斗より後で比べるので、
+    // `¥NaN` / `NaN%` は**組が消えた = 段ごと断った**として通ってしまう。
+    expect(RESULT.broken, '壊れた値を刷っている (算定不能なら「—」に倒す)').toEqual([]);
+  });
+
+  it('★ 壊れた値の走査が空振りしていない (印が実物に当たる)', () => {
+    // **不在の主張には標本を添える** (CLAUDE.md の規約)。上の主張は
+    // 「0 件」なので、綴りが 1 つ違えばどの入力でも通る空の検査になる。
+    // `brokenReadings` が使う印そのものを合成した値に当て、拾えることを見る。
+    const sample = [
+      ['営業利益率', 'NaN%'],
+      ['将来評価額', '¥∞'],
+      ['損益分岐点', '￥∞'],
+      ['累計の蝕み効果', '¥NaN'],
+      ['到達年数', 'Infinity年'],
+      ['名義', 'undefined'],
+      ['内訳', '[object Object]'],
+    ] as const;
+    for (const [label, value] of sample) {
+      const hit = BROKEN_READINGS.some((bad) => value.includes(bad));
+      expect(hit, `${label} = ${value} を印が拾えていない`).toBe(true);
+    }
+    // 逆向きも見る —— **正しい表示を巻き添えにしない。**
+    // `∞` 単体は「シート 無制限」の正しい表示で、`—` は算定不能の印である。
+    for (const ok of ['0 / ∞', '—', '0.0%', '¥0', '12.3%', '39.5日']) {
+      expect(BROKEN_READINGS.some((bad) => ok.includes(bad)), `${ok} を誤って拾っている`).toBe(false);
+    }
   });
 
   it('★ 台帳の各項目に理由が書かれている', () => {
