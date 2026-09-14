@@ -54,8 +54,16 @@
  *   - 資格情報ヘッダの値 — `Authorization: Bearer …` も `"authorization":"Bearer …"` も
  *     (`x-apikey` / `hibp-api-key` / `x-proxy-auth` のような接頭辞つきも同じ形で)
  *   - 単独の `Bearer …` / `Basic …` (16 字以上。英単語を巻き添えにしない長さ)
- *   - sk-ant-…, ghp_…, ghs_…, ghu_…, ya29.…, xoxb-…, xoxp-…, secret_…, AIza…
- *   - Atlassian ATATT… tokens
+ *   - 発行元が分かる接頭辞 — sk-ant-… / sk-proj-… / sk-… (OpenAI) /
+ *     ghp_… ghs_… ghu_… gho_… ghr_… **github_pat_…** (GitHub) /
+ *     xoxb-… xoxp-… xoxa-… (Slack) / secret_… **ntn_…** (Notion) /
+ *     **lin_api_… lin_oauth_…** (Linear) / **sntrys_…** (Sentry) /
+ *     shpat_… shpss_… shpca_… (Shopify) / sk_live_… rk_live_… **whsec_…**
+ *     (Stripe) / AIza… ya29.… **1//…** (Google) / **sl.…** (Dropbox) /
+ *     **1/<gid>:<hex>** (Asana) / ATATT… (Atlassian) / **eyJ….….…** (JWT —
+ *     Microsoft 365 / Salesforce) / **00D…!…** (Salesforce セッション)
+ *   - 接頭辞を持たない 3 形 (Cloudflare / LINE / Discord) は模様で見分けられない
+ *     ので、ヘッダ名と JSON 項目名の規則が受け持つ (census が測る)
  *   - JSON token fields (access_token / refresh_token / token / api_key /
  *     client_secret / sharedSecret / password / …)
  */
@@ -138,9 +146,65 @@ export function redactSecrets(input: string): string {
        * 伏字を通り抜けて表示される。
        */
       .replace(
-        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|xoxp-|xoxb-|xoxa-|secret_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_)[A-Za-z0-9_-]{8,}/g,
+        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_)[A-Za-z0-9_-]{8,}/g,
         '$1[REDACTED]',
       )
+      /*
+       * **2026-09-14 (パス 231): 25 形のうち 14 形が裸で素通りしていた。**
+       *
+       * 2026-08-29 は「5 形が抜けていた」を直したが、抜けを**数える道**は
+       * 作らなかった (ヘッダ名の側には `scan-credential-headers.cjs` +
+       * `redactionCoverage.test.ts` の census が在るのに、接頭辞の側は
+       * 手書きの列挙のまま)。このアプリが預かる資格情報の形を 25 並べて
+       * 実物の `redactSecrets` に**裸で**通したところ:
+       *
+       *   伏せた 11 / 素通り 14
+       *
+       * **今日預かっている 23 サービス** (`SERVICE_CREDENTIAL_USE` が
+       * `fetch` / `action`) に効くのは、そのうち 4 家系である:
+       *
+       *   - `github_pat_…` —— **GitHub の細粒度 PAT**。今の GitHub が既定で
+       *     発行する形で、このファイルが例に使い画面の placeholder が
+       *     `ghp_…` と書いている当のサービスの、**今日もっとも普通に
+       *     使われる鍵**が伏字の外に在った。
+       *   - `ntn_…` —— Notion の新しい内部連携トークン (旧 `secret_` は在った)。
+       *   - `1//…`  —— Google の更新トークン (drive / calendar / gmail /
+       *     youtube。`ya29.` のアクセストークンは在った)。
+       *   - `eyJ….….…` —— JWT (microsoft-365 のアクセストークン)。
+       *
+       * 残り (Linear / Sentry / Dropbox / Asana / Stripe の whsec / Salesforce)
+       * は 2026-08 の監査で `none` に倒して**入力欄を閉じた**サービスだが、
+       * それ以前に保存された分は今も残りうる (`credentialUse.ts` が掃除の
+       * 導線を持っているのはそのためである) ので、同じ規則で伏せる。
+       *
+       * 上の一括規則に混ぜられるのは本体が `[A-Za-z0-9_-]` の形だけなので、
+       * 区切り記号を含む 6 形は下に分けて書く。
+       *
+       * 接頭辞を持たない 3 形 (Cloudflare の 40 字・LINE のチャネルトークン・
+       * Discord の bot トークン) は**模様で見分けられない** ——
+       * 伏せようとすれば同じ長さの英数字を何でも伏せることになる。
+       * あちらはヘッダ名・JSON 項目名の規則が受け持ち、
+       * `redactionCoverage.test.ts` がその「受け持てている」ことを測る。
+       */
+      // Sentry の `sntrys_…` は base64 なので `=` `+` `/` を含みうる。
+      // 本体を狭く書くと尻尾が残る (伏せたつもりで漏れる) ので広く取る。
+      .replace(/\bsntrys_[A-Za-z0-9_=+/.-]{16,}/g, 'sntrys_[REDACTED]')
+      // Dropbox の短命トークン。実物は 130 字を超えるので 20 字以上に限れば
+      // 散文の「…sl.」には当たらない (直後に空白の無い長い英数字が要る)。
+      .replace(/\bsl\.[A-Za-z0-9_-]{20,}/g, 'sl.[REDACTED]')
+      /*
+       * JWT (`eyJ…` = base64url の `{"`)。Microsoft 365 / Salesforce の
+       * アクセストークンはこの形で、**ドット 2 つ**を要求するので
+       * 難読化した JSON の塊 (ドットを持たない) は巻き込まない。
+       */
+      .replace(/\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/g, 'eyJ[REDACTED]')
+      // Google の更新トークン (`1//0g…`)。`\b` の手前は非単語字なので
+      // `…/v1//foo` のような道 (`v` が単語字) には当たらない。
+      .replace(/\b1\/\/[A-Za-z0-9_-]{20,}/g, '1//[REDACTED]')
+      // Asana の PAT (`1/<gid>:<32 桁の 16 進>`)。構造が細かいので誤爆しない。
+      .replace(/\b1\/\d{10,}:[0-9a-f]{32}\b/g, '1/[REDACTED]')
+      // Salesforce のセッション ID (`00D…!AQ…`)。組織 ID と `!` が目印。
+      .replace(/\b00D[A-Za-z0-9]{12,15}![A-Za-z0-9._=-]{20,}/g, '00D[REDACTED]')
       /*
        * 接頭辞の付かない旧 OpenAI 鍵 (`sk-` + 英数)。**上の規則より後に置く** ——
        * `sk-ant-` / `sk-proj-` は既に伏せてあり、残りの `ant-[REDACTED]` は

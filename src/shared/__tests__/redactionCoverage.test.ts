@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createRequire } from 'node:module';
 import { redactSecrets } from '../redact';
+import { SERVICE_CREDENTIAL_USE, collectsCredential } from '../credentialUse';
+import type { ServiceId } from '../serviceId';
 
 // scripts/scan-credential-headers.cjs は CJS (Node 走査スクリプト) 設計のため、
 // テストだけが createRequire で読み込む (inline-html.cjs と同じ扱い)。
@@ -260,5 +262,165 @@ describe('伏字の網羅 — 発行元が分かる接頭辞', () => {
     expect(redactSecrets(`error: ${bare}`)).toContain(bare);
     // ただしヘッダ名が付いていれば、ヘッダ側の規則が拾う。
     expect(redactSecrets(`authorization: Bearer ${bare}`)).not.toContain(bare);
+  });
+});
+
+
+/**
+ * **接頭辞の台帳の母集団を、伏字の規則から「預かっているサービス」へ移す**
+ * (2026-09-14 · パス 231)。
+ *
+ * ## 上の「網羅」は、自分の写しを数えていた
+ *
+ * 直前の `describe` は 14 形を並べて「ヘッダ名が無くても伏せられる」ことを
+ * 見ており、**全件緑**である。しかしその 14 形は、`redact.ts` が**既に知って
+ * いる接頭辞**を書き写したものだった。規則を足してから台帳に足すのだから、
+ * **台帳には通る形しか入らない** —— 知らない形については構造的に何も言えず、
+ * 「網羅」という名前だけが残る。
+ *
+ * 母集団を外から取って数え直した。このアプリが預かる資格情報の形を 25 並べ、
+ * **ヘッダ名も JSON の項目名も付けずに**実物の `redactSecrets` へ通した結果:
+ *
+ * ```
+ *   伏せた 11 / 素通り 14
+ * ```
+ *
+ * 素通りの中に **`github_pat_…`** が在った。GitHub の細粒度 PAT ——
+ * 今の GitHub が既定で発行する形で、`redact.ts` が例に使い、画面の
+ * placeholder が `ghp_…` と書いている当のサービスの、**今日もっとも普通に
+ * 使われる鍵**である。ほかに `ntn_` (Notion の新形式)・Google の更新
+ * トークン (`1//`)・JWT (microsoft-365) が、いずれも**今日預かっている**
+ * サービスの形として抜けていた。
+ *
+ * ## だから母集団は `SERVICE_CREDENTIAL_USE` から取る
+ *
+ * 鍵の形は発行元が決めるのでソースには現れない。**現れるのは「誰の鍵を
+ * 預かるか」**で、それは `credentialUse.ts` が宣言している (`fetch` /
+ * `action` = 預かる、`none` = 預からない)。そこを母集団にすれば、
+ * 資格情報を預かるサービスを足す人は**ここも埋めることになる**。
+ *
+ * 分類は 2 つだけで、**それぞれ検査が別のことを証明する**:
+ *
+ * - `prefix`      — 裸で現れても伏せる (発行元が分かる接頭辞を持つ)
+ * - `header-only` — 裸では伏せない。ヘッダ名 / JSON 項目名の規則が受け持つ
+ *
+ * `header-only` は「接頭辞を**主張しない**」という宣言であって、
+ * 「接頭辞が存在しない」の証明ではない。控えめな側なので、形を調べきれて
+ * いないサービスはこちらに置く —— どのトークンも `Authorization` か
+ * `x-api-key` に載って出るので、この宣言が偽になることはない。
+ * そして**そのことも下で測る** (宣言して終わりにしない)。
+ */
+describe('伏字の網羅 — 母集団は「預かっているサービス」(パス 231)', () => {
+  const FILL = 'A'.repeat(28);
+
+  type Carrier = 'prefix' | 'header-only';
+  interface Held {
+    readonly service: ServiceId;
+    /** 発行元と形。人が読むためのもの。 */
+    readonly issuer: string;
+    readonly carrier: Carrier;
+    /** `prefix` のときの標本。`header-only` は接頭辞を持たない標本を置く。 */
+    readonly sample: string;
+  }
+
+  // 預かる 23 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
+  const HELD_FORMATS: readonly Held[] = [
+    { service: 'github', issuer: 'GitHub 細粒度 PAT', carrier: 'prefix', sample: `github_pat_${FILL}_${FILL}${FILL}` },
+    { service: 'notion', issuer: 'Notion 内部連携 (新)', carrier: 'prefix', sample: `ntn_${FILL}${FILL}` },
+    { service: 'drive', issuer: 'Google 更新トークン', carrier: 'prefix', sample: `1//0g${FILL}${FILL}` },
+    { service: 'calendar', issuer: 'Google アクセストークン', carrier: 'prefix', sample: `ya29.${FILL}${FILL}` },
+    { service: 'gmail', issuer: 'Google 更新トークン', carrier: 'prefix', sample: `1//0e${FILL}${FILL}` },
+    { service: 'youtube', issuer: 'Google API キー', carrier: 'prefix', sample: `AIzaSy${FILL}` },
+    {
+      service: 'microsoft-365',
+      issuer: 'Microsoft Graph (JWT)',
+      carrier: 'prefix',
+      sample: `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.${FILL}${FILL}.${FILL}${FILL}`,
+    },
+    { service: 'slack', issuer: 'Slack bot トークン', carrier: 'prefix', sample: `xoxb-1111-2222-${FILL}` },
+    { service: 'atlassian', issuer: 'Atlassian API トークン', carrier: 'prefix', sample: `ATATT3xFfGF0${FILL}` },
+    { service: 'shopify', issuer: 'Shopify 管理 API', carrier: 'prefix', sample: `shpat_${FILL}` },
+    { service: 'assistant', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    { service: 'emotions', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    { service: 'skills', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    { service: 'business', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    { service: 'teamradar', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    // ここから下は接頭辞を主張しない (控えめな側)。標本は「長い英数字」で、
+    // 裸では伏せられないこと・名前が付けば伏せられることの両方を測る。
+    { service: 'cloudflare', issuer: 'Cloudflare API トークン (40 字)', carrier: 'header-only', sample: 'B'.repeat(40) },
+    { service: 'security', issuer: 'HIBP / VirusTotal (16 進)', carrier: 'header-only', sample: 'c'.repeat(64) },
+    { service: 'wordpress', issuer: 'WordPress.com OAuth', carrier: 'header-only', sample: 'D'.repeat(44) },
+    { service: 'canva', issuer: 'Canva OAuth', carrier: 'header-only', sample: 'E'.repeat(48) },
+    { service: 'base', issuer: 'BASE OAuth', carrier: 'header-only', sample: 'F'.repeat(43) },
+    { service: 'freee', issuer: 'freee OAuth', carrier: 'header-only', sample: 'G'.repeat(50) },
+    { service: 'cursor', issuer: 'Cursor API キー', carrier: 'header-only', sample: 'H'.repeat(40) },
+    { service: 'stocks', issuer: '市場データ API キー', carrier: 'header-only', sample: 'J'.repeat(32) },
+  ];
+
+  const HELD_SERVICES = (Object.keys(SERVICE_CREDENTIAL_USE) as ServiceId[]).filter((id) =>
+    collectsCredential(SERVICE_CREDENTIAL_USE[id]),
+  );
+
+  it('★ 母集団が空でない (台帳が死んだら下の総当たりが黙る)', () => {
+    expect(HELD_SERVICES.length).toBeGreaterThanOrEqual(20);
+    expect(HELD_SERVICES).toContain('github');
+  });
+
+  /**
+   * **双方向。** 預かるサービスは必ず 1 行持ち、行は必ず預かるサービスを指す。
+   * 片方向だと「台帳に在る分だけ見る」= 抜けを構造的に見られない検査になる。
+   */
+  it('★ 預かる 23 サービスすべてに行が在り、余計な行が無い', () => {
+    const listed = HELD_FORMATS.map((f) => f.service);
+    expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
+  });
+
+  it.each(HELD_FORMATS.filter((f) => f.carrier === 'prefix').map((f) => [f.service, f.issuer, f.sample] as const))(
+    '★ %s (%s) は、ヘッダ名が無くても伏せられる',
+    (_service, _issuer, sample) => {
+      const out = redactSecrets(`upstream said: invalid credential ${sample} please retry`);
+      expect(out).not.toContain(sample);
+      expect(out).toContain('[REDACTED]');
+    },
+  );
+
+  it.each(HELD_FORMATS.filter((f) => f.carrier === 'header-only').map((f) => [f.service, f.issuer, f.sample] as const))(
+    '★ %s (%s) は裸では伏せられないが、名前が付けば伏せられる',
+    (_service, _issuer, sample) => {
+      // 裸では残る —— **限界を主張ではなく測定で残す**。ここが伏せられる
+      // ようになったら分類を `prefix` へ動かす合図である。
+      expect(redactSecrets(`error: ${sample}`)).toContain(sample);
+      // ヘッダ名が付いた形・JSON の項目名が付いた形では消える。
+      expect(redactSecrets(`authorization: Bearer ${sample}`)).not.toContain(sample);
+      expect(redactSecrets(`{"headers":{"x-api-key":"${sample}"}}`)).not.toContain(sample);
+      expect(redactSecrets(`{"access_token":"${sample}"}`)).not.toContain(sample);
+    },
+  );
+
+  /*
+   * 対照 — **この検査が鳴るか。** 預かっているのに伏字が知らない接頭辞を
+   * 合成し、`prefix` として主張したら落ちることを確かめる。
+   * (2026-09-14 の実測では `github_pat_` がまさにこれだった。)
+   */
+  it('★ 伏字が知らない接頭辞を prefix として並べたら落ちる (対照)', () => {
+    const unknown = `zz_unknown_issuer_${FILL}`;
+    const out = redactSecrets(`upstream said: invalid credential ${unknown} please retry`);
+    expect(out).toContain(unknown);
+  });
+
+  /*
+   * 逆向きの対照 — 規則が広すぎると `header-only` の行が「裸でも消える」に
+   * なって、上の `toContain` が落ちる。つまりこの組は**両方向に鳴る**。
+   * ここでは散文が巻き添えにならないことを、新しく足した 6 形について見る。
+   */
+  it.each([
+    'sl. の後に空白が在る文',
+    'version 1// は区切りではない',
+    'eyJ だけで終わる語',
+    'sntrys_ の説明文',
+    '1/2 の分数と 00D の型番',
+    'whsec_ とは何か',
+  ])('★ 散文は伏せない (パス 231 で足した 6 形): %s', (prose) => {
+    expect(redactSecrets(prose)).toBe(prose);
   });
 });
