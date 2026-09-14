@@ -1626,6 +1626,14 @@
       "leafCount": 71,
       "note": "update vault.ts",
       "hash": "daad1efc40fe40a2dad9c97d66a82d72f7bf16a517f1ad560b6ef1cb372967a2"
+    },
+    {
+      "index": 194,
+      "prevHash": "daad1efc40fe40a2dad9c97d66a82d72f7bf16a517f1ad560b6ef1cb372967a2",
+      "merkleRoot": "d259d7978fe91ebd4ca0e411b2f5bbab9a3311e770937abcb6a89694022bfbcb",
+      "leafCount": 71,
+      "note": "update eraseAll.ts",
+      "hash": "7ef3df28e9c7c61290f7d0c5fbf9e21dc5c027a56fa50e88b93742dfd8736712"
     }
   ],
   "tipManifest": {
@@ -1656,7 +1664,7 @@
     "src/main/clients/assistant.ts": "1296198ca3de021e648cff608617ace5339bda86aed4f9e6103054f9f2da1a81",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
-    "src/main/eraseAll.ts": "0a2d290568268081bd20c8c5dba84b087fa115d7bd1ae06a605b05dcf5329b4f",
+    "src/main/eraseAll.ts": "cd9f8c1a01b64330f62f27d27ba14083c342f27452e20c95ae4f37d03358dbaa",
     "src/main/main.ts": "6ca3bb1be7c51e9bbb0d9edf883090c066b16436cec146a07d3c0d2b4898f3d3",
     "src/main/oauth.ts": "3d3e5b5516b44f9da1a7449e194adeae0dd42575c89a3b8a56cd10f4f44c345f",
     "src/main/secrets.ts": "bfea8c34ab0dcc57da2e58c77a8e9166c61cda110146f390fbbeed8122d5a601",

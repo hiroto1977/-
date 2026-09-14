@@ -8,6 +8,7 @@
  * ことを留める。在庫は置き場所の関数から作る (綴りを写さない)。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -69,6 +70,34 @@ describe('在庫は置き場所の関数から (綴りを写さない)', () => {
       'state.json',
       'dashboard.html',
     ]);
+  });
+
+  /*
+   * **順序は裁定であって偶然ではない** (2026-09-14 · パス 252)。
+   *
+   * ブラウザ版 (`renderer/security/eraseAll.ts` の `ERASE_INDEXEDDB`) は保管庫を**最後**に
+   * 置き、その理由を注記に持っている。こちらはトークンを**先頭**に置く —— 逆向きである。
+   * 前提が違うからで、理由は `desktopEraseTargets` の注記に書いた (両ビルドで封緘の強さが
+   * 同じなので「保管庫だけ新しく記録は平文で残る」が起きず、代わりに「process が途中で
+   * 死んだときに遠隔から使える残骸を残さない」を採った)。
+   *
+   * **両方を留めておく** —— どちらかを黙って並べ替えられないように。この検査が落ちたら、
+   * 落ちた側の注記を読んでから動かすこと。
+   */
+  it('★ トークン (secrets) が先頭 — process が途中で死んだとき遠隔から使える残骸を残さない', () => {
+    expect(path.basename(desktopEraseTargets()[0]!)).toBe('service-hub-secrets.json');
+  });
+
+  it('★ 対照: ブラウザ版は逆向き (保管庫が最後) で、そちらも意図である', () => {
+    // 綴りではなく実物の一覧を読む (写すと片方が腐る)。
+    const browserOrder = readOriginalSource(
+      path.resolve(__dirname, '../../renderer/security/eraseAll.ts'),
+    );
+    const list = /export const ERASE_INDEXEDDB[^=]*=\s*\[([^\]]*)\]/.exec(browserOrder);
+    expect(list, 'ERASE_INDEXEDDB が読めない (走査が死んでいる)').not.toBeNull();
+    const names = [...list![1]!.matchAll(/'([^']+)'/g)].map((m) => m[1]!);
+    expect(names.length, '一覧が空 (走査が死んでいる)').toBeGreaterThanOrEqual(4);
+    expect(names[names.length - 1]).toBe('business-hub-vault');
   });
 });
 
