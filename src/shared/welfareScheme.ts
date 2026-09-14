@@ -94,10 +94,12 @@ export interface MealSubsidyVerdict {
  * 非課税の要件は**2 つとも**満たす必要がある (`MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` の
  * docblock に出典)。片方だけでは足りないので、`reasons` は両方を独立に見る。
  *
- * **これは判定であって、税額の再計算ではない。** 要件を外れた会社負担は本来
- * 給与課税されるが、そこまで反映するとスキーム側の逆算ごと組み替えになる ——
- * まず「外れている」と言えるようにする (`docs/REMAINING_WORK.md` のパス 219 に
- * 積み残しとして書いた)。
+ * **要件を外れた会社負担は `designWelfareScheme` が給与課税として計算に入れる**
+ * (2026-09-14 · パス 228)。パス 219 はここまでを判定だけにして
+ * 「そこまで反映するとスキーム側の逆算ごと組み替えになる」と積み残したが、
+ * 実際に組んでみると**逆算の目標を課税現物の分だけ持ち上げるだけ**で足りた ——
+ * 「大きく組み替わる」という見積りが外れていた。{@link designWelfareScheme} の
+ * `taxableInKind` を参照。
  */
 export function mealSubsidyVerdict(
   mealTotal: number,
@@ -426,9 +428,22 @@ export interface WelfareScenario {
    * 刷っていた (パス 103)。逆算が探索上限に張り付くと一致しない。
    */
   readonly freeCash: number;
-  /** 現物支給の福利厚生価値 (非課税)。 */
+  /** 現物支給の福利厚生価値 (**非課税の分だけ**)。 */
   readonly inKindValue: number;
-  /** 従業員の実質手元残り (= freeCash + inKindValue)。 */
+  /**
+   * **給与課税される現物給与** (2026-09-14 · パス 228)。
+   *
+   * 食事補助が非課税の要件 ({@link mealSubsidyVerdict}) を外れたときの会社負担。
+   * 課税標準に乗るので所得税・住民税・社会保険料の計算に入り、**現金では払われない**
+   * ので手取りからは差し引く。要件を満たしていれば 0 で、そのときの数字は
+   * パス 228 より前と**完全に一致する** (`welfareTaxableInKind.test.ts` の対照)。
+   *
+   * 概算の前提: 社会保険の現物給与の価額は都道府県ごとの告示額 (厚生労働大臣が定める
+   * 価額) で、会社負担額と一致するとは限らない。ここは**会社負担額をそのまま価額と
+   * みなす**簡略モデル。
+   */
+  readonly taxableInKind: number;
+  /** 従業員の実質手元残り (= freeCash + inKindValue + taxableInKind)。 */
   readonly employeeRealValue: number;
   /** 会社の総コスト (額面 + 会社負担社保 + 会社負担福利厚生)。 */
   readonly companyTotalCost: number;
@@ -517,24 +532,39 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
     netPaid: normalComp.takeHome,
     freeCash: normalComp.takeHome - normalLivingCost,
     inKindValue: 0,
+    taxableInKind: 0,
     employeeRealValue: normalComp.takeHome - normalLivingCost,
     companyTotalCost: normalComp.gross + normalComp.employerSocialInsurance,
     reachedTarget: normalSolved.reached,
   };
 
-  // ② スキーム: 会社が家賃(社宅)・食事・育児・EC を非課税で現物支給し基本給を下げる。
-  //    本人天引き = 社宅自己負担 + 食事自己負担。手元残り = 手取り − 天引き。
+  // ② スキーム: 会社が家賃(社宅)・食事・育児・EC を現物支給し基本給を下げる。
+  //    本人天引き = 社宅自己負担 + 食事自己負担。手元残り = 手取り − 課税現物 − 天引き。
+  //
+  // **食事補助が非課税の要件を外れていれば、会社負担は給与課税** (パス 228)。
+  // パス 219 は「そこまで反映するとスキーム側の逆算ごと組み替えになる」と積み残したが、
+  // 実際は**逆算の目標を課税現物の分だけ持ち上げるだけ**で足りる ——
+  //   手取り(課税標準 G) − 課税現物 T − 天引き = 目標
+  //   ⇔ 手取り(G) = 目標 + 天引き + T
+  // なので `solveGrossForTakeHomeChecked` の目標に T を足せばよい。T = 0 のとき
+  // (要件を満たすとき) 式は元のままなので、**満たす場合の数字は 1 円も動かない**。
+  const mealSubsidy = mealSubsidyVerdict(input.mealTotal, input.mealCompanyShare);
+  const taxableInKind = mealSubsidy.taxFree ? 0 : nonNeg(input.mealCompanyShare);
   const schemeDeduction = rentSelf + mealSelf;
   const schemeSolved = solveGrossForTakeHomeChecked(
-    input.targetFreeCash + schemeDeduction,
+    input.targetFreeCash + schemeDeduction + taxableInKind,
     withCare,
     extraDeductions,
     taxYear,
   );
   const schemeComp = monthlyCompensation(schemeSolved.gross, withCare, extraDeductions, taxYear);
+  // 非課税の現物価値に、要件を外れた食事補助は**入れない** (入れると
+  // 「現物支給の福利厚生価値 (非課税)」が課税される分まで非課税として数える)。
   const inKindValue =
-    input.rentCompanyShare + input.mealCompanyShare + input.childcare + input.ecPoints;
-  const schemeFreeCash = schemeComp.takeHome - schemeDeduction;
+    input.rentCompanyShare
+    + (mealSubsidy.taxFree ? input.mealCompanyShare : 0)
+    + input.childcare + input.ecPoints;
+  const schemeFreeCash = schemeComp.takeHome - taxableInKind - schemeDeduction;
   const scheme: WelfareScenario = {
     gross: schemeComp.gross,
     employeeSocialInsurance: schemeComp.employeeSocialInsurance,
@@ -543,7 +573,11 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
     netPaid: schemeComp.takeHome - schemeDeduction,
     freeCash: schemeFreeCash,
     inKindValue,
-    employeeRealValue: schemeFreeCash + inKindValue,
+    taxableInKind,
+    // 食事の現物は課税されても**受け取っている**ので実質手元残りには入る。
+    employeeRealValue: schemeFreeCash + inKindValue + taxableInKind,
+    // 課税現物は `schemeComp.gross` (課税標準) の中に居るので、会社総コストの式は
+    // 形のまま —— 二重に足さない。
     companyTotalCost: schemeComp.gross + schemeComp.employerSocialInsurance + inKindValue,
     reachedTarget: schemeSolved.reached,
   };
@@ -558,7 +592,7 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
       employeeRealValue: scheme.employeeRealValue - normal.employeeRealValue,
       companyTotalCost: scheme.companyTotalCost - normal.companyTotalCost,
     },
-    mealSubsidy: mealSubsidyVerdict(input.mealTotal, input.mealCompanyShare),
+    mealSubsidy,
     deductions: {
       dependent: dependentDeduction,
       blue: blueDeduction,

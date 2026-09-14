@@ -158,6 +158,8 @@ describe('designWelfareScheme', () => {
       inKindValue: 0,
       employeeRealValue: 265_000,
       companyTotalCost: 670_243,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
       // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
       reachedTarget: true,
     });
@@ -171,6 +173,8 @@ describe('designWelfareScheme', () => {
       inKindValue: 157_500,
       employeeRealValue: 422_500,
       companyTotalCost: 569_851,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
       // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
       reachedTarget: true,
     });
@@ -452,6 +456,8 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
       inKindValue: 0,
       employeeRealValue: 265_000,
       companyTotalCost: 620_155,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
       // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
       reachedTarget: true,
     });
@@ -465,6 +471,8 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
       inKindValue: 157_500,
       employeeRealValue: 422_500,
       companyTotalCost: 544_852,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
       // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
       reachedTarget: true,
     });
@@ -655,8 +663,22 @@ describe('mealSubsidyVerdict (食事補助の非課税要件・パス 219)', () 
     const huge = designWelfareScheme({ ...base, mealCompanyShare: 9_999_999_999 });
     expect(huge.mealSubsidy.taxFree).toBe(false);
     expect(huge.mealSubsidy.reasons).toHaveLength(2);
-    // **数字そのものは今も出る** (税額の再計算は積み残し)。断りがその前提を述べる。
-    expect(huge.scheme.employeeRealValue).toBeGreaterThan(10_000_000_000);
+    // **パス 228 で積み残しを閉じた。** ここは元々
+    //   「数字そのものは今も出る (税額の再計算は積み残し)」
+    //   `expect(huge.scheme.employeeRealValue).toBeGreaterThan(10_000_000_000)`
+    // と書いてあった —— **要求ではなく、その時点の振る舞いの記述**である
+    // (コメントが「積み残し」と明言していた)。要件を外れた会社負担は給与課税に
+    // 入るので、非課税の現物価値には入らず、実質手元残りは 100 億にならない。
+    expect(huge.scheme.taxableInKind).toBe(9_999_999_999);
+    expect(huge.scheme.inKindValue).toBe(base.rentCompanyShare + base.ecPoints);
+    expect(huge.scheme.employeeRealValue).toBeLessThan(10_000_000_000);
+    // 逆算は探索上限に張り付く (このモデルでは表せない高さ) —— パス 103 の
+    // `reachedTarget` が false になり、画面はその枠で断る。
+    expect(huge.scheme.reachedTarget).toBe(false);
+    // 要件を満たす側は課税現物 0 で、非課税の現物に食事が入る (対照)。
+    const ok = designWelfareScheme(base);
+    expect(ok.scheme.taxableInKind).toBe(0);
+    expect(ok.scheme.inKindValue).toBe(base.rentCompanyShare + base.mealCompanyShare + base.ecPoints);
   });
 
   it('MEAL_SUBSIDY_SELF_PAY_RATIO に消費者が在る (パス 219 まで 0 件だった)', () => {

@@ -7,6 +7,7 @@ import { jpy } from '../../shared/formatters';
 import {
   designWelfareScheme,
   MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  MEAL_SUBSIDY_SELF_PAY_RATIO,
   type WelfareSchemeInput,
 } from '../../shared/welfareScheme';
 import {
@@ -141,6 +142,9 @@ export function WelfareSchemeCard() {
     { label: '口座振込額', a: normal.netPaid, b: scheme.netPaid },
     { label: '自由に使えるお金 (手元残り)', a: normal.freeCash, b: scheme.freeCash },
     { label: '現物支給の福利厚生価値 (非課税)', a: normal.inKindValue, b: scheme.inKindValue },
+    // **課税される現物給与の行** (パス 228)。0 のときも出す —— 「0 円」は
+    // 「要件を満たしている」という情報で、行が消えると読み手は区別できない。
+    { label: '給与課税される現物給与', a: normal.taxableInKind, b: scheme.taxableInKind },
     { label: '従業員の実質手元残り', a: normal.employeeRealValue, b: scheme.employeeRealValue, hi: true },
     { label: '会社の総コスト (給与+社保+福利厚生)', a: normal.companyTotalCost, b: scheme.companyTotalCost, hi: true },
   ];
@@ -207,9 +211,14 @@ export function WelfareSchemeCard() {
         >
           ⛔ 食事補助が<strong>非課税の要件を満たしていません</strong>。
           {mealSubsidy.reasons.map((r) => `${r}。`).join('')}
-          外れた分は本来<strong>給与として課税されます</strong>が、下表は会社負担の全額を
-          非課税として計算しているため、「税と社保が下がる」効果はこの設計では成り立ちません。
-          会社負担を下げるか、本人負担を増やしてお試しください。
+          {/* **断りと数字を一致させる** (パス 228)。パス 219 まではここで
+              「下表は会社負担の全額を非課税として計算している」と述べていた ——
+              断りは正しいが、それは「下表の数字が間違っている」と認めるだけだった。 */}
+          会社負担 <strong data-meal-taxable-yen={scheme.taxableInKind}>{yen(scheme.taxableInKind)}</strong> は
+          <strong>給与課税として下表の計算に入れています</strong>
+          （社会保険料・所得税・住民税が上がり、「現物支給の福利厚生価値 (非課税)」からは外しています）。
+          会社負担を月 {yen(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN)} 以下にし、本人負担を食事の価額の
+          {Math.round(MEAL_SUBSIDY_SELF_PAY_RATIO * 100)}% 以上にすると非課税になります。
         </p>
       )}
 

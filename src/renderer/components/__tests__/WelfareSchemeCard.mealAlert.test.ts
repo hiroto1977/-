@@ -70,6 +70,22 @@ async function typeField(label: string, value: string): Promise<void> {
 const alertEl = (): Element | null => container.querySelector('[data-meal-subsidy-alert]');
 
 /**
+ * 比較表の 1 行を `[ラベル, これまで, 新制度]` で読む (パス 228)。
+ *
+ * **対照が鳴らなかったので足した検査。** 「給与課税される現物給与」の行を画面へ
+ * 足したあと、その行を消す対照を回したら**何も落ちなかった** ——
+ * 配線しただけで留めていなかった。**鳴らない対照は「合格」ではなく、
+ * その検査についての報せである。**
+ */
+function tableRow(label: string): readonly string[] {
+  const tr = Array.from(container.querySelectorAll('tbody tr')).find(
+    (row) => (row.querySelector('td')?.textContent ?? '').trim() === label,
+  );
+  if (!tr) throw new Error(`row not found: ${label}`);
+  return Array.from(tr.querySelectorAll('td')).map((td) => (td.textContent ?? '').trim());
+}
+
+/**
  * **断りの中だけを読む。** 画面の下の免責文も「会社負担が月 7,500円以下」と
  * 同じ語を持つので、`says()` (画面ぜんぶ) で「出ていない」を主張すると
  * **免責文に当たって必ず true になる** —— 最初にこれで 1 本落ちた。
@@ -101,6 +117,9 @@ describe('食事補助の非課税要件の断り (パス 219)', () => {
     expect(says('給与デザイン')).toBe(true);
     expect(says('従業員の実質手元残り')).toBe(true);
     expect(alertEl()).toBeNull();
+    // **行は 0 のときも出す** (パス 228) —— 「¥0」は「要件を満たしている」という
+    // 情報で、行が消えると読み手は「0 なのか、そもそも見ていないのか」を区別できない。
+    expect(tableRow('給与課税される現物給与')).toEqual(['給与課税される現物給与', '¥0', '¥0']);
   });
 
   it('★ 会社負担が限度額を超えると ⛔ で断り、限度額を述べる', async () => {
@@ -113,8 +132,23 @@ describe('食事補助の非課税要件の断り (パス 219)', () => {
     expect(alertSays('非課税の要件を満たしていません')).toBe(true);
     expect(alertSays('会社負担が月')).toBe(true);
     expect(alertSays('7,500 円を超えています')).toBe(true);
-    // **数字は隠さない** —— 断りが「その前提が成り立たない」と述べる (パス 206 の形)。
-    expect(alertSays('給与として課税されます')).toBe(true);
+    // **断りと数字が一致している** (パス 228)。パス 219 ではここが
+    // `alertSays('給与として課税されます')` で、断りは「本来課税される」と述べつつ
+    // 下表は非課税として計算していた —— つまり**断りが「表は間違っている」と
+    // 認めるだけ**だった。今は計算に入っているので、断りはそう述べる。
+    expect(alertSays('給与課税として下表の計算に入れています')).toBe(true);
+    expect(alertSays('現物支給の福利厚生価値 (非課税)」からは外しています')).toBe(true);
+    // 課税に回した額を数字で名指しする (⛔ の欄の値と同じ出所)。
+    expect(alertEl()?.querySelector('[data-meal-taxable-yen]')?.getAttribute('data-meal-taxable-yen'))
+      .toBe(String(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN + 1));
+    // **表の行にも出る** —— 断りだけでなく、比較表の中で金額が動いたことが見える。
+    expect(tableRow('給与課税される現物給与')).toEqual([
+      '給与課税される現物給与', '¥0', `¥${(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN + 1).toLocaleString('ja-JP')}`,
+    ]);
+    // 非課税の側からは外れている (同じ表の隣の行で対照が取れる)。
+    expect(tableRow('現物支給の福利厚生価値 (非課税)')[2]).not.toContain(
+      `¥${(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN + 1).toLocaleString('ja-JP')}`,
+    );
   });
 
   it('★ 本人負担が半額を下回ると、そちらの要件を名指しする', async () => {
