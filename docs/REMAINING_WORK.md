@@ -26103,6 +26103,71 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 242 (2026-09-14) — **検査が 1 つも落ちていないのに CI が赤くなった — 1 秒タイマーの 1 発**
+
+パス 241 (文書だけ) の push で CI が落ちた。**私の差分のせいではない。** 中身:
+
+```
+Test Files  719 passed (719)
+      Tests  16471 passed (16471)
+     Errors  1 error          ← これで exit 1
+
+ReferenceError: window is not defined
+ ❯ getCurrentEventPriority  react-dom.development.js
+ ❯ dispatchSetState         react-dom.development.js
+ ❯ Timeout._onTimeout       src/renderer/hooks/useRealtimeTick.ts:74
+```
+
+**16,471 件すべて成功しているのにビルドが赤い。** 落ちたのは検査ではなく
+**素の Node のタイマーの中**で、`uncaughtException` が vitest の
+「Errors 1」になって exit 1 を作っている。
+
+### 何が起きているか
+
+`useRealtimeTick` は 1 秒ごとに `setAt(now())` する (画面の時計)。jsdom の
+ファイルが片付いた後にその刻みが 1 発だけ生き残ると、React の
+`dispatchSetState` が `window` を読もうとして落ちる —— 環境は既に消えており、
+`window` はもう無い。**タイマーの中なので誰も catch できない。**
+
+タイミング次第なので、**手元では 2 回とも通り、CI で落ちた** (CI のほうが遅い)。
+再現も試した: 刻みを持つ 2 ファイル (`guardedJudgements` = 全 76 画面 /
+`overviewBankSheet`) を 1 ワーカーで 3 回回して**再現せず** —— 719 ファイルの
+並び順が要る。
+
+### 直したこと、と直していないこと
+
+**直した**: 刻みの本体に `if (typeof document === 'undefined') return;` を 1 行。
+このモジュールは既に 2 か所で同じ判定をしている
+(`defaultSubscribeVisibility` / `defaultIsHidden`) —— つまり「文書が無い所でも
+読み込まれうる」という立場を**元から**取っており、刻みの本体だけが見ていなかった。
+刻みは画面を動かすためだけの物なので、動かす画面が無いなら進める意味も無い。
+
+**直していない (正直に書く)**: **どのファイルが刻みを取り残すのかは特定できていない。**
+`createRoot` を呼ぶ jsdom の検査 136 本を当たり、解除を書いていないのは 1 本
+(`browserEntry.test.ts`) だけで、それは `createRoot` を**差し替えている**ので
+本物の根を持たない (= 私の走査の偽陽性)。刻みを持つ 2 画面を載せる検査は
+どちらも解除する (`afterEach` / `finally`)。**それでも 1 発生き残る**。
+
+つまりこの直しは**原因の除去ではなく、結果の無害化**である。ブラウザでは
+解除が必ず走るので製品の欠陥ではなく、**全件実行の脆さ**を消した。
+特定できていないことを承知で、この形を採った理由:
+
+- 赤の原因は「検査が落ちた」ではなく「片付けの取り残しが 1 発暴れた」で、
+  **16,471 件が緑なのに人が原因を探す**状態そのものが害である。
+- 製品コードに足したのは、そのモジュールが**既に 2 か所で取っている立場**の
+  3 つ目であって、harness のための特別扱いではない。
+
+**残件**: 取り残す 1 本を特定する道を作る (例: jsdom のファイル終了時に
+「アプリが張ったタイマーが残っていないか」を見る setup)。今の
+`vitest.config.ts` に `setupFiles` は無い。
+
+### 対照
+
+`useRealtimeTick.test.ts` に 1 件足した (12 件目)。同じテストの中に対照を置く:
+文書を消して `fire()` → 進まない・投げない / 文書を戻して `fire()` → 進む
+(守りが「常に止める」になっていないこと)。**守りの 1 行を外すと、その 1 件だけが
+落ちる** (実測: 12 件中 1 件)。
+
 ## パス 241 (2026-09-14) — **`shell.openExternal` を当たった。3 経路すべて閉じていた (負の結果)**
 
 `shell.openExternal` は Electron の古典的な昇格の口である —— `javascript:` はコード実行、
