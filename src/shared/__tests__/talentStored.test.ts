@@ -66,8 +66,10 @@ describe('readStoredTalent — 3 つの状態を混ぜない', () => {
     if (r.kind !== 'saved') return;
     expect(r.state.members.map((m) => m.id)).toEqual(['m2']);
     expect(r.state.initiatives).toEqual([]);
+    // 送ったのは施策 1 / メンバー 2 なので件数上限には届いていない ——
+    // 名指すのは**欄の条件だけ**で、200 / 500 は出さない (パス 258)。
     expect(r.dropped).toBe(
-      '施策 1 件 (上限 200 件) / メンバー 1 件 (上限 500 件) は読み込みで落としました (形式が合わないか、上限を超えています)。このまま保存すると、これらは失われます。',
+      '施策 1 件 (施策名は 1〜128 文字・達成確率は 0〜100) / メンバー 1 件 (氏名は 1〜64 文字・STEP は 1〜4・滞留年数は 0〜60) は読み込みで落としました。このまま保存すると、これらは失われます。',
     );
   });
 
@@ -75,7 +77,7 @@ describe('readStoredTalent — 3 つの状態を混ぜない', () => {
     const many = Array.from({ length: MAX_LADDER_MEMBERS + 2 }, (_, i) => ({ id: `m${i}`, name: 'x', step: 1, yearsInStep: 1 }));
     const r = readStoredTalent(JSON.stringify({ ...good(), members: many }));
     expect(r.kind === 'saved' && r.state.members).toHaveLength(MAX_LADDER_MEMBERS);
-    expect(r.kind === 'saved' && r.dropped).toContain(`メンバー 2 件 (上限 ${MAX_LADDER_MEMBERS} 件)`);
+    expect(r.kind === 'saved' && r.dropped).toContain(`メンバー 2 件 (上限 ${MAX_LADDER_MEMBERS} 件を超えた分)`);
   });
 });
 
@@ -87,15 +89,20 @@ describe('describeUnreadEntries / describeDroppedEntries — 同じ数え方・�
     expect(describeDroppedEntries(sent, sent)).toBeNull();
   });
 
-  it('欄ごとの件数と上限を挙げ、読み込み側は「失われます」と言う', () => {
+  it('欄ごとに同じ句を使い、読み込み側だけが「失われます」と言う', () => {
     const kept = { reports: 2, initiatives: 2, members: 3 };
+    // 両方とも `sent <= cap` なので、名指すのは欄の条件だけ (パス 258)。
+    const parts = `部署の申告 1 件 (部署名は 1〜64 文字) / メンバー 2 件 (氏名は 1〜64 文字・STEP は 1〜4・滞留年数は 0〜60)`;
     expect(describeUnreadEntries(sent, kept)).toBe(
-      `部署の申告 1 件 (上限 ${MAX_DEPT_REPORTS} 件) / メンバー 2 件 (上限 ${MAX_LADDER_MEMBERS} 件) は読み込みで落としました (形式が合わないか、上限を超えています)。このまま保存すると、これらは失われます。`,
+      `${parts} は読み込みで落としました。このまま保存すると、これらは失われます。`,
     );
-    expect(describeDroppedEntries(sent, kept)).toBe(
-      `部署の申告 1 件 (上限 ${MAX_DEPT_REPORTS} 件) / メンバー 2 件 (上限 ${MAX_LADDER_MEMBERS} 件) は保存されませんでした。入力の形式が合わないか、上限を超えています。`,
-    );
-    expect(describeUnreadEntries({ ...sent, initiatives: 9 }, { ...sent, initiatives: 8 })).toContain(`施策 1 件 (上限 ${MAX_INITIATIVES} 件)`);
+    expect(describeDroppedEntries(sent, kept)).toBe(`${parts} は保存されませんでした。`);
+    // ★ 読み込み側も件数上限を超えたときだけ上限を名指す (保存側と同じ句を共有する)。
+    expect(describeUnreadEntries(
+      { ...sent, initiatives: MAX_INITIATIVES + 1 }, { ...sent, initiatives: MAX_INITIATIVES },
+    )).toContain(`施策 1 件 (上限 ${MAX_INITIATIVES} 件を超えた分)`);
+    // 対照: 届いていないときは MAX_DEPT_REPORTS の数字そのものが文に現れない。
+    expect(describeUnreadEntries(sent, kept)).not.toContain(`${MAX_DEPT_REPORTS}`);
   });
 });
 

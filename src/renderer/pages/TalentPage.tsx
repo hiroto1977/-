@@ -3,7 +3,10 @@ import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
-import { describeDroppedEntries, type LeaderFitness, type TalentSnapshot } from '../../shared/talent';
+import {
+  describeDroppedEntries, MAX_DEPT_NAME_CHARS, MAX_INITIATIVE_NAME_CHARS,
+  type LeaderFitness, type TalentSnapshot,
+} from '../../shared/talent';
 import type { ActionData } from '../../shared/actionData';
 import type { SourceStrength } from '../../shared/provenance';
 
@@ -260,7 +263,7 @@ export function TalentPage(): React.JSX.Element {
                 <input
                   type="text"
                   value={r.department}
-                  placeholder="部署名"
+                  placeholder={`部署名 (${MAX_DEPT_NAME_CHARS} 文字まで)`}
                   aria-label={`申告 ${idx + 1} の部署名`}
                   onChange={(e) =>
                     setReports((prev) =>
@@ -345,7 +348,7 @@ export function TalentPage(): React.JSX.Element {
               <input
                 type="text"
                 value={it.name}
-                placeholder="施策名"
+                placeholder={`施策名 (${MAX_INITIATIVE_NAME_CHARS} 文字まで)`}
                 aria-label={`施策 ${idx + 1} の名前`}
                 onChange={(e) =>
                   setInitiatives((prev) =>

@@ -37,7 +37,7 @@
 // 2 か所に書かない**。
 export type { SourceStrength } from './provenance';
 export { SOURCE_STRENGTH_ORDER, atLeastAsStrong, isSourceStrength } from './provenance';
-import { clampToCeiling } from './inputCeiling';
+import { clampToCeiling, moreThanChars } from './inputCeiling';
 import type { SourceStrength } from './provenance';
 
 export interface OrganDisease {
@@ -373,7 +373,7 @@ export function isValidLadderMember(m: unknown): m is LadderMember {
   if (m === null || typeof m !== 'object') return false;
   const o = m as Record<string, unknown>;
   if (typeof o['id'] !== 'string' || !MEMBER_ID_RE.test(o['id'])) return false;
-  if (typeof o['name'] !== 'string' || o['name'].length === 0 || o['name'].length > 64) return false;
+  if (typeof o['name'] !== 'string' || o['name'].length === 0 || moreThanChars(o['name'], MAX_MEMBER_NAME_CHARS)) return false;
   const step = o['step'];
   // `typeof step !== 'number'` は実行時には冗長 —— `Number.isInteger(x)` は
   // `typeof x === 'number'` を含意する (実測)。残すのは TS の絞り込みのため。
@@ -424,6 +424,30 @@ export const MAX_INITIATIVES = 200;
 /** 育成ロードマップに載せるメンバーの上限。 */
 export const MAX_LADDER_MEMBERS = 500;
 
+/*
+ * 欄ごとの長さの天井 (2026-09-14 パス 258)。
+ *
+ * **単位は文字**。これらは元々 `dept.length > 64` のような裸のリテラルで、
+ * `String.length` (コード単位) を数えていた。同じ `sanitizeTalentState` の中で
+ * `updatedAt` だけが `clampToCeiling` (文字) を通っていたので、
+ * **隣り合う欄が別の単位で測っていた** ことになる。
+ * 実測 (2026-09-14): 絵文字 33 個の部署名は **33 文字 / 66 コード単位**で、
+ * コード単位の天井だと 33 文字で断られていた。
+ *
+ * パス 195 の規則 (述べる数と、守る数と、切る位置は同じ単位) と、
+ * パス 252 の規則 (天井は*拒むために*在るので数え切らない) に従い、
+ * 判定は `moreThanChars` で **n+1 文字目で打ち切る**。
+ */
+
+/** 部署名の天井 (文字)。 */
+export const MAX_DEPT_NAME_CHARS = 64;
+/** 施策名の天井 (文字)。 */
+export const MAX_INITIATIVE_NAME_CHARS = 128;
+/** ロードマップの氏名の天井 (文字)。 */
+export const MAX_MEMBER_NAME_CHARS = 64;
+/** 保存時刻の文字列の天井 (文字)。 */
+export const MAX_TALENT_UPDATED_AT_CHARS = 32;
+
 
 /** 部署の申告として受け付けられる形か。 */
 export function sanitizeReports(raw: unknown): readonly DeptReport[] {
@@ -438,7 +462,7 @@ export function sanitizeReports(raw: unknown): readonly DeptReport[] {
     if (r === null || typeof r !== 'object') continue;
     const o = r as Record<string, unknown>;
     const dept = o['department'];
-    if (typeof dept !== 'string' || dept.length === 0 || dept.length > 64) continue;
+    if (typeof dept !== 'string' || dept.length === 0 || moreThanChars(dept, MAX_DEPT_NAME_CHARS)) continue;
     // 既定の `[]` を別の配列に変えても、中身が病名の許可リストに載らない限り
     // 下の filter が全部落とすので等価。
     // Stryker disable next-line ArrayDeclaration
@@ -465,7 +489,7 @@ export function sanitizeInitiatives(raw: unknown): readonly Initiative[] {
     if (i === null || typeof i !== 'object') continue;
     const o = i as Record<string, unknown>;
     const name = o['name'];
-    if (typeof name !== 'string' || name.length === 0 || name.length > 128) continue;
+    if (typeof name !== 'string' || name.length === 0 || moreThanChars(name, MAX_INITIATIVE_NAME_CHARS)) continue;
     if (!isValidProbability(o['probability'])) continue;
     out.push({ name, probability: o['probability'] });
   }
@@ -527,22 +551,82 @@ export function describeDroppedEntries(
   sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
   kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
 ): string | null {
-  const rows = droppedRows(sent, kept);
-  if (rows.length === 0) return null;
-  const parts = rows.map((r) => `${r.label} ${r.dropped} 件 (上限 ${r.cap} 件)`);
-  return `${parts.join(' / ')} は保存されませんでした。入力の形式が合わないか、上限を超えています。`;
+  const parts = droppedParts(sent, kept);
+  if (parts.length === 0) return null;
+  return `${parts.join(' / ')} は保存されませんでした。`;
 }
 
-/** 送った件数と残った件数の差 (保存側と読み込み側が同じ数え方をする)。 */
+/**
+ * 送った件数と残った件数の差を、**落とした仕組みごとに分ける**。
+ *
+ * `sanitizeTalentState` は 2 段で落とす —— `slice(0, cap)` (件数上限) と
+ * `filter` (欄の形)。この 2 つは**件数だけから分けられる**:
+ *
+ * - `overflow = max(0, sent - cap)` —— `slice` が切った分。
+ * - `rejected = dropped - overflow` —— 残りは必ず `filter` が落とした分。
+ */
 function droppedRows(
   sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
   kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
-): readonly { readonly label: string; readonly dropped: number; readonly cap: number }[] {
+): readonly {
+  readonly label: string; readonly overflow: number; readonly rejected: number;
+  readonly cap: number; readonly requirement: string;
+}[] {
   return [
-    { label: '部署の申告', dropped: sent.reports - kept.reports, cap: MAX_DEPT_REPORTS },
-    { label: '施策', dropped: sent.initiatives - kept.initiatives, cap: MAX_INITIATIVES },
-    { label: 'メンバー', dropped: sent.members - kept.members, cap: MAX_LADDER_MEMBERS },
-  ].filter((r) => r.dropped > 0);
+    {
+      label: '部署の申告', sent: sent.reports, kept: kept.reports, cap: MAX_DEPT_REPORTS,
+      // 病名は `filter` で選り分けるだけで申告ごと落としはしないので、
+      // 申告が落ちる理由は部署名だけである。
+      requirement: `部署名は 1〜${MAX_DEPT_NAME_CHARS} 文字`,
+    },
+    {
+      label: '施策', sent: sent.initiatives, kept: kept.initiatives, cap: MAX_INITIATIVES,
+      requirement: `施策名は 1〜${MAX_INITIATIVE_NAME_CHARS} 文字・達成確率は 0〜100`,
+    },
+    {
+      label: 'メンバー', sent: sent.members, kept: kept.members, cap: MAX_LADDER_MEMBERS,
+      requirement: `氏名は 1〜${MAX_MEMBER_NAME_CHARS} 文字・STEP は 1〜4・滞留年数は 0〜60`,
+    },
+  ].map((r) => {
+    // 件数は呼び出し側が数えて渡すので、**どんな組み合わせでも負の件数を作らない**ように経らす。
+    const dropped = Math.max(0, r.sent - r.kept);
+    const overflow = Math.min(dropped, Math.max(0, r.sent - r.cap));
+    return {
+      label: r.label, cap: r.cap, requirement: r.requirement,
+      overflow, rejected: dropped - overflow,
+    };
+  }).filter((r) => r.overflow > 0 || r.rejected > 0);
+}
+
+/**
+ * 落ちた分を、**名指せる理由ごとに** 1 句ずつ。保存側と読み込み側が共有する。
+ *
+ * **件数上限を名指すのは、それが実際に切った分だけ** (2026-09-14 パス 258)。
+ * 以前は落ちた全件に「上限 N 件」を添えていたが、上限は 200 / 200 / 500 なので
+ * 実測 (2026-09-14) ではこうなっていた:
+ *
+ * | 入力 | 刺っていた理由 |
+ * | --- | --- |
+ * | 部署名 65 字・申告 **1 件** | 「部署の申告 1 件 (上限 **200** 件)」 |
+ * | 施策名 129 字・施策 **1 件** | 「施策 1 件 (上限 **200** 件)」 |
+ * | 滞留 61 年・メンバー **1 人** (パス 89 の実例) | 「メンバー 1 件 (上限 **500** 件)」 |
+ *
+ * いずれも 1 件しか送っていないので、`sent <= cap` が成り立つ
+ * —— つまり「上限を超えています」は**証明可能に偽**で、
+ * 添えた 200 / 500 は原因と無関係の数字である。パス 254 と同じ形
+ * (**成り立たない理由を刷る**)。いまは `overflow` と `rejected` を分けて
+ * 数え、それぞれの原因をそれぞれの件数と一緒に述べる。
+ */
+function droppedParts(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): readonly string[] {
+  const parts: string[] = [];
+  for (const r of droppedRows(sent, kept)) {
+    if (r.overflow > 0) parts.push(`${r.label} ${r.overflow} 件 (上限 ${r.cap} 件を超えた分)`);
+    if (r.rejected > 0) parts.push(`${r.label} ${r.rejected} 件 (${r.requirement})`);
+  }
+  return parts;
 }
 
 export function sanitizeTalentState(raw: unknown): TalentState {
@@ -556,7 +640,7 @@ export function sanitizeTalentState(raw: unknown): TalentState {
       ? o['members'].slice(0, MAX_LADDER_MEMBERS).filter(isValidLadderMember)
       : [],
     // 保存値は何でも入りうる (古い版・手で直した JSON)。文字の境界で切る (パス 196)。
-    updatedAt: typeof updatedAt === 'string' ? clampToCeiling(updatedAt, 32) : '',
+    updatedAt: typeof updatedAt === 'string' ? clampToCeiling(updatedAt, MAX_TALENT_UPDATED_AT_CHARS) : '',
   };
 }
 
@@ -603,10 +687,9 @@ export function describeUnreadEntries(
   sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
   kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
 ): string | null {
-  const rows = droppedRows(sent, kept);
-  if (rows.length === 0) return null;
-  const parts = rows.map((r) => `${r.label} ${r.dropped} 件 (上限 ${r.cap} 件)`);
-  return `${parts.join(' / ')} は読み込みで落としました (形式が合わないか、上限を超えています)。このまま保存すると、これらは失われます。`;
+  const parts = droppedParts(sent, kept);
+  if (parts.length === 0) return null;
+  return `${parts.join(' / ')} は読み込みで落としました。このまま保存すると、これらは失われます。`;
 }
 
 const LIST_FIELDS = ['reports', 'initiatives', 'members'] as const;

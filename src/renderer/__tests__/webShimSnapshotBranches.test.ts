@@ -113,7 +113,7 @@ describe('talent — 保存した申告が診断に出る', () => {
     const snap = await hub.fetchSnapshot('talent');
     expect(snap.ok).toBe(true);
     expect(snap.data?.stored).toBe('saved');
-    expect(String(snap.data?.storedNote)).toContain('メンバー 1 件 (上限 500 件) は読み込みで落としました');
+    expect(String(snap.data?.storedNote)).toContain('メンバー 1 件 (氏名は 1〜64 文字・STEP は 1〜4・滞留年数は 0〜60) は読み込みで落としました');
   });
 });
 
