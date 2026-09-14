@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { hasLoneSurrogate } from './loneSurrogate';
 import { safeErrorMessage, ERROR_MESSAGE_MAX_CHARS, REDACT_SCAN_LIMIT, redactForMessage, redactSecrets } from '../redact';
 
 /*
@@ -62,17 +63,6 @@ describe('safeErrorMessage', () => {
    * この関数は両ビルドのすべてのエラー 1 行が通る漏斗なので、境界が
    * サロゲート対の真ん中に落ちると孤立サロゲートが画面と IPC へ出る。
    */
-  function hasLoneSurrogate(str: string): boolean {
-    for (let i = 0; i < str.length; i++) {
-      const c = str.charCodeAt(i);
-      if (c >= 0xd800 && c <= 0xdbff) {
-        const next = i + 1 < str.length ? str.charCodeAt(i + 1) : -1;
-        if (next < 0xdc00 || next > 0xdfff) return true;
-        i++;
-      } else if (c >= 0xdc00 && c <= 0xdfff) return true;
-    }
-    return false;
-  }
 
   it('★ 絵文字が境界に来ても文字を割らない (孤立サロゲートを残さない)', () => {
     // 'a' を 1999 個 + 絵文字 → コード単位で切ると 2000 番目で対が割れる。

@@ -299,8 +299,16 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
     expect(LOCK).toMatch(/MIN_PASSWORD_LENGTH/);
   });
 
-  it('事前検査も同じ定数で比べている (別の閾値を持たない)', () => {
-    expect(SETTINGS).toMatch(/newPw\.length < MIN_PASSWORD_LENGTH/);
+  it('事前検査は関門そのものを読む (定数だけ共有して式を書き直さない)', () => {
+    /*
+     * **2026-09-14 (パス 252) に要求を強めた。** それまでは
+     * `newPw.length < MIN_PASSWORD_LENGTH` という**式の写し**を要求していた ——
+     * 定数は 1 つでも**規則が 2 か所**に在る形で、実際その写しが
+     * `password.length` (コード単位) を数えており、`'😀'.repeat(6)` (実文字数 6) が
+     * 「12 文字以上」の関門を通っていた。式ごと `meetsPasswordPolicy` を読む。
+     */
+    expect(SETTINGS).toMatch(/meetsPasswordPolicy\(newPw\)/);
+    expect(SETTINGS, '長さの式を書き直している (関門を読むこと)').not.toMatch(/newPw\.length\s*[<>]/);
     expect(SETTINGS, '古い 8 文字の閾値が残っている').not.toMatch(/newPw\.length < 8\b/);
   });
 

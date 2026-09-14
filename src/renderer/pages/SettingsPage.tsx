@@ -11,7 +11,7 @@ import { PARAMETERS } from '../../shared/parameters';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
-import { getVault, MAX_TOKEN_CHARS, MIN_PASSWORD_LENGTH } from '../security/vault';
+import { getVault, MAX_TOKEN_CHARS, MIN_PASSWORD_LENGTH, meetsPasswordPolicy } from '../security/vault';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import { checkTokenInput } from '../../shared/tokenInput';
@@ -459,7 +459,8 @@ export function VaultControls() {
     // 10 文字を入れると「8 文字以上」と言われた後に vault が「12 文字以上」で
     // 弾く、という二段の食い違いになっていた (2026-08-23)。
     // 数字を 2 か所に持たない —— 実物の定数から出す。
-    if (newPw.length < MIN_PASSWORD_LENGTH) {
+    // 式ごと関門を読む (パス 252) —— `newPw.length` はコード単位を数えていた。
+    if (!meetsPasswordPolicy(newPw)) {
       setErr(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上にしてください`);
       return;
     }

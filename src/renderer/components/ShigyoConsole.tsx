@@ -10,6 +10,7 @@ import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
 import { docsForProfessional } from '../data/businessTriage';
 import {
@@ -23,6 +24,24 @@ import {
   type ShigyoConsultationEntry,
   shigyoDemoMixNote,
 } from '../data/shigyoDirectory';
+
+/** 独占業務の説明を吹き出しの幅に収める文字数 (表示だけ。切った印を付ける)。 */
+const EXCLUSIVE_SUMMARY_CHARS = 26;
+
+/**
+ * **切るのは文字の境界で** (2026-09-14 · パス 252)。
+ *
+ * ここは `profile.exclusive.length > 26 ? profile.exclusive.slice(0, 26) : …` と
+ * **コード単位**で数え・切っていた。実測では台帳 8 件に BMP の外の文字は 0 件なので
+ * 今日の出力は変わらないが、士業の説明は `𠮟責` のような JIS2004 漢字を含みうる
+ * 語域で、混ざった日に末尾が `\ufffd` へ化ける。`PageErrorBoundary` が
+ * パス 196 で同じ形を直したのと同じ規準に寄せる。
+ */
+function exclusiveSummary(text: string): string {
+  return countChars(text) > EXCLUSIVE_SUMMARY_CHARS
+    ? `${clampToCeiling(text, EXCLUSIVE_SUMMARY_CHARS)}…`
+    : text;
+}
 
 const EMPTY_CONTACT_FORM = { name: '', firm: '', phone: '', email: '' };
 const EMPTY_CONSULTATION_FORM = { date: '', topic: '', status: '相談予約' as ShigyoConsultationStatus };
@@ -230,7 +249,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                 cursor: 'help',
               }}
             >
-              独占業務: {profile.exclusive.length > 26 ? `${profile.exclusive.slice(0, 26)}…` : profile.exclusive}
+              独占業務: {exclusiveSummary(profile.exclusive)}
             </span>
           </div>
           <div

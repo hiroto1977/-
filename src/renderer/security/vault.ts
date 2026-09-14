@@ -17,7 +17,7 @@
  *  - 詳細: docs/BROWSER_REDESIGN.md §3.1.1 + /tmp/vault-recovery-design.md
  */
 
-import { countChars } from '../../shared/inputCeiling';
+import { atLeastChars, countChars, moreThanChars } from '../../shared/inputCeiling';
 import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../../shared/tokenInput';
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
@@ -55,6 +55,21 @@ const SALT_BYTES = 32;
 const IV_BYTES = AES_GCM_IV_BYTES;
 const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
 // Stryker restore StringLiteral
+/**
+ * マスターパスワードの**文字数の上限** (2026-09-14 · パス 252 で名前を付けた)。
+ *
+ * 2026-09-14 まで `256` は**条件 3 か所と文面 3 か所**に字面で在った (計 6 写し) ——
+ * パス 167 が入力欄の天井で直したのと同じ形。安全上限なので `parameters.ts` の
+ * 台帳には載せない (CLAUDE.md の規則)。
+ *
+ * PBKDF2 は入力の長さを問わないので、これは鍵の強さの話ではなく
+ * **際限のない入力を受けない**ための床である。
+ *
+ * **`Stryker disable StringLiteral` の範囲の外に置く** —— 数値なので
+ * 文字列の無効化とは無関係で、中に入れると `lint:mutation-scope` が
+ * 「広い無効化が 34 行に増えた」と正しく鳴った (2026-09-14 に実測)。
+ */
+export const MAX_PASSWORD_CHARS = 256;
 
 /**
  * パスワードが**現在の**下限を満たすか。
@@ -74,7 +89,22 @@ const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
  * `unlock` は通さない。混ぜると `unlock` が既存の保管庫を閉め出す。
  */
 export function meetsPasswordPolicy(password: string): boolean {
-  return password.length >= MIN_PASSWORD_LENGTH;
+  /*
+   * **数えるのは文字で、コード単位ではない。** (2026-09-14 · パス 252)
+   *
+   * パス 195 は**天井**を文字単位へ揃えたが、**床**は見ていなかった。この同じ
+   * ファイルの `setToken` は既に `countChars(token) > MAX_TOKEN_CHARS` と
+   * 文字で数えており、**床だけが `password.length`** だった。
+   *
+   * 実測 (2026-09-14): 画面と例外は 9 か所で「12 文字以上」と述べるのに、
+   * `'😀'.repeat(6)` (実文字数 **6**・コード単位 12) が通っていた ——
+   * **宣言した床の半分で満たせた**。BMP の外の文字を混ぜるほど床は下がり、
+   * `'😀😀😀' + 'a'.repeat(6)` (実文字数 9) も通っていた。
+   *
+   * `atLeastChars` は 12 文字目で切り上げるので、長さに依らず安い
+   * (`countChars` は最後まで辿る)。
+   */
+  return atLeastChars(password, MIN_PASSWORD_LENGTH);
 }
 
 /**
@@ -714,8 +744,8 @@ class BrowserVault implements Vault {
     if (typeof password !== 'string' || !meetsPasswordPolicy(password)) {
       throw new Error(`パスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
-    if (password.length > 256) {
-      throw new Error('パスワードが長すぎます (256 字以内)');
+    if (moreThanChars(password, MAX_PASSWORD_CHARS)) {
+      throw new Error(`パスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
     const db = await openDb();
     try {
@@ -1070,8 +1100,8 @@ class BrowserVault implements Vault {
     if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
       throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
-    if (newPassword.length > 256) {
-      throw new Error('新しいパスワードが長すぎます (256 字以内)');
+    if (moreThanChars(newPassword, MAX_PASSWORD_CHARS)) {
+      throw new Error(`新しいパスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
     const db = await openDb();
     try {
@@ -1173,8 +1203,8 @@ class BrowserVault implements Vault {
     if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
       throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
-    if (newPassword.length > 256) {
-      throw new Error('新しいパスワードが長すぎます (256 字以内)');
+    if (moreThanChars(newPassword, MAX_PASSWORD_CHARS)) {
+      throw new Error(`新しいパスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
     // Validate mnemonic BEFORE opening IDB (cheap rejection → no leaked
     // connection if mnemonic is malformed / has unknown words / bad checksum).

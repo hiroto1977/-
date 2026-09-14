@@ -79,7 +79,17 @@ const VERDICTS = {
     '対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び '
     + '(main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の '
     + '消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ',
-  assistantLimits: '未読 (AI へ送る入力の天井)',
+  assistantLimits:
+    '対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、'
+    + 'ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も '
+    + 'inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は '
+    + '`.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。'
+    + '絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した',
+  inputCeiling:
+    '対称 (設計・パス 252 で新設) —— 天井と床の判定そのもの (countChars / clampToCeiling / '
+    + 'atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を'
+    + '満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。'
+    + '呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)',
   atlassianSite: '**非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ)',
   emotionsLimits: '未読 (AI へ送る入力の天井)',
   eraseReport: '未読 (消去の報告)',

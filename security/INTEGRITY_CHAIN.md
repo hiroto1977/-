@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 192
+- ブロック数: 194
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `7e915fc8f9d06c05e8f8c4ac5984d1ac1728f052987d614cdf3d139b99bc36fb`
+- 末尾(tip)ハッシュ: `daad1efc40fe40a2dad9c97d66a82d72f7bf16a517f1ad560b6ef1cb372967a2`
 - 保護対象: 71 ファイル
 
 ## ブロック
@@ -205,6 +205,8 @@
 | 189 | `16493095e76909bb` | `50fb909a763fa713` | `99603a884ce00f29` | update secrets.ts,vault.ts,tokenInput.ts |
 | 190 | `b1355dbc7c0c258e` | `99603a884ce00f29` | `a4581b8db1377e1b` | update secrets.ts,vaultToken.ts |
 | 191 | `b8a80c2a515f4d13` | `a4581b8db1377e1b` | `7e915fc8f9d06c05` | update ci.yml,atlassianSite.ts |
+| 192 | `8cd4d58c6b655672` | `7e915fc8f9d06c05` | `fc5b41cfc9978320` | update assistant.ts,vault.ts,inputCeiling.ts |
+| 193 | `9115266c561a5b6d` | `fc5b41cfc9978320` | `daad1efc40fe40a2` | update vault.ts |
 
 ## 保護対象ファイル
 

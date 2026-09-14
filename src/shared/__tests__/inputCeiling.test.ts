@@ -10,12 +10,15 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  atLeastChars,
   charsOverCeiling,
   clampToCeiling,
   clampedCeilingNote,
   countChars,
+  moreThanChars,
   refusedCeilingNote,
 } from '../inputCeiling';
+import { hasLoneSurrogate } from './loneSurrogate';
 
 describe('charsOverCeiling', () => {
   it('超えていなければ 0 (境界ちょうども 0)', () => {
@@ -104,28 +107,6 @@ describe('2 つの文は互いに別物', () => {
  * (絵文字・JIS 2004 の漢字) を含む入力で 2 つの害が同時に出ていた ——
  * 下の ★ が実測した形をそのまま持つ。
  */
-/*
- * **孤立サロゲートを自分で判定する。**
- *
- * `String.prototype.isWellFormed()` (ES2024) はこの tsconfig の `lib` に無く、
- * 出荷先のブラウザにも在るとは限らない。**「割れていない」の意味をここで書く** ——
- * 上位半分 (U+D800–U+DBFF) の直後は必ず下位半分 (U+DC00–U+DFFF)、
- * 下位半分が単独で現れてはいけない。
- */
-function hasLoneSurrogate(s: string): boolean {
-  for (let i = 0; i < s.length; i++) {
-    const c = s.charCodeAt(i);
-    if (c >= 0xd800 && c <= 0xdbff) {
-      const next = i + 1 < s.length ? s.charCodeAt(i + 1) : -1;
-      if (next < 0xdc00 || next > 0xdfff) return true;
-      i++; // 対で消費する
-    } else if (c >= 0xdc00 && c <= 0xdfff) {
-      return true; // 下位半分が単独で来た
-    }
-  }
-  return false;
-}
-
 describe('hasLoneSurrogate — 判定そのものが効いている (この検査の道具を先に留める)', () => {
   it('対になっていれば false / 割れていれば true', () => {
     expect(hasLoneSurrogate('abc')).toBe(false);
@@ -219,5 +200,67 @@ describe('★ 述べる数と、守る数と、切る位置が同じ単位であ
       expect(charsOverCeiling(cut, MAX)).toBe(0);
       expect(hasLoneSurrogate(cut)).toBe(false);
     }
+  });
+});
+
+describe('★ 床も天井も、数えるのは文字である (パス 252)', () => {
+  /*
+   * **既存の境界検査はどれも `'a'.repeat(N)` を使っていた** —— ASCII では
+   * コード単位と文字数が一致するので、**単位の食い違いはどの標本でも現れない**。
+   * 「不在を主張する検査には、標本を添える」の裏面: *在ることを主張する*検査も、
+   * 区別が現れる標本を通らなければ何も留めていない。
+   */
+  it('★ atLeastChars は文字で数える (コード単位では床を満たす標本が落ちる)', () => {
+    const six = '😀'.repeat(6); // 実文字数 6 / コード単位 12
+    expect(countChars(six)).toBe(6);
+    expect(six.length).toBe(12);
+    expect(atLeastChars(six, 12)).toBe(false);
+    // 対照 —— これが 2026-09-14 まで使われていた式で、通っていた。
+    expect(six.length >= 12).toBe(true);
+  });
+
+  it('★ 混在も文字で数える (絵文字 3 + ASCII 6 = 9 文字)', () => {
+    const mixed = `${'😀'.repeat(3)}${'a'.repeat(6)}`;
+    expect(countChars(mixed)).toBe(9);
+    expect(atLeastChars(mixed, 12)).toBe(false);
+    expect(atLeastChars(mixed, 9)).toBe(true);
+  });
+
+  it('★ JIS2004 の漢字も 1 文字として数える', () => {
+    expect(atLeastChars('𠮟'.repeat(12), 12)).toBe(true);
+    expect(atLeastChars('𠮟'.repeat(11), 12)).toBe(false);
+  });
+
+  it('★ 境界 (n-1 / n / n+1)', () => {
+    expect(atLeastChars('あ'.repeat(11), 12)).toBe(false);
+    expect(atLeastChars('あ'.repeat(12), 12)).toBe(true);
+    expect(atLeastChars('あ'.repeat(13), 12)).toBe(true);
+    expect(moreThanChars('あ'.repeat(11), 12)).toBe(false);
+    expect(moreThanChars('あ'.repeat(12), 12)).toBe(false);
+    expect(moreThanChars('あ'.repeat(13), 12)).toBe(true);
+  });
+
+  it('★ moreThanChars は文字で数える (200 文字の絵文字は 256 字の中)', () => {
+    const long = '😀'.repeat(200); // 実文字数 200 / コード単位 400
+    expect(moreThanChars(long, 256)).toBe(false);
+    // 対照 —— これが使われていた式で、宣言と違って断っていた。
+    expect(long.length > 256).toBe(true);
+  });
+
+  it('★ 読めない床・天井の倒し方 (通さない向き)', () => {
+    expect(atLeastChars('あいうえおかきくけこさし', Number.NaN)).toBe(false);
+    expect(atLeastChars('あ', Number.POSITIVE_INFINITY)).toBe(false);
+    expect(moreThanChars('', Number.NaN)).toBe(true);
+    expect(moreThanChars('', -1)).toBe(true);
+    // 0 以下の床は「誰でも満たす」(空文字も通る) —— 呼び出し側の誤りだが投げない。
+    expect(atLeastChars('', 0)).toBe(true);
+  });
+
+  it('★ 長さに依らず答える (数え切らない)', () => {
+    // 20 万文字でも、判定は n 文字目で切り上げる。答えが正しいことを留める
+    // (速さの主張は散文が持つ —— 時間の assert は環境で揺れる)。
+    const huge = 'あ'.repeat(200_000);
+    expect(atLeastChars(huge, 12)).toBe(true);
+    expect(moreThanChars(huge, 256)).toBe(true);
   });
 });

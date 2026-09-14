@@ -97,6 +97,66 @@ export function clampToCeiling(value: string, max: number): string {
 }
 
 /**
+ * **文字数が `n` 以上か。数え切らずに答える。** (2026-09-14 · パス 252)
+ *
+ * ## なぜ `value.length >= n` ではないか
+ *
+ * パス 195 は**天井**(切る側) を文字単位へ揃えたが、**床**(下限) は見ていなかった。
+ * 実測 (2026-09-14): 保管庫のマスターパスワードは 9 か所で「12 文字以上」と述べ、
+ * 関門 (`meetsPasswordPolicy`) は `password.length >= 12` ——
+ * つまり**コード単位**を数えていた。
+ *
+ * | 入力 | 文字数 | コード単位 | 関門 | 画面の宣言 |
+ * | --- | --- | --- | --- | --- |
+ * | `'😀'.repeat(6)` | **6** | 12 | **通す** | 断るべき |
+ * | `'𠮟'.repeat(6)` (JIS2004 漢字) | **6** | 12 | **通す** | 断るべき |
+ * | `'😀😀😀' + 'a'.repeat(6)` | **9** | 12 | **通す** | 断るべき |
+ * | `'あいうえおかきくけこさし'` | 12 | 12 | 通す | 通すべき |
+ *
+ * **宣言した 12 文字の床は、実文字数 6 で満たせた** —— 床の半分である。天井の側
+ * (コード単位で切る) は「切り過ぎ + 孤立サロゲート」だが、床の側は
+ * **緩む方向へ外れる**。同じ 1 つの単位の食い違いが、向きによって害を変える。
+ *
+ * ## なぜ短絡するか —— 床と天井は「安全上限」で、評価が安くなければならない
+ *
+ * `countChars(value) >= n` でも答えは同じだが、あちらは**文字列を最後まで**辿る。
+ * 上限の判定 (`256 字以内`) は**拒むために**在るので、100 MB の入力を拒むのに
+ * 100 MB 辿るのでは守りが攻撃面になる (`.length` は O(1) だからこの問題が無い)。
+ * ここは `n` 文字目に届いた時点で切り上げるので O(min(n, 長さ))、
+ * つまり**入力の長さに依らない**。
+ */
+export function atLeastChars(value: string, n: number): boolean {
+  // 非有限の床は「満たせない」に倒す。`clampToCeiling` が非有限の天井を
+  // 「余地なし」に倒すのと同じ向き —— 読めない規則を通してはいけない。
+  if (!Number.isFinite(n)) return false;
+  if (n <= 0) return true;
+  let seen = 0;
+  for (const _ch of value) {
+    seen += 1;
+    if (seen >= n) return true;
+  }
+  return false;
+}
+
+/**
+ * **文字数が `n` を超えるか。数え切らずに答える。** (2026-09-14 · パス 252)
+ *
+ * 上限の側。`n + 1` 文字目に届いた時点で真を返すので O(min(n, 長さ))。
+ * 理由は {@link atLeastChars} に書いた。
+ */
+export function moreThanChars(value: string, n: number): boolean {
+  // 非有限の上限は「超えている」に倒す (読めない天井は通さない)。
+  if (!Number.isFinite(n)) return true;
+  if (n < 0) return true;
+  let seen = 0;
+  for (const _ch of value) {
+    seen += 1;
+    if (seen > n) return true;
+  }
+  return false;
+}
+
+/**
  * 天井を何字超えているか (超えていなければ 0)。
  *
  * **前後の空白を落としてから数えない** —— 画面の欄が持っている文字数をそのまま言う。

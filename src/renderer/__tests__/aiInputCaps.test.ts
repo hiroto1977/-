@@ -92,8 +92,21 @@ const CAP_MARKS: readonly RegExp[] = [
   /\bcountChars\s*\([^)]*\)\s*>\s*MAX_[A-Z0-9_]+\b/,
 ];
 
-/** 黙って切る印。母集団の handler は**届いてはいけない** (パス 112 / 114 の規則)。 */
-const SILENT_CUT_MARKS: readonly RegExp[] = [/\.slice\(\s*0\s*,\s*MAX_[A-Za-z0-9_]+\s*\)/];
+/**
+ * 黙って切る印。母集団の handler は**届いてはいけない** (パス 112 / 114 の規則)。
+ *
+ * **綴りではなく振る舞いを見る** (2026-09-14 · パス 252)。それまで印は
+ * `.slice(0, MAX_…)` だけだった。パス 252 が `main/clients/assistant.ts` の
+ * system プロンプトを `clampToCeiling(system, MAX_SYSTEM)` (文字境界で切る) へ
+ * 直した途端、**この走査は「もう切っていない」と読んだ** —— 切る位置が
+ * コード単位から文字境界へ移っただけで、**黙って切ることは何も変わっていない**。
+ * 台帳の対照 (「切らなくなった行は消す」) が鳴って気づいた。
+ * 天井まで入れて超えた分を落とす綴りは両方とも印である (パス 224 と同じ向き)。
+ */
+const SILENT_CUT_MARKS: readonly RegExp[] = [
+  /\.slice\(\s*0\s*,\s*MAX_[A-Za-z0-9_]+\s*\)/,
+  /\bclampToCeiling\s*\([^)]*\bMAX_[A-Za-z0-9_]+\s*\)/,
+];
 
 /**
  * 黙って切る印に届いてよい handler と、その理由。**利用者の最新の発話ではない物**に限る。

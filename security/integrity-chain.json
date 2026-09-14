@@ -1610,6 +1610,22 @@
       "leafCount": 71,
       "note": "update ci.yml,atlassianSite.ts",
       "hash": "7e915fc8f9d06c05e8f8c4ac5984d1ac1728f052987d614cdf3d139b99bc36fb"
+    },
+    {
+      "index": 192,
+      "prevHash": "7e915fc8f9d06c05e8f8c4ac5984d1ac1728f052987d614cdf3d139b99bc36fb",
+      "merkleRoot": "8cd4d58c6b655672b079d2d9712e069514b1ef21526b2cf687e5bff1919761e8",
+      "leafCount": 71,
+      "note": "update assistant.ts,vault.ts,inputCeiling.ts",
+      "hash": "fc5b41cfc997832054ebe27c4bc8ba9f08135666770c4b9fe0c7257e6f93a4af"
+    },
+    {
+      "index": 193,
+      "prevHash": "fc5b41cfc997832054ebe27c4bc8ba9f08135666770c4b9fe0c7257e6f93a4af",
+      "merkleRoot": "9115266c561a5b6dec69d950bf111c5104c2b1b54f795984127f49b0ae631f3d",
+      "leafCount": 71,
+      "note": "update vault.ts",
+      "hash": "daad1efc40fe40a2dad9c97d66a82d72f7bf16a517f1ad560b6ef1cb372967a2"
     }
   ],
   "tipManifest": {
@@ -1637,7 +1653,7 @@
     "scripts/smoke-app.cjs": "3308303649279f4ca49640e00f61f2451fea881e506005c51a97c3cbca2bd827",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "b1840895edf0bf5394fa36a64352b28cf852ca1a2b02e246dd6d6c82c457db44",
-    "src/main/clients/assistant.ts": "f83b61b4bbfe6fa92636cc5cf7c1e1823095dc41a0a46712f26853cd5bc4e186",
+    "src/main/clients/assistant.ts": "1296198ca3de021e648cff608617ace5339bda86aed4f9e6103054f9f2da1a81",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/eraseAll.ts": "0a2d290568268081bd20c8c5dba84b087fa115d7bd1ae06a605b05dcf5329b4f",
@@ -1661,7 +1677,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "8d782018674c6cd8caefedeb86efed86a5554e578ccc9fd8d2315539f2bd23cc",
+    "src/renderer/security/vault.ts": "46ba705774b57c307b62c7c7533a08c76e157c0873aa12134ba406bbaf949554",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "fb4b09c9d607b67d10f45cd6801db72ca74b5293d94f446975ce35c7af8a9524",
@@ -1676,7 +1692,7 @@
     "src/shared/externalUrlGate.ts": "01b2f3904381ca98950ac331aa0558b1a6fda14e2a7e7c85b6b5bd1b6f9b9ce6",
     "src/shared/httpLimits.ts": "9e980f75cba0e5a29051e648f77fa9cca0728425a987b72bacf49d18fd08df2c",
     "src/shared/imageUrlGate.ts": "c7b928e51fdbac71b154f9d0f97aa51a341eb8db3203105292cf47f79eda6760",
-    "src/shared/inputCeiling.ts": "c711c0cd1c204915cf09ca827e3823de781cc5f60f3c359349ef20fb808f6a61",
+    "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/ollama.ts": "076921ac85941fcbcd709e2c198eb26b5fa4b677fce7728408180f9111945f2a",
     "src/shared/proxyEndpoint.ts": "2157128494994adea9e6edb6e2af40518f69ff879c328ef3a0c9b9e8d9d0b340",
     "src/shared/redact.ts": "31bb9038137a30f8bfa1d6b89f0073b0a2fc8e1d1472c3d389b34fd53ddfc01b",

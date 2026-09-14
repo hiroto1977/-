@@ -26103,6 +26103,88 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 252 (2026-09-14) — **パス 195 は天井だけを直した。床はコード単位のままで、「12 文字以上」のマスターパスワードは実文字数 6 で満たせた**
+
+パス 195 が置いた規則は片側だけ効いていた:
+
+> **述べる数と、守る数と、切る位置は、同じ単位で数えなければならない。**
+
+`_CHARS` の天井は `countChars` / `clampToCeiling` へ揃ったが、**床 (下限) は誰も見ていなかった**。
+しかも隣の走査 `ceilingLiteralCensus.test.ts` (パス 174) は**天井の数の写し**を数える走査なので、
+`system.slice(0, MAX_SYSTEM)` のように**定数を正しく読んだうえでコード単位で切る**形は
+構造的に見えない。**数の走査には、単位の死角がある。**
+
+### 実測 (2026-09-14) — 3 家系
+
+| 場所 | 直す前 | 実測した結果 |
+|---|---|---|
+| `security/vault.ts` `meetsPasswordPolicy` | `password.length >= MIN_PASSWORD_LENGTH` | `'😀'.repeat(6)` (実文字数 **6** / コード単位 12) が通る —— **宣言した 12 文字の床を、実文字数 6 で満たせた**。`'𠮟'.repeat(6)` (JIS2004 漢字) も・`'😀😀😀' + 'a'.repeat(6)` (9 文字) も通る。BMP の外の文字 1 つで床が 1 文字下がる |
+| `security/vault.ts` 上限 ×3 | `password.length > 256` | 実文字数 200 の絵文字パスワード (400 コード単位) を、「256 字以内」と述べながら**断って**いた (安全側だが宣言と食い違う) |
+| `main/clients/assistant.ts` ×2 | `system.slice(0, MAX_SYSTEM)` | 60,000 字目が絵文字だと末尾が**孤立サロゲート** (`isWellFormed()` が false・`JSON.stringify` は `\ud83d` を本文へ載せる)。絵文字 50,000 字の system で **main は 30,000 字・ブラウザ版は 50,000 字**を送っていた —— 天井の**値**は共有の定数から来ていたが**単位**が割れていた |
+
+**床の側が厄介なのは向きである。** 天井をコード単位で切れば「切り過ぎ + 壊れた文字列」だが、
+床をコード単位で数えると**緩む**。同じ 1 つの単位の食い違いが、向きによって害を変える。
+
+**規準は同じファイルに在った** (この一族の定番): `vault.ts` の `setToken` は既に
+`countChars(token) > MAX_TOKEN_CHARS` と文字で数えており、**床だけが `password.length`** だった。
+`main/clients/assistant.ts` も同じ関数の 40 行上で `clampToCeiling(c.trim(), MAX_CONTENT)` を使い、
+**system だけが `.slice`** だった。
+
+### なぜ既存の検査で見えなかったか
+
+`vault.guards.test.ts` のパスワード境界検査は 6 本あり、**どれも `'a'.repeat(N)`** だった。
+ASCII ではコード単位と文字数が一致するので、**単位の食い違いはどの標本でも現れない**。
+`assistantTurnsParity.test.ts` の 10 例も全部 ASCII。
+「不在を主張する検査には、標本を添える」の裏面 —— **在ることを主張する検査も、区別が現れる
+標本を通らなければ何も留めていない。**
+
+### 直した物
+
+- `shared/inputCeiling.ts`: `atLeastChars` / `moreThanChars` —— **数え切らない**比較
+  (`n` 文字目で切り上げるので O(min(n, 長さ)))。上限の判定は*拒むために*在るので、
+  100 MB の入力を拒むのに 100 MB 辿ってはいけない (`countChars` は最後まで辿る)。
+  非有限は通さない向きに倒す (`atLeastChars` → false / `moreThanChars` → true)。
+- `security/vault.ts`: `meetsPasswordPolicy` は `atLeastChars`、上限 3 か所は `moreThanChars`。
+  **256 を `MAX_PASSWORD_CHARS` に名付けた** —— それまで条件 3 か所と文面 3 か所に字面で在った (6 写し)。
+  安全上限なので `parameters.ts` には載せない。
+- **下限の規則の写し 2 つを消した**: `data/backup.ts` と `pages/SettingsPage.tsx` は定数だけ共有して
+  `>=` の式を書き直していた (パス 128 / それ以前)。式ごと `meetsPasswordPolicy` を読む ——
+  同じ規則を 2 か所に書けば片方だけ緩む日が来る (パス 246 の教訓)。
+- `main/clients/assistant.ts` ×2: `clampToCeiling(system, MAX_SYSTEM)`。
+- `components/ShigyoConsole.tsx`: 独占業務の表示の切り取りを `exclusiveSummary` へ
+  (`clampToCeiling` + `countChars`)。**台帳 8 件に非 BMP は実測 0 件なので今日の出力は変わらない** ——
+  士業の語域は `𠮟責` を含みうるので landmine を外しただけ。
+- `shared/__tests__/stripNonCode.ts`: 走査の道具を検査ファイルから切り出した ——
+  **検査ファイルを import すると中の describe がもう一度走る** (実測で 14 件と報告された)。
+
+### 走査 (新設・検査として常設。ゲートは足していない)
+
+`shared/__tests__/ceilingUnitCensus.test.ts` —— 「文字で数えると宣言した定数が、`.length` の比較か
+`.slice(` / `.substring(` の引数に現れる」箇所の**母集団**。台帳は双方向 (直った行が残っていれば鳴る)。
+床は違反件数ではなく**走査そのもの**に置く (定数 ≥ 10 件・正しい綴り ≥ 10 件)。
+
+**対照で自分の走査の死角が出た**: 最初の版は `_CHARS` で終わる名前と別名台帳だけを見ており、
+`const MAX_SYSTEM = MAX_ASSISTANT_SYSTEM_CHARS;` のような**局所名への付け替え**を辿らないので、
+直した所を壊しても**鳴らなかった**。`withLocalAliases` で 1 段辿るようにし、対照に
+局所名の標本 2 本を足した (`atlassian.ts` も `MAX_EMAIL` / `MAX_TOKEN` / `MAX_SITE` で同じ形)。
+**綴りで数える走査のこの一日で 6 度目の死角**である。
+
+### 対照 (3 家系すべて、綴りを grep で確かめてから `-t` なしで実行)
+
+| 壊した物 | 落ちた検査 |
+|---|---|
+| `clampToCeiling(system, MAX_SYSTEM)` → `.slice` | 走査 2 本 (`main/clients/assistant.ts:164` / `:234` を名指し) + 配線 1 本 + 綴り 1 本 |
+| `atLeastChars(password, …)` → `.length >=` | 絵文字 6 個の 3 本 + 走査 (`vault.ts:104` を名指し) + 配線 |
+| `moreThanChars(password, …)` → `.length >` | 上限の 1 本 + 走査 (`vault.ts:744` を名指し) + 配線 |
+
+### 残した物 (読んで、変えないと決めた)
+
+- `shared/safeFilename.ts` の `s.length > MAX_FILENAME_LENGTH` は**ファイル名**の制限で、
+  OS の限度はバイトである。`.replace(/[^\w.-]+/g, '-')` を通った後は ASCII だけなので単位は一致する。
+- `password.length === 0` (空の判定) は、空文字なら文字数も 0 なので単位に依らない。
+- `.slice(0, 10)` / `.slice(0, 7)` などの**日付の部分文字列**・配列の `.slice` ・`blob.slice`・
+  `Uint8Array.slice` は文字の話ではない (走査の母集団に入らない)。
+
 ## パス 251 (2026-09-14) — **断る理由は 3 つ全部扱われていた。断りの「言語」が両ビルドで割れていて、それが画面に出る (母集団 118)**
 
 未読 11 件のうち AI へ送る入力の天井から `advisorQuestionLimits` を読んだ。
@@ -26365,13 +26447,13 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **21**（うち未読 **10**）。これは分母であって欠陥の一覧ではない。
+shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **22**（うち未読 **9**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
 | `advisorQuestionLimits` | 2 | 4 | 対称 (実測・パス 251) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った |
 | `api/cursor` | 1 | 1 | 対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の 消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
-| `assistantLimits` | 3 | 5 | 未読 (AI へ送る入力の天井) |
+| `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `emotionsLimits` | 1 | 5 | 未読 (AI へ送る入力の天井) |
 | `eraseReport` | 2 | 3 | 未読 (消去の報告) |
@@ -26380,6 +26462,7 @@ shared **138** モジュール / 両ビルドが import **44** / うち否定で
 | `funding` | 1 | 1 | 未読 (計算の判定) |
 | `httpLimits` | 4 | 5 | 対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない) |
 | `hydroponicsControl` | 1 | 5 | 未読 (計算の判定) |
+| `inputCeiling` | 13 | 42 | 対称 (設計・パス 252 で新設) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳) |
 | `isoDate` | 2 | 23 | 未読 (日付の読み取り) |
 | `ollama` | 1 | 4 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `radarPlot` | 1 | 2 | 未読 (作図) |

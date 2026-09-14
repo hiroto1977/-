@@ -32,7 +32,7 @@
 import type { StoredRecord } from './store';
 import { parseTimestamp } from '../../shared/isoDate';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
-import { MIN_PASSWORD_LENGTH } from '../security/vault';
+import { MIN_PASSWORD_LENGTH, meetsPasswordPolicy } from '../security/vault';
 import { personalDataCollections } from './collectionShapes';
 
 export const BACKUP_VERSION = 1;
@@ -133,7 +133,11 @@ export async function serializeBackup(
  * 古いファイルの短い合言葉も開ける (開けなくなる方が事故)。
  */
 export function backupPassphraseTooShort(password: string): string | null {
-  if (password.length >= MIN_PASSWORD_LENGTH) return null;
+  // **下限の規則そのものを写さない** (2026-09-14 · パス 252)。2026-09-09 (パス 128) は
+  // 定数だけを共有し、`>=` の式はここに書き直していた —— その式が
+  // `password.length` (コード単位) だったので、`'😀'.repeat(6)` (実文字数 6) が
+  // 「12 文字以上」の合言葉として通っていた。式ごと `meetsPasswordPolicy` を読む。
+  if (meetsPasswordPolicy(password)) return null;
   return `暗号化バックアップのパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください（保管庫のパスワードと同じ下限です。短い合言葉は総当たりで開きます）`;
 }
 

@@ -154,7 +154,14 @@ async function chat(
     );
   }
 
-  const sys = typeof system === 'string' ? system.slice(0, MAX_SYSTEM) : '';
+  // **切るのは文字の境界で** (2026-09-14 · パス 252)。同じ関数の 40 行上は既に
+  // `clampToCeiling(c.trim(), MAX_CONTENT)` で発話を切っており、**system だけが
+  // `.slice`** だった。実測: 60,000 字目が絵文字の system を `.slice(0, 60000)` で
+  // 切ると末尾が孤立サロゲート (`isWellFormed()` が false) になり、
+  // `JSON.stringify` は `\ud83d` を本文に載せる。さらに絵文字 50,000 字の
+  // system では main が 30,000 字・ブラウザ版が 50,000 字を送っていた ——
+  // 天井の**値**は共有していたが**単位**が割れていた。
+  const sys = typeof system === 'string' ? clampToCeiling(system, MAX_SYSTEM) : '';
 
   // トークンを資格情報として解析 (生キーは Anthropic として後方互換)、
   // payload.provider (省略時は既定プロバイダ) を解決して共有レイヤで実行する。
@@ -217,7 +224,14 @@ async function chatAll(ctx: ActionContext): Promise<ActionData<'assistant/chatAl
   if (ids.length === 0) {
     throw new Error('設定済みの AI プロバイダがありません (⚙ エージェント設定で API キーを保存してください)');
   }
-  const sys = typeof system === 'string' ? system.slice(0, MAX_SYSTEM) : '';
+  // **切るのは文字の境界で** (2026-09-14 · パス 252)。同じ関数の 40 行上は既に
+  // `clampToCeiling(c.trim(), MAX_CONTENT)` で発話を切っており、**system だけが
+  // `.slice`** だった。実測: 60,000 字目が絵文字の system を `.slice(0, 60000)` で
+  // 切ると末尾が孤立サロゲート (`isWellFormed()` が false) になり、
+  // `JSON.stringify` は `\ud83d` を本文に載せる。さらに絵文字 50,000 字の
+  // system では main が 30,000 字・ブラウザ版が 50,000 字を送っていた ——
+  // 天井の**値**は共有していたが**単位**が割れていた。
+  const sys = typeof system === 'string' ? clampToCeiling(system, MAX_SYSTEM) : '';
   const answers = await Promise.all(
     ids.map(async (id): Promise<EnsembleAnswer> => {
       try {
