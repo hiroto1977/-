@@ -12,6 +12,7 @@
 
 import { finiteOrNull } from '../../shared/num';
 import { isCalendarMonth } from '../../shared/isoDate';
+import { relationIssue } from './recordRelations';
 
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
 
@@ -129,8 +130,13 @@ export function parseKpiActual(input: {
   // 人件費は任意。未入力 ('' / null) のときはフィールド自体を持たせない。
   if (input.laborCost != null && input.laborCost !== '') {
     const laborCost = num(input.laborCost, '人件費');
-    if (laborCost > sga) throw new Error('人件費は販管費以下で入力してください');
-    return { ...base, laborCost };
+    // 人件費 ≦ 販管費 は **台帳 1 つ** (`recordRelations.ts`) —— 復元の入口も同じ関係を
+    // 見る (パス 224。それまでは復元が通し、計算書類の取り込みが「人件費以外の販管費は
+    // 0 とした」と断りながら進んでいた)。実績と予算は同じ関係。
+    const out = { ...base, laborCost };
+    const issue = relationIssue(KPI_ACTUALS_COLLECTION, out);
+    if (issue !== null) throw new Error(issue);
+    return out;
   }
   return base;
 }

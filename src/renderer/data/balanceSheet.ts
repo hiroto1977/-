@@ -12,6 +12,7 @@
 
 import { isCalendarDateOrMonth } from '../../shared/isoDate';
 import { latestRecord } from './latestRecord';
+import { relationIssue } from './recordRelations';
 
 export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
 
@@ -135,17 +136,6 @@ export function parseBalanceSheet(input: {
     if (typeof v === 'string' && v.trim() === '') return undefined;
     return requireNonNegative(v, label);
   };
-  /**
-   * 内数が親項目を超えていないか。未入力 (undefined) は照合しない。
-   *
-   * `v !== undefined` は**実行時には冗長**である —— `undefined > n` は常に false
-   * なので、外しても振る舞いは変わらない (等価変異)。型検査が
-   * `number | undefined` と `number` の比較を許さないので残している。
-   */
-  const atMost = (v: number | undefined, limit: number, message: string): void => {
-    // Stryker disable next-line ConditionalExpression: undefined > n は常に false なので実行時は等価 (型検査のために残す)
-    if (v !== undefined && v > limit) throw new Error(message);
-  };
   const currentAssets = requireNonNegative(input.currentAssets, '流動資産');
   const cash = optNonNeg(input.cash, '現預金');
   const inventory = optNonNeg(input.inventory, '棚卸資産');
@@ -154,15 +144,20 @@ export function parseBalanceSheet(input: {
   const accountsPayable = optNonNeg(input.accountsPayable, '仕入債務');
   const fixedLiabilities = requireNonNegative(input.fixedLiabilities, '固定負債');
   const interestBearingDebt = optNonNeg(input.interestBearingDebt, '有利子負債');
-  atMost(cash, currentAssets, '現預金は流動資産以下で入力してください');
-  atMost(inventory, currentAssets, '棚卸資産は流動資産以下で入力してください');
-  atMost(accountsReceivable, currentAssets, '売上債権は流動資産以下で入力してください');
-  atMost(accountsPayable, currentLiabilities, '仕入債務は流動負債以下で入力してください');
-  atMost(
-    interestBearingDebt,
-    currentLiabilities + fixedLiabilities,
-    '有利子負債は負債合計以下で入力してください',
-  );
+  /*
+   * 内数 ≦ 親項目は **台帳 1 つ** (`recordRelations.ts`) で持つ —— 復元の入口
+   * (`COLLECTION_SHAPES`) が同じ関係を見る (パス 224)。
+   * 2026-09-07 から 2026-09-14 まで、この 5 件はここだけに在り、復元は 0/5 しか
+   * 見ていなかった: 当座比率 −800% と 債務償還年数 75 年 が銀行提出書面まで届く。
+   *
+   * `fixedAssets` / `netIncome` は**どの関係にも入らない**ので、関門を通った後に読む
+   * (読む順序を変えると、両方が不正なときにどちらの文を出すかが変わる)。
+   */
+  const issue = relationIssue(BALANCE_SHEET_COLLECTION, {
+    currentAssets, cash, inventory, accountsReceivable,
+    currentLiabilities, accountsPayable, fixedLiabilities, interestBearingDebt,
+  });
+  if (issue !== null) throw new Error(issue);
   return {
     asOf,
     currentAssets,
@@ -247,8 +242,11 @@ export function computeBalanceSheetMetrics(bs: BalanceSheet): BalanceSheetMetric
     currentRatioPct: pct(bs.currentAssets, bs.currentLiabilities),
     // 棚卸資産が未入力なら**算定不能**。0 に倒すと当座比率が流動比率と同じ値を
     // 名乗る —— より厳しいはずの指標が緩い側の数字になる (空欄で保存した控えでは必ず)。
+    // 棚卸資産が流動資産を**超える**記録も算定不能 —— 2 つの門 (画面・復元) より前に
+    // 保存された控えは残りうるので、ここでも受ける (パス 224)。倒さず null にするのは
+    // 「当座比率 −800%」という**在り得ない数字が銀行提出書面に刷られていた**ため。
     quickRatioPct:
-      bs.inventory === undefined
+      bs.inventory === undefined || bs.inventory > bs.currentAssets
         ? null
         : pct(bs.currentAssets - bs.inventory, bs.currentLiabilities),
     roaPct: pct(bs.netIncome, totalAssets),

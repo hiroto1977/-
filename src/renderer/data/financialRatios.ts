@@ -162,7 +162,12 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
     nopat: round0(nopat),
     // ROIC: 投下資本が 0 以下なら算定不能。pct は 0 のみガードするため <=0 を明示。
     roicPct: roundNullable(investedCapital <= 0 ? null : (nopat / investedCapital) * 100, round1),
-    quickRatioPct: roundNullable(pct(f.currentAssets - f.inventory, f.currentLiabilities), round1),
+    // 棚卸資産が流動資産を超える記録は**算定不能** —— 2 つの門より前に保存された控えは
+    // 残りうる (パス 224。`balanceSheet.computeBalanceSheetMetrics` と同じ判断)。
+    quickRatioPct: roundNullable(
+      f.inventory > f.currentAssets ? null : pct(f.currentAssets - f.inventory, f.currentLiabilities),
+      round1,
+    ),
     cashRatioPct: roundNullable(pct(cash, f.currentLiabilities), round1),
     freeCashflow: round0(freeCashflow),
     // インタレストカバレッジ: 支払利息 (任意) が未指定/0 なら算定不能。
