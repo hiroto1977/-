@@ -471,6 +471,34 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
     `hasUsableAccessToken` が既に形を見ているので、そこへ寄せるのが筋）。
     限界は散文だけでなく**通る側の標本**として検査に書いてある。
 
+24. **壊れた TokenSet を Bearer に載せない（デスクトップ版・refresh token の流出）** ——
+    `main/secrets.ts` の `getValidToken` + `shared/vaultToken.ts` の
+    `brokenStoredCredentialMessage`（2026-09-14 · パス 246）。
+    `vaultToken.ts` は 2026-08-20 の監査で「JSON として読めたのに `accessToken` が
+    無ければ、その JSON 丸ごとを Bearer として送っていた」形をブラウザ版で直し、
+    **「規則を 1 つにまとめて両方から呼ぶ」と書いていた**。まとめたのは述語
+    (`hasUsableAccessToken`) で、**述語が no と言ったあとの動作は揃っていなかった**:
+    ブラウザは `null` → 理由つきで断る、main の `getValidToken` は
+    `return { ok: true, token: raw }` → **生の JSON をそのまま Bearer として返す**。
+    `getOAuthTokens` は null を返すが、Authorization ヘッダに載るのは `getValidToken`
+    の戻り値である（`main.ts:411` / `main.ts:460`）。実測:
+    `{"refreshToken":"rt_SECRET_VALUE"}` を保存して呼ぶと
+    `Authorization: Bearer {"refreshToken":"rt_SECRET_VALUE"}` が相手先 API へ出る ——
+    **アクセストークンより長命で強い鍵を、渡す必要のない相手へ渡し、しかも JSON の塊は
+    Bearer として通らないので認証は必ず失敗する**（漏らす代償だけ払って得るものが無い）。
+    直し: `StoredTokenRead` に `reason: 'broken-token-set'` を足し、**オブジェクトなら
+    断る**。オブジェクトでない値（JSON ですらない生の PAT・数字だけの API キー）は
+    今までどおり返す。**呼び出し側の変更は 0 行** —— `main.ts` は既に非 `absent` の
+    reason を `not_configured` + message へ流していた（**断る器は最初から在って、
+    そこへ入れていなかっただけ**）。文面は共有の 1 つにし、ブラウザ版の写しも
+    そこへ寄せた。**★ この漏れは気付かれていなかったのではなく、
+    `secretsTokenRead.test.ts` の「TokenSet でない JSON は生文字列として返す」という
+    緑の検査に要件として留められていた** —— 検査が在ること自体は、検査が正しいことを
+    意味しない（0 倒し census・パラメータ配線と同じ性質）。**残り**: 書き込み側の
+    `setOAuthTokens` は今も `TokenSet` の各欄を検証しない（読み出しで断るので egress は
+    閉じたが、保存はできてしまう）。**この形の一般化 —— 「述語は共有したが動作が
+    両ビルドで違う」箇所が他に何件あるか —— は測っていない。**
+
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 
 | 優先 | 対策 | 主に効く脅威 | 備考 |

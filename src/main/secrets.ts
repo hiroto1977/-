@@ -4,7 +4,7 @@ import path from 'node:path';
 import type { ServiceId } from '../shared/serviceId';
 import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../shared/tokenInput';
 import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
-import { hasUsableAccessToken } from '../shared/vaultToken';
+import { brokenStoredCredentialMessage, hasUsableAccessToken } from '../shared/vaultToken';
 import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
 
 const FILE_NAME = 'service-hub-secrets.json';
@@ -192,7 +192,24 @@ export type StoredTokenRead =
    * このファイルの冒頭が「読み出しの安全側と書き込みの安全側は逆向き」と
    * 書いているとおり、読み出しは落ちない方がよい —— だが**嘘は別の話**である。
    */
-  | { readonly ok: false; readonly reason: 'store-unreadable'; readonly message: string };
+  | { readonly ok: false; readonly reason: 'store-unreadable'; readonly message: string }
+  /**
+   * **保存値は読めたが、資格情報として使えない** (2026-09-14 · パス 246)。
+   *
+   * JSON のオブジェクトとして読めたのに `accessToken` が無い = 壊れた TokenSet。
+   * ここまで `getValidToken` は `{ ok: true, token: raw }` を返しており、
+   * **raw は JSON 丸ごと**なので `Authorization: Bearer {"refreshToken":"…"}`
+   * として相手先 API へ送られていた。TokenSet には refresh token が入るので、
+   * **アクセストークンより強い鍵を、渡す必要のない相手へ出す**ことになる。
+   * しかも JSON の塊は Bearer として通らないので認証は必ず失敗する ——
+   * 漏らす代償だけ払って得るものが無い。
+   *
+   * ブラウザ版は 2026-08-20 にこれを直しており (`bearerFromStoredToken` が
+   * null を返し `web-shim` が断る)、`shared/vaultToken.ts` の注記は「規則を
+   * 1 つにまとめて両方から呼ぶ」と書いていた。まとめたのは**述語**で、
+   * **述語が no と言ったあとの動作**ではなかった。
+   */
+  | { readonly ok: false; readonly reason: 'broken-token-set'; readonly message: string };
 
 const UNDECRYPTABLE_NO_KEYCHAIN =
   '保存された資格情報を復号できません。OS キーチェーン (safeStorage) が利用できない状態です。' +
@@ -454,7 +471,22 @@ export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRe
     // JSON でなければ生の Bearer。`parsed` は null のままなので、すぐ下の
     // `isTokenSet` が必ず落とす — ここで返すと同じ結果の出口が 2 つになる。
   }
-  if (!isTokenSet(parsed)) return { ok: true, token: raw };
+  if (!isTokenSet(parsed)) {
+    /*
+     * **オブジェクトなら「壊れた TokenSet」。raw を返さない。**
+     *
+     * `raw` は保存値そのもの = JSON 丸ごとなので、返せば
+     * `Authorization: Bearer {"refreshToken":"…"}` になる (パス 246 で実測)。
+     * オブジェクトでない場合 (JSON ですらない生の PAT / 数字だけの API キー)
+     * は今までどおり `raw` を返す —— そちらは本当に資格情報そのものである。
+     * 配列も `typeof === 'object'` なのでここで断るが、配列が資格情報である
+     * ことはないので正しい。
+     */
+    if (parsed !== null && typeof parsed === 'object') {
+      return { ok: false, reason: 'broken-token-set', message: brokenStoredCredentialMessage(serviceId) };
+    }
+    return { ok: true, token: raw };
+  }
 
   const tokens: TokenSet = parsed;
   const config = OAUTH_CONFIGS[serviceId];

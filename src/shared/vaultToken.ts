@@ -26,6 +26,29 @@
  * いた。**同じ規則を 2 か所に書いて片方だけ緩い**、という形だったので、規則を
  * ここへ 1 つにまとめて両方から呼ぶ。
  *
+ * ## まとめたのは述語で、「no と言われたとき何をするか」ではなかった (パス 246)
+ *
+ * 2026-09-14 に実測して分かった —— 上の「まとめた」は `hasUsableAccessToken`
+ * という**述語**のことで、**述語が false を返したあとの動作は揃っていなかった**。
+ *
+ * ```
+ *   ブラウザ  bearerFromStoredToken → null → web-shim が理由つきで断る
+ *   main      getValidToken         → if (!isTokenSet(parsed))
+ *                                        return { ok: true, token: raw };
+ *                                     ← 生の JSON をそのまま Bearer として返す
+ * ```
+ *
+ * `getOAuthTokens` は null を返すが、**Authorization ヘッダに載るのは
+ * `getValidToken` の戻り値**である (`main.ts:411` / `main.ts:460`)。実測:
+ * `{"refreshToken":"rt_SECRET_VALUE"}` を保存して `getValidToken` を呼ぶと
+ * `{ ok: true, token: '{"refreshToken":"rt_SECRET_VALUE"}' }` が返り、
+ * デスクトップ版はそれを相手先 API へ送っていた。つまり**この注記が
+ * 「直した」と書いている当の漏れが、main 側では 2026-08-20 から今日まで
+ * そのまま残っていた**。
+ *
+ * main 側も断るようにし (`reason: 'broken-token-set'`)、文面は
+ * `brokenStoredCredentialMessage` 1 つにした。
+ *
  * ## 判定
  *
  * | 保存された値 | 返す |
@@ -49,6 +72,19 @@ export function hasUsableAccessToken(parsed: unknown): parsed is { accessToken: 
   // 空文字は「あるが使えない」。Bearer に載せても相手は必ず 401 を返すので、
   // 未設定として扱うほうが利用者に正しく伝わる。
   return typeof token === 'string' && token !== '';
+}
+
+/**
+ * 「保存された資格情報が壊れている」の文面 — **両ビルドで 1 つ**。
+ *
+ * 2026-09-14 (パス 246) に切り出した。ブラウザ版 (`web-shim`) はこの文面で
+ * 断っていたが、主プロセスには断りが無く**生の JSON を Bearer として送って
+ * いた** (下の `bearerFromStoredToken` の注記が言う 2026-08-20 の形が、
+ * main 側にそのまま残っていた)。両方が断るようにしたので、文面も 1 つにする ——
+ * 2 か所に書けば必ず片方だけ直る日が来る。
+ */
+export function brokenStoredCredentialMessage(serviceId: string): string {
+  return `${serviceId} の保存された資格情報が壊れています。設定から登録し直してください`;
 }
 
 /**

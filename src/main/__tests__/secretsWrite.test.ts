@@ -423,6 +423,89 @@ describe('壊れた保存ファイルへの備え', () => {
 });
 
 // ---------------------------------------------------------------------------
+// 壊れた TokenSet を Bearer に載せない (パス 246)
+// ---------------------------------------------------------------------------
+
+/**
+ * `shared/vaultToken.ts` の冒頭は、2026-08-20 の監査で見つけた形をこう書いている:
+ *
+ *   > レンダラ側が JSON として読めたのに `accessToken` が無い場合、
+ *   > **その JSON 丸ごとを Bearer として送っていた**。TokenSet には
+ *   > `refreshToken` が入る …… 主プロセス側は同じ状況で null を返していた。
+ *   > 同じ規則を 2 か所に書いて片方だけ緩い、という形だったので、規則を
+ *   > ここへ 1 つにまとめて両方から呼ぶ。
+ *
+ * **まとめたのは述語 (`hasUsableAccessToken`) で、「述語が no と言ったときに
+ * 何をするか」ではない。** ブラウザ版の `bearerFromStoredToken` は `null` を
+ * 返し、`web-shim` が「保存された資格情報が壊れています」と断る。主プロセスの
+ * `getValidToken` は `if (!isTokenSet(parsed)) return { ok: true, token: raw };`
+ * —— **生の JSON をそのまま Bearer として返す**。`getOAuthTokens` は null を
+ * 返すが、Authorization ヘッダに載るのは `getValidToken` の戻り値である
+ * (`main.ts:411` / `main.ts:460`)。
+ *
+ * ここで測る。
+ */
+describe('getValidToken — 壊れた TokenSet', () => {
+  it('★ accessToken を持たない JSON を Bearer として返さない', async () => {
+    const { setToken, getValidToken } = await import('../secrets');
+    await setToken('github', JSON.stringify({ refreshToken: 'rt_SECRET_VALUE' }));
+
+    const read = await getValidToken('github');
+    // 何を返すかはここでは決めない —— **refresh token が出ないこと**が要件
+    const asString = read.ok ? read.token : '';
+    expect(asString, 'refresh token が Bearer に載っている').not.toContain('rt_SECRET_VALUE');
+  });
+
+  it('★ 壊れているなら理由を返す (未設定と混ぜない)', async () => {
+    const { setToken, getValidToken } = await import('../secrets');
+    await setToken('github', JSON.stringify({ refreshToken: 'rt_x', expiresAt: 1 }));
+
+    const read = await getValidToken('github');
+    expect(read.ok).toBe(false);
+    expect(read.ok ? '' : read.reason).not.toBe('absent');
+  });
+
+  it('対照: 使える TokenSet は accessToken を返す', async () => {
+    const { setOAuthTokens, getValidToken } = await import('../secrets');
+    await setOAuthTokens('github', { accessToken: 'at_good' });
+    const read = await getValidToken('github');
+    expect(read.ok && read.token).toBe('at_good');
+  });
+
+  it('対照: 生の PAT はそのまま返す (JSON ではないので TokenSet 判定に入らない)', async () => {
+    const { setToken, getValidToken } = await import('../secrets');
+    await setToken('github', 'ghp_raw_pat_value');
+    const read = await getValidToken('github');
+    expect(read.ok && read.token).toBe('ghp_raw_pat_value');
+  });
+
+  it('★ 断りの文面は共有の 1 つから採る (ブラウザ版と食い違わない)', async () => {
+    const { setToken, getValidToken } = await import('../secrets');
+    const { brokenStoredCredentialMessage } = await import('../../shared/vaultToken');
+    await setToken('github', JSON.stringify({ refreshToken: 'rt_x' }));
+    const read = await getValidToken('github');
+    expect(read.ok).toBe(false);
+    // 写経していれば、共有関数を書き換えてもここが追従せず落ちる
+    const message = !read.ok && read.reason === 'broken-token-set' ? read.message : '';
+    expect(message).toBe(brokenStoredCredentialMessage('github'));
+  });
+
+  it('対照: 配列も断る (資格情報ではない)', async () => {
+    const { setToken, getValidToken } = await import('../secrets');
+    await setToken('github', '[1,2,3]');
+    const read = await getValidToken('github');
+    expect(read.ok).toBe(false);
+  });
+
+  it('対照: 数字だけの API キー (JSON の数値として読める) もそのまま返す', async () => {
+    const { setToken, getValidToken } = await import('../secrets');
+    await setToken('github', '12345');
+    const read = await getValidToken('github');
+    expect(read.ok && read.token).toBe('12345');
+  });
+});
+
+// ---------------------------------------------------------------------------
 // 保管層の床 — 呼び出し側が関門を忘れても制御文字は入らない (パス 245)
 // ---------------------------------------------------------------------------
 

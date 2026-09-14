@@ -26103,6 +26103,99 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 246 (2026-09-14) — **デスクトップ版が refresh token を相手先 API へ Bearer として送っていた。しかも緑の検査がそれを留めていた**
+
+パス 245 の残件「`setOAuthTokens` の `TokenSet` の各欄」を閉じに行って、**書き込み側ではなく
+読み出し側に、もっと重い物**を見つけた。
+
+### 見つけ方
+
+`shared/vaultToken.ts` の冒頭は、2026-08-20 の監査で見つけた形をこう書いている:
+
+> レンダラ側が JSON として読めたのに `accessToken` が無い場合、**その JSON 丸ごとを
+> Bearer として送っていた**。TokenSet には `refreshToken` が入る …… 主プロセス側は
+> 同じ状況で null を返していた。**同じ規則を 2 か所に書いて片方だけ緩い**、という
+> 形だったので、規則をここへ 1 つにまとめて両方から呼ぶ。
+
+`hasUsableAccessToken` を両方が呼んでいるのは事実である。**まとめたのは述語で、
+「述語が no と言ったあと何をするか」ではなかった。**
+
+```
+ブラウザ  bearerFromStoredToken → null → web-shim が理由つきで断る
+main      getValidToken         → if (!isTokenSet(parsed))
+                                     return { ok: true, token: raw };
+                                  ← 生の JSON をそのまま Bearer として返す
+```
+
+`getOAuthTokens` は null を返す —— それが注記の言う「主プロセス側」である。だが
+**Authorization ヘッダに載るのは `getValidToken` の戻り値**である
+(`main.ts:411` の `fetch:snapshot` と `main.ts:460` の action invoke)。
+
+### 実測
+
+```
+保存: {"refreshToken":"rt_SECRET_VALUE"}
+getValidToken('github') → { ok: true, token: '{"refreshToken":"rt_SECRET_VALUE"}' }
+```
+
+つまり `Authorization: Bearer {"refreshToken":"rt_SECRET_VALUE"}` が相手先 API へ出る。
+**アクセストークンより長命で強い鍵を、渡す必要のない相手へ渡す。** しかも JSON の塊は
+Bearer として通らないので**認証は必ず失敗する** —— 漏らす代償だけ払って得るものが無い。
+これは注記が「直した」と書いている当の形で、main 側には 2026-08-20 から残っていた。
+
+### ★ 気付かれていなかったのではなく、緑の検査に留められていた
+
+`secretsTokenRead.test.ts` にこれが在った:
+
+```ts
+it('TokenSet でない JSON は生文字列として返す', async () => {
+  await writeRawStore({ github: encrypted('{"unrelated":1}') });
+  expect(await getValidToken('github')).toEqual({ ok: true, token: '{"unrelated":1}' });
+});
+```
+
+**名前も期待値も、そのときの振る舞いを正しく写していた。** 「JSON オブジェクトなら
+生文字列を返す」を要件として読むと自然に見える —— ただし「生文字列」とは保存値そのもの
+= TokenSet の JSON 丸ごとであって、資格情報 1 本ではない。この検査を書き換えるまで、
+漏れは**要件として守られていた**。
+
+これは 0 倒し census (パス 85) やパラメータ配線 (パス 42) と同じ性質の話で、
+**検査が在ること自体は、検査が正しいことを意味しない**。
+
+### 直した所
+
+- `secrets.ts`: `StoredTokenRead` に `reason: 'broken-token-set'` を足し、
+  `getValidToken` は**オブジェクトなら断る**。オブジェクトでない値 (JSON ですらない
+  生の PAT・数字だけの API キー) は今までどおり返す —— そちらは本当に資格情報そのもの。
+  配列も `typeof === 'object'` なので断るが、配列が資格情報であることはない。
+- **呼び出し側の変更は 0 行** —— `main.ts` は既に `read.reason !== 'absent'` を
+  `not_configured` + `read.message` へ流していた。**断る器は最初から在って、
+  そこへ入れていなかっただけ**だった。
+- 文面は `shared/vaultToken.ts` の `brokenStoredCredentialMessage(serviceId)` 1 つ。
+  ブラウザ版 (`web-shim`) の写しもこれを読むように替えた —— 2 か所に書けば必ず
+  片方だけ直る日が来る (このパスがまさにその実例)。
+- `vaultToken.ts` の冒頭注記に「まとめたのは述語で、動作ではなかった」を追記。
+  **注記が事実より進んでいた**ことを、注記自身に書き残す。
+
+### 検査
+
+- `secretsWrite.test.ts` に 7 件 (★3 + 対照 4)。★ は「refresh token が Bearer に
+  載らない」「理由を返す (absent と混ぜない)」「文面は共有の 1 つから採る」。
+- `secretsTokenRead.test.ts` の 1 件を新しい契約へ書き換え + 対照 1 件を追加
+  (「JSON ですらない生トークンは今までどおり返す」= 断る対象を広げていない)。
+- 落ちた数: 7 のうち 2 (先に書いた)、書き換え前の既存 1 件。
+
+chain #190 (secrets.ts / vaultToken.ts)。722/722・16,517 件・36 ゲート・
+出荷物 11,850,468 B / 3,263,214 B (両方 +29 B)・perf LITE 123ms / FULL 402ms。
+
+### 残り
+
+- **書き込み側の `setOAuthTokens` は今も `TokenSet` の各欄を検証しない。** 読み出し側で
+  断るようにしたので egress は閉じたが、「保存できてしまう」ことは変わらない。
+- **「名前を持たない文面」の母集団を数える走査は無い** (パス 244 からの持ち越し)。
+- **この形の一般化を測っていない** —— 「述語は共有したが、述語が no と言ったあとの
+  動作が両ビルドで違う」箇所が他に何件あるか。今回は 1 件見つけただけである。
+
 ## パス 245 (2026-09-14) — **入口を 1 本ずつ塞ぐのをやめて、保管層に床を置いた (パス 244 の残件 2 本)**
 
 パス 244 は入口 2 本を `checkTokenInput` へ通し、**残件として 2 本を記録した**。

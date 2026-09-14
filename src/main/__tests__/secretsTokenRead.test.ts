@@ -133,10 +133,47 @@ describe('getValidToken', () => {
     expect(await getValidToken('drive')).toEqual({ ok: true, token: 'ya29.a' });
   });
 
-  it('TokenSet でない JSON は生文字列として返す', async () => {
+  /**
+   * **2026-09-14 (パス 246) に契約を変えた。この検査は漏れを留めていた。**
+   *
+   * 元の姿はこうだった:
+   *
+   * ```ts
+   *   it('TokenSet でない JSON は生文字列として返す', …
+   *     await writeRawStore({ github: encrypted('{"unrelated":1}') });
+   *     expect(await getValidToken('github'))
+   *       .toEqual({ ok: true, token: '{"unrelated":1}' });
+   * ```
+   *
+   * 名前も期待値も**そのときの振る舞いを正しく写していた**。ただしその
+   * 振る舞いが、`{"refreshToken":"…"}` を `Authorization: Bearer` に載せて
+   * 相手先 API へ送るという意味を持っていた —— `shared/vaultToken.ts` が
+   * 2026-08-20 にブラウザ版で直したと書いている当の形である。
+   *
+   * **つまり気付かれていなかったのではなく、緑の検査に留められていた。**
+   * 「JSON オブジェクトなら生文字列を返す」を要件として読むと正しく見えるが、
+   * 生文字列とは保存値そのもの = TokenSet の JSON 丸ごとであって、
+   * 資格情報 1 本ではない。
+   *
+   * 新しい契約: **オブジェクトなら断る**。オブジェクトでない値 (JSON ですら
+   * ない生の PAT・数字だけの API キー) は今までどおり返す —— そちらは本当に
+   * 資格情報そのものだから。
+   */
+  it('TokenSet でない JSON オブジェクトは断る (生の JSON を Bearer に載せない)', async () => {
     const { getValidToken } = await import('../secrets');
+    const { brokenStoredCredentialMessage } = await import('../../shared/vaultToken');
     await writeRawStore({ github: encrypted('{"unrelated":1}') });
-    expect(await getValidToken('github')).toEqual({ ok: true, token: '{"unrelated":1}' });
+    expect(await getValidToken('github')).toEqual({
+      ok: false,
+      reason: 'broken-token-set',
+      message: brokenStoredCredentialMessage('github'),
+    });
+  });
+
+  it('対照: JSON ですらない生トークンは今までどおり返す (断る対象を広げていない)', async () => {
+    const { getValidToken } = await import('../secrets');
+    await writeRawStore({ github: encrypted('ghp_not_json_at_all') });
+    expect(await getValidToken('github')).toEqual({ ok: true, token: 'ghp_not_json_at_all' });
   });
 
   it('未設定は absent を伝える (「読めない」と混同しない)', async () => {

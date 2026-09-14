@@ -117,7 +117,7 @@ import {
   readBodyWithCap,
 } from '../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
-import { bearerFromStoredToken } from '../shared/vaultToken';
+import { bearerFromStoredToken, brokenStoredCredentialMessage } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { REAL_MIRROR, mirrorToFolder } from './fs/folderMirror';
 import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
@@ -260,10 +260,9 @@ async function runProxyBearer<R>(
   // という無関係な案内で利用者を回り道させることにもなる。
   const bearer = bearerFromStoredToken(token);
   if (bearer === null) {
-    return err(
-      'not_configured',
-      `${serviceId} の保存された資格情報が壊れています。設定から登録し直してください`,
-    );
+    // 文面は `shared/vaultToken.ts` が持つ —— main 側も同じ断りを返すように
+    // なったので (パス 246)、2 か所に書けば必ず片方だけ直る日が来る。
+    return err('not_configured', brokenStoredCredentialMessage(serviceId));
   }
   let transport: Transport;
   try {
