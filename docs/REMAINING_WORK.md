@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **22**（うち未読 **7**）。これは分母であって欠陥の一覧ではない。
+shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **22**（うち未読 **6**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -26593,7 +26593,7 @@ shared **138** モジュール / 両ビルドが import **44** / うち否定で
 | `httpLimits` | 4 | 5 | 対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない) |
 | `hydroponicsControl` | 1 | 5 | 未読 (計算の判定) |
 | `inputCeiling` | 13 | 42 | 対称 (設計・パス 252 で新設) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳) |
-| `isoDate` | 2 | 23 | 未読 (日付の読み取り) |
+| `isoDate` | 2 | 23 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 |
 | `ollama` | 1 | 4 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `radarPlot` | 1 | 2 | 未読 (作図) |
 | `scanTarget` | 1 | 2 | 対称 (実測・パス 247) |
@@ -31494,3 +31494,76 @@ CLAUDE.md は「`verify:all` だけを見て『全 green』と言うと CI で�
 「最後の編集の後に走ったか」を知らないので同じ穴を持つ (パス 253 で「守りの字面を
 探す検査」が同じ形で失敗している)。ここでは**順序を守る**のが正しい直し方で、
 そのために記録を引継ぎの先頭に置く。
+
+## パス 256 (2026-09-14) — **`isoDate` を読んだ: 対称。ついでに台帳の粒度が母集団を膨らませていることが分かった**
+
+共有判定の census で未読が 7 件残っており、その中で `isoDate` が**最も広い**
+(実装からの import 元 33 ファイル)。広いから後回しになっていたので、そこから読む。
+
+### 読み方を絞った —— 非対称は「両ビルドが呼ぶ関数」にしか宿らない
+
+`isoDate` は負で答える関数を 8 つ持つ (`parseIsoDate` / `isCalendarDate` /
+`isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` /
+`isoDateFromTimestamp` / `addIsoDays` / `isoDaysBetween`)。33 の import 元を
+1 つずつ読むのではなく、**main/preload 側の消費者を機械的に数えた**:
+
+| 関数 | main/preload | renderer + shared |
+| --- | --- | --- |
+| `isCalendarDate` | `main/clients/emotions.ts` | 11 |
+| `calendarDateMessage` | `main/clients/emotions.ts` | 3 |
+| `isoDateFromTimestamp` | `main/clients/stocks.ts` | 3 |
+| `parseIsoDate` | **0** | 5 |
+| `isCalendarMonth` | **0** | 3 |
+| `isCalendarDateOrMonth` | **0** | 4 |
+| `parseTimestamp` | **0** | 12 |
+| `addIsoDays` | **0** | 2 |
+| `isoDaysBetween` | **0** | 2 |
+
+**境界を越えるのは 2 家系だけ。** 残り 6 つは renderer / shared だけが呼ぶので、
+ビルド間の非対称は**原理的に起き得ない** (片側にしか消費者が無い)。
+
+### 越える 2 つ — どちらも対称だった
+
+**(1) `isCalendarDate` + `calendarDateMessage`** (気分ログの `log-mood` の日付):
+
+```
+main/clients/emotions.ts:212        if (!isCalendarDate(finalDate)) throw new Error(calendarDateMessage('date'));
+renderer/data/emotionsWeb.ts:177    if (!isCalendarDate(finalDate)) throw new Error(calendarDateMessage('date'));
+```
+
+**同一の行**である。文面も共有の生成器から来るので言語も揺れない
+(パス 251 で `advisorQuestionLimits` に見つけた「文面の言語が割れる」形ではない)。
+
+**(2) `isoDateFromTimestamp`** (見本のローソク足の日付):
+
+```
+main/clients/stocks.ts:776                  date: isoDateFromTimestamp(startMs + i * DAY_MS) ?? ''
+renderer/data/stocksWatchlistWeb.ts:194     return isoDateFromTimestamp(now - daysAgo * 24 * 60 * 60 * 1000) ?? ''
+```
+
+どちらも `?? ''` で空文字に倒す。**同じ倒し方**なので対称。さらに両方とも
+**見本 (mock) のローソク生成の中**に在り、入力は `Date.now()` ± 日数なので
+`parseTimestamp` が `null` を返す条件 (`|ms| > MAX_TIMESTAMP_MS` = 8.64e15) には
+**実質到達しない**。型を全域にするための `??` であって、生きた 0 倒しではない。
+
+### ★ 台帳の粒度 —— モジュール単位の母集団は「読むべき量」を過大に見せる
+
+census は **モジュール**単位で「両ビルドが import している共有モジュール」を数える
+(44 件)。これはパス 247 が意図して選んだ粒度で、理由も実測されている ——
+シンボル単位にすると パス 246 の欠陥 (main が `hasUsableAccessToken`、renderer が
+`bearerFromStoredToken`) が母集団から落ちる。**だから母集団の粒度は正しい。**
+
+ただし**読むときの粒度は関数**である。`isoDate` はその差が最も大きい例で、
+33 の import 元・負で答える 8 関数に対し、**実際に読む必要が在ったのは 2 家系**だった。
+次に未読を読む人のために、越える関数を裁定の中に名指しで書いた
+(母集団は縮めない —— 縮めるとパス 246 の形が落ちる)。
+
+### 残した物
+
+- **未読 7 → 6**: `freeeIntake` `funding` `hydroponicsControl` `radarPlot`
+  `serviceAdvisor` `talent`。`talent` は「パス 121 が両ビルドを同じ
+  `readStoredTalent` へ寄せた」と分かっているが、**寄せたから対称だろうは
+  パス 246 で外れた推論**なので未読のまま。
+- `httpLimits` は「部分実測」のまま (手で選んだ 3 経路だけ・母集団の総当たりではない)。
+- このパスは `scripts/` と `docs/` だけで `src/` を触っていないので、**出荷物は不変**
+  (11,850,737 B / 3,263,483 B)。
