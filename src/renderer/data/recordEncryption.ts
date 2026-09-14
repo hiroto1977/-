@@ -17,6 +17,7 @@ import { getRecordStore } from './store';
 import { IDENTITY_CIPHER, createPassphraseRecordCipher } from './recordCipher';
 import { deriveAesKey, sealWithKey, openWithKey, randomSaltB64, isSealed, type Sealed } from '../security/dataCrypto';
 import { describeStorageError } from './localWrite';
+import { LEGACY_KDF_ITERATIONS, PBKDF2_ITERATIONS } from '../../shared/cryptoParams';
 
 // 内部キー/既知平文。save↔load・seal↔compare で同じ定数を使い round-trip するため、
 // 値そのものを変える StringLiteral mutation は外部から観測できず equivalent。
@@ -30,6 +31,25 @@ interface EncryptionMeta {
   readonly enabled: boolean;
   readonly salt: string;
   readonly kcv: Sealed;
+  /**
+   * 封緘に使った PBKDF2 の反復回数 (パス 239)。
+   *
+   * salt と同じ理由でここに要る —— **`PBKDF2_ITERATIONS` は動く定数**で、
+   * 実際に一度動いた (210,000 → 600,000)。回数を書き残さずに定数だけ上げると、
+   * 封緘済みのレコードは**正しいパスフレーズでも開かなくなる**。しかも
+   * `unlockEncryption` の契約は「誤りなら false」なので、見え方は
+   * 「パスフレーズが違います」になり、原因を一切指さない。
+   *
+   * バックアップの `EncryptedBundle` は最初から `iterations` を持っており、
+   * その注記が「古い値で書かれた封緘も自分の回数で開く」と言っている。
+   * 同じ約束をこちらにも置く。
+   *
+   * 任意 (`?`) —— 欄が出来る前に書かれた meta が在りうるので、無ければ
+   * `LEGACY_KDF_ITERATIONS` へ倒す。**`loadMeta` の必須の形には入れない**
+   * (入れると欠けた meta が degraded になり、`unlockEncryption` が
+   *  「解錠できた」と答えてしまう —— パス 237 で一度踏んだ罠)。
+   */
+  readonly iterations?: number;
 }
 
 /**
@@ -104,7 +124,23 @@ function loadMeta(): EncryptionMeta | null {
       // 返り値の enabled は常に true (検証済み)。消費側 (unlock/disable) は salt/kcv のみ
       // 参照し enabled を読まないため、この BooleanLiteral mutation は equivalent。
       // Stryker disable next-line BooleanLiteral
-      return { enabled: true, salt: m.salt, kcv: m.kcv };
+      return {
+        enabled: true,
+        salt: m.salt,
+        kcv: m.kcv,
+        // **有限の数でないなら無かったことにする** (下の `??` が凍結値へ倒す)。
+        // `typeof === 'number'` では駄目 —— `typeof NaN === 'number'` は true なので
+        // NaN がそのまま反復回数として流れる (パス 98 の番人がこれを捕まえた。
+        // 私がこの行を最初 typeof で書いて落ちた)。`Number.isFinite` は型強制を
+        // しないので文字列 `'600000'` も落ちる。
+        //
+        // 壊れていたら**凍結値で開こうとする**。封緘が凍結値で作られていれば開くし、
+        // 違えば別の鍵になって GCM が落ち `false` —— つまり弱くならない。
+        // 締め出さない方を採るのは、このモジュールの設計節 (「誤りなら false を
+        // 返すだけ」) と同じ理屈である。範囲の確認は `deriveAesKey` の
+        // `assertKdfIterations` が持っており、範囲外も try が拾って `false` になる。
+        iterations: Number.isFinite(m.iterations) ? m.iterations : undefined,
+      };
     }
     // 形が違う (版数違いのメタなど)。**在るのに読めない**のでこちらも degraded。
     lastMetaDegraded = true;
@@ -176,10 +212,13 @@ export async function enableEncryption(password: string): Promise<void> {
   assertMetaWritable();
 
   const salt = randomSaltB64();
-  const key = await deriveAesKey(password, salt);
+  // 回数を**明示して**導出し、同じ値を meta に書き残す (パス 239)。
+  // 既定引数に頼ると「何回で封緘したか」がどこにも残らない。
+  const iterations = PBKDF2_ITERATIONS;
+  const key = await deriveAesKey(password, salt, iterations);
   const kcv = await sealWithKey(key, KCV_PLAINTEXT);
 
-  const cipher = await createPassphraseRecordCipher(password, salt);
+  const cipher = await createPassphraseRecordCipher(password, salt, iterations);
   const store = getRecordStore();
 
   /*
@@ -206,7 +245,7 @@ export async function enableEncryption(password: string): Promise<void> {
    *  復号を全部終えてから `clearMeta()` する。同じ理屈を
    *  有効化側にも当てる。)
    */
-  saveMeta({ enabled: true, salt, kcv });
+  saveMeta({ enabled: true, salt, kcv, iterations });
   store.configureCipher(cipher);
   await store.reencryptAll(); // 既存平文 → 封緘 (decrypt は素通し)
 }
@@ -231,15 +270,17 @@ export async function unlockEncryption(password: string): Promise<boolean> {
   //
   // 壊れた salt は誤パスフレーズと同じ false になるので理由は区別できないが、
   // 利用者が**やり直せる状態に留まる**方を採る (throw だと打つ手が無くなる)。
+  // **封緘したときの回数で開く** (パス 239)。欄が無い古い meta は凍結値へ。
+  const iterations = meta.iterations ?? LEGACY_KDF_ITERATIONS;
   try {
-    const key = await deriveAesKey(password, meta.salt);
+    const key = await deriveAesKey(password, meta.salt, iterations);
     const opened = await openWithKey(key, meta.kcv);
     if (opened !== KCV_PLAINTEXT) return false;
   } catch {
-    return false; // wrong passphrase (GCM auth failure) / 空 / 壊れた salt
+    return false; // wrong passphrase (GCM auth failure) / 空 / 壊れた salt / 範囲外の回数
   }
 
-  const cipher = await createPassphraseRecordCipher(password, meta.salt);
+  const cipher = await createPassphraseRecordCipher(password, meta.salt, iterations);
   getRecordStore().configureCipher(cipher);
   return true;
 }
@@ -254,14 +295,16 @@ export async function disableEncryption(password: string): Promise<boolean> {
 
   // `unlockEncryption` と同じ理由で鍵の導出も try の中へ (上のコメント参照)。
   // **解除の側が throw すると逃げ道が無くなる**ので、こちらの方が重い。
+  // 解錠と同じ —— 封緘したときの回数で開く (パス 239)。
+  const iterations = meta.iterations ?? LEGACY_KDF_ITERATIONS;
   try {
-    const key = await deriveAesKey(password, meta.salt);
+    const key = await deriveAesKey(password, meta.salt, iterations);
     if ((await openWithKey(key, meta.kcv)) !== KCV_PLAINTEXT) return false;
   } catch {
     return false;
   }
 
-  const passCipher = await createPassphraseRecordCipher(password, meta.salt);
+  const passCipher = await createPassphraseRecordCipher(password, meta.salt, iterations);
   const store = getRecordStore();
   store.configureCipher(IDENTITY_CIPHER);
   await store.reencryptAll(passCipher); // 復号(passCipher) → 平文(identity)で保存

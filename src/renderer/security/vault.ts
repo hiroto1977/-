@@ -21,7 +21,11 @@ import { countChars } from '../../shared/inputCeiling';
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
 import { webCryptoUnavailableReason } from './webCrypto';
-import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
+import {
+  AES_GCM_IV_BYTES,
+  LEGACY_KDF_ITERATIONS,
+  PBKDF2_ITERATIONS as SHARED_ITERATIONS,
+} from '../../shared/cryptoParams';
 
 // Constants below are pinned by integration behavior (DB name / iterations
 // / byte counts) but the exact string values & default arrows are not
@@ -349,6 +353,16 @@ interface VaultMeta {
 
   // ── Recovery branch (Phase E). Optional for backward compat with
   // legacy vaults created before this feature shipped. ────────────
+  /**
+   * リカバリー枝**専用**の反復回数 (パス 239)。
+   *
+   * `iterations` (上) と共用にはできない —— あちらはパスワード枝の持ち物で、
+   * `changePassword` が**今の定数**へ書き換える。リカバリー枝は包み直さない
+   * ので、共用にすると片方を直した瞬間にもう片方が開けなくなる。
+   *
+   * 欄が無い古い meta は `LEGACY_KDF_ITERATIONS` で開く。
+   */
+  recoveryIterations?: number;
   recoverySalt?: Uint8Array;        // 32 bytes, PBKDF2 salt for recovery key
   recoveryIv?: Uint8Array;          // 12 bytes, IV for KCV under recovery key
   recoveryKcv?: Uint8Array;         // ciphertext of KCV_PLAINTEXT under recovery key
@@ -516,8 +530,11 @@ async function decryptString(
  * (「recovery key has 256-bit entropy (~2^256 brute-force cost)」) で
  * 別の side-channel を受け入れているのと同じ理屈である。
  *
- * 反復回数もここでは保管値を読まない (`PBKDF2_ITERATIONS` の定数を使う) ので、
- * `assertKdfIterations` を掛ける対象が無い。
+ * 反復回数は**保管値を読む** (`meta.recoveryIterations`、パス 239 で足した)。
+ * 呼ぶ側が `assertKdfIterations` を掛けてから渡す —— パスワードの道と同じ扱い。
+ * 2026-09-14 まではこの関数が定数を読んでいて、**定数を上げた瞬間に世に出て
+ * いるリカバリーキーが全部無効になる**形だった (しかも見え方は
+ * 「リカバリーキーが違います」で、原因を指さない)。
  *
  * 短い `recoverySalt` が起きたときの見え方は「リカバリーキーが違います」に
  * なる (別の鍵が出て KCV の GCM 認証が落ちる)。**保管値が壊れているのに
@@ -530,6 +547,7 @@ async function deriveKeyFromMnemonic(
   mnemonic: string,
   salt: Uint8Array,
   version: number | undefined,
+  iterations: number,
 ): Promise<CryptoKey> {
   // 鍵を作る所は**すべて**守る (パス 171)。`crypto.subtle` が無い端末では
   // ここが最初に触る所になりうる —— 守り漏れが 1 つ在ると、その経路だけが
@@ -547,7 +565,7 @@ async function deriveKeyFromMnemonic(
     ['deriveKey'],
   );
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: salt as BufferSource, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: 'SHA-256' },
     baseKey,
     { name: 'AES-GCM', length: 256 },
     false,
@@ -724,7 +742,12 @@ class BrowserVault implements Vault {
         const entropy = generateEntropy();
         const mnemonic = await encodeMnemonic(entropy);
         const recoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-        const recoveryKey = await deriveKeyFromMnemonic(mnemonic, recoverySalt, 1);
+        const recoveryKey = await deriveKeyFromMnemonic(
+          mnemonic,
+          recoverySalt,
+          1,
+          PBKDF2_ITERATIONS,
+        );
         const recoveryKcv = await encryptString(recoveryKey, KCV_PLAINTEXT);
         const recoveryWrap = await wrapMasterForRecovery(masterRaw, recoveryKey);
 
@@ -733,6 +756,7 @@ class BrowserVault implements Vault {
           iv: kcv.iv,
           kcv: kcv.ciphertext,
           iterations: PBKDF2_ITERATIONS,
+          recoveryIterations: PBKDF2_ITERATIONS,
           recoverySalt,
           recoveryIv: recoveryKcv.iv,
           recoveryKcv: recoveryKcv.ciphertext,
@@ -1158,10 +1182,17 @@ class BrowserVault implements Vault {
       // dominating any timing-channel speedup.
       // Use the same version the vault was initialized under, so legacy
       // (v0, prefix-less) and new (v1, prefixed) vaults both work.
+      //
+      // 反復回数も**その金庫が使った回数**で導出する (パス 239)。欄が出来る前に
+      // 書かれた meta には無いので、凍結値へ倒す。範囲の確認はパスワードの道
+      // (`unlock` / `changePassword`) と同じ —— 保存領域から来た数だから。
+      const recoveryIterations = meta.recoveryIterations ?? LEGACY_KDF_ITERATIONS;
+      assertKdfIterations(recoveryIterations);
       const recoveryKey = await deriveKeyFromMnemonic(
         mnemonic,
         meta.recoverySalt,
         meta.recoveryVersion,
+        recoveryIterations,
       );
       try {
         const plain = await decryptString(recoveryKey, {
@@ -1197,6 +1228,14 @@ class BrowserVault implements Vault {
           salt: newSalt,
           iv: newKcv.iv,
           kcv: newKcv.ciphertext,
+          // **導出に使った回数を書き残す** (パス 239)。上の `deriveKey` は
+          // `PBKDF2_ITERATIONS` で新しいパスワード鍵を作っているのに、
+          // 2026-09-14 まではこの行が無く `...meta` の古い回数が残っていた。
+          // `unlock` は保管値を読む (それ自体は正しい前方互換) ので、
+          // 保管値 ≠ 定数の金庫で復旧すると **今設定したばかりのパスワードが
+          // 二度と通らない** —— しかもリカバリーキーは使い切っている。
+          // `changePassword` は最初からこの行を持っていた。揃える。
+          iterations: PBKDF2_ITERATIONS,
         };
 
         // ── Legacy v0 → v1 silent auto-migration ────────────────────
@@ -1219,14 +1258,14 @@ class BrowserVault implements Vault {
           try {
             const migratedRecoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
             const migratedRecoveryKey = await deriveKeyFromMnemonic(
-              mnemonic,
-              migratedRecoverySalt,
-              1,
+              mnemonic, migratedRecoverySalt, 1, PBKDF2_ITERATIONS,
             );
             const migratedRecoveryKcv = await encryptString(migratedRecoveryKey, KCV_PLAINTEXT);
             const migratedRecoveryWrap = await wrapMasterForRecovery(masterRaw, migratedRecoveryKey);
             newMeta = {
               ...newMeta,
+              // 包み直したのだから、包んだ回数もこちらで書き残す (パス 239)。
+              recoveryIterations: PBKDF2_ITERATIONS,
               recoverySalt: migratedRecoverySalt,
               recoveryIv: migratedRecoveryKcv.iv,
               recoveryKcv: migratedRecoveryKcv.ciphertext,

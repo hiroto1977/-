@@ -383,6 +383,22 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
     API キーやマスターパスワードが**この app が消せない媒体**へ入りうる。使える token は `off` / `new-password` /
     `current-password` の 3 つだけで、母集団は走査で数える（生存の床 16・`type` を式で書く抜け道も塞ぐ）。
     消せないことは画面の「消えない物」に名前で挙げた。
+20. **封緘した物は、自分を作った PBKDF2 の反復回数を覚えている** — `shared/cryptoParams.ts` の
+    `LEGACY_KDF_ITERATIONS` + `VaultMeta.recoveryIterations` + `EncryptionMeta.iterations`
+    （2026-09-14 · パス 239）。`PBKDF2_ITERATIONS` は**動く定数**で、実際に一度動いた
+    (OWASP の SHA-256 の床に合わせて 21万 → 60万)。回数を書き残さない封緘は、その日に
+    **正しい鍵でも開かなくなる**。4 つある導出のうち約束を守っていたのは 1.5 個だった:
+    バックアップ (`EncryptedBundle.iterations`) と保管庫のパスワード枝は保存値を読むが、
+    **保管庫のリカバリーキーは定数で導出**し、**レコードの封緘は回数を持たなかった**。
+    そして 2 つ目が正しいことが 3 つ目の穴を致命傷にしていた ——
+    `recoverWithMnemonic` は新しいパスワードを**定数**で導出するのに `meta.iterations` を
+    書き換えず (`changePassword` は書き換えていた)、保管値 ≠ 定数の金庫で復旧すると
+    **今設定したばかりのパスワードが二度と通らない**。リカバリーキーは使い切っている。
+    見え方はどれも「パスワード／リカバリーキー／パスフレーズが違います」で、原因を指さない。
+    欄が無い古い保存値は**凍結値** (`LEGACY_KDF_ITERATIONS` = 60万、数値リテラルで固定。
+    `PBKDF2_ITERATIONS` の別名にすると仕組みごと無力になるので、原文で別名でないことを留める)
+    へ倒す。`security/__tests__/kdfCostProvenance.test.ts` が 3 つの導出それぞれについて
+    「保存値を読んでいること」と「欄が無くても開くこと」を対照つきで留める。
 
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 

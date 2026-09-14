@@ -1562,6 +1562,14 @@
       "leafCount": 71,
       "note": "update vault.ts",
       "hash": "c22afe999a4dcb5206f5ea808ca0763cbfc713c27e0886f23b798cca7de024dd"
+    },
+    {
+      "index": 186,
+      "prevHash": "c22afe999a4dcb5206f5ea808ca0763cbfc713c27e0886f23b798cca7de024dd",
+      "merkleRoot": "1d211e3379972955ecafd5876049c50b8286105b5a5d6a169ad74505bfba8a16",
+      "leafCount": 71,
+      "note": "update recordCipher.ts,vault.ts,cryptoParams.ts",
+      "hash": "540801a9343cac0d55288c76e2ee38595d7ce6986d8a15f8ac0949ddefee0dd0"
     }
   ],
   "tipManifest": {
@@ -1600,7 +1608,7 @@
     "src/preload/preload.ts": "6985953d4e8253f5ece972ac22e5294c8aaa64293d7ff2e57e80dc21411aa667",
     "src/renderer/data/assistantMarkdown.ts": "7d08dc362233f8ca3d52257e84c2bd6c95ad34d3ea97d5208359aa730d969d6b",
     "src/renderer/data/localWrite.ts": "bb5ed9a5b0b719ec23ad6dac928ba5ac97650d1c5981469acec29f05b22692d3",
-    "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",
+    "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",
     "src/renderer/fs/fsa.ts": "fb721de4a0aa024a6834b04e4bb22fc891d6c380518458957af18084b88b3e3d",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
     "src/renderer/network/proxy.ts": "b4ec8ba48beb306dcc2c4227cf8d283fc5ba7c35d284023bd39302bfa34838f9",
@@ -1613,7 +1621,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "509d194eeb8ce6b4e6075c7583f9b37fd71fa83d28998452dfda57e636c2f4ad",
+    "src/renderer/security/vault.ts": "27ffae9a49302afad6fc328d4d99efd340dd59e39c4404ba3b0834dc2bf1a152",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "fb4b09c9d607b67d10f45cd6801db72ca74b5293d94f446975ce35c7af8a9524",
@@ -1622,7 +1630,7 @@
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
     "src/shared/atlassianSite.ts": "5810fde838f479ba095ec4dad9774020ee87c6e980bf7bff4a3c61bb2c4c0b90",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
-    "src/shared/cryptoParams.ts": "fd68954c1be30280b89ba4e99e270515b44a7b27ff199f8efd891d20876e21c7",
+    "src/shared/cryptoParams.ts": "49d2360be4e3a313466e56522b7244292606c90d9745af73640d959412a206e5",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "01b2f3904381ca98950ac331aa0558b1a6fda14e2a7e7c85b6b5bd1b6f9b9ce6",

@@ -26103,6 +26103,102 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 239 (2026-09-14) — **封緘した物が、自分を作った反復回数を覚えていなかった (4 つのうち 2.5 個)**
+
+パス 237 の残件として「レコード封緘のメタは `iterations` を持たない」と書き留めてあった。
+辿ったら、**同じ穴が保管庫のリカバリー枝にも在り、しかもそのうち 1 つは今日すでに壊れていた**。
+
+### 根っこ
+
+`PBKDF2_ITERATIONS` は**動く定数**である。実際に一度動いた —— OWASP の PBKDF2-**SHA256** の床
+60 万回に合わせて 21 万 → 60 万 (2026-07 の監査。`dataCrypto.ts` の注記)。`MAX_KDF_ITERATIONS
+= 4_000_000` という天井は「これからも上げる」という前提そのものである。
+
+上げるのは良い。**ただし保存した側が「自分を何回で作ったか」を書き残していなければ、
+上げた瞬間に古い鍵が導出できなくなる。** バックアップはそれを知っていて、`EncryptedBundle`
+は `iterations` を持ち、復号は `bundle.iterations` を読む —— 注記に「古い値で書かれた封緘も
+自分の回数で開く」と明記してある。
+
+PBKDF2 の導出は 4 つある。約束を守っていたのは **1.5 個**だった。
+
+| # | 導出 | 回数を保存 | 開くとき読む | |
+|---|---|---|---|---|
+| ① | バックアップ (`dataCrypto`) | ✅ | ✅ `bundle.iterations` | |
+| ② | 保管庫のパスワード枝 (`unlock` / `changePassword`) | ✅ | ✅ `meta.iterations` | |
+| ③ | 保管庫のリカバリーキー | ✅ (同じ欄を共用) | ❌ **定数** | 欠陥 |
+| ④ | 業務レコードの封緘 | ❌ **持たない** | ❌ 定数 (既定引数) | 欠陥 |
+
+### ③ が単なる前方互換の穴ではなく、今日の欠陥だった
+
+`VaultMeta` の `iterations` は**1 つ**しか無いのに、パスワード枝とリカバリー枝の**両方**が
+それで説明されていた。そして `changePassword` はそれを**今の定数へ書き換える** (リカバリー枝は
+包み直さないまま)。つまり 1 つの欄で 2 つの導出は説明できない。
+
+さらに `recoverWithMnemonic`:
+
+```ts
+const newPasswordKey = await deriveKey(newPassword, newSalt, PBKDF2_ITERATIONS); // 定数で作る
+…
+let newMeta: VaultMeta = { ...meta, salt: newSalt, iv, kcv };                    // ← 回数を書かない
+```
+
+`changePassword` は同じ場所に `iterations: PBKDF2_ITERATIONS,` を持っている。**復旧の側だけが
+落ちていた。** 次の `unlock` は `meta.iterations` (古い方) を読むので、
+
+> パスワードを忘れた → リカバリーキーで復旧した → 新しいパスワードを設定した →
+> **そのパスワードが二度と通らない。** しかもリカバリーキーは使い切っている。
+
+見え方は「パスワードが違います」。原因を一切指さない。②が正しく保管値を読む (それ自体は
+正しい前方互換) ことが、この穴を**全損**に変えていた —— `unlock` が定数を読んでいたなら
+無害だった。2 つの半分はそれぞれ筋が通っていて、合わせると壊れる形である。
+
+### 直したこと
+
+- `shared/cryptoParams.ts` … **凍結値** `LEGACY_KDF_ITERATIONS = 600_000`。欄が出来る前に
+  書かれた保存値はすべてこの回数 (git 履歴で確認: `vault.ts` は 21 万を一度も使っていない)。
+  **`PBKDF2_ITERATIONS` の別名にしてはならない** —— 等しいので実行時には見分けられず、
+  別名にした日にこの仕組みごと無力になる。数値リテラルで宣言し、原文で留める。
+  「上げるときはここだけを変える」という既存の注記も、成り立つ条件を添えて書き直した。
+- `security/vault.ts` … `recoveryIterations?: number` を `VaultMeta` に足し
+  (`iterations` と**共用にできない**理由をその場に書いた)、`deriveKeyFromMnemonic` は
+  回数を引数で受ける。`initialize` と v0→v1 移行は使った回数を書き残し、
+  `recoverWithMnemonic` は `meta.recoveryIterations ?? LEGACY_KDF_ITERATIONS` を
+  `assertKdfIterations` に通して渡す (保存領域から来た数だから、パスワードの道と同じ扱い)。
+  **そして `newMeta` に `iterations: PBKDF2_ITERATIONS` を足した** (上の全損を止める 1 行)。
+  パス 238 で「`assertKdfIterations` を掛ける対象が無い」と書いた注記は、もう正しくないので
+  書き換えた。
+- `data/recordEncryption.ts` … `EncryptionMeta.iterations?: number`。`enableEncryption` は
+  回数を**明示して**導出し同じ値を書き残す。`unlock` / `disable` は
+  `meta.iterations ?? LEGACY_KDF_ITERATIONS` で開く。`createPassphraseRecordCipher` も
+  同じ回数を受ける (KCV と本体で別の鍵になっては意味が無い)。
+  **`loadMeta` の必須の形には入れない** —— 入れると欠けた meta が degraded になり
+  `unlockEncryption` が「解錠できた」と答える。パス 237 で一度踏んだ罠なので、理由を現場に書いた。
+
+### 対照 (鳴ったもの)
+
+`security/__tests__/kdfCostProvenance.test.ts` (8 件) を**先に**書いて、直す前に回した ——
+**6 件のうち 5 件が落ちた**。`meta.iterations` は復旧後に 150000 (導出は 600000)、
+`recoveryIterations` は `undefined`、レコードの `iterations` も `undefined`。
+
+直した後、1 つずつ戻す対照も回した (`cp` で退避 / 復元):
+
+- `recoverWithMnemonic` の 1 行だけを消す → **「実際に使った反復回数を書き残す」だけが落ち**、他 7 件は通る
+- `unlockEncryption` の引数だけを既定へ戻す → **「保存された回数で導出する」だけが落ちる**
+
+どちらも狙った 1 件だけが鳴った。「欄が無い古い meta も開ける」向きも両方の道で留めてある
+(この 2 件は直す前から通っていた —— 後方互換は壊していないという意味であって、
+新しい守りの証拠ではない)。
+
+### 測ったが**直さなかった**こと
+
+- **到達性**: パス 237 で測ったとおり、レコード封緘の書き込み・解錠の経路は
+  両ビルドで tree-shaking により落ちている (出荷 HTML に文面が 0 件)。つまり ④ は
+  **今日まだ何も封緘していない** —— だからこそ移行が無料で、経路が出荷された後では
+  有料になる。今やる理由はそれである。①②③ は出荷されている。
+- **`MIN_SALT_BYTES` を上げる**のは今も orphan を作る (`randomSaltB64` が同じ定数を読む)。
+  回数と違って salt は**長さの床**なので、同じ「保存値を読む」形では解けない。手つかず。
+- 短い `recoverySalt` が「リカバリーキーが違います」に見える件 (パス 238 の記録) はそのまま。
+
 ## パス 238 (2026-09-14) — **金庫の復旧の道に salt の床が無い。調べたら、**無くて正しかった****
 
 ### 追った理由 (パス 237 の直接の双子)
