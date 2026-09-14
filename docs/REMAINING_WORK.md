@@ -26103,6 +26103,71 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 238 (2026-09-14) — **金庫の復旧の道に salt の床が無い。調べたら、**無くて正しかった****
+
+### 追った理由 (パス 237 の直接の双子)
+
+パス 237 で `deriveAesKey` に `assertSaltBytes` を足したあと、`security/dataCrypto.ts` の
+`assertSaltBytes` の説明が **「反復回数のほうは『資格情報そのものを持つ Vault 側が
+素通しだった』として塞がれたが、隣の欄である salt は残っていた」** と書いているのを見て、
+**資格情報そのものを持つ金庫**を当たり直した。
+
+`vault.ts` の**パスワードの道**は両方の床を通していた:
+
+```
+762: assertKdfIterations(meta.iterations)   ← unlock
+764: assertSaltBytes(meta.salt)
+1014,1016: 同じ 2 つ                        ← changePassword
+```
+
+ところが `assertSaltBytes` はこの 2 か所にしか無い。**復旧 (ニーモニック) の道**は
+`meta.recoverySalt` を**存在するか**しか見ずに (`vault.ts:1120-1123` の truthy 判定)、
+長さを見ないまま `deriveKeyFromMnemonic(mnemonic, meta.recoverySalt, …)` へ渡す。
+しかもこの道が開けるのは **生のマスター鍵** (`unwrapMasterFromRecovery` →
+全サービスのトークンを開く鍵) で、金庫の中でいちばん価値が高い。
+**出荷物にも入っている** (`リカバリーキーが違います` が FULL / LITE に各 1 件。
+パス 237 のレコード封緘とは違い、tree-shaking で落ちていない)。
+
+ここまでは「パス 237 より重い欠陥」に見えた。
+
+### 調べた結果 — 床は要らない
+
+salt の仕事は**利用者をまたいだ事前計算を壊すこと**である。固定値へ差し替えられると
+表が使い回せるのは、**入力の取りうる範囲が狭いとき**に限る。
+
+復旧の道の入力は 24 語の BIP-39 で、`security/mnemonic.ts` の冒頭が
+**`ENTROPY_BITS = 256`**(24 words × 11 bit = 256 bit entropy + 8 bit checksum) と
+宣言している。**2^256 に対する事前計算には意味が無い**ので、`recoverySalt` を
+0 バイトにされても固定値にされても、攻撃側の得る物は 0 である。
+
+`vault.ts` 自身が同じ根拠で別の side-channel を受け入れていた ——
+復旧の KCV 照合の timing の注記が「the recovery key has 256-bit entropy
+(~2^256 brute-force cost), dominating any timing-channel speedup」と書いている。
+**同じ理屈が salt にも当たる。** パスワードの道に床が在り復旧の道に無いのは、
+抜けではなく**入力のエントロピーが違うから**である。
+
+反復回数も `deriveKeyFromMnemonic` は保管値を読まず `PBKDF2_ITERATIONS` の定数を
+使うので、`assertKdfIterations` を掛ける対象がそもそも無い。
+
+### したこと — 直さず、理由を現場に書いた
+
+**変更は `vault.ts` のコメント 1 つだけ。** 同じ問いで立ち止まる人 (と次の私) が
+必ず出るので、`deriveKeyFromMnemonic` の直前に「ここに `assertSaltBytes` は要らない」
+とその根拠を置いた。**床を足さなかったのは怠慢ではなく判断である**ことが、
+コードを読んだだけで分かる状態にした。
+
+併せて 1 つだけ残した観察: 短い `recoverySalt` が起きたときの見え方は
+「リカバリーキーが違います」になる (別の鍵が出て KCV の GCM 認証が落ちる)。
+**保管値が壊れているのに合言葉を疑わせる**のは案内としては良くない。
+ただし断り方を変えると `recoverWithMnemonic` の契約 (誤りは 1 種類の文言) が動くので、
+利害を測ってから触ること —— パス 237 で `loadMeta` 側に床を置いて解錠の契約を
+壊しかけた前例が在る。**今日は触らない。**
+
+### 出荷物
+
+コメントだけなので最小化で落ち、FULL / LITE は byte 単位で不変。
+`vault.ts` は完全性チェーンの保護対象なのでブロックを採掘した。
+
 ## パス 237 (2026-09-14) — **PBKDF2 の salt の床が、バックアップの道にしか掛かっていなかった**
 
 ### 見つけ方 (AES-GCM の nonce を疑って、隣に在った)

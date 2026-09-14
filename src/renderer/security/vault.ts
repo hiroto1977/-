@@ -501,6 +501,31 @@ async function decryptString(
  *  v1 is the default for new vaults; v0 exists strictly for backward
  *  compat with vaults persisted before the prefix was introduced.
  */
+/*
+ * **ここに `assertSaltBytes` は要らない** —— 2026-09-14 (パス 238) に調べて、
+ * 意図的に置かないと決めた。同じ問いで一度立ち止まる人が必ず出るので理由を残す。
+ *
+ * パスワードの道 (`unlock` / `changePassword`) は `meta.salt` に
+ * `assertSaltBytes` を掛けている。salt の仕事は**利用者をまたいだ事前計算を
+ * 壊すこと**で、保管領域へ書ける相手が salt を固定値へ差し替えると、
+ * **入力の取りうる範囲が狭いとき**に表が使い回せる —— パスワードはまさにそれ。
+ *
+ * こちらの入力は 24 語の BIP-39 (`security/mnemonic.ts`: 256 bit entropy)
+ * である。2^256 に対する事前計算には意味が無いので、salt を短く・固定に
+ * されても攻撃側の得る物は 0 になる。下の timing の注記が同じ根拠
+ * (「recovery key has 256-bit entropy (~2^256 brute-force cost)」) で
+ * 別の side-channel を受け入れているのと同じ理屈である。
+ *
+ * 反復回数もここでは保管値を読まない (`PBKDF2_ITERATIONS` の定数を使う) ので、
+ * `assertKdfIterations` を掛ける対象が無い。
+ *
+ * 短い `recoverySalt` が起きたときの見え方は「リカバリーキーが違います」に
+ * なる (別の鍵が出て KCV の GCM 認証が落ちる)。**保管値が壊れているのに
+ * 合言葉を疑わせる**のは案内としては良くないが、断り方を変えると
+ * `recoverWithMnemonic` の契約 (誤りは 1 種類の文言) が動くので、
+ * 利害を測ってから触ること —— パス 237 で `loadMeta` 側に床を置いて
+ * 解錠の契約を壊しかけた前例が在る (`data/recordEncryption.ts` の注記)。
+ */
 async function deriveKeyFromMnemonic(
   mnemonic: string,
   salt: Uint8Array,
