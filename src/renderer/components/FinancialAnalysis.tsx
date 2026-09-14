@@ -32,7 +32,7 @@ import {
 import { formatDate } from '../../shared/bankFormat';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { AxonometricCharts } from './AxonometricCharts';
-import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
+import { computeFinancialRatios, radarAxes, defaultBandAxes, defaultBandNote, type FinancialRatios, type RadarAxis } from '../data/financialRatios';
 import { diagnoseFinancials, levelOf, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
 import type { HealthBands, RadarBands } from '../../shared/financialHealthBands';
 import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
@@ -736,8 +736,9 @@ function TrendBadge({ trend }: { trend: MarginTrend }) {
   );
 }
 
-function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend; onExportReport: () => void; healthBands?: HealthBands }) {
+function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands, defaultBand }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend; onExportReport: () => void; healthBands?: HealthBands; defaultBand: readonly RadarAxis[] }) {
   const { overallScore, grade, categories, strengths, weaknesses, unscored } = diagnosis;
+  const bandNote = defaultBandNote(defaultBand);
   return (
     <div style={cardStyle}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
@@ -799,6 +800,20 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }:
         名指ししていた。**算定不能は弱みではない** —— 分けて示し、
         平均から外したことも述べる (数字が変わった理由が読めるように)。
       */}
+      {/* **採点した水準が利用者の保存値ではなく既定であることを言う** (パス 227)。
+          設定画面は「その組は効きません」と言うが、点数の隣で「この点数は既定の水準で
+          付いた」と言う口が無かった —— 別の面には別の文が要る。 */}
+      {bandNote !== null && (
+        <div
+          data-default-band-axes={defaultBand.length}
+          role="alert"
+          style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.7, border: '1px solid var(--border)', borderRadius: 6, padding: '6px 8px' }}
+        >
+          ⚠️ <strong>{defaultBand.map((a) => a.label).join('・')} の {defaultBand.length} 軸</strong>は、
+          0 点 / 100 点の水準が同じ値で保存されているため<strong>既定の水準で採点しています</strong>
+          （設定の「数値パラメータ」で違う値にすると効きます）。
+        </div>
+      )}
       {unscored.length > 0 && (
         <div
           data-unscored-axes
@@ -881,6 +896,9 @@ export function FinancialAnalysis({
   const stmtLabel = consolidated ? scopeLabel : `${selected.unit.label}・単体`;
   const axes = radarAxes(selected.ratios, radarBands);
   const diagnosis = diagnoseFinancials(axes, healthBands);
+  // **この点数が既定の水準で付いた軸を名指しする** (パス 227)。倒し込みは `axisBand` の
+  // 防御で正しいが、倒したことを言う口が採点する面に無かった。
+  const defaultBand = defaultBandAxes(axes, radarBands);
   const trend = analyzeMarginTrend(selected.unit.history);
   const marginHistory = selected.unit.history.map((h) => (h.revenue > 0 ? Math.round((h.profit / h.revenue) * 1000) / 10 : 0));
   const otherCost = Math.max(0, fin.revenue - fin.cogs - fin.laborCost - fin.operatingProfit);
@@ -952,7 +970,7 @@ export function FinancialAnalysis({
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
       </div>
 
-      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} trend={trend} onExportReport={onExportReport} healthBands={healthBands} />
+      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} trend={trend} onExportReport={onExportReport} healthBands={healthBands} defaultBand={defaultBand} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
         <div style={cardStyle}>

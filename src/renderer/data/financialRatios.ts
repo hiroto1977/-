@@ -43,7 +43,7 @@ export interface FinancialInputs {
   readonly effectiveTaxRate?: number; // 実効税率 (0-1; NOPAT 算定用; 無ければ DEFAULT_EFFECTIVE_TAX_RATE)
 }
 
-import { RADAR_AXIS_BANDS, type AxisBand, type RadarAxisKey, type RadarBands } from '../../shared/financialHealthBands';
+import { RADAR_AXIS_BANDS, RADAR_AXIS_KEYS, type AxisBand, type RadarAxisKey, type RadarBands } from '../../shared/financialHealthBands';
 
 /** NOPAT / ROIC / FCF 算定で参照する既定値 (概算)。法人実効税率は約 30% を仮置き。 */
 export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
@@ -188,6 +188,14 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
 // 指標ごとに違う (高いほど良い / 低いほど良い) ため、ベンチマークで吸収する。
 
 export interface RadarAxis {
+  /**
+   * 軸の鍵。`radarAxes` が作るのは `RADAR_AXIS_KEYS` の 15 個だけなので
+   * `RadarAxisKey` に狭めたくなるが、**`string` のままにしてある** ——
+   * `diagnoseFinancials` は軸の鍵について**総称的**で、未知の鍵をカテゴリ無しとして
+   * 扱う枝を持ち、その枝を検査が合成鍵 (`'zzz'` / `'a'`) で通している
+   * (パス 227 で実際に狭めてみて、そこで気付いた)。**広い型が常に嘘とは限らない。**
+   * 帯を引く側 ({@link defaultBandAxes}) が `RADAR_AXIS_KEYS` の側から回す。
+   */
   readonly key: string;
   readonly label: string;
   readonly unit: string;
@@ -239,6 +247,41 @@ function linScore(raw: number | null, bad: number, good: number): number | null 
 export function axisBand(key: RadarAxisKey, bands: RadarBands): AxisBand {
   const b = bands[key];
   return b.good === b.bad ? RADAR_AXIS_BANDS[key] : b;
+}
+
+/**
+ * **既定の帯へ倒した軸** (2026-09-14 · パス 227)。
+ *
+ * パス 222 は「幅 0 の帯 (`good === bad`) を {@link axisBand} が黙って既定へ倒す」ことを
+ * 見つけ、**設定画面**に断りを付けた (保存を断り、すでに保存されている組を名指しする)。
+ * だが**採点する画面の側は何も言わない** —— 診断カードは「自己資本比率 60 点」と刷り、
+ * その 60 点が**利用者が保存した水準ではなく既定の水準で付いた**ことを示さない。
+ *
+ * 倒し込み自体は正しい防御である (幅 0 の帯では 0 除算になる) が、
+ * **黙って倒す防御は、倒したことを誰かが言わなければ嘘になる** (パス 219 / 222 / 225 / 226)。
+ * 設定画面が言うのは「その組は効きません」で、診断画面が言うべきは
+ * 「**この点数は既定の水準で付いています**」——**別の面には別の文が要る。**
+ *
+ * ラベルは {@link radarAxes} が作った `RadarAxis` から取る (軸名を写さない)。
+ */
+export function defaultBandAxes(axes: readonly RadarAxis[], bands: RadarBands = RADAR_AXIS_BANDS): readonly RadarAxis[] {
+  // **台帳 (`RADAR_AXIS_KEYS`) の側から回す。** 軸の側から `bands[a.key]` を引くと
+  // `key: string` では引けず、cast を足すと「知らない鍵」が黙って通る。
+  // 並びも台帳の順になるので、画面の軸の並びと一致する。
+  return RADAR_AXIS_KEYS.flatMap((k) => {
+    const b = bands[k];
+    if (b.good !== b.bad) return [];
+    const hit = axes.find((a) => a.key === k);
+    return hit === undefined ? [] : [hit];
+  });
+}
+
+/** {@link defaultBandAxes} の結果を 1 文にする。0 件なら null (断りを出さない)。 */
+export function defaultBandNote(axes: readonly RadarAxis[]): string | null {
+  if (axes.length === 0) return null;
+  return `${axes.map((a) => a.label).join('・')} の ${axes.length} 軸は、`
+    + '0 点 / 100 点の水準が同じ値で保存されているため**既定の水準で採点しています**'
+    + '（設定の「数値パラメータ」で違う値にすると効きます）。';
 }
 
 function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number | null {
