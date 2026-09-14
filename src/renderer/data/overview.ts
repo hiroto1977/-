@@ -15,6 +15,7 @@ import {
   computeYoYGrowth,
   computeLaborMetrics,
   isValidPeriod,
+  readablePeriodRows,
   periodWindow,
   type KpiActual,
   type DuplicateActualGroup,
@@ -164,6 +165,15 @@ export interface BusinessOverview {
      * (書面 §1・経営レポート) はこれが空でなければ「合算値」と述べる。
      */
     duplicateActuals: readonly DuplicateActualGroup[];
+    /**
+     * 期 (YYYY-MM) が読めないため**すべての集計から除いた**行数 (実績 + 予算・パス 225)。
+     *
+     * 書き手は `YYYY-MM` を強制するが復元の入口は文字列であることだけを見るので、
+     * 古い版・手で直した JSON・別の道具が書いた控えはこういう行を持ち込める。
+     * 2026-09-14 まで**期間だけが選別され金額は選別されていなかった** ——
+     * 月数 4 に対し分子が 5 行ぶん、という控えが作れた (`readablePeriodRows` の表)。
+     */
+    unreadablePeriods: number;
     revenue: number;
     operatingProfit: number;
     bep: number;
@@ -296,10 +306,22 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const salesSummary = summarizeSales(input.sales);
   const topChannel = salesSummary.byChannel[0]?.label ?? null;
 
-  const hasKpi = input.kpiActuals.length > 0;
-  const kpiBudgets = input.kpiBudgets ?? [];
+  /*
+   * **期が読める行だけで集計する** (パス 225)。それまでは `validKpiPeriods` (下) だけが
+   * 選別しており、`summarizeFundamentals` は全行を足していた —— 月数は選別後・分子は
+   * 選別前、という控えが作れた (`kpiActuals.ts` の `readablePeriodRows` に実測表)。
+   *
+   * `hasData` も選別後で測る。こうすると「実績が在る ⇒ 系列が空でない ⇒
+   * `revenueLanding` は非 null」という `overviewScorecard.ts` の不変条件が**保たれる**
+   * (選別だけ入れて `hasData` を素の件数で測ると、その不変条件が破れる)。
+   */
+  const readableActuals = readablePeriodRows(input.kpiActuals);
+  const readableBudgets = readablePeriodRows(input.kpiBudgets ?? []);
+  const kpiActuals = readableActuals.rows;
+  const hasKpi = kpiActuals.length > 0;
+  const kpiBudgets = readableBudgets.rows;
   // 実績の最新の期。**期の綴りは `isValidPeriod` が 1 か所で持つ** (写さない)。
-  const validKpiPeriods = input.kpiActuals.map((r) => r.period).filter(isValidPeriod).sort();
+  const validKpiPeriods = kpiActuals.map((r) => r.period).filter(isValidPeriod).sort();
   // 期が 1 つも無ければ `undefined`。**`length === 0` の分岐は書かない** ——
   // `balanceSheetFreshness` は読めない値 (null / undefined / 綴り違い) を同じく
   // 「測れない」として扱うので、ここで null に畳んでも観測できる差が無く、
@@ -308,7 +330,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   // **実績が何か月分か** (期の異なり数。同じ月に複数事業が在るので行数ではない)。
   // 溜まり ÷ 流れ の回転日数はこの長さで決まる (`workingCapital.ts` 冒頭の実測表)。
   const kpiMonthCount = new Set(validKpiPeriods).size;
-  const fundamentals = summarizeFundamentals(input.kpiActuals);
+  const fundamentals = summarizeFundamentals(kpiActuals);
   const kpi = computeKpiMetrics(fundamentals);
 
   const seatLimit = planDef.maxSeats;
@@ -362,7 +384,8 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       hasData: hasKpi,
       periods: validKpiPeriods,
       periodWindow: periodWindow(validKpiPeriods),
-      duplicateActuals: findDuplicateActuals(input.kpiActuals),
+      duplicateActuals: findDuplicateActuals(kpiActuals),
+      unreadablePeriods: readableActuals.dropped + readableBudgets.dropped,
       revenue: fundamentals.revenue,
       operatingProfit: kpi.operatingProfit,
       bep: kpi.bep,
@@ -376,11 +399,11 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       advertisingRatioPct: pctOfRevenue(fundamentals.advertising),
       sgaRatioPct: pctOfRevenue(fundamentals.sga),
       contributionRatio: kpi.contributionRatio,
-      revenueGrowthPct: computeRevenueGrowthPct(input.kpiActuals),
-      revenueCagrPct: computeRevenueCagrPct(input.kpiActuals),
-      revenueTrend: computeRevenueTrend(input.kpiActuals),
-      revenueLanding: computeRevenueLandingForecast(input.kpiActuals),
-      yoy: computeYoYGrowth(input.kpiActuals),
+      revenueGrowthPct: computeRevenueGrowthPct(kpiActuals),
+      revenueCagrPct: computeRevenueCagrPct(kpiActuals),
+      revenueTrend: computeRevenueTrend(kpiActuals),
+      revenueLanding: computeRevenueLandingForecast(kpiActuals),
+      yoy: computeYoYGrowth(kpiActuals),
     },
     team: {
       members: memberCount,
@@ -392,13 +415,13 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       members: memberCount,
       revenuePerCapita: perCapita(fundamentals.revenue),
       operatingProfitPerCapita: perCapita(kpi.operatingProfit),
-      labor: computeLaborMetrics(input.kpiActuals, memberCount),
+      labor: computeLaborMetrics(kpiActuals, memberCount),
     },
-    budget: computeBudgetVariance(kpiBudgets, input.kpiActuals),
+    budget: computeBudgetVariance(kpiBudgets, kpiActuals),
     // 突合状況は「両方に行が在る」だけで測れる (期が重なるかは測った結果)。
     budgetAlignment:
-      kpiBudgets.length > 0 && input.kpiActuals.length > 0
-        ? budgetPeriodAlignment(kpiBudgets, input.kpiActuals)
+      kpiBudgets.length > 0 && kpiActuals.length > 0
+        ? budgetPeriodAlignment(kpiBudgets, kpiActuals)
         : null,
     financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
     // 会計連携と貸借対照表の**両方**が在るときだけ測れる (片方だけでは隔たりが無い)。
@@ -436,7 +459,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
     cashForecast: accountingSummary && input.balanceSheet && (input.balanceSheet.cash ?? 0) > 0
       ? forecastCashBalance(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet, 12)
       : null,
-    trendAlerts: computeTrendAlerts(input.kpiActuals),
+    trendAlerts: computeTrendAlerts(kpiActuals),
     hydroponics: summarizeHydroponics(input.hydroponics ?? null, input.lowPotassium ?? null),
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,

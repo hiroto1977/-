@@ -161,3 +161,36 @@ describe('KPI 実績 — 同じ期・事業を 2 件にしない', () => {
     expect(text()).not.toContain('合算されています');
   });
 });
+
+/**
+ * **期 (YYYY-MM) が読めない実績は集計から除き、除いたことを言う** (2026-09-14 · パス 225)。
+ *
+ * パス 224 で「復元は期の**型**だけ見る」と裁定したので、`period: '全社'` の控えは
+ * 復元を通る。2026-09-14 まで画面は**その行を合計に入れながら、期間・成長率からは
+ * 外していた** —— 合計だけが膨らみ、月商が 3 倍になる (`kpiActuals.ts` の実測表)。
+ *
+ * ここは実物の画面で 2 面を読む: 合計に入らない・除いた件数が `role="alert"` で出る。
+ */
+describe('KPI 画面 — 期が読めない実績 (パス 225)', () => {
+  it('★ 合計に入れず、除いた件数を警告に出す', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, ROW); // 2026-04 / 100 万
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, { ...ROW, period: '全社', revenue: 9_000_000 });
+    await mount();
+    const alert = Array.from(container.querySelectorAll('[data-unreadable-periods]')).at(0);
+    expect(alert, 'data-unreadable-periods の断りが無い').toBeDefined();
+    expect(alert!.getAttribute('data-unreadable-periods')).toBe('1');
+    expect(alert!.getAttribute('role')).toBe('alert');
+    const t = (alert!.textContent ?? '').replace(/\s+/g, ' ');
+    expect(t).toContain('1 件');
+    expect(t).toContain('YYYY-MM');
+    // 合計は読める 1 行だけ (¥1,000,000)。900 万は入らない。
+    expect(text()).not.toMatch(/[¥￥]10,000,000/);
+  });
+
+  it('対照: 期がすべて読めれば断りは出ない', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, ROW);
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, { ...ROW, period: '2026-05' });
+    await mount();
+    expect(container.querySelector('[data-unreadable-periods]')).toBeNull();
+  });
+});

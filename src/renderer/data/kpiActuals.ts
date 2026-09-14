@@ -89,6 +89,68 @@ export function periodWindow(periods: readonly string[]): PeriodWindow | null {
   return { from: valid[0]!, to: valid[valid.length - 1]!, months: new Set(valid).size };
 }
 
+/**
+ * **期が読める行だけを通す漏斗** (パス 225)。落とした件数を添える。
+ *
+ * ## なぜ要るのか (2026-09-14 実測)
+ *
+ * 期の綴りは書き手 (`parseKpiActual`) が `YYYY-MM` を強制するが、**復元の入口は
+ * 文字列であることだけを見る** (`collectionShapes.ts` の宣言どおり・パス 224 で
+ * `per-field` と裁定した組)。だから古い版・手で直した JSON・別の道具が書いた控えは
+ * `period: '全社'` のような行を持ち込める。
+ *
+ * そのとき **同じ関数の中で、期間は選別して金額は選別していなかった**:
+ *
+ * | | 素の 4 期 | + 期が読めない 1 行 (売上 900 万) |
+ * | --- | ---: | ---: |
+ * | 刷られる対象期間 | 2026-01〜2026-04・4 か月 | **同じ** (`periodWindow` は選別する) |
+ * | 合計売上 | ¥4,600,000 | **¥13,600,000** (`summarizeFundamentals` は選別しない) |
+ * | 着地見込み 対象年 | 2026 | **「全社」** |
+ * | 年換算 | ¥13,800,000 | **¥108,000,000** |
+ * | 前月比 / CAGR | 8.3% / 9.1% | **592.3% / 73.2%** |
+ *
+ * 月数は選別後の 4 で、分子は選別前の 1,360 万 —— 月商が ¥3,400,000 になる
+ * (実際の 4 か月の月商は ¥1,150,000)。回転日数・借入金月商倍率・スコアカードの
+ * 効率性がこの月商で決まるので、**パス 48 と同じ家系**である。
+ *
+ * **だから片側ではなく両側を選別する。** そして落としたことは言う ——
+ * 黙って落とす防御は、落としたことを誰かが言わなければ嘘になる (パス 219 / 222)。
+ */
+export interface ReadablePeriodRows<T> {
+  /** 期が `YYYY-MM` として読める行。 */
+  readonly rows: readonly T[];
+  /** 落とした行数。 */
+  readonly dropped: number;
+}
+
+/** 期が読める行だけを返す。判定は `isValidPeriod` の 1 か所 (綴りを写さない)。 */
+export function readablePeriodRows<T extends { readonly period: string }>(
+  input: readonly T[],
+): ReadablePeriodRows<T> {
+  const rows = input.filter((r) => isValidPeriod(r.period));
+  return { rows, dropped: input.length - rows.length };
+}
+
+/**
+ * 期が読めない行を落としたことを述べる 1 文。落としていなければ `null`。
+ * 画面向け (`kind` = 実績 / 予算) —— 相手に渡る面は `unreadablePeriodSheetNote`。
+ */
+export function unreadablePeriodNote(kind: string, dropped: number): string | null {
+  // **肯定形で書く。** `dropped <= 0` は `undefined <= 0` が false なので
+  // **`undefined` を通してしまう** —— 2026-09-14 に実際にやり、`buildManagementReport` の
+  // golden 検査が「読めない undefined 件」を突き返した (手で組んだ overview に新しい欄が
+  // 無かった)。非有限・未定義は「言うことが無い」と同じ扱い (パス 98 / 201 / 203 の規則)。
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `${kind}のうち ${dropped} 件は期 (YYYY-MM) が読めないため、集計・期間・成長率のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（設定の「形式の合わない記録」から消せます）。`;
+}
+
+/** 同じことを、相手に渡る書面・レポート向けの 1 文で。 */
+export function unreadablePeriodSheetNote(dropped: number): string | null {
+  // 画面側と同じ肯定形 (`undefined` / NaN は言わない)。
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `期 (YYYY-MM) が読めない ${dropped} 件は集計から除いています。`;
+}
+
 /** 窓を画面・レポート向けの 1 語にする (`2026-04〜2026-06・3 か月`)。 */
 export function formatPeriodWindow(w: PeriodWindow): string {
   return `${w.from}〜${w.to}・${w.months} か月`;
@@ -167,7 +229,9 @@ export interface PeriodRevenue {
  */
 export function groupRevenueByPeriod(actuals: readonly KpiActual[]): PeriodRevenue[] {
   const byPeriod = new Map<string, number>();
-  for (const a of actuals) {
+  // 期が読めない行は系列に入れない (パス 225 —— 入れると「対象年 全社」の
+  // 着地見込みや 592.3% の前月比が出る)。
+  for (const a of readablePeriodRows(actuals).rows) {
     byPeriod.set(a.period, (byPeriod.get(a.period) ?? 0) + a.revenue);
   }
   return [...byPeriod.entries()]
@@ -190,7 +254,8 @@ export function groupOperatingProfitByPeriod(
   actuals: readonly KpiActual[],
 ): PeriodOperatingProfit[] {
   const byPeriod = new Map<string, KpiActual[]>();
-  for (const a of actuals) {
+  // 期が読めない行は系列に入れない (パス 225)。
+  for (const a of readablePeriodRows(actuals).rows) {
     const list = byPeriod.get(a.period) ?? [];
     list.push(a);
     byPeriod.set(a.period, list);

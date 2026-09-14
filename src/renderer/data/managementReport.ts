@@ -11,7 +11,7 @@ import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 import { verdictLabel, type ManagementScorecard } from '../../shared/managementScorecard';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
-import { duplicateActualsSheetNote, formatPeriodWindow, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
+import { duplicateActualsSheetNote, formatPeriodWindow, unreadablePeriodSheetNote, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
 import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
 
 const SEVERITY_MARK: Record<Highlight['severity'], string> = {
@@ -137,6 +137,9 @@ export function buildManagementReport(
     // 同じ期・事業の重複が在れば、上の金額はその合算値 (パス 124)。書面 §1 と同じ文。
     const duplicateNote = duplicateActualsSheetNote(k.duplicateActuals);
     if (duplicateNote !== null) lines.push(`- ${duplicateNote}`);
+    // 期が読めず集計から除いた件数 (パス 225)。書面 §1 と同じ文。
+    const unreadableNote = unreadablePeriodSheetNote(k.unreadablePeriods);
+    if (unreadableNote !== null) lines.push(`- ${unreadableNote}`);
     lines.push('');
   }
 

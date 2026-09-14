@@ -17,6 +17,8 @@ import {
   noBreakEvenNote,
   duplicateActualMessage,
   duplicateActualsNote,
+  readablePeriodRows,
+  unreadablePeriodNote,
   findDuplicateActuals,
   hasSamePeriodUnit,
   type KpiActual,
@@ -357,12 +359,20 @@ function ActualsPanel() {
   const [error, setError] = useState<string>();
   const [importMonth, setImportMonth] = useState('');
   const submit = useSubmitGuard();
+  /*
+   * **期が読める行だけで集計する** (パス 225)。復元の入口は期が文字列であることだけを
+   * 見るので `period: '全社'` の控えが入りうる —— 混ざると合計だけが膨らみ、期間・
+   * 成長率とは別の母数になる (`kpiActuals.ts` の `readablePeriodRows` に実測表)。
+   */
+  const readable = useMemo(() => readablePeriodRows(records.map((r) => r.data)), [records]);
   // 既に在る重複 (同じ期・事業が 2 件以上)。一覧の上で「合算されている」と言う (パス 124)。
-  const duplicateNote = useMemo(() => duplicateActualsNote('実績', findDuplicateActuals(records.map((r) => r.data))), [records]);
+  const duplicateNote = useMemo(() => duplicateActualsNote('実績', findDuplicateActuals(readable.rows)), [readable]);
+  // 期が読めず除いた件数を言う (黙って落とすと、合計が説明できない数字になる)。
+  const unreadableNote = useMemo(() => unreadablePeriodNote('実績', readable.dropped), [readable]);
 
   // 実績の素の合計。**画面で数え直さない** —— 以前は「実績合計 売上高」の札だけが
   // 別の `reduce` を持っており、同じ量に 2 つの出所が在った (2026-09-07)。
-  const fundamentals = useMemo(() => summarizeFundamentals(records.map((r) => r.data)), [records]);
+  const fundamentals = useMemo(() => summarizeFundamentals(readable.rows), [readable]);
   const computedSummary = useMemo(() => computeKpiMetrics(fundamentals), [fundamentals]);
 
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
@@ -508,6 +518,11 @@ function ActualsPanel() {
           {duplicateNote}
         </p>
       )}
+      {unreadableNote !== null && (
+        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {unreadableNote}
+        </p>
+      )}
       {records.length > 0 ? (
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
@@ -569,7 +584,10 @@ function BudgetPanel() {
   // 「突合できなかった期」の断り書きは **1 回だけ**呼ぶ (関門と表示で同じ値を見る)。
   const unmatchedNote = variance === null ? null : budgetUnmatchedNote(variance.alignment);
   const submit = useSubmitGuard();
-  const duplicateNote = useMemo(() => duplicateActualsNote('予算', findDuplicateActuals(budgets.map((r) => r.data))), [budgets]);
+  const readable = useMemo(() => readablePeriodRows(budgets.map((r) => r.data)), [budgets]);
+  const duplicateNote = useMemo(() => duplicateActualsNote('予算', findDuplicateActuals(readable.rows)), [readable]);
+  // 期が読めず除いた件数 (実績と同じ規則・パス 225)。
+  const unreadableNote = useMemo(() => unreadablePeriodNote('予算', readable.dropped), [readable]);
 
   async function onAdd() {
     try {
@@ -645,6 +663,11 @@ function BudgetPanel() {
       {duplicateNote !== null && (
         <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {duplicateNote}
+        </p>
+      )}
+      {unreadableNote !== null && (
+        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {unreadableNote}
         </p>
       )}
       {budgets.length > 0 ? (
