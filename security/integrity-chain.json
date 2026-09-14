@@ -1634,6 +1634,14 @@
       "leafCount": 71,
       "note": "update eraseAll.ts",
       "hash": "7ef3df28e9c7c61290f7d0c5fbf9e21dc5c027a56fa50e88b93742dfd8736712"
+    },
+    {
+      "index": 195,
+      "prevHash": "7ef3df28e9c7c61290f7d0c5fbf9e21dc5c027a56fa50e88b93742dfd8736712",
+      "merkleRoot": "032d93072d4e0d995e09bc872c1509c1b7a82ec5975cd778d3759cb8ff2a2523",
+      "leafCount": 71,
+      "note": "update migrate.sh",
+      "hash": "9da7169a68d4522e0146dfb91f887f190fbbd9d29e13e8f557982ed464ad29ed"
     }
   ],
   "tipManifest": {
@@ -1652,7 +1660,7 @@
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
-    "scripts/migrate.sh": "78d13dcde6a78953eb57c4f70f300c61fdb6b26df05ff1781e6c1e84647388e9",
+    "scripts/migrate.sh": "fe793636d6c87f42b663a42e300207346b40d6adbb057d0ba5696fd4604311ed",
     "scripts/public-host-guard.cjs": "7970ad1ccf8f9b2fa1e6c8d6a2bd7a01c2e148ad50ded827ca88fea4228d1175",
     "scripts/safe-vault-write.cjs": "263ad4e8e52952769cda1be6e25b31025e0f023439e93f6eccdc996ec15215f3",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
