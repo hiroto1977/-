@@ -26103,6 +26103,140 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 237 (2026-09-14) — **PBKDF2 の salt の床が、バックアップの道にしか掛かっていなかった**
+
+### 見つけ方 (AES-GCM の nonce を疑って、隣に在った)
+
+入口は「AES-GCM の IV が使い回されていないか」だった —— 同じ鍵で nonce を再利用すると
+GCM は偽造と平文回復まで通す。`vault.ts` / `dataCrypto.ts` を読むと**そちらは健全**で、
+`encryptString` / `sealWithKey` / `encryptBytes` はすべて毎回
+`crypto.getRandomValues(new Uint8Array(12))` を引いており、`vault.ts:464` には
+「同じ鍵・同じ iv で暗号文が完全に一致する」実測まで残っていた (等価変異の記録)。
+
+代わりに見つかったのは**隣の欄**である。`security/dataCrypto.ts` には
+「保存側から読んだ値」を断る規則が 2 つ在る:
+
+```
+assertSaltBytes(salt)        床 MIN_SALT_BYTES = 16
+assertKdfIterations(n)       範囲 [100,000, 4,000,000]
+```
+
+`assertSaltBytes` の説明は、その理由をこう書いている ——
+**「短いソルトは鍵そのものを壊さないが、利用者をまたいだ事前計算を成り立たせる。
+保管領域へ書ける相手 (拡張機能・同一生成元の別ページ) が salt を固定値へ差し替えれば、
+KCV に対する総当たりを使い回せる」**。
+
+ところがその規則を通していたのは `decryptString` (バックアップ復号の道) **だけ**で、
+同じモジュールの 40 行下に在る `deriveAesKey` —— **レコード封緘の道** —— は
+長さも回数も見ていなかった。実測:
+
+```
+decryptString salt=0B  -> REFUSED: 暗号化データのソルトが短すぎます
+decryptString salt=1B  -> REFUSED
+decryptString salt=15B -> REFUSED
+decryptString salt=16B -> (床は通り、鍵不一致で断る)
+deriveAesKey  salt=0B  -> ACCEPTED — 空 salt から鍵を導出した
+deriveAesKey  salt=1B  -> ACCEPTED
+deriveAesKey  salt=15B -> ACCEPTED
+```
+
+**そして `deriveAesKey` の salt は、散文が名指ししているその保管領域から来る。**
+`data/recordEncryption.ts` の `loadMeta` は `localStorage` の
+`servicehub.recordEncryption` を読み、`typeof m.salt === 'string'` しか見ずに
+`deriveAesKey` / `createPassphraseRecordCipher` へ渡していた。
+**salt と KCV はその 1 件の中に隣り合って入っている** —— 書き換えられる側が
+両方を同時に握れる。散文が想定した攻撃の経路が、そのまま開いていた。
+
+### 到達性は今日 0 —— 出荷物に `deriveAesKey` が入っていない (実測)
+
+**ビルドの byte 数が 1 つも動かなかった**ので調べた。出荷 HTML を文字列で当たると:
+
+```
+ソルトが短すぎます                  … 1 件 (assertSaltBytes は入っている)
+反復回数が許容範囲外                … 1 件
+servicehub.recordEncryption         … 2 件 (loadMeta / isEncryptionEnabled は入っている)
+暗号化は既に有効です                … 0 件  ← enableEncryption が無い
+保存された暗号化設定を読めませんでした … 0 件  ← assertMetaWritable が無い
+レコードは平文に戻しましたが          … 0 件  ← disableEncryption が無い
+service-hub-record-encryption-v1    … 0 件  ← KCV の既知平文が無い
+鍵不一致またはデータ破損              … 0 件  ← openWithKey が無い
+```
+
+つまり**レコード封緘の書き込み・解錠の経路はまるごと tree-shaking で落ちている**。
+残っているのは `isEncryptionEnabled()` だけ (`BackupPanel` が警告を出すか決めるために呼ぶ)。
+FULL / LITE の両方で同じ。
+
+これは既に書かれていた事実と一致する —— `components/BackupPanel.tsx` の注記が
+**「今この警告は描画されない。レコード暗号化を有効にする口が UI に無く
+(`enableEncryption` の呼び出し元は 0)、`isEncryptionEnabled()` は常に false のため」**
+と述べている。有効化できないのだから、封緘されたレコードも保存された salt も
+**まだ誰も持っていない**。
+
+したがって **これは「今日盗まれる穴」ではなく、機能が配線された日に効く床**である。
+`assertSaltBytes` の散文が書いている攻撃 (salt の差し替え → KCV への総当たりの使い回し)
+が成立するのは、`enableEncryption` に口が付いてからになる。
+**その日に気付く場所が「総当たりされた」になるのを避けるために、先に置く。**
+(パス 237 の byte 差 0 の説明でもある —— 足した 2 行は出荷物に入らない関数の中に在る。)
+
+### 直し方
+
+床は **`deriveAesKey` に 1 つだけ**置いた (`assertSaltBytes` + `assertKdfIterations`)。
+そこを通れば `unlockEncryption` / `disableEncryption` / `createPassphraseRecordCipher` の
+3 つの呼び出し元がまとめて塞がる。
+
+`saltBytesOk(saltB64)` も公開した (投げずに真偽を返す形。規則を 2 か所に書き写さない)。
+
+### 最初の実装は間違っていた —— 既存の検査が教えた
+
+最初は `loadMeta` の側でも短い salt を **degraded** (在るのに読めない) にした。
+既存の検査 2 本 (「salt が base64 として読めない でも throw せず false」) が**その場で落ちた**。
+理由は重い: degraded にすると `loadMeta` は `null` を返し、`unlockEncryption` の
+`if (!meta) return true` に落ちる —— つまり**差し替えられた salt に対して
+「解錠できた」と答える**。このモジュールの設計節が避けると宣言している
+「誤りなら false を返すだけ」を破っていた。
+
+床は `deriveAesKey` へ移し、`loadMeta` は元のままにした。短い salt は
+`deriveAesKey` が投げ、`unlockEncryption` の try が拾って `false` になる ——
+誤パスフレーズと同じ扱いで、利用者はやり直せる。差し替えられた salt が上書きで
+消える心配も既存の門が持つ (メタは読めているので `isEncryptionEnabled()` は真、
+`enableEncryption` は「既に有効」で断る)。
+
+### 対照 (2 本、両方鳴らした) と、鳴らなかった検査の記録
+
+1. `assertSaltBytes` を外す → `dataCrypto.test.ts` の短い salt の検査が落ちる。
+2. `assertKdfIterations` を外す → 反復回数の検査が落ちる。
+   断り文が WebCrypto の生の `iterations cannot be zero` に戻ることまで見えた
+   (= 以前はその文言が外へ出ていた)。
+
+**そして `recordEncryption.test.ts` に足した 3 件は、対照で鳴らなかった。**
+床が無くても空 salt から**別の鍵**が導出され、その鍵では KCV の GCM 認証が落ちるので、
+結局同じ `false` になる —— `false` は 2 通りの理由で立つ。
+床の検査は `dataCrypto.test.ts` の側に在り、そちらの対照は鳴る。
+あの 3 件が留めているのは**ロックアウト回避の契約が壊れていないこと**で、
+床そのものではない。検査の散文にそう書いた
+(**鳴らない対照は「合格」ではなく、その検査についての報せ**)。
+
+### ついでに直した 1 件 (検査の速度のための 1000 回)
+
+`cloud/__tests__/cloudProviderAdapter.test.ts` は
+`deriveAesKey('pw-1234', randomSaltB64(), 1000)` で鍵を作っていた —— 1000 は
+「検査を速くするため」の値で、床 (100,000) を割る。**床を緩めず、検査が本当に
+要る物へ寄せた**: この検査が見ているのは鍵の使い回しと封筒の組み立てで、
+PBKDF2 の導出ではないので `crypto.subtle.generateKey` で直に作る。
+600,000 回より速く、かつ「この検査は KDF を見ていない」と読んで分かる。
+**出荷コードは反復回数を渡す呼び出しを 1 つも持たない** (既定の 600,000 のみ) ので、
+床は今日の振る舞いを 1 つも変えない。
+
+### 残作業
+
+- **反復回数はメタに入っていない。** `sealWithKey` の封緘は `iv` + `ct` だけで、
+  `deriveAesKey` は常に現在の定数を使う。つまり `PBKDF2_ITERATIONS` を将来動かすと
+  **既存の封緘レコードが開かなくなる**。バックアップの `EncryptedBundle` は
+  `iterations` を持っていて後方互換なのに、レコード封緘の側は持っていない。
+  今日は困らないが、定数を動かす日には移行が要る (この非対称そのものが残作業)。
+- **床を上げるときも同じ注意**: 生成側 `randomSaltB64` も `MIN_SALT_BYTES` を読むので、
+  床を上げると既存の正当な salt が床を割る。`deriveAesKey` の注記に書いた。
+
 ## パス 236 (2026-09-14) — **監査して外れた 6 面。守りの境界は既に閉じていた**
 
 ### なぜ書くか

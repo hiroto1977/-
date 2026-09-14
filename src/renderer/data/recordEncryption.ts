@@ -80,6 +80,26 @@ function loadMeta(): EncryptionMeta | null {
   if (!raw) return null;
   try {
     const m = JSON.parse(raw) as Partial<EncryptionMeta>;
+    /*
+     * **salt の長さはここでは見ない** (パス 237 で一度そうして、戻した)。
+     *
+     * 床そのものは要る —— `deriveAesKey` が空 salt から鍵を導出していた。
+     * だが**床を置く場所はここではない**。`saltBytesOk` を足して短い salt を
+     * degraded にすると `loadMeta` は `null` を返し、`unlockEncryption` の
+     * `if (!meta) return true` に落ちる —— つまり**差し替えられた salt に対して
+     * 「解錠できた」と答える**。既存の検査 2 本
+     * (「salt が base64 として読めない でも throw せず false」) がその場で落ち、
+     * 設計節が避けると宣言しているロックアウト回避 (「誤りなら false を返すだけ」)
+     * を破っていることを教えてくれた。
+     *
+     * 床は `security/dataCrypto.ts` の `deriveAesKey` に 1 つ置く。そこなら
+     * 短い salt は**鍵を作れず**、この関数の try が拾って `false` になる ——
+     * 誤パスフレーズと同じ扱いで、利用者はやり直せる。
+     *
+     * 差し替えられた salt が上書きで消える心配も無い: メタは読めている
+     * (`typeof salt === 'string'`) ので `isEncryptionEnabled()` は真、
+     * `enableEncryption` は「暗号化は既に有効です」で断る。
+     */
     if (m.enabled === true && typeof m.salt === 'string' && isSealed(m.kcv)) {
       // 返り値の enabled は常に true (検証済み)。消費側 (unlock/disable) は salt/kcv のみ
       // 参照し enabled を読まないため、この BooleanLiteral mutation は equivalent。

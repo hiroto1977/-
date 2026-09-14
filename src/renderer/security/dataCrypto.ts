@@ -238,10 +238,51 @@ export function randomSaltB64(): string {
   return toBase64(crypto.getRandomValues(new Uint8Array(SALT_BYTES)));
 }
 
-/** Derive a reusable AES-GCM key from a passphrase + (persisted) salt. */
+/**
+ * 保存された salt が床を満たすか (base64 のまま問う)。
+ *
+ * `assertSaltBytes` と同じ規則だが、**投げずに真偽を返す**形が要る ——
+ * `data/recordEncryption.ts` の `loadMeta` は同期の読み手で、
+ * 「在るのに読めない」を degraded として扱う (投げると控えを取り出す画面が消える)。
+ * 規則を 2 か所に書き写さないよう、判定はこのモジュールに置く。
+ */
+export function saltBytesOk(saltB64: string): boolean {
+  try {
+    return fromBase64(saltB64).length >= MIN_SALT_BYTES;
+  } catch {
+    return false; // base64 として読めない = 使えない salt
+  }
+}
+
+/**
+ * Derive a reusable AES-GCM key from a passphrase + (persisted) salt.
+ *
+ * **床と反復回数の検査は `decryptString` と同じものを通す** (パス 237)。
+ *
+ * 2026-09-14 まで、この関数は長さも回数も見ていなかった。実測:
+ *
+ *   decryptString salt=0B  → 断る (「ソルトが短すぎます」)
+ *   deriveAesKey  salt=0B  → **通り、空 salt から鍵を導出していた**
+ *
+ * 同じモジュールの 40 行上に `assertSaltBytes` が在り、その説明が
+ * 「保管領域へ書ける相手 (拡張機能・同一生成元の別ページ) が salt を固定値へ
+ * 差し替えれば、KCV に対する総当たりを使い回せる」と、**まさにこの経路の攻撃**を
+ * 書いている —— レコード封緘の salt と KCV は `localStorage` の同じ 1 件
+ * (`servicehub.recordEncryption`) に隣り合って入っている。
+ * バックアップの道だけが守られ、レコードの道が素通しだった。
+ *
+ * `iterations` は呼ぶ側が渡せる (既定はこのモジュールの定数)。既定しか渡って
+ * いない今は範囲内だが、保存値を渡す呼び出しが足された日に効く床として通す。
+ *
+ * **床を上げるときの注意**: 生成側 (`randomSaltB64`) も `MIN_SALT_BYTES` を
+ * 読むので、床を上げると**既存の正当な salt が床を割る**。その日は移行が要る。
+ */
 export async function deriveAesKey(password: string, saltB64: string, iterations = ITERATIONS): Promise<CryptoKey> {
   if (password.length === 0) throw new Error('パスワードを入力してください');
-  return deriveKey(password, decodeBase64Field(saltB64, 'salt'), iterations);
+  const salt = decodeBase64Field(saltB64, 'salt');
+  assertSaltBytes(salt);
+  assertKdfIterations(iterations);
+  return deriveKey(password, salt, iterations);
 }
 
 export async function sealWithKey(key: CryptoKey, plaintext: string): Promise<Sealed> {

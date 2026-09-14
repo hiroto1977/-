@@ -518,3 +518,61 @@ describe('保存領域へ触れられない端末', () => {
     expect(isEncryptionEnabled()).toBe(false);
   });
 });
+
+/*
+ * **短い salt でも利用者はやり直せる** (2026-09-14 · パス 237)。
+ *
+ * ## この describe が留めているもの / 留めていないもの
+ *
+ * **留めていない**: 床そのもの。対照で確かめた —— `deriveAesKey` から
+ * `assertSaltBytes` を外しても、ここの検査は**全部通る**。床が無ければ空 salt から
+ * 鍵が導出され、その鍵では KCV の GCM 認証が落ちるので、結局同じ `false` になる。
+ * つまり `false` は 2 通りの理由で立つ。**床の検査は
+ * `security/__tests__/dataCrypto.test.ts` の「床は両方の入口に掛かる」に在り、
+ * そちらの対照は鳴る。**
+ *
+ * **留めている**: 床を足したことで**ロックアウト回避の契約が壊れていない**こと。
+ * パス 237 の最初の実装は `loadMeta` 側で短い salt を degraded にしていた。
+ * すると `loadMeta` が `null` を返し、`unlockEncryption` の
+ * `if (!meta) return true` に落ちて、**差し替えられた salt に対して
+ * 「解錠できた」と答えていた**。既存の 2 本 (「salt が base64 として読めない
+ * でも throw せず false」) がその場で落ち、設計節の「誤りなら false を返すだけ」を
+ * 破っていることを教えてくれた。床は `deriveAesKey` へ移した (経緯は
+ * `recordEncryption.ts` の `loadMeta` の注記)。
+ *
+ * 元の salt が上書きで消えないことも併せて留める —— こちらは既存の門
+ * (`isEncryptionEnabled()` → 「既に有効」) が持つ。
+ */
+describe('短い salt でも利用者はやり直せる (パス 237)', () => {
+  const zeros = (n: number) => btoa(String.fromCharCode(...new Uint8Array(n)));
+
+  // この 3 件は床が無くても通る (上の注記)。契約の回帰検査として置いている。
+  it.each([
+    ['空文字 (0 バイト・読める base64)', ''],
+    ['1 バイト', 'AA=='],
+    ['床の 1 つ下 (15 バイト)', zeros(15)],
+  ])('%s は解錠も解除も false (throw しない)', async (_label, shortSalt) => {
+    await enableEncryption('pw');
+    const valid = JSON.parse(localStorage.getItem(LS_KEY)!) as Record<string, unknown>;
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, salt: shortSalt }));
+    _resetRecordStoreForTests();
+    await expect(unlockEncryption('pw')).resolves.toBe(false);
+    await expect(disableEncryption('pw')).resolves.toBe(false);
+  });
+
+  it('★ 短い salt に差し替えられても、元の salt を新しい値で潰さない', async () => {
+    await enableEncryption('pw');
+    const valid = JSON.parse(localStorage.getItem(LS_KEY)!) as Record<string, unknown>;
+    const tampered = JSON.stringify({ ...valid, salt: '' });
+    localStorage.setItem(LS_KEY, tampered);
+    // メタは読めている (typeof salt === 'string') ので「既に有効」で断る
+    await expect(enableEncryption('pw')).rejects.toThrow('暗号化は既に有効です');
+    expect(localStorage.getItem(LS_KEY)).toBe(tampered);
+  });
+
+  it('床ちょうどの salt なら解錠できる (関門が全部を落としていない)', async () => {
+    await enableEncryption('pw');
+    _resetRecordStoreForTests();
+    await expect(unlockEncryption('pw')).resolves.toBe(true);
+  });
+});
