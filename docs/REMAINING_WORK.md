@@ -13923,7 +13923,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **107 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 282 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13981,6 +13981,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
+| `src/shared/api/cursor.ts` | 2 |
 | `src/shared/connectors/connectorRegistry.ts` | 2 |
 | `src/shared/num.ts` | 2 |
 | `src/shared/talent.ts` | 2 |
@@ -14023,7 +14024,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/StoragePage.tsx` | 1 |
 | `src/renderer/pages/TalentPage.tsx` | 1 |
 | `src/shared/api/canva.ts` | 1 |
-| `src/shared/api/cursor.ts` | 1 |
 | `src/shared/fxCurrency.ts` | 1 |
 | `src/shared/httpLimits.ts` | 1 |
 | `src/shared/hydroponicsControl.ts` | 1 |
@@ -26582,7 +26582,7 @@ shared **141** モジュール / 両ビルドが import **47** / うち否定で
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
 | `advisorQuestionLimits` | 2 | 4 | 対称 (実測・パス 251) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った |
-| `api/cursor` | 1 | 1 | 対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の 消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
+| `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
@@ -31653,6 +31653,106 @@ rejected = dropped - overflow   ← 残りは必ず filter が落とした分
 - 施策の「達成確率は 0〜100」は `<input type="number">` の `max` に依らず
   `isValidProbability` が持つ。氏名の `id` (`MEMBER_ID_RE`) は画面が作るので
   利用者には見えない — 文には入れていない。
+
+## パス 263 (2026-09-14) — **`[]` が 5 つの違う事実を意味していた。うち 1 つは「相手が 0 件と答えた」**
+
+パス 262 が残した一行をそのまま実行した —— 「`cursor` は `null` の応答を『空』として
+画面に出す」。読んでみると、**このモジュールの冒頭に規則が書いてあった**:
+
+> 未知のキーは黙って捨て、**欠けている数値は 0 ではなく「取れなかった」として扱う**
+> (0 と欠測を混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
+> —— `shared/api/cursor.ts` の docblock (パス 263 より前から在る)
+
+**欄の側はそれを守っていた** (`acceptRate` → null・`hardLimitUsd` → null・
+`toIsoDate` → 空文字)。**封筒の側が守っていなかった。**
+
+### 実測 —— 5 つの状況が byte 単位で同じ画面になる
+
+`fetchCursorSnapshotWith` に本文を注入して画面の文字を並べた:
+
+```
+  {teamMembers: []}     相手が「0 名」と答えた
+  null                  本文が読めない
+  {}                    封筒に鍵が無い
+  {teamMembers: 'x'}    鍵は在るが配列でない
+  42                    スカラー
+
+  → どれも  見出し: Cursor · 0 名 / 稼働 0 日 / $0.00   (緑の「ライブ」表示)
+            節:     「メンバーを取得できていません。」
+```
+
+**両方向に嘘になる**:
+
+- 本当に 0 名のチーム / 期間内に利用が無いチーム / 今月の支出が無いチームに
+  「**取得できていません**」と言う (取得はできている)。
+- 読めなかったときに「**0 名 / 稼働 0 日 / $0.00**」を事実として刷る。しかも
+  取得そのものは 200 で成功しているのでバッジは緑である。
+
+もう 1 段下にも同じ形が在った: `spendCents` が数でない行は `num()` で **0 に倒され、
+「$0.00 使った人」として一覧に並び、合計にも 0 として足されていた**。
+
+### 直した所
+
+- `rowsOf` → **`readRows`** が `{ rows, read }` を返す。**空の配列は `read: true`**
+  (0 件は答えである)。`null` / スカラー / 鍵が無い / 鍵が配列でない は `read: false`。
+  **鍵が無い `{}` を `read: false` にしたのは判断である** —— Cursor Admin API は
+  空でも `{teamMembers: []}` を返すので鍵の不在は形が変わった印で、そこを
+  「空の配列」と同じに扱うとこの pass が直している混同が残る。
+- 正規化の 3 つが `{ rows, state }` を返し、`buildCursorSnapshot` が
+  **読めなかった節の数字を `null` にする**。支出の合計は「金額の読めない行が
+  1 行でも在れば `null`」 —— 足りない合計は合計ではない (パス 54 / 226 と同じ規準)。
+- `spendUsd: number | null`。行は残す (誰が居るかは分かる) が**金額は 0 に倒さない**。
+- `cursorIntakeNote(intake)` が読めなかった物を 1 文で述べる。全部読めていれば `null`。
+- 画面 (`CursorPage`): 数字は `—`・⚠️ の注記・節の空文の文面を
+  「**Admin API が 0 名と答えました**」と「**応答を読めませんでした**」で分ける。
+- 同梱の見本 (`SNAPSHOT.cursor`) に `intake` を足した。**足さないと取得前の画面が
+  `intake.members` を読んで落ちる** —— 欄ごとの `as {…}[]` の写し 3 つは
+  `as CursorSnapshot` 1 つに寄せた (写しが在ると、型が広がったとき
+  `spendUsd: number | null` に画面だけが古い型を見て `null` の枝が死ぬ。
+  パス 62 / 80 / 116 の家系)。
+
+### 検査と対照
+
+検査 **+21** (shared 12 —— `readRows` の 3 状態・`cursorIntakeNote` 6 本 +
+標本 1 / main 5 —— 未知の形・0 件の対照・1 つだけ壊れる・金額の対照・同梱との形の一致 2 /
+jsdom 4 —— **画面の文字**で留める)。
+
+**対照 4 本すべて鳴った**:
+
+| 戻した物 | 落ちた検査 |
+| --- | --- |
+| `readRows` の `read` を常に `true` へ | **4 件** |
+| `spendUsd` を `num()` で 0 に倒す | **1 件** |
+| `buildCursorSnapshot` が `state` を見ない | **1 件** |
+| 画面の注記・`—`・節の書き分けを外す | **jsdom 4 件**（全部） |
+
+jsdom を別に書いたのは、**shared に規則が在るのに画面へ届いていない**形を
+パス 119 / 122 で 2 度踏んでいるからである。
+
+### 既存の検査 5 本が古い期待を留めていた
+
+`未知の形が返っても落ちない（空として扱う）`・`支出の欄が欠けていても空文字と 0 で
+埋める`・`形が読めなければ空`・`rowsOf` の 2 本。どれも**落ちないこと**は正しく
+留めていたが、**0 と言うこと**まで仕様として固定していた。期待を書き換え、
+理由を検査の中に書いた (パス 262 の `cursor` 3 本と同じ扱い)。
+
+### 出荷物
+
+11,856,243 B / 3,268,989 B (**両方 +1,829 B**)。shared と renderer の両方に
+掛かる直しなので LITE も同じだけ増える。perf OK (LITE DCL 130ms / FULL 364ms)。
+
+### 残り
+
+- **封筒を確かめる形は `cursor` にしか無い。** 他の 13 クライアントは
+  パス 262 の漏斗 (`jsonFetch<T>`) がオブジェクトを要求するので型エラーは出ないが、
+  「欄が空なら空として出る」ままである (`drive` の `files ?? []` など)。
+  それが害かは 1 件ずつ読まないと決まらない —— 母集団としてここに記録する。
+- `linesAdded` / `requests` / `fastPremiumRequests` は依然 `num()` で 0 に倒す。
+  金額と違って**合計を作らない**ので今回は触っていないが、「0 行追加した日」と
+  「行数が読めなかった日」は画面で区別が付かない。
+- `intake` は節ごとの 2 値で、**どの鍵が無かったか**は持たない
+  (`readRows` は理由を返さない)。画面の文は「応答の形が変わった可能性」までしか
+  言えない。
 
 ## パス 262 (2026-09-14) — **`as T` は封筒も確かめない。`null` の応答で 12 クライアントが V8 の型エラーを画面へ漏らしていた**
 

@@ -180,7 +180,19 @@ describe('スナップショットの取得', () => {
     expect(snap.spend).toHaveLength(2);
   });
 
-  it('未知の形が返っても落ちない（空として扱う）', async () => {
+  /*
+   * **この検査は 2026-09-14 (パス 263) に期待ごと変わった。**
+   *
+   * 以前は「未知の形は空として扱う」を確かめていた —— それは落ちないことの
+   * 検査としては正しいが、**画面に出る数字まで 0 にしていた**。実測すると
+   * `null` / `{}` / `{unexpected:1}` / スカラー / そして**相手が本当に
+   * 「0 名」と答えた場合**の 5 つが、見出しの
+   * `Cursor · 0 名 / 稼働 0 日 / $0.00` まで byte 単位で同じだった。
+   *
+   * 落ちないことは保つ (`rows` は空配列)。**0 とは言わない** ——
+   * 数字は `null`・素性は `unreadable` になる。
+   */
+  it('★ 未知の形が返っても落ちないが、0 とは言わない（null + unreadable）', async () => {
     const f = stub({ members: {}, usage: { unexpected: 1 }, spend: null });
     // spend に null を返させるのが肝。Array.isArray(null) は false なので、
     // オブジェクト前提でキーを引くと TypeError になる（実際に一度なった）。
@@ -188,7 +200,32 @@ describe('スナップショットの取得', () => {
     expect(snap.members).toEqual([]);
     expect(snap.usage).toEqual([]);
     expect(snap.spend).toEqual([]);
+    expect(snap.totals).toEqual({ members: null, activeDays: null, spendUsd: null });
+    expect(snap.intake).toEqual({
+      members: 'unreadable', usage: 'unreadable', spend: 'unreadable', spendAmountsUnreadable: 0,
+    });
+  });
+
+  it('★ 対照: 相手が「0 件」と答えたら 0 と言う（空配列は答えである）', async () => {
+    const f = stub({ members: { teamMembers: [] }, usage: { data: [] }, spend: { teamMemberSpend: [] } });
+    const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
     expect(snap.totals).toEqual({ members: 0, activeDays: 0, spendUsd: 0 });
+    expect(snap.intake).toEqual({
+      members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0,
+    });
+  });
+
+  it('★ 3 つのうち 1 つだけ読めないなら、残り 2 つは数字を出す（全体を断らない）', async () => {
+    const f = stub({
+      members: { teamMembers: [{ name: 'A', email: 'a@example.invalid', role: 'owner' }] },
+      usage: { data: [{ date: 1_754_265_600_000, isActive: true }] },
+      spend: null,
+    });
+    const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
+    expect(snap.totals.members).toBe(1);
+    expect(snap.totals.activeDays).toBe(1);
+    expect(snap.totals.spendUsd).toBeNull();
+    expect(snap.intake.spend).toBe('unreadable');
   });
 
   it('欠けている数値は 0、欠けている文字列は空にする', async () => {
@@ -210,12 +247,29 @@ describe('スナップショットの取得', () => {
     ]);
   });
 
-  it('支出の欄が欠けていても空文字と 0 で埋める', async () => {
+  /*
+   * **金額だけは 0 で埋めない** (パス 263)。名前と席は空文字でよい (表示が
+   * 空欄になるだけ) が、`spendCents` を 0 に倒すと**その人は「$0.00 使った」
+   * として一覧に並び、合計にも 0 として足される** —— 行が在るのに金額が
+   * 読めないことと、本当に使っていないことは違う。
+   */
+  it('★ 支出の欄が欠けていたら、名前は空文字・金額は null（0 に倒さない）', async () => {
     const f = stub({ spend: { teamMemberSpend: [{}] } });
     const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
     expect(snap.spend).toEqual([
-      { name: '', email: '', role: '', spendUsd: 0, fastPremiumRequests: 0, hardLimitUsd: null },
+      { name: '', email: '', role: '', spendUsd: null, fastPremiumRequests: 0, hardLimitUsd: null },
     ]);
+    // 金額の読めない行が 1 行でも在れば、合計は出さない。
+    expect(snap.totals.spendUsd).toBeNull();
+    expect(snap.intake.spendAmountsUnreadable).toBe(1);
+  });
+
+  it('★ 対照: 金額が読める行だけなら合計を出す', async () => {
+    const f = stub({ spend: { teamMemberSpend: [{ spendCents: 4120 }, { spendCents: 0 }] } });
+    const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
+    expect(snap.spend.map((r) => r.spendUsd)).toEqual([41.2, 0]);
+    expect(snap.totals.spendUsd).toBe(41.2);
+    expect(snap.intake.spendAmountsUnreadable).toBe(0);
   });
 
   /*
@@ -280,5 +334,37 @@ describe('スナップショットの取得', () => {
   it('HTTP エラーはサービス名つきで投げる', async () => {
     const f = vi.fn<typeof fetch>(async () => ({ ok: false, status: 401, text: async () => 'unauthorized' }) as Response);
     await expect(fetchCursorSnapshot({ token: 'bad', fetch: f })).rejects.toThrow(/cursor 401/);
+  });
+});
+
+/**
+ * **同梱の見本と、取ってきた形は同じでなければならない** (パス 263)。
+ *
+ * 画面は `useServiceData('cursor', SNAPSHOT.cursor)` で**まず見本**を描き、
+ * 取得できたら差し替える。`intake` を取得側にだけ足すと、**取得前の画面が
+ * `intake.members` を読んで落ちる** —— 取得できた瞬間に直る、という
+ * 最も気づきにくい壊れ方の裏返しである (`snapshotShapeParity.test.ts` の
+ * 走査は `LOCAL_SERVICES` だけなので cursor は覆われていない。SaaS 側の
+ * 一致は各 client のテストが持つ、とあの docblock が述べている)。
+ */
+describe('同梱の見本と取得の形', () => {
+  it('★ SNAPSHOT.cursor と取得した形の欄が一致する', async () => {
+    const { SNAPSHOT } = await import('../../../renderer/data/snapshot');
+    const { shapeDiff } = await import('../../../shared/__tests__/shapeDiff');
+    const fetched = await fetchCursorSnapshot({ token: 'key', fetch: stub({}) });
+    const d = shapeDiff(SNAPSHOT.cursor, fetched);
+    expect(d, '見本だけ / 取得だけの欄が在ると、片方の道でだけ undefined を読む').toEqual({
+      snapshotOnly: [],
+      fetchedOnly: [],
+    });
+  });
+
+  it('★ 見本は「3 つとも読めた」を宣言している (画面が注記を出さない)', async () => {
+    const { SNAPSHOT } = await import('../../../renderer/data/snapshot');
+    const { cursorIntakeNote } = await import('../../../shared/api/cursor');
+    expect(SNAPSHOT.cursor.intake).toEqual({
+      members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0,
+    });
+    expect(cursorIntakeNote(SNAPSHOT.cursor.intake)).toBeNull();
   });
 });

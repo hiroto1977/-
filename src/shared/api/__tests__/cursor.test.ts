@@ -13,7 +13,8 @@ import {
   toIsoDate,
   acceptRateOf,
   isOverCounted,
-  rowsOf,
+  readRows,
+  cursorIntakeNote,
   usageWindow,
   normalizeMembers,
   normalizeUsage,
@@ -73,18 +74,24 @@ describe('isOverCounted', () => {
   });
 });
 
-describe('rowsOf — 相手の形が変わっても落ちない', () => {
+describe('readRows — 相手の形が変わっても落ちない', () => {
   it('配列そのものと、キーで包まれた配列の両方を読む', () => {
-    expect(rowsOf<number>([1, 2], 'x')).toEqual([1, 2]);
-    expect(rowsOf<number>({ x: [3] }, 'x')).toEqual([3]);
+    expect(readRows<number>([1, 2], 'x')).toEqual({ rows: [1, 2], read: true });
+    expect(readRows<number>({ x: [3] }, 'x')).toEqual({ rows: [3], read: true });
   });
 
-  it('読めない形は空配列 (画面を真っ白にしない)', () => {
-    expect(rowsOf(null, 'x')).toEqual([]);
-    expect(rowsOf(undefined, 'x')).toEqual([]);
-    expect(rowsOf({}, 'x')).toEqual([]);
-    expect(rowsOf({ x: 'not-an-array' }, 'x')).toEqual([]);
-    expect(rowsOf(42, 'x')).toEqual([]);
+  it('★ 空の配列は「答え」なので read: true (0 件と読めなかったを分ける · パス 263)', () => {
+    expect(readRows<number>([], 'x')).toEqual({ rows: [], read: true });
+    expect(readRows<number>({ x: [] }, 'x')).toEqual({ rows: [], read: true });
+  });
+
+  it('★ 読めない形は空配列 + read: false (画面を真っ白にしないが、0 とは言わない)', () => {
+    for (const body of [null, undefined, {}, { x: 'not-an-array' }, 42, 'nope', true] as unknown[]) {
+      expect(readRows(body, 'x'), JSON.stringify(body) ?? 'undefined').toEqual({
+        rows: [],
+        read: false,
+      });
+    }
   });
 });
 
@@ -110,15 +117,24 @@ describe('usageWindow — 照会期間', () => {
 
 describe('normalizeMembers', () => {
   it('欠けている項目は空文字で埋める', () => {
-    expect(normalizeMembers({ teamMembers: [{ name: 'A', email: 'a@example.com', role: 'owner' }, {}] })).toEqual([
-      { name: 'A', email: 'a@example.com', role: 'owner' },
-      { name: '', email: '', role: '' },
-    ]);
+    expect(
+      normalizeMembers({ teamMembers: [{ name: 'A', email: 'a@example.com', role: 'owner' }, {}] }),
+    ).toEqual({
+      state: 'read',
+      rows: [
+        { name: 'A', email: 'a@example.com', role: 'owner' },
+        { name: '', email: '', role: '' },
+      ],
+    });
   });
 
-  it('形が読めなければ空', () => {
-    expect(normalizeMembers(null)).toEqual([]);
-    expect(normalizeMembers({ other: [] })).toEqual([]);
+  it("★ 形が読めなければ空 + state: 'unreadable' (0 名と言わない · パス 263)", () => {
+    expect(normalizeMembers(null)).toEqual({ rows: [], state: 'unreadable' });
+    expect(normalizeMembers({ other: [] })).toEqual({ rows: [], state: 'unreadable' });
+  });
+
+  it("★ 対照: 相手が空の配列を答えたら state: 'read' (0 名は答えである)", () => {
+    expect(normalizeMembers({ teamMembers: [] })).toEqual({ rows: [], state: 'read' });
   });
 });
 
@@ -141,7 +157,7 @@ describe('normalizeUsage', () => {
             mostUsedModel: 'claude-4.5-sonnet',
           },
         ],
-      }),
+      }).rows,
     ).toEqual([
       {
         date: '2026-08-04',
@@ -159,14 +175,14 @@ describe('normalizeUsage', () => {
   });
 
   it('稼働は true のときだけ true (欠測を稼働あつかいしない)', () => {
-    const rows = normalizeUsage({ data: [{ isActive: undefined }, { isActive: 'yes' }, { isActive: true }] });
+    const { rows } = normalizeUsage({ data: [{ isActive: undefined }, { isActive: 'yes' }, { isActive: true }] });
     expect(rows.map((r) => r.active)).toEqual([false, false, true]);
   });
 
   it('欠けている数値は 0、率は null、上回りは印を付ける', () => {
     const [empty, over] = normalizeUsage({
       data: [{}, { totalLinesAdded: 10, acceptedLinesAdded: 12 }],
-    });
+    }).rows;
     expect(empty).toMatchObject({ linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false, requests: 0, model: '', date: '' });
     expect(over).toMatchObject({ acceptRate: 120, overCounted: true });
   });
@@ -181,32 +197,46 @@ describe('normalizeSpend', () => {
           { spendCents: 1875, hardLimitOverrideDollars: 50 },
         ],
       }),
-    ).toEqual([
-      { name: 'A', email: 'a@example.com', role: 'owner', spendUsd: 41.2, fastPremiumRequests: 412, hardLimitUsd: null },
-      { name: '', email: '', role: '', spendUsd: 18.75, fastPremiumRequests: 0, hardLimitUsd: 50 },
-    ]);
+    ).toEqual({
+      state: 'read',
+      amountsUnreadable: 0,
+      rows: [
+        { name: 'A', email: 'a@example.com', role: 'owner', spendUsd: 41.2, fastPremiumRequests: 412, hardLimitUsd: null },
+        { name: '', email: '', role: '', spendUsd: 18.75, fastPremiumRequests: 0, hardLimitUsd: 50 },
+      ],
+    });
   });
 
   it('上限 0 ドルも設定として扱う (null に潰さない)', () => {
-    expect(normalizeSpend({ teamMemberSpend: [{ hardLimitOverrideDollars: 0 }] })[0]!.hardLimitUsd).toBe(0);
+    expect(
+      normalizeSpend({ teamMemberSpend: [{ hardLimitOverrideDollars: 0 }] }).rows[0]!.hardLimitUsd,
+    ).toBe(0);
   });
 });
+
+/** 「読めた」節を組む helper (パス 263 で引数が `{rows, state}` になった)。 */
+function read<T>(rows: T[]): { rows: T[]; state: 'read' } {
+  return { rows, state: 'read' };
+}
+function readSpend<T>(rows: T[]): { rows: T[]; state: 'read'; amountsUnreadable: number } {
+  return { rows, state: 'read', amountsUnreadable: 0 };
+}
 
 describe('buildCursorSnapshot — 合計', () => {
   it('人数・稼働日数・支出合計', () => {
     const totals = buildCursorSnapshot(
-      [
+      read([
         { name: 'A', email: 'a@example.com', role: 'owner' },
         { name: 'B', email: 'b@example.com', role: 'member' },
-      ],
-      [
+      ]),
+      read([
         { date: '2026-08-04', active: true, linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false, tabsShown: 0, tabsAccepted: 0, requests: 0, model: '' },
         { date: '2026-08-05', active: false, linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false, tabsShown: 0, tabsAccepted: 0, requests: 0, model: '' },
-      ],
-      [
+      ]),
+      readSpend([
         { name: 'A', email: 'a@example.com', role: 'owner', spendUsd: 41.2, fastPremiumRequests: 0, hardLimitUsd: null },
         { name: 'B', email: 'b@example.com', role: 'member', spendUsd: 18.75, fastPremiumRequests: 0, hardLimitUsd: null },
-      ],
+      ]),
     ).totals;
     expect(totals).toEqual({ members: 2, activeDays: 1, spendUsd: 59.95 });
   });
@@ -215,11 +245,13 @@ describe('buildCursorSnapshot — 合計', () => {
     const rows = Array.from({ length: 3 }, () => ({
       name: '', email: '', role: '', spendUsd: 0.1, fastPremiumRequests: 0, hardLimitUsd: null,
     }));
-    expect(buildCursorSnapshot([], [], rows).totals.spendUsd).toBe(0.3);
+    expect(buildCursorSnapshot(read([]), read([]), readSpend(rows)).totals.spendUsd).toBe(0.3);
   });
 
-  it('空でも 0 を返す', () => {
-    expect(buildCursorSnapshot([], [], []).totals).toEqual({ members: 0, activeDays: 0, spendUsd: 0 });
+  it('読めたうえで空なら 0 を返す (0 件は答えである)', () => {
+    expect(buildCursorSnapshot(read([]), read([]), readSpend([])).totals).toEqual({
+      members: 0, activeDays: 0, spendUsd: 0,
+    });
   });
 });
 
@@ -315,7 +347,7 @@ describe('num —— 欠けた数値欄は 0 にする', () => {
 
   it('★ 欄が欠けていても 0 になり、加算が NaN にならない', async () => {
     const { normalizeUsage } = await fresh();
-    const [row] = normalizeUsage({ data: [{ date: 0, isActive: true }] });
+    const [row] = normalizeUsage({ data: [{ date: 0, isActive: true }] }).rows;
     expect(row?.linesAdded).toBe(0);
     expect(row?.linesAccepted).toBe(0);
     expect(row?.tabsShown).toBe(0);
@@ -337,7 +369,7 @@ describe('num —— 欠けた数値欄は 0 にする', () => {
           chatRequests: 3,
         },
       ],
-    });
+    }).rows;
     expect(row?.linesAdded).toBe(0);
     expect(row?.linesAccepted).toBe(0);
     expect(row?.tabsShown).toBe(0);
@@ -368,5 +400,52 @@ describe('送り先 —— 読み直して問う', () => {
     );
     expect(seen.length).toBeGreaterThan(0);
     for (const u of seen) expect(u.startsWith('https://api.cursor.com/')).toBe(true);
+  });
+});
+
+describe('cursorIntakeNote — 読めなかった物を述べる 1 文 (パス 263)', () => {
+  const ok = { members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0 } as const;
+
+  it('★ 全部読めていれば null (何も足さない)', () => {
+    expect(cursorIntakeNote(ok)).toBeNull();
+  });
+
+  it('★ 読めなかった節を名指しし、「0 ではない」と述べる', () => {
+    const note = cursorIntakeNote({ ...ok, members: 'unreadable' });
+    expect(note).not.toBeNull();
+    expect(note).toContain('メンバー');
+    expect(note).toContain('0 ではなく');
+    // 読めた節は名指ししない (対照)。
+    expect(note).not.toContain('今月の支出');
+  });
+
+  it('★ 複数なら並べる', () => {
+    const note = cursorIntakeNote({ ...ok, usage: 'unreadable', spend: 'unreadable' });
+    expect(note).toContain('日次の利用状況・今月の支出');
+    expect(note).not.toContain('メンバー・');
+  });
+
+  it('★ 金額の読めない行数も述べ、合計を出せないと言う', () => {
+    const note = cursorIntakeNote({ ...ok, spendAmountsUnreadable: 3 });
+    expect(note).toContain('支出 3 行');
+    expect(note).toContain('合計は出せません');
+  });
+
+  it('★ 節が読めない + 金額も読めない は両方述べる', () => {
+    const note = cursorIntakeNote({ ...ok, members: 'unreadable', spendAmountsUnreadable: 1 });
+    expect(note).toContain('メンバー');
+    expect(note).toContain('支出 1 行');
+  });
+
+  it('標本: 文面は「件数が 0」とは言わない (言えないことを言わないための文)', () => {
+    for (const bad of [
+      { ...ok, members: 'unreadable' } as const,
+      { ...ok, spendAmountsUnreadable: 2 } as const,
+    ]) {
+      const note = cursorIntakeNote(bad)!;
+      expect(note, note).not.toMatch(/0 (名|日|件)(?!ではなく)/);
+    }
+    // 対照: この正規表現は実際に「0 名」に当たる (綴り違いで黙る検査にしない)。
+    expect('Cursor · 0 名 / 稼働 0 日').toMatch(/0 (名|日|件)(?!ではなく)/);
   });
 });

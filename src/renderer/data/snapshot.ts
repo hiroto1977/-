@@ -14,6 +14,7 @@ import {
 import { NO_SECURED_FUNDING_NOTE } from '../../shared/funding';
 import { MIN_SAFE_VERSION } from '../../shared/ollama';
 import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
+import type { CursorSnapshot } from '../../shared/api/cursor';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 
 /**
@@ -1111,37 +1112,25 @@ export const SNAPSHOT = {
       { name: '佐藤 健', email: 'sato@example.com', role: 'owner' },
       { name: '鈴木 彩', email: 'suzuki@example.com', role: 'member' },
       { name: '田中 悠', email: 'tanaka@example.com', role: 'member' },
-    ] as { name: string; email: string; role: string }[],
+    ],
     usage: [
       { date: '2026-08-04', active: true, linesAdded: 1240, linesAccepted: 812, acceptRate: 65.5, overCounted: false, tabsShown: 430, tabsAccepted: 190, requests: 62, model: 'claude-4.5-sonnet' },
       { date: '2026-08-05', active: true, linesAdded: 980, linesAccepted: 604, acceptRate: 61.6, overCounted: false, tabsShown: 380, tabsAccepted: 150, requests: 48, model: 'claude-4.5-sonnet' },
       { date: '2026-08-06', active: false, linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false, tabsShown: 0, tabsAccepted: 0, requests: 0, model: '' },
-    ] as {
-      date: string;
-      active: boolean;
-      linesAdded: number;
-      linesAccepted: number;
-      acceptRate: number | null;
-      overCounted: boolean;
-      tabsShown: number;
-      tabsAccepted: number;
-      requests: number;
-      model: string;
-    }[],
+    ],
     spend: [
       { name: '佐藤 健', email: 'sato@example.com', role: 'owner', spendUsd: 41.2, fastPremiumRequests: 412, hardLimitUsd: null },
       { name: '鈴木 彩', email: 'suzuki@example.com', role: 'member', spendUsd: 18.75, fastPremiumRequests: 187, hardLimitUsd: 50 },
       { name: '田中 悠', email: 'tanaka@example.com', role: 'member', spendUsd: 0, fastPremiumRequests: 0, hardLimitUsd: null },
-    ] as {
-      name: string;
-      email: string;
-      role: string;
-      spendUsd: number;
-      fastPremiumRequests: number;
-      hardLimitUsd: number | null;
-    }[],
+    ],
     totals: { members: 3, activeDays: 2, spendUsd: 59.95 },
-  },
+    // 見本は「3 つとも読めた」状態。**素性を持たせないと、画面が
+    // `intake.members` を読めず取得前に落ちる** (同梱と取得の形は同じでなければ
+    // ならない · パス 263)。欄ごとの `as` の写しは `CursorSnapshot` 1 つに寄せた ——
+    // 写しが在ると、型が広がったとき (`spendUsd: number | null`) に画面だけが
+    // 古い型を見て `null` の枝が死ぬ (パス 62 / 80 / 116 の家系)。
+    intake: { members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0 },
+  } as CursorSnapshot,
 
   talent: {
     // 定義表 (病・STEP・10ヶ条) は **定数であってデータではない**。

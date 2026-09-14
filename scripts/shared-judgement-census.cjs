@@ -76,9 +76,15 @@ const VERDICTS = {
     + 'ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、'
     + 'その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った',
   'api/cursor':
-    '対称 (実測・パス 250) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び '
-    + '(main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定 (acceptRate === null) の '
-    + '消費者は CursorPage 1 つだけ。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ',
+    '対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ '
+    + '`fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は '
+    + 'network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / '
+    + '`buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の'
+    + '**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の '
+    + 'ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は'
+    + '**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / '
+    + '`normalizeSpend` が `state` に畳んでから返す)。応答の上限も '
+    + 'MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ',
   assistantLimits:
     '対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、'
     + 'ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も '

@@ -317,12 +317,14 @@ describe('封筒を確かめない口 (jsonFetchAny) の呼び出し元', () => 
     };
     expect(snap.members, '包み方に依存しない読み手を断ってはいけない').toHaveLength(1);
 
+    // `null` は読めないので、行は空・**件数は 0 ではなく `null`** (パス 263 で
+    // そう変えた。それまでは「0 名のチーム」と区別が付かなかった)。
     const empty = (await LIVE_FETCHERS['cursor']({
       token: 'tok',
       fetch: reply('null'),
-    })) as { members: unknown[]; totals: { members: number } };
+    })) as { members: unknown[]; totals: { members: number | null } };
     expect(empty.members).toEqual([]);
-    expect(empty.totals.members).toBe(0);
+    expect(empty.totals.members).toBeNull();
 
     // 同じ本文を、厳しい口を通る隣のサービスは断る (対照)。
     await expect(LIVE_FETCHERS['notion']({ token: 'tok', fetch: reply('null') })).rejects.toThrow(
