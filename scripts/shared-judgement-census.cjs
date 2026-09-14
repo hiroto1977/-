@@ -126,9 +126,20 @@ const VERDICTS = {
   scanTarget: '対称 (実測・パス 247)',
   serviceAdvisor: '未読 (助言の生成)',
   talent:
-    '未読 (パス 121 が両ビルドを同じ `readStoredTalent` へ寄せているが、否定の枝そのものは未確認 —— '
-    + '「寄せたのだから対称だろう」はパス 246 で外れた推論なので、読むまで未読と書く)',
+    '対称 (実測・パス 260) —— 否定の枝を両側で読んだ: main は `loadTalentState` が '
+    + "`{ kind: 'unreadable', reason }` を返し (talent.ts:85 / :90)、ブラウザ版は "
+    + '`localStorage` が拒んでも同じ形を作る (web-shim.ts:1271)。そこから先は**両方が同じ '
+    + '2 段**を通る —— `talentProvenance(stored)` → `buildTalentSnapshot(state, provenance)` '
+    + '(main/clients/talent.ts:143-144 / web-shim.ts:1273-1274)。画面は `snap.storedNote` を '
+    + '⚠ つきで刷る (TalentPage.tsx:219-221)。`reviewLadder` は境界を越えない '
+    + '(唯一の呼び出しは shared/talent.ts:709 の `buildTalentSnapshot` の中)',
   tokenInput: '閉じている (パス 245 で両ビルドの保管層に床)',
+  tokenResponse:
+    '対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、'
+    + '否定のあとの動作は両ビルドで同じ 2 行: `if (!parsed.ok) throw new Error(parsed.message)` '
+    + '(main/oauth.ts の交換・更新の 2 か所と renderer/oauth/pkce.ts)。文面も共有の 1 組。'
+    + 'この pass の前は main 側に検査そのものが無く (`JSON.parse(…) as TokenResponse`)、'
+    + 'ブラウザ版だけが見ていた —— 非対称の極として在った',
   updateCheck:
     '対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と '
     + '3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、'

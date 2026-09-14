@@ -72,6 +72,7 @@
     "src/shared/safeFilename.ts",
     "src/shared/scanTarget.ts",
     "src/shared/tokenInput.ts",
+    "src/shared/tokenResponse.ts",
     "src/shared/vaultToken.ts"
   ],
   "blocks": [
@@ -1650,6 +1651,14 @@
       "leafCount": 71,
       "note": "update secrets.ts,vaultToken.ts",
       "hash": "366767004bfcda84e2e0dbeb8f0d46b8b854bebdd1359c83706ebec7bcb6955d"
+    },
+    {
+      "index": 197,
+      "prevHash": "366767004bfcda84e2e0dbeb8f0d46b8b854bebdd1359c83706ebec7bcb6955d",
+      "merkleRoot": "cde076c101d629d502e72bc024753ad9cc8bf7e76c83053460f825a6f4212678",
+      "leafCount": 72,
+      "note": "update integrity-chain.cjs,oauth.ts,pkce.ts,tokenResponse.ts",
+      "hash": "e455dcde10bef15285883fd5d923b7159f947e7ef22e0996cf6638e3b2499825"
     }
   ],
   "tipManifest": {
@@ -1663,7 +1672,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "87a573652bc81aef328adfd35758c30bf9b2666d16215ecd21f8de32c6895173",
+    "scripts/integrity-chain.cjs": "2fa946d7253df0eb0029b973fb2027296876570c6da93fe6d3ecb7ec8e4a2678",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
@@ -1682,7 +1691,7 @@
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/eraseAll.ts": "cd9f8c1a01b64330f62f27d27ba14083c342f27452e20c95ae4f37d03358dbaa",
     "src/main/main.ts": "6ca3bb1be7c51e9bbb0d9edf883090c066b16436cec146a07d3c0d2b4898f3d3",
-    "src/main/oauth.ts": "3d3e5b5516b44f9da1a7449e194adeae0dd42575c89a3b8a56cd10f4f44c345f",
+    "src/main/oauth.ts": "aaa3d70b0e28a2c9906d90473d49b04dbab87cd858047cdbb77d1e13823d3e9a",
     "src/main/secrets.ts": "be9459125976403b0c23444b53c7da21b80502768c24cecc337122529b006ef4",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "6985953d4e8253f5ece972ac22e5294c8aaa64293d7ff2e57e80dc21411aa667",
@@ -1692,7 +1701,7 @@
     "src/renderer/fs/fsa.ts": "fb721de4a0aa024a6834b04e4bb22fc891d6c380518458957af18084b88b3e3d",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
     "src/renderer/network/proxy.ts": "b4ec8ba48beb306dcc2c4227cf8d283fc5ba7c35d284023bd39302bfa34838f9",
-    "src/renderer/oauth/pkce.ts": "adcfd8112e2ecc2c3597af674235755317314bb2e9b6368610aa679899649615",
+    "src/renderer/oauth/pkce.ts": "a9f5c27839475ad067d0fb5e43b3b4e78196715fc69f42a523171b8889e64a63",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
     "src/renderer/security/LockScreen.tsx": "a05a31d56248d1c9b9cebad5d9bde1c0628f635b59d1787f8b843a5f993526f9",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
@@ -1723,6 +1732,7 @@
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
     "src/shared/scanTarget.ts": "354916a61ce7cc7711931754c916ec813bd32be3b88de6908414a3ad2d9e6ded",
     "src/shared/tokenInput.ts": "6249a157a3434f2bc10232810df10912ff8dbfaf3ed84d4f7cf23c0f67740a08",
+    "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7"
   }
 }

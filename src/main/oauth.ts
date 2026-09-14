@@ -19,6 +19,7 @@ import { AddressInfo } from 'node:net';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
 import { redactForMessage } from '../shared/redact';
+import { parseTokenResponse, type TokenResponseFields } from '../shared/tokenResponse';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
@@ -113,14 +114,12 @@ export interface TokenSet {
   tokenType?: string;
 }
 
-/** Provider-side response from a token endpoint. */
-interface TokenResponse {
-  access_token: string;
-  refresh_token?: string;
-  expires_in?: number;
-  scope?: string;
-  token_type?: string;
-}
+/**
+ * Provider-side response from a token endpoint. **`shared/tokenResponse.ts` の
+ * 検証済みの形そのもの** —— ここで宣言を写すと、写しがずれた日に `as` が黙る
+ * (パス 260 で外した `JSON.parse(…) as TokenResponse` がその形だった)。
+ */
+type TokenResponse = TokenResponseFields;
 
 /** Loaded by main.ts. Adding a service is just a new entry here. */
 export const OAUTH_CONFIGS: Partial<Record<ServiceId, OAuthConfig>> = {
@@ -401,10 +400,15 @@ export function serializeTokenBody(config: OAuthConfig, params: URLSearchParams)
 
 export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string): TokenSet {
   const expiresIn = raw.expires_in ?? 0;
+  // **足した結果を見る。** `expires_in` が有限でも `Date.now() + 1e308 * 1000` は
+  // `Infinity` で、`JSON.stringify` はそれを `null` にする —— 読み戻すと
+  // 「期限が記録されていない」になり 1 度も更新しない (パス 260 で実測)。
+  // 入口の欄と、計算した量は**別の量**なので、それぞれの場所で見る (パス 57)。
+  const expiresAt = Date.now() + expiresIn * 1000;
   return {
     accessToken: raw.access_token,
     refreshToken: raw.refresh_token ?? fallbackRefresh,
-    expiresAt: expiresIn > 0 ? Date.now() + expiresIn * 1000 : undefined,
+    expiresAt: expiresIn > 0 && Number.isFinite(expiresAt) ? expiresAt : undefined,
     scope: raw.scope,
     tokenType: raw.token_type,
   };
@@ -750,9 +754,11 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
       ).catch(() => '');
       throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
     }
-    return JSON.parse(
-      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
-    ) as TokenResponse;
+    // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ
+    // (ブラウザ版の `pkce.ts` も同じ関数を読む)。断り文は本文を引用しない。
+    const parsed = parseTokenResponse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'));
+    if (!parsed.ok) throw new Error(parsed.message);
+    return parsed.value;
   });
   return tokenResponseToSet(raw);
 }
@@ -791,9 +797,11 @@ export async function refresh(
       ).catch(() => '');
       throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
     }
-    return JSON.parse(
-      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
-    ) as TokenResponse;
+    // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ
+    // (ブラウザ版の `pkce.ts` も同じ関数を読む)。断り文は本文を引用しない。
+    const parsed = parseTokenResponse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'));
+    if (!parsed.ok) throw new Error(parsed.message);
+    return parsed.value;
   });
   return tokenResponseToSet(raw, current.refreshToken);
 }

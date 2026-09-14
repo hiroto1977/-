@@ -286,6 +286,7 @@
     "src/shared/templateSvg.ts",
     "src/shared/textWrap.ts",
     "src/shared/tokenInput.ts",
+    "src/shared/tokenResponse.ts",
     "src/shared/tradeTax.ts",
     "src/shared/updateCheck.ts",
     "src/shared/vaultToken.ts",

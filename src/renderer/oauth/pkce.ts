@@ -23,6 +23,7 @@
  */
 import { countChars } from '../../shared/inputCeiling';
 import { redactForMessage } from '../../shared/redact';
+import { parseTokenResponse } from '../../shared/tokenResponse';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
@@ -268,32 +269,25 @@ export async function exchangeGoogleCode(
     }
     return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
   });
-  let data: {
-    access_token?: string;
-    refresh_token?: string;
-    expires_in?: number;
-    scope?: string;
-  };
-  try {
-    data = JSON.parse(raw) as typeof data;
-  } catch {
-    throw new Error('トークン端点の応答が JSON ではありません');
-  }
-  if (typeof data.access_token !== 'string' || data.access_token.length === 0) {
-    throw new Error('token exchange response missing access_token');
-  }
-  // Stryker disable next-line ConditionalExpression: 型検査を落としても `Number.isFinite` が
-  // 非数値を弾くため、既定の 3600 に落ちる結果は変わらない (等価変異)。
-  const expiresIn = typeof data.expires_in === 'number' && Number.isFinite(data.expires_in) ? data.expires_in : 3600;
+  // **規則は `shared/tokenResponse.ts` に 1 つ** (パス 260)。ここに在った
+  // 手書きの検証がその規則の原型で、主プロセス側 (`main/oauth.ts`) には
+  // 同じ物が無く `JSON.parse(…) as TokenResponse` だけだった。片方だけ緩い、
+  // という形を消すために規則を共有へ移し、両ビルドが同じ関数を読む。
+  const parsed = parseTokenResponse(raw);
+  if (!parsed.ok) throw new Error(parsed.message);
+  const data = parsed.value;
+  // 既定の 3600 は**この build の選択**で、規則ではない —— 応答が期限を
+  // 述べなかったときに何を書くかの話である。`TokenResult.expiresAt` は必須欄
+  // だがブラウザ版で**誰も読んでいない** (2026-09-14 実測) ので、倒し先を
+  // 変えても観測できる差が出ない。だから触らない。
+  const expiresIn = data.expires_in ?? 3600;
   const result: TokenResult = {
     accessToken: data.access_token,
     expiresAt: Date.now() + expiresIn * 1000,
-    scope: typeof data.scope === 'string' ? data.scope : '',
+    scope: data.scope ?? '',
   };
   // refresh_token is optional; only include if Google returned one.
-  return typeof data.refresh_token === 'string'
-    ? { ...result, refreshToken: data.refresh_token }
-    : result;
+  return data.refresh_token === undefined ? result : { ...result, refreshToken: data.refresh_token };
 }
 
 /** Google 標準スコープのプリセット (BROWSER_REDESIGN.md §8.1)。 */

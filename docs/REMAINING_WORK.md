@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **138** モジュール / 両ビルドが import **44** / うち否定で答えられる **22**（うち未読 **6**）。これは分母であって欠陥の一覧ではない。
+shared **139** モジュール / 両ビルドが import **45** / うち否定で答えられる **23**（うち未読 **5**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -26598,8 +26598,9 @@ shared **138** モジュール / 両ビルドが import **44** / うち否定で
 | `radarPlot` | 1 | 2 | 未読 (作図) |
 | `scanTarget` | 1 | 2 | 対称 (実測・パス 247) |
 | `serviceAdvisor` | 4 | 4 | 未読 (助言の生成) |
-| `talent` | 1 | 3 | 未読 (パス 121 が両ビルドを同じ `readStoredTalent` へ寄せているが、否定の枝そのものは未確認 —— 「寄せたのだから対称だろう」はパス 246 で外れた推論なので、読むまで未読と書く) |
+| `talent` | 1 | 3 | 対称 (実測・パス 260) —— 否定の枝を両側で読んだ: main は `loadTalentState` が `{ kind: 'unreadable', reason }` を返し (talent.ts:85 / :90)、ブラウザ版は `localStorage` が拒んでも同じ形を作る (web-shim.ts:1271)。そこから先は**両方が同じ 2 段**を通る —— `talentProvenance(stored)` → `buildTalentSnapshot(state, provenance)` (main/clients/talent.ts:143-144 / web-shim.ts:1273-1274)。画面は `snap.storedNote` を ⚠ つきで刷る (TalentPage.tsx:219-221)。`reviewLadder` は境界を越えない (唯一の呼び出しは shared/talent.ts:709 の `buildTalentSnapshot` の中) |
 | `tokenInput` | 2 | 4 | 閉じている (パス 245 で両ビルドの保管層に床) |
+| `tokenResponse` | 1 | 1 | 対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、否定のあとの動作は両ビルドで同じ 2 行: `if (!parsed.ok) throw new Error(parsed.message)` (main/oauth.ts の交換・更新の 2 か所と renderer/oauth/pkce.ts)。文面も共有の 1 組。この pass の前は main 側に検査そのものが無く (`JSON.parse(…) as TokenResponse`)、ブラウザ版だけが見ていた —— 非対称の極として在った |
 | `updateCheck` | 1 | 2 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い) |
 | `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
 | `writeFieldLimits` | 11 | 12 | 対称 (実測・パス 247) |
@@ -31652,6 +31653,78 @@ rejected = dropped - overflow   ← 残りは必ず filter が落とした分
 - 施策の「達成確率は 0〜100」は `<input type="number">` の `max` に依らず
   `isValidProbability` が持つ。氏名の `id` (`MEMBER_ID_RE`) は画面が作るので
   利用者には見えない — 文には入れていない。
+
+## パス 260 (2026-09-14) — **同じ規則が 2 か所に在り、デスクトップ版だけが 1 つも見ていなかった**
+
+パス 259 が残した本筋をそのまま実行した —— 「`oauth.ts` の `as TokenResponse` (2 か所) を
+検証つきの parse へ替える」。読んでみると、**規則はもう在った。片方の build にだけ。**
+
+```
+  ブラウザ  renderer/oauth/pkce.ts:282-296
+              access_token は非空の文字列でなければ throw
+              expires_in は Number.isFinite を通す
+              refresh_token は**文字列のときだけ**載せる
+  main      oauth.ts:755 / :796
+              JSON.parse(…) as TokenResponse     ← 1 つも確かめない
+```
+
+`as` は型を名乗るだけである。実測した帰結 (デスクトップ版):
+
+| 応答 | 直す前 |
+|---|---|
+| `{"refresh_token":{"a":1}}` | **働いていた更新トークンが消える** |
+| `{"expires_in":1e308}` | 期限が `Infinity` → 保存で `null` → **1 度も更新しない** |
+| `{"expires_in":true}` | 期限が「1 秒後」→ 呼ぶたびに更新 (相手先へ連打) |
+| `null` | `TypeError: Cannot read properties of null (reading 'expires_in')` が画面へ |
+| 200 の壊れた JSON | V8 の SyntaxError が**本文の窓を引用する** |
+
+1 行目が最も重い。`tokenResponseToSet` は `raw.refresh_token ?? fallbackRefresh` なので、
+**`??` はオブジェクトに掛からない** —— 手元で働いていた `refreshToken` が置き換わる。
+保存の関門 (パス 259) は `accessToken` と**文字列**欄の制御文字しか見ないので通り、
+読み戻しの `isTokenSet` も `accessToken` しか見ないので通る。次の更新が送るのは
+`refresh_token=%5Bobject+Object%5D` (実測)。必ず失敗し、`getValidToken` の `catch` が
+黙って古いアクセストークンへ落ちる。**以後そのサービスは 401 のままで、画面は「設定済み」
+と出す。出口は登録し直しだけで、そうとは誰も言わない。**
+
+2 行目はパス 57 の形である —— **入口の欄 (`expires_in`) を検査しても、計算した量
+(`expiresAt`) は別の量**である。`1e308` は有限なので型検査を通り、
+`Date.now() + 1e308 * 1000` が `Infinity` になり、`JSON.stringify` がそれを `null` にする。
+パス 98 は*読む*側で `±Infinity` を塞いだが、*書く*側がまだ作っていた。
+
+### 直したこと
+
+- `src/shared/tokenResponse.ts` (新規・保護対象) に規則を 1 つ。`parseTokenResponse(raw)` は
+  JSON でなければ / オブジェクトでなければ / `access_token` が非空文字列でなければ
+  理由つきで断り、任意欄は**型の合ったものだけ**返す。**断りに本文を引用しない。**
+- `main/oauth.ts` の 2 か所が `as` をやめてこれを通る。`tokenResponseToSet` は
+  `Number.isFinite(expiresAt)` を足して**計算した量**を見る。
+- `renderer/oauth/pkce.ts` も同じ関数を読む (手書きの検証が規則の原型だった)。
+  既定の 3600 は残した —— **`TokenResult.expiresAt` はブラウザ版で誰も読んでいない**
+  (実測) ので、倒し先を変えても観測できる差が出ない。
+- 検査: `shared/__tests__/tokenResponse.test.ts` 32 件 + `main/__tests__/oauth.test.ts`
+  に 11 件 (交換側は**実物の loopback を立てて**断りを確かめる —— 綴りの走査では
+  この pass の docblock 自体に当たり、どの入力でも通る検査になる)。
+  対照 3 本: 任意欄を素で取る → 9 件落ちる / `Number.isFinite(expiresAt)` を外す → 1 件 /
+  `as` を戻す → 11 件。
+- 台帳: 判定の census に `tokenResponse` (対称・そう作った) と、**未読だった `talent`**
+  (両側を読んで対称と確認) を書き、未読 6 → 5。
+
+### 残り
+
+- **`expires_in` の数字の文字列は受けたままにした。** RFC 6749 §5.1 は JSON の数値と
+  述べるが、`"3600" > 0` は true・`"3600" * 1000` は 3600000 なので**直す前の
+  デスクトップ版は受けていた**。型検査だけを足すとこの経路を黙って落とし、`expiresAt` が
+  付かず**先回りの更新がまるごと消える**。それは直しではなく振る舞いの変更なので残した。
+  どの提供元が実際に文字列で返すかは**測っていない** (ネットワークに出ていないので書かない)。
+- **`scope` / `token_type` は型だけ見る。** 長さも中身も見ていない。`scope` は
+  `main.ts:521` で画面へ返るが、型が `string | undefined` になったので `[object Object]`
+  は出なくなった。それ以上の害は測れていない。
+- 200 の壊れた本文から漏れる量は**トークンの先頭 10 字**だった (実測: `ya29.a0AfB`)。
+  `redact.ts` の `ya29.` 規則は続きを 10 文字以上要求するのでこの切れ端には当たらない。
+  10 字では使えないので直しの動機としては弱く、**parse を包んだ副産物として閉じた**だけである。
+  「ヘッダ名を持たない短い切れ端」の census は無い (パス 244 の残りと同じ穴)。
+- `MAX_HTTP_RESPONSE_BYTES` = 10 MiB の本文はそのまま `JSON.parse` に渡る。
+  parse が落ちる前の**メモリの山**は測っていない。
 
 ## パス 259 (2026-09-14) — **認可サーバの応答 1 つで、全サービスの資格情報が読めなくなる**
 

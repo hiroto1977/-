@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 197
+- ブロック数: 198
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `366767004bfcda84e2e0dbeb8f0d46b8b854bebdd1359c83706ebec7bcb6955d`
-- 保護対象: 71 ファイル
+- 末尾(tip)ハッシュ: `e455dcde10bef15285883fd5d923b7159f947e7ef22e0996cf6638e3b2499825`
+- 保護対象: 72 ファイル
 
 ## ブロック
 
@@ -210,6 +210,7 @@
 | 194 | `d259d7978fe91ebd` | `daad1efc40fe40a2` | `7ef3df28e9c7c612` | update eraseAll.ts |
 | 195 | `032d93072d4e0d99` | `7ef3df28e9c7c612` | `9da7169a68d4522e` | update migrate.sh |
 | 196 | `18f586e7be21a7e1` | `9da7169a68d4522e` | `366767004bfcda84` | update secrets.ts,vaultToken.ts |
+| 197 | `cde076c101d629d5` | `366767004bfcda84` | `e455dcde10bef152` | update integrity-chain.cjs,oauth.ts,pkce.ts,tokenResponse.ts |
 
 ## 保護対象ファイル
 
@@ -283,4 +284,5 @@
 - `src/shared/safeFilename.ts`
 - `src/shared/scanTarget.ts`
 - `src/shared/tokenInput.ts`
+- `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`
