@@ -37,6 +37,14 @@ import {
 import { jiraBrowseUrl } from '../../shared/atlassianLinks';
 import { redactForMessage } from '../../shared/redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
+import {
+  optionalString,
+  requireChild,
+  requireNumber,
+  requireObject,
+  requireString,
+} from '../../shared/apiResponse';
+import { hibpBreaches, vtScanStats } from '../../shared/securityResponse';
 import type { ActionData } from '../../shared/actionData';
 
 /**
@@ -157,7 +165,13 @@ export async function createGithubIssue(
   // ここは**プロキシを通らない唯一の書き込み経路** (api.github.com は CORS
   // 許可済み)。上限を掛けるのはこの読み出しだけで、他の create-* は
   // `fetchViaProxy` が組み直した 10MiB 以下の `Response` を受け取っている。
-  const data = JSON.parse(await readCapped(res, 'GitHub API')) as GithubIssueApiResponse;
+  // 大きさは `readCapped` が、**形は `requireObject`/`requireNumber` が**見る (パス 261)。
+  const o = requireObject(JSON.parse(await readCapped(res, 'GitHub API')), 'GitHub API');
+  const data: GithubIssueApiResponse = {
+    number: requireNumber(o, 'number', 'GitHub API'),
+    html_url: requireString(o, 'html_url', 'GitHub API'),
+    title: requireString(o, 'title', 'GitHub API'),
+  };
   return { number: data.number, url: data.html_url, title: data.title };
 }
 
@@ -200,8 +214,8 @@ export async function createNotionPage(
     }),
   });
   await ensureOk(res, 'Notion API');
-  const data = (await res.json()) as { id: string; url: string };
-  return { id: data.id, url: data.url };
+  const o = requireObject(await res.json(), 'Notion API');
+  return { id: requireString(o, 'id', 'Notion API'), url: requireString(o, 'url', 'Notion API') };
 }
 
 // --- Slack: send-message (CORS ブロック → プロキシ経由) -------------------
@@ -233,9 +247,11 @@ export async function sendSlackMessage(
   });
   await ensureOk(res, 'Slack API');
   // Slack は HTTP 200 でも body.ok=false でエラーを返す。
-  const data = (await res.json()) as { ok: boolean; error?: string; ts?: string; channel?: string };
-  if (!data.ok) throw new Error(`Slack: ${data.error ?? 'unknown_error'}`);
-  return { ts: data.ts ?? '', channel: data.channel ?? channel };
+  const o = requireObject(await res.json(), 'Slack API');
+  if (o['ok'] !== true) throw new Error(`Slack: ${optionalString(o, 'error') ?? 'unknown_error'}`);
+  // `ts` / `channel` は ok:true の応答に必ず在る。**空に倒さない** —— 倒すと
+  // 「送れたが、どこへ送れたか言えない」報告になる。
+  return { ts: requireString(o, 'ts', 'Slack API'), channel: optionalString(o, 'channel') ?? channel };
 }
 
 // --- Atlassian (Jira): create-issue (CORS ブロック → プロキシ経由) ---------
@@ -331,7 +347,7 @@ export async function createAtlassianIssue(
     }),
   });
   await ensureOk(res, 'Atlassian API');
-  const data = (await res.json()) as { key: string };
+  const data = { key: requireString(requireObject(await res.json(), 'Atlassian API'), 'key', 'Atlassian API') };
   return { key: data.key, url: jiraBrowseUrl(creds.site, data.key) };
 }
 
@@ -402,7 +418,8 @@ export async function createCalendarEvent(
     body: JSON.stringify(body),
   });
   await ensureOk(res, 'Calendar API');
-  const data = (await res.json()) as { id: string; htmlLink: string };
+  const o = requireObject(await res.json(), 'Google Calendar API');
+  const data = { id: requireString(o, 'id', 'Google Calendar API'), htmlLink: requireString(o, 'htmlLink', 'Google Calendar API') };
   return { id: data.id, htmlLink: data.htmlLink };
 }
 
@@ -449,7 +466,11 @@ export async function createGmailDraft(
     body: JSON.stringify({ message: { raw } }),
   });
   await ensureOk(res, 'Gmail API');
-  const data = (await res.json()) as { id: string; message: { id: string } };
+  const o = requireObject(await res.json(), 'Gmail API');
+  const data = {
+    id: requireString(o, 'id', 'Gmail API'),
+    message: { id: requireString(requireChild(o, 'message', 'Gmail API'), 'id', 'Gmail API') },
+  };
   return { id: data.id, messageId: data.message.id };
 }
 
@@ -481,7 +502,12 @@ export async function createDriveFolder(
     }),
   });
   await ensureOk(res, 'Drive API');
-  const data = (await res.json()) as { id: string; name: string; webViewLink?: string };
+  const o = requireObject(await res.json(), 'Google Drive API');
+  const data = {
+    id: requireString(o, 'id', 'Google Drive API'),
+    name: requireString(o, 'name', 'Google Drive API'),
+    webViewLink: optionalString(o, 'webViewLink'),
+  };
   return { id: data.id, name: data.name, url: data.webViewLink ?? `https://drive.google.com/drive/folders/${data.id}` };
 }
 
@@ -516,7 +542,12 @@ export async function createWordPressPostDraft(
     },
   );
   await ensureOk(res, 'WordPress API');
-  const data = (await res.json()) as { ID: number; URL: string; title: string };
+  const o = requireObject(await res.json(), 'WordPress.com API');
+  const data = {
+    ID: requireNumber(o, 'ID', 'WordPress.com API'),
+    URL: requireString(o, 'URL', 'WordPress.com API'),
+    title: requireString(o, 'title', 'WordPress.com API'),
+  };
   return { id: data.ID, url: data.URL, title: data.title };
 }
 
@@ -544,7 +575,10 @@ export async function createCanvaFolder(
     body: JSON.stringify({ name, parent_folder_id: parentFolderId }),
   });
   await ensureOk(res, 'Canva API');
-  const data = (await res.json()) as { folder: { id: string; name: string } };
+  const folder = requireChild(requireObject(await res.json(), 'Canva API'), 'folder', 'Canva API');
+  const data = {
+    folder: { id: requireString(folder, 'id', 'Canva API'), name: requireString(folder, 'name', 'Canva API') },
+  };
   return { id: data.folder.id, name: data.folder.name };
 }
 
@@ -552,17 +586,26 @@ export async function createCanvaFolder(
 
 const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
 
-interface CfWrap<T> {
-  success: boolean;
-  errors?: { message: string }[];
-  result: T;
-}
-
-function cfUnwrap<T>(payload: CfWrap<T>): T {
-  if (!payload.success) {
-    throw new Error(`Cloudflare: ${payload.errors?.[0]?.message ?? 'unknown error'}`);
+/**
+ * Cloudflare の `{success, errors, result}` の包みを開く。
+ *
+ * **包み自体を確かめる** (パス 261) —— `success !== true` は断り、
+ * `result` の形は呼び出し側が `requireObject` で見る。直す前は
+ * `as CfWrap<T>` だったので `{}` の応答が `success: undefined` となり
+ * 「Cloudflare: unknown error」に落ちていた (相手が何を返したか言えない)。
+ */
+function cfUnwrap(raw: unknown): unknown {
+  const payload = requireObject(raw, 'Cloudflare API');
+  if (payload['success'] !== true) {
+    const errors = payload['errors'];
+    const first = Array.isArray(errors) && errors.length > 0 ? errors[0] : null;
+    const message =
+      first !== null && typeof first === 'object' && !Array.isArray(first)
+        ? optionalString(first as Record<string, unknown>, 'message')
+        : undefined;
+    throw new Error(`Cloudflare: ${message ?? 'unknown error'}`);
   }
-  return payload.result;
+  return payload['result'];
 }
 
 export interface CreateCfDnsRecordInput {
@@ -597,8 +640,12 @@ export async function createCloudflareDnsRecord(
     body: JSON.stringify(body),
   });
   await ensureOk(res, 'Cloudflare API');
-  const record = cfUnwrap((await res.json()) as CfWrap<{ id: string; name: string; type: string }>);
-  return { id: record.id, name: record.name, type: record.type };
+  const record = requireObject(cfUnwrap(await res.json()), 'Cloudflare API');
+  return {
+    id: requireString(record, 'id', 'Cloudflare API'),
+    name: requireString(record, 'name', 'Cloudflare API'),
+    type: requireString(record, 'type', 'Cloudflare API'),
+  };
 }
 
 export interface PurgeCfCacheInput {
@@ -629,8 +676,11 @@ export async function purgeCloudflareCache(
     body: JSON.stringify(body),
   });
   await ensureOk(res, 'Cloudflare API');
-  const result = cfUnwrap((await res.json()) as CfWrap<{ id: string }>);
-  return { id: result.id, purged: purgeEverything ? 'all' : files.length };
+  const result = requireObject(cfUnwrap(await res.json()), 'Cloudflare API');
+  return {
+    id: requireString(result, 'id', 'Cloudflare API'),
+    purged: purgeEverything ? 'all' : files.length,
+  };
 }
 
 // --- セキュリティ: VirusTotal scan-url (CORS → プロキシ) -------------------
@@ -707,10 +757,12 @@ export async function scanUrlVirusTotal(
     headers: { 'x-apikey': vtKey },
   });
   await ensureOk(report, 'VirusTotal API');
-  const data = (await report.json()) as {
-    data: { attributes: { last_analysis_stats: { harmless: number; malicious: number; suspicious: number; undetected: number } } };
-  };
-  const s = data.data.attributes.last_analysis_stats;
+  // **4 つの内訳を 1 つずつ要求する** (パス 261)。直す前は `as {…}` だったので、
+  // 欄が欠けた応答は `undefined + undefined` = **NaN** の「検出数」を作り、
+  // 入れ子が欠けた応答は `Cannot read properties of undefined` で落ちていた。
+  // これは「この URL は危険か」という安全の判定なので、**数えられなかったことを
+  // 数え上げてはいけない**。
+  const s = vtScanStats(await report.json());
   const positives = s.malicious + s.suspicious;
   const total = s.harmless + s.malicious + s.suspicious + s.undetected;
   return { url, positives, total, reportUrl: `https://www.virustotal.com/gui/url/${id}` };
@@ -747,21 +799,9 @@ export async function checkEmailBreach(
   // 404 = この email はどの漏洩にも含まれない (正常)。
   if (res.status === 404) return { email, breaches: [] };
   await ensureOk(res, 'HIBP API');
-  const data = (await res.json()) as {
-    Name: string;
-    Title: string;
-    BreachDate: string;
-    PwnCount: number;
-    DataClasses: string[];
-  }[];
-  return {
-    email,
-    breaches: data.map((b) => ({
-      name: b.Name,
-      title: b.Title,
-      date: b.BreachDate,
-      pwnCount: b.PwnCount,
-      dataClasses: b.DataClasses,
-    })),
-  };
+  // **でっち上げの漏洩を作らない** (パス 261)。直す前は `as […]` だったので
+  // `["x"]` / `[{}]` の応答が「名前も日付も件数も空の漏洩 1 件」として
+  // 一覧に並んだ。要素ごとに欄を要求する —— 漏洩の有無は安全の判断なので、
+  // 読めない答えを「読めた」ことにしてはいけない。
+  return { email, breaches: hibpBreaches(await res.json()) };
 }

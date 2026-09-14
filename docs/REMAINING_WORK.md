@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **139** モジュール / 両ビルドが import **45** / うち否定で答えられる **23**（うち未読 **5**）。これは分母であって欠陥の一覧ではない。
+shared **141** モジュール / 両ビルドが import **46** / うち否定で答えられる **23**（うち未読 **5**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -31653,6 +31653,81 @@ rejected = dropped - overflow   ← 残りは必ず filter が落とした分
 - 施策の「達成確率は 0〜100」は `<input type="number">` の `max` に依らず
   `isValidProbability` が持つ。氏名の `id` (`MEMBER_ID_RE`) は画面が作るので
   利用者には見えない — 文には入れていない。
+
+## パス 261 (2026-09-14) — **外部サービスへの書き込みを「できた」と報告していた。応答が何も答えていなくても**
+
+パス 260 の残りを測ろうとして (「10 MiB の本文がそのまま `JSON.parse` に渡る」)、
+まず**応答の大きさの関門が本当に全経路に掛かっているか**を数えた。答えは
+**掛かっている** —— `saasWriteWeb.ts` の 11 経路はすべて `getProxyTransport()` →
+`fetchViaProxy` → `readBodyWithCap` を通り、組み直された `Response` の本文は
+既に 10 MiB 以下である。`httpLimits.ts` の注記が主張していたとおりで、
+**ここに欠陥は無かった**。
+
+欠陥は隣に在った。同じ 11 経路はどれも `(await res.json()) as { … }` で、
+**形を 1 つも確かめていない**。12 経路すべてを機械的に呼んで測った:
+
+| 200 の本文 | 直す前の振る舞い |
+|---|---|
+| `{}` / `[]` / `"str"` | **6 経路が成功として返す** |
+| 〃 | `atlassian` → `https://x.atlassian.net/browse/**undefined**` |
+| 〃 | `drive` → `https://drive.google.com/drive/folders/**undefined**` |
+| 〃 | `slack` → `ts: ''` (送った本文を指す識別子が空) |
+| `["x"]` / `[{}]` | `security` が**名前も日付も件数も空の「漏洩」を 1 件でっち上げる** |
+| 欄の欠けた VT 応答 | `positives` / `total` が **NaN**・`null` は 0 に化けて **78 が 73 になる** |
+| `null` | 12 経路すべてが `Cannot read properties of null (reading 'id')` |
+
+重いのは下 3 行である。**`undefined` を埋め込んだ URL は押せるリンクとして
+画面に出る**し、`security` の 2 つは「あなたは漏洩に含まれるか」「この URL は
+危険か」という**安全の判定**で、数えられなかったものを数え上げている。
+
+**そして main 側も同じだった** —— `jsonFetch<T>` は `JSON.parse(text) as T` なので
+型引数を書いても 1 つも確かめておらず、`main/clients/security.ts` の HIBP と
+VirusTotal は同じ `.map()` / 同じ算術をしていた。非対称ではなく、**規則そのものが
+無かった**。
+
+### 直したこと
+
+- `src/shared/apiResponse.ts` (新規) —— 外部の「成功した」応答を読む規則を 1 つ。
+  `requireObject` / `requireArray` / `requireString` (**空文字も断る**) /
+  `requireNumber` (非有限を断る) / `requireChild` / `optionalString` /
+  `optionalStringArray`。断りは必ず**「処理したことを確認できません」**と述べる ——
+  外向きの書き込みはもう起きているかもしれないので「失敗しました」とは言わない。
+- `src/shared/securityResponse.ts` (新規) —— 安全の判定を作る 2 つの応答
+  (`hibpBreaches` / `vtScanStats`) を**両ビルドが同じ実装で読む**。
+  HIBP は 1 件でも形が合わなければ**全体を断る** (部分的に読めた一覧は
+  「含まれていない漏洩は無い」を意味しないので、パス 89 / 121 の「落とした件数を
+  数えて残りを見せる」形にはしない)。
+- `saasWriteWeb.ts` の 12 経路と `main/clients/security.ts` の 2 経路を配線。
+  `cfUnwrap` は包み自体を確かめるようにした (`success !== true` を断る)。
+- **空の配列は通す。** `checkEmailBreach` にとって `[]` は「どの漏洩にも含まれない」=
+  形の合った正しい答えで、断る理由が無い (HIBP は 404 で返すが、それを 200 + `[]` へ
+  正規化するプロキシは在り得る)。
+- 検査 73 本 (apiResponse 27 + securityResponse 23 + saasWriteWeb に 23)。
+  対照 2 本: 助け手を素通しに戻す → **36 件**落ちる / 安全の 2 つを素の `as` に戻す →
+  **21 件**落ちる。
+
+### 自分の走査が 2 度間違えた (記録)
+
+1. **12 経路のうち 1 つ (`scanUrlVirusTotal`) を最初の一覧から落としていた。**
+   見つけたのは自分で書いた双方向の突き合わせ (`transport: Transport` を取る
+   export された関数を実装から数え、台帳と一致を要求する) である。
+   **落としていたのが一番重い経路**だった —— 安全の判定を作る側。
+2. **`[]` を一律に断ると期待していた。** これは実装ではなく**検査の側が誤り**で、
+   期待を直した。最初の報告でも「空配列から安全と判定している」と書いたが、
+   実際に作られていたのは**逆向き**の、空の漏洩をでっち上げる側だった。
+
+### 残り
+
+- **読み取り (snapshot) 側の `jsonFetch<T>` は手つかず。** `JSON.parse(text) as T` が
+  74 クライアントぶん残っている。害の多くは「画面の欄が空になる」で、パス
+  62 / 80 / 98 / 116 が下流に形の判定を置いているが、**それが全部を覆うかは
+  測っていない**。母集団としてここに記録する。
+- 判定の census (`lint:shared-judgement`) は「負の**値**を返す」述語を母集団に
+  するので、**投げて断る規則はそこに入らない**。`securityResponse` は両ビルドが
+  import するのに「否定で答えられる」23 に数えられていない。走査の限界であって
+  対称性の主張ではない —— 広げるなら別のパス。
+- `scope` / `token_type` (パス 260 の残り) と同じく、通した文字列の**長さ**は
+  どの経路でも見ていない。
 
 ## パス 260 (2026-09-14) — **同じ規則が 2 か所に在り、デスクトップ版だけが 1 つも見ていなかった**
 

@@ -17,6 +17,7 @@ import {
   scanUrlVirusTotal,
   parseSecurityKeys,
   checkEmailBreach,
+  type Transport,
 } from '../saasWriteWeb';
 import {
   MAX_ATLASSIAN_EMAIL,
@@ -210,10 +211,13 @@ describe('sendSlackMessage', () => {
     expect(r).toEqual({ ts: '1.2', channel: 'C' });
     expect(bodyOf(transport.mock.calls[0]![1])).toEqual({ channel: 'C', text: '  spaced  ' });
   });
-  it('returns empty ts when absent', async () => {
+  it('★ ts が無ければ断る (パス 261 — 空に倒すと「送れたが、どこへ送れたか言えない」になる)', async () => {
+    // 直す前は `ts: ''` を返していた。`ts` は送った本文を指す識別子なので、
+    // 空で成功と言うのは `.../browse/undefined` を渡すのと同じ形である。
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ok: true, channel: 'C9' }));
-    const r = await sendSlackMessage({ channel: 'C', text: 't' }, 'tok', transport);
-    expect(r).toEqual({ ts: '', channel: 'C9' });
+    await expect(sendSlackMessage({ channel: 'C', text: 't' }, 'tok', transport)).rejects.toThrow(
+      'Slack API の応答に ts (非空の文字列) がありません',
+    );
   });
   it('requires channel and text (each alone is insufficient)', async () => {
     const transport = vi.fn();
@@ -1063,5 +1067,106 @@ describe('createGithubIssue — 応答本文の上限 (プロキシを通らな�
     ).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(Error);
     expect((err as Error).message).toBe('GitHub API 500: ');
+  });
+});
+
+describe('★ 壊れた 200 の応答を成功として返さない (パス 261)', () => {
+  const reply = (body: string) => async () =>
+    new Response(body, { status: 200, headers: { 'content-type': 'application/json' } });
+
+  /**
+   * 11 の書き込み口を**全部**並べる。直す前の実測では 6 経路が `{}` / `[]` /
+   * `"str"` を成功として返し、うち 2 経路は `undefined` を埋め込んだ URL を
+   * 押せるリンクとして画面に渡していた:
+   *
+   *   atlassian → https://x.atlassian.net/browse/undefined
+   *   drive     → https://drive.google.com/drive/folders/undefined
+   *
+   * 台帳を関数の一覧として持つので、**新しい書き込み口を足して**ここに
+   * 載せ忘れると、`writeEntryCensus` (下) が鳴る。
+   */
+  const ENTRIES: Array<[string, (t: Transport) => Promise<unknown>]> = [
+    ['createGithubIssue', (t) => createGithubIssue({ owner: 'o', repo: 'r', title: 'T' }, 'tok', t)],
+    ['createNotionPage', (t) => createNotionPage({ parentPageId: 'p'.repeat(32), title: 'T', body: 'B' }, 'tok', t)],
+    ['sendSlackMessage', (t) => sendSlackMessage({ channel: '#c', text: 'hi' }, 'tok', t)],
+    [
+      'createAtlassianIssue',
+      (t) =>
+        createAtlassianIssue(
+          { projectKey: 'AB', summary: 'S', issueType: 'Task' },
+          JSON.stringify({ email: 'a@b.co', token: 't', site: 'https://x.atlassian.net' }),
+          t,
+        ),
+    ],
+    [
+      'createCalendarEvent',
+      (t) => createCalendarEvent({ summary: 'S', start: '2026-09-15T10:00:00Z', end: '2026-09-15T11:00:00Z' }, 'tok', t),
+    ],
+    ['createGmailDraft', (t) => createGmailDraft({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
+    ['createDriveFolder', (t) => createDriveFolder({ name: 'N' }, 'tok', t)],
+    [
+      'createWordPressPostDraft',
+      (t) => createWordPressPostDraft({ siteId: 'x.wordpress.com', title: 'T', content: 'C' }, 'tok', t),
+    ],
+    ['createCanvaFolder', (t) => createCanvaFolder({ name: 'N' }, 'tok', t)],
+    [
+      'createCloudflareDnsRecord',
+      (t) => createCloudflareDnsRecord({ zoneId: 'z'.repeat(32), type: 'A', name: 'a.b.co', content: '1.2.3.4' }, 'tok', t),
+    ],
+    ['purgeCloudflareCache', (t) => purgeCloudflareCache({ zoneId: 'z'.repeat(32), files: ['https://a.b.co/x'] }, 'tok', t)],
+    // ★ この 2 つは**下の台帳の突き合わせが見つけた** —— 私の最初の一覧は
+    //   `scanUrlVirusTotal` を落としていた (「安全の判定」を作る側なので最も重い)。
+    ['scanUrlVirusTotal', (t) => scanUrlVirusTotal({ url: 'https://a.b.co/' }, 'key', t)],
+    ['checkEmailBreach', (t) => checkEmailBreach({ email: 'a@b.co' }, 'key', t)],
+  ];
+
+  // `{}` / `"str"` / `null` / 非 JSON —— どれも「相手が処理した」証拠にならない。
+  for (const [bodyLabel, body] of [
+    ['空のオブジェクト', '{}'],
+    ['文字列', '"hello"'],
+    ['null', 'null'],
+    ['JSON ではない', '<html>Worker error</html>'],
+  ] as const) {
+    it.each(ENTRIES)(`200 / ${bodyLabel} → %s は断る`, async (_name, call) => {
+      await expect(call(reply(body) as never)).rejects.toThrow();
+    });
+  }
+
+  /**
+   * **空の配列は 1 つだけ例外である。** `checkEmailBreach` にとって `[]` は
+   * 「どの漏洩にも含まれない」= 形の合った正しい答えで、断る理由が無い
+   * (HIBP は 404 で返すが、それを 200 + `[]` に正規化するプロキシは在り得る)。
+   * 最初に書いた検査はここを一律に断ると期待していて**検査の側が誤っていた** ——
+   * 実装ではなく期待を直した。
+   */
+  it.each(ENTRIES.filter(([n]) => n !== 'checkEmailBreach'))('200 / 配列 → %s は断る', async (_n, call) => {
+    await expect(call(reply('[]') as never)).rejects.toThrow();
+  });
+  it('200 / 配列 → checkEmailBreach だけは「漏洩なし」として通す', async () => {
+    await expect(checkEmailBreach({ email: 'a@b.co' }, 'key', reply('[]') as never)).resolves.toEqual({
+      email: 'a@b.co',
+      breaches: [],
+    });
+  });
+
+  it('★ undefined を埋め込んだ URL を作らない (直す前の 2 経路)', async () => {
+    for (const [, call] of ENTRIES) {
+      const out = await call(reply('{}') as never).catch((e: Error) => e.message);
+      expect(String(out)).not.toContain('undefined');
+    }
+  });
+
+  it('★ 台帳 (ENTRIES) が実装の書き込み口を全部覆う', async () => {
+    // **原文で読む** —— 生の読みでは Stryker の計器が書き換えた写しに当たり、
+    // 綴りに当てる検査が空になる (`originalSourcePolicy` がそれをゲートにしている)。
+    const { readOriginalSource } = await import('../../../shared/__tests__/originalSource');
+    const src = readOriginalSource(new URL('../saasWriteWeb.ts', import.meta.url).pathname);
+    // `transport: Transport` を取る export された関数が「書き込み口」である。
+    const declared = [...src.matchAll(/export async function (\w+)\([\s\S]{0,400}?transport: Transport,/g)].map(
+      (m) => m[1],
+    );
+    // 標本: 走査が**実際に当たる**ことを見る (0 件なら規則が死んでいる)。
+    expect(declared.length).toBeGreaterThan(0);
+    expect([...declared].sort()).toEqual(ENTRIES.map(([n]) => n).sort());
   });
 });

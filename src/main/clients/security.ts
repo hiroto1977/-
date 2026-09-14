@@ -25,6 +25,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
+import { hibpBreaches, vtScanStats } from '../../shared/securityResponse';
 import {
   jsonFetch,
   limitedFetch,
@@ -188,14 +189,6 @@ interface CheckEmailBreachPayload {
   email: string;
 }
 
-interface HibpBreach {
-  Name: string;
-  Title: string;
-  BreachDate: string;
-  PwnCount: number;
-  DataClasses: string[];
-}
-
 async function checkEmailBreach(
   ctx: ActionContext,
 ): Promise<ActionData<'security/check-email-breach'>> {
@@ -239,22 +232,21 @@ async function checkEmailBreach(
         throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
       }
       const bodyText = await readCapped(res, hctx);
-      let data: HibpBreach[];
+      let parsed: unknown;
       try {
-        data = JSON.parse(bodyText) as HibpBreach[];
+        parsed = JSON.parse(bodyText);
       } catch {
         throw new FetchError('HIBP の応答が JSON ではありません', res.status, 'security');
       }
-      return {
-        email,
-        breaches: data.map((b) => ({
-          name: b.Name,
-          title: b.Title,
-          date: b.BreachDate,
-          pwnCount: b.PwnCount,
-          dataClasses: b.DataClasses,
-        })),
-      };
+      // **要素ごとに欄を要求する** (パス 261)。直す前は `as HibpBreach[]` で、
+      // `["x"]` / `[{}]` の応答が「名前も日付も件数も空の漏洩 1 件」になった
+      // (ブラウザ側で実測)。規則は `shared/hibpResponse.ts` に 1 つ —— 同じ
+      // `.map()` が 2 か所に在り、どちらも検証していなかった。
+      try {
+        return { email, breaches: hibpBreaches(parsed) };
+      } catch (e) {
+        throw new FetchError(e instanceof Error ? e.message : String(e), res.status, 'security');
+      }
     },
   );
 }
@@ -265,21 +257,6 @@ interface ScanUrlPayload {
 
 interface VtUrlScanResponse {
   data: { id: string; type: string };
-}
-
-interface VtUrlReportResponse {
-  data: {
-    id: string;
-    attributes: {
-      last_analysis_stats: {
-        harmless: number;
-        malicious: number;
-        suspicious: number;
-        undetected: number;
-      };
-      reputation?: number;
-    };
-  };
 }
 
 // vtBase64: `=+$` mutants equivalent for URL lengths we feed.
@@ -332,13 +309,16 @@ async function scanUrl(
   // VirusTotal identifies a URL by base64url(sha) — but the simpler form
   // is just base64url(url) which they accept on the GET endpoint.
   const id = vtBase64(url);
-  const report = await jsonFetch<VtUrlReportResponse>(
+  const report = await jsonFetch<unknown>(
     `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(id)}`,
     { headers: { 'x-apikey': keys.vt } },
     { fetch: ctx.fetch, serviceId: 'security' },
   );
 
-  const stats = report.data.attributes.last_analysis_stats;
+  // **規則は `shared/securityResponse.ts` に 1 つ** (パス 261)。`jsonFetch<T>` は
+  // `JSON.parse(text) as T` なので、型引数を書いても 1 つも確かめていなかった ——
+  // 欄の欠けた応答から NaN の「検出数」が出来ていた (ブラウザ側で実測)。
+  const stats = vtScanStats(report);
   const positives = stats.malicious + stats.suspicious;
   const total = stats.harmless + stats.malicious + stats.suspicious + stats.undetected;
   return {
