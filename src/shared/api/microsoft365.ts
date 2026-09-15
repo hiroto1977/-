@@ -25,7 +25,12 @@
  * 失敗のときだけ呼び出し側が本文を読む (伏字と上限はそれぞれの層が持つ)。
  */
 
-import { MS365_MAIL_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
+import {
+  MS365_EVENT_FIELDS,
+  MS365_MAIL_FIELDS,
+  checkWriteFields,
+  describeWriteFieldFailure,
+} from '../writeFieldLimits';
 
 /** Graph の土台。版まで含めて 1 つ (`beta` へ動かすとき片側だけが動かないように)。 */
 export const GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
@@ -112,4 +117,75 @@ export async function sendGraphMail(
    * 「`graph.microsoft.com` の行を消すと 1 件鳴る」が 0 件になって気づいた。
    */
   return transport(`${GRAPH_BASE}${GRAPH_SEND_MAIL_PATH}`, graphMailInit(mail, token));
+}
+
+// --- 予定の作成 (POST /me/events) ---------------------------------------
+/*
+ * **パス 275 で足した。** パス 274 は send-mail だけを繋ぎ、`create-event` は
+ * 「プロキシ経路をまだ用意していない」と台帳に書いて残した。その後 4 行の
+ * 断りの**理由を実測**したところ、これは「出来ない」ではなく
+ * **画面に在るボタンが `action_not_found` で落ちる**状態だった
+ * (`Microsoft365Page.tsx:122` が呼んでいる)。経路はパス 274 で出来ているので、
+ * 断りを残す理由はもう無い。
+ *
+ * 予定作成は **201 Created・本文あり** で、送信 (202・本文なし) とは違う ——
+ * 作った資源を返すので、呼ぶ側は本文の形を確かめられる (確かめるべきである)。
+ */
+
+/** 予定の時刻に添える時間帯。**両ビルドで 1 つ** (片側だけ動くとずれる)。 */
+export const GRAPH_EVENT_TIME_ZONE = 'Tokyo Standard Time';
+
+/** `checkEvent` が受ける欄 (client 側の `CreateEventPayload` と構造で合う)。 */
+export interface GraphEventFields {
+  readonly subject?: unknown;
+  readonly start?: unknown;
+  readonly end?: unknown;
+  readonly location?: unknown;
+}
+
+/** 台帳を通った後の、外へ出す 4 欄。 */
+export interface CheckedEvent {
+  readonly subject: string;
+  readonly start: string;
+  readonly end: string;
+  readonly location: string;
+}
+
+/** 欄を**両ビルドで同じ台帳** (`MS365_EVENT_FIELDS`) で断る。 */
+export function checkEvent(input: GraphEventFields): CheckedEvent {
+  const bad = checkWriteFields(input, MS365_EVENT_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 台帳を通ったので `subject` / `start` / `end` は空でない文字列。`location` は任意。
+  return {
+    subject: (input.subject as string).trim(),
+    start: (input.start as string).trim(),
+    end: (input.end as string).trim(),
+    location: typeof input.location === 'string' ? input.location : '',
+  };
+}
+
+/** 作成の path (共有 —— 両ビルドが同じ所へ出す)。 */
+export const GRAPH_CREATE_EVENT_PATH = '/me/events';
+
+/** 要求の本体 (Graph の event 封筒)。**組み立ては 1 つ**で両ビルドが読む。 */
+export function graphEventInit(event: CheckedEvent, token: string): RequestInit {
+  return {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      subject: event.subject,
+      start: { dateTime: event.start, timeZone: GRAPH_EVENT_TIME_ZONE },
+      end: { dateTime: event.end, timeZone: GRAPH_EVENT_TIME_ZONE },
+      location: { displayName: event.location },
+    }),
+  };
+}
+
+export async function createGraphEvent(
+  event: CheckedEvent,
+  token: string,
+  transport: GraphTransport,
+): Promise<Response> {
+  // ホストは送信の呼び出しと**同じ行**に置く (理由は `sendGraphMail` の注記)。
+  return transport(`${GRAPH_BASE}${GRAPH_CREATE_EVENT_PATH}`, graphEventInit(event, token));
 }

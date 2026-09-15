@@ -28,7 +28,14 @@ import {
   describeWriteFieldFailure,
 } from '../../shared/writeFieldLimits';
 /* ホストは共有に 1 つだけ —— main と同じ字面を写さない (パス 274)。 */
-import { checkMail, sendGraphMail, type GraphMailFields } from '../../shared/api/microsoft365';
+import {
+  checkEvent,
+  checkMail,
+  createGraphEvent,
+  sendGraphMail,
+  type GraphEventFields,
+  type GraphMailFields,
+} from '../../shared/api/microsoft365';
 import {
   MAX_ATLASSIAN_EMAIL,
   MAX_ATLASSIAN_SITE,
@@ -833,4 +840,27 @@ export async function sendMicrosoftMail(
   const res = await sendGraphMail(mail, token, transport);
   await ensureOk(res, 'Microsoft Graph');
   return { ok: true, to: mail.to, subject: mail.subject };
+}
+
+/**
+ * Microsoft 365 予定作成 (Graph · プロキシ経由) —— **パス 275**。
+ *
+ * 送信 (202・本文なし) と違い **201 Created は作った予定を返す**ので、ここは
+ * 本文を読んで形を確かめる —— `{}` を「作成成功」として返すと `undefined` を
+ * 埋めた `webLink` が押せるリンクとして画面へ行く (パス 261 が 2 経路で実測した形)。
+ */
+export async function createMicrosoftEvent(
+  input: GraphEventFields,
+  token: string,
+  transport: Transport,
+): Promise<ActionData<'microsoft-365/create-event'>> {
+  const event = checkEvent(input);
+  const res = await createGraphEvent(event, token, transport);
+  await ensureOk(res, 'Microsoft Graph');
+  const o = requireObject(await res.json(), 'Microsoft Graph');
+  return {
+    id: requireString(o, 'id', 'Microsoft Graph'),
+    subject: optionalString(o, 'subject') ?? event.subject,
+    webLink: optionalString(o, 'webLink') ?? '',
+  };
 }

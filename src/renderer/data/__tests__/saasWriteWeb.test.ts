@@ -17,6 +17,7 @@ import {
   scanUrlVirusTotal,
   parseSecurityKeys,
   checkEmailBreach,
+  createMicrosoftEvent,
   sendMicrosoftMail,
   type Transport,
 } from '../saasWriteWeb';
@@ -1123,6 +1124,17 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
     // ★ パス 274 で足した口。**本文を返さない端点**なので下の 5 本からは外れる
     //   (理由は `BODYLESS` の注記)。台帳には載る —— 載せないと census が鳴る。
     ['sendMicrosoftMail', (t) => sendMicrosoftMail({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
+    // ★ パス 275。**こちらは 201 Created が資源を返す**ので、下の 5 本に掛かる
+    //   (BODYLESS では**ない** —— 送信との違いはそこである)。
+    [
+      'createMicrosoftEvent',
+      (t) =>
+        createMicrosoftEvent(
+          { subject: 'S', start: '2026-09-15T10:00:00', end: '2026-09-15T11:00:00' },
+          'tok',
+          t,
+        ),
+    ],
   ];
 
   /**

@@ -167,6 +167,7 @@ import {
   createDriveFolder,
   createWordPressPostDraft,
   createCanvaFolder,
+  createMicrosoftEvent,
   sendMicrosoftMail,
   createCloudflareDnsRecord,
   purgeCloudflareCache,
@@ -1699,14 +1700,26 @@ const shim = {
       return (await runProxyBearer('calendar', (t, tok) => createCalendarEvent(payload, tok, t))) as ActionResult<T>;
     }
     /*
-     * ここが無いまま `action_not_found` へ落ちていた (パス 274 実測)。
-     * **同じフォームの隣の `create-event` は動いていた** ので、利用者から見ると
-     * 「予定は作れるのにメールだけ送れない」形だった。押せる条件も同じ
-     * (`submitting` と欄の天井だけ) で、ビルドを見る枝は無い。
+     * Microsoft 365 の 2 操作 —— どちらもここが無いまま `action_not_found` へ
+     * 落ちていた。send-mail をパス 274 で、create-event をパス 275 で繋いだ。
+     *
+     * **パス 274 の注記の訂正**: あのとき私は「同じフォームの隣の
+     * `create-event` は動いていた」と書いたが、**それは誤り**だった。動いて
+     * いたのは `calendar/create-event` (Google カレンダー) で、
+     * `microsoft-365/create-event` は自分も `DESKTOP_ONLY` の台帳に在った ——
+     * つまりこの画面のボタンは**2 つとも**落ちていた。似ていたのは
+     * 行動名だけで、サービスが違う。
+     *
+     * 押せる条件は両方同じ (`submitting` と欄の天井だけ) で、ビルドを見る枝は無い。
      */
     if (serviceId === 'microsoft-365' && action === 'send-mail') {
       return (await runProxyBearer('microsoft-365', (t, tok) =>
         sendMicrosoftMail(payload, tok, t),
+      )) as ActionResult<T>;
+    }
+    if (serviceId === 'microsoft-365' && action === 'create-event') {
+      return (await runProxyBearer('microsoft-365', (t, tok) =>
+        createMicrosoftEvent(payload, tok, t),
       )) as ActionResult<T>;
     }
     if (serviceId === 'gmail' && action === 'create-draft') {

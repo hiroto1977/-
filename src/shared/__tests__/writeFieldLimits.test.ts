@@ -315,7 +315,8 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
     { name: 'WORDPRESS_POST_FIELDS', main: 'main/clients/wordpress.ts', page: 'renderer/pages/WordPressPage.tsx', fields: ['siteId', 'title', 'content'], web: true },
     // パス 274 で共有の `checkMail` に寄せ、ブラウザ版の双子が出来た (web: false → true)。
     { name: 'MS365_MAIL_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['to', 'subject', 'body'], web: true, via: { fn: 'checkMail', init: 'graphMailInit', file: 'shared/api/microsoft365.ts' } },
-    { name: 'MS365_EVENT_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['subject', 'location'], web: false },
+    // パス 275 で共有の `checkEvent` に寄せ、ブラウザ版の双子が出来た (web: false → true)。
+    { name: 'MS365_EVENT_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['subject', 'location'], web: true, via: { fn: 'checkEvent', init: 'graphEventInit', file: 'shared/api/microsoft365.ts' } },
     { name: 'CLOUDFLARE_DNS_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: ['name', 'content'], web: true },
     { name: 'CLOUDFLARE_PURGE_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: [], web: true },
   ] as const;

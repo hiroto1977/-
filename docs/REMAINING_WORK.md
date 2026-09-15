@@ -26611,7 +26611,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `tokenResponse` | 1 | 1 | 対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、否定のあとの動作は両ビルドで同じ 2 行: `if (!parsed.ok) throw new Error(parsed.message)` (main/oauth.ts の交換・更新の 2 か所と renderer/oauth/pkce.ts)。文面も共有の 1 組。この pass の前は main 側に検査そのものが無く (`JSON.parse(…) as TokenResponse`)、ブラウザ版だけが見ていた —— 非対称の極として在った |
 | `updateCheck` | 1 | 2 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い) |
 | `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
-| `writeFieldLimits` | 11 | 12 | 対称 (実測・パス 247) |
+| `writeFieldLimits` | 10 | 12 | 対称 (実測・パス 247) |
 <!-- shared-judgement-census:end -->
 
 ### 2. ★ `ollama` —— 許可する経路の台帳を、読んでいるのはブラウザ版だけだった
@@ -33147,3 +33147,70 @@ save-state) と同じ。検査 `webShimCredentials.test.ts` もその前提を
   古びていた。数を消して母集団の走査を指すようにした。
 - 出荷物 **11,890,432 B / 3,303,178 B** (両方 **+890 B**)。perf OK
   (FULL 547ms / LITE 197ms)。保護対象は 1 つも触っていないので chain は #202 のまま。
+
+## パス 275 —— 断りの台帳の**理由**を誰も検算していなかった (2026-09-15)
+
+### 見つけた形
+
+パス 274 は `DESKTOP_ONLY` の 1 行 (`send-mail`) の理由を偽と実測した。同じ台帳の
+**残る 4 行すべて**を測ったら、4 行で 3 通りだった:
+
+| 行 | 台帳が言っていた理由 | 実測 |
+| --- | --- | --- |
+| `skills/run-skill` | ブラウザに同等の能力が無い | **真** (`node:fs`/`os`/`path` を要る・`SkillsPage.tsx:55` が呼ぶ) |
+| `microsoft-365/create-event` | プロキシ経路を用意していない | **生きた欠陥** —— `Microsoft365Page.tsx:122` が呼んでおり、押すと `action_not_found` |
+| `stocks/backtest` | デスクトップ側の計算 | **偽** —— ブラウザ版は自分の `backtest` を持ち、`compare-strategies` の中で**戦略ごとに呼んでいる** |
+| `docstudio/list-collections` | ローカルのテンプレート集を読む | **偽** —— 3 要素のリテラル定数を返すだけ (`node:` の import は 0 件) |
+
+**台帳は 3 つ組の散文で、理由は誰の検算も受けていなかった。**
+
+### 直した所
+
+**① 生きた欠陥を繋いだ。** `create-event` を共有モジュールへ寄せ (`checkEvent` /
+`graphEventInit` / `createGraphEvent` / `GRAPH_EVENT_TIME_ZONE`)、両ビルドが同じ実装を通る。
+送信 (202・本文なし) と違い **201 Created は資源を返す**ので、ブラウザ版は本文を
+`requireObject` / `requireString` で確かめる (`BODYLESS` では**ない**)。
+
+**② 理由を種類にした。** `kind: 'needs-main-only-facility' | 'dead-action'` を
+各行に持たせ、種類ごとに機械の検査を 1 本付けた。散文はそのまま残すが、
+**散文が黙って偽になる日に鳴る**ようになった。
+
+**③ 新しい不変条件。** `dead-action` の行は**画面から呼ばれていてはならない**。
+これが `send-mail` (パス 274) と `create-event` (パス 275) の**どちらも**捕まえる形で、
+「ボタンは在るが繋いでいない」を台帳が仕様として固定できなくなった。
+
+### 自分の誤りを 2 つ直した (パス 274 で入れた物)
+
+1. **`web-shim.ts` のコメントが偽だった。** 「同じフォームの隣の `create-event` は
+   動いていた」と書いたが、動いていたのは `calendar/create-event` (Google) で、
+   `microsoft-365/create-event` は自分も台帳に在った —— **この画面のボタンは 2 つとも
+   落ちていた**。似ていたのは行動名だけで、サービスが違う。
+2. **画面の断り書きが過大だった。** パス 274 で
+   「メール送信と予定作成はブラウザ版でも動きます」と書いたが、予定作成はその時点で
+   動いていなかった。**私が直していた欠陥 (画面の散文が実装と食い違う) を、
+   逆向きに自分で作った。** パス 275 でその文が真になった。
+
+### 対照 (2 本とも鳴った)
+
+| 壊した所 | 鳴った検査 |
+| --- | --- |
+| `StocksPage.tsx` に `'stocks', 'backtest'` を足す | `stocks/backtest は 'dead-action' なのに画面から呼ばれています` |
+| `docstudio` の行を `needs-main-only-facility` に付け替える | `docstudio.ts は node: の組み込みを要らない` |
+
+走査の生死も同じテストで留めた (`rendererCallers` が `SkillsPage` を拾い、
+繋いだ 2 つを拾い、当たらない組では空を返す)。
+
+### 残り
+
+- **`kind: 'needs-main-only-facility'` の検査は module 単位である。** `stocks.ts` が
+  その反例で (module は `node:fs` を import するが `runBacktest` は使わない)、
+  だから stocks の行は別の種類にした。call 単位へ移すには AST が要る
+  (リポジトリの制約。**同じ限界に当たるのは 5 度目** —— isoDate 256 /
+  radarPlot 268 / パス 272 / egress 274 / ここ)。
+- **`stocks/backtest` と `docstudio/list-collections` は繋がなかった。** どちらも
+  画面から呼ぶ所が無く、繋ぐと「誰も押さない口」が増える (パス 118 の形の裏返し)。
+  台帳の理由をそう書き換えてある。`list-collections` はスナップショットと同じ定数を
+  返すので、**消すのが正しい**可能性が高い —— ただし `lint:test-coverage` が
+  サービスごとに action の登録を求めるため、消すならあのゲートの側から決める。
+- 出荷物 **11,891,350 B / 3,304,096 B** (両方 **+918 B**)。perf OK
+  (FULL 541ms / LITE 201ms)。保護対象は触っていないので chain は #202 のまま。
