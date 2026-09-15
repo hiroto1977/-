@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { EligibilityChecker } from '../components/EligibilityChecker';
 import { useServiceData } from '../hooks/useServiceData';
+import { accountingCfSeriesLabel, fundingLinkLabel } from '../../shared/funding';
 
 // 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/クラウドファンディングを
 // 会計ソフト・株式投資連携と合わせて 4 種チャート (レーダー/折れ線/円/棒) で
@@ -138,7 +139,9 @@ function LineChart({ data }: { data: FundingSnapshot }) {
     { color: COLORS.afterTax, dash: '4,2', label: '税引後手残り' },
     ...(hasRepayment ? [{ color: COLORS.repayment, dash: '5,3', label: '融資返済 (支出)' }] : []),
     ...(hasRepayment ? [{ color: COLORS.net, label: '純資金繰り' }] : []),
-    ...(data.accountingLinked ? [{ color: COLORS.cashflow, dash: '3,2', label: `営業CF (会計・実績${knownCf.length}か月)` }] : []),
+    ...(data.accountingLinked
+      ? [{ color: COLORS.cashflow, dash: '3,2', label: accountingCfSeriesLabel(data.accountingSource, knownCf.length) }]
+      : []),
     ...(data.stocksLinked ? [{ color: COLORS.portfolio, dash: '2,2', label: '株式評価額' }] : []),
   ];
 
@@ -460,8 +463,11 @@ export function FundingPage() {
           </div>
         )}
         <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-mute)' }}>
-          会計ソフト連携: {live.accountingLinked ? '✅ 連携中' : '— 未連携'} ／
-          株式投資連携: {live.stocksLinked ? '✅ 連携中' : '— 未連携 (任意)'}
+          {/* **出どころを名乗る** (パス 265)。`accountingLinked` は「会計CF を持つか」
+              しか表さず、Phase 6 までデスクトップの fetcher は見本の Map を必ず渡すので
+              ここは常に真になっていた —— 何も繋いでいない利用者に「✅ 連携中」を刷っていた。 */}
+          会計ソフト連携: {fundingLinkLabel(live.accountingSource)} ／
+          株式投資連携: {fundingLinkLabel(live.stocksSource, true)}
         </div>
         <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
           ※ 補助金・助成金・給付金・購入型クラウドファンディングは原則「益金 (事業収入)」として課税対象、
@@ -608,9 +614,11 @@ export function FundingPage() {
                       ※ 返済予定 {live.debtService.unmatchedMonths} か月分 (返済額合計
                       {' '}{jpy(live.debtService.totalRepayment)}) は、会計ソフト連携に同じ月の月次営業CF が
                       無いため突合できず、返済余力は算定できません
-                      {live.accountingLinked
+                      {live.accountingSource === 'linked'
                         ? '（連携済みですが、返済予定月と重なる月の実績CF がありません）。'
-                        : '（会計ソフト連携時に算定されます）。'}
+                        : live.accountingSource === 'sample'
+                          ? '（入っている月次CF は同梱の見本で、連携はされていません）。'
+                          : '（会計ソフト連携時に算定されます）。'}
                     </>
                   ) : live.debtService.unmatchedMonths > 0 ? (
                     <>

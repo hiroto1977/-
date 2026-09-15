@@ -1367,3 +1367,49 @@ export function barData(byKind: readonly FundingByKind[]): FundingBar[] {
     pipeline: b.pipeline,
   }));
 }
+
+// --- 任意連携の出どころ (2026-09-15 · パス 265) --------------------------
+
+/**
+ * **「連携している」と「見本の数字が入っている」は別の事実である。**
+ *
+ * `accountingLinked` / `stocksLinked` の意味は「この控えが会計/株式のデータを
+ * 持っているか」で、**どこから来たかは含まない**。デスクトップの
+ * `fetchFundingSnapshot` は Phase 6 の実 API 差込みまで `MOCK_ACCOUNTING` /
+ * `MOCK_PORTFOLIO` を必ず渡すので、両方が常に真になる —— 何も繋いでいない
+ * 利用者が「更新」を押すと、画面は
+ *
+ *     会計ソフト連携: ✅ 連携中 ／ 株式投資連携: ✅ 連携中
+ *     凡例: 営業CF (会計・実績12か月)
+ *
+ * を刷っていた (`isMock: true` を立てたまま)。同梱の見本を**実績**と名乗る形は
+ * パス 119 / 187 で 2 度直した家系で、ここは 3 つ目である。
+ *
+ * 2026-09-15 まで画面の型は `typeof SNAPSHOT.funding` (= `as const` のリテラル)
+ * だったので `accountingLinked` は `false` に狭まり、**「✅ 連携中」の枝は
+ * 型の上で死んでいた** —— どの検査もそこを通れなかった (パス 79 の家系)。
+ */
+export type FundingLinkSource = 'linked' | 'sample' | 'none';
+
+/**
+ * @param hasData 会計/株式のデータがこの控えに入っているか
+ * @param isMock  控えが自分を同梱の見本だと名乗っているか
+ */
+export function fundingLinkSource(hasData: boolean, isMock: boolean): FundingLinkSource {
+  if (!hasData) return 'none';
+  return isMock ? 'sample' : 'linked';
+}
+
+/** 画面が刷る 1 行。`none` は任意連携かどうかで語尾が変わるので引数で分ける。 */
+export function fundingLinkLabel(source: FundingLinkSource, optional = false): string {
+  if (source === 'linked') return '✅ 連携中';
+  if (source === 'sample') return '⚠️ 同梱の見本 (未連携)';
+  return optional ? '— 未連携 (任意)' : '— 未連携';
+}
+
+/** 折れ線グラフの凡例。見本の月を「実績」と呼ばない。 */
+export function accountingCfSeriesLabel(source: FundingLinkSource, months: number): string {
+  return source === 'sample'
+    ? `営業CF (同梱の見本${months}か月)`
+    : `営業CF (会計・実績${months}か月)`;
+}

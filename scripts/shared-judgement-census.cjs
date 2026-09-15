@@ -116,7 +116,14 @@ const VERDICTS = {
     + 'の選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた',
   externalUrlGate: '閉じている (パス 241 で 3 経路を実測)',
   freeeIntake: '未読 (取り込みの取りこぼし)',
-  funding: '未読 (計算の判定)',
+  funding:
+    '一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は '
+    + '**両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。'
+    + 'ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の '
+    + 'web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の '
+    + "控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、"
+    + 'その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の '
+    + '実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読',
   httpLimits:
     '対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。'
     + 'ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない)',

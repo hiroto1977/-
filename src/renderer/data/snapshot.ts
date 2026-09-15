@@ -11,7 +11,7 @@ import {
   SKILL_STEPS,
   SKILL_STEPS_SOURCE,
 } from '../../shared/talent';
-import { NO_SECURED_FUNDING_NOTE } from '../../shared/funding';
+import { NO_SECURED_FUNDING_NOTE, type FundingLinkSource } from '../../shared/funding';
 import { MIN_SAFE_VERSION } from '../../shared/ollama';
 import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
 import type { CursorSnapshot } from '../../shared/api/cursor';
@@ -41,21 +41,43 @@ const SAMPLE_THUMBNAIL =
 const SAMPLE_AVATAR =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23d1d5db'/%3E%3Ccircle cx='32' cy='26' r='11' fill='%239ca3af'/%3E%3Cpath d='M12 60a20 20 0 0140 0z' fill='%239ca3af'/%3E%3C/svg%3E";
 
+/**
+ * **`as const` なので、注記を足さない真偽値は「その値しか取らない型」になる。**
+ *
+ * 画面は `useServiceData(id, SNAPSHOT[id])` で描く。`fetchSnapshot<T>` の `T` は
+ * **検証されない主張**で (`ipcRenderer.invoke` の戻りは any)、その `T` はここの
+ * 型から推論される —— つまり `isMock: true` と書くと、画面は「相手は true 以外を
+ * 返さない」と宣言したことになる。実物 (`main/clients/*` の戻り値の型) が
+ * `boolean` を宣言していると、その主張は嘘になり:
+ *
+ *   - 画面の `isMock ? A : B` の**もう一方の枝が `never` に狭まる** ——
+ *     実行時には正しく出るのに、型検査器はその枝を「起きない」として扱う。
+ *   - **その状態を `SNAPSHOT` から組んだ検査で作れない** (cast が要る)。
+ *     2026-09-14 のパス 264 で実際にこれに当たった —— `versionSafe: true` の
+ *     対照が書けず、`as boolean` を足すまで前へ進めなかった。
+ *
+ * だから**直下の真偽値は実物と同じ幅で書く** (`as boolean`)。実物の側も
+ * リテラルを宣言している欄だけが例外で、`snapshotFieldWidth.test.ts` の
+ * `NARROW_BY_DESIGN` に理由つきで載せる —— 走査は**両方向**に鳴る。
+ *
+ * 経緯: パス 62 / 79 (101 件) / 80 / 116 / 263 / 264 と同じ家系。パス 79 が
+ * 101 件直したときゲートを残さなかったので、13 件が静かに生き残っていた。
+ */
 export const SNAPSHOT = {
   home: {
     greeting: 'こんにちは。今日は何を作りましょう?',
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
   library: {
     note: 'ライブラリの実体はブラウザの IndexedDB に保存されます',
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
   settings: {
     note: 'API キーはマスターパスワードで暗号化されてブラウザに保管されます',
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
   assistant: {
     note: 'AI アシスタントは選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、確証済みナレッジと全サービスを統合して応答します',
@@ -65,7 +87,7 @@ export const SNAPSHOT = {
       '表・箇条書き・計画などの成果物の生成',
       '関連サービスへの案内・操作',
     ] as readonly string[],
-    keyConfigured: false,
+    keyConfigured: false as boolean,
   },
 
   fetchedAt: '2026-05-11T09:30:00Z',
@@ -369,7 +391,7 @@ export const SNAPSHOT = {
       sentiment: 'positive' | 'neutral' | 'negative';
       dominant: string;
     }[],
-    keyConfigured: false,
+    keyConfigured: false as boolean,
   },
 
   ollama: {
@@ -1111,7 +1133,7 @@ export const SNAPSHOT = {
       { id: 'shugyo', label: '就業規則（10章47条）', docCount: 1 },
     ] as { id: string; label: string; docCount: number }[],
     fetchedAt: '2035-05-15T00:00:00.000Z',
-    isMock: true,
+    isMock: true as boolean,
   },
 
   cursor: {
@@ -1303,10 +1325,13 @@ export const SNAPSHOT = {
       nonDeductibleInputTax: 0,
       simplified: false,
     },
-    accountingLinked: false,
-    stocksLinked: false,
+    accountingLinked: false as boolean,
+    // 出どころ (パス 265) —— 同梱の見本は会計CF も株式評価額も持たないので 'none'。
+    accountingSource: 'none' as FundingLinkSource,
+    stocksLinked: false as boolean,
+    stocksSource: 'none' as FundingLinkSource,
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
 
   freee: {
@@ -1378,7 +1403,7 @@ export const SNAPSHOT = {
       }[],
     },
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
 
   stocks: {
@@ -1419,6 +1444,10 @@ export const SNAPSHOT = {
       }[],
     },
     fetchedAt: '',
+    // **実物も literal を宣言している**唯一の欄 (`StocksSnapshot.isMock: true` ——
+    // 「Always true until Phase 7 wires a real data source + broker」)。だから狭いのが
+    // 正しく、`as boolean` を足すと実物より**広い**主張になる。台帳は
+    // `main/clients/__tests__/snapshotFieldWidth.test.ts` の NARROW_BY_DESIGN。
     isMock: true,
   },
 
@@ -1703,7 +1732,7 @@ export const SNAPSHOT = {
       },
     ],
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
     // 保存先から何が読めたか (パス 120)。同梱の初期値は「まだ無い」。
     stored: 'none' as 'saved' | 'none' | 'unreadable',
     storedNote: null as string | null,
@@ -1833,7 +1862,7 @@ export const SNAPSHOT = {
       },
     ],
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
 } as const;
 

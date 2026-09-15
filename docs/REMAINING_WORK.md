@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **141** モジュール / 両ビルドが import **47** / うち否定で答えられる **23**（うち未読 **5**）。これは分母であって欠陥の一覧ではない。
+shared **141** モジュール / 両ビルドが import **47** / うち否定で答えられる **23**（うち未読 **4**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -26589,7 +26589,7 @@ shared **141** モジュール / 両ビルドが import **47** / うち否定で
 | `eraseReport` | 2 | 3 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
 | `externalUrlGate` | 1 | 1 | 閉じている (パス 241 で 3 経路を実測) |
 | `freeeIntake` | 1 | 5 | 未読 (取り込みの取りこぼし) |
-| `funding` | 1 | 1 | 未読 (計算の判定) |
+| `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
 | `httpLimits` | 4 | 5 | 対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない) |
 | `hydroponicsControl` | 1 | 5 | 未読 (計算の判定) |
 | `inputCeiling` | 13 | 42 | 対称 (設計・パス 252 で新設) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳) |
@@ -32207,3 +32207,107 @@ VirusTotal は同じ `.map()` / 同じ算術をしていた。非対称ではな
   「期限が記録されていない」として扱う)。**害が測れなかったので触っていない。**
 - ハードリセット (パス 137) が塞がった store から出る道になるかは未測定。
   `unlink` なので効くはずだが、確かめていないので書かない。
+
+## パス 265 (2026-09-15) — **`as const` が画面の型を実物より狭くし、その死んだ枝が「✅ 連携中」だった**
+
+パス 264 が残した一行をそのまま実行した —— 「`SNAPSHOT` 直下の boolean リテラルは
+16 件。このうち**画面が分岐している物は、もう一方の枝が型の上で死んでいる**。
+パス 79 が 101 件直した家系の生き残りで、**ゲートが無い**」。
+
+### なぜ「狭い」が害になるのか
+
+`snapshot.ts` は末尾が `} as const;` なので、注記の無い真偽値は**リテラル型**になる。
+画面は `useServiceData(id, SNAPSHOT[id])` で描き、`fetchSnapshot<T>` の `T` は
+**検証されない主張**である (`ipcRenderer.invoke` の戻りは any)。つまり
+`isMock: true` と書くことは「相手は true 以外を返さない」と宣言することで、
+実物 (`main/clients/*` の戻り値の型) が `boolean` を宣言していればその主張は嘘になる。
+
+実行時は壊れない。壊れるのは**確かめる手段**である:
+
+- 画面の `flag ? A : B` の**もう一方の枝が `never` に狭まる**。
+- **その状態を `SNAPSHOT` から組んだ検査で作れない** (cast が要る)。
+  パス 264 で実際にこれに当たり、`ollama.versionSafe: true` の対照が書けなかった。
+
+### 実測 —— 母集団は 13 件、うち 6 件は実行時に本当に両方の値を取る
+
+```
+  home / library / settings / docstudio / kpi / templates .isMock
+        実物の宣言は boolean だが、返る値は今日つねに true (定数)
+  stocks.isMock
+        実物も literal `true` を宣言 (Always true until Phase 7) → 狭いのが正しい
+
+  ★ teamradar.isMock          stored.kind !== 'saved' —— 保存した自分のチームは false
+                              (パス 120 がこの区別のために入れた欄)
+  ★ funding.isMock            options.isMock ?? true
+  ★ funding.accountingLinked  (options.accounting?.size ?? 0) > 0
+  ★ funding.stocksLinked      (options.portfolio?.size ?? 0) > 0
+  ★ assistant.keyConfigured   Boolean(ctx.token)
+  ★ emotions.keyConfigured    Boolean(ctx.token)
+```
+
+12 件に `as boolean` を足し、`stocks.isMock` は理由つきで台帳に載せた。**型検査は
+通ったまま** —— つまり死んだ枝の中に壊れたコードが隠れていたわけではない。
+出てきたのは別の物である。
+
+### 型を広げて初めて見えた欠陥 —— 何も繋いでいない人に「✅ 連携中」
+
+`FundingPage` の型は `typeof SNAPSHOT.funding` (画面の中で `as` して自分に戻している)
+なので、`accountingLinked` はリテラル `false` に狭まっていた。広げると枝が生き、
+実装を読むと:
+
+```ts
+// src/main/clients/funding.ts — Phase 6 の実 API 差込みまでのモック入力値
+const fetcherOptions = {
+  accounting: new Map(MOCK_ACCOUNTING),   // ← 必ず渡す
+  portfolio: new Map(MOCK_PORTFOLIO),     // ← 必ず渡す
+  isMock: true,
+};
+```
+
+`accountingLinked` / `stocksLinked` は「**この控えが会計CF / 株式評価額を持つか**」で、
+どこから来たかを含まない。だから会計ソフトを 1 つも繋いでいない利用者が「更新」を
+押すと、画面はこう刷っていた (`isMock: true` を立てたまま):
+
+```
+  会計ソフト連携: ✅ 連携中 ／ 株式投資連携: ✅ 連携中
+  凡例:           営業CF (会計・実績12か月)
+  DSCR の但し書き: （連携済みですが、返済予定月と重なる月の実績CF がありません）
+```
+
+同梱の見本を**実績**と名乗る形はパス 119 / 187 で 2 度直した家系で、これが 3 つ目。
+
+**直し方**: 出どころを型に足した (`shared/funding.ts` の `FundingLinkSource` =
+`'linked' | 'sample' | 'none'`)。`fundingLinkSource(hasData, isMock)` が判定を 1 つに
+持ち、`fundingLinkLabel` / `accountingCfSeriesLabel` が文言を持つ。`accountingLinked`
+の意味は変えていない (図を描くかの判断はこれで変わらない) —— 変えたのは**名乗り**だけ。
+
+### 残したゲート (両方向)
+
+`src/main/clients/__tests__/snapshotFieldWidth.test.ts`:
+
+1. **型の照合** —— 欄ごとに `SameWidth<typeof SNAPSHOT.x.y, ClientType['y']>` を
+   `T extends true` の制約で確かめる。ずれると `npm run typecheck` が落ちる
+   (`tsconfig.node.json` が `src/main` を含むので検査ファイルも型検査される)。
+2. **母集団の走査** —— `snapshot.ts` の直下に注記の無い真偽値が現れたら落ちる。
+   例外は `NARROW_BY_DESIGN` に理由つきで載せ、**載っているのに母集団から消えても
+   落ちる**。
+
+対照を 3 通り回した: `as boolean` を 1 つ外す → 型と走査の**両方**が鳴る /
+台帳の欄を `as boolean` にする → 「消えたら落ちる」が鳴る / 実物の `stocks.isMock` を
+`boolean` へ広げる → 一致と**対照の側**の 2 行が鳴る (対照が空でないことの確認)。
+画面の側も `fundingLinkLabel` を旧い三項に戻して jsdom の検査が落ちることを見た。
+
+### 残り
+
+- **`isMock` 6 件は今日つねに `true`** —— 型は広げたが、値が動く道はまだ無い。
+  実 API が入って `false` を返し始めたとき、画面の「同梱データ」バッジは
+  `payloadIsMock` (実行時の判定) が持つので壊れないが、**型の主張は初めて意味を持つ**。
+- **`FundingPage` の型は今も `typeof SNAPSHOT.funding`** である。実物の
+  `FundingSnapshot` を読めば幅は自動で合うが、renderer が `main/clients` を import
+  できない (`lint:imports`) ので、共有へ型を移すか parity 検査で留めるかの選択になる。
+  パス 62 / 80 / 116 と同じ判断で、**別のパスにする**。
+- ブラウザ版の funding は `not_implemented` なので `sample` を作れない。
+  非対称の原因は「デスクトップの fetcher が見本の Map を渡す」側に在るので、
+  Phase 6 で実 API が入れば消える。census の verdict にそう書いた。
+- `assistant` / `emotions` の `keyConfigured` は画面が `!keyConfigured` で分けており、
+  **枝は正しい** (鍵が在れば分析 UI が出る)。型が狭かっただけなので文言は触っていない。
