@@ -186,20 +186,27 @@ const VERDICTS = {
     + ' ★ なお `shared/tokenInput.ts` の `hasControlChars` (複数形) は**別のモジュール**で、'
     + 'JSON の包みの中を見られないという別の限界を持つ (パス 245)。名前が似ているだけである',
   depreciation:
-    '未読 (減価償却の計算。パス 268 の閉包で見えた —— 税の計算は画面が読み、'
-    + 'main 側の到達経路をまだ辿っていない)',
+    '非対称は起きない (実測・パス 272) —— 到達の鎖は `taxCalc.ts` 1 本だけで、'
+    + '**`taxCalc.ts` を import する main / preload のファイルは 0 件** (実測)。'
+    + '税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを'
+    + '**1 度も発しない**ので、ビルド間の非対称は原理的に起きない',
   hydroponicCrops:
-    '未読 (作物の台帳。パス 268 の閉包で見えた —— `hydroponicsControl` (非対称は起きない) '
-    + 'の下請けだが、否定で答える関数があるかは**読んでいない**)',
+    '非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。',
   hydroponics:
-    '未読 (水耕栽培の計算。パス 268 の閉包で見えた)',
+    '非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る '
+    + '(main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。'
+    + 'main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、'
+    + 'この鎖の否定で答える関数を 1 つも呼ばない (実測)',
   mutualFundsMetrics:
-    '未読 (投資信託の指標。パス 268 の閉包で見えた —— パス 122/123/226 で'
-    + 'null の枝を足した所だが、両ビルドの到達経路は**読んでいない**)',
+    '対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**2 つだけ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct` (`pct < RETURN_FLOOR_PCT` の 1 行)。**その述語は確かに越境する** —— `adviseService` の中で真の枝 (:586 警告を組む) と偽の枝 (:596 測れる集合から外す) の両方が使われる。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。',
   readNumeric:
-    '未読 (数の読み取り。パス 268 の閉包で見えた —— パス 80 で規則を 1 つにした所)',
+    '非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、'
+    + '**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。'
+    + 'その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、'
+    + 'この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、'
+    + '**片側しか呼ばない判定に非対称は宿らない**',
   savingsPlanning:
-    '未読 (貯蓄計画の計算。パス 268 の閉包で見えた)',
+    '非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは `RETURN_FLOOR_PCT` と `isImpossibleReturnPct` の 2 つだけで、**`isPlannableRate` / `isPlannableYears` はどちらの中からも呼ばれない** (`isImpossibleReturnPct` は 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。',
   radarPlot:
     '**欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち '
     + '`isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は'

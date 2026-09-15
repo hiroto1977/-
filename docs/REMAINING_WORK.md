@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **142** モジュール / 両ビルドが import **61** / うち否定で答えられる **31**（うち未読 **6**）。これは分母であって欠陥の一覧ではない。
+shared **142** モジュール / 両ビルドが import **61** / うち否定で答えられる **31**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -26587,23 +26587,23 @@ shared **142** モジュール / 両ビルドが import **61** / うち否定で
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ なお `shared/tokenInput.ts` の `hasControlChars` (複数形) は**別のモジュール**で、JSON の包みの中を見られないという別の限界を持つ (パス 245)。名前が似ているだけである |
-| `depreciation` | 0 | 1 | 未読 (減価償却の計算。パス 268 の閉包で見えた —— 税の計算は画面が読み、main 側の到達経路をまだ辿っていない) |
+| `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は `taxCalc.ts` 1 本だけで、**`taxCalc.ts` を import する main / preload のファイルは 0 件** (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを**1 度も発しない**ので、ビルド間の非対称は原理的に起きない |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
 | `eraseReport` | 2 | 3 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
 | `externalUrlGate` | 1 | 1 | 閉じている (パス 241 で 3 経路を実測) |
 | `freeeIntake` | 1 | 5 | 意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / `dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** (FreeePage / bankSubmission / docImports)。main が import するのは `NO_DEAL_INTAKE` と型だけで、**負で答える 3 関数の呼び出しは src/main・src/preload で実測 0 件**。ただし非対称は 1 段上に在る —— 落ちた件数を数える `FreeeDealIntake` を**作れるのは main の freee.ts だけ**で、ブラウザ版に freee の live 読みは無い (読むのは cursor だけ)。だからブラウザ版の 3 つの消費者は常に `NO_DEAL_INTAKE` を見て `null` を返す (注記が出ない)。**原因は「判定の非対称」ではなく「クライアントの不在」**で、funding (パス 265) と同じ形である |
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
 | `httpLimits` | 4 | 5 | 対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない) |
-| `hydroponicCrops` | 0 | 3 | 未読 (作物の台帳。パス 268 の閉包で見えた —— `hydroponicsControl` (非対称は起きない) の下請けだが、否定で答える関数があるかは**読んでいない**) |
-| `hydroponics` | 0 | 3 | 未読 (水耕栽培の計算。パス 268 の閉包で見えた) |
+| `hydroponicCrops` | 0 | 3 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。 |
+| `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 5 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
 | `inputCeiling` | 13 | 42 | 対称 (設計・パス 252 で新設) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳) |
 | `isoDate` | 2 | 23 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 |
-| `mutualFundsMetrics` | 0 | 1 | 未読 (投資信託の指標。パス 268 の閉包で見えた —— パス 122/123/226 でnull の枝を足した所だが、両ビルドの到達経路は**読んでいない**) |
+| `mutualFundsMetrics` | 0 | 1 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**2 つだけ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct` (`pct < RETURN_FLOOR_PCT` の 1 行)。**その述語は確かに越境する** —— `adviseService` の中で真の枝 (:586 警告を組む) と偽の枝 (:596 測れる集合から外す) の両方が使われる。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollama` | 1 | 4 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
-| `readNumeric` | 0 | 3 | 未読 (数の読み取り。パス 268 の閉包で見えた —— パス 80 で規則を 1 つにした所) |
-| `savingsPlanning` | 0 | 1 | 未読 (貯蓄計画の計算。パス 268 の閉包で見えた) |
+| `readNumeric` | 0 | 3 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
+| `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは `RETURN_FLOOR_PCT` と `isImpossibleReturnPct` の 2 つだけで、**`isPlannableRate` / `isPlannableYears` はどちらの中からも呼ばれない** (`isImpossibleReturnPct` は 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |
 | `scanTarget` | 1 | 2 | 対称 (実測・パス 247) |
 | `serviceAdvisor` | 4 | 4 | 対称 (実測・パス 268) —— 否定で答えるのは `adviseService` (`ok: false`) と、その中でだけ呼ばれる 4 つの `parse*AdviceInput` (**外部の消費者は 0 件**)。`adviseService` は main の 4 クライアント (real-estate / mutual-funds / uber-eats / demae-can) とブラウザ版の web-shim が呼び、**否定のあとの動作は同じ 1 行に畳まれる**: main は `throw new Error(r.message)` → action:invoke の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、ブラウザ版は `err('action_failed', r.message)`。`safeErrorMessage` の中身は `redactForMessage(msg, ERROR_MESSAGE_MAX_CHARS)` で、`err()` が掛けるものと**同じ関数・同じ天井**なので、code も文面も一致する。★ ただし**到達性**は 2026-09-15 まで非対称だった —— この 4 サービスは `LOCAL_SERVICES` なのに `action:invoke` が全サービスにトークンを要求しており、デスクトップ版では 4 つの advise が 1 度も呼ばれなかった (パス 267 で直した) |
 | `talent` | 1 | 3 | 対称 (実測・パス 260) —— 否定の枝を両側で読んだ: main は `loadTalentState` が `{ kind: 'unreadable', reason }` を返し (talent.ts:85 / :90)、ブラウザ版は `localStorage` が拒んでも同じ形を作る (web-shim.ts:1271)。そこから先は**両方が同じ 2 段**を通る —— `talentProvenance(stored)` → `buildTalentSnapshot(state, provenance)` (main/clients/talent.ts:143-144 / web-shim.ts:1273-1274)。画面は `snap.storedNote` を ⚠ つきで刷る (TalentPage.tsx:219-221)。`reviewLadder` は境界を越えない (唯一の呼び出しは shared/talent.ts:709 の `buildTalentSnapshot` の中) |
@@ -32895,3 +32895,85 @@ grep の件数だけで結論を出しかけた —— `fetch(` の 6 件はど�
   短い非秘密は伏せられる —— 引数名が `key` なら伏せるほうが安いという判断。
 - 出荷物 **11,889,532 B / 3,302,278 B** (両方 +196 B)。chain #201 (`redact.ts` は保護対象)。
 - **実機では確かめていない** (`redactSecrets` を直接呼んだ実測まで)。
+
+## パス 272 — 「main はこの問いを発しない」を 6 件読み切り、その**事実**に鍵を掛けた
+
+`lint:shared-judgement` の台帳は 2026-09-14 (パス 247) 以来「母集団は機械が、判断は散文が」
+という形で在る。母集団に入ったのに判定が無ければ落ち、判定が在るのに母集団から消えても落ちる ——
+**両方向に鳴る**。ところが台帳の 31 行のうち **6 行が `未読` のまま**で、
+これは「対称だろう」と書かなかった正直さの跡であって、読んだ跡ではなかった。
+
+今日その 6 件 (`depreciation` / `hydroponicCrops` / `hydroponics` / `mutualFundsMetrics` /
+`readNumeric` / `savingsPlanning`) を読み切った。**うち 1 件も欠陥ではなかった**。
+だが読み方そのものが、この台帳の**粒度の限界**を 2 度目に突きつけた。
+
+### 6 件は 2 本の鎖と 1 本の行き止まりに畳まれた
+
+どれも main 側の直接の import を持たない。閉包 (`sharedClosure`) が繋いだ道を端まで辿ると:
+
+- **鎖 A** — `main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → {hydroponics, readNumeric}`。
+  実測: `clients/hydroponics.ts:1` が取るのは **`buildHydroponicsSnapshot` 1 つだけ**
+  (残りは再輸出と型)。その関数の本体は `READING_FIELDS.map(…)` と `DEFAULT_CROP_LIST.map(…)` の
+  **2 つの射影しか無い** —— 否定で答える関数を 1 つも呼ばない。
+- **鎖 B** — `main → 4 クライアント (real-estate / mutual-funds / uber-eats / demae-can)
+  → serviceAdvisor → mutualFundsMetrics → savingsPlanning`。
+  `serviceAdvisor.ts:37` が取るのは定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct`
+  (`pct < RETURN_FLOOR_PCT` の 1 行) の **2 つだけ**。
+- **行き止まり** — `depreciation` の道は `taxCalc.ts` 1 本で、
+  **`taxCalc.ts` を import する main / preload のファイルは 0 件** (実測)。
+
+### 2 度目の教訓 —— module の到達と call の到達は違う
+
+`isoDate` の行 (パス 256) が既に書いていたことが、今日 3 行に増えた:
+
+> この台帳は**モジュール**単位で「両ビルドが import」を数えるが、
+> 非対称が宿るのは**両ビルドが呼ぶ関数**だけである。
+
+`savingsPlanning` はその最も純粋な例である。`mutualFundsMetrics` は確かに
+`isPlannableRate` / `isPlannableYears` を import しているが、それを呼ぶのは
+**将来評価額の計算**で、`serviceAdvisor` はその関数を import していない。
+**module の import の辺は在るが、call の辺が無い。**
+
+`mutualFundsMetrics` だけは述語が本当に越境する (`adviseService` の中で真の枝 :586 が
+警告を組み、偽の枝 :596 が測れる集合から外す)。だが**否定のあとの動作は
+両ビルドで同じ 1 つの実装の中に在る** —— 助言の*中身*を形づくるだけで `ok: false` を作らず、
+同じオブジェクトが両ビルドへ返る。だから「対称」と書いた。
+
+AST パーサを持たない (リポジトリの制約) ので、この粒度は綴りで辿るしかない。
+**辿った結果を散文に書くのは今日で 3 度目**で、そのたびに同じ限界に当たっている。
+
+### 散文が黙って偽になる日に、鳴るようにした
+
+`src/shared/__tests__/sharedJudgementReach.test.ts` (10 件)。
+留めるのは判定ではなく、**判定が乗っている事実**である:
+
+- main が `hydroponicsControl` から取るのは `buildHydroponicsSnapshot` 1 つだけ
+- `buildHydroponicsSnapshot` の本体は 2 つの射影だけ (否定で答える 11 関数を 1 つも呼ばない)
+- `serviceAdvisor` が `mutualFundsMetrics` から取るのは 2 つだけ
+- `serviceAdvisor` は `savingsPlanning` を import も call もしない
+- `isImpossibleReturnPct` は 1 行の比較 (下請けを呼ばない)
+- `taxCalc` を import する main / preload は 0 件
+
+**広げること自体は禁じていない。** 鳴ったら「**census の判定を読み直せ**」という合図である ——
+台帳の両方向のゲートは「モジュールが母集団に入ったか」しか見ないので、
+*同じモジュールのまま main 側が import を増やした*場合は**鳴らない**。
+そこが今日塞いだ穴である。
+
+### 対照 (3 本とも鳴った)
+
+| 壊した事実 | 鳴った ★ |
+| --- | --- |
+| `clients/hydroponics.ts` の import に `isSafeEc` を足す | 射影 1 つしか取らない |
+| `clients/index.ts` に `taxCalc` の import を足す | taxCalc を import する main / preload は 0 件 |
+| `serviceAdvisor.ts` に `savingsPlanning` の import を足す | savingsPlanning の述語を呼ばない |
+
+抽出器の対照も 4 本置いた (`import type { … }` を落とすこと・別モジュールが混ざらないこと)。
+**不在の主張 (「否定を呼ばない」) が空の検査にならない**ように、
+肯定側 (`READING_FIELDS.map(` が本体に在る) も同じテストで見ている。
+
+### 残り
+
+- **台帳の粒度は module のままである。** call 単位へ移すには AST が要る。
+  この検査は**判定が乗っている 6 つの事実**に鍵を掛けただけで、
+  母集団の数え方を直したわけではない。
+- 出荷物は **byte 単位で不変** (`scripts/` + 検査 + 文書だけ)。
