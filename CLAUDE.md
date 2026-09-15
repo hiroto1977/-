@@ -99,7 +99,17 @@ npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) 
                            #   台帳 153 誌で誌名も照合し、ISSN の検査数字も検算する (1 回しか引かれない誤 DOI を拾う)
 npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
-npm run lint:test-coverage # every service must have a test + an action registered
+npm run lint:test-coverage # サービスごとに `<id>.test.ts` が在り、**登録済みの action が
+                           #   すべてその中でクォート付きで現れる**こと。加えて `LIVE_ACTIONS` の
+                           #   各項はクライアントの `ACTIONS` を指す識別子ただ 1 つで (index.ts に
+                           #   直書きした action は検査を素通りする)、`ACTIONS` を export する
+                           #   クライアントは全部 `LIVE_ACTIONS` に載る (逆向き)。
+                           #   **action を持たないサービスは許される** —— 2026-09-15 実測で
+                           #   **76 のうち 48 が action を 1 つも登録していない** (ゲートの
+                           #   self-test にも「テストはあるが action 0 件 → 0 件鳴る」が在る)。
+                           #   2026-09-15 まで、この行は「every service must have a test +
+                           #   an action registered」と書かれていた —— **後半は偽**で、
+                           #   死んだ action を消せない理由として実際に私が引用した (パス 275)
 npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self-test のみ verify:all。
                            #   成果物への適用は ci.yml が inject-pwa 適用後に行う)。
                            #   雛形側 (index.html / inline-html.cjs の buildCsp) は

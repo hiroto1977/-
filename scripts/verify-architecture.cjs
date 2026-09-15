@@ -784,6 +784,38 @@ const METRICS = [
     },
   },
   {
+    /*
+     * **2026-09-15 · パス 276。** この行は「every service must have a test +
+     * an action registered」と書かれていた —— **後半が偽**で、
+     * `lint:test-coverage` は action の登録を求めていない (あのゲートの
+     * self-test に「テストはあるが action 0 件 → 0 件鳴る」が在る)。
+     *
+     * 偽の要求が害を出した実例: パス 275 で死んだ action
+     * (`docstudio/list-collections`) を消せない理由として、私がこの行を引用した。
+     * **要求の主張は検算できないので、代わりに検算できる事実に置き換えた** ——
+     * action を 1 つも持たないサービスの数。action が増えたらこの数が動くので、
+     * 直す人は 1 つの数字を書き換えるだけでよい (localStorage の台帳と同じ扱い)。
+     */
+    name: 'CLAUDE.md: services registering no action',
+    docFile: 'CLAUDE.md',
+    docPattern: /\*\*76 のうち (\d+) が action を 1 つも登録していない\*\*/,
+    compute: () => {
+      const idSrc = readFileSafe(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
+      const m = idSrc.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
+      if (!m) return null;
+      const ids = [...m[1].matchAll(/^\s*'([a-z][a-z0-9-]*)'\s*,/gm)].map((x) => x[1]);
+      // 走査の生死 —— id が読めていないなら数えない (0 を「健全」と読ませない)。
+      if (ids.length === 0) return null;
+      let none = 0;
+      for (const id of ids) {
+        const f = path.join(REPO_ROOT, 'src/main/clients', `${id}.ts`);
+        if (!fs.existsSync(f)) continue;
+        if (!readFileSafe(f).includes('export const ACTIONS')) none += 1;
+      }
+      return none;
+    },
+  },
+  {
     name: 'CLAUDE.md: sessionStorage ledger entry count',
     docFile: 'CLAUDE.md',
     docPattern: /sessionStorage (\d+)。/,
