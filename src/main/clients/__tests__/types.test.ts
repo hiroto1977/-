@@ -344,13 +344,30 @@ describe('redactSecrets — ヘッダの値', () => {
     );
   });
 
-  it('Google の API キーは URL に載っていても伏せる', () => {
-    // YouTube は `?key=…` の形でキーを URL に載せる (API の仕様)。
-    // URL ごと書き出された場合に備えて、接頭辞でも拾えるようにしておく。
+  /*
+   * **2026-09-15 (パス 271) に出力が変わった。**
+   *
+   * ここは元々 `key=AIza[REDACTED]` を留めていた —— 注記が
+   * 「URL ごと書き出された場合に備えて、**接頭辞でも拾えるようにしておく**」
+   * と言っているとおり、URL という運び手を**接頭辞の規則で**覆っていた。
+   * つまり覆えていたのは **発行元が鍵に接頭辞を付けている場合だけ**で、
+   * 接頭辞を持たない鍵が `?api_key=` に載れば素通りした (実測 6 形)。
+   *
+   * パス 271 で `?名前=値` そのものを運び手として足したので、いまは
+   * クエリの規則が先に当たり、**値を丸ごと** `[REDACTED]` にする。
+   * 接頭辞が出力から消えるが、どの発行元かは引数名 (`key=`) と
+   * ホスト (`googleapis.com`) が既に語っているので読み手は困らない。
+   */
+  it('Google の API キーは URL に載っていても伏せる (値は丸ごと)', () => {
     const url = 'https://www.googleapis.com/youtube/v3/channels?id=UC1&key=AIzaSyD9f2c1a8e4b';
     expect(redactSecrets(url)).toBe(
-      'https://www.googleapis.com/youtube/v3/channels?id=UC1&key=AIza[REDACTED]',
+      'https://www.googleapis.com/youtube/v3/channels?id=UC1&key=[REDACTED]',
     );
+  });
+
+  it('★ 接頭辞を持たない鍵も、クエリに載れば伏せる (パス 271 で足した運び手)', () => {
+    const url = `https://h.test/v1/x?id=1&api_key=${'q'.repeat(39)}`;
+    expect(redactSecrets(url)).toBe('https://h.test/v1/x?id=1&api_key=[REDACTED]');
   });
 
   it('資格情報を運ばないヘッダは触らない', () => {

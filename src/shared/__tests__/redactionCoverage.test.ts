@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createRequire } from 'node:module';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { readOriginalDir, readOriginalSource } from './originalSource';
 import { redactSecrets } from '../redact';
 import { SERVICE_CREDENTIAL_USE, collectsCredential } from '../credentialUse';
 import type { ServiceId } from '../serviceId';
@@ -30,6 +33,18 @@ const { credentialHeaderNames, scanSources, sourceFiles, selfTest } = req(
  * 消えることだけを見る。字面を比べると、比べているのは自分の写しになる。
  */
 const SECRET = 'Zk9dQ2vX7pL4mN1sT8rW6yB3hJ0uA5cE';
+
+/** repo の根 (この検査は `src/shared/__tests__/` に在る)。 */
+const REPO = resolve(__dirname, '../../..');
+
+/** 行コメントを落とす —— 注記の中の `?key=${…}` を走査が掴まないため。 */
+function stripLineComments(text: string): string {
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .split('\n')
+    .filter((l) => !/^\s*(\/\/|\*)/.test(l))
+    .join('\n');
+}
 
 /** 失敗応答が資格情報ヘッダを映して返すときの、実際に見かける 3 つの形。 */
 function renderings(name: string): { form: string; body: string }[] {
@@ -413,6 +428,128 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * なって、上の `toContain` が落ちる。つまりこの組は**両方向に鳴る**。
    * ここでは散文が巻き添えにならないことを、新しく足した 6 形について見る。
    */
+  /*
+   * **3 本目の運び手 —— URL のクエリ引数。** (パス 271)
+   *
+   * 上の 2 つの describe は**ヘッダ名**と**JSON 項目名**を数えている。
+   * `?key=…` はそのどちらでもなく、2026-09-15 まで**どの規則も当たらなかった**。
+   *
+   * このアプリがクエリに資格情報を載せるのは 1 か所 (`youtube.ts` の `&key=`) で、
+   * それが漏れていなかったのは **Google が鍵に `AIza` を付けているから** ——
+   * 運び手を知っていたからではない。走査で「クエリに資格情報を載せている所」を
+   * 数え、台帳と**両方向**に突き合わせる: 新しい所が増えたら鳴り、
+   * 台帳の行が消えても鳴る。
+   */
+  describe('伏字の網 — 3 本目の運び手 (URL のクエリ引数・パス 271)', () => {
+    const LONG = 'Z'.repeat(40);
+
+    /** 資格情報を名乗るクエリ引数の綴り。規則が当たらなければ落ちる。 */
+    const QUERY_NAMES = [
+      'api_key',
+      'api-key',
+      'apikey',
+      'apiKey',
+      'x-api-key',
+      'access_token',
+      'accesstoken',
+      'refresh_token',
+      'client_secret',
+      'token',
+      'secret',
+      'password',
+      'auth',
+      'key',
+    ] as const;
+
+    it.each(QUERY_NAMES)('★ ?%s= の値は伏せられる (名前は残る)', (name) => {
+      const out = redactSecrets(`https://h.test/v1/x?id=1&${name}=${LONG}&next=2`);
+      expect(out).not.toContain(LONG);
+      // 名前と前後の引数はそのまま —— どの引数だったかは原因究明に要る。
+      expect(out).toContain(`${name}=[REDACTED]`);
+      expect(out).toContain('id=1');
+      expect(out).toContain('next=2');
+    });
+
+    /*
+     * 逆向き —— 規則が広すぎないこと。**巻き添えにすると 401 の理由が読めなくなる。**
+     */
+    it.each([
+      ['短い id は伏せない', 'https://h.test/p?key=1'],
+      ['資格情報でない引数は伏せない', 'https://h.test/p?part=snippet&id=UC1'],
+      ['語の途中の key は伏せない (monkey)', 'https://h.test/p?monkey=abcdefghij'],
+      ['散文の key=value は伏せない', 'the key=value form is common'],
+      ['`?` も `&` も無い形は伏せない', 'token=abcdefghijklmnop in prose'],
+    ])('★ %s', (_label, text) => {
+      expect(redactSecrets(text)).toBe(text);
+    });
+
+    /*
+     * **実物の 1 か所。** `youtube.ts` は `&key=${apiKey}` で Google API キーを
+     * クエリに載せる。2 つの規則が重なって当たるが、**重なりに依存しない**ことを
+     * 見る —— 接頭辞を持たない鍵でも、クエリの規則だけで消える。
+     */
+    it('★ youtube の実物の形 (AIza 付き) が消える', () => {
+      const key = `AIzaSy${'A'.repeat(33)}`;
+      const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=UC1&key=${key}`;
+      const out = redactSecrets(`fetch failed: ${url}`);
+      expect(out).not.toContain(key);
+      expect(out).toContain('key=[REDACTED]');
+    });
+
+    it('★ 接頭辞を持たない鍵でも、クエリに載れば消える (発行元の親切に依らない)', () => {
+      const key = 'q'.repeat(39);
+      const out = redactSecrets(`https://h.test/v1/x?key=${key}`);
+      expect(out).not.toContain(key);
+    });
+
+    /*
+     * **走査 —— クエリに資格情報を載せている所の母集団。**
+     * 台帳と両方向で突き合わせる (パス 117 / 210 と同じ流儀)。
+     */
+    const QUERY_CREDENTIAL_SITES: Readonly<Record<string, string>> = {
+      'src/main/clients/youtube.ts':
+        'Google API キーを `&key=${key}` でクエリに載せる (YouTube Data API v3 の仕様。ヘッダでは受け付けない)',
+    };
+
+    function scanQueryCredentialSites(): string[] {
+      const roots = ['src/main/clients', 'src/shared/api', 'src/renderer/data'];
+      const found = new Set<string>();
+      // 資格情報らしい名前のクエリ引数へ、変数を差し込んでいる形。
+      const rx = /[?&](?:api[_-]?key|access[_-]?token|token|secret|auth|key)=\$\{/i;
+      for (const root of roots) {
+        const dir = resolve(REPO, root);
+        if (!existsSync(dir)) continue;
+        for (const name of readOriginalDir(dir)) {
+          if (!name.endsWith('.ts')) continue;
+          const rel = `${root}/${name}`;
+          const text = stripLineComments(readOriginalSource(resolve(dir, name)));
+          if (rx.test(text)) found.add(rel);
+        }
+      }
+      return [...found].sort();
+    }
+
+    it('★ 走査が生きている (的を外していない)', () => {
+      expect(scanQueryCredentialSites().length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('★ クエリに資格情報を載せる所は台帳と一致する (両方向)', () => {
+      expect(scanQueryCredentialSites()).toEqual(Object.keys(QUERY_CREDENTIAL_SITES).sort());
+    });
+
+    it('台帳の行にはすべて理由がある', () => {
+      for (const [file, why] of Object.entries(QUERY_CREDENTIAL_SITES)) {
+        expect(why.trim().length, `${file} の理由が短い`).toBeGreaterThan(20);
+      }
+    });
+
+    it('★ 走査は新しい所を拾う (対照・合成の標本)', () => {
+      const rx = /[?&](?:api[_-]?key|access[_-]?token|token|secret|auth|key)=\$\{/i;
+      expect(rx.test('const u = `https://h/x?api_key=${k}`;')).toBe(true);
+      expect(rx.test('const u = `https://h/x?part=snippet&id=${ch}`;')).toBe(false);
+    });
+  });
+
   it.each([
     'sl. の後に空白が在る文',
     'version 1// は区切りではない',

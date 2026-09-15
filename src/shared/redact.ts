@@ -63,7 +63,9 @@
  *     **1/<gid>:<hex>** (Asana) / ATATT… (Atlassian) / **eyJ….….…** (JWT —
  *     Microsoft 365 / Salesforce) / **00D…!…** (Salesforce セッション)
  *   - 接頭辞を持たない 3 形 (Cloudflare / LINE / Discord) は模様で見分けられない
- *     ので、ヘッダ名と JSON 項目名の規則が受け持つ (census が測る)
+ *     ので、ヘッダ名・JSON 項目名・**URL のクエリ引数**の規則が受け持つ (census が測る)
+ *   - URL のクエリ引数 (`?api_key=` / `?access_token=` / `?token=` / `?key=` …) ——
+ *     **3 本目の運び手。パス 271 で足した** (それまで 6 形すべて素通り)
  *   - JSON token fields (access_token / refresh_token / token / api_key /
  *     client_secret / sharedSecret / password / …)
  */
@@ -264,6 +266,46 @@ export function redactSecrets(input: string): string {
       .replace(
         /"(access_token|refresh_token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
         '"$1":"[REDACTED]"',
+      )
+      /*
+       * **3 本目の運び手 —— URL のクエリ引数。** (2026-09-15 · パス 271)
+       *
+       * ここまでの規則が見ているのは 2 本だけである: **ヘッダ名**
+       * (`authorization:` / `api-key:` …) と **JSON の項目名**
+       * (`"access_token":` …)。このファイルの冒頭も、接頭辞を持たない鍵を
+       * 裸では伏せない理由として「ヘッダ名と JSON 項目名の規則が受け持つ」と
+       * 宣言している。**`?key=…` はそのどちらでもない。**
+       *
+       * 実測 (2026-09-15・`redactSecrets` を直接呼んだ):
+       *
+       *   ?api_key=Z…  ?apikey=Z…  ?access_token=Z…
+       *   ?token=Z…    ?auth=Z…    ?key=Z…          —— **6 形すべて素通り**
+       *
+       * このアプリがクエリに資格情報を載せる所は 1 つ在る ——
+       * `main/clients/youtube.ts` の `&key=${apiKey}` (Google API キー)。
+       * それが今日漏れないのは、**Google が鍵に `AIza` を付けているから**である
+       * (接頭辞の規則が拾う。実測で確認した)。つまり**運び手を知っていたからでは
+       * なく、発行元の親切に依っていた**。鍵の形が変わるか、接頭辞を持たない
+       * サービスが `?api_key=` を使い始めた日に、そこは黙って裸になる。
+       *
+       * **今日の実害は測って 0 だった** —— `src/` の例外文面で URL を
+       * 差し込んでいる所は 1 つも無く (`FetchError` は `ctx.serviceId` だけを
+       * 名乗る)、`new URL()` の失敗も `{ok:false, reason}` に畳まれる。
+       * これは**深さの守り**で、塞いだのは運び手である。
+       *
+       * 名前は残して値だけ伏せる (どの引数だったかは原因究明に要る)。
+       * 値の下限を 8 字にしてあるのは `?key=1` のような id を巻き添えに
+       * しないため。上限は置かない —— 区切り (`&` / 空白 / `#` / 引用符) で
+       * 止まるので、長い鍵でも尻尾が残らない。
+       *
+       * **`?sig=` / `?signature=` は入れていない。** 事前署名 URL の署名は
+       * 同じ class だが、このアプリは 1 つも作らない (実測 0 件) ので、
+       * 使っていない綴りを規則へ足すと「効いているように読める」だけになる
+       * (このファイルが 2026-08-23 に学んだこと)。
+       */
+      .replace(
+        /([?&])((?:[a-z0-9]+[_-])?(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|token|secret|password|auth|key))(=)([^&\s"'`#<>]{8,})/gi,
+        (_m, lead: string, name: string, eq: string) => `${lead}${name}${eq}[REDACTED]`,
       )
   );
 }
