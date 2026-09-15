@@ -124,7 +124,20 @@ npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) 
                            #   ISSN を埋め込む DOI (APA / Elsevier PII / Wiley j. / SAGE) は台帳 164 誌で、誌の略号を
                            #   持つ DOI (INFORMS / Oxford / Wiley / Springer / Annual Reviews / MIT / Emerald) は
                            #   台帳 153 誌で誌名も照合し、ISSN の検査数字も検算する (1 回しか引かれない誤 DOI を拾う)
-npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
+npm run lint:charset       # 他文字種 6 ブロック (キリル / ハングル / アラビア / タイ /
+                           #   デーヴァナーガリー / ヘブライ) と簡体字の混入
+                           #   (CJK は共有ブロックなので字を列挙するしかない)。
+                           #   **加えて制御・不可視文字の 4 群** —— C0/DEL・C1・
+                           #   **双方向制御 (Trojan Source · CVE-2021-42574)**・不可視文字
+                           #   (SHY / ZWSP / U+2060-2064 / BOM)。双方向制御は
+                           #   **読める物と走る物が違うソース**を作れるので攻撃手法であり、
+                           #   レビューでは見えない。ZWJ / ZWNJ は絵文字の連結に要るので
+                           #   **意図して外す**。正当な出現 (NUL の標本・不可視文字を剥がす
+                           #   検査の標本・CSV の BOM) は ALLOWLIST に件数と理由つきで載る。
+                           #   2026-09-15 まで、この行は制御・不可視の 4 群に 1 字も触れて
+                           #   おらず、**ゲートより狭く書かれていた** (パス 279。同じ CLAUDE.md
+                           #   の出荷物の節には 2026-09-14 から書かれていたので、
+                           #   1 つの文書が同じ事実を一方で述べ他方で落としていた)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # サービスごとに `<id>.test.ts` が在り、**登録済みの action が
                            #   すべてその中でクォート付きで現れる**こと。加えて `LIVE_ACTIONS` の
@@ -149,13 +162,32 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / �
                            #   道 (overrides / devDependencies の範囲) を問わず 1 つの台帳に載せ、
                            #   宣言の消失・指定の緩み・lockfile の解決版 (入れ子の複製も) を見る。
                            #   **床が今日の勧告にまだ十分かは網が要る** → `npm run audit:floors`
-                           #   (CI では走らせない。定期点検の道具)
+                           #   (CI では走らせない。定期点検の道具)。
+                           #   規則は全部で 7 本 —— 上に書いた 5 本のほかに
+                           #   ① **lockfile が読めてパッケージ数が床以上** (実測 647 / 床 400。
+                           #   走査が死んで「0 件だから健全」にならないため) と
+                           #   ⑥ **台帳の理由が空でないこと** が在る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
                            #   localStorage 21 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
                            #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**・
                            #   **ハードリセット (すべてのデータを削除) が台帳の全行を覆うこと** (規則 11、パス 136)
-npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
+npm run lint:shell         # **追跡されている `.sh` すべて** (git ls-files。`scripts/` 直下だけを
+                           #   読んでいた頃は `tools/deploy.sh` や `scripts/ci/foo.sh` が死角だった ——
+                           #   git が使えない環境では `scripts/` 直下に落とすが、黙って 0 件にはしない)。
+                           #   規則 6 本: ① bash shebang が 1 行目 ② `set -euo pipefail` が行頭
+                           #   (関数の中だけでは「このスクリプトは strict」と言えないので行頭アンカー)
+                           #   ③ `bash -n` 構文 ④ **遠隔コードの実行 (`curl | sh`) は台帳のみ** ——
+                           #   取得元が入れ替われば任意コードが利用者の権限で走るので、
+                           #   「何を・どれくらい固定して・なぜ」を書く (今 2 本: nvm と ollama の install.sh)
+                           #   ⑤ **後戻りできない書き込みと秘密の扱いは台帳のみ** (双方向 —— 危ない操作が
+                           #   無くなったのに台帳に残っていても落ちる。古い登録は次に足された 1 本を隠す)
+                           #   ⑥ **台帳に載った本の `--self-test` を実際に走らせる** (自己テストを書いても
+                           #   誰も走らせなければ「在るのに何も守っていない検査」になる ——
+                           #   ci.yml に無いゲート・主プロセスを通さない smoke と同じ形)。
+                           #   2026-09-15 まで、この行は「scripts/*.sh: bash -n + strict mode」だけで、
+                           #   **母集団も規則 ④⑤⑥ も落としていた** (パス 279。落ちていた 3 本が
+                           #   供給網・破壊的操作・秘密という一番重い側である)
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable と、
                            #   **理由が書かれていない pragma** —— 無言の pragma はその行の変異体を
                            #   消すので、測っていない範囲が「100%」として報告される)

@@ -1,8 +1,11 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 170 個の `file:line` 参照 + 5 個のライブメトリクスが
-> 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
-> commit `ff4f6ab` 時点で **100% コードと一致**。
+> 自己検証: `npm run verify:arch` で 601 個の `file:line` 参照 + 38 個のライブメトリクスが
+> 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
+> なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
+> 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
+> 下の §「同じ事実に 4 つの数字が並んでいた —— 要約の数を誰も見ていなかった」
+> (2026-09-07) が名指しした形が、**この見出しの中に残っていた。**
 
 ---
 
@@ -2466,7 +2469,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 6 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | `file:line` 参照 + ライブメトリクスの検証 (数は冒頭の要約が持つ — ここに写すと 3 つ目の数字になる) |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / window.open / 未秘匿のエラー本文 / エスケープの再実装 / Ollama write-side endpoints) |
 | `scripts/lint-network-targets.cjs` | `lint:network-targets` | **送り先ホストが変数で決まる通信**を双方向台帳で管理 (新規は fail / 直したら消す) |
 | `scripts/lint-url-encoding.cjs` | `lint:url-encoding` | invariant #6 を機械化。通信呼び出しに渡る URL の authority より後ろに生の `${…}` があれば fail (束縛時の `encodeURIComponent` も認める)。ホストは `lint:network-targets` の担当、画面に出すリンクは #5 の担当 |
@@ -2481,7 +2484,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 2. **行範囲**: 行番号がファイルサイズに収まる
 3. **シンボル局所性 (strict)**: doc が名前を挙げているシンボル (例 `isServiceId`) が
    **cited line から ±15 行以内に存在する**。drift した場合は実際の行番号を出力。
-4. **ライブメトリクス**: doc の数値 (22 services, 11 IPC, 30 mutated modules, ...) を **実コードから再計算** して一致確認
+4. **ライブメトリクス**: doc の数値 (サービス数・IPC ハンドラ数・変異検査の対象数ほか) を **実コードから再計算** して一致確認 (具体的な数は下の metrics 表が持つ — ここに写すと腐る)
 
 ### 事業・数値の手入力 (全画面共通)
 

@@ -157,6 +157,23 @@ function countOccurrences(text, pattern) {
   return [...text.matchAll(pattern)].length;
 }
 
+/**
+ * 名前つきの配列リテラルの中の `name:` を数える (パス 279)。
+ *
+ * 綴りではなく**構造**で数える —— 規則の表を `[{ name, re }, …]` で持つ走査
+ * (`lint-charset.cjs` の SCRIPT_RANGES / INVISIBLE_RANGES) は、規則が増えれば
+ * 要素が増える。読めなかったときは `null` を返す: 0 を返すと「規則が 0 本でも
+ * 散文が 0 と書いてあれば一致」になり、走査の死が合格に化ける。
+ */
+function countNamedEntries(relFile, constName) {
+  const src = readFileSafe(path.join(REPO_ROOT, relFile));
+  if (src === null) return null;
+  const m = src.match(new RegExp(`const ${constName} = \\[([\\s\\S]*?)\\n\\];`));
+  if (m === null) return null;
+  const n = countOccurrences(m[1], /\bname:\s*'/g);
+  return n === 0 ? null : n;
+}
+
 // ---------------------------------------------------------------------------
 // Phase 1 — file:line reference verification
 // ---------------------------------------------------------------------------
@@ -615,6 +632,23 @@ const METRICS = [
         .filter((l) => !/SCAFFOLD/i.test(l)).length;
     },
   },
+  /*
+   * **このゲート自身の届く範囲。** (パス 279)
+   *
+   * `docs/ARCHITECTURE.md` の冒頭 (最初に読まれる 1 行) は 2026 年前半から
+   * 「170 個の file:line 参照 + 5 個のライブメトリクス」と書いたままで、実測は
+   * 601 と 37 だった —— **4 倍と 7 倍の過小申告**。同じ文書の §「同じ事実に 4 つの
+   * 数字が並んでいた —— 要約の数を誰も見ていなかった」(2026-09-07) が名指しした
+   * 失敗の形が、**その文書自身の見出しに残っていた**。
+   *
+   * 参照数は既に metric に在ったが (表の 1 行)、要約の行と metric の**個数**は
+   * 誰も見ていなかった。自分の大きさを自分で数える。
+   */
+  {
+    name: 'verify:arch live metric count',
+    docPattern: /(\d+) 個のライブメトリクス/,
+    compute: () => METRICS.length,
+  },
   {
     name: 'verify:arch ref count',
     docPattern: /`file:line` 参照数 \| (\d+) /,
@@ -813,6 +847,38 @@ const METRICS = [
         if (!readFileSafe(f).includes('export const ACTIONS')) none += 1;
       }
       return none;
+    },
+  },
+  /*
+   * パス 279 で `lint:charset` / `lint:shell` の説明を実物に合わせたとき、
+   * 規則の**数**を散文へ書いた。数を書いたら検算を付ける (パス 145 / 278 と同じ扱い) ——
+   * 規則が増えても減っても散文が黙るなら、直したばかりの過小申告がまた戻る。
+   *
+   * 数え方は**名前つきの const の中の `name:` の数**にする (綴りではなく構造)。
+   * 走査が死んだら null を返して「0 だから健全」と読ませない。
+   */
+  {
+    name: 'CLAUDE.md: lint:charset script blocks',
+    docFile: 'CLAUDE.md',
+    docPattern: /他文字種 (\d+) ブロック/,
+    compute: () => countNamedEntries('scripts/lint-charset.cjs', 'SCRIPT_RANGES'),
+  },
+  {
+    name: 'CLAUDE.md: lint:charset invisible groups',
+    docFile: 'CLAUDE.md',
+    docPattern: /\*\*加えて制御・不可視文字の (\d+) 群\*\*/,
+    compute: () => countNamedEntries('scripts/lint-charset.cjs', 'INVISIBLE_RANGES'),
+  },
+  {
+    name: 'CLAUDE.md: lint:shell remote-exec allowlist size',
+    docFile: 'CLAUDE.md',
+    docPattern: /今 (\d+) 本: nvm と ollama の install\.sh/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-shell.cjs'));
+      const m = src.match(/const REMOTE_EXEC_ALLOWLIST = \{([\s\S]*?)\n\};/);
+      if (m === null) return null;
+      const n = [...m[1].matchAll(/^ {2}'[^']+':\s*\{/gm)].length;
+      return n === 0 ? null : n;
     },
   },
   {
