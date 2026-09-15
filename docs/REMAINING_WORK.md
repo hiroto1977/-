@@ -13923,7 +13923,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **107 ファイル / 282 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13981,7 +13981,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
-| `src/shared/api/cursor.ts` | 2 |
 | `src/shared/connectors/connectorRegistry.ts` | 2 |
 | `src/shared/num.ts` | 2 |
 | `src/shared/talent.ts` | 2 |
@@ -14024,6 +14023,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/StoragePage.tsx` | 1 |
 | `src/renderer/pages/TalentPage.tsx` | 1 |
 | `src/shared/api/canva.ts` | 1 |
+| `src/shared/api/cursor.ts` | 1 |
 | `src/shared/fxCurrency.ts` | 1 |
 | `src/shared/httpLimits.ts` | 1 |
 | `src/shared/hydroponicsControl.ts` | 1 |
@@ -32311,3 +32311,94 @@ const fetcherOptions = {
   Phase 6 で実 API が入れば消える。census の verdict にそう書いた。
 - `assistant` / `emotions` の `keyConfigured` は画面が `!keyConfigured` で分けており、
   **枝は正しい** (鍵が在れば分析 UI が出る)。型が狭かっただけなので文言は触っていない。
+
+## パス 266 (2026-09-15) — **日次利用の 5 欄が、鍵の不在を「0 行 / 採択率 0%」として刷っていた**
+
+### まず当たって外れた調査 — `as const` の残り 46 サービスに害は無い
+
+パス 265 の残りを最初に追った。「`FundingPage` の型は今も `typeof SNAPSHOT.funding`」で、
+同じ形がほかに何件在るか。**型検査器で総当たりした** (`.p266/` の probe · 66 の
+`*Snapshot` を宣言するクライアントについて `const c: typeof SNAPSHOT[id] = clientValue`
+を並べ、`tsc` のエラーを読む):
+
+```
+  見本が実物より狭い  46 / 66 サービス
+  ずれの内訳          文字列リテラル (12 件) と固定長タプル (40 件) だけ
+```
+
+**どちらも害が無い。** 画面がそれらを比べている箇所を数えると 0 件で
+(`=== 'all'` / `switch` / `.length === 0` の総当たり)、`ShigyoConsole` の
+`recentConsultations.length === 0` は**宣言された広い型** (`ShigyoSnapshot`) を
+受け取るのでタプルの狭まりが届かない。**パス 265 がこの家系の害のある部分
+(真偽値) を閉じていて、残りは表示だけである** —— 次のパスで再訪しないために
+測った結果を書き残す。
+
+### 見つけた欠陥 — 同じモジュールの冒頭に書いてある規則を、5 欄が守っていなかった
+
+`shared/api/cursor.ts` の docblock はこう書いてある (パス 263 より前から):
+
+> 未知のキーは黙って捨て、**欠けている数値は 0 ではなく「取れなかった」として扱う**
+> (0 と欠測を混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
+
+パス 263 は封筒 (`readRows`) と支出の金額 (`spendUsd`) をこの規則へ寄せた。
+**日次利用の行の中は `num()` で 0 に倒したまま残っていた** —— `linesAdded` /
+`linesAccepted` / `tabsShown` / `tabsAccepted` / `requests`、それに支出の
+`fastPremiumRequests`。実測すると 2 つの面で嘘になる:
+
+```
+  ① 採択率が「0%」になる
+     {totalLinesAdded: 5000} だけが返った日 (acceptedLinesAdded が無い)
+       → linesAccepted = 0 → acceptRateOf(0, 5000) = 0
+       → 画面のバッジ「0%」・行に「採用 0 行」
+     「提案の 0% しか採用しなかった」は測った結果に見えるが、鍵が無かっただけ。
+
+  ② リクエスト数が「4 つのうち 1 つだけを数えた値」になる
+     requests = num(composerRequests) + num(chatRequests)
+              + num(agentRequests) + num(cmdkUsages)
+     {composerRequests: 40} だけが返った日 → 画面「リクエスト 40」
+     これはその日の総数ではない。**足りない合計は合計ではない**
+     (パス 54 / 226 / 263 が 3 度当てた規準)。
+```
+
+`overCounted` (⚠️ と「Cursor 側の集計が噛み合っていない」の段落) は
+**`total > 0` の守りが既に在るので嘘にならない** —— 0 に倒れた側が分母なら
+判定は false になる。ここは直す必要が無かったので触っていない。
+
+### 直し方
+
+- `num()` → `readNum()` (`number | null`)。**`num` は 1 つも残っていない** (全 9 経路)。
+- `CursorUsageDay` の 5 欄と `CursorSpend.fastPremiumRequests` が `number | null`。
+- `sumOrNull(parts)` —— **1 項目でも `null` なら合計を作らない**。
+  どの項目が欠けたかは持たない (画面が刷るのは「—」だけなので、区別しても
+  出す場所が無い。必要になったら項目ごとに返す形へ広げる)。
+- `acceptRateOf` / `isOverCounted` が `number | null` を受け、`null` なら
+  率は `null`・判定は `false`。
+- `CursorPage` に `qty(n)` (桁区切り + 「—」)。5 欄と高速リクエストを通す。
+
+### 検査と対照
+
+既存の検査 **6 本が古い期待を留めていた** (「欠けている数値は 0、率は null」
+「★ 欄が欠けていても 0 になり」「★ 数でない値・NaN・Infinity も 0 に倒す」ほか)。
+どれも「落ちないこと」は正しく留めていたが、**「0 と言うこと」まで仕様として
+固定していた**。期待を書き換え、理由を検査の中に書いた (パス 263 と同じ形)。
+足したのは shared 1 + jsdom 2 で、対照は 3 本すべて鳴った:
+
+```
+  readNum を 0 倒しに戻す          → 6 件 (shared 3 / main 2 / … )
+  sumOrNull を「読めた分だけ足す」 → 4 件
+  画面の qty(null) を 0 にする     → jsdom 1 件
+```
+
+**対照 2 で jsdom が鳴らなかったのは正しい** —— jsdom の検査は組み立て済みの
+控えを渡すので `normalizeUsage` を通らない。画面の仕事 (`null` を「—」で刷る) と
+正規化の仕事 (欠測を `null` にする) は別の事実で、別の検査が持つ。
+
+### 残り
+
+- **`sumOrNull` は「どの項目が欠けたか」を持たない。** 4 つのうち 3 つ読めていても
+  「—」になるので、利用者は「全部読めなかった」と区別できない。画面に出す場所が
+  無いので今回は足していない。
+- `date` が読めない行は今も空文字で、`title` が「日付不明」になる (パス 188 の
+  `toIsoDate`)。**日付は量ではない**ので 0 倒しの家系には入らない。
+- 残り 10 のネットワーククライアントは依然「欄が空なら空として出る」まま
+  (パス 264 が 1 件ずつ読んで「文を作っていない」と裁定した通り)。

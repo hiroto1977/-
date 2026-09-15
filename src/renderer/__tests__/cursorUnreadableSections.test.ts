@@ -147,4 +147,54 @@ describe('Cursor の画面 — 読めなかった節', () => {
     expect(text).toContain('合計は出せません');
     expect(text).not.toContain('$0.00');
   });
+
+  /*
+   * **日次利用の 5 欄** (2026-09-15 · パス 266)。パス 263 は封筒と支出の金額を
+   * 直したが、行の中の数値は `num()` で 0 に倒したままだった。だから
+   * `acceptedLinesAdded` が欠けた日に画面は「採用 0 行」と刷り、
+   * `acceptRateOf(0, 5000)` が 0 を返して**バッジが「0%」**になる ——
+   * 「提案の 0% しか採用しなかった」は測った結果に見えるが、鍵が無いだけである。
+   */
+  it('★ 行の中の読めない数値を 0 として刷らず、率も作らない', async () => {
+    const text = await render({
+      members: [], spend: [],
+      usage: [
+        {
+          date: '2026-09-01', active: true,
+          // 総追加行は読めたが、採用行・Tab・リクエストは読めなかった日。
+          linesAdded: 5000, linesAccepted: null, acceptRate: null, overCounted: false,
+          tabsShown: null, tabsAccepted: null, requests: null, model: 'example-model',
+        },
+      ],
+      totals: { members: 0, activeDays: 1, spendUsd: 0 },
+      intake: { members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0 },
+    });
+    // 読めた欄はそのまま出る (何でも「—」にしているのではない)。
+    expect(text).toContain('追加 5,000 行');
+    expect(text).toContain('採用 — 行');
+    expect(text).toContain('Tab —/—');
+    expect(text).toContain('リクエスト —');
+    // **「0%」を刷らない。** これが「提案の 0% しか採用しなかった」に見える文面。
+    expect(text).not.toContain('0%');
+    expect(text).not.toContain('採用 0 行');
+  });
+
+  it('★ 対照: 4 項目すべて読めた日は合計と率を刷る', async () => {
+    const text = await render({
+      members: [], spend: [],
+      usage: [
+        {
+          date: '2026-09-02', active: true,
+          linesAdded: 1000, linesAccepted: 400, acceptRate: 40, overCounted: false,
+          tabsShown: 7, tabsAccepted: 3, requests: 15, model: '',
+        },
+      ],
+      totals: { members: 0, activeDays: 1, spendUsd: 0 },
+      intake: { members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0 },
+    });
+    expect(text).toContain('追加 1,000 行 / 採用 400 行');
+    expect(text).toContain('Tab 3/7');
+    expect(text).toContain('リクエスト 15');
+    expect(text).toContain('40%');
+  });
 });

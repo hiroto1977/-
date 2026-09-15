@@ -179,11 +179,19 @@ describe('normalizeUsage', () => {
     expect(rows.map((r) => r.active)).toEqual([false, false, true]);
   });
 
-  it('欠けている数値は 0、率は null、上回りは印を付ける', () => {
+  /*
+   * **期待を 0 から null へ書き換えた** (2026-09-15 · パス 266)。
+   *
+   * 以前の期待は `linesAdded: 0, linesAccepted: 0, requests: 0` だった。
+   * 落ちないことは正しく留めていたが、「**0 と言うこと**」まで仕様として
+   * 固定していた —— このモジュールの冒頭の規則は逆で、欠けている数値は
+   * 0 ではなく「取れなかった」として扱う。画面は「追加 — 行」と刷る。
+   */
+  it('欠けている数値は null、率は null、上回りは印を付ける', () => {
     const [empty, over] = normalizeUsage({
       data: [{}, { totalLinesAdded: 10, acceptedLinesAdded: 12 }],
     }).rows;
-    expect(empty).toMatchObject({ linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false, requests: 0, model: '', date: '' });
+    expect(empty).toMatchObject({ linesAdded: null, linesAccepted: null, acceptRate: null, overCounted: false, requests: null, model: '', date: '' });
     expect(over).toMatchObject({ acceptRate: 120, overCounted: true });
   });
 });
@@ -202,7 +210,8 @@ describe('normalizeSpend', () => {
       amountsUnreadable: 0,
       rows: [
         { name: 'A', email: 'a@example.com', role: 'owner', spendUsd: 41.2, fastPremiumRequests: 412, hardLimitUsd: null },
-        { name: '', email: '', role: '', spendUsd: 18.75, fastPremiumRequests: 0, hardLimitUsd: 50 },
+        // `fastPremiumRequests` が無い行は **null** (0 回と区別する · パス 266)。
+        { name: '', email: '', role: '', spendUsd: 18.75, fastPremiumRequests: null, hardLimitUsd: 50 },
       ],
     });
   });
@@ -334,9 +343,9 @@ describe('fetchCursorSnapshotWith — 通信手段を差し替えられる', () 
  * 気付かない。欠けている・数でない・NaN の 3 種を通す —— `undefined` が
  * 混ざると `requests` の加算が NaN になり、画面には「NaN」が出る。
  */
-describe('num —— 欠けた数値欄は 0 にする', () => {
+describe('readNum —— 欠けた数値欄は null にする (0 と混ぜない)', () => {
   /*
-   * **`num` はモジュール本体の `const` なので、読み直さないと測れない。**
+   * **`readNum` はモジュール本体の `const` なので、読み直さないと測れない。**
    * 静的 import では変異が効く前に矢印関数が作られてしまい、
    * `() => undefined` へ変えても気付けない (実測 2026-08-31: 生存)。
    */
@@ -345,18 +354,19 @@ describe('num —— 欠けた数値欄は 0 にする', () => {
     return import('../cursor');
   };
 
-  it('★ 欄が欠けていても 0 になり、加算が NaN にならない', async () => {
+  it('★ 欄が欠けていたら null になり、加算は NaN にならない', async () => {
     const { normalizeUsage } = await fresh();
     const [row] = normalizeUsage({ data: [{ date: 0, isActive: true }] }).rows;
-    expect(row?.linesAdded).toBe(0);
-    expect(row?.linesAccepted).toBe(0);
-    expect(row?.tabsShown).toBe(0);
-    expect(row?.tabsAccepted).toBe(0);
-    expect(row?.requests).toBe(0);
+    expect(row?.linesAdded).toBeNull();
+    expect(row?.linesAccepted).toBeNull();
+    expect(row?.tabsShown).toBeNull();
+    expect(row?.tabsAccepted).toBeNull();
+    expect(row?.requests).toBeNull();
+    // NaN を出さないことは変わらず留める (0 倒しをやめた理由は NaN ではない)。
     expect(Number.isNaN(row?.requests)).toBe(false);
   });
 
-  it('★ 数でない値・NaN・Infinity も 0 に倒す', async () => {
+  it('★ 数でない値・NaN・Infinity も null にする', async () => {
     const { normalizeUsage } = await fresh();
     const [row] = normalizeUsage({
       data: [
@@ -370,11 +380,38 @@ describe('num —— 欠けた数値欄は 0 にする', () => {
         },
       ],
     }).rows;
-    expect(row?.linesAdded).toBe(0);
-    expect(row?.linesAccepted).toBe(0);
-    expect(row?.tabsShown).toBe(0);
-    // 有効な数はそのまま通る (何でも 0 にしているのではない — 対照)。
-    expect(row?.requests).toBe(3);
+    expect(row?.linesAdded).toBeNull();
+    expect(row?.linesAccepted).toBeNull();
+    expect(row?.tabsShown).toBeNull();
+    /*
+     * **合計は 3 ではなく null** (パス 266)。以前は `composerRequests: null` を
+     * 0 に倒して `chatRequests: 3` だけを足し、画面は「リクエスト 3」を
+     * **その日の総数として**刷っていた —— 4 つのうち 1 つだけを数えた値である。
+     * 足りない合計は合計ではない (パス 54 / 226 / 263 と同じ規準)。
+     */
+    expect(row?.requests).toBeNull();
+  });
+
+  it('★ 対照: 4 項目すべて読めれば合計になる (何でも null にしているのではない)', async () => {
+    const { normalizeUsage } = await fresh();
+    const [row] = normalizeUsage({
+      data: [
+        {
+          date: 0,
+          totalLinesAdded: 100,
+          acceptedLinesAdded: 40,
+          totalTabsShown: 7,
+          totalTabsAccepted: 3,
+          composerRequests: 1,
+          chatRequests: 2,
+          agentRequests: 4,
+          cmdkUsages: 8,
+        },
+      ],
+    }).rows;
+    expect(row?.requests).toBe(15);
+    expect(row?.linesAdded).toBe(100);
+    expect(row?.acceptRate).toBe(40);
   });
 });
 

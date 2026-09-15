@@ -228,12 +228,17 @@ describe('スナップショットの取得', () => {
     expect(snap.intake.spend).toBe('unreadable');
   });
 
-  it('欠けている数値は 0、欠けている文字列は空にする', async () => {
+  /*
+   * **期待を 0 から null へ書き換えた** (2026-09-15 · パス 266) —— 数値の欄は
+   * 「0 だった」と「読めなかった」を分ける。文字列の欄 (`model`) は空文字の
+   * まま: 名前が無いことは画面に出す物が無いだけで、量の主張にならない。
+   */
+  it('欠けている数値は null、欠けている文字列は空にする', async () => {
     const f = stub({ usage: { data: [{ date: 1_754_265_600_000, isActive: true }] } });
     const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
     expect(snap.usage[0]).toMatchObject({
-      linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false,
-      tabsShown: 0, tabsAccepted: 0, requests: 0, model: '',
+      linesAdded: null, linesAccepted: null, acceptRate: null, overCounted: false,
+      tabsShown: null, tabsAccepted: null, requests: null, model: '',
     });
   });
 
@@ -257,7 +262,8 @@ describe('スナップショットの取得', () => {
     const f = stub({ spend: { teamMemberSpend: [{}] } });
     const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
     expect(snap.spend).toEqual([
-      { name: '', email: '', role: '', spendUsd: null, fastPremiumRequests: 0, hardLimitUsd: null },
+      // `fastPremiumRequests` も null (パス 266) —— 高速リクエスト 0 回と区別する。
+      { name: '', email: '', role: '', spendUsd: null, fastPremiumRequests: null, hardLimitUsd: null },
     ]);
     // 金額の読めない行が 1 行でも在れば、合計は出さない。
     expect(snap.totals.spendUsd).toBeNull();

@@ -26,6 +26,12 @@ export function CursorPage() {
   const usd = (n: number) => `$${n.toFixed(2)}`;
   /** 読めなかった数は「0」ではなく「—」。 */
   const count = (n: number | null) => (n === null ? '—' : String(n));
+  /**
+   * 桁区切りつきの数。**読めなかった欄は「—」** (パス 266) —— 以前は
+   * `num()` で 0 に倒していたので「追加 0 行 / 採用 0 行 · Tab 0/0 ·
+   * リクエスト 0」が、使っていない日と同じ見た目で出ていた。
+   */
+  const qty = (n: number | null) => (n === null ? '—' : n.toLocaleString('ja-JP'));
   const money = (n: number | null) => (n === null ? '—' : usd(n));
   const note = cursorIntakeNote(intake);
   /** 節が空のときの文。**答えとして空だったのか、読めなかったのか**で分ける。 */
@@ -81,8 +87,8 @@ export function CursorPage() {
             key: d.date || String(Math.random()),
             title: `${d.date || '日付不明'} ${d.active ? '' : '（稼働なし）'}`,
             meta: d.active
-              ? `追加 ${d.linesAdded.toLocaleString('ja-JP')} 行 / 採用 ${d.linesAccepted.toLocaleString('ja-JP')} 行`
-                + ` · Tab ${d.tabsAccepted}/${d.tabsShown} · リクエスト ${d.requests}`
+              ? `追加 ${qty(d.linesAdded)} 行 / 採用 ${qty(d.linesAccepted)} 行`
+                + ` · Tab ${count(d.tabsAccepted)}/${count(d.tabsShown)} · リクエスト ${count(d.requests)}`
                 + (d.model ? ` · ${d.model}` : '')
               : 'この日はチームの誰も使っていません',
             badge: d.acceptRate === null
@@ -109,7 +115,7 @@ export function CursorPage() {
           items={spend.map((r) => ({
             key: r.email,
             title: r.name || r.email,
-            meta: `${r.email} · 高速リクエスト ${r.fastPremiumRequests.toLocaleString('ja-JP')} 回`
+            meta: `${r.email} · 高速リクエスト ${qty(r.fastPremiumRequests)} 回`
               + (r.hardLimitUsd === null ? '' : ` · 上限 ${usd(r.hardLimitUsd)}`)
               // 金額が読めなかった行はその理由を行に書く ($0.00 と並べない)。
               + (r.spendUsd === null ? ' · 金額を読めませんでした' : ''),

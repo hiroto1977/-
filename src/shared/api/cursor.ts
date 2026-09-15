@@ -72,8 +72,9 @@ export interface CursorUsageDay {
   /** YYYY-MM-DD（UTC）。Cursor は epoch ミリ秒で返す。 */
   date: string;
   active: boolean;
-  linesAdded: number;
-  linesAccepted: number;
+  /** **読めなかった欄は `null`** —— 0 行と区別する (パス 266)。 */
+  linesAdded: number | null;
+  linesAccepted: number | null;
   /**
    * 提案行のうち受け入れられた割合（%）。分母が 0 のときは null。
    * Cursor 側の集計では受入行が総追加行を上回ることがあるため、
@@ -82,9 +83,14 @@ export interface CursorUsageDay {
   acceptRate: number | null;
   /** acceptRate が 100% を超えた（＝ Cursor 側の集計が噛み合っていない）。 */
   overCounted: boolean;
-  tabsShown: number;
-  tabsAccepted: number;
-  requests: number;
+  tabsShown: number | null;
+  tabsAccepted: number | null;
+  /**
+   * `composerRequests` + `chatRequests` + `agentRequests` + `cmdkUsages`。
+   * **1 項目でも読めなければ `null`** —— 足りない合計は合計ではない
+   * (パス 54 / 226 / 263 と同じ規準)。
+   */
+  requests: number | null;
   model: string;
 }
 
@@ -97,7 +103,8 @@ export interface CursorSpend {
    * **金額が読めなかった行は `null`** —— 0 ドルと区別する (パス 263)。
    */
   spendUsd: number | null;
-  fastPremiumRequests: number;
+  /** 読めなければ `null` —— 0 回と区別する (パス 266)。 */
+  fastPremiumRequests: number | null;
   /** 上限の個別設定（米ドル）。設定が無ければ null。 */
   hardLimitUsd: number | null;
 }
@@ -136,7 +143,39 @@ export interface CursorSnapshot {
   intake: CursorIntake;
 }
 
-const num = (v: number | undefined): number => (Number.isFinite(v) ? (v as number) : 0);
+/**
+ * **読めた数だけを返す。読めなければ `null`** (2026-09-15 · パス 266)。
+ *
+ * このモジュールの冒頭の規則は「欠けている数値は 0 ではなく『取れなかった』として
+ * 扱う (0 と欠測を混ぜると、使っていないのか取得に失敗したのか画面から判別できなく
+ * なる)」である。パス 263 は封筒と支出の金額をその規則へ寄せたが、**日次利用の 5 欄は
+ * `num()` で 0 に倒したまま残っていた** —— `acceptedLinesAdded` が欠けた日は
+ * 「採用 0 行」と刷られ、`acceptRateOf(0, 5000)` が **0 を返して バッジが「0%」**
+ * になる。「提案の 0% しか採用しなかった」は測った結果に見えるが、実際は鍵が
+ * 無かっただけである。
+ */
+const readNum = (v: number | undefined): number | null => (Number.isFinite(v) ? (v as number) : null);
+
+/**
+ * **1 項目でも読めなければ合計を作らない** (2026-09-15 · パス 266)。
+ *
+ * 日次のリクエスト数は 4 つの鍵の和 (`composerRequests` / `chatRequests` /
+ * `agentRequests` / `cmdkUsages`) で、以前はそれぞれを 0 に倒してから足していた。
+ * だから `{composerRequests: 40}` だけが返った日に画面は「リクエスト 40」と
+ * **その日の総数として**刷っていた —— 4 つのうち 1 つだけを数えた値である。
+ * パス 263 が支出の合計へ当てた規準と同じで、足りない合計は合計ではない。
+ *
+ * **どの項目が欠けたかは持たない** —— 画面が刷るのは「—」だけなので、
+ * 区別しても出す場所が無い。必要になったら項目ごとに返す形へ広げる。
+ */
+function sumOrNull(parts: readonly (number | null)[]): number | null {
+  let total = 0;
+  for (const p of parts) {
+    if (p === null) return null;
+    total += p;
+  }
+  return total;
+}
 
 /**
  * epoch ミリ秒 → YYYY-MM-DD（UTC）。読めない値は空文字にして日付欄を詐称しない。
@@ -155,8 +194,10 @@ export function toIsoDate(epochMs: number | undefined): string {
  * 受入率を出す。分母が 0 なら null（0% ではない — 提案が無いことと
  * 提案が全部拒否されたことは違う）。
  */
-export function acceptRateOf(accepted: number, total: number): number | null {
+export function acceptRateOf(accepted: number | null, total: number | null): number | null {
   // 非有限は「率 0%」ではなく「算定不能」(既に `null` の道が在る)。
+  // **`null` も同じ扱い** (パス 266) —— 読めなかった行数から率は作れない。
+  if (accepted === null || total === null) return null;
   if (finiteOrNull(accepted) === null || finiteOrNull(total) === null) return null;
   if (total <= 0) return null;
   return Math.round((accepted / total) * 1000) / 10;
@@ -169,7 +210,10 @@ export function acceptRateOf(accepted: number, total: number): number | null {
  * JS のセマンティクスに寄りかかることになり、条件の片方が観測できなくなる。
  * 行数そのもので判定すれば、分母 0 のときも上回りのときも別々に確かめられる。
  */
-export function isOverCounted(accepted: number, total: number): boolean {
+export function isOverCounted(accepted: number | null, total: number | null): boolean {
+  // 読めなかった行数からは「Cursor 側の集計が噛み合っていない」とは言えない
+  // (パス 266)。`total > 0` の守りは既に在るが、`null` はそこを通らない。
+  if (accepted === null || total === null) return false;
   return total > 0 && accepted > total;
 }
 
@@ -248,8 +292,8 @@ export function normalizeMembers(body: unknown): CursorSection<CursorMember> {
 /** 日次利用の応答を正規化する。 */
 export function normalizeUsage(body: unknown): CursorSection<CursorUsageDay> {
   return sectionOf(readRows<DailyUsageRow>(body, 'data'), (d) => {
-    const linesAdded = num(d.totalLinesAdded);
-    const linesAccepted = num(d.acceptedLinesAdded);
+    const linesAdded = readNum(d.totalLinesAdded);
+    const linesAccepted = readNum(d.acceptedLinesAdded);
     return {
       date: toIsoDate(d.date),
       active: d.isActive === true,
@@ -257,10 +301,14 @@ export function normalizeUsage(body: unknown): CursorSection<CursorUsageDay> {
       linesAccepted,
       acceptRate: acceptRateOf(linesAccepted, linesAdded),
       overCounted: isOverCounted(linesAccepted, linesAdded),
-      tabsShown: num(d.totalTabsShown),
-      tabsAccepted: num(d.totalTabsAccepted),
-      requests:
-        num(d.composerRequests) + num(d.chatRequests) + num(d.agentRequests) + num(d.cmdkUsages),
+      tabsShown: readNum(d.totalTabsShown),
+      tabsAccepted: readNum(d.totalTabsAccepted),
+      requests: sumOrNull([
+        readNum(d.composerRequests),
+        readNum(d.chatRequests),
+        readNum(d.agentRequests),
+        readNum(d.cmdkUsages),
+      ]),
       model: d.mostUsedModel ?? '',
     };
   });
@@ -286,7 +334,7 @@ export function normalizeSpend(
       email: r.email ?? '',
       role: r.role ?? '',
       spendUsd: cents === null ? null : Math.round(cents) / 100,
-      fastPremiumRequests: num(r.fastPremiumRequests),
+      fastPremiumRequests: readNum(r.fastPremiumRequests),
       hardLimitUsd: Number.isFinite(r.hardLimitOverrideDollars)
         ? (r.hardLimitOverrideDollars as number)
         : null,
