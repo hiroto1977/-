@@ -11,7 +11,8 @@
  *   `talent|teamradar/save-state` 保存できないときに `action_failed` を返す (画面が出す)。
  *   `talent/judge-leader`         入力を絞る (文字列以外を落とし、候補者名は 64 字で切る)。
  *   `templates/export-template`   知らない書式 id を弾く。
- *   `teamradar/export-svg`        画面に図が無いときは、その旨を返す。
+ *   `teamradar/export-svg`        画面ではなく**状態**から組む (パス 268 —— それまでは
+ *                                画面の `<svg>` を掻き取っており、断りと標題が落ちていた)。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -222,19 +223,31 @@ describe('書き出しの入口', () => {
     expect(r.message).toContain('no-such-template');
   });
 
-  it('★ teamradar: 画面に図が無ければ、切り替えてから試すよう返す', async () => {
+  /*
+   * **画面は関係なくなった** (パス 268)。
+   *
+   * ここは 2026-09-15 まで「画面に図が無ければ断る」「在れば書き出せる」を留めていた ——
+   * ブラウザ版が画面の `<svg>` を DOM から掻き取っていたからである。掻き取れるのは
+   * `<svg>` 要素だけなので、標題・部署・評価時点・凡例・⚠ の断りはその外側に在って
+   * **書き出した SVG から落ちていた** (実測 244 バイトの裸の図)。
+   * いまは main と同じ `renderTeamRadarSvg(snap, { title })` を通すので、
+   * 画面に何が描かれていても答えは同じ —— 状態から組む。
+   */
+  it('★ teamradar: 画面に図が無くても書き出せる (状態から組む)', async () => {
+    document.body.innerHTML = '';
     const hub = await loadHub();
     const r = await hub.invoke('teamradar', 'export-svg', { title: 'x' });
-    expect(r.ok).toBe(false);
-    expect(r.message).toContain('チームレーダー');
+    expect(r.ok, r.message).toBe(true);
+    expect(r.data?.path).toMatch(/\.svg$/);
+    expect((r.data?.bytes as number) > 0).toBe(true);
   });
 
-  it('対照: 画面に図が在れば書き出せる (xmlns を補う)', async () => {
+  it('対照: 画面に図が在っても答えは同じ (掻き取りに戻っていない)', async () => {
     document.body.innerHTML = '<svg role="img" aria-label="チームレーダー"><text>x</text></svg>';
     const hub = await loadHub();
     const r = await hub.invoke('teamradar', 'export-svg', { title: 'チーム' });
     expect(r.ok, r.message).toBe(true);
-    expect(r.data?.path).toMatch(/\.svg$/);
-    expect((r.data?.bytes as number) > 0).toBe(true);
+    // 掻き取っていれば 1 行の <text>x</text> しか入らず、ここまで大きくならない。
+    expect((r.data?.bytes as number) > 1000).toBe(true);
   });
 });

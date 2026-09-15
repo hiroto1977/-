@@ -64,7 +64,16 @@ type Route =
 
 const ROUTES: readonly (readonly [string, string, Route])[] = [
   ['templates', 'export-template', { ok: false, code: 'action_failed', message: 'unknown template id: undefined' }],
-  ['teamradar', 'export-svg', { ok: false, code: 'action_failed', message: 'チームレーダーページに切り替えてからもう一度お試しください' }],
+  /*
+   * パス 268 まではここが `action_failed`「チームレーダーページに切り替えてから…」だった ——
+   * ブラウザ版が画面の `<svg>` を DOM から掻き取っており、**図が画面に無ければ書き出せなかった**
+   * (掻き取れるのは `<svg>` だけなので、標題・部署・評価時点・凡例・⚠ の断りは落ちていた)。
+   * いまは main と同じ `renderTeamRadarSvg` を通し、`chart` が無ければ保存済みを読む ——
+   * main の `exportTeamRadarSvgImpl` と同じ 2 枝なので、空の payload は**同梱の見本**を
+   * 書き出して成功する (main も同じ)。正しい payload の往復と断りは
+   * webShimRadarExportRefusal.test.ts が持つ。
+   */
+  ['teamradar', 'export-svg', { ok: true, shape: (d) => expect(d).toHaveProperty('path') }],
   // パス 118 まではここが `ok: true` で `{}` をそのまま返していた (検証せずに書く)。
   // いまは main と同じ判定を通すので、空の payload は main と同じ文面で断る。
   // 正しい payload の往復は webShimSnapshotBranches.test.ts が持つ。

@@ -55,11 +55,12 @@ const RULE = '| --- | ---: | ---: | --- |';
 /**
  * 走査の生死の床。**0 件を「問題なし」と読まない** —— 走査が壊れた
  * (import の綴り・src の場所替え) ときに静かに通らせないため。
- * 実測 (2026-09-14) は 138 / 44 / 21 なので、その 8 割弱を床にする。
+ * 実測 (2026-09-15 · 到達を閉包で見るようにした後) は 142 / 61 / 31 なので、
+ * その 8 割弱を床にする (パス 268 まで 1 ホップで 138 / 44 / 21 と数えていた)。
  */
-const MIN_SHARED = 110;
-const MIN_BOTH = 34;
-const MIN_JUDGEMENT = 16;
+const MIN_SHARED = 113;
+const MIN_BOTH = 48;
+const MIN_JUDGEMENT = 24;
 
 /** 否定で答えられる形。**過剰に拾う** (分母は多い側に外す)。 */
 const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
@@ -115,7 +116,17 @@ const VERDICTS = {
     + 'process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」か'
     + 'の選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた',
   externalUrlGate: '閉じている (パス 241 で 3 経路を実測)',
-  freeeIntake: '未読 (取り込みの取りこぼし)',
+  freeeIntake:
+    '意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / '
+    + '`dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** '
+    + '(FreeePage / bankSubmission / docImports)。main が import するのは '
+    + '`NO_DEAL_INTAKE` と型だけで、**負で答える 3 関数の呼び出しは src/main・'
+    + 'src/preload で実測 0 件**。ただし非対称は 1 段上に在る —— '
+    + '落ちた件数を数える `FreeeDealIntake` を**作れるのは main の freee.ts だけ**で、'
+    + 'ブラウザ版に freee の live 読みは無い (読むのは cursor だけ)。だから'
+    + 'ブラウザ版の 3 つの消費者は常に `NO_DEAL_INTAKE` を見て `null` を返す '
+    + '(注記が出ない)。**原因は「判定の非対称」ではなく「クライアントの不在」**で、'
+    + 'funding (パス 265) と同じ形である',
   funding:
     '一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は '
     + '**両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。'
@@ -127,7 +138,15 @@ const VERDICTS = {
   httpLimits:
     '対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。'
     + 'ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない)',
-  hydroponicsControl: '未読 (計算の判定)',
+  hydroponicsControl:
+    '非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / '
+    + '`batchFromStored` / `batchSchedule` / `nextSolutionChange` / '
+    + '`lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は '
+    + 'renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx)。main が import するのは '
+    + '`buildHydroponicsSnapshot` と型 2 つだけで、その関数は '
+    + 'READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数**'
+    + ' (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード '
+    + '(IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない**',
   isoDate:
     '対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた):'
     + ' (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage(\'date\'))`)。'
@@ -135,9 +154,56 @@ const VERDICTS = {
     + ' 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。'
     + ' ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。',
   ollama: '**非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ)',
-  radarPlot: '未読 (作図)',
+  aiEndpoint:
+    '未読 (AI の宛先の解決。パス 268 の閉包で見えた —— main は clients 経由、'
+    + 'ブラウザ版は web-shim 経由で届く)',
+  controlChars:
+    '未読 (制御文字の判定。パス 268 の閉包で見えた —— `tokenInput` (閉じている・パス 245) '
+    + 'の下請けなので、その判定と同じ床に乗っている可能性が高いが**読んでいない**)',
+  depreciation:
+    '未読 (減価償却の計算。パス 268 の閉包で見えた —— 税の計算は画面が読み、'
+    + 'main 側の到達経路をまだ辿っていない)',
+  hydroponicCrops:
+    '未読 (作物の台帳。パス 268 の閉包で見えた —— `hydroponicsControl` (非対称は起きない) '
+    + 'の下請けだが、否定で答える関数があるかは**読んでいない**)',
+  hydroponics:
+    '未読 (水耕栽培の計算。パス 268 の閉包で見えた)',
+  mutualFundsMetrics:
+    '未読 (投資信託の指標。パス 268 の閉包で見えた —— パス 122/123/226 で'
+    + 'null の枝を足した所だが、両ビルドの到達経路は**読んでいない**)',
+  readNumeric:
+    '未読 (数の読み取り。パス 268 の閉包で見えた —— パス 80 で規則を 1 つにした所)',
+  savingsPlanning:
+    '未読 (貯蓄計画の計算。パス 268 の閉包で見えた)',
+  radarPlot:
+    '**欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち '
+    + '`isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は'
+    + '**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった '
+    + '(main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。'
+    + '**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、'
+    + 'ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` '
+    + '要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。'
+    + '実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, '
+    + 'hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が'
+    + '居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。'
+    + '組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。'
+    + '★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは'
+    + '到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、'
+    + '未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る',
   scanTarget: '対称 (実測・パス 247)',
-  serviceAdvisor: '未読 (助言の生成)',
+  serviceAdvisor:
+    '対称 (実測・パス 268) —— 否定で答えるのは `adviseService` (`ok: false`) と、'
+    + 'その中でだけ呼ばれる 4 つの `parse*AdviceInput` (**外部の消費者は 0 件**)。'
+    + '`adviseService` は main の 4 クライアント (real-estate / mutual-funds / '
+    + 'uber-eats / demae-can) とブラウザ版の web-shim が呼び、**否定のあとの動作は'
+    + '同じ 1 行に畳まれる**: main は `throw new Error(r.message)` → '
+    + "action:invoke の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、"
+    + "ブラウザ版は `err('action_failed', r.message)`。`safeErrorMessage` の中身は "
+    + '`redactForMessage(msg, ERROR_MESSAGE_MAX_CHARS)` で、`err()` が掛けるものと'
+    + '**同じ関数・同じ天井**なので、code も文面も一致する。'
+    + '★ ただし**到達性**は 2026-09-15 まで非対称だった —— この 4 サービスは '
+    + '`LOCAL_SERVICES` なのに `action:invoke` が全サービスにトークンを要求しており、'
+    + 'デスクトップ版では 4 つの advise が 1 度も呼ばれなかった (パス 267 で直した)',
   talent:
     '対称 (実測・パス 260) —— 否定の枝を両側で読んだ: main は `loadTalentState` が '
     + "`{ kind: 'unreadable', reason }` を返し (talent.ts:85 / :90)、ブラウザ版は "
@@ -296,6 +362,39 @@ function sharedImportsOf(file, sharedRoot) {
   return keys;
 }
 
+/**
+ * shared → shared の到達 (閉包)。**1 ホップでは足りない** (2026-09-15 · パス 268)。
+ *
+ * パス 268 で SVG の組み立てを `main/clients/teamradar.ts` から
+ * `shared/teamRadarSvg.ts` へ移したところ、`radarPlot` が母集団から**消えた** ——
+ * main は同じ判断 (`omittedRadarNote`) を今も通すのに、経路が
+ * `main → teamRadarSvg → radarPlot` の 2 ホップになったからである。
+ *
+ * **共有モジュールの後ろへ回った判断が見えなくなる**のは、走査が黙る形そのもの
+ * (パス 85 / 95 / 107 / 220 の家系)。実測では 1 ホップ 47 / 22 に対し
+ * 閉包は 61 / 31 —— **8 件は私の refactor と無関係に、ずっと外に在った。**
+ * 母集団は「両ビルドが到達する共有モジュール」であって「直接 import する」ではない。
+ */
+function sharedClosure(seed, byKey, sharedRoot) {
+  // **種を先に配列へ落とす。** `seed` は iterator で来ることがあり、`new Set(seed)` が
+  // 先に食い尽くすと `[...seed]` が空になって閉包が種のまま返る (実測でここを踏んだ)。
+  const start = [...seed];
+  const out = new Set(start);
+  const queue = [...start];
+  while (queue.length > 0) {
+    const key = queue.pop();
+    const abs = byKey.get(key);
+    if (abs === undefined) continue;
+    for (const next of sharedImportsOf(abs, sharedRoot)) {
+      if (byKey.has(next) && !out.has(next)) {
+        out.add(next);
+        queue.push(next);
+      }
+    }
+  }
+  return out;
+}
+
 /** 母集団を数える。`{ rows, shared, both, judgement }`。 */
 function census(srcRoot = SRC) {
   const sharedRoot = path.join(srcRoot, 'shared');
@@ -312,15 +411,19 @@ function census(srcRoot = SRC) {
   };
   const mainPer = count('main');
   const rendPer = count('renderer');
+  // 到達は閉包で見る。表の数は**直接 import した件数**のまま —— `0` は
+  // 「別の共有モジュールを通ってしか届かない」を意味する (欄の意味を変えない)。
+  const mainReach = sharedClosure(mainPer.keys(), byKey, sharedRoot);
+  const rendReach = sharedClosure(rendPer.keys(), byKey, sharedRoot);
 
   const rows = [];
   let both = 0;
   for (const key of [...byKey.keys()].sort()) {
-    if (!mainPer.has(key) || !rendPer.has(key)) continue;
+    if (!mainReach.has(key) || !rendReach.has(key)) continue;
     both += 1;
     const body = stripCommentsAndStrings(fs.readFileSync(byKey.get(key), 'utf8'));
     if (!NEGATIVE.test(body)) continue;
-    rows.push({ module: key, main: mainPer.get(key), renderer: rendPer.get(key) });
+    rows.push({ module: key, main: mainPer.get(key) ?? 0, renderer: rendPer.get(key) ?? 0 });
   }
   return { rows, shared: byKey.size, both, judgement: rows.length };
 }
@@ -438,6 +541,46 @@ function selfTest() {
     stripComments("const u = 'https://x/y';").includes('https://x/y'),
   );
 
+  // --- ★ 到達は閉包で見る (パス 268 —— 共有モジュールの後ろへ回った判断) ---
+  {
+    const byKey = new Map([
+      ['front', '/x/front.ts'],
+      ['deep', '/x/deep.ts'],
+      ['lonely', '/x/lonely.ts'],
+    ]);
+    const fake = (abs) => (abs === '/x/front.ts' ? new Set(['deep']) : new Set());
+    const saved = module.exports.sharedImportsOf;
+    // 閉包は `sharedImportsOf` を通すので、ここだけ差し替える代わりに同じ形の
+    // 小さな実装で確かめる (本体は純粋な幅優先なので、隣接だけ与えれば足りる)。
+    const closure = (seed) => {
+      const start = [...seed];
+      const out = new Set(start);
+      const q = [...start];
+      while (q.length > 0) {
+        const k = q.pop();
+        for (const n of fake(byKey.get(k) ?? '')) {
+          if (byKey.has(n) && !out.has(n)) { out.add(n); q.push(n); }
+        }
+      }
+      return out;
+    };
+    void saved;
+    check('★ 2 ホップ先も到達に入る (front → deep)', closure(['front']).has('deep'));
+    check('対照: 誰も import しない物は入らない', closure(['front']).has('lonely') === false);
+    /*
+     * ★ 種が iterator でも閉包が動く。
+     *
+     * 最初の実装は `new Set(seed)` の後に `[...seed]` を取っており、**iterator を
+     * 先に食い尽くしていた** —— 閉包が種のまま返り、実測が 1 ホップと同じ 47 / 22 に
+     * 見えた (2026-09-15 に踏んだ)。本物の shared を種にして 2 ホップ先を要求する。
+     */
+    const realShared = path.join(SRC, 'shared');
+    const realKeys = new Map();
+    for (const abs of sourceFiles(realShared)) realKeys.set(moduleKey(abs, realShared), abs);
+    const reach = sharedClosure(new Map([['teamRadarSvg', 1]]).keys(), realKeys, realShared);
+    check('★ 種が iterator でも閉包が動く (teamRadarSvg → radarPlot)', reach.has('radarPlot'));
+  }
+
   // --- 実測と床 ---
   const real = census();
   check(`実測が shared の床を超えている (${real.shared} >= ${MIN_SHARED})`, real.shared >= MIN_SHARED);
@@ -452,6 +595,10 @@ function selfTest() {
   check(
     '★ vaultToken が母集団に在る (シンボル単位に戻したら落ちる形・パス 247)',
     real.rows.some((r) => r.module === 'vaultToken'),
+  );
+  check(
+    '★ radarPlot が母集団に在る (main は teamRadarSvg 経由の 2 ホップ・パス 268)',
+    real.rows.some((r) => r.module === 'radarPlot'),
   );
 
   // --- 台帳の双方向 ---
@@ -576,6 +723,7 @@ module.exports = {
   sourceFiles,
   moduleKey,
   sharedImportsOf,
+  sharedClosure,
   census,
   renderTable,
   ledgerMismatch,

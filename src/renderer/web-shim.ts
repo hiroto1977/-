@@ -101,11 +101,13 @@ import {
 } from '../shared/talent';
 import {
   TEAM_RADAR_STORAGE_KEY,
+  MAX_CHART_TITLE_CHARS,
   buildTeamRadarSnapshot,
   readStoredTeamRadar,
   validateTeamRadarState,
   type StoredTeamRadar,
 } from '../shared/teamRadarState';
+import { renderTeamRadarSvg } from '../shared/teamRadarSvg';
 import { getVault } from './security/vault';
 import { eraseEverything } from './security/eraseAll';
 import type { EraseAllReport } from '../shared/eraseReport';
@@ -430,6 +432,11 @@ interface ExportTemplatePayload {
 
 interface ExportSvgPayload {
   title?: string;
+  /**
+   * **画面が見ている図** (パス 190)。形の判定は `validateTeamRadarState` が持つので
+   * `unknown` のまま渡す —— ここで型を写すと main の宣言とずれる (パス 116 の形)。
+   */
+  chart?: unknown;
 }
 
 // --- Anthropic Business advisor (browser-direct) ----------------------
@@ -1071,18 +1078,22 @@ async function buildBusinessAnalysesForAdvisor(): Promise<Array<{
   });
 }
 
-function tryGrabSvgFromPage(): string | null {
-  // The TeamRadarPage renders the chart as an inline <svg> with role="img".
-  // For the web export fallback, serialize whatever radar svg is currently
-  // shown.
-  const svg = document.querySelector('svg[role="img"][aria-label*="レーダー"]');
-  if (!svg) return null;
-  // Add xmlns if missing (sometimes React strips it).
-  const cloned = svg.cloneNode(true) as SVGElement;
-  if (!cloned.getAttribute('xmlns')) {
-    cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+/**
+ * 保存済みのチームレーダー状態を読む。**`fetchSnapshot` と `export-svg` が同じ 1 つを通る。**
+ *
+ * ここに在ったのは `tryGrabSvgFromPage()` —— 画面の `<svg>` を DOM から掻き取る
+ * 2 つ目の書き出し実装だった。掻き取れるのは `<svg>` 要素**だけ**で、⚠ の断り
+ * (描けなかった人の名指し)・標題・部署・評価時点・凡例はその**外側**の `<div>` に在る
+ * ので、書き出した SVG からは全部落ちていた (パス 268 で実測)。
+ * いまはデスクトップ版と同じ `renderTeamRadarSvg` を呼ぶ。
+ */
+function readStoredTeamRadarState(): StoredTeamRadar {
+  try {
+    return readStoredTeamRadar(localStorage.getItem(TEAM_RADAR_STORAGE_KEY));
+  } catch (e) {
+    // Web Storage そのものが拒む環境 (パス 89) —— 「読めなかった」として見本を返す。
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
-  return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(cloned);
 }
 
 const shim = {
@@ -1284,14 +1295,7 @@ const shim = {
      * 保存した物まで「同梱データ」と刷られていた)。
      */
     if (serviceId === 'teamradar') {
-      let stored: StoredTeamRadar;
-      try {
-        stored = readStoredTeamRadar(localStorage.getItem(TEAM_RADAR_STORAGE_KEY));
-      } catch (e) {
-        // Web Storage そのものが拒む環境 (パス 89) —— 「読めなかった」として見本を返す。
-        stored = { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
-      }
-      return ok(buildTeamRadarSnapshot(stored)) as ActionResult<T>;
+      return ok(buildTeamRadarSnapshot(readStoredTeamRadarState())) as ActionResult<T>;
     }
     /*
      * security は「鍵が入っているか」だけがブラウザでも観測できる。
@@ -1408,13 +1412,33 @@ const shim = {
       return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
-    // TeamRadar export: grab the inline svg already rendered on the page.
+    /*
+     * TeamRadar export —— **デスクトップ版と同じ `renderTeamRadarSvg` を通す** (パス 268)。
+     *
+     * 2026-09-15 まではここが画面の `<svg>` を掻き取っており、⚠ の断り・標題・部署・
+     * 評価時点・凡例が落ちた**裸の図**を渡していた (それらは `<svg>` の外に在る)。
+     * 5 人のうち 2 人が未評価で描かれていないとき、受け取った人には 3 人のチームに見え、
+     * 2 人が落ちた理由はどこにも書かれていなかった —— 断りは渡す物に乗る (パス 41)。
+     *
+     * 状態の出どころもデスクトップ版と同じ 2 枝: 画面が送った `chart` を判定に通し、
+     * 送られていなければ保存済みを読む。判定は `validateTeamRadarState` の 1 つ。
+     */
     if (serviceId === 'teamradar' && action === 'export-svg') {
-      const svg = tryGrabSvgFromPage();
-      if (!svg) {
-        return err('action_failed', 'チームレーダーページに切り替えてからもう一度お試しください');
-      }
       const p = payload as ExportSvgPayload;
+      let snap;
+      try {
+        snap = p.chart === undefined
+          ? buildTeamRadarSnapshot(readStoredTeamRadarState())
+          : buildTeamRadarSnapshot({ kind: 'saved', state: validateTeamRadarState(p.chart) });
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+      // 天井は shared が 1 つだけ持つ (パス 167)。越える標題は既定へ倒す —— main と同じ式。
+      const titleStr = typeof p.title === 'string' && p.title.length > 0
+        && countChars(p.title) <= MAX_CHART_TITLE_CHARS
+        ? p.title
+        : 'チームレーダーチャート';
+      const svg = renderTeamRadarSvg(snap, { title: titleStr });
       const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
       const filename = filenameFromTitle(title, Date.now(), '.svg');
       const sinks = await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
