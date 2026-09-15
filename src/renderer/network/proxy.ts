@@ -21,7 +21,7 @@
  * redactSecrets による秘匿 — に限られる。
  */
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
-import { redactForMessage } from '../../shared/redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import {
   describeProxyEndpointFailure,
   normalizeProxyEndpoint,
@@ -682,7 +682,7 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
     const body = await proxyRes.text().catch(() => '');
     // A misbehaving proxy may echo the forwarded request (incl. the
     // Authorization header) back in its error body. Redact before surfacing.
-    throw new Error(`proxy ${proxyRes.status}: ${redactForMessage(body, 200)}`);
+    throw new Error(`proxy ${proxyRes.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
 
   // Defense-in-depth: cap response body before json() to prevent OOM on

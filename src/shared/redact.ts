@@ -376,6 +376,58 @@ export function redactForMessage(input: string, maxChars: number): string {
 export const ERROR_MESSAGE_MAX_CHARS = 2000;
 
 /**
+ * **相手の本文をどれだけ画面へ載せてよいか** —— 天井の梯子 (2026-09-15 · パス 273)。
+ *
+ * `redactForMessage(input, maxChars)` の `maxChars` は**呼ぶ側が決める**。
+ * 2026-09-15 の実測でその実引数は 5 値に割れ、**19 か所が裸のリテラル**だった:
+ *
+ * | 値 | 件数 | 名前 |
+ * |---:|---:|---|
+ * | 2000 | 1 | `ERROR_MESSAGE_MAX_CHARS` (`safeErrorMessage`) |
+ * | 300 | 2 | `MAX_ENSEMBLE_ERROR_CHARS` (パス 269 で名前を付けた) |
+ * | 200 | **15** | **無し** |
+ * | 100 | **2** | **無し** |
+ * | 80 | **2** | **無し** |
+ *
+ * **最も多い天井 (200・15 か所) にだけ名前も理由も無かった。** 隣の 8192 と
+ * 2000 には段落があるのに、15 か所が依っている数字は誰も正当化していない。
+ *
+ * そして 80 の 2 か所は **main ↔ ブラウザ版の双子**である ——
+ * `main/clients/emotions.ts` と `web-shim.ts` が、同じ状況 (Anthropic が
+ * JSON 以外を返した) を同じ 80 で切っている。**今日は一致しているが、
+ * 一致を留めている物が何も無い。** これはパス 269 が
+ * `MAX_ENSEMBLE_ERROR_CHARS` (300 が 2 か所) で塞いだ穴とまったく同じ形で、
+ * パス 167 / 250 / 252 から続く一族である。
+ *
+ * ## 3 段に分かれている理由 (畳まない)
+ *
+ * 数を 1 つに寄せるほうが整うが、**3 つは違う物を切っている**ので畳まない:
+ *
+ * - `MAX_RESPONSE_BODY_IN_MESSAGE` (200) —— 投げる誤りの**本文まるごと**。
+ *   相手 (外部 API・利用者のプロキシ) が返した本文の抜粋で、エラー 1 行の
+ *   ほぼ全部を占める。`ERROR_MESSAGE_MAX_CHARS` (2000) より 1 桁狭いのは、
+ *   **その 1 行には呼び出し元の文脈 (サービス名・status) も載る**からで、
+ *   本文が 2000 字取ると文脈が読めなくなる。
+ * - `MAX_WARNING_BODY_CHARS` (100) —— **警告の一覧**に積む 1 行
+ *   (Ollama の未到達・モデル一覧の失敗)。画面には何本も並ぶので、
+ *   1 本が長いと一覧として読めない。投げる誤りより狭い。
+ * - `MAX_MALFORMED_JSON_ECHO_CHARS` (80) —— モデルが **JSON 以外を返した**
+ *   ときの echo。要るのは「どんな形が来たか」の冒頭だけで (`I'm sorry…` /
+ *   `<html>` / ```` ```json ````)、全文は要らない。3 段で一番狭い。
+ *   **両ビルドの双子がここを読む。**
+ *
+ * 天井そのものは 1 字も変えていない —— 名前と理由を与え、写しを畳んだだけである。
+ * `__tests__/redactionCoverage.test.ts` が**裸のリテラルの再発**を落とす。
+ */
+export const MAX_RESPONSE_BODY_IN_MESSAGE = 200;
+
+/** 警告の一覧に積む 1 行の本文の上限 (**文字**)。梯子の理由は上の段に在る。 */
+export const MAX_WARNING_BODY_CHARS = 100;
+
+/** JSON 以外が返ったときの echo の上限 (**文字**)。梯子の理由は上の段に在る。 */
+export const MAX_MALFORMED_JSON_ECHO_CHARS = 80;
+
+/**
  * 例外を「利用者へ見せてよい 1 行」にする。**伏字を通した後**を返す。
  *
  * main 側 (`src/main/main.ts`) にだけ置いてあったが、ブラウザ版の

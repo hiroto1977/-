@@ -22,7 +22,7 @@
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
 import { countChars } from '../../shared/inputCeiling';
-import { redactForMessage } from '../../shared/redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { parseTokenResponse } from '../../shared/tokenResponse';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -265,7 +265,7 @@ export async function exchangeGoogleCode(
       // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
       // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
       // 不具合報告に貼られる。
-      throw new Error(`token exchange ${res.status}: ${redactForMessage(body, 200)}`);
+      throw new Error(`token exchange ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
     return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
   });

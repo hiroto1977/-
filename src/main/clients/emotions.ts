@@ -36,6 +36,7 @@ import { sealJsonDocument, unsealJsonDocument } from '../atRest';
 import {
   jsonFetch,
   redactForMessage,
+  MAX_MALFORMED_JSON_ECHO_CHARS,
   type ActionContext,
   type ActionMap,
   type FetchContext,
@@ -343,7 +344,7 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   try {
     parsed = JSON.parse(extractJson(body));
   } catch {
-    throw new Error('Anthropic returned a non-JSON response: ' + redactForMessage(body, 80));
+    throw new Error('Anthropic returned a non-JSON response: ' + redactForMessage(body, MAX_MALFORMED_JSON_ECHO_CHARS));
   }
   const normalized = normalizeAnalysis(parsed);
 

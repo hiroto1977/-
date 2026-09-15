@@ -43,8 +43,24 @@ import {
   readBodyWithCap,
   withTimeout,
 } from '../../shared/httpLimits';
-import { redactSecrets, redactForMessage, safeErrorMessage } from '../../shared/redact';
-export { redactSecrets, redactForMessage, safeErrorMessage };
+import {
+  redactSecrets,
+  redactForMessage,
+  safeErrorMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
+  MAX_WARNING_BODY_CHARS,
+  MAX_MALFORMED_JSON_ECHO_CHARS,
+} from '../../shared/redact';
+/* 天井は `shared/redact.ts` の梯子が 1 つだけ持つ (パス 273)。main 側のクライアントは
+ * `./types` 経由でしか redact に触れないので、ここから再輸出する —— 数を写さない。 */
+export {
+  redactSecrets,
+  redactForMessage,
+  safeErrorMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
+  MAX_WARNING_BODY_CHARS,
+  MAX_MALFORMED_JSON_ECHO_CHARS,
+};
 
 /**
  * 全 SaaS クライアントが通る 1 本の口。**打ち切りと応答サイズの上限もここ。**
@@ -204,7 +220,7 @@ async function readJsonBody(res: Response, ctx: LimitedFetchCtx, maxBytes: numbe
     // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
     const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
     throw new FetchError(
-      `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+      `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
       res.status,
       ctx.serviceId,
     );

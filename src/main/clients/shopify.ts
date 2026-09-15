@@ -4,6 +4,7 @@ import {
   readCapped,
   FetchError,
   redactForMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
   type ActionContext,
   type ActionMap,
   type ServiceAction,
@@ -130,7 +131,7 @@ async function postExpectOk(
       const body = await readCapped(res, ctx).catch(() => '');
       // redactSecrets: 連携先が応答にトークンを反射しても、エラー経由で漏らさない。
       throw new FetchError(
-        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
         res.status,
         ctx.serviceId,
       );

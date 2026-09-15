@@ -32,6 +32,7 @@ import {
   readCapped,
   FetchError,
   redactForMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
   type ActionContext,
   type ActionMap,
   type FetchContext,
@@ -229,7 +230,7 @@ async function checkEmailBreach(
       if (res.status === 404) return { email, breaches: [] };
       if (!res.ok) {
         const body = await readCapped(res, hctx).catch(() => '');
-        throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
+        throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`, res.status, 'security');
       }
       const bodyText = await readCapped(res, hctx);
       let parsed: unknown;

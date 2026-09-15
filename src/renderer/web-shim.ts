@@ -112,7 +112,7 @@ import { renderTeamRadarSvg } from '../shared/teamRadarSvg';
 import { getVault } from './security/vault';
 import { eraseEverything } from './security/eraseAll';
 import type { EraseAllReport } from '../shared/eraseReport';
-import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_CHARS } from '../shared/redact';
+import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_CHARS, MAX_RESPONSE_BODY_IN_MESSAGE, MAX_MALFORMED_JSON_ECHO_CHARS } from '../shared/redact';
 import {
   withBodyDeadline,
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -581,7 +581,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 
   if (!res.ok) {
     const body = await readCappedText(res, 'Anthropic').catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
 
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
@@ -690,7 +690,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   }
   if (!res.ok) {
     const body = await readCappedText(res, 'Anthropic').catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
   // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
@@ -778,7 +778,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   }
   if (!res.ok) {
     const body = await readCappedText(res, 'Anthropic').catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
   // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
@@ -800,7 +800,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   try {
     json = JSON.parse(emotionsExtractJson(body));
   } catch {
-    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + redactForMessage(body, 80));
+    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + redactForMessage(body, MAX_MALFORMED_JSON_ECHO_CHARS));
   }
   const entry = emotionsRecordAnalysis(text, source, emotionsNormalize(json));
   return ok(entry);

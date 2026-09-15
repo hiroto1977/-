@@ -561,3 +561,103 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     expect(redactSecrets(prose)).toBe(prose);
   });
 });
+
+/**
+ * **相手の本文をどれだけ画面へ載せてよいかの天井を、裸の数で書かせない。** (パス 273)
+ *
+ * 実測 (2026-09-15): `redactForMessage(input, maxChars)` の第 2 引数は 5 値に割れ、
+ * **19 か所が裸のリテラル**だった —— 200 が 15 か所・100 が 2 か所・80 が 2 か所。
+ * 名前が在ったのは 2000 (`ERROR_MESSAGE_MAX_CHARS`) と 300
+ * (`MAX_ENSEMBLE_ERROR_CHARS`・パス 269 で付けた) だけで、**最も多い 200 には
+ * 名前も理由も無かった**。
+ *
+ * とくに 80 の 2 か所は **main ↔ ブラウザ版の双子** (`main/clients/emotions.ts` と
+ * `web-shim.ts` が、Anthropic が JSON 以外を返した同じ状況を同じ 80 で切る)。
+ * 一致していたが、**一致を留めている物が何も無かった** —— パス 269 が 300 で
+ * 塞いだ穴とまったく同じ形である。
+ *
+ * ここで見るのは**綴りではなく母集団**: `redactForMessage` を呼ぶ所すべてを数え、
+ * 第 2 引数が識別子であることを要求する。数を足した人は名前を付けるしかない。
+ */
+describe('伏字の天井 — 呼ぶ側の第 2 引数は名前で書く (パス 273)', () => {
+  /** `src/` 以下の .ts を集める (検査自身と redact.ts の説明は除く)。 */
+  function productionSources(dir: string, out: string[] = []): string[] {
+    for (const name of readOriginalDir(dir)) {
+      const p = resolve(dir, name);
+      if (name === '__tests__') continue;
+      if (existsSync(p) && !name.endsWith('.ts') && !name.includes('.')) {
+        productionSources(p, out);
+      } else if (name.endsWith('.ts') || name.endsWith('.tsx')) {
+        out.push(p);
+      }
+    }
+    return out;
+  }
+
+  /** 呼び出しの第 2 引数だけを取る (コメントと文字列の中は落とす)。 */
+  const CALL = /redactForMessage\s*\([^,()]*,\s*([^)]*)\)/g;
+  function secondArgs(src: string): string[] {
+    const found: string[] = [];
+    for (const m of stripLineComments(src).matchAll(CALL)) found.push((m[1] ?? '').trim());
+    return found;
+  }
+
+  const sources = productionSources(resolve(REPO, 'src')).filter(
+    (p) => !p.endsWith(`${'redact'}.ts`),
+  );
+
+  it('★ 母集団が空でない (走査が死んだら「問題なし」にならない)', () => {
+    const total = sources.reduce((n, p) => n + secondArgs(readOriginalSource(p)).length, 0);
+    expect(sources.length).toBeGreaterThan(200);
+    expect(total).toBeGreaterThanOrEqual(19);
+  });
+
+  it('★ 裸の数で天井を書いている所は 0 件', () => {
+    const naked: string[] = [];
+    for (const p of sources) {
+      for (const arg of secondArgs(readOriginalSource(p))) {
+        if (/^\d+$/.test(arg)) naked.push(`${p.slice(REPO.length + 1)} → ${arg}`);
+      }
+    }
+    expect(naked).toEqual([]);
+  });
+
+  it('★ 使っている名前はすべて redact / assistantLimits の輸出である', () => {
+    const allowed = new Set([
+      'ERROR_MESSAGE_MAX_CHARS',
+      'MAX_ENSEMBLE_ERROR_CHARS',
+      'MAX_RESPONSE_BODY_IN_MESSAGE',
+      'MAX_WARNING_BODY_CHARS',
+      'MAX_MALFORMED_JSON_ECHO_CHARS',
+    ]);
+    const unknown = new Set<string>();
+    for (const p of sources) {
+      for (const arg of secondArgs(readOriginalSource(p))) {
+        if (!allowed.has(arg)) unknown.add(`${p.slice(REPO.length + 1)} → ${arg}`);
+      }
+    }
+    expect([...unknown]).toEqual([]);
+  });
+
+  /* 対照 —— 抽出器が本当に裸の数を見つけるか (空の検査にしない)。 */
+  it('★ 標本: 裸の数は拾い、名前は拾わない', () => {
+    expect(secondArgs('throw new Error(`x: ${redactForMessage(body, 200)}`);')).toEqual(['200']);
+    expect(secondArgs('redactForMessage(msg, MAX_WARNING_BODY_CHARS)')).toEqual([
+      'MAX_WARNING_BODY_CHARS',
+    ]);
+    // コメントの中の再発例は数えない (この検査自身の説明文で落ちないこと)
+    expect(secondArgs('// かつては redactForMessage(body, 200) と書いていた')).toEqual([]);
+  });
+
+  it('★ 双子が同じ天井を読む (main の emotions とブラウザ版・パス 273)', () => {
+    const mainSrc = readOriginalSource(resolve(REPO, 'src/main/clients/emotions.ts'));
+    const webSrc = readOriginalSource(resolve(REPO, 'src/renderer/web-shim.ts'));
+    expect(mainSrc).toContain('MAX_MALFORMED_JSON_ECHO_CHARS');
+    expect(webSrc).toContain('MAX_MALFORMED_JSON_ECHO_CHARS');
+    // 片方が数へ戻ったら鳴る (綴りではなく引数の形で見る)
+    const drift = /redactForMessage\(\s*body\s*,\s*\d/;
+    expect(mainSrc).not.toMatch(drift);
+    expect(webSrc).not.toMatch(drift);
+    expect('redactForMessage(body, 80)').toMatch(drift);
+  });
+});

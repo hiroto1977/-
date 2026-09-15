@@ -18,7 +18,7 @@ import http from 'node:http';
 import { AddressInfo } from 'node:net';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
-import { redactForMessage } from '../shared/redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../shared/redact';
 import { parseTokenResponse, type TokenResponseFields } from '../shared/tokenResponse';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -752,7 +752,7 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
         // Stryker disable next-line StringLiteral
         'oauth',
       ).catch(() => '');
-      throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
+      throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
     // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ
     // (ブラウザ版の `pkce.ts` も同じ関数を読む)。断り文は本文を引用しない。
@@ -795,7 +795,7 @@ export async function refresh(
         // Stryker disable next-line StringLiteral
         'oauth',
       ).catch(() => '');
-      throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
+      throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
     // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ
     // (ブラウザ版の `pkce.ts` も同じ関数を読む)。断り文は本文を引用しない。

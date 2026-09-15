@@ -25,7 +25,7 @@ import { seededNoise } from '../../shared/seededNoise';
 import { ratioPctOrDash } from '../../shared/num';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
-import { limitedFetch, readCapped, redactForMessage } from './types';
+import { limitedFetch, readCapped, redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from './types';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
@@ -1333,7 +1333,7 @@ async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise
         // bodies are short.
         // Stryker disable next-line ArrowFunction,MethodExpression
         const body = await readCapped(res, hctx).catch(() => '');
-        throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+        throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
       }
       return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
     },

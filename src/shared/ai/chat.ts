@@ -11,7 +11,7 @@
 
 // golden で固定する。
 
-import { redactForMessage } from '../redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, withTimeout } from '../httpLimits';
 import { capAssistantReply } from '../assistantLimits';
 import {
@@ -140,7 +140,7 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
     }
 
     if (!res.ok) {
-      throw new Error(`${spec.label} API ${res.status}: ${redactForMessage(body, 200)}`);
+      throw new Error(`${spec.label} API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
 
     let json: unknown;

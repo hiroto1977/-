@@ -7,7 +7,7 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { limitedFetch, readCapped, redactForMessage } from './types';
+import { limitedFetch, readCapped, redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from './types';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -703,7 +703,7 @@ export async function askBusinessAdvisorImpl(
         // mirrors stocks-advisor pattern for symmetry.
         // Stryker disable next-line ArrowFunction,MethodExpression
         const body = await readCapped(res, hctx).catch(() => '');
-        throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+        throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
       }
       return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
     },

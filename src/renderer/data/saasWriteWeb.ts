@@ -35,7 +35,7 @@ import {
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { jiraBrowseUrl } from '../../shared/atlassianLinks';
-import { redactForMessage } from '../../shared/redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 import {
   optionalString,
@@ -83,7 +83,7 @@ async function ensureOk(res: Response, label: string): Promise<void> {
   if (res.ok) return;
   // 落ちている相手ほど大きなものを返しうるので、失敗の本文も上限つきで読む。
   const body = await readCapped(res, label).catch(() => '');
-  throw new Error(`${label} ${res.status}: ${redactForMessage(body, 200)}`);
+  throw new Error(`${label} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
 }
 
 // --- GitHub: create-issue ------------------------------------------------

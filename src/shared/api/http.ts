@@ -12,7 +12,7 @@
  * `src/main/clients/*` と同じ作法（`vi.fn<typeof fetch>()`）で書ける。
  */
 
-import { redactForMessage } from '../redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../redact';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
@@ -111,7 +111,7 @@ export async function apiFetch<T>(url: string, init: RequestInit, ctx: RequestCo
       // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
       const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
       throw new ApiError(
-        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
         res.status,
         ctx.serviceId,
       );
