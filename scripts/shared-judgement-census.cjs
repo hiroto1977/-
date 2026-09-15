@@ -93,10 +93,25 @@ const VERDICTS = {
     + '`.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。'
     + '絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した',
   inputCeiling:
-    '対称 (設計・パス 252 で新設) —— 天井と床の判定そのもの (countChars / clampToCeiling / '
-    + 'atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を'
-    + '満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。'
-    + '呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)',
+    '対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / '
+    + 'clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも'
+    + '「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、'
+    + '**動作を決めるのは呼ぶ側**である。'
+    + ' ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が'
+    + '母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を'
+    + '見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か'
+    + '`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない'
+    + '(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。'
+    + '`controlChars` (パス 280) と同じ「別の物へ預けた」形。'
+    + ' ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— '
+    + '`countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / '
+    + 'templates) と web-shim の両側から呼ばれ、`atLeastChars` / `moreThanChars` の'
+    + '呼び手は `renderer/security/vault.ts` **1 ファイルだけ**である'
+    + '(デスクトップ版にマスターパスワードは無い —— 資格情報は OS のキーチェーンが封緘するので、'
+    + '床の双子が存在しない)。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、'
+    + '**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・'
+    + 'assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。'
+    + '数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る',
   atlassianSite: '**非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ)',
   emotionsLimits:
     '対称 (実測・パス 254) —— analyze-text の門は両ビルドとも '
@@ -200,10 +215,27 @@ const VERDICTS = {
     + '振る舞いの一致と「2 つ目が戻らないこと」を両方留める。'
     + 'JSON の包みの中を見られないという限界 (パス 245) はそのまま残る',
   depreciation:
-    '非対称は起きない (実測・パス 272) —— 到達の鎖は `taxCalc.ts` 1 本だけで、'
-    + '**`taxCalc.ts` を import する main / preload のファイルは 0 件** (実測)。'
+    '非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、'
+    + '**パス 272 が書いた理由は偽だった**。'
+    + ' ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、'
+    + '`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。'
     + '税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを'
-    + '**1 度も発しない**ので、ビルド間の非対称は原理的に起きない',
+    + '1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は'
+    + '**真**だが、後半は**偽** —— 実測した鎖は '
+    + '`main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、'
+    + '**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。'
+    + '**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る'
+    + '(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である'
+    + '(到達していなければ行は存在しない)。'
+    + ' ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を'
+    + '持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、'
+    + '`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` は'
+    + 'このモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / '
+    + '`straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。'
+    + 'だから main 側は否定で答える問いを発しない。'
+    + '`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。'
+    + ' 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が'
+    + '両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る)',
   hydroponicCrops:
     '非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。',
   hydroponics:

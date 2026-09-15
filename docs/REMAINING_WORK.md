@@ -26587,7 +26587,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ **パス 280 の訂正**: ここには「`shared/tokenInput.ts` の `hasControlChars` (複数形) は別のモジュールで、名前が似ているだけである」と書いてあった —— **それは読み足りなかった**。名前が似ているだけでなく、**同じ判定の 2 つ目の実装**だった (片方は正規表現の文字クラス・もう片方は文字ごとの走査で、どちらも C0 と DEL を見る)。しかも読む側は資格情報の入口と保管層の床である。 ★ 範囲そのものをここに書かない —— `lint:forbidden` が「共有モジュールの外で制御文字の判定を書き直した」として落とす (パス 280 で実際に落ちた。**判定について書いた散文が、判定の写しと見分けられなくなる**)。 2 つは**ほんとうに一致していた** —— BMP のスカラー値すべて + astral + lone surrogate + 貼り付けで混ざる形、計 63,504 標本で食い違い 0 件 (実測)。だから欠陥ではなかったが、`controlChars.ts` 自身の docblock が「同じ判定が 2 つ目を作りかけたので独立させた・片方だけ緩んでも気付けない」と書いている当の形だったので、`hasControlChars` は `hasControlChar` へ委譲する**1 つの実装**にした。`__tests__/controlCharSingleRule.test.ts` が振る舞いの一致と「2 つ目が戻らないこと」を両方留める。JSON の包みの中を見られないという限界 (パス 245) はそのまま残る |
-| `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は `taxCalc.ts` 1 本だけで、**`taxCalc.ts` を import する main / preload のファイルは 0 件** (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを**1 度も発しない**ので、ビルド間の非対称は原理的に起きない |
+| `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、**パス 272 が書いた理由は偽だった**。 ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は**真**だが、後半は**偽** —— 実測した鎖は `main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である(到達していなければ行は存在しない)。 ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / `straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。だから main 側は否定で答える問いを発しない。`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る) |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
 | `eraseReport` | 2 | 3 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
 | `externalUrlGate` | 1 | 1 | 閉じている (パス 241 で 3 経路を実測) |
@@ -26597,7 +26597,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `hydroponicCrops` | 0 | 3 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。 |
 | `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 5 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
-| `inputCeiling` | 13 | 42 | 対称 (設計・パス 252 で新設) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳) |
+| `inputCeiling` | 13 | 42 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれ、`atLeastChars` / `moreThanChars` の呼び手は `renderer/security/vault.ts` **1 ファイルだけ**である(デスクトップ版にマスターパスワードは無い —— 資格情報は OS のキーチェーンが封緘するので、床の双子が存在しない)。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
 | `isoDate` | 2 | 23 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 |
 | `mutualFundsMetrics` | 0 | 1 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**2 つだけ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct` (`pct < RETURN_FLOOR_PCT` の 1 行)。**その述語は確かに越境する** —— `adviseService` の中で真の枝 (:586 警告を組む) と偽の枝 (:596 測れる集合から外す) の両方が使われる。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollama` | 1 | 4 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
@@ -33620,3 +33620,144 @@ census は `src/` を歩くので 1 度だけ呼んで覚える。
 - 判定 census の 31 行は**全部読まれている** (未読 0)。ただし「読んだ」の質は
   行ごとに違う —— `controlChars` は読まれていたが**足りなかった**。
   次に同じ形を探すなら、「対称と書いてある行の根拠が実測か設計論か」を見ること。
+
+## パス 281 —— 「main はこの問いを発しない」の根拠が、1 ホップで測って閉包について述べていた (2026-09-15)
+
+### 出発点 —— パス 280 が残した次の一手
+
+パス 280 の記録はこう締めていた:
+
+> 判定 census の 31 行は**全部読まれている** (未読 0)。ただし「読んだ」の質は行ごとに違う
+> —— `controlChars` は読まれていたが**足りなかった**。次に同じ形を探すなら、
+> 「対称と書いてある行の根拠が実測か設計論か」を見ること。
+
+機械的に分類した (31 行):
+
+| 根拠 | 件数 | 行 |
+| --- | ---: | --- |
+| 対称 (実測) | 15 | `advisorQuestionLimits` / `api/cursor` / `assistantLimits` / `emotionsLimits` / … |
+| 非対称は起きない (実測) | 6 | `depreciation` / `hydroponicCrops` / `hydroponics` / `hydroponicsControl` / `readNumeric` / `savingsPlanning` |
+| パス 248 等で直した | 4 | `atlassianSite` / `ollama` / `radarPlot` / `vaultToken` |
+| **対称 (設計)** | **2** | **`inputCeiling` / `controlChars`** |
+| 意図した非対称 | 1 | `funding` |
+| そう作った | 1 | `tokenResponse` |
+| 閉じている | 2 | `externalUrlGate` / `tokenInput` |
+
+**予想が当たった** —— 「設計」の 2 行のうち 1 行 (`controlChars`) はパス 280 で
+実際に不足が見つかった側である。残る 1 行 (`inputCeiling`) を読み、
+ついでに「非対称は起きない (実測)」の 6 行の根拠も端まで辿った。
+
+### ① `inputCeiling` —— 別の検査へ預けたが、その検査は別のことを見ていた
+
+行はこう書いてあった:
+
+> 呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)
+
+**偽である。** `ceilingUnitCensus.test.ts` が数えるのは「文字で数えると宣言した定数が
+`.length` の比較か `.slice(` の引数に現れる」箇所 —— つまり**単位**であって、
+ビルド間の非対称ではない。あちらの冒頭が自分でそう述べている
+(「天井の写しを数える走査は在った。数えていなかったのは**単位**である」)。
+`controlChars` (パス 280) と同じ「**別の物へ預けた**」形で、預け先が
+その問いを見ていない。
+
+**実測して書き直した** (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ**。
+
+| 述語 | main 側の呼び手 | renderer / web-shim 側 | 越境 |
+| --- | --- | --- | :-: |
+| `countChars` | assistant / skills / emotions / ollama / templates | web-shim ほか 20 以上 | ✅ |
+| `clampToCeiling` | assistant / skills / emotions / ollama | web-shim ほか | ✅ |
+| `atLeastChars` | **0 件** | `renderer/security/vault.ts` だけ | ✕ |
+| `moreThanChars` | **0 件** | `renderer/security/vault.ts` だけ | ✕ |
+
+床の 2 つが越えないのは**デスクトップ版にマスターパスワードが無い**ため ——
+資格情報は OS のキーチェーンが封緘するので、床の双子が存在しない。
+越える 2 つは天井の定数を `shared/` に 1 つずつ持ち、**同じ定数を両側が読む**。
+
+### ② `depreciation` —— 1 ホップで測って、閉包について述べていた
+
+行はこう書いてあった (パス 272):
+
+> 到達の鎖は `taxCalc.ts` 1 本だけで、**`taxCalc.ts` を import する main / preload の
+> ファイルは 0 件** (実測)。税の計算は画面 (renderer) だけが読む。main 側がこの
+> モジュールの問いを**1 度も発しない**ので、ビルド間の非対称は原理的に起きない
+
+**前半は真・後半は偽。** 実測した鎖:
+
+```
+src/main/clients/funding.ts → src/shared/funding.ts
+  → src/shared/taxCalc.ts → src/shared/depreciation.ts
+```
+
+`shared/funding.ts` を 1 枚はさんで main へ繋がっている。`src/main` / `src/preload`
+の中に `taxCalc` を**直に** import するファイルは確かに 0 件だが、
+**この本は到達を閉包で見る** (パス 268 でそう直した) ので、
+その 1 ホップの数は結論を支えない。むしろ **この行が母集団に在ること自体が反証**で、
+到達していなければ行は存在しない —— **散文が、自分をそこへ載せた計算と矛盾していた。**
+
+**結論 (「非対称は起きない」) は今も正しい。**ただし理由は**辺の中身**である:
+
+| 辺 | 持ち出す名前 | 種類 |
+| --- | --- | --- |
+| `funding.ts` → `taxCalc.ts` | `CONSUMPTION_TAX_STANDARD` | 定数 |
+| `taxCalc.ts` → `depreciation.ts` | `SME_ANNUAL_CAP` / `SME_MEASURE_END` / `SME_UNIT_LIMIT` / `SME_UNIT_LIMIT_BEFORE_STEP` / `SME_UNIT_LIMIT_STEP_DATE` | 定数 5 つ |
+
+`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` /
+`straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。
+だから main 側は否定で答える問いを発しない。
+
+### ③ 残る 5 行の根拠は端まで辿って**真**だった
+
+| 行 | 根拠 | 実測 |
+| --- | --- | --- |
+| `hydroponicCrops` / `hydroponics` / `readNumeric` | main の入口は `buildHydroponicsSnapshot` 1 つだけ・その本体は射影だけ | ✅ `main/clients/hydroponics.ts` が値として取るのは `buildHydroponicsSnapshot` のみ。本体の呼び出しは `.map(` **だけ** |
+| `mutualFundsMetrics` | `serviceAdvisor` が取るのは 2 つだけ | ✅ `RETURN_FLOOR_PCT` / `isImpossibleReturnPct` |
+| `savingsPlanning` | 同じ鎖の先・`isPlannableRate` / `isPlannableYears` はどちらの中からも呼ばれない | ✅ `mutualFundsMetrics` 自身の将来評価額の計算だけが呼ぶ |
+
+### 直し —— 散文が引く**到達の事実**を機械に持たせる
+
+`src/shared/__tests__/judgementReachEdges.test.ts` (検査 17 件)。
+6 行を **3 本の鎖**が支えているので、pin も 3 本で足りる。留めるのは 4 つ:
+
+1. **main からの閉包の最短路が台帳の鎖と一致する** (経路が変われば鳴る)
+2. **鎖の各辺が値として持ち出す名前が台帳と一致する** (`import type` / `{ type X }` は数えない)
+3. **「定数だけ」と台帳が言う辺は、名前が実際に `export const`** (定数が関数に化ければ鳴る)
+4. **`buildHydroponicsSnapshot` の本体の呼び出しは `.map(` だけ**
+
+加えて **pin と行を結ぶ** —— 各行の散文が pin の語を引いていること
+(引かなくなれば「pin が孤児になった」として鳴る)。
+
+**call の辺までは証明しない** (AST を入れない約束はそのまま)。留めるのは
+**散文が引いている事実**であって結論ではない —— 事実が動いたら人が読み直す、
+という所までを機械が受け持つ。
+
+### 対照 (5 件・全部鳴った)
+
+| # | 壊したもの | 鳴った検査 |
+| --- | --- | --- |
+| A | `taxCalc.ts` の import 一覧に `isSchedulableLife` を足す | 持ち出す名前が台帳と一致する (5 vs 4) |
+| B | `export const SME_UNIT_LIMIT` → `export function SME_UNIT_LIMIT()` | 「定数だけ」の辺は実際に `export const` である + 空検査の対照 |
+| C | `buildHydroponicsSnapshot` の `{ ...X }` を `structuredClone(X)` に | 本体は射影だけ (`['.map','structuredClone']` vs `['.map']`) |
+| D | `main/clients/funding.ts` が `depreciation` を直に import | 最短路が台帳の鎖と一致する (4 段 → 2 段) |
+| E | `depreciation` の行を**パス 272 の偽の散文へ戻す** | pin と同じ語を引いている (`funding.ts` が無い) |
+
+対照 E は「訂正が黙って元に戻る」形を塞ぐ。片付けは `cp` で退避・復元
+(`git checkout --` は使わない)。
+
+### 家系
+
+**「散文が別の物へ預ける」**の 2 例目 (`controlChars` が 1 例目・パス 280) と、
+**「1 ホップで測って閉包について述べる」**の初例。後者はパス 268 が
+census の計算を 1 ホップ → 閉包へ直したときに、**散文の側を直し忘れた**形である
+—— 計算を直すとき、その計算に依っている散文も母集団として数えること。
+
+### 次に同じ形を探すなら
+
+- 判定 census の 31 行で「設計」根拠はこれで **0 件**になった (2 行とも実測に置き換えた)。
+- 残るのは「実測」15 行の**質**である。パス 281 で辿ったのは 6 行 (非対称は起きない) の
+  到達だけで、**「対称 (実測)」の 15 行がどこまで辿られているかは読んでいない**。
+  探すなら同じ問い —— **その行は 1 ホップを測って閉包について述べていないか**。
+- 出荷物のバイト数はパス 280 / 281 のどちらでも測っていない。
+  281 で触ったのは検査・走査・文書だけなので**出荷物に入らない**
+  (`scripts/` も `__tests__` も単一 HTML に入らない)。
+  パス 280 の `tokenInput.ts` の委譲 1 行は**両ビルドに入る** —— 次に測るときは
+  その分の差が出るので、280 と 281 を混ぜて読まないこと。
