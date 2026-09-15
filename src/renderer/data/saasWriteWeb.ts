@@ -9,7 +9,7 @@
  * ここは fetch を注入できる純粋ロジックに保ち、単体テスト可能にする。
  * サービスを追加するたびにこのモジュールに関数を増やしていく。
  */
-import { SCAN_URL_MESSAGES, validateScanUrl } from '../../shared/scanTarget';
+import { SCAN_URL_MESSAGES, validateScanUrl, BREACH_EMAIL_MESSAGES, validateBreachEmail } from '../../shared/scanTarget';
 import {
   ATLASSIAN_ISSUE_FIELDS,
   CALENDAR_EVENT_FIELDS,
@@ -26,6 +26,8 @@ import {
   checkWriteFields,
   checkWriteLabels,
   describeWriteFieldFailure,
+  CLOUDFLARE_PURGE_NEEDS_TARGET,
+  RFC2822_HEADER_UNSAFE,
 } from '../../shared/writeFieldLimits';
 /* ホストは共有に 1 つだけ —— main と同じ字面を写さない (パス 274)。 */
 import {
@@ -427,7 +429,7 @@ export function isSafeHeaderValue(value: unknown): value is string {
 }
 
 export function buildRfc2822(to: string, subject: string, body: string): string {
-  if (!isSafeHeaderValue(to)) throw new Error('to に CR/LF/NUL は使用できません');
+  if (!isSafeHeaderValue(to)) throw new Error(RFC2822_HEADER_UNSAFE);
   const utf8Subject = `=?UTF-8?B?${utf8ToBase64(subject)}?=`;
   return [
     `To: ${to}`,
@@ -671,7 +673,7 @@ export async function purgeCloudflareCache(
   const purgeEverything = input.purgeEverything === true;
   const files = Array.isArray(input.files) ? input.files.filter((f): f is string => typeof f === 'string') : [];
   if (!purgeEverything && files.length === 0) {
-    throw new Error('purgeEverything=true か、空でない files[] のいずれかが必要です');
+    throw new Error(CLOUDFLARE_PURGE_NEEDS_TARGET);
   }
   const body = purgeEverything ? { purge_everything: true } : { files };
   const res = await transport(`${CF_API_BASE}/zones/${encodeURIComponent(zoneId)}/purge_cache`, {
@@ -779,8 +781,12 @@ export async function checkEmailBreach(
   hibpKey: string,
   transport: Transport,
 ): Promise<ActionData<'security/check-email-breach'>> {
-  const email = typeof input.email === 'string' ? input.email.trim() : '';
-  if (!email) throw new Error('email は必須です');
+  // 空白落としと空の断りは `shared/scanTarget.ts` が 1 つだけ持つ (パス 285) ——
+  // 2026-08-22 にこの双子がずれて「誤った安心」を返した経緯が、あちらの
+  // docblock に在る。文面ではなく**述語ごと**共有している。
+  const checked = validateBreachEmail(input.email);
+  if (!checked.ok) throw new Error(BREACH_EMAIL_MESSAGES[checked.reason]);
+  const email = checked.email;
   const res = await transport(
     'https://haveibeenpwned.com/api/v3/breachedaccount/' + encodeURIComponent(email) + '?truncateResponse=false',
     {

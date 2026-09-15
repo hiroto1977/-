@@ -26581,7 +26581,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
-| `advisorQuestionLimits` | 2 | 4 | 対称 (実測・パス 251) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った |
+| `advisorQuestionLimits` | 2 | 4 | 対称 (実測・パス 251 / パス 285 で文も閉じた) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。 ★ パス 285 まで**同じ条件に文が 2 通り在った** —— main の 2 か所が英語 (`question is required` / `question exceeds 1000 chars`)、ブラウザ版の 2 か所が日本語。main の文は safeErrorMessage を通って**そのまま画面へ出る** (redact.ts は伏字にするだけで翻訳はしない) ので、**日本語の画面にだけ英語が出て**、同じ操作がブラウザ版では日本語で断られていた。`ADVISOR_QUESTION_MESSAGES` (shared/advisorQuestionLimits.ts) に 3 文を置き、4 か所すべてが台帳を読む —— **運び方は変えていない** (main は今も throw、ブラウザ版は今も err('action_failed', …))。docblock が「呼び出し側がそれぞれの**流儀**で伝えられるように」と述べた決定はそこに在るので、それは守った。 ★ 重さ: この組は `scanTarget` より**軽い** —— 判定は 2026-08-25 から 1 つで、写しだったのは文だけなので安全の主張は乗っていない (HIBP は述語が写しで、片側の trim が落ちて偽の安心を返した)。同じ家系でも重さは分けて書く。母集団はパス 251 で 118 件と測った |
 | `aiEndpoint` | 0 | 0 | 対称 (実測・パス 269) —— 直接の import は **両ビルドとも 0 件** (表の 0 / 0)。越境するのは shared を 2 段たどった先だけで、辿ると否定は 1 つに絞れる: `normalizeAiBaseUrl` の `{ok:false, reason}` を読むのは `ai/providers.ts` の `resolveBase` **だけ**で、そこは `buildRequest` の中に在り、両ビルドは `runAiChat` (main/clients/assistant.ts:44 / web-shim.ts:188) からそこへ入る。**投げたあとの動作が一致する**: main は `action:invoke` の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、ブラウザ版は `err('action_failed', e.message)` で、その `err()` 自身が `redactForMessage(message, ERROR_MESSAGE_MAX_CHARS)` を掛ける —— **同じ関数・同じ天井**なので code も伏字も文面の長さも同じ (serviceAdvisor と同じ形)。 ★ ただし `chatAll` の**提供者ごと**の伏字だけは、2026-09-15 まで `redactForMessage(msg, 300)` という**字面がビルドごとに 1 つずつ**在った (パス 167/250/252 と同じ家系)。パス 269 で `MAX_ENSEMBLE_ERROR_CHARS` を `shared/assistantLimits.ts` に置き、両ビルドがその名を読むようにして `assistantTurnsParity.test.ts` に字面の再登場を禁じる門を足した。 もう 1 つの輸出 `isLoopbackHostname` は越境しない —— 唯一の読み手 `shared/proxyEndpoint.ts` の消費者が renderer だけ (network/proxy.ts / SettingsPage.tsx) である |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
@@ -26611,7 +26611,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `tokenResponse` | 1 | 1 | 対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、否定のあとの動作は両ビルドで同じ 2 行: `if (!parsed.ok) throw new Error(parsed.message)` (main/oauth.ts の交換・更新の 2 か所と renderer/oauth/pkce.ts)。文面も共有の 1 組。この pass の前は main 側に検査そのものが無く (`JSON.parse(…) as TokenResponse`)、ブラウザ版だけが見ていた —— 非対称の極として在った |
 | `updateCheck` | 1 | 2 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。 ★ **パス 282 で閉じた**: この行はパス 250 から「**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い)」と**生きた食い違いを記録したまま置いて**いた。main を `DEFAULT_HTTP_TIMEOUT_MS` へ寄せ、`shared/__tests__/deadlineCensus.test.ts` が両ビルドの締切を留める。★ 教訓: 「理由はどこにも無い」と書けたなら、それは**書いた時点で欠陥**である ——記録しただけで 32 パス残った |
 | `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
-| `writeFieldLimits` | 11 | 12 | 対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。**外部サービスへ利用者の資格情報で書き込む前の関門**なので、4 文字では足りない。 ★ 実測 (パス 282): 双子は **10 組** (slack / github / calendar / gmail / drive / canva / notion / atlassian / wordpress / cloudflare ×2 の欄)。**10 組すべてが同じ形**で、main は `checkWriteFields(ctx.payload, TABLE)`・ブラウザ版は `checkWriteFields(input, 同じ TABLE)` を呼び、否定 (`!== null`) のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。欄の台帳は `shared/writeFieldLimits.ts` に 1 つずつで、ラベルも天井も**両ビルドが同じ定数を読む**。GitHub の labels だけ 2 段目 (`checkWriteLabels`) が在り、それも両側に在る。MS365 の 2 表はパス 274/275 で `shared/api/microsoft365.ts` へ移したので**両ビルドが同じ実装**を通る (表の上では「片側だけ」に見えるが、それは共有へ寄せた結果である)。 ★ 11 番目 (パス 283): `shopify` の注文 —— **ブラウザ版に相手が居ない**。7 つの同期 action (slack / discord / line / gmail / notion / salesforce / stripe) は main にしか無く、`webShimCredentials.test.ts` の `BROWSER_SURFACE` がその不在を既に台帳で留めている (増減したら鳴る)。だからこの 1 組は**非対称ではなく片側しか存在しない** —— 断りの動作が両ビルドで違う、という家系の外に在る。main 側の欄は `SHOPIFY_ORDER_FIELDS` + `checkShopifyLineItems` で、他の 10 組と同じ `describeWriteFieldFailure` の文を投げる。パス 283 まで `assertOrder` は `id` と `name` の真偽値しか見ておらず、`lineItems` が配列でないと `items.map is not a function`・`total` がオブジェクトだと `[object Object]` が 7 つの第三者へ出ていた。 ★ 残る非対称は**文面の言語** —— Cloudflare のパージの「どちらかが要る」の断りは main が英語 (`either purgeEverything=true or non-empty files[] is required`)・ブラウザ版が日本語。`advisorQuestionLimits` の行が同じことを述べており、**欄の判定ではなく文面の家系**なのでこの行では直していない (次に閉じる候補) |
+| `writeFieldLimits` | 11 | 12 | 対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。**外部サービスへ利用者の資格情報で書き込む前の関門**なので、4 文字では足りない。 ★ 実測 (パス 282): 双子は **10 組** (slack / github / calendar / gmail / drive / canva / notion / atlassian / wordpress / cloudflare ×2 の欄)。**10 組すべてが同じ形**で、main は `checkWriteFields(ctx.payload, TABLE)`・ブラウザ版は `checkWriteFields(input, 同じ TABLE)` を呼び、否定 (`!== null`) のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。欄の台帳は `shared/writeFieldLimits.ts` に 1 つずつで、ラベルも天井も**両ビルドが同じ定数を読む**。GitHub の labels だけ 2 段目 (`checkWriteLabels`) が在り、それも両側に在る。MS365 の 2 表はパス 274/275 で `shared/api/microsoft365.ts` へ移したので**両ビルドが同じ実装**を通る (表の上では「片側だけ」に見えるが、それは共有へ寄せた結果である)。 ★ 11 番目 (パス 283): `shopify` の注文 —— **ブラウザ版に相手が居ない**。7 つの同期 action (slack / discord / line / gmail / notion / salesforce / stripe) は main にしか無く、`webShimCredentials.test.ts` の `BROWSER_SURFACE` がその不在を既に台帳で留めている (増減したら鳴る)。だからこの 1 組は**非対称ではなく片側しか存在しない** —— 断りの動作が両ビルドで違う、という家系の外に在る。main 側の欄は `SHOPIFY_ORDER_FIELDS` + `checkShopifyLineItems` で、他の 10 組と同じ `describeWriteFieldFailure` の文を投げる。パス 283 まで `assertOrder` は `id` と `name` の真偽値しか見ておらず、`lineItems` が配列でないと `items.map is not a function`・`total` がオブジェクトだと `[object Object]` が 7 つの第三者へ出ていた。 ★ パス 285 で閉じた —— 残っていた非対称は「**同じ条件に文が 2 つ**」で (パス 283 はこれを「文面の言語」と書いたが、**軸は言語ではない** —— 言語が同じでも 2 つ在れば片方だけ動く)。2 件とも main が英語・ブラウザ版が日本語だった: Cloudflare のパージの「どちらかが要る」と Gmail の to の CR/LF。`CLOUDFLARE_PURGE_NEEDS_TARGET` / `RFC2822_HEADER_UNSAFE` を `shared/writeFieldLimits.ts` の台帳の隣に置き、main の 2 経路と saasWriteWeb の 2 経路が同じ定数を読む。留めるのは `shared/__tests__/refusalTwins.test.ts` (両ビルドを実際に呼んで同じ文が返ることを見る —— 綴りを写した検査は無言で古びるので、main 側の検査 11 か所も台帳を読むように直した) |
 <!-- shared-judgement-census:end -->
 
 ### 2. ★ `ollama` —— 許可する経路の台帳を、読んでいるのはブラウザ版だけだった
@@ -34129,3 +34129,120 @@ AI アドバイザーの応答検査 (`validateBusinessAdvisorJson` /
   **4,000,000 B 超で落とし**、3,400,000 B 超は**警告だけで落とさない**
   (ci.yml に理由が在る —— 天井に当たってから気付くと無関係な PR が落ちた
   ように見えるため)。**ハード上限までは 695,753 B。**
+
+---
+
+## パス 285 —— 同じ条件に文が 2 つ在る 4 組を閉じ、家系の中で重さを分けた (2026-09-15)
+
+### 見つけ方 —— パス 283 が残した 1 行を、軸ごと疑った
+
+パス 283 は `writeFieldLimits` の行にこう書き残した:
+「★ 残る非対称は**文面の言語** —— Cloudflare のパージの断りは main が英語・
+ブラウザ版が日本語」。パス 285 はまずこの**軸の名前**を疑った。
+
+**言語は軸ではない。** 言語が同じでも文が 2 つ在れば片方だけ動く。
+正しい軸は**「同じ条件に文が 2 つ」**である。言語の違いは、
+2 つ在ることの**見つけやすい兆候**にすぎない (だから目に付いた)。
+
+軸を直して数え直すと、この家系は 4 組だった:
+
+| 組 | 判定 | 文 | 重さ |
+|---|---|---|---|
+| `scanTarget` (HIBP の email) | **写し** (両ビルドが別々に trim) | 写し | **安全** —— 実際にずれた |
+| `writeFieldLimits` (Cloudflare のパージ) | 共有 | 写し | 中 (破壊的操作の理由) |
+| `writeFieldLimits` (Gmail の to の CR/LF) | 共有 | 写し | 中 (ヘッダ注入の理由) |
+| `advisorQuestionLimits` (質問 3 理由 × 4 か所) | 共有 (2026-08-25 から) | 写し 2 通り | **軽** (画面の言語) |
+
+### 重さを同じだと書かないこと —— HIBP だけが安全の主張を持っていた
+
+`scanTarget` の docblock が経緯を持っていた: **2026-08-22 に片側の `.trim()` が
+落ち**、HIBP の 404 が「どの漏洩にも含まれない」と読まれて**偽の安心**を返した。
+そのときの直しは trim を**写した**ので、写しが 2 つ残った。
+
+だから共有したのは**文ではなく述語** (`validateBreachEmail`)。天井は
+**足していない** —— 足すと「今まで通っていた長い email を断る」という
+別の変更が混ざる。
+
+残る 3 組は判定が最初から 1 つで、写しだったのは文だけ。害は文の食い違いに
+留まり、安全の主張は乗っていない。**同じ家系でも重さは分けて書く** ——
+census の 2 行にその区別を入れた。
+
+### `advisorQuestionLimits` —— 日本語の画面にだけ英語が出ていた
+
+実測: 判定を呼ぶ 4 か所 × 理由 3 つ = **12 文が 2 通り**。main の 2 か所
+(`stocks.ts` / `business.ts`) が英語 (`question is required` /
+`question exceeds 1000 chars` / `...control characters`)、ブラウザ版の
+2 か所が日本語。
+
+main の文は `safeErrorMessage` を通って**そのまま画面へ出る** ——
+`redact.ts` は伏字にするだけで翻訳はしない。つまり**デスクトップ版の
+アドバイザー 2 画面だけが英語で断り**、同じ操作がブラウザ版では
+日本語で断られていた。どちらのビルドを見てもこの食い違いは分からない
+(画面は 1 つずつしか見えない)。
+
+`ADVISOR_QUESTION_MESSAGES` を述語の隣に置き、4 か所が台帳を読む。
+**運び方は変えていない** —— docblock が「呼び出し側がそれぞれの**流儀**
+(`throw` / `err()`) で伝えられるように」戻り値を理由にした決定を述べており、
+それはここでも生きている。変えたのは運ぶ物ではなく運ばれる文である。
+
+### 自分の方法の欠陥 —— 全文で grep すると、部分文字列で留めた検査が隠れる
+
+置き換えた英語を pin している検査を探すとき、**完全な綴りで grep した**
+(`"question is required"`)。それで 3 件見つけて直したが、全件実行で
+**2 件落ちた**。落ちたのは部分文字列で留めていた検査である:
+
+```
+stocks.test.ts:1477   .rejects.toThrow(/required/);
+stocks.test.ts:1483   .rejects.toThrow(/control characters/);
+business.test.ts:679  .rejects.toThrow(/control characters/);
+```
+
+`/required/` は `question is required` の**部分**なので、全文の grep には
+掛からない。これは今パスで 2 度起きた (Cloudflare / HIBP の 2 件でも同じ)。
+
+**持続する守りは検査の綴りではなく、実装側の走査である。** 4 か所すべてが
+`ADVISOR_QUESTION_MESSAGES` を読み、引用の中に英語の旧文面が無いことを
+`refusalTwins.test.ts` が見る。検査の綴りが古びても、実装に英語が戻れば鳴る
+(対照で確かめた)。
+
+### 規則を「文面」ではなく「英語」に掛けてしまった —— 最初の版は正しい散文で落ちた
+
+引用の外も見る広い規則を書いたら、`business.ts:633` の
+`// question is required and bounded; control chars rejected to keep prompt clean.`
+——**規則を述べた正しい英語のコメント**に当たって落ちた。画面には出ない。
+
+規則を `/['"`]question (is required|exceeds)/` に狭め、**標本を 3 つ**添えた:
+引用つきの旧文面 2 つには鳴り、散文のコメントには鳴らない。
+「英語を禁じる」のではなく「引用の中の旧文面を禁じる」が意図だった。
+
+### 実測 (2026-09-15)
+
+- 検査 742 ファイル / **17,014 件** 全 green・`verify:all` **37 ゲート** 全 green
+- 静的 `it()` **14,344** (14,340 → +4。`verify:arch` の metric も直した)
+- 判定 census: shared 143 / 両ビルド 62 / 否定 31 —— **母集団は不変**
+  (変えたのは 2 行の判決文で、数えている物ではない)
+- 出荷物: FULL **11,891,335 B** / LITE **3,304,081 B** —— **両方 −166 B**。
+  4 か所の写しを台帳 1 つに畳んだ分が、台帳が増やした分より大きかった。
+  LITE の警告線 (3,400,000 B) まで **95,919 B**・ハード上限 (4,000,000 B) まで
+  **695,919 B**
+- `npm run perf` 実 chromium: LITE DCL 195ms / FULL DCL 534ms ——
+  起動時の巨大 `JSON.parse` ゼロ
+- 対照: 判定を外す 2 本で **5 件**・main に英語を戻す + 検査を綴りに戻す 2 本で
+  **4 件** 鳴った (どちらも `cp` で退避 → 復元し、`.p285c/` `.p285d/` は削除)
+
+### 次の候補 —— 鎖の除外台帳は、PROTECTED の**閉包しか問わない**
+
+`security/integrity-chain.json` の除外台帳 (`DEP_EXCLUSIONS`) は
+「**保護対象が import しているのに保護しない**と決めた物」の台帳で、
+双方向に鳴る。よく出来ているが、**閉包の外は一度も問われない**。
+
+実測: `src/shared/writeFieldLimits.ts` は PROTECTED にも除外台帳にも無い。
+これは**利用者の資格情報で 11 の第三者へ書き込む手前の欄の台帳**で、
+一つ隣の `httpLimits` / `externalUrlGate` / `exportPaths` は保護対象である。
+`advisorQuestionLimits.ts` も同じ位置に在る (CR/LF を断って要求本文と
+ログが行を割られるのを防いでいる)。
+
+**「決めて除外した」と「一度も問われていない」は違う。** 除外台帳の docblock
+自身が「理由の書けない除外は、単に見落としと区別がつかない」と述べている ——
+同じ言葉が閉包の外にも当たる。PROTECTED へ入れるかは閉包が増える判断なので、
+次のパスで閉包ごと読んで決める。

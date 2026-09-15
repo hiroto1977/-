@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fsp } from 'node:fs';
+import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
 import {
   sma,
   ema,
@@ -1474,13 +1475,13 @@ describe('ACTIONS["advise"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: '' } }),
-    ).rejects.toThrow(/required/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES.empty);
     await expect(
       ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: 'x'.repeat(1001) } }),
-    ).rejects.toThrow(/exceeds 1000/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES['too-long']);
     await expect(
       ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: 'hi\nworld' } }),
-    ).rejects.toThrow(/control characters/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES['control-chars']);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

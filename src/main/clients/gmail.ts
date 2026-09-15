@@ -1,6 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { localIsoDate } from '../../shared/localDate';
-import { GMAIL_DRAFT_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import { GMAIL_DRAFT_FIELDS, checkWriteFields, describeWriteFieldFailure, RFC2822_HEADER_UNSAFE } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 
 interface GmailListResponse {
@@ -100,7 +100,7 @@ export function isSafeHeaderValue(value: unknown): value is string {
 /** Build an RFC 2822 message with UTF-8 encoded subject. */
 export function buildRfc2822(to: string, subject: string, body: string): string {
   if (!isSafeHeaderValue(to)) {
-    throw new Error('to contains a CR/LF/NUL character');
+    throw new Error(RFC2822_HEADER_UNSAFE);
   }
   // Same equivalent-mutant note as base64url above: Node 22 treats
   // unknown encodings as utf8 for our inputs.

@@ -1,4 +1,4 @@
-import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import { checkAdvisorQuestion, ADVISOR_QUESTION_MESSAGES } from '../../shared/advisorQuestionLimits';
 import { countChars } from '../../shared/inputCeiling';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../../shared/advisorResponseLimits';
 import { seededNoise } from '../../shared/seededNoise';
@@ -633,11 +633,8 @@ export async function askBusinessAdvisorImpl(
   // question is required and bounded; control chars rejected to keep prompt clean.
   // Stryker disable ConditionalExpression
   const problem = checkAdvisorQuestion(question);
-  if (problem === 'empty') {
-    throw new Error('question is required');
-  }
-  if (problem === 'too-long') {
-    throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`);
+  if (problem !== null) {
+    throw new Error(ADVISOR_QUESTION_MESSAGES[problem]);
   }
   if (problem === 'control-chars') {
     throw new Error('question contains control characters');

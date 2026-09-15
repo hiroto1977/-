@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchCloudflareSnapshot, ACTIONS } from '../cloudflare';
 import { FetchError } from '../types';
+import { CLOUDFLARE_PURGE_NEEDS_TARGET } from '../../../shared/writeFieldLimits';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -373,7 +374,7 @@ describe('ACTIONS["purge-cache"] — 入口の検査と送り方', () => {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['purge-cache']!({ token: 't', fetch: fetchMock, payload }),
-      ).rejects.toThrow('either purgeEverything=true or non-empty files[] is required');
+      ).rejects.toThrow(CLOUDFLARE_PURGE_NEEDS_TARGET);
       // 送ってから断るのでは遅い — キャッシュは消えてしまう。
       expect(fetchMock).not.toHaveBeenCalled();
     }

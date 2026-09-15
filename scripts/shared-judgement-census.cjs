@@ -72,10 +72,22 @@ const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
  */
 const VERDICTS = {
   advisorQuestionLimits:
-    '対称 (実測・パス 251) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / '
-    + "control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、"
-    + 'ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、'
-    + 'その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った',
+    '対称 (実測・パス 251 / パス 285 で文も閉じた) —— checkAdvisorQuestion の 3 つの理由 '
+    + "(empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う "
+    + '(main の stocks / business、ブラウザ版の web-shim)。'
+    + ' ★ パス 285 まで**同じ条件に文が 2 通り在った** —— main の 2 か所が英語 '
+    + '(`question is required` / `question exceeds 1000 chars`)、ブラウザ版の 2 か所が'
+    + '日本語。main の文は safeErrorMessage を通って**そのまま画面へ出る** '
+    + '(redact.ts は伏字にするだけで翻訳はしない) ので、**日本語の画面にだけ英語が'
+    + '出て**、同じ操作がブラウザ版では日本語で断られていた。'
+    + '`ADVISOR_QUESTION_MESSAGES` (shared/advisorQuestionLimits.ts) に 3 文を置き、'
+    + '4 か所すべてが台帳を読む —— **運び方は変えていない** (main は今も throw、'
+    + "ブラウザ版は今も err('action_failed', …))。docblock が「呼び出し側がそれぞれの"
+    + '**流儀**で伝えられるように」と述べた決定はそこに在るので、それは守った。'
+    + ' ★ 重さ: この組は `scanTarget` より**軽い** —— 判定は 2026-08-25 から 1 つで、'
+    + '写しだったのは文だけなので安全の主張は乗っていない (HIBP は述語が写しで、'
+    + '片側の trim が落ちて偽の安心を返した)。同じ家系でも重さは分けて書く。'
+    + '母集団はパス 251 で 118 件と測った',
   'api/cursor':
     '対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ '
     + '`fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は '
@@ -371,10 +383,16 @@ const VERDICTS = {
     + 'パス 283 まで `assertOrder` は `id` と `name` の真偽値しか見ておらず、'
     + '`lineItems` が配列でないと `items.map is not a function`・'
     + '`total` がオブジェクトだと `[object Object]` が 7 つの第三者へ出ていた。'
-    + ' ★ 残る非対称は**文面の言語** —— Cloudflare のパージの「どちらかが要る」の断りは '
-    + 'main が英語 (`either purgeEverything=true or non-empty files[] is required`)・'
-    + 'ブラウザ版が日本語。`advisorQuestionLimits` の行が同じことを述べており、'
-    + '**欄の判定ではなく文面の家系**なのでこの行では直していない (次に閉じる候補)',
+    + ' ★ パス 285 で閉じた —— 残っていた非対称は「**同じ条件に文が 2 つ**」で '
+    + '(パス 283 はこれを「文面の言語」と書いたが、**軸は言語ではない** —— '
+    + '言語が同じでも 2 つ在れば片方だけ動く)。2 件とも main が英語・ブラウザ版が'
+    + '日本語だった: Cloudflare のパージの「どちらかが要る」と Gmail の to の CR/LF。'
+    + '`CLOUDFLARE_PURGE_NEEDS_TARGET` / `RFC2822_HEADER_UNSAFE` を '
+    + '`shared/writeFieldLimits.ts` の台帳の隣に置き、main の 2 経路と '
+    + 'saasWriteWeb の 2 経路が同じ定数を読む。留めるのは '
+    + '`shared/__tests__/refusalTwins.test.ts` (両ビルドを実際に呼んで同じ文が'
+    + '返ることを見る —— 綴りを写した検査は無言で古びるので、'
+    + 'main 側の検査 11 か所も台帳を読むように直した)',
 };
 
 /**

@@ -32,6 +32,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
+import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
 
 /** 書き出し先として action が返す道 (実物と同じ形の絶対パス)。 */
 const EXPORT_PATH = '/home/user/.local/business-hub/data/dashboard.html';
@@ -217,7 +218,7 @@ describe('株式画面の残りの操作 (カバレッジ 28.45% だった側 ·
     expect(container.textContent).toContain('銘柄コードを入力してください');
     // 質問の欄も空。
     await click('AI に聞く');
-    expect(container.textContent).toContain('質問を入力してください');
+    expect(container.textContent).toContain(ADVISOR_QUESTION_MESSAGES.empty);
     expect(invoked, '空入力で IPC を呼んでいる').toBe(0);
   });
 

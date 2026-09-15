@@ -61,9 +61,9 @@ import {
   tooLongTemplateFields,
 } from '../shared/templateSvg';
 import {
-  MAX_ADVISOR_QUESTION_CHARS,
   capAdvisorUniverse,
   checkAdvisorQuestion,
+  ADVISOR_QUESTION_MESSAGES,
 } from '../shared/advisorQuestionLimits';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
@@ -529,11 +529,7 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
 async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'business/advise'>>> {
   const question = payload['question'];
   const qProblem = checkAdvisorQuestion(question);
-  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
-  if (qProblem === 'too-long')
-    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
-  if (qProblem === 'control-chars')
-    return err('action_failed', '質問に改行・制御文字を含めることはできません');
+  if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
   // Read the Anthropic key from Vault.
   let apiKey: string | null = null;
@@ -637,11 +633,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'stocks/advise'>>> {
   const question = payload['question'];
   const qProblem = checkAdvisorQuestion(question);
-  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
-  if (qProblem === 'too-long')
-    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
-  if (qProblem === 'control-chars')
-    return err('action_failed', '質問に改行・制御文字を含めることはできません');
+  if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
   let apiKey: string | null = null;
   try {

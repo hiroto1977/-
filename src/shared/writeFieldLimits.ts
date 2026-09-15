@@ -275,6 +275,19 @@ export const GMAIL_DRAFT_FIELDS = {
   body: text(false),
 } satisfies Readonly<Record<string, WriteRule>>;
 
+/**
+ * **RFC 2822 のヘッダ行へ連結する値の断り —— 両ビルドがここを読む**
+ * (2026-09-15 · パス 285)。
+ *
+ * 上の `to` は台帳が 1 行の欄として既に CR/LF を断る。この文は
+ * `buildRfc2822` の**二重の備え**が使う方で、両ビルドに 1 つずつ在り
+ * 文面だけ割れていた (main が英語・ブラウザ版が日本語)。
+ * 二重の備えを残す理由は元の注記のとおり —— `to` は base64 に包まれず
+ * 生のまま `To: ` の後ろへ連結されるので、関門を通らない呼び出しが
+ * 将来増えたときにここが最後の砦になる。
+ */
+export const RFC2822_HEADER_UNSAFE = 'to に CR/LF/NUL は使用できません';
+
 /** `drive/create-folder` の欄。 */
 export const DRIVE_FOLDER_FIELDS = {
   name: title(true),
@@ -350,6 +363,20 @@ export const CLOUDFLARE_PURGE_FIELDS = {
   files: list(false, MAX_WRITE_URLS, line(true)),
   purgeEverything: flag(false),
 } satisfies Readonly<Record<string, WriteRule>>;
+
+/**
+ * **パージの「どちらかが要る」の断り —— 両ビルドがここを読む** (2026-09-15 · パス 285)。
+ *
+ * 上の 3 欄は形を見るが、「`purgeEverything` か `files` のどちらかが要る」は
+ * 欄と欄の関係なので台帳の形では書けない。その判定は両ビルドに 1 つずつ在り
+ * (どちらも同じ式)、**文面だけが英語と日本語に割れていた** ——
+ * デスクトップ版の日本語の画面が
+ * `either purgeEverything=true or non-empty files[] is required` を
+ * `safeErrorMessage` 経由で赤い帯に出していた。判定は揃っているので
+ * ここで畳むのは文面だけである。
+ */
+export const CLOUDFLARE_PURGE_NEEDS_TARGET =
+  'purgeEverything=true か、空でない files[] のいずれかが必要です';
 
 /** 台帳から必須欄の名前を導く (音声の台帳が読む —— 手で写さない)。 */
 export function requiredWriteFields(fields: Readonly<Record<string, WriteRule>>): readonly string[] {

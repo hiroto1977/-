@@ -17,6 +17,7 @@
  * 迷う)。画面の飾りの文言 (ボタンやラベル) はここでは見ない。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ADVISOR_QUESTION_MESSAGES } from '../../shared/advisorQuestionLimits';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -84,7 +85,7 @@ const ROUTES: readonly (readonly [string, string, Route])[] = [
   ['stocks', 'register-ticker', { ok: false, code: 'action_failed', message: SYMBOL }],
   ['stocks', 'unregister-ticker', { ok: false, code: 'action_failed', message: SYMBOL }],
   ['stocks', 'compare-strategies', { ok: false, code: 'action_failed', message: SYMBOL }],
-  ['stocks', 'advise', { ok: false, code: 'action_failed', message: '質問を入力してください' }],
+  ['stocks', 'advise', { ok: false, code: 'action_failed', message: ADVISOR_QUESTION_MESSAGES.empty }],
   ['stocks', 'export-dashboard', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^stocks-dashboard-\d+\.html$/) }],
   ['stocks', 'export-dashboard-md', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^stocks-dashboard-\d+\.md$/) }],
   ['emotions', 'log-mood', { ok: false, code: 'action_failed', message: 'score must be a number between 1 and 5' }],
@@ -116,7 +117,7 @@ const ROUTES: readonly (readonly [string, string, Route])[] = [
   ['assistant', 'chat', { ok: false, code: 'action_failed', message: '最後の発話は user である必要があります' }],
   ['assistant', 'chatAll', { ok: false, code: 'action_failed', message: '最後の発話は user である必要があります' }],
   ['assistant', 'providers', { ok: true, shape: (d) => expect((d as { providers: { id: string }[] }).providers.map((p) => p.id)).toContain('anthropic') }],
-  ['business', 'advise', { ok: false, code: 'action_failed', message: '質問を入力してください' }],
+  ['business', 'advise', { ok: false, code: 'action_failed', message: ADVISOR_QUESTION_MESSAGES.empty }],
   ['business', 'export-dashboard', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^business-dashboard-\d+\.html$/) }],
   ['business', 'export-dashboard-md', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^business-dashboard-\d+\.md$/) }],
   // 経路が「無い」ほうも固定する: record-entry はその 4 サービスにしか無い、

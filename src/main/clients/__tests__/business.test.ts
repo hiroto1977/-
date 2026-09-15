@@ -32,6 +32,7 @@ import {
   BUSINESS_ADVISOR_MAX_TOKENS,
 } from '../business';
 import { BUSINESS_CATEGORY_IDS } from '../../../shared/businessAdvisor';
+import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
 
 // --- Category taxonomy ------------------------------------------------
 
@@ -663,19 +664,19 @@ describe('askBusinessAdvisorImpl', () => {
   it('rejects missing or non-string question', async () => {
     await expect(
       askBusinessAdvisorImpl({ token: 't', payload: {} }),
-    ).rejects.toThrow(/question is required/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES.empty);
     await expect(
       askBusinessAdvisorImpl({ token: 't', payload: { question: 42 } }),
-    ).rejects.toThrow(/question is required/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES.empty);
   });
 
   it('rejects oversize / control-char question', async () => {
     await expect(
       askBusinessAdvisorImpl({ token: 't', payload: { question: 'x'.repeat(1001) } }),
-    ).rejects.toThrow(/exceeds 1000/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES['too-long']);
     await expect(
       askBusinessAdvisorImpl({ token: 't', payload: { question: 'a\nb' } }),
-    ).rejects.toThrow(/control characters/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES['control-chars']);
   });
 
   it('rejects unknown categoryId in user-supplied categories', async () => {

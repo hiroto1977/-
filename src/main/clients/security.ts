@@ -24,7 +24,7 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { SCAN_URL_MESSAGES, validateScanUrl } from '../../shared/scanTarget';
+import { SCAN_URL_MESSAGES, validateScanUrl, BREACH_EMAIL_MESSAGES, validateBreachEmail } from '../../shared/scanTarget';
 import { hibpBreaches, vtScanStats } from '../../shared/securityResponse';
 import {
   jsonFetch,
@@ -199,8 +199,9 @@ async function checkEmailBreach(
   // それを「どの漏洩にも含まれない」として表示してしまう ——
   // **誤った安心**を返す側のずれなので、厳しい側ではなく正しい側へ揃える。
   const raw = (ctx.payload as unknown as CheckEmailBreachPayload).email;
-  const email = typeof raw === 'string' ? raw.trim() : '';
-  if (!email) throw new Error('email is required');
+  const checked = validateBreachEmail(raw);
+  if (!checked.ok) throw new Error(BREACH_EMAIL_MESSAGES[checked.reason]);
+  const email = checked.email;
   const keys = parseSecurityKeys(ctx.token);
   if (!keys.hibp) throw new Error('HIBP API key not configured');
 

@@ -11,10 +11,10 @@ import {
   tradeCountSubLabel,
 } from '../../shared/paperAccount';
 import {
-  MAX_ADVISOR_QUESTION_CHARS,
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
   MAX_TICKER_CHARS,
   checkAdvisorQuestion,
+  ADVISOR_QUESTION_MESSAGES,
 } from '../../shared/advisorQuestionLimits';
 import {
   MAX_ADVISOR_RECOMMENDATIONS,
@@ -1243,11 +1243,8 @@ async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise
   // via pragma.
   // Stryker disable ConditionalExpression
   const problem = checkAdvisorQuestion(question);
-  if (problem === 'empty') {
-    throw new Error('question is required');
-  }
-  if (problem === 'too-long') {
-    throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`);
+  if (problem !== null) {
+    throw new Error(ADVISOR_QUESTION_MESSAGES[problem]);
   }
   if (problem === 'control-chars') {
     throw new Error('question contains control characters');

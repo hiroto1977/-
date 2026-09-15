@@ -24,6 +24,7 @@ import {
   CLOUDFLARE_PURGE_FIELDS,
   checkWriteFields,
   describeWriteFieldFailure,
+  CLOUDFLARE_PURGE_NEEDS_TARGET,
 } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 
@@ -197,7 +198,7 @@ async function purgeCache(ctx: ActionContext): Promise<ActionData<'cloudflare/pu
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { zoneId, files, purgeEverything } = ctx.payload as unknown as PurgeCachePayload;
   if (!purgeEverything && (!files || files.length === 0)) {
-    throw new Error('either purgeEverything=true or non-empty files[] is required');
+    throw new Error(CLOUDFLARE_PURGE_NEEDS_TARGET);
   }
 
   const body = purgeEverything ? { purge_everything: true } : { files };

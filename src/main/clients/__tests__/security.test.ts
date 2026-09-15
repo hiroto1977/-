@@ -11,6 +11,7 @@ import {
   parseSecurityKeys,
 } from '../security';
 import { FetchError } from '../types';
+import { BREACH_EMAIL_MESSAGES } from '../../../shared/scanTarget';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -456,7 +457,7 @@ describe('ACTIONS["check-email-breach"] — URL + header pinning (kills StringLi
         fetch: fetchMock,
         payload: { email: '   ' },
       }),
-    ).rejects.toThrow('email is required');
+    ).rejects.toThrow(BREACH_EMAIL_MESSAGES.empty);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
