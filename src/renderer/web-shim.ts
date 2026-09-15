@@ -87,6 +87,7 @@ import {
   MAX_ASSISTANT_SYSTEM_CHARS,
   inputTooLongMessage,
   latestTurnTooLong,
+  MAX_ENSEMBLE_ERROR_CHARS,
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
@@ -1002,7 +1003,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
         // `slice` だけでは伏せられない。`redactForMessage` は
         // **伏せてから切る** (先に切ると模様の終わりが落ちて規則が外れる)。
         const msg = e instanceof Error ? e.message : String(e);
-        return { provider: id, model: '', text: '', ok: false, error: redactForMessage(msg, 300) };
+        return { provider: id, model: '', text: '', ok: false, error: redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS) };
       }
     }),
   );

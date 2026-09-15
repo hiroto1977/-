@@ -74,6 +74,22 @@ export const MAX_ASSISTANT_SYSTEM_CHARS = 60000;
  */
 export const MAX_ASSISTANT_REPLY_CHARS = 100_000;
 
+/**
+ * 全AI合議 (`assistant/chatAll`) の **1 社ごとの誤りの文言**の天井 (文字)。
+ * (2026-09-15 · パス 269)
+ *
+ * `err()` / `safeErrorMessage` の天井 (`ERROR_MESSAGE_MAX_CHARS` = 2,000) より狭い。
+ * 合議の答えは**最大 5 社が並ぶ**ので、1 社が 2,000 字の例外を出すと画面が
+ * 誤りの文字で埋まる。切るのは表示のためで、**伏せるのは別の仕事**である
+ * (`redactForMessage` が伏せてから切る —— 先に切ると模様の終わりが落ちて規則が外れる)。
+ *
+ * **この値は 2026-09-15 まで両ビルドに `300` の字面で 2 つ在った**
+ * (`main/clients/assistant.ts` と `renderer/web-shim.ts`)。同じ値だったが、
+ * 片方を変えても何も鳴らない —— 天井の写しが割れる形はパス 167 / 250 / 252 で
+ * 3 度当てた家系なので、名前を 1 つ付けて両方が読む。
+ */
+export const MAX_ENSEMBLE_ERROR_CHARS = 300;
+
 /** 切り詰めたことを黙らせない。画面には必ずこの一行が付く。 */
 export const ASSISTANT_REPLY_TRUNCATED_NOTICE =
   '\n\n…（応答が長すぎたため、ここで打ち切りました）';

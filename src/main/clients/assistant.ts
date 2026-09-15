@@ -30,6 +30,7 @@ import {
   MAX_ASSISTANT_SYSTEM_CHARS,
   inputTooLongMessage,
   latestTurnTooLong,
+  MAX_ENSEMBLE_ERROR_CHARS,
 } from '../../shared/assistantLimits';
 import { redactForMessage } from './types';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -258,7 +259,7 @@ async function chatAll(ctx: ActionContext): Promise<ActionData<'assistant/chatAl
           model: '',
           text: '',
           ok: false,
-          error: redactForMessage(msg, 300),
+          error: redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS),
         };
       }
     }),

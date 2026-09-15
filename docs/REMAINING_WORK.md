@@ -26577,16 +26577,16 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **142** モジュール / 両ビルドが import **61** / うち否定で答えられる **31**（うち未読 **8**）。これは分母であって欠陥の一覧ではない。
+shared **142** モジュール / 両ビルドが import **61** / うち否定で答えられる **31**（うち未読 **6**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
 | `advisorQuestionLimits` | 2 | 4 | 対称 (実測・パス 251) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。**ただし文面の言語が割れている** —— main は英語で throw し、その文字列は safeErrorMessage を通って画面へ出る。母集団はパス 251 で 118 件と測った |
-| `aiEndpoint` | 0 | 0 | 未読 (AI の宛先の解決。パス 268 の閉包で見えた —— main は clients 経由、ブラウザ版は web-shim 経由で届く) |
+| `aiEndpoint` | 0 | 0 | 対称 (実測・パス 269) —— 直接の import は **両ビルドとも 0 件** (表の 0 / 0)。越境するのは shared を 2 段たどった先だけで、辿ると否定は 1 つに絞れる: `normalizeAiBaseUrl` の `{ok:false, reason}` を読むのは `ai/providers.ts` の `resolveBase` **だけ**で、そこは `buildRequest` の中に在り、両ビルドは `runAiChat` (main/clients/assistant.ts:44 / web-shim.ts:188) からそこへ入る。**投げたあとの動作が一致する**: main は `action:invoke` の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、ブラウザ版は `err('action_failed', e.message)` で、その `err()` 自身が `redactForMessage(message, ERROR_MESSAGE_MAX_CHARS)` を掛ける —— **同じ関数・同じ天井**なので code も伏字も文面の長さも同じ (serviceAdvisor と同じ形)。 ★ ただし `chatAll` の**提供者ごと**の伏字だけは、2026-09-15 まで `redactForMessage(msg, 300)` という**字面がビルドごとに 1 つずつ**在った (パス 167/250/252 と同じ家系)。パス 269 で `MAX_ENSEMBLE_ERROR_CHARS` を `shared/assistantLimits.ts` に置き、両ビルドがその名を読むようにして `assistantTurnsParity.test.ts` に字面の再登場を禁じる門を足した。 もう 1 つの輸出 `isLoopbackHostname` は越境しない —— 唯一の読み手 `shared/proxyEndpoint.ts` の消費者が renderer だけ (network/proxy.ts / SettingsPage.tsx) である |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
-| `controlChars` | 0 | 2 | 未読 (制御文字の判定。パス 268 の閉包で見えた —— `tokenInput` (閉じている・パス 245) の下請けなので、その判定と同じ床に乗っている可能性が高いが**読んでいない**) |
+| `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ なお `shared/tokenInput.ts` の `hasControlChars` (複数形) は**別のモジュール**で、JSON の包みの中を見られないという別の限界を持つ (パス 245)。名前が似ているだけである |
 | `depreciation` | 0 | 1 | 未読 (減価償却の計算。パス 268 の閉包で見えた —— 税の計算は画面が読み、main 側の到達経路をまだ辿っていない) |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
 | `eraseReport` | 2 | 3 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
@@ -32616,3 +32616,115 @@ Skills・Security・アシスタント。**ブラウザ版はトークンを要�
   トークン無しで動く」という**性質**であって、実装ではない。
 - **実機では確かめていない。** IPC ハンドラを直接呼んだ実測と `smoke:app` までで、
   Electron を起動してボタンを押す検証 (e2e) はこのパスでは回していない。
+
+---
+
+## パス 269 — 網の目が同期の綴りしか見ておらず、台帳のファイルに対する「無いこと」の主張が 1 件、黙って空の検査になっていた
+
+**2026-09-15。** アシスタントの伏字の天井を読みに行って、2 つ見つけた。1 つは小さい写し、
+もう 1 つは**それを留めようとして初めて見えた、ゲートそのものの穴**である。
+
+### 欠陥 1 —— 提供者ごとの伏字の天井 `300` が、ビルドごとに 1 つずつ書かれていた
+
+`assistant/chatAll` は最大 5 提供者へ同じ質問を投げ、失敗した提供者の文言を
+`answers[].error` に載せて画面へ返す。その 1 件あたりの天井が **`redactForMessage(msg, 300)`
+という字面**で、`src/main/clients/assistant.ts` と `src/renderer/web-shim.ts` に
+**1 つずつ**在った。パス 167 (入力欄の天井の写し 12 件)・パス 250・パス 252 と同じ家系で、
+**片方だけ動かしても誰も鳴らない**。
+
+`300` は応答そのものの天井 (`ERROR_MESSAGE_MAX_CHARS` = 2,000) より狭い。狭い理由は
+「5 提供者ぶんが 1 つの文に積まれる」からだが、**その理由がどこにも書かれていなかった** ——
+数字だけが 2 か所に在った。`shared/assistantLimits.ts` に
+`MAX_ENSEMBLE_ERROR_CHARS` として名前と理由を置き、両ビルドがその名を読む。
+
+### 欠陥 2 (本体) —— `originalSourcePolicy` の網が `readFileSync` しか見ていなかった
+
+上の写しを留める門を `assistantTurnsParity.test.ts` に足そうとして、その検査が
+どう原文を読んでいるかを見た。**`node:fs/promises` の `readFile`** だった。
+
+2026-09-07 に足した規則 (`originalSourcePolicy.test.ts`) は、`mutate` 台帳のファイルを
+原文の綴りで読む検査を `readOriginalSource` へ通させる —— Stryker は台帳のファイルを
+**書き換えてから** sandbox に置くので、綴りに当てる走査は sandbox の中で 0 件になり、
+「無いこと」の主張が**どの入力でも通る空の検査**になるからである。そのとき 36 件を直した。
+
+**その網は `read(?:File|dir)Sync` だけを探していた。** 非同期の綴りは 1 件も見ていない。
+そして実測すると、ちょうど 1 件がそこに落ちていた:
+
+| | |
+| --- | --- |
+| 検査 | `src/renderer/__tests__/assistantTurnsParity.test.ts` |
+| 読んでいた物 | `src/main/clients/assistant.ts` (**`mutate` 台帳に在る**) |
+| 綴り | `await readFile(new URL(…, import.meta.url), 'utf8')` |
+| していた主張 | `expect(mainSrc).not.toContain('system.slice(0, MAX_SYSTEM)')` |
+
+これは**パス 252 で直した欠陥が戻っていないことを見張る検査**である。その見張りが、
+変異検査の中では空になっていた。綴りを 1 つ変えただけで、36 件直した欠陥が 1 件戻っていた。
+
+### 直し方
+
+`Sync` を**省略可**にした (`read(?:File|dir)(?:Sync)?`)。規則 1 (台帳のファイルは
+`readOriginalSource` を通す) と規則 2 (道が読めない読みは理由つきで台帳へ) の**両方**が
+非同期の綴りにも掛かる。
+
+- 規則 1 の違反は**実測 1 件**で、`assistantTurnsParity.test.ts` を `readOriginalSource`
+  (+ `resolve(__dirname, …)`) へ直した。
+- 規則 2 の台帳は **8 → 19 件**になった。増えた 11 件はどれも自分が `mkdtemp` で作った
+  一時ディレクトリの中を読み戻す検査 (`atomicWrite` の `.prev`・一時 userData の
+  `secrets.json`・封緘した状態ファイル・書き出した SVG など) で、repo のファイルを
+  読んでいないから Stryker に書き換えられる物が無い。**1 件ずつ開いて確かめて理由を書いた** ——
+  台帳は白紙委任にしない。
+
+### 足した門
+
+`assistantTurnsParity.test.ts` に 3 本 (肯定形 → 否定形 → 対照):
+
+1. `redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS)` が**両ビルドの原文に在る**こと。
+   加えて局所の再宣言 (`const MAX_ENSEMBLE_ERROR_CHARS`) を禁じる —— 名を通していても
+   値が 2 つなら同じことである。
+2. `redactForMessage(msg, <数字>)` の形が**どちらにも無い**こと。
+   **同じテストの中で標本に当てて、規則が実際にその文面へ届くことを確かめる** ——
+   `'error: redactForMessage(msg, 300),'` は当たり、共有の名を使った行は当たらない。
+3. 共有の天井が応答の天井より狭いこと (積まれるので)。
+
+`originalSourcePolicy.test.ts` に 4 本: 非同期の綴りを拾う・同期の綴りを**二重に数えない**
+(`Sync` を省略可にしたので `readFileSync(` が 2 件に見える危険が在った)・非同期で道が変数なら
+規則 2 に数える・`readOriginalSource` 自身は生の読みとして拾わない。
+
+### 対照 (3 本すべて鳴った)
+
+| 壊した物 | 鳴った検査 |
+| --- | --- |
+| main に `redactForMessage(msg, 300)` を戻す | 2 本 (共有の名 / 字面の再登場) |
+| ブラウザ版だけに戻す (**片側だけの漂流**) | 同じ 2 本 |
+| 網を `read(?:File|dir)Sync` に戻す | 3 本 (非同期の 2 本 + 規則 2 の台帳が 11 件合わない) |
+
+### 判定 census の未読 8 → 6
+
+パス 268 の閉包で見えた未読のうち 2 件を読んだ。
+
+- **`aiEndpoint` → 対称 (実測)。** 直接の import は**両ビルドとも 0 件**で、越境は
+  shared を 2 段たどった先だけ。`normalizeAiBaseUrl` の `{ok:false}` を読むのは
+  `ai/providers.ts` の `resolveBase` だけ、そこは `buildRequest` の中に在り、
+  両ビルドは `runAiChat` からそこへ入る。投げたあと main は `safeErrorMessage`、
+  ブラウザ版は `err()` —— **`err()` 自身が `redactForMessage(message, ERROR_MESSAGE_MAX_CHARS)`
+  を掛ける**ので同じ関数・同じ天井である。
+  ★ **ここで欠陥 1 が見つかった** —— 唯一割れていたのが `chatAll` の提供者ごとの天井だった。
+  もう 1 つの輸出 `isLoopbackHostname` は越境しない (読み手は `proxyEndpoint` だけで、
+  その消費者は renderer だけ)。
+- **`controlChars` → 対称 (設計)。** 輸出は `hasControlChar` 1 つで、`false` の意味は
+  1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので判定はここで閉じる。
+  呼び手 6 件のうち越境するのは 2 件だけ (`atlassianSite` = パス 248 で直した /
+  `aiEndpoint` = 今回)。残り 4 件は renderer 側にしか読み手が居ないが、
+  **`hydroponicCrops` はそれ自身が別の未読行なのでここでは断じない。**
+
+### 残り (書いておく)
+
+- **未読は 6 件残っている**: `depreciation` / `hydroponicCrops` / `hydroponics` /
+  `mutualFundsMetrics` / `readNumeric` / `savingsPlanning`。
+- **`shared/ai/chat.ts:143` にもう 1 つ字面が在る** —— `redactForMessage(body, 200)`
+  (HTTP エラー本文の天井)。これは **shared に 1 つしか無い**のでビルド間の漂流は
+  起き得ないが、名前も理由も持っていない。欠陥 1 と同じ家系の「名の無い数」である。
+- 網の穴は**非同期の綴りだけ**を塞いだ。`fs.promises` を別名で受ける形
+  (`const { readFile: rf } = fs.promises`) は今も規則の外に在る。実測 0 件だが、
+  **規則が見る綴りの一覧は、規則そのものと同じくらい確かめる必要がある。**
+- 実機では確かめていない (どちらの変更も検査とゲートで、画面の振る舞いは変えていない)。

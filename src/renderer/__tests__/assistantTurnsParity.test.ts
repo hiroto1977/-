@@ -18,9 +18,12 @@ import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_MESSAGES,
   MAX_ASSISTANT_SYSTEM_CHARS,
+  MAX_ENSEMBLE_ERROR_CHARS,
 } from '../../shared/assistantLimits';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
-import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { ERROR_MESSAGE_MAX_CHARS } from '../../shared/redact';
 import { hasLoneSurrogate } from '../../shared/__tests__/loneSurrogate';
 
 /*
@@ -137,14 +140,61 @@ describe('★ system プロンプトの天井も、両ビルドが同じ単位�
     expect(JSON.stringify(cut).endsWith('\\ud83d"')).toBe(true);
   });
 
-  it('★ 両ビルドの実装が同じ綴りで切っている (字面の再登場を許さない)', async () => {
-    const [mainSrc, webSrc] = await Promise.all([
-      readFile(new URL('../../main/clients/assistant.ts', import.meta.url), 'utf8'),
-      readFile(new URL('../web-shim.ts', import.meta.url), 'utf8'),
-    ]);
+  /*
+   * **原文で読む。** 2026-09-15 まで `node:fs/promises` の `readFile` を使っていた ——
+   * `src/main/clients/assistant.ts` は `stryker.config.json` の `mutate` 台帳に在るので、
+   * 変異検査の sandbox ではこのファイルは計器に書き換えられており、下の
+   * **`not.toContain(…)` は「どの入力でも通る空の検査」になっていた**
+   * (2026-09-07 に 36 件直したのと同じ欠陥。網が同期の綴りしか見ていなかったので
+   * この 1 件だけが規則の外に残っていた —— `originalSourcePolicy.test.ts` の規則 3)。
+   */
+  const sources = (): { mainSrc: string; webSrc: string } => ({
+    mainSrc: readOriginalSource(resolve(__dirname, '../../main/clients/assistant.ts')),
+    webSrc: readOriginalSource(resolve(__dirname, '../web-shim.ts')),
+  });
+
+  it('★ 両ビルドの実装が同じ綴りで切っている (字面の再登場を許さない)', () => {
+    const { mainSrc, webSrc } = sources();
     // main は局所名 (MAX_SYSTEM = MAX_ASSISTANT_SYSTEM_CHARS) を使う。
     expect(mainSrc).toContain('clampToCeiling(system, MAX_SYSTEM)');
     expect(mainSrc).not.toContain('system.slice(0, MAX_SYSTEM)');
     expect(webSrc).toContain('clampToCeiling(payload[\'system\'] as string, MAX_ASSISTANT_SYSTEM_CHARS)');
+  });
+
+  /*
+   * **1 つの数字を 2 度書くと、片方だけが動く。**
+   *
+   * 提供者ごとのエラー文の天井 300 字は、2026-09-15 まで
+   * `redactForMessage(msg, 300)` という**字面がビルドごとに 1 つずつ**在った。
+   * 応答の天井 (`ERROR_MESSAGE_MAX_CHARS` = 2,000) とは別の数で、最大 5 提供者ぶんが
+   * 1 つの文に積まれるので狭い —— つまり「なぜ 300 か」が書かれるべき所に何も無かった。
+   * パス 167 (入力欄の天井の写し 12 件)・パス 250・パス 252 と同じ家系である。
+   *
+   * **肯定形で留める** —— 共有の名を通していることを確かめ、そのうえで字面の再登場を禁じる。
+   */
+  it('★ 提供者ごとのエラー文の天井は、両ビルドが共有の名を読む', () => {
+    const { mainSrc, webSrc } = sources();
+    expect(mainSrc).toContain('redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS)');
+    expect(webSrc).toContain('redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS)');
+    // 名は `shared/assistantLimits.ts` の 1 つだけから来る (局所の再宣言を許さない)。
+    for (const src of [mainSrc, webSrc]) {
+      expect(src).toContain('MAX_ENSEMBLE_ERROR_CHARS');
+      expect(src).not.toMatch(/(?:const|let)\s+MAX_ENSEMBLE_ERROR_CHARS/);
+    }
+  });
+
+  it('★ 字面の 300 が同じ位置に戻っていない (対照つき)', () => {
+    const { mainSrc, webSrc } = sources();
+    const drift = /redactForMessage\(\s*msg\s*,\s*\d/;
+    expect(mainSrc).not.toMatch(drift);
+    expect(webSrc).not.toMatch(drift);
+    // 対照 —— 規則が実際にこの形へ当たる (綴りが 1 つ違えば黙る検査にしない)。
+    expect('error: redactForMessage(msg, 300),').toMatch(drift);
+    expect("error: redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS)").not.toMatch(drift);
+  });
+
+  it('★ 共有の天井は応答の天井より狭い (積まれるので)', () => {
+    expect(MAX_ENSEMBLE_ERROR_CHARS).toBe(300);
+    expect(MAX_ENSEMBLE_ERROR_CHARS).toBeLessThan(ERROR_MESSAGE_MAX_CHARS);
   });
 });

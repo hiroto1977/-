@@ -155,11 +155,36 @@ const VERDICTS = {
     + ' ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。',
   ollama: '**非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ)',
   aiEndpoint:
-    '未読 (AI の宛先の解決。パス 268 の閉包で見えた —— main は clients 経由、'
-    + 'ブラウザ版は web-shim 経由で届く)',
+    '対称 (実測・パス 269) —— 直接の import は **両ビルドとも 0 件** (表の 0 / 0)。'
+    + '越境するのは shared を 2 段たどった先だけで、辿ると否定は 1 つに絞れる: '
+    + '`normalizeAiBaseUrl` の `{ok:false, reason}` を読むのは `ai/providers.ts` の '
+    + '`resolveBase` **だけ**で、そこは `buildRequest` の中に在り、両ビルドは `runAiChat` '
+    + '(main/clients/assistant.ts:44 / web-shim.ts:188) からそこへ入る。'
+    + '**投げたあとの動作が一致する**: main は `action:invoke` の catch が '
+    + '`{code:\'action_failed\', message: safeErrorMessage(err)}`、ブラウザ版は '
+    + '`err(\'action_failed\', e.message)` で、その `err()` 自身が '
+    + '`redactForMessage(message, ERROR_MESSAGE_MAX_CHARS)` を掛ける —— '
+    + '**同じ関数・同じ天井**なので code も伏字も文面の長さも同じ (serviceAdvisor と同じ形)。'
+    + ' ★ ただし `chatAll` の**提供者ごと**の伏字だけは、2026-09-15 まで '
+    + '`redactForMessage(msg, 300)` という**字面がビルドごとに 1 つずつ**在った '
+    + '(パス 167/250/252 と同じ家系)。パス 269 で `MAX_ENSEMBLE_ERROR_CHARS` を '
+    + '`shared/assistantLimits.ts` に置き、両ビルドがその名を読むようにして '
+    + '`assistantTurnsParity.test.ts` に字面の再登場を禁じる門を足した。'
+    + ' もう 1 つの輸出 `isLoopbackHostname` は越境しない —— 唯一の読み手 '
+    + '`shared/proxyEndpoint.ts` の消費者が renderer だけ (network/proxy.ts / SettingsPage.tsx) である',
   controlChars:
-    '未読 (制御文字の判定。パス 268 の閉包で見えた —— `tokenInput` (閉じている・パス 245) '
-    + 'の下請けなので、その判定と同じ床に乗っている可能性が高いが**読んでいない**)',
+    '対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、'
+    + '`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。'
+    + '**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている '
+    + '(`inputCeiling` と同じ形)。'
+    + ' 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: '
+    + '`atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。'
+    + '残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` '
+    + '(network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・'
+    + '`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は '
+    + '`hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。'
+    + ' ★ なお `shared/tokenInput.ts` の `hasControlChars` (複数形) は**別のモジュール**で、'
+    + 'JSON の包みの中を見られないという別の限界を持つ (パス 245)。名前が似ているだけである',
   depreciation:
     '未読 (減価償却の計算。パス 268 の閉包で見えた —— 税の計算は画面が読み、'
     + 'main 側の到達経路をまだ辿っていない)',

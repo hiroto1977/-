@@ -25,6 +25,28 @@ import { readOriginalDirEntries, readOriginalSource } from './originalSource';
  * `readFileSync(p)` する走査 —— つまり「この綴りはどこにも無い」を主張する census そのもの ——
  * は道が変数なので**規則から丸ごと外れていた** (実測 15 ファイル)。
  * 一番空になりやすい形が一番の死角だった。
+ *
+ * ## 2026-09-15 (パス 269): **網が同期の綴りしか見ていなかった**
+ *
+ * 走査は `readFileSync` / `readdirSync` を探していた。`node:fs/promises` の
+ * **非同期の綴り** (`readFile` / `readdir`) は 1 件も見ていない —— つまり
+ * `await readFile(new URL('../../main/clients/assistant.ts', import.meta.url), 'utf8')`
+ * は、台帳のファイルを原文で読んでいるのに**規則の外に在った**。
+ *
+ * 実測で 1 件在った: `assistantTurnsParity.test.ts` が
+ * `src/main/clients/assistant.ts` (台帳に在る) を非同期で読み、
+ * **`not.toContain('system.slice(0, MAX_SYSTEM)')` という「無いこと」の主張をしていた**。
+ * sandbox の中ではその綴りは計器に書き換えられているので、主張は
+ * **どの入力でも通る空の検査**になる —— 2026-09-07 に 36 件直したのと同じ欠陥が、
+ * 綴りを 1 つ変えただけで戻ってきていた。
+ *
+ * だから `Sync` を**省略可**にした (`read(?:File|dir)(?:Sync)?`)。
+ * これで非同期の読みも規則 1・2 の両方に掛かる。
+ * 規則が見る綴りを増やすと**規則 2 の台帳が 8 → 19 件に増える** ——
+ * 増えた 11 件はどれも自分が `mkdtemp` で作った一時ファイルを読み戻す検査で、
+ * repo のファイルではないから書き換わらない (1 件ずつ確かめて理由を書いた)。
+ *
+ * **網の目の大きさは、網そのものと同じくらい確かめる必要がある。**
  */
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
@@ -36,7 +58,9 @@ const REPO_ROOT = path.resolve(__dirname, '../../..');
  */
 const READ = `${'read'}FileSync`;
 const READDIR = `${'read'}dirSync`;
-const RAW_READ = /read(?:File|dir)Sync\s*\(/g;
+/** 非同期の綴り (`node:fs/promises`)。**穴だったのはこちら** —— 下の規則 3 を見よ。 */
+const READ_ASYNC = `${'read'}File`;
+const RAW_READ = /read(?:File|dir)(?:Sync)?\s*\(/g;
 
 /** `stryker.config.json` の `mutate` (= Stryker が書き換えるファイル)。 */
 function mutateLedger(): Set<string> {
@@ -141,7 +165,7 @@ export function rawReads(testAbsPath: string, text: string): { targets: string[]
   // **窓は先読みで見る。** 窓を捕獲に含めると `matchAll` が窓ごと消費し、
   // **200 字以内に続く 2 件目の読みが飛ぶ**。この形は実在した (`scriptEmbedGate` は
   // 2 件を 1 件と数えていた) —— 台帳の件数と実測が食い違って初めて分かった。
-  for (const m of code.matchAll(/read(?:File|dir)Sync\s*\((?=([\s\S]{0,200}))/g)) {
+  for (const m of code.matchAll(/read(?:File|dir)(?:Sync)?\s*\((?=([\s\S]{0,200}))/g)) {
     const t = readTarget(m[1] ?? '', dir);
     if (t === null) unresolved += 1;
     else targets.push(t);
@@ -190,6 +214,58 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
   'src/shared/__tests__/workflowShellAssumptions.test.ts': {
     count: 3,
     why: 'ファイル局所の定数 WORKFLOW_DIR (.github/workflows) を歩いて読む。台帳の外で書き換わらない',
+  },
+
+  /*
+   * ここから下は 2026-09-15 (パス 269) に規則が非同期の綴りへ広がって見えるようになった 11 件。
+   * **どれも自分が `mkdtemp` で作った一時ディレクトリの中を読み戻す**検査で、
+   * repo のファイルを読んでいないので Stryker に書き換えられる物が無い
+   * (1 件ずつ読んで確かめた。道は `dir` / `tmpDir` / `storePath()` / `result.path` のような
+   * ファイル局所の値なので、機械には行き先が決められない = 規則 2 の担当)。
+   */
+  'src/main/__tests__/atomicWrite.test.ts': {
+    count: 13,
+    why: 'mkdtemp で作った一時ディレクトリに atomicWriteFile が書いた物 (本体と .prev) を読み戻す。repo のファイルではない',
+  },
+  'src/main/__tests__/secretsUnreadableWrite.test.ts': {
+    count: 4,
+    why: 'userData を差し替えた一時ディレクトリの secrets.json を読み戻す。repo のファイルではない',
+  },
+  'src/main/__tests__/secretsWrite.test.ts': {
+    count: 5,
+    why: '同じく一時 userData の secrets.json と .prev を読み戻す。repo のファイルではない',
+  },
+  'src/main/__tests__/stateWritePolicy.test.ts': {
+    count: 1,
+    why: '一時ディレクトリに書いた状態ファイル (封緘済み talent.json) を読み戻す。repo のファイルではない',
+  },
+  'src/main/clients/__tests__/emotions.test.ts': {
+    count: 10,
+    why: '一時 userData の service-hub-emotions.json (封緘済み) を読み戻す。repo のファイルではない',
+  },
+  'src/main/clients/__tests__/exportPaths.test.ts': {
+    count: 1,
+    why: '一時 home に書き出した Markdown を読み戻す。repo のファイルではない',
+  },
+  'src/main/clients/__tests__/skills.test.ts': {
+    count: 2,
+    why: '一時ディレクトリに組んだ skill の SKILL.md を読み戻す。repo のファイルではない',
+  },
+  'src/main/clients/__tests__/stocks.test.ts': {
+    count: 1,
+    why: '一時 userData のウォッチリスト状態ファイルを読み戻す。repo のファイルではない',
+  },
+  'src/main/clients/__tests__/teamradar.realfs.test.ts': {
+    count: 3,
+    why: '一時 home に書き出した SVG と、封緘した状態ファイルを読み戻す。repo のファイルではない',
+  },
+  'src/main/clients/__tests__/teamradar.test.ts': {
+    count: 1,
+    why: '一時 userData の封緘済み状態ファイルを読み戻す。repo のファイルではない',
+  },
+  'src/main/clients/__tests__/templates.realfs.test.ts': {
+    count: 1,
+    why: '一時 home に書き出したテンプレートを読み戻す。repo のファイルではない',
   },
 };
 
@@ -302,6 +378,35 @@ describe('mutate 台帳のファイルを原文で読む検査は readOriginalSo
     it('★ resolve(__dirname, …) の形も拾う — 最初に見落とした形', () => {
       const text = `const S = ${READ}(path.resolve(__dirname, '${up}'), 'utf8');`;
       expect(ledgerReads(fake, text)).toEqual([inLedger]);
+    });
+
+    /*
+     * **非同期の綴り** (パス 269 で網に入れた)。同期の綴りしか見ていなかった間、
+     * この形は規則 1 の外に在り、台帳のファイルに対する「無いこと」の主張が
+     * 黙って空の検査になっていた (`assistantTurnsParity.test.ts` に実在した 1 件)。
+     */
+    it('★ 台帳のファイルを非同期の readFile で読む形も拾う (2026-09-15 に網へ入れた)', () => {
+      const text = `const S = await ${READ_ASYNC}(new URL('${up}', import.meta.url), 'utf8');`;
+      expect(ledgerReads(fake, text)).toEqual([inLedger]);
+    });
+
+    it('★ 同期の綴りも同じ 1 件として拾う (Sync を省略可にして二重に数えていない)', () => {
+      const text = `const S = ${READ}(new URL('${up}', import.meta.url), 'utf8');`;
+      const r = rawReads(fake, text);
+      expect(r.targets).toEqual([inLedger]);
+      expect(r.targets.length + r.unresolved, '1 件の読みを 2 件に数えている').toBe(1);
+    });
+
+    it('★ 非同期で道が変数なら「読めない 1 件」に数える (一時ファイルの読み戻し)', () => {
+      const r = rawReads(fake, `const S = await ${READ_ASYNC}(target, 'utf8');`);
+      expect(r.targets).toEqual([]);
+      expect(r.unresolved).toBe(1);
+    });
+
+    it('原文の道具 (readOriginalSource) は生の読みとして拾わない', () => {
+      const r = rawReads(fake, `const S = readOriginalSource(path.join(REPO_ROOT, '${inLedger}'));`);
+      expect(r.targets).toEqual([]);
+      expect(r.unresolved).toBe(0);
     });
 
     it('台帳に無いファイル (文書) は拾わない', () => {
