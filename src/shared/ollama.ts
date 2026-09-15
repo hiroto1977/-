@@ -52,7 +52,7 @@
  * CERT VU#518910・NVD・OSV は取得できなかったので、届いた物だけを出典に書く。
  * 2024 年の 5 件は 2026-05-12 の監査 (docs/OLLAMA_SECURITY.md) で確認した値。
  */
-import { clampToCeiling } from './inputCeiling';
+import { MAX_LOCAL_MODEL_ERROR_CHARS, redactForMessage } from './redact';
 
 export interface OllamaAdvisory {
   readonly id: string;
@@ -504,31 +504,51 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
  * 取り違えずに案内できるかが、使えるか使えないかの分かれ目になる。
  */
 
-/**
- * エラー文の表示上限 (**文字**)。異常に長い本文をそのままログ・UI へ流さないための上限。
+/*
+ * **エラー本文は `redactForMessage` を通す** (2026-09-15 · パス 290)。
  *
- * 切るのは `clampToCeiling` —— **文字の境界で切る** (2026-09-13 · パス 196)。
- * ここは `.slice()` だったので、300 番目がサロゲート対の真ん中に落ちると
- * 孤立サロゲートが UI へ出る (Ollama の本文は端末内のモデル名・ファイル名を含み、
- * 絵文字も JIS 2004 の漢字も来る)。
+ * ここは `clampToCeiling(x, MAX_ERROR_DETAIL)` で**天井だけ**を掛けていた ——
+ * つまり `redactForMessage` の後半 (切る) を手で書き、前半 (伏せる) を
+ * 持っていなかった。相手の本文を画面の文へ入れる経路のうち、伏字を
+ * 1 度も呼んでいないのはここだけだった (実測: `main/clients/types.ts` 6 /
+ * `renderer/network/proxy.ts` 3 / `renderer/oauth/pkce.ts` 2 /
+ * `shared/ai/chat.ts` 3 / ここ **0**)。
+ *
+ * **今日の実害は 0 である** —— Ollama への要求に資格情報は 1 つも乗らない
+ * (`SERVICE_CREDENTIAL_USE.ollama === 'none'`、`Authorization` /
+ * `api-key` / `Bearer` は両クライアントで実測 0 件)。送っていない物は
+ * 反射されようがない。**ただしその理由はどこにも書かれておらず**、
+ * 本文の出どころは `isAllowedOllamaPlaintextHost` が許す範囲で
+ * **利用者が設定したホスト**である。鍵つきの逆プロキシを前に置く構成は
+ * 作れるので、「送っていないから安全」は設定次第で崩れる前提だった。
+ *
+ * 除外の理由を書いて台帳へ結ぶより、**通すほうが安い** ——
+ * `redactSecrets` は両ビルドに既に入っており (`api/http.ts` ほかが読む)、
+ * 足したのは呼び出し 1 つぶんである。順序も `redactForMessage` が
+ * 正しく持っている (**伏せてから切る**。逆にすると模様の終わりが
+ * 切り落とされて規則が当たらない —— `REDACT_SCAN_LIMIT` の説明に実測が在る)。
+ *
+ * 天井の 300 は `shared/redact.ts` の梯子へ `MAX_LOCAL_MODEL_ERROR_CHARS`
+ * として移した。私有定数のままだと**梯子も census も見えない** ——
+ * パス 273 の census は `redactForMessage` の第 2 引数を見るので、
+ * `redactForMessage` を呼ばない経路は母集団に入らなかった。
  */
-const MAX_ERROR_DETAIL = 300;
 
 /** エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。 */
 export function extractOllamaError(json: unknown, text = ''): string {
   const err = (json as { error?: unknown } | null)?.error;
   // 空判定は要らない — 空白だけの本文は trim すると '' になり、下へ落として
   // も最後は '' を返すので、書いても結果が変わらない分岐になる。
-  if (typeof err === 'string') return clampToCeiling(err.trim(), MAX_ERROR_DETAIL);
+  if (typeof err === 'string') return redactForMessage(err.trim(), MAX_LOCAL_MODEL_ERROR_CHARS);
   // 稀に {"error": {"message": "…"}} の入れ子で返す経路もある。
   const nested = (err as { message?: unknown } | null)?.message;
-  if (typeof nested === 'string') return clampToCeiling(nested.trim(), MAX_ERROR_DETAIL);
+  if (typeof nested === 'string') return redactForMessage(nested.trim(), MAX_LOCAL_MODEL_ERROR_CHARS);
   // JSON として読めたのに error が無いなら、本文を出しても情報がない。
   if (json !== null && json !== undefined) return '';
   // JSON ですらない本文 (Ollama が素の "Forbidden" を返す経路など) は短く返す。
   // Stryker disable next-line StringLiteral: text 省略時の '' は「空を返す」で、
   // 番人の値を入れても呼び出し側は同じ「詳細なし」として扱う。
-  return clampToCeiling((text ?? '').trim(), MAX_ERROR_DETAIL);
+  return redactForMessage((text ?? '').trim(), MAX_LOCAL_MODEL_ERROR_CHARS);
 }
 
 export type OllamaErrorKind =

@@ -3,6 +3,8 @@ import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { readOriginalDir, readOriginalSource } from './originalSource';
+import { extractOllamaError } from '../ollama';
+import { MAX_LOCAL_MODEL_ERROR_CHARS } from '../redact';
 import { redactSecrets } from '../redact';
 import { SERVICE_CREDENTIAL_USE, collectsCredential } from '../credentialUse';
 import type { ServiceId } from '../serviceId';
@@ -796,5 +798,123 @@ describe('伏字の天井 — 呼ぶ側の第 2 引数は名前で書く (パス
     expect(mainSrc).not.toMatch(drift);
     expect(webSrc).not.toMatch(drift);
     expect('redactForMessage(body, 80)').toMatch(drift);
+  });
+});
+
+/*
+ * **天井を掛けるだけで伏字を通さない経路は在ってはならない。** (パス 290)
+ *
+ * パス 273 は「相手の本文をどれだけ画面へ載せてよいか」の天井に名前と理由を
+ * 与え、`redactForMessage(x, NAME)` の**第 2 引数**を census にした。
+ * その census には死角が在った —— **`redactForMessage` を呼ばない経路は
+ * 母集団に入らない。** `shared/ollama.ts` は `clampToCeiling(x, 300)` で
+ * 天井だけを掛けており (私有定数 `MAX_ERROR_DETAIL`)、梯子にも census にも
+ * 映らないまま、相手の本文を伏字なしで画面の文へ入れていた。
+ *
+ * パス 289 が隣の census (運び手) で見つけた死角と同じ形である ——
+ * **「在る物の形」を数える census は、「無い物」を数えない。**
+ *
+ * だから向きを変えて留める: **梯子の天井は伏字を通してのみ掛かる。**
+ * 天井の名前が `clampToCeiling` の第 2 引数に現れたら、それは
+ * 「切るけれど伏せない」= パス 290 が直した形そのものである。
+ */
+describe('★ 伏字の梯子 — 天井は伏字を通してのみ掛かる (パス 290)', () => {
+  /** `shared/redact.ts` の梯子 + `assistantLimits.ts` の 1 段。 */
+  const LADDER = [
+    'ERROR_MESSAGE_MAX_CHARS',
+    'MAX_RESPONSE_BODY_IN_MESSAGE',
+    'MAX_WARNING_BODY_CHARS',
+    'MAX_MALFORMED_JSON_ECHO_CHARS',
+    'MAX_LOCAL_MODEL_ERROR_CHARS',
+    'MAX_ENSEMBLE_ERROR_CHARS',
+  ] as const;
+
+  /** 引数に呼び出しが入れ子になる (`err.trim()`) ので 1 段だけ括弧を許す。 */
+  function callWith(fn: string, name: string): RegExp {
+    return new RegExp(`${fn}\\((?:[^()]|\\([^()]*\\))*,\\s*${name}`);
+  }
+
+  function shippedFiles(): string[] {
+    const out: string[] = [];
+    for (const root of ['src/shared', 'src/main', 'src/main/clients', 'src/renderer', 'src/renderer/data', 'src/renderer/network', 'src/renderer/oauth', 'src/shared/api', 'src/shared/ai']) {
+      const dir = resolve(REPO, root);
+      if (!existsSync(dir)) continue;
+      for (const name of readOriginalDir(dir)) {
+        if (name.endsWith('.ts') || name.endsWith('.tsx')) out.push(`${root}/${name}`);
+      }
+    }
+    return out;
+  }
+
+  it('★ 走査が生きている (母集団が空でない)', () => {
+    expect(shippedFiles().length).toBeGreaterThan(100);
+  });
+
+  it('★ 梯子の天井を clampToCeiling で裸に掛けている所は 0 件', () => {
+    const bad: string[] = [];
+    for (const rel of shippedFiles()) {
+      const text = stripLineComments(readOriginalSource(resolve(REPO, rel)));
+      for (const name of LADDER) {
+        if (callWith('clampToCeiling', name).test(text)) bad.push(`${rel}: clampToCeiling(…, ${name})`);
+      }
+    }
+    expect(bad, '天井だけ掛けて伏字を通していない経路が在る').toEqual([]);
+  });
+
+  it('★ 標本: この規則はパス 290 が直した形に実際に鳴る', () => {
+    // 直す前の `shared/ollama.ts` の姿 (名前だけ梯子のものに置き換えた形)。
+    const before = 'return clampToCeiling(err.trim(), MAX_LOCAL_MODEL_ERROR_CHARS);';
+    expect(callWith('clampToCeiling', 'MAX_LOCAL_MODEL_ERROR_CHARS').test(before)).toBe(true);
+    // 直した後には鳴らない。
+    const after = 'return redactForMessage(err.trim(), MAX_LOCAL_MODEL_ERROR_CHARS);';
+    expect(callWith('clampToCeiling', 'MAX_LOCAL_MODEL_ERROR_CHARS').test(after)).toBe(false);
+    // 梯子の外の天井には掛からない (規則は梯子だけを見る)。
+    expect(callWith('clampToCeiling', 'MAX_OLLAMA_PROMPT_CHARS').test(before)).toBe(false);
+  });
+
+  it('★ 梯子の 6 段すべてが redactForMessage の第 2 引数として使われている (死んだ段が無い)', () => {
+    const used = new Set<string>();
+    for (const rel of shippedFiles()) {
+      const text = readOriginalSource(resolve(REPO, rel));
+      for (const name of LADDER) {
+        if (callWith('redactForMessage', name).test(text)) used.add(name);
+      }
+    }
+    expect([...used].sort()).toEqual([...LADDER].sort());
+  });
+});
+
+/*
+ * **端末内モデル (Ollama) のエラー本文。** (パス 290)
+ *
+ * 2026-09-15 まで、相手の本文を画面の文へ入れる経路のうちここだけが
+ * 伏字を 1 度も呼んでいなかった (実測: 兄弟 6 / 3 / 2 / 3 件、ここ 0 件)。
+ * **実害は今日 0** —— Ollama への要求に資格情報は乗らない
+ * (`SERVICE_CREDENTIAL_USE.ollama === 'none'`) ので反射されようがない。
+ * それでも通したのは、本文の出どころが**利用者が設定したホスト**であり、
+ * 「送っていないから安全」は設定次第で崩れる前提だからである。
+ */
+describe('★ 端末内モデルのエラー本文は、伏せてから切る (パス 290)', () => {
+  const KEY = `ghp_${'a'.repeat(30)}`;
+
+  it.each([
+    ['error が文字列', { error: `pull failed: ${KEY}` }, ''],
+    ['入れ子の message', { error: { message: `auth: ${KEY}` } }, ''],
+    ['JSON でない素の本文', null, `Forbidden: Authorization: Bearer ${KEY}`],
+  ])('★ %s の鍵が消える', (_label, json, text) => {
+    const out = extractOllamaError(json, text);
+    expect(out).not.toContain(KEY);
+    expect(out).toContain('[REDACTED]');
+  });
+
+  it('★ 天井は 300 文字のまま (伏字を足しても切る量は変えていない)', () => {
+    expect(MAX_LOCAL_MODEL_ERROR_CHARS).toBe(300);
+    const long = extractOllamaError({ error: 'あ'.repeat(500) });
+    expect([...long].length).toBe(MAX_LOCAL_MODEL_ERROR_CHARS);
+  });
+
+  it('★ 対照: 秘密を含まない本文はそのまま読める (全部伏せてはいない)', () => {
+    const out = extractOllamaError({ error: 'model "llama3" not found, try pulling it first' });
+    expect(out).toBe('model "llama3" not found, try pulling it first');
   });
 });

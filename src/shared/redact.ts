@@ -46,9 +46,27 @@
  * 正規表現の字面ではなく、実物の `redactSecrets` に本文を通して秘密が消えるかを
  * 見るので、ここを書き換えても検査を欺けない。
  *
- * ここは全経路の最後の関門である (`src/shared/api/http.ts`,
- * `src/renderer/network/proxy.ts`, `src/renderer/web-shim.ts`,
- * `src/renderer/oauth/pkce.ts`, `src/shared/ai/chat.ts` ほか)。
+ * ここは**相手の本文を画面の文へ入れる経路すべて**の最後の関門である
+ * (`src/shared/api/http.ts`, `src/renderer/network/proxy.ts`,
+ * `src/renderer/web-shim.ts`, `src/renderer/oauth/pkce.ts`,
+ * `src/shared/ai/chat.ts`, `src/shared/ollama.ts`)。
+ *
+ * **2026-09-15 (パス 290) まで、この文は「全経路」と書いて 5 件を列挙し
+ * 「ほか」で閉じていた。実測するとその「ほか」に穴が 1 つ在った** ——
+ * `shared/ollama.ts` は端末内モデルのエラー本文を画面の文へ入れるのに、
+ * 伏字を 1 度も呼んでいなかった (実測: 兄弟は 6 / 3 / 2 / 3 件、
+ * ollama だけ 0 件)。天井だけを自前の `MAX_ERROR_DETAIL = 300` で掛けて
+ * いたので、**梯子にも載らず census にも映らなかった** ——
+ * パス 273 の census は `redactForMessage(x, NAME)` の**第 2 引数**を見る
+ * ので、`redactForMessage` を呼ばない経路は母集団に入らない。
+ * パス 289 が隣の census で見つけた死角とまったく同じ形である。
+ *
+ * 300 は `MAX_LOCAL_MODEL_ERROR_CHARS` として梯子へ入れ、3 か所を
+ * `redactForMessage` へ通した。**Ollama への要求に資格情報は乗らない**
+ * (`SERVICE_CREDENTIAL_USE.ollama === 'none'`・ヘッダも実測 0 件) ので
+ * 今日の実害は 0 だが、本文の出どころは**利用者が設定したホスト**であり、
+ * 「送っていないから反射されない」は設定次第で崩れる前提である。
+ * 除外の理由を書くより、通すほうが安い経路だった。
  *
  * 覆う範囲:
  *   - 資格情報ヘッダの値 — `Authorization: Bearer …` も `"authorization":"Bearer …"` も
@@ -479,6 +497,21 @@ export const MAX_WARNING_BODY_CHARS = 100;
 
 /** JSON 以外が返ったときの echo の上限 (**文字**)。梯子の理由は上の段に在る。 */
 export const MAX_MALFORMED_JSON_ECHO_CHARS = 80;
+
+/**
+ * 端末内モデル (Ollama) のエラー本文の上限 (**文字**)。梯子の 5 段目。
+ *
+ * `MAX_RESPONSE_BODY_IN_MESSAGE` (200) より広いのは、この本文が
+ * **端末内のモデル名・ファイル名・パス**を含み、そこを切ると利用者が
+ * 「どのモデルが無いのか」を読めなくなるためである (同じ 300 を
+ * `MAX_ENSEMBLE_ERROR_CHARS` が使っているが、あちらの理由は逆で
+ * 「5 提供者ぶんが 1 文に積まれる」= 狭める側なので、名前は分けて持つ)。
+ *
+ * 2026-09-15 (パス 290) まで `shared/ollama.ts` の私有定数
+ * `MAX_ERROR_DETAIL` として梯子の外に在り、しかも**伏字を通さずに**
+ * 掛かっていた。移した理由はこのファイルの冒頭に在る。
+ */
+export const MAX_LOCAL_MODEL_ERROR_CHARS = 300;
 
 /**
  * 例外を「利用者へ見せてよい 1 行」にする。**伏字を通した後**を返す。
