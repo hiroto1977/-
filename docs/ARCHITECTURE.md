@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14369** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14371** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -2374,16 +2374,16 @@ classDiagram
   }
 
   class OAuthHelper~oauth.ts~ {
-    +OAUTH_CONFIGS : oauth.ts:54
-    +isOAuthSupported(id) : oauth.ts:293
-    +generatePkce() : oauth.ts:311
-    +buildAuthorizeUrl() : oauth.ts:317
-    +buildTokenExchangeBody() : oauth.ts:351
-    +buildRefreshBody() : oauth.ts:366
-    +tokenResponseToSet() : oauth.ts:402
-    +authorize(config) : oauth.ts:258 ~loopback HTTP~
-    +refresh(config, tokens) : oauth.ts:782
-    -listenForCallback(state) : oauth.ts:548 ~Host pin~
+    +OAUTH_CONFIGS : oauth.ts:176
+    +isOAuthSupported(id) : oauth.ts:343
+    +generatePkce() : oauth.ts:361
+    +buildAuthorizeUrl() : oauth.ts:367
+    +buildTokenExchangeBody() : oauth.ts:401
+    +buildRefreshBody() : oauth.ts:416
+    +tokenResponseToSet() : oauth.ts:452
+    +authorize(config) : oauth.ts:775 ~loopback HTTP~
+    +refresh(config, tokens) : oauth.ts:857
+    -listenForCallback(state) : oauth.ts:599 ~Host pin~
   }
 
   class ServiceIdGuard~shared/serviceId.ts~ {
@@ -2457,7 +2457,7 @@ classDiagram
 | 9 | `dangerouslySetInnerHTML` / `eval` / `new Function` 禁止 | `lint:forbidden` (24 パターン・自己検査つき)。§8.2 には最初から書いてあったのに、この欄だけ手作業の grep audit のままだった |
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `gmail.test.ts` + property fuzz 400 試行 |
-| 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:446-451` |
+| 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:524-529` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:37-50` |
 | 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
 | 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:90` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |

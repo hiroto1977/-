@@ -1,6 +1,6 @@
 # Service Hub — 残りの作業手順書
 
-最終更新: 2026-09-14
+最終更新: 2026-09-15
 対象ブランチ: `claude/eager-brown-7cev3c`（既定ブランチは `main`）
 
 このドキュメントは「今の状態から先に何が残っているか」を並べたランブックです。
@@ -20,6 +20,136 @@
 開いた先が違う)。同じ形 (union の型ガード `isTeikanType` + sanitize + 対で保存) で
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
+
+## パス 291 (2026-09-15) — 検査の題名が、弱さを仕様として書き留めていた
+
+### 見つけた物
+
+`lint:forbidden` は `shell.openExternal` を禁じ、例外を台帳で管理している。例外は 2 件、
+どちらも `src/main/` で、その 1 つが `oauth.ts` の authorize URL である。
+
+そこに掛かっていた関門は**字面**だった:
+
+```ts
+if (!url.startsWith('https://')) throw new Error(`OAuth ${role} endpoint must use https`);
+```
+
+このリポジトリには**同じ問いを解析で答える関門が既に在る** —— `shared/externalUrlGate.ts` で、
+2026-08-23 に「29 の攻撃入力を字面検査 `/^https?:\/\//i` に当てて 6 件食い違った」という
+実測から作られた物である。その docblock は「**解析してから判定し、正規化した形を返す**ので、
+調べたものと開くものが一致する」と述べている。
+
+6 形を両方に当てた (実測):
+
+| 入力 | `startsWith('https://')` | `new URL` で解析 |
+|---|---|---|
+| `https://accounts.google.com/o/oauth2/auth` | 通す | 通す |
+| `HTTPS://accounts.example.com/authorize` | **弾く** | 通す (正当な https) |
+| `https://accounts.google.com@evil.example/o/oauth2/auth` | **通す** | `origin` は **`https://evil.example`** |
+| `https:/accounts.google.com/auth` (スラッシュ 1 本) | 弾く | 弾く |
+| ` https://accounts.google.com/auth` (先頭空白) | 弾く | 通す (空白を捨てる) |
+| `https://user:pw@accounts.google.com/auth` | 通す | 通すが資格情報が埋まっている |
+
+**6 形のうち 5 形で答えが割れた。** 一番鋭いのは 3 行目 —— `startsWith` は通し、
+解析した origin は `evil.example`。**同じ Google のホスト名を前置きに使った、
+関門の docblock が userinfo の検査を足した当の攻撃**である。
+
+### 実害は今日 0 —— だが根拠は「設定が変わらないこと」だった
+
+`OAUTH_CONFIGS` の 9 つの config はすべて**ソース中の `https://` リテラル**で、
+利用者が端点を入れる口は無い。だから今日この穴は突けない。
+しかし守りの強さが**「設定は動かない」という別の前提**に依っているので、
+1 つの config を利用者設定にした瞬間に崩れる。`shared/aiEndpoint.ts` (AI ハブの
+提供者ホストは利用者が決める) が既にそちら側に在るので、仮定ではない。
+
+### ★ 検査が、その弱さを**仕様として**書き留めていた
+
+`oauth.test.ts` の拒否表に、この行が在った:
+
+```ts
+['大文字 (URL 解析ではなく前置き一致なので弾く側)', 'HTTPS://accounts.example.com/authorize'],
+```
+
+**題名が実装の弱点を説明し、その振る舞いを固定していた。** 「なぜ弾くのか」に
+答えているので読むと納得してしまうが、答えは「実装がそうだから」であって
+「弾くべきだから」ではない。`HTTPS://` は RFC 3986 §3.1 でスキームは
+大文字小文字を区別しないと定めた、**正当な https URL** である。
+
+パス 289 の「過剰の対照が穴を意図として留めていた」と同じ家系だが、
+あちらは**標本**が 2 つの母集団を見分けられなかった。
+こちらは**題名**が弱さに名前を与えて正当化していた。より直している方が難しい ——
+落ちる検査が無いので、読んで気付くしかない。
+
+### 直した物
+
+1. `assertHttpsEndpoint(url, role)` を**解析して判定**へ移した (`new URL` →
+   `protocol !== 'https:'` を弾き、**`username` / `password` が空でなければ別の理由で弾く**)。
+   `externalUrlOrNull` を使わないのは**問いが違う**から —— あちらは「ブラウザへ渡してよい URL か」
+   (http も通す) で、こちらは「OAuth の端点として使ってよいか」(https のみ) である。
+   理由を docblock に実測表ごと書いた。
+2. `shell` への直接の呼び出し口を**関門が返した形**に替えた。
+   `assertHttpsEndpoint` が見るのは**土台の端点**で、実際に渡るのは
+   `buildAuthorizeUrl` が組み立てた**後の文字列**である —— 関門の「調べたものと開くものが
+   一致する」は、呼ぶ側が**返り値を使って**初めて成り立つ。`null` なら投げて中断する。
+3. 検査: 弱さを仕様として書いていた行を消し、代わりに
+   - `HTTPS://` が**通る**ことを流れの中で確かめ、`shell` が受けた文字列を
+     関門に入れ直して**冪等**であることも確かめる (= 関門を通った形である)
+   - userinfo の 3 形が `must not embed credentials in the URL` で弾かれ、
+     `openExternal` が**呼ばれない**こと
+   - `startsWith` では 3 形すべてが通り、解析した `origin` が `https://evil.example` に
+     なることを**純粋な標本**で示す (字面と解析の差そのものを検査にする)
+
+### 副産物: 私のコメントが「呼び出し」に化けた
+
+2 の注記に `shell.openExternal` と**字で書いた**ところ、`lint:forbidden` の
+例外台帳が 1 → 2 件に増えて落ちた。**散文が呼び出しに化けた** ——
+走査は字面を数えるので、判定について書いた文と判定の呼び出しを見分けられない
+(パス 280 で `controlChars` について同じことが起きている)。
+「`shell` への直接の呼び出し口」と言い換えた。**ゲートが正しく鳴った**ので、
+これは欠陥ではなく設計どおりである。
+
+### 副産物 2: 私の後片付けが、片付ける対象より遅かった
+
+足した流れの検査は `access_denied` のコールバックで promise を終わらせる。
+`.catch` を**後片付けの行**に書いたので、`fireCallback` を待っている間
+`p` は受け手の無いまま reject し、Node が `unhandledRejection` を上げた ——
+**後から `.catch` を付けても取り消せない**。vitest は「167 件すべて pass」の
+まま `Errors 1` を刷り **exit 1** する (実測) ので CI は捕まえたが、
+受け手は**生まれた瞬間に**付けるのが正しい。`p.catch((e) => e)` を
+`authorize()` の直後に置き、最後は `expect(settled).resolves.toBeInstanceOf(Error)` で
+**終わり方まで**主張する (待ちっぱなしにしないだけでなく、何で終わったかを言う)。
+
+### 出荷物
+
+**FULL 11,891,351 B / LITE 3,304,097 B —— byte 単位で不変。**
+直したのは `src/main/oauth.ts` だけで、**ブラウザ版はこのモジュールを 1 行も読み込まない**
+(`web-shim.ts` の `authorize` は `not_supported` を返すだけで、貼り付け式 PKCE は
+`renderer/oauth/pkce.ts` が別に組む)。検査と文書は出荷 HTML に入らない。
+
+### 台帳への影響
+
+`lint:shared-judgement` の `externalUrlGate` 行が main 1 → 2 になった (この pass が
+`oauth.ts` から import したため)。理由も書き直した —— 否定 (`null`) の扱いは 4 経路すべてで
+「開かない」の 1 つで、**4 本目に twin は無い** (ブラウザ版はこの問いを発しない)。
+`docs/ARCHITECTURE.md` の `oauth.ts` の参照 11 件を実物の定義行へ引き直した。
+
+### ★ 次のパスの候補 (測ったが直していない)
+
+`verify:arch` の**図の参照**は「記号が ±15 行の帯に**現れる**こと」しか見ない ——
+**定義であることを要求しない**。実測: `authorize(config) : oauth.ts:258` は
+Notion の docs について書かれた**コメント行**を指しており、実際の定義は 775 行目
+(**517 行の隔たり**) だが、`authorize` という語が 258 行の近くの散文に在るので
+ゲートは ✅ を出していた。同じ形が `OAUTH_CONFIGS : oauth.ts:54` (実物 176) と
+`listenForCallback : oauth.ts:548` (実物 599) にも在った。
+この pass では**データを**実物へ直したが、**ゲートの弱さは残っている** ——
+散文の中の言及と定義を見分けていない。パス 291 で直した `oauth.test.ts` の題名、
+パス 280 の `controlChars`、この pass の `lint:forbidden` の例外台帳と**同じ家系**
+(字面の走査が、判定について書いた文と判定そのものを見分けられない)。
+直し方の候補: 帯の中に**宣言の形** (`function <name>` / `const <name>` / `class <name>` /
+`<name>:` のいずれか) を要求する。母集団は図の参照 27 件なので、
+偽陽性が出ても読める大きさである。
+
+---
 
 ## パス 290 (2026-09-15) — 「全経路の最後の関門」の列挙の「ほか」に、穴が 1 つ在った
 
@@ -26780,7 +26910,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、**パス 272 が書いた理由は偽だった**。 ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は**真**だが、後半は**偽** —— 実測した鎖は `main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である(到達していなければ行は存在しない)。 ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / `straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。だから main 側は否定で答える問いを発しない。`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る) |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
 | `eraseReport` | 2 | 3 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
-| `externalUrlGate` | 1 | 1 | 閉じている (パス 241 で 3 経路を実測) |
+| `externalUrlGate` | 2 | 1 | 閉じている (実測・パス 241 で 3 経路 → パス 291 で 4 経路) —— 否定 (`null`) の扱いは 4 経路すべてで「開かない」の 1 つ: main.ts の `app:openExternal` と setWindowOpenHandler、ブラウザ版 web-shim の同名の polyfill、そしてパス 291 で足した `oauth.ts` の authorize URL (投げて中断する)。 ★ **その 4 本目に twin は無い** —— ブラウザ版の `authorize` は `not_supported` を返すだけで、貼り付け式 PKCE (`renderer/oauth/pkce.ts`) は URL を画面に出し**利用者が自分で開く**ので、「この authorize URL を外部ブラウザへ渡してよいか」という問いを発するのは main だけ。だから非対称になりようがない (`depreciation` の「問いを発しない」と同じ形だが、あちらは辺が定数だけ・こちらは片側の実装が存在しない) |
 | `freeeIntake` | 1 | 5 | 意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / `dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** (FreeePage / bankSubmission / docImports)。main が import するのは `NO_DEAL_INTAKE` と型だけで、**負で答える 3 関数の呼び出しは src/main・src/preload で実測 0 件**。ただし非対称は 1 段上に在る —— 落ちた件数を数える `FreeeDealIntake` を**作れるのは main の freee.ts だけ**で、ブラウザ版に freee の live 読みは無い (読むのは cursor だけ)。だからブラウザ版の 3 つの消費者は常に `NO_DEAL_INTAKE` を見て `null` を返す (注記が出ない)。**原因は「判定の非対称」ではなく「クライアントの不在」**で、funding (パス 265) と同じ形である |
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
 | `httpLimits` | 4 | 5 | 対称 (実測・パス 282 で総当たりにした) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts)。 ★ パス 248 は「手で選んだ 3 経路だけで母集団の総当たりではない」と**自分で認めていた**。パス 282 でその総当たりをやったら、**認めていた穴の中に生きた欠陥が 1 件**在った —— `main/main.ts` の `app:checkUpdate` が `AbortSignal.timeout(10_000)` という**裸の数**で、ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた。**同じ問いに 3 倍違う締切**で、遅い回線で先に諦めるのは「新しい版が出た」を受けて実際に更新できる**デスクトップ版**の側だった。しかも同じ関数の 3 行下の注記が 2026-08-31 に**本文の上限**の同じ食い違いを直したときのもので、そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い」と書いてある —— **その直しは 1 行手前で止まっていた**。 直しと同時に `shared/__tests__/deadlineCensus.test.ts` が母集団を走査する: 締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / `timeoutMs`) の時間の引数が**名前**であること (値の一致は要求しない —— `AI_CHAT_TIMEOUT_MS` の 2 分のように意図して違う締切は在る。名前が付いていれば理由が定義の隣に書ける)。実測 24 呼び出し・裸の数 0 件・例外の台帳 0 件 |

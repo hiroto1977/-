@@ -20,6 +20,7 @@ import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../shared/redact';
 import { parseTokenResponse, type TokenResponseFields } from '../shared/tokenResponse';
+import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
@@ -52,8 +53,58 @@ import {
  * 引数の `role` は文言のためだけにあり、判定は両方で同一である。
  */
 function assertHttpsEndpoint(url: string, role: 'token' | 'authorization'): void {
-  if (!url.startsWith('https://')) {
+  /*
+   * **解析してから判定する。字面では判定しない。** (2026-09-15 · パス 291)
+   *
+   * ここは 2026-09-15 まで `url.startsWith('https://')` だった ——
+   * つまり `externalUrlGate.ts` の docblock が**20 行かけて「これは誤りだ」と
+   * 説明している、その述語**である。あちらはブラウザ版が持っていた
+   * `/^https?:\/\//i` を「字面は `https://` で始まるので通るが、実際に開くのは
+   * 解析後の URL で、検査した文字列とは別物になりうる」と述べて捨てた。
+   *
+   * 実測 (2026-09-15・6 形を両方の述語に通した。**5 形で答えが割れた**):
+   *
+   *   形                              startsWith  解析して判定  解析後の origin
+   *   https://accounts.google.com/…   通す        通す          https://accounts.google.com
+   *   https://<LF>javascript:alert(1) 通す        断る          (解析不能)
+   *   https://<NUL>evil               通す        断る          (解析不能)
+   *   https://accounts.google.com@evil.example/…
+   *                                   通す        断る          **https://evil.example**
+   *   https://user:pw@evil.example/…  通す        断る          **https://evil.example**
+   *   https://                        通す        断る          (解析不能)
+   *
+   * 4 つ目が要点である。`externalUrlGate.ts` が userinfo の判定を足した理由に
+   * 挙げている例と**同じホスト**で、頭から読むと Google だが送り先は
+   * `evil.example` である。`tokenUrl` にこの形が入れば
+   * **client_secret と code をそこへ POST する**。
+   *
+   * **今日は悪用できない** —— `OAUTH_CONFIGS` の 9 つの `authorizeUrl` /
+   * `tokenUrl` はすべてソース中の `https://…` リテラルで、実行時に差し替わる
+   * 道が無い (実測)。だからこれは**深さの守りと述語の一貫性**の直しである。
+   * ただし上の docblock が自分で書いているとおり、以前ここは
+   * 「全 config がハードコード https」という**検査の中だけの保証**に頼って
+   * いた。常設ガードへ移したとき、選んだ述語が弱いままだった。
+   *
+   * `externalUrlOrNull` を使わないのは**問いが違う**から ——
+   * あちらは「OS に URL を開かせてよいか」で、ここは「この宛先へ資格情報を
+   * 載せて出てよいか」である (`tokenUrl` は `fetch` の相手で、OS へは渡らない)。
+   * userinfo を落とす式は `proxyEndpoint.ts` / `aiEndpoint.ts` /
+   * `externalUrlGate.ts` が既に同じ形で持っており、これで 4 つ目になる ——
+   * **統合しないのは 4 つが別の問いに答えているためで**、
+   * `shared/__tests__/loopbackChecks.test.ts` がループバック判定 3 つについて
+   * 同じ判断を記録している。
+   */
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
     throw new Error(`OAuth ${role} endpoint must use https`);
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new Error(`OAuth ${role} endpoint must use https`);
+  }
+  if (parsed.username !== '' || parsed.password !== '') {
+    throw new Error(`OAuth ${role} endpoint must not embed credentials in the URL`);
   }
 }
 
@@ -742,7 +793,31 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   const redirectUri = `http://127.0.0.1:${port}/oauth/callback`;
   const authorizeUrl = buildAuthorizeUrl(config, redirectUri, state, challenge);
 
-  await shell.openExternal(authorizeUrl);
+  /*
+   * **OS へ渡す文字列そのものを、共有の関門に通す。** (2026-09-15 · パス 291)
+   *
+   * `externalUrlGate.ts` は自分を「外へ開く URL を判定する**唯一の関門**」と
+   * 宣言しているが、ここは `lint:forbidden` の allowFile で例外にしてある
+   * `shell` への直接の呼び出し口で、**その関門を通っていなかった**
+   * (上の `assertHttpsEndpoint` が別の述語で守っていた)。
+   * つまり「唯一」は実物より広い主張だった —— パス 290 が
+   * `redact.ts` の「全経路」で見つけたのと同じ形である。
+   *
+   * **`assertHttpsEndpoint` が見るのは `config.authorizeUrl` (土台) で、
+   * `shell` が受けるのは組み立て後の文字列である。** 関門の docblock が
+   * 掲げる性質は「**調べたものと開くものが一致する**」なので、
+   * 土台だけを調べていては満たせない。だから組み立て後を通し、
+   * **関門が返した正規化済みの文字列を開く** (引数をそのまま渡さない)。
+   *
+   * ここまで来れば土台は https で userinfo 無しだが、`buildAuthorizeUrl` は
+   * `config.extraAuthParams` を差し込むので、組み立て後を見るのが正しい。
+   */
+  const safeAuthorizeUrl = externalUrlOrNull(authorizeUrl);
+  if (safeAuthorizeUrl === null) {
+    throw new Error('OAuth authorization URL was rejected by the external-URL gate');
+  }
+
+  await shell.openExternal(safeAuthorizeUrl);
 
   const { code } = await listener;
 

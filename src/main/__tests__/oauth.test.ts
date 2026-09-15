@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
 import http from 'node:http';
 
 // electron must be mocked BEFORE the oauth module is imported because
@@ -1233,6 +1234,40 @@ describe('authorize (end-to-end flow with real loopback + mocked electron + mock
     );
   });
 
+  /*
+   * **述語を字面から解析へ移した効果を、流れの中で測る。** (パス 291)
+   *
+   * `HTTPS://` は正当な https URL だが、旧い `startsWith('https://')` は
+   * 弾いていた (検査の題名が「前置き一致なので弾く側」と**弱さを仕様として
+   * 書いていた**)。解析して判定すれば通り、しかも `shell` が受けるのは
+   * 関門 `externalUrlOrNull` が返した**正規化済み**の文字列である ——
+   * 関門の docblock が掲げる「調べたものと開くものが一致する」は、
+   * 呼ぶ側が返り値を使って初めて成り立つ。
+   */
+  it('★ HTTPS:// は通り、shell へ渡るのは関門が正規化した形である (パス 291)', async () => {
+    openExternalMock.mockClear();
+    const p = authorize(
+      { ...CFG, authorizeUrl: 'HTTPS://accounts.example.com/o/oauth2/v2/auth' },
+      vi.fn<typeof fetch>(),
+    );
+    // **受け手は生まれた瞬間に付ける。** この流れは `access_denied` で終わらせるので
+    // `p` は必ず reject する。`.catch` を後片付けの行まで遅らせると、その間に
+    // Node が unhandledRejection を上げ、**後から付けても取り消せない**
+    // (vitest は「Errors 1」を刷り exit 1 —— 167 件すべて pass のままで落ちる)。
+    const settled = p.catch((e: unknown) => e);
+    const opened = await waitForOpenExternalCall();
+    // 端点の判定を通った = ブラウザを開くところまで来た (字面検査では弾かれていた)。
+    // 関門が小文字へ正規化しているので、開く文字列は https: で始まる。
+    expect(opened.startsWith('https://accounts.example.com')).toBe(true);
+    // 関門を通った形 == 関門に入れても同じ形で返る (冪等)。
+    expect(externalUrlOrNull(opened)).toBe(opened);
+    // 後片付け: コールバックを撃って promise を終わらせる (待ちっぱなしにしない)。
+    const u = new URL(opened);
+    const port = Number(new URL(u.searchParams.get('redirect_uri') ?? 'http://127.0.0.1:0').port);
+    await fireCallback(port, { error: 'access_denied', state: u.searchParams.get('state') ?? '' });
+    await expect(settled).resolves.toBeInstanceOf(Error);
+  });
+
   it('completes the full flow: opens browser → receives callback → exchanges code for token', async () => {
     openExternalMock.mockClear();
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
@@ -1654,7 +1689,6 @@ describe('assertHttpsEndpoint (RFC 8252 §8.3 — 平文の宛先へ資格情報
     ['平文 http', 'http://accounts.example.com/authorize'],
     ['スキーム無し', 'accounts.example.com/authorize'],
     ['file', 'file:///etc/passwd'],
-    ['大文字 (URL 解析ではなく前置き一致なので弾く側)', 'HTTPS://accounts.example.com/authorize'],
     ['空', ''],
   ])('authorize は %s の認可エンドポイントを拒否する (%s)', async (_label, authorizeUrl) => {
     const before = openExternalMock.mock.calls.length;
@@ -1664,6 +1698,55 @@ describe('assertHttpsEndpoint (RFC 8252 §8.3 — 平文の宛先へ資格情報
     // **ブラウザを開く副作用より前**に落ちること。平文の宛先へ state を
     // 投げてから気付いても遅い。
     expect(openExternalMock.mock.calls.length, 'ブラウザを開いてしまっている').toBe(before);
+  });
+
+  /*
+   * **述語を字面から解析へ移した。** (2026-09-15 · パス 291)
+   *
+   * ここは `url.startsWith('https://')` だった —— `externalUrlGate.ts` の
+   * docblock が 20 行かけて「これは誤りだ」と説明している、その述語である。
+   * 実測で 6 形のうち **5 形で答えが割れた**。
+   *
+   * ★ **この検査自身が、弱さを「意図」として留めていた。** 上の表には
+   * `['大文字 (URL 解析ではなく前置き一致なので弾く側)', 'HTTPS://…']` という
+   * 行が在り、**題名で「前置き一致だから弾く」と述べていた** ——
+   * つまり字面検査であることを仕様として固定していた。`HTTPS://` は
+   * 正当な https URL で (`URL.protocol` は小文字へ正規化する)、
+   * 弾くのは `externalUrlGate.ts` が「逆向きの害 = 正当なリンクを黙って
+   * 開かない」と呼ぶ側の誤りである。だから受理側へ移した。
+   *
+   * パス 289 で見つけた「過剰の対照が穴を意図として留めていた」と同じ形で、
+   * 今度は**題名がその理由まで書いていた**。
+   */
+  /*
+   * **送り先を見せかけで隠す形。** 字面検査はこれを通していた ——
+   * 頭から読むと Google だが、解析後の origin は `evil.example` である。
+   * `tokenUrl` にこの形が入れば **client_secret と code をそこへ POST する**。
+   * `externalUrlGate.ts` が userinfo の判定を足した理由に挙げている例と
+   * 同じホストで、実測で `new URL(...).origin === 'https://evil.example'`。
+   */
+  it.each([
+    ['認可 URL の userinfo', { authorizeUrl: 'https://accounts.google.com@evil.example/o/oauth2/auth' }],
+    ['認可 URL の userinfo (password つき)', { authorizeUrl: 'https://user:pw@evil.example/authorize' }],
+    ['トークン端点の userinfo', { tokenUrl: 'https://accounts.google.com@evil.example/token' }],
+  ])('★ %s は断る (字面検査は通していた)', async (_label, patch) => {
+    const before = openExternalMock.mock.calls.length;
+    await expect(authorize({ ...CFG, ...patch })).rejects.toThrow(
+      'must not embed credentials in the URL',
+    );
+    expect(openExternalMock.mock.calls.length, 'ブラウザを開いてしまっている').toBe(before);
+  });
+
+  it('★ 標本: 字面検査ならこの 3 形は通っていた (規則が実際に効いていることの裏取り)', () => {
+    const prefixOk = (u: string): boolean => u.startsWith('https://');
+    for (const u of [
+      'https://accounts.google.com@evil.example/o/oauth2/auth',
+      'https://user:pw@evil.example/authorize',
+      'https://accounts.google.com@evil.example/token',
+    ]) {
+      expect(prefixOk(u), `${u} は字面では通る`).toBe(true);
+      expect(new URL(u).origin, `${u} の本当の送り先`).toBe('https://evil.example');
+    }
   });
 
   it('トークン端点が平文なら、認可 URL を見るより前に落ちる (順序)', async () => {

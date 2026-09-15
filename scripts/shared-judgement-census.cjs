@@ -142,7 +142,16 @@ const VERDICTS = {
     + 'atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、'
     + 'process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」か'
     + 'の選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた',
-  externalUrlGate: '閉じている (パス 241 で 3 経路を実測)',
+  externalUrlGate:
+    '閉じている (実測・パス 241 で 3 経路 → パス 291 で 4 経路) —— 否定 (`null`) の扱いは '
+    + '4 経路すべてで「開かない」の 1 つ: main.ts の `app:openExternal` と '
+    + 'setWindowOpenHandler、ブラウザ版 web-shim の同名の polyfill、そしてパス 291 で足した '
+    + '`oauth.ts` の authorize URL (投げて中断する)。 ★ **その 4 本目に twin は無い** —— '
+    + 'ブラウザ版の `authorize` は `not_supported` を返すだけで、貼り付け式 PKCE '
+    + '(`renderer/oauth/pkce.ts`) は URL を画面に出し**利用者が自分で開く**ので、'
+    + '「この authorize URL を外部ブラウザへ渡してよいか」という問いを発するのは main だけ。'
+    + 'だから非対称になりようがない (`depreciation` の「問いを発しない」と同じ形だが、'
+    + 'あちらは辺が定数だけ・こちらは片側の実装が存在しない)',
   freeeIntake:
     '意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / '
     + '`dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** '

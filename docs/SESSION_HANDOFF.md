@@ -7,6 +7,93 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 291 (2026-09-15) — 検査の題名が、弱さを仕様として書き留めていた
+
+### 見つけた物
+
+`lint:forbidden` が例外として許している `shell` への直接の呼び出し口 2 件のうち 1 つ、
+`oauth.ts` の authorize URL に掛かっていた関門が**字面**だった:
+
+```ts
+if (!url.startsWith('https://')) throw new Error(`OAuth ${role} endpoint must use https`);
+```
+
+**このリポジトリには、同じ問いを解析で答える関門が 2026-08-23 から在る**
+(`shared/externalUrlGate.ts` —— 29 の攻撃入力を `/^https?:\/\//i` に当てて 6 件
+食い違ったという実測から作られ、「解析してから判定し、正規化した形を返す」と宣言している)。
+
+6 形を両方に当てて **5 形で答えが割れた**。一番鋭いのは:
+
+| 入力 | `startsWith` | 解析 |
+|---|---|---|
+| `HTTPS://accounts.example.com/authorize` | **弾く** | 通す (RFC 3986 §3.1 —— スキームは大小無区別) |
+| `https://accounts.google.com@evil.example/o/oauth2/auth` | **通す** | `origin` は **`https://evil.example`** |
+
+2 行目は**同じ Google のホスト名を前置きに使った、関門の docblock が
+userinfo の検査を足した当の攻撃**である。
+
+### ★ 検査の題名が、その弱さを**仕様として**書いていた
+
+```ts
+['大文字 (URL 解析ではなく前置き一致なので弾く側)', 'HTTPS://accounts.example.com/authorize'],
+```
+
+**題名が実装の弱点を説明し、その振る舞いを固定していた。** 読むと納得してしまうが、
+答えは「実装がそうだから」であって「弾くべきだから」ではない。
+パス 289 の「対照の標本が 2 つの母集団を見分けられなかった」と同じ家系だが、
+**こちらは落ちる検査が無いので読んで気付くしかない**。
+
+### 実害は今日 0 —— 根拠は「設定が変わらないこと」
+
+`OAUTH_CONFIGS` の 9 config はすべてソース中の `https://` リテラルで、利用者が端点を
+入れる口は無い。だが**守りの強さが別の前提に依っていた** ——
+`shared/aiEndpoint.ts` (提供者ホストは利用者が決める) が既にそちら側に在る。
+
+### 直した物
+
+1. `assertHttpsEndpoint` を解析へ移し、**userinfo (`username` / `password`) を
+   別の理由で弾く**。`externalUrlOrNull` を使わないのは**問いが違う**から
+   (あちらは http も通す「ブラウザへ渡してよい URL か」)。
+2. `shell` へ渡す文字列を**関門の返り値**に替えた —— `assertHttpsEndpoint` が見るのは
+   **土台の端点**で、渡るのは `buildAuthorizeUrl` が組み立てた**後**の文字列。
+   「調べた物と開く物が一致する」は呼ぶ側が返り値を使って初めて成り立つ。
+3. 検査: 弱さを仕様にしていた行を消し、`HTTPS://` が**通る**ことを流れの中で確かめ、
+   `shell` が受けた文字列の**冪等**性も見る。userinfo 3 形は
+   `openExternal` が**呼ばれない**ことまで主張。`startsWith` と解析の差そのものも
+   純粋な標本で留めた。
+
+### 罠 (2 つとも自分が作った)
+
+- **散文が呼び出しに化ける**: 注記に `shell.openExternal` と字で書いたら
+  `lint:forbidden` の例外台帳が 1 → 2 で落ちた。走査は字面を数えるので、
+  判定について書いた文と判定の呼び出しを見分けない (パス 280 と同形)。
+  **ゲートが正しく鳴った**ので欠陥ではない。
+- **受け手は生まれた瞬間に付ける**: 足した流れの検査は `access_denied` で終わるので
+  `authorize()` の promise は必ず reject する。`.catch` を**後片付けの行**まで
+  遅らせると、その間に Node が `unhandledRejection` を上げ、
+  **後から付けても取り消せない** —— vitest は「167 件すべて pass」のまま
+  `Errors 1` を刷り **exit 1** する (実測)。`p.catch((e) => e)` を直後に置き、
+  最後は `expect(settled).resolves.toBeInstanceOf(Error)` で終わり方まで言う。
+
+### 出荷物
+
+**FULL 11,891,351 B / LITE 3,304,097 B —— byte 単位で不変**
+(ブラウザ版は `main/oauth.ts` を 1 行も読み込まない。`web-shim.ts` の `authorize` は
+`not_supported` で、貼り付け式 PKCE は `renderer/oauth/pkce.ts` が別に組む)。
+
+### ★ 次のパスへ残した物 (測ったが直していない)
+
+`verify:arch` の**図の参照**は「記号が ±15 行の帯に**現れる**こと」しか見ず、
+**定義であることを要求しない**。実測: `authorize(config) : oauth.ts:258` は
+Notion の docs について書かれた**コメント行**を指し、定義は 775 行目
+(**517 行の隔たり**) だが ✅ が出ていた。`OAUTH_CONFIGS : oauth.ts:54` (実物 176)、
+`listenForCallback : oauth.ts:548` (実物 599) も同じ。
+この pass では**データを**実物へ直したが、**ゲートの弱さは残っている**。
+直し方の候補: 帯の中に**宣言の形** (`function <name>` / `const <name>` /
+`class <name>` / `<name>:`) を要求する。母集団は 27 件なので読める大きさ。
+
+---
+
 ## パス 290 (2026-09-15) — 「全経路の最後の関門」の列挙の「ほか」に、穴が 1 つ在った
 
 ### 見つけた物

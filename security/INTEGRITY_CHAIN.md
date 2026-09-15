@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 212
+- ブロック数: 214
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `c40edecfac623e070a517fbbb643bfcb149b519ad9d4671ef8de53e29383b1c4`
+- 末尾(tip)ハッシュ: `b2360eeb1c6a1345c7813daf709adf085ee97ceeb88522a3121906046e560f09`
 - 保護対象: 73 ファイル
 
 ## ブロック
@@ -225,6 +225,8 @@
 | 209 | `f0b4a3c3337eb2e8` | `1259de2343e18a25` | `4d705ae7f96457a3` | update writeFieldLimits.ts |
 | 210 | `2932bf3681e2eea9` | `4d705ae7f96457a3` | `bfc1d71cf6a4a382` | update redact.ts |
 | 211 | `fcc875b846a2d307` | `bfc1d71cf6a4a382` | `c40edecfac623e07` | update ollama.ts,redact.ts |
+| 212 | `3e4b3cc70e3c63c1` | `c40edecfac623e07` | `f15a9c1268c00628` | update oauth.ts |
+| 213 | `97d738e849b8c4b3` | `f15a9c1268c00628` | `b2360eeb1c6a1345` | update oauth.ts |
 
 ## 保護対象ファイル
 
