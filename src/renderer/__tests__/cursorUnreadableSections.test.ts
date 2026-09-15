@@ -21,6 +21,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { settleUntil } from './jsdomWait';
 import { CursorPage } from '../pages/CursorPage';
 import type { CursorSnapshot } from '../../shared/api/cursor';
 
@@ -83,11 +84,10 @@ async function render(snap: CursorSnapshot): Promise<string> {
     root = createRoot(host);
     root.render(createElement(CursorPage));
   });
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
+  // **固定回数の settle は待っていない、当てているだけ** —— jsdomWait.ts の
+  // docblock が 2 度の実測つきでそう書いている (パス 169)。実際、この検査を
+  // 固定 8 周で書いた直後の全件実行で 1 本落ちた (単独では 3/3 通る)。
+  await settleUntil(() => (host.textContent ?? '').length > 0, 'Cursor の節が描かれた');
   return host.textContent ?? '';
 }
 

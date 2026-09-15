@@ -106,3 +106,40 @@ export function optionalStringArray(obj: Record<string, unknown>, field: string)
   const v = obj[field];
   return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
 }
+
+/** 鍵の読み取り結果 —— 行と、**鍵がそこに在ったのか**。 */
+export interface ArrayFieldRead {
+  readonly rows: readonly unknown[];
+  /** 鍵が在って配列だったか。`rows` が空でも true なら「0 件」が相手の答えである。 */
+  readonly read: boolean;
+}
+
+/**
+ * オブジェクトの 1 鍵を配列として読み、**読めたのかどうかを一緒に返す**
+ * (2026-09-14 · パス 264)。
+ *
+ * ## なぜ「読めた」を返す必要があるのか
+ *
+ * `(body.results ?? []).map(…)` は落ちないが、**鍵が無いことと空の配列を
+ * 同じ `[]` に畳む**。そこから件数の文や判定を作ると、相手が何も答えて
+ * いないのに断定した文が画面へ出る。パス 263 が `cursor` で直した形で、
+ * 実測すると同じ形が 2 つ残っていた:
+ *
+ *   notion         `note: pages.length === 0 ? 'インテグレーションに共有された
+ *                  ページなし' : …`
+ *                  → 本文が `{}` だと**利用者の Notion の設定を診断する文**が出る。
+ *                    共有は正しいのに共有設定を直しに行かせる。
+ *   microsoft-365  `📧 Outlook: 直近 0 件 / 未読 0 件` / `📅 予定: 直近 0 件`
+ *                  → 「サマリー」の節に 2 件のカードとして出るので、
+ *                    **空に見えない。数えた結果のように見える。**
+ *
+ * **空の配列は `read: true`。** 0 件は答えであって、欠測ではない
+ * (この区別が付かないことが、そもそもの欠陥である)。
+ */
+export function readArrayField(obj: unknown, field: string): ArrayFieldRead {
+  if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {
+    return { rows: [], read: false };
+  }
+  const v = (obj as Record<string, unknown>)[field];
+  return Array.isArray(v) ? { rows: v, read: true } : { rows: [], read: false };
+}

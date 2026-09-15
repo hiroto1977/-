@@ -13,6 +13,7 @@ import {
   requireNumber,
   requireObject,
   requireString,
+  readArrayField,
 } from '../apiResponse';
 
 const L = 'Svc API';
@@ -113,5 +114,40 @@ describe('★ 断りは必ず「確認できません」と述べる', () => {
     }
     expect(message).toContain('処理したことを確認できません');
     expect(message).toContain(L);
+  });
+});
+
+describe('readArrayField — 鍵が在ったのかを一緒に返す (パス 264)', () => {
+  it('★ 鍵が在って配列なら read: true (中身は素通し)', () => {
+    expect(readArrayField({ value: [1, 2] }, 'value')).toEqual({ rows: [1, 2], read: true });
+  });
+
+  it('★ 空の配列も read: true —— 0 件は「答え」である', () => {
+    expect(readArrayField({ value: [] }, 'value')).toEqual({ rows: [], read: true });
+  });
+
+  it('★ 鍵が無い / 配列でない / 物でない は read: false (件数を言わせない)', () => {
+    for (const body of [
+      {},
+      { other: [] },
+      { value: 'x' },
+      { value: 42 },
+      { value: null },
+      null,
+      undefined,
+      42,
+      'nope',
+      [1, 2],
+    ] as unknown[]) {
+      expect(readArrayField(body, 'value'), JSON.stringify(body) ?? 'undefined').toEqual({
+        rows: [],
+        read: false,
+      });
+    }
+  });
+
+  it('★ prototype の鍵は拾わない (Object.hasOwn ではなく Array.isArray で落ちる)', () => {
+    expect(readArrayField({}, 'constructor').read).toBe(false);
+    expect(readArrayField({}, 'toString').read).toBe(false);
   });
 });

@@ -373,9 +373,16 @@ export const SNAPSHOT = {
   },
 
   ollama: {
-    running: false,
+    // **`as boolean` が必要** (2026-09-14 · パス 264)。annotation が無いと TS は
+    // リテラル型 `false` を推論し、画面 (`OllamaPage`) が `running ? … : …` /
+    // `!versionSafe ? … : …` で分けている**もう一方の枝が型の上で死ぬ** ——
+    // 実データ (`main/clients/ollama.ts` / `network/ollamaWeb.ts`) は `boolean` を
+    // 返すので、見本の型だけが実物より狭い (パス 62 / 80 / 116 / 263 の家系)。
+    // 同じ形が snapshot の直下にあと 14 件在る (実測) —— 母集団は
+    // `docs/REMAINING_WORK.md` のパス 264 の「残り」に記録した。
+    running: false as boolean,
     version: '' as string,
-    versionSafe: false,
+    versionSafe: false as boolean,
     versionMinRecommended: MIN_SAFE_VERSION,
     models: [] as {
       name: string;

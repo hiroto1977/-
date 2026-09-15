@@ -96,13 +96,24 @@ export function OllamaPage() {
             {running ? (
               <>
                 <span style={{ color: 'var(--success)' }}>● Running</span> v{version || '?'}
+                {/*
+                  * **版が読めなかったことを「古い」と言わない** (パス 264)。
+                  * `isVersionSafe('')` は false を返す —— 安全の判定なので
+                  * 読めないときは危険側へ倒すのが正しい。**倒すこと自体は残す**
+                  * (バッジは出る) が、理由は事実に合わせる: 既知 CVE が在ると
+                  * 分かったのではなく、**版が分からない**のである。
+                  */}
                 {!versionSafe ? (
                   <span
                     className="badge warn"
                     style={{ marginLeft: 8 }}
-                    title={`既知 CVE。最低 ${versionMinRecommended} へ更新推奨`}
+                    title={
+                      version === ''
+                        ? `バージョンを読み取れませんでした (/api/version の応答に version がありません)。最低 ${versionMinRecommended} 以上か確認してください`
+                        : `既知 CVE。最低 ${versionMinRecommended} へ更新推奨`
+                    }
                   >
-                    Outdated — known CVEs
+                    {version === '' ? 'Version unknown' : 'Outdated — known CVEs'}
                   </span>
                 ) : (
                   <span className="badge ok" style={{ marginLeft: 8 }}>
@@ -217,7 +228,9 @@ export function OllamaPage() {
               ) : null}
               {!versionSafe ? (
                 <span style={{ color: 'var(--warning)', fontSize: 12, alignSelf: 'center' }}>
-                  ⚠ 古いバージョンで実行中 — アップグレード推奨
+                  {version === ''
+                    ? '⚠ バージョンを読み取れませんでした — 版を確認してください'
+                    : '⚠ 古いバージョンで実行中 — アップグレード推奨'}
                 </span>
               ) : null}
             </div>

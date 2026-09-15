@@ -31654,6 +31654,93 @@ rejected = dropped - overflow   ← 残りは必ず filter が落とした分
   `isValidProbability` が持つ。氏名の `id` (`MEMBER_ID_RE`) は画面が作るので
   利用者には見えない — 文には入れていない。
 
+## パス 264 (2026-09-14) — **件数の「文」を、鍵が無い応答から組み立てていた**
+
+パス 263 が残した一行をそのまま実行した —— 「封筒を確かめる形は `cursor` にしか
+無い。他の 13 は『欄が空なら空として出る』まま。**それが害かは 1 件ずつ読まないと
+決まらない**」。13 を `{}` (封筒は正しく鍵が無い応答) で回して snapshot を刷った。
+
+### 実測 —— 空の一覧で済んでいたのは 10 件、**残り 3 件は文を作っていた**
+
+```
+  wordpress / drive / gmail / canva / base / calendar   空の一覧 (画面も空に見える)
+  github / slack / cloudflare                           パス 262 の門か自前の判定で断る
+  freee                                                 パス 262 で空のスナップショットへ
+
+  ★ notion         note: 'インテグレーションに共有されたページなし'
+  ★ microsoft-365  items: [📧 Outlook: 直近 0 件 / 未読 0 件, 📅 予定: 直近 0 件]
+  ★ ollama         version: '' → versionSafe: false → 画面は「既知 CVE」
+```
+
+**空の一覧と文は違う。** 一覧は空に見えるが、文は**数えた結果のように見える**:
+
+- `notion` の `note` は**利用者の Notion の設定についての診断**である。本文が
+  `{}` でもその文が出るので、共有は正しいのに**共有設定を直しに行かせる**。
+- `microsoft-365` の `items` は「サマリー」の節に**2 件のカード**として並ぶ
+  (`count={items.length}` = 2)。節が空にならないので、受信箱を数えた結果に見える。
+- `ollama` は `/api/version` の応答に `version` が無いと `isVersionSafe('')` が
+  `false` を返し、画面が `Outdated — known CVEs` / 「既知 CVE。最低 N へ更新推奨」を
+  出す。**危険側へ倒すこと自体は正しい** (安全の判定なので) が、**理由が事実と
+  違う** —— 既知 CVE が在ると分かったのではなく、版が分からないのである。
+
+### 直した所
+
+- `shared/apiResponse.ts` に `readArrayField(obj, field)` —— 行と**鍵が在ったか**を
+  返す。**空の配列は `read: true`** (0 件は答えである)。パス 263 の `readRows` と
+  同じ規準を、`cursor` の外でも使える形で 1 つ置いた。
+- `notion` / `microsoft-365` がそれを通す。読めなければ**件数を言わず**
+  「読み取れませんでした (件数は 0 ではなく不明)」と述べる。
+- `OllamaPage` の警告は `version === ''` で文面を分ける ——
+  `Version unknown` / 「バージョンを読み取れませんでした」。**バッジは出したまま**。
+- `SNAPSHOT.ollama` の `running` / `versionSafe` に `as boolean`。annotation が
+  無いと TS がリテラル型 `false` を推論し、画面が分けている**もう一方の枝が型の上で
+  死ぬ** —— 実データは `boolean` なので、見本の型だけが実物より狭い
+  (パス 62 / 80 / 116 / 263 の家系)。**この pass で `versionSafe: true` の対照が
+  書けなかったことで見つかった。**
+
+### 検査と対照
+
+検査 **+15** (shared 4 —— `readArrayField` の 4 状態 + prototype の鍵 /
+main 8 —— notion 4・microsoft-365 4 / jsdom 3 —— Ollama のバッジ)。
+
+**対照 3 本すべて鳴った**: `readArrayField` を常に `read: true` へ → **6 件** /
+`notion` の `note` を旧い三項へ → **2 件** / Ollama のバッジの文面を戻す → **1 件**。
+
+### ★ 自分が入れた flake を、自分の検査で踏んだ (記録)
+
+全件実行で **1 本だけ落ちた** (16,825 件中。単独では 3/3 通り、以後 2 回の全件実行は
+緑)。原因はほぼ確実に**自分の jsdom harness** —— パス 263 と 264 で新しく書いた
+2 本が、どちらも固定 8 周の `settle` を手で書いていた。`jsdomWait.ts` の docblock は
+**それが 2 度起きたことを実測つきで書いてある** (2026-09-09 / 2026-09-12):
+
+> 固定回数の `settle` は待っていない、当てているだけ。…空いている機械では
+> 間に合い、**全件実行の負荷の下では間に合わないことがある**。
+
+**規準はリポジトリの中に在り、私が 51 本目の写しを足した。** 2 本とも
+`settleUntil(() => …, label)` へ寄せた (条件を見て 5 秒で諦め、何を待っていたかを
+言って落ちる)。**落ちた 1 本の名前は捕まえられなかった** (出力を `tail` で切った)
+—— そこは推定であって実測ではない、と書いておく。
+
+### 出荷物
+
+11,856,526 B / 3,269,272 B (**両方 +283 B**)。perf OK (LITE DCL 134ms / FULL 363ms)。
+
+### 残り
+
+- **`SNAPSHOT` 直下の boolean リテラルは 16 件** (走査で数えた。annotation の無い物 ——
+  `home/library/settings/docstudio/funding/kpi/stocks/business/teamradar/templates` の
+  `isMock: true`・`assistant/emotions` の `keyConfigured: false`・`funding` の
+  `accountingLinked` / `stocksLinked`・この pass で直した `ollama` の 2 件)。
+  このうち**画面が分岐している物は、もう一方の枝が型の上で死んでいる** ——
+  パス 79 が 101 件直した家系の生き残りで、**ゲートが無い**。次のパスの本筋:
+  母集団を数えて annotation を足し、両方向に鳴る走査を常設する。
+- 残り 10 クライアント (`wordpress` / `drive` / `gmail` / `canva` / `base` /
+  `calendar` ほか) は空の一覧のままである。**文を作っていないので今回は触らない**
+  —— 画面が空に見えるなら、少なくとも嘘はついていない。ただし
+  「0 件だった」と「読めなかった」は依然として区別が付かない。
+- `ollama` の `versionSafe` は**危険側へ倒したまま**にした (安全の判定なので正しい
+  向き)。倒し込みを消すとバッジが出なくなるので、直したのは理由だけである。
+
 ## パス 263 (2026-09-14) — **`[]` が 5 つの違う事実を意味していた。うち 1 つは「相手が 0 件と答えた」**
 
 パス 262 が残した一行をそのまま実行した —— 「`cursor` は `null` の応答を『空』として

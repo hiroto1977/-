@@ -1,4 +1,5 @@
 import { jsonFetch, limitedFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { readArrayField } from '../../shared/apiResponse';
 import {
   MS365_EVENT_FIELDS,
   MS365_MAIL_FIELDS,
@@ -80,11 +81,24 @@ export interface Microsoft365Snapshot {
   readonly count: number;
 }
 
-/** Graph レスポンス (user / messages / events) をスナップショットに正規化する (純粋・テスト用)。 */
+/**
+ * Graph レスポンス (user / messages / events) をスナップショットに正規化する (純粋・テスト用)。
+ *
+ * **件数の文は「読めた」ときだけ作る** (2026-09-14 · パス 264)。以前は
+ * `messages.value ?? []` で畳んだ配列から `📧 Outlook: 直近 0 件 / 未読 0 件`
+ * を組み立てていた。本文が `{}` でもその文が出て、しかも「サマリー」の節に
+ * **2 件のカード**として並ぶので**空に見えない** —— 数えた結果のように見える。
+ * `messagesRead` / `eventsRead` が偽なら件数を言わず、読めなかったと述べる。
+ *
+ * 既定を `true` にしてあるのは、この関数を**直接**呼ぶ検査が多く、
+ * そこでは配列を渡す = 読めた、で正しいから (呼び出し側の
+ * `fetchMicrosoft365Snapshot` は実測した値を渡す)。
+ */
 export function buildMicrosoft365Snapshot(
   user: GraphUser,
   messages: readonly GraphMessage[],
   events: readonly GraphEvent[],
+  read: { readonly messages: boolean; readonly events: boolean } = { messages: true, events: true },
 ): Microsoft365Snapshot {
   const userName = user.displayName ?? user.userPrincipalName ?? user.mail ?? '';
   const msgs = messages.map((m) => ({
@@ -102,8 +116,18 @@ export function buildMicrosoft365Snapshot(
   }));
   const unreadCount = msgs.filter((m) => m.unread).length;
   const items = [
-    { id: 'outlook', name: `📧 Outlook: 直近 ${msgs.length} 件 / 未読 ${unreadCount} 件` },
-    { id: 'calendar', name: `📅 予定: 直近 ${evs.length} 件` },
+    {
+      id: 'outlook',
+      name: read.messages
+        ? `📧 Outlook: 直近 ${msgs.length} 件 / 未読 ${unreadCount} 件`
+        : '📧 Outlook: 応答を読み取れませんでした (件数は 0 ではなく不明)',
+    },
+    {
+      id: 'calendar',
+      name: read.events
+        ? `📅 予定: 直近 ${evs.length} 件`
+        : '📅 予定: 応答を読み取れませんでした (件数は 0 ではなく不明)',
+    },
   ];
   return { userName, messages: msgs, events: evs, items, count: items.length };
 }
@@ -131,7 +155,14 @@ export async function fetchMicrosoft365Snapshot(ctx: FetchContext): Promise<Micr
     ),
   ]);
 
-  return buildMicrosoft365Snapshot(user, messages.value ?? [], events.value ?? []);
+  const msgList = readArrayField(messages, 'value');
+  const evList = readArrayField(events, 'value');
+  return buildMicrosoft365Snapshot(
+    user,
+    msgList.rows as readonly GraphMessage[],
+    evList.rows as readonly GraphEvent[],
+    { messages: msgList.read, events: evList.read },
+  );
 }
 
 // --- write-side actions (Microsoft Graph) -------------------------------

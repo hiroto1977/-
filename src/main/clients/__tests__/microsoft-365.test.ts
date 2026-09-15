@@ -268,3 +268,55 @@ describe('ACTIONS["create-event"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+/**
+ * **「サマリー」のカードは、数えられたときだけ件数を言う。** (2026-09-14 · パス 264)
+ *
+ * `items` は「📧 Outlook: 直近 N 件 / 未読 M 件」という**文**で、画面の
+ * 「サマリー」節に 2 件のカードとして並ぶ。`value` が無い応答でも
+ * `messages.value ?? []` で `[]` に畳んでいたので **`直近 0 件 / 未読 0 件` が
+ * 数えた結果のように出ていた** —— 節に 2 件在るので空にも見えない。
+ */
+describe('サマリーの件数は「読めた」ときだけ (パス 264)', () => {
+  const itemsFor = async (messages: unknown, events: unknown): Promise<string[]> => {
+    const f = vi.fn<typeof fetch>(async (url) =>
+      jsonResponse(
+        String(url).includes('/messages') ? messages : String(url).includes('/events') ? events : { displayName: 'A' },
+      ),
+    );
+    const snap = await fetchMicrosoft365Snapshot({ token: 't', fetch: f });
+    return snap.items.map((i) => i.name);
+  };
+
+  it('★ value が無ければ件数を言わない (0 ではなく不明)', async () => {
+    const names = await itemsFor({}, {});
+    expect(names[0]).toContain('読み取れませんでした');
+    expect(names[1]).toContain('読み取れませんでした');
+    for (const n of names) expect(n, n).not.toContain('0 件');
+  });
+
+  it('★ 対照: value: [] は相手の答えなので 0 件と言う', async () => {
+    expect(await itemsFor({ value: [] }, { value: [] })).toEqual([
+      '📧 Outlook: 直近 0 件 / 未読 0 件',
+      '📅 予定: 直近 0 件',
+    ]);
+  });
+
+  /*
+   * 片方が読めない形は**封筒が正しくて鍵だけ無い**場合に限られる ——
+   * `null` の本文はパス 262 の漏斗 (`jsonFetch`) が先に断るので、ここへは来ない
+   * (最初 `null` を渡して書き、その断りで教わった)。
+   */
+  it('★ 片方だけ読めないなら、読めた側は件数を言う', async () => {
+    const names = await itemsFor({ value: [{ id: 'm1', isRead: false }] }, { value: 'x' });
+    expect(names[0]).toBe('📧 Outlook: 直近 1 件 / 未読 1 件');
+    expect(names[1]).toContain('読み取れませんでした');
+  });
+
+  it('buildMicrosoft365Snapshot の既定は「読めた」 (配列を渡す = 数えられた)', () => {
+    expect(buildMicrosoft365Snapshot({}, [], []).items.map((i) => i.name)).toEqual([
+      '📧 Outlook: 直近 0 件 / 未読 0 件',
+      '📅 予定: 直近 0 件',
+    ]);
+  });
+});
