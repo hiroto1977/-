@@ -33328,3 +33328,94 @@ save-state) と同じ。検査 `webShimCredentials.test.ts` もその前提を
   `lint:zero-fold` / `lint:shared-judgement` / `lint:deps` の散文部分 /
   `verify:arch` / `lint`)。**数ではなく主張の内容**を読むこと。
 - 出荷物は変わらない (触ったのは `CLAUDE.md` と `docs/` だけ)。
+
+## パス 278 —— 4 つの TypeScript が、型検査の外に居た (2026-09-15)
+
+パス 277 の残り 12 本のうち `typecheck` の説明を読みに行ったら、説明の**当否**では
+なく**覆う範囲**に穴が在った。
+
+### 発見
+
+`eslint.config.js` の冒頭が自分でこう宣言している:
+
+```
+  // Strict TypeScript is the primary correctness gate (npm run typecheck).
+```
+
+そのとおりに eslint は型を見ない (`parserOptions.project` も `projectService` も
+無いので typescript-eslint は型情報なしで走る。実測で `tseslint.configs.recommended`
+だけ —— `recommendedTypeChecked` ではない)。**型の誤りを捕まえる網は `tsc -b` 1 つ**で、
+その網は `tsconfig.json` の references から辿る 2 project の `include` しか見ない。
+
+覆われていない `.ts` が **4 つ**在った:
+
+| ファイル | 中身 |
+| --- | --- |
+| `src/__tests__/dualBuildActionSurface.test.ts` | 検査 9 件。**ブラウザ版がデスクトップ版の許可表に無い操作を実行できてはいけない**という安全の不変条件 |
+| `src/__tests__/responseMockFidelity.test.ts` | 検査 9 件。手作りの `Response` が本物にありえない形をしていないか |
+| `vitest.config.ts` | 実物の electron を読まないための alias (CI の取得依存を切った回の成果物)・`retry`・`include` |
+| `scripts/generate-dashboard.ts` | `src/main/clients/stocks` を読む開発用の一本道 |
+
+`src/**` の下に在るのに覆われていなかったのは、`include` が `src/renderer` /
+`src/shared` / `src/main` / `src/preload` と**枝を名指し**しており、`src/__tests__` は
+そのどれの下でもないため。`vitest.config.ts` は隣の `vite.config.ts` だけが
+名指しされていた (**1 字違いで片方だけ**)。
+
+**なぜ走っている検査が覆われていないと困るか**: vitest は esbuild で型を**剥がす**
+だけなので、型の誤りは実行時まで現れない。存在しない欄を読めば `undefined` になり、
+`expect(x.typo).toBeUndefined()` の形は**通る** —— 「無いことの検査」がここで空に
+なっても誰も気付かない。原文を読む検査が Stryker の sandbox で空になる穴
+(`originalSource.ts` の冒頭) と同じ形で、こちらは型の側である。
+
+### 直した所
+
+1. `tsconfig.app.json` の include に `src/__tests__`、`tsconfig.node.json` に
+   `vitest.config.ts` と `scripts/generate-dashboard.ts`。**今日の時点で型の誤りは
+   0 件**だった (先に別 project で測ってから触った) ので、直したのは網の範囲だけ。
+2. `src/shared/__tests__/typecheckCoverage.test.ts` (検査 5 件) が**母集団**を走査
+   する: repo の `.ts` / `.tsx` を全部数え (実測 1,252 件・床 1,000)、どれかの
+   include に入ることを要求する。`exclude` を持つ project が現れたら
+   「この検査に教えろ」と落ちる (黙って甘くならない)。
+3. `CLAUDE.md` の `typecheck` の説明を実物に合わせた —— eslint が型を見ないこと・
+   覆う範囲・include の外は 1 行も検査されないこと・母集団が留められていること。
+4. `scripts/generate-dashboard.ts` の走らせ方の注記が**偽だった**ので実測して
+   書き直した: `npx tsx …` の `tsx` は**この repo の依存ではない** (npx がその場で
+   registry から取る)。素の `node` では**走らない** ——
+   `ERR_MODULE_NOT_FOUND: .../src/main/clients/stocks` (拡張子の無い import と
+   `moduleResolution: "bundler"`。実測)。同じ書き出しは製品側の
+   `stocks/export-dashboard` action に在り、`clients/__tests__/stocks.test.ts` が
+   実装を 8 件・action の口を 4 件で測っている。**依存を 1 つ増やしてまで
+   走らせ直す物ではない**と判断し、注記を実物に合わせて残した。
+
+### 自分が作った写しに、その場で検算を付けた
+
+3 で `CLAUDE.md` に include の一覧を**写した** —— それはこのパスで直している
+「散文の写しが腐る」家系そのものなので、写した瞬間に検査を足した
+(★ CLAUDE.md が写した include の一覧は、実物と一致する)。**両方向**に鳴る。
+区切りは `・` にした (最初 ` / ` で書いて `src/renderer` を 2 語に割ってしまい、
+繋ぎ直す細工が要った —— **細工の要る走査は空になりやすい**ので、書く側を変えた)。
+TypeScript でない `electron-builder.json` も、写しは 1 項ずつ照合されるので省かない。
+
+### 対照 (5 本すべて鳴った)
+
+| 対照 | 結果 |
+| --- | --- |
+| A: 4 ファイルに `const x: number = 'not a number'` を植える (直す前) | `tsc -b` の誤り **0 件** (これが欠陥の証拠) |
+| A': 同じ植え込み (直した後) | 4 ファイルとも **1 件** |
+| B: `tsconfig.app.json` の include を元に戻す | 検査 2 本が落ちる |
+| C: `tsconfig.node.json` の include を元に戻す | 検査 2 本が落ちる (うち 1 本が外れたファイルを名指し) |
+| D: project に `exclude` を足す | 検査 3 本が「教えろ」と落ちる |
+| E: `CLAUDE.md` の写しを 1 項減らす / include を 1 項増やす | どちらでも ★ が落ちる (両方向) |
+
+### 残り
+
+- 未読 11 本 (`lint:imports` / `lint:docs` / `lint:charset` / `lint:knowledge-refs` /
+  `lint:shell` / `lint:doi-prefix` の散文部分 / `lint:zero-fold` /
+  `lint:shared-judgement` / `lint:deps` の散文部分 / `verify:arch` / `lint`)。
+- 途中で確かめて**欠陥ではなかった**物: `lint:imports` の説明「main / preload /
+  renderer import-boundary enforcement」は**真** —— 走査は `src/` だけを歩くので
+  (`walkSrc(SRC)`)、`scripts/generate-dashboard.ts` が `src/main` を読んでいても
+  母集団の外だが、説明が名乗る範囲と一致している (名乗っていない物を守って
+  いないことは偽の主張ではない)。
+- eslint に型情報を渡す (`projectService`) かどうかは**測っていない** ——
+  型対応の規則が増えると走査時間も増えるので、別のパスで費用を測ってから決める。

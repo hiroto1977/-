@@ -11,5 +11,12 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/main", "src/preload", "vite.config.ts", "electron-builder.json"]
+  "include": [
+    "src/main",
+    "src/preload",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "scripts/generate-dashboard.ts",
+    "electron-builder.json"
+  ]
 }
