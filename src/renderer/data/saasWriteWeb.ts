@@ -9,7 +9,7 @@
  * ここは fetch を注入できる純粋ロジックに保ち、単体テスト可能にする。
  * サービスを追加するたびにこのモジュールに関数を増やしていく。
  */
-import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
+import { SCAN_URL_MESSAGES, validateScanUrl } from '../../shared/scanTarget';
 import {
   ATLASSIAN_ISSUE_FIELDS,
   CALENDAR_EVENT_FIELDS,
@@ -733,13 +733,6 @@ function vtBase64(url: string): string {
 export interface ScanUrlInput {
   url?: unknown;
 }
-
-const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
-  empty: 'url は必須です',
-  'too-long': 'url が長すぎます',
-  'not-a-url': 'url を URL として解釈できません',
-  'not-web': 'url は http:// または https:// で始まる必要があります',
-};
 
 export async function scanUrlVirusTotal(
   input: ScanUrlInput,

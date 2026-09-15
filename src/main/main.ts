@@ -18,7 +18,7 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
-import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
+import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
 import { eraseDesktopData } from './eraseAll';
 import type { DesktopEraseReport } from '../shared/eraseReport';
 
@@ -240,7 +240,28 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
   try {
     const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
       headers: { accept: 'application/vnd.github+json' },
-      signal: AbortSignal.timeout(10_000),
+      /*
+       * **締切も共有の値。** (2026-09-15 · パス 282)
+       *
+       * ここは今日まで `AbortSignal.timeout(10_000)` という**裸の数**で、
+       * ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は
+       * `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた —— **同じ問いに 3 倍違う締切**。
+       * しかも 3 行下の注記は 2026-08-31 に**本文の上限**の食い違いを直したときのもので、
+       * そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで
+       * 判断が変わる理由が無い」と書いてある。**その直しは 1 行手前で止まり、
+       * 同じ関数の中に同じ形の食い違いを 2 週間残していた。**
+       *
+       * 害の向き: 遅い回線で先に諦めるのは**デスクトップ版**で、そちらは
+       * 「新しい版が出た」を受けて実際に更新できる側である (ブラウザ版は自分自身を
+       * 更新できない —— `web-shim.ts` の注記がそう述べている)。答えを要る方が
+       * 3 倍早く「判定不能」に倒れていた。
+       *
+       * 実測 (パス 282): `src/**` の締切はすべて名前のある定数を読んでおり、
+       * **裸の数はこの 1 行だけだった**。`shared/__tests__/deadlineCensus.test.ts` が
+       * 母集団を走査して留める (`httpLimits` の判定が「手で選んだ 3 経路だけ」と
+       * 自分で認めていた穴がここに在った)。
+       */
+      signal: AbortSignal.timeout(DEFAULT_HTTP_TIMEOUT_MS),
     });
     if (!res.ok) return evaluateUpdate(current, null);
     // 本文は上限つきで読む。ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate`)

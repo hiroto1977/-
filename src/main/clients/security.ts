@@ -24,7 +24,7 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
+import { SCAN_URL_MESSAGES, validateScanUrl } from '../../shared/scanTarget';
 import { hibpBreaches, vtScanStats } from '../../shared/securityResponse';
 import {
   jsonFetch,
@@ -273,13 +273,6 @@ function vtBase64(input: string): string {
     .replace(/\//g, '_');
 }
 // Stryker restore Regex
-
-const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
-  empty: 'url は必須です',
-  'too-long': 'url が長すぎます',
-  'not-a-url': 'url を URL として解釈できません',
-  'not-web': 'url は http:// または https:// で始まる必要があります',
-};
 
 async function scanUrl(
   ctx: ActionContext,

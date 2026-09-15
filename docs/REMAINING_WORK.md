@@ -26593,7 +26593,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `externalUrlGate` | 1 | 1 | 閉じている (パス 241 で 3 経路を実測) |
 | `freeeIntake` | 1 | 5 | 意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / `dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** (FreeePage / bankSubmission / docImports)。main が import するのは `NO_DEAL_INTAKE` と型だけで、**負で答える 3 関数の呼び出しは src/main・src/preload で実測 0 件**。ただし非対称は 1 段上に在る —— 落ちた件数を数える `FreeeDealIntake` を**作れるのは main の freee.ts だけ**で、ブラウザ版に freee の live 読みは無い (読むのは cursor だけ)。だからブラウザ版の 3 つの消費者は常に `NO_DEAL_INTAKE` を見て `null` を返す (注記が出ない)。**原因は「判定の非対称」ではなく「クライアントの不在」**で、funding (パス 265) と同じ形である |
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
-| `httpLimits` | 4 | 5 | 対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない) |
+| `httpLimits` | 4 | 5 | 対称 (実測・パス 282 で総当たりにした) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts)。 ★ パス 248 は「手で選んだ 3 経路だけで母集団の総当たりではない」と**自分で認めていた**。パス 282 でその総当たりをやったら、**認めていた穴の中に生きた欠陥が 1 件**在った —— `main/main.ts` の `app:checkUpdate` が `AbortSignal.timeout(10_000)` という**裸の数**で、ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた。**同じ問いに 3 倍違う締切**で、遅い回線で先に諦めるのは「新しい版が出た」を受けて実際に更新できる**デスクトップ版**の側だった。しかも同じ関数の 3 行下の注記が 2026-08-31 に**本文の上限**の同じ食い違いを直したときのもので、そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い」と書いてある —— **その直しは 1 行手前で止まっていた**。 直しと同時に `shared/__tests__/deadlineCensus.test.ts` が母集団を走査する: 締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / `timeoutMs`) の時間の引数が**名前**であること (値の一致は要求しない —— `AI_CHAT_TIMEOUT_MS` の 2 分のように意図して違う締切は在る。名前が付いていれば理由が定義の隣に書ける)。実測 24 呼び出し・裸の数 0 件・例外の台帳 0 件 |
 | `hydroponicCrops` | 0 | 3 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。 |
 | `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 5 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
@@ -26604,14 +26604,14 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
 | `readNumeric` | 0 | 3 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは `RETURN_FLOOR_PCT` と `isImpossibleReturnPct` の 2 つだけで、**`isPlannableRate` / `isPlannableYears` はどちらの中からも呼ばれない** (`isImpossibleReturnPct` は 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |
-| `scanTarget` | 1 | 2 | 対称 (実測・パス 247) |
+| `scanTarget` | 1 | 2 | 対称 (実測・パス 282 で辿り直した) —— パス 247 は「対称 (実測)」の 4 文字だけで、**根拠が書かれていなかった**。パス 247 は母集団を初めて数えた回で、しかも到達は 1 ホップで測っていた (閉包へ直したのはパス 268) ので、その「実測」が何を見たのかは今から確かめられない。 ★ 実測 (パス 282): 越境するのは `validateScanUrl` **1 つだけ** (`main/clients/security.ts` と `renderer/data/saasWriteWeb.ts` の両方が呼ぶ)。否定のあとの動作は**字まで同じ 1 行** —— `if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);`。`describeScanUrlRisk` (内部・社内ホストの警告) の読み手は `SecurityPage.tsx` だけ、`looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけなので越境しない。 ★ ただし `SCAN_URL_MESSAGES` (4 行) は**ビルドごとに 1 つずつ**在った —— 字は一致していたが一致を留めている物が何も無く、パス 167 / 250 / 252 / 269 / 273 が1 件ずつ閉じてきた家系。URL を第三者 (VirusTotal) へ渡す前の関門の断り文なので、`shared/scanTarget.ts` へ寄せて `scanTarget.test.ts` が「読む側は共有の表を読み、自分の写しを持たない」を両方向に留める。 ★ 設計として残る非対称ではない点: 内部ホスト・秘密らしきクエリ引数は**関門ではなく警告**である (`validateScanUrl` の失敗は empty / too-long / not-a-url / not-web の 4 つだけ)。警告を出す画面は両ビルドで同じ 1 本なので対称 |
 | `serviceAdvisor` | 4 | 4 | 対称 (実測・パス 268) —— 否定で答えるのは `adviseService` (`ok: false`) と、その中でだけ呼ばれる 4 つの `parse*AdviceInput` (**外部の消費者は 0 件**)。`adviseService` は main の 4 クライアント (real-estate / mutual-funds / uber-eats / demae-can) とブラウザ版の web-shim が呼び、**否定のあとの動作は同じ 1 行に畳まれる**: main は `throw new Error(r.message)` → action:invoke の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、ブラウザ版は `err('action_failed', r.message)`。`safeErrorMessage` の中身は `redactForMessage(msg, ERROR_MESSAGE_MAX_CHARS)` で、`err()` が掛けるものと**同じ関数・同じ天井**なので、code も文面も一致する。★ ただし**到達性**は 2026-09-15 まで非対称だった —— この 4 サービスは `LOCAL_SERVICES` なのに `action:invoke` が全サービスにトークンを要求しており、デスクトップ版では 4 つの advise が 1 度も呼ばれなかった (パス 267 で直した) |
 | `talent` | 1 | 3 | 対称 (実測・パス 260) —— 否定の枝を両側で読んだ: main は `loadTalentState` が `{ kind: 'unreadable', reason }` を返し (talent.ts:85 / :90)、ブラウザ版は `localStorage` が拒んでも同じ形を作る (web-shim.ts:1271)。そこから先は**両方が同じ 2 段**を通る —— `talentProvenance(stored)` → `buildTalentSnapshot(state, provenance)` (main/clients/talent.ts:143-144 / web-shim.ts:1273-1274)。画面は `snap.storedNote` を ⚠ つきで刷る (TalentPage.tsx:219-221)。`reviewLadder` は境界を越えない (唯一の呼び出しは shared/talent.ts:709 の `buildTalentSnapshot` の中) |
 | `tokenInput` | 2 | 4 | 閉じている (パス 245 で両ビルドの保管層に床) |
 | `tokenResponse` | 1 | 1 | 対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、否定のあとの動作は両ビルドで同じ 2 行: `if (!parsed.ok) throw new Error(parsed.message)` (main/oauth.ts の交換・更新の 2 か所と renderer/oauth/pkce.ts)。文面も共有の 1 組。この pass の前は main 側に検査そのものが無く (`JSON.parse(…) as TokenResponse`)、ブラウザ版だけが見ていた —— 非対称の極として在った |
-| `updateCheck` | 1 | 2 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い) |
+| `updateCheck` | 1 | 2 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。 ★ **パス 282 で閉じた**: この行はパス 250 から「**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い)」と**生きた食い違いを記録したまま置いて**いた。main を `DEFAULT_HTTP_TIMEOUT_MS` へ寄せ、`shared/__tests__/deadlineCensus.test.ts` が両ビルドの締切を留める。★ 教訓: 「理由はどこにも無い」と書けたなら、それは**書いた時点で欠陥**である ——記録しただけで 32 パス残った |
 | `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
-| `writeFieldLimits` | 10 | 12 | 対称 (実測・パス 247) |
+| `writeFieldLimits` | 10 | 12 | 対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。**外部サービスへ利用者の資格情報で書き込む前の関門**なので、4 文字では足りない。 ★ 実測 (パス 282): 双子は **10 組** (slack / github / calendar / gmail / drive / canva / notion / atlassian / wordpress / cloudflare ×2 の欄)。**10 組すべてが同じ形**で、main は `checkWriteFields(ctx.payload, TABLE)`・ブラウザ版は `checkWriteFields(input, 同じ TABLE)` を呼び、否定 (`!== null`) のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。欄の台帳は `shared/writeFieldLimits.ts` に 1 つずつで、ラベルも天井も**両ビルドが同じ定数を読む**。GitHub の labels だけ 2 段目 (`checkWriteLabels`) が在り、それも両側に在る。MS365 の 2 表はパス 274/275 で `shared/api/microsoft365.ts` へ移したので**両ビルドが同じ実装**を通る (表の上では「片側だけ」に見えるが、それは共有へ寄せた結果である)。 ★ 残る非対称は**文面の言語** —— Cloudflare のパージの「どちらかが要る」の断りは main が英語 (`either purgeEverything=true or non-empty files[] is required`)・ブラウザ版が日本語。`advisorQuestionLimits` の行が同じことを述べており、**欄の判定ではなく文面の家系**なのでこの行では直していない (次に閉じる候補) |
 <!-- shared-judgement-census:end -->
 
 ### 2. ★ `ollama` —— 許可する経路の台帳を、読んでいるのはブラウザ版だけだった
@@ -33761,3 +33761,133 @@ census の計算を 1 ホップ → 閉包へ直したときに、**散文の側
   (`scripts/` も `__tests__` も単一 HTML に入らない)。
   パス 280 の `tokenInput.ts` の委譲 1 行は**両ビルドに入る** —— 次に測るときは
   その分の差が出るので、280 と 281 を混ぜて読まないこと。
+
+## パス 282 —— 「理由はどこにも無い」と書いた食い違いを、記録したまま 32 パス置いていた (2026-09-15)
+
+### 出発点 —— パス 281 が残した次の一手
+
+> 「対称 (実測)」15 行の辿り具合は読んでいない —— 同じ問い
+> (1 ホップで測って閉包について述べていないか) を当てること。
+
+15 行を読んだ結果は 3 種に分かれた。
+
+| 型 | 行 | 状態 |
+| --- | --- | --- |
+| 閉包まで辿っている | `aiEndpoint` (「shared を 2 段たどった先」と明記)・`api/cursor`・`talent`・`assistantLimits`・`emotionsLimits`・`advisorQuestionLimits`・`updateCheck`・`eraseReport` | 根拠が書かれている |
+| **根拠が 4 文字だけ** | **`scanTarget` / `writeFieldLimits`** | パス 247 の「対称 (実測)」のみ |
+| **自分で穴を認めている** | **`httpLimits`** (「手で選んだ 3 経路だけで母集団の総当たりではない」) | 認めた穴の中に欠陥 |
+
+### ① 生きた欠陥 —— 更新確認の締切が 3 倍違い、諦めるのは答えを要る側だった
+
+`httpLimits` が認めていた穴の総当たりをやったら、1 件出た。
+
+| | 締切 | 出どころ |
+| --- | ---: | --- |
+| デスクトップ版 (`main/main.ts` の `app:checkUpdate`) | **10 秒** | 裸の `10_000` |
+| ブラウザ版 (`web-shim.ts` の `checkUpdate` → `timedFetch`) | **30 秒** | `DEFAULT_HTTP_TIMEOUT_MS` |
+
+**害の向き**: 遅い回線・律速された GitHub API で先に諦めるのは**デスクトップ版**で、
+そちらは「新しい版が出た」を受けて**実際に更新できる**側である (ブラウザ版は自分自身を
+更新できない —— `web-shim.ts` の注記がそう述べている)。**答えを要る方が 3 倍早く
+「判定不能」に倒れていた。**
+
+★ **同じ関数の 3 行下の注記**が 2026-08-31 に**本文の上限**の同じ食い違いを直した
+ときのもので、そこにこう書いてある:
+
+> 同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い。
+
+**その直しは 1 行手前で止まり、同じ関数の中に同じ形の食い違いを 2 週間残していた。**
+`controlChars.ts` の docblock が「2 つ目を作りかけた」と書いた真下に 2 つ目が在った
+(パス 280) のと同じ形である。
+
+★★ しかも判定 census の `updateCheck` の行は、パス 250 からこう書いてあった:
+
+> **ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は
+> DEFAULT_HTTP_TIMEOUT_MS = 30_000。**理由はどこにも無い**)
+
+**見つけて、書いて、直さなかった。** 「理由はどこにも無い」と書けたなら、
+それは**書いた時点で欠陥**である —— 記録しただけで 32 パス残った。
+これは「散文が腐る」とは別の家系で、**散文は正しかったのに誰も動かなかった**方である。
+
+### ② 走査を作ったら、自分の grep が見落としていた 2 件目が出た
+
+`shared/__tests__/deadlineCensus.test.ts` (検査 5 件) が締切の母集団を走査する。
+留めるのは「締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` /
+`withTimeout` / `timeoutMs`) の時間の引数が**名前**であること」。
+
+**値の一致は要求しない** —— 意図して違う締切は在る (`AI_CHAT_TIMEOUT_MS` は 2 分。
+「通常の 30 秒では足りない」と両ビルドの注記が同じ理由を述べている)。
+名前が付いていれば**理由が定義の隣に書ける**。裸の数にはそれができない。
+
+★ **私の grep は 1 件見落としていた。** 手で `AbortSignal.timeout(` /
+`withTimeout(` / `withBodyDeadline(` を探して「裸の数はこの 1 行だけ」と書いたが、
+走査は `main/oauth.ts` の `timeoutMs = 5 * 60_000` (OAuth の同意画面を待つ 5 分) を
+拾った。名前を付けた (`OAUTH_CALLBACK_WINDOW_MS`) —— 直下の rate-limit の注記が
+「the 5-min timeout」と**散文で同じ数を述べていた**ので、式と散文の 2 か所に
+同じ数が在る形だった。
+
+★ 走査の報せ方も直した: 最初の正規表現は式の**先頭の数だけ**を掴み、
+`5 * 60_000` を `timeoutMs(5)` と報告した。**5 ミリ秒に見える報せは読む人を誤らせる**
+(実物は 5 分)。規則の当否は変わらないが、鳴ったときに伝わる物が変わる。
+
+### ③ 根拠 4 文字の 2 行を読んだ —— どちらも真だったが、片方に写しが在った
+
+**`scanTarget`** (URL を VirusTotal へ渡す前の関門): 越境するのは `validateScanUrl`
+1 つだけで、否定のあとは**字まで同じ 1 行**
+(`if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);`)。
+`describeScanUrlRisk` (内部ホスト・秘密らしきクエリ引数の警告) の読み手は
+`SecurityPage.tsx` だけ、`looksInternalHostname` の呼び手はその中だけなので越境しない。
+★ ただし **`SCAN_URL_MESSAGES` (4 行) はビルドごとに 1 つずつ**在った ——
+字は一致していたが一致を留めている物が何も無く、
+パス 167 / 250 / 252 / 269 / 273 が 1 件ずつ閉じてきた家系。`shared/scanTarget.ts` へ寄せた。
+
+**`writeFieldLimits`** (外部サービスへ利用者の資格情報で書き込む前の関門):
+双子は **10 組**で、**10 組すべてが同じ形** —— main が
+`checkWriteFields(ctx.payload, TABLE)`・ブラウザ版が `checkWriteFields(input, 同じ TABLE)`、
+否定のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。
+GitHub の labels の 2 段目 (`checkWriteLabels`) も両側に在る。
+MS365 の 2 表はパス 274/275 で shared へ移したので両ビルドが同じ実装を通る。
+★ 残る非対称は**文面の言語** —— Cloudflare のパージの「どちらかが要る」の断りは
+main が英語・ブラウザ版が日本語 (`advisorQuestionLimits` の行が同じことを述べている。
+**欄の判定ではなく文面の家系**なのでこの pass では直していない)。
+
+### 対照 (5 件・全部鳴った)
+
+| # | 壊したもの | 鳴った検査 |
+| --- | --- | --- |
+| A | 更新確認を `AbortSignal.timeout(10_000)` に戻す | 裸の数 census + 更新確認の締切の名前 (2 本) |
+| B | OAuth の窓を `5 * 60_000` に戻す | 裸の数 census (報せは `timeoutMs(5 * 60_000)` — 式の全体) |
+| C | main に `SCAN_URL_MESSAGES` の写しを戻す | 「読む側は共有の表を読み、自分の写しを持たない」 |
+| D | ブラウザ版の `timedFetch` を裸の数に | 裸の数 census (★ 下記) |
+| E | 走査の規則を空にする | 走査の生死の床 (24 → 0 件) |
+
+★ **対照 D が私の検査の弱さを暴いた。** 最初は web-shim **全体**に
+`toContain('withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS')` を当てていたが、
+その綴りは**このファイルに 2 か所**在り (`:240` と `timedFetch` の `:417`)、
+`timedFetch` の側だけを裸の数に戻しても**もう一方が `toContain` を満たして黙った**。
+`timedFetch` の本体だけを切り出す形に直した ——
+**「在ることの検査」でも、在る場所を絞らないと空になる。**
+
+### 家系
+
+- 「**見つけて書いて直さなかった**」の初例 (`updateCheck` の 32 パス)。
+  散文が腐る家系の裏返しで、散文は正しかった。
+- 「**自分で認めた穴に欠陥が在る**」—— `httpLimits` の「部分実測」は
+  正直な申告だったが、正直なだけでは塞がらない。
+  次に「部分実測」「手で選んだ」と書く行を見たら、その差分を測ること。
+- 「**原則を書いた人が、その原則を破る行を 3 行上に残す**」の 2 例目 (パス 280 が 1 例目)。
+
+### 次に同じ形を探すなら
+
+- 判定 census の 31 行で、**「対称 (実測)」の根拠が 4 文字だけ**の行は
+  これで 0 件になった (`scanTarget` / `writeFieldLimits` を辿った)。
+- 残るのは**文面の言語の非対称** —— `advisorQuestionLimits` と
+  `writeFieldLimits` の 2 行が同じことを述べている (main が英語で throw し、
+  `safeErrorMessage` を通って画面へ出る)。母集団は数えていない。
+- census の行に**「部分実測」「手で選んだ」と書いてある物は他に無い**
+  (`httpLimits` が唯一で、この pass で閉じた)。
+- 出荷物は測っていない。`shared/scanTarget.ts` (表を足した) と
+  `shared/httpLimits.ts` (触っていない) のうち前者は**両ビルドが読む**ので
+  増えるが、`main/clients/security.ts` / `main/oauth.ts` / `main/main.ts` の
+  変更は出荷 HTML に入らない。**パス 280 の `tokenInput.ts` の分と混ざるので、
+  次に測るときは 280 / 281 / 282 の 3 パス分をまとめて記録すること。**

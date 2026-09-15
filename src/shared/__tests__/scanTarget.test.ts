@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MAX_SCAN_URL_CHARS, SECRET_PARAM_NAMES, describeScanUrlRisk, validateScanUrl, looksInternalHostname } from '../scanTarget';
+import { join } from 'node:path';
+import { readOriginalSource } from './originalSource';
+import { MAX_SCAN_URL_CHARS, SCAN_URL_MESSAGES, SECRET_PARAM_NAMES, describeScanUrlRisk, looksInternalHostname, type ScanUrlFailure, validateScanUrl } from '../scanTarget';
 
 describe('validateScanUrl', () => {
   it('http / https を通す', () => {
@@ -372,5 +374,60 @@ describe('scanTarget — 生存していた変異を塞ぐ', () => {
     expect(looksInternalHostname('wiki.corp.local'), '末尾なら社内').toBe(true);
     expect(looksInternalHostname('local.example.com'), '先頭は別物').toBe(false);
     expect(looksInternalHostname('a.internal.example.com'), '途中は別物').toBe(false);
+  });
+});
+
+/*
+ * **断りの文面はアプリ全体で 1 つ。** (2026-09-15 · パス 282)
+ *
+ * 2026-09-15 まで、`validateScanUrl` の 4 つの理由に対する文面は
+ * **ビルドごとに 1 つずつ**在った (`main/clients/security.ts` と
+ * `renderer/data/saasWriteWeb.ts` に同じ 4 行)。字は一致していたが、
+ * **一致を留めている物が何も無かった** —— パス 167 / 250 / 252 / 269 / 273 が
+ * それぞれ 1 件ずつ閉じてきた「字面がビルドごとに 1 つずつ」の家系。
+ *
+ * ここは URL を第三者 (VirusTotal) へ渡す前の関門なので、断られた理由が
+ * ビルドによって違う言い方になってはいけない。
+ */
+describe('断りの文面は 1 つだけ', () => {
+  const READERS = [
+    'src/main/clients/security.ts',
+    'src/renderer/data/saasWriteWeb.ts',
+  ] as const;
+
+  it('★ 理由の 4 つすべてに文面が在る (総当たり)', () => {
+    const reasons: ScanUrlFailure[] = ['empty', 'too-long', 'not-a-url', 'not-web'];
+    for (const r of reasons) {
+      expect(SCAN_URL_MESSAGES[r].length, `${r} の文面が空`).toBeGreaterThan(4);
+    }
+    // 走査の生死 —— 鍵が減ったら鳴る (型だけでは実行時の欠落を捕まえられない)。
+    expect(Object.keys(SCAN_URL_MESSAGES).sort()).toEqual([...reasons].sort());
+  });
+
+  it('★ 読む側は共有の表を import し、自分の写しを持たない (両方向)', () => {
+    for (const rel of READERS) {
+      const src = readOriginalSource(join(__dirname, '..', '..', '..', rel));
+      // 肯定形: 共有の表を読んでいる
+      expect(src, `${rel} が共有の SCAN_URL_MESSAGES を import していない`).toContain(
+        'SCAN_URL_MESSAGES',
+      );
+      expect(src, `${rel} が scanTarget から読んでいない`).toMatch(
+        /SCAN_URL_MESSAGES[^;]*from '[^']*scanTarget'/,
+      );
+      // 否定形: 自分で宣言していない
+      expect(
+        /const SCAN_URL_MESSAGES\s*[:=]/.test(src),
+        `${rel} が SCAN_URL_MESSAGES を自分で宣言している (2 つ目の写し)`,
+      ).toBe(false);
+    }
+  });
+
+  it('規則は写しの綴りに当たる (空の検査になっていない)', () => {
+    // ★ 消した旧い形の標本 —— 規則が実際にこの綴りへ当たることを示す。
+    const old = "const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {";
+    expect(/const SCAN_URL_MESSAGES\s*[:=]/.test(old), '規則が旧い宣言に当たらない').toBe(true);
+    // import 行は宣言と読み違えない
+    const imp = "import { SCAN_URL_MESSAGES, validateScanUrl } from '../../shared/scanTarget';";
+    expect(/const SCAN_URL_MESSAGES\s*[:=]/.test(imp), 'import を宣言と読んだ').toBe(false);
   });
 });

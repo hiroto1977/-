@@ -23,6 +23,26 @@ export type ScanUrlResult =
   | { readonly ok: false; readonly reason: ScanUrlFailure };
 
 /** VirusTotal の URL 長の実務上の上限に合わせた保守的な値。 */
+/**
+ * **断りの文面も 1 つ。** (2026-09-15 · パス 282)
+ *
+ * `validateScanUrl` の 4 つの理由に対する文面は、2026-09-15 まで
+ * **ビルドごとに 1 つずつ**在った (`main/clients/security.ts` と
+ * `renderer/data/saasWriteWeb.ts` に同じ 4 行)。今日は字も一致していたが、
+ * **一致を留めている物が何も無かった** —— パス 167 / 250 / 252 / 269 / 273 が
+ * それぞれ 1 件ずつ閉じてきた「字面がビルドごとに 1 つずつ」の家系である。
+ *
+ * ここは URL を第三者 (VirusTotal) へ渡す前の関門なので、断られた理由が
+ * ビルドによって違う言い方になってはいけない —— 利用者は同じ入力を
+ * 別の端末で試し、同じ説明を期待する。
+ */
+export const SCAN_URL_MESSAGES: Readonly<Record<ScanUrlFailure, string>> = {
+  empty: 'url は必須です',
+  'too-long': 'url が長すぎます',
+  'not-a-url': 'url を URL として解釈できません',
+  'not-web': 'url は http:// または https:// で始まる必要があります',
+};
+
 export const MAX_SCAN_URL_CHARS = 2048;
 
 /**

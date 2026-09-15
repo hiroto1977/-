@@ -151,8 +151,25 @@ const VERDICTS = {
     + 'その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の '
     + '実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読',
   httpLimits:
-    '対称 (部分実測・パス 248) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。'
-    + 'ブラウザ版は webShimTimeouts.test.ts。ただし手で選んだ 3 経路だけで母集団の総当たりではない)',
+    '対称 (実測・パス 282 で総当たりにした) —— 呼び出し側の網は両ビルドに在る '
+    + '(パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts)。'
+    + ' ★ パス 248 は「手で選んだ 3 経路だけで母集団の総当たりではない」と'
+    + '**自分で認めていた**。パス 282 でその総当たりをやったら、'
+    + '**認めていた穴の中に生きた欠陥が 1 件**在った —— `main/main.ts` の '
+    + '`app:checkUpdate` が `AbortSignal.timeout(10_000)` という**裸の数**で、'
+    + 'ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は '
+    + '`DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた。**同じ問いに 3 倍違う締切**で、'
+    + '遅い回線で先に諦めるのは「新しい版が出た」を受けて実際に更新できる'
+    + '**デスクトップ版**の側だった。しかも同じ関数の 3 行下の注記が '
+    + '2026-08-31 に**本文の上限**の同じ食い違いを直したときのもので、'
+    + 'そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで'
+    + '判断が変わる理由が無い」と書いてある —— **その直しは 1 行手前で止まっていた**。'
+    + ' 直しと同時に `shared/__tests__/deadlineCensus.test.ts` が母集団を走査する: '
+    + '締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / '
+    + '`timeoutMs`) の時間の引数が**名前**であること (値の一致は要求しない —— '
+    + '`AI_CHAT_TIMEOUT_MS` の 2 分のように意図して違う締切は在る。'
+    + '名前が付いていれば理由が定義の隣に書ける)。'
+    + '実測 24 呼び出し・裸の数 0 件・例外の台帳 0 件',
   hydroponicsControl:
     '非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / '
     + '`batchFromStored` / `batchSchedule` / `nextSolutionChange` / '
@@ -268,7 +285,25 @@ const VERDICTS = {
     + '★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは'
     + '到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、'
     + '未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る',
-  scanTarget: '対称 (実測・パス 247)',
+  scanTarget:
+    '対称 (実測・パス 282 で辿り直した) —— パス 247 は「対称 (実測)」の 4 文字だけで、'
+    + '**根拠が書かれていなかった**。パス 247 は母集団を初めて数えた回で、'
+    + 'しかも到達は 1 ホップで測っていた (閉包へ直したのはパス 268) ので、'
+    + 'その「実測」が何を見たのかは今から確かめられない。'
+    + ' ★ 実測 (パス 282): 越境するのは `validateScanUrl` **1 つだけ** '
+    + '(`main/clients/security.ts` と `renderer/data/saasWriteWeb.ts` の両方が呼ぶ)。'
+    + '否定のあとの動作は**字まで同じ 1 行** —— '
+    + '`if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);`。'
+    + '`describeScanUrlRisk` (内部・社内ホストの警告) の読み手は `SecurityPage.tsx` だけ、'
+    + '`looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけなので越境しない。'
+    + ' ★ ただし `SCAN_URL_MESSAGES` (4 行) は**ビルドごとに 1 つずつ**在った —— '
+    + '字は一致していたが一致を留めている物が何も無く、パス 167 / 250 / 252 / 269 / 273 が'
+    + '1 件ずつ閉じてきた家系。URL を第三者 (VirusTotal) へ渡す前の関門の断り文なので、'
+    + '`shared/scanTarget.ts` へ寄せて `scanTarget.test.ts` が'
+    + '「読む側は共有の表を読み、自分の写しを持たない」を両方向に留める。'
+    + ' ★ 設計として残る非対称ではない点: 内部ホスト・秘密らしきクエリ引数は'
+    + '**関門ではなく警告**である (`validateScanUrl` の失敗は empty / too-long / '
+    + 'not-a-url / not-web の 4 つだけ)。警告を出す画面は両ビルドで同じ 1 本なので対称',
   serviceAdvisor:
     '対称 (実測・パス 268) —— 否定で答えるのは `adviseService` (`ok: false`) と、'
     + 'その中でだけ呼ばれる 4 つの `parse*AdviceInput` (**外部の消費者は 0 件**)。'
@@ -300,10 +335,35 @@ const VERDICTS = {
   updateCheck:
     '対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と '
     + '3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、'
-    + '画面は共有の describeUpdate を読む。**ただし締切の値だけ割れている** '
-    + '(main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い)',
+    + '画面は共有の describeUpdate を読む。'
+    + ' ★ **パス 282 で閉じた**: この行はパス 250 から「**ただし締切の値だけ割れている** '
+    + '(main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。'
+    + '理由はどこにも無い)」と**生きた食い違いを記録したまま置いて**いた。'
+    + 'main を `DEFAULT_HTTP_TIMEOUT_MS` へ寄せ、'
+    + '`shared/__tests__/deadlineCensus.test.ts` が両ビルドの締切を留める。'
+    + '★ 教訓: 「理由はどこにも無い」と書けたなら、それは**書いた時点で欠陥**である ——'
+    + '記録しただけで 32 パス残った',
   vaultToken: '**欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた)',
-  writeFieldLimits: '対称 (実測・パス 247)',
+  writeFieldLimits:
+    '対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は'
+    + '「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。'
+    + '**外部サービスへ利用者の資格情報で書き込む前の関門**なので、'
+    + '4 文字では足りない。'
+    + ' ★ 実測 (パス 282): 双子は **10 組** (slack / github / calendar / gmail / drive / '
+    + 'canva / notion / atlassian / wordpress / cloudflare ×2 の欄)。'
+    + '**10 組すべてが同じ形**で、main は `checkWriteFields(ctx.payload, TABLE)`・'
+    + 'ブラウザ版は `checkWriteFields(input, 同じ TABLE)` を呼び、'
+    + '否定 (`!== null`) のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。'
+    + '欄の台帳は `shared/writeFieldLimits.ts` に 1 つずつで、'
+    + 'ラベルも天井も**両ビルドが同じ定数を読む**。'
+    + 'GitHub の labels だけ 2 段目 (`checkWriteLabels`) が在り、それも両側に在る。'
+    + 'MS365 の 2 表はパス 274/275 で `shared/api/microsoft365.ts` へ移したので'
+    + '**両ビルドが同じ実装**を通る (表の上では「片側だけ」に見えるが、'
+    + 'それは共有へ寄せた結果である)。'
+    + ' ★ 残る非対称は**文面の言語** —— Cloudflare のパージの「どちらかが要る」の断りは '
+    + 'main が英語 (`either purgeEverything=true or non-empty files[] is required`)・'
+    + 'ブラウザ版が日本語。`advisorQuestionLimits` の行が同じことを述べており、'
+    + '**欄の判定ではなく文面の家系**なのでこの行では直していない (次に閉じる候補)',
 };
 
 /**

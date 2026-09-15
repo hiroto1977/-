@@ -521,6 +521,19 @@ const CALLBACK_HTML = `<!doctype html><html><head><meta charset="utf-8"><title>S
 h1{margin:0 0 8px;font-size:18px}p{margin:0;color:#8a93a6;font-size:13px}</style></head>
 <body><div class="box"><h1>認証完了</h1><p>このタブは閉じて Service Hub に戻ってください。</p></div></body></html>`;
 
+/**
+ * **利用者が同意画面を操作している間、loopback を開けておく時間。** (2026-09-15 · パス 282)
+ *
+ * HTTP の締切 (`DEFAULT_HTTP_TIMEOUT_MS` = 30 秒) とは**別の量**である ——
+ * こちらが待っているのは相手のサーバではなく**人**で、ブラウザを開き、
+ * アカウントを選び、権限を読んで押すまでの時間。だから長い。
+ *
+ * 名前を付けたのは、下の rate-limit の注記が「the 5-min timeout」と
+ * **散文で同じ数を述べていた**ため —— 数が式と散文の 2 か所に在ると、
+ * 片方だけ動いたときに誰も気付けない (パス 282 の census が拾った)。
+ */
+const OAUTH_CALLBACK_WINDOW_MS = 5 * 60_000;
+
 interface CallbackResult {
   code: string;
   state: string;
@@ -532,7 +545,7 @@ interface CallbackResult {
  *
  *  Exported for integration testing (real HTTP server bound to 127.0.0.1
  *  on a random port). Not part of the stable API. */
-export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promise<CallbackResult> & {
+export function listenForCallback(expectedState: string, timeoutMs = OAUTH_CALLBACK_WINDOW_MS): Promise<CallbackResult> & {
   port: () => Promise<number>;
   cancel: () => void;
 } {

@@ -1707,6 +1707,14 @@
       "leafCount": 72,
       "note": "update tokenInput.ts",
       "hash": "5974986ecab81edf9ba5d56a12ab0e6f2d45f463eef7cb38ec959a2c391729fa"
+    },
+    {
+      "index": 204,
+      "prevHash": "5974986ecab81edf9ba5d56a12ab0e6f2d45f463eef7cb38ec959a2c391729fa",
+      "merkleRoot": "8ef84f2f2871a2f7c5e7d1bfd9964d19b7b8c82ff0e7618a47b8c3a0fdc13511",
+      "leafCount": 72,
+      "note": "update main.ts,oauth.ts,scanTarget.ts",
+      "hash": "b9a1bfd8ee0fbae5884bbf1a5fe2a33ee4916c43b0410333c0e5aa155c46c1e8"
     }
   ],
   "tipManifest": {
@@ -1738,8 +1746,8 @@
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "63112353a1fb8553ae64f7fe44f400d071575357e59d52ca1ab263474550e27b",
     "src/main/eraseAll.ts": "cd9f8c1a01b64330f62f27d27ba14083c342f27452e20c95ae4f37d03358dbaa",
-    "src/main/main.ts": "36a8b778f3370f5c4d6a92d95b2838d52916740f8de4f4d8dca957c6ffed915a",
-    "src/main/oauth.ts": "4b64e662a8fb42fe1a4e6c4c9bead75184afe371faf6e725304c25afaf28180e",
+    "src/main/main.ts": "370f634b80435ac119a3ccd72c0ac55a6a2df6aff4d6e970c08291497c3eed4e",
+    "src/main/oauth.ts": "87f3cd45153c40a364bcefe8850053ef466d976f3f60923a14640fb409ab1cbb",
     "src/main/secrets.ts": "be9459125976403b0c23444b53c7da21b80502768c24cecc337122529b006ef4",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "6985953d4e8253f5ece972ac22e5294c8aaa64293d7ff2e57e80dc21411aa667",
@@ -1778,7 +1786,7 @@
     "src/shared/proxyEndpoint.ts": "2157128494994adea9e6edb6e2af40518f69ff879c328ef3a0c9b9e8d9d0b340",
     "src/shared/redact.ts": "e1e3e3fe3b502c57f3954417b3347cf20c46d3501470423f61f7ab4d0a52b91c",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
-    "src/shared/scanTarget.ts": "354916a61ce7cc7711931754c916ec813bd32be3b88de6908414a3ad2d9e6ded",
+    "src/shared/scanTarget.ts": "2b14524d372ddd41f78749a3165857ca78af9d156093bbc53e735a7b9ffbdb2c",
     "src/shared/tokenInput.ts": "efdeddf96062aaf89ead2bb325cfec0ccf9ec5a449b85923d6bf9f9b1f0b14b3",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7"
