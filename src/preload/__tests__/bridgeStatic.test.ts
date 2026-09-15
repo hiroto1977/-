@@ -85,13 +85,14 @@ const CHANNELS: readonly [string, string][] = [
   ['clearToken', 'secrets:clear'],
   ['listConfigured', 'secrets:list'],
   ['storageProtection', 'secrets:protection'],
+  ['eraseAll', 'app:eraseAll'],
   ['fetchSnapshot', 'fetch:snapshot'],
   ['invoke', 'action:invoke'],
   ['oauthSupported', 'oauth:isSupported'],
   ['authorize', 'oauth:authorize'],
 ];
 
-describe('橋の 13 本 — 読み直して static 変異体を届かせる', () => {
+describe('橋の 14 本 — 読み直して static 変異体を届かせる', () => {
   it.each(CHANNELS)('★ %s は %s を 1 回だけ呼ぶ', async (method, channel) => {
     const api = await freshBridge();
     const fn = api[method];

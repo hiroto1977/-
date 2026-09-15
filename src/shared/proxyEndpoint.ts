@@ -34,14 +34,15 @@
  * 貼り間違いの印である。
  */
 
+import { countChars } from './inputCeiling';
 import { isLoopbackHostname } from './aiEndpoint';
 import { hasControlChar } from './controlChars';
 
 /** プロキシ URL の長さ上限。これを超える正当な worker URL は無い。 */
-export const MAX_PROXY_URL_LENGTH = 1024;
+export const MAX_PROXY_URL_CHARS = 1024;
 
 /** 共有秘密の長さ上限。 */
-export const MAX_PROXY_SECRET_LENGTH = 256;
+export const MAX_PROXY_SECRET_CHARS = 256;
 
 export type ProxyEndpointFailure =
   | 'empty'
@@ -68,7 +69,7 @@ export function normalizeProxyEndpoint(raw: unknown): ProxyEndpointResult {
   if (typeof raw !== 'string') return { ok: false, reason: 'not-a-url' };
   const text = raw.trim();
   if (text.length === 0) return { ok: false, reason: 'empty' };
-  if (text.length > MAX_PROXY_URL_LENGTH) return { ok: false, reason: 'too-long' };
+  if (countChars(text) > MAX_PROXY_URL_CHARS) return { ok: false, reason: 'too-long' };
   // 制御文字はヘッダ / URL の分断に使われうる。解析の前に落とす。
   if (hasControlChar(text)) return { ok: false, reason: 'control-char' };
 
@@ -96,7 +97,7 @@ export function describeProxyEndpointFailure(reason: ProxyEndpointFailure): stri
     case 'empty':
       return 'proxy URL が不正です (空です)。';
     case 'too-long':
-      return `proxy URL が長すぎます (${MAX_PROXY_URL_LENGTH} 文字まで)。`;
+      return `proxy URL が長すぎます (${MAX_PROXY_URL_CHARS} 文字まで)。`;
     case 'control-char':
       return 'proxy URL に制御文字が含まれています。';
     case 'not-a-url':
@@ -110,14 +111,14 @@ export function describeProxyEndpointFailure(reason: ProxyEndpointFailure): stri
     case 'insecure-remote':
       return 'このプロキシには API トークンが乗るため http:// は使えません (平文で流れるため)。https:// にするか、localhost / 127.0.0.1 のローカル worker を指定してください。';
     case 'secret-too-long':
-      return `共有秘密が不正です (${MAX_PROXY_SECRET_LENGTH} 字以内)。`;
+      return `共有秘密が不正です (${MAX_PROXY_SECRET_CHARS} 字以内)。`;
   }
 }
 
 /** 共有秘密の検証。無指定は許す (worker 側が認証を要らないこともある)。 */
 export function isValidProxySecret(secret: unknown): boolean {
   if (secret === undefined) return true;
-  return typeof secret === 'string' && secret.length <= MAX_PROXY_SECRET_LENGTH;
+  return typeof secret === 'string' && countChars(secret) <= MAX_PROXY_SECRET_CHARS;
 }
 
 /** プロキシ設定の中身。IndexedDB へ入る形そのもの。 */

@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — 同分野の近傍
-- [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]] — 同分野の近傍
+- [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 語彙が近い
 - [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — 語彙が近い
 - [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 語彙が近い
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同じ思想家
 - [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同じ思想家
 - [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 同じ思想家

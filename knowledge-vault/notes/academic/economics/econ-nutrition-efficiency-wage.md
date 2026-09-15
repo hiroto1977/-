@@ -32,15 +32,13 @@ Harvey Leibenstein（ハーヴェイ・ライベンシュタイン, 1957） ／ 
 
 ## 関連概念
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
 - [[econ-harberger-triangle|ハーバーガーの三角形（独占の死荷重損失計測）]] — 同じ思想家
-- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同分野の近傍
+- [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]] — 同分野の近傍
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

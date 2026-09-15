@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[human-community-psychology-rappaport-empowerment|コミュニティ心理学——ラパポートのエンパワーメント理論と社会変革]] — 同分野の近傍
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同分野の近傍
+- [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

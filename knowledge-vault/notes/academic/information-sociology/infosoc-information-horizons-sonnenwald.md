@@ -26,7 +26,7 @@ aliases:
 ダイアン・ゾンネンヴァルト ／ リーフ・サヴォライネン ／ トーマス・D・ウィルソン ／ エルフレダ・チャットマン
 
 ## 出典
-- [Sonnenwald, D. H. (1999) Evolving perspectives on human information behavior — in Exploring the Contexts of Information Behaviour](https://www.worldcat.org/oclc/471863509) `学術`
+- [Sonnenwald, D. H. (1999) Evolving perspectives on human information behavior — in Exploring the Contexts of Information Behaviour](https://www.worldcat.org/oclc/471863509) `リファレンス`
 - [Wikipedia: Information behavior — information horizons, contexts, situations, social networks](https://en.wikipedia.org/wiki/Information_behavior) `リファレンス`
 
 ## 関連概念
@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
 - [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
 - [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同分野の近傍
-- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

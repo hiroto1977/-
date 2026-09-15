@@ -51,3 +51,24 @@ export const MAX_ADVISOR_RISK_FACTORS = 3;
 
 /** 打ち手・リスクの 1 項目の長さ (どちらも同じ)。 */
 export const MAX_ADVISOR_ITEM_CHARS = 240;
+
+// ---------------------------------------------------------------------------
+// 株式アドバイザー (`stocks/advise`) の応答 —— 形が違うので欄も別 (2026-09-09 · パス 113)
+// ---------------------------------------------------------------------------
+
+/**
+ * 上の台帳は `business/advise` の物で、**同じファイルの 100 行下に `stocks/advise` が
+ * 同じ形の数字を字面で持っていた** —— main (`stocks.ts`) とブラウザ版の双子
+ * (`stocksAnalysisWeb.ts`) に `5` / `400` / `200` が 2 度ずつ。値は両側で一致していたが、
+ * 「片方だけ緩めば、そのビルドだけがより大きな第三者由来の値を通す」のは上と同じ。
+ * パス 113 の走査 (AI へ出る handler がすべて応答側の天井に届く) が、字面の数字を
+ * 天井として数えられずに `stocks/advise` を挙げたので、ここへ寄せた。
+ *
+ * 推奨の件数は上の `MAX_ADVISOR_RECOMMENDATIONS` (5) をそのまま読む。
+ */
+
+/** 株式の推奨 1 件の理由の長さ (business の 600 より短い —— 表示欄が狭い)。 */
+export const MAX_STOCK_ADVISOR_RATIONALE_CHARS = 400;
+
+/** 株式の推奨 1 件のリスク要因 1 項目の長さ。 */
+export const MAX_STOCK_ADVISOR_RISK_CHARS = 200;

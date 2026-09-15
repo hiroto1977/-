@@ -22,11 +22,15 @@
  * キーで同じ共有レイヤ経由の呼び出しを行う。
  */
 
+import { clampToCeiling } from '../../shared/inputCeiling';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_MESSAGES,
   MAX_ASSISTANT_SYSTEM_CHARS,
+  inputTooLongMessage,
+  latestTurnTooLong,
+  MAX_ENSEMBLE_ERROR_CHARS,
 } from '../../shared/assistantLimits';
 import { redactForMessage } from './types';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -38,6 +42,7 @@ import {
   resolveProvider,
 } from '../../shared/ai/credentials';
 import { runAiChat } from '../../shared/ai/chat';
+import type { ActionData, EnsembleAnswer } from '../../shared/actionData';
 
 
 /** 既定モデル: Anthropic プロバイダの既定 (後方互換の再エクスポート)。 */
@@ -109,7 +114,9 @@ export function sanitizeMessages(raw: unknown): ChatTurn[] {
     const c = (item as { content?: unknown }).content;
     if (r !== 'user' && r !== 'assistant') continue;
     if (typeof c !== 'string') continue;
-    const content = c.trim().slice(0, MAX_CONTENT);
+    // 窓に収めるのも**文字の境界で** (パス 196) —— `.slice()` は対を割り、
+    // 壊れた文字列が有料 API へ送られる。
+    const content = clampToCeiling(c.trim(), MAX_CONTENT);
     if (content.length === 0) continue;
     out.push({ role: r, content });
   }
@@ -130,8 +137,10 @@ export function extractAssistantText(res: AnthropicResponse): string {
 
 async function chat(
   ctx: ActionContext,
-): Promise<{ text: string; model: string; provider: string }> {
+): Promise<ActionData<'assistant/chat'>> {
   const { messages, system, model, provider } = ctx.payload as unknown as ChatPayload;
+  // 最新の発話は切らずに断る (パス 112)。履歴の窓 (`sanitizeMessages`) とは別の判断。
+  if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));
   const turns = sanitizeMessages(messages);
   if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
   // 直前の `turns.length === 0` で空を弾いているので末尾は必ず在る。`?.` を
@@ -146,7 +155,14 @@ async function chat(
     );
   }
 
-  const sys = typeof system === 'string' ? system.slice(0, MAX_SYSTEM) : '';
+  // **切るのは文字の境界で** (2026-09-14 · パス 252)。同じ関数の 40 行上は既に
+  // `clampToCeiling(c.trim(), MAX_CONTENT)` で発話を切っており、**system だけが
+  // `.slice`** だった。実測: 60,000 字目が絵文字の system を `.slice(0, 60000)` で
+  // 切ると末尾が孤立サロゲート (`isWellFormed()` が false) になり、
+  // `JSON.stringify` は `\ud83d` を本文に載せる。さらに絵文字 50,000 字の
+  // system では main が 30,000 字・ブラウザ版が 50,000 字を送っていた ——
+  // 天井の**値**は共有していたが**単位**が割れていた。
+  const sys = typeof system === 'string' ? clampToCeiling(system, MAX_SYSTEM) : '';
 
   // トークンを資格情報として解析 (生キーは Anthropic として後方互換)、
   // payload.provider (省略時は既定プロバイダ) を解決して共有レイヤで実行する。
@@ -172,21 +188,14 @@ async function chat(
 }
 
 /** 各 AI プロバイダの設定状況 (UI のエージェント選択・接続チップ用)。 */
-async function providers(ctx: ActionContext): Promise<{ providers: unknown[] }> {
+async function providers(ctx: ActionContext): Promise<ActionData<'assistant/providers'>> {
   const creds = parseAiCredentials(ctx.token);
   return Promise.resolve({ providers: providerStatuses(creds) });
 }
 
 // --- chatAll action (全AI合議) ---------------------------------------------
 
-/** 合議モードの 1 プロバイダ分の回答 (失敗はエラー文字列つきで他を巻き込まない)。 */
-export interface EnsembleAnswer {
-  provider: string;
-  model: string;
-  text: string;
-  ok: boolean;
-  error?: string;
-}
+// `EnsembleAnswer` は台帳 `shared/actionData.ts` に在る (パス 116) —— 画面が同じ型を読む。
 
 /**
  * 設定済みの **全** AI プロバイダへ同じ質問を並列に投げ、回答を並べて返す。
@@ -194,8 +203,10 @@ export interface EnsembleAnswer {
  *   - 1 社の失敗は ok:false + error として返し、他社の回答を巻き込まない。
  *   - 1 社も設定が無ければ chat と同趣旨のエラーを投げる (UI は決定論フォールバックへ)。
  */
-async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] }> {
+async function chatAll(ctx: ActionContext): Promise<ActionData<'assistant/chatAll'>> {
   const { messages, system, model } = ctx.payload as unknown as ChatPayload;
+  // chat と同じ (パス 112)。
+  if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));
   const turns = sanitizeMessages(messages);
   if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
   // 直前の `turns.length === 0` で空を弾いているので末尾は必ず在る。`?.` を
@@ -214,7 +225,14 @@ async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] 
   if (ids.length === 0) {
     throw new Error('設定済みの AI プロバイダがありません (⚙ エージェント設定で API キーを保存してください)');
   }
-  const sys = typeof system === 'string' ? system.slice(0, MAX_SYSTEM) : '';
+  // **切るのは文字の境界で** (2026-09-14 · パス 252)。同じ関数の 40 行上は既に
+  // `clampToCeiling(c.trim(), MAX_CONTENT)` で発話を切っており、**system だけが
+  // `.slice`** だった。実測: 60,000 字目が絵文字の system を `.slice(0, 60000)` で
+  // 切ると末尾が孤立サロゲート (`isWellFormed()` が false) になり、
+  // `JSON.stringify` は `\ud83d` を本文に載せる。さらに絵文字 50,000 字の
+  // system では main が 30,000 字・ブラウザ版が 50,000 字を送っていた ——
+  // 天井の**値**は共有していたが**単位**が割れていた。
+  const sys = typeof system === 'string' ? clampToCeiling(system, MAX_SYSTEM) : '';
   const answers = await Promise.all(
     ids.map(async (id): Promise<EnsembleAnswer> => {
       try {
@@ -241,7 +259,7 @@ async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] 
           model: '',
           text: '',
           ok: false,
-          error: redactForMessage(msg, 300),
+          error: redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS),
         };
       }
     }),

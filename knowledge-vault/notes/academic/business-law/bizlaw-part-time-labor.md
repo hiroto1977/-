@@ -39,7 +39,6 @@ aliases:
 - [[subsidy-employment-adjustment|雇用調整助成金]] — 出典を共有
 - [[bizlaw-employment-security|職業安定法]] — 同分野の近傍
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同分野の近傍
-- [[bizlaw-worker-dispatch|労働者派遣法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

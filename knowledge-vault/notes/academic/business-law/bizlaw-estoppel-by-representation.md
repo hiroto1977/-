@@ -26,7 +26,7 @@ aliases:
 デニング卿 ／ ジョン・カーター ／ アンドリュー・バロウズ ／ エドウィン・ペール
 
 ## 出典
-- [Peel, E. (2015) Treitel on the Law of Contract — 14th ed., Sweet & Maxwell, ISBN 9780414037397 (OCLC 910717405)](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
+- [Peel, E. (2015) Treitel on the Law of Contract — 14th ed., Sweet & Maxwell, ISBN 9780414037397 (OCLC 910717405)](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `リファレンス`
 - [Central London Property Trust v High Trees House [1947] KB 130 — promissory estoppel landmark](https://www.bailii.org/ew/cases/EWHC/KB/1947/1.html) `公的`
 - [Wikipedia: Estoppel — reliance-based preclusion doctrine overview](https://en.wikipedia.org/wiki/Estoppel) `リファレンス`
 
@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 同じ思想家
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
 - [[bizlaw-third-party-beneficiary-contract|第三者のためにする契約——契約当事者以外への権利付与の法理]] — 同じ思想家
-- [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

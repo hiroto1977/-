@@ -1,8 +1,15 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { SLACK_MESSAGE_FIELDS } from '../../shared/writeFieldLimits';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
+import type { ActionData } from '../../shared/actionData';
+import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -24,14 +31,29 @@ export function SlackPage() {
   const [showForm, setShowForm] = useState(false);
   const [channel, setChannel] = useState('');
   const [text, setText] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const channelOver = charsOverCeiling(channel, SLACK_MESSAGE_FIELDS.channel!.max);
+  const textOver = charsOverCeiling(text, SLACK_MESSAGE_FIELDS.text!.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
+
+  /*
+   * 感情分析へ送る本文は**チャンネルの数で決まる** —— 利用者が長さを決められない。
+   * `analyze-text` は 5000 字を超えると断る (英語の生の例外文が alert に出るだけで、
+   * 一覧を減らす手が無い)。先頭から入るぶんだけ送り、外した件数を**押す前に**言う
+   * (詰め方と文面は `shared/emotionsLimits.ts`・パス 156)。
+   */
+  const analyzeBatch = useMemo(
+    () => packAnalyzeText(channels.map((c) => `#${c.name}: ${c.purpose || '(no purpose)'}`)),
+    [channels],
+  );
+  const analyzeNote = analyzeBatchNote(analyzeBatch);
 
   const send = async () => {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ ts: string; channel: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'slack/send-message'>>(
       'slack',
       'send-message',
       { channel: channel.trim(), text },
@@ -71,23 +93,32 @@ export function SlackPage() {
         />
       </Section>
 
+      {/* **何が外へ出るかを書く** (2026-09-09 · パス 106)。
+            チャンネルの**名前と目的**が Anthropic へ送られる (メッセージ本文は
+            送っていない)。社内の体制が読み取れる情報である。
+            この画面は 2026-09-09 まで、外へ出ることを述べる文を 1 つも持っていなかった
+            —— パス 106 の走査 (`aiEgressDisclosed.test.ts`) が見つけた。
+            断りを 3 画面に足したつもりが、実際は 5 画面だった。 */}
+      <AiEgressNotice
+        subject={{
+          what: 'チャンネル名と目的 (purpose)',
+          recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
+        }}
+      />
       <Section
         title="チャンネル雰囲気分析"
         action={
           <button
             onClick={async () => {
-              if (!window.serviceHub || channels.length < 1) return;
-              const text = channels
-                .map((c) => `#${c.name}: ${c.purpose || '(no purpose)'}`)
-                .join('\n');
-              const res = await window.serviceHub.invoke('emotions', 'analyze-text', {
-                text,
+              if (!window.serviceHub || analyzeBatch.included < 1) return;
+              const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
+                text: analyzeBatch.text,
                 source: 'Slack channels',
               });
               if (!res.ok) alert('感情分析失敗: ' + res.message);
-              else alert('Emotions タブに結果を保存しました');
+              else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
             }}
-            disabled={channels.length < 1}
+            disabled={analyzeBatch.included < 1}
           >
             Emotions で分析
           </button>
@@ -96,6 +127,10 @@ export function SlackPage() {
         <div className="empty" style={{ fontSize: 12 }}>
           チャンネル名と purpose の一覧を Emotions タブに送り、ワークスペース全体の
           ムード傾向を分析します。
+          {/* 天井に収まらない件数は**押す前に**言う (パス 156)。文面は shared/emotionsLimits.ts。 */}
+          {analyzeNote !== null && (
+            <div data-analyze-batch-note style={{ marginTop: 6, color: '#fbbf24' }}>⚠ {analyzeNote}</div>
+          )}
         </div>
       </Section>
 
@@ -109,6 +144,7 @@ export function SlackPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            {/* 上限は main / ブラウザ版と同じ台帳から読む (パス 110)。数を写さない。 */}
             <input
               placeholder="チャンネル ID (C…) または #channel-name"
               value={channel}
@@ -122,11 +158,13 @@ export function SlackPage() {
               rows={3}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="チャンネル" value={channel} max={SLACK_MESSAGE_FIELDS.channel!.max} />
+            <CeilingNotice label="メッセージ本文" value={text} max={SLACK_MESSAGE_FIELDS.text!.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={send}
-                disabled={submitting || !channel.trim() || !text.trim()}
+                disabled={submitting || !channel.trim() || !text.trim() || channelOver > 0 || textOver > 0}
               >
                 {submitting ? '送信中…' : '送信'}
               </button>

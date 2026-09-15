@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { afterEach, describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 import { getRecordStore, _resetRecordStoreForTests } from '../store';
 import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from '../recordCipher';
@@ -426,5 +426,153 @@ describe('封緘したままのバックアップは他の端末で開けない 
     await store2.importAll(backup, { replace: true });
     const list = await store2.list<{ memo: string }>('sales');
     expect(list.map((r) => r.data.memo)).toEqual(['MIGRATE-ME']);
+  });
+});
+
+
+/*
+ * ## 保存領域そのものへ触れられない端末 (2026-09-06)
+ *
+ * `loadMeta()` は `getItem` を `try` の**上**で呼んでいたので、サイトデータを
+ * ブロックしたオリジン (Chrome の `SecurityError`) では `isEncryptionEnabled()` が
+ * 投げていた。それは `components/BackupPanel.tsx` の描画中に呼ばれるので、
+ * **控えを取り出す画面が消える** (画面の側からは
+ * `pages/__tests__/storageRefusedScreens.test.ts` が測っている)。
+ *
+ * ここで測るのは「投げないこと」と、**投げない代わりに degraded に数えること** ——
+ * `null` を「まだ有効化されていない」と読んで上書きすると salt が失われる。
+ */
+describe('保存領域へ触れられない端末', () => {
+  function refuse(op: 'getItem' | 'removeItem', name = 'SecurityError'): void {
+    const real = globalThis.localStorage;
+    const boom = (): never => {
+      const e = new Error('Access is denied for this document.');
+      e.name = name;
+      throw e;
+    };
+    vi.stubGlobal('localStorage', {
+      getItem: op === 'getItem' ? boom : (k: string) => real.getItem(k),
+      setItem: (k: string, v: string) => real.setItem(k, v),
+      removeItem: op === 'removeItem' ? boom : (k: string) => real.removeItem(k),
+      clear: () => real.clear(),
+      key: (i: number) => real.key(i),
+      get length(): number {
+        return real.length;
+      },
+    });
+  }
+
+  /*
+   * **後片付けは `afterEach` に置く。** 各 it の末尾に書くと、守りを外す対照で
+   * ★ が投げて後片付けに届かず、断る `localStorage` が次の it へ漏れる ——
+   * 対照が独立でなくなり「守りを外すと ★ だけが落ちる」を示せない
+   * (2026-09-06 実測: 対照まで一緒に落ちた)。
+   */
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('★ isEncryptionEnabled() は投げない (描画中に呼ばれるので落とせない)', () => {
+    refuse('getItem');
+    expect(() => isEncryptionEnabled()).not.toThrow();
+    expect(isEncryptionEnabled()).toBe(false);
+  });
+
+  it('★ 読めない端末では有効化を断る (salt を上書きさせない)', async () => {
+    refuse('getItem');
+    // 門 (`isEncryptionEnabled()`) は false を返すので通ってしまう。
+    // **degraded を見ている `assertMetaWritable()` が止める。**
+    await expect(enableEncryption('passphrase-1234')).rejects.toThrow(/読めませんでした/);
+  });
+
+  /*
+   * 文面は 3 つのことを言う必要がある。**1 つだけ検査すると残りは何を書いても
+   * 通る** (変異検査が断片ごとの生存として鳴らした。ボールトの文面で踏んだのと
+   * 同じ形なので、ここでは最初から分けて留める)。
+   */
+  it('★ 解除の最後で消せなかったら、平文に戻したことまで言う', async () => {
+    await enableEncryption('passphrase-1234');
+    expect(isEncryptionEnabled()).toBe(true);
+    refuse('removeItem');
+    // レコードの復号は終わっているので、黙って true を返すと画面は
+    // 「暗号化が有効」と言いながら平文を保存する。
+    const err = await disableEncryption('passphrase-1234').then(
+      () => null,
+      (e: unknown) => (e instanceof Error ? e.message : String(e)),
+    );
+    expect(err, '成功として返してはいけない').not.toBeNull();
+    // ① 何が起きたか (レコードは平文に戻っている)
+    expect(err).toContain('レコードは平文に戻しましたが、暗号化設定をこの端末から消せませんでした');
+    // ② 例外の種別が文面に入る (原因の切り分けに要る)
+    expect(err).toContain('SecurityError');
+    // ③ 画面の表示が現実と食い違っていることを名指しする
+    expect(err).toContain('画面はまだ「暗号化が有効」と表示します。');
+    // ④ 次にやること
+    expect(err).toContain('もう一度「暗号化を解除」を実行してください。');
+  });
+
+  it('対照: 触れる端末では有効化も解除も通る', async () => {
+    await enableEncryption('passphrase-1234');
+    expect(isEncryptionEnabled()).toBe(true);
+    await expect(disableEncryption('passphrase-1234')).resolves.toBe(true);
+    expect(isEncryptionEnabled()).toBe(false);
+  });
+});
+
+/*
+ * **短い salt でも利用者はやり直せる** (2026-09-14 · パス 237)。
+ *
+ * ## この describe が留めているもの / 留めていないもの
+ *
+ * **留めていない**: 床そのもの。対照で確かめた —— `deriveAesKey` から
+ * `assertSaltBytes` を外しても、ここの検査は**全部通る**。床が無ければ空 salt から
+ * 鍵が導出され、その鍵では KCV の GCM 認証が落ちるので、結局同じ `false` になる。
+ * つまり `false` は 2 通りの理由で立つ。**床の検査は
+ * `security/__tests__/dataCrypto.test.ts` の「床は両方の入口に掛かる」に在り、
+ * そちらの対照は鳴る。**
+ *
+ * **留めている**: 床を足したことで**ロックアウト回避の契約が壊れていない**こと。
+ * パス 237 の最初の実装は `loadMeta` 側で短い salt を degraded にしていた。
+ * すると `loadMeta` が `null` を返し、`unlockEncryption` の
+ * `if (!meta) return true` に落ちて、**差し替えられた salt に対して
+ * 「解錠できた」と答えていた**。既存の 2 本 (「salt が base64 として読めない
+ * でも throw せず false」) がその場で落ち、設計節の「誤りなら false を返すだけ」を
+ * 破っていることを教えてくれた。床は `deriveAesKey` へ移した (経緯は
+ * `recordEncryption.ts` の `loadMeta` の注記)。
+ *
+ * 元の salt が上書きで消えないことも併せて留める —— こちらは既存の門
+ * (`isEncryptionEnabled()` → 「既に有効」) が持つ。
+ */
+describe('短い salt でも利用者はやり直せる (パス 237)', () => {
+  const zeros = (n: number) => btoa(String.fromCharCode(...new Uint8Array(n)));
+
+  // この 3 件は床が無くても通る (上の注記)。契約の回帰検査として置いている。
+  it.each([
+    ['空文字 (0 バイト・読める base64)', ''],
+    ['1 バイト', 'AA=='],
+    ['床の 1 つ下 (15 バイト)', zeros(15)],
+  ])('%s は解錠も解除も false (throw しない)', async (_label, shortSalt) => {
+    await enableEncryption('pw');
+    const valid = JSON.parse(localStorage.getItem(LS_KEY)!) as Record<string, unknown>;
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, salt: shortSalt }));
+    _resetRecordStoreForTests();
+    await expect(unlockEncryption('pw')).resolves.toBe(false);
+    await expect(disableEncryption('pw')).resolves.toBe(false);
+  });
+
+  it('★ 短い salt に差し替えられても、元の salt を新しい値で潰さない', async () => {
+    await enableEncryption('pw');
+    const valid = JSON.parse(localStorage.getItem(LS_KEY)!) as Record<string, unknown>;
+    const tampered = JSON.stringify({ ...valid, salt: '' });
+    localStorage.setItem(LS_KEY, tampered);
+    // メタは読めている (typeof salt === 'string') ので「既に有効」で断る
+    await expect(enableEncryption('pw')).rejects.toThrow('暗号化は既に有効です');
+    expect(localStorage.getItem(LS_KEY)).toBe(tampered);
+  });
+
+  it('床ちょうどの salt なら解錠できる (関門が全部を落としていない)', async () => {
+    await enableEncryption('pw');
+    _resetRecordStoreForTests();
+    await expect(unlockEncryption('pw')).resolves.toBe(true);
   });
 });

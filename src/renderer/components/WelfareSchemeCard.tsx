@@ -7,6 +7,7 @@ import { jpy } from '../../shared/formatters';
 import {
   designWelfareScheme,
   MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  MEAL_SUBSIDY_SELF_PAY_RATIO,
   type WelfareSchemeInput,
 } from '../../shared/welfareScheme';
 import {
@@ -125,9 +126,13 @@ export function WelfareSchemeCard() {
     spouseElderly,
   ]);
 
-  const { normal, scheme, diff, deductions } = result;
+  const { normal, scheme, diff, deductions, mealSubsidy } = result;
   const yen = (n: number) => jpy(Math.round(n));
   const hasExtraDeduction = deductions.total.incomeTax > 0 || deductions.total.residentTax > 0;
+  // 目標手元残りに両筋書きが届いたか。届いていなければ**この表は「同じ手元残りでの
+  // 比較」ではない** —— 額面の逆算が探索上限に張り付いた結果を並べているだけになる
+  // (パス 103)。差額を制度の効果として読ませないために、表より前に出す。
+  const reachedTarget = normal.reachedTarget && scheme.reachedTarget;
 
   const rows: { label: string; a: number; b: number; hi?: boolean }[] = [
     { label: '額面基本給', a: normal.gross, b: scheme.gross },
@@ -137,6 +142,9 @@ export function WelfareSchemeCard() {
     { label: '口座振込額', a: normal.netPaid, b: scheme.netPaid },
     { label: '自由に使えるお金 (手元残り)', a: normal.freeCash, b: scheme.freeCash },
     { label: '現物支給の福利厚生価値 (非課税)', a: normal.inKindValue, b: scheme.inKindValue },
+    // **課税される現物給与の行** (パス 228)。0 のときも出す —— 「0 円」は
+    // 「要件を満たしている」という情報で、行が消えると読み手は区別できない。
+    { label: '給与課税される現物給与', a: normal.taxableInKind, b: scheme.taxableInKind },
     { label: '従業員の実質手元残り', a: normal.employeeRealValue, b: scheme.employeeRealValue, hi: true },
     { label: '会社の総コスト (給与+社保+福利厚生)', a: normal.companyTotalCost, b: scheme.companyTotalCost, hi: true },
   ];
@@ -155,9 +163,64 @@ export function WelfareSchemeCard() {
     <Section title="給与デザイン / 福利厚生スキーム試算">
       <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>
         「生活費を払った後の手元残り」を同額に保ったまま、社宅・食事補助・育児補助・自社 EC
-        カフェテリアポイント（いずれも非課税の現物/役務支給）を詰めて基本給を下げる設計。本人・会社
-        双方の社会保険料と税が下がり、従業員は同じ手元残り + 現物価値、会社は総コスト減になります。
+        カフェテリアポイント（<strong>非課税の要件を満たす限りにおいて</strong>非課税の現物/役務
+        支給）を詰めて基本給を下げる設計。本人・会社双方の社会保険料と税が下がり、従業員は同じ
+        手元残り + 現物価値、会社は総コスト減になります。
       </p>
+
+      {!reachedTarget && (
+        <p
+          role="alert"
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            margin: '0 0 12px',
+            padding: '8px 10px',
+            borderRadius: 6,
+            border: '1px solid var(--warn, #d97706)',
+            color: 'var(--warn, #d97706)',
+          }}
+        >
+          ⚠ 目標の手元残りが本試算モデルの範囲を超えています（額面の上限に張り付きました）。
+          {normal.reachedTarget ? '' : `① これまで の手元残りは ${yen(normal.freeCash)} 止まりです。`}
+          {scheme.reachedTarget ? '' : `② 新制度 の手元残りは ${yen(scheme.freeCash)} 止まりです。`}
+          下表は「同じ手元残りでの比較」になっていないため、差額を制度の効果として読まないでください。
+          目標額を下げてお試しください。
+        </p>
+      )}
+
+      {/*
+        **食事補助の非課税要件は機械で判定できる** (パス 219)。定数は 2026-08-21 に
+        出典つきで置かれたが、読んでいたのは規程ひな形と下の免責文 (散文) だけで、
+        計算は会社負担の全額を非課税として扱っていた。要件を外れていれば、下表の
+        「税と社保が下がる」は成り立たない前提で組まれている。
+      */}
+      {!mealSubsidy.taxFree && (
+        <p
+          role="alert"
+          data-meal-subsidy-alert
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            margin: '0 0 12px',
+            padding: '8px 10px',
+            borderRadius: 6,
+            border: '1px solid var(--danger, #ef4444)',
+            color: 'var(--danger, #ef4444)',
+          }}
+        >
+          ⛔ 食事補助が<strong>非課税の要件を満たしていません</strong>。
+          {mealSubsidy.reasons.map((r) => `${r}。`).join('')}
+          {/* **断りと数字を一致させる** (パス 228)。パス 219 まではここで
+              「下表は会社負担の全額を非課税として計算している」と述べていた ——
+              断りは正しいが、それは「下表の数字が間違っている」と認めるだけだった。 */}
+          会社負担 <strong data-meal-taxable-yen={scheme.taxableInKind}>{yen(scheme.taxableInKind)}</strong> は
+          <strong>給与課税として下表の計算に入れています</strong>
+          （社会保険料・所得税・住民税が上がり、「現物支給の福利厚生価値 (非課税)」からは外しています）。
+          会社負担を月 {yen(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN)} 以下にし、本人負担を食事の価額の
+          {Math.round(MEAL_SUBSIDY_SELF_PAY_RATIO * 100)}% 以上にすると非課税になります。
+        </p>
+      )}
 
       {/* 入力 */}
       <div

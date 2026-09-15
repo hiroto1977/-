@@ -30,9 +30,11 @@ J・L・オースティン（J. L. Austin, 1911–1960）／ジョン・サー�
 - [Searle, J. R. (1969) Speech Acts: An Essay in the Philosophy of Language, Cambridge University Press](https://www.cambridge.org/core/books/speech-acts/D2D7B03E472C8A390ED60B3A9F65387E) `学術`
 
 ## 関連概念
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — 同じ思想家
 - [[infosoc-cooperative-principle-grice|協調の原理（グライス）——会話の格率と含意]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同分野の近傍
 - [[infosoc-code-switching|コードスイッチング]] — 同分野の近傍
+- [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
-import { readFileSync } from 'node:fs';
 import { externalUrlOrNull } from '../../shared/externalUrlGate';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
  * BrowserWindow の作られ方と、窓に張った 3 つの番人。
@@ -374,7 +374,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
   const ALLOWED = ['clipboard-read', 'clipboard-sanitized-write'];
 
   function electronPermissionNames(): string[] {
-    const dts = readFileSync(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'), 'utf8');
+    const dts = readOriginalSource(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'));
     const m = /setPermissionRequestHandler\(handler: \(\(webContents: WebContents, permission: ([^,]+),/.exec(dts);
     expect(m, 'electron.d.ts から権限の一覧を読めない — 走査が壊れている').not.toBeNull();
     return [...m![1]!.matchAll(/'([a-zA-Z-]+)'/g)].map((x) => x[1]!);

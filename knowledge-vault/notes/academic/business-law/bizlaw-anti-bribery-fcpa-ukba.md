@@ -36,8 +36,8 @@ SEC（米国証券取引委員会） ／ 法務省（米国） ／ 英国重大�
 - [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 出典を共有
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

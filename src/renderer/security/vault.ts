@@ -17,9 +17,16 @@
  *  - 詳細: docs/BROWSER_REDESIGN.md §3.1.1 + /tmp/vault-recovery-design.md
  */
 
+import { atLeastChars, countChars, moreThanChars } from '../../shared/inputCeiling';
+import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../../shared/tokenInput';
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
-import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
+import { webCryptoUnavailableReason } from './webCrypto';
+import {
+  AES_GCM_IV_BYTES,
+  LEGACY_KDF_ITERATIONS,
+  PBKDF2_ITERATIONS as SHARED_ITERATIONS,
+} from '../../shared/cryptoParams';
 
 // Constants below are pinned by integration behavior (DB name / iterations
 // / byte counts) but the exact string values & default arrows are not
@@ -34,10 +41,35 @@ const PBKDF2_ITERATIONS = SHARED_ITERATIONS;
 /** Minimum master-password length for new vaults / password resets. */
 export const MIN_PASSWORD_LENGTH = 12;
 
+/**
+ * 保管する資格情報 1 件の文字数の天井 (2026-09-12 · パス 167 で名前を付けた)。
+ *
+ * `setToken` の条件・その断りの文面・`SettingsPage` の入力欄 `maxLength` の
+ * **3 か所に字面の 8192 が在った**。同じ判断なので 1 つにする
+ * (`shared/recordEntryLimits.ts` が 2026-08-23 に同じ理由で作られている)。
+ * 安全上限なので `parameters.ts` の台帳には載せない (CLAUDE.md の規則)。
+ */
+export const MAX_TOKEN_CHARS = 8192;
+
 const SALT_BYTES = 32;
 const IV_BYTES = AES_GCM_IV_BYTES;
 const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
 // Stryker restore StringLiteral
+/**
+ * マスターパスワードの**文字数の上限** (2026-09-14 · パス 252 で名前を付けた)。
+ *
+ * 2026-09-14 まで `256` は**条件 3 か所と文面 3 か所**に字面で在った (計 6 写し) ——
+ * パス 167 が入力欄の天井で直したのと同じ形。安全上限なので `parameters.ts` の
+ * 台帳には載せない (CLAUDE.md の規則)。
+ *
+ * PBKDF2 は入力の長さを問わないので、これは鍵の強さの話ではなく
+ * **際限のない入力を受けない**ための床である。
+ *
+ * **`Stryker disable StringLiteral` の範囲の外に置く** —— 数値なので
+ * 文字列の無効化とは無関係で、中に入れると `lint:mutation-scope` が
+ * 「広い無効化が 34 行に増えた」と正しく鳴った (2026-09-14 に実測)。
+ */
+export const MAX_PASSWORD_CHARS = 256;
 
 /**
  * パスワードが**現在の**下限を満たすか。
@@ -57,10 +89,95 @@ const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
  * `unlock` は通さない。混ぜると `unlock` が既存の保管庫を閉め出す。
  */
 export function meetsPasswordPolicy(password: string): boolean {
-  return password.length >= MIN_PASSWORD_LENGTH;
+  /*
+   * **数えるのは文字で、コード単位ではない。** (2026-09-14 · パス 252)
+   *
+   * パス 195 は**天井**を文字単位へ揃えたが、**床**は見ていなかった。この同じ
+   * ファイルの `setToken` は既に `countChars(token) > MAX_TOKEN_CHARS` と
+   * 文字で数えており、**床だけが `password.length`** だった。
+   *
+   * 実測 (2026-09-14): 画面と例外は 9 か所で「12 文字以上」と述べるのに、
+   * `'😀'.repeat(6)` (実文字数 **6**・コード単位 12) が通っていた ——
+   * **宣言した床の半分で満たせた**。BMP の外の文字を混ぜるほど床は下がり、
+   * `'😀😀😀' + 'a'.repeat(6)` (実文字数 9) も通っていた。
+   *
+   * `atLeastChars` は 12 文字目で切り上げるので、長さに依らず安い
+   * (`countChars` は最後まで辿る)。
+   */
+  return atLeastChars(password, MIN_PASSWORD_LENGTH);
 }
 
-export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked';
+/**
+ * 保管庫の状態。**`unreadable` は 2026-09-06 に足した。**
+ *
+ * それまで `status()` は「保管庫が無い」と「保管庫を読めない」の両方に
+ * `uninitialized` を返しており、ロック画面は読めないだけの端末へ
+ * **「ようこそ — はじめてのご利用」「マスターパスワードを 1 つだけ設定してください」**
+ * を出していた。トークンを預けている本人に対して**初回起動の画面**を見せることになる。
+ *
+ * `initialize()` は書く前にもう一度読んで「既に初期化されています」と断るので、
+ * **アプリが上書きすることはない** (読み出しの安全側と書き込みの安全側は逆向き ——
+ * `main/secrets.ts` の注記と同じ)。危ないのは画面の主張のほうで、
+ * 「消えた」と読んだ利用者はサイトデータの削除や再インストールへ進みうる ——
+ * そちらは**本当に消える**。
+ */
+export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked' | 'unreadable';
+
+/**
+ * ハードリセットが**実際に何をしたか**。
+ *
+ * ## なぜ戻り値が要るのか (2026-09-07 実測)
+ *
+ * `wipeAndReset` は `onsuccess` / `onerror` / `onblocked` の**どれでも
+ * `resolve()`** していた (UI をハングさせないため —— その判断は正しい)。
+ * ところが呼ぶ側は 2 か所とも「解決したら消えた」と読み、無条件で
+ * `window.location.reload()` していた。つまり
+ *
+ *  - **他のタブが IndexedDB の接続を掴んでいると削除できない** (`onblocked`)。
+ *    それでも画面は再読込へ進み、**データは残ったまま**「最初のセットアップ画面に
+ *    戻ります」の約束だけが破れる (保管庫はまだ初期化済みなので、戻るのは
+ *    ロック解除の画面)。理由はどこにも出ない。
+ *  - 唯一の報せは `console.warn` で、**利用者には見えない**。しかも 500ms 後の
+ *    後追い確認は、直後の `reload()` で**タイマーごと消える** ——
+ *    原理的に誰にも届かない診断だった (だから消した)。
+ *
+ * 画面の文面は「保管中の全トークン・暗号化メタデータ・現在のリカバリーキーが
+ * **復旧不可**な形で消去されます」で、消えなかった場合と同じ顔をしていた。
+ * ロック画面側の「完全初期化」はもっと悪く、**閉じ出された本人**が押すので、
+ * 何も消えずに同じロック画面へ戻っても「ボタンが壊れている」としか見えない。
+ *
+ * 解決を保ったまま**結果を返す**ことで、呼ぶ側が「消えた時だけ再読込する」と
+ * 書ける。`resolve` を捨てて `throw` にしないのは、ハングさせない元の判断を
+ * 崩さないため。
+ */
+export type WipeOutcome = 'deleted' | 'blocked' | 'failed';
+
+/**
+ * ハードリセットの結果を、利用者への 1 行にする。
+ *
+ * **文言を 1 か所にする**ため。呼ぶ側は設定ページとロック画面の 2 つで、
+ * 同じ結果に違う説明を出す理由が無い (打ち手はどちらも「他のタブを閉じる」)。
+ */
+export function describeWipeOutcome(outcome: WipeOutcome): string | null {
+  if (outcome === 'deleted') return null;
+  if (outcome === 'blocked') {
+    return '削除できませんでした — このアプリを開いている他のタブが保管庫を使用中です。'
+      + '他のタブをすべて閉じてから、もう一度実行してください。データは残っています。';
+  }
+  return '削除できませんでした — 保管庫の削除がブラウザに拒否されました。'
+    + 'ページを再読み込みしてから、もう一度実行してください。データは残っています。';
+}
+
+/**
+ * 読めなかったときにロック画面が出す 1 行。**現実に起こる 2 つの原因と、
+ * それぞれの打ち手を両方載せる** (どちらかを断定できないため)。
+ */
+export const VAULT_UNREADABLE_TEXT =
+  'この端末の保管庫を確認できませんでした。'
+  + 'はじめての利用のように見えても、預けたトークンが消えたとは限りません。'
+  + 'プライベートウィンドウで開いている場合は通常のウィンドウで開き直し、'
+  + '保存領域が一杯の場合はライブラリの不要なファイルを削除してから、'
+  + 'この画面の「もう一度確認」を押してください。';
 
 export interface InitResult {
   /** 24-word BIP-39 mnemonic. Caller MUST display once + discard. */
@@ -150,8 +267,10 @@ export interface Vault {
    *  Recovery key rotation is not supported. The mnemonic from initialize()
    *  is permanent unless the user calls wipeAndReset() and re-initializes. */
   rotateRecoveryKey(): Promise<string>;
-  /** Hard reset (for users who lost both password and mnemonic). */
-  wipeAndReset(): Promise<void>;
+  /** Hard reset (for users who lost both password and mnemonic).
+   *  **必ず解決する** (UI をハングさせない) ので、消えたかどうかは
+   *  戻り値で見ること —— `WipeOutcome` の注記に経緯がある。 */
+  wipeAndReset(): Promise<WipeOutcome>;
 }
 
 // --- IndexedDB helpers ------------------------------------------------
@@ -265,6 +384,16 @@ interface VaultMeta {
 
   // ── Recovery branch (Phase E). Optional for backward compat with
   // legacy vaults created before this feature shipped. ────────────
+  /**
+   * リカバリー枝**専用**の反復回数 (パス 239)。
+   *
+   * `iterations` (上) と共用にはできない —— あちらはパスワード枝の持ち物で、
+   * `changePassword` が**今の定数**へ書き換える。リカバリー枝は包み直さない
+   * ので、共用にすると片方を直した瞬間にもう片方が開けなくなる。
+   *
+   * 欄が無い古い meta は `LEGACY_KDF_ITERATIONS` で開く。
+   */
+  recoveryIterations?: number;
   recoverySalt?: Uint8Array;        // 32 bytes, PBKDF2 salt for recovery key
   recoveryIv?: Uint8Array;          // 12 bytes, IV for KCV under recovery key
   recoveryKcv?: Uint8Array;         // ciphertext of KCV_PLAINTEXT under recovery key
@@ -292,7 +421,6 @@ interface VaultMeta {
   recoveryVersion?: number;
 }
 
-// Stryker disable next-line StringLiteral
 const RECOVERY_DERIVATION_PREFIX_V1 = 'service-hub-bip39-recovery-v1:';
 
 interface EncryptedToken {
@@ -338,6 +466,19 @@ function tokenAad(serviceId: string): Uint8Array {
 // either breaks at runtime (caught by integration tests) or makes no
 // observable difference (decorative).
 async function deriveKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
+  /*
+   * **WebCrypto が無い端末では、ここが最初に触る所である** (パス 171)。
+   *
+   * 素のまま呼ぶと `Cannot read properties of undefined (reading 'importKey')` に
+   * なり、`LockScreen` と設定画面はその `message` をそのまま出す —— 内部 API の
+   * 名前しか言わないので、読んだ人に打てる手が無い。
+   *
+   * `crypto.subtle` は**安全なコンテキストにしか無い**ので、単一 HTML を平文の
+   * `http://` で社内サーバや LAN の IP から配ると必ずここを通る。文面は
+   * `webCrypto.ts` が 1 つだけ持つ (パス 169 で OAuth の節に付けたのと同じ物)。
+   */
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
   const baseKey = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(password) as BufferSource,
@@ -405,11 +546,46 @@ async function decryptString(
  *  v1 is the default for new vaults; v0 exists strictly for backward
  *  compat with vaults persisted before the prefix was introduced.
  */
+/*
+ * **ここに `assertSaltBytes` は要らない** —— 2026-09-14 (パス 238) に調べて、
+ * 意図的に置かないと決めた。同じ問いで一度立ち止まる人が必ず出るので理由を残す。
+ *
+ * パスワードの道 (`unlock` / `changePassword`) は `meta.salt` に
+ * `assertSaltBytes` を掛けている。salt の仕事は**利用者をまたいだ事前計算を
+ * 壊すこと**で、保管領域へ書ける相手が salt を固定値へ差し替えると、
+ * **入力の取りうる範囲が狭いとき**に表が使い回せる —— パスワードはまさにそれ。
+ *
+ * こちらの入力は 24 語の BIP-39 (`security/mnemonic.ts`: 256 bit entropy)
+ * である。2^256 に対する事前計算には意味が無いので、salt を短く・固定に
+ * されても攻撃側の得る物は 0 になる。下の timing の注記が同じ根拠
+ * (「recovery key has 256-bit entropy (~2^256 brute-force cost)」) で
+ * 別の side-channel を受け入れているのと同じ理屈である。
+ *
+ * 反復回数は**保管値を読む** (`meta.recoveryIterations`、パス 239 で足した)。
+ * 呼ぶ側が `assertKdfIterations` を掛けてから渡す —— パスワードの道と同じ扱い。
+ * 2026-09-14 まではこの関数が定数を読んでいて、**定数を上げた瞬間に世に出て
+ * いるリカバリーキーが全部無効になる**形だった (しかも見え方は
+ * 「リカバリーキーが違います」で、原因を指さない)。
+ *
+ * 短い `recoverySalt` が起きたときの見え方は「リカバリーキーが違います」に
+ * なる (別の鍵が出て KCV の GCM 認証が落ちる)。**保管値が壊れているのに
+ * 合言葉を疑わせる**のは案内としては良くないが、断り方を変えると
+ * `recoverWithMnemonic` の契約 (誤りは 1 種類の文言) が動くので、
+ * 利害を測ってから触ること —— パス 237 で `loadMeta` 側に床を置いて
+ * 解錠の契約を壊しかけた前例が在る (`data/recordEncryption.ts` の注記)。
+ */
 async function deriveKeyFromMnemonic(
   mnemonic: string,
   salt: Uint8Array,
   version: number | undefined,
+  iterations: number,
 ): Promise<CryptoKey> {
+  // 鍵を作る所は**すべて**守る (パス 171)。`crypto.subtle` が無い端末では
+  // ここが最初に触る所になりうる —— 守り漏れが 1 つ在ると、その経路だけが
+  // 素の TypeError を見せる (この形を何度も直してきた)。
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
+
   const normalized = normalizeMnemonic(mnemonic);
   const pbkdf2Input = version === 1 ? RECOVERY_DERIVATION_PREFIX_V1 + normalized : normalized;
   const baseKey = await crypto.subtle.importKey(
@@ -420,7 +596,7 @@ async function deriveKeyFromMnemonic(
     ['deriveKey'],
   );
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: salt as BufferSource, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: 'SHA-256' },
     baseKey,
     { name: 'AES-GCM', length: 256 },
     false,
@@ -432,6 +608,12 @@ async function deriveKeyFromMnemonic(
  *  initialize() and recoverWithMnemonic() — the extractable handle is
  *  scoped to the function body and dereferenced before return. */
 async function generateMasterKey(): Promise<CryptoKey> {
+  // 鍵を作る所は**すべて**守る (パス 171)。`crypto.subtle` が無い端末では
+  // ここが最初に触る所になりうる —— 守り漏れが 1 つ在ると、その経路だけが
+  // 素の TypeError を見せる (この形を何度も直してきた)。
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
+
   return crypto.subtle.generateKey(
     { name: 'AES-GCM', length: 256 },
     true, // extractable — required so we can wrap it for the recovery branch
@@ -447,6 +629,19 @@ async function exportRawKey(key: CryptoKey): Promise<Uint8Array> {
 
 /** Re-import raw key bytes as a non-extractable handle for runtime use. */
 async function importNonExtractable(raw: Uint8Array): Promise<CryptoKey> {
+  /*
+   * ここも鍵を作る呼び (`importKey`) なので守る (パス 171)。
+   *
+   * **実際には `deriveKey` が先に走るので、この行に到達する経路は無い。**
+   * それでも置くのは、「どれが最初か」を呼び順の読みで決めるのが
+   * **このパスで既に 1 度外れた**から —— `deriveKey` だけを守って直したつもりが、
+   * `initialize` は `generateMasterKey` を先に触っていた。規則は
+   * 「鍵を作る所はすべて守る」に固定し、走査で数える
+   * (`__tests__/webCryptoGuardCensus.test.ts`)。
+   */
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
+
   return crypto.subtle.importKey(
     'raw',
     raw as BufferSource,
@@ -506,28 +701,31 @@ class BrowserVault implements Vault {
   /** 解錠に使われたパスワードが下限を満たしたか (メモリのみ・保存しない)。 */
   private policyOk: boolean | null = null;
 
+  /**
+   * 状態を見る。**投げない** —— 投げると呼び出し側 (App) がハングして
+   * ログイン画面に到達できなくなる。ただし**読めなかったことは
+   * `uninitialized` と混ぜない** (2026-09-06)。混ぜていた頃は、
+   * 読めないだけの端末に初回起動の画面が出ていた。
+   */
   async status(): Promise<VaultStatus> {
     let db: IDBDatabase;
-    // DB を開けない環境 (プライベートモード等) では「未初期化」として扱う。
-    // fake-indexeddb では失敗させられず、この catch には到達しない。
-    /* Stryker disable BlockStatement,StringLiteral */
+    // DB を開けない環境 (プライベートウィンドウ・保存領域が一杯) は
+    // 「保管庫が無い」ではなく「確認できない」。
     try {
       db = await openDb();
     } catch {
-      return 'uninitialized';
+      return 'unreadable';
     }
-    /* Stryker restore BlockStatement,StringLiteral */
-    // idbGet が reject すると status() が reject し、呼び出し側 (App) が
-    // ハングしてログイン画面が出なくなる。読み取り失敗時は meta 未取得のまま
-    // 下の `!meta` 分岐に落とし、uninitialized を返してロック画面に到達させる。
     let meta: VaultMeta | undefined;
+    let readFailed = false;
     try {
       meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
     } catch {
-      // 読取失敗 → meta は undefined のまま (下で uninitialized を返す)
+      readFailed = true;
     } finally {
       db.close();
     }
+    if (readFailed) return 'unreadable';
     if (!meta) return 'uninitialized';
     return this.currentKey ? 'unlocked' : 'locked';
   }
@@ -546,8 +744,8 @@ class BrowserVault implements Vault {
     if (typeof password !== 'string' || !meetsPasswordPolicy(password)) {
       throw new Error(`パスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
-    if (password.length > 256) {
-      throw new Error('パスワードが長すぎます (256 字以内)');
+    if (moreThanChars(password, MAX_PASSWORD_CHARS)) {
+      throw new Error(`パスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
     const db = await openDb();
     try {
@@ -575,7 +773,12 @@ class BrowserVault implements Vault {
         const entropy = generateEntropy();
         const mnemonic = await encodeMnemonic(entropy);
         const recoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-        const recoveryKey = await deriveKeyFromMnemonic(mnemonic, recoverySalt, 1);
+        const recoveryKey = await deriveKeyFromMnemonic(
+          mnemonic,
+          recoverySalt,
+          1,
+          PBKDF2_ITERATIONS,
+        );
         const recoveryKcv = await encryptString(recoveryKey, KCV_PLAINTEXT);
         const recoveryWrap = await wrapMasterForRecovery(masterRaw, recoveryKey);
 
@@ -584,6 +787,7 @@ class BrowserVault implements Vault {
           iv: kcv.iv,
           kcv: kcv.ciphertext,
           iterations: PBKDF2_ITERATIONS,
+          recoveryIterations: PBKDF2_ITERATIONS,
           recoverySalt,
           recoveryIv: recoveryKcv.iv,
           recoveryKcv: recoveryKcv.ciphertext,
@@ -708,9 +912,28 @@ class BrowserVault implements Vault {
     if (typeof serviceId !== 'string' || serviceId.length === 0 || serviceId.length > 64) {
       throw new Error('serviceId が不正です');
     }
-    if (typeof token !== 'string' || token.length === 0 || token.length > 8192) {
-      throw new Error('token が不正です (1-8192 字)');
+    if (typeof token !== 'string' || token.length === 0 || countChars(token) > MAX_TOKEN_CHARS) {
+      throw new Error(`token が不正です (1-${MAX_TOKEN_CHARS} 字)`);
     }
+    /*
+     * **保管層の床 (2026-09-14 · パス 245)。**
+     *
+     * パス 244 は資格情報の**入口**を `shared/tokenInput.ts` の規則へ通したが、
+     * ここを**直接**叩く書き込みが残っていた —— `SettingsPage.tsx` の Google
+     * トークン 4 本 (`v.setToken('drive', tok.accessToken)` ほか) は画面の関門を
+     * 経由しない。中身は認可サーバの発行値なので制御文字は入りにくいが、
+     * **「入りにくい」は関門ではない**。制御文字がヘッダに載ると
+     * `new Headers()` が値ごと文面に載せて投げ、その文面は画面へ出る
+     * (`shared/__tests__/headerValueLeak.test.ts` が 10 経路で実測)。
+     *
+     * 入口を 1 本ずつ数えて塞ぐ形は「n か所のうち n-1 か所を直した」を生むので、
+     * **床はここに置く**。規則の綴りは `hasControlChars` だけが持つ。
+     *
+     * **限界**: `JSON.stringify` は制御文字をエスケープ列へ逃がすので、
+     * 包んだ値 (assistant のマルチプロバイダ資格情報) は床を通る。包みの中は
+     * 包む側の画面が断る (`AssistantPage.saveAgentCreds`・パス 244)。
+     */
+    if (hasControlChars(token)) throw new Error(CONTROL_CHAR_MESSAGE);
     const db = await openDb();
     try {
       // 待っている間に施錠されていたら、**書かずに**施錠の文言で落とす。
@@ -877,8 +1100,8 @@ class BrowserVault implements Vault {
     if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
       throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
-    if (newPassword.length > 256) {
-      throw new Error('新しいパスワードが長すぎます (256 字以内)');
+    if (moreThanChars(newPassword, MAX_PASSWORD_CHARS)) {
+      throw new Error(`新しいパスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
     const db = await openDb();
     try {
@@ -980,8 +1203,8 @@ class BrowserVault implements Vault {
     if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
       throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
-    if (newPassword.length > 256) {
-      throw new Error('新しいパスワードが長すぎます (256 字以内)');
+    if (moreThanChars(newPassword, MAX_PASSWORD_CHARS)) {
+      throw new Error(`新しいパスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
     // Validate mnemonic BEFORE opening IDB (cheap rejection → no leaked
     // connection if mnemonic is malformed / has unknown words / bad checksum).
@@ -1009,10 +1232,17 @@ class BrowserVault implements Vault {
       // dominating any timing-channel speedup.
       // Use the same version the vault was initialized under, so legacy
       // (v0, prefix-less) and new (v1, prefixed) vaults both work.
+      //
+      // 反復回数も**その金庫が使った回数**で導出する (パス 239)。欄が出来る前に
+      // 書かれた meta には無いので、凍結値へ倒す。範囲の確認はパスワードの道
+      // (`unlock` / `changePassword`) と同じ —— 保存領域から来た数だから。
+      const recoveryIterations = meta.recoveryIterations ?? LEGACY_KDF_ITERATIONS;
+      assertKdfIterations(recoveryIterations);
       const recoveryKey = await deriveKeyFromMnemonic(
         mnemonic,
         meta.recoverySalt,
         meta.recoveryVersion,
+        recoveryIterations,
       );
       try {
         const plain = await decryptString(recoveryKey, {
@@ -1048,6 +1278,14 @@ class BrowserVault implements Vault {
           salt: newSalt,
           iv: newKcv.iv,
           kcv: newKcv.ciphertext,
+          // **導出に使った回数を書き残す** (パス 239)。上の `deriveKey` は
+          // `PBKDF2_ITERATIONS` で新しいパスワード鍵を作っているのに、
+          // 2026-09-14 まではこの行が無く `...meta` の古い回数が残っていた。
+          // `unlock` は保管値を読む (それ自体は正しい前方互換) ので、
+          // 保管値 ≠ 定数の金庫で復旧すると **今設定したばかりのパスワードが
+          // 二度と通らない** —— しかもリカバリーキーは使い切っている。
+          // `changePassword` は最初からこの行を持っていた。揃える。
+          iterations: PBKDF2_ITERATIONS,
         };
 
         // ── Legacy v0 → v1 silent auto-migration ────────────────────
@@ -1070,14 +1308,14 @@ class BrowserVault implements Vault {
           try {
             const migratedRecoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
             const migratedRecoveryKey = await deriveKeyFromMnemonic(
-              mnemonic,
-              migratedRecoverySalt,
-              1,
+              mnemonic, migratedRecoverySalt, 1, PBKDF2_ITERATIONS,
             );
             const migratedRecoveryKcv = await encryptString(migratedRecoveryKey, KCV_PLAINTEXT);
             const migratedRecoveryWrap = await wrapMasterForRecovery(masterRaw, migratedRecoveryKey);
             newMeta = {
               ...newMeta,
+              // 包み直したのだから、包んだ回数もこちらで書き残す (パス 239)。
+              recoveryIterations: PBKDF2_ITERATIONS,
               recoverySalt: migratedRecoverySalt,
               recoveryIv: migratedRecoveryKcv.iv,
               recoveryKcv: migratedRecoveryKcv.ciphertext,
@@ -1137,68 +1375,35 @@ class BrowserVault implements Vault {
     );
   }
 
-  async wipeAndReset(): Promise<void> {
-    this.currentKey = null;
-    // wipeAndReset is best-effort idempotent cleanup.
+  async wipeAndReset(): Promise<WipeOutcome> {
+    // **必ず解決し、何が起きたかを返す。**
     //
     // multi-tab edge case (onblocked): if another tab still holds an open
     // connection to the same DB, IndexedDB cannot delete it and fires
-    // onblocked instead of onsuccess. We resolve the Promise either way
-    // (so the UI doesn't hang forever) but emit console.warn so the user
-    // sees that the wipe was incomplete, and schedule a 500ms post-check
-    // via indexedDB.databases() to confirm the DB really went away once
-    // the other tab releases its handle.
+    // onblocked instead of onsuccess. 投げないのは元の判断のまま (UI を
+    // ハングさせない) だが、`'blocked'` を返すので**呼ぶ側が「消えた時だけ
+    // 再読込する」と書ける** —— 直す前は解決だけを見て無条件に再読込しており、
+    // データが残ったまま「消去しました」と同じ画面になっていた。
     //
-    // onerror is similarly best-effort: the typical cause (storage quota
-    // exceeded mid-delete, OS file lock) is recoverable on the next call.
+    // onerror も同じ扱い。典型的な原因 (削除中の容量超過・OS のファイル錠) は
+    // 次回の呼び出しで回復しうるので、利用者に「もう一度」と言えれば足りる。
     //
-    // Unit-testing these branches requires mocking IndexedDB to surface
-    // error/blocked states, which the current test stack (fake-indexeddb)
-    // does not expose cleanly — hence the Stryker-disable on the callbacks.
-    await new Promise<void>((resolve) => {
+    // 以前ここに在った「500ms 後に `indexedDB.databases()` で本当に消えたか
+    // 見る」後追い診断は**消した** —— 報せ先が `console.warn` しか無く、
+    // しかも呼ぶ側が直後に `location.reload()` するので**タイマーごと消えて
+    // いた**。原理的に誰にも届かない診断を残すより、結果を返すほうが良い。
+    const outcome = await new Promise<WipeOutcome>((resolve) => {
       const req = indexedDB.deleteDatabase(DB_NAME);
-      req.onsuccess = () => resolve();
-      // Stryker disable next-line ArrowFunction
-      req.onerror = () => resolve();
-      // 他のタブが接続を掴んでいるときだけ発火する。単一プロセスのテストでは
-      // 作れず到達しない。
-      /* Stryker disable BlockStatement,StringLiteral,ArrowFunction */
-      req.onblocked = () => {
-        console.warn(
-          '[vault] wipeAndReset blocked — another tab is still holding the IndexedDB. ' +
-            'Close all other tabs of this app and try again.',
-        );
-        /* Stryker restore BlockStatement,StringLiteral,ArrowFunction */
-        // Best-effort follow-up: check whether the DB is actually gone
-        // after a short delay (the other tab might close in the meantime).
-        // We don't await this — wipeAndReset() must return promptly so the
-        // UI can re-render even if cleanup is incomplete.
-        // The entire diagnostic block below runs ONLY on the onblocked
-        // branch, which fake-indexeddb cannot simulate cleanly (see comment
-        // above). Every mutant inside is unreachable from the test suite
-        // by construction → disable Stryker for the whole follow-up block.
-        // Stryker disable all
-        setTimeout(() => {
-          // indexedDB.databases() is a relatively new API; older browsers
-          // (Safari < 14) may not implement it. Guard accordingly.
-          if (typeof indexedDB.databases !== 'function') return;
-          indexedDB
-            .databases()
-            .then((dbs) => {
-              if (dbs.some((d) => d.name === DB_NAME)) {
-                console.warn(
-                  '[vault] wipeAndReset: IndexedDB still present after 500ms — ' +
-                    'manual cleanup required (close other tabs / clear site data).',
-                );
-              }
-            })
-            // Swallow — this is purely diagnostic.
-            .catch(() => {});
-        }, 500);
-        // Stryker restore all
-        resolve();
-      };
+      req.onsuccess = () => resolve('deleted');
+      req.onerror = () => resolve('failed');
+      req.onblocked = () => resolve('blocked');
     });
+    // **消えた時だけ鍵を落とす。** 消せなかったなら何も変わっていないので、
+    // 半分だけ適用しない —— 落としてしまうと呼ぶ側の画面は「解錠のまま鍵は
+    // 死んでいる」状態になり、2026-09-06 に直したのと同じ食い違いを作る。
+    // 利用者は他のタブを閉じてもう一度押せる。
+    if (outcome === 'deleted') this.currentKey = null;
+    return outcome;
   }
 }
 

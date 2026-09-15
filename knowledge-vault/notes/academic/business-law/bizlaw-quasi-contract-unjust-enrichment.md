@@ -39,9 +39,9 @@ aliases:
 - [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — 同じ思想家
 - [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同じ思想家
 - [[bizlaw-tracing-equity|エクイティ上の追及——価値を新たな財産へと追いかける]] — 同じ思想家
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
-- [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

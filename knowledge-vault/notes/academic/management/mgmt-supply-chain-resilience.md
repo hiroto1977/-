@@ -34,7 +34,6 @@ aliases:
 - [[econ-externality-market-failure|外部性と市場の失敗]] — 出典を共有
 - [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 出典を共有
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 出典を共有
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
 - [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 同分野の近傍
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍
 - [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍

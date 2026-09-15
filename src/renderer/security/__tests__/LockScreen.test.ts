@@ -17,6 +17,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createElement, act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { LOCK_CHANNEL, LOCK_MESSAGE } from '../lockWorkspace';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -25,14 +26,15 @@ const MNEMONIC_24 =
   'abandon ability able about above absent absorb abstract absurd abuse access accident ' +
   'account accuse achieve acid acoustic acquire across act action actor actress actual';
 
-let vaultStatus: 'uninitialized' | 'locked' | 'unlocked' = 'locked';
+let vaultStatus: 'uninitialized' | 'locked' | 'unlocked' | 'unreadable' = 'locked';
 let unlockImpl: (pw: string) => Promise<void> = async () => {};
 let initializeImpl: (pw: string) => Promise<{ mnemonic: string }> = async () => ({
   mnemonic: MNEMONIC_24,
 });
 let recoverImpl: (m: string, pw: string) => Promise<void> = async () => {};
-let wipeImpl: () => Promise<void> = async () => {};
-let statusImpl: () => Promise<'uninitialized' | 'locked' | 'unlocked'> = async () => vaultStatus;
+let wipeImpl: () => Promise<'deleted' | 'blocked' | 'failed'> = async () => 'deleted';
+let statusImpl: () => Promise<'uninitialized' | 'locked' | 'unlocked' | 'unreadable'> = async () =>
+  vaultStatus;
 const calls: { name: string; args: unknown[] }[] = [];
 
 vi.mock('../vault', async (importOriginal) => ({
@@ -41,6 +43,11 @@ vi.mock('../vault', async (importOriginal) => ({
   // ここに `12` と直書きすると、定数を変えたときにモックだけ古くなり、
   // 「画面と定数がずれていないか」を見ている当の検査が嘘をつく。
   MIN_PASSWORD_LENGTH: (await importOriginal<typeof import('../vault')>()).MIN_PASSWORD_LENGTH,
+  // 「保管庫を確認できません」の文面も同じ理由で**本物を読み直す** (2026-09-06)。
+  VAULT_UNREADABLE_TEXT: (await importOriginal<typeof import('../vault')>()).VAULT_UNREADABLE_TEXT,
+  // 結果を 1 行にする関数も**本物を読み直す** (2026-09-07)。文面をここへ写すと、
+  // 「画面が結果どおりの理由を出しているか」を見ている当の検査が嘘をつく。
+  describeWipeOutcome: (await importOriginal<typeof import('../vault')>()).describeWipeOutcome,
   getVault: () => ({
     status: async () => statusImpl(),
     unlock: async (pw: string) => {
@@ -59,8 +66,25 @@ vi.mock('../vault', async (importOriginal) => ({
       calls.push({ name: 'wipeAndReset', args: [] });
       return wipeImpl();
     },
+    // 完全初期化は消す前に**他のタブへ施錠を配るだけ** —— このタブを施錠すると
+    // 画面が差し替わって結果を報せられない。配ったことは線の上で見る。
+    lock: () => {
+      calls.push({ name: 'lock', args: [] });
+    },
   }),
 }));
+
+/** 上限つきで「1 件届く」を待つ (BroadcastChannel の配達はタスク)。 */
+function waitFor(seen: string[], ms = 2000): Promise<void> {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const tick = (): void => {
+      if (seen.length > 0 || Date.now() - started >= ms) return resolve();
+      setTimeout(tick, 5);
+    };
+    tick();
+  });
+}
 
 // --- レンダリングの足回り --------------------------------------------------
 let container: HTMLDivElement;
@@ -103,7 +127,7 @@ beforeEach(() => {
   unlockImpl = async () => {};
   initializeImpl = async () => ({ mnemonic: MNEMONIC_24 });
   recoverImpl = async () => {};
-  wipeImpl = async () => {};
+  wipeImpl = async () => 'deleted';
   statusImpl = async () => vaultStatus;
   vi.resetModules();
 });
@@ -548,11 +572,23 @@ describe('完全初期化の実行', () => {
       configurable: true,
       value: { ...window.location, reload },
     });
-    await openResetAndAgree();
-    await click(buttonSaying('全て消去して初回設定に戻る'));
-    expect(calls).toEqual([{ name: 'wipeAndReset', args: [] }]);
-    // 状態を作り直すため読み込み直す (消した直後の画面を使わせない)。
-    expect(reload).toHaveBeenCalledTimes(1);
+    const wire = new BroadcastChannel(LOCK_CHANNEL);
+    const announced: string[] = [];
+    wire.onmessage = (e: MessageEvent) => announced.push(String(e.data));
+    try {
+      await openResetAndAgree();
+      await click(buttonSaying('全て消去して初回設定に戻る'));
+      expect(calls).toEqual([{ name: 'wipeAndReset', args: [] }]);
+      // **このタブは施錠しない** —— 施錠すると画面が差し替わって結果を報せられない。
+      expect(calls.some((c) => c.name === 'lock')).toBe(false);
+      // 他のタブへは配る (消えた後の保管庫へ古い鍵で書かせない)。
+      await waitFor(announced);
+      expect(announced).toEqual([LOCK_MESSAGE]);
+      // 状態を作り直すため読み込み直す (消した直後の画面を使わせない)。
+      expect(reload).toHaveBeenCalledTimes(1);
+    } finally {
+      wire.close();
+    }
   });
 
   it('消去に失敗したら理由を出し、押し直せる状態に戻す', async () => {
@@ -564,6 +600,42 @@ describe('完全初期化の実行', () => {
     expect(container.textContent).toContain('IndexedDB が開けません');
     // busy のまま固まると、二度と押せない画面になる。
     expect(buttonSaying('全て消去して初回設定に戻る')!.disabled).toBe(false);
+  });
+
+  /*
+   * **消えていないのに再読込していた** (2026-09-07 実測)。
+   *
+   * `wipeAndReset` は `onblocked` (他のタブが保管庫を掴んでいる) でも解決する
+   * ので、ここは投げない失敗を「消えた」と読み、無条件で `location.reload()`
+   * していた。**閉じ出された本人**が押す最後の手段なので、何も消えずに同じ
+   * ロック画面へ戻れば「ボタンが壊れている」としか見えない。
+   */
+  it('★ 他のタブが掴んでいて消せなかったら、理由を出して再読込しない', async () => {
+    const reload = vi.fn();
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { ...window.location, reload },
+    });
+    wipeImpl = async () => 'blocked';
+    await openResetAndAgree();
+    await click(buttonSaying('全て消去して初回設定に戻る'));
+    expect(container.textContent).toContain('他のタブ');
+    expect(container.textContent).toContain('データは残っています');
+    expect(reload).not.toHaveBeenCalled();
+    expect(buttonSaying('全て消去して初回設定に戻る')!.disabled).toBe(false);
+  });
+
+  it('★ ブラウザに拒まれたときも、理由を出して再読込しない', async () => {
+    const reload = vi.fn();
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { ...window.location, reload },
+    });
+    wipeImpl = async () => 'failed';
+    await openResetAndAgree();
+    await click(buttonSaying('全て消去して初回設定に戻る'));
+    expect(container.textContent).toContain('拒否');
+    expect(reload).not.toHaveBeenCalled();
   });
 });
 
@@ -615,13 +687,56 @@ describe('リカバリーキーのダウンロード', () => {
 });
 
 describe('ボールトの状態が読めないとき', () => {
-  it('状態の取得に失敗しても画面は出す (真っ白にしない)', async () => {
+  /*
+   * **「はじめての利用」と言わない。** ここは元々「状態の取得に失敗しても
+   * 画面は出す (真っ白にしない)」だけを見ており、出ていたのは
+   * **初回設定のパスワード欄**だった —— トークンを預けている本人に
+   * 「ようこそ」と告げる画面である。真っ白にしないことは変えずに、
+   * 出す物を変えた (2026-09-06)。
+   */
+  it('★ 状態の取得が投げたら「確認できません」を出す (画面は出る)', async () => {
     statusImpl = async () => {
       throw new Error('IndexedDB unavailable');
     };
     await mount();
-    // 何かしら操作できる画面が出ていること。
-    expect(pwInputs().length).toBeGreaterThan(0);
+    const alert = container.querySelector('[data-vault-unreadable]');
+    expect(alert, '真っ白になっている').not.toBeNull();
+    expect(alert?.getAttribute('role')).toBe('alert');
+    expect(alert?.textContent).toContain('保管庫を確認できませんでした');
+    expect(alert?.textContent).toContain('消えたとは限りません');
+  });
+
+  it('★ unreadable のときはパスワード欄を出さない (行き止まりへ連れて行かない)', async () => {
+    vaultStatus = 'unreadable';
+    await mount();
+    expect(container.textContent).toContain('保管庫を確認できません');
+    expect(pwInputs(), 'パスワード欄が出ている').toHaveLength(0);
+    expect(container.textContent).not.toContain('はじめてのご利用');
+  });
+
+  it('★ 「もう一度確認」で読み直す (原因は直せることが多い)', async () => {
+    let calls = 0;
+    statusImpl = async () => {
+      calls += 1;
+      return calls === 1 ? 'unreadable' : 'locked';
+    };
+    await mount();
+    expect(container.querySelector('[data-vault-unreadable]')).not.toBeNull();
+    const again = Array.from(container.querySelectorAll('button')).find(
+      (b) => b.textContent === 'もう一度確認',
+    );
+    expect(again, '再確認のボタンが無い').toBeTruthy();
+    await click(again!);
+    expect(container.querySelector('[data-vault-unreadable]')).toBeNull();
+    expect(pwInputs().length, '解錠画面に進んでいない').toBeGreaterThan(0);
+  });
+
+  it('対照: 本当に未初期化なら、これまでどおり初回設定を出す', async () => {
+    vaultStatus = 'uninitialized';
+    await mount();
+    expect(container.textContent).toContain('はじめてのご利用');
+    expect(container.querySelector('[data-vault-unreadable]')).toBeNull();
+    expect(pwInputs()).toHaveLength(2);
   });
 });
 

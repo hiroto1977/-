@@ -34,6 +34,7 @@ aliases:
 - [[legal-pse|電気用品安全法とPSEマーク制度]] — 分野横断
 - [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
 - [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
+- [[bizlaw-financial-services-act|金融サービス提供法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

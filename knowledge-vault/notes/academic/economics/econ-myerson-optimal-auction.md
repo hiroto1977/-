@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Revenue equivalence — Myerson optimal auction, virtual valuation, reserve price](https://en.wikipedia.org/wiki/Revenue_equivalence) `リファレンス`
 
 ## 関連概念
-- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 語彙が近い
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
+- [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
 - [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
 - [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
 - [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
@@ -39,7 +39,7 @@ aliases:
 - [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
 - [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
-- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
+- [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

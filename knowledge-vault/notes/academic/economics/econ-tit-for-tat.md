@@ -26,7 +26,7 @@ aliases:
 繰り返しで協力が均衡になりうる(フォーク定理)／R.アクセルロッドのトーナメント／優勝はラポポートのしっぺ返し(tit-for-tat、初手協力＋相手の前回手を模倣)／強い戦略＝上品・報復的・寛容・明快／『The Evolution of Cooperation』1984
 
 ## 出典
-- [Stanford Encyclopedia of Philosophy — Prisoner's Dilemma（Axelrod and Tit for Tat）](https://plato.stanford.edu/entries/prisoner-dilemma/) `学術`
+- [Stanford Encyclopedia of Philosophy — Prisoner's Dilemma（Axelrod and Tit for Tat）](https://plato.stanford.edu/entries/prisoner-dilemma/) `リファレンス`
 - [University of Michigan Heritage Project — The Prisoner's Dilemma（トーナメント／ラポポートのtit-for-tat優勝）](https://heritage.umich.edu/stories/the-prisoners-dilemma/) `学術`
 - [PLOS Computational Biology — Properties of winning Iterated Prisoner's Dilemma strategies（nice/retaliating/forgiving/clear）](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012644) `学術`
 - [Harvard (E. Maskin) — The Folk Theorem in Repeated Games](https://scholar.harvard.edu/files/maskin/files/folk_theorem_in_repeated_games_with_discounting_or_incomplete_information.pdf) `学術`

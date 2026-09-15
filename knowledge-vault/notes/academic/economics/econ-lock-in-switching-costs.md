@@ -26,7 +26,7 @@ aliases:
 カール・シャピロ ／ ハル・ヴァリアン ／ ポール・クレンペラー ／ ジョセフ・ファレル
 
 ## 出典
-- [Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — HBS Press (WorldCat)](https://www.worldcat.org/oclc/39733830) `学術`
+- [Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — HBS Press (WorldCat)](https://www.worldcat.org/oclc/39733830) `リファレンス`
 - [Wikipedia: Switching costs / lock-in — Shapiro & Varian, installed base, market power, network effects](https://en.wikipedia.org/wiki/Switching_barriers) `リファレンス`
 
 ## 関連概念

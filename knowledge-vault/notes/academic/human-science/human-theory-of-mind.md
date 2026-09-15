@@ -36,11 +36,11 @@ aliases:
 - [[human-premack-principle|プレマックの原理]] — 同じ思想家
 - [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 出典を共有
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 出典を共有
+- [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

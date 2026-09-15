@@ -6,10 +6,22 @@ import {
   isSafeModelName,
   isVersionSafe,
   MIN_SAFE_VERSION,
-  UNPATCHED_OOB_NOTICE,
   ACTIONS,
 } from '../ollama';
+import {
+  OLLAMA_ADVISORIES_VERIFIED_ON,
+  OLLAMA_READ_PATHS,
+  advisoryLedgerNotice,
+  buildOllamaUrl,
+  type OllamaReadPath,
+} from '../../../shared/ollama';
 import { FetchError } from '../types';
+import {
+  ASSISTANT_REPLY_TRUNCATED_NOTICE,
+  MAX_ASSISTANT_REPLY_CHARS,
+  inputTooLongMessage,
+} from '../../../shared/assistantLimits';
+import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS } from '../../../shared/ollama';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -64,12 +76,13 @@ describe('isVersionSafe', () => {
   it('returns false for versions older than MIN_SAFE_VERSION', () => {
     expect(isVersionSafe('0.1.45')).toBe(false);
     expect(isVersionSafe('0.1.33')).toBe(false); // before Probllama fix
+    expect(isVersionSafe('0.5.10')).toBe(false); // 2024 年の床は超えるが CVE-2026-7482 (0.17.1 で修正) が当てはまる
     expect(isVersionSafe('0.0.1')).toBe(false);
   });
   it('returns true for MIN_SAFE_VERSION and newer', () => {
     expect(isVersionSafe(MIN_SAFE_VERSION)).toBe(true);
-    expect(isVersionSafe('0.1.47')).toBe(true);
-    expect(isVersionSafe('0.5.10')).toBe(true);
+    expect(isVersionSafe('0.31.2')).toBe(true);
+    expect(isVersionSafe('0.33.3')).toBe(true);
     expect(isVersionSafe('1.0.0')).toBe(true);
   });
 });
@@ -204,7 +217,7 @@ describe('fetchOllamaSnapshot', () => {
   it('reports safe version + normalized models when everything is current', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ version: '0.33.3' }))
       .mockResolvedValueOnce(
         jsonResponse({
           models: [
@@ -249,15 +262,16 @@ describe('fetchOllamaSnapshot', () => {
   });
 
   it('emits NO outdated-version warning when the running version is current', async () => {
-    // Kills the `if (running && !versionSafe)` ConditionalExpression `true`
-    // mutation: with the mutation, every run pushes the CVE warning even
-    // for fresh installs.
+    // 当てはまる CVE の名指し (「当てはまります」) は出ない。台帳の注意 (修正版未公表の
+    // CVE を名指しする) は常に 1 本出るので、/CVE/ で見ると誤って鳴る —— 名指しの文で見る。
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ version: '0.33.3' }))
       .mockResolvedValueOnce(jsonResponse({ models: [] }));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
-    expect(snap.warnings.some((w) => /older than|CVE/i.test(w))).toBe(false);
+    expect(snap.versionSafe).toBe(true);
+    expect(snap.warnings.some((w) => /当てはまります|older than/.test(w))).toBe(false);
+    expect(snap.warnings).toHaveLength(1);
   });
 
   it('does NOT attempt to list models when not running (kills `if (running)` → true)', async () => {
@@ -350,6 +364,18 @@ describe('fetchOllamaSnapshot', () => {
 // --- action: chat
 
 describe('ACTIONS["chat"]', () => {
+  it('★ 返答は MAX_ASSISTANT_REPLY_CHARS で打ち切り、切ったことを本文に残す (パス 113 まで 10 MiB まで素通し)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'y'.repeat(MAX_ASSISTANT_REPLY_CHARS + 1) }, total_duration: 0 }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const result = (await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } })) as { reply: string };
+    expect(result.reply).toHaveLength(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+    expect(result.reply.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
+  });
+
   it('POSTs to /api/chat with stream=false and returns the assistant text', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
@@ -410,22 +436,22 @@ describe('ACTIONS["chat"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('clamps oversize prompts to 32 KB', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      ),
-    );
-    const longPrompt = 'A'.repeat(50_000);
-    await ACTIONS['chat']!({
-      token: '',
-      fetch: fetchMock,
-      payload: { model: 'llama3.2', prompt: longPrompt },
-    });
-    const init = fetchMock.mock.calls[0]![1] as RequestInit;
-    const body = JSON.parse(init.body as string);
-    expect(body.messages[0].content.length).toBe(32768);
+  // 天井超えは**切らずに断る** (パス 114)。2026-09-09 までは `slice(0, 32768)` で黙って切り、
+  // この検査は「切れていること」を合格としていた —— 貼った長文の末尾 (質問はたいてい末尾) が
+  // 届かないまま答えが返る形を、検査が守っていた。
+  it('★ prompt は天井ちょうどを 1 字も変えずに送り、1 字超は送らずに断る (パス 114)', async () => {
+    const okOnce = () =>
+      vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({ message: { role: 'assistant', content: 'ok' } }));
+    const atCap = 'A'.repeat(MAX_OLLAMA_PROMPT_CHARS);
+    const f1 = okOnce();
+    await ACTIONS['chat']!({ token: '', fetch: f1, payload: { model: 'llama3.2', prompt: atCap } });
+    const body = JSON.parse((f1.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.messages[0].content).toBe(atCap);
+    const f2 = okOnce();
+    await expect(
+      ACTIONS['chat']!({ token: '', fetch: f2, payload: { model: 'llama3.2', prompt: atCap + 'A' } }),
+    ).rejects.toThrow(inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS));
+    expect(f2).not.toHaveBeenCalled();
   });
 
   it('includes a system prompt when provided', async () => {
@@ -563,23 +589,20 @@ describe('ACTIONS["chat"]', () => {
     expect(headers['Content-Type']).toBe('application/json');
   });
 
-  it('clamps an oversized system prompt to 8192 chars (kills `systemStr.slice(0, 8192)` → `systemStr`)', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      ),
-    );
-    const longSystem = 'S'.repeat(20_000);
-    await ACTIONS['chat']!({
-      token: '',
-      fetch: fetchMock,
-      payload: { model: 'llama3.2', prompt: 'hi', system: longSystem },
-    });
-    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+  it('★ system も天井ちょうどは 1 字も変えずに送り、1 字超は送らずに断る (パス 114)', async () => {
+    const okOnce = () =>
+      vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({ message: { role: 'assistant', content: 'ok' } }));
+    const atCap = 'S'.repeat(MAX_OLLAMA_SYSTEM_CHARS);
+    const f1 = okOnce();
+    await ACTIONS['chat']!({ token: '', fetch: f1, payload: { model: 'llama3.2', prompt: 'hi', system: atCap } });
+    const body = JSON.parse((f1.mock.calls[0]![1] as RequestInit).body as string);
     // messages[0] is the system message (since `system` was provided).
-    expect(body.messages[0].role).toBe('system');
-    expect(body.messages[0].content.length).toBe(8192);
+    expect(body.messages[0]).toEqual({ role: 'system', content: atCap });
+    const f2 = okOnce();
+    await expect(
+      ACTIONS['chat']!({ token: '', fetch: f2, payload: { model: 'llama3.2', prompt: 'hi', system: atCap + 'S' } }),
+    ).rejects.toThrow(inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS));
+    expect(f2).not.toHaveBeenCalled();
   });
 
   it('bounds a long chat-error body instead of echoing it whole', async () => {
@@ -654,7 +677,10 @@ describe('ACTIONS["chat"]', () => {
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi' },
     })) as { reply: string };
-    expect(result.reply.length).toBe(fillerLen);
+    // byte の天井ちょうどは**断らない** (境界はそのまま)。応答の文字数はパス 113 から
+    // `capAssistantReply` が 10 万字で打ち切るので、長さは天井 + 注記になる。
+    expect(result.reply.length).toBe(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+    expect(result.reply.startsWith('x'.repeat(MAX_ASSISTANT_REPLY_CHARS))).toBe(true);
   });
 
   it('truncates unsafe model name to 32 chars in error (kills `model.slice(0, 32)` → `model`)', async () => {
@@ -745,7 +771,7 @@ describe('ACTIONS["chat"]', () => {
   });
 });
 
-// --- endpoint allowlist (defense-in-depth against the unpatched OOB read)
+// --- endpoint allowlist (defense-in-depth against the endpoints in OLLAMA_ADVISORIES)
 
 describe('isAllowedEndpoint', () => {
   it('permits /api/version, /api/tags, /api/chat on 127.0.0.1:11434', () => {
@@ -776,43 +802,104 @@ describe('isAllowedEndpoint', () => {
   });
 });
 
-describe('fetchOllamaSnapshot — unpatched OOB notice', () => {
-  it('emits UNPATCHED_OOB_NOTICE whenever Ollama is reachable', async () => {
+/**
+ * **許可表は台帳から組み立てる (写しではない)。**
+ *
+ * 2026-09-14 まで、main は `/api/version` `/api/tags` `/api/chat` の 3 本を
+ * **手で書き写して** `ALLOWED_ENDPOINTS` を作っていた。ブラウザ版は
+ * `buildOllamaUrl` → `OLLAMA_READ_PATHS` で同じ 3 本を**台帳から**見ていた。
+ * つまり台帳を 1 本増やせば**ブラウザ版の門だけが広がり**、main の写しに足せば
+ * **台帳とブラウザ版が知らないまま main だけが広がる** —— そしてどちらの向きでも
+ * 既存の検査は 1 つも鳴らなかった (両方が同じ 3 本を独立に literal で留めていたため)。
+ *
+ * 台帳の危うさは注記が書いているとおり: `/api/pull` `/api/create` `/api/push`
+ * `/api/copy` `/api/delete` `/api/blobs` `/api/upload` は CVE-2024-37032
+ * (Probllama) と CVE-2024-39719/20/21/22 の経路である。
+ */
+describe('endpoint 許可表は shared の台帳 (OLLAMA_READ_PATHS) から組み立てる', () => {
+  it('★ 台帳の全経路が main 側で許される (走査の生死つき)', () => {
+    // 台帳が空になったら「全部許される」が真空で通る。母集団の床を先に置く。
+    expect(OLLAMA_READ_PATHS.length).toBeGreaterThan(0);
+    for (const apiPath of OLLAMA_READ_PATHS) {
+      expect(isAllowedEndpoint(`http://127.0.0.1:11434${apiPath}`)).toBe(true);
+    }
+  });
+
+  it('★ 台帳に無い経路は main 側でも許されない (前提つき)', () => {
+    const notInLedger = [
+      '/api/pull',
+      '/api/create',
+      '/api/push',
+      '/api/copy',
+      '/api/delete',
+      '/api/blobs',
+      '/api/upload',
+      '/api/generate',
+      '/api/embeddings',
+      '/api/ps',
+      '/',
+    ];
+    for (const apiPath of notInLedger) {
+      // 前提: この経路は本当に台帳の外か。台帳に入った日はここが鳴る。
+      expect(OLLAMA_READ_PATHS as readonly string[]).not.toContain(apiPath);
+      expect(isAllowedEndpoint(`http://127.0.0.1:11434${apiPath}`)).toBe(false);
+    }
+  });
+
+  it('★ ブラウザ版の門 (buildOllamaUrl) と同じ台帳で同じ答えになる', () => {
+    for (const apiPath of OLLAMA_READ_PATHS) {
+      const url = `http://127.0.0.1:11434${apiPath}`;
+      expect(buildOllamaUrl('http://127.0.0.1:11434', apiPath)).toBe(url);
+      expect(isAllowedEndpoint(url)).toBe(true);
+    }
+    // 対照: 台帳の外は両方で落ちる (main は false、ブラウザ版は null)。
+    const danger = '/api/pull' as OllamaReadPath;
+    expect(buildOllamaUrl('http://127.0.0.1:11434', danger)).toBeNull();
+    expect(isAllowedEndpoint(`http://127.0.0.1:11434${danger}`)).toBe(false);
+  });
+
+  it('台帳は今日 3 本 — 増えたらこの行が鳴り、両ビルドの門を読み直す合図になる', () => {
+    expect([...OLLAMA_READ_PATHS]).toEqual(['/api/version', '/api/tags', '/api/chat']);
+  });
+});
+
+describe('fetchOllamaSnapshot — 日付つきの脆弱性台帳の注意 (2026-09-09 までは日付の無い「未パッチ」の固定文)', () => {
+  it('Ollama に届くときは台帳の注意を載せる (照合日を刷る)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ version: '0.33.3' }))
       .mockResolvedValueOnce(jsonResponse({ models: [] }));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
-    expect(snap.warnings).toContain(UNPATCHED_OOB_NOTICE);
+    expect(snap.warnings.some((w) => w.includes(`${OLLAMA_ADVISORIES_VERIFIED_ON} 時点`))).toBe(true);
+    expect(snap.warnings.some((w) => /未パッチ/.test(w))).toBe(false);
   });
 
-  it('does NOT emit the OOB notice when Ollama is not running', async () => {
+  it('Ollama が動いていなければ台帳の注意は出さない', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new Error('ECONNREFUSED'));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
-    expect(snap.warnings).not.toContain(UNPATCHED_OOB_NOTICE);
+    expect(snap.warnings.some((w) => w.includes(`${OLLAMA_ADVISORIES_VERIFIED_ON} 時点`))).toBe(false);
   });
 
-  it('mentions the operational mitigation (verified-source-only) in the notice', () => {
-    // Cross-check the wording so the contract with the user matches
-    // what docs/OLLAMA_SECURITY.md promises.
-    expect(UNPATCHED_OOB_NOTICE).toMatch(/out-of-bounds read/i);
-    expect(UNPATCHED_OOB_NOTICE).toMatch(/検証済み|verified/i);
+  it('★ 古い版には当てはまる CVE を名指しし、文面は shared の buildWarnings と同じ (main の独自英文は無い)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.16.0' }))
+      .mockResolvedValueOnce(jsonResponse({ models: [] }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.versionSafe).toBe(false);
+    expect(snap.warnings[0]).toContain('CVE-2026-7482');
+    expect(snap.warnings[0]).toContain('0.17.1 で修正');
+    expect(snap.warnings.some((w) => /minimum safe version|older than/i.test(w))).toBe(false);
   });
 
-  it('pins each fragment of the OOB notice so partial wording drifts are caught', () => {
-    // Kills the four StringLiteral mutants on ollama.ts:53–57. Each
-    // concatenation fragment carries unique technical/UX content; any
-    // one of them silently mutating to "" or "Stryker was here" would
-    // strip the security contract.
-    expect(UNPATCHED_OOB_NOTICE).toContain('未パッチの out-of-bounds read');
-    expect(UNPATCHED_OOB_NOTICE).toContain('モデル/エンジンファイルパーサ');
-    expect(UNPATCHED_OOB_NOTICE).toContain('/api/pull');
-    expect(UNPATCHED_OOB_NOTICE).toContain('/api/create');
-    expect(UNPATCHED_OOB_NOTICE).toContain('/api/push');
-    expect(UNPATCHED_OOB_NOTICE).toContain('攻撃ベクトルを遮断');
-    expect(UNPATCHED_OOB_NOTICE).toContain('Ollama 公式 library');
-    expect(UNPATCHED_OOB_NOTICE).toContain('検証済みソース');
-    expect(UNPATCHED_OOB_NOTICE).toContain('docs/OLLAMA_SECURITY.md');
+  it('注意の文面は運用上の緩和策 (検証済みソースのみ) を言う', () => {
+    // docs/OLLAMA_SECURITY.md との契約を字面で確かめる (定数を定数自身と比べない)。
+    const n = advisoryLedgerNotice(new Date('2026-09-09T00:00:00Z'));
+    expect(n).toMatch(/検証済み|verified/i);
+    expect(n).toContain('/api/pull');
+    expect(n).toContain('/api/create');
+    expect(n).toContain('/api/push');
+    expect(n).toContain('docs/OLLAMA_SECURITY.md');
   });
 });
 

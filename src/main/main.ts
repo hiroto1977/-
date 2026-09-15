@@ -18,7 +18,9 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
-import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
+import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
+import { eraseDesktopData } from './eraseAll';
+import type { DesktopEraseReport } from '../shared/eraseReport';
 
 const isDev = !app.isPackaged;
 
@@ -88,6 +90,13 @@ function createWindow(): BrowserWindow {
    * このアプリはどれも使っていない (実測: `getUserMedia` 0 件・
    * `geolocation` 0 件・`new Notification` 0 件)。`SpeechRecognition` は
    * ブラウザ版だけで動くもので、Electron には実装が無い。
+   *
+   * **その「使っていない」は `shared/__tests__/permissionJustification.test.ts` が
+   * 走査で測る。** (2026-09-11 · パス 148) 許可表そのものは `mainWindow.test.ts` が
+   * 留めているが、**拒む根拠**の側はこの散文だけが持っていた —— 誰かが
+   * `getUserMedia` を足すと Electron では黙って動かなくなり (許可表は変わらない)、
+   * この実測は嘘になるのに何も鳴らない、という形だった。いまは両方向に鳴る:
+   * API を足せば走査が落ち、許可表を広げれば `mainWindow.test.ts` が落ちる。
    */
   const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
     'clipboard-read',
@@ -231,7 +240,28 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
   try {
     const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
       headers: { accept: 'application/vnd.github+json' },
-      signal: AbortSignal.timeout(10_000),
+      /*
+       * **締切も共有の値。** (2026-09-15 · パス 282)
+       *
+       * ここは今日まで `AbortSignal.timeout(10_000)` という**裸の数**で、
+       * ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は
+       * `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた —— **同じ問いに 3 倍違う締切**。
+       * しかも 3 行下の注記は 2026-08-31 に**本文の上限**の食い違いを直したときのもので、
+       * そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで
+       * 判断が変わる理由が無い」と書いてある。**その直しは 1 行手前で止まり、
+       * 同じ関数の中に同じ形の食い違いを 2 週間残していた。**
+       *
+       * 害の向き: 遅い回線で先に諦めるのは**デスクトップ版**で、そちらは
+       * 「新しい版が出た」を受けて実際に更新できる側である (ブラウザ版は自分自身を
+       * 更新できない —— `web-shim.ts` の注記がそう述べている)。答えを要る方が
+       * 3 倍早く「判定不能」に倒れていた。
+       *
+       * 実測 (パス 282): `src/**` の締切はすべて名前のある定数を読んでおり、
+       * **裸の数はこの 1 行だけだった**。`shared/__tests__/deadlineCensus.test.ts` が
+       * 母集団を走査して留める (`httpLimits` の判定が「手で選んだ 3 経路だけ」と
+       * 自分で認めていた穴がここに在った)。
+       */
+      signal: AbortSignal.timeout(DEFAULT_HTTP_TIMEOUT_MS),
     });
     if (!res.ok) return evaluateUpdate(current, null);
     // 本文は上限つきで読む。ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate`)
@@ -355,6 +385,30 @@ ipcMain.handle('secrets:list', () => listConfiguredServices());
 // file path — so the UI can warn the user instead of degrading silently.
 ipcMain.handle('secrets:protection', () => getStorageProtection());
 
+/**
+ * デスクトップ版の「すべてのデータを削除」(2026-09-09 · パス 137)。トークン (secrets.json と控え)・状態ファイル
+ * (気分の記録・人材育成・チームレーダー・ウォッチリスト) と書き込みの残骸、renderer の保存領域を消し、
+ * **全部消えた時だけ**再起動する (パス 20 の規則)。残った物はファイルごとの報告で画面が名指しする。
+ * 再起動は返してから —— 画面が「再起動します」を出せる。
+ */
+const RELAUNCH_DELAY_MS = 300;
+function scheduleRelaunch(): void {
+  setTimeout(() => {
+    app.relaunch();
+    app.exit(0);
+  }, RELAUNCH_DELAY_MS);
+}
+ipcMain.handle('app:eraseAll', async (): Promise<DesktopEraseReport> => {
+  try {
+    const report = await eraseDesktopData();
+    if (report.allDeleted) scheduleRelaunch();
+    return report;
+  } catch (e) {
+    // eraseDesktopData は投げない設計だが、IPC を reject させない (lint:ipc-handlers) —— 画面が用意していない経路に落とさない。
+    return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: safeErrorMessage(e) };
+  }
+});
+
 ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_implemented', message: 'unknown service id' };
@@ -378,8 +432,10 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
     const read = await getValidToken(serviceId);
     if (!read.ok) {
       // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
-      // ただし「保存済みだが復号できない」場合はローカルでも黙らない。
-      if (read.reason === 'undecryptable') {
+      // ただし「保存済みだが復号できない」「保管ファイルが読めない」場合は
+      // ローカルでも黙らない —— どちらも**未設定ではない**ので、
+      // 「トークン未設定」と案内すると利用者は鍵を貼り直そうとする。
+      if (read.reason !== 'absent') {
         return { ok: false, code: 'not_configured', message: read.message };
       }
       if (!LOCAL_SERVICES.has(serviceId)) {
@@ -420,17 +476,42 @@ ipcMain.handle(
       };
     }
     // fetch:snapshot と同じ理由で try の中に入れる。
-    let token: string;
+    /*
+     * **`LOCAL_SERVICES` の action はトークン無しで通す** (2026-09-15 · パス 267)。
+     *
+     * ここは 2026-09-15 まで**全サービスに**有効なトークンを要求しており、
+     * 資格情報の要らない 15 サービス (実測) の action が**デスクトップ版では
+     * 1 度も呼ばれなかった** —— 実測すると
+     * `{ok: false, code: 'not_configured', message: 'トークン未設定'}` を返し、
+     * action 関数の呼び出し回数は 0 だった。同じ入口の `fetch:snapshot` は
+     * 30 行上で `LOCAL_SERVICES` を見ており (資格情報なしでも動くので
+     * 読めないことは異常ではない)、**書き込み側だけがその規則を持っていなかった。**
+     *
+     * 効いていたのは「AI 改善提案」(不動産 / 投資信託 / Uber Eats / 出前館 ——
+     * パス 119 が両ビルドへ通した物)・チームレーダーの `save-state` (パス 118 が
+     * ブラウザ版で直した物の裏返し)・人材育成の 2 つ・感情ログの `analyze-text`・
+     * Ollama の `chat`・株式の 5 つ・経営の `advise`・書類スタジオ・テンプレート・
+     * Skills・Security・アシスタント。ブラウザ版 (`web-shim`) はトークンを
+     * 要求しないので**同じボタンが動いていた** —— ビルド間の非対称である。
+     *
+     * 断る条件は `fetch:snapshot` と 1 文字も変えない: **`absent` 以外は
+     * ローカルでも断る** (「保存済みだが復号できない」「保管ファイルが読めない」は
+     * *未設定ではない*ので、「トークン未設定」と案内すると鍵を貼り直させてしまう)。
+     */
+    let token = '';
     try {
       const read = await getValidToken(serviceId);
       if (!read.ok) {
-        return {
-          ok: false,
-          code: 'not_configured',
-          message: read.reason === 'undecryptable' ? read.message : 'トークン未設定',
-        };
+        // 未設定だけが「トークン未設定」。復号できない・保管ファイルが読めないは理由を出す。
+        if (read.reason !== 'absent') {
+          return { ok: false, code: 'not_configured', message: read.message };
+        }
+        if (!LOCAL_SERVICES.has(serviceId)) {
+          return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+        }
+      } else {
+        token = read.token;
       }
-      token = read.token;
     } catch (err) {
       return { ok: false, code: 'action_failed', message: safeErrorMessage(err) };
     }

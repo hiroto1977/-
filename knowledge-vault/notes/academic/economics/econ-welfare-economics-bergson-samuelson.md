@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Fundamental theorems of welfare economics — 厚生経済学の基本定理](https://en.wikipedia.org/wiki/Fundamental_theorems_of_welfare_economics) `リファレンス`
 
 ## 関連概念
-- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 語彙が近い
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同じ思想家
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
@@ -40,7 +39,8 @@ aliases:
 - [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
 - [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同じ思想家
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
-- [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 同分野の近傍
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

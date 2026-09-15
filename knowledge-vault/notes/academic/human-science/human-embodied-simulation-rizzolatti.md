@@ -32,8 +32,7 @@ aliases:
 ## 関連概念
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — 語彙が近い
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 語彙が近い
-- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 同じ思想家
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同分野の近傍
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

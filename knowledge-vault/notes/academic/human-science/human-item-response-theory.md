@@ -28,7 +28,7 @@ Rasch, Georg （1960 Probabilistic Models for Some Intelligence and Attainment T
 ## 出典
 - [Wikipedia, "Item response theory" (definition, history, ICC, parameters, invariance, applications)](https://en.wikipedia.org/wiki/Item_response_theory) `リファレンス`
 - [Wikipedia, "Georg Rasch" (1960 Probabilistic Models for Some Intelligence and Attainment Tests, specific objectivity, one-parameter logistic model)](https://en.wikipedia.org/wiki/Georg_Rasch) `リファレンス`
-- [Lord, F.M. & Novick, M.R. (1968) Statistical Theories of Mental Test Scores — Addison-Wesley (contains Birnbaum's logistic IRT chapters)](https://books.google.com/books/about/Statistical_Theories_of_Mental_Test_Scor.html?id=0nkMX_MqEQ4C) `学術`
+- [Lord, F.M. & Novick, M.R. (1968) Statistical Theories of Mental Test Scores — Addison-Wesley (contains Birnbaum's logistic IRT chapters)](https://books.google.com/books/about/Statistical_Theories_of_Mental_Test_Scor.html?id=0nkMX_MqEQ4C) `リファレンス`
 
 ## 関連概念
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 出典を共有

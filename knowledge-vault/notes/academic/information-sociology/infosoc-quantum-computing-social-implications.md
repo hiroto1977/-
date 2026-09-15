@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Quantum computing — social and security implications](https://en.wikipedia.org/wiki/Quantum_computing) `リファレンス`
 
 ## 関連概念
-- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 同分野の近傍
+- [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連

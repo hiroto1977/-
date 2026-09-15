@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Wikipedia — Metacognition](https://en.wikipedia.org/wiki/Metacognition) `リファレンス`
 - [Flavell (1979) Metacognition and Cognitive Monitoring — American Psychologist 34(10)](https://www.jstor.org/stable/1422286) `学術`
-- [Schraw & Dennison (1994) Assessing Metacognitive Awareness — Contemporary Educational Psychology](https://scholar.google.com/scholar?q=Schraw+Dennison+metacognitive+awareness+inventory) `学術`
+- [Schraw & Dennison (1994) Assessing Metacognitive Awareness — Contemporary Educational Psychology](https://scholar.google.com/scholar?q=Schraw+Dennison+metacognitive+awareness+inventory) `リファレンス`
 
 ## 関連概念
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 出典を共有

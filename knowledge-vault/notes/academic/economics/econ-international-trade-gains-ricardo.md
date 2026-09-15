@@ -40,6 +40,7 @@ aliases:
 - [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
 - [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同じ思想家
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同じ思想家
+- [[econ-public-goods|公共財（非競合性・非排除性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

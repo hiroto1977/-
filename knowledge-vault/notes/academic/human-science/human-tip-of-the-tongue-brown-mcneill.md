@@ -32,8 +32,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-bolam-test|ボーラム・テスト——専門家の過失をめぐる注意義務の基準]] — 同じ思想家
 - [[human-flashbulb-memory-brown-kulik|フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶]] — 同じ思想家
-- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同じ思想家
-- [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同分野の近傍
+- [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連

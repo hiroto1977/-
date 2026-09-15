@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { readOriginalSource } from './originalSource';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -27,7 +27,7 @@ const req = createRequire(import.meta.url);
 const REPO_ROOT = resolve(__dirname, '../../..');
 const chainModule = req('../../../scripts/integrity-chain.cjs') as { PROTECTED: string[] };
 const chain = JSON.parse(
-  readFileSync(join(REPO_ROOT, 'security/integrity-chain.json'), 'utf8'),
+  readOriginalSource(join(REPO_ROOT, 'security/integrity-chain.json')),
 ) as {
   genesisHash: string;
   protected: string[];
@@ -64,7 +64,7 @@ const hashOf = (b: { index: number; prevHash: string; merkleRoot: string; leafCo
 function manifestFromDisk(): Record<string, string> {
   const out: Record<string, string> = {};
   for (const rel of [...chainModule.PROTECTED].sort()) {
-    out[rel] = sha(readFileSync(join(REPO_ROOT, rel)));
+    out[rel] = sha(readOriginalSource(join(REPO_ROOT, rel)));
   }
   return out;
 }

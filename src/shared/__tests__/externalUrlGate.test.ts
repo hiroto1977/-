@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { readOriginalSource } from './originalSource';
 import { EXTERNAL_URL_SCHEMES, externalUrlOrNull } from '../externalUrlGate';
 
 /*
@@ -190,7 +191,7 @@ describe('externalUrlOrNull — OS へ渡してよい URL だけ', () => {
  * `buildAuthorizeUrl()` が組み立てた URL で、レンダラー由来ではない。
  */
 describe('main.ts の中で OS へ URL を渡す扉は、全部この関門を通る', () => {
-  const MAIN = readFileSync(new URL('../../main/main.ts', import.meta.url), 'utf8');
+  const MAIN = readOriginalSource(path.resolve(__dirname, '../../main/main.ts'));
   const count = (re: RegExp): number => (MAIN.match(re) ?? []).length;
 
   it('shell.openExternal の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
@@ -220,7 +221,7 @@ describe('main.ts の中で OS へ URL を渡す扉は、全部この関門を�
  * 「調べたもの」と「開くもの」が一致する。
  */
 describe('web-shim.ts の中で外へ開く扉も、全部この関門を通る', () => {
-  const SHIM = readFileSync(new URL('../../renderer/web-shim.ts', import.meta.url), 'utf8');
+  const SHIM = readOriginalSource(path.resolve(__dirname, '../../renderer/web-shim.ts'));
   const code = SHIM.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
   const count = (re: RegExp): number => (code.match(re) ?? []).length;
 

@@ -109,12 +109,42 @@ describe('読めなかった保管ファイルの上には書かない', () => {
     expect((await listConfiguredServices()).sort()).toEqual(['github', 'notion']);
   });
 
-  it('読み出しは今までどおり空を返す (画面を止めない)', async () => {
-    const { setToken, listConfiguredServices, getToken } = await import('../secrets');
+  /**
+   * **2026-09-06 に方針を 1 つだけ変えた。**
+   *
+   * ここは元々「読み出しは今までどおり空を返す (画面を止めない)」だった。
+   * 画面を止めないのは正しいのだが、**一覧が空を返すことは「1 件も登録されて
+   * いない」という別の嘘**で、その代償は画面が止まるより重い ——
+   * すべてのサービスに「トークン未設定」が出るので、利用者の自然な次の手は
+   * **API キーの再入力**になり、それは `setToken` が (正しく) 断るので徒労に終わる。
+   *
+   * なので**一覧は投げる**。画面が止まらないことは別の形で保つ:
+   * `getToken` は今までどおり `null`、`readStoredToken` は
+   * 「保存はされているが今は読めない」を名乗り、呼び出し側 3 か所
+   * (`useServiceData` / 接続一覧 / 預かりの節) が受けて理由を出す。
+   */
+  it('★ 一覧は投げる (空を「1 件も無い」と名乗らない)', async () => {
+    const { setToken, listConfiguredServices } = await import('../secrets');
     await setToken('github', 'ghp_real');
     await growBeyondLimit();
-    expect(await listConfiguredServices(), '読み出しまで投げている').toEqual([]);
+    await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
+  });
+
+  it('★ 1 件ぶんの読み出しは投げず、「読めない」と名乗る (画面は止まらない)', async () => {
+    const { setToken, getToken, readStoredToken } = await import('../secrets');
+    await setToken('github', 'ghp_real');
+    await growBeyondLimit();
     expect(await getToken('github')).toBeNull();
+    const read = await readStoredToken('github');
+    expect(read.ok).toBe(false);
+    expect(read.ok === false && read.reason !== 'absent' && read.message).toContain('保管ファイルを読めませんでした');
+    expect(read.ok === false && read.reason).toBe('store-unreadable');
+  });
+
+  it('対照: 読める端末では一覧が普通に返る (投げるのは読めないときだけ)', async () => {
+    const { setToken, listConfiguredServices } = await import('../secrets');
+    await setToken('github', 'ghp_real');
+    await expect(listConfiguredServices()).resolves.toEqual(['github']);
   });
 });
 

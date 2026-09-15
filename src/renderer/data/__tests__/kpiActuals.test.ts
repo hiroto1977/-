@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
+  formatPeriodWindow,
+  periodWindow,
   KPI_ACTUALS_COLLECTION,
   isValidPeriod,
   parseKpiActual,
@@ -15,6 +17,14 @@ import {
   monthlyTrendSeries,
   computeYoYGrowth,
   type KpiActual,
+  finiteBep,
+  noBreakEvenNote,
+  actualKey,
+  hasSamePeriodUnit,
+  findDuplicateActuals,
+  duplicateActualMessage,
+  duplicateActualsNote,
+  duplicateActualsSheetNote,
 } from '../kpiActuals';
 
 const actual = (period: string, revenue: number, unit = '全社'): KpiActual => ({
@@ -40,6 +50,43 @@ const BASE = {
 describe('KPI_ACTUALS_COLLECTION', () => {
   it('is the stable record-store collection key', () => {
     expect(KPI_ACTUALS_COLLECTION).toBe('kpi-actuals');
+  });
+});
+
+/**
+ * **窓の月数は「期の異なり数」。** (2026-09-08)
+ *
+ * `KpiActual` は期ごとに事業 (`unit`) の行を持つので、**行数で数えると
+ * 3 事業 × 4 か月が「12 か月」になる。** この規則を留めていなかったことは
+ * パス 50 の対照 (月数を `valid.length` に替える) が 1 件も落とさなかったことで
+ * 分かった —— 見本がどれも「1 期 1 行」だったため、規則が測られていなかった。
+ */
+describe('periodWindow / formatPeriodWindow', () => {
+  it('★ 同じ期の複数事業は 1 か月として数える (行数ではない)', () => {
+    const w = periodWindow(['2026-04', '2026-04', '2026-04', '2026-05', '2026-05'])!;
+    expect(w).toEqual({ from: '2026-04', to: '2026-05', months: 2 });
+    expect(formatPeriodWindow(w)).toBe('2026-04〜2026-05・2 か月');
+  });
+
+  it('★ 並び順に依らず最初と最後を取る', () => {
+    expect(periodWindow(['2026-06', '2026-01', '2026-03'])).toEqual({
+      from: '2026-01', to: '2026-06', months: 3,
+    });
+  });
+
+  it('★ 読めない期は無視し、読める分だけで測る', () => {
+    expect(periodWindow(['2026-13', 'bad', '2026-05'])).toEqual({
+      from: '2026-05', to: '2026-05', months: 1,
+    });
+  });
+
+  it('★ 読める期が 1 件も無ければ null (0 か月に倒さない)', () => {
+    expect(periodWindow([])).toBeNull();
+    expect(periodWindow(['2026-13', '2026-00', 'nope'])).toBeNull();
+  });
+
+  it('★ 1 期だけなら from と to が同じ (範囲を偽装しない)', () => {
+    expect(formatPeriodWindow(periodWindow(['2026-04'])!)).toBe('2026-04〜2026-04・1 か月');
   });
 });
 
@@ -153,19 +200,29 @@ describe('computeKpiMetrics', () => {
     expect(m.operatingProfit).toBe(250);
   });
 
-  it('marks BEP as Infinity when contribution is non-positive', () => {
+  it('marks BEP as Infinity and 安全余裕率 as 算定不能 when contribution is non-positive', () => {
     const m = computeKpiMetrics({ revenue: 100, cogs: 100, advertising: 50, sga: 10, depreciation: 0 });
     expect(m.contribution).toBeLessThanOrEqual(0);
     expect(m.bep).toBe(Infinity);
     expect(m.bepRatio).toBe(Infinity);
-    expect(m.safetyMargin).toBe(0);
+    // 損益分岐点が存在しないので比率も存在しない。**0 に倒さない。**
+    expect(m.safetyMargin).toBeNull();
   });
 
-  it('returns zeroed ratios for a zero-revenue unit', () => {
+  // **売上 0 なら限界利益率は「算定不能」で、0 ではない。** 0 は「変動費が売上を
+  // すべて食っている」という主張であり、姉妹欄 `safetyMargin` と同じ答え方に
+  // 揃える (2026-09-08 まで、この見本の名前が `zeroed ratios` として 0 を固定していた)。
+  it('cannot compute the contribution ratio for a zero-revenue unit (null, not 0)', () => {
     const m = computeKpiMetrics({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 });
-    expect(m.contributionRatio).toBe(0);
+    expect(m.contributionRatio).toBeNull();
     expect(m.bep).toBe(Infinity);
     expect(m.operatingProfit).toBe(-100);
+  });
+
+  // ★ 対照: 売上が在れば率は出る (上の null が「常に null」ではないこと)。
+  it('computes the contribution ratio when revenue is positive', () => {
+    const m = computeKpiMetrics({ revenue: 1000, cogs: 400, advertising: 0, sga: 100, depreciation: 0 });
+    expect(m.contributionRatio).toBe(60);
   });
 });
 
@@ -408,9 +465,11 @@ describe('monthlyTrendSeries', () => {
     expect(rows[1]!.revenueGrowthPct).toBeNull();
   });
 
-  it('reports a zero operating margin for a zero-revenue period', () => {
+  // 月次推移の営業利益率も**その月の売上が 0 なら算定不能**。経営レポートの
+  // 推移テーブルと画面の表がこの値を刷るので、0.0% は「利益率が 0」の主張になる。
+  it('cannot compute the operating margin for a zero-revenue period (null, not 0)', () => {
     const rows = monthlyTrendSeries([actual('2026-04', 0)]);
-    expect(rows[0]!.operatingMarginPct).toBe(0);
+    expect(rows[0]!.operatingMarginPct).toBeNull();
   });
 });
 
@@ -512,5 +571,255 @@ describe('summarizeLaborCost / computeLaborMetrics', () => {
     const m = computeLaborMetrics([withLabor(400, 400, 300, 200)], 1);
     expect(m.laborSharePct).toBeNull(); // gross profit 0
     expect(m.laborToRevenuePct).toBe(50); // 200/400
+  });
+});
+
+/**
+ * **安全余裕率は 100 − 損益分岐点比率である。0 で止めない。** (2026-09-07)
+ *
+ * 2026-09-07 まで `Math.max(0, 100 - bepRatio)` で下から止めていた。分母は売上なので
+ * 損益分岐点を下回れば真値は負になるのに、**0.0% と表示していた** —— つまり
+ * 「損益分岐点ちょうど」と「損益分岐点を 200% 下回る」が同じ数字になっていた。
+ *
+ * 実測 (直す前・同じ画面に出る損益分岐点比率と並べる):
+ *
+ * | 状況 | 損益分岐点比率 | 表示された安全余裕率 | 真値 (100 − 比率) | 営業利益 |
+ * | --- | --- | --- | --- | --- |
+ * | 損益分岐点ちょうど | 100.0% | 0.0% | 0.0% | 0 |
+ * | 33% 下回る | 150.0% | **0.0%** | **−50.0%** | −300 |
+ * | 大きく下回る | 300.0% | **0.0%** | **−200.0%** | −1,200 |
+ * | 限界利益 ≤ 0 (BEP なし) | ∞ | **0.0%** | 算定不能 | −300 |
+ *
+ * `KpiPage` は「損益分岐点 (BEP) ¥X / 比率 150.0%」の札の**隣**に「安全余裕率 0.0%」を
+ * 出しており、100 − 150 = 0 ではないので**同じ画面の 2 つの数字が両立しなかった**。
+ * 金融機関等提出用の書面はさらに算式「(売上高 − 損益分岐点売上高) ÷ 売上高」を
+ * 数字の隣に刷るので、**刷った算式が刷った数字を出さない**状態だった
+ * (`bankSubmission.test.ts` の「印刷した式が、印刷した数字で成り立つこと」と同じ欠陥)。
+ *
+ * 直し方: 負の値をそのまま返す。損益分岐点が**存在しない** (限界利益 ≤ 0) ときだけ
+ * `null` = 算定不能とする —— 0 に倒すと「損益分岐点上に居る」という最も安全な読みで
+ * 出てしまうので、最悪の場合を最良の顔で見せることになる (パス 28 と同じ形)。
+ */
+describe('安全余裕率 = 100 − 損益分岐点比率 (0 で止めない)', () => {
+  const f = (revenue: number, variable: number, fixed: number) => ({
+    revenue,
+    cogs: variable,
+    advertising: 0,
+    sga: fixed,
+    depreciation: 0,
+  });
+
+  it('★ 損益分岐点を下回ると負の値を返す (0 に丸めない)', () => {
+    const m = computeKpiMetrics(f(1000, 400, 900));
+    expect(m.bepRatio).toBeCloseTo(150);
+    expect(m.safetyMargin).toBeCloseTo(-50);
+    expect(m.operatingProfit).toBe(-300); // 実際に赤字である
+  });
+
+  it('★ 下回り方の大きさが数字に出る (0.0% で潰れない)', () => {
+    const near = computeKpiMetrics(f(1000, 400, 900)); // BEP 1,500
+    const far = computeKpiMetrics(f(1000, 400, 1800)); // BEP 3,000
+    expect(near.safetyMargin).toBeCloseTo(-50);
+    expect(far.safetyMargin).toBeCloseTo(-200);
+    // 直す前はこの 2 つがどちらも 0 で、区別が付かなかった。
+    expect(near.safetyMargin).not.toBe(far.safetyMargin);
+  });
+
+  it('★ 不変条件: 損益分岐点が有限なら 安全余裕率 === 100 − 損益分岐点比率 (60 通り)', () => {
+    const broken: string[] = [];
+    for (let i = 0; i < 60; i += 1) {
+      const m = computeKpiMetrics(f(1000 + i * 7, 300 + i * 3, 200 + i * 37));
+      if (!Number.isFinite(m.bepRatio)) continue;
+      if (m.safetyMargin === null || Math.abs(m.safetyMargin - (100 - m.bepRatio)) > 1e-9) {
+        broken.push(`i=${i}: bepRatio=${m.bepRatio} safetyMargin=${String(m.safetyMargin)}`);
+      }
+    }
+    expect(broken).toEqual([]);
+  });
+
+  it('★ 対照: 走査は負の側にも実際に入っている (空回りの検査ではない)', () => {
+    let negatives = 0;
+    for (let i = 0; i < 60; i += 1) {
+      const m = computeKpiMetrics(f(1000 + i * 7, 300 + i * 3, 200 + i * 37));
+      if (m.safetyMargin !== null && m.safetyMargin < 0) negatives += 1;
+    }
+    // 直す前の実装ならここは 0 になる (`Math.max(0, …)` なので負は出ない)。
+    expect(negatives).toBeGreaterThan(0);
+  });
+
+  it('損益分岐点ちょうどは 0 —— 負とは別の状態である', () => {
+    const m = computeKpiMetrics(f(1000, 400, 600));
+    expect(m.bepRatio).toBeCloseTo(100);
+    expect(m.safetyMargin).toBeCloseTo(0);
+    expect(m.operatingProfit).toBe(0);
+  });
+
+  it('限界利益 ≤ 0 は算定不能 (null) —— 0 でも −∞ でもない', () => {
+    const m = computeKpiMetrics(f(1000, 1200, 100));
+    expect(m.contribution).toBeLessThan(0);
+    expect(m.bep).toBe(Infinity);
+    expect(m.safetyMargin).toBeNull();
+  });
+
+  it('健全な会社は従来どおり正の値 (直しが良い側を壊していない)', () => {
+    const m = computeKpiMetrics(f(2000, 800, 600));
+    expect(m.bepRatio).toBeCloseTo(50);
+    expect(m.safetyMargin).toBeCloseTo(50);
+  });
+});
+
+/**
+ * **損益分岐点が「存在しない」ことを、座標に 0 として渡さない。**
+ *
+ * `bep` の「無い」の印は `Infinity` (限界利益 0 以下 = どんな売上でも固定費を
+ * 回収できない)。2026-09-08 まで KPI 画面の 2 つのグラフがこれを 0 に倒し、
+ * BEP 線を軸の一番下に引いていた —— 「損益分岐点 0 円 = どんな売上でも黒字」で、
+ * **真実の正反対**である。
+ */
+describe('finiteBep / noBreakEvenNote — 損益分岐点が存在しない期', () => {
+  it('★ 限界利益が 0 以下なら null (0 に倒さない)', () => {
+    // 売上 100 万・変動費 120 万 → 限界利益 −20 万
+    const m = computeKpiMetrics({ revenue: 1_000_000, cogs: 1_200_000, advertising: 0, sga: 300_000, depreciation: 0 });
+    expect(m.bep).toBe(Infinity);
+    expect(finiteBep(m.bep)).toBeNull();
+  });
+
+  it('★ 限界利益ちょうど 0 も null (境目は「0 以下」)', () => {
+    const m = computeKpiMetrics({ revenue: 1_000_000, cogs: 1_000_000, advertising: 0, sga: 300_000, depreciation: 0 });
+    expect(finiteBep(m.bep)).toBeNull();
+  });
+
+  it('★ 対照: 限界利益が在れば数で出る (標本が在ることの確認)', () => {
+    const m = computeKpiMetrics({ revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0 });
+    expect(finiteBep(m.bep)).toBe(500_000); // 30万 ÷ 60万 × 100万
+  });
+
+  it('★ 途切れの理由を述べ、「データが無い」と読ませない', () => {
+    const out = noBreakEvenNote(2, 12);
+    expect(out).toContain('12 期のうち 2 期');
+    expect(out).toContain('損益分岐点が存在しません');
+    expect(out).toContain('どれだけ売っても固定費を回収できない');
+  });
+
+  it('★ 対照: 欠けが無ければ断り書きは出ない', () => {
+    expect(noBreakEvenNote(0, 12)).toBeNull();
+    expect(noBreakEvenNote(-1, 12)).toBeNull();
+  });
+});
+
+describe('同じ期・事業の重複 (パス 124)', () => {
+  const row = (period: string, unit: string, revenue = 1): KpiActual => ({ period, unit, revenue, cogs: 0, advertising: 0, sga: 0, depreciation: 0 });
+
+  it('actualKey は期と事業 (前後の空白を落とす) で決まり、金額は関係ない', () => {
+    expect(actualKey(row('2026-04', '全社', 1))).toBe(actualKey(row('2026-04', ' 全社 ', 999)));
+    expect(actualKey(row('2026-04', '全社'))).not.toBe(actualKey(row('2026-05', '全社')));
+    expect(actualKey(row('2026-04', '全社'))).not.toBe(actualKey(row('2026-04', 'EC')));
+    // 大文字小文字は別物 (同じかどうかは利用者の判断)
+    expect(actualKey(row('2026-04', 'EC'))).not.toBe(actualKey(row('2026-04', 'ec')));
+  });
+
+  it('★ hasSamePeriodUnit は同じ組が在れば true・別の期や別の事業なら false', () => {
+    const existing = [row('2026-04', '全社'), row('2026-04', 'EC')];
+    expect(hasSamePeriodUnit(existing, { period: '2026-04', unit: '全社' })).toBe(true);
+    expect(hasSamePeriodUnit(existing, { period: '2026-04', unit: ' EC ' })).toBe(true);
+    expect(hasSamePeriodUnit(existing, { period: '2026-05', unit: '全社' })).toBe(false);
+    expect(hasSamePeriodUnit(existing, { period: '2026-04', unit: '店舗' })).toBe(false);
+    expect(hasSamePeriodUnit([], { period: '2026-04', unit: '全社' })).toBe(false);
+  });
+
+  it('findDuplicateActuals は件数 2 以上の組だけを期・事業の昇順で返す', () => {
+    const groups = findDuplicateActuals([
+      row('2026-05', 'EC'), row('2026-04', '全社'), row('2026-05', 'EC'), row('2026-04', '全社'), row('2026-04', '全社'), row('2026-06', '全社'),
+    ]);
+    expect(groups).toEqual([
+      { period: '2026-04', unit: '全社', count: 3 },
+      { period: '2026-05', unit: 'EC', count: 2 },
+    ]);
+    expect(findDuplicateActuals([row('2026-04', '全社'), row('2026-04', 'EC')])).toEqual([]);
+    expect(findDuplicateActuals([])).toEqual([]);
+  });
+
+  it('★ 前後の空白は組の鍵だけでなく、報告する事業名からも落とす', () => {
+    // `actualKey` は空白を落とすので ' 全社 ' と '全社' は同じ組になる。
+    // **組を代表する `unit` も揃っていないと**、画面の警告と書面の但し書きに
+    // 空白つきの名前が出て、同じ事業が 2 通りの綴りで人に見える。
+    expect(findDuplicateActuals([row('2026-04', ' 全社 '), row('2026-04', '全社')])).toEqual([
+      { period: '2026-04', unit: '全社', count: 2 },
+    ]);
+    // 1 件目が空白つきでも 2 件目が空白つきでも同じ (代表は最初の 1 件から作る)。
+    expect(findDuplicateActuals([row('2026-05', 'EC'), row('2026-05', '  EC')])).toEqual([
+      { period: '2026-05', unit: 'EC', count: 2 },
+    ]);
+  });
+
+  it('合算の実測: 同じ組を 2 件持つと summarizeFundamentals / groupRevenueByPeriod は足す (だから 2 件目を断る)', () => {
+    const two = [row('2026-04', '全社', 1_000_000), row('2026-04', '全社', 1_200_000)];
+    expect(summarizeFundamentals(two).revenue).toBe(2_200_000);
+    expect(groupRevenueByPeriod(two)).toEqual([{ period: '2026-04', revenue: 2_200_000 }]);
+    expect(findDuplicateActuals(two)).toEqual([{ period: '2026-04', unit: '全社', count: 2 }]);
+  });
+
+  it('文面: 断り・一覧の警告・書面の但し書きは、期と事業と件数を名指しする', () => {
+    expect(duplicateActualMessage('実績', { period: '2026-04', unit: '全社' })).toBe(
+      '2026-04 の「全社」の実績は既に入力されています。訂正するときは一覧の × で消してから入れ直してください（同じ期・事業を 2 件入れると合算されます）。',
+    );
+    expect(duplicateActualMessage('予算', { period: '2026-04', unit: ' EC ' })).toContain('2026-04 の「EC」の予算は既に入力されています');
+    const groups = [
+      { period: '2026-04', unit: '全社', count: 2 },
+      { period: '2026-05', unit: 'EC', count: 3 },
+    ];
+    expect(duplicateActualsNote('実績', groups)).toBe(
+      '同じ期・事業の実績が 2 組重複しており、合算されています（2026-04 全社 ×2、2026-05 EC ×3）。一覧の × で余分な行を消してください。',
+    );
+    expect(duplicateActualsNote('予算', groups.slice(0, 1))).toBe(
+      '同じ期・事業の予算が 1 組重複しており、合算されています（2026-04 全社 ×2）。一覧の × で余分な行を消してください。',
+    );
+    expect(duplicateActualsSheetNote(groups)).toBe(
+      'KPI 実績に同じ期・事業の重複が 2 組あり（2026-04 全社 ×2、2026-05 EC ×3）、本表の金額はその合算値です。',
+    );
+    expect(duplicateActualsNote('実績', [])).toBeNull();
+    expect(duplicateActualsSheetNote([])).toBeNull();
+  });
+});
+
+/*
+ * **モジュール直下の値は、読み直してから確かめる (静的変異体)。**
+ *
+ * `KPI_ACTUALS_COLLECTION` と `listGroups` は module 直下で評価されるので、
+ * Stryker が変異体を有効にする**前に**モジュールが読み込まれてしまい、
+ * 上の検査が字面で値を持っていても変異体が届かず「生存」と報告される
+ * (実測 2026-09-10: この 2 件がまさにそれで、手で書き換えて全件を回すと
+ * 上の検査は落ちる —— つまり「テストが無い」のではなく「届いていない」)。
+ *
+ * `stryker.config.json` の `_commentIgnoreStatic` が指す形 (`vi.resetModules()`
+ * + 毎回の動的 `import()`) で読み直して、同じ値を改めて留める。
+ * `oauth.test.ts` の `freshConfigs` / `autoLock.test.ts` と同じ形。
+ */
+describe('モジュール直下の値 (読み直してから確かめる — 静的変異体)', () => {
+  async function fresh(): Promise<typeof import('../kpiActuals')> {
+    vi.resetModules();
+    return (await import('../kpiActuals')) as typeof import('../kpiActuals');
+  }
+
+  it('★ 保存先の collection 名は読み直しても kpi-actuals', async () => {
+    const mod = await fresh();
+    expect(mod.KPI_ACTUALS_COLLECTION).toBe('kpi-actuals');
+    // 空文字だと record store の鍵が消えて別の場所へ書く (= 保存が迷子になる)。
+    expect(mod.KPI_ACTUALS_COLLECTION.length).toBeGreaterThan(0);
+  });
+
+  it('★ 警告の中の重複一覧は、読み直しても「期 事業 ×件数」を並べる', async () => {
+    const mod = await fresh();
+    const note = mod.duplicateActualsNote('実績', [
+      { period: '2026-04', unit: '全社', count: 2 },
+      { period: '2026-05', unit: 'EC', count: 3 },
+    ]);
+    expect(note).toBe(
+      '同じ期・事業の実績が 2 組重複しており、合算されています（2026-04 全社 ×2、2026-05 EC ×3）。一覧の × で余分な行を消してください。',
+    );
+    // 書面の但し書きも同じ一覧を通る。
+    expect(mod.duplicateActualsSheetNote([{ period: '2026-04', unit: '全社', count: 2 }])).toContain(
+      '2026-04 全社 ×2',
+    );
   });
 });

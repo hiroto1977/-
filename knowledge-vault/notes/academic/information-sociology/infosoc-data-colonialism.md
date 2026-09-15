@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 語彙が近い
-- [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同じ思想家
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 出典を共有
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 出典を共有
@@ -42,6 +41,7 @@ aliases:
 - [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

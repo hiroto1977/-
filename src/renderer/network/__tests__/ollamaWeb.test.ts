@@ -15,7 +15,17 @@ import {
   REQUEST_TIMEOUT_MS,
   setupCommands,
 } from '../ollamaWeb';
-import { DEFAULT_SETUP_MODEL, MIN_SAFE_VERSION } from '../../../shared/ollama';
+import {
+  DEFAULT_SETUP_MODEL,
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
+  MIN_SAFE_VERSION,
+} from '../../../shared/ollama';
+import {
+  ASSISTANT_REPLY_TRUNCATED_NOTICE,
+  MAX_ASSISTANT_REPLY_CHARS,
+  inputTooLongMessage,
+} from '../../../shared/assistantLimits';
 
 /*
  * probeOllama の要点は **失敗理由の切り分け**。利用者から見ると「未起動」と
@@ -59,7 +69,7 @@ describe('probeOllama — 接続成功', () => {
   it('バージョンとモデルを読み、running:true のスナップショットを返す', async () => {
     const r = await probeOllama(
       11434,
-      healthyFetch('0.5.4', [
+      healthyFetch('0.33.3', [
         {
           name: 'llama3.2:latest',
           size: 1024 * 1024 * 1024,
@@ -70,11 +80,11 @@ describe('probeOllama — 接続成功', () => {
     );
     expect(r.status).toBe('ok');
     expect(r.snapshot.running).toBe(true);
-    expect(r.snapshot.version).toBe('0.5.4');
+    expect(r.snapshot.version).toBe('0.33.3');
     expect(r.snapshot.versionSafe).toBe(true);
     expect(r.snapshot.models).toHaveLength(1);
     expect(r.snapshot.models[0]?.name).toBe('llama3.2:latest');
-    expect(r.message).toContain('0.5.4');
+    expect(r.message).toContain('0.33.3');
     expect(r.message).toContain('1 件');
   });
 
@@ -88,7 +98,7 @@ describe('probeOllama — 接続成功', () => {
   it('モデル一覧だけ失敗しても接続成功として扱う (バージョンが読めている)', async () => {
     const f = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       throw new TypeError('tags failed');
     }) as unknown as typeof fetch;
     const r = await probeOllama(11434, f, '');
@@ -99,7 +109,7 @@ describe('probeOllama — 接続成功', () => {
   it('読み取り 3 エンドポイント以外は叩かない', async () => {
     const spy = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     await probeOllama(11434, spy, '');
@@ -118,7 +128,7 @@ describe('probeOllama — 別端末から使う経路', () => {
     const f = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
       expect(u.startsWith('http://192.168.1.10:11434/')).toBe(true);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama('http://192.168.1.10:11434', f, '192.168.1.10');
@@ -129,7 +139,7 @@ describe('probeOllama — 別端末から使う経路', () => {
     const f = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
       expect(u.startsWith('https://abc.trycloudflare.com/')).toBe(true);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama('https://abc.trycloudflare.com', f, 'hiroto1977.github.io');
@@ -217,7 +227,7 @@ describe('probeOllama — 失敗理由の切り分け', () => {
   });
 
   it('空文字は既定のループバックとして扱う (bad-endpoint にしない)', async () => {
-    const r = await probeOllama('', healthyFetch('0.5.4', []), '');
+    const r = await probeOllama('', healthyFetch('0.33.3', []), '');
     expect(r.status).toBe('ok');
   });
 
@@ -285,6 +295,24 @@ describe('chatOllama — 送信', () => {
       });
     }) as unknown as typeof fetch;
   }
+
+  it('★ 返答は MAX_ASSISTANT_REPLY_CHARS で打ち切り、切ったことを本文に残す (パス 113 まで 2 MiB まで素通し)', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) {
+        return new Response(JSON.stringify({ models: [{ name: 'llama3.2:latest', size: 1024 ** 3 }] }), { status: 200, headers: { 'content-type': 'application/json' } });
+      }
+      return new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'z'.repeat(MAX_ASSISTANT_REPLY_CHARS + 1) }, total_duration: 0 }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }) as unknown as typeof fetch;
+    const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'やあ' }, f, '');
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.reply).toHaveLength(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+    expect(r.reply.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
+  });
 
   it('応答本文を返す', async () => {
     const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'やあ' }, chatServer(), '');
@@ -506,7 +534,7 @@ describe('probeOllama — 配信元 CSP による遮断', () => {
   });
 
   it('接続できている場合は watcher を見ない', async () => {
-    const r = await probeOllama(11434, healthyFetch('0.5.4', []), '', hitWatcher);
+    const r = await probeOllama(11434, healthyFetch('0.33.3', []), '', hitWatcher);
     expect(r.status).toBe('ok');
   });
 
@@ -526,7 +554,7 @@ describe('probeOllama — 配信元 CSP による遮断', () => {
   it('監視は必ず解除する (リスナを積み残さない)', async () => {
     let stopped = 0;
     const counting = () => ({ hit: () => false, stop: () => void stopped++ });
-    await probeOllama(11434, healthyFetch('0.5.4', []), '', counting);
+    await probeOllama(11434, healthyFetch('0.33.3', []), '', counting);
     await probeOllama(11434, unreachableFetch(), '', counting);
     expect(stopped).toBe(2);
   });
@@ -766,7 +794,7 @@ describe('つながらない理由の文言 golden', () => {
   });
 
   it('接続成功', async () => {
-    expect(await probeOllama(11434, healthyFetch('0.5.4', []), '', noCsp)).toMatchSnapshot('ok');
+    expect(await probeOllama(11434, healthyFetch('0.33.3', []), '', noCsp)).toMatchSnapshot('ok');
   });
 
   it('古い版は警告つきで返す', async () => {
@@ -996,7 +1024,7 @@ describe('通信の枠', () => {
     const f = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       if (String(url).endsWith('/api/version')) {
         signal = init?.signal ?? undefined;
-        return json({ version: '0.5.4' });
+        return json({ version: '0.33.3' });
       }
       return json({ models: [] });
     }) as unknown as typeof fetch;
@@ -1164,7 +1192,7 @@ describe('診断の問い合わせ方', () => {
     const inits: RequestInit[] = [];
     const f = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       inits.push(init ?? {});
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     await probeOllama(11434, f, '', noCsp);
@@ -1282,7 +1310,7 @@ describe('配信ホストの既定値', () => {
       configurable: true,
     });
     const f = vi.fn(async (url: string | URL | Request) => {
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     // 第 3 引数を渡さない = 既定値の経路。同じホストなので許可される。
@@ -1300,7 +1328,7 @@ describe('配信ホストの既定値', () => {
     const urls: string[] = [];
     const f = vi.fn(async (url: string | URL | Request) => {
       urls.push(String(url));
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama(undefined, f, '');
@@ -1454,7 +1482,7 @@ describe('時間切れと後始末', () => {
   it('★ 見張りは本文の間だけ残り、締切とともに自分で消える', async () => {
     vi.useFakeTimers();
     const f = vi.fn(async (url: string | URL | Request) => {
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama(11434, f, '', noCsp);
@@ -1641,27 +1669,41 @@ describe('chatOllama — 送る前の整形と上限', () => {
     expect(sent(f).messages).toEqual([{ role: 'user', content: 'こんにちは' }]);
   });
 
-  it('system は 8192 字で切る', async () => {
+  // 天井超えは**切らずに断る** (main 版と同じ判断・同じ文面 —— パス 114)。2026-09-09 までは
+  // `slice` で黙って切り、この 2 本は「切れていること」を合格としていた。
+  it('★ system は天井ちょうどを 1 字も変えずに送り、1 字超は送らずに断る (パス 114)', async () => {
+    const atCap = 'あ'.repeat(MAX_OLLAMA_SYSTEM_CHARS);
     const f = okChat();
-    await chatOllama(
-      { endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは', system: 'あ'.repeat(9000) },
-      f,
+    await chatOllama({ endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは', system: atCap }, f, '');
+    expect(sent(f).messages[0]).toEqual({ role: 'system', content: atCap });
+    const g = okChat();
+    const r = await chatOllama(
+      { endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは', system: atCap + 'あ' },
+      g,
       '',
     );
-    const [sys] = sent(f).messages;
-    expect(sys!.role).toBe('system');
-    expect(sys!.content.length).toBe(8192);
+    expect(r).toEqual({
+      ok: false,
+      kind: 'too-long',
+      message: inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS),
+    });
+    expect(g).not.toHaveBeenCalled();
   });
 
-  it('プロンプトは 32768 字で切る', async () => {
+  it('★ prompt も天井ちょうどは通し、1 字超は送らずに断る', async () => {
+    const atCap = 'い'.repeat(MAX_OLLAMA_PROMPT_CHARS);
     const f = okChat();
-    await chatOllama(
-      { endpoint: '11434', model: 'llama3.2:1b', prompt: 'い'.repeat(40_000) },
-      f,
-      '',
-    );
+    await chatOllama({ endpoint: '11434', model: 'llama3.2:1b', prompt: atCap }, f, '');
     const msgs = sent(f).messages;
-    expect(msgs[msgs.length - 1]!.content.length).toBe(32_768);
+    expect(msgs[msgs.length - 1]).toEqual({ role: 'user', content: atCap });
+    const g = okChat();
+    const r = await chatOllama({ endpoint: '11434', model: 'llama3.2:1b', prompt: atCap + 'い' }, g, '');
+    expect(r).toEqual({
+      ok: false,
+      kind: 'too-long',
+      message: inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS),
+    });
+    expect(g).not.toHaveBeenCalled();
   });
 });
 
@@ -1844,7 +1886,12 @@ describe('chat の応答サイズの境界', () => {
     expect(body.length).toBe(LIMIT);
     const r = await chatOllama(base, chatBody(body), '');
     expect(r.ok).toBe(true);
-    if (r.ok) expect(r.reply).toBe(pad);
+    // byte の天井ちょうどは**断らない** (境界はそのまま)。文字数はパス 113 から
+    // `capAssistantReply` が 10 万字で打ち切る。
+    if (r.ok) {
+      expect(r.reply.startsWith('z'.repeat(MAX_ASSISTANT_REPLY_CHARS))).toBe(true);
+      expect(r.reply.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
+    }
   });
 
   it('上限を 1 バイト超えたら読まない', async () => {

@@ -26,7 +26,7 @@ aliases:
 フリッツ・マハループ ／ マーク・ポラット ／ ダニエル・ベル ／ ピーター・ドラッカー
 
 ## 出典
-- [Machlup, F. (1962) The Production and Distribution of Knowledge in the United States — Princeton UP (WorldCat)](https://www.worldcat.org/oclc/491747) `学術`
+- [Machlup, F. (1962) The Production and Distribution of Knowledge in the United States — Princeton UP (WorldCat)](https://www.worldcat.org/oclc/491747) `リファレンス`
 - [Wikipedia: Fritz Machlup — knowledge industry, knowledge economy, information society measurement](https://en.wikipedia.org/wiki/Fritz_Machlup) `リファレンス`
 
 ## 関連概念

@@ -31,7 +31,7 @@ aliases:
 - [厚生労働省 セルフメディケーション税制について](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000124853.html) `公的`
 
 ## 関連概念
-- [[tax-medical-expense-deduction|医療費控除]] — 同分野の近傍
+- [[tax-medical-expense-deduction|医療費控除]] — 語彙が近い
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 同分野の近傍
 
 ## 関連

@@ -3,6 +3,11 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import { CLOUDFLARE_DNS_FIELDS } from '../../shared/writeFieldLimits';
+import { purgeEverythingConfirmMessage, purgeUrlList } from '../data/cachePurge';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -32,6 +37,9 @@ export function CloudflarePage() {
   const [dnsType, setDnsType] = useState<'A' | 'AAAA' | 'CNAME' | 'TXT' | 'MX'>('A');
   const [dnsName, setDnsName] = useState('');
   const [dnsContent, setDnsContent] = useState('');
+  /* 貼り付けを黙って切らない (パス 183)。天井は台帳から読む。 */
+  const dnsNameOver = charsOverCeiling(dnsName, CLOUDFLARE_DNS_FIELDS.name.max);
+  const dnsContentOver = charsOverCeiling(dnsContent, CLOUDFLARE_DNS_FIELDS.content.max);
   const [dnsProxied, setDnsProxied] = useState(false);
   const [dnsBusy, setDnsBusy] = useState(false);
   const [dnsResult, setDnsResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
@@ -42,7 +50,7 @@ export function CloudflarePage() {
     if (!window.serviceHub) return;
     setDnsBusy(true);
     setDnsResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; name: string; type: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'cloudflare/create-dns-record'>>(
       'cloudflare',
       'create-dns-record',
       {
@@ -73,13 +81,23 @@ export function CloudflarePage() {
 
   const runPurge = async () => {
     if (!window.serviceHub) return;
+    /*
+     * **ゾーン全体は確認してから送る** (2026-09-12 · パス 154)。
+     *
+     * 選択肢のラベルは「ゾーン全体（破壊的）」—— 画面自身が破壊的だと名乗っている
+     * のに、2026-09-12 まで 1 回押すだけで `purgeEverything: true` が飛んでいた。
+     * このリポジトリはライブラリの 1 ファイル削除にも確認を付けており、
+     * **端末の外に効く唯一の破壊的操作**にだけ無いのは順序が逆だった。
+     * 範囲は id ではなく**ゾーン名**で言う (文面は `data/cachePurge.ts`)。
+     */
+    if (purgeMode === 'all') {
+      const zoneName = zoneOptions.find((z) => z.id === purgeZone)?.label ?? '';
+      if (!window.confirm(purgeEverythingConfirmMessage(zoneName))) return;
+    }
     setPurgeBusy(true);
     setPurgeResult(undefined);
-    const files = purgeUrls
-      .split(/\r?\n/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-    const res = await window.serviceHub.invoke<{ id: string; purged: 'all' | number }>(
+    const files = purgeUrlList(purgeUrls);
+    const res = await window.serviceHub.invoke<ActionData<'cloudflare/purge-cache'>>(
       'cloudflare',
       'purge-cache',
       purgeMode === 'all'
@@ -93,7 +111,9 @@ export function CloudflarePage() {
         message:
           res.data.purged === 'all' ? 'ゾーン全体をパージしました' : `${res.data.purged} URL をパージしました`,
       });
-      setPurgeUrls('');
+      // **URL 一覧を消すのは、その一覧を使ったときだけ。** ゾーン全体のパージは
+      // 一覧を読まないので、打ってあった URL を消すと打ち直させることになる。
+      if (purgeMode === 'urls') setPurgeUrls('');
     } else {
       setPurgeResult({ kind: 'error', message: res.message });
     }
@@ -184,6 +204,7 @@ export function CloudflarePage() {
               onChange={(e) => setDnsName(e.target.value)}
               style={inputStyle}
             />
+            <CeilingNotice label="name" value={dnsName} max={CLOUDFLARE_DNS_FIELDS.name.max} />
             <input
               placeholder={
                 dnsType === 'A' ? 'IPv4 アドレス'
@@ -196,6 +217,12 @@ export function CloudflarePage() {
               onChange={(e) => setDnsContent(e.target.value)}
               style={inputStyle}
             />
+            {/*
+             * content は 1 行だが天井 4,096 字で、**人が値を貼る欄**である (TXT の
+             * DKIM / SPF は長い)。`maxLength` に任せると貼った値の後ろが黙って落ち、
+             * 画面は「作成しました」と言う —— 壊れたレコードが公開される (パス 183)。
+             */}
+            <CeilingNotice label="content" value={dnsContent} max={CLOUDFLARE_DNS_FIELDS.content.max} />
             {supportsProxy ? (
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
                 <input
@@ -210,7 +237,7 @@ export function CloudflarePage() {
               <button
                 className="primary"
                 onClick={createDns}
-                disabled={dnsBusy || !dnsZone || !dnsName.trim() || !dnsContent.trim()}
+                disabled={dnsBusy || !dnsZone || !dnsName.trim() || !dnsContent.trim() || dnsNameOver > 0 || dnsContentOver > 0}
               >
                 {dnsBusy ? '作成中…' : '作成'}
               </button>

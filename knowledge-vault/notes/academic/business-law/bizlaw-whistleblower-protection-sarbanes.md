@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-whistleblower-protection-directive-eu|EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計]] — 語彙が近い
 - [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-dodd-frank|内部告発者保護とドッド・フランク法（米国）]] — 語彙が近い
 - [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 出典を共有
 - [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 出典を共有
 - [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 出典を共有
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — 出典を共有
 - [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有
-- [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

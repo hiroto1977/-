@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { SERVICE_IDS } from '../../shared/serviceId';
 import { join } from 'node:path';
+import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
  * ブラウザ版の**資格情報の出口**。`runProxyBearer` は、プロキシ経由で書き込む
@@ -55,6 +55,8 @@ vi.mock('../library/library', () => ({
 }));
 vi.mock('../network/proxy', () => ({
   getProxyConfig: async () => proxyConfig,
+  // 読み出しの新しい入口 (「未設定」と「読めない」を分ける)。ここでは常に「読めた」。
+  inspectStoredProxyConfig: async () => ({ config: proxyConfig, rejected: null, unreadable: null }),
   fetchViaProxy: async (url: string, init: RequestInit) => {
     transportCalls.push({ url, init });
     return new Response('{}', { status: 200 });
@@ -339,7 +341,7 @@ describe('API キーの送り先とヘッダ', () => {
   const TARGET_RE = /(?<!function\s)\btimedFetchAi\([\s\S]{0,300}?'(https?:\/\/[^']+)'/g;
 
   it('★ 鍵を載せて直接叩く送り先は 1 つだけ (計装後の源でも数えられる形で)', () => {
-    const src = readFileSync(join(__dirname, '..', 'web-shim.ts'), 'utf8')
+    const src = readOriginalSource(join(__dirname, '..', 'web-shim.ts'))
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^\s*\/\/.*$/gm, '');
 
@@ -819,47 +821,169 @@ describe('金庫が施錠されていれば、そう言って外へ出ない (�
  * そこで**呼んで確かめる**。デスクトップ側にしか無いと決めた操作は、
  * ブラウザ版では `action_not_found` であること。
  */
+/*
+ * ## 断りの**理由**を機械で確かめる (2026-09-15 · パス 275)
+ *
+ * パス 274 までこの台帳は `[service, action, 理由の散文]` の 3 つ組で、
+ * **理由を誰も検算していなかった**。パス 274 が 1 行 (`send-mail`) の理由を
+ * 偽と実測したので、残る 4 行**すべて**を測った。結果は 4 行で 3 通り:
+ *
+ * | 行 | 台帳が言っていた理由 | 実測 |
+ * | --- | --- | --- |
+ * | `skills/run-skill` | ブラウザに同等の能力が無い | **真** (`node:fs`/`os`/`path` を要る) |
+ * | `microsoft-365/create-event` | プロキシ経路を用意していない | **生きた欠陥** —— 画面にボタンが在り、押すと `action_not_found` |
+ * | `stocks/backtest` | デスクトップ側の計算 | **偽** —— ブラウザ版は自分の `backtest` を持ち、`compare-strategies` の中で**戦略ごとに呼んでいる** |
+ * | `docstudio/list-collections` | ローカルのテンプレート集を読む | **偽** —— 3 要素のリテラル定数を返すだけ (`node:` の import は 0 件) |
+ *
+ * だから理由を**種類**にした。種類ごとに機械の検査が 1 本付き、両方向に鳴る。
+ *
+ * **`kind` が 'needs-main-only-facility' でない行に、画面から呼ぶボタンが
+ * 在ってはならない** —— これがこの節の新しい不変条件で、パス 274 の
+ * `send-mail` と パス 275 の `create-event` の**どちらも**これで捕まる。
+ */
+type DesktopOnlyKind =
+  /** handler が main しか持たない設備 (`node:` の組み込み) を要る。 */
+  | 'needs-main-only-facility'
+  /** どちらのビルドからも呼ばれていない。繋ぐ先が無いので繋がない。 */
+  | 'dead-action';
+
+interface DesktopOnlyRow {
+  readonly service: string;
+  readonly action: string;
+  readonly kind: DesktopOnlyKind;
+  readonly note: string;
+}
+
 describe('デスクトップ版だけの操作は、ブラウザ版では実行できない', () => {
-  const DESKTOP_ONLY: ReadonlyArray<readonly [string, string, string]> = [
-    ['skills', 'run-skill', 'ローカルのスキルを実行する口。ブラウザに同等の能力は無い'],
-    ['microsoft-365', 'send-mail', 'CORS で直接叩けず、プロキシ経路も用意していない'],
-    ['microsoft-365', 'create-event', '同上'],
-    ['stocks', 'backtest', 'デスクトップ側の計算 (ブラウザ版は compare-strategies)'],
-    ['docstudio', 'list-collections', 'ローカルのテンプレート集を読む'],
+  const DESKTOP_ONLY: readonly DesktopOnlyRow[] = [
+    {
+      service: 'skills',
+      action: 'run-skill',
+      kind: 'needs-main-only-facility',
+      note: 'ローカルのスキルを実行する。main/clients/skills.ts は node:fs / node:os / node:path を要る',
+    },
+    {
+      service: 'stocks',
+      action: 'backtest',
+      kind: 'dead-action',
+      note:
+        '**「デスクトップ側の計算」は偽だった** —— ブラウザ版 (stocksAnalysisWeb.ts) は自分の '
+        + 'backtest を持ち、compare-strategies の中で戦略ごとに呼んでいる。main の runBacktest も '
+        + 'fs を触らない (stocks.ts の node: import はウォッチリストの状態ファイル用で、この '
+        + 'handler は使わない —— module の到達と call の到達は違う)。繋がない理由は '
+        + '**画面から呼ぶ所が無いこと**で、能力ではない',
+    },
+    {
+      service: 'docstudio',
+      action: 'list-collections',
+      kind: 'dead-action',
+      note:
+        '**「ローカルのテンプレート集を読む」は偽だった** —— 3 要素のリテラル定数 (COLLECTIONS) を '
+        + '返すだけで、node: の import は 0 件。同じ定数を fetchDocstudioSnapshot も返すので、'
+        + '画面が要る物は既にスナップショットで届いている',
+    },
   ];
 
-  it.each(DESKTOP_ONLY)('%s/%s は実行されない (%s)', async (service, action) => {
-    stored = 'sk-ant-test-key-value'; // 鍵の有無で断られたのではないことを明示する
-    const hub = await loadShim();
-    const r = await invoke(hub, service, action, {});
-    expect(r.ok).toBe(false);
-    expect(
-      r.code,
-      `${service}/${action} がブラウザ版で処理されています (if 連鎖のどれかが飲み込んでいる)`,
-    ).toBe('action_not_found');
+  it.each(DESKTOP_ONLY.map((r) => [r.service, r.action, r.note] as const))(
+    '%s/%s は実行されない (%s)',
+    async (service, action) => {
+      stored = 'sk-ant-test-key-value'; // 鍵の有無で断られたのではないことを明示する
+      const hub = await loadShim();
+      const r = await invoke(hub, service, action, {});
+      expect(r.ok).toBe(false);
+      expect(
+        r.code,
+        `${service}/${action} がブラウザ版で処理されています (if 連鎖のどれかが飲み込んでいる)`,
+      ).toBe('action_not_found');
+    },
+  );
+
+  /**
+   * 画面 (pages / components) が `invoke('<service>', '<action>'` の形で呼んでいるか。
+   * `web-shim.ts` と検査は母集団に入れない (あそこに在るのは処理する側)。
+   */
+  function rendererCallers(service: string, action: string): string[] {
+    const dirs = ['src/renderer/pages', 'src/renderer/components'];
+    const re = new RegExp(`'${service}',\\s*'${action}'`);
+    const hits: string[] = [];
+    for (const d of dirs) {
+      for (const e of readOriginalDirEntries(join(__dirname, '..', '..', '..', d))) {
+        if (!e.isFile() || !/\.tsx?$/.test(e.name)) continue;
+        if (re.test(readOriginalSource(`${d}/${e.name}`))) hits.push(`${d}/${e.name}`);
+      }
+    }
+    return hits;
+  }
+
+  /*
+   * **この節の要**。`kind` ごとに検算する。
+   *
+   * - `dead-action` —— 画面から呼ぶ所が 0 件であること。**ボタンを足した人は
+   *   ここで止まる**ので、「繋がない」と決め直すか繋ぐかを選ぶことになる。
+   * - `needs-main-only-facility` —— client が `node:` の組み込みを要ること。
+   *   **module 単位の測りであることを承知で使う** (`stocks.ts` がその反例で、
+   *   だから stocks の行は別の種類にした)。ここで見たいのは
+   *   「main にしか無い設備に依る *可能性* を持つ module か」で、
+   *   種類の取り違えを止める粗い篩である。
+   */
+  it('★ 断りの理由は種類ごとに実測と合う (散文を検算する)', () => {
+    for (const row of DESKTOP_ONLY) {
+      const callers = rendererCallers(row.service, row.action);
+      if (row.kind === 'dead-action') {
+        expect(
+          callers,
+          `${row.service}/${row.action} は 'dead-action' なのに画面から呼ばれています。`
+            + 'ボタンが在るならブラウザ版に繋ぐか、種類を選び直してください',
+        ).toEqual([]);
+        continue;
+      }
+      const src = readOriginalSource(`src/main/clients/${row.service}.ts`);
+      expect(
+        /from 'node:/.test(src),
+        `${row.service}.ts は node: の組み込みを要らない — 'needs-main-only-facility' は当たらない`,
+      ).toBe(true);
+    }
   });
 
   /*
-   * 標本 —— 上の 5 本が「何を呼んでも action_not_found」を見ているだけに
+   * 走査の対照 —— `rendererCallers` が**実際に当たる**こと。
+   * 空を返す関数なら上の `dead-action` の検査は何も見ていない。
+   */
+  it('★ 走査は実物の呼び出しを拾う (空の検査になっていない)', () => {
+    expect(rendererCallers('skills', 'run-skill')).toContain('src/renderer/pages/SkillsPage.tsx');
+    // ★ パス 275 で繋いだ 2 つは、今は画面から呼ばれていて**台帳に無い**。
+    expect(rendererCallers('microsoft-365', 'create-event')).not.toEqual([]);
+    expect(rendererCallers('microsoft-365', 'send-mail')).not.toEqual([]);
+    const listed = DESKTOP_ONLY.map((r) => `${r.service}/${r.action}`);
+    expect(listed).not.toContain('microsoft-365/create-event');
+    expect(listed).not.toContain('microsoft-365/send-mail');
+    // 当たらない組では空 (綴りに当てているだけの関数ではない)。
+    expect(rendererCallers('skills', 'create-event')).toEqual([]);
+  });
+
+  /*
+   * 標本 —— 上の 3 本が「何を呼んでも action_not_found」を見ているだけに
    * なっていないこと。ブラウザ版が持っている口では**別の答え**が返る。
    */
   it('★ ブラウザ版が持つ口は action_not_found にならない', async () => {
     stored = 'sk-ant-test-key-value';
     const hub = await loadShim();
     const r = await invoke(hub, 'emotions', 'log-mood', { score: 3 });
-    expect(r.code, '対照が効いていない — 上の 5 本は何も見ていない').not.toBe('action_not_found');
+    expect(r.code, '対照が効いていない — 上の 3 本は何も見ていない').not.toBe('action_not_found');
   });
 });
 
 /*
  * **ブラウザ版が処理する口を、呼んで数え上げて固定する。**
  *
- * 上の 5 本は名指しである。**名指しの規則は、名指しした綴りしか止められない** ——
- * このリポジトリが繰り返し踏んでいる形で、上の 5 本自身がその弱点を持つ
- * (6 つ目の危険な口が生えても何も言わない)。そこで**総当たり**で固定する。
+ * 上の 3 本は名指しである。**名指しの規則は、名指しした綴りしか止められない** ——
+ * このリポジトリが繰り返し踏んでいる形で、上の 3 本自身がその弱点を持つ
+ * (4 つ目の危険な口が生えても何も言わない)。そこで**総当たり**で固定する。
  *
  * 75 サービス × 42 行動名を全部 `invoke` して、`action_not_found` 以外を
- * 返した組を集める。それがブラウザ版の実際の面である。**38 組ちょうど。**
+ * 返した組を集める。それがブラウザ版の実際の面である。**44 組ちょうど**
+ * (2026-09-09 · パス 119 で advise ×4 が増え、2026-09-15 · パス 274 で
+ * `microsoft-365/send-mail` が増えた)。
  *
  * ## 語彙の限界を書いておく
  *
@@ -883,29 +1007,33 @@ const PROBE_ACTIONS: readonly string[] = [
   'sync-to-stripe', 'unregister-ticker',
 ];
 
-/** ブラウザ版が実際に処理する組 (2026-09-01 実測)。**増減したら鳴る。** */
+/**
+ * ブラウザ版が実際に処理する組 (2026-09-01 実測・2026-09-09 パス 119 で advise ×4・
+ * 2026-09-15 パス 274 で `microsoft-365/send-mail`・パス 275 で `microsoft-365/create-event`)。**増減したら鳴る。**
+ */
 const BROWSER_SURFACE: readonly string[] = [
   'assistant/chat', 'assistant/chatAll', 'assistant/providers',
   'atlassian/create-issue',
   'business/advise', 'business/export-dashboard', 'business/export-dashboard-md',
   'calendar/create-event', 'canva/create-folder',
   'cloudflare/create-dns-record', 'cloudflare/purge-cache',
-  'demae-can/record-entry', 'drive/create-folder',
+  'demae-can/advise', 'demae-can/record-entry', 'drive/create-folder',
   'emotions/analyze-text', 'emotions/clear-history', 'emotions/log-mood',
   'github/create-issue', 'gmail/create-draft',
-  'mutual-funds/record-entry', 'notion/create-page', 'ollama/chat',
-  'real-estate/record-entry',
+  'microsoft-365/create-event', 'microsoft-365/send-mail',
+  'mutual-funds/advise', 'mutual-funds/record-entry', 'notion/create-page', 'ollama/chat',
+  'real-estate/advise', 'real-estate/record-entry',
   'security/check-email-breach', 'security/scan-url',
   'slack/send-message',
   'stocks/advise', 'stocks/compare-strategies', 'stocks/export-dashboard',
   'stocks/export-dashboard-md', 'stocks/register-ticker', 'stocks/unregister-ticker',
   'talent/judge-leader', 'talent/save-state',
   'teamradar/export-svg', 'teamradar/save-state',
-  'templates/export-template', 'uber-eats/record-entry', 'wordpress/create-post-draft',
+  'templates/export-template', 'uber-eats/advise', 'uber-eats/record-entry', 'wordpress/create-post-draft',
 ];
 
 describe('ブラウザ版の面は、この組ちょうど (総当たりで固定)', () => {
-  it('処理される (service, action) は 38 組ちょうど', async () => {
+  it('処理される (service, action) は 44 組ちょうど', async () => {
     stored = null; // 鍵の有無に依らず「処理されるか」だけを見る
     const hub = await loadShim();
     const handled: string[] = [];

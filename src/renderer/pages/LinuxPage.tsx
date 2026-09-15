@@ -9,6 +9,21 @@ const fmtMb = (mb: number) => (mb >= 1024 ? `${(mb / 1024).toFixed(1)} GB` : `${
 /** メモリ使用率の警告閾値 (%) — clients/linux.ts の MEMORY_WARN_PCT と整合。 */
 const MEMORY_WARN_PCT = 85;
 
+/**
+ * ロードアベレージを刷る。**算定できていなければ「—」**。
+ *
+ * `null` は「このプラットフォームはロードアベレージを提供しない」の印
+ * (Windows では Node が OS に訊かず常に 0 を返す)。`?? 0` で倒すと
+ * 「ロード 0.00 = 暇」と読める数字になり、しかも下の `positive` /
+ * 色分けが**それを緑 (健全) として肯定する**。
+ */
+const loadOrDash = (n: number | null): string => (n === null ? '—' : n.toFixed(2));
+/** コアあたり負荷を刷る (算定不能なら「—」)。 */
+const pctOrDash = (n: number | null): string => (n === null ? '—' : `${n}%`);
+/** コアあたり負荷の色。**算定不能には色を付けない** (判定しないため)。 */
+const perCoreColor = (n: number | null): string | undefined =>
+  n === null ? undefined : n >= 100 ? '#ef4444' : n >= 70 ? '#fbbf24' : '#22c55e';
+
 export function LinuxPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
     'linux',
@@ -32,7 +47,11 @@ export function LinuxPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 8 }}>
           <Stat label="メモリ使用率" value={`${memory.usagePct.toFixed(1)}%`} positive={memory.usagePct < MEMORY_WARN_PCT} />
           <Stat label="使用 / 合計" value={`${fmtMb(memory.usedMb)} / ${fmtMb(memory.totalMb)}`} />
-          <Stat label="ロード (1分)" value={load.avg1.toFixed(2)} positive={load.perCorePct < 100} />
+          <Stat
+            label="ロード (1分)"
+            value={loadOrDash(load.avg1)}
+            positive={load.perCorePct === null ? undefined : load.perCorePct < 100}
+          />
           <Stat label="CPU コア" value={`${cpu.cores} 論理コア`} />
         </div>
       </Section>
@@ -60,11 +79,28 @@ export function LinuxPage() {
             </tr>
           </thead>
           <tbody>
-            <tr><td style={tdStyle}>直近 1 分</td><td style={tdNum}>{load.avg1.toFixed(2)}</td><td style={{ ...tdNum, color: load.perCorePct >= 100 ? '#ef4444' : load.perCorePct >= 70 ? '#fbbf24' : '#22c55e', fontWeight: 600 }}>{load.perCorePct}%</td></tr>
-            <tr><td style={tdStyle}>直近 5 分</td><td style={tdNum}>{load.avg5.toFixed(2)}</td><td style={tdNum}>—</td></tr>
-            <tr><td style={tdStyle}>直近 15 分</td><td style={tdNum}>{load.avg15.toFixed(2)}</td><td style={tdNum}>—</td></tr>
+            <tr><td style={tdStyle}>直近 1 分</td><td style={tdNum}>{loadOrDash(load.avg1)}</td><td style={{ ...tdNum, color: perCoreColor(load.perCorePct), fontWeight: 600 }}>{pctOrDash(load.perCorePct)}</td></tr>
+            <tr><td style={tdStyle}>直近 5 分</td><td style={tdNum}>{loadOrDash(load.avg5)}</td><td style={tdNum}>—</td></tr>
+            <tr><td style={tdStyle}>直近 15 分</td><td style={tdNum}>{loadOrDash(load.avg15)}</td><td style={tdNum}>—</td></tr>
           </tbody>
         </table>
+        {load.unavailableNote !== null && (
+          <div
+            data-loadavg-scope
+            role="alert"
+            style={{
+              fontSize: 11,
+              color: 'var(--text-mute)',
+              marginTop: 8,
+              lineHeight: 1.5,
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              padding: '6px 10px',
+            }}
+          >
+            {load.unavailableNote}
+          </div>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
           ※ ロードアベレージは実行待ち/実行中のプロセス数の平均。「コアあたり」が 100% を
           超えると、CPU が処理を捌ききれていない目安です。

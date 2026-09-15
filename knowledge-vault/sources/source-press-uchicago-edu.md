@@ -2,7 +2,7 @@
 title: "press.uchicago.edu"
 type: source-domain
 host: "press.uchicago.edu"
-cite_count: 16
+cite_count: 17
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # press.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **16 件**（学術 14 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **17 件**（学術 15 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -28,6 +28,7 @@ tags:
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — Turner(2006)FromCounterculturetoCyberculture,UniversityofChicagoPress
 - [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — Winner,L.(1986)TheWhaleandtheReactor—UniversityofChicagoPressch.1
 - [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — Galison(1997)ImageandLogic:AMaterialCultureofMicrophysics—Universityo…
+- [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]] — Vaughan,D.(1996)TheChallengerLaunchDecision:RiskyTechnology,Culture,a…
 - [[mgmt-role-exit-theory|役割退出理論]] — Ebaugh,H.R.F."BecominganEx:TheProcessofRoleExit"—UniversityofChicagoP…
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — Czarniawska,B.(1997)NarratingtheOrganization:DramasofInstitutionalIde…
 

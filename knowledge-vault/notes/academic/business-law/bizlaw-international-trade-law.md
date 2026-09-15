@@ -26,7 +26,7 @@ aliases:
 ジョン・H・ジャクソン ／ ロバート・ハデック ／ ペーター・ファン・デン・ボッシェ
 
 ## 出典
-- [Jackson 1969 World Trade and the Law of GATT](https://www.worldcat.org/title/world-trade-and-the-law-of-gatt/oclc/11656) `学術`
+- [Jackson 1969 World Trade and the Law of GATT](https://www.worldcat.org/title/world-trade-and-the-law-of-gatt/oclc/11656) `リファレンス`
 - [WTO Marrakesh Agreement Establishing the WTO 1995](https://www.wto.org/english/docs_e/legal_e/04-wto_e.htm) `公的`
 - [WTO Understanding on Rules and Procedures Governing the Settlement of Disputes (DSU)](https://www.wto.org/english/docs_e/legal_e/28-dsu_e.htm) `公的`
 - [Van den Bossche & Zdouc 2021 The Law and Policy of the World Trade Organization (4th ed.)](https://www.cambridge.org/core/books/law-and-policy-of-the-world-trade-organization/E52A862D68B07E34E57F13EB764A30B1) `リファレンス`
@@ -40,8 +40,8 @@ aliases:
 - [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 出典を共有
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 出典を共有
 - [[eh-1947|1947年（昭和22年）]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

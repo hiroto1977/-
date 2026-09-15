@@ -36,11 +36,11 @@ aliases:
 - [[econ-repugnant-markets-roth|忌避される市場——道徳が市場に課す制約]] — 同じ思想家
 - [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
 - [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 同じ思想家
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
 - [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
 - [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — 同じ思想家
-- [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

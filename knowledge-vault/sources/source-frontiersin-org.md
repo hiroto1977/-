@@ -2,7 +2,7 @@
 title: "frontiersin.org"
 type: source-domain
 host: "frontiersin.org"
-cite_count: 14
+cite_count: 13
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # frontiersin.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **14 件**（学術 14）
+> [!info] 出典ドメイン索引 ・ 引用 **13 件**（学術 13）
 
 ## このドメインを出典とする項目
 
@@ -24,7 +24,6 @@ tags:
 - [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — FrontiersinHumanNeuroscience:mirrortherapymechanismsreview
 - [[human-statistical-learning|統計的学習（Statistical Learning）]] — Kroghetal.(2013)StatisticalLearningAcrossDevelopment:FlexibleYetConst…
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — FrontiersinPsychology(2023)査読論文「Dealingwithinformationoverload:acompr…
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — ManagingKnowledgeinOrganizations—NonakaのSECIモデル操作化（FrontiersinPsychol…
 - [[mgmt-emotional-intelligence|感情知性（EQ）]] — FrontiersinPsychology(2019)感情知性の測定法に関する批判的レビュー
 - [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — FrontiersPsychology2021researchreview
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — Establishingself-concordantgoals:alongitudinalstudyontheinfluenceofeg…

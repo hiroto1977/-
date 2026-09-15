@@ -55,7 +55,7 @@ jobs:
             const fs = require('fs');
             const q = JSON.parse(fs.readFileSync('orchestration/knowledge-queue.json', 'utf8'));
             const s = q.summary;
-            const actionable = s.enrich + s.reverify + s.missingAsOf + s.dedupe + (s.dedupeGraph || 0) + s.sourceHygiene + s.deadLinks;
+            const actionable = s.enrich + s.reverify + s.missingAsOf + s.dedupe + (s.dedupeGraph || 0) + (s.dedupeId || 0) + (s.dedupeSource || 0) + s.sourceHygiene + s.deadLinks;
             const title = '📚 知識オートパイロット報告（自動更新）';
             const body = [
               `基準日 **${q.generatedAt}** ／ 対象 **${q.totals.entries}** 項目`,
@@ -67,6 +67,8 @@ jobs:
               `| asOf 欠落 | ${s.missingAsOf} |`,
               `| 重複疑い（タイトルコア） | ${s.dedupe} |`,
               `| 重複疑い（グラフ語彙） | ${s.dedupeGraph || 0} |`,
+              `| 重複疑い（id 翻字ゆれ） | ${s.dedupeId || 0} |`,
+              `| 重複疑い（第一出典 DOI） | ${s.dedupeSource || 0} |`,
               `| 出典衛生 | ${s.sourceHygiene} |`,
               `| リンク切れ | ${s.deadLinks}（要確認 ${s.suspectLinks} ／ 検査 ${s.linksChecked}） |`,
               '',

@@ -32,8 +32,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 同じ思想家
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
-- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
-- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同じ思想家
 - [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — 同分野の近傍
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 同分野の近傍

@@ -26,7 +26,7 @@ aliases:
 カール・シャピロ ／ ハル・ヴァリアン ／ アーサー・ピグー ／ ジュール・デュピュイ
 
 ## 出典
-- [Shapiro, C. & Varian, H.R. (1998) Versioning: The Smart Way to Sell Information — Harvard Business Review 76(6)](https://hbr.org/1998/11/versioning-the-smart-way-to-sell-information) `学術`
+- [Shapiro, C. & Varian, H.R. (1998) Versioning: The Smart Way to Sell Information — Harvard Business Review 76(6)](https://hbr.org/1998/11/versioning-the-smart-way-to-sell-information) `メディア`
 - [Wikipedia: Versioning — Shapiro & Varian, information goods, self-selection, second-degree price discrimination](https://en.wikipedia.org/wiki/Versioning) `リファレンス`
 
 ## 関連概念

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { detectCrisis } from '../counseling';
 import {
   simulateSession,
   runResearch,
@@ -41,6 +42,42 @@ describe('simulateSession (AI同士の役割演技)', () => {
     expect(s.turns[0]!.counselorTone).toBe('crisis');
     expect(s.turns[0]!.referred).toBe(true);
     expect(s.crisisReferred).toBe(true);
+  });
+
+  /*
+   * **不変条件そのものは既に全件で見ている** (下の
+   * 「MUST refer every crisis persona to resources (safety invariant)」が
+   * `runResearch(RESEARCH_PERSONAS)` を回し、`crisisReferrals === crisisSessions` を
+   * 床つきで確かめる)。**足りないのはラベルの側だった。**
+   *
+   * `crisisReferred` は `persona.crisis ? referred : null` なので、
+   * 危機語を含む発話を持つのに `crisis: false` と書いたペルソナは
+   * `crisisSessions` に数えられず、**不変条件の対象から静かに外れる**。
+   * 「窓口へ必ず到達する」を全件で確かめても、**何が全件なのかを表が自分で
+   * 決めている**限り、そこが逃げ道になる。表が自分について嘘をつけないように
+   * する (窓口を `kind: 'emergency'` に隠せないようにしたのと同じ形)。
+   */
+  it('★ 危機語を含む発話を持つペルソナは crisis: true でなければならない (不変条件から逃げられない)', () => {
+    const mislabelled = RESEARCH_PERSONAS.filter(
+      (p) => !p.crisis && p.steps.some((st) => detectCrisis(st.open) || detectCrisis(st.withdrawn)),
+    );
+    expect(mislabelled.map((p) => p.id)).toEqual([]);
+  });
+
+  it('対照: 逃げ道は実在する — 危機語を持つのに crisis: false だと判定対象から外れる', () => {
+    const dodger: PatientPersona = {
+      id: 'dodger',
+      name: 'D',
+      theme: '逃げ道の標本',
+      crisis: false,
+      steps: [{ open: 'もう死にたい', withdrawn: '', expect: ['crisis'] }],
+    };
+    // 危機語は実際に当たっているのに…
+    expect(detectCrisis(dodger.steps[0]!.open)).toBe(true);
+    // …ラベルが false なので危機の判定対象にならない (crisisSessions に入らない)。
+    expect(simulateSession(dodger).crisisReferred).toBeNull();
+    expect(runResearch([dodger]).crisisSessions).toBe(0);
+    // だから「全件が到達する」を見る検査だけでは足りず、ラベルの側を見る規則が要る。
   });
 
   it('marks crisisReferred=false for a crisis persona that never reaches a referral', () => {

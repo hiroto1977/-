@@ -26,7 +26,7 @@ aliases:
 ボニー・ナルディ ／ ヴィッキ・オデイ ／ グレゴリー・ベイトソン ／ マーシャル・マクルーハン
 
 ## 出典
-- [Nardi, B.A. & ODay, V.L. (1999) Information Ecologies: Using Technology with Heart — MIT Press (WorldCat)](https://www.worldcat.org/oclc/40193223) `学術`
+- [Nardi, B.A. & ODay, V.L. (1999) Information Ecologies: Using Technology with Heart — MIT Press (WorldCat)](https://www.worldcat.org/oclc/40193223) `リファレンス`
 - [Wikipedia: Information ecology — Nardi & ODay, system of people/practices/values/technology, keystone species](https://en.wikipedia.org/wiki/Information_ecology) `リファレンス`
 
 ## 関連概念

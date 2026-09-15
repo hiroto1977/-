@@ -18,7 +18,9 @@ import http from 'node:http';
 import { AddressInfo } from 'node:net';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
-import { redactForMessage } from '../shared/redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../shared/redact';
+import { parseTokenResponse, type TokenResponseFields } from '../shared/tokenResponse';
+import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
@@ -51,8 +53,58 @@ import {
  * 引数の `role` は文言のためだけにあり、判定は両方で同一である。
  */
 function assertHttpsEndpoint(url: string, role: 'token' | 'authorization'): void {
-  if (!url.startsWith('https://')) {
+  /*
+   * **解析してから判定する。字面では判定しない。** (2026-09-15 · パス 291)
+   *
+   * ここは 2026-09-15 まで `url.startsWith('https://')` だった ——
+   * つまり `externalUrlGate.ts` の docblock が**20 行かけて「これは誤りだ」と
+   * 説明している、その述語**である。あちらはブラウザ版が持っていた
+   * `/^https?:\/\//i` を「字面は `https://` で始まるので通るが、実際に開くのは
+   * 解析後の URL で、検査した文字列とは別物になりうる」と述べて捨てた。
+   *
+   * 実測 (2026-09-15・6 形を両方の述語に通した。**5 形で答えが割れた**):
+   *
+   *   形                              startsWith  解析して判定  解析後の origin
+   *   https://accounts.google.com/…   通す        通す          https://accounts.google.com
+   *   https://<LF>javascript:alert(1) 通す        断る          (解析不能)
+   *   https://<NUL>evil               通す        断る          (解析不能)
+   *   https://accounts.google.com@evil.example/…
+   *                                   通す        断る          **https://evil.example**
+   *   https://user:pw@evil.example/…  通す        断る          **https://evil.example**
+   *   https://                        通す        断る          (解析不能)
+   *
+   * 4 つ目が要点である。`externalUrlGate.ts` が userinfo の判定を足した理由に
+   * 挙げている例と**同じホスト**で、頭から読むと Google だが送り先は
+   * `evil.example` である。`tokenUrl` にこの形が入れば
+   * **client_secret と code をそこへ POST する**。
+   *
+   * **今日は悪用できない** —— `OAUTH_CONFIGS` の 9 つの `authorizeUrl` /
+   * `tokenUrl` はすべてソース中の `https://…` リテラルで、実行時に差し替わる
+   * 道が無い (実測)。だからこれは**深さの守りと述語の一貫性**の直しである。
+   * ただし上の docblock が自分で書いているとおり、以前ここは
+   * 「全 config がハードコード https」という**検査の中だけの保証**に頼って
+   * いた。常設ガードへ移したとき、選んだ述語が弱いままだった。
+   *
+   * `externalUrlOrNull` を使わないのは**問いが違う**から ——
+   * あちらは「OS に URL を開かせてよいか」で、ここは「この宛先へ資格情報を
+   * 載せて出てよいか」である (`tokenUrl` は `fetch` の相手で、OS へは渡らない)。
+   * userinfo を落とす式は `proxyEndpoint.ts` / `aiEndpoint.ts` /
+   * `externalUrlGate.ts` が既に同じ形で持っており、これで 4 つ目になる ——
+   * **統合しないのは 4 つが別の問いに答えているためで**、
+   * `shared/__tests__/loopbackChecks.test.ts` がループバック判定 3 つについて
+   * 同じ判断を記録している。
+   */
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
     throw new Error(`OAuth ${role} endpoint must use https`);
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new Error(`OAuth ${role} endpoint must use https`);
+  }
+  if (parsed.username !== '' || parsed.password !== '') {
+    throw new Error(`OAuth ${role} endpoint must not embed credentials in the URL`);
   }
 }
 
@@ -113,14 +165,12 @@ export interface TokenSet {
   tokenType?: string;
 }
 
-/** Provider-side response from a token endpoint. */
-interface TokenResponse {
-  access_token: string;
-  refresh_token?: string;
-  expires_in?: number;
-  scope?: string;
-  token_type?: string;
-}
+/**
+ * Provider-side response from a token endpoint. **`shared/tokenResponse.ts` の
+ * 検証済みの形そのもの** —— ここで宣言を写すと、写しがずれた日に `as` が黙る
+ * (パス 260 で外した `JSON.parse(…) as TokenResponse` がその形だった)。
+ */
+type TokenResponse = TokenResponseFields;
 
 /** Loaded by main.ts. Adding a service is just a new entry here. */
 export const OAUTH_CONFIGS: Partial<Record<ServiceId, OAuthConfig>> = {
@@ -401,10 +451,15 @@ export function serializeTokenBody(config: OAuthConfig, params: URLSearchParams)
 
 export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string): TokenSet {
   const expiresIn = raw.expires_in ?? 0;
+  // **足した結果を見る。** `expires_in` が有限でも `Date.now() + 1e308 * 1000` は
+  // `Infinity` で、`JSON.stringify` はそれを `null` にする —— 読み戻すと
+  // 「期限が記録されていない」になり 1 度も更新しない (パス 260 で実測)。
+  // 入口の欄と、計算した量は**別の量**なので、それぞれの場所で見る (パス 57)。
+  const expiresAt = Date.now() + expiresIn * 1000;
   return {
     accessToken: raw.access_token,
     refreshToken: raw.refresh_token ?? fallbackRefresh,
-    expiresAt: expiresIn > 0 ? Date.now() + expiresIn * 1000 : undefined,
+    expiresAt: expiresIn > 0 && Number.isFinite(expiresAt) ? expiresAt : undefined,
     scope: raw.scope,
     tokenType: raw.token_type,
   };
@@ -517,6 +572,19 @@ const CALLBACK_HTML = `<!doctype html><html><head><meta charset="utf-8"><title>S
 h1{margin:0 0 8px;font-size:18px}p{margin:0;color:#8a93a6;font-size:13px}</style></head>
 <body><div class="box"><h1>認証完了</h1><p>このタブは閉じて Service Hub に戻ってください。</p></div></body></html>`;
 
+/**
+ * **利用者が同意画面を操作している間、loopback を開けておく時間。** (2026-09-15 · パス 282)
+ *
+ * HTTP の締切 (`DEFAULT_HTTP_TIMEOUT_MS` = 30 秒) とは**別の量**である ——
+ * こちらが待っているのは相手のサーバではなく**人**で、ブラウザを開き、
+ * アカウントを選び、権限を読んで押すまでの時間。だから長い。
+ *
+ * 名前を付けたのは、下の rate-limit の注記が「the 5-min timeout」と
+ * **散文で同じ数を述べていた**ため —— 数が式と散文の 2 か所に在ると、
+ * 片方だけ動いたときに誰も気付けない (パス 282 の census が拾った)。
+ */
+const OAUTH_CALLBACK_WINDOW_MS = 5 * 60_000;
+
 interface CallbackResult {
   code: string;
   state: string;
@@ -528,7 +596,7 @@ interface CallbackResult {
  *
  *  Exported for integration testing (real HTTP server bound to 127.0.0.1
  *  on a random port). Not part of the stable API. */
-export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promise<CallbackResult> & {
+export function listenForCallback(expectedState: string, timeoutMs = OAUTH_CALLBACK_WINDOW_MS): Promise<CallbackResult> & {
   port: () => Promise<number>;
   cancel: () => void;
 } {
@@ -725,7 +793,31 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   const redirectUri = `http://127.0.0.1:${port}/oauth/callback`;
   const authorizeUrl = buildAuthorizeUrl(config, redirectUri, state, challenge);
 
-  await shell.openExternal(authorizeUrl);
+  /*
+   * **OS へ渡す文字列そのものを、共有の関門に通す。** (2026-09-15 · パス 291)
+   *
+   * `externalUrlGate.ts` は自分を「外へ開く URL を判定する**唯一の関門**」と
+   * 宣言しているが、ここは `lint:forbidden` の allowFile で例外にしてある
+   * `shell` への直接の呼び出し口で、**その関門を通っていなかった**
+   * (上の `assertHttpsEndpoint` が別の述語で守っていた)。
+   * つまり「唯一」は実物より広い主張だった —— パス 290 が
+   * `redact.ts` の「全経路」で見つけたのと同じ形である。
+   *
+   * **`assertHttpsEndpoint` が見るのは `config.authorizeUrl` (土台) で、
+   * `shell` が受けるのは組み立て後の文字列である。** 関門の docblock が
+   * 掲げる性質は「**調べたものと開くものが一致する**」なので、
+   * 土台だけを調べていては満たせない。だから組み立て後を通し、
+   * **関門が返した正規化済みの文字列を開く** (引数をそのまま渡さない)。
+   *
+   * ここまで来れば土台は https で userinfo 無しだが、`buildAuthorizeUrl` は
+   * `config.extraAuthParams` を差し込むので、組み立て後を見るのが正しい。
+   */
+  const safeAuthorizeUrl = externalUrlOrNull(authorizeUrl);
+  if (safeAuthorizeUrl === null) {
+    throw new Error('OAuth authorization URL was rejected by the external-URL gate');
+  }
+
+  await shell.openExternal(safeAuthorizeUrl);
 
   const { code } = await listener;
 
@@ -748,11 +840,13 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
         // Stryker disable next-line StringLiteral
         'oauth',
       ).catch(() => '');
-      throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
+      throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
-    return JSON.parse(
-      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
-    ) as TokenResponse;
+    // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ
+    // (ブラウザ版の `pkce.ts` も同じ関数を読む)。断り文は本文を引用しない。
+    const parsed = parseTokenResponse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'));
+    if (!parsed.ok) throw new Error(parsed.message);
+    return parsed.value;
   });
   return tokenResponseToSet(raw);
 }
@@ -789,11 +883,13 @@ export async function refresh(
         // Stryker disable next-line StringLiteral
         'oauth',
       ).catch(() => '');
-      throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
+      throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
-    return JSON.parse(
-      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
-    ) as TokenResponse;
+    // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ
+    // (ブラウザ版の `pkce.ts` も同じ関数を読む)。断り文は本文を引用しない。
+    const parsed = parseTokenResponse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'));
+    if (!parsed.ok) throw new Error(parsed.message);
+    return parsed.value;
   });
   return tokenResponseToSet(raw, current.refreshToken);
 }

@@ -114,7 +114,8 @@ function canonicalKnowledgeTotal() {
 function canonicalCitationLedgerCount() {
   const src = read(path.join(REPO_ROOT, 'scripts/lint-doi-prefix.cjs'));
   if (src == null) return null;
-  const names = ['ALLOWLIST', 'ISBN_ALLOWLIST', 'JOURNAL_ALLOWLIST', 'DUPLICATE_ID_ALLOWLIST'];
+  // 2026-09-05: ISSN_ALLOWLIST (埋め込み ISSN の検査数字) が 5 つ目の台帳として加わった。
+  const names = ['ALLOWLIST', 'ISBN_ALLOWLIST', 'JOURNAL_ALLOWLIST', 'DUPLICATE_ID_ALLOWLIST', 'ISSN_ALLOWLIST'];
   let total = 0;
   for (const name of names) {
     // `const NAME = new Map([` から対応する `]);` までを粗く切り出し、
@@ -141,6 +142,18 @@ function canonicalCitationLedgerCount() {
  * QUALITY.md 側は分母に `Ignored` を混ぜて 77.16% を出していた —— 同じ
  * 報告書から出た 2 つの数字が、互いを出典に名指ししたまま 23 ポイント違っていた。
  */
+/**
+ * `src/shared/ollama.ts` の `export const NAME = '…'` を読む (2026-09-09 · パス 139)。
+ * Ollama の安全の床 (MIN_SAFE_VERSION) と台帳の照合日は、2026-09-09 まで docs/OLLAMA_SECURITY.md に
+ * 手で 4 か所写されていて (0.1.46)、コードが動いても文書は動かなかった。
+ */
+function canonicalOllamaConst(name) {
+  const src = read(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
+  if (src === null) return null;
+  const m = new RegExp(`export const ${name}\\s*=\\s*'([^']+)'`).exec(src);
+  return m === null ? null : m[1];
+}
+
 function canonicalMutationScore(which) {
   const src = read(path.join(DOCS, 'QUALITY.md'));
   if (src == null) return null;
@@ -187,12 +200,66 @@ const FACTS = [
     ],
   },
   {
+    name: 'Ollama minimum safe version (台帳の修正版の最大)',
+    canonical: canonicalOllamaConst('MIN_SAFE_VERSION'),
+    claims: [
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /→ \*\*Ollama (\d+\.\d+\.\d+) 以降 \(推奨: 最新安定版\)\*\*/,
+        parse: (m) => m[1],
+      },
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /床は `(\d+\.\d+\.\d+)`\)/,
+        parse: (m) => m[1],
+      },
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /更新後 `ollama --version` で (\d+\.\d+\.\d+) 以上/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
+  {
+    name: 'Ollama advisories verified on (台帳の照合日)',
+    canonical: canonicalOllamaConst('OLLAMA_ADVISORIES_VERIFIED_ON'),
+    claims: [
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /台帳[^\n]*は \*\*(\d{4}-\d{2}-\d{2}) 時点\*\*/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
+  {
     name: 'academic concept count',
     canonical: canonicalAcademicCount(),
     claims: [
       {
         file: 'docs/KNOWLEDGE_AUTOPILOT.md',
         pattern: /知識ベース（学術 ([\d,]+) \//,
+        parse: (m) => Number(m[1].replace(/,/g, '')),
+      },
+      /*
+       * **新しいセッションが最初に読む文書も突き合わせる** (2026-09-08 · パス 97)。
+       *
+       * `docs/SESSION_HANDOFF.md` の進捗ダッシュボードは同じ概念総数を持ち、
+       * 見出しに「毎バッチ完了時に更新」と書いてある = **手で保つ数**である。
+       * ところがこのゲートは、ドリフトが見つかった 2 つの文書
+       * (KNOWLEDGE_AUTOPILOT / REMAINING_WORK) にしか向いていなかった。
+       *
+       * CLAUDE.md と SessionStart hook (`scripts/session-context.cjs`) は
+       * **この文書を最初に読め**と案内する。つまり**いちばん読まれる台帳が、
+       * 何も検査していない唯一の台帳**だった (実測: `scripts/` のうち
+       * SESSION_HANDOFF を読むのは hook・URL 符号化・整合性チェーンの 3 本だけで、
+       * どれも数を見ていない)。
+       *
+       * 2026-09-08 時点の値は**正しかった** (3,417 で本体と一致)。
+       * 欠陥ではなく**番人の不在**なので、番人だけを足す。
+       */
+      {
+        file: 'docs/SESSION_HANDOFF.md',
+        pattern: /\| \*\*現在の概念総数\*\* \| \*\*([\d,]+)\*\*/,
         parse: (m) => Number(m[1].replace(/,/g, '')),
       },
     ],
@@ -528,6 +595,61 @@ function checkE2eBuildOrder(failures, textOverride) {
 }
 
 /**
+ * **発信先の台帳は 1 つ** —— `docs/ARCHITECTURE.md` §3.3 だけ。
+ *
+ * `docs/SECURITY_AUDIT.md` の「ネットワーク発信先一覧」は 2026-09-09 まで §3.3 の手書きの
+ * 写し (12 行) を持ち、「その他のホストへの接続は **存在しない**」「Ollama は
+ * 127.0.0.1:11434 (ハードコード、変更不可)」と書いていた。実物の §3.3 は 29 ホストで、
+ * freee / Microsoft Graph / BASE / Stripe / LINE / Discord / Salesforce / OpenAI / Gemini が
+ * 写しに無く、ブラウザ版の Ollama と AI ハブは接続先を設定できる。§3.3 は `verify:arch`
+ * が実物と照合するが、写しは誰も見ない —— **写しを持つこと自体を禁じる** (節は §3.3 を
+ * 指し、表を持たず、絶対の否定を置かない)。
+ */
+function checkSingleEgressLedger(failures, auditOverride) {
+  const FACT = '発信先の台帳は 1 つ';
+  const text =
+    auditOverride === undefined ? read(path.join(REPO_ROOT, 'docs/SECURITY_AUDIT.md')) : auditOverride;
+  if (text === null) {
+    failures.push({ fact: FACT, reason: 'docs/SECURITY_AUDIT.md を読めない' });
+    return 0;
+  }
+  const lines = text.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('## ネットワーク発信先一覧'));
+  if (start < 0) {
+    failures.push({
+      fact: FACT,
+      reason: 'SECURITY_AUDIT.md に「## ネットワーク発信先一覧」の節が無い — §3.3 への案内が消えている',
+    });
+    return 0;
+  }
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith('## ')) end += 1;
+  const section = lines.slice(start + 1, end);
+  const body = section.join('\n');
+  if (!/ARCHITECTURE\.md[^\n]*§\s*3\.3|§\s*3\.3[^\n]*ARCHITECTURE\.md/.test(body)) {
+    failures.push({ fact: FACT, reason: 'SECURITY_AUDIT.md の発信先の節が docs/ARCHITECTURE.md §3.3 を指していない' });
+  }
+  const tableRows = section.filter((l) => /^\|/.test(l));
+  if (tableRows.length > 0) {
+    failures.push({
+      fact: FACT,
+      reason:
+        `SECURITY_AUDIT.md の発信先の節に表が ${tableRows.length} 行ある — 発信先の台帳は ARCHITECTURE.md §3.3 だけ` +
+        ' (verify:arch が実物と照合する)。写しは 2026-09-09 に 12 行 / 実物 29 ホストまでずれていた',
+    });
+  }
+  if (/接続は\s*\*{0,2}存在しない/.test(body)) {
+    failures.push({
+      fact: FACT,
+      reason:
+        'SECURITY_AUDIT.md の発信先の節が「接続は存在しない」と絶対の否定を置いている — ' +
+        'その主張を持てるのは verify:arch が照合する §3.3 だけ',
+    });
+  }
+  return 1;
+}
+
+/**
  * 変異スコアの**鮮度**。等値の照合 (FACTS) では捕まらない種類の腐り方を見る。
  *
  * `docs/QUALITY.md` は自動生成だが、生成し直さなければ古いまま committed で
@@ -588,6 +710,134 @@ function checkMutationScoreFresh(failures, qualityOverride, configOverride) {
         '赤のはず。緑のままなら doc が古いか、点数の出し方が間違っている ' +
         '(`npm run quality:report` で再生成)',
     });
+  }
+  return 1;
+}
+
+/**
+ * **行ごとの点数も見る。総合だけでは、死んだ 1 ファイルが見えない。**
+ *
+ * ## 見つけた形 (2026-09-07 実測)
+ *
+ * `checkMutationScoreFresh` が読むのは「Mutation score (total / covered)」の
+ * **総合 1 行だけ**で、`thresholds.break` と比べている。ところが
+ * `docs/QUALITY.md` は**ファイルごとの表**も持ち、そこは誰も見ていなかった。
+ *
+ * 246 行のうち **1 行が 0.00%** だった (`src/shared/taxConsumption.ts`)。
+ * 246 ファイルの総合はこの 1 件では動かないので、**総合は緑のまま**である。
+ * 気付いたのは表を数値で並べ替えたからで、見た目 (245 行が 100.00) では隠れる。
+ *
+ * **危ないのは、この 0.00 が 2 つの別物を区別できないこと**:
+ *
+ *   - `mutate` に載せたが**どの検査も覆っていない**モジュール
+ *     (変異検査が存在する理由そのもの)
+ *   - モジュール直下の定数しか持たず、full run では静的変異体が「未到達」に
+ *     落ちるだけのファイル (`stryker.config.json` の注記にある既知の形)
+ *
+ * どちらも `0.00 | 0 殺 | 0 生存 | N 未到達` と出る。**前者を後者に見せかけて
+ * 出荷できる。** 実測した今日の 1 件は後者 (かつ既に古い) だったが、
+ * 「今日はたまたま無害」は仕組みではない。
+ *
+ * ## 規則
+ *
+ * 閾値を下回る行は**台帳に理由つきで載っていなければ落とす**。台帳は
+ * 逆向きにも照合する —— 載っているのに実際は閾値以上 (= 直った) 行、
+ * および表から消えた行も落とす。「直ったのに台帳に残る」は、次に本当に
+ * 死んだファイルが来たときの目隠しになる。
+ */
+const PER_FILE_BELOW_THRESHOLD = {
+  'src/shared/taxConsumption.ts':
+    '週次スナップショットの時点ではモジュール直下の定数だけを持つファイルで、full run では ' +
+    '静的変異体が未到達へ落ちるため 0.00 と記録された (変異体 2・殺 0・生存 0)。' +
+    '2026-09-07 に判定関数 twentyPercentMeasureStatus とその検査が入っており、' +
+    'subset 実行の実測は 100.00% (39 殺・生存 0・未到達 0)。次の週次実行で行が更新される。',
+};
+
+/** 表が生きていることの下限 (実測 246 行)。 */
+const MIN_QUALITY_ROWS = 200;
+
+/** 理由はこの字数以上 (「静的」だけでは次の人が判断できない)。 */
+const MIN_REASON_CHARS = 40;
+
+function checkPerFileMutationScores(failures, qualityOverride, configOverride, ledgerOverride) {
+  const quality =
+    qualityOverride === undefined ? read(path.join(DOCS, 'QUALITY.md')) : qualityOverride;
+  const rawCfg =
+    configOverride === undefined
+      ? read(path.join(REPO_ROOT, 'stryker.config.json'))
+      : configOverride;
+  const ledger = ledgerOverride === undefined ? PER_FILE_BELOW_THRESHOLD : ledgerOverride;
+  if (quality === null || rawCfg === null) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason: 'docs/QUALITY.md か stryker.config.json を読めない',
+    });
+    return 0;
+  }
+  let breakAt = null;
+  try {
+    breakAt = JSON.parse(rawCfg).thresholds?.break ?? null;
+  } catch {
+    breakAt = null;
+  }
+  if (breakAt === null) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason: 'stryker.config.json に thresholds.break が無い — 行ごとの点数を判定できない',
+    });
+    return 0;
+  }
+
+  // `| src/x.ts | 100.00 | 100.00 | 261 | 0 | 0 | 42 | 0 |`
+  const ROW = /^\|\s*(src\/[^|\s]+)\s*\|\s*([\d.]+)\s*\|/gm;
+  const rows = new Map();
+  for (const m of quality.matchAll(ROW)) rows.set(m[1], Number(m[2]));
+
+  if (rows.size < MIN_QUALITY_ROWS) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason:
+        `docs/QUALITY.md のファイル別の行が ${rows.size} 件しか読めない (下限 ${MIN_QUALITY_ROWS}) — ` +
+        '表の形が変わったか生成が壊れている。0 件を「問題なし」と読ませない',
+    });
+    return 1;
+  }
+
+  for (const [file, total] of rows) {
+    if (total >= breakAt) continue;
+    const reason = ledger[file];
+    if (typeof reason !== 'string' || reason.trim().length < MIN_REASON_CHARS) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason:
+          `docs/QUALITY.md の ${file} が ${total}% (閾値 ${breakAt}%) — ` +
+          'PER_FILE_BELOW_THRESHOLD に理由を書くこと。0.00 は「覆っていない」と ' +
+          '「モジュール直下の定数だけ」の両方に見えるので、どちらなのかを実測して残す',
+      });
+    }
+  }
+
+  // 逆向き: 台帳が古くなっていないか。
+  for (const [file, reason] of Object.entries(ledger)) {
+    if (!rows.has(file)) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason: `PER_FILE_BELOW_THRESHOLD の ${file} が docs/QUALITY.md の表に無い — 台帳から消すこと`,
+      });
+      continue;
+    }
+    if (rows.get(file) >= breakAt) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason:
+          `PER_FILE_BELOW_THRESHOLD の ${file} は ${rows.get(file)}% で閾値を満たしている — ` +
+          '直ったなら台帳から消すこと (残すと、次に本当に死んだファイルが来たときの目隠しになる)',
+      });
+    }
+    // 理由の字数は**前向きの側だけ**で見る。両方で見ると同じ問題を 2 件報告して
+    // しまう (self-test がそれを教えてくれた)。閾値以上の行は上で「直った」として
+    // 鳴るので、そちらの理由の長さは問わない。
+    void reason;
   }
   return 1;
 }
@@ -1116,6 +1366,46 @@ function selfTest() {
       console.log(`  ${ok ? '✓' : '✗'} 変異スコア鮮度: ${label}: ${f.length} 件 (期待 ${expected})`);
     }
   }
+
+  /*
+   * 行ごとの点数。**総合が緑でも 1 ファイルが死んでいることは在る** ——
+   * 2026-09-07 の実測で `src/shared/taxConsumption.ts` が 0.00% のまま
+   * 246 行の総合に埋もれていた。台帳は両向きで照合する。
+   */
+  {
+    const cfg = (b) => JSON.stringify({ thresholds: { break: b } });
+    const REASON = 'x'.repeat(50);
+    /** 下限を満たす健全な表 + 追加の行。 */
+    const table = (extra) => {
+      const filler = Array.from(
+        { length: 210 },
+        (_, i) => `| src/filler/f${i}.ts | 100.00 | 100.00 | 5 | 0 | 0 | 0 | 0 |`,
+      ).join('\n');
+      return `${filler}\n${extra}\n`;
+    };
+    const dead = '| src/shared/taxConsumption.ts | 0.00 | 0.00 | 0 | 0 | 0 | 2 | 0 |';
+    const healed = '| src/shared/taxConsumption.ts | 100.00 | 100.00 | 39 | 0 | 0 | 0 | 0 |';
+    const OK = cfg(99.8);
+    for (const [label, quality, ledger, expected, config = OK] of [
+      ['★ 実在した形 (1 行だけ 0.00%・台帳なし) で鳴る', table(dead), {}, 1],
+      ['台帳に理由があれば鳴らない', table(dead), { 'src/shared/taxConsumption.ts': REASON }, 0],
+      ['理由が短ければ鳴る', table(dead), { 'src/shared/taxConsumption.ts': 'みじかい' }, 1],
+      ['★ 直ったのに台帳に残っていれば鳴る (次の死を隠す)', table(healed), { 'src/shared/taxConsumption.ts': REASON }, 1],
+      ['★ 台帳の行が表から消えていれば鳴る', table(healed), { 'src/gone/x.ts': REASON }, 1],
+      ['全部 100 なら鳴らない', table('| src/a/b.ts | 100.00 | 100.00 | 3 | 0 | 0 | 0 | 0 |'), {}, 0],
+      ['★ 表が読めない (行が少ない) なら鳴る — 0 件を合格にしない', `${dead}\n`, {}, 1],
+      ['閾値が無ければ鳴る', table(dead), {}, 1, '{}'],
+      ['設定が壊れていれば鳴る', table(dead), {}, 1, '{ not json'],
+      ['doc が読めなければ鳴る', null, {}, 1],
+      ['設定が読めなければ鳴る', table(dead), {}, 1, null],
+    ]) {
+      const f = [];
+      checkPerFileMutationScores(f, quality, config, ledger);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 行ごとの点数: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
   /*
    * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
    * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
@@ -1123,6 +1413,34 @@ function selfTest() {
    * 「✗」は画面に出るが、CI が見るのは終了コードだけである。
    * 対照を書いておきながら、その対照の結果を捨てていた。
    */
+  /*
+   * 発信先の台帳が 1 つであること。**2026-09-09 まで実在した形を最初のケースに置く** ——
+   * SECURITY_AUDIT の節が表 (12 行) と「その他のホストへの接続は存在しない」を持ち、
+   * §3.3 を指していなかった。「§3.3 を指していれば通る」も同じ強さで要る。
+   */
+  {
+    const head = '## ネットワーク発信先一覧（許可されている外部接続先）\n';
+    const pointer = '\n発信先の台帳は **`docs/ARCHITECTURE.md` §3.3** の 1 つだけ。\n';
+    const table = '\n| サービス | ホスト |\n|---|---|\n| GitHub | api.github.com |\n';
+    const denial = '\nその他のホストへの接続は **存在しない**。\n';
+    const next = '\n## 次の節\n';
+    for (const [label, text, expected] of [
+      ['★ 2026-09-09 まで実在した形 (表 + 絶対の否定・§3.3 を指さない) で鳴る', head + table + denial + next, 3],
+      ['§3.3 を指し、表も否定も無ければ鳴らない', head + pointer + next, 0],
+      ['★ §3.3 を指していても表が戻れば鳴る', head + pointer + table + next, 1],
+      ['絶対の否定だけでも鳴る', head + pointer + denial + next, 1],
+      ['節の外の表は見ない', head + pointer + next + table, 0],
+      ['節が無ければ鳴る', '# 監査\n' + next, 1],
+      ['読めなければ鳴る', null, 1],
+    ]) {
+      const f = [];
+      checkSingleEgressLedger(f, text);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 発信先の台帳: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
   if (bad > 0 || selfTestFailed) {
     console.error(`❌ self-test 不一致 ${bad} 件 (+ 旗 ${selfTestFailed}) — ゲートのゲートが鳴っていない`);
     return 1;
@@ -1178,14 +1496,16 @@ function main() {
   const catCount = checkReadmeCategories(failures);
   const pubCount = checkPublishScanCoverage(failures);
   const orderCount = checkE2eBuildOrder(failures);
-  const freshCount = checkMutationScoreFresh(failures);
+  const ledgerCount = checkSingleEgressLedger(failures);
+  const freshCount = checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
       ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
       ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合` +
       ` + e2e.yml のビルド順 ${orderCount} 件 (dist/ を掃除する側が後ろに来ていないこと)`,
-      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)`,
+      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)` +
+      ` + 発信先の台帳 ${ledgerCount} 件 (SECURITY_AUDIT に §3.3 の写しが無いこと)`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');

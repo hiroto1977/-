@@ -43,13 +43,43 @@ Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS
 | R3-4 | `security/webauthn.ts` | `rawId.byteLength > 0` だけで所持証明 true (署名未検証・チャレンジ使い捨て) → 認証器呼び出し前に throw する fail-closed 化。誤配線事故を構造的に防ぐ | 修正 |
 | R3-5 | `main/secrets.ts` + 設定画面 | `plain:` フォールバックの警告が `console.warn` のみで GUI 利用者に不可視 → `secrets:protection` IPC (秘密を返さず encrypted/plainCount/path のみ) + 設定画面表示 | 修正 |
 | R3-6 | `components/DataList.tsx`, `StatusBar.tsx` | 第三者由来 `thumbnailUrl`/`avatarUrl` のスキーム未検証 (現状 `<img>` なので実害なし。`href`/CSS `url()`/SVG `use` へ移した瞬間に危険) → https?/data:image のみ許可し、それ以外は `src` 属性自体を出さない。tab/CR/LF を除去してから判定 | 修正 |
-| R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認 | 修正 |
+| R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認。2026-09-05 に 43 系の最新 **43.6.0** へ（patch 4 つぶんの Chromium / Node の security backport。`npm audit` は patch release を勧告として出さないので `npm outdated` の `wanted` で見る。実物の起動は `smoke:app` で確認） | 修正 |
 
-production npm audit: **0 脆弱性**。dev 依存の残りは electron-builder の推移的依存 (brace-expansion /
-minimatch / ejs / temp / glob の DoS・ReDoS) と vite/vitest 系。いずれも**出荷物の依存ツリーには入らず**、
-かつ攻撃前提が本プロジェクトの使い方では成立しない (`vitest --ui` は未使用、vite dev server は
-ローカルのみ、electron-builder はリリースタグ時に自前ソースをビルドするだけ)。
-electron-builder については npm の提案が 25 系への降格であり、Electron 43 を扱えなくなるため採らない。
+npm audit: **prod / dev とも 0 件** (2026-09-10 実測)。
+
+> **この段落は 2026-09-10 まで実物とずれていた。** 「dev 依存の残りは brace-expansion / minimatch /
+> ejs / temp / glob と vite/vitest 系」と名指ししていたが、その日の勧告集合は **1 件も重なっていなかった**
+> —— 実際に在ったのは `@vitest/mocker` の**パストラバーサル / 任意ファイル読み出し**
+> (GHSA-82fw-gwwq-j7x9) と `js-yaml` の DoS (GHSA-2883-xcg3-v3hh · **high**) で、どちらもここに理由が
+> 書かれていなかった。読んだ人は「残りは梱包道具の DoS だけ」と受け取る。
+> **散文で在庫を持つのをやめた** —— 受け入れではなく「自分で押さえた床」を台帳にして機械に持たせた。
+
+- **勧告 4 件は宣言の範囲内で解消**した (2026-09-10): `vitest` / `@vitest/coverage-v8` 4.1.10 → **4.1.11**
+  (`^4.1.10` の内側)、`js-yaml` 4.3.1 → **4.3.2** (electron-builder の `^4.1.0` の内側)。
+  追加・削除されたパッケージは 0 件で、動いたのは 10 件の patch だけ。
+- **押さえた版は `scripts/lint-dependencies.cjs` の `SECURITY_FLOORS` (床 4 件) が持つ** (`lint:deps` / 規則 7)。
+  床は道 (`overrides` / `devDependencies` の範囲) を問わず 1 つの台帳に載り、
+  **宣言の消失・指定の緩み・lockfile の解決版 (入れ子の複製も) の下回り**で落ちる。
+  `js-yaml` は解決結果としてしか存在しなかったので `overrides` で宣言し直した ——
+  宣言の無い床は lockfile の衝突ひとつで黙って戻る。
+- **既にあった床も古びていた。** `qs` の `^6.15.2` (2026-08-17 に据えた) は 24 日後には低すぎで、
+  後から出た GHSA-x5fp-wj9c-mxmx (<=6.15.3) と GHSA-4mjr-xmp4-gh2g (<6.16.0) が床の許す版を覆っていた。
+  lockfile がたまたま 6.16.0 に解決されていたので `npm audit` は緑のままだった。**`^6.16.0` へ据え直した。**
+  床は据えた日の勧告に対してしか正しくないので、各行に `checkedOn` を持たせ、
+  180 日を超えると `lint:deps` が警告する。
+- **定期点検 (自動・週次)**: `.github/workflows/dependency-audit.yml` が毎週月曜 07:00 JST に
+  `npm run audit:report` を回す —— `npm audit` の全体と `--omit=dev` を突き合わせて
+  **dev だけの勧告**を切り出し、`npm run audit:floors` と同じ測定 (`probeFloors`) で
+  **床がまだ十分か**を測り直し、要対応を**常設 Issue 1 つ**に集める (0 件になれば自動で閉じる)。
+  手で回すなら `npm run audit:report` / `npm run audit:floors`。網が要るので
+  `verify:all` にも `ci.yml` にも入れない。
+  **2026-09-10 の当初の判断を訂正した** —— パス 143 では「無関係な PR が赤くなると門が門でなくなる」
+  を理由に週次も置かなかったが、その懸念は **PR / push の門についてのもの**で、
+  **予定実行は誰の PR も赤くしない**。`knowledge-auto.yml` が既に採っている型
+  (結果は Issue・片付いたら閉じる) に揃えたので懸念は当たらない (パス 144)。
+- dev 依存の勧告そのものを CI で落とさない方針は変えていない (`ci.yml` の注記)。
+  出荷物に入らず、moderate 以下は推移依存で頻繁に出るため。**狭くする代わり、落ちたら本物として扱う。**
+  電子署名まわりで npm が提案する electron-builder 25 系への降格は、Electron 43 を扱えなくなるため採らない。
 
 ### 第1ラウンド (2026-05-12)
 
@@ -223,22 +253,20 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 
 ## ネットワーク発信先一覧（許可されている外部接続先）
 
-| サービス | ホスト |
-|---|---|
-| GitHub | api.github.com |
-| WordPress.com | public-api.wordpress.com |
-| Atlassian | `{site}.atlassian.net` (https 必須) |
-| Notion | api.notion.com |
-| Google (Drive/Calendar/Gmail) | www.googleapis.com, gmail.googleapis.com, accounts.google.com, oauth2.googleapis.com |
-| Slack | slack.com |
-| Canva | api.canva.com |
-| Cloudflare | api.cloudflare.com |
-| Anthropic (Skills, Emotions) | api.anthropic.com |
-| HIBP | haveibeenpwned.com |
-| VirusTotal | www.virustotal.com |
-| Ollama (ローカルのみ) | 127.0.0.1:11434 (ハードコード、変更不可) |
+発信先の台帳は **`docs/ARCHITECTURE.md` §3.3 (ネットワーク egress マトリクス) の 1 つだけ**。`verify:arch` が `src` の字面
+(main は全部、shared / renderer は送信文脈のもの) と照合し、増えた宛先は表に載るまで CI が落ちる。ここには写しを置かない
+(`lint:docs` がこの節に表と絶対の否定が戻らないことを見る)。
 
-その他のホストへの接続は **存在しない**。
+2026-09-09 までここに在った表は **12 行**で、§3.3 の 29 ホストに対し freee / Microsoft Graph / BASE / Stripe / LINE /
+Discord / Salesforce / OpenAI / Gemini が無く、それでも「他のホストは無い」と書いていた。同じ日に §3.3 側でも、
+ブラウザ版から直接送る `src/shared` / `src/renderer` が走査の外で、`api.cursor.com` (Admin API キーを Bearer で載せる) が
+台帳に無いまま両ビルドから送っていた —— 写しが古いだけでなく、正典も片方の木しか見ていなかった (パス 138)。
+
+送り先が**利用者の設定で決まる**通信 (AI 互換 API・Ollama の接続先・BYO プロキシ・Atlassian サイト・Salesforce・
+Discord webhook) は `lint:network-targets` の台帳 (`scripts/lint-network-targets.cjs` の `REVIEWED`) が、どう絞っているかを
+1 件ずつ持つ。Ollama について正確には: Electron 版の Ollama ページのクライアント (`src/main/clients/ollama.ts` の
+`OLLAMA_BASE`) だけが `127.0.0.1:11434` 固定で、ブラウザ版は 3 経路 (ループバック / ページと同じホスト / 任意の https ——
+`docs/OLLAMA_SECURITY.md`)、AI ハブの Ollama プロバイダは両ビルドで接続先を上書きできる (§3.3 の行のとおり)。
 
 ## レビューチェックリスト（PR 用）
 
@@ -269,7 +297,14 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 
 **実装位置**: `src/main/clients/skills.ts` `readSkillBody()` + `isSafeSkillName()`
 
-- `isSafeSkillName(name)`: `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` 限定 + length ≤ 128 + `..`
+**この allowlist が当たるのは `SkillEntry.id` (フォルダ名・ファイル名) である** (2026-09-12 · パス 179)。
+それまで `run-skill` の payload は**画面に出ている題** (frontmatter の `name:`) を受け取っており、
+題と実体が違うスキルは実行できず、題が他のスキパスのフォルダ名と一致すると**別の定義が
+Anthropic へ送られた**。鍵と題を分けたので、この規則は「実行に使う名前」だけを縛る ——
+日本語の `name:` は題として通り、フォルダ名が英数字でなければ**画面が押させない**
+(理由は `src/shared/skillIdentity.ts` の文面)。
+
+- `isSafeSkillName(id)`: `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` 限定 + length ≤ 128 + `..`
   reject + 先頭ドット reject。`/`, `\`, NUL, 空白, `:`, `;`, `|`, `` ` ``, `$` 全部禁止。
 - `path.resolve(candidate).startsWith(path.resolve(base) + path.sep)` で belt-and-braces。
   Windows alternate separators / 短名 / シンボリックリンク等の platform quirk に対する保険。
@@ -305,3 +340,9 @@ shell metachars が必ず reject されることを確認)。
 - **property-based fuzz** (`src/main/__tests__/property.test.ts`):
   - 300 ランダム URL で write-side path / non-loopback host が allowlist 通らないことを検証
   - 200 ランダム model name で whitespace / shell metachars / null byte / 制御文字 / `..` を reject することを検証
+
+**2026-09-09 追記 (パス 139)**: 上の「未パッチ」は **CVE-2026-7482** として 2026-05-04 に公表され、修正 (PR #14406) は
+この節を書く前の 2026-02-25 に merge されて 0.17.1 に入っていた。`UNPATCHED_OOB_NOTICE` (日付の無い固定文) は
+廃し、`src/shared/ollama.ts` の日付つきの台帳 (`OLLAMA_ADVISORIES`・照合日 / 再照合期限) と、当てはまる CVE を
+名指しする `buildWarnings` に置き換えた。安全の床は台帳の修正版の最大 (0.31.2) で、期限は `lint:rate-freshness`、
+文書の床と日付は `lint:docs` が見る。多層防御 (`ALLOWED_ENDPOINTS` / `\0` reject / fuzz) はそのまま。

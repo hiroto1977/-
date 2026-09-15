@@ -34,7 +34,6 @@ aliases:
 - [[human-yerkes-dodson-law|ヤーキーズ＝ドッドソンの法則——覚醒水準とパフォーマンスの逆U字関係]] — 語彙が近い
 - [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
 - [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
-- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
 - [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
 - [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同じ思想家

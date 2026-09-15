@@ -37,7 +37,7 @@ describe('computeKpi', () => {
     expect(k.operatingLeverage).toBeCloseTo(1.75, 2); // 7M / 4M
   });
 
-  it('returns BEP=Infinity and safetyMargin=0 when contribution is non-positive', () => {
+  it('returns BEP=Infinity and safetyMargin=null when contribution is non-positive', () => {
     // Loss-making unit: variable + fixed > revenue
     const loss: Fundamentals = {
       revenue: 1_000_000,
@@ -50,7 +50,8 @@ describe('computeKpi', () => {
     expect(k.contribution).toBe(-200_000);
     expect(k.bep).toBe(Infinity);
     expect(k.bepRatio).toBe(Infinity);
-    expect(k.safetyMargin).toBe(0); // clamped — never below zero
+    // **算定不能。** 0 に倒すと「損益分岐点上に居る」= 最も安全な読みになる。
+    expect(k.safetyMargin).toBeNull();
     expect(k.operatingProfit).toBe(-350_000);
   });
 
@@ -63,12 +64,21 @@ describe('computeKpi', () => {
       depreciation: 50_000,
     };
     const k = computeKpi(zero);
-    expect(k.contributionRatio).toBe(0);
-    expect(k.variableRatio).toBe(0);
-    expect(k.fixedRatio).toBe(0);
+    // 直す前はここが `toBe(0)` で、名前も
+    // `handles zero-revenue gracefully (**no NaN / Infinity in ratios**)` だった ——
+    // 「NaN / Infinity を避ける」という**正しい懸念**に **0 という誤った答え**を
+    // 固定していた (null も NaN でも Infinity でもない)。パス 54・56・58 と同じ形。
+    expect(k.contributionRatio).toBeNull();
+    expect(k.variableRatio).toBeNull();
+    expect(k.fixedRatio).toBeNull();
+    // NaN / Infinity は本当に出さない (元の懸念はそのまま守る)。
+    for (const v of [k.contributionRatio, k.variableRatio, k.fixedRatio]) {
+      expect(Number.isNaN(v as number)).toBe(false);
+      expect(v).not.toBe(Infinity);
+    }
     // Contribution is 0, which is NOT > 0 → BEP = Infinity
     expect(k.bep).toBe(Infinity);
-    expect(k.safetyMargin).toBe(0);
+    expect(k.safetyMargin).toBeNull();
   });
 
   it('caps operatingLeverage at 999 when OP is near zero (avoids Infinity)', () => {
@@ -109,12 +119,19 @@ describe('computeKpi', () => {
   });
 
   it('uses `revenue > 0` strict, not `>= 0` (kills the EqualityOperator boundary)', () => {
-    // revenue=0 case: ratios should ALL be 0 (not NaN, not Infinity for
-    // the variableRatio/fixedRatio/contributionRatio path).
+    // revenue=0 のとき 3 つの率はすべて null (算定不能)。`>= 0` に変異すると
+    // 0 除算の枝へ入り NaN / Infinity になるので、境目は今も観測できる。
     const k = computeKpi({ revenue: 0, cogs: 5, advertising: 3, sga: 1, depreciation: 0 });
-    expect(k.variableRatio).toBe(0);
-    expect(k.contributionRatio).toBe(0);
-    expect(k.fixedRatio).toBe(0);
+    expect(k.variableRatio).toBeNull();
+    expect(k.contributionRatio).toBeNull();
+    expect(k.fixedRatio).toBeNull();
+  });
+
+  it('★ 対照: 売上が在れば 3 つの率は数で出る (標本が在ることの確認)', () => {
+    const k = computeKpi({ revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0 });
+    expect(k.contributionRatio).toBe(60);
+    expect(k.variableRatio).toBe(40);
+    expect(k.fixedRatio).toBe(30);
   });
 
   it('operatingLeverage uses `> 0.0001` strict (kills `>= 0.0001` boundary)', () => {

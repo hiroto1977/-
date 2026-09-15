@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalSource } from './originalSource';
 import {
   MAX_ADVISOR_ACTION_ITEMS,
   MAX_ADVISOR_ITEM_CHARS,
@@ -46,12 +46,12 @@ describe('アドバイザーの応答の上限は 1 つだけ', () => {
   });
 
   it.each(SRC)('%s が共有の定数を読んでいる', (_label, path) => {
-    const code = readFileSync(path, 'utf8');
+    const code = readOriginalSource(path);
     expect(code, 'advisorResponseLimits を読んでいない').toContain('advisorResponseLimits');
   });
 
   it.each(SRC)('%s に応答の上限が字面で書かれていない', (_label, path) => {
-    const code = readFileSync(path, 'utf8')
+    const code = readOriginalSource(path)
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^\s*\/\/.*$/gm, '');
     const back = LITERAL_BOUNDS.filter(([, re]) => re.test(code)).map(([name]) => name);

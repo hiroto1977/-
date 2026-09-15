@@ -37,7 +37,6 @@ aliases:
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 出典を共有
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]] — 同分野の近傍
-- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

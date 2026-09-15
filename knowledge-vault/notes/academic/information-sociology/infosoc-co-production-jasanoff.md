@@ -26,7 +26,7 @@ aliases:
 シーラ・ジャサノフ ／ ブルーノ・ラトゥール ／ ドナ・ハラウェイ ／ ヘルガ・ノヴォトニー
 
 ## 出典
-- [Jasanoff, S. (ed.) (2004) States of Knowledge: The Co-Production of Science and Social Order — Routledge](https://www.worldcat.org/oclc/53389809) `学術`
+- [Jasanoff, S. (ed.) (2004) States of Knowledge: The Co-Production of Science and Social Order — Routledge](https://www.worldcat.org/oclc/53389809) `リファレンス`
 - [Wikipedia: Sheila Jasanoff — co-production, civic epistemology, sociotechnical imaginaries, STS](https://en.wikipedia.org/wiki/Sheila_Jasanoff) `リファレンス`
 
 ## 関連概念

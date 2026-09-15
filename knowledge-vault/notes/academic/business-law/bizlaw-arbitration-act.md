@@ -40,7 +40,6 @@ aliases:
 - [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 同分野の近傍
 - [[bizlaw-indirect-expropriation|間接収用（Indirect Expropriation）]] — 同分野の近傍
 - [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同分野の近傍
-- [[bizlaw-labor-standards-ilo-conventions|国際労働基準とILO条約体制の国際労働法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

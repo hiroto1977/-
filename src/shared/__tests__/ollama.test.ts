@@ -3,7 +3,7 @@ import {
   DEFAULT_OLLAMA_PORT,
   MIN_SAFE_VERSION,
   OLLAMA_READ_PATHS,
-  UNPATCHED_OOB_NOTICE,
+  advisoryLedgerNotice,
   buildLoopbackBase,
   buildOllamaUrl,
   buildWarnings,
@@ -237,8 +237,10 @@ describe('compareVersions / isVersionSafe', () => {
 
   it('MIN_SAFE_VERSION 境界を含めて判定する', () => {
     expect(isVersionSafe(MIN_SAFE_VERSION)).toBe(true);
-    expect(isVersionSafe('0.1.47')).toBe(true);
-    expect(isVersionSafe('0.1.45')).toBe(false);
+    expect(isVersionSafe('0.31.3')).toBe(true);
+    expect(isVersionSafe('0.31.1')).toBe(false);
+    // 2024 年の床 (0.1.46) は超えるが、2026 年の CVE (0.17.1 / 0.31.2 で修正) が当てはまる
+    expect(isVersionSafe('0.1.47')).toBe(false);
   });
 
   it('不明・壊れたバージョンは安全でない扱い (安全側に倒す)', () => {
@@ -297,20 +299,22 @@ describe('normalizeModels — 未知形状を落とし、危険な名前を弾�
 });
 
 describe('buildWarnings', () => {
-  it('未パッチ OOB の注意は常に含む', () => {
-    expect(buildWarnings('0.5.0')).toEqual([UNPATCHED_OOB_NOTICE]);
+  const NOW = new Date('2026-09-09T00:00:00Z');
+
+  it('台帳の日付つきの注意は常に含む', () => {
+    expect(buildWarnings('0.33.3', NOW)).toEqual([advisoryLedgerNotice(NOW)]);
   });
 
-  it('MIN_SAFE_VERSION 未満なら更新警告を先頭に足す', () => {
-    const w = buildWarnings('0.1.45');
+  it('当てはまる脆弱性があれば名指しの警告を先頭に足す', () => {
+    const w = buildWarnings('0.1.45', NOW);
     expect(w).toHaveLength(2);
     expect(w[0]).toContain('0.1.45');
     expect(w[0]).toContain(MIN_SAFE_VERSION);
-    expect(w[1]).toBe(UNPATCHED_OOB_NOTICE);
+    expect(w[1]).toBe(advisoryLedgerNotice(NOW));
   });
 
-  it('バージョン不明 (空文字) では更新警告を出さない (誤警告を避ける)', () => {
-    expect(buildWarnings('')).toEqual([UNPATCHED_OOB_NOTICE]);
+  it('バージョン不明 (空文字) では名指しの警告を出さない (誤警告を避ける)', () => {
+    expect(buildWarnings('', NOW)).toEqual([advisoryLedgerNotice(NOW)]);
   });
 });
 
@@ -908,18 +912,22 @@ describe('adviseFromBody — 生本文からの入口を 1 つにする', () => 
   });
 });
 
-describe('buildWarnings — 未パッチ注意は常に出し、古い版は先頭に足す', () => {
+describe('buildWarnings — 台帳の注意は常に出し、当てはまる版は名指しを先頭に足す', () => {
+  const NOW = new Date('2026-09-09T00:00:00Z');
+
   it('安全な版なら注意 1 件だけ', () => {
-    expect(buildWarnings('0.1.46')).toHaveLength(1);
-    expect(buildWarnings('9.9.9')).toHaveLength(1);
+    expect(buildWarnings(MIN_SAFE_VERSION, NOW)).toHaveLength(1);
+    expect(buildWarnings('9.9.9', NOW)).toHaveLength(1);
   });
 
-  it('古い版は警告を先頭に積む', () => {
-    const w = buildWarnings('0.1.45');
+  it('古い版は名指しの警告を先頭に積む (2024 年の床を超えた版でも 2026 年の CVE が当てはまる)', () => {
+    const w = buildWarnings('0.1.45', NOW);
     expect(w).toHaveLength(2);
     expect(w[0]).toContain('0.1.45');
-    expect(w[0]).toContain('0.1.46');
-    expect(w[0]).toContain('Probllama');
+    expect(w[0]).toContain(MIN_SAFE_VERSION);
+    expect(w[0]).toContain('CVE-2024-39719');
+    expect(w[0]).toContain('CVE-2026-7482');
+    expect(w[0]).not.toContain('CVE-2024-37032'); // Probllama は 0.1.34 で修正済み — 0.1.45 には当てはまらない
   });
 
   it('バージョン不明 (空文字) では版の警告を出さない', () => {
@@ -1113,7 +1121,7 @@ describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
  * 既存の検査は論理としては当たっているのに**静的 import なので届いて
  * いなかった**。`vi.resetModules()` + 動的 `import()` で読み直す。
  *
- * **`UNPATCHED_OOB_NOTICE` は輪をかけて悪かった** —— 既存の検査が
+ * **旧 `UNPATCHED_OOB_NOTICE` (2026-09-09 に日付つきの台帳の注意へ置き換え) は輪をかけて悪かった** —— 既存の検査が
  * `expect(buildWarnings('0.5.0')).toEqual([UNPATCHED_OOB_NOTICE])` と
  * **定数を定数自身と比べていた**ので、空文字に潰れても両辺が同時に空になり
  * 通ってしまう。本 PR の `EMPTY_TALENT_STATE` と同じ形である。
@@ -1153,29 +1161,38 @@ describe('モジュール直下の値 — 読み直して static 変異体を届
   });
 
   /*
-   * 未パッチ OOB read の注意書き。**中身を字面で当てる** —— 定数と比べると
-   * 空文字への変異で両辺が同時に空になり、検査が意味を失う。
-   * 空になれば利用者は「CLI で野良モデルを引くな」という警告を受け取れない。
+   * 台帳の注意書き。**中身を字面で当てる** —— 定数と比べると空文字への変異で両辺が
+   * 同時に空になり、検査が意味を失う。空になれば利用者は「CLI で野良モデルを引くな」
+   * という警告も、その情報が**いつの物か**も受け取れない。
    */
-  it('★ 未パッチ OOB read の注意書きが中身を持っている', async () => {
+  it('★ 台帳の注意書きが中身 (照合日・期限・件数・緩和策) を持っている', async () => {
     const m = await fresh();
-    const n = m.UNPATCHED_OOB_NOTICE;
-    expect(n).toContain('out-of-bounds read');
+    const n = m.advisoryLedgerNotice(new Date('2026-09-09T00:00:00Z'));
+    expect(n).toContain('2026-09-09 時点');
+    expect(n).toContain('再照合期限 2027-03-09');
+    expect(n).toContain('8 件の台帳');
     expect(n).toContain('/api/pull');
     expect(n).toContain('/api/create');
     expect(n).toContain('/api/push');
-    // 連結された 5 片すべてに当てる。1 片だけ空になっても鳴るように、
-    // 各片から固有の語を採る (最初は中ほどの 1 片が素通りした)。
-    expect(n).toContain('攻撃ベクトルを遮断');
-    expect(n).toContain('CLI からモデルを取得');
+    expect(n).toContain('攻撃面を持ち込みません');
+    expect(n).toContain('CLI でモデルを取得');
     expect(n).toContain('検証済みソース');
     expect(n).toContain('docs/OLLAMA_SECURITY.md');
     expect(n.length).toBeGreaterThan(120);
   });
 
+  it('★ 台帳の日付と床は読み直しても同じ (static 変異体を届かせる)', async () => {
+    const m = await fresh();
+    expect(m.OLLAMA_ADVISORIES_VERIFIED_ON).toBe('2026-09-09');
+    expect(m.OLLAMA_ADVISORIES_REVIEW_BY).toBe('2027-03-09');
+    expect(m.MIN_SAFE_VERSION).toBe('0.31.2');
+    expect(m.OLLAMA_ADVISORIES.map((a) => a.id)).toContain('CVE-2026-7482');
+  });
+
   it('★ 警告に載るのはその注意書きそのもの (経路の確認)', async () => {
     const m = await fresh();
-    expect(m.buildWarnings('0.5.0')).toEqual([m.UNPATCHED_OOB_NOTICE]);
-    expect(m.buildWarnings('0.5.0')[0]).toContain('out-of-bounds read');
+    const now = new Date('2026-09-09T00:00:00Z');
+    expect(m.buildWarnings('0.33.3', now)).toEqual([m.advisoryLedgerNotice(now)]);
+    expect(m.buildWarnings('0.33.3', now)[0]).toContain('2026-09-09 時点');
   });
 });

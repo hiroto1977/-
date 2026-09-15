@@ -28,6 +28,35 @@
 | RBAC / プラン | 権限昇格防止・最後のオーナー保護・シート/機能ゲート | 正しい |
 | バックアップ完全性 | （従来）破損検知なし → **SHA-256 を追加**。改ざん検知は暗号化バックアップ (AES-GCM) の側 | 改善実施 |
 
+## 端末から出て行く物の在庫（利用者のデータ・2026-09-09 実測）
+
+**「残る物」の在庫はあったが、「出て行く物」の在庫は無かった。** パス 106〜108 で
+画面ごとの断りを配線したので、その一覧をここに置く（画面の文面は
+`src/shared/aiEgressNotice.ts` と `src/shared/voiceEgressNotice.ts` が 1 か所で持ち、
+**母集団は検査が実装から導く** —— `renderer/pages/__tests__/aiEgressDisclosed.test.ts`
+が `main/clients/*.ts` の `ACTIONS` から到達可能性で、
+`renderer/components/__tests__/voiceEgressDisclosed.test.ts` が
+`startSpeechRecognition` の呼び出しから）。
+
+| 出て行く物 | 送り先 | どの画面から | 断り |
+|---|---|---|---|
+| 質問文 + ウォッチリストのティッカー（上限 25 銘柄） | Anthropic | 株価 | ✅ |
+| 質問文 + 各事業カテゴリの KPI・売上トレンド (JSON) | Anthropic | 事業ダッシュボード | ✅ |
+| 貼り付けたテキスト本文 | Anthropic | 感情ログ（第三者の文面の同意も促す） | ✅ |
+| 受信スレッドの件名と送信者アドレス（本文は送らない） | Anthropic | Gmail | ✅ |
+| チャンネル名と目的（発言は送らない） | Anthropic | Slack | ✅ |
+| 指示文 + 選んだスキルの定義 (Markdown) | Anthropic | Skills | ✅ |
+| 直近 16 往復の会話 | **利用者が選んだプロバイダ**（合議は設定済みの全部・Ollama は既定で端末内 —— 接続先を上書きすればその先） | アシスタント | ✅ |
+| マイクで話した内容の書き起こし | 同上 | AIの村 | ✅ |
+| **マイクの音声そのもの** | **ブラウザの音声認識に委ねる（経路を選べない・確かめられない）** | AIの村 / 全画面の音声バー | ✅ |
+| メールアドレス（漏洩照会） | HIBP（ブラウザ版はプロキシ運用者にも見える） | セキュリティ | ✅ |
+| 調べる URL | VirusTotal | セキュリティ | ✅ |
+| 各 SaaS の要求 + `Authorization` | Notion / Atlassian / Cloudflare は**利用者の Worker 経由**（運用者にトークンが見える） | 設定（BYO プロキシ）| ✅ |
+
+**書かない物**: 受け取った第三者が送信内容をどう扱うかは、このリポジトリからは
+確かめられないので主張しない（`SecurityPage` の HIBP の断りが 2026-08 に決めた方針）。
+音声認識の提供元の名前も同じ理由で挙げない。
+
 ## ブラウザに残る物の在庫（全件）
 
 **この表に無い保存先は、問われもしない。** 2026-08-25 までこの文書は
@@ -116,6 +145,29 @@ renderer に `caches.open(…)` を足しても ✅ を返した（実測）。
 どちらかが戻れば CI が落ちる。上の表の「中身」と「保護」の欄は、
 **その 2 つの検査が生きていることに依存している**。
 
+**ただしその 2 つは「SW が走っている前提で何を焼くか」しか見ていない ——
+「どこで走るか」は見ていない。** (2026-09-11 · パス 149)
+走る場所を決めているのは**組み立ての分離**である:
+
+- `scripts/inject-pwa.cjs` が SW 登録を差し込むのは Pages の `_site/*.html` **だけ**
+- 配布物を作る `build:web` (= `tsc -b && vite build && inline-html.cjs`) は injector を通らない
+- 実測 2026-09-11: `dist/standalone.html` は `serviceWorker` / `sw.js` /
+  `manifest.webmanifest` / `apple-touch-icon` のいずれも **0 件**。同じファイルに
+  injector を当てた写しは各 **1 件**
+
+**なぜ分離が要るか。** `register('./sw.js')` の scope は script の置き場所なので、
+Pages では `/-/` に収まる。もし配布物が登録を持ち、利用者が `sw.js` も一緒に自分の
+サーバのルートへ置いたら、scope は**そのオリジン全体**になる。唯一の絞りは
+「同一オリジン」だけなので、**そのオリジンが配るものは何でも平文で Cache Storage に
+無期限で残る** —— 上で閉じた 2026-07 の指摘と同じ形が、別の扉から開く。
+
+**この扉には 2026-09-11 まで鍵が無かった。** `build:web` に injector を 1 行足せば、
+`serviceWorker.test.ts` の 2 判定は通ったまま・上の表も「アプリシェルだけ」と読めたまま、
+配布物が SW を撒くようになる。いまは
+`src/shared/__tests__/distributedArtifactNoPwa.test.ts` が分離そのものを留める
+(npm script のどれも injector を呼ばない・`inline-html` は injector を参照しない・
+**pages.yml は実際に呼んでいる**・実物の `injectPwaTags` が探している綴りを足す)。
+
 なお Cache Storage が生成元ごとに持たれるのは**この媒体に限った話ではない**ので、
 在庫の冒頭「この在庫全体に掛かる前提」へ移した（2026-08-28 に判断済み）。
 
@@ -125,6 +177,33 @@ renderer に `caches.open(…)` を足しても ✅ を返した（実測）。
 増えることはない（足すと「台帳に無い保存先」で落ちる）。
 `src/renderer/fs/fsa.ts` の `createWritable()` は File System Access API で
 **利用者が選んだ場所**へ書くもので、生成元に紐づくブラウザ保存領域ではない。
+
+### ブラウザ自身の資格情報ストア（台帳に載せられない媒体 · 2026-09-11 · パス 147）
+
+**ここは「この app が保存する物」ではなく、「ブラウザに保存させてしまえる物」の欄である。**
+`type="password"` の欄はブラウザから見ればパスワード欄なので、宣言が無ければ
+ブラウザが自分の判断で保存を勧めたり、保存済みの物を流し込んだりする。入るのは
+API キー（Anthropic / OpenAI / Gemini / 互換）・サービストークン・プロキシの共有秘密・
+バックアップの合言葉・保管庫のマスターパスワードで、**いずれも保管庫が守る対象そのもの**。
+
+この媒体が上の 4 媒体と決定的に違う点:
+
+- **`lint:storage` の走査は仕組み上届かない。** Web Storage の API ではないので、
+  台帳 (`STORES`) に行として持てない。「0 件だが走査する」cookie / OPFS とも違う。
+- **ハードリセットで消せない。** だから在庫ではなく**消えない物**の側に書いてある
+  （`security/eraseAll.ts` の `eraseScopeSummary`）。消すのはブラウザの設定から。
+- **暗号化の外に出る。** 保管庫 (AES-GCM-256 / PBKDF2 600k) に入れた鍵の平文が、
+  同じ端末のブラウザ側に別途残る形になる。
+
+こちらから掛けられる手当ては**宣言だけ**なので、宣言を欠けないようにした:
+`type="password"` の欄は全件 `autoComplete` を宣言し（`off` / `new-password` /
+`current-password` の 3 つだけ。`on` = ブラウザに任せる、は選べない）、母集団は
+`renderer/__tests__/secretFieldAutocomplete.test.ts` が走査で数える（生存の床 16・
+`type` を式で書いて綴りの走査を抜ける道も塞ぐ）。2026-09-11 の実測では 16 欄のうち
+**宣言していたのは `LockScreen.tsx` の 4 つだけ**だった。
+
+**宣言は勧めを減らすだけで、禁止ではない。** 利用者が自分で保存した物はブラウザ側に残り、
+この app からは見えも消せもしない —— だから画面の「消えない物」に名前で挙げている。
 
 ### localStorage（21 キー・すべて平文・すべて立ち退きの対象・バックアップに入らない）
 
@@ -137,6 +216,10 @@ renderer に `caches.open(…)` を足しても ✅ を返した（実測）。
   （組織病の申告 / 施策と達成確率 / メンバーの STEP と滞留年数）。
   デスクトップ版は `~/.local/business-hub/talent.json` (0600) に置くが、
   ブラウザ版はここ。平文でバックアップにも入らない。
+- `teamradar.state` — チームレーダーの保存状態。**部署名・メンバーの氏名・軸ごとの 1〜5 評価・付箋**
+  （第三者の人事評価そのもの）。デスクトップ版は `~/.local/business-hub/team-radar.json` (0600) に置くが、
+  ブラウザ版はここ。2026-09-09 (パス 118) までは書くだけで読む所が無く、いまは `fetchSnapshot` が読む。
+  平文でバックアップにも入らない。
 
 鍵材料:
 
@@ -160,6 +243,41 @@ Ollama の接続先とポート・銘柄のウォッチリスト・クライア�
 以前は成功経路にしか掃除が無く、**`state` 不一致（= CSRF の疑い）で落ちたときに
 いちばん消したい verifier が残っていた**（2026-08-23 に修正、検査で固定）。
 
+### ハードリセット（「すべてのデータを削除」）が消す範囲（2026-09-09 · パス 136）
+
+設定画面の「⚠ すべてのデータを削除 (ハードリセット)」は、**上の在庫の全行**を消す:
+IndexedDB 4 つ（業務レコード / 保管庫 / ライブラリ / preferences）・Cache Storage・localStorage 21 鍵・
+sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts` にあり、`lint:storage` の規則 11 が
+台帳 (`STORES`) と両方向で突き合わせる —— 台帳に行を足せば、在庫に足すまでゲートが落ちる。
+2026-09-09 までは保管庫 1 つしか消しておらず、「最初のセットアップ画面」の裏に前の人の業務レコードが平文で残っていた。
+
+消えたと言うのは全媒体が消えた時だけ（他のタブが掴んで消せない / ブラウザが拒む場合は残った物を名指しして再読込しない）。
+**消えない物**: 保存先フォルダに書き出した控え（利用者の PC のファイル）・ダウンロードしたバックアップと書き出し・
+ブラウザの履歴・**ブラウザ自身に保存させたパスワードや API キー**（上の「資格情報ストア」の節 · パス 147）。
+
+**デスクトップ版**（2026-09-09 · パス 137）: 同じボタンが main の `app:eraseAll` を呼び、トークン (`service-hub-secrets.json`
+とその控え `.prev`)・状態ファイル（`service-hub-emotions.json` / `~/.local/business-hub/talent.json` / `team-radar.json` /
+`state.json` / `data/dashboard.html`）・書き込みの残骸 `<名前>.tmp-*`・renderer の保存領域（`session.clearStorageData()`）を消す。
+在庫は各モジュールの置き場所の関数から作る（綴りを写さない）。控えか残骸が 1 つでも残ればそのファイルは failed で、
+全部消えた時だけアプリが再起動する。**消えない物**: 書き出したファイル・OS のキーチェーンに残る鍵の器（中身の暗号文は消える）・
+アプリ本体。2026-09-09 まではデスクトップ版でも renderer の保存領域（パス 136 まではその中の使われていない保管庫 1 つ）しか
+消えず、トークンと健康に関わる記録が OS のユーザー領域に残っていた。
+
+### デスクトップ版の状態ファイル（`userData` / `~/.local/business-hub`）
+
+| ファイル | 中身 | 保護 |
+|---|---|---|
+| `service-hub-secrets.json` | API キー・トークン | **OS のキーチェーン (`safeStorage`)**。無い環境では `plain:` (難読化) —— 設定画面がその状態を言う |
+| `service-hub-emotions.json` | 気分の点数・メモ・解析に貼った文の抜粋（**健康に関わる記録**） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 132。それまで**平文** 0600）。無い環境では `plain:`。封緘は `main/atRest.ts`（`secrets.ts` と同じ約束） |
+| `~/.local/business-hub/talent.json` | 人材育成の入力（部署名・個人名） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 133。それまで平文 0600）。無い環境では `plain:`。封緘は `main/atRest.ts` |
+| `~/.local/business-hub/team-radar.json` | チームレーダー（氏名・軸ごとの評価・付箋） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 133。それまで平文 0600）。無い環境では `plain:`。封緘は `main/atRest.ts` |
+| `~/.local/business-hub/state.json` | 株式ダッシュボードの状態（ウォッチリストの銘柄記号だけ） | 平文 0600 —— 台帳 `src/main/__tests__/atRestPolicy.test.ts` に理由つき（守る物が無い所に「鍵違いで読めなくなる」道を足さない） |
+
+2026-09-09 まで、この在庫は文書に無かった —— 同じ端末に置く 5 つのうち封緘していたのは `secrets.json`
+だけで、健康に関わる記録が平文だった。同日のパス 133 で talent / team-radar（人事の評価と氏名を含む）も同じ `atRest.ts` を
+通した。state（銘柄記号だけ）は平文のまま —— **封緘しているか**は `src/main/__tests__/atRestPolicy.test.ts` が
+母集団（置き場所を決める関数を持つモジュール）を実装から数え、通らない物は台帳に理由が要る。
+
 ## 本リリースで実装した独自セキュリティ機能
 
 1. **バックアップ完全性検証 (SHA-256)** — `data/backup.ts`。バックアップ JSON に records の
@@ -167,16 +285,293 @@ Ollama の接続先とポート・銘柄のウォッチリスト・クライア�
    （改ざん検知ではない —— 鍵が無いので、書き換えた側が計算し直せば通る。実測は
    `src/renderer/data/__tests__/backup.test.ts`）
    (損壊対策)。再フォーマットには強く、内容変更に反応。旧バックアップ(checksum 無し)は後方互換で許容。
-2. **置換復元の確認ダイアログ** — `components/BackupPanel.tsx`。「既存データ全削除→復元」前に確認を挟み、
-   誤操作によるデータ消失を防止。
+2. **復元は、何が足され・残り・消えるかを言う** — `data/backup.ts` の `planRestore` + `components/BackupPanel.tsx`
+   （2026-09-09 · パス 129）。復元は**書く前に**バックアップの封筒 (id / updatedAt) とこの端末の封筒を突き合わせ、
+   追加・上書き・この端末の方が新しい・この端末にだけある・消える件数を数える。**マージは id ごとに新しい方を残す**
+   (バックアップを取った後に直した記録を古い中身で上書きしない)。置換 (全削除→復元) の確認ダイアログは、
+   書き出し時刻・件数・消える件数 (バックアップに無い + この端末の方が新しい) を言い、消える物が無ければそう言う。
+   それまでの確認は一文だけで、何を失うかを言っていなかった（損壊対策）。削除の墓標は無いので、この端末で消した
+   記録はマージで戻る（件数には出る）。
 3. **Shopify コネクタのエラー時トークン秘匿** — `clients/shopify.ts` の `postExpectOk` に `redactSecrets`
    を適用。連携先(Discord webhook 等)が応答にトークンを反射してもエラー経由で漏れない(漏洩対策)。
 4. **`redactSecrets` の Atlassian トークン対応** — `ATATT…` 形式を秘匿対象に追加。
 5. **暗号化バックアップ (AES-GCM-256)** — `security/dataCrypto.ts` + `data/backup.ts`。
-   パスフレーズ指定でバックアップ全体を PBKDF2-SHA256(21万回)→ AES-GCM で封緘
-   (漏洩対策: バックアップファイルは最も持ち出されやすい流出経路)。誤パスワード・
+   パスフレーズ指定でバックアップ全体を PBKDF2-SHA256(60 万回 —— `shared/cryptoParams.ts` の
+   `PBKDF2_ITERATIONS`。ここに写していた反復回数は 2026-09-09 の実測で古く、実物は保管庫と同じ
+   60 万回だった。数字は `backup.test.ts` が本文と突き合わせる)→ AES-GCM で封緘 (漏洩対策:
+   バックアップファイルは最も持ち出されやすい流出経路)。
+   **パスフレーズの下限は保管庫のマスターパスワードと同じ 12 文字** (`vault.ts` の
+   `MIN_PASSWORD_LENGTH` を `backup.ts` が読む。2026-09-09 まで 1 文字でも「暗号化済み」を
+   名乗っていた —— パス 128)。復元は古いファイルの短い合言葉も開く。誤パスワード・
    改ざんは GCM 認証タグで復号失敗となる。**改ざんに耐えるのはこちらだけ**で、
    平文側の SHA-256 が担うのは破損検知である（二層ではなく役割が違う）。
+   復元の合言葉は**マスクされた欄**でしか受けない（2026-09-09 · パス 131 —— それまで欄が空なら `prompt` で訊いていた。prompt は入力を平文で映し、Electron の renderer には無い。`lint:forbidden` が `prompt` の呼び出しを禁止する）。
+6. **復元時の中身の形の検査** — `data/collectionShapes.ts` + `store.importAll`（2026-09-05）。封筒（id /
+   collection / createdAt / updatedAt）だけでなく、collection ごとの中身の形（20 collection = `*_COLLECTION`
+   定数の全部）を見て、合わない平文レコードは捨てて件数を伝える。検査数字が合ったままの「別の版・手直し・
+   別の道具」のバックアップから `amount: "abc"` が入り、その画面が開かなくなるのを防ぐ（損壊対策）。
+   必須は中核の欄だけ・知らない欄と知らない collection は通す（前方互換）。封緘済み（`__enc`）は中身を見られない
+   ので封筒だけで通す（暗号化バックアップを落とさない）。
+7. **形式の合わないレコードの点検・削除** — `data/recordShapeAudit.ts` + `components/RecordShapeAuditPanel.tsx`
+   （設定画面、2026-09-05）。6 より前に入った形違いを探して、件数と内訳を見せ、確認のうえ消す。形違いが 1 件あると
+   その画面は境界の枠になって開けず、画面からは消せないので、ここが唯一の出口。読めなかった collection
+   （暗号化の鍵違い）と封緘のままの中身は消す対象にしない（消失対策）。
+8. **取り込みファイルの上限** — `data/importFile.ts`（2026-09-05）。売上 CSV / KPI 実績 CSV / バックアップは
+   `file.text()` の**前に** `file.size` で断る（CSV 20 MiB / バックアップ 256 MiB）。選び間違えた巨大ファイル
+   1 つで renderer が落ちるのを防ぐ（可用性）。
+9. **保存の失敗を黙って捨てない** — `data/localWrite.ts` + 書類スタジオ / Team Radar（2026-09-06）。
+   `localStorage.setItem` は容量超過（`QuotaExceededError` / Firefox は `NS_ERROR_DOM_QUOTA_REACHED`）と
+   書き込み禁止（プライベートモード = `SecurityError`）で失敗する。利用者が打ち込む物を保存する 3 か所は
+   `catch {}` で失敗を捨てていた。書類スタジオは画面に「入力は端末内に自動保存」と書いてあるので、
+   **画面が嘘をつく**（打ち続けられ、閉じると消える）。`writeLocalJson()` が理由を分けて返し、
+   画面は見出しを「⚠ 端末に保存できていません」に変えて打ち手つきの警告を出す。**入力は画面に残す**
+   （保存の失敗で打ち込んだ物まで捨てない）（消失対策）。
+10. **書き出しが収まった先を報せる** — `data/exportOutcome.ts` + `fs/folderMirror.ts`（2026-09-06）。
+    ブラウザ版の書き出しは 1 回の操作で 3 か所へ置こうとする（端末のダウンロード / ライブラリ /
+    設定で選んだ PC のフォルダ）。3 つとも失敗が捨てられていた（`catch {}` と、誰も読まない `downloaded`）。
+    フォルダの許可は**ブラウザの再起動で切れうる**のに、そのときは試しもせず黙って飛ばしていたので、
+    設定画面の「PC の指定フォルダにも自動保存します」が守られない状態が普通に起きた。収まらなかった先は
+    書き出した画面に理由と打ち手つきで出す（未設定は失敗ではないので黙る）。許可が分からない環境では
+    飛ばさず書きに行く（消失対策）。
+11. **デスクトップ版の状態ファイルは原子的に書く** — `main/atomicWrite.ts`（2026-09-06 に `talent.json` を寄せた）。
+    `fs.writeFile` は本体を切り詰めてから書くので、その間に落ちると中途半端な内容が本体として残る。読み側は
+    どのモジュールも「壊れていたら空で続ける」ので、利用者には**保存したはずの物が全部消えた**ように見え、
+    しかも何も表示されない。状態ファイル 4 つのうち `secrets.json`（`.prev` の控えつき）と感情ログは
+    `atomicWriteFile`、`team-radar.json` と `state.json` は tmp+rename だったが、**`talent.json` だけが
+    本体を直接書いていた**（権限は `chmod` で締めていたので、抜けていたのは原子性だけ）。台帳と検査は
+    `src/main/__tests__/stateWritePolicy.test.ts`（`fs.writeFile` を直接呼ぶ場所は 3 つ = 成果物の口と
+    tmp を書く 2 つだけ・双方向・inode の置き換えで原子性を観測）（消失対策）。
+12. **平文バックアップは、個人情報の件数を言ってから書く** — `data/collectionShapes.ts` の `personalDataCollections`
+    + `data/backup.ts` の `plaintextExposure` / `plaintextBackupConfirmMessage` + `components/BackupPanel.tsx`
+    （2026-09-09 · パス 130）。合言葉が空の書き出しは平文で、5 の言う「最も持ち出されやすい流出経路」に
+    チームメンバーのメールアドレス・士業の連絡先の電話番号・提出者情報の住所がそのまま入る。それまで画面は
+    「（任意）」の欄を空のまま押せば黙って平文を書いた。どの collection が個人情報を持つかは中身の形の
+    **欄の名前から導き**（email / phone / address / representative）、入れ物の形しか無い提出者情報だけ台帳に
+    理由つきで載せる。確認は件数と内訳と暗号化の道を言い、個人情報の記録が 0 件なら確認しない（漏洩対策）。
+13. **デスクトップ版の感情ログを OS のキーチェーンで封緘する** — `main/atRest.ts` + `main/clients/emotions.ts`
+    （2026-09-09 · パス 132）。気分の点数・メモ・解析に貼った文の抜粋は健康に関わる記録なのに、同じ userData の
+    `secrets.json` が `safeStorage` で封緘される一方で**平文** (0600) だった。`{ v: 2, sealed }` の封筒で置き、
+    2026-09-09 までの平文は読めて次の書き込みで封緘される（移行）。キーチェーンの無い環境は `plain:`
+    （難読化。`secrets.ts` と同じ倒し方）。読めない封緘（鍵違い・破損・キーチェーン消失）は理由を言って
+    上書きせず、「履歴を消去」だけは通る（唯一の出口を塞がない）（漏洩対策）。
+14. **人材育成・チームレーダーの状態ファイルも同じ口で封緘する** — `main/atRest.ts` の `sealJsonDocument` / `unsealJsonDocument`
+    + `main/clients/talent.ts` / `teamradar.ts`（2026-09-09 · パス 133）。部署名・氏名・軸ごとの評価（第三者の人事評価）が
+    0600 の平文で置かれていた。書くときは封筒、読むときは開けてから形を判定し、開けられなければ理由つきで「読めなかった」
+    （画面は「保存すると上書きされる」と言う —— 鍵違いのファイルを黙って空や見本に化けさせない）。2026-09-09 までの平文は
+    そのまま読み、次の保存で封緘される。封緘しているモジュールの母集団は `src/main/__tests__/atRestPolicy.test.ts` が
+    実装から数える（漏洩対策）。
+15. **消したトークンを控えに残さない** — `main/atomicWrite.ts` の `keepBackup`（2026-09-09 · パス 134）。控え `.prev` は
+    「直前の内容」だったので、`clearToken` / `setToken` の直後は消した・入れ替えたトークンがそこに残り、本体が消える・壊れると
+    `readStore` の復旧で**復活**していた。控えは rename の後に**最後に書けた内容**を同じ経路で置く（消した物は 1 バイトも
+    残らない・書けなければ投げる）。復旧の意味は変わらない —— 本体を後から失ったとき戻したいのは最後に書けた内容である（漏洩対策）。
+16. **「保存時の保護状態」の節は、トークン以外の保存物の状態も言う** — `shared/atRestInventory.ts` +
+    `pages/SettingsPage.tsx`（2026-09-09 · パス 135）。気分の記録・人材育成・チームレーダーの状態は、デスクトップ版では
+    トークンと同じ鍵で封緘（キーチェーンが無ければ同じく難読化のみ）、ブラウザ版では保管庫の外の localStorage に平文 ——
+    節はその 3 通りをトークンの文の後に 1 文で言う。在庫の鍵・ファイル名は検査が実装の定数・封緘モジュールと突き合わせる
+    （利用者が判断すべき状態を利用者に届ける）。
+17. **ハードリセットは在庫の全媒体を消す** — `security/eraseAll.ts` + 各保管層の `delete…Database` +
+    `pages/SettingsPage.tsx`（2026-09-09 · パス 136）。保管庫だけでなく業務レコード・ライブラリ・preferences・localStorage・
+    sessionStorage・Cache Storage を消し、全部消えた時だけ再読込、残った物は名指し。在庫は台帳と `lint:storage` 規則 11 で
+    両方向に一致（次に使う人へ前の人の記録を渡さない）。
+18. **デスクトップ版のハードリセットは main のファイルも消す** — `main/eraseAll.ts` + `app:eraseAll` +
+    `shared/eraseReport.ts`（2026-09-09 · パス 137）。トークン (`service-hub-secrets.json` と控え `.prev`)・状態ファイル 4 つ・
+    書き込みの残骸 `*.tmp-*`・renderer の保存領域 (`session.clearStorageData`) を消し、全部消えた時だけ再起動。残った物は
+    パスで名指し。保管庫の無いデスクトップには保管庫の操作 (パスワード変更・施錠) を出さない（次に使う人へ前の人の
+    トークンと健康に関わる記録を渡さない）。
+19. **秘密を受ける欄は、ブラウザの資格情報ストアに対する態度を宣言する** — 16 欄すべての `autoComplete` +
+    `renderer/__tests__/secretFieldAutocomplete.test.ts`（2026-09-11 · パス 147）。宣言が無いとブラウザの判断に委ねられ、
+    API キーやマスターパスワードが**この app が消せない媒体**へ入りうる。使える token は `off` / `new-password` /
+    `current-password` の 3 つだけで、母集団は走査で数える（生存の床 16・`type` を式で書く抜け道も塞ぐ）。
+    消せないことは画面の「消えない物」に名前で挙げた。
+20. **封緘した物は、自分を作った PBKDF2 の反復回数を覚えている** — `shared/cryptoParams.ts` の
+    `LEGACY_KDF_ITERATIONS` + `VaultMeta.recoveryIterations` + `EncryptionMeta.iterations`
+    （2026-09-14 · パス 239）。`PBKDF2_ITERATIONS` は**動く定数**で、実際に一度動いた
+    (OWASP の SHA-256 の床に合わせて 21万 → 60万)。回数を書き残さない封緘は、その日に
+    **正しい鍵でも開かなくなる**。4 つある導出のうち約束を守っていたのは 1.5 個だった:
+    バックアップ (`EncryptedBundle.iterations`) と保管庫のパスワード枝は保存値を読むが、
+    **保管庫のリカバリーキーは定数で導出**し、**レコードの封緘は回数を持たなかった**。
+    そして 2 つ目が正しいことが 3 つ目の穴を致命傷にしていた ——
+    `recoverWithMnemonic` は新しいパスワードを**定数**で導出するのに `meta.iterations` を
+    書き換えず (`changePassword` は書き換えていた)、保管値 ≠ 定数の金庫で復旧すると
+    **今設定したばかりのパスワードが二度と通らない**。リカバリーキーは使い切っている。
+    見え方はどれも「パスワード／リカバリーキー／パスフレーズが違います」で、原因を指さない。
+    欄が無い古い保存値は**凍結値** (`LEGACY_KDF_ITERATIONS` = 60万、数値リテラルで固定。
+    `PBKDF2_ITERATIONS` の別名にすると仕組みごと無力になるので、原文で別名でないことを留める)
+    へ倒す。`security/__tests__/kdfCostProvenance.test.ts` が 3 つの導出それぞれについて
+    「保存値を読んでいること」と「欄が無くても開くこと」を対照つきで留める。
+21. **保存済みを検査する床は、生成の大きさと別の定数にする** — `shared/cryptoParams.ts` の
+    `MIN_STORED_SALT_BYTES`（2026-09-14 · パス 240）。`MIN_SALT_BYTES` は**新しく作る**
+    ソルトの長さと**保存済み**ソルトを受け入れる床を兼ねており、しかも生成が床に
+    張り付いていた（`SALT_BYTES = MIN_SALT_BYTES`、16 で採り 16 で検査）ので、
+    **1 バイト上げるだけで既存のバックアップとレコード封緘が全部開かなくなった**
+    （見え方はそれぞれ「ソルトが短すぎます」／`false` = 誤パスフレーズと同じ／解錠不能）。
+    危険は `deriveAesKey` の注記に正しく書かれていたが、**上げる編集をするのは宣言行**で、
+    そこには「増やすのは自由」としか書いていなかった。検査は凍結値へ分け、注記は
+    動かす側へ移した。**併せて限界を明記**: この床が止めるのは「短い」ソルトだけで、
+    保管領域へ書ける相手は 16 バイトの固定値も置けるので、注記が挙げている
+    「salt を差し替えて事前計算を使い回す」攻撃は長さでは防げない（防ぐにはメタを
+    別の鍵で認証する必要があり、KCV はソルトから導出されるので自分を守れない）。
+    多層防御の 1 枚であって解ではない。走査した 5 定数のうち `MIN_PASSWORD_LENGTH` は
+    **既に正しく**（解錠には掛けず、設定・変更にのみ掛ける）、`ENTROPY_BITS` は
+    `recoveryVersion` という移行の仕組みを持つので放置した。
+
+22. **資格情報の入口は 1 つの規則を通る／プラットフォームの例外文面から鍵を復元させない**
+    —— `pages/SettingsPage.tsx` + `pages/AssistantPage.tsx` + `shared/redact.ts`
+    （2026-09-14 · パス 244）。`shared/tokenInput.ts` は冒頭で「この規則を main と
+    renderer で同じにするために在る」と宣言しているのに、`checkTokenInput` を通していたのは
+    `main.ts` の `secrets:set` と `web-shim.ts` の `setToken` の **2 か所だけ**だった。
+    通っていなかった 2 経路:
+    - **設定画面の資格情報スロット 9 枚**（anthropic / github / notion / slack / wordpress /
+      atlassian / canva / cloudflare / security）は `getVault().setToken()` を直接叩き、
+      `value.length === 0` という弱い写しだけを持っていた。`vault.setToken` 側も
+      型・空・`MAX_TOKEN_CHARS` しか見ない。**ブラウザ版でこの 9 つを入力する口はここだけ。**
+    - **アシスタントのエージェント資格情報**は複数プロバイダの鍵を `JSON.stringify` 1 本に
+      まとめてから `setToken` へ渡す。`JSON.stringify` は制御文字を `\u0000` の 6 文字へ
+      逃がすので、**包みの外からは「制御文字なし」に見える**。取り出す側
+      (`clients/assistant.ts`) は JSON を解いて中の鍵をそのまま `'x-api-key'` に載せるので
+      制御文字は復活する。
+    何が起きるか: 制御文字を含む値は `Authorization: Bearer …` / `hibp-api-key: …` に載り、
+    `new Headers()` が **値ごと引用符で抱えた文面**で投げる
+    （`Headers.append: "<値>" is an invalid header value.`）。`limitedFetch` は `fetch` の例外を
+    そのまま再送出し、`main.ts` の `safeErrorMessage` を通って画面の赤いバッジへ出る。
+    `redact.ts` の 3 規則はどれも「ヘッダ名が在る」か「方式 (Bearer/Basic) が在る」ことに
+    掛かっているが、**この文面はヘッダ名を含まない** —— まさに同ファイルが接頭辞を持たない
+    3 形 (Cloudflare 40 字 / LINE / Discord) を裸で伏せない根拠として挙げていた
+    「ヘッダ名・JSON 項目名の規則が受け持つ」という前提が崩れる 1 本だった。
+    2026-09-14 の実測 (10 経路): `hibp-api-key` / `x-apikey` の 64 桁 16 進は**丸ごと**素通り
+    （規則が 0 件当たる）、`Authorization` の 8 経路は改行で分断された後半 20〜86 字が裸で残る
+    （`Bearer …{16,}` に届かないため）。
+    直した 3 か所: 2 つの入口を `checkTokenInput` へ通し（**理由つきで断る**。アシスタントは
+    どの欄かを言う）、`redact.ts` に「末尾が ` is an invalid header value` の引用はまとめて伏せる
+    （方式だけ残す）」規則を足した。**入口が原因・伏字は結果の遮断**で、両方入れてある。
+    `shared/__tests__/headerValueLeak.test.ts` は期待文面を写経せず**実物の `Headers` に
+    毎回投げさせ**、「値が文面に入ること」自体も主張する（Node が文面を変えた日に空の検査へ
+    化けないため）。**併せて測った境目**: `<input>` の値の消毒 (value sanitization) は CR / LF を
+    **要素の側で**落とすので、この欄から入るのは改行ではなく NUL / 垂直タブなどの
+    他の C0 制御文字である（最初は「折り返して貼った改行」で書いており、それだと
+    この経路では何も守らない検査になっていた）。ヘッダ名が不正な場合の双子
+    (`"…" is an invalid header name.`) は伏せない —— あちらの引用は名前で、伏せると原因が読めない。
+
+23. **資格情報の保管層そのものが制御文字を断る（入口を数えない床）** ——
+    `renderer/security/vault.ts` + `main/secrets.ts` + `shared/tokenInput.ts` の
+    `hasControlChars`（2026-09-14 · パス 245）。項目 22 は入口 2 本を関門へ通したが、
+    **関門を持つ層を通らない書き込みが 2 本残っていた**: `secrets.setOAuthTokens`
+    （規則は `main.ts` の IPC ハンドラに在り、ここは経由しない —— `secrets.setToken`
+    自身には検証が 1 つも無かった）と `SettingsPage` の Google トークン 4 本
+    （保管庫を直接叩く）。中身は認可サーバの発行値なので制御文字は入りにくいが、
+    **「入りにくい」は関門ではない**。入口を 1 本ずつ数えて塞ぐ形は数え漏らした
+    本数だけ穴が残るので、**両ビルドの保管層に床を置いた**。規則の綴りは
+    `hasControlChars` 1 つで、`checkTokenInput` もそこを読む（同じ規則を 3 通りに
+    綴ると必ず食い違う —— パス 201 の消毒 5 通りと同じ形）。長さは床に置かない
+    （ハンドラ・保管庫・読み出しが既に 3 つ持っており、4 つ目を作るとずれる）。
+    **限界を検査に明示**: `JSON.stringify` は制御文字をエスケープ列へ逃がすので、
+    包んだ値（`assistant` の資格情報・OAuth の `TokenSet`）は床を通る。包みの中は
+    包む側で断るしかなく、画面側は項目 22 で直したが **`setOAuthTokens` の
+    `TokenSet` の各欄はまだ断っていない**（`shared/vaultToken.ts` の
+    `hasUsableAccessToken` が既に形を見ているので、そこへ寄せるのが筋）。
+    限界は散文だけでなく**通る側の標本**として検査に書いてある。
+
+24. **壊れた TokenSet を Bearer に載せない（デスクトップ版・refresh token の流出）** ——
+    `main/secrets.ts` の `getValidToken` + `shared/vaultToken.ts` の
+    `brokenStoredCredentialMessage`（2026-09-14 · パス 246）。
+    `vaultToken.ts` は 2026-08-20 の監査で「JSON として読めたのに `accessToken` が
+    無ければ、その JSON 丸ごとを Bearer として送っていた」形をブラウザ版で直し、
+    **「規則を 1 つにまとめて両方から呼ぶ」と書いていた**。まとめたのは述語
+    (`hasUsableAccessToken`) で、**述語が no と言ったあとの動作は揃っていなかった**:
+    ブラウザは `null` → 理由つきで断る、main の `getValidToken` は
+    `return { ok: true, token: raw }` → **生の JSON をそのまま Bearer として返す**。
+    `getOAuthTokens` は null を返すが、Authorization ヘッダに載るのは `getValidToken`
+    の戻り値である（`main.ts:411` / `main.ts:460`）。実測:
+    `{"refreshToken":"rt_SECRET_VALUE"}` を保存して呼ぶと
+    `Authorization: Bearer {"refreshToken":"rt_SECRET_VALUE"}` が相手先 API へ出る ——
+    **アクセストークンより長命で強い鍵を、渡す必要のない相手へ渡し、しかも JSON の塊は
+    Bearer として通らないので認証は必ず失敗する**（漏らす代償だけ払って得るものが無い）。
+    直し: `StoredTokenRead` に `reason: 'broken-token-set'` を足し、**オブジェクトなら
+    断る**。オブジェクトでない値（JSON ですらない生の PAT・数字だけの API キー）は
+    今までどおり返す。**呼び出し側の変更は 0 行** —— `main.ts` は既に非 `absent` の
+    reason を `not_configured` + message へ流していた（**断る器は最初から在って、
+    そこへ入れていなかっただけ**）。文面は共有の 1 つにし、ブラウザ版の写しも
+    そこへ寄せた。**★ この漏れは気付かれていなかったのではなく、
+    `secretsTokenRead.test.ts` の「TokenSet でない JSON は生文字列として返す」という
+    緑の検査に要件として留められていた** —— 検査が在ること自体は、検査が正しいことを
+    意味しない（0 倒し census・パラメータ配線と同じ性質）。**残り**: 書き込み側の
+    `setOAuthTokens` は今も `TokenSet` の各欄を検証しない（読み出しで断るので egress は
+    閉じたが、保存はできてしまう）。**この形の一般化 —— 「述語は共有したが動作が
+    両ビルドで違う」箇所が他に何件あるか —— は測っていない。**
+    （**2026-09-14 · パス 247 で測った**: 21 件。パス 248 でそれをゲート
+    `lint:shared-judgement` にし、読んだ 2 件が両方とも非対称だった → 下の 25。）
+
+25. **共有した述語の「周り」も両ビルドで揃える（Atlassian の欄の天井・Ollama の許可経路）** ——
+    `shared/atlassianSite.ts` の `MAX_ATLASSIAN_EMAIL` / `MAX_ATLASSIAN_TOKEN` /
+    `MAX_ATLASSIAN_SITE` と `main/clients/ollama.ts` の `ALLOWED_ENDPOINTS`
+    （2026-09-14 · パス 248）。上の 24 が見つけた形の母集団 21 件を
+    `lint:shared-judgement`（37 ゲート目）で機械に持たせ、危険の高い順に 3 件読んだ
+    ところ 2 件が非対称だった。
+
+    - **Atlassian**: 送り先ホストを絞る述語（`normalizeAtlassianSiteResult`）は共有して
+      いたのに、**その前段の欄の天井が main にしかなかった** —— main は email 254 /
+      token 1024 / site 256 を見て、ブラウザ版は email だけ（254 を手で写し）。
+      main 側には理由まで書かれていた（「Length caps prevent multi-MB strings from
+      OOMing the basicAuth Buffer allocation」）のに、ブラウザ版も同じ
+      `btoa(email:token)` を通る。**危険度は低い** —— 値は利用者自身の保管庫から来るので
+      第三者への流出経路ではなく、壊れた・巨大な保存値に対する頑丈さの差である。
+      3 つの天井を shared へ移し、両ビルドがそれを読む（**安全上限なので
+      `parameters.ts` の台帳には載せない**）。ついでに、ブラウザ版の既存の検査は
+      `over-long` を名前に持ちながら**測っていたのは email だけ**だった（残り 2 つに
+      測る天井が無かった）ので、境界（ちょうど / +1）を足した。
+    - **Ollama**: 叩いてよい経路の台帳 `OLLAMA_READ_PATHS`（`/api/version` `/api/tags`
+      `/api/chat`）はブラウザ版が `buildOllamaUrl` 経由で読んでいたが、**main は同じ
+      3 本を手で書き写していた**。その写しの上のコメントは危うさを正確に書いており ——
+      `/api/pull` `/api/create` `/api/push` `/api/copy` `/api/delete` `/api/blobs`
+      `/api/upload` は CVE-2024-37032 (Probllama) と CVE-2024-39719/20/21/22 の経路
+      である —— **つまりこの集合そのものが守りの本体**だった。**測った対照**: 台帳に
+      `/api/pull` を足したとき、手写しのままなら既存の検査
+      `refuses every CVE-prone Ollama endpoint` は**通った**（main の門は広がらないが
+      **ブラウザ版の門だけが黙って広がる**）。台帳から組み立てる今の形なら**落ちる**。
+      同ファイルのコメントが言っていた「the currently UNPATCHED out-of-bounds-read」も
+      落とした —— その OOB read は 0.17.1 で修正済みで、**パス 139 が同じ嘘を別の
+      ファイルで直している**。版のことは台帳（`OLLAMA_ADVISORIES`）が持つ。
+
+26. **マスターパスワードの床は、画面が述べる単位（文字）で数える** ——
+    `meetsPasswordPolicy` が `atLeastChars`、上限 3 か所が `moreThanChars`
+    （2026-09-14 · パス 252）。保管庫のパスワードは **9 か所で「12 文字以上」と述べる**
+    （ロック画面 ×2 の placeholder・設定画面 ×2・`vault.ts` の例外 3 本・暗号化
+    バックアップの断り 2 本）のに、関門は `password.length` —— **UTF-16 のコード単位**を
+    数えていた。実測:
+
+    | 入力 | 実文字数 | コード単位 | 直す前の関門 | 画面の宣言 |
+    |---|---|---|---|---|
+    | `'😀'.repeat(6)` | **6** | 12 | **通す** | 断るべき |
+    | `'𠮟'.repeat(6)`（JIS2004 漢字） | **6** | 12 | **通す** | 断るべき |
+    | `'😀😀😀' + 'a'.repeat(6)` | **9** | 12 | **通す** | 断るべき |
+    | `'😀'.repeat(200)` | 200 | 400 | **断る** | 通すべき（256 字以内） |
+
+    **宣言した 12 文字の床は、実文字数 6 で満たせた** —— BMP の外の文字 1 つで床が
+    1 文字下がる。PBKDF2 60 万反復は 1 回の推測を遅くするだけで、**探索空間そのものは
+    縮む**。この保管庫が守るのは全サービスのトークン・暗号化メタデータ・24 単語
+    リカバリーキーである。**天井とは向きが逆**で、天井をコード単位で切ると「切り過ぎ +
+    孤立サロゲート」（パス 195）だが、床をコード単位で数えると**緩む**。
+
+    **下限の規則は 1 か所だけにした**: `data/backup.ts`（暗号化バックアップの合言葉・
+    パス 128）と `pages/SettingsPage.tsx`（パスワード変更）は定数だけ共有して `>=` の式を
+    書き直していた —— つまり**規則が 3 か所**に在り、3 つとも同じ単位の誤りを持っていた。
+    式ごと `meetsPasswordPolicy` を読む。上限の `256` も `MAX_PASSWORD_CHARS` に名付けた
+    （条件 3 か所 + 文面 3 か所 = 6 写しだった。**安全上限なので `parameters.ts` の台帳には
+    載せない**）。`atLeastChars` / `moreThanChars` は **`n` 文字目で切り上げる** ——
+    上限の判定は*拒むために*在るので、100 MB の入力を拒むのに 100 MB 辿ってはいけない。
+
+    **なぜ検査で見えなかったか**: `vault.guards.test.ts` のパスワード境界検査 6 本は
+    **どれも `'a'.repeat(N)`** で、ASCII ではコード単位と文字数が一致する ——
+    **区別が現れない標本**だけを通していた。「不在を主張する検査には標本を添える」の
+    裏面である。非 BMP の標本 8 本を足し、`ceilingUnitCensus.test.ts` が
+    「文字で数えると宣言した定数を `.length` / `.slice` と組んでいないか」を母集団で見る
+    （両方向の台帳・`const MAX_SYSTEM = MAX_ASSISTANT_SYSTEM_CHARS;` のような**局所名への
+    付け替えも辿る** —— 辿らない最初の版は、直した所を壊しても鳴らなかった）。
+
+    同じ単位の割れは `main/clients/assistant.ts` の system プロンプトにも在った
+    （`.slice(0, MAX_SYSTEM)`）。絵文字 50,000 字の system で **main 30,000 字 /
+    ブラウザ版 50,000 字**、境界が絵文字なら末尾が孤立サロゲートになり
+    `JSON.stringify` が `\ud83d` を本文に載せる。`clampToCeiling` に揃えた。
 
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 
@@ -184,7 +579,7 @@ Ollama の接続先とポート・銘柄のウォッチリスト・クライア�
 |---|---|---|---|
 | 1 | ~~業務レコードを AES-GCM 暗号化~~ → **エンジン + 有効化/アンロック/解除のオーケストレーションまで実装済み** (`recordCipher.ts` + `recordEncryption.ts`: enable/unlock/disable, KCV 検証, `store.configureCipher`/`reencryptAll(from)`)。誤パスフレーズは false を返すだけ (ロックアウトしない)。残りは設定 UI/起動時アンロック画面の配線のみ | 漏洩 | 既定は平文(後方互換)。封緘後はキー無しで閲覧不可 |
 | 2 | Electron `secrets` の keychain 非依存パスフレーズ暗号化 + 未初期化警告 UI | 漏洩 | `plain:base64` フォールバック解消 |
-| 3 | ~~`secrets.json` の atomic write~~ → **実装済み** (`atomicWrite.ts`: fsync + dir fsync + `.prev` バックアップ + temp 後始末、読取りは `.prev` フォールバック) | 消失 | 強制終了/電源断時のトークン破損・消失を防止 |
+| 3 | ~~`secrets.json` の atomic write~~ → **実装済み** (`atomicWrite.ts`: fsync + dir fsync + `.prev` の控え (**最後に書けた内容** —— 2026-09-09 · パス 134 まで直前の内容で、消したトークンが残っていた) + temp 後始末、読取りは `.prev` フォールバック) | 消失 | 強制終了/電源断時のトークン破損・消失を防止 |
 | 4 | ~~CSV 一括取込のトランザクション化~~ → **実装済み** (`store.insertMany` = 単一 IndexedDB tx で全件 commit/全件 abort)。SalesPage/KpiPage の CSV 取込を per-row ループから `addMany` に置換。復元 (`importAll`) は元から単一 tx で atomic | 損壊 | 取込途中失敗での部分書込みを防止 |
 | 5 | プロキシ漏洩緩和 → **一部実装**: プロキシのエラー応答に反射したトークンを `redactSecrets` で秘匿 (`shared/redact.ts` に集約し main/renderer 共有) + 機密性の前提を明文化。upstream へは Authorization 透過が必須のため、第三者運用プロキシでは運用者がトークンを閲覧可能 → 自己運用を推奨 (本質的な残リスク) | 漏洩 | 第三者 Worker ログ対策 |
 

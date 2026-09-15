@@ -27,12 +27,14 @@ aliases:
 
 ## 出典
 - [W. H. Dutton, "The Fifth Estate Emerging through the Network of Networks," Prometheus 27(1):1-15 (2009)](https://www.tandfonline.com/doi/full/10.1080/08109020802657453) `学術`
-- [Oxford Internet Institute (University of Oxford) — The Fifth Estate research project](https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/) `リファレンス`
+- [Oxford Internet Institute (University of Oxford) — The Fifth Estate research project](https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/) `学術`
 
 ## 関連概念
 - [[infosoc-fourth-estate|第四の権力]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同分野の近傍
+- [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 同分野の近傍
+- [[infosoc-social-exchange-theory|社会交換理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

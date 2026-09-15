@@ -80,7 +80,7 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
     sources: [
       { url: 'https://www.britannica.com/event/Operation-Barbarossa', type: 'reference', label: 'Encyclopaedia Britannica — Operation Barbarossa（独ソ戦開始）' },
       { url: 'https://history.state.gov/milestones/1937-1945/pearl-harbor', type: 'government', label: 'U.S. Dept. of State, Office of the Historian — Pearl Harbor（対日資産凍結・石油禁輸）' },
-      { url: 'https://www.ebsco.com/research-starters/economics/analysis-lend-lease-act', type: 'academic', label: 'EBSCO Research Starters — Lend-Lease Act' },
+      { url: 'https://www.ebsco.com/research-starters/economics/analysis-lend-lease-act', type: 'reference', label: 'EBSCO Research Starters — Lend-Lease Act' },
     ],
   },
   {
@@ -454,7 +454,7 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
     caveats: 'DJIA年末値583.65は確証値（年間約+34%）。日経平均1958年末確定値は独立確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
     sources: [
       { url: 'https://www.europarl.europa.eu/factsheets/en/sheet/1/the-first-treaties', type: 'government', label: 'European Parliament — The First Treaties（ローマ条約・EEC発足）' },
-      { url: 'https://www.ebsco.com/research-starters/history/recession-1957-1958', type: 'academic', label: 'EBSCO — Recession of 1957-1958（米不況と回復）' },
+      { url: 'https://www.ebsco.com/research-starters/history/recession-1957-1958', type: 'reference', label: 'EBSCO — Recession of 1957-1958（米不況と回復）' },
       { url: 'https://ja.wikipedia.org/wiki/岩戸景気', type: 'reference', label: 'Wikipedia — 岩戸景気（1958/7〜1961/12）' },
     ],
   },

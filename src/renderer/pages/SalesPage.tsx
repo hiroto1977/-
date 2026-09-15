@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
 import { localIsoDate } from '../../shared/localDate';
 import {
   SALES_COLLECTION,
@@ -11,6 +13,8 @@ import {
   monthlyTotals,
   type SalesEntry,
   type SalesChannel,
+  duplicateOrdersNote,
+  findDuplicateOrders,
 } from '../data/sales';
 import { salesToCsv, salesFromCsv } from '../data/salesCsv';
 import {
@@ -69,6 +73,7 @@ export function SalesPage() {
   const { records, add, addMany, remove } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
   const [notice, setNotice] = useState<string>();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -83,6 +88,8 @@ export function SalesPage() {
     [computedSummary, overrideRecords],
   );
   const months = useMemo(() => monthlyTotals(entries), [entries]);
+  // 同じ注文名の重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 126)。
+  const duplicateNote = useMemo(() => duplicateOrdersNote(findDuplicateOrders(entries)), [entries]);
 
   async function onAdd() {
     try {
@@ -109,8 +116,25 @@ export function SalesPage() {
   async function onImportFile(file: File) {
     setError(undefined);
     setNotice(undefined);
-    const text = await file.text();
-    const { entries: parsed, errors } = salesFromCsv(text);
+    // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
+    let text: string;
+    try {
+      text = await readImportText(file, MAX_CSV_IMPORT_BYTES, 'CSV ファイル');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+    const { entries: parsed, errors, stored, allStored } = salesFromCsv(text, entries);
+    // 読めた行が**すべて**既存の記録と同じ内容なら、同じファイルを 2 度読んだと判断して断る (パス 126)。
+    // 同じ内容の別の売上はありうるので、一部が同じだけなら取り込んで件数を言う (下)。
+    if (allStored) {
+      setError(
+        `この CSV の ${parsed.length} 行はすべて既に取り込まれている記録と同じ内容（日付・チャネル・金額・件数・メモ）です。同じファイルを 2 度読んだと判断し、取り込みませんでした。本当に同じ売上が 2 度あったのなら、その行だけ上のフォームから追加してください。`,
+      );
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
     // Atomic: all valid rows commit together or none (no partial import).
     if (parsed.length > 0) await addMany(parsed);
     const ok = parsed.length;
@@ -118,7 +142,9 @@ export function SalesPage() {
     if (ok === 0 && ng === 0) {
       setError('取り込める行がありませんでした (ヘッダ: date,channel,amount,orders,note)');
     } else {
-      setNotice(`${ok} 件を取り込みました${ng > 0 ? ` / ${ng} 件はスキップ (行 ${errors.map((x) => x.row).join(', ')})` : ''}`);
+      setNotice(
+        `${ok} 件を取り込みました${ng > 0 ? ` / ${ng} 件はスキップ (行 ${errors.map((x) => x.row).join(', ')})` : ''}${stored > 0 ? `。うち ${stored} 件は既存の記録と同じ内容です（同じファイルを 2 度読んだのなら、一覧で該当行を消してください）` : ''}`,
+      );
     }
     if (fileRef.current) fileRef.current.value = '';
   }
@@ -169,7 +195,7 @@ export function SalesPage() {
             onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
             style={{ ...inputStyle, width: 140 }}
           />
-          <button type="button" onClick={onAdd}>追加</button>
+          <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>追加</button>
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
           <button type="button" onClick={onExport} disabled={entries.length === 0}>
@@ -192,6 +218,11 @@ export function SalesPage() {
         </div>
         {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
         {notice && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>{notice}</div>}
+        {duplicateNote !== null && (
+          <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+            {duplicateNote}
+          </p>
+        )}
       </Section>
 
       {entries.length === 0 ? (
@@ -204,7 +235,9 @@ export function SalesPage() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
             <Tile label="総売上" value={yen.format(summary.totalAmount)} />
             <Tile label="総注文件数" value={summary.totalOrders.toLocaleString('ja-JP')} />
-            <Tile label="平均注文単価 (AOV)" value={yen.format(Math.round(summary.aov))} />
+            {/* 注文が 0 件なら「—」。`¥0` は「平均単価が 0 円」という主張になる
+                (経緯は `data/sales.ts` の `SalesSummary.aov`)。 */}
+            <Tile label="平均注文単価 (AOV)" value={summary.aov === null ? '—' : yen.format(Math.round(summary.aov))} />
             <Tile label="チャネル数" value={`${summary.byChannel.length}`} />
           </div>
 
@@ -230,7 +263,7 @@ export function SalesPage() {
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(c.amount)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.share.toFixed(1)}%</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.orders.toLocaleString('ja-JP')}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(Math.round(c.aov))}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.aov === null ? '—' : yen.format(Math.round(c.aov))}</td>
                   </tr>
                 ))}
               </tbody>

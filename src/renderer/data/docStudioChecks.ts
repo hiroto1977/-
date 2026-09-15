@@ -15,8 +15,12 @@
  */
 
 import type { StudioDoc } from './docStudioData';
+import { utcMsFromParts } from '../../shared/isoDate';
 import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
 import { namedShareholderCount, totalHeldShares } from './shareholders';
+// 明細の金額はこの厳しい読み取りで計算される。橋を掛けるために読む (パス 94)。
+import { readNumber } from './inputGuards';
+import { fromWareki } from '../../shared/bankFormat';
 
 /** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。旧名は呼び出し側のために残す。 */
 export type CheckLevel = IssueLevel;
@@ -32,10 +36,30 @@ export interface DocIssue {
 
 type Values = Record<string, string>;
 
-/** 全角数字・カンマ・単位つきの入力から数値を取り出す。取れなければ null。 */
+/**
+ * 全角数字・カンマ・単位つきの入力から数値を取り出す。取れなければ null。
+ *
+ * **この読み取りは意図して緩い。** 差込欄には「40時間」「第5条」「100個」のような
+ * 散文が入るので、そこから数を拾えないと 36協定の上限や議事録の定足数を
+ * 判定できない。金額の計算に使う `readNumber` (`shared/readNumeric.ts`) は
+ * 逆に厳しく読む —— **役割が違う 2 つの読み取りである**。
+ * 2 つの間で答えが分かれる欄については、下の `RULES.invoice` が橋を掛ける
+ * (2026-09-08 · パス 94)。
+ *
+ * **符号の取り違え (2026-09-08 に直した)**: 全角 `－` (U+FF0D) は畳んでいたが
+ * **U+2212 `−` を畳んでいなかった**ので、`'−500'` が **+500** と読まれていた。
+ * `num()` 経由で金額の規則に入るため、−500 と書いた数字が +500 として突合を
+ * 通り得た。U+2212 は数学の負符号そのものなので、ここで半角 `-` に畳む。
+ *
+ * **日本語会計の `△` / `▲` (負数) は、まだ負として読まない。**
+ * `'△500'` は今も **+500** になる。会計の慣行では負数だが、書面の数字の意味を
+ * 変える判断なので `docs/REMAINING_WORK.md` に残した。
+ */
 export function toNum(raw: string | undefined): number | null {
   if (!raw) return null;
-  const half = raw.replace(/[０-９．－]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+  const half = raw
+    .replace(/\u2212/g, '-') // U+2212 MINUS SIGN → 半角ハイフンマイナス
+    .replace(/[０-９．－]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
   // 桁区切りは半角 , だけとは限らない。日本語 IME は全角 ，や読点 、を平気で挟むので
   // ここで一緒に落とす（\s は U+3000 全角スペースも含む）。落とし損ねると
   // 「１，２３４」が 1 と読まれ、金額チェックが静かに的外れになる。
@@ -49,7 +73,7 @@ export function toNum(raw: string | undefined): number | null {
 export function parseJpDate(raw: string | undefined): number | null {
   if (!raw) return null;
   const half = raw.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
-  const m = half.match(/(\d{4})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/);
+  const m = half.match(/(\d{4})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/) ?? matchWareki(half);
   if (!m) return null;
   const y = Number(m[1]);
   const mo = Number(m[2]);
@@ -57,14 +81,90 @@ export function parseJpDate(raw: string | undefined): number | null {
   // 月だけは先に弾く。Date.UTC は 0 月を前年12月、13月を翌年1月として受け取ってしまい、
   // 日は動かないので後段の照合をすり抜ける。
   if (mo < 1 || mo > 12) return null;
-  const t = Date.UTC(y, mo - 1, d);
+  const t = utcMsFromParts(y, mo, d);
   // 2月30日・4月31日・0日のような実在しない日は Date.UTC が別の月へ繰り上げ／繰り下げるため、
   // 日が入力どおりに戻ってこない。日の照合だけで足りる（月は上で範囲を保証済み）。
   if (new Date(t).getUTCDate() !== d) return null;
   return t;
 }
 
+/**
+ * **和暦の日付を西暦の組に直す。** 元号名 (`令和`)・1 文字 (`令`)・頭文字 (`R`) を受ける。
+ * `元` は 1 年。返す形は西暦の正規表現と同じ `[全体, 年, 月, 日]` なので、
+ * 呼び出し側は以降を 1 本で書ける。
+ *
+ * ## なぜ要るのか (2026-09-08 · パス 100 の実測)
+ *
+ * 直す前の `parseJpDate` は `(\d{4})` の年しか読まず、**和暦は 1 つも読めなかった** ——
+ * `令和8年9月30日` / `R8.9.30` / `平成31年4月30日` / `令8.9.30` はすべて null。
+ * 読めなければ `day()` が NaN を返し、**法定の判定が黙って行われない**。
+ * 実測 (解雇予告通知書・予告 4 日・手当「支給しない」):
+ *
+ * | 日付の書き方 | 交付前チェックの結論 |
+ * | --- | --- |
+ * | `2026年9月1日` → `2026年9月5日` | **fatal: 予告期間が 4 日しかありません…解雇予告手当の支払が必要です** |
+ * | `令和8年9月1日` → `令和8年9月5日` | **fatal が 1 件も出ない** |
+ *
+ * つまり**和暦で書いた解雇予告通知書は、労基法 20 条の検査を失っていた**。
+ * しかもこの app は**自分で和暦を刷る** (`formatDate(..., { era: 'wareki' })` が
+ * 税制の適用期限を「令和8年9月30日」と出す) —— **教えている書き方を読めなかった。**
+ *
+ * ★ 規準は手の届く所に在った (7 か所目): 元号の境目を持つ表 `ERAS` は
+ * `shared/bankFormat.ts` に在り、その注記に「和暦の組み立てはここ 1 か所に置く」と
+ * 書いてある。足りなかったのは**逆向きの変換**だけで、`fromWareki` は同じ表を読む。
+ */
+function matchWareki(half: string): RegExpMatchArray | null {
+  const m = half
+    .trim()
+    .match(/^(令和|平成|昭和|令|平|昭|[RrHhSs])\s*(元|\d{1,2})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/);
+  if (!m) return null;
+  const eraYear = m[2] === '元' ? 1 : Number(m[2]);
+  const month = Number(m[3]);
+  const day = Number(m[4]);
+  const year = fromWareki(m[1]!, eraYear, month, day);
+  if (year === null) return null;
+  // 西暦側と同じ形に揃える (以降の月・日の検査を 1 本で通す)。
+  return [m[0], String(year), String(month), String(day)] as unknown as RegExpMatchArray;
+}
+
 const DAY = 86_400_000;
+
+/**
+ * **日付欄が埋まっているのに読めないとき、その旨を言う。**
+ *
+ * 読めない日付は `day()` が NaN にし、差の比較はすべて false になる ——
+ * つまり**法定の判定が黙って行われない**。空欄は「まだ書いていない」と分かるが、
+ * 「読めない」は画面から見分けが付かない (パス 94 で請求書の単価に同じ橋を架けた:
+ * 「空欄と『読めない』の非対称がそのまま欠陥だった」)。
+ *
+ * 段階は `warn` —— 書面が違法だと言っているのではなく、**検査ができなかった**と
+ * 言っている。`fatal` にすると、私が覆えていない書き方 1 つで印刷が止まる。
+ */
+function unreadableDates(
+  v: Values,
+  doc: StudioDoc,
+  keys: readonly string[],
+  judgement: string,
+): DocIssue[] {
+  const out: DocIssue[] = [];
+  for (const key of keys) {
+    const raw = (v[key] ?? '').trim();
+    if (raw === '' || parseJpDate(raw) !== null) continue;
+    // **ラベルは実物の書式から引く。** 手で写すと食い違う ——
+    // 実測: `payday` は書式ごとに 7 通りのラベルを持ち (支払期日 / 代金の支払期日 /
+    // 支払予定日 / 賃金の支払日 / 支払日)、`kenshu` では「代金の支払期日」である。
+    // パス 100 で私は「支払期日」と写し、**画面に無い欄の名前**を出していた
+    // (2026-09-09 · パス 101。欄が見つからなければ鍵をそのまま出す ——
+    // 配線の誤りなので黙って隠さない。同じことを `docStudioDateFields.test.ts` が留める)。
+    const label = doc.fields.find((f) => f.k === key)?.label ?? key;
+    out.push({
+      level: 'warn',
+      field: key,
+      message: `「${label}」を日付として読み取れません（入力値: ${raw}）。${judgement}を行いませんでした。`,
+    });
+  }
+  return out;
+}
 
 /** 利息制限法1条の上限利率（％）。元本の額で決まる。 */
 export function interestCap(principal: number): number {
@@ -107,6 +207,56 @@ function num(v: Values, key: string): number {
  * 何も指摘されない」という一番たちの悪い状態になる。空欄は 0、
  * 「読めない文字が入っている」ときだけ判定を止める。
  */
+/** 円の表示。判定の文面は画面と同じ桁区切りで出す。 */
+function fmtYen(n: number): string {
+  return `${n.toLocaleString('ja-JP')} 円`;
+}
+
+/**
+ * 支払明細書の差引支給額。**書面の合計と同じ欄・同じ読み方で検算する** ——
+ * ここだけ別の欄を足すと、書面はマイナスを刷っているのに何も指摘されない。
+ *
+ * 断るのは「控除が支給を超えた」ときだけ。料率が正しいかは判定しない
+ * (書式が料率を持たないので、判定できない物を「問題なし」と黙るより良い)。
+ */
+function netPayIssues(
+  v: Values,
+  payKeys: readonly string[],
+  dedKeys: readonly string[],
+  firstPayKey: string,
+): DocIssue[] {
+  const paid = payKeys.reduce((n, k) => n + money(v, k), 0);
+  const deducted = dedKeys.reduce((n, k) => n + money(v, k), 0);
+  if (!Number.isFinite(paid) || !Number.isFinite(deducted)) return [];
+  if (deducted <= paid) return [];
+  return [{
+    level: 'warn',
+    field: firstPayKey,
+    message: `控除額の合計（${fmtYen(deducted)}）が支給額の合計（${fmtYen(paid)}）を超えています。`
+      + `差引支給額が ${fmtYen(paid - deducted)} になります。`,
+    basis: '労働基準法24条1項',
+  }];
+}
+
+/**
+ * 標準賞与額の検算。**1,000 円未満を切り捨てた額**なので、賞与額を超えることはない。
+ * 超えていれば桁か欄の取り違えである (上限 —— 健保 年度 573 万円・厚年 1 回 150 万円 ——
+ * は判定しない: 年度累計は利用者が入れる値で、この書面だけでは確かめられない)。
+ */
+function standardBonusIssues(v: Values, bonusKey: string): DocIssue[] {
+  const bonus = num(v, bonusKey);
+  const std = num(v, 'stdBonus');
+  if (!Number.isFinite(bonus) || !Number.isFinite(std) || std <= 0) return [];
+  if (std <= bonus) return [];
+  return [{
+    level: 'warn',
+    field: 'stdBonus',
+    message: `標準賞与額（${fmtYen(std)}）が賞与額（${fmtYen(bonus)}）を超えています。`
+      + '標準賞与額は賞与額の 1,000 円未満を切り捨てた額なので、賞与額を超えることはありません。',
+    basis: '健康保険法45条',
+  }];
+}
+
 function money(v: Values, key: string): number {
   return text(v, key) === '' ? 0 : num(v, key);
 }
@@ -145,6 +295,35 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
     if (filled && price === '') {
       out.push({ level: 'warn', field: `i${n}price`, message: `品目${n} の単価が未入力です。金額 0 円として計算されます。` });
     }
+    // **空欄は上で言っている。「読めない」は 2026-09-08 まで黙っていた** (パス 94)。
+    //
+    // 明細の金額は `DocstudioPage` が `readNumber(priceRaw) ?? 0` で計算する ——
+    // この本の `toNum` より**厳しい**読み取りである。だから
+    // 「`toNum` は読めるが `readNumber` は読めない」帯が存在し、そこに入る入力は
+    // **明細が ¥0 で計上されるのに交付前チェックが「無効リスクは見つかりません
+    // でした」と言っていた**。実測でその帯に入るもの:
+    //   `30 000` (空白区切り) / `1,23` (桁が 3 でない) / `1、234` (読点) / `100m2`
+    // 空欄だけを見ていたのが非対称の正体で、**読めない側にも同じ断りを出す**。
+    const qty = text(v, `i${n}qty`);
+    // **総称ループが既に言う分は言わない。** `checkDoc` は `f.num` の欄について
+    // `toNum` で読めなければ「数値として読み取れません」を出す。ここが狙うのは
+    // **`toNum` は読めるが `readNumber` は読めない帯** (`30 000` / `1,23` / `100m2`)
+    // —— そこだけ計算が黙って 0 になる。両方が拒む入力 (`abc`) で 2 件出すと
+    // 同じ欄に同じ趣旨の断りが並ぶ (2026-09-09 · パス 101 の実測で 2 件出ていた)。
+    if (filled && price !== '' && toNum(price) !== null && readNumber(price) === null) {
+      out.push({
+        level: 'warn',
+        field: `i${n}price`,
+        message: `品目${n} の単価「${price}」を金額として読み取れません。金額 0 円として計算されます。`,
+      });
+    }
+    if (filled && qty !== '' && toNum(qty) !== null && readNumber(qty) === null) {
+      out.push({
+        level: 'warn',
+        field: `i${n}qty`,
+        message: `品目${n} の数量「${qty}」を数として読み取れません。数量 0 として計算されます。`,
+      });
+    }
   }
   for (const tag of usedCustom) {
     // 空欄も「読めない」に含まれる（toNum は空文字で null を返す）ので、null 判定だけでよい。
@@ -171,7 +350,12 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
 }
 
 /** 書式ごとの個別ルール。値が入っていない項目は原則として空欄チェックに任せる。 */
-const RULES: Record<string, (v: Values) => DocIssue[]> = {
+/**
+ * 書式ごとの規則。第 2 引数の書式は**欄のラベルを引くため**に渡す
+ * (規則の中でラベルを写すと実物とずれる —— パス 101 の実測)。
+ * 使わない規則は第 1 引数だけを宣言すればよい。
+ */
+const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
   mimoto(v) {
     const out: DocIssue[] = [];
     const limit = num(v, 'limit');
@@ -303,9 +487,11 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
     return out;
   },
 
-  'kaiko-yokoku'(v) {
+  'kaiko-yokoku'(v, doc) {
     const out: DocIssue[] = [];
-    // 日付が読めなければ days は NaN になり、以下の比較はすべて false になる（＝判定しない）。
+    // 読めない日付は NaN になり以下の比較はすべて false になる（＝判定しない）ので、
+    // **読めなかったこと自体を言う** (パス 100)。
+    out.push(...unreadableDates(v, doc, ['noticeDate', 'dismissDate'], '30日前の予告の判定'));
     const days = Math.round((day(v, 'dismissDate') - day(v, 'noticeDate')) / DAY);
     if (days < 0) {
       out.push({ level: 'warn', field: 'dismissDate', message: '解雇の日が通知日より前になっています。' });
@@ -412,9 +598,11 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
     return out;
   },
 
-  kenshu(v) {
+  kenshu(v, doc) {
     const out: DocIssue[] = [];
-    // 日付が読めなければ NaN になり、60日の判定は行われない。
+    // 読めない日付は NaN になり 60 日の判定は行われないので、
+    // **読めなかったこと自体を言う** (パス 100)。
+    out.push(...unreadableDates(v, doc, ['receiveDate', 'payday'], '60日以内の判定'));
     const days = Math.round((day(v, 'payday') - day(v, 'receiveDate')) / DAY);
     if (days > 60) {
       out.push({
@@ -465,6 +653,103 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
   sokai: meetingQuorum('totalShares', 'presentShares', '出席株主の議決権数', '議決権の総数'),
   'rinji-sokai': meetingQuorum('totalShares', 'presentShares', '出席株主の議決権数', '議決権の総数'),
   torishimari: meetingQuorum('total', 'present', '出席取締役数', '取締役総数'),
+
+  /*
+   * 支払明細書 4 種 (2026-09-15)。
+   *
+   * 検算するのは**書面の中で食い違えること**だけにする —— 保険料率・税額表の
+   * 当てはめは書式が持たないので、料率が正しいかは判定できない (判定できない物を
+   * 「問題なし」として黙るのが最も悪い)。見るのは 3 つ:
+   *   ① 差引支給額がマイナス (控除が支給を超えている)
+   *   ② 役員賞与の**届出どおりでない支給** (原則として全額損金不算入)
+   *   ③ 標準賞与額が賞与額を超えている (1,000円未満切捨てなので超えるはずがない)
+   */
+  'kyuyo-meisai'(v) {
+    return netPayIssues(
+      v,
+      ['base', 'postAllow', 'famAllow', 'houseAllow', 'otPay', 'holidayPay', 'nightPay', 'commuteFree', 'commuteTax', 'otherPay'],
+      ['health', 'care', 'pension', 'empIns', 'incomeTax', 'residentTax', 'otherDed'],
+      'base',
+    );
+  },
+
+  'shoyo-meisai'(v) {
+    return [
+      ...netPayIssues(v, ['bonus', 'otherPay'], ['health', 'care', 'pension', 'empIns', 'incomeTax', 'otherDed'], 'bonus'),
+      ...standardBonusIssues(v, 'bonus'),
+    ];
+  },
+
+  'yakuin-hoshu-meisai'(v) {
+    const out = netPayIssues(
+      v,
+      ['hoshu', 'commuteFree', 'commuteTax', 'otherPay'],
+      ['health', 'care', 'pension', 'incomeTax', 'residentTax', 'otherDed'],
+      'hoshu',
+    );
+    // 定期同額給与 (法人税法34条1項1号) —— 決議の月額と支給額が違えば、
+    // 期中改定として損金不算入の部分が生じ得る。**判定はしない** (改定が
+    // 定時改定か・業績の著しい悪化によるものかはこの書面から分からない)。
+    const decided = num(v, 'resolutionAmount');
+    const paid = num(v, 'hoshu');
+    if (Number.isFinite(decided) && Number.isFinite(paid) && decided > 0 && decided !== paid) {
+      out.push({
+        level: 'warn',
+        field: 'hoshu',
+        message: `決議による月額（${fmtYen(decided)}）と支給額（${fmtYen(paid)}）が一致しません。定期同額給与から外れると、その差額は原則として損金不算入です。定時改定・業績の著しい悪化による改定に当たるか確認してください。`,
+        basis: '法人税法34条1項1号',
+      });
+    }
+    return out;
+  },
+
+  'yakuin-shoyo-meisai'(v) {
+    const out = netPayIssues(v, ['bonus'], ['health', 'care', 'pension', 'incomeTax', 'otherDed'], 'bonus');
+    out.push(...standardBonusIssues(v, 'bonus'));
+    const kind = text(v, 'kind');
+    if (kind.startsWith('いずれにも当たらない')) {
+      out.push({
+        level: 'warn',
+        field: 'kind',
+        message: '事前確定届出給与・業績連動給与のいずれにも当たらない役員賞与は、全額が損金不算入です。',
+        basis: '法人税法34条1項',
+      });
+      return out;
+    }
+    if (!kind.startsWith('事前確定届出給与')) return out;
+    // **届出どおりでなければ原則として全額損金不算入** (一部ではない)。
+    // 日付は文字列で比べる —— 書式が和暦・西暦どちらでも入るので暦に直せない。
+    // 同じ綴りでなければ「確認してください」と言うにとどめ、判定はしない。
+    const notifiedDate = text(v, 'notifiedDate');
+    const payDate = text(v, 'payDate');
+    if (notifiedDate !== '' && payDate !== '' && notifiedDate !== payDate) {
+      out.push({
+        level: 'fatal',
+        field: 'payDate',
+        message: `届出した支給日（${notifiedDate}）と実際の支給日（${payDate}）が一致していません。事前確定届出給与を届出どおりに支給しない場合、原則として賞与の全額が損金不算入になります。`,
+        basis: '法人税法34条1項2号',
+      });
+    }
+    const notified = num(v, 'notifiedAmount');
+    const paid = num(v, 'bonus');
+    if (Number.isFinite(notified) && Number.isFinite(paid) && notified > 0 && notified !== paid) {
+      out.push({
+        level: 'fatal',
+        field: 'bonus',
+        message: `届出した支給額（${fmtYen(notified)}）と実際の支給額（${fmtYen(paid)}）が一致していません。事前確定届出給与を届出どおりに支給しない場合、原則として賞与の全額（差額ではなく全額）が損金不算入になります。`,
+        basis: '法人税法34条1項2号',
+      });
+    }
+    if (text(v, 'notifyDate') === '') {
+      out.push({
+        level: 'warn',
+        field: 'notifyDate',
+        message: '事前確定届出給与の届出日が空欄です。届出の期限は、決議日から1か月を経過する日または事業年度開始日から4か月を経過する日のいずれか早い日です。',
+        basis: '法人税法施行令69条4項',
+      });
+    }
+    return out;
+  },
 
   'kabunushi-meibo'(v) {
     const out: DocIssue[] = [];
@@ -853,7 +1138,7 @@ export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
     }
   }
 
-  out.push(...(RULES[doc.id]?.(values) ?? []));
+  out.push(...(RULES[doc.id]?.(values, doc) ?? []));
 
   // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
   return [...out].sort(byIssueLevel);

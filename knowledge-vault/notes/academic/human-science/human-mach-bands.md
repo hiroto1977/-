@@ -26,7 +26,7 @@ aliases:
 エルンスト・マッハ ／ ハルダン・ハートライン ／ フロイド・ラトリフ ／ ゲオルク・フォン・ベーケーシ
 
 ## 出典
-- [Ratliff, F. (1965) Mach Bands: Quantitative Studies on Neural Networks in the Retina — Holden-Day](https://www.worldcat.org/oclc/345413) `学術`
+- [Ratliff, F. (1965) Mach Bands: Quantitative Studies on Neural Networks in the Retina — Holden-Day](https://www.worldcat.org/oclc/345413) `リファレンス`
 - [Wikipedia: Mach bands — lateral inhibition, edge enhancement, brightness perception](https://en.wikipedia.org/wiki/Mach_bands) `リファレンス`
 
 ## 関連概念

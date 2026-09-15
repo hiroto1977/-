@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — 同じ思想家
 - [[human-illusory-correlation|錯誤相関]] — 同分野の近傍
-- [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]] — 同分野の近傍
+- [[human-attribution-theory|帰属理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

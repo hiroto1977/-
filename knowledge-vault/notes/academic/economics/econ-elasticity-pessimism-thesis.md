@@ -39,8 +39,8 @@ aliases:
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
 - [[econ-dorfman-steiner-theorem|ドーフマン＝スタイナーの定理——最適な広告は弾力性で決まる]] — 同じ思想家
-- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — 同じ思想家
-- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — 同じ思想家
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — 同じ思想家
+- [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

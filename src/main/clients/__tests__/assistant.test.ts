@@ -10,6 +10,7 @@ import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_MESSAGES,
   MAX_ASSISTANT_SYSTEM_CHARS,
+  inputTooLongMessage,
 } from '../../../shared/assistantLimits';
 
 /** Build a minimal fetch double returning a JSON Anthropic response. */
@@ -406,6 +407,40 @@ describe('assistant — 送る量の上限 (課金される外部 API へ渡る�
     // `item === null` の枝を落とす変異体は、ここで `null.role` を触って落ちる。
     const out = sanitizeMessages([null, 'x', 42, undefined, { role: 'user', content: 'ok' }]);
     expect(out).toEqual([{ role: 'user', content: 'ok' }]);
+  });
+
+  it('★ 最新の発話が MAX_ASSISTANT_CONTENT_CHARS を超えていれば、切らずに断る (chat / chatAll · パス 112)', async () => {
+    // 2026-09-09 まで `sanitizeMessages` が黙って切り、AI は途中で切れた質問に答えていた。
+    const over = 'あ'.repeat(MAX_ASSISTANT_CONTENT_CHARS + 1);
+    for (const action of ['chat', 'chatAll'] as const) {
+      const fetchMock = okFetch();
+      await expect(
+        ACTIONS[action]!({
+          token: 'sk-ant-xxx',
+          fetch: fetchMock,
+          payload: { messages: [{ role: 'user', content: over }] },
+        }),
+      ).rejects.toThrow(inputTooLongMessage('入力'));
+      expect(fetchMock, action).not.toHaveBeenCalled();
+    }
+  });
+
+  it('★ 天井ちょうどの最新の発話は送る (境目)。履歴の長い発話は窓に収めて送る (断らない)', async () => {
+    const fetchMock = okFetch();
+    await ACTIONS['chat']!({
+      token: 'sk-ant-xxx',
+      fetch: fetchMock,
+      payload: {
+        messages: [
+          { role: 'user', content: 'x'.repeat(MAX_ASSISTANT_CONTENT_CHARS + 100) },
+          { role: 'assistant', content: 'y' },
+          { role: 'user', content: 'あ'.repeat(MAX_ASSISTANT_CONTENT_CHARS) },
+        ],
+      },
+    });
+    const sent = sentBody(fetchMock);
+    expect(sent.messages[0]!.content).toHaveLength(MAX_ASSISTANT_CONTENT_CHARS);
+    expect(sent.messages[2]!.content).toHaveLength(MAX_ASSISTANT_CONTENT_CHARS);
   });
 
   it('system は MAX_ASSISTANT_SYSTEM_CHARS で切ってから送る', async () => {

@@ -22,7 +22,7 @@
  *   7. 税引後利益   = 課税所得 − 法人税等合計
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 
 // --- 年度定数 (令和6年度 / 2024) ----------------------------------------
 // 根拠: 法人税法66条 (中小法人の軽減税率 15% / 本則 23.2%)、
@@ -217,7 +217,7 @@ export function resolveCorporatePerCapita(
   employees = 0,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const c = Math.max(0, capital);
+  const c = nonNeg(capital);
   const many = employees > r.perCapitaEmployeeThreshold;
   // 上位区分から走査し、最初に「下限以上」(c >= 下限) を満たした区分を採用する。
   // これにより資本金区分の境界と最上位区分の頭打ちを同時に満たす。最下位区分
@@ -302,8 +302,8 @@ export function applyLossCarryforward(
   small: boolean,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): LossCarryforwardResult {
-  const baseIncome = Math.max(0, income);
-  const availableLoss = Math.max(0, loss);
+  const baseIncome = nonNeg(income);
+  const availableLoss = nonNeg(loss);
   const limit = small ? baseIncome : baseIncome * r.largeCorpLossDeductionRatio;
   const deductedLoss = Math.min(availableLoss, limit);
   return {
@@ -329,7 +329,7 @@ export function calcCorporateIncomeTax(
   small: boolean,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各項が 0×率=0 を返すため等価。
   if (income === 0) return 0;
   if (!small) {
@@ -349,7 +349,7 @@ export function calcLocalCorporateTax(
   corporateIncomeTax: number,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  return yen(Math.max(0, corporateIncomeTax) * r.localCorpTaxRate);
+  return yen(nonNeg(corporateIncomeTax) * r.localCorpTaxRate);
 }
 
 /**
@@ -365,8 +365,27 @@ export function calcResidentCorporateTax(
   perCapitaLevy: number = DEFAULT_PER_CAPITA_LEVY,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const corporateTaxPortion = yen(Math.max(0, corporateIncomeTax) * r.residentCorpTaxRate);
-  return corporateTaxPortion + Math.max(0, perCapitaLevy);
+  const corporateTaxPortion = yen(nonNeg(corporateIncomeTax) * r.residentCorpTaxRate);
+  return corporateTaxPortion + nonNeg(perCapitaLevy);
+}
+
+/**
+ * 法人事業税の所得段階の境目を、**使う前に昇順へ畳む**。
+ *
+ * 台帳 (`parameters.ts`) の検査は 1 欄ずつしか見ないので、下 800 万 / 上 400 万の
+ * ような組が保存されうる (画面は `parameterConsistencyIssues` で断るが、古い版で置いた
+ * 上書き・復元したバックアップはその関門を通っていない)。畳まないと
+ * `tier2Limit - tier1Limit` が負になり、第 2 段の課税標準が **−400 万円**、
+ * 第 3 段が第 1 段と同じ所得を二重に数え、所得 500 万円の所得割が 175,000 円
+ * ではなく 33,000 円になっていた (2026-09-13 実測・パス 221)。
+ *
+ * 畳んだ後は、どんな境目でも **第1段 + 第2段 + 第3段 = 所得** が成り立つ。
+ */
+export function orderedBusinessTaxLimits(
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): { readonly limit1: number; readonly limit2: number } {
+  const limit1 = nonNeg(r.businessTaxTier1Limit);
+  return { limit1, limit2: Math.max(limit1, nonNeg(r.businessTaxTier2Limit)) };
 }
 
 /**
@@ -384,15 +403,13 @@ export function calcBusinessTaxIncomePortion(
   taxableIncome: number,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各 tier が 0×率=0 を返すため等価。
   if (income === 0) return 0;
-  const tier1 = Math.min(income, r.businessTaxTier1Limit);
-  const tier2 = Math.min(
-    Math.max(0, income - r.businessTaxTier1Limit),
-    r.businessTaxTier2Limit - r.businessTaxTier1Limit,
-  );
-  const tier3 = Math.max(0, income - r.businessTaxTier2Limit);
+  const { limit1, limit2 } = orderedBusinessTaxLimits(r);
+  const tier1 = Math.min(income, limit1);
+  const tier2 = Math.min(Math.max(0, income - limit1), limit2 - limit1);
+  const tier3 = Math.max(0, income - limit2);
   return yen(
     tier1 * r.businessTaxRateTier1 +
       tier2 * r.businessTaxRateTier2 +
@@ -409,7 +426,7 @@ export function calcSpecialBusinessTax(
   businessTaxIncomePortion: number,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  return yen(Math.max(0, businessTaxIncomePortion) * r.specialBusinessTaxRate);
+  return yen(nonNeg(businessTaxIncomePortion) * r.specialBusinessTaxRate);
 }
 
 // --- 法定実効税率 (round 60) --------------------------------------------
@@ -473,7 +490,7 @@ export function selectStatutoryRates(
   small: boolean,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): StatutoryRateInputs {
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   const corporateRate =
     small && income <= r.reducedThreshold
       ? r.reducedRate
@@ -481,9 +498,10 @@ export function selectStatutoryRates(
   let businessRate: number;
   // 事業税系の限界率 = 所得割率 × (1 + 特別法人事業税率)。既定では STATUTORY_BUSINESS_RATE_TIER* と同じ値。
   const statutory = 1 + r.specialBusinessTaxRate;
-  if (income <= r.businessTaxTier1Limit) {
+  const { limit1, limit2 } = orderedBusinessTaxLimits(r);
+  if (income <= limit1) {
     businessRate = r.businessTaxRateTier1 * statutory;
-  } else if (income <= r.businessTaxTier2Limit) {
+  } else if (income <= limit2) {
     businessRate = r.businessTaxRateTier2 * statutory;
   } else {
     businessRate = r.businessTaxRateTier3 * statutory;
@@ -543,8 +561,25 @@ export interface CorporateTaxBreakdown {
   readonly specialBusinessTax: number;
   /** 法人税等の合計。 */
   readonly totalTax: number;
-  /** 実効税率 (法人税等合計 / 課税所得)。所得0以下は0。単純合算ベース。 */
-  readonly effectiveRate: number;
+  /**
+   * 実効税率 (法人税等合計 ÷ 控除後の課税所得)。単純合算ベース。
+   *
+   * **控除後の課税所得が 0 以下なら `null` = 算定不能。** 0 に倒すと、
+   * 均等割だけが課される期に「法人税等合計 70,000 円 / 実効税率 **0.0%**」という
+   * **両立しない 2 行**が並ぶ (実測 2026-09-08。財務分析レポートと画面の両方)。
+   *
+   * | 控え | 控除後所得 | 法人税等合計 | 直す前の率 |
+   * | --- | ---: | ---: | ---: |
+   * | 欠損 (課税所得 0) | 0 | 70,000 円 | **0.0%** |
+   * | 所得 500 万・繰越欠損 5,000 万で全額控除 | 0 | 70,000 円 | **0.0%** |
+   *
+   * 2 行目が要注意 —— 画面の関門は `ordinaryProfit <= 0` (税引前利益) で
+   * 「―」を出していたが、**この値が割るのは控除後の課税所得**なので、
+   * 繰越欠損で控除しきった期は**関門が開いたまま 0.0% が出た**。
+   * 規準は姉妹モジュール `fxCurrency.ts` の同名 `effectiveRate(): number | null`
+   * (「外貨額の合計が 0 なら null」) に在った。
+   */
+  readonly effectiveRate: number | null;
   /**
    * 法定実効税率 (参考)。事業税 (+特別法人事業税) の損金算入を織り込んだ標準指標
    * (`calcStatutoryEffectiveRate`)。`effectiveRate` (単純合算ベース) とは目的の
@@ -586,7 +621,7 @@ export function calcCorporateTax(
   const small = isSmallBusiness(profile, r);
   const perCapitaLevy = Math.max(0, resolvePerCapitaLevy(profile, r));
 
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   const loss = applyLossCarryforward(income, profile.carryforwardLoss ?? 0, small, r);
   const incomeAfterLoss = loss.taxableIncome;
 
@@ -603,7 +638,9 @@ export function calcCorporateTax(
     businessTax +
     specialBusinessTax;
 
-  const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : 0;
+  // **割る相手が 0 なら率は無い。** 0 に倒すと均等割だけの期に
+  // 「法人税等合計 70,000 円 / 実効税率 0.0%」が並ぶ (欄の注記に実測表)。
+  const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : null;
   // 法定実効税率 (参考) は控除後所得の限界帯で評価する (損金算入を織り込んだ標準指標)。
   const statutoryEffectiveRate = calcStatutoryEffectiveRate(incomeAfterLoss, profile, r);
   const afterTaxProfit = taxableIncome - totalTax;

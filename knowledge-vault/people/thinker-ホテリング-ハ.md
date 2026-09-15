@@ -2,7 +2,7 @@
 title: "ハロルド・ホテリング"
 type: thinker
 person_key: "ホテリング|ハ"
-concept_count: 4
+concept_count: 5
 tags:
   - person
   - index
@@ -10,13 +10,14 @@ tags:
 
 # ハロルド・ホテリング
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
+## 学術概念（5件）
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 死荷重損失（deadweightloss）は、市場の均衡がパレート最適から乖離したときに失われる経済厚生（消費者余剰と…
 - [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — グリーン・パラドックス（greenparadox）は、ハンス＝ヴェルナー・シンが2008年以降の研究で提唱した理論で、…
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — ホテリングの法則（最小差別化の原理,principleofminimumdifferentiation）は、競争する売…
 - [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — ハロルド・ホテリングが1931年に「枯渇性資源の経済学」（JournalofPoliticalEconomy）で示した…
+- [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]] — シェパードの補題とは、企業の費用最小化問題で費用関数をある要素価格で偏微分すると当該要素の条件付き需要関数が得られると…
 
 ## 関連
 - 索引: [[人物索引]]

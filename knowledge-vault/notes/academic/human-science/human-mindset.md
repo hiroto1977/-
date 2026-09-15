@@ -33,7 +33,7 @@ C.ドゥエックが提唱／固定マインドセット(能力は不変)vs成�
 
 ## 関連概念
 - [[human-growth-mindset|マインドセット理論（ドゥエック）]] — 語彙が近い
-- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 語彙が近い
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

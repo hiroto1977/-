@@ -4,7 +4,7 @@
  * import rows back (reusing `parseSalesEntry` for validation).
  */
 import { recordsToCsv, parseCsvRecords } from './csv';
-import { parseSalesEntry, type SalesEntry } from './sales';
+import { countStoredRows, parseSalesEntry, type SalesEntry } from './sales';
 
 /** Column order for exported sales CSV (matches the import expectation). */
 export const SALES_CSV_COLUMNS = ['date', 'channel', 'amount', 'orders', 'note'] as const;
@@ -25,6 +25,14 @@ export interface SalesImportResult {
   readonly entries: SalesEntry[];
   /** Per-row errors keyed by 1-based data-row number (header excluded). */
   readonly errors: { row: number; message: string }[];
+  /**
+   * `entries` のうち、内容 (日付・チャネル・金額・件数・メモ) が既存の記録と同じ行の数 (パス 126)。
+   * 同じ内容の別の売上はありうるので**落とさない** —— 画面が件数を言い、全行が既存なら
+   * 「同じファイルを 2 度読んだ」として断る (`allStored`)。
+   */
+  readonly stored: number;
+  /** 読めた行が 1 行以上あり、その**すべて**が既存の記録と同じ内容か。 */
+  readonly allStored: boolean;
 }
 
 /**
@@ -32,7 +40,7 @@ export interface SalesImportResult {
  * doesn't abort the whole import — good rows are returned alongside a list of
  * row-level errors for the user to fix.
  */
-export function salesFromCsv(text: string): SalesImportResult {
+export function salesFromCsv(text: string, existing: readonly SalesEntry[] = []): SalesImportResult {
   const records = parseCsvRecords(text);
   const entries: SalesEntry[] = [];
   const errors: { row: number; message: string }[] = [];
@@ -55,5 +63,6 @@ export function salesFromCsv(text: string): SalesImportResult {
     }
   });
 
-  return { entries, errors };
+  const stored = countStoredRows(existing, entries);
+  return { entries, errors, stored, allStored: entries.length > 0 && stored === entries.length };
 }

@@ -435,6 +435,14 @@ function main() {
   console.log(
     `Scanned ${importCount} imports across ${fileCount} src/**/*.ts(x) files`,
   );
+  // 走査が死んで 0 件になったのを「違反なし」と読まない (2026-09-05、e2e の空振り合格を
+  // 塞いだ同じ日に、走査数を表示するだけで床の無いゲートをここと lint:regex に見つけた)。
+  // 実測 440 ファイル / 1,360 import。src/ の半分が消えるような変化は、境界検査の前に気づくべき事故。
+  const MIN_FILES = 300;
+  if (fileCount < MIN_FILES) {
+    console.error(`❌ src/**/*.ts(x) を ${fileCount} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
+    return 1;
+  }
   if (violations.length === 0) {
     console.log('✅ all imports respect process boundaries');
     return 0;

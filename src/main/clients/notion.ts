@@ -1,4 +1,7 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { readArrayField } from '../../shared/apiResponse';
+import { NOTION_PAGE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 
 interface NotionPage {
@@ -53,7 +56,17 @@ export async function fetchNotionSnapshot(ctx: FetchContext): Promise<NotionSnap
     fetchCtx,
   );
 
-  const pages = (search.results ?? []).map((p) => ({
+  /*
+   * **`results` が在ったのかどうかを見る** (2026-09-14 · パス 264)。
+   *
+   * 以前は `(search.results ?? []).map(…)` で、鍵が無いことと空の配列を
+   * 同じ `[]` に畳んでいた。そこから作られる `note` は
+   * 「インテグレーションに共有されたページなし」—— **利用者の Notion の
+   * 設定についての診断**である。本文が `{}` でもその文が出るので、
+   * 共有は正しいのに共有設定を直しに行かせることになる。
+   */
+  const list = readArrayField(search, 'results');
+  const pages = (list.rows as readonly NotionPage[]).map((p) => ({
     id: p.id,
     title: extractTitle(p),
     url: p.url,
@@ -63,7 +76,11 @@ export async function fetchNotionSnapshot(ctx: FetchContext): Promise<NotionSnap
 
   return {
     teams: [],
-    note: pages.length === 0 ? 'インテグレーションに共有されたページなし' : `${pages.length} 件取得`,
+    note: !list.read
+      ? '共有ページの一覧を読み取れませんでした (応答に results がありません)。件数は 0 ではなく不明です。'
+      : pages.length === 0
+        ? 'インテグレーションに共有されたページなし'
+        : `${pages.length} 件取得`,
     pages,
   };
 }
@@ -81,9 +98,11 @@ interface NotionCreatePageResponse {
   url: string;
 }
 
-async function createPage(ctx: ActionContext): Promise<{ id: string; url: string }> {
+async function createPage(ctx: ActionContext): Promise<ActionData<'notion/create-page'>> {
+  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!parentPageId || !title` だけだった。
+  const bad = checkWriteFields(ctx.payload, NOTION_PAGE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { parentPageId, title, body } = ctx.payload as unknown as CreatePagePayload;
-  if (!parentPageId || !title) throw new Error('parentPageId and title are required');
 
   const blocks = body
     ? [

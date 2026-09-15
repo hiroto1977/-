@@ -26,7 +26,7 @@ aliases:
 ヘンリー・ミンツバーグ ／ ローズマリー・スチュワート ／ ジョン・コッター ／ アンリ・ファヨール
 
 ## 出典
-- [Mintzberg, H. (1973) The Nature of Managerial Work — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/653927) `学術`
+- [Mintzberg, H. (1973) The Nature of Managerial Work — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/653927) `リファレンス`
 - [Wikipedia: Mintzbergs managerial roles — interpersonal/informational/decisional, ten roles, structured observation](https://en.wikipedia.org/wiki/Henry_Mintzberg) `リファレンス`
 
 ## 関連概念
@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
 - [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
 - [[mgmt-administrative-theory-fayol|ファヨールの管理過程論——管理の五機能と十四の管理原則]] — 同じ思想家
-- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同じ思想家
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

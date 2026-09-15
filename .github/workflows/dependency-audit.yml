@@ -1,0 +1,84 @@
+name: dependency-audit
+
+# 依存の勧告を週 1 回きちんと見に行き、要対応を常設 Issue 1 つに集める。
+# 毎週月曜 07:00 JST（日曜 22:00 UTC）。knowledge-auto（同 06:00 JST）とずらす。
+#
+# **なぜ PR の門ではなく週次なのか。**
+# `ci.yml` は `npm audit --omit=dev --audit-level=high` だけを落とす。
+# 狭くしたのは正しい判断で（勧告は日々変わり、無関係な PR が赤くなると
+# 「赤を無視する習慣」がついて門が門でなくなる）、そこは変えない。
+# だが 2026-09-10（パス 143）に、**狭くした外側を誰も見ていない**ことが
+# 実害になった —— 検査を走らせる道具そのもののパストラバーサル
+# (GHSA-82fw-gwwq-j7x9) と js-yaml の DoS (high) が、手で `npm audit` を
+# 打つまで誰にも見えていなかった。
+# 同じ日に、`qs` の床 `^6.15.2` が据えた **24 日後**に低すぎになっていたのも
+# 実測した（`lint:deps` の checkedOn 警告は 180 日なので間に合わない）。
+#
+# **週次の予定実行は誰の PR も赤くしない**ので、上の懸念は当たらない。
+# knowledge-auto.yml が既に採っている型（結果は Issue・片付いたら自動で閉じる）に揃える。
+
+on:
+  schedule:
+    - cron: '0 22 * * 0'
+  workflow_dispatch: {}
+
+concurrency:
+  group: dependency-audit
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    name: 依存の勧告とセキュリティの床（週次報告）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      # 出荷物の検査には Electron の実体が要らない（ci.yml と同じ理由）。
+      - run: npm ci
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+
+      # 全体 / prod の npm audit と、床ちょうどの版の測り直し。
+      # **勧告が在っても exit 0**（報告する道具なので、赤にしても見る人がいない）。
+      # 測れなかったときだけ落ちる —— 「測れていない」を「0 件」として通さない。
+      - name: 勧告と床を測る
+        run: npm run audit:report
+
+      - name: 報告をアーティファクトとして保存
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit
+          path: orchestration/dependency-audit.json
+          retention-days: 90
+
+      - name: 要対応を Issue に反映
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const r = JSON.parse(fs.readFileSync('orchestration/dependency-audit.json', 'utf8'));
+            const title = '🔐 依存の勧告とセキュリティの床（自動更新）';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100,
+            });
+            const existing = issues.find((i) => i.title === title);
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.number, body: r.markdown,
+                state: r.actionable > 0 ? 'open' : 'closed',
+              });
+            } else if (r.actionable > 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo, title, body: r.markdown,
+              });
+            }

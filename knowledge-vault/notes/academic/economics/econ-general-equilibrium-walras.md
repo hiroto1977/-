@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Sonnenschein-Mantel-Debreu theorem.](https://en.wikipedia.org/wiki/Sonnenschein%E2%80%93Mantel%E2%80%93Debreu_theorem) `リファレンス`
 
 ## 関連概念
-- [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
+- [[econ-tatonnement|タトヌマン（模索過程）]] — 語彙が近い
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
@@ -39,8 +39,8 @@ aliases:
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
-- [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-contingent-valuation|仮想評価法——表明選好により非市場財の価値を計測する手法]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

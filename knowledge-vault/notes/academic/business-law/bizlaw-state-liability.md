@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 同分野の近傍
-- [[bizlaw-employer-liability|使用者責任（民法715条）]] — 同分野の近傍
 - [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 同分野の近傍
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 同分野の近傍
 

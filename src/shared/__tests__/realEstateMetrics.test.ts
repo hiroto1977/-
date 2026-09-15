@@ -8,6 +8,8 @@ import {
   calcBreakEvenOccupancyPct,
   calcNpv,
   calcIrr,
+  fullLeverageNote,
+  missingPriceNote,
   DSCR_DANGER_THRESHOLD,
   DSCR_CAUTION_THRESHOLD,
   IRR_TOLERANCE,
@@ -37,11 +39,27 @@ describe('calcRealEstateYield', () => {
     expect(r.netYieldPct).toBe(Math.round((2_016_000 / 45_000_000) * 100 * 100) / 100);
   });
 
-  it('guards against zero or negative purchase price', () => {
+  it('物件価格が読めなければ利回りは null (金額は返す)', () => {
+    // 2026-09-08 まで `toBe(0)` を仕様として固定していた —— 名前は
+    // `guards against zero or negative purchase price` で、**正しい懸念に
+    // 誤った答え**を留めていた (0 除算は避けるが、null も避けている)。
     const r = calcRealEstateYield(168_000, 0);
-    expect(r.grossYieldPct).toBe(0);
-    expect(r.netYieldPct).toBe(0);
+    expect(r.grossYieldPct).toBeNull();
+    expect(r.netYieldPct).toBeNull();
+    // **金額は算定できる** —— 賃料と経費だけで決まり物件価格に依らない。
     expect(r.annualGrossRent).toBe(2_016_000);
+    expect(r.annualNetIncome).toBe(2_016_000);
+  });
+
+  it('★ 対照: 価格が読めれば利回りは数で出る (標本が在ることの確認)', () => {
+    const r = calcRealEstateYield(168_000, 42_000_000);
+    expect(r.grossYieldPct).not.toBeNull();
+    expect(r.netYieldPct).not.toBeNull();
+  });
+
+  it('★ 出せない理由を 1 文で述べる (「—」だけでは「利回りが無い」と読まれる)', () => {
+    expect(missingPriceNote(calcRealEstateYield(168_000, 0))).toContain('物件価格が未入力');
+    expect(missingPriceNote(calcRealEstateYield(168_000, 42_000_000))).toBeNull();
   });
 
   it('clamps occupancy to [0,1] and negatives to zero', () => {
@@ -75,9 +93,36 @@ describe('calcRealEstateLeverage (CCR・イールドギャップ)', () => {
     expect(r.yieldGapPct).toBe(-1.5);
   });
 
-  it('guards zero own equity (CCR 0, no division by zero)', () => {
-    const r = calcRealEstateLeverage(2_000_000, 0, 1_200_000, 5.0, 2.0);
-    expect(r.cashOnCashReturnPct).toBe(0);
+  it('自己資金 0 (フルローン) では CCR は null —— 0% と刷ると順位が反転する', () => {
+    // 直す前はここが `toBe(0)` で、名前も `CCR 0, no division by zero` だった。
+    // **同じ持ち出しなのに、自己資金を入れないほうが良い数字**として並んでいた:
+    //   自己資金 1,000 万 → CCR −0.84% / 自己資金 0 → CCR 0%
+    const full = calcRealEstateLeverage(2_000_000, 0, 3_200_000, 5.0, 2.0);
+    expect(full.cashOnCashReturnPct).toBeNull();
+    expect(full.annualCashflow).toBe(-1_200_000); // 持ち出しは算定できている
+    const funded = calcRealEstateLeverage(2_000_000, 10_000_000, 3_200_000, 5.0, 2.0);
+    expect(funded.cashOnCashReturnPct).toBe(-12);
+    // ★ 直す前の 0 は funded の −12% より**上に**並んだ (それが反転)。
+  });
+
+  it('★ フルローンの理由を 1 文で述べ、持ち出しの符号まで言う', () => {
+    const out = fullLeverageNote(calcRealEstateLeverage(2_000_000, 0, 3_200_000, 5.0, 2.0));
+    expect(out).toContain('自己資金が 0 円');
+    expect(out).toContain('1,200,000 円の持ち出し');
+    expect(fullLeverageNote(calcRealEstateLeverage(2_000_000, 10_000_000, 3_200_000, 5.0, 2.0))).toBeNull();
+  });
+
+  it('★ 実質利回りが算定不能ならイールドギャップも算定不能 (0 から判定を作らない)', () => {
+    // 直す前: 実質利回り 0% − 金利 2.0% = **−2%** が「イールドギャップ」として
+    // 出て、画面は赤く塗り「プラスなら正レバレッジ」の下に並べていた ——
+    // **未入力が「逆レバレッジ」という判定に化けていた。**
+    const y = calcRealEstateYield(168_000, 0, 1, 600_000);
+    const lev = calcRealEstateLeverage(y.annualNetIncome, 10_000_000, 1_500_000, y.netYieldPct, 2.0);
+    expect(lev.yieldGapPct).toBeNull();
+    // ★ 対照: 価格が読めれば判定は出る
+    const y2 = calcRealEstateYield(168_000, 42_000_000, 1, 600_000);
+    const lev2 = calcRealEstateLeverage(y2.annualNetIncome, 10_000_000, 1_500_000, y2.netYieldPct, 2.0);
+    expect(lev2.yieldGapPct).not.toBeNull();
   });
 
   it('clamps negative debt service to zero', () => {

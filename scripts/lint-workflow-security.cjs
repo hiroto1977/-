@@ -365,6 +365,12 @@ function selfTest() {
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
   const list = workflows();
+  // ディレクトリが無い・拾えない = 0 件を「問題なし」と読まない (実測 5 本、2026-09-05)。
+  const MIN_WORKFLOWS = 3;
+  if (list.length < MIN_WORKFLOWS) {
+    console.error(`❌ .github/workflows/ の YAML を ${list.length} 本しか拾えませんでした (${MIN_WORKFLOWS} 本以上を期待)。走査が壊れています。`);
+    process.exit(1);
+  }
   const problems = check(list);
   const ledger = Object.keys(UNPINNED_ALLOW).length;
   console.log(

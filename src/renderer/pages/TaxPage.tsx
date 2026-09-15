@@ -2,16 +2,22 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
+import { invoiceTransitionCurrentLabel, invoiceTransitionScheduleLabel } from '../../shared/invoiceTransition';
 import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
-import { jpy } from '../../shared/formatters';
+import { DASH, jpy, jpyOrDash } from '../../shared/formatters';
+import { localIsoDate } from '../../shared/localDate';
 import { parseAmountInput } from '../components/serviceActionUtils';
 import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
 import {
   MAX_RATE,
   buildSchedule,
   type ScheduleInput,
+  type TaxMethod,
+  MIN_FISCAL_YEAR,
+  MAX_FISCAL_YEAR,
+  isRepresentableFiscalPeriod,
 } from '../../shared/taxConsumptionSchedule';
 import {
   VAT_REFERENCE,
@@ -21,7 +27,8 @@ import {
   lookupVat,
   type CustomsBasis,
 } from '../../shared/tradeTax';
-import { guardAll, readNumber } from '../data/inputGuards';
+import { guardAll, readNumber, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { useParameters } from '../data/parameterOverrides';
 import {
   acquisitionParams,
@@ -62,6 +69,8 @@ import {
 } from '../../shared/taxCalc';
 import {
   calcAllDeductions,
+  IDECO_ANNUAL_CAPS,
+  IDECO_ANNUAL_CAP_MAX,
   type DependentKind,
   type DeductionInput,
   type IdecoOccupation,
@@ -79,16 +88,24 @@ import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, resolveAcquisitionCost, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
-import { DEEMED_PURCHASE_RATES, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import {
+  DEEMED_PURCHASE_RATES,
+  TWENTY_PERCENT_MEASURE_END,
+  thirtyPercentMeasureStatus,
+  thirtyPercentMeasureYearsLabel,
+  twentyPercentMeasureStatus,
+  type SimplifiedBusinessType,
+  type ConsumptionTaxMethod,
+} from '../../shared/taxConsumption';
+import { formatDate } from '../../shared/bankFormat';
+import {
+  canUseSimplified,
   compareBusinessTaxMethods,
   isTaxExempt,
   calcStandardTaxDetailed,
   compareInputCreditMethods,
-  FULL_CREDIT_RATIO_THRESHOLD,
-  FULL_CREDIT_SALES_THRESHOLD,
 } from '../../shared/taxConsumptionBusiness';
-import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
+import { calcSocialInsurance, calcSocialInsuranceWithBonus, maxEmployeeSocialInsurance } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 import { compareDividendMethods, withholdingTotalRate, type DividendMethod } from '../../shared/taxDividend';
 import {
@@ -106,6 +123,15 @@ import {
 } from '../../shared/taxRegistrationLicense';
 import { stampDutyAmount, type DocumentType } from '../../shared/taxStampDuty';
 import { estimateRealEstatePurchaseTaxCost } from '../../shared/taxRealEstateTransactionCost';
+
+/**
+ * 丸める前に「算定不能」を保つ (パス 208)。
+ *
+ * `Math.round(null)` は **0** —— `null` を数として扱う JS の暗黙変換で、
+ * 「算定していない」が「0 円」に化ける。仕向国側は端数処理を仮定していないので
+ * 表示のためだけに丸めており、その丸めが判定を作ってはいけない。
+ */
+const roundOrNull = (n: number | null): number | null => (n === null ? null : Math.round(n));
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -125,6 +151,50 @@ const inputStyle: React.CSSProperties = {
   width: 160,
 };
 
+/**
+ * **貿易の「金額」の欄** (パス 212 で JSX のリテラルから引き上げた)。
+ *
+ * パス 208 が閉じたのは**率**で、金額はまだ `nonNeg` の契約どおり 0 に倒れていた。
+ * ⛔ は出ているのに**何を計算したかを言わない** —— 実測 (−9999 を入れた時):
+ *
+ * | 欄 | 出ていた物 |
+ * | --- | --- |
+ * | 商品代金 (輸入) | `課税価格 ¥535,000 → **¥35,000**`・そこから関税・消費税・地方消費税・税の合計・通関原価まで全部 |
+ * | 国際運賃 (輸入) | `課税価格 → ¥505,000` |
+ * | 保険料 (輸入) | `課税価格 → ¥530,000` |
+ * | 商品代金 (輸出) | `仕向国の課税価格 ¥1,090,000 → **¥90,000**`・仕向国の関税・付加価値税・税の合計・買手の負担 |
+ * | 国際運賃 / 保険料 (輸出) | 同じ連鎖 |
+ *
+ * **税額は減る側なので申告者に不利には働かないが、税関に出す数字が変わる。**
+ * 課税価格は CIF (商品代金＋運賃＋保険料) の和なので、**1 つでも ⛔ なら
+ * 課税価格そのものが測れない** —— パス 208 が「課税価格は率に依らないので
+ * 出し続ける」と決めたのは**率**の話で、金額では逆になる。
+ */
+const TRADE_SPECS = {
+  imGoods: { label: '商品代金 (輸入・円)', kind: 'money', allowZero: false },
+  imFreight: { label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true },
+  imInsurance: { label: '保険料 (輸入・円)', kind: 'money', allowZero: true },
+  imExcise: { label: '個別消費税 (酒税・たばこ税等・円)', kind: 'money', allowZero: true },
+  exGoods: { label: '商品代金 (輸出・円)', kind: 'money', allowZero: false },
+  exFreight: { label: '国際運賃 (輸出・円)', kind: 'money', allowZero: true },
+  exInsurance: { label: '保険料 (輸出・円)', kind: 'money', allowZero: true },
+} as const satisfies Record<string, NumSpec>;
+
+/**
+ * **どの段がどの欄を読むか。**
+ *
+ * 輸入は課税価格から下が 1 本の鎖なので節ごと。個別消費税は消費税の課税標準に
+ * 入るので同じ段に含める (既定 0 なので ⛔ にしても動かないが、**依存は依存**)。
+ *
+ * 輸出は「日本の輸出関税 ¥0 / 消費税（輸出免税）¥0」だけ別 —— これは入力に依らない
+ * **事実の記述**なので、金額が ⛔ でも消さない (消すと「日本も輸出関税を課すかも
+ * しれない」と読める)。
+ */
+const TRADE_READS = {
+  importChain: ['imGoods', 'imFreight', 'imInsurance', 'imExcise'],
+  exportDest: ['exGoods', 'exFreight', 'exInsurance'],
+} as const satisfies Record<string, readonly (keyof typeof TRADE_SPECS)[]>;
+
 export function TaxPage() {
   const { source, status, errorMessage, refresh, isConfigured } = useServiceData('tax', SNAPSHOT.tax);
 
@@ -136,6 +206,8 @@ export function TaxPage() {
   const [topic, setTopic] = useState<ComplianceTopic>('micro-corp');
 
   const schemes = useMemo(() => schemesForEntity(entity), [entity]);
+  // 期限つきの制度の「今日」。期限を過ぎた行は赤く言う (コードの日付が更新されていない印)。
+  const today = localIsoDate();
   const checklist = useMemo(() => complianceChecklist(topic), [topic]);
 
   const TOPIC_LABEL: Record<ComplianceTopic, string> = {
@@ -435,14 +507,50 @@ export function TaxPage() {
   const [icTaxableOnlyStr, setIcTaxableOnlyStr] = useState('2000000');
   const [icExemptOnlyStr, setIcExemptOnlyStr] = useState('600000');
   const [icCommonStr, setIcCommonStr] = useState('400000');
+  const ctExempt = useMemo(
+    () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.exemptionThreshold),
+    [ctSalesStr, ctReducedSalesStr, bizParams],
+  );
+  /**
+   * ⑩ で**選べる**方式。3 方式のうち 2 つは条件つきなので、「最も納付が少ない方式」を
+   * 決める前に外す —— 2026-09-06 の実測では、この節は 3 方式の最小値をそのまま
+   * 「✅ 最も納付が少ない方式」と出しており、**すぐ上の説明文が「簡易課税は基準期間の
+   * 課税売上5,000万円以下」と書いているのに、6,000 万円でも簡易課税を勧めていた**。
+   *
+   * - 簡易課税: 基準期間の課税売上高 (ここでは入力した課税売上高で代理)
+   * - 2 割特例: 免税の水準を超える売上なら元から免税ではないので対象外。加えて
+   *   **期限つきの経過措置**なので、`twentyPercentMeasureStatus()` が言い切れる
+   *   `ended` のときも外す (課税期間を入力に持たないため、言い切れない帯は残す)
+   */
+  const ctSimplifiedOk = useMemo(
+    () => canUseSimplified(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.simplifiedEligibilityThreshold),
+    [ctSalesStr, ctReducedSalesStr, bizParams],
+  );
+  // 事業形態 (このページの節税制度カタログと同じ切替) で、2割特例の期限の帯と 3割特例の対象が決まる。
+  const ctMeasure = twentyPercentMeasureStatus(new Date(), TWENTY_PERCENT_MEASURE_END, entity);
+  const ctTwentyPercentOk = ctExempt && ctMeasure !== 'ended';
+  const ctThirty = thirtyPercentMeasureStatus(new Date(), entity);
+  const ctThirtyPercentOk = ctExempt && ctThirty === 'active';
+  const thirtyYears = thirtyPercentMeasureYearsLabel();
+  /** 外した方式とその理由。**判定と同じ値から作る**ので、片方だけ直ることがない。 */
+  const ctUnavailable: string[] = [];
+  if (!ctSimplifiedOk) ctUnavailable.push(`簡易課税（基準期間の課税売上${jpy(bizParams.simplifiedEligibilityThreshold)}超）`);
+  if (!ctExempt) ctUnavailable.push(`2割特例（課税売上${jpy(bizParams.exemptionThreshold)}超は元から免税ではない）`);
+  else if (ctMeasure === 'ended') ctUnavailable.push(`2割特例（適用期限 ${formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' })} 経過）`);
+  if (!ctExempt) ctUnavailable.push(`3割特例（課税売上${jpy(bizParams.exemptionThreshold)}超は元から免税ではない）`);
+  else if (ctThirty === 'not-applicable') ctUnavailable.push('3割特例（法人は対象外）');
+  else if (ctThirty === 'upcoming') ctUnavailable.push(`3割特例（${thirtyYears}から）`);
+  else if (ctThirty === 'ended') ctUnavailable.push(`3割特例（${thirtyYears}で終了）`);
+
   const consumptionMethods = useMemo(
     () =>
       compareBusinessTaxMethods(
         [{ type: ctBizType, sales: { standard: num(ctSalesStr), reduced: num(ctReducedSalesStr) } }],
         { standard: num(ctPurchaseStr), reduced: 0 },
         bizParams,
+        { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk, thirtyPercent: ctThirtyPercentOk },
       ),
-    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, bizParams],
+    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, bizParams, ctSimplifiedOk, ctTwentyPercentOk, ctThirtyPercentOk],
   );
   // ⑩-2 納付/還付スケジュール — 税率 0%〜50% を範囲に、金額と時期を出す。
   const [csRateStr, setCsRateStr] = useState('10');
@@ -450,15 +558,21 @@ export function TaxPage() {
   const [csEndMonth, setCsEndMonth] = useState('12');
   const [csEndYear, setCsEndYear] = useState('2026');
   const [csExtended, setCsExtended] = useState(false);
-  const [csMethod, setCsMethod] = useState<'standard' | 'simplified' | 'twenty-percent'>('standard');
+  const [csMethod, setCsMethod] = useState<TaxMethod>('standard');
   const [csPriorStr, setCsPriorStr] = useState('0');
   const [csETax, setCsETax] = useState(true);
 
   const csInput = useMemo<ScheduleInput>(
     () => ({
       filer: csFiler,
-      fiscalEndMonth: csFiler === 'individual' ? 12 : Math.min(12, Math.max(1, Math.round(num(csEndMonth)) || 12)),
-      fiscalEndYear: Math.round(num(csEndYear)) || 2026,
+      // **黙って丸めない・黙って既定に倒さない** (2026-09-13 · パス 199)。
+      // 以前は月を `Math.min(12, Math.max(1, …))` で丸め (99 → 12)、年は
+      // `|| 2026` で 0 を既定に倒しつつ **`26` や `1` はそのまま通していた** ——
+      // その結果 `1926-05-31` のような**もっともらしい誤った申告期限**が出ていた。
+      // いまは打った値をそのまま渡し、`isRepresentableFiscalPeriod` が範囲外を
+      // 断り、下の注記が理由を述べる。
+      fiscalEndMonth: csFiler === 'individual' ? 12 : Math.round(num(csEndMonth)),
+      fiscalEndYear: Math.round(num(csEndYear)),
       extendedDeadline: csFiler === 'corporate' && csExtended,
       method: csMethod,
       taxableSales: num(ctSalesStr) + num(ctReducedSalesStr),
@@ -508,6 +622,21 @@ export function TaxPage() {
   const [exVatIncludesDuty, setExVatIncludesDuty] = useState(true);
   const [exBearer, setExBearer] = useState<'seller' | 'buyer'>('buyer');
 
+  /** **貿易の段ごとの ⛔ の欄** (パス 212)。率はパス 208 が値の側で閉じている。 */
+  const tradeRefusedBy = useMemo(() => {
+    const refused = refusedFields(TRADE_SPECS, {
+      imGoods: imGoodsStr, imFreight: imFreightStr, imInsurance: imInsuranceStr, imExcise: imExciseStr,
+      exGoods: exGoodsStr, exFreight: exFreightStr, exInsurance: exInsuranceStr,
+    });
+    return {
+      importChain: refusalLabels(TRADE_SPECS, refused, TRADE_READS.importChain),
+      exportDest: refusalLabels(TRADE_SPECS, refused, TRADE_READS.exportDest),
+    };
+  }, [
+    imGoodsStr, imFreightStr, imInsuranceStr, imExciseStr,
+    exGoodsStr, exFreightStr, exInsuranceStr,
+  ]);
+
   const exportTax = useMemo(
     () =>
       calcExport({
@@ -534,11 +663,6 @@ export function TaxPage() {
     else setExBasis('CIF');
   }
 
-  const ctExempt = useMemo(
-    () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.exemptionThreshold),
-    [ctSalesStr, ctReducedSalesStr, bizParams],
-  );
-
   // ⑩-3 本則課税の仕入控除税額。売上は ⑩ の入力を使い、非課税・免税売上と
   // 用途区分をここで足す。用途区分はすべて標準税率とみなす (概算)。
   const inputCredit = useMemo(() => {
@@ -562,6 +686,7 @@ export function TaxPage() {
     standard: '本則課税',
     simplified: '簡易課税',
     'twenty-percent': '2割特例',
+    'thirty-percent': '3割特例',
   };
 
   // --- ⑪ 不動産・資産にかかる税 (概算) ---
@@ -682,9 +807,31 @@ export function TaxPage() {
       [bonusPerStr, { label: '賞与1回あたり (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [bonusCountStr, { label: '賞与の回数', kind: 'count', allowEmpty: true, allowZero: true, max: 12 }],
       [dGrossStr, { label: '給与収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [dSocialStr, { label: '社会保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [dIdecoStr, { label: 'iDeCo 掛金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [dSmallBizStr, { label: '小規模企業共済 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      // **社会保険料控除には法定上限が無い** (実際に支払った額をそのまま引く)。
+      // 実測: `支払社会保険料 = 9,999,999,999` で控除合計が `¥10,000,669,999` になり、
+      // 画面は何も言わなかった —— `money` の既定の `sane` は 10 兆円で、
+      // 個人の家計の欄には緩すぎた (パス 218)。
+      //
+      // 法定の天井が無いので ⛔ (`max`) は作れない。使えるのは⚠️ (`sane`) で、
+      // **2 つの本物の上界のうち緩い方**を採る (どちらの読み方でも説明が付かない
+      // ときだけ警告する): 申告した給与収入と、被用者としての法定最大額。
+      // 給与を超える支払いは、事業所得から国民年金を払う人には起こりうるので
+      // 断らない —— 「桁を間違えていないか」と訊くだけ。
+      [dSocialStr, {
+        label: '社会保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true,
+        sane: Math.max(num(dGrossStr), maxEmployeeSocialInsurance(siRates)),
+      }],
+      // **法定の拠出上限を関門にする** (パス 217)。それまで天井が無く、巨大な拠出が
+      // そのまま控除になって `所得税 ¥147,535 → ¥0` が出ていた。区分を選べば
+      // その区分の上限、未選択なら**どの区分でも超えられない最大値**で見る。
+      [dIdecoStr, {
+        label: 'iDeCo 掛金 (円)', kind: 'money', allowEmpty: true, allowZero: true,
+        max: idecoOccupation === '' ? IDECO_ANNUAL_CAP_MAX : IDECO_ANNUAL_CAPS[idecoOccupation],
+      }],
+      [dSmallBizStr, {
+        label: '小規模企業共済 (円)', kind: 'money', allowEmpty: true, allowZero: true,
+        max: dedParams.smallBizMutualAnnualCap,
+      }],
       [dLifeStr, { label: '生命保険料 (新制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [dLifeOldStr, { label: '生命保険料 (旧制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [dQuakeStr, { label: '地震保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
@@ -732,6 +879,9 @@ export function TaxPage() {
     dGrossStr,
     dSocialStr,
     dIdecoStr,
+    // iDeCo の上限は加入区分で変わる (パス 217)。区分を deps に入れないと、
+    // 区分を切り替えても関門が古い上限のまま残る。
+    idecoOccupation,
     dSmallBizStr,
     dLifeStr,
     dLifeOldStr,
@@ -771,6 +921,10 @@ export function TaxPage() {
     stampAmountStr,
     costAssessedStr,
     costContractStr,
+    // 小規模企業共済の上限は台帳 (`parameters.ts`) から来るので、上書きされたら
+    // 関門も動く必要がある。社会保険料の⚠️の基準 (料率と標準賞与額の上限) も同じ。
+    dedParams,
+    siRates,
   ]);
   return (
     <div>
@@ -920,7 +1074,9 @@ export function TaxPage() {
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             iDeCo 職業区分 (拠出上限)
             <select value={idecoOccupation} onChange={(e) => setIdecoOccupation(e.target.value as IdecoOccupation | '')} style={{ ...inputStyle, width: '100%' }}>
-              <option value="">未指定 (上限なし)</option>
+              {/* **「上限なし」は誤りだった** (パス 217)。区分が未選択でも、どの区分でも
+                  超えられない最大値 (自営業 = 第1号被保険者) で倒して試算する。 */}
+              <option value="">未指定 (上限 {jpy(IDECO_ANNUAL_CAP_MAX)} で試算)</option>
               <option value="self-employed">自営業 (月6.8万)</option>
               <option value="employee-no-pension">会社員・企業年金なし (月2.3万)</option>
               <option value="employee-with-dc">会社員・企業型DC (月2.0万)</option>
@@ -1276,11 +1432,36 @@ export function TaxPage() {
         </div>
       </Section>
 
-      <Section title="⑩ 消費税の納付方式の比較 (本則 / 簡易 / 2割特例)" count={3}>
+      <Section title="⑩ 消費税の納付方式の比較 (本則 / 簡易 / 2割特例 / 3割特例)" count={4}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           消費税の課税事業者は<strong>本則課税・簡易課税・2割特例</strong>から納付方式を選べます。
-          簡易課税は基準期間の課税売上{jpy(bizParams.simplifiedEligibilityThreshold)}以下、2割特例はインボイス登録した免税事業者向けの経過措置 (令和8年分まで) です。
+          簡易課税は基準期間の課税売上{jpy(bizParams.simplifiedEligibilityThreshold)}以下、2割特例はインボイス登録した免税事業者向けの経過措置
+          ({formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' })}を含む課税期間まで) です。
+          その後、個人事業者は<strong>3割特例</strong>（{thirtyYears}・納付税額 = 売上税額 × {Math.round(bizParams.thirtyPercentRate * 100)}%・令和8年度税制改正）を選べます。法人に後継の措置はありません。
+          事業形態は下の切替（節税制度カタログと共通）: 現在 <strong>{entity === 'corporation' ? '法人' : '個人事業主'}</strong>。
           ※ 概算試算であり、適用要件・端数処理の細部は反映しません。確定申告は税理士・国税庁でご確認ください。
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          {(['sole-proprietor', 'corporation'] as const).map((e) => (
+            <button
+              key={`ct-kind-${e}`}
+              type="button"
+              onClick={() => setEntity(e)}
+              aria-pressed={entity === e}
+              style={{
+                padding: '4px 12px',
+                borderRadius: 6,
+                border: '1px solid var(--border)',
+                background: entity === e ? 'var(--accent)' : 'var(--bg-elev)',
+                color: entity === e ? '#fff' : 'var(--text)',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {e === 'corporation' ? '法人' : '個人事業主'}
+            </button>
+          ))}
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -1320,16 +1501,22 @@ export function TaxPage() {
         >
           ✅ 最も納付が少ない方式: <strong>{ctMethodLabel[consumptionMethods.best]}</strong>
           （納付 {jpy(consumptionMethods.bestAmount)}）
+          {ctUnavailable.length > 0 && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
+              ※ 選べない方式は比較から外しています: {ctUnavailable.join(' / ')}
+            </div>
+          )}
           {ctExempt && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
               ※ 課税売上が{jpy(bizParams.exemptionThreshold)}以下です。基準期間で同水準なら原則<strong>免税事業者</strong>（インボイス登録時を除く）。
             </div>
           )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
           <Stat label="簡易課税" value={jpy(consumptionMethods.simplified)} positive={consumptionMethods.best === 'simplified'} />
           <Stat label="2割特例" value={jpy(consumptionMethods.twentyPercent)} positive={consumptionMethods.best === 'twenty-percent'} />
+          <Stat label="3割特例" value={jpy(consumptionMethods.thirtyPercent)} positive={consumptionMethods.best === 'thirty-percent'} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.6 }}>
           ※ ここの<strong>本則課税</strong>は課税仕入れの消費税を<strong>全額引ける</strong>前提の額です。
@@ -1341,11 +1528,15 @@ export function TaxPage() {
       <Section title="⑩-3 本則課税の仕入控除税額 (全額控除 / 個別対応 / 一括比例配分)" count={3}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           上の ⑩ の「本則課税」は<strong>課税仕入れの消費税を全額引ける</strong>前提の概算です。全額引けるのは
-          <strong>課税売上割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 以上</strong>かつ
-          <strong>課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 以下</strong>のときだけで、住宅家賃・利子・保険料・医療・教育のような
+          <strong>課税売上割合 {Math.round(bizParams.fullCreditRatioThreshold * 100)}% 以上</strong>かつ
+          <strong>課税売上高 {jpy(bizParams.fullCreditSalesThreshold)} 以下</strong>のときだけで、住宅家賃・利子・保険料・医療・教育のような
           <strong>非課税売上</strong>があると按分が必要です。按分せずに全額を引くと<strong>納付が過少に出ます</strong>。
           ここでは実際の 2 方式（個別対応方式・一括比例配分方式）で計算します。売上 (標準/軽減) は ⑩ の入力を使います。
           ※ 概算試算です。課税売上割合に準ずる割合の承認・調整対象固定資産の調整等は反映しません。
+          <br />
+          ※ <strong>免税事業者等（インボイス登録の無い相手）からの課税仕入れ</strong>は、経過措置で
+          <strong>{invoiceTransitionCurrentLabel()}</strong>しか控除できません（{invoiceTransitionScheduleLabel()}と段階縮小・同一先からの仕入れは年1億円まで）。
+          <strong>この試算はその区別をしていません</strong>ので、登録の無い相手からの仕入れが多いほど実際の納付は多くなります。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -1388,7 +1579,7 @@ export function TaxPage() {
             </div>
           ) : (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
-              ⚠️ 全額控除の要件を満たしません（割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 未満、または課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 超）。
+              ⚠️ 全額控除の要件を満たしません（割合 {Math.round(bizParams.fullCreditRatioThreshold * 100)}% 未満、または課税売上高 {jpy(bizParams.fullCreditSalesThreshold)} 超）。
               下の 2 方式のいずれかで按分します。控除が多い方が有利です:{' '}
               <strong>{inputCredit.compare.better === 'itemized' ? '個別対応方式' : '一括比例配分方式'}</strong>
             </div>
@@ -1443,6 +1634,7 @@ export function TaxPage() {
               <option value="standard">本則課税</option>
               <option value="simplified">簡易課税</option>
               <option value="twenty-percent">2割特例</option>
+              <option value="thirty-percent">3割特例</option>
             </select>
           </label>
           <GuardedNumber
@@ -1481,6 +1673,19 @@ export function TaxPage() {
           <GuardedNumber spec={{ label: '税率 (%) 直接入力', kind: 'percent', allowZero: true, max: MAX_RATE * 100 }} value={csRateStr} onChange={setCsRateStr} width={130} />
         </div>
 
+        {/* **期限を出せないなら、その理由をその場で言う** (パス 199)。欄の ⛔ は
+            「2000〜2100 で入力してください」と言うが、期限の欄が空いている理由は
+            別に述べる必要がある。 */}
+        {!isRepresentableFiscalPeriod(csInput) && (
+          <div
+            data-cs-period-unrepresentable
+            style={{ border: '1px solid #e5484d', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 12, color: '#e5484d', lineHeight: 1.6 }}
+          >
+            <strong>申告期限・中間納付の日程は算定していません</strong> —— 課税期間の終了年は{' '}
+            {MIN_FISCAL_YEAR}〜{MAX_FISCAL_YEAR} の西暦 4 桁、決算月は 1〜12 で入力してください
+            （<strong>2 桁で入力すると 100 年ずれた期限が出る</strong>ため、丸めずに断っています）。
+          </div>
+        )}
         <div
           data-cs-verdict
           data-kind={schedule.settlement.kind}
@@ -1503,13 +1708,13 @@ export function TaxPage() {
             中間納付 {schedule.interim.count === 0 ? 'なし' : `${schedule.interim.count} 回 合計 ${jpy(schedule.interim.total)}`}
           </div>
           <div style={{ fontWeight: 700 }}>
-            {schedule.settlement.kind === 'payment' && <>確定申告で <strong>{jpy(schedule.settlement.amount)} を納付</strong>（期限 {schedule.settlement.due}）</>}
+            {schedule.settlement.kind === 'payment' && <>確定申告で <strong>{jpy(schedule.settlement.amount)} を納付</strong>（期限 {schedule.settlement.due ?? DASH}）</>}
             {schedule.settlement.kind === 'refund' && (
               <span style={{ color: '#3ec98a' }}>
-                確定申告で <strong>{jpy(Math.abs(schedule.settlement.amount))} が還付</strong>（申告期限 {schedule.settlement.due}）
+                確定申告で <strong>{jpy(Math.abs(schedule.settlement.amount))} が還付</strong>（申告期限 {schedule.settlement.due ?? DASH}）
               </span>
             )}
-            {schedule.settlement.kind === 'none' && <>確定申告での納付・還付は発生しません（期限 {schedule.settlement.due}）</>}
+            {schedule.settlement.kind === 'none' && <>確定申告での納付・還付は発生しません（期限 {schedule.settlement.due ?? DASH}）</>}
           </div>
           {schedule.settlement.refundWindow && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
@@ -1850,11 +2055,11 @@ export function TaxPage() {
             関税が消費税の課税標準に入るため、関税が高いほど消費税も増えます。
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
-            <GuardedNumber spec={{ label: '商品代金 (輸入・円)', kind: 'money', allowZero: false }} value={imGoodsStr} onChange={setImGoodsStr} width={150} />
-            <GuardedNumber spec={{ label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true }} value={imFreightStr} onChange={setImFreightStr} width={130} />
-            <GuardedNumber spec={{ label: '保険料 (輸入・円)', kind: 'money', allowZero: true }} value={imInsuranceStr} onChange={setImInsuranceStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.imGoods} value={imGoodsStr} onChange={setImGoodsStr} width={150} />
+            <GuardedNumber spec={TRADE_SPECS.imFreight} value={imFreightStr} onChange={setImFreightStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.imInsurance} value={imInsuranceStr} onChange={setImInsuranceStr} width={130} />
             <GuardedNumber spec={{ label: '関税率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={imDutyStr} onChange={setImDutyStr} width={110} />
-            <GuardedNumber spec={{ label: '個別消費税 (酒税・たばこ税等・円)', kind: 'money', allowZero: true }} value={imExciseStr} onChange={setImExciseStr} width={190} />
+            <GuardedNumber spec={TRADE_SPECS.imExcise} value={imExciseStr} onChange={setImExciseStr} width={190} />
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
               <input type="checkbox" checked={imReduced} onChange={(e) => setImReduced(e.target.checked)} />
               軽減税率の対象 (飲食料品等)
@@ -1869,18 +2074,30 @@ export function TaxPage() {
             </label>
           </div>
 
+          {/* **金額が ⛔ なら課税価格そのものが測れない** (CIF の和なので・パス 212)。
+              率が ⛔ のときに課税価格を出し続けるのはパス 208 の判断で、そちらは
+              `importTax` の欄ごとの `null` が担う —— ここは節ごと断る。 */}
+          {tradeRefusedBy.importChain.length > 0 ? (
+            <RefusedFieldsNote labels={tradeRefusedBy.importChain} />
+          ) : (
+          <>
           <div className="stat-grid" data-import-stats data-exempted={String(importTax.exempted)}>
+            {/* **課税価格は関税率に依らないので出し続ける** (パス 208)。
+                率が ⛔ のときに消えるのは関税から下だけ —— 理由は
+                `importTax.notes` が欄の名前で述べる。 */}
             <Stat label="課税価格 (1,000円未満切捨て)" value={jpy(importTax.customsValue)} />
-            <Stat label="関税 (100円未満切捨て)" value={jpy(importTax.duty)} />
-            <Stat label="消費税の課税標準" value={jpy(importTax.consumptionBase)} />
-            <Stat label="消費税 (国税)" value={jpy(importTax.nationalTax)} />
-            <Stat label="地方消費税" value={jpy(importTax.localTax)} />
-            <Stat label="税の合計" value={jpy(importTax.totalTax)} />
-            <Stat label="通関までの原価" value={jpy(importTax.landedCost)} positive />
+            <Stat label="関税 (100円未満切捨て)" value={jpyOrDash(importTax.duty)} />
+            <Stat label="消費税の課税標準" value={jpyOrDash(importTax.consumptionBase)} />
+            <Stat label="消費税 (国税)" value={jpyOrDash(importTax.nationalTax)} />
+            <Stat label="地方消費税" value={jpyOrDash(importTax.localTax)} />
+            <Stat label="税の合計" value={jpyOrDash(importTax.totalTax)} />
+            <Stat label="通関までの原価" value={jpyOrDash(importTax.landedCost)} positive />
           </div>
           {importTax.notes.map((n, i) => (
             <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
           ))}
+          </>
+          )}
         </div>
 
         {/* (b) 輸出 */}
@@ -1893,9 +2110,9 @@ export function TaxPage() {
             日本以外から輸出する場合に備え、輸出税の税率も入力できます。
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
-            <GuardedNumber spec={{ label: '商品代金 (輸出・円)', kind: 'money', allowZero: false }} value={exGoodsStr} onChange={setExGoodsStr} width={150} />
-            <GuardedNumber spec={{ label: '国際運賃 (輸出・円)', kind: 'money', allowZero: true }} value={exFreightStr} onChange={setExFreightStr} width={130} />
-            <GuardedNumber spec={{ label: '保険料 (輸出・円)', kind: 'money', allowZero: true }} value={exInsuranceStr} onChange={setExInsuranceStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.exGoods} value={exGoodsStr} onChange={setExGoodsStr} width={150} />
+            <GuardedNumber spec={TRADE_SPECS.exFreight} value={exFreightStr} onChange={setExFreightStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.exInsurance} value={exInsuranceStr} onChange={setExInsuranceStr} width={130} />
             <GuardedNumber spec={{ label: '輸出税率 (%・日本は0)', kind: 'percent', allowZero: true, max: 100 }} value={exExportDutyStr} onChange={setExExportDutyStr} width={150} />
             <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
               仕向国 (参考税率を差し込む)
@@ -1930,20 +2147,36 @@ export function TaxPage() {
             </label>
           </div>
 
-          <div className="stat-grid" data-export-stats>
+          {/* **入力に依らない事実は断らない** (パス 212) —— 日本が輸出に関税を課さない
+              ことと輸出免税は、金額が ⛔ でも真である。消すと「日本も課すかもしれない」
+              と読めてしまう。 */}
+          <div className="stat-grid" data-export-japan>
             <Stat label="日本の輸出関税" value={jpy(0)} />
             <Stat label="日本の消費税（輸出免税）" value={jpy(0)} />
-            <Stat label="輸出税（日本以外の場合）" value={jpy(Math.round(exportTax.exportDuty))} />
+          </div>
+          {tradeRefusedBy.exportDest.length > 0 ? (
+            <RefusedFieldsNote labels={tradeRefusedBy.exportDest} />
+          ) : (
+          <>
+          <div className="stat-grid" data-export-stats>
+            {/* 3 つの率のうち断られた物に応じて、そこから下だけが「—」になる
+                (パス 208)。**仕向国の課税価格は率に依らないので出し続ける。**
+                `Math.round` は `null` を 0 にしてしまうので、丸める前に分ける。 */}
+            <Stat label="輸出税（日本以外の場合）" value={jpyOrDash(roundOrNull(exportTax.exportDuty))} />
             <Stat label="仕向国の課税価格" value={jpy(Math.round(exportTax.destCustomsValue))} />
-            <Stat label="仕向国の関税" value={jpy(Math.round(exportTax.destDuty))} />
-            <Stat label="仕向国の付加価値税" value={jpy(Math.round(exportTax.destVat))} />
-            <Stat label="仕向国の税 合計" value={jpy(Math.round(exportTax.destTotalTax))} />
-            <Stat label="売手の負担" value={jpy(Math.round(exportTax.sellerBurden))} positive={exportTax.sellerBurden === 0} />
-            <Stat label="買手の負担" value={jpy(Math.round(exportTax.buyerBurden))} />
+            <Stat label="仕向国の関税" value={jpyOrDash(roundOrNull(exportTax.destDuty))} />
+            <Stat label="仕向国の付加価値税" value={jpyOrDash(roundOrNull(exportTax.destVat))} />
+            <Stat label="仕向国の税 合計" value={jpyOrDash(roundOrNull(exportTax.destTotalTax))} />
+            {/* **算定不能を「負担なし」(緑) にしない** —— `positive` は
+                「0 円で済む」という判定なので、算定していないときは付けない。 */}
+            <Stat label="売手の負担" value={jpyOrDash(roundOrNull(exportTax.sellerBurden))} positive={exportTax.sellerBurden === 0} />
+            <Stat label="買手の負担" value={jpyOrDash(roundOrNull(exportTax.buyerBurden))} />
           </div>
           {exportTax.notes.map((n, i) => (
             <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
           ))}
+          </>
+          )}
           {lookupVat(exCountry)?.note && (
             <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>・{lookupVat(exCountry)!.note}</div>
           )}
@@ -2005,7 +2238,16 @@ export function TaxPage() {
             {schemes.map((s) => (
               <tr key={s.id}>
                 <td style={tdStyle}>{s.name}</td>
-                <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>{s.summary}</td>
+                <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+                  {s.summary}
+                  {s.until !== undefined && (
+                    <div style={{ marginTop: 4, color: s.until < today ? '#f87171' : 'var(--text-mute)' }}>
+                      {s.until < today
+                        ? `適用期限 ${s.until} を過ぎています — 延長の有無を国税庁で確認してください (このアプリの期限は未更新)`
+                        : `適用期限 ${s.until} (この日までの取得等が対象。期限つきの措置は延長・見直しがあるため、実行前に最新の改正を確認)`}
+                    </div>
+                  )}
+                </td>
                 <td style={tdStyle}>
                   {s.needsAdvisor ? (
                     <span style={{ color: '#fbbf24', fontWeight: 600 }}>⚠️ 必須</span>

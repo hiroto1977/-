@@ -1,4 +1,5 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionData, DocstudioCollection } from '../../shared/actionData';
 
 /**
  * 書類スタジオ — ローカル完結サービス。テンプレートと描画はすべて
@@ -9,7 +10,7 @@ import type { ActionContext, ActionMap, FetchContext } from './types';
  */
 
 export interface DocstudioSnapshot {
-  readonly collections: readonly { id: string; label: string; docCount: number }[];
+  readonly collections: readonly DocstudioCollection[];
   readonly fetchedAt: string;
   readonly isMock: boolean;
 }
@@ -27,7 +28,7 @@ export async function fetchDocstudioSnapshot(_ctx: FetchContext): Promise<Docstu
   return { collections: COLLECTIONS, fetchedAt: FETCHED_AT, isMock: true };
 }
 
-async function listCollections(_ctx: ActionContext): Promise<DocstudioSnapshot['collections']> {
+async function listCollections(_ctx: ActionContext): Promise<ActionData<'docstudio/list-collections'>> {
   return COLLECTIONS;
 }
 

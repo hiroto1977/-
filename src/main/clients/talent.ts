@@ -1,16 +1,25 @@
 import { promises as fs } from 'node:fs';
+import { clampToCeiling } from '../../shared/inputCeiling';
 import os from 'node:os';
 import path from 'node:path';
 import {
-  EMPTY_TALENT_STATE,
   buildTalentSnapshot,
   judgeLeaderFitness,
+  readStoredTalent,
   sanitizeTalentState,
-  type LeaderFitness,
+  talentProvenance,
+  type JudgeResult,
+  type StoredTalent,
   type TalentSnapshot,
   type TalentState,
+  MAX_LEADER_CANDIDATE_CHARS,
 } from '../../shared/talent';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionData } from '../../shared/actionData';
+
+export type { JudgeResult } from '../../shared/talent';
+import { atomicWriteFile } from '../atomicWrite';
+import { atRestUnreadableReason, sealJsonDocument, unsealJsonDocument } from '../atRest';
 
 // 判定と定義表は shared にある。ここは I/O (状態の保存・取得) と
 // action の口だけを持つ。**同じ判定を二度書かない。**
@@ -36,7 +45,8 @@ export * from '../../shared/talent';
  *   4. `reviewLadder`       — 育成ロードマップ。STEP1 の滞留を検出する。
  *
  * ネットワークは使わない (`LOCAL_SERVICES`)。状態は teamradar と同じく
- * `~/.local/business-hub/` 配下へ 0600 で置く。
+ * `~/.local/business-hub/` 配下へ 0600 で置き、中身は OS のキーチェーンで封緘する
+ * (`main/atRest.ts`・パス 133 —— 部署名と氏名を含むので、`secrets.json` / 感情ログと同じ約束)。
  *
  * ## 出典の扱い
  *
@@ -59,49 +69,79 @@ export interface StateDeps {
 }
 
 /**
- * 保存された状態を読む。読めなければ空で返す —— 初回起動と壊れたファイルを
- * 区別しても画面ですることが同じなので、分けない。
+ * 保存された状態を読む —— 「まだ無い」(ENOENT) と「読めなかった」(権限・I/O・壊れた中身) を分ける
+ * (パス 121)。それまでは「初回起動と壊れたファイルを区別しても画面ですることが同じ」として空で
+ * 返していた —— 同じではない: 壊れたファイルでは利用者の申告・施策・メンバーが消えており、次の
+ * 保存で空に上書きされる。読めた後の判定は shared (`readStoredTalent`) が持つ。
  */
-export async function loadTalentState(deps: StateDeps = {}): Promise<TalentState> {
+export async function loadTalentState(deps: StateDeps = {}): Promise<StoredTalent> {
   const p = (deps.statePath ?? defaultStatePath)();
   const read = deps.readFile ?? ((q: string) => fs.readFile(q, 'utf8'));
+  let raw: string;
   try {
-    return sanitizeTalentState(JSON.parse(await read(p)) as unknown);
-  } catch {
-    return EMPTY_TALENT_STATE;
+    raw = await read(p);
+  } catch (e) {
+    if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
+  // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
+  // 画面は「空の状態を表示 / このまま保存すると上書き」と言う (パス 121 の注記がそのまま出口になる)。
+  const opened = unsealJsonDocument(raw);
+  if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
+  return readStoredTalent(opened.json);
 }
 
 /**
- * 0600 で書いて、**書いた後に締める**。
+ * 状態を保存する。**`atomicWriteFile` を通す** (`secrets.ts` / 感情ログと同じ)。
  *
- * `mode` は新規作成のときしか効かないので、固定名が既に 644 で残っていると
- * 644 のまま被さる (teamradar 側で 2026-08-25 に実測されている)。
+ * 2026-09-06 まで、ここは**本体を直接**書いていた:
+ *
+ * ```ts
+ *   await fs.writeFile(q, c, { mode: 0o600 });
+ *   await fs.chmod(q, 0o600);       // mode は新規作成のときしか効かないので締め直す
+ * ```
+ *
+ * 権限の側は `chmod` で閉じていたが、**書き込みの途中で落ちる**side は開いていた。
+ * `fs.writeFile` は本体を切り詰めてから書くので、その間に電源が落ちる・
+ * `SIGKILL` される・容量が尽きると、**中途半端な JSON が本体として残る**。
+ * 読み側 `loadTalentState` は (2026-09-09 のパス 121 まで) 壊れた JSON を catch して
+ * `EMPTY_TALENT_STATE` を返す設計だったので、そのとき利用者に起きることは「**組織病の
+ * 申告・施策・メンバーの STEP が全部消えている**」であり、しかも**何も表示されなかった**
+ * (初回起動と区別しない、という読み側の判断と組み合わさっていた。今は「読めなかった」と言う)。
+ * 実際に全部消えた事例が `TalentPage.tsx` の注記に残っている。
+ *
+ * `atomicWriteFile` は一意な tmp に書いて fsync し、`rename` で被せて
+ * ディレクトリも fsync する。落ちても本体は**前の内容のまま**で、
+ * 0600 は tmp を作る時点で決まるので `chmod` の追い打ちも要らない。
+ *
+ * 同じ userData に置く 4 つの状態ファイルのうち、ここだけが原子的でなかった
+ * (`secrets.json` と感情ログは `atomicWriteFile`、`team-radar.json` と
+ * `state.json` は tmp+rename)。検査は `main/__tests__/stateWritePolicy.test.ts`。
  */
 export async function saveTalentState(state: TalentState, deps: StateDeps = {}): Promise<TalentState> {
   const p = (deps.statePath ?? defaultStatePath)();
   const mkdir = deps.mkdir ?? ((q: string) => fs.mkdir(q, { recursive: true }).then(() => undefined));
-  const write = deps.writeFile ?? (async (q: string, c: string) => {
-    await fs.writeFile(q, c, { mode: 0o600 });
-    await fs.chmod(q, 0o600);
-  });
+  const write = deps.writeFile ?? ((q: string, c: string) => atomicWriteFile(q, c, { mode: 0o600 }));
   const clean = sanitizeTalentState(state);
   await mkdir(path.dirname(p));
-  await write(p, JSON.stringify(clean, null, 2));
+  // 封緘して書く (パス 133): 部署名・氏名を含むので、secrets.json / 感情ログと同じ約束 (main/atRest.ts) を通す。
+  await write(p, sealJsonDocument(JSON.stringify(clean)));
   return clean;
 }
 
 // --- スナップショット --------------------------------------------------
 
 export interface SnapshotDeps {
-  loadState?: (deps?: StateDeps) => Promise<TalentState>;
+  loadState?: (deps?: StateDeps) => Promise<StoredTalent>;
 }
 
 export async function fetchTalentSnapshotImpl(
   _ctx: FetchContext,
   deps: SnapshotDeps = {},
 ): Promise<TalentSnapshot> {
-  return buildTalentSnapshot(await (deps.loadState ?? loadTalentState)());
+  // 読んだ結果を状態と由来に分ける (ブラウザ版の枝と同じ関数)。見本は無い —— 空か、利用者の物か、読めなかったか。
+  const { state, provenance } = talentProvenance(await (deps.loadState ?? loadTalentState)());
+  return buildTalentSnapshot(state, provenance);
 }
 
 export async function fetchTalentSnapshot(ctx: FetchContext): Promise<TalentSnapshot> {
@@ -121,14 +161,11 @@ export async function saveTalentStateImpl(
   return (deps.save ?? saveTalentState)(sanitizeTalentState(ctx.payload), deps);
 }
 
-async function saveStateAction(ctx: ActionContext): Promise<TalentState> {
+async function saveStateAction(ctx: ActionContext): Promise<ActionData<'talent/save-state'>> {
   return saveTalentStateImpl(ctx);
 }
 
-export interface JudgeResult {
-  readonly fitness: LeaderFitness;
-  readonly candidate: string;
-}
+// `JudgeResult` は shared/talent.ts (パス 117 —— 台帳 `talent/judge-leader` と画面が同じ物を読む)。
 
 /**
  * `judge-leader` が renderer から受け取る形。
@@ -147,11 +184,11 @@ export async function judgeLeaderImpl(ctx: ActionContext): Promise<JudgeResult> 
   const flagged = Array.isArray(raw) ? raw.filter((f): f is string => typeof f === 'string') : [];
   return {
     fitness: judgeLeaderFitness(flagged),
-    candidate: typeof name === 'string' ? name.slice(0, 64) : '',
+    candidate: typeof name === 'string' ? clampToCeiling(name, MAX_LEADER_CANDIDATE_CHARS) : '',
   };
 }
 
-async function judgeLeaderAction(ctx: ActionContext): Promise<JudgeResult> {
+async function judgeLeaderAction(ctx: ActionContext): Promise<ActionData<'talent/judge-leader'>> {
   return judgeLeaderImpl(ctx);
 }
 

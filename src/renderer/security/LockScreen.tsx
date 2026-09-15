@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { getVault, type VaultStatus, MIN_PASSWORD_LENGTH } from './vault';
+import { describeWipeOutcome, getVault, type VaultStatus, MIN_PASSWORD_LENGTH, VAULT_UNREADABLE_TEXT } from './vault';
+import { announceLockToOtherTabs } from './lockWorkspace';
 import { looksLikeValidMnemonic } from './mnemonic';
 
 /**
@@ -60,12 +61,24 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
         if (!cancelled) setStatus(s);
       })
       .catch(() => {
-        if (!cancelled) setStatus('uninitialized');
+        // **`uninitialized` へ倒さない。** 確かめられなかっただけで初回起動の
+        // 画面を出すと、トークンを預けている本人に「はじめての利用」と告げる。
+        if (!cancelled) setStatus('unreadable');
       });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  /** 「もう一度確認」— 原因 (私用ウィンドウ・容量) は直せることが多い。 */
+  async function recheckStatus(): Promise<void> {
+    setStatus('loading');
+    try {
+      setStatus(await getVault().status());
+    } catch {
+      setStatus('unreadable');
+    }
+  }
 
   // **ここで予約を取り消さない。**
   //
@@ -120,13 +133,31 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     onUnlocked();
   }
 
-  /** 完全初期化: パスワードもリカバリーキーも失った場合の最終手段。
-   *  保存済みトークン等を全消去して初回設定に戻す (vault.wipeAndReset)。 */
+  /**
+   * 完全初期化: パスワードもリカバリーキーも失った場合の最終手段。
+   * 保存済みトークン等を全消去して初回設定に戻す (vault.wipeAndReset)。
+   *
+   * **消えた時だけ再読込する。** 設定ページ側と同じ直し (2026-09-07 実測) ——
+   * `wipeAndReset` は他のタブが保管庫を掴んでいると削除できず、それでも
+   * 解決していた。ここは**閉じ出された本人**が押す最後の手段なので、
+   * 何も消えずに同じロック画面へ戻ると「ボタンが壊れている」としか見えない。
+   * 理由を出す価値がいちばん高い場所である。
+   *
+   * 他のタブへは施錠を**配るだけ** —— 書き込みを止めさせて `onblocked` を
+   * 踏みにくくするのが目的で、このタブの鍵は `wipeAndReset` が成功時に落とす。
+   */
   async function submitReset() {
     setErr(null);
     setBusy(true);
     try {
-      await getVault().wipeAndReset();
+      announceLockToOtherTabs();
+      const outcome = await getVault().wipeAndReset();
+      const problem = describeWipeOutcome(outcome);
+      if (problem !== null) {
+        setErr(problem);
+        setBusy(false);
+        return;
+      }
       // 状態を確実に作り直すためリロードして初回設定フローへ。
       window.location.reload();
     } catch (e) {
@@ -231,6 +262,34 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     return (
       <div style={overlayStyle}>
         <div style={{ color: 'var(--text-mute)' }}>読み込み中…</div>
+      </div>
+    );
+  }
+
+  /*
+   * --- View: unreadable (保管庫を確認できない) -----------------------
+   *
+   * **パスワード欄を出さない。** 出しても「作る」側は
+   * `initialize()` が「既に初期化されています」で断り、「開ける」側は
+   * meta が読めないので開けない —— どちらも利用者を行き止まりへ連れて行く。
+   * ここでは何が起きたかと、直せる 2 つの原因だけを出す。
+   */
+  if (status === 'unreadable') {
+    return (
+      <div style={overlayStyle}>
+        <div style={cardStyle}>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>保管庫を確認できません</div>
+          <div
+            role="alert"
+            data-vault-unreadable
+            style={{ fontSize: 13, lineHeight: 1.8, marginBottom: 16 }}
+          >
+            {VAULT_UNREADABLE_TEXT}
+          </div>
+          <button type="button" onClick={() => void recheckStatus()} style={buttonStyle}>
+            もう一度確認
+          </button>
+        </div>
       </div>
     );
   }

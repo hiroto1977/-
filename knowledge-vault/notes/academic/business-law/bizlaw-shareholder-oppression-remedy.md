@@ -37,11 +37,11 @@ aliases:
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
 - [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 出典を共有
 - [[bizlaw-short-swing-profit-rule|短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
-- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
-- [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
+- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

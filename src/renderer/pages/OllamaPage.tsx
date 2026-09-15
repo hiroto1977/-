@@ -13,7 +13,16 @@ import {
   originsSetupSteps,
   setupCommands,
 } from '../network/ollamaWeb';
-import { DEFAULT_OLLAMA_PORT, isLoopbackHostname, parseOllamaEndpoint } from '../../shared/ollama';
+import {
+  DEFAULT_OLLAMA_PORT,
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
+  isLoopbackHostname,
+  parseOllamaEndpoint,
+} from '../../shared/ollama';
+import type { ActionData } from '../../shared/actionData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -44,13 +53,22 @@ export function OllamaPage() {
   const [busy, setBusy] = useState(false);
   const [reply, setReply] = useState<{ text: string; durationMs: number } | null>(null);
   const [errMsg, setErrMsg] = useState<string>();
+  /*
+   * 貼り付けを黙って切らない (パス 175)。端末内のモデルでも同じ ——
+   * パス 114 が handler を「切らずに断る」に直したのに、画面の `maxLength` が
+   * その断りを 1 度も通していなかった (32,768 / 8,192 字は貼り付けでしか届かない)。
+   */
+  const promptOver = charsOverCeiling(prompt, MAX_OLLAMA_PROMPT_CHARS);
+  const systemOver = charsOverCeiling(systemPrompt, MAX_OLLAMA_SYSTEM_CHARS);
 
   const sendChat = async () => {
     if (!window.serviceHub) return;
     setBusy(true);
     setErrMsg(undefined);
     setReply(null);
-    const res = await window.serviceHub.invoke<{ reply: string; durationMs: number }>(
+    // 戻り値の型は台帳 (`ollama/chat` = 共有の `OllamaChatResult`) を読む (パス 114 / 117 ——
+    // チャットボットをパス 113 で直したのと同じ形。手で写した型は実物とずれても `tsc` が黙る)。
+    const res = await window.serviceHub.invoke<ActionData<'ollama/chat'>>(
       'ollama',
       'chat',
       { model: model.trim(), prompt: prompt.trim(), system: systemPrompt.trim() || undefined },
@@ -78,13 +96,24 @@ export function OllamaPage() {
             {running ? (
               <>
                 <span style={{ color: 'var(--success)' }}>● Running</span> v{version || '?'}
+                {/*
+                  * **版が読めなかったことを「古い」と言わない** (パス 264)。
+                  * `isVersionSafe('')` は false を返す —— 安全の判定なので
+                  * 読めないときは危険側へ倒すのが正しい。**倒すこと自体は残す**
+                  * (バッジは出る) が、理由は事実に合わせる: 既知 CVE が在ると
+                  * 分かったのではなく、**版が分からない**のである。
+                  */}
                 {!versionSafe ? (
                   <span
                     className="badge warn"
                     style={{ marginLeft: 8 }}
-                    title={`既知 CVE。最低 ${versionMinRecommended} へ更新推奨`}
+                    title={
+                      version === ''
+                        ? `バージョンを読み取れませんでした (/api/version の応答に version がありません)。最低 ${versionMinRecommended} 以上か確認してください`
+                        : `既知 CVE。最低 ${versionMinRecommended} へ更新推奨`
+                    }
                   >
-                    Outdated — known CVEs
+                    {version === '' ? 'Version unknown' : 'Outdated — known CVEs'}
                   </span>
                 ) : (
                   <span className="badge ok" style={{ marginLeft: 8 }}>
@@ -182,11 +211,13 @@ export function OllamaPage() {
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="システムプロンプト" value={systemPrompt} max={MAX_OLLAMA_SYSTEM_CHARS} />
+            <CeilingNotice label="プロンプト" value={prompt} max={MAX_OLLAMA_PROMPT_CHARS} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={sendChat}
-                disabled={busy || !model || !prompt.trim()}
+                disabled={busy || !model || !prompt.trim() || promptOver > 0 || systemOver > 0}
               >
                 {busy ? '生成中…' : '送信'}
               </button>
@@ -197,7 +228,9 @@ export function OllamaPage() {
               ) : null}
               {!versionSafe ? (
                 <span style={{ color: 'var(--warning)', fontSize: 12, alignSelf: 'center' }}>
-                  ⚠ 古いバージョンで実行中 — アップグレード推奨
+                  {version === ''
+                    ? '⚠ バージョンを読み取れませんでした — 版を確認してください'
+                    : '⚠ 古いバージョンで実行中 — アップグレード推奨'}
                 </span>
               ) : null}
             </div>

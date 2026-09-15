@@ -1,10 +1,11 @@
 import { afterAll, describe, expect, it } from 'vitest';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isPrivateOrReservedTarget } from '../proxy';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const req = createRequire(import.meta.url);
 const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.cjs') as {
@@ -45,7 +46,29 @@ const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.c
  *
  * ただし 1 点だけ意図的に違う —— CI 側は**名前**も受け取る
  * (`example.com` のような host)。名前は解決してから判定するので、
- * ここでの比較は**リテラル (IP) の標本に限る**。
+ * 下の 3 実装の比較は**リテラル (IP) の標本に限る**。
+ *
+ * ## 名前を比べていなかったので、名前でずれた (2026-09-12)
+ *
+ * 「名前は解決してから判定する」は正しいが、**解決を待たずに落とす名前**が
+ * 両側に在る (loopback を指す名前。hosts の書き換えと検索ドメインの補完で
+ * 揺れるので、揺れる物を唯一の守りにしないため)。そこは比較の外に在った。
+ * 名前 21 形を当ててみると **11 形で答えが違い、ずれは両方向だった**:
+ *
+ * ```
+ *   CI 側だけが通した : localhost. / LOCALHOST. / ip6-localhost / ip6-loopback
+ *                       ← 末尾ドットの迂回は 2026-07 の監査が client 側で
+ *                         見つけて直したもので、CI 側には来ていなかった
+ *   client だけが通した: foo.localhost / foo.localhost.
+ *                       ← RFC 6761 §6.3 は `localhost.` 直下の**すべて**を
+ *                         loopback と定める。完全一致しか見ていなかった
+ * ```
+ *
+ * 残りの差 (`metadata.google.internal` / `printer.local` / `x.internal` /
+ * `x.home.arpa` など) は**設計どおりの違い**である —— client は proxy へ
+ * 渡す前の先回り、CI 側は解決後の IP で見る。だから下の名前の標本は
+ * 「両方が解決を待たずに落とす組」と「両方が通す組」だけを持ち、
+ * 設計で分かれる組は別に**違うことを**留める。
  */
 
 const MD = join(__dirname, '../../../../docs/PROXY_EXAMPLE.md');
@@ -65,7 +88,7 @@ function extractFunction(source: string, name: string): string {
   throw new Error(`function ${name} の波括弧が閉じていません`);
 }
 
-const md = readFileSync(MD, 'utf8');
+const md = readOriginalSource(MD);
 const dir = mkdtempSync(join(tmpdir(), 'proxy-worker-parity-'));
 const modulePath = join(dir, 'workerIp.mjs');
 writeFileSync(
@@ -190,5 +213,73 @@ describe('proxy の宛先判定は client と Worker で同じ', () => {
     expect(workerBlocks('127.0.0.1')).toBe(true);
     expect(workerBlocks('8.8.8.8')).toBe(false);
     expect(extractFunction(md, 'isBlockedIp')).toContain('169.254');
+  });
+});
+
+/*
+ * **名前の突き合わせ。** 上の 3 実装比較はリテラルに限っている (Worker の
+ * `isBlockedIp` は**解決後の IP** しか受け取らないので、名前は原理的に
+ * 比べられない)。ここは名前を受け取る 2 実装 —— client の
+ * `isPrivateOrReservedTarget` と CI の `isPrivateOrReservedHost` —— を当てる。
+ */
+
+/** 両方が「解決を待たずに」落とすべき名前。同じ相手を指す別表記を含む。 */
+const LOOPBACK_NAMES_SAMPLE = [
+  'localhost',
+  'localhost.', // FQDN 形。`URL` は名前の末尾ドットを残す
+  'LOCALHOST.', // 大文字 + 末尾ドット
+  '.localhost', // 先頭ドット
+  'ip6-localhost', // Debian / Ubuntu の /etc/hosts の既定の別名
+  'ip6-loopback',
+  'foo.localhost', // RFC 6761 §6.3 — localhost. 直下はすべて loopback
+  'foo.localhost.',
+];
+
+/** 両方が通すべき名前。**片側に寄った標本は「常に true」の偽物を通す。** */
+const PUBLIC_NAMES_SAMPLE = [
+  'www.nta.go.jp',
+  'example.com',
+  'doi.org',
+  'link.springer.com',
+  'notlocalhost.example', // 部分一致で当たらないこと
+  'localhost.example.com', // 最終ラベルが localhost でないこと
+];
+
+/**
+ * **設計で分かれる組。** client は proxy へ渡す前の先回りなので内部 TLD と
+ * メタデータ名も落とす。CI 側は名前を解決してから IP で見る役割分担なので
+ * ここでは通す (`resolvesToPublicHost` が受け持つ)。**同じでないことを
+ * 留めておく** —— 黙って揃えると、どちらかの役割が消えたのに気付けない。
+ */
+const BY_DESIGN_DIFFERENT = [
+  'metadata.google.internal',
+  'x.metadata.cloud.google.com',
+  'printer.local',
+  'x.internal',
+  'x.home.arpa',
+];
+
+describe('名前の判定は client と CI の関門で同じ (Worker は IP しか受け取らない)', () => {
+  it('標本が両側を持つ', () => {
+    expect(LOOPBACK_NAMES_SAMPLE.length).toBeGreaterThan(5);
+    expect(PUBLIC_NAMES_SAMPLE.length).toBeGreaterThan(4);
+  });
+
+  it.each(LOOPBACK_NAMES_SAMPLE)('★ %s は 2 実装とも解決を待たずに落とす', (name) => {
+    expect(clientBlocks(name), `client が ${name} を通しています`).toBe(true);
+    expect(isPrivateOrReservedHost(name), `CI の関門が ${name} を通しています`).toBe(true);
+  });
+
+  it.each(PUBLIC_NAMES_SAMPLE)('%s は 2 実装とも通す', (name) => {
+    expect(clientBlocks(name), `client が ${name} を塞いでいます`).toBe(false);
+    expect(isPrivateOrReservedHost(name), `CI の関門が ${name} を塞いでいます`).toBe(false);
+  });
+
+  it.each(BY_DESIGN_DIFFERENT)('%s は client だけが落とす (役割分担・意図した差)', (name) => {
+    expect(clientBlocks(name), `client が ${name} を通しています`).toBe(true);
+    expect(
+      isPrivateOrReservedHost(name),
+      `CI の関門が ${name} をリテラル段で落としました。役割分担が変わったなら注記を直してください`,
+    ).toBe(false);
   });
 });

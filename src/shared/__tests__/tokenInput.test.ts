@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { TOKEN_MAX_LENGTH, checkTokenInput } from '../tokenInput';
+import { MAX_TOKEN_INPUT_CHARS, checkTokenInput } from '../tokenInput';
 
 /**
  * `secrets:set` は上限超えなどを `return;` で黙って捨てていて、renderer からは
@@ -11,12 +11,12 @@ describe('checkTokenInput — 受理', () => {
   });
 
   it('上限ちょうどは受理する (境界)', () => {
-    const value = 'a'.repeat(TOKEN_MAX_LENGTH);
+    const value = 'a'.repeat(MAX_TOKEN_INPUT_CHARS);
     expect(checkTokenInput(value)).toEqual({ ok: true, value });
   });
 
   it('空白を落とした結果が上限内なら受理する', () => {
-    const value = 'a'.repeat(TOKEN_MAX_LENGTH);
+    const value = 'a'.repeat(MAX_TOKEN_INPUT_CHARS);
     expect(checkTokenInput(`  ${value}  `)).toEqual({ ok: true, value });
   });
 });
@@ -35,12 +35,29 @@ describe('checkTokenInput — 拒否', () => {
   });
 
   it('上限 +1 は too-long で、実長と上限を message に出す', () => {
-    const r = checkTokenInput('a'.repeat(TOKEN_MAX_LENGTH + 1));
+    const r = checkTokenInput('a'.repeat(MAX_TOKEN_INPUT_CHARS + 1));
     expect(r.ok).toBe(false);
     if (r.ok) throw new Error('unreachable');
     expect(r.reason).toBe('too-long');
-    expect(r.message).toContain(String(TOKEN_MAX_LENGTH + 1));
-    expect(r.message).toContain(String(TOKEN_MAX_LENGTH));
+    expect(r.message).toContain(String(MAX_TOKEN_INPUT_CHARS + 1));
+    expect(r.message).toContain(String(MAX_TOKEN_INPUT_CHARS));
+  });
+
+  /*
+   * **刷る数も「字」である** (2026-09-13 · パス 196)。文面は
+   * 「N 文字 / 上限 M 文字」と言うのに、N は `value.length` (コード単位) だった ——
+   * 絵文字の資格情報では**実際の倍の数**を刷り、しかもその値は天井を超えていない。
+   */
+  it('★ 絵文字は字で数える (天井いっぱいは通り、文面の数も字)', () => {
+    const atLimit = '\u{1F600}'.repeat(MAX_TOKEN_INPUT_CHARS);
+    expect(atLimit.length).toBe(MAX_TOKEN_INPUT_CHARS * 2); // コード単位では 2 倍
+    expect(checkTokenInput(atLimit)).toMatchObject({ ok: true });
+    const over = checkTokenInput(atLimit + '\u{1F600}');
+    expect(over.ok).toBe(false);
+    if (over.ok) throw new Error('unreachable');
+    expect(over.message).toContain(`${MAX_TOKEN_INPUT_CHARS + 1} 文字`);
+    // コード単位の数 (2 倍) を刷っていないこと。
+    expect(over.message).not.toContain(`${(MAX_TOKEN_INPUT_CHARS + 1) * 2} 文字`);
   });
 
   it('文字列でない入力は empty (undefined / null / 数値 / オブジェクト)', () => {
@@ -53,9 +70,9 @@ describe('checkTokenInput — 拒否', () => {
   });
 });
 
-describe('TOKEN_MAX_LENGTH', () => {
+describe('MAX_TOKEN_INPUT_CHARS', () => {
   it('64KiB — main と renderer で同じ値を使う唯一の定義', () => {
-    expect(TOKEN_MAX_LENGTH).toBe(65536);
+    expect(MAX_TOKEN_INPUT_CHARS).toBe(65536);
   });
 });
 

@@ -26,7 +26,7 @@ aliases:
 ジョシュア・メイロウィッツ ／ マーシャル・マクルーハン ／ アーヴィング・ゴッフマン ／ ウォルター・オング
 
 ## 出典
-- [Meyrowitz, J. (1985) No Sense of Place: The Impact of Electronic Media on Social Behavior — Oxford UP (WorldCat)](https://www.worldcat.org/oclc/11468029) `学術`
+- [Meyrowitz, J. (1985) No Sense of Place: The Impact of Electronic Media on Social Behavior — Oxford UP (WorldCat)](https://www.worldcat.org/oclc/11468029) `リファレンス`
 - [Wikipedia: Joshua Meyrowitz — medium theory, No Sense of Place, situations, front/back regions](https://en.wikipedia.org/wiki/Joshua_Meyrowitz) `リファレンス`
 
 ## 関連概念
@@ -35,11 +35,11 @@ aliases:
 - [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — 同じ思想家
 - [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — 同じ思想家
 - [[infosoc-medium-is-the-message|メディアはメッセージである（マクルーハン）]] — 同じ思想家
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同じ思想家
 - [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]] — 同じ思想家
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同じ思想家
-- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

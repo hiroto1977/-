@@ -27,6 +27,12 @@ import {
   startSpeechRecognition,
   type SpeechSessionHandle,
 } from '../voice/speechAdapter';
+import { VoiceEgressNotice } from './VoiceEgressNotice';
+import {
+  voiceWriteRefusal,
+  voiceWriteRefusalMessage,
+} from '../../shared/voiceWriteRequirements';
+import { SERVICES } from '../services';
 
 // 音声からルーティング可能な write action を serviceId 別に宣言。
 // (main の LIVE_ACTIONS は import 境界外なので renderer 側に最小の対応表を持つ。)
@@ -186,6 +192,29 @@ export function VoiceCommandBar() {
     setOpen(false);
   }
 
+  /**
+   * **起こり得ないことに承認を求めない。**
+   *
+   * 書き込み操作の必須項目 (`slack/send-message` なら channel と text) は
+   * `VoiceIntent.params` から来るが、`parseVoiceCommand` はそれを一度も設定
+   * しない。2026-09-09 (パス 109) まで、確認を取ってから
+   * 「channel and text are required」で落ちていた —— 利用者は起こり得ない
+   * ことに承認を与えていた。判断は `shared/voiceWriteRequirements.ts` が
+   * 1 か所で持つ (チャットも同じ物を読む)。
+   *
+   * 状態機械 (`voiceSession.ts`) は触らない —— 「破壊的 intent は必ず
+   * awaiting-confirmation を経る」という不変条件の検査を空振りにしない
+   * (この画面が承認の口を閉じるだけで、実行できない物は実行されない)。
+   */
+  const refusal =
+    state.intent === undefined
+      ? null
+      : voiceWriteRefusal(state.intent.serviceId, state.intent.action, state.intent.params);
+
+  /** サービス名は `services.ts` から引く (文面へ写さない)。 */
+  const serviceLabel = (id: string | undefined): string =>
+    SERVICES.find((sv) => sv.id === id)?.label ?? id ?? '（サービス未特定）';
+
   function handleConfirm() {
     dispatch({ type: 'confirm' });
   }
@@ -233,13 +262,23 @@ export function VoiceCommandBar() {
           style={{
             fontSize: 12,
             display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '2px 8px',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 6,
+            padding: '4px 8px',
             borderRadius: 6,
             background: 'var(--panel, rgba(0,0,0,0.05))',
           }}
         >
+          {/* **マイクの声について書く。** この入口は `App.tsx` に載っているので
+              **全画面**に在るのに、2026-09-09 (パス 108) まで何も書いていなかった。
+              書き起こす前に音声そのものがブラウザの提供元へ出る場合があり、
+              しかも経路は選べない。文面は `shared/voiceEgressNotice.ts`。
+              **ここは端末内で解釈するだけ** (`VOICE_ACTIONS` に AI の action は
+              無い) なので、その分は言い切る。 */}
+          <VoiceEgressNotice subject={{ transcriptStaysLocal: true }} compact />
+
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           {state.transcript && (
             <span className="voice-transcript" aria-label="認識テキスト">
               「{state.transcript}」
@@ -252,7 +291,32 @@ export function VoiceCommandBar() {
             </span>
           )}
 
-          {state.phase === 'awaiting-confirmation' && (
+          {state.phase === 'awaiting-confirmation' && refusal !== null && (
+            <span className="voice-cannot-run" role="alert" aria-label="実行できません" data-voice-cannot-run>
+              <strong style={{ color: 'var(--warn, #d97706)' }}>実行しません:</strong>{' '}
+              {voiceWriteRefusalMessage(
+                serviceLabel(state.intent?.serviceId),
+                state.intent?.action ?? '',
+                refusal,
+              )}
+              {state.intent?.serviceId !== undefined && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const id = state.intent?.serviceId;
+                    handleCancel();
+                    if (id !== undefined) navigateTo(id);
+                  }}
+                  aria-label="画面を開く"
+                  style={{ marginLeft: 6 }}
+                >
+                  画面を開く
+                </button>
+              )}
+            </span>
+          )}
+
+          {state.phase === 'awaiting-confirmation' && refusal === null && (
             <span className="voice-confirm" role="alertdialog" aria-label="実行確認">
               <strong style={{ color: 'var(--danger, #ef4444)' }}>確認:</strong> 実行しますか？
               <button type="button" onClick={handleConfirm} aria-label="実行を承認" style={{ marginLeft: 6 }}>
@@ -283,6 +347,7 @@ export function VoiceCommandBar() {
               ✕
             </button>
           )}
+          </div>
         </div>
       )}
     </div>

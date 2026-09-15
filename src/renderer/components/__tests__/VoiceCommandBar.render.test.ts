@@ -13,6 +13,26 @@ import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { VoiceCommandBar } from '../VoiceCommandBar';
 
+/**
+ * **確認 → invoke の配線は「必要な項目が揃った未来」で測る** (2026-09-09 · パス 109)。
+ *
+ * `parseVoiceCommand` は `VoiceIntent.params` を一度も設定しないので、いまの実物では
+ * どの書き込みも `voiceWriteRefusal` に断られ、**確認ボタンは出ない** (それがパス 109
+ * で直した欠陥 —— 起こり得ないことに承認を求めていた)。だがここで測っている
+ * 「確認前は invoke しない / 実行を押すと invoke する / 取消すと invoke しない」は
+ * **項目が揃った日に効く不変条件**なので、検査を捨てずに `ready` の旗で
+ * 「揃っている」状態を作って測る (旗を倒すと実物どおり断られる —— 下の節で測る)。
+ */
+const gate = vi.hoisted(() => ({ ready: true }));
+vi.mock('../../../shared/voiceWriteRequirements', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../shared/voiceWriteRequirements')>();
+  return {
+    ...actual,
+    voiceWriteRefusal: (...args: Parameters<typeof actual.voiceWriteRefusal>) =>
+      gate.ready ? null : actual.voiceWriteRefusal(...args),
+  };
+});
+
 // react-dom/client + act の連携を有効化 (act 警告の抑止)。
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -155,6 +175,55 @@ describe('VoiceCommandBar — インタラクション', () => {
       await Promise.resolve();
     });
     expect(invoke).toHaveBeenCalledWith('github', 'create-issue', expect.any(Object));
+  });
+
+  describe('渡せない書き込みは断る (パス 109)', () => {
+    beforeEach(() => {
+      gate.ready = false;
+    });
+    afterEach(() => {
+      gate.ready = true;
+    });
+
+    it('★ 確認ボタンを出さず、足りない項目を名指しして断る', async () => {
+      render();
+      clickMic();
+      await act(async () => {
+        emitFinal('githubにイシューを作って');
+        await Promise.resolve();
+      });
+      expect(container.querySelector('[aria-label="実行を承認"]'), '実行できないのに承認ボタンが出ている').toBeNull();
+      expect(container.textContent).toContain('実行しません');
+      expect(container.textContent).toContain('owner / repo / title');
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('★ 画面を開くボタンを出す (次の手を示す)', async () => {
+      render();
+      clickMic();
+      await act(async () => {
+        emitFinal('githubにイシューを作って');
+        await Promise.resolve();
+      });
+      const open = container.querySelector('[aria-label="画面を開く"]') as HTMLButtonElement | null;
+      expect(open, '次の手が無い').not.toBeNull();
+      await act(async () => {
+        open!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await Promise.resolve();
+      });
+      // 遷移するだけで invoke はしない。
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('★ サービス名は services.ts のラベルで出す (id を生で見せない)', async () => {
+      render();
+      clickMic();
+      await act(async () => {
+        emitFinal('githubにイシューを作って');
+        await Promise.resolve();
+      });
+      expect(container.textContent).toContain('GitHub');
+    });
   });
 
   it('破壊的コマンドを "取消" すると invoke されず確認 UI が閉じる', async () => {

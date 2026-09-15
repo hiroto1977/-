@@ -26,20 +26,20 @@ aliases:
 アドルフ・バーリ ／ ウィリアム・ケアリー ／ メルヴィン・アイゼンバーグ ／ ロバート・クラーク
 
 ## 出典
-- [Cary, W. L. & Eisenberg, M. A. Corporations: Cases and Materials — Foundation Press](https://www.worldcat.org/oclc/2598415) `学術`
+- [Cary, W. L. & Eisenberg, M. A. Corporations: Cases and Materials — Foundation Press](https://www.worldcat.org/oclc/2598415) `リファレンス`
 - [Wikipedia: De facto corporation and corporation by estoppel — defective incorporation, limited liability](https://en.wikipedia.org/wiki/De_facto_corporation_and_corporation_by_estoppel) `リファレンス`
 
 ## 関連概念
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同じ思想家
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-penalty-clause-comparative|違約金条項・損害賠償予定と比較契約法]] — 同じ思想家
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[infosoc-dataveillance|データヴェイランス（クラーク）——個人データのシステムを体系的に用いて人々の行動や通信を監視する、安価で大規模な監視様式]] — 同じ思想家
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
-- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 - [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]] — 同分野の近傍
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 同分野の近傍
+- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

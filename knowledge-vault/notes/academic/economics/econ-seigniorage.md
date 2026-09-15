@@ -30,7 +30,6 @@ aliases:
 - [みずほ証券 ファイナンス用語集「通貨発行益」](https://glossary.mizuho-sc.com/faq/show/2294) `リファレンス`
 
 ## 関連概念
-- [[econ-credit-channel-theory|信用チャネル理論]] — 出典を共有
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同分野の近傍
 - [[econ-soft-budget-constraint|ソフトな予算制約（コルナイ）]] — 同分野の近傍
 

@@ -10,8 +10,8 @@
  * 所得税と住民税で控除額が異なるものは両方を返す。
  */
 
-import { yen } from './num';
-import { calcBasicDeduction, calcResidentBasicDeduction } from './taxCalc';
+import { yen, nonNeg } from './num';
+import { calcBasicDeduction, calcResidentBasicDeduction, resolveTaxYear } from './taxCalc';
 
 /** 円未満を四捨五入。 */
 
@@ -66,7 +66,8 @@ export interface DeductionPair {
  * - 国税庁 令和7年度税制改正による所得税の基礎控除の見直し等について
  *   https://www.nta.go.jp/users/gensen/2025kiso/index.htm
  */
-export function spouseIncomeLimitYen(taxYear: number): number {
+export function spouseIncomeLimitYen(rawTaxYear: number): number {
+  const taxYear = resolveTaxYear(rawTaxYear);
   if (taxYear >= 2026) return 620_000; // 令和8年分以後
   if (taxYear === 2025) return 580_000; // 令和7年分
   return 480_000; // 令和6年分以前
@@ -240,8 +241,27 @@ export function calcDependentDeductionWithIncome(
 //     各区分 所得税上限5万・住民税上限3.5万、合計上限は所得税10万・住民税7万。
 //   新旧の両方がある区分は、(新のみ / 旧のみ / 新+旧で4万・2.8万上限) の最大を採る。
 
-/** 新制度・生命保険料控除 1 区分の控除額を計算する。 */
-function lifeInsuranceNew(premium: number): DeductionPair {
+/**
+ * 新制度・生命保険料控除 1 区分の控除額を計算する。
+ *
+ * **読めない保険料を上限へ倒さない。** 比較だけの段は `NaN` をどの枝にも
+ * 落とさないので、消毒前は最後の `else` (= その区分の**上限**) が選ばれていた。
+ * 実測 (パス 204):
+ *
+ * | 入力 | 消毒前 | 消毒後 |
+ * | --- | --- | --- |
+ * | `{general: NaN}` | `{40,000, 28,000}` (新制度 1 区分の上限) | `{0, 0}` |
+ * | `{general/medical/pension すべて NaN}` | **`{120,000, 70,000}`** | `{0, 0}` |
+ * | `{generalOld: NaN}` | `{50,000, 35,000}` (旧制度の上限) | `{0, 0}` |
+ *
+ * 3 区分すべてが NaN のときの `{120,000, 70,000}` は、**実際に各区分 8 万円の
+ * 保険料を払った人の満額と完全に同じ**なので、答えから区別できない。
+ * 控除を最大化する向き = 税額を小さく見せる向きに倒れていた (パス 86 と同じ形)。
+ * 隣の `calcEarthquakeInsuranceDeduction` は同じ入力で `{0, 0}` を返す
+ * (パス 203 で消毒済み) —— **規準は同じファイルの 70 行下に在った。**
+ */
+function lifeInsuranceNew(rawPremium: number): DeductionPair {
+  const premium = nonNeg(rawPremium);
   // Stryker disable EqualityOperator: 各ブラケット境界は連続で <= と < が同値 (等価変異)。
   // Stryker disable next-line ConditionalExpression: premium<=0 の早期returnは計算経路でも {0,0} で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
@@ -261,8 +281,9 @@ function lifeInsuranceNew(premium: number): DeductionPair {
   return { incomeTax: it, residentTax: rt };
 }
 
-/** 旧制度・生命保険料控除 1 区分の控除額を計算する。 */
-function lifeInsuranceOld(premium: number): DeductionPair {
+/** 旧制度・生命保険料控除 1 区分の控除額を計算する (消毒の理由は `lifeInsuranceNew` 参照)。 */
+function lifeInsuranceOld(rawPremium: number): DeductionPair {
+  const premium = nonNeg(rawPremium);
   // Stryker disable EqualityOperator: 各ブラケット境界は連続で <= と < が同値 (等価変異)。
   // Stryker disable next-line ConditionalExpression: premium<=0 の早期returnは計算経路でも {0,0} で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
@@ -325,7 +346,8 @@ export function calcLifeInsuranceDeduction(p: LifeInsurancePremiums): DeductionP
 // 国税庁 No.1145。所得税は支払額 (上限5万)、住民税は1/2 (上限2.5万)。
 
 /** 地震保険料から控除額を計算する。 */
-export function calcEarthquakeInsuranceDeduction(premium: number): DeductionPair {
+export function calcEarthquakeInsuranceDeduction(rawPremium: number): DeductionPair {
+  const premium = nonNeg(rawPremium);
   // Stryker disable next-line EqualityOperator,ConditionalExpression: premium<=0 早期returnは計算経路でも{0,0}で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
   return {
@@ -372,7 +394,7 @@ export function calcSelfMedicationDeduction(
   threshold = SELF_MEDICATION_THRESHOLD,
   cap = SELF_MEDICATION_CAP,
 ): DeductionPair {
-  const paid = Math.max(0, switchOtcPaid);
+  const paid = nonNeg(switchOtcPaid);
   const deduction = Math.min(cap, Math.max(0, paid - threshold));
   return { incomeTax: deduction, residentTax: deduction };
 }
@@ -410,17 +432,32 @@ export const IDECO_ANNUAL_CAPS: Record<IdecoOccupation, number> = {
   'dependent-spouse': 276_000, // 月2.3万
 };
 
+/**
+ * **職業区分が分からないときの iDeCo の上限** —— どの区分でも超えられない最大値
+ * (自営業 = 第1号被保険者の年 81.6 万)。
+ *
+ * パス 217 まで、区分が未選択のときは `Math.max(0, 拠出額)` だけで**上限が無かった**。
+ * 実測: `iDeCo 拠出 (年) = 9,999,999,999` で `所得税 ¥147,535 → ¥0`・
+ * `住民税 ¥305,500 → ¥5,000` —— **控除が全額効いて「税を払わなくてよい」**と出ていた。
+ *
+ * **区分ごとの最小値 (公務員 14.4 万) に倒すのは誤り**: 区分が分からないだけで
+ * 正当な拠出を削ることになり、「別の間違った答え」を作る (パス 209 の教訓)。
+ * 最大値なら「どの区分でもこれを超える拠出は制度上あり得ない」という**真の言明**に
+ * なるので、そこで止める。
+ */
+export const IDECO_ANNUAL_CAP_MAX = Math.max(...Object.values(IDECO_ANNUAL_CAPS));
+
 /** 小規模企業共済の年間拠出限度額 (月7万 × 12, 円)。 */
 export const SMALL_BIZ_MUTUAL_ANNUAL_CAP = 840_000;
 
 /** iDeCo 拠出額を職業区分別の年間上限でクランプする (負値は0)。 */
 export function clampIdecoContribution(amount: number, occupation: IdecoOccupation): number {
-  return Math.min(Math.max(0, amount), IDECO_ANNUAL_CAPS[occupation]);
+  return Math.min(nonNeg(amount), IDECO_ANNUAL_CAPS[occupation]);
 }
 
 /** 小規模企業共済掛金を年間上限 (84万) でクランプする (負値は0)。 */
 export function clampSmallBizMutualAid(amount: number, cap = SMALL_BIZ_MUTUAL_ANNUAL_CAP): number {
-  return Math.min(Math.max(0, amount), cap);
+  return Math.min(nonNeg(amount), cap);
 }
 
 // --- 寄附金控除 (ふるさと納税ベースの所得税分) ---------------------------
@@ -583,19 +620,51 @@ export interface CasualtyLossInput {
  *   方式(1) = 差引損失額 − 総所得×10%
  *   方式(2) = (差引損失額のうち災害関連支出) − 5万円
  * の大きい方 (いずれも下限0) を控除額とする。所得税・住民税で同額。
- * 非有限・負の入力はガードして安全側に倒す。
+ *
+ * ## 読めない数は「0」ではない (2026-09-08 · パス 86)
+ *
+ * **渡された数が非有限なら控除を算定せず `{0,0}` を返す。** 2026-09-08 まで
+ * 全ての欄を 0 に倒しており、doc は「非有限・負の入力はガードして安全側に倒す」と
+ * 書いていたが、**この関数では 0 が安全側ではなかった**:
+ *
+ * | 欄 | 0 に倒すと | 向き |
+ * | --- | --- | --- |
+ * | `totalIncome` | 方式(1) の**足切り (総所得×10%) が消える** | **控除が増える** |
+ * | `reimbursed` | **補填が無かったことになる** | **控除が増える** |
+ * | `lossAmount` | 差引損失額が 0 → 早期 return | 控えめ |
+ * | `disasterRelatedSpending` | 方式(2) の素が減る | 控えめ |
+ *
+ * 実測 (損害 100 万): 総所得 300 万なら **70 万**だが、総所得が読めないと
+ * **100 万** (足切り 30 万が丸ごと消える)。補填 40 万なら **30 万**だが、
+ * 補填が読めないと **70 万**。
+ *
+ * **すぐ上の寄附金の 2 関数 (`calcGeneralDonationDeduction` /
+ * `calcDonationTaxCredit`) は同じ `Number.isFinite(totalIncome) ? … : 0` を
+ * 書いていて、そちらは正しい** —— 寄附金では所得が**上限**を決めるので 0 に倒すと
+ * 控除も 0 になり、doc の「上限0として安全側に倒す」がそのとおり成り立つ。
+ * 雑損では所得が**足切り**を決めるので、同じ倒し方が逆を向く。
+ * **所得が逆の役割を持つ 2 つの関数で、同じ書き方を再利用した形である。**
+ *
+ * 負の値は今までどおり 0 へ丸める —— **負は「読めるが範囲外」で最寄りの有効値が
+ * 定まる**のに対し、非有限は**読めない**ので最寄りの値が無い。この 2 つを同じ
+ * 扱いにしたことが元の誤りだった。
  */
 export function calcCasualtyLossDeduction(
   input: CasualtyLossInput,
   disasterFloor = CASUALTY_DISASTER_FLOOR,
   incomeRate = CASUALTY_INCOME_RATE,
 ): DeductionPair {
-  const loss = Number.isFinite(input.lossAmount) ? Math.max(0, input.lossAmount) : 0;
-  const disaster = Number.isFinite(input.disasterRelatedSpending ?? 0)
-    ? Math.max(0, input.disasterRelatedSpending ?? 0)
-    : 0;
-  const reimbursed = Number.isFinite(input.reimbursed ?? 0) ? Math.max(0, input.reimbursed ?? 0) : 0;
-  const income = Number.isFinite(input.totalIncome) ? Math.max(0, input.totalIncome) : 0;
+  // 渡された数のどれか 1 つでも読めなければ控除を算定しない。
+  // **0 に倒すと足切りと補填が消えて控除が増える** (doc の表)。
+  // 欄が無い (undefined) のは「該当なし = 0」で、読めないのとは別。
+  const supplied = [input.lossAmount, input.totalIncome, input.disasterRelatedSpending, input.reimbursed];
+  if (supplied.some((v) => v !== undefined && !Number.isFinite(v))) {
+    return { incomeTax: 0, residentTax: 0 };
+  }
+  const loss = nonNeg(input.lossAmount);
+  const disaster = Math.max(0, input.disasterRelatedSpending ?? 0);
+  const reimbursed = Math.max(0, input.reimbursed ?? 0);
+  const income = nonNeg(input.totalIncome);
 
   // 差引損失額 (補填額控除後, 下限0)。
   const netLoss = Math.max(0, loss + disaster - reimbursed);
@@ -772,9 +841,11 @@ export function calcAllDeductions(
   // 小規模企業共済 (年84万上限) + iDeCo (職業区分別上限) の合算。
   const smallBizCapped = clampSmallBizMutualAid(input.smallBizMutualAid ?? 0, p.smallBizMutualAnnualCap);
   const idecoRaw = input.idecoContribution ?? 0;
+  // 区分が未選択でも**上限は掛ける** (パス 217)。`Math.max(0, …)` だけだと上限が無く、
+  // 巨大な拠出がそのまま控除になって税額が 0 になっていた。
   const idecoCapped = input.idecoOccupation
     ? clampIdecoContribution(idecoRaw, input.idecoOccupation)
-    : Math.max(0, idecoRaw);
+    : Math.min(nonNeg(idecoRaw), IDECO_ANNUAL_CAP_MAX);
   const smallBizTotal = smallBizCapped + idecoCapped;
   const smallBiz = smallBizTotal > 0
     ? { incomeTax: yen(smallBizTotal), residentTax: yen(smallBizTotal) }

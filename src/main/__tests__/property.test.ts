@@ -10,8 +10,15 @@
  * the smallest reproducer.
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
+
+// `../oauth` は `shell` を electron から読む。ここで実物の electron を読むと、Electron 本体
+// (バイナリ) が node_modules に落ちていないランナーでは `Electron failed to install correctly`
+// で**このファイルだけ**が落ちる (2026-09-05 の CI run 33948541144 で実測 — main の他のテストは
+// 全部 mock 済みで、実物を読む唯一のテストだった)。単体テストにバイナリは要らないので、
+// ci.yml は取得そのものを止めた (`ELECTRON_SKIP_BINARY_DOWNLOAD`)。ここを外すと CI が決定的に落ちる。
+vi.mock('electron', () => ({ shell: { openExternal: vi.fn() } }));
 
 import { parseFrontmatter } from '../clients/skills';
 import { parseSecurityKeys } from '../clients/security';

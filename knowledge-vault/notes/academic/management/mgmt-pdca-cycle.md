@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]] — 出典を共有
 - [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
-- [[mgmt-theory-of-constraints|制約理論（TOC）]] — 同分野の近傍
+- [[mgmt-hoshin-kanri|方針管理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

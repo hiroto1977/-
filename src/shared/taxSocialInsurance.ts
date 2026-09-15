@@ -12,7 +12,7 @@
  * 上限を反映します。実額は給与明細・日本年金機構で確認すること。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 
 // --- 標準報酬月額の等級表 (令和6年度・協会けんぽ全国共通) ----------------
 //
@@ -148,6 +148,7 @@ export const PENSION_BONUS_CAP_PER_PAYMENT = 1_500_000;
 /** 健康保険の標準賞与額の上限 (年度累計, 円)。 */
 export const HEALTH_BONUS_CAP_ANNUAL = 5_730_000;
 
+
 // --- 本人負担の料率 (協会けんぽ全国平均ベースの概算) ----------------------
 //
 // **料率は年度で変わる。** 2026-08 の監査時点で、ここは令和6年度のまま
@@ -197,6 +198,34 @@ export const DEFAULT_SOCIAL_INSURANCE_RATES: SocialInsuranceRates = {
 };
 
 /**
+ * **被用者の社会保険料 (本人負担) の法定最大額** (年・円)。
+ *
+ * 厚生年金と健康保険・介護保険は「標準報酬月額の上限」と「標準賞与額の上限」で
+ * 頭打ちになるので、被用者としての負担額はこの天井を超えられない:
+ *
+ * - 厚生年金 = (標準報酬月額の上限 × 12 + 標準賞与額の上限 × 12 回) × 本人料率
+ * - 健康保険 + 介護 = (標準報酬月額の上限 × 12 + 標準賞与額の年度上限) × 本人料率
+ *
+ * **雇用保険は含めない** —— あれは賃金総額に比例し、上限が無い (令和8年度 0.5%)。
+ * だから「社会保険料の絶対の上限」という数は存在しない。この関数が返すのは
+ * *上限を持つ 2 制度の合計*であって、社会保険料控除の法定上限ではない。
+ *
+ * 用途は**桁の妥当性の目安** (パス 218)。社会保険料控除は「実際に支払った額」を
+ * そのまま引くので法定上限が無く、`calcAllDeductions` も天井を掛けない ——
+ * 実測で `支払社会保険料 = 9,999,999,999` は控除合計をそのまま
+ * `¥10,000,669,999` にし、画面は何も言わなかった (`money` の既定の
+ * `sane` は 10 兆円で、個人の家計の欄には緩すぎた)。
+ * 介護保険料率は 40 歳以上のみだが、**最大額**を問うているので常に足す。
+ */
+export function maxEmployeeSocialInsurance(
+  rates: SocialInsuranceRates = DEFAULT_SOCIAL_INSURANCE_RATES,
+): number {
+  const pension = (PENSION_MONTHLY_CAP * 12 + rates.pensionBonusCapPerPayment * 12) * rates.pensionRate;
+  const health = (HEALTH_MONTHLY_CAP * 12 + rates.healthBonusCapAnnual) * (rates.healthRate + rates.careRate);
+  return Math.round(pension + health);
+}
+
+/**
  * 報酬月額を等級表に当てはめ、対応する標準報酬月額を返す純粋関数。
  *
  * 「以上〜未満」ルール: 報酬月額 `r` は lowerBound[i] ≤ r < lowerBound[i+1]
@@ -210,7 +239,7 @@ export function resolveStandardMonthly(
   remuneration: number,
   grades: readonly RemunerationGrade[],
 ): number {
-  const r = Math.max(0, remuneration);
+  const r = nonNeg(remuneration);
   // 上位等級から走査し、最初に「下限以上」を満たした等級を採用する。
   // これにより上限等級での頭打ちと境界 (以上〜未満) を同時に満たす。
   // 最下位等級 (index 0, lowerBound===0) は r>=0 で必ず一致するため、ループは
@@ -240,7 +269,7 @@ export function resolveHealthStandardMonthly(remuneration: number): number {
 
 /** 賞与額を標準賞与額に丸める (1,000円未満切捨て、負は0)。 */
 export function resolveStandardBonus(bonus: number): number {
-  const b = Math.max(0, bonus);
+  const b = nonNeg(bonus);
   return Math.floor(b / 1_000) * 1_000;
 }
 
@@ -270,6 +299,10 @@ export function calcSocialInsurance(
   withCare = false,
   r: SocialInsuranceRates = DEFAULT_SOCIAL_INSURANCE_RATES,
 ): SocialInsuranceBreakdown {
+  // 非有限な年収は 0 に倒してから既存の `<= 0` の枝へ届ける。消毒が無いと
+  // 実測で `{pension: 96,624, health: 34,800, employment: NaN, total: NaN}` ——
+  // **等級表の最下位等級から出たもっともらしい保険料 2 つと NaN が混ざる**。
+  grossAnnual = nonNeg(grossAnnual);
   // grossAnnual===0 では計算経路 (monthly=0) でも全保険料が 0 にならない
   // (標準報酬月額は最下位等級 58,000/88,000 で底打ちされる) ため、0/負は
   // ここで明示的に 0 を返す。境界は「0以下なら無職=保険料なし」とみなす。
@@ -309,8 +342,8 @@ export function calcSocialInsuranceWithBonus(
   withCare = false,
   r: SocialInsuranceRates = DEFAULT_SOCIAL_INSURANCE_RATES,
 ): SocialInsuranceBreakdown {
-  const monthly = Math.max(0, monthlyRemuneration);
-  const bonus = Math.max(0, bonusPerPayment);
+  const monthly = nonNeg(monthlyRemuneration);
+  const bonus = nonNeg(bonusPerPayment);
   const bonusCount = Math.max(0, Math.floor(bonusPaymentsPerYear));
   const healthRate = r.healthRate + (withCare ? r.careRate : 0);
 

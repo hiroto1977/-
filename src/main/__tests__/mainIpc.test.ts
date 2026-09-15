@@ -17,6 +17,8 @@ type Handler = (ev: unknown, ...args: unknown[]) => unknown;
 const handlers = new Map<string, Handler>();
 const appListeners = new Map<string, () => void>();
 let quitCalls = 0;
+let relaunchCalls = 0;
+const exitCodes: number[] = [];
 let allWindows: unknown[] = [];
 
 let openedExternal: string[] = [];
@@ -39,6 +41,12 @@ vi.mock('electron', () => ({
     },
     quit: () => {
       quitCalls++;
+    },
+    relaunch: () => {
+      relaunchCalls++;
+    },
+    exit: (code: number) => {
+      exitCodes.push(code);
     },
   },
   BrowserWindow: class {
@@ -73,6 +81,20 @@ vi.mock('electron', () => ({
 
 // --- 協力者 ---------------------------------------------------------------
 let validToken: unknown = { ok: true, token: 'tok' };
+
+/** app:eraseAll の中身は main/eraseAll.ts (実物のファイルで別に検査)。ここは**再起動の判断**だけを見る。 */
+function desktopReport(allDeleted: boolean): import('../../shared/eraseReport').DesktopEraseReport {
+  return {
+    kind: 'desktop',
+    files: { '/tmp/x/service-hub-secrets.json': allDeleted ? 'deleted' : 'failed' },
+    renderer: 'deleted',
+    allDeleted,
+  };
+}
+let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEraseReport> = async () => desktopReport(true);
+vi.mock('../eraseAll', () => ({
+  eraseDesktopData: async () => eraseReportImpl(),
+}));
 let setTokenThrows: Error | null = null;
 let clearTokenThrows: Error | null = null;
 const setTokenCalls: [string, string][] = [];
@@ -112,7 +134,11 @@ vi.mock('../clients', () => ({
     github: async (a: unknown) => { fetcherCalls.push(a); return { rows: [] }; },
     skills: async (a: unknown) => { fetcherCalls.push(a); return { local: true }; },
   },
-  LIVE_ACTIONS: { github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } } },
+  LIVE_ACTIONS: {
+    github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } },
+    // 資格情報の要らないサービスの action (パス 267 の実測対象)。
+    skills: { run: async (a: unknown) => { actionCalls.push(a); return { ran: true }; } },
+  },
   LOCAL_SERVICES: new Set(['skills']),
 }));
 
@@ -162,6 +188,9 @@ beforeEach(async () => {
   authorizeConfigs.length = 0;
   gateResult = '/root/ok.md';
   quitCalls = 0;
+  relaunchCalls = 0;
+  exitCodes.length = 0;
+  eraseReportImpl = async () => desktopReport(true);
   allWindows = [];
   vi.resetModules();
   await import('../main');
@@ -170,11 +199,12 @@ beforeEach(async () => {
 // ---------------------------------------------------------------------------
 
 describe('登録', () => {
-  it('13 個のハンドラが登録される', () => {
+  it('14 個のハンドラが登録される', () => {
     expect([...handlers.keys()].sort()).toEqual(
       [
         'action:invoke',
         'app:checkUpdate',
+        'app:eraseAll',
         'app:getVersion',
         'app:openExternal',
         'app:openPath',
@@ -188,6 +218,52 @@ describe('登録', () => {
         'secrets:set',
       ].sort(),
     );
+  });
+});
+
+describe('app:eraseAll — デスクトップ版の「すべてのデータを削除」 (パス 137)', () => {
+  it('★ 全部消えた時だけ再起動する (relaunch → exit 0)。返してから —— 画面が「再起動します」を出せる', async () => {
+    vi.useFakeTimers();
+    try {
+      const report = (await invoke('app:eraseAll')) as { kind: string; allDeleted: boolean };
+      expect(report).toMatchObject({ kind: 'desktop', allDeleted: true });
+      expect(relaunchCalls).toBe(0);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(relaunchCalls).toBe(1);
+      expect(exitCodes).toEqual([0]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('手順が投げても IPC を reject しない — error つきの報告を返し、再起動しない', async () => {
+    eraseReportImpl = async () => {
+      throw new Error('disk on fire');
+    };
+    vi.useFakeTimers();
+    try {
+      const report = (await invoke('app:eraseAll')) as { kind: string; allDeleted: boolean; error?: string };
+      expect(report).toMatchObject({ kind: 'desktop', allDeleted: false });
+      expect(report.error).toContain('disk on fire');
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(relaunchCalls).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('★ 残った物が在れば再起動しない — 報告を返し、画面が名指しする', async () => {
+    eraseReportImpl = async () => desktopReport(false);
+    vi.useFakeTimers();
+    try {
+      const report = (await invoke('app:eraseAll')) as { kind: string; allDeleted: boolean };
+      expect(report).toMatchObject({ kind: 'desktop', allDeleted: false });
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(relaunchCalls).toBe(0);
+      expect(exitCodes).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
@@ -329,7 +405,7 @@ describe('secrets:set / secrets:clear — サービス id の検査', () => {
     const r = (await invoke('secrets:set', 'github', 'ghp_valid_token_value')) as {
       message: string;
     };
-    // 上限は `ERROR_MESSAGE_MAX_LENGTH` (2000)。数字を写経せず「入力より短い」
+    // 上限は `ERROR_MESSAGE_MAX_CHARS` (2000)。数字を写経せず「入力より短い」
     // ことと「上限以内」の両方を見る。
     expect(r.message.length).toBeLessThan(5000);
     expect(r.message.length).toBeLessThanOrEqual(2000);
@@ -404,6 +480,31 @@ describe('fetch:snapshot — 取得の入口', () => {
     expect(r).toEqual({ ok: false, code: 'not_configured', message: 'キーチェーンが使えません' });
   });
 
+  /*
+   * **「保管ファイルを読めなかった」を「トークン未設定」と言わない** (2026-09-06)。
+   *
+   * 読めなかったとき `readStore` は `{}` を返すので、`readStoredToken` は
+   * `absent` を名乗り、ここは「トークン未設定」と案内していた —— 保存済みの
+   * 利用者は鍵を貼り直そうとし、`setToken` に (正しく) 断られる。
+   */
+  it('★ 保管ファイルが読めないときは理由を伝える (「トークン未設定」と言わない)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (too large)。' };
+    const r = (await invoke('fetch:snapshot', 'github')) as { ok: boolean; code: string; message: string };
+    expect(r).toEqual({
+      ok: false,
+      code: 'not_configured',
+      message: '保管ファイルを読めませんでした (too large)。',
+    });
+    expect(fetcherCalls, '読めないのに取りに行っている').toEqual([]);
+  });
+
+  it('★ ローカルのサービスでも黙らない (資格情報が要らないのは「未設定」のときだけ)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' };
+    const r = (await invoke('fetch:snapshot', 'skills')) as { ok: boolean; message: string };
+    expect(r.ok).toBe(false);
+    expect(r.message).toContain('保管ファイルを読めませんでした');
+  });
+
   it('資格情報の読み出しが投げても reject しない (画面が止まらない)', async () => {
     validToken = new Error('decrypt exploded');
     const r = (await invoke('fetch:snapshot', 'github')) as { ok: boolean; code: string };
@@ -470,6 +571,65 @@ describe('action:invoke — 書き込み側の入口', () => {
     }
   });
 
+  /*
+   * **資格情報の要らないサービスの action が、デスクトップ版で 1 度も呼ばれなかった**
+   * (2026-09-15 · パス 267)。
+   *
+   * `action:invoke` は全サービスに有効なトークンを要求しており、実測すると
+   * `{ok: false, code: 'not_configured', message: 'トークン未設定'}` を返して
+   * action 関数の呼び出し回数は **0** だった。同じ入口の `fetch:snapshot` は
+   * 30 行上で `LOCAL_SERVICES` を見ているのに、**書き込み側だけがその規則を
+   * 持っていなかった** —— ブラウザ版 (`web-shim`) はトークンを要求しないので
+   * 同じボタンが動いており、ビルド間の非対称だった。
+   *
+   * ここを留めるのは**構造**である (`LOCAL_SERVICES` を引く 1 行)。サービスごとの
+   * 台帳は要らない —— ハンドラが集合を直接読むので、新しいローカルサービスが
+   * action を登録しても同じ道を通る。
+   */
+  it('★ 資格情報の要らないサービス (LOCAL_SERVICES) の action は、トークンが無くても呼ぶ', async () => {
+    validToken = { ok: false, reason: 'absent' };
+    expect(await invoke('action:invoke', 'skills', 'run', { q: 'x' })).toEqual({
+      ok: true,
+      data: { ran: true },
+    });
+    // トークンは空文字で渡る (fetch:snapshot と同じ)。
+    expect(actionCalls).toEqual([{ token: '', payload: { q: 'x' } }]);
+  });
+
+  it('★ 対照: 資格情報の要るサービスは、トークンが無ければ今までどおり断る', async () => {
+    validToken = { ok: false, reason: 'absent' };
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'not_configured',
+      message: 'トークン未設定',
+    });
+    expect(actionCalls).toEqual([]);
+  });
+
+  it('★ ローカルでも「未設定ではない」理由なら断る (復号できない / 保管ファイルが読めない)', async () => {
+    // ここを `absent` と同じに扱うと、鍵を貼り直せば直ると思わせてしまう。
+    // 条件は fetch:snapshot と 1 文字も変えていない。
+    for (const read of [
+      { ok: false, reason: 'undecryptable', message: 'キーチェーンが使えません' },
+      { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' },
+    ]) {
+      actionCalls.length = 0;
+      validToken = read;
+      expect(await invoke('action:invoke', 'skills', 'run', {})).toEqual({
+        ok: false,
+        code: 'not_configured',
+        message: read.message,
+      });
+      expect(actionCalls).toEqual([]);
+    }
+  });
+
+  it('★ ローカルサービスに保存済みのトークンが在れば、それを渡す (security の HIBP/VT と同じ)', async () => {
+    validToken = { ok: true, token: 'local-tok' };
+    expect(await invoke('action:invoke', 'skills', 'run', {})).toEqual({ ok: true, data: { ran: true } });
+    expect(actionCalls).toEqual([{ token: 'local-tok', payload: {} }]);
+  });
+
   it('資格情報の読み出しが投げても reject しない', async () => {
     validToken = new Error('boom');
     expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
@@ -497,6 +657,16 @@ describe('action:invoke — 書き込み側の入口', () => {
     } finally {
       LIVE_ACTIONS.github!['create-issue'] = original;
     }
+  });
+
+  it('★ action も、保管ファイルが読めないときは理由を伝える', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (too large)。' };
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'not_configured',
+      message: '保管ファイルを読めませんでした (too large)。',
+    });
+    expect(actionCalls).toEqual([]);
   });
 
   it('資格情報が無ければ action を呼ばない', async () => {

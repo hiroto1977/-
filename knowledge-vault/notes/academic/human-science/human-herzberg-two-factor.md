@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]] — 同じ思想家
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 同じ思想家
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
 - [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
 - [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
-- [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

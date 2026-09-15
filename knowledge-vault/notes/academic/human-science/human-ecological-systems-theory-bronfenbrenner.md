@@ -39,7 +39,7 @@ aliases:
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家
 - [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
-- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

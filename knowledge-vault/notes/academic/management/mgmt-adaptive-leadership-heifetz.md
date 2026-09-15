@@ -41,7 +41,7 @@ Ronald A. Heifetz ／ Marty Linsky ／ Alexander Grashow
 - [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
 - [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 出典を共有
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 出典を共有
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 出典を共有
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
 
 ## 関連

@@ -34,7 +34,18 @@ import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
 import { startSpeechRecognition, isSpeechRecognitionSupported } from '../voice/speechAdapter';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { VoiceEgressNotice } from '../components/VoiceEgressNotice';
+import {
+  assistantEgressRecipients,
+  readProviderStatuses,
+  type ProviderStatus,
+} from '../data/assistantProviders';
 import { speak, cancelSpeech } from '../voice/ttsAdapter';
+import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
+import type { ActionData } from '../../shared/actionData';
 
 const REG: VillageRegistry = {
   org: regOrg as VillageRegistry['org'],
@@ -102,12 +113,49 @@ export function VillagePage() {
   const [bubbles, setBubbles] = useState<Record<string, Bubble>>({});
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  /**
+   * AI へ送ったが答えが来なかった理由 (パス 176)。**黙って端末内の応答に落ちない** ——
+   * 2026-09-12 まで `if (res.ok && res.data.text)` に else が無く、`catch` は空だったので、
+   * 鍵未設定・通信断・天井超えの断りはどれも**誰にも届かなかった**。利用者から見ると
+   * 「AI を入れているのに、いつも簡易応答しか返らない」で、原因を知る手が 1 つも無い。
+   * 吹き出しは端末内の応答を出したままにして (聞こえた答えを消さない)、理由はここに出す。
+   */
+  const [aiError, setAiError] = useState<string>();
   const [voiceTargetId, setVoiceTargetId] = useState<string | null>(null);
   const [aiOn, setAiOn] = useState(true);
+  /**
+   * 送り先を書くための設定状況。**この画面はマイクの声を外へ出す** ——
+   * `assistant/chat` へ渡すのは音声認識で書き起こした本文で、送り先は利用者が
+   * アシスタント画面で設定したプロバイダである。パス 106 の走査は action 名を
+   * 手で書いていたためこの画面を数えておらず、断りが無かった (パス 107)。
+   */
+  const [providers, setProviders] = useState<readonly ProviderStatus[]>([]);
+  const [providersUnknown, setProvidersUnknown] = useState(false);
   const [paused, setPaused] = useState(false);
   const [focusedExec, setFocusedExec] = useState<string | null>(null);
   const recRef = useRef<{ stop: () => void; abort: () => void } | null>(null);
   const voiceClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    void (async () => {
+      const read = await readProviderStatuses();
+      setProviders(read.providers);
+      setProvidersUnknown(read.unknown);
+    })();
+  }, []);
+
+  /**
+   * 断りに書く送り先。**AI を切っていれば外へは出ない** (`aiOn` が false のとき
+   * `invoke` しないので、そう書けるし、そう書くべきである)。判断は
+   * `data/assistantProviders.ts` が 1 か所で持つ (アシスタント画面と同じ)。
+   */
+  const egressRecipients = useMemo(
+    () =>
+      aiOn
+        ? assistantEgressRecipients({ providers, providersUnknown, selected: '' })
+        : { remote: [], local: [] },
+    [aiOn, providers, providersUnknown],
+  );
 
   const activeStep = dispatchPlan.length > 0 ? dispatchPlan[step % dispatchPlan.length] : undefined;
   const activeTeamId = !focusedExec && phase < 4 ? activeStep?.teamId ?? null : null;
@@ -199,6 +247,7 @@ export function VillagePage() {
   const handleUtterance = (raw: string) => {
     const text = raw.trim();
     if (!text) return;
+    setAiError(undefined);
     const scored = routeTopicScored(ORG_INDEX, text);
     const r = scored.route;
     const targetId = r.team?.id ?? r.manager?.id ?? r.executive?.id ?? 'coo';
@@ -212,18 +261,35 @@ export function VillagePage() {
 
     const hub = window.serviceHub;
     if (aiOn && hub && reply.kind !== 'action') {
+      /*
+       * **マイクは欄を通らない** (パス 175)。footer の欄は超過を述べて押せなくできるが、
+       * `startSpeechRecognition` の `onTranscript` はここへ直に来るので、`disabled` が効かない。
+       * 天井を超えた発話を送ると main / ブラウザ版が断り (`latestTurnTooLong`)、その断りは
+       * 下の `if (res.ok && …)` に else が無いので**誰にも届かない** —— ここで断って、声で言う。
+       * 端末内の規則ベースの応答 (`reply`) は既に出ているので、止めるのは AI への送信だけ。
+       */
+      if (charsOverCeiling(text, MAX_ASSISTANT_CONTENT_CHARS) > 0) {
+        const note = refusedCeilingNote('話しかけた文', text, MAX_ASSISTANT_CONTENT_CHARS);
+        setVoiceBubble(targetId, note);
+        speak(note);
+        return;
+      }
       void (async () => {
         try {
-          const res = await hub.invoke<{ text: string; provider?: string }>('assistant', 'chat', {
+          const res = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
             system: buildVillageSystemPrompt(),
             messages: [{ role: 'user', content: text }],
           });
           if (res.ok && res.data.text) {
             setVoiceBubble(targetId, res.data.text);
             speak(res.data.text);
+            return;
           }
-        } catch {
-          /* オフライン応答のまま */
+          // 失敗 (と、本文が空の成功) を言う。文面はアシスタント本体と同じ形
+          // 「AI 応答を利用できないため簡易モードで回答します: …」の村版。
+          setAiError(res.ok ? '応答が空でした' : res.message);
+        } catch (e) {
+          setAiError(e instanceof Error ? e.message : String(e));
         }
       })();
     }
@@ -290,6 +356,33 @@ export function VillagePage() {
           </button>
         </div>
       </div>
+
+      {aiError !== undefined && (
+        <div
+          data-village-ai-error
+          role="alert"
+          style={{ fontSize: 12, color: '#fbbf24', lineHeight: 1.6, padding: '4px 8px' }}
+        >
+          ⚠ AI の応答を利用できないため、端末内の簡易応答を出しています: {aiError}
+        </div>
+      )}
+
+      {/* **声も外へ出る。** マイクで話した内容は音声認識で文字になり、
+          `assistant/chat` へ送られる —— 送り先は利用者がアシスタント画面で
+          設定したプロバイダ。「AI」を切れば送らないので、そのときは
+          「出ません」と書ける (文面は `shared/aiEgressNotice.ts`)。 */}
+      {/* **声そのものの話は AI の話と別である。** 上が「音声をどこで文字にするか」
+          (ブラウザ任せ・経路を選べない)、下が「その文を何処へ送るか」(利用者が
+          選んだプロバイダ)。`transcriptStaysLocal: false` にするのは、文の
+          行き先を下の断りが送り先の内訳つきで述べるから (パス 108)。 */}
+      <VoiceEgressNotice subject={{ transcriptStaysLocal: false }} />
+
+      <AiEgressNotice
+        subject={{
+          what: 'マイクで話した内容 (音声認識の書き起こし) と、入力した文',
+          recipients: egressRecipients,
+        }}
+      />
 
       <div style={sceneStyle}>
         <Scenery />
@@ -572,6 +665,8 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
 // ---------------------------------------------------------------------------
 function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (t: string) => void }) {
   const [text, setText] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。天井は共有の定数から読む。 */
+  const over = charsOverCeiling(text, MAX_ASSISTANT_CONTENT_CHARS);
   return (
     <div style={footerStyle}>
       <div style={{ fontSize: 12, opacity: 0.8, minHeight: 16, flex: 1 }}>
@@ -594,10 +689,11 @@ function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (
           aria-label="村への入力"
           style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(127,127,127,0.4)', minWidth: 200 }}
         />
-        <button type="submit" className="primary" disabled={!text.trim()}>
+        <button type="submit" className="primary" disabled={!text.trim() || over > 0}>
           伝える
         </button>
       </form>
+      <CeilingNotice label="入力" value={text} max={MAX_ASSISTANT_CONTENT_CHARS} />
     </div>
   );
 }

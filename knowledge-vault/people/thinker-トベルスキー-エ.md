@@ -2,7 +2,7 @@
 title: "エイモス・トベルスキー"
 type: thinker
 person_key: "トベルスキー|エ"
-concept_count: 7
+concept_count: 5
 tags:
   - person
   - index
@@ -10,14 +10,12 @@ tags:
 
 # エイモス・トベルスキー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（7件）
+## 学術概念（5件）
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — アンカリング効果とは、トベルスキーとカーネマン（1974年）が提唱したヒューリスティクスの一つで、最初に提示された数値…
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 行動経済学（behavioraleconomics）は，心理学の知見を経済分析に統合し，人間の意思決定が合理的選択理論…
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — リチャード・セイラーは1980年の論文「TowardaPositiveTheoryofConsumerChoice」に…
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 最初に提示された数値（アンカー）が、その後の数量推定や判断の基準点となり、人はそこから十分に調整せず判断がアンカーに偏…
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — エイモス・トベルスキーとダニエル・カーネマンが1974年に同定したアンカリングと調整（anchoringandadju…
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 論理的に等価な情報であっても、その提示の仕方（枠組み＝フレーム）が異なると人々の判断や選択が変わる認知バイアス。
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — プロスペクト理論は、ダニエル・カーネマンとエイモス・トベルスキーが1979年にEconometrica誌で提唱した不確…
 

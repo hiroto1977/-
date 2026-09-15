@@ -26,7 +26,7 @@ aliases:
 ラリー・グレイナー ／ ヘンリー・ミンツバーグ ／ ダニー・ミラー ／ イチャク・アディゼス
 
 ## 出典
-- [Greiner, L.E. (1972/1998) Evolution and Revolution as Organizations Grow — Harvard Business Review 50(4)](https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow) `学術`
+- [Greiner, L.E. (1972/1998) Evolution and Revolution as Organizations Grow — Harvard Business Review 50(4)](https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow) `メディア`
 - [Wikipedia: Greiners growth model — evolution/revolution, five phases, leadership/autonomy/control crises](https://en.wikipedia.org/wiki/Greiner%27s_growth_model) `リファレンス`
 
 ## 関連概念

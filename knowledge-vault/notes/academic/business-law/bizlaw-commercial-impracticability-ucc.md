@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Posner, R. A. & Rosenfield, A. M. (1977) Impossibility and Related Doctrines in Contract Law — Journal of Legal Studies](https://doi.org/10.1086/467163) `学術`
-- [UCC Section 2-615: Excuse by Failure of Presupposed Conditions — Cornell Law Institute](https://www.law.cornell.edu/ucc/2/2-615) `公的`
+- [UCC Section 2-615: Excuse by Failure of Presupposed Conditions — Cornell Law Institute](https://www.law.cornell.edu/ucc/2/2-615) `リファレンス`
 - [Wikipedia: Impracticability — commercial excuse doctrine in contract law overview](https://en.wikipedia.org/wiki/Impracticability) `リファレンス`
 
 ## 関連概念

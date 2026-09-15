@@ -24,23 +24,33 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
+import { SCAN_URL_MESSAGES, validateScanUrl, BREACH_EMAIL_MESSAGES, validateBreachEmail } from '../../shared/scanTarget';
+import { hibpBreaches, vtScanStats } from '../../shared/securityResponse';
 import {
   jsonFetch,
   limitedFetch,
   readCapped,
   FetchError,
   redactForMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
   type ActionContext,
   type ActionMap,
   type FetchContext,
 } from './types';
+import type { ActionData } from '../../shared/actionData';
+import type { NortonDetection } from '../../shared/nortonDetection';
 
 interface NortonStatus {
   installed: boolean;
   installPath: string;
   platform: string;
   details: string;
+  /**
+   * 「見た結果」と「見られなかった」を分ける (パス 165)。`installed` の真偽だけでは
+   * 「探して無かった」と「探せない」が同じ札になり、**ウイルス対策の有無について
+   * 見ていない端末に警告を出す**。文面と色は `shared/nortonDetection.ts` が持つ。
+   */
+  detection: NortonDetection;
 }
 
 export interface SecuritySnapshot {
@@ -143,6 +153,7 @@ export async function detectNorton(
       installPath: found,
       platform,
       details: `${path.basename(found)} を検出`,
+      detection: 'found',
     };
   }
   return {
@@ -150,6 +161,9 @@ export async function detectNorton(
     installPath: '',
     platform,
     details: nortonNotFoundDetails(platform),
+    // 候補のパスが 1 本も無い OS (linux) は「探して無かった」ではなく「製品が無い」。
+    // 判定は `NORTON_PATHS_BY_PLATFORM` の実物から導く (OS 名を写さない)。
+    detection: candidates.length === 0 ? 'unsupported' : 'absent',
   };
 }
 
@@ -176,25 +190,18 @@ interface CheckEmailBreachPayload {
   email: string;
 }
 
-interface HibpBreach {
-  Name: string;
-  Title: string;
-  BreachDate: string;
-  PwnCount: number;
-  DataClasses: string[];
-}
-
 async function checkEmailBreach(
   ctx: ActionContext,
-): Promise<{ email: string; breaches: { name: string; title: string; date: string; pwnCount: number; dataClasses: string[] }[] }> {
+): Promise<ActionData<'security/check-email-breach'>> {
   // **前後の空白を落とす。** ブラウザ版 (`saasWriteWeb.checkEmailBreach`) は
   // 元から `.trim()` していて、こちらだけ生のまま送っていた (2026-08-22)。
   // 貼り付けで空白が付いた住所をそのまま問い合わせると HIBP は 404 を返し、
   // それを「どの漏洩にも含まれない」として表示してしまう ——
   // **誤った安心**を返す側のずれなので、厳しい側ではなく正しい側へ揃える。
   const raw = (ctx.payload as unknown as CheckEmailBreachPayload).email;
-  const email = typeof raw === 'string' ? raw.trim() : '';
-  if (!email) throw new Error('email is required');
+  const checked = validateBreachEmail(raw);
+  if (!checked.ok) throw new Error(BREACH_EMAIL_MESSAGES[checked.reason]);
+  const email = checked.email;
   const keys = parseSecurityKeys(ctx.token);
   if (!keys.hibp) throw new Error('HIBP API key not configured');
 
@@ -224,25 +231,24 @@ async function checkEmailBreach(
       if (res.status === 404) return { email, breaches: [] };
       if (!res.ok) {
         const body = await readCapped(res, hctx).catch(() => '');
-        throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
+        throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`, res.status, 'security');
       }
       const bodyText = await readCapped(res, hctx);
-      let data: HibpBreach[];
+      let parsed: unknown;
       try {
-        data = JSON.parse(bodyText) as HibpBreach[];
+        parsed = JSON.parse(bodyText);
       } catch {
         throw new FetchError('HIBP の応答が JSON ではありません', res.status, 'security');
       }
-      return {
-        email,
-        breaches: data.map((b) => ({
-          name: b.Name,
-          title: b.Title,
-          date: b.BreachDate,
-          pwnCount: b.PwnCount,
-          dataClasses: b.DataClasses,
-        })),
-      };
+      // **要素ごとに欄を要求する** (パス 261)。直す前は `as HibpBreach[]` で、
+      // `["x"]` / `[{}]` の応答が「名前も日付も件数も空の漏洩 1 件」になった
+      // (ブラウザ側で実測)。規則は `shared/hibpResponse.ts` に 1 つ —— 同じ
+      // `.map()` が 2 か所に在り、どちらも検証していなかった。
+      try {
+        return { email, breaches: hibpBreaches(parsed) };
+      } catch (e) {
+        throw new FetchError(e instanceof Error ? e.message : String(e), res.status, 'security');
+      }
     },
   );
 }
@@ -253,21 +259,6 @@ interface ScanUrlPayload {
 
 interface VtUrlScanResponse {
   data: { id: string; type: string };
-}
-
-interface VtUrlReportResponse {
-  data: {
-    id: string;
-    attributes: {
-      last_analysis_stats: {
-        harmless: number;
-        malicious: number;
-        suspicious: number;
-        undetected: number;
-      };
-      reputation?: number;
-    };
-  };
 }
 
 // vtBase64: `=+$` mutants equivalent for URL lengths we feed.
@@ -284,16 +275,9 @@ function vtBase64(input: string): string {
 }
 // Stryker restore Regex
 
-const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
-  empty: 'url は必須です',
-  'too-long': 'url が長すぎます',
-  'not-a-url': 'url を URL として解釈できません',
-  'not-web': 'url は http:// または https:// で始まる必要があります',
-};
-
 async function scanUrl(
   ctx: ActionContext,
-): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
+): Promise<ActionData<'security/scan-url'>> {
   const { url: rawUrl } = ctx.payload as unknown as ScanUrlPayload;
   // payload は renderer から来る任意の値。ここは**第三者へ送る**入口なので、
   // 送ってよい形かを先に確かめる (`src/shared/scanTarget.ts`)。
@@ -320,13 +304,16 @@ async function scanUrl(
   // VirusTotal identifies a URL by base64url(sha) — but the simpler form
   // is just base64url(url) which they accept on the GET endpoint.
   const id = vtBase64(url);
-  const report = await jsonFetch<VtUrlReportResponse>(
+  const report = await jsonFetch<unknown>(
     `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(id)}`,
     { headers: { 'x-apikey': keys.vt } },
     { fetch: ctx.fetch, serviceId: 'security' },
   );
 
-  const stats = report.data.attributes.last_analysis_stats;
+  // **規則は `shared/securityResponse.ts` に 1 つ** (パス 261)。`jsonFetch<T>` は
+  // `JSON.parse(text) as T` なので、型引数を書いても 1 つも確かめていなかった ——
+  // 欄の欠けた応答から NaN の「検出数」が出来ていた (ブラウザ側で実測)。
+  const stats = vtScanStats(report);
   const positives = stats.malicious + stats.suspicious;
   const total = stats.harmless + stats.malicious + stats.suspicious + stats.undetected;
   return {

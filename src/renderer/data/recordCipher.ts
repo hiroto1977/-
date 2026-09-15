@@ -37,9 +37,20 @@ export const IDENTITY_CIPHER: RecordCipher = {
   },
 };
 
-/** パスフレーズ由来鍵で `data` を封緘する cipher を生成。鍵導出は一度だけ。 */
-export async function createPassphraseRecordCipher(password: string, saltB64: string): Promise<RecordCipher> {
-  const key = await deriveAesKey(password, saltB64);
+/**
+ * パスフレーズ由来鍵で `data` を封緘する cipher を生成。鍵導出は一度だけ。
+ *
+ * `iterations` は呼ぶ側が渡す (パス 239)。封緘済みのレコードを開くときは
+ * **そのレコードを封緘した回数**でなければ別の鍵になるので、既定値に頼らず
+ * `recordEncryption` が meta の保管値を渡す。省略時は今の定数 —— 新規の
+ * 有効化だけがその道を通る。
+ */
+export async function createPassphraseRecordCipher(
+  password: string,
+  saltB64: string,
+  iterations?: number,
+): Promise<RecordCipher> {
+  const key = await deriveAesKey(password, saltB64, iterations);
   return {
     async encrypt(data) {
       const sealed = await sealWithKey(key, JSON.stringify(data));

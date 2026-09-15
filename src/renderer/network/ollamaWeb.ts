@@ -23,6 +23,7 @@
  * 扱われるため、https ページからでも mixed content ブロックはされない (CORS だけが壁)。
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   DEFAULT_OLLAMA_PORT,
   DEFAULT_SETUP_MODEL,
@@ -38,10 +39,12 @@ import {
   MAX_OLLAMA_SYSTEM_CHARS,
   normalizeModels,
   parseOllamaEndpoint,
+  type OllamaChatResult,
   type OllamaErrorAdvice,
   type OllamaSnapshot,
 } from '../../shared/ollama';
 import { isOverCap, readBodyWithCap, withBodyDeadline } from '../../shared/httpLimits';
+import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 
 /** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
  *  値は「ポート番号のみ」または `http(s)://host:port`。旧 `…ollama.port` の値も読む。 */
@@ -421,7 +424,7 @@ export const CHAT_TIMEOUT_MS = 120_000;
 // 上限は `shared/ollama.ts` に 1 つだけ置く (main も同じものを読む)。
 
 export type OllamaChatOutcome =
-  | { ok: true; reply: string; durationMs: number }
+  | ({ ok: true } & OllamaChatResult)
   | { ok: false; kind: string; message: string };
 
 export interface OllamaChatInput {
@@ -455,7 +458,8 @@ export async function chatOllama(
   if (!isSafeModelName(model)) {
     // isSafeModelName は unknown を受ける型ガードなので、否定側では never に
     // 狭まる。表示は明示的に文字列化する。
-    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${String(model).slice(0, 32)}` };
+    // 断りに載せる名前も文字の境界で切る (パス 196)。
+    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${clampToCeiling(String(model), 32)}` };
   }
   if (prompt === '') {
     return { ok: false, kind: 'empty-prompt', message: 'プロンプトを入力してください。' };
@@ -468,9 +472,17 @@ export async function chatOllama(
   // base は許可済み、パスは定数なので null にならない (probeOllama と同じ)。
   const url = buildOllamaUrl(base, '/api/chat', pageHostname)!;
 
+  // 天井超えは切らずに断る (main 版と同じ判断・同じ文面 —— パス 114)。
+  if (countChars(system) > MAX_OLLAMA_SYSTEM_CHARS) {
+    return { ok: false, kind: 'too-long', message: inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS) };
+  }
+  if (countChars(prompt) > MAX_OLLAMA_PROMPT_CHARS) {
+    return { ok: false, kind: 'too-long', message: inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS) };
+  }
+
   const messages: { role: string; content: string }[] = [];
-  if (system !== '') messages.push({ role: 'system', content: system.slice(0, MAX_OLLAMA_SYSTEM_CHARS) });
-  messages.push({ role: 'user', content: prompt.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
+  if (system !== '') messages.push({ role: 'system', content: system });
+  messages.push({ role: 'user', content: prompt });
 
   const started = now();
   let res: Response;
@@ -565,7 +577,9 @@ export async function chatOllama(
   const content = (parsed as { message?: { content?: unknown } } | null)?.message?.content;
   return {
     ok: true,
-    reply: typeof content === 'string' ? content.trim() : '',
+    // 応答の天井 (パス 113) —— main と同じ判断を読む。byte の天井 (2 MiB) は「画面に出す量」
+    // としては論外で、10 万字で打ち切って切ったことを本文に残す。
+    reply: capAssistantReply(typeof content === 'string' ? content.trim() : ''),
     durationMs: Math.max(0, Math.round(now() - started)),
   };
 }

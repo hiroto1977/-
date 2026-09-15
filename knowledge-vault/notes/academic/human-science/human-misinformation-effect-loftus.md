@@ -38,9 +38,9 @@ aliases:
 - [[human-spreading-activation|活性化拡散]] — 同じ思想家
 - [[human-false-memory|虚記憶（フォールス・メモリ）]] — 同じ思想家
 - [[human-generation-effect-slamecka|生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい]] — 同じ思想家
-- [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]] — 同じ思想家
 - [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同じ思想家
 - [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
+- [[human-testing-effect-roediger|テスト効果——検索練習が長期記憶保持を促進するメカニズム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -197,3 +197,72 @@ export function revenueNeededForHire(input: {
   // laborCostRatio は laborCost>0 かつ revenue>0 のとき必ず正なので除算は安全。
   return Math.round(perHeadLaborCost / laborCostRatio);
 }
+
+// --- 同じメールアドレスの重複 (パス 125) ---------------------------------------
+
+/**
+ * **メンバーはメールアドレスが 1 人の単位。** 同じ人を 2 度招待すると `members.length` が 1 増え、
+ * シートを 2 つ使い、一人当たりの金額 (売上高・営業利益・人件費 = 累計 ÷ 従業員数) が薄まって
+ * 金融機関等提出用の書面 §3「従業員数 (登録メンバー数)」まで届く。氏名に「編集」は無く (役割だけ
+ * 一覧で変えられる)、訂正は × で消してから入れ直す —— 先に入れ直すと 2 人になる。
+ *
+ * 鍵はメールアドレスの前後の空白を落として**小文字**にしたもの。ドメイン部は大文字小文字を
+ * 区別しない (RFC 5321)。ローカル部は規格上は区別しうるが、実際の受信側はほぼ区別しないので
+ * 「別人」とは扱わない (同じ人を 2 度数える方が重い)。
+ */
+export function memberKey(m: Pick<Member, 'email'>): string {
+  return m.email.trim().toLowerCase();
+}
+
+/** 同じメールアドレスのメンバーが既に在ればそれを返す (無ければ null)。画面が招待を断る判断。 */
+export function sameEmailMember(existing: readonly Member[], candidate: Pick<Member, 'email'>): Member | null {
+  const key = memberKey(candidate);
+  return existing.find((m) => memberKey(m) === key) ?? null;
+}
+
+/** 同じメールアドレスが 2 件以上ある組。 */
+export interface DuplicateMemberGroup {
+  /** 鍵 (前後の空白を落とした小文字)。 */
+  readonly email: string;
+  /** その組の件数 (2 以上)。 */
+  readonly count: number;
+}
+
+/**
+ * 既に在る重複 (件数 2 以上の組) をメールアドレスの昇順で返す。無ければ空。
+ * メールの無い控え (役割だけの射影) は数えない —— 経営サマリーの入力は役割だけの形も受ける。
+ */
+export function findDuplicateMembers(members: readonly { readonly email?: string }[]): DuplicateMemberGroup[] {
+  const counts = new Map<string, number>();
+  for (const m of members) {
+    if (typeof m.email !== 'string') continue;
+    const key = memberKey({ email: m.email });
+    if (key.length === 0) continue;
+    const prev = counts.get(key);
+    counts.set(key, prev === undefined ? 1 : prev + 1);
+  }
+  return [...counts.entries()]
+    .filter(([, count]) => count >= 2)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([email, count]) => ({ email, count }));
+}
+
+/** 同じメールアドレスの招待を断るときの文。訂正の道 (× で消してから) を言う。 */
+export function duplicateMemberMessage(existing: Member): string {
+  return `${existing.email} は「${existing.name}」として既に登録されています。氏名を直すときは一覧の × で消してから入れ直してください（役割は一覧で変えられます。同じ人を 2 度登録するとシートを 2 つ使い、一人当たりの金額が薄まります）。`;
+}
+
+const listMemberGroups = (groups: readonly DuplicateMemberGroup[]): string =>
+  groups.map((g) => `${g.email} ×${g.count}`).join('、');
+
+/** 一覧の上の警告 (既に重複が在るとき)。無ければ null。 */
+export function duplicateMembersNote(groups: readonly DuplicateMemberGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `同じメールアドレスのメンバーが ${groups.length} 組重複しており、従業員数に 2 度数えられています（${listMemberGroups(groups)}）。一覧の × で余分な行を消してください。`;
+}
+
+/** 書面 §3 の但し書き (**相手に渡る面**)。無ければ null。 */
+export function duplicateMembersSheetNote(groups: readonly DuplicateMemberGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `登録メンバーに同じメールアドレスの重複が ${groups.length} 組あり（${listMemberGroups(groups)}）、従業員数と一人当たりの金額はその重複を含んだ値です。`;
+}

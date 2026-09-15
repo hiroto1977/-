@@ -15,6 +15,7 @@
  * この監査で繰り返し出た形なので。
  */
 
+import { countChars } from './inputCeiling';
 export type ScanUrlFailure = 'empty' | 'too-long' | 'not-a-url' | 'not-web';
 
 export type ScanUrlResult =
@@ -22,7 +23,70 @@ export type ScanUrlResult =
   | { readonly ok: false; readonly reason: ScanUrlFailure };
 
 /** VirusTotal の URL 長の実務上の上限に合わせた保守的な値。 */
-export const MAX_SCAN_URL_LENGTH = 2048;
+/**
+ * **断りの文面も 1 つ。** (2026-09-15 · パス 282)
+ *
+ * `validateScanUrl` の 4 つの理由に対する文面は、2026-09-15 まで
+ * **ビルドごとに 1 つずつ**在った (`main/clients/security.ts` と
+ * `renderer/data/saasWriteWeb.ts` に同じ 4 行)。今日は字も一致していたが、
+ * **一致を留めている物が何も無かった** —— パス 167 / 250 / 252 / 269 / 273 が
+ * それぞれ 1 件ずつ閉じてきた「字面がビルドごとに 1 つずつ」の家系である。
+ *
+ * ここは URL を第三者 (VirusTotal) へ渡す前の関門なので、断られた理由が
+ * ビルドによって違う言い方になってはいけない —— 利用者は同じ入力を
+ * 別の端末で試し、同じ説明を期待する。
+ */
+export const SCAN_URL_MESSAGES: Readonly<Record<ScanUrlFailure, string>> = {
+  empty: 'url は必須です',
+  'too-long': 'url が長すぎます',
+  'not-a-url': 'url を URL として解釈できません',
+  'not-web': 'url は http:// または https:// で始まる必要があります',
+};
+
+export const MAX_SCAN_URL_CHARS = 2048;
+
+/**
+ * **HIBP へ渡すメールアドレスを読む —— 1 か所だけ持つ** (2026-09-15 · パス 285)。
+ *
+ * この関数が在る前、同じ 2 行が main (`clients/security.ts`) とブラウザ版
+ * (`data/saasWriteWeb.ts`) に 1 つずつ在った:
+ *
+ *     const email = typeof raw === 'string' ? raw.trim() : '';
+ *     if (!email) throw new Error(…);   // main は英語・ブラウザ版は日本語
+ *
+ * ★ **この双子は 1 度ずれて、実害を出している。** main の元の注記が記録している ——
+ * 2026-08-22 まで **main だけ `.trim()` を持っておらず**、貼り付けで空白が付いた
+ * 住所をそのまま問い合わせると HIBP は 404 を返し、それを「どの漏洩にも
+ * 含まれない」として表示していた。**誤った安心**を返す側のずれである。
+ *
+ * そのときの直しは `.trim()` を main へ**写した** —— つまり写しは 2 つのまま
+ * 残り、同じずれがもう一度起きうる。しかも起きたときの症状は
+ * 「漏洩しているのに安全と言う」で、この本が塞いできた中でも重い側である。
+ * だから**文面ではなく述語ごと**ここへ寄せる。
+ *
+ * 天井は置かない —— 今日の両ビルドが空文字だけを断っているので、
+ * ここで増やすと**振る舞いが変わる**。境界を動かすのは別の判断であり、
+ * 文面と写しを畳む今回の仕事に混ぜない (パス 284 で site の文面へ
+ * 手を伸ばして検査に止められたのと同じ種類の線引き)。
+ */
+export type BreachEmailFailure = 'empty';
+
+export type BreachEmailResult =
+  | { readonly ok: true; readonly email: string }
+  | { readonly ok: false; readonly reason: BreachEmailFailure };
+
+/** 断りの文面 —— **両ビルドがここを読む** (文を写さない)。 */
+export const BREACH_EMAIL_MESSAGES: Readonly<Record<BreachEmailFailure, string>> = {
+  empty: 'email は必須です',
+};
+
+export function validateBreachEmail(raw: unknown): BreachEmailResult {
+  // 前後の空白を落とすのは**安全の判断に効く** (上の docblock の 2026-08-22)。
+  const email = typeof raw === 'string' ? raw.trim() : '';
+  if (!email) return { ok: false, reason: 'empty' };
+  return { ok: true, email };
+}
+
 
 /**
  * 投入してよい形か検証する。
@@ -35,7 +99,7 @@ export function validateScanUrl(raw: unknown): ScanUrlResult {
   if (typeof raw !== 'string') return { ok: false, reason: 'empty' };
   const url = raw.trim();
   if (url === '') return { ok: false, reason: 'empty' };
-  if (url.length > MAX_SCAN_URL_LENGTH) return { ok: false, reason: 'too-long' };
+  if (countChars(url) > MAX_SCAN_URL_CHARS) return { ok: false, reason: 'too-long' };
   let parsed: URL;
   try {
     parsed = new URL(url);

@@ -32,16 +32,16 @@ Michael T. Hannan ／ John Freeman ／ Glenn R. Carroll
 - [Carroll & Hannan (1995) "Organizations in Industry" — Princeton University Press](https://press.princeton.edu/books/paperback/9780691034775/organizations-in-industry) `リファレンス`
 
 ## 関連概念
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 語彙が近い
 - [[mgmt-organizational-death-theory|組織死亡理論]] — 同じ思想家
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — 同じ思想家
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
 - [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 出典を共有
 - [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
-- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同分野の近傍
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

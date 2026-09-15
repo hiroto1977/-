@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 語彙が近い
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — 同じ思想家
 - [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 同じ思想家
 - [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — 同じ思想家
 - [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-crowdfunding-securities-regulation|クラウドファンディングと証券規制の再編（JOBSact）]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
-- [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,9 +40,9 @@ John C. Coates IV ／ Guhan Subramanian ／ Lynn A. Stout ／ Ronald J. Gilson
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同じ思想家
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+- [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 出典を共有
 - [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 出典を共有
 - [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
-- [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

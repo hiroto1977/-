@@ -33,7 +33,8 @@ function resolvePlaywright(){
 }
 const pw=resolvePlaywright();
 if(!pw){console.error('e2e:ollama: playwright が見つかりません');process.exit(2);}
-const DIR=path.join(__dirname,'..','..','dist');
+// 対照実験が古い版の HTML に当てられるよう、置き場所を環境変数で差し替えられる (既定は dist/)。
+const DIR=process.env.SERVICE_HUB_E2E_DIST||path.join(__dirname,'..','..','dist');
 
 const STUB_MODELS=['llama3.2:latest','qwen2.5-coder:7b'];
 
@@ -48,7 +49,7 @@ function ollamaStub(withCors){
       'access-control-allow-headers':'content-type',
     } : {};
     if(req.method==='OPTIONS'){res.writeHead(withCors?204:403,h);res.end();return;}
-    if(req.url==='/api/version'){res.writeHead(200,{...h,'content-type':'application/json'});res.end(JSON.stringify({version:'0.5.4'}));return;}
+    if(req.url==='/api/version'){res.writeHead(200,{...h,'content-type':'application/json'});res.end(JSON.stringify({version:'0.33.3'}));return;}
     if(req.url==='/api/tags'){res.writeHead(200,{...h,'content-type':'application/json'});
       res.end(JSON.stringify({models:[
         {name:'llama3.2:latest',size:2*1024**3,modified_at:'2026-07-01T00:00:00Z',details:{family:'llama',parameter_size:'3B',quantization_level:'Q4_K_M'}},
@@ -154,11 +155,16 @@ async function unlockAndOpenOllama(page){
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
     const hasModels=/llama3\.2:latest/.test(body) && /qwen2\.5-coder:7b/.test(body);
-    const hasVersion=/0\.5\.4/.test(body);
+    const hasVersion=/0\.33\.3/.test(body);
     const noSetupHint=!/はじめて使う/.test(body) && !/あと 1 つだけ設定が要ります/.test(body);
     const ok=hasModels&&hasVersion&&noSetupHint;
-    console.log(`${ok?'✅':'❌'} 接続成功: 実モデル2件とバージョン0.5.4を表示 (models=${hasModels} version=${hasVersion} 案内非表示=${noSetupHint})`);
+    console.log(`${ok?'✅':'❌'} 接続成功: 実モデル2件とバージョン0.33.3を表示 (models=${hasModels} version=${hasVersion} 案内非表示=${noSetupHint})`);
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,400));}
+    // ★ 脆弱性の台帳の注意は「いつの事実か」を刷る (2026-09-09 · パス 139)。日付はコードから読む (写さない)。
+    const verifiedOn=/OLLAMA_ADVISORIES_VERIFIED_ON = '(\d{4}-\d{2}-\d{2})'/.exec(fs.readFileSync(path.join(__dirname,'..','..','src','shared','ollama.ts'),'utf8'))[1];
+    const dated=body.includes(`${verifiedOn} 時点`) && !/未パッチ/.test(body);
+    console.log(`${dated?'✅':'❌'} ★ 脆弱性の台帳の日付 (${verifiedOn} 時点) が画面に出て、「未パッチ」の固定文は出ない`);
+    if(!dated){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,400));}
 
     // --- ケース3b: 実際にチャットを送って応答が返る ---
     // 画面にチャット欄があるだけでは「使える」ことにならない。ブラウザから
@@ -195,7 +201,7 @@ async function unlockAndOpenOllama(page){
     await page.reload({waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
-    const ok=/llama3\.2:latest/.test(body) && /0\.5\.4/.test(body);
+    const ok=/llama3\.2:latest/.test(body) && /0\.33\.3/.test(body);
     console.log(`${ok?'✅':'❌'} 別端末経路: 保存した接続先 (http://localhost:11434) で接続しモデルを表示`);
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,300));}
     await ctx.close();

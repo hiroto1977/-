@@ -150,3 +150,60 @@ describe('lint:forbidden — 外側の証人 (ゲート自身の外から留め�
     }
   });
 });
+
+/*
+ * **走査が的を外していないことの、外側からの証人。** (2026-09-07)
+ *
+ * ゲートには錨が 1 つあった —— `KNOWN_SUPPRESSIONS` の双方向照合。走査が死んで
+ * 例外の一致が消えれば鳴る。実測で `src` / `scripts` / `orchestration` の
+ * どれを落としても鳴った。**ところが錨は「例外が在る場所」にしか無い。**
+ * `assets` を落とすと **exit 0 のまま**で、そこに在る 1 本は `assets/sw.js`
+ * —— 出荷される Service Worker、単一 HTML の外で全タブに常駐する唯一の
+ * スクリプトである。根を足したのは 2026-08-22 で「丸ごと見えていなかった」から
+ * だったのに、その直しには錨が無く、同じ形で黙って元へ戻れた。
+ *
+ * ゲート側に床 (`SCAN_ROOTS`) と名指し (`MUST_SCAN`) を置いたが、**それも
+ * ゲートと同じ紙に在る**。このファイルの冒頭に書いた通り、同じ紙の証人は
+ * 1 回の編集で一緒に消える。だから床の**存在**と**効き**をここから見る。
+ */
+const live = req('../../../scripts/lint-forbidden-patterns.cjs') as {
+  SCAN_ROOTS: { dir: string; min: number; why?: string }[];
+  MUST_SCAN: string[];
+  rootShortfalls: (counts: Record<string, number>, roots?: { dir: string; min: number }[]) => string[];
+  missingMustScan: (visited: Set<string>, must?: string[]) => string[];
+  realRootCounts: () => Record<string, number>;
+  realVisited: () => Set<string>;
+};
+
+describe('lint:forbidden — 走査が生きていること (外側の証人)', () => {
+  it('出荷する Service Worker は名指しで走査対象に入っている', () => {
+    expect(live.MUST_SCAN).toContain('assets/sw.js');
+  });
+
+  it('★ 実物の走査が実際にその 1 本へ届いている', () => {
+    expect(live.missingMustScan(live.realVisited())).toEqual([]);
+    // 標本: 届いていなければ鳴る (規則が空振りしていないこと)。
+    expect(live.missingMustScan(new Set())).toHaveLength(1);
+  });
+
+  it('★ 出荷物の在る根には床が置かれている (0 は「床が無い」ではない)', () => {
+    const assets = live.SCAN_ROOTS.find((r) => r.dir === 'assets');
+    expect(assets?.min).toBeGreaterThanOrEqual(1);
+    // 床 0 の根は理由を書いてあること (「床が無い」と区別する)。
+    for (const r of live.SCAN_ROOTS) {
+      if (r.min === 0) expect((r.why ?? '').length).toBeGreaterThan(8);
+    }
+  });
+
+  it('★ 実物の根はすべて床を満たし、床を上げれば鳴る (対照)', () => {
+    expect(live.rootShortfalls(live.realRootCounts())).toEqual([]);
+    const raised = live.SCAN_ROOTS.map((r) => ({ ...r, min: r.min + 100000 }));
+    expect(live.rootShortfalls(live.realRootCounts(), raised)).toHaveLength(live.SCAN_ROOTS.length);
+  });
+
+  it('走査の死 (根が消えて 0 件) は床で鳴る', () => {
+    const withFloor = live.SCAN_ROOTS.filter((r) => r.min > 0);
+    expect(withFloor.length).toBeGreaterThan(0);
+    expect(live.rootShortfalls({}, withFloor)).toHaveLength(withFloor.length);
+  });
+});

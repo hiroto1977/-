@@ -417,6 +417,14 @@ a:hover { text-decoration: underline; }
   color: var(--success);
   border-color: rgba(74,222,128,0.3);
 }
+/* 中立 — 「確認できません」「検出対象外」のように、利用者の環境について
+   何も主張しない札に使う (パス 165)。既定の青は情報色なので「今ここに何かある」と
+   読めてしまい、警告の黄は不安を作る。どちらでもない色を 1 つ足した。 */
+.badge.muted {
+  background: rgba(148,163,184,0.12);
+  color: var(--text-muted);
+  border-color: rgba(148,163,184,0.3);
+}
 
 .data-list {
   list-style: none;

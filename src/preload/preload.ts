@@ -65,6 +65,8 @@ const api = {
    *  秘密そのものは返さない。 */
   storageProtection: (): Promise<StorageProtection> =>
     ipcRenderer.invoke('secrets:protection'),
+  /** 「すべてのデータを削除」— デスクトップ版は main がファイルと renderer の保存領域を消して再起動する (パス 137)。 */
+  eraseAll: (): Promise<import('../shared/eraseReport').EraseAllReport> => ipcRenderer.invoke('app:eraseAll'),
 
   fetchSnapshot: <T = unknown>(serviceId: ServiceId): Promise<FetchResult<T>> =>
     ipcRenderer.invoke('fetch:snapshot', serviceId),

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import { needsFormulaGuard, toCsv } from '../csv';
+import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 /*
  * **CSV を書き出す経路は、全部 `data/csv.ts` の関門を通る。**
@@ -31,7 +32,7 @@ import { needsFormulaGuard, toCsv } from '../csv';
  */
 
 function sourceFiles(dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const full = join(dir, name);
     if (statSync(full).isDirectory()) {
       if (name !== '__tests__' && name !== 'node_modules') sourceFiles(full, out);
@@ -52,7 +53,7 @@ describe('CSV の書き出しは関門を通る', () => {
     const offenders: string[] = [];
     for (const f of sourceFiles('src')) {
       if (norm(f).endsWith(GATE)) continue;
-      const text = readFileSync(f, 'utf8');
+      const text = readOriginalSource(f);
       const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
       if (!/export function \w*Csv\b/.test(code)) continue;
       // `from './csv'` / `from '../data/csv'` などを受ける。
@@ -68,7 +69,7 @@ describe('CSV の書き出しは関門を通る', () => {
     const offenders: string[] = [];
     for (const f of sourceFiles('src')) {
       if (norm(f).endsWith(GATE)) continue;
-      const code = readFileSync(f, 'utf8')
+      const code = readOriginalSource(f)
         .replace(/\/\*[\s\S]*?\*\//g, '')
         .replace(/^\s*\/\/.*$/gm, '');
       const joinsFields = /\.join\(\s*','\s*\)/.test(code);

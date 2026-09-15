@@ -1,4 +1,13 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { optionalString, requireNumber, requireObject, requireString } from '../../shared/apiResponse';
+import {
+  GITHUB_ISSUE_FIELDS,
+  GITHUB_LABELS,
+  checkWriteFields,
+  checkWriteLabels,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 interface GithubUser {
   login: string;
@@ -130,15 +139,24 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
     }),
   );
 
+  /*
+   * **画面に出る欄を 1 つずつ要求する** (パス 262)。封筒は `jsonFetch` が
+   * 見るが、`{}` の応答では 6 欄すべてが `undefined` のまま
+   * スナップショットへ入り、`publicRepos` / `followers` は
+   * **数として画面に刷られる** —— 14 のクライアントのうち、壊れた応答が
+   * 「エラー」ではなく「データ」として画面へ届くのはここだけだった (実測)。
+   * 名前と会社は元から `null` を取り得る欄なので任意のままにする。
+   */
+  const u = requireObject(user, 'GitHub API');
   return {
     user: {
-      login: user.login,
-      name: user.name ?? user.login,
-      company: user.company ?? '',
-      avatarUrl: user.avatar_url,
-      profileUrl: user.html_url,
-      publicRepos: user.public_repos,
-      followers: user.followers,
+      login: requireString(u, 'login', 'GitHub API'),
+      name: optionalString(u, 'name') ?? requireString(u, 'login', 'GitHub API'),
+      company: optionalString(u, 'company') ?? '',
+      avatarUrl: requireString(u, 'avatar_url', 'GitHub API'),
+      profileUrl: requireString(u, 'html_url', 'GitHub API'),
+      publicRepos: requireNumber(u, 'public_repos', 'GitHub API'),
+      followers: requireNumber(u, 'followers', 'GitHub API'),
     },
     pullRequests: pulls,
   };
@@ -161,10 +179,21 @@ interface CreateIssueResponse {
   state: string;
 }
 
-async function createIssue(ctx: ActionContext): Promise<{ number: number; url: string; title: string }> {
+async function createIssue(ctx: ActionContext): Promise<ActionData<'github/create-issue'>> {
+  // 欄の型と長さは共有の台帳で断る (パス 110)。`labels` は届いた JSON をそのまま
+  // 転送していたので、件数と 1 件の長さにも天井を置く。
+  const bad = checkWriteFields(ctx.payload, GITHUB_ISSUE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { owner, repo, title, body, labels } = ctx.payload as unknown as CreateIssuePayload;
-  if (!owner || !repo || !title) {
-    throw new Error('owner, repo, title are required');
+  const badLabels = checkWriteLabels(labels);
+  if (badLabels !== null) {
+    throw new Error(
+      describeWriteFieldFailure({
+        field: 'labels',
+        problem: badLabels,
+        rule: GITHUB_LABELS,
+      }),
+    );
   }
   const res = await jsonFetch<CreateIssueResponse>(
     `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`,

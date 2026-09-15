@@ -33,7 +33,7 @@ aliases:
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 語彙が近い
 - [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 語彙が近い
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 同じ思想家
-- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同分野の近傍
+- [[bizlaw-corporate-governance-structures|コーポレート・ガバナンス構造の比較制度分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

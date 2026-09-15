@@ -40,7 +40,7 @@ aliases:
 - [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同じ思想家
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
-- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

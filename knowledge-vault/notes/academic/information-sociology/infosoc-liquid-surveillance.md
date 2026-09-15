@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
 - [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同分野の近傍
-- [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

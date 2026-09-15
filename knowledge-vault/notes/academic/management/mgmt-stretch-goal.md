@@ -30,8 +30,9 @@ aliases:
 - [Harvard Business Review (2017) "The Stretch Goal Paradox"（ストレッチ目標が有効な条件・逆効果となる条件の実務解説）](https://hbr.org/2017/01/the-stretch-goal-paradox) `メディア`
 
 ## 関連概念
-- [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同分野の近傍
 - [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同分野の近傍
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同分野の近傍
+- [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
