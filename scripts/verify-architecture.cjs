@@ -128,18 +128,23 @@ function parseRef(raw) {
 
 /** Extract symbol candidates from text. Backtick-wrapped identifiers
  *  (camelCase / snake_case / kebab-case) only. */
+/*
+ * 一般語・TypeScript の原始型は記号として数えない。
+ *
+ * **名前を付けて 1 か所に置く** (パス 292) —— `selfTest` は囲まれた側と図の側の
+ * **両方**を 1 つの標本で試すので、標本がこの表に当たる語だと
+ * 「囲まれた側は記号 0 個なので何も検査しない」状態になり、
+ * **自己検査が静かに空になる** (実際にそうなった: `number` が選ばれて 2 件が
+ * 鳴らなくなった)。選ぶ側が同じ表を読めるように export せず module 定数にする。
+ */
+const GENERIC_SYMBOL_RE =
+  /^(file|line|true|false|null|void|string|number|boolean|main|src|clients|action|payload|test|tests|fetch|json|api|data|svc|env|raw|res|err|get|post|put|delete|patch|head|options)$/i;
+
 function extractSymbols(text) {
   const symbols = new Set();
   for (const m of text.matchAll(/`([A-Za-z_][A-Za-z0-9_-]{2,})\(?\)?`/g)) {
     const sym = m[1];
-    // Skip generic words / TypeScript primitives.
-    if (
-      /^(file|line|true|false|null|void|string|number|boolean|main|src|clients|action|payload|test|tests|fetch|json|api|data|svc|env|raw|res|err|get|post|put|delete|patch|head|options)$/i.test(
-        sym,
-      )
-    ) {
-      continue;
-    }
+    if (GENERIC_SYMBOL_RE.test(sym)) continue;
     symbols.add(sym);
   }
   return [...symbols];
@@ -328,13 +333,85 @@ function verifyReferences(archText) {
  * ただし記号の取り方が違う: 囲まれた側は参照の**手前の散文**から `` `sym` `` を拾うが、
  * 図では `+sym(args) : file:line` の形なので行から直に取る。
  */
-const DIAGRAM_REF_RE = /^\s*[+\-]?([A-Za-z_][A-Za-z0-9_]*)\s*\([^)]*\)\s*:\s*([A-Za-z][A-Za-z0-9./_-]*\.(?:ts|tsx|cjs))\s*:\s*(\d+)/;
+/*
+ * **括弧は必須ではない** (パス 292)。
+ *
+ * 2026-09-15 まで `\([^)]*\)` を**必須**にしていた。mermaid のクラス箱には
+ * 関数以外の成員 —— 定数や型 —— も並ぶので、それらは `+NAME : file.ts:NNN` と
+ * 括弧なしで書かれる。すると:
+ *
+ *   - 図の走査は**括弧**を要求するので見ない
+ *   - 散文の走査は**バッククォート**を要求するので見ない
+ *
+ * ので **どの網にも映らない**。実測 (パス 292): mermaid の中の
+ * 「名前 : ファイル:行」29 件のうち **2 件** (`OAUTH_CONFIGS : oauth.ts` /
+ * `FetchError : types.ts`) が誰にも検査されていなかった。そのうち
+ * `OAUTH_CONFIGS` は `oauth.ts:54` = **ブロックコメントを閉じる行**を指していて、
+ * パス 291 で私が手で直すまで**誰も鳴らなかった**。
+ *
+ * ★ 括弧の代わりに**可視性の印** (`+` / `-` / `~`) を要求する ——
+ * 「散文の中の `foo : bar.ts:1` を拾わない」という元の意図はそちらで果たせる
+ * (クラス箱の成員は必ず印を持つ)。印も括弧も無い行は今までどおり無視する。
+ *
+ * ★ **旧い self-test の 1 行が、この穴を「意図」として留めていた** ——
+ * `['引数の括弧が無ければ図の参照ではない', '+justAName : x.ts:1', 0, 25]`。
+ * 標本の `justAName` は**実在しない名前**なので、
+ * 「散文を拾わない」と「実在する成員を黙って飛ばす」を**見分けられない**。
+ * パス 289 (過剰の対照が穴を意図として留めた) / パス 291 (検査の題名が弱さを
+ * 仕様として書いた) と同じ家系で、**3 パス連続**である。
+ */
+const DIAGRAM_REF_RE =
+  /^\s*(?:([+\-~])\s*)?([A-Za-z_][A-Za-z0-9_]*)\s*(\([^)]*\))?\s*:\s*([A-Za-z][A-Za-z0-9./_-]*\.(?:ts|tsx|cjs))\s*:\s*(\d+)/;
 
 /** 図の 1 行から参照を取る (取れなければ null)。`selfTest` から呼べるよう分けてある。 */
 function parseDiagramRef(line) {
   const m = DIAGRAM_REF_RE.exec(line);
   if (!m) return null;
-  return { symbol: m[1], file: m[2], line: Number(m[3]) };
+  const [, marker, symbol, parens, file, lineNo] = m;
+  // 印も括弧も無ければ図の成員ではない (散文の `foo : bar.ts:1` を拾わないため)。
+  if (!marker && !parens) return null;
+  return { symbol, file, line: Number(lineNo) };
+}
+
+/**
+ * その行はコメント (散文) か。
+ *
+ * 行頭が `//`・`*`・ブロックコメントの開始か終了なら散文とみなす。途中の行も
+ * このリポジトリの書き方では必ず `*` 始まりなので拾える (完璧な字句解析ではないが、
+ * **見落とす向きではなく厳しい向きに外れる** —— 拾いすぎれば「散文だけ」と
+ * 判定されて鳴るので、人が見て直すことになる)。
+ */
+function isProseLine(line) {
+  const t = line.trim();
+  return t === '' || t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
+}
+
+/**
+ * 記号が**コードとして**その行に現れるか (パス 292)。
+ *
+ * 2026-09-15 まで `line.includes(sym)` だけを見ており、**言及と宣言を
+ * 見分けていなかった**。実測した 2 つの通り方:
+ *
+ *   1. **docblock の使用例** —— `+setToken(id, token) : secrets.ts:73` の
+ *      73 行目は本文ではなく `*   setToken('notion', …) → 成功を返す` という
+ *      **説明の例**で、実際の宣言は **263 行目** (190 行の隔たり)。
+ *   2. **文字列リテラル** —— `+authorize(config) : oauth.ts:258` の帯には
+ *      `authorizeUrl: 'https://public-api.wordpress.com/oauth2/authorize'` が
+ *      在り、**URL の末尾**が記号名と一致していた。実際の `authorize` は
+ *      **775 行目** (517 行の隔たり)。
+ *
+ * だから「コメント行ではない」かつ「引用符の外」を要求する。
+ *
+ * ★ **この規則を散文 ref (`verifyReferences`) には掛けない。** 実測 (パス 292):
+ * 記号が照合されている 125 組のうち、引用符の外を要求すると **51 組が落ちる** ——
+ * action 名 (`'create-issue'`) とヘッダ名 (`'x-api-key'`) は**文字列としてしか
+ * 存在し得ない**ので、それは偽陽性である。図の 29 件は全部クラス箱の**成員**
+ * (= 宣言が在る物) なので、そこだけを締める。母集団の性質が違えば規則も違う。
+ */
+function symbolAppearsAsCode(line, sym) {
+  if (isProseLine(line)) return false;
+  // 引用符の中身を落としてから探す (URL の末尾が記号名と一致する形を弾く)。
+  return line.replace(/'[^']*'|"[^"]*"|`[^`]*`/g, '').includes(sym);
 }
 
 function verifyDiagramRefs(archText) {
@@ -369,15 +446,27 @@ function verifyDiagramRefs(archText) {
 
     const lo = Math.max(1, ref.line - SYMBOL_WINDOW);
     const hi = Math.min(srcArr.length, ref.line + SYMBOL_WINDOW);
-    const inWindow = srcArr.slice(lo - 1, hi).some((l) => l.includes(ref.symbol));
+    // **コードとしての出現**を要求する (パス 292) —— docblock の使用例や
+    // URL リテラルの末尾一致では満たされない。
+    const inWindow = srcArr
+      .slice(lo - 1, hi)
+      .some((l) => symbolAppearsAsCode(l, ref.symbol));
     if (!inWindow) {
-      const actual = srcArr.map((l, i) => (l.includes(ref.symbol) ? i + 1 : 0)).filter(Boolean);
+      const actual = srcArr
+        .map((l, i) => (symbolAppearsAsCode(l, ref.symbol) ? i + 1 : 0))
+        .filter(Boolean);
+      // 散文だけで満たされていた場合は、それを名指しする —— 「見つからない」と
+      // 出すと「名前が消えた」と読めてしまい、直し方が分からない。
+      const proseOnly = actual.length === 0
+        && srcArr.slice(lo - 1, hi).some((l) => l.includes(ref.symbol));
       failures.push({
         archLine: lineNo,
         ref: fullRef,
         reason:
           `図の記号 "${ref.symbol}" drifted: cited near line ${ref.line} but actually at line(s) `
-          + `${actual.slice(0, 4).join(', ') || '(見つからない)'} (${path.relative(REPO_ROOT, refPath)})`,
+          + `${actual.slice(0, 4).join(', ') || '(コードとしては見つからない)'}`
+          + (proseOnly ? ' —— 帯に在るのは**散文か文字列の中だけ**です (宣言を指してください)' : '')
+          + ` (${path.relative(REPO_ROOT, refPath)})`,
       });
       return;
     }
@@ -1146,13 +1235,46 @@ function selfTest() {
    * 末尾を引用すると窓 (±15 行) に 89 行目が入って鳴らなかった。
    * 名前も位置も固定で書かず、その場で 1 度きりのものを選ぶ。
    */
-  const once = [...new Set([...srcText.matchAll(/\b([A-Za-z_][A-Za-z0-9_]{4,})\b/g)].map((m) => m[1]))]
+  /*
+   * ★ **1 度きりの出現が「コードとして」であることまで要求する** (パス 292)。
+   *
+   * 図の照合は 2026-09-15 から `symbolAppearsAsCode` を通すので、
+   * コメントの中にしか無い語を土台に選ぶと**自己検査の標本のほうが先に落ちる**
+   * (実際に落ちた: 7 件すべて)。標本は規則を満たす物でなければ規則を試せない。
+   */
+  const onceAll = [...new Set([...srcText.matchAll(/\b([A-Za-z_][A-Za-z0-9_]{4,})\b/g)].map((m) => m[1]))]
     .map((sym) => ({ sym, at: srcLines.map((l, i) => (l.includes(sym) ? i + 1 : 0)).filter(Boolean) }))
-    .find((x) => x.at.length === 1);
+    .filter((x) => x.at.length === 1 && !GENERIC_SYMBOL_RE.test(x.sym));
+  /*
+   * ★ **一般語を除く** (パス 292)。標本が `extractSymbols` の除外表に載る語
+   * (`number` など) だと、囲まれた側は「記号 0 個」になって**何も検査せず
+   * 0 件で通る** —— 自己検査が静かに空になる形である。
+   */
+  const once = onceAll[0];
   if (!once) {
     console.error(`❌ self-test: ${REF} に 1 度しか現れない識別子が無く、ドリフトを試せません`);
     return 1;
   }
+  /*
+   * ★ **図の側は別の標本が要る** (パス 292)。
+   *
+   * 2026-09-15 から図の照合は `symbolAppearsAsCode` を通す (散文・文字列の中の
+   * 言及では満たされない) ので、**囲まれた側と同じ標本では試せない**。
+   * 実測: `serviceId.ts` の 1 度きりの識別子 108 個のうち、コードの行に在るのは
+   * **4 個だけ** (残りは全部コメントか、サービス id の文字列リテラル) で、
+   * そのうち一般語でないのは `function` / `isServiceId` / `unknown` の 3 個。
+   * だから `once` を締めると囲まれた側の標本が作れなくなる ——
+   * **規則が分かれたのだから標本も分ける**。
+   */
+  const onceCode = onceAll.find((x) => symbolAppearsAsCode(srcLines[x.at[0] - 1], x.sym));
+  if (!onceCode) {
+    console.error(
+      `❌ self-test: ${REF} に「コードの行に 1 度だけ現れる」識別子が無く、`
+        + '図の記号の規則 (散文では満たされない) を試せません',
+    );
+    return 1;
+  }
+
   // その識別子から SYMBOL_WINDOW より確実に離れた行。
   const far = once.at[0] > total / 2 ? 1 : total;
   if (Math.abs(far - once.at[0]) <= SYMBOL_WINDOW) {
@@ -1221,9 +1343,16 @@ function selfTest() {
    * そこで**下限より多い件数の標本**を組んで、ドリフトだけを見る。
    */
   {
-    const sym = once.sym;
-    const good = `    +${sym}(x) : ${REF}:${once.at[0]}`;
-    const bad = `    +${sym}(x) : ${REF}:${far}`;
+    // 図の側は `onceCode` を使う (コードの行に在る記号でなければ規則を満たせない)。
+    const sym = onceCode.sym;
+    const symLineNo = onceCode.at[0];
+    const farFromSym = symLineNo > total / 2 ? 1 : total;
+    if (Math.abs(farFromSym - symLineNo) <= SYMBOL_WINDOW) {
+      failed += 1;
+      console.log(`  ✗ 図の参照: ${REF} が短すぎて窓の外を作れません (${total} 行)`);
+    }
+    const good = `    +${sym}(x) : ${REF}:${symLineNo}`;
+    const bad = `    +${sym}(x) : ${REF}:${farFromSym}`;
     /** 下限を満たす嵩上げ (実在の行を指す正しい参照を並べる)。 */
     const pad = (n) => Array.from({ length: n }, () => good).join('\n');
 
@@ -1231,7 +1360,36 @@ function selfTest() {
       ['図の参照を数える (バッククォート無しでも見る)', pad(25), 0, 25],
       ['★ 図の記号がずれたら鳴る', `${pad(25)}\n${bad}`, 1, 25],
       ['図でない行は数えない (散文)', `${pad(25)}\nふつうの文に ${REF}:1 と書いただけ`, 0, 25],
-      ['引数の括弧が無ければ図の参照ではない', `${pad(25)}\n    +justAName : ${REF}:1`, 0, 25],
+      /*
+       * ★ **括弧なしの成員も参照である** (パス 292)。
+       *
+       * ここには 2026-09-15 まで
+       *   ['引数の括弧が無ければ図の参照ではない', `+justAName : ${REF}:1`, 0, 25]
+       * が在り、**穴を「意図」として留めていた** —— 標本の `justAName` は
+       * 実在しない名前なので、「散文を拾わない」と「実在する成員を黙って
+       * 飛ばす」を**見分けられない**。実物では `+OAUTH_CONFIGS : oauth.ts` と
+       * `+FetchError : types.ts` の 2 件が、そのせいでどの網にも映らなかった。
+       *
+       * 元の意図 (散文を拾わない) は**可視性の印**で果たすので、標本を 2 つに
+       * 分ける: 印つきの括弧なしは**取る**・印も括弧も無い行は**取らない**。
+       */
+      ['★ 括弧が無くても印が在れば参照 (定数・型の成員)', `${pad(25)}\n    +${sym} : ${REF}:${farFromSym}`, 1, 25],
+      ['印も括弧も無ければ参照ではない', `${pad(25)}\n    justAName : ${REF}:1`, 0, 25],
+      /*
+       * ★ **散文の中の言及では満たされない** (パス 292)。
+       *
+       * 実物で 2 通り観測した: docblock の使用例 (`setToken` は 73 行の説明文で
+       * 満たされ、宣言は 263 行) と、URL リテラルの末尾一致 (`authorize` は
+       * `authorizeUrl: 'https://…/oauth2/authorize'` で満たされ、宣言は 775 行)。
+       * どちらも**同じファイルの中で数百行離れている**ので、範囲外検査でも
+       * ファイル不在検査でも捕まらなかった。
+       */
+      [
+        '★ 帯に在るのがコメントだけなら鳴る',
+        `${pad(25)}\n    +zzzOnlyInProse(x) : ${REF}:1`,
+        1,
+        25,
+      ],
       ['★ 走査が死んだら鳴る (生存下限)', good, 1, 1],
       ['★ 実在しないファイルなら鳴る', `${pad(25)}\n    +zzz(x) : src/shared/no-such-file.ts:1`, 1, 25],
       ['★ 範囲外の行なら鳴る', `${pad(25)}\n    +${sym}(x) : ${REF}:${total + 500}`, 1, 25],

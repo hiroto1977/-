@@ -35,7 +35,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
 | `file:line` 参照数 | 601 | 自己検証 |
-| 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
+| 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
 
@@ -2364,7 +2364,7 @@ classDiagram
   }
 
   class SecretsStore~secrets.ts~ {
-    +setToken(id, token) : secrets.ts:73
+    +setToken(id, token) : secrets.ts:263
     +getToken(id) : secrets.ts:317
     +clearToken(id) : secrets.ts:322
     +listConfiguredServices() : secrets.ts:344
@@ -2395,7 +2395,7 @@ classDiagram
     +limitedFetch(url, init, ctx) : Response
     +readCapped(res, ctx) : string
     +jsonFetch~T~(url, init, ctx) : types.ts:46
-    +FetchError : types.ts:19
+    +FetchError : types.ts:24
     +redactSecrets(text) : types.ts:37
   }
 
