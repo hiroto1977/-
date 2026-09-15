@@ -454,6 +454,8 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
       'accesstoken',
       'refresh_token',
       'client_secret',
+      'code_verifier',
+      'code-verifier',
       'token',
       'secret',
       'password',
@@ -478,9 +480,78 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
       ['資格情報でない引数は伏せない', 'https://h.test/p?part=snippet&id=UC1'],
       ['語の途中の key は伏せない (monkey)', 'https://h.test/p?monkey=abcdefghij'],
       ['散文の key=value は伏せない', 'the key=value form is common'],
-      ['`?` も `&` も無い形は伏せない', 'token=abcdefghijklmnop in prose'],
+      /*
+       * **パス 271 はここに `'token=abcdefghijklmnop in prose'` を置いていた。**
+       * 理由は「散文」だったが、区切りが無いという条件が指す母集団は 2 つ在り
+       * (散文と **form 本文の 1 つ目**)、標本は散文しか見ていなかった。
+       * だから過剰の対照が、`client_secret=…&grant_type=…` が素通りする穴を
+       * **意図として留めていた** (パス 289 で実測して直した)。
+       *
+       * 散文の対照はここに残す —— ただし**対の途中**に置く。文字列の先頭は
+       * form 本文の 1 つ目と区別できないので、先頭の標本では過剰を測れない。
+       */
+      ['散文の途中の token= は伏せない (対が先頭でない)', 'the token=abcdefghijklmnop form is odd'],
+      ['JSON の中の散文は別規則の領分', '{"note":"see key=abcdefghij"}'],
+      ['エラーコードは伏せない (?code= は規則に入れていない)', 'oauth error: code=access_denied'],
     ])('★ %s', (_label, text) => {
       expect(redactSecrets(text)).toBe(text);
+    });
+
+    /*
+     * **運び手の残り半分 —— `application/x-www-form-urlencoded` の本文。**
+     * (パス 289)
+     *
+     * RFC 6749 §4.1.3 がトークン端点に指定している形で、`main/oauth.ts` の
+     * `serializeTokenBody` と `renderer/oauth/pkce.ts` が実際に組み立てる。
+     * 対が 1 つ目のときは `?` も `&` も手前に無い。
+     */
+    it.each([
+      ['client_secret', `client_secret=${LONG}&grant_type=refresh_token`],
+      ['refresh_token', `refresh_token=${LONG}&client_id=abc`],
+      ['code_verifier (RFC 7636 の秘密)', `code_verifier=${LONG}&grant_type=authorization_code`],
+      ['access_token', `access_token=${LONG}`],
+      ['api_key', `api_key=${LONG}`],
+      ['password', `password=${LONG}`],
+      ['token', `token=${LONG}`],
+    ])('★ form 本文の 1 つ目でも伏せる: %s', (_label, body) => {
+      const out = redactSecrets(body);
+      expect(out).not.toContain(LONG);
+      expect(out).toContain('[REDACTED]');
+    });
+
+    it('★ 改行のあとも対の始まりである (本文をログの体裁で載せた形)', () => {
+      const out = redactSecrets(`request body:\nclient_secret=${LONG}&grant_type=x`);
+      expect(out).not.toContain(LONG);
+      expect(out).toContain('client_secret=[REDACTED]');
+      // 手前の行はそのまま (区切りを書き戻している)。
+      expect(out).toContain('request body:');
+    });
+
+    it('★ 1 つ目を伏せても 2 つ目以降は今までどおり伏せる (両方が要る)', () => {
+      const other = 'Y'.repeat(40);
+      const out = redactSecrets(`client_secret=${LONG}&refresh_token=${other}`);
+      expect(out).not.toContain(LONG);
+      expect(out).not.toContain(other);
+      expect(out).toBe('client_secret=[REDACTED]&refresh_token=[REDACTED]');
+    });
+
+    /*
+     * **`assertion` は足していない** —— JWT bearer grant の綴りだが、
+     * このアプリは 1 度も出さない (実測 0 件)。使っていない綴りを規則へ
+     * 足すと「効いているように読める」だけになる、というのが `?sig=` に
+     * ついて `redact.ts` が書いた判断で、同じ規準をここにも当てる。
+     * **足していないことを検査で留める** —— 黙って足されたら鳴る。
+     */
+    it('★ 出していない綴り (assertion) は規則に入っていない', () => {
+      const emitted = redactSecrets(`assertion=${LONG}`);
+      expect(emitted).toContain(LONG);
+      // 走査: このアプリが `assertion=` を組み立てていないことが根拠である。
+      const sites = ['src/main/oauth.ts', 'src/renderer/oauth/pkce.ts'];
+      for (const rel of sites) {
+        expect(readOriginalSource(resolve(REPO, rel)), rel).not.toContain('assertion:');
+      }
+      // 対照: 同じ走査は実際に出している綴りを拾う。
+      expect(readOriginalSource(resolve(REPO, 'src/main/oauth.ts'))).toContain('code_verifier:');
     });
 
     /*
@@ -540,6 +611,72 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     it('台帳の行にはすべて理由がある', () => {
       for (const [file, why] of Object.entries(QUERY_CREDENTIAL_SITES)) {
         expect(why.trim().length, `${file} の理由が短い`).toBeGreaterThan(20);
+      }
+    });
+
+    /*
+     * **走査の 2 本目 —— form 本文に資格情報を載せている所。** (パス 289)
+     *
+     * 上の走査は `[?&]name=${…}` しか見ていない = **クエリだけ**。
+     * `URLSearchParams` に資格情報の欄を置く形はそこに掛からないので、
+     * 「運び手を数えた」と言えていなかった。実測 2 件 (どちらも OAuth の
+     * トークン端点。`Authorization` ヘッダではなく本文で運ぶのは
+     * RFC 6749 §4.1.3 / RFC 7636 §4.5 の指定である)。
+     *
+     * **`assertion` を規則に入れていない根拠はこの走査である** ——
+     * 走査は `assertion` も探しており、0 件だから足していない。
+     * 誰かが JWT bearer grant を実装したら台帳と食い違って鳴る。
+     */
+    const FORM_CREDENTIAL_SITES: Readonly<Record<string, string>> = {
+      'src/main/oauth.ts':
+        'トークン端点への POST 本文に client_secret / refresh_token / code_verifier を載せる (RFC 6749 §4.1.3 の指定。ヘッダでは運べない欄が在る)',
+      'src/renderer/oauth/pkce.ts':
+        'ブラウザ版の貼り付け PKCE が同じ本文を組む (code_verifier は RFC 7636 §4.5 で本文の欄)',
+    };
+
+    /** 資格情報の欄を持つ form 本文を組んでいるファイル。 */
+    function scanFormCredentialSites(): string[] {
+      const roots = ['src/main', 'src/main/clients', 'src/shared/api', 'src/renderer/data', 'src/renderer/oauth'];
+      const names = 'client_?secret|refresh_?token|access_?token|code_?verifier|api_?key|password|assertion';
+      const asKey = new RegExp(`(?:^|[\\s,{(])(?:${names})\\s*:`, 'im');
+      const asSet = new RegExp(`\\.set\\(\\s*['"\`](?:${names})['"\`]`, 'i');
+      const found = new Set<string>();
+      for (const root of roots) {
+        const dir = resolve(REPO, root);
+        if (!existsSync(dir)) continue;
+        for (const name of readOriginalDir(dir)) {
+          if (!name.endsWith('.ts')) continue;
+          const text = stripLineComments(readOriginalSource(resolve(dir, name)));
+          // form 本文を組んでいないファイルは対象外 (JSON の本文は別規則の領分)。
+          if (!/URLSearchParams|x-www-form-urlencoded/.test(text)) continue;
+          if (asKey.test(text) || asSet.test(text)) found.add(`${root}/${name}`);
+        }
+      }
+      return [...found].sort();
+    }
+
+    it('★ 走査が生きている (的を外していない)', () => {
+      expect(scanFormCredentialSites().length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('★ form 本文に資格情報を載せる所は台帳と一致する (両方向)', () => {
+      expect(scanFormCredentialSites()).toEqual(Object.keys(FORM_CREDENTIAL_SITES).sort());
+    });
+
+    it('台帳の行にはすべて理由がある (form 本文の側)', () => {
+      for (const [file, why] of Object.entries(FORM_CREDENTIAL_SITES)) {
+        expect(why.trim().length, `${file} の理由が短い`).toBeGreaterThan(20);
+      }
+    });
+
+    it('★ 台帳の 2 件が組む欄は、どれも規則に当たる (名前の突き合わせ)', () => {
+      // 実物が本文に置いている欄名 (`main/oauth.ts` / `pkce.ts` より)。
+      for (const field of ['client_secret', 'refresh_token', 'code_verifier', 'grant_type']) {
+        const body = `${field}=${LONG}&x=1`;
+        const out = redactSecrets(body);
+        // grant_type は秘密ではないので伏せない —— 名前の一覧が広すぎないことの対照。
+        if (field === 'grant_type') expect(out, field).toContain(LONG);
+        else expect(out, field).not.toContain(LONG);
       }
     });
 

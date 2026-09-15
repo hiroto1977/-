@@ -64,8 +64,12 @@
  *     Microsoft 365 / Salesforce) / **00D…!…** (Salesforce セッション)
  *   - 接頭辞を持たない 3 形 (Cloudflare / LINE / Discord) は模様で見分けられない
  *     ので、ヘッダ名・JSON 項目名・**URL のクエリ引数**の規則が受け持つ (census が測る)
- *   - URL のクエリ引数 (`?api_key=` / `?access_token=` / `?token=` / `?key=` …) ——
- *     **3 本目の運び手。パス 271 で足した** (それまで 6 形すべて素通り)
+ *   - `name=value` の対 —— **3 本目の運び手。パス 271 で足し、パス 289 で
+ *     残り半分を塞いだ。** URL のクエリ (`?api_key=` / `?key=` …) と
+ *     `application/x-www-form-urlencoded` の本文の**両方**で、対が
+ *     1 つ目 (`client_secret=…&grant_type=…`) でも伏せる。パス 271 の
+ *     規則は `?` か `&` が直前に在ることを求めており、RFC 6749 §4.1.3 が
+ *     トークン端点に指定している form 本文の 1 つ目は素通りしていた
  *   - JSON token fields (access_token / refresh_token / token / api_key /
  *     client_secret / sharedSecret / password / …)
  */
@@ -303,8 +307,57 @@ export function redactSecrets(input: string): string {
        * 使っていない綴りを規則へ足すと「効いているように読める」だけになる
        * (このファイルが 2026-08-23 に学んだこと)。
        */
+      /*
+       * **運び手は「URL のクエリ」ではなく `name=value` の対である。**
+       * (2026-09-15 · パス 289 —— パス 271 の書き直し)
+       *
+       * パス 271 はこの規則を `([?&])` で始めた。`?` か `&` が**直前に在る**
+       * ことを要求するので、対が **1 つ目**のときは当たらない。
+       * `name=value` の対は 2 つの所に現れる:
+       *
+       *   ① URL のクエリ文字列        —— 1 つ目の前に `?` が在る ✅
+       *   ② `application/x-www-form-urlencoded` の本文 —— 1 つ目の前に何も無い ❌
+       *
+       * ② は **RFC 6749 §4.1.3 がトークン端点に指定している形**で、
+       * このファイルの隣 (`main/oauth.ts` の `serializeTokenBody` /
+       * `renderer/oauth/pkce.ts`) が実際に組み立てている。実測 (2026-09-15):
+       *
+       *   ?client_secret=…              伏せた
+       *   client_secret=…&grant_type=…  **素通り** (同じ名前・同じ運び手・位置だけ違う)
+       *   refresh_token=…&client_id=…   **素通り**
+       *   code_verifier=…               **素通り**
+       *   "body:\nclient_secret=…"       **素通り**
+       *
+       * つまり伏字の有効範囲が、**秘密の運び手ではない 1 文字**に依っていた。
+       *
+       * **パス 271 の対照がこの穴を「意図」として留めていた。**
+       * `['`?` も `&` も無い形は伏せない', 'token=abcdefghijklmnop in prose']`
+       * —— 過剰の対照の側に、理由「散文」で置かれていた。区切りが無いという
+       * 条件が指す母集団は 2 つ在り (散文と form 本文の 1 つ目)、
+       * **標本が散文しか見ていなかった**。パス 285 で名付けた
+       * 「同じ条件に 2 つの母集団が在り、標本が片方しか見ていない」の再来で、
+       * 今度は**自分が 1 パス前に書いた検査**である。
+       *
+       * 直し: 先頭を `(^|[?&\n])` にする —— 対が始まりうる境目は
+       * 「文字列の先頭」「`?`」「`&`」「改行」の 4 つ。`\s` まで広げると
+       * 散文 (`{"note":"see key=abcdefghij"}`) を巻き込むので広げない
+       * (実測して 1 件外れたので narrow に戻した)。`m` 旗ではなく `\n` を
+       * 文字クラスに入れてあるのは、`?`/`&` と同じく**区切りをそのまま
+       * 書き戻す**ためである。
+       *
+       * `code[_-]?verifier` を足した —— **両ビルドが実際に送っている**
+       * (`pkce.ts:241` / `main/oauth.ts:361`) し、`pkceSession.ts` の冒頭が
+       * RFC 7636 を引いて「秘密である」と述べている。逆に `assertion`
+       * (JWT bearer grant) は**このアプリが 1 度も出さない** (実測 0 件) ので
+       * 足さない —— このファイルが `?sig=` について書いた理由と同じで、
+       * 使っていない綴りは「効いているように読める」だけになる。
+       *
+       * 実害は今日も測って 0 である (資格情報を form 本文に載せる所は 0 件 ——
+       * slack / shopify→stripe / VirusTotal はどれも `Authorization` ヘッダ)。
+       * **これは深さの守りで、塞いだのは運び手の残り半分である。**
+       */
       .replace(
-        /([?&])((?:[a-z0-9]+[_-])?(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|token|secret|password|auth|key))(=)([^&\s"'`#<>]{8,})/gi,
+        /(^|[?&\n])((?:[a-z0-9]+[_-])?(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|code[_-]?verifier|token|secret|password|auth|key))(=)([^&\s"'`#<>]{8,})/gi,
         (_m, lead: string, name: string, eq: string) => `${lead}${name}${eq}[REDACTED]`,
       )
   );

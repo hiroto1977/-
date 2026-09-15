@@ -92,15 +92,29 @@ describe('redactSecrets', () => {
     );
   });
 
+  /*
+   * **標本は秘密を裸で運ぶ。** (2026-09-15 · パス 289)
+   *
+   * 2026-09-15 まで、この 3 本は `token=…` / `key=…` を運び手にしていた ——
+   * 接頭辞の規則を測るつもりの検査が、実は `name=value` の規則の領分に
+   * 秘密を置いていた。パス 289 が `name=value` の錨を `(^|[?&\n])` に
+   * 広げた (form 本文の 1 つ目を塞いだ) 瞬間、そちらが先に当たって
+   * `token=[REDACTED]` になり、3 本が落ちた。
+   *
+   * **秘密は隠れたままなので欠陥ではない** (伏せ方が強くなった側の変化) が、
+   * 「どの規則を測っているか」が標本から読めなくなるので裸にする。
+   * `integration=` / `access=` が落ちなかったのは、その 2 語が
+   * 資格情報の名前の一覧に無いから —— 運び手は**偶然**無害だった。
+   */
   it('redacts GitHub PAT prefixes', () => {
-    expect(redactSecrets('token=ghp_abcdefghijklmnopqrst')).toContain('ghp_[REDACTED]');
-    expect(redactSecrets('token=ghs_abcdefghijklmnopqrst')).toContain('ghs_[REDACTED]');
+    expect(redactSecrets('error: ghp_abcdefghijklmnopqrst')).toContain('ghp_[REDACTED]');
+    expect(redactSecrets('error: ghs_abcdefghijklmnopqrst')).toContain('ghs_[REDACTED]');
   });
 
   it('redacts Anthropic and Notion secrets', () => {
     // `toContain` だけだと `{8,}` を `{1}` に落とす変異体
     // (`sk-ant-[REDACTED]pi03-xxxxxxxxxx`) が素通りする。末尾まで消えることを見る。
-    expect(redactSecrets('key=sk-ant-api03-xxxxxxxxxx')).toBe('key=sk-ant-[REDACTED]');
+    expect(redactSecrets('error: sk-ant-api03-xxxxxxxxxx')).toBe('error: sk-ant-[REDACTED]');
     expect(redactSecrets('integration=secret_abcdefghij')).toBe('integration=secret_[REDACTED]');
   });
 
@@ -110,8 +124,8 @@ describe('redactSecrets', () => {
   });
 
   it('redacts Atlassian API tokens (ATATT…)', () => {
-    const out = redactSecrets('token=ATATT3xFfGF0abcdef_GHIJ-1234.567');
-    expect(out).toBe('token=ATATT[REDACTED]');
+    const out = redactSecrets('error: ATATT3xFfGF0abcdef_GHIJ-1234.567');
+    expect(out).toBe('error: ATATT[REDACTED]');
     expect(out).not.toContain('3xFfGF0');
   });
 
