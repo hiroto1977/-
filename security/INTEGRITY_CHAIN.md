@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 205
+- ブロック数: 206
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `b9a1bfd8ee0fbae5884bbf1a5fe2a33ee4916c43b0410333c0e5aa155c46c1e8`
+- 末尾(tip)ハッシュ: `0c1052919fac85f200faadf7c378634707c0475caa1f7bb5248476e7d4a04cae`
 - 保護対象: 72 ファイル
 
 ## ブロック
@@ -218,6 +218,7 @@
 | 202 | `94818d10d81b4eca` | `5794484979a09ef7` | `1da3835fa97a4169` | update types.ts,oauth.ts,proxy.ts,pkce.ts,chat.ts,redact.ts |
 | 203 | `ffd387afc1a8dfc3` | `1da3835fa97a4169` | `5974986ecab81edf` | update tokenInput.ts |
 | 204 | `8ef84f2f2871a2f7` | `5974986ecab81edf` | `b9a1bfd8ee0fbae5` | update main.ts,oauth.ts,scanTarget.ts |
+| 205 | `8425f5134a7245a9` | `b9a1bfd8ee0fbae5` | `0c1052919fac85f2` | update atlassianSite.ts |
 
 ## 保護対象ファイル
 

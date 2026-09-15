@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14322** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14332** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1822,7 +1822,7 @@ union を参照する。
 |---|---|---|---|---|
 | github | `create-issue` | `{ owner, repo, title, body?, labels? }` | **共有台帳 `GITHUB_ISSUE_FIELDS` + `GITHUB_LABELS` (`checkWriteFields` / `checkWriteLabels`) で型・長さ・件数を reject**。URL part は `encodeURIComponent` | `github.ts:154-201` |
 | wordpress | `create-post-draft` | `{ siteId, title, content?, status? }` | **共有台帳 `WORDPRESS_POST_FIELDS`** (型・長さ。**`status` は台帳の一覧 (draft / publish / pending / private) 以外を reject** —— publish も指定できる。既定は draft)。siteId は `encodeURIComponent` | `wordpress.ts:69-117` |
-| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | **共有台帳 `ATLASSIAN_ISSUE_FIELDS`** (型・長さ) + site URL https only + *.atlassian.net allowlist | `atlassian.ts:134-199` |
+| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | **共有台帳 `ATLASSIAN_ISSUE_FIELDS`** (型・長さ) + site URL https only + *.atlassian.net allowlist | `atlassian.ts:122-172` |
 | notion | `create-page` | `{ parentPageId, title, body? }` | **共有台帳 `NOTION_PAGE_FIELDS`** (型・長さ。それ以上の形式検証なし — API 4xx で対処) | `notion.ts:72-126` |
 | drive | `create-folder` | `{ name, parentId? }` | **共有台帳 `DRIVE_FOLDER_FIELDS`** (型・長さ。それ以上は Google API 側で検証) | `drive.ts:49-96` |
 | calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | **共有台帳 `CALENDAR_EVENT_FIELDS`** (型・長さ。RFC3339 は API 側。timeZone 既定は Asia/Tokyo) | `calendar.ts:69-132` |

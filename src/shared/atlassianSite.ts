@@ -68,3 +68,79 @@ export function normalizeAtlassianSiteResult(raw: string): AtlassianSiteResult {
   // フラグメント・ポート・userinfo が後段の URL 連結に混ざる。
   return { ok: true, site: `https://${parsed.hostname}` };
 }
+
+/**
+ * **保存された Atlassian の資格情報 JSON を読む — 1 か所だけ持つ** (2026-09-15 · パス 284)。
+ *
+ * この関数が在る前、同じ 3 段の検査 (JSON として読めるか → 3 欄が在って天井の内か →
+ * email / token に制御文字が無いか) が **main (`clients/atlassian.ts`) と
+ * ブラウザ版 (`data/saasWriteWeb.ts`) に 1 つずつ**在り、**3 つの文面が
+ * 両方で違っていた** (どちらも日本語なのに言い回しが違う —— つまり
+ * 「言語の非対称」ではなく「同じ条件に文が 2 つ」の一族である。
+ * パス 167 / 250 / 252 / 269 / 273 / 282 が 1 件ずつ閉じてきた形)。
+ *
+ * ★ **そのうえ両方に同じ欠陥が在った。** 保存値が JSON リテラルの `null` だと
+ * `JSON.parse` は成功して `null` を返し、次の `typeof obj.email` が
+ * `TypeError: Cannot read properties of null (reading 'email')` を投げる ——
+ * **書くつもりだった断りは 1 度も出ない**。`null` は 4 文字の普通の文字列なので
+ * `checkTokenInput` の関門 (パス 244) も通り、利用者が Atlassian のトークン欄に
+ * `null` と打つだけで再現した (2026-09-15 に両ビルドの実物で実測)。
+ *
+ * ★★ **両方が同じように壊れていたので、パリティ検査は通っていた。**
+ * 「両ビルドが一致している」は「正しい」ではない —— この 2 つは別の性質である。
+ *
+ * `typeof null === 'object'` の罠で、この repo は同じ形を何度も塞いでいる
+ * (`emotionsShape.asRecord` / `persistedShape.isRecord`)。ここも同じ約束にする ——
+ * **記録でない値 (`null` / 配列 / 数 / 文字列 / 真偽) は欄が無い物として扱う**。
+ * `{}` と同じ経路になるので、`null` 以外の 4 形の断り文は**1 文字も変わらない**。
+ *
+ * 例外を投げずに結果で返すのは `normalizeAtlassianSiteResult` と同じ理由 ——
+ * 呼び出し側 2 つが別のエラー型 (`FetchError` / `Error`) を持つため。
+ */
+export type AtlassianCredsFailure = 'not-json' | 'fields' | 'control-char';
+
+export type AtlassianCredsResult =
+  | { readonly ok: true; readonly email: string; readonly token: string; readonly site: string }
+  | { readonly ok: false; readonly reason: AtlassianCredsFailure };
+
+/** 断りの文面 —— **両ビルドがここを読む** (文を写さない)。 */
+export const ATLASSIAN_CREDS_MESSAGES: Readonly<Record<AtlassianCredsFailure, string>> = {
+  'not-json': 'Atlassian トークンは { "email", "token", "site" } 形式の JSON で保存してください',
+  fields: 'Atlassian トークンの email / token / site が欠けているか不正です',
+  'control-char': 'Atlassian の email / token に制御文字を含めることはできません',
+};
+
+export function readAtlassianCredentials(raw: string): AtlassianCredsResult {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return { ok: false, reason: 'not-json' };
+  }
+  /*
+   * **記録でなければ欄が無い物として扱う** (上の docblock の `null` の件)。
+   * `typeof parsed === 'object'` だけでは `null` と配列が通ってしまうので、
+   * 3 つ揃えて初めて記録と呼ぶ。
+   */
+  const obj: Record<string, unknown> =
+    typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  const { email, token, site } = obj;
+  if (
+    typeof email !== 'string' || email.length === 0 || email.length > MAX_ATLASSIAN_EMAIL ||
+    typeof token !== 'string' || token.length === 0 || token.length > MAX_ATLASSIAN_TOKEN ||
+    typeof site !== 'string' || site.length === 0 || site.length > MAX_ATLASSIAN_SITE
+  ) {
+    return { ok: false, reason: 'fields' };
+  }
+  /*
+   * email / token は `btoa(`${email}:${token}`)` に入る (Basic 認証)。base64 の
+   * 中では CR/LF は無害だが、この 2 つは失敗時の文面やログ行に現れうるので
+   * そこで行を割られない形にしておく (main 側の元の注記と同じ判断)。
+   */
+  if (hasControlChar(email) || hasControlChar(token)) {
+    return { ok: false, reason: 'control-char' };
+  }
+  return { ok: true, email, token, site };
+}

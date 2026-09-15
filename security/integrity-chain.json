@@ -1715,6 +1715,14 @@
       "leafCount": 72,
       "note": "update main.ts,oauth.ts,scanTarget.ts",
       "hash": "b9a1bfd8ee0fbae5884bbf1a5fe2a33ee4916c43b0410333c0e5aa155c46c1e8"
+    },
+    {
+      "index": 205,
+      "prevHash": "b9a1bfd8ee0fbae5884bbf1a5fe2a33ee4916c43b0410333c0e5aa155c46c1e8",
+      "merkleRoot": "8425f5134a7245a9fd3facdeb9fcff953344216090ecaec4f93110b45e514212",
+      "leafCount": 72,
+      "note": "update atlassianSite.ts",
+      "hash": "0c1052919fac85f200faadf7c378634707c0475caa1f7bb5248476e7d4a04cae"
     }
   ],
   "tipManifest": {
@@ -1773,7 +1781,7 @@
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
-    "src/shared/atlassianSite.ts": "e0876c488724b6a8c6998adda2a813c31c019c35f99fac627890c2f91a5fd78f",
+    "src/shared/atlassianSite.ts": "fbbad4ce7a10f5731a44b0c3f902818285aadb6305aabd2a7522bac7aa3d8cf2",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "0fe808ee71235f71deaf24200a910b87039adf30ac73325084843490bdaad2f1",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",

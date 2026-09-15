@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchAtlassianSnapshot, parseAtlassianToken, ACTIONS } from '../atlassian';
 import { FetchError } from '../types';
+/* 断りの文面は `shared/atlassianSite.ts` の台帳が 1 つだけ持つ (パス 284)。
+ * ここで綴りを写すと、台帳を直したときに検査だけが古い文を要求する。 */
+import { ATLASSIAN_CREDS_MESSAGES } from '../../../shared/atlassianSite';
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -35,23 +38,23 @@ describe('parseAtlassianToken', () => {
   // --- type validation kills (each typeof check) -----------------------
 
   it('rejects non-string email (number / null / object)', () => {
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 123, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
-    expect(() => parseAtlassianToken(JSON.stringify({ email: null, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
-    expect(() => parseAtlassianToken(JSON.stringify({ email: { x: 1 }, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 123, token: 't', site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: null, token: 't', site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: { x: 1 }, token: 't', site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   it('rejects non-string token', () => {
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 42, site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 42, site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   it('rejects non-string site', () => {
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: false }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: false }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   it('rejects empty email/token/site', () => {
-    expect(() => parseAtlassianToken(JSON.stringify({ email: '', token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: '', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: '' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: '', token: 't', site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: '', site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: '' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   // --- length cap kills (each MAX_X EqualityOperator) ------------------
@@ -68,11 +71,11 @@ describe('parseAtlassianToken', () => {
   it('rejects email > 254 chars', () => {
     const email = 'a'.repeat(248) + '@b.com'; // 254
     const longEmail = email + 'x'; // 255
-    expect(() => parseAtlassianToken(JSON.stringify({ email: longEmail, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: longEmail, token: 't', site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   it('rejects token > 1024 chars (kills MAX_TOKEN boundary)', () => {
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 'x'.repeat(1025), site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 'x'.repeat(1025), site: 'https://x.atlassian.net' }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   it('accepts token exactly at 1024 chars', () => {
@@ -97,7 +100,7 @@ describe('parseAtlassianToken', () => {
   it('rejects site > 256 chars (kills MAX_SITE boundary)', () => {
     const longSite = 'https://' + 'a'.repeat(245) + '.atlassian.net';
     expect(longSite.length).toBeGreaterThan(256);
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: longSite }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: longSite }))).toThrow(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   // --- CR/LF/NUL refusal -----------------------------------------------
@@ -178,7 +181,7 @@ describe('parseAtlassianToken', () => {
     expect(err).toBeInstanceOf(FetchError);
     // Kills StringLiteral mutant on atlassian.ts:58 (serviceId → "").
     expect((err as FetchError).serviceId).toBe('atlassian');
-    expect((err as FetchError).message).toMatch(/形式が不正/);
+    expect((err as FetchError).message).toBe(ATLASSIAN_CREDS_MESSAGES.fields);
   });
 
   it('rejects http:// (non-TLS) site with serviceId="atlassian"', () => {

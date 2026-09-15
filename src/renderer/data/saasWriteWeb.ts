@@ -37,10 +37,9 @@ import {
   type GraphMailFields,
 } from '../../shared/api/microsoft365';
 import {
-  MAX_ATLASSIAN_EMAIL,
-  MAX_ATLASSIAN_SITE,
-  MAX_ATLASSIAN_TOKEN,
+  ATLASSIAN_CREDS_MESSAGES,
   normalizeAtlassianSiteResult,
+  readAtlassianCredentials,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { jiraBrowseUrl } from '../../shared/atlassianLinks';
@@ -273,39 +272,28 @@ interface AtlassianCreds {
   site: string;
 }
 
-/** Vault に保存された Atlassian トークン JSON を検証して取り出す。 */
+/** Vault に保存された Atlassian トークン JSON を検証して取り出す。
+ *
+ *  3 段の検査 (JSON → 3 欄と天井 → 制御文字) とその文面は
+ *  `shared/atlassianSite.ts` に 1 つだけ置く (パス 284)。それまでは同じ 3 段が
+ *  main (`clients/atlassian.ts`) にも在り、**文面が両方で違い** (どちらも
+ *  日本語なのに言い回しだけ違う)、しかも**両方が JSON リテラルの `null` で
+ *  素の TypeError を投げていた**。共有側の docblock に実測が在る。 */
 export function parseAtlassianToken(raw: string): AtlassianCreds {
-  let obj: { email?: unknown; token?: unknown; site?: unknown };
-  try {
-    obj = JSON.parse(raw) as typeof obj;
-  } catch {
-    throw new Error('Atlassian トークンは { "email", "token", "site" } 形式の JSON で保存してください');
-  }
-  if (
-    typeof obj.email !== 'string' || obj.email.length === 0 || obj.email.length > MAX_ATLASSIAN_EMAIL ||
-    typeof obj.token !== 'string' || obj.token.length === 0 || obj.token.length > MAX_ATLASSIAN_TOKEN ||
-    typeof obj.site !== 'string' || obj.site.length === 0 || obj.site.length > MAX_ATLASSIAN_SITE
-  ) {
-    throw new Error('Atlassian トークンの email / token / site が欠けているか不正です');
-  }
-  if (/[\r\n\0]/.test(obj.email) || /[\r\n\0]/.test(obj.token)) {
-    throw new Error('Atlassian の email / token に制御文字を含めることはできません');
-  }
+  const creds = readAtlassianCredentials(raw);
+  if (!creds.ok) throw new Error(ATLASSIAN_CREDS_MESSAGES[creds.reason]);
   // **ホスト名まで絞る。** ここは `Authorization: Basic btoa(email:token)` を
   // 付けて `${site}/rest/api/3/issue` へ POST する経路で、以前は
   // `https:` かどうかしか見ていなかった。つまり site を差し替えるだけで
   // Atlassian のメールアドレスと API トークンが任意の相手へ届いた。
-  //
-  // main (`clients/atlassian.ts`) は最初からこの検査を持っており、
-  // 「ホスト名を絞らないと、書き換えられた保存内容が email+token を任意の
-  // HTTPS 先へ向けられる」と理由まで書いてあった。**同じ検証の 3 つ目の
-  // 写しであるここだけが、その一行を持っていなかった。**
   // 実体は `src/shared/atlassianSite.ts` に 1 つだけ置いてある。
-  const site = normalizeAtlassianSiteResult(obj.site);
+  const site = normalizeAtlassianSiteResult(creds.site);
   if (!site.ok) throw new Error(ATLASSIAN_SITE_MESSAGES[site.reason]);
-  return { email: obj.email, token: obj.token, site: site.site };
+  return { email: creds.email, token: creds.token, site: site.site };
 }
 
+
+/* site の文面は呼び手ごと (main 側の同じ表の注記に理由が在る · パス 284)。 */
 const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
   'control-char': 'Atlassian の site に制御文字を含めることはできません',
   'not-a-url': 'Atlassian の site は https URL で指定してください',
