@@ -245,7 +245,13 @@ export function checkShopifyLineItems(value: unknown): WriteFieldFailure | null 
   }
   for (const [index, raw] of value.entries()) {
     const at = `order.lineItems[${index}]`;
-    if (typeof raw !== 'object' || raw === null) {
+    // 配列も `typeof === 'object'` なので**明示して落とす** —— このリポジトリの
+    // 他の記録判定 (`persistedShape.isRecord` / `emotionsShape.asRecord` /
+    // パス 284 の `readAtlassianCredentials`) はどれも `Array.isArray` で落として
+    // おり、ここだけが通していた。通ってもすぐ `title` が無いので断られるが、
+    // **断る欄の名前が `…[0].title` になり「記録ではない」と言えていなかった**
+    // (2026-09-15 · パス 288 に変異検査から辿って見つけた)。
+    if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
       return { field: at, problem: 'not-string', rule: itemTitle };
     }
     const item = raw as { title?: unknown; quantity?: unknown };

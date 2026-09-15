@@ -62,6 +62,8 @@ import {
   checkWriteLabels,
   checkWriteList,
   checkWriteRule,
+  checkShopifyLineItems,
+  MAX_SHOPIFY_LINE_ITEMS,
   describeWriteFieldFailure,
   requiredWriteFields,
   type WriteRule,
@@ -518,5 +520,151 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
       expect(params, `${name} が設定の台帳に載っている`).not.toContain(name);
     }
     expect(MAX_WRITE_TITLE_CHARS).toBeLessThan(MAX_WRITE_TEXT_CHARS);
+  });
+});
+
+/*
+ * **`checkShopifyLineItems` は 1 度も直接呼ばれていなかった。** (2026-09-15 · パス 288)
+ *
+ * パス 283 がこの関数を共有の台帳へ置いたが、検査は main 側の
+ * `shopify.test.ts` から **action 経由でだけ**触っていた。変異検査を初めて
+ * この 1 ファイルに当てると (パス 287 で scope へ入れた) **スコア 78.02%**・
+ * 生存 81 件で、うち**論理の生存**がここに集まっていた:
+ *
+ * | 行 | 生存した変異 | 意味 |
+ * | --- | --- | --- |
+ * | 235 | 条件 → `false` | `undefined` / `null` を通す枝が測られていない |
+ * | 239 | `>` → `>=` | **天井の境目が測られていない** (200 件ちょうどが通るか) |
+ * | 248 | `\|\|` → `&&`・条件 → `false`・本体 → `{}` | **`typeof null === 'object'` の罠** |
+ * | 254 | 条件 → `false` | `quantity` の非有限が測られていない |
+ *
+ * 248 はこの本が何度も塞いでいる形である (`emotionsShape.asRecord` /
+ * `persistedShape.isRecord` / パス 284 の Atlassian の `null`)。**同じ罠の
+ * 4 度目**で、しかも**第三者へ出ていく注文の明細**の判定に在った。
+ *
+ * ★ 以下は**境目を対で**置く (通る側と断る側を必ず並べる) —— 片側だけだと
+ * `>` を `>=` に変えても鳴らない。
+ */
+describe('★ checkShopifyLineItems: 直接呼んで境目と null を留める (パス 288)', () => {
+  const ok = (n: number) => Array.from({ length: n }, (_, i) => ({ title: `t${i}`, quantity: 1 }));
+
+  it('無くてよい —— undefined / null は通す', () => {
+    expect(checkShopifyLineItems(undefined)).toBeNull();
+    expect(checkShopifyLineItems(null)).toBeNull();
+  });
+
+  it('★ 件数の天井は対で: ちょうど 200 は通り、201 は断る', () => {
+    expect(MAX_SHOPIFY_LINE_ITEMS).toBe(200);
+    expect(checkShopifyLineItems(ok(MAX_SHOPIFY_LINE_ITEMS))).toBeNull();
+    const over = checkShopifyLineItems(ok(MAX_SHOPIFY_LINE_ITEMS + 1));
+    expect(over?.problem).toBe('too-many');
+    expect(over?.field).toBe('order.lineItems');
+    // 断りの文が件数を名指しする (`list(false, 200, …)` の引数が生きている)。
+    // `rule` は union なので、配列の枝であることを先に確かめてから読む
+    // (`as` で黙らせない —— 型が union だという事実がここの主張の一部である)。
+    const rule = over?.rule;
+    expect(rule && 'maxItems' in rule ? rule.maxItems : null).toBe(MAX_SHOPIFY_LINE_ITEMS);
+  });
+
+  it('★ 配列でなければ断る (畳まない)', () => {
+    for (const bad of ['[]', 42, true, {}]) {
+      expect(checkShopifyLineItems(bad)?.field, String(bad)).toBe('order.lineItems');
+    }
+  });
+
+  it('★ 要素が null だと断る —— typeof null === "object" の罠 (4 度目)', () => {
+    const bad = checkShopifyLineItems([null]);
+    expect(bad?.field).toBe('order.lineItems[0]');
+    expect(bad?.problem).toBe('not-string');
+    // 標本: 罠そのもの。null を「記録」として通してはいけない。
+    expect(typeof null).toBe('object');
+  });
+
+  it('★ 要素が記録でなければ断る (数・文字列・真偽・配列)', () => {
+    for (const el of [42, 'x', true, []]) {
+      expect(checkShopifyLineItems([el])?.field, String(el)).toBe('order.lineItems[0]');
+    }
+  });
+
+  it('★ 2 件目で壊れていれば添字を名指しする', () => {
+    expect(checkShopifyLineItems([{ title: 'a', quantity: 1 }, null])?.field).toBe(
+      'order.lineItems[1]',
+    );
+  });
+
+  it('★ title は欄の規則を通る (空・天井超え)', () => {
+    expect(checkShopifyLineItems([{ title: '', quantity: 1 }])?.field).toBe(
+      'order.lineItems[0].title',
+    );
+    expect(
+      checkShopifyLineItems([{ title: 'a'.repeat(MAX_WRITE_TITLE_CHARS + 1), quantity: 1 }])
+        ?.problem,
+    ).toBe('too-long');
+  });
+
+  it('★ quantity は有限の数だけ —— NaN / Infinity / 文字列を断る', () => {
+    for (const q of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, '1', null]) {
+      const bad = checkShopifyLineItems([{ title: 't', quantity: q }]);
+      expect(bad?.field, String(q)).toBe('order.lineItems[0].quantity');
+      expect(bad?.problem, String(q)).toBe('not-integer');
+    }
+    // 対照: 有限の数は通る。
+    expect(checkShopifyLineItems([{ title: 't', quantity: 0 }])).toBeNull();
+  });
+});
+
+/*
+ * **`required` の枝を対で留める。** 変異検査で `rule.required ? 'missing' : null`
+ * の 3 件 (整数 / 真偽 / 配列) が生存していた —— 片側しか測っていなかった。
+ */
+describe('★ 無くてよい欄と、無くてはならない欄を対で (パス 288)', () => {
+  it('整数: 無くてよい / 無くてはならない', () => {
+    expect(checkWriteInteger(undefined, { kind: 'integer', required: false, min: 0 })).toBeNull();
+    expect(checkWriteInteger(undefined, { kind: 'integer', required: true, min: 0 })).toBe('missing');
+    expect(checkWriteInteger(null, { kind: 'integer', required: true, min: 0 })).toBe('missing');
+  });
+
+  /*
+   * ★ **型と下限の枝**。変異検査の 2 巡目 (81.07%) で
+   * `typeof value !== 'number' || !Number.isInteger(value) || value < rule.min`
+   * が**まるごと消せても誰も鳴らなかった** —— 1 巡目の直しで `undefined` /
+   * `null` の枝だけを埋め、その下の行を置いていった。
+   *
+   * これは第三者へ出ていく整数の欄 (Cloudflare の purge の件数など) の関門なので、
+   * 3 つの理由を**別々に**測る (`||` の項がどれか 1 つでも消えたら鳴るように)。
+   */
+  it('★ 整数: 数でない / 整数でない / 下限未満を別々に断る', () => {
+    const rule = { kind: 'integer', required: false, min: 2 } as const;
+    // 数でない
+    for (const v of ['3', true, {}, []]) {
+      expect(checkWriteInteger(v, rule), String(v)).toBe('not-integer');
+    }
+    // 数だが整数でない (NaN / Infinity / 小数)
+    for (const v of [Number.NaN, Number.POSITIVE_INFINITY, 2.5]) {
+      expect(checkWriteInteger(v, rule), String(v)).toBe('not-integer');
+    }
+    // 整数だが下限未満 —— 境目を対で置く
+    expect(checkWriteInteger(1, rule)).toBe('not-integer');
+    expect(checkWriteInteger(2, rule)).toBeNull();
+    expect(checkWriteInteger(3, rule)).toBeNull();
+    // min が 0 のときの負数も断る (下限の項が生きている)
+    expect(checkWriteInteger(-1, { kind: 'integer', required: false, min: 0 })).toBe('not-integer');
+    expect(checkWriteInteger(0, { kind: 'integer', required: false, min: 0 })).toBeNull();
+  });
+
+  it('真偽', () => {
+    expect(checkWriteFlag(undefined, { kind: 'flag', required: false })).toBeNull();
+    expect(checkWriteFlag(undefined, { kind: 'flag', required: true })).toBe('missing');
+    expect(checkWriteFlag(null, { kind: 'flag', required: true })).toBe('missing');
+  });
+
+  it('配列', () => {
+    // `title(true)` は module 内の helper なので、同じ形をここで作る
+    // (綴りではなく**形**を写す —— 天井は共有定数から読む)。
+    const item = { required: true, max: MAX_WRITE_TITLE_CHARS, multiline: false } as const;
+    const rule = { kind: 'list', required: false, maxItems: 3, item } as const;
+    expect(checkWriteList(undefined, rule)).toBeNull();
+    expect(checkWriteList(undefined, { ...rule, required: true })).toBe('missing');
+    expect(checkWriteList(null, { ...rule, required: true })).toBe('missing');
   });
 });
