@@ -824,8 +824,7 @@ describe('金庫が施錠されていれば、そう言って外へ出ない (�
 describe('デスクトップ版だけの操作は、ブラウザ版では実行できない', () => {
   const DESKTOP_ONLY: ReadonlyArray<readonly [string, string, string]> = [
     ['skills', 'run-skill', 'ローカルのスキルを実行する口。ブラウザに同等の能力は無い'],
-    ['microsoft-365', 'send-mail', 'CORS で直接叩けず、プロキシ経路も用意していない'],
-    ['microsoft-365', 'create-event', '同上'],
+    ['microsoft-365', 'create-event', 'Graph の予定作成にプロキシ経路をまだ用意していない (send-mail はパス 274 で通した)'],
     ['stocks', 'backtest', 'デスクトップ側の計算 (ブラウザ版は compare-strategies)'],
     ['docstudio', 'list-collections', 'ローカルのテンプレート集を読む'],
   ];
@@ -842,26 +841,28 @@ describe('デスクトップ版だけの操作は、ブラウザ版では実行�
   });
 
   /*
-   * 標本 —— 上の 5 本が「何を呼んでも action_not_found」を見ているだけに
+   * 標本 —— 上の 4 本が「何を呼んでも action_not_found」を見ているだけに
    * なっていないこと。ブラウザ版が持っている口では**別の答え**が返る。
    */
   it('★ ブラウザ版が持つ口は action_not_found にならない', async () => {
     stored = 'sk-ant-test-key-value';
     const hub = await loadShim();
     const r = await invoke(hub, 'emotions', 'log-mood', { score: 3 });
-    expect(r.code, '対照が効いていない — 上の 5 本は何も見ていない').not.toBe('action_not_found');
+    expect(r.code, '対照が効いていない — 上の 4 本は何も見ていない').not.toBe('action_not_found');
   });
 });
 
 /*
  * **ブラウザ版が処理する口を、呼んで数え上げて固定する。**
  *
- * 上の 5 本は名指しである。**名指しの規則は、名指しした綴りしか止められない** ——
- * このリポジトリが繰り返し踏んでいる形で、上の 5 本自身がその弱点を持つ
- * (6 つ目の危険な口が生えても何も言わない)。そこで**総当たり**で固定する。
+ * 上の 4 本は名指しである。**名指しの規則は、名指しした綴りしか止められない** ——
+ * このリポジトリが繰り返し踏んでいる形で、上の 4 本自身がその弱点を持つ
+ * (5 つ目の危険な口が生えても何も言わない)。そこで**総当たり**で固定する。
  *
  * 75 サービス × 42 行動名を全部 `invoke` して、`action_not_found` 以外を
- * 返した組を集める。それがブラウザ版の実際の面である。**42 組ちょうど** (2026-09-09 · パス 119 で advise ×4 が増えた)。
+ * 返した組を集める。それがブラウザ版の実際の面である。**43 組ちょうど**
+ * (2026-09-09 · パス 119 で advise ×4 が増え、2026-09-15 · パス 274 で
+ * `microsoft-365/send-mail` が増えた)。
  *
  * ## 語彙の限界を書いておく
  *
@@ -885,7 +886,10 @@ const PROBE_ACTIONS: readonly string[] = [
   'sync-to-stripe', 'unregister-ticker',
 ];
 
-/** ブラウザ版が実際に処理する組 (2026-09-01 実測・2026-09-09 パス 119 で advise ×4)。**増減したら鳴る。** */
+/**
+ * ブラウザ版が実際に処理する組 (2026-09-01 実測・2026-09-09 パス 119 で advise ×4・
+ * 2026-09-15 パス 274 で `microsoft-365/send-mail`)。**増減したら鳴る。**
+ */
 const BROWSER_SURFACE: readonly string[] = [
   'assistant/chat', 'assistant/chatAll', 'assistant/providers',
   'atlassian/create-issue',
@@ -895,6 +899,7 @@ const BROWSER_SURFACE: readonly string[] = [
   'demae-can/advise', 'demae-can/record-entry', 'drive/create-folder',
   'emotions/analyze-text', 'emotions/clear-history', 'emotions/log-mood',
   'github/create-issue', 'gmail/create-draft',
+  'microsoft-365/send-mail',
   'mutual-funds/advise', 'mutual-funds/record-entry', 'notion/create-page', 'ollama/chat',
   'real-estate/advise', 'real-estate/record-entry',
   'security/check-email-breach', 'security/scan-url',
@@ -907,7 +912,7 @@ const BROWSER_SURFACE: readonly string[] = [
 ];
 
 describe('ブラウザ版の面は、この組ちょうど (総当たりで固定)', () => {
-  it('処理される (service, action) は 42 組ちょうど', async () => {
+  it('処理される (service, action) は 43 組ちょうど', async () => {
     stored = null; // 鍵の有無に依らず「処理されるか」だけを見る
     const hub = await loadShim();
     const handled: string[] = [];

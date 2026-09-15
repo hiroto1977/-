@@ -17,6 +17,7 @@ import {
   scanUrlVirusTotal,
   parseSecurityKeys,
   checkEmailBreach,
+  sendMicrosoftMail,
   type Transport,
 } from '../saasWriteWeb';
 import {
@@ -1075,7 +1076,8 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
     new Response(body, { status: 200, headers: { 'content-type': 'application/json' } });
 
   /**
-   * 11 の書き込み口を**全部**並べる。直す前の実測では 6 経路が `{}` / `[]` /
+   * 書き込み口を**全部**並べる (母集団は下の census が実装から導く)。
+   * 直す前の実測では 6 経路が `{}` / `[]` /
    * `"str"` を成功として返し、うち 2 経路は `undefined` を埋め込んだ URL を
    * 押せるリンクとして画面に渡していた:
    *
@@ -1118,7 +1120,36 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
     //   `scanUrlVirusTotal` を落としていた (「安全の判定」を作る側なので最も重い)。
     ['scanUrlVirusTotal', (t) => scanUrlVirusTotal({ url: 'https://a.b.co/' }, 'key', t)],
     ['checkEmailBreach', (t) => checkEmailBreach({ email: 'a@b.co' }, 'key', t)],
+    // ★ パス 274 で足した口。**本文を返さない端点**なので下の 5 本からは外れる
+    //   (理由は `BODYLESS` の注記)。台帳には載る —— 載せないと census が鳴る。
+    ['sendMicrosoftMail', (t) => sendMicrosoftMail({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
   ];
+
+  /**
+   * **本文が証拠にならない端点。**
+   *
+   * Graph の `POST /me/sendMail` は **202 Accepted・本文なし**で答える
+   * (作った資源を返す端点ではないので、返す物が無い)。したがって
+   * 「`{}` を成功として返すな」という下の 5 本は、この口には当てられない ——
+   * 空の本文は**この端点の正しい答え**である。
+   *
+   * `checkEmailBreach` の `[]` と同じ形の例外で、あちらは「検査の側が誤って
+   * いた」と書いてある。こちらは最初から外す。
+   *
+   * ## その代わりに何を見ているか
+   *
+   * - 2xx でなければ断る (`ensureOk`) —— `microsoft365.test.ts` が 400 で留める
+   * - **本文を読まない** —— 同じ検査が `json` / `text` に触ったら落ちる Proxy で留める
+   *
+   * ## 残る限界 (書いておく)
+   *
+   * 本文が無いので、**2xx を騙るプロキシはここでは捕まえられない。**
+   * 他の 13 口は返ってきた資源の形で嘘を見抜けるが、この口の証拠は status
+   * だけである。Graph が 202 と文書化している以上「202 ちょうど」を要求する
+   * 道も在るが、相手が 200 に正規化しただけで送信が止まるので採らない。
+   */
+  const BODYLESS: ReadonlySet<string> = new Set(['sendMicrosoftMail']);
+  const WITH_BODY = ENTRIES.filter(([n]) => !BODYLESS.has(n));
 
   // `{}` / `"str"` / `null` / 非 JSON —— どれも「相手が処理した」証拠にならない。
   for (const [bodyLabel, body] of [
@@ -1127,7 +1158,7 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
     ['null', 'null'],
     ['JSON ではない', '<html>Worker error</html>'],
   ] as const) {
-    it.each(ENTRIES)(`200 / ${bodyLabel} → %s は断る`, async (_name, call) => {
+    it.each(WITH_BODY)(`200 / ${bodyLabel} → %s は断る`, async (_name, call) => {
       await expect(call(reply(body) as never)).rejects.toThrow();
     });
   }
@@ -1139,7 +1170,7 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
    * 最初に書いた検査はここを一律に断ると期待していて**検査の側が誤っていた** ——
    * 実装ではなく期待を直した。
    */
-  it.each(ENTRIES.filter(([n]) => n !== 'checkEmailBreach'))('200 / 配列 → %s は断る', async (_n, call) => {
+  it.each(WITH_BODY.filter(([n]) => n !== 'checkEmailBreach'))('200 / 配列 → %s は断る', async (_n, call) => {
     await expect(call(reply('[]') as never)).rejects.toThrow();
   });
   it('200 / 配列 → checkEmailBreach だけは「漏洩なし」として通す', async () => {
@@ -1147,6 +1178,18 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
       email: 'a@b.co',
       breaches: [],
     });
+  });
+
+  /*
+   * 例外が**空虚でない**ことを留める —— `sendMicrosoftMail` が本文の検証を
+   * 始めたら (= 202 の実物を断るようになったら) ここが鳴る。
+   * 外した口を「外したまま誰も見ない」にしない。
+   */
+  it('★ 本文なしの端点は 200 / 空の本文を成功として返す (外した理由が生きている)', async () => {
+    await expect(
+      sendMicrosoftMail({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', reply('') as never),
+    ).resolves.toEqual({ ok: true, to: 'a@b.co', subject: 'S' });
+    expect(BODYLESS.size, '例外の一覧が空 = 上の filter が何もしていない').toBe(1);
   });
 
   it('★ undefined を埋め込んだ URL を作らない (直す前の 2 経路)', async () => {

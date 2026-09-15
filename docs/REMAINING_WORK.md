@@ -26577,7 +26577,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **142** モジュール / 両ビルドが import **61** / うち否定で答えられる **31**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **143** モジュール / 両ビルドが import **62** / うち否定で答えられる **31**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -33064,3 +33064,86 @@ AST パーサを持たない (リポジトリの制約) ので、この粒度は
 - 天井の**値**が妥当かは測っていない。名前と理由を与えただけで、
   「200 字で足りるか」は利用者の不具合報告を見ないと決まらない。
 - 出荷物 **11,889,542 B / 3,302,288 B** (両方 +10 B)。perf OK (FULL 560ms / LITE 203ms)。chain #202。
+
+## パス 274 —— デスクトップ版だけが Microsoft 365 のメールを送れていた (2026-09-15)
+
+### 見つけた形
+
+`microsoft-365/send-mail` は main の `ACTIONS` に登録されているのに、
+ブラウザ版の `web-shim.ts` に枝が無く **`action_not_found`** で落ちていた。
+隣の `gmail/create-draft` は同じ「CORS で直接叩けないので Worker を通す」形で
+**動いていた** —— 経路は既に在り、この 1 サービスだけが繋がっていなかった。
+
+画面はそれを「デスクトップ版の機能です」と言っていた (Microsoft365Page.tsx:208)。
+**断り書きが実装の穴を仕様として説明していた**形で、パス 118 (チームレーダーの
+save-state) と同じ。検査 `webShimCredentials.test.ts` もその前提を
+「CORS で直接叩けず、**プロキシ経路も用意していない**」と台帳に書いており、
+**穴を固定していた。**
+
+### 直した所
+
+ホスト・欄の判定・要求の組み立てを `src/shared/api/microsoft365.ts` に 1 つ置き、
+**両ビルドが同じ関数を通る**ようにした (`checkMail` / `graphMailInit` /
+`sendGraphMail`)。main は自分の写しを捨て、ブラウザ版は
+`saasWriteWeb.sendMicrosoftMail` + `web-shim` の枝で繋いだ。
+
+### 出荷物に入らない所で 2 度ホストを見失った (記録)
+
+`GRAPH_BASE` を共有モジュールへ移した時点で、egress の台帳から
+`graph.microsoft.com` が**消えた** (「1 行消したら 1 件鳴る」の対照が 1 → 0)。
+`verify:arch` は `src/main` を**リテラルごと**数えるが、`shared` / `renderer` は
+**送る文脈の中だけ**しか見ない (`scripts/lint-network-targets.cjs:65` の
+`NETWORK_CALL_NAMES`)。宣言だけの共有モジュールは台帳にとって不可視である。
+
+1. 注入する fetch の引数名を `send` にした → まだ 0 件 (実測。`send` は語彙に無い)
+2. `transport` に改名 → 1 件に戻った
+3. `graphMailRequest` を切り出して `GRAPH_BASE` を送信行から離した → また 0 件
+4. `GRAPH_SEND_MAIL_PATH` + `graphMailInit` に分け、**ホストが送信行に載る**形へ
+
+**同じ形を 1 日に 2 度踏んだ**ので、共有モジュールの docblock に書き残した。
+
+### 台帳を 4 つ直した (どれも「穴を固定していた」側)
+
+| 台帳 | 直した内容 |
+| --- | --- |
+| `webShimCredentials.test.ts` | `DESKTOP_ONLY` から 1 行外し、面を 42 → **43 組** |
+| `webShimTimeouts.test.ts` | プロキシを通る書き込みに `microsoft-365/send-mail` |
+| `saasWriteWeb.test.ts` | `ENTRIES` に登録 + **本文を返さない端点**の例外 |
+| `writeFieldLimits.test.ts` | `via` —— 共有の中継を通って台帳に着く形を認める |
+
+`writeFieldLimits` の `via` は**鎖を 3 段で見る**: handler が中継を呼び、中継が
+台帳を読み、中継が実際に POST を組み立てる。それまでこの検査は
+`checkWriteFields(ctx.payload, 台帳)` という**字面**を main と双子の両方に
+要求していた —— つまり**判定の写しが 2 つ在ることを要求していた**。写しはずれる、
+というのがこの台帳そのものの動機なので、字面の要求は目的と逆を向いていた。
+
+### 母集団が黙って縮む形を、床が捕まえた
+
+`method: 'POST'` を共有モジュールへ移した時点で、「POST する handler はすべて
+台帳を読む」の**母集団が 16 → 15 に落ちた** (`sendMail` が母集団から消えた =
+検査の対象外になった)。生存の床 `>= 16` が鳴って気付いた。egress と**同じ形**
+(走査が「送る文脈」しか見ない) が、同じ日に 3 度目。`via.init` で母集団の側の
+鎖も閉じた。
+
+### 対照 (4 本とも鳴った)
+
+| 壊した所 | 鳴った検査 |
+| --- | --- |
+| 中継が台帳を読まなくする | `shared/api/microsoft365.ts が MS365_MAIL_FIELDS を読んでいない` |
+| 中継の `POST` を `PUT` へ | `POST を組み立てていない — 母集団の走査が空を数えている` |
+| 双子が `checkMail` を通らない | `双子が checkMail を呼んでいない` |
+| 面の台帳から 1 行落とす | `処理される (service, action) は 43 組ちょうど` |
+
+### 残り
+
+- **`microsoft-365/create-event` はまだブラウザ版に無い。** 今回は send-mail 1 本に
+  絞った (`MS365_EVENT_FIELDS` は main の直呼びのまま)。台帳の理由を
+  「同上」から実物に書き換えてある。
+- **本文を返さない端点は、2xx を騙るプロキシを捕まえられない。** Graph の
+  `POST /me/sendMail` は 202・本文なしなので、他の 13 口のように「返ってきた
+  資源の形」で嘘を見抜けない。「202 ちょうど」を要求する道も在るが、相手が
+  200 に正規化しただけで送信が止まるので採らなかった (`BODYLESS` の注記)。
+- `web-shim.ts` の「プロキシ経由の **14** 経路」は実測 13 で、私が触る前から
+  古びていた。数を消して母集団の走査を指すようにした。
+- 出荷物 **11,890,432 B / 3,303,178 B** (両方 **+890 B**)。perf OK
+  (FULL 547ms / LITE 197ms)。保護対象は 1 つも触っていないので chain は #202 のまま。

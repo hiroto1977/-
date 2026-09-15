@@ -2,11 +2,31 @@ import { jsonFetch, limitedFetch, FetchError, type ActionContext, type ActionMap
 import { readArrayField } from '../../shared/apiResponse';
 import {
   MS365_EVENT_FIELDS,
-  MS365_MAIL_FIELDS,
   checkWriteFields,
   describeWriteFieldFailure,
 } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
+/* ホストと要求の組み立ては共有に 1 つだけ (パス 274 —— ブラウザ版も同じ関数を通る)。 */
+import { GRAPH_BASE, GRAPH_SEND_MAIL_PATH, checkMail, graphMailInit } from '../../shared/api/microsoft365';
+
+/**
+ * 画面が渡す payload の**形**。
+ *
+ * `verify:arch` の payload の表 (§3.x) は **client に宣言が在ること**を求める
+ * ので、欄の名前はここに置く。**規則は写していない** ——
+ * 型と長さの判定は `MS365_MAIL_FIELDS` 1 つ、要求の組み立ては
+ * `graphMailRequest` 1 つで、どちらも `shared/api/microsoft365.ts` に在り
+ * ブラウザ版も同じ物を通る (パス 274)。
+ *
+ * 欄の名前が台帳とずれたら `microsoft365.test.ts` が鳴る (`MS365_MAIL_FIELDS`
+ * の鍵と突き合わせている) —— 名前を 2 か所に置くこと自体は避けられないので、
+ * **ずれたら鳴る**ようにしてある。
+ */
+export interface SendMailPayload {
+  readonly to?: unknown;
+  readonly subject?: unknown;
+  readonly body?: unknown;
+}
 
 /**
  * Microsoft 365 (Microsoft Graph API) 連携クライアント (実 API)。
@@ -26,7 +46,6 @@ import type { ActionData } from '../../shared/actionData';
  * ※ 本クライアントは読み取りのみ。メール送信・予定作成は行わない。
  */
 
-const GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
 
 interface GraphUser {
   displayName?: string;
@@ -174,34 +193,22 @@ export async function fetchMicrosoft365Snapshot(ctx: FetchContext): Promise<Micr
 
 const TIME_ZONE = 'Tokyo Standard Time';
 
-interface SendMailPayload {
-  to: string;
-  subject: string;
-  body?: string;
-}
 
 /** Outlook でメールを送信する (POST /me/sendMail)。202 Accepted・本文なし。 */
 async function sendMail(ctx: ActionContext): Promise<ActionData<'microsoft-365/send-mail'>> {
-  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!to || !subject` だけだった。
-  const bad = checkWriteFields(ctx.payload, MS365_MAIL_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { to, subject, body } = ctx.payload as unknown as SendMailPayload;
+  /*
+   * 欄の判定と要求の組み立ては **`shared/api/microsoft365.ts` の 1 つ**を通る
+   * (ブラウザ版も同じ関数を呼ぶ・パス 274)。ここが持つのは main の流儀だけ ——
+   * `limitedFetch` の打ち切りと、読まない本文の始末である。
+   */
+  const mail = checkMail(ctx.payload as Record<string, unknown>);
+  const { to, subject } = mail;
+
   // 202 Accepted・本文なしなので `jsonFetch` は使えない (必ず JSON を読む)。
   // だが**打ち切りは本文の形に関係なく要る** —— `limitedFetch` で掛ける。
   await limitedFetch(
-    `${GRAPH_BASE}/me/sendMail`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${ctx.token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: {
-          subject,
-          body: { contentType: 'Text', content: body ?? '' },
-          toRecipients: [{ emailAddress: { address: to } }],
-        },
-        saveToSentItems: true,
-      }),
-    },
+    `${GRAPH_BASE}${GRAPH_SEND_MAIL_PATH}`,
+    graphMailInit(mail, ctx.token),
     // Stryker disable next-line StringLiteral: この `serviceId` は
     // `limitedFetch` の内部 (打ち切りと本文の始末) にしか渡らない。
     // ここは**本文を読まない**経路なので `readBodyWithCap` の文言にも出ず、

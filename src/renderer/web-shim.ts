@@ -167,6 +167,7 @@ import {
   createDriveFolder,
   createWordPressPostDraft,
   createCanvaFolder,
+  sendMicrosoftMail,
   createCloudflareDnsRecord,
   purgeCloudflareCache,
   scanUrlVirusTotal,
@@ -229,7 +230,9 @@ async function getProxyTransport(): Promise<Transport> {
       'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
     );
   }
-  // プロキシ経由の 14 経路にまとめて打ち切りを掛ける。`fetchViaProxy` は
+  // プロキシ経由の経路にまとめて打ち切りを掛ける (**数はここに書かない** ——
+  // 2026-09-15 の実測で 13 経路、この行は 14 と書いたまま古びていた。母集団は
+  // `webShimTimeouts.test.ts` の `proxyRoutedActions` が実装から数える)。`fetchViaProxy` は
   // 2026-08-22 から `init.signal` を**捨てずに転送する**が、渡す側が誰も
   // 付けていなかった —— 関門は在るのに、通す物が無い形。
   return (url, init) =>
@@ -1694,6 +1697,17 @@ const shim = {
     // Bearer + プロキシ経由の create 系 (Google / WordPress / Canva / Cloudflare)。
     if (serviceId === 'calendar' && action === 'create-event') {
       return (await runProxyBearer('calendar', (t, tok) => createCalendarEvent(payload, tok, t))) as ActionResult<T>;
+    }
+    /*
+     * ここが無いまま `action_not_found` へ落ちていた (パス 274 実測)。
+     * **同じフォームの隣の `create-event` は動いていた** ので、利用者から見ると
+     * 「予定は作れるのにメールだけ送れない」形だった。押せる条件も同じ
+     * (`submitting` と欄の天井だけ) で、ビルドを見る枝は無い。
+     */
+    if (serviceId === 'microsoft-365' && action === 'send-mail') {
+      return (await runProxyBearer('microsoft-365', (t, tok) =>
+        sendMicrosoftMail(payload, tok, t),
+      )) as ActionResult<T>;
     }
     if (serviceId === 'gmail' && action === 'create-draft') {
       return (await runProxyBearer('gmail', (t, tok) => createGmailDraft(payload, tok, t))) as ActionResult<T>;

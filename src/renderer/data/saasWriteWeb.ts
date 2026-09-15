@@ -27,6 +27,8 @@ import {
   checkWriteLabels,
   describeWriteFieldFailure,
 } from '../../shared/writeFieldLimits';
+/* ホストは共有に 1 つだけ —— main と同じ字面を写さない (パス 274)。 */
+import { checkMail, sendGraphMail, type GraphMailFields } from '../../shared/api/microsoft365';
 import {
   MAX_ATLASSIAN_EMAIL,
   MAX_ATLASSIAN_SITE,
@@ -804,4 +806,31 @@ export async function checkEmailBreach(
   // 一覧に並んだ。要素ごとに欄を要求する —— 漏洩の有無は安全の判断なので、
   // 読めない答えを「読めた」ことにしてはいけない。
   return { email, breaches: hibpBreaches(await res.json()) };
+}
+
+/**
+ * Microsoft Graph でメールを送る (ブラウザ版・パス 274)。
+ *
+ * ## なぜこれが無かったのか
+ *
+ * ブラウザ版には `send-mail` の枝が 1 つも無く、`web-shim` の既定 (「名指し
+ * していない action は `action_not_found`」) へ落ちていた。ところが**同じ
+ * フォームの隣の `create-event` は動いていた** —— `createCalendarEvent` が
+ * 在るので。押せる条件も同じ (`submitting` と欄の天井だけ) なので、
+ * 利用者から見ると「予定は作れるのにメールだけ送れない」形だった。
+ *
+ * 欄の判定と要求の組み立ては **`shared/api/microsoft365.ts` の 1 つ**を通る
+ * (main も同じ関数を呼ぶ)。ここが持つのは**ブラウザ版の流儀**だけ ——
+ * プロキシ経由の transport と、失敗した本文の読み方 (`ensureOk` が上限つきで
+ * 読んで伏字を通す)。202 は `res.ok` なので `ensureOk` は**本文を読まずに返る**。
+ */
+export async function sendMicrosoftMail(
+  input: GraphMailFields,
+  token: string,
+  transport: Transport,
+): Promise<ActionData<'microsoft-365/send-mail'>> {
+  const mail = checkMail(input);
+  const res = await sendGraphMail(mail, token, transport);
+  await ensureOk(res, 'Microsoft Graph');
+  return { ok: true, to: mail.to, subject: mail.subject };
 }

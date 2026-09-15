@@ -280,7 +280,28 @@ describe('文字列でない欄と一覧のある欄 (パス 111)', () => {
 });
 
 describe('5 か所が同じ台帳を読む (数を写していない)', () => {
-  // `web: false` はブラウザ版の双子が無い操作 (Microsoft 365 は Electron 版だけ)。
+  /*
+   * `web: false` はブラウザ版の双子が無い操作。
+   *
+   * **`via` は「両ビルドが共有の関数を通って台帳に着く」形** (2026-09-15 · パス 274)。
+   * それまでこの検査は `checkWriteFields(ctx.payload, 台帳)` という**字面**を
+   * main と `saasWriteWeb.ts` の両方に要求していた —— つまり
+   * **判定の写しが 2 つ在ることを要求していた。** 写しはずれる、というのが
+   * この台帳そのものの動機なので、字面の要求は目的と逆を向いていた。
+   *
+   * `via` が在る行では鎖を 2 段で見る:
+   *   1. handler / 双子が `via.fn(…)` を呼ぶ
+   *   2. `via.file` の中身が `checkWriteFields(input, 台帳)` で台帳を読む
+   * どちらが切れても落ちる (relay を空の中継にできない)。
+   *
+   * **`via.init` は母集団の側の鎖である。** 下の
+   * 「POST する handler はすべて台帳を読む」は `method: 'POST'` の字面で母集団を
+   * 作っており、要求の組み立てを共有モジュールへ移すと**その handler が母集団から
+   * 消える** (パス 274 で実測: 16 → 15 に落ち、床が鳴って気付いた。egress の
+   * 走査が「送る文脈でしか見ない」ために同じ日にホストを 2 度見失ったのと同じ形)。
+   * だから中継の組み立て役の名前も台帳に置き、`via.file` が本当に POST している
+   * ことまで確かめる。
+   */
   const LEDGERS = [
     { name: 'SLACK_MESSAGE_FIELDS', main: 'main/clients/slack.ts', page: 'renderer/pages/SlackPage.tsx', fields: ['channel', 'text'], web: true },
     { name: 'GITHUB_ISSUE_FIELDS', main: 'main/clients/github.ts', page: 'renderer/pages/GithubPage.tsx', fields: ['owner', 'repo', 'title', 'body'], web: true },
@@ -292,18 +313,46 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
     { name: 'NOTION_PAGE_FIELDS', main: 'main/clients/notion.ts', page: 'renderer/pages/NotionPage.tsx', fields: ['parentPageId', 'title', 'body'], web: true },
     { name: 'ATLASSIAN_ISSUE_FIELDS', main: 'main/clients/atlassian.ts', page: 'renderer/pages/AtlassianPage.tsx', fields: ['projectKey', 'summary', 'description', 'issueType'], web: true },
     { name: 'WORDPRESS_POST_FIELDS', main: 'main/clients/wordpress.ts', page: 'renderer/pages/WordPressPage.tsx', fields: ['siteId', 'title', 'content'], web: true },
-    { name: 'MS365_MAIL_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['to', 'subject', 'body'], web: false },
+    // パス 274 で共有の `checkMail` に寄せ、ブラウザ版の双子が出来た (web: false → true)。
+    { name: 'MS365_MAIL_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['to', 'subject', 'body'], web: true, via: { fn: 'checkMail', init: 'graphMailInit', file: 'shared/api/microsoft365.ts' } },
     { name: 'MS365_EVENT_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['subject', 'location'], web: false },
     { name: 'CLOUDFLARE_DNS_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: ['name', 'content'], web: true },
     { name: 'CLOUDFLARE_PURGE_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: [], web: true },
   ] as const;
 
+  /** `via` を持つ行の中継関数の名前 (走査の語彙を台帳から導く — 手で並べない)。 */
+  const VIA_FNS: ReadonlySet<string> = new Set(
+    LEDGERS.flatMap((l) => ('via' in l ? [l.via.fn] : [])),
+  );
+  /** 同じ台帳から導く、要求を組み立てる側の名前 (母集団の走査が使う)。 */
+  const VIA_INITS: ReadonlySet<string> = new Set(
+    LEDGERS.flatMap((l) => ('via' in l ? [l.via.init] : [])),
+  );
+
   it('★ main の handler が台帳で断る', () => {
     for (const l of LEDGERS) {
+      if ('via' in l) {
+        // 1 段目: handler が中継を呼ぶ。
+        expect(code(l.main), `${l.main} が ${l.via.fn} を呼んでいない`).toContain(`${l.via.fn}(ctx.payload`);
+        // 2 段目: 中継が台帳を読む (空の中継にできない)。
+        expect(
+          code(l.via.file),
+          `${l.via.file} が ${l.name} を読んでいない — 中継が判定を素通りさせている`,
+        ).toContain(`checkWriteFields(input, ${l.name})`);
+        // 3 段目: 中継が実際に POST を組み立てる (母集団の走査がここを数える)。
+        expect(
+          code(l.via.file),
+          `${l.via.file} が POST を組み立てていない — 母集団の走査が空を数えている`,
+        ).toMatch(/method:\s*'POST'/);
+        expect(code(l.main), `${l.main} が ${l.via.init} を呼んでいない`).toContain(`${l.via.init}(`);
+        continue;
+      }
       expect(code(l.main), `${l.main} が台帳で断っていない`).toContain(`checkWriteFields(ctx.payload, ${l.name})`);
     }
     // labels は別の判定。
     expect(code('main/clients/github.ts')).toContain('checkWriteLabels(labels)');
+    // 標本: 中継の形が 1 件以上在る (`via` の枝が死んでいない)。
+    expect(VIA_FNS.size, 'via の枝が空 — 上の分岐は一度も通っていない').toBeGreaterThanOrEqual(1);
   });
 
   it('★ ブラウザ版の双子が同じ台帳で断る', () => {
@@ -312,6 +361,11 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
       if (!l.web) {
         // 双子が無いことも留める —— 出来たら台帳を読む側へ回す。
         expect(web, `${l.name} の双子が出来ている (web: true にして台帳を読ませる)`).not.toContain(l.name);
+        continue;
+      }
+      if ('via' in l) {
+        // 双子も同じ中継を通る。台帳を読むことは上の 2 段目が留めている。
+        expect(web, `双子が ${l.via.fn} を呼んでいない`).toContain(`${l.via.fn}(input)`);
         continue;
       }
       expect(web, `双子が ${l.name} で断っていない`).toContain(`checkWriteFields(input, ${l.name})`);
@@ -411,13 +465,32 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
         }
         const body = src.slice(open, end);
         const key = `${f.replace(/\.ts$/, '')}/${action}`;
-        if (/method:\s*'POST'/.test(body)) posting.push(key);
-        if (/checkWriteFields\(ctx\.payload/.test(body)) reading.push(key);
+        /*
+         * 要求の組み立てが共有モジュールへ移った handler も母集団に入れる ——
+         * `method: 'POST'` はもうこの body に無いが、**POST していることは
+         * 変わっていない**。組み立て役の名前は LEDGERS から導く。
+         */
+        const viaInit = [...VIA_INITS].some((fn) => body.includes(`${fn}(`));
+        if (/method:\s*'POST'/.test(body) || viaInit) posting.push(key);
+        /*
+         * 台帳に着く道は 2 本 —— 直に `checkWriteFields` を呼ぶか、
+         * 共有の中継 (`via.fn`) を通るか。中継の名前は LEDGERS から導くので、
+         * ここに綴りを書き足して「読んでいる」ことにはできない
+         * (中継が実際に台帳を読むことは上の検査の 2 段目が留めている)。
+         */
+        const viaCall = [...VIA_FNS].some((fn) => new RegExp(`\\b${fn}\\(ctx\\.payload`).test(body));
+        if (/checkWriteFields\(ctx\.payload/.test(body) || viaCall) reading.push(key);
       }
     }
     // 規則が実物に当たる (空の走査になっていない)。
     expect(posting.length).toBeGreaterThanOrEqual(16);
     expect(reading).toContain('slack/send-message');
+    // 標本: 中継を通る道も**実際に拾えている** (パス 274)。直呼びだけを見る規則に
+    // 戻すと、この 1 本が `unguarded` に落ちて下の検査が鳴る。
+    expect(reading, '中継 (checkMail) を通る handler を拾えていない').toContain('microsoft-365/send-mail');
+    // 標本: 母集団の側も拾えている。`method: 'POST'` は共有モジュールに在るので、
+    // ここが落ちたら「POST する handler」の母集団が黙って縮んでいる。
+    expect(posting, '共有の組み立て役を通る POST を母集団が数えていない').toContain('microsoft-365/send-mail');
     const unguarded = posting.filter((k) => !reading.includes(k) && !(k in OWN_ENTRANCE));
     expect(unguarded, '台帳を読まずに POST する handler がある').toEqual([]);
     // 対照: 理由つきの除外が古くなっていない (台帳を読み始めたら除外を消す・POST を止めたら消す)。

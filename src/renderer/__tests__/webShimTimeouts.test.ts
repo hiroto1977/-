@@ -307,6 +307,7 @@ const PROXY_WRITES: Readonly<Record<string, Record<string, unknown>>> = {
   'cloudflare/purge-cache': { zoneId: 'z', purgeEverything: true },
   'drive/create-folder': { name: 'n' },
   'gmail/create-draft': { to: 'a@b.c', subject: 's' },
+  'microsoft-365/send-mail': { to: 'a@b.c', subject: 's', body: 'b' },
   'notion/create-page': { parentPageId: 'p', title: 't' },
   'security/check-email-breach': { email: 'a@b.c' },
   'security/scan-url': { url: 'https://example.com/' },
