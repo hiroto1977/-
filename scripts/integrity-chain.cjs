@@ -780,6 +780,72 @@ function cmdSelfTest() {
   }
   {
     /*
+     * **「段を 1 つ増やしたければ、増えた先が次の verify で鳴る」の検算 (パス 286)。**
+     *
+     * 上の閉包の docblock は、推移閉包を追わない理由をこう書いている ——
+     * 「深追いすると『型だけの import』まで巻き込んで台帳が実用にならない。
+     * 段を 1 つ増やしたければ、増えた先が次の verify で鳴る」。
+     *
+     * この 2 文目が**設計の支え**である。追わないでよいのは、追う代わりに
+     * 「1 段ずつ増える」から。ところが self-test 20 件のうち閉包を見る物は
+     * **外す向きしか無かった** (`cryptoParams.ts` を PROTECTED から外すと
+     * 読んでいる側が鳴る)。**足す向き** —— 昇格した物が自分の読んでいる先で
+     * 鳴るか —— は 1 件も測られていなかった (2026-09-15 実測)。
+     *
+     * ★ **足す向きだけを黙らせる変更は実在する** (2026-09-15 に対照で実測)。
+     * `collectClosureProblems` の頭で「もともと `PROTECTED` に在った物からの
+     * 辺だけ見る」——昇格したばかりの物を免除する最適化を装った 2 行——を
+     * 入れると、**self-test 20 件のうち鳴るのはこの 1 本だけ**で、外す向き
+     * (`cryptoParams.ts`)・実物の一覧・workflow の辺はすべて緑のまま通る。
+     * だからこの検査は「同じ実装を 2 度測る重複」ではない。
+     *
+     * ★ 併せて**外した対照も記録する** —— 最初は「`set.has(target)` を
+     * 広い集合に変えれば足す向きだけが黙る」と書いたが、当てて測ると
+     * `src/shared/` を丸ごと飛ばす形になり**外す向きも一緒に落ちた** (4 件鳴った。
+     * 外す向きの標本 `cryptoParams.ts` が `src/shared/` に在るため)。
+     * 予想した対照が外れたら、**書いた予想のほうを直す**。
+     *
+     * ★ 標本は**探す** (綴りで固定しない)。固定すると、その 1 ファイルの
+     * import が変わった日に「どの入力でも通る空の検査」になる —— この本が
+     * 何度も名指ししている形である。だから走査が候補を見つけられなければ
+     * **それ自体を落とす** (下の 1 本目)。
+     */
+    const known = new Set([...PROTECTED, ...Object.keys(DEP_EXCLUSIONS)]);
+    const sharedDir = path.join(REPO_ROOT, 'src', 'shared');
+    const pool = fs.existsSync(sharedDir)
+      ? fs
+          .readdirSync(sharedDir)
+          .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'))
+          .map((f) => `src/shared/${f}`)
+          .filter((rel) => !known.has(rel))
+      : [];
+    let candidate = null;
+    let wouldRing = null;
+    for (const rel of pool) {
+      const text = fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+      const unknown = dependencySpecs(text, 'esm')
+        .map((spec) => resolveRelativeImport(rel, spec))
+        .filter((t) => t !== null && !known.has(t));
+      if (unknown.length > 0) {
+        candidate = rel;
+        wouldRing = unknown[0];
+        break;
+      }
+    }
+    check(
+      '★ 昇格の標本が実在する (走査が死んで「合格」にならない)',
+      candidate !== null && wouldRing !== null,
+    );
+    const promoted =
+      candidate === null ? [] : collectClosureProblems([...PROTECTED, candidate], DEP_EXCLUSIONS);
+    check(
+      '★ 保護対象へ 1 つ足すと、その先が鳴る (推移閉包を追わない理由の検算)',
+      candidate !== null &&
+        promoted.some((m) => m.includes(candidate) && m.includes(wouldRing)),
+    );
+  }
+  {
+    /*
      * **workflow の `run:` を辺として数えているか。**
      *
      * ここが無かったせいで、`release.yml` は保護対象なのに、それが

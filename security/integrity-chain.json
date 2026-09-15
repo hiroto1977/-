@@ -1731,6 +1731,14 @@
       "leafCount": 72,
       "note": "update scanTarget.ts",
       "hash": "7dc897572ce9e709ddc9a405b41239f7511b9d6a83612eec5606ad947b0cc35b"
+    },
+    {
+      "index": 207,
+      "prevHash": "7dc897572ce9e709ddc9a405b41239f7511b9d6a83612eec5606ad947b0cc35b",
+      "merkleRoot": "bea2854f8d1ba41fde896f754627d7c07ac96846d0afc0f4f31b32257164957d",
+      "leafCount": 72,
+      "note": "update integrity-chain.cjs",
+      "hash": "64f02826d03bc6a960c0e1ffdc965738ed99a18e5f997c4b109a06cd027f7571"
     }
   ],
   "tipManifest": {
@@ -1744,7 +1752,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "2fa946d7253df0eb0029b973fb2027296876570c6da93fe6d3ecb7ec8e4a2678",
+    "scripts/integrity-chain.cjs": "194b1d0b39c6b3a96ac811e5d757198f31182b101fc96adf0fc0634c8b59c7a9",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
