@@ -32402,3 +32402,91 @@ const fetcherOptions = {
   `toIsoDate`)。**日付は量ではない**ので 0 倒しの家系には入らない。
 - 残り 10 のネットワーククライアントは依然「欄が空なら空として出る」まま
   (パス 264 が 1 件ずつ読んで「文を作っていない」と裁定した通り)。
+
+## パス 267 (2026-09-15) — **資格情報の要らない 15 サービスの action が、デスクトップ版で 1 度も呼ばれなかった**
+
+判定の census (`lint:shared-judgement`) の **未読 4 件** を読みに行った。census の目的は
+「述語は共有したが、**no と言われたあとの動作が両ビルドで違う**」を見つけることで、
+未読の行だけがまだ何も見ていない場所である。
+
+### `serviceAdvisor` を辿ると、両ビルドの**入口**が違っていた
+
+4 つの `parse*AdviceInput` は**本番の呼び手が 1 つも無い** (検査だけが import する)。
+両ビルドは `adviseService(serviceId, raw)` を通り、その中で分岐して呼ばれる。
+`ok: false` のあとの動作は:
+
+```
+  main (4 client)   if (!r.ok) throw new Error(r.message)   → IPC が action_failed に包む
+  ブラウザ版        if (!r.ok) return err('action_failed', r.message)
+```
+
+**ここは対称だった。** ところが `main` 側の IPC ハンドラを読むと、その手前に在った:
+
+```ts
+// src/main/main.ts — action:invoke (2026-09-15 まで)
+const read = await getValidToken(serviceId);
+if (!read.ok) {
+  return { ok: false, code: 'not_configured',
+           message: read.reason === 'absent' ? 'トークン未設定' : read.message };
+}
+```
+
+**全サービスに有効なトークンを要求していた。** 同じファイルの 30 行上、`fetch:snapshot` は
+`LOCAL_SERVICES` を見ており、理由まで書かれている ——「LOCAL_SERVICES は資格情報なしでも
+動くので、読めないことは異常ではない」。**読み取り側だけがその規則を持っていた。**
+
+### 実測 (IPC ハンドラを実際に呼んだ)
+
+```
+  invoke('action:invoke', 'skills', 'run', {})  with getValidToken → {ok:false, reason:'absent'}
+    → { ok: false, code: 'not_configured', message: 'トークン未設定' }
+    → action 関数の呼び出し回数 = 0        ★ 一度も呼ばれない
+```
+
+**母集団は 15 サービス** (`LOCAL_SERVICES` 53 件 ∩ `LIVE_ACTIONS` の鍵 28 件 · 実測):
+
+```
+  docstudio skills security emotions ollama stocks business teamradar
+  talent templates uber-eats demae-can real-estate mutual-funds assistant
+```
+
+効いていたボタン: 「AI 改善提案」(不動産 / 投資信託 / Uber Eats / 出前館 ——
+**パス 119 が両ビルドへ通した物**)・チームレーダーの `save-state` (**パス 118 が
+ブラウザ版で直した物の裏返し**)・人材育成の 2 つ・感情ログの `analyze-text`・
+Ollama の `chat`・株式の 5 つ・経営の `advise`・書類スタジオ・テンプレート・
+Skills・Security・アシスタント。**ブラウザ版はトークンを要求しないので同じボタンが
+動いていた** —— 利用者から見れば「ブラウザ版では動くのにアプリでは動かない」。
+
+### 直し方
+
+`action:invoke` を `fetch:snapshot` と同じ 3 段にした。**断る条件は 1 文字も変えていない**:
+
+- `read.reason !== 'absent'` → ローカルでも断る (「保存済みだが復号できない」
+  「保管ファイルが読めない」は**未設定ではない**ので、「トークン未設定」と案内すると
+  鍵を貼り直させてしまう)
+- `absent` かつ `LOCAL_SERVICES` でない → 今までどおり「トークン未設定」
+- `absent` かつ ローカル → `token = ''` で通す
+
+**サービスごとの台帳は作っていない** —— ハンドラが `LOCAL_SERVICES` を直接読むので、
+新しいローカルサービスが action を登録しても同じ道を通る。留めたのは**構造**である。
+
+### 検査と対照
+
+`mainIpc.test.ts` に 4 本 (モックの `LIVE_ACTIONS` に `skills.run` を足した):
+ローカルは空文字のトークンで**呼ばれる** / 対照: 資格情報の要るサービスは今までどおり
+断る / `undecryptable` と `store-unreadable` はローカルでも断る / 保存済みトークンが
+在れば渡す (security の HIBP・VT 連携がそれを使う)。
+
+**対照**: `LOCAL_SERVICES` の枝を外すと ★ の 1 本が落ちる。
+**既存の 71 本は 1 本も落ちなかった** —— つまり**この経路を測っていた検査は 1 つも
+無かった** (既存の action 検査は `github` = 資格情報の要るサービスだけを通していた)。
+
+### 残り
+
+- **他の 3 つの未読は読んでいない** (`freeeIntake` / `hydroponicsControl` / `radarPlot`)。
+  `serviceAdvisor` の verdict だけを書いた。未読を「対称だろう」で埋めない (パス 247 の方針)。
+- ブラウザ版の `web-shim` は**そもそもトークンを要求しない** —— これは資格情報を
+  保管庫から自分で引くので構造が違う。対称にするのは「ローカルサービスは
+  トークン無しで動く」という**性質**であって、実装ではない。
+- **実機では確かめていない。** IPC ハンドラを直接呼んだ実測と `smoke:app` までで、
+  Electron を起動してボタンを押す検証 (e2e) はこのパスでは回していない。

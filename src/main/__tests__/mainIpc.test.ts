@@ -134,7 +134,11 @@ vi.mock('../clients', () => ({
     github: async (a: unknown) => { fetcherCalls.push(a); return { rows: [] }; },
     skills: async (a: unknown) => { fetcherCalls.push(a); return { local: true }; },
   },
-  LIVE_ACTIONS: { github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } } },
+  LIVE_ACTIONS: {
+    github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } },
+    // 資格情報の要らないサービスの action (パス 267 の実測対象)。
+    skills: { run: async (a: unknown) => { actionCalls.push(a); return { ran: true }; } },
+  },
   LOCAL_SERVICES: new Set(['skills']),
 }));
 
@@ -565,6 +569,65 @@ describe('action:invoke — 書き込み側の入口', () => {
       await invoke('action:invoke', 'github', 'create-issue', p);
       expect(actionCalls).toEqual([{ token: 'tok', payload: {} }]);
     }
+  });
+
+  /*
+   * **資格情報の要らないサービスの action が、デスクトップ版で 1 度も呼ばれなかった**
+   * (2026-09-15 · パス 267)。
+   *
+   * `action:invoke` は全サービスに有効なトークンを要求しており、実測すると
+   * `{ok: false, code: 'not_configured', message: 'トークン未設定'}` を返して
+   * action 関数の呼び出し回数は **0** だった。同じ入口の `fetch:snapshot` は
+   * 30 行上で `LOCAL_SERVICES` を見ているのに、**書き込み側だけがその規則を
+   * 持っていなかった** —— ブラウザ版 (`web-shim`) はトークンを要求しないので
+   * 同じボタンが動いており、ビルド間の非対称だった。
+   *
+   * ここを留めるのは**構造**である (`LOCAL_SERVICES` を引く 1 行)。サービスごとの
+   * 台帳は要らない —— ハンドラが集合を直接読むので、新しいローカルサービスが
+   * action を登録しても同じ道を通る。
+   */
+  it('★ 資格情報の要らないサービス (LOCAL_SERVICES) の action は、トークンが無くても呼ぶ', async () => {
+    validToken = { ok: false, reason: 'absent' };
+    expect(await invoke('action:invoke', 'skills', 'run', { q: 'x' })).toEqual({
+      ok: true,
+      data: { ran: true },
+    });
+    // トークンは空文字で渡る (fetch:snapshot と同じ)。
+    expect(actionCalls).toEqual([{ token: '', payload: { q: 'x' } }]);
+  });
+
+  it('★ 対照: 資格情報の要るサービスは、トークンが無ければ今までどおり断る', async () => {
+    validToken = { ok: false, reason: 'absent' };
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'not_configured',
+      message: 'トークン未設定',
+    });
+    expect(actionCalls).toEqual([]);
+  });
+
+  it('★ ローカルでも「未設定ではない」理由なら断る (復号できない / 保管ファイルが読めない)', async () => {
+    // ここを `absent` と同じに扱うと、鍵を貼り直せば直ると思わせてしまう。
+    // 条件は fetch:snapshot と 1 文字も変えていない。
+    for (const read of [
+      { ok: false, reason: 'undecryptable', message: 'キーチェーンが使えません' },
+      { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' },
+    ]) {
+      actionCalls.length = 0;
+      validToken = read;
+      expect(await invoke('action:invoke', 'skills', 'run', {})).toEqual({
+        ok: false,
+        code: 'not_configured',
+        message: read.message,
+      });
+      expect(actionCalls).toEqual([]);
+    }
+  });
+
+  it('★ ローカルサービスに保存済みのトークンが在れば、それを渡す (security の HIBP/VT と同じ)', async () => {
+    validToken = { ok: true, token: 'local-tok' };
+    expect(await invoke('action:invoke', 'skills', 'run', {})).toEqual({ ok: true, data: { ran: true } });
+    expect(actionCalls).toEqual([{ token: 'local-tok', payload: {} }]);
   });
 
   it('資格情報の読み出しが投げても reject しない', async () => {
