@@ -658,6 +658,13 @@ export async function purgeCloudflareCache(
 ): Promise<ActionData<'cloudflare/purge-cache'>> {
   // 欄の形は main と同じ台帳で断る (パス 111)。それまで文字列でない URL は**間引いて**
   // 残りをパージし、真偽値でない `purgeEverything` は false に**すり替えて**いた。
+  //
+  // **下の `.filter()` は関門ではない** (2026-09-15 · パス 284 で実測)。この
+  // `checkWriteFields` が `files: list(false, MAX_WRITE_URLS, line(true))` で
+  // 要素ごとに文字列を要求しているので、`['…', 42]` は**ここで**
+  // 「files は文字列で指定してください」として落ちる —— 間引きへは到達しない。
+  // 残してあるのは二重の備えとして (`buildRfc2822` の CR/LF 検査と同じ位置づけ)。
+  // 読む人が「間引きが今も効いている = 黙って落としている」と読まないように。
   const bad = checkWriteFields(input, CLOUDFLARE_PURGE_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const zoneId = typeof input.zoneId === 'string' ? input.zoneId.trim() : '';
