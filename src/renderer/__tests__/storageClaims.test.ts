@@ -32,10 +32,39 @@ const CARD = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/components/Go
  * このリポジトリで何度も直している「同じ判断の N 実装」になる)。
  * 代わりに**条件つきで正しいことを書き、実際の状態は「設定」へ送る**。
  */
+/*
+ * **不在の主張には、実行される標本を添える** (2026-09-15 · パス 293)。
+ *
+ * 下の `not.toMatch` を非空にしているのは、上の docblock が引用している
+ * 2026-08-22 までの実物の一文である。**だが docblock は落ちない** ——
+ * 綴りを 1 字外した規則も、注記を読まなければ見分けられない。
+ * `dbSecurityPosture.test.ts` が 2026-08-25 の失敗から作った形
+ * (`OLD_WORDINGS` + 肯定の `it`) をここにも置く。
+ *
+ * 規則の綴りは**この定数 1 つ**に持たせ、不在の主張と標本が同じ物を読む
+ * (写しを 2 つ置くと離れて腐る)。
+ */
+const KEYCHAIN_ASSERTION = /トークンは\s*OS\s*キーチェーンに\s*暗号化保存されます/;
+/** 2026-08-22 まで実際にカードに在った一文 (この節の docblock が引用している物)。 */
+const OLD_KEYCHAIN_WORDING = 'トークンは OS キーチェーンに暗号化保存されます。';
+
 describe('トークン保存の説明が、環境によらず正しいこと', () => {
+  it('★ この規則が空でない (実際に在った一文に当たる)', () => {
+    expect(OLD_KEYCHAIN_WORDING, '規則が実物の文面に当たらない — 綴りを実物から取り直すこと').toMatch(
+      KEYCHAIN_ASSERTION,
+    );
+  });
+
+  it('★ 直したあとの文面には当たらない (過剰でない)', () => {
+    expect(CARD).toContain('base64 の難読化のみ');
+    expect('キーチェーンがあれば暗号化、無ければ base64 の難読化のみ。').not.toMatch(
+      KEYCHAIN_ASSERTION,
+    );
+  });
+
   it('「OS キーチェーンに暗号化保存されます」と断言していない', () => {
     // 条件を伴わない断言だけを禁じる。語そのものは正しい文にも出る。
-    expect(CARD).not.toMatch(/トークンは\s*OS\s*キーチェーンに\s*暗号化保存されます/);
+    expect(CARD).not.toMatch(KEYCHAIN_ASSERTION);
   });
 
   it('キーチェーンが無い環境では難読化のみ、と書いてある', () => {
@@ -384,8 +413,17 @@ describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
     expect(SETTINGS).toMatch(/MAX_PROXY_SECRET_CHARS/);
   });
 
+  /* 不在の主張の綴りを 1 つに持ち、標本と共有する (パス 293)。 */
+  const OPTIONAL_ONLY_LABEL = /共有秘密 \(任意・空欄可\)/;
+
+  it('★ この規則が空でない (「任意・空欄可」だけの旧ラベルに当たる)', () => {
+    expect('共有秘密 (任意・空欄可)').toMatch(OPTIONAL_ONLY_LABEL);
+    // 過剰でない: 危険を述べている今のラベルには当たらない。
+    expect('共有秘密 (空欄にすると誰でも中継できます)').not.toMatch(OPTIONAL_ONLY_LABEL);
+  });
+
   it('「任意・空欄可」とだけ言って終わっていない', () => {
-    expect(SETTINGS).not.toMatch(/共有秘密 \(任意・空欄可\)/);
+    expect(SETTINGS).not.toMatch(OPTIONAL_ONLY_LABEL);
   });
 
   it('空欄にすると誰でも中継できる、と書いてある', () => {
