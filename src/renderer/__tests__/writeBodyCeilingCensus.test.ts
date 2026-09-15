@@ -34,6 +34,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
+import { join } from 'node:path';
+import { globSync } from 'node:fs';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import { ledgerFieldsIn } from '../../shared/__tests__/writeBodyFields';
 
@@ -82,6 +84,11 @@ const SCREEN_OF: Readonly<Record<string, string>> = {
   'CLOUDFLARE_DNS_FIELDS.content': 'pages/CloudflarePage.tsx',
 };
 
+/** 上の 7 行が共有する理由 (7 欄に写さない)。 */
+const SHOPIFY_WHY =
+  '注文は利用者が打つのではなく Shopify の API が返す記録で、どの画面も 7 つの同期 action を呼んでいない (欄が在りようがない)。' +
+  '天井はここでは貼り付けの切り落としではなく、相手が返した値が 7 つの第三者へ出ていくことを断るために在る';
+
 /** 画面に欄が無い台帳の欄と、その理由 + 欄が無いことの確かめ方。 */
 const NO_FIELD_ON_SCREEN: Readonly<Record<string, { readonly why: string; readonly page: string; readonly absent: string }>> = {
   'CALENDAR_EVENT_FIELDS.description': {
@@ -99,6 +106,31 @@ const NO_FIELD_ON_SCREEN: Readonly<Record<string, { readonly why: string; readon
     page: 'pages/CalendarPage.tsx',
     absent: 'value={timeZone}',
   },
+  /*
+   * **「欄が無い」には 2 種類ある** (2026-09-15 · パス 283)。
+   *
+   * 上の 3 行は「利用者が打つ値だが、この画面はその欄を出していない」——
+   * 値の出どころは人で、入る道が音声・チャットの payload しかない。
+   *
+   * 下の 7 行は**出どころが人ではない** —— Shopify の注文記録そのもので、
+   * `assertOrder` が受けてから 7 つの第三者 (Slack / Discord / LINE / Gmail /
+   * Notion / Salesforce / Zapier) へ配る。天井の規則がここで守るのは
+   * 「貼り付けが黙って切られる」ことではなく、**相手のサービスが返した値が
+   * そのまま 7 方向へ出ていくこと**である (パス 283 の実測: `lineItems` が
+   * 配列でないと `items.map is not a function`・`total` がオブジェクトだと
+   * `[object Object]` が Slack へ届いた)。
+   *
+   * だから `absent` も種類が違う —— 欄の変数名ではなく **action そのもの**を
+   * 見る。どの画面も 7 つの同期 action を呼んでいないので、欄が在りようがない。
+   * 誰かがボタンを配線したら鳴る (下の「どの画面も呼んでいない」も併せて見る)。
+   */
+  'SHOPIFY_ORDER_FIELDS.id': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
+  'SHOPIFY_ORDER_FIELDS.name': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
+  'SHOPIFY_ORDER_FIELDS.customer': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
+  'SHOPIFY_ORDER_FIELDS.email': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
+  'SHOPIFY_ORDER_FIELDS.total': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
+  'SHOPIFY_ORDER_FIELDS.currency': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
+  'SHOPIFY_ORDER_FIELDS.url': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
 };
 
 /**
@@ -152,8 +184,19 @@ describe('外へ書く欄は、切らずに断る (母集団は台帳から導�
   const keys = fields.map((f) => `${f.group}.${f.field}`);
 
   it('★ 走査が実物に当たる (台帳の欄が導けている)', () => {
-    // 実測 (2026-09-12): 32 欄 (画面に在る 31 + カレンダーの説明)。
-    expect(fields.length, '台帳の欄が見つからない (走査が死んでいる)').toBeGreaterThanOrEqual(32);
+    /*
+     * **これは生存の床であって件数の主張ではない** —— 走査が死んだら 0 になるので
+     * 鳴る、という 1 点だけを見る。件数そのものはここに書く (日付つき)。
+     *
+     * 実測 2026-09-15 (パス 283): **47 欄** —— 画面に在る 31 + 欄が無い 10
+     * (カレンダー 3 + Shopify 7) + 制御で決まる 6。
+     *
+     * 2026-09-12 (パス 172) の注記は「32 欄 (画面に在る 31 + カレンダーの説明)」
+     * のままで、**パス 183 が制御 6 欄 + カレンダー 2 欄を足した時点で実物と
+     * ずれていた** (40 欄)。床が 32 だったので誰も気付かない ——
+     * 床は緩くてよいが、**件数を語る散文は測った日を持たなければならない**。
+     */
+    expect(fields.length, '台帳の欄が見つからない (走査が死んでいる)').toBeGreaterThanOrEqual(40);
     // 4 つの作り手すべてが母集団に居る —— `text(` だけに戻っていない印。
     expect(new Set(fields.map((f) => f.kind))).toEqual(new Set(['id', 'title', 'line', 'text']));
     expect(keys).toContain('NOTION_PAGE_FIELDS.body');
@@ -243,6 +286,25 @@ describe('外へ書く欄は、切らずに断る (母集団は台帳から導�
       expect(src, `${key}: ${row.page} に欄が在る — 台帳から外して断りを配線する`).not.toContain(row.absent);
       expect(row.why.length, `${key}: 理由が無い`).toBeGreaterThan(20);
     }
+  });
+
+  it('★ Shopify の 7 欄: どの画面も同期 action を呼んでいない (欄が在りようがない)', () => {
+    /*
+     * 上の「本当に欄が無い」は `row.page` 1 枚しか見ない —— Shopify の 7 行が
+     * 主張しているのは**どの画面も**という強い方なので、母集団で確かめる。
+     * 誰かが別の画面 (経営サマリー・アシスタント) にボタンを配線したら鳴る。
+     */
+    const files = globSync('**/*.{ts,tsx}', { cwd: join(SRC, 'renderer') })
+      .filter((rel) => !rel.includes('__tests__'));
+    expect(files.length, '走査が死んでいる (renderer の .ts/.tsx が 0 件)').toBeGreaterThan(100);
+    const callers = files.filter((rel) => /['`]sync-to-/.test(readOriginalSource(join(SRC, 'renderer', rel))));
+    expect(callers, '画面が Shopify の同期 action を呼んでいる — 欄を配線して断りを描く').toEqual([]);
+
+    // 標本: 規則がこの書き方に**実際に当たる**こと (綴り違いで黙る空の検査にしない)。
+    expect(/['`]sync-to-/.test("await serviceHub.invoke('shopify', 'sync-to-slack', { order })")).toBe(true);
+    expect(/['`]sync-to-/.test('const label = `sync-to-${id}`;')).toBe(true);
+    // 逆に、注文名を打つ既存の欄 (`value={name}`) では当たらない。
+    expect(/['`]sync-to-/.test('<input value={name} placeholder="注文名 (#1001)" />')).toBe(false);
   });
 
   it('★ 対照: 走査と規則が標本を取り違えない', () => {

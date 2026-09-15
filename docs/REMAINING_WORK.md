@@ -26611,7 +26611,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `tokenResponse` | 1 | 1 | 対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、否定のあとの動作は両ビルドで同じ 2 行: `if (!parsed.ok) throw new Error(parsed.message)` (main/oauth.ts の交換・更新の 2 か所と renderer/oauth/pkce.ts)。文面も共有の 1 組。この pass の前は main 側に検査そのものが無く (`JSON.parse(…) as TokenResponse`)、ブラウザ版だけが見ていた —— 非対称の極として在った |
 | `updateCheck` | 1 | 2 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。 ★ **パス 282 で閉じた**: この行はパス 250 から「**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い)」と**生きた食い違いを記録したまま置いて**いた。main を `DEFAULT_HTTP_TIMEOUT_MS` へ寄せ、`shared/__tests__/deadlineCensus.test.ts` が両ビルドの締切を留める。★ 教訓: 「理由はどこにも無い」と書けたなら、それは**書いた時点で欠陥**である ——記録しただけで 32 パス残った |
 | `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
-| `writeFieldLimits` | 10 | 12 | 対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。**外部サービスへ利用者の資格情報で書き込む前の関門**なので、4 文字では足りない。 ★ 実測 (パス 282): 双子は **10 組** (slack / github / calendar / gmail / drive / canva / notion / atlassian / wordpress / cloudflare ×2 の欄)。**10 組すべてが同じ形**で、main は `checkWriteFields(ctx.payload, TABLE)`・ブラウザ版は `checkWriteFields(input, 同じ TABLE)` を呼び、否定 (`!== null`) のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。欄の台帳は `shared/writeFieldLimits.ts` に 1 つずつで、ラベルも天井も**両ビルドが同じ定数を読む**。GitHub の labels だけ 2 段目 (`checkWriteLabels`) が在り、それも両側に在る。MS365 の 2 表はパス 274/275 で `shared/api/microsoft365.ts` へ移したので**両ビルドが同じ実装**を通る (表の上では「片側だけ」に見えるが、それは共有へ寄せた結果である)。 ★ 残る非対称は**文面の言語** —— Cloudflare のパージの「どちらかが要る」の断りは main が英語 (`either purgeEverything=true or non-empty files[] is required`)・ブラウザ版が日本語。`advisorQuestionLimits` の行が同じことを述べており、**欄の判定ではなく文面の家系**なのでこの行では直していない (次に閉じる候補) |
+| `writeFieldLimits` | 11 | 12 | 対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。**外部サービスへ利用者の資格情報で書き込む前の関門**なので、4 文字では足りない。 ★ 実測 (パス 282): 双子は **10 組** (slack / github / calendar / gmail / drive / canva / notion / atlassian / wordpress / cloudflare ×2 の欄)。**10 組すべてが同じ形**で、main は `checkWriteFields(ctx.payload, TABLE)`・ブラウザ版は `checkWriteFields(input, 同じ TABLE)` を呼び、否定 (`!== null`) のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。欄の台帳は `shared/writeFieldLimits.ts` に 1 つずつで、ラベルも天井も**両ビルドが同じ定数を読む**。GitHub の labels だけ 2 段目 (`checkWriteLabels`) が在り、それも両側に在る。MS365 の 2 表はパス 274/275 で `shared/api/microsoft365.ts` へ移したので**両ビルドが同じ実装**を通る (表の上では「片側だけ」に見えるが、それは共有へ寄せた結果である)。 ★ 11 番目 (パス 283): `shopify` の注文 —— **ブラウザ版に相手が居ない**。7 つの同期 action (slack / discord / line / gmail / notion / salesforce / stripe) は main にしか無く、`webShimCredentials.test.ts` の `BROWSER_SURFACE` がその不在を既に台帳で留めている (増減したら鳴る)。だからこの 1 組は**非対称ではなく片側しか存在しない** —— 断りの動作が両ビルドで違う、という家系の外に在る。main 側の欄は `SHOPIFY_ORDER_FIELDS` + `checkShopifyLineItems` で、他の 10 組と同じ `describeWriteFieldFailure` の文を投げる。パス 283 まで `assertOrder` は `id` と `name` の真偽値しか見ておらず、`lineItems` が配列でないと `items.map is not a function`・`total` がオブジェクトだと `[object Object]` が 7 つの第三者へ出ていた。 ★ 残る非対称は**文面の言語** —— Cloudflare のパージの「どちらかが要る」の断りは main が英語 (`either purgeEverything=true or non-empty files[] is required`)・ブラウザ版が日本語。`advisorQuestionLimits` の行が同じことを述べており、**欄の判定ではなく文面の家系**なのでこの行では直していない (次に閉じる候補) |
 <!-- shared-judgement-census:end -->
 
 ### 2. ★ `ollama` —— 許可する経路の台帳を、読んでいるのはブラウザ版だけだった
@@ -33891,3 +33891,92 @@ main が英語・ブラウザ版が日本語 (`advisorQuestionLimits` の行が�
   増えるが、`main/clients/security.ts` / `main/oauth.ts` / `main/main.ts` の
   変更は出荷 HTML に入らない。**パス 280 の `tokenInput.ts` の分と混ざるので、
   次に測るときは 280 / 281 / 282 の 3 パス分をまとめて記録すること。**
+
+---
+
+## パス 283 —— 注文の 3 欄が壊れていると 7 つの第三者へ `[object Object]` が出ていた (2026-09-15)
+
+### 出発点 —— パス 282 が残した次の一手
+
+> `writeFieldLimits` は**双子 10 組すべてが同じ形**で、残る非対称は文面の言語だけ。
+
+その 10 組を数えたときに、**11 番目が居ない**ことに気付いた ——
+`shopify` は書き込み系クライアント 11 本のうち**ただ 1 本**、共有台帳
+`shared/writeFieldLimits.ts` を **1 度も使っていない**側だった。しかも
+`shopify` は **7 つの fan-out action** を持ち、7 つの違う第三者
+(Slack / Discord / LINE / Gmail / Notion / Salesforce / Stripe) へ同じ注文を配る。
+
+### ① 実測 —— 独立した Node プローブで 3 形すべて再現
+
+`assertOrder` は `id` と `name` の**真偽値**しか見ておらず、あとは素のキャストだった。
+
+| 壊れた欄 | 起きたこと |
+| --- | --- |
+| `lineItems` が真値の非配列 (文字列 / オブジェクト / 数) | `TypeError: items.map is not a function` (3 形すべて) |
+| `total` がオブジェクト | **`[object Object]` が Slack / Discord / LINE の本文に載って送信された** |
+| `customer` が配列 | 黙って平坦化されて本文に載る |
+
+`syncToGmail` の docblock は**この穴を自分で名指ししていた** ——
+「`assertOrder` は `id` と `name` しか見ないので」—— のに、2026-08-22 の直しは
+`To:` の CR/LF だけを塞いで**欄の検証は他の 10 本に合わせなかった**。
+パス 282 の `updateCheck` と同じ「見つけて書いて直さなかった」の 2 例目である。
+
+なお **egress の制御は無傷**だった (`lint:network-targets`: 宛先が変数で決まる
+送信 11 件はすべてホスト固定つきで台帳に在る) ので、これは**宛先の話ではなく
+欄の検証**である。
+
+### ② 直した所
+
+- `shared/writeFieldLimits.ts` に `SHOPIFY_ORDER_FIELDS` (7 欄) と
+  `MAX_SHOPIFY_LINE_ITEMS` (200) / `checkShopifyLineItems` (配列であること・
+  件数の天井・要素ごとの `title` と `quantity`) を足した。
+- `main/clients/shopify.ts` の `assertOrder` は他の 10 本と**字まで同じ形** ——
+  `checkWriteFields` → `describeWriteFieldFailure` を投げる。
+- 検査は 74 → 81 件。既存 6 件の期待文を台帳の文面へ直した
+  (振る舞いは不変 = 投げる・要求を出さない。**文面は狭くなった** ——
+  欄の名前を言うようになり、CR/LF は `buildRfc2822` より**手前**で断られる)。
+
+### ③ census が私の足し込みを捕まえた —— 「欄が無い」には 2 種類ある
+
+`renderer/__tests__/writeBodyCeilingCensus.test.ts` が落ちた。台帳に 7 欄を
+足したのに、**どの画面がその欄を描くか**を書いていなかったからである
+(この census は母集団を台帳から導き、3 つの逃げ道のどれにも無い欄を孤児として鳴らす)。
+
+読んだ結果、`SHOPIFY_ORDER_FIELDS` は既存の 3 行とは**種類が違う**:
+
+| | 値の出どころ | `absent` の確かめ方 |
+| --- | --- | --- |
+| カレンダーの 3 行 | **人** (打つ欄がこの画面に無いだけ。音声・チャットの payload から入る) | 欄の変数名 (`value={description}`) |
+| **Shopify の 7 行** | **人ではない** —— Shopify の API が返す注文記録 | **action そのもの** (`sync-to-`) |
+
+天井の規則がここで守るのは「貼り付けが黙って切られる」ことではなく、
+**相手のサービスが返した値がそのまま 7 方向へ出ていくこと**である。
+逃げ道の 1 つ (`NO_FIELD_ON_SCREEN`) に載せたうえで、その違いを台帳に書き、
+**主張に合う強さの検査**を足した —— 既存の行は `row.page` 1 枚しか見ないが、
+Shopify の 7 行が主張しているのは「**どの画面も**呼んでいない」なので、
+renderer の `.ts`/`.tsx` を母集団で走査する (床 100 件・標本 3 本つき)。
+
+### ④ ついで —— この census の件数の散文が、パス 183 から腐っていた
+
+同じ検査の生存の床のところに「実測 (2026-09-12): 32 欄 (画面に在る 31 +
+カレンダーの説明)」と書かれていた。**パス 183 が制御 6 欄 + カレンダー 2 欄を
+足した時点で実物は 40 欄**で、床が 32 だったので誰も気付かない。
+床は緩くてよい (生存の床は「走査が死んだら 0 になる」を見るだけ) が、
+**件数を語る散文は測った日を持たなければならない**。
+実測 47 欄 (31 + 10 + 6) と内訳・日付を書き、床は 40 に引き直した。
+
+### 対照 (7 本すべて鳴った)
+
+| 何を壊したか | 落ちた検査 |
+| --- | --- |
+| `assertOrder` を素のキャストに戻す | ★ 新 6 件 + 文面 6 件 = **12 件** |
+| `ShopifyPage` に `sync-to-slack` の invoke を 1 行足す | 「本当に欄が無い」+「どの画面も呼んでいない」= **2 件** |
+
+### 残り
+
+- **文面の言語の非対称** (main が英語を投げ、`safeErrorMessage` 経由で画面に出る)。
+  実測: `src/main/clients/` の裸の `throw new Error` は **75 EN / 17 JP**。
+  `advisorQuestionLimits` と `writeFieldLimits` の 2 行が同じことを述べている。
+- **出荷物は 280 / 281 / 282 / 283 の 4 パス分をまとめて次に測る** ——
+  283 の変更のうち `shared/writeFieldLimits.ts` は**両ビルドが読む**ので
+  LITE も増えるが、`main/clients/shopify.ts` と検査は出荷 HTML に入らない。

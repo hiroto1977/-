@@ -11,6 +11,12 @@ import {
   type FetchContext,
 } from './types';
 import { buildRfc2822 } from './gmail';
+import {
+  SHOPIFY_ORDER_FIELDS,
+  checkShopifyLineItems,
+  checkWriteFields,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 
 /**
@@ -77,10 +83,37 @@ export interface ShopifyOrderSummary {
 
 /** Pull and shallow-validate `payload.order`. Throws a clear error if a
  *  connector was invoked without an order to sync. */
+/**
+ * **注文を他サービスへ送る前に、欄を共有台帳で見る。** (2026-09-15 · パス 282)
+ *
+ * ここは 2026-09-15 まで**裸のキャストと presence 2 つ**だけだった。
+ * `syncToGmail` の注記が 2026-08-22 に「`assertOrder` は `id` と `name` しか
+ * 見ないので」と**その穴を名指ししながら**、直したのは `To:` の CR/LF だけで、
+ * 残りの欄はそのままだった。
+ *
+ * 実測した害 (パス 282):
+ *
+ * | 欄 | 渡した物 | 起きたこと |
+ * | --- | --- | --- |
+ * | `lineItems` | 文字列 / オブジェクト / 数 | `TypeError: items.map is not a function` |
+ * | `total` | オブジェクト | `[object Object]` が Slack / Discord / LINE へ投稿された |
+ * | `customer` | 配列 | 黙って畳まれた |
+ *
+ * payload は `action:invoke` で renderer から来るので、型は約束でしかない。
+ * **外へ書く 11 クライアントのうち、この 1 本だけが共有台帳を読んでいなかった**
+ * (他の 10 本はすべて `checkWriteFields(payload, TABLE)` を通す)。
+ * 断りの文面も台帳の `describeWriteFieldFailure` に揃える —— 1 経路だけ
+ * 別の言い方をする理由が無い。
+ */
 export function assertOrder(payload: Record<string, unknown>): ShopifyOrderSummary {
   const order = payload.order as ShopifyOrderSummary | undefined;
   if (!order || typeof order !== 'object') throw new Error('order is required');
-  if (!order.id || !order.name) throw new Error('order.id and order.name are required');
+  // 台帳で欄を見る (id / name の presence もここが持つ)。
+  const bad = checkWriteFields(order as unknown as Record<string, unknown>, SHOPIFY_ORDER_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 明細は「件数と 1 件」を別に見る (`checkWriteLabels` と同じ形)。
+  const badItems = checkShopifyLineItems((order as { lineItems?: unknown }).lineItems);
+  if (badItems !== null) throw new Error(describeWriteFieldFailure(badItems));
   return order;
 }
 

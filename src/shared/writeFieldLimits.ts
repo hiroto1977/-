@@ -172,6 +172,92 @@ export const GITHUB_LABELS: WriteListRule = list(false, MAX_WRITE_LABELS, {
   multiline: false,
 });
 
+/**
+ * **Shopify の注文を他サービスへ送る 7 経路の欄。** (2026-09-15 · パス 282)
+ *
+ * ## なぜ今まで無かったか
+ *
+ * 外へ書く 11 のクライアントのうち、`shopify.ts` **だけ**がこの台帳を
+ * 1 度も読んでいなかった (実測 0 件 / 他の 10 本はすべて
+ * `checkWriteFields(payload, TABLE)` を通す)。代わりに在ったのは
+ * `assertOrder` の**裸のキャストと presence 2 つ**だけ:
+ *
+ * ```
+ *   const order = payload.order as ShopifyOrderSummary | undefined;
+ *   if (!order || typeof order !== 'object') throw …
+ *   if (!order.id || !order.name) throw …
+ * ```
+ *
+ * `syncToGmail` の注記が 2026-08-22 に**その穴を名指ししている**
+ * (「`assertOrder` は `id` と `name` しか見ないので」) —— 名指ししたのは
+ * `To:` の CR/LF だけで、**残りの欄はそのまま**だった。
+ *
+ * ## 実測した害 (パス 282)
+ *
+ * | 欄 | 渡した物 | 起きたこと |
+ * | --- | --- | --- |
+ * | `lineItems` | 文字列 / オブジェクト / 数 | **`TypeError: items.map is not a function`** (3 形すべて) |
+ * | `total` | オブジェクト | **`[object Object]` が Slack / Discord / LINE へ投稿された** |
+ * | `customer` | 配列 | 黙って `x` に畳まれた |
+ *
+ * payload は `action:invoke` で renderer から来るので、型は**約束でしかない**
+ * (パス 62 / 80 / 262 と `collectionShapes` の家系)。
+ *
+ * 天井は他の 10 本と同じ定数を読む —— 1 経路だけ別の数にする理由が無い。
+ */
+export const SHOPIFY_ORDER_FIELDS: Readonly<Record<string, WriteFieldRule>> = {
+  id: id(true),
+  name: title(true),
+  customer: title(false),
+  email: line(false),
+  total: title(false),
+  currency: id(false),
+  url: line(false),
+};
+
+/** 1 注文の明細の件数の天井 (`GITHUB_LABELS` と同じ「件数と 1 件」の形)。 */
+export const MAX_SHOPIFY_LINE_ITEMS = 200;
+
+/**
+ * **明細の配列を検証する。** `checkWriteList` を使えないのは、あちらの要素が
+ * **文字列**で、こちらは `{ title, quantity }` の**オブジェクト**だから。
+ * `checkWriteLabels` と同じ「特別扱いの list」の置き方に倣う。
+ *
+ * - 無い / `null` は通す (明細の無い注文は在りうる → 画面は「(明細なし)」)
+ * - **配列でなければ断る** (ここが `.map is not a function` を止める所)
+ * - 件数と、1 件ごとの `title` / `quantity` を見る
+ *
+ * 返すのは台帳と同じ {@link WriteFieldFailure} —— 呼ぶ側は
+ * `describeWriteFieldFailure` にそのまま渡せる (断りの文面が 1 か所に残る)。
+ */
+export function checkShopifyLineItems(value: unknown): WriteFieldFailure | null {
+  const itemTitle = title(true);
+  if (value === undefined || value === null) return null;
+  if (!Array.isArray(value)) {
+    return { field: 'order.lineItems', problem: 'not-string', rule: itemTitle };
+  }
+  if (value.length > MAX_SHOPIFY_LINE_ITEMS) {
+    return {
+      field: 'order.lineItems',
+      problem: 'too-many',
+      rule: list(false, MAX_SHOPIFY_LINE_ITEMS, itemTitle),
+    };
+  }
+  for (const [index, raw] of value.entries()) {
+    const at = `order.lineItems[${index}]`;
+    if (typeof raw !== 'object' || raw === null) {
+      return { field: at, problem: 'not-string', rule: itemTitle };
+    }
+    const item = raw as { title?: unknown; quantity?: unknown };
+    const bad = checkWriteField(item.title, itemTitle);
+    if (bad !== null) return { field: `${at}.title`, problem: bad, rule: itemTitle };
+    if (typeof item.quantity !== 'number' || !Number.isFinite(item.quantity)) {
+      return { field: `${at}.quantity`, problem: 'not-integer', rule: integer(true, 0) };
+    }
+  }
+  return null;
+}
+
 /** `calendar/create-event` の欄。 */
 export const CALENDAR_EVENT_FIELDS: Readonly<Record<string, WriteFieldRule>> = {
   summary: title(true),
