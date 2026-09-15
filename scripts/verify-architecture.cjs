@@ -1652,6 +1652,13 @@ function invariantRowCount(archText) {
  * (`shared/ai/providers.ts`) はここでは拾わない —— あちらは宛先が利用者の設定で決まる
  * ので、どう絞っているかを `lint:network-targets` の台帳 (`REVIEWED`) が 1 件ずつ持つ。
  * `const u = 'https://…'; fetch(u)` のように小文字の変数へ一度置いた形も拾わない。
+ *
+ * **2026-09-15 (パス 270) に、その穴の中を実測した: 0 件。** src/main・src/shared・
+ * src/renderer を走査し、小文字 (camelCase) の `const`/`let`/`var` が URL リテラルを
+ * 持ち、その名前が送信の呼び出しと同じ行に現れる形を数えた —— 1 件も無い。
+ * テンプレートリテラル版は 1 件だけ在るが `oauth.ts` の `redirectUri` = 127.0.0.1
+ * (ループバックの受け口で、宛先ではない。`src/main` は字面を全部数える木なので
+ * そもそも台帳に載っている)。**書いてあるだけの限界は、測るまで大きさが分からない。**
  */
 const SEND_CONTEXT_LINES = 3;
 const SEND_CALL = new RegExp(`\\b(?:${NETWORK_CALL_NAMES.join('|')})\\s*(?:<[^<>]*>)?\\(`);

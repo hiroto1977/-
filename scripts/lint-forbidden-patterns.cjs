@@ -444,6 +444,40 @@ const FORBIDDEN_PATTERNS = [
     rationale: 'DOM XSS sink — banned in renderer; React rendering only',
   },
   {
+    /*
+     * **同じ HTML パーサへの、上の規則が知らない別名 3 つ + 1。** (2026-09-15 · パス 270)
+     *
+     * 上の規則は 2026-08-22 に `.innerHTML` から `.outerHTML` /
+     * `.insertAdjacentHTML` へ広げられている —— 「別名で抜けられる」と
+     * 分かっていたからである。**その別名の一覧が、その日の DOM で止まっていた。**
+     *
+     * 止まっている間に増えた綴り (どれも文字列を HTML パーサへ流す = 同じ sink):
+     *
+     *   `el.setHTMLUnsafe(s)`              Element / ShadowRoot (2024 年に出荷。
+     *                                      **名前が Unsafe と言っている**)
+     *   `Document.parseHTMLUnsafe(s)`      静的メソッド版
+     *   `range.createContextualFragment(s)` Range —— 古くから在る XSS sink だが、
+     *                                      2026-08-22 の一覧に入っていなかった
+     *   `iframe.srcdoc = s`                 文書ごと差し込む (属性でも JSX でも)
+     *
+     * **実在は 0 件** (src/ を走査して実測)。だから今日の欠陥ではない ——
+     * 直しているのは**網の目の大きさ**である。パス 269 で、同期の綴りしか
+     * 見ていない網が「無いこと」の主張を 1 件空にしていたのと同じ形:
+     * **網の目は、網そのものと同じくらい確かめる必要がある。**
+     *
+     * `DOMParser().parseFromString(s, 'text/html')` は**入れていない** ——
+     * 切り離された文書へ解析するだけで、危険になるのは採り込んだ時である。
+     * 同じ class だと言うには弱いので、言わない (実在も 0 件)。
+     */
+    name: 'setHTMLUnsafe / parseHTMLUnsafe / createContextualFragment / srcdoc',
+    pattern: /\.setHTMLUnsafe\s*\(|\bparseHTMLUnsafe\s*\(|\.createContextualFragment\s*\(|\bsrcdoc\s*=/,
+    codeOnly: true,
+    rationale:
+      '上の規則と同じ DOM XSS sink の別名 (invariant #9)。' +
+      'React の描画だけを使うこと — 文字列から DOM を作る必要が本当に出たら、' +
+      'この台帳に理由つきで例外を登録する',
+  },
+  {
     // `writeln` も同じ sink。`write` だけを見ていると別名で抜けられる。
     name: 'document.write / writeln',
     pattern: /\bdocument\.write(?:ln)?\s*\(/,
@@ -1091,6 +1125,16 @@ function selfTest() {
     ['document.writeln も弾く', "document.writeln('<b>');", 1],
     ['textContent は弾かない (安全な代替)', 'el.textContent = s;', 0],
     ['innerText も弾かない', 'el.innerText = s;', 0],
+    // パス 270 —— 上の規則が知らなかった別名 (実在は 0 件。規則が当たることを標本で示す)
+    ['★ setHTMLUnsafe を弾く', 'el.setHTMLUnsafe(html);', 1],
+    ['★ ShadowRoot の setHTMLUnsafe も弾く', 'root.setHTMLUnsafe(html);', 1],
+    ['★ parseHTMLUnsafe を弾く', 'const d = Document.parseHTMLUnsafe(html);', 1],
+    ['★ createContextualFragment を弾く', 'const f = range.createContextualFragment(html);', 1],
+    ['★ srcdoc の代入を弾く', 'frame.srcdoc = html;', 1],
+    ['★ JSX の srcdoc も弾く', 'return <iframe srcdoc={html} />;', 1],
+    ['setHTML (sanitizer つき) は弾かない — 別の API', 'el.setHTML(html, { sanitizer });', 0],
+    ['src= は弾かない (srcdoc の部分一致にしない)', '<img src={url} />', 0],
+    ['parseFromString は弾かない (切り離された文書・理由は規則の注記)', "new DOMParser().parseFromString(s, 'text/html');", 0],
     ['メールヘッダの手組みを弾く (To)', "const m = [`To: ${addr}`].join('\\r\\n');", 1],
     ['メールヘッダの手組みを弾く (Bcc)', "const m = `Bcc: ${addr}`;", 1],
     ['メールヘッダの手組みを弾く (Subject)', "const m = `Subject: ${s}`;", 1],

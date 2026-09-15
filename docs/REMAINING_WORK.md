@@ -32728,3 +32728,83 @@ Skills・Security・アシスタント。**ブラウザ版はトークンを要�
   (`const { readFile: rf } = fs.promises`) は今も規則の外に在る。実測 0 件だが、
   **規則が見る綴りの一覧は、規則そのものと同じくらい確かめる必要がある。**
 - 実機では確かめていない (どちらの変更も検査とゲートで、画面の振る舞いは変えていない)。
+
+---
+
+## パス 270 — 網の目を 4 つ当たって、3 つは閉じていた。1 つは「増えた綴りを知らない」だった
+
+**2026-09-15。** パス 269 の教訓 —— **網の目は、網そのものと同じくらい確かめる必要がある** ——
+を、安全を守っているゲートの側へ一般化した。仮説を 4 つ立てて全部測った。
+**3 つは閉じていた。**閉じていたことも記録する ——「たぶん大丈夫」と書かないために。
+
+### 仮説 1 (閉じていた): egress の照合が `fetch(` しか見ていないのでは
+
+`verify-architecture.cjs` を `grep` すると `fetch(` しか出てこない。しかし読むと
+`SEND_CALL` は **`NETWORK_CALL_NAMES` を借りている** (「名前は 2 つの門で 1 つの一覧」と
+`lint-network-targets.cjs:75-78` に書かれている)。**同じ網の目である。**
+grep の件数だけで結論を出しかけた —— `fetch(` の 6 件はどれも self-test の標本だった。
+
+### 仮説 2 (閉じていた): fetch 以外の送信が野放しでは
+
+`NETWORK_CALL_NAMES` は fetch 一族 13 名だけなので、`navigator.sendBeacon` /
+`new WebSocket` / `new EventSource` / `new XMLHttpRequest` / `new Image().src =` は
+**宛先の照合を通らない**。`lint-network-targets.cjs:573` はそれを知っていて
+「lint:forbidden が 0 件で留める」と書いている。**その規則が実在するかを確かめた** ——
+在った (`lint-forbidden-patterns.cjs:415`、独立した名前つきの規則)。委譲は嘘ではなかった。
+
+### 仮説 3 (閉じていた): 小文字の変数に置いた URL が照合をすり抜けるのでは
+
+これは `egressHostsInFile` の注記が**自分で認めている**穴で、しかし
+「実測 0 件」とは書かれていなかった。測った: **0 件。**
+テンプレートリテラル版は 1 件だけ在るが `oauth.ts` の `redirectUri` = 127.0.0.1 で、
+ループバックの受け口 (宛先ではない) かつ `src/main` は字面を全部数える木なので台帳に載る。
+注記へ実測を書き足した —— **書いてあるだけの限界は、測るまで大きさが分からない。**
+
+### 仮説 4 (これが当たり): HTML パーサへの別名の一覧が、2026-08-22 の DOM で止まっていた
+
+`lint:forbidden` の規則「`.innerHTML` / `.outerHTML` / `insertAdjacentHTML`」には
+**その日の判断が注記に残っている**:
+
+> `.innerHTML` だけでは足りない。`.outerHTML =` と `.insertAdjacentHTML(…)` は
+> 同じ HTML パーサに文字列を流し込む別名で、どちらも 2026-08-22 まで素通りだった (実在は 0 件)。
+
+つまり**「別名で抜けられる」と既に分かっていた**。分かったうえで、別名の一覧が
+その日で止まった。止まっている間に在った / 増えた綴り:
+
+| 綴り | 何 | ゲートは知っていたか |
+| --- | --- | --- |
+| `el.setHTMLUnsafe(s)` | Element / ShadowRoot。**名前が Unsafe と言っている** | ✗ |
+| `Document.parseHTMLUnsafe(s)` | 静的メソッド版 | ✗ |
+| `range.createContextualFragment(s)` | Range —— 古くから在る XSS sink | ✗ |
+| `iframe.srcdoc = s` | 文書ごと差し込む (属性でも JSX でも) | ✗ |
+
+`setHTMLUnsafe` / `parseHTMLUnsafe` は**ゲートより新しい DOM API** で、出荷済みの
+ブラウザで動く。`createContextualFragment` は古くから在るのに一覧に入っていなかった。
+
+**実在は 0 件** (src/ を実測)。だから**今日の欠陥ではない** —— 直したのは網の目である。
+規則を 1 本足して 37 → **38 規則**にし、標本 9 本 (当たる 6・当たらない 3) を添えた。
+
+`DOMParser().parseFromString(s, 'text/html')` は**入れなかった** ——
+切り離された文書へ解析するだけで、危険になるのは採り込んだ時である。
+同じ class だと言うには弱いので言わない (実在も 0 件)。標本で「当たらない」側に留めた。
+
+### 対照
+
+本物の `el.setHTMLUnsafe(html)` を `src/renderer/pages/A8netPage.tsx` に植えると鳴った:
+
+```
+❌ 1 violation(s):
+  src/renderer/pages/A8netPage.tsx:2  [setHTMLUnsafe / parseHTMLUnsafe / createContextualFragment / srcdoc]
+```
+
+戻して 0 件・緑。ゲート自身の床 (「全 38 規則に鳴る標本がある」) も通る。
+
+### 残り
+
+- **仮説 4 の一覧は、また止まる。** 今日の DOM で止めた。次に HTML を受け取る API が
+  増えたら同じ穴が開く —— 一覧を自動で最新にする道は無い (DOM の仕様に台帳が無い)。
+  せめて**なぜ止まったか**を注記に残した。
+- `DOMParser` を規則から外した判断は**読んだ結果**だが、採り込む形
+  (`document.adoptNode` / `append(doc.body.children)`) は規則の外に在る (実在 0 件)。
+- 出荷物は **byte 単位で不変** (11,889,336 B / 3,302,082 B) —— 直したのは
+  `scripts/` と文書だけで、`src/` は 1 行も変えていない。
