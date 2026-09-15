@@ -26586,7 +26586,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
-| `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ なお `shared/tokenInput.ts` の `hasControlChars` (複数形) は**別のモジュール**で、JSON の包みの中を見られないという別の限界を持つ (パス 245)。名前が似ているだけである |
+| `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ **パス 280 の訂正**: ここには「`shared/tokenInput.ts` の `hasControlChars` (複数形) は別のモジュールで、名前が似ているだけである」と書いてあった —— **それは読み足りなかった**。名前が似ているだけでなく、**同じ判定の 2 つ目の実装**だった (片方は正規表現の文字クラス・もう片方は文字ごとの走査で、どちらも C0 と DEL を見る)。しかも読む側は資格情報の入口と保管層の床である。 ★ 範囲そのものをここに書かない —— `lint:forbidden` が「共有モジュールの外で制御文字の判定を書き直した」として落とす (パス 280 で実際に落ちた。**判定について書いた散文が、判定の写しと見分けられなくなる**)。 2 つは**ほんとうに一致していた** —— BMP のスカラー値すべて + astral + lone surrogate + 貼り付けで混ざる形、計 63,504 標本で食い違い 0 件 (実測)。だから欠陥ではなかったが、`controlChars.ts` 自身の docblock が「同じ判定が 2 つ目を作りかけたので独立させた・片方だけ緩んでも気付けない」と書いている当の形だったので、`hasControlChars` は `hasControlChar` へ委譲する**1 つの実装**にした。`__tests__/controlCharSingleRule.test.ts` が振る舞いの一致と「2 つ目が戻らないこと」を両方留める。JSON の包みの中を見られないという限界 (パス 245) はそのまま残る |
 | `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は `taxCalc.ts` 1 本だけで、**`taxCalc.ts` を import する main / preload のファイルは 0 件** (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを**1 度も発しない**ので、ビルド間の非対称は原理的に起きない |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
 | `eraseReport` | 2 | 3 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
@@ -33521,3 +33521,102 @@ ZWJ / ZWNJ は絵文字の連結に要るので**意図して外して**おり�
   綴りで数えると実測 (charset 2 / deps 10 / doi-prefix 8 / parameter-prose 4 /
   shell 3 / storage 9 / orchestration 6) が規則の数と合わない (deps は規則 7 本に対し
   10 行)。**細工の要る走査は空になりやすい**ので、数だけを留めた。
+
+## パス 280 —— 判定 census の 3 つの数が古く、制御文字の判定が 2 つ在った (2026-09-15)
+
+### ① `lint:shared-judgement` の説明の 3 つの数が、3 つとも古かった
+
+説明は「shared **138** / 両ビルドが import **44** / うち否定で答えられる **21**」。
+実測は **143 / 62 / 31**。
+
+**由来が悪い**。census 自身の docblock がこう書いている:
+
+> パス 247 がこの母集団を初めて数え (44 / 21)、**その数を散文にだけ書いた**
+
+つまり **44 / 21 はパス 247 の値**で、パス 248 が「散文だけに書くと腐る」ことを
+理由に生成物 (`docs/REMAINING_WORK.md` のブロック) にした。**それでも
+`CLAUDE.md` の写しは残り**、パス 268 が走査を直して 61 / 31 になったときも
+**床 (113 / 48 / 24) だけが引き直された**。
+
+★ **生成物にしても、別の場所の写しは別に留めないと腐る。** これがこの一族
+(パス 24 / 95 / 145 / 278 / 279) で今日 6 度目である。
+
+**直した所**: 3 つを実測へ直し、**live metric を 3 本**足した (38 → 41) ——
+`census()` を `require` して呼ぶので、散文だけが古びる道が閉じた。
+census は `src/` を歩くので 1 度だけ呼んで覚える。
+
+★ パス 279 で足した「`verify:arch` 自身の metric 数」が、**この変更を自分で
+捕まえた** (`doc says 38, source says 41`)。私が思い出す前に鳴った。
+
+### ② 制御文字の判定が 2 つ在った (同じ判定・名前 1 字違い)
+
+| 場所 | 実装 | 読む側 |
+| --- | --- | --- |
+| `shared/controlChars.ts` `hasControlChar` | 走査 (`c < 0x20 \|\| c === 0x7f`) | 共有 4 + renderer 2 |
+| `shared/tokenInput.ts` `hasControlChars` | 正規表現 (U+0000〜U+001F と U+007F の文字クラス) | **資格情報の入口と保管層の床** |
+
+`controlChars.ts` 自身の docblock が、自分が在る理由をこう書いている:
+
+> 独立した小さなモジュールにしてあるのは、**同じ判定が 2 つ目を作りかけた**ため。
+> 「0x1f まで」か「0x20 未満」か、0x7f を入れるか — どれも一見して差が
+> 出ないので、片方だけ緩んでも気付けない。
+
+**その 2 つ目が `tokenInput.ts` に在った。** しかも `tokenInput.ts` の docblock の
+「**同じ規則を 3 通りに綴ると必ず食い違う**」という段落は、2 つ目の綴りの真上に
+書かれていた。
+
+**実測: 2 つは一致していた** —— BMP のスカラー値すべて (lone surrogate を除く)
++ astral (`charCodeAt(0)` が高位サロゲートを返す所) + lone surrogate + 貼り付けで
+混ざる形、計 **63,504 標本で食い違い 0 件**。つまり**欠陥ではなく、いつでも
+欠陥になれる形**だった。
+
+**直した所**: `hasControlChars` は `hasControlChar` へ委譲する (名前は残す ——
+呼ぶ側が読む)。`__tests__/controlCharSingleRule.test.ts` (4 件) が
+① 振る舞いの一致 ② `tokenInput.ts` が自分の範囲を持たないこと ③ 委譲を**肯定形**で
+の 3 方向を留める。
+
+### 途中で 2 つ、自分の誤りを直した
+
+1. ★ **「未読 2 件」は私の数え間違い**だった。`includes('未読')` で数えたので、
+   **他の行の状態に言及している散文**に当たっていた。census 自身は
+   `startsWith('未読')` で数えており、**実測は 0 件** (31 行すべて読まれている)。
+   母集団を数えるとき部分一致を使うと偽陽性が出る —— 私がこのセッションで
+   他人の走査について何度も書いたことを、自分でやった。
+   ただし `controlChars` の verdict は**読み足りなかった**のは事実で
+   (「名前が似ているだけである」と書いてあった)、そこは訂正して実測を入れた。
+2. ★ **新しい検査に本物の制御文字 5 つを書き込んでしまった** —— docblock で旧実装を
+   引用したとき、エスケープが解釈されて U+0000 / U+001F / U+007F が実体で入った。
+   **`lint:charset` が捕まえた** (パス 279 で説明を直した当のゲートである)。
+   範囲を文字で書かず「U+0000〜U+001F と U+007F」と説明で書く形に直した ——
+   **制御文字の話をする文書は、制御文字を含んではいけない。**
+3. 最初の構造の規則は、自分が書いた docblock の引用に当たって落ちた。
+   コメントを落としてから当てる形にした (`originalSource.ts` が 2026-09-07 に
+   記録した「印について書いた文書は印そのものと見分けられなければならない」の別の面)。
+
+### 対照 (5 本すべて鳴った)
+
+| 対照 | 結果 |
+| --- | --- |
+| A: 散文 143 → 142 | `doc says 142, source says 143` |
+| B: 散文 62 → 61 | `doc says 61, source says 62` |
+| C: 散文 31 → 30 | `doc says 30, source says 31` |
+| D: census の `NEGATIVE` から `ok: false` を外す (**source 側**) | `doc says 31, source says 27` |
+| E: 2 つ目の実装を戻す (綴りを変えた `new RegExp` で) | ★ が落ちる |
+
+★ **E で分かったこと**: 構造の規則 (範囲の綴り 4 形) は**組み立てた正規表現を
+捕まえられなかった** —— 捕まえたのは**肯定形**の
+「`return hasControlChar(value);` が在る」だけである。
+「無いことの検査」だけでは足りないことの実例。
+
+### 残り
+
+- 未読のゲート説明は 6 本 (`lint:docs` / `lint:knowledge-refs` /
+  `lint:doi-prefix` の散文部分 / `lint:zero-fold` / `verify:arch` の 1 行説明 /
+  `lint`)。`lint:shared-judgement` は今回読んだ。
+- `lint:zero-fold` の説明は**当たって過小でも偽でもなかった** —— 数を散文に
+  持たず、生成ブロックを指している (実測 107 ファイル / 281 件)。
+  「26 ファイル (実測 106) と 4 倍ずれていた」は 2026-09-08 の**過去形**の記録で、
+  現在の主張ではない。
+- 判定 census の 31 行は**全部読まれている** (未読 0)。ただし「読んだ」の質は
+  行ごとに違う —— `controlChars` は読まれていたが**足りなかった**。
+  次に同じ形を探すなら、「対称と書いてある行の根拠が実測か設計論か」を見ること。

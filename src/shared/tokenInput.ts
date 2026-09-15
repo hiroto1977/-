@@ -16,6 +16,7 @@
  *
  * 上限そのものも 2 か所に書き写されると必ずずれるので、ここが唯一の定義。
  */
+import { hasControlChar } from './controlChars';
 
 /** 保存を受け付ける最大長。安全側の上限で、実在のトークンより十分に大きい。 */
 import { countChars } from './inputCeiling';
@@ -97,8 +98,28 @@ export const CONTROL_CHAR_MESSAGE =
  * ヘッダ値として不正なのは CR / LF / NUL だが、**残りも断る** —— 資格情報に
  * 垂直タブが入っていて正しいことはなく、通せば `new Headers()` が値ごと
  * 文面に載せて投げる経路が残る (`__tests__/headerValueLeak.test.ts` が実測)。
+ *
+ * ## 2026-09-15 (パス 280): 実装は `shared/controlChars.ts` に 1 つだけ
+ *
+ * ここには**同じ判定の 2 つ目の実装**が在った —— 正規表現
+ * `/[\u0000-\u001f\u007f]/` で、`controlChars.ts` の `hasControlChar`
+ * (走査で `c < 0x20 || c === 0x7f` を見る) と**名前が 1 字違い**
+ * (`hasControlChar` / `hasControlChars`)。
+ *
+ * **2 つは今日ほんとうに一致していた** —— BMP のスカラー値すべて + astral +
+ * lone surrogate + 貼り付けで混ざる形、計 63,504 標本で食い違い **0 件**
+ * (パス 280 で実測)。つまり**欠陥ではなく、いつでも欠陥になれる形**だった。
+ *
+ * それを直すのは、`controlChars.ts` 自身の docblock がこう書いているから:
+ *
+ *     独立した小さなモジュールにしてあるのは、**同じ判定が 2 つ目を作りかけた**ため。
+ *     「0x1f まで」か「0x20 未満」か、0x7f を入れるか — どれも一見して差が
+ *     出ないので、片方だけ緩んでも気付けない。
+ *
+ * **その 2 つ目が、ここに在った。** しかも上の「同じ規則を 3 通りに綴ると必ず
+ * 食い違う」という段落は、2 つ目の綴りの真上に書かれていた。名前は残す
+ * (呼ぶ側 4 か所が `hasControlChars` を読む) が、判定は 1 つである。
  */
 export function hasControlChars(value: string): boolean {
-  // eslint-disable-next-line no-control-regex
-  return /[\u0000-\u001f\u007f]/.test(value);
+  return hasControlChar(value);
 }

@@ -165,6 +165,25 @@ function countOccurrences(text, pattern) {
  * 要素が増える。読めなかったときは `null` を返す: 0 を返すと「規則が 0 本でも
  * 散文が 0 と書いてあれば一致」になり、走査の死が合格に化ける。
  */
+/**
+ * 判定 census を 1 度だけ走らせて覚える (パス 280)。
+ *
+ * `scripts/shared-judgement-census.cjs` の `census()` は `src/` を歩くので、
+ * 3 つの metric がそれぞれ呼ぶと 3 回歩く。読めなかったら `null` —— 数を 0 に
+ * 倒すと「散文が 0 と書いてあれば一致」になり、走査の死が合格に化ける。
+ */
+let sharedJudgementCensusCache;
+function sharedJudgementCensus() {
+  if (sharedJudgementCensusCache === undefined) {
+    try {
+      sharedJudgementCensusCache = require('./shared-judgement-census.cjs').census();
+    } catch {
+      sharedJudgementCensusCache = null;
+    }
+  }
+  return sharedJudgementCensusCache;
+}
+
 function countNamedEntries(relFile, constName) {
   const src = readFileSafe(path.join(REPO_ROOT, relFile));
   if (src === null) return null;
@@ -631,6 +650,39 @@ const METRICS = [
         .filter((l) => /^\s*(?:'[a-z][a-z0-9-]*'|[a-z][a-z0-9]*):\s+\w/i.test(l))
         .filter((l) => !/SCAFFOLD/i.test(l)).length;
     },
+  },
+  /*
+   * **判定 census の 3 つの数。** (パス 280)
+   *
+   * `lint:shared-judgement` の説明は「shared 138 / 両ビルド 44 / 否定 21」と書いたまま
+   * だったが、実測は 143 / 62 / 31 —— **3 つとも古い**。44 / 21 はパス 247 が初めて
+   * 数えた値で、census 自身の docblock が
+   *
+   *     パス 247 がこの母集団を初めて数え (44 / 21)、**その数を散文にだけ書いた**
+   *
+   * と**その誤りを名指ししている** (だからパス 248 で生成物にした)。それでも
+   * CLAUDE.md の写しは残り、パス 268 が走査を直して 61 / 31 になったときも
+   * 床だけが引き直された。**生成物にしても、別の場所の写しは別に留めないと腐る。**
+   *
+   * census は `src/` を歩くので 1 度だけ呼んで覚える (3 つの metric で 3 回歩かせない)。
+   */
+  {
+    name: 'CLAUDE.md: shared-judgement census — shared modules',
+    docFile: 'CLAUDE.md',
+    docPattern: /生成ブロックと突き合わせる \(shared (\d+) \//,
+    compute: () => sharedJudgementCensus()?.shared ?? null,
+  },
+  {
+    name: 'CLAUDE.md: shared-judgement census — imported by both builds',
+    docFile: 'CLAUDE.md',
+    docPattern: /両ビルドが\s*#?\s*import (\d+) \//,
+    compute: () => sharedJudgementCensus()?.both ?? null,
+  },
+  {
+    name: 'CLAUDE.md: shared-judgement census — answerable with a refusal',
+    docFile: 'CLAUDE.md',
+    docPattern: /うち否定で答えられる (\d+)。/,
+    compute: () => sharedJudgementCensus()?.judgement ?? null,
   },
   /*
    * **このゲート自身の届く範囲。** (パス 279)
