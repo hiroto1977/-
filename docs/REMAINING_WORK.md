@@ -33278,3 +33278,53 @@ save-state) と同じ。検査 `webShimCredentials.test.ts` もその前提を
   `clients/index.ts` の 4 か所に波及するので、**依頼の範囲を超える整理**として残した。
   `dead-action` の分類 (パス 275) が既にゲートに載っているので、黙って生き延びることはない。
 - 出荷物は**変わらない** (触ったのは `CLAUDE.md` / `scripts/` / `docs/` だけ)。
+
+## パス 277 —— パス 276 の残り (他のゲートの説明) を読んだ (2026-09-15)
+
+パス 276 は 1 本の説明が偽だと示したが、**残りが真である証拠にはならない**と
+書き残した。当たる道は 1 本ずつ読んで実物と突き合わせるしかないので、そうした。
+
+### 母集団
+
+`verify:all` の 37 ゲートのうち、`CLAUDE.md` が説明を持つのは **22 本**。
+残る **15 本は説明が無い** (`lint:url-encoding` / `lint:sample-data` /
+`verify:release-artifacts` / `lint:repo-size` / `lint:mcp-servers` /
+`lint:data-origin` / `lint:credential-use` / `lint:ipc-handlers` /
+`lint:collection-time` / `lint:rate-freshness` / `verify:orchestration` /
+`vault:check` / `verify:graph` / `verify:knowledge` / `chain:verify`)。
+**説明が無いのは偽の主張ではない** —— `lint:docs` が求めるのは
+「ゲートが `ci.yml` に在ること」で、CLAUDE.md への掲載は求めていない。
+
+### 深く当たった 10 本の結果
+
+| ゲート | 主張 | 実測 |
+| --- | --- | --- |
+| `lint:test-coverage` | action の登録を要求 | **偽** (パス 276 で訂正) |
+| `lint:citations` | 3 規則 | **過小** —— スキーム規則と平文 http の台帳に触れていなかった (このパスで訂正) |
+| `lint:workflow-security` | 4 つ (permissions / SHA 固定 / `pull_request_target` 禁止 / `run:` への埋め込み) | 真 (script の docblock が同じ 4 つを列挙) |
+| `lint:network-targets` | 変数ホストの台帳 | 真 (ホスト部だけを見ると script 自身が限定を宣言) |
+| `lint:csp` | **verify:all では self-test のみ**・成果物は ci.yml | 真 (`package.json` は `--self-test` だけ) |
+| `lint:storage` | 4 点 (含む**規則 11**) | 真 (規則は 11 本在り、11 は実物の在庫で 1 度鳴らしている) |
+| `lint:mutation-scope` | 広い disable と**理由の無い pragma** | 真 |
+| `lint:parameter-prose` | 直接使用の台帳・理由必須 | 真 (規則 4 本が一致) |
+| `lint:regex` | **指数のみ** | 真 (自分で範囲を狭く宣言している = 正直) |
+| `lint:forbidden` / `lint:deps` / `lint:doi-prefix` 等の**数** | 38 / 5・3・4 / 164・153 ほか | 真 —— これらは `verify:arch` の live metric が既に留めている |
+
+**22 本中 12 本は未読のまま**である。書いていないことを「読んだ」とは書かない。
+
+### 途中で確かめて、欠陥ではなかった物
+
+- **陰性対照の無いゲート 5 本**は数だけでなく**既に名指しされていた** ——
+  `docs/ARCHITECTURE.md:32` が「外部ツール 2 (`typecheck` / eslint) と知識コーパス系 3」
+  と書き、後者 3 つは 2026-08-25 に**実物へ違反を植えて鳴ることを確認済み**と記録している。
+  私の最初の走査は 6 本と数えたが、それは `chain:verify` が
+  `integrity-chain.cjs self-test` (ダッシュ無しの副命令) を使うのを
+  `--self-test` の綴りで探したからで、**私の数え方の誤り**だった (実物は 32 / 37)。
+
+### 残り
+
+- 未読 12 本 (`typecheck` / `lint:imports` / `lint:docs` / `lint:charset` /
+  `lint:knowledge-refs` / `lint:shell` / `lint:doi-prefix` の散文部分 /
+  `lint:zero-fold` / `lint:shared-judgement` / `lint:deps` の散文部分 /
+  `verify:arch` / `lint`)。**数ではなく主張の内容**を読むこと。
+- 出荷物は変わらない (触ったのは `CLAUDE.md` と `docs/` だけ)。
