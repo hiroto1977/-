@@ -215,6 +215,42 @@ const ROWS: readonly DocTriage[] = [
     caseByCase: '労働者名簿は社会保険労務士法2条1項2号の帳簿書類の典型例。自社の従業員について自社が調製する分は制限されない。',
     consult: [],
   },
+  /*
+   * 支払明細書 4 種 (2026-09-15)。自社の従業員・役員について自社が作る分は制限されない。
+   * 業として他社のために作成代行するなら社会保険労務士法 / 税理士法の領域に入り得る。
+   */
+  {
+    doc: 'kyuyo-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '交付は義務 (所得税法231条1項)。法定控除 (社会保険料・所得税・住民税) 以外を控除するには労働協約または書面協定が必要で、根拠を明細に残すこと。',
+    exclusiveTo: ['labor-consultant'],
+    caseByCase: '給与計算そのものは事実行為で資格を要しないが、他社の労働社会保険諸法令に基づく書類の作成を業として行うなら社会保険労務士法2条1項2号の領域。年末調整・源泉所得税の計算を業として請け負うなら税理士法2条の税務書類の作成に当たり得る。',
+    consult: ['tax-accountant'],
+  },
+  {
+    doc: 'shoyo-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '賞与は給与と計算の仕組みが違う (標準賞与額の上限・算出率の表・住民税を引かない)。給与明細の様式を流用しないこと。',
+    exclusiveTo: ['labor-consultant'],
+    caseByCase: '同上。標準賞与額の上限 (健保 年度573万円・厚年 1回150万円) の当てはめを他社のために業として行う場合は社会保険労務士の領域に入り得る。',
+    consult: ['tax-accountant'],
+  },
+  {
+    doc: 'yakuin-hoshu-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '定期同額給与から外れると損金不算入の部分が生じる。期中に増減するなら、定時改定か業績の著しい悪化による改定に当たるかを支給前に確認すること。',
+    exclusiveTo: [],
+    caseByCase: '役員報酬の損金算入の判定は法人税法の解釈で、他社のために業として行えば税理士法2条の税務相談に当たる。株主総会の決議・登記が絡む部分は司法書士・弁護士の領域。',
+    consult: ['tax-accountant', 'judicial-scrivener'],
+  },
+  {
+    doc: 'yakuin-shoyo-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '**届出どおりに支給しないと全額が損金不算入**になる。届出書の控えと支給日・支給額を突き合わせてから支給すること。',
+    exclusiveTo: [],
+    caseByCase: '事前確定届出給与の届出書の作成・提出は税務書類の作成 (税理士法2条1項2号) に当たる。自社分を自社で出すのは制限されないが、要件の判定は税理士に確認するのが安全。',
+    consult: ['tax-accountant'],
+  },
   {
     doc: 'chingin-daichou',
     ownUse: 'ok-with-care',
@@ -472,7 +508,7 @@ export function triageFor(doc: string): DocTriage | null {
 }
 
 /**
- * 仕分けの対象となる全 doc id（書式 45 + 定款2 + 就業規則）。
+ * 仕分けの対象となる全 doc id（書式 + 定款2 + 就業規則 + 決算書。件数は STUDIO_TEMPLATES から導く）。
  *
  * `LIVE_FETCHERS` と同じ考え方で、ここを網羅していないと画面に穴が開く。
  * 書式を足して仕分けを忘れると、その書式だけ黙って何も出なくなるため、

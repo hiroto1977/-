@@ -97,7 +97,7 @@ const LEDGER: Partial<Record<ServiceId, readonly Claim[]>> = {
   'super-delivery': [{ text: 'B2B', why: '業態の呼び名' }],
   youtube: [{ text: 'API v3', why: 'API の版' }],
   village: [{ text: '143 体', measure: () => String(villageBodies()), why: '村人の総数 (orchestration/registry.json から)' }],
-  docstudio: [{ text: '52 書式', measure: () => String(STUDIO_TEMPLATES.length), why: '経営書類の書式の数' }],
+  docstudio: [{ text: '56 書式', measure: () => String(STUDIO_TEMPLATES.length), why: '経営書類の書式の数' }],
   talent: [{ text: '達成確率100%', why: '規則の名前 (talent.ts「達成確率100%キープの法則」。100 は割合の天井)' }],
 };
 

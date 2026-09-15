@@ -671,7 +671,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'docstudio',
     label: '書類スタジオ',
     icon: '🗂',
-    description: '契約・経理・人事・組織・規程・社内・通知・事業計画 52 書式＋電子定款＋就業規則 — 入力→交付前チェック（無効リスク検出）→印刷/PDF',
+    description: '契約・経理・人事・組織・規程・社内・通知・事業計画 56 書式＋電子定款＋就業規則 — 入力→交付前チェック（無効リスク検出）→印刷/PDF',
     page: DocstudioPage,
     category: 'featured',
   },

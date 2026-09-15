@@ -207,6 +207,56 @@ function num(v: Values, key: string): number {
  * 何も指摘されない」という一番たちの悪い状態になる。空欄は 0、
  * 「読めない文字が入っている」ときだけ判定を止める。
  */
+/** 円の表示。判定の文面は画面と同じ桁区切りで出す。 */
+function fmtYen(n: number): string {
+  return `${n.toLocaleString('ja-JP')} 円`;
+}
+
+/**
+ * 支払明細書の差引支給額。**書面の合計と同じ欄・同じ読み方で検算する** ——
+ * ここだけ別の欄を足すと、書面はマイナスを刷っているのに何も指摘されない。
+ *
+ * 断るのは「控除が支給を超えた」ときだけ。料率が正しいかは判定しない
+ * (書式が料率を持たないので、判定できない物を「問題なし」と黙るより良い)。
+ */
+function netPayIssues(
+  v: Values,
+  payKeys: readonly string[],
+  dedKeys: readonly string[],
+  firstPayKey: string,
+): DocIssue[] {
+  const paid = payKeys.reduce((n, k) => n + money(v, k), 0);
+  const deducted = dedKeys.reduce((n, k) => n + money(v, k), 0);
+  if (!Number.isFinite(paid) || !Number.isFinite(deducted)) return [];
+  if (deducted <= paid) return [];
+  return [{
+    level: 'warn',
+    field: firstPayKey,
+    message: `控除額の合計（${fmtYen(deducted)}）が支給額の合計（${fmtYen(paid)}）を超えています。`
+      + `差引支給額が ${fmtYen(paid - deducted)} になります。`,
+    basis: '労働基準法24条1項',
+  }];
+}
+
+/**
+ * 標準賞与額の検算。**1,000 円未満を切り捨てた額**なので、賞与額を超えることはない。
+ * 超えていれば桁か欄の取り違えである (上限 —— 健保 年度 573 万円・厚年 1 回 150 万円 ——
+ * は判定しない: 年度累計は利用者が入れる値で、この書面だけでは確かめられない)。
+ */
+function standardBonusIssues(v: Values, bonusKey: string): DocIssue[] {
+  const bonus = num(v, bonusKey);
+  const std = num(v, 'stdBonus');
+  if (!Number.isFinite(bonus) || !Number.isFinite(std) || std <= 0) return [];
+  if (std <= bonus) return [];
+  return [{
+    level: 'warn',
+    field: 'stdBonus',
+    message: `標準賞与額（${fmtYen(std)}）が賞与額（${fmtYen(bonus)}）を超えています。`
+      + '標準賞与額は賞与額の 1,000 円未満を切り捨てた額なので、賞与額を超えることはありません。',
+    basis: '健康保険法45条',
+  }];
+}
+
 function money(v: Values, key: string): number {
   return text(v, key) === '' ? 0 : num(v, key);
 }
@@ -603,6 +653,103 @@ const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
   sokai: meetingQuorum('totalShares', 'presentShares', '出席株主の議決権数', '議決権の総数'),
   'rinji-sokai': meetingQuorum('totalShares', 'presentShares', '出席株主の議決権数', '議決権の総数'),
   torishimari: meetingQuorum('total', 'present', '出席取締役数', '取締役総数'),
+
+  /*
+   * 支払明細書 4 種 (2026-09-15)。
+   *
+   * 検算するのは**書面の中で食い違えること**だけにする —— 保険料率・税額表の
+   * 当てはめは書式が持たないので、料率が正しいかは判定できない (判定できない物を
+   * 「問題なし」として黙るのが最も悪い)。見るのは 3 つ:
+   *   ① 差引支給額がマイナス (控除が支給を超えている)
+   *   ② 役員賞与の**届出どおりでない支給** (原則として全額損金不算入)
+   *   ③ 標準賞与額が賞与額を超えている (1,000円未満切捨てなので超えるはずがない)
+   */
+  'kyuyo-meisai'(v) {
+    return netPayIssues(
+      v,
+      ['base', 'postAllow', 'famAllow', 'houseAllow', 'otPay', 'holidayPay', 'nightPay', 'commuteFree', 'commuteTax', 'otherPay'],
+      ['health', 'care', 'pension', 'empIns', 'incomeTax', 'residentTax', 'otherDed'],
+      'base',
+    );
+  },
+
+  'shoyo-meisai'(v) {
+    return [
+      ...netPayIssues(v, ['bonus', 'otherPay'], ['health', 'care', 'pension', 'empIns', 'incomeTax', 'otherDed'], 'bonus'),
+      ...standardBonusIssues(v, 'bonus'),
+    ];
+  },
+
+  'yakuin-hoshu-meisai'(v) {
+    const out = netPayIssues(
+      v,
+      ['hoshu', 'commuteFree', 'commuteTax', 'otherPay'],
+      ['health', 'care', 'pension', 'incomeTax', 'residentTax', 'otherDed'],
+      'hoshu',
+    );
+    // 定期同額給与 (法人税法34条1項1号) —— 決議の月額と支給額が違えば、
+    // 期中改定として損金不算入の部分が生じ得る。**判定はしない** (改定が
+    // 定時改定か・業績の著しい悪化によるものかはこの書面から分からない)。
+    const decided = num(v, 'resolutionAmount');
+    const paid = num(v, 'hoshu');
+    if (Number.isFinite(decided) && Number.isFinite(paid) && decided > 0 && decided !== paid) {
+      out.push({
+        level: 'warn',
+        field: 'hoshu',
+        message: `決議による月額（${fmtYen(decided)}）と支給額（${fmtYen(paid)}）が一致しません。定期同額給与から外れると、その差額は原則として損金不算入です。定時改定・業績の著しい悪化による改定に当たるか確認してください。`,
+        basis: '法人税法34条1項1号',
+      });
+    }
+    return out;
+  },
+
+  'yakuin-shoyo-meisai'(v) {
+    const out = netPayIssues(v, ['bonus'], ['health', 'care', 'pension', 'incomeTax', 'otherDed'], 'bonus');
+    out.push(...standardBonusIssues(v, 'bonus'));
+    const kind = text(v, 'kind');
+    if (kind.startsWith('いずれにも当たらない')) {
+      out.push({
+        level: 'warn',
+        field: 'kind',
+        message: '事前確定届出給与・業績連動給与のいずれにも当たらない役員賞与は、全額が損金不算入です。',
+        basis: '法人税法34条1項',
+      });
+      return out;
+    }
+    if (!kind.startsWith('事前確定届出給与')) return out;
+    // **届出どおりでなければ原則として全額損金不算入** (一部ではない)。
+    // 日付は文字列で比べる —— 書式が和暦・西暦どちらでも入るので暦に直せない。
+    // 同じ綴りでなければ「確認してください」と言うにとどめ、判定はしない。
+    const notifiedDate = text(v, 'notifiedDate');
+    const payDate = text(v, 'payDate');
+    if (notifiedDate !== '' && payDate !== '' && notifiedDate !== payDate) {
+      out.push({
+        level: 'fatal',
+        field: 'payDate',
+        message: `届出した支給日（${notifiedDate}）と実際の支給日（${payDate}）が一致していません。事前確定届出給与を届出どおりに支給しない場合、原則として賞与の全額が損金不算入になります。`,
+        basis: '法人税法34条1項2号',
+      });
+    }
+    const notified = num(v, 'notifiedAmount');
+    const paid = num(v, 'bonus');
+    if (Number.isFinite(notified) && Number.isFinite(paid) && notified > 0 && notified !== paid) {
+      out.push({
+        level: 'fatal',
+        field: 'bonus',
+        message: `届出した支給額（${fmtYen(notified)}）と実際の支給額（${fmtYen(paid)}）が一致していません。事前確定届出給与を届出どおりに支給しない場合、原則として賞与の全額（差額ではなく全額）が損金不算入になります。`,
+        basis: '法人税法34条1項2号',
+      });
+    }
+    if (text(v, 'notifyDate') === '') {
+      out.push({
+        level: 'warn',
+        field: 'notifyDate',
+        message: '事前確定届出給与の届出日が空欄です。届出の期限は、決議日から1か月を経過する日または事業年度開始日から4か月を経過する日のいずれか早い日です。',
+        basis: '法人税法施行令69条4項',
+      });
+    }
+    return out;
+  },
 
   'kabunushi-meibo'(v) {
     const out: DocIssue[] = [];

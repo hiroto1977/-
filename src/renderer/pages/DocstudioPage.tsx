@@ -429,7 +429,10 @@ function TaxItemsTable({ values }: { values: Values }) {
 function FillTable({ spec, fields, values }: { spec: DocTable; fields: readonly DocField[]; values: Values }) {
   // 検算（docStudioChecks）と同じ toNum で読む。ここだけ別のパーサを使うと、
   // 書面には差額が出ているのに検算は何も言わない、という食い違いが生まれる。
-  const total = spec.sum ? spec.sum.keys.reduce((s, k) => s + (toNum(values[k]) ?? 0), 0) : null;
+  // `minus` が在れば差し引く (支払明細書の差引支給額)。**上の表が合計している欄と
+  // 同じ欄から導く** —— 手入力の欄にすると印刷した式が成り立たなくなる (パス 53 / 81)。
+  const add = (keys: readonly string[]) => keys.reduce((s, k) => s + (toNum(values[k]) ?? 0), 0);
+  const total = spec.sum ? add(spec.sum.keys) - add(spec.sum.minus ?? []) : null;
   const cls = (i: number) => (spec.align?.[i] === 'r' ? 'ds-num' : undefined);
   return (
     <table className="ds-table">
