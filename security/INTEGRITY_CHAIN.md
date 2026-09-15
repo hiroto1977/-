@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 208
+- ブロック数: 209
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `64f02826d03bc6a960c0e1ffdc965738ed99a18e5f997c4b109a06cd027f7571`
-- 保護対象: 72 ファイル
+- 末尾(tip)ハッシュ: `1259de2343e18a25e70a874be947d260aa4a6fdfd0de0460d59985c2ea84fb48`
+- 保護対象: 73 ファイル
 
 ## ブロック
 
@@ -221,6 +221,7 @@
 | 205 | `8425f5134a7245a9` | `b9a1bfd8ee0fbae5` | `0c1052919fac85f2` | update atlassianSite.ts |
 | 206 | `17f73bba666c801a` | `0c1052919fac85f2` | `7dc897572ce9e709` | update scanTarget.ts |
 | 207 | `bea2854f8d1ba41f` | `7dc897572ce9e709` | `64f02826d03bc6a9` | update integrity-chain.cjs |
+| 208 | `4829002d97eb6601` | `64f02826d03bc6a9` | `1259de2343e18a25` | update integrity-chain.cjs,writeFieldLimits.ts |
 
 ## 保護対象ファイル
 
@@ -296,3 +297,4 @@
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`
+- `src/shared/writeFieldLimits.ts`

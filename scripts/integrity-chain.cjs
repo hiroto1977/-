@@ -319,6 +319,31 @@ const PROTECTED = [
   // `countChars` を `length` へ戻されると、**述べる数と守る数がずれ**、
   // 天井の半分で断る / 孤立サロゲートを保存側へ渡す状態に戻る。
   'src/shared/inputCeiling.ts',             // 天井を数える・切る唯一の場所 (単位は「字」)
+  // 2026-09-15 (パス 287) に足した。**数える助けは封緘されているのに、
+  // 何を数えるかの表が封緘されていなかった。**
+  //
+  // 実測: `writeFieldLimits.ts` は実行時に残る export を **37 件**持ち
+  // (型だけではない)、**両ビルドの実装 14 ファイル**が読む ——
+  // main の client 11 本 (slack / github / calendar / gmail / drive / canva /
+  // notion / atlassian / wordpress / cloudflare / shopify)・ブラウザ版の
+  // `data/saasWriteWeb.ts`・`shared/api/microsoft365.ts`・
+  // `shared/voiceWriteRequirements.ts`。中身は**利用者の資格情報で第三者へ
+  // 書き込む手前の欄の判定**で、欄ごとの天井・型・CR/LF/NUL の拒否・
+  // 断りの文面を持つ (パス 110/111/183/283/285 が積み上げた)。
+  //
+  // ここを緩めると、`inputCeiling.ts` (保護対象) が字を正しく数え続けても
+  // **数える対象の上限が消える** —— 2026-08-22 の注記が言う
+  // 「関門だけ守って、関門を呼ぶ側が守られていなかった」の**裏返し**で、
+  // こちらは関門そのものが外に在った。
+  //
+  // ★ **閉包の費用は 0** —— このファイルの import は `./inputCeiling` の
+  // `countChars` **1 本だけ**で、それは既に保護対象である (実測)。
+  // 除外台帳に 1 行も足す必要が無い。
+  //
+  // なお、これはパス 286 が「閉包の穴ではなく独立した merit の問い」として
+  // 残した項目である。閉包の検査は範囲の外について何も主張していない ——
+  // だから閉包を責めずに、**中身の重さで**入れる。
+  'src/shared/writeFieldLimits.ts',         // 第三者へ書く欄の判定 (天井・型・CR/LF・断りの文)
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
   // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が

@@ -73,7 +73,8 @@
     "src/shared/scanTarget.ts",
     "src/shared/tokenInput.ts",
     "src/shared/tokenResponse.ts",
-    "src/shared/vaultToken.ts"
+    "src/shared/vaultToken.ts",
+    "src/shared/writeFieldLimits.ts"
   ],
   "blocks": [
     {
@@ -1739,6 +1740,14 @@
       "leafCount": 72,
       "note": "update integrity-chain.cjs",
       "hash": "64f02826d03bc6a960c0e1ffdc965738ed99a18e5f997c4b109a06cd027f7571"
+    },
+    {
+      "index": 208,
+      "prevHash": "64f02826d03bc6a960c0e1ffdc965738ed99a18e5f997c4b109a06cd027f7571",
+      "merkleRoot": "4829002d97eb6601037a420f7c928ff3b641d7d54c69813afc70ce5b29d0e63b",
+      "leafCount": 73,
+      "note": "update integrity-chain.cjs,writeFieldLimits.ts",
+      "hash": "1259de2343e18a25e70a874be947d260aa4a6fdfd0de0460d59985c2ea84fb48"
     }
   ],
   "tipManifest": {
@@ -1752,7 +1761,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "194b1d0b39c6b3a96ac811e5d757198f31182b101fc96adf0fc0634c8b59c7a9",
+    "scripts/integrity-chain.cjs": "f99904f4d229d60c7bc978a33efe3867444a1aa010dc18dd588f0eeecc03b7aa",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
@@ -1813,6 +1822,7 @@
     "src/shared/scanTarget.ts": "5f7fd1be552525ef02582cf1930e3368dc06e6f93d4e69a891a8908fa3035794",
     "src/shared/tokenInput.ts": "efdeddf96062aaf89ead2bb325cfec0ccf9ec5a449b85923d6bf9f9b1f0b14b3",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
-    "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7"
+    "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",
+    "src/shared/writeFieldLimits.ts": "c69d05355b2b855d8e820064a3842f206a962ec0b95ba2c99251e4d7d670cb96"
   }
 }
