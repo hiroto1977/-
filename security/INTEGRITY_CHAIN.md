@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 219
+- ブロック数: 220
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `94dab87df56f68a7b0275ac22ecedf699f6081c7a545ea24031ddacda53c3a83`
+- 末尾(tip)ハッシュ: `584ff738f2e54656667675cdba440968967c82adbc9cd25b51f82c821fe148bc`
 - 保護対象: 74 ファイル
 
 ## ブロック
@@ -232,6 +232,7 @@
 | 216 | `778a52b4c2cafedb` | `a6fbb3d158dd3865` | `3291d13bf175cf84` | update integrity-chain.cjs,proxy.ts,headerValue.ts,proxyEndpoint.ts,tokenInput.ts |
 | 217 | `f1d91fad0e60d976` | `3291d13bf175cf84` | `21426058e2257388` | update externalUrlGate.ts |
 | 218 | `c7e80990ace3e969` | `21426058e2257388` | `94dab87df56f68a7` | update imageUrlGate.ts |
+| 219 | `d8280db5b33036f7` | `94dab87df56f68a7` | `584ff738f2e54656` | update imageUrlGate.ts |
 
 ## 保護対象ファイル
 

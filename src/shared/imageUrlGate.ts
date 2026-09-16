@@ -74,10 +74,27 @@
  * ## 閉じていない物を、閉じたと書かない
  *
  * **プライベート帯・ループバックのホストはまだ落としていない。**
- * `network/proxy.ts` は同じ「取りに行く先」の問いに対して private/reserved と
- * DNS rebinding まで見ているので、規準はリポジトリの中に在る。ここで足さない
- * のは、LAN の自ホスト (社内 GitLab のアバター等) を黙って映さなくする
- * 機能変更になるためで、**測ったが決めていない**という状態である。
+ * 足さない理由は 2 つ在り、**最初に書いたときは 1 つしか書いていなかった**
+ * (同日中に読み直して追記):
+ *
+ *   1. **方針** —— LAN の自ホスト (社内 GitLab のアバター等) を黙って
+ *      映さなくする機能変更になる。**測ったが決めていない**という状態
+ *   2. **構造** —— 規準は在るが、**ここからは import できない**。
+ *      `renderer/network/proxy.ts` が `isPrivateOrReservedTarget` を
+ *      export しており (private/reserved + DNS rebinding + IPv6 mapped まで
+ *      見る本物) が、`lint:imports` は `shared: ['shared']` ——
+ *      `shared → renderer` は禁止で、その禁止は走査の self-test に
+ *      `['shared', 'renderer', false]` として固定されている。
+ *      つまり流用するには**先に判定を shared へ移す**必要があり、
+ *      それはこのパスの範囲を超える
+ *
+ * 1 だけを書くと、次の読み手は「では import すればよい」と考えて
+ * 境界の違反に当たる。**流用できない理由は、流用したくない理由とは別に書く。**
+ * ループバック判定が 3 つ在って統合してはいけない件は
+ * `shared/__tests__/loopbackChecks.test.ts` が同じ形で留めている ——
+ * あちらは「問いが違う」を検査で示した見本で、この docblock が
+ * パス 299 まで持っていなかったものである。
+ *
  * 認証情報の側は迷う余地が無い (authority に資格情報を持つ正当な画像 URL は無い)。
  */
 export function safeImageSrc(url: string | undefined | null): string | undefined {
