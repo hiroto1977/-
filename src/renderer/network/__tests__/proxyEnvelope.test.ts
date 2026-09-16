@@ -85,6 +85,19 @@ describe('読み込み直しても同じ規則 (定数の初期化子を測る)'
     expect(env).toEqual({ status: 200, headers: { 'x-ok': 'plain' }, body: 'b' });
   });
 
+  it('★ 値が非 Latin1 (U+1F600 など ≥0x100) なら落とす (Response の ByteString 要件)', async () => {
+    const { parseProxyEnvelope: parse } = await load();
+    // 😀 は U+1F600 (4-byte UTF-8: F0 9F 98 80)。JavaScript では 1 文字だが、
+    // WHATWG Headers API は Latin1 (0x00-0xff) のみを受け入れる。
+    const env = parse(JSON.stringify({
+      status: 200,
+      headers: { 'x-emoji': '😀', 'x-latin1': '\x80\xff', 'x-ok': 'plain' },
+      body: 'b',
+    }));
+    // x-emoji は落ちる (U+1F600 ≥ 0x100)。x-latin1 は通る (0x80, 0xff は Latin1)。
+    expect(env).toEqual({ status: 200, headers: { 'x-latin1': '\x80\xff', 'x-ok': 'plain' }, body: 'b' });
+  });
+
   it('★ headers が辞書でなければ 1 件も採らない (文字列は添字が名前に化ける)', async () => {
     const { parseProxyEnvelope: parse } = await load();
     // `Object.entries('xy')` は [['0','x'],['1','y']] で、どちらも token かつ文字列 ——

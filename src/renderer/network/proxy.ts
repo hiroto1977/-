@@ -187,8 +187,11 @@ interface ProxyResponseEnvelope {
 
 /** RFC 9110 token — `new Headers()` は空白などを含む名前で TypeError を投げる。 */
 const HEADER_NAME_RE = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
-/** 値に CR / LF / NUL があると `new Headers()` が TypeError を投げる (ヘッダ注入の形でもある)。 */
-const HEADER_VALUE_RE = /^[^\r\n\0]*$/;
+/** 値は Latin1 (0x00-0xff) の、CR/LF/NUL を除いたもの。
+ *  Response の headers は ByteString を要求し、非 Latin1 文字 (≥0x100) は
+ *  TypeError を投げる (「Cannot create property … (ByteString error)」)。
+ *  許容範囲: 0x01-0x09・0x0b-0x0c・0x0e-0xff (NUL/CR/LF を除く全 Latin1)。 */
+const HEADER_VALUE_RE = /^[\x01-\x09\x0b\x0c\x0e-\xff]*$/;
 
 const INVALID_ENVELOPE: ProxyResponseEnvelope = { status: 502, headers: {}, body: 'proxy returned an invalid envelope' };
 
