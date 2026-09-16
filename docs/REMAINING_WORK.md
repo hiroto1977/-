@@ -8802,7 +8802,7 @@ Google の API キーは `AIza` 接頭辞を持つので、実測で URL の中�
 出る」と書いている当の欠陥は、実測で閉じている。配列・数値・`null` リテラルも
 すべて `null`。
 
-**`tokenInput.ts` — 空 / 空白だけ / 65536 字超 / 改行 / NUL / タブ / 非文字列を全部弾く**
+**`tokenInput.ts` — 空 / 空白だけ / 65536 字超 / 改行 / NUL / タブ / DEL / 非 Latin1 (全角文字・絵文字) / 非文字列を全部弾く**
 
 境界も正しい (65536 は通し、65537 で弾く)。前後の空白は落として通す。
 
@@ -14488,16 +14488,16 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **107 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 282 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
 | `src/shared/funding.ts` | 13 |
 | `src/renderer/data/investments.ts` | 11 |
 | `src/shared/taxDeductions.ts` | 9 |
-| `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
 | `src/renderer/pages/DocstudioPage.tsx` | 8 |
 | `src/main/clients/stocks.ts` | 7 |
+| `src/renderer/data/stocksAnalysisWeb.ts` | 7 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
 | `src/renderer/pages/RealEstatePage.tsx` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
@@ -14511,6 +14511,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/funding.ts` | 4 |
 | `src/renderer/components/FinancialAnalysis.tsx` | 4 |
 | `src/renderer/data/connectionStatus.ts` | 4 |
+| `src/renderer/data/emotionInsights.ts` | 4 |
 | `src/renderer/data/members.ts` | 4 |
 | `src/renderer/data/overview.ts` | 4 |
 | `src/renderer/pages/VillagePage.tsx` | 4 |
@@ -14546,7 +14547,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
-| `src/shared/connectors/connectorRegistry.ts` | 2 |
 | `src/shared/num.ts` | 2 |
 | `src/shared/talent.ts` | 2 |
 | `src/shared/taxCalc.ts` | 2 |
@@ -27142,7 +27142,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
-shared **143** モジュール / 両ビルドが import **62** / うち否定で答えられる **31**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **144** モジュール / 両ビルドが import **63** / うち否定で答えられる **32**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -27158,6 +27158,7 @@ shared **143** モジュール / 両ビルドが import **62** / うち否定で
 | `externalUrlGate` | 2 | 1 | 閉じている (実測・パス 241 で 3 経路 → パス 291 で 4 経路) —— 否定 (`null`) の扱いは 4 経路すべてで「開かない」の 1 つ: main.ts の `app:openExternal` と setWindowOpenHandler、ブラウザ版 web-shim の同名の polyfill、そしてパス 291 で足した `oauth.ts` の authorize URL (投げて中断する)。 ★ **その 4 本目に twin は無い** —— ブラウザ版の `authorize` は `not_supported` を返すだけで、貼り付け式 PKCE (`renderer/oauth/pkce.ts`) は URL を画面に出し**利用者が自分で開く**ので、「この authorize URL を外部ブラウザへ渡してよいか」という問いを発するのは main だけ。だから非対称になりようがない (`depreciation` の「問いを発しない」と同じ形だが、あちらは辺が定数だけ・こちらは片側の実装が存在しない) |
 | `freeeIntake` | 1 | 5 | 意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / `dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** (FreeePage / bankSubmission / docImports)。main が import するのは `NO_DEAL_INTAKE` と型だけで、**負で答える 3 関数の呼び出しは src/main・src/preload で実測 0 件**。ただし非対称は 1 段上に在る —— 落ちた件数を数える `FreeeDealIntake` を**作れるのは main の freee.ts だけ**で、ブラウザ版に freee の live 読みは無い (読むのは cursor だけ)。だからブラウザ版の 3 つの消費者は常に `NO_DEAL_INTAKE` を見て `null` を返す (注記が出ない)。**原因は「判定の非対称」ではなく「クライアントの不在」**で、funding (パス 265) と同じ形である |
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
+| `headerValue` | 0 | 1 | 対称 (パス 296 で**そう作った**) —— 「`Headers` がこの値を受理するか」の規則で、境界を越えるのは `shared/tokenInput.ts` 経由の 1 本だけ。そこは実測で**同一の 1 行**: main が `return { ok: false, code: 'invalid_token', message: checked.message }` (main/main.ts:348-350)、ブラウザ版も同じ code と同じ message (web-shim.ts:1154-1155)。残る 2 つの読み手は越境しない —— `shared/proxyEndpoint.ts` の消費者は renderer だけ (network/proxy.ts / SettingsPage.tsx。aiEndpoint の行が同じ事実を既に述べている)、`parseProxyEnvelope` は renderer にしか無い。この pass の前は**規則が 3 通りに割れていた** —— 応答側は Latin1 を見て (パス 295)、資格情報の入口は C0/DEL だけ、共有秘密は型と長さだけ。1 つに寄せた |
 | `httpLimits` | 4 | 5 | 対称 (実測・パス 282 で総当たりにした) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts)。 ★ パス 248 は「手で選んだ 3 経路だけで母集団の総当たりではない」と**自分で認めていた**。パス 282 でその総当たりをやったら、**認めていた穴の中に生きた欠陥が 1 件**在った —— `main/main.ts` の `app:checkUpdate` が `AbortSignal.timeout(10_000)` という**裸の数**で、ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた。**同じ問いに 3 倍違う締切**で、遅い回線で先に諦めるのは「新しい版が出た」を受けて実際に更新できる**デスクトップ版**の側だった。しかも同じ関数の 3 行下の注記が 2026-08-31 に**本文の上限**の同じ食い違いを直したときのもので、そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い」と書いてある —— **その直しは 1 行手前で止まっていた**。 直しと同時に `shared/__tests__/deadlineCensus.test.ts` が母集団を走査する: 締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / `timeoutMs`) の時間の引数が**名前**であること (値の一致は要求しない —— `AI_CHAT_TIMEOUT_MS` の 2 分のように意図して違う締切は在る。名前が付いていれば理由が定義の隣に書ける)。実測 24 呼び出し・裸の数 0 件・例外の台帳 0 件 |
 | `hydroponicCrops` | 0 | 3 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。 |
 | `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |

@@ -69,50 +69,28 @@ const MIN_SITES = 240;
 /** 構文上の 0 倒し。**過剰に拾う** (分母は多い側に外す)。 */
 const FOLD = /\?[^?;{}]{0,300}?:\s*0(?![\d.])|\?\?\s*0(?![\d.])|\|\|\s*0(?![\d.])/gs;
 
-/**
- * コメントと文字列リテラルを落とす。**改行は保つ** ——
- * 保たないと行番号がずれ、この関数で「どの行か」を出せなくなる
- * (実際に 1 度ずれた出力を読んで別の行を調べかけた)。件数は改行を保っても変わらない。
+/*
+ * **コメント・文字列・正規表現の中身を落とす走査器は、1 つしか綴らない。**
  *
- * 落とす理由: `|| 0` が散文や見本の中に在っても数に入れないため ——
- * このファイル自身の doc コメントがまさにそれで、落とさないと本が自分を数える。
+ * 2026-09-16 (パス 297) まで、この本は自前の写しを持っていた。写しは
+ * 正規表現リテラルを知らず、**文字クラスの中の引用符を文字列の開始として
+ * 読んでいた** —— 下の parseTable のコメントがその欠陥を「バッククォートは
+ * 16 進エスケープで書く」という**書き方の制約**として書き留めていたが、
+ * 直してはいなかった。
+ *
+ * 実測した食い違いは 3 ファイル・両方向:
+ *
+ * | ファイル | 写し | 直した走査器 |
+ * |---|---|---|
+ * | renderer/data/emotionInsights.ts | **0** | **4** (実在する 4 件を見落としていた) |
+ * | renderer/data/stocksAnalysisWeb.ts | 8 | 7 (幻を 1 件数えていた) |
+ * | shared/connectors/connectorRegistry.ts | 2 | **0** (幻を 2 件数えていた) |
+ *
+ * 合計は 281 → 282 とほとんど動かないが、**内訳は両方向に誤っていた** ——
+ * 人が読むのはファイルごとの表なので、合計が合っていることは慰めにならない。
+ * 改行を保つ性質 (行番号がずれない) も共有側が self-test で留めている。
  */
-function stripCommentsAndStrings(src) {
-  let out = '';
-  let i = 0;
-  const n = src.length;
-  while (i < n) {
-    const c = src[i];
-    const c2 = src[i + 1];
-    if (c === '/' && c2 === '/') {
-      while (i < n && src[i] !== '\n') i += 1;
-      continue; // 改行そのものは次の周で out に入る
-    }
-    if (c === '/' && c2 === '*') {
-      i += 2;
-      while (i < n && !(src[i] === '*' && src[i + 1] === '/')) {
-        if (src[i] === '\n') out += '\n';
-        i += 1;
-      }
-      i += 2;
-      continue;
-    }
-    if (c === '"' || c === "'" || c === '`') {
-      const quote = c;
-      i += 1;
-      while (i < n && src[i] !== quote) {
-        if (src[i] === '\\') i += 1;
-        i += 1;
-      }
-      i += 1;
-      out += '""';
-      continue;
-    }
-    out += c;
-    i += 1;
-  }
-  return out;
-}
+const { stripCommentsAndStrings } = require('./shared-judgement-census.cjs');
 
 /** `src/` 配下の .ts / .tsx (`__tests__` を除く) を追跡順で。 */
 function sourceFiles(root = SRC) {
@@ -222,8 +200,10 @@ function staleReason(doc, table) {
 function parseTable(block) {
   const total = /合計 \*\*(\d+) ファイル \/ (\d+) 件\*\*/.exec(block);
   const rows = new Map();
-  // 行の綴りは `renderTable` の物。バッククォートは \x60 で書く —— 正規表現の中に素で置くと、
-  // この本自身の走査 (`stripCommentsAndStrings`) がテンプレート文字列の始まりと読み、後ろの標本まで数えてしまう。
+  // 行の綴りは `renderTable` の物。バッククォートは \x60 のまま置いてある ——
+  // **その必要はもう無い** (パス 297 で走査器が正規表現リテラルを解するようになった。
+  // 上の docblock に経緯) が、読める綴りなので直さない。素のバッククォートに戻すと、
+  // 「なぜここだけエスケープなのか」を次の人が調べ直すことになる。
   for (const m of block.matchAll(/^\| \x60([^\x60]+)\x60 \| (\d+) \|$/gm)) rows.set(m[1], Number(m[2]));
   return { files: total ? Number(total[1]) : null, sites: total ? Number(total[2]) : null, rows };
 }

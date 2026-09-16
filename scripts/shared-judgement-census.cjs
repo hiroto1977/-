@@ -346,6 +346,16 @@ const VERDICTS = {
     + '(main/clients/talent.ts:143-144 / web-shim.ts:1273-1274)。画面は `snap.storedNote` を '
     + '⚠ つきで刷る (TalentPage.tsx:219-221)。`reviewLadder` は境界を越えない '
     + '(唯一の呼び出しは shared/talent.ts:709 の `buildTalentSnapshot` の中)',
+  headerValue:
+    '対称 (パス 296 で**そう作った**) —— 「`Headers` がこの値を受理するか」の規則で、'
+    + '境界を越えるのは `shared/tokenInput.ts` 経由の 1 本だけ。そこは実測で**同一の 1 行**: '
+    + 'main が `return { ok: false, code: \'invalid_token\', message: checked.message }` '
+    + '(main/main.ts:348-350)、ブラウザ版も同じ code と同じ message '
+    + '(web-shim.ts:1154-1155)。残る 2 つの読み手は越境しない —— '
+    + '`shared/proxyEndpoint.ts` の消費者は renderer だけ (network/proxy.ts / SettingsPage.tsx。'
+    + 'aiEndpoint の行が同じ事実を既に述べている)、`parseProxyEnvelope` は renderer にしか無い。'
+    + 'この pass の前は**規則が 3 通りに割れていた** —— 応答側は Latin1 を見て (パス 295)、'
+    + '資格情報の入口は C0/DEL だけ、共有秘密は型と長さだけ。1 つに寄せた',
   tokenInput: '閉じている (パス 245 で両ビルドの保管層に床)',
   tokenResponse:
     '対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、'
@@ -405,14 +415,46 @@ const VERDICTS = {
 };
 
 /**
+ * 正規表現リテラルの直前に来られる文字。**`/` が除算か正規表現かを決める**唯一の手掛かり。
+ *
+ * 除算の左側は式の終わり (識別子・数字・`)`・`]`) なので、それ以外なら正規表現である。
+ * キーワードの直後 (`return /…/`) は別に見る。
+ */
+const REGEX_CAN_FOLLOW = new Set(['', '(', ',', '=', ':', '[', '!', '&', '|', '?', '{', '}', ';', '+', '-', '*', '%', '<', '>', '~', '^']);
+const REGEX_AFTER_KEYWORD = /\b(return|typeof|instanceof|in|of|new|delete|void|case|do|else|yield|await)$/;
+
+/**
  * コメントと文字列リテラルを落とす (改行は保つ)。
  * 落とす理由: 「`return null` と書いていた」という散文を実装として数えないため ——
  * このファイル自身の doc コメントがまさにそれである。
+ *
+ * **正規表現リテラルも落とす** (2026-09-16 · パス 297)。それまでこの走査器は
+ * 正規表現を知らず、**文字クラスの中の `'` や `` ` `` を文字列の開始として読んで
+ * いた** —— つまりそこからファイルの末尾までが「文字列の中」になり、実装が
+ * 丸ごと消えていた。
+ *
+ * 実測で当たったのは `src/shared` の **1 ファイル**、`shared/headerValue.ts`
+ * (パス 296 で新設。RFC 9110 token の文字クラスが `'` と `` ` `` を含む) ——
+ * **共有へ移した途端に母集団から静かに落ちた。**
+ *
+ * ★ **候補は 3 つ在ったが、2 つは走査器が正しかった。** `shared/redact.ts` と
+ * `shared/api/http.ts` も「生の原文には `NEGATIVE` が当たるのに strip 後には
+ * 当たらない」ので同じ穴に見えたが、読むと一致はどちらも **docblock の散文**
+ * (`{ok:false, reason}` に畳まれる / `{ ok: false, error }` で失敗を返す API) で、
+ * コードには `return null` も `return false` も 1 つも無い ——
+ * **この関数が落とすべき物を落としていただけ**である。
+ * 数だけ見て「最も安全に関わるモジュールが見えていなかった」と書きかけたので、
+ * ここに残す: **走査の食い違いは、まず読んでから名前を付ける。**
+ *
+ * 回避 (引用符を持たない綴りに書き換える) ではなく走査器を直したのは、
+ * 次に誰かが正規表現を書いた瞬間に同じ穴が開くため。
  */
 function stripCommentsAndStrings(src) {
   let out = '';
   let i = 0;
   const n = src.length;
+  /** 直前に出した意味のある文字 (空白を除く)。正規表現かどうかの判定に使う。 */
+  let prev = '';
   while (i < n) {
     const c = src[i];
     const c2 = src[i + 1];
@@ -438,9 +480,40 @@ function stripCommentsAndStrings(src) {
       }
       i += 1;
       out += '""';
+      prev = '"';
       continue;
     }
+    // `out` の末尾の空白を落としてからキーワードを見る (`return /x/` は
+    // `out` が `"… return "` で終わっているので、落とさないと当たらない)。
+    if (c === '/' && (REGEX_CAN_FOLLOW.has(prev) || REGEX_AFTER_KEYWORD.test(out.trimEnd()))) {
+      // 文字クラス `[…]` の中では `/` は区切りにならない (`/[/]/` は正しい正規表現)。
+      let inClass = false;
+      let j = i + 1;
+      while (j < n) {
+        const d = src[j];
+        if (d === '\\') {
+          j += 2;
+          continue;
+        }
+        if (d === '\n') break; // 閉じない = 正規表現ではなかった (除算と読む)
+        if (d === '[') inClass = true;
+        else if (d === ']') inClass = false;
+        else if (d === '/' && !inClass) break;
+        j += 1;
+      }
+      if (j < n && src[j] === '/') {
+        j += 1;
+        while (j < n && /[a-z]/.test(src[j])) j += 1; // フラグ
+        // 中身は `@` に潰す —— 引用符も `return null` も残さないが、
+        // 「正規表現が在った」ことは token として残す。
+        out += '/@/';
+        prev = '/';
+        i = j;
+        continue;
+      }
+    }
     out += c;
+    if (!/\s/.test(c)) prev = c;
     i += 1;
   }
   return out;
@@ -690,6 +763,34 @@ function selfTest() {
   check('★ `return false` を否定とみなす', NEGATIVE.test('function f() { return false; }'));
   check('★ `ok: false` を否定とみなす', NEGATIVE.test('return { ok: false, reason: 1 };'));
   check('肯定だけなら否定でない', NEGATIVE.test('return { ok: true };') === false);
+  /*
+   * 正規表現リテラル (パス 297)。★ の 2 本が守っているのは
+   * 「文字クラスの中の引用符でファイルの残りを失わない」という 1 点である。
+   */
+  check(
+    '★ 正規表現の中の引用符でコードを失わない',
+    NEGATIVE.test(stripCommentsAndStrings("const RE = /^[a-z'`|~-]+$/;\nif (x) return false;")),
+  );
+  check(
+    '★ 正規表現の中の `return null` は数えない (中身は潰す)',
+    NEGATIVE.test(stripCommentsAndStrings('const RE = /return null/;')) === false,
+  );
+  check(
+    '除算は正規表現と読まない (`/` の左が式の終わり)',
+    stripCommentsAndStrings('const r = a / b / c;').includes('a / b / c'),
+  );
+  check(
+    'キーワードの直後は正規表現 (`return /x/`)',
+    stripCommentsAndStrings('function f(){ return /x/.test(y); }').includes('/@/'),
+  );
+  check(
+    '文字クラスの中の `/` は区切りにしない',
+    NEGATIVE.test(stripCommentsAndStrings('const RE = /[/]/;\nreturn false;')),
+  );
+  check(
+    '閉じない `/` は除算のまま (行をまたがない)',
+    stripCommentsAndStrings('const a = x / 2;\nreturn false;').includes('x / 2'),
+  );
   check(
     'コメントの中の「return null」は数えない',
     NEGATIVE.test(stripCommentsAndStrings('// かつては return null だった\nexport const x = 1;')) === false,
@@ -698,9 +799,39 @@ function selfTest() {
     '文字列の中の「ok: false」は数えない',
     NEGATIVE.test(stripCommentsAndStrings("const s = 'ok: false';")) === false,
   );
+  /*
+   * **この本自身を材料にする 2 本** (パス 297 で書き直した)。
+   *
+   * ここには 2026-09-16 まで「この本の prefix に否定は 1 件も無い」という
+   * `=== false` の主張が在り、**通っていた**。ところが `findTable` は実際に
+   * `return null` を返す —— 通っていたのは、走査器が正規表現の中の `'` で
+   * 偽の文字列を開き、**151 行を丸ごと飲み込んでいた**からである
+   * (実測: prefix 681 行 → strip 後 530 行・原文の `return null` 4 件のうち
+   * strip 後に見えるのは **0 件**)。
+   * つまり **「落とし忘れの対照」は、走査が死んでいたから合格していた** ——
+   * このリポジトリが繰り返し記録している形そのものである。
+   *
+   * だから主張を 2 つに分けて、どちらも**肯定形**で書く:
+   *
+   * ① **行数は変わらない。** 落とすのはコメント・文字列・正規表現の**中身**
+   *    だけなので、行の数は原文と一致しなければならない。旧走査器はここで
+   *    151 行を失っていた —— この 1 行が在れば当日に鳴っていた。
+   * ② **コードの否定は見え、散文の否定は見えない。** 実測でコード上の
+   *    `return null` は 2 件 (`findTable` の 2 つの早期 return) で、
+   *    `VERDICTS` の文字列に入っている 2 件は落ちる。
+   *    合計 4 件のうち 2 件だけが残るのが正しい答えである。
+   */
+  const ownSrc = fs.readFileSync(__filename, 'utf8');
   check(
-    '★ この本自身の doc を数えない (落とし忘れの対照)',
-    NEGATIVE.test(stripCommentsAndStrings(fs.readFileSync(__filename, 'utf8').split('function selfTest')[0])) === false,
+    '★ 走査器は行数を変えない (中身だけ落とす)',
+    stripCommentsAndStrings(ownSrc).split('\n').length === ownSrc.split('\n').length,
+  );
+  const ownPrefix = ownSrc.split('function selfTest')[0];
+  const seen = (stripCommentsAndStrings(ownPrefix).match(/return null/g) ?? []).length;
+  const raw = (ownPrefix.match(/return null/g) ?? []).length;
+  check(
+    `★ コードの否定は見え、散文の否定は落ちる (原文 ${raw} 件 → ${seen} 件)`,
+    seen === 2 && raw > seen,
   );
 
   // --- import の走査: コメントは落とす・綴りは残す ---
