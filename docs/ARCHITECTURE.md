@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 601 個の `file:line` 参照 + 41 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 602 個の `file:line` 参照 + 41 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14410** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14416** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 601 | 自己検証 |
+| `file:line` 参照数 | 602 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2450,7 +2450,7 @@ classDiagram
 | 2 | Renderer に raw token は届かない (`secrets:list` は ID のみ) | `listConfigured` `src/preload/preload.ts:59` |
 | 3 | IPC で受けた serviceId は indexing 前に `isServiceId()` 検証 | **`lint:ipc-handlers`** (2026-08-22 追加。それまでの回帰テスト欄は `isServiceId` **自体**の検査 4 件で、各ハンドラが呼んでいるかは誰も見ていなかった) + `src/shared/__tests__/serviceId.test.ts` 4 件 |
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
-| 5 | 外部 URL を OS へ渡す扉は 2 つ (`app:openExternal` と新窓ハンドラ)、**どちらも同じ関門**を通る — http(s) 限定 | `EXTERNAL_URL_SCHEMES` `src/shared/externalUrlGate.ts:50` + `src/shared/__tests__/externalUrlGate.test.ts` 37 件 (扉の数を数える検査を含む) |
+| 5 | 外部 URL を OS へ渡す扉は 2 つ (`app:openExternal` と新窓ハンドラ)、**どちらも同じ関門**を通る — http(s) 限定。**加えてプラットフォームが自分で辿る出口** (アンカーの属性) も同じ関門を通る (パス 298。それまで 2 本が台帳の生の値を属性に置いており、React のクリック handler で打ち消しても中クリックや右クリックの「新しいタブで開く」は関門の外だった) | `EXTERNAL_URL_SCHEMES` `src/shared/externalUrlGate.ts:100` + `src/shared/__tests__/externalUrlGate.test.ts` 37 件 (扉の数を数える検査を含む) + `src/shared/__tests__/followableUrlCensus.test.ts` 6 件 (動的な属性の母集団・両方向) |
 | 6 | fetcher / action の URL path 動的部分は `encodeURIComponent` | **`lint:url-encoding`** (2026-08-22 新設。それまで機械検証は無く、各クライアントの個別テストだけだった) + `github.test.ts`, `wordpress.test.ts`, ... |
 | 7 | Ollama ページのクライアント (main の ollama.ts) は `127.0.0.1:11434` 以外には接続しない (AI ハブの Ollama プロバイダは利用者の設定で決まる —— §3.3 の行と `lint:network-targets` の台帳) | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
 | 8 | Ollama は `/api/pull|create|push|copy|delete|blobs|upload` を呼ばない | `ollama.test.ts` `isAllowedEndpoint` + property fuzz 700 試行 |

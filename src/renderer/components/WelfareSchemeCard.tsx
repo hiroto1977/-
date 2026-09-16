@@ -4,6 +4,7 @@ import { Stat } from './Stat';
 import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
 import { jpy } from '../../shared/formatters';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
 import {
   designWelfareScheme,
   MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
@@ -533,21 +534,37 @@ function BenefitCatalogue(): JSX.Element {
                   )}
                   <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 6 }}>
                     出典:{' '}
-                    {b.sources.map((src, i) => (
-                      <span key={src.url}>
-                        {i > 0 && ' / '}
-                        <a
-                          href={src.url}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            void window.serviceHub.openExternal(src.url);
-                          }}
-                          style={{ color: 'inherit' }}
-                        >
-                          {src.label}
-                        </a>
-                      </span>
-                    ))}
+                    {b.sources.map((src, i) => {
+                      /*
+                       * **属性に入れるのは関門を通した文字列だけ** (パス 298)。
+                       * 理由は `EligibilityChecker.tsx` の `safeSourceUrl` に
+                       * 1 つだけ書いてある —— `onClick` の `preventDefault()` は
+                       * `click` しか止めないので、中クリック / 「新しいタブで
+                       * 開く」 / 「リンクをコピー」は素の属性を使う。
+                       */
+                      const safeUrl = externalUrlOrNull(src.url);
+                      return (
+                        <span key={src.url}>
+                          {i > 0 && ' / '}
+                          {safeUrl === null ? (
+                            <span style={{ color: 'var(--warning, #d97706)' }}>
+                              ⚠ {src.label}（URL が http(s) ではないため開けません）
+                            </span>
+                          ) : (
+                            <a
+                              href={safeUrl}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                void window.serviceHub.openExternal(safeUrl);
+                              }}
+                              style={{ color: 'inherit' }}
+                            >
+                              {src.label}
+                            </a>
+                          )}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               ))}

@@ -1813,6 +1813,14 @@
       "leafCount": 74,
       "note": "update integrity-chain.cjs,proxy.ts,headerValue.ts,proxyEndpoint.ts,tokenInput.ts",
       "hash": "3291d13bf175cf8445bfd50df87c5a5a32db10a99a10298bdbf0822edc542fee"
+    },
+    {
+      "index": 217,
+      "prevHash": "3291d13bf175cf8445bfd50df87c5a5a32db10a99a10298bdbf0822edc542fee",
+      "merkleRoot": "f1d91fad0e60d9767b82987eb3a8ffc4d41932dae81c51026742eaa2d874a479",
+      "leafCount": 74,
+      "note": "update externalUrlGate.ts",
+      "hash": "21426058e225738841688dab50d41f7d893e39f9b21b34e46e2d5e229cef7819"
     }
   ],
   "tipManifest": {
@@ -1876,7 +1884,7 @@
     "src/shared/cryptoParams.ts": "0fe808ee71235f71deaf24200a910b87039adf30ac73325084843490bdaad2f1",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
-    "src/shared/externalUrlGate.ts": "01b2f3904381ca98950ac331aa0558b1a6fda14e2a7e7c85b6b5bd1b6f9b9ce6",
+    "src/shared/externalUrlGate.ts": "75d54e0ec94c7568521e4fa31ad90596d18e59519434c42edb562d939806eb4b",
     "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
     "src/shared/httpLimits.ts": "9e980f75cba0e5a29051e648f77fa9cca0728425a987b72bacf49d18fd08df2c",
     "src/shared/imageUrlGate.ts": "c7b928e51fdbac71b154f9d0f97aa51a341eb8db3203105292cf47f79eda6760",

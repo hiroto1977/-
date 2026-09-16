@@ -7,6 +7,92 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 298 (2026-09-16) — 「唯一の関門」の外に、プラットフォームが自分で辿る出口が 2 つ在った
+
+`shared/externalUrlGate.ts` の冒頭は自分を「外へ開く URL を判定する**唯一の関門**」と
+名乗っていた。実測するとその主張は 2 件だけ偽だった:
+
+```
+  renderer の <a> 全体                     16 本
+    href="#" + ハンドラの中はリテラル      14 本  ← 辿られても '#' なので無害
+    href={台帳の生の値}                     2 本  ← EligibilityChecker / WelfareSchemeCard
+  payload 由来の URL を開く他の経路
+    DataList                        <button onClick={openExternal}> (href を持たない)
+    main / web-shim の openExternal  この関門を通る
+```
+
+2 本は `onClick` で `preventDefault()` してから `openExternal` を呼ぶので**左クリック
+だけは**関門を通っていた。だが `href` 属性そのものは関門を通っておらず、React の
+`onClick` は `click` にしか着かないので、**中クリック (`auxclick`)・右クリックの
+「新しいタブで開く」「リンクをコピー」・リンクのドラッグ**は `preventDefault` を 1 度も
+呼ばずに素の属性を使う。「調べた物」と「使われる物」が別になる形で、**パス 291**
+(端点を前置き一致で見ていた)・**パス 295 / 296** (ヘッダ値の関門が実物の `Headers` と
+ずれていた) と同じ家系である。しかもこの関門は**自分についてその構図を下で説明して
+いた** —— 同じ形が関門の外側にもう一度在った。
+
+**今日の実害は 0。** 2 本が読む台帳の URL は実測で全件 `https://` なので、属性が
+辿られても同じ先へ行く。壊れていたのは値ではなく**射程**で、直したのは呼び出し側。
+
+### 射程の穴が 2 つ重なっていた
+
+`lint:citations` のスキーム規則は `orchestration/knowledge-context.cjs` の
+**COLLECTIONS 5 件を名前で**見ている。url 的な鍵に付いた絶対 URL リテラルの実測:
+
+| | 件数 |
+|---|---|
+| 5 台帳 (`lint:citations` が見る) | 12,209 |
+| その外 | **42** |
+| └ `data/eligibility.ts` | 9 ← `<a href>` になる |
+| └ `shared/employerBenefits.ts` | 10 ← `<a href>` になる |
+| └ `data/selfCareLibrary.ts` | 12 |
+| └ `data/snapshot.ts` | 7 |
+| └ `pages/TaxPage.tsx` | 4 |
+
+**関門の射程の外と、台帳の射程の外が、同じ 2 本の上でちょうど重なって空いていた。**
+
+### 直し
+
+- 両画面: `const safe = externalUrlOrNull(u)` を 1 つ持ち、`href={safe}` と
+  ハンドラの両方が**同じ変数**を使う。`null` なら link ではなく ⚠ の文を出す
+  (規準は `DataList` に在った —— payload 由来の URL は `<button>` で開き属性を持たない)
+- `shared/__tests__/followableUrlCensus.test.ts` (新設・静的 `it(` 6 本):
+  母集団を数え、**動的な `href` に渡す識別子がその場で `externalUrlOrNull(...)` から
+  作られている**ことを要求する (両方向)。関門を通していない `href` は `"#"` ちょうどだけ
+- `externalUrlGate.ts` の「唯一の関門」を実測に直した
+
+### ★ 自戒 — 私は同じ日に 2 度、走査に自分の散文を拾わせた
+
+1. 最初の版は素の原文を読み、**この検査と `EligibilityChecker` の注記に書いた
+   ``href={j.sourceUrl}``** を動的 href として数えた (2 件 → 合計 4)。
+   `stripComments` (`scripts/shared-judgement-census.cjs` から借用) で落とした。
+   **文字列は残す**ものを選ぶ —— `href="#"` の `#` を見る必要があるので、兄弟の
+   `stripCommentsAndStrings` では空になる
+2. 「同じファイルに `externalUrlOrNull` が `includes` で在る」という最初の規則は、
+   **対照 A (`href={j.sourceUrl}` へ戻して import も消す) で 6 件すべて通った** ——
+   このファイルの注記が関門の名前を書いているので、**言及が宣言の代わりになっていた**。
+   パス 292 が図の参照で直したのと同じ形を、私が同じ日に作った。
+   識別子が `externalUrlOrNull(` から作られていることを要求する形に直した
+3. 「注記を落とさないと必ず多く数える」という対照も**repo の中身に依っていた** ——
+   注記を消せば差は 0 になり、「走査が壊れた」と「注記が無い」を見分けられない
+   (実測で 18 === 18 で落ちた)。標本 4 行に対して確かめる形に直した
+
+### 対照 (5 本すべて鳴る)
+
+| | 壊し方 | 落ちた検査 |
+|---|---|---|
+| A | 直す前の木 (`href={j.sourceUrl}` ×2) | 動的 href — **2 件を名指し** |
+| B | 変数を `= j.sourceUrl` にする | 動的 href |
+| C | `href="#"` を実 URL にする | `"#"` ちょうどだけ |
+| D | 関門の `EXTERNAL_URL_SCHEMES.has` を消す | 関門は `javascript:` を落とす |
+| E | 台帳に `javascript:alert(1)` を置く | 5 台帳の外も全件 http(s) |
+
+★ **対照を回す道具で自分の変更を消した** —— 最初の対照スクリプトは復元に
+`git checkout -- <file>` を使い、**まだコミットしていなかったパス 298 の編集を
+2 ファイル分捨てた**。復元は `cp` の退避から行うこと (作業木が唯一の写しである
+あいだ、`git checkout` は復元ではなく破棄である)。
+
+---
+
 ## パス 297 (2026-09-16) — census の走査器が正規表現を知らず、自分の self-test を空にしていた
 
 パス 296 で `shared/headerValue.ts` を共有へ置いた**途端に**、

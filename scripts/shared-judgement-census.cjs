@@ -151,7 +151,16 @@ const VERDICTS = {
     + '(`renderer/oauth/pkce.ts`) は URL を画面に出し**利用者が自分で開く**ので、'
     + '「この authorize URL を外部ブラウザへ渡してよいか」という問いを発するのは main だけ。'
     + 'だから非対称になりようがない (`depreciation` の「問いを発しない」と同じ形だが、'
-    + 'あちらは辺が定数だけ・こちらは片側の実装が存在しない)',
+    + 'あちらは辺が定数だけ・こちらは片側の実装が存在しない)。'
+    + '★ **パス 298 で 4 → 6 経路。** 足した 2 つは画面の `<a>` で、'
+    + 'プラットフォームが自分で辿る属性 (`EligibilityChecker` / `WelfareSchemeCard`)。'
+    + 'それまで台帳の生の値を属性に置いており、React のクリック handler で打ち消しても'
+    + '中クリックや右クリックの「新しいタブで開く」は関門の外だった '
+    + '(「調べた物と使われる物が別」—— パス 291 / 295 / 296 と同じ家系)。'
+    + '否定の扱いは**両方とも同じ 1 つ** —— link を描かずに ⚠ の文を出す。'
+    + 'この 2 つは renderer だけの経路だが、main 側に双子は在りようがない '
+    + '(デスクトップ版も同じ renderer を描く) ので非対称ではない。'
+    + '母集団は `shared/__tests__/followableUrlCensus.test.ts` が両方向に留める',
   freeeIntake:
     '意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / '
     + '`dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** '
