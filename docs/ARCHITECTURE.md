@@ -2231,7 +2231,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **288 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **289 ファイル**。
 2026-09-12 (パス 178) に `src/shared/inputCeiling.ts` を足した —— パス 167 / 168 / 172 / 174 / 175 が
 「切ったのか、送らなかったのか」の言い分けをこの 3 関数に寄せた結果、**実装 18 モジュール・
 呼び出し 23 か所 (画面の断り書きは 16 個) と検査 6 本が同じ判断を読む**ようになったのに、

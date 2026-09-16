@@ -223,6 +223,7 @@
     "src/shared/formatters.ts",
     "src/shared/funding.ts",
     "src/shared/fxCurrency.ts",
+    "src/shared/headerValue.ts",
     "src/shared/httpLimits.ts",
     "src/shared/hydroponicCrops.ts",
     "src/shared/hydroponics.ts",
