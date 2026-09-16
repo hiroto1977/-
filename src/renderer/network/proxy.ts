@@ -22,6 +22,7 @@
  */
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
+import { isHeaderName, isHeaderValue, normalizeHeaderValue } from '../../shared/headerValue';
 import {
   describeProxyEndpointFailure,
   normalizeProxyEndpoint,
@@ -185,14 +186,15 @@ interface ProxyResponseEnvelope {
   body: string;
 }
 
-/** RFC 9110 token — `new Headers()` は空白などを含む名前で TypeError を投げる。 */
-const HEADER_NAME_RE = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
-/** 値は Latin1 (0x00-0xff) の、CR/LF/NUL を除いたもの。
- *  Response の headers は ByteString を要求し、非 Latin1 文字 (≥0x100) は
- *  TypeError を投げる (「Cannot create property … (ByteString error)」)。
- *  許容範囲: 0x01-0x09・0x0b-0x0c・0x0e-0xff (NUL/CR/LF を除く全 Latin1)。 */
-// eslint-disable-next-line no-control-regex
-const HEADER_VALUE_RE = /^[\x01-\x09\x0b\x0c\x0e-\xff]*$/;
+/*
+ * 値の規則は `shared/headerValue.ts` が 1 つだけ持つ (パス 296)。
+ *
+ * パス 295 はここに専用の正規表現を置いていたが、同じ知識が要求側 (共有秘密・
+ * トークン) には無く、3 通りに割れていた。加えてその regex は**プラットフォームより
+ * 厳しく**、末尾に改行が付いた値を丸ごと落としていた —— `new Response()` は
+ * それを受理して前後の HTTP 空白を剥がすだけなので、落とす理由が無かった。
+ * 正規化してから検査すれば、残す物も落とす物もプラットフォームと一致する。
+ */
 
 const INVALID_ENVELOPE: ProxyResponseEnvelope = { status: 502, headers: {}, body: 'proxy returned an invalid envelope' };
 
@@ -227,8 +229,12 @@ export function parseProxyEnvelope(bodyText: string): ProxyResponseEnvelope {
   const status = typeof env.status === 'number' && Number.isInteger(env.status) && env.status >= 200 && env.status <= 599 ? env.status : 502;
   const headers: Record<string, string> = {};
   if (typeof env.headers === 'object' && env.headers !== null && !Array.isArray(env.headers)) {
-    for (const [name, value] of Object.entries(env.headers as Record<string, unknown>)) {
-      if (typeof value === 'string' && HEADER_NAME_RE.test(name) && HEADER_VALUE_RE.test(value)) headers[name] = value;
+    for (const [name, raw] of Object.entries(env.headers as Record<string, unknown>)) {
+      if (typeof raw !== 'string' || !isHeaderName(name)) continue;
+      // 正規化してから検査し、**正規化後の値を残す** —— `new Response()` が送る値と
+      // ここで持つ値を同じにする (調べた物と開く物を一致させる)。
+      const value = normalizeHeaderValue(raw);
+      if (isHeaderValue(value)) headers[name] = value;
     }
   }
   return { status, headers, body: typeof env.body === 'string' ? env.body : '' };

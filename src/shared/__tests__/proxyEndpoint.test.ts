@@ -95,12 +95,83 @@ describe('normalizeProxyEndpoint — 断るもの', () => {
     expect(reasonOf(url)).toBeNull();                        // 字では超えていないので通る
   });
 
-  it('★ 共有秘密も字で数える', () => {
-    const atLimit = '\u{1F600}'.repeat(MAX_PROXY_SECRET_CHARS);
-    expect([...atLimit].length).toBe(MAX_PROXY_SECRET_CHARS);
-    expect(atLimit.length).toBe(MAX_PROXY_SECRET_CHARS * 2);
+  /*
+   * 天井は字で数える。**実験台は絵文字から Latin1 へ変えた** (2026-09-16 · パス 296) ——
+   * 共有秘密は `x-proxy-auth` ヘッダになるので、絵文字は
+   * 「要求ヘッダに載らない文字」として断られるようになった。URL 側 (すぐ上の検査) は
+   * ヘッダにならないので絵文字のまま測り続ける —— **この非対称が規則の範囲**である。
+   */
+  it('共有秘密の天井は字で数える (Latin1 の実験台)', () => {
+    const atLimit = 'a'.repeat(MAX_PROXY_SECRET_CHARS);
     expect(isValidProxySecret(atLimit)).toBe(true);
-    expect(isValidProxySecret(atLimit + '\u{1F600}')).toBe(false);
+    expect(isValidProxySecret(atLimit + 'a')).toBe(false);
+    expect(
+      reviewStoredProxyConfig({ url: 'https://w.example/', sharedSecret: atLimit + 'a' }).rejected,
+    ).toBe('secret-too-long');
+  });
+
+  /*
+   * **共有秘密は型と長さしか見られていなかった** (パス 296)。同じファイルの上の
+   * `control-char` は URL 側にだけ掛かっていた。実測した 8 形のうち 4 形は
+   * `new Headers()` が**通した上で前後を剥がす**ので、保存した秘密と送る秘密が
+   * 食い違い、Worker 側の認証は必ず落ちるのに画面は「保存した」と言っていた。
+   */
+  describe('共有秘密は x-proxy-auth ヘッダになる (パス 296)', () => {
+    const CR = String.fromCharCode(13);
+    const LF = String.fromCharCode(10);
+    const NUL = String.fromCharCode(0);
+    const reviewOf = (sharedSecret: unknown) =>
+      reviewStoredProxyConfig({ url: 'https://w.example/', sharedSecret });
+    const secretOf = (sharedSecret: unknown) => reviewOf(sharedSecret).config?.sharedSecret;
+    const rejectionOf = (sharedSecret: unknown) => reviewOf(sharedSecret).rejected;
+
+    it('★ 末尾 LF (貼り付けで最も普通に混ざる) は剥がして保存する — 保存した物と送る物を同じにする', () => {
+      expect(secretOf('sk-abcdef' + LF)).toBe('sk-abcdef');
+      // 実際に送られる値と一致すること。
+      expect(new Headers({ 'x-proxy-auth': 'sk-abcdef' + LF }).get('x-proxy-auth')).toBe('sk-abcdef');
+    });
+
+    it.each([
+      ['先頭空白', ' sk-abcdef'],
+      ['末尾 TAB', 'sk-abcdef\t'],
+      ['末尾 CR', 'sk-abcdef' + CR],
+      ['前後とも空白', '  sk-abcdef  '],
+    ])('%s も剥がして保存する', (_label, raw) => {
+      expect(secretOf(raw)).toBe('sk-abcdef');
+    });
+
+    it.each([
+      ['途中の CRLF (ヘッダ注入の形)', 'sk-abcdef' + CR + LF + 'X-Injected: 1', 'secret-control-char'],
+      ['途中の LF', 'sk-abc' + LF + 'def', 'secret-control-char'],
+      ['NUL', 'sk-abc' + NUL + 'def', 'secret-control-char'],
+      ['日本語', 'sk-abc' + String.fromCharCode(0x3042) + 'def', 'secret-non-latin1'],
+      ['絵文字', 'sk-abc' + String.fromCodePoint(0x1f600) + 'def', 'secret-non-latin1'],
+    ])('%s は理由つきで断る', (_label, raw, reason) => {
+      expect(rejectionOf(raw)).toBe(reason);
+      // 断りの文面が在ること (理由を足して文面を忘れる形を塞ぐ)。
+      expect(describeProxyEndpointFailure(reason as ProxyEndpointFailure)).not.toBe('');
+    });
+
+    it('★ 断った値は実際に Headers が拒む (関門と一致)', () => {
+      for (const raw of [
+        'sk-abcdef' + CR + LF + 'X-Injected: 1',
+        'sk-abc' + NUL + 'def',
+        'sk-abc' + String.fromCharCode(0x3042) + 'def',
+      ]) {
+        expect(isValidProxySecret(raw)).toBe(false);
+        expect(() => new Headers({ 'x-proxy-auth': raw })).toThrow();
+      }
+    });
+
+    it('空白だけなら「秘密なし」と同じ (送信側は falsy でヘッダを付けない)', () => {
+      expect(secretOf('   ')).toBeUndefined();
+      expect(secretOf(undefined)).toBeUndefined();
+      expect(rejectionOf('   ')).toBeNull();
+    });
+
+    it('素の秘密はそのまま保存する', () => {
+      expect(secretOf('sk-abcdef0123456789')).toBe('sk-abcdef0123456789');
+    });
   });
 
   it('制御文字（URL の解析より先に落とす）', () => {

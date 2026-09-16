@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 216
+- ブロック数: 217
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `a6fbb3d158dd386509f7a5336244d19fe5f8640051d892865e3b5c1639ac2b6f`
-- 保護対象: 73 ファイル
+- 末尾(tip)ハッシュ: `3291d13bf175cf8445bfd50df87c5a5a32db10a99a10298bdbf0822edc542fee`
+- 保護対象: 74 ファイル
 
 ## ブロック
 
@@ -229,6 +229,7 @@
 | 213 | `97d738e849b8c4b3` | `f15a9c1268c00628` | `b2360eeb1c6a1345` | update oauth.ts |
 | 214 | `8d31f43402ce6c9b` | `b2360eeb1c6a1345` | `2f148e8ad881657a` | update proxy.ts |
 | 215 | `f0b70d7ce3910b83` | `2f148e8ad881657a` | `a6fbb3d158dd3865` | update proxy.ts |
+| 216 | `778a52b4c2cafedb` | `a6fbb3d158dd3865` | `3291d13bf175cf84` | update integrity-chain.cjs,proxy.ts,headerValue.ts,proxyEndpoint.ts,tokenInput.ts |
 
 ## 保護対象ファイル
 
@@ -293,6 +294,7 @@
 - `src/shared/eraseReport.ts`
 - `src/shared/escape.ts`
 - `src/shared/externalUrlGate.ts`
+- `src/shared/headerValue.ts`
 - `src/shared/httpLimits.ts`
 - `src/shared/imageUrlGate.ts`
 - `src/shared/inputCeiling.ts`

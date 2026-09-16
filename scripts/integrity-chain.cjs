@@ -292,6 +292,16 @@ const PROTECTED = [
   // 制御文字の判定。URL / ヘッダの分断を止める共通の一段目で、
   // proxy / AI endpoint / Atlassian site / 資格情報入力が全部ここを通る。
   'src/shared/controlChars.ts',
+  // 「`Headers` がこの名前 / この値を受理するか」の唯一の出典 (2026-09-16 · パス 296)。
+  // ここも閉包の検査が足した当日に浮かせた —— `tokenInput.ts` / `proxyEndpoint.ts` /
+  // `network/proxy.ts` (いずれも保護対象) が読む先である。
+  //
+  // 全部 true を返すようになれば、**資格情報と共有秘密の入口が丸ごと開く**:
+  // 途中に CRLF を含む値が保存でき、要求の組み立てで throw し、その例外文には
+  // 秘密が平文で載る (実測: `Headers.append: "sk-…\r\nX-Injected: 1" is an
+  // invalid header value.`)。正規化の側が恒等関数になれば、保存した秘密と
+  // 送る秘密が食い違い、認証は必ず落ちるのに画面は「保存した」と言う。
+  'src/shared/headerValue.ts',
   // レコードを封緘するか素通しするかを決める唯一の場所。`dataCrypto.ts` を
   // 守っても、**呼ぶ側が黙って `IDENTITY_CIPHER` を返せば平文で保存される** ——
   // 画面は「暗号化は有効」と言い続けるので、外からは見分けが付かない。

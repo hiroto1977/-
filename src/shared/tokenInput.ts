@@ -17,12 +17,13 @@
  * 上限そのものも 2 か所に書き写されると必ずずれるので、ここが唯一の定義。
  */
 import { hasControlChar } from './controlChars';
+import { isHeaderValue } from './headerValue';
 
 /** 保存を受け付ける最大長。安全側の上限で、実在のトークンより十分に大きい。 */
 import { countChars } from './inputCeiling';
 export const MAX_TOKEN_INPUT_CHARS = 65536;
 
-export type TokenRejectReason = 'empty' | 'too-long' | 'control-char';
+export type TokenRejectReason = 'empty' | 'too-long' | 'control-char' | 'non-latin1';
 
 export type TokenInputCheck =
   | { readonly ok: true; readonly value: string }
@@ -73,12 +74,47 @@ export function checkTokenInput(raw: unknown): TokenInputCheck {
       message: CONTROL_CHAR_MESSAGE,
     };
   }
+  /*
+   * **Latin1 でない文字も、ヘッダに載らない。** (2026-09-16 · パス 296)
+   *
+   * 上の制御文字の判定 (`hasControlChars` = C0 と DEL) は 2026-08-22 に、
+   * 「`new Headers()` が CR/LF/NUL を throw する」という**当時の理解**で
+   * 書かれている。パス 295 が応答側で測ったのは、それより広い規則だった ——
+   * `Headers` は **ByteString (Latin1) を要求する**ので、非 Latin1 文字
+   * (≥0x100) は `Cannot convert argument to a ByteString …` で throw する。
+   *
+   * その学びは応答側 (`renderer/network/proxy.ts`) にだけ入り、**ここへは
+   * 持ち帰られなかった**。実測すると `ghp_` + あ + `_0123456789` は
+   * この関門を**通り**、保存され、以後そのサービスへの要求は
+   * `Authorization: Bearer …` の組み立てで必ず throw していた ——
+   * docblock が名指しで直したと書いている
+   * 「保存は成功 → 次の取得で不可解な TypeError」そのものの形が、
+   * 文字種を変えるだけで残っていた。
+   *
+   * 判定は `shared/headerValue.ts` が 1 つだけ持つ (要求側と応答側が同じ物を読む)。
+   */
+  if (!isHeaderValue(value)) {
+    return {
+      ok: false,
+      reason: 'non-latin1',
+      message: NON_LATIN1_MESSAGE,
+    };
+  }
   return { ok: true, value };
 }
 
 /** 断りの文面。床 (保管層) と入口が同じ文言を出すので、写しを作らない。 */
 export const CONTROL_CHAR_MESSAGE =
   '資格情報に改行や制御文字が含まれています (貼り付け時の折り返しをご確認ください)';
+
+/**
+ * 断りの文面 (非 Latin1)。**「全角」と言わない** —— 弾く範囲は日本語だけでなく
+ * キリル文字も絵文字も含むので、原因は「日本語だから」ではなく「要求ヘッダに
+ * 載せられない文字だから」である。実際にありうるのは、資格情報の一部を
+ * 日本語入力のまま打った・全角英数で貼った、という取り違えである。
+ */
+export const NON_LATIN1_MESSAGE =
+  '資格情報に要求ヘッダへ載せられない文字が含まれています (全角文字・絵文字など。半角で入力してください)';
 
 /**
  * **制御文字の規則は、このリポジトリで 1 か所しか綴らない。**

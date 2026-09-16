@@ -37,6 +37,7 @@
 import { countChars } from './inputCeiling';
 import { isLoopbackHostname } from './aiEndpoint';
 import { hasControlChar } from './controlChars';
+import { isHeaderValue, normalizeHeaderValue } from './headerValue';
 
 /** プロキシ URL の長さ上限。これを超える正当な worker URL は無い。 */
 export const MAX_PROXY_URL_CHARS = 1024;
@@ -53,7 +54,9 @@ export type ProxyEndpointFailure =
   | 'has-userinfo'
   | 'has-fragment'
   | 'insecure-remote'
-  | 'secret-too-long';
+  | 'secret-too-long'
+  | 'secret-control-char'
+  | 'secret-non-latin1';
 
 export type ProxyEndpointResult = { ok: true; url: string } | { ok: false; reason: ProxyEndpointFailure };
 
@@ -112,13 +115,57 @@ export function describeProxyEndpointFailure(reason: ProxyEndpointFailure): stri
       return 'このプロキシには API トークンが乗るため http:// は使えません (平文で流れるため)。https:// にするか、localhost / 127.0.0.1 のローカル worker を指定してください。';
     case 'secret-too-long':
       return `共有秘密が不正です (${MAX_PROXY_SECRET_CHARS} 字以内)。`;
+    case 'secret-control-char':
+      return '共有秘密に改行や制御文字が含まれています (貼り付け時の折り返しをご確認ください)。';
+    case 'secret-non-latin1':
+      return '共有秘密に要求ヘッダへ載せられない文字が含まれています (全角文字・絵文字など。半角で入力してください)。';
   }
 }
 
-/** 共有秘密の検証。無指定は許す (worker 側が認証を要らないこともある)。 */
+/**
+ * 共有秘密の検証。無指定は許す (worker 側が認証を要らないこともある)。
+ *
+ * **この値は `x-proxy-auth` ヘッダになる** (`renderer/network/proxy.ts`)。
+ * 2026-09-16 (パス 296) まで、ここは**型と長さしか見ていなかった** —— 同じ
+ * ファイルの 60 行上で URL 側が `hasControlChar` を通していたのに、秘密側は
+ * 通していなかった。実測した 8 形の結果:
+ *
+ * | 入力 | 旧い関門 | `new Headers()` |
+ * |---|---|---|
+ * | 末尾 LF (ファイルや端末から貼ると付く) | 通す | **通すが剥がす** → 保存した秘密と送る秘密が違う |
+ * | 先頭空白 / 末尾 TAB / 末尾 CR | 通す | **通すが剥がす** (同上) |
+ * | 途中の CRLF | 通す | throw。**しかも例外文に秘密が平文で載る** |
+ * | NUL / 非 Latin1 | 通す | throw |
+ *
+ * 前者 4 形が重い: 画面は「保存した」と言い、Worker には別の文字列が届くので
+ * 認証は必ず落ち、**なぜ落ちるかを画面から知る道が無い**。
+ *
+ * だから正規化してから検査し、**正規化後の値を返す** —— 保存する物と送る物を
+ * 同じにする。規則は `shared/headerValue.ts` が 1 つだけ持つ。
+ */
+export type ProxySecretCheck =
+  | { readonly ok: true; readonly value: string | undefined }
+  | { readonly ok: false; readonly reason: ProxyEndpointFailure };
+
+export function checkProxySecret(secret: unknown): ProxySecretCheck {
+  if (secret === undefined) return { ok: true, value: undefined };
+  if (typeof secret !== 'string') return { ok: false, reason: 'secret-too-long' };
+  // `Headers` が黙って落とす前後の空白は、ここで落としておく。
+  const value = normalizeHeaderValue(secret);
+  // 空になったなら「秘密なし」と同じ —— 送信側は falsy でヘッダを付けないので、
+  // `''` を保存しても観測差が無い。差の無い違いを保存しない。
+  if (value.length === 0) return { ok: true, value: undefined };
+  if (countChars(value) > MAX_PROXY_SECRET_CHARS) return { ok: false, reason: 'secret-too-long' };
+  // 途中に残った CR/LF/TAB などは貼り間違いなので、理由を付けて断る
+  // (資格情報の入口 `shared/tokenInput.ts` と同じ厳しさに揃える)。
+  if (hasControlChar(value)) return { ok: false, reason: 'secret-control-char' };
+  if (!isHeaderValue(value)) return { ok: false, reason: 'secret-non-latin1' };
+  return { ok: true, value };
+}
+
+/** 真偽だけが要る呼び出し側のため。規則は `checkProxySecret` が 1 つだけ持つ。 */
 export function isValidProxySecret(secret: unknown): boolean {
-  if (secret === undefined) return true;
-  return typeof secret === 'string' && countChars(secret) <= MAX_PROXY_SECRET_CHARS;
+  return checkProxySecret(secret).ok;
 }
 
 /** プロキシ設定の中身。IndexedDB へ入る形そのもの。 */
@@ -150,10 +197,13 @@ export function reviewStoredProxyConfig(raw: unknown): StoredProxyReview {
   if (raw === null || raw === undefined) return { config: null, rejected: null };
   const checked = normalizeProxyEndpoint((raw as { url?: unknown }).url);
   if (!checked.ok) return { config: null, rejected: checked.reason };
-  const secret = (raw as { sharedSecret?: unknown }).sharedSecret;
-  if (!isValidProxySecret(secret)) return { config: null, rejected: 'secret-too-long' };
-  const config: ProxyCredentials = secret === undefined
+  const secret = checkProxySecret((raw as { sharedSecret?: unknown }).sharedSecret);
+  if (!secret.ok) return { config: null, rejected: secret.reason };
+  // **正規化後の値を持つ** —— `Headers` が前後の空白を落とすので、素の値を保存すると
+  // 保存した秘密と送る秘密が違ってしまう (パス 296)。読み出しもこの 1 本を通るので、
+  // 既に汚れた値が入っている端末でもここで揃う。
+  const config: ProxyCredentials = secret.value === undefined
     ? { url: checked.url }
-    : { url: checked.url, sharedSecret: secret as string };
+    : { url: checked.url, sharedSecret: secret.value };
   return { config, rejected: null };
 }
