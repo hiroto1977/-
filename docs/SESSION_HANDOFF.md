@@ -41,14 +41,35 @@ workflow 自身の注記が「e2e.yml は既定で走らないので、誰も落
   「e2e の段」と読んだ (build:renderer より前に在る) ので、注記を言い換えた。字面の照合は言及と実行を見分けない
   (パス 292 / 297 の家系) が、今日はゲート側を直さず文を直した —— 注記に実行の綴りを書かない方が安全側。
 
-### runner での検証
+### runner での検証 (workflow_dispatch · run 35185957545 · HEAD `69e0f28e`) —— **この workflow が runner で走った最初の 1 回**
 
-workflow_dispatch (target=both) をこの branch で 1 回起動する (無料枠の分数を使うので 1 回だけ。結果は下に追記)。
+**全 13 段 success・8 分 01 秒** (05:29:52 → 05:37:53 UTC。無料枠の分数を使うので 1 回だけ)。
+Install 9 s → **Playwright module 2 s** → chromium 26 s → build:renderer 35 s → **smoke:app 11 s (実物の `electron .` が runner で起動)** →
+両ビルド 71 s → **E2E (full) 2 分 19 秒** → **E2E (lite) 2 分 03 秒 (`ALL E2E CHECKS PASSED (395 件)`)** →
+**E2E (ollama stub) 50 秒 (`ALL OLLAMA CHECKS PASSED`・8 状態)** → perf 2 秒 (LITE 3.15 MB DCL 147 ms heap 10.1 MB /
+FULL 11.34 MB DCL 325 ms heap 37.8 MB・起動時の巨大 JSON.parse 0)。同じ commit の `ci` も success (05:38)。
+直す前の workflow は同じ runner で E2E の段が exit 2 だった形 (module の解決先が無い) —— 直した後の 1 回で、
+パス 303 の suite の床・パス 304 の `e2e:ollama`・2026-08-26 の `smoke:app` が**初めて runner で**通った。
+
+### 同日の続き —— `exp:*` 3 本も成果物を読むのに鮮度を見ていなかった
+
+パス 304 の母集団 (`e2e*` / `perf*` / `smoke*`) は**名前で**切っており、`exp:overflow` (横はみ出し) / `exp:runtime`
+(実行時の不変条件) / `exp:soak` (耐久) の 3 本は `dist/index.html` / `dist/standalone.html` を Electron で開くのに
+鮮度を見ていなかった。「実験」と呼ばれるが結論は同じく成果物から出る —— 古い HTML で 10 周回して「損失 0」と言える。
+3 本に `assertFreshArtifacts` (`SERVICE_HUB_EXP_ALLOW_STALE`) を足し、母集団の正規表現に `exp` を足した (5 → 8 本・台帳と両方向)。
+`soak-test.cjs` は `ROOT='/home/user/-'` を**絶対パスで固定**していて、この沙箱でしか動かなかった —— `__dirname` 基準に直した。
+対照: `soak-test.cjs` の鮮度検査を消す → 「道具は全部 鮮度検査を呼ぶ」1 本 (`scripts/soak-test.cjs は鮮度検査を呼ぶ`)。
+チェーン **#226** (`integrity-chain.cjs` の保護対象の注記 5 → 8)。
 
 ### 閉じていない物
 
 - `run-e2e` ラベルは repo に存在しない。CLAUDE.md / e2e.yml の注記が案内する「PR にラベルを付ける」経路は、
   持ち主がラベルを作るまで使えない (この session の GitHub 権限では label の作成を試みない)。
+- runner のログに `actions/checkout@v4` / `actions/setup-node@v4` が「Node.js 20 を対象にしているが Node.js 24 で強制実行」
+  という deprecation の警告 (GitHub の 2025-09-19 告知)。今日は動くが、強制が終われば workflow ごと止まる側。第一者 action の
+  版上げは `lint:workflow-security` (SHA 固定の規則) と併せて別パスで。
+- 母集団はまだ**名前** (`e2e*` / `perf*` / `smoke*` / `exp*`) で切っている。「dist/ の HTML を窓に読む script」を走査で
+  数える形にすれば名前に依らない —— 今日は 8 本すべてが名前の網に入っているので、走査は次の道具を足す人に委ねる。
 
 ## パス 304 (2026-09-17) — 転送に追随しない規則が no-cors の到達確認にも重なり、「起動しているが OLLAMA_ORIGINS 未設定」を「未起動」と診断していた —— 単体検査は全件緑で、CI の外の `e2e:ollama` だけが捕まえた
 
@@ -3586,7 +3607,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 |---|---|
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
-| `e2e.yml` が runner で動くか (パス 305) | 🔎 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 (結果はパス 305 の節) |
+| `e2e.yml` が runner で動くか (パス 305) | ✅ 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 → **全 13 段 success・8 分 01 秒** (e2e 395 / lite 395 / ollama 8 / perf OK / smoke:app OK) |
 | 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 (CLAUDE.md) |
 | PR #788 の本文 | ✅ パス 〜303 まで反映 |
 | imageUrlGate のプライベート帯 | ✅ パス 300 で閉じた (問いを 2 つに分けた) |

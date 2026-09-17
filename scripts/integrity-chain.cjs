@@ -235,8 +235,8 @@ const PROTECTED = [
   //   smoke-app.cjs               梱包後に解決できない require を捕まえる
   //                               (`--check-bundle`)。デスクトップ版が 2 週間
   //                               起動しなかった事故の再発を止める唯一の検査。
-  //   lib/artifact-freshness.cjs  成果物が材料より古ければ止める判定 (5 つの道具が
-  //                               共有)。2026-09-17 (パス 304) に smoke-app.cjs が
+  //   lib/artifact-freshness.cjs  成果物が材料より古ければ止める判定 (8 つの道具が
+  //                               共有 · パス 305 で exp:* 3 本を足した)。2026-09-17 (パス 304) に smoke-app.cjs が
   //                               読むようになって閉包に入った。ここが `process.exit(0)`
   //                               に書き換わると smoke:app は**何も検査せずに緑**を
   //                               返せる (run() の先頭で呼ぶ) —— 守っている検査を

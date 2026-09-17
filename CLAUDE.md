@@ -58,9 +58,9 @@ npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:li
                          #   `SERVICE_HUB_E2E_ONLY=desktop,tablet` で一部だけ回せる (知らない名前は落ちる)
 npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。
                          #   **成果物が材料より古ければ exit 2** (e2e / e2e:ollama / smoke / smoke:app も同じ判定
-                         #   `scripts/lib/artifact-freshness.cjs`。母集団 5 本は `artifactFreshness.test.ts` が
-                         #   package.json の e2e* / perf* / smoke* から導く —— パス 304 まで 3 本を手で並べており、
-                         #   e2e:ollama と smoke:app は古い成果物を黙って相手にしていた)。
+                         #   `scripts/lib/artifact-freshness.cjs`。母集団 8 本は `artifactFreshness.test.ts` が
+                         #   package.json の e2e* / perf* / smoke* / exp* から導く —— パス 304 まで 3 本を手で並べており、
+                         #   e2e:ollama と smoke:app は古い成果物を黙って相手にしていた。exp:* 3 本はパス 305 で)。
                          #   材料 = src/ の ts/tsx/css/html/json + vite.config.ts + scripts/inline-html.cjs +
                          #   tsconfig*.json + package(-lock).json + src/ が import する外の JSON (orchestration/registry.json)。
                          #   2026-09-17 (パス 302) まで src/ しか見ておらず、inline-html.cjs (CSP を組む側) を

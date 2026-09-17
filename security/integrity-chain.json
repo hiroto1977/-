@@ -1887,6 +1887,14 @@
       "leafCount": 76,
       "note": "update integrity-chain.cjs,artifact-freshness.cjs",
       "hash": "6a49e8e08b5ff4c25f640e45875098e5d0ef5c50c0c508629a066a8844269fb7"
+    },
+    {
+      "index": 226,
+      "prevHash": "6a49e8e08b5ff4c25f640e45875098e5d0ef5c50c0c508629a066a8844269fb7",
+      "merkleRoot": "da67b59058ce8567879ccc6ec72ad55a5fc9b2df79bd197a2cfa6f01a02e2af2",
+      "leafCount": 76,
+      "note": "update integrity-chain.cjs,artifact-freshness.cjs",
+      "hash": "6fee5d6ed429511f2729148297816a3825f98d0e5598f9f3ac74452302120f36"
     }
   ],
   "tipManifest": {
@@ -1900,8 +1908,8 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "853eb0961b12beb800ab313eee442cda53496376abbf119ebcbea30648fbc7ee",
-    "scripts/lib/artifact-freshness.cjs": "0ee42f79d57b61b05df71547e4e17f285057ad3734dab6f22fdcf0decf6ce9aa",
+    "scripts/integrity-chain.cjs": "129875d45a5cffe458735c63b5dbcd6648b019ecb493fb5518af7ab6eadfa138",
+    "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",

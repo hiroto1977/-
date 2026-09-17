@@ -253,7 +253,7 @@ describe('BUILD_MATERIALS — 台帳と実物 (パス 302)', () => {
   });
 
   /**
-   * 母集団は package.json から導く —— `e2e*` / `perf*` / `smoke*` が起動する `scripts/` の本。
+   * 母集団は package.json から導く —— `e2e*` / `perf*` / `smoke*` / `exp*` が起動する `scripts/` の本。
    * パス 304 まではここに 3 本を**手で並べて**いて、`e2e:ollama` と `smoke:app` が鮮度を
    * 見ていないことに誰も気づかなかった (手で並べた一覧は、足した道具を黙って外に置く)。
    */
@@ -263,19 +263,23 @@ describe('BUILD_MATERIALS — 台帳と実物 (パス 302)', () => {
     };
     const out = new Set<string>();
     for (const [name, cmd] of Object.entries(pkg.scripts)) {
-      if (!/^(e2e|perf|smoke)(:|$)/.test(name)) continue;
+      if (!/^(e2e|perf|smoke|exp)(:|$)/.test(name)) continue;
       for (const m of cmd.matchAll(/\bscripts\/[\w/.-]+\.cjs\b/g)) out.add(m[0]);
     }
     return [...out].sort();
   }
 
-  it('★ 母集団は 5 本で、台帳と一致する (両方向 —— 道具が増えても減っても鳴る)', () => {
+  it('★ 母集団は 8 本で、台帳と一致する (両方向 —— 道具が増えても減っても鳴る)', () => {
+    // パス 305: exp:* 3 本 (横はみ出し / 実行時の不変条件 / 耐久) も dist を読むのに鮮度を見ていなかった
     expect(artifactTools()).toEqual([
       'scripts/e2e/core.cjs',
       'scripts/e2e/ollama.cjs',
+      'scripts/overflow-check.cjs',
       'scripts/perf/startup.cjs',
+      'scripts/runtime-security-exp.cjs',
       'scripts/screenshot.cjs',
       'scripts/smoke-app.cjs',
+      'scripts/soak-test.cjs',
     ]);
   });
 
