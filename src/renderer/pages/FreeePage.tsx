@@ -29,7 +29,7 @@ function CashflowChart({ data }: { data: FreeeSnapshot }) {
 
   return (
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
-      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke="#2a2f3a" />
+      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke="#e8d5e2" />
       {rows.map((r, i) => {
         const gx = P + i * groupW + groupW / 2;
         return (
@@ -45,7 +45,7 @@ function CashflowChart({ data }: { data: FreeeSnapshot }) {
         );
       })}
       <g fontSize="11">
-        <rect x={W - 150} y={6} width="144" height="54" fill="var(--bg)" stroke="#2a2f3a" />
+        <rect x={W - 150} y={6} width="144" height="54" fill="var(--bg)" stroke="#e8d5e2" />
         <rect x={W - 142} y={14} width="10" height="10" fill="#3ec98a" />
         <text x={W - 128} y={23} fill="var(--text)">収入</text>
         <rect x={W - 142} y={28} width="10" height="10" fill="#e0568a" />
@@ -108,7 +108,7 @@ export function FreeePage() {
             borderRadius: 6,
             border: '1px solid #fbbf24',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
           }}
         >
           ⚠ {intakeNote}
@@ -157,7 +157,7 @@ export function FreeePage() {
                 >
                   <span style={{ color: 'var(--text)' }}>{m.month}</span>
                   <span style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-                    <span style={{ color: '#3ec98a', fontSize: 12 }}>収入 {jpy(m.income)}</span>
+                    <span style={{ color: 'var(--success)', fontSize: 12 }}>収入 {jpy(m.income)}</span>
                     <span style={{ color: '#e0568a', fontSize: 12 }}>支出 {jpy(m.expense)}</span>
                     <span style={{ color: 'var(--text)', fontWeight: 600 }}>純 {jpy(m.net)}</span>
                   </span>

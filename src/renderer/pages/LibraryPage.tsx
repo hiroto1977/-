@@ -354,7 +354,7 @@ export function LibraryPage() {
                   padding: '4px 12px',
                   background: 'transparent',
                   border: '1px solid var(--border)',
-                  borderRadius: 6,
+                  borderRadius: 999,
                   color: '#ef4444',
                   cursor: 'pointer',
                   fontSize: 11,

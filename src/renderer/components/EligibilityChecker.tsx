@@ -27,7 +27,7 @@ import {
 } from '../data/eligibility';
 
 const VERDICT_STYLE: Readonly<Record<Verdict, { label: string; color: string }>> = {
-  eligible: { label: '要件を満たす', color: '#3ec98a' },
+  eligible: { label: '要件を満たす', color: 'var(--success)' },
   needsCheck: { label: '入力が足りない', color: '#f5a623' },
   ineligible: { label: '対象外', color: '#e0568a' },
 };

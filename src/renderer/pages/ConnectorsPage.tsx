@@ -164,7 +164,7 @@ export function ConnectorsPage() {
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
             aria-label="ドライラン対象のコネクター"
-            style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', padding: '4px 6px', fontSize: 13 }}
+            style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '4px 6px', fontSize: 13 }}
           >
             {FREE_CONNECTORS.map((c) => (
               <option key={c.id} value={c.id}>

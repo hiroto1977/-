@@ -153,7 +153,7 @@ export function TemplatesPage() {
         style={{
           border: '1px solid #fbbf24',
           background: 'rgba(251, 191, 36, 0.08)',
-          color: '#fbbf24',
+          color: 'var(--warning)',
           padding: '10px 14px',
           borderRadius: 8,
           fontSize: 12,
@@ -250,7 +250,7 @@ export function TemplatesPage() {
                     padding: '4px 10px',
                     background: 'var(--bg-elev)',
                     border: '1px solid var(--border)',
-                    borderRadius: 4,
+                    borderRadius: 999,
                     color: 'var(--text)',
                     cursor: 'pointer',
                     fontSize: 11,
@@ -297,7 +297,7 @@ export function TemplatesPage() {
                       padding: '6px 10px',
                       background: 'var(--bg-elev)',
                       border: '1px solid var(--border)',
-                      borderRadius: 6,
+                      borderRadius: 10,
                       color: 'var(--text)',
                       fontSize: 13,
                       resize: 'vertical',
@@ -313,7 +313,7 @@ export function TemplatesPage() {
                       padding: '6px 10px',
                       background: 'var(--bg-elev)',
                       border: '1px solid var(--border)',
-                      borderRadius: 6,
+                      borderRadius: 10,
                       color: 'var(--text)',
                       fontSize: 13,
                     }}
@@ -332,7 +332,7 @@ export function TemplatesPage() {
                       type="color"
                       value={params[key]}
                       onChange={(e) => update(key, e.target.value)}
-                      style={{ width: 36, height: 30, padding: 0, border: '1px solid var(--border)', borderRadius: 4 }}
+                      style={{ width: 36, height: 30, padding: 0, border: '1px solid var(--border)', borderRadius: 10 }}
                     />
                     <input
                       type="text"
@@ -344,7 +344,7 @@ export function TemplatesPage() {
                         padding: '4px 8px',
                         background: 'var(--bg-elev)',
                         border: '1px solid var(--border)',
-                        borderRadius: 4,
+                        borderRadius: 10,
                         color: 'var(--text)',
                         fontSize: 12,
                         fontFamily: 'monospace',
@@ -372,7 +372,7 @@ export function TemplatesPage() {
               padding: '6px 14px',
               background: busy || fieldsOver ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: busy ? 'wait' : fieldsOver ? 'not-allowed' : 'pointer',
               fontSize: 12,
@@ -386,7 +386,7 @@ export function TemplatesPage() {
               padding: '6px 14px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: 'pointer',
               fontSize: 12,

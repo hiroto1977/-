@@ -19,7 +19,7 @@ import type { ActionData } from '../../shared/actionData';
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',
   fontSize: 13,
@@ -32,8 +32,8 @@ const EMOTION_LABELS: Record<string, { ja: string; color: string }> = {
   anger: { ja: '怒り', color: '#f87171' },
   fear: { ja: '不安', color: '#a78bfa' },
   surprise: { ja: '驚き', color: '#4ade80' },
-  disgust: { ja: '嫌悪', color: '#94a3b8' },
-  mixed: { ja: '混合', color: '#8a93a6' },
+  disgust: { ja: '嫌悪', color: 'var(--text-muted)' },
+  mixed: { ja: '混合', color: 'var(--text-muted)' },
 };
 
 interface MoodLog {
@@ -343,7 +343,7 @@ export function EmotionsPage() {
             <div
               data-mood-note-overflow={moodNoteOverflow}
               role="alert"
-              style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}
+              style={{ fontSize: 11, color: 'var(--warning)', lineHeight: 1.6 }}
             >
               ⚠ {clampedCeilingNote('気分のメモ', moodNoteOverflow, MAX_MOOD_NOTE_CHARS)}
             </div>

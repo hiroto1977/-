@@ -1903,6 +1903,14 @@
       "leafCount": 76,
       "note": "update localWrite.ts",
       "hash": "cc12d4379bb34aaa581e3ee327d66b64b5a1825e5665f4dc139ca9b3da14abc8"
+    },
+    {
+      "index": 228,
+      "prevHash": "cc12d4379bb34aaa581e3ee327d66b64b5a1825e5665f4dc139ca9b3da14abc8",
+      "merkleRoot": "b2f88a11db36b8e474247c694ac6cd03cbaacf64f4253e8af54862ac4cf5a9af",
+      "leafCount": 76,
+      "note": "update inject-pwa.cjs,main.ts,LockScreen.tsx",
+      "hash": "4622ed7f0c87d56a1371386a88d53893baabf29c8931512dfdc538445b0b325d"
     }
   ],
   "tipManifest": {
@@ -1914,7 +1922,7 @@
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
-    "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
+    "scripts/inject-pwa.cjs": "76c8d69500f6185c3658aff5b7eeaafa2d4e0c00e4c6a1793f27693d72e0f418",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
     "scripts/integrity-chain.cjs": "129875d45a5cffe458735c63b5dbcd6648b019ecb493fb5518af7ab6eadfa138",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
@@ -1935,7 +1943,7 @@
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "a0012ad791cd737f5afb7e5b98e172b4efe02fee4e763221c4680bafa4219df5",
     "src/main/eraseAll.ts": "cd9f8c1a01b64330f62f27d27ba14083c342f27452e20c95ae4f37d03358dbaa",
-    "src/main/main.ts": "860f49f4011071c6962155f8d0203333816d846631433d59562620bd0d2e4fb8",
+    "src/main/main.ts": "d09390a7a7a391a5f3e115e2d81a0419f82bbd58697dac63e5f803dbf0474432",
     "src/main/oauth.ts": "a83e80a655bc516f482858954c50c90ba5d655bc9b88308f313f05641ffec6dd",
     "src/main/secrets.ts": "be9459125976403b0c23444b53c7da21b80502768c24cecc337122529b006ef4",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
@@ -1948,7 +1956,7 @@
     "src/renderer/network/proxy.ts": "39345d1ce31ca023c42805cc79e11764054c5ee83e4a36dcbeb26940ab659cc7",
     "src/renderer/oauth/pkce.ts": "d2f5ec3f22cd21deffa67f15b87a607e0a363470c9f0a36f3931fb31cf1aaf08",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
-    "src/renderer/security/LockScreen.tsx": "a05a31d56248d1c9b9cebad5d9bde1c0628f635b59d1787f8b843a5f993526f9",
+    "src/renderer/security/LockScreen.tsx": "31853d745953c4a3d5b6bfad86764655ef053fdd2768483c7ee8f4426aa03f86",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "b17e4b5b8fbbc383342fe6b0145da3306dd5ee3cd524da85c7bec341b7f1b956",

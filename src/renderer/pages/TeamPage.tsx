@@ -217,7 +217,7 @@ export function TeamPage() {
   const inputStyle = {
     background: 'var(--bg)',
     border: '1px solid var(--border)',
-    borderRadius: 6,
+    borderRadius: 10,
     color: 'var(--text)',
     padding: '6px 8px',
     fontSize: 13,

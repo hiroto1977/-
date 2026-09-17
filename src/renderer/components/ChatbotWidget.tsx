@@ -159,8 +159,8 @@ const panelStyle: React.CSSProperties = {
   flexDirection: 'column',
   background: 'var(--bg-elev, #1b1d22)',
   border: '1px solid var(--border, #333)',
-  borderRadius: 12,
-  boxShadow: '0 12px 32px rgba(0,0,0,0.45)',
+  borderRadius: 18,
+  boxShadow: 'var(--shadow, 0 12px 32px rgba(120,90,150,0.18))',
   zIndex: 1000,
   overflow: 'hidden',
 };
@@ -173,12 +173,12 @@ const fabStyle: React.CSSProperties = {
   height: 48,
   borderRadius: '50%',
   border: '1px solid var(--border, #333)',
-  background: 'var(--accent, #4f7cff)',
+  background: 'var(--gradient, #ee6fa8)',
   color: '#fff',
   fontSize: 22,
   cursor: 'pointer',
   zIndex: 1000,
-  boxShadow: '0 6px 18px rgba(0,0,0,0.4)',
+  boxShadow: '0 8px 20px rgba(238,111,168,0.35)',
 };
 
 export function ChatbotWidget() {
@@ -419,7 +419,7 @@ export function ChatbotWidget() {
                 padding: '8px 10px',
                 background: 'var(--bg, #111)',
                 border: '1px solid var(--border, #333)',
-                borderRadius: 8,
+                borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
               }}

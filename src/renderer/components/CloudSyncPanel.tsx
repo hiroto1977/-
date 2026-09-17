@@ -134,7 +134,7 @@ export function CloudSyncPanel() {
             min={1}
             value={intervalMin}
             onChange={(e) => setIntervalMin(Math.max(1, Number(e.target.value) || 1))}
-            style={{ width: 70, padding: '4px 6px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', fontSize: 12 }}
+            style={{ width: 70, padding: '4px 6px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 12 }}
           />
         </label>
       )}
@@ -145,13 +145,13 @@ export function CloudSyncPanel() {
         {state.phase !== 'idle' && <div>進捗: {pct}%</div>}
         {state.integrityOk === true && <div style={{ color: '#22c55e' }}>整合性: OK ✓</div>}
         {state.integrityOk === false && <div style={{ color: '#ef4444' }}>整合性: 不一致 (再同期が必要)</div>}
-        {state.retriable && <div style={{ color: '#fbbf24' }}>一部失敗あり — 再試行できます</div>}
+        {state.retriable && <div style={{ color: 'var(--warning)' }}>一部失敗あり — 再試行できます</div>}
         {enabled && due && <div style={{ color: 'var(--accent)' }}>次回同期のタイミングです</div>}
       </div>
 
       <div style={{ display: 'flex', gap: 6, marginTop: 10, alignItems: 'center' }}>
         {/* 送る先が無いので押せない。押せてしまうと、押した人は「同期した」と思う。 */}
-        <button type="button" disabled title="クラウド接続が未実装のため実行できません" style={{ padding: '6px 14px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text-mute)', cursor: 'not-allowed', fontSize: 12 }}>
+        <button type="button" disabled title="クラウド接続が未実装のため実行できません" style={{ padding: '6px 14px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text-mute)', cursor: 'not-allowed', fontSize: 12 }}>
           今すぐ同期
         </button>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>クラウド接続が未実装のため実行できません</span>

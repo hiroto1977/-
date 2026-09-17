@@ -145,7 +145,7 @@ const inputStyle: React.CSSProperties = {
   padding: '6px 10px',
   background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,
   width: 160,
@@ -311,7 +311,7 @@ export function TaxPage() {
     () => [
       { label: '所得税 (課税所得ベース)', annual: incomeTax, color: '#f7768e' },
       { label: '住民税 (課税所得ベース)', annual: residentTax, color: '#e0af68' },
-      { label: '手取り (額面年収ベース)', annual: netSalary.takeHome, color: '#3ec98a' },
+      { label: '手取り (額面年収ベース)', annual: netSalary.takeHome, color: 'var(--success)' },
       {
         label: '消費税 (預かり)',
         annual: consumptionTax * 12,
@@ -947,7 +947,7 @@ export function TaxPage() {
           border: '1px solid #fbbf24',
           borderRadius: 6,
           fontSize: 11,
-          color: '#fbbf24',
+          color: 'var(--warning)',
           lineHeight: 1.6,
         }}
       >
@@ -1153,7 +1153,7 @@ export function TaxPage() {
           <strong>税額控除</strong>: 住宅ローン (所得税 {jpy(precise.credits.mortgageIncomeTax)} / 住民税 {jpy(precise.credits.mortgageResidentTax)}) /
           配当控除 (所得税 {jpy(precise.credits.dividendIncomeTax)} / 住民税 {jpy(precise.credits.dividendResidentTax)})。
         </div>
-        <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>
+        <div style={{ fontSize: 11, color: 'var(--warning)', marginTop: 8, lineHeight: 1.6 }}>
           ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。配当は総合課税を選択した配当を想定 (申告分離・上場株式の特例は別計算)。
           住宅ローン控除は居住年・住宅性能区分で控除率/上限が変わります (上のセレクタで選択)。
           扶養親族はそれぞれ<strong>合計所得 48 万円以下</strong>が要件です (要件を満たす人数のみ入力してください)。
@@ -1450,7 +1450,7 @@ export function TaxPage() {
               aria-pressed={entity === e}
               style={{
                 padding: '4px 12px',
-                borderRadius: 6,
+                borderRadius: 999,
                 border: '1px solid var(--border)',
                 background: entity === e ? 'var(--accent)' : 'var(--bg-elev)',
                 color: entity === e ? '#fff' : 'var(--text)',
@@ -1703,14 +1703,14 @@ export function TaxPage() {
           税率 <strong>{(csRate * 100).toFixed(1)}%</strong> のとき — 年税額{' '}
           <strong>{schedule.annual.isRefund ? `還付 ${jpy(-schedule.annual.total)}` : jpy(schedule.annual.total)}</strong>
           （国税 {jpy(Math.abs(schedule.annual.national))} ／ 地方 {jpy(Math.abs(schedule.annual.local))}）
-          {schedule.annual.isRefund && <span style={{ color: '#3ec98a' }}>（仕入れが売上を上回る＝控除不足還付）</span>}
+          {schedule.annual.isRefund && <span style={{ color: 'var(--success)' }}>（仕入れが売上を上回る＝控除不足還付）</span>}
           <div>
             中間納付 {schedule.interim.count === 0 ? 'なし' : `${schedule.interim.count} 回 合計 ${jpy(schedule.interim.total)}`}
           </div>
           <div style={{ fontWeight: 700 }}>
             {schedule.settlement.kind === 'payment' && <>確定申告で <strong>{jpy(schedule.settlement.amount)} を納付</strong>（期限 {schedule.settlement.due ?? DASH}）</>}
             {schedule.settlement.kind === 'refund' && (
-              <span style={{ color: '#3ec98a' }}>
+              <span style={{ color: 'var(--success)' }}>
                 確定申告で <strong>{jpy(Math.abs(schedule.settlement.amount))} が還付</strong>（申告期限 {schedule.settlement.due ?? DASH}）
               </span>
             )}
@@ -1827,7 +1827,7 @@ export function TaxPage() {
             border: '1px solid #fbbf24',
             borderRadius: 6,
             fontSize: 11,
-            color: '#fbbf24',
+            color: 'var(--warning)',
             lineHeight: 1.6,
           }}
         >
@@ -2037,7 +2037,7 @@ export function TaxPage() {
           role="note"
           style={{
             margin: '0 0 12px', padding: 10, background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: '#fbbf24', lineHeight: 1.6,
+            border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: 'var(--warning)', lineHeight: 1.6,
           }}
         >
           ⚠️ <strong>概算であり通関実務の助言ではありません。</strong>実際の税額は品目の HS コード・原産地・適用する協定
@@ -2178,7 +2178,7 @@ export function TaxPage() {
           </>
           )}
           {lookupVat(exCountry)?.note && (
-            <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>・{lookupVat(exCountry)!.note}</div>
+            <div style={{ fontSize: 11, color: 'var(--warning)', marginTop: 8, lineHeight: 1.6 }}>・{lookupVat(exCountry)!.note}</div>
           )}
         </div>
 
@@ -2213,7 +2213,7 @@ export function TaxPage() {
               onClick={() => setEntity(e)}
               style={{
                 padding: '6px 14px',
-                borderRadius: 6,
+                borderRadius: 999,
                 border: '1px solid var(--border)',
                 background: entity === e ? 'var(--accent)' : 'var(--bg-elev)',
                 color: entity === e ? '#fff' : 'var(--text)',
@@ -2250,7 +2250,7 @@ export function TaxPage() {
                 </td>
                 <td style={tdStyle}>
                   {s.needsAdvisor ? (
-                    <span style={{ color: '#fbbf24', fontWeight: 600 }}>⚠️ 必須</span>
+                    <span style={{ color: 'var(--warning)', fontWeight: 600 }}>⚠️ 必須</span>
                   ) : (
                     <span style={{ color: 'var(--text-mute)' }}>推奨</span>
                   )}
@@ -2294,7 +2294,7 @@ export function TaxPage() {
               onClick={() => setTopic(t)}
               style={{
                 padding: '6px 14px',
-                borderRadius: 6,
+                borderRadius: 999,
                 border: '1px solid var(--border)',
                 background: topic === t ? 'var(--accent)' : 'var(--bg-elev)',
                 color: topic === t ? '#fff' : 'var(--text)',
@@ -2315,7 +2315,7 @@ export function TaxPage() {
             border: '1px solid #fbbf24',
             borderRadius: 6,
             fontSize: 11,
-            color: '#fbbf24',
+            color: 'var(--warning)',
             lineHeight: 1.6,
             marginBottom: 12,
           }}
@@ -2345,7 +2345,7 @@ export function TaxPage() {
                         padding: '2px 8px',
                         background: 'var(--bg-elev)',
                         border: '1px solid var(--border)',
-                        borderRadius: 4,
+                        borderRadius: 999,
                         color: 'var(--text)',
                         cursor: 'pointer',
                         fontSize: 11,

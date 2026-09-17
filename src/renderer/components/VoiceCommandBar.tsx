@@ -246,7 +246,7 @@ export function VoiceCommandBar() {
         title="話しかけて操作 (日本語)"
         style={{
           border: '1px solid var(--border, #444)',
-          borderRadius: 8,
+          borderRadius: 999,
           padding: '4px 10px',
           background: state.phase === 'listening' ? 'rgba(239,68,68,0.15)' : 'transparent',
           cursor: 'pointer',

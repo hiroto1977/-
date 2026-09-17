@@ -49,7 +49,7 @@ const EMPTY_CONSULTATION_FORM = { date: '', topic: '', status: '相談予約' as
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '6px 8px',
   fontSize: 13,
@@ -213,7 +213,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             border: '1px solid #fbbf24',
             borderRadius: 6,
             fontSize: 11,
-            color: '#fbbf24',
+            color: 'var(--warning)',
             lineHeight: 1.5,
           }}
         >

@@ -14,7 +14,7 @@ import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',
   fontSize: 13,
@@ -129,7 +129,7 @@ export function SlackPage() {
           ムード傾向を分析します。
           {/* 天井に収まらない件数は**押す前に**言う (パス 156)。文面は shared/emotionsLimits.ts。 */}
           {analyzeNote !== null && (
-            <div data-analyze-batch-note style={{ marginTop: 6, color: '#fbbf24' }}>⚠ {analyzeNote}</div>
+            <div data-analyze-batch-note style={{ marginTop: 6, color: 'var(--warning)' }}>⚠ {analyzeNote}</div>
           )}
         </div>
       </Section>

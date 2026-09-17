@@ -100,7 +100,7 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
   return (
     <svg viewBox={`${-PAD_X} ${-PAD_Y} ${size + PAD_X * 2} ${size + PAD_Y * 2}`} width="100%" style={{ maxWidth: size + PAD_X * 2, height: 'auto', display: 'block', margin: '0 auto', overflow: 'visible' }} role="img" aria-label="財務指標レーダー">
       {[20, 40, 60, 80, 100].map((lvl) => (
-        <polygon key={lvl} points={axes.map((_, i) => point(i, lvl)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} fill="none" stroke="#2a2f3a" strokeDasharray="2,3" />
+        <polygon key={lvl} points={axes.map((_, i) => point(i, lvl)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} fill="none" stroke="#e8d5e2" strokeDasharray="2,3" />
       ))}
       {axes.map((a, i) => {
         const outer = point(i, 100);
@@ -108,7 +108,7 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
         const anchor = Math.abs(lp.x - cx) < 8 ? 'middle' : lp.x > cx ? 'start' : 'end';
         return (
           <g key={a.key}>
-            <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#2a2f3a" />
+            <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#e8d5e2" />
             {/* 未評価の軸はラベルを暗くし、末尾に印を付ける (頂点が無い理由を図の中で示す)。 */}
             <text x={lp.x} y={lp.y} fontSize={9} fill={unscoredKeys.has(a.key) ? '#64748b' : '#94a3b8'} textAnchor={anchor} dominantBaseline="middle">
               {unscoredKeys.has(a.key) ? `${a.label}（未評価）` : a.label}
@@ -134,7 +134,7 @@ function LineChart({ values }: { values: number[] }) {
   const pts = values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: W, height: 'auto', display: 'block' }} role="img" aria-label="営業利益率の推移">
-      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke="#2a2f3a" strokeDasharray="2,3" />
+      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke="#e8d5e2" strokeDasharray="2,3" />
       <polyline fill="none" stroke="#5cb85c" strokeWidth={2} points={pts} />
       {values.map((v, i) => <circle key={i} cx={x(i)} cy={y(v)} r={2.5} fill="#5cb85c" />)}
       <text x={P} y={12} fontSize={9} fill="#94a3b8">営業利益率の推移 (%)</text>
@@ -301,7 +301,7 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
       <tbody>
         {lines.map((l, i) => (
-          <tr key={`${l.label}-${i}`} style={l.emphasis ? { fontWeight: 700, background: 'rgba(255,255,255,0.03)' } : undefined}>
+          <tr key={`${l.label}-${i}`} style={l.emphasis ? { fontWeight: 700, background: 'rgba(238,111,168,0.06)' } : undefined}>
             <td style={{ padding: '3px 8px', paddingLeft: 8 + (l.indent ?? 0) * 16, borderBottom: '1px solid var(--border)', color: l.indent ? 'var(--text-mute)' : 'var(--text)' }}>{l.label}</td>
             <td style={{ padding: '3px 8px', borderBottom: '1px solid var(--border)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
               {l.display ?? (l.amount == null ? '' : yen.format(l.amount))}
@@ -472,7 +472,7 @@ function CorporateTaxCard({
   const inputStyle: CSSProperties = {
     background: 'var(--bg-elev)',
     border: '1px solid var(--border)',
-    borderRadius: 6,
+    borderRadius: 10,
     color: 'var(--text)',
     padding: '4px 8px',
     fontSize: 12,
@@ -562,7 +562,7 @@ function CorporateTaxCard({
         </div>
       </div>
       {isLoss && (
-        <div style={{ fontSize: 12, color: '#e36b6b', marginBottom: 8 }}>
+        <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>
           欠損（税引前利益が0以下）のため、法人住民税の均等割（{yen.format(breakdown.residentTax)}）のみが課されます。
         </div>
       )}
@@ -684,7 +684,7 @@ function CorporateTaxCard({
             >
               <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>
                 {CT_METHOD_LABEL[method]}
-                {ct.best === method && <span style={{ color: '#5cb85c', fontWeight: 700 }}> · 最有利</span>}
+                {ct.best === method && <span style={{ color: 'var(--success)', fontWeight: 700 }}> · 最有利</span>}
               </div>
               <div style={{ fontSize: 17, fontWeight: 700 }}>{yen.format(amount)}</div>
               <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>{sub}</div>
@@ -720,9 +720,9 @@ const GRADE_COLOR: Record<HealthGrade, string> = { S: '#43c3b8', A: '#5cb85c', B
 const LEVEL_COLOR: Record<HealthLevel, string> = { good: '#5cb85c', warn: '#ec9a3d', bad: '#e36b6b' };
 
 const TREND_META: Record<MarginTrend['direction'], { icon: string; text: string; color: string }> = {
-  up: { icon: '▲', text: '改善傾向', color: '#5cb85c' },
-  flat: { icon: '▶', text: '横ばい', color: '#94a3b8' },
-  down: { icon: '▼', text: '悪化傾向', color: '#e36b6b' },
+  up: { icon: '▲', text: '改善傾向', color: 'var(--success)' },
+  flat: { icon: '▶', text: '横ばい', color: 'var(--text-muted)' },
+  down: { icon: '▼', text: '悪化傾向', color: 'var(--danger)' },
 };
 
 function TrendBadge({ trend }: { trend: MarginTrend }) {
@@ -745,7 +745,7 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands, d
         <div style={{ fontSize: 13, fontWeight: 700 }}>🩺 {label} の財務健全度 総合診断</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <TrendBadge trend={trend} />
-          <button onClick={onExportReport} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
+          <button onClick={onExportReport} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
             ⬇ 診断レポート(Markdown)
           </button>
         </div>
@@ -964,7 +964,7 @@ export function FinancialAnalysis({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <label style={{ fontSize: 12, color: 'var(--text-mute)' }}>対象事業:</label>
-        <select data-financial-unit-select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '4px 8px', fontSize: 13 }}>
+        <select data-financial-unit-select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '4px 8px', fontSize: 13 }}>
           {units.map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
         </select>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
@@ -991,7 +991,7 @@ export function FinancialAnalysis({
       <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ fontSize: 13, fontWeight: 700 }}>📊 事業間比較（棒グラフ）</div>
-          <select value={barKey} onChange={(e) => setBarKey(e.target.value as keyof FinancialRatios)} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}>
+          <select value={barKey} onChange={(e) => setBarKey(e.target.value as keyof FinancialRatios)} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}>
             {BAR_OPTIONS.map((b) => <option key={String(b.key)} value={String(b.key)}>{b.label}</option>)}
           </select>
         </div>
@@ -1001,7 +1001,7 @@ export function FinancialAnalysis({
       <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ fontSize: 13, fontWeight: 700 }}>🧮 {selected.unit.label} の財務指標一覧（15指標）</div>
-          <button onClick={onExportCsv} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
+          <button onClick={onExportCsv} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
             ⬇ 全事業の指標をCSVで書き出し
           </button>
         </div>
@@ -1033,7 +1033,7 @@ export function FinancialAnalysis({
             <button
               key={k}
               onClick={() => setStmtTab(k)}
-              style={{ padding: '4px 10px', background: stmtTab === k ? 'var(--accent)' : 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}
+              style={{ padding: '4px 10px', background: stmtTab === k ? 'var(--accent)' : 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}
             >
               {label}
             </button>
@@ -1042,7 +1042,7 @@ export function FinancialAnalysis({
             <input type="checkbox" checked={consolidated} onChange={(e) => setConsolidated(e.target.checked)} />
             {scopeLabel}で表示
           </label>
-          <button onClick={onExportStatement} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
+          <button onClick={onExportStatement} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
             ⬇ この諸表をCSV
           </button>
         </div>

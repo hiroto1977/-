@@ -50,7 +50,7 @@ const inputStyle: React.CSSProperties = {
   padding: '4px 6px',
   background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 4,
+  borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,
   textAlign: 'right',

@@ -46,7 +46,7 @@ function createWindow(): BrowserWindow {
     minWidth: 960,
     minHeight: 600,
     title: 'Service Hub',
-    backgroundColor: '#0f1117',
+    backgroundColor: '#fff7fa',
     icon: iconPath(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

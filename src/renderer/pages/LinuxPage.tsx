@@ -188,7 +188,7 @@ export function LinuxPage() {
         ) : (
           <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.8 }}>
             {notes.map((n, i) => (
-              <li key={i} style={{ color: '#fbbf24' }}>{n}</li>
+              <li key={i} style={{ color: 'var(--warning)' }}>{n}</li>
             ))}
           </ul>
         )}

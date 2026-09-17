@@ -49,7 +49,7 @@ const VERDICT_LABEL: Record<string, string> = {
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',
   fontSize: 13,
@@ -402,7 +402,7 @@ export function SecurityPage() {
           style={{
             background: 'var(--bg)',
             border: '1px solid var(--border)',
-            borderRadius: 6,
+            borderRadius: 10,
             color: 'var(--text)',
             padding: '8px 10px',
             fontSize: 13,

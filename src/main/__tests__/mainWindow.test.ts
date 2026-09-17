@@ -568,7 +568,7 @@ describe('窓の見た目とアイコン', () => {
   it('題名と背景色を決めて出す', async () => {
     const c = await loadMain({ packaged: true });
     expect(c.opts.title).toBe('Service Hub');
-    expect(c.opts.backgroundColor).toBe('#0f1117');
+    expect(c.opts.backgroundColor).toBe('#fff7fa');
   });
 
   it('同梱のアイコンを、束ねた場所からの相対で指す', async () => {

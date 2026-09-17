@@ -167,7 +167,7 @@ function TimeSeriesChart({ unit }: { unit: Unit }) {
       <div
         data-no-breakeven
         role="alert"
-        style={{ marginTop: 6, fontSize: 11, color: '#e36b6b', lineHeight: 1.7 }}
+        style={{ marginTop: 6, fontSize: 11, color: 'var(--danger)', lineHeight: 1.7 }}
       >
         ⚠ {noBreakEvenNote(missingBep, rows.length)}
       </div>
@@ -339,7 +339,7 @@ function UnitBars({ units }: { units: Unit[] }) {
       <div
         data-no-breakeven-units
         role="alert"
-        style={{ marginTop: 6, fontSize: 11, color: '#e36b6b', lineHeight: 1.7 }}
+        style={{ marginTop: 6, fontSize: 11, color: 'var(--danger)', lineHeight: 1.7 }}
       >
         ⚠ {noBep.map((u) => u.label).join('・')}は限界利益が 0 以下のため損益分岐点が存在せず（どれだけ売っても固定費を回収できない状態）、BEP の棒を描いていません。
       </div>
@@ -452,7 +452,7 @@ function ActualsPanel() {
       style={{
         background: 'var(--bg)',
         border: '1px solid var(--border)',
-        borderRadius: 6,
+        borderRadius: 10,
         color: 'var(--text)',
         padding: '6px 8px',
         fontSize: 13,
@@ -469,7 +469,7 @@ function ActualsPanel() {
           <select
             value={importMonth}
             onChange={(e) => setImportMonth(e.target.value)}
-            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
+            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
           >
             <option value="">月を選択</option>
             {monthOptions.map((m) => (
@@ -611,7 +611,7 @@ function BudgetPanel() {
       placeholder={placeholder}
       onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
       style={{
-        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
         color: 'var(--text)', padding: '6px 8px', fontSize: 13,
         width: key === 'period' || key === 'unit' ? 110 : 100,
       }}
@@ -747,7 +747,7 @@ function BalanceSheetPanel() {
       placeholder={placeholder}
       onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
       style={{
-        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
         color: 'var(--text)', padding: '6px 8px', fontSize: 13,
         width: key === 'asOf' ? 120 : 110,
       }}
@@ -906,7 +906,7 @@ export function KpiPage() {
         <div style={{
           background: 'rgba(251, 191, 36, 0.12)',
           border: '1px solid #d97706',
-          color: '#fbbf24',
+          color: 'var(--warning)',
           padding: '8px 12px',
           borderRadius: 6,
           fontSize: 12,
@@ -937,7 +937,7 @@ export function KpiPage() {
           style={{
             background: 'var(--bg)',
             border: '1px solid var(--border)',
-            borderRadius: 6,
+            borderRadius: 10,
             color: 'var(--text)',
             padding: '6px 10px',
             fontSize: 13,

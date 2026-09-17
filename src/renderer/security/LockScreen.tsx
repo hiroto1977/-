@@ -351,7 +351,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
                 setResetAcknowledged(false);
                 setErr(null);
               }}
-              style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline' }}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline' }}
             >
               ← 戻る（初期化しない）
             </button>
@@ -421,7 +421,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               style={{
                 ...buttonStyle,
                 flex: 1,
-                background: busy ? 'var(--bg-elev)' : 'var(--accent)',
+                background: busy ? 'var(--bg-elev)' : 'var(--gradient)',
                 cursor: busy ? 'wait' : 'pointer',
               }}
             >
@@ -459,7 +459,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               border: '1px solid #fbbf24',
               borderRadius: 6,
               fontSize: 11,
-              color: '#fbbf24',
+              color: 'var(--warning)',
               lineHeight: 1.6,
               marginBottom: 16,
             }}
@@ -537,7 +537,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             style={{
               ...buttonStyle,
               width: '100%',
-              background: mnemonicAcknowledged ? 'var(--accent)' : 'var(--bg-elev)',
+              background: mnemonicAcknowledged ? 'var(--gradient)' : 'var(--bg-elev)',
               cursor: mnemonicAcknowledged ? 'pointer' : 'not-allowed',
               opacity: mnemonicAcknowledged ? 1 : 0.5,
             }}
@@ -603,7 +603,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
           disabled={busy || password.length === 0}
           style={{
             ...buttonStyle,
-            background: busy ? 'var(--bg-elev)' : 'var(--accent)',
+            background: busy ? 'var(--bg-elev)' : 'var(--gradient)',
             cursor: busy ? 'wait' : 'pointer',
           }}
         >
@@ -621,7 +621,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               style={{
                 background: 'none',
                 border: 'none',
-                color: 'var(--accent)',
+                color: 'var(--accent-strong)',
                 cursor: 'pointer',
                 fontSize: 11,
                 textDecoration: 'underline',
@@ -672,7 +672,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
 const overlayStyle: React.CSSProperties = {
   position: 'fixed',
   inset: 0,
-  background: 'rgba(15, 17, 23, 0.92)',
+  background: 'linear-gradient(135deg, #ffe6f0 0%, #f3edff 50%, #e3f7ef 100%)',
   backdropFilter: 'blur(6px)',
   display: 'flex',
   alignItems: 'center',
@@ -682,13 +682,13 @@ const overlayStyle: React.CSSProperties = {
 };
 
 const cardStyle: React.CSSProperties = {
-  background: 'var(--bg)',
+  background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 12,
-  padding: 28,
+  borderRadius: 22,
+  padding: 32,
   width: '100%',
-  maxWidth: 420,
-  boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+  maxWidth: 440,
+  boxShadow: 'var(--shadow, 0 20px 50px rgba(120,90,150,0.18))',
 };
 
 const labelStyle: React.CSSProperties = {
@@ -701,19 +701,19 @@ const labelStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  padding: '8px 12px',
+  padding: '10px 14px',
   background: 'var(--bg-elev)',
-  border: '1px solid var(--border)',
-  borderRadius: 6,
+  border: '1px solid var(--border-strong, var(--border))',
+  borderRadius: 12,
   color: 'var(--text)',
   fontSize: 14,
 };
 
 const buttonStyle: React.CSSProperties = {
   width: '100%',
-  padding: '10px 14px',
+  padding: '11px 16px',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 999,
   color: 'var(--text)',
   fontSize: 14,
   fontWeight: 600,

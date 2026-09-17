@@ -78,7 +78,7 @@ function SourceBadge({ source }: { source: SourceStrength }): React.JSX.Element 
 }
 
 /** 入力欄の見た目。画面の配色に合わせる (他ページと同じ値)。 */
-const INPUT = { fontSize: 13, padding: '4px 6px', background: '#0f1117', color: '#e6e8ee', border: '1px solid #232936', borderRadius: 4 };
+const INPUT = { fontSize: 13, padding: '4px 6px', background: 'var(--bg-elev)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 10 };
 
 export function TalentPage(): React.JSX.Element {
   // 資格情報が要らないので、マウント時に 1 度取る。取得できなくても定義表
@@ -201,7 +201,7 @@ export function TalentPage(): React.JSX.Element {
       <button type="button" onClick={() => void save()} disabled={saving}>
         {saving ? '保存中…' : '入力を保存して判定し直す'}
       </button>
-      {saveMsg !== null && <span style={{ fontSize: 13, color: '#8a93a6' }}>{saveMsg}</span>}
+      {saveMsg !== null && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{saveMsg}</span>}
     </div>
   );
 
@@ -217,13 +217,13 @@ export function TalentPage(): React.JSX.Element {
       />
       {/* 保存先が読めなかった / 読み込みで項目を落としたときだけ出る (パス 121)。黙って空にしない。 */}
       {snap.storedNote !== null && (
-        <div role="status" style={{ margin: '8px 0', padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: '#fbbf24', lineHeight: 1.5 }}>
+        <div role="status" style={{ margin: '8px 0', padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: 'var(--warning)', lineHeight: 1.5 }}>
           ⚠ {snap.storedNote}
         </div>
       )}
 
       <Section title="診断 — 5つの企業組織病">
-        <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 0 }}>
           管理職に自部署で当てはまるものを挙げてもらい、
           <strong>2部署以上で重なった病</strong>を今期の対象にします。重なった時点で、それは個人ではなく仕組みの問題です。
         </p>
@@ -233,14 +233,14 @@ export function TalentPage(): React.JSX.Element {
             <strong>{systemicNames.length > 0 ? systemicNames.join('・') : 'なし'}</strong>
           </p>
         ) : (
-          <p style={{ fontSize: 13, color: '#8a93a6' }}>まだ申告がありません。</p>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>まだ申告がありません。</p>
         )}
 
         <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'grid', gap: 10 }}>
           {diseases.map((d) => {
             const tally = snap.diagnosis.tallies.find((t) => t.id === d.id);
             return (
-              <li key={d.id} style={{ border: '1px solid #232936', borderRadius: 6, padding: '12px 14px' }}>
+              <li key={d.id} style={{ border: '1px solid var(--border)', borderRadius: 6, padding: '12px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}>
                   <strong>{d.name}</strong>
                   <SourceBadge source={d.source} />
@@ -250,7 +250,7 @@ export function TalentPage(): React.JSX.Element {
                     </span>
                   )}
                 </div>
-                <div style={{ color: '#8a93a6', fontSize: 13, marginTop: 4 }}>{d.summary}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>{d.summary}</div>
               </li>
             );
           })}
@@ -258,7 +258,7 @@ export function TalentPage(): React.JSX.Element {
 
         <div style={{ display: 'grid', gap: 10, margin: '14px 0' }}>
           {reports.map((r, idx) => (
-            <div key={idx} style={{ border: '1px solid #232936', borderRadius: 6, padding: '10px 12px' }}>
+            <div key={idx} style={{ border: '1px solid var(--border)', borderRadius: 6, padding: '10px 12px' }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                 <input
                   type="text"
@@ -319,13 +319,13 @@ export function TalentPage(): React.JSX.Element {
       </Section>
 
       <Section title="達成確率100%キープの法則">
-        <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 0 }}>
           施策の達成確率を合計し、100% に足りない分を出します。足りなければ、その場で施策を足すのが運用です。
         </p>
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'baseline' }}>
           <div>
             <div style={{ fontSize: 28, fontWeight: 600 }}>{snap.achievement.total}%</div>
-            <div style={{ fontSize: 12, color: '#8a93a6' }}>合計（{snap.achievement.counted} 施策）</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>合計（{snap.achievement.counted} 施策）</div>
           </div>
           <div>
             <div
@@ -337,7 +337,7 @@ export function TalentPage(): React.JSX.Element {
             >
               {snap.achievement.shortfall}%
             </div>
-            <div style={{ fontSize: 12, color: '#8a93a6' }}>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
               {snap.achievement.ok ? '不足なし' : '不足（この分の施策を足す）'}
             </div>
           </div>
@@ -372,7 +372,7 @@ export function TalentPage(): React.JSX.Element {
                 }
                 style={{ ...INPUT, width: 90 }}
               />
-              <span style={{ fontSize: 13, color: '#8a93a6' }}>%</span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>%</span>
               <button
                 type="button"
                 onClick={() => setInitiatives((prev) => prev.filter((_, i) => i !== idx))}
@@ -394,7 +394,7 @@ export function TalentPage(): React.JSX.Element {
       </Section>
 
       <Section title="登用判定 — 絶対にリーダーにしてはいけない人10ヶ条">
-        <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 0 }}>
           <SourceBadge source={snap.disqualifiersSource} />{' '}
           該当するものを選んで判定します。<strong>1つでも該当すればリーダーには据えません</strong>
           （能力の項目が1つも無いのが要点です）。
@@ -435,7 +435,7 @@ export function TalentPage(): React.JSX.Element {
       </Section>
 
       <Section title="育成ロードマップ — 年代ごとの4つのスキル">
-        <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 0 }}>
           <SourceBadge source={snap.stepsSource} />{' '}
           STEP を飛ばして上には行けません。業務スキルは通常 3〜5 年でマスターできる領域とされ、
           <strong>大きく超えて留まっている場合は本人ではなく配置と任せ方を疑います</strong>。
@@ -444,10 +444,10 @@ export function TalentPage(): React.JSX.Element {
           {steps.map((s) => (
             <li key={s.step}>
               <strong>{s.name}</strong>
-              <span style={{ color: '#8a93a6', fontSize: 12, marginLeft: 8 }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: 12, marginLeft: 8 }}>
                 {snap.ladder.byStep[s.step] ?? 0} 名
               </span>
-              <div style={{ color: '#8a93a6', fontSize: 13 }}>{s.detail}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{s.detail}</div>
             </li>
           ))}
         </ol>
@@ -510,7 +510,7 @@ export function TalentPage(): React.JSX.Element {
                 }
                 style={{ ...INPUT, width: 80 }}
               />
-              <span style={{ fontSize: 13, color: '#8a93a6' }}>年</span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>年</span>
               <button type="button" onClick={() => setMembers((prev) => prev.filter((_, i) => i !== idx))}>
                 削除
               </button>

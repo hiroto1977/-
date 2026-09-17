@@ -1,18 +1,51 @@
+/* ---------------------------------------------------------------------------
+ * Service Hub — 見た目の規則 (2026-09-17 再設計)
+ *
+ * 配色は「淡いピンク × ラベンダー × ミント」の明るいパステル。角は大きく丸め、
+ * 影は色つきで柔らかく、サイドバーとトップバーはすりガラス。文字は丸ゴシック系
+ * (無い環境では OS の標準ゴシックへ倒れる。外部フォントは読み込まない ——
+ * 出荷 HTML は CSP `default-src 'self'` で単一ファイルなので、font-src を開けず
+ * 同梱もしない)。
+ *
+ * **画面側 (pages / components) は inline style で `var(--text-mute)` /
+ * `var(--bg-elev)` / `var(--warn)` / `var(--panel)` を読む。** これらは以前は
+ * どこにも定義されておらず (定義は `--text-muted` / `--bg-elevated` だけ)、
+ * 指定が素通りして親の色で描かれていた。ここで別名として必ず定義する。
+ * 名前を 1 つ消すと 600 か所以上の指定が黙って効かなくなるので、消さない。
+ * ------------------------------------------------------------------------- */
 :root {
-  color-scheme: dark;
-  --bg: #0f1117;
-  --bg-elevated: #161a22;
-  --bg-sidebar: #11141b;
-  --border: #232936;
-  --text: #e6e8ee;
-  --text-muted: #8a93a6;
-  --accent: #6ea8ff;
-  --accent-strong: #4f8cff;
-  --success: #4ade80;
-  --warning: #facc15;
-  --danger: #f87171;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans',
-    'Yu Gothic UI', sans-serif;
+  color-scheme: light;
+  /* 地の色 */
+  --bg: #fff7fa;
+  --bg-elevated: #ffffff;
+  --bg-elev: var(--bg-elevated);
+  --bg-sidebar: rgba(255, 255, 255, 0.78);
+  --panel: rgba(255, 255, 255, 0.72);
+  --border: #f4dbe6;
+  --border-strong: #ecc6d8;
+  /* 文字 */
+  --text: #4b3f57;
+  --text-muted: #836f8e;
+  --text-mute: var(--text-muted);
+  /* 主役の色 */
+  --accent: #ee6fa8;
+  --accent-strong: #cf3a7f;
+  --accent-2: #a98cf5;
+  --accent-soft: #ffe3ef;
+  --accent-soft-2: #ece4ff;
+  --gradient: linear-gradient(135deg, #ff8fc0 0%, #b79cff 100%);
+  /* 意味色 (文字として白地に置いても読める濃さ) */
+  --success: #22a06b;
+  --warning: #c4741a;
+  --warn: var(--warning);
+  --danger: #e8496f;
+  /* 影と角 */
+  --shadow: 0 12px 32px rgba(238, 111, 168, 0.12), 0 2px 8px rgba(120, 90, 150, 0.06);
+  --shadow-sm: 0 4px 14px rgba(238, 111, 168, 0.10);
+  --radius: 18px;
+  --radius-sm: 12px;
+  font-family: 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', 'Yu Gothic UI', 'Meiryo',
+    'Segoe UI', 'Helvetica Neue', system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -24,24 +57,97 @@ html, body, #root {
   color: var(--text);
 }
 
+::selection { background: #ffd4e6; color: var(--text); }
+
+/* 細くて淡いスクロールバー (WebKit / Chromium) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: #efd0df;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover { background-color: #e6b9cf; }
+
+h1, h2, h3, h4 { color: var(--text); }
+
 button {
   font: inherit;
-  color: inherit;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(120, 90, 150, 0.06);
+  transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+button:hover { border-color: var(--accent); color: var(--accent-strong); background: #fff5f9; }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+button.primary {
+  background: var(--gradient);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 6px 16px rgba(238, 111, 168, 0.28);
+}
+button.primary:hover { filter: brightness(1.05); color: white; transform: translateY(-1px); }
+
+/* 入力欄: 白地・丸い角・ピンクのフォーカスリング。個別ページの inline 指定が勝つ。 */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+select,
+textarea {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  padding: 7px 11px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(238, 111, 168, 0.16);
+}
+input::placeholder, textarea::placeholder { color: #b9aac2; }
+input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--accent); }
+
+/* スライダー: 淡い溝にグラデーションのつまみ (既定の暗い溝は明るい配色に合わない)。 */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: #f1d6e3;
+  padding: 0;
+  border: none;
+  box-shadow: none;
   cursor: pointer;
 }
-button:hover { border-color: var(--accent); color: var(--accent); }
-button.primary {
-  background: var(--accent-strong);
-  border-color: var(--accent-strong);
-  color: white;
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gradient);
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(238, 111, 168, 0.4);
 }
-button.primary:hover { filter: brightness(1.1); color: white; }
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ee6fa8;
+  border: 2px solid #ffffff;
+}
+input[type="range"]:focus { box-shadow: 0 0 0 3px rgba(238, 111, 168, 0.16); }
 
-a { color: var(--accent); text-decoration: none; }
+a { color: var(--accent-strong); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 .app {
@@ -63,42 +169,55 @@ a:hover { text-decoration: underline; }
      100vh だと Android Chrome で下端 (チャットボット等) がバーの裏に隠れる。 */
   height: 100dvh;
   overflow: hidden;
+  /* 画面全体に淡い色の滲み。サイドバー・トップバーは半透明なので透けて見える。 */
+  background:
+    radial-gradient(900px 480px at -5% -10%, #ffe1ed 0%, rgba(255, 225, 237, 0) 60%),
+    radial-gradient(800px 460px at 105% -5%, #e8dfff 0%, rgba(232, 223, 255, 0) 60%),
+    radial-gradient(700px 420px at 50% 115%, #dcf5ec 0%, rgba(220, 245, 236, 0) 60%),
+    var(--bg);
 }
 
 .sidebar {
   background: var(--bg-sidebar);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: 16px 0;
+  padding: 18px 0 12px;
 }
 
 .sidebar-header {
-  padding: 4px 20px 16px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  font-size: 14px;
-  color: var(--text-muted);
-  text-transform: uppercase;
+  padding: 6px 22px 16px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  font-size: 15px;
+  color: var(--accent-strong);
+  text-transform: none;
+}
+.sidebar-header::before {
+  content: '✿';
+  margin-right: 8px;
+  color: var(--accent);
 }
 
 .sidebar-search {
-  padding: 0 16px 12px;
+  padding: 0 14px 12px;
 }
 .sidebar-search-input {
   width: 100%;
-  padding: 7px 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border, #2a2f3a);
-  border-radius: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
   color: var(--text);
   font-size: 13px;
 }
-.sidebar-search-input::placeholder { color: var(--text-muted); }
+.sidebar-search-input::placeholder { color: #b9aac2; }
 .sidebar-search-input:focus {
   outline: none;
   border-color: var(--accent);
-  background: rgba(110, 168, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(238, 111, 168, 0.16);
 }
 .sidebar-empty {
   padding: 12px 20px;
@@ -107,13 +226,13 @@ a:hover { text-decoration: underline; }
   line-height: 1.5;
 }
 .sidebar-section-label {
-  padding: 4px 12px;
+  padding: 6px 22px 2px;
   margin-top: 4px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  color: var(--accent-2);
 }
 .sidebar-item-controls {
   margin-left: auto;
@@ -130,8 +249,8 @@ a:hover { text-decoration: underline; }
   border-radius: 4px;
 }
 .sidebar-item:hover .fav-toggle { opacity: 0.5; }
-.fav-toggle.on { opacity: 1; color: var(--warning); }
-.fav-toggle:hover { opacity: 1 !important; color: var(--warning); }
+.fav-toggle.on { opacity: 1; color: #f2a93b; }
+.fav-toggle:hover { opacity: 1 !important; color: #f2a93b; }
 
 .sidebar-nav {
   flex: 1;
@@ -139,41 +258,50 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   gap: 2px;
   overflow-y: auto;
+  padding: 0 4px;
 }
 
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 20px;
+  gap: 10px;
+  margin: 1px 8px;
+  padding: 8px 12px;
   border: none;
-  border-left: 3px solid transparent;
-  border-radius: 0;
+  border-radius: 12px;
   background: transparent;
   color: var(--text);
   text-align: left;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: none;
 }
-.sidebar-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.sidebar-item:hover { background: rgba(238, 111, 168, 0.08); color: var(--text); }
 .sidebar-item.active {
-  background: rgba(110,168,255,0.08);
-  border-left-color: var(--accent);
-  color: var(--accent);
+  background: linear-gradient(135deg, #ffe0ee 0%, #ebe3ff 100%);
+  color: var(--accent-strong);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
 }
 .sidebar-item .icon {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  border-radius: 6px;
-  background: var(--bg-elevated);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #ffd3e6 0%, #dfd3ff 100%);
+  color: #b23a78;
 }
+.sidebar-item.active .icon { background: var(--gradient); color: #ffffff; }
 
 .sidebar-footer {
-  padding: 12px 20px;
+  padding: 12px 20px 4px;
   font-size: 11px;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
@@ -187,24 +315,38 @@ a:hover { text-decoration: underline; }
 }
 
 .topbar {
-  height: 52px;
+  height: 56px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   padding: 0 24px;
   gap: 16px;
-  background: var(--bg-elevated);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   min-width: 0;
   overflow: hidden;
 }
 .topbar h1 {
-  font-size: 16px;
+  font-size: 17px;
   margin: 0;
-  font-weight: 600;
+  font-weight: 800;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+.topbar h1::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gradient);
+  margin-right: 10px;
+  vertical-align: 1px;
+  box-shadow: 0 0 0 4px rgba(238, 111, 168, 0.15);
 }
 
 /* ハンバーガー (モバイル/タブレットのみ表示 — メディアクエリ側で display 切替) */
@@ -226,7 +368,7 @@ a:hover { text-decoration: underline; }
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(80, 50, 90, 0.35);
   border: none;
   border-radius: 0;
   padding: 0;
@@ -247,7 +389,7 @@ a:hover { text-decoration: underline; }
   flex: 1;
   overflow-y: auto;
   overflow-x: auto; /* 万一の横はみ出しはページ全体ではなくここでスクロール */
-  padding: 24px;
+  padding: 28px 32px;
   min-width: 0;
 }
 
@@ -294,9 +436,10 @@ a:hover { text-decoration: underline; }
     left: 0;
     width: min(300px, 84vw);
     z-index: 50;
+    background: rgba(255, 255, 255, 0.94);
     transform: translateX(-105%);
     transition: transform 0.22s ease;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 8px 0 32px rgba(120, 90, 150, 0.18);
     /* ノッチ/ジェスチャーバーを避ける (viewport-fit=cover 時のみ効く) */
     padding-top: max(16px, env(safe-area-inset-top));
     padding-bottom: env(safe-area-inset-bottom);
@@ -340,8 +483,8 @@ a:hover { text-decoration: underline; }
 
 /* タッチデバイス (Android/iPad 等): ホバーが無い前提の操作性を確保する。 */
 @media (pointer: coarse) {
-  .sidebar-item { padding: 13px 20px; } /* 指で押しやすい高さ (~44px) */
-  .sidebar-item:active { background: rgba(255, 255, 255, 0.08); }
+  .sidebar-item { padding: 12px 12px; } /* 指で押しやすい高さ (~44px) */
+  .sidebar-item:active { background: rgba(238, 111, 168, 0.14); }
   /* ホバーで出す UI はタッチでは永遠に出ないので、常時うっすら表示 */
   .fav-toggle { opacity: 0.45; }
   .data-list-open { padding: 8px 14px; }
@@ -357,16 +500,19 @@ a:hover { text-decoration: underline; }
 .card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: var(--radius);
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, transform 0.2s;
 }
+.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
 .card h3 {
   margin: 0;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
 }
 .card p {
@@ -385,45 +531,47 @@ a:hover { text-decoration: underline; }
 .section-title {
   margin: 0 0 12px;
   font-size: 13px;
-  text-transform: uppercase;
+  font-weight: 800;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  color: #8a6bd6;
 }
 
 .empty {
   padding: 32px;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
   color: var(--text-muted);
   text-align: center;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .badge {
   display: inline-block;
   font-size: 11px;
-  padding: 2px 8px;
+  font-weight: 700;
+  padding: 2px 10px;
   border-radius: 999px;
-  background: rgba(110,168,255,0.12);
-  color: var(--accent);
-  border: 1px solid rgba(110,168,255,0.3);
+  background: var(--accent-soft-2);
+  color: #6d4fd1;
+  border: 1px solid #ddd2ff;
 }
 .badge.warn {
-  background: rgba(250,204,21,0.12);
-  color: var(--warning);
-  border-color: rgba(250,204,21,0.3);
+  background: #ffe8d1;
+  color: #b8661a;
+  border-color: #ffd3a8;
 }
 .badge.ok {
-  background: rgba(74,222,128,0.12);
-  color: var(--success);
-  border-color: rgba(74,222,128,0.3);
+  background: #dcf7ea;
+  color: #1b8a5d;
+  border-color: #b9ecd3;
 }
 /* 中立 — 「確認できません」「検出対象外」のように、利用者の環境について
-   何も主張しない札に使う (パス 165)。既定の青は情報色なので「今ここに何かある」と
-   読めてしまい、警告の黄は不安を作る。どちらでもない色を 1 つ足した。 */
+   何も主張しない札に使う (パス 165)。既定の紫は情報色なので「今ここに何かある」と
+   読めてしまい、警告の橙は不安を作る。どちらでもない色を 1 つ足した。 */
 .badge.muted {
-  background: rgba(148,163,184,0.12);
+  background: #f1edf3;
   color: var(--text-muted);
-  border-color: rgba(148,163,184,0.3);
+  border-color: #e3dbe8;
 }
 
 .data-list {
@@ -432,7 +580,7 @@ a:hover { text-decoration: underline; }
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 .data-list-item {
   display: grid;
@@ -441,16 +589,18 @@ a:hover { text-decoration: underline; }
   gap: 12px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 3px rgba(120, 90, 150, 0.05);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
-.data-list-item:hover { border-color: rgba(110,168,255,0.4); }
+.data-list-item:hover { border-color: #f5b8d2; box-shadow: var(--shadow-sm); transform: translateY(-1px); }
 .data-list-thumb {
   width: 56px;
   height: 36px;
   object-fit: cover;
-  border-radius: 4px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--accent-soft);
   grid-row: span 1;
 }
 .data-list-body {
@@ -463,6 +613,7 @@ a:hover { text-decoration: underline; }
 .data-list-item:not(:has(.data-list-thumb)) .data-list-body { grid-column: 1 / span 2; }
 .data-list-title {
   font-size: 14px;
+  font-weight: 600;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -477,11 +628,11 @@ a:hover { text-decoration: underline; }
 }
 .data-list-open {
   font-size: 12px;
-  padding: 4px 10px;
+  padding: 4px 12px;
 }
 
 .data-section {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 .data-section-header {
   display: flex;
@@ -493,9 +644,19 @@ a:hover { text-decoration: underline; }
 .data-section-header h2 {
   margin: 0;
   font-size: 13px;
-  text-transform: uppercase;
+  font-weight: 800;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  color: #8a6bd6;
+}
+.data-section-header h2::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--gradient);
+  margin-right: 8px;
+  vertical-align: -1px;
 }
 .data-section-header .count {
   font-size: 12px;
@@ -507,10 +668,11 @@ a:hover { text-decoration: underline; }
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
-  padding: 10px 12px;
-  background: var(--bg-elevated);
+  padding: 10px 14px;
+  background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
 }
 .status-bar .who {
   display: flex;

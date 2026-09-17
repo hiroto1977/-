@@ -22,7 +22,7 @@ const inputStyle: React.CSSProperties = {
   padding: '6px 8px',
   background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 4,
+  borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,
 };
@@ -151,7 +151,7 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
               borderRadius: 4,
               border: '1px solid #fbbf24',
               background: 'rgba(251, 191, 36, 0.08)',
-              color: '#fbbf24',
+              color: 'var(--warning)',
             }}
           >
             ⚠ {shareNote}Drive / Calendar / Gmail それぞれの画面で貼り直してください。

@@ -354,14 +354,14 @@ export function HydroponicsPage() {
         onRefresh={refresh}
       />
 
-      <p style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.7, color: '#94a3b8' }}>
+      <p style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.7, color: 'var(--text-muted)' }}>
         毎日の測定を記録すると、<strong>判定と「今日やること」を自動で作ります</strong>。
         播種日と品目から定植・収穫・養液交換の日程も出します。
         測定値・ロット・設定は<strong>この端末の中だけ</strong>に保存され、外へは送りません。
       </p>
       <p
         data-hydroponics-basis
-        style={{ margin: '0 0 16px', fontSize: 12, lineHeight: 1.7, color: '#fbbf24' }}
+        style={{ margin: '0 0 16px', fontSize: 12, lineHeight: 1.7, color: 'var(--warning)' }}
       >
         ⚠ 目標域の初期値は<strong>実務で広く使われる幅を置いた目安</strong>で、出典で検証した値では
         ありません。品目・季節・光量で適正域は動きます —— <strong>自分の実測に置き換えて</strong>
@@ -381,7 +381,7 @@ export function HydroponicsPage() {
           />
         </div>
         {summary.noReadings && (
-          <p data-hydroponics-no-readings style={{ fontSize: 13, color: '#fbbf24', margin: '0 0 12px' }}>
+          <p data-hydroponics-no-readings style={{ fontSize: 13, color: 'var(--warning)', margin: '0 0 12px' }}>
             測定の記録がまだ 1 件もありません。<strong>「全部正常」ではなく「まだ分からない」</strong>状態です。
           </p>
         )}
@@ -408,7 +408,7 @@ export function HydroponicsPage() {
                     {SEVERITY_LABEL[t.severity]}
                   </td>
                   <td style={tdStyle}>{t.label}</td>
-                  <td style={{ ...tdStyle, fontSize: 12, color: '#94a3b8' }}>{t.why}</td>
+                  <td style={{ ...tdStyle, fontSize: 12, color: 'var(--text-muted)' }}>{t.why}</td>
                   <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
                     {t.dueDate ?? '—'}
                     {t.overdueDays !== null && t.overdueDays > 0 ? ` (${t.overdueDays} 日遅れ)` : ''}
@@ -424,10 +424,10 @@ export function HydroponicsPage() {
       {/* --- 直近の測定の判定 ----------------------------------------- */}
       <Section title="直近の測定の判定" count={assessment?.fields.length}>
         {assessment === null ? (
-          <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>測定を記録すると判定が出ます。</p>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>測定を記録すると判定が出ます。</p>
         ) : (
           <>
-            <p style={{ fontSize: 12, color: '#94a3b8', margin: '0 0 8px' }}>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0 0 8px' }}>
               {assessment.at} の測定 — 測れた {assessment.measured} 項目 / 未測定 {assessment.unmeasured} /
               読めない {assessment.unreadable} / 範囲外 {assessment.outOfRange}
             </p>
@@ -454,7 +454,7 @@ export function HydroponicsPage() {
                       <td style={{ ...tdStyle, color: STATUS_COLOR[f.status] }}>
                         {STATUS_LABEL[f.status]}
                       </td>
-                      <td style={{ ...tdStyle, fontSize: 12, color: '#94a3b8' }}>
+                      <td style={{ ...tdStyle, fontSize: 12, color: 'var(--text-muted)' }}>
                         {TARGET_BASIS[f.field] === 'sourced' ? '出典あり' : '目安'}
                       </td>
                     </tr>
@@ -474,7 +474,7 @@ export function HydroponicsPage() {
 
       {/* --- 測定を記録 ----------------------------------------------- */}
       <Section title="測定を記録">
-        <p style={{ fontSize: 12, color: '#94a3b8', margin: '0 0 8px' }}>
+        <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0 0 8px' }}>
           <strong>測っていない項目は空欄のままにしてください</strong> —— 0 を入れると「0 を測った」
           という記録になります。
         </p>
@@ -535,7 +535,7 @@ export function HydroponicsPage() {
             data-hydroponics-input="note"
             style={{ width: '100%', marginTop: 2 }}
           />
-          <span style={{ fontSize: 11, color: '#64748b' }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
             {MAX_HYDROPONICS_NOTE_CHARS.toLocaleString('en-US')} 字まで (超えると保存しません)
           </span>
         </label>
@@ -563,7 +563,7 @@ export function HydroponicsPage() {
       {/* --- 栽培ロット ----------------------------------------------- */}
       <Section title="栽培ロット" count={batches.items.length}>
         {batches.items.length === 0 ? (
-          <p style={{ fontSize: 13, color: '#94a3b8', margin: '0 0 12px' }}>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 12px' }}>
             ロットがまだありません。播種日と品目を入れると、定植・収穫・養液交換の予定が出ます。
           </p>
         ) : (
@@ -740,7 +740,7 @@ export function HydroponicsPage() {
 
       {/* --- 運転の設定 ----------------------------------------------- */}
       <Section title="運転の設定">
-        <p style={{ fontSize: 12, color: '#94a3b8', margin: '0 0 8px' }}>
+        <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0 0 8px' }}>
           <strong>タンク容量・原液の EC 上昇率・アルカリ度を入れると、調製の量が出ます。</strong>
           入れていない間は「量は出せません」と足りない物の名前を出します —— 推定値では養液を壊すので
           出しません。
@@ -844,7 +844,7 @@ export function HydroponicsPage() {
 
       {/* --- 測定項目の台帳 ------------------------------------------- */}
       <Section title="測定項目の台帳" count={data.fields.length}>
-        <p style={{ fontSize: 12, color: '#94a3b8', margin: '0 0 8px' }}>
+        <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0 0 8px' }}>
           「妥当範囲」は<strong>桁誤りと測定器の異常を止める幅</strong>で、栽培上の適正域では
           ありません (適正域は品目と上の設定で決まります)。
         </p>
@@ -873,7 +873,7 @@ export function HydroponicsPage() {
           </tbody>
         </table>
         {data.fields.length === 0 && (
-          <p style={{ fontSize: 12, color: '#94a3b8' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
             台帳を取得できていません ({label('ec')} などの一覧は「更新」で読み直せます)。
           </p>
         )}

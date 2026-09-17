@@ -169,7 +169,7 @@ export function RealtimeTicker({
             >
               <div>
                 <div style={{ fontSize: 12, color: '#8fa3c8' }}>{r.label}</div>
-                <div style={{ fontSize: 11, color: '#6c7c9c' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
                   年額 {yen0.format(annual)} 円 / 秒あたり {rate.toFixed(4)} 円
                   {r.hint !== undefined ? ` — ${r.hint}` : ''}
                 </div>
@@ -191,7 +191,7 @@ export function RealtimeTicker({
         })}
       </div>
 
-      <p style={{ fontSize: 11, color: '#6c7c9c', marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>
+      <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>
         {note ??
           '年額を年内の経過で按分した「ここまでの発生見込み」です。実際の課税・入金の時点とは一致しません。'}
         {' '}

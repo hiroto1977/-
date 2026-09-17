@@ -165,7 +165,7 @@ export function StoragePage() {
             <li key={i}>{r}</li>
           ))}
         </ul>
-        <div style={{ marginTop: 12, padding: 10, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: '#fbbf24', lineHeight: 1.5 }}>
+        <div style={{ marginTop: 12, padding: 10, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: 'var(--warning)', lineHeight: 1.5 }}>
           📚 参考: NEC LAVIE FAQ「ストレージを最適化して PC のパフォーマンスを向上させる」
           (https://faq.nec-lavie.jp/fa/qa/web/knowledge21797.html)。
           Phase 6 で `os` / `fs` API 経由の実 OS 統計取得に切替予定です。

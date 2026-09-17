@@ -7,6 +7,51 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## UI 再設計 (2026-09-17) — 紺のダーク配色から、淡いピンク × ラベンダー × ミントの明るい配色へ (利用者の依頼: 若い女性が好みそうなお洒落な見た目)
+
+### 何を変えたか (見た目だけ。画面の構造・文言・data 属性・class 名は 1 つも変えていない)
+
+- `src/renderer/styles.css` を書き直した (630 → 約 800 行)。トークン: `--bg #fff7fa` / `--text #4b3f57` / `--accent #ee6fa8` (ローズ) /
+  `--accent-2 #a98cf5` (ラベンダー) / `--gradient` (ピンク → ラベンダー) / 意味色は白地でも読める濃さ (`--success #22a06b` / `--warning #c4741a` /
+  `--danger #e8496f`)。角は 12–18 px、影は色つきで柔らかく、サイドバーとトップバーは `backdrop-filter` のすりガラス、
+  `.app` に淡い滲みの背景。文字は丸ゴシック系 (`Hiragino Maru Gothic ProN` / `BIZ UDPGothic` → 無ければ OS の標準ゴシック。
+  **外部フォントは読まない**: 出荷 HTML は CSP `default-src 'self'` の単一ファイルで、同梱すると LITE の余裕 (約 91 KB) を超える)。
+- **★ 画面側が読んでいた 4 つの変数名が、それまでどこにも定義されていなかった**: `var(--text-mute)` **624 か所** / `var(--bg-elev)` /
+  `var(--warn)` / `var(--panel)` (定義されていたのは `--text-muted` / `--bg-elevated` だけ)。指定は素通りして親の色で描かれていた
+  (「薄い字」のつもりの注記が本文と同じ濃さだった)。別名として必ず定義し、消さない理由を stylesheet の頭に書いた。
+- 部品: サイドバー項目はピル型 (active はグラデーション地・チップは `.icon` の 2 文字コードをピンクの角丸に)、`.sidebar-header` に ✿、
+  トップバーの題に丸い印、`.data-section-header h2` にグラデーションの縦バー、`.badge` はパステルのピル、`.card` / `.status-bar` /
+  `.data-list-item` は白い角丸 + 色つきの影 (hover で浮く)、入力欄は白地 + ピンクのフォーカスリング、`input[type=range]` は淡い溝 +
+  グラデーションのつまみ、スクロールバーと `::selection` も淡色。
+- inline style の直書き色を意味のトークンへ寄せた (29 ファイル): `color: '#fbbf24'` (白地では読めない黄) 45 か所 → `var(--warning)`、
+  灰 (`#8a93a6` / `#94a3b8` / `#64748b` / `#6c7c9c`) 30 か所 → `var(--text-muted)`、`#e36b6b` → `var(--danger)`、`#3ec98a` / `#5cb85c` →
+  `var(--success)`、暗い罫線 (`#232936` / `#2a2f3a`) → `var(--border)`、SVG の軸 (`stroke="#2a2f3a"` / `"#4a5568"`) → 淡い桃灰 (属性なので
+  リテラル)。`TalentPage` の入力欄の暗色 2 つ → トークン。**`#22c55e` / `#ef4444` (緑 / 赤の意味色) と SVG の塗りは触っていない** ——
+  `Stat.render.test.ts` / `barChartSign.test.ts` が字面で留めており、白地でも読める。
+- ボタン: `<button>` の inline `borderRadius: 4/6/8` を**開き括弧の中だけ**走査して 999 (ピル) へ 38 か所 (幅 100% / 左寄せ / 縦積みの
+  タイル型 5 か所は据え置き)。`<input>` / `<select>` / `<textarea>` の同じ物 37 か所と入力欄の style 定数 28 か所は 10 へ。
+  ホームの「今すぐ作る」・`ServiceActionPanel` のボタン・銘柄 / 事業の丸いアバターは `var(--gradient)`、「ファイルを開く」
+  (ホーム / `ExportActions`) は淡いピンクのピル。ロック画面は白い角丸カード + パステルの背景、チャットの吹き出しボタンはグラデーション。
+- Electron の窓の下地 `backgroundColor` (`main.ts`) を `#0f1117` → `#fff7fa` (起動時に暗い矩形が一瞬出ないように)・PWA の `theme-color`
+  (`inject-pwa.cjs`) を `#0e0f13` → `#fff7fa`。`mainWindow.test.ts` の期待値も。
+
+### 守った物
+
+- e2e が見る `.stat-grid` の折返し (phone 2 列 / tablet 3 列以上)・入力欄 16 px (自動ズーム防止)・横スクロール無し・`.sidebar` /
+  `.menu-btn` / `.app.nav-open` / `data-*` は不変。印刷用の `.ds-*` / `.bank-*` (紙は紙) は 1 字も変えていない。
+- `verify:arch` の `file:line` 参照: 直書き色の置換は行内で行い行数を変えない。ARCHITECTURE の参照先に当たるファイルは無かった。
+
+### 実機
+
+`smoke:app` OK / `e2e` 30 suite 398 件 ❌ 0 / `e2e:lite` 398 件 ❌ 0 / `perf` OK (LITE DCL 122 ms heap 10.2 MB・FULL DCL 307 ms heap 36.9 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8 (連鎖 1 回で全段緑)。出荷物 FULL **11,901,220 B** / LITE **3,313,741 B** (FULL +4,785 B・LITE +4,785 B —— stylesheet の書き換えと inline の置換。renderer は両ビルドが読む)。
+
+### 閉じていない物
+
+- 意味色の直書き (`#22c55e` 93 / `#ef4444` 120 / 各種) はトークンにしていない。白地でも読めるので今日の見た目には影響しないが、
+  次に配色を変える日には同じ走査が要る。`lint:parameter-prose` の形 (「画面が刷る数字と計算の数字の出所」) を色にも当てるなら census が要る。
+- タイル型のボタン 5 か所 (事業ダッシュボードのカテゴリ等) は角 8 のまま。
+- ダーク配色を選べる設定は無い (以前も無かった)。`color-scheme: light` を宣言したので OS のダーク設定でもこの配色で描く。
+
 ## パス 312 (2026-09-17) — ブラウザ版の `invoke` / `fetchSnapshot` に main の IPC ハンドラと同じ床が無く、「reject しない」は 19 の写しと 4 条件の検査で名乗っていた
 
 パス 311 の「閉じていない物」—— shim の `invoke` / `fetchSnapshot` は、枝ごとの `try` の外で投げた物をどこで受けるか —— を測った。

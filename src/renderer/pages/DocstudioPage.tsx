@@ -577,7 +577,7 @@ function FieldInputs({
                 onChange={(e) => onChange(f.k, e.target.value)}
                 aria-label={f.label}
                 data-field={f.k}
-                style={{ padding: '8px 10px', background: 'var(--bg-elev)', border, borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
+                style={{ padding: '8px 10px', background: 'var(--bg-elev)', border, borderRadius: 10, color: 'var(--text)', fontSize: 13 }}
               >
                 {f.options.map((o) => (
                   <option key={o} value={o}>{o}</option>
@@ -592,7 +592,7 @@ function FieldInputs({
                 onChange={(e) => onChange(f.k, e.target.value)}
                 aria-label={f.label}
                 data-field={f.k}
-                style={{ padding: '8px 10px', background: 'var(--bg-elev)', border, borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
+                style={{ padding: '8px 10px', background: 'var(--bg-elev)', border, borderRadius: 10, color: 'var(--text)', fontSize: 13 }}
               />
             )}
           </label>
@@ -1800,7 +1800,7 @@ export function DocstudioPage() {
                 placeholder="書式名・場面で検索（例: 残業 / 退職 / 未払 / 登記）"
                 aria-label="書式を検索"
                 data-doc-search
-                style={{ width: '100%', padding: '9px 11px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', fontSize: 13 }}
+                style={{ width: '100%', padding: '9px 11px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13 }}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 8 }}>
                 {['すべて', ...cats].map((c) => (
@@ -1974,7 +1974,7 @@ export function DocstudioPage() {
               <div
                 role="alert"
                 data-store-unreadable
-                style={{ fontSize: 12, color: '#fbbf24', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+                style={{ fontSize: 12, color: 'var(--warning)', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
               >
                 ⚠ {readError}この画面の入力は、この端末には残りません。
               </div>

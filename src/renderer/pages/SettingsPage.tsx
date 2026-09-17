@@ -347,7 +347,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
                 padding: '6px 10px',
                 background: 'var(--bg)',
                 border: '1px solid var(--border)',
-                borderRadius: 4,
+                borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 12,
                 fontFamily: 'monospace',
@@ -395,7 +395,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
         <div
           role="alert"
           data-credential-unreadable-reason={slot.vaultKey}
-          style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}
+          style={{ fontSize: 11, color: 'var(--warning)', lineHeight: 1.6 }}
         >
           ⚠ {unreadable}
         </div>
@@ -751,7 +751,7 @@ export function LicenseSection() {
   }
 
   const inputStyle: React.CSSProperties = {
-    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
     color: 'var(--text)', padding: '8px 10px', fontSize: 13, width: 220,
   };
 
@@ -1025,7 +1025,7 @@ export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) 
     return (
       <section data-unused-credentials>
         <h3 style={{ margin: '0 0 8px', fontSize: 14 }}>使われていない資格情報</h3>
-        <div role="alert" data-unused-unreadable style={{ fontSize: 12, color: '#fbbf24', lineHeight: 1.7 }}>
+        <div role="alert" data-unused-unreadable style={{ fontSize: 12, color: 'var(--warning)', lineHeight: 1.7 }}>
           ⚠ {unreadable}
         </div>
       </section>
@@ -1618,7 +1618,7 @@ export function ProxySection() {
         <div
           role="alert"
           data-proxy-unreadable-reason
-          style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}
+          style={{ fontSize: 11, color: 'var(--warning)', marginTop: 6, lineHeight: 1.6 }}
         >
           ⚠ {unreadable}
         </div>
@@ -1774,7 +1774,7 @@ export function FsaSection() {
       )}
 
       {unreadable !== null && (
-        <div role="alert" data-fsa-unreadable-reason style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}>
+        <div role="alert" data-fsa-unreadable-reason style={{ fontSize: 11, color: 'var(--warning)', marginTop: 6, lineHeight: 1.6 }}>
           ⚠ {unreadable}
         </div>
       )}
@@ -2011,7 +2011,7 @@ export function GoogleOAuthSection() {
           <CeilingNotice label={OAUTH_FIELD_LABEL.redirectUri} value={redirectUri} max={OAUTH_FIELD_CHARS.redirectUri} />
           {/* 完了できない形なら、押す前に理由を出す (パス 157)。 */}
           {redirectBlockedReason(redirectUri) !== null && (
-            <div data-redirect-unusable style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}>
+            <div data-redirect-unusable style={{ fontSize: 11, color: 'var(--warning)', lineHeight: 1.6 }}>
               ⚠ {redirectBlockedReason(redirectUri)}
             </div>
           )}
@@ -2090,7 +2090,7 @@ export function GoogleOAuthSection() {
         <div
           role="alert"
           data-pkce-leftover
-          style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}
+          style={{ fontSize: 11, color: 'var(--warning)', marginTop: 6, lineHeight: 1.6 }}
         >
           ⚠ 認可に使った一時情報をこのブラウザから消せませんでした ({leftover.join(' / ')})。
           このタブを閉じると消えます。閉じるまでは開いたままにしないでください。

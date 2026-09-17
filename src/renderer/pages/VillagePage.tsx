@@ -361,7 +361,7 @@ export function VillagePage() {
         <div
           data-village-ai-error
           role="alert"
-          style={{ fontSize: 12, color: '#fbbf24', lineHeight: 1.6, padding: '4px 8px' }}
+          style={{ fontSize: 12, color: 'var(--warning)', lineHeight: 1.6, padding: '4px 8px' }}
         >
           ⚠ AI の応答を利用できないため、端末内の簡易応答を出しています: {aiError}
         </div>
@@ -687,7 +687,7 @@ function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (
           onChange={(e) => setText(e.target.value)}
           placeholder="文字でも話しかけられます"
           aria-label="村への入力"
-          style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(127,127,127,0.4)', minWidth: 200 }}
+          style={{ padding: '7px 10px', borderRadius: 10, border: '1px solid rgba(127,127,127,0.4)', minWidth: 200 }}
         />
         <button type="submit" className="primary" disabled={!text.trim() || over > 0}>
           伝える

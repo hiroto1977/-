@@ -816,7 +816,7 @@ export function BusinessPage() {
           style={{
             border: '1px solid #fbbf24',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
@@ -889,7 +889,7 @@ export function BusinessPage() {
                 padding: '4px 12px',
                 background: sortKey === k ? 'var(--accent)' : 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text)',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -905,7 +905,7 @@ export function BusinessPage() {
                 padding: '4px 12px',
                 background: 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text-mute)',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -942,7 +942,7 @@ export function BusinessPage() {
               padding: '6px 14px',
               background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,
@@ -958,7 +958,7 @@ export function BusinessPage() {
               padding: '6px 14px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,
@@ -1011,7 +1011,7 @@ export function BusinessPage() {
           style={{
             border: '1px solid #fbbf24',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '8px 12px',
             borderRadius: 6,
             fontSize: 12,
@@ -1048,7 +1048,7 @@ export function BusinessPage() {
               padding: '8px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,
             }}
@@ -1063,7 +1063,7 @@ export function BusinessPage() {
               padding: '8px 16px',
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: advisorBusy ? 'wait' : 'pointer',
@@ -1117,7 +1117,7 @@ export function BusinessPage() {
                       width: 28,
                       height: 28,
                       borderRadius: 14,
-                      background: 'var(--accent)',
+                      background: 'var(--gradient)',
                       color: '#fff',
                       display: 'flex',
                       alignItems: 'center',
@@ -1151,7 +1151,7 @@ export function BusinessPage() {
                 <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, marginBottom: 4 }}>
                   リスク要因:
                 </div>
-                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#fbbf24' }}>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: 'var(--warning)' }}>
                   {r.riskFactors.map((rf, i) => (
                     <li key={i} style={{ marginBottom: 2 }}>
                       {rf}

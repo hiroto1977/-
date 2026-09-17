@@ -581,7 +581,7 @@ export function AssistantPage() {
             aria-label="AI エージェントを選択"
             title="このチャットが使う AI エージェント"
             onChange={(e) => setProvider(e.target.value)}
-            style={{ fontSize: 12, borderRadius: 8, padding: '4px 8px' }}
+            style={{ fontSize: 12, borderRadius: 10, padding: '4px 8px' }}
           >
             <option value="">エージェント自動 (既定)</option>
             <option value={ALL_AGENTS}>
@@ -803,7 +803,7 @@ export function AssistantPage() {
               placeholder="https://… (任意)"
               aria-label="背景画像URL"
               onChange={(e) => setTheme((t) => ({ ...t, image: e.target.value.trim() }))}
-              style={{ flex: 1, padding: '4px 8px', borderRadius: 6 }}
+              style={{ flex: 1, padding: '4px 8px', borderRadius: 10 }}
             />
           </label>
           <button type="button" onClick={() => setTheme(DEFAULT_THEME)}>
@@ -920,7 +920,7 @@ export function AssistantPage() {
             flex: 1,
             padding: '10px 12px',
             border: '1px solid rgba(127,127,127,0.4)',
-            borderRadius: 8,
+            borderRadius: 10,
             background: 'rgba(255,255,255,0.6)',
             color: '#111',
             fontSize: 14,

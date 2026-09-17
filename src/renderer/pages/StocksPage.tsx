@@ -404,7 +404,7 @@ export function StocksPage() {
           style={{
             border: '1px solid #fbbf24',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
@@ -443,7 +443,7 @@ export function StocksPage() {
           {paperAccountNote(buildKind)}
         </div>
         {acct.unpricedPositions.length > 0 && (
-          <div data-paper-account-unpriced style={{ fontSize: 12, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>
+          <div data-paper-account-unpriced style={{ fontSize: 12, color: 'var(--warning)', marginTop: 8, lineHeight: 1.6 }}>
             ⚠ 値段が分からない {acct.unpricedPositions.length} 銘柄 (
             {acct.unpricedPositions.join(' / ')}) を時価評価に入れていません ——
             <strong>現在資産は実際より小さく出ています</strong>。
@@ -466,7 +466,7 @@ export function StocksPage() {
         )}
         {/* 保存先が読めなかった・読み込みで落とした物が在るときだけ出る (パス 309)。見本や空に化けたことを黙らない。 */}
         {data.storedNote !== null && (
-          <div data-watchlist-stored-note style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.6 }}>
+          <div data-watchlist-stored-note style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 12, lineHeight: 1.6 }}>
             ⚠ {data.storedNote}
           </div>
         )}
@@ -481,7 +481,7 @@ export function StocksPage() {
               padding: '8px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,
             }}
@@ -496,7 +496,7 @@ export function StocksPage() {
               padding: '8px 16px',
               background: registerBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: registerBusy ? 'wait' : 'pointer',
@@ -511,7 +511,7 @@ export function StocksPage() {
               padding: '8px 16px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: registerBusy ? 'wait' : 'pointer',
@@ -563,7 +563,7 @@ export function StocksPage() {
                 padding: '4px 12px',
                 background: filterAction === opt ? 'var(--accent)' : 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text)',
                 cursor: 'pointer',
               }}
@@ -668,7 +668,7 @@ export function StocksPage() {
           style={{
             border: '1px solid #fbbf24',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '8px 12px',
             borderRadius: 6,
             fontSize: 12,
@@ -715,7 +715,7 @@ export function StocksPage() {
         {data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS && (
           <div
             data-advisor-universe-capped
-            style={{ fontSize: 12, lineHeight: 1.6, marginBottom: 12, color: '#fbbf24' }}
+            style={{ fontSize: 12, lineHeight: 1.6, marginBottom: 12, color: 'var(--warning)' }}
           >
             ⚠ 1 度に見られるのは {MAX_ADVISOR_UNIVERSE_SYMBOLS} 件までです。
             残り {data.watchlist.length - MAX_ADVISOR_UNIVERSE_SYMBOLS} 件は
@@ -733,7 +733,7 @@ export function StocksPage() {
               padding: '8px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,
             }}
@@ -748,7 +748,7 @@ export function StocksPage() {
               padding: '8px 16px',
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: advisorBusy ? 'wait' : 'pointer',
@@ -802,7 +802,7 @@ export function StocksPage() {
                       width: 28,
                       height: 28,
                       borderRadius: 14,
-                      background: 'var(--accent)',
+                      background: 'var(--gradient)',
                       color: '#fff',
                       display: 'flex',
                       alignItems: 'center',
@@ -853,7 +853,7 @@ export function StocksPage() {
               {advisorResult.universeOmitted > 0 && (
                 <>
                   <br />
-                  <span style={{ color: '#fbbf24' }}>
+                  <span style={{ color: 'var(--warning)' }}>
                     ⚠ 上限のため {advisorResult.universeOmitted} 件は対象外です。
                   </span>
                 </>
@@ -875,7 +875,7 @@ export function StocksPage() {
               padding: '8px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,
             }}
@@ -890,7 +890,7 @@ export function StocksPage() {
               padding: '8px 16px',
               background: compareBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: compareBusy ? 'wait' : 'pointer',
@@ -1008,7 +1008,7 @@ export function StocksPage() {
               padding: '8px 16px',
               background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: exportBusy ? 'wait' : 'pointer',

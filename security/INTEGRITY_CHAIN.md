@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 228
+- ブロック数: 229
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `cc12d4379bb34aaa581e3ee327d66b64b5a1825e5665f4dc139ca9b3da14abc8`
+- 末尾(tip)ハッシュ: `4622ed7f0c87d56a1371386a88d53893baabf29c8931512dfdc538445b0b325d`
 - 保護対象: 76 ファイル
 
 ## ブロック
@@ -241,6 +241,7 @@
 | 225 | `938ba9be71b39e54` | `07ff990376947690` | `6a49e8e08b5ff4c2` | update integrity-chain.cjs,artifact-freshness.cjs |
 | 226 | `da67b59058ce8567` | `6a49e8e08b5ff4c2` | `6fee5d6ed429511f` | update integrity-chain.cjs,artifact-freshness.cjs |
 | 227 | `bd20f5455715e558` | `6fee5d6ed429511f` | `cc12d4379bb34aaa` | update localWrite.ts |
+| 228 | `b2f88a11db36b8e4` | `cc12d4379bb34aaa` | `4622ed7f0c87d56a` | update inject-pwa.cjs,main.ts,LockScreen.tsx |
 
 ## 保護対象ファイル
 

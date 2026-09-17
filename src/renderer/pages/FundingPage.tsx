@@ -10,7 +10,7 @@ import { accountingCfSeriesLabel, fundingLinkLabel } from '../../shared/funding'
 // 可視化する。集計ロジックは src/shared/funding.ts (純粋関数) に集約。
 
 const COLORS = {
-  axis: '#2a2f3a',
+  axis: '#e8d5e2',
   grid: '#363b47',
   text: 'var(--text)',
   mute: 'var(--text-mute)',

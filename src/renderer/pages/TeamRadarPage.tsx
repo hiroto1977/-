@@ -139,7 +139,7 @@ function RadarChart({
         const lp = axisPoint(cx, cy, radius, 0, axes.length, lvl);
         return (
           <g key={lvl}>
-            <polygon points={pts.join(' ')} fill="none" stroke="#2a2f3a" strokeDasharray="3,3" />
+            <polygon points={pts.join(' ')} fill="none" stroke="#e8d5e2" strokeDasharray="3,3" />
             <text x={lp.x + 8} y={lp.y} fontSize={10} fill="#94a3b8" textAnchor="start">
               {lvl}
             </text>
@@ -153,7 +153,7 @@ function RadarChart({
           Math.abs(lp.x - cx) < 8 ? 'middle' : lp.x > cx ? 'start' : 'end';
         return (
           <g key={i}>
-            <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#2a2f3a" />
+            <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#e8d5e2" />
             <text x={lp.x} y={lp.y} fontSize={13} fill="#e6e8ec" textAnchor={anchor} dominantBaseline="middle">
               {label}
             </text>
@@ -473,7 +473,7 @@ export function TeamRadarPage() {
       />
       {/* 保存先が読めなかったときだけ出る (パス 120)。見本に化けたことを黙らない。 */}
       {data.storedNote !== null && (
-        <div role="status" style={{ padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: '#fbbf24', lineHeight: 1.5 }}>
+        <div role="status" style={{ padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: 'var(--warning)', lineHeight: 1.5 }}>
           ⚠ {data.storedNote}
         </div>
       )}
@@ -482,7 +482,7 @@ export function TeamRadarPage() {
         style={{
           border: '1px solid #fbbf24',
           background: 'rgba(251, 191, 36, 0.08)',
-          color: '#fbbf24',
+          color: 'var(--warning)',
           padding: '10px 14px',
           borderRadius: 8,
           fontSize: 12,
@@ -512,7 +512,7 @@ export function TeamRadarPage() {
           <div
             role="alert"
             data-draft-unreadable
-            style={{ fontSize: 12, color: '#fbbf24', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+            style={{ fontSize: 12, color: 'var(--warning)', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
           >
             ⚠ {draftUnreadable}下に出ているのは同梱の見本で、この画面の編集はこの端末には残りません。
           </div>
@@ -539,7 +539,7 @@ export function TeamRadarPage() {
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
                 width: 260,
@@ -563,7 +563,7 @@ export function TeamRadarPage() {
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
                 width: 200,
@@ -582,7 +582,7 @@ export function TeamRadarPage() {
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
                 width: 160,
@@ -607,7 +607,7 @@ export function TeamRadarPage() {
                   padding: '6px 10px',
                   background: 'var(--bg-elev)',
                   border: '1px solid var(--border)',
-                  borderRadius: 6,
+                  borderRadius: 10,
                   color: 'var(--text)',
                   fontSize: 13,
                   width: 140,
@@ -627,7 +627,7 @@ export function TeamRadarPage() {
                 padding: '6px 12px',
                 background: 'transparent',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text-mute)',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -762,7 +762,7 @@ export function TeamRadarPage() {
                   high: { label: 'ケア優先', color: '#ef4444' },
                   medium: { label: '見守り', color: '#d97706' },
                   // **記録が無い人を緑の「安定」に混ぜない。** 灰色で「記録待ち」。
-                  unknown: { label: '記録待ち', color: '#94a3b8' },
+                  unknown: { label: '記録待ち', color: 'var(--text-muted)' },
                   none: { label: '安定', color: '#22c55e' },
                 };
                 const b = badge[r.priority];
@@ -836,7 +836,7 @@ export function TeamRadarPage() {
                         padding: '4px 8px',
                         background: 'var(--bg)',
                         border: '1px solid var(--border)',
-                        borderRadius: 4,
+                        borderRadius: 10,
                         color: 'var(--text)',
                         fontSize: 13,
                       }}
@@ -848,7 +848,7 @@ export function TeamRadarPage() {
                         padding: '4px 10px',
                         background: 'transparent',
                         border: '1px solid var(--border)',
-                        borderRadius: 4,
+                        borderRadius: 999,
                         color: '#ef4444',
                         cursor: 'pointer',
                         fontSize: 11,
@@ -922,7 +922,7 @@ export function TeamRadarPage() {
                 padding: '8px 14px',
                 background: 'var(--bg-elev)',
                 border: '1px dashed var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text)',
                 cursor: members.length >= 50 ? 'not-allowed' : 'pointer',
                 fontSize: 12,
@@ -944,7 +944,7 @@ export function TeamRadarPage() {
               padding: '6px 14px',
               background: saveBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: saveBusy ? 'wait' : 'pointer',
               fontSize: 12,
@@ -959,7 +959,7 @@ export function TeamRadarPage() {
               padding: '6px 14px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,

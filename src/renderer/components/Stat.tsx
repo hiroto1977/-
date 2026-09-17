@@ -53,10 +53,11 @@ export function Stat({ label, value, positive }: { label: string; value: string;
 }
 
 const cardStyle: React.CSSProperties = {
-  padding: 12,
+  padding: 14,
   background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 8,
+  borderRadius: 14,
+  boxShadow: 'var(--shadow-sm)',
 };
 const labelStyle: React.CSSProperties = { fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 };
 const valueStyle: React.CSSProperties = { fontSize: 18, fontWeight: 700, fontVariantNumeric: 'tabular-nums' };

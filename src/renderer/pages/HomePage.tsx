@@ -179,12 +179,13 @@ function ActionCard({ action }: { action: QuickAction }) {
       style={{
         background: 'var(--bg-elev)',
         border: '1px solid var(--border)',
-        borderRadius: 10,
-        padding: 16,
+        borderRadius: 18,
+        padding: 18,
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
         minHeight: 200,
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
@@ -203,10 +204,11 @@ function ActionCard({ action }: { action: QuickAction }) {
         disabled={busy}
         style={{
           padding: '10px 14px',
-          background: busy ? 'var(--bg-elev)' : 'var(--accent)',
-          border: '1px solid var(--border)',
-          borderRadius: 6,
-          color: 'var(--text)',
+          background: busy ? 'var(--bg-elev)' : 'var(--gradient)',
+          border: busy ? '1px solid var(--border)' : '1px solid transparent',
+          borderRadius: 999,
+          color: busy ? 'var(--text)' : '#fff',
+          boxShadow: busy ? undefined : '0 6px 16px rgba(238,111,168,0.28)',
           cursor: busy ? 'wait' : 'pointer',
           fontSize: 13,
           fontWeight: 600,
@@ -243,10 +245,10 @@ function ActionCard({ action }: { action: QuickAction }) {
               onClick={openFile}
               style={{
                 padding: '4px 10px',
-                background: 'var(--accent)',
-                border: '1px solid var(--border)',
-                borderRadius: 4,
-                color: 'var(--text)',
+                background: 'var(--accent-soft)',
+                border: '1px solid #f5b8d2',
+                borderRadius: 999,
+                color: 'var(--accent-strong)',
                 cursor: 'pointer',
                 fontSize: 11,
                 fontWeight: 600,
@@ -262,7 +264,7 @@ function ActionCard({ action }: { action: QuickAction }) {
                   padding: '4px 10px',
                   background: 'var(--bg)',
                   border: '1px solid var(--border)',
-                  borderRadius: 4,
+                  borderRadius: 999,
                   color: 'var(--text)',
                   cursor: 'pointer',
                   fontSize: 11,
@@ -279,7 +281,7 @@ function ActionCard({ action }: { action: QuickAction }) {
                   padding: '4px 10px',
                   background: 'var(--bg)',
                   border: '1px solid var(--border)',
-                  borderRadius: 4,
+                  borderRadius: 999,
                   color: 'var(--text-mute)',
                   cursor: 'pointer',
                   fontSize: 11,
@@ -307,9 +309,9 @@ export function HomePage() {
       <div
         style={{
           padding: '24px 28px',
-          background: 'linear-gradient(135deg, rgba(91,141,239,0.15) 0%, rgba(91,141,239,0.04) 100%)',
+          background: 'linear-gradient(135deg, rgba(255,143,192,0.20) 0%, rgba(183,156,255,0.14) 100%)',
           border: '1px solid var(--border)',
-          borderRadius: 12,
+          borderRadius: 18,
         }}
       >
         <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>

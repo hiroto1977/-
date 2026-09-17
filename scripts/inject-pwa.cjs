@@ -29,7 +29,7 @@ assertRawTextInert(SW_REGISTER_JS, 'script', 'SW 登録スニペット');
 
 const PWA_HEAD_TAGS = [
   '<link rel="manifest" href="./manifest.webmanifest">',
-  '<meta name="theme-color" content="#0e0f13">',
+  '<meta name="theme-color" content="#fff7fa">',
   '<link rel="apple-touch-icon" href="./icon.svg">',
   `<script>${SW_REGISTER_JS}</script>`,
 ].join('');

@@ -1116,7 +1116,7 @@ export function RealEstatePage() {
               </div>
             )}
             {zoning.shadow.regulated === null && zoning.shadow.exceedsThreshold && (
-              <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 10 }}>
                 計画高さが {zoning.shadow.thresholdM} m を超えています。日影規制の対象区域かどうかは<strong>自治体の条例指定</strong>なのでここでは判定できません
                 — 建築指導課に照会してください。対象だった場合は最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下に抑えると対象から外れます。
               </div>

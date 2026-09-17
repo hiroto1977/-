@@ -838,7 +838,7 @@ export function OverviewPage() {
       rows.push({
         label: '売上 (年換算ペース)',
         annual: salesPace,
-        color: '#3ec98a',
+        color: 'var(--success)',
         hint: '年初来の実績を経過で割り戻した年換算',
       });
     }
@@ -1072,7 +1072,7 @@ export function OverviewPage() {
                 value={targetProfit}
                 placeholder="目標営業利益 (円)"
                 onChange={(e) => setTargetProfit(e.target.value)}
-                style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 160 }}
+                style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 160 }}
               />
               {targetRevenue && (
                 // **刷る値そのもので関門を張る。** 以前は `upliftPct` だけを見て

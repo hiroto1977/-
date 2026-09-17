@@ -193,7 +193,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
         <div
           data-note-overflow={noteOverflow}
           role="alert"
-          style={{ fontSize: 11, color: '#fbbf24', marginBottom: 8, lineHeight: 1.6 }}
+          style={{ fontSize: 11, color: 'var(--warning)', marginBottom: 8, lineHeight: 1.6 }}
         >
           {/* 文面は `shared/inputCeiling.ts` が 1 つだけ持つ (パス 168 —— ここに直接書くと
               同じ判断の文が画面の数だけ増える)。 */}
@@ -237,7 +237,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
               </li>
             ))}
           </ul>
-          <div style={{ marginTop: 10, padding: 8, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 4, fontSize: 11, color: '#fbbf24', lineHeight: 1.5 }}>
+          <div style={{ marginTop: 10, padding: 8, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 4, fontSize: 11, color: 'var(--warning)', lineHeight: 1.5 }}>
             ⚠ {advice.disclaimer}
           </div>
         </div>
@@ -250,17 +250,18 @@ const inputStyle: React.CSSProperties = {
   padding: '6px 10px',
   background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,
 };
 
 const buttonStyle: React.CSSProperties = {
-  padding: '6px 12px',
-  background: 'var(--accent)',
+  padding: '6px 14px',
+  background: 'var(--gradient)',
   color: '#fff',
   border: 'none',
-  borderRadius: 6,
+  borderRadius: 999,
+  boxShadow: '0 4px 12px rgba(238,111,168,0.25)',
   fontSize: 13,
   fontWeight: 600,
   cursor: 'pointer',
