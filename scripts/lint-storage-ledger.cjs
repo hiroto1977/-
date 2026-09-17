@@ -36,6 +36,10 @@
  *   8. どの行にも「何が入るか」が書いてある
  *   9. **秘密や利用者の書いた物を持つ保存先は、監査報告に名前で載っている**
  *      (`docs/DATA_PROTECTION.md` —— 「漏洩・損壊・消失は防げるか」に答える文書)
+ *  12. **入口 (`data/localWrite.ts`) へ流れる鍵は、入口の登録が名乗る鍵に限る (双方向)**
+ *      —— 規則 4 の登録は散文で「新しい呼び出し元を足したら鍵をここへ書く」と言っていたが、
+ *      2026-09-17 (パス 310) まで 4 つのうち 2 つが書かれておらず、直接の getItem が同じ鍵を
+ *      名乗っていたので規則 3 は満たされ、誰も鳴らなかった。呼び出しから鍵を解いて突き合わせる
  *
  * ## 評価は純関数
  *
@@ -208,11 +212,13 @@ const INDIRECT_SITES = [
   {
     file: 'src/renderer/data/localWrite.ts',
     expr: 'key',
-    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1'],
+    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1', 'chatbot-requests', 'google-client-id'],
     why:
-      '書き込みの成否を返す共通の入口 (2026-09-06)。鍵は呼び出し元の定数で、いま通るのは書類スタジオの'
-      + '差込値と Team Radar の下書きの 2 つ。**新しい呼び出し元を足したら、その鍵をここへ書く** ——'
-      + '`writeLocalJson(key, …)` は鍵を組み立てないので、台帳が唯一の一覧になる。',
+      '成否を返す共通の入口 (書き 2026-09-06・読み 2026-09-12 パス 160)。鍵は呼び出し元の定数で、通るのは書類スタジオの'
+      + '差込値・Team Radar の下書き・チャットの要望 (2026-09-06)・Google のクライアント ID (書きはパス 155・読みはパス 310) の 4 つ。'
+      + '**新しい呼び出し元を足したら、その鍵をここへ書く** —— `writeLocalJson(key, …)` は鍵を組み立てないので、台帳が唯一の一覧になる。'
+      + '2026-09-17 (パス 310) まで後の 2 つが書かれておらず、直接の getItem が同じ鍵を名乗っていたので誰も鳴らなかった ——'
+      + ' Google の読みを入口へ寄せた瞬間に「実在しない保存先」として出た。規則 10 が入口の呼び出しから鍵を解いて突き合わせる。',
   },
   {
     file: 'src/renderer/web-shim.ts',
@@ -234,6 +240,9 @@ const CONST_RE = /const\s+([A-Za-z_$][\w$]*)\s*=\s*'([^']*)'\s*;/g;
 const IDB_OPEN_RE = /indexedDB\.open\(/;
 const DB_NAME_RE = /const\s+DB_NAME\s*=\s*'([^']+)'/;
 const WEB_STORAGE_RE = /\b(localStorage|sessionStorage)\.(?:setItem|getItem|removeItem)\(/g;
+/** 成否を返す入口 (規則 12)。ここへ渡る鍵は登録の一覧と突き合わせる。 */
+const ENTRANCE_FILE = 'src/renderer/data/localWrite.ts';
+const ENTRANCE_CALL_RE = /\b(?:read|write)Local(?:Json|String)\(/g;
 
 /*
  * ブラウザが生成元ごとに持つ**残る場所**は、この 3 つで終わりではない。
@@ -445,11 +454,50 @@ function evaluate(input) {
     }
   }
 
-  // 4/5. 鍵が定数でない箇所の登録
+  /*
+   * 12. **入口 (`data/localWrite.ts`) へ流れる鍵は、入口の登録が名乗る鍵に限る (双方向)。**
+   *
+   * 入口の `getItem(key)` / `setItem(key, …)` は鍵を組み立てないので、規則 4 の登録 (INDIRECT_SITES の
+   * localWrite の行) が「そこへ流れる鍵の一覧」を持つ。2026-09-17 (パス 310) までその一覧は 4 つのうち
+   * 2 つしか書かれておらず、鳴らなかった —— 直接の getItem が同じ鍵を名乗り、規則 3 が満たされていた
+   * ため。Google の読みを入口へ寄せた瞬間に「実在しない保存先」として出た。呼び出し
+   * (`readLocal*` / `writeLocal*`) から鍵を解いて突き合わせる。解けない鍵は規則 4 と同じ登録を要る。
+   */
+  const byPathForCalls = new Map(files.map((f) => [f.path, f.text]));
+  const flowing = new Map(); // key -> caller files
+  const unresolvedCalls = [];
+  for (const f of files) {
+    if (f.path === ENTRANCE_FILE) continue;
+    for (const m of f.text.matchAll(ENTRANCE_CALL_RE)) {
+      const expr = firstArg(f.text, m.index + m[0].length);
+      const key = resolveKey(byPathForCalls, f.path, f.text, expr);
+      if (key === null) unresolvedCalls.push({ file: f.path, expr: expr.trim() });
+      else {
+        if (!flowing.has(key)) flowing.set(key, []);
+        flowing.get(key).push(f.path);
+      }
+    }
+  }
+  const entranceKeys = new Set(indirect.filter((s) => s.file === ENTRANCE_FILE).flatMap((s) => s.keys));
+  for (const [key, callers] of flowing) {
+    if (!entranceKeys.has(key)) {
+      problems.push(
+        '入口 (' + ENTRANCE_FILE + ') へ流れる鍵が登録に無い: ' + key + ' (' + [...new Set(callers)].join(', ') +
+          ') — INDIRECT_SITES の localWrite の行の keys に足すこと',
+      );
+    }
+  }
+  for (const key of entranceKeys) {
+    if (!flowing.has(key)) {
+      problems.push('入口の登録が名乗る鍵をどの呼び出しも渡していない: ' + key + ' — 消したなら keys からも消すこと');
+    }
+  }
+
+  // 4/5. 鍵が定数でない箇所の登録 (入口へ渡す鍵が解けない呼び出しも同じ登録を要る)
   const regKey = (s) => s.file + ' ' + s.expr;
   const registered = new Set(indirect.map(regKey));
-  const seenUnresolved = new Set(unresolved.map(regKey));
-  for (const u of unresolved) {
+  const seenUnresolved = new Set([...unresolved, ...unresolvedCalls].map(regKey));
+  for (const u of [...unresolved, ...unresolvedCalls]) {
     if (!registered.has(regKey(u))) {
       problems.push(
         '鍵が定数でない保存箇所が台帳に無い: ' + u.file + ' の `' + u.expr + '` — INDIRECT_SITES に、そこへ流れる鍵と理由を書くこと',
@@ -693,6 +741,50 @@ function selfTest() {
       {
         files: [...BASE_FILES, SRC('src/renderer/h.ts', 'navigator.storage.getDirectory();')],
         ...opts,
+      },
+      1,
+    ],
+
+    /*
+     * 規則 12 (2026-09-17 · パス 310): 入口へ流れる鍵と登録の一覧を双方向に突き合わせる。
+     * 合成の入口は `setItem(key, …)` だけを持つ (規則 4 の登録が要る形)。
+     */
+    [
+      '規則 12: 入口へ流れる鍵が登録に無ければ鳴る',
+      {
+        files: [...BASE_FILES, SRC('src/renderer/i.ts', "const K2 = 'k.one';\nwriteLocalJson(K2, 1);")],
+        ...opts,
+      },
+      1,
+    ],
+    [
+      '規則 12: 入口の登録が名乗る鍵をどの呼び出しも渡していなければ鳴る (逆向き)',
+      {
+        files: [...BASE_FILES, SRC(ENTRANCE_FILE, 'localStorage.setItem(key, v);')],
+        ...opts,
+        indirect: [{ file: ENTRANCE_FILE, expr: 'key', keys: ['k.one'], why: '試験' }],
+      },
+      1,
+    ],
+    [
+      '規則 12: 登録と呼び出しが揃っていれば 0 件',
+      {
+        files: [
+          ...BASE_FILES,
+          SRC(ENTRANCE_FILE, 'localStorage.setItem(key, v);'),
+          SRC('src/renderer/i.ts', "const K2 = 'k.one';\nreadLocalJson(K2, (x) => x);"),
+        ],
+        ...opts,
+        indirect: [{ file: ENTRANCE_FILE, expr: 'key', keys: ['k.one'], why: '試験' }],
+      },
+      0,
+    ],
+    [
+      '規則 12: 入口へ渡す鍵が定数でない呼び出しは登録が要る',
+      {
+        files: [...BASE_FILES, SRC(ENTRANCE_FILE, 'localStorage.setItem(key, v);'), SRC('src/renderer/j.ts', 'writeLocalJson(dynKey, 1);')],
+        ...opts,
+        indirect: [{ file: ENTRANCE_FILE, expr: 'key', keys: [], why: '試験' }],
       },
       1,
     ],

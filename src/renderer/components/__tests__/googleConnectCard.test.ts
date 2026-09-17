@@ -182,7 +182,9 @@ describe('Google かんたん接続カード (カバレッジ 38.46% だった�
     const n = notice();
     expect(n).not.toBeNull();
     expect(n).toContain('この端末ではクライアント ID を保存できません');
-    expect(n).toContain('SecurityError');
+    // 理由の文は入口 (`data/localWrite.ts`) の物 —— パス 310 まで例外の名前 (SecurityError) だけを載せていた。
+    expect(n).toContain('ブラウザの設定 (プライベートモードなど) で端末の保存領域を読めません');
+    expect(n).toContain('通常のウィンドウで開き直すと');
     expect(n).toContain('それぞれの画面で貼り直してください');
     // **約束そのものを取り下げる。** 「1 回貼れば」は出ない。
     expect(container.textContent).not.toContain('1 回貼れば各ページで使えます');

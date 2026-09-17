@@ -7,6 +7,67 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 310 (2026-09-17) — 端末からの読み取りに「読めなかった時をどう扱うか」の台帳が無く、Google の接続カードは入口の写しを持っていた
+
+パス 309 の「なぜパス 160 の走査が stocks を見なかったか」を測った。書き込みには `storageWritePolicy.test.ts` (2026-09-06・双方向の
+台帳) が在るのに、読みは `storageReadPolicy.test.ts` (同日) が「`getItem` が `try` の内側に在るか」だけを見ていて、**受けた後に
+畳むのか・言うのか・断るのか**を留める物が無かった。`try { … } catch { return [] }` は前者を通る —— stocks がそれだった。
+
+### 実測 (読みの母集団 22 か所 = 生の `getItem` 20 + 入口 `readLocalJson` 2)
+
+- **三状態** (無い / 読めなかった / 読めた を分け、読めなかった時は画面が言うか書きを断る): 入口 (`localWrite.ts`)・書類スタジオと
+  チームレーダーの下書き (入口経由)・web-shim の talent / teamradar・stocks (パス 309)・emotions・recordEncryption・Google 接続カード。
+- **畳む** (既定へ倒す。書きの台帳で deliberate-swallow と宣言済みの物と同じ): App の並び・chatbot の履歴 / 要望 / モデル名・assistant の
+  履歴 / 配色 / 提供元・plan・internalLicense・ollama の接続先・ms365 の client id。**読んで理由を書けた** —— どれも失うのは既定に戻る物か
+  過去の吹き出しで、利用者が明示に保存した物は無い (要望の記録は code に理由が在る)。
+- **やり直しへ倒す**: pkceSession (4 つ揃わなければ null)。
+- **写し 1 件**: `GoogleConnectCard.readSavedClientId` は `readLocalString` と同じ `{ value, readable, reason }` を自前の try/catch で組み、
+  理由は例外の名前 (`SecurityError`) だけだった。プライベートウィンドウの案内文 (「通常のウィンドウで開き直すと…」) は入口側にしか無く、
+  **同じ条件が画面によって違う文で説明されていた** (パス 281 / 285 の家系)。
+- **2 つ目 (直している最中に鳴った)**: Google の読みを入口へ寄せると `lint:storage` が「台帳にあるが実在しない保存先: google-client-id」と
+  鳴った。入口 `localWrite.ts` の規則 4 の登録 (`INDIRECT_SITES`) が名乗る鍵は `docstudio` / `teamradar.draft` の 2 つだけで、
+  **`chatbot-requests` (2026-09-06) と `google-client-id` (パス 155) は書かれていなかった** —— 登録の why が「新しい呼び出し元を足したら
+  その鍵をここへ書く。台帳が唯一の一覧になる」と散文で言うだけで、直接の `getItem` が同じ鍵を名乗って規則 3 を満たしていたので、
+  2 週間近く誰も鳴らなかった。散文で述べた規則は落ちない (CLAUDE.md の自戒そのもの)。
+
+### 直し
+
+- `src/renderer/__tests__/storageReadLedger.test.ts` (新規 11 検査): 母集団 = 生の `getItem` + 入口の呼び出し。方針 4 通り
+  (entrance / three-state / fold / abort) と理由を場所ごとに。双方向・床 15・**三状態は「読めなかった」を運ぶ語 (readable / unreadable /
+  degraded) を実際に持つ** (方針だけの三状態を許さない)・fold の過半はその語を持たない (対照)・入口へ寄せた 3 画面に生の `getItem` が
+  戻っていない・標本 (.tsx)・偽の標本 `fixtures/undeclaredRead.txt`。
+- Google 接続カードは入口 `readLocalString` を通す (写し 0)。読めない端末の注記は入口の文になり、案内が付く。カードの検査は
+  `SecurityError` の綴りではなく入口の文を留める。
+
+### 対照 (4 本すべて鳴る · `ctl310/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. App.tsx の行を台帳から消す | 「台帳に無い読み取り箇所は無い」1 本 |
+| B. 実在しないファイルの行を足す | 「現物が無い項目は無い」+ fold の対照 (2 本) |
+| C. fold の App.tsx を three-state と名乗らせる | 「読めなかったことを運ぶ語を実際に持つ」1 本 |
+| D. Google カードが自前の `getItem` へ戻る | 「入口へ寄せた画面に生の getItem が残っていない」1 本 |
+| E. `lint:storage` の入口の登録から `google-client-id` を外す | 規則 3「実在しない保存先」+ 規則 12「入口へ流れる鍵が登録に無い」の 2 件 |
+| F. 誰も渡さない鍵 (`servicehub.plan`) を入口の登録に足す | 規則 12 の逆向き「どの呼び出しも渡していない」1 件 |
+
+### 自戒
+
+- **同名のファイルを上書きした。** `storageReadPolicy.test.ts` は 2026-09-06 から在った (try の内側かを見る走査・113 行) のに、`ls` せずに
+  同じ名前で書き、消していた。`git status` の ` M` で気付き、`git checkout` で戻して台帳を `storageReadLedger.test.ts` へ移した。
+  **新しいファイルは、作る前に在るかを見る。** ARCHITECTURE.md はその検査を名前で挙げており、読んでいれば気付けた
+  (`verify:arch` は `file:line` を検証するが、名前だけの参照は検証しない)。
+
+### 実機
+
+`smoke:app` OK / `e2e` 30 suite 398 件 ❌ 0 / `e2e:lite` 398 件 ❌ 0 / `perf` OK (LITE DCL 232 ms heap 10.2 MB・FULL DCL 678 ms heap 36.7 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8 (連鎖 1 回で全段緑)。出荷物 FULL **11,895,789 B** / LITE **3,308,310 B** (両方 -37 B —— Google カードの注記の文と入口の呼び出し)。
+
+### 台帳
+
+- ARCHITECTURE のテスト数 14,521 → **14,532** (実行時 17,300 → 17,311)。`storageReadPolicy` の段落に台帳の対の 1 文。`npm test` 751 ファイル /
+  17,311 件・`verify:all` 37/37 (1 回目は `lint:storage` で鳴った —— 上の 2 つ目の穴。2 回目は verify:arch の参照数 606 → 607 と git 管理外の新規ファイル。3 回目 OK)。
+- `scripts/lint-storage-ledger.cjs` に**規則 12** (入口へ流れる鍵 = 入口の登録が名乗る鍵・双方向。解けない鍵は規則 4 と同じ登録を要る)。
+  self-test 4 件 (`規則 12:` の 4 行)。登録の keys を 2 → 4 に直し、why に経緯。CLAUDE.md の `lint:storage` の行に規則 12。
+
 ## パス 309 (2026-09-17) — 銘柄のウォッチリストは「まだ無い」と「読めなかった」を分けず、壊れた保存値を見本 / 空として刷り、次の登録が 1 銘柄で上書きしていた (両ビルド)
 
 パス 308 の「閉じていない物」(状態ファイルの読み) を辿って、**読みの結果をどう畳んでいるか**を 4 つの状態ファイルで比べた。
@@ -3911,6 +3972,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 端末からの読み取りの台帳 (パス 310) | ✅ 読みの 22 か所を方針 4 通りと理由で台帳に (`storageReadLedger.test.ts`・双方向)。Google 接続カードの写し (自前の try/catch) を入口へ。対照 4 本 |
 | 銘柄のウォッチリストの読み (パス 309) | ✅ 両ビルドが shared の 3 状態 (`readStoredWatchlist`) を通り、画面が ⚠ で「読めなかった」と言う。登録・解除は警告のうえ通す (パス 120 / 160 の規則)。対照 4 本 (D は実機で exit 1)。`isSafeSymbol` の写し 2 → 1 |
 | スキル本文の天井 (パス 308) | ✅ system の天井 (60,000 字) を run-skill と一覧へ。byte の門 (4 × 天井) で読まずに断る。対照 3 本 |
 | 例外の文面 → 画面 (パス 307) | ✅ 2 経路を `redactForMessage` へ。実機 5 段 + `e2e:ollama` 緑・両方 +9 B。「例外 → 画面」の母集団を数える網は無い (閉じていない物) |

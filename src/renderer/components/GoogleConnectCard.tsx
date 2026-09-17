@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Section } from './StatusBar';
-import { describeStorageError, writeLocalString } from '../data/localWrite';
+import { readLocalString, writeLocalString } from '../data/localWrite';
 
 /**
  * Google ワークスペース「かんたん接続」カード (Drive / Calendar / Gmail 共通)。
@@ -40,13 +40,15 @@ export interface GoogleConnectCardProps {
  * 投げる。そこを `catch { return '' }` で畳むと、**保存できない端末を「まだ貼っていない
  * 端末」と同じ**に見せてしまい、下の「1 回貼れば各ページで使えます」が嘘になる
  * (パス 86 で設定画面に同じ形を直した)。
+ *
+ * 読むのは入口 `readLocalString` (パス 160)。2026-09-17 (パス 310) まで、ここは同じ形を
+ * 自前の try/catch で写していて、理由は例外の名前 (`SecurityError`) だけだった ——
+ * プライベートウィンドウの案内 (「通常のウィンドウで開き直すと…」) は入口側にしか無く、
+ * 同じ条件が画面によって違う文で説明されていた。写しをやめて入口の文を使う。
  */
 function readSavedClientId(): { readonly value: string; readonly readable: boolean; readonly reason: string } {
-  try {
-    return { value: localStorage.getItem(GOOGLE_CLIENT_ID_STORAGE_KEY) ?? '', readable: true, reason: '' };
-  } catch (err) {
-    return { value: '', readable: false, reason: describeStorageError(err) };
-  }
+  const r = readLocalString(GOOGLE_CLIENT_ID_STORAGE_KEY);
+  return { value: r.value ?? '', readable: r.readable, reason: r.message ?? '' };
 }
 
 export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardProps) {
@@ -62,7 +64,7 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
    * この値が下の説明文を切り替える —— **できないことを「できます」と書かない。**
    */
   const [shareNote, setShareNote] = useState<string | null>(
-    saved.readable ? null : `この端末ではクライアント ID を保存できません (${saved.reason})。`,
+    saved.readable ? null : `この端末ではクライアント ID を保存できません —— ${saved.reason}`,
   );
 
   const openExternal = (url: string) => window.serviceHub?.openExternal(url);
