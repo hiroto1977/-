@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 607 個の `file:line` 参照 + 41 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 610 個の `file:line` 参照 + 41 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14542** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14550** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 607 | 自己検証 |
+| `file:line` 参照数 | 610 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -365,8 +365,11 @@ stub、`LIVE_ACTIONS` に登録なし、`src/shared/api/` にもクライアン�
 
 `action:invoke` の IPC ハンドラは **失敗しても reject せず** `{ ok: false, code,
 message }` を返す (未知のサービス・未登録アクション・トークン未設定・アクション内の
-throw をすべて戻り値で表す)。同じアクションを呼ぶ 3 経路が、この事実の扱いを
-別々に持っていた:
+throw をすべて戻り値で表す)。ブラウザ版の `web-shim.ts` も同じ約束を **`withFloor`
+(invoke / fetchSnapshot の外側 1 か所・パス 312)** で守る —— 2026-09-17 までは 32 の枝の
+中の 19 の `try` (同じ規則の写し) だけが守っており、Web Storage が拒む環境・null の
+payload・形の違う payload でそれぞれ reject した。同じアクションを呼ぶ 3 経路が、
+この事実の扱いを別々に持っていた:
 
 | 経路 | `ok:false` | `persisted:false` |
 |---|---|---|
@@ -477,6 +480,16 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 `await` がある」形を落とす。`await` の無いハンドラと、try の中だけで await する
 ハンドラは通る。実コードでの陰性対照も取っている (`app:openPath` を監査前の形に
 戻すと 1 件鳴る)。
+
+**ブラウザ版の同じ約束は構造ではなく動作で留める** (`src/renderer/__tests__/webShimInvokeNeverRejects.test.ts`)。
+このゲートは `src/main` しか見ないので、`web-shim.ts` の `invoke` / `fetchSnapshot` は
+2026-08-23 から「敵対条件を作って全組を叩き、reject が 0」で守ってきた。ただし列挙した
+条件の外は見えない —— 2026-09-17 (パス 312) に条件を 3 つ足すと (Web Storage が拒む /
+payload が null / 欄の形が違う) それぞれで reject が出た。守っていたのは 32 の枝の中の
+19 の `try` で、床が無かった。main と同じ床 (`withFloor` → `err()` → `safeErrorMessage`)
+を外側 1 か所に置き、検査は 3 条件の全組走査に加えて**枝の try の外で投げる注入**
+(`probeOllama`) で床そのものを叩く。対照 3 本 (invoke の床を外す → 5 件 / 床の伏字を
+外す → 2 件 / fetchSnapshot の床を外す → 1 件)。
 
 #### 「測っていない」は「緑」ではない (`scripts/lint-mutation-scope.cjs`)
 

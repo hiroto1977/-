@@ -7,6 +7,71 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 312 (2026-09-17) — ブラウザ版の `invoke` / `fetchSnapshot` に main の IPC ハンドラと同じ床が無く、「reject しない」は 19 の写しと 4 条件の検査で名乗っていた
+
+パス 311 の「閉じていない物」—— shim の `invoke` / `fetchSnapshot` は、枝ごとの `try` の外で投げた物をどこで受けるか —— を測った。
+
+### 実測
+
+- **約束**: `actionOutcome.ts` / `VoiceCommandBar.tsx` は「`invoke` は失敗しても reject せず `{ ok: false }` を返す」と書き、画面はそれを前提に
+  **呼び出し 40 か所のうち 24 が `try` の外で `await`** する (`setSubmitting(true)` … await … `setSubmitting(false)` の形。reject すると
+  `busy` が戻らず、ボタンは押せないまま残り、画面には何も出ない)。`fetchSnapshot` の 1 か所 (`useServiceData`) だけが受け皿を持つ。
+- **main**: `action:invoke` / `fetch:snapshot` は本体を丸ごと `try` に入れ `safeErrorMessage` で返す (床は 1 か所・`lint:ipc-handlers` が形を留める)。
+- **shim**: `invoke` は **32 の枝**、その中に `try` が **19** —— 同じ規則の写しで、外側の床は無い。`fetchSnapshot` は 7 の枝 + liveRead、床は無い。
+- **既存の検査** `webShimInvokeNeverRejects.test.ts` (2026-08-23) は 4 条件 (fetch が reject / blob: が塞がる / ライブラリが投げる / 金庫が null) で
+  37 組を叩き reject 0 —— 「何があっても reject しない」と述べていた。**条件を足すと、足した分だけ穴が出た**:
+
+| 条件 | reject した組 |
+|---|---|
+| 金庫 (`vault.getToken`) が投げる (施錠中) | 0 |
+| `fetch` が同期で投げる | 0 |
+| **Web Storage そのものが拒む** (Chrome の `SecurityError` · パス 89 の環境) | **1** (`emotions/clear-history` —— 隣の `log-mood` は `try` を持ち、こちらは持たない。投げるのは `saveStore` の書き込み) |
+| **payload が null** (型は `Record` だが床は型を信じない) | **11** (`Cannot read properties of null`) |
+| **欄の形が違う payload** (`strategyComparison: 42`) | **2** (`stocks/export-dashboard(-md)` —— 書き出しの描画が `.replace` を呼ぶ) |
+| `fetchSnapshot` × 上の全条件 | 0 (だが床は無く、枝の try の外で投げれば同じ形) |
+
+条件を 1 つ足すたびに穴が 1 つ出るのは、**床が無いことの症状**である。列挙した条件で reject しないことは「何があっても」の標本にすぎない。
+
+### 直し (規則は 1 つ: `withFloor` —— main の `safeErrorMessage` と同じ関数を、`invoke` / `fetchSnapshot` の外側 1 か所で)
+
+- `web-shim.ts`: 中身の object を `unguarded` とし、公開する `shim` は `{ ...unguarded, fetchSnapshot: withFloor('fetch_failed', …), invoke: withFloor('action_failed', …) }`。
+  床は `err()` を通るので文面は伏字 + 天井 (main と同じ `safeErrorMessage`)。code は main と同じ汎用の 2 つ。**枝の中の `try` は残す** ——
+  `not_configured` など枝が選ぶ code を持つので写しではない。公開する口の名前は変わらない (`webShimBridge` の parity 14 口はそのまま)。
+- `webShimInvokeNeverRejects.test.ts` (+8): 3 条件の全組走査 (reject 0 + **空虚でない標本** —— null は枝の中まで届き 11 組が `action_failed` で戻る /
+  Web Storage が拒む環境は `clear-history` に本当に届く) ・床の文面が `Bearer [REDACTED]` を含み鍵を含まない (標本: 素の文面には鍵が載る) ・
+  `fetchSnapshot` の床は `probeOllama` を**枝の try の外で投げる注入** (partial mock) で叩く (注入そのものが投げることも別の検査で見る) ・
+  全スナップショット × Web Storage が拒む環境。
+
+### 対照 (3 本すべて鳴る · `ctl312/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. `invoke` の床を外す (`invoke: unguarded.invoke`) | 5 本 (3 条件の全組走査 + 標本 + 伏字)。stack は `saveStore` (emotionsWeb.ts:138) を指す |
+| B. 床が `err()` を通らず素の `e.message` を返す | 2 本 (伏字・fetchSnapshot の伏字) |
+| C. `fetchSnapshot` の床を外す | 1 本 (注入が reject) |
+
+### 実機
+
+`smoke:app` OK / `e2e` 30 suite 398 件 ❌ 0 / `e2e:lite` 398 件 ❌ 0 / `perf` OK (LITE DCL 235 ms heap 10.2 MB・FULL DCL 661 ms heap 36.9 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8 (連鎖 1 回で全段緑)。出荷物 FULL **11,896,435 B** / LITE **3,308,956 B** (両方 +211 B —— 床 `withFloor` と公開 object の組み立て。web-shim は両ビルドが読むので LITE も同じだけ)。
+
+### 台帳
+
+- ARCHITECTURE のテスト数 14,542 → **14,550**。`useServiceData` / `err()` の docblock は行数を変えずに書き換えた (`file:line` 参照は動かない)。
+  `file:line` 参照 607 → 610。`npm test` 752 ファイル / 17,329 件 (最初の全走査で 1 件 —— 下の台帳の行 —— が鳴り、直して再走査で全緑)・`verify:all` 37/37・実機 1 回で全段緑。
+  ARCHITECTURE の `actionOutcome` の節と `lint:ipc-handlers` の節に、ブラウザ版の床を 1 段ずつ足した。
+- `invokeFailureSurfaced.test.ts` (パス 176) の台帳に `web-shim.ts` を理由つきで足した —— 床の委譲 `unguarded.invoke(...)` は `.invoke(` の綴りを
+  持つが呼び手ではなく、結果を 1 字も触らずに返す (失敗の枝は呼んだ画面が持つ)。全走査で唯一鳴った 1 件で、走査が実物に当たっている報せ。
+- **自戒**: 「catch-all が在るか」を語で grep して 0 件だったので「無い」と結論しかけた —— 実際は**動作で留める検査が在り、構造の床が無い**という
+  両立だった。無いことは走査ではなく、投げて確かめる (対照 A の stack が投げた場所を指すまでが実測)。
+
+### 当たって問題なしだった物 (パス 311 の直後・再訪不要)
+
+- 動的な鍵の代入 20 か所 (prototype の鍵) —— どれも `Object.hasOwn` / `lookup` を通るか、鍵が自前の定数。
+- main の IPC ハンドラ 14 本はすべて `safeErrorMessage` で返す (`lint:ipc-handlers` の言うとおり)。
+- shim の `err()` は `ERROR_MESSAGE_MAX_CHARS` (2,000) で伏字 + 天井を掛けるので、Slack の `error` / Cloudflare の `errors[0].message` を
+  文面に埋め込む 2 か所 (`saasWriteWeb.ts`) と main の同じ 3 か所は境界で有界。
+- 金庫が投げる / `fetch` が同期で投げる条件では shim は 1 組も reject しない (上の表)。
+
 ## パス 311 (2026-09-17) — 第三者の 2xx 本文が JSON でないとき、V8 の SyntaxError が本文の先頭 10 字を引用したまま画面へ出ていた (ブラウザ版の書き込み 13 経路ほか 16 か所)
 
 パス 307 / 309 の「閉じていない物」(例外の文面 → 画面の census) を、**例外の文面に相手の本文が乗る形**に絞って測った。
@@ -4019,6 +4084,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| ブラウザ版 invoke / fetchSnapshot の床 (パス 312) | ✅ main と同じ `safeErrorMessage` の床を外側 1 か所 (`withFloor`) に。3 条件 (Web Storage 拒否 / null / 形違い) で 1 + 11 + 2 組が reject していた。検査 +8・対照 3 本 |
 | 2xx の非 JSON 本文と V8 の引用 (パス 311) | ✅ `res.json()` 16 か所を `parseJsonBody` (文言は定数) へ。census で `.json()` は 1 か所だけ (両方向)。標本: 素の res.json() は先頭 10 字を引用する。対照 2 本 |
 | 端末からの読み取りの台帳 (パス 310) | ✅ 読みの 22 か所を方針 4 通りと理由で台帳に (`storageReadLedger.test.ts`・双方向)。Google 接続カードの写し (自前の try/catch) を入口へ。対照 4 本 |
 | 銘柄のウォッチリストの読み (パス 309) | ✅ 両ビルドが shared の 3 状態 (`readStoredWatchlist`) を通り、画面が ⚠ で「読めなかった」と言う。登録・解除は警告のうえ通す (パス 120 / 160 の規則)。対照 4 本 (D は実機で exit 1)。`isSafeSymbol` の写し 2 → 1 |

@@ -380,7 +380,7 @@ function ok<T>(data: T): ActionResult<T> {
  * `redactForMessage` を通しているので、今のところ二度手間である。それでも
  * 置くのは、main 側の `safeErrorMessage` と同じ理由 — この関数は
  * ブラウザ版の**全ての失敗**が通る 1 本の口で、新しく足された経路が伏字を
- * 忘れても、ここで止まる。片側にしか関門が無い状態を残さない。
+ * 忘れても、ここで止まる (枝の try の外で投げた物も `withFloor` がここへ通す · パス 312)。片側にしか関門が無い状態を残さない。
  * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
  */
 /**
@@ -1103,7 +1103,7 @@ function readStoredTeamRadarState(): StoredTeamRadar {
   }
 }
 
-const shim = {
+const unguarded = {
   getVersion: (): Promise<string> => Promise.resolve('0.1.0-web'),
 
   /**
@@ -1863,6 +1863,49 @@ const shim = {
   oauthSupported: (): Promise<boolean> => Promise.resolve(false),
   authorize: (): Promise<ActionResult<unknown>> =>
     Promise.resolve(err('not_supported', 'ブラウザ版では OAuth フローを実行しません')),
+};
+
+/**
+ * **main の IPC ハンドラと同じ床** (2026-09-17 · パス 312)。
+ *
+ * `action:invoke` / `fetch:snapshot` は本体を丸ごと `try` に入れ、投げた物を
+ * `safeErrorMessage` で `{ ok: false }` にして返す —— 「失敗は戻り値で表す」約束を
+ * **ハンドラの外側 1 か所**で守っている (`lint:ipc-handlers` が形を留める)。
+ * ブラウザ版の `invoke` はその約束を **32 の枝の中の 19 の `try`** で守っていた ——
+ * 同じ規則の写しが 19 つ在り、床は無かった。写しは書き忘れが効く: 実測 (2026-09-17) では
+ * 隣の `log-mood` が持つ `try` を `clear-history` が持たず、Web Storage そのものが拒む
+ * 環境 (パス 89 の SecurityError) で **reject** した。null の payload で 11 の枝、
+ * 形の違う payload で 2 の枝 (stocks の書き出し) も同じく reject した。
+ * `webShimInvokeNeverRejects.test.ts` (2026-08-23) は 4 つの敵対条件で全組を叩いて
+ * 「何があっても reject しない」と述べていたが、**列挙した条件の外**は見えない ——
+ * 条件を 1 つ足すたびに穴が 1 つ出る形は、床が無いことの症状である。
+ *
+ * reject の行き先は呼び出し側の `busy` フラグである (30 か所が `try` の外で `await` して
+ * いる —— `actionOutcome.ts` / `VoiceCommandBar.tsx` に「reject しない」と書いてあるとおり、
+ * それが約束だから)。`setSubmitting(false)` が走らず、ボタンは押せないまま残り、画面には
+ * 何も出ない。
+ *
+ * 床は `err()` を通るので、文面は main と同じ `safeErrorMessage` (伏字 + 天井) を経る。
+ * 枝の中の `try` は残す —— それらは `not_configured` など**枝が選ぶ code** を持つ。
+ * 床が持つのは main と同じ汎用の code (`action_failed` / `fetch_failed`) だけである。
+ */
+async function withFloor<T>(
+  code: 'action_failed' | 'fetch_failed',
+  run: () => Promise<ActionResult<T>>,
+): Promise<ActionResult<T>> {
+  try {
+    return await run();
+  } catch (e) {
+    return err<T>(code, safeErrorMessage(e));
+  }
+}
+
+const shim = {
+  ...unguarded,
+  fetchSnapshot: <T>(serviceId?: string): Promise<ActionResult<T>> =>
+    withFloor<T>('fetch_failed', () => unguarded.fetchSnapshot<T>(serviceId)),
+  invoke: <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> =>
+    withFloor<T>('action_failed', () => unguarded.invoke<T>(serviceId, action, payload)),
 };
 
 // Install only if no Electron preload has populated serviceHub already.

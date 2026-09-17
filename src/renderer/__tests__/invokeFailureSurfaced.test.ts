@@ -123,6 +123,11 @@ const SILENT_ALLOWED: Readonly<Record<string, string>> = {
     '失敗は捨てずに `unknown: true` として返し、画面が「確認できません」と刷る (パス 107 ——'
     + '「未設定」と「読めなかった」を混ぜないために作った関数そのもの)。'
     + '`res.ok` の枝を通らなければ `unknown` になるので、`else` を書く必要が無い',
+  'web-shim.ts':
+    '`invoke` の**実装**であって呼び手ではない。唯一の `.invoke(` は床 `withFloor` から'
+    + '中身 (`unguarded.invoke`) への委譲で (パス 312)、結果 (ok も失敗も) は 1 字も触らずに'
+    + '画面へ返す —— 失敗の枝を持つのは呼んだ画面の側。ここに `else` を書けば床が判断を'
+    + '持つことになり、main の `action:invoke` (投げた物を戻り値にするだけ) と形がずれる',
 };
 
 describe('invoke の失敗を画面に出さない呼びは、理由つきの台帳の物だけ (パス 176)', () => {

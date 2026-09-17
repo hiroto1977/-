@@ -102,7 +102,7 @@ export function useServiceData<T>(
     // IPC が **reject** した場合の受け皿。ハンドラ側は失敗を戻り値で表す約束だが、
     // 約束の外で throw されると (2026-08 監査では `safeStorage.decryptString` が
     // 壊れた値で throw した) ここで捕まえないと status が 'loading' のまま残り、
-    // バッジが「読込中…」で永久に止まる。約束は main 側で守るが、止まらない
+    // バッジが「読込中…」で永久に止まる。約束は main (と web-shim の床 · パス 312) で守るが、止まらない
     // ことは renderer 側でも保証する。
     let result: FetchResult<T>;
     try {
