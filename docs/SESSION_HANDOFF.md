@@ -7,6 +7,50 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 308 (2026-09-17) — スキル本文 (SKILL.md) は system として丸ごと有料 API へ送られるのに、天井を持たず、ファイルは大きさを見ずに読んでいた
+
+main の local file の読み (10 か所) を「大きさの門が在るか」で走査した (パス 307 の続き)。`secrets.ts` だけが
+`MAX_STORE_SIZE` (1 MB) を持ち、状態ファイル (emotions / talent / teamradar) は app 自身が書く物。残る `clients/skills.ts` は
+**利用者の `~/.claude/skills/*/SKILL.md` を読んで `system:` に載せ、Anthropic へ送る** —— 発話 (`prompt`) はパス 112 が
+`MAX_ASSISTANT_CONTENT_CHARS` (8,000) で断り、アシスタントの system は `assistant.ts` が `MAX_ASSISTANT_SYSTEM_CHARS` (60,000)
+で切るのに、**スキルの system だけが天井を持たなかった** (パス 112 が塞いだ「貼り付けた物が丸ごと有料 API へ出ていた」の隣の欄)。
+一覧 (`scanSkills`) も `readSkillBody` も `fs.readFile` を大きさを見ずに呼ぶので、巨大な SKILL.md はメモリへ丸ごと入る。
+
+### 直し (規則は 1 つ: system の天井は assistant と同じ `MAX_ASSISTANT_SYSTEM_CHARS`)
+
+- `MAX_SKILL_FILE_BYTES = 4 × MAX_ASSISTANT_SYSTEM_CHARS`: UTF-8 は 1 字 4 byte までなので、これを超えるファイルは**読まなくても**
+  天井を超えている (逆は成り立たないので、読んだ後に `countChars` で数え直す)。
+- 一覧: byte の門を超える物は読まずに `runnable: false` + 理由 (`skillTooLongNote()` = `inputTooLongMessage('スキル本文', 60000)`)
+  で載せる (消さない —— 消すと「無い」に見える)。字の門を超える物も同じ (題は frontmatter から)。`markRunnable` は既に理由の
+  在る行を上書きしない。
+- `run-skill`: 同じ 2 段で断り、API を呼ばない。**切らずに断る** (切ると指示の後半が黙って消える —— パス 172–175 の規則。
+  `assistant.ts` の system は `clampToCeiling` で切る側だが、あちらは会話の文脈、こちらは指示書なので断る側に置いた)。
+- ブラウザ版に `run-skill` は無い (`~/.claude/skills` を読めない) ので main だけ。
+
+### 検査 (+5 · `skills.test.ts` 74 → 79)
+
+一覧 3 件 (byte 超は **`readFile` に実体が現れない** —— spy が small.md の読みは見ている標本つき / 字超は runnable: false と
+frontmatter の題 / 対照: 天井ちょうどは runnable) + run-skill 2 件 (字超は断って fetch 0 回 / byte 超は読まずに断る)。
+
+### 対照 (3 本すべて鳴る・snapshot から復元 · `ctl308/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. 一覧の byte の門を外す | 「読まずに一覧へ載せ」1 本 (readFile に huge.md が現れる) |
+| B. 一覧の字の門を外す | 「字が天井を超えれば runnable: false」1 本 |
+| C. `readSkillBody` の 2 段を外す | run-skill の 2 本 |
+
+### 実機
+
+main だけの変更なので `build:renderer` → **`smoke:app` OK** (実物の `electron .` が新しい main.js で起動) → `build:web` → FULL は **11,894,372 B でパス 307 と byte 単位で同じ** (ブラウザ版は `clients/skills.ts` を読まない —— 実測で裏付けた。LITE は組んでいない: 差が出るのは学術コーパスだけなので FULL が不変なら LITE も不変)。e2e は回していない (renderer に触っていない)。
+
+### 閉じていない物
+
+- main の local file の読みで大きさの門を持つのは `secrets.ts` と `skills.ts` だけ。実測: `emotions.ts:102` は `fs.readFile(storePath())` を直に、
+  `talent.ts:79` / `teamradar.ts:99` は `deps.readFile ?? fs.readFile` を直に呼び、`atomicWrite.ts` の `readFileWithBackup` (保護対象) にも
+  天井は無い。どれも app 自身が書く物 (入力の天井で 1 件ずつは小さい) なので後回しにしたが、「自分が書いた物は大きくならない」は前提であって
+  検査ではない —— 直すなら `readFileWithBackup` に byte の天井を 1 つ置き、3 つの読みをそこへ通す形 (保護対象なので chain が要る)。
+
 ## パス 307 (2026-09-17) — 例外の message を画面へ出す経路 2 本が、天井だけ掛けて伏字を持っていなかった
 
 `src/main` の子プロセスと console 出力の走査 (当たって問題なし・パス 306 の節) の続きで、**例外の文面が画面へ出る
@@ -69,6 +113,14 @@ self-test の仮名 2 件 (`lint:a` / `lint:b`) だけ —— 「無い命令を
 - **利用者が配る Worker (`docs/PROXY_EXAMPLE.md`)**: 共有秘密の照合は XOR 累積の定時間比較 (`timingSafeEqualStr`)、転送は `MAX_REDIRECTS = 3` で
   ホップごとに再検査、資格情報ヘッダは `CREDENTIAL_HEADERS` で落とす。本文の大きさの天井は Worker 側に無いが、アプリ側が両端で持つ
   (応答は `readBodyWithCap`・要求は書き込みの天井)。`SHARED_SECRET` が空なら allowlist 内への中継を誰でも使える —— 冒頭 (55 行目) に明記。
+- **docs のゲート名 (バッククォートの `lint:*` / `verify:*` … 1,364 件)** で package.json に無い物は 4 件 —— self-test の仮名 2 件 (`lint:a` / `lint:b`)・
+  前方一致の罠の例示 (`lint:test` vs `lint:test-coverage`) 1 件・行番号 (`vault:532`) 1 件。名前の古びは 0。
+- **prototype 汚染 (再帰的な merge / `for…in` の写し) は出荷 code に 0 件** (走査: `deepMerge` / `mergeDeep` / `assignDeep` / `for (const k in`)。
+  読む側の `__proto__` / `constructor` は `shared/lookup.ts` (`Object.hasOwn`) が既に床 (パス 235)。
+- **相手の数で確保する配列 / 文字列は 0 件** (走査: `new Array(v)` / `.repeat(v)` / `Array.from({ length: v })` の変数形 2 件はどちらも定数 `PLAN_MONTHS`)。
+- **`knowledge-auto.yml` は書かない** (`permissions: contents: read`、`git diff --exit-code` で再生成の drift を落とすだけ。自動 push で
+  レビューを迂回する形は無い)。`ci.yml` は `concurrency` (ref ごと・cancel-in-progress) を持つ。`e2e.yml` / `mutation.yml` / `release.yml` は
+  持たないが、起動が手動 / 週次 / tag なので重なりは起きにくい。
 - scripts の文字列中の `npm run X`: 156 件のうち package.json に無いのは self-test の仮名 2 件だけ。docs の「`npm run X` で再生成」5 件は
   引継ぎの引用 2 件を除き実際に書き戻す script を指す。
 
@@ -3762,6 +3814,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| スキル本文の天井 (パス 308) | ✅ system の天井 (60,000 字) を run-skill と一覧へ。byte の門 (4 × 天井) で読まずに断る。対照 3 本 |
 | 例外の文面 → 画面 (パス 307) | ✅ 2 経路を `redactForMessage` へ。実機 5 段 + `e2e:ollama` 緑・両方 +9 B。「例外 → 画面」の母集団を数える網は無い (閉じていない物) |
 | `e2e.yml` が runner で動くか (パス 305) | ✅ 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 → **全 13 段 success・8 分 01 秒** (e2e 395 / lite 395 / ollama 8 / perf OK / smoke:app OK) |
 | 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 (CLAUDE.md) |

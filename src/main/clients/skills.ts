@@ -3,7 +3,12 @@ import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
-import { MAX_ASSISTANT_CONTENT_CHARS, capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
+import {
+  MAX_ASSISTANT_CONTENT_CHARS,
+  MAX_ASSISTANT_SYSTEM_CHARS,
+  capAssistantReply,
+  inputTooLongMessage,
+} from '../../shared/assistantLimits';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../shared/skillIdentity';
 import {
   jsonFetch,
@@ -193,6 +198,22 @@ export async function scanSkills(
     // 「代入が成功した」場合しかない (TS の確定代入解析もそれを認める)。
     // 初期値 `''` は**一度も観測されず**、変異検査で生き残っていた
     // (実測 2026-08-31)。読まれない値を置かない。
+    // 読む前に大きさで断る (パス 308)。天井を超えるファイルを丸ごと読んでから捨てない。
+    // 一覧からは消さない —— 消すと「無い」に見える。runnable: false と理由で見せる。
+    const st = await fs.stat(realFile).catch(() => null);
+    if (st === null) continue;
+    if (st.size > MAX_SKILL_FILE_BYTES) {
+      results.push({
+        id: fallbackName,
+        label: fallbackName,
+        description: '',
+        source,
+        path: skillFile,
+        runnable: false,
+        unrunnableReason: skillTooLongNote(),
+      });
+      continue;
+    }
     let content: string;
     try {
       content = await fs.readFile(realFile, 'utf8');
@@ -200,6 +221,19 @@ export async function scanSkills(
       continue;
     }
     const fm = parseFrontmatter(content);
+    // byte の門は「確実に超える物」しか止めない (ASCII なら byte = 字)。字で数え直す。
+    if (countChars(content) > MAX_ASSISTANT_SYSTEM_CHARS) {
+      results.push({
+        id: fallbackName,
+        label: fm.name || fallbackName,
+        description: fm.description ?? '',
+        source,
+        path: skillFile,
+        runnable: false,
+        unrunnableReason: skillTooLongNote(),
+      });
+      continue;
+    }
     /*
      * **鍵は実体 (フォルダ名・ファイル名) から、題は frontmatter から。**
      * `fallbackName` がそのまま鍵 —— `readSkillBody` が組む候補
@@ -245,6 +279,8 @@ function markRunnable(entries: SkillEntry[]): void {
     else byId.set(e.id, [e]);
   }
   for (const e of entries) {
+    // 既に理由が付いている物 (長すぎる本文 · パス 308) はそのまま —— ここで上書きしない。
+    if (e.unrunnableReason !== '') continue;
     if (!isSafeSkillName(e.id)) {
       e.runnable = false;
       e.unrunnableReason = unsafeSkillIdNote(e.id);
@@ -305,6 +341,28 @@ interface RunSkillPayload {
  * `model` も同じ理由で payload から外した。モデルの選択は保存済みの
  * プロバイダ設定 (`providers.ts` の `cfg.model`) 側の口である。
  */
+/**
+ * スキル本文 (SKILL.md) は **system プロンプトとして丸ごと有料 API へ送られる**。
+ * 発話は `MAX_ASSISTANT_CONTENT_CHARS` (パス 112) で、アシスタントの system は
+ * `MAX_ASSISTANT_SYSTEM_CHARS` (`assistant.ts`) で天井を持つのに、こちらの system だけが
+ * 2026-09-17 (パス 308) まで**天井を持たず**、ファイルは大きさを見ずに丸ごと読んでいた
+ * (パス 112 が「貼り付けた物が丸ごと有料 API へ出ていた」と塞いだ形の、隣の欄)。
+ *
+ * 天井は system と同じ 1 つ (`MAX_ASSISTANT_SYSTEM_CHARS`)。**切らずに断る** —— 切ると指示の
+ * 後半が黙って消える (パス 172–175 の規則)。一覧では `runnable: false` と理由で見せ、
+ * run-skill では同じ文で投げる。
+ *
+ * 読む前の門は byte で持つ: UTF-8 は 1 字 4 byte までなので、`4 × 天井` byte を超える
+ * ファイルは読まなくても天井を超えていると分かる (逆は成り立たない —— ASCII だけなら
+ * byte = 字 —— ので、読んだ後に字で数える)。
+ */
+export const MAX_SKILL_FILE_BYTES = MAX_ASSISTANT_SYSTEM_CHARS * 4;
+
+/** 長すぎるスキル本文の断り (一覧の `unrunnableReason` と run-skill の例外で同じ文)。 */
+export function skillTooLongNote(): string {
+  return inputTooLongMessage('スキル本文', MAX_ASSISTANT_SYSTEM_CHARS);
+}
+
 export const SKILLS_MAX_TOKENS = 2048;
 
 interface AnthropicMessagesResponse {
@@ -352,11 +410,18 @@ async function readSkillBody(id: string): Promise<string> {
     const real = await fs.realpath(c).catch(() => null);
     if (real === null) continue;
     if (!real.startsWith(baseResolved)) continue;
+    // 読む前に大きさで断る (パス 308)。候補の順は一覧の勝者と同じなので、ここで断るのは正しい。
+    const st = await fs.stat(real).catch(() => null);
+    if (st === null) continue;
+    if (st.size > MAX_SKILL_FILE_BYTES) throw new Error(skillTooLongNote());
+    let body: string;
     try {
-      return await fs.readFile(real, 'utf8');
+      body = await fs.readFile(real, 'utf8');
     } catch {
-      // try next
+      continue; // try next
     }
+    if (countChars(body) > MAX_ASSISTANT_SYSTEM_CHARS) throw new Error(skillTooLongNote());
+    return body;
   }
   throw new Error(`skill "${id}" not found in ~/.claude/skills`);
 }

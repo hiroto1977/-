@@ -2,7 +2,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot, SKILLS_MAX_TOKENS } from '../skills';
+import {
+  parseFrontmatter,
+  scanSkills,
+  ACTIONS,
+  isSafeSkillName,
+  fetchSkillsSnapshot,
+  SKILLS_MAX_TOKENS,
+  MAX_SKILL_FILE_BYTES,
+  skillTooLongNote,
+} from '../skills';
+import { MAX_ASSISTANT_SYSTEM_CHARS } from '../../../shared/assistantLimits';
 import type { SkillEntry } from '../skills';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../../shared/skillIdentity';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
@@ -328,6 +338,32 @@ describe('ACTIONS["run-skill"]', () => {
     process.env.HOME = originalHome;
     vi.restoreAllMocks();
     await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('★ 長すぎるスキル本文は API へ送らずに断る (パス 308 —— system の天井は assistant と同じ 1 つ)', async () => {
+    await fs.writeFile(
+      path.join(tmpDir, '.claude', 'skills', 'echo', 'SKILL.md'),
+      'x'.repeat(MAX_ASSISTANT_SYSTEM_CHARS + 1),
+    );
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']!({ token: 'sk-ant-xxxxx', fetch: fetchMock, payload: { id: 'echo', prompt: 'ping' } }),
+    ).rejects.toThrow(skillTooLongNote());
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('★ 天井 × 4 byte を超える SKILL.md は読まずに断る (readFile に実体が現れない)', async () => {
+    await fs.writeFile(
+      path.join(tmpDir, '.claude', 'skills', 'echo', 'SKILL.md'),
+      'x'.repeat(MAX_SKILL_FILE_BYTES + 1),
+    );
+    const readSpy = vi.spyOn(fs, 'readFile');
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']!({ token: 'sk-ant-xxxxx', fetch: fetchMock, payload: { id: 'echo', prompt: 'ping' } }),
+    ).rejects.toThrow(skillTooLongNote());
+    expect(readSpy.mock.calls.some((c) => String(c[0]).endsWith('SKILL.md'))).toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('POSTs to the Anthropic Messages API with the skill body as system prompt', async () => {
@@ -1082,5 +1118,48 @@ describe('スキルの鍵と題 (パス 179)', () => {
       unrunnableReason: '',
     };
     expect(Object.keys(entry!).sort()).toEqual(Object.keys(sample).sort());
+  });
+});
+
+describe('スキル本文の天井 (パス 308): 読む前に byte で、読んだ後に字で断る', () => {
+  let tmpDir = '';
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-ceiling-'));
+  });
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('★ 天井 × 4 byte を超えるファイルは読まずに一覧へ載せ、runnable: false と理由を持つ', async () => {
+    await fs.writeFile(path.join(tmpDir, 'huge.md'), 'a'.repeat(MAX_SKILL_FILE_BYTES + 1));
+    await fs.writeFile(path.join(tmpDir, 'small.md'), '---\nname: small\n---\nok');
+    const readSpy = vi.spyOn(fs, 'readFile');
+    const result = await scanSkills(tmpDir, 'user');
+    expect(result.find((e) => e.id === 'huge')).toMatchObject({ runnable: false, unrunnableReason: skillTooLongNote() });
+    expect(result.find((e) => e.id === 'small')?.runnable).toBe(true);
+    const readPaths = readSpy.mock.calls.map((c) => String(c[0]));
+    expect(readPaths.some((q) => q.endsWith('huge.md'))).toBe(false);
+    // 標本: spy は本当に読みを見ている (small.md は読まれる)
+    expect(readPaths.some((q) => q.endsWith('small.md'))).toBe(true);
+  });
+
+  it('★ byte は天井以内でも字が天井を超えれば runnable: false (題は frontmatter から)', async () => {
+    await fs.writeFile(
+      path.join(tmpDir, 'long.md'),
+      `---\nname: Long One\n---\n${'a'.repeat(MAX_ASSISTANT_SYSTEM_CHARS + 1)}`,
+    );
+    const result = await scanSkills(tmpDir, 'user');
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ id: 'long', label: 'Long One', runnable: false, unrunnableReason: skillTooLongNote() });
+  });
+
+  it('対照: 天井ちょうどの本文は runnable', async () => {
+    const head = '---\nname: ok\n---\n';
+    await fs.writeFile(path.join(tmpDir, 'ok.md'), head + 'a'.repeat(MAX_ASSISTANT_SYSTEM_CHARS - head.length));
+    const result = await scanSkills(tmpDir, 'user');
+    expect(result[0]).toMatchObject({ id: 'ok', runnable: true, unrunnableReason: '' });
   });
 });

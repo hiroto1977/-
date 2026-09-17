@@ -237,7 +237,7 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 | GitHub `owner/repo` | `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/...` | ✅ url-encode 済 |
 | GitHub PR detail URL | `item.pull_request.url` | ✅ host pin (api.github.com), https 必須 |
 | Ollama `model` | `/api/chat { model }` | ✅ regex sanitize `^[a-z0-9][a-z0-9._:/-]+$` |
-| Skills `name` | `~/.claude/skills/<name>/SKILL.md` | ⚠️ ファイル名は user input 経由のみ、パス traversal リスクなし (fs.readFile に直接 join しない、findSkillFile が候補リストを enumerate) |
+| Skills `name` | `~/.claude/skills/<name>/SKILL.md` | ⚠️ ファイル名は user input 経由のみ、パス traversal リスクなし (fs.readFile に直接 join しない、findSkillFile が候補リストを enumerate)。本文は system として有料 API へ送られるので天井 `MAX_ASSISTANT_SYSTEM_CHARS` (60,000 字・assistant と同じ 1 つ) —— 4 × 天井 byte を超えるファイルは読まずに断り、一覧は `runnable: false` + 理由で載せる (パス 308) |
 | OAuth callback `state` | `state !== expectedState` | ✅ 16 byte random + early compare |
 | Security `url` (VirusTotal) | VT API `url=...` body | ✅ VT 側が受け取って scan するため our SSRF にあらず |
 | Emotions `text` | Claude API `messages` | ✅ 32KB clamp |
