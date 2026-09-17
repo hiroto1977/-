@@ -7,6 +7,49 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 305 (2026-09-17) — `e2e.yml` は 1 度も runner で走ったことが無く、走れば最初の E2E の段で「playwright が見つかりません」と落ちる形だった
+
+パス 304 で `e2e:ollama` を `.github/workflows/e2e.yml` に足したとき、「この step は runner で動くのか」を問うた。
+harness は `require('playwright')` を**プロジェクト**と `/opt/node22/lib/node_modules` (開発環境の置き場) の 2 か所で
+しか解決せず、playwright は devDependencies にも lockfile にも無い (`perf/startup.cjs` の冒頭が「グローバル導入前提」と
+明記)。workflow は `npm ci` → `npx playwright install --with-deps chromium` としており、注記は「ここで確実に入れる」——
+だが **`npx playwright install` はブラウザを入れるだけ**で、package は npx の一時キャッシュに置かれ、リポジトリの
+`node_modules` には入らない。
+
+### 実測 (名前を付ける前に測った)
+
+| 問い | 測り方 | 答え |
+|---|---|---|
+| playwright は lockfile に在るか | `grep -c '"node_modules/playwright' package-lock.json` | **0** (`npm ls playwright` → empty) |
+| リポジトリからだけで解決できるか | `require.resolve('playwright', { paths: ['/home/user/-'] })` | **MODULE_NOT_FOUND** |
+| この workflow は runner で走ったことが在るか | Actions の run 一覧 (`e2e.yml`・943 回) | **workflow_dispatch 0 回**・`run-e2e` ラベルは **repo に存在しない** (`get_label` → not found)・直近 30 回はすべて `pull_request` / **skipped** |
+| smoke:app は runner で動くか | `ELECTRON_SKIP_BINARY_DOWNLOAD` の有無 | ci.yml だけが '1'。e2e.yml は無いので `npm ci` が electron の実体を取る (動く側) |
+
+つまり **CLAUDE.md が「`e2e` / `e2e:lite` / `perf` / `smoke:app` are wired into e2e.yml」と述べ、パス 304 で私が
+`e2e:ollama` を足した workflow は、実行されたことが 1 度も無く、実行されれば E2E の段で exit 2 だった**。
+workflow 自身の注記が「e2e.yml は既定で走らないので、誰も落ちるところを見ていなかった」と 2026-08-26 の事故を
+書いている —— その同じ形が、注記の 3 行上の段に残っていた。
+
+### 直し
+
+- `e2e.yml`: `npm ci` の後に **`npm install --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1`**
+  (開発環境と同じ版 = chromium 1194)。`--no-save` は package.json / lockfile を変えず (`lint:deps` の台帳の外)、
+  `--ignore-scripts` は package の install script (ブラウザの自動取得) を走らせない —— ブラウザは既存の
+  `npx playwright install --with-deps chromium` が明示的に入れる。注記に実測を書いた。
+- `perf/startup.cjs` の冒頭「CI には入れていない」を実態 (e2e.yml が手動 / ラベルで回す) に直した (行数は同じ)。
+- **`lint:docs` の「e2e のビルド順」照合が最初の版で鳴った** —— 私が書いた注記の中の `npm run e2e` という**字面**を
+  「e2e の段」と読んだ (build:renderer より前に在る) ので、注記を言い換えた。字面の照合は言及と実行を見分けない
+  (パス 292 / 297 の家系) が、今日はゲート側を直さず文を直した —— 注記に実行の綴りを書かない方が安全側。
+
+### runner での検証
+
+workflow_dispatch (target=both) をこの branch で 1 回起動する (無料枠の分数を使うので 1 回だけ。結果は下に追記)。
+
+### 閉じていない物
+
+- `run-e2e` ラベルは repo に存在しない。CLAUDE.md / e2e.yml の注記が案内する「PR にラベルを付ける」経路は、
+  持ち主がラベルを作るまで使えない (この session の GitHub 権限では label の作成を試みない)。
+
 ## パス 304 (2026-09-17) — 転送に追随しない規則が no-cors の到達確認にも重なり、「起動しているが OLLAMA_ORIGINS 未設定」を「未起動」と診断していた —— 単体検査は全件緑で、CI の外の `e2e:ollama` だけが捕まえた
 
 パス 301 の `egressInit` (`redirect: 'manual'` を重ねる) は網の fetch 12 か所に**一律**に掛けた。その 1 つ、
@@ -84,6 +127,7 @@ e2e.yml と同じ順序 + 末尾に `e2e:ollama` (連鎖 1 回・HEAD のまま 
   `/me/events`)・Drive の `alt=media` (200 で返る) —— はどれも呼んでいない。残るのは GitHub の改名 repo の 301 だけで、
   それは「進まずに止まる」を選んだ側 (POST が GET に変わる方が危ない)。
 - `src/` で `mode: 'no-cors'` を書く場所は `ollamaWeb.ts` の到達確認 1 か所だけ (走査)。例外の適用範囲はそこで閉じている。
+- **ブラウザにしか無い fetch の意味論に他に依っていないか** (走査: `.redirected` / `Response.url` / `.type ===` / `credentials:` / `keepalive` / `referrer`): 当たるのは `httpLimits.ts` の `opaqueredirect` 判定 1 つだけ (それが今回の直しの相方)。`res.url` の 2 件は Notion の JSON 項目で Response ではない。`credentials:` は 0 件 = 既定 `same-origin` なので別オリジンへ cookie は付かない。
 
 ### ★ 自戒
 
@@ -3542,6 +3586,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 |---|---|
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
+| `e2e.yml` が runner で動くか (パス 305) | 🔎 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 (結果はパス 305 の節) |
 | 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 (CLAUDE.md) |
 | PR #788 の本文 | ✅ パス 〜303 まで反映 |
 | imageUrlGate のプライベート帯 | ✅ パス 300 で閉じた (問いを 2 つに分けた) |

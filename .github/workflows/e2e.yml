@@ -50,7 +50,24 @@ jobs:
         run: npm ci
 
       # scripts/e2e/core.cjs は playwright が無いと exit 2 で明示的に落ちる
-      # (スキップ扱いにしない設計)。ここで確実に入れる。
+      # (スキップ扱いにしない設計)。
+      #
+      # **`npx playwright install` はブラウザを入れるだけで、`require('playwright')` を
+      # 解決可能にはしない** —— npx は package を自分の一時キャッシュに置き、リポジトリの
+      # node_modules には入れない。playwright は devDependencies にも lockfile にも無く
+      # (グローバル導入前提 —— `scripts/perf/startup.cjs` の冒頭)、harness の解決先は
+      # プロジェクトと `/opt/node22/lib/node_modules` (開発環境の置き場) の 2 つだけなので、
+      # runner では下の E2E の段が「playwright が見つかりません」で exit 2 になる。
+      # 2026-09-17 (パス 305) の実測: この workflow は 1 度も runner で走ったことが無かった
+      # (workflow_dispatch 0 回・`run-e2e` ラベルは repo に存在せず・943 回すべて skipped) ——
+      # 「ここで確実に入れる」と書いた行を、誰も実行して確かめていなかった。
+      #
+      # 版は開発環境と同じ 1.56.1 に固定する (chromium 1194)。`--no-save` は package.json と
+      # lockfile を変えず、`--ignore-scripts` は package の install script (ブラウザの
+      # 自動取得) を走らせない —— ブラウザは次の段が明示的に入れる。
+      - name: Install Playwright module (pinned, not saved)
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1
+
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
