@@ -71,6 +71,9 @@
 - OAuth の loopback 応答: 成功ページは静的な `CALLBACK_HTML` (補間なし)、失敗は `text/plain` —— IdP 由来のクエリ (`error` / `error_description`) は HTML へ反射しない。
 - e2e の枠 (iframe) 検査: `.count().catch(() => 0) === 0` の 1 本は「iframe が読み込まれた」「拒否の見出しが出る」の肯定形 2 本と対照 (枠なしなら動く) で囲まれており、読み込み失敗を合格とは読まない (docblock に空撃ち対策として書いてある)。
 - AI 端点の関門 `normalizeAiBaseUrl`: 保存時だけでなく要求を組む側 (`providers.ts` の `resolveBase`) で毎回掛かる —— 復元した古い値・手で直した保管庫でも迂回しない。
+- main のファイル書き込み: `secrets.json` / 状態ファイル / 書き出し先の全部が `mode: 0o600` + `chmod` (既存ファイルには mode が効かない罠まで注記済み)・`atomicWrite.ts` は `wx` + 0o600 の一時ファイル → rename。同じ端末の他ユーザーから読める形は無い。
+- `new RegExp(` は `chatCalc.ts` の 1 件で、材料はコード内の定数 (利用者や第三者の文字列から正規表現を組む所は無い —— ReDoS の入口なし)。クリップボードへ書く 5 件は利用者の操作によるもので、復旧フレーズは書いた後に空文字で消す。
+- **DOI 要照合 46 件 (残作業 6・7) はこの環境では進められないことを実測した**: `api.crossref.org` は egress proxy が遮断 (`EGRESS_BLOCKED`)。doi.org と同じ。推測で埋めない。
 
 ### 測ったが裁定していない分母 (再訪の材料)
 
