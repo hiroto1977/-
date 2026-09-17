@@ -1862,6 +1862,14 @@
       "leafCount": 75,
       "note": "update main.ts",
       "hash": "ba43bcaff2f37520db9bb52a0fea5fe107f2b5740fe2ea62459a5b39781e4a6b"
+    },
+    {
+      "index": 223,
+      "prevHash": "ba43bcaff2f37520db9bb52a0fea5fe107f2b5740fe2ea62459a5b39781e4a6b",
+      "merkleRoot": "3bad11657753ff7db5cd4cc3d5c2cf55dea632f1a51a38e3581a0d8128e78549",
+      "leafCount": 75,
+      "note": "update lint-sample-data.cjs",
+      "hash": "dbef2f67700de4b3b59844dc01df9d862378ecae69bd653fd34b63484fccbeba"
     }
   ],
   "tipManifest": {
@@ -1877,7 +1885,7 @@
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
     "scripts/integrity-chain.cjs": "2960127b6f1f80f99060c1dd96ce16dd16408c6d9aec1db5807ee3ee1e69ad26",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
-    "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
+    "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
     "scripts/migrate.sh": "fe793636d6c87f42b663a42e300207346b40d6adbb057d0ba5696fd4604311ed",

@@ -55,6 +55,11 @@ npm run build:web        # → dist/standalone.html (browser build; runs inline-
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
 npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。
+                         #   **成果物が材料より古ければ exit 2** (e2e / smoke も同じ判定 `scripts/lib/artifact-freshness.cjs`)。
+                         #   材料 = src/ の ts/tsx/css/html/json + vite.config.ts + scripts/inline-html.cjs +
+                         #   tsconfig*.json + package(-lock).json + src/ が import する外の JSON (orchestration/registry.json)。
+                         #   2026-09-17 (パス 302) まで src/ しか見ておらず、inline-html.cjs (CSP を組む側) を
+                         #   直しても古い standalone.html で緑だった。docs/ と __tests__/ は材料ではない
                          #   フル版と LITE 版の**両方**が要る。vite の emptyOutDir が dist/ を掃除するので
                          #   `build:web && build:web:lite` と続けると**フル版が消えて perf が落ちる** ——
                          #   フル版を退避してから lite を作ること (e2e.yml がその順序を持っている)。

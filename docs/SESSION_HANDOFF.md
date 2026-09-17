@@ -7,6 +7,74 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 302 (2026-09-17) — 成果物の鮮度検査が `src/` しか見ておらず、CSP を組む側を直しても古い HTML で緑だった
+
+`scripts/lib/artifact-freshness.cjs` は「古い成果物を相手に検査したつもりになる」のを防ぐ判定で、
+`e2e` / `perf` / `smoke` の 3 つが通る。パス 300 の実機で私を止めたのもこれ。ところが**材料として
+見ていたのは `src/` の ts / tsx / css / html だけ**だった。成果物を決める材料はその外にも在る:
+
+| 材料 | 何を決めるか | 判定が見ていたか |
+|---|---|---|
+| `scripts/inline-html.cjs` | dist/index.html → standalone.html (**CSP を含む**) | ✗ |
+| `vite.config.ts` | 束ね方・LITE の切り分け・遅延読み込みの差し込み | ✗ |
+| `tsconfig*.json` | `tsc -b` の入力 | ✗ |
+| `package.json` / `package-lock.json` | 束に入る依存の版 | ✗ |
+| `orchestration/registry.json` | 3 つの画面 (ChatbotWidget / VillagePage / AssistantPage) が import する束の中身 | ✗ (src/ の外) |
+| `src/**/*.json` | (今日は 0 件) | ✗ (拡張子の網の外) |
+
+### 実測 (名前を付ける前に測った)
+
+`touch scripts/inline-html.cjs orchestration/registry.json` して `npm run perf` → **exit 0・「起動パフォーマンス OK」**。
+判定の冒頭が名指ししている「壊す前のものを見ていた」そのもので、`build:web` の 3 段目 (`node scripts/inline-html.cjs`)
+が落ちても `tsc -b && vite build` が通る限り前回の standalone.html が残り、全項目が通る。直した後の同じ操作は
+**exit 2・「成果物が材料より古い (一番新しい材料: scripts/inline-html.cjs)」**。
+
+### 直し (判定は 1 つのまま)
+
+- `BUILD_MATERIALS` (src/ の外の固定の材料 7 件) と、束に入る JSON の**実物の走査** (`lint-sample-data.cjs` の `bundledJsonImports` を借りる —— 同じ問いに走査を 2 つ書かない。`repoRoot` 引数を足した) を材料に加えた。拡張子の網に `json` を足した。
+- `newestMaterial` が**一番新しい材料の名**を返し、断り文がそれを挙げる (「src/ より古い」では、どれを直したせいか分からなかった)。
+- 呼び出し側 3 つは変えていない (既に `repoRoot` を渡していた)。`repoRoot` を渡さない旧来の呼び方は src/ だけを見る (互換)。
+- **docs/ と __tests__/ は材料にしない** —— 文書や検査だけ直したときに再ビルドを要求すると、要求そのものが無視されるようになる (対照で留めた)。
+
+### 検査 (`artifactFreshness.test.ts` 11 → 26)
+
+材料 4 種が新しければ名を挙げて古いと言う / src/ の外の JSON も import されていれば材料 / src/ の中の .json も材料 /
+対照: docs・README・import されない JSON は材料ではない / 成果物が全部より新しければ何も挙げない / repoRoot 無しは旧来どおり。
+**台帳の突き合わせ (両方向)**: 台帳の物はすべて実在 / package.json のビルド連鎖が走らせる `scripts/` は全部台帳に在る /
+根の `tsconfig*.json` と `vite.config.ts` は台帳に在る / 実物の外の JSON は 1 件以上で標本は `orchestration/registry.json` /
+3 つの道具は全部 `repoRoot` を**プロパティの形で**渡す。
+
+### ★ 対照 D が最初は鳴らなかった (自戒・3 度目)
+
+「3 つの道具は全部 repoRoot を渡す」の最初の版は `\brepoRoot\b` で、e2e の `repoRoot,` をコメントアウトしても
+**緑のまま**だった —— コメントの中の語と `path.join(repoRoot, 'src')` の**引数の言及**で満たされていた。
+パス 297 (self-test を空にした走査)・パス 298 (自分の散文を拾った走査) と同じ家系で、これが 3 度目。
+コメントを落とした原文で **options のプロパティの形** (`[{,]\s*repoRoot\s*[,:}]`) だけを数えるようにし、
+針の標本 (当たる 2 形・当たらない 2 形) を同じ検査に置いた。直した後はコメントアウトでも削除でも鳴る。
+
+### 対照 (4 本すべて鳴る・snapshot から復元)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. 台帳から `scripts/inline-html.cjs` を落とす | 2 本 (その材料の検査 + ビルド連鎖の突き合わせ) |
+| B. `newestMaterial` が src/ の外を見ない | 5 本 (材料 4 種 + 外の JSON) |
+| C. 拡張子の網から `json` を外す | 1 本 |
+| D. e2e が `repoRoot` を渡さない (コメントアウト / 削除の 2 通り) | 1 本ずつ (直す前は 0 本) |
+
+### ★ 全件実行が 2 つ教えた (どちらも私の見落とし)
+
+1. `scripts/lint-sample-data.cjs` は**保護対象** —— `bundledJsonImports` に `repoRoot` 引数を足しただけで `integrityChainWitness` が落ちた。`npm run chain:append` → **block #223**。
+2. 新しい検査の `fs.readFileSync(path.join(REPO_ROOT, rel))` / `fs.readdirSync(REPO_ROOT)` は `originalSourcePolicy.test.ts` の「道が読めない生の読み」で、台帳に無いので落ちた。台帳へ載せるより原文の道具 (`readOriginalSource` / `readOriginalDirEntries`) へ寄せた —— 変異検査の砂場でも原文を読む形になる。
+
+### 測ったが裁定していない分母 (再訪の材料)
+
+原文を読む検査 **129 本**のうち、`stripComments` 系を 1 度も呼ばない物が **105 本**。抜き取った 3 本 (`bareFetchLedger` / `linkRedirectGuard` / `permissionJustification`) はそれぞれ自前で扱っていた (行コメントの除去・対照つき) ので、これは欠陥の一覧ではなく分母である。対照 D の形 (言及で満たされる肯定形) が他にも在るかは、読まないと決まらない。
+
+### 出荷物・実機
+
+`src/` に触っていない (scripts / tests / docs のみ) ので成果物は不変・実機は回さない。ただし手元の `dist/` は
+touch した材料より古いので、次に実機を回すときは再ビルドから (連鎖の順序どおり)。
+
 ## パス 301 (2026-09-17) — 送り先の関門は最初の 1 ホップにしか掛かっておらず、転送 (3xx) の先を誰も見ていなかった
 
 送り先を絞る関門は 3 種在る —— `lint:network-targets` (送り先が変数の通信の台帳)・
@@ -75,6 +143,10 @@
 
 `docs/ARCHITECTURE.md` §3.3 (表は 1 ホップ目の話だと明記)・`docs/PROXY_EXAMPLE.md` §(c) (「(b) と (c) はクライアント側では
 原理的に実装できない」→ (c) は追随しない形で持つ)・PROTECTED 7 本 (types / main / oauth / proxy / pkce / chat / httpLimits) を触ったので chain → **block #221**、全件実行後に eslint が `main.ts` の未使用 import (`redirectRefusal`) を 1 つ挙げたので落として再採掘 → **#222**。
+
+### 当たって問題なしだった物 (パス 301 の直後・再訪不要)
+
+「網の fetch 12 か所」という主張の**外側**を数えた —— fetch 以外の出口 (`new WebSocket(` / `new EventSource(` / `sendBeacon(` / `XMLHttpRequest` / `new Image(` / Node の `https.request` `http.get` / Electron の `net.request` `net.fetch`) は `src/` に **0 件**。`window.open(` は `web-shim.ts` の `openExternal` 1 か所だけで、`externalUrlOrNull` の返り値を渡している (`library/preview.ts` / `LibraryPage.tsx` の 2 件は「使わない」と書いた注記)。`location.href` 等への代入も 0。したがって `egressInit` の母集団 (12 か所) は**アプリの出口の全部**である。CI 側の `scripts/` は `public-host-guard.cjs` がホップごとに見る (パス 191)。併せて 2 つ: **main に `child_process` / `exec` / `spawn` は 0 件** (コマンド注入の面が無い)・ライブラリのプレビューは `<img src=data:>` (secure static mode) とテキストノードだけで、`blob:` を同一オリジンで開く経路は無い (`library/preview.ts` の冒頭がその理由を持つ)。`URL.createObjectURL` 12 件はすべて `<a download>` の一時 URL。さらに 2 つ: `Object.assign(` は 5 件で、外から来た JSON を target に流し込む形は 0 (proxy.ts の 1 件は呼び出し側の `init.headers`・残りは内部の値)、`deepMerge` 系は 0 件 —— prototype 汚染の入口は無い (`?? 既定` の側はパス 235 が `Object.hasOwn` の床で閉じている)。PBKDF2 の反復回数は保存値・バックアップとも `assertKdfIterations` が**床 100,000 と天井 4,000,000 の両方**を見る (細工したバックアップで解錠を固めることはできない)。
 
 ### 実機
 
