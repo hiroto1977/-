@@ -53,7 +53,7 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const DOC = path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md');
 const SRC = path.join(REPO_ROOT, 'src');
 
-const BEGIN = '<!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->';
+const BEGIN = '<!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->';
 const END = '<!-- zero-fold-census:end -->';
 const HEADER = '| ファイル | 構文上の 0 倒し |';
 const RULE = '| --- | ---: |';
@@ -337,7 +337,7 @@ function main() {
   if (args.includes('--check')) {
     const reason = staleReason(doc, table);
     if (reason !== null) {
-      console.error(`❌ census が古くなっています。\`npm run lint:zero-fold\` で再生成してください。\n${reason}`);
+      console.error(`❌ census が古くなっています。\`node scripts/zero-fold-census.cjs\` (引数なし) で再生成してください —— \`npm run lint:zero-fold\` は --check だけで書き戻さない (パス 307)。\n${reason}`);
       process.exit(1);
     }
     console.log(`✅ census は最新 (${result.files} ファイル / ${result.sites} 件)`);

@@ -46,7 +46,11 @@ e2e.yml と同じ順序 + `e2e:ollama` (連鎖 1 回・対照を戻してから�
 `lint:shared-judgement` の生成ブロック (`docs/REMAINING_WORK.md`) は `inputCeiling` の import 元が 42 → 41 (localWrite が離れた) で古くなり、
 全件実行で鳴った → 再生成。**その断り文が「`npm run lint:shared-judgement` で再生成」と案内していたが、その npm script は `--check` だけで
 書き戻さない** —— 案内どおり叩いて空振りした。再生成は `node scripts/shared-judgement-census.cjs` (引数なし)。文を直した
-(生成ブロックの開始マーカーにも同じ文言が在るが、マーカーを変えると既存ブロックを見失うので触らない)。
+生成ブロックの開始マーカー (`<!-- …:begin — … (npm run … で再生成) -->`) にも同じ文言が在った —— script の `BEGIN` 定数と
+`docs/REMAINING_WORK.md` の committed のマーカー行を**同時に**書き換えれば既存ブロックを見失わない (両方の `--check` が緑)。
+`zero-fold-census.cjs` (`lint:zero-fold`) の断り文も同じ形 (「`npm run lint:zero-fold` で再生成」—— check だけ) だったので同じく直した。
+`lint:parameter-prose` は生成ブロックを持たない (案内も無い)。走査: scripts の文字列中の `npm run X` 156 件のうち package.json に無いのは
+self-test の仮名 2 件 (`lint:a` / `lint:b`) だけ —— 「無い命令を案内する」形は無く、「在るが約束の動作をしない命令を案内する」形が 2 件だった。
 
 ### 閉じていない物
 

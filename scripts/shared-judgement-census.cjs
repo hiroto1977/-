@@ -46,7 +46,7 @@ const DOC = path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md');
 const SRC = path.join(REPO_ROOT, 'src');
 
 const BEGIN =
-  '<!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->';
+  '<!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->';
 const END = '<!-- shared-judgement-census:end -->';
 const BEGIN_TAG = '<!-- shared-judgement-census:begin';
 const HEADER = '| shared モジュール | main | renderer | 判定 |';

@@ -14487,7 +14487,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 偽枝が 0」という意味論的な規則を人が当てた**再現できない**量で、新しい数は script に
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
-<!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
+<!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
 合計 **107 ファイル / 282 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
@@ -27141,7 +27141,7 @@ src/shared/ のモジュール                                        138
 判断は機械化していない。**対称かどうかは読まないと決まらない** —— だから台帳の値は
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
-<!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (npm run lint:shared-judgement で再生成) -->
+<!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
 shared **145** モジュール / 両ビルドが import **63** / うち否定で答えられる **32**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
