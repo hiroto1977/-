@@ -52,6 +52,26 @@ e2e.yml と同じ順序 + `e2e:ollama` (連鎖 1 回・対照を戻してから�
 `lint:parameter-prose` は生成ブロックを持たない (案内も無い)。走査: scripts の文字列中の `npm run X` 156 件のうち package.json に無いのは
 self-test の仮名 2 件 (`lint:a` / `lint:b`) だけ —— 「無い命令を案内する」形は無く、「在るが約束の動作をしない命令を案内する」形が 2 件だった。
 
+### 当たって問題なしだった物 (パス 307 の直後・再訪不要)
+
+- **出荷 HTML の CSP** (`scripts/inline-html.cjs` の `buildCsp`): `script-src` はハッシュ固定・`object-src 'none'`・`frame-src 'none'`・
+  `base-uri 'self'`・`form-action 'none'`・`worker-src 'self'`。`connect-src` は `https:` 全許可 + loopback の平文 —— 接続先を利用者が決める
+  設計なので台帳ではなく、送り先の関門はアプリ側 (§3.3 / `lint:network-targets` / `egressInit`)。`frame-ancestors` は `<meta>` CSP では
+  効かないので frame guard (e2e の `frameGuard` suite) が持つ。`lint:csp` が注入後の実物に当てている。
+- **ライブラリのプレビュー** (`library/preview.ts`): 画像 (SVG を含む) は `<img src="data:…">` (secure static mode —— script も外部参照も
+  動かない)、`text/html` はテキストとして `<pre>` にソース表示、`frame-src 'none'` の下で iframe は使わない。読んで確かめた。
+- **`redactSecrets` の正規表現に破滅的バックトラックは無い** (実測): 敵対的な本文 16 形 (`Bearer ` の連打・`token=x&`・`=` / `:` の連続・
+  `x-api-key: `・`{"token":"`・base64 / hex / `ghp_` / `eyJ` の連続 …) を 4,096 / 8,192 / 16,384 字で当て、8,192 字 (= `REDACT_SCAN_LIMIT`) の
+  最悪は `x-api-key: ` の連打で **0.45 ms**、倍率は 1.4〜3.0 (線形の範囲)。`lint:regex` の主眼は `assistantMarkdown.ts` なので、こちらは手で測った。
+- **出荷 code の環境変数スイッチ** (走査 `process.env.*` / `import.meta.env.*`・test 除く): main の OAuth client id / secret 10 件と
+  `VITE_DEV_SERVER_URL` 3 件だけ。後者は `isDev = !app.isPackaged` で gate されており、梱包後は環境変数で窓の読み込み先を
+  変えられない。renderer / shared に環境変数の分岐は 0 件 (検査用の抜け道が出荷物に無い)。
+- **利用者が配る Worker (`docs/PROXY_EXAMPLE.md`)**: 共有秘密の照合は XOR 累積の定時間比較 (`timingSafeEqualStr`)、転送は `MAX_REDIRECTS = 3` で
+  ホップごとに再検査、資格情報ヘッダは `CREDENTIAL_HEADERS` で落とす。本文の大きさの天井は Worker 側に無いが、アプリ側が両端で持つ
+  (応答は `readBodyWithCap`・要求は書き込みの天井)。`SHARED_SECRET` が空なら allowlist 内への中継を誰でも使える —— 冒頭 (55 行目) に明記。
+- scripts の文字列中の `npm run X`: 156 件のうち package.json に無いのは self-test の仮名 2 件だけ。docs の「`npm run X` で再生成」5 件は
+  引継ぎの引用 2 件を除き実際に書き戻す script を指す。
+
 ### 閉じていない物
 
 - 「例外の文面 → 画面」の経路を**母集団として数える網**は無い (`redactForMessage` の第 2 引数の census は呼ぶ側しか
@@ -3741,6 +3761,8 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 |---|---|
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
+| 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 例外の文面 → 画面 (パス 307) | ✅ 2 経路を `redactForMessage` へ。実機 5 段 + `e2e:ollama` 緑・両方 +9 B。「例外 → 画面」の母集団を数える網は無い (閉じていない物) |
 | `e2e.yml` が runner で動くか (パス 305) | ✅ 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 → **全 13 段 success・8 分 01 秒** (e2e 395 / lite 395 / ollama 8 / perf OK / smoke:app OK) |
 | 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 (CLAUDE.md) |
 | PR #788 の本文 | ✅ パス 〜303 まで反映 |
