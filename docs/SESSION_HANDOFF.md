@@ -7,6 +7,62 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 300 (2026-09-17) — 「測ったが決めていない」は、測ったら決まった —— 第三者由来の `<img src>` が内側を向いた送り先を取りに行っていた
+
+パス 299 が「閉じていない」と書いて残した項。`safeImageSrc` は認証情報つき authority を
+落とすようになったが、`http://127.0.0.1/pixel.png` / `http://192.168.1.10/avatar.png` /
+`http://169.254.169.254/…` は**通す**。呼び出し側 2 つ (`DataList` の `thumbnailUrl`・
+`StatusBar` の `avatarUrl`) は第三者 API の応答なので、GET が**利用者の網の内側へ**
+利用者のブラウザから飛ぶ (`<img>` は読めないが load / error のタイミングで在否が漏れる)。
+
+### 決めるために測った 2 点 (推測ではなく配線)
+
+| 問い | 実測 | 帰結 |
+|---|---|---|
+| 第三者の値はどこから来るか | fetcher は `main/clients/github.ts` (`avatar_url`) と `main/clients/canva.ts` (`thumbnail.url`) の 2 本。**両方とも送り先がソース中のリテラル** (`https://api.github.com/…` / `https://api.canva.com/…`) | GitHub Enterprise Server も自前 Canva も繋げない → 応答の画像 URL は GitHub / Canva の公開 CDN しか正当には来ない → **「LAN のアバター」は起きえない** |
+| 利用者自身の値は無いか | 1 つ在る: `AssistantPage` の背景画像 (`safeCssUrl` → `safeImageSrc`)。利用者が欄に打つ (`AssistantPage.tsx:802`) | NAS の `http://192.168.1.10/bg.png` は正当 → **こちらには掛けない** |
+
+つまり**問いが 2 つ在った**: 「第三者が指した先を取りに行ってよいか」と「自分が指した先を
+取りに行ってよいか」。パス 299 が「方針」として迷っていたのは、この 2 つを 1 つの関門で
+答えようとしていたからで、分ければ迷いは消える。
+
+### 構造 —— 判定を shared へ移した (中身は 1 字も変えない)
+
+`isPrivateOrReservedTarget` + `LOOPBACK_NAMES` / `INTERNAL_TLDS` + `extractMappedV4` /
+`extractEmbeddedV4FromTransitionPrefix` を `renderer/network/proxy.ts` (733 行) から
+`shared/privateTarget.ts` (393 行) へ**そのまま**移し、`proxy.ts` は re-export だけ残す (383 行)。
+`lint:imports` の `shared → renderer` 禁止はそのまま。呼び出し側と検査の import 先は変えない
+(`security/__tests__/proxy.test.ts` 56 件超・`proxyWorkerParity.test.ts` は `../proxy` のまま緑)。
+
+### 直し
+
+- `shared/imageUrlGate.ts` に **2 段目** `safeRemoteImageSrc` = `safeImageSrc` + 「送り先が private / reserved なら落とす」(`data:image/*` はホストが無いので通す)。`DataList` / `StatusBar` はこちらを読む。`safeCssUrl` は `safeImageSrc` のまま (利用者の値)。
+- docblock の「閉じていない物を、閉じたと書かない」は消さずに「→ パス 300 で閉じた」として、**測って決まった理由**を上に書いた。
+
+### 検査 (新規 2 describe + 1 ファイル)
+
+- `imageUrlGate.test.ts`: INWARD 13 形は落とす / OUTWARD 4 形は `safeImageSrc` と同じ値 / `data:` は通す / **2 段は意図して違う** (`safeImageSrc` は INWARD を通す —— 揃えた瞬間に落ちる) / 判定は BYO プロキシと同じ 1 つ (`isPrivateOrReservedTarget` と答えが割れる形が無い) / パス 299 の形は両段で落ちる / 空文字を返さない。**呼び出し側が読む段の census**: DataList / StatusBar は `safeRemoteImageSrc(` を呼び `safeImageSrc(` を呼ばない・AssistantPage は `safeCssUrl(` を呼ぶ (原文・コメント除去・針の標本つき)。
+- `privateTarget.test.ts`: `proxy.ts` の export は shared と**同じ関数オブジェクト** (写しではない) / 遮断表の綴り 5 つは shared の原文に在り・`proxy.ts` の原文に残っていない / `proxy.ts` は shared から読む (肯定形) / 標本 6 形で両側が同じ答え。
+
+### 対照 (4 本すべて鳴る・snapshot から復元)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. `DataList` を `safeImageSrc(` に戻す | census 1 本 (DataList の段) |
+| B. `safeImageSrc` にもプライベート帯の判定を掛ける (揃える) | 「2 段は意図して違う」1 本 |
+| C. `proxy.ts` に手書きの写しを戻す (re-export を差し替え) | `privateTarget.test.ts` 4 本 (同一オブジェクト / 原文 / 肯定形 / 標本) |
+| D. `safeRemoteImageSrc` が判定を飛ばす | INWARD 13 本 + 「同じ 1 つ」+ 「空文字ではない」 |
+
+### 台帳
+
+`stryker.config.json` 289 → **290**・`lint-mutation-scope.cjs` の `MUST_MEASURE` と `PRAGMA_BARE` (無言 pragma 3 つが遮断表ごと移ったので台帳も移す)・`integrity-chain.cjs` の `PROTECTED` (`proxy.ts` が re-export だけになったので、守る物を移した先へ) → **block #220**・`lint:shared-judgement` census shared 144 → **145** (CLAUDE.md の散文も)・`docs/ARCHITECTURE.md` (AI 端点の注記のパス / `file:line` 参照 602 → 603 / 単体テスト 14,421 → 14,432 / Stryker 290)・`docs/PROXY_EXAMPLE.md` §3 のパス。
+
+### 実機
+
+- **パス 298–299 の借り (HEAD `2eccf082`)**: `build:renderer` → `smoke:app` OK → `build:web` / `build:web:lite` (11,892,947 B / 3,305,693 B) → `e2e` **395 件 ❌ 0** → `e2e:lite` **395 件 ❌ 0** → `perf` OK (LITE 3.15 MB DCL 246 ms heap 10.1 MB / FULL 11.34 MB DCL 706 ms heap 36.9 MB)。
+- ★ **`perf` は 1 度 exit 2 で断った** —— 連鎖の途中で私がパス 300 の `src/` を編集したため「成果物が src/ より古い」。成果物は編集前の HEAD の物なので `SERVICE_HUB_PERF_ALLOW_STALE=1` で意図して通した。**断りは正しく働いた** (「壊したのに緑」を受け取らないための門)。次からは連鎖が終わるまで `src/` を触らない。
+- **パス 300 の分** (renderer を触った: DataList / StatusBar / proxy.ts): `build:renderer` → `smoke:app` OK → `build:web` / `build:web:lite` (**11,893,061 B / 3,305,807 B・両方 +114 B**) → `e2e` **395 件 ❌ 0** → `e2e:lite` **395 件 ❌ 0** → `perf` OK (LITE 3.15 MB DCL 245 ms heap 10 MB / FULL 11.34 MB DCL 695 ms heap 36.7 MB・起動時の巨大 `JSON.parse` ゼロ)。連鎖の間は `src/` に触っていないので `perf` は断らなかった。
+
 ## パス 299 (2026-09-16) — 「同じ方針」と書いた 2 つの関門が、危ない側で 5 形ずれていた
 
 `shared/imageUrlGate.ts` の `safeImageSrc` は自分の docblock で
@@ -68,6 +124,8 @@ DNS rebinding まで見ているので規準は在るが、ここで足すと LA
 (社内 GitLab のアバター等) を黙って映さなくする機能変更になる。
 **測ったが決めていない**という状態として `imageUrlGate.ts` に書いた。
 認証情報の側は迷う余地が無い (authority に資格情報を持つ正当な画像 URL は無い)。
+
+→ **パス 300 (2026-09-17) で閉じた** —— 測ったら決まった (第三者の値の出所は GitHub / Canva のリテラル固定の端点だけ。利用者の値は別の段に残す)。上のパス 300 の節。
 
 ### 対照 (4 本すべて鳴る)
 
@@ -684,7 +742,7 @@ verify:all **37 ゲート全 green**・チェーン **#210** (`redact.ts` は保
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,417**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 33 パス+オートパイロット消化で 4,350→3,518・**−832**。パス4/5/7 は全文読解で裁定し、統合先の出典・記述を一切減らさずに 25 件を統合。**重複疑いキューは 3 系列すべて 0 件** — タイトルコア一致 / グラフ term-overlap / **id 正規化 (パス7 で新設)**） |
-| **実機検証** | ✅ **`perf` は回した (2026-09-14 · パス 254 後)** —— 実測 LITE 3.11 MB / DCL 150 ms / heap 10 MB、FULL 11.30 MB / DCL 388 ms / heap 36.8 MB。起動時の巨大 `JSON.parse` ゼロ・閾値内。出荷物は **11,850,737 B / 3,263,483 B (両方 −3 B)**。`e2e` / `e2e:lite` は利用者の指示で回していない (「perf だけ回す」)。**`dist/` は vite の `emptyOutDir` が掃除するので、FULL を退避してから LITE を作ること**。 |
+| **実機検証** | ✅ **実機 4 種を回した (2026-09-17 · HEAD `2eccf082` = パス 299 後)** —— `smoke:app` OK / `e2e` 395 件 ❌ 0 / `e2e:lite` 395 件 ❌ 0 / `perf` OK (LITE 3.15 MB DCL 246 ms heap 10.1 MB / FULL 11.34 MB DCL 706 ms heap 36.9 MB)。出荷物は **11,892,947 B / 3,305,693 B (両方 +1,596 B)**。パス 300 の分は同節を見る。**`dist/` は vite の `emptyOutDir` が掃除するので、FULL を退避してから LITE を作ること**。**連鎖の途中で `src/` を触ると `perf` が「成果物が古い」で断る** (正しい)。 |
 | **直近完了作業** | 🔑 **自分がパス 285 で書いた「閉包の外は問われない」を測り直したら、言い過ぎだった (2026-09-15 ・ パス 286)** —— ★ **まず自分の訂正**: パス 285 のコミットと引継ぎに「鎖の除外台帳は 保護対象の import 閉包しか問わない・`shared/writeFieldLimits.ts` はどちらの台帳にも無い」と書いたが、測ると **PROTECTED から直接 import している物 0 件・除外台帳の項からも 0 件** —— このファイルは**閉包に入っていない**。閉包の検査は範囲を docblock で明示しており (「保護対象が**直接** import している相対パス」)、**範囲の外について何も主張していない**。言っていない物を「問うていない」と責めるのは**ゲートより広い主張をゲートに帰す**形で、過小申告の裏返しである。PROTECTED に入れるべきかは独立した merit の問いで、閉包の穴ではない。★★ **除外台帳の 11 の理由を全部当たった —— どれも成り立っていた**: 終端 11 件のうち 7 件は自分もどちらの台帳にも無い物を読んでいるが、**理由が保護対象の依存範囲を絞っている** (ハードリセットの 4 件は「読むのは置き場所の関数だけ」・`updateCheck` は「開いてよいかを決めるのは `externalUrlGate` (保護対象)」)。**終端を「重要でないから」ではなく「依存がここまでだから」で閉じているのがこの台帳の良いところ。** ★ `actionData.ts` の「型だけ」は**疑って確かめた** ——docblock 自身が「`clients/types.ts` は『型だけ』と書いてあったが実行時の判断を持っていた」と記録しているので信じない。実測: export 9 件すべて `interface`/`type`・実行時に残る export **0 件**・import 8 本すべて `import type`。理由は真。**欠陥は無し** (パス 284 と同じ「何も無かった探索」の報告)。★★★ **見つけた本物**: 推移閉包を追わない**理由** (「段を 1 つ増やしたければ、増えた先が次の verify で鳴る」) が、**self-test 20 件の外に在った** —— 閉包を見る 3 件はすべて**外す向き**で、**足す向きが 1 件も無い**。支えている文だけが留められていなかった。昇格した物が自分の読んでいる先で鳴ることを測る 2 本を足した (**標本は探す** —— 綴りで固定すると空の検査になるので、走査が候補を見つけられなければそれ自体を落とす床を 1 本目に置いた)。★ **対照 2 本のうち 1 本目が外れたので、予想のほうを直した**: docblock に「`set.has` を広い集合に変えれば足す向きだけが黙る」と書いたが、当てると `src/shared/` を丸ごと飛ばす形になり **4 件鳴った** (外す向きの標本 `cryptoParams.ts` が `src/shared/` に在るため)。**書いた予想が偽だった。**対照 2 (当たった): 「もともと PROTECTED に在った物からの辺だけ見る」= 昇格した物を免除する 2 行だと**鳴るのは新しい 1 本だけ**で他は全部緑 —— だから重複ではない。docblock には**両方**書いた。**実測**: チェーン **#207**・self-test **20 → 22 件** 全 green・`verify:all` 37 ゲート全 green・**出荷物は 1 バイトも変わらない** (`scripts/` は出荷 HTML に入らない) |
 | **直近完了作業** | 🧪🕳️ **4 つの TypeScript が、型検査の外に居た (2026-09-15 ・ パス 278)** —— パス 277 の残り 12 本のうち `typecheck` を読みに行ったら、説明の**当否**ではなく**覆う範囲**に穴が在った。`eslint.config.js` の冒頭が自分で「Strict TypeScript is the primary correctness gate (npm run typecheck)」と宣言しており、実際 eslint は型を見ない (`parserOptions.project` も `projectService` も無い = `recommendedTypeChecked` ではない)。つまり**型の誤りを捕まえる網は `tsc -b` 1 つ**で、その網は `tsconfig.json` の references から辿る 2 project の `include` しか見ない。覆われていない `.ts` が **4 つ**: `src/__tests__/dualBuildActionSurface.test.ts` (検査 9 件 —— **ブラウザ版がデスクトップ版の許可表に無い操作を実行できてはいけない**という安全の不変条件)・`src/__tests__/responseMockFidelity.test.ts` (検査 9 件)・`vitest.config.ts` (実物の electron を読まない alias・`retry`・`include`)・`scripts/generate-dashboard.ts`。`src/**` の下なのに外れていたのは include が**枝を名指し**しているため (`src/__tests__` はどの枝の下でもない)、`vitest.config.ts` は隣の `vite.config.ts` だけが名指しされていた (**1 字違いで片方だけ**)。★ **走っている検査が覆われていないと何が起きるか**: vitest は esbuild で型を**剥がす**だけなので、存在しない欄を読めば `undefined` になり `expect(x.typo).toBeUndefined()` は**通る** —— 「無いことの検査」が空になっても誰も気付かない (原文を読む検査が Stryker sandbox で空になる穴と同じ形の、型の側)。**直した所**: include を広げ (今日の時点で型の誤りは **0 件**だったので直したのは網の範囲だけ)、`shared/__tests__/typecheckCoverage.test.ts` (5 件) が repo の `.ts`/`.tsx` **1,252 件**を数えて「どれかの include に入る」を要求し (床 1,000)、`exclude` が生えたら「教えろ」と落ちる。`CLAUDE.md` の説明も実物に合わせた。`scripts/generate-dashboard.ts` の走らせ方の注記は**偽だった**ので実測して書き直した (`tsx` は依存ではない・素の `node` では `ERR_MODULE_NOT_FOUND`・同じ書き出しは製品の `stocks/export-dashboard` action に在り 8+4 件で測られている → 依存を増やしてまで走らせ直す物ではないと判断)。★ **自分が作った写しにその場で検算を付けた**: `CLAUDE.md` へ include 一覧を写したのは「散文の写しが腐る」家系そのものなので、写した瞬間に両方向の検査を足した。区切りは `・` (最初 ` / ` で書いて `src/renderer` を2 語に割り、繋ぎ直す細工が要った —— **細工の要る走査は空になりやすい**ので書く側を変えた)。**対照 5 本すべて鳴った** (植えた型の誤りが 0 件 → 1 件・include を戻す ×2・`exclude` を足す・写しの両方向)。**残り**: 未読 11 本。`lint:imports` は**真**と確かめた (走査は `src/` だけを歩くので `scripts/generate-dashboard.ts` の `src/main` 参照は母集団の外だが、説明が名乗る範囲と一致している)。eslint に型情報を渡すかは**測っていない** (走査時間の費用を先に測る) |
 | **直近完了作業** | 🔎📋 **パス 276 の残り (他のゲートの説明) を読んだ (2026-09-15 ・ パス 277)** — パス 276 は 1 本が偽だと示したが「残りが真である証拠にはならない」と書き残したので、1 本ずつ実物と突き合わせた。**母集団**: 37 ゲートのうち `CLAUDE.md` が説明を持つのは **22 本**・残る **15 本は説明が無い** (説明の不在は偽の主張ではない —— `lint:docs` が求めるのは `ci.yml` への掲載だけ)。**深く当たった 10 本**: `lint:test-coverage` は**偽** (276 で訂正)・`lint:citations` は**過小** —— スキーム規則 (`javascript:` / `data:` / `file:` を例外なく落とす) と平文 http の双方向台帳に触れておらず、**ゲートより狭く書かれていた** (このパスで訂正。過小申告は偽より軽いが、守られている物を守られていないと読ませる)・残る 8 本は**真** (`lint:workflow-security` の 4 つ・`lint:network-targets`・`lint:csp` の「verify:all では self-test のみ」・`lint:storage` の規則 11 (実物の在庫で 1 度鳴らしている)・`lint:mutation-scope`・`lint:parameter-prose`・`lint:regex` の「指数のみ」・数を名乗る物は `verify:arch` の live metric が既に留めている)。★ **途中で確かめて欠陥ではなかった物**: 陰性対照の無い 5 本は数だけでなく**既に名指し**されていた (`ARCHITECTURE.md:32` —— 外部ツール 2 + 知識コーパス系 3、後者は 2026-08-25 に実物へ違反を植てて鳴ることを確認済み)。私の最初の走査が 6 本と数えたのは `chain:verify` の `self-test` がダッシュ無しの副命令だったためで、**私の数え方の誤り**。**残り**: **22 本中 12 本は未読** (書いていないことを「読んだ」とは書かない)。出荷物は変わらない |

@@ -6,7 +6,7 @@ import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
-import { safeImageSrc } from '../../shared/imageUrlGate';
+import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
 
 interface Props {
   who: ReactNode;
@@ -174,9 +174,10 @@ export function StatusBar({
   const editButtonLabel =
     errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
 
-  // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外なら
-  // `undefined` になり <img> ごと描画しない（`src=""` を出さない）。
-  const avatarSrc = safeImageSrc(avatarUrl);
+  // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外・認証情報つき・
+  // **内側を向いた送り先 (loopback / プライベート帯)** なら `undefined` になり <img> ごと
+  // 描画しない（`src=""` を出さない）。第三者の応答なので `safeRemoteImageSrc` (パス 300)。
+  const avatarSrc = safeRemoteImageSrc(avatarUrl);
 
   return (
     <div className="status-bar">

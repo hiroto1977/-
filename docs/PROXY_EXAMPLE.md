@@ -384,7 +384,8 @@ function json(obj, status) {
   オープンプロキシになる
 - **DNS rebinding / 公開ワイルドカード DNS 対策はプロキシ側の責任**:
   クライアントは hostname 文字列しか見られない (`isPrivateOrReservedTarget` in
-  `src/renderer/network/proxy.ts` — DNS リゾルバを持たない)。したがって
+  `src/shared/privateTarget.ts`、`src/renderer/network/proxy.ts` が re-export —
+  DNS リゾルバを持たない)。したがって
   `169-254-169-254.sslip.io` / `customer1.169.254.169.254.nip.io` /
   `localtest.me` のような **公開名 → 私設 IP** や、同じ名前を
   1 回目=公開 IP / 2 回目=127.0.0.1 と返す rebinding は client 側では

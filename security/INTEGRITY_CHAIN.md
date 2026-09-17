@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 220
+- ブロック数: 221
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `584ff738f2e54656667675cdba440968967c82adbc9cd25b51f82c821fe148bc`
-- 保護対象: 74 ファイル
+- 末尾(tip)ハッシュ: `9081829e86e19cd9aa577c27972f83c07eb1341eb6e477d5c4fb6701ec801fa7`
+- 保護対象: 75 ファイル
 
 ## ブロック
 
@@ -233,6 +233,7 @@
 | 217 | `f1d91fad0e60d976` | `3291d13bf175cf84` | `21426058e2257388` | update externalUrlGate.ts |
 | 218 | `c7e80990ace3e969` | `21426058e2257388` | `94dab87df56f68a7` | update imageUrlGate.ts |
 | 219 | `d8280db5b33036f7` | `94dab87df56f68a7` | `584ff738f2e54656` | update imageUrlGate.ts |
+| 220 | `e4c14e4db43effcd` | `584ff738f2e54656` | `9081829e86e19cd9` | update integrity-chain.cjs,proxy.ts,imageUrlGate.ts,privateTarget.ts |
 
 ## 保護対象ファイル
 
@@ -302,6 +303,7 @@
 - `src/shared/imageUrlGate.ts`
 - `src/shared/inputCeiling.ts`
 - `src/shared/ollama.ts`
+- `src/shared/privateTarget.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.ts`

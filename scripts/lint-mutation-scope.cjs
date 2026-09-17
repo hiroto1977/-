@@ -172,13 +172,15 @@ const PRAGMA_BARE = {
   'src/renderer/data/store.ts':                  2,
   'src/renderer/hooks/useServiceData.ts':        2,
   'src/renderer/library/library.ts':             1,
-  'src/renderer/network/proxy.ts':               3,
   'src/renderer/plan/internalLicense.ts':        1,
   'src/renderer/security/mnemonic.ts':           1,
   'src/renderer/security/vault.ts':              2,
   'src/shared/funding.ts':                       2,
   'src/shared/httpLimits.ts':                    1,
   'src/shared/ollama.ts':                        3,
+  // 2026-09-17 (パス 300): `renderer/network/proxy.ts` に在った 3 つ (v6 の ULA / link-local /
+  // 2001:db8 の正規表現) が遮断表ごと shared へ移った。理由の書き方は移した先の注記のとおり。
+  'src/shared/privateTarget.ts':                 3,
 };
 
 /** 台帳の合計。self-test の期待値をここから計算し、数字を 2 か所に置かない。 */
@@ -194,6 +196,10 @@ const ledgerTotal = () => Object.values(PRAGMA_BARE).reduce((a, b) => a + b, 0);
 const MUST_MEASURE = {
   'src/main/clients/exportPaths.ts': '書き出し先の唯一の関門 (4 サービスが通る)',
   'src/renderer/network/proxy.ts':   'BYO プロキシの送り先判定 (SSRF の関門)',
+  // 2026-09-17 (パス 300) 追加。上の `proxy.ts` から**判定の本体**を移した先。
+  // `proxy.ts` は re-export だけになったので、ここを外すと SSRF の遮断表そのものが
+  // 測られない。読む側は BYO プロキシと `imageUrlGate.safeRemoteImageSrc` の 2 つ。
+  'src/shared/privateTarget.ts':     'プライベート帯 / 予約帯の送り先判定 (BYO プロキシと第三者由来の <img src> が同じ 1 つを読む)',
   'src/shared/ollama.ts':            'Ollama の接続先判定 (任意ホストへの http を許すと内部探索の踏み台になる)',
   'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
   'src/renderer/security/autoLock.ts': '離席時の施錠',

@@ -20,8 +20,12 @@
  * `DataList.render.test.ts` に残してある —— あちらはコンポーネントの話)。
  */
 import { describe, expect, it } from 'vitest';
-import { safeImageSrc, safeCssUrl } from '../imageUrlGate';
+import * as path from 'node:path';
+import { createRequire } from 'node:module';
+import { safeImageSrc, safeCssUrl, safeRemoteImageSrc } from '../imageUrlGate';
 import { externalUrlOrNull } from '../externalUrlGate';
+import { isPrivateOrReservedTarget } from '../privateTarget';
+import { readOriginalSource } from './originalSource';
 
 /**
  * 2026-07 セキュリティ監査（多層防御）: 第三者由来の画像 URL のスキーム検証。
@@ -261,5 +265,135 @@ describe('safeImageSrc と externalUrlOrNull の突き合わせ (パス 299)', (
     expect(externalUrlOrNull('https://evil.example/pixel.png')).toBe(
       'https://evil.example/pixel.png',
     );
+  });
+});
+
+/*
+ * ## 第三者の応答から来た値は、内側を向いた送り先を落とす (2026-09-17 · パス 300)
+ *
+ * パス 299 が「閉じていない」と書いた項。閉じるには**問いを 2 つに分ける**
+ * 必要があった —— 「第三者が指した先を取りに行ってよいか」(`DataList` /
+ * `StatusBar`。GitHub / Canva の応答) と「自分が指した先を取りに行ってよいか」
+ * (`AssistantPage` の背景画像。利用者が欄に打つ)。前者だけがプライベート帯を
+ * 落とす。判定は BYO プロキシの SSRF 関門と同じ 1 つ (`privateTarget.ts`)。
+ *
+ * 下の 2 段は**意図して違う**。揃えると (`safeImageSrc` にも掛けると)
+ * 利用者の NAS の背景画像が黙って消える —— `loopbackChecks.test.ts` と
+ * 同じ形で、違いそのものを検査で留める。
+ */
+describe('safeRemoteImageSrc — 第三者の応答から来た値は、内側を向いた送り先を落とす (パス 300)', () => {
+  /**
+   * 第三者が指してはならない先。BYO プロキシの関門が塞ぐ範囲の代表
+   * (loopback / RFC 1918 / link-local + メタデータ / 内部 TLD / v4-mapped v6 / 0.0.0.0)。
+   * 網羅は `renderer/security/__tests__/proxy.test.ts` と
+   * `renderer/network/__tests__/proxyWorkerParity.test.ts` が持つ。
+   */
+  const INWARD = [
+    'http://127.0.0.1/pixel.png',
+    'http://localhost/pixel.png',
+    'http://foo.localhost/pixel.png',
+    'http://[::1]/pixel.png',
+    'http://10.0.0.5/avatar.png',
+    'http://192.168.1.10/avatar.png',
+    'http://172.16.0.1/a.png',
+    'http://169.254.169.254/latest/meta-data',
+    'http://metadata.google.internal/x.png',
+    'http://printer.local/x.png',
+    'http://gitlab.corp/uploads/avatar.png',
+    'https://[::ffff:7f00:1]/x.png',
+    'http://0.0.0.0/x.png',
+  ];
+
+  /** 実際に来る形 (GitHub / Canva の公開 CDN) と、公開ホスト一般。 */
+  const OUTWARD = [
+    'https://avatars.githubusercontent.com/u/1?v=4',
+    'https://document-export.canva.com/x.png',
+    'http://cdn.example.com/a.png',
+    'HTTPS://CDN.EXAMPLE.COM/A.PNG',
+  ];
+
+  it.each(INWARD)('★ %s は落とす (第三者の応答が指してよい先ではない)', (v) => {
+    expect(safeRemoteImageSrc(v)).toBeUndefined();
+  });
+
+  it('★ 対照 — 公開ホストは safeImageSrc と同じ値を通す (門が全部落としていない)', () => {
+    for (const v of OUTWARD) {
+      const out = safeRemoteImageSrc(v);
+      expect(out, v).not.toBeUndefined();
+      expect(out, v).toBe(safeImageSrc(v));
+    }
+  });
+
+  it('★ data:image/* はホストが無いので通す (取得が起きない) — 同梱の見本はこの形', () => {
+    for (const v of ['data:image/png;base64,AAA', "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"]) {
+      expect(safeRemoteImageSrc(v), v).toBe(v);
+    }
+  });
+
+  it('★ 2 段は意図して違う — safeImageSrc は内側の送り先を通す (自分で打つ値の床)', () => {
+    // ここが落ちたら、誰かが下の段にもプライベート帯の判定を掛けた。
+    // それは利用者の背景画像 (NAS の http://192.168.…) を黙って消す変更である。
+    for (const v of INWARD) {
+      expect(safeImageSrc(v), v).not.toBeUndefined();
+      expect(safeRemoteImageSrc(v), v).toBeUndefined();
+    }
+  });
+
+  it('★ 判定は BYO プロキシの関門と同じ 1 つ — 答えが割れる形が無い', () => {
+    // 両方 http(s) で認証情報なしなので、落とす/通すは「内側か」だけで決まる。
+    for (const v of [...INWARD, ...OUTWARD]) {
+      expect(safeRemoteImageSrc(v) === undefined, v).toBe(isPrivateOrReservedTarget(new URL(v)));
+    }
+  });
+
+  it('★ パス 299 の形 (認証情報で内側を隠す) はどちらの段でも落ちる', () => {
+    expect(safeImageSrc('https://cdn.example.com@127.0.0.1/x.png')).toBeUndefined();
+    expect(safeRemoteImageSrc('https://cdn.example.com@127.0.0.1/x.png')).toBeUndefined();
+  });
+
+  it('★ 落とす形は undefined で、空文字ではない (src="" はページ自身を再取得する)', () => {
+    for (const v of INWARD) expect(safeRemoteImageSrc(v), v).not.toBe('');
+  });
+});
+
+/*
+ * ## どの呼び出し側がどの段を読むか (パス 300)
+ *
+ * 段を 2 つにした瞬間、「第三者の値が下の段を読んでいる」形が**次の変更で**
+ * 生まれうる (関門をコンポーネントの中に置いていた頃と同じ死角)。
+ * 原文で留める: 第三者の値を受ける 2 つは `safeRemoteImageSrc(` を呼び、
+ * `safeImageSrc(` を呼ばない。利用者の値を受ける 1 つは `safeCssUrl(` を呼ぶ。
+ */
+describe('imageUrlGate — 呼び出し側が読む段 (パス 300)', () => {
+  const REPO_ROOT = path.resolve(__dirname, '../../..');
+  const { stripComments } = createRequire(__filename)(
+    path.join(REPO_ROOT, 'scripts/shared-judgement-census.cjs'),
+  ) as { stripComments: (s: string) => string };
+  const src = (rel: string): string => stripComments(readOriginalSource(path.join(REPO_ROOT, rel)));
+
+  /** 呼び出しの形だけを見る (言及ではなく)。`(` まで含めるので import 行には当たらない。 */
+  const REMOTE_CALL = /\bsafeRemoteImageSrc\(/;
+  const PLAIN_CALL = /\bsafeImageSrc\(/;
+  const CSS_CALL = /\bsafeCssUrl\(/;
+
+  it('針の標本 — 規則は呼び出しの形に当たり、import 行には当たらない', () => {
+    expect('const a = safeImageSrc(u);').toMatch(PLAIN_CALL);
+    expect('const a = safeRemoteImageSrc(u);').toMatch(REMOTE_CALL);
+    expect("import { safeImageSrc } from '../../shared/imageUrlGate';").not.toMatch(PLAIN_CALL);
+  });
+
+  it.each([
+    'src/renderer/components/DataList.tsx',
+    'src/renderer/components/StatusBar.tsx',
+  ])('★ %s (第三者の値) は safeRemoteImageSrc を呼び、safeImageSrc を呼ばない', (rel) => {
+    const s = src(rel);
+    expect(s).toMatch(REMOTE_CALL);
+    expect(s).not.toMatch(PLAIN_CALL);
+  });
+
+  it('★ AssistantPage (利用者の値) は safeCssUrl を呼ぶ —— こちらにはプライベート帯の判定を掛けない', () => {
+    const s = src('src/renderer/pages/AssistantPage.tsx');
+    expect(s).toMatch(CSS_CALL);
+    expect(s).not.toMatch(REMOTE_CALL);
   });
 });

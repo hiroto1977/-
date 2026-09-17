@@ -19,7 +19,8 @@ const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.c
  * (`docs/PROXY_EXAMPLE.md`) を通す。宛先が私設 / 予約レンジでないことは
  * **両側**が見ている:
  *
- *   - client : `proxy.ts` の `isPrivateOrReservedTarget`
+ *   - client : `proxy.ts` の `isPrivateOrReservedTarget` (本体は 2026-09-17・パス 300 から
+ *              `shared/privateTarget.ts`。`proxy.ts` は re-export —— ここは import 先を変えない)
  *   - Worker : `docs/PROXY_EXAMPLE.md` の `isBlockedIp`
  *
  * Worker 側の注記は「client と同じレンジを塞ぐ」と書いていた。だが

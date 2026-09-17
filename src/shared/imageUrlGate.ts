@@ -16,6 +16,7 @@
  * (同じ形は `exportPaths.ts` と `frameGuard.ts` で既に踏んでいる ——
  *  どちらも「壁なのに測られていなかった」。名簿はそのために在る。)
  */
+import { isPrivateOrReservedTarget } from './privateTarget';
 
 /**
  * 第三者 API 由来の画像 URL を `https:` / `http:` / `data:image/*` に限定する。
@@ -71,29 +72,49 @@
  * —— そこは**問いが違う**ので割れていて正しい (`<img>` は data: を要り、
  * OS のブラウザへ渡す関門は data: を拒む)。
  *
- * ## 閉じていない物を、閉じたと書かない
+ * ## 閉じていない物を、閉じたと書かない → パス 300 で閉じた (2026-09-17)
  *
- * **プライベート帯・ループバックのホストはまだ落としていない。**
- * 足さない理由は 2 つ在り、**最初に書いたときは 1 つしか書いていなかった**
- * (同日中に読み直して追記):
+ * パス 299 の時点で**プライベート帯・ループバックのホストはまだ落としていなかった。**
+ * 足さない理由を 2 つ書いた (最初は 1 つしか書いておらず、同日中に追記):
  *
  *   1. **方針** —— LAN の自ホスト (社内 GitLab のアバター等) を黙って
  *      映さなくする機能変更になる。**測ったが決めていない**という状態
  *   2. **構造** —— 規準は在るが、**ここからは import できない**。
  *      `renderer/network/proxy.ts` が `isPrivateOrReservedTarget` を
- *      export しており (private/reserved + DNS rebinding + IPv6 mapped まで
- *      見る本物) が、`lint:imports` は `shared: ['shared']` ——
+ *      export していたが、`lint:imports` は `shared: ['shared']` ——
  *      `shared → renderer` は禁止で、その禁止は走査の self-test に
- *      `['shared', 'renderer', false]` として固定されている。
- *      つまり流用するには**先に判定を shared へ移す**必要があり、
- *      それはこのパスの範囲を超える
+ *      `['shared', 'renderer', false]` として固定されている
  *
  * 1 だけを書くと、次の読み手は「では import すればよい」と考えて
  * 境界の違反に当たる。**流用できない理由は、流用したくない理由とは別に書く。**
- * ループバック判定が 3 つ在って統合してはいけない件は
- * `shared/__tests__/loopbackChecks.test.ts` が同じ形で留めている ——
- * あちらは「問いが違う」を検査で示した見本で、この docblock が
- * パス 299 まで持っていなかったものである。
+ *
+ * パス 300 で両方を解いた:
+ *
+ *   1. **方針は、測ったら決まった。** この関門へ第三者の URL を渡す呼び出し側は
+ *      2 つ (`DataList` の `thumbnailUrl`・`StatusBar` の `avatarUrl`) で、
+ *      それを埋める fetcher は `main/clients/github.ts` (`avatar_url`) と
+ *      `main/clients/canva.ts` (`thumbnail.url`) の 2 本。どちらも**送り先が
+ *      ソース中のリテラルで固定** (`https://api.github.com/…` /
+ *      `https://api.canva.com/…`) なので、応答の画像 URL は GitHub / Canva が
+ *      発行した公開 CDN の物しか正当には来ない —— GitHub Enterprise Server も
+ *      自前の Canva も繋げないので、「LAN のアバター」は**起きえない**。
+ *      一方 `AssistantPage` の背景画像 (`safeCssUrl`) は**利用者自身が欄に打つ**
+ *      値で、NAS の `http://192.168.1.10/bg.png` は正当である。
+ *      つまり**問いが 2 つ在った**: 「第三者が指した先を取りに行ってよいか」と
+ *      「自分が指した先を取りに行ってよいか」。前者だけがプライベート帯を落とす。
+ *   2. **判定を `shared/privateTarget.ts` へ移した** (中身は不変・`proxy.ts` は
+ *      re-export)。写しを作らず、BYO プロキシとここが同じ 1 つを読む。
+ *
+ * 従って関門は 2 段になった:
+ *
+ *   - `safeImageSrc`        スキーム + 認証情報 —— 自分の値・第三者の値、両方の床
+ *   - `safeRemoteImageSrc`  その上に**送り先がプライベート帯 / 予約帯なら落とす**
+ *                           —— 第三者の応答から来る値はこちらを通す
+ *
+ * 「割れていて正しい」の対 (`data:image/*` と `externalUrlGate`) と同じく、
+ * 2 段が違う答えを返す標本は `imageUrlGate.test.ts` が名前をつけて留める。
+ * 「では `safeImageSrc` にも掛ければ簡単だ」は、利用者の背景画像を黙って
+ * 消す変更である —— 揃えた瞬間にそこが落ちる。
  *
  * 認証情報の側は迷う余地が無い (authority に資格情報を持つ正当な画像 URL は無い)。
  */
@@ -115,6 +136,30 @@ export function safeImageSrc(url: string | undefined | null): string | undefined
   // `data:image/<subtype>` のみ。`;base64,` でも `,` 直結でも可。
   if (/^data:image\/[a-z0-9.+-]+[;,]/i.test(normalized)) return normalized;
   return undefined;
+}
+
+/**
+ * **第三者の応答から来た**画像 URL の関門。`safeImageSrc` の上に、
+ * **送り先がプライベート帯 / 予約帯 (loopback・RFC 1918・link-local・
+ * クラウドメタデータ・内部 TLD …) なら落とす**を重ねる。
+ *
+ * `<img>` からスクリプトは走らないが**取得は起きる** —— 利用者のブラウザが
+ * 利用者の網の内側へ GET を飛ばし、load / error のタイミングで在否が漏れる
+ * (追跡画素と内部探索の踏み台)。第三者 API の応答が指してよい先ではない。
+ * 判定は `privateTarget.ts` の `isPrivateOrReservedTarget` —— BYO プロキシの
+ * SSRF 関門と**同じ 1 つ**で、写しではない。
+ *
+ * `data:image/*` はホストを持たないのでそのまま通す (取得が起きない)。
+ * 自分で打った値 (アシスタントの背景画像) には掛けない —— `safeCssUrl` は
+ * `safeImageSrc` を読む。理由は上の docblock「パス 300 で閉じた」。
+ */
+export function safeRemoteImageSrc(url: string | undefined | null): string | undefined {
+  const src = safeImageSrc(url);
+  if (src === undefined) return undefined;
+  // `safeImageSrc` が http(s) を通すのは解析後の形だけなので、ここで再解析は失敗しない。
+  if (!/^https?:/i.test(src)) return src;
+  if (isPrivateOrReservedTarget(new URL(src))) return undefined;
+  return src;
 }
 
 /**

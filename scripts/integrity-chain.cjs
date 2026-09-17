@@ -69,6 +69,12 @@ const PROTECTED = [
   // BYO プロキシの SSRF 関門。ブラウザ版では**全サービスのトークン**が
   // ここを通って利用者指定の Worker へ出るので、絞りが緩むと宛先を選ばれる。
   'src/renderer/network/proxy.ts',
+  // 2026-09-17 (パス 300) に足した。上の `proxy.ts` が持っていた**遮断表そのもの**
+  // (`isPrivateOrReservedTarget` と内部 TLD / loopback 名の一覧) を移した先。
+  // `imageUrlGate` も同じ判定を要るのに `shared → renderer` が境界で禁止されて
+  // いたため shared へ出した。`proxy.ts` は re-export だけになったので、
+  // 保護対象が `proxy.ts` のままでは**遮断表を書き換えても鎖が鳴らない**。
+  'src/shared/privateTarget.ts',
   // 2026-09-12 (パス 191) に足した。上の `proxy.ts` の**三つ子の 3 人目** ——
   // 週次 CI (`knowledge-auto.yml --links=400`) が出典 URL の生死を確かめるとき、
   // 第三者の `302 Location:` で runner の網の内側へ向けられる経路を塞ぐ関門。
