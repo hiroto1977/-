@@ -101,7 +101,7 @@
     "lint:shared-judgement": "node scripts/shared-judgement-census.cjs --check && node scripts/shared-judgement-census.cjs --self-test",
     "lint:mutation-scope": "node scripts/lint-mutation-scope.cjs && node scripts/lint-mutation-scope.cjs --self-test",
     "audit:floors": "node scripts/audit-floors.cjs",
-    "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test"
+    "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test && node scripts/dependency-audit-issue.cjs --self-test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

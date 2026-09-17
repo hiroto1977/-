@@ -69,12 +69,19 @@ describe('週次の依存監査は、予定 → スクリプト → 報告 → I
     expect(WF).toContain('issues: write');
   });
 
-  it('★ 報告ファイルを読んで Issue を作成/更新し、片付いたら閉じる', () => {
+  it('★ 報告ファイルを読んで Issue を作成/更新し、片付いたら閉じる (判断は module · パス 306)', () => {
+    // パス 306 まで判断は YAML の中の script に在り、この検査は綴りで留めていた。閉じた Issue を
+    // 再開できない形 (state: 'open' で探して閉じる) をその綴りの検査は通していた —— 判断を
+    // `scripts/dependency-audit-issue.cjs` へ出し、振る舞いは `dependencyAuditIssue.test.ts` が見る。
+    // ここは配線 (workflow が報告を読んで module を呼ぶ・module が作成 / 更新 / 閉じるを持つ) を留める。
     expect(WF).toContain(REPORT_PATH);
-    expect(WF).toContain('issues.create');
-    expect(WF).toContain('issues.update');
-    expect(WF, '要対応 0 件で閉じないと、古い内容が開いたまま残る').toContain(
-      "state: r.actionable > 0 ? 'open' : 'closed'",
+    expect(WF).toContain("require('./scripts/dependency-audit-issue.cjs')");
+    expect(WF).toContain('await syncIssue({ github, context, report })');
+    const MOD = read('scripts/dependency-audit-issue.cjs');
+    expect(MOD).toContain('issues.create');
+    expect(MOD).toContain('issues.update');
+    expect(MOD, '要対応 0 件で閉じないと、古い内容が開いたまま残る').toContain(
+      "const state = report.actionable > 0 ? 'open' : 'closed';",
     );
   });
 

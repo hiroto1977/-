@@ -60,25 +60,15 @@ jobs:
           path: orchestration/dependency-audit.json
           retention-days: 90
 
+      # 判断は `scripts/dependency-audit-issue.cjs` (self-test + vitest つき)。YAML の中に書いた
+      # script は検査できず、実際に `state: 'open'` で探して閉じる形 —— 閉じた翌週に要対応が
+      # 戻ると 2 つ目を作る —— が 2026-09-17 (パス 306) まで残っていた (この workflow は 1 度も
+      # 走っていない)。github-script の `require` は workspace 相対で解決する。
       - name: 要対応を Issue に反映
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const r = JSON.parse(fs.readFileSync('orchestration/dependency-audit.json', 'utf8'));
-            const title = '🔐 依存の勧告とセキュリティの床（自動更新）';
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100,
-            });
-            const existing = issues.find((i) => i.title === title);
-            if (existing) {
-              await github.rest.issues.update({
-                owner: context.repo.owner, repo: context.repo.repo,
-                issue_number: existing.number, body: r.markdown,
-                state: r.actionable > 0 ? 'open' : 'closed',
-              });
-            } else if (r.actionable > 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner, repo: context.repo.repo, title, body: r.markdown,
-              });
-            }
+            const { syncIssue } = require('./scripts/dependency-audit-issue.cjs');
+            const report = JSON.parse(require('fs').readFileSync('orchestration/dependency-audit.json', 'utf8'));
+            const result = await syncIssue({ github, context, report });
+            core.info(`dependency-audit issue: ${result.action}${result.number === null ? '' : ` #${result.number}`}`);

@@ -7,6 +7,62 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 306 (2026-09-17) — 1 度も走っていない週次の依存監査は、「常設 Issue 1 つ」を 2 週目で破る形だった
+
+パス 305 の走査で `dependency-audit.yml` は GitHub に**未登録** (この branch にしか無く、`schedule` は既定 branch から
+しか発火しない) と分かった。書かれてから 1 度も走っていない code を読む: YAML の中の `actions/github-script` が
+Issue を `state: 'open'` で探し、要対応 0 件のときその Issue を**閉じる**。閉じた翌週に要対応が戻ると、探す側は
+閉じた物を見つけられず **2 つ目を作る** —— CLAUDE.md の「要対応を常設 Issue 1 つに集める」は 2 週目で偽になる
+(`listForRepo` の `state` は既定 open で、closed は返さない —— API の仕様であって推測ではない)。
+
+### 測れた側と測れない側
+
+- `npm run audit:report` (workflow の前半) はローカルで通る: 報告 JSON は `actionable` / `markdown` を持ち
+  (今日は actionable 0・markdown 643 字)、report 側の self-test 11 件も緑。gitignored。
+- 後半 (Issue の同期) は YAML の中の script で、**検査の届く場所に無い**。runner で試すには merge を待つしかない。
+
+### 直し
+
+- 判断を `scripts/dependency-audit-issue.cjs` (`syncIssue`) へ出した: `state: 'all'`・更新順で探し (常設 Issue は
+  毎週更新されるので先頭付近)、PR (`pull_request` を持つ物) は除き、在れば本文を更新して要対応 0 なら閉じ・
+  1 以上なら**再開**、無ければ 1 以上のときだけ作る。報告の形が違えば投げる (黙って none にしない)。
+- workflow はその module を `require` して呼ぶだけ (github-script の `require` は workspace 相対)。
+- `audit:report` の末尾で module の self-test (13 件) を回す —— workflow が使う直前に壊れていれば止まる。
+- `dependencyAuditIssue.test.ts` (9 件): 再開 / 探し方 / 閉じる / 作る・作らない / PR を無視 / 形の検査、
+  **workflow が module を呼び YAML の中に判断を持たない** (旧い形の標本つき)、module の探し方 (`listForRepo({…})` の
+  引数だけを見る —— 最初の版は全文に `state: 'open'` の不在を当てて self-test の標本で落ちた)、
+  `audit:report` が self-test を回す。
+
+### 対照
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. module の探し方を `state: 'open'` に戻す | **最初は 2 本** (引数を読む 2 本) —— 偽 client が `state` を無視していたので「再開する」が通った。偽 client を本物と同じく `state` で絞る形に直したら **3 本 + self-test 3 件** |
+| B. YAML の中に `listForRepo` の判断を戻す | 「workflow は module を呼ぶ」1 本 |
+
+### ★ 全件実行が教えた —— 綴りで留めた検査は、欠陥の綴りも留める
+
+`dependencyAuditWorkflow.test.ts` (パス 143) は YAML に `issues.create` / `issues.update` /
+`state: r.actionable > 0 ? 'open' : 'closed'` が**在ること**を綴りで留めていた —— 閉じた Issue を再開できない形を、
+その検査は「配線されている」として通していた (探す側の `state: 'open'` は見ていない)。判断を module へ出したら
+綴りが YAML から消えて落ちたので、配線 (workflow が報告を読んで module を呼ぶ・module が作成 / 更新 / 閉じるを持つ)
+を留める形に直し、振る舞いは `dependencyAuditIssue.test.ts` に任せた。
+
+### 当たって問題なしだった物 (パス 306 の直後・再訪不要)
+
+- **参照だけ在って実体が無い物** (「書かれてから 1 度も走っていない」の隣): package.json の scripts が指す
+  `scripts/*.{cjs,sh,ts}` 115 件 → 欠落 0 / workflow の `npm run X` 65 件 → package.json に無い物 0 /
+  CLAUDE.md・README・docs/*.md の `npm run X` 308 件 → 無い物 0。
+- **`release.yml` の現行版にパス 305 と同じ形 (npm ci が入れない道具) は無い** (静的に読んだ): `run:` は npm ci /
+  typecheck / test / verify:all / `npm run build -- --publish never` / `node scripts/{smoke-app --check-bundle, verify-release-artifacts,
+  checksum-release, lint-sample-data --artifact}` だけで、electron-builder・electron は devDependencies に在る。runner での
+  実行が無い事実は変わらないが、少なくとも「module が無くて落ちる」側ではない。
+
+### 閉じていない物
+
+- runner での実行は merge 後の最初の日曜 (22:00 UTC) が最初になる。`workflow_dispatch: {}` も持つが、この branch では
+  未登録なので押せない。
+
 ## パス 305 (2026-09-17) — `e2e.yml` は 1 度も runner で走ったことが無く、走れば最初の E2E の段で「playwright が見つかりません」と落ちる形だった
 
 パス 304 で `e2e:ollama` を `.github/workflows/e2e.yml` に足したとき、「この step は runner で動くのか」を問うた。
@@ -60,6 +116,22 @@ FULL 11.34 MB DCL 325 ms heap 37.8 MB・起動時の巨大 JSON.parse 0)。同�
 `soak-test.cjs` は `ROOT='/home/user/-'` を**絶対パスで固定**していて、この沙箱でしか動かなかった —— `__dirname` 基準に直した。
 対照: `soak-test.cjs` の鮮度検査を消す → 「道具は全部 鮮度検査を呼ぶ」1 本 (`scripts/soak-test.cjs は鮮度検査を呼ぶ`)。
 チェーン **#226** (`integrity-chain.cjs` の保護対象の注記 5 → 8)。
+
+### 同じ問いを他の workflow にも掛けた (Actions の run 一覧 · 読むだけ)
+
+| workflow | runner で走った実績 | 判定 |
+|---|---|---|
+| `ci.yml` | push / PR ごと (この PR の全 HEAD で success) | ✅ |
+| `e2e.yml` | **0 回** → 今日の dispatch 1 回で success | ✅ (パス 305) |
+| `mutation.yml` | 170 回・週次 schedule・直近 5 回 success (2026-09-13 まで) | ✅ |
+| `knowledge-auto.yml` | 8 回・週次 schedule・全 success | ✅ |
+| `pages.yml` | 768 回・main への push ごと・success | ✅ |
+| `release.yml` | 3 回 (2026-07-27 の workflow_dispatch: 失敗 2 → 成功 1)。**その後の版 (`verify-release-artifacts.cjs` / `checksum-release.cjs` を足した現行) は 1 度も走っていない** | ⚠️ tag / dispatch で公開物を作るので、この session からは起動しない |
+| `dependency-audit.yml` | GitHub に**未登録** (この branch にしか無い。`schedule` は既定 branch からしか発火しない) | — merge 後に初めて登録・発火 |
+| `ci-smoke` | 登録は残っているが file は main にも branch にも無い (2026-05-31 の残骸) | — 無害 |
+
+"閉じていない物" の 1 つは `release.yml` の現行版 —— `verify-release-artifacts` / `checksum-release` (どちらも保護対象) を
+runner で通した記録が無い。次にリリースを切るときが最初の実行になる (dispatch は公開物を作るので、検証のためだけには押さない)。
 
 ### 閉じていない物
 
