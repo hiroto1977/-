@@ -7,6 +7,54 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 307 (2026-09-17) — 例外の message を画面へ出す経路 2 本が、天井だけ掛けて伏字を持っていなかった
+
+`src/main` の子プロセスと console 出力の走査 (当たって問題なし・パス 306 の節) の続きで、**例外の文面が画面へ出る
+経路**を読んだ。`components/PageErrorBoundary.tsx` の `describeRenderError` は `error.message` を 160 字の天井で切って
+そのまま `<p>` に刷り、`data/localWrite.ts` の `describeStorageError` は Error でない物を `String()` して 60 字で切る ——
+どちらも **`clampToCeiling` で天井だけ**を掛けていて、`redactForMessage` を通らない。パス 290 が `shared/ollama.ts` で
+見つけた「天井だけで伏字を持たない」形と同じで、パス 273 / 290 の census は `redactForMessage` の**第 2 引数**を
+数えるので、呼ばない経路は映らない (今回も同じ死角)。
+
+### 測った範囲 (実害の筋道)
+
+- renderer の `.tsx` に描画中の `throw new Error(` は **0 件** —— 境界へ届く例外は実行時エラーか、描画中に呼ぶ共有関数が
+  投げる物。そこに相手の本文や `?token=` の形の URL が載る**根拠は無いが、載らない根拠も無い** (message の出所は
+  投げる側次第)。`describeStorageError` は Error なら `name` だけを返す (message を出さない判断は既に在った) が、
+  文字列を投げる実装の分だけ素通りだった。
+- 費用: `redact.ts` は両ビルドに既に在るので呼び出し 1 つずつ。
+
+### 直し
+
+- `describeRenderError`: `redactForMessage(text, ERROR_MESSAGE_MAX_CHARS)` で伏せてから、この枠の 160 字の天井と `…`
+  (切ったことの印) はそのまま。
+- `describeStorageError`: Error でない物は `redactForMessage(String(err), MAX_REASON_CHARS)`。`clampToCeiling` の import は
+  使わなくなったので落とした。
+- 検査 (+4): 境界 2 件 (GitHub PAT を 2 形で載せた message が画面の文に残らない —— 伏せる前の標本つき / 160 字 + `…` は不変)、
+  localWrite 2 件 (Error は `name` だけ / 文字列に載った PAT が残らない)。jsdom の `DOMException` は Error を継承しない
+  (ブラウザでは継承する) ので、name を持つ Error で見る —— 最初の版はそれで落ちた。
+- 対照 A (境界の伏字を外す) → 1 本 / B (`describeStorageError` の伏字を外す) → 2 本。
+
+### 実機
+
+e2e.yml と同じ順序 + `e2e:ollama` (連鎖 1 回・対照を戻してから起動): `build:renderer` → `smoke:app` OK → `build:web` / `build:web:lite` (**11,894,372 B / 3,306,893 B・両方 +9 B**) → `e2e` **30 suite / 395 件 ❌ 0** → `e2e:lite` **30 suite / 395 件 ❌ 0** → `perf` OK (LITE standalone-lite.html 3.15 MB DCL 244ms load 245ms heap 10.2MB FULL standalone.html 11.34 MB DCL 665ms load 668ms heap 36.9MB) → `e2e:ollama` **✅ 8**。
+
+### 台帳
+
+`data/localWrite.ts` は保護対象 (書き込みの成否を決める側) —— 全件実行で `integrityChainWitness` が鳴り、チェーン **#227**。
+`docs/ARCHITECTURE.md` のテスト数 14,484 → 14,488・CLAUDE.md の出荷物のバイト。
+`lint:shared-judgement` の生成ブロック (`docs/REMAINING_WORK.md`) は `inputCeiling` の import 元が 42 → 41 (localWrite が離れた) で古くなり、
+全件実行で鳴った → 再生成。**その断り文が「`npm run lint:shared-judgement` で再生成」と案内していたが、その npm script は `--check` だけで
+書き戻さない** —— 案内どおり叩いて空振りした。再生成は `node scripts/shared-judgement-census.cjs` (引数なし)。文を直した
+(生成ブロックの開始マーカーにも同じ文言が在るが、マーカーを変えると既存ブロックを見失うので触らない)。
+
+### 閉じていない物
+
+- 「例外の文面 → 画面」の経路を**母集団として数える網**は無い (`redactForMessage` の第 2 引数の census は呼ぶ側しか
+  映さない)。`err.message` / `String(err)` が JSX か state へ流れる形の走査 —— 今日の 2 本は読んで見つけた。
+- `redact.ts` の「最後の関門」の列挙 (相手の本文の経路 6 件) は保護対象の注記なので触っていない。例外の文面は
+  別の class として、ここ (引継ぎ) に書く。
+
 ## パス 306 (2026-09-17) — 1 度も走っていない週次の依存監査は、「常設 Issue 1 つ」を 2 週目で破る形だった
 
 パス 305 の走査で `dependency-audit.yml` は GitHub に**未登録** (この branch にしか無く、`schedule` は既定 branch から
@@ -53,6 +101,16 @@ Issue を `state: 'open'` で探し、要対応 0 件のときその Issue を**
 - **参照だけ在って実体が無い物** (「書かれてから 1 度も走っていない」の隣): package.json の scripts が指す
   `scripts/*.{cjs,sh,ts}` 115 件 → 欠落 0 / workflow の `npm run X` 65 件 → package.json に無い物 0 /
   CLAUDE.md・README・docs/*.md の `npm run X` 308 件 → 無い物 0。
+- **`--self-test` を名乗るのに誰も回さない script**: 私の粗い走査は 3 本を挙げた (`integrity-chain` / `public-host-guard` /
+  `scan-credential-headers`) が、どれも既存の `gateSelfTests.test.ts` (2 つの綴り `--self-test` / 下位命令 `self-test` と vitest の
+  経路を数える) の中に在り、走らせる経路を持つ。`it.skip` / `it.todo` / `it.only` は 0 件。
+- **子プロセスの起動は app code に 0 件** (`child_process` / `spawn(` / `execFile(` / `execSync(`: 走査に当たる 23 件は
+  すべて正規表現の `.exec`)。**主プロセスの console 出力は 5 件で全部 `secrets.ts`**: 保管庫のパス・サイズ・keychain 不在の固定文だけで、
+  鍵の中身も応答本文も刷らない。
+- **パス 304–306 の差分 (code / workflow 20 ファイル・+508 行) に資格情報らしい物は無い**: 追加行を token / secret / key /
+  password / bearer / `ghp_` / `github_pat` / `AKIA` / `-----BEGIN` で漉して 0 件。GitHub の secret scanning API は
+  **この repo では Advanced Security が無効で使えない** (実測: `Repository does not have GitHub Advanced Security enabled`) ——
+  機械の網は自前の `lint:sample-data` と上の漉しだけ。
 - **`release.yml` の現行版にパス 305 と同じ形 (npm ci が入れない道具) は無い** (静的に読んだ): `run:` は npm ci /
   typecheck / test / verify:all / `npm run build -- --publish never` / `node scripts/{smoke-app --check-bundle, verify-release-artifacts,
   checksum-release, lint-sample-data --artifact}` だけで、electron-builder・electron は devDependencies に在る。runner での

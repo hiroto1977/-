@@ -4,7 +4,7 @@
  * 成功したときは**実際に入っている**ことを見る。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { writeLocalJson, writeLocalString } from '../localWrite';
+import { describeStorageError, writeLocalJson, writeLocalString } from '../localWrite';
 
 /**
  * **`Storage.prototype` に挿す。** jsdom の `setItem` は実体 (`window.localStorage`) の
@@ -24,6 +24,23 @@ const named = (name: string) => {
 
 beforeEach(() => localStorage.clear());
 afterEach(() => vi.restoreAllMocks());
+
+describe('describeStorageError は伏せてから切る (パス 307)', () => {
+  it('Error は種別だけ (message は出さない)', () => {
+    // jsdom の DOMException は Error を継承しない (ブラウザでは継承する) ので、name を持つ Error で見る
+    expect(describeStorageError(Object.assign(new Error('full'), { name: 'QuotaExceededError' }))).toBe('QuotaExceededError');
+    expect(describeStorageError(new Error('Authorization: Bearer ghp_abcdefghijklmnopqrstuvwxyz0123456789'))).toBe('Error');
+  });
+
+  it('★ Error でない物 (文字列を投げる実装) に載った資格情報は残らない', () => {
+    const thrown = 'x-proxy-auth: ghp_abcdefghijklmnopqrstuvwxyz0123456789';
+    const out = describeStorageError(thrown);
+    expect(out).not.toContain('ghp_abcdefghijklmnopqrstuvwxyz0123456789');
+    // 標本: 伏せる前には在る
+    expect(thrown).toContain('ghp_abcdefghijklmnopqrstuvwxyz0123456789');
+    expect(out.length).toBeGreaterThan(0);
+  });
+});
 
 describe('writeLocalJson', () => {
   it('成功したら ok で、値が実際に入っている (書けたことの検査)', () => {

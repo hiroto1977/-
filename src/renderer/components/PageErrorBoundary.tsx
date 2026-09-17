@@ -1,4 +1,5 @@
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 /**
@@ -30,7 +31,15 @@ export const MAX_RENDER_ERROR_CHARS = 160;
 /** 例外から利用者向けの短い文を作る。Error 以外 (文字列や undefined) も落とさず受ける。 */
 export function describeRenderError(error: unknown): string {
   const raw = error instanceof Error ? error.message : typeof error === 'string' ? error : '';
-  const text = raw.replace(/\s+/g, ' ').trim();
+  /*
+   * **伏せてから切る** (2026-09-17 · パス 307)。ここは例外の message を画面へ出す経路で、
+   * 天井 (160 字) だけを自前で掛けていた —— パス 290 が `shared/ollama.ts` で見つけた
+   * 「天井だけで伏字を持たない」形と同じ。描画中に投げる物の多くは実行時エラーだが、
+   * message に相手の本文や URL (`?token=` の形) が載る可能性を排除する根拠は無い。
+   * `redactForMessage` は両ビルドのエラー 1 行が通る唯一の漏斗で、費用は呼び出し 1 つ。
+   * 2000 字で伏せてから、この枠の 160 字の天井を掛ける (切ったことは `…` で示す)。
+   */
+  const text = redactForMessage(raw.replace(/\s+/g, ' ').trim(), ERROR_MESSAGE_MAX_CHARS);
   /*
    * **切るのは文字の境界で** (2026-09-13 · パス 196)。`text.slice(0, 160)` は
    * UTF-16 のコード単位で切るので、160 番目がサロゲート対の真ん中に落ちると

@@ -62,6 +62,23 @@ describe('describeRenderError', () => {
   });
 });
 
+describe('describeRenderError は伏せてから切る (パス 307)', () => {
+  it('★ message に載った資格情報は画面の文に残らない', () => {
+    const msg = 'GET https://api.example.com/x?access_token=ghp_abcdefghijklmnopqrstuvwxyz0123456789 failed: Authorization: Bearer ghp_abcdefghijklmnopqrstuvwxyz0123456789';
+    const out = describeRenderError(new Error(msg));
+    expect(out).not.toContain('ghp_abcdefghijklmnopqrstuvwxyz0123456789');
+    // 標本: 伏せる前の文には鍵がそのまま在る (この検査が空でないこと)
+    expect(msg).toContain('ghp_abcdefghijklmnopqrstuvwxyz0123456789');
+    expect(out.length).toBeGreaterThan(0);
+  });
+
+  it('伏せた後も 160 字の天井と「…」は変わらない', () => {
+    const out = describeRenderError(new Error('x'.repeat(500)));
+    expect(out.endsWith('…')).toBe(true);
+    expect([...out].length).toBe(161);
+  });
+});
+
 describe('PageErrorBoundary', () => {
   it('★ 標本: 子が投げると、その枠だけが文面 (画面名 + message) と「もう一度開く」「ホームへ戻る」になる', async () => {
     const onGoHome = vi.fn();

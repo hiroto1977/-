@@ -1013,7 +1013,7 @@ function main() {
     const reason = staleReason(doc, table);
     if (reason !== null) {
       console.error(
-        `❌ census が古くなっています。\`npm run lint:shared-judgement\` で再生成してください。\n${reason}`,
+        `❌ census が古くなっています。\`node scripts/shared-judgement-census.cjs\` (引数なし) で再生成してください —— \`npm run lint:shared-judgement\` は --check だけで書き戻さない (パス 307 で実際に案内どおり叩いて空振りした)。\n${reason}`,
       );
       process.exit(1);
     }
