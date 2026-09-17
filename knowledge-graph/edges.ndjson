@@ -421,7 +421,7 @@
 {"a":"bizlaw-anti-dilution-venture","b":"bizlaw-tag-along-drag-along","type":"same-category","score":418}
 {"a":"bizlaw-anti-dilution-venture","b":"bizlaw-tag-along-drag-along-rights","type":"shares-source","score":10000}
 {"a":"bizlaw-anti-money-laundering-directive-eu","b":"bizlaw-anti-money-laundering-fatf","type":"same-category","score":414}
-{"a":"bizlaw-anti-money-laundering-fatf","b":"bizlaw-insider-trading-regulation","type":"same-category","score":419}
+{"a":"bizlaw-anti-money-laundering-fatf","b":"bizlaw-insider-trading-regulation","type":"same-category","score":421}
 {"a":"bizlaw-anti-monopoly-digital-platforms","b":"bizlaw-antitrust-competition-law","type":"shares-thinker","score":3333}
 {"a":"bizlaw-anti-monopoly-digital-platforms","b":"bizlaw-antitrust-digital-platforms","type":"shares-thinker","score":3333}
 {"a":"bizlaw-anti-monopoly-digital-platforms","b":"bizlaw-competition-law","type":"shares-thinker","score":3333}
@@ -1867,7 +1867,7 @@
 {"a":"bizlaw-cross-listing-global-securities","b":"bizlaw-tag-along-drag-along","type":"shares-thinker","score":5000}
 {"a":"bizlaw-cross-listing-global-securities","b":"human-attention-restoration","type":"shares-thinker","score":3333}
 {"a":"bizlaw-crowdfunding-securities-regulation","b":"bizlaw-securities-fraud-materiality","type":"shares-thinker","score":3333}
-{"a":"bizlaw-crowdfunding-securities-regulation","b":"bizlaw-securities-insider-trading-regulation","type":"same-category","score":430}
+{"a":"bizlaw-crowdfunding-securities-regulation","b":"bizlaw-securities-insider-trading-regulation","type":"same-category","score":434}
 {"a":"bizlaw-crowdfunding-securities-regulation","b":"bizlaw-securities-regulation-disclosure","type":"shares-thinker","score":3333}
 {"a":"bizlaw-crowdfunding-securities-regulation","b":"bizlaw-shareholder-activism-hedge-fund","type":"shares-thinker","score":2500}
 {"a":"bizlaw-crowdfunding-securities-regulation","b":"bizlaw-shareholders-derivative-suit","type":"shares-thinker","score":3333}
@@ -2858,7 +2858,7 @@
 {"a":"bizlaw-implied-covenant-good-faith","b":"bizlaw-implied-warranty-of-merchantability","type":"shares-thinker","score":2500}
 {"a":"bizlaw-implied-covenant-good-faith","b":"bizlaw-parole-evidence-rule","type":"shares-source","score":3333}
 {"a":"bizlaw-implied-covenant-good-faith","b":"bizlaw-tortious-interference","type":"shares-source","score":3333}
-{"a":"bizlaw-implied-terms","b":"bizlaw-insider-trading-regulation","type":"same-category","score":420}
+{"a":"bizlaw-implied-terms","b":"bizlaw-insider-trading-regulation","type":"same-category","score":421}
 {"a":"bizlaw-implied-terms","b":"bizlaw-shareholder-activism-proxy-fight","type":"same-category","score":420}
 {"a":"bizlaw-implied-warranty-merchantability","b":"bizlaw-implied-warranty-of-merchantability","type":"term-overlap","score":1244}
 {"a":"bizlaw-implied-warranty-merchantability","b":"bizlaw-letter-of-credit","type":"shares-thinker","score":3333}
@@ -2917,14 +2917,14 @@
 {"a":"bizlaw-insider-trading","b":"bizlaw-market-manipulation","type":"same-category","score":1706}
 {"a":"bizlaw-insider-trading","b":"bizlaw-securities-disclosure","type":"shares-source","score":5000}
 {"a":"bizlaw-insider-trading","b":"eh-1978","type":"shares-source","score":3333}
-{"a":"bizlaw-insider-trading","b":"legal-insider-trading","type":"term-overlap","score":1405}
+{"a":"bizlaw-insider-trading","b":"legal-insider-trading","type":"term-overlap","score":1414}
 {"a":"bizlaw-insider-trading","b":"legal-insider-trading","type":"shares-source","score":10000}
 {"a":"bizlaw-insider-trading","b":"legal-securities-disclosure","type":"shares-source","score":5000}
 {"a":"bizlaw-insider-trading","b":"mgmt-corporate-governance","type":"shares-source","score":10000}
 {"a":"bizlaw-insider-trading-regulation","b":"bizlaw-regulation-d-private-placement","type":"shares-source","score":2500}
 {"a":"bizlaw-insider-trading-regulation","b":"bizlaw-say-on-pay","type":"shares-source","score":10000}
 {"a":"bizlaw-insider-trading-regulation","b":"bizlaw-securities-class-action-litigation","type":"shares-source","score":10000}
-{"a":"bizlaw-insider-trading-regulation","b":"bizlaw-securities-insider-trading-regulation","type":"term-overlap","score":1257}
+{"a":"bizlaw-insider-trading-regulation","b":"bizlaw-securities-insider-trading-regulation","type":"term-overlap","score":1266}
 {"a":"bizlaw-insider-trading-regulation","b":"bizlaw-securities-regulation","type":"shares-source","score":5000}
 {"a":"bizlaw-insider-trading-regulation","b":"bizlaw-securities-regulation-disclosure","type":"shares-source","score":10000}
 {"a":"bizlaw-insider-trading-regulation","b":"bizlaw-shareholder-activism-proxy-fight","type":"shares-source","score":10000}
@@ -3582,7 +3582,7 @@
 {"a":"bizlaw-privacy-law-gdpr-compliance","b":"infosoc-gdpr-right-erasure","type":"term-overlap","score":1210}
 {"a":"bizlaw-privacy-law-gdpr-compliance","b":"infosoc-gdpr-right-erasure","type":"shares-source","score":5000}
 {"a":"bizlaw-privacy-law-gdpr-compliance","b":"infosoc-privacy-by-design","type":"shares-source","score":5000}
-{"a":"bizlaw-private-detective-act","b":"bizlaw-trade-secret-misappropriation","type":"same-category","score":428}
+{"a":"bizlaw-private-detective-act","b":"bizlaw-trade-secret-misappropriation","type":"same-category","score":431}
 {"a":"bizlaw-private-detective-act","b":"bizlaw-unauthorized-access","type":"shares-source","score":10000}
 {"a":"bizlaw-private-detective-act","b":"legal-anti-money-laundering-act","type":"shares-source","score":10000}
 {"a":"bizlaw-private-detective-act","b":"legal-secondhand-dealer","type":"shares-source","score":10000}
@@ -3994,8 +3994,8 @@
 {"a":"bizlaw-trade-secret-directive-eu","b":"bizlaw-trade-secret-protection-trips","type":"same-category","score":1597}
 {"a":"bizlaw-trade-secret-directive-eu","b":"bizlaw-trade-secret-protection-utsa","type":"shares-thinker","score":5000}
 {"a":"bizlaw-trade-secret-misappropriation","b":"bizlaw-trade-secret-protection-trips","type":"term-overlap","score":1624}
-{"a":"bizlaw-trade-secret-misappropriation","b":"bizlaw-unfair-competition-trade-secret","type":"term-overlap","score":1220}
-{"a":"bizlaw-trade-secret-misappropriation","b":"bizlaw-unfair-competition-trade-secret","type":"same-category","score":1220}
+{"a":"bizlaw-trade-secret-misappropriation","b":"bizlaw-unfair-competition-trade-secret","type":"term-overlap","score":1228}
+{"a":"bizlaw-trade-secret-misappropriation","b":"bizlaw-unfair-competition-trade-secret","type":"same-category","score":1228}
 {"a":"bizlaw-trade-secret-misappropriation","b":"eh-1959","type":"shares-source","score":3333}
 {"a":"bizlaw-trade-secret-misappropriation","b":"eh-1965","type":"shares-source","score":2500}
 {"a":"bizlaw-trade-secret-misappropriation","b":"eh-1974","type":"shares-source","score":2500}
@@ -16932,7 +16932,7 @@
 {"a":"legal-inheritance-registration-mandatory","b":"tax-invoice","type":"shares-source","score":5000}
 {"a":"legal-inheritance-registration-mandatory","b":"tax-nisa","type":"shares-source","score":5000}
 {"a":"legal-insider-trading","b":"legal-securities-disclosure","type":"shares-source","score":5000}
-{"a":"legal-insider-trading","b":"legal-securities-disclosure","type":"same-category","score":392}
+{"a":"legal-insider-trading","b":"legal-securities-disclosure","type":"same-category","score":395}
 {"a":"legal-insider-trading","b":"mgmt-corporate-governance","type":"shares-source","score":10000}
 {"a":"legal-interest-limit","b":"legal-provider-liability","type":"same-category","score":449}
 {"a":"legal-interest-limit","b":"legal-statutory-interest","type":"same-category","score":410}
@@ -17018,7 +17018,7 @@
 {"a":"legal-patent-right","b":"legal-utility-model","type":"shares-source","score":10000}
 {"a":"legal-prescription","b":"legal-prescription-renewal","type":"same-category","score":460}
 {"a":"legal-prescription","b":"legal-pseudonymized-info","type":"shares-source","score":5000}
-{"a":"legal-prescription","b":"legal-statutory-interest","type":"same-category","score":765}
+{"a":"legal-prescription","b":"legal-statutory-interest","type":"same-category","score":766}
 {"a":"legal-prescription","b":"legal-tort-liability","type":"same-category","score":806}
 {"a":"legal-prescription","b":"subsidy-aomori","type":"shares-source","score":3333}
 {"a":"legal-prescription","b":"subsidy-iwate","type":"shares-source","score":3333}
