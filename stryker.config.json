@@ -292,6 +292,7 @@
     "src/shared/tradeTax.ts",
     "src/shared/updateCheck.ts",
     "src/shared/vaultToken.ts",
+    "src/shared/watchlistState.ts",
     "src/shared/waterCyclePlanner.ts",
     "src/shared/welfareDocs.ts",
     "src/shared/welfareScheme.ts",

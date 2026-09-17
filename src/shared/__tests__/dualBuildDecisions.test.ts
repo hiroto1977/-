@@ -45,7 +45,6 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   extractJson: { kind: 'decision', why: 'LLM 応答から JSON を取る (dualBuildParity)' },
   normalizeAnalysis: { kind: 'decision', why: 'LLM 応答を型へ丸める (dualBuildParity)' },
   validateAdvisorJson: { kind: 'decision', why: 'LLM 応答を絞る (advisorValidationParity)' },
-  isSafeSymbol: { kind: 'decision', why: '銘柄記号の形 (dualBuildParity)' },
 
   // --- 純計算 ---
   sma: { kind: 'pure', why: '単純移動平均。境界の守りではない' },

@@ -2918,6 +2918,26 @@ async function paperAccountSuite(browser) {
   );
   ok(empty !== '該当する銘柄はありません', 'paperAccount: 古い一言に戻っていない');
 
+  // 壊れた保存値: 空を表示しつつ、そう言う (黙って「初期状態（登録なし）」に化けない・パス 309)。
+  // チームレーダー (パス 120) と同じ形 —— 保存先を読むのは「更新」。
+  await page.evaluate(() => localStorage.setItem('stocks.watchlist', '{壊れた'));
+  await page.getByRole('button', { name: '更新' }).click();
+  await page.waitForSelector('[data-watchlist-stored-note]', { timeout: 20000 });
+  const storedNote = (await page.locator('[data-watchlist-stored-note]').textContent()) ?? '';
+  ok(
+    storedNote.includes('保存したウォッチリストを読めませんでした (JSON として読めません)'),
+    `paperAccount: ★ 壊れた保存値を「読めなかった」と言う — 実際 ${storedNote.slice(0, 80)}`,
+  );
+  ok(storedNote.includes('元の保存値は戻りません'), 'paperAccount: ★ 登録・解除で上書きされることを先に言う');
+  // 対照 —— 保存値を退けると注記は消える (「読めなかった」が固定文でないこと)。
+  await page.evaluate(() => localStorage.removeItem('stocks.watchlist'));
+  await page.getByRole('button', { name: '更新' }).click();
+  await page.waitForSelector('[data-watchlist-stored-note]', { state: 'detached', timeout: 20000 });
+  ok(
+    (await page.locator('[data-watchlist-stored-note]').count()) === 0,
+    'paperAccount: 対照 — 保存値が無ければ注記は出ない',
+  );
+
   ok(errs.length === 0, `paperAccount: コンソールエラー 0 件 (${errs.join(' | ')})`);
   await ctx.close();
 }

@@ -1444,6 +1444,9 @@ export const SNAPSHOT = {
       }[],
     },
     fetchedAt: '',
+    // 保存先から何が読めたか (パス 309)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
     // **実物も literal を宣言している**唯一の欄 (`StocksSnapshot.isMock: true` ——
     // 「Always true until Phase 7 wires a real data source + broker」)。だから狭いのが
     // 正しく、`as boolean` を足すと実物より**広い**主張になる。台帳は

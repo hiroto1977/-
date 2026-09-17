@@ -88,6 +88,9 @@ interface StocksSnapshot {
   portfolio: Portfolio;
   fetchedAt: string;
   isMock: boolean;
+  /** 保存先から何が読めたか (パス 309)。読めなかったときは `storedNote` がそう言う。 */
+  stored: 'saved' | 'none' | 'unreadable';
+  storedNote: string | null;
 }
 
 const ACTION_COLORS: Record<Signal['action'], string> = {
@@ -459,6 +462,12 @@ export function StocksPage() {
           <div data-watchlist-storage style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 12 }}>
             {persistDestinationNote(buildKind, DESKTOP_PATHS.stocksState)}
             {emptyWatchlistNote(buildKind)}
+          </div>
+        )}
+        {/* 保存先が読めなかった・読み込みで落とした物が在るときだけ出る (パス 309)。見本や空に化けたことを黙らない。 */}
+        {data.storedNote !== null && (
+          <div data-watchlist-stored-note style={{ fontSize: 12, color: '#fbbf24', marginBottom: 12, lineHeight: 1.6 }}>
+            ⚠ {data.storedNote}
           </div>
         )}
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>

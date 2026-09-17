@@ -7,6 +7,95 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 309 (2026-09-17) — 銘柄のウォッチリストは「まだ無い」と「読めなかった」を分けず、壊れた保存値を見本 / 空として刷り、次の登録が 1 銘柄で上書きしていた (両ビルド)
+
+パス 308 の「閉じていない物」(状態ファイルの読み) を辿って、**読みの結果をどう畳んでいるか**を 4 つの状態ファイルで比べた。
+emotions (`readStore`: ENOENT 以外は投げる・`forWrite` は落とした物が在れば断る)、talent (パス 121)、teamradar (パス 120) は
+「まだ無い」と「読めなかった」を分ける。**stocks だけが分けていなかった** —— しかも両ビルドで:
+
+```
+  main  clients/stocks.ts  loadStocksState        catch { return DEFAULT_STATE }   ENOENT / EACCES / 壊れた JSON / 形違い → 全部 { watchlist: [] }
+  web   stocksWatchlistWeb loadWatchlistSymbols   catch { return [] }              同じ
+```
+
+docblock は「Returns DEFAULT_STATE on missing file / parse error / shape mismatch. **Never throws.**」と**弱さを仕様として書き留め**、
+検査も `returns DEFAULT_STATE on JSON parse error` を緑で留めていた (パス 291 の「前置き一致なので弾く側」と同じ家系)。
+
+### 実害の筋道 (実測)
+
+- **画面**: デスクトップの `fetchStocksSnapshotImpl` は `watchlist.length > 0 ? 保存値 : MOCK_TICKERS` なので、壊れた `state.json` で
+  **見本 5 銘柄**が出て、画面の `emptyWatchlistNote` が「初期状態（登録なし）では見本の銘柄が表示されます」と言う —— 利用者の一覧が
+  読めていないことを「登録が無い」と名乗る。ブラウザ版は空の一覧 + 「初期状態（登録なし）では一覧は空です」。
+- **書き**: `addWatchlistEntry` は `load → [] → save([新しい 1 件])`。**壊れた保存値へ 1 銘柄登録すると、元の一覧は戻らない**。
+  `removeWatchlistEntry` は `[]` に無い物を消せないので書かない (偶然の安全)。ブラウザ版の `registerSymbol` も同じ形。
+- `isSafeSymbol` は main と renderer に**写しが 1 つずつ** (renderer の docblock が「Electron 版と同じ規則」と言うだけで留める物は無い)。
+
+### 直し (規則は 1 つ: `shared/watchlistState.ts`)
+
+- `readStoredWatchlist(raw | null)`: `none` / `unreadable (理由)` / `saved { symbols, dropped }`。包みは 2 つとも受ける
+  (`{ watchlist: [...] }` = デスクトップが書く形 / 裸の配列 = ブラウザ版が書く形。**書く形は変えない** —— 変えると古い版が読めず、
+  黙って空に畳んでいた頃の動作へ戻る)。理由の文言は定数 (`WATCHLIST_UNREADABLE`・パス 234 の規則)。銘柄コードでない要素は
+  落として `dropped` に数える (人材育成の `describeUnreadEntries` と同じ「上書きすると失われる物が在る」を言うため)。
+- `isSafeSymbol` を shared へ移し、main / renderer は re-export (写し 0)。
+- main `loadStoredWatchlist`: ENOENT だけ `none`、他の読みの失敗は理由つき `unreadable` (talent / teamradar と同じ形)。
+- 両ビルドのスナップショットに `stored` / `storedNote` の 2 欄 (`StocksSnapshot` / `WebStocksSnapshot` / 静的 `snapshot.ts`)。
+  注記は `watchlistStoredNote(stored, shown)` の 1 つで、`shown` (見本 / 空) だけが実行形態で違う (パス 161 の決定を引き継ぐ)。
+- **読めなかった保存値を空として扱う場所は `symbolsOrEmpty` の 1 つ**に書き、使う所は 3 つ (スナップショット・登録/解除・ブラウザ版の
+  助言の対象)。登録・解除は**警告のうえ通す** (注記が先に「登録・解除すると空の一覧を基に上書きされ、元の保存値は戻りません」と言う)。
+  これはチームレーダーの「保存を押すと上書き」(パス 120) と同じ規則 —— **明示の操作は警告のうえ通し、暗黙の書き込みだけ断る** (パス 160)。
+  断る側に倒すと、ブラウザ版で壊れた `stocks.watchlist` を退ける手段がハードリセットしか無くなる。
+- 画面 (`StocksPage`): `data.storedNote` を ⚠ つきで刷る (`data-watchlist-stored-note`)。
+
+### 検査 (静的 `it(` +28 = 14,493 → 14,521 · 実行時 +41 = 17,259 → 17,300)
+
+- `shared/__tests__/watchlistState.test.ts` (新規 15 + `it.each` 2 本 = 実行時 28): 規則・3 状態・包み 2 つ・落とした件数・注記の全文・`symbolsOrEmpty`。
+- `stocks.test.ts` (+5・書き換え 9): 壊れた JSON / EACCES / 形違いは `unreadable` (★)、スナップショットの 3 状態と注記 (★)、
+  壊れた保存値への登録は空を基に書き直す・解除は書かない (決定を留める)。`loadState` の偽物 6 か所 (`paperAccountReality.test.ts` 含む) を
+  3 状態の形へ。
+- `stocksWatchlistWeb.test.ts` (+5)・`webShimSnapshotBranches.test.ts` (+3): ブラウザ版の 3 状態と往復。
+- e2e `paperAccount` (+3): 実 chromium で壊れた `stocks.watchlist` → 「更新」→ ⚠ の注記 → 退けると消える (対照)。
+
+### 対照 (4 本すべて鳴る · `ctl309/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. shared の読みが壊れた JSON を `saved []` に畳む | 5 本 (shared 1 / main 1 / web 2 / shim 1) |
+| B. デスクトップのスナップショットが注記を運ばない | 2 本 (★ 読めなかった / ★ 落とした件数) |
+| C. ブラウザ版のスナップショットが注記を運ばない | 3 本 (web 2 / shim 1) |
+| D. 画面の ⚠ を外して `build:web` → `SERVICE_HUB_E2E_ONLY=paperAccount npm run e2e` | **実機で exit 1** (`waitForSelector('[data-watchlist-stored-note]')` が 20 秒で落ちる) —— 単体検査は全部緑のまま |
+
+### 実機
+
+`e2e.yml` と同じ順序 + `e2e:ollama`: `smoke:app` OK / `e2e` 30 suite **398 件** ❌ 0 (395 + 今日の 3) / `e2e:lite` 398 件 ❌ 0 / `perf` OK (LITE DCL 252 ms heap 10.1 MB・FULL DCL 720 ms heap 36.7 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8。**連鎖は 2 回回した** —— 1 回目は `e2e` (398 件 ❌ 0) の最中に `src/main/clients/stocks.ts` の Stryker pragma を 1 行動かしたため、続く `e2e:lite` / `perf` / `e2e:ollama` が「成果物が材料より古い」で **exit 2** (鮮度の判定は `src/` 全体を見るので main の編集でも鳴る。断りは正しい)。組み直して 2 回目は全段緑で、FULL / LITE の byte は 1 回目と同じ。出荷物: FULL **11,895,826 B** / LITE **3,308,347 B** (パス 307 後 11,894,372 / 3,306,893 から
+**両方 +1,454 B** —— shared の読み 1 本 + 両ビルドの配線 + 画面の 1 段。shared は両ビルドが読むので LITE も同じだけ増える)。
+
+### 台帳
+
+- `lint:shared-judgement`: `watchlistState` が母集団に入った (shared 146 / 両ビルド 64 / 否定 33)。判定「対称 (そう作った)」を `VERDICTS` に書き、
+  生成ブロックを引数なしの script で再生成。CLAUDE.md の 3 つの live metric も追随。
+- `stryker.config.json` 290 → **291** (新しい shared)。ARCHITECTURE のテスト数 14,493 → **14,521**。
+- `atRestPolicy.test.ts` の `PLAINTEXT_LEDGER` (stocks の `state.json` は銘柄記号だけなので封緘しない) は据え置き —— 今日の直しは読みの判定で、
+  置く物は変わっていない。
+- `absenceSampleCensus.test.ts` の台帳 2 行 (`stocks.test.ts:2818` / `:3624`) は**行番号が鍵**なので、検査を書き換えた分だけ動かした (2820 / 3678)。
+  `dualBuildDecisions.test.ts` から `isSafeSymbol` の行を消した (もう 2 実装ではない —— 台帳は両方向に鳴った)。全件実行はこの 3 本だけが落ち、
+  直して 750 ファイル / 17,300 件が緑。
+- `lint:charset` が新しい検査ファイルの**生の U+0000** を捕まえた —— `'A\u0000B'` と書いたつもりの標本が、道具を経て実体の NUL として保存されていた
+  (`verify:all` の 1 回目はここで落ちた)。エスケープ 6 字に直して 2 回目は 37/37。**ゲートが無ければ NUL 入りのソースがそのまま入っていた** ——
+  パス 255 が制御文字を 4 群足した理由がそのまま当たった。
+
+### 当たって問題なしだった物 (パス 309 の直後・再訪不要)
+
+- 状態ファイルの読みの畳み方: emotions は ENOENT 以外を投げ `forWrite` で断る・talent / teamradar は 3 状態 —— stocks が最後の 1 つだった。
+- `secrets.ts` の `readFileWithBackup` (本体が読めなければ `.prev`): 本体の壊れは `.prev` へ倒れる設計で、`readStoredToken` が
+  `absent` / `undecryptable` / `store-unreadable` を分ける (2026-09-06)。ここは分けている。
+
+### 閉じていない物
+
+- パス 308 の「状態ファイルの読みに大きさの門が無い」(`emotions.ts` / `talent.ts` / `teamradar.ts` / `atomicWrite.ts` の `readFileWithBackup`) は
+  今日も据え置き。stocks の `loadStoredWatchlist` も同じで、4 つ目の読みが増えた形 —— 直すなら 1 つの床を 4 つの読みが通る形 (保護対象なので chain が要る)。
+- main の `unreadable` の理由は `e.message` (fs のエラー文: `EACCES: permission denied, open '/home/…/state.json'`)。talent / teamradar と同じで
+  資格情報は乗らないが、パス 307 の「例外の文面 → 画面」の census を書くならこの 3 本も母集団に入る。
+
 ## パス 308 (2026-09-17) — スキル本文 (SKILL.md) は system として丸ごと有料 API へ送られるのに、天井を持たず、ファイルは大きさを見ずに読んでいた
 
 main の local file の読み (10 か所) を「大きさの門が在るか」で走査した (パス 307 の続き)。`secrets.ts` だけが
@@ -43,6 +132,14 @@ frontmatter の題 / 対照: 天井ちょうどは runnable) + run-skill 2 件 (
 ### 実機
 
 main だけの変更なので `build:renderer` → **`smoke:app` OK** (実物の `electron .` が新しい main.js で起動) → `build:web` → FULL は **11,894,372 B でパス 307 と byte 単位で同じ** (ブラウザ版は `clients/skills.ts` を読まない —— 実測で裏付けた。LITE は組んでいない: 差が出るのは学術コーパスだけなので FULL が不変なら LITE も不変)。e2e は回していない (renderer に触っていない)。
+
+### 当たって問題なしだった物 (パス 308 の直後・再訪不要)
+
+- **AI へ送る欄の走査** (`system:` / `messages:` / `content:` / `prompt:` を書く場所 · 出荷 code): web-shim の事業アドバイザー・株式アドバイザーは
+  `question` (画面で天井) + プログラムが組む JSON (事業カテゴリ / `capAdvisorUniverse` で銘柄数を上限) で、利用者の自由文は question だけ。
+  Village は `charsOverCeiling` + `refusedCeilingNote`、アシスタントは `MAX_ASSISTANT_CONTENT_CHARS` / `MAX_ASSISTANT_SYSTEM_CHARS`、
+  Ollama は `shared/ollama.ts` の天井、感情ログの analyze-text は e2e の `aiCeiling` / `writeCeiling` が実機で見ている。
+  今日の穴 (スキル本文) は「system に**ファイル**を載せる」唯一の経路だった。
 
 ### 閉じていない物
 
@@ -3814,6 +3911,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 銘柄のウォッチリストの読み (パス 309) | ✅ 両ビルドが shared の 3 状態 (`readStoredWatchlist`) を通り、画面が ⚠ で「読めなかった」と言う。登録・解除は警告のうえ通す (パス 120 / 160 の規則)。対照 4 本 (D は実機で exit 1)。`isSafeSymbol` の写し 2 → 1 |
 | スキル本文の天井 (パス 308) | ✅ system の天井 (60,000 字) を run-skill と一覧へ。byte の門 (4 × 天井) で読まずに断る。対照 3 本 |
 | 例外の文面 → 画面 (パス 307) | ✅ 2 経路を `redactForMessage` へ。実機 5 段 + `e2e:ollama` 緑・両方 +9 B。「例外 → 画面」の母集団を数える網は無い (閉じていない物) |
 | `e2e.yml` が runner で動くか (パス 305) | ✅ 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 → **全 13 段 success・8 分 01 秒** (e2e 395 / lite 395 / ollama 8 / perf OK / smoke:app OK) |

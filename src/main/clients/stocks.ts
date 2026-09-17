@@ -1,6 +1,15 @@
 import { isoDateFromTimestamp } from '../../shared/isoDate';
 import { countChars } from '../../shared/inputCeiling';
 import {
+  isSafeSymbol,
+  readStoredWatchlist,
+  symbolsOrEmpty,
+  watchlistStoredNote,
+  type StoredWatchlist,
+} from '../../shared/watchlistState';
+// 銘柄コードの規則は shared が 1 つだけ持つ (パス 309 まで main と renderer に写しが 1 つずつ)。
+export { isSafeSymbol } from '../../shared/watchlistState';
+import {
   watchlistPrices,
   paperAccountExportNote,
   paperAccountView,
@@ -12,7 +21,6 @@ import {
 } from '../../shared/paperAccount';
 import {
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
-  MAX_TICKER_CHARS,
   checkAdvisorQuestion,
   ADVISOR_QUESTION_MESSAGES,
 } from '../../shared/advisorQuestionLimits';
@@ -167,6 +175,10 @@ export interface StocksSnapshot {
   readonly fetchedAt: string;
   /** Always true until Phase 7 wires a real data source + broker. */
   readonly isMock: true;
+  /** 保存先から何が読めたか (パス 309)。`unreadable` のとき `watchlist` は見本 (空ではない)。 */
+  readonly stored: StoredWatchlist['kind'];
+  /** 読めなかった・読み込みで落とした物が在るときの 1 行 (`watchlistStoredNote`)。無ければ null。 */
+  readonly storedNote: string | null;
 }
 
 // --- Indicators (pure functions) -----------------------------------------
@@ -796,7 +808,7 @@ const SNAPSHOT_INITIAL_CASH = 1_000_000;
  *  a custom data source / state loader / date. Production: real ones. */
 export interface SnapshotDeps {
   dataSource?: StocksDataSource;
-  loadState?: (deps?: StateDeps) => Promise<StocksState>;
+  loadState?: (deps?: StateDeps) => Promise<StoredWatchlist>;
 }
 
 export async function fetchStocksSnapshotImpl(
@@ -808,9 +820,12 @@ export async function fetchStocksSnapshotImpl(
   const watchlist: WatchlistItem[] = [];
   // Use the persistent watchlist when non-empty, otherwise fall back to
   // the demo MOCK_TICKERS so first-run users see a populated dashboard.
-  const state = await (deps.loadState ?? loadStocksState)();
-  const universe = state.watchlist.length > 0
-    ? state.watchlist.map((s) => {
+  // 「まだ無い」と「読めなかった」を混ぜない (パス 309): 読めなかったときも見本に倒すが、
+  // `storedNote` がそう言う (チームレーダーのパス 120 と同じ形)。倒す場所は shared の 1 つ。
+  const stored = await (deps.loadState ?? loadStoredWatchlist)();
+  const saved = symbolsOrEmpty(stored);
+  const universe = saved.length > 0
+    ? saved.map((s) => {
         const def = MOCK_TICKERS.find((t) => t.symbol === s);
         return def
           ? { symbol: def.symbol, label: def.label }
@@ -833,7 +848,14 @@ export async function fetchStocksSnapshotImpl(
     });
     port = applySignal(port, t.symbol, signal, last.close);
   }
-  return { watchlist, portfolio: port, fetchedAt: FETCHED_AT, isMock: true };
+  return {
+    watchlist,
+    portfolio: port,
+    fetchedAt: FETCHED_AT,
+    isMock: true,
+    stored: stored.kind,
+    storedNote: watchlistStoredNote(stored, 'demo'),
+  };
 }
 
 // Production wrapper — tests use fetchStocksSnapshotImpl directly with
@@ -856,21 +878,6 @@ interface BacktestPayload {
   initialCash?: unknown;
 }
 
-/** Permits Latin letters, digits, dot, dash, caret. Covers JP TSE codes
- *  (`7203.T`), US tickers (`AAPL`), and index symbols (`^N225`). Rejects
- *  spaces, NUL, path separators, shell metachars. */
-export function isSafeSymbol(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
-  // The regex /^[A-Za-z0-9.\\-^]+$/ rejects empty strings on its own
-  // (`+` requires ≥1 char), so the length === 0 short-circuit is
-  // redundant. The length > 16 cap IS observable (a 17-char all-valid
-  // string would pass otherwise), but the cap is pinned by the
-  // 'A.repeat(17) → false' test elsewhere.
-  // Stryker disable next-line ConditionalExpression
-  if (value.length === 0 || countChars(value) > MAX_TICKER_CHARS) return false;
-  return /^[A-Za-z0-9.\-^]+$/.test(value);
-}
-
 export async function registerTickerImpl(
   ctx: ActionContext,
   deps: StateDeps = {},
@@ -880,8 +887,9 @@ export async function registerTickerImpl(
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  const before = await loadStocksState(deps);
-  const wasAlreadyThere = before.watchlist.includes(upper);
+  // 読めなかった保存値は空として扱う —— 理由と 3 つの場所は shared の `symbolsOrEmpty` に書いてある。
+  const before = symbolsOrEmpty(await loadStoredWatchlist(deps));
+  const wasAlreadyThere = before.includes(upper);
   const after = await addWatchlistEntry(symbol, deps);
   return {
     symbol: upper,
@@ -907,8 +915,8 @@ export async function unregisterTickerImpl(
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  const before = await loadStocksState(deps);
-  const wasThere = before.watchlist.includes(upper);
+  const before = symbolsOrEmpty(await loadStoredWatchlist(deps));
+  const wasThere = before.includes(upper);
   const after = await removeWatchlistEntry(symbol, deps);
   return {
     symbol: upper,
@@ -1611,8 +1619,6 @@ export interface StocksState {
   readonly watchlist: readonly string[];
 }
 
-const DEFAULT_STATE: StocksState = { watchlist: [] };
-
 /** Default path. Mirrors dashboard layout: `~/.local/business-hub/state.json`. */
 export function defaultStatePath(): string {
   return path.join(os.homedir(), '.local', 'business-hub', 'state.json');
@@ -1627,22 +1633,6 @@ export interface StateDeps {
   statePath?: () => string;
 }
 
-// Exhaustive negative tests pin every reject path of `shape`: null root,
-// non-object root, missing watchlist, non-string entries, unsafe symbols.
-// Stryker's perTest mis-attributes some kills here.
-// Stryker disable ConditionalExpression,LogicalOperator
-function shape(raw: unknown): StocksState {
-  if (raw === null || typeof raw !== 'object') return { ...DEFAULT_STATE };
-  const r = raw as Record<string, unknown>;
-  const wl = Array.isArray(r['watchlist'])
-    ? r['watchlist'].filter((s): s is string => typeof s === 'string' && isSafeSymbol(s))
-    : [];
-  return { watchlist: wl };
-}
-// Stryker restore ConditionalExpression,LogicalOperator
-
-/** Load state from disk. Returns DEFAULT_STATE on missing file / parse error /
- *  shape mismatch. Never throws. */
 /*
  * `saveStocksState` が **0600** で書く理由 —— `team-radar.json` と同じ扱いに
  * 揃える (2026-08-23)。
@@ -1697,16 +1687,28 @@ async function writeTight(target: string, contents: string): Promise<void> {
   await fs.chmod(target, 0o600);
 }
 
+/**
+ * 保存先を読む —— 「まだ無い」(ENOENT) と「読めなかった」(権限・I/O・壊れた中身) を分ける (パス 309)。
+ *
+ * 2026-09-17 まで `catch { return DEFAULT_STATE }` で全部を空に畳み、docblock が
+ * 「Returns DEFAULT_STATE on missing file / parse error / shape mismatch. Never throws.」と
+ * **弱さを仕様として書き留めていた** —— 壊れた `state.json` で画面は見本 5 銘柄を刷って
+ * 「初期状態（登録なし）」と言い、次の register-ticker が `[新しい 1 件]` で上書きした
+ * (チームレーダーのパス 120・人材育成のパス 121 と同じ形の 4 つ目)。読めた後の判定は
+ * shared (`readStoredWatchlist`) が持つ。
+ */
 // Stryker disable ArrowFunction,BooleanLiteral
-export async function loadStocksState(deps: StateDeps = {}): Promise<StocksState> {
+export async function loadStoredWatchlist(deps: StateDeps = {}): Promise<StoredWatchlist> {
   const p = (deps.statePath ?? defaultStatePath)();
   const read = deps.readFile ?? ((path: string) => fs.readFile(path, 'utf8'));
+  let raw: string;
   try {
-    const raw = await read(p);
-    return shape(JSON.parse(raw));
-  } catch {
-    return { ...DEFAULT_STATE };
+    raw = await read(p);
+  } catch (e) {
+    if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
+  return readStoredWatchlist(raw);
 }
 
 /** Save state with atomic rename (write to tmp + rename). Throws on
@@ -1730,9 +1732,10 @@ export async function addWatchlistEntry(symbol: string, deps: StateDeps = {}): P
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  const cur = await loadStocksState(deps);
-  if (cur.watchlist.includes(upper)) return cur;
-  const next: StocksState = { ...cur, watchlist: [...cur.watchlist, upper] };
+  // 読めなかった保存値は空として扱う (明示の操作は警告のうえ通す —— shared の `symbolsOrEmpty` の注記)。
+  const cur = symbolsOrEmpty(await loadStoredWatchlist(deps));
+  if (cur.includes(upper)) return { watchlist: cur };
+  const next: StocksState = { watchlist: [...cur, upper] };
   await saveStocksState(next, deps);
   return next;
 }
@@ -1743,9 +1746,9 @@ export async function removeWatchlistEntry(symbol: string, deps: StateDeps = {})
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  const cur = await loadStocksState(deps);
-  if (!cur.watchlist.includes(upper)) return cur;
-  const next: StocksState = { ...cur, watchlist: cur.watchlist.filter((s) => s !== upper) };
+  const cur = symbolsOrEmpty(await loadStoredWatchlist(deps));
+  if (!cur.includes(upper)) return { watchlist: cur };
+  const next: StocksState = { watchlist: cur.filter((s) => s !== upper) };
   await saveStocksState(next, deps);
   return next;
 }

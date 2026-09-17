@@ -355,6 +355,18 @@ const VERDICTS = {
     + '(main/clients/talent.ts:143-144 / web-shim.ts:1273-1274)。画面は `snap.storedNote` を '
     + '⚠ つきで刷る (TalentPage.tsx:219-221)。`reviewLadder` は境界を越えない '
     + '(唯一の呼び出しは shared/talent.ts:709 の `buildTalentSnapshot` の中)',
+  watchlistState:
+    '対称 (パス 309 で**そう作った**) —— 銘柄のウォッチリストの保存値を読む 1 つの規則で、否定は '
+    + "`readStoredWatchlist` の `{ kind: 'unreadable', reason }` と `isSafeSymbol` の false。"
+    + 'main は `loadStoredWatchlist` (clients/stocks.ts) が ENOENT だけを none にして残りを unreadable に載せ、'
+    + 'ブラウザ版は `readWatchlist` (data/stocksWatchlistWeb.ts) が Web Storage の例外を同じ形にする。'
+    + 'そこから先は**両方が同じ 2 つ**を通る —— `symbolsOrEmpty(stored)` (読めなかった物を空として扱う唯一の場所) と '
+    + '`watchlistStoredNote(stored, shown)` (画面の 1 行)。意図した非対称は `shown` の 1 引数だけ: '
+    + '空のときデスクトップは見本の銘柄・ブラウザ版は空 (パス 161 の決定) で、注記の文もそこだけ違う。'
+    + '`isSafeSymbol` はパス 309 まで main と renderer に写しが 1 つずつ在った (docblock が「同じ規則」と言うだけ) —— '
+    + '両方が re-export になったので規則は 1 つ。画面は `data.storedNote` を ⚠ つきで刷る (StocksPage.tsx の '
+    + 'data-watchlist-stored-note)。★ 直す前は main が `catch { return DEFAULT_STATE }`、ブラウザ版が '
+    + '`catch { return [] }` で、否定そのものが無かった (ENOENT も EACCES も壊れた JSON も空)。',
   headerValue:
     '対称 (パス 296 で**そう作った**) —— 「`Headers` がこの値を受理するか」の規則で、'
     + '境界を越えるのは `shared/tokenInput.ts` 経由の 1 本だけ。そこは実測で**同一の 1 行**: '

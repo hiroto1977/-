@@ -30,7 +30,7 @@ import { paperAccountView } from '../../../shared/paperAccount';
 import { MAX_TICKER_CHARS } from '../../../shared/advisorQuestionLimits';
 
 const CTX = {} as FetchContext;
-const noState = { loadState: async () => ({ watchlist: [] as string[] }) };
+const noState = { loadState: async () => ({ kind: 'saved' as const, symbols: [] as string[], dropped: 0 }) };
 
 /** `isSafeSymbol` が通す文字 —— 種は先頭 1 文字しか見ないので、これが母集団。 */
 const SEED_ALPHABET = [
@@ -89,7 +89,7 @@ describe('主張 3 — 同梱のモック源では到達可能な全部の種で
     const actions = new Set<string>();
     for (const c of SEED_ALPHABET) {
       const snap = await fetchStocksSnapshotImpl(CTX, {
-        loadState: async () => ({ watchlist: [(c + 'ZZZ').toUpperCase()] }),
+        loadState: async () => ({ kind: 'saved' as const, symbols: [(c + 'ZZZ').toUpperCase()], dropped: 0 }),
       });
       actions.add(snap.watchlist[0]!.signal.action);
     }

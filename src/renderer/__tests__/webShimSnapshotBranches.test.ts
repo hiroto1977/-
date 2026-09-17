@@ -262,3 +262,36 @@ describe('分岐が無いサービス', () => {
     expect(snap.code).toBe('not_implemented');
   });
 });
+
+describe('stocks — 保存したウォッチリストの 3 つの状態 (パス 309)', () => {
+  it('保存が無い端末は空の一覧を返し、注記は無い', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('stocks');
+    expect(snap.ok).toBe(true);
+    expect((snap.data?.watchlist as unknown[]).length).toBe(0);
+    expect(snap.data?.stored).toBe('none');
+    expect(snap.data?.storedNote).toBeNull();
+  });
+
+  it('★ 壊れた保存値は空を返しつつ「読めなかった」と言う (パス 309 までは黙って空で続け、次の登録が上書きした)', async () => {
+    localStorage.setItem('stocks.watchlist', '{壊れた');
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('stocks');
+    expect(snap.ok).toBe(true);
+    expect((snap.data?.watchlist as unknown[]).length).toBe(0);
+    expect(snap.data?.stored).toBe('unreadable');
+    expect(String(snap.data?.storedNote)).toContain(
+      '保存したウォッチリストを読めませんでした (JSON として読めません)。一覧は空です。',
+    );
+  });
+
+  it('登録した銘柄は保存され、スナップショットは saved で注記が消える (往復)', async () => {
+    const hub = await loadHub();
+    const r = await hub.invoke('stocks', 'register-ticker', { symbol: 'aapl' });
+    expect(r.ok).toBe(true);
+    const snap = await hub.fetchSnapshot('stocks');
+    expect(snap.data?.stored).toBe('saved');
+    expect((snap.data?.watchlist as { symbol: string }[]).map((w) => w.symbol)).toEqual(['AAPL']);
+    expect(snap.data?.storedNote).toBeNull();
+  });
+});
