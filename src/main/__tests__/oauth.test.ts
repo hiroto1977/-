@@ -2359,3 +2359,39 @@ describe('トークン端点の応答を読むところで検証する (パス 2
     });
   });
 });
+
+/*
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * token 端点への POST には code + verifier (交換) / refresh_token (更新) と、
+ * 種類によっては client_secret が載る。307 / 308 は本文ごと Location 先へ
+ * 再送されるので、端点が「動いた」ことを検査しないと、`assertHttpsEndpoint` が
+ * 通した送り先と、実際に秘密を送る送り先が別になる。
+ */
+describe('refresh — 転送に追随しない (パス 301)', () => {
+  it('★ fetch へ redirect: manual を渡す', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ access_token: 'new-at', expires_in: 3600 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await refresh(CFG, { accessToken: 'old', refreshToken: 'rt' }, fetchMock);
+    expect((fetchMock.mock.calls[0]![1] as RequestInit).redirect).toBe('manual');
+  });
+
+  it('★ 307 は理由を言って止まり、refresh_token を別の場所へ再送しない', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce({
+      ok: false,
+      status: 307,
+      type: 'default',
+      headers: new Headers({ location: 'https://oauth2.evil.example/token?rt=rt' }),
+      text: () => Promise.resolve(''),
+      body: null,
+    } as unknown as Response);
+    const p = refresh(CFG, { accessToken: 'old', refreshToken: 'rt' }, fetchMock);
+    await expect(p).rejects.toThrow(/認可サーバ が別の場所 \(oauth2\.evil\.example\) へ転送しようとしました/);
+    await expect(p).rejects.not.toThrow(/rt=rt/);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});

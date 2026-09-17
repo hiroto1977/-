@@ -26,8 +26,11 @@ import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/red
 import { parseTokenResponse } from '../../shared/tokenResponse';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
+  egressInit,
+  isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  redirectRefusal,
   withTimeout,
 } from '../../shared/httpLimits';
 
@@ -248,12 +251,16 @@ export async function exchangeGoogleCode(
   // **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
   // Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
   const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
-    const res = await fetchImpl('https://oauth2.googleapis.com/token', {
+    const res = await fetchImpl('https://oauth2.googleapis.com/token', egressInit({
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: params.toString(),
       signal,
-    });
+    }));
+    // 転送には追随しない (規則は httpLimits.ts)。token 端点が動いたなら、code と verifier を別の場所へ再送しない。
+    if (isRedirectResponse(res)) {
+      throw new Error(redirectRefusal(res, 'https://oauth2.googleapis.com/token', 'token exchange'));
+    }
     if (!res.ok) {
       // Stryker disable next-line StringLiteral: ここのラベルは**直後の `.catch` が
       // 捨てる**ので、空にしても観測できる差が出ない (等価変異・2026-08-31 に

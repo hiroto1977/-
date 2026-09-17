@@ -40,7 +40,10 @@ import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
   declaredLengthExceeds,
+  egressInit,
+  isRedirectResponse,
   readBodyWithCap,
+  redirectRefusal,
   withTimeout,
 } from '../../shared/httpLimits';
 import {
@@ -166,12 +169,18 @@ export async function limitedFetch<T>(
     async (signal) => {
       let res: Response;
       try {
-        res = await f(url, { ...init, signal });
+        res = await f(url, egressInit({ ...init, signal }));
       } catch (e) {
         if (signal.aborted) {
           throw new FetchError(`${ctx.serviceId} が時間内に応答しませんでした`, 0, ctx.serviceId);
         }
         throw e;
+      }
+
+      // 転送には追随しない (`httpLimits.ts` の規則)。送り先の関門は 1 ホップ目にしか無い。
+      if (isRedirectResponse(res)) {
+        await discardBody(res);
+        throw new FetchError(redirectRefusal(res, url, ctx.serviceId), res.status, ctx.serviceId);
       }
 
       // 宣言された長さが上限を超えていれば、本文を読む前に落とす (先手の門)。

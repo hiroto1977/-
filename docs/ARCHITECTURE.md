@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 603 個の `file:line` 参照 + 41 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 605 個の `file:line` 参照 + 41 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14432** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14451** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 603 | 自己検証 |
+| `file:line` 参照数 | 605 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1885,6 +1885,11 @@ renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/a
 走査の外だった —— パス 138)。宛先が**利用者の設定で決まる**通信 (AI 互換 API・Ollama の接続先・BYO プロキシ・Atlassian サイト・
 Salesforce・Discord webhook) は、どう絞っているかを `lint:network-targets` の台帳 (`scripts/lint-network-targets.cjs` の
 `REVIEWED`) が 1 件ずつ持つ。
+**この表は最初の 1 ホップの話である** —— `fetch` の既定 `redirect: 'follow'` だと、表のホストが返す `302 Location:` 1 つで
+表に無い先 (LAN・loopback を含む) へ取りに行く。2026-09-17 (パス 301) から**アプリ自身の fetch は転送に追随しない**:
+規則は `src/shared/httpLimits.ts` の `egressInit` / `isRedirectResponse` / `redirectRefusal` に 1 つ、網の fetch 12 か所が全部それを
+通ることは `src/shared/__tests__/egressRedirectCensus.test.ts` が両方向に留める (利用者が配る Worker は各ホップを再検査して**進む**が、
+アプリは**止まって理由を言う** —— このアプリが呼ぶ API に転送を要る物は無い)。
 
 | Service | Host | Method + Path | Auth | 出典 |
 |---|---|---|---|---|
@@ -1923,8 +1928,8 @@ Salesforce・Discord webhook) は、どう絞っているかを `lint:network-ta
 | OAuth (Canva) | `www.canva.com` | `GET /api/oauth/authorize` (ブラウザで開く。main は fetch しない) | — | `oauth.ts:236-239` |
 
 **Ollama 禁止リスト**: `/api/pull`, `/api/create`, `/api/push`, `/api/copy`, `/api/delete`,
-`/api/blobs`, `/api/upload` — `ALLOWED_ENDPOINTS` (`ollama.ts:61-66`) に含まれず、
-`withTimeout()` (`ollama.ts:142-165`) で実行時 reject。
+`/api/blobs`, `/api/upload` — `ALLOWED_ENDPOINTS` (`ollama.ts:87-92`) に含まれず、
+`withTimeout()` (`ollama.ts:122-170`) で実行時 reject。
 
 ### 3.4 新サービスの追加
 
@@ -1975,8 +1980,8 @@ graph TB
 | 攻撃面 | 例 | 防御 (file:line) |
 |---|---|---|
 | **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:93`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
-| **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:44`) + `ALLOWED_ENDPOINTS` (`ollama.ts:61-66`) |
-| **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:177-181`) |
+| **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:59`) + `ALLOWED_ENDPOINTS` (`ollama.ts:87-92`) |
+| **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:201-205`) |
 | **Skill id path traversal** | `id="../etc/passwd"` | `isSafeSkillName` (`skills.ts:367`) + realpath による封じ込め (読み出し `skills.ts:347-352` / **列挙 `skills.ts:151-189`**)。**鍵は一覧が出した `SkillEntry.id` で、frontmatter の `name:` は鍵にしない** (パス 179) |
 | **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:94-97`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
 | **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
@@ -2409,12 +2414,12 @@ classDiagram
   %% (2026-09-12 パス 180 —— 図は clients の行番号を指していた)。
   class OllamaGuards~clients/ollama.ts~ {
     +ALLOWED_ENDPOINTS : Set : ollama.ts:61
-    +isAllowedEndpoint(url) : ollama.ts:70
+    +isAllowedEndpoint(url) : ollama.ts:91
     +isSafeModelName(name) : src/shared/ollama.ts:339
     +compareVersions(a, b) : src/shared/ollama.ts:354
     +isVersionSafe(v) : src/shared/ollama.ts:383
     +buildWarnings() : shared/ollama.ts (台帳 OLLAMA_ADVISORIES)
-    -withTimeout(f, url, init) : ollama.ts:101
+    -withTimeout(f, url, init) : ollama.ts:122
   }
 
   class SkillsGuards~clients/skills.ts~ {
@@ -2460,7 +2465,7 @@ classDiagram
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:524-529` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:37-50` |
 | 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
-| 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:90` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |
+| 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:108` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |
 | 16 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
 ### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)

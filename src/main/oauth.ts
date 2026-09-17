@@ -23,8 +23,11 @@ import { parseTokenResponse, type TokenResponseFields } from '../shared/tokenRes
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
+  egressInit,
+  isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  redirectRefusal,
   withTimeout,
 } from '../shared/httpLimits';
 
@@ -824,12 +827,14 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   // **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
   // Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
   const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
-    const res = await fetchFn(config.tokenUrl, {
+    const res = await fetchFn(config.tokenUrl, egressInit({
       method: 'POST',
       headers: buildTokenRequestHeaders(config),
       body: serializeTokenBody(config, buildTokenExchangeBody(config, redirectUri, code, verifier)),
       signal,
-    });
+    }));
+    // 転送には追随しない (規則は httpLimits.ts)。token 端点が動いたなら、資格情報を別の場所へ再送しない。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, config.tokenUrl, '認可サーバ'));
     if (!res.ok) {
       const body = await readBodyWithCap(
         res,
@@ -867,12 +872,14 @@ export async function refresh(
   // 上の guard を通った値をここで確定させる。
   const refreshToken = current.refreshToken;
   const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
-    const res = await fetchFn(config.tokenUrl, {
+    const res = await fetchFn(config.tokenUrl, egressInit({
       method: 'POST',
       headers: buildTokenRequestHeaders(config),
       body: serializeTokenBody(config, buildRefreshBody(config, refreshToken)),
       signal,
-    });
+    }));
+    // 転送には追随しない (規則は httpLimits.ts)。token 端点が動いたなら、資格情報を別の場所へ再送しない。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, config.tokenUrl, '認可サーバ'));
     if (!res.ok) {
       const body = await readBodyWithCap(
         res,

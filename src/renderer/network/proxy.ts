@@ -20,7 +20,13 @@
  * (b) レスポンスサイズ上限、(c) プロキシのエラー応答に含まれうるトークンの
  * redactSecrets による秘匿 — に限られる。
  */
-import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
+import {
+  egressInit,
+  isRedirectResponse,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  redirectRefusal,
+} from '../../shared/httpLimits';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { isHeaderName, isHeaderValue, normalizeHeaderValue } from '../../shared/headerValue';
 import { isPrivateOrReservedTarget } from '../../shared/privateTarget';
@@ -331,12 +337,19 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   // envelope にも下の fetch にも渡っていなかった。呼び出し側 (`runAiChat`)
   // が timeout を付けても、プロキシ経由の道だけ効かない —— 「守っている
   // つもりの守り」になる。中継先が固まったら、こちらの待ちも切る。
-  const proxyRes = await fetch(proxyChecked.url, {
+  const proxyRes = await fetch(proxyChecked.url, egressInit({
     method: 'POST',
     headers: proxyHeaders,
     body: JSON.stringify(envelope),
     signal: init.signal ?? undefined,
-  });
+  }));
+
+  // 転送には追随しない (規則は httpLimits.ts)。封筒には上流の Authorization が載っており、
+  // 307 / 308 はブラウザがそれを Location 先へ**そのまま再送**する —— `proxyEndpoint` の
+  // 関門は 1 ホップ目にしか掛からない (調べた送り先と、送る送り先が別になる形)。
+  if (isRedirectResponse(proxyRes)) {
+    throw new Error(redirectRefusal(proxyRes, proxyChecked.url, 'proxy'));
+  }
 
   if (!proxyRes.ok) {
     const body = await proxyRes.text().catch(() => '');

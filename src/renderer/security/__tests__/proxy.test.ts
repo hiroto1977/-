@@ -1326,3 +1326,56 @@ describe('isPrivateOrReservedTarget', () => {
  * 本当の方針は `liveRead.test.ts` の「プロキシを用意できなければ読まない」で
  * 留める。
  */
+
+/*
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * 封筒には上流の `Authorization` が**本文として**載る。307 / 308 はブラウザが
+ * 本文ごと Location 先へ再送するので、`proxyEndpoint` の関門 (1 ホップ目) を
+ * 通った送り先と、実際に送る送り先が別になる。ブラウザは `redirect: 'manual'`
+ * のとき `type: 'opaqueredirect'` (status 0・ヘッダ無し) を返す。
+ */
+describe('fetchViaProxy — 転送に追随しない (パス 301)', () => {
+  /** Worker の正常な封筒 (上の describe のヘルパはブロックの中なので、ここで持つ)。 */
+  const okEnvelope = (): Response =>
+    new Response(JSON.stringify({ status: 200, headers: {}, body: '{}' }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    });
+
+  it('★ fetch へ redirect: manual を渡す', async () => {
+    let seen: RequestInit | undefined;
+    const mockFetch = vi.fn<typeof fetch>(async (_u, init) => {
+      seen = init as RequestInit;
+      return okEnvelope();
+    });
+    globalThis.fetch = mockFetch;
+    await fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://my-worker.example.com/proxy' });
+    expect(seen?.redirect).toBe('manual');
+  });
+
+  it('★ opaqueredirect (ブラウザ) は理由を言って止まり、再送しない', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
+      { type: 'opaqueredirect', status: 0, ok: false, headers: new Headers(), text: () => Promise.resolve('') } as unknown as Response,
+    );
+    globalThis.fetch = mockFetch;
+    await expect(
+      fetchViaProxy(
+        'https://api.notion.com/v1/x',
+        { method: 'POST', headers: { Authorization: 'Bearer secret_xxx' }, body: '{}' },
+        { url: 'https://my-worker.example.com/proxy' },
+      ),
+    ).rejects.toThrow(/proxy が別の場所へ転送しようとしました/);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('★ 3xx (Node の manual) も止まる —— 行き先のホストだけを述べる', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
+      { type: 'default', status: 307, ok: false, headers: new Headers({ location: 'https://other.example/relay?x=secret_xxx' }), text: () => Promise.resolve('') } as unknown as Response,
+    );
+    globalThis.fetch = mockFetch;
+    const p = fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://my-worker.example.com/proxy' });
+    await expect(p).rejects.toThrow(/\(other\.example\)/);
+    await expect(p).rejects.not.toThrow(/secret_xxx/);
+  });
+});

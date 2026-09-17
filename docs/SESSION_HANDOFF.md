@@ -7,6 +7,79 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 301 (2026-09-17) — 送り先の関門は最初の 1 ホップにしか掛かっておらず、転送 (3xx) の先を誰も見ていなかった
+
+送り先を絞る関門は 3 種在る —— `lint:network-targets` (送り先が変数の通信の台帳)・
+`docs/ARCHITECTURE.md` §3.3 (外部接続先ホスト 30 の表)・各 endpoint の検証
+(`atlassianSite` / `aiEndpoint` / `proxyEndpoint` / `scanTarget` …)。実測すると
+**どれも最初の 1 ホップしか見ていない**。`fetch` の既定は `redirect: 'follow'` で、
+表のホストが `302 Location: http://169.254.169.254/` を返せば Node (undici) は
+その先を一切検査せずに取りに行く (LAN・loopback を含む)。§3.3 の「下記以外の
+ホストへの接続は存在しない」は、相手の応答 1 つで偽になる主張だった。
+
+### 同じ規則が 2 か所に在り、アプリ自身の fetch だけが持っていなかった
+
+| 場所 | 規則 | 状態 |
+|---|---|---|
+| 利用者が配る Worker (`docs/PROXY_EXAMPLE.md` §(c)) | `redirect: 'manual'` + ホップごとに `denyReason()` | **在る** —— 注記が「既定の 'follow' は Location 先を*一切検査せずに*取得する」と危険を名指し |
+| 窓の遷移 (`main.ts` `will-redirect`) | `will-navigate` と同じ関門 | **在る** —— 「otherwise a 3xx …」と注記 |
+| アプリ自身の fetch (網の呼び出し **12 か所**) | — | **0 か所** (`redirect` を指定する物が 1 つも無い) |
+
+母集団 12 か所 (実測): `main/clients/types.ts` (`limitedFetch` = SaaS 74 本の口) /
+`main/oauth.ts` ×2 (token 交換・更新) / `main/main.ts` (更新確認) / `main/clients/ollama.ts` /
+`shared/ai/chat.ts` / `shared/api/http.ts` / `renderer/oauth/pkce.ts` / `renderer/network/proxy.ts`
+(Worker への POST) / `renderer/web-shim.ts` ×2 / `renderer/network/ollamaWeb.ts`。
+
+### 実害の筋道 (配線で確かめた・今日の実害は 0)
+
+- **Worker への POST (`proxy.ts`)**: 封筒の本文に上流の `Authorization` が載る。307 / 308 はブラウザが本文ごと Location 先へ再送するので、`proxyEndpoint` が通した送り先と実際に送る送り先が別になる (「調べた物」と「使われる物」の家系)。
+- **token 端点 (`oauth.ts` / `pkce.ts`)**: POST の本文に code + verifier / refresh_token (+ client_secret)。307 / 308 で本文ごと再送。
+- **AI (`chat.ts`)**: `x-api-key` / `x-goog-api-key` は Fetch 標準が cross-origin で落とす `Authorization` では**ない**ので、転送先へそのまま届く。宛先は利用者が決められる (`compat` / BYO プロキシ)。
+- **SaaS 74 本 (`limitedFetch`)**: 相手先ホストは固定なので前提は「相手が転送しない」——守りの強さが相手の振る舞いに依っていた (パス 291 と同じ形)。GitHub は改名された repo の API に 301 を返す —— 'follow' だと POST が GET へ変わり「issue を作った」つもりで一覧を読む。
+- 実害 0 の理由: ホストは固定か利用者自身の物で、転送を返す相手が今日は居ない。**だが守りが相手の善意に依る形は、パス 291 が「設定は動かない」という前提に依っていたのと同じ**。
+
+### 直し —— 規則は 1 つ、追随せず止まる
+
+`shared/httpLimits.ts` (打ち切りと上限の台帳・PROTECTED・MUST_MEASURE) に 3 つ:
+`REDIRECT_STATUSES` (301/302/303/307/308 —— Fetch 標準の redirect status。300 と 304 は入らない)・
+`egressInit(init)` (= `{ ...init, redirect: 'manual' }`)・`isRedirectResponse(res)` (Node は 3xx がそのまま返り、
+ブラウザは `type: 'opaqueredirect'` status 0 が返る —— 両方を転送と読む)・`redirectRefusal(res, url, label)`
+(**Location のホストだけ**を述べる。パスやクエリには秘密が載りうる)。12 か所すべてが `egressInit(` を通し、
+転送なら理由を言って止まる (Worker のように再検査して**進む**ことはしない —— このアプリが呼ぶ API に転送を要る物は無い)。
+
+### 検査
+
+- `httpLimits.test.ts` (+9): 3 つの規則・304 / 300 は転送でない・opaqueredirect・ホストだけ・相対 Location。
+- `types.test.ts` (+8): `limitedFetch` が `redirect: manual` を渡す / 5 つの 3xx で `FetchError` (consume は呼ばれない・fetch は 1 回) / 断り文にパス・クエリ無し / 対照 304 は通る。
+- `chat.test.ts` (+2) / `proxy.test.ts` (+3) / `oauth.test.ts` (+2): 各経路で manual を渡し、3xx (と opaqueredirect) で止まり、2 回目の fetch が起きない。
+- **`egressRedirectCensus.test.ts`** (新規・13 件): 呼び出しの形 (`fetch(` / `fetchFn(` / `fetchImpl(` / 別名 `f(`) で母集団を数え、台帳 10 ファイル 12 か所と**両方向**に一致・床 10・全部 `egressInit(` を通す・`redirect:` を手で書く場所は `httpLimits.ts` だけ (不在の主張に標本つき)。
+
+### ★ 既存の検査 1 本が落ちた —— 期待値を直す前に読んだ
+
+全件実行で `shared/api/__tests__/http.test.ts` の「2xx なら JSON を返す」が 1 本落ちた。
+`toHaveBeenCalledWith(url, { signal: expect.any(AbortSignal) })` と **init の形を完全一致で**留めており、
+新しく乗った `redirect: 'manual'` を知らない。守っている性質 (締切の signal が乗る) は壊れていないので、
+期待値に `redirect: 'manual'` を足し、理由 (パス 301) を隣に書いた。**対照 4 本を回した標的の検査は
+その前に全部緑だった** —— 落ちたのは規則の検査ではなく、規則を知らない既存の完全一致である。
+
+### 対照 (4 本すべて鳴る・snapshot から復元)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. `http.ts` の 1 か所だけ `egressInit` を外す | census 1 本 (その file の行) |
+| B. `isRedirectResponse` が常に false | 14 本 (規則 6 + limitedFetch 5 + chat / oauth / 断り文) |
+| C. `egressInit` が `follow` を重ねる | 6 本 (規則 2 + 各経路の「manual を渡す」4) |
+| D. `proxy.ts` が `redirect: 'follow'` を手書きで上書き | census 1 本 (「手で書く場所は httpLimits.ts だけ」) |
+
+### 台帳
+
+`docs/ARCHITECTURE.md` §3.3 (表は 1 ホップ目の話だと明記)・`docs/PROXY_EXAMPLE.md` §(c) (「(b) と (c) はクライアント側では
+原理的に実装できない」→ (c) は追随しない形で持つ)・PROTECTED 7 本 (types / main / oauth / proxy / pkce / chat / httpLimits) を触ったので chain → **block #221**、全件実行後に eslint が `main.ts` の未使用 import (`redirectRefusal`) を 1 つ挙げたので落として再採掘 → **#222**。
+
+### 実機
+
+renderer を触った (proxy.ts / web-shim.ts / pkce.ts / ollamaWeb.ts): `build:renderer` → `smoke:app` OK → `build:web` / `build:web:lite` (**11,894,093 B / 3,306,839 B・両方 +1,032 B**) → `e2e` **395 件 ❌ 0** → `e2e:lite` **395 件 ❌ 0** → `perf` OK (LITE 3.15 MB DCL 241 ms heap 10.1 MB / FULL 11.34 MB DCL 711 ms heap 36.9 MB・起動時の巨大 `JSON.parse` ゼロ)。全件テスト 747 ファイル / 17,210 件・`verify:all` 37/37 も同じ木で緑。
+
 ## パス 300 (2026-09-17) — 「測ったが決めていない」は、測ったら決まった —— 第三者由来の `<img src>` が内側を向いた送り先を取りに行っていた
 
 パス 299 が「閉じていない」と書いて残した項。`safeImageSrc` は認証情報つき authority を

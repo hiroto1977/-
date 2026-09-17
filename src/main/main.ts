@@ -18,7 +18,13 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
-import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  egressInit,
+  isRedirectResponse,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+} from '../shared/httpLimits';
 import { eraseDesktopData } from './eraseAll';
 import type { DesktopEraseReport } from '../shared/eraseReport';
 
@@ -238,7 +244,7 @@ ipcMain.handle('app:getVersion', () => app.getVersion());
 ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
   const current = app.getVersion();
   try {
-    const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
+    const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', egressInit({
       headers: { accept: 'application/vnd.github+json' },
       /*
        * **締切も共有の値。** (2026-09-15 · パス 282)
@@ -262,8 +268,9 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
        * 自分で認めていた穴がここに在った)。
        */
       signal: AbortSignal.timeout(DEFAULT_HTTP_TIMEOUT_MS),
-    });
-    if (!res.ok) return evaluateUpdate(current, null);
+    }));
+    // 転送には追随しない (規則は httpLimits.ts)。案内先は固定なので、転送されたら「判定不能」。
+    if (isRedirectResponse(res) || !res.ok) return evaluateUpdate(current, null);
     // 本文は上限つきで読む。ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate`)
     // は `readCappedText` を通しているのに、**こちらだけ `res.json()` の
     // 素通しだった** (2026-08-31)。宛先は定数で https だが、同じ問いに答えが

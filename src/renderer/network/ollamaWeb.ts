@@ -43,7 +43,14 @@ import {
   type OllamaErrorAdvice,
   type OllamaSnapshot,
 } from '../../shared/ollama';
-import { isOverCap, readBodyWithCap, withBodyDeadline } from '../../shared/httpLimits';
+import {
+  egressInit,
+  isOverCap,
+  isRedirectResponse,
+  readBodyWithCap,
+  redirectRefusal,
+  withBodyDeadline,
+} from '../../shared/httpLimits';
 import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 
 /** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
@@ -184,7 +191,12 @@ function fetchWithTimeout(
   init: RequestInit,
   timeoutMs: number = REQUEST_TIMEOUT_MS,
 ): Promise<Response> {
-  return withBodyDeadline(timeoutMs, undefined, (signal) => fetchFn(url, { ...init, signal }));
+  return withBodyDeadline(timeoutMs, undefined, async (signal) => {
+    const res = await fetchFn(url, egressInit({ ...init, signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, 'Ollama'));
+    return res;
+  });
 }
 
 /**

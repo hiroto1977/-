@@ -114,10 +114,13 @@ import { eraseEverything } from './security/eraseAll';
 import type { EraseAllReport } from '../shared/eraseReport';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_CHARS, MAX_RESPONSE_BODY_IN_MESSAGE, MAX_MALFORMED_JSON_ECHO_CHARS } from '../shared/redact';
 import {
-  withBodyDeadline,
   DEFAULT_HTTP_TIMEOUT_MS,
+  egressInit,
+  isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  redirectRefusal,
+  withBodyDeadline,
 } from '../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken, brokenStoredCredentialMessage } from '../shared/vaultToken';
@@ -414,16 +417,22 @@ async function readCappedText(res: Response, label: string): Promise<string> {
 function timedFetch(url: string, init: RequestInit): Promise<Response> {
   // `Response` を返す口なので `withBodyDeadline` —— 締切を早く落とすと
   // 呼び出し側の本文読み取りに掛からない (2026-08-28)。
-  return withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
-    fetch(url, { ...init, signal }),
-  );
+  return withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, async (signal) => {
+    const res = await fetch(url, egressInit({ ...init, signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, new URL(url).host));
+    return res;
+  });
 }
 
 /** 有料 LLM への直呼び出し。main と同じく 2 分 (通常の 30 秒では足りない)。 */
 function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
-  return withBodyDeadline(AI_CHAT_TIMEOUT_MS, init.signal, (signal) =>
-    fetch(url, { ...init, signal }),
-  );
+  return withBodyDeadline(AI_CHAT_TIMEOUT_MS, init.signal, async (signal) => {
+    const res = await fetch(url, egressInit({ ...init, signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, new URL(url).host));
+    return res;
+  });
 }
 
 function err<T = never>(code: string, message: string): ActionResult<T> {

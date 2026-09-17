@@ -44,7 +44,9 @@ X-Proxy-Auth: <optional-shared-secret>
 返す `169-254-169-254.sslip.io` / `localtest.me` 系と DNS rebinding 対策)、
 **(c) リダイレクト各ホップの再検査** (`redirect: 'manual'`。allowlist 済み
 ホストが `302 Location: http://169.254.169.254/` を返す経路を塞ぐ)。
-(b) と (c) はクライアント側では原理的に実装できない — 残余リスクは §3 参照。
+(b) はクライアント側では原理的に実装できない — 残余リスクは §3 参照。(c) はクライアント側も
+**追随しない**という形で持つ (`src/shared/httpLimits.ts` の `egressInit`・2026-09-17 パス 301。
+Worker のように各ホップを再検査して進むのではなく、転送が来た時点で止まって理由を言う)。
 
 ```js
 // proxy-worker.js

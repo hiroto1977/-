@@ -44,7 +44,13 @@ import {
 } from '../../shared/ollama';
 import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 import type { ActionData } from '../../shared/actionData';
-import { isOverCap, readBodyWithCap } from '../../shared/httpLimits';
+import {
+  egressInit,
+  isOverCap,
+  isRedirectResponse,
+  readBodyWithCap,
+  redirectRefusal,
+} from '../../shared/httpLimits';
 
 // 既存の import 元 (このモジュール) を維持するため再 export する。
 export { MIN_SAFE_VERSION, compareVersions, isSafeModelName, isVersionSafe };
@@ -156,7 +162,9 @@ async function withTimeout<T>(
    */
   // Stryker disable BlockStatement
   try {
-    const res = await fetchFn(url, { ...init, signal: controller.signal });
+    const res = await fetchFn(url, egressInit({ ...init, signal: controller.signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, 'Ollama'));
     return await consume(res);
   } finally {
     clearTimeout(timer);

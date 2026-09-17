@@ -688,3 +688,55 @@ describe('jsonFetch は limitedFetch の上限をそのまま受け継ぐ', () =
     ).rejects.toThrow(/demo 500: $/);
   });
 });
+
+/*
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * `limitedFetch` は SaaS 74 本が通る口。既定の `redirect: 'follow'` だと
+ * 相手の `302 Location: http://169.254.169.254/` をそのまま取りに行き、
+ * 送り先の台帳 (§3.3 / lint:network-targets) は 1 ホップ目しか守れない。
+ * 規則は `shared/httpLimits.ts` に 1 つ。
+ */
+describe('limitedFetch — 転送に追随しない (パス 301)', () => {
+  const status = async (res: Response): Promise<number> => res.status;
+  const redirect = (code: number, location: string): Response =>
+    ({ status: code, ok: false, type: 'default', headers: new Headers({ location }), body: null } as unknown as Response);
+
+  it('★ fetch へ redirect: manual を渡す', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('', { status: 200 }));
+    await limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, status);
+    expect(fetchMock.mock.calls[0]?.[1]?.redirect).toBe('manual');
+  });
+
+  it.each([301, 302, 303, 307, 308])('★ %s は FetchError で止まり、consume は呼ばれない', async (code) => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(redirect(code, 'http://169.254.169.254/latest/meta-data'));
+    const consume = vi.fn(status);
+    await expect(
+      limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, consume),
+    ).rejects.toMatchObject({
+      name: 'FetchError',
+      status: code,
+      message: expect.stringContaining('github が別の場所 (169.254.169.254) へ転送しようとしました'),
+    });
+    expect(consume).not.toHaveBeenCalled();
+    // 追随していない: fetch は 1 回だけ
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('★ 断り文に Location のパスやクエリは載らない', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(redirect(302, 'https://evil.example/collect?token=ghp_secret'));
+    await expect(
+      limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, status),
+    ).rejects.toThrow(/\(evil\.example\)/);
+    await expect(
+      limitedFetch('https://api.github.com/user', {}, { fetch: vi.fn<typeof fetch>().mockResolvedValueOnce(redirect(302, 'https://evil.example/collect?token=ghp_secret')), serviceId: 'github' }, status),
+    ).rejects.not.toThrow(/ghp_secret/);
+  });
+
+  it('対照 — 304 は転送ではないので consume へ渡る', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      { status: 304, ok: false, type: 'default', headers: new Headers(), body: null } as unknown as Response,
+    );
+    expect(await limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, status)).toBe(304);
+  });
+});
