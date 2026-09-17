@@ -250,6 +250,10 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 - `innerHTML` / `eval` / `new Function`: **0 件**
 - 外部画像表示は `<img src={...}>` のみ、CSP で `img-src 'self' data: https:` 制限
 - 外部リンクは `window.serviceHub.openExternal(url)` 経由 → main で http(s) のみ許可
+- 第三者 API の応答から来る画像 URL (`avatar_url` / `thumbnail.url`) は `safeRemoteImageSrc` を通す (2026-09-17・パス 300):
+  スキーム + 認証情報つき authority の拒否に加え、**送り先がプライベート帯 / loopback なら取りに行かない**
+  (`<img>` はスクリプトを走らせないが GET は利用者の網の内側へ飛ぶ)。判定は BYO プロキシの SSRF 関門と同じ
+  `src/shared/privateTarget.ts` の 1 つ。利用者自身が打つ背景画像 (`safeCssUrl`) には掛けない (NAS の LAN URL は正当)。
 
 ## ネットワーク発信先一覧（許可されている外部接続先）
 
@@ -267,6 +271,12 @@ Discord webhook) は `lint:network-targets` の台帳 (`scripts/lint-network-tar
 1 件ずつ持つ。Ollama について正確には: Electron 版の Ollama ページのクライアント (`src/main/clients/ollama.ts` の
 `OLLAMA_BASE`) だけが `127.0.0.1:11434` 固定で、ブラウザ版は 3 経路 (ループバック / ページと同じホスト / 任意の https ——
 `docs/OLLAMA_SECURITY.md`)、AI ハブの Ollama プロバイダは両ビルドで接続先を上書きできる (§3.3 の行のとおり)。
+
+上の台帳はすべて**最初の 1 ホップ**の話である。2026-09-17 (パス 301) から、アプリ自身の fetch は転送 (3xx) に追随しない ——
+規則は `src/shared/httpLimits.ts` の `egressInit` / `isRedirectResponse` / `redirectRefusal` に 1 つで、網の fetch 12 か所が
+全部それを通ることを `src/shared/__tests__/egressRedirectCensus.test.ts` が両方向に留める。それまでは `fetch` の既定
+`redirect: 'follow'` で、台帳のホストが返す `302 Location:` 1 つで台帳に無い先 (LAN・loopback) へ取りに行っていた。
+利用者が配る Worker (`docs/PROXY_EXAMPLE.md` §(c)) は各ホップを再検査して進むが、アプリは止まって理由 (Location のホストだけ) を言う。
 
 ## レビューチェックリスト（PR 用）
 

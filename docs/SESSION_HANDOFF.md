@@ -7,6 +7,72 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 303 (2026-09-17) — 実機 e2e の床が「合計 0 件」だけで、suite が黙って縮んでも緑だった
+
+`scripts/e2e/core.cjs` の合格判定は「走った検査が 0 件なら落とす」だけだった (2026-09-05 に「知らない suite 名で
+0 件走って PASSED」を塞いだときの床)。suite の中の `ok()` は `for` の中や `if (frame) { … }` の中に在るので、
+対象の一覧が空になる・分岐が閉じるだけで**その suite の検査が黙って減り、合計は緑のまま**になる —— 同じ穴の 1 段下。
+
+### 実測 (2026-09-17 の e2e ログ・FULL / LITE とも 395 件)
+
+| suite | 件数 | 床 | suite | 件数 | 床 | suite | 件数 | 床 |
+|---|---|---|---|---|---|---|---|---|
+| desktop | 60 | 51 | manualData | 19 | 16 | dataOrigin | 9 | 7 |
+| credential | 8 | 6 | businessComparison | 13 | 11 | kessanTax | 21 | 17 |
+| frameGuard | 7 | 5 | noBeacon | 11 | 9 | vaultPassword | 6 | 5 |
+| credentialEgress | 13 | 11 | proxyEnvelope | 13 | 11 | cspEnforced | 5 | 4 |
+| vaultOpacity | 18 | 15 | crossTabLock | 5 | 4 | storageDurability | 21 | 17 |
+| hardReset | 8 | 6 | securityPosture | 11 | 9 | thirdPartyDisclosure | 11 | 9 |
+| realtime | 7 | 5 | phone | 10 | 8 | talent | 14 | 11 |
+| teamRadar | 14 | 11 | demoMix | 10 | 8 | paperAccount | 10 | 8 |
+| serviceAdvice | 15 | 12 | hydroponics | 24 | 20 | parameters | 11 | 9 |
+| writeCeiling | 9 | 7 | aiCeiling | 10 | 8 | tablet | 2 | 1 |
+
+床 = 実測の 85% (切り捨て・最低 1)。全 suite を回すときは合計の床 350 も掛ける。
+
+### 直し
+
+- 30 本の `if (run(x)) await xSuite()` を `SUITE_TABLE` (名前・関数・床) に畳み、suite ごとに走った件数を数えて
+  `(name: N 件)` と出し、床を割れば `failures` に積む。名前の一覧 `SUITES` は表から導く (表に無い suite は呼べない)。
+- **`ok(true, …)` 32 か所**を数えた —— どれも直前の `waitFor…` が投げることで成り立つ「記録」で、慣習でしか
+  守られていなかった。うち 2 か所は直前が wait ではなかった (`selectOption` の成否・`await dl`) ので、結果を読む
+  本物の条件に直した (shigyo の select の値・download の実体)。残り 30 は「直前の文が投げる wait であること」を規則にした。
+
+### 検査 (新規 `e2eSuiteFloors.test.ts` 8 件)
+
+30 suite が全部載る / 床は 1 以上で実測以下 (実測より大きい床は「必ず落ちる検査」になる) / 一覧は表から導く /
+合計の床は suite の床の和より緩くない / `ok(true)` の直前の文は投げる wait (`try` で包んだ物は wait ではない)。針の標本つき。
+
+### 対照 (7 本すべて鳴る)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. tablet の床を 3 (> 実測 2) に | 「床は実測以下」1 本 |
+| B. 表から 1 行消す | 「30 suite」+「合計の床」2 本 |
+| C. 名前の一覧を手書きに戻す | 「一覧は表から導く」1 本 |
+| D. 合計の床を 100 に緩める | 「合計の床は和より緩くない」1 本 |
+| E. `ok(true)` の前の wait を消す | 「直前の文は投げる wait」1 本 |
+| E'. wait を `try {} catch {}` で包む | 同 1 本 |
+| **実機**: tablet の床を 3 にして `SERVICE_HUB_E2E_ONLY=tablet` | harness が `❌ tablet: 走った検査 2 件 < 床 3 件`・exit 1 (戻すと 2 件で緑) |
+
+### ★ 自戒 3 つ (どれも自分の検査)
+
+1. 対照 E は最初**鳴らなかった** —— 「直前 12 行以内に wait」が前の段の `waitForSelector` で満たされていた。窓ではなく**直前の文**を見るようにした。
+2. その「直前の文」の判定も最初は文の頭を `{` / `}` でも切っていて、引数の `{ timeout: 15000 },` の行で止まり、**原文の 13 件を誤って挙げた**。`await` の行まで戻る形に直した。
+3. 強めた shigyo の検査が実機で 1 度落ちた: select は制御コンポーネントで、保存 (IndexedDB) が返るまで DOM の値は元に戻る。**`ok(true)` の頃はこの挙動が観測されていなかった** —— 記録を検査に変えた瞬間に見えた。保存の反映を `waitForFunction` で待ってから読む。
+
+### 実機
+
+1 回目 (連鎖): 30 suite の件数はすべて表の実測と一致・床は割れず。落ちたのは上の shigyo 1 本 (FULL / LITE とも)。
+直した後: `SERVICE_HUB_E2E_ONLY=desktop` で FULL / LITE とも **60 件 ❌ 0**。`smoke:app` OK・`perf` OK (LITE DCL 233 ms 近傍)。
+出荷物は不変 (src/ に触っていない)。
+
+### Stryker はこの沙箱では回らない
+
+パス 300–301 で触った `httpLimits.ts` / `imageUrlGate.ts` / `privateTarget.ts` を測ろうとしたが、初回実行が
+`skill "invoice" not found in ~/.claude/skills` で止まる (罠 0 と同じ環境依存 —— この沙箱には `~/.claude/skills` が無い)。
+週次の `mutation.yml` に委ねる。
+
 ## パス 302 (2026-09-17) — 成果物の鮮度検査が `src/` しか見ておらず、CSP を組む側を直しても古い HTML で緑だった
 
 `scripts/lib/artifact-freshness.cjs` は「古い成果物を相手に検査したつもりになる」のを防ぐ判定で、

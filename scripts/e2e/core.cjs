@@ -372,7 +372,18 @@ async function desktopSuite(browser) {
   await page.getByRole('button', { name: '＋ 相談を記録' }).click();
   await page.waitForSelector('select[aria-label="相談ステータスを変更"]', { timeout: 15000 });
   await page.locator('select[aria-label="相談ステータスを変更"]').first().selectOption('完了');
-  ok(true, 'shigyo: 相談記録 + ステータスのインライン変更');
+  // `ok(true)` だった —— selectOption が通ったことと「変わった」ことは別 (パス 303)。
+  // select は制御コンポーネントで、保存 (IndexedDB) が返るまで DOM の値は元に戻る。
+  // だから**保存が反映されるまで待ってから**読む (直後に読むと旧値で、実機で 1 度落ちた)。
+  await page.waitForFunction(
+    () => document.querySelector('select[aria-label="相談ステータスを変更"]')?.value === '完了',
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(
+    (await page.locator('select[aria-label="相談ステータスを変更"]').first().inputValue()) === '完了',
+    'shigyo: 相談記録 + ステータスのインライン変更 (保存後の select の値が 完了)',
+  );
   await gotoService(page, '#lawyer', 'text=根拠法: 弁護士法');
   ok(!(await has('E2E会計士')), 'shigyo: 他士業ページへは非漏出 (serviceId 分離)');
 
@@ -554,7 +565,8 @@ async function desktopSuite(browser) {
   const dl = page.waitForEvent('download', { timeout: 15000 });
   await page.locator('[data-library-download]').first().click();
   const download = await dl;
-  ok(true, 'library: 「ダウンロード」で実際に保存が始まる（無反応でない）');
+  // `ok(true)` だった —— 待てたことを条件として書く (パス 303)。
+  ok(Boolean(download) && typeof download.suggestedFilename === 'function', 'library: 「ダウンロード」で実際に保存が始まる（無反応でない）');
   // 保存名は控えの名前。ブラウザが付ける乱数の名になっていたらここが落ちる。
   const suggested = download.suggestedFilename();
   ok(
@@ -3473,11 +3485,54 @@ async function hardResetSuite(browser) {
   const only = (process.env.SERVICE_HUB_E2E_ONLY ?? '').split(',').map((s) => s.trim()).filter(Boolean);
   // 知らない名前は**落とす**。2026-09-05 に `kessanTaxSuite` (正しくは kessanTax) と書いて
   // 1 つも走らないまま「ALL E2E CHECKS PASSED」が出た —— 空振りを合格と読む穴。
-  const SUITES = [
-    'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
-    'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability', 'hardReset',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'demoMix', 'paperAccount', 'serviceAdvice', 'hydroponics', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
+  /**
+   * **suite ごとの床** (2026-09-17 · パス 303)。
+   *
+   * それまで床は「合計 0 件」だけだった。suite の中の `ok()` は `for` の中や
+   * `if (frame) { … }` の中に在るので、対象の一覧が空になる・分岐が閉じるだけで
+   * **その suite の検査が黙って減り、合計は緑のまま**になる (2026-09-05 の
+   * 「知らない suite 名で 0 件走って PASSED」の、1 段下の同じ穴)。
+   *
+   * 床は 2026-09-17 の実測 (FULL / LITE とも合計 395 件) の 85% (切り捨て・最低 1)。
+   * 検査を減らす変更をしたら、ここを**読んで**下げる —— 黙って下がる物ではない。
+   * 増やす分には床は追随しなくてよい (床は「減っていないこと」しか言わない)。
+   * 名前の一覧はこの表から導く (`SUITES`) ので、表に無い suite は呼べない。
+   */
+  const SUITE_TABLE = [
+    ['desktop', desktopSuite, 51], // 実測 60
+    ['manualData', manualDataSuite, 16], // 実測 19
+    ['dataOrigin', dataOriginSuite, 7], // 実測 9
+    ['credential', credentialSuite, 6], // 実測 8
+    ['businessComparison', businessComparisonSuite, 11], // 実測 13
+    ['kessanTax', kessanTaxSuite, 17], // 実測 21
+    ['frameGuard', frameGuardSuite, 5], // 実測 7
+    ['noBeacon', noBeaconSuite, 9], // 実測 11
+    ['vaultPassword', vaultPasswordSuite, 5], // 実測 6
+    ['credentialEgress', credentialEgressSuite, 11], // 実測 13
+    ['proxyEnvelope', proxyEnvelopeSuite, 11], // 実測 13
+    ['cspEnforced', cspEnforcedSuite, 4], // 実測 5
+    ['vaultOpacity', vaultOpacitySuite, 15], // 実測 18
+    ['crossTabLock', crossTabLockSuite, 4], // 実測 5
+    ['storageDurability', storageDurabilitySuite, 17], // 実測 21
+    ['hardReset', hardResetSuite, 6], // 実測 8
+    ['securityPosture', securityPostureSuite, 9], // 実測 11
+    ['thirdPartyDisclosure', thirdPartyDisclosureSuite, 9], // 実測 11
+    ['realtime', realtimeSuite, 5], // 実測 7
+    ['phone', phoneSuite, 8], // 実測 10
+    ['talent', talentSuite, 11], // 実測 14
+    ['teamRadar', teamRadarSuite, 11], // 実測 14
+    ['demoMix', demoMixSuite, 8], // 実測 10
+    ['paperAccount', paperAccountSuite, 8], // 実測 10
+    ['serviceAdvice', serviceAdviceSuite, 12], // 実測 15
+    ['hydroponics', hydroponicsSuite, 20], // 実測 24
+    ['parameters', parameterSuite, 9], // 実測 11
+    ['writeCeiling', writeCeilingSuite, 7], // 実測 9
+    ['aiCeiling', aiCeilingSuite, 8], // 実測 10
+    ['tablet', tabletSuite, 1], // 実測 2
   ];
+  const SUITES = SUITE_TABLE.map(([name]) => name);
+  /** 全 suite を回したときの合計の床 (実測 395 の約 88%)。一部だけ回すときは掛けない。 */
+  const MIN_TOTAL_CHECKS = 350;
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
     console.error(`❌ SERVICE_HUB_E2E_ONLY に知らない suite: ${unknown.join(', ')} (使える名前: ${SUITES.join(', ')})`);
@@ -3489,36 +3544,18 @@ async function hardResetSuite(browser) {
     return only.length === 0 || only.includes(name);
   };
   if (only.length > 0) console.log(`(SERVICE_HUB_E2E_ONLY=${only.join(',')})`);
-  if (run('desktop')) await desktopSuite(browser);
-  if (run('manualData')) await manualDataSuite(browser);
-  if (run('dataOrigin')) await dataOriginSuite(browser);
-  if (run('credential')) await credentialSuite(browser);
-  if (run('businessComparison')) await businessComparisonSuite(browser);
-  if (run('kessanTax')) await kessanTaxSuite(browser);
-  if (run('frameGuard')) await frameGuardSuite(browser);
-  if (run('noBeacon')) await noBeaconSuite(browser);
-  if (run('vaultPassword')) await vaultPasswordSuite(browser);
-  if (run('credentialEgress')) await credentialEgressSuite(browser);
-  if (run('proxyEnvelope')) await proxyEnvelopeSuite(browser);
-  if (run('cspEnforced')) await cspEnforcedSuite(browser);
-  if (run('vaultOpacity')) await vaultOpacitySuite(browser);
-  if (run('crossTabLock')) await crossTabLockSuite(browser);
-  if (run('storageDurability')) await storageDurabilitySuite(browser);
-  if (run('hardReset')) await hardResetSuite(browser);
-  if (run('securityPosture')) await securityPostureSuite(browser);
-  if (run('thirdPartyDisclosure')) await thirdPartyDisclosureSuite(browser);
-  if (run('realtime')) await realtimeSuite(browser);
-  if (run('phone')) await phoneSuite(browser);
-  if (run('talent')) await talentSuite(browser);
-  if (run('teamRadar')) await teamRadarSuite(browser);
-  if (run('demoMix')) await demoMixSuite(browser);
-  if (run('paperAccount')) await paperAccountSuite(browser);
-  if (run('serviceAdvice')) await serviceAdviceSuite(browser);
-  if (run('hydroponics')) await hydroponicsSuite(browser);
-  if (run('parameters')) await parameterSuite(browser);
-  if (run('writeCeiling')) await writeCeilingSuite(browser);
-  if (run('aiCeiling')) await aiCeilingSuite(browser);
-  if (run('tablet')) await tabletSuite(browser);
+  for (const [name, suite, floor] of SUITE_TABLE) {
+    if (!run(name)) continue;
+    const before = checks;
+    await suite(browser);
+    const ran = checks - before;
+    console.log(`  (${name}: ${ran} 件)`);
+    if (ran < floor) {
+      // 検査そのものは通っていても、走った数が床を割れば落とす —— 「減ったのに緑」を受け取らない。
+      failures.push(`${name}: 走った検査 ${ran} 件 < 床 ${floor} 件 (suite が黙って縮んだ。減らす変更なら SUITE_TABLE の床を読んで下げる)`);
+      console.log(`  ❌ ${name}: 走った検査 ${ran} 件 < 床 ${floor} 件`);
+    }
+  }
   await browser.close();
   if (failures.length > 0) {
     console.log(`\nFAILED: ${failures.length} 件`);
@@ -3527,6 +3564,10 @@ async function hardResetSuite(browser) {
   if (checks === 0) {
     // 走らなかった検査は「合格」ではない (対照が鳴らないのと同じ)。
     console.error('\n❌ 検査が 1 件も走っていません (suite の選択か、検査の配線が壊れています)');
+    process.exit(1);
+  }
+  if (only.length === 0 && checks < MIN_TOTAL_CHECKS) {
+    console.error(`\n❌ 走った検査が ${checks} 件で、全 suite の床 ${MIN_TOTAL_CHECKS} 件を割っています (検査の配線が黙って減った)`);
     process.exit(1);
   }
   console.log(`\nALL E2E CHECKS PASSED (${checks} 件)`);
