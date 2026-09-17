@@ -49,6 +49,8 @@ import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/red
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 import {
   optionalString,
+  parseJsonBody,
+  parseJsonText,
   requireChild,
   requireNumber,
   requireObject,
@@ -176,7 +178,7 @@ export async function createGithubIssue(
   // 許可済み)。上限を掛けるのはこの読み出しだけで、他の create-* は
   // `fetchViaProxy` が組み直した 10MiB 以下の `Response` を受け取っている。
   // 大きさは `readCapped` が、**形は `requireObject`/`requireNumber` が**見る (パス 261)。
-  const o = requireObject(JSON.parse(await readCapped(res, 'GitHub API')), 'GitHub API');
+  const o = requireObject(parseJsonText(await readCapped(res, 'GitHub API'), 'GitHub API'), 'GitHub API');
   const data: GithubIssueApiResponse = {
     number: requireNumber(o, 'number', 'GitHub API'),
     html_url: requireString(o, 'html_url', 'GitHub API'),
@@ -224,7 +226,7 @@ export async function createNotionPage(
     }),
   });
   await ensureOk(res, 'Notion API');
-  const o = requireObject(await res.json(), 'Notion API');
+  const o = requireObject(await parseJsonBody(res, 'Notion API'), 'Notion API');
   return { id: requireString(o, 'id', 'Notion API'), url: requireString(o, 'url', 'Notion API') };
 }
 
@@ -257,7 +259,7 @@ export async function sendSlackMessage(
   });
   await ensureOk(res, 'Slack API');
   // Slack は HTTP 200 でも body.ok=false でエラーを返す。
-  const o = requireObject(await res.json(), 'Slack API');
+  const o = requireObject(await parseJsonBody(res, 'Slack API'), 'Slack API');
   if (o['ok'] !== true) throw new Error(`Slack: ${optionalString(o, 'error') ?? 'unknown_error'}`);
   // `ts` / `channel` は ok:true の応答に必ず在る。**空に倒さない** —— 倒すと
   // 「送れたが、どこへ送れたか言えない」報告になる。
@@ -346,7 +348,7 @@ export async function createAtlassianIssue(
     }),
   });
   await ensureOk(res, 'Atlassian API');
-  const data = { key: requireString(requireObject(await res.json(), 'Atlassian API'), 'key', 'Atlassian API') };
+  const data = { key: requireString(requireObject(await parseJsonBody(res, 'Atlassian API'), 'Atlassian API'), 'key', 'Atlassian API') };
   return { key: data.key, url: jiraBrowseUrl(creds.site, data.key) };
 }
 
@@ -417,7 +419,7 @@ export async function createCalendarEvent(
     body: JSON.stringify(body),
   });
   await ensureOk(res, 'Calendar API');
-  const o = requireObject(await res.json(), 'Google Calendar API');
+  const o = requireObject(await parseJsonBody(res, 'Google Calendar API'), 'Google Calendar API');
   const data = { id: requireString(o, 'id', 'Google Calendar API'), htmlLink: requireString(o, 'htmlLink', 'Google Calendar API') };
   return { id: data.id, htmlLink: data.htmlLink };
 }
@@ -465,7 +467,7 @@ export async function createGmailDraft(
     body: JSON.stringify({ message: { raw } }),
   });
   await ensureOk(res, 'Gmail API');
-  const o = requireObject(await res.json(), 'Gmail API');
+  const o = requireObject(await parseJsonBody(res, 'Gmail API'), 'Gmail API');
   const data = {
     id: requireString(o, 'id', 'Gmail API'),
     message: { id: requireString(requireChild(o, 'message', 'Gmail API'), 'id', 'Gmail API') },
@@ -501,7 +503,7 @@ export async function createDriveFolder(
     }),
   });
   await ensureOk(res, 'Drive API');
-  const o = requireObject(await res.json(), 'Google Drive API');
+  const o = requireObject(await parseJsonBody(res, 'Google Drive API'), 'Google Drive API');
   const data = {
     id: requireString(o, 'id', 'Google Drive API'),
     name: requireString(o, 'name', 'Google Drive API'),
@@ -541,7 +543,7 @@ export async function createWordPressPostDraft(
     },
   );
   await ensureOk(res, 'WordPress API');
-  const o = requireObject(await res.json(), 'WordPress.com API');
+  const o = requireObject(await parseJsonBody(res, 'WordPress.com API'), 'WordPress.com API');
   const data = {
     ID: requireNumber(o, 'ID', 'WordPress.com API'),
     URL: requireString(o, 'URL', 'WordPress.com API'),
@@ -574,7 +576,7 @@ export async function createCanvaFolder(
     body: JSON.stringify({ name, parent_folder_id: parentFolderId }),
   });
   await ensureOk(res, 'Canva API');
-  const folder = requireChild(requireObject(await res.json(), 'Canva API'), 'folder', 'Canva API');
+  const folder = requireChild(requireObject(await parseJsonBody(res, 'Canva API'), 'Canva API'), 'folder', 'Canva API');
   const data = {
     folder: { id: requireString(folder, 'id', 'Canva API'), name: requireString(folder, 'name', 'Canva API') },
   };
@@ -639,7 +641,7 @@ export async function createCloudflareDnsRecord(
     body: JSON.stringify(body),
   });
   await ensureOk(res, 'Cloudflare API');
-  const record = requireObject(cfUnwrap(await res.json()), 'Cloudflare API');
+  const record = requireObject(cfUnwrap(await parseJsonBody(res, 'Cloudflare API')), 'Cloudflare API');
   return {
     id: requireString(record, 'id', 'Cloudflare API'),
     name: requireString(record, 'name', 'Cloudflare API'),
@@ -682,7 +684,7 @@ export async function purgeCloudflareCache(
     body: JSON.stringify(body),
   });
   await ensureOk(res, 'Cloudflare API');
-  const result = requireObject(cfUnwrap(await res.json()), 'Cloudflare API');
+  const result = requireObject(cfUnwrap(await parseJsonBody(res, 'Cloudflare API')), 'Cloudflare API');
   return {
     id: requireString(result, 'id', 'Cloudflare API'),
     purged: purgeEverything ? 'all' : files.length,
@@ -761,7 +763,7 @@ export async function scanUrlVirusTotal(
   // 入れ子が欠けた応答は `Cannot read properties of undefined` で落ちていた。
   // これは「この URL は危険か」という安全の判定なので、**数えられなかったことを
   // 数え上げてはいけない**。
-  const s = vtScanStats(await report.json());
+  const s = vtScanStats(await parseJsonBody(report, 'VirusTotal API'));
   const positives = s.malicious + s.suspicious;
   const total = s.harmless + s.malicious + s.suspicious + s.undetected;
   return { url, positives, total, reportUrl: `https://www.virustotal.com/gui/url/${id}` };
@@ -806,7 +808,7 @@ export async function checkEmailBreach(
   // `["x"]` / `[{}]` の応答が「名前も日付も件数も空の漏洩 1 件」として
   // 一覧に並んだ。要素ごとに欄を要求する —— 漏洩の有無は安全の判断なので、
   // 読めない答えを「読めた」ことにしてはいけない。
-  return { email, breaches: hibpBreaches(await res.json()) };
+  return { email, breaches: hibpBreaches(await parseJsonBody(res, 'HIBP API')) };
 }
 
 /**
@@ -851,7 +853,7 @@ export async function createMicrosoftEvent(
   const event = checkEvent(input);
   const res = await createGraphEvent(event, token, transport);
   await ensureOk(res, 'Microsoft Graph');
-  const o = requireObject(await res.json(), 'Microsoft Graph');
+  const o = requireObject(await parseJsonBody(res, 'Microsoft Graph'), 'Microsoft Graph');
   return {
     id: requireString(o, 'id', 'Microsoft Graph'),
     subject: optionalString(o, 'subject') ?? event.subject,

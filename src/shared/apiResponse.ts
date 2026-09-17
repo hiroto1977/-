@@ -43,6 +43,45 @@
  * `fetchViaProxy` が先に掛かっている (実測で確認済み)。
  */
 
+/**
+ * 応答の本文を JSON として読む。**読めなければ文言は定数** (2026-09-17 · パス 311)。
+ *
+ * V8 の `SyntaxError` は本文の**先頭 10 字を引用する** (Node 22 実測):
+ *
+ * ```
+ *   JSON.parse('ghp_abcdefghijklmnop…')  →  Unexpected token 'g', "ghp_abcdef"... is not valid JSON
+ *   JSON.parse('<!DOCTYPE html>…')        →  Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+ * ```
+ *
+ * `res.json()` も同じ文を投げるので、相手 (または途中のプロキシ) が 2xx で JSON でない本文を返し、
+ * その先頭に資格情報が在れば、その 10 字が例外の文面に乗って `action_failed` の文として画面へ出る。
+ * `shared/tokenResponse.ts` (パス 260) と `shared/api/http.ts` / `shared/ai/chat.ts` /
+ * `main/clients/types.ts` は既に文言を定数にしていたが、パス 261 で足した書き込み 13 経路と
+ * liveRead の transport・main の Ollama 2 経路は `await res.json()` のままだった。
+ * **`.json()` を直接呼ぶのはここだけ** (`jsonBodyCensus.test.ts` が両方向に留める)。
+ */
+export async function parseJsonBody(res: Response, label: string): Promise<unknown> {
+  try {
+    return (await res.json()) as unknown;
+  } catch {
+    throw new Error(notJsonMessage(label));
+  }
+}
+
+/** 読み終えた本文を JSON として読む (上限つきで先に読んだ文字列用)。文言は {@link parseJsonBody} と同じ。 */
+export function parseJsonText(text: string, label: string): unknown {
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    throw new Error(notJsonMessage(label));
+  }
+}
+
+/** 読めなかったときの 1 文。本文は 1 字も引用しない。 */
+export function notJsonMessage(label: string): string {
+  return `${label} の応答が JSON ではありません (処理したことを確認できません)`;
+}
+
 /** 応答が JSON のオブジェクトであることを要求する。配列は通さない。 */
 export function requireObject(raw: unknown, label: string): Record<string, unknown> {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {

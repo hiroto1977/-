@@ -19,6 +19,7 @@
  *     local Ollama is older than MIN_SAFE_VERSION.
  */
 
+import { parseJsonBody } from '../../shared/apiResponse';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   FetchError,
@@ -181,7 +182,7 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
   try {
     await withTimeout(f, `${OLLAMA_BASE}/api/version`, {}, async (res) => {
       if (res.ok) {
-        const body = (await res.json()) as OllamaVersionResponse;
+        const body = (await parseJsonBody(res, 'Ollama /api/version')) as OllamaVersionResponse;
         version = body.version ?? '';
         running = true;
       } else {
@@ -215,7 +216,7 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
           // Stryker disable next-line StringLiteral
           throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
         }
-        const tags = (await tagsRes.json()) as OllamaTagsResponse;
+        const tags = (await parseJsonBody(tagsRes, 'Ollama /api/tags')) as OllamaTagsResponse;
         for (const m of tags.models ?? []) {
           models.push({
             name: m.name,

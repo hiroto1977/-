@@ -7,6 +7,53 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 311 (2026-09-17) — 第三者の 2xx 本文が JSON でないとき、V8 の SyntaxError が本文の先頭 10 字を引用したまま画面へ出ていた (ブラウザ版の書き込み 13 経路ほか 16 か所)
+
+パス 307 / 309 の「閉じていない物」(例外の文面 → 画面の census) を、**例外の文面に相手の本文が乗る形**に絞って測った。
+`instanceof Error ? e.message : String(e)` は出荷 code に 77 か所、うち renderer の状態へ直に入る物 32 か所、同じ行で伏字を通る物 1。
+`e` の出どころを追うと、IPC / shim の失敗はパス 273 / 285 で main が `safeErrorMessage` を通し、非 2xx の本文は `ensureOk` が
+`redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)` で天井と伏字を掛ける。**残っていたのは 2xx で JSON でない本文**:
+
+```
+  JSON.parse('ghp_abcdefghijklmnop…')  →  Unexpected token 'g', "ghp_abcdef"... is not valid JSON   (Node 22 実測)
+  JSON.parse('<!DOCTYPE html>…')        →  Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+```
+
+`res.json()` も同じ文を投げる。相手 (または途中のプロキシ) が 2xx で JSON でない本文を返し、その先頭に資格情報が在れば、
+**その 10 字が例外の文面に乗って** shim の `err('action_failed', e.message)` → 画面へ出る。パス 260 の `tokenResponse.ts` は
+「V8 は本文の窓を引用する → 文言は定数」と書いてそうしており、`shared/api/http.ts` / `shared/ai/chat.ts` / `main/clients/types.ts` /
+web-shim の AI 経路 6 か所 / proxy / Ollama も定数だった。**パス 261 で足した書き込み 13 経路 (`saasWriteWeb.ts`)・liveRead の
+transport (web-shim)・main の Ollama 2 経路 = 16 か所だけが `await res.json()` のまま** —— 規則が隣の欄に無い形。
+
+### 直し (規則は 1 つ: `shared/apiResponse.ts` の `parseJsonBody` / `parseJsonText` / `notJsonMessage`)
+
+- 16 か所すべてを通した。文面は `${label} の応答が JSON ではありません (処理したことを確認できません)` (`requireObject` と同じ語尾)。
+  main の Ollama 2 経路は catch で `redactForMessage` を通していたので漏れではなかったが、「Ollama unreachable: Unexpected token '<'…」と
+  **届いているのに unreachable と言う**文だった —— 同じ助けを通して「/api/version の応答が JSON ではありません」に。
+- `shared/__tests__/jsonBodyCensus.test.ts` (新規 7 検査): `.json()` の呼び出しは出荷 code で `apiResponse.ts` の 1 か所だけ (両方向・床 1・
+  標本つき)。助けの検査は**素の `res.json()` / `JSON.parse` が本当に先頭 10 字を引用する標本**を同じファイルに置き、そのうえで
+  「文面は定数・本文の 1 字も引用しない」を留める (不在の主張には標本を添える)。
+- `saasWriteWeb.test.ts` (+3): 実物の `Response` で Notion / Slack に 2xx の非 JSON を返し、文面が定数で `ghp_` / `DOCTYPE` を含まない。
+
+### 対照 (2 本すべて鳴る · `ctl311-G.log` / `ctl311-H.log`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| G. Notion を素の `res.json()` に戻す | census「1 か所だけ」+ Notion の文面 (2 本) |
+| H. 助けが例外の文面 (本文の引用) を継ぎ足す | 助け 2 本 + Notion / Slack (4 本) |
+
+### 実機
+
+`smoke:app` OK / `e2e` 30 suite 398 件 ❌ 0 / `e2e:lite` 398 件 ❌ 0 / `perf` OK (LITE DCL 237 ms heap 10.2 MB・FULL DCL 704 ms heap 36.7 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8 (連鎖 1 回で全段緑)。出荷物 FULL **11,896,224 B** / LITE **3,308,745 B** (両方 +435 B —— 助け 3 つと 16 か所の呼び出し。shared は両ビルドが読むので LITE も同じだけ)。
+
+### 台帳
+
+- ARCHITECTURE のテスト数 14,532 → **14,542** (実行時 17,311 → 17,321)。web-shim / main の Ollama に import を 1 行ずつ足したので
+  `file:line` 参照を 1 行ずつ動かした (web-shim 1・ollama 14)。`npm test` 752 ファイル / 17,321 件・`verify:all` 37/37・実機 1 回で全段緑。
+- 残る「例外の文面 → 画面」の 32 か所は、出どころが IPC / shim / vault / 自前の throw で、相手の本文が乗る経路はこの 16 か所だけだった
+  (非 2xx は `ensureOk` が伏字・2xx の JSON は `requireObject` 以降の app の文)。census として留めるほどの母集団の差が無いので、
+  この節の実測を記録に残す形にした。
+
 ## パス 310 (2026-09-17) — 端末からの読み取りに「読めなかった時をどう扱うか」の台帳が無く、Google の接続カードは入口の写しを持っていた
 
 パス 309 の「なぜパス 160 の走査が stocks を見なかったか」を測った。書き込みには `storageWritePolicy.test.ts` (2026-09-06・双方向の
@@ -3972,6 +4019,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 2xx の非 JSON 本文と V8 の引用 (パス 311) | ✅ `res.json()` 16 か所を `parseJsonBody` (文言は定数) へ。census で `.json()` は 1 か所だけ (両方向)。標本: 素の res.json() は先頭 10 字を引用する。対照 2 本 |
 | 端末からの読み取りの台帳 (パス 310) | ✅ 読みの 22 か所を方針 4 通りと理由で台帳に (`storageReadLedger.test.ts`・双方向)。Google 接続カードの写し (自前の try/catch) を入口へ。対照 4 本 |
 | 銘柄のウォッチリストの読み (パス 309) | ✅ 両ビルドが shared の 3 状態 (`readStoredWatchlist`) を通り、画面が ⚠ で「読めなかった」と言う。登録・解除は警告のうえ通す (パス 120 / 160 の規則)。対照 4 本 (D は実機で exit 1)。`isSafeSymbol` の写し 2 → 1 |
 | スキル本文の天井 (パス 308) | ✅ system の天井 (60,000 字) を run-skill と一覧へ。byte の門 (4 × 天井) で読まずに断る。対照 3 本 |

@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14532** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14542** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1836,7 +1836,7 @@ union を参照する。
 | cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | **共有台帳 `CLOUDFLARE_PURGE_FIELDS`** (files は文字列の配列で件数と 1 件の長さに天井・purgeEverything は真偽値)。zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:180-220` |
 | emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:121-290` |
 | emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:250-320` |
-| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:247-371` |
+| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:248-372` |
 | microsoft-365 | `send-mail` | `{ to, subject, body? }` | **共有台帳 `MS365_MAIL_FIELDS`** を共有の `checkMail` が読む (型・長さ) + Graph message envelope も共有 (`graphMailInit`)。宣言は `SendMailPayload`、欄の名前のずれは検査が留める | `microsoft-365.ts:17-269` |
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | **共有台帳 `MS365_EVENT_FIELDS`** を共有の `checkEvent` が読む (型・長さ) + Graph event envelope も共有 (`graphEventInit`・時間帯は `GRAPH_EVENT_TIME_ZONE`)。宣言は `CreateEventPayload` | `microsoft-365.ts:17-250` |
 | assistant | `chat` | `{ messages, system, model, provider }` | **最新の発話が 1 発話の天井を超えていれば切らずに断る (`latestTurnTooLong` · パス 112。履歴は窓)**。sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model / provider は利用者が選ぶ設計**なので許可リストは掛けない —— provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:134-256` |
@@ -1899,7 +1899,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | Service | Host | Method + Path | Auth | 出典 |
 |---|---|---|---|---|
 | github | `api.github.com` | `GET /user`, `GET /search/issues`, `GET /repos/{owner}/{repo}/pulls/{n}`, `POST /repos/{owner}/{repo}/issues` | Bearer | `github.ts:74-164` |
-| app (更新の確認・両ビルド) | `api.github.com` | `GET /repos/hiroto1977/-/releases/latest` (利用者が押した時だけ。応答は形と案内先ホストまで確かめる —— §1.4 の app:checkUpdate) | none | `main.ts:231-238`, `src/renderer/web-shim.ts:1088-1095` |
+| app (更新の確認・両ビルド) | `api.github.com` | `GET /repos/hiroto1977/-/releases/latest` (利用者が押した時だけ。応答は形と案内先ホストまで確かめる —— §1.4 の app:checkUpdate) | none | `main.ts:231-238`, `src/renderer/web-shim.ts:1089-1096` |
 | wordpress | `public-api.wordpress.com` | `GET /rest/v1.1/me/sites`, `POST /rest/v1.1/sites/{id}/posts/new` | Bearer | `wordpress.ts:46-89` |
 | atlassian | `*.atlassian.net` (https only) | `GET /rest/api/3/project/search`, `POST /rest/api/3/issue` | Basic | `atlassian.ts:62-148` |
 | notion | `api.notion.com` | `POST /v1/search`, `POST /v1/pages` | Bearer | `notion.ts:43-98` |
@@ -1918,7 +1918,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | assistant (AI ハブ・ollama) | 既定 `127.0.0.1:11434` (資格情報で上書き可) | `POST /api/chat` | none | `src/shared/ai/providers.ts:216-243` |
 | assistant (AI ハブ・compat) | ユーザー指定 (LiteLLM / Groq / LM Studio 等) | `POST /v1/chat/completions` | Bearer (任意) | `src/shared/ai/providers.ts:245-283` |
 | OAuth (Google) | `accounts.google.com`, `oauth2.googleapis.com` | `GET /o/oauth2/v2/auth`, `POST /token` | — / form-urlencoded | `oauth.ts:58-85` |
-| ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:27, 40-46` |
+| ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:28, 40-46` |
 | microsoft-365 | `graph.microsoft.com` | `GET /v1.0/me`, `POST /v1.0/me/sendMail`, `POST /v1.0/me/events` | Bearer | `microsoft-365.ts:21` |
 | freee | `api.freee.co.jp` | `GET /api/1/companies`, `GET /api/1/deals` | Bearer | `freee.ts:21` |
 | base | `api.thebase.in` | `GET /1/items` | Bearer | `base.ts:34` |
@@ -1933,8 +1933,8 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | OAuth (Canva) | `www.canva.com` | `GET /api/oauth/authorize` (ブラウザで開く。main は fetch しない) | — | `oauth.ts:236-239` |
 
 **Ollama 禁止リスト**: `/api/pull`, `/api/create`, `/api/push`, `/api/copy`, `/api/delete`,
-`/api/blobs`, `/api/upload` — `ALLOWED_ENDPOINTS` (`ollama.ts:87-92`) に含まれず、
-`withTimeout()` (`ollama.ts:122-170`) で実行時 reject。
+`/api/blobs`, `/api/upload` — `ALLOWED_ENDPOINTS` (`ollama.ts:88-93`) に含まれず、
+`withTimeout()` (`ollama.ts:123-171`) で実行時 reject。
 
 ### 3.4 新サービスの追加
 
@@ -1985,8 +1985,8 @@ graph TB
 | 攻撃面 | 例 | 防御 (file:line) |
 |---|---|---|
 | **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:93`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
-| **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:59`) + `ALLOWED_ENDPOINTS` (`ollama.ts:87-92`) |
-| **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:201-205`) |
+| **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:60`) + `ALLOWED_ENDPOINTS` (`ollama.ts:88-93`) |
+| **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:202-206`) |
 | **Skill id path traversal** | `id="../etc/passwd"` | `isSafeSkillName` (`skills.ts:367`) + realpath による封じ込め (読み出し `skills.ts:347-352` / **列挙 `skills.ts:151-189`**)。**鍵は一覧が出した `SkillEntry.id` で、frontmatter の `name:` は鍵にしない** (パス 179) |
 | **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:94-97`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
 | **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
@@ -2212,7 +2212,7 @@ $ npm run mutate:next -- --top=5
 | # | ROI | File:line | Mutator | Suggested pattern |
 |--:|----:|-----------|---------|-------------------|
 | 1 | 7.00 | oauth.ts:278 | ObjectLiteral → `{}` | Assert specific properties... |
-| 2 | 5.00 | ollama.ts:322 | StringLiteral → `""` | Assert exact string value with .toBe... |
+| 2 | 5.00 | ollama.ts:323 | StringLiteral → `""` | Assert exact string value with .toBe... |
 ...
 ```
 
@@ -2418,13 +2418,13 @@ classDiagram
   %% 版と名前の 3 判定は shared/ollama.ts に在り、clients/ollama.ts は再 export だけ
   %% (2026-09-12 パス 180 —— 図は clients の行番号を指していた)。
   class OllamaGuards~clients/ollama.ts~ {
-    +ALLOWED_ENDPOINTS : Set : ollama.ts:61
-    +isAllowedEndpoint(url) : ollama.ts:91
-    +isSafeModelName(name) : src/shared/ollama.ts:339
-    +compareVersions(a, b) : src/shared/ollama.ts:354
-    +isVersionSafe(v) : src/shared/ollama.ts:383
+    +ALLOWED_ENDPOINTS : Set : ollama.ts:62
+    +isAllowedEndpoint(url) : ollama.ts:92
+    +isSafeModelName(name) : src/shared/ollama.ts:340
+    +compareVersions(a, b) : src/shared/ollama.ts:355
+    +isVersionSafe(v) : src/shared/ollama.ts:384
     +buildWarnings() : shared/ollama.ts (台帳 OLLAMA_ADVISORIES)
-    -withTimeout(f, url, init) : ollama.ts:122
+    -withTimeout(f, url, init) : ollama.ts:123
   }
 
   class SkillsGuards~clients/skills.ts~ {

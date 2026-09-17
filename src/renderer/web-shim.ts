@@ -129,6 +129,7 @@ import { REAL_MIRROR, mirrorToFolder } from './fs/folderMirror';
 import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
+import { parseJsonBody } from '../shared/apiResponse';
 import {
   registerSymbol,
   unregisterSymbol,
@@ -1360,7 +1361,7 @@ const shim = {
           return async (url, init) => {
             const r = await transport(url, init);
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            return (await r.json()) as unknown;
+            return parseJsonBody(r, serviceId);
           };
         },
         now: () => Date.now(),

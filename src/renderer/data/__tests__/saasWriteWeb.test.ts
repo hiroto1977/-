@@ -140,6 +140,40 @@ describe('createGithubIssue', () => {
   });
 });
 
+describe('2xx で JSON でない本文 (パス 311)', () => {
+  // 実物の Response を使う —— `res.json()` が V8 の SyntaxError (本文の先頭 10 字を引用) を投げる形を写す。
+  const TOKEN_BODY = 'ghp_abcdefghijklmnopqrstuvwxyz0123456789 が先頭に在る本文';
+  const textResponse = (status: number, text: string): Response => new Response(text, { status });
+
+  it('標本: 実物の res.json() は本文の先頭 10 字を引用する', async () => {
+    await expect(textResponse(200, TOKEN_BODY).json()).rejects.toThrow(/ghp_abcdef/);
+  });
+
+  it('★ Notion: 文面は定数で、本文の 1 字も画面へ運ばない', async () => {
+    const transport = vi.fn().mockResolvedValue(textResponse(200, TOKEN_BODY));
+    let msg = '';
+    try {
+      await createNotionPage({ parentPageId: 'par', title: 'T', body: 'hi' }, 'secret', transport);
+    } catch (e) {
+      msg = e instanceof Error ? e.message : String(e);
+    }
+    expect(msg).toBe('Notion API の応答が JSON ではありません (処理したことを確認できません)');
+    expect(msg).not.toContain('ghp_');
+  });
+
+  it('★ Slack: 同じ 1 文 (規則は shared/apiResponse.ts の 1 つ)', async () => {
+    const transport = vi.fn().mockResolvedValue(textResponse(200, '<!DOCTYPE html><html>502</html>'));
+    let msg = '';
+    try {
+      await sendSlackMessage({ channel: 'C1', text: 'hi' }, 'xoxb-1', transport);
+    } catch (e) {
+      msg = e instanceof Error ? e.message : String(e);
+    }
+    expect(msg).toBe('Slack API の応答が JSON ではありません (処理したことを確認できません)');
+    expect(msg).not.toContain('DOCTYPE');
+  });
+});
+
 describe('createNotionPage', () => {
   it('POSTs the exact endpoint/headers/body and maps the result', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'p1', url: 'https://notion.so/p1' }));
