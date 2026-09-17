@@ -13,6 +13,7 @@
     "scripts/inject-pwa.cjs",
     "scripts/inline-html.cjs",
     "scripts/integrity-chain.cjs",
+    "scripts/lib/artifact-freshness.cjs",
     "scripts/lint-artifact-csp.cjs",
     "scripts/lint-sample-data.cjs",
     "scripts/make-autoinstall.sh",
@@ -1870,6 +1871,22 @@
       "leafCount": 75,
       "note": "update lint-sample-data.cjs",
       "hash": "dbef2f67700de4b3b59844dc01df9d862378ecae69bd653fd34b63484fccbeba"
+    },
+    {
+      "index": 224,
+      "prevHash": "dbef2f67700de4b3b59844dc01df9d862378ecae69bd653fd34b63484fccbeba",
+      "merkleRoot": "41cc4592e2328e61b615257a99e431430d4a7981136e78e0965cd2f0bf11ea11",
+      "leafCount": 75,
+      "note": "update smoke-app.cjs,httpLimits.ts",
+      "hash": "07ff99037694769049eee26c4cc86b66da79dfd1d5269049a7202ea614b690b9"
+    },
+    {
+      "index": 225,
+      "prevHash": "07ff99037694769049eee26c4cc86b66da79dfd1d5269049a7202ea614b690b9",
+      "merkleRoot": "938ba9be71b39e5439007c85e21a0c8ccce0aeb83acf0581a0634124b88ea31f",
+      "leafCount": 76,
+      "note": "update integrity-chain.cjs,artifact-freshness.cjs",
+      "hash": "6a49e8e08b5ff4c25f640e45875098e5d0ef5c50c0c508629a066a8844269fb7"
     }
   ],
   "tipManifest": {
@@ -1883,7 +1900,8 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "2960127b6f1f80f99060c1dd96ce16dd16408c6d9aec1db5807ee3ee1e69ad26",
+    "scripts/integrity-chain.cjs": "853eb0961b12beb800ab313eee442cda53496376abbf119ebcbea30648fbc7ee",
+    "scripts/lib/artifact-freshness.cjs": "0ee42f79d57b61b05df71547e4e17f285057ad3734dab6f22fdcf0decf6ce9aa",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
@@ -1894,7 +1912,7 @@
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
-    "scripts/smoke-app.cjs": "3308303649279f4ca49640e00f61f2451fea881e506005c51a97c3cbca2bd827",
+    "scripts/smoke-app.cjs": "e0ec8dd631cbdbcd075663b99bdc33b380dc5d61ea049df7a626e300fb544095",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "b1840895edf0bf5394fa36a64352b28cf852ca1a2b02e246dd6d6c82c457db44",
     "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
@@ -1935,7 +1953,7 @@
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "75d54e0ec94c7568521e4fa31ad90596d18e59519434c42edb562d939806eb4b",
     "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
-    "src/shared/httpLimits.ts": "d7dcb04a97d52b8dfb7ec61e9231bc956fb12a4b10827ab762434dfae4477d38",
+    "src/shared/httpLimits.ts": "1acb465f537f44f0314d875363ac0826cabe9a7c165119d8d9eb5f40fe510584",
     "src/shared/imageUrlGate.ts": "3a380023ab15c106574638f6b1b2420632b3df5377bf8744e51d59700ec6e43c",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/ollama.ts": "54fb23af95ca9cbde3f2dcd7252692fce5591479ce6d01c70ae1f31ec42caf53",

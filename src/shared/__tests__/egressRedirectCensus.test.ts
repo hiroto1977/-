@@ -132,4 +132,12 @@ describe('egressRedirectCensus — 網の fetch は全部 egressInit を通す (
     // 標本: 規則の在る場所には当たる
     expect(stripComments(readOriginalSource(path.join(REPO_ROOT, 'src/shared/httpLimits.ts')))).toMatch(HAND_WRITTEN_REDIRECT);
   });
+
+  it("★ 'follow' を書くのは httpLimits.ts の no-cors の枝 1 つだけ (例外も規則の中に在る · パス 304)", () => {
+    const code = stripComments(readOriginalSource(path.join(REPO_ROOT, 'src/shared/httpLimits.ts')));
+    expect(code).toMatch(/if \(init\.mode === 'no-cors'\) return \{ \.\.\.init, redirect: 'follow' \};/);
+    // 型注釈 (`{ redirect: 'manual' | 'follow' }`) ではなく、値として書く形だけを数える
+    expect(code.match(/, redirect: 'follow' \}/g)).toHaveLength(1);
+    expect(code.match(/, redirect: 'manual' \}/g)).toHaveLength(1);
+  });
 });

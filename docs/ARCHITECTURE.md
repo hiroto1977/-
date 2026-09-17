@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 605 個の `file:line` 参照 + 41 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 606 個の `file:line` 参照 + 41 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14470** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14475** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 605 | 自己検証 |
+| `file:line` 参照数 | 606 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1890,6 +1890,11 @@ Salesforce・Discord webhook) は、どう絞っているかを `lint:network-ta
 規則は `src/shared/httpLimits.ts` の `egressInit` / `isRedirectResponse` / `redirectRefusal` に 1 つ、網の fetch 12 か所が全部それを
 通ることは `src/shared/__tests__/egressRedirectCensus.test.ts` が両方向に留める (利用者が配る Worker は各ホップを再検査して**進む**が、
 アプリは**止まって理由を言う** —— このアプリが呼ぶ API に転送を要る物は無い)。
+**例外は `mode: 'no-cors'` の 1 形だけ** (パス 304): Fetch 標準は no-cors と `redirect ≠ 'follow'` の組み合わせを network error と
+定めており (chromium 実測 `TypeError: Failed to fetch`)、Ollama の到達確認 (`src/renderer/network/ollamaWeb.ts` の no-cors の探り) がそれで落ちて
+「起動しているが OLLAMA_ORIGINS 未設定」を「未起動」と診断していた。no-cors の要求は資格情報を載せられず応答も読めないので、
+追随しても台帳の外へ運ぶ物が無い —— その 1 形だけ `egressInit` の**中で** 'follow' を明示する (規則は 1 つのまま。
+undici は CORS を実装しないので単体検査には映らず、CI の外だった `e2e:ollama` だけが捕まえた —— 同日から `e2e.yml` で走る)。
 
 | Service | Host | Method + Path | Auth | 出典 |
 |---|---|---|---|---|

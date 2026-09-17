@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 224
+- ブロック数: 226
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `dbef2f67700de4b3b59844dc01df9d862378ecae69bd653fd34b63484fccbeba`
-- 保護対象: 75 ファイル
+- 末尾(tip)ハッシュ: `6a49e8e08b5ff4c25f640e45875098e5d0ef5c50c0c508629a066a8844269fb7`
+- 保護対象: 76 ファイル
 
 ## ブロック
 
@@ -237,6 +237,8 @@
 | 221 | `3867dd78d005fa8e` | `9081829e86e19cd9` | `010833de8c0136f5` | update types.ts,main.ts,oauth.ts,proxy.ts,pkce.ts,chat.ts |
 | 222 | `9a221dc8a7b88486` | `010833de8c0136f5` | `ba43bcaff2f37520` | update main.ts |
 | 223 | `3bad11657753ff7d` | `ba43bcaff2f37520` | `dbef2f67700de4b3` | update lint-sample-data.cjs |
+| 224 | `41cc4592e2328e61` | `dbef2f67700de4b3` | `07ff990376947690` | update smoke-app.cjs,httpLimits.ts |
+| 225 | `938ba9be71b39e54` | `07ff990376947690` | `6a49e8e08b5ff4c2` | update integrity-chain.cjs,artifact-freshness.cjs |
 
 ## 保護対象ファイル
 
@@ -251,6 +253,7 @@
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
+- `scripts/lib/artifact-freshness.cjs`
 - `scripts/lint-artifact-csp.cjs`
 - `scripts/lint-sample-data.cjs`
 - `scripts/make-autoinstall.sh`

@@ -170,6 +170,10 @@ CSP は `connect-src 'self' https://<id>.frame.claudeusercontent.com` のみ)。
 
 E2E は `npm run e2e:ollama` (実 chromium + スタブ Ollama)。未起動 / CORS 未許可 /
 接続成功 / **チャット往復** / 別端末経路 / 許可外拒否 の 6 状態を実機で固定している。
+2026-09-17 (パス 304) から `.github/workflows/e2e.yml` (手動起動 / `run-e2e` ラベル) でも走る ——
+Node (undici) は CORS を実装しないので、「CORS 未許可」の切り分け (no-cors の到達確認) が
+ブラウザで落ちる形は単体検査に映らず、この harness だけが捕まえた (その日の実例:
+転送に追随しない規則が no-cors にも重なり、CORS 未許可が未起動と診断された)。
 ブラウザを介さない経路として `npm run ollama` (CLI) もあり、こちらは CORS も
 mixed content も原理的に発生しない。
 

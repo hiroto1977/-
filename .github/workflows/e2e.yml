@@ -98,6 +98,15 @@ jobs:
           inputs.target == 'both' || inputs.target == 'lite'
         run: npm run e2e:lite
 
+      # Ollama 連携の実機 E2E (スタブ Ollama + 実 chromium・full の HTML)。CORS の意味論は
+      # Node (undici) に無いので、no-cors の到達確認が壊れても単体検査は緑のまま ——
+      # 実ブラウザでしか見えない (2026-09-17 パス 304 で実際に起きた。それまで CI の外だった)。
+      - name: E2E (ollama stub)
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          inputs.target == 'both' || inputs.target == 'full'
+        run: npm run e2e:ollama
+
       # 起動性能。巨大な JSON.parse が起動時に戻っていないかを見る。
       - name: Startup performance
         run: npm run perf

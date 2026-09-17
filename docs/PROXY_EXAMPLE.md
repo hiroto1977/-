@@ -46,7 +46,9 @@ X-Proxy-Auth: <optional-shared-secret>
 ホストが `302 Location: http://169.254.169.254/` を返す経路を塞ぐ)。
 (b) はクライアント側では原理的に実装できない — 残余リスクは §3 参照。(c) はクライアント側も
 **追随しない**という形で持つ (`src/shared/httpLimits.ts` の `egressInit`・2026-09-17 パス 301。
-Worker のように各ホップを再検査して進むのではなく、転送が来た時点で止まって理由を言う)。
+Worker のように各ホップを再検査して進むのではなく、転送が来た時点で止まって理由を言う。
+例外は `mode: 'no-cors'` の到達確認 1 形だけ —— Fetch 標準が no-cors + manual を network error と
+定めるため、資格情報を載せられず応答も読めないその形だけは 'follow' のまま · パス 304)。
 
 ```js
 // proxy-worker.js

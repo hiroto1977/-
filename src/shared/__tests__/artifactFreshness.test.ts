@@ -252,9 +252,35 @@ describe('BUILD_MATERIALS — 台帳と実物 (パス 302)', () => {
     expect(stripComments("{ srcDir: x,\n  // repoRoot,\n  tool: 'E2E' }")).not.toMatch(PASSES_REPO_ROOT);
   });
 
-  it('★ 成果物を相手にする 3 つの道具は全部 repoRoot を渡している (渡さないと src/ しか見ない)', () => {
-    const tools = ['scripts/e2e/core.cjs', 'scripts/perf/startup.cjs', 'scripts/screenshot.cjs'];
-    for (const rel of tools) {
+  /**
+   * 母集団は package.json から導く —— `e2e*` / `perf*` / `smoke*` が起動する `scripts/` の本。
+   * パス 304 まではここに 3 本を**手で並べて**いて、`e2e:ollama` と `smoke:app` が鮮度を
+   * 見ていないことに誰も気づかなかった (手で並べた一覧は、足した道具を黙って外に置く)。
+   */
+  function artifactTools(): string[] {
+    const pkg = JSON.parse(readOriginalSource(path.join(REPO_ROOT, 'package.json'))) as {
+      scripts: Record<string, string>;
+    };
+    const out = new Set<string>();
+    for (const [name, cmd] of Object.entries(pkg.scripts)) {
+      if (!/^(e2e|perf|smoke)(:|$)/.test(name)) continue;
+      for (const m of cmd.matchAll(/\bscripts\/[\w/.-]+\.cjs\b/g)) out.add(m[0]);
+    }
+    return [...out].sort();
+  }
+
+  it('★ 母集団は 5 本で、台帳と一致する (両方向 —— 道具が増えても減っても鳴る)', () => {
+    expect(artifactTools()).toEqual([
+      'scripts/e2e/core.cjs',
+      'scripts/e2e/ollama.cjs',
+      'scripts/perf/startup.cjs',
+      'scripts/screenshot.cjs',
+      'scripts/smoke-app.cjs',
+    ]);
+  });
+
+  it('★ 成果物を相手にする道具は全部 鮮度検査を呼び、repoRoot を渡している (渡さないと src/ しか見ない)', () => {
+    for (const rel of artifactTools()) {
       const text = stripComments(readOriginalSource(path.join(REPO_ROOT, rel)));
       const call = /assertFreshArtifacts\(([\s\S]*?)\);/.exec(text);
       expect(call, `${rel} は鮮度検査を呼ぶ`).not.toBeNull();

@@ -16,6 +16,12 @@
  *
  * 2 と 1 を取り違えると「壊れている」と誤解されるため、切り分けが効いていることを
  * ここで固定する (単体テストは src/renderer/network/__tests__/ollamaWeb.test.ts)。
+ * **単体テストでは見えない物がここには在る**: Node (undici) は CORS を実装しないので、
+ * 2 の切り分け (no-cors の到達確認) がブラウザで落ちる形 —— Fetch 標準の
+ * 「no-cors + redirect ≠ follow は network error」—— を undici は通してしまう。
+ * 2026-09-17 (パス 304) に実際に起きた: 転送に追随しない規則が no-cors にも重なり、
+ * 2 が 1 と診断されたが、単体検査は全件緑で、この harness だけが ❌ を出した。
+ * だから 2026-09-17 から `.github/workflows/e2e.yml` (手動起動 / `run-e2e` ラベル) で走る。
  *
  * ポート 11434 を bind するので、実 Ollama が動いている環境では EADDRINUSE で
  * 失敗する (その場合は実機で手動確認するのが正しい)。
@@ -35,6 +41,17 @@ const pw=resolvePlaywright();
 if(!pw){console.error('e2e:ollama: playwright が見つかりません');process.exit(2);}
 // 対照実験が古い版の HTML に当てられるよう、置き場所を環境変数で差し替えられる (既定は dist/)。
 const DIR=process.env.SERVICE_HUB_E2E_DIST||path.join(__dirname,'..','..','dist');
+// 成果物の鮮度 —— 古い standalone.html を相手に「診断が直った / 壊れていない」と報告しない。
+// 判定は e2e / perf / smoke と同じ `scripts/lib/artifact-freshness.cjs` (パス 304 で足した:
+// それまで**この harness だけ**が鮮度を見ておらず、src/ を直した直後に回すと壊す前の HTML の
+// 診断結果を返していた —— 実測 2026-09-17: httpLimits.ts を直して再ビルドせずに回すと、直す前の
+// 「CORS未許可 → 未起動」の誤診がそのまま ❌ で出た。exit 2 ではなく、古い答えが出る)。
+require('../lib/artifact-freshness.cjs').assertFreshArtifacts([path.join(DIR,'standalone.html')],{
+  srcDir:path.join(__dirname,'..','..','src'),
+  repoRoot:path.join(__dirname,'..','..'),
+  tool:'e2e:ollama',
+  allowEnv:'SERVICE_HUB_E2E_ALLOW_STALE',
+});
 
 const STUB_MODELS=['llama3.2:latest','qwen2.5-coder:7b'];
 

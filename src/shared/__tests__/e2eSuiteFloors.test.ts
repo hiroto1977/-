@@ -15,10 +15,21 @@
  */
 import { describe, expect, it } from 'vitest';
 import * as path from 'node:path';
+import { createRequire } from 'node:module';
 import { readOriginalSource } from './originalSource';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
+/** 原文 (表の `// 実測 N` はコメントなので、表の読み取りだけはこちら)。 */
 const src = readOriginalSource(path.join(REPO_ROOT, 'scripts/e2e/core.cjs'));
+/**
+ * 構造の主張 (一覧を表から導く・ループ・合計の床) はコメントを落とした原文に当てる ——
+ * `// const SUITES = SUITE_TABLE.map(…)` という**言及**で満たされないように
+ * (パス 297 / 298 / 302 の家系。最初の版は原文のままだった)。
+ */
+const { stripComments } = createRequire(__filename)(path.join(REPO_ROOT, 'scripts/shared-judgement-census.cjs')) as {
+  stripComments: (s: string) => string;
+};
+const code = stripComments(src);
 
 /** 表の 1 行: `['name', fn, floor], // 実測 N` */
 const ROW = /^\s*\['(\w+)', (\w+), (\d+)\], \/\/ 実測 (\d+)$/gm;
@@ -43,13 +54,17 @@ describe('e2e の suite ごとの床 (パス 303)', () => {
     }
   });
 
-  it('★ 名前の一覧は表から導く (表に無い suite は呼べない)', () => {
-    expect(src).toMatch(/const SUITES = SUITE_TABLE\.map\(\(\[name\]\) => name\);/);
-    expect(src).toMatch(/for \(const \[name, suite, floor\] of SUITE_TABLE\)/);
+  it('★ 名前の一覧は表から導く (表に無い suite は呼べない) —— コメントの言及では満たされない', () => {
+    expect(code).toMatch(/const SUITES = SUITE_TABLE\.map\(\(\[name\]\) => name\);/);
+    expect(code).toMatch(/for \(const \[name, suite, floor\] of SUITE_TABLE\)/);
+    // 針の標本: 言及だけの形は落ちる
+    expect(stripComments('// const SUITES = SUITE_TABLE.map(([name]) => name);\nconst SUITES = [\'desktop\'];')).not.toMatch(
+      /const SUITES = SUITE_TABLE\.map/,
+    );
   });
 
   it('★ 合計の床は suite の床の和より緩くない', () => {
-    const m = /const MIN_TOTAL_CHECKS = (\d+);/.exec(src);
+    const m = /const MIN_TOTAL_CHECKS = (\d+);/.exec(code);
     expect(m).not.toBeNull();
     const total = Number(m![1]);
     const sumFloors = rows.reduce((a, r) => a + r.floor, 0);

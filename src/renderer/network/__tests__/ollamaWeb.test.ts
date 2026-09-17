@@ -1034,6 +1034,35 @@ describe('通信の枠', () => {
     expect(signal?.aborted).toBe(false);
   });
 
+  /*
+   * パス 304 の退行検査。パス 301 の `egressInit` (redirect: 'manual') が到達確認の
+   * no-cors にも重なり、ブラウザでは Fetch 標準どおり network error になって
+   * 「起動しているが OLLAMA_ORIGINS 未設定」が「未起動」と診断された。undici は
+   * CORS を実装しないので既存の検査は緑のままだった —— **ブラウザの規則を写した
+   * fetch** で見る (chromium 実測 2026-09-17: no-cors + manual → TypeError: Failed to fetch)。
+   */
+  it('★ 到達確認の no-cors に redirect: manual を載せない (載せるとブラウザでは network error · パス 304)', async () => {
+    const seen: RequestInit[] = [];
+    const browserLike = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      seen.push(init ?? {});
+      if (init?.mode === 'no-cors') {
+        if ((init.redirect ?? 'follow') !== 'follow') throw new TypeError('Failed to fetch');
+        return new Response(null, { status: 204 });
+      }
+      throw new TypeError('Failed to fetch'); // 通常 fetch は CORS で落ちる (OLLAMA_ORIGINS 未設定)
+    }) as unknown as typeof fetch;
+    // 標本: 写した規則は本当に落とす
+    await expect(browserLike('http://127.0.0.1:11434/api/version', { mode: 'no-cors', redirect: 'manual' })).rejects.toThrow(
+      'Failed to fetch',
+    );
+    seen.length = 0;
+    const r = await probeOllama(11434, browserLike, '', () => ({ hit: () => false, stop: () => undefined }));
+    expect(r.status).toBe('cors-blocked');
+    const noCors = seen.filter((i) => i.mode === 'no-cors');
+    expect(noCors).toHaveLength(1);
+    expect(noCors[0]!.redirect).toBe('follow');
+  });
+
   it('到達確認は no-cors で行う (中身は読めなくても届いたことは分かる)', async () => {
     const modes: (string | undefined)[] = [];
     const f = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {

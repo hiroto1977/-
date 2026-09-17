@@ -277,6 +277,11 @@ Discord webhook) は `lint:network-targets` の台帳 (`scripts/lint-network-tar
 全部それを通ることを `src/shared/__tests__/egressRedirectCensus.test.ts` が両方向に留める。それまでは `fetch` の既定
 `redirect: 'follow'` で、台帳のホストが返す `302 Location:` 1 つで台帳に無い先 (LAN・loopback) へ取りに行っていた。
 利用者が配る Worker (`docs/PROXY_EXAMPLE.md` §(c)) は各ホップを再検査して進むが、アプリは止まって理由 (Location のホストだけ) を言う。
+例外は `mode: 'no-cors'` の 1 形だけ (2026-09-17 パス 304): Fetch 標準は no-cors + `redirect ≠ 'follow'` を network error と定める
+(chromium 実測 `TypeError: Failed to fetch`。undici は CORS を実装しないので通す)。no-cors の要求はヘッダの guard が `Authorization` を
+落とし、応答は opaque で読めないので、追随しても台帳の外へ運ぶ物が無い —— `egressInit` の中でその 1 形だけ 'follow' を明示する。
+パス 301 はこの重ねを一律に掛けて Ollama の到達確認 (`ollamaWeb.ts`) を壊しており、CI の外だった `e2e:ollama` だけが捕まえた
+(同日から `.github/workflows/e2e.yml` で走る)。
 
 ## レビューチェックリスト（PR 用）
 

@@ -7,6 +7,101 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 304 (2026-09-17) — 転送に追随しない規則が no-cors の到達確認にも重なり、「起動しているが OLLAMA_ORIGINS 未設定」を「未起動」と診断していた —— 単体検査は全件緑で、CI の外の `e2e:ollama` だけが捕まえた
+
+パス 301 の `egressInit` (`redirect: 'manual'` を重ねる) は網の fetch 12 か所に**一律**に掛けた。その 1 つ、
+`renderer/network/ollamaWeb.ts` の到達確認は、通常 fetch が落ちた後に `mode: 'no-cors'` で「聞いているか」だけを見る
+探りで、**成功 = 起動しているが CORS 未許可 / 失敗 = 未起動** の切り分けそのものである。Fetch 標準の main fetch は
+「mode が no-cors で redirect mode が follow でなければ network error」と定めているので、この探りはブラウザでは
+**必ず落ちる**ようになり、CORS 未許可が未起動と診断された (画面: 「● Not running 127.0.0.1:11434 で Ollama を起動してく…」)。
+
+### 実測 (名前を付ける前に測った · `nocors-probe.cjs`、CORS ヘッダ無しの鯖 + 別オリジンのページ)
+
+| 呼び出し | chromium | Node 22 (undici) |
+|---|---|---|
+| `fetch(url, { mode: 'no-cors', redirect: 'follow' })` | 解決 `type: 'opaque'` / status 0 | 解決 `type: 'basic'` / 200 |
+| `fetch(url, { mode: 'no-cors', redirect: 'manual' })` | **`TypeError: Failed to fetch`** | 解決 `type: 'basic'` / 200 |
+| `fetch(url, { redirect: 'manual' })` (cors 既定) | `TypeError: Failed to fetch` (CORS 拒否 = 期待どおり) | — |
+
+**undici は CORS を実装しない**ので、右列は 2 行とも同じ答えである —— だから `ollamaWeb.test.ts` の既存の検査
+(no-cors の成否で診断が決まる・cache: no-store …) は全件緑のまま退行を通した。`npm test` 17,233 件と
+`verify:all` 37 ゲートも緑。`e2e` / `e2e:lite` (395 件) も緑 —— 到達確認の切り分けを実機で見るのは `e2e:ollama`
+(スタブ Ollama + 実 chromium) だけで、それは CI に無く、パス 301 の実機の節にも無かった。
+
+### 直し —— 規則は 1 つのまま、例外も規則の中に置く
+
+`egressInit` の中で `init.mode === 'no-cors'` のときだけ `redirect: 'follow'` を**明示**する。呼ぶ側は何も知らない。
+追随しても台帳の外へ何も運ばないことは標準の性質: no-cors のヘッダ guard は CORS-safelisted の外 (`Authorization`) を
+落とすので資格情報を載せられず、応答は opaque で本文もヘッダも読めない。
+
+### 測っている間に見つけた 2 つ目 —— `e2e:ollama` と `smoke:app` は成果物の鮮度を見ていなかった
+
+パス 302 は鮮度検査の材料を広げたが、**検査を呼ぶ道具の一覧は 3 本を手で並べたまま**だった (`e2e` / `perf` / `smoke`)。
+`e2e:ollama` (`scripts/e2e/ollama.cjs`) と `smoke:app` (`scripts/smoke-app.cjs`) は成果物を読むのに鮮度を見ない。
+実測: `httpLimits.ts` を直して再ビルドせずに `e2e:ollama` を回すと、exit 2 ではなく**直す前の HTML の診断 (❌ CORS未許可)**
+がそのまま出た —— 「壊す前のものを見ていた」の裏返し (直したのに直っていないと言う) で、区別は付かない。
+2 本に `assertFreshArtifacts` を足し、`artifactFreshness.test.ts` の母集団を package.json の `e2e*` / `perf*` / `smoke*`
+から**導く** (5 本・台帳と両方向)。
+
+### 3 つ目 —— `e2e:ollama` を `.github/workflows/e2e.yml` に足した
+
+実ブラウザでしか見えない退行を捕まえる唯一の網が CI の外に在った。手動起動 / `run-e2e` ラベルで走る e2e.yml に
+「E2E (ollama stub)」を足した (full の HTML を使う。スタブ鯖は harness が自分で立てる)。**`lint:docs` の逆向きの照合が鳴った**:
+CLAUDE.md が「`e2e:ollama` / `smoke` are **not** in CI」と書いていた —— step を足しただけで CLAUDE.md を直す前に
+`❌ CLAUDE.md は "e2e:ollama" を「not in CI」と書いているが e2e.yml が実行している` (2026-08-24 に足した規則が、
+2 度目に本当に働いた)。文を直して緑。
+
+### 検査 (+6 件。静的 `it(` は +5: 14,470 → 14,475 —— `it.each` は 1 と数える)
+
+- `httpLimits.test.ts` (+3): no-cors だけ follow を明示 / cors・same-origin・未指定は manual のまま (`it.each`) /
+  **ブラウザの規則を写した fetch** (no-cors + manual を `TypeError` で落とす) が `egressInit` の出力を通す —— 標本として
+  「写した規則は本当に落とす」を同じ検査の中で確かめる (undici の寛容さに乗って緑になれない)。
+- `ollamaWeb.test.ts` (+1): 同じ写しの fetch で `probeOllama` → `cors-blocked`、no-cors の init の `redirect` は `'follow'`。
+- `egressRedirectCensus.test.ts` (+1): 値として `redirect: 'follow'` を書く場所は httpLimits.ts の no-cors の枝 1 つ、
+  `'manual'` も 1 つ (型注釈 `'manual' | 'follow'` は数えない —— 最初の版はそれを数えて落ちた)。
+- `artifactFreshness.test.ts` (+1): 母集団 5 本は台帳と一致 (両方向)。既存の 3 本手書きの検査は母集団を読む形に。
+- `e2eSuiteFloors.test.ts` (パス 303 の補強・件数不変): 構造の主張 3 つ (一覧は表から導く・ループ・合計の床) を
+  **コメントを落とした原文**に当てる。`// const SUITES = SUITE_TABLE.map(…)` という言及では満たされない (針の標本つき)。
+
+### 対照 (4 本すべて鳴る・snapshot から復元 · `ctl304/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. `egressInit` の no-cors の枝を消す (パス 301 の形へ戻す) | 4 本 (httpLimits 2・ollamaWeb 1・census 1) |
+| B. `ollama.cjs` の鮮度検査を消す | 「道具は全部 鮮度検査を呼ぶ」1 本 (`scripts/e2e/ollama.cjs は鮮度検査を呼ぶ`) |
+| C. e2e.yml に step を足し CLAUDE.md の主張を残す | `lint:docs` 1 件 (上の文) |
+| D. 実機: パス 301 の HTML のまま `e2e:ollama` | `❌ CORS未許可` 1 件 (直す前・鮮度検査が無いので exit 2 にならない) |
+
+### 実機
+
+e2e.yml と同じ順序 + 末尾に `e2e:ollama` (連鎖 1 回・HEAD のまま src/ に触っていない): `build:renderer` → `smoke:app` OK (**鮮度検査つき**で通る) → `build:web` / `build:web:lite` (**11,894,363 B / 3,306,884 B・両方 +45 B** = no-cors の枝 1 行) → `e2e` **30 suite / 395 件 ❌ 0** → `e2e:lite` **30 suite / 395 件 ❌ 0** → `perf` OK (LITE DCL 235 ms heap 10.2 MB・FULL DCL 712 ms heap 36.9 MB・起動時の巨大 JSON.parse 0) → **`e2e:ollama` 8 状態 ✅ 8** (「CORS未許可: 残り 1 手順だけに絞って提示」が ❌ → ✅。同じ harness が直す前の HTML では ❌ だった = 対照 D)。
+
+### 当たって問題なしだった物 (パス 304 の直後・再訪不要)
+
+- **パス 301 の「このアプリが呼ぶ API に転送を要る物は無い」を測った**: main clients + shared/api + renderer の
+  network / oauth の `https://` リテラルを全部並べた (約 60 件)。転送を返すと分かっている端点 —— Sentry の末尾スラッシュ
+  301 (Sentry は静的スタブで通信しない)・Graph の `/content` 302 (呼んでいない。使うのは `/me/sendMail` と
+  `/me/events`)・Drive の `alt=media` (200 で返る) —— はどれも呼んでいない。残るのは GitHub の改名 repo の 301 だけで、
+  それは「進まずに止まる」を選んだ側 (POST が GET に変わる方が危ない)。
+- `src/` で `mode: 'no-cors'` を書く場所は `ollamaWeb.ts` の到達確認 1 か所だけ (走査)。例外の適用範囲はそこで閉じている。
+
+### ★ 自戒
+
+1. パス 301 の実機の節は `e2e` / `e2e:lite` / `perf` を回して「395 件 ❌ 0」と書いたが、**`e2e:ollama` を回していない**。
+   CI に無い物は手順にも無かった —— だから CI に入れた。
+2. undici で通る検査は、**ブラウザの規則を写した標本**を持たないとこの種の退行を見ない。「fetch を差し替えられる」は
+   「ブラウザの意味論を持つ」ではない。同じ形は `mode: 'no-cors'` の 1 か所しか無い (走査: src に no-cors は ollamaWeb.ts だけ)。
+3. パス 302 で「材料は src/ だけではなかった」と書いた直後に、**道具は 3 本だけではなかった**。台帳を手で並べた場所は
+   同じ穴を 1 段下に持つ —— 母集団は機械が数える。
+4. 全件実行で `integrityChainWitness` (閉包検査) が鳴った: `smoke-app.cjs` (保護対象) が読むようになった
+   `lib/artifact-freshness.cjs` が保護対象でも除外台帳でもなかった。`run()` の先頭で呼ぶので `process.exit(0)` 1 行で
+   smoke:app を「何も検査せずに緑」にできる —— **守っている検査を黙らせられる物は除外ではなく保護対象** (block #225)。
+   部分実行 (直した検査だけ) では映らず、全件実行が教えた —— パス 302 の「全件実行が 2 つ教えた」と同じ形。
+
+台帳: チェーン **block #224 → #225** (`httpLimits.ts`・`integrity-chain.cjs` の保護対象に `lib/artifact-freshness.cjs`)・`docs/ARCHITECTURE.md` の live metric (テスト 14,475・参照 606)・
+CLAUDE.md (CI の文・鮮度の道具 5 本・出荷物のバイト)・`docs/SECURITY_AUDIT.md` / `docs/ARCHITECTURE.md` §3.3 /
+`docs/PROXY_EXAMPLE.md` §(c) / `docs/OLLAMA_SECURITY.md` に例外と CI の記述。
+
 ## パス 303 (2026-09-17) — 実機 e2e の床が「合計 0 件」だけで、suite が黙って縮んでも緑だった
 
 `scripts/e2e/core.cjs` の合格判定は「走った検査が 0 件なら落とす」だけだった (2026-09-05 に「知らない suite 名で
@@ -3446,6 +3541,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 項目 | 状態 |
 |---|---|
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
+| 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 (CLAUDE.md) |
 | PR #788 の本文 | ✅ パス 〜303 まで反映 |
 | imageUrlGate のプライベート帯 | ✅ パス 300 で閉じた (問いを 2 つに分けた) |

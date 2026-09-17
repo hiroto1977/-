@@ -112,8 +112,32 @@ export const DEFAULT_HTTP_TIMEOUT_MS = 30_000;
  */
 export const REDIRECT_STATUSES: ReadonlySet<number> = new Set([301, 302, 303, 307, 308]);
 
-/** 外へ出る fetch の初期化に「転送へ追随しない」を重ねる。他の欄は変えない。 */
-export function egressInit<T extends RequestInit>(init: T): T & { redirect: 'manual' } {
+/**
+ * 外へ出る fetch の初期化に「転送へ追随しない」を重ねる。他の欄は変えない。
+ *
+ * ## 例外は `mode: 'no-cors'` の 1 形だけ (2026-09-17 パス 304)
+ *
+ * Fetch 標準の main fetch は「mode が no-cors で redirect mode が follow でなければ
+ * network error」と定めている。chromium で実測 (2026-09-17):
+ *
+ *   fetch(url, { mode: 'no-cors', redirect: 'follow' })  → type 'opaque' / status 0 で解決
+ *   fetch(url, { mode: 'no-cors', redirect: 'manual' })  → **TypeError: Failed to fetch**
+ *
+ * Node (undici) は CORS を実装しないので**同じ呼び出しが type 'basic' / 200 で通り**、
+ * 単体検査には映らない。パス 301 はこの重ねを網の 12 か所へ一律に掛け、
+ * `renderer/network/ollamaWeb.ts` の到達確認 (通常 fetch が落ちた後に no-cors で
+ * 「聞いているか」だけを見る) を壊した —— 「起動しているが OLLAMA_ORIGINS 未設定」が
+ * 「未起動」と診断される。CI に無かった `e2e:ollama` (実 chromium) だけが捕まえた。
+ *
+ * no-cors の要求は**転送に追随しても台帳の外へ何も運ばない**: ヘッダの guard が
+ * CORS-safelisted の外 (`Authorization` など) を落とすので資格情報を載せられず、
+ * 応答は opaque で本文もヘッダも読めない。だからこの 1 形だけは標準どおり
+ * 'follow' を**明示**する。規則が 1 つのままなのは、例外も**この関数の中**に
+ * 在るからで、呼ぶ側は何も知らなくてよい (`egressRedirectCensus.test.ts` は
+ * 'follow' を書く場所がこの枝 1 つであることも留める)。
+ */
+export function egressInit<T extends RequestInit>(init: T): T & { redirect: 'manual' | 'follow' } {
+  if (init.mode === 'no-cors') return { ...init, redirect: 'follow' };
   return { ...init, redirect: 'manual' };
 }
 
