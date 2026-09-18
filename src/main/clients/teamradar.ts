@@ -1,3 +1,4 @@
+import { readStateFile } from '../stateFile';
 import * as fs from 'node:fs/promises';
 import { countChars } from '../../shared/inputCeiling';
 import * as os from 'node:os';
@@ -80,6 +81,8 @@ export function defaultStatePath(): string {
 
 export interface StateDeps {
   readFile?: (p: string) => Promise<string>;
+  /** 読む前の大きさの門 (`stateFile.ts`)。省くと注入の読み手では後門だけ。 */
+  stat?: (p: string) => Promise<{ size: number }>;
   writeFile?: (p: string, c: string) => Promise<void>;
   mkdir?: (p: string) => Promise<void>;
   rename?: (a: string, b: string) => Promise<void>;
@@ -96,17 +99,12 @@ export async function loadTeamRadarState(
   deps: StateDeps = {},
 ): Promise<StoredTeamRadar> {
   const p = (deps.statePath ?? defaultStatePath)();
-  const read = deps.readFile ?? ((q: string) => fs.readFile(q, 'utf8'));
-  let raw: string;
-  try {
-    raw = await read(p);
-  } catch (e) {
-    if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
-    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
-  }
+  // 大きさの門と 3 状態の読みは `stateFile.ts` の 1 つ (パス 313)。
+  const file = await readStateFile(p, { readFile: deps.readFile, stat: deps.stat });
+  if (file.kind !== 'read') return file;
   // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
   // 画面は「見本を表示 / 保存を押すと上書き」と言う (パス 120 の注記がそのまま出口になる)。
-  const opened = unsealJsonDocument(raw);
+  const opened = unsealJsonDocument(file.text);
   if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
   return readStoredTeamRadar(opened.json);
 }

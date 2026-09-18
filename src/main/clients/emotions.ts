@@ -20,6 +20,7 @@
  * complexity.
  */
 
+import { readStateFile } from '../stateFile';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { app } from 'electron';
 import {
@@ -29,7 +30,6 @@ import {
   MAX_MOODS,
   MAX_MOOD_NOTE_CHARS,
 } from '../../shared/emotionsLimits';
-import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { atomicWriteFile } from '../atomicWrite';
 import { sealJsonDocument, unsealJsonDocument } from '../atRest';
@@ -94,18 +94,13 @@ export function storePath(): string {
  * `clear-history` だけは通す (壊れた保存先から抜け出す唯一の道)。
  */
 async function readStore(opts: { forWrite?: boolean } = {}): Promise<EmotionsStore> {
-  let raw: string;
-  try {
-    // encoding を空にすると Buffer が返るが、`JSON.parse` は toString()
-    // 経由で読むため結果は変わらない (実測)。型のために明示している。
-    // Stryker disable next-line StringLiteral: 空文字でも Buffer 経由で同じ結果 (実測)
-    raw = await fs.readFile(storePath(), 'utf8');
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return { moods: [], analyses: [] };
-    throw err;
-  }
+  // 大きさの門と 3 状態の読みは `stateFile.ts` の 1 つ (パス 313)。「まだ無い」は空、
+  // 「読めなかった」は理由ごと投げる (ENOENT 以外を握り潰すと壊れた記録を空で上書きする)。
+  const file = await readStateFile(storePath());
+  if (file.kind === 'none') return { moods: [], analyses: [] };
+  if (file.kind === 'unreadable') throw new Error(file.reason);
   // オブジェクトでない JSON (null / 配列 / 数値) は「欄が無い古い形」と同じ扱い (空)。判定は共有側 1 か所。
-  const rec = asRecord(unsealStore(raw));
+  const rec = asRecord(unsealStore(file.text));
   const moods = readStoredList(rec.moods, isMoodEntry);
   const analyses = readStoredList(rec.analyses, isAnalysisEntry);
   if (opts.forWrite && (moods.dropped > 0 || analyses.dropped > 0)) {

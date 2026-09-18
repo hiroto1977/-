@@ -7,6 +7,40 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 313 (2026-09-18) — main の状態ファイル 4 つの読みに大きさの門が無く、「自分が書いた物は大きくならない」という前提で `readFile` → `JSON.parse` していた
+
+UI 再設計の直前まで「閉じていない物」に 3 度書き残していた項 (パス 308 / 309 / 311)。利用者の依頼で残作業を閉じる。
+
+### 実測
+
+- main が端末のファイルを読む口で大きさの門を持つのは `secrets.ts` (stat・1 MB) と `clients/skills.ts` (stat・4 × 天井 byte) の 2 つ。
+  `emotions.ts:102` は `fs.readFile(storePath())` を直に、`talent.ts` / `teamradar.ts` / `stocks.ts` は `deps.readFile ?? fs.readFile` を直に呼び、
+  読んだ物をそのまま `unseal` → `JSON.parse` していた (4 か所)。どれも app 自身が書く物で入力に天井は在るが、別のプロセスが置き換えた・
+  壊れた・肥大した保存ファイルは `readFile` + `JSON.parse` で main を落とし、画面は全サービスごと消える。
+- 正当に最も大きくなる保存は感情ログ: 気分 365 × 注記 2,000 字 (UTF-8 最大 8 KB) + 分析 50 × 5,000 字 ≈ 4 MB、封緘の膨らみを見ても約 6 MB。
+
+### 直し (規則は 1 つ: `src/main/stateFile.ts` の `readStateFile` / `MAX_STATE_FILE_BYTES` = 16 MiB / `stateFileTooLargeReason`)
+
+- 門は 2 段: **読む前** (`fs.stat` の大きさ。巨大な物を memory に載せない) と **読んだ後** (byte 数。stat と read の間に育った物・stat を持たない
+  注入の読み手)。断りの文面は定数で **path を載せない** (画面へ出る)。「まだ無い」(ENOENT) と「読めなかった」は混ぜない (3 状態)。
+- 4 つの読みが同じ関数を通る: talent / teamradar / stocks は `StateDeps` に `stat?` を足し `readStateFile(p, { readFile, stat })` の結果を
+  そのまま返す (3 状態の型が一致する)。emotions は `none` → 空、`unreadable` → 理由ごと投げる (ENOENT 以外を握り潰さない・従来どおり)。
+  `readFileWithBackup` (保護対象) は触らない —— 唯一の呼び手 `secrets.ts` は前で stat の門を持つ。
+- 検査: `stateFile.test.ts` (新規 10: 3 状態・前門は readFile を呼ばない・後門は byte で測る (3 byte の字で 3 分の 1 の字数)・文面に path が
+  入らない (標本: fs の失敗の文には同じ path が入る)・実ファイルは疎ファイルで天井超えを作り stat で断る) + 4 モジュールに前門 / 後門 2 本ずつ
+  (感情ログは実ファイル: 疎ファイル 16 MiB + 3 で `fetchEmotionsSnapshot` が定数の文で reject)。
+
+### 対照 (2 本すべて鳴る · `ctl313/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. 後門 (読んだ byte の判定) を外す | `stateFile` の後門 1 本 + talent / teamradar / stocks の「読んだ物が天井を超えても」3 本 |
+| B. 前門 (stat の判定) を外す | `stateFile` の前門 1 本 + 「path を載せない」1 本 + talent / teamradar / stocks の「読まずに断る」3 本。**感情ログの実ファイルの検査は鳴らない** —— 前門を外しても後門が同じ byte 数で同じ文を返すため (疎ファイルの 0x00 は読んだ byte 数に影響しない)。あの検査が留めるのは結果の文であって「読まなかったこと」ではなく、読まなかったことは `stateFile.test.ts` の readFile の呼び出し回数が留める |
+
+### 出荷物
+
+main だけの変更。`build:web` で実測し FULL は **11,901,220 B で byte 単位で不変** (LITE は組んでいない: 差は学術コーパスだけ)。
+
 ## UI 再設計 (2026-09-17) — 紺のダーク配色から、淡いピンク × ラベンダー × ミントの明るい配色へ (利用者の依頼: 若い女性が好みそうなお洒落な見た目)
 
 ### 何を変えたか (見た目だけ。画面の構造・文言・data 属性・class 名は 1 つも変えていない)
@@ -4129,6 +4163,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 状態ファイルの読みの大きさの門 (パス 313) | ✅ `main/stateFile.ts` の 1 つ (stat の前門 + byte の後門・16 MiB・文面は定数で path 無し) を 4 つの読みが通る。検査 +18・対照 2 本 |
 | ブラウザ版 invoke / fetchSnapshot の床 (パス 312) | ✅ main と同じ `safeErrorMessage` の床を外側 1 か所 (`withFloor`) に。3 条件 (Web Storage 拒否 / null / 形違い) で 1 + 11 + 2 組が reject していた。検査 +8・対照 3 本 |
 | 2xx の非 JSON 本文と V8 の引用 (パス 311) | ✅ `res.json()` 16 か所を `parseJsonBody` (文言は定数) へ。census で `.json()` は 1 か所だけ (両方向)。標本: 素の res.json() は先頭 10 字を引用する。対照 2 本 |
 | 端末からの読み取りの台帳 (パス 310) | ✅ 読みの 22 か所を方針 4 通りと理由で台帳に (`storageReadLedger.test.ts`・双方向)。Google 接続カードの写し (自前の try/catch) を入口へ。対照 4 本 |

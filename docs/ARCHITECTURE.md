@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14550** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14567** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1847,8 +1847,8 @@ union を参照する。
 | security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:277-329` |
 | cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | **共有台帳 `CLOUDFLARE_DNS_FIELDS`** (型・長さ・**type は台帳の一覧 (A / AAAA / CNAME / TXT / MX) 以外を reject**・ttl は 1 以上の整数・proxied は真偽値)。zoneId encodeURIComponent | `cloudflare.ts:132-220` |
 | cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | **共有台帳 `CLOUDFLARE_PURGE_FIELDS`** (files は文字列の配列で件数と 1 件の長さに天井・purgeEverything は真偽値)。zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:180-220` |
-| emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:121-290` |
-| emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:250-320` |
+| emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:116-285` |
+| emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:245-315` |
 | ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:248-372` |
 | microsoft-365 | `send-mail` | `{ to, subject, body? }` | **共有台帳 `MS365_MAIL_FIELDS`** を共有の `checkMail` が読む (型・長さ) + Graph message envelope も共有 (`graphMailInit`)。宣言は `SendMailPayload`、欄の名前のずれは検査が留める | `microsoft-365.ts:17-269` |
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | **共有台帳 `MS365_EVENT_FIELDS`** を共有の `checkEvent` が読む (型・長さ) + Graph event envelope も共有 (`graphEventInit`・時間帯は `GRAPH_EVENT_TIME_ZONE`)。宣言は `CreateEventPayload` | `microsoft-365.ts:17-250` |
@@ -1858,19 +1858,19 @@ union を参照する。
 | business | `advise` | `{ question, categories }` | **model / maxTokens は payload から受けない** (定数)。有料 API 呼び出しには 2 分の締切と本文上限 | `business.ts:1124-1128` |
 | business | `export-dashboard` | `{ path, advisorResult }` | path は書き出し関門 (clients/exportPaths.ts) を通る | `business.ts:1124-1128` |
 | business | `export-dashboard-md` | `{ path, advisorResult }` | 同上 (Markdown 版) | `business.ts:1124-1128` |
-| stocks | `register-ticker` | `{ symbol }` | **isSafeSymbol(symbol)** —— 英数と . - ^ のみ・空文字拒否 | `stocks.ts:2033-2041` |
-| stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2033-2041` |
-| stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2033-2041` |
-| stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2033-2041` |
-| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS。**応答の欄の天井は `advisorResponseLimits.ts` の株式用の定数** (パス 113 まで main / ブラウザ版に 5 / 400 / 200 が字面で) | `stocks.ts:2033-2041` |
-| stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2033-2041` |
-| stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2033-2041` |
+| stocks | `register-ticker` | `{ symbol }` | **isSafeSymbol(symbol)** —— 英数と . - ^ のみ・空文字拒否 | `stocks.ts:2031-2039` |
+| stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2031-2039` |
+| stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2031-2039` |
+| stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2031-2039` |
+| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS。**応答の欄の天井は `advisorResponseLimits.ts` の株式用の定数** (パス 113 まで main / ブラウザ版に 5 / 400 / 200 が字面で) | `stocks.ts:2031-2039` |
+| stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2031-2039` |
+| stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2031-2039` |
 | templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:344-349` |
-| teamradar | `save-state` | `{ department, evaluatedAt, members, axes }` | members は形と件数を検証してから 0600 で保存。**axes はパス 190 で足した** —— それまで画面で付け直した軸名はブラウザの下書きにしか残らず、保存にも書き出しにも届かなかった (省略可: 既存の保存値をそのまま読む) | `teamradar.ts:314-317` |
-| teamradar | `export-svg` | `{ path, title, chart }` | path は書き出し関門。図の文字列は escapeXml を通してから書く。**chart はパス 190 で足した画面の図** (validateTeamRadarState が通す形) —— それまで title だけを受け、本体は保存済み状態から読んでいたので、1 枚の SVG が 2 つの部署・2 つの評価時点を名乗った。省略時だけ保存済みへ落ちる | `teamradar.ts:314-317` |
-| talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:186-189` |
-| talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:186-189` |
-| emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:372-386` |
+| teamradar | `save-state` | `{ department, evaluatedAt, members, axes }` | members は形と件数を検証してから 0600 で保存。**axes はパス 190 で足した** —— それまで画面で付け直した軸名はブラウザの下書きにしか残らず、保存にも書き出しにも届かなかった (省略可: 既存の保存値をそのまま読む) | `teamradar.ts:312-315` |
+| teamradar | `export-svg` | `{ path, title, chart }` | path は書き出し関門。図の文字列は escapeXml を通してから書く。**chart はパス 190 で足した画面の図** (validateTeamRadarState が通す形) —— それまで title だけを受け、本体は保存済み状態から読んでいたので、1 枚の SVG が 2 つの部署・2 つの評価時点を名乗った。省略時だけ保存済みへ落ちる | `teamradar.ts:312-315` |
+| talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:184-187` |
+| talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:184-187` |
+| emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:367-381` |
 | docstudio | `list-collections` | (payload なし) | ctx.payload を読まない (同梱の書式目録を返すだけ) | `docstudio.ts:34-36` |
 | real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:87-90` |
 | real-estate | `advise` | 画面の集計 (RealEstateAdviceInput: 物件の行・月次 CF・平均利回り・入居率・しきい値) | shared/serviceAdvisor.ts の規則で提案を組む (パス 119)。読めない payload は断る。ブラウザ版の枝も同じ関数・同じ文面 | `real-estate.ts:87-90` |
@@ -1924,7 +1924,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:227` |
 | security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:290-321` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
-| skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:465`, `emotions.ts:209` |
+| skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:465`, `emotions.ts:204` |
 | assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:150-186` |
 | assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:149-172` |
 | assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:213-253` |

@@ -1,3 +1,4 @@
+import { readStateFile } from '../stateFile';
 import { promises as fs } from 'node:fs';
 import { clampToCeiling } from '../../shared/inputCeiling';
 import os from 'node:os';
@@ -63,6 +64,8 @@ export function defaultStatePath(): string {
 
 export interface StateDeps {
   readFile?: (p: string) => Promise<string>;
+  /** 読む前の大きさの門 (`stateFile.ts`)。省くと注入の読み手では後門だけ。 */
+  stat?: (p: string) => Promise<{ size: number }>;
   writeFile?: (p: string, c: string) => Promise<void>;
   mkdir?: (p: string) => Promise<void>;
   statePath?: () => string;
@@ -76,17 +79,12 @@ export interface StateDeps {
  */
 export async function loadTalentState(deps: StateDeps = {}): Promise<StoredTalent> {
   const p = (deps.statePath ?? defaultStatePath)();
-  const read = deps.readFile ?? ((q: string) => fs.readFile(q, 'utf8'));
-  let raw: string;
-  try {
-    raw = await read(p);
-  } catch (e) {
-    if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
-    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
-  }
+  // 大きさの門と 3 状態の読みは `stateFile.ts` の 1 つ (パス 313)。
+  const file = await readStateFile(p, { readFile: deps.readFile, stat: deps.stat });
+  if (file.kind !== 'read') return file;
   // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
   // 画面は「空の状態を表示 / このまま保存すると上書き」と言う (パス 121 の注記がそのまま出口になる)。
-  const opened = unsealJsonDocument(raw);
+  const opened = unsealJsonDocument(file.text);
   if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
   return readStoredTalent(opened.json);
 }

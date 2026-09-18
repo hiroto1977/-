@@ -1,3 +1,4 @@
+import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fsp } from 'node:fs';
 import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
@@ -3845,5 +3846,23 @@ describe('saveStocksState の権限', () => {
     await saveStocksState({ watchlist: ['MSFT'] }, { statePath: () => target });
 
     expect(await modeOf(target)).toBe('600');
+  });
+});
+
+describe('ウォッチリストの保存ファイル — 大きさの門 (パス 313 · 規則は main/stateFile.ts の 1 つ)', () => {
+  it('★ stat が天井を超えると、読まずに「読めなかった」(readFile は呼ばれない)', async () => {
+    let reads = 0;
+    const r = await loadStoredWatchlist({
+      statePath: () => '/tmp/test-state.json',
+      stat: async () => ({ size: MAX_STATE_FILE_BYTES + 1 }),
+      readFile: async () => { reads += 1; return '[]'; },
+    });
+    expect(r).toEqual({ kind: 'unreadable', reason: stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 1) });
+    expect(reads).toBe(0);
+  });
+
+  it('★ 読んだ物が天井を超えても「読めなかった」(注入の読み手は後門だけ)', async () => {
+    const r = await loadStoredWatchlist({ statePath: () => '/tmp/test-state.json', readFile: async () => 'x'.repeat(MAX_STATE_FILE_BYTES + 1) });
+    expect(r).toEqual({ kind: 'unreadable', reason: stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 1) });
   });
 });

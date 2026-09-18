@@ -1,3 +1,4 @@
+import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ACTIONS,
@@ -830,5 +831,23 @@ describe('保存先の封緘 — 人材育成の状態は氏名を含む (パス
 
   it('対照: 封筒の中が壊れていれば、従来の文 (JSON として読めません) で「読めなかった」', async () => {
     expect(await load(sealForTest('not json'))).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
+  });
+});
+
+describe('大きさの門 (パス 313 · 規則は main/stateFile.ts の 1 つ)', () => {
+  it('★ stat が天井を超えると、読まずに「読めなかった」(readFile は呼ばれない)', async () => {
+    let reads = 0;
+    const r = await loadTalentState({
+      statePath: () => '/tmp/talent.json',
+      stat: async () => ({ size: MAX_STATE_FILE_BYTES + 1 }),
+      readFile: async () => { reads += 1; return '{}'; },
+    });
+    expect(r).toEqual({ kind: 'unreadable', reason: stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 1) });
+    expect(reads).toBe(0);
+  });
+
+  it('★ 読んだ物が天井を超えても「読めなかった」(注入の読み手は後門だけ)', async () => {
+    const r = await loadTalentState({ statePath: () => '/tmp/talent.json', readFile: async () => 'x'.repeat(MAX_STATE_FILE_BYTES + 1) });
+    expect(r).toEqual({ kind: 'unreadable', reason: stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 1) });
   });
 });

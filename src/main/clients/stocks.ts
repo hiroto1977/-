@@ -1,3 +1,4 @@
+import { readStateFile } from '../stateFile';
 import { isoDateFromTimestamp } from '../../shared/isoDate';
 import { countChars } from '../../shared/inputCeiling';
 import {
@@ -1627,6 +1628,8 @@ export function defaultStatePath(): string {
 /** Dependency-injection seam for tests. Production: real fs + Date. */
 export interface StateDeps {
   readFile?: (p: string) => Promise<string>;
+  /** 読む前の大きさの門 (`stateFile.ts`)。省くと注入の読み手では後門だけ。 */
+  stat?: (p: string) => Promise<{ size: number }>;
   writeFile?: (p: string, c: string) => Promise<void>;
   mkdir?: (p: string) => Promise<void>;
   rename?: (a: string, b: string) => Promise<void>;
@@ -1700,15 +1703,10 @@ async function writeTight(target: string, contents: string): Promise<void> {
 // Stryker disable ArrowFunction,BooleanLiteral
 export async function loadStoredWatchlist(deps: StateDeps = {}): Promise<StoredWatchlist> {
   const p = (deps.statePath ?? defaultStatePath)();
-  const read = deps.readFile ?? ((path: string) => fs.readFile(path, 'utf8'));
-  let raw: string;
-  try {
-    raw = await read(p);
-  } catch (e) {
-    if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
-    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
-  }
-  return readStoredWatchlist(raw);
+  // 大きさの門と 3 状態の読みは `stateFile.ts` の 1 つ (パス 313)。
+  const file = await readStateFile(p, { readFile: deps.readFile, stat: deps.stat });
+  if (file.kind !== 'read') return file;
+  return readStoredWatchlist(file.text);
 }
 
 /** Save state with atomic rename (write to tmp + rename). Throws on

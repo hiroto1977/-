@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
 import { calendarDateMessage } from '../../../shared/isoDate';
 import { extractJson, normalizeAnalysis } from '../emotions';
+import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 
 describe('extractJson', () => {
   it('returns the raw text when no fences are present', () => {
@@ -1051,6 +1052,14 @@ describe('保存要素の形 (ブラウザ版と同じ規則)', () => {
     // 書き込み (rename がディレクトリに当たる) でも落ちるので、読み出しの握り潰しを測れない。
     await fs.mkdir(storeFile());
     await expect(fetchEmotionsSnapshot({ token: '' })).rejects.toThrow(/EISDIR/);
+  });
+
+  it('★ 天井を超える保存ファイルは読まずに断る (パス 313 · 規則は main/stateFile.ts の 1 つ)', async () => {
+    // 疎ファイル: 中身を書かずに大きさだけ作る。読めば 0x00 の塊なので、読んでいれば別の文で落ちる。
+    const fh = await fs.open(storeFile(), 'w');
+    await fh.truncate(MAX_STATE_FILE_BYTES + 3);
+    await fh.close();
+    await expect(fetchEmotionsSnapshot({ token: '' })).rejects.toThrow(stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 3));
   });
 });
 
