@@ -7,6 +7,27 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 316 (2026-09-18) — GitHub Actions の第一者 action を Node 24 の版へ (checkout / setup-node / upload-artifact v5・github-script v8)
+
+パス 305 の「閉じていない物」。runner のログが `actions/checkout@v4` / `actions/setup-node@v4` に「Node.js 20 を対象にしているが
+Node.js 24 で強制実行」と警告していた (GitHub の 2025-09-19 告知)。今日は動くが、強制が終われば workflow ごと止まる側。
+
+### 直し
+
+- 7 つの workflow で `actions/checkout` v4→v5 (7 か所)・`actions/setup-node` v4→v5 (7)・`actions/upload-artifact` v4→v5 (3)・
+  `actions/github-script` v7→v8 (2)。
+- **触っていない物**: `softprops/action-gh-release@v2` (第三者。SHA 固定の台帳に「このセッションからは SHA を解決できない」と理由つきで
+  載っている —— 持ち主が `gh api` で SHA を引いて置き換える) / `actions/upload-pages-artifact@v3` / `actions/deploy-pages@v4` /
+  `actions/cache@v4` (Node 24 の版が出ていない、または版の更新が無い)。
+- `lint:workflow-security` は `actions/*` の**版のタグ**を許す規則なので規則は変えていない (self-test の標本 `actions/checkout@v4` も
+  規則の標本なのでそのまま)。`ci.yml` / `pages.yml` / `release.yml` は保護対象 → **chain #230**。
+
+### 確かめたこと・確かめられないこと
+
+- `lint:workflow-security` / `lint:docs` / `verify:all` 緑。CI (`ci.yml`) は push で回るので、この commit 自身が v5 の最初の実行になる。
+- `e2e.yml` / `release.yml` / `pages.yml` / `knowledge-auto.yml` / `mutation.yml` / `dependency-audit.yml` は既定では走らない
+  (dispatch / ラベル / 週次 / タグ)。それぞれ**次の起動が v5 での最初の実行**で、ここからは押さない (release と pages は公開物を作る)。
+
 ## パス 315 (2026-09-18) — 意味色 (緑 / 赤 / 黄) の直書き 360 か所 (裸 332 + 退避値の中 28) をトークンへ、画面が読む変数名の未定義 3 つを消し、直書き色の分母を census に
 
 UI 再設計 (2026-09-17) の「閉じていない物」。利用者の依頼で残作業を閉じる。
@@ -699,9 +720,9 @@ runner で通した記録が無い。次にリリースを切るときが最初�
 
 - `run-e2e` ラベルは repo に存在しない。CLAUDE.md / e2e.yml の注記が案内する「PR にラベルを付ける」経路は、
   持ち主がラベルを作るまで使えない (この session の GitHub 権限では label の作成を試みない)。
-- runner のログに `actions/checkout@v4` / `actions/setup-node@v4` が「Node.js 20 を対象にしているが Node.js 24 で強制実行」
-  という deprecation の警告 (GitHub の 2025-09-19 告知)。今日は動くが、強制が終われば workflow ごと止まる側。第一者 action の
-  版上げは `lint:workflow-security` (SHA 固定の規則) と併せて別パスで。
+- ~~runner のログに `actions/checkout@v4` / `actions/setup-node@v4` が「Node.js 20 を対象にしているが Node.js 24 で強制実行」
+  という deprecation の警告 (GitHub の 2025-09-19 告知)。~~ → **パス 316 (2026-09-18) で v5 / v8 へ上げた** (第三者の
+  `softprops/action-gh-release@v2` の SHA 固定は持ち主の手が要る)。
 - 母集団はまだ**名前** (`e2e*` / `perf*` / `smoke*` / `exp*`) で切っている。「dist/ の HTML を窓に読む script」を走査で
   数える形にすれば名前に依らない —— 今日は 8 本すべてが名前の網に入っているので、走査は次の道具を足す人に委ねる。
 
@@ -4242,6 +4263,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| GitHub Actions の第一者 action の版上げ (パス 316) | ✅ checkout / setup-node / upload-artifact v5・github-script v8 (19 か所・7 workflow)。第三者と pages / cache は据え置き (理由は本文)。chain #230 |
 | 意味色の直書きとトークンの census (パス 315) | ✅ 360 か所 (裸 332 + 退避値の中 28) を token へ・未定義の変数名 3 つ (`--mute` / `--ng` / `--ok`) を消し、直書き色 275 件 / 40 ファイルを分母として台帳に (双方向・変数名の定義も検査)。検査 12 ファイルの綴りを追随。対照 2 本・chain #229 |
 | 例外の文面 → 画面の census (パス 314) | ✅ 90 行 (伏字 26 / 通らない 64・33 ファイル) を数え、64 行を出どころ 6 種の理由つき台帳に (双方向・窓は 1 行)。相手の本文が乗る行は 0。対照 2 本 |
 | 状態ファイルの読みの大きさの門 (パス 313) | ✅ `main/stateFile.ts` の 1 つ (stat の前門 + byte の後門・16 MiB・文面は定数で path 無し) を 4 つの読みが通る。検査 +18・対照 2 本 |

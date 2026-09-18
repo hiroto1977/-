@@ -35,8 +35,8 @@ jobs:
     name: 依存の勧告とセキュリティの床（週次報告）
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
@@ -54,7 +54,7 @@ jobs:
 
       - name: 報告をアーティファクトとして保存
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: dependency-audit
           path: orchestration/dependency-audit.json
@@ -65,7 +65,7 @@ jobs:
       # 戻ると 2 つ目を作る —— が 2026-09-17 (パス 306) まで残っていた (この workflow は 1 度も
       # 走っていない)。github-script の `require` は workspace 相対で解決する。
       - name: 要対応を Issue に反映
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { syncIssue } = require('./scripts/dependency-audit-issue.cjs');
