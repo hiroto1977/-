@@ -271,6 +271,7 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
 | `service-hub-emotions.json` | 気分の点数・メモ・解析に貼った文の抜粋（**健康に関わる記録**） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 132。それまで**平文** 0600）。無い環境では `plain:`。封緘は `main/atRest.ts`（`secrets.ts` と同じ約束） |
 | `~/.local/business-hub/talent.json` | 人材育成の入力（部署名・個人名） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 133。それまで平文 0600）。無い環境では `plain:`。封緘は `main/atRest.ts` |
 | `~/.local/business-hub/team-radar.json` | チームレーダー（氏名・軸ごとの評価・付箋） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 133。それまで平文 0600）。無い環境では `plain:`。封緘は `main/atRest.ts` |
+| `service-hub-window.json` | 窓の配色 (`light` / `dark`) と下地色 (`#rrggbb`) —— 設定の「配色」で選んだ物 (2026-09-18 · パス 318) | 平文 0600 —— 秘密も個人情報も無い。台帳 `src/main/__tests__/atRestPolicy.test.ts` に理由。ハードリセットで消える |
 | `~/.local/business-hub/state.json` | 株式ダッシュボードの状態（ウォッチリストの銘柄記号だけ） | 平文 0600 —— 台帳 `src/main/__tests__/atRestPolicy.test.ts` に理由つき（守る物が無い所に「鍵違いで読めなくなる」道を足さない） |
 
 2026-09-09 まで、この在庫は文書に無かった —— 同じ端末に置く 5 つのうち封緘していたのは `secrets.json`
@@ -374,7 +375,7 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
     sessionStorage・Cache Storage を消し、全部消えた時だけ再読込、残った物は名指し。在庫は台帳と `lint:storage` 規則 11 で
     両方向に一致（次に使う人へ前の人の記録を渡さない）。
 18. **デスクトップ版のハードリセットは main のファイルも消す** — `main/eraseAll.ts` + `app:eraseAll` +
-    `shared/eraseReport.ts`（2026-09-09 · パス 137）。トークン (`service-hub-secrets.json` と控え `.prev`)・状態ファイル 4 つ・
+    `shared/eraseReport.ts`（2026-09-09 · パス 137）。トークン (`service-hub-secrets.json` と控え `.prev`)・状態ファイル 5 つ (窓の配色 `service-hub-window.json` はパス 318 から)・
     書き込みの残骸 `*.tmp-*`・renderer の保存領域 (`session.clearStorageData`) を消し、全部消えた時だけ再起動。残った物は
     パスで名指し。保管庫の無いデスクトップには保管庫の操作 (パスワード変更・施錠) を出さない（次に使う人へ前の人の
     トークンと健康に関わる記録を渡さない）。

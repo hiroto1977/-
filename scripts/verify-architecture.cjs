@@ -1604,7 +1604,7 @@ function selfTest() {
    * **IPC チャンネルの網羅にも標本を通す。**
    */
   const channelCases = [
-    ['表が空なら登録済みチャンネルが全部鳴る', '', (n) => n === 14],
+    ['表が空なら登録済みチャンネルが全部鳴る', '', (n) => n === 15],
     [
       '実物の文書なら鳴らない',
       readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '',

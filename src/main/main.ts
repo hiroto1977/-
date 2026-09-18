@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
 import path from 'node:path';
 import {
   clearToken,
@@ -26,6 +26,14 @@ import {
   readBodyWithCap,
 } from '../shared/httpLimits';
 import { eraseDesktopData } from './eraseAll';
+import {
+  DEFAULT_WINDOW_PREFS,
+  isBackgroundColor,
+  isWindowScheme,
+  readWindowPrefs,
+  writeWindowPrefs,
+  type WindowPrefs,
+} from './windowPrefs';
 import type { DesktopEraseReport } from '../shared/eraseReport';
 
 const isDev = !app.isPackaged;
@@ -39,6 +47,17 @@ function iconPath(): string {
   return path.join(__dirname, '..', 'build', 'icon.png');
 }
 
+/**
+ * 窓の下地色と配色 (パス 318)。起動時に userData から読み、renderer が `app:setColorScheme` で伝えてくるたびに
+ * 更新する。`createWindow` はこれを読むので、`activate` で作り直す窓も同じ色になる。
+ */
+let windowPrefs: WindowPrefs = DEFAULT_WINDOW_PREFS;
+
+/** Electron 自身の配色 (ダイアログ・スクロールバー) も選んだ側へ。mock が nativeTheme を持たない検査では飛ばす。 */
+function applyNativeTheme(scheme: WindowPrefs['scheme']): void {
+  if (nativeTheme) nativeTheme.themeSource = scheme;
+}
+
 function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
@@ -46,7 +65,8 @@ function createWindow(): BrowserWindow {
     minWidth: 960,
     minHeight: 600,
     title: 'Service Hub',
-    backgroundColor: '#fff7fa',
+    // 保存した配色の下地で塗る (パス 318)。既定は styles.css の --bg (ライト) と同じ値 (windowPrefs.test.ts が照合)。
+    backgroundColor: windowPrefs.background,
     icon: iconPath(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -204,7 +224,10 @@ function createWindow(): BrowserWindow {
   return win;
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // 窓を作る前に配色を読む (パス 318) —— 読めなければ既定のライトで、renderer が起動後に伝え直す。
+  windowPrefs = await readWindowPrefs();
+  applyNativeTheme(windowPrefs.scheme);
   createWindow();
 
   /*
@@ -413,6 +436,27 @@ ipcMain.handle('app:eraseAll', async (): Promise<DesktopEraseReport> => {
   } catch (e) {
     // eraseDesktopData は投げない設計だが、IPC を reject させない (lint:ipc-handlers) —— 画面が用意していない経路に落とさない。
     return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: safeErrorMessage(e) };
+  }
+});
+
+/**
+ * 配色の追随 (パス 318)。renderer が解いた scheme と stylesheet の `--bg` の実値を受け取り、今ある窓の下地と
+ * Electron 自身の配色を変え、次回の起動のために userData に残す。値は形で絞る (`light` / `dark` と `#rrggbb` だけ)。
+ * 保存に失敗しても窓の色はもう変わっている —— 戻り値で言い、reject しない (lint:ipc-handlers)。
+ */
+ipcMain.handle('app:setColorScheme', async (_e, scheme: unknown, background: unknown): Promise<OsOpResult> => {
+  if (!isWindowScheme(scheme) || !isBackgroundColor(background)) {
+    return { ok: false, message: '配色の値が不正です (light / dark と #rrggbb だけを受け取ります)' };
+  }
+  const prefs: WindowPrefs = { scheme, background: background.toLowerCase() };
+  try {
+    windowPrefs = prefs;
+    applyNativeTheme(prefs.scheme);
+    for (const win of BrowserWindow.getAllWindows()) win.setBackgroundColor(prefs.background);
+    await writeWindowPrefs(prefs);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
   }
 });
 

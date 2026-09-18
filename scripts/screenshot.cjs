@@ -51,6 +51,7 @@ const STUBS = {
   'app:openExternal': () => undefined,
   'app:revealInFolder': () => undefined,
   'app:openPath': () => undefined,
+  'app:setColorScheme': () => ({ ok: true }),
   'secrets:list': () => [],
   'secrets:set': () => undefined,
   'secrets:clear': () => undefined,

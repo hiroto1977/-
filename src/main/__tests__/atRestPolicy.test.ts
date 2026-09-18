@@ -20,6 +20,9 @@ const PLAINTEXT_LEDGER: Record<string, string> = {
   'src/main/clients/stocks.ts':
     '`state.json` の中身はウォッチリストの銘柄記号だけ (氏名・評価・メモは無い)。封緘は「鍵違いで読めなくなる」道を'
     + '足すので、守る物が無い所には掛けない。銘柄以外を置く日が来たら同じ atRest.ts を通し、この行を消す。',
+  'src/main/windowPrefs.ts':
+    '`service-hub-window.json` の中身は配色 (light / dark) と窓の下地色 (#rrggbb) の 2 語だけで、秘密も個人情報も無い'
+    + ' (パス 318)。stocks の state.json と同じ裁定 —— 守る物が無い所に封緘は掛けない。',
 };
 
 const STATE_PATH_DEF = /\bfunction (defaultStatePath|storePath|secretsPath)\(\): string\b/;

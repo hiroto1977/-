@@ -35,6 +35,8 @@
     "src/main/oauth.ts",
     "src/main/secrets.ts",
     "src/main/shellOpenGate.ts",
+    "src/main/stateFile.ts",
+    "src/main/windowPrefs.ts",
     "src/preload/preload.ts",
     "src/renderer/data/assistantMarkdown.ts",
     "src/renderer/data/localWrite.ts",
@@ -1935,6 +1937,30 @@
       "leafCount": 76,
       "note": "update LockScreen.tsx",
       "hash": "1c5bc4d25c104fa56829787ef338ec621d2dea92cbc8a2b8237dfa40e02f344e"
+    },
+    {
+      "index": 232,
+      "prevHash": "1c5bc4d25c104fa56829787ef338ec621d2dea92cbc8a2b8237dfa40e02f344e",
+      "merkleRoot": "b9c5cd1a1e1e1b526ea7bfea1dc8c8eed03d8a271847f8a77b92c7de3bccd4fa",
+      "leafCount": 76,
+      "note": "update eraseAll.ts,main.ts,preload.ts",
+      "hash": "026e19752fd23417dbfac4853273b90dfc0235ae46b16c985461e89080f45598"
+    },
+    {
+      "index": 233,
+      "prevHash": "026e19752fd23417dbfac4853273b90dfc0235ae46b16c985461e89080f45598",
+      "merkleRoot": "4e6ba7f326282c1f0151d962b787538ace3b88ab0ba05ea76fb2489b484e7eb7",
+      "leafCount": 77,
+      "note": "update integrity-chain.cjs,windowPrefs.ts",
+      "hash": "356612b929b814c6a2db1647ef71a9b238e7ed4a379b63f6b46df71ea13567e8"
+    },
+    {
+      "index": 234,
+      "prevHash": "356612b929b814c6a2db1647ef71a9b238e7ed4a379b63f6b46df71ea13567e8",
+      "merkleRoot": "74dea58ee7310355444181b027196030c38af1ced028705b4f0b567f42d86db2",
+      "leafCount": 78,
+      "note": "update integrity-chain.cjs,stateFile.ts",
+      "hash": "1bb13503b433342cd1e036078894834a9cccc9aea901b1af9d6bda84b2b50ca8"
     }
   ],
   "tipManifest": {
@@ -1948,7 +1974,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "76c8d69500f6185c3658aff5b7eeaafa2d4e0c00e4c6a1793f27693d72e0f418",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "129875d45a5cffe458735c63b5dbcd6648b019ecb493fb5518af7ab6eadfa138",
+    "scripts/integrity-chain.cjs": "45081cb4b1780e885d462e4fe5347e84569e6a834631061848713cdb78883940",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
@@ -1966,12 +1992,14 @@
     "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "a0012ad791cd737f5afb7e5b98e172b4efe02fee4e763221c4680bafa4219df5",
-    "src/main/eraseAll.ts": "cd9f8c1a01b64330f62f27d27ba14083c342f27452e20c95ae4f37d03358dbaa",
-    "src/main/main.ts": "d09390a7a7a391a5f3e115e2d81a0419f82bbd58697dac63e5f803dbf0474432",
+    "src/main/eraseAll.ts": "76debcaa6b3231c56bf66afd853b5f9301d9cdcbb4d1232204594ea5ca320a39",
+    "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
     "src/main/oauth.ts": "a83e80a655bc516f482858954c50c90ba5d655bc9b88308f313f05641ffec6dd",
     "src/main/secrets.ts": "be9459125976403b0c23444b53c7da21b80502768c24cecc337122529b006ef4",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
-    "src/preload/preload.ts": "6985953d4e8253f5ece972ac22e5294c8aaa64293d7ff2e57e80dc21411aa667",
+    "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
+    "src/main/windowPrefs.ts": "9d0e02079fb16b22fcbed648cad378776114beb989708f1080d72fcee753ca71",
+    "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/data/assistantMarkdown.ts": "7d08dc362233f8ca3d52257e84c2bd6c95ad34d3ea97d5208359aa730d969d6b",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
     "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",

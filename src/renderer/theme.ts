@@ -81,17 +81,49 @@ export function applyScheme(scheme: ResolvedScheme, doc: Pick<Document, 'documen
   doc.documentElement.setAttribute('data-theme', scheme);
 }
 
+/** 母体へ伝えるのに要る分だけの document (検査は素の object を渡す)。 */
+export type HostDoc = Pick<Document, 'documentElement'> & {
+  readonly defaultView?: Window | null;
+  readonly querySelector?: Document['querySelector'];
+};
+
+const HEX_COLOR = /^#[0-9a-f]{6}$/i;
+
+/**
+ * 母体に解いた配色を伝える (パス 318): PWA の `<meta name="theme-color">` (GitHub Pages の配布物だけが持つ) と、
+ * デスクトップ版の窓の下地 (`serviceHub.setColorScheme` → main → `BrowserWindow.setBackgroundColor` と次回起動の色)。
+ *
+ * 色は stylesheet の `--bg` の**実値**を読む —— palette をここに写さない (main も持たない。持つのは起動の既定 1 値だけで、
+ * それは `windowPrefs.test.ts` が stylesheet と照合する)。実値が `#rrggbb` でない (styles の無い jsdom・未定義) なら
+ * 何も伝えない。橋の失敗は起動の一瞬の色にしか効かないので戻り値を待たない (fold —— 理由は SESSION_HANDOFF パス 318)。
+ */
+export function syncHostChrome(scheme: ResolvedScheme, doc: HostDoc = document): void {
+  const view = doc.defaultView;
+  if (!view || typeof view.getComputedStyle !== 'function') return;
+  const bg = view.getComputedStyle(doc.documentElement).getPropertyValue('--bg').trim();
+  if (!HEX_COLOR.test(bg)) return;
+  doc.querySelector?.('meta[name="theme-color"]')?.setAttribute('content', bg);
+  const bridge = (view as { serviceHub?: { setColorScheme?: (s: ResolvedScheme, b: string) => Promise<unknown> } }).serviceHub;
+  if (typeof bridge?.setColorScheme === 'function') {
+    void bridge.setColorScheme(scheme, bg).catch(() => undefined);
+  }
+}
+
 /**
  * 選択を適用し、'system' のあいだは OS の変更に追随する。戻り値は追随をやめる関数
  * (選択を変えるときは前の追随を止めてから次を掛ける —— `selectTheme` がそうする)。
  */
 export function applyThemeChoice(
   choice: ThemeChoice,
-  deps: { win?: MatchMediaHost; doc?: Pick<Document, 'documentElement'> } = {},
+  deps: { win?: MatchMediaHost; doc?: HostDoc } = {},
 ): () => void {
   const win = deps.win ?? window;
   const doc = deps.doc ?? document;
-  applyScheme(resolveScheme(choice, osPrefersDark(win)), doc);
+  const paint = (scheme: ResolvedScheme) => {
+    applyScheme(scheme, doc);
+    syncHostChrome(scheme, doc);
+  };
+  paint(resolveScheme(choice, osPrefersDark(win)));
   if (choice !== 'system' || typeof win.matchMedia !== 'function') return () => {};
   let mql: MediaQueryList;
   try {
@@ -100,7 +132,7 @@ export function applyThemeChoice(
     return () => {};
   }
   if (typeof mql.addEventListener !== 'function') return () => {};
-  const onChange = (e: MediaQueryListEvent) => applyScheme(e.matches ? 'dark' : 'light', doc);
+  const onChange = (e: MediaQueryListEvent) => paint(e.matches ? 'dark' : 'light');
   mql.addEventListener('change', onChange);
   return () => mql.removeEventListener('change', onChange);
 }

@@ -7,6 +7,66 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 319 (2026-09-18) — ダーク配色を 30 画面で撮って読んだ: 直す物は無かった
+
+パス 317 の「閉じていない物」2 つ目 (inline の直書き色 275 件がダークで読めるかは目で見ていない)。
+
+- `dist/standalone.html` を `servicehub.theme=dark` で 30 画面撮り (scratchpad `shots/dark.cjs` → `shots/dark/`)、26 画面を目で読んだ
+  (home / overview / charts / stocks / tax / docstudio / teamradar / emotions / village / settings / kpi / real-estate / mutual-funds /
+  hydroponics / assistant / security / business / quality / storage / linux / compliance / lock / github / templates / sales / talent)。
+  チャートのパレット・SVG の塗り・警告の札 (琥珀の地に黒い字)・書類スタジオの白い紙・AI の村の緑の野原はどれもダークの地で読める。
+  ページエラー 0。
+- **直す物が無かったので code は触っていない。** 「読めるかは目で見ていない」を「見た」に変えただけで、機械では測れない項なので
+  次に配色を変える日にも同じ撮影が要る。
+
+## パス 318 (2026-09-18) — 窓の下地と PWA の theme-color が、選んだ配色を知らなかった
+
+パス 317 の「閉じていない物」1 つ目。ダークを選んだ利用者は起動の一瞬だけ淡いピンクの窓 (`backgroundColor: '#fff7fa'`) を見て、
+GitHub Pages の配布物の `theme-color` (ブラウザの chrome の色) はライトのままだった。
+
+### 規則は 1 つ (renderer の `theme.ts` → `syncHostChrome`)
+
+- 配色を適用するたびに **stylesheet の `--bg` の実値**を `getComputedStyle` で読み、`<meta name="theme-color">` (Pages の配布物だけが持つ。
+  単一 HTML には無いので何もしない) を書き換え、`serviceHub.setColorScheme(scheme, bg)` で main へ伝える。**palette は写さない** ——
+  main が持つ色は起動の既定 1 値 (`DEFAULT_WINDOW_PREFS`) だけで、`windowPrefs.test.ts` が `styles.css` の `:root { --bg }` と照合する。
+- 実値が `#rrggbb` でなければ何も伝えない (styles の無い jsdom・未定義)。橋の失敗は待たない (fold —— 失うのは起動の一瞬の色だけで、
+  次に配色を触れば伝え直す)。
+
+### main (`windowPrefs.ts` 新規・保護対象)
+
+- 形の関門: `light` / `dark` と `#rrggbb` だけ (名前色・`rgba()`・短縮形・`javascript:` は通さない —— 信用できない文字列を
+  `setBackgroundColor` に渡さない)。読みは `stateFile.ts` の 3 状態の門 (パス 313) を通し、read 以外と壊れた中身は既定へ。書きは
+  `atomicWriteFile` (stateWritePolicy)。
+- `app:setColorScheme` (15 個目の IPC): 今ある窓の `setBackgroundColor` → `nativeTheme.themeSource` → userData の
+  `service-hub-window.json` の順に効き、保存の失敗は戻り値で言う (窓の色はもう変わっている・reject しない)。起動は窓を作る前に読む
+  (`app.whenReady` → `readWindowPrefs` → `createWindow`)。`activate` で作り直す窓も同じ色。
+- ブラウザ版の shim は `setColorScheme` を no-op で持つ (口の名前は preload と同じ 15)。
+
+### 台帳
+
+- eraseAll のデスクトップ在庫 7 つ目 (「前の人の選んだ配色」も残さない) / `atRestPolicy` (封緘しない理由: 配色と色の 2 語) /
+  ARCHITECTURE の IPC 表 (15) と `ALLOWED_PERMISSIONS` の行番号 / DATA_PROTECTION の状態ファイル表 / **chain #232〜#234**
+  (main.ts / preload.ts / eraseAll.ts を触り、閉包の検査が「保護対象が読む物は保護対象か除外台帳」と 2 度鳴ったので `windowPrefs.ts` と
+  `stateFile.ts` を保護対象に) / `verify:arch` の self-test が IPC 14 個を字面で持っていた (15 に)。
+- 検査: `windowPrefs.test.ts` 12 / `mainIpc` +4 / `mainWindow` +2 / `theme` +5。e2e の theme suite に theme-color の追随 2 件 (12 → 14)。
+
+### 対照 (3 本すべて鳴る · `ctl318/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. 色の関門を `typeof x === 'string'` に緩める | windowPrefs 3 本 + mainIpc「形の合わない値は何も変えずに断る」(4 本) |
+| B. 保存を先にして窓の色を後にする | mainIpc「保存に失敗しても窓の色は変わっている」(1 本) |
+| C. renderer が実値の形を見ずに伝える | theme「実値が #rrggbb でなければ何も伝えない」(1 本) |
+
+### 閉じていない物
+
+- 橋の失敗 (IPC が reject / 保存不能) は画面に出さない (fold)。失うのは起動の一瞬の色だけ。
+- `nativeTheme.themeSource` は Electron のダイアログ・スクロールバーに効くが、実機の Electron では見ていない —— `smoke:app` は起動 8 秒の生存だけ。
+
+### 実機
+
+`smoke:app` OK / `e2e` 31 suite 412 件 ❌ 0 (410 + theme-color の 2) / `e2e:lite` 412 件 ❌ 0 / `perf` OK (LITE DCL 195 ms heap 10.2 MB・FULL DCL 522 ms heap 36.9 MB・起動時の巨大 JSON.parse 0。単体検査と同時に回したので DCL は前回より遅い) / `e2e:ollama` ✅ 8 (連鎖 1 回で全段緑)。出荷物 FULL **11,909,508 B** / LITE **3,322,029 B** (両方 +509 B —— `syncHostChrome` と shim の口 1 つ。renderer は両ビルドが読むので LITE も同じだけ)。
+
 ## 残作業の棚卸し (2026-09-18) — 「変異検査の静的な生存 3 ファイル」は記録が古かっただけ
 
 利用者の依頼「残作業を終わらせて」で 6 件を挙げたうち、この 1 件は**作業ではなく記録の訂正**で閉じた。
@@ -62,9 +122,8 @@ UI 再設計 (2026-09-17) の「閉じていない物」(ダーク配色を選�
 
 ### 閉じていない物
 
-- Electron の窓の下地 (`backgroundColor: '#fff7fa'`・`main.ts`) と PWA の `theme-color` は main / 雛形側で renderer の選択を知らない ——
-  ダークを選んだ利用者は起動の一瞬だけ淡いピンクの窓を見る。直すなら main が userData に選択を持つか、renderer から IPC で窓の色を変える。
-- inline の直書き色 275 件 (チャートのパレット・SVG の塗り・書式の既定色) はダークでも同じ値。読めるかは目で見ていない (機械では測れない)。
+- ~~Electron の窓の下地と PWA の `theme-color` は main / 雛形側で renderer の選択を知らない~~ → **パス 318 で追随させた** (renderer が stylesheet の実値を伝え、main は起動前に読む)。
+- ~~inline の直書き色 275 件はダークで読めるかは目で見ていない~~ → **パス 319 で 30 画面撮って読んだ: 直す物なし**。
 - 「OS に合わせる」の追随は `MediaQueryList.addEventListener` 前提。持たない古い WebView では最初の 1 回だけ解いて追随しない (検査あり)。
 
 ### 実機
@@ -4327,6 +4386,8 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 窓の下地と theme-color の追随 (パス 318) | ✅ `theme.ts` → `syncHostChrome` (stylesheet の --bg の実値) → meta と `app:setColorScheme` (15 個目・形の関門・原子的な保存・起動時に読む)。chain #232〜#234・対照 3 本 |
+| ダーク配色の目視 (パス 319) | ✅ 30 画面撮影・26 画面を読んで直す物なし (機械では測れないので撮影 script を残した) |
 | 配色の設定 ライト / ダーク / OS に合わせる (パス 317) | ✅ `theme.ts` 1 か所 (入口・解決・追随)・設定の 3 択・ダークのトークン表 53 (両方向の照合)・部品の直書き 54 → 10・e2e `theme` suite 12 件 (31 suite)・台帳 8 つ・chain #231。対照 3 本 |
 | GitHub Actions の第一者 action の版上げ (パス 316) | ✅ checkout / setup-node / upload-artifact v5・github-script v8 (19 か所・7 workflow)。第三者と pages / cache は据え置き (理由は本文)。chain #230 |
 | 意味色の直書きとトークンの census (パス 315) | ✅ 360 か所 (裸 332 + 退避値の中 28) を token へ・未定義の変数名 3 つ (`--mute` / `--ng` / `--ok`) を消し、直書き色 275 件 / 40 ファイルを分母として台帳に (双方向・変数名の定義も検査)。検査 12 ファイルの綴りを追随。対照 2 本・chain #229 |
@@ -4340,7 +4401,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 例外の文面 → 画面 (パス 307) | ✅ 2 経路を `redactForMessage` へ。実機 5 段 + `e2e:ollama` 緑・両方 +9 B。「例外 → 画面」の母集団を数える網は無い (閉じていない物) |
 | `e2e.yml` が runner で動くか (パス 305) | ✅ 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 → **全 13 段 success・8 分 01 秒** (e2e 395 / lite 395 / ollama 8 / perf OK / smoke:app OK) |
 | 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 (CLAUDE.md) |
-| PR #788 の本文 | ✅ パス 〜303 まで反映 |
+| PR #788 の本文 | ✅ パス 〜317 まで反映 (2026-09-18 01:40 UTC・タイトルも 〜317)。318 以降はその commit の push 後に反映する |
 | imageUrlGate のプライベート帯 | ✅ パス 300 で閉じた (問いを 2 つに分けた) |
 | 刑名の表記ゆれ 8 行 | ✅ 1 行ずつ裁定 (下の節に表) |
 | DOI 要照合 46 件・PsyCap 系の実体未確定 | ⛔ この環境は doi.org も api.crossref.org も egress で遮断 (実測)。推測で埋めない |

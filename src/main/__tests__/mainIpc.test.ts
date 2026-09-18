@@ -59,6 +59,8 @@ vi.mock('electron', () => ({
       handlers.set(name, fn);
     },
   },
+  // 配色の追随 (パス 318) が themeSource を書く。resetModules ごとに作り直されるので 'system' から始まる。
+  nativeTheme: { themeSource: 'system' },
   shell: {
     openExternal: async (url: string) => {
       if (openExternalRejection !== null) throw openExternalRejection;
@@ -95,6 +97,20 @@ let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEra
 vi.mock('../eraseAll', () => ({
   eraseDesktopData: async () => eraseReportImpl(),
 }));
+/** 窓の配色の保存 (パス 318)。実ファイルは windowPrefs.test.ts で見るので、ここは main の順序と戻り値だけ。 */
+let writePrefsThrows: Error | null = null;
+const writtenPrefs: unknown[] = [];
+vi.mock('../windowPrefs', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../windowPrefs')>();
+  return {
+    ...real,
+    readWindowPrefs: async () => real.DEFAULT_WINDOW_PREFS,
+    writeWindowPrefs: async (prefs: unknown) => {
+      if (writePrefsThrows) throw writePrefsThrows;
+      writtenPrefs.push(prefs);
+    },
+  };
+});
 let setTokenThrows: Error | null = null;
 let clearTokenThrows: Error | null = null;
 const setTokenCalls: [string, string][] = [];
@@ -191,6 +207,8 @@ beforeEach(async () => {
   relaunchCalls = 0;
   exitCodes.length = 0;
   eraseReportImpl = async () => desktopReport(true);
+  writePrefsThrows = null;
+  writtenPrefs.length = 0;
   allWindows = [];
   vi.resetModules();
   await import('../main');
@@ -199,7 +217,7 @@ beforeEach(async () => {
 // ---------------------------------------------------------------------------
 
 describe('登録', () => {
-  it('14 個のハンドラが登録される', () => {
+  it('15 個のハンドラが登録される', () => {
     expect([...handlers.keys()].sort()).toEqual(
       [
         'action:invoke',
@@ -209,6 +227,7 @@ describe('登録', () => {
         'app:openExternal',
         'app:openPath',
         'app:revealInFolder',
+        'app:setColorScheme',
         'fetch:snapshot',
         'oauth:authorize',
         'oauth:isSupported',
@@ -264,6 +283,70 @@ describe('app:eraseAll — デスクトップ版の「すべてのデータを�
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+describe('app:setColorScheme — 窓の下地と配色の追随 (パス 318)', () => {
+  function fakeWindow() {
+    return {
+      colors: [] as string[],
+      setBackgroundColor(c: string) {
+        this.colors.push(c);
+      },
+    };
+  }
+
+  it('★ 形の合う値なら、今ある窓の下地・Electron の配色・userData の順に効く', async () => {
+    const w1 = fakeWindow();
+    const w2 = fakeWindow();
+    allWindows = [w1, w2];
+    expect(await invoke('app:setColorScheme', 'dark', '#1B1520')).toEqual({ ok: true });
+    expect(w1.colors).toEqual(['#1b1520']);
+    expect(w2.colors).toEqual(['#1b1520']);
+    const electron = await import('electron');
+    expect(electron.nativeTheme.themeSource).toBe('dark');
+    expect(writtenPrefs).toEqual([{ scheme: 'dark', background: '#1b1520' }]);
+  });
+
+  it('★ 形の合わない値は何も変えずに断る (scheme も色も)', async () => {
+    const w = fakeWindow();
+    allWindows = [w];
+    // electron の mock は resetModules をまたいで同じ object なので、前の検査が書いた themeSource を戻す。
+    const electron = await import('electron');
+    electron.nativeTheme.themeSource = 'system';
+    const bad: [unknown, unknown][] = [
+      ['system', '#1b1520'],
+      ['Dark', '#1b1520'],
+      ['dark', 'red'],
+      ['dark', '#fff'],
+      ['dark', 'javascript:alert(1)'],
+      [1, '#1b1520'],
+      ['dark', null],
+    ];
+    for (const [s, b] of bad) {
+      const r = (await invoke('app:setColorScheme', s, b)) as { ok: boolean; message?: string };
+      expect(r.ok, JSON.stringify([s, b])).toBe(false);
+      expect(r.message).toContain('配色の値が不正');
+    }
+    expect(w.colors).toEqual([]);
+    expect(writtenPrefs).toEqual([]);
+    expect(electron.nativeTheme.themeSource).toBe('system');
+  });
+
+  it('★ 保存に失敗しても窓の色は変わっていて、失敗は戻り値で言う (reject しない)', async () => {
+    writePrefsThrows = new Error('EACCES: permission denied');
+    const w = fakeWindow();
+    allWindows = [w];
+    const r = (await invoke('app:setColorScheme', 'dark', '#1b1520')) as { ok: boolean; message?: string };
+    expect(w.colors).toEqual(['#1b1520']);
+    expect(r.ok).toBe(false);
+    expect(r.message).toContain('EACCES');
+  });
+
+  it('窓が 1 つも無くても保存はする (次に作る窓のため)', async () => {
+    allWindows = [];
+    expect(await invoke('app:setColorScheme', 'light', '#fff7fa')).toEqual({ ok: true });
+    expect(writtenPrefs).toEqual([{ scheme: 'light', background: '#fff7fa' }]);
   });
 });
 

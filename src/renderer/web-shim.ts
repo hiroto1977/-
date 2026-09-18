@@ -1154,6 +1154,8 @@ const unguarded = {
 
   revealInFolder: notSupportedAlert,
   openPath: notSupportedAlert,
+  // 配色の追随 (パス 318): ブラウザ版に窓は無く、PWA の theme-color は theme.ts 自身が書き換えるので何もしない。
+  setColorScheme: async (): Promise<OsOpResult> => ({ ok: true }),
   // 「すべてのデータを削除」— ブラウザ版は保管層ごとの在庫 (security/eraseAll.ts) を消す。橋の形は両ビルドで 1 つ (パス 137)。
   eraseAll: async (): Promise<EraseAllReport> => ({ kind: 'browser', ...(await eraseEverything()) }),
 

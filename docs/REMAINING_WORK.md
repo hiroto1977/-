@@ -1,6 +1,6 @@
 # Service Hub — 残りの作業手順書
 
-最終更新: 2026-09-15
+最終更新: 2026-09-18
 対象ブランチ: `claude/eager-brown-7cev3c`（既定ブランチは `main`）
 
 このドキュメントは「今の状態から先に何が残っているか」を並べたランブックです。
@@ -3182,10 +3182,10 @@ npm run build      # release/ に .dmg / .exe を出力
 
 ### 1-1. PR を ready にする
 
-GitHub UI で PR #2 を開き、「Ready for review」をクリック。または:
+GitHub UI で PR #788 (このブランチの draft PR。2026-09-18 時点で 458 commit) を開き、「Ready for review」をクリック。または:
 
 ```bash
-gh pr ready 2     # gh CLI を使う場合
+gh pr ready 788   # gh CLI を使う場合
 ```
 
 ### 1-2. セルフレビュー観点

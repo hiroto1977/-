@@ -20,6 +20,7 @@ import {
   resolveScheme,
   sanitizeThemeChoice,
   selectTheme,
+  syncHostChrome,
   THEME_CHOICES,
   THEME_KEY,
   THEME_LABELS,
@@ -210,5 +211,84 @@ describe('配色の選択: 端末との読み書き (入口 localWrite を通す
     localStorage.setItem(THEME_KEY, 'garbage');
     expect(applySavedTheme().choice).toBe('light');
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+  });
+});
+
+describe('配色の選択: 母体への伝達 (パス 318)', () => {
+  /** stylesheet の実値の代役: --bg を返す getComputedStyle と、meta と橋を持つ document。 */
+  function hostDoc(bg: string, opts: { meta?: boolean; bridge?: (s: string, b: string) => Promise<unknown> } = {}) {
+    const el = document.createElement('html');
+    const meta = document.createElement('meta');
+    meta.setAttribute('name', 'theme-color');
+    meta.setAttribute('content', '#fff7fa');
+    const calls: [string, string][] = [];
+    const view = {
+      getComputedStyle: () => ({ getPropertyValue: (name: string) => (name === '--bg' ? bg : '') }),
+      serviceHub:
+        opts.bridge === undefined
+          ? undefined
+          : {
+              setColorScheme: (s: string, b: string) => {
+                calls.push([s, b]);
+                return opts.bridge!(s, b);
+              },
+            },
+    } as unknown as Window;
+    const doc = {
+      documentElement: el,
+      defaultView: view,
+      querySelector: (sel: string) => (opts.meta === false ? null : sel === 'meta[name="theme-color"]' ? meta : null),
+    };
+    return { doc, el, meta, calls };
+  }
+
+  it('★ theme-color と橋に伝えるのは stylesheet の --bg の実値 (palette を写さない)', async () => {
+    const h = hostDoc('#1b1520', { bridge: async () => ({ ok: true }) });
+    syncHostChrome('dark', h.doc);
+    expect(h.meta.getAttribute('content')).toBe('#1b1520');
+    expect(h.calls).toEqual([['dark', '#1b1520']]);
+  });
+
+  it('★ 実値が #rrggbb でなければ何も伝えない (styles の無い環境で空文字や var() を送らない)', () => {
+    for (const bad of ['', 'var(--x)', 'rgb(27, 21, 32)', '#fff']) {
+      const h = hostDoc(bad, { bridge: async () => ({ ok: true }) });
+      syncHostChrome('dark', h.doc);
+      expect(h.meta.getAttribute('content'), bad).toBe('#fff7fa');
+      expect(h.calls, bad).toEqual([]);
+    }
+  });
+
+  it('meta が無い (単一 HTML) / 橋が無い (jsdom) でも投げない', () => {
+    const noMeta = hostDoc('#1b1520', { meta: false, bridge: async () => ({ ok: true }) });
+    expect(() => syncHostChrome('dark', noMeta.doc)).not.toThrow();
+    expect(noMeta.calls).toEqual([['dark', '#1b1520']]);
+    const noBridge = hostDoc('#1b1520');
+    expect(() => syncHostChrome('dark', noBridge.doc)).not.toThrow();
+    expect(noBridge.meta.getAttribute('content')).toBe('#1b1520');
+  });
+
+  it('橋が reject しても未処理の拒否にならない (失うのは起動の一瞬の色だけ)', async () => {
+    const h = hostDoc('#1b1520', { bridge: async () => Promise.reject(new Error('ipc down')) });
+    const unhandled: unknown[] = [];
+    const onUnhandled = (e: unknown) => unhandled.push(e);
+    process.on('unhandledRejection', onUnhandled);
+    try {
+      syncHostChrome('dark', h.doc);
+      await new Promise((r) => setTimeout(r, 0));
+    } finally {
+      process.off('unhandledRejection', onUnhandled);
+    }
+    expect(unhandled).toEqual([]);
+    expect(h.calls).toHaveLength(1);
+  });
+
+  it("★ 適用のたびに伝える —— 'system' で OS が切り替わった時も", () => {
+    const fm = fakeMatchMedia(false);
+    const h = hostDoc('#fff7fa', { bridge: async () => ({ ok: true }) });
+    const stop = applyThemeChoice('system', { win: fm.win, doc: h.doc });
+    expect(h.calls).toEqual([['light', '#fff7fa']]);
+    fm.fire(true);
+    expect(h.calls).toEqual([['light', '#fff7fa'], ['dark', '#fff7fa']]);
+    stop();
   });
 });

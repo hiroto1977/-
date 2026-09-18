@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 615 個の `file:line` 参照 + 41 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 616 個の `file:line` 参照 + 41 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -22,11 +22,11 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | 軸 | 値 | 出典 |
 |---|---:|---|
 | サービス数 | 76 | `src/shared/serviceId.ts:9-43` |
-| IPC ハンドラ数 | 14 | `src/main/main.ts:111-296` |
+| IPC ハンドラ数 | 15 | `src/main/main.ts:254-592` |
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14605** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14627** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 615 | 自己検証 |
+| `file:line` 参照数 | 616 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -210,6 +210,7 @@ form-action 'none';
 | `app:checkUpdate` | — | `UpdateVerdict` | 送り先は定数。応答は `parseLatestRelease` が形と案内先ホストまで確かめる | 失敗はすべて `unknown` へ寄せる |
 | `secrets:protection` | — | `StorageProtection` | (出力のみ) 保存先・暗号化の有無・平文の件数を返す。**トークンそのものは返さない** | — |
 | `app:eraseAll` | — | `DesktopEraseReport` | (出力のみ) トークン・状態ファイル (控え・残骸) と renderer の保存領域を消し、ファイルごとの結果を返す。**全部消えた時だけ**再起動する (パス 137) | — |
+| `app:setColorScheme` | `(scheme, background)` | `OsOpResult` | `scheme ∈ {light,dark}` + `background` は `#rrggbb` だけ (`windowPrefs.ts`)。今ある窓の下地・`nativeTheme` を変えてから userData の service-hub-window.json に残す —— 次の起動は窓を作る前に読む (パス 318) | 保存の失敗は `message` で返す (窓の色はもう変わっている) |
 | `secrets:set` | `(serviceId, token)` | `void` | `isServiceId` + token 長さ `(0, 65536]` | — |
 | `secrets:clear` | `serviceId` | `void` | `isServiceId` | — |
 | `secrets:list` | — | `ServiceId[]` | (出力のみ) | — |
@@ -2254,7 +2255,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **291 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **293 ファイル**。
 2026-09-12 (パス 178) に `src/shared/inputCeiling.ts` を足した —— パス 167 / 168 / 172 / 174 / 175 が
 「切ったのか、送らなかったのか」の言い分けをこの 3 関数に寄せた結果、**実装 18 モジュール・
 呼び出し 23 か所 (画面の断り書きは 16 個) と検査 6 本が同じ判断を読む**ようになったのに、
@@ -2483,7 +2484,7 @@ classDiagram
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:524-529` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:37-50` |
 | 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
-| 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:108` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |
+| 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:127` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |
 | 16 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
 ### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)

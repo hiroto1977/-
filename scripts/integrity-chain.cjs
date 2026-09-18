@@ -284,6 +284,8 @@ const PROTECTED = [
   // ハードリセット (2026-09-09 · パス 137): main のファイル (トークン・状態ファイル・控え・残骸) を消す手順と、
   // 両ビルドの報告の型・文面。消す先が黙って変わらないこと。
   'src/main/eraseAll.ts',
+  'src/main/windowPrefs.ts', // 窓の下地色の関門 (#rrggbb だけを setBackgroundColor へ) と配色の保存。eraseAll が在庫として読む (パス 318)
+  'src/main/stateFile.ts',   // 状態ファイルの読みの門 (stat の前門 + 16 MiB の後門・パス 313)。windowPrefs (保護対象) が読む
   'src/shared/eraseReport.ts',
   // IPC 境界で資格情報の文字列を検査する唯一の場所 (main.ts が読む)。
   // 制御文字・長さ・空を落としているので、緩めば折り返しごと保存される。

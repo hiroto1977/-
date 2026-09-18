@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 232
+- ブロック数: 235
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `1c5bc4d25c104fa56829787ef338ec621d2dea92cbc8a2b8237dfa40e02f344e`
-- 保護対象: 76 ファイル
+- 末尾(tip)ハッシュ: `1bb13503b433342cd1e036078894834a9cccc9aea901b1af9d6bda84b2b50ca8`
+- 保護対象: 78 ファイル
 
 ## ブロック
 
@@ -245,6 +245,9 @@
 | 229 | `6e0ef03411cb14e9` | `4622ed7f0c87d56a` | `fe61d314102bf9a8` | update LockScreen.tsx |
 | 230 | `19cbcb46e8a814b5` | `fe61d314102bf9a8` | `1bb6f54ad8b44fa2` | update ci.yml,pages.yml,release.yml |
 | 231 | `ff0d24df824d74da` | `1bb6f54ad8b44fa2` | `1c5bc4d25c104fa5` | update LockScreen.tsx |
+| 232 | `b9c5cd1a1e1e1b52` | `1c5bc4d25c104fa5` | `026e19752fd23417` | update eraseAll.ts,main.ts,preload.ts |
+| 233 | `4e6ba7f326282c1f` | `026e19752fd23417` | `356612b929b814c6` | update integrity-chain.cjs,windowPrefs.ts |
+| 234 | `74dea58ee7310355` | `356612b929b814c6` | `1bb13503b433342c` | update integrity-chain.cjs,stateFile.ts |
 
 ## 保護対象ファイル
 
@@ -281,6 +284,8 @@
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
 - `src/main/shellOpenGate.ts`
+- `src/main/stateFile.ts`
+- `src/main/windowPrefs.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`
 - `src/renderer/data/localWrite.ts`

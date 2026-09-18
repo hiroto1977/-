@@ -23,6 +23,7 @@ import { storePath as emotionsStorePath } from './clients/emotions';
 import { defaultStatePath as talentStatePath } from './clients/talent';
 import { defaultStatePath as teamRadarStatePath } from './clients/teamradar';
 import { defaultDashboardPath, defaultStatePath as stocksStatePath } from './clients/stocks';
+import { defaultStatePath as windowPrefsPath } from './windowPrefs';
 
 type FileIo = Pick<typeof fs, 'rm' | 'readdir'>;
 
@@ -61,6 +62,8 @@ export function desktopEraseTargets(): readonly string[] {
     teamRadarStatePath(),
     stocksStatePath(),
     defaultDashboardPath(),
+    // 窓の配色 (パス 318)。秘密は無いが「前の人の選んだ配色」も残さない。
+    windowPrefsPath(),
   ];
 }
 

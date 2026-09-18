@@ -60,7 +60,7 @@ afterEach(async () => {
 });
 
 describe('在庫は置き場所の関数から (綴りを写さない)', () => {
-  it('トークン・気分の記録・人材育成・チームレーダー・ウォッチリスト・ダッシュボードの 6 つ', () => {
+  it('トークン・気分の記録・人材育成・チームレーダー・ウォッチリスト・ダッシュボード・窓の配色の 7 つ', () => {
     const names = desktopEraseTargets().map((p) => path.basename(p));
     expect(names).toEqual([
       'service-hub-secrets.json',
@@ -69,6 +69,7 @@ describe('在庫は置き場所の関数から (綴りを写さない)', () => {
       'team-radar.json',
       'state.json',
       'dashboard.html',
+      'service-hub-window.json',
     ]);
   });
 
