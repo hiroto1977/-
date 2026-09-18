@@ -3415,6 +3415,67 @@ async function parameterSuite(browser) {
 }
 
 /** ハードリセットは保管庫だけでなく全媒体を消す (2026-09-09 · パス 136)。前の人の事業が、次の人には見えない。 */
+/**
+ * 配色の設定 (パス 317): 何も選んでいなければ OS がダークでもライト・選ぶと即座に効いて端末に残り、
+ * 再読込では解錠の前 (ロック画面) から効く・「OS に合わせる」は OS の切り替えに追随し、ライトを
+ * 選び直せば追随しない。単体 (jsdom) では matchMedia の代役しか置けないので、実ブラウザの
+ * `emulateMedia` で見る。地の色は `getComputedStyle` の実測で比べる (属性だけでは CSS が
+ * 効いていない退行を見られない)。
+ */
+async function themeSuite(browser) {
+  console.log('--- 配色の設定 (ライト / ダーク / OS に合わせる) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: 'dark' });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.goto(FILE + '#settings', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-theme-section]', { timeout: 30000 });
+  const attr = () => page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const stored = () => page.evaluate(() => localStorage.getItem('servicehub.theme'));
+  const note = () => page.locator('[data-theme-note]').innerText();
+  ok((await attr()) === 'light', `theme: ★ 何も選んでいなければ OS がダークでもライト (実際 ${await attr()})`);
+  const lightBg = await bodyBg();
+
+  await page.locator('[data-theme-choice="dark"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'dark', undefined, { timeout: 5000 });
+  const darkBg = await bodyBg();
+  ok(darkBg !== lightBg, `theme: ★ ダークを選ぶと地の色が実際に変わる (${lightBg} → ${darkBg})`);
+  ok((await stored()) === 'dark', 'theme: 選択は servicehub.theme に残る');
+  ok((await note()).includes('ダークで表示しています'), 'theme: 注記が「ダークで表示しています」と言う');
+
+  // 再読込: 解錠の前 (ロック画面) から効いている —— main.tsx が描画より先に適用する。
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  ok((await attr()) === 'dark', `theme: ★ 再読込しても解錠の前からダーク (実際 ${await attr()})`);
+  ok((await bodyBg()) === darkBg, 'theme: 再読込後の地の色も同じダーク');
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('[data-theme-section]', { timeout: 30000 });
+  ok((await page.locator('[data-theme-choice="dark"]').getAttribute('aria-pressed')) === 'true', 'theme: 設定画面はダークが選ばれた状態で開く');
+
+  // OS に合わせる → OS の切り替えに追随する。
+  await page.locator('[data-theme-choice="system"]').click();
+  await page.waitForFunction(() => localStorage.getItem('servicehub.theme') === 'system', undefined, { timeout: 5000 });
+  ok((await attr()) === 'dark', 'theme: 「OS に合わせる」は OS がダークならダーク');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page
+    .waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'light', undefined, { timeout: 5000 })
+    .catch(() => {});
+  ok((await attr()) === 'light', `theme: ★ OS をライトへ切り替えると追随する (実際 ${await attr()})`);
+  ok((await note()).includes('OS の設定に合わせてライト'), 'theme: 注記も追随する');
+
+  // ライトを選び直せば追随しない (対照: 上では追随した)。
+  await page.locator('[data-theme-choice="light"]').click();
+  await page.waitForFunction(() => localStorage.getItem('servicehub.theme') === 'light', undefined, { timeout: 5000 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.waitForTimeout(300);
+  ok((await attr()) === 'light', `theme: ★ ライトを選んだ後は OS がダークになっても追随しない (実際 ${await attr()})`);
+  ok(errs.length === 0, `theme: ページエラー 0 (実際 ${JSON.stringify(errs)})`);
+  await ctx.close();
+}
+
 async function hardResetSuite(browser) {
   console.log('--- ハードリセットは保管庫だけでなく全媒体を消す (パス 136) ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -3548,6 +3609,7 @@ async function hardResetSuite(browser) {
     ['parameters', parameterSuite, 9], // 実測 11
     ['writeCeiling', writeCeilingSuite, 7], // 実測 9
     ['aiCeiling', aiCeilingSuite, 8], // 実測 10
+    ['theme', themeSuite, 10], // 実測 12
     ['tablet', tabletSuite, 1], // 実測 2
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);

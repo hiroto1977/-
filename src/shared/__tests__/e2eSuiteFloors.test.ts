@@ -9,7 +9,7 @@
  * 「知らない suite 名で 0 件走って PASSED」の 1 段下の同じ穴。
  *
  * 床そのものは実機でしか効かない (ブラウザが要る)。ここで留めるのは**表の形**:
- * 30 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
+ * 31 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
  * 「必ず落ちる検査」になり、誰かが床を消す)・名前の一覧は表から導く・
  * 合計の床は suite の床の和を下回らない側に置かない (合計だけが緩い形にしない)。
  */
@@ -41,9 +41,9 @@ describe('e2e の suite ごとの床 (パス 303)', () => {
     expect("  if (run('tablet')) await tabletSuite(browser);").not.toMatch(new RegExp(ROW.source));
   });
 
-  it('★ 30 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(30);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(30);
+  it('★ 31 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(31);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(31);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -71,8 +71,8 @@ describe('e2e の suite ごとの床 (パス 303)', () => {
     const sumMeasured = rows.reduce((a, r) => a + r.measured, 0);
     expect(total).toBeGreaterThanOrEqual(sumFloors);
     expect(total).toBeLessThanOrEqual(sumMeasured);
-    // 実測の合計は 2026-09-17 の 395 (FULL / LITE とも)
-    expect(sumMeasured).toBe(395);
+    // 実測の合計は 2026-09-17 の 395 (FULL / LITE とも) + 2026-09-18 (パス 317) の theme suite 12 = 407
+    expect(sumMeasured).toBe(407);
   });
 });
 

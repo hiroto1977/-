@@ -1,5 +1,6 @@
 import { navigateTo } from '../navigate';
 import { useCallback, useEffect, useState } from 'react';
+import { ThemeSection } from '../components/ThemeSection';
 import { Section, StatusBar } from '../components/StatusBar';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
@@ -1108,6 +1109,10 @@ export function SettingsPage() {
         ここで入力した API キーはマスターパスワードで暗号化 (AES-GCM-256) されてブラウザに保管されます。
         パスワードを知らない人が IndexedDB を読み取っても復号できません。共用 PC では使わないでください。
       </div>
+
+      <Section title="配色 (ライト / ダーク / OS に合わせる)" count={3}>
+        <ThemeSection />
+      </Section>
 
       <Section title="接続状況ハブ" count={SERVICES.length}>
         <ConnectionHub refreshKey={refreshKey} />

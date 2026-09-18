@@ -246,7 +246,7 @@ function ActionCard({ action }: { action: QuickAction }) {
               style={{
                 padding: '4px 10px',
                 background: 'var(--accent-soft)',
-                border: '1px solid #f5b8d2',
+                border: '1px solid var(--list-hover-border)',
                 borderRadius: 999,
                 color: 'var(--accent-strong)',
                 cursor: 'pointer',

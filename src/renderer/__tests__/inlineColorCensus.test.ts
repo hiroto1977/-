@@ -50,7 +50,6 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/components/ChatbotWidget.tsx': 13,
   'src/renderer/components/CloudSyncPanel.tsx': 1,
   'src/renderer/components/EligibilityChecker.tsx': 2,
-  'src/renderer/components/ExportActions.tsx': 1,
   'src/renderer/components/FinancialAnalysis.tsx': 31,
   'src/renderer/components/GuardedNumber.tsx': 2,
   'src/renderer/components/RealtimeTicker.tsx': 7,
@@ -66,7 +65,7 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/EmotionsPage.tsx': 3,
   'src/renderer/pages/FreeePage.tsx': 10,
   'src/renderer/pages/FundingPage.tsx': 16,
-  'src/renderer/pages/HomePage.tsx': 2,
+  'src/renderer/pages/HomePage.tsx': 1,
   'src/renderer/pages/HydroponicsPage.tsx': 1,
   'src/renderer/pages/KpiPage.tsx': 3,
   'src/renderer/pages/LibraryPage.tsx': 1,
@@ -83,7 +82,6 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/TeamRadarPage.tsx': 14,
   'src/renderer/pages/TemplatesPage.tsx': 10,
   'src/renderer/pages/VillagePage.tsx': 32,
-  'src/renderer/security/LockScreen.tsx': 3,
 };
 
 const SOURCES = uiSources();

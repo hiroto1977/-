@@ -672,7 +672,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
 const overlayStyle: React.CSSProperties = {
   position: 'fixed',
   inset: 0,
-  background: 'linear-gradient(135deg, #ffe6f0 0%, #f3edff 50%, #e3f7ef 100%)',
+  background: 'var(--lock-overlay)',
   backdropFilter: 'blur(6px)',
   display: 'flex',
   alignItems: 'center',

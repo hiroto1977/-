@@ -77,6 +77,11 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['google-client-id'],
     why: '入口 (readLocalString) を通す。読めなければ「1 回貼れば各ページで使えます」を取り下げる (パス 86 / 155)。パス 310 まで同じ形を自前の try/catch で写しており、プライベートウィンドウの案内文だけが入口側に在った。',
   },
+  'src/renderer/theme.ts': {
+    policy: 'three-state',
+    keys: ['servicehub.theme'],
+    why: '入口 (readLocalString) を通す。読めなければ既定のライトで描き、設定画面がその理由を言う (パス 317)。壊れた保存値は sanitizeThemeChoice が既定へ倒す —— 選択は設定画面から選び直せる。',
+  },
   'src/renderer/web-shim.ts': {
     policy: 'three-state',
     keys: ['servicehub.talent.state.v1', 'teamradar.state'],

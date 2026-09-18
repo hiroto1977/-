@@ -7,6 +7,70 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 残作業の棚卸し (2026-09-18) — 「変異検査の静的な生存 3 ファイル」は記録が古かっただけ
+
+利用者の依頼「残作業を終わらせて」で 6 件を挙げたうち、この 1 件は**作業ではなく記録の訂正**で閉じた。
+`docs/REMAINING_WORK.md` の見出し「同じ死角を 4 ファイルで実測した (2026-09-07・**未着手の残作業**)」は、その直下に
+2026-09-10 の消化の記録 (kpiActuals を実測・残り 3 ファイルは母集団を読んで導き 31 件を手で当て・managementReport に検査 5 本) と、
+**「静的生存」という前提そのものの訂正** (全件実行の週次 CI `mutation` #169 / #170 は `break: 99.8` を通っている = 部分実行の偽の生存)
+を持っているのに、見出しだけが「未着手」のままだった。見出しを直した。Stryker の部分実行は回していない —— 回しても
+リポジトリの規則どおり「部分実行の生存は信用しない」数字が出るだけで、7 分 × 3 の CPU を使って知っている答えを見ることになる。
+
+## パス 317 (2026-09-18) — 配色の設定 (ライト / ダーク / OS に合わせる) を足し、stylesheet の部品の色を全部トークンへ
+
+UI 再設計 (2026-09-17) の「閉じていない物」(ダーク配色を選べる設定は無い)。利用者の依頼「残作業を終わらせて」で閉じる。
+
+### 規則は 1 つ (`src/renderer/theme.ts`)
+
+- 保存: localStorage `servicehub.theme` を入口 `readLocalString` / `writeLocalString` で。既定は **light** —— 何も選んでいない利用者の
+  見た目を変えない (OS がダークでも再設計の配色のまま。「OS に合わせる」は選んだ人だけ)。
+- 解決: 'system' は `matchMedia('(prefers-color-scheme: dark)')` で解き、`<html data-theme>` に**解いた後の値だけ**を置く。CSS には
+  `prefers-color-scheme` を書かない (ダークのトークン表を 2 か所に持たない)。'system' のあいだだけ change を聴き、選び直せば止める
+  (`selectTheme` が前の追随を止めてから次を掛ける)。`matchMedia` が無い・投げる環境は「ダークではない」。
+- 適用は保存に失敗しても行う (この場では効く)。成否は戻り値で、設定画面が「配色は変わりましたが、次回のために保存できませんでした」と
+  **入口の文**で言う (この画面は文を持たない)。読めなければ既定で描いて理由を言う (読みの台帳: three-state)。
+- 起動: `main.tsx` が描画より先に適用する (保存した選択と違う色の一瞬を作らない)。
+
+### stylesheet (`styles.css`)
+
+- `:root` に部品のトークン **33** を足した (25 → 58): control / placeholder / range / selection / scrollbar / glow ×3 / star / sidebar ×3 /
+  icon ×2 / backdrop / drawer / heading / empty / list-hover / badge ×10 / lock-overlay。部品の規則の直書き **54 → 10** (残りは半透明の
+  影と光輪で、`themeTokens.test.ts` が台帳として持つ)。`:root[data-theme="dark"]` がライトの色トークン **53** を全部上書きする (別名 3 つと
+  `--radius` 2 つは色ではない)。`--warning-bg` はダークでも明るいまま —— 文字が `'#000'` 固定の札の地。
+- 紙の節 (書類スタジオ・銀行提出書式・印刷) は白い紙なので配色の外 (`.ds-*` / `.bank-*` はそのまま)。`.bank-error` / `.bank-saved` の
+  意味色は `var(--danger)` / `var(--success)` へ。
+- inline: LockScreen の幕 → `var(--lock-overlay)` (保護対象 → **chain #231**)・ホームと ExportActions の淡いピンクの罫線 → `var(--list-hover-border)`。
+
+### 台帳
+
+- `lint:storage` の STORES + 入口の登録 (規則 12) / `eraseAll.ts` の在庫 (規則 11) / `storageReadLedger` (three-state) / `DATA_PROTECTION.md`
+  (localStorage 21 → 22・3 か所) / CLAUDE.md の live metric (22) / `inlineColorCensus` (LockScreen 3 と ExportActions 1 の行が消え、HomePage 2 → 1) /
+  USER_GUIDE の FAQ / ARCHITECTURE の 1 段。
+- 検査: `theme.test.ts` (15) / `themeSection.test.ts` (6) / `themeTokens.test.ts` (6・ライト ⇄ ダークの表を両方向・部品の直書きの台帳・標本)。
+  e2e に `theme` suite (12 件・床 10): OS がダークでも既定はライト・ダークで地の色が `getComputedStyle` の実測で変わる・再読込しても解錠の前から
+  ダーク・`emulateMedia` で OS の切り替えに追随・ライトを選び直せば追随しない。30 → **31 suite**。
+- jsdom の `DOMException` は `instanceof Error` を満たさない (入口の `isBlocked` / `isQuota` が素通りする) ので、検査の例外は既存の
+  `googleConnectCard.test.ts` と同じ `Object.assign(new Error(), { name })` の形。
+
+### 対照 (3 本すべて鳴る · `ctl317/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. ダークの表から `--danger` を消す | themeTokens ① ライトの色トークンはすべてダークで上書き (1 本) |
+| B. 部品の規則に `#123456` を 1 つ足す | themeTokens ③ 直書きの台帳 (1 本) |
+| C. `selectTheme` が前の追随を止めない | theme ★ selectTheme・themeSection ★ OS に合わせる (2 本) |
+
+### 閉じていない物
+
+- Electron の窓の下地 (`backgroundColor: '#fff7fa'`・`main.ts`) と PWA の `theme-color` は main / 雛形側で renderer の選択を知らない ——
+  ダークを選んだ利用者は起動の一瞬だけ淡いピンクの窓を見る。直すなら main が userData に選択を持つか、renderer から IPC で窓の色を変える。
+- inline の直書き色 275 件 (チャートのパレット・SVG の塗り・書式の既定色) はダークでも同じ値。読めるかは目で見ていない (機械では測れない)。
+- 「OS に合わせる」の追随は `MediaQueryList.addEventListener` 前提。持たない古い WebView では最初の 1 回だけ解いて追随しない (検査あり)。
+
+### 実機
+
+`smoke:app` OK / `e2e` 31 suite 410 件 ❌ 0 (398 + `theme` 12) / `e2e:lite` 410 件 ❌ 0 / `perf` OK (LITE DCL 124 ms heap 10.2 MB・FULL DCL 301 ms heap 36.9 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8 (連鎖 1 回で全段緑)。出荷物 FULL **11,908,999 B** / LITE **3,321,520 B** (両方 +5,868 B —— `theme.ts`・設定の 3 択・部品のトークン 33 とダークの表 53。renderer は両ビルドが読むので LITE も同じだけ)。
+
 ## パス 316 (2026-09-18) — GitHub Actions の第一者 action を Node 24 の版へ (checkout / setup-node / upload-artifact v5・github-script v8)
 
 パス 305 の「閉じていない物」。runner のログが `actions/checkout@v4` / `actions/setup-node@v4` に「Node.js 20 を対象にしているが
@@ -184,7 +248,7 @@ main だけの変更。`build:web` で実測し FULL は **11,901,220 B で byte
 - 意味色の直書き (`#22c55e` 93 / `#ef4444` 120 / 各種) はトークンにしていない。白地でも読めるので今日の見た目には影響しないが、
   次に配色を変える日には同じ走査が要る。`lint:parameter-prose` の形 (「画面が刷る数字と計算の数字の出所」) を色にも当てるなら census が要る。
 - タイル型のボタン 5 か所 (事業ダッシュボードのカテゴリ等) は角 8 のまま。
-- ダーク配色を選べる設定は無い (以前も無かった)。`color-scheme: light` を宣言したので OS のダーク設定でもこの配色で描く。
+- ~~ダーク配色を選べる設定は無い (以前も無かった)。`color-scheme: light` を宣言したので OS のダーク設定でもこの配色で描く。~~ → **パス 317 (2026-09-18) で設定 (ライト / ダーク / OS に合わせる) を足した**。既定はライトのままなので、何も選んでいない利用者の見た目は変わらない。
 
 ## パス 312 (2026-09-17) — ブラウザ版の `invoke` / `fetchSnapshot` に main の IPC ハンドラと同じ床が無く、「reject しない」は 19 の写しと 4 条件の検査で名乗っていた
 
@@ -4263,6 +4327,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 配色の設定 ライト / ダーク / OS に合わせる (パス 317) | ✅ `theme.ts` 1 か所 (入口・解決・追随)・設定の 3 択・ダークのトークン表 53 (両方向の照合)・部品の直書き 54 → 10・e2e `theme` suite 12 件 (31 suite)・台帳 8 つ・chain #231。対照 3 本 |
 | GitHub Actions の第一者 action の版上げ (パス 316) | ✅ checkout / setup-node / upload-artifact v5・github-script v8 (19 か所・7 workflow)。第三者と pages / cache は据え置き (理由は本文)。chain #230 |
 | 意味色の直書きとトークンの census (パス 315) | ✅ 360 か所 (裸 332 + 退避値の中 28) を token へ・未定義の変数名 3 つ (`--mute` / `--ng` / `--ok`) を消し、直書き色 275 件 / 40 ファイルを分母として台帳に (双方向・変数名の定義も検査)。検査 12 ファイルの綴りを追随。対照 2 本・chain #229 |
 | 例外の文面 → 画面の census (パス 314) | ✅ 90 行 (伏字 26 / 通らない 64・33 ファイル) を数え、64 行を出どころ 6 種の理由つき台帳に (双方向・窓は 1 行)。相手の本文が乗る行は 0。対照 2 本 |

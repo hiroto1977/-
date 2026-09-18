@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 612 個の `file:line` 参照 + 41 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 615 個の `file:line` 参照 + 41 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14578** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14605** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 612 | 自己検証 |
+| `file:line` 参照数 | 615 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2639,6 +2639,16 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 (パス 309 の銘柄のウォッチリストがそれだった: 書きの台帳は 2026-09-06 から在り、
 読みには「投げないか」の走査しか無かった)。三状態と名乗る項は「読めなかった」を運ぶ語を
 実際に持たなければならず、`fold` は失う物と失ってよい理由を書く。
+
+**配色の選択** (2026-09-18 · パス 317) は `src/renderer/theme.ts` の 1 か所が持つ —— localStorage
+`servicehub.theme` を入口 `readLocalString` / `writeLocalString` で読み書きし (読みの台帳は three-state:
+読めなければ既定のライトで描いて設定画面が理由を言う・書きの成否も画面が言う)、'system' は
+`matchMedia('(prefers-color-scheme: dark)')` で解いてから `<html data-theme>` に**解いた後の値だけ**を置く
+(CSS 側に `prefers-color-scheme` を書かない —— ダークのトークン表 `:root[data-theme="dark"]` を 2 か所に
+持たない)。既定はライトで、何も選んでいない利用者の見た目は OS がダークでも変わらない。
+`src/renderer/__tests__/themeTokens.test.ts` がライトの色トークンとダークの表を両方向に照合し、部品の規則に
+残る直書き色 (半透明の影と光輪) を台帳で留める。起動時は `main.tsx` が描画より先に適用し、実機の
+`theme` suite (e2e) が「再読込しても解錠の前からダーク」と OS への追随を見る。
 
 **捕まえた例外の文面が画面へ流れる行**は `src/renderer/__tests__/errorMessageSurfaceCensus.test.ts`
 が数える (2026-09-18 · パス 314)。renderer の出荷 code で例外を文にする行 (実測 90) は、同じ行で伏字
