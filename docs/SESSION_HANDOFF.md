@@ -7,6 +7,42 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 314 (2026-09-18) — 「例外の文面 → 画面」の経路を数える網が無かった (伏字を通らない 64 行を理由つきの台帳へ)
+
+パス 307 / 311 の「閉じていない物」。`redactForMessage` の第 2 引数を数える census (パス 273) は呼ぶ側しか映さず、
+伏字を通さずに例外の文面を state / JSX / 戻り値へ流す行は誰も数えていなかった (パス 311 は 77 か所を**読んで**記録に残したが、
+記録は次に足された 1 か所を止めない)。
+
+### 実測 (`errorMessageSurfaceCensus.test.ts` の走査 · renderer の出荷 code)
+
+- 捕まえた例外を文にする行: **90**。同じ行で伏字を通る物 **26** (`redactForMessage` 7・web-shim の `err()` 19)、通らない物 **64 / 33 ファイル**。
+- 64 行の出どころを 1 行ずつ読んだ: `window.serviceHub` の呼びの catch **21** (両ビルドとも失敗は戻り値で表すので、届く例外は IPC 層の文か
+  橋の不在)・自前の関門の定数の文 **24** (`parse…` / `validate…` / `readImportText` / CSV の行)・保管庫と WebCrypto **13** (Settings 9・
+  LockScreen 3・`describeCryptoFailure` 1)・platform の DOMException **3** (Web Storage の 3 状態の理由)・通信 **2** (`liveRead` —— 本文は
+  載せない形で投げる)・「代入して次の行で伏せる」**1** (`describeRenderError` の中)。**相手の本文が乗る行は 0** (pass 311 の結論のとおり)。
+- 途中で 3 か所を疑って読んだ: `ConnectorsPage` の `executeFreeConnector` (fetch を持たない)・`SettingsPage` の PKCE 交換 (`pkce.ts:275` が
+  同じ行で本文を伏せる)・web-shim の chatAll (次の行で `redactForMessage` · パス 269)。どれも台帳の理由に書いた。
+
+### 規則 (census · 双方向)
+
+- 出荷 code の該当行は、**同じ行で伏字を通る**か、**台帳 (ファイル → 件数・出どころの種類・注記) に載る**か。件数が動けば鳴る (足しても減っても)。
+  台帳の行は実物に無ければ落ちる。伏字と数えるのは `redactForMessage` / `safeErrorMessage` / `describeStorageError` / `describeRenderError` /
+  `redactSecrets` と、`web-shim.ts` に限って `err()` (伏字の関門そのもの・パス 273。他のファイルの `err(` は別の関数かもしれないので数えない)。
+- **窓は 1 行**。「代入して次の行で伏せる」は `deferred` として台帳に持つ —— 窓を 2 行に広げると「次の行でたまたま別の物を伏せている」を
+  安全と読む。標本 (2 行の fixture) で留めた。
+
+### 対照 (2 本すべて鳴る · `ctl314/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. 台帳に無い行を `GithubPage.tsx` に 1 行足す | 「台帳に無い行が 0 件」(ファイルと行番号を名指し) |
+| B. 台帳から `StocksPage.tsx` の行を消す | 「台帳に無い行が 0 件」(台帳 0 / 実物 4) |
+
+### 閉じていない物
+
+- 台帳は「相手の本文が載らない理由」を持つが、`ownThrow` の 24 行には**利用者自身の入力の値**が載りうる (CSV の行・入力欄の値)。
+  自分の値が自分の画面に出る形なので伏字の対象ではないが、天井 (`MAX_RENDER_ERROR_CHARS` のような) は無い。
+
 ## パス 313 (2026-09-18) — main の状態ファイル 4 つの読みに大きさの門が無く、「自分が書いた物は大きくならない」という前提で `readFile` → `JSON.parse` していた
 
 UI 再設計の直前まで「閉じていない物」に 3 度書き残していた項 (パス 308 / 309 / 311)。利用者の依頼で残作業を閉じる。
@@ -4163,6 +4199,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 例外の文面 → 画面の census (パス 314) | ✅ 90 行 (伏字 26 / 通らない 64・33 ファイル) を数え、64 行を出どころ 6 種の理由つき台帳に (双方向・窓は 1 行)。相手の本文が乗る行は 0。対照 2 本 |
 | 状態ファイルの読みの大きさの門 (パス 313) | ✅ `main/stateFile.ts` の 1 つ (stat の前門 + byte の後門・16 MiB・文面は定数で path 無し) を 4 つの読みが通る。検査 +18・対照 2 本 |
 | ブラウザ版 invoke / fetchSnapshot の床 (パス 312) | ✅ main と同じ `safeErrorMessage` の床を外側 1 か所 (`withFloor`) に。3 条件 (Web Storage 拒否 / null / 形違い) で 1 + 11 + 2 組が reject していた。検査 +8・対照 3 本 |
 | 2xx の非 JSON 本文と V8 の引用 (パス 311) | ✅ `res.json()` 16 か所を `parseJsonBody` (文言は定数) へ。census で `.json()` は 1 か所だけ (両方向)。標本: 素の res.json() は先頭 10 字を引用する。対照 2 本 |

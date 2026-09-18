@@ -115,8 +115,8 @@ const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
     '針は検査自身が注入した見出し (`## 偽の見出し`) で、他所の綴りではない —— 注入した字と探す字が同じ it の中に在る',
   'src/main/clients/__tests__/paperAccountReality.test.ts:127':
     '書面の表の行 (`| 損益 | +￥0`)。標本を付ける価値は在るが、同じ検査が肯定側で ￥0 でない値を主張している',
-  'src/main/clients/__tests__/stocks.test.ts:2820': 'パス 189 の「+¥0 (0.00%) を刷らない」の一部。標本未付',
-  'src/main/clients/__tests__/stocks.test.ts:3678':
+  'src/main/clients/__tests__/stocks.test.ts:2821': 'パス 189 の「+¥0 (0.00%) を刷らない」の一部。標本未付',
+  'src/main/clients/__tests__/stocks.test.ts:3679':
     '針は検査自身が注入した見出し (`## 偽`) で、他所の綴りではない',
   'src/renderer/__tests__/chatCalcAmountAndFloor.test.ts:132':
     'パス 102 の「負の手取りを刷らない」。針は `手取り` + 負号で、画面のラベルは肯定側で主張されている',
@@ -129,7 +129,7 @@ const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
   'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1114':
     '針は検査自身が注入した見出し (`## 偽の見出し`)。main 側 business.test.ts:1987 の双子',
   'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1133':
-    '針は検査自身が注入した見出し (`## 偽`)。main 側 stocks.test.ts:3678 の双子',
+    '針は検査自身が注入した見出し (`## 偽`)。main 側 stocks.test.ts:3679 の双子',
   'src/renderer/pages/__tests__/emotionRadarNoData.test.ts:161':
     'パス 65 の「記録が無い人を評価しない」。針は `活力 \\d` で、ラベルは肯定側で主張されている',
   'src/renderer/pages/__tests__/siteDimensionsUnsetOnScreen.test.ts:165':
