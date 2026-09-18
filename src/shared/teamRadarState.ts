@@ -26,6 +26,7 @@
 
 import { clampToCeiling, countChars } from './inputCeiling';
 import { localIsoDate } from './localDate';
+import { MAX_STORED_STATE_REASON_CHARS, redactForMessage } from './redact';
 
 // --- Axes ----------------------------------------------------------------
 
@@ -362,7 +363,9 @@ export function readStoredTeamRadar(raw: string | null): StoredTeamRadar {
   try {
     members = validateMembers(o['members'] ?? []);
   } catch (e) {
-    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
+    // `validateMembers` の文は生の保存値 (id / score / axis label) を補間する。上の JSON.parse の枝と同じ理由で
+    // 画面へ流れるので、値は残したまま天井を掛ける (redact.ts の梯子 · パス 320)。
+    return { kind: 'unreadable', reason: redactForMessage(e instanceof Error ? e.message : String(e), MAX_STORED_STATE_REASON_CHARS) };
   }
   /*
    * **天井は上の検証と同じ定数から読む** (2026-09-12 · パス 174)。

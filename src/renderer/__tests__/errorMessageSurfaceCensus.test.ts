@@ -8,7 +8,7 @@
  *
  * ## 規則
  *
- * renderer の出荷 code で、捕まえた例外を文にする行 (`e instanceof Error ? e.message : …` /
+ * renderer と shared の出荷 code で、捕まえた例外を文にする行 (`e instanceof Error ? e.message : …` /
  * `(e as Error).message` / `e.message`) は、**同じ行で伏字を通る**か、**理由つきの台帳に載る**か、
  * どちらかでなければならない。台帳はファイルごとの件数で**両方向**に鳴る —— 足しても減っても落ちる。
  *
@@ -33,6 +33,11 @@ export const MESSAGE_SURFACE =
 export const REDACTED_ON_LINE = /redactForMessage\(|safeErrorMessage\(|describeStorageError\(|describeRenderError\(|redactSecrets\(/;
 /** `web-shim.ts` の `err()` は失敗の唯一の口で、中で `redactForMessage` を通す。 */
 const SHIM_FUNNEL = /\berr(?:<[^>]*>)?\(/;
+/**
+ * 文面を**読むだけ**で流さない形 (`e.message.includes(' response too large')` のような判定)。
+ * shared を母集団に入れたとき (パス 320) に `httpLimits.ts` の `isOverCap` が当たったので、形で外す (標本つき)。
+ */
+const READ_ONLY_USE = /\.message\.(?:includes|startsWith|endsWith|match|test)\(|\.message\s*[!=]==?\s/;
 
 export interface Site {
   readonly file: string;
@@ -44,6 +49,7 @@ export function classifyLine(file: string, line: string): 'skip' | 'safe' | 'raw
   const t = line.trim();
   if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return 'skip';
   if (!MESSAGE_SURFACE.test(line)) return 'skip';
+  if (READ_ONLY_USE.test(line)) return 'skip';
   if (REDACTED_ON_LINE.test(line)) return 'safe';
   if (file.endsWith('web-shim.ts') && SHIM_FUNNEL.test(line)) return 'safe';
   return 'raw';
@@ -61,7 +67,9 @@ export function scan(files: readonly { readonly file: string; readonly text: str
 }
 
 function rendererSources(): { file: string; text: string }[] {
-  return globSync(['src/renderer/**/*.ts', 'src/renderer/**/*.tsx'], {
+  // 2026-09-18 (パス 320) から shared も見る —— `shared/teamRadarState.ts:365` が保存値の壊れ方の理由に
+  // 生の保存値を載せたまま画面 (storedNote) へ流していたのを、renderer だけの走査は映さなかった。
+  return globSync(['src/renderer/**/*.ts', 'src/renderer/**/*.tsx', 'src/shared/**/*.ts'], {
     cwd: REPO,
     absolute: true,
     ignore: ['**/__tests__/**', '**/*.d.ts'],
@@ -90,6 +98,7 @@ const SOURCE = {
  * 載らない理由**を持つ。件数が動けば鳴る (足しても減っても)。
  */
 const LEDGER: Readonly<Record<string, { readonly sites: number; readonly source: keyof typeof SOURCE; readonly note?: string }>> = {
+  'src/shared/connectors/connectorRegistry.ts': { sites: 1, source: 'ownThrow', note: '組み込みコネクタ台帳の検証 (`validateConnectors`) の定数の文を起動時の Error に束ねる。利用者の入力も相手の本文も載らない' },
   'src/renderer/components/BackupPanel.tsx': { sites: 2, source: 'ownThrow', note: 'IndexedDB の DOMException も混じる' },
   'src/renderer/components/ExportActions.tsx': { sites: 1, source: 'invoke', note: 'openPath / revealInFolder は OsOpResult で表す' },
   'src/renderer/components/PageErrorBoundary.tsx': { sites: 1, source: 'deferred', note: '`describeRenderError` の中 (パス 307)' },
@@ -153,6 +162,20 @@ describe('例外の文面 → 画面 (パス 314): 伏字を通らない行は�
       expect(present.has(file), `${file}: 台帳に在るが伏字を通らない行が無い (古い行)`).toBe(true);
       expect(SOURCE[row.source].length, `${file}: 理由が無い`).toBeGreaterThan(20);
     }
+  });
+
+  it('★ 標本: 走査は shared も見ており、teamRadarState の保存値の理由は同じ行で天井を通る (パス 320)', () => {
+    // renderer だけの走査 (パス 314) が映さなかった行。天井 (redactForMessage) を外すと raw になり、台帳に無いので落ちる。
+    const shared = SITES.filter((s) => s.file.startsWith('src/shared/'));
+    expect(shared.length).toBeGreaterThanOrEqual(1);
+    const radar = SITES.find((s) => s.file === 'src/shared/teamRadarState.ts');
+    expect(radar?.safe, 'teamRadarState の unreadable の理由は redactForMessage を同じ行で通す').toBe(true);
+  });
+
+  it('標本: 文面を読むだけの判定は数えない (流す形は数える)', () => {
+    expect(classifyLine('x.ts', "  return e instanceof Error && e.message.includes(' response too large');")).toBe('skip');
+    expect(classifyLine('x.ts', "  if (e.message === 'AbortError') return;")).toBe('skip');
+    expect(classifyLine('x.ts', '  setErr(e.message);')).toBe('raw');
   });
 
   it('標本: 走査は 3 つの形に当たり、コメント行は落とす', () => {

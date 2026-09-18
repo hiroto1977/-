@@ -6,6 +6,7 @@
  * `readStoredTeamRadar` (保存した / まだ無い / 読めなかった を分ける —— パス 120)・`buildTeamRadarSnapshot` (形) —— を直に留める。
  */
 import { describe, expect, it } from 'vitest';
+import { MAX_STORED_STATE_REASON_CHARS } from '../redact';
 import {
   CANONICAL_AXES,
   DEFAULT_TEAM_RADAR,
@@ -133,6 +134,20 @@ describe('readStoredTeamRadar — 「保存した」「まだ無い」「読め�
       reason: 'member id is invalid: BAD',
     });
     expect(readStoredTeamRadar(JSON.stringify({ ...good(), members: 'x' }))).toEqual({ kind: 'unreadable', reason: 'members must be an array' });
+  });
+
+  it('★ members の判定が投げた文に載る保存値には天井が掛かる (パス 320・同じ関数の 20 行上の JSON.parse の枝と同じ理由)', () => {
+    const longId = 'x'.repeat(5_000);
+    const out = readStoredTeamRadar(JSON.stringify({ ...good(), members: [{ id: longId }] }));
+    expect(out.kind).toBe('unreadable');
+    if (out.kind !== 'unreadable') return;
+    // 値は残す (どのメンバーかを言う) が、天井を超えた分は切れている。
+    expect(out.reason.startsWith('member id is invalid: xxxx')).toBe(true);
+    expect(out.reason.length).toBeLessThan(longId.length);
+    expect(out.reason.length).toBeLessThanOrEqual(MAX_STORED_STATE_REASON_CHARS + 1);
+    // 画面の注記にも 5,000 字は載らない。
+    expect(unreadableTeamRadarNote(out.reason).includes(longId)).toBe(false);
+    // 標本: 短い id はそのまま載る (上の 'member id is invalid: BAD' が肯定形で留めている)。
   });
 
   it('department / evaluatedAt は空なら既定に倒し、長ければ切る (読む側は寛容・書く側は断る)', () => {

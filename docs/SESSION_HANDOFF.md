@@ -7,6 +7,48 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 320 (2026-09-18) — 保存値の壊れ方の理由に、生の保存値がそのまま載っていた (同じ関数の 20 行上が「定数に固定する」と書いていた)
+
+パス 314 の「閉じていない物」(ownThrow 24 行には利用者自身の入力の値が載りうるが天井が無い) を測りに行って、別の場所で見つけた。
+
+### 実測
+
+- renderer の ownThrow 24 行に届く投げ手の補間は **105 件** (`renderer/data` + `shared` の `throw new Error(\`…${…}\`)`)。うち欄のラベル・
+  定数・数が **95 件**、自由文の補間は `cloudBackup.buildManifest` の `path` 5 件 (**呼び出し元が無い**) と `stocksAnalysisWeb` の AI 応答
+  2 件 (invoke 経由で伏字 + 天井を通る)。文字列の連結 (`'…' + value`) は 0 件。**24 行に天井は要らなかった** —— 載るのはラベルと定数。
+- **本命は census の外に居た**: `shared/teamRadarState.ts:365` は `validateMembers` が投げた文をそのまま `unreadable` の `reason` に載せ、
+  その文は**生の保存値**を補間する (`member id is invalid: ${String(m['id'])}` / `duplicate member id: ${m['id']}` /
+  `score …: ${String(s)}` / `note key …: ${k}` / `axis label …: ${String(a)}`)。理由は `unreadableTeamRadarNote` → `storedNote` で画面へ
+  (両ビルド)。**同じ関数の 20 行上**は「JSON.parse の文は保存値の断片を引用するので文言は定数に固定する」と docblock で述べ、
+  検査が等値で留めている —— その下の枝には何も無かった。axis label の検査は「長すぎる」ときに投げるので、**長すぎる値がそのまま
+  注記に載る**形。パス 314 の census は `src/renderer/**` しか見ておらず、shared の読み手は映らなかった。
+
+### 直し
+
+- `redact.ts` の梯子に 6 段目 `MAX_STORED_STATE_REASON_CHARS` (200・理由つき) を足し、`teamRadarState.ts:365` を `redactForMessage` で通す
+  (値は残す —— どのメンバーかを言うのに要る)。`redact.ts` は保護対象 → **chain #235**。
+- census の母集団を `src/shared/**/*.ts` へ広げた。広げると 2 行が当たった: `httpLimits.ts:251` (`e.message.includes(' response too large')`
+  —— 文面を**読むだけ**の判定) は形で外す (`READ_ONLY_USE`・標本つき)、`connectorRegistry.ts:186` (組み込み台帳の検証の定数の文を起動時の
+  Error に束ねる) は台帳へ。標本: shared が走査に入っていること・teamRadarState の行が同じ行で天井を通ること。
+- 検査: `teamRadarState.test.ts` +1 (5,000 字の id → 理由は 200 字で切れ、注記に 5,000 字は載らない。短い id はそのまま載る標本は既存)。
+
+### 対照 (2 本すべて鳴る · `ctl320/`)
+
+| 対照 | 落ちた検査 |
+|---|---|
+| A. teamRadarState の天井を外す | census「台帳に無い行」+ 標本「同じ行で天井を通る」+ teamRadarState の新しい検査 (3 本) |
+| B. census の母集団から shared を外す | 標本「走査は shared も見ている」+ 台帳の双方向 (connectorRegistry の行が消える) (2 本) |
+
+### 閉じていない物
+
+- `talent.ts` / `watchlistState.ts` の理由は定数 (`${field} が配列ではありません` の field も定数名) なので触っていない。
+- 105 件の補間の母集団は今日は読んで数えた (機械の台帳にはしていない)。次に `throw new Error(\`…${raw}\`)` を書く人を止める網は無い ——
+  census の母集団に入る行 (catch → 画面) は形で見張られているので、投げ手側の網は要るときに足す。
+
+### 実機
+
+`smoke:app` OK / `e2e` 31 suite 412 件 ❌ 0 / `e2e:lite` 412 件 ❌ 0 / `perf` OK (LITE DCL 195 ms heap 10.2 MB・FULL DCL 552 ms heap 36.7 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8 (連鎖 1 回で全段緑)。出荷物 FULL **11,909,524 B** / LITE **3,322,045 B** (両方 +16 B —— 理由の天井 1 か所: `redactForMessage` の呼び出し 1 つと梯子の定数 1 つ。`redact.ts` / `teamRadarState.ts` は両ビルドが読むので LITE も同じだけ)。
+
 ## パス 319 (2026-09-18) — ダーク配色を 30 画面で撮って読んだ: 直す物は無かった
 
 パス 317 の「閉じていない物」2 つ目 (inline の直書き色 275 件がダークで読めるかは目で見ていない)。
@@ -4386,6 +4428,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 保存値の壊れ方の理由の天井 + census を shared へ (パス 320) | ✅ `teamRadarState.ts:365` を `redactForMessage` (梯子 6 段目 200 字) で通し、census の母集団を shared へ (2 行: 読むだけの形は外し・台帳の定数の文は登録)。ownThrow 24 行の補間 105 件はラベルと定数 (天井は要らなかった)。chain #235・対照 2 本 |
 | 窓の下地と theme-color の追随 (パス 318) | ✅ `theme.ts` → `syncHostChrome` (stylesheet の --bg の実値) → meta と `app:setColorScheme` (15 個目・形の関門・原子的な保存・起動時に読む)。chain #232〜#234・対照 3 本 |
 | ダーク配色の目視 (パス 319) | ✅ 30 画面撮影・26 画面を読んで直す物なし (機械では測れないので撮影 script を残した) |
 | 配色の設定 ライト / ダーク / OS に合わせる (パス 317) | ✅ `theme.ts` 1 か所 (入口・解決・追随)・設定の 3 択・ダークのトークン表 53 (両方向の照合)・部品の直書き 54 → 10・e2e `theme` suite 12 件 (31 suite)・台帳 8 つ・chain #231。対照 3 本 |

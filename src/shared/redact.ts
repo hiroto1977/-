@@ -514,6 +514,18 @@ export const MAX_MALFORMED_JSON_ECHO_CHARS = 80;
 export const MAX_LOCAL_MODEL_ERROR_CHARS = 300;
 
 /**
+ * 保存値 (状態ファイル / localStorage) の**壊れ方の理由**の上限 (**文字**)。梯子の 6 段目 (2026-09-18 · パス 320)。
+ *
+ * `shared/teamRadarState.ts` の `readStoredTeamRadar` は `validateMembers` が投げた文をそのまま
+ * `unreadable` の理由に載せ、その文は**生の保存値** (`member id is invalid: ${id}` /
+ * `axis label …: ${label}`) を補間する —— 同じ関数の 20 行上が「JSON.parse の文は保存値の断片を
+ * 引用するので定数に固定する」と書いているのに、その下の枝には天井が無かった。値そのものは
+ * 「どのメンバーか」を言うのに要るので定数にはせず、天井だけ掛ける。`MAX_RESPONSE_BODY_IN_MESSAGE`
+ * と同じ 200: 理由の 1 行に載る値は 1 つで、画面の注記 (`unreadableTeamRadarNote`) の中に置かれる。
+ */
+export const MAX_STORED_STATE_REASON_CHARS = 200;
+
+/**
  * 例外を「利用者へ見せてよい 1 行」にする。**伏字を通した後**を返す。
  *
  * main 側 (`src/main/main.ts`) にだけ置いてあったが、ブラウザ版の
