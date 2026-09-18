@@ -43,8 +43,8 @@ vi.mock('../../data/chartSelfCheck', async (orig) => {
 
 const { ChartsPage } = await import('../ChartsPage');
 
-const GREEN = 'var(--ok, #27ae60)';
-const RED = 'var(--ng, #eb5757)';
+const GREEN = 'var(--success)';
+const RED = 'var(--danger)';
 
 /** 画面を刷る。`datasets` を省けば既定 (同梱の見本) が使われる。 */
 function screen(datasets?: readonly (typeof CHART_DATASETS)[number][]): string {

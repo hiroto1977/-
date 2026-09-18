@@ -106,7 +106,7 @@ export function FreeePage() {
             marginBottom: 16,
             padding: '8px 12px',
             borderRadius: 6,
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
             color: 'var(--warning)',
           }}

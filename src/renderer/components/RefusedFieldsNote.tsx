@@ -22,7 +22,7 @@ export function RefusedFieldsNote(
     <div
       role="alert"
       data-refused-fields
-      style={{ fontSize: 12, lineHeight: 1.6, color: '#f87171', marginBottom: 12 }}
+      style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--danger)', marginBottom: 12 }}
     >
       {note}
     </div>

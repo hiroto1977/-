@@ -299,7 +299,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     return (
       <div style={overlayStyle}>
         <div style={cardStyle}>
-          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: '#ef4444' }}>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: 'var(--danger)' }}>
             ⚠ 完全初期化 — 最初からやり直す
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7, marginBottom: 14 }}>
@@ -311,10 +311,10 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             し、初回設定に戻します。
             <br />
             消去されるのは接続用の鍵だけで、アプリ本体・知識ベース・外部サービス側のデータには影響しません。
-            この操作は<strong style={{ color: '#ef4444' }}>取り消せません</strong>。
+            この操作は<strong style={{ color: 'var(--danger)' }}>取り消せません</strong>。
           </div>
 
-          {err && <div style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{err}</div>}
+          {err && <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 12 }}>{err}</div>}
 
           <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--text)', marginBottom: 14, lineHeight: 1.5 }}>
             <input
@@ -335,7 +335,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             style={{
               ...buttonStyle,
               width: '100%',
-              background: resetAcknowledged && !busy ? '#ef4444' : 'var(--bg-elev)',
+              background: resetAcknowledged && !busy ? 'var(--danger)' : 'var(--bg-elev)',
               cursor: resetAcknowledged && !busy ? 'pointer' : 'not-allowed',
               opacity: resetAcknowledged && !busy ? 1 : 0.5,
             }}
@@ -411,7 +411,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             />
           </label>
 
-          {err && <div style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{err}</div>}
+          {err && <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 12 }}>{err}</div>}
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button
@@ -456,7 +456,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             style={{
               padding: '10px 12px',
               background: 'rgba(251, 191, 36, 0.12)',
-              border: '1px solid #fbbf24',
+              border: '1px solid var(--warning)',
               borderRadius: 6,
               fontSize: 11,
               color: 'var(--warning)',
@@ -505,10 +505,10 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
                 fontSize: 11,
                 color:
                   feedback.kind === 'error'
-                    ? '#ef4444'
+                    ? 'var(--danger)'
                     : feedback.kind === 'warn'
-                      ? '#fbbf24'
-                      : '#22c55e',
+                      ? 'var(--warning)'
+                      : 'var(--success)',
                 marginBottom: 12,
                 lineHeight: 1.5,
               }}
@@ -595,7 +595,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
           </label>
         )}
 
-        {err && <div style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{err}</div>}
+        {err && <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 12 }}>{err}</div>}
 
         <button
           type="button"
@@ -640,7 +640,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#ef4444',
+                color: 'var(--danger)',
                 cursor: 'pointer',
                 fontSize: 11,
                 textDecoration: 'underline',
@@ -659,7 +659,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
           {initial && (
             <>
               <br />
-              <strong style={{ color: '#22c55e' }}>✓ 復旧可能:</strong>{' '}
+              <strong style={{ color: 'var(--success)' }}>✓ 復旧可能:</strong>{' '}
               次画面で表示される 24 語のリカバリーキーを保管しておけば、パスワードを忘れても復元できます。
             </>
           )}

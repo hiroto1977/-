@@ -73,10 +73,10 @@ const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(n) : '∞');
 const pctOrDash = (n: number | null) => (n === null ? '—' : pct(n));
 
 const COLORS = {
-  revenue: '#4ade80',
-  bep: '#f87171',
+  revenue: 'var(--success)',
+  bep: 'var(--danger)',
   op: '#60a5fa',
-  variable: '#fbbf24',
+  variable: 'var(--warning)',
   fixed: '#a78bfa',
   axis: '#475569',
 };
@@ -511,15 +511,15 @@ function ActualsPanel() {
           列: period, unit, revenue, cogs, advertising, sga, depreciation
         </span>
       </div>
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
       {duplicateNote !== null && (
-        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {duplicateNote}
         </p>
       )}
       {unreadableNote !== null && (
-        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {unreadableNote}
         </p>
       )}
@@ -634,10 +634,10 @@ function BudgetPanel() {
         {field('depreciation', '減価償却費')}
         <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>予算を追加</button>
       </div>
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
       {variance === null && budgets.length > 0 && actuals.length > 0 && (
-        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           予算と実績で期 (YYYY-MM) が 1 つも重なっていないため、達成率を算定できません。実績と同じ月の予算を入力してください。
         </p>
       )}
@@ -654,19 +654,19 @@ function BudgetPanel() {
                 補間側の型は `string | null` のまま —— 裸の `${}` なら文字列 "null" を刷る形である
                 (純粋関数なので今は同じ値が返るが、型で守られてはいない)。 */}
             {unmatchedNote !== null && (
-              <span style={{ color: '#f59e0b' }}>{`。${unmatchedNote}です`}</span>
+              <span style={{ color: 'var(--warning)' }}>{`。${unmatchedNote}です`}</span>
             )}
           </p>
         </>
       )}
 
       {duplicateNote !== null && (
-        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {duplicateNote}
         </p>
       )}
       {unreadableNote !== null && (
-        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {unreadableNote}
         </p>
       )}
@@ -783,7 +783,7 @@ function BalanceSheetPanel() {
         {field('netIncome', '当期純利益')}
         <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>BS を保存</button>
       </div>
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
       {metrics && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
@@ -831,16 +831,16 @@ function BalanceSheetPanel() {
         </div>
       )}
       {metrics?.insolvent && (
-        <div style={{ color: '#ef4444', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
+        <div style={{ color: 'var(--danger)', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
       )}
       {insights?.substantiveInsolvencyRisk === true && (
-        <div role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
+        <div role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
           ⚠ 純資産は正ですが、ネットデット（有利子負債 − 現預金）が純資産を上回っています（実質債務超過の懸念）。
           借入の返済計画と資金繰りを確認してください。
         </div>
       )}
       {choiceNote !== null && (
-        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {choiceNote}
         </p>
       )}
@@ -905,7 +905,7 @@ export function KpiPage() {
       {isMock && (
         <div style={{
           background: 'rgba(251, 191, 36, 0.12)',
-          border: '1px solid #d97706',
+          border: '1px solid var(--warning)',
           color: 'var(--warning)',
           padding: '8px 12px',
           borderRadius: 6,

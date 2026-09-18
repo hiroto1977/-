@@ -366,9 +366,9 @@ export function ChatbotWidget() {
               <div
                 role="alertdialog"
                 aria-label="実行確認"
-                style={{ fontSize: 12, border: '1px solid var(--danger, #ef4444)', borderRadius: 8, padding: 8 }}
+                style={{ fontSize: 12, border: '1px solid var(--danger)', borderRadius: 8, padding: 8 }}
               >
-                <strong style={{ color: 'var(--danger, #ef4444)' }}>確認:</strong> 書き込み操作を実行しますか？
+                <strong style={{ color: 'var(--danger)' }}>確認:</strong> 書き込み操作を実行しますか？
                 <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
                   <button
                     type="button"

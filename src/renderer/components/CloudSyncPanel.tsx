@@ -107,7 +107,7 @@ export function CloudSyncPanel() {
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>クラウド自動バックアップ</div>
-            <span style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>未接続</span>
+            <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--warning-bg)', color: '#000', borderRadius: 4 }}>未接続</span>
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
             <strong>この機能はまだクラウドに接続されていません。</strong>
@@ -143,8 +143,8 @@ export function CloudSyncPanel() {
         <div>状態: <strong style={{ color: 'var(--text)' }}>{PHASE_LABEL[state.phase]}</strong></div>
         <div>最終同期: {fmtTime(lastSync)}</div>
         {state.phase !== 'idle' && <div>進捗: {pct}%</div>}
-        {state.integrityOk === true && <div style={{ color: '#22c55e' }}>整合性: OK ✓</div>}
-        {state.integrityOk === false && <div style={{ color: '#ef4444' }}>整合性: 不一致 (再同期が必要)</div>}
+        {state.integrityOk === true && <div style={{ color: 'var(--success)' }}>整合性: OK ✓</div>}
+        {state.integrityOk === false && <div style={{ color: 'var(--danger)' }}>整合性: 不一致 (再同期が必要)</div>}
         {state.retriable && <div style={{ color: 'var(--warning)' }}>一部失敗あり — 再試行できます</div>}
         {enabled && due && <div style={{ color: 'var(--accent)' }}>次回同期のタイミングです</div>}
       </div>

@@ -60,8 +60,8 @@ function OrderToSalesForm() {
         <input value={total} placeholder="金額 (¥12,000)" onChange={(e) => setTotal(e.target.value)} style={{ ...inputStyle, width: 130 }} />
         <button type="button" onClick={() => void submit.run(onRecord)} disabled={submit.busy}>売上集計に記録</button>
       </div>
-      {msg && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>{msg}</div>}
-      {err && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{err}</div>}
+      {msg && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{err}</div>}
     </div>
   );
 }

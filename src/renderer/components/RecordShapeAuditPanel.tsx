@@ -75,8 +75,8 @@ export function RecordShapeAuditPanel() {
           {result.skippedSealed > 0 && <div>封緘のままの {result.skippedSealed} 件は判定していません。</div>}
         </div>
       )}
-      {err && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{err}</div>}
-      {msg && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{err}</div>}
+      {msg && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{msg}</div>}
     </div>
   );
 }

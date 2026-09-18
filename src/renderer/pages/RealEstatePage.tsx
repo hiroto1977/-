@@ -822,7 +822,7 @@ export function RealEstatePage() {
             </button>
           )}
         </div>
-        {propError && <div style={{ color: '#f87171', fontSize: 12 }}>{propError}</div>}
+        {propError && <div style={{ color: 'var(--danger)', fontSize: 12 }}>{propError}</div>}
       </Section>
 
       <Section title="保有物件" count={properties.length}>
@@ -860,7 +860,7 @@ export function RealEstatePage() {
                 <td style={tdNum}>{pct1OrDash(y.grossYieldPct)}</td>
                 <td style={tdNum}>{pct1OrDash(y.netYieldPct)}</td>
                 <td style={tdStyle}>
-                  <span style={{ color: p.occupied ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
+                  <span style={{ color: p.occupied ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
                     {p.occupied ? '● 入居中' : '○ 空室'}
                   </span>
                 </td>
@@ -870,7 +870,7 @@ export function RealEstatePage() {
                       <button type="button" onClick={() => onStartEditProperty(p.rowId, p)} style={{ fontSize: 11 }}>
                         編集
                       </button>
-                      <button type="button" onClick={() => removeProperty(p.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                      <button type="button" onClick={() => removeProperty(p.rowId)} style={{ fontSize: 11, color: 'var(--danger)' }}>
                         削除
                       </button>
                     </span>
@@ -893,7 +893,7 @@ export function RealEstatePage() {
             <tr><td style={tdStyle}>ローン返済</td><td style={tdNum}>−{jpy(portfolio.mortgagePayment)}</td></tr>
             <tr style={{ background: 'var(--bg-elev)' }}>
               <td style={{ ...tdStyle, fontWeight: 700 }}>純キャッシュフロー</td>
-              <td style={{ ...tdNum, fontWeight: 700, color: portfolio.netCashflow >= 0 ? '#22c55e' : '#ef4444' }}>{jpy(portfolio.netCashflow)}</td>
+              <td style={{ ...tdNum, fontWeight: 700, color: portfolio.netCashflow >= 0 ? 'var(--success)' : 'var(--danger)' }}>{jpy(portfolio.netCashflow)}</td>
             </tr>
           </tbody>
         </table>
@@ -1111,7 +1111,7 @@ export function RealEstatePage() {
               <Stat label="日影規制を避けられる上限" value={`${zoning.shadow.maxHeightToAvoidM.toLocaleString()} m`} />
             </div>
             {!zoning.slope.ok && (
-              <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 10 }}>
                 道路斜線を超えています — 後退を {zoning.slope.minSetbackM} m 以上取るか、高さを {zoning.slope.limitM} m 以下に抑える必要があります。
               </div>
             )}
@@ -1122,7 +1122,7 @@ export function RealEstatePage() {
               </div>
             )}
             {zoning.shadow.regulated === true && (
-              <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 10 }}>
                 日影規制の対象です — 最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下にすると対象から外れます (現在 {Math.abs(zoning.shadow.headroomM)} m 超過)。
               </div>
             )}
@@ -1198,8 +1198,8 @@ export function RealEstatePage() {
                   marginBottom: 10,
                   padding: '8px 10px',
                   borderRadius: 6,
-                  border: '1px solid var(--warn, #d97706)',
-                  color: 'var(--warn, #d97706)',
+                  border: '1px solid var(--warn)',
+                  color: 'var(--warn)',
                 }}
               >
                 ⚠ この延べ床には <b>{zoning.schematic.floorsNeeded.toLocaleString()} 階</b>{' '}
@@ -1228,7 +1228,7 @@ export function RealEstatePage() {
         ) : (
           <>
             {zoning.factory.overCap && (
-              <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 10 }}>
                 希望の作業場面積が法定上限を超えています — この用途地域では建てられないため、面積の縮小か準工業地域などの立地見直しが必要です。
               </div>
             )}
@@ -1319,7 +1319,7 @@ export function RealEstatePage() {
           </div>
         )}
         {water.balance.recoveryPct !== null && water.balance.recoveryPct >= 100 && (
-          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>
             回収率 100% は物質収支上成立しません — 排出をゼロにすると塩類が無限に蓄積します。ブリード (濃縮廃液の排出) が塩類の唯一の出口です。
           </div>
         )}
@@ -1350,7 +1350,7 @@ export function RealEstatePage() {
           <Stat label="連続止水日数" value={water.ro.idleDays === null ? '—' : `${water.ro.idleDays} 日`} />
         </div>
         {water.ro.capacityAdequate === false && (
-          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>
             導入予定の RO 機では目標時間内にバッチを処理しきれません。能力の大きい機種か処理時間の延長が必要です。
           </div>
         )}
@@ -1426,7 +1426,7 @@ export function RealEstatePage() {
           </div>
         )}
         {wcRefusedBy.effluentDischarge.length === 0 && water.effluent.wpclNpApplicable === true && (
-          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>
             排出水量が {effStd.npApplicabilityM3PerDay} m³/日以上のため、水質汚濁防止法の窒素・りん規制の対象になりえます。届出と処理設備が必要です。
           </div>
         )}

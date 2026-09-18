@@ -151,7 +151,7 @@ export function TemplatesPage() {
 
       <div
         style={{
-          border: '1px solid #fbbf24',
+          border: '1px solid var(--warning)',
           background: 'rgba(251, 191, 36, 0.08)',
           color: 'var(--warning)',
           padding: '10px 14px',
@@ -189,7 +189,7 @@ export function TemplatesPage() {
                   padding: 10,
                   background: sel ? 'var(--accent)' : 'var(--bg-elev)',
                   border: '1px solid var(--border)',
-                  borderRadius: 6,
+                  borderRadius: 14,
                   color: 'var(--text)',
                   cursor: 'pointer',
                   fontSize: 12,

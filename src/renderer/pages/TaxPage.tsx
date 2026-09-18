@@ -944,7 +944,7 @@ export function TaxPage() {
           margin: '0 0 12px',
           padding: 10,
           background: 'rgba(251, 191, 36, 0.08)',
-          border: '1px solid #fbbf24',
+          border: '1px solid var(--warning)',
           borderRadius: 6,
           fontSize: 11,
           color: 'var(--warning)',
@@ -1293,7 +1293,7 @@ export function TaxPage() {
         <div
           style={{
             border: '1px solid var(--border)',
-            borderLeft: `3px solid ${furusato.eligibility.eligible ? 'var(--success, #3ec98a)' : 'var(--text-mute)'}`,
+            borderLeft: `3px solid ${furusato.eligibility.eligible ? 'var(--success)' : 'var(--text-mute)'}`,
             borderRadius: 6,
             padding: '8px 12px',
             marginBottom: 12,
@@ -1344,7 +1344,7 @@ export function TaxPage() {
         <div
           style={{
             border: '1px solid var(--border)',
-            borderLeft: '3px solid var(--success, #3ec98a)',
+            borderLeft: '3px solid var(--success)',
             borderRadius: 6,
             padding: '8px 12px',
             marginBottom: 12,
@@ -1360,7 +1360,7 @@ export function TaxPage() {
             <div
               key={m.method}
               style={{
-                border: m.method === dividendComparison.best ? '2px solid var(--success, #3ec98a)' : '1px solid var(--border)',
+                border: m.method === dividendComparison.best ? '2px solid var(--success)' : '1px solid var(--border)',
                 borderRadius: 8,
                 padding: 12,
               }}
@@ -1491,7 +1491,7 @@ export function TaxPage() {
         <div
           style={{
             border: '1px solid var(--border)',
-            borderLeft: '3px solid var(--success, #3ec98a)',
+            borderLeft: '3px solid var(--success)',
             borderRadius: 6,
             padding: '8px 12px',
             marginBottom: 12,
@@ -1563,7 +1563,7 @@ export function TaxPage() {
         <div
           style={{
             border: '1px solid var(--border)',
-            borderLeft: `3px solid ${inputCredit.compare.fullyDeductible ? 'var(--success, #3ec98a)' : '#e8a33d'}`,
+            borderLeft: `3px solid ${inputCredit.compare.fullyDeductible ? 'var(--success)' : '#e8a33d'}`,
             borderRadius: 6,
             padding: '8px 12px',
             marginBottom: 12,
@@ -1691,7 +1691,7 @@ export function TaxPage() {
           data-kind={schedule.settlement.kind}
           style={{
             border: '1px solid var(--border)',
-            borderLeft: `3px solid ${schedule.settlement.kind === 'refund' ? '#3ec98a' : '#fbbf24'}`,
+            borderLeft: `3px solid ${schedule.settlement.kind === 'refund' ? '#3ec98a' : 'var(--warning)'}`,
             borderRadius: 6,
             padding: '10px 12px',
             marginBottom: 12,
@@ -1824,7 +1824,7 @@ export function TaxPage() {
             margin: '0 0 12px',
             padding: 10,
             background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             borderRadius: 6,
             fontSize: 11,
             color: 'var(--warning)',
@@ -2037,7 +2037,7 @@ export function TaxPage() {
           role="note"
           style={{
             margin: '0 0 12px', padding: 10, background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: 'var(--warning)', lineHeight: 1.6,
+            border: '1px solid var(--warning)', borderRadius: 6, fontSize: 11, color: 'var(--warning)', lineHeight: 1.6,
           }}
         >
           ⚠️ <strong>概算であり通関実務の助言ではありません。</strong>実際の税額は品目の HS コード・原産地・適用する協定
@@ -2241,7 +2241,7 @@ export function TaxPage() {
                 <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
                   {s.summary}
                   {s.until !== undefined && (
-                    <div style={{ marginTop: 4, color: s.until < today ? '#f87171' : 'var(--text-mute)' }}>
+                    <div style={{ marginTop: 4, color: s.until < today ? 'var(--danger)' : 'var(--text-mute)' }}>
                       {s.until < today
                         ? `適用期限 ${s.until} を過ぎています — 延長の有無を国税庁で確認してください (このアプリの期限は未更新)`
                         : `適用期限 ${s.until} (この日までの取得等が対象。期限つきの措置は延長・見直しがあるため、実行前に最新の改正を確認)`}
@@ -2273,7 +2273,7 @@ export function TaxPage() {
             margin: '0 0 12px',
             padding: 10,
             background: 'rgba(239, 68, 68, 0.08)',
-            border: '1px solid #ef4444',
+            border: '1px solid var(--danger)',
             borderRadius: 6,
             fontSize: 11,
             color: '#fca5a5',
@@ -2312,7 +2312,7 @@ export function TaxPage() {
           style={{
             padding: 10,
             background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             borderRadius: 6,
             fontSize: 11,
             color: 'var(--warning)',
@@ -2382,7 +2382,7 @@ export function TaxPage() {
                 padding: '8px 12px',
                 background: 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 14,
                 color: 'var(--text)',
                 cursor: 'pointer',
                 fontSize: 13,

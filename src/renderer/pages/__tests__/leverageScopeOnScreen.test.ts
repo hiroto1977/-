@@ -119,7 +119,7 @@ describe('不動産 レバレッジ試算 — 算定不能から判定を作ら�
     expect(statValue('実質利回り')).toMatch(/^\d+\.\d+%$/);
     expect(statValue('CCR (自己資金回収率)')).toMatch(/^-?\d+\.\d+%$/);
     expect(statValue('イールドギャップ')).toMatch(/^\d+\.\d+%$/);
-    expect(statColor('イールドギャップ')).toBe('rgb(34, 197, 94)'); // 緑 = 正レバレッジ
+    expect(statColor('イールドギャップ')).toBe('var(--success)'); // 緑 = 正レバレッジ
     expect(scopeBand()).toBe('');
   });
 

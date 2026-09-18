@@ -94,8 +94,8 @@ interface StocksSnapshot {
 }
 
 const ACTION_COLORS: Record<Signal['action'], string> = {
-  buy: '#22c55e',
-  sell: '#ef4444',
+  buy: 'var(--success)',
+  sell: 'var(--danger)',
   hold: '#94a3b8',
 };
 
@@ -130,7 +130,7 @@ function Sparkline({ candles, width = 160, height = 40 }: { candles: Candle[]; w
     .join(' ');
   const last = closes[closes.length - 1]!;
   const first = closes[0]!;
-  const color = last >= first ? '#22c55e' : '#ef4444';
+  const color = last >= first ? 'var(--success)' : 'var(--danger)';
   return (
     <svg width={width} height={height} aria-hidden="true">
       <polyline fill="none" stroke={color} strokeWidth={1.5} points={points} />
@@ -402,7 +402,7 @@ export function StocksPage() {
       {data.isMock && (
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
             color: 'var(--warning)',
             padding: '10px 14px',
@@ -524,9 +524,9 @@ export function StocksPage() {
         {registerError && (
           <div
             style={{
-              border: '1px solid #ef4444',
+              border: '1px solid var(--danger)',
               background: 'rgba(239, 68, 68, 0.08)',
-              color: '#ef4444',
+              color: 'var(--danger)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,
@@ -539,9 +539,9 @@ export function StocksPage() {
         {registerMessage && (
           <div
             style={{
-              border: '1px solid #22c55e',
+              border: '1px solid var(--success)',
               background: 'rgba(34, 197, 94, 0.08)',
-              color: '#22c55e',
+              color: 'var(--success)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,
@@ -595,7 +595,7 @@ export function StocksPage() {
                 <div
                   style={{
                     fontSize: 11,
-                    color: w.changePct >= 0 ? '#22c55e' : '#ef4444',
+                    color: w.changePct >= 0 ? 'var(--success)' : 'var(--danger)',
                   }}
                 >
                   {pctLabel(w.changePct)}
@@ -651,7 +651,7 @@ export function StocksPage() {
               >
                 <span style={{ color: 'var(--text-mute)' }}>{t.date}</span>
                 <span style={{ fontWeight: 600 }}>{t.ticker}</span>
-                <span style={{ color: t.action === 'buy' ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
+                <span style={{ color: t.action === 'buy' ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
                   {ACTION_LABELS[t.action]}
                 </span>
                 <span>{t.shares} 株</span>
@@ -666,7 +666,7 @@ export function StocksPage() {
       <Section title="AI アドバイザー" count={advisorResult?.recommendations.length ?? 0}>
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
             color: 'var(--warning)',
             padding: '8px 12px',
@@ -765,9 +765,9 @@ export function StocksPage() {
             data-advisor-error
             role="alert"
             style={{
-              border: '1px solid #ef4444',
+              border: '1px solid var(--danger)',
               background: 'rgba(239, 68, 68, 0.08)',
-              color: '#ef4444',
+              color: 'var(--danger)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,
@@ -903,9 +903,9 @@ export function StocksPage() {
         {compareError && (
           <div
             style={{
-              border: '1px solid #ef4444',
+              border: '1px solid var(--danger)',
               background: 'rgba(239, 68, 68, 0.08)',
-              color: '#ef4444',
+              color: 'var(--danger)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,
@@ -923,7 +923,7 @@ export function StocksPage() {
                 <>
                   {' '}
                   · 最良:{' '}
-                  <strong style={{ color: '#22c55e' }}>{compareResult.bestByReturn}</strong>
+                  <strong style={{ color: 'var(--success)' }}>{compareResult.bestByReturn}</strong>
                 </>
               )}
             </div>
@@ -952,7 +952,7 @@ export function StocksPage() {
                             marginLeft: 6,
                             padding: '1px 6px',
                             borderRadius: 3,
-                            background: '#22c55e',
+                            background: 'var(--success)',
                             color: '#fff',
                             fontSize: 10,
                           }}
@@ -965,7 +965,7 @@ export function StocksPage() {
                       最終資産 {yen.format(r.finalEquity)}
                     </span>
                     <span
-                      style={{ color: r.totalReturnPct >= 0 ? '#22c55e' : '#ef4444' }}
+                      style={{ color: r.totalReturnPct >= 0 ? 'var(--success)' : 'var(--danger)' }}
                     >
                       {r.totalReturnPct >= 0 ? '+' : ''}
                       {r.totalReturnPct.toFixed(2)}%
@@ -1020,9 +1020,9 @@ export function StocksPage() {
         {exportError && (
           <div
             style={{
-              border: '1px solid #ef4444',
+              border: '1px solid var(--danger)',
               background: 'rgba(239, 68, 68, 0.08)',
-              color: '#ef4444',
+              color: 'var(--danger)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,

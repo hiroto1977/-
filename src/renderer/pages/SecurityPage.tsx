@@ -22,22 +22,22 @@ import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock'
 import type { ActionData } from '../../shared/actionData';
 
 const GRADE_COLOR: Record<string, string> = {
-  A: '#22c55e',
+  A: 'var(--success)',
   B: '#3ec98a',
-  C: '#f59e0b',
-  D: '#ef4444',
+  C: 'var(--warning)',
+  D: 'var(--danger)',
 };
 const SEVERITY_COLOR: Record<string, string> = {
-  critical: '#ef4444',
-  high: '#f59e0b',
+  critical: 'var(--danger)',
+  high: 'var(--warning)',
   medium: '#94a3b8',
 };
 
 const VERDICT_COLOR: Record<string, string> = {
-  weak: '#ef4444',
-  fair: '#f59e0b',
+  weak: 'var(--danger)',
+  fair: 'var(--warning)',
   good: '#3ec98a',
-  strong: '#22c55e',
+  strong: 'var(--success)',
 };
 const VERDICT_LABEL: Record<string, string> = {
   weak: '弱い',
@@ -476,7 +476,7 @@ export function SecurityPage() {
                 <td style={tdLeft}>{c.label}</td>
                 <td style={{ ...tdLeft, textAlign: 'center', color: SEVERITY_COLOR[c.severity] }}>{c.severity}</td>
                 <td style={{ ...tdLeft, textAlign: 'right' }}>{c.weight}</td>
-                <td style={{ ...tdLeft, textAlign: 'center', color: c.ok ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
+                <td style={{ ...tdLeft, textAlign: 'center', color: c.ok ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
                   {c.ok ? '✅' : '⚠'}
                 </td>
               </tr>
@@ -561,7 +561,7 @@ export function SecurityPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 10 }}>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>総合検知率</div>
-            <div style={{ ...statValueStyle, color: range.overallDetectionRate >= 0.95 ? '#22c55e' : '#f59e0b' }}>
+            <div style={{ ...statValueStyle, color: range.overallDetectionRate >= 0.95 ? 'var(--success)' : 'var(--warning)' }}>
               {(range.overallDetectionRate * 100).toFixed(1)}%
             </div>
           </div>
@@ -577,8 +577,8 @@ export function SecurityPage() {
                   range.benignChecked === 0
                     ? 'var(--text-mute)'
                     : range.falsePositives === 0
-                      ? '#22c55e'
-                      : '#ef4444',
+                      ? 'var(--success)'
+                      : 'var(--danger)',
               }}
             >
               {range.benignChecked === 0 ? '未測定' : `${range.falsePositives} 件`}
@@ -604,10 +604,10 @@ export function SecurityPage() {
               <tr key={r.evasion}>
                 <td style={tdLeft}>{evasionLabel(r.evasion)}</td>
                 <td style={tdRight}>{r.detected} / {r.attacks}</td>
-                <td style={{ ...tdRight, color: r.detectionRate >= 1 ? '#22c55e' : '#f59e0b', fontWeight: 600 }}>
+                <td style={{ ...tdRight, color: r.detectionRate >= 1 ? 'var(--success)' : 'var(--warning)', fontWeight: 600 }}>
                   {(r.detectionRate * 100).toFixed(0)}%
                 </td>
-                <td style={{ ...tdRight, color: r.falsePositives === 0 ? 'var(--text-mute)' : '#ef4444' }}>
+                <td style={{ ...tdRight, color: r.falsePositives === 0 ? 'var(--text-mute)' : 'var(--danger)' }}>
                   {r.falsePositives}
                 </td>
               </tr>
@@ -620,11 +620,11 @@ export function SecurityPage() {
             改善候補 (取りこぼし) — {range.findings.length} 件
           </div>
           {range.findings.length === 0 ? (
-            <div style={{ fontSize: 13, color: '#22c55e' }}>✅ 全ラウンドで取りこぼしなし。</div>
+            <div style={{ fontSize: 13, color: 'var(--success)' }}>✅ 全ラウンドで取りこぼしなし。</div>
           ) : (
             <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
               {range.findings.map((f, i) => (
-                <li key={`${f.id}-${f.evasion}-${i}`} style={{ color: '#f59e0b' }}>
+                <li key={`${f.id}-${f.evasion}-${i}`} style={{ color: 'var(--warning)' }}>
                   <code>{f.payload}</code> が「{evasionLabel(f.evasion)}」で回避（{categoryLabel(f.category)}）
                 </li>
               ))}

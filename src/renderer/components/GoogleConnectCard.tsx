@@ -149,7 +149,7 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
               lineHeight: 1.6,
               padding: '6px 10px',
               borderRadius: 4,
-              border: '1px solid #fbbf24',
+              border: '1px solid var(--warning)',
               background: 'rgba(251, 191, 36, 0.08)',
               color: 'var(--warning)',
             }}

@@ -163,9 +163,11 @@ describe('投資信託 — 年初来リターンを入力していない銘柄�
     expect(cell.textContent?.trim()).toBe('—');
     expect(cell.textContent).not.toContain('0.0%');
     expect(cell.getAttribute('title')).toContain('未入力');
-    expect(cell.style.color).not.toBe('rgb(34, 197, 94)'); // #22c55e (緑) を付けない
+    expect(cell.style.color).not.toBe('var(--success)'); // 緑のトークンを付けない
     // 見本の行は今までどおり符号つきで刷る (対照)
     expect(ytdCell('ひふみプラス').textContent?.trim()).toBe('+8.7%');
+    // 標本: 見本の正の行には緑のトークンが付く (「付けない」の主張が空でないことを同じ検査で見る)
+    expect(ytdCell('ひふみプラス').style.color).toBe('var(--success)');
   });
 
   it('★ リスク (標準偏差) は入力された 4 銘柄だけで取り、注記が「未入力 1 銘柄は除外」と言う', async () => {

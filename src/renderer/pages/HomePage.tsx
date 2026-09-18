@@ -219,7 +219,7 @@ function ActionCard({ action }: { action: QuickAction }) {
 
       {status.kind === 'done' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ fontSize: 11, color: '#22c55e' }}>
+          <div style={{ fontSize: 11, color: 'var(--success)' }}>
             ✓ 出来上がりました!
           </div>
           <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
@@ -229,7 +229,7 @@ function ActionCard({ action }: { action: QuickAction }) {
             <div
               data-export-warning
               role="alert"
-              style={{ fontSize: 10, color: '#f59e0b', lineHeight: 1.6 }}
+              style={{ fontSize: 10, color: 'var(--warning)', lineHeight: 1.6 }}
             >
               ⚠ {status.warning}
             </div>
@@ -295,7 +295,7 @@ function ActionCard({ action }: { action: QuickAction }) {
       )}
 
       {status.kind === 'error' && (
-        <div style={{ fontSize: 11, color: '#ef4444' }}>エラー: {status.message}</div>
+        <div style={{ fontSize: 11, color: 'var(--danger)' }}>エラー: {status.message}</div>
       )}
     </div>
   );

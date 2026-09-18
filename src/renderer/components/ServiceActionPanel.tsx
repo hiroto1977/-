@@ -205,8 +205,8 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
       </div>
 
       {/* 記録の結果 —— 提案の結果とは別の枠なので、提案を押しても消えない (パス 192)。 */}
-      {feedback && <div data-record-feedback style={{ ...feedbackStyle, color: '#22c55e' }}>{feedback}</div>}
-      {error && <div data-record-error role="alert" style={{ ...feedbackStyle, color: '#ef4444' }}>{error}</div>}
+      {feedback && <div data-record-feedback style={{ ...feedbackStyle, color: 'var(--success)' }}>{feedback}</div>}
+      {error && <div data-record-error role="alert" style={{ ...feedbackStyle, color: 'var(--danger)' }}>{error}</div>}
 
       {/* advise */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, marginBottom: 8 }}>
@@ -220,7 +220,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
 
       {/* 提案の失敗は提案の側に出す —— 記録の確認を消さない (パス 192)。 */}
       {adviseFailed && (
-        <div data-advise-error role="alert" style={{ ...feedbackStyle, color: '#ef4444' }}>
+        <div data-advise-error role="alert" style={{ ...feedbackStyle, color: 'var(--danger)' }}>
           {adviseFailed}
         </div>
       )}
@@ -237,7 +237,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
               </li>
             ))}
           </ul>
-          <div style={{ marginTop: 10, padding: 8, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 4, fontSize: 11, color: 'var(--warning)', lineHeight: 1.5 }}>
+          <div style={{ marginTop: 10, padding: 8, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid var(--warning)', borderRadius: 4, fontSize: 11, color: 'var(--warning)', lineHeight: 1.5 }}>
             ⚠ {advice.disclaimer}
           </div>
         </div>

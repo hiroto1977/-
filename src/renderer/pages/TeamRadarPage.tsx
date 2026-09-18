@@ -473,14 +473,14 @@ export function TeamRadarPage() {
       />
       {/* 保存先が読めなかったときだけ出る (パス 120)。見本に化けたことを黙らない。 */}
       {data.storedNote !== null && (
-        <div role="status" style={{ padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: 'var(--warning)', lineHeight: 1.5 }}>
+        <div role="status" style={{ padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid var(--warning)', borderRadius: 6, fontSize: 12, color: 'var(--warning)', lineHeight: 1.5 }}>
           ⚠ {data.storedNote}
         </div>
       )}
 
       <div
         style={{
-          border: '1px solid #fbbf24',
+          border: '1px solid var(--warning)',
           background: 'rgba(251, 191, 36, 0.08)',
           color: 'var(--warning)',
           padding: '10px 14px',
@@ -512,7 +512,7 @@ export function TeamRadarPage() {
           <div
             role="alert"
             data-draft-unreadable
-            style={{ fontSize: 12, color: 'var(--warning)', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+            style={{ fontSize: 12, color: 'var(--warning)', border: '1px solid var(--warning)', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
           >
             ⚠ {draftUnreadable}下に出ているのは同梱の見本で、この画面の編集はこの端末には残りません。
           </div>
@@ -521,7 +521,7 @@ export function TeamRadarPage() {
           <div
         role="alert"
         data-save-error
-        style={{ fontSize: 12, color: '#f87171', border: '1px solid #f87171', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+        style={{ fontSize: 12, color: 'var(--danger)', border: '1px solid var(--danger)', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
           >
         ⚠ {saveError}
           </div>
@@ -653,7 +653,7 @@ export function TeamRadarPage() {
               <div
                 data-skill-radar-omitted
                 role="alert"
-                style={{ fontSize: 11, color: '#f59e0b', marginTop: 8, lineHeight: 1.6 }}
+                style={{ fontSize: 11, color: 'var(--warning)', marginTop: 8, lineHeight: 1.6 }}
               >
                 ⚠ {skillPlanNote}
               </div>
@@ -736,7 +736,7 @@ export function TeamRadarPage() {
             </div>
 
             {emotionRadar.needsSupport.length > 0 ? (
-              <div style={{ marginTop: 12, border: '1px solid var(--warning, #d97706)', borderRadius: 8, padding: 10 }}>
+              <div style={{ marginTop: 12, border: '1px solid var(--warning)', borderRadius: 8, padding: 10 }}>
                 <strong style={{ fontSize: 13 }}>🫂 声かけをおすすめするメンバー</strong>
                 <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
                   {emotionRadar.needsSupport.map((s) => (
@@ -759,11 +759,11 @@ export function TeamRadarPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {teamCare.reports.map((r) => {
                 const badge: Record<CarePriority, { label: string; color: string }> = {
-                  high: { label: 'ケア優先', color: '#ef4444' },
-                  medium: { label: '見守り', color: '#d97706' },
+                  high: { label: 'ケア優先', color: 'var(--danger)' },
+                  medium: { label: '見守り', color: 'var(--warning)' },
                   // **記録が無い人を緑の「安定」に混ぜない。** 灰色で「記録待ち」。
                   unknown: { label: '記録待ち', color: 'var(--text-muted)' },
-                  none: { label: '安定', color: '#22c55e' },
+                  none: { label: '安定', color: 'var(--success)' },
                 };
                 const b = badge[r.priority];
                 return (
@@ -793,7 +793,7 @@ export function TeamRadarPage() {
                     {/* **未評価の軸が在るなら述べる** —— 平均の分母が軸数と違う理由は
                         数字からは読めない (文面は `data/memberCare.ts` が 1 か所で持つ)。 */}
                     {unevaluatedAxesNote(r.skill) !== null && (
-                      <div data-unevaluated-axes role="alert" style={{ fontSize: 11, color: '#f59e0b', marginTop: 4, lineHeight: 1.6 }}>
+                      <div data-unevaluated-axes role="alert" style={{ fontSize: 11, color: 'var(--warning)', marginTop: 4, lineHeight: 1.6 }}>
                         ⚠ {unevaluatedAxesNote(r.skill)}
                       </div>
                     )}
@@ -849,7 +849,7 @@ export function TeamRadarPage() {
                         background: 'transparent',
                         border: '1px solid var(--border)',
                         borderRadius: 999,
-                        color: '#ef4444',
+                        color: 'var(--danger)',
                         cursor: 'pointer',
                         fontSize: 11,
                       }}

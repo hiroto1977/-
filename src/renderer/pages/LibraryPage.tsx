@@ -279,7 +279,7 @@ export function LibraryPage() {
           `npm run lint:storage` が持つ。
         */}
         <br />
-        <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+        <strong style={{ color: 'var(--warn)' }}>
           ⚠️ ここのファイルは暗号化されません
         </strong>{' '}
         —— 暗号化されるのは API キー・トークンだけです (設定画面の「保存時の保護状態」)。
@@ -355,7 +355,7 @@ export function LibraryPage() {
                   background: 'transparent',
                   border: '1px solid var(--border)',
                   borderRadius: 999,
-                  color: '#ef4444',
+                  color: 'var(--danger)',
                   cursor: 'pointer',
                   fontSize: 11,
                 }}
@@ -411,7 +411,7 @@ export function LibraryPage() {
                       type="button"
                       data-library-delete={it.id}
                       onClick={() => remove(it.id)}
-                      style={{ ...actionBtn(), color: '#ef4444' }}
+                      style={{ ...actionBtn(), color: 'var(--danger)' }}
                     >
                       削除
                     </button>

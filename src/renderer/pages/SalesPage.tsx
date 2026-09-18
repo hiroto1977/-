@@ -216,10 +216,10 @@ export function SalesPage() {
             列: date, channel, amount, orders, note
           </span>
         </div>
-        {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
-        {notice && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>{notice}</div>}
+        {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
+        {notice && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{notice}</div>}
         {duplicateNote !== null && (
-          <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
             {duplicateNote}
           </p>
         )}

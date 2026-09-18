@@ -29,9 +29,9 @@ const inputStyle: React.CSSProperties = {
 const EMOTION_LABELS: Record<string, { ja: string; color: string }> = {
   joy: { ja: '喜び', color: '#facc15' },
   sadness: { ja: '悲しみ', color: '#6ea8ff' },
-  anger: { ja: '怒り', color: '#f87171' },
+  anger: { ja: '怒り', color: 'var(--danger)' },
   fear: { ja: '不安', color: '#a78bfa' },
-  surprise: { ja: '驚き', color: '#4ade80' },
+  surprise: { ja: '驚き', color: 'var(--success)' },
   disgust: { ja: '嫌悪', color: 'var(--text-muted)' },
   mixed: { ja: '混合', color: 'var(--text-muted)' },
 };
@@ -168,7 +168,7 @@ function CounselingCard({ moods, analyses, draftNote, draftScore, profile }: {
         className="card"
         style={{
           gap: 10,
-          borderColor: response.isCrisis ? 'var(--danger, #ef4444)' : 'var(--border)',
+          borderColor: response.isCrisis ? 'var(--danger)' : 'var(--border)',
           background: response.isCrisis ? 'rgba(239,68,68,0.06)' : undefined,
         }}
       >
@@ -178,8 +178,8 @@ function CounselingCard({ moods, analyses, draftNote, draftScore, profile }: {
         </p>
 
         {response.isCrisis ? (
-          <div style={{ border: '1px solid var(--danger, #ef4444)', borderRadius: 8, padding: 12 }}>
-            <strong style={{ color: 'var(--danger, #ef4444)' }}>相談できる窓口（日本）</strong>
+          <div style={{ border: '1px solid var(--danger)', borderRadius: 8, padding: 12 }}>
+            <strong style={{ color: 'var(--danger)' }}>相談できる窓口（日本）</strong>
             <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 13, lineHeight: 1.8 }}>
               {response.resources.map((r) => (
                 <li key={r.label}>

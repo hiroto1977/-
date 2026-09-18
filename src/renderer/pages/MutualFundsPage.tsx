@@ -611,7 +611,7 @@ export function MutualFundsPage() {
             </button>
           )}
         </div>
-        {fundError && <div style={{ color: '#f87171', fontSize: 12 }}>{fundError}</div>}
+        {fundError && <div style={{ color: 'var(--danger)', fontSize: 12 }}>{fundError}</div>}
       </Section>
 
       <Section title="保有銘柄" count={holdings.length}>
@@ -663,8 +663,8 @@ export function MutualFundsPage() {
                     color: h.ytdReturnPct === null
                       ? 'var(--text-mute)'
                       : isImpossibleReturnPct(h.ytdReturnPct)
-                        ? '#f59e0b'
-                        : h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444',
+                        ? 'var(--warning)'
+                        : h.ytdReturnPct >= 0 ? 'var(--success)' : 'var(--danger)',
                   }}
                   title={h.ytdReturnPct === null
                     ? '年初来リターンは未入力です (0% ではありません)'
@@ -682,7 +682,7 @@ export function MutualFundsPage() {
                       <button type="button" onClick={() => onStartEditHolding(h.rowId, h)} style={{ fontSize: 11 }}>
                         編集
                       </button>
-                      <button type="button" onClick={() => removeHolding(h.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                      <button type="button" onClick={() => removeHolding(h.rowId)} style={{ fontSize: 11, color: 'var(--danger)' }}>
                         削除
                       </button>
                     </span>

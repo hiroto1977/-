@@ -161,7 +161,7 @@ describe('Linux モニター — ロードアベレージを提供しない OS',
     expect(rows['直近 1 分']).toEqual(['2.00', '50%']);
     expect(rows['直近 5 分']?.[0]).toBe('1.50');
     expect(rows['直近 15 分']?.[0]).toBe('1.00');
-    expect(perCoreColor()).toBe('rgb(34, 197, 94)'); // 緑 = 余裕あり
+    expect(perCoreColor()).toBe('var(--success)'); // 緑 = 余裕あり
     expect(statValue('ロード (1分)')?.value).toBe('2.00');
     expect(scopeBand()).toBe('');
   });
@@ -179,7 +179,7 @@ describe('Linux モニター — ロードアベレージを提供しない OS',
 
   it('★ 算定不能に「健全」の色を付けない', async () => {
     await mountWith(payload('win32', [0, 0, 0]));
-    // 直す前は緑 (rgb(34, 197, 94))。色を付けない = 判定しない。
+    // 直す前は緑 (var(--success))。色を付けない = 判定しない。
     expect(perCoreColor()).toBe('');
     expect(statValue('ロード (1分)')?.color).toBe('');
   });

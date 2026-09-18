@@ -5,9 +5,9 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 
 const VERDICT_COLOR: Record<string, string> = {
-  要修正: '#ef4444',
-  'マージ可': '#fbbf24',
-  'マージ推奨': '#22c55e',
+  要修正: 'var(--danger)',
+  'マージ可': 'var(--warning)',
+  'マージ推奨': 'var(--success)',
 };
 
 export function QualityPage() {
@@ -57,7 +57,7 @@ export function QualityPage() {
               <tr key={v.name}>
                 <td style={tdStyle}>{v.name}</td>
                 <td style={tdStyle}>
-                  <span style={{ color: v.status === 'pass' ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
+                  <span style={{ color: v.status === 'pass' ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
                     {v.status === 'pass' ? '● pass' : '× fail'}
                   </span>
                 </td>

@@ -39,6 +39,8 @@
   --warning: #c4741a;
   --warn: var(--warning);
   --danger: #e8496f;
+  /* 黄の札の地色 (黒い字を載せる)。文字色の --warning とは別に持つ。 */
+  --warning-bg: #ffe3ad;
   /* 影と角 */
   --shadow: 0 12px 32px rgba(238, 111, 168, 0.12), 0 2px 8px rgba(120, 90, 150, 0.06);
   --shadow-sm: 0 4px 14px rgba(238, 111, 168, 0.10);

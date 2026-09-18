@@ -10,8 +10,8 @@ const DIFFICULTY_LABEL: Record<string, string> = {
   manual: '🛠 手動',
 };
 const DIFFICULTY_COLOR: Record<string, string> = {
-  safe: '#22c55e',
-  caution: '#fbbf24',
+  safe: 'var(--success)',
+  caution: 'var(--warning)',
   manual: '#94a3b8',
 };
 const CATEGORY_LABEL: Record<string, string> = {
@@ -73,7 +73,7 @@ export function StoragePage() {
                 <td style={tdNum}>{gb(d.totalGb)}</td>
                 <td style={tdNum}>{gb(d.usedGb)}</td>
                 <td style={tdNum}>{gb(d.freeGb)}</td>
-                <td style={{ ...tdNum, color: d.usagePct >= 90 ? '#ef4444' : d.usagePct >= 75 ? '#fbbf24' : '#22c55e', fontWeight: 600 }}>
+                <td style={{ ...tdNum, color: d.usagePct >= 90 ? 'var(--danger)' : d.usagePct >= 75 ? 'var(--warning)' : 'var(--success)', fontWeight: 600 }}>
                   {d.usagePct.toFixed(1)}%
                 </td>
               </tr>
@@ -165,7 +165,7 @@ export function StoragePage() {
             <li key={i}>{r}</li>
           ))}
         </ul>
-        <div style={{ marginTop: 12, padding: 10, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 11, color: 'var(--warning)', lineHeight: 1.5 }}>
+        <div style={{ marginTop: 12, padding: 10, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid var(--warning)', borderRadius: 6, fontSize: 11, color: 'var(--warning)', lineHeight: 1.5 }}>
           📚 参考: NEC LAVIE FAQ「ストレージを最適化して PC のパフォーマンスを向上させる」
           (https://faq.nec-lavie.jp/fa/qa/web/knowledge21797.html)。
           Phase 6 で `os` / `fs` API 経由の実 OS 統計取得に切替予定です。

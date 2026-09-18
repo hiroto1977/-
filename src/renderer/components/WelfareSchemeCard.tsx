@@ -178,8 +178,8 @@ export function WelfareSchemeCard() {
             margin: '0 0 12px',
             padding: '8px 10px',
             borderRadius: 6,
-            border: '1px solid var(--warn, #d97706)',
-            color: 'var(--warn, #d97706)',
+            border: '1px solid var(--warn)',
+            color: 'var(--warn)',
           }}
         >
           ⚠ 目標の手元残りが本試算モデルの範囲を超えています（額面の上限に張り付きました）。
@@ -206,8 +206,8 @@ export function WelfareSchemeCard() {
             margin: '0 0 12px',
             padding: '8px 10px',
             borderRadius: 6,
-            border: '1px solid var(--danger, #ef4444)',
-            color: 'var(--danger, #ef4444)',
+            border: '1px solid var(--danger)',
+            color: 'var(--danger)',
           }}
         >
           ⛔ 食事補助が<strong>非課税の要件を満たしていません</strong>。
@@ -355,7 +355,7 @@ export function WelfareSchemeCard() {
         </p>
       )}
       {deductions.blue > 0 && (
-        <p style={{ fontSize: 11, color: 'var(--warning, #d97706)', margin: '0 0 12px', lineHeight: 1.6 }}>
+        <p style={{ fontSize: 11, color: 'var(--warning)', margin: '0 0 12px', lineHeight: 1.6 }}>
           ⚠ 青色申告特別控除は本来「事業所得・不動産所得」に対する控除で、給与所得には適用できません。
           給与のほかに青色申告する事業所得（副業・個人事業）があり、その所得から控除できる場合の概算として
           課税所得から差し引いています。給与のみの方は「なし」を選んでください。
@@ -524,7 +524,7 @@ function BenefitCatalogue(): JSX.Element {
                     <div
                       style={{
                         fontSize: 11,
-                        color: 'var(--warning, #d97706)',
+                        color: 'var(--warning)',
                         marginTop: 6,
                         lineHeight: 1.6,
                       }}
@@ -547,7 +547,7 @@ function BenefitCatalogue(): JSX.Element {
                         <span key={src.url}>
                           {i > 0 && ' / '}
                           {safeUrl === null ? (
-                            <span style={{ color: 'var(--warning, #d97706)' }}>
+                            <span style={{ color: 'var(--warning)' }}>
                               ⚠ {src.label}（URL が http(s) ではないため開けません）
                             </span>
                           ) : (

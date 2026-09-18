@@ -129,7 +129,7 @@ describe('投資信託 — 「—」のタイルに色を付けない', () => {
     const cagr = tiles().find((t) => t.label === '年率換算 (CAGR)');
     expect(cagr, 'CAGR タイルが見つからない').toBeDefined();
     expect(cagr!.value).toContain(UNDETERMINED);
-    // 直す前はここが rgb(34, 197, 94) = 緑だった。
+    // 直す前はここが var(--success) = 緑だった。
     expect(cagr!.color).toBe('');
   });
 
@@ -188,7 +188,7 @@ describe('不動産投資 — 「—」のタイルに色を付けない', () =>
     const irr = tiles().find((t) => t.label === 'IRR (年率概算)');
     expect(irr, 'IRR タイルが見つからない').toBeDefined();
     expect(irr!.value).toContain(UNDETERMINED);
-    // 直す前はここが rgb(34, 197, 94) = 緑だった。
+    // 直す前はここが var(--success) = 緑だった。
     expect(irr!.color).toBe('');
   });
 
@@ -198,8 +198,8 @@ describe('不動産投資 — 「—」のタイルに色を付けない', () =>
     const npv = all.find((t) => t.label.startsWith('NPV'));
     const cf = all.find((t) => t.label === '返済後CF (年)');
     expect(npv!.value).toContain('-');
-    expect(npv!.color).toBe('rgb(239, 68, 68)');
-    expect(cf!.color).toBe('rgb(239, 68, 68)');
+    expect(npv!.color).toBe('var(--danger)');
+    expect(cf!.color).toBe('var(--danger)');
   });
 
   it('★ 「—」を刷っているタイルは 1 枚残らず無色 (標本が空でないことも確かめる)', async () => {

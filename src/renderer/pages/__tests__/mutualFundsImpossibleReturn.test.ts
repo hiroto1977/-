@@ -188,7 +188,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
     expect(cell.textContent?.trim()).toBe('⛔ -250.0%');
     expect(cell.getAttribute('title')).toContain('在り得ない値');
     expect(cell.getAttribute('title')).toContain('元本を超えて失うことはありません');
-    expect(cell.style.color).not.toBe('rgb(239, 68, 68)'); // #ef4444 (実在の損失の赤) は付けない
+    expect(cell.style.color).not.toBe('var(--danger)'); // 意味色のトークン (実在の損失の赤) は付けない
     // 対照: 見本の行は今までどおり符号つき・⛔ なし
     const demo = ytdCell('ひふみプラス');
     expect(demo.textContent?.trim()).toBe('+8.7%');
@@ -235,7 +235,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
     const cell = ytdCell('全損ファンド');
     expect(cell.textContent?.trim()).toBe('-100.0%');
     expect(cell.textContent).not.toContain('⛔');
-    expect(cell.style.color).toBe('rgb(239, 68, 68)');
+    expect(cell.style.color).toBe('var(--danger)');
     expect(stat('リスク (銘柄YTDの標準偏差)')).toContain(`${calcStdDev([...demoYtd(), -100])}%`);
     expect(text()).not.toContain('在り得ない値');
     await clickButton('改善提案');

@@ -103,7 +103,7 @@ function Card({ j }: { j: ProgramJudgement }): ReactElement {
         </div>
       )}
       {safeSourceUrl === null ? (
-        <div style={{ marginTop: 6, fontSize: 11, color: 'var(--warning, #d97706)' }}>
+        <div style={{ marginTop: 6, fontSize: 11, color: 'var(--warning)' }}>
           ⚠ 出典を開けません（{j.authority}）— 台帳の URL が http(s) ではありません
         </div>
       ) : (

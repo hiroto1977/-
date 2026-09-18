@@ -1213,7 +1213,7 @@ function TriagePanel({ doc }: { doc: string }) {
       <strong style={{ fontSize: 13 }}>⚖️ 事業仕分け — 自社でやるか、士業に頼むか</strong>
 
       <div style={{ marginTop: 8 }}>
-        <span style={{ fontWeight: 700, color: 'var(--ok, #2e7d32)' }}>
+        <span style={{ fontWeight: 700, color: 'var(--success)' }}>
           自社分: 作成から提出まで自分でできます{t.ownUse === 'ok-with-care' ? '（手順に注意）' : ''}
         </span>
         <div style={{ color: 'var(--text-mute)' }}>{t.ownNote}</div>
@@ -1447,7 +1447,7 @@ function OverviewImportPanel({
         <button type="button" onClick={() => navigateTo('overview')}>経営サマリーを開く →</button>
       </div>
       {applied !== null && (
-        <div role="status" style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>
+        <div role="status" style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>
           {applied} 件を取り込みました。差込フォームと右の書面に反映されています。
         </div>
       )}
@@ -1974,7 +1974,7 @@ export function DocstudioPage() {
               <div
                 role="alert"
                 data-store-unreadable
-                style={{ fontSize: 12, color: 'var(--warning)', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+                style={{ fontSize: 12, color: 'var(--warning)', border: '1px solid var(--warning)', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
               >
                 ⚠ {readError}この画面の入力は、この端末には残りません。
               </div>
@@ -1983,7 +1983,7 @@ export function DocstudioPage() {
               <div
                 role="alert"
                 data-save-error
-                style={{ fontSize: 12, color: '#f87171', border: '1px solid #f87171', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+                style={{ fontSize: 12, color: 'var(--danger)', border: '1px solid var(--danger)', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
               >
                 ⚠ {saveError}
               </div>

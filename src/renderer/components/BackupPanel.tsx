@@ -168,7 +168,7 @@ export function BackupPanel() {
               padding: '8px 10px',
               fontSize: 12,
               lineHeight: 1.7,
-              border: '1px solid var(--warn, #fbbf24)',
+              border: '1px solid var(--warn)',
               borderRadius: 6,
               color: 'var(--text)',
             }}
@@ -205,8 +205,8 @@ export function BackupPanel() {
           既存データを置換（チェック無しはマージ = id ごとに新しい方を残す）
         </label>
       </div>
-      {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
-      {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
+      {msg && <div style={{ fontSize: 11, color: 'var(--success)', marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ fontSize: 11, color: 'var(--danger)', marginTop: 6 }}>{err}</div>}
     </div>
   );
 }

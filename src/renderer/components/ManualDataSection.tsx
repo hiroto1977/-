@@ -285,7 +285,7 @@ function BusinessUnits({
         <button type="button" onClick={() => fireReported(submit.run(add))} disabled={submit.busy} style={{ fontSize: 12 }}>
           事業を追加
         </button>
-        {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
+        {error !== undefined && <span style={{ fontSize: 11, color: 'var(--danger)' }}>{error}</span>}
       </div>
     </div>
   );
@@ -407,7 +407,7 @@ function ManualMetrics({
         <button type="button" onClick={() => fireReported(submit.run(add))} disabled={submit.busy} style={{ fontSize: 12 }}>
           数値を追加
         </button>
-        {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
+        {error !== undefined && <span style={{ fontSize: 11, color: 'var(--danger)' }}>{error}</span>}
       </div>
     </div>
   );
@@ -471,8 +471,8 @@ function Overrides({
                     data-overridden
                     style={{
                       fontSize: 11,
-                      color: '#22c55e',
-                      border: '1px solid #22c55e',
+                      color: 'var(--success)',
+                      border: '1px solid var(--success)',
                       borderRadius: 4,
                       padding: '1px 6px',
                     }}
@@ -498,7 +498,7 @@ function Overrides({
                   </button>
                 )}
                 {(errors[f.path] ?? '') !== '' && (
-                  <span style={{ fontSize: 11, color: '#ef4444' }}>{errors[f.path]}</span>
+                  <span style={{ fontSize: 11, color: 'var(--danger)' }}>{errors[f.path]}</span>
                 )}
               </div>
             );

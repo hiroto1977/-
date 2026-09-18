@@ -289,7 +289,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{slot.label}</div>
             {configured === true && (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: '#fff', borderRadius: 4 }}>
                 設定済み
               </span>
             )}
@@ -302,7 +302,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
             {unreadable !== null && (
               <span
                 data-credential-unreadable={slot.vaultKey}
-                style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}
+                style={{ fontSize: 10, padding: '2px 6px', background: 'var(--warning-bg)', color: '#000', borderRadius: 4 }}
               >
                 確認できません
               </span>
@@ -382,7 +382,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
                 {configured ? '変更' : '設定する'}
               </button>
               {configured && (
-                <button type="button" onClick={clear} disabled={busy} style={{ ...btn(), color: '#ef4444' }}>
+                <button type="button" onClick={clear} disabled={busy} style={{ ...btn(), color: 'var(--danger)' }}>
                   削除
                 </button>
               )}
@@ -401,7 +401,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
         </div>
       )}
       {err && (
-        <div data-credential-error={slot.vaultKey} role="alert" style={{ fontSize: 11, color: '#ef4444' }}>
+        <div data-credential-error={slot.vaultKey} role="alert" style={{ fontSize: 11, color: 'var(--danger)' }}>
           {err}
         </div>
       )}
@@ -597,8 +597,8 @@ export function VaultControls() {
           <button type="button" onClick={changePassword} disabled={busy} style={btn('accent', busy)}>
             {busy ? '変更中…' : 'パスワードを変更'}
           </button>
-          {msg && <div style={{ fontSize: 11, color: '#22c55e' }}>{msg}</div>}
-          {err && <div style={{ fontSize: 11, color: '#ef4444' }}>{err}</div>}
+          {msg && <div style={{ fontSize: 11, color: 'var(--success)' }}>{msg}</div>}
+          {err && <div style={{ fontSize: 11, color: 'var(--danger)' }}>{err}</div>}
         </div>
       </div>
 
@@ -619,12 +619,12 @@ export function VaultControls() {
       <div
         style={{
           background: 'var(--bg-elev)',
-          border: '1px solid #ef4444',
+          border: '1px solid var(--danger)',
           borderRadius: 8,
           padding: 14,
         }}
       >
-        <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: '#ef4444' }}>
+        <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: 'var(--danger)' }}>
           ⚠ すべてのデータを削除 (ハードリセット)
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 10, lineHeight: 1.5 }}>
@@ -644,8 +644,8 @@ export function VaultControls() {
             }}
             style={{
               ...btn(),
-              color: '#ef4444',
-              border: '1px solid #ef4444',
+              color: 'var(--danger)',
+              border: '1px solid var(--danger)',
             }}
           >
             すべてのデータを削除…
@@ -657,10 +657,10 @@ export function VaultControls() {
               style={{
                 padding: '10px 12px',
                 background: 'rgba(239, 68, 68, 0.10)',
-                border: '1px solid #ef4444',
+                border: '1px solid var(--danger)',
                 borderRadius: 6,
                 fontSize: 11,
-                color: '#ef4444',
+                color: 'var(--danger)',
                 lineHeight: 1.5,
               }}
             >
@@ -688,9 +688,9 @@ export function VaultControls() {
                 disabled={wipeConfirmText !== WIPE_CONFIRM_PHRASE}
                 style={{
                   ...btn(),
-                  background: wipeConfirmText === WIPE_CONFIRM_PHRASE ? '#ef4444' : 'var(--bg)',
+                  background: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 'var(--danger)' : 'var(--bg)',
                   color: '#fff',
-                  border: '1px solid #ef4444',
+                  border: '1px solid var(--danger)',
                   opacity: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 1 : 0.5,
                   cursor: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 'pointer' : 'not-allowed',
                 }}
@@ -709,7 +709,7 @@ export function VaultControls() {
                 キャンセル
               </button>
             </div>
-            {wipeErr && <div style={{ fontSize: 11, color: '#ef4444' }}>{wipeErr}</div>}
+            {wipeErr && <div style={{ fontSize: 11, color: 'var(--danger)' }}>{wipeErr}</div>}
           </div>
         )}
         {wipeStage === 'wiping' && (
@@ -778,7 +778,7 @@ export function LicenseSection() {
 
       {internalUnlocked ? (
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, color: '#22c55e' }}>
+          <span style={{ fontSize: 13, color: 'var(--success)' }}>
             ✅ 社内ライセンス有効 — 全機能が無償で利用できます（現在のプラン: {getPlan(plan).label}）。
           </span>
           {/*
@@ -821,7 +821,7 @@ export function LicenseSection() {
         </div>
       )}
 
-      {msg && <div style={{ fontSize: 12, color: msg.ok ? '#22c55e' : '#f87171' }}>{msg.text}</div>}
+      {msg && <div style={{ fontSize: 12, color: msg.ok ? 'var(--success)' : 'var(--danger)' }}>{msg.text}</div>}
 
       <details style={{ fontSize: 12, color: 'var(--text-mute)' }}>
         <summary style={{ cursor: 'pointer' }}>オーナー向け — 招待コードを発行・配布する</summary>
@@ -1184,7 +1184,7 @@ function EvictionNotice() {
   return (
     <>
       <br />
-      <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+      <strong style={{ color: 'var(--warn)' }}>
         ⚠️ この保管庫は「消えうる」領域にあります
       </strong>
       <br />
@@ -1239,10 +1239,10 @@ export function StorageProtectionNotice() {
   }, []);
 
   if (failed) {
-    return <p style={{ fontSize: 13, color: 'var(--mute)' }}>保護状態を取得できませんでした。</p>;
+    return <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>保護状態を取得できませんでした。</p>;
   }
   if (!state) {
-    return <p style={{ fontSize: 13, color: 'var(--mute)' }}>確認中…</p>;
+    return <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>確認中…</p>;
   }
 
   if (state.encrypted && state.plainCount === 0) {
@@ -1256,8 +1256,8 @@ export function StorageProtectionNotice() {
           実際には proxy の共有秘密 (`business-hub-preferences`)・ライブラリの
           書類・localStorage の各ストアは平文のまま (2026-08-23 実測)。
         */}
-        <strong style={{ color: 'var(--ok, #4ade80)' }}>✅ トークンは暗号化されています</strong>
-        <p style={{ margin: '4px 0 0', color: 'var(--mute)' }}>
+        <strong style={{ color: 'var(--success)' }}>✅ トークンは暗号化されています</strong>
+        <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
           {/*
             **何が鍵を握っているかを取り違えない。** 2026-08-23 まで、ここは
             `encrypted` が true なら無条件に「OS のキーチェーン由来の鍵で」と
@@ -1315,10 +1315,10 @@ export function StorageProtectionNotice() {
 
   return (
     <div style={{ fontSize: 13, lineHeight: 1.7 }}>
-      <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+      <strong style={{ color: 'var(--warn)' }}>
         ⚠️ このデバイスではトークンを暗号化できません
       </strong>
-      <p style={{ margin: '4px 0 0', color: 'var(--mute)' }}>
+      <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
         OS のキーチェーン (safeStorage) が利用できないため、トークンは
         <strong> base64 の難読化のみ</strong>で保存されています（暗号化ではありません）。
         このユーザーでファイルを読める人・バックアップ・root は復元できます。
@@ -1498,9 +1498,9 @@ export function ProxySection() {
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>BYO プロキシ</div>
             {unreadable !== null ? (
-              <span data-proxy-unreadable style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>確認できません</span>
+              <span data-proxy-unreadable style={{ fontSize: 10, padding: '2px 6px', background: 'var(--warning-bg)', color: '#000', borderRadius: 4 }}>確認できません</span>
             ) : cfg ? (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>設定済み</span>
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: '#fff', borderRadius: 4 }}>設定済み</span>
             ) : (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
             )}
@@ -1532,7 +1532,7 @@ export function ProxySection() {
               判定できない以上、**言うことが唯一の対策**になる。
             */}
             <br />
-            <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+            <strong style={{ color: 'var(--warn)' }}>
               入れてよいのは、あなたが管理している Worker だけです。
             </strong>
             {' '}
@@ -1599,7 +1599,7 @@ export function ProxySection() {
               {cfg.sharedSecret ? (
                 ' · 共有秘密あり'
               ) : (
-                <span style={{ color: '#f59e0b' }}> · 共有秘密なし (誰でも中継できます)</span>
+                <span style={{ color: 'var(--warning)' }}> · 共有秘密なし (誰でも中継できます)</span>
               )}
             </div>
           )}
@@ -1607,7 +1607,7 @@ export function ProxySection() {
             {cfg ? '変更' : '設定する'}
           </button>
           {cfg && (
-            <button type="button" onClick={disconnect} style={{ ...btn(), color: '#ef4444' }}>
+            <button type="button" onClick={disconnect} style={{ ...btn(), color: 'var(--danger)' }}>
               削除
             </button>
           )}
@@ -1626,14 +1626,14 @@ export function ProxySection() {
       {rejected !== null && (
         <div
           data-proxy-rejected
-          style={{ fontSize: 11, color: '#f59e0b', marginTop: 6, lineHeight: 1.6, border: '1px solid #f59e0b', borderRadius: 6, padding: '6px 8px' }}
+          style={{ fontSize: 11, color: 'var(--warning)', marginTop: 6, lineHeight: 1.6, border: '1px solid var(--warning)', borderRadius: 6, padding: '6px 8px' }}
         >
           保存されているプロキシ設定は、今の規則では使えないので<strong>無効にしています</strong>。
           {' '}{describeProxyEndpointFailure(rejected)} 設定し直してください。
         </div>
       )}
-      {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
-      {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
+      {msg && <div style={{ fontSize: 11, color: 'var(--success)', marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ fontSize: 11, color: 'var(--danger)', marginTop: 6 }}>{err}</div>}
     </div>
   );
 }
@@ -1731,16 +1731,16 @@ export function FsaSection() {
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>非対応ブラウザ</span>
             )}
             {supported && unreadable === null && hasHandle && permission === 'granted' && (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>有効</span>
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: '#fff', borderRadius: 4 }}>有効</span>
             )}
             {supported && unreadable === null && hasHandle && permission !== 'granted' && (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>権限再要求</span>
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--warning-bg)', color: '#000', borderRadius: 4 }}>権限再要求</span>
             )}
             {supported && unreadable === null && !hasHandle && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
             )}
             {supported && unreadable !== null && (
-              <span data-fsa-unreadable style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>確認できません</span>
+              <span data-fsa-unreadable style={{ fontSize: 10, padding: '2px 6px', background: 'var(--warning-bg)', color: '#000', borderRadius: 4 }}>確認できません</span>
             )}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
@@ -1762,7 +1762,7 @@ export function FsaSection() {
             {hasHandle ? 'フォルダを変更' : 'フォルダを設定する'}
           </button>
           {hasHandle && (
-            <button type="button" onClick={disconnect} style={{ ...btn(), color: '#ef4444' }}>
+            <button type="button" onClick={disconnect} style={{ ...btn(), color: 'var(--danger)' }}>
               連携解除
             </button>
           )}
@@ -1778,8 +1778,8 @@ export function FsaSection() {
           ⚠ {unreadable}
         </div>
       )}
-      {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
-      {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
+      {msg && <div style={{ fontSize: 11, color: 'var(--success)', marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ fontSize: 11, color: 'var(--danger)', marginTop: 6 }}>{err}</div>}
     </div>
   );
 }
@@ -2097,8 +2097,8 @@ export function GoogleOAuthSection() {
         </div>
       )}
 
-      {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
-      {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
+      {msg && <div style={{ fontSize: 11, color: 'var(--success)', marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ fontSize: 11, color: 'var(--danger)', marginTop: 6 }}>{err}</div>}
     </div>
   );
 }

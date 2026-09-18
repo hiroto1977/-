@@ -22,7 +22,7 @@ const loadOrDash = (n: number | null): string => (n === null ? '—' : n.toFixed
 const pctOrDash = (n: number | null): string => (n === null ? '—' : `${n}%`);
 /** コアあたり負荷の色。**算定不能には色を付けない** (判定しないため)。 */
 const perCoreColor = (n: number | null): string | undefined =>
-  n === null ? undefined : n >= 100 ? '#ef4444' : n >= 70 ? '#fbbf24' : '#22c55e';
+  n === null ? undefined : n >= 100 ? 'var(--danger)' : n >= 70 ? 'var(--warning)' : 'var(--success)';
 
 export function LinuxPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
@@ -166,7 +166,7 @@ export function LinuxPage() {
                 padding: '4px 10px',
                 borderRadius: 999,
                 border: '1px solid var(--border)',
-                color: c.ok ? '#22c55e' : '#fbbf24',
+                color: c.ok ? 'var(--success)' : 'var(--warning)',
               }}
             >
               {c.ok ? '✅' : '⚠'} {c.label}
@@ -184,7 +184,7 @@ export function LinuxPage() {
 
       <Section title="状況メモ" count={notes.length}>
         {notes.length === 0 ? (
-          <div style={{ fontSize: 13, color: '#22c55e' }}>✅ 特記事項はありません。システムは健全です。</div>
+          <div style={{ fontSize: 13, color: 'var(--success)' }}>✅ 特記事項はありません。システムは健全です。</div>
         ) : (
           <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.8 }}>
             {notes.map((n, i) => (

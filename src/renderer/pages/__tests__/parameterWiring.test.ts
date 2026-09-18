@@ -240,8 +240,8 @@ describe('給与 — 通勤手当の非課税限度', () => {
 
 // --- 不動産 (DSCR) ------------------------------------------------------------
 
-const GREEN = 'rgb(34, 197, 94)';
-const RED = 'rgb(239, 68, 68)';
+const GREEN = 'var(--success)';
+const RED = 'var(--danger)';
 
 describe('不動産 — DSCR の判定しきい値', () => {
   it('対照: 既定 (1.0 / 1.2) では初期値の DSCR 0.88 は危険水域 (赤)', async () => {

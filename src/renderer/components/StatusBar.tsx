@@ -237,7 +237,7 @@ export function StatusBar({
         </span>
       ) : null}
       {staleNote ? (
-        <span data-stale-note style={{ fontSize: 11, color: 'var(--warn, #fbbf24)' }}>
+        <span data-stale-note style={{ fontSize: 11, color: 'var(--warn)' }}>
           {staleNote}
         </span>
       ) : null}

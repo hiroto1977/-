@@ -225,7 +225,7 @@ export function ConnectorsPage() {
                         {runningId === c.id ? '実行中…' : '▶ 実行'}
                       </button>
                       {res ? (
-                        <div style={{ fontSize: 10, marginTop: 4, color: res.ok ? 'var(--success)' : 'var(--danger, #ef4444)' }}>
+                        <div style={{ fontSize: 10, marginTop: 4, color: res.ok ? 'var(--success)' : 'var(--danger)' }}>
                           {res.ok ? '✅' : '⛔'} {res.message}
                         </div>
                       ) : null}
@@ -299,7 +299,7 @@ export function ConnectorsPage() {
                   <tr key={s.connectorId}>
                     <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{s.connectorId}</td>
                     <td style={{ ...tdStyle, fontSize: 12 }}>{requiredPermissionFor(s.capability) ?? UNKNOWN_CAPABILITY_PERMISSION}</td>
-                    <td style={{ ...tdStyle, color: s.permitted ? 'var(--success)' : '#ef4444' }}>
+                    <td style={{ ...tdStyle, color: s.permitted ? 'var(--success)' : 'var(--danger)' }}>
                       {s.permitted ? '✅ 実行可' : '⛔ 権限不足'}
                     </td>
                   </tr>

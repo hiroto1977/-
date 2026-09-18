@@ -95,8 +95,8 @@ export function ExportActions({
           role="alert"
           style={{
             fontSize: 12,
-            color: '#f59e0b',
-            border: '1px solid #f59e0b',
+            color: 'var(--warning)',
+            border: '1px solid var(--warning)',
             borderRadius: 6,
             padding: '6px 8px',
             lineHeight: 1.6,

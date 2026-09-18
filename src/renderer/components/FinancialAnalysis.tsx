@@ -210,7 +210,7 @@ export function BarChart({ rows, unit }: { rows: { label: string; value: number 
         // 負は基準線から左へ、正は基準線から右へ。null は描かない。
         const left = v == null ? 0 : ((Math.min(v, 0) - lo) / span) * 100;
         const width = v == null ? 0 : (Math.abs(v) / span) * 100;
-        const color = v != null && v < 0 ? '#ef4444' : PALETTE[i % PALETTE.length];
+        const color = v != null && v < 0 ? 'var(--danger)' : PALETTE[i % PALETTE.length];
         return (
           <div key={r.label} data-bar-row={r.label} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1.2fr) 2fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
             <span title={v == null ? `${r.label}（算定不能）` : r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
@@ -1085,7 +1085,7 @@ export function FinancialAnalysis({
         **どの事業でも同じ値が出るのだから、事業を見比べる材料にはならない。**
         黙って並べると「3 軸が揃っている」ことを実測の一致として読まれるので明記する。
       */}
-      <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 4 }}>
+      <div style={{ fontSize: 11, color: 'var(--warning)', marginTop: 4 }}>
         ※ 運転資本の 3 指標（売上債権回転率・棚卸資産回転率・CCC）は、概算の置き方
         （売上債権 = 月商 ×1.5／棚卸 = 月次原価 ×1／仕入債務 = 月次原価 ×1.2）から
         <strong>どの事業でも同じ値（8 倍・12 倍・39.5 日）になります</strong>。

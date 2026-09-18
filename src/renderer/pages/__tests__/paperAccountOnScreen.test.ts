@@ -115,7 +115,7 @@ const marker = (name: string): string | null => {
   return el === null ? null : (el.textContent ?? '').replace(/\s+/g, ' ');
 };
 
-/** jsdom は `#22c55e` を `rgb(34, 197, 94)` に正規化するので、比べる前に両方通す。 */
+/** jsdom は `#22c55e` を `var(--success)` に正規化するので、比べる前に両方通す。 */
 function cssColor(value: string): string {
   const d = document.createElement('div');
   d.style.color = value;

@@ -33,8 +33,8 @@ const { stripCommentsAndStrings } = require_(
   path.resolve(__dirname, '..', '..', '..', '..', 'scripts', 'zero-fold-census.cjs'),
 ) as { stripCommentsAndStrings: (src: string) => string };
 
-const GREEN = '#22c55e';
-const RED = '#ef4444';
+const GREEN = 'var(--success)';
+const RED = 'var(--danger)';
 const RENDERER_ROOT = path.resolve(__dirname, '..', '..');
 
 describe('positiveIfKnown — 算定不能は色を付けない', () => {

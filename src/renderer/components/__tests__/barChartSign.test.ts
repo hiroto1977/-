@@ -28,7 +28,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { BarChart } from '../FinancialAnalysis';
 
-const RED = '#ef4444';
+const RED = 'var(--danger)';
 
 /**
  * `BarChart` は `FinancialAnalysis` の内部部品なので、実物の画面を通して測る。
@@ -68,7 +68,7 @@ describe('事業間比較の棒 — 符号が幾何に出ている', () => {
   it('★ 走査が実物の目印に当たっている (空振りしていない)', () => {
     // **不在を主張する前に、読み取りがその文面へ当たることを標本で確かめる。**
     const sample =
-      '<div data-bar-fill="X" style="position:absolute;left:40%;width:10%;background:#ef4444"></div>';
+      '<div data-bar-fill="X" style="position:absolute;left:40%;width:10%;background:var(--danger)"></div>';
     const bars = barsOf(sample);
     expect(bars).toHaveLength(1);
     expect(bars[0]).toMatchObject({ label: 'X', left: 40, width: 10, red: true });

@@ -129,7 +129,7 @@ function ParameterRow({
             {PARAMETER_KIND_LABEL[def.kind]}
           </span>
           {overridden && (
-            <span style={{ fontSize: 10, color: '#f59e0b', marginLeft: 6 }}>上書き中</span>
+            <span style={{ fontSize: 10, color: 'var(--warning)', marginLeft: 6 }}>上書き中</span>
           )}
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
@@ -138,7 +138,7 @@ function ParameterRow({
           {def.note ? ` · ${def.note}` : ''}
         </div>
         {issue !== null && (
-          <div role="alert" style={{ fontSize: 11, color: '#ef4444' }}>
+          <div role="alert" style={{ fontSize: 11, color: 'var(--danger)' }}>
             {issue}
           </div>
         )}
@@ -208,13 +208,13 @@ export function ParametersPanel() {
           role="alert"
           data-parameter-order-issues={pairIssues.length}
           style={{
-            border: '1px solid #ef4444',
+            border: '1px solid var(--danger)',
             borderRadius: 6,
             padding: '8px 10px',
             marginBottom: 10,
             fontSize: 12,
             lineHeight: 1.7,
-            color: '#ef4444',
+            color: 'var(--danger)',
           }}
         >
           <strong>⛔ 保存されている値が矛盾しています</strong>

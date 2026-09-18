@@ -293,7 +293,7 @@ export function VoiceCommandBar() {
 
           {state.phase === 'awaiting-confirmation' && refusal !== null && (
             <span className="voice-cannot-run" role="alert" aria-label="実行できません" data-voice-cannot-run>
-              <strong style={{ color: 'var(--warn, #d97706)' }}>実行しません:</strong>{' '}
+              <strong style={{ color: 'var(--warn)' }}>実行しません:</strong>{' '}
               {voiceWriteRefusalMessage(
                 serviceLabel(state.intent?.serviceId),
                 state.intent?.action ?? '',
@@ -318,7 +318,7 @@ export function VoiceCommandBar() {
 
           {state.phase === 'awaiting-confirmation' && refusal === null && (
             <span className="voice-confirm" role="alertdialog" aria-label="実行確認">
-              <strong style={{ color: 'var(--danger, #ef4444)' }}>確認:</strong> 実行しますか？
+              <strong style={{ color: 'var(--danger)' }}>確認:</strong> 実行しますか？
               <button type="button" onClick={handleConfirm} aria-label="実行を承認" style={{ marginLeft: 6 }}>
                 実行
               </button>
@@ -331,13 +331,13 @@ export function VoiceCommandBar() {
           {state.phase === 'executing' && <span aria-label="実行中">実行中…</span>}
 
           {state.phase === 'notice' && (
-            <span className="voice-notice" role="status" style={{ color: 'var(--warn, #d97706)' }}>
+            <span className="voice-notice" role="status" style={{ color: 'var(--warn)' }}>
               {state.notice}
             </span>
           )}
 
           {state.phase === 'error' && (
-            <span className="voice-error" role="alert" style={{ color: 'var(--danger, #ef4444)' }}>
+            <span className="voice-error" role="alert" style={{ color: 'var(--danger)' }}>
               {state.error}
             </span>
           )}

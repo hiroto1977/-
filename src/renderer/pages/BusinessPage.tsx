@@ -95,7 +95,7 @@ function Sparkline({
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(' ');
-  const color = positive === false ? '#ef4444' : '#22c55e';
+  const color = positive === false ? 'var(--danger)' : 'var(--success)';
   return (
     <svg width={width} height={height} aria-hidden="true">
       <polyline fill="none" stroke={color} strokeWidth={1.5} points={pts} />
@@ -169,7 +169,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
         <div
           style={{
             padding: '2px 8px',
-            background: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             color: '#fff',
             fontSize: 11,
             fontWeight: 600,
@@ -193,7 +193,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
             style={{
               fontSize: 14,
               fontWeight: 600,
-              color: c.profit >= 0 ? '#22c55e' : '#ef4444',
+              color: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             }}
           >
             {yen.format(c.profit)}
@@ -283,7 +283,7 @@ function Sideboard({
           padding: '8px 10px',
           background: selected === 'all' ? 'var(--accent)' : 'var(--bg-elev)',
           border: '1px solid var(--border)',
-          borderRadius: 6,
+          borderRadius: 14,
           color: 'var(--text)',
           cursor: 'pointer',
           fontSize: 12,
@@ -300,7 +300,7 @@ function Sideboard({
       </button>
       {units.map((u) => {
         const isSel = selected === u.id;
-        const profitColor = u.current.profit >= 0 ? '#22c55e' : '#ef4444';
+        const profitColor = u.current.profit >= 0 ? 'var(--success)' : 'var(--danger)';
         return (
           <button
             key={u.id}
@@ -311,7 +311,7 @@ function Sideboard({
               padding: '6px 10px',
               background: isSel ? 'var(--accent)' : 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 14,
               color: 'var(--text)',
               cursor: 'pointer',
               fontSize: 12,
@@ -389,7 +389,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
         <div
           style={{
             padding: '4px 10px',
-            background: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             color: '#fff',
             fontSize: 12,
             fontWeight: 600,
@@ -413,7 +413,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
             style={{
               fontSize: 20,
               fontWeight: 700,
-              color: c.profit >= 0 ? '#22c55e' : '#ef4444',
+              color: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             }}
           >
             {yen.format(c.profit)}
@@ -499,7 +499,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
                     style={{
                       padding: '4px 8px',
                       textAlign: 'right',
-                      color: h.profit >= 0 ? '#22c55e' : '#ef4444',
+                      color: h.profit >= 0 ? 'var(--success)' : 'var(--danger)',
                     }}
                   >
                     {yen.format(h.profit)}
@@ -508,7 +508,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
                     style={{
                       padding: '4px 8px',
                       textAlign: 'right',
-                      color: h.profitMargin >= 0 ? '#22c55e' : '#ef4444',
+                      color: h.profitMargin >= 0 ? 'var(--success)' : 'var(--danger)',
                     }}
                   >
                     {h.profitMargin.toFixed(1)}%
@@ -814,7 +814,7 @@ export function BusinessPage() {
       {data.isMock && (
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
             color: 'var(--warning)',
             padding: '10px 14px',
@@ -857,7 +857,7 @@ export function BusinessPage() {
             label="月次利益"
             value={(agg.profit >= 0 ? '+' : '') + yen.format(agg.profit)}
             sub={(agg.profitMargin >= 0 ? '+' : '') + agg.profitMargin.toFixed(1) + '%'}
-            accent={agg.profit >= 0 ? '#22c55e' : '#ef4444'}
+            accent={agg.profit >= 0 ? 'var(--success)' : 'var(--danger)'}
           />
           <Tile
             label="月次コンテンツ出力"
@@ -1009,7 +1009,7 @@ export function BusinessPage() {
       >
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
             color: 'var(--warning)',
             padding: '8px 12px',
@@ -1080,9 +1080,9 @@ export function BusinessPage() {
             data-advisor-error
             role="alert"
             style={{
-              border: '1px solid #ef4444',
+              border: '1px solid var(--danger)',
               background: 'rgba(239, 68, 68, 0.08)',
-              color: '#ef4444',
+              color: 'var(--danger)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,

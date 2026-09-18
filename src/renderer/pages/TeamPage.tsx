@@ -271,12 +271,12 @@ export function TeamPage() {
             残りシート: {remaining === Infinity ? '無制限' : remaining}
           </span>
         </div>
-        {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+        {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
       </Section>
 
       <Section title="メンバー" count={records.length}>
         {duplicateNote !== null && (
-          <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+          <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
             {duplicateNote}
           </p>
         )}

@@ -78,8 +78,8 @@ import { findCrop } from '../../shared/hydroponicCrops';
  */
 
 const SEVERITY_COLOR: Readonly<Record<TaskSeverity, string>> = {
-  alert: '#ef4444',
-  warn: '#f59e0b',
+  alert: 'var(--danger)',
+  warn: 'var(--warning)',
   info: '#60a5fa',
 };
 const SEVERITY_LABEL: Readonly<Record<TaskSeverity, string>> = {
@@ -96,12 +96,12 @@ const STATUS_LABEL: Readonly<Record<FieldStatus, string>> = {
   unreadable: '読めません',
 };
 const STATUS_COLOR: Readonly<Record<FieldStatus, string | undefined>> = {
-  ok: '#22c55e',
-  low: '#f59e0b',
-  high: '#f59e0b',
+  ok: 'var(--success)',
+  low: 'var(--warning)',
+  high: 'var(--warning)',
   // **未測定は緑でも赤でもない。** 色を付けないことで「判定していない」を示す。
   unmeasured: undefined,
-  unreadable: '#ef4444',
+  unreadable: 'var(--danger)',
 };
 
 /** 目標域の表示。片側しか効かない項目は「N 以上」。 */
@@ -386,7 +386,7 @@ export function HydroponicsPage() {
           </p>
         )}
         {tasks.length === 0 && !summary.noReadings && (
-          <p style={{ fontSize: 13, color: '#22c55e', margin: 0 }}>
+          <p style={{ fontSize: 13, color: 'var(--success)', margin: 0 }}>
             今日やることはありません (直近の測定は全項目が適正域の中です)。
           </p>
         )}
@@ -465,7 +465,7 @@ export function HydroponicsPage() {
           </>
         )}
         {readings.unreadable > 0 && (
-          <p data-hydroponics-unreadable style={{ fontSize: 12, color: '#ef4444', marginTop: 8 }}>
+          <p data-hydroponics-unreadable style={{ fontSize: 12, color: 'var(--danger)', marginTop: 8 }}>
             ⚠ 保存されている測定のうち {readings.unreadable} 件は読めませんでした (日付が壊れている控え)。
             件数だけ数えて集計から外しています。
           </p>
@@ -549,12 +549,12 @@ export function HydroponicsPage() {
           {readingGuard.busy ? '保存中…' : '測定を記録'}
         </button>
         {readingError !== null && (
-          <p data-hydroponics-error="reading" style={{ color: '#ef4444', fontSize: 13 }}>
+          <p data-hydroponics-error="reading" style={{ color: 'var(--danger)', fontSize: 13 }}>
             ⚠ {readingError}
           </p>
         )}
         {readingOk !== null && (
-          <p data-hydroponics-ok="reading" style={{ color: '#22c55e', fontSize: 13 }}>
+          <p data-hydroponics-ok="reading" style={{ color: 'var(--success)', fontSize: 13 }}>
             ✅ {readingOk}
           </p>
         )}
@@ -610,7 +610,7 @@ export function HydroponicsPage() {
                         data-hydroponics-remove-batch={b.id}
                         disabled={removeGuard.busy}
                         onClick={() => void removeGuard.run(() => removeBatch(b.id))}
-                        style={{ color: '#ef4444' }}
+                        style={{ color: 'var(--danger)' }}
                       >
                         {removeGuard.busy ? '削除中…' : '削除'}
                       </button>
@@ -622,7 +622,7 @@ export function HydroponicsPage() {
           </table>
         )}
         {batches.unreadable > 0 && (
-          <p data-hydroponics-unreadable-batches style={{ fontSize: 12, color: '#ef4444', marginTop: 8 }}>
+          <p data-hydroponics-unreadable-batches style={{ fontSize: 12, color: 'var(--danger)', marginTop: 8 }}>
             ⚠ 保存されているロットのうち {batches.unreadable} 件は読めませんでした。
           </p>
         )}
@@ -727,12 +727,12 @@ export function HydroponicsPage() {
           {batchGuard.busy ? '保存中…' : 'ロットを追加'}
         </button>
         {batchError !== null && (
-          <p data-hydroponics-error="batch" style={{ color: '#ef4444', fontSize: 13 }}>
+          <p data-hydroponics-error="batch" style={{ color: 'var(--danger)', fontSize: 13 }}>
             ⚠ {batchError}
           </p>
         )}
         {batchOk !== null && (
-          <p data-hydroponics-ok="batch" style={{ color: '#22c55e', fontSize: 13 }}>
+          <p data-hydroponics-ok="batch" style={{ color: 'var(--success)', fontSize: 13 }}>
             ✅ {batchOk}
           </p>
         )}
@@ -831,12 +831,12 @@ export function HydroponicsPage() {
           </>
         )}
         {controlError !== null && (
-          <p data-hydroponics-error="control" style={{ color: '#ef4444', fontSize: 13 }}>
+          <p data-hydroponics-error="control" style={{ color: 'var(--danger)', fontSize: 13 }}>
             ⚠ {controlError}
           </p>
         )}
         {controlOk !== null && (
-          <p data-hydroponics-ok="control" style={{ color: '#22c55e', fontSize: 13 }}>
+          <p data-hydroponics-ok="control" style={{ color: 'var(--success)', fontSize: 13 }}>
             ✅ {controlOk}
           </p>
         )}

@@ -43,7 +43,7 @@ export function Stat({ label, value, positive }: { label: string; value: string;
       <div
         style={{
           ...valueStyle,
-          color: judged == null ? undefined : judged ? '#22c55e' : '#ef4444',
+          color: judged == null ? undefined : judged ? 'var(--success)' : 'var(--danger)',
         }}
       >
         {value}

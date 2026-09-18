@@ -123,7 +123,7 @@ describe('セキュリティ演習場 — 測っていない「誤検知 0」を
     const t = tile(LABEL);
     expect(t).not.toBeNull();
     expect(t!.value).toBe('0 件');
-    expect(t!.color).toBe('rgb(34, 197, 94)'); // 緑 = 目標達成
+    expect(t!.color).toBe('var(--success)'); // 緑 = 目標達成
   });
 
   it('★ 無害ケースが 1 件も無ければ「未測定」と刷り、緑にしない', async () => {
@@ -134,8 +134,8 @@ describe('セキュリティ演習場 — 測っていない「誤検知 0」を
     // 直す前は「0 件」を緑で刷っていた —— 何も評価せずに「目標達成」。
     expect(t!.value).toBe('未測定');
     expect(t!.value).not.toBe('0 件');
-    expect(t!.color).not.toBe('rgb(34, 197, 94)'); // 緑ではない
-    expect(t!.color).not.toBe('rgb(239, 68, 68)'); // 赤でもない (悪いとも言わない)
+    expect(t!.color).not.toBe('var(--success)'); // 緑ではない
+    expect(t!.color).not.toBe('var(--danger)'); // 赤でもない (悪いとも言わない)
   });
 
   it('★ 対照: 差し替えが効いていること (無害ケースを外せた)', async () => {
@@ -146,7 +146,7 @@ describe('セキュリティ演習場 — 測っていない「誤検知 0」を
     const rate = tile('総合検知率');
     expect(rate).not.toBeNull();
     expect(rate!.value).toBe('100.0%');
-    expect(rate!.color).toBe('rgb(34, 197, 94)');
+    expect(rate!.color).toBe('var(--success)');
   });
 
   it('★ 他 2 つのタイルは空でも安全な向きに倒れる (床が要らない理由)', async () => {

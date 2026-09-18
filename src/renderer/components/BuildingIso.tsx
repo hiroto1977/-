@@ -110,7 +110,7 @@ export function BuildingIso({ widthM, depthM, floors, height = 320, caption }: B
         </svg>
       </div>
       {!model.allFit && (
-        <div style={{ fontSize: 11, color: '#f87171', marginTop: 6 }}>
+        <div style={{ fontSize: 11, color: 'var(--danger)', marginTop: 6 }}>
           室の面積合計が階の外形と一致していません（
           {model.floors
             .filter((f) => !f.fits)

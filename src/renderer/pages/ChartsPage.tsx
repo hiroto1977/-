@@ -160,10 +160,10 @@ export function ChartsPage({ datasets = CHART_DATASETS }: ChartsPageProps): Reac
             ...CARD,
             // 0 件は緑にしない (「通過」を主張しない)。
             borderColor: overall.allPassed
-              ? 'var(--ok, #27ae60)'
+              ? 'var(--success)'
               : overall.checkedDatasets === 0
                 ? 'var(--border)'
-                : 'var(--ng, #eb5757)',
+                : 'var(--danger)',
             marginBottom: 12,
           }}
         >
@@ -199,7 +199,7 @@ export function ChartsPage({ datasets = CHART_DATASETS }: ChartsPageProps): Reac
             <tbody>
               {check.results.map((r) => (
                 <tr key={r.name} style={{ borderTop: '1px solid var(--border, #333)' }}>
-                  <td style={{ padding: '4px 8px', color: r.ok ? 'var(--ok, #27ae60)' : 'var(--ng, #eb5757)' }}>
+                  <td style={{ padding: '4px 8px', color: r.ok ? 'var(--success)' : 'var(--danger)' }}>
                     {r.ok ? 'OK' : 'NG'}
                   </td>
                   <td style={{ padding: '4px 8px' }}>{r.name}</td>

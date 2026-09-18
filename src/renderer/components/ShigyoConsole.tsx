@@ -58,9 +58,9 @@ const inputStyle: React.CSSProperties = {
 
 const STATUS_COLOR: Record<ShigyoConsultationStatus, string> = {
   相談予約: '#94a3b8',
-  相談中: '#fbbf24',
+  相談中: 'var(--warning)',
   対応中: '#3b82f6',
-  完了: '#22c55e',
+  完了: 'var(--success)',
 };
 
 /** ステータスの意味を補足するツールチップ (NIT: 相談中 / 対応中 の区別)。 */
@@ -210,7 +210,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             margin: '0 0 12px',
             padding: 10,
             background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             borderRadius: 6,
             fontSize: 11,
             color: 'var(--warning)',
@@ -282,10 +282,10 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                     style={{
                       flex: 'none',
                       fontSize: 10,
-                      border: `1px solid ${duty.scope === 'exclusive' ? '#f87171' : 'var(--border)'}`,
+                      border: `1px solid ${duty.scope === 'exclusive' ? 'var(--danger)' : 'var(--border)'}`,
                       borderRadius: 999,
                       padding: '1px 8px',
-                      color: duty.scope === 'exclusive' ? '#f87171' : 'var(--text-mute)',
+                      color: duty.scope === 'exclusive' ? 'var(--danger)' : 'var(--text-mute)',
                       cursor: 'help',
                     }}
                   >
@@ -419,7 +419,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             </button>
           )}
         </div>
-        {contactError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{contactError}</div>}
+        {contactError && <div style={{ color: 'var(--danger)', fontSize: 12, marginBottom: 8 }}>{contactError}</div>}
         {contacts.length === 0 ? (
           <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>
             連携先が未登録です — 上のフォームから実際の{label}を登録できます (端末内にのみ保存)
@@ -455,7 +455,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                         <button type="button" onClick={() => onStartEditContact(c.rowId, c)} style={{ fontSize: 11 }}>
                           編集
                         </button>
-                        <button type="button" onClick={() => fireReported(contactsCol.remove(c.rowId))} style={{ fontSize: 11, color: '#f87171' }}>
+                        <button type="button" onClick={() => fireReported(contactsCol.remove(c.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>
                           削除
                         </button>
                       </span>
@@ -508,7 +508,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
           </label>
           <button type="button" onClick={() => void submit.run(onAddConsultation)} disabled={submit.busy}>＋ 相談を記録</button>
         </div>
-        {consultError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{consultError}</div>}
+        {consultError && <div style={{ color: 'var(--danger)', fontSize: 12, marginBottom: 8 }}>{consultError}</div>}
         {recentConsultations.length === 0 ? (
           <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>相談履歴はまだありません — 上のフォームから記録できます</div>
         ) : (
@@ -547,7 +547,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   </td>
                   <td style={tdStyle}>
                     {c.user && (
-                      <button type="button" onClick={() => fireReported(consultationsCol.remove(c.rowId))} style={{ fontSize: 11, color: '#f87171' }}>
+                      <button type="button" onClick={() => fireReported(consultationsCol.remove(c.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>
                         削除
                       </button>
                     )}

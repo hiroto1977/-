@@ -217,7 +217,7 @@ export function TalentPage(): React.JSX.Element {
       />
       {/* 保存先が読めなかった / 読み込みで項目を落としたときだけ出る (パス 121)。黙って空にしない。 */}
       {snap.storedNote !== null && (
-        <div role="status" style={{ margin: '8px 0', padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: 'var(--warning)', lineHeight: 1.5 }}>
+        <div role="status" style={{ margin: '8px 0', padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid var(--warning)', borderRadius: 6, fontSize: 12, color: 'var(--warning)', lineHeight: 1.5 }}>
           ⚠ {snap.storedNote}
         </div>
       )}

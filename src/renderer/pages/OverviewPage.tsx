@@ -102,10 +102,10 @@ import {
 import { SNAPSHOT } from '../data/snapshot';
 
 const SCORE_COLOR = (s: number | null): string =>
-  s === null ? 'var(--text-mute)' : s >= 80 ? '#22c55e' : s >= 60 ? '#3ec98a' : s >= 40 ? '#f59e0b' : '#ef4444';
+  s === null ? 'var(--text-mute)' : s >= 80 ? 'var(--success)' : s >= 60 ? '#3ec98a' : s >= 40 ? 'var(--warning)' : 'var(--danger)';
 const TREND_LABEL: Record<string, string> = { up: '↗ 上昇', down: '↘ 下降', flat: '→ 横ばい', none: '—' };
-const TREND_COLOR: Record<string, string | undefined> = { up: '#22c55e', down: '#ef4444', flat: undefined, none: undefined };
-const RISK_BAND_COLOR: Record<RiskBand, string> = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e', none: 'var(--text-mute)' };
+const TREND_COLOR: Record<string, string | undefined> = { up: 'var(--success)', down: 'var(--danger)', flat: undefined, none: undefined };
+const RISK_BAND_COLOR: Record<RiskBand, string> = { high: 'var(--danger)', medium: 'var(--warning)', low: 'var(--success)', none: 'var(--text-mute)' };
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
@@ -246,8 +246,8 @@ function HighlightSettingsPanel({
         {field('singleChannelWarnPct', '単一チャネル依存(%)')}
         <button type="button" onClick={() => void submit.run(save)} disabled={submit.busy}>保存</button>
       </div>
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
-      {saved && !error && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。</div>}
+      {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {saved && !error && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>保存しました。</div>}
     </div>
   );
 }
@@ -462,7 +462,7 @@ function HydroponicsPanel({
       </p>
 
       {current !== null && savedCrop === undefined && (
-        <div style={{ color: '#f59e0b', fontSize: 12, lineHeight: 1.6, marginBottom: 8 }}>
+        <div style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, marginBottom: 8 }}>
           保存した設定の品目「{current.cropId}」は一覧にありません。先頭の品目（{crops[0]!.label}）で試算しています。
           品目を選び直して保存してください。
         </div>
@@ -596,7 +596,7 @@ function HydroponicsPanel({
           <input type="text" inputMode="decimal" value={ph} onChange={(e) => setPh(e.target.value)} style={settingsInput} />
         </label>
         {nutrient && (
-          <div style={{ fontSize: 12, color: nutrient.ok ? '#22c55e' : '#f59e0b', lineHeight: 1.7 }}>
+          <div style={{ fontSize: 12, color: nutrient.ok ? 'var(--success)' : 'var(--warning)', lineHeight: 1.7 }}>
             {nutrient.ok
               ? `適正範囲内です（EC ${crop.ecLow}〜${crop.ecHigh} / pH ${crop.phLow}〜${crop.phHigh}）。`
               : `範囲外です — ${!nutrient.ecInRange ? `EC は ${crop.ecLow}〜${crop.ecHigh} mS/cm` : ''}${!nutrient.ecInRange && !nutrient.phInRange ? '、' : ''}${!nutrient.phInRange ? `pH は ${crop.phLow}〜${crop.phHigh}` : ''} が目安。EC が高すぎるとレタス類は苦味が出ます。`}
@@ -630,7 +630,7 @@ function HydroponicsPanel({
           対照 G2 (門を外す) が鳴らなかったことでそれが分かった (足した条件は
           到達不能だった)。**鳴らない対照は報せ**なので、条件は消して性質だけを
           検査で留める (`refusedSave.test.ts` の「保存に成功した後で欄を壊すと」)。 */}
-      {saved && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。経営サマリーに反映されています。</div>}
+      {saved && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>保存しました。経営サマリーに反映されています。</div>}
     </div>
   );
 }
@@ -986,7 +986,7 @@ export function OverviewPage() {
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 12 }}>
             <button type="button" onClick={() => void reportCopy.run(copyReport)} disabled={reportCopy.busy}>経営レポートをコピー (Markdown)</button>
             <button type="button" onClick={downloadReport}>レポートをダウンロード</button>
-            {reportCopied && <span style={{ color: '#22c55e', fontSize: 12 }}>コピーしました。</span>}
+            {reportCopied && <span style={{ color: 'var(--success)', fontSize: 12 }}>コピーしました。</span>}
           </div>
           <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>
             ※ 入力済みデータからの概算の経営診断です。財務・税務助言ではありません。役員会・銀行・税理士への共有にご利用ください。
@@ -1016,9 +1016,9 @@ export function OverviewPage() {
                   <tr key={r.period} style={{ borderTop: '1px solid var(--border)' }}>
                     <td style={{ padding: '4px 8px' }}>{r.period}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.revenue)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? 'var(--text)' : '#ef4444' }}>{yen.format(r.operatingProfit)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? 'var(--text)' : 'var(--danger)' }}>{yen.format(r.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{pct1OrDash(r.operatingMarginPct)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right', color: r.revenueGrowthPct === null ? 'var(--text-mute)' : r.revenueGrowthPct >= 0 ? '#22c55e' : '#ef4444' }}>
+                    <td style={{ padding: '4px 8px', textAlign: 'right', color: r.revenueGrowthPct === null ? 'var(--text-mute)' : r.revenueGrowthPct >= 0 ? 'var(--success)' : 'var(--danger)' }}>
                       {r.revenueGrowthPct === null ? '—' : `${r.revenueGrowthPct > 0 ? '+' : ''}${r.revenueGrowthPct}%`}
                     </td>
                   </tr>
@@ -1056,7 +1056,7 @@ export function OverviewPage() {
                   <tr key={r.deltaPct} style={{ borderTop: '1px solid var(--border)', fontWeight: r.deltaPct === 0 ? 600 : 400 }}>
                     <td style={{ padding: '4px 8px' }}>{r.deltaPct > 0 ? '+' : ''}{r.deltaPct}%{r.deltaPct === 0 ? ' (現状)' : ''}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.revenue)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? '#22c55e' : '#ef4444' }}>{yen.format(r.operatingProfit)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? 'var(--success)' : 'var(--danger)' }}>{yen.format(r.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{pct1OrDash(r.operatingMarginPct)}</td>
                   </tr>
                 ))}
@@ -1084,7 +1084,7 @@ export function OverviewPage() {
                 ) : (
                   <span style={{ fontSize: 13 }}>
                     必要売上 <strong>{yen.format(targetRevenue.requiredRevenue)}</strong>
-                    （現状から <strong style={{ color: targetRevenue.upliftPct >= 0 ? '#f59e0b' : '#22c55e' }}>{targetRevenue.upliftPct > 0 ? '+' : ''}{targetRevenue.upliftPct}%</strong>）
+                    （現状から <strong style={{ color: targetRevenue.upliftPct >= 0 ? 'var(--warning)' : 'var(--success)' }}>{targetRevenue.upliftPct > 0 ? '+' : ''}{targetRevenue.upliftPct}%</strong>）
                   </span>
                 )
               )}
@@ -1098,7 +1098,7 @@ export function OverviewPage() {
                   key={c.reductionPct}
                   label={`固定費 −${c.reductionPct}%`}
                   value={yen.format(c.newOperatingProfit)}
-                  accent={c.newOperatingProfit >= 0 ? '#22c55e' : '#ef4444'}
+                  accent={c.newOperatingProfit >= 0 ? 'var(--success)' : 'var(--danger)'}
                   sub={`改善 +${yen.format(c.profitImprovement)}`}
                 />
               ))}
@@ -1113,7 +1113,7 @@ export function OverviewPage() {
             data-stale-derived
             style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)' }}
           >
-            <strong style={{ color: '#f59e0b' }}>
+            <strong style={{ color: 'var(--warning)' }}>
               手で置いた数値から計算される指標が、自動値のままです。
             </strong>
             <div style={{ marginTop: 4 }}>{applied.staleDerived.map((d) => d.label).join(' / ')}</div>
@@ -1165,7 +1165,7 @@ export function OverviewPage() {
             <Tile
               label="売上分散スコア"
               value={`${overview.sales.concentration.diversityScore} / 100`}
-              accent={overview.sales.concentration.singleChannelRisk ? '#f59e0b' : undefined}
+              accent={overview.sales.concentration.singleChannelRisk ? 'var(--warning)' : undefined}
               sub={`実効 ${overview.sales.concentration.effectiveChannels} ch・最大 ${overview.sales.concentration.topChannel ?? '—'} ${overview.sales.concentration.topSharePct}%`}
             />
           )}
@@ -1178,7 +1178,7 @@ export function OverviewPage() {
               <Tile
                 label="営業利益"
                 value={yen.format(overview.kpi.operatingProfit)}
-                accent={overview.flags.profitable ? '#22c55e' : '#ef4444'}
+                accent={overview.flags.profitable ? 'var(--success)' : 'var(--danger)'}
                 sub={`営業利益率 ${pct1OrDash(overview.kpi.operatingMarginPct)}`}
               />
               <Tile
@@ -1231,7 +1231,7 @@ export function OverviewPage() {
                   // 算定不能なら色を付けない —— 緑 (黒字) は「0 以上」の主張である。
                   overview.productivity.operatingProfitPerCapita === null
                     ? undefined
-                    : overview.productivity.operatingProfitPerCapita >= 0 ? '#22c55e' : '#ef4444'
+                    : overview.productivity.operatingProfitPerCapita >= 0 ? 'var(--success)' : 'var(--danger)'
                 }
               />
               {overview.productivity.labor.laborCost > 0 && (
@@ -1252,7 +1252,7 @@ export function OverviewPage() {
           <Tile
             label="メンバー / シート"
             value={`${overview.team.members} / ${overview.team.seatLimit === Infinity ? '∞' : overview.team.seatLimit}`}
-            accent={overview.flags.seatsFull ? '#f59e0b' : undefined}
+            accent={overview.flags.seatsFull ? 'var(--warning)' : undefined}
             sub={overview.flags.seatsFull ? 'シート上限に到達' : `残り ${overview.team.seatsRemaining === Infinity ? '無制限' : overview.team.seatsRemaining}`}
           />
         </div>
@@ -1281,7 +1281,7 @@ export function OverviewPage() {
             ))}
           </div>
           {scorecard.alerts.length > 0 && (
-            <ul style={{ margin: '12px 0 0', paddingLeft: 18, fontSize: 12, color: '#f59e0b', lineHeight: 1.7 }}>
+            <ul style={{ margin: '12px 0 0', paddingLeft: 18, fontSize: 12, color: 'var(--warning)', lineHeight: 1.7 }}>
               {scorecard.alerts.map((a) => <li key={a}>{a}</li>)}
             </ul>
           )}
@@ -1290,7 +1290,7 @@ export function OverviewPage() {
               <Tile
                 label="前期比成長率"
                 value={overview.kpi.revenueGrowthPct === null ? '—' : `${overview.kpi.revenueGrowthPct > 0 ? '+' : ''}${overview.kpi.revenueGrowthPct}%`}
-                accent={overview.kpi.revenueGrowthPct === null ? undefined : overview.kpi.revenueGrowthPct >= 0 ? '#22c55e' : '#ef4444'}
+                accent={overview.kpi.revenueGrowthPct === null ? undefined : overview.kpi.revenueGrowthPct >= 0 ? 'var(--success)' : 'var(--danger)'}
                 sub="直近期 vs 前期"
               />
               <Tile
@@ -1315,7 +1315,7 @@ export function OverviewPage() {
                 <Tile
                   label="前年同月比 (YoY)"
                   value={`${overview.kpi.yoy.revenueYoYPct > 0 ? '+' : ''}${overview.kpi.yoy.revenueYoYPct}%`}
-                  accent={overview.kpi.yoy.revenueYoYPct >= 0 ? '#22c55e' : '#ef4444'}
+                  accent={overview.kpi.yoy.revenueYoYPct >= 0 ? 'var(--success)' : 'var(--danger)'}
                   sub={`${overview.kpi.yoy.period} vs ${overview.kpi.yoy.priorPeriod}`}
                 />
               )}
@@ -1330,7 +1330,7 @@ export function OverviewPage() {
 
       {overview.budget === null && overview.budgetAlignment !== null && (
         <Section title="予算実績差異 (BVA)">
-          <p role="alert" style={{ color: '#f59e0b', fontSize: 13, lineHeight: 1.6 }}>
+          <p role="alert" style={{ color: 'var(--warning)', fontSize: 13, lineHeight: 1.6 }}>
             予算と実績で<strong>期 (YYYY-MM) が 1 つも重なっていない</strong>ため、達成率を算定できません
             （予算 {overview.budgetAlignment.budgetOnlyPeriods.length} か月・実績{' '}
             {overview.budgetAlignment.actualOnlyPeriods.length} か月）。KPI ページで、実績と同じ月の予算を入力してください。
@@ -1345,7 +1345,7 @@ export function OverviewPage() {
             {`${budgetComparedRangeLabel(overview.budget.alignment)}分です。`}予算は KPI ページで入力できます。
           </p>
           {budgetScopeSentence(overview.budget.alignment) !== null && (
-            <p role="alert" style={{ color: '#f59e0b', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+            <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
               {budgetScopeSentence(overview.budget.alignment)}通年の比較ではありません。
             </p>
           )}
@@ -1358,7 +1358,7 @@ export function OverviewPage() {
                 key={label}
                 label={`${label} 達成率`}
                 value={v.achievementPct === null ? '—' : `${v.achievementPct}%`}
-                accent={v.achievementPct === null ? undefined : v.achievementPct >= 100 ? '#22c55e' : v.achievementPct >= 90 ? '#f59e0b' : '#ef4444'}
+                accent={v.achievementPct === null ? undefined : v.achievementPct >= 100 ? 'var(--success)' : v.achievementPct >= 90 ? 'var(--warning)' : 'var(--danger)'}
                 sub={`予算 ${yen.format(v.budget)} / 実績 ${yen.format(v.actual)} (差異 ${v.variance >= 0 ? '+' : ''}${yen.format(v.variance)})`}
               />
             ))}
@@ -1376,13 +1376,13 @@ export function OverviewPage() {
             <strong>※ 概算であり財務助言ではありません。</strong>
           </p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <Tile label="営業CF 合計" value={yen.format(overview.accounting.totalNet)} accent={overview.accounting.cashflowPositive ? '#22c55e' : '#ef4444'} sub={`${overview.accounting.months} か月`} />
-            <Tile label="月次平均 営業CF" value={yen.format(overview.accounting.avgMonthlyNet)} accent={overview.accounting.avgMonthlyNet >= 0 ? '#22c55e' : '#ef4444'} />
-            <Tile label={`直近月 (${overview.accounting.latestMonth})`} value={yen.format(overview.accounting.latestNet)} accent={overview.accounting.latestNet >= 0 ? '#22c55e' : '#ef4444'} />
+            <Tile label="営業CF 合計" value={yen.format(overview.accounting.totalNet)} accent={overview.accounting.cashflowPositive ? 'var(--success)' : 'var(--danger)'} sub={`${overview.accounting.months} か月`} />
+            <Tile label="月次平均 営業CF" value={yen.format(overview.accounting.avgMonthlyNet)} accent={overview.accounting.avgMonthlyNet >= 0 ? 'var(--success)' : 'var(--danger)'} />
+            <Tile label={`直近月 (${overview.accounting.latestMonth})`} value={yen.format(overview.accounting.latestNet)} accent={overview.accounting.latestNet >= 0 ? 'var(--success)' : 'var(--danger)'} />
             <Tile
               label="資金ランウェイ"
               value={overview.runwayMonths === null ? (overview.accounting.avgMonthlyNet >= 0 ? '資金流出なし' : '—') : `${overview.runwayMonths} か月`}
-              accent={overview.runwayMonths === null ? undefined : overview.runwayMonths >= 12 ? '#22c55e' : overview.runwayMonths >= 6 ? '#f59e0b' : '#ef4444'}
+              accent={overview.runwayMonths === null ? undefined : overview.runwayMonths >= 12 ? 'var(--success)' : overview.runwayMonths >= 6 ? 'var(--warning)' : 'var(--danger)'}
               sub="現預金 ÷ 月次純流出"
             />
           </div>
@@ -1391,19 +1391,19 @@ export function OverviewPage() {
               <Tile
                 label="12か月後の予測残高"
                 value={yen.format(overview.cashForecast.rows[overview.cashForecast.rows.length - 1]?.balance ?? overview.cashForecast.openingBalance)}
-                accent={(overview.cashForecast.rows[overview.cashForecast.rows.length - 1]?.balance ?? 0) >= 0 ? '#22c55e' : '#ef4444'}
+                accent={(overview.cashForecast.rows[overview.cashForecast.rows.length - 1]?.balance ?? 0) >= 0 ? 'var(--success)' : 'var(--danger)'}
                 sub="現預金＋月次CFの外挿"
               />
               <Tile
                 label="資金ショート予測"
                 value={overview.cashForecast.shortfallMonthIndex === null ? '12か月内なし' : `${overview.cashForecast.shortfallMonthIndex} か月後`}
-                accent={overview.cashForecast.shortfallMonthIndex === null ? '#22c55e' : '#ef4444'}
+                accent={overview.cashForecast.shortfallMonthIndex === null ? 'var(--success)' : 'var(--danger)'}
                 sub={`期間中の最低残高 ${yen.format(overview.cashForecast.minBalance)}`}
               />
               <Sparkline
                 label="予測残高の推移"
                 values={cashForecastTrajectory(overview.cashForecast)}
-                color={overview.cashForecast.shortfallMonthIndex === null ? '#3ec98a' : '#ef4444'}
+                color={overview.cashForecast.shortfallMonthIndex === null ? '#3ec98a' : 'var(--danger)'}
               />
             </div>
           )}
@@ -1420,18 +1420,18 @@ export function OverviewPage() {
             <Tile
               label="全体カバー率 (DSCR)"
               value={debtService.overallDscr === null ? '—' : `${debtService.overallDscr}`}
-              accent={debtService.overallDscr === null ? undefined : debtService.overallDscr >= 1 ? '#22c55e' : '#ef4444'}
+              accent={debtService.overallDscr === null ? undefined : debtService.overallDscr >= 1 ? 'var(--success)' : 'var(--danger)'}
               sub="営業CF合計 ÷ 返済額合計"
             />
             <Tile
               label="最悪月カバー率"
               value={debtService.worstMonthDscr === null ? '—' : `${debtService.worstMonthDscr}`}
-              accent={debtService.worstMonthDscr === null ? undefined : debtService.worstMonthDscr >= 1 ? '#22c55e' : '#ef4444'}
+              accent={debtService.worstMonthDscr === null ? undefined : debtService.worstMonthDscr >= 1 ? 'var(--success)' : 'var(--danger)'}
             />
             <Tile
               label="カバー率1.0未満の月"
               value={`${debtService.shortfallMonths} / ${debtService.coveredMonths} か月`}
-              accent={debtService.shortfallMonths > 0 ? '#f59e0b' : undefined}
+              accent={debtService.shortfallMonths > 0 ? 'var(--warning)' : undefined}
               sub={debtService.unmatchedMonths > 0 ? `会計連携に月次CFが無い ${debtService.unmatchedMonths} か月は対象外` : undefined}
             />
           </div>
@@ -1480,7 +1480,7 @@ export function OverviewPage() {
               <Tile
                 label="営業利益"
                 value={yen.format(overview.hydroponics.operatingProfit)}
-                accent={overview.hydroponics.operatingProfit >= 0 ? '#22c55e' : '#ef4444'}
+                accent={overview.hydroponics.operatingProfit >= 0 ? 'var(--success)' : 'var(--danger)'}
                 sub={`営業利益率 ${pct1OrDash(overview.hydroponics.operatingMarginPct)}`}
               />
               {/* 出荷 0 は「1 株あたり 0 円」ではなく**算定しない** ——
@@ -1514,7 +1514,7 @@ export function OverviewPage() {
                     ? '—'
                     : `${num.format(overview.hydroponics.breakEvenPlantsPerMonth)} 株`
                 }
-                accent={overview.hydroponics.meetsBreakEven ? '#22c55e' : '#ef4444'}
+                accent={overview.hydroponics.meetsBreakEven ? 'var(--success)' : 'var(--danger)'}
                 sub={
                   overview.hydroponics.breakEvenPlantsPerMonth === null
                     ? '単価が株あたり変動費以下です。何株売っても固定費を回収できません。'
@@ -1550,8 +1550,8 @@ export function OverviewPage() {
                         }
                         accent={
                           overview.hydroponics.lowPotassium.reductionPct === null
-                            ? '#f59e0b'
-                            : overview.hydroponics.lowPotassium.reductionPct > 0 ? '#22c55e' : '#ef4444'
+                            ? 'var(--warning)'
+                            : overview.hydroponics.lowPotassium.reductionPct > 0 ? 'var(--success)' : 'var(--danger)'
                         }
                       />
                       {/* **未入力を「0 日」とも「範囲外」とも言わない。** 0 は
@@ -1571,7 +1571,7 @@ export function OverviewPage() {
                             ? undefined // 未入力は違反ではない —— 警告色を付けない
                             : overview.hydroponics.lowPotassium.switchWindowOk
                               ? undefined
-                              : '#f59e0b'
+                              : 'var(--warning)'
                         }
                         sub={
                           overview.hydroponics.lowPotassium.switchWindowOk === null
@@ -1609,7 +1609,7 @@ export function OverviewPage() {
                   <div
                     style={{
                       border: '1px solid var(--border)',
-                      borderLeft: '3px solid #ef4444',
+                      borderLeft: '3px solid var(--danger)',
                       borderRadius: 6,
                       padding: '8px 12px',
                       marginBottom: 12,
@@ -1648,7 +1648,7 @@ export function OverviewPage() {
           <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
             貸借対照表から算出した安全性・収益性の指標です。<strong>※ 概算の財務分析であり財務助言ではありません。</strong>
             業種・規模で適正値は異なります。{overview.financialPosition.insolvent && (
-              <strong style={{ color: '#ef4444' }}> ⚠ 純資産がマイナス（債務超過）です。</strong>
+              <strong style={{ color: 'var(--danger)' }}> ⚠ 純資産がマイナス（債務超過）です。</strong>
             )}
           </p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -1668,7 +1668,7 @@ export function OverviewPage() {
                 {`回転日数は実績 ${overview.workingCapital.periodMonths} か月分（${Math.round(periodDaysForMonths(overview.workingCapital.periodMonths) * 10) / 10} 日）で算定しています。`}
               </div>
               {overview.workingCapital.missingStocks.length > 0 && (
-                <div style={{ fontSize: 12, color: '#f59e0b', margin: '0 0 6px' }}>
+                <div style={{ fontSize: 12, color: 'var(--warning)', margin: '0 0 6px' }}>
                   貸借対照表の{overview.workingCapital.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は「—」です (0 円として扱っていません)。
                 </div>
               )}
@@ -1676,7 +1676,7 @@ export function OverviewPage() {
                 <Tile
                   label="CCC (現金回収日数)"
                   value={overview.workingCapital.ccc === null ? '—' : `${overview.workingCapital.ccc} 日`}
-                  accent={overview.workingCapital.ccc === null ? undefined : overview.workingCapital.ccc <= 0 ? '#22c55e' : overview.workingCapital.ccc <= 60 ? '#3ec98a' : '#f59e0b'}
+                  accent={overview.workingCapital.ccc === null ? undefined : overview.workingCapital.ccc <= 0 ? 'var(--success)' : overview.workingCapital.ccc <= 60 ? '#3ec98a' : 'var(--warning)'}
                   sub="短い(マイナス)ほど資金繰りが楽"
                 />
                 <Tile label="売上債権回転 (DSO)" value={overview.workingCapital.dso === null ? '—' : `${overview.workingCapital.dso} 日`} />

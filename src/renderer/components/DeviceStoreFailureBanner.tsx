@@ -36,7 +36,7 @@ export function DeviceStoreFailureBanner() {
         alignItems: 'flex-start',
         margin: '0 0 12px',
         padding: '10px 12px',
-        border: '1px solid #ef4444',
+        border: '1px solid var(--danger)',
         borderRadius: 6,
         background: 'rgba(239, 68, 68, 0.08)',
         fontSize: 12,
