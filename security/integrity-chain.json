@@ -1977,6 +1977,14 @@
       "leafCount": 78,
       "note": "update scanTarget.ts",
       "hash": "e40f7cb370ef3d37f3e43647aa854a51dafb7d66149b564de8431533f09ed272"
+    },
+    {
+      "index": 237,
+      "prevHash": "e40f7cb370ef3d37f3e43647aa854a51dafb7d66149b564de8431533f09ed272",
+      "merkleRoot": "5fbf5ce3610df6c024e8e14484553271e0f5adbe2ae090a36ff7b990cd3de4f9",
+      "leafCount": 78,
+      "note": "update atomicWrite.ts,secrets.ts",
+      "hash": "73dadc5f8e9a2da5e15dfe11c20e0b8bad68e766f9437eea3979ed243cb14424"
     }
   ],
   "tipManifest": {
@@ -2004,14 +2012,14 @@
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "scripts/smoke-app.cjs": "e0ec8dd631cbdbcd075663b99bdc33b380dc5d61ea049df7a626e300fb544095",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "src/main/atomicWrite.ts": "b1840895edf0bf5394fa36a64352b28cf852ca1a2b02e246dd6d6c82c457db44",
+    "src/main/atomicWrite.ts": "75a137ba9b183accde80c4baae2cc45fa6b4cf5324bf6ba4b1143b93ff9390d9",
     "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "a0012ad791cd737f5afb7e5b98e172b4efe02fee4e763221c4680bafa4219df5",
     "src/main/eraseAll.ts": "76debcaa6b3231c56bf66afd853b5f9301d9cdcbb4d1232204594ea5ca320a39",
     "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
     "src/main/oauth.ts": "a83e80a655bc516f482858954c50c90ba5d655bc9b88308f313f05641ffec6dd",
-    "src/main/secrets.ts": "be9459125976403b0c23444b53c7da21b80502768c24cecc337122529b006ef4",
+    "src/main/secrets.ts": "bdbbf6d8b1a36fb5f4daf39886bd11bf2d689b95b59e2d66254a11b6094bdaaf",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/windowPrefs.ts": "9d0e02079fb16b22fcbed648cad378776114beb989708f1080d72fcee753ca71",

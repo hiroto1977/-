@@ -105,19 +105,34 @@ async function fsyncDir(dir: string): Promise<void> {
 /* Stryker restore all */
 
 /**
+ * 読む前の大きさの門 (パス 326)。`stat` が答えられなければ**読まない** ——
+ * 読める保証が無い物を上限なしで開かないため。
+ *
+ * 門そのものは `stateFile.ts` の `readStateFile` と同じ形 (stat → 上限 → 読む) だが、
+ * あちらは 3 状態を返す状態ファイル専用の入口で、こちらは控え (`.prev`) へ倒れる
+ * 読みの中に在る必要がある —— **控えへ倒れる枝は呼び出し側から見えない**ので、
+ * 呼び出し側に門を置くと片方しか掛からない (実際そうなっていた・下記)。
+ */
+async function readIfWithinCap(path: string, maxBytes: number): Promise<string | null> {
+  const st = await fs.stat(path).catch(() => null);
+  if (st === null || st.size > maxBytes) return null;
+  return await fs.readFile(path, 'utf8').catch(() => null);
+}
+
+/**
  * Read a file, falling back to its `.prev` copy (= the content last written
  * successfully, see above) if the primary is missing or unreadable. Returns
  * `null` only when neither exists. Use together with
  * `atomicWriteFile(..., { keepBackup: true })`.
+ *
+ * **`maxBytes` は必須** (パス 326)。それまで、この関数は上限を持たず、
+ * `secrets.ts` は**本体にだけ** `stat` の門を掛けていた —— 本体が消えていれば
+ * `readFileWithBackup` は素通りで `.prev` を丸ごと読み、`JSON.parse` まで進んだ。
+ * 門は「自分が書いた物は大きくならない」という前提**ではなく**、別のプロセス・
+ * ディスクの壊れ・同期ソフトが膨らませた場合に備えて在る (パス 313 の理由と同じ)
+ * ので、控えにも同じだけ要る。上限を超える / `stat` できない側は無かったものとして
+ * 次の候補へ倒れる (呼び出し側の「読めなかった」の扱いは変えない)。
  */
-export async function readFileWithBackup(target: string): Promise<string | null> {
-  try {
-    return await fs.readFile(target, 'utf8');
-  } catch {
-    try {
-      return await fs.readFile(`${target}.prev`, 'utf8');
-    } catch {
-      return null;
-    }
-  }
+export async function readFileWithBackup(target: string, maxBytes: number): Promise<string | null> {
+  return (await readIfWithinCap(target, maxBytes)) ?? (await readIfWithinCap(`${target}.prev`, maxBytes));
 }

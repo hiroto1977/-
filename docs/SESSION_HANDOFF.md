@@ -7,6 +7,73 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 326 (2026-09-19) — 読む前の大きさの門が 2 経路に無かった: 控えと開発環境の読み
+
+パス 325 の続き。**法則の執行者を種類で数え直した** —— 82 本のうち「`verify:all` のゲートが 0 件、かつ
+母集団を走査する検査が 0 件」の物が **8 本**在った。その中で最も実害の筋道が短い `size-gate-before-parse`
+(パス 308 / 313 で 2 回学ばれている) を測ると、`readFile` / `readFileSync` の **5 か所のうち 2 経路に門が無かった**。
+
+### 見つけた 2 件
+
+- **`main/secrets.ts` の控え (`<path>.prev`)** —— `loadStore()` は `fs.stat(secretsPath())` で本体にだけ 1 MB の門を
+  掛けており、その `catch` は **ENOENT を握って先へ進む**。続く `readFileWithBackup` は本体が読めなければ控えへ倒れるが、
+  **控えの大きさは誰も見ていなかった** —— つまり**本体を消して巨大な `.prev` を置けば、主プロセスがそれを丸ごと読んで
+  `JSON.parse` する**。門を掛ける理由 (別プロセス・壊れたディスク・同期ソフト) は控えにも同じだけ当てはまる。
+  **資格情報のファイルという、この app で最も守られているはずの場所**で、2 本の経路のうち 1 本だけに門が在った。
+- **`main/clients/devEnv.ts` の 7 つの読み** (`package.json` / `.nvmrc` / `go.mod` / `.python-version` /
+  `.tool-versions` / `.git/HEAD` / `.git` の ref) —— 門が 1 つも無く、しかも `readFileSync`。
+  **アプリが書いていないファイル**なので大きさの保証が無く、同期の読みは **Electron の主スレッドを止める**
+  (非同期の読みより重い —— 巨大なファイルが 1 つ在るだけで画面ごと固まる)。
+
+### 直し
+
+- **門を読む関数の中へ移した**: `atomicWrite.ts` に `readIfWithinCap(path, maxBytes)` (`stat` → 上限 → 読む。
+  `stat` が答えられない物も読まない) を置き、`readFileWithBackup(target, maxBytes)` は本体と控えの**両方**を
+  そこへ通す。`maxBytes` は必須の引数にした (呼び忘れが型で落ちる)。
+  **呼び出し側に門を置くと必ず片方しか掛からない** —— 控えへ倒れる枝は呼び出し側から見えないからで、
+  実際そうなっていた。`secrets.ts` は 2 か所の呼び出し両方に `MAX_STORE_SIZE` を渡す。
+- `devEnv.ts`: `MAX_DEV_ENV_FILE_BYTES` (1 MiB・理由つき) と `readFileOrNull` の `statSync` の門。
+  超えた物は「無かった」と同じ `null` に倒す (呼び出し側 7 か所はどれも `null` を「取れなかった」として扱うので、
+  断り方を増やさない)。
+
+### 機械
+
+**`fileReadSizeGateCensus.test.ts` (main・+6)**: `readFile` / `readFileSync` の母集団 (**実測 5 か所 / 4 ファイル**) を
+1 行ずつ「どの門が・どの上限で覆うか」の台帳に (**両方向**)。各行について**同じファイルの中に門の綴りと上限の名前が在る**ことを
+原文で確かめる。加えて「控えへ倒れる読みは門を関数の中に持つ」「secrets は 2 か所とも同じ上限を渡す」を留める
+(不在の主張には直す前の宣言の綴りを標本として添える)。法則の執行者に census を足し、statement に
+「控えへ倒れる枝は呼び出し側から見えないので、門は読む関数の中に置く」を書いた。
+
+### 足した検査が別の台帳に鳴った
+
+`originalSourcePolicy.test.ts` の規則 2 (「道が読めない生の読みは理由つきで台帳へ」) が、新しい census を
+**6 件**で名指しした —— この census の母集団は `readFile` の呼び出しそのものなので、**台帳の needle と標本が
+数える綴りを引用する**。綴りを分割して走査を避ける (`'fs.read' + 'File('`) こともできたが、それは
+**機械を騙して読みにくくする**方向なので、理由つきで `VARIABLE_PATH_ALLOWED` に載せた (実際の読みは
+`readOriginalSource` だけを通しており、引用は文字列リテラルで走らない)。
+
+### 対照 (実測・3 本)
+
+(A) 控えの門を外す (`st.size > maxBytes` を落とす) → **4 件**落ちる (境界 2 + 控え 1 + census の配置 1)。
+(B) `devEnv` の門を外す → **1 件** (台帳が「門の綴りが無い」と名指し)。
+(C) 台帳に無い `readFile` を 1 つ足す → **1 件** (両方向の照合)。
+
+### 出荷物と実機
+
+FULL **11,926,107 B** / LITE **3,338,628 B** で **byte 単位で不変** (直したのは `src/main/` の 3 モジュールだけで、
+ブラウザ版は 1 行も読み込まない。両方を組んで実測)。`secrets.ts` / `atomicWrite.ts` は保護対象なので
+`npm run chain:append` (整合性チェーン block **#237**)。実機は連鎖 1 回で全段緑 —— **主プロセスを通す `smoke:app`**
+が今回の直しの当たり所なので特に効く: `smoke:app` OK / `e2e` 32 suite 446 件 ❌ 0 / `e2e:lite` 446 件 ❌ 0 /
+`perf` OK (LITE DCL 248 ms heap 10.2 MB・FULL DCL 672 ms heap 37 MB) / `e2e:ollama` ✅ 8。
+
+### 自戒
+
+- **「1 つの入口に門を置いた」と言えるのは、その入口が分岐を持たないときだけ。** `secrets.ts` は門を
+  `loadStore()` の先頭に置いて「読む前に断っている」と読めたが、その下の読みは**2 つのファイルへ分岐**していた。
+  分岐は呼び出し側のコードに現れない (関数の中に隠れている) ので、**門は分岐より内側に置く**。
+- **法則の執行者は「何件あるか」ではなく「母集団を見ているか」で数える。** パス 325 と同じ数え直しを
+  82 本に掛けたら、gate も走査も無い法則が 8 本出た。残り 7 本は次の候補。
+
 ## パス 325 (2026-09-19) — 調べた物と使う物が別だった 3 か所: 法則は 4 回学ばれていたのに母集団の機械が無かった
 
 パス 324 の続き。法則 `checked-equals-used`「関門が通した値ではなく元の文字列を使うと、調べた物と使われる物が別になる」は
@@ -4760,6 +4827,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 読む前の大きさの門が 2 経路に無かった (パス 326) | ✅ 法則の執行者を種類で数え直すと、gate も母集団の走査も無い法則が **82 本中 8 本**。その 1 つ `size-gate-before-parse` を測ると `readFile` 5 か所のうち 2 経路が素通り: **`secrets.ts` の控え `.prev`** (本体にだけ門・ENOENT で素通りする枝から控えを丸ごと読んで `JSON.parse`) と **`devEnv.ts` の 7 読み** (門なし・`readFileSync` で主スレッドを止める)。門を `readFileWithBackup` の**中**へ移し (`maxBytes` は必須引数)、devEnv に 1 MiB。`fileReadSizeGateCensus.test.ts` (5 か所を両方向・門と上限を原文で確認)・対照 3 本 (4 / 1 / 1 件)・chain #237 |
 | 調べた物と使う物が別 (パス 325) | ✅ 法則 `checked-equals-used` は 4 回学ばれていたのに執行者が全部「直した個所の検査」で、母集団の機械が無かった。`new URL(` の **27 か所 / 20 ファイル**を種類つきの台帳へ (`parsedUrlGateCensus.test.ts`・両方向・value-gate は振る舞いで確認)。破れていた 3 件を直した: `validateScanUrl` が生を返し VT へ送っていた (8 形中 5 形が食い違う) / `github` が pin 後に生を fetch / `shopify` の Discord webhook が pin 後に生へ POST。対照 4 本 (8 / 1 / 1 / 1 件) |
 | 画面のリンクのホストに第三者の応答の値 (パス 324) | ✅ `main/clients/slack.ts` の permalink が `team.info` の `domain` を authority に直置き (`/` `?` `#` `\` の 1 字で host が `.slack.com` の外へ)。`shared/api/slack.ts` の 1 ラベルの関門 `slackWorkspaceDomainOrNull` の**返り値だけ**を置き、断られたら `app_redirect`。`hostInterpolationCensus.test.ts` (母集団 5 行・両方向の台帳)・法則 `link-host-not-from-response`・対照 2 本 (関門を迂回 → 10 件 / 文法を緩める → 17 件落ちる)。3 つの網 (`lint:url-encoding` は authority を見ず・`network-targets` は通信だけ・#5 はスキームだけ) の継ぎ目 |
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |

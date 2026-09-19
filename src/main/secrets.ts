@@ -10,7 +10,15 @@ import {
 import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
 
 const FILE_NAME = 'service-hub-secrets.json';
-const MAX_STORE_SIZE = 1 * 1024 * 1024; // 1 MB — generous for hundreds of tokens
+/*
+ * 1 MB — generous for hundreds of tokens.
+ *
+ * **控えにも同じ上限が掛かる** (パス 326)。2026-09-19 まで、この定数は
+ * `loadStore()` の中の `fs.stat(secretsPath())` にだけ効いており、
+ * `readFileWithBackup` が倒れる `<path>.prev` は上限なしで読まれていた
+ * (本体が ENOENT のときは門を素通りする枝がある)。
+ */
+const MAX_STORE_SIZE = 1 * 1024 * 1024;
 
 /** 置き場所。ハードリセット (`main/eraseAll.ts`) が在庫を作るために読む (パス 137)。 */
 export function secretsPath(): string {
@@ -119,13 +127,13 @@ async function readStore(): Promise<Record<string, string>> {
   // Primary file, falling back to the `.prev` copy if the primary went missing
   // or corrupt afterwards. The copy holds the content **last written** (パス 134) —
   // never the previous one, so a cleared / rotated token cannot come back.
-  const text = await readFileWithBackup(secretsPath());
+  const text = await readFileWithBackup(secretsPath(), MAX_STORE_SIZE);
   if (text == null) return {};
   const store = parseStore(text);
   if (store) return store;
 
   // Primary unparseable → try the backup explicitly before giving up.
-  const prev = await readFileWithBackup(`${secretsPath()}.prev`); // reads `<path>.prev`
+  const prev = await readFileWithBackup(`${secretsPath()}.prev`, MAX_STORE_SIZE); // reads `<path>.prev`
   const recovered = parseStore(prev);
   if (recovered) {
 

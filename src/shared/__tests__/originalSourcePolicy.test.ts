@@ -183,6 +183,10 @@ const ALLOWED: Readonly<Record<string, string>> = {};
  * `count` は実測の件数で、**増えたら鳴る** (台帳が白紙委任にならないように)。
  */
 const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: string }>> = {
+  'src/main/__tests__/fileReadSizeGateCensus.test.ts': {
+    count: 6,
+    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する** (5 行 + 標本 1)。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)',
+  },
   'src/main/__tests__/electronFuses.test.ts': {
     count: 1,
     why: 'ファイル局所の定数 CONFIG (electron-builder の設定) を読む。台帳の外のファイルで、書き換わらない',

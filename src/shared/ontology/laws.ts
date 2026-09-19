@@ -458,10 +458,10 @@ export const LAWS: readonly Law[] = [
   {
     id: 'size-gate-before-parse',
     family: 'at-rest',
-    name: '状態ファイルは読む前に大きさの門',
-    statement: '「自分が書いた物は大きくならない」は前提にならない (別プロセス・壊れたディスク・同期ソフト)。stat で読む前に門、読んだ後にも byte の門。secrets.json は 1 MB かつ plain object。',
-    provenance: ['不変条件 #13', 'パス 313'],
-    enforcedBy: [test(T.main('stateFile')), test(T.main('secretsProtection')), chain],
+    name: 'ディスクから読む所は読む前に大きさの門',
+    statement: '「自分が書いた物は大きくならない」は前提にならない (別プロセス・壊れたディスク・同期ソフト)。stat で読む前に門、読んだ後にも byte の門。secrets.json は 1 MB かつ plain object。**控えへ倒れる枝は呼び出し側から見えないので、門は読む関数の中に置く** (パス 326)。同期の読みは主スレッドを止めるので特に要る。',
+    provenance: ['不変条件 #13', 'パス 308', 'パス 313', 'パス 326 (母集団の機械)'],
+    enforcedBy: [test(T.main('fileReadSizeGateCensus')), test(T.main('stateFile')), test(T.main('secretsProtection')), chain],
   },
   {
     id: 'at-rest-mechanism-inventory',

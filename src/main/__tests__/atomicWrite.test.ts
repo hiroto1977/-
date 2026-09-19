@@ -130,20 +130,52 @@ describe('atomicWriteFile', () => {
 });
 
 describe('readFileWithBackup', () => {
+  const CAP = 1024 * 1024;
+
   it('reads the primary file when present', async () => {
     const target = path.join(dir, 'f.json');
     await atomicWriteFile(target, 'primary');
-    expect(await readFileWithBackup(target)).toBe('primary');
+    expect(await readFileWithBackup(target, CAP)).toBe('primary');
   });
 
   it('falls back to .prev when the primary is missing', async () => {
     const target = path.join(dir, 'f.json');
     await fs.writeFile(`${target}.prev`, 'backup');
-    expect(await readFileWithBackup(target)).toBe('backup');
+    expect(await readFileWithBackup(target, CAP)).toBe('backup');
   });
 
   it('returns null when neither exists', async () => {
-    expect(await readFileWithBackup(path.join(dir, 'nope.json'))).toBeNull();
+    expect(await readFileWithBackup(path.join(dir, 'nope.json'), CAP)).toBeNull();
+  });
+
+  /*
+   * **読む前の大きさの門は、控え (`.prev`) にも掛かる** (パス 326)。
+   *
+   * それまで `readFileWithBackup` は上限を持たず、`secrets.ts` は**本体にだけ**
+   * `fs.stat` の門を掛けていた —— 本体が消えていれば門は ENOENT で素通りし、
+   * 控えが何バイトでも丸ごと読まれて `JSON.parse` まで進んだ。
+   */
+  it('★ 上限を超える本体は読まず、控えへ倒れる', async () => {
+    const target = path.join(dir, 'big.json');
+    await fs.writeFile(target, 'x'.repeat(200));
+    await fs.writeFile(`${target}.prev`, 'small');
+    expect(await readFileWithBackup(target, 100)).toBe('small');
+    // 対照: 上限を上げれば本体が読める (門が効いていることの裏取り)
+    expect(await readFileWithBackup(target, 1000)).toBe('x'.repeat(200));
+  });
+
+  it('★ 本体が無く控えが上限を超えるとき、控えも読まない (null)', async () => {
+    const target = path.join(dir, 'onlybig.json');
+    await fs.writeFile(`${target}.prev`, 'y'.repeat(200));
+    expect(await readFileWithBackup(target, 100)).toBeNull();
+    expect(await readFileWithBackup(target, 1000)).toBe('y'.repeat(200));
+  });
+
+  it('境界: ちょうど上限は読む / 1 バイト超は読まない', async () => {
+    const target = path.join(dir, 'edge.json');
+    await fs.writeFile(target, 'z'.repeat(64));
+    expect(await readFileWithBackup(target, 64)).toBe('z'.repeat(64));
+    expect(await readFileWithBackup(target, 63)).toBeNull();
   });
 });
 
