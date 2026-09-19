@@ -10,7 +10,7 @@ import {
   type ServiceAction,
   type FetchContext,
 } from './types';
-import { buildRfc2822 } from './gmail';
+import { GMAIL_API, GMAIL_DRAFTS_PATH, gmailDraftInit, parseCreatedDraft } from '../../shared/api/google';
 import {
   SHOPIFY_ORDER_FIELDS,
   checkShopifyLineItems,
@@ -135,19 +135,6 @@ function orderMessage(o: ShopifyOrderSummary): string {
   return `${orderHeadline(o)}\n${orderLines(o)}${tail}`;
 }
 
-/** base64url (no padding) — the encoding Gmail's `drafts.create` expects
- *  for the raw RFC 822 message. */
-function toBase64Url(value: string): string {
-  // Buffer.from(string) already defaults to utf8 — drop the explicit arg to
-  // avoid the equivalent `'utf8' → ''` mutant.
-  let s = Buffer.from(value).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
-  // Strip trailing '=' padding (one or two chars). A while/endsWith loop instead
-  // of a `/=+$/` regex so each padding char removed is individually observable —
-  // a one/two-pad input distinguishes the boundary, killing off-by-one mutants.
-  while (s.endsWith('=')) s = s.slice(0, -1);
-  return s;
-}
-
 /** POST to an endpoint that returns an empty body on success (e.g. a
  *  Discord webhook → 204). `jsonFetch` can't be used because it always
  *  parses JSON. */
@@ -253,10 +240,6 @@ async function syncToLine(ctx: ActionContext): Promise<ActionData<'shopify/sync-
   return { service: 'line', delivered: true };
 }
 
-interface GmailDraftResponse {
-  id: string;
-}
-
 /** Shopify → Gmail: create a draft order-confirmation email to the customer.
  *  payload: `{ order, token (Gmail OAuth access token) }`. */
 async function syncToGmail(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-gmail'>> {
@@ -266,32 +249,29 @@ async function syncToGmail(ctx: ActionContext): Promise<ActionData<'shopify/sync
   if (!order.email) throw new Error('order.email is required to draft a customer email');
 
   /*
-   * RFC 2822 の組み立ては `gmail.ts` の `buildRfc2822` に 1 つだけ置く。
+   * RFC 2822 の組み立ては shared の `buildRfc2822` に 1 つだけ置く (`gmailDraftInit` が呼ぶ)。
    *
    * ここは 2026-08-22 まで**同じものを手で組み直していて、`To:` の
    * CR/LF 検査だけが抜けていた**。`assertOrder` は `id` と `name` しか見ないので
    * `order.email` は型も改行も無検査で、payload は `action:invoke` 経由で
    * renderer から来る —— つまり乗っ取られた renderer が
    * `"a@b.com\r\nBcc: attacker@evil.com"` を渡せば、下書きに Bcc が載った。
-   * gmail.ts の同じ処理には最初から `isSafeHeaderValue` の関門があり、
+   * 共有の同じ処理には最初から `isSafeHeaderValue` の関門があり、
    * その理由もコメントに書いてある (不変条件 #11)。写した側だけが落としていた。
+   * パス 321 からは要求の組み立て (base64url・URL・ヘッダ) ごと共有を通る。
    */
-  const mime = buildRfc2822(
-    order.email,
-    `ご注文ありがとうございます ${order.name}`,
-    `${order.customer || 'お客'}様\n\nご注文を承りました。\n\n${orderLines(order)}\n\n合計: ${order.total}`,
-  );
+  const draft = {
+    to: order.email,
+    subject: `ご注文ありがとうございます ${order.name}`,
+    body: `${order.customer || 'お客'}様\n\nご注文を承りました。\n\n${orderLines(order)}\n\n合計: ${order.total}`,
+  };
 
-  const res = await jsonFetch<GmailDraftResponse>(
-    'https://gmail.googleapis.com/gmail/v1/users/me/drafts',
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: { raw: toBase64Url(mime) } }),
-    },
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GMAIL_API}${GMAIL_DRAFTS_PATH}`,
+    gmailDraftInit(draft, token),
     { fetch: ctx.fetch, serviceId: 'shopify→gmail' },
   );
-  return { service: 'gmail', draftId: res.id };
+  return { service: 'gmail', draftId: parseCreatedDraft(res).id };
 }
 
 interface NotionPageResponse {

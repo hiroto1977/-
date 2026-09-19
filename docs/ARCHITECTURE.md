@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 617 個の `file:line` 参照 + 41 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 645 個の `file:line` 参照 + 41 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14630** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14674** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 32 / 37 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 617 | 自己検証 |
+| `file:line` 参照数 | 645 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -126,7 +126,7 @@ mutation score を限りなく 100% に近づけるための **二段構え**:
 | `security.ts` | `detectNorton` (fs.stat loop) | `findExistingDirectory(candidates, probe)`, `nortonNotFoundDetails(platform)` |
 | `ollama.ts` | `chat`, `fetchOllamaSnapshot` | `isAllowedEndpoint`, `isSafeModelName`, `isVersionSafe`, `compareVersions` |
 | `skills.ts` | `runSkill`, `scanSkills` | `isSafeSkillName`, `parseFrontmatter`, `stripBalancedQuotes` |
-| `gmail.ts` | `createDraft` | `isSafeHeaderValue`, `buildRfc2822` |
+| `gmail.ts` | `createDraft` | (パス 321 から shared の `src/shared/rfc2822.ts` に `isSafeHeaderValue`, `buildRfc2822` —— main は re-export) |
 | `secrets.ts` | `readStore`/`writeStore` (safeStorage) | (pure helpers already factored — `isTokenSet`) |
 
 **Phase 2 — Integration test for side-effecting wrappers**
@@ -1834,20 +1834,20 @@ union を参照する。
 
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
-| github | `create-issue` | `{ owner, repo, title, body?, labels? }` | **共有台帳 `GITHUB_ISSUE_FIELDS` + `GITHUB_LABELS` (`checkWriteFields` / `checkWriteLabels`) で型・長さ・件数を reject**。URL part は `encodeURIComponent` | `github.ts:154-201` |
-| wordpress | `create-post-draft` | `{ siteId, title, content?, status? }` | **共有台帳 `WORDPRESS_POST_FIELDS`** (型・長さ。**`status` は台帳の一覧 (draft / publish / pending / private) 以外を reject** —— publish も指定できる。既定は draft)。siteId は `encodeURIComponent` | `wordpress.ts:69-117` |
-| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | **共有台帳 `ATLASSIAN_ISSUE_FIELDS`** (型・長さ) + site URL https only + *.atlassian.net allowlist | `atlassian.ts:122-172` |
-| notion | `create-page` | `{ parentPageId, title, body? }` | **共有台帳 `NOTION_PAGE_FIELDS`** (型・長さ。それ以上の形式検証なし — API 4xx で対処) | `notion.ts:72-126` |
-| drive | `create-folder` | `{ name, parentId? }` | **共有台帳 `DRIVE_FOLDER_FIELDS`** (型・長さ。それ以上は Google API 側で検証) | `drive.ts:49-96` |
-| calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | **共有台帳 `CALENDAR_EVENT_FIELDS`** (型・長さ。RFC3339 は API 側。timeZone 既定は Asia/Tokyo) | `calendar.ts:69-132` |
-| gmail | `create-draft` | `{ to, subject, body? }` | **共有台帳 `GMAIL_DRAFT_FIELDS` (`checkWriteFields`) で型・長さ・CR/LF を reject** + `isSafeHeaderValue(to)` (二重の備え) | `gmail.ts:61-146` |
-| slack | `send-message` | `{ channel, text }` | **共有台帳 `SLACK_MESSAGE_FIELDS`** (型・長さ) | `slack.ts:84-126` |
-| canva | `create-folder` | `{ name, parentFolderId? }` | **共有台帳 `CANVA_FOLDER_FIELDS`** (型・長さ) | `canva.ts:81-122` |
+| github | `create-issue` | `{ owner, repo, title, body?, labels? }` | **共有台帳 `GITHUB_ISSUE_FIELDS` + `GITHUB_LABELS`** を共有の `checkIssue` が読む (型・長さ・件数を reject) + URL (`githubIssuesPath`・動的部分は `encodeURIComponent`)・要求 (`githubIssueInit`)・応答の読み (`parseCreatedIssue`) も共有 —— 両ビルドが同じ関数を通る (2026-09-18 のオントロジーの組み直し)。宣言は main の CreateIssuePayload | `src/shared/api/github.ts:164-254` |
+| wordpress | `create-post-draft` | `{ siteId, title, content?, status? }` | **共有台帳 `WORDPRESS_POST_FIELDS`** を共有の `checkPost` が読む (型・長さ。`status` は台帳の一覧 (draft / publish / pending / private) 以外を reject —— publish も指定できるので画面の断りは「下書き**または**公開」) + URL (`wordpressPostsPath`・siteId は `encodeURIComponent`)・要求 (`wordpressPostInit`)・応答の読み (`parseCreatedPost`) も共有 —— 両ビルドが同じ関数を通る (2026-09-18)。宣言は main の CreatePostDraftPayload | `src/shared/api/wordpress.ts:110-174` |
+| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | **共有台帳 `ATLASSIAN_ISSUE_FIELDS`** を共有の `checkJiraIssue` が読む (型・長さ。issueType は空なら Task) + ADF・Basic 認証 (`basicAuthorization` —— UTF-8 を通す)・要求 (`jiraIssueInit`)・応答の読み (`parseCreatedJiraIssue`) も共有 —— 両ビルドが同じ関数を通る (2026-09-19)。site URL の https only + *.atlassian.net allowlist は呼び手の parseAtlassianToken (main / ブラウザ版。断りの運び方が違うので残す —— パス 284)。宣言は main の CreateJiraIssuePayload | `src/shared/api/atlassian.ts:126-218` |
+| notion | `create-page` | `{ parentPageId, title, body? }` | **共有台帳 `NOTION_PAGE_FIELDS`** を共有の `checkPage` が読む (型・長さ。それ以上の形式検証なし — API 4xx で対処) + 要求 (`notionPageInit`)・応答の読み (`parseCreatedPage`) も共有 —— 両ビルドが同じ関数を通る (2026-09-18)。宣言は main の CreatePagePayload | `src/shared/api/notion.ts:90-150` |
+| drive | `create-folder` | `{ name, parentId? }` | **共有台帳 `DRIVE_FOLDER_FIELDS`** を共有の `checkDriveFolder` が読む (型・長さ。それ以上は Google API 側で検証) + 要求 (`driveFolderInit`)・応答の読み (`parseCreatedDriveFolder` —— `webViewLink` が無ければフォルダの URL を組む) も共有 (2026-09-18)。宣言は main の CreateFolderPayload | `src/shared/api/google.ts:211-272` |
+| calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | **共有台帳 `CALENDAR_EVENT_FIELDS`** を共有の `checkCalendarEvent` が読む (型・長さ。RFC3339 は API 側。timeZone の既定は端末の物 = 共有の `defaultTimeZone` 1 つ) + 要求 (`calendarEventInit`)・応答の読み (`parseCreatedEvent`) も共有 (2026-09-18)。宣言は main の CreateEventPayload | `src/shared/api/google.ts:279-357` |
+| gmail | `create-draft` | `{ to, subject, body? }` | **共有台帳 `GMAIL_DRAFT_FIELDS`** を共有の `checkGmailDraft` が読む (型・長さ・`to` の CR/LF を 1 行の欄として reject) + RFC 2822 の組み立て (`buildRfc2822` —— 二重の備えの isSafeHeaderValue はその中)・base64url・要求 (`gmailDraftInit`)・応答の読み (`parseCreatedDraft` —— `message.id` が無ければ断る) も共有 —— 両ビルドと shopify の `sync-to-gmail` が同じ関数を通る (2026-09-19)。宣言は main の CreateDraftPayload | `src/shared/api/google.ts:363-425` |
+| slack | `send-message` | `{ channel, text }` | **共有台帳 `SLACK_MESSAGE_FIELDS`** を共有の `checkMessage` が読む (型・長さ) + 要求 (`slackMessageInit`)・応答の読み (`readSlackPost` —— `ok: true` に `ts` が無ければ断る。main は 2026-09-18 まで '' に倒していた) も共有。宣言は main の SendMessagePayload | `src/shared/api/slack.ts:118-175` |
+| canva | `create-folder` | `{ name, parentFolderId? }` | **共有台帳 `CANVA_FOLDER_FIELDS`** を共有の `checkFolder` が読む (型・長さ。親は省略なら root) + 要求 (`canvaFolderInit`)・応答の読み (`parseCreatedFolder`) も共有 (2026-09-18)。宣言は main の CreateFolderPayload | `src/shared/api/canva.ts:124-175` |
 | skills | `run-skill` | `{ id, prompt }` | **`isSafeSkillName(id)`** + path containment。**`id` は一覧が出した `SkillEntry.id` (フォルダ名・ファイル名) で、画面に出ている題 (`label` = frontmatter の `name:`) ではない** —— パス 179 までここが題を受け取っており、題と実体が違うスキルは実行できない / **別のスキルの定義が送られる**。**`prompt` は `MAX_ASSISTANT_CONTENT_CHARS` 超を断る** (パス 112 まで天井なし)。**応答は `capAssistantReply` で 10 万字に打ち切り注記を残す** (パス 113 まで byte の天井だけ)。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:205-482` |
-| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:187-329` |
-| security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:277-329` |
-| cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | **共有台帳 `CLOUDFLARE_DNS_FIELDS`** (型・長さ・**type は台帳の一覧 (A / AAAA / CNAME / TXT / MX) 以外を reject**・ttl は 1 以上の整数・proxied は真偽値)。zoneId encodeURIComponent | `cloudflare.ts:132-220` |
-| cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | **共有台帳 `CLOUDFLARE_PURGE_FIELDS`** (files は文字列の配列で件数と 1 件の長さに天井・purgeEverything は真偽値)。zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:180-220` |
+| security | `check-email-breach` | `{ email }` | 空白落としと空の断り (`checkBreachEmail` → `validateBreachEmail`)・URL (`hibpBreachedAccountPath`: `encodeURIComponent(email)`)・ヘッダ (`hibpInit`)・404 = 漏洩なし (`HIBP_NO_BREACH_STATUS`) は共有 —— 両ビルドが同じ関数を通る (2026-09-19)。送る道 (main は limitedFetch の上限つき) と User-Agent は呼び手。宣言は main の CheckEmailBreachPayload | `src/shared/api/security.ts:49-81` |
+| security | `scan-url` | `{ url }` | **`checkScanUrl` → `validateScanUrl`** (http/https のみ・長さ上限) → 投入 (`vtSubmitInit`) → base64url(url) = VT id (`vtUrlId` / `vtReportPath`) → 検出数の集計 (`summarizeVtReport` —— 4 つの内訳を要求) は共有 —— 両ビルドが同じ関数を通る (2026-09-19)。宣言は main の ScanUrlPayload | `src/shared/api/security.ts:83-145` |
+| cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | **共有台帳 `CLOUDFLARE_DNS_FIELDS`** を共有の `checkDnsRecord` が読む (型・長さ・**type は台帳の一覧 (A / AAAA / CNAME / TXT / MX) 以外を reject**・ttl は 1 以上の整数・proxied は真偽値で A / AAAA / CNAME にだけ載せる) + URL (`cloudflareDnsRecordsPath`・zoneId は encodeURIComponent)・要求 (`dnsRecordInit`)・封筒と結果の読み (`readCloudflareEnvelope` / `parseCreatedDnsRecord`) も共有 —— 両ビルドが同じ関数を通る (2026-09-19)。宣言は main の CreateDnsRecordPayload | `src/shared/api/cloudflare.ts:51-138` |
+| cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | **共有台帳 `CLOUDFLARE_PURGE_FIELDS`** を共有の `checkPurge` が読む (files は文字列の配列で件数と 1 件の長さに天井・purgeEverything は真偽値・どちらかが要る = `CLOUDFLARE_PURGE_NEEDS_TARGET`) + URL (`cloudflarePurgePath`)・要求 (`purgeCacheInit`)・結果の読み (`parsePurgeResult`) も共有 (2026-09-19)。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する。宣言は main の PurgeCachePayload | `src/shared/api/cloudflare.ts:140-202` |
 | emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:116-285` |
 | emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:245-315` |
 | ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:248-372` |
@@ -1881,13 +1881,13 @@ union を参照する。
 | uber-eats | `advise` | 画面の集計 (UberEatsAdviceInput: 店舗・人気メニュー・平均評価) | 同上 (規則。画面が無いので今は呼ぶ物が無い) | `uber-eats.ts:94-97` |
 | demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:89-92` |
 | demae-can | `advise` | 画面の集計 (DemaeCanAdviceInput: 月次件数・キャンセル率・地域別・配達中) | 同上 | `demae-can.ts:89-92` |
-| shopify | `sync-to-slack` | order + token + channel | 送り先は定数 (slack.com)。token は Bearer として載る。必須欄は CONNECTORS の requiredFields が持つ | `shopify.ts:433-441` |
-| shopify | `sync-to-discord` | order + webhookUrl | **送り先が payload 由来**。https かつ hostname が discord.com のものだけ通す | `shopify.ts:433-441` |
-| shopify | `sync-to-line` | order + token + to | 送り先は定数 (api.line.me)。to は宛先 ID | `shopify.ts:433-441` |
-| shopify | `sync-to-gmail` | order + token | 送り先は定数。order.email が無ければ断る | `shopify.ts:433-441` |
-| shopify | `sync-to-notion` | order + token + databaseId | 送り先は定数 (api.notion.com) | `shopify.ts:433-441` |
-| shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:433-441` |
-| shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:433-441` |
+| shopify | `sync-to-slack` | order + token + channel | 送り先は定数 (slack.com)。token は Bearer として載る。必須欄は CONNECTORS の requiredFields が持つ | `shopify.ts:414-420` |
+| shopify | `sync-to-discord` | order + webhookUrl | **送り先が payload 由来**。https かつ hostname が discord.com のものだけ通す | `shopify.ts:414-420` |
+| shopify | `sync-to-line` | order + token + to | 送り先は定数 (api.line.me)。to は宛先 ID | `shopify.ts:414-420` |
+| shopify | `sync-to-gmail` | order + token | 送り先は定数。order.email が無ければ断る | `shopify.ts:414-420` |
+| shopify | `sync-to-notion` | order + token + databaseId | 送り先は定数 (api.notion.com) | `shopify.ts:414-420` |
+| shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:414-420` |
+| shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:414-420` |
 
 ### 3.3 ネットワーク egress マトリクス (30 ホスト + ユーザー指定)
 
@@ -1912,19 +1912,19 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 
 | Service | Host | Method + Path | Auth | 出典 |
 |---|---|---|---|---|
-| github | `api.github.com` | `GET /user`, `GET /search/issues`, `GET /repos/{owner}/{repo}/pulls/{n}`, `POST /repos/{owner}/{repo}/issues` | Bearer | `github.ts:74-164` |
+| github | `api.github.com` | `GET /user`, `GET /search/issues`, `GET /repos/{owner}/{repo}/pulls/{n}` (main) / `POST /repos/{owner}/{repo}/issues` (両ビルドが共有の関数を通る) | Bearer | `github.ts:74-150` + `src/shared/api/github.ts:231-235` |
 | app (更新の確認・両ビルド) | `api.github.com` | `GET /repos/hiroto1977/-/releases/latest` (利用者が押した時だけ。応答は形と案内先ホストまで確かめる —— §1.4 の app:checkUpdate) | none | `main.ts:231-238`, `src/renderer/web-shim.ts:1089-1096` |
-| wordpress | `public-api.wordpress.com` | `GET /rest/v1.1/me/sites`, `POST /rest/v1.1/sites/{id}/posts/new` | Bearer | `wordpress.ts:46-89` |
-| atlassian | `*.atlassian.net` (https only) | `GET /rest/api/3/project/search`, `POST /rest/api/3/issue` | Basic | `atlassian.ts:62-148` |
-| notion | `api.notion.com` | `POST /v1/search`, `POST /v1/pages` | Bearer | `notion.ts:43-98` |
-| drive | `www.googleapis.com`, `drive.google.com` | `GET /drive/v3/files`, `POST /drive/v3/files` | Bearer | `drive.ts:30-87` |
-| calendar | `www.googleapis.com` | `GET /calendar/v3/users/me/calendarList`, `events` (`GET` + `POST`) | Bearer | `calendar.ts:33-108` |
-| gmail | `gmail.googleapis.com` | `GET /messages`, `GET /messages/{id}`, `POST /drafts` | Bearer | `gmail.ts:29-113` |
-| slack | `slack.com` | `GET /api/conversations.list`, `team.info`, `POST /chat.postMessage` | Bearer | `slack.ts:53-98` |
-| canva | `api.canva.com` | `GET /rest/v1/designs`, `brand-kits`, `POST /folders` | Bearer | `canva.ts:43-96` |
-| security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:227` |
-| security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:290-321` |
-| cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
+| wordpress | `public-api.wordpress.com` | `GET /rest/v1.1/me/sites` (main) / `POST /rest/v1.1/sites/{id}/posts/new` (両ビルドが共有の関数を通る) | Bearer | `wordpress.ts:46-70` + `src/shared/api/wordpress.ts:152-158` |
+| atlassian | `*.atlassian.net` (https only) | `GET /rest/api/3/project/search` (main) / `POST /rest/api/3/issue` (両ビルドが共有の関数を通る) | Basic | `atlassian.ts:77-106` + `src/shared/api/atlassian.ts:202-208` |
+| notion | `api.notion.com` | `POST /v1/search` (main) / `POST /v1/pages` (両ビルドが共有の関数を通る) | Bearer | `notion.ts:43-60` + `src/shared/api/notion.ts:133-139` |
+| drive | `www.googleapis.com`, `drive.google.com` | `GET /drive/v3/files` (main) / `POST /drive/v3/files` (両ビルドが共有の関数を通る) | Bearer | `drive.ts:30-70` + `src/shared/api/google.ts:248-254` |
+| calendar | `www.googleapis.com` | `GET /calendar/v3/users/me/calendarList`, `events` (`GET` main / `POST` は両ビルドが共有の関数を通る) | Bearer | `calendar.ts:33-70` + `src/shared/api/google.ts:340-346` |
+| gmail | `gmail.googleapis.com` | `GET /messages`, `GET /messages/{id}` (main) / `POST /drafts` (両ビルドと shopify が共有の関数を通る) | Bearer | `gmail.ts:29-46` + `src/shared/api/google.ts:406-412` |
+| slack | `slack.com` | `GET /api/conversations.list`, `team.info` (main) / `POST /chat.postMessage` (両ビルドが共有の関数を通る) | Bearer | `slack.ts:53-70` + `src/shared/api/slack.ts:151-157` |
+| canva | `api.canva.com` | `GET /rest/v1/designs`, `brand-kits` (main) / `POST /folders` (両ビルドが共有の関数を通る) | Bearer | `canva.ts:43-70` + `src/shared/api/canva.ts:158-164` |
+| security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` (両ビルドが共有の URL とヘッダを通る) | `hibp-api-key` | `src/shared/api/security.ts:61-81` + `security.ts:205-209` |
+| security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` (両ビルドが共有の関数を通る) | `x-apikey` | `src/shared/api/security.ts:104-124` + `security.ts:251-255` |
+| cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` (main) / `POST /zones/{id}/dns_records`, `/purge_cache` (両ビルドが共有の関数を通る) | Bearer | `cloudflare.ts:93-138` + `src/shared/api/cloudflare.ts:116-122,186-192` |
 | skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:465`, `emotions.ts:204` |
 | assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:150-186` |
 | assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:149-172` |
@@ -2002,7 +2002,7 @@ graph TB
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:60`) + `ALLOWED_ENDPOINTS` (`ollama.ts:88-93`) |
 | **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:202-206`) |
 | **Skill id path traversal** | `id="../etc/passwd"` | `isSafeSkillName` (`skills.ts:367`) + realpath による封じ込め (読み出し `skills.ts:347-352` / **列挙 `skills.ts:151-189`**)。**鍵は一覧が出した `SkillEntry.id` で、frontmatter の `name:` は鍵にしない** (パス 179) |
-| **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:94-97`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
+| **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`src/shared/rfc2822.ts:22-25`) + throw in `buildRfc2822` (`src/shared/rfc2822.ts:28-40`) —— 2026-09-19 から shared の 1 つ (両ビルド + shopify) |
 | **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
 | **token 漏洩 (プロキシがヘッダを JSON で返す)** | 利用者の BYO Worker が `{"headers":{"authorization":"Bearer …"}}` を返す | `redactSecrets` を**ヘッダ名起点**にした (線上の `名前: 値` と JSON の `"名前":"値"` の両方)。旧規則はコロン直結のみを見ており、この形が素通りしていた (2026-08-20 実測) |
 | **Renderer XSS** | (理論) | CSP + React auto-escape + `dangerouslySetInnerHTML` 0 件 |
@@ -2175,9 +2175,7 @@ ratchet 値は **これ以上下げない** (上げるのみ)。
 | File | Line | Mutator | 等価判定の根拠 | 解除条件 |
 |---|---:|---|---|---|
 | `atlassian.ts` | host strip | Regex (`^https:\/\/` 中の `^` 削除) | `parseAtlassianToken` が https:// prefix を上流で強制 | parseAtlassianToken の上流バリデーションが緩んだ場合 |
-| `gmail.ts` | base64url | Regex (`=+$` vs `=$`) | Gmail RFC2822 body の length % 3 が常に 1 (= padding 0) になる構造 | base64url の input が任意長になった場合 |
 | `oauth.ts` | base64url | Regex (`=+$` vs `=$`) | 16-byte (state) と 32-byte (verifier) のみ feed、両者とも = padding 1 | base64url が新たな buffer size を受け入れた場合 |
-| `security.ts` | vtBase64 | Regex (`=+$` vs `=$`) | URL の length % 3 が実用上 0 か 1 | テスト対象の URL が % 3 = 2 のケースを含むよう拡張された場合 |
 | `oauth.ts:96` | LogicalOperator (`process.env.X ?? ''`) | env var unset テスト時のシグネチャが固定 | OAUTH_CONFIGS shape test が `clientId === ''` を assert | プロダクション ENV を test setup で stub する場合 |
 
 **運用ルール**:
@@ -2446,9 +2444,9 @@ classDiagram
     -readSkillBody(id) : skills.ts:373 ~containment check~
   }
 
-  class GmailGuards~clients/gmail.ts~ {
-    +isSafeHeaderValue(v) : gmail.ts:94
-    +buildRfc2822(to, sub, body) : gmail.ts:100 ~refuses CRLF~
+  class GmailGuards~shared/rfc2822.ts~ {
+    +isSafeHeaderValue(v) : src/shared/rfc2822.ts:22
+    +buildRfc2822(to, sub, body) : src/shared/rfc2822.ts:28 ~refuses CRLF~
   }
 
   IpcHandlers ..> ServiceIdGuard
@@ -2480,7 +2478,7 @@ classDiagram
 | 8 | Ollama は `/api/pull|create|push|copy|delete|blobs|upload` を呼ばない | `ollama.test.ts` `isAllowedEndpoint` + property fuzz 700 試行 |
 | 9 | `dangerouslySetInnerHTML` / `eval` / `new Function` 禁止 | `lint:forbidden` (24 パターン・自己検査つき)。§8.2 には最初から書いてあったのに、この欄だけ手作業の grep audit のままだった |
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
-| 11 | Gmail `to` は CR/LF/NUL を含まない | `gmail.test.ts` + property fuzz 400 試行 |
+| 11 | Gmail `to` は CR/LF/NUL を含まない | `rfc2822.test.ts` (shared の 1 つ) + `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:524-529` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:37-50` |
 | 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
@@ -2509,6 +2507,30 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 3. **シンボル局所性 (strict)**: doc が名前を挙げているシンボル (例 `isServiceId`) が
    **cited line から ±15 行以内に存在する**。drift した場合は実際の行番号を出力。
 4. **ライブメトリクス**: doc の数値 (サービス数・IPC ハンドラ数・変異検査の対象数ほか) を **実コードから再計算** して一致確認 (具体的な数は下の metrics 表が持つ — ここに写すと腐る)
+
+### 8.3 オントロジー —— 語彙・facet・法則を機械可読にした台帳 (2026-09-19 · パス 321)
+
+320 パスで学んだ規則は、それまで CLAUDE.md / SESSION_HANDOFF / 各ゲートの docblock に**散文として**散っていた。
+散文で述べた規則は落ちない (このリポジトリが繰り返し直してきた形) ので、規則そのものを `src/shared/ontology/` の
+4 層に置き、実物に当てる検査と生成物を付けた:
+
+| 層 | 置き場 | 述べていること | 実物に当てる機械 |
+|---|---|---|---|
+| 層とビルド | `src/shared/ontology/vocabulary.ts` (`ZONES` / `BUILDS`) | main / preload / renderer / shared の信頼の上限・import してよい層・node の可否・出荷されるビルド | `ontologyLaws.test.ts` が `scripts/check-import-boundaries.cjs` の `ALLOW` と一致することを留める |
+| 実体クラス | 同 (`ENTITY_CLASSES`) | service / bridge-method / store / egress-site / url-door / surface / limit / parameter / knowledge-dataset / gate / census / protected-file / harness / document / workflow —— **一覧はどこに在り、それを実物と突き合わせる機械は何か** | 台帳と機械のパスが実在することを検査が留める |
+| facet 行列と公理 | `src/shared/ontology/serviceFacets.ts` | サービス 1 つの性質は 7 つの台帳に分かれて宣言されている (配置 / 出所 / 資格情報の読み手 / local / OAuth / action / 士業)。台帳が区画を跨ぐのは設計なので 1 つに畳めず、代わりに **facet の間の関係を公理 10 本**で述べる (例: 出所が remote なら取得は資格情報を読む・ブラウザ版の action はデスクトップ版の部分集合・デスクトップだけの action は種類つきの台帳にちょうど載る) | `ontologyFacets.test.ts` が 76 サービスの実物 (`src/__tests__/ontologyFacts.ts` が台帳から集める) に当てる。例外は理由つきで双方向 |
+| 法則と執行者 | `src/shared/ontology/laws.ts` (`LAWS` · 9 家系) | 「何を守るか」「どのパスで学んだか」「何がそれを守っているか (gate / test / harness / chain / type / ci / prose)」 | `validateLawLedger` が執行者のパスと npm script の実在を留め、**執行者が散文だけの法則**は文書の別節に集める (5 本) |
+
+生成物 `docs/ONTOLOGY.md` は `npm run ontology:md` (`scripts/build-ontology-md.cjs` —— esbuild の `.ts` require hook。`new Function` は使わない) が
+語彙と実物から組み、`ontologyDoc.test.ts` が「committed == 再生成」と「法則・実体クラス・公理・サービス id の網羅」を留める
+(出力に日付や時刻は入れない —— 入れると再生成のたびに変わる)。
+
+**公理と法則を実物に当てて出た欠落 (パス 321 で閉じた物):**
+
+- `desktop-only-is-the-difference` —— shopify の 7 つの同期 action がデスクトップ版にだけ在るのに、種類つきの台帳 (`DESKTOP_ONLY`) に載っていなかった (`dead-action` として登録)。
+- `shared/api/*.ts` の**書き込み**は 13 経路のうち 2 (MS365) しか通っておらず、残り 11 は main と `src/renderer/data/saasWriteWeb.ts` に写しが 1 つずつ在った。github / notion / slack / wordpress / canva / drive / calendar / gmail / cloudflare ×2 / atlassian / security ×2 の全 13 経路を `checkX` → `xInit` → `parseCreatedX` の共有の形へ寄せた (§3.2 / §3.3 の行がその在処を指す)。畳む途中で見えた差: slack の `ts` の無い ok:true を main だけ '' に倒していた・cloudflare の封筒の条件が main は falsy / ブラウザ版は `!== true`・atlassian の Basic 認証が main は Buffer / ブラウザ版は `btoa` (多バイトの email はブラウザ版だけが投げる)。RFC 2822 の組み立て (`buildRfc2822`) と資格情報の解析 (`parseSecurityKeys`) は**判定の双子**そのものを `src/shared/rfc2822.ts` / `src/shared/api/security.ts` へ畳み、パリティ検査は同一性 (`===`) の検査へ。
+- `safety-limits-not-parameters` の裏側 —— 上限 114 のうち 2 つ (`MAX_RENDER_ERROR_CHARS` / `MAX_STOCK_ADVISOR_RATIONALE_CHARS`) はどの検査からも名前で参照されていなかった (数字の 160 / 400 は検査に在った)。`limitCoverageCensus.test.ts` が母集団を実装から導いて双方向に留める。
+- 副産物: `lint:network-targets` の「URL らしさ」の門が `${creds.site}${JIRA_ISSUE_PATH}` (変数のホスト + **定数の経路**) を「URL ではない」と落としていた —— 経路をリテラルから定数へ寄せる refactor が、そのまま監視の外へ出る形。門を広げ、self-test と `networkTargetWitness.test.ts` に標本を置いた。
 
 ### 事業・数値の手入力 (全画面共通)
 
@@ -4188,4 +4210,5 @@ export interface TokenSet {
 | `docs/QUALITY_WORKFLOW.md` | 品質運用 playbook |
 | `docs/ADDING_A_SERVICE.md` | 新サービス追加チェックリスト |
 | `docs/REMAINING_WORK.md` | Phase 4-7 ロードマップ |
+| `docs/ONTOLOGY.md` | (生成物 · `npm run ontology:md`) 層とビルド・実体クラス・サービスの facet 行列と公理・法則と執行者 (§8.3) |
 | `CLAUDE.md` | Claude Code 向けプロジェクトガイド |

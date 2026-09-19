@@ -72,6 +72,15 @@ describe('lint:network-targets — 外側の証人', () => {
     expect(bare('await fetch(cfg.url, init);').length).toBeGreaterThan(0);
   });
 
+  it('★ 変数のホスト + 定数の経路 (`${creds.site}${JIRA_ISSUE_PATH}`) も拾う (パス 321 まで素通り)', () => {
+    // `${…}/` を要求する「URL らしさ」の門が、補間の直後に補間が続く形を「URL ではない」と
+    // 落としていた。経路をリテラルから定数へ寄せる refactor が、そのまま監視の外へ出る形。
+    expect(tpl('await transport(`${creds.site}${JIRA_ISSUE_PATH}`, init);')).toHaveLength(1);
+    expect(tpl('await jsonFetch(`${creds.site}${JIRA_ISSUE_PATH}`, init, ctx);')).toHaveLength(1);
+    // 対照: ホストが ALL_CAPS の定数なら台帳には載せない (経路の補間は別の関心事)。
+    expect(tpl('await transport(`${GITHUB_API}${path}`, init);')).toHaveLength(0);
+  });
+
   it('陰性: 注釈の中は拾わない', () => {
     expect(bare('// await fetch(cfg.url, init);')).toHaveLength(0);
   });

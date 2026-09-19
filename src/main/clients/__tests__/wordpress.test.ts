@@ -136,7 +136,8 @@ describe('ACTIONS["create-post-draft"]', () => {
 
   it('url-encodes site IDs containing slashes or unusual chars', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      jsonResponse({ ID: 1, URL: '', title: 'x', status: 'draft' }),
+      // URL は非空を要求する (shared/api/wordpress.ts の parseCreatedPost —— ブラウザ版が前から持っていた封筒の検査を main も通る · 2026-09-18)。
+      jsonResponse({ ID: 1, URL: 'https://blog/?p=1', title: 'x', status: 'draft' }),
     );
     await ACTIONS['create-post-draft']!({
       token: 't',

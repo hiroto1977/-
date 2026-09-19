@@ -7,6 +7,54 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 321 (2026-09-19) — オントロジー: 320 パスで学んだ規則を機械可読にし、実物に当てて出た欠落で組み直した
+
+利用者の依頼は「今まで学習した全てを踏まえた上でオントロジーを作り、それを基に既存のシステムを徹底的に解析し組みなおして」。
+規則はそれまで CLAUDE.md / この引継ぎ / 各ゲートの docblock に**散文として**散っており、散文で述べた規則は落ちない
+(このリポジトリが繰り返し直してきた形)。だから規則そのものをコードに置き、実物に当てる検査と生成物を付けた。
+
+### 作った物 (`src/shared/ontology/` · 4 層 · 詳細は `docs/ARCHITECTURE.md` §8.3)
+
+- **層とビルド** (`vocabulary.ts` の `ZONES` / `BUILDS`): import してよい層は `scripts/check-import-boundaries.cjs` の `ALLOW` と一致 (検査が留める。ゲートは `ALLOW` / `ZONES` を export するようにした)。
+- **実体クラス** 15 (`ENTITY_CLASSES`): 「一覧はどこに在り、それを実物と突き合わせる機械は何か」。台帳と機械のパスの実在を検査が留める。
+- **facet 行列と公理 10 本** (`serviceFacets.ts`): サービス 1 つの性質は 7 つの台帳に分かれて宣言されている (配置 / 出所 / 資格情報の読み手 / local / OAuth / action / 士業)。区画を跨ぐのは設計なので畳めず、**facet の間の関係**を公理で述べて 76 サービスの実物 (`src/__tests__/ontologyFacts.ts`) に当てる。例外は理由つき・双方向 (今日 0)。
+- **法則と執行者** (`laws.ts` · 9 家系): 何を守るか・どのパスで学んだか・何が守っているか (gate / test / harness / chain / type / ci / prose)。執行者が散文だけの法則 5 本は文書の別節に集まる。
+- **生成物** `docs/ONTOLOGY.md` (`npm run ontology:md` · `scripts/build-ontology-md.cjs` は esbuild の `.ts` require hook。`new Function` は `lint:forbidden` が落とすので使わない)。`ontologyDoc.test.ts` が committed == 再生成 と 網羅 (法則・実体クラス・公理・サービス id) を留める。日付は入れない。
+- 検査 3 本 (`ontologyLaws` / `ontologyFacets` / `ontologyDoc`) + `dualBuildActionSurface.test.ts` の走査を `src/__tests__/actionSurface.ts` へ切り出して facts と共用。
+
+### 実測 —— 公理と法則を当てて出た欠落 (全部この日に閉じた)
+
+| 欠落 | 実測 | 直し |
+|---|---|---|
+| `desktop-only-is-the-difference` が shopify で破れ | 同期 action 7 つ (slack / discord / line / gmail / notion / salesforce / stripe) が main にだけ在り、種類つきの台帳 `DESKTOP_ONLY` に無かった | `webShimCredentials.test.ts` に 7 行 (`dead-action`) |
+| **`shared/api/*.ts` の書き込みが死んでいた** | 13 経路のうち共有を通るのは MS365 の 2 つだけ。残り 11 は main と `saasWriteWeb.ts` に写しが 1 つずつ (欄の判定は台帳で 1 つだったが、URL・ヘッダ・本文・応答の読みは 2 つ) | github / notion / slack / wordpress / canva / drive / calendar / gmail / cloudflare ×2 / atlassian / security ×2 を `checkX` → `xInit` → `parseCreatedX` の形へ。`writeFieldLimits.test.ts` の LEDGERS は 12 行すべて `via` (直呼びの枝は母集団 0・型を明示して分岐は残す)。**畳む途中で見えた差**: slack の `ts` の無い ok:true を main だけ '' に倒す / cloudflare の封筒の条件が main は falsy・ブラウザ版は `!== true` で文も別 / atlassian の Basic 認証が main は Buffer・ブラウザ版は `btoa` (多バイトの email はブラウザ版だけが投げる) / gmail の `to` の trim がブラウザ版だけ / main の github・wordpress・calendar の検査の応答に URL の欄が無く、共有の読み手 (パス 261 の形) が要求したので**検査の応答を実物の形に**直した |
+| 判定の双子 2 組 | `buildRfc2822` / `isSafeHeaderValue` (main ↔ web、`rfc2822Parity` が同じ答えで守る) と `parseSecurityKeys` (`dualBuildParity`) | `src/shared/rfc2822.ts` / `src/shared/base64.ts` / `src/shared/api/security.ts` の 1 つへ。両ビルドは re-export し、パリティ検査は**同一性 (`===`)** の検査へ (写しが再び生えれば落ちる)。`rfc2822Parity.test.ts` は `shared/__tests__/rfc2822.test.ts` (golden + Buffer を証人にした base64) に。`lint:forbidden` の「RFC 2822 の手組み」の正典は 1 つに。shopify の `toBase64Url` / main gmail の `base64url` / web の `utf8ToBase64Url` / `vtBase64` ×2 の 5 写しも `base64.ts` の 1 つに |
+| `safety-limits-not-parameters` の裏側 | 上限 114 のうち **2 つ** (`MAX_RENDER_ERROR_CHARS` 160 / `MAX_STOCK_ADVISOR_RATIONALE_CHARS` 400) はどの検査からも**名前で**参照されていない (数字は在った —— 定数を動かしても検査は動かない) | 境界の検査 3 本 (ちょうどは通り 1 字超えは断る) + `limitCoverageCensus.test.ts` (母集団を実装から導く・双方向・census 自身は母集団から外す) |
+| **副産物: `lint:network-targets` の死角** | 「URL らしさ」の門が `${…}/` を要求していたので、`${creds.site}${JIRA_ISSUE_PATH}` (変数のホスト + **定数の経路**) を「URL ではない」と落として 1 件も鳴らなかった —— 経路をリテラルから定数へ寄せる refactor が、そのまま監視の外へ出る形 (台帳の 2 行を「実在しない」と断って気付いた) | 門を `${…}(/|${)` に広げ、self-test 5 件 (`templateFindings` に 1 行ずつ流す) + `networkTargetWitness.test.ts` に標本 |
+
+### 対照
+
+- ontologyDoc: サービスを落とした事実で組むと行列が空 / 決定性 / 時刻の印が無い (針は標本に当たる)。
+- ontologyFacets: 破れ・古い例外・実在しない例外がそれぞれ鳴る / 行き先の無い書き込みの標本 / 例外に載せた破れは鳴らない。
+- ontologyLaws: self-test の無いゲートの台帳 (双方向) / `WITHOUT_SELF_TEST` / fold-must-pair の針。
+- limitCoverageCensus: 実在しない名前は参照されていない (針を動的に組む —— 自分のファイルの字面で満たさない)。
+- network-targets: self-test の 5 件 (旧い形も新しい形も 1 件・定数のホストは 0・URL でない物は 0・通信でない行は 0)。
+
+### 数 (この日の終わり)
+
+- shared-judgement census: shared 155 / 両ビルド 77 / 否定 36 (`api/cloudflare` / `rfc2822` の判定を VERDICTS へ。`writeFieldLimits` / `scanTarget` の判定に ★ パス 321 の追記)。
+- `verify:arch` の参照 629。§3.2 / §3.3 の 13 行が共有の在処を指す。
+
+### 実機と出荷物
+
+- 出荷物: FULL 11,912,169 B / LITE 3,324,690 B (**両方 +2,645 B** —— 13 経路の共有化の分。オントロジーは出荷物に入らない。CLAUDE.md に内訳)。
+- 実機 (連鎖 1 回・全段緑): `smoke:app` OK / `e2e` 412 件 ❌ 0 / `e2e:lite` 412 件 ❌ 0 / `perf` OK (LITE DCL 119 ms · heap 10.2 MB / FULL DCL 385 ms · heap 36.9 MB) / `e2e:ollama` 8 状態 OK。単体 17,465 件・`verify:all` 37 ゲート緑。chain は不変 (#235 —— 保護対象に触れていない)。
+
+### 残り
+
+- 執行者が散文だけの法則 5 本 (`claim-unit-not-file` / `manual-check-becomes-gate` / `measure-before-claim` / `no-weakness-as-spec` / `parity-is-not-correctness`) —— 機械にできる物があれば次のパスで。
+- `parseAtlassianToken` は呼び手ごとに残した (断りの運び方 FetchError / Error と欄の呼び名が違う —— パス 284 の裁定のまま)。
+
 ## パス 320 (2026-09-18) — 保存値の壊れ方の理由に、生の保存値がそのまま載っていた (同じ関数の 20 行上が「定数に固定する」と書いていた)
 
 パス 314 の「閉じていない物」(ownThrow 24 行には利用者自身の入力の値が載りうるが天井が無い) を測りに行って、別の場所で見つけた。
@@ -4428,6 +4476,8 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
+| 実機 5 種 (パス 321: shared / renderer の書き込み経路を組み直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 412 / `e2e:lite` 412 / `perf` LITE DCL 119 ms · FULL 385 ms / `e2e:ollama` 8)。出荷物 FULL 11,912,169 B / LITE 3,324,690 B (両方 +2,645 B) |
+| オントロジー + 組み直し (パス 321) | ✅ `src/shared/ontology/` 4 層 + `docs/ONTOLOGY.md` (生成物) + 検査 3 本。当てて出た欠落 5 種を閉じた: shopify の dead-action 7 行 / 書き込み 13 経路を shared へ (LEDGERS 12 行すべて via) / 判定の双子 2 組を 1 つに / 上限 2 つの検査 + census / `lint:network-targets` の「変数のホスト + 定数の経路」の死角 |
 | 保存値の壊れ方の理由の天井 + census を shared へ (パス 320) | ✅ `teamRadarState.ts:365` を `redactForMessage` (梯子 6 段目 200 字) で通し、census の母集団を shared へ (2 行: 読むだけの形は外し・台帳の定数の文は登録)。ownThrow 24 行の補間 105 件はラベルと定数 (天井は要らなかった)。chain #235・対照 2 本 |
 | 窓の下地と theme-color の追随 (パス 318) | ✅ `theme.ts` → `syncHostChrome` (stylesheet の --bg の実値) → meta と `app:setColorScheme` (15 個目・形の関門・原子的な保存・起動時に読む)。chain #232〜#234・対照 3 本 |
 | ダーク配色の目視 (パス 319) | ✅ 30 画面撮影・26 画面を読んで直す物なし (機械では測れないので撮影 script を残した) |
@@ -4443,7 +4493,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | スキル本文の天井 (パス 308) | ✅ system の天井 (60,000 字) を run-skill と一覧へ。byte の門 (4 × 天井) で読まずに断る。対照 3 本 |
 | 例外の文面 → 画面 (パス 307) | ✅ 2 経路を `redactForMessage` へ。実機 5 段 + `e2e:ollama` 緑・両方 +9 B。「例外 → 画面」の母集団を数える網は無い (閉じていない物) |
 | `e2e.yml` が runner で動くか (パス 305) | ✅ 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 → **全 13 段 success・8 分 01 秒** (e2e 395 / lite 395 / ollama 8 / perf OK / smoke:app OK) |
-| 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 (CLAUDE.md) |
+| 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 / 〜320 / 321 (CLAUDE.md) |
 | PR #788 の本文 | ✅ パス 〜320 まで反映 (2026-09-18 06:14 UTC・タイトルも 〜320: 459 commits · 17,410 tests · Stryker 293 · chain #235)。HEAD `757445ff` (パス 320) の CI は success (06:07 UTC)。次のパスはその commit の push 後に反映する |
 | imageUrlGate のプライベート帯 | ✅ パス 300 で閉じた (問いを 2 つに分けた) |
 | 刑名の表記ゆれ 8 行 | ✅ 1 行ずつ裁定 (下の節に表) |

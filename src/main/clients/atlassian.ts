@@ -5,8 +5,13 @@ import {
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { ATLASSIAN_ISSUE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
-import { jiraBrowseUrl } from '../../shared/atlassianLinks';
+import {
+  JIRA_ISSUE_PATH,
+  basicAuthorization,
+  checkJiraIssue,
+  jiraIssueInit,
+  parseCreatedJiraIssue,
+} from '../../shared/api/atlassian';
 import type { ActionData } from '../../shared/actionData';
 
 interface JiraProject {
@@ -69,14 +74,10 @@ const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
   'not-atlassian': 'Atlassian token の site は *.atlassian.net である必要があります',
 };
 
-function basicAuth(email: string, token: string): string {
-  return 'Basic ' + Buffer.from(`${email}:${token}`).toString('base64');
-}
-
 export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<AtlassianSnapshot> {
   const creds = parseAtlassianToken(ctx.token);
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'atlassian' };
-  const headers = { Authorization: basicAuth(creds.email, creds.token), Accept: 'application/json' };
+  const headers = { Authorization: basicAuthorization(creds.email, creds.token), Accept: 'application/json' };
 
   const url = new URL(`${creds.site}/rest/api/3/project/search?maxResults=50`);
   const projects = await jsonFetch<JiraProjectsResponse>(url.toString(), { headers }, fetchCtx);
@@ -106,65 +107,30 @@ export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<Atlassi
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateJiraIssuePayload {
+/*
+ * 欄の判定・ADF・Basic 認証・要求・応答の読みは `shared/api/atlassian.ts` の 1 つで、
+ * ブラウザ版も同じ関数を通る (パス 321)。資格情報の解析 (`parseAtlassianToken`) は
+ * 上のとおり呼び手ごとに残す (断りの運び方と欄の呼び名が違う —— パス 284)。
+ */
+
+export interface CreateJiraIssuePayload {
   projectKey: string;
   summary: string;
   description?: string;
   issueType?: string; // default "Task"
 }
 
-interface JiraCreateIssueResponse {
-  id: string;
-  key: string;
-  self: string;
-}
-
 async function createJiraIssue(
   ctx: ActionContext,
 ): Promise<ActionData<'atlassian/create-issue'>> {
   const creds = parseAtlassianToken(ctx.token);
-  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!projectKey || !summary` だけだった。
-  const bad = checkWriteFields(ctx.payload, ATLASSIAN_ISSUE_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { projectKey, summary, description, issueType } =
-    ctx.payload as unknown as CreateJiraIssuePayload;
-
-  // Jira Cloud REST v3 wants Atlassian Document Format for description.
-  const descBody = description
-    ? {
-        type: 'doc',
-        version: 1,
-        content: [
-          {
-            type: 'paragraph',
-            content: [{ type: 'text', text: description }],
-          },
-        ],
-      }
-    : undefined;
-
-  const res = await jsonFetch<JiraCreateIssueResponse>(
-    `${creds.site}/rest/api/3/issue`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: basicAuth(creds.email, creds.token),
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        fields: {
-          project: { key: projectKey },
-          summary,
-          issuetype: { name: issueType ?? 'Task' },
-          ...(descBody ? { description: descBody } : {}),
-        },
-      }),
-    },
+  const issue = checkJiraIssue(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${creds.site}${JIRA_ISSUE_PATH}`,
+    jiraIssueInit(issue, creds),
     { fetch: ctx.fetch, serviceId: 'atlassian' },
   );
-
-  return { key: res.key, url: jiraBrowseUrl(creds.site, res.key) };
+  return parseCreatedJiraIssue(res, creds.site);
 }
 
 export const ACTIONS: ActionMap = {

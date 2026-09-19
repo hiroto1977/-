@@ -32,6 +32,7 @@ import {
   type Strategy,
 } from '../stocksAnalysisWeb';
 import { mockCandles, type WebCandle } from '../stocksWatchlistWeb';
+import { MAX_STOCK_ADVISOR_RATIONALE_CHARS } from '../../../shared/advisorResponseLimits';
 
 /** close 配列から最小限の WebCandle 列を作る (戦略・指標は close のみ参照)。 */
 function mkCandles(closes: readonly number[]): WebCandle[] {
@@ -339,6 +340,11 @@ describe('validateAdvisorJson', () => {
     );
     expect(recs).toHaveLength(1);
     expect(recs[0]!.symbol).toBe('AAPL');
+  });
+  it('rationale の天井は名前で参照する (ちょうどは通り、1 字超えは断る —— パス 321 の census)', () => {
+    const rec = (n: number) => ({ recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'x'.repeat(n), riskFactors: ['r'] }] });
+    expect(validateAdvisorJson(rec(MAX_STOCK_ADVISOR_RATIONALE_CHARS), allowed)).toHaveLength(1);
+    expect(() => validateAdvisorJson(rec(MAX_STOCK_ADVISOR_RATIONALE_CHARS + 1), allowed)).toThrow(/rationale exceeds/);
   });
   it('rejects out-of-universe symbol', () => {
     expect(() =>

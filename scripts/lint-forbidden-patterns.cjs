@@ -295,19 +295,17 @@ const FORBIDDEN_PATTERNS = [
      * 無検査で、payload は `action:invoke` 経由で renderer から届く。つまり
      * `"a@b.example\r\nBcc: attacker@evil.example"` で下書きに Bcc が載った。
      *
-     * 正典は 2 つだけ (プロセス境界で renderer が main を import できないため):
-     *   src/main/clients/gmail.ts        buildRfc2822
-     *   src/renderer/data/saasWriteWeb.ts buildRfc2822
-     * どちらも `isSafeHeaderValue` を先に通す。3 つ目を作らせない。
+     * 正典は 1 つ: src/shared/rfc2822.ts の buildRfc2822 (`isSafeHeaderValue` を先に通す)。
+     * 2026-09-19 (パス 321) までは main と renderer に 1 つずつ在り (renderer は
+     * main を import できないため)、パリティ検査が同じ答えを返すことで守っていた。
+     * shared は両方が読めるので 1 つに畳んだ。2 つ目を作らせない。
      */
     name: 'hand-rolled RFC 2822 header line',
     pattern: /`(?:To|Cc|Bcc|From|Reply-To|Return-Path|Subject):\s*\$\{/,
     rationale:
-      'メールヘッダの手組み — buildRfc2822 (main: clients/gmail.ts / renderer:'
-      + ' data/saasWriteWeb.ts) を使ってください。写すと CR/LF 検査が落ちます'
-      + ' (不変条件 #11)',
-    allowFile: (rel) =>
-      rel === 'src/main/clients/gmail.ts' || rel === 'src/renderer/data/saasWriteWeb.ts',
+      'メールヘッダの手組み — buildRfc2822 (src/shared/rfc2822.ts) を使ってください。'
+      + '写すと CR/LF 検査が落ちます (不変条件 #11)',
+    allowFile: (rel) => rel === 'src/shared/rfc2822.ts',
   },
   {
     name: 'new Function',
@@ -909,8 +907,7 @@ const KNOWN_SUPPRESSIONS = [
   // 削除を再確認していた) を消したので、直接触る箇所が 1 つ減った。
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 12',
   'CSS の url() へ生の値を差し込んでいる :: src/shared/imageUrlGate.ts :: 1',
-  'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
-  'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
+  'hand-rolled RFC 2822 header line :: src/shared/rfc2822.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
   // `build-academic-md.cjs` は docs/ACADEMIC_KNOWLEDGE.md の概念表を生成する素の CJS で、
   // TS の `escapeMarkdownInline` を読めないため同じ 4 置換の写しを持つ。写しが共有実装と

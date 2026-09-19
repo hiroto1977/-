@@ -1,5 +1,5 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { CANVA_FOLDER_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import { CANVA_API, CANVA_FOLDERS_PATH, canvaFolderInit, checkFolder, parseCreatedFolder } from '../../shared/api/canva';
 import type { ActionData } from '../../shared/actionData';
 
 interface CanvaDesign {
@@ -81,41 +81,24 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateFolderPayload {
+/**
+ * `create-folder` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkFolder` (`CanvaFolderFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreateFolderPayload {
   name: string;
   parentFolderId?: string; // omitted → "root"
 }
 
-interface CanvaCreateFolderResponse {
-  folder: {
-    id: string;
-    name: string;
-  };
-}
-
 async function createFolder(ctx: ActionContext): Promise<ActionData<'canva/create-folder'>> {
-  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!name` だけだった。
-  const bad = checkWriteFields(ctx.payload, CANVA_FOLDER_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { name, parentFolderId } = ctx.payload as unknown as CreateFolderPayload;
-
-  const res = await jsonFetch<CanvaCreateFolderResponse>(
-    'https://api.canva.com/rest/v1/folders',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        parent_folder_id: parentFolderId ?? 'root',
-      }),
-    },
+  // 欄の判定・URL・要求・応答の読みは shared/api/canva.ts の 1 つ (ブラウザ版も同じ関数 · 2026-09-18)。
+  const folder = checkFolder(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${CANVA_API}${CANVA_FOLDERS_PATH}`,
+    canvaFolderInit(folder, ctx.token),
     { fetch: ctx.fetch, serviceId: 'canva' },
   );
-
-  return { id: res.folder.id, name: res.folder.name };
+  return parseCreatedFolder(res);
 }
 
 export const ACTIONS: ActionMap = {

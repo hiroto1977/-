@@ -37,10 +37,10 @@ type Kind = 'decision' | 'pure' | 'different';
 /** 分類台帳。**増えても減っても鳴る** (双方向)。 */
 const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   // --- 判定: パリティ検査が突き合わせている ---
-  buildRfc2822: { kind: 'decision', why: 'メールヘッダの組み立て (rfc2822Parity)' },
-  isSafeHeaderValue: { kind: 'decision', why: 'CR/LF/NUL の拒否 (rfc2822Parity)' },
+  // buildRfc2822 / isSafeHeaderValue は 2026-09-19 (パス 321) に shared/rfc2822.ts の 1 つへ
+  // 畳んだ (両ビルドは re-export)。2 実装ではなくなったので、この台帳からは消えた。
   parseAtlassianToken: { kind: 'decision', why: '送り先ホストの許可 (atlassianSiteParity)' },
-  parseSecurityKeys: { kind: 'decision', why: '資格情報の解析 (dualBuildParity)' },
+  // parseSecurityKeys は 2026-09-19 (パス 321) に shared/api/security.ts の 1 つへ畳んだ (両ビルドは re-export)。
   safeStateEquals: { kind: 'decision', why: 'CSRF の state 比較 (stateEqualsParity)' },
   extractJson: { kind: 'decision', why: 'LLM 応答から JSON を取る (dualBuildParity)' },
   normalizeAnalysis: { kind: 'decision', why: 'LLM 応答を型へ丸める (dualBuildParity)' },

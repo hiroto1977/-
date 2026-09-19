@@ -882,6 +882,76 @@ describe('デスクトップ版だけの操作は、ブラウザ版では実行�
         + '返すだけで、node: の import は 0 件。同じ定数を fetchDocstudioSnapshot も返すので、'
         + '画面が要る物は既にスナップショットで届いている',
     },
+    {
+      service: 'shopify',
+      action: 'sync-to-slack',
+      kind: 'dead-action',
+      note:
+        'Shopify の注文を外部へ流す connector (main/clients/shopify.ts の CONNECTORS)。**どちらのビルドの画面からも '
+        + '呼ばれていない** —— ShopifyPage に invoke は 0 件、声 / チャット / ホームの動的な呼び出しの台帳にも無い。'
+        + '2026-09-18 のオントロジーの公理 desktop-only-is-the-difference が見つけた: それまで台帳は '
+        + 'デスクトップだけの 10 操作のうち 3 つしか持っておらず、残り 7 つがこれ',
+    },
+    {
+      service: 'shopify',
+      action: 'sync-to-discord',
+      kind: 'dead-action',
+      note:
+        'Shopify の注文を外部へ流す connector (main/clients/shopify.ts の CONNECTORS)。**どちらのビルドの画面からも '
+        + '呼ばれていない** —— ShopifyPage に invoke は 0 件、声 / チャット / ホームの動的な呼び出しの台帳にも無い。'
+        + '2026-09-18 のオントロジーの公理 desktop-only-is-the-difference が見つけた: それまで台帳は '
+        + 'デスクトップだけの 10 操作のうち 3 つしか持っておらず、残り 7 つがこれ',
+    },
+    {
+      service: 'shopify',
+      action: 'sync-to-line',
+      kind: 'dead-action',
+      note:
+        'Shopify の注文を外部へ流す connector (main/clients/shopify.ts の CONNECTORS)。**どちらのビルドの画面からも '
+        + '呼ばれていない** —— ShopifyPage に invoke は 0 件、声 / チャット / ホームの動的な呼び出しの台帳にも無い。'
+        + '2026-09-18 のオントロジーの公理 desktop-only-is-the-difference が見つけた: それまで台帳は '
+        + 'デスクトップだけの 10 操作のうち 3 つしか持っておらず、残り 7 つがこれ',
+    },
+    {
+      service: 'shopify',
+      action: 'sync-to-gmail',
+      kind: 'dead-action',
+      note:
+        'Shopify の注文を外部へ流す connector (main/clients/shopify.ts の CONNECTORS)。**どちらのビルドの画面からも '
+        + '呼ばれていない** —— ShopifyPage に invoke は 0 件、声 / チャット / ホームの動的な呼び出しの台帳にも無い。'
+        + '2026-09-18 のオントロジーの公理 desktop-only-is-the-difference が見つけた: それまで台帳は '
+        + 'デスクトップだけの 10 操作のうち 3 つしか持っておらず、残り 7 つがこれ',
+    },
+    {
+      service: 'shopify',
+      action: 'sync-to-notion',
+      kind: 'dead-action',
+      note:
+        'Shopify の注文を外部へ流す connector (main/clients/shopify.ts の CONNECTORS)。**どちらのビルドの画面からも '
+        + '呼ばれていない** —— ShopifyPage に invoke は 0 件、声 / チャット / ホームの動的な呼び出しの台帳にも無い。'
+        + '2026-09-18 のオントロジーの公理 desktop-only-is-the-difference が見つけた: それまで台帳は '
+        + 'デスクトップだけの 10 操作のうち 3 つしか持っておらず、残り 7 つがこれ',
+    },
+    {
+      service: 'shopify',
+      action: 'sync-to-salesforce',
+      kind: 'dead-action',
+      note:
+        'Shopify の注文を外部へ流す connector (main/clients/shopify.ts の CONNECTORS)。**どちらのビルドの画面からも '
+        + '呼ばれていない** —— ShopifyPage に invoke は 0 件、声 / チャット / ホームの動的な呼び出しの台帳にも無い。'
+        + '2026-09-18 のオントロジーの公理 desktop-only-is-the-difference が見つけた: それまで台帳は '
+        + 'デスクトップだけの 10 操作のうち 3 つしか持っておらず、残り 7 つがこれ',
+    },
+    {
+      service: 'shopify',
+      action: 'sync-to-stripe',
+      kind: 'dead-action',
+      note:
+        'Shopify の注文を外部へ流す connector (main/clients/shopify.ts の CONNECTORS)。**どちらのビルドの画面からも '
+        + '呼ばれていない** —— ShopifyPage に invoke は 0 件、声 / チャット / ホームの動的な呼び出しの台帳にも無い。'
+        + '2026-09-18 のオントロジーの公理 desktop-only-is-the-difference が見つけた: それまで台帳は '
+        + 'デスクトップだけの 10 操作のうち 3 つしか持っておらず、残り 7 つがこれ',
+    },
   ];
 
   it.each(DESKTOP_ONLY.map((r) => [r.service, r.action, r.note] as const))(

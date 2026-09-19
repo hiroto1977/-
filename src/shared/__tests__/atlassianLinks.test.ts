@@ -113,16 +113,19 @@ describe('Atlassian のリンクを組む場所 (パス 181)', () => {
     expect(rogue, '`/jira/…` を組む形が戻っている').toEqual([]);
   });
 
-  it('★ 3 つの読み手がこの module を通る (口はあるが繋がっていないを作らない)', () => {
-    const readers = [
-      path.join('main', 'clients', 'atlassian.ts'),
-      path.join('renderer', 'data', 'saasWriteWeb.ts'),
-      path.join('renderer', 'pages', 'AtlassianPage.tsx'),
-    ];
+  it('★ 読み手がこの module を通る (口はあるが繋がっていないを作らない)', () => {
+    // 2026-09-19 (パス 321) から、課題の URL を組むのは shared/api/atlassian.ts の
+    // `parseCreatedJiraIssue` 1 つで、main と saasWriteWeb はそれを通る (直に読まない)。
+    const readers = [path.join('shared', 'api', 'atlassian.ts'), path.join('renderer', 'pages', 'AtlassianPage.tsx')];
     for (const rel of readers) {
       const f = files.find((x) => x.rel === rel);
       expect(f, `${rel} が読めない`).toBeDefined();
       expect(f!.text, `${rel}: jiraBrowseUrl を読んでいない`).toContain('jiraBrowseUrl');
+    }
+    for (const rel of [path.join('main', 'clients', 'atlassian.ts'), path.join('renderer', 'data', 'saasWriteWeb.ts')]) {
+      const f = files.find((x) => x.rel === rel);
+      expect(f, `${rel} が読めない`).toBeDefined();
+      expect(f!.text, `${rel}: 共有の parseCreatedJiraIssue を通っていない`).toContain('parseCreatedJiraIssue(');
     }
   });
 });

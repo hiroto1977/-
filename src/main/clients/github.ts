@@ -1,12 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { optionalString, requireNumber, requireObject, requireString } from '../../shared/apiResponse';
-import {
-  GITHUB_ISSUE_FIELDS,
-  GITHUB_LABELS,
-  checkWriteFields,
-  checkWriteLabels,
-  describeWriteFieldFailure,
-} from '../../shared/writeFieldLimits';
+import { GITHUB_API, checkIssue, githubIssueInit, githubIssuesPath, parseCreatedIssue } from '../../shared/api/github';
 import type { ActionData } from '../../shared/actionData';
 
 interface GithubUser {
@@ -66,12 +60,14 @@ export interface GithubSnapshot {
   }[];
 }
 
+const USER_AGENT = 'service-hub-desktop';
+
 function headers(token: string): Record<string, string> {
   return {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'service-hub-desktop',
+    'User-Agent': USER_AGENT,
   };
 }
 
@@ -164,7 +160,11 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateIssuePayload {
+/**
+ * `create-issue` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkIssue` (`GithubIssueFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreateIssuePayload {
   owner: string;
   repo: string;
   title: string;
@@ -172,39 +172,20 @@ interface CreateIssuePayload {
   labels?: string[];
 }
 
-interface CreateIssueResponse {
-  number: number;
-  html_url: string;
-  title: string;
-  state: string;
-}
-
 async function createIssue(ctx: ActionContext): Promise<ActionData<'github/create-issue'>> {
-  // 欄の型と長さは共有の台帳で断る (パス 110)。`labels` は届いた JSON をそのまま
-  // 転送していたので、件数と 1 件の長さにも天井を置く。
-  const bad = checkWriteFields(ctx.payload, GITHUB_ISSUE_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { owner, repo, title, body, labels } = ctx.payload as unknown as CreateIssuePayload;
-  const badLabels = checkWriteLabels(labels);
-  if (badLabels !== null) {
-    throw new Error(
-      describeWriteFieldFailure({
-        field: 'labels',
-        problem: badLabels,
-        rule: GITHUB_LABELS,
-      }),
-    );
-  }
-  const res = await jsonFetch<CreateIssueResponse>(
-    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`,
-    {
-      method: 'POST',
-      headers: { ...headers(ctx.token), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, body, labels }),
-    },
+  /*
+   * 欄の判定・URL・要求・応答の読みは **`shared/api/github.ts` の 1 つ**を通る
+   * (ブラウザ版も同じ関数を呼ぶ · 2026-09-18 のオントロジーの組み直し)。
+   * ここが持つのは main の流儀だけ —— `jsonFetch` の打ち切り・上限・封筒と、
+   * ブラウザには付けられない `User-Agent`。
+   */
+  const issue = checkIssue(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GITHUB_API}${githubIssuesPath(issue)}`,
+    githubIssueInit(issue, ctx.token, { 'User-Agent': USER_AGENT }),
     { fetch: ctx.fetch, serviceId: 'github' },
   );
-  return { number: res.number, url: res.html_url, title: res.title };
+  return parseCreatedIssue(res);
 }
 
 export const ACTIONS: ActionMap = {

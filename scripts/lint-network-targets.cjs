@@ -109,8 +109,13 @@ const URL_ASSIGNMENT = /\b(url|endpoint|target)\s*[:=]/i;
 const REVIEWED = [
   {
     file: 'src/main/clients/atlassian.ts',
-    template: '`${creds.site}/rest/api/3/issue`',
-    guard: 'parseAtlassianToken → shared/atlassianSite.ts で *.atlassian.net のみ許可し hostname から組み直す',
+    template: '`${creds.site}${JIRA_ISSUE_PATH}`',
+    guard: 'parseAtlassianToken → shared/atlassianSite.ts で *.atlassian.net のみ許可し hostname から組み直す (パス 321 から要求の組み立ては shared/api/atlassian.ts の 1 つ。経路は JIRA_ISSUE_PATH の定数)',
+  },
+  {
+    file: 'src/shared/api/atlassian.ts',
+    template: '`${creds.site}${JIRA_ISSUE_PATH}`',
+    guard: 'createJiraIssueRequest の creds.site は呼び手の parseAtlassianToken (main / ブラウザ版) が shared/atlassianSite.ts で *.atlassian.net のみ許可し hostname から組み直した物 (パス 321)',
   },
   {
     file: 'src/main/clients/shopify.ts',
@@ -126,11 +131,6 @@ const REVIEWED = [
     file: 'src/shared/api/atlassian.ts',
     template: '`${site}/wiki/api/v2/pages/${encodeURIComponent(pageId)}`',
     guard: 'normalizeAtlassianSite → shared/atlassianSite.ts',
-  },
-  {
-    file: 'src/renderer/data/saasWriteWeb.ts',
-    template: '`${creds.site}/rest/api/3/issue`',
-    guard: 'parseAtlassianToken → shared/atlassianSite.ts (2026-08 監査で追加)',
   },
   {
     file: 'src/main/clients/atlassian.ts',
@@ -375,6 +375,27 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} 走査の的: ${label}: ${got} (期待 ${expected})`);
   }
 
+  /*
+   * **URL らしさの門にも self-test を置く** (2026-09-19 · パス 321)。
+   * 上の 4 表はホストの判定・通信の名前・素の送信・拡張子を見ていたが、
+   * 「テンプレートが URL か」の門 (`${…}/` を要求) には 1 件も無く、
+   * `${creds.site}${JIRA_ISSUE_PATH}` が黙って落ちていた。走査そのもの
+   * (`templateFindings`) に 1 行ずつ流す。
+   */
+  const templateCases = [
+    ['変数のホスト + リテラルの経路', 'await transport(`${creds.site}/rest/api/3/issue`, init);', 1],
+    ['変数のホスト + 定数の経路 (パス 321 まで素通り)', 'await transport(`${creds.site}${JIRA_ISSUE_PATH}`, init);', 1],
+    ['定数のホスト + 定数の経路は載せない', 'await transport(`${GITHUB_API}${path}`, init);', 0],
+    ['URL でないテンプレートは拾わない', 'await transport(`${label}: ${n}`, init);', 0],
+    ['通信でない行は拾わない', 'const shown = `${creds.site}${JIRA_ISSUE_PATH}`;', 0],
+  ];
+  for (const [label, line, expected] of templateCases) {
+    const got = templateFindings('self-test.ts', [line]).length;
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} URL らしさ: ${label}: ${got} 件 (期待 ${expected})`);
+  }
+
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
     return 1;
@@ -403,7 +424,13 @@ function templateFindings(rel, lines) {
         const ctx = lines.slice(Math.max(0, i - 3), i + 1).join('\n');
         if (!NETWORK_CALL.test(ctx) && !URL_ASSIGNMENT.test(lines[i])) continue;
         // パスで始まらない (= URL ではない) テンプレートは除く。
-        if (!/^`(https?:\/\/|\$\{[^}]*\}\/)/.test(template)) continue;
+        //
+        // 2026-09-19 (パス 321): `${creds.site}${JIRA_ISSUE_PATH}` —— 変数のホストに
+        // **定数の経路**を続ける形 —— は `${…}/` を要求するこの門で「URL ではない」と
+        // 落ち、1 件も鳴らなかった。経路をリテラルから定数へ寄せる refactor が、
+        // そのまま監視の外へ出る形である。補間の直後にもう 1 つの補間が続く物も URL とみなす
+        // (ホストが定数かどうかは次の hasConstantHost が先頭の補間だけを見る)。
+        if (!/^`(https?:\/\/|\$\{[^}]*\}(\/|\$\{))/.test(template)) continue;
         if (hasConstantHost(template)) continue;
         found.push({ file: rel, line: i + 1, template });
       }

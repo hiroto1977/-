@@ -1,6 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { readArrayField } from '../../shared/apiResponse';
-import { NOTION_PAGE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import { NOTION_API, NOTION_PAGES_PATH, checkPage, notionPageInit, parseCreatedPage } from '../../shared/api/notion';
 import type { ActionData } from '../../shared/actionData';
 
 
@@ -87,54 +87,29 @@ export async function fetchNotionSnapshot(ctx: FetchContext): Promise<NotionSnap
 
 // --- write-side actions --------------------------------------------------
 
-interface CreatePagePayload {
+/**
+ * `create-page` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkPage` (`NotionPageFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreatePagePayload {
   parentPageId: string; // a page id the integration has access to
   title: string;
   body?: string; // plain text — turned into a single paragraph block
 }
 
-interface NotionCreatePageResponse {
-  id: string;
-  url: string;
-}
-
 async function createPage(ctx: ActionContext): Promise<ActionData<'notion/create-page'>> {
-  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!parentPageId || !title` だけだった。
-  const bad = checkWriteFields(ctx.payload, NOTION_PAGE_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { parentPageId, title, body } = ctx.payload as unknown as CreatePagePayload;
-
-  const blocks = body
-    ? [
-        {
-          object: 'block',
-          type: 'paragraph',
-          paragraph: { rich_text: [{ type: 'text', text: { content: body } }] },
-        },
-      ]
-    : [];
-
-  const res = await jsonFetch<NotionCreatePageResponse>(
-    'https://api.notion.com/v1/pages',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        parent: { page_id: parentPageId },
-        properties: {
-          title: { title: [{ text: { content: title } }] },
-        },
-        children: blocks,
-      }),
-    },
+  /*
+   * 欄の判定・URL・要求・応答の読みは **`shared/api/notion.ts` の 1 つ**を通る
+   * (ブラウザ版も同じ関数を呼ぶ · 2026-09-18)。ここは main の流儀 (`jsonFetch` の
+   * 打ち切り・上限・封筒) だけ。
+   */
+  const page = checkPage(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${NOTION_API}${NOTION_PAGES_PATH}`,
+    notionPageInit(page, ctx.token),
     { fetch: ctx.fetch, serviceId: 'notion' },
   );
-
-  return { id: res.id, url: res.url };
+  return parseCreatedPage(res);
 }
 
 export const ACTIONS: ActionMap = {

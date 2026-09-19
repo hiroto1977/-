@@ -14,8 +14,13 @@
  * 表示していた —— **誤った安心**。そのときの直しは `.trim()` を写したので
  * 写しは 2 つのまま残り、同じずれが起きうる。だからこの 1 組だけは
  * **文面ではなく述語ごと** `shared/scanTarget.ts` へ寄せた
- * (`validateBreachEmail`)。他の 2 組は判定が式 1 本で両側に在り、
- * 畳むと振る舞いを動かす危険があるので文面だけにしてある。
+ * (`validateBreachEmail`)。
+ *
+ * ★ **2026-09-19 (パス 321): RFC 2822 の組も述語ごと畳んだ。** `buildRfc2822` は
+ * `shared/rfc2822.ts` の 1 つになり、両ビルドは同じ関数を re-export する。
+ * 「同じ入力に同じ文」は自明になったので、ここが留めるのは**同一の関数である
+ * こと** (写しが再び生えれば `===` が落ちる) と、その 1 つが台帳の文で断ること。
+ * 残る文面だけの組は Cloudflare のパージ 1 つ。
  */
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -23,6 +28,7 @@ import {
   RFC2822_HEADER_UNSAFE,
 } from '../writeFieldLimits';
 import { BREACH_EMAIL_MESSAGES, validateBreachEmail } from '../scanTarget';
+import { buildRfc2822 } from '../rfc2822';
 import {
   ADVISOR_QUESTION_MESSAGES,
   MAX_ADVISOR_QUESTION_CHARS,
@@ -48,32 +54,38 @@ vi.mock('../../renderer/library/library', () => ({ getLibrary: () => ({ put: asy
 
 const CRLF = String.fromCharCode(13) + String.fromCharCode(10);
 
-describe('★ RFC 2822 のヘッダの断りは両ビルドで同じ文', () => {
-  async function both(to: string): Promise<{ main: string; web: string }> {
-    const m = (await import('../../main/clients/gmail')) as { buildRfc2822: (t: string, s: string, b: string) => string };
-    const w = (await import('../../renderer/data/saasWriteWeb')) as { buildRfc2822: (t: string, s: string, b: string) => string };
-    const say = (f: (t: string, s: string, b: string) => string): string => {
-      try { f(to, 's', 'b'); return 'OK'; } catch (e) { return e instanceof Error ? e.message : String(e); }
-    };
-    return { main: say(m.buildRfc2822), web: say(w.buildRfc2822) };
+describe('★ RFC 2822 のヘッダの断りは両ビルドで同じ関数 (パス 321 から 1 つ)', () => {
+  async function both(): Promise<{ main: typeof buildRfc2822; web: typeof buildRfc2822 }> {
+    const m = (await import('../../main/clients/gmail')) as { buildRfc2822: typeof buildRfc2822 };
+    const w = (await import('../../renderer/data/saasWriteWeb')) as { buildRfc2822: typeof buildRfc2822 };
+    return { main: m.buildRfc2822, web: w.buildRfc2822 };
   }
+  const say = (f: typeof buildRfc2822, to: string): string => {
+    try { f(to, 's', 'b'); return 'OK'; } catch (e) { return e instanceof Error ? e.message : String(e); }
+  };
 
-  it('CR/LF を含む to は両方が台帳の文で断る', async () => {
-    const { main, web } = await both(`a@b.example${CRLF}Bcc: evil@example.com`);
-    expect(main).toBe(RFC2822_HEADER_UNSAFE);
-    expect(web).toBe(RFC2822_HEADER_UNSAFE);
+  it('両ビルドが出す buildRfc2822 は shared の同じ 1 つ (写しが生えれば落ちる)', async () => {
+    const { main, web } = await both();
+    expect(main).toBe(buildRfc2822);
+    expect(web).toBe(buildRfc2822);
   });
 
-  it('★ 対照: 正当な to は両方が通る (「全部断る」で一致していない)', async () => {
-    const { main, web } = await both('a@b.example');
-    expect(main).toBe('OK');
-    expect(web).toBe('OK');
+  it('CR/LF を含む to は台帳の文で断る', async () => {
+    const { main, web } = await both();
+    const to = `a@b.example${CRLF}Bcc: evil@example.com`;
+    expect(say(main, to)).toBe(RFC2822_HEADER_UNSAFE);
+    expect(say(web, to)).toBe(RFC2822_HEADER_UNSAFE);
+  });
+
+  it('★ 対照: 正当な to は通る (「全部断る」で一致していない)', async () => {
+    const { main, web } = await both();
+    expect(say(main, 'a@b.example')).toBe('OK');
+    expect(say(web, 'a@b.example')).toBe('OK');
   });
 
   it('NUL も同じ文 (規則は 3 文字すべてに掛かる)', async () => {
-    const { main, web } = await both(`a@b.example${String.fromCharCode(0)}x`);
-    expect(main).toBe(RFC2822_HEADER_UNSAFE);
-    expect(web).toBe(RFC2822_HEADER_UNSAFE);
+    const { main } = await both();
+    expect(say(main, `a@b.example${String.fromCharCode(0)}x`)).toBe(RFC2822_HEADER_UNSAFE);
   });
 });
 

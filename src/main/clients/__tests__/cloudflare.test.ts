@@ -415,7 +415,7 @@ describe('ACTIONS["purge-cache"] — 入口の検査と送り方', () => {
 
 // --- 応答の読み方 ------------------------------------------------------
 
-describe('unwrap — Cloudflare の封筒', () => {
+describe('unwrap — Cloudflare の封筒 (判定は shared の readCloudflareEnvelope・文は CLOUDFLARE_UNKNOWN_ERROR)', () => {
   it('success=false で errors が空でも「不明なエラー」として伝える', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
@@ -426,7 +426,7 @@ describe('unwrap — Cloudflare の封筒', () => {
       (e: Error) => e,
     );
     expect(err).toBeInstanceOf(FetchError);
-    expect((err as Error).message).toBe('cloudflare unknown Cloudflare error');
+    expect((err as Error).message).toBe('cloudflare unknown error');
     expect((err as FetchError).serviceId).toBe('cloudflare');
   });
 
@@ -436,7 +436,7 @@ describe('unwrap — Cloudflare の封筒', () => {
       .mockResolvedValueOnce(jsonResponse({ result: null, success: false }))
       .mockResolvedValueOnce(jsonResponse(okWrap([])));
     await expect(fetchCloudflareSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(
-      'cloudflare unknown Cloudflare error',
+      'cloudflare unknown error',
     );
   });
 
@@ -448,7 +448,7 @@ describe('unwrap — Cloudflare の封筒', () => {
       )
       .mockResolvedValueOnce(jsonResponse(okWrap([])));
     await expect(fetchCloudflareSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(
-      'cloudflare unknown Cloudflare error',
+      'cloudflare unknown error',
     );
   });
 });

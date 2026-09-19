@@ -16,7 +16,7 @@ import { describe, expect, it } from 'vitest';
  * ここは**ゲートを呼ばない**。`PROTECTED` の一覧だけを借りて、
  * ハッシュ・Merkle・ブロック連結を**この検査自身で計算し直す**。
  * リポジトリが既に持つパリティ検査 (`proxyWorkerParity` /
- * `rfc2822Parity` / `atlassianSiteParity`) と同じ形である。
+ * `atlassianSiteParity`、2026-09-19 まで `rfc2822Parity`) と同じ形である。
  *
  * **限界も書いておく (0-a-16)**: パリティは「両方に在る穴」を見つけられない。
  * 仕様 (葉 = `sha256(path\0filehash)` / 奇数は末尾複製 / ブロックは

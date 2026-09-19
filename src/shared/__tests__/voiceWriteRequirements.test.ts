@@ -94,13 +94,24 @@ describe('台帳の必須項目が実装と一致する', () => {
       'github/create-issue': 'GITHUB_ISSUE_FIELDS',
       'calendar/create-event': 'CALENDAR_EVENT_FIELDS',
     };
+    // 共有の中継の置き場 (service id と file 名が違う物だけ)。
+    const SHARED_API_FILE: Record<string, string> = { calendar: 'google' };
     for (const r of VOICE_WRITE_REQUIREMENTS) {
       const ledger = LEDGER[`${r.serviceId}/${r.action}`];
       if (ledger !== undefined) {
+        /*
+         * 2026-09-19 (パス 321) から main は共有の中継 (`shared/api/<service>.ts` の
+         * `checkX`) を通って台帳に着く。鎖は 2 段: 中継が `checkWriteFields(input, 台帳)` を
+         * 読み、main の handler がその中継を `ctx.payload` で呼ぶ。中継の名前は共有の
+         * 実装から導く (手で並べない)。
+         */
+        const shared = read(`shared/api/${SHARED_API_FILE[r.serviceId] ?? r.serviceId}.ts`);
+        const relay = new RegExp(`export function (\\w+)\\([^)]*\\)[^{]*\\{\\s*const bad = checkWriteFields\\(input, ${ledger}\\)`).exec(shared);
+        expect(relay, `${r.serviceId}.${r.action}: 共有の中継が台帳 ${ledger} を読んでいない`).not.toBeNull();
         expect(
           read(`main/clients/${r.serviceId}.ts`),
-          `${r.serviceId}.${r.action}: main が台帳 ${ledger} で断っていない`,
-        ).toContain(`checkWriteFields(ctx.payload, ${ledger})`);
+          `${r.serviceId}.${r.action}: main が中継 ${relay![1]} を通っていない`,
+        ).toContain(`${relay![1]}(ctx.payload`);
         expect(r.required.length, `${ledger} に必須欄が無い`).toBeGreaterThan(0);
         continue;
       }

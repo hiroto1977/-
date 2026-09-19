@@ -458,6 +458,6 @@ function main() {
  * **外側の証人のために公開する。** `require.main` の番をつけないと、
  * require した瞬間に CLI が走って process ごと落ちる。
  */
-module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition };
+module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES };
 
 if (require.main === module) process.exit(main());

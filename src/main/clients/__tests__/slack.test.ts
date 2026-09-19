@@ -196,22 +196,27 @@ describe('ACTIONS["send-message"]', () => {
     ).rejects.toBeInstanceOf(FetchError);
   });
 
-  it('defaults send-message return ts/channel to fallbacks (kills slack.ts:113 `?? ""` / `?? channel`)', async () => {
-    // Slack may technically omit `ts`/`channel` from a 200 response;
-    // we coerce them to safe defaults. Pin both with toBe so the
-    // StringLiteral → 'Stryker was here!' mutant on the `''` fallback
-    // dies, and the symmetric `?? channel` fallback for `channel` is
-    // exercised.
+  it('ok:true なのに ts が無い応答は断る (空に倒さない —— ブラウザ版と同じ規則 · 2026-09-18)', async () => {
+    // 2026-09-18 まで main は `ts` を '' に倒して「送れた」と報告していた (この検査が
+    // その倒し込みを留めていた)。共有の readSlackPost に寄せたので、要求する側に揃う。
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ ok: true /* no ts, no channel */ }),
+    );
+    await expect(
+      ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { channel: 'C-input', text: 'hi' } }),
+    ).rejects.toThrow(/ts/);
+  });
+
+  it('channel が応答に無ければ、送った先 (要求の channel) で補う', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ ok: true, ts: '1700000000.000100' /* no channel */ }),
     );
     const result = (await ACTIONS['send-message']!({
       token: 't',
       fetch: fetchMock,
       payload: { channel: 'C-input', text: 'hi' },
     })) as { ts: string; channel: string };
-    expect(result.ts).toBe('');
-    expect(result.ts).not.toContain('Stryker');
+    expect(result.ts).toBe('1700000000.000100');
     expect(result.channel).toBe('C-input');
   });
 

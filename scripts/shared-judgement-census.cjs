@@ -88,6 +88,28 @@ const VERDICTS = {
     + '写しだったのは文だけなので安全の主張は乗っていない (HIBP は述語が写しで、'
     + '片側の trim が落ちて偽の安心を返した)。同じ家系でも重さは分けて書く。'
     + '母集団はパス 251 で 118 件と測った',
+  rfc2822:
+    '対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、'
+    + '両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。'
+    + '断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま'
+    + '呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、'
+    + 'ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は '
+    + 'shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本',
+  'api/cloudflare':
+    '対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・'
+    + '封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。'
+    + 'それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も '
+    + '「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。'
+    + '断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、'
+    + 'ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。'
+    + 'main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る',
+  'api/slack':
+    '対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` '
+    + '(Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は '
+    + "FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) "
+    + 'だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が'
+    + '両ビルドで同じ文で投げる (main はそれまで \'\' に倒していた —— 揃えたときに要求する側へ)。'
+    + '消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ',
   'api/cursor':
     '対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ '
     + '`fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は '
@@ -333,7 +355,10 @@ const VERDICTS = {
     + '「読む側は共有の表を読み、自分の写しを持たない」を両方向に留める。'
     + ' ★ 設計として残る非対称ではない点: 内部ホスト・秘密らしきクエリ引数は'
     + '**関門ではなく警告**である (`validateScanUrl` の失敗は empty / too-long / '
-    + 'not-a-url / not-web の 4 つだけ)。警告を出す画面は両ビルドで同じ 1 本なので対称',
+    + 'not-a-url / not-web の 4 つだけ)。警告を出す画面は両ビルドで同じ 1 本なので対称。'
+    + ' ★ パス 321: `validateScanUrl` / `validateBreachEmail` を呼ぶのは `shared/api/security.ts` の'
+    + ' `checkScanUrl` / `checkBreachEmail` の 1 つずつになり、main と saasWriteWeb はそれを通る'
+    + ' (直に import しない)。「字まで同じ 1 行」は 1 行になった',
   serviceAdvisor:
     '対称 (実測・パス 268) —— 否定で答えるのは `adviseService` (`ok: false`) と、'
     + 'その中でだけ呼ばれる 4 つの `parse*AdviceInput` (**外部の消費者は 0 件**)。'
@@ -432,7 +457,12 @@ const VERDICTS = {
     + 'saasWriteWeb の 2 経路が同じ定数を読む。留めるのは '
     + '`shared/__tests__/refusalTwins.test.ts` (両ビルドを実際に呼んで同じ文が'
     + '返ることを見る —— 綴りを写した検査は無言で古びるので、'
-    + 'main 側の検査 11 か所も台帳を読むように直した)',
+    + 'main 側の検査 11 か所も台帳を読むように直した)。'
+    + ' ★ パス 321 (2026-09-19・オントロジーの組み直し): **双子そのものを畳んだ**。12 表すべてで'
+    + ' main と saasWriteWeb は共有の中継 (`shared/api/*.ts` の `checkX` → `xInit` → `parseCreatedX`) を'
+    + ' 通り、`checkWriteFields(…, 表)` を呼ぶのは shared の 1 か所ずつ。`writeFieldLimits.test.ts` の'
+    + ' LEDGERS は全行が `via` になり、直呼びの枝は母集団 0 (型を明示して分岐は残す)。'
+    + ' 上の「10 組すべてが同じ形」は 2026-09-19 より前の記述である',
 };
 
 /**

@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { readOriginalSource } from '../shared/__tests__/originalSource';
-import path from 'node:path';
-import { RECORD_ENTRY_SERVICE_IDS } from '../shared/recordEntryLimits';
+import {
+  actionsIsComputed,
+  browserPairs,
+  desktopPairs,
+  desktopServiceModules,
+  invokeBody,
+  KNOWN_EMPTY,
+  readRepoFile as read,
+} from './actionSurface';
 
 /*
  * **ブラウザ版が、デスクトップ版の許可表に無い操作を実行できてはいけない。**
@@ -27,155 +33,8 @@ import { RECORD_ENTRY_SERVICE_IDS } from '../shared/recordEntryLimits';
  * 数え、走査結果がその全部を説明できることを別に確かめる。
  */
 
-const REPO_ROOT = path.resolve(__dirname, '../..');
-const read = (rel: string): string => readOriginalSource(path.join(REPO_ROOT, rel));
-
-/** コメントを落とす (説明文の中の例を数えないため)。 */
-function stripComments(text: string): string {
-  const noBlock = text.replace(/\/\*[\s\S]*?\*\//g, '');
-  return noBlock
-    .split('\n')
-    .filter((l) => !l.trim().startsWith('//'))
-    .join('\n');
-}
-
-/** `{` から対応する `}` までを返す。 */
-function braceBlock(text: string, from: number): string {
-  const b = text.indexOf('{', from);
-  let depth = 0;
-  for (let i = b; i < text.length; i += 1) {
-    if (text[i] === '{') depth += 1;
-    else if (text[i] === '}') {
-      depth -= 1;
-      if (depth === 0) return text.slice(b + 1, i);
-    }
-  }
-  return '';
-}
-
-// ===== デスクトップ版の許可表 =====
-
-/** LIVE_ACTIONS の `serviceId: ALIAS` と、その ALIAS の輸入元ファイル。 */
-function desktopServiceModules(): Map<string, string> {
-  const idx = read('src/main/clients/index.ts');
-  const alias = new Map<string, string>();
-  for (const m of idx.matchAll(
-    /import\s*\{[^}]*\bACTIONS\s+as\s+([A-Z0-9_]+)[^}]*\}\s*from\s*'\.\/([^']+)'/g,
-  )) {
-    alias.set(m[1]!, m[2]!);
-  }
-  const table = braceBlock(idx, idx.indexOf('export const LIVE_ACTIONS'));
-  const out = new Map<string, string>();
-  for (const m of stripComments(table).matchAll(/^\s*'?([a-z0-9-]+)'?:\s*([A-Z0-9_]+),/gm)) {
-    const file = alias.get(m[2]!);
-    if (file) out.set(m[1]!, file);
-  }
-  return out;
-}
-
-/**
- * `ACTIONS` の初期化子が `Object.fromEntries(...)` で**組み立て**ているか。
- *
- * ## 2026-09-12 (パス 166) に直した形 —— 固定長の窓が条件だった
- *
- * ここは `text.slice(at, at + 200).includes('Object.fromEntries')` だった。
- * 実測すると shopify の `Object.fromEntries` は `export const ACTIONS` から **+34**
- * —— **窓 200 に対し余裕は 166 文字**しかなく、注記を 3 行足せば越える。
- * 越えたときこれは**落ちずに別の枝へ行く** (字面の表として読もうとして鍵が 0 件になり、
- * `KNOWN_EMPTY` との突き合わせで「shopify に action が無い」と**誤った理由で**鳴る)。
- *
- * パス 165 で `browserSnapshotGates` の窓 4000 を 28 文字で踏み抜いたのと同じ形。
- * **窓ではなく構造で決める**: 初期化子の頭は
- *
- * ```
- *   字面の表   export const ACTIONS: ActionMap = {        ← 最初の `{` が表の開き
- *   組み立て   export const ACTIONS: ActionMap = Object.fromEntries(…);
- * ```
- *
- * なので「`at` から最初の `{` か `;` まで」に `Object.fromEntries` が在るかで決まる。
- * 文字数に依らないので、注記を何行足しても倒れない (下の対照で確かめる)。
- */
-export function actionsIsComputed(text: string): boolean {
-  const at = text.indexOf('export const ACTIONS');
-  if (at < 0) return false;
-  const brace = text.indexOf('{', at);
-  const semi = text.indexOf(';', at);
-  const end = Math.min(brace < 0 ? text.length : brace, semi < 0 ? text.length : semi);
-  return text.slice(at, end).includes('Object.fromEntries');
-}
-
-/** ACTIONS マップから鍵を取る。3 通りの書き方すべて。 */
-function actionKeysOf(file: string): string[] {
-  const text = read(`src/main/clients/${file}.ts`);
-  const at = text.indexOf('export const ACTIONS');
-  if (at < 0) return [];
-  // shopify は `Object.fromEntries(CONNECTORS.map(…))` で組み立てる。
-  // 字面の表が無いので、その元になる CONNECTORS の action 欄から取る。
-  if (actionsIsComputed(text)) {
-    const arr = text.slice(text.indexOf('export const CONNECTORS'));
-    return [...stripComments(arr).matchAll(/\baction:\s*'([^']+)'/g)].map((m) => m[1]!);
-  }
-  const body = stripComments(braceBlock(text, at));
-  const keys = new Set<string>();
-  for (const m of body.matchAll(/^\s*'([^']+)'\s*:/gm)) keys.add(m[1]!);
-  for (const m of body.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*:/gm)) keys.add(m[1]!);
-  for (const m of body.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*,\s*$/gm)) keys.add(m[1]!);
-  return [...keys];
-}
-
-/** 意図的に空の ACTIONS を持つサービス (書き込み操作がまだ無い)。 */
-const KNOWN_EMPTY = ['cursor'];
-
-function desktopPairs(): { pairs: Set<string>; empty: string[] } {
-  const pairs = new Set<string>();
-  const empty: string[] = [];
-  for (const [svc, file] of desktopServiceModules()) {
-    const keys = actionKeysOf(file);
-    if (keys.length === 0) empty.push(svc);
-    for (const k of keys) pairs.add(`${svc}/${k}`);
-  }
-  return { pairs, empty };
-}
-
-// ===== ブラウザ版の if 連鎖 =====
-
-/** `invoke:` の本体だけを取る。 */
-function invokeBody(): string {
-  const shim = read('src/renderer/web-shim.ts');
-  return stripComments(braceBlock(shim, shim.indexOf('  invoke: async <T>')));
-}
-
-/**
- * `record-entry` / `advise` を集合で受ける分岐の対象サービス。
- *
- * 2026-09-09 (パス 117) までブラウザ版は `RECORD_ENTRY_SERVICES = new Set([…])` を自前で持ち、
- * ここはその字面を読んでいた。いまは shared の `RECORD_ENTRY_SERVICE_IDS` を `isRecordEntryServiceId`
- * で読むので、**分岐がその関数で振り分けている**ことを字面で確かめた上で、集合は shared から取る
- * (集合を 2 度書かない)。分岐の形が変われば [] になり、その action が「拾えていない action」として鳴る。
- * パス 119 で `advise` も同じ形の分岐になった (4 サービスの提案を shared の 1 関数が組む)。
- */
-function sharedSetServices(body: string, action: 'record-entry' | 'advise'): string[] {
-  return new RegExp(`action\\s*===\\s*'${action}'\\s*&&\\s*isRecordEntryServiceId\\(serviceId\\)`).test(body)
-    ? [...RECORD_ENTRY_SERVICE_IDS]
-    : [];
-}
-
-function browserPairs(body: string): Set<string> {
-  const out = new Set<string>();
-  for (const m of body.matchAll(/serviceId\s*===\s*'([^']+)'\s*&&\s*action\s*===\s*'([^']+)'/g)) {
-    out.add(`${m[1]}/${m[2]}`);
-  }
-  for (const m of body.matchAll(/action\s*===\s*'([^']+)'\s*&&\s*serviceId\s*===\s*'([^']+)'/g)) {
-    out.add(`${m[2]}/${m[1]}`);
-  }
-  for (const m of body.matchAll(/serviceId\s*===\s*'([^']+)'\s*&&\s*\(([^)]*action\s*===[^)]*)\)/g)) {
-    for (const a of m[2]!.matchAll(/action\s*===\s*'([^']+)'/g)) out.add(`${m[1]}/${a[1]}`);
-  }
-  for (const action of ['record-entry', 'advise'] as const) {
-    for (const svc of sharedSetServices(body, action)) out.add(`${svc}/${action}`);
-  }
-  return out;
-}
+// 読み方 (デスクトップの表・ブラウザ版の if 連鎖) は `./actionSurface.ts` に 1 つ。
+// オントロジー (`ontologyFacts.ts`) も同じ物を読むので、ここには写しを置かない。
 
 /**
  * **判定が文字数に依らないこと** (2026-09-12 · パス 166)。

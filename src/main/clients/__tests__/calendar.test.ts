@@ -169,6 +169,8 @@ describe('defaultTimeZone', () => {
 });
 
 describe('ACTIONS["create-event"]', () => {
+  // htmlLink は非空を要求する (shared/api/google.ts の parseCreatedEvent —— ブラウザ版が前から持っていた封筒の検査を main も通る · 2026-09-18)。
+  // htmlLink は非空を要求する (shared/api/google.ts の parseCreatedEvent —— ブラウザ版が前から持っていた封筒の検査を main も通る · 2026-09-18)。
   it('POSTs to primary/events with start/end + host-detected time zone', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ id: 'e1', htmlLink: 'https://calendar.google.com/event?eid=x' }),
@@ -199,7 +201,7 @@ describe('ACTIONS["create-event"]', () => {
   it('書き込みは Google の events へ POST し、トークンは Authorization だけに載る', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ id: 'e1', htmlLink: '' }));
+      .mockResolvedValueOnce(jsonResponse({ id: 'e1', htmlLink: 'https://calendar.google.com/event?eid=e1' }));
 
     await ACTIONS['create-event']!({
       token: 'ya29.secret',
@@ -219,7 +221,7 @@ describe('ACTIONS["create-event"]', () => {
 
   it('honors a custom time zone when supplied', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      jsonResponse({ id: 'e2', htmlLink: '' }),
+      jsonResponse({ id: 'e2', htmlLink: 'https://calendar.google.com/event?eid=e2' }),
     );
     await ACTIONS['create-event']!({
       token: 't',

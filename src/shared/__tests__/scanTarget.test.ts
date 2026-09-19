@@ -390,10 +390,10 @@ describe('scanTarget — 生存していた変異を塞ぐ', () => {
  * ビルドによって違う言い方になってはいけない。
  */
 describe('断りの文面は 1 つだけ', () => {
-  const READERS = [
-    'src/main/clients/security.ts',
-    'src/renderer/data/saasWriteWeb.ts',
-  ] as const;
+  // 2026-09-19 (パス 321) から読む側は shared/api/security.ts の `checkScanUrl` 1 つ。
+  // main と saasWriteWeb はそれを通る (直に読まず、写しも持たない —— 下の NON_READERS)。
+  const READERS = ['src/shared/api/security.ts'] as const;
+  const NON_READERS = ['src/main/clients/security.ts', 'src/renderer/data/saasWriteWeb.ts'] as const;
 
   it('★ 理由の 4 つすべてに文面が在る (総当たり)', () => {
     const reasons: ScanUrlFailure[] = ['empty', 'too-long', 'not-a-url', 'not-web'];
@@ -419,6 +419,11 @@ describe('断りの文面は 1 つだけ', () => {
         /const SCAN_URL_MESSAGES\s*[:=]/.test(src),
         `${rel} が SCAN_URL_MESSAGES を自分で宣言している (2 つ目の写し)`,
       ).toBe(false);
+    }
+    for (const rel of NON_READERS) {
+      const src = readOriginalSource(join(__dirname, '..', '..', '..', rel));
+      expect(src, `${rel} が共有の checkScanUrl を通っていない`).toContain('checkScanUrl(');
+      expect(/const SCAN_URL_MESSAGES\s*[:=]/.test(src), `${rel} が写しを持っている`).toBe(false);
     }
   });
 

@@ -20,16 +20,21 @@ import {
   type FetchContext,
 } from './types';
 import {
-  CLOUDFLARE_DNS_FIELDS,
-  CLOUDFLARE_PURGE_FIELDS,
-  checkWriteFields,
-  describeWriteFieldFailure,
-  CLOUDFLARE_PURGE_NEEDS_TARGET,
-} from '../../shared/writeFieldLimits';
+  CLOUDFLARE_API,
+  checkDnsRecord,
+  checkPurge,
+  cloudflareDnsRecordsPath,
+  cloudflarePurgePath,
+  dnsRecordInit,
+  parseCreatedDnsRecord,
+  parsePurgeResult,
+  purgeCacheInit,
+  readCloudflareEnvelope,
+} from '../../shared/api/cloudflare';
 import type { ActionData } from '../../shared/actionData';
 
-
-const API_BASE = 'https://api.cloudflare.com/client/v4';
+/** 送り先は shared の 1 つ (書き込みも読みも同じ定数を通る)。 */
+const API_BASE = CLOUDFLARE_API;
 
 interface CfWrap<T> {
   result: T;
@@ -74,14 +79,15 @@ function headers(token: string): Record<string, string> {
   };
 }
 
-/** Cloudflare wraps every payload in `{ success, errors, result }`. We
- *  unwrap and surface a clean error message when `success: false`. */
+/**
+ * Cloudflare wraps every payload in `{ success, errors, result }`. 封筒の判定は shared の
+ * 1 つ (`readCloudflareEnvelope` —— ブラウザ版も同じ関数)。ここは断りを serviceId つきの
+ * `FetchError` で運ぶだけ (ブラウザ版は `Error`。例外の型だけが流儀で、条件は 1 つ)。
+ */
 function unwrap<T>(payload: CfWrap<T>): T {
-  if (!payload.success) {
-    const msg = payload.errors?.[0]?.message ?? 'unknown Cloudflare error';
-    throw new FetchError(`cloudflare ${msg}`, 0, 'cloudflare');
-  }
-  return payload.result;
+  const env = readCloudflareEnvelope(payload);
+  if (!env.ok) throw new FetchError(`cloudflare ${env.message}`, 0, 'cloudflare');
+  return env.result as T;
 }
 
 export async function fetchCloudflareSnapshot(ctx: FetchContext): Promise<CloudflareSnapshot> {
@@ -133,7 +139,13 @@ async function fetchAllZones(
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateDnsRecordPayload {
+/*
+ * 欄の判定・本文の組み立て・URL・封筒の読みは `shared/api/cloudflare.ts` の 1 つで、
+ * ブラウザ版も同じ関数を通る (パス 321)。ここに残るのは送る道 (`jsonFetch`) と
+ * 断りの運び方 (`unwrap` の FetchError) だけ。
+ */
+
+export interface CreateDnsRecordPayload {
   zoneId: string;
   type: 'A' | 'AAAA' | 'CNAME' | 'TXT' | 'MX';
   name: string;
@@ -142,44 +154,19 @@ interface CreateDnsRecordPayload {
   proxied?: boolean;  // orange-cloud (only valid for A/AAAA/CNAME)
 }
 
-interface CfDnsRecord {
-  id: string;
-  name: string;
-  type: string;
-  content: string;
-  ttl: number;
-  proxied: boolean;
-}
-
 async function createDnsRecord(
   ctx: ActionContext,
 ): Promise<ActionData<'cloudflare/create-dns-record'>> {
-  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは 4 欄の真偽値だけで、
-  // `type` は一覧で見ず、`ttl` / `proxied` は型も見ずに転送していた。
-  const bad = checkWriteFields(ctx.payload, CLOUDFLARE_DNS_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { zoneId, type, name, content, ttl, proxied } =
-    ctx.payload as unknown as CreateDnsRecordPayload;
-
-  const body: Record<string, unknown> = { type, name, content, ttl: ttl ?? 1 };
-  if (type === 'A' || type === 'AAAA' || type === 'CNAME') {
-    body.proxied = proxied ?? false;
-  }
-
-  const wrap = await jsonFetch<CfWrap<CfDnsRecord>>(
-    `${API_BASE}/zones/${encodeURIComponent(zoneId)}/dns_records`,
-    {
-      method: 'POST',
-      headers: { ...headers(ctx.token), 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    },
+  const record = checkDnsRecord(ctx.payload);
+  const wrap = await jsonFetch<CfWrap<unknown>>(
+    `${API_BASE}${cloudflareDnsRecordsPath(record)}`,
+    dnsRecordInit(record, ctx.token),
     { fetch: ctx.fetch, serviceId: 'cloudflare' },
   );
-  const record = unwrap(wrap);
-  return { id: record.id, name: record.name, type: record.type };
+  return parseCreatedDnsRecord(unwrap(wrap));
 }
 
-interface PurgeCachePayload {
+export interface PurgeCachePayload {
   zoneId: string;
   /** When omitted (and `purgeEverything` is true), drop the entire
    *  cache for the zone. Otherwise purge only the listed URLs. */
@@ -187,33 +174,14 @@ interface PurgeCachePayload {
   purgeEverything?: boolean;
 }
 
-interface CfPurgeResponse {
-  id: string;
-}
-
 async function purgeCache(ctx: ActionContext): Promise<ActionData<'cloudflare/purge-cache'>> {
-  // 欄の形は共有の台帳で断る (パス 111): `files` は文字列の配列 (件数と 1 件の長さに
-  // 天井)、`purgeEverything` は真偽値。どちらが要るかの組み合わせは下で見る。
-  const bad = checkWriteFields(ctx.payload, CLOUDFLARE_PURGE_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { zoneId, files, purgeEverything } = ctx.payload as unknown as PurgeCachePayload;
-  if (!purgeEverything && (!files || files.length === 0)) {
-    throw new Error(CLOUDFLARE_PURGE_NEEDS_TARGET);
-  }
-
-  const body = purgeEverything ? { purge_everything: true } : { files };
-
-  const wrap = await jsonFetch<CfWrap<CfPurgeResponse>>(
-    `${API_BASE}/zones/${encodeURIComponent(zoneId)}/purge_cache`,
-    {
-      method: 'POST',
-      headers: { ...headers(ctx.token), 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    },
+  const purge = checkPurge(ctx.payload);
+  const wrap = await jsonFetch<CfWrap<unknown>>(
+    `${API_BASE}${cloudflarePurgePath(purge)}`,
+    purgeCacheInit(purge, ctx.token),
     { fetch: ctx.fetch, serviceId: 'cloudflare' },
   );
-  const result = unwrap(wrap);
-  return { id: result.id, purged: purgeEverything ? 'all' : files!.length };
+  return parsePurgeResult(unwrap(wrap), purge);
 }
 
 export const ACTIONS: ActionMap = {

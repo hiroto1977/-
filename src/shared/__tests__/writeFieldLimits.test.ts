@@ -304,37 +304,52 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
    * だから中継の組み立て役の名前も台帳に置き、`via.file` が本当に POST している
    * ことまで確かめる。
    */
-  const LEDGERS = [
-    { name: 'SLACK_MESSAGE_FIELDS', main: 'main/clients/slack.ts', page: 'renderer/pages/SlackPage.tsx', fields: ['channel', 'text'], web: true },
-    { name: 'GITHUB_ISSUE_FIELDS', main: 'main/clients/github.ts', page: 'renderer/pages/GithubPage.tsx', fields: ['owner', 'repo', 'title', 'body'], web: true },
-    { name: 'CALENDAR_EVENT_FIELDS', main: 'main/clients/calendar.ts', page: 'renderer/pages/CalendarPage.tsx', fields: ['summary'], web: true },
+  /**
+   * 行の形。`via` は省略できる (直に `checkWriteFields(ctx.payload, 台帳)` を呼ぶ形) が、
+   * 2026-09-19 (パス 321) で全行が中継を通るようになった —— 型を明示しておくのは、
+   * 「直呼びの枝」が母集団に 0 件でも走査の分岐が型検査で never にならないため
+   * (次に直呼びの行が増えたときに分岐が生きている)。
+   */
+  interface LedgerRow {
+    readonly name: string;
+    readonly main: string;
+    readonly page: string;
+    readonly fields: readonly string[];
+    readonly web: boolean;
+    readonly via?: { readonly fn: string; readonly init: string; readonly file: string };
+  }
+  const LEDGERS: readonly LedgerRow[] = [
+    { name: 'SLACK_MESSAGE_FIELDS', main: 'main/clients/slack.ts', page: 'renderer/pages/SlackPage.tsx', fields: ['channel', 'text'], web: true, via: { fn: 'checkMessage', init: 'slackMessageInit', file: 'shared/api/slack.ts' } },
+    // 2026-09-18 (オントロジーの組み直し) で共有の `checkIssue` に寄せた —— 欄の判定・URL・要求・応答の読みを両ビルドが同じ関数で通る。
+    { name: 'GITHUB_ISSUE_FIELDS', main: 'main/clients/github.ts', page: 'renderer/pages/GithubPage.tsx', fields: ['owner', 'repo', 'title', 'body'], web: true, via: { fn: 'checkIssue', init: 'githubIssueInit', file: 'shared/api/github.ts' } },
+    { name: 'CALENDAR_EVENT_FIELDS', main: 'main/clients/calendar.ts', page: 'renderer/pages/CalendarPage.tsx', fields: ['summary'], web: true, via: { fn: 'checkCalendarEvent', init: 'calendarEventInit', file: 'shared/api/google.ts' } },
     // パス 111 で載せた 9 家系。
-    { name: 'GMAIL_DRAFT_FIELDS', main: 'main/clients/gmail.ts', page: 'renderer/pages/GmailPage.tsx', fields: ['to', 'subject', 'body'], web: true },
-    { name: 'DRIVE_FOLDER_FIELDS', main: 'main/clients/drive.ts', page: 'renderer/pages/DrivePage.tsx', fields: ['name', 'parentId'], web: true },
-    { name: 'CANVA_FOLDER_FIELDS', main: 'main/clients/canva.ts', page: 'renderer/pages/CanvaPage.tsx', fields: ['name', 'parentFolderId'], web: true },
-    { name: 'NOTION_PAGE_FIELDS', main: 'main/clients/notion.ts', page: 'renderer/pages/NotionPage.tsx', fields: ['parentPageId', 'title', 'body'], web: true },
-    { name: 'ATLASSIAN_ISSUE_FIELDS', main: 'main/clients/atlassian.ts', page: 'renderer/pages/AtlassianPage.tsx', fields: ['projectKey', 'summary', 'description', 'issueType'], web: true },
-    { name: 'WORDPRESS_POST_FIELDS', main: 'main/clients/wordpress.ts', page: 'renderer/pages/WordPressPage.tsx', fields: ['siteId', 'title', 'content'], web: true },
+    { name: 'GMAIL_DRAFT_FIELDS', main: 'main/clients/gmail.ts', page: 'renderer/pages/GmailPage.tsx', fields: ['to', 'subject', 'body'], web: true, via: { fn: 'checkGmailDraft', init: 'gmailDraftInit', file: 'shared/api/google.ts' } },
+    { name: 'DRIVE_FOLDER_FIELDS', main: 'main/clients/drive.ts', page: 'renderer/pages/DrivePage.tsx', fields: ['name', 'parentId'], web: true, via: { fn: 'checkDriveFolder', init: 'driveFolderInit', file: 'shared/api/google.ts' } },
+    { name: 'CANVA_FOLDER_FIELDS', main: 'main/clients/canva.ts', page: 'renderer/pages/CanvaPage.tsx', fields: ['name', 'parentFolderId'], web: true, via: { fn: 'checkFolder', init: 'canvaFolderInit', file: 'shared/api/canva.ts' } },
+    { name: 'NOTION_PAGE_FIELDS', main: 'main/clients/notion.ts', page: 'renderer/pages/NotionPage.tsx', fields: ['parentPageId', 'title', 'body'], web: true, via: { fn: 'checkPage', init: 'notionPageInit', file: 'shared/api/notion.ts' } },
+    { name: 'ATLASSIAN_ISSUE_FIELDS', main: 'main/clients/atlassian.ts', page: 'renderer/pages/AtlassianPage.tsx', fields: ['projectKey', 'summary', 'description', 'issueType'], web: true, via: { fn: 'checkJiraIssue', init: 'jiraIssueInit', file: 'shared/api/atlassian.ts' } },
+    { name: 'WORDPRESS_POST_FIELDS', main: 'main/clients/wordpress.ts', page: 'renderer/pages/WordPressPage.tsx', fields: ['siteId', 'title', 'content'], web: true, via: { fn: 'checkPost', init: 'wordpressPostInit', file: 'shared/api/wordpress.ts' } },
     // パス 274 で共有の `checkMail` に寄せ、ブラウザ版の双子が出来た (web: false → true)。
     { name: 'MS365_MAIL_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['to', 'subject', 'body'], web: true, via: { fn: 'checkMail', init: 'graphMailInit', file: 'shared/api/microsoft365.ts' } },
     // パス 275 で共有の `checkEvent` に寄せ、ブラウザ版の双子が出来た (web: false → true)。
     { name: 'MS365_EVENT_FIELDS', main: 'main/clients/microsoft-365.ts', page: 'renderer/pages/Microsoft365Page.tsx', fields: ['subject', 'location'], web: true, via: { fn: 'checkEvent', init: 'graphEventInit', file: 'shared/api/microsoft365.ts' } },
-    { name: 'CLOUDFLARE_DNS_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: ['name', 'content'], web: true },
-    { name: 'CLOUDFLARE_PURGE_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: [], web: true },
-  ] as const;
+    { name: 'CLOUDFLARE_DNS_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: ['name', 'content'], web: true, via: { fn: 'checkDnsRecord', init: 'dnsRecordInit', file: 'shared/api/cloudflare.ts' } },
+    { name: 'CLOUDFLARE_PURGE_FIELDS', main: 'main/clients/cloudflare.ts', page: 'renderer/pages/CloudflarePage.tsx', fields: [], web: true, via: { fn: 'checkPurge', init: 'purgeCacheInit', file: 'shared/api/cloudflare.ts' } },
+  ];
 
   /** `via` を持つ行の中継関数の名前 (走査の語彙を台帳から導く — 手で並べない)。 */
   const VIA_FNS: ReadonlySet<string> = new Set(
-    LEDGERS.flatMap((l) => ('via' in l ? [l.via.fn] : [])),
+    LEDGERS.flatMap((l) => (l.via !== undefined ? [l.via.fn] : [])),
   );
   /** 同じ台帳から導く、要求を組み立てる側の名前 (母集団の走査が使う)。 */
   const VIA_INITS: ReadonlySet<string> = new Set(
-    LEDGERS.flatMap((l) => ('via' in l ? [l.via.init] : [])),
+    LEDGERS.flatMap((l) => (l.via !== undefined ? [l.via.init] : [])),
   );
 
   it('★ main の handler が台帳で断る', () => {
     for (const l of LEDGERS) {
-      if ('via' in l) {
+      if (l.via !== undefined) {
         // 1 段目: handler が中継を呼ぶ。
         expect(code(l.main), `${l.main} が ${l.via.fn} を呼んでいない`).toContain(`${l.via.fn}(ctx.payload`);
         // 2 段目: 中継が台帳を読む (空の中継にできない)。
@@ -352,8 +367,8 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
       }
       expect(code(l.main), `${l.main} が台帳で断っていない`).toContain(`checkWriteFields(ctx.payload, ${l.name})`);
     }
-    // labels は別の判定。
-    expect(code('main/clients/github.ts')).toContain('checkWriteLabels(labels)');
+    // labels は別の判定。中継 (shared/api/github.ts の checkIssue) がそれも読む。
+    expect(code('shared/api/github.ts')).toContain('checkWriteLabels(input.labels)');
     // 標本: 中継の形が 1 件以上在る (`via` の枝が死んでいない)。
     expect(VIA_FNS.size, 'via の枝が空 — 上の分岐は一度も通っていない').toBeGreaterThanOrEqual(1);
   });
@@ -366,14 +381,15 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
         expect(web, `${l.name} の双子が出来ている (web: true にして台帳を読ませる)`).not.toContain(l.name);
         continue;
       }
-      if ('via' in l) {
+      if (l.via !== undefined) {
         // 双子も同じ中継を通る。台帳を読むことは上の 2 段目が留めている。
         expect(web, `双子が ${l.via.fn} を呼んでいない`).toContain(`${l.via.fn}(input)`);
         continue;
       }
       expect(web, `双子が ${l.name} で断っていない`).toContain(`checkWriteFields(input, ${l.name})`);
     }
-    expect(web).toContain('checkWriteLabels(input.labels)');
+    // labels の判定も中継 (shared/api/github.ts の checkIssue) の中に 1 つ —— 双子は checkIssue(input) を通る。
+    expect(code('shared/api/github.ts')).toContain('checkWriteLabels(input.labels)');
   });
 
   /**
@@ -447,8 +463,18 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
     const OWN_ENTRANCE: Record<string, string> = {
       'emotions/analyze-text': 'AI への入力。MAX_ANALYZE_TEXT_CHARS が天井',
       'skills/run-skill': 'AI への入力。name は isSafeSkillName、prompt の天井は未収載 (残作業)',
-      'security/scan-url': 'URL 1 つ。validateScanUrl (scanTarget.ts) が形と長さを見る',
+      'security/scan-url': 'URL 1 つ。validateScanUrl (scanTarget.ts) が形と長さを見る (共有の checkScanUrl が呼ぶ)',
     };
+    /**
+     * 台帳の外で POST を組み立てる共有の関数 (パス 321)。`security/scan-url` の投入は
+     * `shared/api/security.ts` の `vtSubmitInit` が組み、handler の body に
+     * `method: 'POST'` は無い —— 母集団から黙って落ちないよう名前をここに置く。
+     * 台帳を読む必要が無い理由は上の OWN_ENTRANCE が持つ。
+     */
+    const POST_BUILDERS_OUTSIDE_LEDGER: readonly string[] = ['vtSubmitInit'];
+    for (const fn of POST_BUILDERS_OUTSIDE_LEDGER) {
+      expect(code('shared/api/security.ts'), `${fn} が shared に無い`).toMatch(new RegExp(`export function ${fn}\\([\\s\\S]{0,400}?method:\\s*'POST'`));
+    }
     const dir = path.join(SRC, 'main/clients');
     const posting: string[] = [];
     const reading: string[] = [];
@@ -473,7 +499,7 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
          * `method: 'POST'` はもうこの body に無いが、**POST していることは
          * 変わっていない**。組み立て役の名前は LEDGERS から導く。
          */
-        const viaInit = [...VIA_INITS].some((fn) => body.includes(`${fn}(`));
+        const viaInit = [...VIA_INITS, ...POST_BUILDERS_OUTSIDE_LEDGER].some((fn) => body.includes(`${fn}(`));
         if (/method:\s*'POST'/.test(body) || viaInit) posting.push(key);
         /*
          * 台帳に着く道は 2 本 —— 直に `checkWriteFields` を呼ぶか、

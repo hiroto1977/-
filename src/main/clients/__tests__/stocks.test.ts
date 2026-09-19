@@ -2,6 +2,7 @@ import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fsp } from 'node:fs';
 import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
+import { MAX_STOCK_ADVISOR_RATIONALE_CHARS } from '../../../shared/advisorResponseLimits';
 import {
   sma,
   ema,
@@ -1262,6 +1263,13 @@ describe('validateAdvisorJson', () => {
       ...over,
     };
   }
+
+  it('rationale の天井は名前で参照する (ちょうどは通り、1 字超えは断る —— パス 321 の census)', () => {
+    expect(validateAdvisorJson({ recommendations: [goodRec({ rationale: 'x'.repeat(MAX_STOCK_ADVISOR_RATIONALE_CHARS) })] }, allowed)).toHaveLength(1);
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ rationale: 'x'.repeat(MAX_STOCK_ADVISOR_RATIONALE_CHARS + 1) })] }, allowed),
+    ).toThrow(/rationale exceeds/);
+  });
 
   it('accepts a well-formed response within the allowed universe', () => {
     const out = validateAdvisorJson({ recommendations: [goodRec()] }, allowed);

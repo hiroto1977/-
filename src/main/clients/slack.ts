@@ -1,9 +1,5 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
-import {
-  SLACK_MESSAGE_FIELDS,
-  checkWriteFields,
-  describeWriteFieldFailure,
-} from '../../shared/writeFieldLimits';
+import { SLACK_API, SLACK_POST_MESSAGE_PATH, checkMessage, readSlackPost, slackMessageInit } from '../../shared/api/slack';
 import type { ActionData } from '../../shared/actionData';
 
 interface SlackChannel {
@@ -84,42 +80,30 @@ export async function fetchSlackSnapshot(ctx: FetchContext): Promise<SlackSnapsh
 
 // --- write-side actions --------------------------------------------------
 
-interface SendMessagePayload {
+/**
+ * `send-message` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkMessage` (`SlackMessageFields` = 欄が unknown の受け口) が行う。
+ */
+export interface SendMessagePayload {
   channel: string; // channel id (C…) or name with leading "#"
   text: string;
 }
 
-interface SlackChatPostResponse {
-  ok: boolean;
-  error?: string;
-  ts?: string;
-  channel?: string;
-}
-
 async function sendMessage(ctx: ActionContext): Promise<ActionData<'slack/send-message'>> {
-  // 欄の型と長さは共有の台帳で断る (パス 110)。それまでは `!channel || !text` の
-  // 真偽値の検査だけで、object でも数 MB の本文でも通していた。
-  const bad = checkWriteFields(ctx.payload, SLACK_MESSAGE_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { channel, text } = ctx.payload as unknown as SendMessagePayload;
-
-  const res = await jsonFetch<SlackChatPostResponse>(
-    'https://slack.com/api/chat.postMessage',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify({ channel, text }),
-    },
+  /*
+   * 欄の判定・URL・要求・応答の読みは **`shared/api/slack.ts` の 1 つ**を通る
+   * (ブラウザ版も同じ関数を呼ぶ · 2026-09-18)。ここは main の流儀 —— `jsonFetch` の
+   * 打ち切り・上限・封筒と、`ok: false` を FetchError で断ること —— だけ。
+   */
+  const message = checkMessage(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${SLACK_API}${SLACK_POST_MESSAGE_PATH}`,
+    slackMessageInit(message, ctx.token),
     { fetch: ctx.fetch, serviceId: 'slack' },
   );
-
-  if (!res.ok) {
-    throw new FetchError(`slack ${res.error ?? 'unknown_error'}`, 0, 'slack');
-  }
-  return { ts: res.ts ?? '', channel: res.channel ?? channel };
+  const post = readSlackPost(res, message);
+  if (!post.ok) throw new FetchError(`slack ${post.error}`, 0, 'slack');
+  return { ts: post.ts, channel: post.channel };
 }
 
 export const ACTIONS: ActionMap = {

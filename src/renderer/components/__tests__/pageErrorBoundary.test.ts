@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { PageErrorBoundary, describeRenderError } from '../PageErrorBoundary';
+import { MAX_RENDER_ERROR_CHARS, PageErrorBoundary, describeRenderError } from '../PageErrorBoundary';
 
 /*
  * 画面 1 つの描画エラーを、その画面の枠に閉じ込める (2026-09-05)。
@@ -56,9 +56,12 @@ describe('describeRenderError', () => {
     expect(describeRenderError('文字列で投げた')).toBe('文字列で投げた');
     expect(describeRenderError(undefined)).toBe('原因不明のエラー');
     expect(describeRenderError(new Error(''))).toBe('原因不明のエラー');
-    const long = describeRenderError(new Error('x'.repeat(500)));
-    expect(long.length).toBe(161);
+    // 天井は名前で参照する (数字を写すと、定数を動かしても検査は動かない —— パス 321 の census)。
+    const long = describeRenderError(new Error('x'.repeat(MAX_RENDER_ERROR_CHARS * 3)));
+    expect(long.length).toBe(MAX_RENDER_ERROR_CHARS + 1);
     expect(long.endsWith('…')).toBe(true);
+    // 境界: ちょうど天井までは切らない。
+    expect(describeRenderError(new Error('y'.repeat(MAX_RENDER_ERROR_CHARS)))).toBe('y'.repeat(MAX_RENDER_ERROR_CHARS));
   });
 });
 
@@ -75,7 +78,7 @@ describe('describeRenderError は伏せてから切る (パス 307)', () => {
   it('伏せた後も 160 字の天井と「…」は変わらない', () => {
     const out = describeRenderError(new Error('x'.repeat(500)));
     expect(out.endsWith('…')).toBe(true);
-    expect([...out].length).toBe(161);
+    expect([...out].length).toBe(MAX_RENDER_ERROR_CHARS + 1);
   });
 });
 

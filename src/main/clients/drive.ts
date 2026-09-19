@@ -1,5 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { DRIVE_FOLDER_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import { DRIVE_CREATE_FOLDER_PATH, GOOGLE_DRIVE_API, checkDriveFolder, driveFolderInit, parseCreatedDriveFolder } from '../../shared/api/google';
 import type { ActionData } from '../../shared/actionData';
 
 interface DriveFile {
@@ -49,47 +49,26 @@ export async function fetchDriveSnapshot(ctx: FetchContext): Promise<DriveSnapsh
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateFolderPayload {
+/**
+ * `create-folder` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkDriveFolder` (`DriveFolderFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreateFolderPayload {
   name: string;
   parentId?: string; // omitted → "My Drive" root
-}
-
-interface DriveCreateFileResponse {
-  id: string;
-  name: string;
-  webViewLink?: string;
 }
 
 async function createFolder(
   ctx: ActionContext,
 ): Promise<ActionData<'drive/create-folder'>> {
-  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!name` だけだった。
-  const bad = checkWriteFields(ctx.payload, DRIVE_FOLDER_FIELDS);
-  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
-  const { name, parentId } = ctx.payload as unknown as CreateFolderPayload;
-
-  const res = await jsonFetch<DriveCreateFileResponse>(
-    'https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        mimeType: 'application/vnd.google-apps.folder',
-        ...(parentId ? { parents: [parentId] } : {}),
-      }),
-    },
+  // 欄の判定・URL・要求・応答の読みは shared/api/google.ts の 1 つ (ブラウザ版も同じ関数 · 2026-09-18)。
+  const folder = checkDriveFolder(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GOOGLE_DRIVE_API}${DRIVE_CREATE_FOLDER_PATH}`,
+    driveFolderInit(folder, ctx.token),
     { fetch: ctx.fetch, serviceId: 'drive' },
   );
-
-  return {
-    id: res.id,
-    name: res.name,
-    url: res.webViewLink ?? `https://drive.google.com/drive/folders/${res.id}`,
-  };
+  return parseCreatedDriveFolder(res);
 }
 
 export const ACTIONS: ActionMap = {
