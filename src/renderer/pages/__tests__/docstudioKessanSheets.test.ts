@@ -117,7 +117,7 @@ afterEach(async () => {
 });
 
 describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
-  it('既定は「4点まとめて」: 5 つのタブがあり、4 つの書面と決算公告の要旨が全部出る', async () => {
+  it('既定は「4点まとめて」: 5 つのタブがあり、計算書類 4 点が全部出る (公告の要旨は入らない)', async () => {
     navigateTo('docstudio', { doc: 'kessan' });
     await mount();
     // 一覧の並び: 4 点それぞれが独立した書類として先に並び、「まとめて」は最後
@@ -125,9 +125,15 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     expect(q.tabs()).toEqual(['pl', 'bs', 'equity', 'notes', 'all']);
     expect(q.tab('all')?.className).toBe('primary');
     expect(q.sheets()?.dataset['kessanSheets']).toBe('all');
-    for (const t of ['損益計算書', '資産の部', '負債・純資産の部', '貸借対照表の要旨']) expect(q.statement(t), t).not.toBeNull();
+    for (const t of ['損益計算書', '資産の部', '負債・純資産の部']) expect(q.statement(t), t).not.toBeNull();
     expect(q.paperText()).toContain('株主資本等変動計算書');
     expect(q.paperText()).toContain('個別注記表');
+    // **名乗りどおり 4 点ちょうど** (パス 328)。決算公告の要旨は会社法 440 条の公告で
+    // 435 条 2 項の計算書類ではないので、まとめてには入れない。
+    expect(q.statement('貸借対照表の要旨')).toBeNull();
+    expect(q.paperText()).not.toContain('決算公告');
+    // 標本: 不在の主張の綴りは、貸借対照表を選べば実際に出る文に当たる
+    expect('決算公告（貸借対照表の要旨）').toContain('決算公告');
     expect(q.inherited()).toBeNull();
     // 入力欄は全欄 (損益の科目も貸借対照表の科目も注記も)
     expect(q.input('売上高')).not.toBeNull();
@@ -381,26 +387,43 @@ describe('印刷の隣は計算書類の検算も数える', () => {
 describe('書類スタジオ — 計算書類は 1 点 1 枚 (パス 323)', () => {
   const ids = (): (string | null)[] => q.pages().map((p) => p.getAttribute('data-kessan-page'));
 
-  it('★ 「まとめて」は 5 枚の紙 (損益 / 貸借 / 変動 / 注記 / 公告の要旨) がこの順に並び、どれも .ds-paper で免責の脚注を持つ', async () => {
+  /*
+   * **「計算書類（4点まとめて）」は 4 枚ちょうど** (パス 328・依頼「これらを４つに分けて」)。
+   *
+   * パス 323 で 1 点 1 枚にしたとき、決算公告の要旨を 5 枚目として同じ束に入れていた ——
+   * つまり **タブが「4点」と名乗るのに 5 枚出ていた**。要旨は会社法 440 条の公告で、
+   * 435 条 2 項の計算書類ではない。束は 4 点にし、要旨は貸借対照表と組で出す。
+   */
+  it('★ 「まとめて」は 4 枚の紙 (損益 / 貸借 / 変動 / 注記) がこの順に並び、どれも .ds-paper で免責の脚注を持つ', async () => {
     navigateTo('docstudio', { doc: 'kessan' });
     await mount();
-    expect(ids()).toEqual(['pl', 'bs', 'equity', 'notes', 'notice']);
-    expect(q.sheets()?.getAttribute('data-kessan-pages')).toBe('5');
+    expect(ids()).toEqual(['pl', 'bs', 'equity', 'notes']);
+    expect(q.sheets()?.getAttribute('data-kessan-pages')).toBe('4');
     for (const pg of q.pages()) {
       expect(pg.classList.contains('ds-paper'), pg.getAttribute('data-kessan-page') ?? '').toBe(true);
       expect(pg.querySelector('.ds-disclaimer')?.textContent).toContain('専門家による確認');
     }
     // 紙 1 枚に見出し 1 つ (紙をまたいで書面が続かない)
-    expect(q.pages().map((pg) => pg.querySelectorAll('.ds-title').length)).toEqual([1, 1, 1, 1, 1]);
+    expect(q.pages().map((pg) => pg.querySelectorAll('.ds-title').length)).toEqual([1, 1, 1, 1]);
     // 紙の上の札 (画面だけ)
     const captions = Array.from(container.querySelectorAll('.ds-sheet-caption')).map((c) => c.textContent?.trim() ?? '');
-    expect(captions).toHaveLength(5);
-    expect(captions[0]).toContain('1 枚目 / 全 5 枚');
+    expect(captions).toHaveLength(4);
+    expect(captions[0]).toContain('1 枚目 / 全 4 枚');
     expect(captions[0]).toContain('損益計算書');
-    expect(captions[4]).toContain('5 枚目 / 全 5 枚');
-    expect(captions[4]).toContain('決算公告');
-    // 計算書類の外側に「1 枚の紙」は残っていない (5 枚がすべて)
-    expect(container.querySelectorAll('.ds-paper').length).toBe(5);
+    expect(captions[3]).toContain('4 枚目 / 全 4 枚');
+    expect(captions[3]).toContain('個別注記表');
+    // 計算書類の外側に「1 枚の紙」は残っていない (4 枚がすべて)
+    expect(container.querySelectorAll('.ds-paper').length).toBe(4);
+  });
+
+  it('★ 決算公告の要旨は束から外れても失われない (貸借対照表を選べば 2 枚目に出る)', async () => {
+    navigateTo('docstudio', { doc: 'kessan-bs' });
+    await mount();
+    expect(ids()).toEqual(['bs', 'notice']);
+    expect(q.paperText()).toContain('決算公告');
+    expect(q.statement('貸借対照表の要旨')).not.toBeNull();
+    // 会社法 440 条の断りも要旨の紙に付いて回る
+    expect(q.paperText()).toContain('440');
   });
 
   it('1 点ずつ: 貸借対照表は要旨と 2 枚、ほかは 1 枚', async () => {

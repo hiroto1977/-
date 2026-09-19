@@ -1266,8 +1266,14 @@ async function kessanTaxSuite(browser) {
   // 1 点 1 枚 (2026-09-19・パス 323、依頼「計算書類（4点）が一枚に集約されているので１枚ずつになる様に最適化して」):
   // まとめて表示でも書面ごとに別の紙で、印刷は書面ごとに改ページ。改ページは実 chromium でしか測れない
   // (jsdom は紙の数と順序と規則の原文まで)。ページ数は PDF の /Pages の /Count から読む。
-  ok((await pageIds()).join(',') === 'pl,bs,equity,notes,notice', `kessan[all]: ★ 書面は 1 点 1 枚で 5 枚 (実際 ${(await pageIds()).join(',')})`);
-  ok((await page.locator('[data-kessan-sheets] .ds-paper').count()) === 5, 'kessan[all]: 5 枚がそれぞれ紙 (.ds-paper) で、免責の脚注も紙ごと');
+  //
+  // **名乗りどおり 4 枚ちょうど** (パス 328・依頼「これらを４つに分けて」)。パス 323 は決算公告の要旨を
+  // 5 枚目として同じ束に入れており、タブが「4点」と名乗るのに 5 枚出ていた。要旨は会社法 440 条の
+  // 公告で 435 条 2 項の計算書類ではないので束から外し、貸借対照表を選んだときだけ組で出す
+  // (上の `kessan[bs]: bs,notice` がそれを留めている —— 外しても失われない)。
+  ok((await pageIds()).join(',') === 'pl,bs,equity,notes', `kessan[all]: ★ 書面は 1 点 1 枚で 4 枚ちょうど (実際 ${(await pageIds()).join(',')})`);
+  ok((await page.locator('[data-kessan-sheets] .ds-paper').count()) === 4, 'kessan[all]: 4 枚がそれぞれ紙 (.ds-paper) で、免責の脚注も紙ごと');
+  ok((await page.locator('[data-kessan-sheets]').innerText()).includes('決算公告') === false, 'kessan[all]: ★ まとめてに決算公告の要旨は入らない (440 条の公告は計算書類ではない)');
   // 規則が実ブラウザの cascade で紙に届くこと (2 枚目以降だけ)。stylesheet の順序で負けて 1 行も効かない形は
   // 原文の検査では見えない (パス 322 の hero がそれだった)。
   await page.emulateMedia({ media: 'print' });
@@ -1275,7 +1281,7 @@ async function kessanTaxSuite(browser) {
   const breaks = await page.locator('[data-kessan-sheets] .ds-sheet-block').evaluateAll((els) => els.map((el) => getComputedStyle(el).breakBefore));
   await page.evaluate(() => document.body.classList.remove('ds-printing'));
   await page.emulateMedia({ media: null });
-  ok(breaks.join(',') === 'auto,page,page,page,page', `kessan[all]: ★ 印刷の cascade で 2 枚目以降の紙に break-before: page が届く (実際 ${breaks.join(',')})`);
+  ok(breaks.join(',') === 'auto,page,page,page', `kessan[all]: ★ 印刷の cascade で 2 枚目以降の紙に break-before: page が届く (実際 ${breaks.join(',')})`);
   const pdfPageCount = async () => {
     await page.evaluate(() => document.body.classList.add('ds-printing'));
     const buf = await page.pdf({ format: 'A4', preferCSSPageSize: true });
@@ -1284,10 +1290,11 @@ async function kessanTaxSuite(browser) {
     const m = /\/Type\s*\/Pages\b[^>]*?\/Count\s+(\d+)/.exec(text);
     return m ? Number(m[1]) : (text.match(/\/Type\s*\/Page\b(?!s)/g) ?? []).length;
   };
-  ok((await pdfPageCount()) >= 5, `kessan[all]: ★ 印刷は書面ごとに改ページ (PDF ${await pdfPageCount()} ページ ≥ 5 枚)`);
-  // 対照は中身を縮めて測る —— 実物の 5 枚はほぼ 1 ページずつ埋まるので、規則を外しても自然な流れで
-  // 5 ページになりうる (実測: 消費税の 4 科目を入れた状態で 5 / 5)。表の 4 行目以降と注記の 3 節目以降を
-  // CSSOM で隠して 5 枚を短くすると、規則が効いていれば 5 ページ・効いていなければ流れて減る。
+  ok((await pdfPageCount()) >= 4, `kessan[all]: ★ 印刷は書面ごとに改ページ (PDF ${await pdfPageCount()} ページ ≥ 4 枚)`);
+  // 対照は中身を縮めて測る —— 実物の紙はほぼ 1 ページずつ埋まるので、規則を外しても自然な流れで
+  // 同じページ数になりうる (パス 323 の実測: 消費税の 4 科目を入れた状態で 5 / 5 で鳴らなかった)。
+  // 表の 4 行目以降と注記の 3 節目以降を CSSOM で隠して紙を短くすると、規則が効いていれば 4 ページ・
+  // 効いていなければ流れて減る。
   const shrink = (on) => page.evaluate((hide) => {
     const rows = document.querySelectorAll('[data-kessan-page] .ds-table tbody tr:nth-child(n+4), [data-statement="個別注記表"] > div:nth-child(n+3)');
     rows.forEach((el) => { el.style.display = hide ? 'none' : ''; });
@@ -1298,8 +1305,8 @@ async function kessanTaxSuite(browser) {
   const shrunkWithoutRule = await pdfPageCount();
   await page.evaluate(() => document.querySelectorAll('.e2e-no-break').forEach((el) => el.classList.replace('e2e-no-break', 'ds-sheet-block')));
   await shrink(false);
-  ok(shrunkWithRule === 5, `kessan[all]: ★ 中身を縮めても 1 点 1 枚 (PDF ${shrunkWithRule} ページ = 5 枚)`);
-  ok(shrunkWithoutRule < 5, `kessan[all]: 対照 — 改ページの規則を外すと縮めた 5 枚は流れて減る (${shrunkWithoutRule} < 5)`);
+  ok(shrunkWithRule === 4, `kessan[all]: ★ 中身を縮めても 1 点 1 枚 (PDF ${shrunkWithRule} ページ = 4 枚)`);
+  ok(shrunkWithoutRule < 4, `kessan[all]: 対照 — 改ページの規則を外すと縮めた 4 枚は流れて減る (${shrunkWithoutRule} < 4)`);
 
   ok(errors.length === 0, `kessan: ページエラー 0 (実際 ${errors.length})`);
   if (errors.length > 0) errors.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
@@ -3758,7 +3765,7 @@ async function hardResetSuite(browser) {
     ['dataOrigin', dataOriginSuite, 7], // 実測 9
     ['credential', credentialSuite, 6], // 実測 8
     ['businessComparison', businessComparisonSuite, 11], // 実測 13
-    ['kessanTax', kessanTaxSuite, 23], // 実測 28
+    ['kessanTax', kessanTaxSuite, 24], // 実測 29
     ['frameGuard', frameGuardSuite, 5], // 実測 7
     ['noBeacon', noBeaconSuite, 9], // 実測 11
     ['vaultPassword', vaultPasswordSuite, 5], // 実測 6
@@ -3788,7 +3795,7 @@ async function hardResetSuite(browser) {
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /** 全 suite を回したときの合計の床 (実測 395 の約 88%)。一部だけ回すときは掛けない。 */
-  const MIN_TOTAL_CHECKS = 376;
+  const MIN_TOTAL_CHECKS = 377;
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
     console.error(`❌ SERVICE_HUB_E2E_ONLY に知らない suite: ${unknown.join(', ')} (使える名前: ${SUITES.join(', ')})`);

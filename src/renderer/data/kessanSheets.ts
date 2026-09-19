@@ -17,7 +17,7 @@
 import { ACCOUNTS, type Section } from './statementAccounts';
 import type { DocField } from './docStudioData';
 
-/** 書面の選択。`all` は従来どおり 4 点（＋決算公告の要旨）をまとめて出す。 */
+/** 書面の選択。`all` は計算書類 4 点ちょうど (決算公告の要旨は `bs` に付く別の書類)。 */
 export type KessanSheet = 'all' | 'pl' | 'bs' | 'equity' | 'notes';
 
 export interface KessanSheetDef {
@@ -33,7 +33,7 @@ export interface KessanSheetDef {
 }
 
 export const KESSAN_SHEETS: readonly KessanSheetDef[] = [
-  { id: 'all', label: '4点まとめて', docId: 'kessan', title: '計算書類（4点）', note: '4 点と決算公告の要旨を 1 点 1 枚の紙で続けて出力します（印刷 / PDF では書面ごとに改ページ）。' },
+  { id: 'all', label: '4点まとめて', docId: 'kessan', title: '計算書類（4点）', note: '計算書類 4 点を 1 点 1 枚の紙で出力します（印刷 / PDF では書面ごとに改ページ）。決算公告の要旨は会社法440条の公告なのでここには入らず、貸借対照表を選ぶと付いてきます。' },
   { id: 'pl', label: '損益計算書', docId: 'kessan-pl', title: '損益計算書', note: '損益計算書だけを出力します。当期純利益は貸借対照表と株主資本等変動計算書へ引き継がれます。' },
   { id: 'bs', label: '貸借対照表', docId: 'kessan-bs', title: '貸借対照表', note: '貸借対照表と決算公告の要旨を出力します。繰越利益剰余金には損益計算書の当期純利益を含めます。' },
   { id: 'equity', label: '株主資本等変動計算書', docId: 'kessan-equity', title: '株主資本等変動計算書', note: '株主資本等変動計算書だけを出力します。当期末残高は貸借対照表の純資産の部と一致します。' },
