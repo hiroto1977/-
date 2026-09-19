@@ -65,7 +65,6 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/EmotionsPage.tsx': 3,
   'src/renderer/pages/FreeePage.tsx': 10,
   'src/renderer/pages/FundingPage.tsx': 16,
-  'src/renderer/pages/HomePage.tsx': 1,
   'src/renderer/pages/HydroponicsPage.tsx': 1,
   'src/renderer/pages/KpiPage.tsx': 3,
   'src/renderer/pages/LibraryPage.tsx': 1,

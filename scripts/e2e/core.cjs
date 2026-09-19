@@ -742,6 +742,118 @@ async function tabletSuite(browser) {
 }
 
 /**
+ * シェルの操作性 (パス 322): サイドバー (検索の ✕ と件数・分類の開閉) / トップバーの ♡ /
+ * ホームの「お気に入り・最近使った」のジャンプ列 / 「先頭へ戻る」 / スマホのドロワーの閉じ方。
+ *
+ * 見るのは**1 つの状態を 3 つの場所が映すこと** —— トップバーの ♡・サイドバーの節・ホームの列は
+ * どれも App の 1 つの並び (`shellContext.ts`) から描かれる。jsdom (`appShell.test.ts`) は同じ配線を
+ * 見るが、スクロールの量と `position: fixed` の可視性は実ブラウザでしか測れない。
+ */
+async function shellSuite(browser) {
+  console.log('--- shell: サイドバー / トップバー / ホームのジャンプ列 / 先頭へ戻る (パス 322) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-home-favorites]', { timeout: 30000 });
+
+  // 1. お気に入りが無いホームは案内文 (何も押していない利用者が最初に見る物)
+  ok((await page.locator('[data-home-favorites]').innerText()).includes('ここに並びます'), 'shell: ★ お気に入りが無いホームは案内文を出す');
+
+  // 2. トップバーの ♡ → サイドバーの節と項目の ♥ が同じ状態を映す
+  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
+  await page.locator('.topbar-fav').click();
+  await page.waitForSelector('.topbar-fav.on', { timeout: 5000 });
+  ok((await page.locator('.topbar-fav').getAttribute('aria-pressed')) === 'true', 'shell: ★ トップバーの ♡ を押すと押された状態 (aria-pressed) になる');
+  await page.waitForSelector('[data-section="favorites"] .sidebar-item[data-service-id="docstudio"]', { timeout: 5000 });
+  ok(true, 'shell: ★ サイドバーの「お気に入り」の節に同じサービスが現れる');
+  ok((await page.locator('.sidebar-item[data-service-id="docstudio"] .fav-toggle.on').count()) >= 1, 'shell: 項目の ♥ も点く (押し場所は 2 つ・状態は 1 つ)');
+  const favStored = JSON.parse((await page.evaluate(() => localStorage.getItem('servicehub.favorites'))) || '[]');
+  ok(Array.isArray(favStored) && favStored.includes('docstudio'), 'shell: お気に入りは servicehub.favorites に残る');
+
+  // 3. ホームのジャンプ列: お気に入り / 最近使った (自分は出さない) → 押すとそこへ移る
+  await page.locator('.sidebar-item[data-service-id="home"]').first().click();
+  await page.waitForSelector('[data-home-favorites] button.chip[data-jump-to="docstudio"]', { timeout: 10000 });
+  ok(true, 'shell: ★ ホームのお気に入り列にサイドバーと同じサービスが並ぶ');
+  ok((await page.locator('[data-home-recents] button.chip[data-jump-to="docstudio"]').count()) === 1, 'shell: 最近使った列に直前に開いた画面が並ぶ');
+  ok((await page.locator('[data-home-recents] button.chip[data-jump-to="home"]').count()) === 0, 'shell: 最近使った列にホーム自身は出ない (今ここに居る)');
+  await page.locator('[data-home-favorites] button.chip[data-jump-to="docstudio"]').click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
+  ok((await page.evaluate(() => location.hash)) === '#docstudio', 'shell: ★ ジャンプ列を押すとその画面へ移る (hash も同期)');
+
+  // 4. 検索: 件数 / ✕ で消す / ショートカットの札 / フォーカスは残る
+  await page.locator('.sidebar-search-input').fill('株');
+  await page.waitForSelector('.sidebar-search-clear', { timeout: 5000 });
+  const label = (await page.locator('.sidebar-nav [role="status"]').innerText()).trim();
+  const counted = /検索結果 (\d+) 件/.exec(label);
+  ok(counted !== null, `shell: ★ 検索結果の件数を出す (${label})`);
+  ok(counted !== null && (await page.locator('.sidebar-nav .sidebar-item').count()) === Number(counted[1]), 'shell: 件数と並ぶ項目の数が一致する');
+  await page.locator('.sidebar-search-clear').click();
+  await page.waitForFunction(() => document.querySelector('.sidebar-search-input').value === '', undefined, { timeout: 5000 });
+  ok(true, 'shell: ★ ✕ で検索が消える');
+  ok(await page.locator('.sidebar-search-kbd').isVisible(), 'shell: 空の検索欄にはショートカットの札が見える');
+  ok(await page.locator('.sidebar-search-input').evaluate((el) => document.activeElement === el), 'shell: ✕ の後もフォーカスは検索欄に残る (続けて打てる)');
+
+  // 5. 分類の開閉 (aria-expanded が実物と一致する)
+  const head = page.locator('.sidebar-group[data-category="tools"] .sidebar-group-head');
+  ok((await head.getAttribute('aria-expanded')) === 'false', 'shell: 「分析・ツール」は既定で畳まれている');
+  await head.click();
+  await page.waitForSelector('.sidebar-group[data-category="tools"] .sidebar-item', { timeout: 5000 });
+  ok((await head.getAttribute('aria-expanded')) === 'true', 'shell: ★ 見出しを押すと開く (aria-expanded=true・項目が出る)');
+  await head.click();
+  await page.waitForFunction(() => document.querySelectorAll('.sidebar-group[data-category="tools"] .sidebar-item').length === 0, undefined, { timeout: 5000 });
+  ok(true, 'shell: もう 1 度押すと畳まれる');
+
+  // 6. 先頭へ戻る + 画面を切り替えたらスクロール位置を引き継がない
+  await page.locator('.sidebar-item[data-service-id="business"]').first().click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="business"]', { timeout: 10000 });
+  const scrollTop = () => page.evaluate(() => document.querySelector('.content').scrollTop);
+  await page.evaluate(() => document.querySelector('.content').scrollTo({ top: 900, behavior: 'auto' }));
+  await page.waitForSelector('.scroll-top.show', { timeout: 5000 });
+  ok(true, 'shell: ★ 本文を下へ送ると「先頭へ戻る」が現れる');
+  ok((await scrollTop()) > 320, `shell: スクロール量 ${await scrollTop()}px > 320px (現れる閾値)`);
+  await page.locator('.scroll-top').click();
+  await page.waitForFunction(() => document.querySelector('.content').scrollTop === 0, undefined, { timeout: 5000 });
+  ok(true, 'shell: ★ 押すと先頭へ戻る');
+  await page.waitForFunction(() => !document.querySelector('.scroll-top.show'), undefined, { timeout: 5000 });
+  ok(true, 'shell: 戻ったらボタンは隠れる');
+  await page.evaluate(() => document.querySelector('.content').scrollTo({ top: 900, behavior: 'auto' }));
+  await page.waitForSelector('.scroll-top.show', { timeout: 5000 });
+  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
+  await page.waitForFunction(() => document.querySelector('.content').scrollTop === 0 && !document.querySelector('.scroll-top.show'), undefined, { timeout: 5000 });
+  ok(true, 'shell: ★ 画面を切り替えると先頭から始まる (前の画面のスクロール位置を引き継がない)');
+  await ctx.close();
+
+  // 7. スマホ: ドロワーは ✕ でも Esc でも閉じる
+  const pctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+  const ppage = await pctx.newPage();
+  collectErrors(ppage, errs);
+  await ppage.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await ppage.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(ppage);
+  await ppage.locator('.menu-btn').tap();
+  await ppage.waitForSelector('.app.nav-open', { timeout: 10000 });
+  ok(await ppage.locator('.drawer-close').isVisible(), 'shell: ★ スマホのドロワーに閉じるボタンが見える');
+  await ppage.locator('.drawer-close').tap();
+  await ppage.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+  ok(true, 'shell: ★ ✕ でドロワーが閉じる');
+  await ppage.locator('.menu-btn').tap();
+  await ppage.waitForSelector('.app.nav-open', { timeout: 10000 });
+  await ppage.keyboard.press('Escape');
+  await ppage.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+  ok(true, 'shell: Esc でもドロワーが閉じる');
+  ok(await noHScroll(ppage), 'shell: スマホのホームに横スクロールなし');
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(realErrs.length === 0, `shell: console エラーゼロ (${realErrs.length})`);
+  await pctx.close();
+}
+
+/**
  * 事業・数値の手入力 — 全画面共通の欄。
  *
  * この欄は App が 1 か所で描くので、画面ごとに貼り忘れる余地は無い。
@@ -3631,10 +3743,11 @@ async function hardResetSuite(browser) {
     ['aiCeiling', aiCeilingSuite, 8], // 実測 10
     ['theme', themeSuite, 10], // 実測 14
     ['tablet', tabletSuite, 1], // 実測 2
+    ['shell', shellSuite, 22], // 実測 27
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /** 全 suite を回したときの合計の床 (実測 395 の約 88%)。一部だけ回すときは掛けない。 */
-  const MIN_TOTAL_CHECKS = 350;
+  const MIN_TOTAL_CHECKS = 370;
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
     console.error(`❌ SERVICE_HUB_E2E_ONLY に知らない suite: ${unknown.join(', ')} (使える名前: ${SUITES.join(', ')})`);

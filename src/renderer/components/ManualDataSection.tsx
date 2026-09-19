@@ -82,8 +82,9 @@ export function ManualDataSection({ scope }: { scope: string }) {
       style={{
         marginTop: 20,
         border: '1px solid var(--border)',
-        borderRadius: 8,
+        borderRadius: 16,
         background: 'var(--bg-elev)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <button

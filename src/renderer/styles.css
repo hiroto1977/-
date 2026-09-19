@@ -1,17 +1,25 @@
 /* ---------------------------------------------------------------------------
- * Service Hub — 見た目の規則 (2026-09-17 再設計)
+ * Service Hub — 見た目と操作の規則 (2026-09-17 再設計 → 2026-09-19 パス 322 で作り直し)
  *
- * 配色は「淡いピンク × ラベンダー × ミント」の明るいパステル。角は大きく丸め、
- * 影は色つきで柔らかく、サイドバーとトップバーはすりガラス。文字は丸ゴシック系
- * (無い環境では OS の標準ゴシックへ倒れる。外部フォントは読み込まない ——
- * 出荷 HTML は CSP `default-src 'self'` で単一ファイルなので、font-src を開けず
- * 同梱もしない)。
+ * 配色は「淡いピンク × ラベンダー × ミント」の明るいパステル。サイドバーと本文は
+ * 角の大きい 2 枚の白いカード (すりガラス) として淡い滲みの上に浮かび、
+ * 影は色つきで柔らかい。文字は丸ゴシック系 (無い環境では OS の標準ゴシックへ倒れる。
+ * 外部フォントは読み込まない —— 出荷 HTML は CSP `default-src 'self'` で単一ファイルなので、
+ * font-src を開けず同梱もしない)。
+ *
+ * 操作の規則 (パス 322): 見えるフォーカス (`:focus-visible`)、押した手応え (`button:active`)、
+ * 画面切替のフェード (`.page-enter` · `prefers-reduced-motion` で止まる)、指で押せる高さ
+ * (サイドバー項目 40px)、検索の × と ⌘K、絵文字つきの分類見出し、♥ のお気に入り、
+ * 先頭へ戻る浮遊ボタン (`.scroll-top`)。
  *
  * **画面側 (pages / components) は inline style で `var(--text-mute)` /
  * `var(--bg-elev)` / `var(--warn)` / `var(--panel)` を読む。** これらは以前は
  * どこにも定義されておらず (定義は `--text-muted` / `--bg-elevated` だけ)、
  * 指定が素通りして親の色で描かれていた。ここで別名として必ず定義する。
  * 名前を 1 つ消すと 600 か所以上の指定が黙って効かなくなるので、消さない。
+ *
+ * 部品の規則に直書きの色は置かない —— 影も光輪もトークン (`--shadow-*` / `--focus-ring`)。
+ * `themeTokens.test.ts` がライト ⇄ ダークの表を両方向に照合し、直書きが 0 であることを留める。
  * ------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
@@ -27,6 +35,8 @@
   --text: #4b3f57;
   --text-muted: #836f8e;
   --text-mute: var(--text-muted);
+  /* グラデーションの上に載せる文字 (両配色とも白) */
+  --on-gradient: #ffffff;
   /* 主役の色 */
   --accent: #ee6fa8;
   --accent-strong: #cf3a7f;
@@ -44,6 +54,12 @@
   /* 影と角 */
   --shadow: 0 12px 32px rgba(238, 111, 168, 0.12), 0 2px 8px rgba(120, 90, 150, 0.06);
   --shadow-sm: 0 4px 14px rgba(238, 111, 168, 0.10);
+  --shadow-ink: rgba(120, 90, 150, 0.06);
+  --shadow-list: rgba(120, 90, 150, 0.05);
+  --shadow-drawer: rgba(120, 90, 150, 0.18);
+  --primary-shadow: rgba(238, 111, 168, 0.28);
+  --thumb-shadow: rgba(238, 111, 168, 0.4);
+  --focus-ring: rgba(238, 111, 168, 0.35);
   --radius: 18px;
   --radius-sm: 12px;
   /* 部品の地 (ボタン・入力欄・検索欄) とその細部。ダークでは `:root[data-theme="dark"]` が同じ名前を
@@ -56,11 +72,16 @@
   --selection-bg: #ffd4e6;
   --scrollbar-thumb: #efd0df;
   --scrollbar-thumb-hover: #e6b9cf;
-  /* 画面全体の滲み (radial-gradient の芯の色) */
   --glow-1: #ffe1ed;
   --glow-2: #e8dfff;
   --glow-3: #dcf5ec;
-  --star: #f2a93b;
+  --heart: #ff5c9a;
+  --kbd-bg: #fff0f6;
+  --kbd-fg: #b23a78;
+  --kbd-border: #f4c6da;
+  --chip-bg: #fff0f6;
+  --chip-fg: #b23a78;
+  --hero-bg: linear-gradient(135deg, rgba(255, 143, 192, 0.22) 0%, rgba(183, 156, 255, 0.16) 60%, rgba(140, 225, 190, 0.18) 100%);
   --sidebar-hover-bg: rgba(238, 111, 168, 0.08);
   --sidebar-press-bg: rgba(238, 111, 168, 0.14);
   --sidebar-active-bg: linear-gradient(135deg, #ffe0ee 0%, #ebe3ff 100%);
@@ -105,6 +126,7 @@
   --border-strong: #4c3f59;
   --text: #f3e9f5;
   --text-muted: #b6a3c2;
+  --on-gradient: #ffffff;
   --accent: #ff8fc0;
   --accent-strong: #ffb3d3;
   --accent-2: #c3adff;
@@ -118,6 +140,12 @@
   --warning-bg: #f6c86b;
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-ink: rgba(0, 0, 0, 0.25);
+  --shadow-list: rgba(0, 0, 0, 0.2);
+  --shadow-drawer: rgba(0, 0, 0, 0.5);
+  --primary-shadow: rgba(0, 0, 0, 0.4);
+  --thumb-shadow: rgba(0, 0, 0, 0.45);
+  --focus-ring: rgba(255, 143, 192, 0.45);
   --control-bg: #2b2335;
   --control-hover-bg: #352a40;
   --placeholder: #7f6f8c;
@@ -129,7 +157,13 @@
   --glow-1: #3a2033;
   --glow-2: #2c2446;
   --glow-3: #1e3a30;
-  --star: #f2a93b;
+  --heart: #ff8fc0;
+  --kbd-bg: #3a2a3e;
+  --kbd-fg: #ffb3d3;
+  --kbd-border: #5a3f5e;
+  --chip-bg: #3b2438;
+  --chip-fg: #ffb3d3;
+  --hero-bg: linear-gradient(135deg, rgba(232, 108, 166, 0.28) 0%, rgba(143, 108, 240, 0.22) 60%, rgba(60, 150, 110, 0.22) 100%);
   --sidebar-hover-bg: rgba(255, 143, 192, 0.10);
   --sidebar-press-bg: rgba(255, 143, 192, 0.18);
   --sidebar-active-bg: linear-gradient(135deg, #43263c 0%, #33294f 100%);
@@ -175,33 +209,51 @@ html, body, #root {
 }
 *::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
 
+/* 見えるフォーカス: キーボードで辿ったときだけ輪を出す (マウスのクリックでは出さない)。
+   入力欄は自分のリング (下) を持つので二重にしない。 */
+:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+
+/* 動きを減らす設定の人には、画面切替のフェードと浮遊ボタンの滑りを止める。 */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter, .scroll-top, .sidebar, .sidebar-item, .card, .home-card { animation: none !important; transition: none !important; }
+}
+
 h1, h2, h3, h4 { color: var(--text); }
 
 button {
   font: inherit;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
   background: var(--control-bg);
   border: 1px solid var(--border-strong);
   border-radius: 999px;
-  padding: 7px 14px;
+  padding: 7px 15px;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(120, 90, 150, 0.06);
-  transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.15s;
+  box-shadow: 0 1px 2px var(--shadow-ink);
+  transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.12s;
 }
 button:hover { border-color: var(--accent); color: var(--accent-strong); background: var(--control-hover-bg); }
-button:disabled { opacity: 0.55; cursor: not-allowed; }
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 button.primary {
   background: var(--gradient);
   border-color: transparent;
-  color: white;
-  box-shadow: 0 6px 16px rgba(238, 111, 168, 0.28);
+  color: var(--on-gradient);
+  box-shadow: 0 6px 16px var(--primary-shadow);
 }
-button.primary:hover { filter: brightness(1.05); color: white; transform: translateY(-1px); }
+button.primary:hover { filter: brightness(1.05); color: var(--on-gradient); transform: translateY(-1px); }
+/* 淡いピンクの地の補助ボタン (「ファイルを開く」など) と、地の無いボタン (× など) */
+button.soft { background: var(--accent-soft); border-color: transparent; color: var(--accent-strong); box-shadow: none; }
+button.soft:hover { border-color: var(--list-hover-border); background: var(--accent-soft); }
+button.ghost { background: transparent; border-color: transparent; box-shadow: none; color: var(--text-muted); }
+button.ghost:hover { background: var(--sidebar-hover-bg); color: var(--accent-strong); }
 
-/* 入力欄: 白地・丸い角・ピンクのフォーカスリング。個別ページの inline 指定が勝つ。 */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+/* 入力欄: 白地・丸い角・ピンクのフォーカスリング。個別ページの inline 指定が勝つ。
+   `:where()` で特異性を (0,0,1) に抑える —— `:not([type=…])` を 4 つ重ねると (0,4,1) になり、
+   クラス 1 つの `.sidebar-search-input` の余白 (🔍 のぶん) が負けて虫眼鏡が placeholder に重なった (パス 322 実測)。 */
+input:where(:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"])),
 select,
 textarea {
   font: inherit;
@@ -214,9 +266,10 @@ textarea {
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
+input:hover, select:hover, textarea:hover { border-color: var(--list-hover-border); }
 input:focus, select:focus, textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(238, 111, 168, 0.16);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 input::placeholder, textarea::placeholder { color: var(--placeholder); }
 input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--accent); }
@@ -241,7 +294,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--gradient);
   border: 2px solid var(--thumb-border);
-  box-shadow: 0 2px 6px rgba(238, 111, 168, 0.4);
+  box-shadow: 0 2px 6px var(--thumb-shadow);
 }
 input[type="range"]::-moz-range-thumb {
   width: 16px;
@@ -250,10 +303,39 @@ input[type="range"]::-moz-range-thumb {
   background: var(--accent);
   border: 2px solid var(--thumb-border);
 }
-input[type="range"]:focus { box-shadow: 0 0 0 3px rgba(238, 111, 168, 0.16); }
+input[type="range"]:focus { box-shadow: 0 0 0 3px var(--focus-ring); }
 
 a { color: var(--accent-strong); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+/* キーの札 (⌘K など) と、押せる小さな札 (お気に入り / 最近使ったへの近道) */
+kbd.kbd {
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--kbd-bg);
+  color: var(--kbd-fg);
+  border: 1px solid var(--kbd-border);
+  line-height: 1.4;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+  font-size: 11.5px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+button.chip { cursor: pointer; box-shadow: none; }
+button.chip:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); transform: translateY(-1px); }
 
 .app {
   display: grid;
@@ -262,7 +344,7 @@ a:hover { text-decoration: underline; }
      画面外に見切れてしまう (スクロールもできない)。0 を下限にすると列は
      ビューポート幅に収まり、はみ出す中身は .content / .data-section 側で
      スクロールに切り替わる。 */
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 256px minmax(0, 1fr);
   /* 行も 100vh に収める。これがないと暗黙の行が中身の高さ(auto)で広がり、
      height:100vh + overflow:hidden の組み合わせで下側が画面外に切れ、しかも
      スクロールできなくなる (背の高いページでチャートの下が見られない原因)。
@@ -274,7 +356,7 @@ a:hover { text-decoration: underline; }
      100vh だと Android Chrome で下端 (チャットボット等) がバーの裏に隠れる。 */
   height: 100dvh;
   overflow: hidden;
-  /* 画面全体に淡い色の滲み。サイドバー・トップバーは半透明なので透けて見える。 */
+  /* 画面全体に淡い色の滲み。サイドバーと本文のカードは半透明なので透けて見える。 */
   background:
     radial-gradient(900px 480px at -5% -10%, var(--glow-1) 0%, transparent 60%),
     radial-gradient(800px 460px at 105% -5%, var(--glow-2) 0%, transparent 60%),
@@ -282,36 +364,72 @@ a:hover { text-decoration: underline; }
     var(--bg);
 }
 
+/* --- サイドバー: 左に浮かぶ白いカード ------------------------------------------- */
 .sidebar {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0 12px 12px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
   background: var(--bg-sidebar);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  border-right: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  padding: 18px 0 12px;
+  min-height: 0;
+  padding: 14px 0 10px;
 }
 
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 18px 12px;
+}
 .sidebar-header {
-  padding: 6px 22px 16px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  font-size: 16px;
   color: var(--accent-strong);
-  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .sidebar-header::before {
   content: '✿';
-  margin-right: 8px;
   color: var(--accent);
+  font-size: 18px;
+}
+/* ドロワーを閉じる × (モバイルだけ表示。メディアクエリ側で display 切替) */
+.drawer-close {
+  display: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-search {
-  padding: 0 14px 12px;
+  position: relative;
+  padding: 0 14px 10px;
+}
+.sidebar-search::before {
+  content: '🔍';
+  position: absolute;
+  left: 26px;
+  top: 10px;
+  font-size: 12px;
+  opacity: 0.75;
+  pointer-events: none;
 }
 .sidebar-search-input {
   width: 100%;
-  padding: 8px 14px;
+  padding: 9px 62px 9px 34px;
   background: var(--control-bg);
   border: 1px solid var(--border-strong);
   border-radius: 999px;
@@ -322,7 +440,27 @@ a:hover { text-decoration: underline; }
 .sidebar-search-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(238, 111, 168, 0.16);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.sidebar-search-kbd {
+  position: absolute;
+  right: 26px;
+  top: 9px;
+  pointer-events: none;
+}
+.sidebar-search-clear {
+  position: absolute;
+  right: 20px;
+  top: 5px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 15px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .sidebar-empty {
   padding: 12px 20px;
@@ -331,14 +469,52 @@ a:hover { text-decoration: underline; }
   line-height: 1.5;
 }
 .sidebar-section-label {
-  padding: 6px 22px 2px;
-  margin-top: 4px;
-  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 4px;
+  margin-top: 2px;
+  font-size: 11px;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--accent-2);
+  letter-spacing: 0.06em;
+  color: var(--heading-accent);
 }
+.sidebar-group { margin-bottom: 2px; }
+.sidebar-group-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--heading-accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: left;
+}
+.sidebar-group-head:hover { background: var(--sidebar-hover-bg); color: var(--accent-strong); }
+.sidebar-group-head:active { transform: none; }
+.sidebar-group-head .group-emoji { font-size: 14px; line-height: 1; }
+.sidebar-group-head .group-count {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+}
+.sidebar-group-head .chev {
+  display: inline-block;
+  font-size: 10px;
+  transition: transform 0.18s;
+}
+.sidebar-group-head[aria-expanded="false"] .chev { transform: rotate(-90deg); }
 .sidebar-item-controls {
   margin-left: auto;
   display: inline-flex;
@@ -346,16 +522,17 @@ a:hover { text-decoration: underline; }
   gap: 6px;
 }
 .fav-toggle {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
   color: var(--text-muted);
   opacity: 0;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  transition: opacity 0.15s, transform 0.15s;
 }
-.sidebar-item:hover .fav-toggle { opacity: 0.5; }
-.fav-toggle.on { opacity: 1; color: var(--star); }
-.fav-toggle:hover { opacity: 1 !important; color: var(--star); }
+.sidebar-item:hover .fav-toggle { opacity: 0.6; }
+.fav-toggle.on { opacity: 1; color: var(--heart); }
+.fav-toggle:hover { opacity: 1 !important; transform: scale(1.2); }
 
 .sidebar-nav {
   flex: 1;
@@ -363,31 +540,46 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   gap: 2px;
   overflow-y: auto;
-  padding: 0 4px;
+  min-height: 0;
+  padding: 0 8px;
 }
 
 .sidebar-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 1px 8px;
+  margin: 1px 4px;
   padding: 8px 12px;
+  min-height: 40px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: transparent;
   color: var(--text);
   text-align: left;
   cursor: pointer;
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 600;
   box-shadow: none;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
 }
-.sidebar-item:hover { background: var(--sidebar-hover-bg); color: var(--text); }
+.sidebar-item:hover { background: var(--sidebar-hover-bg); color: var(--text); transform: translateX(2px); }
+.sidebar-item:active { transform: translateX(2px) scale(0.99); }
 .sidebar-item.active {
   background: var(--sidebar-active-bg);
   color: var(--accent-strong);
-  font-weight: 700;
+  font-weight: 800;
   box-shadow: var(--shadow-sm);
+}
+.sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 10px;
+  bottom: 10px;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--gradient);
 }
 .sidebar-item .icon {
   width: 28px;
@@ -399,60 +591,127 @@ a:hover { text-decoration: underline; }
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  border-radius: 9px;
+  border-radius: 10px;
   background: var(--icon-bg);
   color: var(--icon-fg);
 }
-.sidebar-item.active .icon { background: var(--gradient); color: #ffffff; }
+.sidebar-item.active .icon { background: var(--gradient); color: var(--on-gradient); }
 
 .sidebar-footer {
-  padding: 12px 20px 4px;
+  padding: 10px 16px 4px;
   font-size: 11px;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
 }
+.plan-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--heading-accent);
+}
+.plan-select { width: 100%; }
+.license-pill {
+  margin-top: 8px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: var(--badge-ok-bg);
+  border: 1px solid var(--badge-ok-border);
+  color: var(--badge-ok-fg);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+.sidebar-version {
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
 
+/* --- 本文: 右に浮かぶ白いカード (トップバー + スクロールする中身) --------------- */
 .main {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   min-width: 0; /* グリッド子要素が中身で広がらないようにする (見切れ防止の要) */
-}
-
-.topbar {
-  height: 56px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  gap: 16px;
+  margin: 12px 12px 12px 10px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
   background: var(--panel);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-sm);
+}
+
+.topbar {
+  min-height: 60px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
   min-width: 0;
   overflow: hidden;
+}
+.topbar-icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--gradient);
+  color: var(--on-gradient);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-sm);
 }
 .topbar h1 {
   font-size: 17px;
   margin: 0;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 }
-.topbar h1::before {
-  content: '';
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--gradient);
-  margin-right: 10px;
-  vertical-align: 1px;
-  box-shadow: 0 0 0 4px rgba(238, 111, 168, 0.15);
+.topbar .crumb { flex: none; }
+.topbar .description {
+  color: var(--text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
+.topbar-right {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.topbar-fav {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+.topbar-fav.on { color: var(--heart); border-color: var(--list-hover-border); background: var(--accent-soft); }
+.topbar-fav:hover { transform: scale(1.08); }
 
 /* ハンバーガー (モバイル/タブレットのみ表示 — メディアクエリ側で display 切替) */
 .menu-btn {
@@ -481,22 +740,47 @@ a:hover { text-decoration: underline; }
 
 /* 音声ボタンが狭い画面で 2 行に折り返してトップバーを壊すのを防ぐ */
 .voice-mic { white-space: nowrap; }
-.topbar .description {
-  color: var(--text-muted);
-  font-size: 13px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
 
 .content {
   flex: 1;
   overflow-y: auto;
   overflow-x: auto; /* 万一の横はみ出しはページ全体ではなくここでスクロール */
-  padding: 28px 32px;
+  padding: 24px 28px calc(96px + env(safe-area-inset-bottom));
   min-width: 0;
 }
+/* 画面を切り替えたときに中身がふわっと現れる (`App.tsx` が画面ごとに key を張り直す) */
+.page-enter { animation: pageIn 0.28s ease-out both; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 先頭へ戻る浮遊ボタン。チャットの吹き出し (右下 48px) の左隣に置く。 */
+.scroll-top {
+  position: fixed;
+  right: 76px;
+  bottom: 20px;
+  z-index: 900;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: var(--on-gradient);
+  box-shadow: var(--shadow);
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.scroll-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.scroll-top:hover { color: var(--on-gradient); filter: brightness(1.05); transform: translateY(-2px); }
 
 /* --- レスポンシブ・ガードレール: どのページでも画面内に収める ---
    個別ページに手を入れなくても、共通の崩れ要因をここで吸収する。 */
@@ -534,25 +818,31 @@ a:hover { text-decoration: underline; }
     grid-template-columns: minmax(0, 1fr); /* サイドバー列を畳む */
   }
   .menu-btn { display: inline-flex; }
+  .drawer-close { display: inline-flex; }
+  .sidebar-search-kbd { display: none; }
   .sidebar {
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
+    margin: 0;
     width: min(300px, 84vw);
     z-index: 50;
+    border-radius: 0 24px 24px 0;
     background: var(--drawer-bg);
     transform: translateX(-105%);
     transition: transform 0.22s ease;
-    box-shadow: 8px 0 32px rgba(120, 90, 150, 0.18);
+    box-shadow: 8px 0 32px var(--shadow-drawer);
     /* ノッチ/ジェスチャーバーを避ける (viewport-fit=cover 時のみ効く) */
     padding-top: max(16px, env(safe-area-inset-top));
     padding-bottom: env(safe-area-inset-bottom);
   }
   .app.nav-open .sidebar { transform: translateX(0); }
   .app.nav-open .sidebar-backdrop { display: block; }
-  .content { padding: 16px; }
+  .main { margin: 0; border: none; border-radius: 0; box-shadow: none; background: transparent; }
+  .content { padding: 16px 16px calc(96px + env(safe-area-inset-bottom)); }
   .topbar { padding: 0 12px; gap: 10px; }
+  .scroll-top { right: 72px; bottom: 16px; }
   /* フォーカス時の自動ズーム防止: モバイル Safari/Chrome は 16px 未満の
      入力欄にフォーカスするとページ全体を拡大してしまう。ページ側の
      inline style (fontSize: 13 等) にも勝つ必要があるため !important。 */
@@ -582,8 +872,10 @@ a:hover { text-decoration: underline; }
   grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
 }
 @media (max-width: 640px) {
-  .topbar .description { display: none; } /* タイトル+音声ボタンを優先 */
-  .content { padding: 12px; }
+  .topbar .description, .topbar .crumb { display: none; } /* タイトル+音声ボタンを優先 */
+  .content { padding: 12px 12px calc(96px + env(safe-area-inset-bottom)); }
+  .home-hero { padding: 20px 18px; }
+  .home-hero::after { font-size: 34px; opacity: 0.22; right: 12px; top: 8px; } /* 見出しに被らない大きさ */
 }
 
 /* タッチデバイス (Android/iPad 等): ホバーが無い前提の操作性を確保する。 */
@@ -592,6 +884,7 @@ a:hover { text-decoration: underline; }
   .sidebar-item:active { background: var(--sidebar-press-bg); }
   /* ホバーで出す UI はタッチでは永遠に出ないので、常時うっすら表示 */
   .fav-toggle { opacity: 0.45; }
+  .sidebar-search-kbd { display: none; }
   .data-list-open { padding: 8px 14px; }
   button { touch-action: manipulation; } /* ダブルタップズームの誤発火防止 */
 }
@@ -605,7 +898,7 @@ a:hover { text-decoration: underline; }
 .card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 20px;
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -617,7 +910,7 @@ a:hover { text-decoration: underline; }
 .card h3 {
   margin: 0;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text);
 }
 .card p {
@@ -642,12 +935,20 @@ a:hover { text-decoration: underline; }
 }
 
 .empty {
-  padding: 32px;
+  padding: 28px 32px;
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius);
   color: var(--text-muted);
   text-align: center;
   background: var(--empty-bg);
+  line-height: 1.6;
+}
+.empty::before {
+  content: '🌸';
+  display: block;
+  font-size: 26px;
+  margin-bottom: 6px;
+  opacity: 0.8;
 }
 
 .badge {
@@ -694,9 +995,9 @@ a:hover { text-decoration: underline; }
   gap: 12px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 10px 14px;
-  box-shadow: 0 1px 3px rgba(120, 90, 150, 0.05);
+  box-shadow: 0 1px 3px var(--shadow-list);
   transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 .data-list-item:hover { border-color: var(--list-hover-border); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
@@ -704,7 +1005,7 @@ a:hover { text-decoration: underline; }
   width: 56px;
   height: 36px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--accent-soft);
   grid-row: span 1;
 }
@@ -741,27 +1042,32 @@ a:hover { text-decoration: underline; }
 }
 .data-section-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
 }
+/* 節の題はピルの札 (パス 322)。左の丸い印はグラデーション。 */
 .data-section-header h2 {
   margin: 0;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft-2);
+  font-size: 12.5px;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--heading-accent);
 }
 .data-section-header h2::before {
   content: '';
   display: inline-block;
-  width: 6px;
-  height: 12px;
-  border-radius: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: var(--gradient);
-  margin-right: 8px;
-  vertical-align: -1px;
 }
 .data-section-header .count {
   font-size: 12px;
@@ -770,13 +1076,14 @@ a:hover { text-decoration: underline; }
 
 .status-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px 12px;
   margin-bottom: 16px;
   padding: 10px 14px;
-  background: var(--panel);
+  background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: var(--shadow-sm);
 }
 .status-bar .who {
@@ -794,6 +1101,132 @@ a:hover { text-decoration: underline; }
   border-radius: 50%;
   border: 1px solid var(--border);
 }
+
+/* --- ホーム (HomePage): 挨拶・近道・今すぐ作る・3 ステップ ------------------------ */
+.home { display: flex; flex-direction: column; gap: 20px; }
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 28px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--hero-bg);
+}
+.home-hero::after {
+  content: '🌸';
+  position: absolute;
+  right: 22px;
+  top: 12px;
+  font-size: 56px;
+  opacity: 0.35;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+.home-date {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--heading-accent);
+}
+.home-greeting {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+}
+.home-lead {
+  margin: 10px 0 0;
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.home-lead strong { color: var(--text); }
+.home-jump { display: flex; flex-direction: column; gap: 8px; }
+.home-jump-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.home-jump-title { font-size: 12px; font-weight: 800; color: var(--heading-accent); margin-right: 2px; }
+.home-jump-hint { font-size: 12px; color: var(--text-muted); }
+.home-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+}
+.home-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.home-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.home-card-head { display: flex; align-items: flex-start; gap: 12px; }
+.home-card-emoji {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border-radius: 16px;
+  background: var(--accent-soft-2);
+}
+.home-card-title { font-size: 15px; font-weight: 800; color: var(--text); }
+.home-card-sub { margin-top: 4px; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
+.home-card-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.home-card-result { display: flex; flex-direction: column; gap: 6px; }
+.home-done { font-size: 12px; font-weight: 700; color: var(--success); }
+.home-file { font-size: 11px; color: var(--text-muted); }
+.home-note { font-size: 11px; line-height: 1.6; color: var(--warning); }
+.home-error { font-size: 11px; color: var(--danger); }
+.home-steps {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+}
+.home-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+.home-step-num {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: var(--on-gradient);
+  font-size: 13px;
+  font-weight: 900;
+}
+.home-step p { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--text-muted); }
+.home-step strong { color: var(--text); }
+
+/* プランのロック画面 (App.tsx の UpgradeNotice) */
+.upgrade-card {
+  max-width: 440px;
+  padding: 28px;
+  border-radius: 24px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+.upgrade-card .lock { font-size: 40px; margin-bottom: 8px; }
+.upgrade-card h2 { margin: 0 0 8px; font-size: 16px; }
+.upgrade-card p { margin: 0 0 14px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
 
 /* --- 書類スタジオ (DocstudioPage): 書面プレビュー + 印刷 --- */
 .ds-paper {

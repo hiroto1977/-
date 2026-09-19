@@ -7,6 +7,77 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 322 (2026-09-19) — 可愛い UI: 見た目に加えて操作性を作り直した (機能は 1 つも減らさない)
+
+利用者の依頼は「既存の機能を残しつつ、操作性や見た目を一新した若い女性に好まれる可愛らしいUIに作り直して」。
+2026-09-17 の再設計は色と形だけを変え、構造・文言・`data-*` は触らなかった。今回はサイドバー・トップバー・ホームの
+**操作**を変え、画面の機能・e2e が見る selector (`.menu-btn` / `.app.nav-open` / `.sidebar-item[data-service-id]` /
+`[data-manual-data] > button` / `.field-grid input` / `.stat-grid`) と aria-label (お気に入りに追加 / 外す・サービスを検索・
+プラン選択・メニューを開く / 閉じる) は 1 つも変えていない。
+
+### 変えた物
+
+- **stylesheet** (`styles.css` の UI 側 1,230 行を書き直し・紙の節は不変): トークンを 15 足した (`--on-gradient` / `--shadow-ink` /
+  `--shadow-list` / `--shadow-drawer` / `--primary-shadow` / `--thumb-shadow` / `--focus-ring` / `--heart` / `--kbd-*` ×3 / `--chip-*` ×2 /
+  `--hero-bg`) ので**部品の規則の直書き色は 10 → 0** (ダークでは影と光輪も配色に合う)。`:focus-visible` の輪・`prefers-reduced-motion` で
+  動きを止める・ピル型ボタンに `.primary` / `.soft` / `.ghost` / `.chip`・`kbd.kbd`・サイドバーと本文を浮いたカードに・`.page-enter` の入り・
+  `.scroll-top`・`.upgrade-card`・ホームの `.home-*`。
+  - **撮って気付いた 1 つ**: 入力欄の全体規則 `input:not([type=…])` ×4 の特異性 (0,4,1) がクラス 1 つの `.sidebar-search-input` に勝ち、
+    🔍 が placeholder に重なっていた。`:where()` で (0,0,1) に。
+- **`App.tsx`**: 検索欄の ✕ (押した後もフォーカスは欄に) と件数 (`role=status`) と札 (⌘K / Ctrl K —— UA で表記だけ変え、押す鍵は両方受ける)、
+  分類の見出し `.sidebar-group-head` (絵文字・件数・`aria-expanded` と一致する山形)、`aria-current=page`、トップバーの記号 `.topbar-icon`・
+  分類の `.chip crumb`・♡ `.topbar-fav`、本文の `ref` + `onScroll` (閾値 320px) → `.scroll-top` (`aria-hidden` / `tabIndex` を状態に合わせる・
+  `prefers-reduced-motion` なら `auto`)、画面を切り替えたら `scrollTo({ top: 0 })` (`scrollTo` の無い jsdom は `scrollTop = 0`)、
+  `.page-enter` を key で張り直す、Esc でドロワーを閉じる、`.drawer-close`。`UpgradeNotice` は `.upgrade-card`。
+- **`shellContext.ts`** (新規): `ShellState { favorites, recents, toggleFavorite }` を App が provide し、ホームは `useShell()` で受ける。
+  **保存の読み手は増やさない** (`lint:storage` の規則 3 / 12 の行は不変)。`services.ts` が `HomePage` を import するので `HomePage` から
+  `SERVICES` は読めない (循環) → 文脈は id と表示に要る最小の欄だけ。
+- **`HomePage.tsx`**: inline style を全部 `.home-*` へ (hex `#fff` 1 件 → 0・`inlineColorCensus` の行を消した)。日付 (`data-live-clock`)・挨拶・
+  「お気に入り / 最近使った」のジャンプ列 (`button.chip[data-jump-to]`・自分は出さない・空なら案内文)・8 つの近道 (文言・
+  `data-export-warning` / `data-os-op-error` / `role=alert`・catch 2 か所は不変 → `errorMessageSurfaceCensus` の行 `{ sites: 2 }` も不変)・
+  3 ステップを番号つきに。
+- `Stat` のタイル (角 16・値 19px / 800) と `ManualDataSection` の枠 (角 16・影)。
+
+### 検査と台帳
+
+- 新規 `src/renderer/__tests__/appShell.test.ts` (15 件・jsdom で App を丸ごと描く): 検索の ✕ / 件数 / Enter / Esc / 空振り、分類の開閉と件数、
+  `aria-current`、**♡ の 3 か所が 1 つの並びを映す** (トップバー → 節と項目とホームの列 → 節の ♥ で外すと全部戻る・`servicehub.favorites`
+  の中身)、最近使った (新しい順・自分は出さない・押すと移る)、文脈の外 (`EMPTY_SHELL` / `HomePage` 単体は案内文だけ)、先頭へ戻る
+  (閾値・smooth / reduced-motion なら auto・要素に模した `scrollTo` の向き・`scrollTo` 無しは `scrollTop`)、画面切替で先頭から、
+  ドロワー (☰ / ✕ / Esc / 項目)。
+- e2e `shell` suite (27 件・床 22・32 suite 目・合計の床 350 → 370 = 436 × 85%): 同じ配線を実ブラウザで + `position: fixed` の可視性と
+  スクロール量 900px + スマホの ✕ / Esc + 横スクロール無し + console エラー 0。`e2eSuiteFloors` 31 → 32・実測合計 409 → 436。
+- `themeTokens` の台帳 `REMAINING_UI_LITERALS` = [] (両方向のまま —— 新しい直書きは鳴る)。`inlineColorCensus` の HomePage の行を削除。
+- 文書: USER_GUIDE「画面の使い方」節・ARCHITECTURE「シェルの操作性」段落・CLAUDE.md (e2e の行・出荷物)。
+
+### 対照
+
+- 画面切替の `scrollTo` の effect を消す → `appShell` の「画面を切り替えると先頭から」だけが落ちる (1 / 15)。
+- e2e の対照は回していない —— 1 回の再ビルドに 3 分かかるため。suite の主張は全部「在ること」で、無ければ `waitFor…` が投げる。
+  `ok(true)` の直前が投げる wait であることは `e2eSuiteFloors` が留める。
+
+### 自戒
+
+- **対照を戻すのに `git checkout -- App.tsx` を打って、未コミットの書き直し (666 行) を消した。** 同じ script で作り直せたので 3 分で
+  済んだが、対照の前に WIP をローカルにコミットしておくべきだった (以後: 対照 → 戻す は WIP コミットの上で)。
+
+### 実機と出荷物
+
+- 出荷物: FULL **11,924,512 B** / LITE **3,337,033 B** (**両方 +12,343 B** —— stylesheet の書き直しと App のシェルの分。`HomePage` の inline style → class の分は減る。
+  renderer は両ビルドが読むので LITE も同じだけ増える)。**LITE の警告線 (3,400,000 B) まで 62,967 B** —— パス 290 後の 95,903 B から 4 日で 33 KB 使った。
+  次に renderer / shared を 63 KB 足すと CI が警告を出す (落ちはしない)。
+- 実機 (連鎖 1 回・全段緑): `smoke:app` OK / `e2e` **32 suite 439 件** ❌ 0 (412 + `shell` 27) / `e2e:lite` 439 件 ❌ 0 / `perf` OK
+  (LITE DCL 137 ms · heap 10.2 MB / FULL DCL 370 ms · heap 36.8 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8。
+  単体 765 ファイル / 17,480 件・`verify:all` 37 ゲート緑 (`verify:arch` の参照 648・静的 `it(` 14,689)。
+- 両配色の撮影 (デスクトップ 1280 と スマホ 412・ホーム / 銘柄 / 不動産 / 設定 / 事業 / GitHub / 書類 / 税務 + 検索 + ドロワー): ページエラー 0。
+  読んで直したのは 🔍 の重なり (上の特異性) と、ホームのカードの `min-height` (結果が無いと 100px の空白) と、スマホの hero の 🌸 (見出しに被る) の 3 つ。
+
+### 残り
+
+- 画面ごとの inline style (`inlineColorCensus` の 275 件 / 40 ファイル) は据え置き —— 今回はシェルとホームだけ。各画面の欄・表・カードを
+  `.card` / `.chip` / `.soft` の部品へ寄せる作業は画面ごとに文言と `data-*` を守りながら。
+- 検索欄の札は UA で表記を決める (`⌘K` / `Ctrl K`)。Electron の `navigator.userAgent` は Chromium の物なので Mac では ⌘K になる。
+
 ## パス 321 (2026-09-19) — オントロジー: 320 パスで学んだ規則を機械可読にし、実物に当てて出た欠落で組み直した
 
 利用者の依頼は「今まで学習した全てを踏まえた上でオントロジーを作り、それを基に既存のシステムを徹底的に解析し組みなおして」。
@@ -4478,6 +4549,8 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
 | 実機 5 種 (パス 321: shared / renderer の書き込み経路を組み直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 412 / `e2e:lite` 412 / `perf` LITE DCL 119 ms · FULL 385 ms / `e2e:ollama` 8)。出荷物 FULL 11,912,169 B / LITE 3,324,690 B (両方 +2,645 B) |
 | オントロジー + 組み直し (パス 321) | ✅ `src/shared/ontology/` 4 層 + `docs/ONTOLOGY.md` (生成物) + 検査 3 本。当てて出た欠落 5 種を閉じた: shopify の dead-action 7 行 / 書き込み 13 経路を shared へ (LEDGERS 12 行すべて via) / 判定の双子 2 組を 1 つに / 上限 2 つの検査 + census / `lint:network-targets` の「変数のホスト + 定数の経路」の死角 |
+| 可愛い UI: 操作性 (パス 322) | ✅ シェル (サイドバー / トップバー / ホームのジャンプ列 / 先頭へ戻る / ドロワー) を作り直し、`shellContext.ts` で並びの出所を App 1 つに。stylesheet の直書き色 10 → 0 (トークン 15)。jsdom `appShell` 15 件 + e2e `shell` suite 27 件 (32 suite・合計の床 350 → 370)。対照 1 本 (画面切替の scrollTo) |
+| 実機 5 種 (パス 322: renderer の shell と stylesheet を作り直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 439 / `e2e:lite` 439 / `perf` LITE DCL 137 ms · FULL 370 ms / `e2e:ollama` 8)。出荷物 FULL 11,924,512 B / LITE 3,337,033 B (両方 +12,343 B)。LITE の警告線まで 62,967 B |
 | 保存値の壊れ方の理由の天井 + census を shared へ (パス 320) | ✅ `teamRadarState.ts:365` を `redactForMessage` (梯子 6 段目 200 字) で通し、census の母集団を shared へ (2 行: 読むだけの形は外し・台帳の定数の文は登録)。ownThrow 24 行の補間 105 件はラベルと定数 (天井は要らなかった)。chain #235・対照 2 本 |
 | 窓の下地と theme-color の追随 (パス 318) | ✅ `theme.ts` → `syncHostChrome` (stylesheet の --bg の実値) → meta と `app:setColorScheme` (15 個目・形の関門・原子的な保存・起動時に読む)。chain #232〜#234・対照 3 本 |
 | ダーク配色の目視 (パス 319) | ✅ 30 画面撮影・26 画面を読んで直す物なし (機械では測れないので撮影 script を残した) |

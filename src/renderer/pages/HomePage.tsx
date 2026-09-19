@@ -2,6 +2,7 @@ import { navigateTo } from '../navigate';
 import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { useServiceData } from '../hooks/useServiceData';
+import { useShell, type ShellService } from '../shellContext';
 import type { ServiceId } from '../../shared/serviceId';
 import { exportWarning } from '../data/exportOutcome';
 
@@ -175,118 +176,53 @@ function ActionCard({ action }: { action: QuickAction }) {
 
   const busy = status.kind === 'busy';
   return (
-    <div
-      style={{
-        background: 'var(--bg-elev)',
-        border: '1px solid var(--border)',
-        borderRadius: 18,
-        padding: 18,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 10,
-        minHeight: 200,
-        boxShadow: 'var(--shadow-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-        <div style={{ fontSize: 36, lineHeight: 1 }}>{action.emoji}</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{action.title}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
-            {action.subtitle}
-          </div>
+    <div className="home-card" data-quick-action={action.id}>
+      <div className="home-card-head">
+        <div className="home-card-emoji" aria-hidden="true">
+          {action.emoji}
+        </div>
+        <div>
+          <div className="home-card-title">{action.title}</div>
+          <div className="home-card-sub">{action.subtitle}</div>
         </div>
       </div>
 
       <button
         type="button"
+        className={busy ? 'soft' : 'primary'}
         onClick={run}
         disabled={busy}
-        style={{
-          padding: '10px 14px',
-          background: busy ? 'var(--bg-elev)' : 'var(--gradient)',
-          border: busy ? '1px solid var(--border)' : '1px solid transparent',
-          borderRadius: 999,
-          color: busy ? 'var(--text)' : '#fff',
-          boxShadow: busy ? undefined : '0 6px 16px rgba(238,111,168,0.28)',
-          cursor: busy ? 'wait' : 'pointer',
-          fontSize: 13,
-          fontWeight: 600,
-        }}
+        aria-busy={busy}
+        style={busy ? { cursor: 'wait' } : undefined}
       >
         {busy ? '作成中…' : status.kind === 'done' ? 'もう一度作る' : '今すぐ作る'}
       </button>
 
       {status.kind === 'done' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ fontSize: 11, color: 'var(--success)' }}>
-            ✓ 出来上がりました!
-          </div>
-          <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
-            ファイル名: {basename(status.path)}
-          </div>
+        <div className="home-card-result">
+          <div className="home-done">✓ 出来上がりました!</div>
+          <div className="home-file">ファイル名: {basename(status.path)}</div>
           {status.warning ? (
-            <div
-              data-export-warning
-              role="alert"
-              style={{ fontSize: 10, color: 'var(--warning)', lineHeight: 1.6 }}
-            >
+            <div data-export-warning role="alert" className="home-note">
               ⚠ {status.warning}
             </div>
           ) : null}
           {openFailure ? (
-            <div data-os-op-error role="alert" style={{ fontSize: 10, color: 'var(--danger)' }}>
+            <div data-os-op-error role="alert" className="home-error">
               {openFailure}
             </div>
           ) : null}
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={openFile}
-              style={{
-                padding: '4px 10px',
-                background: 'var(--accent-soft)',
-                border: '1px solid var(--list-hover-border)',
-                borderRadius: 999,
-                color: 'var(--accent-strong)',
-                cursor: 'pointer',
-                fontSize: 11,
-                fontWeight: 600,
-              }}
-            >
+          <div className="home-card-actions">
+            <button type="button" className="soft" onClick={openFile}>
               ファイルを開く
             </button>
             {action.openUrl && (
-              <button
-                type="button"
-                onClick={openCanva}
-                style={{
-                  padding: '4px 10px',
-                  background: 'var(--bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 999,
-                  color: 'var(--text)',
-                  cursor: 'pointer',
-                  fontSize: 11,
-                }}
-              >
+              <button type="button" className="ghost" onClick={openCanva}>
                 Canva で編集する
               </button>
             )}
             {action.detailsService && (
-              <button
-                type="button"
-                onClick={() => navigateTo(action.detailsService!)}
-                style={{
-                  padding: '4px 10px',
-                  background: 'var(--bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 999,
-                  color: 'var(--text-mute)',
-                  cursor: 'pointer',
-                  fontSize: 11,
-                }}
-              >
+              <button type="button" className="ghost" onClick={() => navigateTo(action.detailsService!)}>
                 細かく編集する
               </button>
             )}
@@ -294,67 +230,97 @@ function ActionCard({ action }: { action: QuickAction }) {
         </div>
       )}
 
-      {status.kind === 'error' && (
-        <div style={{ fontSize: 11, color: 'var(--danger)' }}>エラー: {status.message}</div>
-      )}
+      {status.kind === 'error' && <div className="home-error">エラー: {status.message}</div>}
     </div>
   );
 }
 
+/** ジャンプ列の 1 粒。サイドバーと同じ `navigateTo` で移る (ドロワーも閉じる)。 */
+function JumpChip({ service, glyph }: { service: ShellService; glyph?: string }) {
+  return (
+    <button
+      type="button"
+      className="chip"
+      data-jump-to={service.id}
+      title={service.description}
+      onClick={() => navigateTo(service.id)}
+    >
+      {glyph ? <span aria-hidden="true">{glyph}</span> : null}
+      {service.label}
+    </button>
+  );
+}
+
+/** 今日の日付 (壁時計)。数字は入力ではなく時計から来るので `data-live-clock` の印を付けて刷る。 */
+function todayLabel(): string {
+  return new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+}
+
 export function HomePage() {
   const { data } = useServiceData<HomeSnapshot>('home', SNAPSHOT.home);
+  const shell = useShell();
+  // 「最近使った」にはこの画面自身も積まれる —— ここに居るのだから自分は出さない。
+  const recents = shell.recents.filter((s) => s.id !== 'home');
 
   return (
-    <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div
-        style={{
-          padding: '24px 28px',
-          background: 'linear-gradient(135deg, rgba(255,143,192,0.20) 0%, rgba(183,156,255,0.14) 100%)',
-          border: '1px solid var(--border)',
-          borderRadius: 18,
-        }}
-      >
-        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
-          {data.greeting}
+    <div className="home">
+      <section className="home-hero">
+        <div className="home-date" data-live-clock>
+          {todayLabel()}
         </div>
-        <div style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-          作りたいものを選んで <strong style={{ color: 'var(--text)' }}>「今すぐ作る」</strong> ボタンを押すだけ。
+        <h2 className="home-greeting">{data.greeting}</h2>
+        <p className="home-lead">
+          作りたいものを選んで <strong>「今すぐ作る」</strong> ボタンを押すだけ。
           数秒で完成します。出来上がったら「ファイルを開く」を押すと内容を確認でき、
           「Canva で編集する」を押せばブラウザで Canva が開いて、文字や色を変更できます。
-        </div>
-      </div>
+        </p>
+      </section>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))',
-          gap: 12,
-        }}
-      >
+      <section className="home-jump" aria-label="すぐ開く">
+        <div className="home-jump-row" data-home-favorites>
+          <span className="home-jump-title">♥ お気に入り</span>
+          {shell.favorites.length === 0 ? (
+            <span className="home-jump-hint">サイドバーやページ右上の ♡ を押すと、ここに並びます</span>
+          ) : (
+            shell.favorites.map((s) => <JumpChip key={s.id} service={s} glyph="♥" />)
+          )}
+        </div>
+        <div className="home-jump-row" data-home-recents>
+          <span className="home-jump-title">🕒 最近使った</span>
+          {recents.length === 0 ? (
+            <span className="home-jump-hint">開いた画面が新しい順にここへ並びます</span>
+          ) : (
+            recents.map((s) => <JumpChip key={s.id} service={s} />)
+          )}
+        </div>
+      </section>
+
+      <div className="home-grid">
         {QUICK_ACTIONS.map((a) => (
           <ActionCard key={a.id} action={a} />
         ))}
       </div>
 
-      <div
-        style={{
-          marginTop: 12,
-          padding: '12px 16px',
-          background: 'var(--bg-elev)',
-          border: '1px solid var(--border)',
-          borderRadius: 8,
-          fontSize: 12,
-          color: 'var(--text-mute)',
-          lineHeight: 1.7,
-        }}
-      >
-        <strong style={{ color: 'var(--text)' }}>かんたん 3 ステップ:</strong>
-        <ol style={{ margin: '6px 0 0', paddingLeft: 20 }}>
-          <li>作りたいもののカードで <strong style={{ color: 'var(--text)' }}>「今すぐ作る」</strong> を押す</li>
-          <li><strong style={{ color: 'var(--text)' }}>「ファイルを開く」</strong> で出来上がりを確認する</li>
-          <li>必要なら <strong style={{ color: 'var(--text)' }}>「Canva で編集する」</strong> を押し、開いた Canva にファイルをドラッグ&ドロップする</li>
-        </ol>
-      </div>
+      <section className="home-steps" aria-label="かんたん 3 ステップ">
+        <div className="home-step">
+          <span className="home-step-num" aria-hidden="true">1</span>
+          <p>
+            作りたいもののカードで <strong>「今すぐ作る」</strong> を押す
+          </p>
+        </div>
+        <div className="home-step">
+          <span className="home-step-num" aria-hidden="true">2</span>
+          <p>
+            <strong>「ファイルを開く」</strong> で出来上がりを確認する
+          </p>
+        </div>
+        <div className="home-step">
+          <span className="home-step-num" aria-hidden="true">3</span>
+          <p>
+            必要なら <strong>「Canva で編集する」</strong> を押し、開いた Canva にファイルをドラッグ&amp;ドロップする
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
