@@ -56,6 +56,7 @@
   (LITE DCL 138 ms · heap 10.2 MB / FULL DCL 368 ms · heap 37 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8。
   撮影: 「4点まとめて」が 5 枚の紙 (札「n 枚目 / 全 5 枚 — 書面名」つき) に見える・貸借対照表を 1 点で開くと要旨と 2 枚・
   `page.pdf` は 5 ページ。単体 765 ファイル / 17,484 件・`verify:all` 37 ゲート緑 (静的 `it(` 14,693)。
+  HEAD `f9472faa` の CI は **success** (06:00 UTC)。PR #788 の本文とタイトルをパス 〜323 まで反映した (466 commits · 37 ゲート · 17,484 tests · Stryker 293 · chain #235)。
 
 ### 残り
 
@@ -4615,7 +4616,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
 | 実機 5 種 (パス 321: shared / renderer の書き込み経路を組み直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 412 / `e2e:lite` 412 / `perf` LITE DCL 119 ms · FULL 385 ms / `e2e:ollama` 8)。出荷物 FULL 11,912,169 B / LITE 3,324,690 B (両方 +2,645 B) |
 | オントロジー + 組み直し (パス 321) | ✅ `src/shared/ontology/` 4 層 + `docs/ONTOLOGY.md` (生成物) + 検査 3 本。当てて出た欠落 5 種を閉じた: shopify の dead-action 7 行 / 書き込み 13 経路を shared へ (LEDGERS 12 行すべて via) / 判定の双子 2 組を 1 つに / 上限 2 つの検査 + census / `lint:network-targets` の「変数のホスト + 定数の経路」の死角 |
-| 計算書類は 1 点 1 枚 (パス 323) | ✅ `KessanSheets` を書面ごとの紙 (5 枚: 損益 / 貸借 / 変動 / 注記 / 公告の要旨) に。印刷は 2 枚目以降で改ページ・札は刷らない。jsdom +4・e2e kessanTax +7 (cascade・PDF のページ数・縮めた対照)。値の入れ物は 1 つのまま |
+| 計算書類は 1 点 1 枚 (パス 323) | ✅ `KessanSheets` を書面ごとの紙 (5 枚: 損益 / 貸借 / 変動 / 注記 / 公告の要旨) に。印刷は 2 枚目以降で改ページ・札は刷らない。jsdom +4・e2e kessanTax +7 (cascade・PDF のページ数・縮めた対照)。値の入れ物は 1 つのまま。HEAD `f9472faa` の CI success・PR #788 反映済み |
 | 可愛い UI: 操作性 (パス 322) | ✅ シェル (サイドバー / トップバー / ホームのジャンプ列 / 先頭へ戻る / ドロワー) を作り直し、`shellContext.ts` で並びの出所を App 1 つに。stylesheet の直書き色 10 → 0 (トークン 15)。jsdom `appShell` 15 件 + e2e `shell` suite 27 件 (32 suite・合計の床 350 → 370)。対照 1 本 (画面切替の scrollTo) |
 | 実機 5 種 (パス 322: renderer の shell と stylesheet を作り直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 439 / `e2e:lite` 439 / `perf` LITE DCL 137 ms · FULL 370 ms / `e2e:ollama` 8)。出荷物 FULL 11,924,660 B / LITE 3,337,181 B (両方 +12,491 B)。LITE の警告線まで 62,819 B。連鎖 3 回 (続きの CSS の後に 2 回)。HEAD `7bd73bd6` / `8d1a9878` の CI success・PR #788 反映済み |
 | 保存値の壊れ方の理由の天井 + census を shared へ (パス 320) | ✅ `teamRadarState.ts:365` を `redactForMessage` (梯子 6 段目 200 字) で通し、census の母集団を shared へ (2 行: 読むだけの形は外し・台帳の定数の文は登録)。ownThrow 24 行の補間 105 件はラベルと定数 (天井は要らなかった)。chain #235・対照 2 本 |
