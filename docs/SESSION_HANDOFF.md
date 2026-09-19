@@ -4494,7 +4494,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 例外の文面 → 画面 (パス 307) | ✅ 2 経路を `redactForMessage` へ。実機 5 段 + `e2e:ollama` 緑・両方 +9 B。「例外 → 画面」の母集団を数える網は無い (閉じていない物) |
 | `e2e.yml` が runner で動くか (パス 305) | ✅ 1 度も走ったことが無かった (943 回すべて skipped・dispatch 0・ラベル不在)。playwright の module を入れる段を足し、workflow_dispatch で 1 回検証 → **全 13 段 success・8 分 01 秒** (e2e 395 / lite 395 / ollama 8 / perf OK / smoke:app OK) |
 | 出荷物のバイト計測 | ✅ パス 299 / 300 / 301 / 刑名の裁定後 / 〜320 / 321 (CLAUDE.md) |
-| PR #788 の本文 | ✅ パス 〜320 まで反映 (2026-09-18 06:14 UTC・タイトルも 〜320: 459 commits · 17,410 tests · Stryker 293 · chain #235)。HEAD `757445ff` (パス 320) の CI は success (06:07 UTC)。次のパスはその commit の push 後に反映する |
+| PR #788 の本文 | ✅ パス 〜321 まで反映 (2026-09-19 01:49 UTC・タイトルも 〜321: 461 commits · 17,465 tests · Stryker 293 · chain #235)。HEAD `39d71240` (パス 321) の CI は success (01:52 UTC)。次のパスはその commit の push 後に反映する |
 | imageUrlGate のプライベート帯 | ✅ パス 300 で閉じた (問いを 2 つに分けた) |
 | 刑名の表記ゆれ 8 行 | ✅ 1 行ずつ裁定 (下の節に表) |
 | DOI 要照合 46 件・PsyCap 系の実体未確定 | ⛔ この環境は doi.org も api.crossref.org も egress で遮断 (実測)。推測で埋めない |
