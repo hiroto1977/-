@@ -437,6 +437,8 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   font-size: 13px;
 }
 .sidebar-search-input::placeholder { color: var(--placeholder); }
+/* ブラウザ組み込みの消すボタン (type="search") は隠す —— 自前の ✕ と 2 つ並んでいた (パス 322 実測)。 */
+.sidebar-search-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 .sidebar-search-input:focus {
   outline: none;
   border-color: var(--accent);
@@ -874,8 +876,6 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 @media (max-width: 640px) {
   .topbar .description, .topbar .crumb { display: none; } /* タイトル+音声ボタンを優先 */
   .content { padding: 12px 12px calc(96px + env(safe-area-inset-bottom)); }
-  .home-hero { padding: 20px 18px; }
-  .home-hero::after { font-size: 34px; opacity: 0.22; right: 12px; top: 8px; } /* 見出しに被らない大きさ */
 }
 
 /* タッチデバイス (Android/iPad 等): ホバーが無い前提の操作性を確保する。 */
@@ -1121,6 +1121,13 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   opacity: 0.35;
   transform: rotate(12deg);
   pointer-events: none;
+}
+/* スマホ: 花を小さく薄く、右の余白を花の分だけ取る (折り返した見出しが花の下へ入らない)。
+   **この media 規則は上の基本の規則より後ろに置く** —— ≤640px の共通ブロック (上の方) に書くと、
+   同じ特異性で後ろに在る基本の規則が勝って 1 行も効かない (パス 322 で 2 度撮って気付いた)。 */
+@media (max-width: 640px) {
+  .home-hero { padding: 20px 56px 20px 18px; }
+  .home-hero::after { font-size: 32px; opacity: 0.22; right: 10px; top: 8px; }
 }
 .home-date {
   margin: 0 0 4px;
