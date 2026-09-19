@@ -14,6 +14,8 @@
  * 画面遷移は `servicehub:navigate` CustomEvent (App.tsx が listen)。
  */
 import { navigateTo } from '../navigate';
+import { readMechanism, savedCredentialMessage, type StorageMechanism } from '../data/credentialSaveMessage';
+import { chatMessages } from '../data/persistedShape';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
@@ -29,6 +31,18 @@ import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 import { safeCssUrl } from '../../shared/imageUrlGate';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import {
+  ALL_AGENTS,
+  assistantEgressRecipients,
+  readProviderStatuses,
+  type ProviderStatus,
+} from '../data/assistantProviders';
+import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import { checkTokenInput } from '../../shared/tokenInput';
+import type { ActionData } from '../../shared/actionData';
 
 interface ChatMessage {
   readonly role: 'user' | 'assistant';
@@ -39,17 +53,6 @@ interface ChatMessage {
   readonly offline?: boolean;
   /** 応答した AI プロバイダ (assistant 発話・オンライン時)。 */
   readonly provider?: string;
-}
-
-/** assistant/providers アクションが返すプロバイダ設定状況。 */
-interface ProviderStatus {
-  readonly id: string;
-  readonly label: string;
-  readonly configured: boolean;
-  readonly isDefault: boolean;
-  readonly browserDirect: boolean;
-  readonly needsApiKey: boolean;
-  readonly defaultModel: string;
 }
 
 /** エージェント設定パネルの入力フィールド (保存時に空欄は除外)。 */
@@ -86,19 +89,17 @@ interface Theme {
 const HISTORY_KEY = 'assistant-history';
 const THEME_KEY = 'assistant-theme';
 const PROVIDER_KEY = 'assistant-provider';
-/** エージェント選択の特別値: 設定済みの全プロバイダへ同時に質問する合議モード。 */
-const ALL_AGENTS = '__all__';
-
 /** chatAll (全AI合議) の 1 プロバイダ分の回答。 */
-interface EnsembleAnswer {
-  readonly provider: string;
-  readonly model: string;
-  readonly text: string;
-  readonly ok: boolean;
-  readonly error?: string;
-}
+// `EnsembleAnswer` は台帳 `shared/actionData.ts` から読む (パス 116) —— main と同じ型。
 const HISTORY_MAX = 50;
-const TURN_WINDOW = 16; // AI へ渡す直近会話数
+/**
+ * AI へ渡す直近の**発話数** (往復ではない —— 利用者と AI の発話を合わせて数える)。
+ *
+ * 検査がこの値を読むために輸出する (数を写すと、片方だけ動いて断り書きがずれる ——
+ * 2026-09-12 のパス 186 まで断りは「16 往復」と書いており、実際の 2 倍を述べていた)。
+ */
+export const ASSISTANT_TURN_WINDOW = 16;
+const TURN_WINDOW = ASSISTANT_TURN_WINDOW;
 
 const DEFAULT_THEME: Theme = { bg: '#ffffff', fg: '#000000', image: '' };
 
@@ -111,8 +112,8 @@ function loadHistory(): ChatMessage[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ChatMessage[]).slice(-HISTORY_MAX) : [];
+    // 保存値は型が守らない —— role / text の形が合う要素だけ (null が 1 つ混じると描画で落ちる)。
+    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'assistant'], HISTORY_MAX);
   } catch {
     return [];
   }
@@ -247,13 +248,34 @@ function MarkdownView({ blocks, fg }: { blocks: Block[]; fg: string }) {
   );
 }
 
+/**
+ * 保管の守り方を橋へ問い合わせる。取れなければ null —— **分からないことを
+ * 「暗号化しました」と言い換えない** (古い橋・問い合わせの失敗の両方でここへ来る)。
+ */
+async function storageMechanismOrNull(hub: Window['serviceHub']): Promise<StorageMechanism | null> {
+  try {
+    return readMechanism(await hub.storageProtection());
+  } catch {
+    return null;
+  }
+}
+
 export function AssistantPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
+  /*
+   * **貼り付けを黙って切らない** (パス 175)。`maxLength` に任せると、ブラウザが天井を超えた分を
+   * 黙って落とし、先頭 8,000 字だけが AI へ行く —— 切れた質問への答えが全文への答えとして返る。
+   * 天井は打てば届く量ではないので、`maxLength` が発火するのは**貼り付けのときだけ**であり、
+   * そのときは必ず見えない (パス 168 が感情分析の欄で実測した形)。
+   */
+  const inputOver = charsOverCeiling(input, MAX_ASSISTANT_CONTENT_CHARS);
   const [busy, setBusy] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => loadTheme());
   const [showTheme, setShowTheme] = useState(false);
-  const [providers, setProviders] = useState<ProviderStatus[]>([]);
+  const [providers, setProviders] = useState<readonly ProviderStatus[]>([]);
+  /** 設定状況を**読めなかった**か (空配列と区別する。パス 107)。 */
+  const [providersUnknown, setProvidersUnknown] = useState(false);
   const [provider, setProvider] = useState<string>(() => {
     try {
       return localStorage.getItem(PROVIDER_KEY) ?? '';
@@ -266,16 +288,15 @@ export function AssistantPage() {
   const [credsMessage, setCredsMessage] = useState('');
   const listRef = useRef<HTMLDivElement | null>(null);
 
-  /** プロバイダ設定状況を取得 (未設定・ブラウザ版 Vault ロック時は空のまま)。 */
+  /**
+   * プロバイダ設定状況を取得する。**「未設定」と「確認できません」を混ぜない** ——
+   * 読み方は `data/assistantProviders.ts` が 1 か所で持つ (`VillagePage` も同じ
+   * 判断を要るので。2026-09-09 · パス 107)。
+   */
   const refreshProviders = async () => {
-    try {
-      const hub = window.serviceHub;
-      if (!hub) return;
-      const res = await hub.invoke<{ providers: ProviderStatus[] }>('assistant', 'providers', {});
-      if (res.ok && Array.isArray(res.data.providers)) setProviders(res.data.providers);
-    } catch {
-      /* 取得失敗は無視 (チャットのフォールバックは別途機能する) */
-    }
+    const read = await readProviderStatuses();
+    setProviders(read.providers);
+    setProvidersUnknown(read.unknown);
   };
 
   useEffect(() => {
@@ -290,6 +311,11 @@ export function AssistantPage() {
     }
   }, [provider]);
 
+  const egressRecipients = useMemo(
+    () => assistantEgressRecipients({ providers, providersUnknown, selected: provider }),
+    [providers, providersUnknown, provider],
+  );
+
   /** エージェント設定 (JSON マルチプロバイダ資格情報) を assistant スロットへ保存。 */
   const saveAgentCreds = async () => {
     const hub = window.serviceHub;
@@ -298,17 +324,55 @@ export function AssistantPage() {
       return;
     }
     const creds: Record<string, string> = {};
+    /*
+     * **包む前に 1 欄ずつ検証する。**
+     *
+     * `setToken` は `shared/tokenInput.ts` の規則を通すが、見ているのは
+     * `JSON.stringify` した**後**の文字列である。`JSON.stringify` は制御文字を
+     * `\u0000` の 6 文字へ逃がすので、包みの中に制御文字が在っても外側からは
+     * 「制御文字なし」に見え、そのまま保存される。取り出す側
+     * (`clients/assistant.ts`) は JSON を解いて中の鍵をそのまま
+     * `'x-api-key': ctx.token` に載せるので**制御文字は復活し**、
+     * `new Headers()` が投げる文面に鍵が入って画面へ出る
+     * (`shared/__tests__/headerValueLeak.test.ts` が実測)。
+     *
+     * **黙って落とさず断る。** 落とすと「保存しました」と言いながらその鍵だけ
+     * 入っていない状態になる (このリポジトリが外へ出す欄で繰り返し選んできた側 ——
+     * パス 183 ほか)。どの欄かを言わないと打ち直しようがないので、名前も出す。
+     */
+    const refused: string[] = [];
     (Object.keys(credsForm) as Array<keyof AgentCredsForm>).forEach((k) => {
       const v = credsForm[k].trim();
-      if (v) creds[k] = v;
+      if (!v) return;
+      const checked = checkTokenInput(v);
+      if (!checked.ok) {
+        refused.push(`${k}: ${checked.message}`);
+        return;
+      }
+      creds[k] = checked.value;
     });
+    if (refused.length > 0) {
+      setCredsMessage(`保存できませんでした — ${refused.join(' / ')}`);
+      return; // 入力は残す (打ち直しのため)
+    }
     if (Object.keys(creds).length === 0) {
       setCredsMessage('少なくとも 1 つの API キー / URL を入力してください');
       return;
     }
     try {
-      await hub.setToken('assistant', JSON.stringify(creds));
-      setCredsMessage('保存しました (キーは暗号化ストレージに格納され、再表示はされません)');
+      // **戻り値で判断する。** `setToken` は上限超え・保管庫の施錠などを
+      // `{ ok: false }` で返すので、await が解けたことを成功と読んではいけない
+      // (`components/StatusBar.tsx` は同じ理由で res を見ている)。ここは
+      // 2026-09-06 まで結果を捨てており、**保存できていないのに「保存しました」と
+      // 言い、入力欄まで空にしていた** (打ち直しになる)。
+      const res = await hub.setToken('assistant', JSON.stringify(creds));
+      if (!res.ok) {
+        setCredsMessage(`保存できませんでした: ${res.message}`);
+        return; // 入力は残す
+      }
+      // 何が鍵を握っているかで文面を選ぶ (`data/credentialSaveMessage.ts`)。
+      // 分からないときは暗号化を名乗らない。
+      setCredsMessage(savedCredentialMessage(await storageMechanismOrNull(hub)));
       setCredsForm(EMPTY_CREDS_FORM);
       await refreshProviders();
     } catch (e) {
@@ -401,7 +465,7 @@ export function AssistantPage() {
 
       // 🤝 全AI合議: 設定済みの全プロバイダへ同時に質問し、回答を並べて表示する。
       if (provider === ALL_AGENTS) {
-        const resAll = await hub.invoke<{ answers: EnsembleAnswer[] }>('assistant', 'chatAll', {
+        const resAll = await hub.invoke<ActionData<'assistant/chatAll'>>('assistant', 'chatAll', {
           system,
           messages: turns,
         });
@@ -442,7 +506,7 @@ export function AssistantPage() {
         return;
       }
 
-      const res = await hub.invoke<{ text: string; model?: string; provider?: string }>(
+      const res = await hub.invoke<ActionData<'assistant/chat'>>(
         'assistant',
         'chat',
         {
@@ -517,7 +581,7 @@ export function AssistantPage() {
             aria-label="AI エージェントを選択"
             title="このチャットが使う AI エージェント"
             onChange={(e) => setProvider(e.target.value)}
-            style={{ fontSize: 12, borderRadius: 8, padding: '4px 8px' }}
+            style={{ fontSize: 12, borderRadius: 10, padding: '4px 8px' }}
           >
             <option value="">エージェント自動 (既定)</option>
             <option value={ALL_AGENTS}>
@@ -605,6 +669,7 @@ export function AssistantPage() {
             Anthropic API キー
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.anthropic}
               placeholder="sk-ant-…"
               aria-label="Anthropic API キー"
@@ -615,6 +680,7 @@ export function AssistantPage() {
             OpenAI API キー (ChatGPT)
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.openai}
               placeholder="sk-…"
               aria-label="OpenAI API キー"
@@ -625,6 +691,7 @@ export function AssistantPage() {
             Google Gemini API キー
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.gemini}
               placeholder="AIza…"
               aria-label="Google Gemini API キー"
@@ -665,6 +732,7 @@ export function AssistantPage() {
             互換 API キー (任意)
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.compatKey}
               placeholder="キー不要のサーバーは空欄"
               aria-label="互換 API キー"
@@ -735,7 +803,7 @@ export function AssistantPage() {
               placeholder="https://… (任意)"
               aria-label="背景画像URL"
               onChange={(e) => setTheme((t) => ({ ...t, image: e.target.value.trim() }))}
-              style={{ flex: 1, padding: '4px 8px', borderRadius: 6 }}
+              style={{ flex: 1, padding: '4px 8px', borderRadius: 10 }}
             />
           </label>
           <button type="button" onClick={() => setTheme(DEFAULT_THEME)}>
@@ -811,6 +879,31 @@ export function AssistantPage() {
         ))}
       </div>
 
+      {/* **何が外へ出るかを、送る画面が書く。** この画面はパス 106 の走査から
+          漏れていた (走査が action 名を手で書いており `chat` / `chatAll` が
+          一覧に無かった) —— この app の主チャットで、しかも「全AI合議」は
+          設定済みの全プロバイダへ同時に送る。文面は `shared/aiEgressNotice.ts`。 */}
+      <AiEgressNotice
+        subject={{
+          /*
+           * **単位を実装に合わせた** (2026-09-12 · パス 186)。
+           *
+           * ここは「直近 16 **往復**までの会話」と書いていたが、送っているのは
+           * `history.slice(-TURN_WINDOW)` —— 平らな発話の列の**末尾 16 発話**で、
+           * 往復 (利用者 + AI の 1 組) に直すと約 8 往復である。つまり断り書きが
+           * **送る量を 2 倍に述べていた**。外へ何が出るかの断りなので、
+           * 単位を取り違えたままにはしない (パス 101 の「断りが実物とずれる」形)。
+           *
+           * **1 つのテンプレートリテラルで書く。** 走査 (`aiEgressDisclosed` の
+           * `whatOf`) は `what:` の**最初のリテラル**だけを読むので、`+` で
+           * 連結すると文の後半が走査から見えなくなる (断りの一部が検査の外に出る)。
+           */
+          what: `入力した質問文と、直近 ${TURN_WINDOW} 発話までの会話 (利用者と AI の発話を合わせて数えるので約 ${Math.floor(TURN_WINDOW / 2)} 往復。AI の返答を含む。1 発話は先頭 ${MAX_ASSISTANT_CONTENT_CHARS} 字まで) `,
+          recipients: egressRecipients,
+        }}
+      />
+
+      <CeilingNotice label="入力" value={input} max={MAX_ASSISTANT_CONTENT_CHARS} />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -827,13 +920,13 @@ export function AssistantPage() {
             flex: 1,
             padding: '10px 12px',
             border: '1px solid rgba(127,127,127,0.4)',
-            borderRadius: 8,
+            borderRadius: 10,
             background: 'rgba(255,255,255,0.6)',
             color: '#111',
             fontSize: 14,
           }}
         />
-        <button type="submit" className="primary" disabled={busy || !input.trim()}>
+        <button type="submit" className="primary" disabled={busy || !input.trim() || inputOver > 0}>
           送信
         </button>
       </form>

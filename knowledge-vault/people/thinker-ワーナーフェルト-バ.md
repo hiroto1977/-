@@ -2,7 +2,7 @@
 title: "バーガー・ワーナーフェルト"
 type: thinker
 person_key: "ワーナーフェルト|バ"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # バーガー・ワーナーフェルト
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
-- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 持続的競争優位の源泉を業界構造（外部要因）ではなく企業内部に蓄積された経営資源・ケイパビリティの異質性に求める経営戦略…
+## 学術概念（2件）
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 戦略的要素市場（StrategicFactorMarkets）理論は、バーニーが1986年に提唱した概念であり、企業が…
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — VRIOフレームワーク（VRIOframework）は、ジェイ・バーニーが資源ベース論（resource-basedv…
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — 資源ベース理論（RBV）は持続的競争優位の源泉を業界構造ではなく企業内部の資源と能力の異質性に求める戦略論で、VRIO…
 
 ## 関連
 - 索引: [[人物索引]]

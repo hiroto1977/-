@@ -31,8 +31,8 @@ aliases:
 - [内閣官房 消費者安全法案のポイント](https://www.cas.go.jp/jp/houan/syouhisya/anzen/gaiyou.pdf) `公的`
 
 ## 関連概念
+- [[legal-product-safety|消費生活用製品安全法（消安法）]] — 語彙が近い
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
-- [[legal-product-safety|消費生活用製品安全法（消安法）]] — 同分野の近傍
 - [[legal-data-security-measures|個人データの安全管理措置義務（個人情報保護法23条）]] — 同分野の近傍
 
 ## 関連

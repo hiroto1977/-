@@ -1,4 +1,12 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import {
+  CALENDAR_CREATE_EVENT_PATH,
+  GOOGLE_CALENDAR_API,
+  calendarEventInit,
+  checkCalendarEvent,
+  parseCreatedEvent,
+} from '../../shared/api/google';
+import type { ActionData } from '../../shared/actionData';
 
 interface CalListItem {
   id: string;
@@ -63,61 +71,31 @@ export async function fetchCalendarSnapshot(ctx: FetchContext): Promise<Calendar
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateEventPayload {
+/**
+ * `create-event` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkCalendarEvent` (`CalendarEventFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreateEventPayload {
   summary: string;
   start: string; // ISO 8601 datetime
   end: string;   // ISO 8601 datetime
   description?: string;
   location?: string;
-  timeZone?: string; // defaults to Asia/Tokyo
+  timeZone?: string; // defaults to the host time zone (shared defaultTimeZone)
 }
 
-interface CalendarCreateEventResponse {
-  id: string;
-  htmlLink: string;
-  summary?: string;
-}
+/** 端末の時間帯の推測は shared に 1 つ。検査が main の名前で読むので再 export する。 */
+export { defaultTimeZone } from '../../shared/api/google';
 
-/** Best-effort guess at the user's local IANA time zone. Falls back to
- *  UTC if Intl is unavailable for some reason. Exported for testing. */
-export function defaultTimeZone(): string {
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (typeof tz === 'string' && tz.length > 0) return tz;
-  } catch {
-    // ignore
-  }
-  return 'UTC';
-}
-
-async function createEvent(ctx: ActionContext): Promise<{ id: string; htmlLink: string }> {
-  const { summary, start, end, description, location, timeZone } =
-    ctx.payload as unknown as CreateEventPayload;
-  if (!summary || !start || !end) throw new Error('summary, start, end are required');
-
-  const tz = timeZone ?? defaultTimeZone();
-  const body = {
-    summary,
-    description,
-    location,
-    start: { dateTime: start, timeZone: tz },
-    end: { dateTime: end, timeZone: tz },
-  };
-
-  const res = await jsonFetch<CalendarCreateEventResponse>(
-    'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    },
+async function createEvent(ctx: ActionContext): Promise<ActionData<'calendar/create-event'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/google.ts の 1 つ (ブラウザ版も同じ関数 · 2026-09-18)。
+  const event = checkCalendarEvent(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GOOGLE_CALENDAR_API}${CALENDAR_CREATE_EVENT_PATH}`,
+    calendarEventInit(event, ctx.token),
     { fetch: ctx.fetch, serviceId: 'calendar' },
   );
-
-  return { id: res.id, htmlLink: res.htmlLink };
+  return parseCreatedEvent(res);
 }
 
 export const ACTIONS: ActionMap = {

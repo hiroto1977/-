@@ -1,3 +1,4 @@
+import { countChars } from './inputCeiling';
 /**
  * アドバイザーの「質問」が受け取る入力の規則 —— **両ビルドで 1 つだけ持つ。**
  *
@@ -50,8 +51,96 @@ export type AdvisorQuestionProblem = 'empty' | 'too-long' | 'control-chars';
 
 export function checkAdvisorQuestion(question: unknown): AdvisorQuestionProblem | null {
   if (typeof question !== 'string' || question.length === 0) return 'empty';
-  if (question.length > MAX_ADVISOR_QUESTION_CHARS) return 'too-long';
+  if (countChars(question) > MAX_ADVISOR_QUESTION_CHARS) return 'too-long';
   // CR / LF / NUL。要求本文とログの両方で行を割られないようにする。
   if (/[\r\n\0]/.test(question)) return 'control-chars';
   return null;
+}
+
+/**
+ * 理由ごとの断りの文 —— **両ビルドで 1 つだけ持つ (パス 285)。**
+ *
+ * 上の docblock は「呼び出し側がそれぞれの**流儀** (`throw` / `err()`) で
+ * 伝えられるように」戻り値を理由にした、と述べている。その決定はここでも
+ * 生きている —— 変えたのは**運び方ではなく文**である (main は今も `throw`、
+ * ブラウザ版は今も `err('action_failed', …)`)。
+ *
+ * ## なぜ文も 1 つにするか (実測 2026-09-15)
+ *
+ * 判定 (`checkAdvisorQuestion`) は 2026-08-25 から共有されていたのに、
+ * **文は 4 か所に 2 通りで書かれていた** —— main の 2 か所が英語
+ * (`question is required` / `question exceeds 1000 chars`)、
+ * ブラウザ版の 2 か所が日本語。main の文は `safeErrorMessage` を通って
+ * **そのまま画面へ出る** (`redact.ts` は伏字にするだけで翻訳はしない) ので、
+ * **日本語の画面にだけ英語が出ていた** —— しかも同じ操作が
+ * ブラウザ版では日本語で断られる。この食い違いはどちらのビルドを見ても
+ * 分からない (画面が 1 つずつしか見えない)。
+ *
+ * ## この家系の中での重さ (パス 285 で分けた)
+ *
+ * **「判定が写しか、文だけが写しか」で重さが違う。**
+ * `scanTarget` の HIBP は**判定そのものが写し**で、2026-08-22 に片側の
+ * `.trim()` が落ちて「どの漏洩にも含まれない」という**偽の安心**を返した
+ * (だから共有したのは文ではなく述語である)。こちらは判定が最初から
+ * 1 つなので、写しが生む害は**文の食い違いだけ**で、安全の主張は乗って
+ * いない。それでも直す理由は「日本語の画面に英語が出る」ことが
+ * それ自体で欠陥だから —— 重さを同じだと述べないために、ここに書く。
+ */
+export const ADVISOR_QUESTION_MESSAGES: Readonly<Record<AdvisorQuestionProblem, string>> = {
+  empty: '質問を入力してください',
+  'too-long': `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`,
+  'control-chars': '質問に改行・制御文字を含めることはできません',
+};
+
+// ---------------------------------------------------------------------------
+// ユニバース (銘柄の許可リスト)
+// ---------------------------------------------------------------------------
+
+/**
+ * アドバイザーのユニバース (助言の対象にする銘柄) の上限 —— **両ビルドで 1 つだけ持つ。**
+ *
+ * ## なぜここに移したか (2026-09-09 · パス 105)
+ *
+ * 上の「質問」の上限は 2026-08-25 にここへ寄せたが、**同じ関数の 25 行下に在った
+ * ユニバースの上限は置いていかれた**。そして 2 つの実装が同じ 25 を**正反対に**
+ * 扱っていた:
+ *
+ * ```
+ *   main/clients/stocks.ts:1268   if (universeList.length > 25) throw   ← 断る
+ *   renderer/web-shim.ts:612      watch.slice(0, 25)                   ← 黙って切る
+ * ```
+ *
+ * この本の上のほうに「同じ判断を 4 度書くと、片方だけ動かしたときに誰も気付かない」と
+ * 書いてある。**動かさなくても、最初から食い違っていた。**
+ */
+export const MAX_ADVISOR_UNIVERSE_SYMBOLS = 25;
+
+/**
+ * ティッカー 1 つの長さの天井 —— **両ビルドと画面で 1 つだけ持つ** (2026-09-09 · パス 112)。
+ * それまで `16` は main (`isSafeTicker`)・ブラウザ版の双子 (`stocksWatchlistWeb.ts`)・
+ * `StocksPage` の `maxLength` ×2 に**字面で 4 度**書いてあった (上の「質問」の上限が
+ * 2026-08-25 に寄せられたときと同じ形)。
+ */
+export const MAX_TICKER_CHARS = 16;
+
+/** 上限に収めたユニバースと、**外した件数**。 */
+export interface CappedAdvisorUniverse {
+  /** 助言の対象にする銘柄 (最大 {@link MAX_ADVISOR_UNIVERSE_SYMBOLS} 件)。 */
+  readonly symbols: readonly string[];
+  /** 上限のために外した件数。0 なら全部見ている。 */
+  readonly omitted: number;
+}
+
+/**
+ * ユニバースを上限に収める。**外した件数を一緒に返すので、黙って切れない。**
+ *
+ * 「答えは利用者の一覧について」と画面が述べるなら、一覧の一部しか見ていないことも
+ * 述べなければならない (パス 103 / 104 と同じ形 —— 内部の境界で切ったなら、それを
+ * 値と一緒に運ぶ)。
+ */
+export function capAdvisorUniverse(symbols: readonly string[]): CappedAdvisorUniverse {
+  return {
+    symbols: symbols.slice(0, MAX_ADVISOR_UNIVERSE_SYMBOLS),
+    omitted: Math.max(0, symbols.length - MAX_ADVISOR_UNIVERSE_SYMBOLS),
+  };
 }

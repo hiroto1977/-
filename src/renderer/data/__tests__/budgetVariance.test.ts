@@ -7,6 +7,10 @@ import {
   computeBudgetVarianceFromFundamentals,
   computeMonthlyAchievement,
   decomposePriceVolumeVariance,
+  budgetPeriodAlignment,
+  budgetComparedRangeLabel,
+  budgetScopeSentence,
+  budgetUnmatchedNote,
   KPI_BUDGETS_COLLECTION,
 } from '../budgetVariance';
 import type { KpiActual } from '../kpiActuals';
@@ -26,6 +30,18 @@ const row = (revenue: number, cogs = 0, advertising = 0, sga = 0, depreciation =
   sga,
   depreciation,
 });
+
+/** 期を指定した 1 行 (`row` は期を固定するので、期の突合は測れない)。 */
+const at = (period: string, revenue: number, unit = '全社'): KpiActual => ({
+  period, unit, revenue, cogs: 0, advertising: 0, sga: 0, depreciation: 0,
+});
+
+/** `from` 月から `count` か月ぶんの `YYYY-MM` (1 始まりの通し月で 12 を越えたら年が繰り上がる)。 */
+const months = (from: number, count: number): string[] =>
+  Array.from({ length: count }, (_, i) => {
+    const m = from + i;
+    return `${2026 + Math.floor((m - 1) / 12)}-${String(((m - 1) % 12) + 1).padStart(2, '0')}`;
+  });
 
 describe('computeBudgetVarianceFromFundamentals', () => {
   it('computes revenue and operating-profit variance and achievement', () => {
@@ -80,6 +96,141 @@ describe('computeBudgetVariance', () => {
     // 1000 actual / 300 budget = 333.33% → 333.3
     const v = computeBudgetVariance([row(300)], [row(1000)])!;
     expect(v.revenue.achievementPct).toBe(333.3);
+  });
+
+  // -------------------------------------------------------------------------
+  // 期の突合 (2026-09-07)。直す前は**両側の全行**を合算して割っていたので、
+  // 通期予算と数か月の実績を突き合わせると達成率が期間の比になっていた。
+  // -------------------------------------------------------------------------
+
+  it('★ 通期予算 12 か月 vs 実績 3 か月 —— 突合できた 3 か月で測る (直す前は 25%)', () => {
+    const budgets = months(4, 12).map((m) => at(m, 4_000_000));
+    const actuals = months(4, 3).map((m) => at(m, 4_000_000));
+    const v = computeBudgetVariance(budgets, actuals)!;
+    expect(v.revenue.budget).toBe(12_000_000); // 直す前は 48,000,000
+    expect(v.revenue.actual).toBe(12_000_000);
+    expect(v.revenue.achievementPct).toBe(100); // 直す前は 25
+    expect(v.alignment.comparedPeriods).toEqual(['2026-04', '2026-05', '2026-06']);
+    expect(v.alignment.budgetOnlyPeriods).toHaveLength(9);
+    expect(v.alignment.actualOnlyPeriods).toEqual([]);
+  });
+
+  it('★ 予算 1 か月分だけ vs 実績 12 か月 —— 突合できた 1 か月で測る (直す前は 1200%)', () => {
+    const v = computeBudgetVariance([at('2026-04', 4_000_000)], months(4, 12).map((m) => at(m, 4_000_000)))!;
+    expect(v.revenue.achievementPct).toBe(100); // 直す前は 1200
+    expect(v.alignment.comparedPeriods).toEqual(['2026-04']);
+    expect(v.alignment.actualOnlyPeriods).toHaveLength(11);
+  });
+
+  it('★ 期が 1 つも重ならなければ null (去年の予算 vs 今年の実績で 125% を出さない)', () => {
+    const budgets = months(4, 12).map((m) => at(m, 4_000_000)); // 2026-04〜2027-03
+    const actuals = months(16, 12).map((m) => at(m, 5_000_000)); // 2027-04〜2028-03
+    expect(computeBudgetVariance(budgets, actuals)).toBeNull(); // 直す前は 達成率 125%
+  });
+
+  it('★ 突合できた期の中の複数事業は合算する (期が同じなら足す)', () => {
+    const v = computeBudgetVariance(
+      [at('2026-04', 600, 'A'), at('2026-04', 400, 'B'), at('2026-05', 999, 'A')],
+      [at('2026-04', 500, 'A'), at('2026-04', 700, 'B')],
+    )!;
+    expect(v.revenue.budget).toBe(1000); // 2026-05 の 999 は実績が無いので入らない
+    expect(v.revenue.actual).toBe(1200);
+    expect(v.alignment.comparedPeriods).toEqual(['2026-04']);
+    expect(v.alignment.budgetOnlyPeriods).toEqual(['2026-05']);
+  });
+});
+
+describe('budgetPeriodAlignment', () => {
+  it('splits the periods into compared / budget-only / actual-only, ascending', () => {
+    const a = budgetPeriodAlignment(
+      [{ period: '2026-05' }, { period: '2026-04' }, { period: '2026-03' }],
+      [{ period: '2026-06' }, { period: '2026-04' }, { period: '2026-05' }],
+    );
+    expect(a.comparedPeriods).toEqual(['2026-04', '2026-05']);
+    expect(a.budgetOnlyPeriods).toEqual(['2026-03']);
+    expect(a.actualOnlyPeriods).toEqual(['2026-06']);
+  });
+
+  it('★ 同じ期の複数事業は 1 か月として数える (行数ではなく月数)', () => {
+    const a = budgetPeriodAlignment(
+      [{ period: '2026-04' }, { period: '2026-04' }, { period: '2026-04' }],
+      [{ period: '2026-04' }, { period: '2026-04' }],
+    );
+    expect(a.comparedPeriods).toEqual(['2026-04']);
+  });
+
+  it('is empty on every axis for two empty series', () => {
+    expect(budgetPeriodAlignment([], [])).toEqual({
+      comparedPeriods: [], budgetOnlyPeriods: [], actualOnlyPeriods: [],
+    });
+  });
+});
+
+describe('budgetUnmatchedNote / budgetScopeSentence', () => {
+  const al = (compared: number, budgetOnly: number, actualOnly: number) => ({
+    comparedPeriods: months(1, compared),
+    budgetOnlyPeriods: months(30, budgetOnly),
+    actualOnlyPeriods: months(60, actualOnly),
+  });
+
+  it('★ 全期が突合できていれば断り書きは無い (null)', () => {
+    expect(budgetUnmatchedNote(al(3, 0, 0))).toBeNull();
+    expect(budgetScopeSentence(al(3, 0, 0))).toBeNull();
+  });
+
+  it('★ 実績待ちの月だけがあるとき', () => {
+    expect(budgetUnmatchedNote(al(3, 9, 0))).toBe('予算のみ 9 か月は対象外');
+    expect(budgetScopeSentence(al(3, 9, 0))).toBe('予算と実績の両方が在る 3 か月分の比較です (予算のみ 9 か月は対象外)。');
+  });
+
+  it('★ 予算を入れていない月だけがあるとき', () => {
+    expect(budgetUnmatchedNote(al(1, 0, 11))).toBe('実績のみ 11 か月は対象外');
+  });
+
+  /**
+   * **突合できた期が 0 のときに、範囲も「比較」も作らない。**
+   *
+   * どちらも export されていて、`budgetPeriodAlignment` も export されている ——
+   * つまり**直に組んだ突合を渡せる** (`overview.ts` の `budgetAlignment` がそれ)。
+   * 今の呼び手は 2 つとも `computeBudgetVariance` (空なら null) 経由なので届かないが、
+   * **関門は呼び手の並びではなく関数の側に置く**。直す前の実測:
+   *
+   * | 関数 | 突合 0 のときの返り |
+   * | --- | --- |
+   * | `budgetComparedRangeLabel` | `undefined〜undefined・0 か月` (添字が `undefined`・裸の補間) |
+   * | `budgetScopeSentence` | 「予算と実績の両方が在る **0 か月分の比較**です」= 比較していない |
+   */
+  it('★ 突合 0 のとき範囲ラベルは undefined を刷らない', () => {
+    expect(budgetComparedRangeLabel(al(0, 9, 3))).toBe('突合できた期なし');
+    expect(budgetComparedRangeLabel(al(0, 9, 3))).not.toContain('undefined');
+    // 全部が空でも同じ (添字の枝は突合の数だけで決まる)。
+    expect(budgetComparedRangeLabel(al(0, 0, 0))).toBe('突合できた期なし');
+  });
+
+  it('★ 対照: 突合が在れば範囲と月数を出す (床が邪魔をしない)', () => {
+    expect(budgetComparedRangeLabel(al(1, 0, 0))).toMatch(/^\d{4}-\d{2}〜\d{4}-\d{2}・1 か月$/);
+    expect(budgetComparedRangeLabel(al(3, 0, 0))).toContain('・3 か月');
+  });
+
+  it('★ 突合 0 のときは「0 か月分の比較」と述べず、算定していない旨を述べる', () => {
+    const s = budgetScopeSentence(al(0, 9, 3));
+    expect(s).toBe('予算と実績で期が重なっていないため、予実差異は算定していません (予算のみ 9 か月・実績のみ 3 か月は対象外)。');
+    expect(s).not.toContain('0 か月分の比較');
+    // 文面は managementReport の突合ゼロの枝と同じ事実を述べる。
+    expect(s).toContain('期が重なっていない');
+  });
+
+  it('★ 対照: 突合が在れば従来どおり「N か月分の比較です」', () => {
+    expect(budgetScopeSentence(al(2, 4, 5))).toContain('予算と実績の両方が在る 2 か月分の比較です');
+  });
+
+  it('★ 突合も対象外も無ければ述べることが無い (null のまま)', () => {
+    // 断り書きが要らない場合は突合 0 でも null —— 床を当てすぎない。
+    expect(budgetScopeSentence(al(0, 0, 0))).toBeNull();
+  });
+
+  it('★ 両側に対象外があるときは中黒で並べる', () => {
+    expect(budgetUnmatchedNote(al(2, 4, 5))).toBe('予算のみ 4 か月・実績のみ 5 か月は対象外');
   });
 });
 
@@ -254,21 +405,38 @@ describe('computeMonthlyAchievement', () => {
     });
   });
 
-  it('treats a period missing from one side as zero', () => {
+  /**
+   * **この検査は 2026-09-07 まで、欠陥のほうを「仕様」として留めていた。**
+   * 旧: `treats a period missing from one side as zero` —— 実績がまだ無い月を
+   * 「実績 0・達成率 0%」と数え、累計にもその 0 を足していた。見本が食い違いを
+   * 固定していた形は **5 例目** (安全余裕率・決算期・事業計画書の月数・返済余力に次ぐ)。
+   */
+  it('★ 片側しか無い期は「0」ではなく null (達成率も累計も作らない)', () => {
     const rows = computeMonthlyAchievement(
       [{ period: '2026-01', revenue: 100 }],
       [{ period: '2026-02', revenue: 80 }],
     );
     expect(rows).toHaveLength(2);
-    // Jan: actual missing → 0, achievement 0/100 = 0
-    expect(rows[0]).toMatchObject({ period: '2026-01', actual: 0, achievementPct: 0 });
-    // Feb: budget missing → 0, achievement null (div by zero), YTD 80/100 = 80
-    expect(rows[1]).toMatchObject({
-      period: '2026-02',
-      budget: 0,
-      achievementPct: null,
-      ytdAchievementPct: 80,
-    });
+    // Jan: 実績が無い → actual は null・達成率も null (0% ではない)
+    expect(rows[0]).toMatchObject({ period: '2026-01', budget: 100, actual: null, achievementPct: null });
+    // Feb: 予算が無い → budget は null・達成率も null
+    expect(rows[1]).toMatchObject({ period: '2026-02', budget: null, actual: 80, achievementPct: null });
+    // 突合できた月が 1 つも無いので累計は 0 のまま・YTD も null
+    expect(rows.map((r) => r.cumulativeBudget)).toEqual([0, 0]);
+    expect(rows.map((r) => r.cumulativeActual)).toEqual([0, 0]);
+    expect(rows.map((r) => r.ytdAchievementPct)).toEqual([null, null]);
+  });
+
+  it('★ 累計は突合できた期だけを足す (片側しか無い月を挟んでも増えない)', () => {
+    const rows = computeMonthlyAchievement(
+      [{ period: '2026-01', revenue: 100 }, { period: '2026-02', revenue: 200 }, { period: '2026-03', revenue: 400 }],
+      [{ period: '2026-01', revenue: 120 }, { period: '2026-03', revenue: 300 }],
+    );
+    // 2026-02 は実績が無いので累計に入らない → 3 月の YTD は (120+300)/(100+400) = 84%
+    expect(rows.map((r) => r.cumulativeBudget)).toEqual([100, 100, 500]);
+    expect(rows.map((r) => r.cumulativeActual)).toEqual([120, 120, 420]);
+    expect(rows[2]!.ytdAchievementPct).toBe(84);
+    expect(rows[1]!.achievementPct).toBeNull();
   });
 
   it('returns null achievement when the cumulative budget is still zero', () => {

@@ -92,15 +92,29 @@ describe('redactSecrets', () => {
     );
   });
 
+  /*
+   * **標本は秘密を裸で運ぶ。** (2026-09-15 · パス 289)
+   *
+   * 2026-09-15 まで、この 3 本は `token=…` / `key=…` を運び手にしていた ——
+   * 接頭辞の規則を測るつもりの検査が、実は `name=value` の規則の領分に
+   * 秘密を置いていた。パス 289 が `name=value` の錨を `(^|[?&\n])` に
+   * 広げた (form 本文の 1 つ目を塞いだ) 瞬間、そちらが先に当たって
+   * `token=[REDACTED]` になり、3 本が落ちた。
+   *
+   * **秘密は隠れたままなので欠陥ではない** (伏せ方が強くなった側の変化) が、
+   * 「どの規則を測っているか」が標本から読めなくなるので裸にする。
+   * `integration=` / `access=` が落ちなかったのは、その 2 語が
+   * 資格情報の名前の一覧に無いから —— 運び手は**偶然**無害だった。
+   */
   it('redacts GitHub PAT prefixes', () => {
-    expect(redactSecrets('token=ghp_abcdefghijklmnopqrst')).toContain('ghp_[REDACTED]');
-    expect(redactSecrets('token=ghs_abcdefghijklmnopqrst')).toContain('ghs_[REDACTED]');
+    expect(redactSecrets('error: ghp_abcdefghijklmnopqrst')).toContain('ghp_[REDACTED]');
+    expect(redactSecrets('error: ghs_abcdefghijklmnopqrst')).toContain('ghs_[REDACTED]');
   });
 
   it('redacts Anthropic and Notion secrets', () => {
     // `toContain` だけだと `{8,}` を `{1}` に落とす変異体
     // (`sk-ant-[REDACTED]pi03-xxxxxxxxxx`) が素通りする。末尾まで消えることを見る。
-    expect(redactSecrets('key=sk-ant-api03-xxxxxxxxxx')).toBe('key=sk-ant-[REDACTED]');
+    expect(redactSecrets('error: sk-ant-api03-xxxxxxxxxx')).toBe('error: sk-ant-[REDACTED]');
     expect(redactSecrets('integration=secret_abcdefghij')).toBe('integration=secret_[REDACTED]');
   });
 
@@ -110,8 +124,8 @@ describe('redactSecrets', () => {
   });
 
   it('redacts Atlassian API tokens (ATATT…)', () => {
-    const out = redactSecrets('token=ATATT3xFfGF0abcdef_GHIJ-1234.567');
-    expect(out).toBe('token=ATATT[REDACTED]');
+    const out = redactSecrets('error: ATATT3xFfGF0abcdef_GHIJ-1234.567');
+    expect(out).toBe('error: ATATT[REDACTED]');
     expect(out).not.toContain('3xFfGF0');
   });
 
@@ -344,13 +358,30 @@ describe('redactSecrets — ヘッダの値', () => {
     );
   });
 
-  it('Google の API キーは URL に載っていても伏せる', () => {
-    // YouTube は `?key=…` の形でキーを URL に載せる (API の仕様)。
-    // URL ごと書き出された場合に備えて、接頭辞でも拾えるようにしておく。
+  /*
+   * **2026-09-15 (パス 271) に出力が変わった。**
+   *
+   * ここは元々 `key=AIza[REDACTED]` を留めていた —— 注記が
+   * 「URL ごと書き出された場合に備えて、**接頭辞でも拾えるようにしておく**」
+   * と言っているとおり、URL という運び手を**接頭辞の規則で**覆っていた。
+   * つまり覆えていたのは **発行元が鍵に接頭辞を付けている場合だけ**で、
+   * 接頭辞を持たない鍵が `?api_key=` に載れば素通りした (実測 6 形)。
+   *
+   * パス 271 で `?名前=値` そのものを運び手として足したので、いまは
+   * クエリの規則が先に当たり、**値を丸ごと** `[REDACTED]` にする。
+   * 接頭辞が出力から消えるが、どの発行元かは引数名 (`key=`) と
+   * ホスト (`googleapis.com`) が既に語っているので読み手は困らない。
+   */
+  it('Google の API キーは URL に載っていても伏せる (値は丸ごと)', () => {
     const url = 'https://www.googleapis.com/youtube/v3/channels?id=UC1&key=AIzaSyD9f2c1a8e4b';
     expect(redactSecrets(url)).toBe(
-      'https://www.googleapis.com/youtube/v3/channels?id=UC1&key=AIza[REDACTED]',
+      'https://www.googleapis.com/youtube/v3/channels?id=UC1&key=[REDACTED]',
     );
+  });
+
+  it('★ 接頭辞を持たない鍵も、クエリに載れば伏せる (パス 271 で足した運び手)', () => {
+    const url = `https://h.test/v1/x?id=1&api_key=${'q'.repeat(39)}`;
+    expect(redactSecrets(url)).toBe('https://h.test/v1/x?id=1&api_key=[REDACTED]');
   });
 
   it('資格情報を運ばないヘッダは触らない', () => {
@@ -371,7 +402,20 @@ describe('redactSecrets — ヘッダの値', () => {
  * 伏せられないまま残る。
  */
 describe('redactForMessage — 伏せてから切る', () => {
-  const TOKEN = '1//0eXyZaBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789abcdefGHIJKLMNOP';
+  /**
+   * **接頭辞を持たない 60 字。** ここで測るのは「伏せてから切る」という
+   * **順序**であって、接頭辞の網ではない。
+   *
+   * 2026-09-14 (パス 231) までこの標本は `1//0e…` (Google の更新トークン) で、
+   * 「直す前の書き方なら 60 文字すべて残る」を示していた。同じパスで `1//` を
+   * 接頭辞の規則に足したところ、**接頭辞の規則が切り口の内側で当たってしまい**
+   * 残りが 3 文字 (`1//`) になった —— 直っているのは良いことだが、
+   * **この検査が名前どおりのことを示さなくなる** (順序の欠陥が接頭辞の網に
+   * 隠れる)。順序だけを測るために、**どの接頭辞にも当たらない**標本へ替えた。
+   * 長さ 60 は動かせない —— 詰め物 116 のとき閉じ引用符がちょうど 200 文字目の
+   * 外側に落ちる、という位置がこの長さで決まっている。
+   */
+  const TOKEN = 'XyZaBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789abcdefGHIJKLMNOPqrstu';
 
   /** out に残っている token の先頭からの一致文字数。 */
   const leaked = (out: string, token: string): number => {
@@ -642,5 +686,57 @@ describe('jsonFetch は limitedFetch の上限をそのまま受け継ぐ', () =
     await expect(
       jsonFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
     ).rejects.toThrow(/demo 500: $/);
+  });
+});
+
+/*
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * `limitedFetch` は SaaS 74 本が通る口。既定の `redirect: 'follow'` だと
+ * 相手の `302 Location: http://169.254.169.254/` をそのまま取りに行き、
+ * 送り先の台帳 (§3.3 / lint:network-targets) は 1 ホップ目しか守れない。
+ * 規則は `shared/httpLimits.ts` に 1 つ。
+ */
+describe('limitedFetch — 転送に追随しない (パス 301)', () => {
+  const status = async (res: Response): Promise<number> => res.status;
+  const redirect = (code: number, location: string): Response =>
+    ({ status: code, ok: false, type: 'default', headers: new Headers({ location }), body: null } as unknown as Response);
+
+  it('★ fetch へ redirect: manual を渡す', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('', { status: 200 }));
+    await limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, status);
+    expect(fetchMock.mock.calls[0]?.[1]?.redirect).toBe('manual');
+  });
+
+  it.each([301, 302, 303, 307, 308])('★ %s は FetchError で止まり、consume は呼ばれない', async (code) => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(redirect(code, 'http://169.254.169.254/latest/meta-data'));
+    const consume = vi.fn(status);
+    await expect(
+      limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, consume),
+    ).rejects.toMatchObject({
+      name: 'FetchError',
+      status: code,
+      message: expect.stringContaining('github が別の場所 (169.254.169.254) へ転送しようとしました'),
+    });
+    expect(consume).not.toHaveBeenCalled();
+    // 追随していない: fetch は 1 回だけ
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('★ 断り文に Location のパスやクエリは載らない', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(redirect(302, 'https://evil.example/collect?token=ghp_secret'));
+    await expect(
+      limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, status),
+    ).rejects.toThrow(/\(evil\.example\)/);
+    await expect(
+      limitedFetch('https://api.github.com/user', {}, { fetch: vi.fn<typeof fetch>().mockResolvedValueOnce(redirect(302, 'https://evil.example/collect?token=ghp_secret')), serviceId: 'github' }, status),
+    ).rejects.not.toThrow(/ghp_secret/);
+  });
+
+  it('対照 — 304 は転送ではないので consume へ渡る', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      { status: 304, ok: false, type: 'default', headers: new Headers(), body: null } as unknown as Response,
+    );
+    expect(await limitedFetch('https://api.github.com/user', {}, { fetch: fetchMock, serviceId: 'github' }, status)).toBe(304);
   });
 });

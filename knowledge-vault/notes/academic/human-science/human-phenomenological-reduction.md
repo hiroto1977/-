@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Stanford Encyclopedia of Philosophy — Edmund Husserl](https://plato.stanford.edu/entries/husserl/) `学術`
-- [Stanford Encyclopedia of Philosophy — Phenomenology](https://plato.stanford.edu/entries/phenomenology/) `学術`
+- [Stanford Encyclopedia of Philosophy — Phenomenology](https://plato.stanford.edu/entries/phenomenology/) `リファレンス`
 - [Encyclopaedia Britannica — Phenomenological Reduction](https://www.britannica.com/topic/phenomenological-reduction) `リファレンス`
 
 ## 関連概念

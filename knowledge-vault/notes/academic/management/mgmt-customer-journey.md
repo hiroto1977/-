@@ -39,8 +39,8 @@ aliases:
 - [[mgmt-value-proposition|バリュープロポジション]] — 出典を共有
 - [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — 出典を共有
 - [[mgmt-aida|AIDAモデル（購買行動モデル）]] — 同分野の近傍
-- [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

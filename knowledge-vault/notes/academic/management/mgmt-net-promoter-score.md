@@ -26,12 +26,12 @@ aliases:
 フレッド・ライクヘルド（Fred Reichheld, 2003 / Bain & Company）
 
 ## 出典
-- [Reichheld, F. (2003) "The One Number You Need to Grow", Harvard Business Review](https://hbr.org/2003/12/the-one-number-you-need-to-grow) `学術`
+- [Reichheld, F. (2003) "The One Number You Need to Grow", Harvard Business Review](https://hbr.org/2003/12/the-one-number-you-need-to-grow) `メディア`
 - [Wikipedia: Net promoter score](https://en.wikipedia.org/wiki/Net_promoter_score) `リファレンス`
 
 ## 関連概念
 - [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
-- [[mgmt-greiner-growth|グレイナーの企業成長モデル]] — 同分野の近傍
+- [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

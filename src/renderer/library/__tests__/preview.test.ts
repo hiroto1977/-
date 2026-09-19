@@ -134,9 +134,17 @@ describe('MAX_TEXT_PREVIEW_BYTES (読む前に切る量)', () => {
   });
 
   it('先に切ってから復号しても、表示される中身は全部読んだ場合と同じ', async () => {
-    // 4 バイト文字 (絵文字) で埋めた、上限より十分大きい blob。
-    const unit = '😀'; // UTF-8 で 4 バイト / JS の length は 2
-    const big = unit.repeat(MAX_TEXT_PREVIEW_CHARS);
+    /*
+     * 4 バイト文字 (絵文字) で埋めた、上限より十分大きい blob。
+     *
+     * **標本の個数は `+ 10`** (2026-09-13 · パス 196)。以前はちょうど
+     * `MAX_TEXT_PREVIEW_CHARS` 個で、当時の `truncateForPreview` が
+     * `text.length` (コード単位) で数えていたので**倍の 2 倍で超えて**いた。
+     * 天井を「字」で数えるようにした今、ちょうど N 個は天井ぴったりで
+     * 切り詰めが起きない —— **標本が規則を跨がなくなる**。
+     */
+    const unit = '😀'; // UTF-8 で 4 バイト / JS の length は 2 / 字では 1
+    const big = unit.repeat(MAX_TEXT_PREVIEW_CHARS + 10);
     const blob = new Blob([big], { type: 'text/plain' });
 
     const sliced = truncateForPreview(await blob.slice(0, MAX_TEXT_PREVIEW_BYTES).text());
@@ -149,6 +157,54 @@ describe('MAX_TEXT_PREVIEW_BYTES (読む前に切る量)', () => {
     expect(sliced.text).not.toContain('\uFFFD');
   });
 
+});
+
+describe('天井の単位 — プレビューの上限は「字」 (2026-09-13 · パス 196)', () => {
+  /*
+   * `MAX_TEXT_PREVIEW_CHARS` は名前のとおり**字**の天井だが、
+   * `truncateForPreview` は `text.length` / `text.slice` (UTF-16 コード単位) で
+   * 数え・切っていた。パス 195 の census は**定数の名前**で拾うので、
+   * 天井が引数 (`limit`) に渡し替わったこの関数は走査の外に在った。
+   *
+   * ここが扱うのは**利用者が取り込んだ任意のテキスト**なので、絵文字や
+   * 非 BMP の漢字が来る確率はこのリポジトリで最も高い。
+   */
+  function hasLoneSurrogate(str: string): boolean {
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      if (c >= 0xd800 && c <= 0xdbff) {
+        const next = i + 1 < str.length ? str.charCodeAt(i + 1) : -1;
+        if (next < 0xdc00 || next > 0xdfff) return true;
+        i++;
+      } else if (c >= 0xdc00 && c <= 0xdfff) return true;
+    }
+    return false;
+  }
+
+  it('★ 絵文字は 1 字として数える (コード単位なら半分で切られる)', () => {
+    const atLimit = '😀'.repeat(MAX_TEXT_PREVIEW_CHARS);
+    expect(atLimit.length).toBe(MAX_TEXT_PREVIEW_CHARS * 2); // コード単位では 2 倍
+    const out = truncateForPreview(atLimit);
+    expect(out.truncated).toBe(false);       // 字では天井ぴったり = 切らない
+    expect(out.text).toBe(atLimit);
+  });
+
+  it('★ 切る所は文字の境界 (孤立サロゲートを残さない)', () => {
+    // 天井の 1 つ手前まで ASCII、境界に絵文字を置く。
+    const text = 'a'.repeat(MAX_TEXT_PREVIEW_CHARS - 1) + '😀' + 'b'.repeat(5);
+    const out = truncateForPreview(text);
+    expect(out.truncated).toBe(true);
+    expect(hasLoneSurrogate(out.text)).toBe(false);
+    expect([...out.text]).toHaveLength(MAX_TEXT_PREVIEW_CHARS);
+    expect(out.text.endsWith('😀')).toBe(true);
+    // 壊れていれば UTF-8 の往復で `\uFFFD` に化ける。
+    expect(Buffer.from(out.text, 'utf8').toString('utf8')).toBe(out.text);
+  });
+
+  it('★ 短い天井でも同じ (引数で渡した天井も字)', () => {
+    expect(truncateForPreview('😀😀😀😀😀', 3)).toEqual({ text: '😀😀😀', truncated: true });
+    expect(truncateForPreview('😀😀😀', 3)).toEqual({ text: '😀😀😀', truncated: false });
+  });
 });
 
 describe('readTextForPreview (読む量そのものを留める)', () => {
@@ -188,7 +244,8 @@ describe('readTextForPreview (読む量そのものを留める)', () => {
   });
 
   it('4 バイト文字でも、境界で壊れた文字は残らない', async () => {
-    const big = '😀'.repeat(MAX_TEXT_PREVIEW_CHARS);
+    // 個数が `+ 10` である理由は上の同名の注記と同じ (パス 196)。
+    const big = '😀'.repeat(MAX_TEXT_PREVIEW_CHARS + 10);
     const out = await readTextForPreview(new Blob([big], { type: 'text/plain' }));
     expect(out.truncated).toBe(true);
     expect(out.text).not.toContain('\uFFFD');

@@ -86,6 +86,12 @@ const TAXONOMIES = {
 };
 
 const kc = require(path.join(REPO_ROOT, 'orchestration', 'knowledge-context.cjs'));
+/*
+ * 目録の判定は `lint-citations.cjs` の台帳 1 つを読む (`METADATA_ONLY_HOSTS`)。
+ * ホスト一覧を 2 か所に書くと片方が腐るので写さない —— `require` は
+ * `require.main === module` の守りがあるので main は走らない。
+ */
+const { hostOf, isMetadataOnlyHost } = require(path.join(REPO_ROOT, 'scripts', 'lint-citations.cjs'));
 
 /**
  * コレクション → 適用する分類。`loadEntries()` が返す `collection` キーで引く。
@@ -113,17 +119,35 @@ function taxonomyOf(collection) {
     : undefined;
 }
 
-function assess(types, taxonomy) {
+/**
+ * 出典の並び (`{ type, url }`) を評価して、満たしていない理由を返す。
+ *
+ * **URL も見る**のは目録の規則のため (2026-09-06 に種別だけの評価から変えた)。
+ * 図書館の目録・書店の商品頁・検索結果は「その出版物が存在する」ことしか示さないので、
+ * 権威ある出典がそれだけの項目は**中身を誰も確かめていない**。実測では 0 件だったが、
+ * 0 件のまま放置すると次に足す人が気づかないので規則にした (標本は自己検査に置いた)。
+ */
+function assess(sources, taxonomy) {
   const reasons = [];
+  const types = sources.map((s) => s.type);
   if (types.length < MIN_SOURCES) {
     reasons.push(`出典 ${types.length} 件（${MIN_SOURCES} 件以上が必要）`);
   }
   const set = TAXONOMIES[taxonomy].authoritative;
-  const authoritative = types.filter((t) => set.has(t)).length;
+  const authoritativeSources = sources.filter((s) => set.has(s.type));
+  const authoritative = authoritativeSources.length;
   if (authoritative < MIN_AUTHORITATIVE) {
     reasons.push(
       `権威ある出典 ${authoritative} 件（${MIN_AUTHORITATIVE} 件以上が必要 / ${taxonomy} 分類）`,
     );
+  }
+  /*
+   * `every` は空配列に true を返すので、**1 件以上あるとき限定**にする。
+   * 0 件は上の理由が既に鳴らしており、ここで二重に鳴らす意味がない。
+   */
+  if (authoritative >= MIN_AUTHORITATIVE
+    && authoritativeSources.every((s) => isMetadataOnlyHost(hostOf(String(s.url ?? '').trim())))) {
+    reasons.push('権威ある出典が目録・書店・検索結果の記録だけ（出版物そのものが必要）');
   }
   return reasons;
 }
@@ -155,8 +179,27 @@ function selfTest() {
 
   let failed = 0;
   console.log('self-test:');
+  /** 表は種別だけを書く。URL 空文字は目録判定に当たらない (ホストが取れない)。 */
+  const asSources = (types) => types.map((t) => ({ type: t, url: '' }));
   for (const [label, types, taxonomy, want] of cases) {
-    const got = assess(types, taxonomy).length;
+    const got = assess(asSources(types), taxonomy).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: 理由 ${got} 件 (期待 ${want})`);
+  }
+
+  /* --- 目録の記録だけでは権威にならない。標本を当てて、規則が実際に鳴ることを見る。 --- */
+  const S = (...pairs) => pairs.map(([type, url]) => ({ type, url }));
+  const metaCases = [
+    ['★ 権威が worldcat の目録だけなら鳴る', S(['reference', 'https://search.worldcat.org/title/17234042'], ['media', 'https://hbr.org/x']), 1],
+    ['★ 権威が Google Scholar の検索 URL だけでも鳴る', S(['reference', 'https://scholar.google.com/scholar?q=x'], ['media', 'https://hbr.org/x']), 1],
+    ['目録 + 出版物なら通る', S(['reference', 'https://search.worldcat.org/title/17234042'], ['academic', 'https://doi.org/10.1234/x']), 0],
+    ['目録が非権威 (media) で他に権威があれば通る', S(['academic', 'https://doi.org/10.1234/x'], ['media', 'https://www.worldcat.org/oclc/1']), 0],
+    ['全文を置くホスト (archive.org) は目録ではない', S(['academic', 'https://archive.org/details/logiclimitsofb00jack'], ['media', 'https://hbr.org/x']), 0],
+    ['権威 0 件のときは目録の理由を重ねない (理由は 1 つ)', S(['media', 'https://www.worldcat.org/oclc/1'], ['media', 'https://hbr.org/x']), 1],
+  ];
+  for (const [label, sources, want] of metaCases) {
+    const got = assess(sources, 'academic').length;
     const ok = got === want;
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: 理由 ${got} 件 (期待 ${want})`);
@@ -257,7 +300,7 @@ function main(argv) {
     counts[e.collection] = (counts[e.collection] ?? 0) + 1;
 
     const types = (e.sources ?? []).map((s) => s.type);
-    const reasons = assess(types, taxonomy);
+    const reasons = assess((e.sources ?? []).map((s) => ({ type: s.type, url: s.url })), taxonomy);
     if (reasons.length > 0) violations.push({ collection: e.collection, id: e.id, reasons });
 
     /*

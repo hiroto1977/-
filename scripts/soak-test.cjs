@@ -15,7 +15,7 @@ const { app, BrowserWindow } = require('electron');
 const path=require('node:path'); const os=require('node:os'); const fs=require('node:fs');
 const PROFILE=fs.mkdtempSync(path.join(os.tmpdir(),'sh-soak-'));
 app.setPath('userData',PROFILE);
-const ROOT='/home/user/-'; const PW='Str0ng-P@ssw0rd!'; const CYCLES=10;
+const ROOT=path.join(__dirname,'..'); // 2026-09-17 まで '/home/user/-' 固定 (この沙箱でしか動かなかった) const PW='Str0ng-P@ssw0rd!'; const CYCLES=10;
 const results=[]; const log=(ok,n,x='')=>{results.push(ok);console.log((ok?'PASS':'FAIL')+' '+n+(x?' :: '+x:''));};
 const setPw=(i,v)=>`(()=>{const el=[...document.querySelectorAll('input[type=password]')][${i}];if(!el)return'x';const s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;s.call(el,${JSON.stringify(v)});el.dispatchEvent(new Event('input',{bubbles:true}));return'ok';})()`;
 const click=(t)=>`(()=>{const b=[...document.querySelectorAll('button')].find(x=>x.innerText.includes(${JSON.stringify(t)}));if(b){b.click();return'c';}return'n';})()`;
@@ -32,6 +32,8 @@ const COUNT=`(async()=>{return await new Promise((res)=>{const o=indexedDB.open(
 
 (async()=>{await app.whenReady();
 const win=new BrowserWindow({width:1280,height:1400,show:false,webPreferences:{sandbox:false}});
+// 成果物の鮮度 (判定は e2e / perf / smoke と同じ)。古い HTML で 10 周回して「損失 0」と言わない (パス 305)。
+require('./lib/artifact-freshness.cjs').assertFreshArtifacts([path.join(ROOT,'dist','standalone.html')],{srcDir:path.join(ROOT,'src'),repoRoot:ROOT,tool:'exp:soak',allowEnv:'SERVICE_HUB_EXP_ALLOW_STALE'});
 await win.loadFile(path.join(ROOT,'dist','standalone.html'));await sleep(2000);const e=js=>win.webContents.executeJavaScript(js);
 // initialize vault
 await e(setPw(0,PW));await e(setPw(1,PW));await sleep(200);await e(click('開始'));await sleep(1700);await e(ack);await sleep(1500);

@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 出典を共有
 - [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
 - [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同分野の近傍
+- [[infosoc-social-bots|ソーシャルボット]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,8 +35,7 @@ T字型人材（T-shaped professional）とは、ある特定分野に深い専�
 - [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 出典を共有
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 出典を共有
 - [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同分野の近傍
-- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同分野の近傍
+- [[mgmt-theory-z|セオリーZ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

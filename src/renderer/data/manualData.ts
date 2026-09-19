@@ -194,12 +194,25 @@ export function sectionsFor(
   return groupFieldsBySection(catalogFor(scope));
 }
 
+/**
+ * その画面のものか。**scope の判定はここだけに置く。**
+ *
+ * 2026-09-12 (パス 170) まで `ManualDataSection` は見出しの件数を
+ * `metricsForScope` で数え、並べる行を `records.filter((r) => r.data.scope === scope)`
+ * と**書き直して**いた。今日は一致するが、片方だけを直すと
+ * **「3 件」と書いてあるのに 2 行しか出ない**形になる (パス 61 の家系)。
+ * レコード (`{ id, data }`) からでも中身からでも、通る道はこの 1 本にする。
+ */
+export function belongsToScope(scope: ManualScope, entry: { readonly scope: string }): boolean {
+  return entry.scope === scope;
+}
+
 /** レコードの中から、その画面のものだけを取り出す。 */
 export function metricsForScope(
   scope: ManualScope,
   records: readonly ManualMetricEntry[],
 ): readonly ManualMetricEntry[] {
-  return records.filter((r) => r.scope === scope);
+  return records.filter((r) => belongsToScope(scope, r));
 }
 
 /** 同上（上書き）。 */
@@ -207,7 +220,7 @@ export function overridesForScope(
   scope: ManualScope,
   records: readonly ManualOverrideEntry[],
 ): readonly ManualOverrideEntry[] {
-  return records.filter((r) => r.scope === scope);
+  return records.filter((r) => belongsToScope(scope, r));
 }
 
 /**

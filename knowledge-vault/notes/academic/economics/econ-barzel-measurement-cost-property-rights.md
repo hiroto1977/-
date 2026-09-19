@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同じ思想家
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同分野の近傍
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍
+- [[econ-granger-causality|グレンジャー因果性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

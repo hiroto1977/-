@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[infosoc-algorithmic-governance-yeung|アルゴリズム統治——自動化された意思決定の社会的制御と民主的正統性]] — 語彙が近い
 - [[infosoc-data-sovereignty|データ主権]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同じ思想家
 - [[infosoc-onlife|オンライフ]] — 同じ思想家
 - [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
 - [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
-- [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

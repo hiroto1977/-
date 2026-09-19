@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — 同分野の近傍
-- [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

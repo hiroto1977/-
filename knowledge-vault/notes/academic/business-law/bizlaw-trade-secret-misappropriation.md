@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [U.S. Congress (2016) Defend Trade Secrets Act of 2016 — Pub. L. 114-153（DTSA、連邦営業秘密民事訴訟権の付与）](https://www.govinfo.gov/content/pkg/PLAW-114publ153/pdf/PLAW-114publ153.pdf) `公的`
 - [Uniform Law Commission (1979/1985) Uniform Trade Secrets Act — UTSA text and state adoptions](https://www.uniformlaws.org/committees/community-home?CommunityKey=0d08a1a8-de70-46a6-b82e-b51e498c7c70) `リファレンス`
-- [Png, I. P. L. (2017) Law and Innovation: Evidence from State Trade Secrets Laws — Review of Economics and Statistics, 99(1), 167–179（営業秘密法と技術革新の実証）](https://doi.org/10.1007/s10796-016-9606-6) `学術`
+- [Png, I. P. L. (2017) Law and Innovation: Evidence from State Trade Secrets Laws — Review of Economics and Statistics 99(1), 167–179（旧 DOI は Information Systems Frontiers の別論文を指していたため IDEAS 記録へ差し替え）](https://ideas.repec.org/a/tpr/restat/v99y2017i1p167-179.html) `学術`
 - [Wikipedia: Trade secret — UTSA, DTSA, requirements, misappropriation, employee mobility issues](https://en.wikipedia.org/wiki/Trade_secret) `リファレンス`
 
 ## 関連概念

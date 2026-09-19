@@ -9,13 +9,67 @@
  * ここは fetch を注入できる純粋ロジックに保ち、単体テスト可能にする。
  * サービスを追加するたびにこのモジュールに関数を増やしていく。
  */
-import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
+/* ホストは共有に 1 つだけ —— main と同じ字面を写さない (パス 274)。 */
 import {
+  checkEvent,
+  checkMail,
+  createGraphEvent,
+  sendGraphMail,
+  type GraphEventFields,
+  type GraphMailFields,
+} from '../../shared/api/microsoft365';
+import { checkIssue, createGithubIssueRequest, parseCreatedIssue } from '../../shared/api/github';
+import { checkPage, createNotionPageRequest, parseCreatedPage } from '../../shared/api/notion';
+import { checkMessage, postSlackMessageRequest, readSlackPost } from '../../shared/api/slack';
+import { checkPost, createWordPressPostRequest, parseCreatedPost } from '../../shared/api/wordpress';
+import { checkFolder, createCanvaFolderRequest, parseCreatedFolder } from '../../shared/api/canva';
+import {
+  checkDnsRecord,
+  checkPurge,
+  createDnsRecordRequest,
+  parseCreatedDnsRecord,
+  parsePurgeResult,
+  purgeCacheRequest,
+  readCloudflareEnvelope,
+} from '../../shared/api/cloudflare';
+import {
+  checkCalendarEvent,
+  checkDriveFolder,
+  checkGmailDraft,
+  createCalendarEventRequest,
+  createDriveFolderRequest,
+  createGmailDraftRequest,
+  parseCreatedDraft,
+  parseCreatedDriveFolder,
+  parseCreatedEvent,
+} from '../../shared/api/google';
+import {
+  ATLASSIAN_CREDS_MESSAGES,
   normalizeAtlassianSiteResult,
+  readAtlassianCredentials,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
-import { redactForMessage } from '../../shared/redact';
+import { checkJiraIssue, createJiraIssueRequest, parseCreatedJiraIssue } from '../../shared/api/atlassian';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
+import {
+  optionalString,
+  parseJsonBody,
+  parseJsonText,
+  requireObject,
+  requireString,
+} from '../../shared/apiResponse';
+import { hibpBreaches } from '../../shared/securityResponse';
+import {
+  HIBP_NO_BREACH_STATUS,
+  checkBreachEmail,
+  checkEmailBreachRequest,
+  checkScanUrl,
+  fetchVtReportRequest,
+  submitVtUrlRequest,
+  summarizeVtReport,
+} from '../../shared/api/security';
+import type { ActionData } from '../../shared/actionData';
 
 /**
  * 素の `fetch` と同じ形。
@@ -53,7 +107,7 @@ async function ensureOk(res: Response, label: string): Promise<void> {
   if (res.ok) return;
   // 落ちている相手ほど大きなものを返しうるので、失敗の本文も上限つきで読む。
   const body = await readCapped(res, label).catch(() => '');
-  throw new Error(`${label} ${res.status}: ${redactForMessage(body, 200)}`);
+  throw new Error(`${label} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
 }
 
 // --- GitHub: create-issue ------------------------------------------------
@@ -67,17 +121,7 @@ export interface CreateGithubIssueInput {
   labels?: unknown;
 }
 
-export interface CreateGithubIssueResult {
-  number: number;
-  url: string;
-  title: string;
-}
 
-interface GithubIssueApiResponse {
-  number: number;
-  html_url: string;
-  title: string;
-}
 
 /**
  * GitHub の課題を作る。
@@ -100,38 +144,20 @@ export async function createGithubIssue(
   input: CreateGithubIssueInput,
   token: string,
   transport: Transport,
-): Promise<CreateGithubIssueResult> {
-  const owner = typeof input.owner === 'string' ? input.owner.trim() : '';
-  const repo = typeof input.repo === 'string' ? input.repo.trim() : '';
-  const title = typeof input.title === 'string' ? input.title.trim() : '';
-  if (!owner || !repo || !title) {
-    throw new Error('owner, repo, title は必須です');
-  }
-  const body = typeof input.body === 'string' ? input.body : undefined;
-  const labels = Array.isArray(input.labels)
-    ? input.labels.filter((l): l is string => typeof l === 'string')
-    : undefined;
-
-  const res = await transport(
-    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Content-Type': 'application/json',
-        // User-Agent はブラウザが自動付与する (手動設定は禁止ヘッダ) ため省く。
-      },
-      body: JSON.stringify({ title, body, labels }),
-    },
-  );
+): Promise<ActionData<'github/create-issue'>> {
+  /*
+   * 欄の判定・URL・要求・応答の読みは **`shared/api/github.ts` の 1 つ**
+   * (main も同じ関数を呼ぶ · 2026-09-18 のオントロジーの組み直し)。ここが持つのは
+   * ブラウザ版の流儀だけ —— 打ち切りつきの transport と、失敗した本文の読み方
+   * (`ensureOk` が上限つきで読んで伏字を通す)。
+   */
+  const issue = checkIssue(input);
+  const res = await createGithubIssueRequest(issue, token, transport);
   await ensureOk(res, 'GitHub API');
   // ここは**プロキシを通らない唯一の書き込み経路** (api.github.com は CORS
   // 許可済み)。上限を掛けるのはこの読み出しだけで、他の create-* は
   // `fetchViaProxy` が組み直した 10MiB 以下の `Response` を受け取っている。
-  const data = JSON.parse(await readCapped(res, 'GitHub API')) as GithubIssueApiResponse;
-  return { number: data.number, url: data.html_url, title: data.title };
+  return parseCreatedIssue(parseJsonText(await readCapped(res, 'GitHub API'), 'GitHub API'));
 }
 
 // --- Notion: create-page (CORS ブロック → プロキシ経由) -------------------
@@ -142,40 +168,17 @@ export interface CreateNotionPageInput {
   body?: unknown;
 }
 
-export interface CreateNotionPageResult {
-  id: string;
-  url: string;
-}
 
 export async function createNotionPage(
   input: CreateNotionPageInput,
   token: string,
   transport: Transport,
-): Promise<CreateNotionPageResult> {
-  const parentPageId = typeof input.parentPageId === 'string' ? input.parentPageId.trim() : '';
-  const title = typeof input.title === 'string' ? input.title.trim() : '';
-  if (!parentPageId || !title) throw new Error('parentPageId と title は必須です');
-  const body = typeof input.body === 'string' ? input.body : undefined;
-  const children = body
-    ? [{ object: 'block', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: body } }] } }]
-    : [];
-
-  const res = await transport('https://api.notion.com/v1/pages', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Notion-Version': '2022-06-28',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      parent: { page_id: parentPageId },
-      properties: { title: { title: [{ text: { content: title } }] } },
-      children,
-    }),
-  });
+): Promise<ActionData<'notion/create-page'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/notion.ts の 1 つ (main も同じ関数)。
+  const page = checkPage(input);
+  const res = await createNotionPageRequest(page, token, transport);
   await ensureOk(res, 'Notion API');
-  const data = (await res.json()) as { id: string; url: string };
-  return { id: data.id, url: data.url };
+  return parseCreatedPage(await parseJsonBody(res, 'Notion API'));
 }
 
 // --- Slack: send-message (CORS ブロック → プロキシ経由) -------------------
@@ -185,39 +188,25 @@ export interface SendSlackMessageInput {
   text?: unknown;
 }
 
-export interface SendSlackMessageResult {
-  ts: string;
-  channel: string;
-}
 
 export async function sendSlackMessage(
   input: SendSlackMessageInput,
   token: string,
   transport: Transport,
-): Promise<SendSlackMessageResult> {
-  const channel = typeof input.channel === 'string' ? input.channel.trim() : '';
-  const text = typeof input.text === 'string' ? input.text : '';
-  if (!channel || !text) throw new Error('channel と text は必須です');
-
-  const res = await transport('https://slack.com/api/chat.postMessage', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json; charset=utf-8',
-    },
-    body: JSON.stringify({ channel, text }),
-  });
+): Promise<ActionData<'slack/send-message'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/slack.ts の 1 つ (main も同じ関数)。
+  const message = checkMessage(input);
+  const res = await postSlackMessageRequest(message, token, transport);
   await ensureOk(res, 'Slack API');
-  // Slack は HTTP 200 でも body.ok=false でエラーを返す。
-  const data = (await res.json()) as { ok: boolean; error?: string; ts?: string; channel?: string };
-  if (!data.ok) throw new Error(`Slack: ${data.error ?? 'unknown_error'}`);
-  return { ts: data.ts ?? '', channel: data.channel ?? channel };
+  // Slack は HTTP 200 でも body.ok=false でエラーを返す。断り方だけがブラウザ版の流儀。
+  const post = readSlackPost(await parseJsonBody(res, 'Slack API'), message);
+  if (!post.ok) throw new Error(`Slack: ${post.error}`);
+  return { ts: post.ts, channel: post.channel };
 }
 
 // --- Atlassian (Jira): create-issue (CORS ブロック → プロキシ経由) ---------
-// トークンは {email, token, site} の JSON。ブラウザでは btoa で Basic 認証。
+// トークンは {email, token, site} の JSON。Basic 認証の組み立ては shared (`basicAuthorization`)。
 
-const MAX_ATLASSIAN_EMAIL = 254;
 
 interface AtlassianCreds {
   email: string;
@@ -225,39 +214,28 @@ interface AtlassianCreds {
   site: string;
 }
 
-/** Vault に保存された Atlassian トークン JSON を検証して取り出す。 */
+/** Vault に保存された Atlassian トークン JSON を検証して取り出す。
+ *
+ *  3 段の検査 (JSON → 3 欄と天井 → 制御文字) とその文面は
+ *  `shared/atlassianSite.ts` に 1 つだけ置く (パス 284)。それまでは同じ 3 段が
+ *  main (`clients/atlassian.ts`) にも在り、**文面が両方で違い** (どちらも
+ *  日本語なのに言い回しだけ違う)、しかも**両方が JSON リテラルの `null` で
+ *  素の TypeError を投げていた**。共有側の docblock に実測が在る。 */
 export function parseAtlassianToken(raw: string): AtlassianCreds {
-  let obj: { email?: unknown; token?: unknown; site?: unknown };
-  try {
-    obj = JSON.parse(raw) as typeof obj;
-  } catch {
-    throw new Error('Atlassian トークンは { "email", "token", "site" } 形式の JSON で保存してください');
-  }
-  if (
-    typeof obj.email !== 'string' || obj.email.length === 0 || obj.email.length > MAX_ATLASSIAN_EMAIL ||
-    typeof obj.token !== 'string' || obj.token.length === 0 ||
-    typeof obj.site !== 'string' || obj.site.length === 0
-  ) {
-    throw new Error('Atlassian トークンの email / token / site が欠けているか不正です');
-  }
-  if (/[\r\n\0]/.test(obj.email) || /[\r\n\0]/.test(obj.token)) {
-    throw new Error('Atlassian の email / token に制御文字を含めることはできません');
-  }
+  const creds = readAtlassianCredentials(raw);
+  if (!creds.ok) throw new Error(ATLASSIAN_CREDS_MESSAGES[creds.reason]);
   // **ホスト名まで絞る。** ここは `Authorization: Basic btoa(email:token)` を
   // 付けて `${site}/rest/api/3/issue` へ POST する経路で、以前は
   // `https:` かどうかしか見ていなかった。つまり site を差し替えるだけで
   // Atlassian のメールアドレスと API トークンが任意の相手へ届いた。
-  //
-  // main (`clients/atlassian.ts`) は最初からこの検査を持っており、
-  // 「ホスト名を絞らないと、書き換えられた保存内容が email+token を任意の
-  // HTTPS 先へ向けられる」と理由まで書いてあった。**同じ検証の 3 つ目の
-  // 写しであるここだけが、その一行を持っていなかった。**
   // 実体は `src/shared/atlassianSite.ts` に 1 つだけ置いてある。
-  const site = normalizeAtlassianSiteResult(obj.site);
+  const site = normalizeAtlassianSiteResult(creds.site);
   if (!site.ok) throw new Error(ATLASSIAN_SITE_MESSAGES[site.reason]);
-  return { email: obj.email, token: obj.token, site: site.site };
+  return { email: creds.email, token: creds.token, site: site.site };
 }
 
+
+/* site の文面は呼び手ごと (main 側の同じ表の注記に理由が在る · パス 284)。 */
 const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
   'control-char': 'Atlassian の site に制御文字を含めることはできません',
   'not-a-url': 'Atlassian の site は https URL で指定してください',
@@ -272,61 +250,17 @@ export interface CreateAtlassianIssueInput {
   issueType?: unknown;
 }
 
-export interface CreateAtlassianIssueResult {
-  key: string;
-  url: string;
-}
-
 export async function createAtlassianIssue(
   input: CreateAtlassianIssueInput,
   tokenJson: string,
   transport: Transport,
-): Promise<CreateAtlassianIssueResult> {
+): Promise<ActionData<'atlassian/create-issue'>> {
   const creds = parseAtlassianToken(tokenJson);
-  const projectKey = typeof input.projectKey === 'string' ? input.projectKey.trim() : '';
-  const summary = typeof input.summary === 'string' ? input.summary.trim() : '';
-  if (!projectKey || !summary) throw new Error('projectKey と summary は必須です');
-  const description = typeof input.description === 'string' ? input.description : undefined;
-  const issueType = typeof input.issueType === 'string' && input.issueType.length > 0 ? input.issueType : 'Task';
-  const descBody = description
-    ? { type: 'doc', version: 1, content: [{ type: 'paragraph', content: [{ type: 'text', text: description }] }] }
-    : undefined;
-
-  const res = await transport(`${creds.site}/rest/api/3/issue`, {
-    method: 'POST',
-    headers: {
-      Authorization: 'Basic ' + btoa(`${creds.email}:${creds.token}`),
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      fields: {
-        project: { key: projectKey },
-        summary,
-        issuetype: { name: issueType },
-        ...(descBody ? { description: descBody } : {}),
-      },
-    }),
-  });
+  // 欄の判定・ADF・Basic 認証・要求・応答の読みは shared/api/atlassian.ts の 1 つ (main も同じ関数)。
+  const issue = checkJiraIssue(input);
+  const res = await createJiraIssueRequest(issue, creds, transport);
   await ensureOk(res, 'Atlassian API');
-  const data = (await res.json()) as { key: string };
-  return { key: data.key, url: `${creds.site}/browse/${data.key}` };
-}
-
-// --- UTF-8 安全な base64 / base64url (ブラウザの btoa は Latin1 のみ) -------
-
-function utf8ToBase64(s: string): string {
-  const bytes = new TextEncoder().encode(s);
-  let bin = '';
-  for (const b of bytes) bin += String.fromCharCode(b);
-  return btoa(bin);
-}
-
-function utf8ToBase64Url(s: string): string {
-  // Stryker disable next-line Regex: base64 のパディング '=' は常に末尾にのみ現れるため
-  // `/=+$/` の `$` アンカー有無 (`/=+/`) は出力が等価。`+` を落とした `/=$/` 変異は
-  // gmail draft の '=='二重パディング golden テストで別途 kill 済み。
-  return utf8ToBase64(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return parseCreatedJiraIssue(await parseJsonBody(res, 'Atlassian API'), creds.site);
 }
 
 // --- Google Calendar: create-event (OAuth, CORS → プロキシ) ---------------
@@ -340,66 +274,23 @@ export interface CreateCalendarEventInput {
   timeZone?: unknown;
 }
 
-function defaultTimeZone(): string {
-  // Stryker disable all: Intl.DateTimeFormat().resolvedOptions().timeZone は
-  // 実行環境で常に空でない文字列を返すため、型ガード (typeof/length) と catch・
-  // 'UTC' フォールバックはいずれも到達/分岐させられず構造的に等価。正常系
-  // (TZ 解決) は createCalendarEvent の timeZone 既定テストでカバー済み。
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (typeof tz === 'string' && tz.length > 0) return tz;
-  } catch {
-    /* ignore */
-  }
-  return 'UTC';
-  // Stryker restore all
-}
 
 export async function createCalendarEvent(
   input: CreateCalendarEventInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; htmlLink: string }> {
-  const summary = typeof input.summary === 'string' ? input.summary.trim() : '';
-  const start = typeof input.start === 'string' ? input.start : '';
-  const end = typeof input.end === 'string' ? input.end : '';
-  if (!summary || !start || !end) throw new Error('summary, start, end は必須です');
-  const tz = typeof input.timeZone === 'string' && input.timeZone.length > 0 ? input.timeZone : defaultTimeZone();
-  const body = {
-    summary,
-    description: typeof input.description === 'string' ? input.description : undefined,
-    location: typeof input.location === 'string' ? input.location : undefined,
-    start: { dateTime: start, timeZone: tz },
-    end: { dateTime: end, timeZone: tz },
-  };
-  const res = await transport('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+): Promise<ActionData<'calendar/create-event'>> {
+  // 欄の判定・時間帯の既定・URL・要求・応答の読みは shared/api/google.ts の 1 つ (main も同じ関数)。
+  const event = checkCalendarEvent(input);
+  const res = await createCalendarEventRequest(event, token, transport);
   await ensureOk(res, 'Calendar API');
-  const data = (await res.json()) as { id: string; htmlLink: string };
-  return { id: data.id, htmlLink: data.htmlLink };
+  return parseCreatedEvent(await parseJsonBody(res, 'Google Calendar API'));
 }
 
 // --- Gmail: create-draft (OAuth, CORS → プロキシ) -------------------------
 
-export function isSafeHeaderValue(value: unknown): value is string {
-  return typeof value === 'string' && !/[\r\n\0]/.test(value);
-}
-
-export function buildRfc2822(to: string, subject: string, body: string): string {
-  if (!isSafeHeaderValue(to)) throw new Error('to に CR/LF/NUL は使用できません');
-  const utf8Subject = `=?UTF-8?B?${utf8ToBase64(subject)}?=`;
-  return [
-    `To: ${to}`,
-    `Subject: ${utf8Subject}`,
-    'Content-Type: text/plain; charset="UTF-8"',
-    'MIME-Version: 1.0',
-    '',
-    body,
-  ].join('\r\n');
-}
+// RFC 2822 の組み立ては shared の 1 つ (main も同じ関数)。検査が読むので名前はここからも出す。
+export { buildRfc2822, isSafeHeaderValue } from '../../shared/rfc2822';
 
 export interface CreateGmailDraftInput {
   to?: unknown;
@@ -411,19 +302,12 @@ export async function createGmailDraft(
   input: CreateGmailDraftInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; messageId: string }> {
-  const to = typeof input.to === 'string' ? input.to.trim() : '';
-  const subject = typeof input.subject === 'string' ? input.subject : '';
-  if (!to || !subject) throw new Error('to と subject は必須です');
-  const raw = utf8ToBase64Url(buildRfc2822(to, subject, typeof input.body === 'string' ? input.body : ''));
-  const res = await transport('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: { raw } }),
-  });
+): Promise<ActionData<'gmail/create-draft'>> {
+  // 欄の判定・RFC 2822・base64url・URL・要求・応答の読みは shared/api/google.ts の 1 つ (main も同じ関数)。
+  const draft = checkGmailDraft(input);
+  const res = await createGmailDraftRequest(draft, token, transport);
   await ensureOk(res, 'Gmail API');
-  const data = (await res.json()) as { id: string; message: { id: string } };
-  return { id: data.id, messageId: data.message.id };
+  return parseCreatedDraft(await parseJsonBody(res, 'Gmail API'));
 }
 
 // --- Google Drive: create-folder (OAuth, CORS → プロキシ) -----------------
@@ -437,22 +321,12 @@ export async function createDriveFolder(
   input: CreateDriveFolderInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; name: string; url: string }> {
-  const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (!name) throw new Error('name は必須です');
-  const parentId = typeof input.parentId === 'string' ? input.parentId : undefined;
-  const res = await transport('https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name,
-      mimeType: 'application/vnd.google-apps.folder',
-      ...(parentId ? { parents: [parentId] } : {}),
-    }),
-  });
+): Promise<ActionData<'drive/create-folder'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/google.ts の 1 つ (main も同じ関数)。
+  const folder = checkDriveFolder(input);
+  const res = await createDriveFolderRequest(folder, token, transport);
   await ensureOk(res, 'Drive API');
-  const data = (await res.json()) as { id: string; name: string; webViewLink?: string };
-  return { id: data.id, name: data.name, url: data.webViewLink ?? `https://drive.google.com/drive/folders/${data.id}` };
+  return parseCreatedDriveFolder(await parseJsonBody(res, 'Google Drive API'));
 }
 
 // --- WordPress.com: create-post-draft (Bearer, CORS → プロキシ) -----------
@@ -468,25 +342,12 @@ export async function createWordPressPostDraft(
   input: CreateWordPressPostInput,
   token: string,
   transport: Transport,
-): Promise<{ id: number; url: string; title: string }> {
-  const siteId = typeof input.siteId === 'string' ? input.siteId.trim() : '';
-  const title = typeof input.title === 'string' ? input.title.trim() : '';
-  if (!siteId || !title) throw new Error('siteId と title は必須です');
-  // 既定値 'draft' は allowlist に含めない (含めても未指定時と同じ 'draft' になり等価変異を生むため)。
-  const allowedNonDefault = new Set(['publish', 'pending', 'private']);
-  const status =
-    typeof input.status === 'string' && allowedNonDefault.has(input.status) ? input.status : 'draft';
-  const res = await transport(
-    `https://public-api.wordpress.com/rest/v1.1/sites/${encodeURIComponent(siteId)}/posts/new`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content: typeof input.content === 'string' ? input.content : '', status }),
-    },
-  );
+): Promise<ActionData<'wordpress/create-post-draft'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/wordpress.ts の 1 つ (main も同じ関数)。
+  const post = checkPost(input);
+  const res = await createWordPressPostRequest(post, token, transport);
   await ensureOk(res, 'WordPress API');
-  const data = (await res.json()) as { ID: number; URL: string; title: string };
-  return { id: data.ID, url: data.URL, title: data.title };
+  return parseCreatedPost(await parseJsonBody(res, 'WordPress.com API'));
 }
 
 // --- Canva: create-folder (Bearer, CORS → プロキシ) -----------------------
@@ -500,35 +361,24 @@ export async function createCanvaFolder(
   input: CreateCanvaFolderInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; name: string }> {
-  const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (!name) throw new Error('name は必須です');
-  const parentFolderId = typeof input.parentFolderId === 'string' && input.parentFolderId.length > 0 ? input.parentFolderId : 'root';
-  const res = await transport('https://api.canva.com/rest/v1/folders', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, parent_folder_id: parentFolderId }),
-  });
+): Promise<ActionData<'canva/create-folder'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/canva.ts の 1 つ (main も同じ関数)。
+  const folder = checkFolder(input);
+  const res = await createCanvaFolderRequest(folder, token, transport);
   await ensureOk(res, 'Canva API');
-  const data = (await res.json()) as { folder: { id: string; name: string } };
-  return { id: data.folder.id, name: data.folder.name };
+  return parseCreatedFolder(await parseJsonBody(res, 'Canva API'));
 }
 
 // --- Cloudflare: create-dns-record / purge-cache (Bearer, CORS → プロキシ) -
 
-const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
-
-interface CfWrap<T> {
-  success: boolean;
-  errors?: { message: string }[];
-  result: T;
-}
-
-function cfUnwrap<T>(payload: CfWrap<T>): T {
-  if (!payload.success) {
-    throw new Error(`Cloudflare: ${payload.errors?.[0]?.message ?? 'unknown error'}`);
-  }
-  return payload.result;
+/**
+ * 封筒 (`{success, errors, result}`) の判定は shared の 1 つ (`readCloudflareEnvelope` ——
+ * main も同じ関数)。ここは断りを `Error` で運ぶだけ (main は serviceId つきの FetchError)。
+ */
+function cfUnwrap(raw: unknown): unknown {
+  const env = readCloudflareEnvelope(raw);
+  if (!env.ok) throw new Error(`Cloudflare: ${env.message}`);
+  return env.result;
 }
 
 export interface CreateCfDnsRecordInput {
@@ -544,22 +394,12 @@ export async function createCloudflareDnsRecord(
   input: CreateCfDnsRecordInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; name: string; type: string }> {
-  const zoneId = typeof input.zoneId === 'string' ? input.zoneId.trim() : '';
-  const type = typeof input.type === 'string' ? input.type : '';
-  const name = typeof input.name === 'string' ? input.name.trim() : '';
-  const content = typeof input.content === 'string' ? input.content.trim() : '';
-  if (!zoneId || !type || !name || !content) throw new Error('zoneId, type, name, content は必須です');
-  const body: Record<string, unknown> = { type, name, content, ttl: typeof input.ttl === 'number' ? input.ttl : 1 };
-  if (type === 'A' || type === 'AAAA' || type === 'CNAME') body.proxied = input.proxied === true;
-  const res = await transport(`${CF_API_BASE}/zones/${encodeURIComponent(zoneId)}/dns_records`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+): Promise<ActionData<'cloudflare/create-dns-record'>> {
+  // 欄の判定・本文・URL・要求・結果の読みは shared/api/cloudflare.ts の 1 つ (main も同じ関数)。
+  const record = checkDnsRecord(input);
+  const res = await createDnsRecordRequest(record, token, transport);
   await ensureOk(res, 'Cloudflare API');
-  const record = cfUnwrap((await res.json()) as CfWrap<{ id: string; name: string; type: string }>);
-  return { id: record.id, name: record.name, type: record.type };
+  return parseCreatedDnsRecord(cfUnwrap(await parseJsonBody(res, 'Cloudflare API')));
 }
 
 export interface PurgeCfCacheInput {
@@ -572,106 +412,39 @@ export async function purgeCloudflareCache(
   input: PurgeCfCacheInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; purged: 'all' | number }> {
-  const zoneId = typeof input.zoneId === 'string' ? input.zoneId.trim() : '';
-  if (!zoneId) throw new Error('zoneId は必須です');
-  const purgeEverything = input.purgeEverything === true;
-  const files = Array.isArray(input.files) ? input.files.filter((f): f is string => typeof f === 'string') : [];
-  if (!purgeEverything && files.length === 0) {
-    throw new Error('purgeEverything=true か、空でない files[] のいずれかが必要です');
-  }
-  const body = purgeEverything ? { purge_everything: true } : { files };
-  const res = await transport(`${CF_API_BASE}/zones/${encodeURIComponent(zoneId)}/purge_cache`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+): Promise<ActionData<'cloudflare/purge-cache'>> {
+  const purge = checkPurge(input);
+  const res = await purgeCacheRequest(purge, token, transport);
   await ensureOk(res, 'Cloudflare API');
-  const result = cfUnwrap((await res.json()) as CfWrap<{ id: string }>);
-  return { id: result.id, purged: purgeEverything ? 'all' : files.length };
+  return parsePurgeResult(cfUnwrap(await parseJsonBody(res, 'Cloudflare API')), purge);
 }
 
 // --- セキュリティ: VirusTotal scan-url (CORS → プロキシ) -------------------
 // HIBP の check-email-breach は「404 = 漏洩なし」を fetchViaProxy が
 // エラーとして扱い区別できないため未対応 (HIBP 対応プロキシが必要)。
 
-interface SecurityKeys {
-  hibp?: string;
-  vt?: string;
-}
+// 資格情報の解析は shared の 1 つ (main も同じ関数)。web-shim と検査が読むので名前はここからも出す。
+export { parseSecurityKeys } from '../../shared/api/security';
 
-/** Vault のセキュリティトークン(JSON {hibp,vt} か、生文字列なら HIBP キー)を解析。 */
-export function parseSecurityKeys(raw: string): SecurityKeys {
-  if (!raw) return {};
-  try {
-    const parsed = JSON.parse(raw) as { hibp?: unknown; vt?: unknown } | null;
-    // `parsed` 真偽 (null 弾き) は必須かつ可検 (テスト済) だが、`typeof === 'object'` を
-    // true 化しても JSON の真値プリミティブはプロパティ参照が undefined を返し例外を
-    // 投げず、結局 out={} になるため実行時は等価。型絞り込みのために残す。
-    // Stryker disable next-line ConditionalExpression
-    if (parsed && typeof parsed === 'object') {
-      const out: SecurityKeys = {};
-      if (typeof parsed.hibp === 'string' && parsed.hibp) out.hibp = parsed.hibp;
-      if (typeof parsed.vt === 'string' && parsed.vt) out.vt = parsed.vt;
-      return out;
-    }
-  } catch {
-    return { hibp: raw };
-  }
-  return {};
-}
-
-/** VirusTotal の URL 識別子 = base64url(url) (パディング無し)。 */
-function vtBase64(url: string): string {
-  // Stryker disable next-line Regex: base64 のパディング '=' は常に末尾のみのため
-  // `/=+$/` のアンカー有無 (`/=+/`) は等価。`+` を落とした `/=$/` は scan-url の id 照合
-  // テスト (パディングを含む url) で kill 済み。
-  return utf8ToBase64(url).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
-}
+/** HIBP は User-Agent 必須。ブラウザ版はプロキシ (Worker) が名乗り、ここでの値は封筒に載るだけ。 */
+const WEB_USER_AGENT = 'service-hub';
 
 export interface ScanUrlInput {
   url?: unknown;
 }
 
-const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
-  empty: 'url は必須です',
-  'too-long': 'url が長すぎます',
-  'not-a-url': 'url を URL として解釈できません',
-  'not-web': 'url は http:// または https:// で始まる必要があります',
-};
-
 export async function scanUrlVirusTotal(
   input: ScanUrlInput,
   vtKey: string,
   transport: Transport,
-): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
-  // main 側 (`clients/security.ts`) と同じ検証を同じ実装で通す。
-  // 以前はどちらも任意の文字列をそのまま投入していた。
-  const checked = validateScanUrl(input.url);
-  if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);
-  const url = checked.url;
-
-  // 解析を投入 (レポートを最新化)。
-  const submit = await transport('https://www.virustotal.com/api/v3/urls', {
-    method: 'POST',
-    headers: { 'x-apikey': vtKey, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ url }).toString(),
-  });
+): Promise<ActionData<'security/scan-url'>> {
+  // URL の判定・投入・id・レポートの読みは shared/api/security.ts の 1 つ (main も同じ関数)。
+  const url = checkScanUrl(input);
+  const submit = await submitVtUrlRequest(url, vtKey, transport);
   await ensureOk(submit, 'VirusTotal API');
-
-  const id = vtBase64(url);
-  const report = await transport(`https://www.virustotal.com/api/v3/urls/${encodeURIComponent(id)}`, {
-    method: 'GET',
-    headers: { 'x-apikey': vtKey },
-  });
+  const report = await fetchVtReportRequest(url, vtKey, transport);
   await ensureOk(report, 'VirusTotal API');
-  const data = (await report.json()) as {
-    data: { attributes: { last_analysis_stats: { harmless: number; malicious: number; suspicious: number; undetected: number } } };
-  };
-  const s = data.data.attributes.last_analysis_stats;
-  const positives = s.malicious + s.suspicious;
-  const total = s.harmless + s.malicious + s.suspicious + s.undetected;
-  return { url, positives, total, reportUrl: `https://www.virustotal.com/gui/url/${id}` };
+  return summarizeVtReport(url, await parseJsonBody(report, 'VirusTotal API'));
 }
 
 // --- セキュリティ: HIBP メール漏洩チェック (CORS → プロキシ) --------------
@@ -682,51 +455,67 @@ export interface CheckEmailBreachInput {
   email?: unknown;
 }
 
-export interface BreachRow {
-  name: string;
-  title: string;
-  date: string;
-  pwnCount: number;
-  dataClasses: string[];
-}
-
 export async function checkEmailBreach(
   input: CheckEmailBreachInput,
   hibpKey: string,
   transport: Transport,
-): Promise<{ email: string; breaches: BreachRow[] }> {
-  const email = typeof input.email === 'string' ? input.email.trim() : '';
-  if (!email) throw new Error('email は必須です');
-  const res = await transport(
-    'https://haveibeenpwned.com/api/v3/breachedaccount/' + encodeURIComponent(email) + '?truncateResponse=false',
-    {
-      method: 'GET',
-      headers: {
-        'hibp-api-key': hibpKey,
-        // User-Agent はプロキシ(worker)側で送られる。HIBP は UA 必須。
-        'User-Agent': 'service-hub',
-        Accept: 'application/json',
-      },
-    },
-  );
+): Promise<ActionData<'security/check-email-breach'>> {
+  // 空白落としと空の断りは shared (パス 285 —— 2026-08-22 に双子がずれて「誤った安心」を返した組)。
+  const email = checkBreachEmail(input);
+  const res = await checkEmailBreachRequest(email, hibpKey, WEB_USER_AGENT, transport);
   // 404 = この email はどの漏洩にも含まれない (正常)。
-  if (res.status === 404) return { email, breaches: [] };
+  if (res.status === HIBP_NO_BREACH_STATUS) return { email, breaches: [] };
   await ensureOk(res, 'HIBP API');
-  const data = (await res.json()) as {
-    Name: string;
-    Title: string;
-    BreachDate: string;
-    PwnCount: number;
-    DataClasses: string[];
-  }[];
+  // **でっち上げの漏洩を作らない** (パス 261) —— 要素ごとに欄を要求する (`hibpBreaches`)。
+  return { email, breaches: hibpBreaches(await parseJsonBody(res, 'HIBP API')) };
+}
+
+/**
+ * Microsoft Graph でメールを送る (ブラウザ版・パス 274)。
+ *
+ * ## なぜこれが無かったのか
+ *
+ * ブラウザ版には `send-mail` の枝が 1 つも無く、`web-shim` の既定 (「名指し
+ * していない action は `action_not_found`」) へ落ちていた。ところが**同じ
+ * フォームの隣の `create-event` は動いていた** —— `createCalendarEvent` が
+ * 在るので。押せる条件も同じ (`submitting` と欄の天井だけ) なので、
+ * 利用者から見ると「予定は作れるのにメールだけ送れない」形だった。
+ *
+ * 欄の判定と要求の組み立ては **`shared/api/microsoft365.ts` の 1 つ**を通る
+ * (main も同じ関数を呼ぶ)。ここが持つのは**ブラウザ版の流儀**だけ ——
+ * プロキシ経由の transport と、失敗した本文の読み方 (`ensureOk` が上限つきで
+ * 読んで伏字を通す)。202 は `res.ok` なので `ensureOk` は**本文を読まずに返る**。
+ */
+export async function sendMicrosoftMail(
+  input: GraphMailFields,
+  token: string,
+  transport: Transport,
+): Promise<ActionData<'microsoft-365/send-mail'>> {
+  const mail = checkMail(input);
+  const res = await sendGraphMail(mail, token, transport);
+  await ensureOk(res, 'Microsoft Graph');
+  return { ok: true, to: mail.to, subject: mail.subject };
+}
+
+/**
+ * Microsoft 365 予定作成 (Graph · プロキシ経由) —— **パス 275**。
+ *
+ * 送信 (202・本文なし) と違い **201 Created は作った予定を返す**ので、ここは
+ * 本文を読んで形を確かめる —— `{}` を「作成成功」として返すと `undefined` を
+ * 埋めた `webLink` が押せるリンクとして画面へ行く (パス 261 が 2 経路で実測した形)。
+ */
+export async function createMicrosoftEvent(
+  input: GraphEventFields,
+  token: string,
+  transport: Transport,
+): Promise<ActionData<'microsoft-365/create-event'>> {
+  const event = checkEvent(input);
+  const res = await createGraphEvent(event, token, transport);
+  await ensureOk(res, 'Microsoft Graph');
+  const o = requireObject(await parseJsonBody(res, 'Microsoft Graph'), 'Microsoft Graph');
   return {
-    email,
-    breaches: data.map((b) => ({
-      name: b.Name,
-      title: b.Title,
-      date: b.BreachDate,
-      pwnCount: b.PwnCount,
-      dataClasses: b.DataClasses,
-    })),
+    id: requireString(o, 'id', 'Microsoft Graph'),
+    subject: optionalString(o, 'subject') ?? event.subject,
+    webLink: optionalString(o, 'webLink') ?? '',
   };
 }

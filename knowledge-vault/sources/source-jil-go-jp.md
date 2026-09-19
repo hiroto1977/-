@@ -2,7 +2,7 @@
 title: "jil.go.jp"
 type: source-domain
 host: "jil.go.jp"
-cite_count: 8
+cite_count: 9
 tags:
   - source-domain
   - index
@@ -10,11 +10,12 @@ tags:
 
 # jil.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（公的 5 ・ 学術 2 ・ メディア 1）
+> [!info] 出典ドメイン索引 ・ 引用 **9 件**（公的 6 ・ 学術 2 ・ メディア 1）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-labor-contract-act|労働契約法]] — 労働政策研究・研修機構(JILPT)「労働契約法の制定」
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — 独立行政法人労働政策研究・研修機構（JILPT）.VPI職業興味検査（VocationalPreferenceInventory）解説ペー…
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — JILPTカスハラ対策の措置義務化解説
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — JILPT給与のデジタル振り込みを2023年4月から解禁
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 労働政策研究・研修機構解説

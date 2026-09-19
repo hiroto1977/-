@@ -37,6 +37,7 @@ aliases:
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 出典を共有
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
 - [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

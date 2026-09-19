@@ -32,16 +32,16 @@ aliases:
 - [Wikipedia: Issue selling — Dutton & Ashford, middle managers, attention management, change agents, packaging](https://en.wikipedia.org/wiki/Issue_selling) `リファレンス`
 
 ## 関連概念
-- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 語彙が近い
 - [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 語彙が近い
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 同じ思想家
 - [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 同じ思想家
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
-- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
-- [[mgmt-trust-integrative-model|組織的信頼統合モデル（メイヤー＝デイビス＝シューアマンの信頼モデル）]] — 同分野の近傍
+- [[mgmt-strategic-silence|組織における戦略的沈黙]] — 同分野の近傍
+- [[mgmt-executive-hubris|ヒューブリス仮説（経営者の過信）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

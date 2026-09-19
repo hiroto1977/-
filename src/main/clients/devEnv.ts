@@ -251,8 +251,26 @@ function realpathOrNull(p: string): string | null {
   }
 }
 
-function readFileOrNull(p: string): string | null {
+/**
+ * 読む前の大きさの上限 (パス 326)。
+ *
+ * ここが読むのは**アプリが書いていないファイル** (`package.json` / `.nvmrc` /
+ * `go.mod` / `.python-version` / `.tool-versions` / `.git/HEAD` と `.git` の ref) で、
+ * 大きさについて何の保証も無い。しかも読みは `readFileSync` —— **Electron の主スレッドを
+ * 止める**ので、巨大なファイルが 1 つ在るだけで画面ごと固まる (非同期の読みより重い)。
+ * 1 MiB はこれらの設定ファイルとしては桁違いに大きく、正当な物を落とさない。
+ */
+export const MAX_DEV_ENV_FILE_BYTES = 1 * 1024 * 1024;
+
+/**
+ * 読む前に `stat` で断る (パス 326)。`stat` が答えられない (存在しない / 権限が無い) 物も
+ * 読まない —— 読める保証が無い物を上限なしで開かないため。上限を超えたら「無かった」と
+ * 同じ `null` に倒す: 呼び出し側 7 か所はどれも `null` を「その情報は取れなかった」として
+ * 扱うので、断り方を増やす必要が無い。
+ */
+function readFileOrNull(p: string, maxBytes: number = MAX_DEV_ENV_FILE_BYTES): string | null {
   try {
+    if (fs.statSync(p).size > maxBytes) return null;
     return fs.readFileSync(p, 'utf8');
   } catch {
     return null;

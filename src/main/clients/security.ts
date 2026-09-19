@@ -24,23 +24,47 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
+import { hibpBreaches } from '../../shared/securityResponse';
+import {
+  HIBP_API,
+  HIBP_NO_BREACH_STATUS,
+  VIRUSTOTAL_API,
+  VT_URLS_PATH,
+  checkBreachEmail,
+  checkScanUrl,
+  hibpBreachedAccountPath,
+  hibpInit,
+  parseSecurityKeys,
+  summarizeVtReport,
+  vtReportInit,
+  vtReportPath,
+  vtSubmitInit,
+} from '../../shared/api/security';
 import {
   jsonFetch,
   limitedFetch,
   readCapped,
   FetchError,
   redactForMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
   type ActionContext,
   type ActionMap,
   type FetchContext,
 } from './types';
+import type { ActionData } from '../../shared/actionData';
+import type { NortonDetection } from '../../shared/nortonDetection';
 
 interface NortonStatus {
   installed: boolean;
   installPath: string;
   platform: string;
   details: string;
+  /**
+   * 「見た結果」と「見られなかった」を分ける (パス 165)。`installed` の真偽だけでは
+   * 「探して無かった」と「探せない」が同じ札になり、**ウイルス対策の有無について
+   * 見ていない端末に警告を出す**。文面と色は `shared/nortonDetection.ts` が持つ。
+   */
+  detection: NortonDetection;
 }
 
 export interface SecuritySnapshot {
@@ -55,36 +79,14 @@ export interface SecuritySnapshot {
   keysConfigured: { hibp: boolean; vt: boolean };
 }
 
-interface SecurityKeys {
-  hibp?: string; // Have I Been Pwned API key
-  vt?: string;   // VirusTotal API key
-}
+/*
+ * 資格情報の解析 (`parseSecurityKeys`) は `shared/api/security.ts` の 1 つ (ブラウザ版も同じ関数)。
+ * 検査 (`security.test.ts` / `dualBuildParity.test.ts`) が読むので名前はここからも出す。
+ */
+export { parseSecurityKeys };
 
-export function parseSecurityKeys(raw: string): SecurityKeys {
-  if (!raw) return {};
-  try {
-    const parsed = JSON.parse(raw);
-    // Stryker disable next-line ConditionalExpression: when mutated to
-    // `true`, the block is entered with parsed=null, accessing `.hibp`
-    // throws TypeError, the outer catch returns `{ hibp: raw }`. The
-    // null-input test asserts `{}` so the mutant SHOULD be killed, but
-    // Stryker's perTest coverage analysis appears to misattribute the
-    // mutation. Marked equivalent because the catch-and-rebrand path
-    // makes the function's *output* the same shape under the mutation
-    // for every input that hits this branch (parsed always becomes a
-    // {hibp: raw} envelope when the inner indexing fails).
-    if (parsed && typeof parsed === 'object') {
-      const out: SecurityKeys = {};
-      if (typeof parsed.hibp === 'string' && parsed.hibp) out.hibp = parsed.hibp;
-      if (typeof parsed.vt === 'string' && parsed.vt) out.vt = parsed.vt;
-      return out;
-    }
-  } catch {
-    // not JSON — treat as a single HIBP key for convenience
-    return { hibp: raw };
-  }
-  return {};
-}
+/** HIBP は User-Agent 必須。デスクトップ版は自分で名乗る (ブラウザ版は Worker が名乗る)。 */
+const USER_AGENT = 'service-hub-desktop';
 
 const NORTON_PATHS_BY_PLATFORM: Record<string, string[]> = {
   win32: [
@@ -143,6 +145,7 @@ export async function detectNorton(
       installPath: found,
       platform,
       details: `${path.basename(found)} を検出`,
+      detection: 'found',
     };
   }
   return {
@@ -150,6 +153,9 @@ export async function detectNorton(
     installPath: '',
     platform,
     details: nortonNotFoundDetails(platform),
+    // 候補のパスが 1 本も無い OS (linux) は「探して無かった」ではなく「製品が無い」。
+    // 判定は `NORTON_PATHS_BY_PLATFORM` の実物から導く (OS 名を写さない)。
+    detection: candidates.length === 0 ? 'unsupported' : 'absent',
   };
 }
 
@@ -172,36 +178,24 @@ export async function fetchSecuritySnapshot(ctx: FetchContext): Promise<Security
 
 // --- write-side actions --------------------------------------------------
 
-interface CheckEmailBreachPayload {
-  email: string;
-}
+/*
+ * 欄の判定・URL・ヘッダ・VirusTotal の id・検出数の集計は `shared/api/security.ts` の
+ * 1 つで、ブラウザ版も同じ関数を通る (パス 321)。ここに残るのは送る道
+ * (`limitedFetch` / `jsonFetch` —— 打ち切りと応答サイズの上限) と断りの運び方だけ。
+ */
 
-interface HibpBreach {
-  Name: string;
-  Title: string;
-  BreachDate: string;
-  PwnCount: number;
-  DataClasses: string[];
+export interface CheckEmailBreachPayload {
+  email: string;
 }
 
 async function checkEmailBreach(
   ctx: ActionContext,
-): Promise<{ email: string; breaches: { name: string; title: string; date: string; pwnCount: number; dataClasses: string[] }[] }> {
-  // **前後の空白を落とす。** ブラウザ版 (`saasWriteWeb.checkEmailBreach`) は
-  // 元から `.trim()` していて、こちらだけ生のまま送っていた (2026-08-22)。
-  // 貼り付けで空白が付いた住所をそのまま問い合わせると HIBP は 404 を返し、
-  // それを「どの漏洩にも含まれない」として表示してしまう ——
-  // **誤った安心**を返す側のずれなので、厳しい側ではなく正しい側へ揃える。
-  const raw = (ctx.payload as unknown as CheckEmailBreachPayload).email;
-  const email = typeof raw === 'string' ? raw.trim() : '';
-  if (!email) throw new Error('email is required');
+): Promise<ActionData<'security/check-email-breach'>> {
+  // 空白落としと空の断りは共有 (パス 285 —— 2026-08-22 にこちらだけ `.trim()` が無く、
+  // 空白付きの住所で HIBP が 404 を返し「どの漏洩にも含まれない」と表示した組)。
+  const email = checkBreachEmail(ctx.payload);
   const keys = parseSecurityKeys(ctx.token);
   if (!keys.hibp) throw new Error('HIBP API key not configured');
-
-  const url =
-    'https://haveibeenpwned.com/api/v3/breachedaccount/' +
-    encodeURIComponent(email) +
-    '?truncateResponse=false';
 
   // HIBP returns 404 when the email is not in any breach — treat that
   // as a normal "no breaches" response, not an error. `jsonFetch` は !ok を
@@ -209,132 +203,56 @@ async function checkEmailBreach(
   // ので `limitedFetch` + `readCapped` を通す (2026-08-23)。
   const hctx = { fetch: ctx.fetch, serviceId: 'security' };
   return limitedFetch(
-    url,
-    {
-      headers: {
-        'hibp-api-key': keys.hibp,
-        'User-Agent': 'service-hub-desktop',
-        Accept: 'application/json',
-      },
-    },
+    `${HIBP_API}${hibpBreachedAccountPath(email)}`,
+    hibpInit(keys.hibp, USER_AGENT),
     hctx,
     // HIBP は 404 が「どの侵害にも含まれない」という**正常応答**。
     // その枝は本文を読まないので、limitedFetch が捨てる。
     async (res) => {
-      if (res.status === 404) return { email, breaches: [] };
+      if (res.status === HIBP_NO_BREACH_STATUS) return { email, breaches: [] };
       if (!res.ok) {
         const body = await readCapped(res, hctx).catch(() => '');
-        throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
+        throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`, res.status, 'security');
       }
       const bodyText = await readCapped(res, hctx);
-      let data: HibpBreach[];
+      let parsed: unknown;
       try {
-        data = JSON.parse(bodyText) as HibpBreach[];
+        parsed = JSON.parse(bodyText);
       } catch {
         throw new FetchError('HIBP の応答が JSON ではありません', res.status, 'security');
       }
-      return {
-        email,
-        breaches: data.map((b) => ({
-          name: b.Name,
-          title: b.Title,
-          date: b.BreachDate,
-          pwnCount: b.PwnCount,
-          dataClasses: b.DataClasses,
-        })),
-      };
+      // **要素ごとに欄を要求する** (パス 261)。直す前は `as HibpBreach[]` で、
+      // `["x"]` / `[{}]` の応答が「名前も日付も件数も空の漏洩 1 件」になった
+      // (ブラウザ側で実測)。規則は `shared/securityResponse.ts` に 1 つ。
+      try {
+        return { email, breaches: hibpBreaches(parsed) };
+      } catch (e) {
+        throw new FetchError(e instanceof Error ? e.message : String(e), res.status, 'security');
+      }
     },
   );
 }
 
-interface ScanUrlPayload {
+export interface ScanUrlPayload {
   url: string;
 }
 
-interface VtUrlScanResponse {
-  data: { id: string; type: string };
-}
-
-interface VtUrlReportResponse {
-  data: {
-    id: string;
-    attributes: {
-      last_analysis_stats: {
-        harmless: number;
-        malicious: number;
-        suspicious: number;
-        undetected: number;
-      };
-      reputation?: number;
-    };
-  };
-}
-
-// vtBase64: `=+$` mutants equivalent for URL lengths we feed.
-// Stryker disable Regex
-function vtBase64(input: string): string {
-  // Node 22's Buffer.from silently uses utf8 for unknown encodings — the
-  // 'utf8' literal is unobservable for our inputs.
-  // Stryker disable next-line StringLiteral
-  return Buffer.from(input, 'utf8')
-    .toString('base64')
-    .replace(/=+$/, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
-}
-// Stryker restore Regex
-
-const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
-  empty: 'url は必須です',
-  'too-long': 'url が長すぎます',
-  'not-a-url': 'url を URL として解釈できません',
-  'not-web': 'url は http:// または https:// で始まる必要があります',
-};
-
 async function scanUrl(
   ctx: ActionContext,
-): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
-  const { url: rawUrl } = ctx.payload as unknown as ScanUrlPayload;
-  // payload は renderer から来る任意の値。ここは**第三者へ送る**入口なので、
-  // 送ってよい形かを先に確かめる (`src/shared/scanTarget.ts`)。
-  const checked = validateScanUrl(rawUrl);
-  if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);
-  const url = checked.url;
+): Promise<ActionData<'security/scan-url'>> {
+  // payload は renderer から来る任意の値。第三者へ送る入口なので、送ってよい形かを
+  // 先に確かめる (`shared/scanTarget.ts` —— 共有の `checkScanUrl` が呼ぶ)。
+  const url = checkScanUrl(ctx.payload);
   const keys = parseSecurityKeys(ctx.token);
   if (!keys.vt) throw new Error('VirusTotal API key not configured');
+  const fetchCtx = { fetch: ctx.fetch, serviceId: 'security' };
 
   // Submit URL for analysis (so the report is fresh).
-  await jsonFetch<VtUrlScanResponse>(
-    'https://www.virustotal.com/api/v3/urls',
-    {
-      method: 'POST',
-      headers: {
-        'x-apikey': keys.vt,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({ url }).toString(),
-    },
-    { fetch: ctx.fetch, serviceId: 'security' },
-  );
+  await jsonFetch<unknown>(`${VIRUSTOTAL_API}${VT_URLS_PATH}`, vtSubmitInit(url, keys.vt), fetchCtx);
 
-  // VirusTotal identifies a URL by base64url(sha) — but the simpler form
-  // is just base64url(url) which they accept on the GET endpoint.
-  const id = vtBase64(url);
-  const report = await jsonFetch<VtUrlReportResponse>(
-    `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(id)}`,
-    { headers: { 'x-apikey': keys.vt } },
-    { fetch: ctx.fetch, serviceId: 'security' },
-  );
-
-  const stats = report.data.attributes.last_analysis_stats;
-  const positives = stats.malicious + stats.suspicious;
-  const total = stats.harmless + stats.malicious + stats.suspicious + stats.undetected;
-  return {
-    url,
-    positives,
-    total,
-    reportUrl: `https://www.virustotal.com/gui/url/${id}`,
-  };
+  // VirusTotal identifies a URL by base64url(url) on the GET endpoint (`vtReportPath`).
+  const report = await jsonFetch<unknown>(`${VIRUSTOTAL_API}${vtReportPath(url)}`, vtReportInit(keys.vt), fetchCtx);
+  return summarizeVtReport(url, report);
 }
 
 export const ACTIONS: ActionMap = {

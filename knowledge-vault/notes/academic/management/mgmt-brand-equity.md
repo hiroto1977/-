@@ -34,6 +34,7 @@ aliases:
 - [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — 出典を共有
 - [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]] — 同分野の近傍
 - [[mgmt-double-jeopardy-law|ダブル・ジョパディの法則（Double Jeopardy Law／Ehrenberg 1990）——市場シェアの小さいブランドは買い手が少なく、しかもその買い手の忠誠度も低い]] — 同分野の近傍
+- [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

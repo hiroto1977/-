@@ -40,11 +40,30 @@ import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
   declaredLengthExceeds,
+  egressInit,
+  isRedirectResponse,
   readBodyWithCap,
+  redirectRefusal,
   withTimeout,
 } from '../../shared/httpLimits';
-import { redactSecrets, redactForMessage, safeErrorMessage } from '../../shared/redact';
-export { redactSecrets, redactForMessage, safeErrorMessage };
+import {
+  redactSecrets,
+  redactForMessage,
+  safeErrorMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
+  MAX_WARNING_BODY_CHARS,
+  MAX_MALFORMED_JSON_ECHO_CHARS,
+} from '../../shared/redact';
+/* 天井は `shared/redact.ts` の梯子が 1 つだけ持つ (パス 273)。main 側のクライアントは
+ * `./types` 経由でしか redact に触れないので、ここから再輸出する —— 数を写さない。 */
+export {
+  redactSecrets,
+  redactForMessage,
+  safeErrorMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
+  MAX_WARNING_BODY_CHARS,
+  MAX_MALFORMED_JSON_ECHO_CHARS,
+};
 
 /**
  * 全 SaaS クライアントが通る 1 本の口。**打ち切りと応答サイズの上限もここ。**
@@ -150,12 +169,18 @@ export async function limitedFetch<T>(
     async (signal) => {
       let res: Response;
       try {
-        res = await f(url, { ...init, signal });
+        res = await f(url, egressInit({ ...init, signal }));
       } catch (e) {
         if (signal.aborted) {
           throw new FetchError(`${ctx.serviceId} が時間内に応答しませんでした`, 0, ctx.serviceId);
         }
         throw e;
+      }
+
+      // 転送には追随しない (`httpLimits.ts` の規則)。送り先の関門は 1 ホップ目にしか無い。
+      if (isRedirectResponse(res)) {
+        await discardBody(res);
+        throw new FetchError(redirectRefusal(res, url, ctx.serviceId), res.status, ctx.serviceId);
       }
 
       // 宣言された長さが上限を超えていれば、本文を読む前に落とす (先手の門)。
@@ -195,6 +220,55 @@ export function readCapped(res: Response, ctx: LimitedFetchCtx): Promise<string>
   return readBodyWithCap(res, ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES, ctx.serviceId);
 }
 
+/**
+ * `!ok` を断り、本文を上限つきで読んで `JSON.parse` するところまで。
+ * **封筒の形はここでは見ない** (見る版と見ない版で分かれる直前)。
+ */
+async function readJsonBody(res: Response, ctx: LimitedFetchCtx, maxBytes: number): Promise<unknown> {
+  if (!res.ok) {
+    // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
+    const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
+    throw new FetchError(
+      `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
+      res.status,
+      ctx.serviceId,
+    );
+  }
+  const text = await readBodyWithCap(res, maxBytes, ctx.serviceId);
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new FetchError(`${ctx.serviceId} の応答が JSON ではありません`, res.status, ctx.serviceId);
+  }
+}
+
+/**
+ * **封筒を確かめず、読めた JSON をそのまま返す口** (2026-09-14 ・ パス 262)。
+ *
+ * `jsonFetch<T>` は「先頭は JSON のオブジェクト」を要求する。だが
+ * **呼び出し側が全部の形を自分で見る**経路が 1 つ在る: `cursor` は
+ * `CursorJsonFetch = (url, init) => Promise<unknown>` を契約として宣言し、
+ * 3 つの応答を `normalizeMembers` / `normalizeUsage` / `normalizeSpend` で
+ * 自分で正規化する (配列を直接返す形も、包んだ形も読む)。ここに
+ * オブジェクトの要求を掛けると、**その正規化が正しく扱える応答を断って**
+ * しまう。
+ *
+ * ブラウザ版も同じモジュールへ素の JSON を渡す (`web-shim` の
+ * `getProxyJsonFetch`) ので、この口を使うことで**両ビルドが同じ物を見る**。
+ *
+ * 新しい呼び出しを足すなら `jsonFetch<T>` が既定 ——
+ * こちらは「読む側が `unknown` を宣言している」ことが条件で、
+ * `__tests__/malformedResponseCensus.test.ts` が呼び出し元を数えている。
+ */
+export async function jsonFetchAny(
+  url: string,
+  init: RequestInit,
+  ctx: LimitedFetchCtx,
+): Promise<unknown> {
+  const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
+  return limitedFetch(url, init, ctx, (res) => readJsonBody(res, ctx, maxBytes));
+}
+
 export async function jsonFetch<T>(
   url: string,
   init: RequestInit,
@@ -202,21 +276,35 @@ export async function jsonFetch<T>(
 ): Promise<T> {
   const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
   return limitedFetch(url, init, ctx, async (res) => {
-    if (!res.ok) {
-      // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
-      const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
+    const parsed = await readJsonBody(res, ctx, maxBytes);
+    /*
+     * **封筒だけはここで確かめる** (2026-09-14 ・ パス 262)。
+     *
+     * `as T` は 1 つも確かめないので、`null` の本文は呼び出し側の
+     * `data.files ?? []` へそのまま渡り、`??` に届く前に
+     * `Cannot read properties of null (reading 'files')` で落ちていた ——
+     * **欄は守っているのに封筒を仮定していた**形で、14 のネットワーク
+     * クライアントのうち 12 がこれだった (実測)。文面は相手先も理由も
+     * 言わないので、画面には V8 の英語の型エラーがそのまま出る。
+     *
+     * 全呼び出しの型引数を数えた: `jsonFetch<T>` の T はどれもオブジェクト型で、
+     * **先頭が配列やスカラーの応答を待っている呼び出しは 1 つも無い**
+     * (`CfWrap<CfZone[]>` も封筒はオブジェクト)。唯一の例外 `cursor` は
+     * `unknown` を宣言して自分で正規化するので `jsonFetchAny` を使う ——
+     * 最初この分岐を作らずに全部へ掛け、cursor の既存の検査 3 件が
+     * **正しく落ちた** (包み方に依存しない読み手を断っていた)。
+     *
+     * **欄の中身はここでは見ない。** それはクライアントごとに違うので、
+     * 画面へ出る数字を作る所 (github の user・freee の companies) で
+     * 別に要求する。
+     */
+    if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
       throw new FetchError(
-        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+        `${ctx.serviceId} の応答が JSON のオブジェクトではありません`,
         res.status,
         ctx.serviceId,
       );
     }
-
-    const text = await readBodyWithCap(res, maxBytes, ctx.serviceId);
-    try {
-      return JSON.parse(text) as T;
-    } catch {
-      throw new FetchError(`${ctx.serviceId} の応答が JSON ではありません`, res.status, ctx.serviceId);
-    }
+    return parsed as T;
   });
 }

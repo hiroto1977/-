@@ -126,6 +126,10 @@ describe('runSecurityRange (red vs blue)', () => {
     expect(none.detectionRate).toBe(1);
     expect(none.falsePositives).toBe(0);
     expect(report.falsePositives).toBe(0);
+    // **「誤検知 0」は、無害ケースを実際に評価していて初めて主張になる。**
+    // この行が無いと、既定コーパスから無害ケースを全部消してもこの
+    // 「安全不変条件」は通る (空振り合格)。**不在を主張する検査には標本を添える。**
+    expect(report.benignChecked).toBeGreaterThan(0);
   });
 
   it('defeats every modeled evasion in the default corpus (no findings)', () => {
@@ -192,6 +196,11 @@ describe('runSecurityRange (red vs blue)', () => {
     expect(report.overallDetectionRate).toBe(0);
     expect(report.precision).toBe(0);
     expect(report.rounds.every((r) => r.detectionRate === 0)).toBe(true);
+    // 検知率・適合率が 0 に倒れるのは**安全な向き**である (何も測っていない
+    // コーパスは「危ない報告」として出る)。危ないのは `falsePositives` で、
+    // そちらは 0 が**目標達成**として緑に出る —— 下の describe を見よ。
+    expect(report.benignChecked).toBe(0);
+    expect(report.attacksChecked).toBe(0);
   });
 
   it('is reproducible (same input → same report)', () => {
@@ -205,5 +214,84 @@ describe('labels', () => {
   it('maps category and evasion to Japanese', () => {
     expect(categoryLabel('xss')).toContain('XSS');
     expect(evasionLabel('split')).toContain('分断');
+  });
+});
+
+/**
+ * **「誤検知 0 件」は、無害ケースを 1 件でも評価してから言うこと。**
+ *
+ * `RangeReport` の 3 つの集計値は、コーパスが空のとき**どちらの向きに倒れるかが
+ * それぞれ違う**:
+ *
+ * | 欄 | 空のとき | 画面での意味 | 危ないか |
+ * | --- | --- | --- | --- |
+ * | `overallDetectionRate` | `0` | 「検知率 0.0%」(琥珀) | **安全** —— 何も測っていないコーパスは危なく出る |
+ * | `precision` | `0` | 「適合率 0.0%」 | **安全** —— 同じ向き |
+ * | `falsePositives` | `0` | **「誤検知 0 件」(緑)** | **危険** —— 0 が**目標達成**として出る |
+ *
+ * 型の doc 自身が 誤検知 を「0 が必須目標」と書いており、`SecurityPage` は
+ * `falsePositives === 0` を緑で塗る。**無害ケースを 1 件も評価していなければ、
+ * それは達成ではなく未測定**である —— パス 68 が `chartSelfCheck` の
+ * `allPassed` に置いた床と同じ「空振り合格」の形が、1 ファイル隣に在った。
+ *
+ * ## 到達可能性 (正直に)
+ *
+ * 画面は `runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS)` を
+ * **非空のモジュール定数**で呼ぶので、**今日この経路では 0 件にならない。**
+ * ここで置くのは **export された契約側の床**である (呼ぶ側は任意のコーパスを
+ * 渡せる)。画面の分岐そのものは
+ * `pages/__tests__/falsePositiveScopeOnScreen.test.ts` が
+ * `DEFAULT_RANGE_CORPUS` を差し替えて留める。
+ *
+ * ## 上の検査自身が空振りしていた
+ *
+ * `catches every raw attack with zero false positives (safety invariant)` は
+ * `expect(report.falsePositives).toBe(0)` を「安全不変条件」と名乗っていたが、
+ * **既定コーパスから無害ケースを全部消しても通る**検査だった。
+ * `benignChecked > 0` を同じ検査に足して標本の存在を確かめる。
+ */
+describe('演習場 — 何件評価したかを公開する (0 件を「達成」と言わない)', () => {
+  it('★ 無害ケースが無いコーパスでは benignChecked が 0 (「誤検知 0」は未測定)', () => {
+    const attacksOnly: RangeCase[] = [
+      { id: 'a1', payload: '<script>alert(1)</script>', category: 'xss', note: '' },
+      { id: 'a2', payload: 'union select x', category: 'sql-injection', note: '' },
+    ];
+    const report = runSecurityRange(attacksOnly, ['none']);
+    // 誤検知は 0 —— **測っていないので 0 なのであって、達成ではない。**
+    expect(report.falsePositives).toBe(0);
+    expect(report.benignChecked).toBe(0);
+    // 攻撃側は測れている (片方だけが未測定という状態が数で出る)。
+    expect(report.attacksChecked).toBe(2);
+  });
+
+  it('★ 対照: 既定コーパスは無害ケースを実際に評価している (床が邪魔をしない)', () => {
+    const report = runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS);
+    const benign = DEFAULT_RANGE_CORPUS.filter((c) => c.category === 'benign');
+    expect(benign.length).toBeGreaterThan(0);
+    expect(report.benignChecked).toBe(benign.length * DEFAULT_EVASIONS.length);
+    // ここが緑の根拠 —— **評価したうえで** 0 件。
+    expect(report.falsePositives).toBe(0);
+  });
+
+  it('★ 評価数は集計の分母と一致する (別々に数えていない)', () => {
+    const report = runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS);
+    // 攻撃側: ラウンドごとの attacks の合計 = overallDetectionRate の分母。
+    const summed = report.rounds.reduce((acc, r) => acc + r.attacks, 0);
+    expect(report.attacksChecked).toBe(summed);
+    // 無害側: ラウンド数 × 無害件数 = falsePositives の分母
+    // (無害ケースは回避を適用せず毎ラウンド同じ判定を繰り返すため、
+    //  誤検知の累計と同じ数え方でなければ率が合わない)。
+    expect(report.benignChecked % report.rounds.length).toBe(0);
+    expect(report.benignChecked / report.rounds.length).toBe(
+      DEFAULT_RANGE_CORPUS.filter((c) => c.category === 'benign').length,
+    );
+  });
+
+  it('★ 回避ラウンドを増やせば無害の評価数も増える (ラウンド合計であること)', () => {
+    const corpus: RangeCase[] = [{ id: 'b', payload: 'hello world', category: 'benign', note: '' }];
+    expect(runSecurityRange(corpus, ['none']).benignChecked).toBe(1);
+    expect(runSecurityRange(corpus, ['none', 'case', 'whitespace']).benignChecked).toBe(3);
+    // 回避ラウンドが 0 本なら何も測っていない。
+    expect(runSecurityRange(corpus, []).benignChecked).toBe(0);
   });
 });

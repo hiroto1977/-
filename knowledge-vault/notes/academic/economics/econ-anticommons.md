@@ -34,11 +34,11 @@ aliases:
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]] — 同じ思想家
 - [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — 同じ思想家
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
 - [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
 - [[human-trolley-problem|トロッコ問題]] — 出典を共有
+- [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]] — 出典を共有
 - [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 

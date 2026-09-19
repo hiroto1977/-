@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 語彙が近い
 - [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 同じ思想家
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同じ思想家
-- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 出典を共有
 - [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同分野の近傍
 - [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同分野の近傍
 

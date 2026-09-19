@@ -44,7 +44,11 @@ X-Proxy-Auth: <optional-shared-secret>
 返す `169-254-169-254.sslip.io` / `localtest.me` 系と DNS rebinding 対策)、
 **(c) リダイレクト各ホップの再検査** (`redirect: 'manual'`。allowlist 済み
 ホストが `302 Location: http://169.254.169.254/` を返す経路を塞ぐ)。
-(b) と (c) はクライアント側では原理的に実装できない — 残余リスクは §3 参照。
+(b) はクライアント側では原理的に実装できない — 残余リスクは §3 参照。(c) はクライアント側も
+**追随しない**という形で持つ (`src/shared/httpLimits.ts` の `egressInit`・2026-09-17 パス 301。
+Worker のように各ホップを再検査して進むのではなく、転送が来た時点で止まって理由を言う。
+例外は `mode: 'no-cors'` の到達確認 1 形だけ —— Fetch 標準が no-cors + manual を network error と
+定めるため、資格情報を載せられず応答も読めないその形だけは 'follow' のまま · パス 304)。
 
 ```js
 // proxy-worker.js
@@ -384,7 +388,8 @@ function json(obj, status) {
   オープンプロキシになる
 - **DNS rebinding / 公開ワイルドカード DNS 対策はプロキシ側の責任**:
   クライアントは hostname 文字列しか見られない (`isPrivateOrReservedTarget` in
-  `src/renderer/network/proxy.ts` — DNS リゾルバを持たない)。したがって
+  `src/shared/privateTarget.ts`、`src/renderer/network/proxy.ts` が re-export —
+  DNS リゾルバを持たない)。したがって
   `169-254-169-254.sslip.io` / `customer1.169.254.169.254.nip.io` /
   `localtest.me` のような **公開名 → 私設 IP** や、同じ名前を
   1 回目=公開 IP / 2 回目=127.0.0.1 と返す rebinding は client 側では

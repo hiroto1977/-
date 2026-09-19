@@ -1,3 +1,4 @@
+import { countChars } from './inputCeiling';
 /**
  * `emotions` の action が受け取る入力の上限 —— **両ビルドで 1 つだけ持つ。**
  *
@@ -78,3 +79,118 @@ export const MAX_MOODS = 365;
 
 /** 分析結果の保持件数 (新しいものを先頭に積む)。 */
 export const MAX_ANALYSES = 50;
+
+/**
+ * 分析レコードに残す本文の抜粋の長さ (2026-09-12 · パス 174)。
+ *
+ * **両ビルドが 80 を別々に写していた** —— `main/clients/emotions.ts` と
+ * `renderer/data/emotionsWeb.ts` がどちらも `text.slice(0, 80)`。
+ * 片方だけ動かすと、同じ分析がデスクトップとブラウザで別の長さの抜粋を保存する
+ * (保存したレコードに残るので、後から見分けが付かない)。
+ */
+export const MAX_ANALYSIS_EXCERPT_CHARS = 80;
+
+/*
+ * ## 一覧から本文を組む所の天井 (2026-09-12 · パス 156)
+ *
+ * パス 112 は「AI への入力の天井を、画面が共有定数から読む」で閉じたつもりだった。
+ * 実測すると、**`MAX_ANALYZE_TEXT_CHARS` を読んでいる画面は `EmotionsPage` 1 つだけ**で、
+ * `analyze-text` を呼ぶ画面は 3 つ在った:
+ *
+ * | 画面 | 本文の作り | 天井 |
+ * |---|---|---|
+ * | `EmotionsPage` | 利用者が打つ textarea | `maxLength={MAX_ANALYZE_TEXT_CHARS}` |
+ * | `GmailPage` | 受信スレッドの件名と送信者を全件 join | **無し** |
+ * | `SlackPage` | チャンネル名と purpose を全件 join | **無し** |
+ *
+ * 後ろ 2 つは**利用者が長さを決められない** —— スレッドやチャンネルの数で決まる。
+ * 超えると `analyze-text` は断る (`text exceeds 5000 chars`) が、それは英語の
+ * 生の例外文が alert に出るだけで、**利用者に打てる手が無い** (一覧を減らせない)。
+ * パス 66 の形 (「3 か所のうち 1 か所しか直していなかった」) である。
+ *
+ * ## 方針 —— 先頭から入るぶんだけ送り、何件外したかを**押す前に**言う
+ *
+ * 途中を飛ばして詰めることはしない。分析が読むのは一覧の**先頭からの連続した一部**で、
+ * 間に穴が開くと「受信トレイを見た」という主張が実物と違う物になる。
+ * パス 105 (助言が銘柄を黙って 25 件に切っていた) と同じ扱い ——
+ * **切るのはよいが、切ったと言う。**
+ */
+
+/** 一覧から組んだ本文と、その素性 (何件入って何件外れたか)。 */
+export interface AnalyzeTextBatch {
+  /** 送る本文 (行を `\n` で連結)。入る行が無ければ空文字。 */
+  readonly text: string;
+  /** 先頭から入った行数。 */
+  readonly included: number;
+  /** 入らなかった行数 (末尾側)。 */
+  readonly omitted: number;
+}
+
+/**
+ * 行の一覧を、上限に収まる本文へ詰める。**先頭から連続して**入れ、入らなくなったら止める。
+ *
+ * 1 行目だけで上限を超える場合は `included: 0` / `text: ''` を返す ——
+ * その行を切って送るより、**送れないと言う**方が正しい (切った本文を分析させると
+ * 途中で切れた件名が分析結果に混ざる)。呼び出し側は `included === 0` で押せなくする。
+ */
+export function packAnalyzeText(
+  rows: readonly string[],
+  max: number = MAX_ANALYZE_TEXT_CHARS,
+): AnalyzeTextBatch {
+  const taken: string[] = [];
+  let length = 0;
+  for (const row of rows) {
+    /*
+     * **予算は文字で積む** (2026-09-14 · パス 254)。
+     *
+     * 2026-09-14 まで `row.length` —— **UTF-16 のコード単位**だった。門の側
+     * (`main/clients/emotions.ts` と `web-shim.ts`) はどちらも
+     * `countChars(text) > MAX_ANALYZE_TEXT_CHARS` と**文字**で測るので、
+     * 予算だけが別の単位で組まれていた。
+     *
+     * 実測 (絵文字 10 個の件名 600 行 —— Gmail の件名は絵文字を含みやすい):
+     *
+     * |  | 入った行 | 外した行 | 送った文字数 |
+     * | --- | --- | --- | --- |
+     * | `.length` (直す前) | 238 | **362** | **2,617** |
+     * | `countChars` (今) | 454 | 146 | 4,993 |
+     *
+     * 門は 5,000 **文字**まで受けるのに、2,617 字送った時点で 362 行を落とし、
+     * 画面は「1 回に送れるのは 5000 字までのため、残り 362 件は含みません」と
+     * **成り立たない理由**を述べていた。**述べる数と、守る数は、同じ単位で
+     * 数えなければならない** (パス 195)。
+     *
+     * 向きは安全側 (コード単位 ≥ 文字数なので、門を超える本文は作れない) ——
+     * 壊れていたのは送信量ではなく**分析の網羅と断りの真偽**である。
+     *
+     * 2 行目以降は連結の `\n` も数える。ここを忘れると行数ぶんだけ上限を超える
+     * (`\n` は 1 文字 = 1 コード単位なので、単位を変えても 1 のまま)。
+     */
+    const cost = countChars(row) + (taken.length === 0 ? 0 : 1);
+    if (length + cost > max) break;
+    taken.push(row);
+    length += cost;
+  }
+  return { text: taken.join('\n'), included: taken.length, omitted: rows.length - taken.length };
+}
+
+/**
+ * 押す前に画面へ出す断り。全部入るなら `null` (述べることが無い)。
+ *
+ * **件数と理由の両方**を言う —— 「先頭 12 件だけ送ります」だけでは、
+ * なぜそうなるのかが読めない。
+ */
+export function analyzeBatchNote(
+  batch: AnalyzeTextBatch,
+  max: number = MAX_ANALYZE_TEXT_CHARS,
+): string | null {
+  if (batch.omitted === 0) return null;
+  const total = batch.included + batch.omitted;
+  if (batch.included === 0) {
+    return `1 件目だけで ${max} 字を超えるため、分析に送れる行がありません。`;
+  }
+  return (
+    `${total} 件のうち、先頭 ${batch.included} 件だけを分析に送ります`
+    + ` (1 回に送れるのは ${max} 字までのため、残り ${batch.omitted} 件は含みません)。`
+  );
+}

@@ -35,7 +35,7 @@ aliases:
 - [[human-moral-foundations-haidt|道徳基盤理論——多元的道徳直観の進化的・文化的基盤]] — 同じ思想家
 - [[infosoc-digital-identity|デジタルアイデンティティ]] — 出典を共有
 - [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — 出典を共有
-- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同分野の近傍
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティング（ワイザー）——コンピュータが環境に溶け込み意識されずに使われる「消えるコンピュータ」の構想と、IoT・アンビエント環境への展開]] — 同分野の近傍
 - [[infosoc-online-disinhibition|オンライン脱抑制効果]] — 同分野の近傍
 
 ## 関連

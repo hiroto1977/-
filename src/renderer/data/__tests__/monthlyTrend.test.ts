@@ -31,9 +31,12 @@ describe('monthlyTrendSeries', () => {
     expect(series[0]!.operatingProfit).toBe(500);
   });
 
-  it('reports a zero margin and null growth when revenue is zero', () => {
+  // **同じ行の 2 欄が「割れない」を同じ答え方で返す。** 2026-09-08 までこの見本は
+  // 成長率に null を求めつつ営業利益率には 0 を求めており、**1 つの検査が
+  // 1 つの条件に 2 通りの答えを固定していた。**
+  it('nulls both the margin and the growth when revenue is zero', () => {
     const series = monthlyTrendSeries([row('2026-04', 0, 0, 100), row('2026-05', 0, 0, 100)]);
-    expect(series[0]!.operatingMarginPct).toBe(0);
+    expect(series[0]!.operatingMarginPct).toBeNull(); // 売上 0 → 割れない
     expect(series[1]!.revenueGrowthPct).toBeNull(); // prior revenue 0 → null
   });
 

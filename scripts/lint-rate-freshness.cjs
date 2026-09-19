@@ -42,6 +42,11 @@ const CONST_NAME = 'SOCIAL_INSURANCE_RATE_FISCAL_YEAR';
  * 実測 (2026-08-23): 2割特例の適用期限は注記と画面の文言にはあったが、
  * **判定に使っている場所が無かった**。`taxConsumptionBusiness.ts` は期間を
  * 見ずに `best = 'twenty-percent'` を選びうるので、期限後も勧め続ける。
+ * 2026-09-06 に繋いだ (`twentyPercentMeasureStatus()` が課税期間の規則で
+ * 3 値に落とし、言い切れる `ended` でだけ最有利の候補から外す)。
+ * **それでもこの門は要る** —— 期限が来たら、経過措置そのものを画面から
+ * 下げるのか参考として残すのかを人が決める必要があり、コードは
+ * 「勧めない」までしか自分で決められない。
  *
  * 料率の側は 2 年度分放置されてから見つかった。**こちらは期限が来る前に
  * 鳴らす** —— 過ぎてから直すのでは、その間に出した数字が既に誤っている。
@@ -53,14 +58,126 @@ const DATED_MEASURES = [
     label: 'インボイス 2割特例 (小規模事業者の税額控除に関する経過措置)',
     source: 'src/shared/taxConsumption.ts',
     constName: 'TWENTY_PERCENT_MEASURE_END',
-    // 期限の前にこれだけ猶予があれば警告に留める。過ぎたら失敗。
+    // 期限の前にこれだけ猶予があれば警告に留める。
+    warnWithinDays: 180,
+    /*
+     * **期限の後の帯** (2026-09-10 · パス 141)。2割特例は「期限の属する課税期間まで」なので、期限の翌日から
+     * 1 年は今日を含む課税期間が期限内の日を含みうる (twentyPercentMeasureStatus の period-dependent)。
+     * その帯では画面が条件を書いて選ばせるので、落とさずに警告に留める。帯を過ぎたら落とす —— 2割特例の
+     * 行と定数を外す番。後継は決まっている: 法人は無し、個人事業者は 3割特例 (下の項)。
+     */
+    graceDays: 364,
+    graceWhy: '期限の翌日から 1 年は今日を含む課税期間が期限内の日を含みうる (twentyPercentMeasureStatus の period-dependent の帯)',
+    how:
+      '法人は令和 8 年 9 月 30 日を含む課税期間で終了 (後継なし)、個人事業者は令和 9 年分・令和 10 年分の 3割特例へ ' +
+      '(2026-09-10 に実装済み: thirtyPercentMeasureStatus / calcThirtyPercentTax)。猶予帯 (期限後 1 年) を過ぎたら ' +
+      '2割特例の行 (FinancialAnalysis / TaxPage ⑩) と TWENTY_PERCENT_MEASURE_END を外し、3割特例だけを残してください。' +
+      '国税庁 https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm',
+  },
+  {
+    label: 'インボイス 3割特例 (個人事業者の令和 9 年分・令和 10 年分・2割特例の後継)',
+    source: 'src/shared/taxConsumption.ts',
+    constName: 'THIRTY_PERCENT_MEASURE_END',
     warnWithinDays: 180,
     how:
-      '適用期限を過ぎた特例を勧め続けていないか確認してください ' +
-      '(`taxConsumptionBusiness.ts` は期間を見ずに best を選びます)。' +
-      '国税庁 https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm',
+      '令和 10 年分の後に後継の措置が無ければ thirtyPercentMeasureStatus が ended を返し、画面は勧めません。' +
+      '令和 11 年度の税制改正大綱 (財務省) と国税庁のインボイス特集で延長・後継の有無を確かめ、あれば ' +
+      'THIRTY_PERCENT_MEASURE_END を進め、無ければ 3割特例の行を外してください。',
+  },
+  {
+    /*
+     * **安全の主張にも期限が要る** (2026-09-09 · パス 139)。Ollama の脆弱性の台帳は
+     * 「いつ照合したか」を持ち、その日から半年で見直す。2026-05-12 の「未パッチ」の
+     * 固定文は日付が無かったので、修正 (0.17.1) が出た後も 4 か月間そのまま刷られた。
+     */
+    label: 'Ollama 既知脆弱性の台帳の再照合 (src/shared/ollama.ts OLLAMA_ADVISORIES)',
+    source: 'src/shared/ollama.ts',
+    constName: 'OLLAMA_ADVISORIES_REVIEW_BY',
+    warnWithinDays: 60,
+    how:
+      'GitHub Advisory Database (github.com/advisories?query=ollama) と NVD で新しい CVE を確認し、' +
+      'OLLAMA_ADVISORIES に足して (修正版が出た項目は fixedIn を埋めて) MIN_SAFE_VERSION を台帳の最大に揃え、' +
+      'OLLAMA_ADVISORIES_VERIFIED_ON を今日・OLLAMA_ADVISORIES_REVIEW_BY を半年後に進めてください ' +
+      '(docs/OLLAMA_SECURITY.md の床と日付は lint:docs が照合します)。',
+  },
+  {
+    /*
+     * **2 年・3 年おきに延長されてきた措置** (2026-09-09 · パス 140)。令和 8 年度改正 (2026-04-01 施行) で
+     * 上限 30 万 → 40 万円・従業員 500 → 400 人・期限 2029-03-31 になったのに、コードは 5 か月間 30 万円の
+     * ままで、期限そのものを持っていなかった —— 定数さえ在ればこの台帳が鳴らす。
+     */
+    label: '少額減価償却資産の特例 (措法 67 の 5・中小企業者等の即時償却)',
+    source: 'src/shared/depreciation.ts',
+    constName: 'SME_MEASURE_END',
+    warnWithinDays: 180,
+    how:
+      '翌年度の税制改正大綱 (財務省) と国税庁 No.5408 で延長の有無・取得価額の上限・従業員数要件を確かめ、' +
+      'SME_MEASURE_END / SME_UNIT_LIMIT / SME_EMPLOYEE_CAP (src/shared/depreciation.ts) と ' +
+      'complianceKnowledge.ts の tax-small-amount-depreciation を同時に進めてください ' +
+      '(延長されなければ smeMeasureWindow() が measure-ended を返し、画面は特例を勧めません)。',
+  },
+  {
+    /*
+     * **同じ日程が 6 か所に手で書かれ、2 か所が改正前のまま残っていた** (2026-09-10 · パス 142)。
+     * 定数を 1 つにしたので、ここに載せれば終わりの 180 日前から鳴る。
+     */
+    label: 'インボイス 免税事業者等からの課税仕入れの経過措置 (段階的に縮小)',
+    source: 'src/shared/invoiceTransition.ts',
+    constName: 'INVOICE_TRANSITION_END',
+    warnWithinDays: 180,
+    how:
+      '延長・再改正の有無を国税庁のインボイス特集と翌年度の税制改正大綱 (財務省) で確かめ、' +
+      'INVOICE_TRANSITION_STAGES (src/shared/invoiceTransition.ts) の段を進めてください。延長されなければ ' +
+      'invoiceTransitionRateOn() が null を返し、画面は「経過措置は終了（控除できません）」と書きます ' +
+      '(文面と知識台帳は表から組む / 突き合わせるので、ここだけ直せば全部が動きます)。',
+  },
+  {
+    label: '中小企業投資促進税制 (措法 42 の 6)',
+    source: 'src/shared/taxCalc.ts',
+    constName: 'INVESTMENT_PROMOTION_MEASURE_END',
+    warnWithinDays: 180,
+    how:
+      '翌年度の税制改正大綱 (財務省) と国税庁 No.5433 で延長の有無を確かめ、INVESTMENT_PROMOTION_MEASURE_END ' +
+      '(src/shared/taxCalc.ts) を進めるか、延長されなければ節税制度カタログから下げてください。',
   },
 ];
+
+/**
+ * **台帳の母集団を機械で数える** (2026-09-09 · パス 140)。
+ *
+ * 台帳は手で足す物で、足し忘れた期限は誰も見ない。そこで `src/shared` の期限の定数 —— 名前が
+ * `_END` / `_UNTIL` / `_DEADLINE` / `_REVIEW_BY` / `_EXPIRES` で終わる `export const X = 'YYYY-MM-DD'` ——
+ * を全部拾い、台帳に無ければ落とす。過去の日付を表す名前 (`_VERIFIED_ON` / `_STEP_DATE` / `_SINCE` /
+ * `_FROM`) は期限ではないので外。**1 件も見つからなければ走査の故障**として落とす (0 件で通る門は門でない)。
+ */
+const DEADLINE_NAME = /^[A-Z0-9_]+_(END|UNTIL|DEADLINE|REVIEW_BY|EXPIRES)$/;
+const DATED_CONST = /export const ([A-Z0-9_]+)\s*=\s*'(\d{4}-\d{2}-\d{2})'/g;
+
+/** 期限の名前を持つ日付定数の名前を列挙する。 */
+function deadlineConstsIn(text) {
+  const out = [];
+  for (const m of text.matchAll(DATED_CONST)) if (DEADLINE_NAME.test(m[1])) out.push(m[1]);
+  return out;
+}
+
+/** `[{ file, text }]` のうち台帳に無い期限定数を `file::NAME` で返す。 */
+function unledgeredDeadlines(files, ledger = DATED_MEASURES) {
+  const known = new Set(ledger.map((m) => `${m.source}::${m.constName}`));
+  const out = [];
+  for (const { file, text } of files) {
+    for (const name of deadlineConstsIn(text)) if (!known.has(`${file}::${name}`)) out.push(`${file}::${name}`);
+  }
+  return out;
+}
+
+/** `src/shared` の実装ファイル (検査は除く) を読む。 */
+function sharedSources() {
+  const dir = path.join(REPO_ROOT, 'src', 'shared');
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'))
+    .map((f) => ({ file: `src/shared/${f}`, text: fs.readFileSync(path.join(dir, f), 'utf8') }));
+}
 
 /** `export const NAME = 'YYYY-MM-DD';` を読む。読めなければ null。 */
 function declaredDate(src, constName) {
@@ -68,12 +185,15 @@ function declaredDate(src, constName) {
   return m === null ? null : m[1];
 }
 
-/** 期限つき措置の判定。`days` は期限までの残日数 (過ぎていれば負)。 */
-function evaluateDated(dateStr, now, warnWithinDays) {
+/**
+ * 期限つき措置の判定。`days` は期限までの残日数 (過ぎていれば負)。
+ * `graceDays` は期限の後の帯 (その中は `grace` = 警告で落とさない。既定 0 = 翌日から失敗)。
+ */
+function evaluateDated(dateStr, now, warnWithinDays, graceDays = 0) {
   if (dateStr === null) return { level: 'error', days: null };
   const end = new Date(`${dateStr}T23:59:59Z`);
   const days = Math.floor((end.getTime() - now.getTime()) / 86400000);
-  if (days < 0) return { level: 'error', days };
+  if (days < 0) return { level: -days <= graceDays ? 'grace' : 'error', days };
   if (days <= warnWithinDays) return { level: 'warn', days };
   return { level: 'ok', days };
 }
@@ -119,6 +239,12 @@ function selfTest() {
     ['期限当日はまだ使える (境界)', '2026-09-30', new Date('2026-09-30T12:00:00Z'), 180, 'warn'],
     ['翌日は失敗 (境界)', '2026-09-30', new Date('2026-10-01T12:00:00Z'), 180, 'error'],
     ['日付が読めなければ失敗', null, new Date('2026-08-23T00:00:00Z'), 180, 'error'],
+    // 期限の後の帯 (2割特例: 期限の翌日から 1 年は課税期間が期限内の日を含みうる)。
+    ['猶予帯の中なら grace (翌日)', '2026-09-30', new Date('2026-10-01T12:00:00Z'), 180, 'grace', 364],
+    ['猶予帯の最終日は grace (境界)', '2026-09-30', new Date('2027-09-29T12:00:00Z'), 180, 'grace', 364],
+    ['猶予帯の翌日は失敗 (境界)', '2026-09-30', new Date('2027-09-30T12:00:00Z'), 180, 'error', 364],
+    ['猶予が 0 なら翌日から失敗 (既定)', '2026-09-30', new Date('2026-10-01T12:00:00Z'), 180, 'error', 0],
+    ['猶予帯があっても期限の前は warn のまま', '2026-09-30', new Date('2026-09-01T12:00:00Z'), 180, 'warn', 364],
   ];
 
   console.log('self-test:');
@@ -128,8 +254,8 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${want})`);
   }
-  for (const [name, dateStr, now, within, want] of datedCases) {
-    const got = evaluateDated(dateStr, now, within).level;
+  for (const [name, dateStr, now, within, want, grace = 0] of datedCases) {
+    const got = evaluateDated(dateStr, now, within, grace).level;
     const ok = got === want;
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${name}: ${got} (期待 ${want})`);
@@ -143,6 +269,28 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${m.constName} をコードから読める: ${got ?? '読めない'}`);
   }
+
+  // --- 台帳の母集団の対照 (標本) --- 台帳に無い期限定数は拾い、期限でない名前と台帳済みは拾わない。
+  const ledger = [{ source: 'src/shared/x.ts', constName: 'KNOWN_END' }];
+  const coverageCases = [
+    ['台帳に無い _END は拾う', "export const FOO_MEASURE_END = '2027-01-01';", ['src/shared/x.ts::FOO_MEASURE_END']],
+    ['台帳に無い _REVIEW_BY は拾う', "export const BAR_REVIEW_BY = '2027-01-01';", ['src/shared/x.ts::BAR_REVIEW_BY']],
+    ['台帳済みは拾わない', "export const KNOWN_END = '2027-01-01';", []],
+    ['過去の日付の名前 (_VERIFIED_ON / _STEP_DATE) は期限ではない', "export const A_VERIFIED_ON = '2026-09-09';\nexport const B_STEP_DATE = '2026-04-01';", []],
+    ['日付でない値・小文字の名前は拾わない', "export const foo_end = '2027-01-01';\nexport const BAZ_END = 'later';", []],
+    ['同じファイルで別のファイルの台帳項目は拾う (file::NAME で照合)', "export const KNOWN_END = '2027-01-01';", ['src/shared/y.ts::KNOWN_END'], 'src/shared/y.ts'],
+  ];
+  for (const [label, text, want, file = 'src/shared/x.ts'] of coverageCases) {
+    const got = unledgeredDeadlines([{ file, text }], ledger);
+    const ok = JSON.stringify(got) === JSON.stringify(want);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${JSON.stringify(got)}`);
+  }
+  // 実物の走査が生きている (台帳の定数を自分で見つける) ことも見る。
+  const found = sharedSources().flatMap((f) => deadlineConstsIn(f.text));
+  const liveOk = DATED_MEASURES.every((m) => found.includes(m.constName));
+  if (!liveOk) failed += 1;
+  console.log(`  ${liveOk ? '✓' : '✗'} 走査が台帳の定数 ${DATED_MEASURES.length} 件を src/shared で見つける (${found.length} 件)`);
 
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
@@ -163,7 +311,7 @@ function main(argv) {
   // **料率の結果に関わらず期限も見る。** 片方で早期 return すると、
   // もう片方が黙って測られなくなる。
   console.log(`期限つき措置 ${DATED_MEASURES.length} 件:`);
-  const datedFailures = checkDatedMeasures(now);
+  const datedFailures = checkDatedMeasures(now) + checkLedgerCoverage();
 
   if (declared === null) {
     console.error(`❌ ${SOURCE} に ${CONST_NAME} がありません`);
@@ -192,13 +340,38 @@ function main(argv) {
   return 1;
 }
 
+/**
+ * 台帳の母集団: `src/shared` の期限定数が全部台帳に在るか。戻り値は失敗した件数。
+ * 走査が 1 件も見つけなければ (台帳の定数さえ見えない) 走査の故障として落とす。
+ */
+function checkLedgerCoverage() {
+  const files = sharedSources();
+  const found = files.flatMap((f) => deadlineConstsIn(f.text));
+  if (found.length === 0) {
+    console.error('❌ src/shared に期限の定数が 1 件も見つかりません (走査の不具合を疑ってください)');
+    return 1;
+  }
+  const missing = unledgeredDeadlines(files);
+  if (missing.length === 0) {
+    console.log(`  ✅ 期限の定数 ${found.length} 件はすべて台帳に在ります`);
+    return 0;
+  }
+  console.error(
+    `❌ 台帳 (DATED_MEASURES) に無い期限の定数が ${missing.length} 件:\n` +
+      missing.map((m) => `   - ${m}`).join('\n') +
+      '\n   期限なら scripts/lint-rate-freshness.cjs の DATED_MEASURES に (label / source / constName / warnWithinDays / how) を足し、' +
+      '期限でないなら _END / _UNTIL / _DEADLINE / _REVIEW_BY / _EXPIRES で終わらない名前にしてください。',
+  );
+  return missing.length;
+}
+
 /** 期限つき措置を全部見る。戻り値は失敗した件数。 */
 function checkDatedMeasures(now) {
   let failed = 0;
   for (const m of DATED_MEASURES) {
     const src = fs.readFileSync(path.join(REPO_ROOT, m.source), 'utf8');
     const dateStr = declaredDate(src, m.constName);
-    const { level, days } = evaluateDated(dateStr, now, m.warnWithinDays);
+    const { level, days } = evaluateDated(dateStr, now, m.warnWithinDays, m.graceDays ?? 0);
     if (dateStr === null) {
       console.error(`❌ ${m.source} に ${m.constName} がありません`);
       failed += 1;
@@ -215,6 +388,13 @@ function checkDatedMeasures(now) {
       );
       continue;
     }
+    if (level === 'grace') {
+      console.warn(
+        `::warning::${m.label} の適用期限 (${dateStr}) を ${-days} 日過ぎましたが、猶予帯 (期限後 ${m.graceDays} 日: ${m.graceWhy}) の中です。` +
+          `${m.how} 帯を過ぎると CI が落ちます`,
+      );
+      continue;
+    }
     console.error(
       `❌ ${m.label} の適用期限を過ぎています (${dateStr} / ${-days} 日経過)。\n` +
         '   期限つきの措置は、期限を境に「正しかったもの」が誤りになります。\n' +
@@ -225,7 +405,7 @@ function checkDatedMeasures(now) {
   return failed;
 }
 
-module.exports = { evaluate, fiscalYear, declaredFiscalYear, evaluateDated, declaredDate, DATED_MEASURES };
+module.exports = { evaluate, fiscalYear, declaredFiscalYear, evaluateDated, declaredDate, DATED_MEASURES, deadlineConstsIn, unledgeredDeadlines };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

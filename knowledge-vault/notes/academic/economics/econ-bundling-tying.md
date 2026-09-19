@@ -39,7 +39,7 @@ aliases:
 - [[econ-experience-goods-nelson|探索財・経験財・信用財——品質評価の時点による財の三分類]] — 同じ思想家
 - [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — 同じ思想家
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同じ思想家
-- [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]] — 同じ思想家
+- [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

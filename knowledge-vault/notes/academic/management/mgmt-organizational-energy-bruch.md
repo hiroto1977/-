@@ -31,8 +31,11 @@ aliases:
 - [Bruch, H. & Ghoshal, S. (2003) Beware the Busy Manager — Harvard Business Review](https://hbr.org/2003/03/beware-the-busy-manager) `メディア`
 
 ## 関連概念
+- [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — 同じ思想家
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同分野の近傍
-- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同分野の近傍
+- [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 同分野の近傍
+- [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同分野の近傍
+- [[mgmt-theory-of-constraints|制約理論（TOC）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

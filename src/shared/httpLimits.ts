@@ -76,6 +76,100 @@ export const MAX_HTTP_RESPONSE_BYTES = 10 * 1024 * 1024;
 export const DEFAULT_HTTP_TIMEOUT_MS = 30_000;
 
 /**
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * 送り先の関門は 3 種在る —— `lint:network-targets` (送り先が変数の通信の台帳)・
+ * `docs/ARCHITECTURE.md` §3.3 (外部接続先ホストの一覧)・各 endpoint の検証
+ * (`atlassianSite` / `aiEndpoint` / `proxyEndpoint` / `scanTarget` …)。
+ * どれも**最初の 1 ホップ**しか見ていない。`fetch` の既定は `redirect: 'follow'`
+ * で、相手が `302 Location: http://169.254.169.254/` を返せば、Node (undici) は
+ * **その先を一切検査せずに**取りに行く。つまり台帳が「ここへしか出ない」と
+ * 述べる主張は、相手の応答 1 つで偽になる。
+ *
+ * この規則は既にリポジトリの中に **2 か所**在った:
+ *   - 利用者が配る Worker (`docs/PROXY_EXAMPLE.md` §(c)) は `redirect: 'manual'` で
+ *     ホップごとに `denyReason()` を掛け直し、その注記は「既定の 'follow' は
+ *     Location 先を*一切検査せずに*取得する」と危険を名指ししている
+ *   - `main.ts` の窓の遷移は `will-redirect` を `will-navigate` と同じ関門に通す
+ *     (「otherwise a 3xx …」と注記がある)
+ * **アプリ自身の fetch だけが持っていなかった** (実測 2026-09-17: 網の fetch 呼び出し
+ * 12 か所のうち `redirect` を指定する物 **0**)。
+ *
+ * 追随しないだけで、Worker のように**ホップ先を再検査して進む**ことはしない。
+ * このアプリが呼ぶ API (固定ホストの REST / GraphQL / 認可サーバの token 端点) に
+ * 転送を要る物は無く、転送が来た時点で「相手が動いた」か「相手が乗っ取られた」の
+ * どちらかなので、進まずに**理由を言って止まる**ほうが正しい
+ * (GitHub は改名された repo の API に 301 を返す —— 'follow' だと POST が GET へ
+ * 変わり「issue を作った」つもりで一覧を読む形になる)。
+ *
+ * Node (undici) の `redirect: 'manual'` は 3xx をそのまま返し、ブラウザは
+ * `type: 'opaqueredirect'` (status 0・ヘッダ無し) を返す。`isRedirectResponse` は
+ * その両方を転送と読む。断り文は **Location のホストだけ**を述べる —— パスや
+ * クエリには秘密が載りうる (`?token=` の形はパス 271 が伏字の運び手として数えた)。
+ *
+ * 母集団 (fetch を呼ぶ全ての場所が `egressInit` を通すこと) は
+ * `shared/__tests__/egressRedirectCensus.test.ts` が両方向に留める。
+ */
+export const REDIRECT_STATUSES: ReadonlySet<number> = new Set([301, 302, 303, 307, 308]);
+
+/**
+ * 外へ出る fetch の初期化に「転送へ追随しない」を重ねる。他の欄は変えない。
+ *
+ * ## 例外は `mode: 'no-cors'` の 1 形だけ (2026-09-17 パス 304)
+ *
+ * Fetch 標準の main fetch は「mode が no-cors で redirect mode が follow でなければ
+ * network error」と定めている。chromium で実測 (2026-09-17):
+ *
+ *   fetch(url, { mode: 'no-cors', redirect: 'follow' })  → type 'opaque' / status 0 で解決
+ *   fetch(url, { mode: 'no-cors', redirect: 'manual' })  → **TypeError: Failed to fetch**
+ *
+ * Node (undici) は CORS を実装しないので**同じ呼び出しが type 'basic' / 200 で通り**、
+ * 単体検査には映らない。パス 301 はこの重ねを網の 12 か所へ一律に掛け、
+ * `renderer/network/ollamaWeb.ts` の到達確認 (通常 fetch が落ちた後に no-cors で
+ * 「聞いているか」だけを見る) を壊した —— 「起動しているが OLLAMA_ORIGINS 未設定」が
+ * 「未起動」と診断される。CI に無かった `e2e:ollama` (実 chromium) だけが捕まえた。
+ *
+ * no-cors の要求は**転送に追随しても台帳の外へ何も運ばない**: ヘッダの guard が
+ * CORS-safelisted の外 (`Authorization` など) を落とすので資格情報を載せられず、
+ * 応答は opaque で本文もヘッダも読めない。だからこの 1 形だけは標準どおり
+ * 'follow' を**明示**する。規則が 1 つのままなのは、例外も**この関数の中**に
+ * 在るからで、呼ぶ側は何も知らなくてよい (`egressRedirectCensus.test.ts` は
+ * 'follow' を書く場所がこの枝 1 つであることも留める)。
+ */
+export function egressInit<T extends RequestInit>(init: T): T & { redirect: 'manual' | 'follow' } {
+  if (init.mode === 'no-cors') return { ...init, redirect: 'follow' };
+  return { ...init, redirect: 'manual' };
+}
+
+/**
+ * 応答が転送か。`304 Not Modified` と `300 Multiple Choices` は転送ではない
+ * (Fetch 標準の "redirect status" は 301 / 302 / 303 / 307 / 308 の 5 つ)。
+ */
+export function isRedirectResponse(res: Response): boolean {
+  return res.type === 'opaqueredirect' || REDIRECT_STATUSES.has(res.status);
+}
+
+/**
+ * 転送を断る文。`label` は相手の名前 (サービス id など)。
+ * Location が読めればその**ホストだけ**を添える (相対 Location は要求 URL で解く)。
+ * ブラウザの `opaqueredirect` はヘッダを見せないので、そのときは行き先を述べない。
+ */
+export function redirectRefusal(res: Response, requestUrl: string, label: string): string {
+  let host = '';
+  const location = res.headers.get('location');
+  if (location) {
+    try {
+      host = new URL(location, requestUrl).host;
+    } catch {
+      host = '';
+    }
+  }
+  return host === ''
+    ? `${label} が別の場所へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)`
+    : `${label} が別の場所 (${host}) へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)`;
+}
+
+/**
  * 応答本文を上限つきで読む。超えたら**読むのをやめて**投げる。
  *
  * `label` は文言に入る (`${label} response too large`)。呼び出し側ごとに

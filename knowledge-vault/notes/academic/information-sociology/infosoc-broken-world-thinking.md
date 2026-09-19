@@ -35,12 +35,13 @@ Steven J. Jackson ／ Stephen Graham ／ Nigel Thrift
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
 - [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 出典を共有
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 出典を共有
+- [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
-- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
+- [[infosoc-mediatization-theory|メディアタイゼーション理論（Mediatization Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

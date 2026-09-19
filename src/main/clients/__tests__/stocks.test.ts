@@ -1,5 +1,8 @@
+import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fsp } from 'node:fs';
+import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
+import { MAX_STOCK_ADVISOR_RATIONALE_CHARS } from '../../../shared/advisorResponseLimits';
 import {
   sma,
   ema,
@@ -32,7 +35,7 @@ import {
   type StocksSnapshot,
   type PaperTrade,
   type AdvisorResponse,
-  loadStocksState,
+  loadStoredWatchlist,
   saveStocksState,
   addWatchlistEntry,
   removeWatchlistEntry,
@@ -702,7 +705,10 @@ describe('backtest', () => {
     expect(res.tradeCount).toBe(0);
     expect(res.finalEquity).toBe(10_000);
     expect(res.totalReturnPct).toBe(0);
-    expect(res.winRate).toBe(0);
+    // **決済が 1 件も無いので勝率は算定できない (null)。** 0 は「決済した取引が
+    // 在り、どれも勝てなかった」の意味。上の 2 つの 0 は正しい —— 現金のまま
+    // 持てば本当に 0% で、値下がりもしない (2026-09-08 · パス 92)。
+    expect(res.winRate).toBeNull();
     expect(res.maxDrawdownPct).toBe(0);
     expect(res.trades).toEqual([]);
   });
@@ -964,7 +970,7 @@ describe('createMockStocksDataSource', () => {
 describe('fetchStocksSnapshot', () => {
   // Empty-state shortcut so snapshot tests don't depend on the real
   // ~/.local/business-hub/state.json file.
-  const emptyStateDeps = { loadState: async () => ({ watchlist: [] as readonly string[] }) };
+  const emptyStateDeps = { loadState: async () => ({ kind: 'saved' as const, symbols: [] as readonly string[], dropped: 0 }) };
 
   it('produces a watchlist of the 5 mock tickers + a paper portfolio', async () => {
     const snap = await fetchStocksSnapshotImpl({ token: '' }, emptyStateDeps);
@@ -1049,7 +1055,7 @@ describe('registerTickerImpl', () => {
       deps: {
         statePath: () => '/tmp/test.json',
         readFile: async () => {
-          if (store === null) throw new Error('ENOENT');
+          if (store === null) throw Object.assign(new Error('ENOENT: no such file'), { code: 'ENOENT' });
           return store;
         },
         writeFile: async (_p: string, c: string) => {
@@ -1257,6 +1263,13 @@ describe('validateAdvisorJson', () => {
       ...over,
     };
   }
+
+  it('rationale の天井は名前で参照する (ちょうどは通り、1 字超えは断る —— パス 321 の census)', () => {
+    expect(validateAdvisorJson({ recommendations: [goodRec({ rationale: 'x'.repeat(MAX_STOCK_ADVISOR_RATIONALE_CHARS) })] }, allowed)).toHaveLength(1);
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ rationale: 'x'.repeat(MAX_STOCK_ADVISOR_RATIONALE_CHARS + 1) })] }, allowed),
+    ).toThrow(/rationale exceeds/);
+  });
 
   it('accepts a well-formed response within the allowed universe', () => {
     const out = validateAdvisorJson({ recommendations: [goodRec()] }, allowed);
@@ -1471,13 +1484,13 @@ describe('ACTIONS["advise"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: '' } }),
-    ).rejects.toThrow(/required/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES.empty);
     await expect(
       ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: 'x'.repeat(1001) } }),
-    ).rejects.toThrow(/exceeds 1000/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES['too-long']);
     await expect(
       ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: 'hi\nworld' } }),
-    ).rejects.toThrow(/control characters/);
+    ).rejects.toThrow(ADVISOR_QUESTION_MESSAGES['control-chars']);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -1950,6 +1963,8 @@ function emptySnapshot(): StocksSnapshot {
     portfolio: { cash: 1_000_000, initialCash: 1_000_000, positions: {}, history: [] },
     fetchedAt: '2026-05-14T00:00:00.000Z',
     isMock: true,
+    stored: 'none',
+    storedNote: null,
   };
 }
 
@@ -2014,7 +2029,11 @@ describe('renderDashboardHtml', () => {
         cash: 900_000,
         initialCash: 1_000_000,
         positions: { X: { shares: 500, avgCost: 200 } },
-        history: [],
+        // 約定が無ければ損益は「—」で色も付かない (パス 189) —— 色の検査は
+        // **約定が在る口座**に当てる。
+        history: [
+          { date: '01', ticker: 'X', action: 'buy', shares: 500, price: 200, cashAfter: 900_000, reason: 'r' },
+        ],
       },
     };
     renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
@@ -2071,6 +2090,8 @@ describe('renderDashboardHtml', () => {
       ],
       disclaimer: ADVISOR_DISCLAIMER,
       notForRealMoney: true,
+      universeConsidered: [],
+      universeOmitted: 0,
     };
     const html = renderDashboardHtml({
       snapshot: emptySnapshot(),
@@ -2264,6 +2285,8 @@ describe('exportDashboardImpl', () => {
       ],
       disclaimer: ADVISOR_DISCLAIMER,
       notForRealMoney: true,
+      universeConsidered: [],
+      universeOmitted: 0,
     };
     let captured = '';
     await exportDashboardImpl(
@@ -2353,8 +2376,15 @@ describe('compareStrategiesImpl', () => {
       expect(row.finalEquity).toBeGreaterThan(0);
       expect(typeof row.totalReturnPct).toBe('number');
       expect(typeof row.maxDrawdownPct).toBe('number');
-      expect(row.winRate).toBeGreaterThanOrEqual(0);
-      expect(row.winRate).toBeLessThanOrEqual(1);
+      // 決済済みが 0 件の戦略は null (算定不能)。数が出ているなら 0..1 に入る。
+      //
+      // **`if` で包むと、全行が null のとき 1 度も走らない空の検査になる**
+      // (この銘柄・この初期資金では実際に 3 戦略とも決済に至らない)。かといって
+      // 「全部 null」を留めると、見本を変えた瞬間に壊れる不変条件になる ——
+      // パス 87 で私がやった失敗である。**どの行にも必ず当たる形**で書く。
+      // 実数側の範囲は take-profit (=== 1) と stop-loss (=== 0) の 2 本が
+      // 別に留めている (2026-09-08 · パス 92)。
+      expect(row.winRate === null || (row.winRate >= 0 && row.winRate <= 1)).toBe(true);
       expect(row.tradeCount).toBeGreaterThanOrEqual(0);
     }
   });
@@ -2647,6 +2677,8 @@ describe('renderDashboardMarkdown', () => {
         ],
         disclaimer: 'TEST DISCLAIMER',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
     });
     expect(md).toContain('## AI アドバイザー結果 (1 件)');
@@ -2709,10 +2741,21 @@ describe('renderDashboardMarkdown', () => {
     expect(md).not.toContain('## 戦略比較');
   });
 
+  /**
+   * **損益が「在る」ための取引 1 件** (パス 189)。
+   *
+   * それまでこの節の雛形はどれも `history: []` で「+￥0」「+10.00%」を
+   * 期待していた —— 1 度も約定していない口座について。取引 0 件の損益は
+   * 「—」であり、金額の検査はどれも**約定が在る口座**に当てるべきものだった。
+   */
+  const ONE_TRADE = [
+    { date: '01', ticker: 'X', action: 'buy' as const, shares: 1, price: 1, cashAfter: 0, reason: 'r' },
+  ];
+
   it('shows P&L sign + percent in the portfolio table', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 110_000, initialCash: 100_000, positions: {}, history: [] },
+      portfolio: { cash: 110_000, initialCash: 100_000, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     // ￥ is the fullwidth yen sign Intl.NumberFormat returns for ja-JP.
@@ -2722,7 +2765,7 @@ describe('renderDashboardMarkdown', () => {
   it('handles negative P&L sign (kills `>= 0` boundary on sign formatting)', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 90_000, initialCash: 100_000, positions: {}, history: [] },
+      portfolio: { cash: 90_000, initialCash: 100_000, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     expect(md).toMatch(/損益.*-￥10,000.*-10\.00%/);
@@ -2733,7 +2776,7 @@ describe('renderDashboardMarkdown', () => {
     // mutated `pnl > 0` → "" (no sign).
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 100_000, initialCash: 100_000, positions: {}, history: [] },
+      portfolio: { cash: 100_000, initialCash: 100_000, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     expect(md).toMatch(/損益.*\+￥0.*\+0\.00%/);
@@ -2774,14 +2817,16 @@ describe('renderDashboardMarkdown', () => {
     expect(md).toContain('+0.00%');
   });
 
-  it('boundary: initialCash === 0 → pnlPct === 0, no NaN (kills `> 0` → `>= 0` on initialCash gate)', () => {
+  it('boundary: initialCash === 0 → 率は算定不能と言う, no NaN (kills `> 0` → `>= 0` on initialCash gate)', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 0, initialCash: 0, positions: {}, history: [] },
+      portfolio: { cash: 0, initialCash: 0, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     expect(md).not.toContain('NaN');
-    expect(md).toMatch(/損益.*0\.00%/);
+    // 0 で割れないので「0.00%」ではなく理由を書く (パス 189)。
+    expect(md).toMatch(/損益.*初期入金 0 円 — 率は算定できません/);
+    expect(md).not.toMatch(/損益.*0\.00%/);
   });
 
   it('embeds held position values in the equity total (kills positions reduce + find-predicate mutants)', () => {
@@ -2795,7 +2840,7 @@ describe('renderDashboardMarkdown', () => {
         cash: 50_000,
         initialCash: 100_000,
         positions: { MSFT: { shares: 100, avgCost: 200 } },
-        history: [],
+        history: ONE_TRADE,
       },
       watchlist: [
         {
@@ -2958,7 +3003,7 @@ describe('exportDashboardMdImpl', () => {
   });
 });
 
-// --- Persistent state (loadStocksState / addWatchlistEntry / etc) ----
+// --- Persistent state (loadStoredWatchlist / addWatchlistEntry / etc) ----
 
 describe('stocks state persistence', () => {
   function memoryDeps(initial?: string) {
@@ -2967,7 +3012,7 @@ describe('stocks state persistence', () => {
       deps: {
         statePath: () => '/tmp/test-state.json',
         readFile: async () => {
-          if (store === null) throw new Error('ENOENT');
+          if (store === null) throw Object.assign(new Error('ENOENT: no such file'), { code: 'ENOENT' });
           return store;
         },
         writeFile: async (_p: string, c: string) => {
@@ -2986,64 +3031,78 @@ describe('stocks state persistence', () => {
     });
   });
 
-  describe('loadStocksState', () => {
-    it('returns DEFAULT_STATE when file does not exist', async () => {
+  describe('loadStoredWatchlist — 3 つの状態を混ぜない (パス 309)', () => {
+    it('ファイルが無い (ENOENT) は「まだ無い」', async () => {
       const { deps } = memoryDeps();
-      const s = await loadStocksState(deps);
-      expect(s.watchlist).toEqual([]);
+      expect(await loadStoredWatchlist(deps)).toEqual({ kind: 'none' });
     });
 
-    it('returns DEFAULT_STATE on JSON parse error', async () => {
+    it('★ 読めない (EACCES) は理由つきで「読めなかった」(パス 309 までは黙って空)', async () => {
+      const deps: StateDeps = {
+        statePath: () => '/tmp/test-state.json',
+        readFile: async () => {
+          throw Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' });
+        },
+      };
+      expect(await loadStoredWatchlist(deps)).toEqual({ kind: 'unreadable', reason: 'EACCES: permission denied' });
+    });
+
+    it('★ 壊れた JSON は「読めなかった」(パス 309 までは DEFAULT_STATE に畳み、docblock が「Never throws」と仕様にしていた)', async () => {
       const { deps } = memoryDeps('not valid json {{{');
-      const s = await loadStocksState(deps);
-      expect(s.watchlist).toEqual([]);
+      expect(await loadStoredWatchlist(deps)).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
     });
 
-    it('returns DEFAULT_STATE on non-object root', async () => {
-      const { deps } = memoryDeps('"a string"');
-      const s = await loadStocksState(deps);
-      expect(s.watchlist).toEqual([]);
-    });
-
-    it('returns DEFAULT_STATE on null root', async () => {
-      const { deps } = memoryDeps('null');
-      const s = await loadStocksState(deps);
-      expect(s.watchlist).toEqual([]);
+    it('★ オブジェクトでも配列でもない根 / watchlist が配列でない → 「読めなかった」', async () => {
+      for (const raw of ['"a string"', 'null', '42', JSON.stringify({ watchlist: 'AAPL' })]) {
+        const { deps } = memoryDeps(raw);
+        expect(await loadStoredWatchlist(deps), raw).toEqual({ kind: 'unreadable', reason: 'ウォッチリストの形ではありません' });
+      }
     });
 
     it('reads a well-formed watchlist', async () => {
       const { deps } = memoryDeps(JSON.stringify({ watchlist: ['AAPL', 'MSFT'] }));
-      const s = await loadStocksState(deps);
-      expect(s.watchlist).toEqual(['AAPL', 'MSFT']);
+      expect(await loadStoredWatchlist(deps)).toEqual({ kind: 'saved', symbols: ['AAPL', 'MSFT'], dropped: 0 });
     });
 
-    it('filters out non-string watchlist entries (defense vs tampering)', async () => {
+    it('★ 銘柄コードでない要素は落として数える (defense vs tampering・件数は画面が言う)', async () => {
       const { deps } = memoryDeps(JSON.stringify({ watchlist: ['AAPL', 42, null, 'MSFT'] }));
-      const s = await loadStocksState(deps);
-      expect(s.watchlist).toEqual(['AAPL', 'MSFT']);
+      expect(await loadStoredWatchlist(deps)).toEqual({ kind: 'saved', symbols: ['AAPL', 'MSFT'], dropped: 2 });
     });
 
-    it('filters out unsafe symbols (path-injection / shell-meta)', async () => {
+    it('filters out unsafe symbols (path-injection / shell-meta) and counts them', async () => {
       const { deps } = memoryDeps(
         JSON.stringify({ watchlist: ['AAPL', 'BAD;rm', 'OK.T', 'over_underscore'] }),
       );
-      const s = await loadStocksState(deps);
       // Only AAPL + OK.T pass isSafeSymbol.
-      expect(s.watchlist).toEqual(['AAPL', 'OK.T']);
+      expect(await loadStoredWatchlist(deps)).toEqual({ kind: 'saved', symbols: ['AAPL', 'OK.T'], dropped: 2 });
     });
 
-    it('treats missing watchlist field as empty', async () => {
+    it('treats a missing watchlist field as an empty saved list (古い版の形)', async () => {
       const { deps } = memoryDeps(JSON.stringify({ unrelated: 'data' }));
-      const s = await loadStocksState(deps);
-      expect(s.watchlist).toEqual([]);
+      expect(await loadStoredWatchlist(deps)).toEqual({ kind: 'saved', symbols: [], dropped: 0 });
     });
 
     it('uses default statePath when not injected (smoke — does not throw)', async () => {
-      // Just verify the production path doesn't crash on a missing file.
-      // Implementation reads the real ~/.local/business-hub/state.json
-      // which may or may not exist; either way, loadStocksState swallows.
-      const s = await loadStocksState();
-      expect(Array.isArray(s.watchlist)).toBe(true);
+      // Implementation reads the real ~/.local/business-hub/state.json, which may or
+      // may not exist; either way it answers with one of the three states.
+      const s = await loadStoredWatchlist();
+      expect(['saved', 'none', 'unreadable']).toContain(s.kind);
+    });
+  });
+
+  describe('★ 読めなかった保存値と登録・解除 (パス 309 の決定: 明示の操作は警告のうえ通す)', () => {
+    it('壊れた state.json への登録は空を基に書き直す — 画面は先に storedNote で「上書きされ、元の保存値は戻りません」と言っている', async () => {
+      const { deps, getStore } = memoryDeps('not valid json {{{');
+      const next = await addWatchlistEntry('AAPL', deps);
+      expect(next.watchlist).toEqual(['AAPL']);
+      expect(JSON.parse(getStore()!)).toEqual({ watchlist: ['AAPL'] });
+    });
+
+    it('壊れた state.json からの解除は何も書かない (空に無い物は消せない —— 保存値は触らない)', async () => {
+      const { deps, getStore } = memoryDeps('not valid json {{{');
+      const next = await removeWatchlistEntry('AAPL', deps);
+      expect(next.watchlist).toEqual([]);
+      expect(getStore()).toBe('not valid json {{{');
     });
   });
 
@@ -3148,7 +3207,7 @@ describe('stocks state persistence', () => {
         deps: {
           statePath: () => '/tmp/test.json',
           readFile: async () => {
-            if (store === null) throw new Error('ENOENT');
+            if (store === null) throw Object.assign(new Error('ENOENT: no such file'), { code: 'ENOENT' });
             return store;
           },
           writeFile: async (_p: string, c: string) => {
@@ -3196,7 +3255,7 @@ describe('stocks state persistence', () => {
       const snap = await fetchStocksSnapshotImpl(
         { token: '' },
         {
-          loadState: async () => ({ watchlist: ['AAPL', 'MSFT'] }),
+          loadState: async () => ({ kind: 'saved' as const, symbols: ['AAPL', 'MSFT'], dropped: 0 }),
         },
       );
       expect(snap.watchlist).toHaveLength(2);
@@ -3207,7 +3266,7 @@ describe('stocks state persistence', () => {
       const snap = await fetchStocksSnapshotImpl(
         { token: '' },
         {
-          loadState: async () => ({ watchlist: ['AAPL', '7203.T'] }),
+          loadState: async () => ({ kind: 'saved' as const, symbols: ['AAPL', '7203.T'], dropped: 0 }),
         },
       );
       expect(snap.watchlist[0]!.label).toBe('Apple');
@@ -3218,7 +3277,7 @@ describe('stocks state persistence', () => {
       const snap = await fetchStocksSnapshotImpl(
         { token: '' },
         {
-          loadState: async () => ({ watchlist: ['NVDA'] }),
+          loadState: async () => ({ kind: 'saved' as const, symbols: ['NVDA'], dropped: 0 }),
         },
       );
       expect(snap.watchlist[0]!.symbol).toBe('NVDA');
@@ -3229,13 +3288,51 @@ describe('stocks state persistence', () => {
       const snap = await fetchStocksSnapshotImpl(
         { token: '' },
         {
-          loadState: async () => ({ watchlist: [] }),
+          loadState: async () => ({ kind: 'saved' as const, symbols: [], dropped: 0 }),
         },
       );
       expect(snap.watchlist).toHaveLength(MOCK_TICKERS.length);
     });
 
-    it('uses real loadStocksState by default (smoke — does not throw)', async () => {
+    it('★ 読めなかった保存は見本を返しつつ、そう言う (stored=unreadable・注記) — パス 309 までは黙って見本に化けた', async () => {
+      const snap = await fetchStocksSnapshotImpl(
+        { token: '' },
+        { loadState: async () => ({ kind: 'unreadable', reason: 'EACCES: permission denied' }) },
+      );
+      expect(snap.watchlist).toHaveLength(MOCK_TICKERS.length);
+      expect(snap.stored).toBe('unreadable');
+      expect(snap.storedNote).toBe(
+        '保存したウォッチリストを読めませんでした (EACCES: permission denied)。見本の銘柄を表示しています。'
+          + 'このまま銘柄を登録・解除すると空の一覧を基に上書きされ、元の保存値は戻りません。',
+      );
+    });
+
+    it('保存が無い / 読めた保存は注記を出さない (対照)', async () => {
+      const none = await fetchStocksSnapshotImpl({ token: '' }, { loadState: async () => ({ kind: 'none' }) });
+      expect(none.stored).toBe('none');
+      expect(none.storedNote).toBeNull();
+      expect(none.watchlist).toHaveLength(MOCK_TICKERS.length);
+      const saved = await fetchStocksSnapshotImpl(
+        { token: '' },
+        { loadState: async () => ({ kind: 'saved', symbols: ['AAPL'], dropped: 0 }) },
+      );
+      expect(saved.stored).toBe('saved');
+      expect(saved.storedNote).toBeNull();
+      expect(saved.watchlist.map((w) => w.symbol)).toEqual(['AAPL']);
+    });
+
+    it('★ 読み込みで落とした要素が在れば件数を言う (上書きすると失われる物が在る)', async () => {
+      const snap = await fetchStocksSnapshotImpl(
+        { token: '' },
+        { loadState: async () => ({ kind: 'saved', symbols: ['AAPL'], dropped: 3 }) },
+      );
+      expect(snap.stored).toBe('saved');
+      expect(snap.storedNote).toBe(
+        '保存したウォッチリストのうち 3 件は銘柄コードとして読めず、読み込みで落としました。このまま登録・解除すると、これらは失われます。',
+      );
+    });
+
+    it('uses real loadStoredWatchlist by default (smoke — does not throw)', async () => {
       // No deps injected → uses defaultStatePath. May read a stale state
       // file, but should at least not throw.
       const snap = await fetchStocksSnapshotImpl({ token: '' });
@@ -3262,7 +3359,7 @@ describe('Stocks ダッシュボードの符号と色', () => {
   /** 「損益」タイルの色・金額・パーセントを 1 つの塊として取り出す。 */
   function pnlTile(page: string): { color: string; amount: string; pct: string } {
     const re =
-      /<div class="label">損益<\/div><div class="value" style="color:(#[0-9a-f]{6})">([^<]*)<\/div><div class="sub">([^<]*)<\/div>/;
+      /<div class="label">損益<\/div><div class="value" style="color:([^"]+)">([^<]*)<\/div><div class="sub">([^<]*)<\/div>/;
     const m = re.exec(page);
     return { color: m?.[1] ?? '', amount: m?.[2] ?? '', pct: m?.[3] ?? '' };
   }
@@ -3290,7 +3387,10 @@ describe('Stocks ダッシュボードの符号と色', () => {
         cash,
         initialCash: 1_000_000,
         positions: { X: { shares, avgCost: latestClose } },
-        history: [],
+        // 玉が在るなら約定が在った —— 取引 0 件の口座は損益を出さない (パス 189)。
+        history: [
+          { date: '01', ticker: 'X', action: 'buy', shares, price: latestClose, cashAfter: cash, reason: 'r' },
+        ],
       },
     };
   }
@@ -3360,13 +3460,22 @@ describe('Stocks ダッシュボードの符号と色', () => {
     expect(equityTile(renderDashboardHtml({ snapshot: snap, generatedAt: '01' }))).toBe('￥100,000');
   });
 
-  it('初期入金が 0 でも利益率は 0% にする (0 除算を出さない)', () => {
+  it('初期入金が 0 なら率は「算定できません」と言う (0 除算を出さない)', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 500, initialCash: 0, positions: {}, history: [] },
+      portfolio: {
+        cash: 500,
+        initialCash: 0,
+        positions: {},
+        history: [
+          { date: '01', ticker: 'X', action: 'sell', shares: 1, price: 500, cashAfter: 500, reason: 'r' },
+        ],
+      },
     };
     const page = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
-    expect(pnlTile(page).pct).toBe('+0.00%');
+    // 0 で割った「0.00%」は答えではない (パス 189)。
+    expect(pnlTile(page).pct).toBe('初期入金 0 円 — 率は算定できません');
+    expect(pnlTile(page).pct).not.toBe('+0.00%');
     expect(page).not.toContain('NaN');
     expect(page).not.toContain('Infinity');
   });
@@ -3549,6 +3658,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: '<style>body{display:none}</style>',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });
@@ -3565,6 +3676,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: 'd\n本文',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });
@@ -3581,6 +3694,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         recommendations: [{ symbol: 'A', rank: 1, rationale: '一行目\n二行目', riskFactors: [] }],
         disclaimer: 'd',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });
@@ -3739,5 +3854,23 @@ describe('saveStocksState の権限', () => {
     await saveStocksState({ watchlist: ['MSFT'] }, { statePath: () => target });
 
     expect(await modeOf(target)).toBe('600');
+  });
+});
+
+describe('ウォッチリストの保存ファイル — 大きさの門 (パス 313 · 規則は main/stateFile.ts の 1 つ)', () => {
+  it('★ stat が天井を超えると、読まずに「読めなかった」(readFile は呼ばれない)', async () => {
+    let reads = 0;
+    const r = await loadStoredWatchlist({
+      statePath: () => '/tmp/test-state.json',
+      stat: async () => ({ size: MAX_STATE_FILE_BYTES + 1 }),
+      readFile: async () => { reads += 1; return '[]'; },
+    });
+    expect(r).toEqual({ kind: 'unreadable', reason: stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 1) });
+    expect(reads).toBe(0);
+  });
+
+  it('★ 読んだ物が天井を超えても「読めなかった」(注入の読み手は後門だけ)', async () => {
+    const r = await loadStoredWatchlist({ statePath: () => '/tmp/test-state.json', readFile: async () => 'x'.repeat(MAX_STATE_FILE_BYTES + 1) });
+    expect(r).toEqual({ kind: 'unreadable', reason: stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 1) });
   });
 });

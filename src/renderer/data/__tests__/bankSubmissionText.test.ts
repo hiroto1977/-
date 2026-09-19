@@ -6,6 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildBankSubmissionSheet, type BankSubmissionSettings } from '../bankSubmission';
 import { buildBusinessOverview } from '../overview';
+import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { combineCashflowDebtService } from '../cashflowDebtService';
 import { BANK_FORMAT_DEFAULT } from '../../../shared/bankFormat';
@@ -47,9 +48,12 @@ describe('金融機関等提出用の書面 — 全文', () => {
     });
     const m = buildBankSubmissionSheet({
       overview,
-      scorecard: buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct, grossMarginPct: overview.kpi.grossMarginPct }),
+      scorecard: buildManagementScorecard({
+        operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,
+        grossMarginPct: overview.kpi.grossMarginPct ?? undefined,
+      }),
       debtService: combineCashflowDebtService(ACCOUNTING, REPAYMENTS),
-      kpiPeriods: ['2026-04'], balanceSheetAsOf: '2026-03-31', today: '2026-09-04', settings: SETTINGS,
+      balanceSheetAsOf: BS.asOf, today: '2026-09-04', settings: SETTINGS, manual: NO_MANUAL_OVERRIDES,
     });
     expect(m.title).toBe('経営サマリー');
     expect(m.subtitle).toBe('経営概況・財務指標一覧');
@@ -66,7 +70,9 @@ describe('金融機関等提出用の書面 — 全文', () => {
       { label: '表示単位', value: '千円（千円未満切捨て）' },
     ]);
     expect(m.sections).toEqual([
-      { title: '1. 損益の状況（対象期間の累計）', caption: null, rows: [
+      // 2026-09-07 まで caption は null だった。**この全文の見本自身**が
+      // 決算期 令和8年3月期 の下に「令和8年4月の 1 か月」の累計を無言で刷っていた。
+      { title: '1. 損益の状況（対象期間の累計）', caption: '上の金額は令和8年4月・1 か月の累計で、令和8年3月期（令和7年4月〜令和8年3月）の 12 か月とは一致しません。', rows: [
           { label: '売上高', value: '12,345', note: 'KPI 実績の合計' },
           { label: '売上総利益', value: '7,345', note: '売上高 − 売上原価' },
           { label: '売上総利益率', value: '59.5%', note: '売上総利益 ÷ 売上高' },
@@ -79,9 +85,13 @@ describe('金融機関等提出用の書面 — 全文', () => {
           { label: '販売費及び一般管理費率', value: '64.8%', note: '販売費及び一般管理費 ÷ 売上高' },
           { label: '限界利益率', value: '51.4%', note: '(売上高 − 変動費) ÷ 売上高' },
           { label: '損益分岐点売上高', value: '15,953', note: '固定費 ÷ 限界利益率' },
-          { label: '安全余裕率', value: '0.0%', note: '(売上高 − 損益分岐点売上高) ÷ 売上高' },
+          // 2026-09-07 まで '0.0%' だった。**この見本自身が欠陥を刷っていた** ——
+          // 売上高 12,345 千円 に対し損益分岐点売上高 15,953 千円 なので、
+          // 備考の算式どおりなら △29.2% であって 0.0% ではない。安全余裕率を
+          // `Math.max(0, …)` で下から止めていたための食い違い (kpiActuals.ts 参照)。
+          { label: '安全余裕率', value: '△29.2%', note: '(売上高 − 損益分岐点売上高) ÷ 売上高' },
         ] },
-      { title: '2. 販売の状況', caption: null, rows: [
+      { title: '2. 販売の状況', caption: '上の金額は販売記録の令和8年4月・1 か月分の累計です。', rows: [
           { label: '売上高（販売記録）', value: '100', note: '販売記録の合計' },
           { label: '受注件数', value: '20件', note: '' },
           { label: '平均受注単価', value: '5,000円', note: '売上高 ÷ 受注件数' },
@@ -89,7 +99,7 @@ describe('金融機関等提出用の書面 — 全文', () => {
           { label: '主力チャネル', value: 'Amazon', note: '売上に占める割合 60.0%' },
           { label: '売上分散スコア', value: '48／100', note: '(1 − ハーフィンダール指数) × 100' },
         ] },
-      { title: '3. 人員・生産性', caption: null, rows: [
+      { title: '3. 人員・生産性', caption: '一人当たりの金額と人件費は、実績の令和8年4月・1 か月分の累計を従業員数で割ったものです（年額ではありません）。', rows: [
           { label: '従業員数', value: '2名', note: '登録メンバー数' },
           { label: '一人当たり売上高', value: '6,172', note: '売上高 ÷ 従業員数' },
           { label: '一人当たり営業利益', value: '△927', note: '営業利益 ÷ 従業員数' },
@@ -109,15 +119,19 @@ describe('金融機関等提出用の書面 — 全文', () => {
           { label: '総資産利益率（ROA）', value: '5.0%', note: '当期純利益 ÷ 総資産' },
           { label: '自己資本利益率（ROE）', value: '15.0%', note: '当期純利益 ÷ 純資産' },
         ] },
-      { title: '5. 運転資本', caption: null, rows: [
-          { label: '売上債権回転日数（DSO）', value: '59.1日', note: '売上債権 ÷ 売上高 × 365' },
-          { label: '棚卸資産回転日数（DIO）', value: '73.0日', note: '棚卸資産 ÷ 売上原価 × 365' },
-          { label: '仕入債務回転日数（DPO）', value: '109.5日', note: '仕入債務 ÷ 売上原価 × 365' },
-          { label: '現金化サイクル（CCC）', value: '22.6日', note: 'DSO + DIO − DPO' },
+      // **2026-09-07 まで、この全文の見本自身が回転日数の 12 倍を刷っていた。**
+      // 実績は 令和8年4月 の 1 か月分なのに、分母をそのまま 365 日で割っていた
+      // (DSO 59.1 / DIO 73.0 / DPO 109.5 / CCC 22.6 日 —— 正しくは 1/12 の値)。
+      // 見本が食い違いを固定していた形は **6 例目**。
+      { title: '5. 運転資本', caption: '回転日数は実績の令和8年4月・1 か月分（30.4 日）で算定しています。1 年分の回転日数ではありません。', rows: [
+          { label: '売上債権回転日数（DSO）', value: '4.9日', note: '売上債権 ÷ 売上高 × 30.4 日' },
+          { label: '棚卸資産回転日数（DIO）', value: '6.1日', note: '棚卸資産 ÷ 売上原価 × 30.4 日' },
+          { label: '仕入債務回転日数（DPO）', value: '9.1日', note: '仕入債務 ÷ 売上原価 × 30.4 日' },
+          { label: '現金化サイクル（CCC）', value: '1.9日', note: 'DSO + DIO − DPO' },
           { label: '運転資本', value: '1,500', note: '売上債権 + 棚卸資産 − 仕入債務' },
         ] },
       { title: '6. 資金繰り・返済余力', caption: null, rows: [
-          { label: '営業キャッシュフロー（累計）', value: '600', note: '2か月分' },
+          { label: '営業キャッシュフロー（累計）', value: '600', note: '令和8年3月〜令和8年4月・2か月分' },
           { label: '営業キャッシュフロー（月次平均）', value: '300', note: '' },
           { label: '資金ランウェイ', value: '―', note: '現預金 ÷ 月次の資金流出' },
           { label: '12か月後の予測残高', value: '6,600', note: '現預金に月次キャッシュフローを外挿' },
@@ -134,7 +148,7 @@ describe('金融機関等提出用の書面 — 全文', () => {
           { label: '当年度売上着地見込み', value: '148,148', note: '2026年（1か月経過、実績 12,345）' },
           { label: '前年同月比', value: '―', note: '' },
         ] },
-      { title: '8. 予算実績差異', caption: null, rows: [
+      { title: '8. 予算実績差異', caption: '対象: 令和8年4月・1 か月（予算と実績の両方が在る期）。', rows: [
           { label: '売上高（予算）', value: '10,000', note: '' },
           { label: '売上高（実績）', value: '12,345', note: '' },
           { label: '売上高（差異）', value: '2,345', note: '実績 − 予算' },
@@ -169,7 +183,7 @@ describe('金融機関等提出用の書面 — 全文', () => {
     const m = buildBankSubmissionSheet({
       overview,
       scorecard: buildManagementScorecard({}),
-      debtService: null, kpiPeriods: [], balanceSheetAsOf: null, today: '2026-09-04', settings: SETTINGS,
+      debtService: null, balanceSheetAsOf: null, today: '2026-09-04', settings: SETTINGS, manual: NO_MANUAL_OVERRIDES,
     });
     expect(m.meta).toEqual([
       { label: '商号', value: '株式会社テスト' },
@@ -200,15 +214,19 @@ describe('金融機関等提出用の書面 — 全文', () => {
       { title: '2. 販売の状況', caption: null, rows: [
           { label: '売上高（販売記録）', value: '0', note: '販売記録の合計' },
           { label: '受注件数', value: '0件', note: '' },
-          { label: '平均受注単価', value: '0円', note: '売上高 ÷ 受注件数' },
+          // 注文 0 件 → **算定不能で ―** (2026-09-08 までこの見本が
+          // 「何も入力していない書面」の平均受注単価を `'0円'` で固定していた)。
+          { label: '平均受注単価', value: '―', note: '売上高 ÷ 受注件数' },
           { label: '販売チャネル数', value: '0', note: '' },
           { label: '主力チャネル', value: '―', note: '' },
           { label: '売上分散スコア', value: '―', note: '(1 − ハーフィンダール指数) × 100' },
         ] },
-      { title: '3. 人員・生産性', caption: null, rows: [
+      { title: '3. 人員・生産性', caption: 'KPI 実績が未入力のため、一人当たりの金額は算定していません。', rows: [
           { label: '従業員数', value: '0名', note: '登録メンバー数' },
-          { label: '一人当たり売上高', value: '0', note: '売上高 ÷ 従業員数' },
-          { label: '一人当たり営業利益', value: '0', note: '営業利益 ÷ 従業員数' },
+          // 従業員 0 名・KPI 未入力 → **一人当たりは算定不能で ―** (2026-09-08 まで
+          // この見本が `0` を「何も入力していない書面」の仕様として固定していた)。
+          { label: '一人当たり売上高', value: '―', note: '売上高 ÷ 従業員数' },
+          { label: '一人当たり営業利益', value: '―', note: '営業利益 ÷ 従業員数' },
           { label: '人件費', value: '―', note: 'KPI 実績の人件費の合計' },
           { label: '労働分配率', value: '―', note: '人件費 ÷ 売上総利益' },
           { label: '人件費率', value: '―', note: '人件費 ÷ 売上高' },
@@ -226,9 +244,9 @@ describe('金融機関等提出用の書面 — 全文', () => {
           { label: '自己資本利益率（ROE）', value: '―', note: '当期純利益 ÷ 純資産' },
         ] },
       { title: '5. 運転資本', caption: '貸借対照表と売上高が揃っていないため算定していません。', rows: [
-          { label: '売上債権回転日数（DSO）', value: '―', note: '売上債権 ÷ 売上高 × 365' },
-          { label: '棚卸資産回転日数（DIO）', value: '―', note: '棚卸資産 ÷ 売上原価 × 365' },
-          { label: '仕入債務回転日数（DPO）', value: '―', note: '仕入債務 ÷ 売上原価 × 365' },
+          { label: '売上債権回転日数（DSO）', value: '―', note: '売上債権 ÷ 売上高 × 0 日' },
+          { label: '棚卸資産回転日数（DIO）', value: '―', note: '棚卸資産 ÷ 売上原価 × 0 日' },
+          { label: '仕入債務回転日数（DPO）', value: '―', note: '仕入債務 ÷ 売上原価 × 0 日' },
           { label: '現金化サイクル（CCC）', value: '―', note: 'DSO + DIO − DPO' },
           { label: '運転資本', value: '―', note: '売上債権 + 棚卸資産 − 仕入債務' },
         ] },

@@ -26,22 +26,22 @@ aliases:
 G・リン・ショスタック（G. Lynn Shostack、1984 HBR「Designing Services That Deliver」）／メアリー・ジョー・ビトナー＆エイミー・オストロム＆フェリシア・モーガン（Bitner, Ostrom & Morgan, 2008, 現代型5行モデルの定式化）
 
 ## 出典
-- [G. Lynn Shostack, “Designing Services That Deliver,” Harvard Business Review 62(1), 1984, pp.133-139（原典）](https://hbr.org/1984/01/designing-services-that-deliver) `学術`
+- [G. Lynn Shostack, “Designing Services That Deliver,” Harvard Business Review 62(1), 1984, pp.133-139（原典）](https://hbr.org/1984/01/designing-services-that-deliver) `メディア`
 - [Nielsen Norman Group「Service Blueprints: Definition」（5構成要素と3境界線の定義）](https://www.nngroup.com/articles/service-blueprints-definition/) `リファレンス`
 - [Wikipedia「Service blueprint」（起源・構成要素・物理的証拠・fail point）](https://en.wikipedia.org/wiki/Service_blueprint) `リファレンス`
 - [Bitner, Ostrom & Morgan, “Service Blueprinting: A Practical Technique for Service Innovation,” California Management Review 50(4), 2008, pp.66-94](https://www.researchgate.net/publication/215915405_Service_Blueprinting_A_Practical_Technique_for_Service_Innovation) `学術`
 
 ## 関連概念
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
 - [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
 - [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同じ思想家
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 - [[infosoc-information-foraging|情報採餌理論（インフォメーション・フォージング）]] — 出典を共有
+- [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

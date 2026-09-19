@@ -5,10 +5,17 @@ import path from 'node:path';
  * Durable atomic file write. Stronger than plain `writeFile + rename`:
  *
  *   1. write to a unique temp sibling, **fsync** its contents to disk,
- *   2. (optional) keep a `.prev` copy of the current file for recovery,
- *   3. atomically `rename` temp → target,
- *   4. **fsync the directory** so the rename itself is durable,
+ *   2. atomically `rename` temp → target,
+ *   3. **fsync the directory** so the rename itself is durable,
+ *   4. (optional) write a `.prev` copy of **the content just written** (same path: temp → rename),
  *   5. on any error, remove the temp file (no leaked `.tmp-*` litter).
+ *
+ * **控えは「最後に書けた内容」であって「直前の内容」ではない** (2026-09-09 · パス 134)。それまで
+ * 控えは rename の前に本体を複製していた = 直前の内容。すると**消した・入れ替えた資格情報が控えに
+ * 残り**、本体が消える・壊れると `readFileWithBackup` がそれを本体として戻していた —— 「消したはず
+ * のトークンの復活」。控えが要るのは本体を**後から**失ったときで、そのとき戻したいのは最後に書けた
+ * 内容である (rename は原子的なので、書き込みの途中で落ちても本体は前の内容のまま —— 直前の内容の
+ * 控えが役に立つ場面は無かった)。
  *
  * Steps 1 & 4 close the window where a power loss / `SIGKILL` after rename
  * could otherwise leave a zero-length or stale file on some filesystems.
@@ -58,27 +65,6 @@ export async function atomicWriteFile(
     }
     // Stryker restore BlockStatement
 
-    // Best-effort recovery copy of the current file (skipped if none exists).
-    if (opts.keepBackup) {
-      try {
-        await fs.copyFile(target, `${target}.prev`);
-        // **控えは本体より緩くしない。** `copyFile` は**複製元の**mode を
-        // 引き継ぐので、本体が過去に緩い権限で作られていると、控えもその
-        // 緩さのまま同じ中身を持つことになる。実測 (2026-08-23):
-        //
-        //   本体 644 → rename で本体は 600 に直るが、控えは 644 のまま
-        //
-        // 本体だけ直して控えを緩いまま残すのは、鍵を掛けた扉の横に
-        // 窓を開けておくのと同じ。**本体を作るときと同じ mode に揃える** ——
-        // 上の `fs.open(tmp, 'wx', opts.mode ?? 0o600)` と同じ式なので、mode 無指定
-        // でも本体は 0o600 になる。「指定があるときだけ揃える」だと、まさにその
-        // 無指定の場合に本体 600 / 控え 644 という窓が開いたままになっていた。
-        await fs.chmod(`${target}.prev`, opts.mode ?? 0o600);
-      } catch {
-        // no existing target yet — nothing to back up
-      }
-    }
-
     await fs.rename(tmp, target);
     await fsyncDir(dir); // make the rename durable
   } catch (err) {
@@ -90,6 +76,12 @@ export async function atomicWriteFile(
     await fs.rm(tmp, { force: true }).catch(() => {});
     throw err;
   }
+
+  // 控え (パス 134): **書いたばかりの内容**を `.prev` へ、本体と同じ経路 (一意な tmp → rename) で置く。
+  // 同じ経路なので mode は必ず効き (2026-08-23 の「控えが 644 のまま」の窓は経路ごと消えた)、古い控えは
+  // 丸ごと置き換わる —— 直前の内容は 1 バイトも残らない。書けなければ**投げる**: 古い控えを黙って残すと、
+  // 呼び出し側が「消した」と信じた物がまだディスクに在ることになる (本体は既に新しい内容で、投げても壊れない)。
+  if (opts.keepBackup) await atomicWriteFile(`${target}.prev`, data, { mode: opts.mode });
 }
 
 /** fsync a directory entry so a preceding rename is persisted. Not supported
@@ -113,18 +105,34 @@ async function fsyncDir(dir: string): Promise<void> {
 /* Stryker restore all */
 
 /**
- * Read a file, falling back to its `.prev` backup if the primary is missing
- * or unreadable. Returns `null` only when neither exists. Use together with
- * `atomicWriteFile(..., { keepBackup: true })`.
+ * 読む前の大きさの門 (パス 326)。`stat` が答えられなければ**読まない** ——
+ * 読める保証が無い物を上限なしで開かないため。
+ *
+ * 門そのものは `stateFile.ts` の `readStateFile` と同じ形 (stat → 上限 → 読む) だが、
+ * あちらは 3 状態を返す状態ファイル専用の入口で、こちらは控え (`.prev`) へ倒れる
+ * 読みの中に在る必要がある —— **控えへ倒れる枝は呼び出し側から見えない**ので、
+ * 呼び出し側に門を置くと片方しか掛からない (実際そうなっていた・下記)。
  */
-export async function readFileWithBackup(target: string): Promise<string | null> {
-  try {
-    return await fs.readFile(target, 'utf8');
-  } catch {
-    try {
-      return await fs.readFile(`${target}.prev`, 'utf8');
-    } catch {
-      return null;
-    }
-  }
+async function readIfWithinCap(path: string, maxBytes: number): Promise<string | null> {
+  const st = await fs.stat(path).catch(() => null);
+  if (st === null || st.size > maxBytes) return null;
+  return await fs.readFile(path, 'utf8').catch(() => null);
+}
+
+/**
+ * Read a file, falling back to its `.prev` copy (= the content last written
+ * successfully, see above) if the primary is missing or unreadable. Returns
+ * `null` only when neither exists. Use together with
+ * `atomicWriteFile(..., { keepBackup: true })`.
+ *
+ * **`maxBytes` は必須** (パス 326)。それまで、この関数は上限を持たず、
+ * `secrets.ts` は**本体にだけ** `stat` の門を掛けていた —— 本体が消えていれば
+ * `readFileWithBackup` は素通りで `.prev` を丸ごと読み、`JSON.parse` まで進んだ。
+ * 門は「自分が書いた物は大きくならない」という前提**ではなく**、別のプロセス・
+ * ディスクの壊れ・同期ソフトが膨らませた場合に備えて在る (パス 313 の理由と同じ)
+ * ので、控えにも同じだけ要る。上限を超える / `stat` できない側は無かったものとして
+ * 次の候補へ倒れる (呼び出し側の「読めなかった」の扱いは変えない)。
+ */
+export async function readFileWithBackup(target: string, maxBytes: number): Promise<string | null> {
+  return (await readIfWithinCap(target, maxBytes)) ?? (await readIfWithinCap(`${target}.prev`, maxBytes));
 }

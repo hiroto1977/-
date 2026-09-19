@@ -13,8 +13,31 @@
  * 免責 (ADVISOR_DISCLAIMER) を必ず付ける。
  */
 
+import { countChars } from '../../shared/inputCeiling';
 import { escapeXml, escapeMarkdownInline } from '../../shared/escape';
+import { portfolioEquity } from '../../shared/paperAccount';
+import { ratioPctOrDash } from '../../shared/num';
+import {
+  MAX_ADVISOR_RECOMMENDATIONS,
+  MAX_STOCK_ADVISOR_RATIONALE_CHARS,
+  MAX_STOCK_ADVISOR_RISK_CHARS,
+} from '../../shared/advisorResponseLimits';
 import { mockCandles, type WebCandle, type WebSignal } from './stocksWatchlistWeb';
+import type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  BacktestSummary,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+} from '../../shared/stocksTypes';
+
+// 戻り値の形は shared/stocksTypes.ts が 1 つだけ持つ (パス 117 —— それまでここは main の写しだった)。
+export type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+} from '../../shared/stocksTypes';
 
 const HISTORY_LENGTH = 120;
 
@@ -310,25 +333,13 @@ function applySignal(
   return { ...port, cash: newCash, positions: newPositions, history: [...port.history, trade] };
 }
 
-function portfolioEquity(port: PaperPortfolio, prices: Readonly<Record<string, number>>): number {
-  let equity = port.cash;
-  for (const [ticker, pos] of Object.entries(port.positions)) {
-    const price = prices[ticker];
-    // backtest からの呼び出しでは価格 ({[ticker]: bar.close / lastClose}) が常に渡される
-    // ため price は常に非 null。この防御ガードを true 固定する変異は equivalent。
-    // Stryker disable next-line ConditionalExpression
-    if (price != null) equity += pos.shares * price;
-  }
-  return equity;
-}
+// 時価評価はここに写しを持たない —— **規則は `shared/paperAccount.ts` の 1 か所** (パス 189)。
+// それまでこのモジュールは自前の `portfolioEquity` を持っており、main と shared と
+// 画面と合わせて**同じ式が 4 つ**在った (画面の分はパス 189 で消した)。
+// 値段の取り違えは画面に出ないので、写し間違えても気付けない形である。
 
-export interface BacktestResult {
-  finalEquity: number;
-  totalReturnPct: number;
-  maxDrawdownPct: number;
-  winRate: number;
-  tradeCount: number;
-}
+/** ブラウザ版のバックテストは要約 5 欄だけを返す (デスクトップ版は取引と資産曲線を足す)。 */
+export type BacktestResult = BacktestSummary;
 
 export function backtest(
   candles: readonly WebCandle[],
@@ -399,27 +410,16 @@ export function backtest(
     finalEquity,
     totalReturnPct: ((finalEquity - initialCash) / initialCash) * 100,
     maxDrawdownPct: maxDrawdown * 100,
-    winRate: completed > 0 ? wins / completed : 0,
+    // **決済が 1 件も無いなら勝率は算定できない (null)。** 0 は
+    // 「決済した取引が在り、どれも勝てなかった」の意味 (2026-09-08 · パス 92)。
+    winRate: completed > 0 ? wins / completed : null,
     tradeCount: port.history.length,
   };
 }
 
 // --- 戦略比較 ------------------------------------------------------------
 
-export interface StrategyComparisonRow {
-  strategy: string;
-  finalEquity: number;
-  totalReturnPct: number;
-  maxDrawdownPct: number;
-  winRate: number;
-  tradeCount: number;
-}
-export interface StrategyComparisonResult {
-  symbol: string;
-  initialCash: number;
-  rows: StrategyComparisonRow[];
-  bestByReturn: string | null;
-}
+// `StrategyComparisonRow` / `StrategyComparisonResult` は shared/stocksTypes.ts (上で再輸出)。
 
 /** `symbol` のモック履歴に対し全戦略をバックテストし比較する。 */
 export function compareStrategies(
@@ -518,17 +518,7 @@ export const ADVISOR_DISCLAIMER =
 /** ウォッチリストが空のときの既定ユニバース。 */
 export const DEFAULT_ADVISOR_UNIVERSE: readonly string[] = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META'];
 
-export interface AdvisorRecommendation {
-  symbol: string;
-  rank: number;
-  rationale: string;
-  riskFactors: string[];
-}
-export interface AdvisorResponse {
-  recommendations: AdvisorRecommendation[];
-  disclaimer: string;
-  notForRealMoney: true;
-}
+// `AdvisorRecommendation` / `AdvisorResponse` は shared/stocksTypes.ts (上で再輸出)。
 
 export function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
   return [
@@ -557,7 +547,7 @@ export function validateAdvisorJson(
   const obj = raw as { recommendations?: unknown };
   if (!Array.isArray(obj.recommendations)) throw new Error('advisor response missing recommendations array');
   if (obj.recommendations.length === 0) throw new Error('advisor response has zero recommendations');
-  if (obj.recommendations.length > 5) throw new Error('advisor response exceeds 5 recommendations');
+  if (obj.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) throw new Error(`advisor response exceeds ${MAX_ADVISOR_RECOMMENDATIONS} recommendations`);
   const out: AdvisorRecommendation[] = [];
   for (const item of obj.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('recommendation entry is not an object');
@@ -575,11 +565,11 @@ export function validateAdvisorJson(
       throw new Error(`recommendation has invalid rank: ${String(rec.rank)}`);
     }
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) throw new Error('recommendation has empty rationale');
-    if (rec.rationale.length > 400) throw new Error('recommendation rationale exceeds 400 chars');
+    if (countChars(rec.rationale) > MAX_STOCK_ADVISOR_RATIONALE_CHARS) throw new Error(`recommendation rationale exceeds ${MAX_STOCK_ADVISOR_RATIONALE_CHARS} chars`);
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) throw new Error('recommendation has no riskFactors');
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > 200) throw new Error('riskFactor entry is not a 1-200 char string');
+      if (typeof rf !== 'string' || rf.length === 0 || countChars(rf) > MAX_STOCK_ADVISOR_RISK_CHARS) throw new Error(`riskFactor entry is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`);
       riskFactors.push(rf);
     }
     out.push({ symbol: rec.symbol, rank: rec.rank, rationale: rec.rationale, riskFactors });
@@ -607,7 +597,7 @@ export function renderDashboardHtml(input: DashboardInput): string {
     ? `<h2>戦略比較 — ${escapeXml(input.strategyComparison.symbol)}</h2><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>戦略</th><th>最終資産</th><th>リターン%</th><th>最大DD%</th><th>勝率</th><th>取引数</th></tr>${input.strategyComparison.rows
         .map(
           (r) =>
-            `<tr><td>${escapeXml(r.strategy)}</td><td style="text-align:right">${r.finalEquity.toFixed(0)}</td><td style="text-align:right">${r.totalReturnPct.toFixed(2)}</td><td style="text-align:right">${r.maxDrawdownPct.toFixed(2)}</td><td style="text-align:right">${(r.winRate * 100).toFixed(0)}%</td><td style="text-align:right">${r.tradeCount}</td></tr>`,
+            `<tr><td>${escapeXml(r.strategy)}</td><td style="text-align:right">${r.finalEquity.toFixed(0)}</td><td style="text-align:right">${r.totalReturnPct.toFixed(2)}</td><td style="text-align:right">${r.maxDrawdownPct.toFixed(2)}</td><td style="text-align:right">${ratioPctOrDash(r.winRate)}</td><td style="text-align:right">${r.tradeCount}</td></tr>`,
         )
         .join('')}</table><p>最良 (リターン基準): ${input.strategyComparison.bestByReturn ? escapeXml(input.strategyComparison.bestByReturn) : '差なし'}</p>`
     : '';
@@ -644,7 +634,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
     const c = input.strategyComparison;
     lines.push('', `## 戦略比較 — ${escapeMarkdownInline(c.symbol)}`, '', '| 戦略 | 最終資産 | リターン% | 最大DD% | 勝率 | 取引数 |', '| --- | ---: | ---: | ---: | ---: | ---: |');
     for (const r of c.rows) {
-      lines.push(`| ${escapeMarkdownInline(r.strategy)} | ${r.finalEquity.toFixed(0)} | ${r.totalReturnPct.toFixed(2)} | ${r.maxDrawdownPct.toFixed(2)} | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`);
+      lines.push(`| ${escapeMarkdownInline(r.strategy)} | ${r.finalEquity.toFixed(0)} | ${r.totalReturnPct.toFixed(2)} | ${r.maxDrawdownPct.toFixed(2)} | ${ratioPctOrDash(r.winRate)} | ${r.tradeCount} |`);
     }
     lines.push('', `最良 (リターン基準): ${c.bestByReturn === null ? '差なし' : escapeMarkdownInline(c.bestByReturn)}`);
   }

@@ -21,6 +21,9 @@ const profile = (over: Partial<EmotionProfile> = {}): EmotionProfile => ({
   lowStreak: 0,
   dominantEmotion: null,
   sentimentBalance: 0,
+  // 既定の見本は「気分 5 件・解析 1 件が在る人」。分母が 0 だと
+  // 前向きの軸は `null` になり、その軸を測る検査が測れなくなる。
+  analysisCount: 1,
   topTriggers: [],
   ...over,
 });
@@ -126,11 +129,29 @@ describe('buildTeamEmotionRadar', () => {
     expect(r.needsSupport[0]!.reason).toContain('連続して低調');
   });
 
-  it('returns an all-zero teamAverage and empty members for no input', () => {
+  it('★ メンバー 0 人の teamAverage は 0 ではなく null (算定不能)', () => {
+    // **この検査は 2026-09-09 まで `[0,0,0,0,0]` を留めていた** ——
+    // 「全軸 0 点」は「誰も居ない」ではなく「全員が最低」と読める。
     const r = buildTeamEmotionRadar([]);
     expect(r.members).toEqual([]);
-    expect(r.teamAverage).toEqual([0, 0, 0, 0, 0]);
-    expect(r.needsSupport).toEqual([]);
+    expect(r.teamAverage).toEqual([null, null, null, null, null]);
+    expect(r.missingData).toEqual([]);
+  });
+
+  it('★ 記録が無い人を 0 点として平均に入れない (平均が参加率の関数にならない)', () => {
+    const r = buildTeamEmotionRadar([
+      { id: 'a', name: '記録あり', moods: [{ score: 4, note: '' }, { score: 4, note: '' }], analyses: [] },
+      { id: 'b', name: '未記録', moods: [], analyses: [] },
+    ]);
+    // 活力は「記録あり」1 人だけで平均する (4)。旧実装は (4 + 1) / 2 = 2.5 だった。
+    expect(r.teamAverage[0]).toBe(4);
+    // **前向きは誰も解析していないので軸ごと落ちる** (入力の無い軸を描かない)。
+    expect(r.axes).toEqual(['活力', '安定', '余裕', '回復力']);
+    expect(r.teamAverage).toHaveLength(4);
+    // 未記録の人は名指しで断る (低評価ではない)。落とした軸は名指ししない。
+    expect(r.missingData.map((m) => m.name)).toEqual(['未記録']);
+    expect(r.missingData[0]!.axes).toContain('活力');
+    expect(r.missingData[0]!.axes).not.toContain('前向き');
   });
 });
 

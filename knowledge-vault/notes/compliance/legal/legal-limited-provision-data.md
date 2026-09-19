@@ -31,7 +31,6 @@ aliases:
 - [限定提供データ 改正不正競争防止法 解説](https://xtrend.nikkei.com/atcl/contents/skillup/00009/00041/) `メディア`
 
 ## 関連概念
-- [[bizlaw-trade-secret|営業秘密（不正競争防止法2条6項）]] — 語彙が近い
 - [[legal-trade-secret|営業秘密の保護（不正競争防止法）]] — 語彙が近い
 - [[legal-trade-disparagement|不正競争防止法上の営業誹謗行為（信用毀損行為）]] — 同分野の近傍
 - [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 同分野の近傍

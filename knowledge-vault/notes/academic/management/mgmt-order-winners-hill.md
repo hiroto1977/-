@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-work-design-growth-model|職務設計成長モデル]] — 出典を共有
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

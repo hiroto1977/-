@@ -32,6 +32,7 @@ Patti Valkenburg ／ Jochen Peter ／ Journal of Communication 2013 ／ Cognitiv
 
 ## 関連概念
 - [[bizlaw-disclose-or-abstain-rule|開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる]] — 同じ思想家
+- [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — 同じ思想家
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 

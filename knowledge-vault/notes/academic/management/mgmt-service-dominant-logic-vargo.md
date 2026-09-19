@@ -3,39 +3,36 @@ collection: academic
 id: mgmt-service-dominant-logic-vargo
 category: "management"
 category_ja: "経営学"
-title: "サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）"
-as_of: "2026-06-26"
-source_count: 4
+title: "サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム"
+as_of: "2026-09"
+source_count: 2
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）"
+  - "サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム"
 ---
 
-# サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）
+# サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 4件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 2件（うち権威ある出典 ✓）
 
 ## 概要
-サービス・ドミナント・ロジック（Service-Dominant Logic; S-D Logic）は、ヴァーゴ＆ラッシュ（2004）がJournal of Marketingで提唱した、マーケティング・経営の基盤理論を「モノ（goods）の交換」から「知識・スキルを通じたサービスの共創（co-creation of value through service）」へと転換するパラダイムシフト論である。従来の「グッズ・ドミナント・ロジック（G-D Logic）」——製品を生産・配送・消費するプロセスとして市場を捉える——に対し、S-Dロジックは「すべての経済・社会活動はサービスである」という命題の下、資源の「オペランド資源（operand resource；物理的資源）」と「オペラント資源（operant resource；知識・スキル）」を区別し、後者が価値創造の源泉であると論じた。「価値は使用を通じて共創される（value-in-use）」という視点は、製品ではなく経験・関係性・エコシステムの中でこそ価値が生まれることを示す。IoT・プラットフォーム経済・サービス化（servitization）・DX時代の産業論との親和性が高く、多くの実務・学術領域に応用されている。
+サービス・ドミナント・ロジック（S-D logic）は、スティーヴン・ヴァーゴとロバート・ラッシュが2004年に Journal of Marketing で提唱した、マーケティングと経営の基盤を「モノ（グッズ）の交換」から「知識と技能を通じたサービスの共創」へ転換するパラダイムである。製品を生産・配送・消費する過程として市場を捉えるグッズ・ドミナント・ロジックに対し、「すべての経済・社会活動はサービスの交換である」という命題の下、加工される物的資源であるオペランド資源と、作用を及ぼす知識・技能であるオペラント資源を区別して後者を価値創造の源泉とし、価値は企業が製品に埋め込むのではなく、使用を通じて顧客・従業員・パートナーを含む複数のアクターが資源を統合し合うことで共創される（value-in-use）と論じた。基礎的命題は2008年以降も改訂を重ね、共創が制度と制度配置によって調整されるサービス・エコシステムの視点へ拡張され、製造業のサービタイゼーション、プラットフォーム事業、デジタル共創コミュニティ、IoT の解釈に広く援用される。C・K・プラハラードとヴェンカト・ラマスワミの価値共創論や北欧学派の関係性マーケティングと接続する。批判として、「すべてはサービス」という命題が反証不能に近く実証研究の設計が難しいこと、価値共創の失敗（共破壊）や顧客への負担転嫁を軽視しがちなこと、規範的なパラダイム主張が経験的知見に先行することがある。中小企業には、売っているのが製品ではなく顧客が使って得る価値であるという見方が、保守・研修・カスタマイズといったサービス収益の設計と、顧客を共創の担い手として巻き込む仕組み（レビュー、共同開発）につながることが含意となる。
 
 ## 提唱者・初出
-スティーブン・ヴァーゴ ／ ロバート・ラッシュ ／ エバート・グミッソン ／ ジャン・ポール・フィッツシモンズ
+スティーヴン・ヴァーゴ＆ロバート・ラッシュ（2004 提唱／2008 命題の改訂）／エヴェルト・グメソン（北欧学派の関係性マーケティング）／C・K・プラハラード＆ヴェンカト・ラマスワミ（価値共創論）
 
 ## 出典
-- [Vargo, S. L. & Lusch, R. F. (2004) Evolving to a New Dominant Logic for Marketing — Journal of Marketing, 68(1), 1–17（S-Dロジックの原典）](https://doi.org/10.1509/jmkg.68.1.1.24036) `学術`
-- [Vargo, S. L. & Lusch, R. F. (2008) Service-Dominant Logic: Continuing the Evolution — Journal of the Academy of Marketing Science, 36(1), 1–10（理論の発展）](https://doi.org/10.1509/jmkg.72.1.5.21180) `学術`
-- [Lusch, R. F. & Nambisan, S. (2015) Service Innovation: A Service-Dominant Logic Perspective — MIS Quarterly, 39(1), 155–175（デジタルイノベーションへの応用）](https://doi.org/10.1016/j.jretai.2016.03.004) `学術`
-- [Wikipedia: Service-dominant logic — Vargo & Lusch, operant resources, value-in-use, co-creation](https://en.wikipedia.org/wiki/Service-dominant_logic) `リファレンス`
+- [Vargo, S. L. & Lusch, R. F. (2004) Evolving to a New Dominant Logic for Marketing — Journal of Marketing 68(1)（原典）](https://doi.org/10.1509/jmkg.68.1.1.24036) `学術`
+- [Wikipedia: Service-dominant logic — Vargo & Lusch、オペラント資源、価値共創、サービス・エコシステム](https://en.wikipedia.org/wiki/Service-dominant_logic) `リファレンス`
 
 ## 関連概念
-- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 語彙が近い
-- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
-- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
+- [[mgmt-dominant-logic|ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する]] — 同じ思想家
 - [[mgmt-servitization|サービタイゼーション（サービス化）]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

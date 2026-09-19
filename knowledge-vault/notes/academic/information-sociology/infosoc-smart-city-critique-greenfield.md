@@ -26,21 +26,21 @@ aliases:
 アダム・グリーンフィールド ／ ロブ・キトチン ／ シャノン・マッターン ／ テイラー・シェルトン ／ マシュー・ゾック
 
 ## 出典
-- [Greenfield, A. (2013) Against the Smart City — Do Projects](https://search.worldcat.org/title/against-the-smart-city/oclc/869266837) `学術`
+- [Greenfield, A. (2013) Against the Smart City — Do Projects](https://search.worldcat.org/title/against-the-smart-city/oclc/869266837) `リファレンス`
 - [Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal](https://doi.org/10.1007/s10708-013-9516-8) `学術`
 - [Wikipedia: Smart city — スマートシティの概念と批判的議論](https://en.wikipedia.org/wiki/Smart_city) `リファレンス`
 
 ## 関連概念
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 語彙が近い
-- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 出典を共有
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
-- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 - [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
+- [[infosoc-gamification|ゲーミフィケーション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

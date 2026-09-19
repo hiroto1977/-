@@ -31,8 +31,8 @@ aliases:
 - [Psychological Bulletin abstract (Ovid): The Actor–Observer Asymmetry in Attribution](https://www.ovid.com/journals/plbul/abstract/00006823-200611000-00004~the-actorobserver-asymmetry-in-attribution-a-surprising) `学術`
 
 ## 関連概念
-- [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]] — 同分野の近傍
 - [[human-attribution-theory|帰属理論]] — 同分野の近傍
+- [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]] — 同分野の近傍
 - [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]] — 同分野の近傍
 
 ## 関連

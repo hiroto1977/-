@@ -14,7 +14,7 @@
  * 特例分は住民税所得割額の 20% が上限。上限を超えた分は自己負担になる。
  */
 
-import { yen } from './num';
+import { yen, finiteOrNull } from './num';
 import { RECONSTRUCTION_SURTAX_RATE } from './taxCalc';
 
 /** ふるさと納税の自己負担額 (円)。 */
@@ -51,6 +51,14 @@ export function furusatoOneStopEligibility(
 ): FurusatoOneStopEligibility {
   if (filesTaxReturn) {
     return { eligible: false, reason: '確定申告を行う場合はワンストップ特例を使えません (申告に寄附金控除を含めます)' };
+  }
+  // 比較だけの関門は NaN をどちらの枝にも落とさない。実測では
+  // `furusatoOneStopEligibility(NaN, false)` が **`eligible: true`**
+  // (「ワンストップ特例の対象です・確定申告不要」) を返していた ——
+  // **申告しなくてよいと告げる向き**へ倒れる。上限が測れないときは
+  // 文面に `NaN自治体以内` が入っていた。どちらも「判定できない」と答える。
+  if (finiteOrNull(municipalityCount) === null || finiteOrNull(maxMunicipalities) === null) {
+    return { eligible: false, reason: '寄附先の件数が読めないため、ワンストップ特例の判定ができません (入力を確認してください)' };
   }
   if (municipalityCount <= 0) {
     return { eligible: false, reason: '寄附先がありません' };

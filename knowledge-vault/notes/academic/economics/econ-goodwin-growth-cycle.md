@@ -26,7 +26,7 @@ aliases:
 リチャード・グッドウィン ／ カール・マルクス ／ アルフレッド・ロトカ ／ ヴィト・ヴォルテラ
 
 ## 出典
-- [Goodwin, R. M. (1967) A growth cycle — in Socialism, Capitalism and Economic Growth (Cambridge UP)](https://www.worldcat.org/oclc/977195) `学術`
+- [Goodwin, R. M. (1967) A growth cycle — in Socialism, Capitalism and Economic Growth (Cambridge UP)](https://www.worldcat.org/oclc/977195) `リファレンス`
 - [Wikipedia: Goodwin model (economics) — predator-prey, employment, wage share, class struggle](https://en.wikipedia.org/wiki/Goodwin_model_(economics)) `リファレンス`
 
 ## 関連概念
@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
 - [[infosoc-time-space-compression-harvey|時空間圧縮——資本主義が空間と時間の経験を縮約する過程]] — 同じ思想家
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同分野の近傍
-- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — 同分野の近傍
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

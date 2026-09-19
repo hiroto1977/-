@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 語彙が近い
+- [[tax-corp-blue-application|法人税の青色申告の承認申請]] — 語彙が近い
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 出典を共有
 - [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]] — 出典を共有
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 出典を共有
-- [[subsidy-patent-fee-reduction|特許料等の減免制度]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

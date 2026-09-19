@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Network effect（定義・直接/間接・クリティカルマス・ロックイン・winner-take-all）](https://en.wikipedia.org/wiki/Network_effect) `リファレンス`
 
 ## 関連概念
-- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 語彙が近い
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 分野横断
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
 - [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 同じ思想家
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家

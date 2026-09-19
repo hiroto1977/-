@@ -114,4 +114,26 @@ describe('sanitizeNote', () => {
     expect(sanitizeNote('abc', 3)).toBe('abc');
     expect(sanitizeNote('abc', 0)).toBe('');
   });
+
+  /*
+   * **★ 切る単位は「字」であり、サロゲート対を割らない** (2026-09-13 · パス 195)。
+   *
+   * 直す前は `.slice(0, maxLen)` (コード単位) で、絵文字を含むメモを天井の半分で
+   * 切り、境界に**孤立サロゲート**を残していた (UTF-8 を往復すると `�` に化ける)。
+   * 上の検査は ASCII だけだったので差が出なかった。
+   */
+  it('★ 絵文字は 1 字として数え、対を割らない', () => {
+    // 3 字ぶん = 絵文字 3 つ (コード単位なら 6)。
+    expect(sanitizeNote('😀😀😀😀😀', 3)).toBe('😀😀😀');
+    // 天井ちょうど。
+    expect(sanitizeNote('😀'.repeat(2000))).toBe('😀'.repeat(2000));
+    // 孤立サロゲートが残らない —— 上位半分が単独で末尾に来ていない。
+    const cut = sanitizeNote('a' + '😀'.repeat(2000));
+    const last = cut.charCodeAt(cut.length - 1);
+    expect(last >= 0xd800 && last <= 0xdbff, `末尾が孤立上位サロゲート: 0x${last.toString(16)}`).toBe(false);
+    // 対照 —— コード単位で切ると壊れる (直す前の振る舞い)。
+    const broken = ('a' + '😀'.repeat(2000)).slice(0, 2000);
+    const brokenLast = broken.charCodeAt(broken.length - 1);
+    expect(brokenLast >= 0xd800 && brokenLast <= 0xdbff).toBe(true);
+  });
 });

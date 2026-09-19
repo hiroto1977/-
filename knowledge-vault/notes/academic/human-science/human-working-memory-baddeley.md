@@ -30,9 +30,11 @@ aliases:
 - [Wikipedia: Baddeleys model of working memory — central executive, phonological loop, visuospatial sketchpad, episodic buffer](https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory) `リファレンス`
 
 ## 関連概念
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同じ思想家
+- [[human-executive-function|実行機能（エグゼクティブ・ファンクション）——抑制制御・ワーキングメモリ・認知的柔軟性を中核に、目標に向けて思考と行動を制御する前頭前野の高次過程]] — 同じ思想家
 - [[human-iconic-memory-sperling|アイコニックメモリ——大容量で急速に減衰する視覚の感覚記憶]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[human-episodic-future-thinking|エピソード的未来思考（将来事象の心的シミュレーション）]] — 同分野の近傍
+- [[human-phonological-loop|音韻ループ（Phonological Loop）]] — 同分野の近傍
 - [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同分野の近傍
 
 ## 関連

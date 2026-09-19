@@ -30,9 +30,8 @@ aliases:
 - [Wikipedia: Ironic process theory — white bear, operating and monitoring processes, rebound](https://en.wikipedia.org/wiki/Ironic_process_theory) `リファレンス`
 
 ## 関連概念
-- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 同じ思想家
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
-- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同じ思想家
+- [[mgmt-transactive-memory-wegner|トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み]] — 同じ思想家
 - [[human-mind-wandering|マインドワンダリング]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 

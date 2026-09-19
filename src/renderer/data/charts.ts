@@ -101,7 +101,22 @@ export function lineChart(
   const pad = Math.min(options.pad ?? 8, height * 0.4, width * 0.4);
   const tickCount = Math.max(2, options.yTickCount ?? 4);
 
-  const all = series.flatMap((s) => s.values);
+  /*
+   * **描けない値 (NaN / ±Infinity) は最初に落とす。**
+   *
+   * 規準は同じファイルの隣に在った —— `pieChart` は
+   * `Number.isFinite(s.value) && s.value > 0` で弾き、`radarChart` は
+   * `.filter((v) => Number.isFinite(v))` と `Number.isFinite(v) ? v : min` で
+   * 二重に守っている。**素通しだったのはこの関数だけ**だった
+   * (2026-09-12 · パス 150)。
+   *
+   * 実測した害: 値に 1 つ NaN が混じると `min`/`max` が NaN になり、
+   * 全目盛りが `NaN 件`・全座標が `NaN,NaN`・0 線も `y1="NaN"` になる。
+   * SVG は NaN の座標を**何も描かない**ので、画面には
+   * **枠と凡例だけが在って線が無い図**が出る —— このモジュールの冒頭が
+   * 「それらしい図が出てしまうのが最悪」と書いているまさにその形である。
+   */
+  const all = series.flatMap((s) => s.values).filter((v) => Number.isFinite(v));
   if (all.length === 0) {
     return { series: [], min: 0, max: 0, zeroY: null, yTicks: [], xTicks: [] };
   }
@@ -129,7 +144,13 @@ export function lineChart(
   };
 
   const geo: LineSeriesGeometry[] = series.map((s) => {
-    const points = s.values.map((v, i) => ({ x: r1(xOf(i)), y: r1(yOf(v)) }));
+    // 描けない値は**その点を落とす** (線に隙間ができる)。0 や min に倒すと
+    // 「読めなかった」が「その値だった」に化ける (パス 52 の族)。
+    // 添字 `i` は元の位置のままなので、残る点は横軸のラベルと揃ったままになる。
+    const points = s.values
+      .map((v, i) => ({ v, i }))
+      .filter(({ v }) => Number.isFinite(v))
+      .map(({ v, i }) => ({ x: r1(xOf(i)), y: r1(yOf(v)) }));
     return {
       label: s.label,
       points,

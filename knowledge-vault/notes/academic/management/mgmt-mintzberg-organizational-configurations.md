@@ -26,7 +26,7 @@ aliases:
 ヘンリー・ミンツバーグ ／ マックス・ウェーバー ／ ジョーン・ウッドワード ／ トム・バーンズ
 
 ## 出典
-- [Mintzberg, H. (1979) The Structuring of Organizations — Prentice-Hall (WorldCat)](https://www.worldcat.org/oclc/4136131) `学術`
+- [Mintzberg, H. (1979) The Structuring of Organizations — Prentice-Hall (WorldCat)](https://www.worldcat.org/oclc/4136131) `リファレンス`
 - [Wikipedia: Mintzberg organizational configurations — simple/machine/professional/divisional/adhocracy, coordination mechanisms](https://en.wikipedia.org/wiki/Henry_Mintzberg#Organizational_configurations) `リファレンス`
 
 ## 関連概念

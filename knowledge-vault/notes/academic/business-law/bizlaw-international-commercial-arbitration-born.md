@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: International commercial arbitration — 制度・条約・主要仲裁機関](https://en.wikipedia.org/wiki/International_commercial_arbitration) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 語彙が近い
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]] — 語彙が近い
+- [[bizlaw-international-commercial-arbitration|国際商事仲裁とニューヨーク条約の執行規範]] — 語彙が近い
 - [[bizlaw-commercial-arbitration-icc|ICC国際商事仲裁——仲裁条項の設計と仲裁判断の執行]] — 同じ思想家
 - [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同じ思想家
 - [[bizlaw-arbitration-adr|仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度]] — 同じ思想家

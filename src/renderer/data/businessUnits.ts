@@ -13,7 +13,9 @@
  */
 
 import type { MonthlyBusinessKpi } from './businessFinancials';
+import { readNumeric } from '../../shared/readNumeric';
 import { hasControlChar } from '../../shared/controlChars';
+import { isCalendarDateOrMonth } from '../../shared/isoDate';
 
 export const BUSINESS_UNITS_COLLECTION = 'business-units';
 
@@ -56,14 +58,14 @@ export type BusinessUnitResult =
   | { ok: true; entry: BusinessUnitInput }
   | { ok: false; reason: string };
 
-/**
- * 開始年月の形。`YYYY-MM` と `YYYY-MM-DD` の 2 つだけ受ける。
+/*
+ * 開始年月の形。`YYYY-MM` と `YYYY-MM-DD` の 2 つだけ受ける —— 判定は `shared/isoDate.ts`
+ * (2026-09-09 · パス 115 までは自前の正規表現で、`2024-02-30` を通していた)。
  *
  * 月だけで足りる場面が多いので日付を必須にしない。曖昧な表記
  * (`2026/4`・`令和8年4月`) は受けずに言い直してもらう —
  * 解釈を推測すると、後で並べ替えたときに黙って順序が狂う。
  */
-const STARTED_ON_RE = /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/;
 
 /** 入力を検証して、保存する形にする。 */
 export function parseBusinessUnit(input: {
@@ -88,7 +90,7 @@ export function parseBusinessUnit(input: {
   }
 
   const startedOn = (input.startedOn ?? '').trim();
-  if (startedOn.length > 0 && !STARTED_ON_RE.test(startedOn)) {
+  if (startedOn.length > 0 && !isCalendarDateOrMonth(startedOn)) {
     return { ok: false, reason: '開始時期は YYYY-MM か YYYY-MM-DD で入力してください。' };
   }
 
@@ -138,12 +140,13 @@ function parseAmounts(input: {
   for (const key of ['revenue', 'variableCost', 'fixedCost'] as const) {
     const raw = (input[key] ?? '').trim();
     if (raw.length === 0) continue;
-    // 桁区切りと全角数字は日常的に貼り付けられるので受ける。
-    const normalized = raw.replace(/,/g, '').replace(/[０-９]/g, (c) =>
-      String.fromCharCode(c.charCodeAt(0) - 0xfee0),
-    );
-    const value = Number(normalized);
-    if (!Number.isFinite(value)) {
+    // 読み取りはアプリで 1 つ (`shared/readNumeric.ts`)。桁区切りと全角数字は
+    // 日常的に貼り付けられるので受けるが、**位置**は見る —— ここだけ
+    // `Number(カンマを外した文字列)` で読んでいた 2026-09-06 までは、
+    // `1,5` が 15、`0x10` が 16、`1e3` が 1000 として通っていた
+    // (打った数と保存された数が黙って食い違う)。
+    const value = readNumeric(raw);
+    if (value === null) {
       return { ok: false, reason: `${AMOUNT_LABEL[key]}は数値で入力してください。` };
     }
     if (value < 0) {
@@ -260,9 +263,12 @@ export function financialUnitsFromBusinessUnits(
   const out: BusinessFinancialUnit[] = [];
   for (const u of units) {
     const revenue = u.data.revenue;
-    if (typeof revenue !== 'number') continue;
-    const variableCost = typeof u.data.variableCost === 'number' ? u.data.variableCost : 0;
-    const fixedCost = typeof u.data.fixedCost === 'number' ? u.data.fixedCost : 0;
+    // 非有限は「入っていない」と同じ扱い。`typeof x === 'number'` は NaN と
+    // ±Infinity を通すので、ここを通ると `deriveBusinessFinancials` から
+    // 財務分析・法人税/消費税カードの全部へ ∞ が広がる (パス 98)。
+    if (typeof revenue !== 'number' || !Number.isFinite(revenue)) continue;
+    const variableCost = typeof u.data.variableCost === 'number' && Number.isFinite(u.data.variableCost) ? u.data.variableCost : 0;
+    const fixedCost = typeof u.data.fixedCost === 'number' && Number.isFinite(u.data.fixedCost) ? u.data.fixedCost : 0;
     const profit = revenue - variableCost - fixedCost;
     out.push({
       id: u.id,

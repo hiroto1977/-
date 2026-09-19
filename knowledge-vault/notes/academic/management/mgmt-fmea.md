@@ -33,8 +33,8 @@ aliases:
 - [[mgmt-pdca-cycle|PDCAサイクル]] — 出典を共有
 - [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

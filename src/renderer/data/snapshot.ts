@@ -3,6 +3,7 @@
 // until each ServiceClient is wired up to call the live REST APIs.
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+import type { NortonDetection } from '../../shared/nortonDetection';
 import {
   LEADER_DISQUALIFIERS,
   LEADER_DISQUALIFIERS_SOURCE,
@@ -10,6 +11,11 @@ import {
   SKILL_STEPS,
   SKILL_STEPS_SOURCE,
 } from '../../shared/talent';
+import { NO_SECURED_FUNDING_NOTE, type FundingLinkSource } from '../../shared/funding';
+import { MIN_SAFE_VERSION } from '../../shared/ollama';
+import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
+import type { CursorSnapshot } from '../../shared/api/cursor';
+import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -35,21 +41,43 @@ const SAMPLE_THUMBNAIL =
 const SAMPLE_AVATAR =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23d1d5db'/%3E%3Ccircle cx='32' cy='26' r='11' fill='%239ca3af'/%3E%3Cpath d='M12 60a20 20 0 0140 0z' fill='%239ca3af'/%3E%3C/svg%3E";
 
+/**
+ * **`as const` なので、注記を足さない真偽値は「その値しか取らない型」になる。**
+ *
+ * 画面は `useServiceData(id, SNAPSHOT[id])` で描く。`fetchSnapshot<T>` の `T` は
+ * **検証されない主張**で (`ipcRenderer.invoke` の戻りは any)、その `T` はここの
+ * 型から推論される —— つまり `isMock: true` と書くと、画面は「相手は true 以外を
+ * 返さない」と宣言したことになる。実物 (`main/clients/*` の戻り値の型) が
+ * `boolean` を宣言していると、その主張は嘘になり:
+ *
+ *   - 画面の `isMock ? A : B` の**もう一方の枝が `never` に狭まる** ——
+ *     実行時には正しく出るのに、型検査器はその枝を「起きない」として扱う。
+ *   - **その状態を `SNAPSHOT` から組んだ検査で作れない** (cast が要る)。
+ *     2026-09-14 のパス 264 で実際にこれに当たった —— `versionSafe: true` の
+ *     対照が書けず、`as boolean` を足すまで前へ進めなかった。
+ *
+ * だから**直下の真偽値は実物と同じ幅で書く** (`as boolean`)。実物の側も
+ * リテラルを宣言している欄だけが例外で、`snapshotFieldWidth.test.ts` の
+ * `NARROW_BY_DESIGN` に理由つきで載せる —— 走査は**両方向**に鳴る。
+ *
+ * 経緯: パス 62 / 79 (101 件) / 80 / 116 / 263 / 264 と同じ家系。パス 79 が
+ * 101 件直したときゲートを残さなかったので、13 件が静かに生き残っていた。
+ */
 export const SNAPSHOT = {
   home: {
     greeting: 'こんにちは。今日は何を作りましょう?',
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
   library: {
     note: 'ライブラリの実体はブラウザの IndexedDB に保存されます',
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
   settings: {
     note: 'API キーはマスターパスワードで暗号化されてブラウザに保管されます',
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
   assistant: {
     note: 'AI アシスタントは選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、確証済みナレッジと全サービスを統合して応答します',
@@ -59,7 +87,7 @@ export const SNAPSHOT = {
       '表・箇条書き・計画などの成果物の生成',
       '関連サービスへの案内・操作',
     ] as readonly string[],
-    keyConfigured: false,
+    keyConfigured: false as boolean,
   },
 
   fetchedAt: '2026-05-11T09:30:00Z',
@@ -307,11 +335,21 @@ export const SNAPSHOT = {
   },
 
   skills: {
+    /*
+     * ブラウザ版はここを読めないので常に空 (`localReadUnavailableNote` が画面で言う)。
+     * 欄は `main/clients/skills.ts` の `SkillEntry` と対応する ——
+     * **`id` (実行の鍵) と `label` (画面の題) は別の欄**である (パス 179)。
+     * 空配列なので `snapshotShapeParity` の走査は要素の形を見ない (両方に 1 件以上
+     * 要る)。対応は `main/clients/__tests__/skills.test.ts` の型検査が留める。
+     */
     items: [] as {
-      name: string;
+      id: string;
+      label: string;
       description: string;
       source: 'user' | 'project' | 'plugin';
       path: string;
+      runnable: boolean;
+      unrunnableReason: string;
     }[],
   },
 
@@ -321,6 +359,9 @@ export const SNAPSHOT = {
       installPath: '' as string,
       platform: '' as string,
       details: '' as string,
+      // 同梱値が出ている = 端末を見ていない (ブラウザ版、または取得に失敗した後)。
+      // `installed: false` を「無い」と読ませないため、状態を明示する (パス 165)。
+      detection: 'unavailable' as NortonDetection,
     },
     breaches: [] as { email: string; checkedAt: string; count: number }[],
     lastUrlScan: null as { url: string; scannedAt: string; positives: number; total: number } | null,
@@ -350,14 +391,21 @@ export const SNAPSHOT = {
       sentiment: 'positive' | 'neutral' | 'negative';
       dominant: string;
     }[],
-    keyConfigured: false,
+    keyConfigured: false as boolean,
   },
 
   ollama: {
-    running: false,
+    // **`as boolean` が必要** (2026-09-14 · パス 264)。annotation が無いと TS は
+    // リテラル型 `false` を推論し、画面 (`OllamaPage`) が `running ? … : …` /
+    // `!versionSafe ? … : …` で分けている**もう一方の枝が型の上で死ぬ** ——
+    // 実データ (`main/clients/ollama.ts` / `network/ollamaWeb.ts`) は `boolean` を
+    // 返すので、見本の型だけが実物より狭い (パス 62 / 80 / 116 / 263 の家系)。
+    // 同じ形が snapshot の直下にあと 14 件在る (実測) —— 母集団は
+    // `docs/REMAINING_WORK.md` のパス 264 の「残り」に記録した。
+    running: false as boolean,
     version: '' as string,
-    versionSafe: false,
-    versionMinRecommended: '0.1.46',
+    versionSafe: false as boolean,
+    versionMinRecommended: MIN_SAFE_VERSION,
     models: [] as {
       name: string;
       family: string;
@@ -500,7 +548,12 @@ export const SNAPSHOT = {
   },
 
   microsoft365: {
-    userName: '',
+    // **`as string` を落とすと枝が死ぬ。** `SNAPSHOT` は末尾が `as const` なので、
+    // 素の `''` はリテラル型 `""` になる。画面は `typeof SNAPSHOT.microsoft365` から型を取るので
+    // `userName ? … : ''` の真の枝が `never` = **型の上で死に、tsc が中を検査しなくなる** ——
+    // 一方 live 取得は `userName: string` を返すので**その枝は実際に走る**。
+    // 直下の配列が既に `as T[]` で広げているのと同じ理由 (プレースホルダは実物の型で持つ)。
+    userName: '' as string,
     messages: [] as { id: string; subject: string; from: string; received: string; unread: boolean }[],
     events: [] as { id: string; subject: string; start: string; location: string }[],
     items: [
@@ -956,7 +1009,16 @@ export const SNAPSHOT = {
     uptimeSec: 277_320,
     uptimeLabel: '3日 5時間 2分',
     cpu: { model: 'Intel Core i7', cores: 8, speedMhz: 2600 },
-    load: { avg1: 0.42, avg5: 0.55, avg15: 0.61, perCorePct: 5 },
+    // 同梱は Linux ホストの標本なので数で持つ。**型は `number | null` に広げる** ——
+    // live 側 (`clients/linux.ts`) はロードアベレージを提供しない OS で `null` を
+    // 返すため、狭いままだと写しがずれる (payloadShapeAgreement.test.ts が留める)。
+    load: {
+      avg1: 0.42 as number | null,
+      avg5: 0.55 as number | null,
+      avg15: 0.61 as number | null,
+      perCorePct: 5 as number | null,
+      unavailableNote: null as string | null,
+    },
     memory: { totalMb: 16384, freeMb: 7168, usedMb: 9216, usagePct: 56.3 },
     notes: [] as string[],
     devEnv: {
@@ -1071,7 +1133,7 @@ export const SNAPSHOT = {
       { id: 'shugyo', label: '就業規則（10章47条）', docCount: 1 },
     ] as { id: string; label: string; docCount: number }[],
     fetchedAt: '2035-05-15T00:00:00.000Z',
-    isMock: true,
+    isMock: true as boolean,
   },
 
   cursor: {
@@ -1079,37 +1141,25 @@ export const SNAPSHOT = {
       { name: '佐藤 健', email: 'sato@example.com', role: 'owner' },
       { name: '鈴木 彩', email: 'suzuki@example.com', role: 'member' },
       { name: '田中 悠', email: 'tanaka@example.com', role: 'member' },
-    ] as { name: string; email: string; role: string }[],
+    ],
     usage: [
       { date: '2026-08-04', active: true, linesAdded: 1240, linesAccepted: 812, acceptRate: 65.5, overCounted: false, tabsShown: 430, tabsAccepted: 190, requests: 62, model: 'claude-4.5-sonnet' },
       { date: '2026-08-05', active: true, linesAdded: 980, linesAccepted: 604, acceptRate: 61.6, overCounted: false, tabsShown: 380, tabsAccepted: 150, requests: 48, model: 'claude-4.5-sonnet' },
       { date: '2026-08-06', active: false, linesAdded: 0, linesAccepted: 0, acceptRate: null, overCounted: false, tabsShown: 0, tabsAccepted: 0, requests: 0, model: '' },
-    ] as {
-      date: string;
-      active: boolean;
-      linesAdded: number;
-      linesAccepted: number;
-      acceptRate: number | null;
-      overCounted: boolean;
-      tabsShown: number;
-      tabsAccepted: number;
-      requests: number;
-      model: string;
-    }[],
+    ],
     spend: [
       { name: '佐藤 健', email: 'sato@example.com', role: 'owner', spendUsd: 41.2, fastPremiumRequests: 412, hardLimitUsd: null },
       { name: '鈴木 彩', email: 'suzuki@example.com', role: 'member', spendUsd: 18.75, fastPremiumRequests: 187, hardLimitUsd: 50 },
       { name: '田中 悠', email: 'tanaka@example.com', role: 'member', spendUsd: 0, fastPremiumRequests: 0, hardLimitUsd: null },
-    ] as {
-      name: string;
-      email: string;
-      role: string;
-      spendUsd: number;
-      fastPremiumRequests: number;
-      hardLimitUsd: number | null;
-    }[],
+    ],
     totals: { members: 3, activeDays: 2, spendUsd: 59.95 },
-  },
+    // 見本は「3 つとも読めた」状態。**素性を持たせないと、画面が
+    // `intake.members` を読めず取得前に落ちる** (同梱と取得の形は同じでなければ
+    // ならない · パス 263)。欄ごとの `as` の写しは `CursorSnapshot` 1 つに寄せた ——
+    // 写しが在ると、型が広がったとき (`spendUsd: number | null`) に画面だけが
+    // 古い型を見て `null` の枝が死ぬ (パス 62 / 80 / 116 の家系)。
+    intake: { members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0 },
+  } as CursorSnapshot,
 
   talent: {
     // 定義表 (病・STEP・10ヶ条) は **定数であってデータではない**。
@@ -1136,7 +1186,22 @@ export const SNAPSHOT = {
     updatedAt: '',
     disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
     stepsSource: SKILL_STEPS_SOURCE,
+    // 保存先から何が読めたか (パス 121)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
   },
+
+  /**
+   * 水耕栽培の運転管理。**利用者のデータでなく「何を測るか」の台帳**で、
+   * 見本ではない —— **`shared/hydroponicsControl.ts` から組む**。
+   *
+   * ここを型だけの空の入れ物にしていたとき、**初回描画の台帳が空の表**に
+   * なった (`useServiceData` はまず snapshot を返すので、「更新」を押すまで
+   * 何も出ない)。e2e が実測で拾った —— パス 118 の「口はあるが繋がっていない」。
+   *
+   * 測定・ロット・設定は record store (端末内) に在り、**ここには入らない**。
+   */
+  hydroponics: buildHydroponicsSnapshot(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
@@ -1170,6 +1235,7 @@ export const SNAPSHOT = {
       interestTaxShield: number;
       netCashflow: number;
       operatingCashflow: number;
+      operatingCashflowKnown: boolean;
       portfolioValue: number;
     }[],
     bars: [] as { label: string; secured: number; pipeline: number }[],
@@ -1207,7 +1273,17 @@ export const SNAPSHOT = {
       };
       return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
     })(),
-    qualityScore: { nonRepayableRatio: 0, afterTaxRatio: 0, compositeScore: 0 },
+    // 同梱は案件 0 件なので**確定総額も 0** —— live 計算 (`fundingQualityScore`) と
+    // 同じ答え (算定不能) を持つ。2026-09-09 まで見本は `0` を持ち、live 計算は
+    // 同じ入力に `100` を返していた —— **同じ空状態について見本と実装が正反対**
+    // だった (どちらが正しいかではなく、どちらも数で答えていたのが誤り)。
+    qualityScore: {
+      nonRepayableRatio: null as number | null,
+      afterTaxRatio: null as number | null,
+      compositeScore: null as number | null,
+      // 文面は `shared/funding.ts` の 1 本を読む (見本に写さない)。
+      unavailableNote: NO_SECURED_FUNDING_NOTE as string | null,
+    },
     diversification: null as {
       kindsPresent: number;
       hhi: number;
@@ -1224,10 +1300,16 @@ export const SNAPSHOT = {
     },
     debtService: {
       totalRepayment: 0,
-      totalOperatingCashflow: 0,
-      overallDscr: 0,
-      worstMonthDscr: 0,
+      // 返済が 0 なので DSCR は算定不能 —— 出荷する既定データに
+      // 「返済ゼロで DSCR 0」を入れない (6 行上の longTermRatioPct と同じ形)。
+      coveredOperatingCashflow: 0,
+      coveredRepayment: 0,
+      overallDscr: null as number | null,
+      worstMonthDscr: null as number | null,
       shortfallMonths: 0,
+      // 突合できた月も突合できなかった月も 0 (返済が 1 か月も無いので)。
+      coveredMonths: 0,
+      unmatchedMonths: 0,
     },
     costMetrics: {
       totalLoanPrincipal: 0,
@@ -1243,15 +1325,22 @@ export const SNAPSHOT = {
       nonDeductibleInputTax: 0,
       simplified: false,
     },
-    accountingLinked: false,
-    stocksLinked: false,
+    accountingLinked: false as boolean,
+    // 出どころ (パス 265) —— 同梱の見本は会計CF も株式評価額も持たないので 'none'。
+    accountingSource: 'none' as FundingLinkSource,
+    stocksLinked: false as boolean,
+    stocksSource: 'none' as FundingLinkSource,
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
 
   freee: {
-    companyName: '',
+    // `as string` の理由は microsoft365.userName と同じ (リテラル `""` だと表示の枝が死ぬ)。
+    companyName: '' as string,
     monthly: [] as { month: string; income: number; expense: number; net: number }[],
+    // 見本は取引を 1 件も読んでいない。件数は `shared/freeeIntake.ts` の定数から
+    // 引く (0 を 4 つ手で書くと、欄が増えたときにここだけ古くなる)。
+    intake: NO_DEAL_INTAKE,
     fetchedAt: '',
   },
 
@@ -1270,12 +1359,12 @@ export const SNAPSHOT = {
         variableCost: number;
         fixedCost: number;
         contribution: number;
-        contributionRatio: number;
-        variableRatio: number;
-        fixedRatio: number;
+        contributionRatio: number | null;
+        variableRatio: number | null;
+        fixedRatio: number | null;
         bep: number;
         bepRatio: number;
-        safetyMargin: number;
+        safetyMargin: number | null;
         operatingProfit: number;
         operatingLeverage: number;
       };
@@ -1295,12 +1384,13 @@ export const SNAPSHOT = {
         variableCost: 0,
         fixedCost: 0,
         contribution: 0,
-        contributionRatio: 0,
-        variableRatio: 0,
-        fixedRatio: 0,
+        // 売上 0 の合算なので率は算定不能 (safetyMargin: null と同じ扱い)。
+        contributionRatio: null as number | null,
+        variableRatio: null as number | null,
+        fixedRatio: null as number | null,
         bep: 0,
         bepRatio: 0,
-        safetyMargin: 0,
+        safetyMargin: null,
         operatingProfit: 0,
         operatingLeverage: 0,
       },
@@ -1313,7 +1403,7 @@ export const SNAPSHOT = {
       }[],
     },
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
 
   stocks: {
@@ -1354,6 +1444,13 @@ export const SNAPSHOT = {
       }[],
     },
     fetchedAt: '',
+    // 保存先から何が読めたか (パス 309)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
+    // **実物も literal を宣言している**唯一の欄 (`StocksSnapshot.isMock: true` ——
+    // 「Always true until Phase 7 wires a real data source + broker」)。だから狭いのが
+    // 正しく、`as boolean` を足すと実物より**広い**主張になる。台帳は
+    // `main/clients/__tests__/snapshotFieldWidth.test.ts` の NARROW_BY_DESIGN。
     isMock: true,
   },
 
@@ -1638,7 +1735,10 @@ export const SNAPSHOT = {
       },
     ],
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
+    // 保存先から何が読めたか (パス 120)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
   },
 
   templates: {
@@ -1765,7 +1865,7 @@ export const SNAPSHOT = {
       },
     ],
     fetchedAt: '',
-    isMock: true,
+    isMock: true as boolean,
   },
 } as const;
 

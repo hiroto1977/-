@@ -61,11 +61,30 @@ function parseArgs(argv) {
   return out;
 }
 
-/** "YYYY-MM" / "YYYY-MM-DD" → 経過月数（不正・空は null）。 */
+/**
+ * "YYYY-MM" / "YYYY-MM-DD" → 経過月数。**読めない・暦に無い・未来は null**。
+ *
+ * ## 未来を null にする理由 (2026-09-06)
+ *
+ * 以前は正規表現に当たればそのまま差を返していた。すると `asOf: '2027-06'` は
+ * **負の月数**になり、`age === null` でもなく `age >= limit` でもないので
+ * **再確証キューに一度も入らない** —— 打ち間違い 1 つで、その項目は
+ * 永久に「新しい」ことになる。**古くなるのを見張る仕組み自身の穴**だった。
+ * `2026-13` も同じ (月を検査していなかったので負になる)。
+ * `2026-00` はもっと悪く、**9 か月前として通っていた** (それらしい値なので気付けない)。
+ *
+ * null にすると呼び出し側の既存の経路 (「asOf が読めない」件数) に乗るので、
+ * 週次レポートに出て人が直せる。**黙って免除されるより、数えられるほうがよい。**
+ *
+ * 経過月数は負にならない (未来を弾いたので)。同じ月なら 0。
+ */
 function monthsSince(asOf, today) {
   const m = /^(\d{4})-(\d{2})/.exec(asOf || '');
   if (!m) return null;
-  return (today.getFullYear() - Number(m[1])) * 12 + (today.getMonth() + 1 - Number(m[2]));
+  const month = Number(m[2]);
+  if (month < 1 || month > 12) return null;
+  const age = (today.getFullYear() - Number(m[1])) * 12 + (today.getMonth() + 1 - month);
+  return age < 0 ? null : age;
 }
 
 /** タイトルの「コア」正規化 — 副題（——以降）・括弧・空白/記号を除去して同一概念の別表記を束ねる。 */
@@ -209,6 +228,162 @@ function idDedupeSuspects(entries, distinct) {
     }
   }
   out.sort((x, y) => (x.a < y.a ? -1 : x.a > y.a ? 1 : x.b < y.b ? -1 : 1));
+  return out;
+}
+
+/**
+ * 出典由来の重複疑い: **第一出典の DOI が同じ**ペア（同一コレクション内）。
+ *
+ * 2026-09-05 に第一出典で束ねる走査を手で回したところ、同じ原典を筆頭に掲げる
+ * 3 件以上の塊が 33 あった（stakeholder-salience ×4、成人愛着 Hazan & Shaver ×5 など）。
+ * どれもタイトルコア（副題が違う）・term-overlap（語彙が違う）・id 正規化（id が別物）を
+ * すり抜けていた。同じ原典を筆頭に置く 2 項目は、ほぼ同じ概念である。
+ *
+ * DOI 以外の URL は鍵にしない: e-Gov の法令 1 本（会社法）を 62 項目が筆頭に置くなど、
+ * 法令・SEP・Wikipedia は多くの別概念が共有する典拠なので精度が落ちる。
+ * DOI は出版社ページの URL に埋め込まれた形（journals.sagepub.com/doi/10.1177/…）も拾う。
+ */
+function doiOfUrl(url) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(url);
+  } catch {
+    decoded = url;
+  }
+  const m = /10\.\d{4,9}\/[^\s?#]+/i.exec(decoded);
+  return m ? m[0].toLowerCase().replace(/[.,;)]+$/, '') : null;
+}
+
+function sourceUrl(source) {
+  return source && typeof source === 'object' ? String(source.url || '') : String(source || '');
+}
+
+function firstSourceDoi(entry) {
+  const first = Array.isArray(entry.sources) && entry.sources[0] ? entry.sources[0] : null;
+  return first === null ? null : doiOfUrl(sourceUrl(first));
+}
+
+/** 出典の**すべての位置**から DOI を集める (重複除去・小文字)。firstSourceDoi と同じ正規化。 */
+function sourceDois(entry) {
+  const out = [];
+  for (const source of Array.isArray(entry.sources) ? entry.sources : []) {
+    const doi = doiOfUrl(sourceUrl(source));
+    if (doi && !out.includes(doi)) out.push(doi);
+  }
+  return out;
+}
+
+function sourceDedupeSuspects(entries, distinct) {
+  const byDoi = new Map();
+  for (const e of entries) {
+    const doi = firstSourceDoi(e);
+    if (!doi) continue;
+    const key = `${e.collection}|${doi}`;
+    if (!byDoi.has(key)) byDoi.set(key, []);
+    byDoi.get(key).push(e.id);
+  }
+  const out = [];
+  for (const [key, ids] of byDoi) {
+    if (ids.length < 2) continue;
+    const doi = key.slice(key.indexOf('|') + 1);
+    ids.sort();
+    for (let i = 0; i < ids.length; i += 1) {
+      for (let j = i + 1; j < ids.length; j += 1) {
+        if (distinct.has(`${ids[i]}|${ids[j]}`)) continue;
+        out.push({ a: ids[i], b: ids[j], doi });
+      }
+    }
+  }
+  out.sort((x, y) => (x.a < y.a ? -1 : x.a > y.a ? 1 : x.b < y.b ? -1 : 1));
+  return out;
+}
+
+/**
+ * 出典由来の重複疑い 2: **任意の位置の出典 DOI を共有し、id の語彙も近い**ペア（同一コレクション内）。
+ *
+ * 2026-09-05 に dedupeSource（第一出典の一致）を 0 件まで畳んだあと、任意の位置で DOI を
+ * 共有するペアを読み直したところ 168 組あり、そのうち id の語彙がほぼ同じ組
+ * （econ-time-inconsistency ⇄ econ-time-inconsistency-kydland-prescott、
+ * mgmt-sensemaking-weick ⇄ mgmt-sensemaking-enactment-weick ⇄ mgmt-enacted-sensemaking-theory ⇄ …、
+ * human-hedonic-treadmill ⇄ human-hedonic-adaptation-brickman）は第一出典が違うだけの同一概念だった。
+ * 第一出典しか見ない検出は、片方が Wikipedia やレビュー論文を筆頭に置くと素通りする。
+ *
+ * 鳴らす条件（どちらか）:
+ *   - 共有 DOI が 2 件以上（同じ原典を 2 本も共有する別概念はまれ）
+ *   - 共有 DOI が 1 件以上、かつ id の語彙（分野接頭辞と 2 文字以下を除いた '-' 区切り）の
+ *     Jaccard 係数が SHARED_ID_SIMILARITY 以上
+ * 共有 DOI 1 件だけで id が別物のペア（econ-public-goods-samuelson ⇄ econ-tiebout-hypothesis-… など）は
+ * 別概念が同じ古典を引いているだけなので鳴らさない（実測 168 組の大半がこれ）。裁定済みは除外。
+ */
+const SHARED_ID_SIMILARITY = 0.5;
+
+function idTokens(id) {
+  return new Set(String(id).split('-').slice(1).filter((t) => t.length > 2));
+}
+
+/** 2 つの id の語彙の Jaccard 係数 (0..1)。語彙が空同士なら 0。 */
+function idSimilarity(a, b) {
+  const ta = idTokens(a);
+  const tb = idTokens(b);
+  let shared = 0;
+  for (const t of ta) if (tb.has(t)) shared += 1;
+  const union = ta.size + tb.size - shared;
+  return union === 0 ? 0 : shared / union;
+}
+
+function sharedSourceDedupeSuspects(entries, distinct) {
+  const byDoi = new Map();
+  for (const e of entries) {
+    for (const doi of sourceDois(e)) {
+      const key = `${e.collection}|${doi}`;
+      if (!byDoi.has(key)) byDoi.set(key, []);
+      byDoi.get(key).push(e.id);
+    }
+  }
+  const pairs = new Map();
+  for (const [key, ids] of byDoi) {
+    if (ids.length < 2) continue;
+    const doi = key.slice(key.indexOf('|') + 1);
+    ids.sort();
+    for (let i = 0; i < ids.length; i += 1) {
+      for (let j = i + 1; j < ids.length; j += 1) {
+        const pk = `${ids[i]}|${ids[j]}`;
+        if (distinct.has(pk)) continue;
+        if (!pairs.has(pk)) pairs.set(pk, { a: ids[i], b: ids[j], dois: [] });
+        pairs.get(pk).dois.push(doi);
+      }
+    }
+  }
+  const out = [];
+  for (const p of pairs.values()) {
+    const sim = idSimilarity(p.a, p.b);
+    if (p.dois.length < 2 && sim < SHARED_ID_SIMILARITY) continue;
+    out.push({ a: p.a, b: p.b, dois: [...p.dois].sort(), idSimilarity: Number(sim.toFixed(2)) });
+  }
+  out.sort((x, y) => (x.a < y.a ? -1 : x.a > y.a ? 1 : x.b < y.b ? -1 : 1));
+  return out;
+}
+
+/**
+ * 学術項目で「提唱者・初出」(keyFigures) が無い物。
+ *
+ * 2026-09-05 に生ファイルを `keyFigures:` の行頭で数える正規表現で 210 件の欠落を
+ * 「見つけた」が、**誤報**だった —— 複数行に折り返した keyFigures を見落としていた。
+ * 正規化後の項目で数え直すと 0 件。ただし欠落すれば概念表 docs/ACADEMIC_KNOWLEDGE.md の
+ * 「提唱者・初出」列が空になるのに、増強 (enrich) は summary の長さしか見ないので
+ * 誰も気付かない。以後の欠落を止めるキューとして残す (合格条件は「増えないこと」)。
+ * 対象は学術だけ: 他コレクションは keyFigures を持たない設計。
+ */
+function missingKeyFiguresSuspects(entries) {
+  const out = [];
+  for (const e of entries) {
+    if (e.collection !== 'academic') continue;
+    const meta = Array.isArray(e.meta) ? e.meta : [];
+    const kf = meta.find((m) => m && m.label === '提唱者・初出');
+    const value = kf && typeof kf.value === 'string' ? kf.value.trim() : '';
+    if (value === '') out.push({ id: e.id, collection: e.collection });
+  }
+  out.sort((a, b) => (a.id < b.id ? -1 : 1));
   return out;
 }
 
@@ -448,6 +623,9 @@ async function main() {
   const q = audit(entries, today);
   const dedupeGraph = graphDedupeSuspects(entries, q.distinct);
   const dedupeId = idDedupeSuspects(entries, q.distinct);
+  const dedupeSource = sourceDedupeSuspects(entries, q.distinct);
+  const dedupeShared = sharedSourceDedupeSuspects(entries, q.distinct);
+  const missingKeyFigures = missingKeyFiguresSuspects(entries);
   let links = { checked: 0, totalUrls: 0, dead: [], suspect: [] };
   if (args.links) {
     const n = Number(args.links) || 100;
@@ -482,6 +660,9 @@ async function main() {
       dedupe: q.dedupe,
       dedupeGraph,
       dedupeId,
+      dedupeSource,
+      dedupeShared,
+      missingKeyFigures,
       sourceHygiene: q.sourceHygiene,
       deadLinks: links.dead,
       suspectLinks: links.suspect,
@@ -493,6 +674,9 @@ async function main() {
       dedupe: q.dedupe.length,
       dedupeGraph: dedupeGraph.length,
       dedupeId: dedupeId.length,
+      dedupeSource: dedupeSource.length,
+      dedupeShared: dedupeShared.length,
+      missingKeyFigures: missingKeyFigures.length,
       sourceHygiene: q.sourceHygiene.length,
       deadLinks: links.dead.length,
       suspectLinks: links.suspect.length,
@@ -505,10 +689,13 @@ async function main() {
   const lines = [
     `増強待ち（コレクション別閾値未満）: ${s.enrich}`,
     `再検証待ち（鮮度切れ）: ${s.reverify}`,
-    `asOf 欠落: ${s.missingAsOf}（${q.missingAsOf.map((m) => `${m.collection} ${m.count}`).join(' / ') || 'なし'}）`,
+    `asOf 欠落・不正: ${s.missingAsOf}（${q.missingAsOf.map((m) => `${m.collection} ${m.count}`).join(' / ') || 'なし'}）`,
     `重複疑い（タイトルコア一致・裁定済み除外後）: ${s.dedupe}`,
     `重複疑い（グラフ term-overlap ≥ ${GRAPH_DUP_SCORE}・裁定済み除外後）: ${s.dedupeGraph}`,
     `重複疑い（id 正規化＝人名の翻字ゆれ・裁定済み除外後）: ${s.dedupeId}`,
+    `重複疑い（第一出典の DOI 一致・裁定済み除外後）: ${s.dedupeSource}`,
+    `重複疑い（任意位置の出典 DOI 共有＋id 類似・裁定済み除外後）: ${s.dedupeShared}`,
+    `提唱者・初出（keyFigures）欠落（学術）: ${s.missingKeyFigures}`,
     `出典衛生（<2件 or 権威なし）: ${s.sourceHygiene}`,
     `リンク切れ: ${s.deadLinks}（要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}）`,
   ];
@@ -526,10 +713,13 @@ async function main() {
       '|---|---:|',
       `| 増強待ち (コレクション別閾値) | ${s.enrich} |`,
       `| 再検証待ち (鮮度切れ) | ${s.reverify} |`,
-      `| asOf 欠落 | ${s.missingAsOf} |`,
+      `| asOf 欠落・不正 | ${s.missingAsOf} |`,
       `| 重複疑い（タイトルコア） | ${s.dedupe} |`,
       `| 重複疑い（グラフ語彙） | ${s.dedupeGraph} |`,
       `| 重複疑い（id 翻字ゆれ） | ${s.dedupeId} |`,
+      `| 重複疑い（第一出典 DOI） | ${s.dedupeSource} |`,
+      `| 重複疑い（出典 DOI 共有） | ${s.dedupeShared} |`,
+      `| 提唱者・初出の欠落（学術） | ${s.missingKeyFigures} |`,
       `| 出典衛生 | ${s.sourceHygiene} |`,
       `| リンク切れ | ${s.deadLinks} (要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}) |`,
       '',
@@ -539,7 +729,7 @@ async function main() {
   }
 
   const actionable =
-    s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.sourceHygiene + s.deadLinks;
+    s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.dedupeSource + s.dedupeShared + s.missingKeyFigures + s.sourceHygiene + s.deadLinks;
   console.log(actionable > 0 ? `\n⏳ LLM 作業 ${actionable} 件が待機中` : '\n✅ 全て最新 — LLM 作業なし');
 }
 
@@ -550,4 +740,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { corpusFingerprint, staleQueueReport, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };
+module.exports = { monthsSince, corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDois, sourceDedupeSuspects, sharedSourceDedupeSuspects, missingKeyFiguresSuspects, idSimilarity, SHARED_ID_SIMILARITY, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };

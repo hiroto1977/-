@@ -36,7 +36,6 @@ aliases:
 - [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同分野の近傍
 - [[econ-time-preference|時間選好]] — 同分野の近傍
-- [[econ-logrolling|ログローリング（票の取引）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

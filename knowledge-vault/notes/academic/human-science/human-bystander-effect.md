@@ -35,7 +35,6 @@ aliases:
 - [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 出典を共有
 - [[human-social-proof|社会的証明]] — 同分野の近傍
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]] — 同分野の近傍
-- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 同分野の近傍
 - [[human-social-facilitation|社会的促進と社会的抑制]] — 同分野の近傍
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同分野の近傍
 

@@ -33,7 +33,6 @@ Kay, Aaron C.　（2008 God and the Government: Testing a Compensatory Control M
 ## 関連概念
 - [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同分野の近傍
 - [[human-system-justification-jost|システム正当化理論——不平等な社会体制を支持する心理的動機]] — 同分野の近傍
-- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

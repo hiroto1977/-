@@ -29,7 +29,7 @@ import { extractJson as jsonWeb, normalizeAnalysis as normWeb } from '../../../r
  * ここで足すのは残り 4 つ:
  *
  *   isSafeSymbol        銘柄記号の形の検査 (URL とマークアップに載る)
- *   parseSecurityKeys   HIBP / VirusTotal の**資格情報の解析**
+ *   parseSecurityKeys   HIBP / VirusTotal の**資格情報の解析** (パス 321 から shared の 1 つ —— ここは同一性だけ見る)
  *   extractJson         **LLM の応答**から JSON を取り出す (信用できない入力)
  *   validateAdvisorJson LLM の応答を画面に載せてよい形へ絞る (株価側の写し)
  *   normalizeAnalysis   **LLM の応答**を画面の型へ丸める (範囲外の値を [0,1] に留める)
@@ -80,34 +80,11 @@ describe('isSafeSymbol — main とブラウザ版で一致する', () => {
   });
 });
 
-describe('parseSecurityKeys — main とブラウザ版で一致する', () => {
-  const CASES: string[] = [
-    '',
-    'raw-key',
-    '{"hibp":"h","vt":"v"}',
-    '{"hibp":"h"}',
-    '{"vt":"v"}',
-    '{}',
-    '{"hibp":""}',
-    '{"hibp":123}',
-    '{"hibp":null}',
-    '{"hibp":{"a":1}}',
-    'null',
-    '[]',
-    '[1,2]',
-    '123',
-    '"just-a-string"',
-    'true',
-    '{broken',
-    '   ',
-  ];
-  it.each(CASES)('%j', (raw) => {
-    expect(keysWeb(raw)).toEqual(keysMain(raw));
-  });
-
-  it('鍵を取り出せる場合も一致している (空虚に {} 同士で揃っていない)', () => {
-    expect(keysMain('{"hibp":"h","vt":"v"}')).toEqual({ hibp: 'h', vt: 'v' });
-    expect(keysWeb('{"hibp":"h","vt":"v"}')).toEqual({ hibp: 'h', vt: 'v' });
+describe('parseSecurityKeys — 2026-09-19 (パス 321) から shared の 1 つ', () => {
+  it('両ビルドが出す関数は shared の同じ 1 つ (写しが再び生えれば落ちる)', async () => {
+    const shared = await import('../../../shared/api/security');
+    expect(keysMain).toBe(shared.parseSecurityKeys);
+    expect(keysWeb).toBe(shared.parseSecurityKeys);
   });
 });
 

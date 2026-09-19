@@ -1,9 +1,16 @@
+import { parseTimestamp } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
 const num = new Intl.NumberFormat('ja-JP');
+
+/** 公開日。読めない値を「Invalid Date」と刷らない (パス 185)。 */
+function youtubePublished(publishedAt: string | undefined): string | undefined {
+  if (!publishedAt) return undefined;
+  return parseTimestamp(publishedAt)?.toLocaleDateString('ja-JP') ?? '公開日が読めません';
+}
 
 function Tile({ label, value }: { label: string; value: string }) {
   return (
@@ -53,7 +60,7 @@ export function YoutubePage() {
           items={recentVideos.map((v) => ({
             key: v.videoId,
             title: v.title,
-            meta: v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('ja-JP') : undefined,
+            meta: youtubePublished(v.publishedAt),
             href: v.url,
           }))}
         />

@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — 同じ思想家
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同じ思想家
-- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
 - [[infosoc-immaterial-labor|非物質的労働（immaterial labor）]] — 同分野の近傍
+- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

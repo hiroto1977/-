@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同分野の近傍
-- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

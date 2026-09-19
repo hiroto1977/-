@@ -25,3 +25,4 @@ reports/
 coverage/
 business-hub.html
 orchestration/knowledge-queue.json
+orchestration/dependency-audit.json

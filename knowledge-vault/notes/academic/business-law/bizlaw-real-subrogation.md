@@ -32,7 +32,7 @@ aliases:
 - [有斐閣Online「抵当権の物上代位（1）」](https://yuhikaku.com/articles/-/14857) `学術`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有

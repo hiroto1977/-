@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: Poka-yoke](https://en.wikipedia.org/wiki/Poka-yoke) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]] — 出典を共有
 - [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
 - [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
 

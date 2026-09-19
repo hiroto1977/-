@@ -36,7 +36,6 @@ J. H. デイルズ(1968)：譲渡可能排出許可の構想を定式化（先�
 - [[econ-search-matching|サーチ理論／マッチング理論]] — 出典を共有
 - [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 出典を共有
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同分野の近傍
-- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同分野の近傍
 - [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 同分野の近傍
 - [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 同分野の近傍
 

@@ -1,3 +1,4 @@
+import { nonNeg } from './num';
 /**
  * 外貨換算・為替損益・実効レート (概算試算)。
  *
@@ -12,8 +13,8 @@ const yen = (n: number): number => Math.round(n);
 
 /** 外貨額 × レート = 円換算額。負の入力は 0 とみなす。 */
 export function convertToJpy(amountForeign: number, rate: number): number {
-  const a = Math.max(0, amountForeign);
-  const r = Math.max(0, rate);
+  const a = nonNeg(amountForeign);
+  const r = nonNeg(rate);
   return yen(a * r);
 }
 
@@ -39,9 +40,9 @@ export function fxGainLoss(input: {
   acquisitionRate: number;
   currentRate: number;
 }): FxGainLoss {
-  const amount = Math.max(0, input.amountForeign);
-  const acquisitionJpy = yen(amount * Math.max(0, input.acquisitionRate));
-  const currentJpy = yen(amount * Math.max(0, input.currentRate));
+  const amount = nonNeg(input.amountForeign);
+  const acquisitionJpy = yen(amount * nonNeg(input.acquisitionRate));
+  const currentJpy = yen(amount * nonNeg(input.currentRate));
   const gain = currentJpy - acquisitionJpy;
   const gainPct = input.acquisitionRate > 0
     ? Math.round(((input.currentRate - input.acquisitionRate) / input.acquisitionRate) * 1000) / 10

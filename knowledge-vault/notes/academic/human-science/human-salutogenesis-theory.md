@@ -26,8 +26,8 @@ aliases:
 アーロン・アントノフスキー（1979 『Health, Stress and Coping』で健康生成論を提唱、1987 SOC概念を体系化）／モニカ・エリクソン（2006 SOC研究458論文の系統的レビュー）／ベングト・リンドストローム（2006 同レビュー共著）／モーリス・B・ミッテルマーク（2017 『Handbook of Salutogenesis』編集）
 
 ## 出典
-- [Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）](https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606) `学術`
-- [Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）](https://search.worldcat.org/title/14904689) `学術`
+- [Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）](https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606) `リファレンス`
+- [Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）](https://search.worldcat.org/title/14904689) `リファレンス`
 - [Eriksson & Lindström (2010)](https://doi.org/10.1093/heapro/dap038) `学術`
 - [Mittelmark et al. (2017) Handbook of Salutogenesis](https://doi.org/10.1007/978-3-319-04600-6) `学術`
 - [Eriksson & Lindström (2006)](https://doi.org/10.1093/heapro/dah609) `学術`
@@ -38,8 +38,8 @@ aliases:
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 出典を共有
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
-- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 - [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 出典を共有
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 出典を共有

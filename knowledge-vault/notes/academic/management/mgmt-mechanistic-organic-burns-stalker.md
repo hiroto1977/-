@@ -26,16 +26,16 @@ aliases:
 トム・バーンズ ／ G・M・ストーカー ／ ポール・ローレンス ／ ジェイ・ローシュ
 
 ## 出典
-- [Burns, T. & Stalker, G.M. (1961) The Management of Innovation — Tavistock (WorldCat)](https://www.worldcat.org/oclc/253045) `学術`
+- [Burns, T. & Stalker, G.M. (1961) The Management of Innovation — Tavistock (WorldCat)](https://www.worldcat.org/oclc/253045) `リファレンス`
 - [Wikipedia: Mechanistic and organic systems — Burns & Stalker, environment fit, contingency theory](https://en.wikipedia.org/wiki/Mechanistic_and_organic_systems) `リファレンス`
 
 ## 関連概念
 - [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同じ思想家
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
-- [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同じ思想家
+- [[mgmt-strategic-choice-child|戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる]] — 同じ思想家
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
 - [[mgmt-holacracy|ホラクラシー]] — 同分野の近傍
-- [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — 同分野の近傍
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

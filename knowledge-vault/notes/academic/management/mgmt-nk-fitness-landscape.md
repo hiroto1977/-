@@ -30,10 +30,10 @@ NK適応度地形モデル（NK model、NKフィットネス・ランドスケ�
 - [Wikipedia: NK model — Kauffman, tunable ruggedness via N (elements) and K (interdependence/epistasis), rugged fitness landscapes and local optima](https://en.wikipedia.org/wiki/NK_model) `リファレンス`
 
 ## 関連概念
-- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
+- [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — 同じ思想家
 - [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -175,7 +175,10 @@ function ownerIdentifiers(pkgJson) {
  * 増えたときに黙る —— このリポジトリで何度も踏んだ形なので、
  * 一覧は必ず実物から数え直して突き合わせる。
  */
-function bundledJsonImports(srcDir = path.join(REPO_ROOT, 'src')) {
+function bundledJsonImports(srcDir = path.join(REPO_ROOT, 'src'), repoRoot = REPO_ROOT) {
+  // `repoRoot` は 2026-09-17 (パス 302) に足した —— 成果物の鮮度検査
+  // (`scripts/lib/artifact-freshness.cjs`) が「束に入る JSON のうち src/ の外に在る物」を
+  // 同じ走査で数えるため。検査は仮の repo で回すので、相対パスの基準を渡せる必要がある。
   const found = new Set();
   const FROM = /(?:from|require\()\s*['"]([^'"]+\.json)['"]/g;
   for (const file of listFiles(srcDir, /\.tsx?$/)) {
@@ -185,7 +188,7 @@ function bundledJsonImports(srcDir = path.join(REPO_ROOT, 'src')) {
     while ((m = FROM.exec(text)) !== null) {
       const spec = m[1];
       if (!spec.startsWith('.')) continue; // パッケージ内の JSON は対象外
-      found.add(path.relative(REPO_ROOT, path.resolve(path.dirname(file), spec)));
+      found.add(path.relative(repoRoot, path.resolve(path.dirname(file), spec)));
     }
   }
   return [...found].sort();

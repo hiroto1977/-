@@ -17,7 +17,7 @@ vi.mock('electron', () => ({
  * ブラウザに `Buffer` も `node:crypto` も無いので、片方は手書きにするしかない。
  * つまりこれは「まとめられる重複」ではなく、**同じ判断の 2 実装**である。
  *
- * 同じ形は既に 2 つ検査してある (`rfc2822Parity` / `atlassianSiteParity`)。
+ * 同じ形は既に 2 つ検査してある (`atlassianSiteParity`、2026-09-19 (パス 321) に shared へ畳むまでは `rfc2822Parity` も)。
  * ここだけ検査が無く、実際にずれていた:
  *
  *   safeStateEquals('あ'.repeat(43), 'a'.repeat(43))

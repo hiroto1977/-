@@ -37,10 +37,10 @@ aliases:
 - [[econ-time-preference|時間選好]] — 同じ思想家
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
 - [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する]] — 同じ思想家
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 同じ思想家
-- [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同じ思想家
+- [[econ-endogenous-growth-romer|内生的成長理論（ローマー／ルーカス）——アイデアの非競合性と知識の外部性が生む収穫逓増により、技術進歩を経済内部の投資の産物として説明する成長論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

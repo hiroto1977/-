@@ -40,7 +40,7 @@ aliases:
 - [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 同じ思想家
 - [[econ-rent-seeking|レントシーキング]] — 同じ思想家
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
-- [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 同じ思想家
+- [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

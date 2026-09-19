@@ -6,6 +6,7 @@
  * 単一レコードで保存する (最新の 1 件を採用)。本モジュールは IO を持たない。
  */
 import { DEFAULT_HIGHLIGHT_THRESHOLDS, type HighlightThresholds } from './managementHighlights';
+import { relationIssue } from './recordRelations';
 
 export const HIGHLIGHT_SETTINGS_COLLECTION = 'highlight-settings';
 
@@ -39,13 +40,19 @@ export function parseHighlightSettings(input: {
 
   const declineWarnStreak = intMin1(input.declineWarnStreak, d.declineWarnStreak, '連続下落(警告)期数');
   const declineCriticalStreak = intMin1(input.declineCriticalStreak, d.declineCriticalStreak, '連続下落(危険)期数');
-  if (declineCriticalStreak < declineWarnStreak) {
-    throw new Error('連続下落(危険)期数は警告期数以上で入力してください');
-  }
-  return {
+  const out: HighlightSettings = {
     declineWarnStreak,
     declineCriticalStreak,
     laborShareWarnPct: pct(input.laborShareWarnPct, d.laborShareWarnPct, '労働分配率の警告しきい値'),
     singleChannelWarnPct: pct(input.singleChannelWarnPct, d.singleChannelWarnPct, '単一チャネル依存の警告しきい値'),
   };
+  /*
+   * 危険 ≧ 警告 は **台帳 1 つ** (`recordRelations.ts`) —— 復元の入口も同じ関係を見る
+   * (パス 224)。逆順の設定が復元で入ると `managementHighlights` の
+   * `streak >= criticalStreak ? 'critical' : 'warning'` が常に前者へ倒れ、
+   * **`warning` の枝が到達不能**になる (2 期の下落が「危険」として出る)。
+   */
+  const issue = relationIssue(HIGHLIGHT_SETTINGS_COLLECTION, out);
+  if (issue !== null) throw new Error(issue);
+  return out;
 }

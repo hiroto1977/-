@@ -17,6 +17,7 @@
  * 迷う)。画面の飾りの文言 (ボタンやラベル) はここでは見ない。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ADVISOR_QUESTION_MESSAGES } from '../../shared/advisorQuestionLimits';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -64,15 +65,27 @@ type Route =
 
 const ROUTES: readonly (readonly [string, string, Route])[] = [
   ['templates', 'export-template', { ok: false, code: 'action_failed', message: 'unknown template id: undefined' }],
-  ['teamradar', 'export-svg', { ok: false, code: 'action_failed', message: 'チームレーダーページに切り替えてからもう一度お試しください' }],
-  ['teamradar', 'save-state', { ok: true, shape: (d) => expect(d).toEqual({}) }],
+  /*
+   * パス 268 まではここが `action_failed`「チームレーダーページに切り替えてから…」だった ——
+   * ブラウザ版が画面の `<svg>` を DOM から掻き取っており、**図が画面に無ければ書き出せなかった**
+   * (掻き取れるのは `<svg>` だけなので、標題・部署・評価時点・凡例・⚠ の断りは落ちていた)。
+   * いまは main と同じ `renderTeamRadarSvg` を通し、`chart` が無ければ保存済みを読む ——
+   * main の `exportTeamRadarSvgImpl` と同じ 2 枝なので、空の payload は**同梱の見本**を
+   * 書き出して成功する (main も同じ)。正しい payload の往復と断りは
+   * webShimRadarExportRefusal.test.ts が持つ。
+   */
+  ['teamradar', 'export-svg', { ok: true, shape: (d) => expect(d).toHaveProperty('path') }],
+  // パス 118 まではここが `ok: true` で `{}` をそのまま返していた (検証せずに書く)。
+  // いまは main と同じ判定を通すので、空の payload は main と同じ文面で断る。
+  // 正しい payload の往復は webShimSnapshotBranches.test.ts が持つ。
+  ['teamradar', 'save-state', { ok: false, code: 'action_failed', message: 'department must be a 1-64 char string' }],
   ['talent', 'judge-leader', { ok: true, shape: (d) => expect(d).toHaveProperty('fitness.eligible') }],
   ['talent', 'save-state', { ok: true, shape: (d) => expect(Object.keys(d as object)).toEqual(expect.arrayContaining(['reports', 'initiatives', 'members'])) }],
   ['ollama', 'chat', { ok: false, code: 'ollama_bad-model', message: 'モデル名が不正です: ' }],
   ['stocks', 'register-ticker', { ok: false, code: 'action_failed', message: SYMBOL }],
   ['stocks', 'unregister-ticker', { ok: false, code: 'action_failed', message: SYMBOL }],
   ['stocks', 'compare-strategies', { ok: false, code: 'action_failed', message: SYMBOL }],
-  ['stocks', 'advise', { ok: false, code: 'action_failed', message: '質問を入力してください' }],
+  ['stocks', 'advise', { ok: false, code: 'action_failed', message: ADVISOR_QUESTION_MESSAGES.empty }],
   ['stocks', 'export-dashboard', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^stocks-dashboard-\d+\.html$/) }],
   ['stocks', 'export-dashboard-md', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^stocks-dashboard-\d+\.md$/) }],
   ['emotions', 'log-mood', { ok: false, code: 'action_failed', message: 'score must be a number between 1 and 5' }],
@@ -95,10 +108,16 @@ const ROUTES: readonly (readonly [string, string, Route])[] = [
   ['demae-can', 'record-entry', { ok: false, code: 'action_failed', message: NOTE('demae-can') }],
   ['real-estate', 'record-entry', { ok: false, code: 'action_failed', message: NOTE('real-estate') }],
   ['mutual-funds', 'record-entry', { ok: false, code: 'action_failed', message: NOTE('mutual-funds') }],
+  // advise (パス 119): 画面の集計から規則で組む。空の payload は shared と同じ文面で断る
+  // (Electron 版の action も同じ関数を通す —— 正しい payload の答えは serviceAdvisor.test.ts が持つ)。
+  ['uber-eats', 'advise', { ok: false, code: 'action_failed', message: 'uber-eats.advise: stores は配列 (1〜500 件) で指定してください' }],
+  ['demae-can', 'advise', { ok: false, code: 'action_failed', message: 'demae-can.advise: monthOrders は有限の数値で指定してください' }],
+  ['real-estate', 'advise', { ok: false, code: 'action_failed', message: 'real-estate.advise: properties は配列 (1〜500 件) で指定してください' }],
+  ['mutual-funds', 'advise', { ok: false, code: 'action_failed', message: 'mutual-funds.advise: holdings は配列 (1〜500 件) で指定してください' }],
   ['assistant', 'chat', { ok: false, code: 'action_failed', message: '最後の発話は user である必要があります' }],
   ['assistant', 'chatAll', { ok: false, code: 'action_failed', message: '最後の発話は user である必要があります' }],
   ['assistant', 'providers', { ok: true, shape: (d) => expect((d as { providers: { id: string }[] }).providers.map((p) => p.id)).toContain('anthropic') }],
-  ['business', 'advise', { ok: false, code: 'action_failed', message: '質問を入力してください' }],
+  ['business', 'advise', { ok: false, code: 'action_failed', message: ADVISOR_QUESTION_MESSAGES.empty }],
   ['business', 'export-dashboard', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^business-dashboard-\d+\.html$/) }],
   ['business', 'export-dashboard-md', { ok: true, shape: (d) => expect((d as { path: string }).path).toMatch(/^business-dashboard-\d+\.md$/) }],
   // 経路が「無い」ほうも固定する: record-entry はその 4 サービスにしか無い、

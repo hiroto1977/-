@@ -316,11 +316,13 @@ describe('exchangeGoogleCode — 応答の扱い', () => {
     );
 
   it('access_token が無ければ失敗', async () => {
-    await expect(exchangeGoogleCode(BASE, res({}))).rejects.toThrow('missing access_token');
+    await expect(exchangeGoogleCode(BASE, res({}))).rejects.toThrow('トークン端点の応答に access_token (非空の文字列) がありません');
   });
 
   it('access_token が空文字でも失敗', async () => {
-    await expect(exchangeGoogleCode(BASE, res({ access_token: '' }))).rejects.toThrow('missing access_token');
+    await expect(exchangeGoogleCode(BASE, res({ access_token: '' }))).rejects.toThrow(
+      'トークン端点の応答に access_token (非空の文字列) がありません',
+    );
   });
 
   it('expires_in が無ければ 3600 秒として扱う', async () => {

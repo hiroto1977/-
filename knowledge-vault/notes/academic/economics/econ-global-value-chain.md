@@ -33,9 +33,9 @@ aliases:
 - [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]] — 語彙が近い
 - [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 同じ思想家
 - [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 出典を共有
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 出典を共有
 - [[econ-microfinance|マイクロファイナンス]] — 出典を共有
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 出典を共有
-- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 出典を共有
 - [[eh-1944|1944年（昭和19年）]] — 出典を共有
 - [[econ-modern-portfolio-theory|現代ポートフォリオ理論（MPT）]] — 同分野の近傍
 

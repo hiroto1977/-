@@ -22,11 +22,21 @@ export function ExportActions({
   bytes,
   openLabel,
   openUrl,
+  warning,
 }: {
   path: string;
   bytes?: number;
   openLabel?: string;
   openUrl?: string;
+  /**
+   * 収まらなかった先の説明 (`data/exportOutcome.ts` の `exportWarning()`)。
+   *
+   * ここは「✓ 保存しました」と言う唯一の場所なので、**言い切れないときは
+   * その場で言う**。ブラウザ版の書き出しは 3 か所 (端末のダウンロード /
+   * ライブラリ / PC の指定フォルダ) へ同時に置こうとし、2026-09-06 まで
+   * どこが失敗しても画面は「✓ 保存しました」だけを出していた。
+   */
+  warning?: string;
 }) {
   const [copied, setCopied] = useState(false);
   // 開けなかった理由を出す場所。監査前は catch で握り潰していたため、書き出した
@@ -79,6 +89,22 @@ export function ExportActions({
           </span>
         )}
       </div>
+      {warning ? (
+        <div
+          data-export-warning
+          role="alert"
+          style={{
+            fontSize: 12,
+            color: 'var(--warning)',
+            border: '1px solid var(--warning)',
+            borderRadius: 6,
+            padding: '6px 8px',
+            lineHeight: 1.6,
+          }}
+        >
+          ⚠ {warning}
+        </div>
+      ) : null}
       {opFailure ? (
         <div data-os-op-error role="alert" style={{ fontSize: 12, color: 'var(--danger)' }}>
           {opFailure}
@@ -90,10 +116,10 @@ export function ExportActions({
           onClick={openFile}
           style={{
             padding: '6px 12px',
-            background: 'var(--accent)',
-            border: '1px solid var(--border)',
-            borderRadius: 4,
-            color: 'var(--text)',
+            background: 'var(--accent-soft)',
+            border: '1px solid var(--list-hover-border)',
+            borderRadius: 999,
+            color: 'var(--accent-strong)',
             cursor: 'pointer',
             fontSize: 12,
             fontWeight: 600,
@@ -108,7 +134,7 @@ export function ExportActions({
             padding: '6px 12px',
             background: 'var(--bg-elev)',
             border: '1px solid var(--border)',
-            borderRadius: 4,
+            borderRadius: 999,
             color: 'var(--text)',
             cursor: 'pointer',
             fontSize: 12,
@@ -123,7 +149,7 @@ export function ExportActions({
             padding: '6px 12px',
             background: 'var(--bg-elev)',
             border: '1px solid var(--border)',
-            borderRadius: 4,
+            borderRadius: 999,
             color: 'var(--text)',
             cursor: 'pointer',
             fontSize: 12,
@@ -139,7 +165,7 @@ export function ExportActions({
               padding: '6px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 4,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: 'pointer',
               fontSize: 12,

@@ -41,7 +41,7 @@ Grant Gilmore ／ Steven L. Harris ／ Lynn M. LoPucki
 - [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 出典を共有
 - [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 出典を共有
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

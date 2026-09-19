@@ -34,7 +34,9 @@
  */
 
 import { PROFESSIONAL_MAP, type ProfessionalId, type ProfessionalProfile } from './professionalMap';
+import { sheetOfDoc } from './kessanSheets';
 import { STUDIO_TEMPLATES } from './docStudioData';
+import { lookup } from '../../shared/lookup';
 
 /** 自社分として作る場合の扱い。 */
 export type OwnUse =
@@ -58,23 +60,30 @@ export interface DocTriage {
   readonly consult: readonly ProfessionalId[];
 }
 
-/** 定款・就業規則は STUDIO_TEMPLATES の外にあるので擬似 id を振る。 */
-export const EXTRA_DOC_IDS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan'] as const;
+/**
+ * 定款・就業規則・計算書類は STUDIO_TEMPLATES の外にあるので擬似 id を振る。
+ * 計算書類は 4 点まとめて (`kessan`) と 1 点ずつ (`kessan-pl` …) の両方を持つ (2026-09-05)。
+ */
+export const EXTRA_DOC_IDS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan', 'kessan-pl', 'kessan-bs', 'kessan-equity', 'kessan-notes'] as const;
 export type ExtraDocId = (typeof EXTRA_DOC_IDS)[number];
 
-/** 書式一覧に無い 4 つの表示名 (書類スタジオの各タブの名前と揃える)。 */
+/** 書式一覧に無い特別枠の表示名 (書類スタジオの各タブ・書面の名前と揃える)。 */
 export const EXTRA_DOC_LABEL: Readonly<Record<ExtraDocId, string>> = {
   'teikan-kk': '電子定款（株式会社）',
   'teikan-gk': '電子定款（合同会社）',
   shugyo: '就業規則',
   kessan: '計算書類（4点）',
+  'kessan-pl': '損益計算書',
+  'kessan-bs': '貸借対照表',
+  'kessan-equity': '株主資本等変動計算書',
+  'kessan-notes': '個別注記表',
 };
 
 /** doc id → 表示名。書式一覧 → 4 つの特別枠 → 見つからなければ id をそのまま。 */
 export function docLabel(doc: string): string {
   const template = STUDIO_TEMPLATES.find((d) => d.id === doc);
   if (template) return template.label;
-  return (EXTRA_DOC_LABEL as Readonly<Record<string, string | undefined>>)[doc] ?? doc;
+  return lookup(EXTRA_DOC_LABEL as Readonly<Record<string, string>>, doc) ?? doc;
 }
 
 /** 契約書に共通の注意（個別の注意が無い書式で使う）。 */
@@ -205,6 +214,42 @@ const ROWS: readonly DocTriage[] = [
     exclusiveTo: ['labor-consultant'],
     caseByCase: '労働者名簿は社会保険労務士法2条1項2号の帳簿書類の典型例。自社の従業員について自社が調製する分は制限されない。',
     consult: [],
+  },
+  /*
+   * 支払明細書 4 種 (2026-09-15)。自社の従業員・役員について自社が作る分は制限されない。
+   * 業として他社のために作成代行するなら社会保険労務士法 / 税理士法の領域に入り得る。
+   */
+  {
+    doc: 'kyuyo-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '交付は義務 (所得税法231条1項)。法定控除 (社会保険料・所得税・住民税) 以外を控除するには労働協約または書面協定が必要で、根拠を明細に残すこと。',
+    exclusiveTo: ['labor-consultant'],
+    caseByCase: '給与計算そのものは事実行為で資格を要しないが、他社の労働社会保険諸法令に基づく書類の作成を業として行うなら社会保険労務士法2条1項2号の領域。年末調整・源泉所得税の計算を業として請け負うなら税理士法2条の税務書類の作成に当たり得る。',
+    consult: ['tax-accountant'],
+  },
+  {
+    doc: 'shoyo-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '賞与は給与と計算の仕組みが違う (標準賞与額の上限・算出率の表・住民税を引かない)。給与明細の様式を流用しないこと。',
+    exclusiveTo: ['labor-consultant'],
+    caseByCase: '同上。標準賞与額の上限 (健保 年度573万円・厚年 1回150万円) の当てはめを他社のために業として行う場合は社会保険労務士の領域に入り得る。',
+    consult: ['tax-accountant'],
+  },
+  {
+    doc: 'yakuin-hoshu-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '定期同額給与から外れると損金不算入の部分が生じる。期中に増減するなら、定時改定か業績の著しい悪化による改定に当たるかを支給前に確認すること。',
+    exclusiveTo: [],
+    caseByCase: '役員報酬の損金算入の判定は法人税法の解釈で、他社のために業として行えば税理士法2条の税務相談に当たる。株主総会の決議・登記が絡む部分は司法書士・弁護士の領域。',
+    consult: ['tax-accountant', 'judicial-scrivener'],
+  },
+  {
+    doc: 'yakuin-shoyo-meisai',
+    ownUse: 'ok-with-care',
+    ownNote: '**届出どおりに支給しないと全額が損金不算入**になる。届出書の控えと支給日・支給額を突き合わせてから支給すること。',
+    exclusiveTo: [],
+    caseByCase: '事前確定届出給与の届出書の作成・提出は税務書類の作成 (税理士法2条1項2号) に当たる。自社分を自社で出すのは制限されないが、要件の判定は税理士に確認するのが安全。',
+    consult: ['tax-accountant'],
   },
   {
     doc: 'chingin-daichou',
@@ -456,11 +501,14 @@ export const TRIAGE_ROWS: readonly DocTriage[] = ROWS;
  * 「テストが 0 件」として静かに素通りしてしまう。
  */
 export function triageFor(doc: string): DocTriage | null {
-  return ROWS.find((r) => r.doc === doc) ?? null;
+  // 計算書類を 1 点ずつ開いても仕分けは 4 点と同じ (自社で作れる・税理士/公認会計士に相談)。
+  // 行を 4 つ複製すると内容がずれていくので、1 点ずつの id は `kessan` の行へ寄せる。
+  const target = sheetOfDoc(doc) !== null ? 'kessan' : doc;
+  return ROWS.find((r) => r.doc === target) ?? null;
 }
 
 /**
- * 仕分けの対象となる全 doc id（書式 45 + 定款2 + 就業規則）。
+ * 仕分けの対象となる全 doc id（書式 + 定款2 + 就業規則 + 決算書。件数は STUDIO_TEMPLATES から導く）。
  *
  * `LIVE_FETCHERS` と同じ考え方で、ここを網羅していないと画面に穴が開く。
  * 書式を足して仕分けを忘れると、その書式だけ黙って何も出なくなるため、

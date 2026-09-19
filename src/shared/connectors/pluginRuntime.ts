@@ -43,6 +43,7 @@ import {
   type PluginPermission,
 } from './connectorRegistry';
 import type { ServiceId } from '../serviceId';
+import { lookup } from '../lookup';
 
 // --- 権限マッピング ------------------------------------------------------
 
@@ -70,8 +71,31 @@ const CAPABILITY_PERMISSION: Readonly<Record<ConnectorCapability, PluginPermissi
  * ならない権限文字列へ写す純粋関数 (ホワイトリスト)。マッピングは
  * connectorRegistry の権限ホワイトリストと整合する。
  */
-export function requiredPermissionFor(capability: ConnectorCapability): PluginPermission {
-  return CAPABILITY_PERMISSION[capability];
+/**
+ * 権限が**定まらない**ときに使う語 (パス 235)。`PLUGIN_PERMISSIONS` の
+ * どれでもないので `isPermitted` は必ず false を返し、画面にも
+ * 「不明な capability」と読める形で出る。`PluginPermission` を名乗らせないのは、
+ * 型が union の一員として嘘をつかないため。
+ */
+export const UNKNOWN_CAPABILITY_PERMISSION = '(不明な capability)';
+
+export function requiredPermissionFor(capability: ConnectorCapability): PluginPermission | null {
+  /*
+   * **表に無い capability は `null`** —— 「どの権限でも動かせない」(パス 235)。
+   * 素の添字は `'constructor'` に対して `Object` を返していた。その値は
+   * どのプラグインの `permissions` にも含まれないので
+   * `pluginPermissionGaps` は「権限不足」と報告する —— 判定は安全な側だが、
+   * 報告された `requiredPermission` が**関数**になり、そのまま画面の表
+   * (`ConnectorsPage`) に出る。境界の `isConnectorCapability`
+   * (`connectorRegistry.ts`) が今は弾くので**今日この道は通らない
+   * (到達性 0)**。床を置くのは、境界を緩めた日に気付く場所が
+   * 「権限の表示が壊れた」にならないようにするため。
+   *
+   * 返りを `PluginPermission` のままにして番兵の文字列を混ぜると、
+   * **型が嘘になる** (`PLUGIN_PERMISSIONS` に無い値を union の一員として
+   * 名乗る)。`null` なら呼ぶ側が「権限が定まらない」を必ず書く。
+   */
+  return lookup(CAPABILITY_PERMISSION, capability) ?? null;
 }
 
 // --- ランタイム (起動時不変条件) -----------------------------------------
@@ -180,6 +204,8 @@ export function resolveHookPlan(
     if (!plugin.hooks.includes(eventName)) continue;
     const hook = eventName as PluginHook;
     for (const connector of plugin.connectors) {
+      // 表に無い capability は `null` = どの権限でも動かせない (パス 235)。
+      // 計画は「除外せず明示」する方針なので、手順は残して `permitted:false` にする。
       const permission = requiredPermissionFor(connector.capability);
       steps.push({
         pluginId: plugin.id,
@@ -189,7 +215,7 @@ export function resolveHookPlan(
         targetService: connector.targetService,
         capability: connector.capability,
         requiresAuth: connector.requiresAuth,
-        permitted: isPermitted(plugin, permission),
+        permitted: permission !== null && isPermitted(plugin, permission),
       });
     }
   }

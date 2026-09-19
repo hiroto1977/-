@@ -2,7 +2,7 @@
 title: "ニック・クルドリー"
 type: thinker
 person_key: "クルドリー|ニ"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # ニック・クルドリー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
-- [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 監視資本主義（surveillancecapitalism）は、ショシャナ・ズボフ（2019）の『監視資本主義の時代（…
+## 学術概念（2件）
 - [[infosoc-data-colonialism|データ植民地主義]] — データ植民地主義（datacolonialism）とは、人々の日常の経験・行動・社会関係といった「生（life）」その…
 - [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 深層メディアタイゼーション（DeepMediatization）とは、デジタルメディアとそのインフラストラクチャが社会…
 

@@ -31,6 +31,7 @@ Kanter, Rosabeth Moss（1977 Men and Women of the Corporation, Basic Books）／
 - [Kramer, Konrad & Erkut et al., Women Directors on Corporate Boards: From Tokenism to Critical Mass, Journal of Business Ethics (Springer)](https://link.springer.com/article/10.1007/s10551-011-0815-z) `学術`
 
 ## 関連概念
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 出典を共有
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
 - [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
@@ -40,7 +41,6 @@ Kanter, Rosabeth Moss（1977 Men and Women of the Corporation, Basic Books）／
 - [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
 - [[mgmt-shared-value|共有価値の創造（CSV）]] — 出典を共有
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
-- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

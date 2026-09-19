@@ -1,17 +1,19 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { professionalsForService } from '../data/businessTriage';
-import { describeOrigin, isRefreshable, originOf } from '../../shared/dataOrigin';
+import { describeOrigin, isRefreshable, originOf, staleDataNote } from '../../shared/dataOrigin';
 import { collectsCredential, credentialUseOf } from '../../shared/credentialUse';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
-import { safeImageSrc } from '../../shared/imageUrlGate';
+import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
 
 interface Props {
   who: ReactNode;
   serviceId?: ServiceId;
   source?: Source;
+  /** 取ってきた中身が同梱データを名乗っているか (`useServiceData` の `payloadIsMock`)。 */
+  payloadIsMock?: boolean;
   status?: Status;
   errorMessage?: string;
   errorKind?: ErrorKind;
@@ -53,6 +55,7 @@ export function StatusBar({
   who,
   serviceId,
   source = 'snapshot',
+  payloadIsMock = false,
   status = 'idle',
   errorMessage,
   errorKind,
@@ -120,7 +123,7 @@ export function StatusBar({
   // 必ず漏れる — 74 画面ぶんの判断を書き写さないための 1 箇所。
   // `serviceId` を渡さない呼び出し元 (汎用パネル) は従来どおりの表示にする。
   const origin = serviceId ? originOf(serviceId) : 'remote';
-  const originLabel = describeOrigin(origin, source);
+  const originLabel = describeOrigin(origin, source, payloadIsMock);
 
   const badge =
     status === 'loading' ? { cls: 'badge', text: '読込中…' }
@@ -128,6 +131,18 @@ export function StatusBar({
     : status === 'error' && errorKind === 'rate_limit' ? { cls: 'badge warn', text: 'レート制限' }
     : status === 'error' ? { cls: 'badge warn', text: 'エラー' }
     : { cls: originLabel.tone === 'ok' ? 'badge ok' : 'badge', text: originLabel.text };
+
+  /*
+   * **バッジは 1 枠しか無い** (2026-09-06)。`status === 'error'` のときバッジは
+   * 「認証エラー」等に変わり、`describeOrigin` が返す取得元の宣言 —— 未取得の
+   * remote なら「サンプル（未連携）」—— が**消える**。ところが画面の下では
+   * `SNAPSHOT[id]` の同梱データがそのまま並んでいるので、トークンを保存して
+   * 「更新」を押し 401 が返った人に見えるのは**数字の入ったダッシュボードと
+   * エラー 1 行だけ**になる。取得元の宣言はエラーのときこそ要るので、
+   * バッジとは別の枠で出す。文面は `shared/dataOrigin.ts` が持つ
+   * (取得元の言い回しを 2 か所に散らさない)。
+   */
+  const staleNote = staleDataNote(origin, source, status === 'error');
 
   const saveToken = async () => {
     if (!serviceId || !window.serviceHub) return;
@@ -159,9 +174,10 @@ export function StatusBar({
   const editButtonLabel =
     errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
 
-  // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外なら
-  // `undefined` になり <img> ごと描画しない（`src=""` を出さない）。
-  const avatarSrc = safeImageSrc(avatarUrl);
+  // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外・認証情報つき・
+  // **内側を向いた送り先 (loopback / プライベート帯)** なら `undefined` になり <img> ごと
+  // 描画しない（`src=""` を出さない）。第三者の応答なので `safeRemoteImageSrc` (パス 300)。
+  const avatarSrc = safeRemoteImageSrc(avatarUrl);
 
   return (
     <div className="status-bar">
@@ -183,13 +199,14 @@ export function StatusBar({
         <span style={{ display: 'flex', gap: 6 }}>
           <input
             type="password"
+            autoComplete="off"
             placeholder={tokenUi.placeholder ?? 'トークン'}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             style={{
               background: 'var(--bg)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               padding: '6px 8px',
               fontSize: 13,
@@ -217,6 +234,11 @@ export function StatusBar({
       {credentialError ? (
         <span data-credential-error role="alert" style={{ color: 'var(--danger)', fontSize: 12 }}>
           {credentialError}
+        </span>
+      ) : null}
+      {staleNote ? (
+        <span data-stale-note style={{ fontSize: 11, color: 'var(--warn)' }}>
+          {staleNote}
         </span>
       ) : null}
       {errorMessage ? (

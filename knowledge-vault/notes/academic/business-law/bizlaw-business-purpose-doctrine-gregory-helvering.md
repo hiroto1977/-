@@ -33,6 +33,7 @@ Sutherland, George （1935 Gregory v. Helvering, 293 U.S. 465, majority opinion�
 ## 関連概念
 - [[bizlaw-benefit-corporation-legislation|ベネフィット・コーポレーション法——利益と公益の二重目的法人]] — 同分野の近傍
 - [[bizlaw-subrogation|代位——債務を弁済した者が債権者の権利に立ち入る法理]] — 同分野の近傍
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

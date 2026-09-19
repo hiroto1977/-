@@ -153,12 +153,38 @@ export type UpdateStatus =
   /** どちらかの版が読めない。 */
   | 'unknown';
 
-export interface UpdateVerdict {
-  readonly status: UpdateStatus;
+/** 判定に共通の欄。`latest` だけが status によって有無が変わる。 */
+interface UpdateVerdictCommon {
+  /** 手元の版。読めなくても文字列は在る (利用者が見るのはこの字面)。 */
   readonly current: string;
-  readonly latest: string | null;
+  /** リリースページ。読めなければ null。 */
   readonly url: string | null;
 }
+
+/**
+ * 手元の版と公開版の比較結果。
+ *
+ * **判別可能合併にしてある。** 2026-09-08 まで平らな interface で
+ * `latest: string | null` を**全 status に**持っていたので、
+ * `case 'update-available'` の中でも `latest` は `string | null` のままだった ——
+ * `describeUpdate` は `` `新しい版 ${verdict.latest} があります` `` と**裸で補間する**ので、
+ * `latest` が null の判定を 1 つ作れば利用者は
+ * **「新しい版 null があります」**を読む (裸の `${}` は `tsc` を素通りする。パス 76・78 参照)。
+ * `evaluateUpdate` は今そういう値を作らないが、**それは型ではなく実装が守っていた**だけで、
+ * 「更新あり」なのに版が分からない、は**そもそも成り立たない状態**である。
+ * 合併にすると `tsc` が枝ごとに証明するので、文面の側に関門が要らない。
+ */
+export type UpdateVerdict =
+  | (UpdateVerdictCommon & {
+      /** 版の比較ができた 3 状態。**この 3 つでは `latest` は必ず在る。** */
+      readonly status: 'update-available' | 'up-to-date' | 'ahead';
+      readonly latest: string;
+    })
+  | (UpdateVerdictCommon & {
+      /** どちらかの版が読めなかった。**このときだけ `latest` が null になりうる。** */
+      readonly status: 'unknown';
+      readonly latest: string | null;
+    });
 
 /** 手元の版と公開されている最新版を比べる。 */
 export function evaluateUpdate(current: string, latest: LatestRelease | null): UpdateVerdict {

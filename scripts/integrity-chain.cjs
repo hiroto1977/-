@@ -43,6 +43,12 @@ const PROTECTED = [
   'scripts/integrity-chain.cjs',
   'src/renderer/security/vault.ts',
   'src/renderer/security/dataCrypto.ts',
+  // 2026-09-12 (パス 171): `vault.ts` / `dataCrypto.ts` の鍵導出が最初に触る所を
+  // 守るために入れた。**実行時の判断を持つ** —— `crypto.subtle` が在るかを決め、
+  // 無いときに画面へ出す文を持つ。ここを書き換えて「在る」と答えさせると、
+  // 鍵導出は素の TypeError に戻り、利用者は内部 API の名前だけを見る。
+  // 除外の基準は「型だけに見えるか」ではなく「実行時に残るか」なので保護対象。
+  'src/renderer/security/webCrypto.ts',
   'src/renderer/security/autoLock.ts',
   'src/renderer/security/mnemonic.ts',
   'src/renderer/security/webauthn.ts',
@@ -63,6 +69,20 @@ const PROTECTED = [
   // BYO プロキシの SSRF 関門。ブラウザ版では**全サービスのトークン**が
   // ここを通って利用者指定の Worker へ出るので、絞りが緩むと宛先を選ばれる。
   'src/renderer/network/proxy.ts',
+  // 2026-09-17 (パス 300) に足した。上の `proxy.ts` が持っていた**遮断表そのもの**
+  // (`isPrivateOrReservedTarget` と内部 TLD / loopback 名の一覧) を移した先。
+  // `imageUrlGate` も同じ判定を要るのに `shared → renderer` が境界で禁止されて
+  // いたため shared へ出した。`proxy.ts` は re-export だけになったので、
+  // 保護対象が `proxy.ts` のままでは**遮断表を書き換えても鎖が鳴らない**。
+  'src/shared/privateTarget.ts',
+  // 2026-09-12 (パス 191) に足した。上の `proxy.ts` の**三つ子の 3 人目** ——
+  // 週次 CI (`knowledge-auto.yml --links=400`) が出典 URL の生死を確かめるとき、
+  // 第三者の `302 Location:` で runner の網の内側へ向けられる経路を塞ぐ関門。
+  // `proxy.ts` は保護されているのにこちらは守られておらず、**冒頭が
+  // `--self-test` を名乗るのに実装が無く**、126 文のうち 18 文が一度も
+  // 実行されていなかった (名前の規則も `proxy.ts` とずれていた)。
+  // 同じ判断を持つ者のうち 1 人だけ鍵が無い、という形だった。
+  'scripts/public-host-guard.cjs',
   // レンダラーが渡してくる書き出し先を検査する唯一の関門。business /
   // stocks / templates / teamradar の書き出しは全部ここを通る。ここが
   // ゆるむと、乗っ取られたレンダラーがホーム配下へ任意のファイルを
@@ -215,11 +235,18 @@ const PROTECTED = [
   //   smoke-app.cjs               梱包後に解決できない require を捕まえる
   //                               (`--check-bundle`)。デスクトップ版が 2 週間
   //                               起動しなかった事故の再発を止める唯一の検査。
+  //   lib/artifact-freshness.cjs  成果物が材料より古ければ止める判定 (8 つの道具が
+  //                               共有 · パス 305 で exp:* 3 本を足した)。2026-09-17 (パス 304) に smoke-app.cjs が
+  //                               読むようになって閉包に入った。ここが `process.exit(0)`
+  //                               に書き換わると smoke:app は**何も検査せずに緑**を
+  //                               返せる (run() の先頭で呼ぶ) —— 守っている検査を
+  //                               黙らせられる物は、除外ではなく保護対象。
   'scripts/lint-sample-data.cjs',
   'scripts/lint-artifact-csp.cjs',
   'scripts/verify-release-artifacts.cjs',
   'scripts/checksum-release.cjs',
   'scripts/smoke-app.cjs',
+  'scripts/lib/artifact-freshness.cjs',
   // electronFuses (runAsNode / NODE_OPTIONS / inspect / cookie 暗号化) の置き場。
   // `runAsNode: true` に戻すだけで、署名済みの自分自身を Node として起動して
   // アプリとして `safeStorage.decryptString` を呼べる状態に戻る。
@@ -254,9 +281,21 @@ const PROTECTED = [
   // 一時ファイルの置き場と `.prev` の扱いを決めるので、ここが変われば
   // 平文や旧世代が予期しない場所に残りうる。
   'src/main/atomicWrite.ts',
+  // ハードリセット (2026-09-09 · パス 137): main のファイル (トークン・状態ファイル・控え・残骸) を消す手順と、
+  // 両ビルドの報告の型・文面。消す先が黙って変わらないこと。
+  'src/main/eraseAll.ts',
+  'src/main/windowPrefs.ts', // 窓の下地色の関門 (#rrggbb だけを setBackgroundColor へ) と配色の保存。eraseAll が在庫として読む (パス 318)
+  'src/main/stateFile.ts',   // 状態ファイルの読みの門 (stat の前門 + 16 MiB の後門・パス 313)。windowPrefs (保護対象) が読む
+  'src/shared/eraseReport.ts',
   // IPC 境界で資格情報の文字列を検査する唯一の場所 (main.ts が読む)。
   // 制御文字・長さ・空を落としているので、緩めば折り返しごと保存される。
   'src/shared/tokenInput.ts',
+  // 認可サーバのトークン端点の応答を検証する唯一の場所 (2026-09-14 · パス 260)。
+  // `oauth.ts` / `pkce.ts` (どちらも保護対象) が読む先で、閉包の検査が
+  // 足した当日に浮かせた。ここが全部通すようになれば、`access_token` の
+  // 検査も `refresh_token` の型も消える —— **働いている更新トークンが
+  // 応答 1 つで置き換わり、以後そのサービスは 401 のままになる** (実測)。
+  'src/shared/tokenResponse.ts',
   // ↓ この 2 つは閉包の検査が**最初の実行で見つけた**もの。
   //   proxyEndpoint.ts を保護対象にした途端、それが読んでいる側が浮いた。
   //
@@ -268,6 +307,16 @@ const PROTECTED = [
   // 制御文字の判定。URL / ヘッダの分断を止める共通の一段目で、
   // proxy / AI endpoint / Atlassian site / 資格情報入力が全部ここを通る。
   'src/shared/controlChars.ts',
+  // 「`Headers` がこの名前 / この値を受理するか」の唯一の出典 (2026-09-16 · パス 296)。
+  // ここも閉包の検査が足した当日に浮かせた —— `tokenInput.ts` / `proxyEndpoint.ts` /
+  // `network/proxy.ts` (いずれも保護対象) が読む先である。
+  //
+  // 全部 true を返すようになれば、**資格情報と共有秘密の入口が丸ごと開く**:
+  // 途中に CRLF を含む値が保存でき、要求の組み立てで throw し、その例外文には
+  // 秘密が平文で載る (実測: `Headers.append: "sk-…\r\nX-Injected: 1" is an
+  // invalid header value.`)。正規化の側が恒等関数になれば、保存した秘密と
+  // 送る秘密が食い違い、認証は必ず落ちるのに画面は「保存した」と言う。
+  'src/shared/headerValue.ts',
   // レコードを封緘するか素通しするかを決める唯一の場所。`dataCrypto.ts` を
   // 守っても、**呼ぶ側が黙って `IDENTITY_CIPHER` を返せば平文で保存される** ——
   // 画面は「暗号化は有効」と言い続けるので、外からは見分けが付かない。
@@ -287,8 +336,49 @@ const PROTECTED = [
   'src/shared/atlassianSite.ts',            // テナント名の検証 (送り先が変わる)
   'src/shared/scanTarget.ts',               // 走査先の検証
   'src/shared/escape.ts',                   // 出口のエスケープ
+  // 2026-09-13 (パス 195) に足した。**ここも保護の閉包が教えてくれた。**
+  // 入力の天井を「文字」で数え・文字境界で切る唯一の場所にしたので、
+  // `vault.ts` (トークンの天井)・`pkce.ts` (認可コードの天井)・`localWrite.ts`
+  // (保存失敗の理由の切り詰め) が読むようになり、`chain:verify` が
+  // 「保護対象が保護されていない物を読んでいる」と鳴らした。黙って
+  // `countChars` を `length` へ戻されると、**述べる数と守る数がずれ**、
+  // 天井の半分で断る / 孤立サロゲートを保存側へ渡す状態に戻る。
+  'src/shared/inputCeiling.ts',             // 天井を数える・切る唯一の場所 (単位は「字」)
+  // 2026-09-15 (パス 287) に足した。**数える助けは封緘されているのに、
+  // 何を数えるかの表が封緘されていなかった。**
+  //
+  // 実測: `writeFieldLimits.ts` は実行時に残る export を **37 件**持ち
+  // (型だけではない)、**両ビルドの実装 14 ファイル**が読む ——
+  // main の client 11 本 (slack / github / calendar / gmail / drive / canva /
+  // notion / atlassian / wordpress / cloudflare / shopify)・ブラウザ版の
+  // `data/saasWriteWeb.ts`・`shared/api/microsoft365.ts`・
+  // `shared/voiceWriteRequirements.ts`。中身は**利用者の資格情報で第三者へ
+  // 書き込む手前の欄の判定**で、欄ごとの天井・型・CR/LF/NUL の拒否・
+  // 断りの文面を持つ (パス 110/111/183/283/285 が積み上げた)。
+  //
+  // ここを緩めると、`inputCeiling.ts` (保護対象) が字を正しく数え続けても
+  // **数える対象の上限が消える** —— 2026-08-22 の注記が言う
+  // 「関門だけ守って、関門を呼ぶ側が守られていなかった」の**裏返し**で、
+  // こちらは関門そのものが外に在った。
+  //
+  // ★ **閉包の費用は 0** —— このファイルの import は `./inputCeiling` の
+  // `countChars` **1 本だけ**で、それは既に保護対象である (実測)。
+  // 除外台帳に 1 行も足す必要が無い。
+  //
+  // なお、これはパス 286 が「閉包の穴ではなく独立した merit の問い」として
+  // 残した項目である。閉包の検査は範囲の外について何も主張していない ——
+  // だから閉包を責めずに、**中身の重さで**入れる。
+  'src/shared/writeFieldLimits.ts',         // 第三者へ書く欄の判定 (天井・型・CR/LF・断りの文)
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
+  // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が
+  // 保存の失敗の種別を文面へ写すため `localWrite.ts` を読むようにしたところ、
+  // `chain:verify` が「保護対象が保護されていない物を読んでいる」と鳴らした。
+  // ここは localStorage 書き込みの**唯一の入口**で、容量超過 / 保存禁止 /
+  // その他の切り分けと利用者へ出す文面を持つ —— 黙って書き換えられると、
+  // 端末が保存を断っていることが**画面から消える** (2026-09-06 のパスで直した
+  // 「押しても何も出ない」がそのまま戻る)。import は 0 件なので閉包は閉じる。
+  'src/renderer/data/localWrite.ts',        // localStorage 書き込みの唯一の入口と失敗の文面
   'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
   'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
@@ -306,6 +396,13 @@ const PROTECTED = [
  * 残り続ける。
  */
 const DEP_EXCLUSIONS = {
+  // ハードリセット (main/eraseAll.ts · パス 137) が読むのは**置き場所の関数**だけ (storePath / defaultStatePath /
+  // defaultDashboardPath)。置き場所が変われば消す先も同じに変わる (在庫は綴りを写さない)。中身の変更で消す対象は
+  // 変わらない。名前は `main/__tests__/eraseAll.test.ts` (6 つ) と封緘の台帳 `atRestPolicy.test.ts` が留める。
+  'src/main/clients/emotions.ts': 'ハードリセットが読むのは置き場所の関数 storePath だけ (上の注記)。',
+  'src/main/clients/talent.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/teamradar.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/stocks.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath / defaultDashboardPath だけ (上の注記)。',
   'src/shared/serviceId.ts':
     'サービスを 1 つ足すたびに変わる (現在 74)。かつ、この一覧自体は関門ではない — '
     + '未知の id を弾いているのは SERVICE_ID_SET を使う isServiceId で、'
@@ -329,6 +426,10 @@ const DEP_EXCLUSIONS = {
     'AI へ送る量の上限の定数のみ (判断は呼び出し側が持ち、両方とも保護対象)。',
   'src/shared/advisorTypes.ts':
     '実行時に残らない型定義のみ (interface 1 つ)。書き換えても生成 JS が変わらない。',
+  // 2026-09-09 (パス 116): assistant.ts の閉包で出てきた。action の戻り値の形の台帳 —— 
+  // interface と type だけで、`import type` でしか読まれない。advisorTypes.ts と同じ基準 (実行時に残らない)。
+  'src/shared/actionData.ts':
+    '実行時に残らない型定義のみ (action の戻り値の形の台帳)。書き換えても生成 JS が変わらない。',
   // 2026-08-25: 保護対象へ入れようとして、**ここに既に在ることに気付いた**
   // (閉包検査が「二重管理」で鳴った)。過去の判断を尊重して除外のままにするが、
   // 理由の書きぶりは実態に寄せる —— このファイルは版の比較だけでなく、
@@ -725,6 +826,72 @@ function cmdSelfTest() {
     check(
       '保護を 1 つ外すと、それを読んでいる側から鳴る',
       found.length > 0 && found.every((m) => m.includes('cryptoParams.ts')),
+    );
+  }
+  {
+    /*
+     * **「段を 1 つ増やしたければ、増えた先が次の verify で鳴る」の検算 (パス 286)。**
+     *
+     * 上の閉包の docblock は、推移閉包を追わない理由をこう書いている ——
+     * 「深追いすると『型だけの import』まで巻き込んで台帳が実用にならない。
+     * 段を 1 つ増やしたければ、増えた先が次の verify で鳴る」。
+     *
+     * この 2 文目が**設計の支え**である。追わないでよいのは、追う代わりに
+     * 「1 段ずつ増える」から。ところが self-test 20 件のうち閉包を見る物は
+     * **外す向きしか無かった** (`cryptoParams.ts` を PROTECTED から外すと
+     * 読んでいる側が鳴る)。**足す向き** —— 昇格した物が自分の読んでいる先で
+     * 鳴るか —— は 1 件も測られていなかった (2026-09-15 実測)。
+     *
+     * ★ **足す向きだけを黙らせる変更は実在する** (2026-09-15 に対照で実測)。
+     * `collectClosureProblems` の頭で「もともと `PROTECTED` に在った物からの
+     * 辺だけ見る」——昇格したばかりの物を免除する最適化を装った 2 行——を
+     * 入れると、**self-test 20 件のうち鳴るのはこの 1 本だけ**で、外す向き
+     * (`cryptoParams.ts`)・実物の一覧・workflow の辺はすべて緑のまま通る。
+     * だからこの検査は「同じ実装を 2 度測る重複」ではない。
+     *
+     * ★ 併せて**外した対照も記録する** —— 最初は「`set.has(target)` を
+     * 広い集合に変えれば足す向きだけが黙る」と書いたが、当てて測ると
+     * `src/shared/` を丸ごと飛ばす形になり**外す向きも一緒に落ちた** (4 件鳴った。
+     * 外す向きの標本 `cryptoParams.ts` が `src/shared/` に在るため)。
+     * 予想した対照が外れたら、**書いた予想のほうを直す**。
+     *
+     * ★ 標本は**探す** (綴りで固定しない)。固定すると、その 1 ファイルの
+     * import が変わった日に「どの入力でも通る空の検査」になる —— この本が
+     * 何度も名指ししている形である。だから走査が候補を見つけられなければ
+     * **それ自体を落とす** (下の 1 本目)。
+     */
+    const known = new Set([...PROTECTED, ...Object.keys(DEP_EXCLUSIONS)]);
+    const sharedDir = path.join(REPO_ROOT, 'src', 'shared');
+    const pool = fs.existsSync(sharedDir)
+      ? fs
+          .readdirSync(sharedDir)
+          .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'))
+          .map((f) => `src/shared/${f}`)
+          .filter((rel) => !known.has(rel))
+      : [];
+    let candidate = null;
+    let wouldRing = null;
+    for (const rel of pool) {
+      const text = fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+      const unknown = dependencySpecs(text, 'esm')
+        .map((spec) => resolveRelativeImport(rel, spec))
+        .filter((t) => t !== null && !known.has(t));
+      if (unknown.length > 0) {
+        candidate = rel;
+        wouldRing = unknown[0];
+        break;
+      }
+    }
+    check(
+      '★ 昇格の標本が実在する (走査が死んで「合格」にならない)',
+      candidate !== null && wouldRing !== null,
+    );
+    const promoted =
+      candidate === null ? [] : collectClosureProblems([...PROTECTED, candidate], DEP_EXCLUSIONS);
+    check(
+      '★ 保護対象へ 1 つ足すと、その先が鳴る (推移閉包を追わない理由の検算)',
+      candidate !== null &&
+        promoted.some((m) => m.includes(candidate) && m.includes(wouldRing)),
     );
   }
   {

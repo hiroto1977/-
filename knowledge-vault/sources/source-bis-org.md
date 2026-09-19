@@ -2,7 +2,7 @@
 title: "bis.org"
 type: source-domain
 host: "bis.org"
-cite_count: 12
+cite_count: 13
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # bis.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **12 件**（公的 8 ・ 学術 3 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **13 件**（公的 9 ・ 学術 3 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,7 @@ tags:
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — BISWorkingPaperNo.176—Debt-deflation:conceptsandastylisedmodel
 - [[econ-forward-guidance|フォワードガイダンス（時間軸政策）]] — BISQuarterlyReview—Forwardguidanceatthezerolowerbound（カレンダー型・閾値型、ZLBで…
 - [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — BISWorkingPaperNo.396—Famaregression,negativeslope,time-varyingriskpr…
+- [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — Drehmann,M.,&Tsatsaronis,K.(2014).TheCredit-to-GDPGapandCountercyclic…
 - [[econ-macroprudential-policy|マクロプルーデンス政策]] — BIS第80次年次報告書（2010）第VII章"Macroprudentialpolicyandaddressingprocyclical…
 - [[econ-regulatory-arbitrage|規制裁定：企業による規制差異の利用と市場効率性]] — BISQuarterlyReview(2021)—Regulatoryarbitrageinbanking.
 - [[econ-sterilized-intervention|不胎化介入（外国為替市場介入）]] — BISWorkingPapersNo.73(Neely2000)"ThePracticeofCentralBankIntervention…

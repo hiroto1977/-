@@ -26,7 +26,7 @@ aliases:
 ジョージ・リッツァ ／ ローランド・ロバートソン ／ マルク・オジェ ／ ベンジャミン・バーバー
 
 ## 出典
-- [Ritzer, G. (2004) The Globalization of Nothing — Pine Forge Press](https://www.worldcat.org/oclc/54503871) `学術`
+- [Ritzer, G. (2004) The Globalization of Nothing — Pine Forge Press](https://www.worldcat.org/oclc/54503871) `リファレンス`
 - [Wikipedia: George Ritzer — grobalization, glocalization, something/nothing, McDonaldization](https://en.wikipedia.org/wiki/George_Ritzer) `リファレンス`
 
 ## 関連概念

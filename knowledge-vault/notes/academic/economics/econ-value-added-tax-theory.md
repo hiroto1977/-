@@ -35,13 +35,13 @@ aliases:
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同じ思想家
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
 - [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 同じ思想家
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — 同じ思想家
 - [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 同じ思想家
 - [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 同じ思想家
-- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
-- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同じ思想家
-- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
+- [[econ-overlapping-generations-samuelson|世代重複モデル——有限の生涯を生きる世代が共存する動学的一般均衡]] — 同じ思想家
+- [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

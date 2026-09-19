@@ -31,8 +31,8 @@ aliases:
 - [Infant Visual Habituation — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC2758574/) `学術`
 
 ## 関連概念
+- [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

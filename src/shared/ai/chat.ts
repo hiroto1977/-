@@ -11,12 +11,16 @@
 
 // golden で固定する。
 
-import { redactForMessage } from '../redact';
-import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, withTimeout } from '../httpLimits';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../redact';
 import {
-  ASSISTANT_REPLY_TRUNCATED_NOTICE,
-  MAX_ASSISTANT_REPLY_CHARS,
-} from '../assistantLimits';
+  egressInit,
+  isRedirectResponse,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  redirectRefusal,
+  withTimeout,
+} from '../httpLimits';
+import { capAssistantReply } from '../assistantLimits';
 import {
   AI_PROVIDERS,
   resolveModel,
@@ -102,18 +106,21 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
   return withTimeout(opts.timeoutMs ?? AI_CHAT_TIMEOUT_MS, undefined, async (signal) => {
     let res: Response;
     try {
-      res = await f(httpReq.url, {
+      res = await f(httpReq.url, egressInit({
         method: 'POST',
         headers: httpReq.headers,
         body: httpReq.body,
         signal,
-      });
+      }));
     } catch (e) {
       if (signal.aborted) {
         throw new Error(`${spec.label} が時間内に応答しませんでした`);
       }
       throw e;
     }
+
+    // 転送には追随しない (規則は httpLimits.ts)。宛先は利用者が決められるので、その先まで辿らない。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, httpReq.url, spec.label));
 
     /*
      * **本文に上限を掛ける** (同日)。`res.json()` には上限が無く、300MiB を
@@ -143,7 +150,7 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
     }
 
     if (!res.ok) {
-      throw new Error(`${spec.label} API ${res.status}: ${redactForMessage(body, 200)}`);
+      throw new Error(`${spec.label} API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
 
     let json: unknown;
@@ -169,14 +176,10 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
      * ままの物が積まれ、ブラウザ版の別の呼び出し口が素通しになる。
      *
      * 黙って切らない —— 切った事実を本文に残す。
+     *
+     * 判断そのものは `capAssistantReply` (assistantLimits.ts) が持つ —— `runAiChat` を
+     * 通らない `skills/run-skill` と `ollama/chat` も同じ関数を読む (パス 113)。
      */
-    if (text.length > MAX_ASSISTANT_REPLY_CHARS) {
-      return {
-        text: text.slice(0, MAX_ASSISTANT_REPLY_CHARS) + ASSISTANT_REPLY_TRUNCATED_NOTICE,
-        model,
-        provider: spec.id,
-      };
-    }
-    return { text, model, provider: spec.id };
+    return { text: capAssistantReply(text), model, provider: spec.id };
   });
 }

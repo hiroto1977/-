@@ -1,10 +1,13 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { saveStocksState } from '../clients/stocks';
 import { saveTeamRadarState } from '../clients/teamradar';
+
+// teamradar の保存は OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
+vi.mock('electron', async () => (await import('./safeStorageMock')).electronSafeStorageMock());
 
 /*
  * **締めるのは、書いた後である。**

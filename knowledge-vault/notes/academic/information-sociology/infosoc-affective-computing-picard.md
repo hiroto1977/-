@@ -34,7 +34,7 @@ aliases:
 - [[human-differential-emotions|分化感情理論（ディファレンシャル・エモーションズ理論）]] — 同じ思想家
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同分野の近傍
-- [[infosoc-digital-phenotyping-theory|デジタル表現型理論]] — 同分野の近傍
+- [[infosoc-sociomateriality|ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

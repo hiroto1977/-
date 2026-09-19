@@ -321,3 +321,54 @@ describe('StatusBar — 読み手のいない資格情報は求めない', () =>
     expect(html).not.toContain('再認証');
   });
 });
+
+/*
+ * **バッジが 1 枠しか無いせいで、いちばん要るときに取得元が消えていた。**
+ *
+ * `status === 'error'` のときバッジは「認証エラー」等になり、
+ * 「サンプル（未連携）」が押し出される。ところが画面の下には
+ * `SNAPSHOT[id]` の同梱データがそのまま並んでいる —— トークンを保存して
+ * 「更新」を押し 401 が返った人には、**数字の入ったダッシュボードと
+ * `401 Bad credentials` の 1 行だけ**が見える (2026-09-06 実測)。
+ *
+ * 取得元の宣言はエラーのときこそ要るので、別枠 (`data-stale-note`) で出す。
+ */
+describe('StatusBar — エラーのときも数字の出どころを言う', () => {
+  const render = (props: Record<string, unknown>): string =>
+    renderToStaticMarkup(createElement(StatusBar, { who: 'TestService', ...props } as never));
+
+  it('★ snapshot + エラー: 同梱のサンプルだと言う (バッジは「認証エラー」のまま)', () => {
+    const html = render({ status: 'error', errorKind: 'auth', errorMessage: '401 Bad credentials' });
+    expect(html).toContain('認証エラー'); // バッジは従来どおり (e2e が字面で見ている)
+    expect(html).toContain('data-stale-note');
+    expect(html).toContain('表示中の数字は同梱のサンプルです（まだあなたのデータではありません）');
+  });
+
+  it('★ live + エラー: 前回取得した内容だと言う (実データだが今回の更新は入っていない)', () => {
+    const html = render({ source: 'live', status: 'error', errorMessage: 'fetch failed' });
+    expect(html).toContain('表示中の数字は前回取得できた内容です（今回の更新は反映されていません）');
+    expect(html).not.toContain('同梱のサンプル');
+  });
+
+  it('★ レート制限でも出す (エラーの種別で消えない)', () => {
+    const html = render({ status: 'error', errorKind: 'rate_limit' });
+    expect(html).toContain('レート制限');
+    expect(html).toContain('data-stale-note');
+  });
+
+  it('対照: 正常時は出さない (バッジ自身が取得元を言っている)', () => {
+    expect(render({ status: 'idle' })).not.toContain('data-stale-note');
+    expect(render({ source: 'live', status: 'idle' })).not.toContain('data-stale-note');
+  });
+
+  it('対照: 読込中は出さない (すぐ決まるので急かさない)', () => {
+    expect(render({ status: 'loading' })).not.toContain('data-stale-note');
+  });
+
+  it('★ 取得しない画面には出さない (同梱データの注記と二重にならない)', () => {
+    // `origin='sample'` の画面は `data-sample-note` が常に同梱データだと書いている。
+    const html = render({ serviceId: 'sample', status: 'error' });
+    expect(html).toContain('data-sample-note');
+    expect(html).not.toContain('data-stale-note');
+  });
+});

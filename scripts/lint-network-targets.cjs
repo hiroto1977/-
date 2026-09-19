@@ -72,6 +72,14 @@ const NETWORK_CALL_NAMES = [
   'transport',
   'postExpectOk',
   'fetchViaProxy',
+  // 2026-09-09: §3.3 の egress 照合 (verify-architecture.cjs) がこの一覧を借りるようになって、
+  // 送る側の名前が 4 つ抜けていると分かった —— web-shim の timedFetch / timedFetchAi、
+  // main の limitedFetch、ブラウザ版 Ollama の fetchWithTimeout (URL が 2 番目の引数なので
+  // BARE_SEND には掛からず、文脈にだけ効く)。名前は 2 つの門で 1 つの一覧。
+  'timedFetch',
+  'timedFetchAi',
+  'limitedFetch',
+  'fetchWithTimeout',
 ];
 
 const NETWORK_CALL = new RegExp(`\\b(${NETWORK_CALL_NAMES.join('|')})\\b`);
@@ -101,8 +109,13 @@ const URL_ASSIGNMENT = /\b(url|endpoint|target)\s*[:=]/i;
 const REVIEWED = [
   {
     file: 'src/main/clients/atlassian.ts',
-    template: '`${creds.site}/rest/api/3/issue`',
-    guard: 'parseAtlassianToken → shared/atlassianSite.ts で *.atlassian.net のみ許可し hostname から組み直す',
+    template: '`${creds.site}${JIRA_ISSUE_PATH}`',
+    guard: 'parseAtlassianToken → shared/atlassianSite.ts で *.atlassian.net のみ許可し hostname から組み直す (パス 321 から要求の組み立ては shared/api/atlassian.ts の 1 つ。経路は JIRA_ISSUE_PATH の定数)',
+  },
+  {
+    file: 'src/shared/api/atlassian.ts',
+    template: '`${creds.site}${JIRA_ISSUE_PATH}`',
+    guard: 'createJiraIssueRequest の creds.site は呼び手の parseAtlassianToken (main / ブラウザ版) が shared/atlassianSite.ts で *.atlassian.net のみ許可し hostname から組み直した物 (パス 321)',
   },
   {
     file: 'src/main/clients/shopify.ts',
@@ -120,25 +133,23 @@ const REVIEWED = [
     guard: 'normalizeAtlassianSite → shared/atlassianSite.ts',
   },
   {
-    file: 'src/renderer/data/saasWriteWeb.ts',
-    template: '`${creds.site}/rest/api/3/issue`',
-    guard: 'parseAtlassianToken → shared/atlassianSite.ts (2026-08 監査で追加)',
-  },
-  {
     file: 'src/main/clients/atlassian.ts',
     template: '`${creds.site}/rest/api/3/project/search?maxResults=50`',
     guard: 'parseAtlassianToken → shared/atlassianSite.ts。2026-08 に検出器を直すまで台帳から漏れていた（jsonFetch が次の行にあり、直前 3 行しか見ない文脈判定に掛からなかった）',
   },
-  {
-    file: 'src/main/clients/atlassian.ts',
-    template: '`${creds.site}/browse/${res.key}`',
-    guard: '同上のホスト検証済み。これは送信ではなく画面へ返す表示用 URL（openExternal で開く）で、資格情報は乗らない',
-  },
-  {
-    file: 'src/renderer/data/saasWriteWeb.ts',
-    template: '`${creds.site}/browse/${data.key}`',
-    guard: '同上（ブラウザ版の表示用 URL）',
-  },
+  /*
+   * **2026-09-12 (パス 181) に 2 行を外した。**
+   *
+   * `${creds.site}/browse/${key}` の組み立ては main / ブラウザ版 / 画面の 3 か所に
+   * 散っており (画面だけ `/jira/projects/` という別の形)、`src/shared/atlassianLinks.ts`
+   * の `jiraBrowseUrl` に寄せた。新しい場所は**送信の文脈に無い** (`fetch` が近くに無い)
+   * ので、この走査の母集団には入らない —— 元の 2 行の理由も「送信ではなく画面へ返す
+   * 表示用 URL」だったので、扱いは変わっていない。
+   *
+   * 台帳に残すと**現物が無いのに見張っているつもり**になるので消した
+   * (この関門自身がそう言って鳴った)。ホスト検証は `shared/atlassianSite.ts` が持ち、
+   * 動的部分の `encodeURIComponent` は `atlassianLinks.ts` が持つ。
+   */
   {
     file: 'src/shared/ai/providers.ts',
     template: '`${base}/v1/messages`',
@@ -196,7 +207,7 @@ const BARE_SEND = new RegExp(
 const REVIEWED_VARIABLE_DESTINATIONS = [
   {
     file: 'src/main/clients/github.ts',
-    dest: 'item.pull_request.url',
+    dest: 'prUrl.href',
     guard:
       '**応答本文から来る送り先。** /search/issues の各項目が返す PR の API URL を'
       + ' そのまま叩き直す形で、値を決めているのは相手のサーバである。'
@@ -204,7 +215,11 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
       + ' `hostname === api.github.com` でなければ叩かずに fallback を返す。'
       + ' PAT (Authorization) が乗るので、乗っ取られた検索応答が別ホストを指しても'
       + ' 出て行かない。2026-08-23 に検出器を広げるまで、この行は台帳の外にいた'
-      + ' (`jsonFetch<T>(` の型引数 + 引数が次の行、の 2 点で素通りしていた)。',
+      + ' (`jsonFetch<T>(` の型引数 + 引数が次の行、の 2 点で素通りしていた)。'
+      + ' **2026-09-19 (パス 325): 渡すのを生の `item.pull_request.url` から関門の返り値'
+      + ' `prUrl.href` へ変えた** —— 調べた物と使う物を同じにする'
+      + ' (今日は `fetch` が同じ URL parser で解くので送り先は一致したが、'
+      + ' 一致が「両側が同じ parser」という別の前提に依っていた)。',
   },
   {
     file: 'src/shared/ai/chat.ts',
@@ -223,6 +238,18 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
       + ' ただし assertHttpsEndpoint が見るのは**スキームだけでホストは見ない**ので、'
       + ' 封じ込めは「表がハードコードであること」に依存している —— tokenUrl を'
       + ' 設定可能にする変更は、client secret の送り先を外部が選べるようにする変更と同義。',
+  },
+  {
+    file: 'src/main/clients/shopify.ts',
+    dest: 'u.href',
+    guard:
+      '**renderer の payload から来る送り先** (Shopify → Discord の注文同期)。'
+      + ' 送信の直前に `new URL()` で解析し、`protocol === https:` かつ'
+      + ' `hostname === discord.com` でなければ投げて止める。webhook の URL 自体が'
+      + ' 秘密なので、別ホストへ出すと注文の中身ごと漏れる。'
+      + ' **2026-09-19 (パス 325): 渡すのを生の `webhookUrl` から関門の返り値 `u.href` へ変えた**'
+      + ' —— 隣の salesforce 同期は最初から `base.origin` を使っており、'
+      + ' 同じファイルの中で 2 つの枝の流儀が割れていた。',
   },
   {
     file: 'src/renderer/network/proxy.ts',
@@ -364,6 +391,27 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} 走査の的: ${label}: ${got} (期待 ${expected})`);
   }
 
+  /*
+   * **URL らしさの門にも self-test を置く** (2026-09-19 · パス 321)。
+   * 上の 4 表はホストの判定・通信の名前・素の送信・拡張子を見ていたが、
+   * 「テンプレートが URL か」の門 (`${…}/` を要求) には 1 件も無く、
+   * `${creds.site}${JIRA_ISSUE_PATH}` が黙って落ちていた。走査そのもの
+   * (`templateFindings`) に 1 行ずつ流す。
+   */
+  const templateCases = [
+    ['変数のホスト + リテラルの経路', 'await transport(`${creds.site}/rest/api/3/issue`, init);', 1],
+    ['変数のホスト + 定数の経路 (パス 321 まで素通り)', 'await transport(`${creds.site}${JIRA_ISSUE_PATH}`, init);', 1],
+    ['定数のホスト + 定数の経路は載せない', 'await transport(`${GITHUB_API}${path}`, init);', 0],
+    ['URL でないテンプレートは拾わない', 'await transport(`${label}: ${n}`, init);', 0],
+    ['通信でない行は拾わない', 'const shown = `${creds.site}${JIRA_ISSUE_PATH}`;', 0],
+  ];
+  for (const [label, line, expected] of templateCases) {
+    const got = templateFindings('self-test.ts', [line]).length;
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} URL らしさ: ${label}: ${got} 件 (期待 ${expected})`);
+  }
+
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
     return 1;
@@ -392,7 +440,13 @@ function templateFindings(rel, lines) {
         const ctx = lines.slice(Math.max(0, i - 3), i + 1).join('\n');
         if (!NETWORK_CALL.test(ctx) && !URL_ASSIGNMENT.test(lines[i])) continue;
         // パスで始まらない (= URL ではない) テンプレートは除く。
-        if (!/^`(https?:\/\/|\$\{[^}]*\}\/)/.test(template)) continue;
+        //
+        // 2026-09-19 (パス 321): `${creds.site}${JIRA_ISSUE_PATH}` —— 変数のホストに
+        // **定数の経路**を続ける形 —— は `${…}/` を要求するこの門で「URL ではない」と
+        // 落ち、1 件も鳴らなかった。経路をリテラルから定数へ寄せる refactor が、
+        // そのまま監視の外へ出る形である。補間の直後にもう 1 つの補間が続く物も URL とみなす
+        // (ホストが定数かどうかは次の hasConstantHost が先頭の補間だけを見る)。
+        if (!/^`(https?:\/\/|\$\{[^}]*\}(\/|\$\{))/.test(template)) continue;
         if (hasConstantHost(template)) continue;
         found.push({ file: rel, line: i + 1, template });
       }

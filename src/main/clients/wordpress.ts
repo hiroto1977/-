@@ -1,4 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { WORDPRESS_API, checkPost, parseCreatedPost, wordpressPostInit, wordpressPostsPath } from '../../shared/api/wordpress';
+import type { ActionData } from '../../shared/actionData';
 
 
 // Subset of fields returned by https://public-api.wordpress.com/rest/v1.1/me/sites
@@ -67,45 +69,28 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
 
 // --- write-side actions --------------------------------------------------
 
-interface CreatePostDraftPayload {
+/**
+ * `create-post-draft` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkPost` (`WordPressPostFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreatePostDraftPayload {
   siteId: string; // blog id or hostname
   title: string;
   content?: string;
   status?: 'draft' | 'publish' | 'pending' | 'private';
 }
 
-interface WpCreatePostResponse {
-  ID: number;
-  URL: string;
-  short_URL?: string;
-  title: string;
-  status: string;
-}
-
 async function createPostDraft(
   ctx: ActionContext,
-): Promise<{ id: number; url: string; title: string }> {
-  const { siteId, title, content, status } = ctx.payload as unknown as CreatePostDraftPayload;
-  if (!siteId || !title) throw new Error('siteId and title are required');
-
-  const res = await jsonFetch<WpCreatePostResponse>(
-    `https://public-api.wordpress.com/rest/v1.1/sites/${encodeURIComponent(siteId)}/posts/new`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title,
-        content: content ?? '',
-        status: status ?? 'draft',
-      }),
-    },
+): Promise<ActionData<'wordpress/create-post-draft'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/wordpress.ts の 1 つ (ブラウザ版も同じ関数 · 2026-09-18)。
+  const post = checkPost(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${WORDPRESS_API}${wordpressPostsPath(post)}`,
+    wordpressPostInit(post, ctx.token),
     { fetch: ctx.fetch, serviceId: 'wordpress' },
   );
-
-  return { id: res.ID, url: res.URL, title: res.title };
+  return parseCreatedPost(res);
 }
 
 export const ACTIONS: ActionMap = {

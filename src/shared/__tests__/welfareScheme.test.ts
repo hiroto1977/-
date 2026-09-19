@@ -6,6 +6,7 @@ import {
   MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
   MEAL_SUBSIDY_SELF_PAY_RATIO,
   NIGHT_MEAL_CASH_TAX_FREE_LIMIT_YEN,
+  mealSubsidyVerdict,
   type WelfareSchemeInput,
 } from '../welfareScheme';
 
@@ -157,6 +158,10 @@ describe('designWelfareScheme', () => {
       inKindValue: 0,
       employeeRealValue: 265_000,
       companyTotalCost: 670_243,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.scheme).toEqual({
       gross: 357_303,
@@ -168,6 +173,10 @@ describe('designWelfareScheme', () => {
       inKindValue: 157_500,
       employeeRealValue: 422_500,
       companyTotalCost: 569_851,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.diff).toEqual({
       gross: -222_785,
@@ -447,6 +456,10 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
       inKindValue: 0,
       employeeRealValue: 265_000,
       companyTotalCost: 620_155,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.scheme).toEqual({
       gross: 335_386,
@@ -458,6 +471,10 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
       inKindValue: 157_500,
       employeeRealValue: 422_500,
       companyTotalCost: 544_852,
+      // 要件を満たす食事補助なので課税現物は 0 (パス 228 で足した欄)。
+      taxableInKind: 0,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.diff).toEqual({
       gross: -203_577,
@@ -572,5 +589,104 @@ describe('designWelfareScheme — 年分が税額に効く', () => {
       expect(at(y).normal.freeCash).toBe(265_000);
       expect(at(y).scheme.freeCash).toBe(265_000);
     }
+  });
+});
+
+describe('mealSubsidyVerdict (食事補助の非課税要件・パス 219)', () => {
+  // 既定の画面値: 食事 20,000 / 会社負担 7,000 → 本人 13,000 (65%) かつ 7,000 <= 7,500。
+  it('★ 対照: 両方の要件を満たす組は taxFree で reasons が空', () => {
+    const v = mealSubsidyVerdict(20_000, 7_000);
+    expect(v.taxFree).toBe(true);
+    expect(v.reasons).toEqual([]);
+  });
+
+  it('★ 会社負担が限度額を超えると落ちる (要件 2)', () => {
+    // 本人負担は 50% 以上のまま、会社負担だけを限度額 +1 にする。
+    const total = MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN * 4; // 本人負担は 75%
+    const v = mealSubsidyVerdict(total, MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN + 1);
+    expect(v.taxFree).toBe(false);
+    expect(v.reasons).toHaveLength(1);
+    expect(v.reasons[0]).toContain('会社負担が月');
+    // 境界そのものは通る (「以下」)。
+    expect(mealSubsidyVerdict(total, MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN).taxFree).toBe(true);
+  });
+
+  it('★ 本人負担が割合を下回ると落ちる (要件 1)', () => {
+    // 会社負担は限度額の内側に収めたまま、価額を下げて本人負担の割合を崩す。
+    const company = MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN;
+    const v = mealSubsidyVerdict(company * 1.5, company); // 本人 33%
+    expect(v.taxFree).toBe(false);
+    expect(v.reasons).toHaveLength(1);
+    expect(v.reasons[0]).toContain('本人負担が食事の価額の');
+    // 境界 (ちょうど 50%) は通る。
+    expect(mealSubsidyVerdict(company * 2, company).taxFree).toBe(true);
+  });
+
+  it('★ 両方外れたら理由が 2 つ並ぶ (片方だけでは足りない要件なので独立に見る)', () => {
+    const v = mealSubsidyVerdict(10_000, 9_000); // 本人 10% かつ 9,000 > 7,500
+    expect(v.taxFree).toBe(false);
+    expect(v.reasons).toHaveLength(2);
+  });
+
+  it('食事補助を使っていない組 (両方 0) は要件の問いが立たないので taxFree', () => {
+    expect(mealSubsidyVerdict(0, 0)).toEqual({ taxFree: true, reasons: [] });
+  });
+
+  it('価額より会社負担が大きい組は本人負担が負になるので落ちる', () => {
+    const v = mealSubsidyVerdict(0, 5_000);
+    expect(v.taxFree).toBe(false);
+    expect(v.reasons.join('')).toContain('本人負担');
+  });
+
+  it('非有限・負の入力は 0 に倒れる (nonNeg を通す)', () => {
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, -1]) {
+      expect(mealSubsidyVerdict(bad, 0).taxFree).toBe(true);
+    }
+    // 会社負担が NaN なら 0 に倒れるので、価額 0 との組は通る。
+    expect(mealSubsidyVerdict(0, Number.NaN).taxFree).toBe(true);
+  });
+
+  it('限度額と割合は引数で差し替えられる (改正が来たら台帳から渡す)', () => {
+    // 旧制度の 3,500 円で見れば、今の 7,000 円は落ちる。
+    expect(mealSubsidyVerdict(20_000, 7_000, 3_500).taxFree).toBe(false);
+    // 割合を 0 にすれば本人負担の要件は消える。
+    expect(mealSubsidyVerdict(10_000, 7_000, 7_500, 0).taxFree).toBe(true);
+  });
+
+  it('★ designWelfareScheme の結果に判定が載る (計算が読んでいる証拠)', () => {
+    const base: WelfareSchemeInput = {
+      targetFreeCash: 200_000, rentTotal: 100_000, rentCompanyShare: 60_000,
+      mealTotal: 20_000, mealCompanyShare: 7_000, childcare: 0, ecPoints: 10_000,
+    };
+    expect(designWelfareScheme(base).mealSubsidy.taxFree).toBe(true);
+    // **実測で ¥10,000,269,999 の「実質手元残り」を作った組。** 判定が false になる。
+    const huge = designWelfareScheme({ ...base, mealCompanyShare: 9_999_999_999 });
+    expect(huge.mealSubsidy.taxFree).toBe(false);
+    expect(huge.mealSubsidy.reasons).toHaveLength(2);
+    // **パス 228 で積み残しを閉じた。** ここは元々
+    //   「数字そのものは今も出る (税額の再計算は積み残し)」
+    //   `expect(huge.scheme.employeeRealValue).toBeGreaterThan(10_000_000_000)`
+    // と書いてあった —— **要求ではなく、その時点の振る舞いの記述**である
+    // (コメントが「積み残し」と明言していた)。要件を外れた会社負担は給与課税に
+    // 入るので、非課税の現物価値には入らず、実質手元残りは 100 億にならない。
+    expect(huge.scheme.taxableInKind).toBe(9_999_999_999);
+    expect(huge.scheme.inKindValue).toBe(base.rentCompanyShare + base.ecPoints);
+    expect(huge.scheme.employeeRealValue).toBeLessThan(10_000_000_000);
+    // 逆算は探索上限に張り付く (このモデルでは表せない高さ) —— パス 103 の
+    // `reachedTarget` が false になり、画面はその枠で断る。
+    expect(huge.scheme.reachedTarget).toBe(false);
+    // 要件を満たす側は課税現物 0 で、非課税の現物に食事が入る (対照)。
+    const ok = designWelfareScheme(base);
+    expect(ok.scheme.taxableInKind).toBe(0);
+    expect(ok.scheme.inKindValue).toBe(base.rentCompanyShare + base.mealCompanyShare + base.ecPoints);
+  });
+
+  it('MEAL_SUBSIDY_SELF_PAY_RATIO に消費者が在る (パス 219 まで 0 件だった)', () => {
+    // 既定引数として読まれていることを、上書きとの差で示す。
+    expect(MEAL_SUBSIDY_SELF_PAY_RATIO).toBe(0.5);
+    const total = 10_000;
+    const company = 6_000; // 本人 40% —— 既定の 50% では落ちる
+    expect(mealSubsidyVerdict(total, company, 10_000).taxFree).toBe(false);
+    expect(mealSubsidyVerdict(total, company, 10_000, 0.3).taxFree).toBe(true);
   });
 });

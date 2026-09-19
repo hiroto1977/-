@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 同分野の近傍
 - [[infosoc-dark-web-anonymity-tor|ダークウェブと匿名性技術の社会学——Tor・I2P・暗号通貨の重層的分析]] — 同分野の近傍
-- [[infosoc-postdigital-culture-cramer|ポストデジタル文化（クレーマー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

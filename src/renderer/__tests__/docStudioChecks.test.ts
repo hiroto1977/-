@@ -290,6 +290,8 @@ const RULE_IDS = [
   'privacy', 'chingin', 'harassment',
   'chotatsu-keikaku', 'jigyo-keikaku',
   'roudousha-meibo', 'chingin-daichou', 'shukkinbo', 'yukyu-kanribo',
+  // 支払明細書 4 種 (2026-09-15)。従業員と役員で別の書式・別のルールにしてある。
+  'kyuyo-meisai', 'shoyo-meisai', 'yakuin-hoshu-meisai', 'yakuin-shoyo-meisai',
 ] as const;
 
 describe('全ルールの網羅 — 指摘の文面を固定する', () => {
@@ -486,9 +488,22 @@ describe('各ルールの分岐を個別に踏む', () => {
     expect(at('kaiko-yokoku', { reason: '就業規則第10条該当' }).some((i) => i.field === 'reason')).toBe(false);
   });
 
-  it('解雇予告: 日付が読めなければ日数の指摘は出ない', () => {
-    expect(at('kaiko-yokoku', { noticeDate: '未定', dismissDate: '未定' })
-      .some((i) => i.field === 'teate' || i.field === 'teateAmount' || i.field === 'dismissDate')).toBe(false);
+  it('解雇予告: 日付が読めなければ日数の指摘は出ないが、読めなかったことは言う', () => {
+    /*
+     * この検査は 2026-09-08 まで「`dismissDate` の指摘が 1 件も出ない」と書いており、
+     * **黙って判定しないことを仕様として固定していた** (パス 100)。
+     * 意図は「**日数の**指摘が出ない」であって「何も言わない」ではない ——
+     * 欄で数えると、同じ欄に付く「読み取れません」の断りまで禁じてしまう。
+     * 意図のとおり**文面**で見る形に直し、断りが出ることを併せて留める。
+     */
+    const out = at('kaiko-yokoku', { noticeDate: '未定', dismissDate: '未定' });
+    // 日数を根拠にした指摘は出ない (予告期間・手当の判定はできていない)
+    expect(out.some((i) => i.message.includes('予告期間が'))).toBe(false);
+    expect(out.some((i) => i.field === 'teate' || i.field === 'teateAmount')).toBe(false);
+    // が、読めなかったことは欄ごとに言う
+    const said = out.filter((i) => i.message.includes('読み取れません'));
+    expect(said).toHaveLength(2);
+    expect(said.every((i) => i.level === 'warn')).toBe(true);
   });
 
   it('領収書: 印紙の info は 5万円が境界', () => {
@@ -1174,5 +1189,142 @@ describe('法定帳簿の検算', () => {
       expect(hit.message).toContain('満了後3年間保存');
       expect(hit.message).toContain('労働基準法109条の帳簿とは根拠が別');
     });
+  });
+});
+
+/**
+ * **支払明細書 4 種** (2026-09-15)。
+ *
+ * placeholder で埋めた状態では 4 つとも指摘が出ない (`[]`) —— 見本の値が整合している
+ * からで、**それだけでは規則が生きていることの証拠にならない**。ここでは規則ごとに
+ * 壊した入力を渡し、対照 (整合した入力) で鳴らないことも見る。
+ */
+describe('支払明細書 — 差引支給額と損金の要件', () => {
+  it('★ 控除が支給を超えたら、差引支給額を添えて警告する (給与)', () => {
+    const out = msgs('kyuyo-meisai', filled('kyuyo-meisai', {
+      base: '200000', postAllow: '0', famAllow: '0', houseAllow: '0', otPay: '0',
+      holidayPay: '0', nightPay: '0', commuteFree: '0', commuteTax: '0', otherPay: '0',
+      health: '100000', care: '0', pension: '100000', empIns: '0',
+      incomeTax: '0', residentTax: '50000', otherDed: '0',
+    }));
+    expect(out.some((m) => m.includes('控除額の合計') && m.includes('250,000 円'))).toBe(true);
+    expect(out.some((m) => m.includes('差引支給額が -50,000 円'))).toBe(true);
+  });
+
+  it('対照: 控除が支給を超えていなければ警告しない (給与)', () => {
+    expect(msgs('kyuyo-meisai', filled('kyuyo-meisai'))).toEqual([]);
+  });
+
+  it('★ 標準賞与額が賞与額を超えたら警告する (賞与)', () => {
+    const out = msgs('shoyo-meisai', filled('shoyo-meisai', { bonus: '600000', stdBonus: '6000000' }));
+    expect(out.some((m) => m.includes('標準賞与額') && m.includes('1,000 円未満を切り捨て'))).toBe(true);
+  });
+
+  it('対照: 標準賞与額が賞与額以下なら警告しない (賞与)', () => {
+    expect(msgs('shoyo-meisai', filled('shoyo-meisai', { bonus: '600000', stdBonus: '600000' }))).toEqual([]);
+  });
+
+  it('★ 役員報酬が決議による月額と違えば、定期同額給与の警告を出す', () => {
+    const out = msgs('yakuin-hoshu-meisai', filled('yakuin-hoshu-meisai', {
+      resolutionAmount: '800000', hoshu: '900000',
+    }));
+    expect(out.some((m) => m.includes('定期同額給与から外れる') && m.includes('損金不算入'))).toBe(true);
+  });
+
+  it('対照: 決議による月額と一致していれば警告しない (役員報酬)', () => {
+    expect(msgs('yakuin-hoshu-meisai', filled('yakuin-hoshu-meisai'))).toEqual([]);
+  });
+
+  it('★ 役員賞与が届出額と違えば fatal —— 差額ではなく全額が損金不算入', () => {
+    const out = msgs('yakuin-shoyo-meisai', filled('yakuin-shoyo-meisai', {
+      notifiedAmount: '1200000', bonus: '1000000',
+    }));
+    expect(out.some((m) => m.startsWith('fatal:') && m.includes('差額ではなく全額'))).toBe(true);
+    expect(levels('yakuin-shoyo-meisai', filled('yakuin-shoyo-meisai', {
+      notifiedAmount: '1200000', bonus: '1000000',
+    }))).toContain('fatal');
+  });
+
+  it('★ 役員賞与が届出した支給日と違う日に支給されたら fatal', () => {
+    const out = msgs('yakuin-shoyo-meisai', filled('yakuin-shoyo-meisai', {
+      notifiedDate: '2026年12月10日', payDate: '2026年12月11日',
+    }));
+    expect(out.some((m) => m.startsWith('fatal:') && m.includes('届出した支給日'))).toBe(true);
+  });
+
+  it('★ 届出日が空欄なら、期限の数え方を添えて警告する (役員賞与)', () => {
+    const out = msgs('yakuin-shoyo-meisai', filled('yakuin-shoyo-meisai', { notifyDate: '' }));
+    expect(out.some((m) => m.includes('届出の期限') && m.includes('4か月'))).toBe(true);
+  });
+
+  it('★ 届出も業績連動でもない役員賞与は、全額損金不算入だと言う', () => {
+    const d = doc('yakuin-shoyo-meisai');
+    const kind = d.fields.find((f) => f.k === 'kind')?.options?.[2];
+    expect(kind, '3 番目の選択肢が「いずれにも当たらない」であること').toMatch(/いずれにも当たらない/);
+    const out = msgs('yakuin-shoyo-meisai', filled('yakuin-shoyo-meisai', { kind: kind! }));
+    expect(out.some((m) => m.includes('全額が損金不算入'))).toBe(true);
+    // 届出の一致を見る枝は、この選択肢では出さない (届出していないので比べる物が無い)
+    expect(out.some((m) => m.includes('届出した支給日'))).toBe(false);
+  });
+
+  it('対照: 届出どおりなら役員賞与に指摘は出ない', () => {
+    expect(msgs('yakuin-shoyo-meisai', filled('yakuin-shoyo-meisai'))).toEqual([]);
+  });
+
+  /**
+   * **役員の明細に雇用保険料・勤怠の欄を作らない** —— 欄が在ることは
+   * 「書いてよい」と言っているのと同じである。役員は労働者でないので
+   * 雇用保険の被保険者にならず、労働時間の概念も無い。
+   */
+  it('★ 役員の 2 書式に雇用保険料の欄が無い (従業員の 2 書式には在る)', () => {
+    const keys = (id: string) => doc(id).fields.map((f) => f.k);
+    expect(keys('kyuyo-meisai')).toContain('empIns');
+    expect(keys('shoyo-meisai')).toContain('empIns');
+    expect(keys('yakuin-hoshu-meisai')).not.toContain('empIns');
+    expect(keys('yakuin-shoyo-meisai')).not.toContain('empIns');
+  });
+
+  it('★ 賞与の 2 書式に住民税の欄が無い (月々の給与・役員報酬には在る)', () => {
+    const keys = (id: string) => doc(id).fields.map((f) => f.k);
+    expect(keys('kyuyo-meisai')).toContain('residentTax');
+    expect(keys('yakuin-hoshu-meisai')).toContain('residentTax');
+    expect(keys('shoyo-meisai')).not.toContain('residentTax');
+    expect(keys('yakuin-shoyo-meisai')).not.toContain('residentTax');
+  });
+
+  it('★ 役員の 2 書式に勤怠 (時間外・出勤日数) の欄が無い', () => {
+    for (const id of ['yakuin-hoshu-meisai', 'yakuin-shoyo-meisai']) {
+      const keys = doc(id).fields.map((f) => f.k);
+      for (const k of ['workDays', 'otHours', 'otPay', 'nightPay', 'holidayPay']) {
+        expect(keys, `${id} に ${k} が在る`).not.toContain(k);
+      }
+    }
+    expect(doc('kyuyo-meisai').fields.map((f) => f.k)).toContain('otHours');
+  });
+
+  /**
+   * 差引支給額は**上の 2 表が合計している欄と同じ欄から導く** (`sum.minus`)。
+   * 手入力の欄にすると、印刷した式が成り立たなくなる (パス 53 / 81)。
+   */
+  it('★ 差引支給額は手入力の欄ではなく、支給・控除の同じ欄から導く', () => {
+    for (const id of ['kyuyo-meisai', 'shoyo-meisai', 'yakuin-hoshu-meisai', 'yakuin-shoyo-meisai']) {
+      const tables = doc(id).body.flatMap((b) => (b.table ? [b.table] : []));
+      const net = tables.find((t) => t.sum?.label.startsWith('差引支給額'));
+      expect(net, `${id} に差引支給額の行が無い`).toBeDefined();
+      expect(net!.sum!.minus, `${id} の差引が引き算になっていない`).toBeDefined();
+      const pay = tables.find((t) => t.sum?.label === '支給額合計');
+      const ded = tables.find((t) => t.sum?.label === '控除額合計');
+      // 同じ欄であること —— 別の欄を足すと書面の 2 表と差引が食い違う
+      expect(net!.sum!.keys, `${id} の差引の足す側`).toEqual(pay!.sum!.keys);
+      expect(net!.sum!.minus, `${id} の差引の引く側`).toEqual(ded!.sum!.keys);
+      // 手入力の「差引支給額」欄を作っていないこと
+      expect(doc(id).fields.map((f) => f.k)).not.toContain('netPay');
+    }
+  });
+
+  it('★ 4 書式すべてが所得税法231条 (交付義務) を注記に持つ', () => {
+    for (const id of ['kyuyo-meisai', 'shoyo-meisai', 'yakuin-hoshu-meisai', 'yakuin-shoyo-meisai']) {
+      expect(doc(id).note.join('\n'), id).toContain('所得税法231条');
+    }
   });
 });

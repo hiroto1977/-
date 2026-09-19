@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[human-attachment-theory-adult|成人愛着理論]] — Fraley,R.C.—ABriefOverviewofAdultAttachmentTheoryandResearch(Universi…
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する]] — Fraley,R.C.,ABriefOverviewofAdultAttachmentTheoryandResearch（Universi…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

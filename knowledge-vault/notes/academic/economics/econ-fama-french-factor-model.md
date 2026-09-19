@@ -34,6 +34,8 @@ Eugene F. Fama ／ Kenneth R. French
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 語彙が近い
 - [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 同じ思想家
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同分野の近傍
+- [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同分野の近傍
+- [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

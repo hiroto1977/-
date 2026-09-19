@@ -11,7 +11,7 @@
  * から差し引く点に注意 (節税インパクトが大きい)。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 
 /** 円未満を四捨五入。 */
 
@@ -176,15 +176,15 @@ export function calcMortgageCredit(
   }
   const rate = input.rate ?? 0.007;
   const cap = input.balanceCap ?? 30_000_000;
-  const balance = Math.max(0, input.yearEndBalance);
+  const balance = nonNeg(input.yearEndBalance);
   const creditable = yen(Math.min(balance, cap) * rate);
 
-  const fromIncomeTax = Math.min(creditable, Math.max(0, input.incomeTaxBeforeCredit));
+  const fromIncomeTax = Math.min(creditable, nonNeg(input.incomeTaxBeforeCredit));
   const remaining = creditable - fromIncomeTax;
 
   const residentCap = Math.min(
     p.residentCapMax,
-    yen(Math.max(0, input.taxableIncomeForResident) * p.residentCapRate),
+    yen(nonNeg(input.taxableIncomeForResident) * p.residentCapRate),
   );
   const fromResidentTax = Math.min(remaining, residentCap);
   const unused = remaining - fromResidentTax;
@@ -231,10 +231,10 @@ const DIVIDEND_RATES: Record<DividendKind, {
 
 /** 配当控除を計算する (種類別の率)。 */
 export function calcDividendCredit(input: DividendCreditInput): DividendCreditResult {
-  const dividend = Math.max(0, input.dividendIncome);
+  const dividend = nonNeg(input.dividendIncome);
   // Stryker disable next-line ConditionalExpression: 早期returnを外しても dividend=0 は計算経路で {0,0} となり同値 (等価変異)。
   if (dividend === 0) return { incomeTax: 0, residentTax: 0 };
-  const total = Math.max(0, input.taxableTotalIncome);
+  const total = nonNeg(input.taxableTotalIncome);
   const THRESHOLD = 10_000_000;
   const r = DIVIDEND_RATES[input.kind ?? 'stock'];
 
@@ -366,7 +366,7 @@ export function calcDividendLevyCredit(
   declaredDividend: number,
   withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
 ): number {
-  return yen(Math.max(0, declaredDividend) * withheldRate);
+  return yen(nonNeg(declaredDividend) * withheldRate);
 }
 
 /**
@@ -380,7 +380,7 @@ export function calcCapitalGainsLevyCredit(
   capitalGain: number,
   withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
 ): number {
-  return yen(Math.max(0, capitalGain) * withheldRate);
+  return yen(nonNeg(capitalGain) * withheldRate);
 }
 
 // --- 一般寄附金税額控除 (住民税・ふるさと納税以外) ----------------------
@@ -403,7 +403,7 @@ export function calcGeneralDonationCredit(
   donation: number,
   kind: GeneralDonationKind = 'both',
 ): number {
-  const amount = Math.max(0, donation);
+  const amount = nonNeg(donation);
   // Stryker disable next-line EqualityOperator: <= と < は amount=2000 で同値 (控除0、連続)。
   if (amount <= GENERAL_DONATION_THRESHOLD) return 0;
   const rate = kind === 'both' ? 0.1 : kind === 'municipal' ? 0.06 : 0.04;

@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 同じ思想家
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同じ思想家
 - [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 同分野の近傍
+- [[bizlaw-strong-v-bird|ストロング対バードの準則——不完全な贈与が遺言執行者就任で完成する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

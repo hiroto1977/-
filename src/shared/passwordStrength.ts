@@ -7,6 +7,8 @@
  * Vault の PBKDF2 + AES-GCM が担います。本モジュールは入力強度の参考値です。
  */
 
+import { nonNeg } from './num';
+
 /** 文字種の有無。 */
 export interface CharsetFlags {
   readonly hasLower: boolean;
@@ -92,6 +94,9 @@ export function evaluatePasswordStrength(password: string): PasswordStrength {
   return { score, verdict, entropyBits, charset, length };
 }
 
+/** 突破時間が測れないときの文面。**「解読不能」側へ倒さない**ための断り。 */
+export const CRACK_TIME_UNMEASURABLE = '判定できません';
+
 /**
  * エントロピーから推定突破時間 (秒) を返す。
  *
@@ -100,13 +105,22 @@ export function evaluatePasswordStrength(password: string): PasswordStrength {
  * @param guessesPerSecond 1秒あたりの試行回数 (オフライン高速攻撃の目安は 1e10)
  */
 export function estimateCrackSeconds(entropyBits: number, guessesPerSecond = 1e10): number {
-  if (entropyBits <= 0 || guessesPerSecond <= 0) return 0;
-  const guesses = Math.pow(2, entropyBits - 1);
-  return guesses / guessesPerSecond;
+  const bits = nonNeg(entropyBits);
+  const rate = nonNeg(guessesPerSecond);
+  if (bits <= 0 || rate <= 0) return 0;
+  const guesses = Math.pow(2, bits - 1);
+  return guesses / rate;
 }
 
-/** 秒数を人間可読な目安文字列にする。 */
+/**
+ * 秒数を人間可読な目安文字列にする。
+ *
+ * **測れない秒数 (NaN / ±Infinity) には「事実上解読不能」と答えない。** 比較だけの
+ * 段は `NaN` をどの枝にも落とさないので、実測では**最後の行 (最も安心させる答え)**
+ * まで滑り落ちていた —— 突破時間を測れないことと「破られない」ことは別である。
+ */
 export function humanizeCrackTime(seconds: number): string {
+  if (!Number.isFinite(seconds)) return CRACK_TIME_UNMEASURABLE;
   if (seconds < 1) return '一瞬';
   const minute = 60, hour = 3600, day = 86400, year = day * 365;
   if (seconds < minute) return `${Math.round(seconds)}秒`;

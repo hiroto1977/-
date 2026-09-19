@@ -37,7 +37,7 @@ national
 - [中野区 後期高齢者医療 葬祭費](https://www.city.tokyo-nakano.lg.jp/kurashi/koukikourei/sosaihi.html) `自治体`
 
 ## 関連概念
-- [[labor-national-health-insurance|国民健康保険（国保）]] — 語彙が近い
+- [[labor-national-health-insurance|国民健康保険（国保）]] — 分野横断
 - [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 出典を共有
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 出典を共有
 - [[labor-sickness-allowance|健康保険の傷病手当金]] — 出典を共有
