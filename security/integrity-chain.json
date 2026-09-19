@@ -1985,6 +1985,14 @@
       "leafCount": 78,
       "note": "update atomicWrite.ts,secrets.ts",
       "hash": "73dadc5f8e9a2da5e15dfe11c20e0b8bad68e766f9437eea3979ed243cb14424"
+    },
+    {
+      "index": 238,
+      "prevHash": "73dadc5f8e9a2da5e15dfe11c20e0b8bad68e766f9437eea3979ed243cb14424",
+      "merkleRoot": "7844589184c9bc41ca3373c05725491a1488c50465a535d07b17c9e8e179fab5",
+      "leafCount": 78,
+      "note": "update dataCrypto.ts,vault.ts",
+      "hash": "c533a547beb0ad9c920cbb5e95d7f1e1e592eac6b36f4e0de3b21e5544f2792d"
     }
   ],
   "tipManifest": {
@@ -2035,11 +2043,11 @@
     "src/renderer/security/LockScreen.tsx": "2589465f17e1e1e769f795249a6da4e4595463b10facee11024072794072f841",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
-    "src/renderer/security/dataCrypto.ts": "b17e4b5b8fbbc383342fe6b0145da3306dd5ee3cd524da85c7bec341b7f1b956",
+    "src/renderer/security/dataCrypto.ts": "c47a7bbf2305b1687bf059cc9d40a43783fef755079b2fdf2a8e59afde9a4f14",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "46ba705774b57c307b62c7c7533a08c76e157c0873aa12134ba406bbaf949554",
+    "src/renderer/security/vault.ts": "cd3a53410af4eda346f78813e4b55ec8cd9f2941e64dd8d915e2aa596a277f85",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "74e522f8aab95280eb6e203d33b274e03378d3665d188f3f1d9126f77c55bbd9",

@@ -25,6 +25,7 @@ import { webCryptoUnavailableReason } from './webCrypto';
 import {
   AES_GCM_IV_BYTES,
   LEGACY_KDF_ITERATIONS,
+  PBKDF2_HASH,
   PBKDF2_ITERATIONS as SHARED_ITERATIONS,
 } from '../../shared/cryptoParams';
 
@@ -487,7 +488,11 @@ async function deriveKey(password: string, salt: Uint8Array, iterations: number)
     ['deriveKey'],
   );
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: 'SHA-256' },
+    // ハッシュは**凍結値を読む** (パス 327)。`'SHA-256'` と書き写すと、`PBKDF2_HASH` を
+    // 変えたときに `kdfLabel()` 由来の封筒メタだけが動いて導出は動かない ——
+    // `cryptoParams.ts` の docblock が「実装とメタデータが食い違うと『復号できない
+    // バックアップ』になる」と述べているそれである。合言葉の復元枝も同じ。
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: PBKDF2_HASH },
     baseKey,
     { name: 'AES-GCM', length: 256 },
     false, // not extractable — key never leaves WebCrypto
@@ -596,7 +601,7 @@ async function deriveKeyFromMnemonic(
     ['deriveKey'],
   );
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: PBKDF2_HASH },
     baseKey,
     { name: 'AES-GCM', length: 256 },
     false,

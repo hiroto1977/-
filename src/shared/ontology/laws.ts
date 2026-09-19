@@ -491,9 +491,9 @@ export const LAWS: readonly Law[] = [
     id: 'crypto-floors-frozen',
     family: 'at-rest',
     name: '暗号の床は凍結値',
-    statement: 'PBKDF2 の反復・salt の byte は使う側ではなく宣言行に危険を書き、下げる編集が検査で落ちる。封緘した物は自分を作った反復回数を覚える。',
-    provenance: ['パス 237', 'パス 239', 'パス 240', 'パターン 0-a-10'],
-    enforcedBy: [test(T.shared('cryptoParams')), chain],
+    statement: 'PBKDF2 の反復・salt の byte は使う側ではなく宣言行に危険を書き、下げる編集が検査で落ちる。封緘した物は自分を作った反復回数を覚える。**導出は凍結値を読む** —— ハッシュを書き写すと封筒のメタだけが動いて「復号できないバックアップ」になる (パス 327)。',
+    provenance: ['パス 237', 'パス 239', 'パス 240', 'パス 327', 'パターン 0-a-10'],
+    enforcedBy: [test(T.shared('kdfParamsCensus')), test(T.shared('cryptoParams')), chain],
   },
   {
     id: 'key-bound-to-slot',

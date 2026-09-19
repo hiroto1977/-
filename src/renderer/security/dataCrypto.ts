@@ -17,6 +17,7 @@ import {
   AES_GCM_IV_BYTES,
   MIN_SALT_BYTES,
   MIN_STORED_SALT_BYTES,
+  PBKDF2_HASH,
   PBKDF2_ITERATIONS as SHARED_ITERATIONS,
 } from '../../shared/cryptoParams';
 
@@ -170,7 +171,11 @@ async function deriveKey(password: string, salt: Uint8Array, iterations: number)
     'deriveKey',
   ]);
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: 'SHA-256' },
+    // ハッシュは**凍結値を読む** (パス 327)。`'SHA-256'` と書き写すと、
+    // `PBKDF2_HASH` を変えたときに `kdfLabel()` 由来の封筒メタだけが動いて
+    // 導出は動かない —— `cryptoParams.ts` の docblock が「実装とメタデータが
+    // 食い違うと『復号できないバックアップ』になる」と述べているそれである。
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: PBKDF2_HASH },
     base,
     { name: 'AES-GCM', length: 256 },
     false,

@@ -7,6 +7,83 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 327 (2026-09-19) — 公開した測定が間違っていた ＋ 鍵導出のハッシュが凍結値を読んでいなかった
+
+パス 326 の終わりに「母集団の機械を持たない法則が 82 本中 8 本」と数え、**7 本を名指しして PR 本文に書いた**。
+数え直したら **3 本**で、さらにそのうち 1 本はこのパスで閉じたので **2 本**である。**測定ではなく heuristic の出力を公開していた。**
+
+### 何を間違えたか
+
+判定に使ったのは「検査ファイルの**名前**に `census` / `ledger` / `coverage` / `witness` / `parity` が入っているか」だった。
+実物を読むと:
+
+| 法則 | 実際の執行者 | 名前の印で落ちた理由 |
+|---|---|---|
+| `refused-values-make-no-judgement` | `guardedJudgements` が **`SERVICES` の全画面を jsdom で描く** (docblock に「母集団は走査で採る」と明記) | 名前に census が無い |
+| `snapshot-parity` | `webShimSnapshotParity` が **`SNAPSHOT` を列挙する** | 同上 |
+| `header-values-one-rule` | `headerValue` が **ASCII 全域を実物の `new Headers()` と突き合わせる** | 同上 |
+| `envelope-checked-at-read` | `jsonBodyCensus` が `.json()` を 1 か所へ絞り、**構造的に**全ての本文を 1 つの読み手へ通す | 別の法則に付いていて執行者の一覧に無い |
+
+**「走査しているか」は名前では分からない** —— 列挙しているものの綴り (`SERVICES` / `SNAPSHOT` / `globSync` /
+`charCodeAt` …) で採るべきだった。印を実物に合わせ直すと 7 → 3 本。
+
+**2 度目の数え違い**も同じ日に出た: 最初の書き直しで `chain` (整合性チェーン) を母集団の機械として数えたが、
+チェーンが捕まえるのは**既に保護対象のファイルの改変**で、同じ法則を破る**新しいファイル**が増えても鳴らない。
+`harness` / `ci` も走らせる仕組みであって母集団を数えない。数えてよいのは `gate` (repo 全体の走査) と
+**母集団を走査する検査**だけ —— この区別を曖昧にしたまま数えたので、1 本ぶん答えが動いた。
+
+### 直し 1: 判定を台帳と検査へ (走り捨ての probe をやめる)
+
+`lawCoverageLedger.test.ts` (shared・+6): 印を**列挙の綴り 14 種**で持ち、「検査だけが執行者で、そのどれも
+母集団を走査していない」法則を数えて台帳と**両方向**に突き合わせる。認める理由は 2 種だけ ——
+`single-site` (守る対象が 1 か所) と `discipline` (機械にできるのは隣の法則の側)。「まだ作っていない」は理由にならない。
+**標本と対照を同じ検査の中に置いた**: 名前に census を持たないが走査する 3 本 (`guardedJudgements` /
+`webShimSnapshotParity` / `headerValue`) を印が拾うこと、例の表だけの 2 本 (`cryptoParams` / `loopbackChecks`) は
+拾わないこと。**この確認を飛ばしたのが今回の原因**なので、確認そのものを検査にした。
+
+残る 2 本: `loopback-oauth-host-pin` (`single-site` —— 守る対象は OAuth の callback を受ける 1 ハンドラだけ) と
+`same-question-before-parity` (`discipline` —— 母集団は `lint:shared-judgement` が gate として数えている)。
+
+### 直し 2: 鍵導出のハッシュが凍結値を読んでいなかった (パス 326 の数え直しが指した 1 本)
+
+`crypto-floors-frozen` を読むと、`shared/cryptoParams.ts` の docblock は
+
+> 最も危ういのは鍵導出識別子で、**反復回数を文字列に焼き込んでいた**。…実装とメタデータが食い違うと
+> **「復号できないバックアップ」**になる
+
+と述べ、「**1 つであるべきもの (IV 長・反復回数・ハッシュ) だけ**をここへ集めた」と続く。
+ところが実測すると、**ハッシュだけは 3 つの導出すべてが `'SHA-256'` のリテラルを書き写していた**
+(`dataCrypto.ts` 1 つ・`vault.ts` 2 つ = パスワード枝と合言葉の復元枝)。反復回数は引数で凍結値を通るのに、
+ハッシュだけが通っていない。**壊れ方**: `PBKDF2_HASH` を変えると封筒へ書く `BACKUP_KEY_DERIVATION = kdfLabel()`
+だけが動いて導出は動かず、メタデータを信じて復号する側は鍵を作り直せない —— docblock が防ぐと書いているそれ。
+3 か所とも `hash: PBKDF2_HASH` に。
+
+`kdfParamsCensus.test.ts` (shared・+6): PBKDF2 の**導出パラメータ**の母集団 (実測 3 か所 / 2 ファイル) が
+凍結値を読むこと・リテラルを書き写した行が 0 であること (標本は直す前の行)・凍結値の宣言が 1 か所であること・
+`kdfLabel` が凍結値を名乗ること。**素のハッシュ (`digest('SHA-256')`) は別の話**として理由つきの台帳に 3 行
+(PKCE は RFC 7636 が S256 を名指し・バックアップの指紋・BIP-39 の検査和 —— どれも封筒のメタに残らないので
+凍結値と連動させてはいけない)。`length: 256` (AES の鍵長) は docblock が集めると言っていない物で、
+封筒のメタにも残らないので**触らない** (広げるなら理由を書いてから)。
+
+### 対照 (実測・2 本)
+
+(D) 導出のハッシュを 1 か所リテラルに戻す → **2 件**落ちる。(E) 台帳から 1 行消す → **1 件** (両方向)。
+
+### 出荷物と実機
+
+FULL **11,926,101 B** / LITE **3,338,622 B** (両方 **−6 B** —— **書き写しを消したので減る**: 最小化後は
+3 つの文字列リテラルが 1 つになる)。**LITE の警告線まで 61,378 B**。`dataCrypto.ts` / `vault.ts` は保護対象なので
+`chain:append` (block **#238**)。実機は連鎖 1 回で全段緑: `smoke:app` OK / `e2e` 32 suite 446 件 ❌ 0 /
+`e2e:lite` 446 件 ❌ 0 / `perf` OK (LITE DCL 247 ms heap 10.2 MB・FULL DCL 695 ms heap 37 MB) / `e2e:ollama` ✅ 8。
+
+### 自戒
+
+- **heuristic の出力を測定として公開した。** 「名前に census が入っているか」で数えた物を、PR 本文に
+  「母集団を見ていない 7 本」と書いた。このリポジトリが 320 パス直してきた「走査の盲目」を、**私自身が犯して
+  外へ出した**。走査を書いたら、**当たるべき物に当たることを標本で確かめてから数を言う**。
+- **数える前に、数えている物の定義を書く。** `chain` を機械に数えるかで答えが 1 本動いた。定義が曖昧なまま
+  出した数は、どちらの読み方でも正しくない。
+
 ## パス 326 (2026-09-19) — 読む前の大きさの門が 2 経路に無かった: 控えと開発環境の読み
 
 パス 325 の続き。**法則の執行者を種類で数え直した** —— 82 本のうち「`verify:all` のゲートが 0 件、かつ
@@ -4827,6 +4904,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 公開した測定の訂正 + 鍵導出のハッシュ (パス 327) | ✅ パス 326 の終わりに PR 本文へ書いた「母集団の機械を持たない法則 7 本」は **heuristic の出力**で、実測は 3 本 (→ 1 本閉じて 2 本)。名前の印ではなく**列挙の綴り**で採り直し、判定を `lawCoverageLedger.test.ts` (両方向・標本と対照つき) へ。閉じた 1 本 = `crypto-floors-frozen`: **PBKDF2 の導出 3 か所すべてが `'SHA-256'` のリテラルを書き写していた** (`cryptoParams.ts` の docblock は「ハッシュも 1 つに集めた」と述べ、封筒のメタ `kdfLabel()` だけが凍結値を読んでいた = 「復号できないバックアップ」の形)。`kdfParamsCensus.test.ts`・対照 2 本・chain #238 |
 | 読む前の大きさの門が 2 経路に無かった (パス 326) | ✅ 法則の執行者を種類で数え直すと、gate も母集団の走査も無い法則が **82 本中 8 本**。その 1 つ `size-gate-before-parse` を測ると `readFile` 5 か所のうち 2 経路が素通り: **`secrets.ts` の控え `.prev`** (本体にだけ門・ENOENT で素通りする枝から控えを丸ごと読んで `JSON.parse`) と **`devEnv.ts` の 7 読み** (門なし・`readFileSync` で主スレッドを止める)。門を `readFileWithBackup` の**中**へ移し (`maxBytes` は必須引数)、devEnv に 1 MiB。`fileReadSizeGateCensus.test.ts` (5 か所を両方向・門と上限を原文で確認)・対照 3 本 (4 / 1 / 1 件)・chain #237 |
 | 調べた物と使う物が別 (パス 325) | ✅ 法則 `checked-equals-used` は 4 回学ばれていたのに執行者が全部「直した個所の検査」で、母集団の機械が無かった。`new URL(` の **27 か所 / 20 ファイル**を種類つきの台帳へ (`parsedUrlGateCensus.test.ts`・両方向・value-gate は振る舞いで確認)。破れていた 3 件を直した: `validateScanUrl` が生を返し VT へ送っていた (8 形中 5 形が食い違う) / `github` が pin 後に生を fetch / `shopify` の Discord webhook が pin 後に生へ POST。対照 4 本 (8 / 1 / 1 / 1 件) |
 | 画面のリンクのホストに第三者の応答の値 (パス 324) | ✅ `main/clients/slack.ts` の permalink が `team.info` の `domain` を authority に直置き (`/` `?` `#` `\` の 1 字で host が `.slack.com` の外へ)。`shared/api/slack.ts` の 1 ラベルの関門 `slackWorkspaceDomainOrNull` の**返り値だけ**を置き、断られたら `app_redirect`。`hostInterpolationCensus.test.ts` (母集団 5 行・両方向の台帳)・法則 `link-host-not-from-response`・対照 2 本 (関門を迂回 → 10 件 / 文法を緩める → 17 件落ちる)。3 つの網 (`lint:url-encoding` は authority を見ず・`network-targets` は通信だけ・#5 はスキームだけ) の継ぎ目 |
