@@ -173,3 +173,24 @@ export function readSlackPost(body: unknown, requested: CheckedMessage): SlackPo
     channel: optionalString(o, 'channel') ?? requested.channel,
   };
 }
+
+/**
+ * `team.info` の `team.domain` を `https://<domain>.slack.com/…` の**ホストの位置**に置いてよい形 (パス 324)。
+ *
+ * ホスト名の 1 ラベル (RFC 1123: 英数字で始まり英数字で終わる・間は英数字とハイフン・63 字まで)。
+ * Slack のワークスペースの副ドメインは実際にはこの内側 (小文字英数字とハイフン・21 字まで) に在る。
+ *
+ * **なぜ要るか**: 応答の値をテンプレートの authority に置くと、`/` `?` `#` `\` の 1 字でホストが
+ * `.slack.com` の外へ出る (`evil.example/x?` → `https://evil.example/x?.slack.com/archives/C1` の host は
+ * `evil.example`)。画面の「開く」は `externalUrlOrNull` (スキームだけを見る) を通して OS のブラウザへ渡す
+ * ので、Slack の応答 1 つでリンク先が Slack でない先へ向く。`lint:url-encoding` は authority を見ず
+ * (パスの話)、`lint:network-targets` は通信しか見ず (これは画面のリンク)、3 つの網のどれにも映らなかった
+ * —— `hostInterpolationCensus.test.ts` がこの形の母集団を両方向に留める。
+ *
+ * 通らなければ null (呼ぶ側は `app_redirect` へ倒す)。**ホストに置くのは返り値** (関門の返り値を使う)。
+ */
+export const SLACK_WORKSPACE_DOMAIN = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i;
+
+export function slackWorkspaceDomainOrNull(value: unknown): string | null {
+  return typeof value === 'string' && SLACK_WORKSPACE_DOMAIN.test(value) ? value : null;
+}

@@ -7,6 +7,71 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 324 (2026-09-19) — 画面のリンクのホストに第三者の応答の値: Slack の permalink は `team.domain` を authority に直置きしていた
+
+利用者の依頼「システムの脆弱性を徹底的に探して見つけ次第解析し対策しながら作業を継続して」の続き (パス 322・323 の UI の依頼を挟んで再開)。
+関門の照合 (`isPrivateOrReservedTarget` に IPv4 の 10 進 / 8 進 / 16 進・IPv4 埋め込み IPv6・NAT64・6to4・`localhost.` ほか 75 形、
+`externalUrlOrNull` に `javascript:` / userinfo / `\` / 制御文字ほか 19 形) はすべて意図どおりで、**穴は関門ではなく関門の継ぎ目に在った**。
+
+### 何が起きていたか
+
+`src/main/clients/slack.ts` の `buildChannelPermalink` は `team.info` の応答の `team.domain` を
+`https://${domain}.slack.com/archives/${id}` の **authority** にそのまま置いていた。応答の値に `/` `?` `#` `\` の
+**1 字**が在れば host は `.slack.com` の外へ出る (実測: `evil.example/x?` → host `evil.example`)。画面の「開く」は
+`externalUrlOrNull` を通すが、それは**スキーム**しか見ないので、Slack の応答 1 つで OS のブラウザが Slack でない先を開く。
+Slack 自身は domain を `[a-z0-9-]` に縛っているので今日の実害は経路 (TLS の中間者・偽の API) に依るが、
+コードの注記は「実物のワークスペース URL」と**ホストを名乗っていた**のに、名乗りを確かめる物が無かった。
+
+**なぜ 3 つの網のどれにも映らなかったか**: `lint:url-encoding` は冒頭で「authority 自体はホストの話なので見ない」「画面に出すリンクは
+対象外 —— パス片を足してもオリジンは変えられない」と述べ、`lint:network-targets` は**通信の呼び出し**の送り先しか見ず、
+#5 (`externalUrlOrNull`) はスキームだけ。3 つがそれぞれ「隣が見る」と書いていて、**画面のリンクの authority に置く応答の値**は誰の
+母集団にも無かった。「オリジンは変えられない」はパス片には正しく、authority には当てはまらない —— 理由の広さと外した範囲の広さが違った。
+隣の `github.ts` は `pull_request.url` を `api.github.com` に pin していた (fetch の送り先) ので、**規則は在ったが 1 か所の中にだけ在った**。
+
+### 直し
+
+- **`shared/api/slack.ts`**: `SLACK_WORKSPACE_DOMAIN` (RFC 1123 の 1 ラベル: 英数字で始まり終わる・間は英数字とハイフン・63 字まで・
+  大文字小文字を問わない) と `slackWorkspaceDomainOrNull(unknown): string | null`。
+- **`main/clients/slack.ts`**: `buildChannelPermalink` はホストに**関門の返り値** `label` だけを置き、断られたら `app_redirect` へ倒す
+  (機能は落ちない —— `app_redirect` は Slack が正式に用意している経路)。`channelId` は `encodeURIComponent` (不変条件 #6 —— 画面のリンクなので
+  `lint:url-encoding` の母集団の外だった)。ブラウザ版は Slack を静的スナップショットで見るだけなので main だけの直し。
+- **法則** `link-host-not-from-response` (`laws.ts`・boundary) と `docs/ONTOLOGY.md` の再生成。`lint-url-encoding.cjs` の冒頭と
+  ARCHITECTURE のゲート表に「authority の中の `${…}` は census が見る」を足した (同じ事実を一方で述べ他方で落とさない)。
+
+### 検査
+
+- **`hostInterpolationCensus.test.ts` (shared・+11)**: 母集団 = src (検査を除く) で authority の先頭が補間のテンプレート
+  (`` `https://${…` `` / `` `//${…` ``) と連結 (`'https://' + …`)。**実測 5 行** —— `ollama.ts` (利用者の入力に scheme を補って解析の入力にする)・
+  `atlassianSite.ts` (解析済み hostname の再直列化)・`privateTarget.ts` ×2 (内部の再解析)・`slack.ts` (関門の返り値)。台帳は理由を
+  4 種 (a/b/c/d) から名指しし、**両方向** (台帳に無い行が出れば落ち、台帳の行が消えても落ちる)。針の標本は直す前の slack.ts の行そのもの。
+  `slack.ts` はホストに `${label}` だけを置き `${workspaceDomain}` が 0 行 (不在の主張に標本つき)。`slackWorkspaceDomainOrNull` は
+  通す 6 形・断る 15 形・文字列でない 5 形。
+- **`slack.test.ts` (main・+7)**: 直す前の形の標本 (`evil.example/x?` で host が `evil.example`)・敵対的 9 形が `app_redirect` へ倒れる・
+  文字列でない domain・通った値は返り値そのもの・`channelId` の符号化・`fetchSlackSnapshot` を通した敵対的応答。
+- **`property.test.ts` (main・書き直し)**: **3 つ目の場所が弱さを仕様として書き留めていた** —— 旧い property の生成子は
+  `/^[a-z0-9-]+$/` を通る文字列なら何でも作り (`-` / `acme-` / `---` は **RFC 1123 の 1 ラベルとして不正**)、それが
+  `${domain}.slack.com` の authority に**そのまま入ること**を不変条件として**要求していた**。つまり直す前は「全件緑」が
+  欠陥の維持を意味しており、直した瞬間にこの 1 件だけが落ちて気付いた。パス 291 の `oauth.test.ts` の拒否表が
+  「前置き一致なので弾く側」と弱さに名前を与えていたのと同じ家系で、**今回は不変条件の側**に書かれていた。
+  新しい契約 (どんな文字列でもホストは `slack.com` か `<1 ラベル>.slack.com`・関門が通した時だけ副ドメイン・両方向) に
+  書き直し、生成子を敵対的な素の `string` へ広げた (numRuns 200)。
+- **対照 (実測)**: (A) main で関門を迂回 (`typeof === 'string' && value`) → **10 件落ちる** (敵対的 9 形の 8 + snapshot + census の
+  「返り値だけ」)。(B) 文法を `/ ? # \ .` を通す形へ緩める → **17 件落ちる**。 (C) 同じ迂回で property だけを回す → 反例 `domain = " "` (空白) を出して落ちる —— 書き直した property が本当に守っていることの裏取り。3 本とも戻して緑。
+
+### 出荷物
+
+FULL 11,926,102 B / LITE 3,338,623 B で **byte 単位で不変** —— 関門は shared に置いたが読むのは main だけなので、ブラウザ版の bundle からは
+tree-shaking で丸ごと落ちる (両方を組んで実測)。
+
+### 自戒
+
+- **「意図して外す」と書くときは、外す理由が外す範囲と同じ広さか測る。** `lint:url-encoding` の「パス片ではオリジンは変えられない」は
+  正しい文だが、それで外したのは「画面に出すリンク**全部**」で、authority の補間まで一緒に外れていた。理由が覆うのはパスだけ。
+- **不変条件を書くときは、それが守る側か欠陥の側かを測る。** property の生成子が作る値の範囲は、そのまま
+  「受け入れると宣言した範囲」になる。ここでは生成子が不正なラベルを作り、それがホストに入ることを要求していた。
+- **関門を 1 つずつ総当たりしても継ぎ目は映らない。** 今日の 94 形の照合は全部通った —— 穴は「どの関門の母集団にも入っていない行」で、
+  それは母集団の定義を並べて初めて見える。
+
 ## パス 323 (2026-09-19) — 計算書類は 1 点 1 枚: 「4点まとめて」が 4 点を 1 枚の紙に流していた
 
 利用者の依頼は「書類スタジオの計算書類（4点）が一枚に集約されているので１枚ずつになる様に最適化して」。
@@ -4611,6 +4676,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 画面のリンクのホストに第三者の応答の値 (パス 324) | ✅ `main/clients/slack.ts` の permalink が `team.info` の `domain` を authority に直置き (`/` `?` `#` `\` の 1 字で host が `.slack.com` の外へ)。`shared/api/slack.ts` の 1 ラベルの関門 `slackWorkspaceDomainOrNull` の**返り値だけ**を置き、断られたら `app_redirect`。`hostInterpolationCensus.test.ts` (母集団 5 行・両方向の台帳)・法則 `link-host-not-from-response`・対照 2 本 (関門を迂回 → 10 件 / 文法を緩める → 17 件落ちる)。3 つの網 (`lint:url-encoding` は authority を見ず・`network-targets` は通信だけ・#5 はスキームだけ) の継ぎ目 |
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |

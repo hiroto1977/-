@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (81)
+## 5. 法則と執行者 (82)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -193,7 +193,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `center-then-count-callers` | **中心へ寄せたら呼び出し側から数え直す** — 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。 | パターン 0-a-18 / パス 311 | 検査 `src/shared/__tests__/bareFetchLedger.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>検査 `src/shared/__tests__/jsonBodyCensus.test.ts` |
 | `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。弱さは閉じるか、理由つきの台帳に「閉じていない物」として書く。 | パス 291 / パス 309 | 散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。各パスの「閉じていない物」の節がその台帳 |
 
-### 境界と信頼 (16)
+### 境界と信頼 (17)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -210,6 +210,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `redirects-refused` | **アプリ自身の fetch は転送に追随しない** — 送り先の関門は最初の 1 ホップしか見ない。規則は httpLimits.ts に 1 つ、網の fetch 12 か所が全部通る。例外は no-cors の 1 形だけ (Fetch 標準が network error と定めるため)。 | パス 301 / パス 304 | 検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>実機 `npm run e2e:ollama` |
 | `variable-hosts-ledgered` | **送り先が変数の通信は台帳** — Authorization を付けて送る先がホスト名で絞られていなければ資格情報の流出。送り先が定数でない通信は台帳に載っていなければ落ち、直したら消す (双方向)。走査は src 全体。 | 不変条件 #7 / ARCHITECTURE §3.3 / パターン 0-a | ゲート `npm run lint:network-targets` |
 | `url-path-encoded` | **URL の動的部分は encodeURIComponent** — 通信呼び出しに渡る URL の authority より後ろに生の ${…} があれば落ちる。ホストは network-targets、画面に出すリンクは external-url-one-gate の担当。 | 不変条件 #6 | ゲート `npm run lint:url-encoding` |
+| `link-host-not-from-response` | **応答の値を URL のホストの位置に置くなら 1 ラベルの文法で断る** — url-path-encoded は authority を見ず、network-targets は通信しか見ず、external-url-one-gate はスキームしか見ない —— 画面に出すリンクのホストに第三者の応答の値 (Slack team.domain) を置く行は 3 つの網のどれにも映らなかった。authority が ${…} で始まるテンプレートは台帳制 (両方向) で、置くのは関門の返り値 (slackWorkspaceDomainOrNull) だけ。 | パス 324 | 検査 `src/shared/__tests__/hostInterpolationCensus.test.ts`<br>検査 `src/main/clients/__tests__/slack.test.ts` |
 | `ollama-allowlist` | **Ollama は読む endpoint だけを呼ぶ** — pull / create / push / copy / delete / blobs / upload を呼ばない (GGUF 経由の脆弱性の面を絶つ)。許可表は共有台帳 OLLAMA_READ_PATHS から組み立てる。脆弱性台帳は日付つき。 | 不変条件 #7 / 不変条件 #8 / パス 141 / パス 248 | ゲート `npm run lint:forbidden`<br>検査 `src/shared/__tests__/ollama.test.ts`<br>ゲート `npm run lint:rate-freshness` |
 | `loopback-oauth-host-pin` | **OAuth callback の Host は loopback だけ** — DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。 | 不変条件 #12 / パターン 0-a-14 | 検査 `src/shared/__tests__/loopbackChecks.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `header-values-one-rule` | **Headers が何を受理するかは 1 つの判定** — 資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。 | パス 244 / パス 296 | 検査 `src/shared/__tests__/headerValue.test.ts`<br>検査 `src/shared/__tests__/headerValueLeak.test.ts` |
@@ -291,6 +292,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 81 (機械あり 76 / 散文だけ 5)
+- 法則 82 (機械あり 77 / 散文だけ 5)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

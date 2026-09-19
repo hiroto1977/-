@@ -38,6 +38,13 @@
  * —— 対象を絞ったこと自体を書いておくのは、今日「走査範囲が一覧だったせいで
  * 死角ができた」ゲートを 7 つ直したため (docs/SESSION_HANDOFF.md 0-a)。
  *
+ * **ただし authority の中の `${…}` は別の話** (パス 324)。上の「オリジンは変えられない」は
+ * **パス片**の話で、`https://${domain}.slack.com/…` のようにホストの位置に第三者の応答の値を
+ * 置くと `/` `?` `#` `\` の 1 字でホストが変わる。このゲートは authority を見ない (と宣言している)
+ * ので、その母集団は `src/shared/__tests__/hostInterpolationCensus.test.ts` が台帳制 (両方向) で持つ。
+ * 実物: `main/clients/slack.ts` の permalink が `team.info` の `domain` をそのまま置いていた ——
+ * ここと network-targets (通信だけ) と #5 (スキームだけ) が互いに「隣が見る」と述べていた継ぎ目。
+ *
  * Run:  node scripts/lint-url-encoding.cjs
  *       node scripts/lint-url-encoding.cjs --self-test
  *       npm run lint:url-encoding

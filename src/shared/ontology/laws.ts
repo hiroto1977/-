@@ -406,6 +406,14 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [gate('lint:url-encoding')],
   },
   {
+    id: 'link-host-not-from-response',
+    family: 'boundary',
+    name: '応答の値を URL のホストの位置に置くなら 1 ラベルの文法で断る',
+    statement: 'url-path-encoded は authority を見ず、network-targets は通信しか見ず、external-url-one-gate はスキームしか見ない —— 画面に出すリンクのホストに第三者の応答の値 (Slack team.domain) を置く行は 3 つの網のどれにも映らなかった。authority が ${…} で始まるテンプレートは台帳制 (両方向) で、置くのは関門の返り値 (slackWorkspaceDomainOrNull) だけ。',
+    provenance: ['パス 324'],
+    enforcedBy: [test(T.shared('hostInterpolationCensus')), test('src/main/clients/__tests__/slack.test.ts')],
+  },
+  {
     id: 'ollama-allowlist',
     family: 'boundary',
     name: 'Ollama は読む endpoint だけを呼ぶ',
