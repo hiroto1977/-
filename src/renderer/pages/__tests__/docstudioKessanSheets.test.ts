@@ -7,6 +7,8 @@
  * 開く / 選んだ書面は localStorage に残り、開き直しても続きから。
  */
 import 'fake-indexeddb/auto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -80,7 +82,9 @@ const q = {
   legalCaveat: () => container.querySelector('[data-legal-panel]')?.textContent ?? '',
   store: (): { kessan?: Record<string, string>; kessanSheet?: string } =>
     JSON.parse(localStorage.getItem(LS_KEY) ?? '{}') as { kessan?: Record<string, string>; kessanSheet?: string },
-  paperText: () => container.querySelector('.ds-paper')?.textContent ?? '',
+  /** 紙は書面ごとに分かれている (パス 323) ので、全部の紙の文字を繋いで読む。 */
+  paperText: () => Array.from(container.querySelectorAll('.ds-paper')).map((el) => el.textContent ?? '').join('\n'),
+  pages: () => Array.from(container.querySelectorAll<HTMLElement>('[data-kessan-sheets] [data-kessan-page]')),
 };
 
 async function type(input: HTMLInputElement, value: string): Promise<void> {
@@ -278,7 +282,7 @@ describe('書類スタジオ — 計算書類 4 点が一覧で独立してい�
     expect(labels.some((t) => t.includes('貸借対照表'))).toBe(true);
     expect(labels.some((t) => t.includes('株主資本等変動計算書'))).toBe(true);
     expect(labels.some((t) => t.includes('個別注記表'))).toBe(true);
-    // 「まとめて」も残す (決算公告の要旨つきで 1 枚に出す従来の出力)。
+    // 「まとめて」も残す (決算公告の要旨つきで 5 枚を続けて出す)。
     expect(labels.some((t) => t.includes('まとめて'))).toBe(true);
   });
 
@@ -362,5 +366,75 @@ describe('印刷の隣は計算書類の検算も数える', () => {
     await mount();
     const badge = container.querySelector('[data-fatal-badge]');
     if (badge !== null) expect(badge.textContent).toContain('このままでは無効になる指摘');
+  });
+});
+
+/**
+ * **紙は 1 点 1 枚** (2026-09-19・パス 323、依頼「計算書類（4点）が一枚に集約されているので１枚ずつになる様に最適化して」)。
+ *
+ * 「4点まとめて」は 4 点と決算公告の要旨を **1 枚の長い紙に続けて**流していた —— 画面では 1 枚の紙、
+ * 印刷では書面の途中で改ページが入る (貸借対照表の見出しがページの下端に来る)。会社法上 4 点は別の
+ * 書類なので紙も別にする: 書面ごとに `.ds-paper` を 1 枚ずつ並べ、印刷は `styles.css` の規則で書面ごとに
+ * 改ページする。改ページそのものは実 chromium の PDF でしか見えないので e2e `kessanTax` がページ数を
+ * 数える。ここで見るのは紙の数と順序・紙ごとの脚注・規則の原文。
+ */
+describe('書類スタジオ — 計算書類は 1 点 1 枚 (パス 323)', () => {
+  const ids = (): (string | null)[] => q.pages().map((p) => p.getAttribute('data-kessan-page'));
+
+  it('★ 「まとめて」は 5 枚の紙 (損益 / 貸借 / 変動 / 注記 / 公告の要旨) がこの順に並び、どれも .ds-paper で免責の脚注を持つ', async () => {
+    navigateTo('docstudio', { doc: 'kessan' });
+    await mount();
+    expect(ids()).toEqual(['pl', 'bs', 'equity', 'notes', 'notice']);
+    expect(q.sheets()?.getAttribute('data-kessan-pages')).toBe('5');
+    for (const pg of q.pages()) {
+      expect(pg.classList.contains('ds-paper'), pg.getAttribute('data-kessan-page') ?? '').toBe(true);
+      expect(pg.querySelector('.ds-disclaimer')?.textContent).toContain('専門家による確認');
+    }
+    // 紙 1 枚に見出し 1 つ (紙をまたいで書面が続かない)
+    expect(q.pages().map((pg) => pg.querySelectorAll('.ds-title').length)).toEqual([1, 1, 1, 1, 1]);
+    // 紙の上の札 (画面だけ)
+    const captions = Array.from(container.querySelectorAll('.ds-sheet-caption')).map((c) => c.textContent?.trim() ?? '');
+    expect(captions).toHaveLength(5);
+    expect(captions[0]).toContain('1 枚目 / 全 5 枚');
+    expect(captions[0]).toContain('損益計算書');
+    expect(captions[4]).toContain('5 枚目 / 全 5 枚');
+    expect(captions[4]).toContain('決算公告');
+    // 計算書類の外側に「1 枚の紙」は残っていない (5 枚がすべて)
+    expect(container.querySelectorAll('.ds-paper').length).toBe(5);
+  });
+
+  it('1 点ずつ: 貸借対照表は要旨と 2 枚、ほかは 1 枚', async () => {
+    navigateTo('docstudio', { doc: 'kessan-bs' });
+    await mount();
+    expect(ids()).toEqual(['bs', 'notice']);
+    expect(container.querySelectorAll('.ds-paper').length).toBe(2);
+    await click(q.tab('pl')!);
+    expect(ids()).toEqual(['pl']);
+    await click(q.tab('equity')!);
+    expect(ids()).toEqual(['equity']);
+    await click(q.tab('notes')!);
+    expect(ids()).toEqual(['notes']);
+    expect(container.querySelectorAll('.ds-paper').length).toBe(1);
+  });
+
+  it('対照: 経営書類 (studio) は 1 枚の紙のままで、計算書類の紙の印は付かない', async () => {
+    localStorage.setItem(LS_KEY, JSON.stringify({ collection: 'studio' }));
+    _resetNavigationIntentForTests();
+    await mount();
+    expect(container.querySelectorAll('.ds-paper').length).toBe(1);
+    expect(q.pages()).toEqual([]);
+    expect(container.querySelector('.ds-disclaimer')).not.toBeNull();
+  });
+
+  it('★ 印刷の規則: 2 枚目以降の紙の前で改ページし、紙の上の札は刷らない (styles.css の原文)', () => {
+    const css = readFileSync(join(__dirname, '..', '..', 'styles.css'), 'utf8');
+    const print = css.slice(css.indexOf('@media print'));
+    const BREAK_RULE = /body\.ds-printing \.ds-sheet-block \+ \.ds-sheet-block \{[^}]*break-before: page;[^}]*page-break-before: always;/;
+    expect(print).toMatch(BREAK_RULE);
+    expect(print).toMatch(/body\.ds-printing \.ds-sheet-caption \{[^}]*display: none/);
+    // 標本: 針は「隣り合う 2 枚目以降」の書き方にだけ当たる。1 枚目にも改ページを入れる書き方
+    // (先頭に白紙が 1 枚出る) には当たらない —— 規則を緩めた変更が黙って通らないため。
+    expect(BREAK_RULE.test('body.ds-printing .ds-sheet-block { break-before: page; page-break-before: always; }')).toBe(false);
+    expect(BREAK_RULE.test('body.ds-printing .ds-sheet-block + .ds-sheet-block { break-before: page; page-break-before: always; }')).toBe(true);
   });
 });

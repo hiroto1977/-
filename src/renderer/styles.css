@@ -1270,6 +1270,10 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
             padding: 4px; margin-top: 12px; font-family: 'Hiragino Sans', sans-serif; }
 .ds-disclaimer { margin-top: 26px; padding-top: 9px; border-top: 1px solid #d5d9e0; color: #667;
                  font-size: 10.5px; font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+/* 計算書類: 書面ごとに 1 枚の紙 (パス 323)。画面では紙を縦に並べ、紙の上に札を出す。 */
+.ds-sheets { display: flex; flex-direction: column; gap: 22px; }
+.ds-sheet-caption { margin: 0 0 6px 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em;
+                    color: var(--heading-accent); font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
 
 /* 印刷: アプリの UI を隠し、書面 (.ds-paper) だけを A4 に出力する */
 @media print {
@@ -1286,6 +1290,12 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   body.ds-printing .ds-paper { box-shadow: none; border-radius: 0; max-width: none;
                                padding: 0; font-size: 11.5pt; }
   body.ds-printing .ds-fill.ds-empty { color: #444; }
+  /* 計算書類は書面ごとに改ページ (1 点 1 枚)。紙の上の札は画面だけの案内なので刷らない。 */
+  body.ds-printing .ds-sheet-caption { display: none !important; }
+  body.ds-printing .ds-sheet-block + .ds-sheet-block { break-before: page; page-break-before: always; }
+  body.ds-printing .ds-title { break-after: avoid; page-break-after: avoid; }
+  body.ds-printing .ds-table thead { display: table-header-group; }
+  body.ds-printing .ds-table tr { break-inside: avoid; page-break-inside: avoid; }
 }
 
 /* ---------------------------------------------------------------------------

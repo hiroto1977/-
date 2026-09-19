@@ -7,6 +7,61 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 323 (2026-09-19) — 計算書類は 1 点 1 枚: 「4点まとめて」が 4 点を 1 枚の紙に流していた
+
+利用者の依頼は「書類スタジオの計算書類（4点）が一枚に集約されているので１枚ずつになる様に最適化して」。
+2026-09-06 に一覧を 4 点に分け、1 点ずつ開けるようにはなっていた (パス 〜321 の記録) が、**「4点まとめて」を開くと
+4 点と決算公告の要旨が 1 枚の長い紙に続けて流れていた** —— 画面では 1 枚の紙、印刷 / PDF では書面の途中で改ページが
+入る (貸借対照表の見出しがページの下端に来て表が次のページへ)。会社法435条2項の 4 点はそれぞれ別の書類なので、
+紙も別にする。
+
+### 直し
+
+- **`KessanSheets` (DocstudioPage.tsx)**: 書面を `KessanPage[]` (pl / bs / equity / notes / notice) として組み、書面ごとに
+  `section.ds-paper.ds-sheet[data-kessan-page]` を 1 枚ずつ並べる (`div.ds-sheets[data-kessan-sheets][data-kessan-pages]` の中に
+  `.ds-sheet-block` = 紙の上の札 `.ds-sheet-caption`「📄 n 枚目 / 全 N 枚 — 書面名」+ 紙)。免責の脚注 `.ds-disclaimer` は
+  紙ごと (1 枚だけ渡しても脚注が付いて回る)。決算公告の要旨は貸借対照表と同じ紙に載せず 5 枚目。
+  1 点で開いたときは 1 枚 (貸借対照表だけ要旨と 2 枚)。**値の入れ物は 1 つのまま** —— 分けたのは紙だけ。
+- **DocstudioPage の紙の枠**: 計算書類のときは 1 枚の `.ds-paper` に流し込まず `KessanSheets` が自分の紙を並べる
+  (経営書類・定款・就業規則は従来どおり 1 枚)。
+- **`styles.css`**: 画面は `.ds-sheets` (縦に並べる) と `.ds-sheet-caption` (札)。印刷は `body.ds-printing .ds-sheet-block +
+  .ds-sheet-block { break-before: page }` (2 枚目以降の前で改ページ —— 1 枚目にも入れると先頭に白紙が出る)・札は刷らない・
+  `.ds-title { break-after: avoid }`・`.ds-table thead { display: table-header-group }`・`tr { break-inside: avoid }`。
+- 文言: `KESSAN_SHEETS[all].note`・書類一覧の注記・手順 ④・注記 1 つ目・USER_GUIDE を「1 点 1 枚 / 書面ごとに改ページ」に。
+
+### 検査
+
+- `docstudioKessanSheets.test.ts` +4: まとめては 5 枚がこの順 (pl,bs,equity,notes,notice)・どれも `.ds-paper` で脚注つき・紙 1 枚に
+  見出し 1 つ・札の文字・紙は 5 枚だけ / 1 点ずつは 1 枚 (貸借対照表は要旨と 2 枚) / 対照: 経営書類は 1 枚のまま /
+  印刷の規則の原文 (針は「隣り合う 2 枚目以降」にだけ当たる標本つき)。`paperText()` は全部の紙を繋いで読むように。
+- e2e `kessanTax` +7 (21 → 28・床 17 → 23・合計の床 370 → 376 = 443 × 85%): 紙の並び・`.ds-paper` 5 枚・貸借対照表は要旨と
+  2 枚・**実 chromium の cascade で 2 枚目以降に `break-before: page` が届く** (`getComputedStyle`・print media)・
+  **PDF (`page.pdf`) のページ数 ≥ 5**・**中身を縮めた対照**: 表の 4 行目以降と注記の 3 節目以降を CSSOM で隠すと、規則が
+  効いていれば 5 ページ・規則の class を外すと流れて減る。
+  - **最初の対照は鳴らなかった**: 「規則を外すとページが減る」を実物の中身で測ったら 5 / 5 だった —— 消費税の 4 科目を
+    入れた状態では 5 枚がほぼ 1 ページずつ埋まり、印刷幅 (A4 の 688px) では自然に流しても 5 ページになる。**対照は
+    「規則が無いと違う結果になる」状態で測らないと対照にならない** —— 中身を縮めてから測る形に変えた (縮めた 5 枚は
+    規則ありで 5・なしで 1〜2)。
+
+### 対照
+
+- jsdom: 印刷の規則の針を「1 枚目にも改ページを入れる書き方」に当てると鳴らない (標本)。
+- e2e: 上の縮めた対照 (規則の class を外すとページが減る) が実機で鳴る。cascade の検査は `body.ds-printing` 無しなら `auto`。
+
+### 実機と出荷物
+
+- 出荷物: FULL **11,926,102 B** / LITE **3,338,623 B** (**両方 +1,442 B** —— 紙ごとの札と脚注・`KessanPage` の組み立て・印刷の規則 5 行。
+  renderer は両ビルドが読むので LITE も同じだけ増える)。**LITE の警告線 (3,400,000 B) まで 61,377 B**。
+- 実機 (連鎖 1 回・全段緑): `smoke:app` OK / `e2e` **32 suite 446 件** ❌ 0 (439 + `kessanTax` の 7) / `e2e:lite` 446 件 ❌ 0 / `perf` OK
+  (LITE DCL 138 ms · heap 10.2 MB / FULL DCL 368 ms · heap 37 MB・起動時の巨大 JSON.parse 0) / `e2e:ollama` ✅ 8。
+  撮影: 「4点まとめて」が 5 枚の紙 (札「n 枚目 / 全 5 枚 — 書面名」つき) に見える・貸借対照表を 1 点で開くと要旨と 2 枚・
+  `page.pdf` は 5 ページ。単体 765 ファイル / 17,484 件・`verify:all` 37 ゲート緑 (静的 `it(` 14,693)。
+
+### 残り
+
+- 経営書類・定款・就業規則は 1 枚の紙のまま (依頼の対象外)。定款の章と就業規則の章は長いので、印刷の改ページは
+  ブラウザ任せ。
+
 ## パス 322 (2026-09-19) — 可愛い UI: 見た目に加えて操作性を作り直した (機能は 1 つも減らさない)
 
 利用者の依頼は「既存の機能を残しつつ、操作性や見た目を一新した若い女性に好まれる可愛らしいUIに作り直して」。
@@ -4560,6 +4615,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 週次の依存監査の Issue 同期 (パス 306) | ✅ 1 度も走っていない code を読んで直した (`state: 'all'`・再開)。runner での初回は merge 後の日曜 |
 | 実機 5 種 (パス 321: shared / renderer の書き込み経路を組み直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 412 / `e2e:lite` 412 / `perf` LITE DCL 119 ms · FULL 385 ms / `e2e:ollama` 8)。出荷物 FULL 11,912,169 B / LITE 3,324,690 B (両方 +2,645 B) |
 | オントロジー + 組み直し (パス 321) | ✅ `src/shared/ontology/` 4 層 + `docs/ONTOLOGY.md` (生成物) + 検査 3 本。当てて出た欠落 5 種を閉じた: shopify の dead-action 7 行 / 書き込み 13 経路を shared へ (LEDGERS 12 行すべて via) / 判定の双子 2 組を 1 つに / 上限 2 つの検査 + census / `lint:network-targets` の「変数のホスト + 定数の経路」の死角 |
+| 計算書類は 1 点 1 枚 (パス 323) | ✅ `KessanSheets` を書面ごとの紙 (5 枚: 損益 / 貸借 / 変動 / 注記 / 公告の要旨) に。印刷は 2 枚目以降で改ページ・札は刷らない。jsdom +4・e2e kessanTax +7 (cascade・PDF のページ数・縮めた対照)。値の入れ物は 1 つのまま |
 | 可愛い UI: 操作性 (パス 322) | ✅ シェル (サイドバー / トップバー / ホームのジャンプ列 / 先頭へ戻る / ドロワー) を作り直し、`shellContext.ts` で並びの出所を App 1 つに。stylesheet の直書き色 10 → 0 (トークン 15)。jsdom `appShell` 15 件 + e2e `shell` suite 27 件 (32 suite・合計の床 350 → 370)。対照 1 本 (画面切替の scrollTo) |
 | 実機 5 種 (パス 322: renderer の shell と stylesheet を作り直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 439 / `e2e:lite` 439 / `perf` LITE DCL 137 ms · FULL 370 ms / `e2e:ollama` 8)。出荷物 FULL 11,924,660 B / LITE 3,337,181 B (両方 +12,491 B)。LITE の警告線まで 62,819 B。連鎖 3 回 (続きの CSS の後に 2 回)。HEAD `7bd73bd6` / `8d1a9878` の CI success・PR #788 反映済み |
 | 保存値の壊れ方の理由の天井 + census を shared へ (パス 320) | ✅ `teamRadarState.ts:365` を `redactForMessage` (梯子 6 段目 200 字) で通し、census の母集団を shared へ (2 行: 読むだけの形は外し・台帳の定数の文は登録)。ownThrow 24 行の補間 105 件はラベルと定数 (天井は要らなかった)。chain #235・対照 2 本 |

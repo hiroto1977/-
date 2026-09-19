@@ -72,8 +72,8 @@ describe('e2e の suite ごとの床 (パス 303)', () => {
     expect(total).toBeGreaterThanOrEqual(sumFloors);
     expect(total).toBeLessThanOrEqual(sumMeasured);
     // 実測の合計は 2026-09-17 の 395 (FULL / LITE とも) + 2026-09-18 (パス 317) の theme suite 12 + パス 318 の 2
-    // + 2026-09-19 (パス 322) の shell suite 27 = 436
-    expect(sumMeasured).toBe(436);
+    // + 2026-09-19 (パス 322) の shell suite 27 = 436 + パス 323 の kessanTax +7 (1 点 1 枚・cascade・PDF のページ数と縮めた対照) = 443
+    expect(sumMeasured).toBe(443);
   });
 });
 

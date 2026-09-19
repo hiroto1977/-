@@ -714,12 +714,28 @@ function NotesSheet({ sections }: { sections: readonly NoteSection[] }) {
   );
 }
 
+/** 1 枚の書面 (画面では 1 枚の紙・印刷では 1 ページ目から始まる)。 */
+interface KessanPage {
+  readonly id: 'pl' | 'bs' | 'equity' | 'notes' | 'notice';
+  /** 紙の上の札に出す名前。 */
+  readonly title: string;
+  readonly body: React.ReactNode;
+}
+
 /**
- * 決算書の書面 — 会社法435条2項の計算書類 4 点。
+ * 決算書の書面 — 会社法435条2項の計算書類 4 点 (+ 決算公告の要旨)。
  *
  * 当期純利益は損益計算書で確定してから貸借対照表へ渡し、株主資本等変動計算書の
  * 当期末残高は貸借対照表から取る。4 枚を別々に組むと連結が切れて、貸借だけ合っているのに
  * 利益が反映されていない書面が出来上がる。
+ *
+ * **書面は 1 点 1 枚** (2026-09-19・依頼「計算書類（4点）が一枚に集約されているので１枚ずつになる様に
+ * 最適化して」)。それまで「4点まとめて」は 4 点と要旨を**1 枚の紙に続けて**流していたので、画面では
+ * 1 枚の長い紙、印刷では書面の途中で改ページが入っていた (貸借対照表の見出しがページの下端に来る)。
+ * 会社法上 4 点はそれぞれ別の書類なので、紙も別にする: 書面ごとに `.ds-paper` を 1 枚ずつ並べ、
+ * 印刷では `styles.css` の `body.ds-printing .ds-sheet-block + .ds-sheet-block { break-before: page }`
+ * が書面ごとに改ページする。免責の脚注も紙ごとに付く (1 枚だけ渡しても脚注が付いて回る)。
+ * 値の入れ物は 1 つのまま —— 分けたのは紙だけで、数字はどの紙も同じ科目残高から組む。
  */
 function KessanSheets({ values, fields, sheet }: { values: Values; fields: readonly DocField[]; sheet: KessanSheet }) {
   // 1 点ずつ出すときも値は同じ 1 つの科目残高から組む（連結を切らない）。
@@ -727,54 +743,98 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
   const inc = incomeTotals(values);
   const opt = kessanOptions(values);
   const bs = buildBalanceRows(values, opt, inc.netIncome);
+  const pages: KessanPage[] = [];
+  if (show('pl')) {
+    pages.push({
+      id: 'pl',
+      title: '損益計算書',
+      body: (
+        <>
+          <div className="ds-title"><Fill text="{{company}} 損益計算書" fields={fields} values={values} /></div>
+          <div className="ds-right">
+            <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
+          </div>
+          <StatementTable title="損益計算書" rows={buildIncomeRows(values)} />
+        </>
+      ),
+    });
+  }
+  if (show('bs')) {
+    pages.push({
+      id: 'bs',
+      title: '貸借対照表',
+      body: (
+        <>
+          <div className="ds-title"><Fill text="{{company}} 貸借対照表" fields={fields} values={values} /></div>
+          <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
+          <StatementTable title="資産の部" rows={bs.assets} />
+          <StatementTable title="負債・純資産の部" rows={bs.liabilitiesEquity} />
+        </>
+      ),
+    });
+  }
+  if (show('equity')) {
+    pages.push({
+      id: 'equity',
+      title: '株主資本等変動計算書',
+      body: (
+        <>
+          <div className="ds-title"><Fill text="{{company}} 株主資本等変動計算書" fields={fields} values={values} /></div>
+          <div className="ds-right">
+            <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
+          </div>
+          <EquityTable rows={buildEquityRows(values, opt, inc.netIncome)} />
+        </>
+      ),
+    });
+  }
+  if (show('notes')) {
+    pages.push({
+      id: 'notes',
+      title: '個別注記表',
+      body: (
+        <>
+          <div className="ds-title"><Fill text="{{company}} 個別注記表" fields={fields} values={values} /></div>
+          <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
+          <NotesSheet sections={buildNoteSections(values, opt, inc.netIncome)} />
+        </>
+      ),
+    });
+  }
+  if (show('bs')) {
+    // 決算公告の要旨は貸借対照表に付く別の書類 (会社法440条)。貸借対照表と同じ紙には載せない。
+    pages.push({
+      id: 'notice',
+      title: '決算公告（貸借対照表の要旨）',
+      body: (
+        <>
+          <div className="ds-title">決算公告（貸借対照表の要旨）</div>
+          <div className="ds-right">
+            <Fill text="{{company}}　{{fyEnd}} 現在" fields={fields} values={values} />
+          </div>
+          <StatementTable title="貸借対照表の要旨" rows={buildPublicNoticeRows(values, opt, inc.netIncome)} />
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6 }}>
+            定時株主総会の終結後、遅滞なく公告してください。官報・日刊新聞紙を公告方法とする会社はこの要旨で足ります（会社法440条1項・2項）。
+            <strong>電子公告を公告方法としている場合は要旨では足りず、貸借対照表の全文が必要です。</strong>
+          </div>
+        </>
+      ),
+    });
+  }
   return (
-    <div data-kessan-sheets={sheet}>
-      {show('pl') && (<>
-      <div className="ds-title"><Fill text="{{company}} 損益計算書" fields={fields} values={values} /></div>
-      <div className="ds-right">
-        <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
-      </div>
-      <StatementTable title="損益計算書" rows={buildIncomeRows(values)} />
-      </>)}
-
-      {show('bs') && (<>
-      <div className="ds-title" style={{ marginTop: sheet === 'bs' ? 0 : 24 }}>
-        <Fill text="{{company}} 貸借対照表" fields={fields} values={values} />
-      </div>
-      <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
-      <StatementTable title="資産の部" rows={bs.assets} />
-      <StatementTable title="負債・純資産の部" rows={bs.liabilitiesEquity} />
-      </>)}
-
-      {show('equity') && (<>
-      <div className="ds-title" style={{ marginTop: sheet === 'equity' ? 0 : 24 }}>
-        <Fill text="{{company}} 株主資本等変動計算書" fields={fields} values={values} />
-      </div>
-      <div className="ds-right">
-        <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
-      </div>
-      <EquityTable rows={buildEquityRows(values, opt, inc.netIncome)} />
-      </>)}
-
-      {show('notes') && (<>
-      <div className="ds-title" style={{ marginTop: sheet === 'notes' ? 0 : 24 }}>
-        <Fill text="{{company}} 個別注記表" fields={fields} values={values} />
-      </div>
-      <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
-      <NotesSheet sections={buildNoteSections(values, opt, inc.netIncome)} />
-      </>)}
-
-      {show('bs') && (<>
-      <div className="ds-title" style={{ marginTop: 24 }}>決算公告（貸借対照表の要旨）</div>
-      <div className="ds-right">
-        <Fill text="{{company}}　{{fyEnd}} 現在" fields={fields} values={values} />
-      </div>
-      <StatementTable title="貸借対照表の要旨" rows={buildPublicNoticeRows(values, opt, inc.netIncome)} />
-      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6 }}>
-        定時株主総会の終結後、遅滞なく公告してください。官報・日刊新聞紙を公告方法とする会社はこの要旨で足ります（会社法440条1項・2項）。
-        <strong>電子公告を公告方法としている場合は要旨では足りず、貸借対照表の全文が必要です。</strong>
-      </div>
-      </>)}
+    <div className="ds-sheets" data-kessan-sheets={sheet} data-kessan-pages={pages.length}>
+      {pages.map((pg, i) => (
+        <div key={pg.id} className="ds-sheet-block">
+          {/* 紙の上の札。画面だけの案内で、印刷には出ない (styles.css)。 */}
+          <div className="ds-sheet-caption" aria-hidden="true">
+            📄 {i + 1} 枚目 / 全 {pages.length} 枚 — {pg.title}
+          </div>
+          <section className="ds-paper ds-sheet" data-kessan-page={pg.id} aria-label={`${pg.title}（${i + 1} 枚目 / 全 ${pages.length} 枚）`}>
+            {pg.body}
+            <div className="ds-disclaimer">{DOC_DISCLAIMER}</div>
+          </section>
+        </div>
+      ))}
     </div>
   );
 }
@@ -1327,7 +1387,7 @@ const COLLECTIONS: readonly CollectionTab[] = [
     sheet: sh.id,
     label: `${KESSAN_ICON[sh.id]} ${sh.title}`,
   })),
-  // 「まとめて」は決算公告の要旨つきで 4 点を 1 枚に出す従来の出力。最後に置く。
+  // 「まとめて」は 4 点と決算公告の要旨を 1 点 1 枚 (5 枚) で続けて出す。最後に置く。
   { id: 'kessan', collection: 'kessan', sheet: 'all', label: '📚 計算書類（4点まとめて）' },
 ];
 
@@ -1361,12 +1421,12 @@ const KESSAN_STEPS: readonly (readonly [string, string])[] = [
   ['① 残高を入れる', '試算表（決算整理後）の科目残高を、区分ごとに正の値で入力します。期末商品棚卸高・減価償却累計額・貸倒引当金は控除項目なので、そのまま正の値で入れれば自動で差し引きます。'],
   ['② 当期の変動を入れる', '繰越利益剰余金の期首残高、剰余金の配当、利益準備金への積立、新株発行による増加額を入れます。期首残高は入力しません。期末残高から当期変動額を引いて逆算するので、内訳と食い違う期首を書けないようになっています。'],
   ['③ 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
-  ['④ 書類を選んで印刷 / PDF 保存', '上の書類一覧で損益計算書・貸借対照表・株主資本等変動計算書・個別注記表のどれか（または「計算書類（4点まとめて）」）を選び、「印刷 / PDF 保存」でその書類だけを出力します。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
+  ['④ 書類を選んで印刷 / PDF 保存', '上の書類一覧で損益計算書・貸借対照表・株主資本等変動計算書・個別注記表のどれか（または「計算書類（4点まとめて）」）を選び、「印刷 / PDF 保存」でその書類だけを出力します。「4点まとめて」も 1 点 1 枚で、印刷では書面ごとに改ページします。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
   ['⑤ 承認と公告', '定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。作成した計算書類は10年間の保存義務があります。'],
 ];
 
 const KESSAN_NOTES: readonly string[] = [
-  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。4点は書類一覧でそれぞれ独立した書類として並び、1 点ずつ記載・出力できます。4点すべては同じ科目残高から組み立てるので（値の入れ物は 1 つのまま）、当期純利益と純資産の連結は切れません。',
+  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。4点は書類一覧でそれぞれ独立した書類として並び、1 点ずつ記載・出力できます（「4点まとめて」でも紙は 1 点 1 枚）。4点すべては同じ科目残高から組み立てるので（値の入れ物は 1 つのまま）、当期純利益と純資産の連結は切れません。',
   '株主資本等変動計算書の当期末残高は、貸借対照表の純資産の部と一致します。期首残高は入力させず期末から逆算するので、二表がずれることはありません。',
   '剰余金の配当をするときは、配当により減少する剰余金の10分の1を資本準備金または利益準備金として計上する必要があります（会社法445条4項）。ただし準備金の合計が資本金の4分の1に達している場合を除きます。',
   '定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）の公告が必要です（会社法440条1項）。'
@@ -2040,6 +2100,9 @@ export function DocstudioPage() {
         </div>
 
         <div style={{ flex: '2 1 420px', minWidth: 0 }}>
+          {/* 計算書類は書面ごとに紙を分けるので、1 枚の紙に流し込む下の枠は使わない。 */}
+          {collection === 'kessan' && <KessanSheets values={filled} fields={fields} sheet={kessanSheet} />}
+          {collection !== 'kessan' && (
           <div className="ds-paper">
             {collection === 'studio' && <Blocks blocks={studioDoc.body} fields={fields} values={filled} />}
             {collection === 'teikan' && (
@@ -2066,9 +2129,9 @@ export function DocstudioPage() {
                 <Chapters chapters={SHUGYO_CHAPTERS} fields={fields} values={values} />
               </>
             )}
-            {collection === 'kessan' && <KessanSheets values={filled} fields={fields} sheet={kessanSheet} />}
             <div className="ds-disclaimer">{DOC_DISCLAIMER}</div>
           </div>
+          )}
         </div>
       </div>
     </div>
