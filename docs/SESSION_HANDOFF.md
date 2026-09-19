@@ -73,7 +73,8 @@
 - 実機 (連鎖 3 回・すべて全段緑。2 回目は続きの CSS 2 行・3 回目は hero の media 規則を後ろへ移した HEAD): `smoke:app` OK / `e2e` **32 suite 439 件** ❌ 0 (412 + `shell` 27) /
   `e2e:lite` 439 件 ❌ 0 / `perf` OK (1 回目 LITE DCL 137 ms · heap 10.2 MB / FULL DCL 370 ms · heap 36.8 MB、2 回目 LITE 140 ms / FULL 374 ms、3 回目 LITE 144 ms / FULL 379 ms・起動時の巨大 JSON.parse 0) /
   `e2e:ollama` ✅ 8。単体 765 ファイル / 17,480 件・`verify:all` 37 ゲート緑 (`verify:arch` の参照 648・静的 `it(` 14,689)。
-  HEAD `7bd73bd6` (本体) の CI は **success** (03:51 UTC)。
+  HEAD `7bd73bd6` (本体) の CI は **success** (03:51 UTC)。HEAD `8d1a9878` (続き) の CI も **success** (04:22 UTC)。
+  PR #788 の本文とタイトルをパス 〜322 まで反映した (464 commits · 37 ゲート · 17,480 tests · Stryker 293 · chain #235)。
 - 両配色の撮影 (デスクトップ 1280 と スマホ 412・ホーム / 銘柄 / 不動産 / 設定 / 事業 / GitHub / 書類 / 税務 + 検索 + ドロワー・2 巡): ページエラー 0。
   1 巡目で直したのは 🔍 の重なり (上の特異性) と、ホームのカードの `min-height` (結果が無いと 100px の空白) と、スマホの hero の 🌸 (見出しに被る) の 3 つ。
   2 巡目 (直した後の撮影) で見えたのは、検索欄に ✕ が **2 つ**並ぶ (Chromium の `type="search"` の組み込みの消すボタンが自前の ✕ の隣に出る —— 旧い画面にも
@@ -4560,7 +4561,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 | 実機 5 種 (パス 321: shared / renderer の書き込み経路を組み直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 412 / `e2e:lite` 412 / `perf` LITE DCL 119 ms · FULL 385 ms / `e2e:ollama` 8)。出荷物 FULL 11,912,169 B / LITE 3,324,690 B (両方 +2,645 B) |
 | オントロジー + 組み直し (パス 321) | ✅ `src/shared/ontology/` 4 層 + `docs/ONTOLOGY.md` (生成物) + 検査 3 本。当てて出た欠落 5 種を閉じた: shopify の dead-action 7 行 / 書き込み 13 経路を shared へ (LEDGERS 12 行すべて via) / 判定の双子 2 組を 1 つに / 上限 2 つの検査 + census / `lint:network-targets` の「変数のホスト + 定数の経路」の死角 |
 | 可愛い UI: 操作性 (パス 322) | ✅ シェル (サイドバー / トップバー / ホームのジャンプ列 / 先頭へ戻る / ドロワー) を作り直し、`shellContext.ts` で並びの出所を App 1 つに。stylesheet の直書き色 10 → 0 (トークン 15)。jsdom `appShell` 15 件 + e2e `shell` suite 27 件 (32 suite・合計の床 350 → 370)。対照 1 本 (画面切替の scrollTo) |
-| 実機 5 種 (パス 322: renderer の shell と stylesheet を作り直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 439 / `e2e:lite` 439 / `perf` LITE DCL 137 ms · FULL 370 ms / `e2e:ollama` 8)。出荷物 FULL 11,924,660 B / LITE 3,337,181 B (両方 +12,491 B)。LITE の警告線まで 62,819 B。連鎖 3 回 (続きの CSS の後に 2 回)。HEAD `7bd73bd6` の CI success |
+| 実機 5 種 (パス 322: renderer の shell と stylesheet を作り直した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 439 / `e2e:lite` 439 / `perf` LITE DCL 137 ms · FULL 370 ms / `e2e:ollama` 8)。出荷物 FULL 11,924,660 B / LITE 3,337,181 B (両方 +12,491 B)。LITE の警告線まで 62,819 B。連鎖 3 回 (続きの CSS の後に 2 回)。HEAD `7bd73bd6` / `8d1a9878` の CI success・PR #788 反映済み |
 | 保存値の壊れ方の理由の天井 + census を shared へ (パス 320) | ✅ `teamRadarState.ts:365` を `redactForMessage` (梯子 6 段目 200 字) で通し、census の母集団を shared へ (2 行: 読むだけの形は外し・台帳の定数の文は登録)。ownThrow 24 行の補間 105 件はラベルと定数 (天井は要らなかった)。chain #235・対照 2 本 |
 | 窓の下地と theme-color の追随 (パス 318) | ✅ `theme.ts` → `syncHostChrome` (stylesheet の --bg の実値) → meta と `app:setColorScheme` (15 個目・形の関門・原子的な保存・起動時に読む)。chain #232〜#234・対照 3 本 |
 | ダーク配色の目視 (パス 319) | ✅ 30 画面撮影・26 画面を読んで直す物なし (機械では測れないので撮影 script を残した) |
