@@ -280,8 +280,8 @@ export const LAWS: readonly Law[] = [
     family: 'single-rule',
     name: '調べた物と使う物を同じにする',
     statement: '関門が通した値ではなく元の文字列を使うと、調べた物と使われる物が別になる (URL の字面一致 vs 解析後・1 ホップ目 vs 転送先・アンカーの属性 vs クリックの handler)。関門の返り値を使う。',
-    provenance: ['パス 291', 'パス 298', 'パス 299', 'パス 301'],
-    enforcedBy: [test(T.shared('externalUrlGate')), test(T.shared('imageUrlGate')), test(T.shared('followableUrlCensus')), test(T.shared('egressRedirectCensus'))],
+    provenance: ['パス 291', 'パス 298', 'パス 299', 'パス 301', 'パス 325 (母集団の機械)'],
+    enforcedBy: [test(T.shared('parsedUrlGateCensus')), test(T.shared('externalUrlGate')), test(T.shared('imageUrlGate')), test(T.shared('followableUrlCensus')), test(T.shared('egressRedirectCensus'))],
   },
   {
     id: 'center-then-count-callers',

@@ -828,7 +828,7 @@ describe('ACTIONS["scan-url"]', () => {
   });
 
   it('swaps `+` to `-` in the VT id (kills `.replace(/\\+/g, "-")` → `""`)', async () => {
-    // URL 'https://example.com/?a=😾' base64-encodes to a string
+    // URL 'https://example.com/?q=~~~' base64-encodes to a string
     // containing '+'. The vtBase64 function must replace `+` with `-`
     // (URL-safe). The mutant `replace(/\+/g, "")` would silently drop
     // the +, producing a shorter id whose round-trip decode misses bytes.
@@ -848,7 +848,10 @@ describe('ACTIONS["scan-url"]', () => {
     await ACTIONS['scan-url']!({
       token: goodToken,
       fetch: fetchMock,
-      payload: { url: 'https://example.com/?a=\u{1F63E}' },
+      // 絵文字の入力は URL 標準の正規化で percent-encode され base64 に `+` が出なくなった
+      // (パス 325 で関門が解析後の href を返すようになったため)。`~~~` は正規化しても素通りし、
+      // 同じ位置に `+` を出すので、変異体を殺す意図はそのまま保てる。
+      payload: { url: 'https://example.com/?q=~~~' },
     });
     const reportUrl = fetchMock.mock.calls[1]![0] as string;
     // Standard base64 contains a '+' (verified offline); base64url must

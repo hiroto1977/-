@@ -6,11 +6,39 @@ import { MAX_SCAN_URL_CHARS, SCAN_URL_MESSAGES, SECRET_PARAM_NAMES, describeScan
 describe('validateScanUrl', () => {
   it('http / https を通す', () => {
     expect(validateScanUrl('https://example.com/a')).toEqual({ ok: true, url: 'https://example.com/a' });
-    expect(validateScanUrl('http://example.com')).toEqual({ ok: true, url: 'http://example.com' });
+    // 裸のホストは URL 標準の正規化で末尾に `/` が付く (返すのは解析後の href なので)。
+    expect(validateScanUrl('http://example.com')).toEqual({ ok: true, url: 'http://example.com/' });
   });
 
   it('前後の空白を落として通す', () => {
-    expect(validateScanUrl('  https://example.com  ')).toEqual({ ok: true, url: 'https://example.com' });
+    expect(validateScanUrl('  https://example.com  ')).toEqual({ ok: true, url: 'https://example.com/' });
+  });
+
+  /*
+   * **返すのは調べた物** (パス 325)。ここは長らく `parsed` で protocol を見て
+   * `url` (生の文字列) を返しており、**調べた物と第三者 (VirusTotal) へ送る物が別**だった。
+   * 同じ形の URL 関門 7 つのうち、生を返していたのはここだけ
+   * (`externalUrlGate` / `imageUrlGate` / `atlassianSite` / `aiEndpoint` /
+   * `proxyEndpoint` / `ollama` の正規化はどれも解析後の値を返す)。
+   */
+  it.each([
+    ['区切りの取り違え', 'https:/\\evil.example/p', 'https://evil.example/p'],
+    ['大文字のスキームとホスト', 'HTTPS://Example.COM/X', 'https://example.com/X'],
+    ['空白の符号化', 'https://example.com/a b', 'https://example.com/a%20b'],
+    ['IDN の punycode 化', 'https://例え.テスト/', 'https://xn--r8jz45g.xn--zckzah/'],
+    ['裸のホスト', 'https://example.com', 'https://example.com/'],
+  ])('★ 生の文字列ではなく解析後の href を返す: %s', (_why, raw, href) => {
+    expect(validateScanUrl(raw)).toEqual({ ok: true, url: href });
+    // 標本: 直す前の返り値 (生) は解析後と食い違っていた。
+    expect(raw).not.toBe(href);
+    expect(new URL(raw).href).toBe(href);
+  });
+
+  it('返り値をもう一度通しても変わらない (解析後の値は不動点)', () => {
+    const first = validateScanUrl('HTTPS://Example.COM');
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+    expect(validateScanUrl(first.url)).toEqual({ ok: true, url: first.url });
   });
 
   it('空 / 非文字列を断る', () => {

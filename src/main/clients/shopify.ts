@@ -205,8 +205,9 @@ async function syncToDiscord(ctx: ActionContext): Promise<ActionData<'shopify/sy
     throw new Error('webhookUrl must be an https://discord.com URL');
   }
 
+  // 送り先は**関門の返り値** `u.href` (パス 325。隣の salesforce 同期は `base.origin`)。
   await postExpectOk(
-    webhookUrl,
+    u.href,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

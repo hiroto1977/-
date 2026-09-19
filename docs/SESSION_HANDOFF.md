@@ -7,6 +7,90 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 325 (2026-09-19) — 調べた物と使う物が別だった 3 か所: 法則は 4 回学ばれていたのに母集団の機械が無かった
+
+パス 324 の続き。法則 `checked-equals-used`「関門が通した値ではなく元の文字列を使うと、調べた物と使われる物が別になる」は
+**パス 291 / 298 / 299 / 301 の 4 回**学ばれているが、執行者は 4 つとも**既に壊れて直した個所**の検査だった ——
+つまり「次に同じ形が生えたら鳴る」物が無い。母集団 (`new URL(` を呼ぶ場所) を数えたら **27 か所 / 20 ファイル**で、
+そのうち 3 か所が法則を満たしていなかった。
+
+### 実測して直した 3 件
+
+- **`shared/scanTarget.ts` の `validateScanUrl`** —— `parsed` で protocol を見て **生の文字列**を返し、その生が
+  VirusTotal へ送られていた (base64url の id と POST の本文の両方)。実測: 8 形のうち **5 形**が解析後と食い違う
+  (`https:/\evil.example/p` → `https://evil.example/p`・`HTTPS://Example.COM/X`・`https://example.com/a b`・
+  IDN の punycode 化・裸のホストの末尾 `/`)。台帳の `value-gate` 10 行のうち、**利用者 / 第三者の URL 文字列を受けて URL 文字列を返す 7 つ** (`externalUrlGate` / `imageUrlGate` / `atlassianSite` / `aiEndpoint` / `proxyEndpoint` / `ollama` の正規化 / `scanTarget`) を読み比べると、**生を返していたのはここだけ**で、
+  隣の `normalizeProxyEndpoint` は最初から `parsed.href` を返している。
+- **`main/clients/github.ts`** —— `api.github.com` に pin した後、**生の `item.pull_request.url`** を fetch していた。
+- **`main/clients/shopify.ts` の Discord webhook** —— `discord.com` に pin した後、**生の `webhookUrl`** へ POST していた。
+  今日の送り先は一致する (`fetch` も同じ WHATWG の URL parser で解く) が、**一致が「両側が同じ parser を使う」という
+  別の前提に依る**形だった。パス 291 が `oauth.ts` で直したのと同じ形で、**同じファイルの隣**の salesforce 同期は
+  最初から `base.origin` を使っている (1 つのファイルの中で 2 つの枝の流儀が割れていた)。
+
+**実害の見立ては正直に書く**: 今日この 3 件から秘密は漏れない。scanTarget は符号化してから送るので注入にならず、
+github / discord は同じ parser なので送り先が変わらない。直す理由は**守りの強さが別の前提に依っている**ことと、
+1 語で消せることである (パス 290 と同じ立て付け)。
+
+### 直しと機械
+
+- `validateScanUrl` は `parsed.href` を返す。`github.ts` は `target = u.href` を fetch し、`shopify.ts` は `u.href` へ POST。
+- **`parsedUrlGateCensus.test.ts` (shared・+11)**: `new URL(` の母集団 27 か所を 1 行ずつ**種類**つきの台帳に
+  (実測 **`value-gate` 10 / `predicate` 6 / `pin` 4 / `internal` 4 / `display` 2** = 26 行で 27 か所を覆う —— web-shim の同じ綴りの 2 行が 1 行に対応・**両方向**)。`value-gate` は
+  **振る舞いで**確かめる —— 生と解析後が食い違う入力 (`HTTPS://Example.COM/X` ほか) を通し、返り値が解析後の側であること
+  (標本: その入力で生 ≠ 解析後であることも同じ検査の中で示す)。`pin` 2 件は原文で「解析後の値を通信に渡す」ことを留める
+  (不在の主張には直す前の行を標本として添える)。
+- `scanTarget.test.ts` +6 (食い違う 5 形 + 不動点)。法則 `checked-equals-used` の執行者に census を足した。
+
+### 直したときに落ちた既存の検査 5 件 (どれも旧い振る舞いの写し)
+
+- `validateScanUrl('http://example.com')` と `'  https://example.com  '` の期待値 —— URL 標準の正規化で末尾に `/` が付く。
+- `security.test.ts` と `saasWriteWeb.test.ts` の「VT id の `+` を `-` に替える変異体を殺す」検査 2 本 ——
+  入力の絵文字 / `>` が正規化で percent-encode され、base64 に `+` が出なくなった。**変異体を殺す意図はそのまま**に、
+  正規化しても素通りして同じ位置に `+` を出す `~` の入力 (`https://example.com/?q=~~~` / `https://a/a~a`) へ替えた
+  (意図を読んでから入力を選び直す。期待値だけ緩めない)。
+- `integrityChainWitness.test.ts` 2 件 —— `scanTarget.ts` が保護対象なので、ディスクの実物と tip の Merkle ルートが
+  食い違った。`chain:append` で block #236 を採掘して閉じた (**検査が「触ってはいけない物に触った」ではなく
+  「触ったなら記録しろ」と言っている**ことを確かめてから追記)。
+
+### 直した拍子に監視の外へ出かけた (ゲートが捕まえた)
+
+`github.ts` の送り先を `target = u.href` という**裸のローカル変数**に置いたところ、`lint:network-targets` が
+「台帳の項目が実在しません」と鳴った。この検出器 (`BARE_SEND`) は**プロパティ参照だけ**を拾う設計で、
+その限界は自分の docblock に明記されている (「`const u = cfg.url; fetch(u, …)` と一度ローカルへ置き換えれば掛からない」)。
+つまり**直しが、その送り先を台帳の視野から黙って外す形**だった —— パス 321 の副産物 (経路をリテラルから定数へ寄せる
+refactor がそのまま監視の外へ出た) と同じ家系。`prUrl.href` (プロパティ参照) にして視野に留め、
+理由をコードと census の両方に書いた。**両方向の台帳が無ければ、この抜けは静かに通っていた。**
+台帳は 2 行更新 (`github.ts` は `item.pull_request.url` → `prUrl.href`・`shopify.ts` の `u.href` を新規登録)。
+
+### 対照 (実測・5 本)
+
+(A) `scanTarget` を生に戻す → **8 件**落ちる。(B) `github` を生の URL で fetch → **1 件**。(C) `shopify` を生の
+`webhookUrl` へ POST → **1 件**。(D) 台帳に無い `new URL(` を 1 つ足す → **1 件** (両方向の照合が名指しで鳴る)。
+(E) 台帳の 1 行の種類を `predicate` → `value-gate` に書き換える → **1 件** (種類ごとの実測値が鳴る)。
+
+### 出荷物と実機
+
+`src/shared/scanTarget.ts` は**保護対象**なので `npm run chain:append` (整合性チェーン block **#236**)。
+
+FULL **11,926,107 B** / LITE **3,338,628 B** (両方 **+5 B** —— `validateScanUrl` の返り値を `url` から `parsed.href` へ
+変えた分だけ。`shared` は両ビルドが読む。`github.ts` / `shopify.ts` の直しは main だけなので出荷物に入らない)。
+**LITE の警告線 (3,400,000 B) まで 61,372 B**。実機は連鎖を **2 回**通した (1 回目の後に `github.ts` を
+`prUrl.href` へ直したので、**最終の木でもう 1 度**測り直した —— 成果物が材料より古い状態で緑を名乗らない)。
+2 回とも全段緑で、出荷物の byte も同値: `smoke:app` OK / `e2e` 32 suite 446 件 ❌ 0 / `e2e:lite` 446 件 ❌ 0 /
+`perf` OK (2 回目 LITE DCL 245 ms heap 10.3 MB・FULL DCL 709 ms heap 37 MB) / `e2e:ollama` ✅ 8。
+
+### 自戒
+
+- **法則に執行者が在っても、それが「直した個所の検査」だけなら母集団は守られていない。** 4 回学んだ法則が
+  3 か所で破れたまま残っていたのは、執行者の形が「事例」で「母集団」ではなかったため。
+  オントロジーの `enforcedBy` は**種類**まで見ないと安心できない。
+- **最初に書いた種類の内訳 (7 / 6 / 4 / 5 / 3) は当てずっぽうで、実測は 10 / 6 / 4 / 4 / 2 だった。** 台帳を書いた
+  直後に自分で数えず記録へ写していた —— **数は機械に持たせる** (検査に実測値を置いたので、次に行が増減すれば鳴る)。
+- **「関門の返り値を使う」を素直に書くと、監視の形を壊すことがある。** 返り値をローカル変数へ受けるのは
+  読みやすいが、`BARE_SEND` はプロパティ参照しか見ない。**直すときは、その行を見ている機械の形も一緒に見る。**
+- **対照を戻すのに `git checkout -- <file>` を使い、同じセッションで 2 度目の取りこぼしをした** (パス 322 でも同じ形)。
+  その直前に足した未コミットの検査 1 本が消えた。**対照の前に WIP コミットを作る**のを手順にする。
+
 ## パス 324 (2026-09-19) — 画面のリンクのホストに第三者の応答の値: Slack の permalink は `team.domain` を authority に直置きしていた
 
 利用者の依頼「システムの脆弱性を徹底的に探して見つけ次第解析し対策しながら作業を継続して」の続き (パス 322・323 の UI の依頼を挟んで再開)。
@@ -60,7 +144,7 @@ Slack 自身は domain を `[a-z0-9-]` に縛っているので今日の実害�
 
 ### 出荷物
 
-FULL 11,926,102 B / LITE 3,338,623 B で **byte 単位で不変** —— 関門は shared に置いたが読むのは main だけなので、ブラウザ版の bundle からは
+CI (`ci`) は HEAD `e5c17885` で **success** (08:46 UTC)。FULL 11,926,102 B / LITE 3,338,623 B で **byte 単位で不変** —— 関門は shared に置いたが読むのは main だけなので、ブラウザ版の bundle からは
 tree-shaking で丸ごと落ちる (両方を組んで実測)。
 
 ### 自戒
@@ -4676,6 +4760,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 調べた物と使う物が別 (パス 325) | ✅ 法則 `checked-equals-used` は 4 回学ばれていたのに執行者が全部「直した個所の検査」で、母集団の機械が無かった。`new URL(` の **27 か所 / 20 ファイル**を種類つきの台帳へ (`parsedUrlGateCensus.test.ts`・両方向・value-gate は振る舞いで確認)。破れていた 3 件を直した: `validateScanUrl` が生を返し VT へ送っていた (8 形中 5 形が食い違う) / `github` が pin 後に生を fetch / `shopify` の Discord webhook が pin 後に生へ POST。対照 4 本 (8 / 1 / 1 / 1 件) |
 | 画面のリンクのホストに第三者の応答の値 (パス 324) | ✅ `main/clients/slack.ts` の permalink が `team.info` の `domain` を authority に直置き (`/` `?` `#` `\` の 1 字で host が `.slack.com` の外へ)。`shared/api/slack.ts` の 1 ラベルの関門 `slackWorkspaceDomainOrNull` の**返り値だけ**を置き、断られたら `app_redirect`。`hostInterpolationCensus.test.ts` (母集団 5 行・両方向の台帳)・法則 `link-host-not-from-response`・対照 2 本 (関門を迂回 → 10 件 / 文法を緩める → 17 件落ちる)。3 つの網 (`lint:url-encoding` は authority を見ず・`network-targets` は通信だけ・#5 はスキームだけ) の継ぎ目 |
 | 実機 4 種 (パス 298–303 の renderer / harness 変更) | ✅ 3 回通した (パス 299 / 300 / 301 の HEAD) + パス 303 は連鎖 1 回 + 直した suite の再実行 |
 | 実機 5 種 (パス 304: `e2e:ollama` を連鎖に足した) | ✅ 連鎖 1 回で全段緑 (`smoke:app` / `e2e` 395 / `e2e:lite` 395 / `perf` / `e2e:ollama` 8)。`e2e:ollama` は e2e.yml にも入れた |

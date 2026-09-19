@@ -109,7 +109,12 @@ export function validateScanUrl(raw: unknown): ScanUrlResult {
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
     return { ok: false, reason: 'not-web' };
   }
-  return { ok: true, url };
+  // **返すのは解析後の href** (パス 325)。`url` (生の文字列) を返すと、調べた物
+  // (`parsed`) と第三者へ送る物 (raw) が別になる —— 実測で 8 形のうち 5 形が食い違った
+  // (`https:/\evil.example/p` / `HTTPS://Example.COM/X` / `https://example.com` /
+  // `https://example.com/a b` / IDN)。隣の `normalizeProxyEndpoint` は最初から
+  // `parsed.href` を返しており、**同じ形の関門 7 つのうちここだけが生を返していた**。
+  return { ok: true, url: parsed.href };
 }
 
 /**

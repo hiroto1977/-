@@ -207,7 +207,7 @@ const BARE_SEND = new RegExp(
 const REVIEWED_VARIABLE_DESTINATIONS = [
   {
     file: 'src/main/clients/github.ts',
-    dest: 'item.pull_request.url',
+    dest: 'prUrl.href',
     guard:
       '**応答本文から来る送り先。** /search/issues の各項目が返す PR の API URL を'
       + ' そのまま叩き直す形で、値を決めているのは相手のサーバである。'
@@ -215,7 +215,11 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
       + ' `hostname === api.github.com` でなければ叩かずに fallback を返す。'
       + ' PAT (Authorization) が乗るので、乗っ取られた検索応答が別ホストを指しても'
       + ' 出て行かない。2026-08-23 に検出器を広げるまで、この行は台帳の外にいた'
-      + ' (`jsonFetch<T>(` の型引数 + 引数が次の行、の 2 点で素通りしていた)。',
+      + ' (`jsonFetch<T>(` の型引数 + 引数が次の行、の 2 点で素通りしていた)。'
+      + ' **2026-09-19 (パス 325): 渡すのを生の `item.pull_request.url` から関門の返り値'
+      + ' `prUrl.href` へ変えた** —— 調べた物と使う物を同じにする'
+      + ' (今日は `fetch` が同じ URL parser で解くので送り先は一致したが、'
+      + ' 一致が「両側が同じ parser」という別の前提に依っていた)。',
   },
   {
     file: 'src/shared/ai/chat.ts',
@@ -234,6 +238,18 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
       + ' ただし assertHttpsEndpoint が見るのは**スキームだけでホストは見ない**ので、'
       + ' 封じ込めは「表がハードコードであること」に依存している —— tokenUrl を'
       + ' 設定可能にする変更は、client secret の送り先を外部が選べるようにする変更と同義。',
+  },
+  {
+    file: 'src/main/clients/shopify.ts',
+    dest: 'u.href',
+    guard:
+      '**renderer の payload から来る送り先** (Shopify → Discord の注文同期)。'
+      + ' 送信の直前に `new URL()` で解析し、`protocol === https:` かつ'
+      + ' `hostname === discord.com` でなければ投げて止める。webhook の URL 自体が'
+      + ' 秘密なので、別ホストへ出すと注文の中身ごと漏れる。'
+      + ' **2026-09-19 (パス 325): 渡すのを生の `webhookUrl` から関門の返り値 `u.href` へ変えた**'
+      + ' —— 隣の salesforce 同期は最初から `base.origin` を使っており、'
+      + ' 同じファイルの中で 2 つの枝の流儀が割れていた。',
   },
   {
     file: 'src/renderer/network/proxy.ts',

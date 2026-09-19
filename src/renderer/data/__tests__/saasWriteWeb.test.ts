@@ -876,11 +876,14 @@ describe('scanUrlVirusTotal', () => {
   });
   it('strips base64 padding and converts + / in the VT id (so the report id is base64url)', async () => {
     const ok = jsonResponse(200, { data: { attributes: { last_analysis_stats: { harmless: 1, malicious: 0, suspicious: 0, undetected: 0 } } } });
-    // 'https://a/a>a' の base64 は '+' を含む → '-' に置換されること。
+    // 'https://a/a~a' の base64 は '+' を含む → '-' に置換されること。
+    // (パス 325 まで 'https://a/a>a' を使っていたが、関門が解析後の href を返すように
+    //  なったので '>' が %3E へ正規化され base64 に '+' が出なくなった。'~' は URL 標準でも
+    //  素通りするので、変異体を殺す意図はそのまま保てる。)
     let transport = vi.fn().mockResolvedValueOnce(jsonResponse(200, {})).mockResolvedValueOnce(ok);
-    let res = await scanUrlVirusTotal({ url: 'https://a/a>a' }, 'k', transport);
-    expect(transport.mock.calls[1]![0]).toBe('https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly9hL2E-YQ');
-    expect(res.reportUrl).toBe('https://www.virustotal.com/gui/url/aHR0cHM6Ly9hL2E-YQ');
+    let res = await scanUrlVirusTotal({ url: 'https://a/a~a' }, 'k', transport);
+    expect(transport.mock.calls[1]![0]).toBe('https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly9hL2F-YQ');
+    expect(res.reportUrl).toBe('https://www.virustotal.com/gui/url/aHR0cHM6Ly9hL2F-YQ');
     // 'https://a/a?a' の base64 は '/' を含む → '_' に置換されること。
     transport = vi.fn().mockResolvedValueOnce(jsonResponse(200, {})).mockResolvedValueOnce(ok);
     res = await scanUrlVirusTotal({ url: 'https://a/a?a' }, 'k', transport);

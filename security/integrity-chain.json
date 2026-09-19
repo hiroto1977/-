@@ -1969,6 +1969,14 @@
       "leafCount": 78,
       "note": "update redact.ts",
       "hash": "9d5cf2972655164e9fde2a8574b27f0d98f8d2ef391e42f9244ab16916363d6d"
+    },
+    {
+      "index": 236,
+      "prevHash": "9d5cf2972655164e9fde2a8574b27f0d98f8d2ef391e42f9244ab16916363d6d",
+      "merkleRoot": "771ba090924652e0fc8a8e4a421428b58069345a5d1d0ce5238cbbafea81c83d",
+      "leafCount": 78,
+      "note": "update scanTarget.ts",
+      "hash": "e40f7cb370ef3d37f3e43647aa854a51dafb7d66149b564de8431533f09ed272"
     }
   ],
   "tipManifest": {
@@ -2045,7 +2053,7 @@
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
-    "src/shared/scanTarget.ts": "5f7fd1be552525ef02582cf1930e3368dc06e6f93d4e69a891a8908fa3035794",
+    "src/shared/scanTarget.ts": "069eaceb80e1d0a87e45d6fb61eb18bcf7acd9558ae58be49793c2f025500b69",
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",

@@ -109,14 +109,24 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
       // The PR URL is server-supplied (echoed back from search results)
       // so technically untrusted. Pin to api.github.com to defend against
       // a hijacked /search/issues response that points us elsewhere.
+      // 取りに行くのは**関門の返り値** `prUrl.href` (パス 325)。生の文字列を渡しても
+      // `fetch` が同じ URL parser で解くので今日の送り先は一致するが、一致が
+      // 「両側が同じ parser を使う」という別の前提に依る形になる。隣の
+      // salesforce 同期は最初から `base.origin` を使っていた。
+      //
+      // **ローカルの裸の変数 (`target` など) には置き換えない。** `lint:network-targets`
+      // の `BARE_SEND` は「プロパティ参照」だけを拾う設計で、その限界は docblock に
+      // 明記されている (`const u = cfg.url; fetch(u, …)` は掛からない) ——
+      // 裸の名前にすると、この送り先が台帳の視野から黙って外れる。
+      let prUrl: URL;
       try {
-        const u = new URL(item.pull_request.url);
-        if (u.protocol !== 'https:' || u.hostname !== 'api.github.com') return fallback;
+        prUrl = new URL(item.pull_request.url);
       } catch {
         return fallback;
       }
+      if (prUrl.protocol !== 'https:' || prUrl.hostname !== 'api.github.com') return fallback;
       try {
-        const pr = await jsonFetch<PullDetail>(item.pull_request.url, init, fetchCtx);
+        const pr = await jsonFetch<PullDetail>(prUrl.href, init, fetchCtx);
         return {
           number: pr.number,
           title: pr.title,
