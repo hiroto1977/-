@@ -464,6 +464,14 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.renderer('storageReadLedger')), test(T.shared('watchlistState')), test(T.shared('teamRadarState')), test(T.main('stateFile'))],
   },
   {
+    id: 'sample-never-written-back',
+    family: 'at-rest',
+    name: '見本を利用者の保管場所へ書き戻さない',
+    statement: '「まだ無い」「読めなかった」ときに返る同梱の見本は飾りであって利用者の物ではない。それを画面の状態へ取り込むと自動保存がそのまま端末へ書き、利用者が何も押していないのに編集中の内容が消える。取り込むのは stored === "saved" のときだけ。「読めていない下書きを書き戻さない」(パス 160) と対になる、書く側の規則。',
+    provenance: ['パス 160', 'パス 335'],
+    enforcedBy: [test(T.renderer('snapshotAdoptionCensus')), test('src/renderer/pages/__tests__/teamRadarSampleNeverOverwrites.test.ts'), harness('e2e')],
+  },
+  {
     id: 'size-gate-before-parse',
     family: 'at-rest',
     name: 'ディスクから読む所は読む前に大きさの門',

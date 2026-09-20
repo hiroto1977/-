@@ -231,6 +231,14 @@ export function TeamRadarPage() {
       ? draft.current.members
       : (structuredClone(data.members) as TeamMember[]),
   );
+  /**
+   * **マウント時、画面の内容がこの端末の下書きから来たか** (2026-09-20 · パス 335)。
+   * 読めなかった保存値の注記が「何を表示しているか」を言うために要る。ref なのは
+   * 表示のためだけの事実で、再描画の引き金にならないほうが正しいから。
+   */
+  const startedFromDraft = useRef(
+    draft.current.members !== undefined && draft.current.members.length > 0,
+  );
   const [saveBusy, setSaveBusy] = useState(false);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
@@ -268,6 +276,32 @@ export function TeamRadarPage() {
       isFirstDataSync.current = false;
       return;
     }
+    /*
+     * **見本で、利用者の編集中の内容を置き換えない** (2026-09-20 · パス 335)。
+     *
+     * この効果は 2026-09 まで `data` が変わるたびに無条件で画面の状態を上書きして
+     * いた。その直後に下の保存の効果が走るので、**上書きされた内容がそのまま
+     * `servicehub.teamradar.draft.v1` へ書かれる** —— 利用者が何も押していなくても
+     * 端末に残っていた編集内容が消える。実測 (jsdom · 下書きに 1 名を入れて「更新」を
+     * 1 回押す):
+     *
+     * ```
+     *   stored='saved'      → 下書きは保存した物で置き換わる     (筋が通る)
+     *   stored='none'       → 下書きは**同梱の見本 3 人**で置き換わる  ← 消える
+     *   stored='unreadable' → 下書きは**同梱の見本 3 人**で置き換わる  ← 消える
+     * ```
+     *
+     * 見本は `buildTeamRadarSnapshot` が `DEFAULT_TEAM_RADAR_STATE` から組む飾りで、
+     * 利用者の物ではない。**利用者の物でない値を、利用者の保管場所へ書いてはいけない**
+     * —— パス 120 (バッジと注記)・パス 121 (人材育成)・パス 309 (銘柄) と同じ家系で、
+     * この画面だけは「言い分ける」ところまでしか直っておらず、**書き戻す側**が残っていた。
+     * 同じモジュールの下 (パス 160) が「読めていない下書きを書き戻さない」と言っているのと
+     * 対になる規則である: 読めない物は書き戻さない / 見本は書き戻さない。
+     *
+     * 保存の直後の `refresh()` は `stored: 'saved'` を返すので、「保存した物が戻ってくる」
+     * 振る舞いは変わらない (e2e の ★ がそれを押さえている)。
+     */
+    if (data.stored !== 'saved') return;
     setDepartment(data.department);
     setEvaluatedAt(data.evaluatedAt);
     setMembers(structuredClone(data.members) as TeamMember[]);
@@ -474,7 +508,17 @@ export function TeamRadarPage() {
       {/* 保存先が読めなかったときだけ出る (パス 120)。見本に化けたことを黙らない。 */}
       {data.storedNote !== null && (
         <div role="status" style={{ padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid var(--warning)', borderRadius: 6, fontSize: 12, color: 'var(--warning)', lineHeight: 1.5 }}>
-          ⚠ {data.storedNote}
+          {/*
+            * 注記の本文は「保存先で何が起きたか」だけ (shared)。**何を表示しているかは
+            * 画面が言う** (パス 335) —— 下書きが在れば見本では置き換えないので、
+            * 「見本を表示しています」は偽になる。
+            */}
+          ⚠ {data.storedNote}{' '}
+          <span data-stored-fallback>
+            {startedFromDraft.current
+              ? 'この端末に残っていた編集中の内容は、そのままにしています。'
+              : '見本を表示しています。'}
+          </span>
         </div>
       )}
 

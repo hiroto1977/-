@@ -2938,6 +2938,30 @@ async function teamRadarSuite(browser) {
   ok(afterCorrupt.includes('同梱データ'), 'teamRadar: ★ 読めなかったときのバッジは「同梱データ」で、注記が理由を言う');
 
   /*
+   * **読めない保存値を取り直しても、端末の編集内容を見本で上書きしない** (パス 335)。
+   *
+   * 画面は「`data` が変わったら状態を揃える」効果と「状態が変わったら下書きを書く」効果を
+   * 持つ。前者に「取ってきた物が利用者の保存した物か」の判定が無かったので、保存値が
+   * 読めないときに返る**同梱の見本 3 人**が下書きへ流れ、利用者が何も押していなくても
+   * 端末の編集内容が消えていた。ここまでの手順でメンバー4 は利用者が足した人なので、
+   * 見本で上書きされればその名前は下書きから消える —— それを針にする。
+   *
+   * この 1 件は **2026-09 の e2e の揺れの原因でもあった**: 上書きは `data` が landed した
+   * 後の passive effect で起き、その効果が走る前に下の `page.evaluate` が下書きを書くと、
+   * 直後に見本で潰されて次の段の `[data-skill-radar-omitted]` が永遠に出ない。
+   * 負荷が高いほど順序が入れ替わるので、連鎖で回したときだけ落ちていた。
+   */
+  const draftAfterCorrupt = await page.evaluate(
+    () => localStorage.getItem('servicehub.teamradar.draft.v1') ?? '',
+  );
+  ok(draftAfterCorrupt.includes('メンバー4'),
+    'teamRadar: ★ 読めない保存値を取り直しても、端末の編集内容が見本で上書きされない');
+  ok(afterCorrupt.includes('この端末に残っていた編集中の内容は、そのままにしています'),
+    'teamRadar: ★ 注記は、残した物を残したと言う');
+  ok(!afterCorrupt.includes('見本を表示しています'),
+    'teamRadar: ★ 下書きが在るのに「見本を表示しています」と言わない');
+
+  /*
    * **未評価の軸が在る人を、図が中心に描かない** (パス 190)。
    *
    * 評点の入力は 1-5 の range なので画面から 0 は書けない —— 0 が入る道は下書きで、
@@ -3792,7 +3816,7 @@ async function hardResetSuite(browser) {
     ['realtime', realtimeSuite, 5], // 実測 7
     ['phone', phoneSuite, 8], // 実測 10
     ['talent', talentSuite, 11], // 実測 14
-    ['teamRadar', teamRadarSuite, 11], // 実測 14
+    ['teamRadar', teamRadarSuite, 14], // 実測 17
     ['demoMix', demoMixSuite, 8], // 実測 10
     ['paperAccount', paperAccountSuite, 8], // 実測 10
     ['serviceAdvice', serviceAdviceSuite, 12], // 実測 15
@@ -3806,7 +3830,7 @@ async function hardResetSuite(browser) {
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /** 全 suite を回したときの合計の床 (実測 395 の約 88%)。一部だけ回すときは掛けない。 */
-  const MIN_TOTAL_CHECKS = 381;
+  const MIN_TOTAL_CHECKS = 384;
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
     console.error(`❌ SERVICE_HUB_E2E_ONLY に知らない suite: ${unknown.join(', ')} (使える名前: ${SUITES.join(', ')})`);

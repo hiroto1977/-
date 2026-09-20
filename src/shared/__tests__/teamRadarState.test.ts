@@ -194,8 +194,17 @@ describe('buildTeamRadarSnapshot — 両ビルドの fetchSnapshot が同じ形�
     expect(snap.stored).toBe('unreadable');
     expect(snap.storedNote).toBe(unreadableTeamRadarNote('JSON として読めません'));
     expect(unreadableTeamRadarNote('X')).toBe(
-      '保存したチームの状態を読めませんでした (X)。見本を表示しています。「チーム情報を保存」を押すと画面の内容で上書きされ、元の保存値は戻りません。',
+      '保存したチームの状態を読めませんでした (X)。「チーム情報を保存」を押すと画面の内容で上書きされ、元の保存値は戻りません。',
     );
+    /*
+     * **この文は「画面に何が出ているか」を言わない** (2026-09-20 · パス 335)。
+     * 2026-09-20 まで「見本を表示しています。」を含んでいたが、下書きが在れば
+     * 画面に出ているのは見本ではない —— その 1 文は画面 (`TeamRadarPage`) が
+     * `data-stored-fallback` として足す (`teamRadarSampleNeverOverwrites.test.ts`)。
+     */
+    expect(unreadableTeamRadarNote('X')).not.toContain('見本を表示しています');
+    // 綴りの標本 —— この針が当たることを、当たるべき文で示す (無ければ黙る検査を作らない)。
+    expect('見本を表示しています。').toContain('見本を表示しています');
   });
 
   it('見本は 3 人の営業部 (基準の絵に合わせた物) で、鍵は台帳の 1 つ', () => {

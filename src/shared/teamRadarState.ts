@@ -384,9 +384,19 @@ export function readStoredTeamRadar(raw: string | null): StoredTeamRadar {
   return { kind: 'saved', state: { department: dept, evaluatedAt: at, members } };
 }
 
-/** 読めなかったときに画面が刷る 1 行 (両ビルドで同じ文)。 */
+/**
+ * 読めなかったときに画面が刷る 1 行 (両ビルドで同じ文)。
+ *
+ * **ここは「保存先で何が起きたか」だけを言う。画面に何が出ているかは言わない**
+ * (2026-09-20 · パス 335)。この文は 2026-09-20 まで「見本を表示しています。」を
+ * 含んでいたが、**下書きが在れば画面に出ているのは見本ではない** ——
+ * マウント時は下書きを優先して復元するので、注記が出ている隣で利用者自身の
+ * 氏名が並んでいた。何を表示しているかを知っているのは画面 (`TeamRadarPage`) だけ
+ * なので、その 1 文は画面が足す。ここが述べる 2 つはどちらも常に真である:
+ * ① 保存値を読めなかった (理由つき) ② 保存を押すと元の保存値は戻らない。
+ */
 export function unreadableTeamRadarNote(reason: string): string {
-  return `保存したチームの状態を読めませんでした (${reason})。見本を表示しています。「チーム情報を保存」を押すと画面の内容で上書きされ、元の保存値は戻りません。`;
+  return `保存したチームの状態を読めませんでした (${reason})。「チーム情報を保存」を押すと画面の内容で上書きされ、元の保存値は戻りません。`;
 }
 
 // Module-level const init; perTest can't link to a specific test.

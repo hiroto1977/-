@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (84)
+## 5. 法則と執行者 (85)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -216,12 +216,13 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `loopback-oauth-host-pin` | **OAuth callback の Host は loopback だけ** — DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。 | 不変条件 #12 / パターン 0-a-14 | 検査 `src/shared/__tests__/loopbackChecks.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `header-values-one-rule` | **Headers が何を受理するかは 1 つの判定** — 資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。 | パス 244 / パス 296 | 検査 `src/shared/__tests__/headerValue.test.ts`<br>検査 `src/shared/__tests__/headerValueLeak.test.ts` |
 
-### 保存と復元 (10)
+### 保存と復元 (11)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
 | `storage-ledger-and-hard-reset` | **端末に残す物は台帳、ハードリセットは全行を覆う** — 新しい保存先が黙って増えない。媒体が DATA_PROTECTION の在庫に載る。入口 (localWrite) へ流れる鍵は登録の鍵と一致する (双方向)。「すべてのデータを削除」が台帳の全行を消す。 | lint:storage 規則 11 / lint:storage 規則 12 / パス 136 / パス 310 | ゲート `npm run lint:storage`<br>検査 `src/renderer/security/__tests__/eraseAll.test.ts` |
 | `read-policy-three-states` | **「無い」「読めなかった」「読めた」を分ける** — 壊れた保存値を「まだ無い」に畳むと、次の登録が元の一覧を上書きする。読みは 3 状態で返し、画面は ⚠ で言う。端末からの読み 22 か所は方針 4 通りと理由で台帳。 | パス 120 / パス 121 / パス 309 / パス 310 / パス 313 | 検査 `src/renderer/__tests__/storageReadLedger.test.ts`<br>検査 `src/shared/__tests__/watchlistState.test.ts`<br>検査 `src/shared/__tests__/teamRadarState.test.ts`<br>検査 `src/main/__tests__/stateFile.test.ts` |
+| `sample-never-written-back` | **見本を利用者の保管場所へ書き戻さない** — 「まだ無い」「読めなかった」ときに返る同梱の見本は飾りであって利用者の物ではない。それを画面の状態へ取り込むと自動保存がそのまま端末へ書き、利用者が何も押していないのに編集中の内容が消える。取り込むのは stored === "saved" のときだけ。「読めていない下書きを書き戻さない」(パス 160) と対になる、書く側の規則。 | パス 160 / パス 335 | 検査 `src/renderer/__tests__/snapshotAdoptionCensus.test.ts`<br>検査 `src/renderer/pages/__tests__/teamRadarSampleNeverOverwrites.test.ts`<br>実機 `npm run e2e` |
 | `size-gate-before-parse` | **ディスクから読む所は読む前に大きさの門** — 「自分が書いた物は大きくならない」は前提にならない (別プロセス・壊れたディスク・同期ソフト)。stat で読む前に門、読んだ後にも byte の門。secrets.json は 1 MB かつ plain object。**控えへ倒れる枝は呼び出し側から見えないので、門は読む関数の中に置く** (パス 326)。同期の読みは主スレッドを止めるので特に要る。 | 不変条件 #13 / パス 308 / パス 313 / パス 326 (母集団の機械) | 検査 `src/main/__tests__/fileReadSizeGateCensus.test.ts`<br>検査 `src/main/__tests__/stateFile.test.ts`<br>検査 `src/main/__tests__/secretsProtection.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `at-rest-mechanism-inventory` | **保存物の封緘方式は台帳** — OS のキーチェーン / WebCrypto の保管庫 / 難読化 / 平文のどれで残っているかを 1 つの在庫が持ち、画面 (secrets:protection) がそれを言う。 | パス 147 / パス 318 | 検査 `src/main/__tests__/atRestPolicy.test.ts`<br>ゲート `npm run lint:storage` |
 | `credential-only-when-read` | **読み手の無い資格情報を預からない** — 取得も書き込みも読まないサービスにトークン入力欄を出さない。「預かること自体が漏えい面」。判定は規則 (client が token に触るか) で決まり、双方向で照合する。 | credentialUse.ts の docblock / パス 147 | ゲート `npm run lint:credential-use`<br>検査 `src/shared/__tests__/credentialUse.test.ts`<br>型 `src/shared/credentialUse.ts` |
@@ -294,6 +295,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 84 (機械あり 79 / 散文だけ 5)
+- 法則 85 (機械あり 80 / 散文だけ 5)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`
