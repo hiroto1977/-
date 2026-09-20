@@ -51,13 +51,36 @@ const REPO_ROOT = path.resolve(__dirname, '../../..');
 /** この検査自身は母集団から外す。理由は下の `it` が主張する。 */
 const SELF = 'src/shared/__tests__/absenceSampleCensus.test.ts';
 
-function trackedTestFiles(): string[] {
-  const out = execFileSync('git', ['ls-files', 'src/**/*.test.ts', 'src/**/*.test.tsx'], {
-    cwd: REPO_ROOT,
-    encoding: 'utf8',
-    maxBuffer: 64 * 1024 * 1024,
-  });
-  return out.split('\n').filter(Boolean);
+/**
+ * 母集団のファイル —— **追跡済み + 未追跡 (無視されていない)**。
+ *
+ * ## `--others --exclude-standard` を足した理由 (2026-09-20 · パス 341)
+ *
+ * ここは `git ls-files` だけを呼んでおり、**まだ `git add` していない新しい
+ * 検査ファイルが 1 つも映らなかった**。規約が最も効くのは「検査を新しく
+ * 書いた瞬間」なので、**効かせたい時にだけ黙る**形だった。
+ *
+ * 実測で踏んだ (パス 340 → 341): 新しい検査に標本の無い `not.toMatch(/…/)` を
+ * 書いて `npm test` を回すと **17,658 件すべて緑**、commit して push したら
+ * **CI が同じ 1 件で落ちた** —— ローカルとの差は「その時点で追跡されていたか」
+ * だけである。**`npm test` が CI と違う答えを出す検査は、手元の確認を無意味にする。**
+ *
+ * 対照 (2026-09-20 実測): 未追跡の検査に標本なしの `not.toMatch` を置くと、
+ * この指定では **捕まえ**、`git ls-files` だけに戻すと **見えなくなる**。
+ *
+ * `--exclude-standard` を付けるので `.gitignore` の物 (dist/ など) は入らない。
+ */
+function testFilePopulation(): string[] {
+  const out = execFileSync(
+    'git',
+    ['ls-files', '--cached', '--others', '--exclude-standard', 'src/**/*.test.ts', 'src/**/*.test.tsx'],
+    {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+      maxBuffer: 64 * 1024 * 1024,
+    },
+  );
+  return [...new Set(out.split('\n').filter(Boolean))].sort();
 }
 
 const JP = /[぀-ゟ゠-ヿ一-鿿]/;
@@ -149,7 +172,7 @@ interface Census {
 }
 
 function runCensus(): Census {
-  const files = trackedTestFiles().filter((f) => f !== SELF);
+  const files = testFilePopulation().filter((f) => f !== SELF);
   const texts = new Map<string, string>();
   // **原文の道具を通す** (`originalSourcePolicy.test.ts` の規則 1)。
   // 生の `readFileSync` は変異検査の中で**変異体**を読みうるし、
@@ -278,8 +301,21 @@ describe('走査が実際に当たる (自分の標本)', () => {
     expect([...positiveNeedles(pos)]).toEqual(['/あ/']);
   });
 
+  /*
+   * **母集団は「まだ commit していない検査」も含む** (2026-09-20 · パス 341)。
+   * 詳しい経緯と対照は `testFilePopulation` の docblock。
+   */
+  it('★ 母集団は未追跡のファイルも数える (npm test と CI の答えを揃える)', () => {
+    const src = readOriginalSource(path.join(REPO_ROOT, SELF));
+    expect(src, '未追跡を拾う指定が無い').toContain("'--others'");
+    expect(src, '.gitignore の物まで拾っている').toContain("'--exclude-standard'");
+    // 標本 —— 走査が実物に届いている (この検査自身のファイルが母集団に在る)。
+    expect(testFilePopulation()).toContain(SELF);
+    expect(testFilePopulation().length).toBeGreaterThanOrEqual(200);
+  });
+
   it('★ この検査自身が母集団から外れている (自分の標本を数えない)', () => {
-    const files = trackedTestFiles();
+    const files = testFilePopulation();
     expect(files, 'この検査が追跡されていない').toContain(SELF);
     const c = runCensus();
     expect(

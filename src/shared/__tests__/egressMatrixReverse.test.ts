@@ -78,6 +78,9 @@ export function documentedButUnfound(): string[] {
  * コードに在るのは接尾辞の判定だけ)。「走査の死角」は理由にならない ——
  * それは針を直す合図である (パス 340 の `defaultBaseUrl` がまさにそれだった)。
  */
+/** 先送りの決まり文句 —— 台帳の理由として認めない綴り (標本は下の it が持つ)。 */
+const POSTPONED = /死角|未対応|あとで/;
+
 const LEDGER: readonly { readonly host: string; readonly why: string }[] = [
   {
     host: 'atlassian.net',
@@ -135,9 +138,26 @@ describe('egress マトリクスの逆向き (パス 340)', () => {
     expect(LEDGER.length).toBeGreaterThan(0);
     for (const r of LEDGER) {
       expect(r.why.trim().length, r.host).toBeGreaterThan(30);
-      expect(r.why, `${r.host}: 死角は理由にならない (針を直すこと)`).not.toMatch(/死角|未対応|あとで/);
+      expect(r.why, `${r.host}: 死角は理由にならない (針を直すこと)`).not.toMatch(POSTPONED);
       // 認める理由は「接尾辞しかコードに無い」だけ —— その根拠を名指ししていること。
       expect(r.why, `${r.host}: どこに接尾辞の判定が在るかを書く`).toMatch(/src\/|shared\/|main\//);
     }
+  });
+
+  /*
+   * **不在の主張には標本を添える** (CLAUDE.md の規約・機械は `absenceSampleCensus`)。
+   * 上の `not.toMatch(POSTPONED)` は綴りが 1 つ違えば黙るので、その針が
+   * **実際に禁じたい文面へ当たる**ことをここで肯定形で示す。
+   */
+  it('★ 標本: 先送りの決まり文句に、針が実際に当たる', () => {
+    for (const sample of [
+      '走査の死角なので通っていない',
+      'この宛先は未対応',
+      'あとで直す',
+    ]) {
+      expect(sample, `針が当たっていない: ${sample}`).toMatch(POSTPONED);
+    }
+    // 対照 —— 認めている理由 (接尾辞しかコードに無い) には当たらない。
+    for (const r of LEDGER) expect(r.why).not.toMatch(POSTPONED);
   });
 });
