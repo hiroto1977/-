@@ -386,6 +386,11 @@ describe('印刷の隣は計算書類の検算も数える', () => {
  */
 describe('書類スタジオ — 計算書類は 1 点 1 枚 (パス 323)', () => {
   const ids = (): (string | null)[] => q.pages().map((p) => p.getAttribute('data-kessan-page'));
+  /** 法定の紙だけ (参考の別紙を除く・パス 329)。 */
+  const statutoryIds = (): (string | null)[] =>
+    q.pages().filter((p) => p.getAttribute('data-kessan-kind') === 'statutory').map((p) => p.getAttribute('data-kessan-page'));
+  const referenceIds = (): (string | null)[] =>
+    q.pages().filter((p) => p.getAttribute('data-kessan-kind') === 'reference').map((p) => p.getAttribute('data-kessan-page'));
 
   /*
    * **「計算書類（4点まとめて）」は 4 枚ちょうど** (パス 328・依頼「これらを４つに分けて」)。
@@ -397,23 +402,78 @@ describe('書類スタジオ — 計算書類は 1 点 1 枚 (パス 323)', () =
   it('★ 「まとめて」は 4 枚の紙 (損益 / 貸借 / 変動 / 注記) がこの順に並び、どれも .ds-paper で免責の脚注を持つ', async () => {
     navigateTo('docstudio', { doc: 'kessan' });
     await mount();
-    expect(ids()).toEqual(['pl', 'bs', 'equity', 'notes']);
+    expect(statutoryIds()).toEqual(['pl', 'bs', 'equity', 'notes']);
     expect(q.sheets()?.getAttribute('data-kessan-pages')).toBe('4');
     for (const pg of q.pages()) {
       expect(pg.classList.contains('ds-paper'), pg.getAttribute('data-kessan-page') ?? '').toBe(true);
       expect(pg.querySelector('.ds-disclaimer')?.textContent).toContain('専門家による確認');
     }
     // 紙 1 枚に見出し 1 つ (紙をまたいで書面が続かない)
-    expect(q.pages().map((pg) => pg.querySelectorAll('.ds-title').length)).toEqual([1, 1, 1, 1]);
-    // 紙の上の札 (画面だけ)
+    expect(q.pages().map((pg) => pg.querySelectorAll('.ds-title').length)).toEqual([1, 1, 1, 1, 1]);
+    // 紙の上の札 (画面だけ)。**数えるのは法定の紙だけ** (パス 329)。
     const captions = Array.from(container.querySelectorAll('.ds-sheet-caption')).map((c) => c.textContent?.trim() ?? '');
-    expect(captions).toHaveLength(4);
+    expect(captions.filter((c) => c.includes('枚目'))).toHaveLength(4);
     expect(captions[0]).toContain('1 枚目 / 全 4 枚');
     expect(captions[0]).toContain('損益計算書');
     expect(captions[3]).toContain('4 枚目 / 全 4 枚');
     expect(captions[3]).toContain('個別注記表');
-    // 計算書類の外側に「1 枚の紙」は残っていない (4 枚がすべて)
-    expect(container.querySelectorAll('.ds-paper').length).toBe(4);
+  });
+
+  /*
+   * **投資ポートフォリオは参考の別紙として併記する** (パス 329・依頼「計算書類4点にポートフォリオも併記する様にして」)。
+   *
+   * 計算書類の**中には入れない** —— 4 点は会社法 435 条 2 項の様式で、保有明細はその様式に無い。
+   * さらに出所 (`mutual-funds` / `real-estate`) は `SERVICE_DATA_ORIGIN` が `sample` と言うとおり
+   * 同梱の見本なので、法定書類の中に刷ると見本の数字が決算書として出る。
+   */
+  it('★ 参考の別紙としてポートフォリオが併記される (法定の 4 枚は増えない)', async () => {
+    navigateTo('docstudio', { doc: 'kessan' });
+    await mount();
+    expect(referenceIds()).toEqual(['portfolio']);
+    expect(statutoryIds()).toHaveLength(4);
+    expect(q.sheets()?.getAttribute('data-kessan-pages')).toBe('4');
+    expect(q.sheets()?.getAttribute('data-kessan-reference')).toBe('1');
+    expect(container.querySelectorAll('.ds-paper').length).toBe(5);
+    // 参考の紙は「枚目」で数えず、自分が計算書類でないことを札で言う
+    const refCaption = Array.from(container.querySelectorAll('.ds-sheet-caption'))
+      .map((c) => c.textContent?.trim() ?? '')
+      .find((c) => c.includes('参考'));
+    expect(refCaption).toBeDefined();
+    expect(refCaption).not.toContain('枚目');
+    expect(refCaption).toContain('計算書類ではありません');
+    // 標本: 「枚目」の綴りは法定の札には実際に在る (不在の主張が空にならない)
+    expect(Array.from(container.querySelectorAll('.ds-sheet-caption'))[0]?.textContent).toContain('枚目');
+  });
+
+  it('★ 参考の紙は 3 つ断る: 計算書類でない / 数字の出所 / 基準の違い', async () => {
+    navigateTo('docstudio', { doc: 'kessan' });
+    await mount();
+    const annex = container.querySelector('[data-kessan-page="portfolio"]');
+    expect(annex).not.toBeNull();
+    const text = annex?.textContent ?? '';
+    expect(text).toContain('会社法435条2項の計算書類');
+    expect(text).toContain('含まれません');
+    // 出所は sample (同梱の見本) なので、実データと取り違えない断りが出る
+    expect(annex?.querySelector('[data-annex-origin]')?.getAttribute('data-annex-origin')).toBe('sample');
+    expect(text).toContain('見本データです');
+    expect(text).toContain('転記しないでください');
+    // 時価 / 取得価額 と 簿価 は基準が違う
+    expect(annex?.querySelector('[data-annex-basis]')).not.toBeNull();
+    expect(text).toContain('基準が違うため差が出るのが通常');
+    // 保有明細と、貸借対照表の簿価の突き合わせ行
+    expect(annex?.querySelector('table[data-statement="投資ポートフォリオ"]')).not.toBeNull();
+    expect(text).toContain('貸借対照表 投資有価証券（簿価）');
+    expect(text).toContain('貸借対照表 土地 + 建物（簿価）');
+  });
+
+  it('★ 1 点ずつ開いたときは参考の別紙を出さない (併記するのは「まとめて」のとき)', async () => {
+    navigateTo('docstudio', { doc: 'kessan-bs' });
+    await mount();
+    expect(referenceIds()).toEqual([]);
+    expect(container.querySelector('[data-kessan-page="portfolio"]')).toBeNull();
+    // 標本: 綴りは「まとめて」では実際に出る
+    await click(q.tab('all')!);
+    expect(container.querySelector('[data-kessan-page="portfolio"]')).not.toBeNull();
   });
 
   it('★ 決算公告の要旨は束から外れても失われない (貸借対照表を選べば 2 枚目に出る)', async () => {

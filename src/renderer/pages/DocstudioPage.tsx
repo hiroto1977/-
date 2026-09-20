@@ -2,6 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { printDocument } from '../data/printDocument';
 import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
+import {
+  ANNEX_BASIS_NOTE,
+  ANNEX_NOT_STATUTORY,
+  annexOriginNote,
+  buildPortfolioAnnex,
+} from '../data/portfolioAnnex';
+import { SERVICE_DATA_ORIGIN } from '../../shared/dataOrigin';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
@@ -716,9 +723,17 @@ function NotesSheet({ sections }: { sections: readonly NoteSection[] }) {
 
 /** 1 枚の書面 (画面では 1 枚の紙・印刷では 1 ページ目から始まる)。 */
 interface KessanPage {
-  readonly id: 'pl' | 'bs' | 'equity' | 'notes' | 'notice';
+  readonly id: 'pl' | 'bs' | 'equity' | 'notes' | 'notice' | 'portfolio';
   /** 紙の上の札に出す名前。 */
   readonly title: string;
+  /**
+   * **法定の計算書類か、参考の別紙か** (パス 329)。
+   *
+   * 「n 枚目 / 全 N 枚」と数えるのは `statutory` だけである —— 参考の紙を同じ列に数えると、
+   * タブが名乗る「4点」と枚数がまた食い違う (パス 328 で直した形)。参考の紙は別の札を持ち、
+   * 紙の上で「計算書類ではない」と自分で言う。
+   */
+  readonly kind: 'statutory' | 'reference';
   readonly body: React.ReactNode;
 }
 
@@ -752,6 +767,7 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
   if (show('pl')) {
     pages.push({
       id: 'pl',
+      kind: 'statutory',
       title: '損益計算書',
       body: (
         <>
@@ -767,6 +783,7 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
   if (show('bs')) {
     pages.push({
       id: 'bs',
+      kind: 'statutory',
       title: '貸借対照表',
       body: (
         <>
@@ -781,6 +798,7 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
   if (show('equity')) {
     pages.push({
       id: 'equity',
+      kind: 'statutory',
       title: '株主資本等変動計算書',
       body: (
         <>
@@ -796,6 +814,7 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
   if (show('notes')) {
     pages.push({
       id: 'notes',
+      kind: 'statutory',
       title: '個別注記表',
       body: (
         <>
@@ -818,6 +837,7 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
      */
     pages.push({
       id: 'notice',
+      kind: 'statutory',
       title: '決算公告（貸借対照表の要旨）',
       body: (
         <>
@@ -834,20 +854,100 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
       ),
     });
   }
-  return (
-    <div className="ds-sheets" data-kessan-sheets={sheet} data-kessan-pages={pages.length}>
-      {pages.map((pg, i) => (
-        <div key={pg.id} className="ds-sheet-block">
-          {/* 紙の上の札。画面だけの案内で、印刷には出ない (styles.css)。 */}
-          <div className="ds-sheet-caption" aria-hidden="true">
-            📄 {i + 1} 枚目 / 全 {pages.length} 枚 — {pg.title}
+  if (sheet === 'all') {
+    /*
+     * **投資ポートフォリオを参考の別紙として併記する** (パス 329・依頼「計算書類4点にポートフォリオも併記する様にして」)。
+     *
+     * 計算書類の**中には入れない** —— 4 点は会社法 435 条 2 項の様式で、保有明細はその様式に無い。
+     * さらに出所 (`mutual-funds` / `real-estate`) は `SERVICE_DATA_ORIGIN` が **`sample`** と
+     * 言うとおり同梱の見本で、利用者の実データではない。`shared/dataOrigin.ts` は自分で
+     * 「決算書類・申告書類へ流れる数字を扱うアプリで、これは単なる表示崩れでは済まない」と書いている。
+     * だから紙は分け、**紙の上で 3 つ言う**: 計算書類ではないこと・数字の出所・基準の違い。
+     */
+    const annex = buildPortfolioAnnex(
+      SNAPSHOT.mutualFunds.holdings,
+      SNAPSHOT.realEstate.properties,
+      values,
+    );
+    // 出所は 2 サービスぶん在る。**どちらかが見本なら見本として断る** (緩い方に倒さない)。
+    const origin =
+      SERVICE_DATA_ORIGIN['mutual-funds'] === 'sample' || SERVICE_DATA_ORIGIN['real-estate'] === 'sample'
+        ? 'sample'
+        : SERVICE_DATA_ORIGIN['mutual-funds'];
+    pages.push({
+      id: 'portfolio',
+      kind: 'reference',
+      title: '参考: 投資ポートフォリオ',
+      body: (
+        <>
+          <div className="ds-title">参考: 投資ポートフォリオ</div>
+          <div className="ds-right">
+            <Fill text="{{company}}　{{fyEnd}} 現在" fields={fields} values={values} />
           </div>
-          <section className="ds-paper ds-sheet" data-kessan-page={pg.id} aria-label={`${pg.title}（${i + 1} 枚目 / 全 ${pages.length} 枚）`}>
-            {pg.body}
-            <div className="ds-disclaimer">{DOC_DISCLAIMER}</div>
-          </section>
-        </div>
-      ))}
+          <div data-annex-origin={origin} style={{ fontSize: 11, color: 'var(--warning)', fontWeight: 700, marginBottom: 6 }}>
+            {annexOriginNote(origin)}
+          </div>
+          {annex.empty ? (
+            <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>保有の明細がありません。</div>
+          ) : (
+            <table className="ds-table" data-statement="投資ポートフォリオ">
+              <thead>
+                <tr><th>投資ポートフォリオ（参考）</th><th>金額（円）</th></tr>
+              </thead>
+              <tbody>
+                {annex.rows.map((r, i) => (
+                  <tr key={`${r.label}-${i}`} data-row-kind={r.kind}>
+                    <td style={{ paddingLeft: r.indent ? 20 : undefined, fontWeight: r.kind === 'item' ? 400 : 700 }}>
+                      {r.label}
+                    </td>
+                    <td className="ds-num">{r.kind === 'section' ? '' : fmt(r.amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <div data-annex-basis style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6 }}>{ANNEX_BASIS_NOTE}</div>
+          <div data-annex-not-statutory style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
+            <strong>{ANNEX_NOT_STATUTORY}</strong>
+          </div>
+        </>
+      ),
+    });
+  }
+  const statutory = pages.filter((pg) => pg.kind === 'statutory');
+  return (
+    <div
+      className="ds-sheets"
+      data-kessan-sheets={sheet}
+      data-kessan-pages={statutory.length}
+      data-kessan-reference={pages.length - statutory.length}
+    >
+      {pages.map((pg) => {
+        // **数えるのは法定の紙だけ** (パス 329)。参考の紙を同じ列に数えると、
+        // タブの「4点」と枚数がまた食い違う (パス 328 で直した形)。
+        const n = statutory.indexOf(pg);
+        const label =
+          n >= 0
+            ? `${n + 1} 枚目 / 全 ${statutory.length} 枚`
+            : '参考 — 計算書類ではありません';
+        return (
+          <div key={pg.id} className="ds-sheet-block">
+            {/* 紙の上の札。画面だけの案内で、印刷には出ない (styles.css)。 */}
+            <div className="ds-sheet-caption" aria-hidden="true">
+              {n >= 0 ? '📄' : '📎'} {label} — {pg.title}
+            </div>
+            <section
+              className="ds-paper ds-sheet"
+              data-kessan-page={pg.id}
+              data-kessan-kind={pg.kind}
+              aria-label={`${pg.title}（${label}）`}
+            >
+              {pg.body}
+              <div className="ds-disclaimer">{DOC_DISCLAIMER}</div>
+            </section>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1401,7 +1501,8 @@ const COLLECTIONS: readonly CollectionTab[] = [
     label: `${KESSAN_ICON[sh.id]} ${sh.title}`,
   })),
   // 「まとめて」は計算書類 4 点ちょうどを 1 点 1 枚 (4 枚) で出す。決算公告の要旨は 440 条の
-  // 公告なので入れない (貸借対照表に付く)。最後に置く。
+  // 公告なので入れない (貸借対照表に付く)。投資ポートフォリオは参考の別紙として後ろに
+  // 1 枚併記する (パス 329 —— 法定の枚数には数えない)。最後に置く。
   { id: 'kessan', collection: 'kessan', sheet: 'all', label: '📚 計算書類（4点まとめて）' },
 ];
 
@@ -1435,12 +1536,12 @@ const KESSAN_STEPS: readonly (readonly [string, string])[] = [
   ['① 残高を入れる', '試算表（決算整理後）の科目残高を、区分ごとに正の値で入力します。期末商品棚卸高・減価償却累計額・貸倒引当金は控除項目なので、そのまま正の値で入れれば自動で差し引きます。'],
   ['② 当期の変動を入れる', '繰越利益剰余金の期首残高、剰余金の配当、利益準備金への積立、新株発行による増加額を入れます。期首残高は入力しません。期末残高から当期変動額を引いて逆算するので、内訳と食い違う期首を書けないようになっています。'],
   ['③ 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
-  ['④ 書類を選んで印刷 / PDF 保存', '上の書類一覧で損益計算書・貸借対照表・株主資本等変動計算書・個別注記表のどれか（または「計算書類（4点まとめて）」）を選び、「印刷 / PDF 保存」でその書類だけを出力します。「4点まとめて」も 1 点 1 枚で、名乗りどおり 4 枚ちょうど出ます（印刷では書面ごとに改ページ）。決算公告の要旨は会社法440条の公告で計算書類ではないので、貸借対照表を選んだときに 2 枚目として付いてきます。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
+  ['④ 書類を選んで印刷 / PDF 保存', '上の書類一覧で損益計算書・貸借対照表・株主資本等変動計算書・個別注記表のどれか（または「計算書類（4点まとめて）」）を選び、「印刷 / PDF 保存」でその書類だけを出力します。「4点まとめて」も 1 点 1 枚で、法定の書面は名乗りどおり 4 枚ちょうど出ます（印刷では書面ごとに改ページ）。決算公告の要旨は会社法440条の公告で計算書類ではないので、貸借対照表を選んだときに 2 枚目として付いてきます。4 点のあとには投資ポートフォリオの明細を参考として 1 枚併記します —— こちらも計算書類ではなく、紙の上で出所（見本か実データか）と、時価・取得価額と簿価で基準が違うことを断ります。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
   ['⑤ 承認と公告', '定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。作成した計算書類は10年間の保存義務があります。'],
 ];
 
 const KESSAN_NOTES: readonly string[] = [
-  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。4点は書類一覧でそれぞれ独立した書類として並び、1 点ずつ記載・出力できます（「4点まとめて」でも紙は 1 点 1 枚で、出るのは 4 枚ちょうどです）。4点すべては同じ科目残高から組み立てるので（値の入れ物は 1 つのまま）、当期純利益と純資産の連結は切れません。',
+  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。4点は書類一覧でそれぞれ独立した書類として並び、1 点ずつ記載・出力できます（「4点まとめて」でも紙は 1 点 1 枚で、法定の書面は 4 枚ちょうどです。そのあとに参考の投資ポートフォリオが 1 枚付きますが、計算書類には含まれません）。4点すべては同じ科目残高から組み立てるので（値の入れ物は 1 つのまま）、当期純利益と純資産の連結は切れません。',
   '株主資本等変動計算書の当期末残高は、貸借対照表の純資産の部と一致します。期首残高は入力させず期末から逆算するので、二表がずれることはありません。',
   '剰余金の配当をするときは、配当により減少する剰余金の10分の1を資本準備金または利益準備金として計上する必要があります（会社法445条4項）。ただし準備金の合計が資本金の4分の1に達している場合を除きます。',
   '定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）の公告が必要です（会社法440条1項）。'
