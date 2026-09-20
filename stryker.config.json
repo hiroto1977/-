@@ -211,6 +211,7 @@
     "src/shared/connectors/pluginRuntime.ts",
     "src/shared/controlChars.ts",
     "src/shared/credentialUse.ts",
+    "src/shared/constantTimeEquals.ts",
     "src/shared/cryptoParams.ts",
     "src/shared/dataOrigin.ts",
     "src/shared/dbSecurityPosture.ts",

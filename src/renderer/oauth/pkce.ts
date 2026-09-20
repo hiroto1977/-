@@ -21,6 +21,7 @@
  * 本フェーズでは file:// と hosted の両方で動く共通フローとして
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
+import { constantTimeEquals } from '../../shared/constantTimeEquals';
 import { countChars } from '../../shared/inputCeiling';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { parseTokenResponse } from '../../shared/tokenResponse';
@@ -85,25 +86,16 @@ export async function generatePkce(): Promise<PkceSecrets> {
   return { verifier, challenge, state };
 }
 
-/** Constant-time string equality. The length check is safe to early-return
- *  because state is always fixed-length base64url (43 chars from 32 random
- *  bytes via generatePkce). The length is therefore NOT secret. If state
- *  ever becomes variable length (nonce + scope hash, etc.) this early-return
- *  leaks the length and must be replaced with a padded comparison.
- *  Equivalent to `oauth.ts:safeStateEquals` (main process); we reimplement
- *  here because main↔renderer can't share modules. */
-export function safeStateEquals(a: string, b: string): boolean {
-  if (typeof a !== 'string' || typeof b !== 'string') return false;
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  // Stryker disable next-line EqualityOperator: 長さが等しいことは上で確認済みなので、
-  // 1 つ余分に回っても両側とも `charCodeAt(len)` が NaN になり `NaN ^ NaN === 0` で
-  // diff が変わらない (等価変異)。境界を 1 つ越えても結果は同じ。
-  for (let i = 0; i < a.length; i++) {
-    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return diff === 0;
-}
+/**
+ * state の定時間比較。**規則は `shared/constantTimeEquals.ts` に 1 つ**
+ * (2026-09-20 · パス 331)。
+ *
+ * ここに在った実装は main (`oauth.ts:safeStateEquals`) の双子で、
+ * その docblock は「等価」「main↔renderer は module を共有できない」と
+ * 書いていた —— **どちらも偽**だった (共有できるし、孤立サロゲートで
+ * 4,192,256 / 4,330,561 組が割れた)。名前は呼び出し側と検査が使うので残す。
+ */
+export const safeStateEquals = constantTimeEquals;
 
 /** Parse a Google OAuth callback URL (or its raw query string) and extract
  *  `code` + `state`. UI should pass whatever the user pastes (full URL,

@@ -71,6 +71,18 @@ const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
  * それは判断ではなく願望である (パス 247 の方針)。
  */
 const VERDICTS = {
+  constantTimeEquals:
+    '対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、'
+    + '両ビルドは同じ関数を別名 (`safeStateEquals`) で export する '
+    + '(`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。'
+    + '**畳む前は等価ですらなかった**: main は `Buffer.from(s,\'utf8\')` → `timingSafeEqual` で、'
+    + 'UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち '
+    + '4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。'
+    + '**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は '
+    + "`classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、"
+    + 'ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を '
+    + 'throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、'
+    + '**「交換しない」という結論は同じ**なので非対称ではない',
   advisorQuestionLimits:
     '対称 (実測・パス 251 / パス 285 で文も閉じた) —— checkAdvisorQuestion の 3 つの理由 '
     + "(empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う "

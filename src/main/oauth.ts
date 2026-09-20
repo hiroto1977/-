@@ -16,7 +16,8 @@
 import { shell } from 'electron';
 import http from 'node:http';
 import { AddressInfo } from 'node:net';
-import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
+import { constantTimeEquals } from '../shared/constantTimeEquals';
 import type { ServiceId } from '../shared/serviceId';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../shared/redact';
 import { parseTokenResponse, type TokenResponseFields } from '../shared/tokenResponse';
@@ -471,42 +472,40 @@ export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string)
 
 // --- side-effecting flows -----------------------------------------------
 
-/** Constant-time string comparison for the OAuth state token. The
- *  practical risk from a non-constant-time `!==` is small (the state
- *  lives for ≤ 5 minutes and we accept exactly one callback per flow),
- *  but `timingSafeEqual` removes the theoretical CPU-time side channel
- *  entirely. Returns false on length mismatch so the lengths themselves
- *  don't leak via timing either. Closes P1-5 from docs/SECURITY_AUDIT.md. */
-export function safeStateEquals(a: string, b: string): boolean {
-  if (typeof a !== 'string' || typeof b !== 'string') return false;
-  // バイト長の判定 (下) を足したことで、この JS 長の判定は**等価変異**になった。
-  // 外すと結果が変わるのは「JS 長が違うのに UTF-8 バイト列が完全一致する 2 つの
-  // 文字列」が在る場合だけで、標本 790,374 組を総当たりして 0 件だった
-  // (孤立サロゲートが U+FFFD に潰れる形も含めて確認、2026-08-22)。
-  // 残すのは速い前置きだから —— 長さ違いのために Buffer を 2 つ確保しない。
-  // Stryker disable next-line ConditionalExpression
-  if (a.length !== b.length) return false;
-  // Equivalent mutant: Node's Buffer.from(str, '') silently falls back to
-  // utf8 when the encoding string is unknown — so 'utf8' → '' produces
-  // identical bytes for the strings we encounter here.
-  // Stryker disable next-line StringLiteral
-  const ab = Buffer.from(a, 'utf8');
-  // Stryker disable next-line StringLiteral
-  const bb = Buffer.from(b, 'utf8');
-  // **バイト長も見る。** JS の length が同じでも UTF-8 のバイト長は違いうる
-  // ('あ' は 1 文字 3 バイト)。`timingSafeEqual` はバイト長が違うと
-  // **RangeError を投げる**ので、この一行が無いと 43 文字の state に全角を
-  // 1 つ混ぜた偽コールバックで例外が出る。実測 (2026-08-22):
-  // ループバックの待受へ投げると応答が返らず `uncaughtException` になり、
-  // main.ts に受け手が無いので **Electron の主プロセスごと落ちる**。
-  // これは classifyCallback の注記が想定している攻撃者そのもの
-  // (「OAuth の窓の間にループバックへ投げ続けるブラウザのタブ」) である。
-  //
-  // 長さで早期に返すこと自体は既存の JS 長の判定と同じ扱い —— state は
-  // 32 バイト乱数の base64url で固定長なので、長さは秘密ではない。
-  if (ab.length !== bb.length) return false;
-  return timingSafeEqual(ab, bb);
-}
+/**
+ * OAuth の state の定時間比較。**規則は `shared/constantTimeEquals.ts` に 1 つ**
+ * (2026-09-20 · パス 331)。`docs/SECURITY_AUDIT.md` の P1-5 を閉じる。
+ *
+ * ## ここに在った実装を捨てた理由
+ *
+ * 2026-08-22 の版は `Buffer.from(s, 'utf8')` → `timingSafeEqual` で、
+ * ブラウザ版 (`renderer/oauth/pkce.ts`) にはコード単位を XOR する双子が在った。
+ * その双子の docblock は「等価」と書いていたが、**等価ではなかった** ——
+ * UTF-8 への変換は**孤立サロゲートをすべて U+FFFD へ潰す**ので、
+ * `'\uD800'` と `'\uDC00'` を **main だけが「等しい」と答える**。
+ * 実測 (2026-09-20): サロゲート帯を跨ぐ 1 文字の総当たり 4,330,561 組のうち
+ * **4,192,256 組 (96.8%)** で答えが割れた (base64url の字だけなら 0 組)。
+ *
+ * 今日この差から攻撃は成立しない —— 比較の片側 `expectedState` は必ず
+ * このアプリが作った base64url だからである。直したのは、**守りの正しさが
+ * 「片側は必ず自分が作った値」という別の前提に依っていた**ためで、
+ * 潰れの無い側へ揃えれば前提ごと要らなくなる。
+ *
+ * ## バイト長の判定を消してよい理由
+ *
+ * 旧実装が `ab.length !== bb.length` を置いていたのは、`timingSafeEqual` が
+ * バイト長の違いで **RangeError を投げる**からだった (43 文字の state に
+ * 全角を 1 つ混ぜた偽コールバックで主プロセスごと落ちる · 2026-08-22 実測)。
+ * `timingSafeEqual` を使わなくなったので、その投げる口ごと無くなった。
+ *
+ * ## state の長さ (実測・2026-09-20)
+ *
+ * この注記は長らく「state は 32 バイト乱数の base64url」と書いていたが、
+ * **main の実物は 16 バイト** (`base64url(randomBytes(16))` → 22 字) である。
+ * 32 バイトはブラウザ版の値で、そちらの注記から写されたまま突き合わせられて
+ * いなかった。結論 (固定長だから長さは秘密でない) は両方で成り立つ。
+ */
+export const safeStateEquals = constantTimeEquals;
 
 /** Strip the port suffix (`:1234`) from a Host header and check whether
  *  the remainder is a loopback hostname. The OAuth callback server only

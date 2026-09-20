@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 240
+- ブロック数: 241
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `0328ccd0ab45e8651829634612c4e9bdb31f0fc4f23b35e85020499bfc1e663d`
-- 保護対象: 78 ファイル
+- 末尾(tip)ハッシュ: `ddca16c3dfb3c0b59744206dd618d9e5b5ef959ff960ddb62335c90cac009a30`
+- 保護対象: 79 ファイル
 
 ## ブロック
 
@@ -253,6 +253,7 @@
 | 237 | `5fbf5ce3610df6c0` | `e40f7cb370ef3d37` | `73dadc5f8e9a2da5` | update atomicWrite.ts,secrets.ts |
 | 238 | `7844589184c9bc41` | `73dadc5f8e9a2da5` | `c533a547beb0ad9c` | update dataCrypto.ts,vault.ts |
 | 239 | `b3b796d83f7eb1ea` | `c533a547beb0ad9c` | `0328ccd0ab45e865` | update types.ts,oauth.ts,proxy.ts,pkce.ts,httpLimits.ts |
+| 240 | `c46b55f220c9611b` | `0328ccd0ab45e865` | `ddca16c3dfb3c0b5` | update integrity-chain.cjs,oauth.ts,pkce.ts,constantTimeEquals.ts |
 
 ## 保護対象ファイル
 
@@ -315,6 +316,7 @@
 - `src/shared/ai/providers.ts`
 - `src/shared/aiEndpoint.ts`
 - `src/shared/atlassianSite.ts`
+- `src/shared/constantTimeEquals.ts`
 - `src/shared/controlChars.ts`
 - `src/shared/cryptoParams.ts`
 - `src/shared/eraseReport.ts`

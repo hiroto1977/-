@@ -61,6 +61,7 @@
     "src/shared/ai/providers.ts",
     "src/shared/aiEndpoint.ts",
     "src/shared/atlassianSite.ts",
+    "src/shared/constantTimeEquals.ts",
     "src/shared/controlChars.ts",
     "src/shared/cryptoParams.ts",
     "src/shared/eraseReport.ts",
@@ -2001,6 +2002,14 @@
       "leafCount": 78,
       "note": "update types.ts,oauth.ts,proxy.ts,pkce.ts,httpLimits.ts",
       "hash": "0328ccd0ab45e8651829634612c4e9bdb31f0fc4f23b35e85020499bfc1e663d"
+    },
+    {
+      "index": 240,
+      "prevHash": "0328ccd0ab45e8651829634612c4e9bdb31f0fc4f23b35e85020499bfc1e663d",
+      "merkleRoot": "c46b55f220c9611bd16f4d826dfe8f636e78a7ba4cc5d98ae15cf6f7d7cc2da9",
+      "leafCount": 79,
+      "note": "update integrity-chain.cjs,oauth.ts,pkce.ts,constantTimeEquals.ts",
+      "hash": "ddca16c3dfb3c0b59744206dd618d9e5b5ef959ff960ddb62335c90cac009a30"
     }
   ],
   "tipManifest": {
@@ -2014,7 +2023,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "76c8d69500f6185c3658aff5b7eeaafa2d4e0c00e4c6a1793f27693d72e0f418",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "45081cb4b1780e885d462e4fe5347e84569e6a834631061848713cdb78883940",
+    "scripts/integrity-chain.cjs": "986bca0d6dbc5c541a9c7110fb056f59856ef49cf12e2975eca4030e9d76213c",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
@@ -2034,7 +2043,7 @@
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "76debcaa6b3231c56bf66afd853b5f9301d9cdcbb4d1232204594ea5ca320a39",
     "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
-    "src/main/oauth.ts": "08a7dd32dc59af61e2c43053a7e5771881dfd2d99b26513367f9a28617316e20",
+    "src/main/oauth.ts": "275428e76abf77dc6e05daf692e15e57945cc018f155dcc19d09f173034e249a",
     "src/main/secrets.ts": "bdbbf6d8b1a36fb5f4daf39886bd11bf2d689b95b59e2d66254a11b6094bdaaf",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
@@ -2046,7 +2055,7 @@
     "src/renderer/fs/fsa.ts": "fb721de4a0aa024a6834b04e4bb22fc891d6c380518458957af18084b88b3e3d",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
     "src/renderer/network/proxy.ts": "eee378f474c494cfc20c769fe3c3db2a92182a9a6e3b756f0de686779d07ef9e",
-    "src/renderer/oauth/pkce.ts": "2509e1c7f53707a46a36eb5e96b79b07bc943e1fa232cd0582f05f28b19c6a75",
+    "src/renderer/oauth/pkce.ts": "2790204fbe99efedb853ea56dbaf2098a6310c8adbd0842cc5e2e3cf954d4122",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
     "src/renderer/security/LockScreen.tsx": "2589465f17e1e1e769f795249a6da4e4595463b10facee11024072794072f841",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
@@ -2063,6 +2072,7 @@
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
     "src/shared/atlassianSite.ts": "fbbad4ce7a10f5731a44b0c3f902818285aadb6305aabd2a7522bac7aa3d8cf2",
+    "src/shared/constantTimeEquals.ts": "b44b4be902ceeecf7b4b7861f4adbf143574d33d0b133d11f8ca2adb11add716",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "0fe808ee71235f71deaf24200a910b87039adf30ac73325084843490bdaad2f1",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",

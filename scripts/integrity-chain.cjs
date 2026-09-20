@@ -55,6 +55,13 @@ const PROTECTED = [
   'src/renderer/security/LockScreen.tsx',
   'src/main/secrets.ts',
   'src/main/oauth.ts',
+  // 2026-09-20 (パス 331) に足した。OAuth の `state` を比べる**定時間比較の実体**を
+  // ここへ移した (それまで main と renderer に 1 つずつ在り、UTF-8 変換が孤立
+  // サロゲートを U+FFFD へ潰すせいで実測 4,330,561 組のうち 4,192,256 組で
+  // 答えが割れていた)。`oauth.ts` と `pkce.ts` は別名を export するだけに
+  // なったので、**保護対象が呼び出し側のままでは比較の本体を書き換えても
+  // 鎖が鳴らない** —— `privateTarget.ts` を足したときと同じ形である。
+  'src/shared/constantTimeEquals.ts',
   'src/preload/preload.ts',
   // 2026-08-22 に足した。**関門だけ守って、関門を呼ぶ側が守られていなかった。**
   // `shellOpenGate.ts` と `exportPaths.ts` は保護対象なのに、それらを呼び、
