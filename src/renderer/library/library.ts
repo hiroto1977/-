@@ -102,6 +102,26 @@ function readableTimestamp(v: unknown): number | null {
  * 落とすと壊れた控えが UI から触れなくなる (パス 136 の教訓: 保存した物は
  * 必ず消せる道が要る)。読めない欄だけを `null` にし、画面がそう言う。
  * `id` が読めない控えだけは何もできないので `null` を返して飛ばす。
+ *
+ * ## 読む側も書く側と同じ関門を通す (2026-09-20 · パス 359)
+ *
+ * 3 つの文字列の欄は `typeof === 'string'` だけで通していた —— つまり
+ * **`put()` が拒む形が読み出し側では素通り**していた。実測 (2026-09-20):
+ * `isSafeFilename` が落とす 9 形 (`../../../../etc/passwd` / `a/b.txt` /
+ * `a\b.txt` / `.` / `..` / 空 / NUL / CR+LF / 5,000 字) が **9/9 そのまま**
+ * 返り、3 つの出口 —— `a.download`・「控えが壊れています」の 1 文・一覧の
+ * 行ラベル —— へ届いていた。
+ *
+ * `a.download` の値はブラウザが必ず消毒するので**区切りでのトラバーサルは
+ * 今日起きない**。観測できるのは長さの側で、`put()` の 256 字が読み出し側に
+ * 無いため、壊れた・手で直された控え 1 行が画面に天井なしの文字列を描けた
+ * (パス 320 で teamradar の理由に天井を掛けたのと同じ形が、**壊れた保存値を
+ * 扱うこのモジュールの中に**残っていた)。
+ *
+ * 直しは**新しい関門を作らない** —— 書く側が呼ぶ 3 つ (`isSafeFilename` /
+ * `isSafeMime` / `isSafeServiceId`) をそのまま読む側でも呼ぶ。倒し込み先の
+ * 3 つの文字列は**それ自身が同じ関門を通る** (通らない既定値は穴になる ——
+ * `downloadFilenameCensus.test.ts` がそこも留める)。
  */
 export function metaFromStored(v: unknown): LibraryItemMeta | null {
   if (typeof v !== 'object' || v === null) return null;
@@ -109,9 +129,9 @@ export function metaFromStored(v: unknown): LibraryItemMeta | null {
   if (typeof r.id !== 'string' || r.id === '') return null;
   return {
     id: r.id,
-    filename: typeof r.filename === 'string' ? r.filename : '(名前が読めません)',
-    mime: typeof r.mime === 'string' ? r.mime : 'application/octet-stream',
-    serviceId: typeof r.serviceId === 'string' ? r.serviceId : 'unknown',
+    filename: isSafeFilename(r.filename) ? r.filename : '(名前が読めません)',
+    mime: isSafeMime(r.mime) ? r.mime : 'application/octet-stream',
+    serviceId: isSafeServiceId(r.serviceId) ? r.serviceId : 'unknown',
     createdAt: readableTimestamp(r.createdAt),
     size: readableNonNeg(r.size),
   };
