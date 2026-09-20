@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 243
+- ブロック数: 245
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `eceb073a154f3b015742d66d7011b3d3456fce0e9ffaebd922b54b87aede182b`
-- 保護対象: 79 ファイル
+- 末尾(tip)ハッシュ: `7a9ec8b816efb086f2de49e06f4f6520bf5b56ee99ae5e4192e3e1d440f9e570`
+- 保護対象: 82 ファイル
 
 ## ブロック
 
@@ -256,6 +256,8 @@
 | 240 | `c46b55f220c9611b` | `0328ccd0ab45e865` | `ddca16c3dfb3c0b5` | update integrity-chain.cjs,oauth.ts,pkce.ts,constantTimeEquals.ts |
 | 241 | `6406fd3ccaf97f32` | `ddca16c3dfb3c0b5` | `84bb7ee1fff35671` | update oauth.ts,pkce.ts,constantTimeEquals.ts,cryptoParams.ts,httpLimits.ts |
 | 242 | `6260a8cd77642a91` | `84bb7ee1fff35671` | `eceb073a154f3b01` | update proxy.ts |
+| 243 | `5531cfe750bcdc50` | `eceb073a154f3b01` | `6b3c13c99ea27ac2` | update eslint.config.js,integrity-chain.cjs,vite.config.ts,vitest.config.ts |
+| 244 | `034c9619164aba7b` | `6b3c13c99ea27ac2` | `7a9ec8b816efb086` | update integrity-chain.cjs |
 
 ## 保護対象ファイル
 
@@ -266,6 +268,7 @@
 - `assets/sw.js`
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
+- `eslint.config.js`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
@@ -338,3 +341,5 @@
 - `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`
 - `src/shared/writeFieldLimits.ts`
+- `vite.config.ts`
+- `vitest.config.ts`

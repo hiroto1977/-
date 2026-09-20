@@ -9,6 +9,7 @@
     "assets/sw.js",
     "docs/SECURITY_CHAIN.md",
     "electron-builder.json",
+    "eslint.config.js",
     "scripts/checksum-release.cjs",
     "scripts/inject-pwa.cjs",
     "scripts/inline-html.cjs",
@@ -80,7 +81,9 @@
     "src/shared/tokenInput.ts",
     "src/shared/tokenResponse.ts",
     "src/shared/vaultToken.ts",
-    "src/shared/writeFieldLimits.ts"
+    "src/shared/writeFieldLimits.ts",
+    "vite.config.ts",
+    "vitest.config.ts"
   ],
   "blocks": [
     {
@@ -2026,6 +2029,22 @@
       "leafCount": 79,
       "note": "update proxy.ts",
       "hash": "eceb073a154f3b015742d66d7011b3d3456fce0e9ffaebd922b54b87aede182b"
+    },
+    {
+      "index": 243,
+      "prevHash": "eceb073a154f3b015742d66d7011b3d3456fce0e9ffaebd922b54b87aede182b",
+      "merkleRoot": "5531cfe750bcdc507458607d37eae0f19023270241b47bea8ee7522ab17ebeaf",
+      "leafCount": 82,
+      "note": "update eslint.config.js,integrity-chain.cjs,vite.config.ts,vitest.config.ts",
+      "hash": "6b3c13c99ea27ac22b410babc4d0929accfdfa057297df196c0987e2fb09a60e"
+    },
+    {
+      "index": 244,
+      "prevHash": "6b3c13c99ea27ac22b410babc4d0929accfdfa057297df196c0987e2fb09a60e",
+      "merkleRoot": "034c9619164aba7bd9d4a5fa78ea2646028212a946703d0440bf13c66cb06034",
+      "leafCount": 82,
+      "note": "update integrity-chain.cjs",
+      "hash": "7a9ec8b816efb086f2de49e06f4f6520bf5b56ee99ae5e4192e3e1d440f9e570"
     }
   ],
   "tipManifest": {
@@ -2036,10 +2055,11 @@
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
+    "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "76c8d69500f6185c3658aff5b7eeaafa2d4e0c00e4c6a1793f27693d72e0f418",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "986bca0d6dbc5c541a9c7110fb056f59856ef49cf12e2975eca4030e9d76213c",
+    "scripts/integrity-chain.cjs": "98ca3f73688af02113a9e99dea2114970eb6663c66981273f7ce10b341b61685",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
@@ -2107,6 +2127,8 @@
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",
-    "src/shared/writeFieldLimits.ts": "067e11979cea363286f440df77ffdb6baf3ec5cb8a07188801730abf4648d4e3"
+    "src/shared/writeFieldLimits.ts": "067e11979cea363286f440df77ffdb6baf3ec5cb8a07188801730abf4648d4e3",
+    "vite.config.ts": "390b859eedad810d9e539adfd2c421fe37fc00a168f28e62d15a20fb7096dcd6",
+    "vitest.config.ts": "082d5d607a48177918bdd841ca4592b861b2b1d0842005da0b8a6f0a4b42f900"
   }
 }

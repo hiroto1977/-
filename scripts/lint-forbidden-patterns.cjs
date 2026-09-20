@@ -982,12 +982,36 @@ const SCAN_ROOTS = [
 ];
 
 /**
+ * **どの根にも属さないが走査する単体のファイル** (2026-09-20 · パス 347)。
+ *
+ * `SCAN_ROOTS` はディレクトリの一覧なので、**リポジトリ直下のファイルは
+ * どの根にも入らない**。2026-09-20 まで 3 本が走査の外に居た:
+ *
+ * ```
+ *   vite.config.ts     出荷 HTML の中身を決める (plugin・define・inline)
+ *   vitest.config.ts   検査の走り方を決める (環境・除外・カバレッジ)
+ *   eslint.config.js   lint の規則を決める
+ * ```
+ *
+ * 対照 (2026-09-20 実測): `vite.config.ts` に `eval(` を植えると
+ * `lint:forbidden` / `lint:imports` / `lint:network-targets` / `chain:verify`
+ * が**すべて exit 0**。**梱包設定 `electron-builder.json` は整合性チェーンの
+ * 保護対象なのに、束ねる側の設定は走査も封緘もされていなかった。**
+ *
+ * 根を `'.'` にすると木全体を歩いてしまう (`knowledge-vault/` 7,000 本ほか)。
+ * 単体の名前で数えるほうが、**増えたときに気付ける**side でもある。
+ */
+const SCAN_FILES = ['vite.config.ts', 'vitest.config.ts', 'eslint.config.js'];
+
+/**
  * **名前で在ることを確かめるファイル。**
  *
  * 本数の床だけでは「1 本」が別の 1 本に置き換わっても気付けない。出荷される
  * Service Worker は `assets/` にただ 1 つなので、名前で留める。
+ * `SCAN_FILES` の 3 本も同じ理由で名前で留める (走査したことを別に確かめる —
+ * 一覧に足しただけで歩き忘れると、また静かに外へ出る)。
  */
-const MUST_SCAN = ['assets/sw.js'];
+const MUST_SCAN = ['assets/sw.js', ...SCAN_FILES];
 
 /**
  * 実物の木を走査して根ごとの本数を返す (自己検査の標本用)。
@@ -1012,6 +1036,13 @@ function realVisited() {
     walk(path.join(REPO_ROOT, root.dir), (_full, rel) => {
       seen.add(rel);
     });
+  }
+  // 根に属さない単体のファイル (パス 347)。**本体の main() と同じ物を歩く** ——
+  // 片方だけに足すと、self-test が「走査した」と言うのに本体は見ていない形になる。
+  for (const rel of SCAN_FILES) {
+    if (!fs.existsSync(path.join(REPO_ROOT, rel))) continue;
+    if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
+    seen.add(rel);
   }
   return seen;
 }
@@ -1429,6 +1460,17 @@ function main() {
     walk(path.join(REPO_ROOT, root.dir), scan);
     perRoot[root.dir] = filesScanned - before;
   }
+  // 根に属さない単体のファイル (リポジトリ直下の設定。上の SCAN_FILES を参照)。
+  {
+    const before = filesScanned;
+    for (const rel of SCAN_FILES) {
+      const full = path.join(REPO_ROOT, rel);
+      if (!fs.existsSync(full)) continue;
+      if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
+      scan(full, rel);
+    }
+    perRoot['(直下)'] = filesScanned - before;
+  }
 
   function scan(full, rel) {
     filesScanned++;
@@ -1444,7 +1486,7 @@ function main() {
 
   console.log(
     `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns` +
-      ` (${SCAN_ROOTS.map((r) => `${r.dir} ${perRoot[r.dir] ?? 0}`).join(' / ')})`,
+      ` (${[...SCAN_ROOTS.map((r) => r.dir), '(直下)'].map((d) => `${d} ${perRoot[d] ?? 0}`).join(' / ')})`,
   );
   const dead = [...rootShortfalls(perRoot), ...missingMustScan(visited)];
   if (dead.length > 0) {
@@ -1496,6 +1538,7 @@ function main() {
  * 規則表を空にすれば、そちらが鳴る。
  */
 module.exports = {
+  SCAN_FILES,
   FORBIDDEN_PATTERNS,
   KNOWN_SUPPRESSIONS,
   isCommentLine,

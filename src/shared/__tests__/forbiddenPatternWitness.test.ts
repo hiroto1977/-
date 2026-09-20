@@ -178,12 +178,24 @@ const live = req('../../../scripts/lint-forbidden-patterns.cjs') as {
 describe('lint:forbidden — 走査が生きていること (外側の証人)', () => {
   it('出荷する Service Worker は名指しで走査対象に入っている', () => {
     expect(live.MUST_SCAN).toContain('assets/sw.js');
+    /*
+     * 2026-09-20 (パス 347) から、**リポジトリ直下の設定 3 本**も名指しで入る。
+     * `SCAN_ROOTS` はディレクトリの一覧なので直下はどの根にも入らず、
+     * `vite.config.ts` (出荷 HTML の中身を決める) に `eval(` を植えても
+     * 当時は 4 つのゲートが全部 exit 0 だった。
+     */
+    for (const f of ['vite.config.ts', 'vitest.config.ts', 'eslint.config.js']) {
+      expect(live.MUST_SCAN, f).toContain(f);
+    }
   });
 
-  it('★ 実物の走査が実際にその 1 本へ届いている', () => {
+  it('★ 実物の走査が名指しの全部へ届いている', () => {
     expect(live.missingMustScan(live.realVisited())).toEqual([]);
     // 標本: 届いていなければ鳴る (規則が空振りしていないこと)。
-    expect(live.missingMustScan(new Set())).toHaveLength(1);
+    // **数は `MUST_SCAN` から導く** —— ここに数字を書くと、名指しを 1 本足した日に
+    // 「検査が古いだけ」で落ちる (パス 346 と同じ形なので繰り返さない)。
+    expect(live.missingMustScan(new Set())).toHaveLength(live.MUST_SCAN.length);
+    expect(live.MUST_SCAN.length).toBeGreaterThanOrEqual(4);
   });
 
   it('★ 出荷物の在る根には床が置かれている (0 は「床が無い」ではない)', () => {

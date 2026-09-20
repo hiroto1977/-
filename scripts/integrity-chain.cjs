@@ -258,6 +258,26 @@ const PROTECTED = [
   // `runAsNode: true` に戻すだけで、署名済みの自分自身を Node として起動して
   // アプリとして `safeStorage.decryptString` を呼べる状態に戻る。
   'electron-builder.json',
+  /*
+   * **束ねる側の設定** (2026-09-20 · パス 347)。梱包設定 (`electron-builder.json`) は
+   * 2026-08 から守られていたのに、**出荷 HTML の中身を決める `vite.config.ts` は
+   * 走査も封緘もされていなかった** —— `lint:forbidden` の `SCAN_ROOTS` は
+   * ディレクトリの一覧で、リポジトリ直下のファイルはどの根にも入らないため。
+   * 対照 (同日実測): `vite.config.ts` へ任意コード実行 (invariant #9 の綴り) を植えると
+   * `lint:forbidden` / `lint:imports` / `lint:network-targets` / `chain:verify` が
+   * **すべて exit 0** だった。
+   *
+   * 3 本とも鎖の基準どおりの「安定したガバナンス資産」である (実測: 全履歴で
+   * `vite.config.ts` 2 / `vitest.config.ts` 2 / `eslint.config.js` 1 コミット)。
+   * 相対 import は 0 件なので閉包の費用も 0。
+   */
+  'vite.config.ts',
+  // 検査の走り方 (環境・除外・カバレッジ)。exclude を 1 行足すだけで、
+  // 落ちるはずの検査が黙って母集団から外れる。
+  'vitest.config.ts',
+  // lint の規則。冒頭が自分で「型の誤りを捕まえる網は typecheck 1 つ」と
+  // 宣言しているとおり、ここが緩むと残りの網も同時に緩む。
+  'eslint.config.js',
   'docs/SECURITY_CHAIN.md',
   // Service Worker は公開版のオリジンで**全てのページ読み込みに介入**する。
   // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
