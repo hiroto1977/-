@@ -157,9 +157,9 @@ export const LAWS: readonly Law[] = [
     id: 'live-metrics-not-prose',
     family: 'gate-hygiene',
     name: '数は機械が、判断は散文が持つ',
-    statement: '散文に書いた件数は誰も検算せず腐る (母集団が 4 倍ずれていた実測)。数える物は生成ブロックか live metric にし、判断だけを散文に書く。',
-    provenance: ['パス 145', 'パス 220', 'パス 248'],
-    enforcedBy: [gate('verify:arch'), gate('lint:zero-fold'), gate('lint:shared-judgement'), gate('lint:docs')],
+    statement: '散文に書いた件数は誰も検算せず腐る (母集団が 4 倍ずれていた実測)。数える物は生成ブロックか live metric にし、判断だけを散文に書く。**閉じた列挙 (「only …」「全 N 件」) も同じ** —— 成員を並べたら、その並びと実物を機械で結ぶ。CLAUDE.md は preload bridge を「it only calls」で 6 件挙げていたが実物は 15 件で、落ちていた 9 件に eraseAll (全データ削除) と openPath が在った (パス 338)。攻撃面の側では、過小申告が読み手を油断させる。',
+    provenance: ['パス 145', 'パス 220', 'パス 248', 'パス 338'],
+    enforcedBy: [gate('verify:arch'), gate('lint:zero-fold'), gate('lint:shared-judgement'), gate('lint:docs'), test(T.preload('bridgeStatic'))],
   },
   {
     id: 'exclusion-states-the-real-reason',

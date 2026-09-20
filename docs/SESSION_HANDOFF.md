@@ -7,6 +7,75 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 338 (2026-09-20) — 攻撃面を「only 6 件」と書いていた (実物 15 件)
+
+### 見つけ方 —— 「renderer は生のトークンを見ない」を確かめに行った
+
+`CLAUDE.md` の一文を検証した:
+
+> The renderer never sees raw tokens — it **only** calls
+> `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
+
+前半 (生のトークンを見ない) は**正しかった** —— 橋の 15 メソッドのどれも秘密を返さず
+(`storageProtection` は件数と方式名だけ)、`fetchSnapshot` / `invoke` が返す
+第三者データにトークンが載る経路も無い (main の client 16 か所を走査: すべて
+ヘッダか fetcher への引き渡しで、`atlassian` / `youtube` の `return { token … }` は
+**内部の資格情報パーサ**で、返り値は fetch へ行き snapshot には入らない)。
+
+**後半の列挙が偽だった。**「only」は閉じた列挙なのに、実物は 15 件で **9 件が落ちていた**:
+
+```
+  落ちていた 9 件: getVersion / checkUpdate / revealInFolder / openPath /
+                   setColorScheme / storageProtection / eraseAll /
+                   oauthSupported / authorize
+```
+
+重いのは **`eraseAll` (すべてのデータを削除して再起動)**・`revealInFolder` / `openPath`
+(OS のファイル面)・`authorize` (ブラウザを開いて loopback サーバを立てる)。
+**「compromised な renderer に何ができるか」をこの文から読む人は、実際より小さい面を見る。**
+
+### 台帳は在った。散文だけが繋がっていなかった
+
+`src/preload/__tests__/bridgeStatic.test.ts` の `CHANNELS` は 2026-08 から
+**メソッド ↔ チャンネル名を両方向**に留めており、`Object.keys(api)` とも一致を
+要求していた。**15 という数はずっと機械が知っていた。** 繋がっていなかったのは
+散文の側だけで、このリポジトリが繰り返し直している「散文で述べた規則は落ちない」の
+**面の側**の形である。
+
+### 直し
+
+- `CLAUDE.md` — 15 件すべてを挙げ、落ちていた 9 件と経緯を書く
+- `bridgeStatic.test.ts` +1 件 — **散文の列挙と `CHANNELS` を両方向**に突き合わせる
+  (標本: 面として重い `eraseAll` / `openPath` / `authorize` が載っていること・
+  対照: 存在しない名前は拾わない)
+- 法則 `live-metrics-not-prose` を**閉じた列挙**まで広げ、執行者に この検査を足した
+  (新しい法則は足していない —— 「数は機械が」と同じ家系で、成員の側へ広げただけ)
+
+### 対照 2 本
+
+```
+  散文を元の 6 件へ戻す    → 新しい ★ が落ちる
+  橋にメソッドを 1 つ足す  → 既存の CHANNELS の ★ が落ちる
+```
+
+2 本目が既存の検査で鳴るのは正しい連鎖である —— メソッドを足すと `CHANNELS` の
+行が要り、`CHANNELS` が動くと散文の照合が動く。**面を広げて散文だけ据え置く道は無い。**
+
+### この掃引で「異常なし」だった所 (測った上で書く)
+
+`window` の `message` 受信口 **0 件** (同一オリジンの `BroadcastChannel` 1 本のみで、
+効果は施錠だけ) ／ ハッシュのルーティングは `isServiceId` の許可表 ／
+service worker は同一オリジンの GET のみ ／ 取り込みファイルは読む前に大きさで断る
+(`importFile.ts` / `previewBlocker` / `readTextForPreview`) ／ 登録済み action は
+全件が文書の行を持ち、構造化 payload の 40 行は全部が型と照合済み
+(「54 と 40」は**別々の数**で、欠陥ではなかった)。
+
+### 数字
+
+- 単体 **14813 件**・法則 86 本・ゲート 37 本
+- 出荷物 **11,930,723 B で不変** —— preload はブラウザ版の bundle に入らず、
+  `CLAUDE.md` / 検査 / ontology も入らない (組んで実測した)
+
 ## パス 337 (2026-09-20) — 門が意図して外した物の「理由」が、実測と食い違っていた
 
 ### 見つけ方 —— ゲートが自分で「測っていない」と書いた所を測った
@@ -5640,6 +5709,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 攻撃面を「only 6 件」と書いていた (パス 338) | ✅ `CLAUDE.md` の「The renderer never sees raw tokens — it **only** calls `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`」を検証した。**前半は正しい** (橋の 15 本はどれも秘密を返さず、main の client 16 か所を走査しても snapshot にトークンは載らない)。**後半の列挙が偽** —— 「only」は閉じた列挙なのに実物は **15 件**で **9 件が落ちていた**: `eraseAll` (全データ削除して再起動)・`revealInFolder` / `openPath` (OS のファイル面)・`authorize` (ブラウザを開いて loopback サーバ)・`storageProtection`・`setColorScheme`・`getVersion`・`checkUpdate`・`oauthSupported`。**台帳 (`CHANNELS`) は 2026-08 から両方向に在り、15 という数はずっと機械が知っていた** —— 繋がっていなかったのは散文だけ。直し: 15 件すべてを挙げ、`bridgeStatic.test.ts` が**散文の列挙と `CHANNELS` を両方向**に突き合わせる。法則 `live-metrics-not-prose` を**閉じた列挙**まで広げた。対照 2 本 (散文を戻す / 橋にメソッドを足す —— 後者は既存の ★ が鳴る正しい連鎖)。**出荷物は byte 単位で不変** |
 | 門が外した物の「理由」が実測と食い違っていた (パス 337) | ✅ `lint:regex` は多項式 (O(n²)) を意図して外しており、理由を「上限は `MAX_ANALYZE_TEXT_CHARS` 5000 等なので O(n²) でも 30ms」と書き、末尾に**「上限を外す変更を入れるなら考え直すこと」**と条件を付けていた。その条件を測ると **5000 は最大ではなかった** —— 実物の最大は **`MAX_TEXT_PREVIEW_CHARS` 200,000** (取り込んだファイルの本文) で、そこでの O(n²) は **30ms ではなく 1 呼び出し 31 秒**。**長さの議論としては premise が偽**だった。結論が生きているのは**到達可能性**のため —— 出荷 `src/` の **588 本**中 250ms 超は **4 本**だけで、どれも長い文字列が届かない所 (村名の静的データ / `new URL()` 後のホスト名 / 2048 字で切られる基底 URL / base64 の末尾 `=` は規格上 2 文字)。**脅威そのものは無かった** —— `assistantMarkdown` は 100,000 字の病的入力 12 形で最悪 41ms、`message` 受信口 0 件、ハッシュは許可表、sw は同一オリジン GET のみ。直し: docblock を到達可能性の議論へ訂正・定期点検 `npm run audit:regex-poly` (32 秒・CI では走らせない = 壁時計時間の判定だから)・**時間を測らない**決定的な機械 `regexPolynomialLedger` (門が引く上限が実物の最大か・台帳の理由)。法則 `exclusion-states-the-real-reason`・対照 4 本・**出荷物は両方を組んで byte 単位で不変** |
 | 「分かる人が決めること」を検査に書いて 1 か月放置していた (パス 336) | ✅ 2026-08-23 に見つかった 2 つの食い違い (`MAX_RESPONSE_BYTES` が main 10 MiB / ブラウザ版 2 MiB・`generatePkce` の乱数が main 32B/16B / renderer 64B/32B) が、**両方の宣言に注記を書いただけ**で値は動かないまま残っていた。`ollamaInputLimits.test.ts` は「この検査は**揃えることを要求しない**」と明記し、両ビルド台帳の `why` も「分かる人が決めること」—— **理由の欄が埋まるので検査は通り続けた**。実測して決めた: ① `capAssistantReply` が 10 万字で切るのでアプリが使える最大の本文は **600,124 B** (最悪) ・`/api/tags` は 2 MiB に **5,745 モデル**入る → **2 MiB でも 3.49 倍の余裕**、10 MiB との差は「捨てる物をどれだけ確保するか」だけなので小さい側へ (main は「落ちればアプリ全体が落ちる」側)。② verifier は RFC 7636 §7.1 が **32-octet を RECOMMENDED** で名指し、`S256` の原像計算 256 bit が律速なので **64 octet は 1 bit も強くしない**。state の 16 B は床ちょうどだったので 1 段上げ、どちらも 32 octet へ。**画面の「デスクトップ版 10 MB」だけが直書き**だったのも直した。機械: 台帳の `why` に**保留の決まり文句を置けない** (両方向・標本と対照)。法則 `no-weakness-as-spec` は機械の無い法則から外れた (5 → 4 本)。対照 5 本・連鎖 5 段すべて緑 |
 | 見本が利用者の編集内容を端末から消していた (パス 335) | ✅ チームレーダーの画面は「`data` が変わったら編集状態を揃える」効果に**「これは利用者が保存した物か」の判定を持っていなかった**。保存値が読めない / まだ無いときに返るのは `DEFAULT_TEAM_RADAR_STATE` の**飾りの見本**で、それが自動保存の効果を通って `servicehub.teamradar.draft.v1` へ書かれ、**利用者が何も押していないのに端末の編集内容 (氏名・部署・評点) が消えていた**。実測 (jsdom・下書きに 1 名入れて「更新」1 回): `saved` → 保存した物 (筋が通る) / `none` と `unreadable` → **同梱の見本 3 人**。パス 120 / 121 / 309 と同じ家系で、この画面は「3 つを言い分ける」ところまでしか直っておらず**書き戻す側**が残っていた (同じファイルの 20 行下 = パス 160 が「読めていない下書きを書き戻さない」と言っているのに、対になる規則が無かった)。**注記も直す前から偽** —— 下書きが在れば画面に出ているのは見本ではないのに 「見本を表示しています。」と刷っていたので、その 1 文を shared から**画面** (`data-stored-fallback`) へ移した。**パス 331 / 332 / 334 の e2e の揺れ 3 回はこの欠陥の症状だった** (上書きが passive effect で起きるため、`waitForSelector` が paint で返った直後に書いた下書きが潰される)。母集団の機械 `snapshotAdoptionCensus` は**別名を収束まで解いて**数える (**1 → 2 件**・パス 334 の死角と同じ形)。法則 `sample-never-written-back`・jsdom 9 + census 8 + e2e 3・対照 4 本・**連鎖 5 段すべて緑 (e2e と e2e:lite が揃って緑はパス 330 以来)** |

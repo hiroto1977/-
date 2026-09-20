@@ -312,8 +312,16 @@ Three TypeScript build contexts, kept separate via `tsconfig` project references
   `src/shared/bridge.d.ts` so the renderer calls it without imports.
 - **`src/renderer/`** — React app. `App.tsx` renders the category-grouped sidebar from `SERVICES`
   (`services.ts`) and mounts the active page inside `components/PageErrorBoundary.tsx` (a render
-  error stays inside that page's frame; the sidebar keeps working). The renderer never sees raw tokens — it only calls
-  `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
+  error stays inside that page's frame; the sidebar keeps working). The renderer never sees raw tokens —
+  **the bridge exposes 15 methods and none of them returns a secret** (`storageProtection` returns counts and
+  a mechanism name only). 全 15 件:
+  `serviceHub.getVersion / checkUpdate / openExternal / revealInFolder / openPath / setColorScheme / setToken / clearToken / listConfigured / storageProtection / eraseAll / fetchSnapshot / invoke / oauthSupported / authorize`.
+  **2026-09-20 (パス 338) まで、この文は 6 件だけを挙げて「it only calls」と書いていた** ——
+  落ちていた 9 件には **`eraseAll` (すべてのデータを削除して再起動)**・`revealInFolder` / `openPath`
+  (OS のファイル面)・`authorize` (ブラウザを開いて loopback サーバを立てる) が含まれる。
+  「renderer から main へ何ができるか」を読む人が**実際より小さい面**を見ることになっていた
+  (過小申告は偽の主張より軽いが、攻撃面の側では読み手を油断させる)。列挙と実物は
+  `src/preload/__tests__/bridgeStatic.test.ts` が**両方向**に留める。
 
 ### The single source of truth for services
 

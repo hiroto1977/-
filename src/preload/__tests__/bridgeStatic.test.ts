@@ -1,4 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { join } from 'node:path';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
+
+const REPO = join(__dirname, '..', '..', '..');
 
 /**
  * **橋の 13 本を、毎回モジュールを読み直して確かめる。**
@@ -131,6 +135,42 @@ describe('橋の 15 本 — 読み直して static 変異体を届かせる', ()
   it('★ 露出する名前は serviceHub ただ 1 つ', async () => {
     await freshBridge();
     expect(exposedName).toBe('serviceHub');
+  });
+
+  /*
+   * **散文の列挙と実物を突き合わせる** (2026-09-20 · パス 338)。
+   *
+   * `CLAUDE.md` は renderer → main の面をこう書いていた:
+   *
+   * > The renderer never sees raw tokens — it **only** calls
+   * > `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
+   *
+   * 「only」は閉じた列挙である。**実物は 15 件で、9 件が落ちていた** ——
+   * その中には `eraseAll` (すべてのデータを削除して再起動)・`revealInFolder` /
+   * `openPath` (OS のファイル面)・`authorize` (ブラウザを開いて loopback サーバを
+   * 立てる) が在る。「compromised な renderer に何ができるか」をこの文から読む人は、
+   * **実際より小さい面**を見ることになる。
+   *
+   * 上の `CHANNELS` は 2026-08 から両方向に留めてあったのに、**散文だけが
+   * それと繋がっていなかった** —— このリポジトリが繰り返し直している
+   * 「散文で述べた規則は落ちない」の、面の側の形である。
+   */
+  it('★ CLAUDE.md の列挙は橋の実物と両方向に一致する', () => {
+    const claude = readOriginalSource(join(REPO, 'CLAUDE.md'));
+    const m = /`serviceHub\.([A-Za-z/ \n]+)`/.exec(claude);
+    expect(m, 'CLAUDE.md に serviceHub の列挙が無い').not.toBeNull();
+    const listed = m![1]!
+      .split('/')
+      .map((x) => x.trim())
+      .filter((x) => x.length > 0);
+    const real = CHANNELS.map(([method]) => method);
+    expect([...listed].sort(), '列挙と実物がずれている').toEqual([...real].sort());
+    // 標本 —— 落ちていた 9 件のうち、面として重い 3 つが実際に載っていること。
+    for (const name of ['eraseAll', 'openPath', 'authorize']) {
+      expect(listed, `${name} が散文の列挙に無い`).toContain(name);
+    }
+    // 対照 —— 針が「何でも通る」形でないこと (存在しない名前は拾わない)。
+    expect(listed).not.toContain('sendRawToken');
   });
 
   it('★ 露出するのは関数だけ (状態や生の ipcRenderer を渡さない)', async () => {
