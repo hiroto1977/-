@@ -206,6 +206,11 @@ import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../share
  */
 async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'> {
   const st = typeof navigator !== 'undefined' ? navigator.storage : undefined;
+  // この早期 return を `false` へ倒す変異体は**等価**である (2026-09-20 · パス 351 の対照で実測)。
+  // 倒すと `st` が無い / `persisted` が関数でない場合は下の try の中で TypeError になり、
+  // `catch` が同じ `best-effort` を返す —— 外から見える答えも `persist()` の呼び出し回数も
+  // 変わらない (門の方が `persisted` に触る前に返るだけ)。読みやすさのために残す。
+  // Stryker disable next-line ConditionalExpression
   if (st === undefined || typeof st.persisted !== 'function') return 'best-effort';
   try {
     if (typeof st.persist === 'function' && !(await st.persisted())) await st.persist();
