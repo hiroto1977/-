@@ -89,12 +89,13 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
     kind: 'different',
     why:
       '乱数の取り方が実行環境で違う (main は `node:crypto` の randomBytes・renderer は WebCrypto の '
-      + 'getRandomValues) ので実装は分かれる。**返す形も違う** —— 実測 (2026-09-20): '
-      + 'main は {verifier 43字, challenge 43字} で state を別に作り、renderer は '
-      + '{verifier 86字, challenge 43字, state 43字}。乱数の byte 数も main verifier 32B / state 16B、'
-      + 'renderer verifier 64B / state 32B と違う。RFC 7636 §4.1 の 43〜128 字にはどちらも収まり、'
-      + 'state はどちらも 128 bit 以上なので**値は動かしていない** —— '
-      + '`MAX_RESPONSE_BYTES` (2 MiB / 10 MiB) と同じく、揃えるか違う理由を書くかは分かる人が決めること。',
+      + 'getRandomValues) ので実装は分かれる。**返す形も違う** —— main は {verifier, challenge} で '
+      + 'state を別に作り、renderer は {verifier, challenge, state} を 1 度に返す。'
+      + '**byte 数は 2026-09-20 (パス 336) から `shared/cryptoParams.ts` の 1 つ** —— '
+      + 'それまで main verifier 32B / state 16B、renderer verifier 64B / state 32B と割れており、'
+      + 'verifier は RFC 7636 §7.1 の RECOMMENDED どおり 32 octet (S256 の原像計算 256 bit が '
+      + '律速なので 64 octet は 1 bit も強くしない)、state は床 128 bit の 1 段上の 32 octet に揃えた。'
+      + '実物の長さが一致することは `stateEqualsParity.test.ts` が走らせて確かめる。',
   },
   readCapped: {
     kind: 'shared-alias',
@@ -257,6 +258,36 @@ describe('2 実装ある関数は、すべて台帳で分類されている', ()
   it('理由が空の項目が無い', () => {
     const blank = Object.entries(LEDGER).filter(([, v]) => v.why.trim().length === 0);
     expect(blank.map(([k]) => k)).toEqual([]);
+  });
+
+  /*
+   * **保留を台帳に置かない** (2026-09-20 · パス 336)。
+   *
+   * この台帳の `why` は「**なぜ割れていてよいか**」を書く欄である。ところが
+   * 2026-08-23 から 2026-09-20 まで、2 つの項がそこへ
+   * 「揃えるか、違う理由を書くかは、どちらが正しいか分かる人が決めること」
+   * と**決めていないこと**を書いていた (`MAX_RESPONSE_BYTES` と `generatePkce`)。
+   * 理由の欄が埋まっているので検査は通り続け、**1 か月近く誰も決めなかった**。
+   *
+   * 保留は台帳ではなく `docs/REMAINING_WORK.md` が持つ ——
+   * あちらは「残っている物の一覧」として読まれるが、ここは「片付いた物の説明」
+   * として読まれるからである。決まっていない物をここへ書くと、
+   * **読み手には片付いて見える**。
+   *
+   * 針は**保留の決まり文句**に当てる (割れている理由の説明は巻き込まない)。
+   */
+  it('★ 理由の欄に「まだ決めていない」を置いていない', () => {
+    const DEFERRAL = /分かる人が決め|わかる人が決め|誰かが決め|決めていない|決まっていない|要検討|TODO/;
+    const parked = Object.entries(LEDGER)
+      .filter(([, v]) => DEFERRAL.test(v.why))
+      .map(([k]) => k);
+    expect(parked, '保留は docs/REMAINING_WORK.md へ (台帳は片付いた物の説明)').toEqual([]);
+    // 標本 —— 針は実際に在った 2 つの文面へ当たる (綴り違いで黙る検査を作らない)。
+    expect('揃えるか違う理由を書くかは分かる人が決めること。').toMatch(DEFERRAL);
+    expect('どちらが正しいか分かる人が決めること').toMatch(DEFERRAL);
+    // 対照 —— 片付いた理由の書き方は巻き込まない。
+    expect('乱数の取り方が実行環境で違うので実装は分かれる。').not.toMatch(DEFERRAL);
+    expect('RFC 7636 §7.1 の RECOMMENDED どおり 32 octet。').not.toMatch(DEFERRAL);
   });
 
   /* 走査そのものが動いていること (空虚に通っていない)。 */

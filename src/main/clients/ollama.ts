@@ -46,6 +46,7 @@ import {
 import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 import type { ActionData } from '../../shared/actionData';
 import {
+  MAX_OLLAMA_RESPONSE_BYTES,
   egressInit,
   isOverCap,
   isRedirectResponse,
@@ -60,12 +61,10 @@ export type { OllamaSnapshot };
 
 const OLLAMA_BASE = 'http://127.0.0.1:11434';
 const REQUEST_TIMEOUT_MS = 30_000;
-// **ブラウザ版 (`renderer/network/ollamaWeb.ts`) は 2 MB で、ここだけ 10 MB。**
-// 2026-08-23 に気付いて明記した —— どこにも理由が書かれておらず、意図した
-// 差なのか流されたのか判別できなかった。値は動かしていない (ブラウザ版の
-// 2 MB は画面の「セキュリティポリシー」欄に出ており、変えると表示も変わる)。
-// **揃えるか、違う理由を書くか**は、どちらが正しいか分かる人が決めること。
-const MAX_RESPONSE_BYTES = 10 * 1024 * 1024; // 10 MB
+// 応答本文の上限は **`shared/httpLimits.ts` の 1 つ** (2026-09-20 · パス 336)。
+// 2026-08-23 から 2026-09-20 まで、ここだけ 10 MB・ブラウザ版だけ 2 MB だった ——
+// 実測して 2 MiB に揃えた (理由と数字は `MAX_OLLAMA_RESPONSE_BYTES` の docblock)。
+const MAX_RESPONSE_BYTES = MAX_OLLAMA_RESPONSE_BYTES;
 
 /**
  * Hard allowlist of Ollama endpoints this client is permitted to touch.

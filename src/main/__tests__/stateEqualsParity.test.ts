@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { OAUTH_STATE_BYTES, PKCE_VERIFIER_BYTES } from '../../shared/cryptoParams';
 
 vi.mock('electron', () => ({
   app: { getPath: () => '/tmp/x', getVersion: () => '1.0.0', isPackaged: false },
@@ -127,19 +128,55 @@ describe('state の比較は両ビルドで同じ 1 つの関数', () => {
 
   /**
    * 長さで早期に返してよい根拠は「state が固定長であること」。
-   * **両ビルドの実測値を留める** —— 旧注記は main について「32 バイト乱数」と
-   * 書いていたが、main の実物は 16 バイト (22 字) である。
+   *
+   * **2026-09-20 (パス 336) から、その長さは両ビルドで同じ 1 つの定数が決める。**
+   * それまでは main 16 B (22 字) / renderer 32 B (43 字) で、ここはその
+   * **食い違いを実測値として書き留めていた** —— 旧注記が main を「32 バイト乱数」と
+   * 誤記していたのを直した跡なので、数字は正しかったが**割れていること自体**は
+   * 直さず留めていた (法則 `no-weakness-as-spec`)。
+   *
+   * verifier は RFC 7636 §7.1 の RECOMMENDED どおり 32 octet、state は床
+   * (128 bit) の 1 段上の 32 octet に揃えた (理由は `cryptoParams.ts`)。
    */
-  it('★ state の長さ: main は 22 字 (16 byte)・renderer は 43 字 (32 byte)', async () => {
+  it('★ state と verifier の byte 数は、両ビルドが shared の 1 つを読む', async () => {
     const oauth = await import('../oauth');
     const src = (await import('../../shared/__tests__/originalSource')).readOriginalSource;
     const mainSrc = src(new URL('../oauth.ts', import.meta.url).pathname);
     const webSrc = src(new URL('../../renderer/oauth/pkce.ts', import.meta.url).pathname);
-    expect(mainSrc).toContain('base64url(randomBytes(16))');
-    expect(webSrc).toContain('base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)))');
-    // 実際に 22 字 / 43 字になることを計算で確かめる (base64url は 4/3 倍・パディング無し)。
-    expect(Math.ceil((16 * 4) / 3)).toBe(22);
-    expect(Math.ceil((32 * 4) / 3)).toBe(43);
+    for (const [label, code] of [['main', mainSrc], ['renderer', webSrc]] as const) {
+      expect(code, `${label} が state の byte 数を書き写している`).toContain('OAUTH_STATE_BYTES');
+      expect(code, `${label} が verifier の byte 数を書き写している`).toContain('PKCE_VERIFIER_BYTES');
+      // 生の数字に戻っていないこと (16 / 32 / 64 のどれでも落ちる)。
+      expect(code, `${label} に生の byte 数が残っている`).not.toMatch(
+        /randomBytes\(\d+\)|new Uint8Array\(\d+\)/,
+      );
+    }
+    // 標本 —— 針は「書き写した宣言」に実際に当たる。
+    expect('base64url(randomBytes(16))').toMatch(/randomBytes\(\d+\)|new Uint8Array\(\d+\)/);
+    expect('base64UrlEncode(crypto.getRandomValues(new Uint8Array(64)))').toMatch(
+      /randomBytes\(\d+\)|new Uint8Array\(\d+\)/,
+    );
+    expect(OAUTH_STATE_BYTES).toBe(32);
+    expect(PKCE_VERIFIER_BYTES).toBe(32);
+    // 実際に 43 字になることを計算で確かめる (base64url は 4/3 倍・パディング無し)。
+    expect(Math.ceil((OAUTH_STATE_BYTES * 4) / 3)).toBe(43);
     expect(typeof oauth.safeStateEquals).toBe('function');
+  });
+
+  /**
+   * **両ビルドが同じ長さを実際に作る。** 上は原文の綴りを見る検査なので、
+   * 走らせた結果も突き合わせる (綴りだけ揃って実物が違う、を作らない)。
+   */
+  it('★ 実物の長さが両ビルドで一致する (verifier 43 字 / state 43 字)', async () => {
+    const { generatePkce: mainGen } = await import('../oauth');
+    const { generatePkce: webGen } = await import('../../renderer/oauth/pkce');
+    const m = mainGen();
+    const w = await webGen();
+    expect(m.verifier).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(m.challenge).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(w.verifier).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(w.challenge).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(w.state).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(w.verifier).toHaveLength(m.verifier.length);
   });
 });

@@ -29,7 +29,7 @@ import {
   safeStateEquals,
 } from '../../oauth/pkce';
 
-const SECRETS = { verifier: 'v'.repeat(86), challenge: 'chal-123', state: 's'.repeat(43) };
+const SECRETS = { verifier: 'v'.repeat(43), challenge: 'chal-123', state: 's'.repeat(43) };
 const OPTS = {
   clientId: 'client-abc.apps.googleusercontent.com',
   scopes: ['https://www.googleapis.com/auth/drive.readonly', 'openid'],
@@ -96,9 +96,16 @@ describe('generatePkce', () => {
     expect((await generatePkce()).state.length).toBe(43);
   });
 
-  it('verifier は 64 バイト由来 = 86 文字 (RFC 7636 の 43-128 内)', async () => {
+  /*
+   * **2026-09-20 (パス 336) に 64 バイト → 32 バイトへ揃えた。**
+   * RFC 7636 §7.1 は 32-octet を RECOMMENDED として名指ししており、`S256` の
+   * challenge から verifier を求める難しさは **SHA-256 の原像計算 (256 bit)** で
+   * 頭打ちになる —— 64 octet (512 bit) にしてもそこから先は 1 bit も強くならない。
+   * main 側は元から 32 バイトで、両ビルドが `PKCE_VERIFIER_BYTES` を読む。
+   */
+  it('verifier は 32 バイト由来 = 43 文字 (RFC 7636 §7.1 の RECOMMENDED)', async () => {
     const v = (await generatePkce()).verifier;
-    expect(v.length).toBe(86);
+    expect(v.length).toBe(43);
     expect(v.length).toBeGreaterThanOrEqual(43);
     expect(v.length).toBeLessThanOrEqual(128);
   });

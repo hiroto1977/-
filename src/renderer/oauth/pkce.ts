@@ -22,6 +22,7 @@
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
 import { constantTimeEquals } from '../../shared/constantTimeEquals';
+import { OAUTH_STATE_BYTES, PKCE_VERIFIER_BYTES } from '../../shared/cryptoParams';
 import { countChars } from '../../shared/inputCeiling';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { parseTokenResponse } from '../../shared/tokenResponse';
@@ -79,8 +80,8 @@ export function base64UrlEncode(bytes: Uint8Array): string {
 }
 
 export async function generatePkce(): Promise<PkceSecrets> {
-  const verifier = base64UrlEncode(crypto.getRandomValues(new Uint8Array(64)));
-  const state = base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)));
+  const verifier = base64UrlEncode(crypto.getRandomValues(new Uint8Array(PKCE_VERIFIER_BYTES)));
+  const state = base64UrlEncode(crypto.getRandomValues(new Uint8Array(OAUTH_STATE_BYTES)));
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
   const challenge = base64UrlEncode(new Uint8Array(hash));
   return { verifier, challenge, state };

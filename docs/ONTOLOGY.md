@@ -191,7 +191,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `fold-must-pair` | **「必ず併用する」と書いた対は畳む** — 「A を使うときは B も呼べ」と書きたくなったら B を A の中へ畳む。畳めないときだけ注記 + 台帳。実測: 7 か所のうち併用していたのは 2 か所だった。 | パターン 0-a-23 | 検査 `src/shared/__tests__/ontologyLaws.test.ts` |
 | `checked-equals-used` | **調べた物と使う物を同じにする** — 関門が通した値ではなく元の文字列を使うと、調べた物と使われる物が別になる (URL の字面一致 vs 解析後・1 ホップ目 vs 転送先・アンカーの属性 vs クリックの handler)。関門の返り値を使う。 | パス 291 / パス 298 / パス 299 / パス 301 / パス 325 (母集団の機械) | 検査 `src/shared/__tests__/parsedUrlGateCensus.test.ts`<br>検査 `src/shared/__tests__/externalUrlGate.test.ts`<br>検査 `src/shared/__tests__/imageUrlGate.test.ts`<br>検査 `src/shared/__tests__/followableUrlCensus.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts` |
 | `center-then-count-callers` | **中心へ寄せたら呼び出し側から数え直す** — 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。 | パターン 0-a-18 / パス 311 | 検査 `src/shared/__tests__/bareFetchLedger.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>検査 `src/shared/__tests__/jsonBodyCensus.test.ts` |
-| `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。弱さは閉じるか、理由つきの台帳に「閉じていない物」として書く。 | パス 291 / パス 309 | 散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。各パスの「閉じていない物」の節がその台帳 |
+| `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。**「揃えることを要求しない」「分かる人が決めること」と書いた保留も同じ** —— 理由の欄が埋まるので検査は通り続け、実測で 1 か月近く誰も決めなかった。弱さは閉じるか、`docs/REMAINING_WORK.md` に「閉じていない物」として書く (台帳は片付いた物の説明を置く所)。 | パス 291 / パス 309 / パス 336 | 検査 `src/shared/__tests__/dualBuildDecisions.test.ts`<br>散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。機械が在るのは両ビルド台帳の理由の欄だけ (保留の決まり文句を落とす) で、検査の題名そのものは各パスの「閉じていない物」の節が持つ |
 
 ### 境界と信頼 (18)
 
@@ -285,16 +285,15 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `release-artifacts-reread` | **公開先は前のランの残骸を溜める — 置いてある一覧を読み返す** — CI の緑はそのランが何を出したかしか保証しない。追記しかしない置き場 (リリース資産) は公開後に一覧を読み返す。数は宣言側 (electron-builder.json) から導く。 | パターン 0-a-19 | ゲート `npm run verify:release-artifacts` |
 | `repo-size-ceiling` | **追跡ファイルの大きさに天井** — 履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 80 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。 | CLAUDE.md lint:repo-size / ci.yml の出荷物の天井 | ゲート `npm run lint:repo-size`<br>CI `.github/workflows/ci.yml` |
 
-## 6. 機械の無い法則 (5)
+## 6. 機械の無い法則 (4)
 
 - `manual-check-becomes-gate` **手でやった検査はその場でゲートにする** — 「手でやった」は機械に映らない。作ったゲートが CI に在ることは gate-runs-in-ci が、自作ゲートが対照を持つことは negative-control が見る
 - `measure-before-claim` **危なそうで報告しない — 実測してから言う** — 「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ
 - `claim-unit-not-file` **主張の単位で見る** — 検査の書き方の規律。個々の検査が守っているかを機械で見る形は無い (absence-needs-sample が「不在の主張」側だけを数える)
 - `parity-is-not-correctness` **パリティは両方に在る穴を見つけない** — 「一致した 2 つが両方とも間違っている」は定義上パリティに映らない。攻撃形を食わせる検査は組ごとに書く
-- `no-weakness-as-spec` **弱さを仕様として書き留めない** — 題名の意味は機械に映らない。各パスの「閉じていない物」の節がその台帳
 
 ## 7. 集計
 
-- 法則 85 (機械あり 80 / 散文だけ 5)
+- 法則 85 (機械あり 81 / 散文だけ 4)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

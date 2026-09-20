@@ -5,7 +5,6 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
   CHAT_TIMEOUT_MS as WEB_CHAT_TIMEOUT_MS,
-  MAX_RESPONSE_BYTES as WEB_MAX_RESPONSE_BYTES,
   OLLAMA_ENDPOINT_KEY,
   REQUEST_TIMEOUT_MS as WEB_REQUEST_TIMEOUT_MS,
   desktopSetupCommands,
@@ -13,6 +12,7 @@ import {
   originsSetupSteps,
   setupCommands,
 } from '../network/ollamaWeb';
+import { MAX_OLLAMA_RESPONSE_BYTES } from '../../shared/httpLimits';
 import {
   DEFAULT_OLLAMA_PORT,
   MAX_OLLAMA_PROMPT_CHARS,
@@ -288,12 +288,16 @@ export function OllamaPage() {
             * 数字はビルドで違う。1 行で「30 秒 / 10 MB」とだけ書いていた頃は
             * デスクトップ版の値で、ブラウザ版 (chat 120 秒 / 上限 2 MB) と
             * ずれていた (2026-08-23)。値は実物の定数から出す。
+            *
+            * **レスポンスの上限は 2026-09-20 (パス 336) から両ビルドで 1 つ** ——
+            * それまで「デスクトップ版 10 MB」だけが**画面に直書き**されており、
+            * 定数から出していたのはブラウザ版の数字だけだった。
             */}
           <div>
-            🔒 デスクトップ版はリクエスト 30 秒・レスポンス 10 MB、
+            🔒 デスクトップ版はリクエスト 30 秒、
             ブラウザ版は疎通確認 {WEB_REQUEST_TIMEOUT_MS / 1000} 秒 / チャット{' '}
-            {WEB_CHAT_TIMEOUT_MS / 1000} 秒・レスポンス {WEB_MAX_RESPONSE_BYTES / (1024 * 1024)} MB
-            で切り詰め
+            {WEB_CHAT_TIMEOUT_MS / 1000} 秒。レスポンスはどちらも{' '}
+            {MAX_OLLAMA_RESPONSE_BYTES / (1024 * 1024)} MB で切り詰め
           </div>
           <div>🔒 Streaming レスポンス未対応 (有限長応答のみ受理)</div>
           <div>

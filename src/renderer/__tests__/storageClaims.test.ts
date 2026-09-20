@@ -220,7 +220,12 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
   it('ブラウザ版の値を定数から描画している (import だけでなく JSX で使っている)', () => {
     expect(PAGE).toMatch(/\{WEB_CHAT_TIMEOUT_MS \/ 1000\}/);
     expect(PAGE).toMatch(/\{WEB_REQUEST_TIMEOUT_MS \/ 1000\}/);
-    expect(PAGE).toMatch(/\{WEB_MAX_RESPONSE_BYTES \/ \(1024 \* 1024\)\}/);
+    // 2026-09-20 (パス 336) から、応答の上限は両ビルドで 1 つ (shared)。
+    // それまで「デスクトップ版 10 MB」だけが**画面に直書き**されていた。
+    expect(PAGE).toMatch(/\{MAX_OLLAMA_RESPONSE_BYTES \/ \(1024 \* 1024\)\}/);
+    expect(PAGE).not.toMatch(/レスポンス 10 MB/);
+    // 標本 — この針は禁じたい字面に実際に当たる (綴り違いで黙る検査を作らない)。
+    expect('🔒 デスクトップ版はリクエスト 30 秒・レスポンス 10 MB、').toMatch(/レスポンス 10 MB/);
   });
 
   /*

@@ -84,11 +84,14 @@ describe('法則の台帳は実物を指している', () => {
      * 増やすときは理由 (`prose.why`) を書き、ここへ足す。減らすとき (機械を付けたとき) は
      * ここから消す。どちらも意図した変更としてこの行で鳴る。
      */
+    // `no-weakness-as-spec` は 2026-09-20 (パス 336) にここから外れた ——
+    // 両ビルド台帳の理由の欄に「保留の決まり文句」を置けなくする検査が付いたため。
+    // 覆うのはその 1 面だけ (検査の題名そのものは今も機械に映らない) だが、
+    // **機械が 1 つでも在れば「機械の無い法則」ではない**ので、ここには載せない。
     const PROSE_ONLY = [
       'claim-unit-not-file',
       'manual-check-becomes-gate',
       'measure-before-claim',
-      'no-weakness-as-spec',
       'parity-is-not-correctness',
     ];
     expect(lawsWithoutMachine(LAWS).map((l) => l.id).sort()).toEqual([...PROSE_ONLY].sort());

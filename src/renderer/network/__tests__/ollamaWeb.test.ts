@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { MAX_OLLAMA_RESPONSE_BYTES } from '../../../shared/httpLimits';
 import {
   chatOllama,
   createCspWatcher,
@@ -10,7 +11,6 @@ import {
   OLLAMA_PORT_KEY,
   desktopSetupCommands,
   originsSetupSteps,
-  MAX_RESPONSE_BYTES,
   probeOllama,
   REQUEST_TIMEOUT_MS,
   setupCommands,
@@ -1566,8 +1566,8 @@ describe('時間切れと後始末', () => {
     const pad = 'あ'.repeat(1_000_000);
     const body = JSON.stringify({ version: pad });
     // 文字数は上限以下だが、byte 数は上限を超える —— ここが分かれ目。
-    expect(body.length).toBeLessThan(MAX_RESPONSE_BYTES);
-    expect(new TextEncoder().encode(body).byteLength).toBeGreaterThan(MAX_RESPONSE_BYTES);
+    expect(body.length).toBeLessThan(MAX_OLLAMA_RESPONSE_BYTES);
+    expect(new TextEncoder().encode(body).byteLength).toBeGreaterThan(MAX_OLLAMA_RESPONSE_BYTES);
     const f = vi.fn(async (url: string | URL | Request) => {
       if (String(url).endsWith('/api/version')) return new Response(body, { status: 200 });
       return json({ models: [] });
@@ -2003,10 +2003,14 @@ describe('モジュール直下の値 — 読み直して static 変異体を届
     });
   });
 
-  it('★ 応答の上限は 2MiB ちょうど', async () => {
-    const m = await fresh();
-    expect(m.MAX_RESPONSE_BYTES).toBe(2 * 1024 * 1024);
-    expect(m.MAX_RESPONSE_BYTES).toBe(2097152);
+  /*
+   * **上限は `shared/httpLimits.ts` の 1 つになった** (2026-09-20 · パス 336)。
+   * ここは 2026-08-23 から `ollamaWeb` の私有定数を読んでおり、main がそれと
+   * 違う値 (10 MiB) を持っていても何も鳴らなかった。値そのものは動いていない。
+   */
+  it('★ 応答の上限は 2MiB ちょうど (両ビルドが読む 1 つ)', () => {
+    expect(MAX_OLLAMA_RESPONSE_BYTES).toBe(2 * 1024 * 1024);
+    expect(MAX_OLLAMA_RESPONSE_BYTES).toBe(2097152);
   });
 });
 

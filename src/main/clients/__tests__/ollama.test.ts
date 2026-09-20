@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { MAX_OLLAMA_RESPONSE_BYTES } from '../../../shared/httpLimits';
 import {
   compareVersions,
   fetchOllamaSnapshot,
@@ -656,10 +657,14 @@ describe('ACTIONS["chat"]', () => {
   });
 
   it('accepts a response of EXACTLY MAX_RESPONSE_BYTES bytes (kills `>` → `>=`)', async () => {
-    // Tightened: build a body whose text.length is EXACTLY 10*1024*1024.
+    // Tightened: build a body whose text.length is EXACTLY the cap.
     // Original `text.length > MAX_RESPONSE_BYTES` is false → accept.
     // Mutated `>=` is true → reject. Boundary precisely pinned.
-    const MAX = 10 * 1024 * 1024;
+    //
+    // **上限は `shared/httpLimits.ts` の 1 つを読む** (2026-09-20 · パス 336)。
+    // ここは 10 MiB を書き写しており、main だけが 10 MiB でブラウザ版が 2 MiB
+    // だった頃はそれで通っていた。揃えたので写しは境界を外す。
+    const MAX = MAX_OLLAMA_RESPONSE_BYTES;
     const envelope = `{"message":{"role":"assistant","content":""}}`;
     // Insert exactly (MAX - envelope.length) "x" chars between the quotes
     // around content so the body is exactly MAX bytes long.

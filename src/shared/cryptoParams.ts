@@ -93,3 +93,36 @@ export function kdfLabel(iterations: number = PBKDF2_ITERATIONS, hash: string = 
   const n = iterations % 1000 === 0 ? `${iterations / 1000}k` : String(iterations);
   return `PBKDF2-${hash}-${n}`;
 }
+
+/**
+ * **OAuth の乱数の byte 数 —— 両ビルドで 1 つ** (2026-09-20 · パス 336)。
+ *
+ * 2026-09-20 まで、同じ判断がビルドごとに違う値で在った (実測):
+ *
+ * ```
+ *              verifier        state
+ *   main       32 B (43 字)    16 B (22 字)
+ *   renderer   64 B (86 字)    32 B (43 字)
+ * ```
+ *
+ * どちらも RFC 7636 §4.1 の 43〜128 字に収まり、state もどちらも 128 bit 以上
+ * なので**今日の実害は無い**。それでも揃えるのは、これが「同じ問いへの 2 つの答え」
+ * だからである —— 片方を動かしても、もう片方は黙って古い値のままになる
+ * (`constantTimeEquals` がまさにそれで割れていた · パス 331)。
+ *
+ * ## どちらが正しいかは、規格と用途が決めている
+ *
+ * **verifier は 32 octet。** RFC 7636 §7.1 が「32-octet sequence を base64url して
+ * 43 字にする」と **RECOMMENDED** で名指ししている。理由も明快で、`S256` の
+ * challenge を見た攻撃者が verifier を求める難しさは **SHA-256 の原像計算 (256 bit)**
+ * で頭打ちになる —— 64 octet (512 bit) の入力にしても、そこから先は**ハッシュが
+ * 律速なので 1 bit も強くならない**。64 は「多い」のではなく**無駄**である。
+ *
+ * **state は 32 octet。** 床は「128 bit 以上」で、main の 16 B は**床ちょうど**だった。
+ * 床は下回ってはいけない値であって目標ではないので、1 段上の 32 B に置く
+ * (URL が 21 字伸びるだけで、費用は無い)。
+ */
+export const PKCE_VERIFIER_BYTES = 32;
+
+/** OAuth の `state` の byte 数。理由は {@link PKCE_VERIFIER_BYTES} の docblock。 */
+export const OAUTH_STATE_BYTES = 32;

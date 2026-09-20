@@ -18,6 +18,7 @@ import http from 'node:http';
 import { AddressInfo } from 'node:net';
 import { createHash, randomBytes } from 'node:crypto';
 import { constantTimeEquals } from '../shared/constantTimeEquals';
+import { OAUTH_STATE_BYTES, PKCE_VERIFIER_BYTES } from '../shared/cryptoParams';
 import type { ServiceId } from '../shared/serviceId';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../shared/redact';
 import { parseTokenResponse, type TokenResponseFields } from '../shared/tokenResponse';
@@ -364,7 +365,7 @@ function base64url(buf: Buffer): string {
 }
 
 export function generatePkce(): { verifier: string; challenge: string } {
-  const verifier = base64url(randomBytes(32));
+  const verifier = base64url(randomBytes(PKCE_VERIFIER_BYTES));
   const challenge = base64url(createHash('sha256').update(verifier).digest());
   return { verifier, challenge };
 }
@@ -501,9 +502,12 @@ export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string)
  * ## state の長さ (実測・2026-09-20)
  *
  * この注記は長らく「state は 32 バイト乱数の base64url」と書いていたが、
- * **main の実物は 16 バイト** (`base64url(randomBytes(16))` → 22 字) である。
- * 32 バイトはブラウザ版の値で、そちらの注記から写されたまま突き合わせられて
- * いなかった。結論 (固定長だから長さは秘密でない) は両方で成り立つ。
+ * その日の実測では **main の実物は 16 バイト** (→ 22 字) だった。32 バイトは
+ * ブラウザ版の値で、そちらの注記から写されたまま突き合わせられていなかった。
+ * 結論 (固定長だから長さは秘密でない) は両方で成り立つ。
+ *
+ * **同日 (パス 336) に両ビルドを `shared/cryptoParams.ts` の
+ * `OAUTH_STATE_BYTES` = 32 へ揃えた**ので、今はどちらも 43 字である。
  */
 export const safeStateEquals = constantTimeEquals;
 
@@ -789,7 +793,7 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   // 平文の宛先へ `state` を投げてから気付いても遅い。
   assertHttpsEndpoint(config.authorizeUrl, 'authorization');
   const { verifier, challenge } = generatePkce();
-  const state = base64url(randomBytes(16));
+  const state = base64url(randomBytes(OAUTH_STATE_BYTES));
 
   const listener = listenForCallback(state);
   const port = await listener.port();
