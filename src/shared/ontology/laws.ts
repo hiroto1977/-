@@ -621,9 +621,9 @@ export const LAWS: readonly Law[] = [
     id: 'exported-markup-escapes-free-text',
     family: 'surface',
     name: '書き出す成果物に自由文を素で入れない',
-    statement: '書き出した `.md` / `.svg` / `.html` はライブラリに保存され、**ダウンロードして人に渡る**。自由文 (利用者の入力・AI の応答・第三者の応答) は `shared/escape.ts` の 1 つを通す —— Markdown は `escapeMarkdownInline` (1 行で終わる場所: 見出し・箇条書きの 1 項目・引用の 1 行) と `escapeMarkdownText` (地の文)、XML/HTML は `escapeXml`、色は `safeColor` で**検証して既定値へ落とす**。`lint:forbidden` #11 が落とすのは**再実装**であって「通していない」ではないので、母集団を別に数える。',
-    provenance: ['パス 332', 'escape.ts の docblock (2026-08-20)'],
-    enforcedBy: [test(T.renderer('markdownExportCensus')), test(T.shared('escape')), gate('lint:forbidden')],
+    statement: '書き出した `.md` / `.svg` / `.html` はライブラリに保存され、**ダウンロードして人に渡る**。自由文 (利用者の入力・AI の応答・第三者の応答) は `shared/escape.ts` の 1 つを通す —— Markdown は `escapeMarkdownInline` (1 行で終わる場所: 見出し・箇条書きの 1 項目・引用の 1 行) と `escapeMarkdownText` (地の文)、XML/HTML は `escapeXml`、色は**入口で検証する** (`safeColor` で既定値へ落とすか、`isHexColor` で断る)。`lint:forbidden` #11 が落とすのは**再実装**であって「通していない」ではないので、**形式ごとに**母集団を数える —— Markdown は不活性だが、`.svg` はブラウザで開くと中の `<script>` が走り、`.svg` / `.html` はアプリ自身が `shell.openPath` で OS に開かせる。',
+    provenance: ['パス 332', 'パス 348', 'escape.ts の docblock (2026-08-20)'],
+    enforcedBy: [test(T.renderer('markdownExportCensus')), test(T.shared('markupExportCensus')), test(T.shared('escape')), gate('lint:forbidden')],
   },
   {
     id: 'refuse-dont-truncate',
