@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 245
+- ブロック数: 246
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `7a9ec8b816efb086f2de49e06f4f6520bf5b56ee99ae5e4192e3e1d440f9e570`
-- 保護対象: 82 ファイル
+- 末尾(tip)ハッシュ: `6215ffe67e69c32006f3881c43ad33a143423fc1f40a2efa9713208fc4dba72e`
+- 保護対象: 83 ファイル
 
 ## ブロック
 
@@ -258,6 +258,7 @@
 | 242 | `6260a8cd77642a91` | `84bb7ee1fff35671` | `eceb073a154f3b01` | update proxy.ts |
 | 243 | `5531cfe750bcdc50` | `eceb073a154f3b01` | `6b3c13c99ea27ac2` | update eslint.config.js,integrity-chain.cjs,vite.config.ts,vitest.config.ts |
 | 244 | `034c9619164aba7b` | `6b3c13c99ea27ac2` | `7a9ec8b816efb086` | update integrity-chain.cjs |
+| 245 | `3e42e4291c23c54b` | `7a9ec8b816efb086` | `6215ffe67e69c320` | update PROXY_EXAMPLE.md,integrity-chain.cjs |
 
 ## 保護対象ファイル
 
@@ -266,6 +267,7 @@
 - `.github/workflows/release.yml`
 - `assets/manifest.webmanifest`
 - `assets/sw.js`
+- `docs/PROXY_EXAMPLE.md`
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
 - `eslint.config.js`

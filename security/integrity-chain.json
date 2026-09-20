@@ -7,6 +7,7 @@
     ".github/workflows/release.yml",
     "assets/manifest.webmanifest",
     "assets/sw.js",
+    "docs/PROXY_EXAMPLE.md",
     "docs/SECURITY_CHAIN.md",
     "electron-builder.json",
     "eslint.config.js",
@@ -2045,6 +2046,14 @@
       "leafCount": 82,
       "note": "update integrity-chain.cjs",
       "hash": "7a9ec8b816efb086f2de49e06f4f6520bf5b56ee99ae5e4192e3e1d440f9e570"
+    },
+    {
+      "index": 245,
+      "prevHash": "7a9ec8b816efb086f2de49e06f4f6520bf5b56ee99ae5e4192e3e1d440f9e570",
+      "merkleRoot": "3e42e4291c23c54b6e9697aad066502b9a3f75b9ed4e3adf9cb998d4a5efa3bb",
+      "leafCount": 83,
+      "note": "update PROXY_EXAMPLE.md,integrity-chain.cjs",
+      "hash": "6215ffe67e69c32006f3881c43ad33a143423fc1f40a2efa9713208fc4dba72e"
     }
   ],
   "tipManifest": {
@@ -2053,13 +2062,14 @@
     ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
     "assets/manifest.webmanifest": "598731c94b6a5cf47d332df053afde8f8918423ea4c7194bb79d5cdff1cdddcc",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
+    "docs/PROXY_EXAMPLE.md": "02114bb2d044db44cda64244bb78fc6b54169714e6e90854c5b31d044b43c39b",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "76c8d69500f6185c3658aff5b7eeaafa2d4e0c00e4c6a1793f27693d72e0f418",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "98ca3f73688af02113a9e99dea2114970eb6663c66981273f7ce10b341b61685",
+    "scripts/integrity-chain.cjs": "6132193d7bc008c883e4c4b2dcfe0485e1854497062885c38287d4ddc187513f",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",

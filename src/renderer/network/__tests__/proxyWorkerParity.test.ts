@@ -5,6 +5,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { fetchViaProxy, isPrivateOrReservedTarget, MAX_PROXY_RESPONSE_BYTES } from '../proxy';
+import { REDIRECT_STATUSES } from '../../../shared/httpLimits';
+import { constantTimeEquals } from '../../../shared/constantTimeEquals';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const req = createRequire(import.meta.url);
@@ -507,5 +509,143 @@ describe('上流のスキームは client と Worker で同じ (パス 345)', ()
     const b = new URL('http://api.notion.com/b');
     expect(b.host === a.host).toBe(true);
     expect(b.origin === a.origin).toBe(false);
+  });
+});
+
+/**
+ * **配る Worker の関数を、全部機械に通す** (2026-09-20 · パス 349)。
+ *
+ * ## 何が在ったか
+ *
+ * パス 345 で「Worker の関数は 9 本、機械が**実際に走らせて**いたのは 2 本」と
+ * 測り、パス 347 で 5 本になった。**その数はどこにも機械が持っておらず、
+ * パスごとに人が数え直していた** —— 数を散文にだけ書くと古びる、という
+ * このリポジトリが繰り返し直してきた形そのものである
+ * (`live-metrics-not-prose`)。しかも数え直しは「今の本数」しか言わず、
+ * **Worker に 10 本目が生えたとき**には何も鳴らない。
+ *
+ * ## この検査が持つもの
+ *
+ * 母集団は **md の js ブロックが宣言する関数の全量** (走査で数える)。
+ * 台帳は 1 本ずつ `run` (この検査が実際に走らせる) か
+ * `read` (走らせない理由を書く) を持ち、**両方向**に突き合わせる。
+ * 新しい関数が生えれば「走らせるのか、走らせない理由は何か」を書くことになる。
+ *
+ * ## 実測 (2026-09-20)
+ *
+ * 宣言は **8 本 + 既定エクスポートの `fetch` ハンドラ**。
+ * パス 349 で `isRedirect` / `timingSafeEqualStr` / `json` を走らせ、
+ * **`fetch` ハンドラ以外の 8 本すべてが `run`** になった。
+ * ハンドラだけは `read` —— 走らせるには Workers の実行環境 (`Response` /
+ * `fetch` / `env`) を丸ごと作ることになり、**作った模型が正しいことを別に
+ * 確かめる必要が出る**。代わりに、ハンドラが持つ 3 つの判断
+ * (資格情報を落とす条件・転送の再検査・上限超過の扱い) は、それぞれ
+ * **切り出した関数の側**で測っている。
+ */
+describe('配る Worker の関数の母集団 (パス 349)', () => {
+  /** md の js ブロックが宣言する関数名 (`async` も含む)。 */
+  function declaredFunctions(source: string): string[] {
+    const names = new Set<string>();
+    for (const m of source.matchAll(/^(?:async )?function ([A-Za-z_$][\w$]*)\(/gm)) names.add(m[1]!);
+    // 既定エクスポートのハンドラは `function` 宣言ではないので別に拾う。
+    if (/^\s*async fetch\(request\)/m.test(source)) names.add('fetch (default export)');
+    return [...names].sort();
+  }
+
+  const FUNCTION_LEDGER: Readonly<Record<string, { run: boolean; why: string }>> = {
+    isBlockedIp: { run: true, why: 'client / CI の 2 実装と同じ標本に当てる (この検査の先頭の表)。' },
+    expandV6: { run: true, why: 'isBlockedIp の依存。IPv6 の短縮形を展開する所で答えが割れる。' },
+    denyReason: { run: true, why: '§3 が「これが主たる防御線」と呼ぶ判定。許可リスト / 平文 http / 解決後 IP の順を実際に走らせる。' },
+    resolvedIpDenyReason: { run: true, why: 'DoH の失敗 4 経路 (network error / !res.ok / JSON 不正 / 0 件) で fail closed になることを走らせて確かめる。' },
+    readCappedText: { run: true, why: '上限を超えた応答で null を返し、reader を cancel することを実際に走らせる (パス 343)。' },
+    isRedirect: { run: true, why: 'アプリ側の REDIRECT_STATUSES と同じ集合であること。写して比べると比べているのが写しになる (パス 349)。' },
+    timingSafeEqualStr: { run: true, why: 'アプリ側の constantTimeEquals と同じ答えを返すこと。孤立サロゲートで割れた前例が在る (パス 331・パス 349)。' },
+    json: { run: true, why: '断りの応答を組む唯一の口。Access-Control-Allow-Origin と Content-Type がここだけで決まる (パス 349)。' },
+    'fetch (default export)': {
+      run: false,
+      why: '走らせるには Workers の実行環境を丸ごと模すことになり、模型が正しいことを別に確かめる必要が出る。ハンドラが持つ 3 つの判断 (資格情報を落とす条件・転送の再検査・上限超過の扱い) は切り出した関数の側で測り、条件の綴りは下の字面の検査が留める。',
+    },
+  };
+
+  it('★ 台帳と md の宣言が一致する (両方向)', () => {
+    expect(declaredFunctions(md)).toEqual(Object.keys(FUNCTION_LEDGER).sort());
+  });
+
+  it('★ 走らせない物は 1 本だけで、理由が書かれている', () => {
+    const notRun = Object.entries(FUNCTION_LEDGER).filter(([, v]) => !v.run);
+    expect(notRun.map(([k]) => k)).toEqual(['fetch (default export)']);
+    for (const [name, v] of Object.entries(FUNCTION_LEDGER)) {
+      expect(v.why.length, name).toBeGreaterThan(20);
+      expect(v.why, name).not.toMatch(/分かる人が決め|誰かが決め|要検討|TODO|同上/);
+    }
+    // 標本: この針は実際に保留の文面へ当たる。
+    expect('同上。').toMatch(/分かる人が決め|誰かが決め|要検討|TODO|同上/);
+  });
+
+  it('標本: 走査は `async function` も既定エクスポートも拾う', () => {
+    expect(declaredFunctions('function a() {}\nasync function b() {}')).toEqual(['a', 'b']);
+    expect(declaredFunctions('  async fetch(request) {')).toEqual(['fetch (default export)']);
+    expect(declaredFunctions('const c = () => {};')).toEqual([]);
+  });
+
+  it('★ isRedirect は アプリ側の REDIRECT_STATUSES と同じ集合', async () => {
+    const file = join(dir, 'workerRedirect.mjs');
+    writeFileSync(file, `${extractFunction(md, 'isRedirect')}\nexport { isRedirect };\n`);
+    const { isRedirect } = (await import(pathToFileURL(file).href)) as {
+      isRedirect: (s: number) => boolean;
+    };
+    const disagreements: number[] = [];
+    for (let s = 100; s <= 599; s += 1) {
+      if (isRedirect(s) !== REDIRECT_STATUSES.has(s)) disagreements.push(s);
+    }
+    expect(disagreements).toEqual([]);
+    // 標本: 比較そのものが生きている (どちらも 302 を転送と呼び、304 は呼ばない)。
+    expect(isRedirect(302)).toBe(true);
+    expect(isRedirect(304)).toBe(false);
+    expect(REDIRECT_STATUSES.has(302)).toBe(true);
+  });
+
+  it('★ timingSafeEqualStr は アプリ側の constantTimeEquals と同じ答え', async () => {
+    const file = join(dir, 'workerEq.mjs');
+    writeFileSync(
+      file,
+      `${extractFunction(md, 'timingSafeEqualStr')}\nexport { timingSafeEqualStr };\n`,
+    );
+    const { timingSafeEqualStr } = (await import(pathToFileURL(file).href)) as {
+      timingSafeEqualStr: (a: unknown, b: unknown) => boolean;
+    };
+    const SAMPLES: [unknown, unknown][] = [
+      ['abc', 'abc'],
+      ['abc', 'abd'],
+      ['abc', 'ab'],
+      ['', ''],
+      ['\uD800', '\uDC00'], // 孤立サロゲート —— main の Buffer 実装はここで割れた (パス 331)
+      ['𐀀', '𐀀'],
+      ['a\u0000b', 'a\u0000b'],
+      ['A', 'a'],
+    ];
+    for (const [a, b] of SAMPLES) {
+      expect(timingSafeEqualStr(a, b), `${JSON.stringify(a)} vs ${JSON.stringify(b)}`).toBe(
+        constantTimeEquals(a as string, b as string),
+      );
+    }
+    // 文字列でない物はどちらも false (Worker 側はヘッダが無いと null を受け取る)。
+    expect(timingSafeEqualStr(null, 'x')).toBe(false);
+    // 標本: 差が在る組では両方とも false を返す (どちらも「常に true」ではない)。
+    expect(timingSafeEqualStr('abc', 'abd')).toBe(false);
+    expect(constantTimeEquals('abc', 'abd')).toBe(false);
+  });
+
+  it('★ json は断りの応答を 1 つの形で組む (CORS と Content-Type がここだけで決まる)', async () => {
+    const file = join(dir, 'workerJson.mjs');
+    writeFileSync(file, `${extractFunction(md, 'json')}\nexport { json };\n`);
+    const { json } = (await import(pathToFileURL(file).href)) as {
+      json: (obj: unknown, status: number) => Response;
+    };
+    const res = json({ error: 'unauthorized' }, 401);
+    expect(res.status).toBe(401);
+    expect(res.headers.get('content-type')).toBe('application/json');
+    expect(res.headers.get('access-control-allow-origin')).toBe('*');
+    await expect(res.json()).resolves.toEqual({ error: 'unauthorized' });
   });
 });

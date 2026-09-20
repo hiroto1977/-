@@ -453,11 +453,22 @@ function json(obj, status) {
 ## 3. セキュリティ留意点
 
 - URL は **公開リポジトリにコミットしない** (誰でも使われる)
-- `SHARED_SECRET` を設定し、Settings 画面で同じ値を入力すると簡易認証
+- **「誰が使えるか」と「どこへ繋げるか」は別の関門である** (2026-09-20 · パス 349):
+  - *誰が* — `SHARED_SECRET`。**既定は空文字で、そのとき認証は一切行われない**
+    (`if (SHARED_SECRET)` の中へ入らない)。応答は常に
+    `Access-Control-Allow-Origin: *` なので、**URL を知っている者は誰でも呼べる**。
+    設定しない場合、守りは URL の秘匿だけになる。Settings 画面で同じ値を入力すると
+    アプリ側が `X-Proxy-Auth` に載せる。
+  - *どこへ* — `UPSTREAM_ALLOWLIST`。緩めると繋げる先が広がる。
+  **この節は 2026-09-20 まで「allowlist を空にしたり `*` 相当に緩めた時点で
+  誰でも使えるオープンプロキシになる」と書いていた** —— 緩めなくても、
+  既定の設定なら許可リストの 10 ホストに対して**誰でも使える**。
+  2 つを取り違えたまま読むと、「allowlist さえ絞ってあれば認証は要らない」と
+  判断することになる。
 - **上流ホストを allowlist する** (例: notion.com / atlassian.net のみ受け入れる) — 上の Worker 例ではこれを既定で組み込んでいる。
   **これが主たる防御線**であり、以下の IP 検査はその上に重ねる多層防御に過ぎない。
-  allowlist を空にしたり `*` 相当に緩めた時点で、Worker は誰でも使える
-  オープンプロキシになる
+  allowlist を空にしたり `*` 相当に緩めると、**繋げる先**が任意のホストへ広がる
+  (誰が呼べるかは上の `SHARED_SECRET` が決める)
 - **DNS rebinding / 公開ワイルドカード DNS 対策はプロキシ側の責任**:
   クライアントは hostname 文字列しか見られない (`isPrivateOrReservedTarget` in
   `src/shared/privateTarget.ts`、`src/renderer/network/proxy.ts` が re-export —
