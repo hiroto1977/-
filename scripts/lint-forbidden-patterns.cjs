@@ -840,6 +840,12 @@ const KNOWN_SUPPRESSIONS = [
   // 直した結果、これまで素通りしていた import 形が全部当たるようになり、
   // scripts/ 側で例外が効く場所が可視化された (2026-08-23)。
   'child_process exec/spawn :: scripts/check-import-boundaries.cjs :: 2',
+  // 2026-09-20 (パス 342): `src` の外の網の口の母集団を **git に聞く**
+  // (`git ls-files --cached --others --exclude-standard`)。無視の規則を書き写すと
+  // `dist/` / `dist-electron/` の生成物を拾って母集団が走るたびに変わるし、
+  // 未追跡のファイルを落とすと「手元では緑・CI では赤」になる (パス 341 の実績)。
+  // 引数は固定でシェルを経由しない (`execFileSync`)。2 件は require と呼び出し。
+  'child_process exec/spawn :: scripts/lint-network-targets.cjs :: 2',
   // 実物のデスクトップアプリを起動する道具。`electron .` を子プロセスで
   // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
   // 確かめるのが目的なので、プロセスを作らずには成り立たない。

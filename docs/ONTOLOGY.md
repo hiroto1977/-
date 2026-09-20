@@ -150,17 +150,18 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (87)
+## 5. 法則と執行者 (88)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
 
-### ゲートそのものの規律 (22)
+### ゲートそのものの規律 (23)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
 | `manual-check-becomes-gate` | **手でやった検査はその場でゲートにする** — 「私が今やった手作業を、次のセッションの誰かが思い出せるか」— 思い出せないならゲートにする。ゲートを作ったら負の対照 (違反を仕込んで落ちる・正常を誤検出しない・直ったのに台帳に残っていれば落ちる) を取る。 | パターン 0 | 散文だけ `docs/SESSION_HANDOFF.md` — 「手でやった」は機械に映らない。作ったゲートが CI に在ることは gate-runs-in-ci が、自作ゲートが対照を持つことは negative-control が見る |
-| `scan-whole-tree` | **走査範囲は木全体、例外は台帳** — 「対象を絞る」と「対象を忘れる」はコードの上で見分けがつかない。走査は木全体にし、外す物を理由つきの台帳に書く。台帳を書いたら「どこまで歩いたか」「注記の規則を判定が実装しているか」「対照は判定関数そのものへ標本を通しているか」を問う。 | パターン 0-a / パターン 0-a-24 | ゲート `npm run lint:network-targets`<br>ゲート `npm run lint:forbidden`<br>検査 `src/shared/__tests__/bareFetchLedger.test.ts` |
+| `scan-whole-tree` | **走査範囲は木全体、例外は台帳** — 「対象を絞る」と「対象を忘れる」はコードの上で見分けがつかない。走査は木全体にし、外す物を理由つきの台帳に書く。台帳を書いたら「どこまで歩いたか」「注記の規則を判定が実装しているか」「対照は判定関数そのものへ標本を通しているか」を問う。外した側をどう台帳にするかは `outside-scope-gets-its-own-census`。 | パターン 0-a / パターン 0-a-24 | ゲート `npm run lint:network-targets`<br>ゲート `npm run lint:forbidden`<br>検査 `src/shared/__tests__/bareFetchLedger.test.ts` |
+| `outside-scope-gets-its-own-census` | **走査の外は、広げれば見えるとは限らない** — 走査範囲を絞ったら、外した側の母集団を一度数える。広げれば見えると決めてはいけない —— 外の母集団は書き方の前提が違うので、同じ検出器を当てると偽陽性で埋まり、本当に危ない物は元の検出器の設計上の除外（例: 素の識別子の送り先）に隠れたままになる。外が小さいなら「危ない構文か」を問うのをやめ、**全件**を守りつきで台帳に載せる。 | パス 342 / パターン 0-a | ゲート `npm run lint:network-targets`<br>検査 `src/shared/__tests__/networkTargetWitness.test.ts` |
 | `gate-runs-in-ci` | **検査が走る場所が CI に在る** — verify:all の全ゲートが ci.yml に在る。「これで強制される」と書いた検査は、CI のどのステップで走るかを確かめる。走らないなら vitest ゲートへ移す。 | パターン 0-a-11 / パターン 0-c | ゲート `npm run lint:docs` |
 | `negative-control` | **ゲートは守りを外して確かめる** — 自作のゲートは --self-test (陽性・陰性の対照) を持ち、verify:all がそれを走らせる。--self-test の「鳴る側」は作った本人の想像なので、守るはずの実物を一度壊して鳴らす。 | パターン 0 / パターン 0-a-15 | 検査 `src/shared/__tests__/ontologyLaws.test.ts` |
 | `count-has-floor` | **件数を出す検査は床を持つ** — 「Checked 0 … ✅」は走査が壊れても緑。ゲートは件数に下限を置き、検査は「全件について〜」の前に非空を主張する。台帳にせず命名規約 (VERIFIED_*) で絞る。 | パターン 0-a-7 | ゲート `npm run lint:test-coverage`<br>検査 `src/shared/__tests__/e2eSuiteFloors.test.ts`<br>ゲート `npm run lint:deps` |
@@ -296,6 +297,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 87 (機械あり 83 / 散文だけ 4)
+- 法則 88 (機械あり 84 / 散文だけ 4)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

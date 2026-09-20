@@ -85,9 +85,21 @@ export const LAWS: readonly Law[] = [
     id: 'scan-whole-tree',
     family: 'gate-hygiene',
     name: '走査範囲は木全体、例外は台帳',
-    statement: '「対象を絞る」と「対象を忘れる」はコードの上で見分けがつかない。走査は木全体にし、外す物を理由つきの台帳に書く。台帳を書いたら「どこまで歩いたか」「注記の規則を判定が実装しているか」「対照は判定関数そのものへ標本を通しているか」を問う。',
+    statement: '「対象を絞る」と「対象を忘れる」はコードの上で見分けがつかない。走査は木全体にし、外す物を理由つきの台帳に書く。台帳を書いたら「どこまで歩いたか」「注記の規則を判定が実装しているか」「対照は判定関数そのものへ標本を通しているか」を問う。外した側をどう台帳にするかは `outside-scope-gets-its-own-census`。',
     provenance: ['パターン 0-a', 'パターン 0-a-24'],
     enforcedBy: [gate('lint:network-targets'), gate('lint:forbidden'), test(T.shared('bareFetchLedger'))],
+  },
+  {
+    id: 'outside-scope-gets-its-own-census',
+    family: 'gate-hygiene',
+    name: '走査の外は、広げれば見えるとは限らない',
+    statement:
+      '走査範囲を絞ったら、外した側の母集団を一度数える。広げれば見えると決めてはいけない —— '
+      + '外の母集団は書き方の前提が違うので、同じ検出器を当てると偽陽性で埋まり、'
+      + '本当に危ない物は元の検出器の設計上の除外（例: 素の識別子の送り先）に隠れたままになる。'
+      + '外が小さいなら「危ない構文か」を問うのをやめ、**全件**を守りつきで台帳に載せる。',
+    provenance: ['パス 342', 'パターン 0-a'],
+    enforcedBy: [gate('lint:network-targets'), test(T.shared('networkTargetWitness'))],
   },
   {
     id: 'gate-runs-in-ci',
