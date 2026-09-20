@@ -101,6 +101,36 @@ observable だったのは**長さの側**で、`put()` の 256 字が読み出�
   `<pre>` のテキストノード —— data URL の型が `blob.type` 由来でずれても `<img>` は
   HTML を実行しないので、宣言と実体のずれが結果を変えない。
 
+### 実機 (出荷物が動いたパスなので回した)
+
+```
+perf      OK  LITE DCL 161ms / heap 10.2MB   FULL DCL 443ms / heap 36.8MB
+e2e       455 件 ❌ 0
+e2e:lite  455 件 ❌ 0
+```
+
+### ★ この作業中に私は 1 つ偽の premise を publish しかけた (訂正)
+
+`FinancialAnalysis` の id の出どころを辿って `store.list()` の
+`cur.value as StoredRecord<T>` を見つけ、「`COLLECTION_SHAPES` は復元 (`importAll`) の
+1 か所にしか当たっておらず、通常の読みが無検査なのは穴だ」と述べた。**これは偽である。**
+
+`recordShapeAudit.ts` の docblock がその非対称を**設計として説明している**:
+
+> 形の違うレコードが 1 件あると、その画面は描画で投げて境界 (`PageErrorBoundary`) が
+> 受ける —— 画面は開けず、開けないので画面からは消せない。ここが唯一の出口になる
+
+つまり store が読みで落とすと、**壊れた行が UI から触れなくなる** ——
+`library.ts` が「**行そのものは落とさない**」と書いている理由 (パス 136) と同じである。
+入口 (`importAll`) で検め、既に入っている物は `RecordShapeAuditPanel` が
+点検して消せるようにする、という 2 段構えが意図されている。**穴ではない。**
+
+**残っている本物の問いは狭い**: その設計が含意する不変条件 ——
+「**読み手は壊れた行に耐えなければならない**」—— を数える機械が無い。
+library はパス 188 → 193 → 359 で欄ごとに辿り着き、
+`financialUnitsFromBusinessUnits` は数値を守る (パス 98) が、残りは未測定である。
+次のパスの候補はこちら (台帳の collection ごとに読み手を測る)。
+
 ---
 
 ## パス 358 (2026-09-20) — docblock が「defense in depth」と名指しした関門に、呼び出しが 0 件だった
