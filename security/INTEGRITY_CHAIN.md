@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 242
+- ブロック数: 243
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `84bb7ee1fff35671c5e2452780f99d91a786cecc295d9b2e9a4b8b19ee7a9f11`
+- 末尾(tip)ハッシュ: `eceb073a154f3b015742d66d7011b3d3456fce0e9ffaebd922b54b87aede182b`
 - 保護対象: 79 ファイル
 
 ## ブロック
@@ -255,6 +255,7 @@
 | 239 | `b3b796d83f7eb1ea` | `c533a547beb0ad9c` | `0328ccd0ab45e865` | update types.ts,oauth.ts,proxy.ts,pkce.ts,httpLimits.ts |
 | 240 | `c46b55f220c9611b` | `0328ccd0ab45e865` | `ddca16c3dfb3c0b5` | update integrity-chain.cjs,oauth.ts,pkce.ts,constantTimeEquals.ts |
 | 241 | `6406fd3ccaf97f32` | `ddca16c3dfb3c0b5` | `84bb7ee1fff35671` | update oauth.ts,pkce.ts,constantTimeEquals.ts,cryptoParams.ts,httpLimits.ts |
+| 242 | `6260a8cd77642a91` | `84bb7ee1fff35671` | `eceb073a154f3b01` | update proxy.ts |
 
 ## 保護対象ファイル
 

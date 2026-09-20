@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (380 行)
+## 2. Cloudflare Worker 実装 (397 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -185,8 +185,13 @@ export default {
       const denial = await denyReason(next);
       if (denial) return json({ error: `redirect blocked: ${denial}` }, 403);
 
-      if (next.host !== target.host) {
-        // クロスホストなので資格情報を落とす。
+      if (next.origin !== target.origin) {
+        // **origin** で比べる (2026-09-20 · パス 345)。`host` だけを見ていた頃は
+        // `https://api.notion.com` → `http://api.notion.com` の転送で host が等しく、
+        // **平文へ落ちるのに `Authorization` を持ち越していた**。上の `denyReason` が
+        // 平文を拒むようになったので今は先に落ちるが、資格情報を持ち越さない条件は
+        // 「同じ scheme・同じ host・同じ port」= origin が正しい (多層防御)。
+        // クロス origin なので資格情報を落とす。
         headers = Object.fromEntries(
           Object.entries(headers).filter(([k]) => !CREDENTIAL_HEADERS.test(k)),
         );
@@ -259,10 +264,22 @@ function timingSafeEqualStr(a, b) {
   return diff === 0;
 }
 
-/** 宛先を拒否する理由 (string) / 通す場合は null。allowlist → 解決後 IP の順。 */
+/**
+ * 宛先を拒否する理由 (string) / 通す場合は null。allowlist → 平文 http → 解決後 IP の順。
+ *
+ * **平文 http を拒む** (2026-09-20 · パス 345)。この Worker が上流へ送る要求には
+ * 利用者の `Authorization` がそのまま載る。2026-09-20 まで `http:` を通しており、
+ * 実測で `http://api.notion.com/v1/x` は `null` (通す) を返した。
+ * 許可リストの 10 ホストはすべて https の公開 SaaS で、**平文で呼ぶ正当な用途は無い**
+ * (LAN / loopback はクライアント側の `isPrivateOrReservedTarget` が別に拒む)。
+ *
+ * 順序は「具体的な理由が先」。許可リスト外の `http://evil.example` には
+ * 「リストに無い」と答えるほうが読み手の役に立つ。
+ */
 async function denyReason(u) {
   if (u.protocol !== 'https:' && u.protocol !== 'http:') return 'http(s) only';
   if (!UPSTREAM_ALLOWLIST.has(u.hostname)) return 'upstream host not in allowlist';
+  if (u.protocol !== 'https:') return 'plaintext http upstream is not allowed (credentials would travel in the clear)';
   return await resolvedIpDenyReason(u.hostname);
 }
 
@@ -450,6 +467,16 @@ function json(obj, status) {
   1 回目=公開 IP / 2 回目=127.0.0.1 と返す rebinding は client 側では
   原理的に防げない。上の Worker はこれを `resolvedIpDenyReason()` で
   塞いでいる (DoH で A / AAAA を引き `isBlockedIp()` に掛ける)
+- **上流は https だけ** (2026-09-20 · パス 345): この Worker が上流へ送る要求には
+  利用者の `Authorization` がそのまま載る。2026-09-20 まで `denyReason` は
+  `http:` も通しており、実測で `http://api.notion.com/v1/x` が `null` (通す) を返した。
+  さらに資格情報を落とす条件が `next.host !== target.host` だったため、
+  **`https://api.notion.com` → `http://api.notion.com` の転送では host が等しく、
+  平文へ落ちるのに `Authorization` を持ち越していた** —— 許可リスト内の上流が
+  `302 Location: http://` を 1 つ返すだけで、利用者のトークンが素のまま流れる。
+  今は `denyReason` が平文を拒み、資格情報の持ち越しは **origin** で判定する
+  (同じ scheme・host・port)。クライアント側 (`fetchViaProxy`) も同じく https を要求し、
+  両者は `proxyWorkerParity.test.ts` が同じ標本へ当てて結んでいる
 - **上流本文には上限を掛ける** (2026-09-20 · パス 343): `await upstream.text()` は
   全部読み終えてから長さが分かるので、読んだ後で測る形では費用を払い終えている。
   上の Worker は `readCappedText()` で 1 チャンクずつ数え、`MAX_UPSTREAM_BYTES`
@@ -495,6 +522,9 @@ function json(obj, status) {
   を数値展開して内部 IPv4 に落として検証する。一方、**ネットワーク固有の
   NAT64 prefix (RFC 6052 §2.2 の /32・/40・/48・/56・/64 や RFC 8215 の
   `64:ff9b:1::/48`) は値が任意なため列挙できない**。ここは allowlist のみが砦
+- **許可リストのホストが https を話し続ける保証は無い**: 上流が恒久的に
+  平文へ移行した場合、この Worker はその宛先を通さなくなる (可用性より
+  資格情報の保護を採る)。許可リストは 10 の公開 SaaS で、いずれも https 専用である。
 - **上限内の応答でも封筒は膨らむ**: `text()` は UTF-16 の文字列を作るので
   ASCII でも 2 倍、その後の `JSON.stringify` でもう 1 部増える。10 MiB の本文で
   概ね 30 MiB 程度を一度に確保する計算になり、128 MiB の isolate では

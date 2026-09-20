@@ -288,6 +288,24 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   if (isPrivateOrReservedTarget(parsed)) {
     throw new Error('target URL の宛先がプライベート / 予約アドレスです (SSRF 防止)');
   }
+  /*
+   * **平文 http の公開ホストは断る** (2026-09-20 · パス 345)。
+   *
+   * 封筒の `headers` には利用者の `Authorization` がそのまま載り、Worker は
+   * それを上流へ透過する。`http:` で呼べば Cloudflare と上流の間を素のまま流れる。
+   * 実測 (2026-09-20): 呼び出し口 3 つ (`web-shim.ts` の 246 / 911 / 982) はどれも
+   * `shared/api/*.ts` の https リテラルを渡しており、**平文で呼ぶ正当な用途は 0 件**。
+   * LAN / loopback は 1 つ上の `isPrivateOrReservedTarget` が既に拒んでいるので、
+   * ここに残るのは「公開ホストへ平文」だけである。
+   *
+   * 判定の順序は private → plaintext。`http://127.0.0.1:8080/admin` のような
+   * 入力には **SSRF のほうが具体的な理由**なので、そちらを先に答える。
+   * 同じ規則が Worker 側 (`docs/PROXY_EXAMPLE.md` の `denyReason`) にも在り、
+   * `proxyWorkerParity.test.ts` が両方を同じ標本へ当てて結んでいる。
+   */
+  if (parsed.protocol !== 'https:') {
+    throw new Error('target URL は https のみ対応 (平文 http は資格情報が素のまま流れます)');
+  }
 
   // Convert RequestInit headers to a flat object.
   const flatHeaders: Record<string, string> = {};

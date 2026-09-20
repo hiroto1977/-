@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { isPrivateOrReservedTarget, MAX_PROXY_RESPONSE_BYTES } from '../proxy';
+import { fetchViaProxy, isPrivateOrReservedTarget, MAX_PROXY_RESPONSE_BYTES } from '../proxy';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const req = createRequire(import.meta.url);
@@ -423,5 +423,89 @@ describe('上流本文の上限は client と Worker で同じ (パス 343)', ()
     const close = md.indexOf('\n```', open);
     const lines = md.slice(md.indexOf('\n', open) + 1, close).split('\n').length;
     expect(Number(heading![1])).toBe(lines);
+  });
+});
+
+/*
+ * **上流のスキームも、同じ判断が 2 か所にある** (2026-09-20 · パス 345)。
+ *
+ * この Worker が上流へ送る要求には利用者の `Authorization` がそのまま載る。
+ * 2026-09-20 まで `denyReason` は `http:` を通しており、md から切り出して走らせた実測で
+ *
+ * ```
+ *   denyReason(new URL('http://api.notion.com/v1/x'))  → null (通す)
+ * ```
+ *
+ * だった。**さらに資格情報を落とす条件が `next.host !== target.host`** だったので、
+ * `https://api.notion.com` → `http://api.notion.com` の転送では host が等しく、
+ * **平文へ落ちるのに `Authorization` を持ち越していた** —— 許可リスト内の上流が
+ * `302 Location: http://` を 1 つ返すだけで、利用者のトークンが素のまま流れる。
+ *
+ * 正当な用途は測って 0 件だった: `fetchViaProxy` の呼び出し口 3 つ
+ * (`web-shim.ts` の 246 / 911 / 982) はどれも `shared/api/*.ts` の https リテラルを渡し、
+ * LAN / loopback は `isPrivateOrReservedTarget` が別に拒んでいる。
+ *
+ * 判定の順序は**具体的な理由が先** —— 許可リスト外の `http://evil.example` には
+ * 「リストに無い」、private な `http://127.0.0.1:8080/admin` には「SSRF」と答える。
+ */
+describe('上流のスキームは client と Worker で同じ (パス 345)', () => {
+  /** md の `denyReason` を、その依存ごと切り出して走らせる。DoH は公開 IP を返す stub。 */
+  async function workerDenyReason(): Promise<(u: URL) => Promise<string | null>> {
+    const allowlist = /const UPSTREAM_ALLOWLIST = new Set\(\[[\s\S]*?\n\]\);/.exec(md);
+    const doh = /const DOH_ENDPOINT = '[^']*';/.exec(md);
+    expect(allowlist, 'UPSTREAM_ALLOWLIST が見つかりません').not.toBeNull();
+    expect(doh, 'DOH_ENDPOINT が見つかりません').not.toBeNull();
+    const file = join(dir, 'workerDeny.mjs');
+    writeFileSync(
+      file,
+      [
+        allowlist![0],
+        doh![0],
+        // DoH は「公開 IP を返した」ことにする。ここで見たいのはスキームの判定であり、
+        // 解決後 IP の判定は上の isBlockedIp の表が別に持っている。
+        "globalThis.fetch = async () => ({ ok: true, json: async () => ({ Answer: [{ type: 1, data: '104.18.0.1' }] }) });",
+        extractFunction(md, 'expandV6'),
+        extractFunction(md, 'isBlockedIp'),
+        extractFunction(md, 'resolvedIpDenyReason'),
+        extractFunction(md, 'denyReason'),
+        'export { denyReason };',
+      ].join('\n'),
+    );
+    const mod = (await import(pathToFileURL(file).href)) as {
+      denyReason: (u: URL) => Promise<string | null>;
+    };
+    return mod.denyReason;
+  }
+
+  it('★ Worker は許可リストの https だけを通す (平文 http は断る)', async () => {
+    const denyReason = await workerDenyReason();
+    await expect(denyReason(new URL('https://api.notion.com/v1/x'))).resolves.toBeNull();
+    await expect(denyReason(new URL('http://api.notion.com/v1/x'))).resolves.toMatch(/plaintext http/);
+    await expect(denyReason(new URL('https://evil.example/x'))).resolves.toMatch(/allowlist/);
+    await expect(denyReason(new URL('ftp://api.notion.com/x'))).resolves.toMatch(/http\(s\) only/);
+  });
+
+  it('★ client も同じ標本を同じように扱う (平文 http の公開ホストを断る)', async () => {
+    await expect(
+      fetchViaProxy('http://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://proxy.example' }),
+    ).rejects.toThrow(/https のみ対応/);
+    // 具体的な理由が先: private なら SSRF のほうを答える (順序が入れ替わっていない)。
+    await expect(
+      fetchViaProxy('http://127.0.0.1:8080/admin', { method: 'GET' }, { url: 'https://proxy.example' }),
+    ).rejects.toThrow(/プライベート \/ 予約アドレス/);
+  });
+
+  it('★ 資格情報を落とす条件は origin で比べる (host だけだと scheme 落ちを見逃す)', () => {
+    const handler = md.slice(md.indexOf('async fetch(request)'), md.indexOf('function isRedirect'));
+    expect(handler).toContain('next.origin !== target.origin');
+    // 不在の主張には標本を添える —— 針が旧い書き方に当たることを見せる。
+    const HOST_ONLY = /next\.host !== target\.host/;
+    expect(HOST_ONLY.test('      if (next.host !== target.host) {')).toBe(true);
+    expect(handler).not.toMatch(HOST_ONLY);
+    // なぜ origin か: 同じ host でも scheme が落ちれば平文になる。
+    const a = new URL('https://api.notion.com/a');
+    const b = new URL('http://api.notion.com/b');
+    expect(b.host === a.host).toBe(true);
+    expect(b.origin === a.origin).toBe(false);
   });
 });
