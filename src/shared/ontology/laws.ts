@@ -393,8 +393,8 @@ export const LAWS: readonly Law[] = [
     id: 'response-body-capped',
     family: 'boundary',
     name: '相手の本文は上限つきで読む —— 失敗した応答でも',
-    statement: '上限は「読む前」に byte で効かせる (全部読んでから捨てるのは上限ではない)。**失敗した応答の枝ほど要る** —— 大きな本文を返すのは壊れている相手で、その相手は `!res.ok` に来る。失敗の読みは `readFailureBody` ただ 1 つ (9 か所)。本文を自分で読む場所は門と端末のファイルの 3 件だけで、`Response` を受け取って自分で読む口 (`parseJsonBody`) は置かない —— 置くと上限が「呼び出し側がどの transport を渡したか」に依る。',
-    provenance: ['パス 301', 'パス 311', 'パス 330 (母集団の機械)'],
+    statement: '上限は「読む前」に byte で効かせる (全部読んでから捨てるのは上限ではない)。**失敗した応答の枝ほど要る** —— 大きな本文を返すのは壊れている相手で、その相手は `!res.ok` に来る。失敗の読みは `readFailureBody` ただ 1 つ (**実測 16 か所**)。**数えるときは別名を解決する** —— パス 330 は `readBodyWithCap|readFailureBody` の綴りだけを数え、本体が 1 行の別名 (`readCapped` / `readCappedText` / `readWithCap`) の先に在る呼び出し 18 件を落としていた (26 → 44 件。うち 7 件は失敗の枝の手書きで、上限は掛かっていたが口が 1 つではなかった · パス 334)。本文を自分で読む場所は門と端末のファイルの 3 件だけで、`Response` を受け取って自分で読む口 (`parseJsonBody`) は置かない —— 置くと上限が「呼び出し側がどの transport を渡したか」に依る。',
+    provenance: ['パス 301', 'パス 311', 'パス 330 (母集団の機械)', 'パス 334 (別名の解決)'],
     enforcedBy: [test(T.shared('responseBodyCapCensus')), test(T.shared('jsonBodyCensus')), test(T.shared('httpLimits'))],
   },
   {

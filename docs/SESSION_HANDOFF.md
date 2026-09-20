@@ -7,6 +7,85 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 334 (2026-09-20) — パス 330 の census が別名を数えていなかった: 「9 か所」は偽
+
+### 見つけ方
+
+パス 333 で web-shim の変異検査を測り直したとき、**未到達の 84 件**を場所ごとに見た。
+その中に `const body = await readCappedText(res, 'Anthropic').catch(() => '')` が 3 行在った ——
+**パス 330 が `readFailureBody` へ寄せたはずの、失敗の枝の手書きそのもの**である。
+
+### 何が在ったか
+
+パス 330 の census の針は `\b(readBodyWithCap|readFailureBody)\(` だけだった。
+このリポジトリには**本体が `readBodyWithCap` の呼び出し 1 行だけの別名**が在り、
+その先の呼び出しが **1 件も映っていなかった**:
+
+```
+  readCapped      main/clients/types.ts / renderer/data/saasWriteWeb.ts
+  readCappedText  renderer/web-shim.ts
+  readWithCap     renderer/network/proxy.ts
+```
+
+実測 (2026-09-20): **26 件 → 44 件**。見えていなかった 18 件のうち **7 件が失敗の枝の手書き**:
+
+```
+  main/clients/business.ts  const body = await readCapped(res, hctx).catch(() => '');
+  main/clients/security.ts  同上
+  main/clients/shopify.ts   const body = await readCapped(res, ctx).catch(() => '');
+  main/clients/stocks.ts    同上
+  renderer/web-shim.ts ×3   const body = await readCappedText(res, 'Anthropic').catch(() => '');
+```
+
+### 穴ではない。偽だったのは私の主張である
+
+**7 件とも上限は掛かっている** —— 別名の中で `readBodyWithCap` を通るからである。
+偽だったのは**パス 330 が census と法則と PR に書いた文**のほう:
+
+> 失敗の枝の読みは **9 か所**あり、全部が `readFailureBody` を通る。
+
+実際は **16 か所**で、**7 か所は通っていなかった**。
+
+法則 `center-then-count-callers` はこう言っている:
+
+> 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。
+> **「その関数を使っている場所」ではなく「同じことをしている場所」**を実測で数える。
+
+**私は前者を数えた。** パス 330 はまさにこの法則の家系の欠陥を直したパスで、
+その直しを数える機械が同じ誤りを踏んでいた。
+
+### 直し
+
+- 7 か所を `readFailureBody` へ通した (ctx は `maxBytes` を持たないので既定と同値・振る舞いは不変)。
+- **census を組み直した。44 行の台帳は書いた日にしか正しくない**ので、
+  ① **別名を機械で見つける** (本体が `return readBodyWithCap(` の関数) → 台帳は 4 行・両方向 ／
+  ② **手書きの失敗の形** (上限つきの読みに直接 `.catch`) が**台帳の 2 件だけ**であることを直接主張 ／
+  ③ 数は測って留める (44 / 16 / 別名 4)。
+- 法則 `response-body-capped` の「9 か所」を **16 か所**へ直し、「数えるときは別名を解決する」を足した。
+
+### 対照 3 本 (どれも狙った検査だけが鳴る)
+
+① 手書きの失敗の形を 1 つ戻す (**パス 330 が見落とした当の形**) → 3 件 ／
+② 台帳に無い別名を 1 つ足す → 2 件 ／
+③ 別名の解決を止めてパス 330 の狭い針へ戻す → 3 件 (呼び出しが 44 → 33 に落ちる)。
+
+### 数字
+
+- 単体 **774 ファイル / 17,626 件** 全緑・**37 ゲート**全緑・連鎖 #241 (保護対象 79)。
+- 出荷物 **11,930,507 B / 3,343,028 B (両方 −48 B)** —— 綴りが短くなった分。
+  LITE の余裕は警告線まで 56,972 B。
+- 実機 ㉗: `smoke:app` OK / `e2e:lite` 452 件 / `perf` OK (LITE DCL 166 ms heap 10.2 MB・
+  FULL DCL 460 ms heap 37 MB) / `e2e:ollama` 8。**`e2e` は 3 度目の同じ失敗**
+  (`teamRadar` の `[data-skill-radar-omitted]`)。パス 332 の「箱が混んでいる」は
+  **合成 CPU 負荷で再現しなかった**ので撤回し、パス 332 の節に追記した (原因は未解明)。
+
+### 自戒
+
+**「1 つに寄せた」と書く前に、寄せ先を使っていない綴りを数える。**
+別名は「同じことをしている場所」であって、名前で数える限り見えない。
+パス 327 (heuristic を測定として publish)・パス 333 (古い数字を publish) と同じ家系で、
+**3 回とも「自分が書いた数」だった**。
+
 ## パス 332 (2026-09-20) — 書き出す Markdown に自由文が素で入っていた
 
 ### 見つけた物
@@ -89,9 +168,27 @@ docblock が「`|` を落とすだけの Markdown 用は形が違うので網に
 ```
 
 20 秒は harness の標準 (`core.cjs` に 26 か所・15000 が 83 / 30000 が 72) なので、
-**ここだけ伸ばすのは恣意的**である。原因は `scratchpad/realbrowser-chain-304.sh` が
-**2 つの vite ビルドの直後に間を置かず e2e を回している**ことで、箱がまだ混んでいる。
-**repo のコードにも harness にも欠陥は見つかっていない** —— 直すなら私の連鎖 script の側。
+**ここだけ伸ばすのは恣意的**である。
+
+> **2026-09-20 追記 (パス 334) —— 上の「箱が混んでいる」は支持されなかった。**
+> パス 334 の連鎖で **3 度目**が出た (今度は `e2e` 側)。データを並べると、
+> **連鎖では毎回 `e2e` / `e2e:lite` のどちらか一方だけが同じ 1 か所で落ち、
+> 単独では一度も落ちない**:
+>
+> ```
+>   パス 331 連鎖   e2e 失敗 / e2e:lite OK
+>   パス 332 連鎖   e2e OK   / e2e:lite 失敗
+>   パス 334 連鎖   e2e 失敗 / e2e:lite OK
+>   単独 (全体・teamRadar だけ・両ビルド)   すべて緑
+>   合成 CPU 負荷 4 本の下で単独            緑 (14 件)
+> ```
+>
+> **負荷を掛けても再現しない**ので、「箱が混んでいる」では説明できない。
+> 3 回とも同じ待受 (`[data-skill-radar-omitted]`) に当たるのも、
+> 散らばる性質の負荷 flake らしくない。**原因は未解明**である ——
+> 「私の連鎖 script が原因」と断定したのは**測る前に言った**もので、撤回する
+> (法則 `measure-before-claim`)。連鎖でだけ変わる条件 (直前に 2 つの vite ビルドが走り、
+> `dist/standalone.html` を退避して書き戻している) を次に切り分ける。
 
 ## パス 331 (2026-09-20) — 検査が「写しは避けられない」と書き留めていた ＋ 母集団の針が狭かった
 
@@ -5267,6 +5364,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| census が別名を数えていなかった (パス 334) | ✅ パス 330 の針が `readBodyWithCap|readFailureBody` の綴りだけで、**本体が 1 行の別名** (`readCapped` ×2 / `readCappedText` / `readWithCap`) の先の呼び出しが 1 件も映っていなかった —— 実測 **26 → 44 件**。見えていなかった 18 件のうち **7 件が失敗の枝の手書き** (business / security / shopify / stocks / web-shim ×3)。**7 件とも上限は掛かっており穴ではない** —— 偽だったのは「失敗の枝は 9 か所・全部が `readFailureBody`」という**私の主張**で、実際は 16 か所・7 か所が通っていなかった。法則 `center-then-count-callers` が warn している当のこと (「その関数を使っている場所ではなく、同じことをしている場所を数えろ」) を私がやった。7 か所を通し、census は **別名を機械で解決**する形へ (台帳 44 行 → 別名 4 行 + `.catch` の例外 2 行、「手書きの失敗の形が 0 件」を直接主張)。法則の「9 か所」も 16 へ訂正。対照 3 本。**見つけ方はパス 333 の未到達 84 件の中身を読んだこと** |
 | 書き出す Markdown に自由文が素で入っていた (パス 332) | ✅ `ChatbotWidget` が利用者の要望文をそのまま `- [ ] ${text}` として `chatbot-requests.md` へ書き出していた。`escapeMarkdownInline` の docblock は適用先 (**箇条書きの 1 項目**) まで書いているのに、この 1 か所だけ通っていなかった。実測 5 形のうち **4 形で差** —— 生 HTML の `<` は**今日この画面から打てる**。改行は 1 行の `<input>` からは入らないが、読み戻しの番人は `typeof === 'string'` しか見ない。ファイルは名前どおり **backlog 候補として人へ渡る**前提。**`lint:forbidden` #11 が落とすのは「再実装」であって「通していない」ではない** —— 母集団 (`text/markdown` の **8 行 / 5 ファイル**) を `markdownExportCensus` が両方向で持ち、自由文の行には **`shared/escape` からの import** を要求する。**自戒: 最初は名前の有無で判定して対照が鳴らなかった** (同名のローカル関数で通る) ので import を見る形へ直した。法則 `exported-markup-escapes-free-text`・対照 3 本 |
 | 検査が「写しは避けられない」と書いていた (パス 331) | ✅ OAuth の `state` の定時間比較が main と renderer に 1 つずつ在り、**パリティ検査の docblock が「まとめられる重複ではなく、同じ判断の 2 実装である」と写しを仕様として固定していた** (法則 `no-weakness-as-spec`)。しかも等価ですらなく、main の `Buffer.from(s,'utf8')` が**孤立サロゲートをすべて U+FFFD へ潰す**ため実測 4,330,561 組のうち **4,192,256 組 (96.8%)** で答えが割れた (base64url の字だけなら 0 組 = 今日の実害 0)。旧版の 15 標本は**前回壊れた族 (バイト長) から採られ、この族を含んでいなかった**。`shared/constantTimeEquals.ts` へ 1 つに畳み、検査は**パリティではなく同一性**を主張する (旧実装を検査内に写して標本に)。**母集団の機械は在ったが針が狭かった** —— `dualBuildDecisions` が `^export function` しか見ておらず、`async function` と `const` が 0 件。広げて **13 → 22 件**、分類に `shared-alias` / `value` を足し、`value` にもパリティ検査を要求 (`stocksConstantsParity` +7 件 —— 断り文・既定リスク値・戦略 3 件は画面に出る)。**自戒: 途中で「機械が無い」と思い込んで 2 つ目の census を書きかけた (在った・捨てた)。** 対照 3 本 |
 | 応答本文の上限は失敗の枝にこそ要る (パス 330) | ✅ 失敗した応答 (`!res.ok`) の本文を読む 9 か所のうち **3 か所に上限が無かった** (`network/proxy.ts` / `network/ollamaWeb.ts` / `main/clients/ollama.ts`) —— どれも**同じ関数の成功側には在り**、しかも成功側の注記が危険を正しく名指ししていた。**大きな本文を返すのは壊れた相手で、それは `!res.ok` に来る**ので向きが逆。実測: 256 MiB の 500 応答で上限なしは 256 MiB 引いて rss +637 MiB / 2,932 ms、上限ありは 11 MiB で断って +9 MiB / 6 ms。512 MiB では `ERR_STRING_TOO_LONG` (= **`catch` は握り潰すが費用は払い終えている**)。`readFailureBody` を 1 つ置いて 9 か所を通し、**`parseJsonBody` を消して**「読む所で切る」へ (上限が transport 次第にならない)。`apiResponse.ts` の「実測で確認済み」の主張は偽だったので訂正。`responseBodyCapCensus.test.ts` +16 件 (生の読み 3・上限つき 26 を両方向)・`jsonBodyCensus` は 1 → **0 件**・法則 `response-body-capped`・対照 3 本 |

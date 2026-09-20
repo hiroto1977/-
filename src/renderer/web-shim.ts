@@ -53,6 +53,7 @@
  * already populates window.serviceHub and this shim is skipped.
  */
 
+import { readFailureBody } from '../shared/httpLimits';
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import {
   normalizeTemplateParams,
@@ -590,7 +591,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
   }
 
   if (!res.ok) {
-    const body = await readCappedText(res, 'Anthropic').catch(() => '');
+    const body = await readFailureBody(res, 'Anthropic');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
 
@@ -695,7 +696,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await readCappedText(res, 'Anthropic').catch(() => '');
+    const body = await readFailureBody(res, 'Anthropic');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
@@ -783,7 +784,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await readCappedText(res, 'Anthropic').catch(() => '');
+    const body = await readFailureBody(res, 'Anthropic');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ

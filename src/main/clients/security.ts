@@ -21,6 +21,7 @@
  * even though two providers are involved.
  */
 
+import { readFailureBody } from '../../shared/httpLimits';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -211,7 +212,7 @@ async function checkEmailBreach(
     async (res) => {
       if (res.status === HIBP_NO_BREACH_STATUS) return { email, breaches: [] };
       if (!res.ok) {
-        const body = await readCapped(res, hctx).catch(() => '');
+        const body = await readFailureBody(res, hctx.serviceId);
         throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`, res.status, 'security');
       }
       const bodyText = await readCapped(res, hctx);

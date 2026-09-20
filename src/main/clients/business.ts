@@ -1,3 +1,4 @@
+import { readFailureBody } from '../../shared/httpLimits';
 import { checkAdvisorQuestion, ADVISOR_QUESTION_MESSAGES } from '../../shared/advisorQuestionLimits';
 import { countChars } from '../../shared/inputCeiling';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../../shared/advisorResponseLimits';
@@ -699,7 +700,7 @@ export async function askBusinessAdvisorImpl(
         // Defensive catch on the capped read — unreachable from current tests but
         // mirrors stocks-advisor pattern for symmetry.
         // Stryker disable next-line ArrowFunction,MethodExpression
-        const body = await readCapped(res, hctx).catch(() => '');
+        const body = await readFailureBody(res, hctx.serviceId);
         throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
       }
       return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;

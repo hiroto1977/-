@@ -1,7 +1,7 @@
+import { readFailureBody } from '../../shared/httpLimits';
 import {
   jsonFetch,
   limitedFetch,
-  readCapped,
   FetchError,
   redactForMessage,
   MAX_RESPONSE_BODY_IN_MESSAGE,
@@ -148,7 +148,7 @@ async function postExpectOk(
   // 打ち切りまで一緒に落とすのは筋が違う (2026-08-23)。
   await limitedFetch(url, init, ctx, async (res) => {
     if (!res.ok) {
-      const body = await readCapped(res, ctx).catch(() => '');
+      const body = await readFailureBody(res, ctx.serviceId);
       // redactSecrets: 連携先が応答にトークンを反射しても、エラー経由で漏らさない。
       throw new FetchError(
         `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,

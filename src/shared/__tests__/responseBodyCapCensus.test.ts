@@ -49,8 +49,6 @@ const REPO = join(__dirname, '..', '..', '..');
 
 /** 本文を**自分で**読む呼び出し。`Response` でも `Blob` / `File` でも当たる。 */
 const RAW_BODY_READ = /\.(?:text|json|arrayBuffer|blob|formData)\(\)/;
-/** 上限つきで読む口。呼び出し側はこのどちらかを通る。 */
-const CAPPED_READ = /\b(readBodyWithCap|readFailureBody)\(/;
 
 function shippedSources(): string[] {
   return globSync(['src/**/*.ts', 'src/**/*.tsx'], {
@@ -84,7 +82,6 @@ export function sitesMatching(files: readonly string[], needle: RegExp): Site[] 
 
 const FILES = shippedSources();
 const RAW = sitesMatching(FILES, RAW_BODY_READ);
-const CAPPED = sitesMatching(FILES, CAPPED_READ);
 
 /**
  * **本文を自分で読んでよい場所の台帳。**
@@ -121,56 +118,98 @@ const RAW_READ_LEDGER: readonly {
   },
 ];
 
+
 /**
- * **上限つきで読んでいる場所の台帳。**
+ * **上限つきで読む口の「別名」を機械で見つける** (2026-09-20 · パス 334)。
  *
- * `branch` は「どの枝の本文か」:
- *  - `failure` … `!res.ok` の枝。**ここは `readFailureBody` ただ 1 つを通る**
- *                (2026-09-20 まで 9 か所の手書きで、3 か所が上限を落としていた)。
- *  - `success` … 2xx の本文。読めなければ throw して呼び出し側へ伝える。
- *  - `either`  … 枝を分けずに 1 度だけ読む口 (共有のヘルパ / ok と !ok が同じ本文を使う)。
- *  - `gate`    … 上限そのものの中。
+ * ## パス 330 の針は呼び出しの 4 割を見ていなかった
  *
- * `sites` は**同じ綴りが何行あるか** (既定 1)。`main/oauth.ts` の交換と更新は
- * 文字どおり同じ 2 行なので、綴りを割るより数を書くほうが正直である。
+ * 当初の針は `\b(readBodyWithCap|readFailureBody)\(` だけだった。ところが
+ * このリポジトリには**本体が `readBodyWithCap` の呼び出し 1 つだけの別名**が
+ * 在り (`readCapped` ×2 / `readCappedText` / `readWithCap`)、その先の呼び出しは
+ * 1 件も映っていなかった。実測 (2026-09-20): **26 件 → 44 件**。
+ *
+ * 見えていなかった 18 件のうち **7 件は失敗の枝の手書き**だった:
+ *
+ * ```
+ *   main/clients/business.ts  const body = await readCapped(res, hctx).catch(() => '');
+ *   main/clients/security.ts  同上
+ *   main/clients/shopify.ts   const body = await readCapped(res, ctx).catch(() => '');
+ *   main/clients/stocks.ts    同上
+ *   renderer/web-shim.ts ×3   const body = await readCappedText(res, 'Anthropic').catch(() => '');
+ * ```
+ *
+ * **7 件とも上限は掛かっていた** (別名の中で `readBodyWithCap` を通る) ので
+ * 穴ではない。偽だったのは**パス 330 がここに書いた主張**のほう ——
+ * 「失敗の枝の読みは 9 か所あり、全部が `readFailureBody` を通る」。
+ * 実際は 16 か所で、7 か所は通っていなかった。
+ *
+ * 法則 `center-then-count-callers` はこう言っている:
+ *
+ * > 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。
+ * > **「その関数を使っている場所」ではなく「同じことをしている場所」**を実測で数える。
+ *
+ * **私は前者を数えた。** だから別名の先が丸ごと落ちた。
+ *
+ * ## 直した形 —— 台帳を小さくして、機械を強くする
+ *
+ * 44 行の台帳は書いた日にしか正しくない。代わりに
+ *
+ *  1. **別名を機械で見つける** (本体が `return readBodyWithCap(` の関数)。
+ *     見つかった集合が台帳と一致することだけを両方向で留める (4 行)。
+ *  2. **手書きの失敗の形を 0 にする** —— 上限つきの読みに直接 `.catch(` を
+ *     付ける綴りは、理由つきの台帳 2 件を除いて存在してはならない。
+ *     これがパス 330 で見落とした当の形である。
+ *  3. 数は**測って留める** (44 / 16) —— 内訳を手で並べない。
  */
-const CAP_LEDGER: readonly {
-  file: string;
-  needle: string;
-  branch: 'failure' | 'success' | 'either' | 'gate';
-  sites?: number;
-}[] = [
-  { file: 'src/main/clients/ollama.ts', needle: "'Ollama /api/version'", branch: 'success' },
-  { file: 'src/main/clients/ollama.ts', needle: "'Ollama /api/tags'", branch: 'success' },
-  { file: 'src/main/clients/ollama.ts', needle: "readFailureBody(res, 'ollama'", branch: 'failure' },
-  { file: 'src/main/clients/ollama.ts', needle: "text = await readBodyWithCap(res, MAX_RESPONSE_BYTES", branch: 'success' },
-  { file: 'src/main/clients/types.ts', needle: 'ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES', branch: 'either' },
-  { file: 'src/main/clients/types.ts', needle: 'readFailureBody(res, ctx.serviceId, maxBytes)', branch: 'failure' },
-  { file: 'src/main/clients/types.ts', needle: 'const text = await readBodyWithCap(res, maxBytes, ctx.serviceId)', branch: 'success' },
-  { file: 'src/main/main.ts', needle: 'parseLatestRelease(JSON.parse(await readBodyWithCap(', branch: 'success' },
-  // 交換 (authorization_code) と更新 (refresh_token) の 2 か所。綴りは同じ。
-  { file: 'src/main/oauth.ts', needle: 'const body = await readFailureBody(', branch: 'failure', sites: 2 },
-  { file: 'src/main/oauth.ts', needle: 'const parsed = parseTokenResponse(await readBodyWithCap(', branch: 'success', sites: 2 },
-  { file: 'src/renderer/data/saasWriteWeb.ts', needle: 'return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label)', branch: 'either' },
-  { file: 'src/renderer/data/saasWriteWeb.ts', needle: 'readFailureBody(res, label, MAX_HTTP_RESPONSE_BYTES)', branch: 'failure' },
-  { file: 'src/renderer/network/ollamaWeb.ts', needle: "return readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES)", branch: 'failure' },
-  { file: 'src/renderer/network/ollamaWeb.ts', needle: "const text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama')", branch: 'success' },
-  { file: 'src/renderer/network/ollamaWeb.ts', needle: "text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama');", branch: 'success' },
-  { file: 'src/renderer/network/proxy.ts', needle: "return readBodyWithCap(res, maxBytes, 'proxy')", branch: 'either' },
-  { file: 'src/renderer/network/proxy.ts', needle: "readFailureBody(proxyRes, 'proxy', MAX_PROXY_RESPONSE_BYTES)", branch: 'failure' },
-  { file: 'src/renderer/oauth/pkce.ts', needle: "readFailureBody(res, 'token exchange')", branch: 'failure' },
-  { file: 'src/renderer/oauth/pkce.ts', needle: "return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange')", branch: 'success' },
-  { file: 'src/renderer/web-shim.ts', needle: 'return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label)', branch: 'either' },
-  { file: 'src/shared/ai/chat.ts', needle: 'body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, spec.label)', branch: 'either' },
-  { file: 'src/shared/api/http.ts', needle: 'readFailureBody(res, ctx.serviceId, maxBytes)', branch: 'failure' },
-  { file: 'src/shared/api/http.ts', needle: 'const text = await readBodyWithCap(res, maxBytes, ctx.serviceId)', branch: 'success' },
-  { file: 'src/shared/httpLimits.ts', needle: "return readBodyWithCap(res, maxBytes, label).catch(() => '')", branch: 'gate' },
+const ALIAS_DEF = /^\s*(?:export )?(?:async )?function (\w+)\([^)]*\)[^{]*\{\s*\n\s*(?:\/\/[^\n]*\n\s*)*return readBodyWithCap\(/gm;
+
+/** 本体が `readBodyWithCap` の呼び出し 1 つだけの関数 = 上限つきの読みの別名。 */
+export function cappedReadAliases(files: readonly string[]): string[] {
+  const out = new Set<string>();
+  for (const abs of files) {
+    for (const m of readOriginalSource(abs).matchAll(ALIAS_DEF)) out.add(m[1]!);
+  }
+  return [...out].sort();
+}
+
+/**
+ * **別名の台帳。** 機械が見つけた集合とこれが一致する (両方向)。
+ * 新しい別名が生えたら、ここに理由を書くまで落ちる ——
+ * 書かないと、その先の呼び出しがまた丸ごと見えなくなる。
+ */
+const ALIAS_LEDGER: readonly { name: string; why: string }[] = [
+  { name: 'readCapped', why: '`main/clients/types.ts` と `renderer/data/saasWriteWeb.ts` の 2 つ。束ねる上限とラベルをモジュールごとに固定する 1 行。' },
+  { name: 'readCappedText', why: '`renderer/web-shim.ts`。ブラウザ版の直叩きの道に同じ上限を掛ける 1 行 (プロキシ経由は `fetchViaProxy` が先に切っている)。' },
+  { name: 'readWithCap', why: '`renderer/network/proxy.ts`。判定の本体は shared に 1 つだけ置く、という注記つきの 1 行。' },
+  { name: 'readFailureBody', why: '`shared/httpLimits.ts`。これ自身も「本体が readBodyWithCap の 1 行」なので機械は別名として見つける —— 失敗の枝の唯一の口である。' },
 ];
 
-/** 宣言行 (`export async function readBodyWithCap(` など) は呼び出しではない。 */
-function isDeclaration(s: Site): boolean {
-  return /^export (async )?function /.test(s.text);
+/** 上限つきの読みに直接 `.catch(` を付ける綴り (= 手書きの失敗の形)。 */
+const HAND_WRITTEN_FAILURE = /\b(readBodyWithCap|readCapped|readCappedText|readWithCap)\([^;]*\)\s*\.catch\(/;
+
+/** 手書きの `.catch` が許される 2 か所。**それ以外は `readFailureBody` を通る。** */
+const CATCH_LEDGER: readonly { file: string; why: string }[] = [
+  {
+    file: 'src/shared/httpLimits.ts',
+    why: '`readFailureBody` の中身そのもの。ここが畳んでいるから、呼び出し側は `.catch` を書かなくてよい。',
+  },
+  {
+    file: 'src/renderer/network/ollamaWeb.ts',
+    why: '`readJsonCapped` の `.catch(() => null)` は**成功側**の読みで、上限超過も非 JSON も「詳細なし」に畳む契約 (3 つの番人が等価変異であることを実測した pragma つき)。失敗の枝ではない。',
+  },
+];
+
+const CALL = (aliases: readonly string[]): RegExp =>
+  new RegExp(`\\b(readBodyWithCap|${aliases.join('|')})\\(`);
+
+function callSites(files: readonly string[], needle: RegExp): Site[] {
+  return sitesMatching(files, needle).filter((s) => !/^(export )?(async )?function /.test(s.text));
 }
+
+const ALIASES = cappedReadAliases(FILES);
+const CAPPED_CALLS = callSites(FILES, CALL(ALIASES));
+const FAILURE_CALLS = CAPPED_CALLS.filter((s) => /\breadFailureBody\(/.test(s.text));
 
 describe('本文を自分で読む場所の母集団 (パス 330)', () => {
   it('走査が生きている (床: 出荷される .ts/.tsx を 200 本以上読めている)', () => {
@@ -184,13 +223,14 @@ describe('本文を自分で読む場所の母集団 (パス 330)', () => {
   });
 
   it('★ 網から来た本文を生で読む場所は 0 件 —— 生の読みは門か端末のファイルだけ', () => {
-    // `kind` は台帳の宣言だが、宣言が実物と合っていることは上の両方向の照合が持つ。
     expect(RAW_READ_LEDGER.filter((r) => r.kind === 'gate')).toHaveLength(1);
     expect(RAW_READ_LEDGER.filter((r) => r.kind === 'local-file')).toHaveLength(2);
   });
 
   it('台帳の理由は空でない', () => {
     for (const row of RAW_READ_LEDGER) expect(row.why.length).toBeGreaterThan(20);
+    for (const row of ALIAS_LEDGER) expect(row.why.length, row.name).toBeGreaterThan(20);
+    for (const row of CATCH_LEDGER) expect(row.why.length, row.file).toBeGreaterThan(20);
   });
 
   it('標本: 針は生の読みに当たり、門を通す綴りには当たらない', () => {
@@ -201,45 +241,68 @@ describe('本文を自分で読む場所の母集団 (パス 330)', () => {
   });
 });
 
-describe('上限つきで読んでいる場所の母集団 (パス 330)', () => {
-  it('★ 台帳と実物が一致する (両方向・宣言行は除く)', () => {
-    const calls = CAPPED.filter((s) => !isDeclaration(s));
-    // 台帳の各行が、その file の中で**ちょうど 1 行**に当たる。
-    for (const row of CAP_LEDGER) {
-      const hits = calls.filter((s) => s.file === row.file && s.text.includes(row.needle));
-      expect({ row: `${row.file} :: ${row.needle}`, hits: hits.length }).toEqual({
-        row: `${row.file} :: ${row.needle}`,
-        hits: row.sites ?? 1,
-      });
-    }
-    // 逆向き: 台帳のどの行にも当たらない呼び出しが在れば落ちる。
-    const unledgered = calls.filter(
-      (s) => !CAP_LEDGER.some((row) => s.file === row.file && s.text.includes(row.needle)),
+describe('上限つきの読みと、その別名 (パス 334)', () => {
+  it('★ 別名は機械が見つけ、台帳と一致する (両方向)', () => {
+    expect(ALIASES).toEqual(ALIAS_LEDGER.map((r) => r.name).sort());
+  });
+
+  it('★ 手書きの失敗の形 (上限つきの読み + `.catch`) は台帳の 2 件だけ (両方向)', () => {
+    const hits = sitesMatching(FILES, HAND_WRITTEN_FAILURE);
+    expect([...new Set(hits.map((s) => s.file))].sort()).toEqual(
+      CATCH_LEDGER.map((r) => r.file).sort(),
     );
-    expect(unledgered.map((s) => `${s.file}:${s.line} ${s.text}`)).toEqual([]);
+    // 台帳の 2 件はどちらも 1 行ずつ (増えたら書き直す)。
+    expect(hits).toHaveLength(2);
   });
 
-  it('★ 失敗の枝の読みは 9 か所あり、全部が `readFailureBody` を通る', () => {
-    const failures = CAP_LEDGER.filter((r) => r.branch === 'failure');
-    expect(failures.reduce((n, r) => n + (r.sites ?? 1), 0)).toBe(9);
-    for (const row of failures) expect(row.needle).toContain('readFailureBody');
+  it('★ 失敗の枝の読みは `readFailureBody` だけ —— 実測 16 か所', () => {
+    expect(FAILURE_CALLS).toHaveLength(16);
+    // 別名の中身は 1 行なので、失敗の口は 1 つしかない。
+    expect(ALIAS_LEDGER.filter((r) => r.name === 'readFailureBody')).toHaveLength(1);
   });
 
-  it('数えた内訳を留める (枝ごと・行数)', () => {
-    const count = (b: string) =>
-      CAP_LEDGER.filter((r) => r.branch === b).reduce((n, r) => n + (r.sites ?? 1), 0);
-    expect({ failure: count('failure'), success: count('success'), either: count('either'), gate: count('gate') }).toEqual(
-      { failure: 9, success: 11, either: 5, gate: 1 },
-    );
-    expect(CAPPED.filter((s) => !isDeclaration(s))).toHaveLength(26);
+  it('数えた内訳を留める (別名を含めて数える)', () => {
+    expect({ 呼び出し: CAPPED_CALLS.length, 失敗: FAILURE_CALLS.length, 別名: ALIASES.length }).toEqual({
+      呼び出し: 44,
+      失敗: 16,
+      別名: 4,
+    });
   });
 
-  it('標本: 針は上限つきの読みに当たり、素の読みには当たらない', () => {
-    expect(CAPPED_READ.test("    const body = await readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES);")).toBe(true);
-    expect(CAPPED_READ.test("    text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama');")).toBe(true);
-    expect(CAPPED_READ.test('    const body = await proxyRes.text().catch(() => \'\');')).toBe(false);
+  /**
+   * ★ **針の標本 —— パス 330 の狭い針では、別名の先が落ちる。**
+   *
+   * 「44 件」とだけ書いても、針が広がったのか呼び出しが増えたのか読む側に
+   * 分からない。同じ検査の中で両方の針を当てて差を見せる。
+   */
+  it('★ 標本: 別名を含む針は当たり、パス 330 の狭い針では落ちる', () => {
+    const NARROW = /\b(readBodyWithCap|readFailureBody)\(/;
+    const sample = "    const body = await readCapped(res, hctx).catch(() => '');";
+    expect(CALL(ALIASES).test(sample)).toBe(true);
+    expect(NARROW.test(sample)).toBe(false);
+    // 別名の見つけ方そのものの標本。
+    const def = [
+      'async function readCappedText(res: Response, label: string): Promise<string> {',
+      '  // 注記が 1 行あっても見つける。',
+      '  return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label);',
+      '}',
+    ].join('\n');
+    expect([...def.matchAll(ALIAS_DEF)].map((m) => m[1])).toEqual(['readCappedText']);
+    // 本体が別の物なら別名ではない。
+    const notAlias = 'function readSomething(res: Response) {\n  return res.text();\n}';
+    expect([...notAlias.matchAll(ALIAS_DEF)]).toHaveLength(0);
+  });
+
+  it('★ 標本: 手書きの失敗の形の針は、実在した綴りに当たる', () => {
+    expect(HAND_WRITTEN_FAILURE.test("    const body = await readCapped(res, hctx).catch(() => '');")).toBe(true);
+    expect(HAND_WRITTEN_FAILURE.test("    const body = await readCappedText(res, 'Anthropic').catch(() => '');")).toBe(true);
+    // 通した形には当たらない。
+    expect(HAND_WRITTEN_FAILURE.test("    const body = await readFailureBody(res, hctx.serviceId);")).toBe(false);
+    // `.catch` の無い上限つきの読みにも当たらない。
+    expect(HAND_WRITTEN_FAILURE.test("    raw = await readCappedText(res, 'Anthropic');")).toBe(false);
   });
 });
+
 
 describe('readFailureBody の振る舞い', () => {
   it('読める本文はそのまま返す', async () => {

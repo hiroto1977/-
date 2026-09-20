@@ -1,3 +1,4 @@
+import { readFailureBody } from '../../shared/httpLimits';
 import { readStateFile } from '../stateFile';
 import { isoDateFromTimestamp } from '../../shared/isoDate';
 import { countChars } from '../../shared/inputCeiling';
@@ -1338,7 +1339,7 @@ async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise
         // `body.slice(0, 200)` length cap is also unreachable since test
         // bodies are short.
         // Stryker disable next-line ArrowFunction,MethodExpression
-        const body = await readCapped(res, hctx).catch(() => '');
+        const body = await readFailureBody(res, hctx.serviceId);
         throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
       }
       return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
