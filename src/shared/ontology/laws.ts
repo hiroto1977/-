@@ -162,6 +162,14 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [gate('verify:arch'), gate('lint:zero-fold'), gate('lint:shared-judgement'), gate('lint:docs'), test(T.preload('bridgeStatic'))],
   },
   {
+    id: 'one-way-match-hides-the-other',
+    family: 'gate-hygiene',
+    name: '片方向の照合は、もう片方を隠す',
+    statement: 'ゲートが同じ母集団について 2 つの数を刷るなら (走査 27 / 表 30)、その差は読まれないまま残る —— 差は理由つきの台帳にして両方向に鳴らす。パス 340 の実測: egress マトリクスの差 4 件のうち 3 件は **AI 提供者の既定の送り先** (`defaultBaseUrl`) で、送信文脈の針の死角だった。対照で確認 —— `api.openai.com` を別のホストに書き換えても verify:arch は緑のまま通り、**提供者を 1 つ足すだけで利用者のプロンプトと API キーの送り先が台帳の外へ出られた**。',
+    provenance: ['パス 340'],
+    enforcedBy: [gate('verify:arch'), test(T.shared('egressMatrixReverse'))],
+  },
+  {
     id: 'exclusion-states-the-real-reason',
     family: 'gate-hygiene',
     name: '外した物の理由は、実際に守っている理由で書く',

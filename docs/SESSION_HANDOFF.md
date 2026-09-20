@@ -7,6 +7,74 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 340 (2026-09-20) — 「27 件検査 / 30 件記載」の差を、誰も読んでいなかった
+
+### 見つけ方 —— ゲートが刷る 2 つの数を引き算した
+
+`verify:arch` は毎回こう刷る:
+
+```
+  Verified 27 host(s) in src (main: every literal / shared + renderer: send context)
+           against the §3.3 egress matrix (30 documented)
+```
+
+**同じ母集団について 2 つの数が在るのに、差は誰も読んでいなかった。**
+`verifyEgressHosts` は**片方向しか見ていない** —— 走査で見つけた宛先が表に無ければ落ちるが、
+逆 (表に在るのに走査で見つからない) は素通りする。
+
+### 差の中身: 4 件のうち 3 件は AI 提供者の送り先だった
+
+```
+  api.anthropic.com                  src/shared/ai/providers.ts:170
+  api.openai.com                     src/shared/ai/providers.ts:208
+  generativelanguage.googleapis.com  src/shared/ai/providers.ts:233
+  (+ atlassian.net / salesforce.com —— 利用者の設定が決める部分ドメイン)
+```
+
+`src/shared` は**送信文脈** (前後 3 行に `NETWORK_CALL_NAMES` の呼び出し) で数える木である。
+提供者の表は `defaultBaseUrl` を**宣言するだけ**で、実際の `fetch` は別の関数が呼ぶ ——
+**3 件とも 1 つも映っていなかった。**
+
+### 対照で「生きた穴」だと確かめた
+
+```
+  api.openai.com → evil-exfil.example.com に書き換えて verify:arch
+    パス 340 以前:  ✅ all references + metrics resolve   ← 素通り
+    パス 340 以後:  ❌ egress マトリクス (§3.3) に無い宛先です
+```
+
+**提供者を 1 つ足すだけで、利用者のプロンプトと API キーの送り先が台帳の外へ出られた。**
+今日そうなっている宛先は 1 つも無い (4 つとも §3.3 に在る) が、**それを保つ物が無かった**。
+
+### なぜ針を「欄の名前」で絞ったか
+
+`src/shared` / `src/renderer` には**画面に出すリンク**の URL が大量に在る (実測 2026-09-20:
+`url` 19 / `viewUrl` 12 / `sourceUrl` 9 / `helpUrl` 8 …)。送信文脈という設計は
+「引用で台帳を埋めない」ために在るので、全部を拾う形には戻せない。
+**「既定の送り先」と名乗る欄だけ**を足した —— 実測でその形は `defaultBaseUrl` の
+**4 件 / 1 ファイル**だけである。走査の宛先は **27 → 29 件**になった。
+
+### 直し
+
+- `scripts/verify-architecture.cjs` — `DESTINATION_FIELD` (`defaultBaseUrl:`) を送信文脈に足し、
+  走査の中身を外から読めるよう `module.exports` を付けた (**数え方を 2 つ持たない**ため、
+  逆向きの検査は**ゲートと同じ 1 つの解析**を呼ぶ)
+- `src/shared/__tests__/egressMatrixReverse.test.ts` (5 件) — 逆向きの台帳 (2 行・両方向)。
+  認める理由は `suffix-only` だけで、**「走査の死角」は理由にならない** (針を直す合図)
+- 法則 `one-way-match-hides-the-other` (87 本目)
+
+### 対照 2 本
+
+```
+  針から defaultBaseUrl を外す (パス 340 以前へ) → ★3 件が落ちる
+  表から 1 行消す (通信しているのに未記載)      → 逆向きの台帳が落ちる
+```
+
+### 数字
+
+- 単体 **14818 件**・法則 **87 本**・ゲート 37 本
+- 出荷物 **11,930,723 B で不変** —— 触ったのは `scripts/` と `__tests__/` と `ontology/` だけ (組んで実測)
+
 ## パス 339 (2026-09-20) — 定期点検を実行して、日付を実測へ直した
 
 欠陥ではなく**点検**の記録。`audit:floors` は「CI では走らせない定期点検の道具」として
@@ -5745,6 +5813,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 「27 件検査 / 30 件記載」の差を誰も読んでいなかった (パス 340) | ✅ `verify:arch` は egress マトリクスを**片方向しか照合していなかった** (走査で見つけた宛先が表に無ければ落ちるが、逆は素通り)。毎回刷っている 2 つの数の差 4 件を測ると、**3 件は AI 提供者の既定の送り先** (`api.anthropic.com` / `api.openai.com` / `generativelanguage.googleapis.com`) だった —— `src/shared` は送信文脈 (前後 3 行に通信の呼び出し) で数える木で、提供者の表は `defaultBaseUrl` を宣言するだけなので **1 つも映っていなかった**。**対照**: `api.openai.com` を別ホストに書き換えても verify:arch は緑のまま通った —— **提供者を 1 つ足すだけで、利用者のプロンプトと API キーの送り先が台帳の外へ出られた** (今日そうなっている宛先は 0)。針に `defaultBaseUrl` を足して 27 → 29 件 (画面に出すリンクの欄 —— `url` 19 / `viewUrl` 12 … —— は宛先ではないので拾わない)。逆向きは `egressMatrixReverse.test.ts` が台帳 2 行で両方向に持ち、**「走査の死角」は理由として認めない**。法則 `one-way-match-hides-the-other`・対照 2 本・**出荷物は byte 単位で不変** |
 | 攻撃面を「only 6 件」と書いていた (パス 338) | ✅ `CLAUDE.md` の「The renderer never sees raw tokens — it **only** calls `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`」を検証した。**前半は正しい** (橋の 15 本はどれも秘密を返さず、main の client 16 か所を走査しても snapshot にトークンは載らない)。**後半の列挙が偽** —— 「only」は閉じた列挙なのに実物は **15 件**で **9 件が落ちていた**: `eraseAll` (全データ削除して再起動)・`revealInFolder` / `openPath` (OS のファイル面)・`authorize` (ブラウザを開いて loopback サーバ)・`storageProtection`・`setColorScheme`・`getVersion`・`checkUpdate`・`oauthSupported`。**台帳 (`CHANNELS`) は 2026-08 から両方向に在り、15 という数はずっと機械が知っていた** —— 繋がっていなかったのは散文だけ。直し: 15 件すべてを挙げ、`bridgeStatic.test.ts` が**散文の列挙と `CHANNELS` を両方向**に突き合わせる。法則 `live-metrics-not-prose` を**閉じた列挙**まで広げた。対照 2 本 (散文を戻す / 橋にメソッドを足す —— 後者は既存の ★ が鳴る正しい連鎖)。**出荷物は byte 単位で不変** |
 | 門が外した物の「理由」が実測と食い違っていた (パス 337) | ✅ `lint:regex` は多項式 (O(n²)) を意図して外しており、理由を「上限は `MAX_ANALYZE_TEXT_CHARS` 5000 等なので O(n²) でも 30ms」と書き、末尾に**「上限を外す変更を入れるなら考え直すこと」**と条件を付けていた。その条件を測ると **5000 は最大ではなかった** —— 実物の最大は **`MAX_TEXT_PREVIEW_CHARS` 200,000** (取り込んだファイルの本文) で、そこでの O(n²) は **30ms ではなく 1 呼び出し 31 秒**。**長さの議論としては premise が偽**だった。結論が生きているのは**到達可能性**のため —— 出荷 `src/` の **588 本**中 250ms 超は **4 本**だけで、どれも長い文字列が届かない所 (村名の静的データ / `new URL()` 後のホスト名 / 2048 字で切られる基底 URL / base64 の末尾 `=` は規格上 2 文字)。**脅威そのものは無かった** —— `assistantMarkdown` は 100,000 字の病的入力 12 形で最悪 41ms、`message` 受信口 0 件、ハッシュは許可表、sw は同一オリジン GET のみ。直し: docblock を到達可能性の議論へ訂正・定期点検 `npm run audit:regex-poly` (32 秒・CI では走らせない = 壁時計時間の判定だから)・**時間を測らない**決定的な機械 `regexPolynomialLedger` (門が引く上限が実物の最大か・台帳の理由)。法則 `exclusion-states-the-real-reason`・対照 4 本・**出荷物は両方を組んで byte 単位で不変** |
 | 「分かる人が決めること」を検査に書いて 1 か月放置していた (パス 336) | ✅ 2026-08-23 に見つかった 2 つの食い違い (`MAX_RESPONSE_BYTES` が main 10 MiB / ブラウザ版 2 MiB・`generatePkce` の乱数が main 32B/16B / renderer 64B/32B) が、**両方の宣言に注記を書いただけ**で値は動かないまま残っていた。`ollamaInputLimits.test.ts` は「この検査は**揃えることを要求しない**」と明記し、両ビルド台帳の `why` も「分かる人が決めること」—— **理由の欄が埋まるので検査は通り続けた**。実測して決めた: ① `capAssistantReply` が 10 万字で切るのでアプリが使える最大の本文は **600,124 B** (最悪) ・`/api/tags` は 2 MiB に **5,745 モデル**入る → **2 MiB でも 3.49 倍の余裕**、10 MiB との差は「捨てる物をどれだけ確保するか」だけなので小さい側へ (main は「落ちればアプリ全体が落ちる」側)。② verifier は RFC 7636 §7.1 が **32-octet を RECOMMENDED** で名指し、`S256` の原像計算 256 bit が律速なので **64 octet は 1 bit も強くしない**。state の 16 B は床ちょうどだったので 1 段上げ、どちらも 32 octet へ。**画面の「デスクトップ版 10 MB」だけが直書き**だったのも直した。機械: 台帳の `why` に**保留の決まり文句を置けない** (両方向・標本と対照)。法則 `no-weakness-as-spec` は機械の無い法則から外れた (5 → 4 本)。対照 5 本・連鎖 5 段すべて緑 |

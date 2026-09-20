@@ -1970,6 +1970,26 @@ function invariantRowCount(archText) {
  */
 const SEND_CONTEXT_LINES = 3;
 const SEND_CALL = new RegExp(`\\b(?:${NETWORK_CALL_NAMES.join('|')})\\s*(?:<[^<>]*>)?\\(`);
+/**
+ * **宛先を宣言する欄** —— 送信の呼び出しが近くに無くても、ここに書かれた URL は宛先である
+ * (2026-09-20 · パス 340)。
+ *
+ * `src/shared/ai/providers.ts` は提供者ごとの表で `defaultBaseUrl` を持ち、実際の
+ * `fetch` はその値を**別の関数が**受け取って呼ぶ。送信文脈 (前後 3 行に `NETWORK_CALL_NAMES`)
+ * では**この 4 件が 1 つも映らなかった** —— 実測 (2026-09-20): `api.anthropic.com` /
+ * `api.openai.com` / `generativelanguage.googleapis.com` / `127.0.0.1:11434` の 4 つとも
+ * §3.3 に在るのに、走査は見つけていなかった。**対照**: `api.openai.com` を
+ * `evil-exfil.example.com` に書き換えても `verify:arch` は緑のまま通った ——
+ * つまり「提供者を 1 つ足す」だけで、**利用者のプロンプトと API キーの送り先**が
+ * 台帳の外へ出られた。
+ *
+ * 欄の名前で絞る理由: `src/shared` / `src/renderer` には「画面に出すリンク」の URL が
+ * 大量に在る (実測: `url` 19 / `viewUrl` 12 / `sourceUrl` 9 / `helpUrl` 8 …)。
+ * それらは**宛先ではない**ので、送信文脈の設計 (引用で台帳を埋めない) を壊さないよう
+ * **「既定の送り先」と名乗る欄だけ**を足す。実測でこの形は `defaultBaseUrl` の
+ * 4 件 / 1 ファイルだけである。
+ */
+const DESTINATION_FIELD = /\bdefaultBaseUrl\s*:/;
 const HOST_LITERAL = /https?:\/\/([A-Za-z0-9._-]+)/g;
 const URL_CONST = /\bconst ([A-Z][A-Z0-9_]*)\s*(?::\s*string)?\s*=\s*['"`]https?:\/\/([A-Za-z0-9._-]+)/;
 
@@ -1996,7 +2016,8 @@ function egressHostsInFile(text, mode) {
   }
   for (let i = 0; i < code.length; i++) {
     const ctx = code.slice(Math.max(0, i - SEND_CONTEXT_LINES), i + 1).join('\n');
-    if (!SEND_CALL.test(ctx)) continue;
+    // 宛先を宣言する欄 (`defaultBaseUrl`) は、その行だけで送信文脈とみなす。
+    if (!SEND_CALL.test(ctx) && !DESTINATION_FIELD.test(code[i])) continue;
     for (const m of code[i].matchAll(HOST_LITERAL)) hosts.add(m[1]);
     for (const [name, host] of consts) {
       if (new RegExp(`\\b${name}\\b`).test(code[i])) hosts.add(host);
@@ -2251,4 +2272,21 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * **走査の中身を外から読めるようにする** (2026-09-20 · パス 340)。
+ * `verifyEgressHosts` は「表に無い宛先」だけを落としており、逆向き
+ * (表に在るのに走査で見つからない行) は誰も見ていなかった。逆向きの台帳は
+ * `src/shared/__tests__/egressMatrixReverse.test.ts` が持つので、そこから
+ * **同じ 1 つの解析**を呼べるように export する (数え方を 2 つ持たない)。
+ */
+module.exports = {
+  documentedEgressHosts,
+  egressHostsInFile,
+  walkEgressTree,
+  readFileSafe,
+  EGRESS_TREES,
+  EGRESS_NOT_FETCHED,
+  REPO_ROOT,
+};
+
+if (require.main === module) process.exit(main());

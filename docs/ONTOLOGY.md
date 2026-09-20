@@ -150,12 +150,12 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (86)
+## 5. 法則と執行者 (87)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
 
-### ゲートそのものの規律 (21)
+### ゲートそのものの規律 (22)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -170,6 +170,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `general-form-not-one-file` | **不変条件は一般形で守る** — ファイル名で書かれた不変条件はそのファイルしか守られない。文面から一般形を取り出し、その形をする場所を全部洗う (「Skill name」→ 変数をパスに畳む箇所、「Gmail の to」→ CR/LF で join する箇所)。 | パターン 0-a-4 | ゲート `npm run lint:url-encoding`<br>ゲート `npm run lint:ipc-handlers`<br>ゲート `npm run lint:forbidden` |
 | `generated-plus-coverage` | **生成物 == 再計算 だけでは足りない** — 「committed と再計算が一致する」は成果物が古いことしか捕まえない。計算が壊れても再生成すれば通る。生成物の検査には本体データとの網羅を必ず足し、数は決め打ちせず欠ける理由を検査する。 | パターン 0-a-5 / パターン 0-a-6 | ゲート `npm run vault:check`<br>ゲート `npm run verify:graph`<br>検査 `src/shared/__tests__/ontologyDoc.test.ts` |
 | `live-metrics-not-prose` | **数は機械が、判断は散文が持つ** — 散文に書いた件数は誰も検算せず腐る (母集団が 4 倍ずれていた実測)。数える物は生成ブロックか live metric にし、判断だけを散文に書く。**閉じた列挙 (「only …」「全 N 件」) も同じ** —— 成員を並べたら、その並びと実物を機械で結ぶ。CLAUDE.md は preload bridge を「it only calls」で 6 件挙げていたが実物は 15 件で、落ちていた 9 件に eraseAll (全データ削除) と openPath が在った (パス 338)。攻撃面の側では、過小申告が読み手を油断させる。 | パス 145 / パス 220 / パス 248 / パス 338 | ゲート `npm run verify:arch`<br>ゲート `npm run lint:zero-fold`<br>ゲート `npm run lint:shared-judgement`<br>ゲート `npm run lint:docs`<br>検査 `src/preload/__tests__/bridgeStatic.test.ts` |
+| `one-way-match-hides-the-other` | **片方向の照合は、もう片方を隠す** — ゲートが同じ母集団について 2 つの数を刷るなら (走査 27 / 表 30)、その差は読まれないまま残る —— 差は理由つきの台帳にして両方向に鳴らす。パス 340 の実測: egress マトリクスの差 4 件のうち 3 件は **AI 提供者の既定の送り先** (`defaultBaseUrl`) で、送信文脈の針の死角だった。対照で確認 —— `api.openai.com` を別のホストに書き換えても verify:arch は緑のまま通り、**提供者を 1 つ足すだけで利用者のプロンプトと API キーの送り先が台帳の外へ出られた**。 | パス 340 | ゲート `npm run verify:arch`<br>検査 `src/shared/__tests__/egressMatrixReverse.test.ts` |
 | `exclusion-states-the-real-reason` | **外した物の理由は、実際に守っている理由で書く** — 門が何かを意図して外すとき、その理由は次の判断の材料になる。結論が正しくても premise が偽なら、次に足す物の評価がそこから外れる。lint:regex は多項式を「入力上限が 5000 だから O(n²) でも 30ms」で外していたが、実物の最大は 200,000 (MAX_TEXT_PREVIEW_CHARS) で 1 呼び出し 31 秒だった —— 守っていたのは長さではなく到達可能性 (その式に長い入力が来ない) である。理由に数を書くなら、その数が実物の最大であることを機械で留める。 | パス 337 | 検査 `src/shared/__tests__/regexPolynomialLedger.test.ts`<br>実機 `npm run audit:regex-poly` |
 | `measure-before-claim` | **危なそうで報告しない — 実測してから言う** — 受け口が危なく見えても、その受け口が実際に何を拒むかを実行して確かめる。深刻度を上げる方にも下げる方にも効く (Headers が CR/LF を投げるので注入は成立しない、など)。 | パターン 0-a-8 / パス 300 | 散文だけ `docs/SESSION_HANDOFF.md` — 「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ |
 | `pragma-directly-above` | **Stryker の pragma は対象行の直上に** — `disable next-line` は間に何か入ると無言で外れ、緩む方向にしか壊れない。理由の無い pragma は測っていない範囲を 100% として報告する。広い disable と無言の pragma は台帳。 | パターン 0-a-13 / パス 1220 付近の REMAINING_WORK | ゲート `npm run lint:mutation-scope` |
@@ -295,6 +296,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 86 (機械あり 82 / 散文だけ 4)
+- 法則 87 (機械あり 83 / 散文だけ 4)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`
