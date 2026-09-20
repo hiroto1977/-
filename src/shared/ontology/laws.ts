@@ -162,6 +162,14 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [gate('verify:arch'), gate('lint:zero-fold'), gate('lint:shared-judgement'), gate('lint:docs')],
   },
   {
+    id: 'exclusion-states-the-real-reason',
+    family: 'gate-hygiene',
+    name: '外した物の理由は、実際に守っている理由で書く',
+    statement: '門が何かを意図して外すとき、その理由は次の判断の材料になる。結論が正しくても premise が偽なら、次に足す物の評価がそこから外れる。lint:regex は多項式を「入力上限が 5000 だから O(n²) でも 30ms」で外していたが、実物の最大は 200,000 (MAX_TEXT_PREVIEW_CHARS) で 1 呼び出し 31 秒だった —— 守っていたのは長さではなく到達可能性 (その式に長い入力が来ない) である。理由に数を書くなら、その数が実物の最大であることを機械で留める。',
+    provenance: ['パス 337'],
+    enforcedBy: [test(T.shared('regexPolynomialLedger')), harness('audit:regex-poly')],
+  },
+  {
     id: 'measure-before-claim',
     family: 'gate-hygiene',
     name: '危なそうで報告しない — 実測してから言う',
