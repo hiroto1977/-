@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (83)
+## 5. 法則と執行者 (84)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -231,7 +231,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `write-then-read-loop` | **書く口を足したら読みの一巡** — 「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。 | パターン 0-a-22 | 検査 `src/renderer/__tests__/webShimSnapshotBranches.test.ts`<br>検査 `src/renderer/__tests__/webShimInputGatesAndSaves.test.ts`<br>検査 `src/renderer/__tests__/deviceStoreWritePolicy.test.ts` |
 | `destructive-ops-have-owner` | **破壊的な操作は「宛先を誰が決めるか」で数える** — 名前がデータ由来でなくても、宛先が環境変数なら守りが要る。rmSync / unlinkSync / 上書きは書き込み先の名前とは別の軸。台帳の ✅ には問いを書く。 | パターン 0-a-20 | 検査 `src/shared/__tests__/notebooklmExportClear.test.ts`<br>検査 `src/main/__tests__/exportSymlinkContainment.test.ts`<br>ゲート `npm run lint:shell` |
 
-### 画面へ出る文言・外へ出る本文 (7)
+### 画面へ出る文言・外へ出る本文 (8)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -240,6 +240,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `json-body-parsed-with-constant-message` | **2xx の非 JSON 本文は定数の文で断る** — V8 の SyntaxError は本文の先頭 10 字を引用する。本文を JSON として読む直呼びは出荷 code で **0 か所** —— パス 330 で `parseJsonBody` (Response を受け取って自分で読む口) を消し、上限つきで読んだ**文字列**を受け取る `parseJsonText` だけにした。口が在ると上限が呼び出し側の transport 次第になる。 | パス 311 / パス 330 | 検査 `src/shared/__tests__/jsonBodyCensus.test.ts`<br>検査 `src/shared/__tests__/apiResponse.test.ts` |
 | `envelope-checked-at-read` | **第三者の応答は読むところで確かめる** — `as T` は封筒も確かめない。200 の {} を成功にしない・null で型エラーを画面へ漏らさない・[] が 5 つの事実を意味しない・認可サーバの応答 1 つで資格情報を失わない。 | パス 259 / パス 260 / パス 261 / パス 262 / パス 263 / パス 264 | 検査 `src/shared/__tests__/tokenResponse.test.ts`<br>検査 `src/shared/__tests__/apiResponse.test.ts`<br>検査 `src/shared/__tests__/securityResponse.test.ts` |
 | `ceiling-unit-is-chars` | **天井も床も文字で数える** — 画面は「2,000 字」と刷り、実装が UTF-16 のコード単位で数えると絵文字で食い違う。上限は n 文字目で切り上げる (100 MB を辿らない)。床 (12 文字以上) も同じ単位。 | パス 195 / パス 197 / パス 252 / パス 254 / パス 258 | 検査 `src/shared/__tests__/ceilingUnitCensus.test.ts`<br>検査 `src/renderer/__tests__/ceilingUnitCensus.test.ts`<br>検査 `src/shared/__tests__/inputCeiling.test.ts` |
+| `exported-markup-escapes-free-text` | **書き出す成果物に自由文を素で入れない** — 書き出した `.md` / `.svg` / `.html` はライブラリに保存され、**ダウンロードして人に渡る**。自由文 (利用者の入力・AI の応答・第三者の応答) は `shared/escape.ts` の 1 つを通す —— Markdown は `escapeMarkdownInline` (1 行で終わる場所: 見出し・箇条書きの 1 項目・引用の 1 行) と `escapeMarkdownText` (地の文)、XML/HTML は `escapeXml`、色は `safeColor` で**検証して既定値へ落とす**。`lint:forbidden` #11 が落とすのは**再実装**であって「通していない」ではないので、母集団を別に数える。 | パス 332 / escape.ts の docblock (2026-08-20) | 検査 `src/renderer/__tests__/markdownExportCensus.test.ts`<br>検査 `src/shared/__tests__/escape.test.ts`<br>ゲート `npm run lint:forbidden` |
 | `refuse-dont-truncate` | **外へ書く欄は切らずに断る** — 外へ送る本文を黙って slice しない。天井を超えたら理由を言って送らない。天井は型と長さの上限を持ち (12 家系)、画面の maxLength は関門ではない。 | パス 110 / パス 111 / パス 172 / パス 175 / パス 183 | 検査 `src/shared/__tests__/writeFieldLimits.test.ts`<br>検査 `src/renderer/__tests__/writeBodyCeilingCensus.test.ts` |
 | `egress-notice-before-send` | **外へ送る画面は何を送るかを言う** — AI へ送る 8 画面・全画面のマイクは、何を・どこへ・どれだけ送るかを送る前に言う。断りが送る量を 2 倍に述べていてはならない。 | パス 106 / パス 107 / パス 108 / パス 186 | 検査 `src/renderer/pages/__tests__/aiEgressDisclosed.test.ts`<br>検査 `src/renderer/__tests__/aiDataDisclosure.test.ts` |
 
@@ -293,6 +294,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 83 (機械あり 78 / 散文だけ 5)
+- 法則 84 (機械あり 79 / 散文だけ 5)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

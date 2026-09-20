@@ -12,6 +12,7 @@
  * 知識はすべて単一の真実源から導出する (SERVICES / orchestration registry /
  * 音声コマンドの能力テーブル) ため、将来のサービス・組織の拡張に自動連動する。
  */
+import { escapeMarkdownInline } from '../../shared/escape';
 import { navigateTo } from '../navigate';
 import { arrayOf, chatMessages, isRecord } from '../data/persistedShape';
 import { classifyActionResult } from '../data/actionOutcome';
@@ -102,6 +103,22 @@ function recordRequest(text: string): LocalWriteResult {
   return writeLocalJson(REQUESTS_KEY, list);
 }
 
+/**
+ * 要望の一覧を Markdown の本文にする。**export しているのは検査のため** ——
+ * ダウンロードの中に埋めたままだと、門を通っていることを DOM 無しで確かめられない
+ * (`downloadRequests` は `URL.createObjectURL` と `<a>.click()` を使う)。
+ */
+export function requestsMarkdown(list: readonly FeatureRequest[]): string {
+  return [
+    '# チャットボット経由の機能要望 (オーケストレーション backlog 候補)',
+    '',
+    ...list.map(
+      (r) => `- [ ] ${escapeMarkdownInline(r.text)} _(受付: ${escapeMarkdownInline(r.at.slice(0, 10))})_`,
+    ),
+    '',
+  ].join('\n');
+}
+
 /** 記録済み要望を Markdown でダウンロードする (オーケストレーション backlog 連携用)。 */
 function downloadRequests(): void {
   let list: FeatureRequest[] = [];
@@ -111,13 +128,33 @@ function downloadRequests(): void {
   } catch {
     list = [];
   }
-  const lines = [
-    '# チャットボット経由の機能要望 (オーケストレーション backlog 候補)',
-    '',
-    ...list.map((r) => `- [ ] ${r.text} _(受付: ${r.at.slice(0, 10)})_`),
-    '',
-  ];
-  const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+  /*
+   * **書き出す Markdown に自由文を素で入れない** (2026-09-20 · パス 332)。
+   *
+   * ここは利用者が打った要望文をそのまま `- [ ] …` の箇条書きにしていた。
+   * `shared/escape.ts` の `escapeMarkdownInline` は**まさにこの場所のため**に在る
+   * (docblock が「1 行で終わらなければならない場所すべて —— 見出し・箇条書きの
+   * 1 項目・引用の 1 行」と書いている) のに、この 1 か所だけ通っていなかった。
+   *
+   * 実測 (2026-09-20・5 形のうち 4 形で差が出た):
+   *
+   * ```
+   *   要望 <img src=x onerror=…>   → 今: 生のまま     門: &lt;img …
+   *   要望\n## 承認済み\n- [x] …   → 今: 箇条書きから抜けて新しい構造を書く
+   *   A|B の切替が欲しい            → 今: 表の桁がずれる
+   *   末尾が \                      → 今: 後続の区切りを打ち消す
+   * ```
+   *
+   * **到達の見立ては分けて書く。** `<` は今日この画面から打てる (入力欄は
+   * 1 行の `<input>`)。改行は `<input>` には打てないので**今日の UI からは入らない**
+   * —— ただし読み戻しの番人は `typeof v.text === 'string'` しか見ておらず、
+   * 保存値が他の経路で入れば形は保証されない。どちらも直しは同じ 1 か所である。
+   *
+   * このファイルは名前のとおり**オーケストレーションの backlog 候補**として
+   * 人へ渡る前提の成果物で、`escape.ts` が「書き出した `.md` はダウンロードして
+   * 人に渡る」と述べている経路そのものである。`at` も保存値なので同じ門を通す。
+   */
+  const blob = new Blob([requestsMarkdown(list)], { type: 'text/markdown;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
