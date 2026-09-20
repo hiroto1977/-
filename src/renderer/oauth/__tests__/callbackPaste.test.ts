@@ -6,7 +6,7 @@
  * (`urn:ietf:wg:oauth:2.0:oob`) では state が持ち帰れないので、**既定値に
  * 従うかぎり完了できなかった**。ここはその判定と文面を留める。
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   CALLBACK_PASTE_HINT,
   CALLBACK_PASTE_PLACEHOLDER,
@@ -211,5 +211,102 @@ describe('oauthFieldTooLong — 天井を持つのは画面の maxLength だけ�
     for (const field of ['clientId', 'redirectUri', 'callbackPaste'] as const) {
       expect(OAUTH_FIELD_LABEL[field].length).toBeGreaterThan(0);
     }
+  });
+});
+
+/**
+ * **モジュール直下の定数を、読み直してから見る** (2026-09-20 · パス 355)。
+ *
+ * この検査は最初から定数を import して使っていたが、**変異検査からは
+ * 見えていなかった**。`stryker.config.json` の `_commentIgnoreStatic` が
+ * 書いているとおり、モジュール直下の値は**変異体の有効化より前に**評価される
+ * ため、覆われていても「生存」として報告される。実測 (2026-09-20・
+ * `--mutate src/renderer/oauth/callbackPaste.ts`): **81.82% / 生存 16**、
+ * その 16 件のうち **13 件がこの定数群**だった (残り 3 件は下の `join('')`)。
+ *
+ * 解析そのものは 72 件すべて Killed で、**穴は「値」と「文面」の側にだけ在った**。
+ * `vi.resetModules()` + 動的 `await import()` で読み直せば、値を書き換える
+ * 変異体が比較で落ちる (`oauth.test.ts` の `freshConfigs`・パス 353 の
+ * `backupCoverage.test.ts` と同じ形)。
+ *
+ * ## なぜこの値を留めるのか
+ *
+ * `LOOPBACK_REDIRECT_URI` は**利用者が Google Cloud Console に登録する綴り**
+ * そのもので、画面の placeholder・断りの文面・例示がすべてこの 1 つを読む。
+ * 書き換わると、登録した綴りと画面が言う綴りが食い違い、**利用者は
+ * 「登録したはずなのに弾かれる」側に立たされる**。
+ */
+describe('モジュール直下の定数 (読み直して見る・パス 355)', () => {
+  async function fresh() {
+    vi.resetModules();
+    return (await import('../callbackPaste')) as typeof import('../callbackPaste');
+  }
+
+  it('★ リダイレクト URI の 2 値は綴りごと固定する', async () => {
+    const m = await fresh();
+    expect(m.LOOPBACK_REDIRECT_URI).toBe('http://localhost');
+    // RFC 6749 時代の OOB。**名前で分かるように残している**値なので、綴りが本体。
+    expect(m.OOB_REDIRECT_URI).toBe('urn:ietf:wg:oauth:2.0:oob');
+    // 2 つは同じ判定の別の答えになる (片方が他方に化けない)。
+    expect(m.redirectKind(m.LOOPBACK_REDIRECT_URI)).toBe('callback');
+    expect(m.redirectKind(m.OOB_REDIRECT_URI)).toBe('no-callback');
+  });
+
+  it('★ 欄の呼び方 3 つを固定する (断りの文面が使う・画面が言い換えない)', async () => {
+    const m = await fresh();
+    expect(m.OAUTH_FIELD_LABEL).toEqual({
+      clientId: 'Client ID',
+      redirectUri: 'リダイレクト URI',
+      callbackPaste: '貼り付けた URL',
+    });
+  });
+
+  it('★ placeholder は空でなく、URL の形と 2 つの引数を見せる', async () => {
+    const m = await fresh();
+    expect(m.CALLBACK_PASTE_PLACEHOLDER.length).toBeGreaterThan(20);
+    expect(m.CALLBACK_PASTE_PLACEHOLDER).toContain('http://localhost/?code=');
+    expect(m.CALLBACK_PASTE_PLACEHOLDER).toContain('&state=');
+    expect(m.CALLBACK_PASTE_PLACEHOLDER).toContain('URL 全体');
+  });
+
+  it('★ 説明は 4 つのことを言い、1 行に繋がっている', async () => {
+    const m = await fresh();
+    const hint = m.CALLBACK_PASTE_HINT;
+    expect(hint.length).toBeGreaterThan(80);
+    // 改行で区切らない (欄の上の 1 行として出る)。
+    expect(hint).not.toContain('\n');
+    for (const part of ['リダイレクト先へ飛びます', '接続できません', 'アドレスバー', 'code だけでは完了できません']) {
+      expect(hint, part).toContain(part);
+    }
+    // **繋ぎ目に何も挟まっていない** (`join('')` が別の区切りに化けたら落ちる)。
+    expect(hint).toContain('飛びます。受け取るものは無いので');
+    expect(hint).toContain('出ています。その URL を丸ごとコピーして');
+  });
+});
+
+/**
+ * **繋ぎ目に何も挟まらない** (2026-09-20 · パス 355)。
+ *
+ * 文面はどれも `[...].join('')` で組む。`''` が別の文字列に化けても
+ * 断片ごとの `toContain` は通るので、**繋ぎ目を跨ぐ文字列**で留める。
+ * 実測 (2026-09-20) では、この 3 か所が生存していた。
+ */
+describe('文面の繋ぎ目 (パス 355)', () => {
+  it('★ OOB の断りは 3 文が続けて読める', () => {
+    const r = redirectBlockedReason(OOB_REDIRECT_URI);
+    expect(r).toContain('完了できません。token の交換には');
+    expect(r).toContain('しか載りません。http://localhost のような');
+  });
+
+  it('★ state 欠けの診断は 3 文が続けて読める', () => {
+    const m = describeCallbackPasteFailure('http://localhost/?code=4%2F0Ab');
+    expect(m).toContain('state がありません。state は CSRF');
+    expect(m).toContain('交換できません。アドレスバーの URL 全体');
+  });
+
+  it('★ code も state も無い診断は 3 文が続けて読める', () => {
+    const m = describeCallbackPasteFailure('4/0AbCdEfGhIjKlMnOpQrStUvWxYz');
+    expect(m).toContain('見つかりませんでした。認可コードだけ');
+    expect(m).toContain('完了できません —— ブラウザのアドレスバーに');
   });
 });

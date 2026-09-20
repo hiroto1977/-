@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14904** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14911** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -2253,7 +2253,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **295 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **296 ファイル**。
 2026-09-12 (パス 178) に `src/shared/inputCeiling.ts` を足した —— パス 167 / 168 / 172 / 174 / 175 が
 「切ったのか、送らなかったのか」の言い分けをこの 3 関数に寄せた結果、**実装 18 モジュール・
 呼び出し 23 か所 (画面の断り書きは 16 個) と検査 6 本が同じ判断を読む**ようになったのに、

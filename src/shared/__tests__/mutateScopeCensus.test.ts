@@ -23,7 +23,7 @@
  * 2. **外に居て、かつ判断を持っていそうな物**を台帳で持つ (両方向)。
  *    「持っていそう」の機械的な定義は **同名の検査が在り、かつ 100 行以上** ——
  *    薄いスタブ (`main/clients/<id>.ts` の 11〜40 行) と、検査すら無い物を外す。
- *    実測 32 本。
+ *    実測 31 本 (パス 355 で `oauth/callbackPaste.ts` が分母へ入って 32 → 31)。
  * 3. 公開している頁が**分母の範囲を述べている**こと (`docs/QUALITY.md` と、
  *    それを作る `scripts/quality-report.cjs` の両方)。
  *
@@ -94,7 +94,6 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/renderer/data/villageData.ts': { kind: 'measure-next', why: 'registry.json から村のシーンを組む決定論的ロジック。画面の見た目を決める。' },
   'src/renderer/data/wordpressMcpAccess.ts': { kind: 'measure-next', why: '取得した payload から「MCP ツールが使えるか」を述べる (パス 177)。名乗りを作る判断。' },
   'src/renderer/hooks/useRealtimeTick.ts': { kind: 'measure-next', why: '描画の刻み。止め忘れると毎秒の再描画が残る。' },
-  'src/renderer/oauth/callbackPaste.ts': { kind: 'measure-next', why: '**利用者が貼り付けた OAuth の戻り値を解析する。** 画面が「貼れ」と言う物と受け取る物を一致させる関門 (パス 157) で、外から来る文字列を読む側である。' },
   'src/renderer/plan/usePlan.ts': { kind: 'measure-next', why: '内部ライセンスの有効化と「全機能を使えるか」の出どころ。機能の開閉を決める。' },
   'src/renderer/theme.ts': { kind: 'measure-next', why: '配色の解決と適用 (パス 317)。OS 追随の停止まで持つ。' },
   'src/shared/api/cloudflare.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口**。DNS レコードとキャッシュ削除の欄を検める。' },
@@ -121,7 +120,7 @@ describe('変異検査の分母の外 (パス 354)', () => {
     expect(scanned.tests.size).toBeGreaterThanOrEqual(400);
   });
 
-  it('★ 分母は名指しの一覧で、外に居る物が在る (実測 2026-09-20: 413 / 295 / 118)', () => {
+  it('★ 分母は名指しの一覧で、外に居る物が在る (実測 2026-09-20: 413 / 296 / 117)', () => {
     expect(named.length).toBeGreaterThanOrEqual(290);
     expect(outside.length).toBe(scanned.files.length - named.length);
     // 名指しの一覧はすべて実在する (消えたファイルが載ったままにならない)。
@@ -150,9 +149,11 @@ describe('変異検査の分母の外 (パス 354)', () => {
     expect(Object.values(LEDGER).filter((r) => r.kind === 'measure-next').length).toBeGreaterThan(data.length);
   });
 
-  it('★ パス 353 で入れた storageDurability.ts は、もう外に居ない', () => {
-    expect(inScope.has('src/shared/storageDurability.ts')).toBe(true);
-    expect(outside).not.toContain('src/shared/storageDurability.ts');
+  it('★ パス 353 / 355 で入れた 2 本は、もう外に居ない', () => {
+    for (const f of ['src/shared/storageDurability.ts', 'src/renderer/oauth/callbackPaste.ts']) {
+      expect(inScope.has(f), f).toBe(true);
+      expect(outside, f).not.toContain(f);
+    }
     // 標本: この針は「外に居る」側にも当たる (当たらなければ上の not は空の検査)。
     expect(outside).toContain('src/shared/apiResponse.ts');
   });
