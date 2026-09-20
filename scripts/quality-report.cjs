@@ -65,6 +65,48 @@ if (!SKIP_COVERAGE) {
 // Stryker が 100.00% と言っている同じ報告書から 77.16% を出していた
 // (35,359 のうち 8,071 が Ignored)。同じ数字を 2 か所で作らないよう、
 // 表と要約は下の `mutTotal` が持つ**同一の文字列**を読む。
+/*
+ * **分母の範囲を述べる** (2026-09-20 · パス 354)。
+ *
+ * `mutate` は**名指しの一覧**なので、載っていないファイルは分母に入らない。
+ * それまでこの頁は「Overall: 100.00% / 0 survived」とだけ書いており、
+ * **何本のうち何本を測った結果なのかを言っていなかった** —— 読んだ人は
+ * 「製品ぜんぶが 100%」と受け取る。実測 (2026-09-20) では `src/` の `.ts` の
+ * うち 4 分の 1 以上が一覧の外に在り、その中には学術コーパスのような
+ * 「測る意味の無い定数表」だけでなく、判断を持つモジュールも居た
+ * (範囲の台帳は `src/shared/__tests__/mutateScopeCensus.test.ts`)。
+ *
+ * 依存を足さずに数えるため、`src/` は自前で歩く (このリポジトリの script は
+ * AST パーサを持たない方針)。
+ */
+function shippedTsFiles(dir, out) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      if (e.name === '__tests__') continue;
+      shippedTsFiles(full, out);
+    } else if (e.name.endsWith('.ts') && !e.name.endsWith('.d.ts')) {
+      out.push(path.relative(ROOT, full).split(path.sep).join('/'));
+    }
+  }
+  return out;
+}
+
+function mutateScopeLine() {
+  const cfgPath = path.join(ROOT, 'stryker.config.json');
+  if (!fs.existsSync(cfgPath)) return '';
+  const named = JSON.parse(fs.readFileSync(cfgPath, 'utf8')).mutate ?? [];
+  const all = shippedTsFiles(path.join(ROOT, 'src'), []);
+  const inScope = new Set(named);
+  const outside = all.filter((f) => !inScope.has(f)).length;
+  return (
+    `分母の範囲: \`stryker.config.json\` の \`mutate\` が名指しする **${named.length} 本**。`
+    + `\`src/\` の \`.ts\` (検査と \`.d.ts\` を除く) は **${all.length} 本**で、`
+    + `**${outside} 本は分母の外**に在る (学術コーパスなどの定数表を含む。`
+    + '範囲の台帳は `src/shared/__tests__/mutateScopeCensus.test.ts`)\n\n'
+  );
+}
+
 const mutPath = path.join(ROOT, 'reports', 'mutation', 'mutation.json');
 let mutSection = '_no mutation report found — run `npm run mutate`._';
 let mutTotal = null;
@@ -109,6 +151,7 @@ if (fs.existsSync(mutPath)) {
   mutSection += `_Report age: ${ageH.toFixed(1)}h._\n\n`;
   mutSection += `**Overall: ${mutTotal.totalPct}% total / ${mutTotal.coveredPct}% covered** `;
   mutSection += `(${detected} killed / ${survived} survived / ${noCov} no-cov / ${valid} valid)\n\n`;
+  mutSection += mutateScopeLine();
   mutSection += `分母から外れたもの: \`Ignored\` ${ignored} (\`Stryker disable\` で測らないと宣言した分 — `;
   mutSection += `範囲は \`npm run lint:mutation-scope\` が台帳で押さえている) / `;
   mutSection += `\`RuntimeError\`+\`CompileError\` ${invalid} (**評価が成立しなかった分。0 でないなら盲点**`;
