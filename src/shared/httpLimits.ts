@@ -237,6 +237,59 @@ export async function readBodyWithCap(
 }
 
 /**
+ * **失敗した応答 (`!res.ok`) の本文を読む —— 上限つきで。**
+ *
+ * この 2 段 (上限つきで読む → 読めなければ空) は 2026-09-20 まで
+ * **9 か所に手で書かれており、そのうち 3 か所が上限を落としていた**:
+ *
+ * ```
+ *   shared/api/http.ts            readBodyWithCap(…).catch(() => '')     上限あり
+ *   main/clients/types.ts         readBodyWithCap(…).catch(() => '')     上限あり
+ *   renderer/data/saasWriteWeb.ts readCapped(…).catch(() => '')          上限あり
+ *   renderer/oauth/pkce.ts        readBodyWithCap(…).catch(() => '')     上限あり
+ *   main/oauth.ts (×2)            readBodyWithCap(…).catch(() => '')     上限あり
+ *   renderer/network/proxy.ts     proxyRes.text().catch(() => '')        ← 上限なし
+ *   renderer/network/ollamaWeb.ts res.text() (readTextOrEmpty)           ← 上限なし
+ *   main/clients/ollama.ts        res.text()                             ← 上限なし
+ * ```
+ *
+ * **落ちていた 3 か所は、どれも成功側に上限を持っている。** つまり
+ * 同じ関数の中で、2xx の本文は切るのに、500 の本文は切っていなかった ——
+ * **向きが逆である**。大きな本文を返すのは壊れている相手のほうで、
+ * その相手は定義上 `!res.ok` の枝に来る。`shared/api/http.ts` と
+ * `main/clients/types.ts` は既にその一文を持っていた
+ * (「落ちている相手ほど大きなものを返しうる」) のに、**散文だったので
+ * 他の 3 か所には掛からなかった**。
+ *
+ * ## 実測 (2026-09-20 · Node 22)
+ *
+ * 1 MiB の塊を返す 500 応答に対して:
+ *
+ * ```
+ *   上限なし 256 MiB   引いた 256 MiB   256 M 文字   rss +637 MiB   2,932 ms
+ *   上限あり 256 MiB   引いた  11 MiB   断り        rss   +9 MiB       6 ms
+ *   上限なし 512 MiB   引いた 512 MiB   ERR_STRING_TOO_LONG
+ * ```
+ *
+ * 512 MiB の行が示すとおり、上限が無いと **`catch` は握り潰すが費用は
+ * 払い終えている** —— 利用者に見えるのは「本文なし」だけで、
+ * その裏で 512 MiB を読んでいる。main プロセスならアプリ全体が落ちる。
+ *
+ * ## 空文字を返す理由
+ *
+ * 失敗の本文は**文言のためだけ**に読む。読めなくても状態番号は伝えられる
+ * ので、読めなかった / 大きすぎたは同じ「詳細なし」に畳んでよい。
+ * 畳んでよくないのは**読む量**のほうである。
+ */
+export async function readFailureBody(
+  res: Response,
+  label: string,
+  maxBytes: number = MAX_HTTP_RESPONSE_BYTES,
+): Promise<string> {
+  return readBodyWithCap(res, maxBytes, label).catch(() => '');
+}
+
+/**
  * その例外は `readBodyWithCap` の**上限超過**か。
  *
  * 呼び出し側には「大きすぎた」を独自の文言・種別へ翻訳する経路が在る

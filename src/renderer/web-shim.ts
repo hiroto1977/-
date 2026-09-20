@@ -129,7 +129,7 @@ import { REAL_MIRROR, mirrorToFolder } from './fs/folderMirror';
 import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
-import { parseJsonBody } from '../shared/apiResponse';
+import { parseJsonText } from '../shared/apiResponse';
 import {
   registerSymbol,
   unregisterSymbol,
@@ -1363,7 +1363,9 @@ const unguarded = {
           return async (url, init) => {
             const r = await transport(url, init);
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            return parseJsonBody(r, serviceId);
+            // 読む所で切る (パス 330) —— 上限が「渡した transport がプロキシだから
+            // 既に切れている」に依っていた形をやめる。
+            return parseJsonText(await readCappedText(r, serviceId), serviceId);
           };
         },
         now: () => Date.now(),

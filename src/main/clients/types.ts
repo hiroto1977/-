@@ -43,6 +43,7 @@ import {
   egressInit,
   isRedirectResponse,
   readBodyWithCap,
+  readFailureBody,
   redirectRefusal,
   withTimeout,
 } from '../../shared/httpLimits';
@@ -226,8 +227,8 @@ export function readCapped(res: Response, ctx: LimitedFetchCtx): Promise<string>
  */
 async function readJsonBody(res: Response, ctx: LimitedFetchCtx, maxBytes: number): Promise<unknown> {
   if (!res.ok) {
-    // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
-    const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
+    // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる (規則は readFailureBody)。
+    const body = await readFailureBody(res, ctx.serviceId, maxBytes);
     throw new FetchError(
       `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
       res.status,

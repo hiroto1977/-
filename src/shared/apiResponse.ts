@@ -39,12 +39,23 @@
  *
  * 読み取り (snapshot) 側の `jsonFetch<T>` は今も `JSON.parse(text) as T` で、
  * 74 クライアントぶんの母集団が残っている (`docs/REMAINING_WORK.md` のパス 261)。
- * 応答の**大きさ**もここでは見ない —— `readBodyWithCap` (10 MiB) と
- * `fetchViaProxy` が先に掛かっている (実測で確認済み)。
+ *
+ * 応答の**大きさ**もここでは見ない。**この段落は 2026-09-20 (パス 330) まで
+ * 「`readBodyWithCap` (10 MiB) と `fetchViaProxy` が先に掛かっている
+ * (実測で確認済み)」と書いていたが、それは偽だった** —— 当時の呼び出し 16 本の
+ * うち 2 本 (`main/clients/ollama.ts` の `/api/version` と `/api/tags`) は
+ * どちらも通っておらず、`withTimeout` が見るのは締切と endpoint の allowlist
+ * だけである。**「上流が掛けている」は呼び出し側を数えないと言えない。**
+ *
+ * 直し方は**上流を数える**ではなく**読む所で切る**にした。`parseJsonBody`
+ * (本文を自分で読む口) は消し、`parseJsonText` (読み終えた文字列を受け取る口)
+ * だけを残す —— こうすると呼び出し側は上限つきで読む手続きを**通らずには
+ * 呼べない**。母集団は `shared/__tests__/responseBodyCapCensus.test.ts` が
+ * 両方向に留め、`.json()` が 0 件であることは `jsonBodyCensus.test.ts` が留める。
  */
 
 /**
- * 応答の本文を JSON として読む。**読めなければ文言は定数** (2026-09-17 · パス 311)。
+ * 上限つきで読み終えた本文を JSON として読む。**読めなければ文言は定数** (2026-09-17 · パス 311)。
  *
  * V8 の `SyntaxError` は本文の**先頭 10 字を引用する** (Node 22 実測):
  *
@@ -58,17 +69,12 @@
  * `shared/tokenResponse.ts` (パス 260) と `shared/api/http.ts` / `shared/ai/chat.ts` /
  * `main/clients/types.ts` は既に文言を定数にしていたが、パス 261 で足した書き込み 13 経路と
  * liveRead の transport・main の Ollama 2 経路は `await res.json()` のままだった。
- * **`.json()` を直接呼ぶのはここだけ** (`jsonBodyCensus.test.ts` が両方向に留める)。
+ *
+ * **`Response` を受け取る双子 (`parseJsonBody`) は 2026-09-20 (パス 330) に消した。**
+ * 本文を自分で読む口が在ると、上限は「呼び出し側がどの transport を渡したか」に
+ * 依ってしまう —— 実際 16 本のうち 2 本は上限を通っていなかった。
+ * 文字列しか受け取らない口だけを残せば、**読む手続きを通らずには呼べない**。
  */
-export async function parseJsonBody(res: Response, label: string): Promise<unknown> {
-  try {
-    return (await res.json()) as unknown;
-  } catch {
-    throw new Error(notJsonMessage(label));
-  }
-}
-
-/** 読み終えた本文を JSON として読む (上限つきで先に読んだ文字列用)。文言は {@link parseJsonBody} と同じ。 */
 export function parseJsonText(text: string, label: string): unknown {
   try {
     return JSON.parse(text) as unknown;

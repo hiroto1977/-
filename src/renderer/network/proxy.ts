@@ -25,6 +25,7 @@ import {
   isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  readFailureBody,
   redirectRefusal,
 } from '../../shared/httpLimits';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
@@ -352,7 +353,12 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   }
 
   if (!proxyRes.ok) {
-    const body = await proxyRes.text().catch(() => '');
+    // **失敗の本文にも上限を掛ける** (2026-09-20 · パス 330)。ここは 1 行下の
+    // 成功側が「compromised or malicious proxy returning a huge payload」を
+    // 名指しして切っているのに、**その相手が実際に通る枝**だけ素の `text()`
+    // だった —— 中継は利用者が配る Worker なので、返す本文の大きさは
+    // このアプリの側では何も保証できない。
+    const body = await readFailureBody(proxyRes, 'proxy', MAX_PROXY_RESPONSE_BYTES);
     // A misbehaving proxy may echo the forwarded request (incl. the
     // Authorization header) back in its error body. Redact before surfacing.
     throw new Error(`proxy ${proxyRes.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);

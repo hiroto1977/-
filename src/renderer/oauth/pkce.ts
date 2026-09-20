@@ -30,6 +30,7 @@ import {
   isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  readFailureBody,
   redirectRefusal,
   withTimeout,
 } from '../../shared/httpLimits';
@@ -266,9 +267,7 @@ export async function exchangeGoogleCode(
       // 捨てる**ので、空にしても観測できる差が出ない (等価変異・2026-08-31 に
       // 対照で確認)。成功側 (下の `return`) は catch していないため文言が
       // 利用者に届き、そちらは検査で留めてある。
-      const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange').catch(
-        () => '',
-      );
+      const body = await readFailureBody(res, 'token exchange');
       // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
       // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
       // 不具合報告に貼られる。

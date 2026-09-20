@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (82)
+## 5. 法則と執行者 (83)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -193,7 +193,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `center-then-count-callers` | **中心へ寄せたら呼び出し側から数え直す** — 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。 | パターン 0-a-18 / パス 311 | 検査 `src/shared/__tests__/bareFetchLedger.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>検査 `src/shared/__tests__/jsonBodyCensus.test.ts` |
 | `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。弱さは閉じるか、理由つきの台帳に「閉じていない物」として書く。 | パス 291 / パス 309 | 散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。各パスの「閉じていない物」の節がその台帳 |
 
-### 境界と信頼 (17)
+### 境界と信頼 (18)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -208,6 +208,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `image-url-parsed-and-private-refused` | **第三者由来の画像 URL は解析し、内側の送り先を拒む** — &lt;img src> は読めなくても GET は利用者の網の内側へ飛ぶ。第三者 API の応答の URL は解析してから判定し、private / reserved を拒む。利用者自身の背景画像は別の段 (LAN の NAS は正当)。 | パス 299 / パス 300 | 検査 `src/shared/__tests__/imageUrlGate.test.ts` |
 | `shell-open-gate` | **OS の「開く」は書き出し根の内側 + 拡張子 allowlist** — realpath で symlink を辿ってから閉じ込めを見る。字面の閉じ込めは symlink を見ない。 | ARCHITECTURE §1.4 app:openPath / パス 0-a-2 | 検査 `src/main/__tests__/exportSymlinkContainment.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `redirects-refused` | **アプリ自身の fetch は転送に追随しない** — 送り先の関門は最初の 1 ホップしか見ない。規則は httpLimits.ts に 1 つ、網の fetch 12 か所が全部通る。例外は no-cors の 1 形だけ (Fetch 標準が network error と定めるため)。 | パス 301 / パス 304 | 検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>実機 `npm run e2e:ollama` |
+| `response-body-capped` | **相手の本文は上限つきで読む —— 失敗した応答でも** — 上限は「読む前」に byte で効かせる (全部読んでから捨てるのは上限ではない)。**失敗した応答の枝ほど要る** —— 大きな本文を返すのは壊れている相手で、その相手は `!res.ok` に来る。失敗の読みは `readFailureBody` ただ 1 つ (9 か所)。本文を自分で読む場所は門と端末のファイルの 3 件だけで、`Response` を受け取って自分で読む口 (`parseJsonBody`) は置かない —— 置くと上限が「呼び出し側がどの transport を渡したか」に依る。 | パス 301 / パス 311 / パス 330 (母集団の機械) | 検査 `src/shared/__tests__/responseBodyCapCensus.test.ts`<br>検査 `src/shared/__tests__/jsonBodyCensus.test.ts`<br>検査 `src/shared/__tests__/httpLimits.test.ts` |
 | `variable-hosts-ledgered` | **送り先が変数の通信は台帳** — Authorization を付けて送る先がホスト名で絞られていなければ資格情報の流出。送り先が定数でない通信は台帳に載っていなければ落ち、直したら消す (双方向)。走査は src 全体。 | 不変条件 #7 / ARCHITECTURE §3.3 / パターン 0-a | ゲート `npm run lint:network-targets` |
 | `url-path-encoded` | **URL の動的部分は encodeURIComponent** — 通信呼び出しに渡る URL の authority より後ろに生の ${…} があれば落ちる。ホストは network-targets、画面に出すリンクは external-url-one-gate の担当。 | 不変条件 #6 | ゲート `npm run lint:url-encoding` |
 | `link-host-not-from-response` | **応答の値を URL のホストの位置に置くなら 1 ラベルの文法で断る** — url-path-encoded は authority を見ず、network-targets は通信しか見ず、external-url-one-gate はスキームしか見ない —— 画面に出すリンクのホストに第三者の応答の値 (Slack team.domain) を置く行は 3 つの網のどれにも映らなかった。authority が ${…} で始まるテンプレートは台帳制 (両方向) で、置くのは関門の返り値 (slackWorkspaceDomainOrNull) だけ。 | パス 324 | 検査 `src/shared/__tests__/hostInterpolationCensus.test.ts`<br>検査 `src/main/clients/__tests__/slack.test.ts` |
@@ -236,7 +237,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 |---|---|---|---|
 | `redact-then-cut` | **相手の本文は伏せてから切る、天井は梯子** — 天井だけ掛けて伏字を持たない経路 (clampToCeiling) は前半 (伏せる) を落としている。伏字の運び手はヘッダ名・JSON 項目名・URL のクエリと form 本文の 1 つ目。天井は redact.ts の梯子に名前と理由つきで置く。 | パス 271 / パス 273 / パス 289 / パス 290 / パス 307 / パス 320 | 検査 `src/shared/__tests__/redactionCoverage.test.ts`<br>検査 `src/shared/__tests__/ceilingLiteralCensus.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `exception-to-screen-ledgered` | **例外の文面 → 画面は台帳** — 伏字を通さずに例外の文面を state / JSX / 戻り値へ流す行を数え、出どころの種類と理由で台帳に載せる (双方向・窓は 1 行)。母集団は renderer と shared。 | パス 314 / パス 320 | 検査 `src/renderer/__tests__/errorMessageSurfaceCensus.test.ts` |
-| `json-body-parsed-with-constant-message` | **2xx の非 JSON 本文は定数の文で断る** — V8 の SyntaxError は本文の先頭 10 字を引用する。本文を JSON として読む直呼びは出荷 code で 1 か所 (parseJsonBody) だけ。 | パス 311 | 検査 `src/shared/__tests__/jsonBodyCensus.test.ts`<br>検査 `src/shared/__tests__/apiResponse.test.ts` |
+| `json-body-parsed-with-constant-message` | **2xx の非 JSON 本文は定数の文で断る** — V8 の SyntaxError は本文の先頭 10 字を引用する。本文を JSON として読む直呼びは出荷 code で **0 か所** —— パス 330 で `parseJsonBody` (Response を受け取って自分で読む口) を消し、上限つきで読んだ**文字列**を受け取る `parseJsonText` だけにした。口が在ると上限が呼び出し側の transport 次第になる。 | パス 311 / パス 330 | 検査 `src/shared/__tests__/jsonBodyCensus.test.ts`<br>検査 `src/shared/__tests__/apiResponse.test.ts` |
 | `envelope-checked-at-read` | **第三者の応答は読むところで確かめる** — `as T` は封筒も確かめない。200 の {} を成功にしない・null で型エラーを画面へ漏らさない・[] が 5 つの事実を意味しない・認可サーバの応答 1 つで資格情報を失わない。 | パス 259 / パス 260 / パス 261 / パス 262 / パス 263 / パス 264 | 検査 `src/shared/__tests__/tokenResponse.test.ts`<br>検査 `src/shared/__tests__/apiResponse.test.ts`<br>検査 `src/shared/__tests__/securityResponse.test.ts` |
 | `ceiling-unit-is-chars` | **天井も床も文字で数える** — 画面は「2,000 字」と刷り、実装が UTF-16 のコード単位で数えると絵文字で食い違う。上限は n 文字目で切り上げる (100 MB を辿らない)。床 (12 文字以上) も同じ単位。 | パス 195 / パス 197 / パス 252 / パス 254 / パス 258 | 検査 `src/shared/__tests__/ceilingUnitCensus.test.ts`<br>検査 `src/renderer/__tests__/ceilingUnitCensus.test.ts`<br>検査 `src/shared/__tests__/inputCeiling.test.ts` |
 | `refuse-dont-truncate` | **外へ書く欄は切らずに断る** — 外へ送る本文を黙って slice しない。天井を超えたら理由を言って送らない。天井は型と長さの上限を持ち (12 家系)、画面の maxLength は関門ではない。 | パス 110 / パス 111 / パス 172 / パス 175 / パス 183 | 検査 `src/shared/__tests__/writeFieldLimits.test.ts`<br>検査 `src/renderer/__tests__/writeBodyCeilingCensus.test.ts` |
@@ -292,6 +293,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 82 (機械あり 77 / 散文だけ 5)
+- 法則 83 (機械あり 78 / 散文だけ 5)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

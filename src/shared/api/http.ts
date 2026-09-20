@@ -19,6 +19,7 @@ import {
   isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  readFailureBody,
   redirectRefusal,
   withTimeout,
 } from '../httpLimits';
@@ -115,8 +116,8 @@ export async function apiFetch<T>(url: string, init: RequestInit, ctx: RequestCo
       throw new ApiError(redirectRefusal(res, url, ctx.serviceId), res.status, ctx.serviceId);
     }
     if (!res.ok) {
-      // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
-      const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
+      // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる (規則は readFailureBody)。
+      const body = await readFailureBody(res, ctx.serviceId, maxBytes);
       throw new ApiError(
         `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
         res.status,

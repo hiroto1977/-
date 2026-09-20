@@ -27,6 +27,7 @@ import {
   isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  readFailureBody,
   redirectRefusal,
   withTimeout,
 } from '../shared/httpLimits';
@@ -836,15 +837,14 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
     // 転送には追随しない (規則は httpLimits.ts)。token 端点が動いたなら、資格情報を別の場所へ再送しない。
     if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, config.tokenUrl, '認可サーバ'));
     if (!res.ok) {
-      const body = await readBodyWithCap(
+      const body = await readFailureBody(
         res,
-        MAX_HTTP_RESPONSE_BYTES,
-        // 読めなかったときは直後の .catch が中身を捨て、この標識はエラー本文にも
-        // 記録にも現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
+        // `readFailureBody` が中身を捨てるので、この標識はエラー本文にも記録にも
+        // 現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
         // 746/779 行目 (捨てない方) の同じ標識は撃墜済みなので、そちらは開けておく。
         // Stryker disable next-line StringLiteral
         'oauth',
-      ).catch(() => '');
+      );
       throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
     // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ
@@ -881,15 +881,14 @@ export async function refresh(
     // 転送には追随しない (規則は httpLimits.ts)。token 端点が動いたなら、資格情報を別の場所へ再送しない。
     if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, config.tokenUrl, '認可サーバ'));
     if (!res.ok) {
-      const body = await readBodyWithCap(
+      const body = await readFailureBody(
         res,
-        MAX_HTTP_RESPONSE_BYTES,
-        // 読めなかったときは直後の .catch が中身を捨て、この標識はエラー本文にも
-        // 記録にも現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
+        // `readFailureBody` が中身を捨てるので、この標識はエラー本文にも記録にも
+        // 現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
         // 746/779 行目 (捨てない方) の同じ標識は撃墜済みなので、そちらは開けておく。
         // Stryker disable next-line StringLiteral
         'oauth',
-      ).catch(() => '');
+      );
       throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
     }
     // **`as` ではなく検証を通す。** 規則は `shared/tokenResponse.ts` に 1 つ

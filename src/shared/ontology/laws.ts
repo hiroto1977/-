@@ -390,6 +390,14 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.shared('egressRedirectCensus')), harness('e2e:ollama')],
   },
   {
+    id: 'response-body-capped',
+    family: 'boundary',
+    name: '相手の本文は上限つきで読む —— 失敗した応答でも',
+    statement: '上限は「読む前」に byte で効かせる (全部読んでから捨てるのは上限ではない)。**失敗した応答の枝ほど要る** —— 大きな本文を返すのは壊れている相手で、その相手は `!res.ok` に来る。失敗の読みは `readFailureBody` ただ 1 つ (9 か所)。本文を自分で読む場所は門と端末のファイルの 3 件だけで、`Response` を受け取って自分で読む口 (`parseJsonBody`) は置かない —— 置くと上限が「呼び出し側がどの transport を渡したか」に依る。',
+    provenance: ['パス 301', 'パス 311', 'パス 330 (母集団の機械)'],
+    enforcedBy: [test(T.shared('responseBodyCapCensus')), test(T.shared('jsonBodyCensus')), test(T.shared('httpLimits'))],
+  },
+  {
     id: 'variable-hosts-ledgered',
     family: 'boundary',
     name: '送り先が変数の通信は台帳',
@@ -541,8 +549,8 @@ export const LAWS: readonly Law[] = [
     id: 'json-body-parsed-with-constant-message',
     family: 'surface',
     name: '2xx の非 JSON 本文は定数の文で断る',
-    statement: 'V8 の SyntaxError は本文の先頭 10 字を引用する。本文を JSON として読む直呼びは出荷 code で 1 か所 (parseJsonBody) だけ。',
-    provenance: ['パス 311'],
+    statement: 'V8 の SyntaxError は本文の先頭 10 字を引用する。本文を JSON として読む直呼びは出荷 code で **0 か所** —— パス 330 で `parseJsonBody` (Response を受け取って自分で読む口) を消し、上限つきで読んだ**文字列**を受け取る `parseJsonText` だけにした。口が在ると上限が呼び出し側の transport 次第になる。',
+    provenance: ['パス 311', 'パス 330'],
     enforcedBy: [test(T.shared('jsonBodyCensus')), test(T.shared('apiResponse'))],
   },
   {

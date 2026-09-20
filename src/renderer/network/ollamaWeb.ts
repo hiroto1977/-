@@ -48,6 +48,7 @@ import {
   isOverCap,
   isRedirectResponse,
   readBodyWithCap,
+  readFailureBody,
   redirectRefusal,
   withBodyDeadline,
 } from '../../shared/httpLimits';
@@ -216,15 +217,22 @@ export function parseJsonOrNull(text: string): unknown {
 }
 
 /**
- * 本文を読む。読めなければ空文字。
+ * 失敗した応答の本文を読む。読めなければ (大きすぎたときも) 空文字。
  *
  * `parseJsonOrNull` と同じ理由で export してある。`.catch(() => '')` と書くと、
  * 失敗側が undefined を返すよう書き換わっても下流が同じ「詳細なし」に潰すので、
  * **空文字にしている意味を確かめられない**。ここだけを直接叩けるようにする。
+ *
+ * **上限は 2026-09-20 (パス 330) に入れた。** それまでは素の `res.text()` で、
+ * 同じファイルの成功側 (`readJsonCapped`) だけが `MAX_RESPONSE_BYTES` で
+ * 切っていた —— その docblock は「2GiB を返す相手には 2MiB の上限が在っても
+ * 2GiB を確保する」と書いているのに、**その相手が実際に通る枝**
+ * (`!res.ok`) には上限が無かった。接続先は利用者が入力する。
  */
 export async function readTextOrEmpty(res: Response): Promise<string> {
-  const [read] = await Promise.allSettled([res.text()]);
-  return read!.status === 'fulfilled' ? read!.value : '';
+  // `Promise.allSettled` の包みは外した —— `readFailureBody` は自分で投げないので、
+  // rejected の枝は**到達できない死んだ枝**になる (変異体が殺せない)。
+  return readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES);
 }
 
 /**

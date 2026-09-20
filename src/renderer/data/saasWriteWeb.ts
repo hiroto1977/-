@@ -51,10 +51,9 @@ import {
 } from '../../shared/atlassianSite';
 import { checkJiraIssue, createJiraIssueRequest, parseCreatedJiraIssue } from '../../shared/api/atlassian';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
-import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, readFailureBody } from '../../shared/httpLimits';
 import {
   optionalString,
-  parseJsonBody,
   parseJsonText,
   requireObject,
   requireString,
@@ -102,11 +101,27 @@ export async function readCapped(res: Response, label: string): Promise<string> 
   return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label);
 }
 
+/**
+ * 成功した応答を **上限つきで読み切ってから** JSON にする。
+ *
+ * 2026-09-20 (パス 330) まで 13 本が `shared/apiResponse.ts` の `parseJsonBody`
+ * を呼んでおり、それは `res.json()` を素で呼ぶ —— 上限は「呼び出し側が渡した
+ * `transport` がプロキシなら、その手前で掛かっている」という**呼び出し側の性質**に
+ * 依っていた。`apiResponse.ts` の docblock はそれを「実測で確認済み」と書いていたが、
+ * 当時 16 本のうち 2 本 (main の Ollama) は通っておらず、主張のほうが偽だった。
+ *
+ * **読む所で切れば、誰がどの transport を渡しても切れる。** GitHub の直叩きが
+ * 既にこの形だったので、残り 12 本をそれに揃えた (綴りは 1 つ)。
+ */
+async function readJson(res: Response, label: string): Promise<unknown> {
+  return parseJsonText(await readCapped(res, label), label);
+}
+
 /** API 応答が ok でなければ本文の一部を添えて throw する共通ヘルパ。 */
 async function ensureOk(res: Response, label: string): Promise<void> {
   if (res.ok) return;
-  // 落ちている相手ほど大きなものを返しうるので、失敗の本文も上限つきで読む。
-  const body = await readCapped(res, label).catch(() => '');
+  // 落ちている相手ほど大きなものを返しうるので、失敗の本文も上限つきで読む (規則は readFailureBody)。
+  const body = await readFailureBody(res, label, MAX_HTTP_RESPONSE_BYTES);
   throw new Error(`${label} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
 }
 
@@ -178,7 +193,7 @@ export async function createNotionPage(
   const page = checkPage(input);
   const res = await createNotionPageRequest(page, token, transport);
   await ensureOk(res, 'Notion API');
-  return parseCreatedPage(await parseJsonBody(res, 'Notion API'));
+  return parseCreatedPage(await readJson(res, 'Notion API'));
 }
 
 // --- Slack: send-message (CORS ブロック → プロキシ経由) -------------------
@@ -199,7 +214,7 @@ export async function sendSlackMessage(
   const res = await postSlackMessageRequest(message, token, transport);
   await ensureOk(res, 'Slack API');
   // Slack は HTTP 200 でも body.ok=false でエラーを返す。断り方だけがブラウザ版の流儀。
-  const post = readSlackPost(await parseJsonBody(res, 'Slack API'), message);
+  const post = readSlackPost(await readJson(res, 'Slack API'), message);
   if (!post.ok) throw new Error(`Slack: ${post.error}`);
   return { ts: post.ts, channel: post.channel };
 }
@@ -260,7 +275,7 @@ export async function createAtlassianIssue(
   const issue = checkJiraIssue(input);
   const res = await createJiraIssueRequest(issue, creds, transport);
   await ensureOk(res, 'Atlassian API');
-  return parseCreatedJiraIssue(await parseJsonBody(res, 'Atlassian API'), creds.site);
+  return parseCreatedJiraIssue(await readJson(res, 'Atlassian API'), creds.site);
 }
 
 // --- Google Calendar: create-event (OAuth, CORS → プロキシ) ---------------
@@ -284,7 +299,7 @@ export async function createCalendarEvent(
   const event = checkCalendarEvent(input);
   const res = await createCalendarEventRequest(event, token, transport);
   await ensureOk(res, 'Calendar API');
-  return parseCreatedEvent(await parseJsonBody(res, 'Google Calendar API'));
+  return parseCreatedEvent(await readJson(res, 'Google Calendar API'));
 }
 
 // --- Gmail: create-draft (OAuth, CORS → プロキシ) -------------------------
@@ -307,7 +322,7 @@ export async function createGmailDraft(
   const draft = checkGmailDraft(input);
   const res = await createGmailDraftRequest(draft, token, transport);
   await ensureOk(res, 'Gmail API');
-  return parseCreatedDraft(await parseJsonBody(res, 'Gmail API'));
+  return parseCreatedDraft(await readJson(res, 'Gmail API'));
 }
 
 // --- Google Drive: create-folder (OAuth, CORS → プロキシ) -----------------
@@ -326,7 +341,7 @@ export async function createDriveFolder(
   const folder = checkDriveFolder(input);
   const res = await createDriveFolderRequest(folder, token, transport);
   await ensureOk(res, 'Drive API');
-  return parseCreatedDriveFolder(await parseJsonBody(res, 'Google Drive API'));
+  return parseCreatedDriveFolder(await readJson(res, 'Google Drive API'));
 }
 
 // --- WordPress.com: create-post-draft (Bearer, CORS → プロキシ) -----------
@@ -347,7 +362,7 @@ export async function createWordPressPostDraft(
   const post = checkPost(input);
   const res = await createWordPressPostRequest(post, token, transport);
   await ensureOk(res, 'WordPress API');
-  return parseCreatedPost(await parseJsonBody(res, 'WordPress.com API'));
+  return parseCreatedPost(await readJson(res, 'WordPress.com API'));
 }
 
 // --- Canva: create-folder (Bearer, CORS → プロキシ) -----------------------
@@ -366,7 +381,7 @@ export async function createCanvaFolder(
   const folder = checkFolder(input);
   const res = await createCanvaFolderRequest(folder, token, transport);
   await ensureOk(res, 'Canva API');
-  return parseCreatedFolder(await parseJsonBody(res, 'Canva API'));
+  return parseCreatedFolder(await readJson(res, 'Canva API'));
 }
 
 // --- Cloudflare: create-dns-record / purge-cache (Bearer, CORS → プロキシ) -
@@ -399,7 +414,7 @@ export async function createCloudflareDnsRecord(
   const record = checkDnsRecord(input);
   const res = await createDnsRecordRequest(record, token, transport);
   await ensureOk(res, 'Cloudflare API');
-  return parseCreatedDnsRecord(cfUnwrap(await parseJsonBody(res, 'Cloudflare API')));
+  return parseCreatedDnsRecord(cfUnwrap(await readJson(res, 'Cloudflare API')));
 }
 
 export interface PurgeCfCacheInput {
@@ -416,7 +431,7 @@ export async function purgeCloudflareCache(
   const purge = checkPurge(input);
   const res = await purgeCacheRequest(purge, token, transport);
   await ensureOk(res, 'Cloudflare API');
-  return parsePurgeResult(cfUnwrap(await parseJsonBody(res, 'Cloudflare API')), purge);
+  return parsePurgeResult(cfUnwrap(await readJson(res, 'Cloudflare API')), purge);
 }
 
 // --- セキュリティ: VirusTotal scan-url (CORS → プロキシ) -------------------
@@ -444,7 +459,7 @@ export async function scanUrlVirusTotal(
   await ensureOk(submit, 'VirusTotal API');
   const report = await fetchVtReportRequest(url, vtKey, transport);
   await ensureOk(report, 'VirusTotal API');
-  return summarizeVtReport(url, await parseJsonBody(report, 'VirusTotal API'));
+  return summarizeVtReport(url, await readJson(report, 'VirusTotal API'));
 }
 
 // --- セキュリティ: HIBP メール漏洩チェック (CORS → プロキシ) --------------
@@ -467,7 +482,7 @@ export async function checkEmailBreach(
   if (res.status === HIBP_NO_BREACH_STATUS) return { email, breaches: [] };
   await ensureOk(res, 'HIBP API');
   // **でっち上げの漏洩を作らない** (パス 261) —— 要素ごとに欄を要求する (`hibpBreaches`)。
-  return { email, breaches: hibpBreaches(await parseJsonBody(res, 'HIBP API')) };
+  return { email, breaches: hibpBreaches(await readJson(res, 'HIBP API')) };
 }
 
 /**
@@ -512,7 +527,7 @@ export async function createMicrosoftEvent(
   const event = checkEvent(input);
   const res = await createGraphEvent(event, token, transport);
   await ensureOk(res, 'Microsoft Graph');
-  const o = requireObject(await parseJsonBody(res, 'Microsoft Graph'), 'Microsoft Graph');
+  const o = requireObject(await readJson(res, 'Microsoft Graph'), 'Microsoft Graph');
   return {
     id: requireString(o, 'id', 'Microsoft Graph'),
     subject: optionalString(o, 'subject') ?? event.subject,

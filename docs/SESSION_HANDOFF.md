@@ -7,6 +7,80 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 330 (2026-09-20) — 応答本文の上限が**失敗した枝にだけ無かった**: 向きが逆である
+
+### 何が在ったか
+
+上限の実装 (`readBodyWithCap`) は 2026-08-22 から 1 つしかない。**呼ぶかどうかが経路ごとの手書き**だったので、
+失敗した応答 (`!res.ok`) の本文を読む 9 か所のうち **3 か所が素の `text()`** だった:
+
+```
+  renderer/network/proxy.ts       成功側 readWithCap(10MiB)   失敗側 proxyRes.text()
+  renderer/network/ollamaWeb.ts   成功側 readJsonCapped(2MiB) 失敗側 res.text()
+  main/clients/ollama.ts          成功側 readBodyWithCap      失敗側 res.text()
+```
+
+**3 つとも、同じ関数の成功側には上限が在る。** しかも成功側の注記が危険を正しく名指ししていた ——
+「compromised or malicious proxy returning a huge payload」「2GiB を返す相手には 2MiB の上限が在っても 2GiB を確保する」
+「10MB の上限が在っても 2GiB は確保される。ここは main プロセスなので、落ちればタブではなく**アプリ全体**が落ちる」。
+その文が掛かっていたのは、**その相手が通らない枝**である。大きな本文を返すのは壊れている相手で、
+壊れている相手は定義上 `!res.ok` に来る。
+
+加えて main の Ollama は**成功側 2 か所**も素通しだった (`/api/version` / `/api/tags` は `parseJsonBody` →
+`res.json()`)。`withTimeout` が見るのは締切と endpoint の allowlist だけで、上限は見ない。
+
+### 実測 (Node 22 · 1 MiB の塊を返す 500 応答)
+
+```
+  上限なし 256 MiB   引いた 256 MiB   256 M 文字            rss +637 MiB   2,932 ms
+  上限あり 256 MiB   引いた  11 MiB   断り                   rss   +9 MiB       6 ms
+  上限なし 512 MiB   引いた 512 MiB   ERR_STRING_TOO_LONG
+```
+
+512 MiB の行が要点である。**`catch` は握り潰すが、費用は払い終えている** ——
+利用者に見えるのは「本文なし」だけで、その裏で 512 MiB を読んでいる。
+
+### 公開した主張の訂正
+
+`shared/apiResponse.ts` の docblock は「応答の大きさはここでは見ない —— `readBodyWithCap` (10 MiB) と
+`fetchViaProxy` が先に掛かっている **(実測で確認済み)**」と書いていた。**偽である** ——
+当時の呼び出し 16 本のうち 2 本 (main の Ollama) はどちらも通っていない。
+パス 327 と同じ家系の誤り (**数えずに「上流が掛けている」と書いた**) なので、訂正を docblock に残した。
+
+### 直し —— 「上流を数える」ではなく「読む所で切る」
+
+- **`shared/httpLimits.ts` に `readFailureBody(res, label, maxBytes?)`**: 上限つきで読む → 読めなければ空文字。
+  手書きだった失敗本文の読み **9 か所**が全部ここを通る (上限が落ちていた 3 か所はこれで閉じる)。
+- **`parseJsonBody` を消した**。`Response` を受け取って自分で読む口が在るかぎり、上限は
+  **「呼び出し側がどの transport を渡したか」に依る**。文字列しか受け取らない `parseJsonText` だけを残せば、
+  呼び出し側は上限つきで読む手続きを**通らずには呼べない**。書き込み 13 経路は `readJson`
+  (= `parseJsonText(await readCapped(…))`) へ、`web-shim` の liveRead は `readCappedText` へ。
+- main の Ollama の成功側 2 か所も `readBodyWithCap` + `parseJsonText` へ。
+
+### 検査
+
+- **`shared/__tests__/responseBodyCapCensus.test.ts` (新規・16 件)** —— 母集団を 2 つ数える:
+  ① **生の読み** (`.text()` / `.json()` / `.arrayBuffer()` / `.blob()` / `.formData()`) は **3 件だけ**
+  (門そのもの 1・端末のファイル 2) で両方向。② **上限つきの読み 26 か所**を
+  `{file, needle, branch}` の台帳に載せて両方向 (`branch` は failure 9 / success 11 / either 5 / gate 1)。
+  **失敗の枝は全部が `readFailureBody`** を通ることを別に主張する。
+  振る舞いの側は**引いた塊の数**で測る —— 文字列の長さだけを見る検査では
+  「全部読んでから捨てる」実装と区別が付かず、それがこのパスで直した形そのものである。
+- **`jsonBodyCensus.test.ts` の答えが 1 → 0 件**。0 を主張するので、走査が生きていることを
+  件数の床ではなく「読めたファイル数 200 本以上」と「針が実在の綴りに当たる標本」で示す。
+- **法則 `response-body-capped`** を `shared/ontology/laws.ts` (boundary 家系) に追加。
+- **対照 3 本** (どれも狙った検査だけが鳴る):
+  ① proxy の失敗本文を `text()` へ戻す → 3 件落ちる ／
+  ② main の Ollama の `/api/version` を `res.json()` へ戻す → 4 件落ちる (`jsonBodyCensus` を含む) ／
+  ③ `readFailureBody` を「全部読んでから捨てる」形にする → **振る舞いの検査が
+  `expected 65 to be less than or equal to 5` で落ちる** (長さでは殺せない変異体を、塊の数が殺す)。
+
+### 数字
+
+- 単体 **772 ファイル / 17,598 件** 全緑・**37 ゲート**全緑・連鎖 #239 (保護対象 78)。
+- 出荷物 **11,930,508 B / 3,343,029 B (両方 −52 B)** —— 消した口が足した関数より大きい。
+  LITE の余裕は警告線まで 56,971 B。
+
 ## パス 329 (2026-09-20) — 計算書類 4 点にポートフォリオを併記する: ただし**法定書類の中には入れない**
 
 利用者の依頼は「計算書類4点にポートフォリオも併記する様にして」。**併記はする。中には入れない。**
@@ -5009,6 +5083,7 @@ derivedFrom を丸ごと表にしてテストファイルに置き、
 
 | 項目 | 状態 |
 |---|---|
+| 応答本文の上限は失敗の枝にこそ要る (パス 330) | ✅ 失敗した応答 (`!res.ok`) の本文を読む 9 か所のうち **3 か所に上限が無かった** (`network/proxy.ts` / `network/ollamaWeb.ts` / `main/clients/ollama.ts`) —— どれも**同じ関数の成功側には在り**、しかも成功側の注記が危険を正しく名指ししていた。**大きな本文を返すのは壊れた相手で、それは `!res.ok` に来る**ので向きが逆。実測: 256 MiB の 500 応答で上限なしは 256 MiB 引いて rss +637 MiB / 2,932 ms、上限ありは 11 MiB で断って +9 MiB / 6 ms。512 MiB では `ERR_STRING_TOO_LONG` (= **`catch` は握り潰すが費用は払い終えている**)。`readFailureBody` を 1 つ置いて 9 か所を通し、**`parseJsonBody` を消して**「読む所で切る」へ (上限が transport 次第にならない)。`apiResponse.ts` の「実測で確認済み」の主張は偽だったので訂正。`responseBodyCapCensus.test.ts` +16 件 (生の読み 3・上限つき 26 を両方向)・`jsonBodyCensus` は 1 → **0 件**・法則 `response-body-capped`・対照 3 本 |
 | 計算書類にポートフォリオを併記 (パス 329) | ✅ 依頼「計算書類4点にポートフォリオも併記する様にして」。出所を測ると `mutual-funds` / `real-estate` は **`sample`** (同梱の見本) だったので、**法定書類の中には入れず参考の別紙**として 4 点の後ろに 1 枚。紙の上で 3 つ断る (計算書類に含まれない / 出所 / 時価・取得価額と簿価は基準が違う)。貸借対照表の簿価と並べて突き合わせ。`KessanPage.kind` で法定の枚数は 4 のまま。`portfolioAnnex.ts` +9 件・jsdom +3・e2e +5 (床 24 → 28・合計 377 → 381)・対照 2 本 |
 | 「4点まとめて」が 5 枚出していた (パス 328) | ✅ 依頼「これらを４つに分けて」。タブは **4点**と名乗るのに決算公告の要旨を 5 枚目として束に入れており、**名乗りと枚数が食い違っていた** (要旨は会社法440条の公告で435条2項の計算書類ではない)。要旨の枝を `show(bs)` → `sheet === bs` にして**まとめては 4 枚ちょうど**・要旨は貸借対照表で 2 枚目 (外しても失われない)。jsdom 2 件を新契約へ +1 件・e2e +1 (床 23→24・合計 376→377)・文言 5 か所・対照 1 本 (2 件落ちる) |
 | 公開した測定の訂正 + 鍵導出のハッシュ (パス 327) | ✅ パス 326 の終わりに PR 本文へ書いた「母集団の機械を持たない法則 7 本」は **heuristic の出力**で、実測は 3 本 (→ 1 本閉じて 2 本)。名前の印ではなく**列挙の綴り**で採り直し、判定を `lawCoverageLedger.test.ts` (両方向・標本と対照つき) へ。閉じた 1 本 = `crypto-floors-frozen`: **PBKDF2 の導出 3 か所すべてが `'SHA-256'` のリテラルを書き写していた** (`cryptoParams.ts` の docblock は「ハッシュも 1 つに集めた」と述べ、封筒のメタ `kdfLabel()` だけが凍結値を読んでいた = 「復号できないバックアップ」の形)。`kdfParamsCensus.test.ts`・対照 2 本・chain #238 |

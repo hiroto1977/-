@@ -19,7 +19,7 @@
  *     local Ollama is older than MIN_SAFE_VERSION.
  */
 
-import { parseJsonBody } from '../../shared/apiResponse';
+import { parseJsonText } from '../../shared/apiResponse';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   FetchError,
@@ -50,6 +50,7 @@ import {
   isOverCap,
   isRedirectResponse,
   readBodyWithCap,
+  readFailureBody,
   redirectRefusal,
 } from '../../shared/httpLimits';
 
@@ -182,7 +183,13 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
   try {
     await withTimeout(f, `${OLLAMA_BASE}/api/version`, {}, async (res) => {
       if (res.ok) {
-        const body = (await parseJsonBody(res, 'Ollama /api/version')) as OllamaVersionResponse;
+        // 成功側の本文にも上限を掛ける (パス 330) —— `withTimeout` は締切と
+        // endpoint の allowlist しか見ず、`parseJsonBody` は `res.json()` を
+        // 素で呼ぶ。ブラウザ版の同じ読み (`readJsonCapped`) は切っていた。
+        const body = parseJsonText(
+          await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'Ollama /api/version'),
+          'Ollama /api/version',
+        ) as OllamaVersionResponse;
         version = body.version ?? '';
         running = true;
       } else {
@@ -216,7 +223,10 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
           // Stryker disable next-line StringLiteral
           throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
         }
-        const tags = (await parseJsonBody(tagsRes, 'Ollama /api/tags')) as OllamaTagsResponse;
+        const tags = parseJsonText(
+          await readBodyWithCap(tagsRes, MAX_RESPONSE_BYTES, 'Ollama /api/tags'),
+          'Ollama /api/tags',
+        ) as OllamaTagsResponse;
         for (const m of tags.models ?? []) {
           models.push({
             name: m.name,
@@ -318,13 +328,14 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
     },
     async (res) => {
   if (!res.ok) {
-    // 本文が読めない経路 (接続断) もあるので、空文字から始めて上書きする。
-    let body = '';
-    try {
-      body = await res.text();
-    } catch {
-      /* 本文なしのまま案内へ進む */
-    }
+    // **失敗の本文にも上限を掛ける** (2026-09-20 · パス 330)。ここは素の
+    // `res.text()` で、すぐ下の成功側だけが `readBodyWithCap` を通していた ——
+    // その注記が「10MB の上限が在っても 2GiB は確保される。ここは main
+    // プロセスなので、落ちればタブではなく**アプリ全体**が落ちる」と述べる
+    // 危険は、**壊れた相手が実際に通る枝**であるこちらにこそ掛かる。
+    // 読めない経路 (接続断) も上限超過も「詳細なし」に畳んでよい ——
+    // 畳んではいけないのは読む量のほうである。
+    const body = await readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES);
     // 生の英語エラーをそのまま投げると UI に内部メッセージが出るだけなので、
     // 共有ロジックで「何が起きて次に何をすればいいか」に翻訳してから投げる
     // (長さ上限も adviseFromBody 側で掛かる)。

@@ -1993,6 +1993,14 @@
       "leafCount": 78,
       "note": "update dataCrypto.ts,vault.ts",
       "hash": "c533a547beb0ad9c920cbb5e95d7f1e1e592eac6b36f4e0de3b21e5544f2792d"
+    },
+    {
+      "index": 239,
+      "prevHash": "c533a547beb0ad9c920cbb5e95d7f1e1e592eac6b36f4e0de3b21e5544f2792d",
+      "merkleRoot": "b3b796d83f7eb1ea9a20d24a1513a4ea9bed8d3a6382f5a699a37890bf21e2ea",
+      "leafCount": 78,
+      "note": "update types.ts,oauth.ts,proxy.ts,pkce.ts,httpLimits.ts",
+      "hash": "0328ccd0ab45e8651829634612c4e9bdb31f0fc4f23b35e85020499bfc1e663d"
     }
   ],
   "tipManifest": {
@@ -2023,10 +2031,10 @@
     "src/main/atomicWrite.ts": "75a137ba9b183accde80c4baae2cc45fa6b4cf5324bf6ba4b1143b93ff9390d9",
     "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
-    "src/main/clients/types.ts": "a0012ad791cd737f5afb7e5b98e172b4efe02fee4e763221c4680bafa4219df5",
+    "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "76debcaa6b3231c56bf66afd853b5f9301d9cdcbb4d1232204594ea5ca320a39",
     "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
-    "src/main/oauth.ts": "a83e80a655bc516f482858954c50c90ba5d655bc9b88308f313f05641ffec6dd",
+    "src/main/oauth.ts": "08a7dd32dc59af61e2c43053a7e5771881dfd2d99b26513367f9a28617316e20",
     "src/main/secrets.ts": "bdbbf6d8b1a36fb5f4daf39886bd11bf2d689b95b59e2d66254a11b6094bdaaf",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
@@ -2037,8 +2045,8 @@
     "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",
     "src/renderer/fs/fsa.ts": "fb721de4a0aa024a6834b04e4bb22fc891d6c380518458957af18084b88b3e3d",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
-    "src/renderer/network/proxy.ts": "39345d1ce31ca023c42805cc79e11764054c5ee83e4a36dcbeb26940ab659cc7",
-    "src/renderer/oauth/pkce.ts": "d2f5ec3f22cd21deffa67f15b87a607e0a363470c9f0a36f3931fb31cf1aaf08",
+    "src/renderer/network/proxy.ts": "eee378f474c494cfc20c769fe3c3db2a92182a9a6e3b756f0de686779d07ef9e",
+    "src/renderer/oauth/pkce.ts": "2509e1c7f53707a46a36eb5e96b79b07bc943e1fa232cd0582f05f28b19c6a75",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
     "src/renderer/security/LockScreen.tsx": "2589465f17e1e1e769f795249a6da4e4595463b10facee11024072794072f841",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
@@ -2061,7 +2069,7 @@
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "75d54e0ec94c7568521e4fa31ad90596d18e59519434c42edb562d939806eb4b",
     "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
-    "src/shared/httpLimits.ts": "1acb465f537f44f0314d875363ac0826cabe9a7c165119d8d9eb5f40fe510584",
+    "src/shared/httpLimits.ts": "54a05797bdd45a435ee2523e1ffeb6430c9743de17201ec359103c2034438c80",
     "src/shared/imageUrlGate.ts": "3a380023ab15c106574638f6b1b2420632b3df5377bf8744e51d59700ec6e43c",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/ollama.ts": "54fb23af95ca9cbde3f2dcd7252692fce5591479ce6d01c70ae1f31ec42caf53",
