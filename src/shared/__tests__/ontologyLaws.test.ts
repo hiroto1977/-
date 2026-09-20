@@ -88,10 +88,14 @@ describe('法則の台帳は実物を指している', () => {
     // 両ビルド台帳の理由の欄に「保留の決まり文句」を置けなくする検査が付いたため。
     // 覆うのはその 1 面だけ (検査の題名そのものは今も機械に映らない) だが、
     // **機械が 1 つでも在れば「機械の無い法則」ではない**ので、ここには載せない。
+    // `measure-before-claim` は 2026-09-20 (パス 356) にここから外れた ——
+    // 変異検査の報告の「生存」を 1 件ずつ原文へ当てて確かめる `npm run audit:survivors`
+    // (と、その純粋な部分を留める `verifySurvivors.test.ts`) が付いたため。
+    // 覆うのは「道具の報告を信じる前に測る」1 面だけだが、**機械が 1 つでも在れば
+    // 「機械の無い法則」ではない**ので、ここには載せない。
     const PROSE_ONLY = [
       'claim-unit-not-file',
       'manual-check-becomes-gate',
-      'measure-before-claim',
       'parity-is-not-correctness',
     ];
     expect(lawsWithoutMachine(LAWS).map((l) => l.id).sort()).toEqual([...PROSE_ONLY].sort());

@@ -205,9 +205,9 @@ export const LAWS: readonly Law[] = [
     id: 'measure-before-claim',
     family: 'gate-hygiene',
     name: '危なそうで報告しない — 実測してから言う',
-    statement: '受け口が危なく見えても、その受け口が実際に何を拒むかを実行して確かめる。深刻度を上げる方にも下げる方にも効く (Headers が CR/LF を投げるので注入は成立しない、など)。',
-    provenance: ['パターン 0-a-8', 'パス 300'],
-    enforcedBy: [prose(HANDOFF, '「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ')],
+    statement: '受け口が危なく見えても、その受け口が実際に何を拒むかを実行して確かめる。深刻度を上げる方にも下げる方にも効く (Headers が CR/LF を投げるので注入は成立しない、など)。**道具の報告も測る対象である** —— 変異検査が「生存」と言う変異体は、モジュール直下の値なら「当てられなかった」を意味するだけで、検査が鳴らないことを意味しない (2026-09-20 実測: 報告の生存 3 件とも既存の検査が殺した)。',
+    provenance: ['パターン 0-a-8', 'パス 300', 'パス 356'],
+    enforcedBy: [harness('audit:survivors'), test(T.shared('verifySurvivors')), prose(HANDOFF, '「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ —— ただし変異検査の報告については `npm run audit:survivors` が当て直して答える')],
   },
   {
     id: 'pragma-directly-above',

@@ -173,7 +173,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `live-metrics-not-prose` | **数は機械が、判断は散文が持つ** — 散文に書いた件数は誰も検算せず腐る (母集団が 4 倍ずれていた実測)。数える物は生成ブロックか live metric にし、判断だけを散文に書く。**閉じた列挙 (「only …」「全 N 件」) も同じ** —— 成員を並べたら、その並びと実物を機械で結ぶ。CLAUDE.md は preload bridge を「it only calls」で 6 件挙げていたが実物は 15 件で、落ちていた 9 件に eraseAll (全データ削除) と openPath が在った (パス 338)。攻撃面の側では、過小申告が読み手を油断させる。 | パス 145 / パス 220 / パス 248 / パス 338 | ゲート `npm run verify:arch`<br>ゲート `npm run lint:zero-fold`<br>ゲート `npm run lint:shared-judgement`<br>ゲート `npm run lint:docs`<br>検査 `src/preload/__tests__/bridgeStatic.test.ts` |
 | `one-way-match-hides-the-other` | **片方向の照合は、もう片方を隠す** — ゲートが同じ母集団について 2 つの数を刷るなら (走査 27 / 表 30)、その差は読まれないまま残る —— 差は理由つきの台帳にして両方向に鳴らす。パス 340 の実測: egress マトリクスの差 4 件のうち 3 件は **AI 提供者の既定の送り先** (`defaultBaseUrl`) で、送信文脈の針の死角だった。対照で確認 —— `api.openai.com` を別のホストに書き換えても verify:arch は緑のまま通り、**提供者を 1 つ足すだけで利用者のプロンプトと API キーの送り先が台帳の外へ出られた**。 | パス 340 | ゲート `npm run verify:arch`<br>検査 `src/shared/__tests__/egressMatrixReverse.test.ts` |
 | `exclusion-states-the-real-reason` | **外した物の理由は、実際に守っている理由で書く** — 門が何かを意図して外すとき、その理由は次の判断の材料になる。結論が正しくても premise が偽なら、次に足す物の評価がそこから外れる。lint:regex は多項式を「入力上限が 5000 だから O(n²) でも 30ms」で外していたが、実物の最大は 200,000 (MAX_TEXT_PREVIEW_CHARS) で 1 呼び出し 31 秒だった —— 守っていたのは長さではなく到達可能性 (その式に長い入力が来ない) である。理由に数を書くなら、その数が実物の最大であることを機械で留める。 | パス 337 | 検査 `src/shared/__tests__/regexPolynomialLedger.test.ts`<br>実機 `npm run audit:regex-poly` |
-| `measure-before-claim` | **危なそうで報告しない — 実測してから言う** — 受け口が危なく見えても、その受け口が実際に何を拒むかを実行して確かめる。深刻度を上げる方にも下げる方にも効く (Headers が CR/LF を投げるので注入は成立しない、など)。 | パターン 0-a-8 / パス 300 | 散文だけ `docs/SESSION_HANDOFF.md` — 「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ |
+| `measure-before-claim` | **危なそうで報告しない — 実測してから言う** — 受け口が危なく見えても、その受け口が実際に何を拒むかを実行して確かめる。深刻度を上げる方にも下げる方にも効く (Headers が CR/LF を投げるので注入は成立しない、など)。**道具の報告も測る対象である** —— 変異検査が「生存」と言う変異体は、モジュール直下の値なら「当てられなかった」を意味するだけで、検査が鳴らないことを意味しない (2026-09-20 実測: 報告の生存 3 件とも既存の検査が殺した)。 | パターン 0-a-8 / パス 300 / パス 356 | 実機 `npm run audit:survivors`<br>検査 `src/shared/__tests__/verifySurvivors.test.ts`<br>散文だけ `docs/SESSION_HANDOFF.md` — 「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ —— ただし変異検査の報告については `npm run audit:survivors` が当て直して答える |
 | `pragma-directly-above` | **Stryker の pragma は対象行の直上に** — `disable next-line` は間に何か入ると無言で外れ、緩む方向にしか壊れない。理由の無い pragma は測っていない範囲を 100% として報告する。広い disable と無言の pragma は台帳。 | パターン 0-a-13 / パス 1220 付近の REMAINING_WORK | ゲート `npm run lint:mutation-scope` |
 | `claim-unit-not-file` | **主張の単位で見る** — 「ファイルのどこかに但し書きが在るか」で判定する検査は同居で無効化される。その断言そのものが無いこと (名指し) と、正しい形が使われていることの両方を見る。 | パターン 0-a-17 | 散文だけ `docs/SESSION_HANDOFF.md` — 検査の書き方の規律。個々の検査が守っているかを機械で見る形は無い (absence-needs-sample が「不在の主張」側だけを数える) |
 | `absence-needs-sample` | **不在を主張する検査には標本を添える** — `not.toMatch` は綴りが 1 つ違えば黙る。規則が実際にその文面へ当たることを同じ検査の中で標本に対して確かめる。正規表現の針で綴りを肯定形で確かめていない物は台帳制。 | CLAUDE.md 規約 (2026-08-25) / パス 293 | 検査 `src/shared/__tests__/absenceSampleCensus.test.ts` |
@@ -289,15 +289,14 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `release-artifacts-reread` | **公開先は前のランの残骸を溜める — 置いてある一覧を読み返す** — CI の緑はそのランが何を出したかしか保証しない。追記しかしない置き場 (リリース資産) は公開後に一覧を読み返す。数は宣言側 (electron-builder.json) から導く。 | パターン 0-a-19 | ゲート `npm run verify:release-artifacts` |
 | `repo-size-ceiling` | **追跡ファイルの大きさに天井** — 履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 80 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。 | CLAUDE.md lint:repo-size / ci.yml の出荷物の天井 | ゲート `npm run lint:repo-size`<br>CI `.github/workflows/ci.yml` |
 
-## 6. 機械の無い法則 (4)
+## 6. 機械の無い法則 (3)
 
 - `manual-check-becomes-gate` **手でやった検査はその場でゲートにする** — 「手でやった」は機械に映らない。作ったゲートが CI に在ることは gate-runs-in-ci が、自作ゲートが対照を持つことは negative-control が見る
-- `measure-before-claim` **危なそうで報告しない — 実測してから言う** — 「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ
 - `claim-unit-not-file` **主張の単位で見る** — 検査の書き方の規律。個々の検査が守っているかを機械で見る形は無い (absence-needs-sample が「不在の主張」側だけを数える)
 - `parity-is-not-correctness` **パリティは両方に在る穴を見つけない** — 「一致した 2 つが両方とも間違っている」は定義上パリティに映らない。攻撃形を食わせる検査は組ごとに書く
 
 ## 7. 集計
 
-- 法則 89 (機械あり 85 / 散文だけ 4)
+- 法則 89 (機械あり 86 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

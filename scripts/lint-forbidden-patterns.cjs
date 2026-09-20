@@ -846,6 +846,11 @@ const KNOWN_SUPPRESSIONS = [
   // 未追跡のファイルを落とすと「手元では緑・CI では赤」になる (パス 341 の実績)。
   // 引数は固定でシェルを経由しない (`execFileSync`)。2 件は require と呼び出し。
   'child_process exec/spawn :: scripts/lint-network-targets.cjs :: 2',
+  // 報告の「生存」を 1 件ずつ原文へ当てて `vitest related` を走らせる定期点検の道具
+  // (パス 356)。**検査を実際に走らせずには成り立たない** —— 目的は
+  // 「その書き換えで本当に誰も鳴らないか」を測ることそのものである。
+  // 引数は固定でシェルを経由しない (`execFileSync` に配列で渡す)。1 件は呼び出し。
+  'child_process exec/spawn :: scripts/verify-survivors.cjs :: 1',
   // 実物のデスクトップアプリを起動する道具。`electron .` を子プロセスで
   // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
   // 確かめるのが目的なので、プロセスを作らずには成り立たない。

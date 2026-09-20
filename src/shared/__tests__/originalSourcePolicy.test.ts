@@ -211,6 +211,10 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     count: 2,
     why: '一時ファイル (走らせた記録) と、ファイル局所の定数 SCRIPT (scripts/ の .sh) を読む。どちらも台帳の外',
   },
+  'src/shared/__tests__/verifySurvivors.test.ts': {
+    count: 1,
+    why: 'この検査は `scripts/verify-survivors.cjs` が「原文へ戻したことを内容で確かめる」形を持つかを見るので、**その綴りを文字列として引用する** (`fs.readFileSync(abs, …) !== original`)。引用は文字列リテラルで走らない —— `fileReadSizeGateCensus.test.ts` と同じ理由で、綴りを分割して走査を避けるより理由つきで載せる (パス 356)',
+  },
   'src/shared/__tests__/scriptEmbedGate.test.ts': {
     count: 2,
     why: 'ファイル局所の定数 SCRIPTS (scripts/ ディレクトリ) を歩いて読む。scripts/ は台帳の外で書き換わらない',
