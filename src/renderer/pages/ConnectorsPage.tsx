@@ -11,6 +11,7 @@ import {
 import { planConnectorRun, CONNECTOR_CATALOG } from '../../shared/connectors/connectorCatalog';
 import { PLUGIN_CATALOG } from '../../shared/connectors/pluginCatalog';
 import {
+  planPermittedSteps,
   resolveHookPlan,
   requiredPermissionFor,
   UNKNOWN_CAPABILITY_PERMISSION,
@@ -121,10 +122,13 @@ export function ConnectorsPage() {
   );
 
   const totalSteps = pluginPlans.reduce((n, pp) => n + pp.steps.length, 0);
-  const permittedSteps = pluginPlans.reduce(
-    (n, pp) => n + pp.steps.filter((s) => s.permitted).length,
-    0,
-  );
+  // **数えるのも `planPermittedSteps` を通す** (2026-09-20 · パス 358)。
+  // `pluginRuntime.ts` の docblock は「defense in depth は実行直前の
+  // `planPermittedSteps` で担保する」と述べているのに、この行は同じ判定
+  // (`s.permitted` の filter) を**手で書き写して**いた —— つまりその関数は
+  // 出荷コードから 1 度も呼ばれておらず、名指しされた関門が配線されていなかった。
+  // 画面が数えるだけの今は実害が無いが、**実行を書く人はこの行を真似る**。
+  const permittedSteps = pluginPlans.reduce((n, pp) => n + planPermittedSteps(pp.steps).length, 0);
 
   return (
     <div>

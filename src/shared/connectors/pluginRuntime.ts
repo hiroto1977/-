@@ -32,6 +32,23 @@
  * `permitted:false` として **明示** し、計画を可観測 (observable) にする。これにより
  * 「なぜ動かないか」を UI / ログが提示でき、defense in depth は実行直前の
  * {@link planPermittedSteps} (= `permitted:true` のみ抽出) で担保する。
+ *
+ * ## 実測 —— **その「実行直前」はまだ存在しない** (2026-09-20 · パス 358)
+ *
+ * 上の段落は `planPermittedSteps` を担保として名指ししているが、実測すると
+ * **出荷コードからの呼び出しは 0 件**だった。計画を読む所も 1 つだけで、
+ * それは `ConnectorsPage` の**表示**である (件数を数えるのに `s.permitted` の
+ * filter を**手で書き写して**いた —— 同じ判定の写し)。
+ * プラグインのフックからコネクタを**実際に撃つ経路は、今日どこにも無い**
+ * (画面の「▶ 実行」は利用者が押す `executeFreeConnector` で、
+ * 認証不要のローカル・コネクタを見本の payload で走らせる別の道である)。
+ *
+ * つまり**今日の実害は 0** だが、名指しされた関門が配線されていない状態だった。
+ * 数える側を `planPermittedSteps` に通し、計画の読み手を
+ * `pluginPlanConsumers.test.ts` が**用途つきの台帳 (両方向)** で持つ ——
+ * `execute` の行が生えたら「`planPermittedSteps` を通しているか」を要求する。
+ * **実行を書く人は、`resolveHookPlan` が全件を返すことに気付かないまま
+ * その配列をそのまま回しうる** (返り値には `permitted:false` も入っている)。
  */
 
 import {
