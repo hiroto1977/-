@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (88)
+## 5. 法則と執行者 (89)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -196,10 +196,11 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `center-then-count-callers` | **中心へ寄せたら呼び出し側から数え直す** — 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。 | パターン 0-a-18 / パス 311 | 検査 `src/shared/__tests__/bareFetchLedger.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>検査 `src/shared/__tests__/jsonBodyCensus.test.ts` |
 | `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。**「揃えることを要求しない」「分かる人が決めること」と書いた保留も同じ** —— 理由の欄が埋まるので検査は通り続け、実測で 1 か月近く誰も決めなかった。弱さは閉じるか、`docs/REMAINING_WORK.md` に「閉じていない物」として書く (台帳は片付いた物の説明を置く所)。 | パス 291 / パス 309 / パス 336 | 検査 `src/shared/__tests__/dualBuildDecisions.test.ts`<br>散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。機械が在るのは両ビルド台帳の理由の欄だけ (保留の決まり文句を落とす) で、検査の題名そのものは各パスの「閉じていない物」の節が持つ |
 
-### 境界と信頼 (18)
+### 境界と信頼 (19)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
+| `distributed-code-same-gates` | **配るコードも自分の門を通す** — 「これを貼って deploy してください」と文書に載せたコードは、動くのが利用者の環境でも**設計はこちらの責任**である。自分の src に掛けている門 —— 応答本文の上限・転送の各ホップの再検査・宛先の関門 —— を、配るコードにも同じだけ掛ける。両者が「同じ」であることを文で書かない: 文は書いた瞬間から離れていくので、実物どうしをテストで結ぶ(文書からコードを切り出して読み込み、同じ標本を当てる)。 | パス 343 / パス 300 | 検査 `src/renderer/network/__tests__/proxyWorkerParity.test.ts` |
 | `zone-imports` | **層の import 境界** — renderer は main / electron / node 組み込みを読まない。shared も同じ (renderer が読む区画)。preload は electron と shared だけ。main は renderer を読まない。相対パスの実行時 require も見る。 | 不変条件 #1 / 不変条件 #14 / パターン 0-a | ゲート `npm run lint:imports`<br>検査 `src/shared/__tests__/ontologyLaws.test.ts` |
 | `bridge-is-the-only-door` | **main への口は window.serviceHub だけ** — レンダラーへ Node API を通す設定・contextIsolation と sandbox と webSecurity を外す設定・文字列を code として評価する口・HTML を文字列で流し込む口を書かない (lint:forbidden の 38 種)。Node が要るものは preload bridge を広げる。 | 不変条件 #1 / 不変条件 #9 / CLAUDE.md Conventions | ゲート `npm run lint:forbidden`<br>検査 `src/main/__tests__/mainWindow.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `renderer-never-sees-raw-token` | **renderer に raw token は届かない** — secrets:list は ID だけを返す。外へ出る値に載る文言は全部 safeErrorMessage → redactSecrets を通る (数える単位はハンドラではなく「外へ出る値に載る文言」)。 | 不変条件 #2 / 不変条件 #4 / ARCHITECTURE §4.4 統一原則 1 | 検査 `src/main/__tests__/rendererBoundMessages.test.ts`<br>検査 `src/preload/__tests__/bridgeContract.test.ts`<br>検査 `src/main/__tests__/property.test.ts` |
@@ -297,6 +298,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 88 (機械あり 84 / 散文だけ 4)
+- 法則 89 (機械あり 85 / 散文だけ 4)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

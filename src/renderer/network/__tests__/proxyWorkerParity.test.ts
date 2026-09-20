@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { isPrivateOrReservedTarget } from '../proxy';
+import { isPrivateOrReservedTarget, MAX_PROXY_RESPONSE_BYTES } from '../proxy';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const req = createRequire(import.meta.url);
@@ -76,8 +76,11 @@ const MD = join(__dirname, '../../../../docs/PROXY_EXAMPLE.md');
 
 /** md の中から名前付き関数を 1 つ、波括弧の対応で切り出す。 */
 function extractFunction(source: string, name: string): string {
-  const at = source.indexOf(`function ${name}(`);
+  let at = source.indexOf(`function ${name}(`);
   if (at < 0) throw new Error(`docs/PROXY_EXAMPLE.md に function ${name} が見つかりません`);
+  // `async function f(` は `function f(` を含むので indexOf は当たるが、`async` を
+  // 落とすと中の `await` が構文エラーになる。前置きを取り込む (2026-09-20 · パス 343)。
+  if (source.slice(Math.max(0, at - 6), at) === 'async ') at -= 6;
   let depth = 0;
   for (let i = source.indexOf('{', at); i < source.length; i += 1) {
     if (source[i] === '{') depth += 1;
@@ -282,5 +285,143 @@ describe('名前の判定は client と CI の関門で同じ (Worker は IP し
       isPrivateOrReservedHost(name),
       `CI の関門が ${name} をリテラル段で落としました。役割分担が変わったなら注記を直してください`,
     ).toBe(false);
+  });
+});
+
+/*
+ * **上流本文の上限も、同じ判断が 2 か所にある** (2026-09-20 · パス 343)。
+ *
+ * アプリ側は `MAX_PROXY_RESPONSE_BYTES` (= `MAX_HTTP_RESPONSE_BYTES`) を
+ * `readBodyWithCap` で掛けている。**Worker 側には 2026-09-20 まで 1 つも無く**、
+ * `await upstream.text()` が素で置かれていた。
+ *
+ * 実測 (Node 22・上流が大きな 200 を返す):
+ *
+ * ```
+ *    64 MiB の応答 / 上限なし → rss +223 MiB / 2,034 ms
+ *   256 MiB の応答 / 上限なし → rss +956 MiB / 6,787 ms
+ *   どちらも上限あり          → 断り / rss +0〜1 MiB / 26〜32 ms
+ * ```
+ *
+ * **Workers の isolate は 128 MiB** なので、64 MiB の応答 1 つで Worker ごと落ちる。
+ * そしてアプリ側の上限は**この Worker が返した封筒**に掛かるので、Worker が先に
+ * 落ちる限り一度も効かない —— パス 330 の「読む所で切る」がそのまま当てはまる。
+ *
+ * 同じ Worker は**ホップ数**には上限を持ち、その理由に「無制限に追うと CPU time と
+ * subrequest 枠を使い切る」と書いてある。**資源の枯渇を 1 つの軸でだけ見ていた。**
+ */
+describe('上流本文の上限は client と Worker で同じ (パス 343)', () => {
+  const CAP_DECL = /const MAX_UPSTREAM_BYTES = (\d+) \* 1024 \* 1024;/;
+
+  it('★ Worker の上限がアプリ側の MAX_HTTP_RESPONSE_BYTES と一致する', () => {
+    const m = CAP_DECL.exec(md);
+    expect(m, 'docs/PROXY_EXAMPLE.md に MAX_UPSTREAM_BYTES がありません').not.toBeNull();
+    expect(Number(m![1]) * 1024 * 1024).toBe(MAX_PROXY_RESPONSE_BYTES);
+    // 針が実際に当たることを、同じ検査の中で標本で確かめる。
+    expect(CAP_DECL.test('const MAX_UPSTREAM_BYTES = 10 * 1024 * 1024;')).toBe(true);
+    expect(CAP_DECL.test('const MAX_UPSTREAM_BYTES = someVariable;')).toBe(false);
+  });
+
+  it('★ 封筒を組む所は上限つきの読みを通る (素の text() を置かない)', () => {
+    const handler = md.slice(md.indexOf('async fetch(request)'), md.indexOf('function isRedirect'));
+    expect(handler).toContain('await readCappedText(upstream)');
+    // 不在の主張には標本を添える —— 針が「素の読み」に当たることを見せる。
+    const BARE = /const text = await upstream\.text\(\);/;
+    expect(BARE.test('    const text = await upstream.text();')).toBe(true);
+    expect(handler).not.toMatch(BARE);
+  });
+
+  /**
+   * 振る舞いで確かめる。**上限の数字だけは差し替える** —— 10 MiB を実際に
+   * 流すと検査が重くなるためで、確かめたいのは数ではなく**打ち切る loop** の方である
+   * (数そのものは上の検査が実物に当てている)。
+   */
+  function buildReader(capBytes: number, withGuard: boolean) {
+    let body = extractFunction(md, 'readCappedText');
+    if (!withGuard) {
+      // 対照: 上限の枝を消す。これで「読み切ってしまう」ことを見る。
+      const before = body;
+      body = body.replace(/\s*if \(seen > MAX_UPSTREAM_BYTES\) \{[\s\S]*?\n {4}\}/, '');
+      if (body === before) throw new Error('対照: 上限の枝を消せませんでした (抽出が変わった)');
+    }
+    const file = join(dir, `reader-${capBytes}-${withGuard ? 'on' : 'off'}.mjs`);
+    writeFileSync(file, `const MAX_UPSTREAM_BYTES = ${capBytes};\n${body}\nexport { readCappedText };\n`);
+    return file;
+  }
+
+  /** 要求された分だけ作るので、打ち切れば作られない (= 費用が測れる)。 */
+  function upstreamOf(totalBytes: number) {
+    let produced = 0;
+    let cancelled = false;
+    const chunk = 64 * 1024;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (produced >= totalBytes) {
+          controller.close();
+          return;
+        }
+        const n = Math.min(chunk, totalBytes - produced);
+        produced += n;
+        controller.enqueue(new Uint8Array(n).fill(0x61));
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+    return { res: { body }, produced: () => produced, cancelled: () => cancelled };
+  }
+
+  const CAP = 1024 * 1024; // 1 MiB (検査用の縮尺)
+  const OVER = 4 * 1024 * 1024;
+
+  it('★ 上限を超える本文は読み切らずに断る (cancel まで)', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, true)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    const up = upstreamOf(OVER);
+    await expect(mod.readCappedText(up.res)).resolves.toBeNull();
+    expect(up.cancelled(), '上流を cancel していません').toBe(true);
+    // 上限 + 1 チャンク分までしか作られていない = 読み切っていない。
+    expect(up.produced()).toBeLessThanOrEqual(CAP + 64 * 1024);
+    expect(up.produced()).toBeLessThan(OVER);
+  });
+
+  it('上限内の本文はそのまま返す', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, true)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    const up = upstreamOf(CAP - 1);
+    await expect(mod.readCappedText(up.res)).resolves.toHaveLength(CAP - 1);
+    expect(up.cancelled()).toBe(false);
+  });
+
+  it('本文の無い応答 (204 / 304) は空文字', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, true)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    await expect(mod.readCappedText({ body: null })).resolves.toBe('');
+  });
+
+  it('★ 対照: 上限の枝を消すと読み切ってしまう (守っているのはこの枝である)', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, false)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    const up = upstreamOf(OVER);
+    await expect(mod.readCappedText(up.res)).resolves.toHaveLength(OVER);
+    expect(up.cancelled(), '対照なのに cancel されています').toBe(false);
+    expect(up.produced()).toBe(OVER);
+  });
+
+  /**
+   * 見出しの行数は**実物から数える**。2026-09-20 まで「約 290 行」と書かれており、
+   * 実測は 325 行だった (13% ずれ)。散文だけが古びる形なので機械に留める。
+   */
+  it('★ 見出しの行数が実物のコードブロックと一致する', () => {
+    const heading = /## 2\. Cloudflare Worker 実装 \((\d+) 行\)/.exec(md);
+    expect(heading, '見出しの行数が読めません').not.toBeNull();
+    const open = md.indexOf('```js\n// proxy-worker.js');
+    const close = md.indexOf('\n```', open);
+    const lines = md.slice(md.indexOf('\n', open) + 1, close).split('\n').length;
+    expect(Number(heading![1])).toBe(lines);
   });
 });

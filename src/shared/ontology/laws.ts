@@ -90,6 +90,18 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [gate('lint:network-targets'), gate('lint:forbidden'), test(T.shared('bareFetchLedger'))],
   },
   {
+    id: 'distributed-code-same-gates',
+    family: 'boundary',
+    name: '配るコードも自分の門を通す',
+    statement:
+      '「これを貼って deploy してください」と文書に載せたコードは、動くのが利用者の環境でも**設計はこちらの責任**である。'
+      + '自分の src に掛けている門 —— 応答本文の上限・転送の各ホップの再検査・宛先の関門 —— を、配るコードにも同じだけ掛ける。'
+      + '両者が「同じ」であることを文で書かない: 文は書いた瞬間から離れていくので、実物どうしをテストで結ぶ'
+      + '(文書からコードを切り出して読み込み、同じ標本を当てる)。',
+    provenance: ['パス 343', 'パス 300'],
+    enforcedBy: [test('src/renderer/network/__tests__/proxyWorkerParity.test.ts')],
+  },
+  {
     id: 'outside-scope-gets-its-own-census',
     family: 'gate-hygiene',
     name: '走査の外は、広げれば見えるとは限らない',

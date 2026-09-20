@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (約 290 行)
+## 2. Cloudflare Worker 実装 (380 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -81,6 +81,26 @@ const DOH_ENDPOINT = 'https://cloudflare-dns.com/dns-query';
 // を回すため、無制限に追うとリダイレクトループで CPU time と subrequest 枠を
 // 使い切る。実運用の API リダイレクトは 3 で足りる。
 const MAX_REDIRECTS = 3;
+
+// 上流本文の上限。10 MiB —— アプリ側の `MAX_HTTP_RESPONSE_BYTES`
+// (`src/shared/httpLimits.ts`) と同じ値にする。**2 つの数はテストで結ばれている**
+// (`src/renderer/network/__tests__/proxyWorkerParity.test.ts`)。
+//
+// 上のホップ上限と**同じ理由**で要る。あちらは「無制限に追うと CPU time と
+// subrequest 枠を使い切る」と書いてあるのに、**バイト数の側には 2026-09-20 まで
+// 上限が無かった** (`await upstream.text()` が素で置かれていた)。
+// 実測 (Node 22・上流が大きな 200 を返す):
+//
+//     64 MiB の応答  → rss +223 MiB / 2,034 ms
+//    256 MiB の応答  → rss +956 MiB / 6,787 ms
+//    上限つき        → どちらも断り / rss +0〜1 MiB / 26〜32 ms
+//
+// **Workers の isolate は 128 MiB** なので、64 MiB の応答 1 つで Worker ごと
+// 落ちる。`text()` は UTF-16 の文字列にするので ASCII でも 2 倍になり、
+// その後の `JSON.stringify` でもう 1 部増える —— だから「64 MiB」では済まない。
+// クライアント側の上限は**この Worker が返した封筒**に掛かるので、
+// Worker が先に落ちる限り一度も効かない。**読む所で切る。**
+const MAX_UPSTREAM_BYTES = 10 * 1024 * 1024;
 
 // ホストが変わるリダイレクトでは持ち越さないヘッダー。allowlist 内に留まる
 // としても、Notion のトークンを別ホストへ渡す必要は無い (横展開の防止)。
@@ -180,13 +200,48 @@ export default {
       target = next;
     }
 
-    const text = await upstream.text();
+    const text = await readCappedText(upstream);
+    if (text === null) {
+      return json({ error: `upstream response exceeds ${MAX_UPSTREAM_BYTES} bytes` }, 502);
+    }
     const outHeaders = {};
     upstream.headers.forEach((v, k) => { outHeaders[k] = v; });
 
     return json({ status: upstream.status, headers: outHeaders, body: text }, 200);
   },
 };
+
+/**
+ * 上流の本文を上限つきで読む。超えたら読むのをやめて `null` を返す。
+ *
+ * `await res.text()` は**全部読み終えてから**長さが分かるので、上限を
+ * 「読んだ後で測る」形にすると費用は払い終えている (実測は
+ * `MAX_UPSTREAM_BYTES` の注記)。だから 1 チャンクずつ数えて、超えた時点で
+ * `cancel()` する。Workers に `Buffer` は無いので `Uint8Array` で連結する。
+ */
+async function readCappedText(res) {
+  if (!res.body) return ''; // 204 / 304 など本文の無い応答
+  const reader = res.body.getReader();
+  const parts = [];
+  let seen = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    seen += value.byteLength;
+    if (seen > MAX_UPSTREAM_BYTES) {
+      await reader.cancel();
+      return null;
+    }
+    parts.push(value);
+  }
+  const all = new Uint8Array(seen);
+  let at = 0;
+  for (const part of parts) {
+    all.set(part, at);
+    at += part.byteLength;
+  }
+  return new TextDecoder().decode(all);
+}
 
 function isRedirect(status) {
   return status === 301 || status === 302 || status === 303 || status === 307 || status === 308;
@@ -395,6 +450,15 @@ function json(obj, status) {
   1 回目=公開 IP / 2 回目=127.0.0.1 と返す rebinding は client 側では
   原理的に防げない。上の Worker はこれを `resolvedIpDenyReason()` で
   塞いでいる (DoH で A / AAAA を引き `isBlockedIp()` に掛ける)
+- **上流本文には上限を掛ける** (2026-09-20 · パス 343): `await upstream.text()` は
+  全部読み終えてから長さが分かるので、読んだ後で測る形では費用を払い終えている。
+  上の Worker は `readCappedText()` で 1 チャンクずつ数え、`MAX_UPSTREAM_BYTES`
+  (10 MiB・アプリ側の `MAX_HTTP_RESPONSE_BYTES` と同値) を超えた時点で
+  `cancel()` して 502 を返す。実測 (Node 22): 上限なしで 64 MiB の応答を読むと
+  **rss +223 MiB / 2,034 ms**、256 MiB で **rss +956 MiB / 6,787 ms**。
+  **Workers の isolate は 128 MiB** なので 64 MiB の応答 1 つで Worker ごと落ちる。
+  クライアント側の上限は**この Worker が返した封筒**に掛かるため、
+  Worker が先に落ちる限り一度も効かない
 - **リダイレクトは各ホップを再検査する**: `fetch` の既定 `redirect: 'follow'`
   は Location 先を一切検査せずに取得するため、allowlist 済みホストが
   `302 Location: http://169.254.169.254/` を返すだけで SSRF が成立し、
@@ -431,6 +495,12 @@ function json(obj, status) {
   を数値展開して内部 IPv4 に落として検証する。一方、**ネットワーク固有の
   NAT64 prefix (RFC 6052 §2.2 の /32・/40・/48・/56・/64 や RFC 8215 の
   `64:ff9b:1::/48`) は値が任意なため列挙できない**。ここは allowlist のみが砦
+- **上限内の応答でも封筒は膨らむ**: `text()` は UTF-16 の文字列を作るので
+  ASCII でも 2 倍、その後の `JSON.stringify` でもう 1 部増える。10 MiB の本文で
+  概ね 30 MiB 程度を一度に確保する計算になり、128 MiB の isolate では
+  **同時に走る他のリクエストと分け合う**。上限を下げる余地は運用側にある
+  (下げるときは `MAX_HTTP_RESPONSE_BYTES` と一緒に下げること —— 2 つの数は
+  テストで結ばれている)
 - **プロキシ運用者はトークンを閲覧できる**: 本プロトコルは `Authorization`
   を上流へ透過する必要があるため、Worker の運用者は転送されるトークンを
   技術的に読める。**第三者運用のプロキシを登録しないこと**
