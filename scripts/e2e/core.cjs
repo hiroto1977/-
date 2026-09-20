@@ -3789,48 +3789,69 @@ async function hardResetSuite(browser) {
    * **その suite の検査が黙って減り、合計は緑のまま**になる (2026-09-05 の
    * 「知らない suite 名で 0 件走って PASSED」の、1 段下の同じ穴)。
    *
-   * 床は 2026-09-17 の実測 (FULL / LITE とも合計 395 件) の 85% (切り捨て・最低 1)。
-   * 検査を減らす変更をしたら、ここを**読んで**下げる —— 黙って下がる物ではない。
-   * 増やす分には床は追随しなくてよい (床は「減っていないこと」しか言わない)。
+   * **表に書くのは実測値ただ 1 つで、床は導く** (2026-09-20 · パス 346)。
+   * それまで表は「床」と「`// 実測 N`」の 2 つを手書きで持っており、実測すると
+   * **3 つの文がずれていた**:
+   *
+   *   - `paperAccount` の注記 10 に対し実物 **13** —— その床 8 は実測の **62%**
+   *     (意図は 85%)。5 件減っても鳴らない状態だった
+   *   - `theme` の床 10 は注記 14 に対して **71%** (規則どおりなら 11)
+   *   - この docblock 自身の「実測 (合計 395 件) の 85%」 —— 実際の根拠は
+   *     注記の合計 **452** で、`MIN_TOTAL_CHECKS` 384 はその **85.0%** だった。
+   *     数は保たれていたのに、**その数が何の 85% なのかを述べた文だけが古びていた**
+   *
+   * 今は `floorOf()` が実測値から床を計算するので、2 つがずれる形が無い。
+   * 検査を減らす変更をしたら**実測値を下げる** (床は自動で追随する)。
+   * 増やす分は急がなくてよい —— 床は「減っていないこと」しか言わない。
    * 名前の一覧はこの表から導く (`SUITES`) ので、表に無い suite は呼べない。
+   *
+   * 形と算術は `src/shared/__tests__/e2eSuiteFloors.test.ts` が毎回の npm test で見る
+   * (ブラウザを起こさずに読める部分だけ —— 実測値が実物と合っているかは、
+   * 全 suite を回した後にこの runner 自身が注意書きとして印字する)。
    */
+  /** 床 = 実測の 85% (切り捨て・最低 1)。**規則はここ 1 か所だけ。** */
+  const floorOf = (measured) => Math.max(1, Math.floor(measured * 0.85));
   const SUITE_TABLE = [
-    ['desktop', desktopSuite, 51], // 実測 60
-    ['manualData', manualDataSuite, 16], // 実測 19
-    ['dataOrigin', dataOriginSuite, 7], // 実測 9
-    ['credential', credentialSuite, 6], // 実測 8
-    ['businessComparison', businessComparisonSuite, 11], // 実測 13
-    ['kessanTax', kessanTaxSuite, 28], // 実測 34
-    ['frameGuard', frameGuardSuite, 5], // 実測 7
-    ['noBeacon', noBeaconSuite, 9], // 実測 11
-    ['vaultPassword', vaultPasswordSuite, 5], // 実測 6
-    ['credentialEgress', credentialEgressSuite, 11], // 実測 13
-    ['proxyEnvelope', proxyEnvelopeSuite, 11], // 実測 13
-    ['cspEnforced', cspEnforcedSuite, 4], // 実測 5
-    ['vaultOpacity', vaultOpacitySuite, 15], // 実測 18
-    ['crossTabLock', crossTabLockSuite, 4], // 実測 5
-    ['storageDurability', storageDurabilitySuite, 17], // 実測 21
-    ['hardReset', hardResetSuite, 6], // 実測 8
-    ['securityPosture', securityPostureSuite, 9], // 実測 11
-    ['thirdPartyDisclosure', thirdPartyDisclosureSuite, 9], // 実測 11
-    ['realtime', realtimeSuite, 5], // 実測 7
-    ['phone', phoneSuite, 8], // 実測 10
-    ['talent', talentSuite, 11], // 実測 14
-    ['teamRadar', teamRadarSuite, 14], // 実測 17
-    ['demoMix', demoMixSuite, 8], // 実測 10
-    ['paperAccount', paperAccountSuite, 8], // 実測 10
-    ['serviceAdvice', serviceAdviceSuite, 12], // 実測 15
-    ['hydroponics', hydroponicsSuite, 20], // 実測 24
-    ['parameters', parameterSuite, 9], // 実測 11
-    ['writeCeiling', writeCeilingSuite, 7], // 実測 9
-    ['aiCeiling', aiCeilingSuite, 8], // 実測 10
-    ['theme', themeSuite, 10], // 実測 14
-    ['tablet', tabletSuite, 1], // 実測 2
-    ['shell', shellSuite, 22], // 実測 27
+    ['desktop', desktopSuite, 60],
+    ['manualData', manualDataSuite, 19],
+    ['dataOrigin', dataOriginSuite, 9],
+    ['credential', credentialSuite, 8],
+    ['businessComparison', businessComparisonSuite, 13],
+    ['kessanTax', kessanTaxSuite, 34],
+    ['frameGuard', frameGuardSuite, 7],
+    ['noBeacon', noBeaconSuite, 11],
+    ['vaultPassword', vaultPasswordSuite, 6],
+    ['credentialEgress', credentialEgressSuite, 13],
+    ['proxyEnvelope', proxyEnvelopeSuite, 13],
+    ['cspEnforced', cspEnforcedSuite, 5],
+    ['vaultOpacity', vaultOpacitySuite, 18],
+    ['crossTabLock', crossTabLockSuite, 5],
+    ['storageDurability', storageDurabilitySuite, 21],
+    ['hardReset', hardResetSuite, 8],
+    ['securityPosture', securityPostureSuite, 11],
+    ['thirdPartyDisclosure', thirdPartyDisclosureSuite, 11],
+    ['realtime', realtimeSuite, 7],
+    ['phone', phoneSuite, 10],
+    ['talent', talentSuite, 14],
+    ['teamRadar', teamRadarSuite, 17],
+    ['demoMix', demoMixSuite, 10],
+    ['paperAccount', paperAccountSuite, 13],
+    ['serviceAdvice', serviceAdviceSuite, 15],
+    ['hydroponics', hydroponicsSuite, 24],
+    ['parameters', parameterSuite, 11],
+    ['writeCeiling', writeCeilingSuite, 9],
+    ['aiCeiling', aiCeilingSuite, 10],
+    ['theme', themeSuite, 14],
+    ['tablet', tabletSuite, 2],
+    ['shell', shellSuite, 27],
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
-  /** 全 suite を回したときの合計の床 (実測 395 の約 88%)。一部だけ回すときは掛けない。 */
-  const MIN_TOTAL_CHECKS = 384;
+  /**
+   * 全 suite を回したときの合計の床。一部だけ回すときは掛けない。
+   * **表の実測値の合計から導く** —— 手書きだった頃は「実測 395 の約 88%」と
+   * 書いてあり、実際の根拠 (注記合計 452 の 85.0%) と二重にずれていた (パス 346)。
+   */
+  const MIN_TOTAL_CHECKS = floorOf(SUITE_TABLE.reduce((n, [, , measured]) => n + measured, 0));
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
     console.error(`❌ SERVICE_HUB_E2E_ONLY に知らない suite: ${unknown.join(', ')} (使える名前: ${SUITES.join(', ')})`);
@@ -3842,17 +3863,31 @@ async function hardResetSuite(browser) {
     return only.length === 0 || only.includes(name);
   };
   if (only.length > 0) console.log(`(SERVICE_HUB_E2E_ONLY=${only.join(',')})`);
-  for (const [name, suite, floor] of SUITE_TABLE) {
+  /** 実測値が古びている suite (走った数 ≠ 表の値)。全 suite を回したときだけ印字する。 */
+  const stale = [];
+  for (const [name, suite, measured] of SUITE_TABLE) {
     if (!run(name)) continue;
+    const floor = floorOf(measured);
     const before = checks;
     await suite(browser);
     const ran = checks - before;
     console.log(`  (${name}: ${ran} 件)`);
+    if (ran !== measured) stale.push(`${name}: 表 ${measured} → 実物 ${ran}`);
     if (ran < floor) {
       // 検査そのものは通っていても、走った数が床を割れば落とす —— 「減ったのに緑」を受け取らない。
-      failures.push(`${name}: 走った検査 ${ran} 件 < 床 ${floor} 件 (suite が黙って縮んだ。減らす変更なら SUITE_TABLE の床を読んで下げる)`);
+      failures.push(`${name}: 走った検査 ${ran} 件 < 床 ${floor} 件 (suite が黙って縮んだ。減らす変更なら SUITE_TABLE の実測値を読んで下げる)`);
       console.log(`  ❌ ${name}: 走った検査 ${ran} 件 < 床 ${floor} 件`);
     }
+  }
+  /*
+   * **表の実測値が実物とずれていたら言う** (2026-09-20 · パス 346)。落とさない ——
+   * 検査を増やした直後は必ずずれるし、床は「減っていないこと」しか言わないので
+   * 増えた側は危険ではない。だが黙っていると `paperAccount` のように
+   * **床が意図の 62% まで緩んだまま 1 か月気付かれない**。数えられる物は言う。
+   */
+  if (only.length === 0 && stale.length > 0) {
+    console.log(`\n⚠ SUITE_TABLE の実測値が古い suite が ${stale.length} 件 (床が意図より緩みます):`);
+    for (const line of stale) console.log(`    ${line}`);
   }
   await browser.close();
   if (failures.length > 0) {

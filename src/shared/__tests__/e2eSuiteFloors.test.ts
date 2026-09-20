@@ -31,14 +31,79 @@ const { stripComments } = createRequire(__filename)(path.join(REPO_ROOT, 'script
 };
 const code = stripComments(src);
 
-/** 表の 1 行: `['name', fn, floor], // 実測 N` */
-const ROW = /^\s*\['(\w+)', (\w+), (\d+)\], \/\/ 実測 (\d+)$/gm;
-const rows = [...src.matchAll(ROW)].map((m) => ({ name: m[1]!, fn: m[2]!, floor: Number(m[3]), measured: Number(m[4]) }));
+/**
+ * 表の 1 行: `['name', fn, 実測]` (2026-09-20 · パス 346 から **3 列**)。
+ *
+ * それまでは `['name', fn, 床], // 実測 N` の **4 つの数を 2 か所に手書き**で
+ * 持っていた。全 suite を回して突き合わせたら 3 つの文がずれていた:
+ *
+ * ```
+ *   suite            表の注記  実物  床   床/実物
+ *   paperAccount           10    13    8    62%   ← 5 件減っても鳴らない
+ *   theme                  14    14   10    71%   ← 規則どおりなら 11
+ *   (他 30 suite は注記も床も正確だった)
+ *
+ *   MIN_TOTAL_CHECKS 384  = 注記合計 452 の 85.0%   ← 数そのものは正しい
+ *   core.cjs「実測 (合計 395 件) の 85%」            ← 根拠の数が二重に偽
+ *   CLAUDE.md「床 377 … → 381 = 実測 449 の 85%」    ← 両方とも古い
+ * ```
+ *
+ * **数は保たれていたのに、その数が何の 85% なのかを述べた文だけが古びていた。**
+ * この検査は `sumMeasured` を 452 に留めていたが、**それは表の注記の合計**であって
+ * 実物ではない —— ブラウザを起こさないと実物は数えられないので、ここでは分からない。
+ * だから実物とのずれは runner 自身が走り終えたあとに印字する。
+ */
+const ROW = /^\s*\['(\w+)', (\w+), (\d+)\],$/gm;
+/** 床 = 実測の 85% (切り捨て・最低 1)。**規則は core.cjs の `floorOf` と同じ 1 つ。** */
+const floorOf = (measured: number): number => Math.max(1, Math.floor(measured * 0.85));
+const rows = [...src.matchAll(ROW)].map((m) => ({
+  name: m[1]!,
+  fn: m[2]!,
+  measured: Number(m[3]),
+  floor: floorOf(Number(m[3])),
+}));
 
-describe('e2e の suite ごとの床 (パス 303)', () => {
+describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
   it('針の標本 — 表の行に当たり、呼び出し行には当たらない', () => {
-    expect("    ['tablet', tabletSuite, 1], // 実測 2").toMatch(new RegExp(ROW.source));
-    expect("  if (run('tablet')) await tabletSuite(browser);").not.toMatch(new RegExp(ROW.source));
+    expect("    ['tablet', tabletSuite, 2],").toMatch(new RegExp(ROW.source, 'm'));
+    expect("  if (run('tablet')) await tabletSuite(browser);").not.toMatch(new RegExp(ROW.source, 'm'));
+    // 旧い 4 列の形はもう当たらない (列を戻したら rows が空になり、下の床が鳴る)。
+    expect("    ['tablet', tabletSuite, 1], // 実測 2").not.toMatch(new RegExp(ROW.source, 'm'));
+  });
+
+  it('★ 床は手書きではなく導出 (数を 2 か所に書かない)', () => {
+    expect(code).toContain('const floorOf = (measured) => Math.max(1, Math.floor(measured * 0.85));');
+    expect(code).toContain('const floor = floorOf(measured);');
+    // 4 列の表・`// 実測 N` の注記・直書きの合計の床は、どれも戻っていない。
+    const fourColumns = /\['\w+', \w+, \d+, \d+\]/;
+    const noteColumn = /\], \/\/ 実測 \d+/;
+    const literalTotal = /const MIN_TOTAL_CHECKS = \d+;/;
+    expect(fourColumns.test("['desktop', desktopSuite, 51, 60]")).toBe(true); // 針の標本
+    expect(noteColumn.test("    ['desktop', desktopSuite, 51], // 実測 60")).toBe(true);
+    expect(literalTotal.test('  const MIN_TOTAL_CHECKS = 384;')).toBe(true);
+    expect(code).not.toMatch(fourColumns);
+    expect(src).not.toMatch(noteColumn);
+    expect(code).not.toMatch(literalTotal);
+  });
+
+  it('★ 2026-09-20 に緩んでいた 2 つが、導出で規則どおりに戻る', () => {
+    const by = new Map(rows.map((r) => [r.name, r]));
+    // paperAccount は注記 10 / 実物 13 で、旧い床 8 は実物の 62% だった。
+    expect(by.get('paperAccount')?.measured).toBe(13);
+    expect(by.get('paperAccount')?.floor).toBe(11);
+    expect(8 / 13).toBeLessThan(0.85); // 旧い床が規則を割っていたことの標本
+    // theme は注記 14 に対し床 10 (71%) だった。
+    expect(by.get('theme')?.measured).toBe(14);
+    expect(by.get('theme')?.floor).toBe(11);
+  });
+
+  it('★ 表の実測値が実物とずれたら runner が言う (落とさずに印字する)', () => {
+    expect(code).toContain('if (ran !== measured) stale.push(');
+    expect(src).toContain('SUITE_TABLE の実測値が古い suite が');
+    // 落とす側ではないことを同じ検査で留める (失敗に積んでいない)。
+    const staleFails = /stale\.length > 0[\s\S]{0,160}?failures\.push/;
+    expect(staleFails.test('if (stale.length > 0) { failures.push("x"); }')).toBe(true); // 針の標本
+    expect(code).not.toMatch(staleFails);
   });
 
   it('★ 32 suite が全部載っている (名前は一意)', () => {
@@ -56,17 +121,16 @@ describe('e2e の suite ごとの床 (パス 303)', () => {
 
   it('★ 名前の一覧は表から導く (表に無い suite は呼べない) —— コメントの言及では満たされない', () => {
     expect(code).toMatch(/const SUITES = SUITE_TABLE\.map\(\(\[name\]\) => name\);/);
-    expect(code).toMatch(/for \(const \[name, suite, floor\] of SUITE_TABLE\)/);
+    expect(code).toMatch(/for \(const \[name, suite, measured\] of SUITE_TABLE\)/);
     // 針の標本: 言及だけの形は落ちる
     expect(stripComments('// const SUITES = SUITE_TABLE.map(([name]) => name);\nconst SUITES = [\'desktop\'];')).not.toMatch(
       /const SUITES = SUITE_TABLE\.map/,
     );
   });
 
-  it('★ 合計の床は suite の床の和より緩くない', () => {
-    const m = /const MIN_TOTAL_CHECKS = (\d+);/.exec(code);
-    expect(m).not.toBeNull();
-    const total = Number(m![1]);
+  it('★ 合計の床は suite の床の和より緩くない (導出値で確かめる)', () => {
+    expect(code).toMatch(/const MIN_TOTAL_CHECKS = floorOf\(SUITE_TABLE\.reduce\(/);
+    const total = floorOf(rows.reduce((a, r) => a + r.measured, 0));
     const sumFloors = rows.reduce((a, r) => a + r.floor, 0);
     const sumMeasured = rows.reduce((a, r) => a + r.measured, 0);
     expect(total).toBeGreaterThanOrEqual(sumFloors);
@@ -77,7 +141,9 @@ describe('e2e の suite ごとの床 (パス 303)', () => {
     // + パス 329 の kessanTax +5 (参考の別紙・法定は 4 枚のまま・出所・突き合わせ) = 449
     // + 2026-09-20 (パス 335) の teamRadar +3 (見本が端末の編集内容を上書きしない・
     //   注記が「残した物を残した」と言う・下書きが在るのに「見本を表示しています」と言わない) = 452
-    expect(sumMeasured).toBe(452);
+    // + 2026-09-20 (パス 346) に paperAccount の注記 10 が**実物 13 と 3 件ずれていた**のを
+    //   実測で直した = 455 (今日の `e2e` / `e2e:lite` の実測とも一致する)
+    expect(sumMeasured).toBe(455);
   });
 });
 
