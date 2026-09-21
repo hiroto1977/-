@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 251
+- ブロック数: 252
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f02b2ea3944ebd26ef846d36620337ab6b65b28ec93b9ce6acf6f1eebcd5378c`
-- 保護対象: 84 ファイル
+- 末尾(tip)ハッシュ: `17aa34be3fdcc87fb4689cc853a2e351ef8aaab7b0e8a8bf3a238bfc1a333d16`
+- 保護対象: 88 ファイル
 
 ## ブロック
 
@@ -264,10 +264,15 @@
 | 248 | `6ac210dcc75635ef` | `a37dbe4dd22650c9` | `f1b6f5d32bf203ff` | update manifest.webmanifest,inject-pwa.cjs |
 | 249 | `2271b65879a4c026` | `f1b6f5d32bf203ff` | `5b4b35d23c050a51` | update settings.json,integrity-chain.cjs |
 | 250 | `4214f066246f7aa3` | `5b4b35d23c050a51` | `f02b2ea3944ebd26` | update integrity-chain.cjs |
+| 251 | `c8100c9a08e21559` | `f02b2ea3944ebd26` | `17aa34be3fdcc87f` | update 00-project.mdc,10-boundaries.mdc,20-gates.mdc,30-conventions.mdc,integrity-chain.cjs |
 
 ## 保護対象ファイル
 
 - `.claude/settings.json`
+- `.cursor/rules/00-project.mdc`
+- `.cursor/rules/10-boundaries.mdc`
+- `.cursor/rules/20-gates.mdc`
+- `.cursor/rules/30-conventions.mdc`
 - `.github/workflows/ci.yml`
 - `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`

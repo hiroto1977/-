@@ -12,7 +12,8 @@ alwaysApply: true
 
 1. Electron デスクトップ（`npm run dev` / `npm run build`）— 3 プロセス構成
 2. ブラウザ単体（`npm run build:web` → `dist/standalone.html`）— Node も Electron も無い
-   単一 HTML。`build:web:lite` は約 2.2MB のモバイル版
+   単一 HTML。`build:web:lite` は約 3.2MiB のモバイル版（2026-09-21 実測 3,344,237 B。
+   ビルドしないと測れないので機械には載せられない —— **測った日を書く**）
 
 各サービスのページは `src/renderer/data/snapshot.ts` の静的スナップショットから始まり、
 `useServiceData(serviceId, snapshot)` が `data` / `source`（`'snapshot' | 'live'`）/

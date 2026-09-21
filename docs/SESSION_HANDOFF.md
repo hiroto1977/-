@@ -7,6 +7,71 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 372 (2026-09-21) — エージェントへ常時注入される指示書が、24 ゲート分古かった
+
+### 母集団を測った (パス 370 / 371 の続き)
+
+法則 `config-that-picks-code-is-guarded` が 4 件出たので、勘で探すのをやめて
+**追跡されている設定ファイル 28 本**を「鎖に在るか」で並べた。結果、コードを選ぶ側
+(`package.json` / workflows / `stryker.config.json` / `tsconfig*.json` / `electron-builder.json`)
+は**どれも門か鎖のどちらかが触っていた**。
+
+**触られていなかったのは別の家系だった** —— `.cursor/rules/*.mdc` **4 本**である。
+
+### 見つけた物
+
+```
+  .cursor/rules/00-project.mdc     alwaysApply: true   Cursor の全セッションへ注入
+  .cursor/rules/20-gates.mdc       alwaysApply: true   同上
+  .cursor/rules/10-boundaries.mdc  globs               合う編集で注入
+  .cursor/rules/30-conventions.mdc globs               同上
+```
+
+`20-gates.mdc` は `npm run verify:all` を **「13 ゲート全部」**と書いていた ——
+**実物は 37**。24 ゲート分古い前提が、毎セッション注入されていた。
+
+**皮肉なことに、その 3 行下で同じファイルが正しく述べている**:
+
+> **`verify:all` にゲートを足したら `ci.yml` にも足すこと** — `lint:docs` が
+> 「verify:all の全ゲートが ci.yml に現れるか」を検査していて、これを怠ると
+> ゲートは存在するのに何も守っていない状態になる
+
+**規則は知っていたのに、自分の数は誰も見ていなかった。**
+
+もう 1 つ: `00-project.mdc` は `build:web:lite` を「約 2.2MB」と書いていた
+(実測 **3,344,237 B ≒ 3.2MiB**)。LITE の天井は 4,000,000 B で警告線が 3,400,000 B なので、
+2.2MB を前提に読むと**余裕を 1.1MB 過大に見積もる**。
+
+**同じ木の中で、`00-project.mdc` のサービス数 (76) だけは `lint:docs` が
+2026-08 から見ていた** —— 片方の数字だけが機械に載っていた。
+
+### 直し
+
+1. 2 つの数を実測へ直した (37 ゲート / 約 3.2MiB + 実測日)。
+2. `verify:arch` に **42 本目のライブメトリクス**
+   (`.cursor/rules: verify:all gate count`) を足した。
+   対照: 13 へ戻すと `doc says 13, source says 37` で鳴る (実測)。
+3. `.cursor/rules/*.mdc` **4 本を整合性チェーンへ** (保護対象 84 → **88**・block **#251**)。
+   数の古びはメトリクスが塞いだ。鎖が見るのは**散文そのものが変わったこと** ——
+   機械には判断できない「指示の中身」の側である。安定資産の基準も満たす (2 / 1 / 1 / 1 コミット)。
+4. `agentInstructionFiles.test.ts` (7 件) が母集団を走査で導き、方針の台帳と**双方向**に
+   突き合わせる (`chain` / `live-metrics`。方針は **churn** で決まる ——
+   `CLAUDE.md` は 183 コミットなので鎖ではなくメトリクス)。
+
+### 測って何も無かったこと (記録する)
+
+- `.mdc` の**他文字種の混入は `lint:charset` が既に見ている** (実測: キリル文字を植えると exit 1)。
+  同じ事実を 2 つの門で見ないので、この検査には足さない。
+- workflows 7 本は `lint:workflow-security` が全部見る (鎖に在るのは publish / release の 3 本)。
+- `stryker.config.json` / `tsconfig*.json` / `orchestration/registry.json` は
+  それぞれ `lint:mutation-scope` / `typecheckCoverage` / `verify:orchestration` が触っている。
+
+### 検証
+
+- `typecheck` / `npm test` (**17,932 件 ❌ 0**) / `verify:all` (37 ゲート) すべて green
+- `chain:verify` OK (block #251・保護対象 88)
+- 出荷物は **11,931,716 B / 3,344,237 B で byte 単位で不変**
+
 ## パス 371 (2026-09-21) — `npm ci` の時点で走る「自分の」コードが無縛だった
 
 ### 見つけた物

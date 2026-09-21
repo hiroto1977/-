@@ -1099,6 +1099,30 @@ const METRICS = [
     },
   },
   {
+    /*
+     * **Cursor へ常時注入されるルールのゲート数** (2026-09-21 · パス 372)。
+     *
+     * `.cursor/rules/20-gates.mdc` は `alwaysApply: true` で、Cursor を使う人の
+     * **すべてのセッションに注入される**。ところが 2026-09-21 まで
+     * 「`npm run verify:all` # **13 ゲート全部**」と書いてあった —— 実物は 37。
+     * **24 ゲート分古い数を、エージェントが前提として読んでいた。**
+     *
+     * 皮肉なことに、その 3 行下で同じファイルが
+     * 「`verify:all` にゲートを足したら `ci.yml` にも足すこと」と正しく述べている。
+     * **規則は知っていたのに、自分の数は誰も見ていなかった。**
+     *
+     * `00-project.mdc` のサービス数は `lint:docs` が 2026-08 から見ていた ——
+     * 同じ木の中で、**片方の数字だけが機械に載っていた**。
+     */
+    name: '.cursor/rules: verify:all gate count',
+    docFile: '.cursor/rules/20-gates.mdc',
+    docPattern: /# (\d+) ゲート全部/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
     name: 'CLAUDE.md: gate count named in the CI sentence',
     docFile: 'CLAUDE.md',
     docPattern: /all (\d+) `verify:all` gates/,

@@ -9,7 +9,7 @@ alwaysApply: true
 npm run typecheck      # tsc -b --noEmit --force
 npm test               # vitest（src/**/__tests__/）
 npm run lint           # eslint（flat config）
-npm run verify:all     # 13 ゲート全部
+npm run verify:all     # 37 ゲート全部（この数は verify:arch が実測と突き合わせる）
 ```
 
 CI（`.github/workflows/ci.yml`）は単一ジョブでこの全部と `build:web` を走らせる。
