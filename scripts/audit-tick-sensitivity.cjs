@@ -89,10 +89,16 @@ function zeroTicks(src) {
  *     ★ ただし**増えない向きの主張には使えない** —— 「2 度押しても 1 件」を
  *     「1 件になるまで待って 1 件」と書くと、関門が壊れていれば 2 件目が後から来るので
  *     **偽陽性**になる。そこは「1 件目が画面に出た」を待ってから記録を聞く 2 段にする。
- *   - `setup-flush` —— 落ちるのは主張ではなく**操作**の側。固定回数の周回が
- *     「待ち」ではなく**状態遷移の流し込み**として効いている。
- *     **条件で待っても、遷移が起きていなければ待てない** —— この 0 周の掃引が
- *     ファイル単位であることの限界でもある (寄せ終えた主張まで巻き込んで落ちる)。
+ *   - `setup-flush` —— 落ちるのは主張ではなく**操作**の側で、helper が
+ *     「まだ画面に出ていない物」を探して死ぬ。
+ *     ★ **この `why` は 2026-09-21 (パス 383) まで「条件で待っても、遷移が
+ *     起きていなければ待てない」と書いていた —— 測ると偽だった。** 同じ分類の
+ *     4 本 (`mutualFundsCostUnentered` / `mutualFundsYtdUnentered` /
+ *     `mutualFundsImpossibleReturn` / `teamLastOwner`) は、mount と押す helper に
+ *     条件待ちを取らせるだけで**全部寄せられた** (0 周でも落ちない)。
+ *     残る 3 本も**寄せられる**が、25〜40 件と大きいので未着手である。
+ *     **分類は「見た形」であって「測った原因」ではない** —— パス 380・382 に
+ *     続いて 3 度目に台帳の `why` が実物と食い違っていた。
  *   - `text-captured` —— 文を `const t = text();` へ取ってから主張する形。
  *     残り 1 本 (`investmentDemoMixOnScreen`) は marker ごとの注記を
  *     3 画面 10 か所で読むので、錠を 1 つに決められない (未着手)。
@@ -126,39 +132,19 @@ const LEDGER = [
     why: '文を `const t = text();` へ取ってから主張する。読み直さないので待ちに渡せない',
   },
   {
-    file: 'src/renderer/pages/__tests__/mutualFundsCostUnentered.test.ts',
-    kind: 'setup-flush',
-    why: '落ちるのは主張ではなく**操作**の側 (`addHolding` が欄を掴めない)。固定回数の周回が「待ち」ではなく**状態遷移の流し込み**として効いている',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/mutualFundsImpossibleReturn.test.ts',
-    kind: 'setup-flush',
-    why: 'helper (`ytdCell`) が行を掴めない。上と同じく操作の側',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/mutualFundsYtdUnentered.test.ts',
-    kind: 'setup-flush',
-    why: '`addHolding` が欄を掴めない。落ちるのは主張ではなく操作の側',
-  },
-  {
     file: 'src/renderer/pages/__tests__/overviewHydroponics.test.ts',
     kind: 'setup-flush',
-    why: '`q.button(…)` が押す物を掴めない (17 件)。操作の側',
+    why: '0 周で 17 件。品目の追加・削除が届かず `q.button(…)` が押す物を掴めない。**寄せられる** (パス 383 で同家系 4 本を寄せた) が 25 件と大きく、1 パスでは終わらない',
   },
   {
     file: 'src/renderer/pages/__tests__/parameterWiring.test.ts',
     kind: 'setup-flush',
-    why: '99 か所を共有の待ちへ寄せた**あとも**落ちる —— 落ちるのは寄せた `waitForText` 自身で、その前の上書きの適用が流れていない。**条件で待っても、遷移が起きていなければ待てない**',
+    why: '0 周で 14 件。99 か所を共有の待ちへ寄せた**あとも**落ちる —— 2 件は寄せた `waitForText` 自身が 5 秒で時間切れ、残りは上書きの seed が届かず `[]` を読む。**上書きを置く側 (seed) を条件で待つ形が要る**。40 件と大きく未着手',
   },
   {
     file: 'src/renderer/pages/__tests__/salesDuplicateImport.test.ts',
     kind: 'setup-flush',
-    why: '寄せた `waitForText` 自身が届かない (取り込みが流れていない) + `toBeDefined()` が 1 件',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/teamLastOwner.test.ts',
-    kind: 'setup-flush',
-    why: '`roleSelectFor(…)` が欄を掴めない。操作の側',
+    why: '0 周で 2 件。取り込み (CSV) が流れず、寄せた `waitForText` が 5 秒で時間切れ。**取り込む側を条件で待つ形が要る** (未着手)',
   },
 ];
 

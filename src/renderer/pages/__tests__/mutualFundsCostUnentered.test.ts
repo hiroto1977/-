@@ -18,6 +18,16 @@
  * 1 つ前のパスで直した隣の欄 (`ytdReturnPct: number | null`・パス 122)。
  *
  * ここは**実物の画面**で、タイル・注記・編集フォーム・改善提案の 4 面を読む。
+ *
+ * ## 待ちは回数ではなく条件で (2026-09-21 · パス 383)
+ *
+ * `audit:tick-sensitivity` の台帳はこのファイルを `setup-flush` と分類し、
+ * 「落ちるのは主張ではなく**操作**の側」と `why` に書いていた。**測ると
+ * それは原因ではなかった** —— 周回数を 0 にすると `addHolding` / `mount` が
+ * 「まだ画面に出ていない物を探している」ことで落ちる。条件で待てる形である。
+ *
+ * ★ **`why` は見た形であって測った原因ではない** —— パス 380・382 に続いて
+ * **3 度目**に台帳の分類が実物と違っていた。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -30,7 +40,7 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { jpy } from '../../../shared/formatters';
 import { adviseService } from '../../../shared/serviceAdvisor';
 import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -52,20 +62,19 @@ beforeAll(() => {
   };
 });
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
+/** 追加フォームの銘柄名の欄が出た = 画面が操作できる状態になった印。 */
+const NAME_FIELD = '例: ニッセイ外国株式';
 
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(MutualFundsPage));
   });
-  await settle();
+  // 固定回数ではなく条件で待つ (法則 wait-for-condition-not-ticks)。
+  await waitForElement(
+    () => container.querySelector(`input[placeholder="${NAME_FIELD}"]`),
+    '追加フォームの銘柄名の欄',
+  );
 }
 
 function changeInput(input: HTMLInputElement, value: string): void {
@@ -81,13 +90,15 @@ function byPlaceholder(placeholder: string): HTMLInputElement {
   return all[0]!;
 }
 
+/** 押す。**押した後は待たない** —— 何が出るかは呼び手ごとに違う (パス 378)。 */
 async function clickButton(label: string): Promise<void> {
-  const button = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label));
-  if (!button) throw new Error(`button "${label}" not found`);
+  const button = await waitForElement(
+    () => Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label)) ?? null,
+    `ボタン「${label}」`,
+  );
   await act(async () => {
     button.click();
   });
-  await settle();
 }
 
 /** ラベルで `<Stat>` 1 枚の文字列を取る。 */
@@ -107,12 +118,14 @@ const COST_PLACEHOLDER = '空欄=未入力 (損益は算定しない)';
 /** 追加フォームで銘柄を足す (評価額は手入力・取得額は渡した文字列のまま。空文字なら触らない = 空欄)。 */
 async function addHolding(name: string, valuation: string, cost: string): Promise<void> {
   await act(async () => {
-    changeInput(byPlaceholder('例: ニッセイ外国株式'), name);
+    changeInput(byPlaceholder(NAME_FIELD), name);
     changeInput(byPlaceholder('空欄=自動計算'), valuation);
     if (cost !== '') changeInput(byPlaceholder(COST_PLACEHOLDER), cost);
   });
   await clickButton('＋ 銘柄を追加');
-  if (!text().includes(name)) throw new Error(`holding "${name}" was not added: ${text().slice(0, 300)}`);
+  // ★ 押した結果を**条件で**待つ。保管層 (IndexedDB) の往復が済んで一覧が
+  //   描き直されるまで、名前は画面に出ない (0 周で実測)。
+  await waitForText(text, name);
 }
 
 const demo = SNAPSHOT.mutualFunds.portfolio;

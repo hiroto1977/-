@@ -28,6 +28,16 @@
  *
  * ここは**実物の画面**で 3 面を読む。値は書き手が断るので、フォームからは入れられない ——
  * 復元と同じ道 (record store へ直接 insert) で入れる。
+ *
+ * ## 待ちは回数ではなく条件で (2026-09-21 · パス 383)
+ *
+ * `audit:tick-sensitivity` の台帳はこのファイルを `setup-flush` と分類し、
+ * 「落ちるのは主張ではなく**操作**の側」と `why` に書いていた。**測ると
+ * それは原因ではなかった** —— 周回数を 0 にすると `addHolding` / `mount` が
+ * 「まだ画面に出ていない物を探している」ことで落ちる。条件で待てる形である。
+ *
+ * ★ **`why` は見た形であって測った原因ではない** —— パス 380・382 に続いて
+ * **3 度目**に台帳の分類が実物と違っていた。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -41,7 +51,7 @@ import { HOLDINGS_COLLECTION } from '../../data/investments';
 import { calcStdDev } from '../../../shared/mutualFundsMetrics';
 import { adviseService } from '../../../shared/serviceAdvisor';
 import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -63,29 +73,29 @@ beforeAll(() => {
   };
 });
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
-async function mount(): Promise<void> {
+/**
+ * 画面を描いて、**その `it` が置いた行が一覧に出るまで待つ**。
+ *
+ * `seedHolding` は保管層へ直接入れるので、行が画面へ届くには IndexedDB の
+ * 往復が要る —— 待たずに `ytdCell(…)` を呼ぶと「row not found」で死ぬ (0 周で実測)。
+ */
+async function mount(waitFor: string): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(MutualFundsPage));
   });
-  await settle();
+  await waitForText(text, waitFor);
 }
 
+/** 押す。**押した後は待たない** —— 何が出るかは呼び手ごとに違う (パス 378)。 */
 async function clickButton(label: string): Promise<void> {
-  const button = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label));
-  if (!button) throw new Error(`button "${label}" not found`);
+  const button = await waitForElement(
+    () => Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label)) ?? null,
+    `ボタン「${label}」`,
+  );
   await act(async () => {
     button.click();
   });
-  await settle();
 }
 
 /** ラベルで `<Stat>` 1 枚の文字列を取る。 */
@@ -184,7 +194,7 @@ afterEach(async () => {
 describe('投資信託 — 在り得ない年初来リターン (元本超の損失)', () => {
   it('★ 一覧のセルは ⛔ を付け、実在の大損 (赤) と同じ顔にしない', async () => {
     await seedHolding('復元ファンド', -250);
-    await mount();
+    await mount('復元ファンド');
     const cell = ytdCell('復元ファンド');
     expect(cell.textContent?.trim()).toBe('⛔ -250.0%');
     expect(cell.getAttribute('title')).toContain('在り得ない値');
@@ -198,7 +208,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
 
   it('★ リスク (標準偏差) は在り得ない値を除いた 4 銘柄で取り、除いた数を言う', async () => {
     await seedHolding('復元ファンド', -250);
-    await mount();
+    await mount('復元ファンド');
     const clean = calcStdDev(demoYtd());
     const withImpossible = calcStdDev([...demoYtd(), -250]);
     expect(clean).not.toBe(withImpossible); // 2 つが同じなら、この検査は何も見ていない
@@ -212,7 +222,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
 
   it('★ 改善提案は在り得ない値を「最低」と名指しせず、名指しして断る', async () => {
     await seedHolding('復元ファンド', -250);
-    await mount();
+    await mount('復元ファンド');
     await clickButton('改善提案');
     const advice = adviceText();
     expect(advice).toContain('年初来リターンに在り得ない値: 復元ファンド');
@@ -232,7 +242,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
 
   it('対照: 下限ちょうど (−100% = 全額失った) は在りうるので、赤・集約・比較に今までどおり入る', async () => {
     await seedHolding('全損ファンド', -100);
-    await mount();
+    await mount('全損ファンド');
     const cell = ytdCell('全損ファンド');
     expect(cell.textContent?.trim()).toBe('-100.0%');
     expect(cell.textContent).not.toContain('⛔');
@@ -246,7 +256,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
   });
 
   it('対照: 見本 4 銘柄だけなら、除外の注記も ⛔ の印も出ない', async () => {
-    await mount();
+    await mount('同梱の見本');
     await waitForText(text, `入力された ${demoYtd().length} 銘柄の母標準偏差です。`);
     expect(text()).not.toContain('在り得ない値');
     expect(container.querySelector('[data-impossible-returns]')).toBeNull();

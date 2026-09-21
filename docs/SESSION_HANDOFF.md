@@ -7,6 +7,68 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 383 (2026-09-21) — 台帳の `why` が 3 度目に偽だった (`setup-flush` は条件で待てる)
+
+出荷物 **11,936,559 B / 3,349,080 B で byte 単位で不変** (直したのは `__tests__/` 4 本と
+`scripts/audit-tick-sensitivity.cjs` の台帳だけ)。台帳 **8 → 4 本**・`setup-flush` **7 → 3 本**。
+
+### ★ 「条件で待っても、遷移が起きていなければ待てない」は偽だった
+
+`setup-flush` の `why` はそう書いてあった。0 周で測ると、落ちているのは
+**helper が「まだ画面に出ていない物」を探して死ぬこと**で、3 形しかなかった:
+
+| 実測した失敗 | 原因 | 直し |
+| --- | --- | --- |
+| `holding "E2Eファンド" was not added` | `addHolding` が押した直後に `text().includes(name)` を見る | `waitForText(text, name)` |
+| `row "復元ファンド" not found` | `seedHolding` が保管層へ直接入れ、mount が待たない | `mount(waitFor)` に名前を渡す |
+| `role select for 一人目 not found` | `roleSelectFor` が待たずに引く | `async` にして `waitForElement` |
+
+**4 本とも寄せ終わった** (0 周でも落ちない)。パス 380・382 に続いて **3 度目**に台帳の
+`why` が実物と食い違った —— **分類は「見た形」であって「測った原因」ではない。**
+
+### ★ 錠の置き先は 3 通りに分かれた
+
+1. **追加フォームの欄が出ること** —— `mutualFunds` 2 本の mount。
+2. **その `it` が置いた行が一覧に出ること** —— `mutualFundsImpossibleReturn`。
+3. **保管層の値** —— `teamLastOwner` の降格は**成功しても画面に文が出ない**ので DOM に
+   待てる印が無い。`settleUntilAsync` で `'owner'` → `'member'` を待つ
+   (「**増える一方の値にだけ使う**」決まりに当てはまる一方向の変化)。
+
+### ★ 自戒: 重複 import を足し、検査は緑のまま `typecheck` だけが捕まえた
+
+3 ファイルに既に `waitForText` の import が在り、私はそれを見ずに
+`import { waitForElement, waitForText }` を足した。**vitest は型を剥がすので 18 件とも緑**で、
+`TS2300: Duplicate identifier` が 6 件出たのは `npm run typecheck` だけである。
+
+### 残り 3 本の `why` も実測へ直した
+
+「条件で待てない」という偽の理由をやめ、**0 周での失敗の件数と何が届いていないか**を書いた。
+
+| ファイル | 0 周 | 届いていない物 |
+| --- | ---: | --- |
+| `overviewHydroponics` | 17 件 | 品目の追加・削除 |
+| `parameterWiring` | 14 件 | 上書きの seed (2 件は寄せた `waitForText` が 5 秒で時間切れ) |
+| `salesDuplicateImport` | 2 件 | CSV の取り込み |
+
+**どれも寄せられる** —— 25〜40 件と大きいので未着手であることも書いた
+(「できない」と「まだしていない」を混ぜない)。
+
+### 対照
+
+| 壊した物 | 結果 |
+| --- | --- |
+| `canChangeRole` を常に true へ | ❌2 —— 1 件は `waitForText` が**何を待っていたかを名指しして** 5,143ms で落ちる |
+| `isImpossibleReturnPct` を常に false へ | ❌3 |
+| 未入力の年初来リターンを 0% として入れる | ❌1 |
+| 取得額の未入力を取得原価に入れる | ❌2 |
+
+### 検証
+
+`audit:tick-sensitivity` **4 / 82 で双方向 OK**・`typecheck` 緑・`npm test` **805 / 17,970**・
+`verify:all` exit 0・`chain:verify` 緑。出荷物が動いていないので実機の連鎖は回していない。
+
+**残り 4 本**: `setup-flush` 3 / `text-captured` 1。
+
 ## パス 382 (2026-09-21) — 画面の断りが書面より弱かった (28 欄で黙る) + e2e が期待値を刷りながら ❌ を出していた
 
 出荷物 **11,936,559 B / 3,349,080 B (両方 +679 B)**。`renderer` は両ビルドが読むので LITE も同じだけ増える。

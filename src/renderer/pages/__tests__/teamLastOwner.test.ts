@@ -11,6 +11,19 @@
  *
  * ここは実物の record store (fake-indexeddb) にメンバーを入れて画面を描き、
  * `<select>` を実際に動かす。
+ *
+ * ## 待ちは回数ではなく条件で (2026-09-21 · パス 383)
+ *
+ * `audit:tick-sensitivity` の台帳はこのファイルを `setup-flush` と分類し、
+ * 「落ちるのは主張ではなく**操作**の側」「条件で待っても、遷移が起きていなければ
+ * 待てない」と `why` に書いていた。**測ると偽だった** —— 周回数を 0 にすると
+ * 4 件すべてが `roleSelectFor(…)` の `role select for 一人目 not found` で
+ * 落ちる。つまり落ちているのは**行がまだ描かれていないのに探していること**で、
+ * それは条件で待てる (`waitForElement`)。
+ *
+ * ★ **`why` が「道具では無理」と言っていたら、まず測る** —— パス 380 と 382 に
+ * 続いて **3 度目**に台帳の `why` が実物と違っていた。分類は*見た形*であって
+ * *測った原因*ではない。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -20,7 +33,7 @@ import { TeamPage } from '../TeamPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MEMBERS_COLLECTION } from '../../data/members';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntilAsync, waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -38,20 +51,21 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 6; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(TeamPage));
   });
-  await settle();
+  // 一覧は保管層 (IndexedDB) の往復のあとに描かれる。行が出るまで待つ ——
+  // 待たずに `roleSelectFor` を呼ぶと「見つからない」で死ぬ (0 周で実測)。
+  await waitForElement(() => memberRow('一人目'), '「一人目」の行');
+}
+
+/** 名前を含む行。まだ無ければ `null` (待ちに渡せる形)。 */
+function memberRow(name: string): HTMLTableRowElement | null {
+  return Array.from(container.querySelectorAll('tr')).find(
+    (tr) => tr.textContent?.includes(name),
+  ) ?? null;
 }
 
 function setNative(el: HTMLSelectElement, value: string): void {
@@ -61,12 +75,15 @@ function setNative(el: HTMLSelectElement, value: string): void {
   el.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-/** 行の役割 `<select>` を名前で引く。 */
-function roleSelectFor(name: string): HTMLSelectElement {
-  const row = Array.from(container.querySelectorAll('tr')).find((tr) => tr.textContent?.includes(name));
-  const sel = row?.querySelector('select');
-  if (!sel) throw new Error(`role select for ${name} not found`);
-  return sel as HTMLSelectElement;
+/**
+ * 行の役割 `<select>` を名前で引く。**出るまで待つ** —— 待たずに引くと
+ * 「見つからない」という**待ちとは無関係な言い方**で死ぬ (パス 169 の教訓)。
+ */
+async function roleSelectFor(name: string): Promise<HTMLSelectElement> {
+  return waitForElement(
+    () => memberRow(name)?.querySelector('select') ?? null,
+    `「${name}」の役割の select`,
+  );
 }
 
 const text = () => container.textContent ?? '';
@@ -100,12 +117,11 @@ describe('チーム — 最後のオーナー', () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '二人目', email: 'b@example.com', role: 'member' });
     await mount();
 
-    const sel = roleSelectFor('一人目');
+    const sel = await roleSelectFor('一人目');
     await act(async () => {
       setNative(sel, 'member');
     });
-    await settle();
-
+    // 押した後は待たない —— 見たい物 (断りの文) で待つ。
     await waitForText(text, '最後のオーナーは降格できません');
     // 保存もされていない (実物の store を読み直して確かめる)。
     const rows = await getRecordStore().list<{ name: string; role: string }>(MEMBERS_COLLECTION);
@@ -115,7 +131,7 @@ describe('チーム — 最後のオーナー', () => {
   it('★ 降格できない選択肢は `<select>` の側でも無効になっている', async () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '一人目', email: 'a@example.com', role: 'owner' });
     await mount();
-    const options = Array.from(roleSelectFor('一人目').querySelectorAll('option'));
+    const options = Array.from((await roleSelectFor('一人目')).querySelectorAll('option'));
     const disabled = options.filter((o) => o.disabled).map((o) => o.value);
     expect(disabled.sort()).toEqual(['admin', 'member']);
   });
@@ -125,14 +141,24 @@ describe('チーム — 最後のオーナー', () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '二人目', email: 'b@example.com', role: 'owner' });
     await mount();
 
+    const sel = await roleSelectFor('一人目');
     await act(async () => {
-      setNative(roleSelectFor('一人目'), 'member');
+      setNative(sel, 'member');
     });
-    await settle();
-
+    /*
+     * **否定を見る前に、起きたことを条件で待つ** (パス 377 の 2 段)。
+     * 錠は保管層の値 —— この画面は降格しても文を出さないので、DOM に
+     * 待てる印が無い。`settleUntilAsync` は**増える一方の値**にだけ使う
+     * 決まりで、ここは 'owner' → 'member' の一方向なので当てはまる。
+     */
+    await settleUntilAsync(
+      async () => {
+        const saved = await getRecordStore().list<{ name: string; role: string }>(MEMBERS_COLLECTION);
+        return saved.find((r) => r.data.name === '一人目')?.data.role === 'member';
+      },
+      '「一人目」が member として保存される',
+    );
     expect(text()).not.toContain('最後のオーナーは降格できません');
-    const rows = await getRecordStore().list<{ name: string; role: string }>(MEMBERS_COLLECTION);
-    expect(rows.find((r) => r.data.name === '一人目')?.data.role).toBe('member');
   });
 
   it('対照: メンバーをオーナーへ上げる道は閉じていない', async () => {
@@ -140,12 +166,16 @@ describe('チーム — 最後のオーナー', () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '二人目', email: 'b@example.com', role: 'member' });
     await mount();
 
+    const sel = await roleSelectFor('二人目');
     await act(async () => {
-      setNative(roleSelectFor('二人目'), 'owner');
+      setNative(sel, 'owner');
     });
-    await settle();
-
-    const rows = await getRecordStore().list<{ name: string; role: string }>(MEMBERS_COLLECTION);
-    expect(rows.find((r) => r.data.name === '二人目')?.data.role).toBe('owner');
+    await settleUntilAsync(
+      async () => {
+        const saved = await getRecordStore().list<{ name: string; role: string }>(MEMBERS_COLLECTION);
+        return saved.find((r) => r.data.name === '二人目')?.data.role === 'owner';
+      },
+      '「二人目」が owner として保存される',
+    );
   });
 });
