@@ -65,6 +65,18 @@
 - workflows 7 本は `lint:workflow-security` が全部見る (鎖に在るのは publish / release の 3 本)。
 - `stryker.config.json` / `tsconfig*.json` / `orchestration/registry.json` は
   それぞれ `lint:mutation-scope` / `typecheckCoverage` / `verify:orchestration` が触っている。
+- **`src/renderer/security/` の 11 モジュールは全部が出荷コードから import されている** ——
+  唯一の 0 件は `webauthn.ts` で、これはパス 359 で測った既知の負 (`verifyBiometric` は
+  必ず throw する fail-closed・出荷コードからの呼び出し 0)。
+- ★ **その測定で、私の針が 1 度外れた**。`\blockWorkspace\s*\(` で数えたので
+  「`lockWorkspace()` の呼び出し 0 件」と出て、`lockWorkspace.ts` の docblock が
+  「自動施錠が使う」と書いているのと食い違った。**実物は
+  `App.tsx:217` の `startAutoLock({ onLock: lockWorkspace })` で、
+  呼び出しではなく参照として渡している** —— パス 334 と同じ家系の針の誤りで、
+  **publish する前に確かめて止めた**。
+- 出荷コードからの参照が 0 の export は **448 件**在るが、大半は同じモジュール内で使う定数・
+  型・`export *` 越しの再輸出である。**これは分母であって欠陥の一覧ではない**ので、
+  読まずに「死んだ輸出 448 件」とは書かない (法則 `lint:zero-fold` の注記と同じ立場)。
 
 ### 検証
 
