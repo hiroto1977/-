@@ -16,7 +16,7 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION } from '../../data/sales';
 import { SHIGYO_CONTACTS_COLLECTION } from '../../data/shigyoDirectory';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 
 const originalConfirm = window.confirm;
 let anchorClicks = 0;
@@ -41,30 +41,32 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 10; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
+const exportButton = (): HTMLButtonElement | undefined =>
+  Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.trim() === 'バックアップを書き出す');
 
+/**
+ * 書き出しの欄が出るまで**条件で**待って描く (2026-09-21 · パス 381)。
+ *
+ * ここは 2026-09-21 まで固定 10 周の `settle()` だった —— 周回数を 0 にすると
+ * `confirm` がまだ呼ばれておらず ★ が落ちる
+ * (`npm run audit:tick-sensitivity` の実測)。後ろに在るのは
+ * 個人情報の件数を数えるための保管層の読みである。
+ */
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(BackupPanel));
   });
-  await settle();
+  await settleUntil(() => exportButton() !== undefined, '書き出しのボタンが出る');
 }
 
-/** 合言葉の欄には触らず (空のまま) 書き出す。 */
+/** 合言葉の欄には触らず (空のまま) 押すだけ。**待つのは呼び手が、自分が見たい物で待つ**。 */
 async function exportPlain(): Promise<void> {
-  const button = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.trim() === 'バックアップを書き出す');
+  const button = exportButton();
   if (!button) throw new Error('export button not found');
   await act(async () => {
     button.click();
   });
-  await settle();
 }
 
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
@@ -110,12 +112,14 @@ describe('バックアップ — 平文の書き出しは個人情報の件数�
     window.confirm = confirm;
     await mount();
     await exportPlain();
+    // **確認が出たことを先に待つ。** 件数を数えるために保管層を読むので、
+    // 押した直後にはまだ呼ばれていない (パス 377〜380 と同じ 2 段)。
+    await waitForText(text, '書き出しをやめました');
     expect(confirm).toHaveBeenCalledTimes(1);
     const message = String(confirm.mock.calls[0]?.[0]);
     expect(message).toContain('平文 (暗号化なし) で書き出します');
     expect(message).toContain('個人情報を含む記録が 1 件入ります: 士業の連絡先 (電話番号・メールアドレス) 1 件。');
     expect(message).toContain('合言葉 (12 文字以上) を入れて暗号化してください');
-    await waitForText(text, '書き出しをやめました');
     expect(text()).not.toContain('件のレコードをバックアップしました');
     expect(anchorClicks).toBe(0);
   });
@@ -135,8 +139,9 @@ describe('バックアップ — 平文の書き出しは個人情報の件数�
     window.confirm = confirm;
     await mount();
     await exportPlain();
-    expect(confirm).not.toHaveBeenCalled();
+    // 肯定の前提 (書き出しが済んだ) を先に待ってから「確認していない」を見る。
     await waitForText(text, '1 件のレコードをバックアップしました（平文）');
+    expect(confirm).not.toHaveBeenCalled();
     expect(anchorClicks).toBe(1);
   });
 });

@@ -93,9 +93,13 @@ function zeroTicks(src) {
  *     「待ち」ではなく**状態遷移の流し込み**として効いている。
  *     **条件で待っても、遷移が起きていなければ待てない** —— この 0 周の掃引が
  *     ファイル単位であることの限界でもある (寄せ終えた主張まで巻き込んで落ちる)。
- *   - `text-captured` / `text-with-message` / `attribute` / `hook-state` / `mock-call`
- *     —— 寄せられるが未着手。**パス 368 の針が見落とした形**はここに集まっている
- *     (`toBe` の matcher・入れ子の括弧)。
+ *   - `text-captured` / `text-with-message` —— 寄せられるが未着手。
+ *   - `attribute` / `hook-state` / `mock-call` —— **2026-09-21 (パス 381) に
+ *     4 本とも寄せ終えて空になった。** 錠は画面の文でなくてよい ——
+ *     属性を持つ行の数 (`tr[data-bs-row]`)・hook の戻り (`loading` / 上書きの件数)・
+ *     **呼ばれたこと自体** (`confirm.mock.calls.length >= 1`) が錠になる。
+ *     ★ 呼び出し回数を錠にするのは「**呼ばれる**」側だけ —— 「呼ばれない」の主張は
+ *     下流の肯定の文を先に待ってから見る (`plaintextBackupNotice` の対照)。
  *   - `text-helper` —— **2026-09-21 (パス 379) に 3 本とも寄せ終えて空になった。**
  *     直し方は「helper をそのまま述語として `settleUntil` へ渡す」で、
  *     読むのが helper なら `expect(…)` の行に `textContent` の綴りが 1 字も無い
@@ -105,26 +109,6 @@ function zeroTicks(src) {
  *     行数のように**数える**条件なら `settleUntil`)。
  */
 const LEDGER = [
-  {
-    file: 'src/renderer/components/__tests__/plaintextBackupNotice.test.ts',
-    kind: 'mock-call',
-    why: '`expect(confirm).toHaveBeenCalledTimes(1)` —— 画面に出た文ではなく**呼ばれた回数**を見る。文の主張はパス 369 で共有の待ちへ寄せた',
-  },
-  {
-    file: 'src/renderer/components/__tests__/restorePlan.test.ts',
-    kind: 'mock-call',
-    why: '確認ダイアログが 1 度だけ呼ばれたことを見る。画面の文ではないので待ちの対象外',
-  },
-  {
-    file: 'src/renderer/data/__tests__/parameterOverrides.test.ts',
-    kind: 'hook-state',
-    why: '画面ではなく hook の戻り (`ref.current.loading`) を見る。DOM に出ない値なので `waitForText` の対象外 —— `settleUntil` で寄せられる (未着手)',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/balanceSheetCurrent.test.ts',
-    kind: 'attribute',
-    why: '`getAttribute(\'data-bs-row\')` —— 文ではなく属性。`waitForElement` + 属性の主張に寄せられる (未着手)',
-  },
   {
     file: 'src/renderer/pages/__tests__/investmentDemoMixOnScreen.test.ts',
     kind: 'text-captured',

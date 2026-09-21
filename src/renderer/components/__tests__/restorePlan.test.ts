@@ -16,7 +16,7 @@ import { _resetRecordStoreForTests, getRecordStore, type StoredRecord } from '..
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION } from '../../data/sales';
 import { serializeBackup } from '../../data/backup';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -35,20 +35,20 @@ beforeAll(() => {
   };
 });
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
+/**
+ * 復元の入口 (ファイル欄) が出るまで**条件で**待って描く (2026-09-21 · パス 381)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * 置換の確認がまだ呼ばれておらず ★ が落ちる
+ * (`npm run audit:tick-sensitivity` の実測)。後ろに在るのは、消える件数を
+ * 数えるための保管層の読みである。
+ */
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(BackupPanel));
   });
-  await settle();
+  await settleUntil(() => container.querySelector('input[type="file"]') !== null, '復元のファイル欄が出る');
 }
 
 beforeEach(async () => {
@@ -83,7 +83,6 @@ async function chooseFile(content: string, name: string): Promise<void> {
   await act(async () => {
     input.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  await settle();
 }
 
 async function checkReplace(): Promise<void> {
@@ -144,6 +143,10 @@ describe('バックアップの復元 — 何が足され・残り・消える�
     await mount();
     await checkReplace();
     await chooseFile(backup, 'replace.json');
+    // **確認が出たことを先に待つ。** やめた場合は画面に何も出ないので、
+    // 下流の文では待てない —— 待てる印はこの呼び出しそのものである
+    // (同じ tick に 2 度呼ぶ形なら下の `toHaveBeenCalledTimes(1)` が捕まえる)。
+    await settleUntil(() => confirm.mock.calls.length >= 1, '置換の確認ダイアログが出る');
     expect(confirm).toHaveBeenCalledTimes(1);
     const message = String(confirm.mock.calls[0]?.[0]);
     expect(message).toContain('既存の業務データを全て削除してから復元します。');

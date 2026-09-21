@@ -17,7 +17,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../../data/balanceSheet';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -35,22 +35,23 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
+const bsRows = (): number => container.querySelectorAll('tr[data-bs-row]').length;
 
-async function mount(): Promise<void> {
+/**
+ * 控えが `rows` 行そろうまで**条件で**待って描く (2026-09-21 · パス 381)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * `rowFor(…)` が「BS row … not found」で投げて 3 件とも落ちる
+ * (`npm run audit:tick-sensitivity` の実測)。後ろに在るのは IndexedDB の読みである。
+ */
+async function mount(rows: number): Promise<void> {
   const def = SERVICES.find((s) => s.id === 'kpi');
   if (!def) throw new Error('kpi service missing');
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  await settleUntil(() => bsRows() === rows, `貸借対照表の一覧が ${rows} 行になる`);
 }
 
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
@@ -99,7 +100,7 @@ afterEach(async () => {
 describe('貸借対照表 — 「現在」は基準日で決まる', () => {
   it('★ 新しい基準日を先に入れ、古い基準日を後から入れても、指標と「使用中」は新しい基準日の控え・注記が出る', async () => {
     await insertInOrder([NEW_BS, OLD_BS]);
-    await mount();
+    await mount(2);
     expect(rowFor('2026-03-31').getAttribute('data-bs-row')).toBe('current');
     expect(rowFor('2026-03-31').textContent).toContain('使用中');
     expect(rowFor('2025-03-31').getAttribute('data-bs-row')).toBe('other');
@@ -114,7 +115,7 @@ describe('貸借対照表 — 「現在」は基準日で決まる', () => {
 
   it('対照: 基準日の順に入れれば、最後に入力した控えが「現在」で、注記は出ない', async () => {
     await insertInOrder([OLD_BS, NEW_BS]);
-    await mount();
+    await mount(2);
     expect(rowFor('2026-03-31').getAttribute('data-bs-row')).toBe('current');
     await waitForText(text, '66.7%');
     expect(text()).not.toContain('より新しい基準日の控え');
@@ -122,7 +123,7 @@ describe('貸借対照表 — 「現在」は基準日で決まる', () => {
 
   it('基準日なしの控えは最下位 (基準日つきが在ればそちらが「現在」)、一覧の × でどの控えでも消せる', async () => {
     await insertInOrder([OLD_BS, { ...NEW_BS, asOf: '' }]);
-    await mount();
+    await mount(2);
     expect(rowFor('2025-03-31').getAttribute('data-bs-row')).toBe('current');
     expect(rowFor('基準日なし').getAttribute('data-bs-row')).toBe('other');
     // 「現在」でない方 (基準日なし) を消す —— 以前は最後に入力した 1 件しか消せなかった
@@ -131,8 +132,9 @@ describe('貸借対照表 — 「現在」は基準日で決まる', () => {
     await act(async () => {
       (button as HTMLButtonElement).click();
     });
-    await settle();
+    // 一覧が 1 行になるのを待ってから記録を聞く (パス 378 の kpi / team と同じ手)。
+    await settleUntil(() => bsRows() === 1, '貸借対照表の一覧が 1 行になる');
     expect((await getRecordStore().list(BALANCE_SHEET_COLLECTION)).length).toBe(1);
-    expect(container.querySelectorAll('tr[data-bs-row]').length).toBe(1);
+    expect(bsRows()).toBe(1);
   });
 });

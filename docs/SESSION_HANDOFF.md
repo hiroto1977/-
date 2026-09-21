@@ -7,6 +7,62 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 381 (2026-09-21) — 台帳を 14 → 10 本へ (`attribute` / `hook-state` / `mock-call` を空にした)
+
+| ファイル | 錠 |
+| --- | --- |
+| `balanceSheetCurrent` | `mount(rows)` —— `tr[data-bs-row]` が n 行になるまで。削除の後も行数で待ってから記録を聞く |
+| `parameterOverrides` | **画面が無い** (hook を ref へ写すだけ) → `settleUntil(() => ref.current?.loading === false)` と `waitForOverrides(n)` |
+| `plaintextBackupNotice` | 下流の文 (「書き出しをやめました」) を待ってから `confirm` の回数を見る |
+| `restorePlan` | **呼ばれたこと自体** (`confirm.mock.calls.length >= 1`) —— やめた場合は画面に何も出ない |
+
+### ★ 錠は画面の文でなくてよい
+
+属性を持つ行の数・hook の戻り・呼ばれたこと自体、どれも条件になる。
+`parameterOverrides` は `Harness` が hook を ref へ写すだけなので `waitForText` が**使えない**。
+
+### ★ 呼び出し回数を錠にするのは「呼ばれる」側だけ
+
+`restorePlan` の置換の確認は**やめた場合に画面へ何も出ない**ので、下流の文では待てない ——
+待てる印は呼び出しそのものである。
+逆に `plaintextBackupNotice` の対照「個人情報が無ければ確認しない」は**呼ばれないこと**の主張なので、
+肯定の文を先に待ってから見る (パス 380 の教訓をそのまま当てた)。
+
+### 対照を 4 方向とも実際に回した
+
+| 壊した物 | 結果 |
+| --- | --- |
+| `BackupPanel` の確認 2 つを迂回 | ❌2 —— どちらも `5000ms 待っても「…」にならなかった` と**何を待っていたかを名指しして**落ちる |
+| `currentBalanceSheet` を「最後に入力した控え」へ | ❌2 |
+| `overridesFromRecords` を空へ倒す | ❌6 |
+
+### ★ 自戒: 一括置換の script が 1 つ黙って失敗した
+
+`parameterOverrides` の `settle()` は**私が数えた 6 か所ではなく 9 か所**在った
+(grep を `head -30` で切って読んでいた)。最後の `assert` で止まって**ファイルは書かれず**、
+しかもそのとき `npm test` は緑だった (触っていないので当然)。
+書き込みの前に `await settle();` が 0 件であることを確かめる `assert` を置いていたので
+「半分だけ直った」状態にはならなかった。
+**母集団を目で数えたら、数えた所までしか直っていない。**
+
+### 検証
+
+`npm run audit:tick-sensitivity`: **0 周で落ちるのは 10 本 / 88 本で台帳どおり (双方向)**。
+`typecheck` 緑・`npm test` **805 / 17,963** (`it()` は増減なし)・`verify:all` exit 0・
+出荷物 **11,935,880 B / 3,348,401 B (byte 単位で不変)**。
+
+### 残り 10 本
+
+`setup-flush` 6 / `text-captured` 2 / `text-with-message` 1。
+
+- `text-with-message` 1 本 (`libraryCorruptContent`) —— `expect(text(), '説明').toContain(…)`。
+  寄せると第 2 引数の説明が落ちるので、待ってから主張する 2 段にする。
+- `text-captured` 2 本 —— `investmentDemoMixOnScreen` は marker ごとの注記を 10 か所・画面 3 種で読み、
+  `manualOverrideDisclosure` は操作の後にも `settle()` を持つ。
+- `setup-flush` 6 本 —— **落ちるのが主張ではなく操作の側**。別の見立てが要る。
+
+---
+
 ## パス 380 (2026-09-21) — 台帳を 17 → 14 本へ (`store-roundtrip` を空にした)
 
 ### ★ 台帳の `why` が「道具の限界」を理由にしていた
