@@ -17,6 +17,7 @@ import { MutualFundsPage } from '../MutualFundsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { HOLDINGS_COLLECTION } from '../../data/investments';
+import { settleUntil, settleUntilAsync, waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -34,20 +35,28 @@ beforeAll(() => {
   };
 });
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
+/**
+ * 入力欄が出るまで**条件で**待って描く (2026-09-21 · パス 380)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * 2 件とも落ちる (`npm run audit:tick-sensitivity` の実測)。後ろに在るのは
+ * 暗号化と IndexedDB の往復である。
+ */
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(MutualFundsPage));
   });
-  await settle();
+  await settleUntil(
+    () => container.querySelector('input[placeholder="例: ニッセイ外国株式"]') !== null,
+    '銘柄名の欄が出る',
+  );
+}
+
+const text = (): string => container.textContent ?? '';
+
+async function holdings(): Promise<number> {
+  return (await getRecordStore().list(HOLDINGS_COLLECTION)).length;
 }
 
 function changeInput(input: HTMLInputElement, value: string): void {
@@ -104,14 +113,18 @@ describe('投資信託 — 追加ボタンの二重送信', () => {
       b.click();
       b.click();
     });
-    await settle();
-    const rows = await getRecordStore().list(HOLDINGS_COLLECTION);
-    expect(rows.length).toBe(1);
-    expect((container.textContent ?? '').match(/二度押しファンド/g)?.length ?? 0).toBe(1);
+    // ★ **ここで「記録が 1 件になるまで」待ってはいけない** —— 関門が壊れていれば
+    //   2 件目は後から来るので、1 件を見た瞬間に通って**偽陽性**になる。
+    //   待つのは「1 件目が画面に出た」= 保存が解決して一覧が描き直された印で、
+    //   件数の主張はその後に置く (`settleUntilAsync` の docblock の後半)。
+    await waitForText(text, '二度押しファンド');
+    expect(await holdings()).toBe(1);
+    expect(text().match(/二度押しファンド/g)?.length ?? 0).toBe(1);
   });
 
   it('対照: 間を置いて 2 度足せば 2 件 (関門は同時だけを止める)', async () => {
     await mount();
+    let want = 0;
     for (const name of ['一件目', '二件目']) {
       await act(async () => {
         changeInput(byPlaceholder('例: ニッセイ外国株式'), name);
@@ -120,8 +133,10 @@ describe('投資信託 — 追加ボタンの二重送信', () => {
       await act(async () => {
         addButton().click();
       });
-      await settle();
+      want += 1;
+      // 増える向きの主張なので、記録そのものを非同期の述語で待てる。
+      await settleUntilAsync(async () => (await holdings()) === want, `銘柄が ${want} 件になる`);
     }
-    expect((await getRecordStore().list(HOLDINGS_COLLECTION)).length).toBe(2);
+    expect(await holdings()).toBe(2);
   });
 });

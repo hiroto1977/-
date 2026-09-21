@@ -14,7 +14,7 @@ import { ShopifyPage } from '../ShopifyPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION, type SalesEntry } from '../../data/sales';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, settleUntilAsync, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -32,20 +32,21 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
+/**
+ * 記録の欄が出るまで**条件で**待って描く (2026-09-21 · パス 380)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * 対照 (4 件記録する側) が落ちる (`npm run audit:tick-sensitivity` の実測)。
+ */
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(ShopifyPage));
   });
-  await settle();
+  await settleUntil(
+    () => container.querySelector('input[placeholder="注文名 (#1001)"]') !== null,
+    '注文名の欄が出る',
+  );
 }
 
 function changeInput(input: HTMLInputElement, value: string): void {
@@ -71,7 +72,16 @@ async function record(name: string, total: string): Promise<void> {
   await act(async () => {
     button.click();
   });
-  await settle();
+}
+
+/**
+ * 売上集計が `n` 件になるまで待つ。
+ *
+ * **増える向きにだけ使う** —— 断られる側 (件数が変わらない) は、これではなく
+ * 断りの文を待ってから件数を聞く 2 段にする (`settleUntilAsync` の docblock)。
+ */
+async function waitForSales(n: number): Promise<void> {
+  await settleUntilAsync(async () => (await sales()).length === n, `売上集計が ${n} 件になる`);
 }
 
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
@@ -108,20 +118,27 @@ describe('Shopify — 同じ注文名を 2 度記録しない', () => {
     await mount();
     await record('#1001', '¥12,000');
     await waitForText(text, '売上集計に記録しました');
+    await waitForSales(1);
     expect(await sales()).toHaveLength(1);
     await record(' #1001 ', '¥15,000');
-    expect(await sales()).toHaveLength(1);
+    // **断りが出たことを先に待つ。** 「件数が増えていない」は押した直後なら
+    // 何も起きていなくても当たる (パス 377〜379 と同じ 2 段)。
     await waitForText(text, 'Shopify #1001 は既に売上集計に記録されています');
     await waitForText(text, '売上集計の一覧の × で消してから記録し直してください');
+    expect(await sales()).toHaveLength(1);
   });
 
   it('対照: 別の注文名なら通り、注文名の無い記録は判定しない', async () => {
     await mount();
     await record('#1001', '¥12,000');
+    await waitForSales(1);
     await record('#1002', '¥12,000');
+    await waitForSales(2);
     expect(await sales()).toHaveLength(2);
     await record('', '¥3,000');
+    await waitForSales(3);
     await record('', '¥3,000');
+    await waitForSales(4);
     expect(await sales()).toHaveLength(4);
     expect(text()).not.toContain('既に売上集計に記録されています');
   });

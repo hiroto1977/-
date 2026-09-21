@@ -7,6 +7,59 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 380 (2026-09-21) — 台帳を 17 → 14 本へ (`store-roundtrip` を空にした)
+
+### ★ 台帳の `why` が「道具の限界」を理由にしていた
+
+3 本とも「IndexedDB の往復。解決が `act` の外なので、条件で待つには**非同期の述語**が
+要る (共有の待ちは同期の述語しか取らない)」と書いてあった。
+**限界は直せるので直した** —— `jsdomWait.ts` に `settleUntilAsync` を足した
+(述語を `act` の**中**で `await` する —— 保管層の読みが購読者を起こして
+React の state を動かすことがあり、`act` の外で起こすと警告になる)。
+
+### ★ ところが、足してみると要らない場面のほうが多かった
+
+保管層への書き込みは**画面に出る** (`useCollection` が購読している) ので DOM の印で待てる。
+
+| ファイル | 錠 |
+| --- | --- |
+| `ParametersPanel.render` | 11 件すべて DOM。`mount` は見出しが「読み込み中…」でなくなるまで、`save()` は**保存ボタンが押せなくなる**まで (件数が変わらない保存でも効く印)、`waitForOverrides(n)` は見出しの件数 |
+| `shopifyDuplicateOrder` | 対照は同じ金額を 4 件記録するので文面で区別できない → `settleUntilAsync` |
+| `mutualFundsDoubleSubmit` | 対照は `settleUntilAsync`。★ は **DOM** (下記) |
+
+### ★ いちばん重い発見: 「N 件になるまで待って N 件」は偽陽性になりうる
+
+`mutualFundsDoubleSubmit` の ★ は「2 度押しても 1 件」という**増えないことの主張**。
+そこに `settleUntilAsync(() => count === 1)` を書くと、**関門が壊れていても
+1 件を見た瞬間に通る** (2 件目は後から来る)。
+錠は「1 件目が画面に出た」= 保存が解決して一覧が描き直された印にし、
+件数の主張はその後に置いた。`settleUntilAsync` の docblock にこの制限を書いた。
+
+### 対照を実際に回した
+
+| 壊した物 | 結果 |
+| --- | --- |
+| `useSubmitGuard` の `if (inFlight.current) return false;` を消す | ★ が **`expected 2 to be 1`** で落ちる (偽陽性になっていない) |
+| `ParametersPanel` の保存を no-op に | **8 件**落ちる |
+
+### 検証
+
+`npm run audit:tick-sensitivity`: **0 周で落ちるのは 14 本 / 92 本で台帳どおり (双方向)**。
+`typecheck` 緑・`npm test` **805 / 17,963** (`it()` は増減なし)・`verify:all` exit 0・
+出荷物 **11,935,880 B / 3,348,401 B (byte 単位で不変)**。
+
+### 残り 14 本
+
+`setup-flush` 6 / `text-captured` 2 / `mock-call` 2 / `hook-state` 1 / `attribute` 1 /
+`text-with-message` 1。
+
+次は `attribute` 1 本 (`balanceSheetCurrent` —— `getAttribute('data-bs-row')`・
+`waitForElement` + 属性の主張に寄せられる) か `hook-state` 1 本
+(`parameterOverrides` —— hook の戻りを見るので `settleUntil` で寄せられる) が軽い。
+`setup-flush` 6 本は**落ちるのが主張ではなく操作の側**なので、別の見立てが要る。
+
+---
+
 ## パス 379 (2026-09-21) — 台帳を 20 → 17 本へ (`text-helper` を空にした)
 
 | ファイル | 錠の置き方 |

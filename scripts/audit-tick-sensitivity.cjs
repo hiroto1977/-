@@ -81,8 +81,14 @@ function zeroTicks(src) {
  *
  * 落ちること自体は欠陥ではない —— `kind` が「回数に依っていることをどう読むか」を言う:
  *
- *   - `store-roundtrip` —— IndexedDB へ書いて読み直す主張。解決が `act` の外なので、
- *     条件で待つには**非同期の述語**が要る (共有の待ちは同期の述語しか取らない)。
+ *   - `store-roundtrip` —— **2026-09-21 (パス 380) に 3 本とも寄せ終えて空になった。**
+ *     この `why` は 2026-09-21 まで「共有の待ちは同期の述語しか取らない」と
+ *     **道具の限界**を理由にしていた —— 限界は直せるので直し (`settleUntilAsync`)、
+ *     同時に**そもそも非同期の述語が要らない場面のほうが多い**ことも実測で分かった
+ *     (保管層への書き込みは画面に出るので、DOM の印で待てる)。
+ *     ★ ただし**増えない向きの主張には使えない** —— 「2 度押しても 1 件」を
+ *     「1 件になるまで待って 1 件」と書くと、関門が壊れていれば 2 件目が後から来るので
+ *     **偽陽性**になる。そこは「1 件目が画面に出た」を待ってから記録を聞く 2 段にする。
  *   - `setup-flush` —— 落ちるのは主張ではなく**操作**の側。固定回数の周回が
  *     「待ち」ではなく**状態遷移の流し込み**として効いている。
  *     **条件で待っても、遷移が起きていなければ待てない** —— この 0 周の掃引が
@@ -99,11 +105,6 @@ function zeroTicks(src) {
  *     行数のように**数える**条件なら `settleUntil`)。
  */
 const LEDGER = [
-  {
-    file: 'src/renderer/components/__tests__/ParametersPanel.render.test.ts',
-    kind: 'store-roundtrip',
-    why: '上書きを保存してから `expect(await stored())` で読み直す。書き込みは `act` の外で解決するので、条件で待つには**非同期の述語**が要る (共有の待ちは同期の述語しか取らない)',
-  },
   {
     file: 'src/renderer/components/__tests__/plaintextBackupNotice.test.ts',
     kind: 'mock-call',
@@ -145,11 +146,6 @@ const LEDGER = [
     why: '落ちるのは主張ではなく**操作**の側 (`addHolding` が欄を掴めない)。固定回数の周回が「待ち」ではなく**状態遷移の流し込み**として効いている',
   },
   {
-    file: 'src/renderer/pages/__tests__/mutualFundsDoubleSubmit.test.ts',
-    kind: 'store-roundtrip',
-    why: '`expect(await getRecordStore().list(…))` —— 非同期の述語が要る',
-  },
-  {
     file: 'src/renderer/pages/__tests__/mutualFundsImpossibleReturn.test.ts',
     kind: 'setup-flush',
     why: 'helper (`ytdCell`) が行を掴めない。上と同じく操作の側',
@@ -173,11 +169,6 @@ const LEDGER = [
     file: 'src/renderer/pages/__tests__/salesDuplicateImport.test.ts',
     kind: 'setup-flush',
     why: '寄せた `waitForText` 自身が届かない (取り込みが流れていない) + `toBeDefined()` が 1 件',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/shopifyDuplicateOrder.test.ts',
-    kind: 'store-roundtrip',
-    why: '`expect(await sales()).toHaveLength(2)` —— 非同期の述語が要る',
   },
   {
     file: 'src/renderer/pages/__tests__/teamLastOwner.test.ts',

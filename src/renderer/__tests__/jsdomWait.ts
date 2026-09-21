@@ -84,6 +84,49 @@ export async function settleUntil(
 }
 
 /**
+ * **答えが `await` の先にある条件で待つ** (2026-09-21 · パス 380)。
+ *
+ * `settleUntil` は同期の述語しか取らない。IndexedDB へ書いた物を読み直す検査は
+ * `await getRecordStore().list(…)` を聞くしかないので、2026-09-21 まで
+ * **この 1 点だけを理由に固定回数の `settle()` に留まっていた**
+ * (`audit:tick-sensitivity` の台帳の `kind: 'store-roundtrip'` 3 本)。
+ * 台帳の `why` は「共有の待ちは同期の述語しか取らない」と**道具の限界**を
+ * 正しく述べていた —— 限界は直せるので直した。
+ *
+ * ★ **述語は `act` の中で評価する。** 保管層の読みが購読者を起こして
+ * React の state を動かすことがあり、`act` の外で起こすと警告になる
+ * (そして警告は「どこで起きたか」を言わないので、読んだ人は待ちを疑わない)。
+ *
+ * ★ **増える一方の値にだけ使う。** 「N 件になるまで待って N 件だと主張する」は、
+ * その後さらに増える余地があると**偽陽性**になる (待ちが主張を飲み込む形の裏返し)。
+ * 「2 度押しても 1 件」のような**増えないこと**の主張は、これではなく
+ * 「1 件目が画面に出た」を待ってから記録を聞く 2 段にする。
+ */
+export async function settleUntilAsync(
+  ready: () => Promise<boolean>,
+  label: string,
+  opts: WaitOptions = {},
+): Promise<void> {
+  const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const stepMs = opts.stepMs ?? DEFAULT_STEP_MS;
+  const until = Date.now() + timeoutMs;
+  for (;;) {
+    let ok = false;
+    await act(async () => {
+      await new Promise<void>((resolve) => setTimeout(resolve, stepMs));
+      ok = await ready();
+    });
+    if (ok) return;
+    if (Date.now() > until) {
+      throw new Error(
+        `${timeoutMs}ms 待っても「${label}」にならなかった。`
+          + '保管層 (IndexedDB) への書き込みが解決していないか、そもそも起きていない。',
+      );
+    }
+  }
+}
+
+/**
  * 条件に合う要素が出るまで待って**返す**。無ければ `label` つきで落ちる。
  *
  * `undefined` を返さないのが肝 —— 呼び手が `!` を書かなくて済み、

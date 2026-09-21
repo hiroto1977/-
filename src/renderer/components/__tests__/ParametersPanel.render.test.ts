@@ -12,7 +12,7 @@ import { PARAMETER_OVERRIDES_COLLECTION, type ParameterOverrideRecord } from '..
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETERS, PARAMETER_BY_ID, parameterFeatures } from '../../../shared/parameters';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -21,14 +21,6 @@ function changeInput(input: HTMLInputElement, value: string): void {
   if (!setter) throw new Error('HTMLInputElement value setter not found');
   setter.call(input, value);
   input.dispatchEvent(new Event('input', { bubbles: true }));
-}
-
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
 }
 
 let container: HTMLDivElement;
@@ -69,11 +61,38 @@ async function type(label: string, value: string): Promise<void> {
   });
 }
 
+/** 押すだけ。**待つのは呼び手が、自分が見たい物で待つ**。 */
 async function click(el: HTMLElement): Promise<void> {
   await act(async () => {
     el.click();
   });
-  await settle();
+}
+
+/**
+ * 上書きの件数が `n` になるまで待つ (見出しの `[data-overridden-count]`)。
+ *
+ * 見出しは**保存された上書き**から出るので、これは「書き込みが解決した」印である
+ * (打っただけでは動かない —— この検査自身が下でそう主張している)。
+ */
+async function waitForOverrides(n: number): Promise<void> {
+  await settleUntil(
+    () => q.header() === `上書き ${n} / ${PARAMETERS.length} 件`,
+    `上書きが ${n} 件になる (いま ${JSON.stringify(q.header())})`,
+  );
+}
+
+/**
+ * 保存を押して、**保存が済んだ印**が出るまで待つ。
+ *
+ * 印は「同じ値になったので保存ボタンが押せなくなる」 —— 件数が変わらない保存
+ * (既定と同じ値を置き直す等) でも効くので、見出しの件数より広く使える。
+ */
+async function save(label: string): Promise<void> {
+  await click(q.button(`${label} を保存`));
+  await settleUntil(
+    () => q.button(`${label} を保存`).disabled,
+    `「${label} を保存」が押せなくなる (保存が済んだ印)`,
+  );
 }
 
 async function stored(): Promise<readonly ParameterOverrideRecord[]> {
@@ -81,12 +100,19 @@ async function stored(): Promise<readonly ParameterOverrideRecord[]> {
   return list.map((r) => r.data);
 }
 
+/**
+ * 台帳を読み終えるまで**条件で**待って描く (2026-09-21 · パス 380)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * 見出しが「読み込み中…」のままで 11 件落ちる
+ * (`npm run audit:tick-sensitivity` の実測)。後ろに在るのは IndexedDB の読みである。
+ */
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(ParametersPanel));
   });
-  await settle();
+  await settleUntil(() => q.header().startsWith('上書き'), '台帳を読み終えて件数が出る');
 }
 
 beforeEach(async () => {
@@ -137,7 +163,8 @@ describe('数値パラメータの設定画面', () => {
   it('値を入れて保存すると残り、上書き中の印と件数が出る', async () => {
     await type(DAYS, '300');
     expect(q.button(`${DAYS} を保存`).disabled).toBe(false);
-    await click(q.button(`${DAYS} を保存`));
+    await save(DAYS);
+    await waitForOverrides(1);
     expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 300 } }]);
     expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('true');
     expect(q.row('hydroponics.daysPerYear').textContent).toContain('上書き中');
@@ -150,7 +177,8 @@ describe('数値パラメータの設定画面', () => {
 
   it('% の欄は画面の値で入れて内部値で保存する (12 → 0.12)', async () => {
     await type(STD, '12');
-    await click(q.button(`${STD} を保存`));
+    await save(STD);
+    await waitForOverrides(1);
     expect(await stored()).toEqual([{ values: { 'tax.consumptionStandardRate': 0.12 } }]);
     expect(q.input(STD).value).toBe('12');
   });
@@ -197,8 +225,10 @@ describe('数値パラメータの設定画面', () => {
 
   it('既定に戻すと保存から消え、入力欄も既定の表示へ戻る', async () => {
     await type(DAYS, '300');
-    await click(q.button(`${DAYS} を保存`));
+    await save(DAYS);
+    await waitForOverrides(1);
     await click(q.button(`${DAYS} を既定に戻す`));
+    await waitForOverrides(0);
     expect(await stored()).toEqual([{ values: {} }]);
     expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
     expect(q.input(DAYS).value).toBe('365');
@@ -207,18 +237,21 @@ describe('数値パラメータの設定画面', () => {
 
   it('既定と同じ値を保存しても「上書き」として残る (既定が改正で動いても置いた値は動かない)', async () => {
     await type(DAYS, '360');
-    await click(q.button(`${DAYS} を保存`));
+    await save(DAYS);
+    await waitForOverrides(1);
     await type(DAYS, '365');
-    await click(q.button(`${DAYS} を保存`));
+    // **件数は 1 のままなので、見出しでは待てない** —— 保存が済んだ印で待つ。
+    await save(DAYS);
     expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 365 } }]);
     expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('true');
   });
 
   it('すべて既定に戻すは確認してから消し、断れば何も変えない', async () => {
     await type(DAYS, '300');
-    await click(q.button(`${DAYS} を保存`));
+    await save(DAYS);
     await type(STD, '12');
-    await click(q.button(`${STD} を保存`));
+    await save(STD);
+    await waitForOverrides(2);
     expect(q.header()).toBe(`上書き 2 / ${PARAMETERS.length} 件`);
 
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
@@ -229,6 +262,7 @@ describe('数値パラメータの設定画面', () => {
 
     confirm.mockReturnValue(true);
     await click(q.buttonByText('すべて既定に戻す'));
+    await waitForOverrides(0);
     expect(q.header()).toBe(`上書き 0 / ${PARAMETERS.length} 件`);
     expect(await stored()).toEqual([{ values: {} }]);
     expect(q.input(DAYS).value).toBe('365');
@@ -259,11 +293,15 @@ describe('数値パラメータの設定画面', () => {
   it('保存の失敗は例外のまま上がらず、ボタンが戻る (busy が解ける)', async () => {
     // 保存中は両方のボタンが無効になり、終われば戻る。
     await type(DAYS, '300');
-    const save = q.button(`${DAYS} を保存`);
+    const button = q.button(`${DAYS} を保存`);
     await act(async () => {
-      save.click();
+      button.click();
     });
-    await settle();
+    // 保存が済んだ印を先に待つ —— 「戻すボタンが押せる」は主張の側。
+    await settleUntil(
+      () => q.button(`${DAYS} を保存`).disabled,
+      `「${DAYS} を保存」が押せなくなる (保存が済んだ印)`,
+    );
     expect(q.button(`${DAYS} を既定に戻す`).disabled).toBe(false);
   });
 });
@@ -318,7 +356,8 @@ describe('隣の欄と矛盾する値は保存させない (パス 221)', () => 
   it('順序を保つ値なら保存できる (対照 — 断りが全部を止めていないこと)', async () => {
     await type(GOOD, '60'); // 「注意」の下限 45 以上なので通る
     expect(q.button(`${GOOD} を保存`).disabled).toBe(false);
-    await click(q.button(`${GOOD} を保存`));
+    await save(GOOD);
+    await waitForOverrides(1);
     expect(await stored()).toEqual([{ values: { 'financeHealth.levelGoodMin': 60 } }]);
   });
 
@@ -408,7 +447,8 @@ describe('0 点と 100 点の水準が同じ上書きを保存させない (パ�
   it('向きを逆にするのは通す (軸ごとに高い方が良い / 低い方が良いが変わる)', async () => {
     await type(BAD, '99');
     expect(q.button(`${BAD} を保存`).disabled).toBe(false);
-    await click(q.button(`${BAD} を保存`));
+    await save(BAD);
+    await waitForOverrides(1);
     expect(await stored()).toEqual([{ values: { 'financeHealth.equityRatioBad': 99 } }]);
   });
 
