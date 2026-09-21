@@ -30,9 +30,33 @@
  *   5. integrity ハッシュが全件にあること
  *   6. 台帳の理由が空でないこと
  *   7. **セキュリティの床**が、道 (overrides / devDependencies) を問わず台帳と一致
+ *   8. **このリポジトリ自身の lifecycle script** が台帳と一致 (双方向・理由つき)
+ *   9. **インストール時に読まれる設定ファイル** (`.npmrc` ほか) が台帳と一致 (双方向)
  *
  * 4 と 5 は「lockfile を書き換えて別の場所から引く」形を塞ぐ。
  * git 参照や tarball の URL は、レジストリと違って**後から中身を差し替えられる**。
+ *
+ * ## ★ 2026-09-21 (パス 371): 規則 3 は**依存の**インストール時コードしか見ていなかった
+ *
+ * 規則 3 は「`npm ci` の時点で任意のコードが動くので危険度は高い」と正しく述べている。
+ * ところが見ていたのは lockfile の `hasInstallScript`、つまり**依存の側**だけで、
+ * **このリポジトリ自身の `package.json` の lifecycle script** は誰も見ていなかった。
+ *
+ * 実測 (2026-09-21): 空の package.json に `postinstall` と `prepare` を置いて
+ * `npm ci` を回すと **どちらも走った** (印のファイルが残る)。つまり
+ * `"postinstall": "node -e …"` を 1 行足せば、それは
+ * **CI の `npm ci`・`release.yml` の梱包ジョブ (署名鍵と `GH_TOKEN` を env に持つ)・
+ * 全員の手元**で走る。対照 (同日実測): それを足しても
+ * **`verify:all` の 37 ゲートすべてが exit 0** だった。
+ *
+ * 同じ形がもう 1 つ: **`.npmrc` は今日 1 つも無い**が、置けば
+ * `registry=` で**どこから取るか**が変わる (lockfile の `resolved` が効かない
+ * 経路 —— `npx -y` で走る MCP サーバ 25 件がまさにそれ) し、
+ * `.pnpmfile.cjs` に至っては**インストール時に走る任意のコード**そのものである。
+ * こちらも同日の実測で 37 ゲート全部が exit 0 だった。
+ *
+ * `package.json` は鎖 (`chain:verify`) には入れない —— 全履歴 **12 コミット**で
+ * 「安定資産」の基準 (パス 347) を満たさないため。**門で形を見る**のが正しい道具である。
  *
  * ## 評価は純関数
  *
@@ -49,6 +73,81 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 
 /** 走査が死んで「0 件だから健全」にならないための床。実測 647 (2026-08-25)。 */
 const MIN_PACKAGES = 400;
+
+/**
+ * npm が**自動で**走らせる root の lifecycle キー (実測 2026-09-21: `npm ci` は
+ * `postinstall` と `prepare` の両方を走らせる)。
+ */
+const LIFECYCLE_KEYS = [
+  'preinstall', 'install', 'postinstall',
+  'prepare', 'prepublish', 'prepublishOnly', 'prepack', 'postpack',
+];
+
+/**
+ * **このリポジトリ自身のインストール時コード。今日は 0 件。**
+ *
+ * 足すなら「`npm ci` のたびに CI と `release.yml` の梱包ジョブ (署名鍵と
+ * `GH_TOKEN` を持つ) と全員の手元で走る」ことを踏まえた理由を書くこと。
+ */
+const OWN_INSTALL_SCRIPTS = {};
+
+/**
+ * インストール時に読まれ、**どこから何を取るか**を変えうる設定ファイル。
+ *
+ * `.npmrc` の `registry=` は lockfile の `resolved` が効かない経路
+ * (`npx -y` で走る MCP サーバ 25 件など) の取得元を丸ごと替える。
+ * `.pnpmfile.cjs` はインストール時に走る任意のコードそのもの。
+ * `npm-shrinkwrap.json` は lockfile を上書きする。
+ */
+const INSTALL_CONFIG_FILES = ['.npmrc', '.yarnrc', '.yarnrc.yml', '.pnpmfile.cjs', 'npm-shrinkwrap.json'];
+
+/** **今日は 1 つも無い。** 置くなら理由を書く (双方向)。 */
+const INSTALL_CONFIG_ALLOW = {};
+
+/** 実際に在る設定ファイルを数える (self-test が注入できるよう分ける)。 */
+function presentInstallConfigs(root = REPO_ROOT, names = INSTALL_CONFIG_FILES) {
+  return names.filter((n) => fs.existsSync(path.join(root, n)));
+}
+
+/** 規則 8: 自分の lifecycle script。 */
+function checkOwnLifecycle(pkg, ledger = OWN_INSTALL_SCRIPTS, keys = LIFECYCLE_KEYS) {
+  const problems = [];
+  const scripts = pkg?.scripts ?? {};
+  const present = keys.filter((k) => Object.hasOwn(scripts, k));
+  for (const k of present) {
+    if (!Object.hasOwn(ledger, k)) {
+      problems.push(
+        `package.json の "${k}" は npm ci のたびに走ります (CI・release.yml の梱包ジョブ・全員の手元) — ` +
+          '理由を添えて OWN_INSTALL_SCRIPTS へ',
+      );
+      continue;
+    }
+    if (String(ledger[k]).trim() === '') problems.push(`OWN_INSTALL_SCRIPTS の ${k} に理由がありません`);
+  }
+  for (const k of Object.keys(ledger)) {
+    if (!present.includes(k)) problems.push(`台帳の lifecycle "${k}" は package.json にありません — 消し忘れです`);
+  }
+  return problems;
+}
+
+/** 規則 9: インストール時の設定ファイル。 */
+function checkInstallConfigs(present, ledger = INSTALL_CONFIG_ALLOW) {
+  const problems = [];
+  for (const f of present) {
+    if (!Object.hasOwn(ledger, f)) {
+      problems.push(
+        `${f} が在ります — インストール時に読まれ、どこから何を取るかを変えられます。` +
+          '理由を添えて INSTALL_CONFIG_ALLOW へ',
+      );
+      continue;
+    }
+    if (String(ledger[f]).trim() === '') problems.push(`INSTALL_CONFIG_ALLOW の ${f} に理由がありません`);
+  }
+  for (const f of Object.keys(ledger)) {
+    if (!present.includes(f)) problems.push(`台帳の ${f} は在りません — 消し忘れです`);
+  }
+  return problems;
+}
 
 /**
  * **本番依存の閉包** (dev でないもの)。出荷物へ畳み込まれ、保管庫と同じ
@@ -306,7 +405,7 @@ function diff(actual, ledger) {
   };
 }
 
-function evaluate({ lock, pkg }) {
+function evaluate({ lock, pkg, installConfigs = presentInstallConfigs() }) {
   const problems = [];
   const packages = lock?.packages;
   if (packages === null || typeof packages !== 'object') {
@@ -378,6 +477,10 @@ function evaluate({ lock, pkg }) {
 
   // 7. セキュリティの床 (道を問わず)。
   problems.push(...checkSecurityFloors({ lock, pkg }));
+
+  // 8 / 9. **自分の**インストール時コードと、インストール時に読まれる設定。
+  problems.push(...checkOwnLifecycle(pkg));
+  problems.push(...checkInstallConfigs(installConfigs));
 
   // package.json の宣言と閉包の食い違い (宣言だけ消して lockfile に残る形)。
   const declared = Object.keys(pkg?.dependencies ?? {});
@@ -507,6 +610,45 @@ function selfTest() {
   ];
 
   let bad = 0;
+
+  // ---- 規則 8 / 9 (2026-09-21 · パス 371) ---------------------------------
+  {
+    const L = { postinstall: 'これは理由です' };
+    const lifecycleCases = [
+      ['lifecycle が 1 つも無ければ通る', { scripts: { test: 'vitest' } }, {}, 0],
+      ['★ 台帳に無い postinstall は鳴る', { scripts: { postinstall: 'x' } }, {}, 1],
+      ['★ 台帳に無い prepare は鳴る (npm ci が走らせる)', { scripts: { prepare: 'x' } }, {}, 1],
+      ['★ preinstall / install も見る', { scripts: { preinstall: 'x', install: 'y' } }, {}, 2],
+      ['台帳に在れば通る', { scripts: { postinstall: 'x' } }, L, 0],
+      ['★ 台帳に在って実物に無ければ鳴る (逆向き)', { scripts: {} }, L, 1],
+      ['台帳の理由が空なら鳴る', { scripts: { postinstall: 'x' } }, { postinstall: '' }, 1],
+      ['lifecycle でない script は見ない', { scripts: { build: 'x', e2e: 'y' } }, {}, 0],
+    ];
+    for (const [label, pkg, ledger, want] of lifecycleCases) {
+      const got = checkOwnLifecycle(pkg, ledger).length;
+      const ok = got === want;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+    }
+    const configCases = [
+      ['設定ファイルが無ければ通る', [], {}, 0],
+      ['★ 台帳に無い .npmrc は鳴る', ['.npmrc'], {}, 1],
+      ['★ .pnpmfile.cjs も鳴る (インストール時に走る任意のコード)', ['.pnpmfile.cjs'], {}, 1],
+      ['台帳に在れば通る', ['.npmrc'], { '.npmrc': 'これは理由です' }, 0],
+      ['★ 台帳に在って実物に無ければ鳴る (逆向き)', [], { '.npmrc': 'これは理由です' }, 1],
+    ];
+    for (const [label, present, ledger, want] of configCases) {
+      const got = checkInstallConfigs(present, ledger).length;
+      const ok = got === want;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+    }
+    // 走査が実物に当たる: 見る名前が実在の形で、今日は 1 つも無い。
+    const namesOk = INSTALL_CONFIG_FILES.includes('.npmrc') && INSTALL_CONFIG_FILES.length >= 4;
+    if (!namesOk) bad++;
+    console.log(`  ${namesOk ? '✓' : '✗'} 見る設定ファイルの名前が ${INSTALL_CONFIG_FILES.length} 件 (.npmrc を含む)`);
+  }
+
   console.log('self-test:');
   for (const [label, input, want] of cases) {
     const n = evaluate(input).length;
@@ -572,6 +714,13 @@ function main(argv) {
     `Checked ${total} locked package(s): 本番依存 ${prod} 件 / インストール時コード ${scripted} 件 / ` +
       `セキュリティの床 ${SECURITY_FLOORS.length} 件 (いずれも台帳) / 取得元と integrity`,
   );
+  const ownLifecycle = LIFECYCLE_KEYS.filter((k) => Object.hasOwn(pkg?.scripts ?? {}, k));
+  const configs = presentInstallConfigs();
+  console.log(
+    `自分のインストール時コード ${ownLifecycle.length} 件 / 台帳 ${Object.keys(OWN_INSTALL_SCRIPTS).length}、` +
+      `インストール時に読まれる設定 ${configs.length} 件 / 台帳 ${Object.keys(INSTALL_CONFIG_ALLOW).length} ` +
+      `(見る名前 ${INSTALL_CONFIG_FILES.length})`,
+  );
   for (const f of staleFloors()) {
     console.warn(
       `::warning::セキュリティの床 ${f.package} を勧告データベースと突き合わせたのは ${f.checkedOn} ` +
@@ -599,4 +748,6 @@ module.exports = {
   parseVersion,
   cmpVersion,
   rangeFloor,
+  checkOwnLifecycle, checkInstallConfigs, presentInstallConfigs,
+  OWN_INSTALL_SCRIPTS, INSTALL_CONFIG_ALLOW, INSTALL_CONFIG_FILES, LIFECYCLE_KEYS,
 };

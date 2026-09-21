@@ -867,13 +867,28 @@ export const LAWS: readonly Law[] = [
       + '実測 (2026-09-21): hook のコマンドを `node -e "…"` に替えると **`verify:all` の 37 ゲートすべてが exit 0**・'
       + '`chain:verify` も exit 0・単体検査も緑。門は形で落とす (`node scripts/<name>.cjs` だけ) '
       + 'ことと、**最上位の鍵を閉じる (知らない鍵は落とす)** ことの 2 つが要る —— '
-      + '設定は `statusLine` など別の実行面を後から増やせるので、「見る鍵を挙げる」形だと 3 つ目が静かに入る。',
-    provenance: ['パス 347 (vite.config.ts)', 'パス 349 (PROXY_EXAMPLE.md)', 'パス 370 (.claude/settings.json の hooks)'],
+      + '設定は `statusLine` など別の実行面を後から増やせるので、「見る鍵を挙げる」形だと 3 つ目が静かに入る。'
+      + '**パス 371 で 4 件目**: `lint:deps` の規則 3 は「`npm ci` の時点で任意のコードが動く」と正しく述べながら、'
+      + '見ていたのは lockfile の `hasInstallScript` = **依存の側**だけで、'
+      + '**このリポジトリ自身の `package.json` の lifecycle script** は誰も見ていなかった。'
+      + '実測 (2026-09-21): 空の package.json で `npm ci` を回すと `postinstall` と `prepare` は**どちらも走る**。'
+      + 'つまり 1 行足せば CI・`release.yml` の梱包ジョブ (署名鍵と `GH_TOKEN` を持つ)・全員の手元で走るのに、'
+      + 'それを足しても **37 ゲートすべてが exit 0** だった (`.npmrc` を置いても同じ)。'
+      + '**鎖に入れるかは変更頻度で決める** —— `package.json` は全履歴 12 コミットで「安定資産」の基準を満たさないので、'
+      + 'ここは門で形を見るのが正しい道具である。',
+    provenance: [
+      'パス 347 (vite.config.ts)',
+      'パス 349 (PROXY_EXAMPLE.md)',
+      'パス 370 (.claude/settings.json の hooks)',
+      'パス 371 (package.json の lifecycle script と .npmrc)',
+    ],
     enforcedBy: [
       gate('lint:mcp-servers'),
+      gate('lint:deps'),
       gate('lint:forbidden'),
       gate('chain:verify'),
       test(T.shared('sessionStartCodeGuarded')),
+      test(T.shared('installTimeCodeGuarded')),
     ],
   },
   {
