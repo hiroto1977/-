@@ -7,6 +7,62 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 366 (2026-09-21) — 投資助言・法的助言の免責 7 か所のうち 5 か所は、消しても誰も鳴らなかった
+
+### 測り方 —— 全部潰して 1 回、それから 1 つずつ
+
+免責の**文言**には検査がいくつも在る (`serviceAdvisor.test.ts` ほかが定数を見る) が、
+それは「定数が在る」しか言わない。利用者に届くかは**描いているか**で決まる。
+
+そこで描画 7 か所を**全部潰して** `npm test` を回した —— 落ちたのは **2 ファイル 3 件だけ**。
+次に 1 つずつ潰して、その 2 ファイルに当てて分けた:
+
+```
+  pages/DocstudioPage.tsx       計算書類の紙          ✅ docstudioKessanSheets
+  components/ServiceActionPanel.tsx                  ✅ mutualFundsImpossibleReturn
+  pages/DocstudioPage.tsx       12 種の書式の紙       ❌ 誰も鳴らない
+  pages/StocksPage.tsx          投資助言ではありません  ❌ 誰も鳴らない
+  pages/BusinessPage.tsx        投資助言・財務助言では… ❌ 誰も鳴らない
+  pages/EmotionsPage.tsx        感情分析の断り         ❌ 誰も鳴らない
+  components/ShigyoConsole.tsx  ⚖️ 士業の断り          ❌ 誰も鳴らない
+```
+
+**5 か所は、消した日に 17,883 件すべて緑のまま出荷される。** 中身は
+「投資助言ではありません」「過去パフォーマンスは将来のリターンを保証しません」
+「個別事情に応じ弁護士・社労士・税理士等の専門家による確認をお勧めします」——
+消えて困る側の文である。
+
+### 機械
+
+`renderer/__tests__/disclaimerRendered.test.ts` (12 件):
+
+1. **描画の母集団を走査で導く** —— JSX の `{識別子[.メンバー…]}` のうち末尾が
+   `disclaimer` の物 (実測 7 件 / 6 ファイル)。`{DOC_DISCLAIMER}` も同じ針で拾う。
+   件数つきの台帳と**両方向**。
+2. **助言だけを描いて免責を描かない形を落とす** —— 同じオブジェクトの
+   `recommendations` / `message` を描くなら `disclaimer` も描くこと。
+3. **紙 1 枚につき断り 1 つ** (`.ds-paper` と `.ds-disclaimer` の数が等しい)。
+4. **振る舞いの背骨** —— `ShigyoConsole` を実際に jsdom で描き、渡した文が DOM に
+   出ること・渡さなければ `[role="note"]` ごと出ないことを見る
+   (字面だけの検査にしない · 法則 `mention-vs-declaration`)。
+
+### 対照 —— 10 方向すべて鳴る
+
+7 か所の描画を 1 つずつ潰す (**5 か所は実測で全件緑だった当のもの**) ・
+台帳から 1 行消す・母集団に居ない行を台帳へ・回数を 1 つ増やす (紙 1 枚に断り 2 つ)。
+
+### 法則 92 本目
+
+`user-facing-claim-held-at-render` **利用者へ出す約束は、描く所で留める**。
+パス 365 (egress の断りを消しても全件緑) と同じ家系をまとめた。
+執行者は `disclaimerRendered` / `thirdPartyEgressDisclosed` / `aiEgressDisclosed` の 3 本。
+
+### ついでに直した古い数
+
+`docs/ARCHITECTURE.md` §8.3 が「執行者が散文だけの法則は文書の別節に集める (**5 本**)」と
+書いていたが、生成物 `docs/ONTOLOGY.md` は **3 本**と言う (パス 356 で `measure-before-claim` に
+機械が付き、パス 348 でも 1 本減った)。**生成側が正しく、手書きの数だけが古びていた。**
+
 ## パス 365 (2026-09-21) — 「外へ送る画面は言う」の母集団が AI とマイクだけだった
 
 ### 欠陥 —— 断りは在るのに、それを保つ物が無かった

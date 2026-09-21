@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **14989** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **14998** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -2519,7 +2519,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | 層とビルド | `src/shared/ontology/vocabulary.ts` (`ZONES` / `BUILDS`) | main / preload / renderer / shared の信頼の上限・import してよい層・node の可否・出荷されるビルド | `ontologyLaws.test.ts` が `scripts/check-import-boundaries.cjs` の `ALLOW` と一致することを留める |
 | 実体クラス | 同 (`ENTITY_CLASSES`) | service / bridge-method / store / egress-site / url-door / surface / limit / parameter / knowledge-dataset / gate / census / protected-file / harness / document / workflow —— **一覧はどこに在り、それを実物と突き合わせる機械は何か** | 台帳と機械のパスが実在することを検査が留める |
 | facet 行列と公理 | `src/shared/ontology/serviceFacets.ts` | サービス 1 つの性質は 7 つの台帳に分かれて宣言されている (配置 / 出所 / 資格情報の読み手 / local / OAuth / action / 士業)。台帳が区画を跨ぐのは設計なので 1 つに畳めず、代わりに **facet の間の関係を公理 10 本**で述べる (例: 出所が remote なら取得は資格情報を読む・ブラウザ版の action はデスクトップ版の部分集合・デスクトップだけの action は種類つきの台帳にちょうど載る) | `ontologyFacets.test.ts` が 76 サービスの実物 (`src/__tests__/ontologyFacts.ts` が台帳から集める) に当てる。例外は理由つきで双方向 |
-| 法則と執行者 | `src/shared/ontology/laws.ts` (`LAWS` · 9 家系) | 「何を守るか」「どのパスで学んだか」「何がそれを守っているか (gate / test / harness / chain / type / ci / prose)」 | `validateLawLedger` が執行者のパスと npm script の実在を留め、**執行者が散文だけの法則**は文書の別節に集める (5 本) |
+| 法則と執行者 | `src/shared/ontology/laws.ts` (`LAWS` · 9 家系) | 「何を守るか」「どのパスで学んだか」「何がそれを守っているか (gate / test / harness / chain / type / ci / prose)」 | `validateLawLedger` が執行者のパスと npm script の実在を留め、**執行者が散文だけの法則**は文書の別節に集める (3 本) |
 
 生成物 `docs/ONTOLOGY.md` は `npm run ontology:md` (`scripts/build-ontology-md.cjs` —— esbuild の `.ts` require hook。`new Function` は使わない) が
 語彙と実物から組み、`ontologyDoc.test.ts` が「committed == 再生成」と「法則・実体クラス・公理・サービス id の網羅」を留める

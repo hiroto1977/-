@@ -657,6 +657,25 @@ export const LAWS: readonly Law[] = [
     provenance: ['パス 106', 'パス 107', 'パス 108', 'パス 186', 'パス 365 (AI 以外の第三者送信)'],
     enforcedBy: [test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'), test(T.renderer('aiDataDisclosure')), test('src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts')],
   },
+  {
+    id: 'user-facing-claim-held-at-render',
+    family: 'surface',
+    name: '利用者へ出す約束は、描く所で留める',
+    statement:
+      '定数の検査は「文言が在る」しか言わない —— 利用者に届くかは**描いているか**で決まる。'
+      + '実測 (2026-09-21): 免責の描画 7 か所を 1 つずつ潰すと **5 か所は 17,883 件すべて緑**のままだった '
+      + '(`StocksPage` / `BusinessPage` の「投資助言ではありません・過去パフォーマンスは将来のリターンを保証しません」・'
+      + '`ShigyoConsole` の ⚖️「法的助言ではない」・`DocstudioPage` の 12 種の書式の紙・`EmotionsPage`)。'
+      + '同じ形は断りの側でも出ており、HIBP の egress の断りを丸ごと消しても全件緑だった (パス 365)。'
+      + 'だから**描画を母集団として数え**、助言本体を描くなら免責も描くこと・紙 1 枚につき断り 1 つ、を機械で結ぶ。'
+      + '字面だけで留めると言い換えで黙るので、振る舞いの背骨 (実際に描いて DOM を見る) を 1 本は置く。',
+    provenance: ['パス 365', 'パス 366'],
+    enforcedBy: [
+      test(T.renderer('disclaimerRendered')),
+      test('src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts'),
+      test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'),
+    ],
+  },
 
   // ───────────────────────── 数字の健全性 ─────────────────────────
   {

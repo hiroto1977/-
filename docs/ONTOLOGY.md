@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (91)
+## 5. 法則と執行者 (92)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -238,7 +238,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `write-then-read-loop` | **書く口を足したら読みの一巡** — 「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。 | パターン 0-a-22 | 検査 `src/renderer/__tests__/webShimSnapshotBranches.test.ts`<br>検査 `src/renderer/__tests__/webShimInputGatesAndSaves.test.ts`<br>検査 `src/renderer/__tests__/deviceStoreWritePolicy.test.ts` |
 | `destructive-ops-have-owner` | **破壊的な操作は「宛先を誰が決めるか」で数える** — 名前がデータ由来でなくても、宛先が環境変数なら守りが要る。rmSync / unlinkSync / 上書きは書き込み先の名前とは別の軸。台帳の ✅ には問いを書く。 | パターン 0-a-20 | 検査 `src/shared/__tests__/notebooklmExportClear.test.ts`<br>検査 `src/main/__tests__/exportSymlinkContainment.test.ts`<br>ゲート `npm run lint:shell` |
 
-### 画面へ出る文言・外へ出る本文 (8)
+### 画面へ出る文言・外へ出る本文 (9)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -250,6 +250,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `exported-markup-escapes-free-text` | **書き出す成果物に自由文を素で入れない** — 書き出した `.md` / `.svg` / `.html` はライブラリに保存され、**ダウンロードして人に渡る**。自由文 (利用者の入力・AI の応答・第三者の応答) は `shared/escape.ts` の 1 つを通す —— Markdown は `escapeMarkdownInline` (1 行で終わる場所: 見出し・箇条書きの 1 項目・引用の 1 行) と `escapeMarkdownText` (地の文)、XML/HTML は `escapeXml`、色は**入口で検証する** (`safeColor` で既定値へ落とすか、`isHexColor` で断る)。`lint:forbidden` #11 が落とすのは**再実装**であって「通していない」ではないので、**形式ごとに**母集団を数える —— Markdown は不活性だが、`.svg` はブラウザで開くと中の `&lt;script>` が走り、`.svg` / `.html` はアプリ自身が `shell.openPath` で OS に開かせる。 | パス 332 / パス 348 / escape.ts の docblock (2026-08-20) | 検査 `src/renderer/__tests__/markdownExportCensus.test.ts`<br>検査 `src/shared/__tests__/markupExportCensus.test.ts`<br>検査 `src/shared/__tests__/escape.test.ts`<br>ゲート `npm run lint:forbidden` |
 | `refuse-dont-truncate` | **外へ書く欄は切らずに断る** — 外へ送る本文を黙って slice しない。天井を超えたら理由を言って送らない。天井は型と長さの上限を持ち (12 家系)、画面の maxLength は関門ではない。 | パス 110 / パス 111 / パス 172 / パス 175 / パス 183 | 検査 `src/shared/__tests__/writeFieldLimits.test.ts`<br>検査 `src/renderer/__tests__/writeBodyCeilingCensus.test.ts` |
 | `egress-notice-before-send` | **外へ送る画面は何を送るかを言う** — AI へ送る 8 画面・全画面のマイクは、何を・どこへ・どれだけ送るかを送る前に言う。断りが送る量を 2 倍に述べていてはならない。**母集団は AI とマイクだけではない** —— 利用者が打った個人データを第三者へ送る経路は他にも在り、実測 (2026-09-21) で `security/check-email-breach` (メールアドレス → Have I Been Pwned) と `security/scan-url` (URL → VirusTotal・投稿された URL は他の利用者が検索できる状態で残る) の 2 本が数えられていなかった。断り自体はよく書けていたが、**HIBP の断りを丸ごと消しても 17,868 件すべて緑**だった (パス 365)。受け手を名前で出すこと・その近くで「送る」と言うこと・**操作子より前に在ること** (押してから知る形にしない) を、実装から導いた母集団に対して要求する。 | パス 106 / パス 107 / パス 108 / パス 186 / パス 365 (AI 以外の第三者送信) | 検査 `src/renderer/pages/__tests__/aiEgressDisclosed.test.ts`<br>検査 `src/renderer/__tests__/aiDataDisclosure.test.ts`<br>検査 `src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts` |
+| `user-facing-claim-held-at-render` | **利用者へ出す約束は、描く所で留める** — 定数の検査は「文言が在る」しか言わない —— 利用者に届くかは**描いているか**で決まる。実測 (2026-09-21): 免責の描画 7 か所を 1 つずつ潰すと **5 か所は 17,883 件すべて緑**のままだった (`StocksPage` / `BusinessPage` の「投資助言ではありません・過去パフォーマンスは将来のリターンを保証しません」・`ShigyoConsole` の ⚖️「法的助言ではない」・`DocstudioPage` の 12 種の書式の紙・`EmotionsPage`)。同じ形は断りの側でも出ており、HIBP の egress の断りを丸ごと消しても全件緑だった (パス 365)。だから**描画を母集団として数え**、助言本体を描くなら免責も描くこと・紙 1 枚につき断り 1 つ、を機械で結ぶ。字面だけで留めると言い換えで黙るので、振る舞いの背骨 (実際に描いて DOM を見る) を 1 本は置く。 | パス 365 / パス 366 | 検査 `src/renderer/__tests__/disclaimerRendered.test.ts`<br>検査 `src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts`<br>検査 `src/renderer/pages/__tests__/aiEgressDisclosed.test.ts` |
 
 ### 数字の健全性 (5)
 
@@ -299,6 +300,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 91 (機械あり 88 / 散文だけ 3)
+- 法則 92 (機械あり 89 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`
