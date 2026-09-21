@@ -23,7 +23,7 @@ import {
   hasSamePeriodUnit,
   type KpiActual,
 } from '../data/kpiActuals';
-import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
+import { SALES_COLLECTION, readableSalesRows, unreadableSalesDateNote, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
 import { budgetComparedRangeLabel, budgetUnmatchedNote, KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
@@ -387,6 +387,12 @@ function ActualsPanel() {
   // Months available from the sales feature, for the "売上集計から取り込む" link.
   const salesEntries = useMemo(() => salesRecords.map((r) => r.data), [salesRecords]);
   const monthOptions = useMemo(() => salesMonths(salesEntries), [salesEntries]);
+  // 取り込み元の売上に日付の読めない行が在れば言う (パス 360)。KPI 行の側は
+  // `unreadableNote` が既に述べるが、**橋で渡ってくる側**は何も言っていなかった。
+  const unreadableSalesNote = useMemo(
+    () => unreadableSalesDateNote(readableSalesRows(salesEntries).dropped),
+    [salesEntries],
+  );
 
   function importFromSales(month: string) {
     if (!month) return;
@@ -521,6 +527,11 @@ function ActualsPanel() {
       {unreadableNote !== null && (
         <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {unreadableNote}
+        </p>
+      )}
+      {unreadableSalesNote !== null && (
+        <p role="alert" data-unreadable-sales-dates style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {unreadableSalesNote}
         </p>
       )}
       {records.length > 0 ? (

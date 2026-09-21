@@ -328,7 +328,7 @@ export const LAWS: readonly Law[] = [
     family: 'single-rule',
     name: '中心へ寄せたら呼び出し側から数え直す',
     statement: '守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。',
-    provenance: ['パターン 0-a-18', 'パス 311', 'パス 359'],
+    provenance: ['パターン 0-a-18', 'パス 311', 'パス 359', 'パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた)'],
     enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus'))],
   },
   {
@@ -502,6 +502,14 @@ export const LAWS: readonly Law[] = [
     statement: '壊れた保存値を「まだ無い」に畳むと、次の登録が元の一覧を上書きする。読みは 3 状態で返し、画面は ⚠ で言う。端末からの読み 22 か所は方針 4 通りと理由で台帳。',
     provenance: ['パス 120', 'パス 121', 'パス 309', 'パス 310', 'パス 313'],
     enforcedBy: [test(T.renderer('storageReadLedger')), test(T.shared('watchlistState')), test(T.shared('teamRadarState')), test(T.main('stateFile'))],
+  },
+  {
+    id: 'escape-hatch-stays-open',
+    family: 'at-rest',
+    name: '壊れた行があっても逃げ口は開く',
+    statement: '保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。',
+    provenance: ['パス 136', 'パス 225', 'パス 360'],
+    enforcedBy: [test(T.renderer('malformedStoreRenders')), test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts')],
   },
   {
     id: 'sample-never-written-back',

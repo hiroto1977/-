@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (89)
+## 5. 法則と執行者 (90)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -193,7 +193,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `parity-is-not-correctness` | **パリティは両方に在る穴を見つけない** — 一致は正しさではない。パリティを取った組は、そのあと 1 つの実装として正しいかを別に見る。送り先・パス・header に入る判断は実際の攻撃形を食わせて測る。 | パターン 0-a-16 | 散文だけ `docs/SESSION_HANDOFF.md` — 「一致した 2 つが両方とも間違っている」は定義上パリティに映らない。攻撃形を食わせる検査は組ごとに書く |
 | `fold-must-pair` | **「必ず併用する」と書いた対は畳む** — 「A を使うときは B も呼べ」と書きたくなったら B を A の中へ畳む。畳めないときだけ注記 + 台帳。実測: 7 か所のうち併用していたのは 2 か所だった。 | パターン 0-a-23 | 検査 `src/shared/__tests__/ontologyLaws.test.ts` |
 | `checked-equals-used` | **調べた物と使う物を同じにする** — 関門が通した値ではなく元の文字列を使うと、調べた物と使われる物が別になる (URL の字面一致 vs 解析後・1 ホップ目 vs 転送先・アンカーの属性 vs クリックの handler)。関門の返り値を使う。 | パス 291 / パス 298 / パス 299 / パス 301 / パス 325 (母集団の機械) | 検査 `src/shared/__tests__/parsedUrlGateCensus.test.ts`<br>検査 `src/shared/__tests__/externalUrlGate.test.ts`<br>検査 `src/shared/__tests__/imageUrlGate.test.ts`<br>検査 `src/shared/__tests__/followableUrlCensus.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts` |
-| `center-then-count-callers` | **中心へ寄せたら呼び出し側から数え直す** — 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。 | パターン 0-a-18 / パス 311 / パス 359 | 検査 `src/shared/__tests__/bareFetchLedger.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>検査 `src/shared/__tests__/jsonBodyCensus.test.ts`<br>検査 `src/renderer/__tests__/downloadFilenameCensus.test.ts` |
+| `center-then-count-callers` | **中心へ寄せたら呼び出し側から数え直す** — 守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。 | パターン 0-a-18 / パス 311 / パス 359 / パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた) | 検査 `src/shared/__tests__/bareFetchLedger.test.ts`<br>検査 `src/shared/__tests__/egressRedirectCensus.test.ts`<br>検査 `src/shared/__tests__/jsonBodyCensus.test.ts`<br>検査 `src/renderer/__tests__/downloadFilenameCensus.test.ts` |
 | `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。**「揃えることを要求しない」「分かる人が決めること」と書いた保留も同じ** —— 理由の欄が埋まるので検査は通り続け、実測で 1 か月近く誰も決めなかった。弱さは閉じるか、`docs/REMAINING_WORK.md` に「閉じていない物」として書く (台帳は片付いた物の説明を置く所)。 | パス 291 / パス 309 / パス 336 | 検査 `src/shared/__tests__/dualBuildDecisions.test.ts`<br>散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。機械が在るのは両ビルド台帳の理由の欄だけ (保留の決まり文句を落とす) で、検査の題名そのものは各パスの「閉じていない物」の節が持つ |
 
 ### 境界と信頼 (19)
@@ -220,12 +220,13 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `loopback-oauth-host-pin` | **OAuth callback の Host は loopback だけ** — DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。 | 不変条件 #12 / パターン 0-a-14 | 検査 `src/shared/__tests__/loopbackChecks.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `header-values-one-rule` | **Headers が何を受理するかは 1 つの判定** — 資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。 | パス 244 / パス 296 | 検査 `src/shared/__tests__/headerValue.test.ts`<br>検査 `src/shared/__tests__/headerValueLeak.test.ts` |
 
-### 保存と復元 (11)
+### 保存と復元 (12)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
 | `storage-ledger-and-hard-reset` | **端末に残す物は台帳、ハードリセットは全行を覆う** — 新しい保存先が黙って増えない。媒体が DATA_PROTECTION の在庫に載る。入口 (localWrite) へ流れる鍵は登録の鍵と一致する (双方向)。「すべてのデータを削除」が台帳の全行を消す。 | lint:storage 規則 11 / lint:storage 規則 12 / パス 136 / パス 310 | ゲート `npm run lint:storage`<br>検査 `src/renderer/security/__tests__/eraseAll.test.ts` |
 | `read-policy-three-states` | **「無い」「読めなかった」「読めた」を分ける** — 壊れた保存値を「まだ無い」に畳むと、次の登録が元の一覧を上書きする。読みは 3 状態で返し、画面は ⚠ で言う。端末からの読み 22 か所は方針 4 通りと理由で台帳。 | パス 120 / パス 121 / パス 309 / パス 310 / パス 313 | 検査 `src/renderer/__tests__/storageReadLedger.test.ts`<br>検査 `src/shared/__tests__/watchlistState.test.ts`<br>検査 `src/shared/__tests__/teamRadarState.test.ts`<br>検査 `src/main/__tests__/stateFile.test.ts` |
+| `escape-hatch-stays-open` | **壊れた行があっても逃げ口は開く** — 保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。 | パス 136 / パス 225 / パス 360 | 検査 `src/renderer/__tests__/malformedStoreRenders.test.ts`<br>検査 `src/renderer/components/__tests__/recordShapeAuditPanel.test.ts` |
 | `sample-never-written-back` | **見本を利用者の保管場所へ書き戻さない** — 「まだ無い」「読めなかった」ときに返る同梱の見本は飾りであって利用者の物ではない。それを画面の状態へ取り込むと自動保存がそのまま端末へ書き、利用者が何も押していないのに編集中の内容が消える。取り込むのは stored === "saved" のときだけ。「読めていない下書きを書き戻さない」(パス 160) と対になる、書く側の規則。 | パス 160 / パス 335 | 検査 `src/renderer/__tests__/snapshotAdoptionCensus.test.ts`<br>検査 `src/renderer/pages/__tests__/teamRadarSampleNeverOverwrites.test.ts`<br>実機 `npm run e2e` |
 | `size-gate-before-parse` | **ディスクから読む所は読む前に大きさの門** — 「自分が書いた物は大きくならない」は前提にならない (別プロセス・壊れたディスク・同期ソフト)。stat で読む前に門、読んだ後にも byte の門。secrets.json は 1 MB かつ plain object。**控えへ倒れる枝は呼び出し側から見えないので、門は読む関数の中に置く** (パス 326)。同期の読みは主スレッドを止めるので特に要る。 | 不変条件 #13 / パス 308 / パス 313 / パス 326 (母集団の機械) | 検査 `src/main/__tests__/fileReadSizeGateCensus.test.ts`<br>検査 `src/main/__tests__/stateFile.test.ts`<br>検査 `src/main/__tests__/secretsProtection.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `at-rest-mechanism-inventory` | **保存物の封緘方式は台帳** — OS のキーチェーン / WebCrypto の保管庫 / 難読化 / 平文のどれで残っているかを 1 つの在庫が持ち、画面 (secrets:protection) がそれを言う。 | パス 147 / パス 318 | 検査 `src/main/__tests__/atRestPolicy.test.ts`<br>ゲート `npm run lint:storage` |
@@ -297,6 +298,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 89 (機械あり 86 / 散文だけ 3)
+- 法則 90 (機械あり 87 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

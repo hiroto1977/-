@@ -15,6 +15,8 @@ import {
   type SalesChannel,
   duplicateOrdersNote,
   findDuplicateOrders,
+  readableSalesRows,
+  unreadableSalesDateNote,
 } from '../data/sales';
 import { salesToCsv, salesFromCsv } from '../data/salesCsv';
 import {
@@ -88,6 +90,12 @@ export function SalesPage() {
     [computedSummary, overrideRecords],
   );
   const months = useMemo(() => monthlyTotals(entries), [entries]);
+  // 日付が読めない行は月次推移から落ちる (パス 360)。**落としたことを言う** ——
+  // 黙って除くと売上高が小さく出て、利用者は気づけない。
+  const unreadableDateNote = useMemo(
+    () => unreadableSalesDateNote(readableSalesRows(entries).dropped),
+    [entries],
+  );
   // 同じ注文名の重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 126)。
   const duplicateNote = useMemo(() => duplicateOrdersNote(findDuplicateOrders(entries)), [entries]);
 
@@ -221,6 +229,11 @@ export function SalesPage() {
         {duplicateNote !== null && (
           <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
             {duplicateNote}
+          </p>
+        )}
+        {unreadableDateNote !== null && (
+          <p role="alert" data-unreadable-sales-dates style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+            {unreadableDateNote}
           </p>
         )}
       </Section>

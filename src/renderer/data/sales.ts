@@ -225,11 +225,61 @@ export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
   };
 }
 
+/**
+ * 日付が読める行だけを通す漏斗 (2026-09-21 · パス 360)。
+ *
+ * **同じ問いが、このファイルの中で 2 通りに答えられていた。** 57 行上の
+ * `salesPeriod` は「読める日付 = 暦に在る日 (判定は `shared/isoDate.ts` ——
+ * 保存側の `isValidDate` と同じ 1 つ)」と書いて `isCalendarDate` で絞るのに、
+ * すぐ下の `monthlyTotals` は `e.date.slice(0, 7)` と素で読んでいた。
+ * `date` が**無い**行が 1 件入ると `undefined.slice` で投げる。
+ *
+ * ## 実測 (2026-09-21)
+ *
+ * `COLLECTION_SHAPES` が拒む行を collection ごとに 1 件ずつ入れて 74 画面を描くと、
+ * **投げたのは 2 画面** —— `sales` (`monthlyTotals`) と `kpi`
+ * (`salesKpiBridge.monthOf` 経由) で、どちらも
+ * `TypeError: Cannot read properties of undefined (reading 'slice')`。
+ * 欄が**在って型が違う**行 (`date: 'bad'`) では 0 画面 —— 投げるのは
+ * **欄が無い**行だけである (`'bad'.slice` は通る)。
+ *
+ * そういう行は実在しうる: 復元の入口 `store.importAll` が形を見るのは
+ * 2026-09-05 からで、それ以前に復元した・古い版が書いた行は既に保存されている
+ * (`recordShapeAudit.ts` がその母集団のために在る)。
+ *
+ * ## 落としたことは言う
+ *
+ * 黙って除くと売上高が小さく出て、利用者は気づけない。数は返し、画面は
+ * `unreadableSalesDateNote` で述べる —— `kpiActuals.ts` の
+ * `readablePeriodRows` / `unreadablePeriodNote` (パス 225) と同じ形。
+ */
+export interface ReadableSalesRows {
+  readonly rows: readonly SalesEntry[];
+  readonly dropped: number;
+}
+
+export function readableSalesRows(entries: readonly SalesEntry[]): ReadableSalesRows {
+  const rows = entries.filter((e) => isCalendarDate(e.date));
+  return { rows, dropped: entries.length - rows.length };
+}
+
+/**
+ * 日付が読めない行を落としたことを述べる 1 文。落としていなければ `null`。
+ *
+ * **肯定形で書く** (`dropped <= 0` は `undefined <= 0` が false なので
+ * `undefined` を通す —— `unreadablePeriodNote` が 2026-09-14 に踏んだ穴)。
+ */
+export function unreadableSalesDateNote(dropped: number): string | null {
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `売上の記録のうち ${dropped} 件は日付 (YYYY-MM-DD) が読めないため、月別の集計から除いています。バックアップの復元や古い版で入った控えの可能性があります（設定の「形式の合わない記録」から消せます）。`;
+}
+
 /** Group entries by `YYYY-MM` month, newest month first, with each month's
  *  total amount. Useful for a trend view. */
 export function monthlyTotals(entries: readonly SalesEntry[]): readonly { month: string; amount: number }[] {
   const acc = new Map<string, number>();
-  for (const e of entries) {
+  // 読める日付だけ (漏斗はこのファイルの 1 つ)。素で `.slice` すると欄の無い行で投げる。
+  for (const e of readableSalesRows(entries).rows) {
     const month = e.date.slice(0, 7); // YYYY-MM
     acc.set(month, (acc.get(month) ?? 0) + e.amount);
   }
