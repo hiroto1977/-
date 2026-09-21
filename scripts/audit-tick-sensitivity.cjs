@@ -119,11 +119,6 @@ const LEDGER = [
     why: '`getAttribute(\'data-bs-row\')` —— 文ではなく属性。`waitForElement` + 属性の主張に寄せられる (未着手)',
   },
   {
-    file: 'src/renderer/pages/__tests__/budgetPeriodScopeVisible.test.ts',
-    kind: 'text-captured',
-    why: '文を `const t = text();` へ取ってから主張する。加えて `toBeDefined()` の要素待ちが 1 件',
-  },
-  {
     file: 'src/renderer/pages/__tests__/docstudioImport.test.ts',
     kind: 'element-presence',
     why: '`not.toBeNull()` と helper 越しの厳密一致。`waitForElement` に寄せられる (未着手)',
@@ -184,11 +179,6 @@ const LEDGER = [
     why: '99 か所を共有の待ちへ寄せた**あとも**落ちる —— 落ちるのは寄せた `waitForText` 自身で、その前の上書きの適用が流れていない。**条件で待っても、遷移が起きていなければ待てない**',
   },
   {
-    file: 'src/renderer/pages/__tests__/realEstateYieldScope.test.ts',
-    kind: 'text-captured',
-    why: '文を `const t = text();` へ取ってから主張する。加えて `toBeDefined()` の要素待ちが 1 件',
-  },
-  {
     file: 'src/renderer/pages/__tests__/refusedSave.test.ts',
     kind: 'text-helper',
     why: '`says(…)` が真偽値を返す helper。待ちに渡すには述語を切り出す (未着手)',
@@ -227,11 +217,6 @@ const LEDGER = [
     file: 'src/renderer/pages/__tests__/teamLastOwner.test.ts',
     kind: 'setup-flush',
     why: '`roleSelectFor(…)` が欄を掴めない。操作の側',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/undefinedRatiosOnScreen.test.ts',
-    kind: 'text-captured',
-    why: '文を `const t = text();` へ取ってから主張する (3 件とも同じ形)',
   },
 ];
 

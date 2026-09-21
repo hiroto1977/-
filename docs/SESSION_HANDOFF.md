@@ -7,6 +7,40 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 377 (2026-09-21) — 台帳を 28 → 25 本へ (text-captured の残り 3 本)
+
+パス 376 で確立した形をそのまま適用した:
+**mount の helper に `waitFor` を取らせ、固定回数の代わりにその文が出るまで条件で待つ**。
+
+| ファイル | 錠の置き方 |
+| --- | --- |
+| `budgetPeriodScopeVisible` | `mount(serviceId, waitFor)` へ。overview の否定だけの `it` は `'経営スコアカード'` を前提に |
+| `undefinedRatiosOnScreen` | 同じ。`'生産性 (一人当たり)'` が出ないことを見る `it` は、先にスコアカードを待つ |
+| `realEstateYieldScope` | ★ **全文ではなく範囲の箱 (`[data-portfolio-scope]`) の文**を読む |
+
+### ★ 錠を置く先は画面ごとに違う
+
+`realEstateYieldScope` の主張はどれも**範囲の箱か一覧の行**を見るので、
+全文を錠にすると「画面は出たが箱はまだ」で通りうる。
+パス 376 の「ラベルは先に出て、算定された値は後から来る」と同じ家系である。
+
+### 検証
+
+`npm run audit:tick-sensitivity`: **0 周で落ちるのは 25 本 / 103 本で台帳どおり (双方向)**。
+`typecheck` 緑・`npm test` **805 / 17,963**・`verify:all` exit 0・
+出荷物 **11,935,880 B / 3,348,401 B (byte 単位で不変)**。
+
+### 残り 25 本
+
+`setup-flush` 7 / `element-presence` 5 / `store-roundtrip` 3 / `text-helper` 3 /
+`text-captured` 2 / `mock-call` 2 / `hook-state` 1 / `attribute` 1 / `text-with-message` 1。
+
+残った `text-captured` 2 本は**別の手が要る**:
+`investmentDemoMixOnScreen` は marker ごとの注記を 10 か所で読み (画面も 3 種)、
+`manualOverrideDisclosure` は**操作の後にも `settle()`** を持つ。
+
+---
+
 ## パス 376 (2026-09-21) — 0 周で落ちる台帳を 31 → 28 本へ消化 + 5 面を測って何も無かった
 
 ### 寄せた 3 本 (どれも `text-captured`)

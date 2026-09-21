@@ -45,22 +45,19 @@ const at = (period: string, revenue: number): KpiActual => ({
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
-async function mount(serviceId: string): Promise<void> {
+/**
+ * 貼ってから、**`waitFor` が画面に出るまで条件で待つ** (法則 `wait-for-condition-not-ticks`)。
+ * 以前は固定回数の `settle()` のあとに `const t = text();` で文を取っており、
+ * **回数が足りるかどうかが機械の負荷に依っていた** (実測: 0 周で落ちる)。
+ */
+async function mount(serviceId: string, waitFor: string): Promise<void> {
   const def = SERVICES.find((s) => s.id === serviceId);
   if (!def) throw new Error(`service ${serviceId} missing`);
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  await waitForText(text, waitFor);
 }
 
 async function seed(budgets: readonly KpiActual[], actuals: readonly KpiActual[]): Promise<void> {
@@ -101,7 +98,7 @@ describe('経営サマリー — 予算実績差異の突合した期', () => {
   it('★ 通期予算に対して実績が一部なら、月数と「通年ではない」を画面が出す', async () => {
     const budgets = ['2026-04', '2026-05', '2026-06', '2026-07'].map((m) => at(m, 4_000_000));
     await seed(budgets, ['2026-04', '2026-05'].map((m) => at(m, 4_000_000)));
-    await mount('overview');
+    await mount('overview', '2026-04〜2026-05・2 か月分です');
     const t = text();
     expect(t).toContain('突き合わせたのは');
     expect(t).toContain('2026-04〜2026-05・2 か月分です');
@@ -112,7 +109,7 @@ describe('経営サマリー — 予算実績差異の突合した期', () => {
 
   it('★ 対照: 全期が突合できていれば「通年の比較ではありません」は出ない', async () => {
     await seed([at('2026-04', 4_000_000)], [at('2026-04', 4_000_000)]);
-    await mount('overview');
+    await mount('overview', '突き合わせたのは');
     const t = text();
     expect(t).toContain('突き合わせたのは');
     // **不在の主張は狭い綴りで。** 最初は `は対象外` で見ていたが、同じ画面の消費税
@@ -125,7 +122,7 @@ describe('経営サマリー — 予算実績差異の突合した期', () => {
 
   it('★ 期が 1 つも重ならなければ「算定できない」と理由を画面が出す (達成率を出さない)', async () => {
     await seed([at('2025-04', 4_000_000)], [at('2026-04', 5_000_000)]);
-    await mount('overview');
+    await mount('overview', '重なっていない');
     const alert = Array.from(container.querySelectorAll('[role="alert"]'))
       .map((el) => (el.textContent ?? '').replace(/\s+/g, ' '))
       .find((s) => s.includes('重なっていない'));
@@ -148,7 +145,7 @@ describe('経営サマリー — 回転日数の期間', () => {
     const store = getRecordStore();
     await store.insert(BALANCE_SHEET_COLLECTION, BS);
     await seed([], ['2026-03', '2026-04', '2026-05'].map((m) => at(m, 4_000_000)));
-    await mount('overview');
+    await mount('overview', '経営スコアカード');
     // 3 か月分 → 91.3 日 (直す前は月数に関係なく 365 日で割っていた)
     await waitForText(text, '回転日数は実績 3 か月分（91.3 日）で算定しています。');
   });
@@ -158,7 +155,7 @@ describe('経営サマリー — 回転日数の期間', () => {
     await store.insert(BALANCE_SHEET_COLLECTION, BS);
     const year = Array.from({ length: 12 }, (_, i) => `2026-${String(i + 1).padStart(2, '0')}`);
     await seed([], year.map((m) => at(m, 4_000_000)));
-    await mount('overview');
+    await mount('overview', '経営スコアカード');
     await waitForText(text, '回転日数は実績 12 か月分（365 日）で算定しています。');
   });
 });
@@ -169,13 +166,13 @@ describe('経営サマリー — 販売記録の期間', () => {
     await store.insert(SALES_COLLECTION, { date: '2024-01-15', channel: 'base', amount: 1_000_000, orders: 10 });
     await store.insert(SALES_COLLECTION, { date: '2026-06-20', channel: 'base', amount: 2_000_000, orders: 20 });
     await seed([], [at('2026-06', 4_000_000)]);
-    await mount('overview');
+    await mount('overview', '経営スコアカード');
     await waitForText(text, '販売記録 2024-01-15〜2026-06-20・2 か月分の累計です（KPI 実績とは別の入力です）。');
   });
 
   it('★ 対照: 販売記録が無ければ期間の行は出ない', async () => {
     await seed([], [at('2026-06', 4_000_000)]);
-    await mount('overview');
+    await mount('overview', '経営スコアカード');
     expect(text()).not.toContain('販売記録 ');
   });
 });
@@ -184,14 +181,14 @@ describe('KPI ページ — 予算パネルの突合した期', () => {
   it('★ 対象の期と対象外の月数をパネルが出す', async () => {
     const budgets = ['2026-04', '2026-05', '2026-06'].map((m) => at(m, 1_000_000));
     await seed(budgets, [at('2026-04', 1_000_000)]);
-    await mount('kpi');
+    await mount('kpi', '対象: 2026-04〜2026-04・1 か月（予算と実績の両方が在る期）。予算のみ 2 か月は対象外です');
     const t = text();
     expect(t).toContain('対象: 2026-04〜2026-04・1 か月（予算と実績の両方が在る期）。予算のみ 2 か月は対象外です');
   });
 
   it('★ 期が重ならなければパネルが理由を出す', async () => {
     await seed([at('2025-04', 1_000_000)], [at('2026-04', 1_000_000)]);
-    await mount('kpi');
+    await mount('kpi', '重なっていない');
     const alert = Array.from(container.querySelectorAll('[role="alert"]'))
       .map((el) => (el.textContent ?? '').replace(/\s+/g, ' '))
       .find((s) => s.includes('重なっていない'));

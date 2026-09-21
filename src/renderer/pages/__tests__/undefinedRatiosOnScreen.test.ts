@@ -26,6 +26,7 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
 import { MEMBERS_COLLECTION, type Member } from '../../data/members';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -52,22 +53,19 @@ const earning = (period: string): KpiActual => ({
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
-async function mountOverview(): Promise<void> {
+/**
+ * 貼ってから **`waitFor` が出るまで条件で待つ** (法則 `wait-for-condition-not-ticks`)。
+ * 否定だけの `it` は**肯定の前提を先に待つ 2 段**にする —— 否定は待てないので、
+ * 条件を置かないと描き終わる前に「出ていない」と言えてしまう。
+ */
+async function mountOverview(waitFor: string): Promise<void> {
   const def = SERVICES.find((s) => s.id === 'overview');
   if (!def) throw new Error('overview service missing');
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  await waitForText(text, waitFor);
 }
 
 async function seed(actuals: readonly KpiActual[], members: readonly Member[] = []): Promise<void> {
@@ -106,7 +104,7 @@ afterEach(async () => {
 describe('経営サマリー — 売上 0 の控え', () => {
   it('★ 損益タイルの比率が「—」になり、0.0% を刷らない', async () => {
     await seed([preRevenue('2026-04'), preRevenue('2026-05')]);
-    await mountOverview();
+    await mountOverview('営業利益率 —');
     const t = text();
     // 額は出る (期間の合計は測れている)
     expect(t).toContain('-3,000,000');
@@ -121,13 +119,13 @@ describe('経営サマリー — 売上 0 の控え', () => {
 
   it('★ コスト構造の枠は出ない (原価率 0.0% を並べない)', async () => {
     await seed([preRevenue('2026-04'), preRevenue('2026-05')]);
-    await mountOverview();
+    await mountOverview('経営スコアカード');
     expect(text()).not.toContain('コスト構造 (対売上)');
   });
 
   it('★ 対照: 売上が在れば同じ副題が数で出て、コスト構造の枠も出る', async () => {
     await seed([earning('2026-04'), earning('2026-05')]);
-    await mountOverview();
+    await mountOverview('営業利益率 35.0%');
     const t = text();
     // 営業利益 = 4,000,000×2 − (1,000,000+100,000+1,500,000)×2 = 2,800,000 → 35.0%
     expect(t).toContain('営業利益率 35.0%');
@@ -139,7 +137,7 @@ describe('経営サマリー — 売上 0 の控え', () => {
 describe('経営サマリー — 従業員 0 名の控え', () => {
   it('★ 生産性の枠は出ない (一人当たり ¥0 を並べない)', async () => {
     await seed([earning('2026-04')]);
-    await mountOverview();
+    await mountOverview('経営スコアカード');
     const t = text();
     expect(t).not.toContain('生産性 (一人当たり)');
     expect(t).not.toContain('一人当たり売上');
@@ -147,7 +145,7 @@ describe('経営サマリー — 従業員 0 名の控え', () => {
 
   it('★ 対照: メンバーが 1 名居れば一人当たりが出る', async () => {
     await seed([earning('2026-04')], [{ name: '山田 太郎', role: 'owner', email: 'a@example.com' } as Member]);
-    await mountOverview();
+    await mountOverview('生産性 (一人当たり)');
     const t = text();
     expect(t).toContain('生産性 (一人当たり)');
     expect(t).toContain('一人当たり売上');
