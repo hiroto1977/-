@@ -19,6 +19,7 @@ import {
   unreadableSalesDateNote,
 } from '../data/sales';
 import { salesToCsv, salesFromCsv } from '../data/salesCsv';
+import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import {
   MANUAL_OVERRIDES_COLLECTION,
   applyManualOverrides,
@@ -133,7 +134,23 @@ export function SalesPage() {
       if (fileRef.current) fileRef.current.value = '';
       return;
     }
-    const { entries: parsed, errors, stored, allStored } = salesFromCsv(text, entries);
+    /*
+     * **重複の判定は保管層から読み直した一覧で行う** (パス 384)。
+     *
+     * ここで画面の `entries` (= `useCollection` の購読の写し) を渡すと、一覧が
+     * IndexedDB から届く前に CSV を選んだときだけ空と比べることになり、
+     * `stored = 0` / `allStored = false` で**重複の検出が丸ごと働かない** ——
+     * 実測では「2 件を取り込みました」だけが出て、重複を含んだ総売上が並んだ。
+     * 「比べられなかった」を「重複が無い」と混ぜない (`readSalesForImport` は
+     * 読めなければ `null`)。
+     */
+    const existing = await readCollectionNow<SalesEntry>(SALES_COLLECTION);
+    if (existing === null) {
+      setError(unreadableForJudgementNote('売上の一覧'));
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+    const { entries: parsed, errors, stored, allStored } = salesFromCsv(text, existing);
     // 読めた行が**すべて**既存の記録と同じ内容なら、同じファイルを 2 度読んだと判断して断る (パス 126)。
     // 同じ内容の別の売上はありうるので、一部が同じだけなら取り込んで件数を言う (下)。
     if (allStored) {

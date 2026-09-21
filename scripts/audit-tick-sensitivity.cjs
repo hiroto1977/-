@@ -141,11 +141,6 @@ const LEDGER = [
     kind: 'setup-flush',
     why: '0 周で 14 件。99 か所を共有の待ちへ寄せた**あとも**落ちる —— 2 件は寄せた `waitForText` 自身が 5 秒で時間切れ、残りは上書きの seed が届かず `[]` を読む。**上書きを置く側 (seed) を条件で待つ形が要る**。40 件と大きく未着手',
   },
-  {
-    file: 'src/renderer/pages/__tests__/salesDuplicateImport.test.ts',
-    kind: 'setup-flush',
-    why: '0 周で 2 件。取り込み (CSV) が流れず、寄せた `waitForText` が 5 秒で時間切れ。**取り込む側を条件で待つ形が要る** (未着手)',
-  },
 ];
 
 function patchAll(files) {

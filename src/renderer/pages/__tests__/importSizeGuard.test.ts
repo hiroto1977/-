@@ -140,6 +140,18 @@ describe('KPI 実績 CSV の取り込み', () => {
     const { file, text } = fakeFile(KPI_CSV, 'small.csv');
     await chooseFile(file);
     expect(text).toHaveBeenCalledTimes(1);
+    /*
+     * **取り込まれた行が一覧に出るまで待つ。**
+     *
+     * 隣の売上の対照は「1 件を取り込みました」を待てるが、**KPI の取り込みは
+     * 成功したときに何も言わない** (`setError(errors.length > 0 ? … : undefined)`)。
+     * 待てる印は一覧の行そのものなので、`2026-04` が出るのを待つ。
+     *
+     * 2026-09-21 (パス 384) までここは待ちを持たず、固定回数の `settle` だけで
+     * 件数を当てていた —— 取り込みの側に非同期の段が 1 つ増えた日に
+     * `expected +0 to be 1` で落ちて分かった (`audit:tick-sensitivity` が捕まえた)。
+     */
+    await waitForText(() => container.textContent ?? '', '2026-04');
     expect(await getRecordStore().count(KPI_ACTUALS_COLLECTION)).toBe(1);
   });
 });

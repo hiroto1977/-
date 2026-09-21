@@ -7,6 +7,80 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 384 (2026-09-21) — CSV の重複の判定が「購読の写し」を読み、一覧が届く前だと丸ごと働かなかった
+
+出荷物 **11,937,114 B / 3,349,635 B (両方 +555 B)**。`renderer` は両ビルドが読むので LITE も同じだけ増える。
+
+### ★ パス 126 の欠陥が、読み込み順の窓から戻っていた
+
+`SalesPage.onImportFile` は `salesFromCsv(text, entries)` の `entries` に
+`useCollection` の**購読の写し**を渡していた。写しは一覧が IndexedDB から届く前は空なので
+`stored = 0` / `allStored = false` になり、**同じファイルを 2 度読んでも断られない**。
+
+実測 (0 周の probe で再現し、対照で確定):
+
+| | 画面 | 総売上 |
+| --- | --- | ---: |
+| 直す前 (一覧が届く前に取り込む) | 「2 件を取り込みました」**だけ** | **￥1,000** (￥500 の記録が倍) |
+| 直した後 | 「同じファイルを 2 度読んだと判断し、取り込みませんでした」 | ￥500 |
+
+パス 126 が直した「同じ CSV を 2 度読むと売上高と受注件数が 2 倍になり、金融機関等提出用の
+書面 §2『売上高（販売記録）』まで届く」そのものである。
+
+### ★ `loading` を見るだけでは足りない
+
+`useCollection` は**読みが失敗しても** `loading` を落とし (「読み込み中…」を永遠に出さないため)
+`records` は空のまま残す。つまり**画面からは「空」と「読めなかった」が区別できない**。
+だから判定の側が読み直し、読めなければ断る。
+
+### 母集団は 1 件ではなかった (4 か所 / 3 画面)
+
+| 画面 · handler | 判定 | 写しが空だと |
+| --- | --- | --- |
+| `SalesPage.onImportFile` | 全行同じ CSV を断る / 同じ行の件数を言う | 断らず、重複を含んだ総売上になる |
+| `KpiPage.onImportCsv` | 既に在る (期間, 事業) を**捨てる** | 2 件目が入って**合算される** |
+| `KpiPage.onAdd` | 手入力の重複を断る | 断らない |
+| `ShopifyPage.onRecord` | 同じ注文名を 1 件に | 断らない (e2e の「★ 同じ注文名の 2 度目は断られ」が見ている関門) |
+
+直しは 1 つの口 `readCollectionNow<T>(collection)` (行を返す / 読めなければ `null`) へ寄せ、
+**`null` を「重複が無い」と混ぜずに断る** (断りは `unreadableForJudgementNote` が 1 つ持つ)。
+
+### ★ 針は名前しか見ない
+
+`snapshotJudgementCensus.test.ts` は handler の中で `records` / `entries` を渡す呼び出しを数えるが、
+**同じ名前のローカル変数も拾う** (`addMany(entries)` の `entries` は解析した CSV の行)。
+だから分類 (`export` / `local` / `judgement`) は人が書き、**「判定は 0 件」の側は
+`readCollectionNow` を import しているかの要求が別に保つ**。
+
+### ★ 監査が私の入れた退行を捕まえた
+
+取り込みに非同期の段が 1 つ増えたので、`importSizeGuard` の KPI の対照が 0 周で
+`expected +0 to be 1` になった (`audit:tick-sensitivity` が「台帳に無いファイル」として鳴らした)。
+**KPI の取り込みは成功しても何も言わない** (`setError(errors.length > 0 ? … : undefined)`) ので、
+待てる印は一覧の行そのもの (`2026-04`) だった。
+
+### ★ 新しい検査が既存の門に捕まった
+
+`recordStoreIsolation` が「`_resetRecordStoreForTests()` は singleton を捨てるだけで
+IndexedDB は残る」と言うとおりで、共有の `resetRecordStore()` へ寄せた。
+
+### 対照
+
+| 壊した物 | 結果 |
+| --- | --- |
+| 写し (`entries`) へ戻す | ❌1 —— **画面が総売上 ￥1,000 を出す** |
+| 読みを常に失敗させる | ❌4 |
+| 断りの枝を消す | ❌1 |
+| census の判定を写しへ戻す | ❌2 |
+
+### 検証
+
+`audit:tick-sensitivity` **3 / 81 で双方向 OK** (台帳 4 → 3)・`typecheck` 緑・
+`npm test` **807 / 17,981**・`verify:all` exit 0・`chain:verify` 緑・
+`perf` OK (LITE DCL 193 ms / FULL DCL 553 ms)・`e2e` **455 件 ❌ 0**・`e2e:lite` **455 件 ❌ 0**。
+
+**残り 3 本**: `setup-flush` 2 (`overviewHydroponics` / `parameterWiring`) / `text-captured` 1。
+
 ## パス 383 (2026-09-21) — 台帳の `why` が 3 度目に偽だった (`setup-flush` は条件で待てる)
 
 出荷物 **11,936,559 B / 3,349,080 B で byte 単位で不変** (直したのは `__tests__/` 4 本と

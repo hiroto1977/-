@@ -7,6 +7,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
+import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import { localIsoDate } from '../../shared/localDate';
 import {
   KPI_ACTUALS_COLLECTION,
@@ -424,7 +425,15 @@ function ActualsPanel() {
       return;
     }
     // 既に在る (期間, 事業) とファイル内の重複行はスキップ (パス 124)。
-    const { entries, errors, duplicates } = kpiActualsFromCsv(text, records.map((r) => r.data));
+    // **判定の相手は保管層から読み直す** (パス 384) —— 画面の `records` は購読の写しで、
+    // 一覧が届く前は空。空と比べると重複が 1 件も見つからず、同じ期・事業の 2 件目が
+    // 入って**合算される** (このファイルの `onAdd` が「2 件目を入れると合算される」と書いている当のこと)。
+    const stored = await readCollectionNow<KpiActual>(KPI_ACTUALS_COLLECTION);
+    if (stored === null) {
+      setError(unreadableForJudgementNote('KPI 実績の一覧'));
+      return;
+    }
+    const { entries, errors, duplicates } = kpiActualsFromCsv(text, stored);
     // Atomic: all valid rows commit together or none (no partial import).
     if (entries.length > 0) await addMany(entries);
     setError(
@@ -438,7 +447,13 @@ function ActualsPanel() {
     try {
       const parsed = parseKpiActual(form);
       // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
-      if (hasSamePeriodUnit(records.map((r) => r.data), parsed)) {
+      // 判定の相手は保管層から読み直す (パス 384 —— 写しは一覧が届く前は空)。
+      const stored = await readCollectionNow<KpiActual>(KPI_ACTUALS_COLLECTION);
+      if (stored === null) {
+        setError(unreadableForJudgementNote('KPI 実績の一覧'));
+        return;
+      }
+      if (hasSamePeriodUnit(stored, parsed)) {
         setError(duplicateActualMessage('実績', parsed));
         return;
       }

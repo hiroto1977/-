@@ -7,6 +7,7 @@ import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { SALES_COLLECTION, duplicateOrderMessage, findShopifyOrder, type SalesEntry } from '../data/sales';
 import { orderToSalesEntry } from '../data/shopifyImport';
+import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 
 const inputStyle = {
   background: 'var(--bg)',
@@ -20,7 +21,8 @@ const inputStyle = {
 /** Record a Shopify order into the cross-channel 売上集計 (→ KPI). Bridges
  *  Shopify into the analytics pipeline so dashboards reflect real orders. */
 function OrderToSalesForm() {
-  const { records, add } = useCollection<SalesEntry>(SALES_COLLECTION);
+  // 購読は書き込み (`add`) のためだけに持つ —— 判定は `readCollectionNow` で読み直す (パス 384)。
+  const { add } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [name, setName] = useState('');
   const [total, setTotal] = useState('');
   const [date, setDate] = useState('');
@@ -37,7 +39,14 @@ function OrderToSalesForm() {
       return;
     }
     // 同じ注文名は 1 件 —— 2 度記録すると売上高と受注件数に 2 度数えられる (パス 126)。
-    const dup = findShopifyOrder(records.map((r) => r.data), name);
+    // **判定の相手は保管層から読み直す** (パス 384) —— 画面の `records` は購読の写しで、
+    // 一覧が届く前は空なので「既に在るか」に必ず「無い」と答える。
+    const existing = await readCollectionNow<SalesEntry>(SALES_COLLECTION);
+    if (existing === null) {
+      setErr(unreadableForJudgementNote('売上の一覧'));
+      return;
+    }
+    const dup = findShopifyOrder(existing, name);
     if (dup !== null) {
       setErr(duplicateOrderMessage(dup));
       return;
