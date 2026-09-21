@@ -130,6 +130,25 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.shared('ontologyLaws'))],
   },
   {
+    id: 'wait-for-condition-not-ticks',
+    family: 'gate-hygiene',
+    name: '待つなら条件で待つ (回数では負荷が嘘をつく)',
+    statement:
+      'jsdom の検査が「固定回数だけ回してから文が出ていることを主張する」形だと、'
+      + '**空いている機械では通り、全件実行の負荷の下では落ちる**。'
+      + '条件で待つ道は `renderer/__tests__/jsdomWait.ts` に 1 つ在る (パス 169) が、'
+      + 'その census は固定回数を「数えるのは別の話」と明記して母集団から外していたため、'
+      + '**落ちる原因そのものが数えられていなかった**。実測 (2026-09-21) で 3 件目が出た ——'
+      + '`importSizeGuard` が全件 3 回のうち 1 回落ち、1 ファイルなら 12 回で 0 回、'
+      + '`settle()` の回数を変えると **ticks=1 で 2 件落ち ticks=2 以上で通る** (tick 依存の確定)。'
+      + '共有の待ちへ寄せると **ticks=0 でも通る**。'
+      + '危ないのは「固定回数」だけではなく「その後で**肯定の**文を主張する」形で '
+      + '(否定は待っても意味が無い)、実測は 固定回数 108 本 / 肯定の主張つき 34 本 / '
+      + '共有の待ちを使う 2 本 → 危ない形 32 本。数は減る方向にしか動かさない。',
+    provenance: ['パス 169 (共有の待ち)', 'パス 368 (3 件目と母集団)'],
+    enforcedBy: [test(T.renderer('fixedTickAssertionCensus')), test(T.renderer('waitHelperCensus'))],
+  },
+  {
     id: 'count-has-floor',
     family: 'gate-hygiene',
     name: '件数を出す検査は床を持つ',

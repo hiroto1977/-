@@ -19,6 +19,7 @@ import { SALES_COLLECTION } from '../../data/sales';
 import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
 import { serializeBackup } from '../../data/backup';
 import { MAX_BACKUP_IMPORT_BYTES, MAX_CSV_IMPORT_BYTES } from '../../data/importFile';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const MiB = 1024 * 1024;
 
@@ -109,7 +110,7 @@ describe('売上 CSV の取り込み', () => {
     await mount(SalesPage);
     const { file, text } = fakeFile(SALES_CSV, 'big.csv', 64 * MiB);
     await chooseFile(file);
-    expect(container.textContent).toContain('CSV ファイルが大きすぎます (64.0 MB。上限 20.0 MB)');
+    await waitForText(() => container.textContent ?? '', 'CSV ファイルが大きすぎます (64.0 MB。上限 20.0 MB)');
     expect(text).not.toHaveBeenCalled();
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(0);
   });
@@ -119,7 +120,7 @@ describe('売上 CSV の取り込み', () => {
     const { file, text } = fakeFile(SALES_CSV, 'small.csv');
     await chooseFile(file);
     expect(text).toHaveBeenCalledTimes(1);
-    expect(container.textContent).toContain('1 件を取り込みました');
+    await waitForText(() => container.textContent ?? '', '1 件を取り込みました');
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });
 });
@@ -129,7 +130,7 @@ describe('KPI 実績 CSV の取り込み', () => {
     await mount(KpiPage);
     const { file, text } = fakeFile(KPI_CSV, 'big.csv', MAX_CSV_IMPORT_BYTES + 1);
     await chooseFile(file);
-    expect(container.textContent).toContain('CSV ファイルが大きすぎます');
+    await waitForText(() => container.textContent ?? '', 'CSV ファイルが大きすぎます');
     expect(text).not.toHaveBeenCalled();
     expect(await getRecordStore().count(KPI_ACTUALS_COLLECTION)).toBe(0);
   });
@@ -148,7 +149,7 @@ describe('バックアップの復元', () => {
     await mount(BackupPanel);
     const { file, text } = fakeFile('{}', 'big.json', MAX_BACKUP_IMPORT_BYTES + 1);
     await chooseFile(file);
-    expect(container.textContent).toContain('バックアップファイルが大きすぎます');
+    await waitForText(() => container.textContent ?? '', 'バックアップファイルが大きすぎます');
     expect(text).not.toHaveBeenCalled();
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(0);
   });
@@ -161,8 +162,8 @@ describe('バックアップの復元', () => {
     await mount(BackupPanel);
     const { file } = fakeFile(backup, 'backup.json');
     await chooseFile(file);
-    expect(container.textContent).toContain('1 件のレコードを復元しました');
-    expect(container.textContent).toContain('1 件は形式が不正なため取り込みませんでした');
+    await waitForText(() => container.textContent ?? '', '1 件のレコードを復元しました');
+    await waitForText(() => container.textContent ?? '', '1 件は形式が不正なため取り込みませんでした');
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });
 
@@ -174,7 +175,7 @@ describe('バックアップの復元', () => {
     const { file, text } = fakeFile(backup, 'backup.json');
     await chooseFile(file);
     expect(text).toHaveBeenCalledTimes(1);
-    expect(container.textContent).toContain('1 件のレコードを復元しました');
+    await waitForText(() => container.textContent ?? '', '1 件のレコードを復元しました');
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });
 });

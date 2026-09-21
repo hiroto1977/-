@@ -150,12 +150,12 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (92)
+## 5. 法則と執行者 (93)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
 
-### ゲートそのものの規律 (23)
+### ゲートそのものの規律 (24)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -164,6 +164,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `outside-scope-gets-its-own-census` | **走査の外は、広げれば見えるとは限らない** — 走査範囲を絞ったら、外した側の母集団を一度数える。広げれば見えると決めてはいけない —— 外の母集団は書き方の前提が違うので、同じ検出器を当てると偽陽性で埋まり、本当に危ない物は元の検出器の設計上の除外（例: 素の識別子の送り先）に隠れたままになる。外が小さいなら「危ない構文か」を問うのをやめ、**全件**を守りつきで台帳に載せる。 | パス 342 / パターン 0-a / パス 364 (lint:storage の外は 8 本・保存は 3 本) | ゲート `npm run lint:network-targets`<br>検査 `src/shared/__tests__/networkTargetWitness.test.ts`<br>検査 `src/shared/__tests__/distributedArtifactStorage.test.ts` |
 | `gate-runs-in-ci` | **検査が走る場所が CI に在る** — verify:all の全ゲートが ci.yml に在る。「これで強制される」と書いた検査は、CI のどのステップで走るかを確かめる。走らないなら vitest ゲートへ移す。 | パターン 0-a-11 / パターン 0-c | ゲート `npm run lint:docs` |
 | `negative-control` | **ゲートは守りを外して確かめる** — 自作のゲートは --self-test (陽性・陰性の対照) を持ち、verify:all がそれを走らせる。--self-test の「鳴る側」は作った本人の想像なので、守るはずの実物を一度壊して鳴らす。 | パターン 0 / パターン 0-a-15 | 検査 `src/shared/__tests__/ontologyLaws.test.ts` |
+| `wait-for-condition-not-ticks` | **待つなら条件で待つ (回数では負荷が嘘をつく)** — jsdom の検査が「固定回数だけ回してから文が出ていることを主張する」形だと、**空いている機械では通り、全件実行の負荷の下では落ちる**。条件で待つ道は `renderer/__tests__/jsdomWait.ts` に 1 つ在る (パス 169) が、その census は固定回数を「数えるのは別の話」と明記して母集団から外していたため、**落ちる原因そのものが数えられていなかった**。実測 (2026-09-21) で 3 件目が出た ——`importSizeGuard` が全件 3 回のうち 1 回落ち、1 ファイルなら 12 回で 0 回、`settle()` の回数を変えると **ticks=1 で 2 件落ち ticks=2 以上で通る** (tick 依存の確定)。共有の待ちへ寄せると **ticks=0 でも通る**。危ないのは「固定回数」だけではなく「その後で**肯定の**文を主張する」形で (否定は待っても意味が無い)、実測は 固定回数 108 本 / 肯定の主張つき 34 本 / 共有の待ちを使う 2 本 → 危ない形 32 本。数は減る方向にしか動かさない。 | パス 169 (共有の待ち) / パス 368 (3 件目と母集団) | 検査 `src/renderer/__tests__/fixedTickAssertionCensus.test.ts`<br>検査 `src/renderer/__tests__/waitHelperCensus.test.ts` |
 | `count-has-floor` | **件数を出す検査は床を持つ** — 「Checked 0 … ✅」は走査が壊れても緑。ゲートは件数に下限を置き、検査は「全件について〜」の前に非空を主張する。台帳にせず命名規約 (VERIFIED_*) で絞る。 | パターン 0-a-7 | ゲート `npm run lint:test-coverage`<br>検査 `src/shared/__tests__/e2eSuiteFloors.test.ts`<br>ゲート `npm run lint:deps` |
 | `table-pinned-by-literal` | **表を留める検査は表を読まない** — 留める対象を読んで回る検査は、対象が変われば一緒に変わる。何が入っているかと何が入っていないかを字面で書く。モジュール定数は vi.resetModules + 動的 import で留める。 | パターン 0-a-9 / パターン 0-a-5 | 実機 `npm run mutate`<br>散文だけ `docs/SESSION_HANDOFF.md` — 「表を読んで回っている」形は変異検査 (Stryker) が生存として映すが、CI の毎回では走らない (週次)。字面かどうかを静的に数える網は無い |
 | `unique-anchor-for-refs` | **参照には一意な錨を前置する** — file:line の参照は、直前のバッククォート付き識別子が引用位置の ±15 行に居ることを見る。錨が無い参照は行番号がファイルに収まる限り永久に通る。錨は一意でなければ意味が無い。 | パターン 0-a-3 / パス 292 | ゲート `npm run verify:arch` |
@@ -300,6 +301,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 92 (機械あり 89 / 散文だけ 3)
+- 法則 93 (機械あり 90 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

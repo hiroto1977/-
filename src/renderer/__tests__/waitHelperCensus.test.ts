@@ -148,7 +148,11 @@ describe('jsdom の待ちは 1 か所に寄せる (母集団は走査で数え�
     expect(pollsByHand(byHand), '自前の while + act を掴めていない').toBe(true);
     expect(pollsByHand(tickForm), 'setTimeout(tick, …) を掴めていない').toBe(true);
     expect(pollsByHand(untilForm), 'Date.now() > until を掴めていない').toBe(true);
-    // 固定回数は「待ち」ではないので、この台帳の対象外 (数えるのは別の話)。
+    // 固定回数は「待ち」ではないので、この台帳の対象外。
+    // **その「別の話」は `fixedTickAssertionCensus.test.ts` (パス 368) が数える** ——
+    // 上の docblock が名指ししている危険 (負荷の下で足りない) の 3 件目が
+    // 2026-09-21 に `importSizeGuard` で出たため、固定回数で待ってから
+    // 肯定の文を主張する形 (実測 32 本) を非増加の台帳に載せた。
     expect(pollsByHand(fixed), '固定回数の settle を自前の待ちとして掴んでいる').toBe(false);
     expect(pollsByHand('const x = 1;'), '無関係な文を掴んでいる').toBe(false);
   });

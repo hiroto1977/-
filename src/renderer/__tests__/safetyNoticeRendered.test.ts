@@ -6,6 +6,7 @@ import { EmotionsPage } from '../pages/EmotionsPage';
 import { StorageProtectionNotice } from '../pages/SettingsPage';
 import { CRISIS_MARKERS, SUPPORT_RESOURCES } from '../data/counseling';
 import { EVICTION_RECOVERY } from '../../shared/storageDurability';
+import { waitForText } from './jsdomWait';
 
 /*
  * **安全側の断りが、条件が成り立ったときに実際に画面へ出ること** — 2026-09-21 · パス 367。
@@ -135,11 +136,10 @@ describe('危機のときの相談窓口 — つらいと打った人に番号�
   it('★ 危機のメモを打つと窓口の見出しと窓口が全部出る', async () => {
     await mount(createElement(EmotionsPage));
     await typeNote('もう消えたい');
-    const text = container.textContent ?? '';
-    expect(text, '危機の見出しが出ていない').toContain(CRISIS_HEADING);
+    await waitForText(() => container.textContent ?? '', CRISIS_HEADING, { timeoutMs: 5_000 });
     for (const r of SUPPORT_RESOURCES) {
-      expect(text, `窓口 ${r.label} が出ていない`).toContain(r.label);
-      expect(text, `窓口 ${r.label} の連絡先が出ていない`).toContain(r.detail);
+      await waitForText(() => container.textContent ?? '', r.label, { timeoutMs: 5_000 });
+      await waitForText(() => container.textContent ?? '', r.detail, { timeoutMs: 5_000 });
     }
   });
 
@@ -163,11 +163,10 @@ describe('立ち退きの警告 — 消えうる領域だと言う', () => {
       durability: 'best-effort',
     };
     await mount(createElement(StorageProtectionNotice));
-    const text = container.textContent ?? '';
-    expect(text).toContain(NOTICE);
-    expect(text).toContain(PHRASE);
+    await waitForText(() => container.textContent ?? '', NOTICE);
+    await waitForText(() => container.textContent ?? '', PHRASE);
     for (const row of EVICTION_RECOVERY) {
-      expect(text, `${row.what} が出ていない`).toContain(row.what);
+      await waitForText(() => container.textContent ?? '', row.what, { timeoutMs: 5_000 });
     }
   });
 
@@ -180,9 +179,8 @@ describe('立ち退きの警告 — 消えうる領域だと言う', () => {
       durability: 'best-effort',
     };
     await mount(createElement(StorageProtectionNotice));
-    const text = container.textContent ?? '';
-    expect(text).toContain(NOTICE);
-    expect(text).toContain(PHRASE);
+    await waitForText(() => container.textContent ?? '', NOTICE);
+    await waitForText(() => container.textContent ?? '', PHRASE);
   });
 
   it('★ persistent では出さない (上の主張は空でない)', async () => {
