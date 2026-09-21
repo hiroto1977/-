@@ -800,11 +800,46 @@ class BrowserVault implements Vault {
           recoveryWrappedKey: recoveryWrap.ciphertext,
           recoveryVersion: 1,
         };
-        await idbPut(db, META_STORE, 'vault', meta);
-        await idbPut(db, META_STORE, 'master-wrap', {
-          iv: passwordWrappedMaster.iv,
-          ciphertext: passwordWrappedMaster.ciphertext,
-        });
+        // meta と master-wrap は **1 トランザクションで**入れ替える
+        // (2026-09-21 · パス 361)。`idbPutAll` の docblock が「`idbPut` を 2 回呼ぶと
+        // トランザクションが 2 つになる。パスワード周りではこれが効く」と警告している
+        // 当のことを、**初期化だけがやっていた** (`changePassword` と
+        // `recoverWithMnemonic` は最初から `idbPutAll`)。
+        //
+        // ## 実測 (2026-09-21) —— 2 つ目が落ちた状態は「静かに使える」
+        //
+        // meta だけ書けて master-wrap が書けなかった金庫を作って測ると:
+        //
+        // ```
+        //   unlock(password)      → 成功する (kcv は passwordKey を指すので通る)
+        //   setToken / getToken   → 往復する (currentKey = passwordKey)
+        //   recoverWithMnemonic   → 以後 TOKEN LOST (null)
+        // ```
+        //
+        // `unlock` は master-wrap が無い金庫を **Phase E 以前の旧形式**と見なして
+        // `currentKey = passwordKey` へ倒す (それ自体は正しい前方互換)。つまり
+        // **利用者は動く金庫を見るので設定をやり直さない** —— しかも `initialize` は
+        // meta が在れば「既に初期化されています」と断るので**やり直せない**。
+        // その間に保存したトークンは passwordKey で包まれるが、meta の
+        // `recoveryWrappedKey` が包んでいるのは**本物の master 鍵**なので、
+        // 利用者が大事に控えた 24 語で復旧した瞬間に実効鍵が入れ替わり、
+        // **それまでのトークンが全部読めなくなる**。
+        //
+        // ## 断る側には倒さない
+        //
+        // 「meta が Phase E を名乗るのに master-wrap が無ければ unlock を断る」は
+        // **既にこの状態に居る利用者にとって改悪**である —— 今は読めているトークンが
+        // その場で読めなくなり、復旧しても失われる結末は変わらない。master-wrap は
+        // master 鍵が無いと作れず、master 鍵は復旧枝からしか出てこないので、
+        // 解錠時に**直す**こともできない。だから塞ぐのは**作る側**だけにする。
+        await idbPutAll(db, [
+          { store: META_STORE, key: 'vault', value: meta },
+          {
+            store: META_STORE,
+            key: 'master-wrap',
+            value: { iv: passwordWrappedMaster.iv, ciphertext: passwordWrappedMaster.ciphertext },
+          },
+        ]);
 
         // 4. Re-import the key non-extractable for runtime use.
         const nonExtractable = await importNonExtractable(masterRaw);

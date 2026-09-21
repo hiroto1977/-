@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (90)
+## 5. 法則と執行者 (91)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -220,7 +220,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `loopback-oauth-host-pin` | **OAuth callback の Host は loopback だけ** — DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。 | 不変条件 #12 / パターン 0-a-14 | 検査 `src/shared/__tests__/loopbackChecks.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `header-values-one-rule` | **Headers が何を受理するかは 1 つの判定** — 資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。 | パス 244 / パス 296 | 検査 `src/shared/__tests__/headerValue.test.ts`<br>検査 `src/shared/__tests__/headerValueLeak.test.ts` |
 
-### 保存と復元 (12)
+### 保存と復元 (13)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -234,6 +234,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `data-origin-declared` | **数字の出所 (sample / local / remote) を宣言する** — 空の stub を「ライブ」として刷らない。分類は木から機械的に決まる規則で、総和型なので足し忘れは tsc が弾く。同梱の見本は集計の側がそれを言う。 | dataOrigin.ts の docblock / パス 164 / パス 187 | ゲート `npm run lint:data-origin`<br>検査 `src/shared/__tests__/dataOrigin.test.ts`<br>型 `src/shared/dataOrigin.ts` |
 | `crypto-floors-frozen` | **暗号の床は凍結値** — PBKDF2 の反復・salt の byte は使う側ではなく宣言行に危険を書き、下げる編集が検査で落ちる。封緘した物は自分を作った反復回数を覚える。**導出は凍結値を読む** —— ハッシュを書き写すと封筒のメタだけが動いて「復号できないバックアップ」になる (パス 327)。 | パス 237 / パス 239 / パス 240 / パス 327 / パターン 0-a-10 | 検査 `src/shared/__tests__/kdfParamsCensus.test.ts`<br>検査 `src/shared/__tests__/cryptoParams.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `key-bound-to-slot` | **暗号文は置き場所と束ねる** — 認証付き暗号は「中身が正しい」しか言わない。鍵と値の対で保管するなら鍵を additionalData に入れ、解錠 (鍵が手に入る瞬間) に全件直す。 | パターン 0-a-21 | 検査 `src/shared/__tests__/ontologyLaws.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
+| `paired-secrets-written-atomically` | **対で意味を持つ保管値は 1 トランザクションで入れ替える** — 鍵の検算値 (`kcv`) と鍵の包み (`master-wrap`) のように**片方だけでは嘘になる**保管値は、`idbPut` を 2 回ではなく 1 トランザクションで書く。`vault.ts` の `idbPutAll` は docblock でその危険を名指ししていたのに、**`initialize` だけが `idbPut` を 2 回呼んでいた** (`changePassword` / `recoverWithMnemonic` は最初から通っていた)。実測 (2026-09-21): meta だけ書けた金庫は `unlock` が**成功し** (kcv は passwordKey を指す)、トークンも往復するので**利用者は設定をやり直さない** —— しかも `initialize` は meta が在れば断るので**やり直せない**。meta の `recoveryWrappedKey` が包むのは本物の master 鍵なので、**控えた 24 語で復旧した瞬間に実効鍵が入れ替わり、それまでのトークンが全部読めなくなる** (`TOKEN LOST`)。**塞ぐのは作る側だけ** —— 「Phase E を名乗るのに master-wrap が無ければ解錠を断る」は既にその状態に居る利用者にとって改悪で、解錠時に直す道も無い (master-wrap は master 鍵が無いと作れず、master 鍵は復旧枝からしか出ない)。 | パス 239 / パス 361 | 検査 `src/renderer/security/__tests__/vaultPairedWrites.test.ts`<br>検査 `src/renderer/security/__tests__/vault.test.ts` |
 | `write-then-read-loop` | **書く口を足したら読みの一巡** — 「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。 | パターン 0-a-22 | 検査 `src/renderer/__tests__/webShimSnapshotBranches.test.ts`<br>検査 `src/renderer/__tests__/webShimInputGatesAndSaves.test.ts`<br>検査 `src/renderer/__tests__/deviceStoreWritePolicy.test.ts` |
 | `destructive-ops-have-owner` | **破壊的な操作は「宛先を誰が決めるか」で数える** — 名前がデータ由来でなくても、宛先が環境変数なら守りが要る。rmSync / unlinkSync / 上書きは書き込み先の名前とは別の軸。台帳の ✅ には問いを書く。 | パターン 0-a-20 | 検査 `src/shared/__tests__/notebooklmExportClear.test.ts`<br>検査 `src/main/__tests__/exportSymlinkContainment.test.ts`<br>ゲート `npm run lint:shell` |
 
@@ -298,6 +299,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 90 (機械あり 87 / 散文だけ 3)
+- 法則 91 (機械あり 88 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

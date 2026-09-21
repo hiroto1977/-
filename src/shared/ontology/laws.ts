@@ -568,6 +568,14 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.shared('ontologyLaws')), chain],
   },
   {
+    id: 'paired-secrets-written-atomically',
+    family: 'at-rest',
+    name: '対で意味を持つ保管値は 1 トランザクションで入れ替える',
+    statement: '鍵の検算値 (`kcv`) と鍵の包み (`master-wrap`) のように**片方だけでは嘘になる**保管値は、`idbPut` を 2 回ではなく 1 トランザクションで書く。`vault.ts` の `idbPutAll` は docblock でその危険を名指ししていたのに、**`initialize` だけが `idbPut` を 2 回呼んでいた** (`changePassword` / `recoverWithMnemonic` は最初から通っていた)。実測 (2026-09-21): meta だけ書けた金庫は `unlock` が**成功し** (kcv は passwordKey を指す)、トークンも往復するので**利用者は設定をやり直さない** —— しかも `initialize` は meta が在れば断るので**やり直せない**。meta の `recoveryWrappedKey` が包むのは本物の master 鍵なので、**控えた 24 語で復旧した瞬間に実効鍵が入れ替わり、それまでのトークンが全部読めなくなる** (`TOKEN LOST`)。**塞ぐのは作る側だけ** —— 「Phase E を名乗るのに master-wrap が無ければ解錠を断る」は既にその状態に居る利用者にとって改悪で、解錠時に直す道も無い (master-wrap は master 鍵が無いと作れず、master 鍵は復旧枝からしか出ない)。',
+    provenance: ['パス 239', 'パス 361'],
+    enforcedBy: [test('src/renderer/security/__tests__/vaultPairedWrites.test.ts'), test('src/renderer/security/__tests__/vault.test.ts')],
+  },
+  {
     id: 'write-then-read-loop',
     family: 'at-rest',
     name: '書く口を足したら読みの一巡',
