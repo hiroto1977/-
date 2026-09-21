@@ -54,7 +54,13 @@ export type NumKind =
   | 'days' // 日数（整数）
   | 'energy' // kWh/kg（電力原単位）
   | 'mgPer100g' // mg/100g（食品成分）
-  | 'km'; // 距離 (km)
+  | 'km' // 距離 (km)
+  // 水耕栽培の運転設定 (2026-09-21 · パス 373)。
+  | 'celsius' // ℃ (氷点下が正当なので負を断らない)
+  | 'liters' // L
+  | 'ppmAir' // ppm (空気中の CO₂ —— `ppm` は単位語が mg/L なので借りない)
+  | 'normality' // N (規定度)
+  | 'ecRise'; // mS/cm (原液 1 mL/L あたりの EC 上昇)
 
 export interface NumSpec {
   readonly label: string;
@@ -112,7 +118,25 @@ const KIND: Record<NumKind, KindRule> = {
   mgPer100g: { unit: 'mg/100g', negativeIsFatal: true, sane: 10000 },
   // 通勤距離 (片道 km)。`length` は m で 0 を断るが、マイカー通勤なし = 0 km は正当。
   km: { unit: 'km', negativeIsFatal: true, sane: 1000 },
+  // 水耕栽培の運転設定が足した 5 種 (2026-09-21 · パス 373)。**近い kind を借りない** ——
+  // 単位語は「0 X として計算されています」「X 以下で入力してください」の文面に
+  // そのまま出るので、借りると嘘の単位を言う (上の days / energy / mgPer100g と同じ理由)。
+  // 温度だけ `negativeIsFatal` を立てない —— 氷点下の室温は正当な入力である。
+  celsius: { unit: '℃', sane: 60 },
+  liters: { unit: 'L', negativeIsFatal: true, sane: 100000 },
+  ppmAir: { unit: 'ppm', negativeIsFatal: true, sane: 50000 },
+  normality: { unit: 'N', negativeIsFatal: true, sane: 40 },
+  ecRise: { unit: 'mS/cm', negativeIsFatal: true, sane: 5 },
 };
+
+/**
+ * その種類が名乗る単位語。**台帳の単位と突き合わせるため**に公開する ——
+ * 近い kind を借りると「0 倍として計算されています」のように嘘の単位を言うので、
+ * 台帳を持つ側 (`CONTROL_FIELD_BOUNDS` など) が一致を検査できる必要がある。
+ */
+export function unitOfKind(kind: NumKind): string {
+  return KIND[kind].unit;
+}
 
 /**
  * 1 つの入力を検査する。問題がなければ null。

@@ -1,4 +1,6 @@
 import { CeilingNotice } from '../components/CeilingNotice';
+import { GuardedNumber } from '../components/GuardedNumber';
+import { refusedFields, refusalLabels, saveRefusalNote } from '../data/inputGuards';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { useMemo, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -20,17 +22,17 @@ import {
 import { latestRecord } from '../data/latestRecord';
 import {
   batchesFromRecords,
-  controlRecordFromRecords,
   dosingFrom,
   HYDROPONICS_BATCHES_COLLECTION,
   HYDROPONICS_CONTROL_COLLECTION,
-  HYDROPONICS_CONTROL_DEFAULTS,
+  HYDROPONICS_CONTROL_SPECS,
   HYDROPONICS_READINGS_COLLECTION,
   MAX_BATCH_ID_CHARS,
   MAX_HYDROPONICS_NOTE_CHARS,
   parseBatch,
   parseControlRecord,
   parseReading,
+  readControlRecord,
   readingsFromRecords,
   settingsFrom,
   targetsFrom,
@@ -38,6 +40,7 @@ import {
   type HydroponicReadingRecord,
   type HydroponicsControlRecord,
 } from '../data/hydroponicsLog';
+import { outOfRangeControlNote, type ControlFieldKey } from '../../shared/hydroponicsControl';
 import {
   assessReading,
   batchSchedule,
@@ -167,7 +170,10 @@ export function HydroponicsPage() {
     () => latestRecord(setupCol.records)?.data ?? HYDROPONICS_DEFAULTS,
     [setupCol.records],
   );
-  const control = useMemo(() => controlRecordFromRecords(controlCol.records), [controlCol.records]);
+  const controlRead = useMemo(() => readControlRecord(controlCol.records), [controlCol.records]);
+  const control = controlRead.record;
+  /** 幅の外だったので既定へ倒した欄 —— **黙って倒さない** (パス 373)。 */
+  const controlOutOfRangeNote = outOfRangeControlNote(controlRead.outOfRange);
   const readings = useMemo(() => readingsFromRecords(readingCol.records), [readingCol.records]);
   const batches = useMemo(() => batchesFromRecords(batchCol.records), [batchCol.records]);
 
@@ -322,6 +328,16 @@ export function HydroponicsPage() {
     if (controlForm === null) return;
     setControlError(null);
     setControlOk(null);
+    // **⛔ の欄が在れば保存しない** (パス 214 と同じ形) —— 判定は出し直せるが、
+    // 保存した値は残り、以後すべての調製の指示がそれを読む。
+    const refused = refusedFields(HYDROPONICS_CONTROL_SPECS, controlForm as Record<ControlFieldKey, string>);
+    const note = saveRefusalNote(
+      refusalLabels(HYDROPONICS_CONTROL_SPECS, refused, Object.keys(HYDROPONICS_CONTROL_SPECS) as readonly ControlFieldKey[]),
+    );
+    if (note !== null) {
+      setControlError(note);
+      return;
+    }
     let record: HydroponicsControlRecord;
     try {
       record = parseControlRecord(controlForm);
@@ -802,18 +818,14 @@ export function HydroponicsPage() {
                 marginTop: 10,
               }}
             >
-              {Object.keys(HYDROPONICS_CONTROL_DEFAULTS).map((k) => (
-                <label key={k} style={{ fontSize: 12, display: 'block' }}>
-                  {k}
-                  <input
-                    type="text"
-                    inputMode="decimal"
+              {(Object.keys(HYDROPONICS_CONTROL_SPECS) as readonly ControlFieldKey[]).map((k) => (
+                <div key={k} data-hydroponics-control-field={k}>
+                  <GuardedNumber
+                    spec={HYDROPONICS_CONTROL_SPECS[k]}
                     value={controlForm[k] ?? ''}
-                    onChange={(e) => setControlForm((v) => (v === null ? v : { ...v, [k]: e.target.value }))}
-                    data-hydroponics-control-input={k}
-                    style={{ width: '100%', marginTop: 2 }}
+                    onChange={(v) => setControlForm((prev) => (prev === null ? prev : { ...prev, [k]: v }))}
                   />
-                </label>
+                </div>
               ))}
             </div>
             <button
@@ -829,6 +841,15 @@ export function HydroponicsPage() {
               取消
             </button>
           </>
+        )}
+        {controlOutOfRangeNote !== null && (
+          <p
+            data-hydroponics-control-out-of-range
+            role="alert"
+            style={{ color: 'var(--warning)', fontSize: 13 }}
+          >
+            ⚠ {controlOutOfRangeNote}
+          </p>
         )}
         {controlError !== null && (
           <p data-hydroponics-error="control" style={{ color: 'var(--danger)', fontSize: 13 }}>

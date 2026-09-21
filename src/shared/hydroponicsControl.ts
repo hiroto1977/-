@@ -765,6 +765,185 @@ export const DEFAULT_CONTROL_SETTINGS: ControlSettings = {
   lowPotassiumSwitchDays: null,
 };
 
+/**
+ * **運転設定 18 欄の入力できる幅** (2026-09-21 · パス 373)。
+ *
+ * ## なぜ要るか (実測 2026-09-21)
+ *
+ * この 18 欄は画面が**素の `<input type="text">`** で出しており
+ * (ラベルも生の鍵名 `waterTempLowC` のまま)、保存側の検査は
+ * `parseControlRecord` の 3 つだけだった:
+ *
+ * ```
+ *   req    (目標域 10 + 残アルカリ度)  有限なら何でも通る —— 負も可・上限なし
+ *   optNum (調製の 4 欄)               有限かつ > 0 だけ   —— 上限なし
+ *   days   (周期・しきい値 3 欄)       1 以上の整数         —— 上限なし
+ * ```
+ *
+ * 効いていたのは `relationIssue` の「下限 ≦ 上限」だけで、
+ * `co2HighPpm: 1e9` も低≦高を保てば保存される。結果 (実測):
+ *
+ * ```
+ *   topUpLiters(1, { …, tankLiters: 1e12 })
+ *     → { kind: 'top-up', liters: 990000000000, why: '液位 1% を満水まで戻す量です…' }
+ * ```
+ *
+ * **桁を 1 つ多く打っただけの値が、自信のある指示として出る。**
+ * これは画面を見た本人が気づけない類ではない —— **気づけるが、
+ * 気づかないまま手を動かせてしまう**。酸を量る指示も同じ経路を通る。
+ *
+ * ## 幅の置き方
+ *
+ * **これは栽培上の適正域ではなく、桁誤りを止める幅である**
+ * (`READING_FIELD_SPECS` の `plausibleMin/Max` と `HYDROPONIC_CROP_BOUNDS` が
+ * 同じ言い方をしている)。目標域 10 欄の幅は **`READING_FIELD_SPECS` から導く** ——
+ * 同じ項目の「測った値として有り得る幅」と「目標として入れてよい幅」は同じで、
+ * **数を 2 度書かない**。
+ */
+export interface ControlFieldBound {
+  readonly label: string;
+  readonly unit: string;
+  readonly min: number;
+  readonly max: number;
+  readonly integer: boolean;
+  /** 空欄を許すか (調製の 4 欄は「未入力」を保つ —— 0 に倒すと「量を出せる」に化ける)。 */
+  readonly optional: boolean;
+  /** **なぜこの幅か。** 適正域ではないことを書く。 */
+  readonly why: string;
+}
+
+export type ControlFieldKey =
+  | keyof EnvironmentTargets
+  | 'tankLiters'
+  | 'stockEcRisePerMlPerL'
+  | 'alkalinityMgCaCO3PerL'
+  | 'acidNormality'
+  | 'residualAlkalinityMgCaCO3PerL'
+  | 'solutionChangeIntervalDays'
+  | 'readingStaleDays'
+  | 'harvestNoticeDays';
+
+/** 目標域の 1 欄を、同じ項目の測定仕様から導く。**数を写さない。** */
+function targetBound(field: ReadingField, side: '下限' | '上限'): ControlFieldBound {
+  const spec = READING_FIELD_SPECS[field];
+  return {
+    label: `${spec.label}の${side}`,
+    unit: spec.unit,
+    min: spec.plausibleMin,
+    max: spec.plausibleMax,
+    integer: false,
+    optional: false,
+    why: `同じ項目の測定仕様 (READING_FIELD_SPECS.${field}) の妥当範囲をそのまま使う。適正域ではなく桁誤りを止める幅`,
+  };
+}
+
+export const CONTROL_FIELD_BOUNDS: Readonly<Record<ControlFieldKey, ControlFieldBound>> = {
+  waterTempLowC: targetBound('waterTempC', '下限'),
+  waterTempHighC: targetBound('waterTempC', '上限'),
+  airTempLowC: targetBound('airTempC', '下限'),
+  airTempHighC: targetBound('airTempC', '上限'),
+  humidityLowPct: targetBound('humidityPct', '下限'),
+  humidityHighPct: targetBound('humidityPct', '上限'),
+  co2LowPpm: targetBound('co2Ppm', '下限'),
+  co2HighPpm: targetBound('co2Ppm', '上限'),
+  dissolvedOxygenLowMgL: targetBound('dissolvedOxygenMgL', '下限'),
+  waterLevelLowPct: targetBound('waterLevelPct', '下限'),
+  tankLiters: {
+    label: '養液タンクの容量',
+    unit: 'L',
+    min: 1,
+    max: 100_000,
+    integer: false,
+    optional: true,
+    why: '家庭規模の数 L から 100 m³ (10 万 L) の施設まで。適正容量ではなく桁誤りを止める幅',
+  },
+  stockEcRisePerMlPerL: {
+    label: '原液の EC 上昇率',
+    unit: 'mS/cm',
+    min: 0.001,
+    max: 5,
+    integer: false,
+    optional: true,
+    why: '原液 1 mL/L あたりの EC 上昇。市販の 2 液式で 0.1〜0.2 程度。上端は桁誤りを止めるだけの幅',
+  },
+  alkalinityMgCaCO3PerL: {
+    label: '原水のアルカリ度',
+    unit: 'mg/L',
+    min: 0,
+    max: 1_000,
+    integer: false,
+    optional: true,
+    why: '軟水で 10〜50、硬水で 200〜400 程度。上端は桁誤りを止める幅',
+  },
+  acidNormality: {
+    label: '使う酸の規定度',
+    unit: 'N',
+    min: 0.01,
+    max: 40,
+    integer: false,
+    optional: true,
+    why: '希釈した硝酸で 1 N 前後、濃硝酸が約 16 N、濃硫酸が約 36 N。**正当な濃酸を断らない**ために上端を 40 に置く (狭めて正当な値を拒むほうが害が大きい)',
+  },
+  residualAlkalinityMgCaCO3PerL: {
+    label: '残すアルカリ度',
+    unit: 'mg/L',
+    min: 0,
+    max: 1_000,
+    integer: false,
+    optional: false,
+    why: '原水のアルカリ度と同じ幅。どちらが大きいかは運用の判断なので、ここでは桁だけを見る',
+  },
+  solutionChangeIntervalDays: {
+    label: '養液交換の周期',
+    unit: '日',
+    min: 1,
+    max: 365,
+    integer: true,
+    optional: false,
+    why: '1 年を超える交換周期は運用として想定しない (桁誤りを止める幅)',
+  },
+  readingStaleDays: {
+    label: '記録の途絶と見なす日数',
+    unit: '日',
+    min: 1,
+    max: 365,
+    integer: true,
+    optional: false,
+    why: '1 年を超える「途絶」は運用として想定しない (桁誤りを止める幅)',
+  },
+  harvestNoticeDays: {
+    label: '収穫の予告日数',
+    unit: '日',
+    min: 1,
+    max: 365,
+    integer: true,
+    optional: false,
+    why: '1 年を超える予告は運用として想定しない (桁誤りを止める幅)',
+  },
+};
+
+/** 幅の外か (読み側・書き側の**どちらも**ここを通る)。空欄 (`null`) は別の話。 */
+export function controlFieldOutOfRange(key: ControlFieldKey, value: number | null): boolean {
+  if (value === null) return false;
+  const b = CONTROL_FIELD_BOUNDS[key];
+  if (!Number.isFinite(value)) return true;
+  if (value < b.min || value > b.max) return true;
+  return b.integer && !Number.isInteger(value);
+}
+
+/**
+ * 幅の外にあった欄を**画面が言う**ための文 (パス 373)。
+ *
+ * 黙って既定へ倒すと、利用者は「自分が入れた値で動いている」と思ったまま
+ * 別の答えを読む —— `kpiActuals.ts` の `unreadablePeriodNote` (パス 225) と
+ * `sales.ts` の `unreadableSalesDateNote` (パス 360) と同じ形である。
+ */
+export function outOfRangeControlNote(keys: readonly ControlFieldKey[]): string | null {
+  if (keys.length === 0) return null;
+  const labels = keys.map((k) => CONTROL_FIELD_BOUNDS[k].label).join('・');
+  return `${labels}が入力できる範囲の外だったので、その欄は既定値で計算しています（設定を開いて直してください）。`;
+}
+
 export interface ControlInput {
   /** 今日 `YYYY-MM-DD`。**呼ぶ側が渡す** (純粋関数に時計を持ち込まない)。 */
   readonly today: string;

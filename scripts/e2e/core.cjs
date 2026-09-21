@@ -3484,9 +3484,11 @@ async function hydroponicsSuite(browser) {
 
   // 7. **設備を入れると量が出る** (断りが消え、mL が出る)。
   await page.locator('[data-hydroponics-edit-control]').click();
-  await page.waitForSelector('[data-hydroponics-control-input="tankLiters"]', { timeout: 15000 });
-  await page.locator('[data-hydroponics-control-input="tankLiters"]').fill('1000');
-  await page.locator('[data-hydroponics-control-input="stockEcRisePerMlPerL"]').fill('0.01');
+  // 2026-09-21 (パス 373): 欄は `GuardedNumber` になったので、印は**欄の外枠**に付く
+  // (⛔ の文言と一緒に描くため)。中の `input` を掴む。
+  await page.waitForSelector('[data-hydroponics-control-field="tankLiters"] input', { timeout: 15000 });
+  await page.locator('[data-hydroponics-control-field="tankLiters"] input').fill('1000');
+  await page.locator('[data-hydroponics-control-field="stockEcRisePerMlPerL"] input').fill('0.01');
   await page.locator('[data-hydroponics-save="control"]').click();
   await page.waitForSelector('[data-hydroponics-ok="control"]', { timeout: 20000 });
   await page.waitForFunction(

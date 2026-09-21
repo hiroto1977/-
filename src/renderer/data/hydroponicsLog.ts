@@ -27,12 +27,16 @@ import {
   DEFAULT_CONTROL_SETTINGS,
   DEFAULT_DOSING_SETUP,
   DEFAULT_ENVIRONMENT_TARGETS,
+  CONTROL_FIELD_BOUNDS,
+  controlFieldOutOfRange,
+  type ControlFieldKey,
   type ControlSettings,
   type CultivationBatch,
   type DosingSetup,
   type EnvironmentTargets,
   type HydroponicReading,
 } from '../../shared/hydroponicsControl';
+import type { NumKind, NumSpec } from './inputGuards';
 import { latestRecord } from './latestRecord';
 import { relationIssue } from './recordRelations';
 
@@ -162,38 +166,138 @@ function numOrNull(v: unknown): number | null {
 }
 
 /**
+ * **運転設定 18 欄の入力仕様** (2026-09-21 · パス 373)。
+ *
+ * 幅・ラベル・単位は `CONTROL_FIELD_BOUNDS` ただ 1 つから来る (**数を写さない**)。
+ * ここで決めるのは種類 (`NumKind`) だけ —— 単位語は
+ * 「0 X として計算されています」「X 以下で入力してください」の文面に出るので、
+ * **近い kind を借りない** (借りると嘘の単位を言う)。単位が一致することは
+ * `hydroponicsControlSpecs.test.ts` が `unitOfKind` と突き合わせる。
+ */
+const CONTROL_KINDS: Readonly<Record<ControlFieldKey, NumKind>> = {
+  waterTempLowC: 'celsius',
+  waterTempHighC: 'celsius',
+  airTempLowC: 'celsius',
+  airTempHighC: 'celsius',
+  humidityLowPct: 'percent',
+  humidityHighPct: 'percent',
+  co2LowPpm: 'ppmAir',
+  co2HighPpm: 'ppmAir',
+  dissolvedOxygenLowMgL: 'ppm',
+  waterLevelLowPct: 'percent',
+  tankLiters: 'liters',
+  stockEcRisePerMlPerL: 'ecRise',
+  alkalinityMgCaCO3PerL: 'ppm',
+  acidNormality: 'normality',
+  residualAlkalinityMgCaCO3PerL: 'ppm',
+  solutionChangeIntervalDays: 'days',
+  readingStaleDays: 'days',
+  harvestNoticeDays: 'days',
+};
+
+/**
+ * 画面の入力欄の仕様。
+ *
+ * **空欄はどの欄でも許す** —— 必須の欄は `parseControlRecord` の `req` が
+ * 既定へ倒すので、「0 ℃ として計算されています」は**その欄については嘘**になる。
+ */
+export const HYDROPONICS_CONTROL_SPECS: Readonly<Record<ControlFieldKey, NumSpec>> = Object.freeze(
+  Object.fromEntries(
+    (Object.keys(CONTROL_FIELD_BOUNDS) as readonly ControlFieldKey[]).map((k) => {
+      const b = CONTROL_FIELD_BOUNDS[k];
+      return [
+        k,
+        {
+          label: b.label,
+          kind: CONTROL_KINDS[k],
+          allowEmpty: true,
+          allowZero: b.min <= 0,
+          min: b.min,
+          max: b.max,
+          sane: b.max,
+        } satisfies NumSpec,
+      ];
+    }),
+  ),
+) as Readonly<Record<ControlFieldKey, NumSpec>>;
+
+/**
+ * 運転の設定を読んだ結果。**幅の外だった欄も返す** ——
+ * 黙って既定へ倒すと、利用者は自分が入れた値で動いていると思ったまま
+ * 別の答えを読む (パス 225 / 360 と同じ形)。
+ */
+export interface ControlRead {
+  readonly record: HydroponicsControlRecord;
+  readonly outOfRange: readonly ControlFieldKey[];
+}
+
+/**
  * 運転の設定を読む。**最新の 1 件を採用**し、欄ごとに既定へ倒す
  * (`hydroponicsSetup.ts` と同じ扱い)。
+ *
+ * **入口と同じ幅をここでも見る** (2026-09-21 · パス 373) —— 入口だけ締めると
+ * 「入口が出口より厳しい」非対称になり、古い保存値や復元で入った桁違いが
+ * そのまま調製の指示になる (パス 359 が名指しした形)。幅は
+ * `CONTROL_FIELD_BOUNDS` ただ 1 つで、書き側 (`parseControlRecord`) も読む。
  */
-export function controlRecordFromRecords(records: readonly StoredLike[]): HydroponicsControlRecord {
+export function readControlRecord(records: readonly StoredLike[]): ControlRead {
   const raw = latestRecord(records)?.data;
-  if (typeof raw !== 'object' || raw === null) return HYDROPONICS_CONTROL_DEFAULTS;
+  if (typeof raw !== 'object' || raw === null) {
+    return { record: HYDROPONICS_CONTROL_DEFAULTS, outOfRange: [] };
+  }
   const r = raw as Record<string, unknown>;
   const d = HYDROPONICS_CONTROL_DEFAULTS;
-  return {
-    waterTempLowC: numOr(r.waterTempLowC, d.waterTempLowC),
-    waterTempHighC: numOr(r.waterTempHighC, d.waterTempHighC),
-    airTempLowC: numOr(r.airTempLowC, d.airTempLowC),
-    airTempHighC: numOr(r.airTempHighC, d.airTempHighC),
-    humidityLowPct: numOr(r.humidityLowPct, d.humidityLowPct),
-    humidityHighPct: numOr(r.humidityHighPct, d.humidityHighPct),
-    co2LowPpm: numOr(r.co2LowPpm, d.co2LowPpm),
-    co2HighPpm: numOr(r.co2HighPpm, d.co2HighPpm),
-    dissolvedOxygenLowMgL: numOr(r.dissolvedOxygenLowMgL, d.dissolvedOxygenLowMgL),
-    waterLevelLowPct: numOr(r.waterLevelLowPct, d.waterLevelLowPct),
+  const outOfRange: ControlFieldKey[] = [];
+  /** 必須の欄。読めない / 幅の外なら既定へ倒し、倒したことを覚える。 */
+  const num = (key: ControlFieldKey, fallback: number): number => {
+    const v = numOr(r[key], Number.NaN);
+    if (!Number.isFinite(v)) return fallback;
+    if (controlFieldOutOfRange(key, v)) {
+      outOfRange.push(key);
+      return fallback;
+    }
+    return v;
+  };
+  /** 空欄を保つ欄。幅の外なら **null へ倒す** —— 既定を入れると「量を出せる」に化ける。 */
+  const numNull = (key: ControlFieldKey): number | null => {
+    const v = numOrNull(r[key]);
+    if (v === null) return null;
+    if (controlFieldOutOfRange(key, v)) {
+      outOfRange.push(key);
+      return null;
+    }
+    return v;
+  };
+  const record: HydroponicsControlRecord = {
+    waterTempLowC: num('waterTempLowC', d.waterTempLowC),
+    waterTempHighC: num('waterTempHighC', d.waterTempHighC),
+    airTempLowC: num('airTempLowC', d.airTempLowC),
+    airTempHighC: num('airTempHighC', d.airTempHighC),
+    humidityLowPct: num('humidityLowPct', d.humidityLowPct),
+    humidityHighPct: num('humidityHighPct', d.humidityHighPct),
+    co2LowPpm: num('co2LowPpm', d.co2LowPpm),
+    co2HighPpm: num('co2HighPpm', d.co2HighPpm),
+    dissolvedOxygenLowMgL: num('dissolvedOxygenLowMgL', d.dissolvedOxygenLowMgL),
+    waterLevelLowPct: num('waterLevelLowPct', d.waterLevelLowPct),
     // **設備の 4 欄は null のまま持つ** —— 既定を入れると「量を出せる」に化ける。
-    tankLiters: numOrNull(r.tankLiters),
-    stockEcRisePerMlPerL: numOrNull(r.stockEcRisePerMlPerL),
-    alkalinityMgCaCO3PerL: numOrNull(r.alkalinityMgCaCO3PerL),
-    acidNormality: numOrNull(r.acidNormality),
-    residualAlkalinityMgCaCO3PerL: numOr(
-      r.residualAlkalinityMgCaCO3PerL,
+    tankLiters: numNull('tankLiters'),
+    stockEcRisePerMlPerL: numNull('stockEcRisePerMlPerL'),
+    alkalinityMgCaCO3PerL: numNull('alkalinityMgCaCO3PerL'),
+    acidNormality: numNull('acidNormality'),
+    residualAlkalinityMgCaCO3PerL: num(
+      'residualAlkalinityMgCaCO3PerL',
       d.residualAlkalinityMgCaCO3PerL,
     ),
-    solutionChangeIntervalDays: numOr(r.solutionChangeIntervalDays, d.solutionChangeIntervalDays),
-    readingStaleDays: numOr(r.readingStaleDays, d.readingStaleDays),
-    harvestNoticeDays: numOr(r.harvestNoticeDays, d.harvestNoticeDays),
+    solutionChangeIntervalDays: num('solutionChangeIntervalDays', d.solutionChangeIntervalDays),
+    readingStaleDays: num('readingStaleDays', d.readingStaleDays),
+    harvestNoticeDays: num('harvestNoticeDays', d.harvestNoticeDays),
   };
+  return { record, outOfRange };
+}
+
+/** 記録 → 設定 (幅の外の件数が要らない呼び手のための薄い包み)。 */
+export function controlRecordFromRecords(records: readonly StoredLike[]): HydroponicsControlRecord {
+  return readControlRecord(records).record;
 }
 
 /** 保存レコード → 目標域。 */
