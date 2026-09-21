@@ -7,6 +7,7 @@
  *
  * **概算であり財務助言ではありません。**
  */
+import { guardNumber, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { nonNeg } from '../../shared/num';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { calcCorporateTax, type CorporateTaxRates } from '../../shared/taxCorporate';
@@ -382,9 +383,35 @@ function CorporateTaxCard({
   const [carryforwardLossStr, setCarryforwardLossStr] = useState('');
 
   // 入力値のパース: 空文字/不正値 → undefined (既定に倒す)
-  const capitalParsed = capitalStr.trim() !== '' ? parseFloat(capitalStr.replace(/,/g, '')) : undefined;
-  const employeesParsed = employeesStr.trim() !== '' ? parseFloat(employeesStr.replace(/,/g, '')) : undefined;
-  const carryforwardLossParsed = carryforwardLossStr.trim() !== '' ? parseFloat(carryforwardLossStr.replace(/,/g, '')) : undefined;
+  /**
+   * **読み取りはアプリで 1 つ** (2026-09-21 · パス 374)。
+   *
+   * ここは 2026-09-21 まで `parseFloat(x.replace(/,/g, ''))` だった。`parseFloat` は
+   * **読めた所まで読んで残りを捨てる** ので、実測:
+   *
+   * ```
+   *   '1億'     → 1          資本金 1 円として法人税を計算する
+   *   '1000万'  → 1000       同上
+   *   '12abc'   → 12
+   *   '12.5.6'  → 12.5
+   * ```
+   *
+   * `shared/readNumeric.ts` は自分の docblock で「入力欄の文字列を数にする口は
+   * 4 つあり、**全部ここを通す**」と述べていたが、**この 5 欄はその 4 つに入っていなかった**
+   * (法則 `center-then-count-callers` —— 使っている場所ではなく、同じことをしている場所を数える)。
+   * 単位語を解釈しないのは方針どおりだが、**黙って別の数にする**のは方針ではない。
+   */
+  const capitalParsed = readNumberOrNull(capitalStr) ?? undefined;
+  const employeesParsed = readNumberOrNull(employeesStr) ?? undefined;
+  const carryforwardLossParsed = readNumberOrNull(carryforwardLossStr) ?? undefined;
+  /** 読めなかったときに画面へ出す指摘 (空欄は指摘しない)。 */
+  const CTAX_SPECS = {
+    capital: { label: '資本金', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
+    employees: { label: '従業者数', kind: 'count', allowEmpty: true, allowZero: true, min: 0 },
+    carryforwardLoss: { label: '繰越欠損金', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
+    ctSales: { label: '課税売上', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
+    ctPurchases: { label: '課税仕入', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
+  } as const satisfies Record<string, NumSpec>;
 
   // 全欄空なら profile 未指定 → 従来の呼び出しと完全同一
   const hasAnyInput = capitalParsed !== undefined || employeesParsed !== undefined || carryforwardLossParsed !== undefined;
@@ -408,8 +435,8 @@ function CorporateTaxCard({
   // 既定は「未選択」: 分からないまま 3割特例を勧めない (パス 141)。
   const [ctKind, setCtKind] = useState<TaxpayerKind>('unknown');
 
-  const ctSalesParsed = ctSalesStr.trim() !== '' ? parseFloat(ctSalesStr.replace(/,/g, '')) : undefined;
-  const ctPurchasesParsed = ctPurchasesStr.trim() !== '' ? parseFloat(ctPurchasesStr.replace(/,/g, '')) : undefined;
+  const ctSalesParsed = readNumberOrNull(ctSalesStr) ?? undefined;
+  const ctPurchasesParsed = readNumberOrNull(ctPurchasesStr) ?? undefined;
   const ctSales = ctSalesParsed !== undefined && isFinite(ctSalesParsed) ? Math.max(0, ctSalesParsed) : Math.max(0, revenue);
   const ctPurchases = ctPurchasesParsed !== undefined && isFinite(ctPurchasesParsed) ? Math.max(0, ctPurchasesParsed) : Math.max(0, taxablePurchases);
 
@@ -491,43 +518,43 @@ function CorporateTaxCard({
           <label style={labelStyle} htmlFor="ctax-capital">資本金（円、任意）</label>
           <input
             id="ctax-capital"
-            type="number"
-            min={0}
-            step={1}
+            type="text"
+            inputMode="decimal"
             value={capitalStr}
             onChange={(e) => setCapitalStr(e.target.value)}
             placeholder="例: 10000000"
             aria-label="資本金"
             style={inputStyle}
           />
+          <CtaxIssue spec={CTAX_SPECS.capital} raw={capitalStr} />
         </div>
         <div>
           <label style={labelStyle} htmlFor="ctax-employees">従業者数（人、任意）</label>
           <input
             id="ctax-employees"
-            type="number"
-            min={0}
-            step={1}
+            type="text"
+            inputMode="decimal"
             value={employeesStr}
             onChange={(e) => setEmployeesStr(e.target.value)}
             placeholder="例: 30"
             aria-label="従業者数"
             style={inputStyle}
           />
+          <CtaxIssue spec={CTAX_SPECS.employees} raw={employeesStr} />
         </div>
         <div>
           <label style={labelStyle} htmlFor="ctax-carryforward">繰越欠損金（円、任意）</label>
           <input
             id="ctax-carryforward"
-            type="number"
-            min={0}
-            step={1}
+            type="text"
+            inputMode="decimal"
             value={carryforwardLossStr}
             onChange={(e) => setCarryforwardLossStr(e.target.value)}
             placeholder="例: 5000000"
             aria-label="繰越欠損金"
             style={inputStyle}
           />
+          <CtaxIssue spec={CTAX_SPECS.carryforwardLoss} raw={carryforwardLossStr} />
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
@@ -590,29 +617,29 @@ function CorporateTaxCard({
             <label style={labelStyle} htmlFor="ct-sales">課税売上高（年・税抜、任意）</label>
             <input
               id="ct-sales"
-              type="number"
-              min={0}
-              step={1}
+              type="text"
+              inputMode="decimal"
               value={ctSalesStr}
               onChange={(e) => setCtSalesStr(e.target.value)}
               placeholder={`既定: ${Math.max(0, Math.round(revenue))}`}
               aria-label="課税売上高"
               style={inputStyle}
             />
+            <CtaxIssue spec={CTAX_SPECS.ctSales} raw={ctSalesStr} />
           </div>
           <div>
             <label style={labelStyle} htmlFor="ct-purchases">課税仕入高（年・税抜、任意）</label>
             <input
               id="ct-purchases"
-              type="number"
-              min={0}
-              step={1}
+              type="text"
+              inputMode="decimal"
               value={ctPurchasesStr}
               onChange={(e) => setCtPurchasesStr(e.target.value)}
               placeholder={`既定: ${Math.max(0, Math.round(taxablePurchases))}`}
               aria-label="課税仕入高"
               style={inputStyle}
             />
+            <CtaxIssue spec={CTAX_SPECS.ctPurchases} raw={ctPurchasesStr} />
           </div>
           <div>
             <label style={labelStyle} htmlFor="ct-biztype">事業区分（簡易課税）</label>
@@ -830,6 +857,27 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands, d
         ※ スコアはレーダー（15指標の健全度0-100）の平均・カテゴリ平均（<strong>算定できた軸のみ</strong>）。コメントは一般情報であり財務助言ではありません。
       </div>
     </div>
+  );
+}
+
+/**
+ * 読めなかった入力の指摘を 1 行出す (パス 374)。
+ *
+ * **空欄は指摘しない** —— この 5 欄はどれも任意で、空欄は「使わない」を意味する。
+ * 指摘の文面は `guardNumber` が持つ (「単位付きのため読み取れません」など) ——
+ * 同じことを 2 度書かない。
+ */
+function CtaxIssue({ spec, raw }: { spec: NumSpec; raw: string }) {
+  const issue = guardNumber(raw, spec);
+  if (issue === null) return null;
+  return (
+    <p
+      data-ctax-issue={spec.label}
+      role="alert"
+      style={{ margin: '2px 0 0', fontSize: 11, color: issue.level === 'fatal' ? 'var(--danger)' : 'var(--warning)' }}
+    >
+      {issue.level === 'fatal' ? '⛔' : '⚠'} {issue.message}
+    </p>
   );
 }
 
