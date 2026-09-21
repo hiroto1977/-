@@ -74,6 +74,14 @@ master-wrap は master 鍵が無いと作れず、master 鍵は復旧枝から�
 | `initialize` を `idbPut` 2 回へ戻す | ❌ 2 (`expected [ [ 'vault' ], [ 'master-wrap' ] ] to deeply equal [ [ 'vault', 'master-wrap' ] ]`) |
 | 旧形式の前方互換を消す | ❌ 1 |
 
+### 実機 (出荷物が動いたパスなので回した)
+
+```
+perf      OK  LITE DCL 153ms / heap 10.2MB   FULL DCL 424ms / heap 36.8MB
+e2e       455 件 ❌ 0
+e2e:lite  455 件 ❌ 0
+```
+
 ### ★ この作業中の 3 つの気付き
 
 1. **鎖の違反を捕まえたのは `chain:verify` ではなく `npm test`** ——
