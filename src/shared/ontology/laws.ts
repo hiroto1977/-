@@ -668,10 +668,19 @@ export const LAWS: readonly Law[] = [
       + '`ShigyoConsole` の ⚖️「法的助言ではない」・`DocstudioPage` の 12 種の書式の紙・`EmotionsPage`)。'
       + '同じ形は断りの側でも出ており、HIBP の egress の断りを丸ごと消しても全件緑だった (パス 365)。'
       + 'だから**描画を母集団として数え**、助言本体を描くなら免責も描くこと・紙 1 枚につき断り 1 つ、を機械で結ぶ。'
-      + '字面だけで留めると言い換えで黙るので、振る舞いの背骨 (実際に描いて DOM を見る) を 1 本は置く。',
-    provenance: ['パス 365', 'パス 366'],
+      + '字面だけで留めると言い換えで黙るので、振る舞いの背骨 (実際に描いて DOM を見る) を 1 本は置く。'
+      + '**免責だけの話ではない** —— 同じ測り方を安全側の断りへ当てると、'
+      + '`EmotionsPage` の**危機のときの相談窓口** (「相談できる窓口（日本）」+ いのちの電話ほか + 厚労省へのボタン) と '
+      + '`SettingsPage` の**立ち退きの警告** (「控えた 24 語では戻せません」・2 か所とも) も、'
+      + '潰して 17,895 件すべて緑だった (パス 367)。判定の側は測られている —— '
+      + '`crisisDeliberation` / `counseling` は `predictCategory` / `detectCrisis` / 窓口の確証を見て、'
+      + 'パス 351 は `durability` の判断、パス 353 は `EVICTION_RECOVERY` の表を機械に載せた。'
+      + '**測られていないのは配達の側**である。しかも `settingsProtectionScope` の標本は型が '
+      + "`'file' | 'persistent'` で、警告が出る `'best-effort'` を構造的に除いていた。",
+    provenance: ['パス 365', 'パス 366', 'パス 367 (免責だけでなく危機の窓口と立ち退きの警告も)'],
     enforcedBy: [
       test(T.renderer('disclaimerRendered')),
+      test(T.renderer('safetyNoticeRendered')),
       test('src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts'),
       test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'),
     ],
