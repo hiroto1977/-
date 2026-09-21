@@ -22,6 +22,19 @@ const OUT = path.join(ROOT, 'dist/landing.html');
 const SITE_URL = 'https://hiroto1977.github.io/-/';
 const REPO_URL = 'https://github.com/hiroto1977/-';
 const OG_IMAGE = SITE_URL + 'og.png';
+
+/**
+ * ランディングの既定の下地 —— **1 か所で持つ** (2026-09-21 · パス 363)。
+ *
+ * この色は 2 か所に要る: 母体 (スマホのアドレスバー) へ伝える `<meta name="theme-color">` と、
+ * 頁自身の `:root { --bg }`。2026-09-21 まで `#0f1117` を**2 度書いて**おり、片方を直しても
+ * もう片方は黙ったままだった —— アプリ側の同じ決定は `styles.css` の `--bg` 1 つを
+ * `windowPrefs.test.ts` / `theme.test.ts` が縛っているのに、ここだけ写しのままだった。
+ *
+ * `inject-pwa` はこの頁が自分の theme-color を名乗っているのを見て**何も足さない**
+ * (足していた頃は 1 つの文書に 2 つの答えが載っていた)。
+ */
+const LANDING_BG = '#0f1117';
 const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。';
 
 // サイドバー (services.ts の CATEGORY_LABEL) と同じ並び。services.ts に新カテゴリを
@@ -325,7 +338,7 @@ function buildHtml(services, tests) {
 <meta name="description" content="${esc(description)}">
 <meta name="robots" content="index,follow">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0f1117">
+<meta name="theme-color" content="${LANDING_BG}">
 <link rel="canonical" href="${SITE_URL}">
 <link rel="icon" href="${faviconDataUri()}">
 <meta property="og:type" content="website">
@@ -340,7 +353,7 @@ function buildHtml(services, tests) {
 <meta name="twitter:image" content="${OG_IMAGE}">
 <script type="application/ld+json">${jsonLd}</script>
 <style>
-  :root{--bg:#0f1117;--elev:#171a22;--elev2:#1e222c;--border:#2a2f3a;--text:#e6e8ee;--mute:#99a0ad;--accent:#4f7cff;--radius:12px;--maxw:1100px}
+  :root{--bg:${LANDING_BG};--elev:#171a22;--elev2:#1e222c;--border:#2a2f3a;--text:#e6e8ee;--mute:#99a0ad;--accent:#4f7cff;--radius:12px;--maxw:1100px}
   *{box-sizing:border-box}html{scroll-behavior:smooth}
   body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:var(--accent);text-decoration:none}.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}

@@ -27,12 +27,91 @@ const SW_REGISTER_JS =
 // 生テキスト要素へ入れる文字列は、書いた者が誰であれ同じ関門を通す。
 assertRawTextInert(SW_REGISTER_JS, 'script', 'SW 登録スニペット');
 
+/**
+ * 文書によらず必ず足すタグ。**下地色はここに無い** — 理由は `themeColorTag`。
+ *
+ * 注入は「theme-color (在れば) + この 3 つ」を 1 続きで置く。順序をこうするのは、
+ * 色が付く場合も付かない場合もこの 3 つが**連続したまま**になるようにするため
+ * (検査が注入位置を `indexOf(PWA_HEAD_TAGS)` で見ている)。
+ */
 const PWA_HEAD_TAGS = [
   '<link rel="manifest" href="./manifest.webmanifest">',
-  '<meta name="theme-color" content="#fff7fa">',
   '<link rel="apple-touch-icon" href="./icon.svg">',
   `<script>${SW_REGISTER_JS}</script>`,
 ].join('');
+
+/**
+ * **下地色を写さない** (2026-09-21 · パス 363)。
+ *
+ * ここは 2026-09-18 (パス 317-318) から `content="#fff7fa"` という**手書きの定数**だった。
+ * その値の出どころは `src/renderer/styles.css` の `:root { --bg }` で、同じ決定の写しは
+ * 実測で 5 つ在り、**機械が縛っていたのは 1 つだけ**だった:
+ *
+ * ```
+ *   src/renderer/styles.css            --bg: #fff7fa / #1b1520   出どころ
+ *   src/main/windowPrefs.ts            #fff7fa                   ✅ windowPrefs.test.ts が照合
+ *   src/renderer/theme.ts              (字面を持たない・実値を読む) ✅ theme.test.ts + e2e
+ *   scripts/inject-pwa.cjs             #fff7fa                   ❌ 何も縛っていない ← ここ
+ *   assets/manifest.webmanifest        #0e0f13                   ❌ 何も縛っていない・**どの版の --bg とも違う**
+ *   scripts/build-landing.cjs          #0f1117 が 2 か所          ❌ 同じファイルの中で 2 度書かれている
+ * ```
+ *
+ * しかもこの定数は**注入先 3 文書のうち 1 つに対して誤っていた** ——
+ * ランディング (`_site/index.html` = 公開サイトの根) は `--bg: #0f1117` の暗い頁で、
+ * 自分の `<meta name="theme-color" content="#0f1117">` を既に持っている。そこへこの定数を
+ * 足すと、**1 つの文書が同じ問いに 2 つの答えを載せる**ことになる (実測: 注入後の
+ * ランディングには theme-color が 2 つ・`#0f1117` と `#fff7fa`)。HTML の規定では
+ * 最初の 1 つが使われるので今日の見た目は正しいが、**どちらが効くかを決めているのは
+ * 誰かの意図ではなく byte の順序**である。
+ *
+ * だから `syncHostChrome` (`renderer/theme.ts`) と**同じ規則**にする ——
+ * palette を写さず、**その文書自身の `:root { --bg }` の実値**を読む。
+ * 文書が自分の theme-color を既に名乗っているなら、こちらは何も足さない。
+ */
+const OWN_THEME_COLOR_RE = /<meta\s+name="theme-color"/i;
+
+/**
+ * 文書自身の既定の下地 (`#rrggbb`)。見つからなければ null。
+ *
+ * 見るのは `<style>` の中の**修飾の無い `:root`** だけ ——
+ * `:root[data-theme="dark"]` は選んだ人の色であって既定ではないし、
+ * バンドルの JS には `"var(--bg)"` の字面が在る (実測: standalone.html に 1 件)
+ * ので、`<style>` の外は読まない。
+ *
+ * **複数の `<style>` が違う既定を名乗ったら落とす。** バンドルは HTML 書き出しの
+ * テンプレートを文字列として持ちうるので (`injectPwa.test.ts` の「バンドルが文字列として
+ * CSP メタを含んでいても」と同じ形)、いつか 2 つ目の `<style>` が現れる余地が在る。
+ * そのとき黙ってどちらかを選ぶと、**公開される色が走査順で決まる**。
+ */
+function documentBackground(html) {
+  const found = [];
+  for (const style of html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
+    for (const rule of style[1].matchAll(/(^|[};])\s*:root\s*\{([^}]*)\}/g)) {
+      const bg = /--bg\s*:\s*(#[0-9a-fA-F]{6})\b/.exec(rule[2]);
+      if (bg) found.push(bg[1].toLowerCase());
+    }
+  }
+  const distinct = [...new Set(found)];
+  if (distinct.length > 1) {
+    throw new Error(`inject-pwa: 既定の下地色が ${distinct.length} 通り見つかりました (${distinct.join(' , ')}) — どれを公開するか決められません`);
+  }
+  return distinct[0] ?? null;
+}
+
+/**
+ * 足すべき theme-color タグ (足さないなら空文字)。
+ *
+ * 文書が自分で名乗っているなら足さない / 名乗っていなくて `--bg` が読めればその実値 /
+ * どちらでもなければ**足さない** —— 無色は manifest の `theme_color` が受けるので
+ * 正しい結末だが、**誤った色は誰も受けられない**。推測して書くより出さない。
+ */
+function themeColorTag(html) {
+  const end = findRealHeadClose(html);
+  const head = end === -1 ? html : html.slice(0, end);
+  if (OWN_THEME_COLOR_RE.test(head)) return '';
+  const bg = documentBackground(html);
+  return bg === null ? '' : `<meta name="theme-color" content="${bg}">`;
+}
 
 /**
  * 上記スニペットの CSP ハッシュ。
@@ -113,7 +192,8 @@ function injectPwaTags(html) {
   if (html.includes('rel="manifest"')) return html;
   const idx = findRealHeadClose(html);
   if (idx === -1) throw new Error('inject-pwa: </head> が見つかりません');
-  const out = withSwScriptHash(`${html.slice(0, idx)}${PWA_HEAD_TAGS}${html.slice(idx)}`);
+  const tags = `${themeColorTag(html)}${PWA_HEAD_TAGS}`;
+  const out = withSwScriptHash(`${html.slice(0, idx)}${tags}${html.slice(idx)}`);
   // タグ注入と CSP 追記の両方をこのガードが見る。CSP メタはバンドルより前にあるので
   // 領域は 1 バイトも動かないのが正しい状態。
   if (moduleScriptRegion(out) !== moduleScriptRegion(html)) {
@@ -235,6 +315,8 @@ module.exports = {
   moduleScriptRegion,
   withSwScriptHash,
   PWA_HEAD_TAGS,
+  documentBackground,
+  themeColorTag,
   SW_REGISTER_JS,
   SW_SCRIPT_HASH,
 };

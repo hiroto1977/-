@@ -63,13 +63,24 @@ function policyOf(html: string): string {
 }
 
 describe('inject-pwa', () => {
-  it('単純な HTML では </head> 直前に 4 タグ一式を注入する', () => {
+  /*
+   * **theme-color は文書から導くので、ここには出ない** (2026-09-21 · パス 363)。
+   * `SIMPLE` は stylesheet を持たず自分の theme-color も名乗っていないので、
+   * 注入されるのは必ず足す 3 つだけ。3 つの枝 (自分で名乗る / `:root{--bg}` から導く /
+   * どちらも無い) と「食い違ったら落とす」は `hostChromeColorCensus.test.ts` が持つ。
+   */
+  it('単純な HTML では </head> 直前に 3 タグ一式を注入する (色は導けないので付かない)', () => {
     const out = injectPwaTags(SIMPLE);
     expect(out).toContain('rel="manifest"');
-    expect(out).toContain('name="theme-color"');
     expect(out).toContain('rel="apple-touch-icon"');
     expect(out).toContain('serviceWorker');
+    expect(out).not.toContain('name="theme-color"');
     expect(out.slice(out.indexOf(PWA_HEAD_TAGS) + PWA_HEAD_TAGS.length)).toMatch(/^<\/head>/);
+  });
+
+  it('★ 標本: 同じ文書に :root{--bg} が在れば theme-color が付く (上の not は空の主張ではない)', () => {
+    const withCss = SIMPLE.replace('<title>t</title>', '<title>t</title><style>:root{--bg:#123456}</style>');
+    expect(injectPwaTags(withCss)).toContain('<meta name="theme-color" content="#123456">');
   });
 
   it('冪等: 注入済み HTML は無変更で返す', () => {

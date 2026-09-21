@@ -96,6 +96,16 @@ const HEX_COLOR = /^#[0-9a-f]{6}$/i;
  * 色は stylesheet の `--bg` の**実値**を読む —— palette をここに写さない (main も持たない。持つのは起動の既定 1 値だけで、
  * それは `windowPrefs.test.ts` が stylesheet と照合する)。実値が `#rrggbb` でない (styles の無い jsdom・未定義) なら
  * 何も伝えない。橋の失敗は起動の一瞬の色にしか効かないので戻り値を待たない (fold —— 理由は SESSION_HANDOFF パス 318)。
+ *
+ * ## ここが届かない母体が 1 つある (2026-09-21 · パス 363)
+ *
+ * 上の 2 つ (PWA の meta・デスクトップの窓) で母体を数え切ったつもりだったが、**3 つ目が在る** ——
+ * `assets/manifest.webmanifest` の `background_color` (インストールした PWA の起動画面) と
+ * `theme_color` (OS がインストール時に控える色)。**どちらも頁の JS より先に読まれる**ので、
+ * この関数は構造的に届かない。実測するとその 2 欄は `#0e0f13` で、
+ * **このアプリの `--bg` がどの版でも取ったことのない値**だった
+ * (今のライト `#fff7fa` / 今のダーク `#1b1520` / 再設計前 `#0f1117`)。
+ * 届かない以上、縛るのは検査しかない —— 母集団と束縛は `shared/__tests__/hostChromeColorCensus.test.ts`。
  */
 export function syncHostChrome(scheme: ResolvedScheme, doc: HostDoc = document): void {
   const view = doc.defaultView;

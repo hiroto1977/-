@@ -287,9 +287,9 @@ export const LAWS: readonly Law[] = [
     id: 'copy-pinned-by-parity',
     family: 'single-rule',
     name: '写しが避けられないなら、ずれを検査で留める',
-    statement: 'プロセス境界のせいで 2 つ要る実装は「同じ入力から同じ出力」「拒否する入力が一致」をパリティ検査で固定する。**母集団の針が狭いと、写しが在るのに映らない** —— 2026-09-20 まで `^export function` だけを見ており、`async function` と `const` が 1 つも映っていなかった (13 → 22 件)。畳めるなら畳んで同一性を主張するほうが強い (パリティは標本の外で割れうる)。',
-    provenance: ['パターン 0-a-4', 'パターン 0-a-14', 'パス 331'],
-    enforcedBy: [test(T.shared('dualBuildDecisions')), test(T.main('stateEqualsParity')), test(T.shared('stocksConstantsParity')), test(T.renderer('webShimSnapshotParity')), test(T.shared('advisorQuestionParity'))],
+    statement: 'プロセス境界のせいで 2 つ要る実装は「同じ入力から同じ出力」「拒否する入力が一致」をパリティ検査で固定する。**母集団の針が狭いと、写しが在るのに映らない** —— 2026-09-20 まで `^export function` だけを見ており、`async function` と `const` が 1 つも映っていなかった (13 → 22 件)。**写しは `.ts` の外にも在る** —— 母体 (OS / ブラウザの枠) へ伝える下地色は出どころが `styles.css` の `--bg` 1 つなのに写しが 5 つ在り、機械が縛っていたのは 1 つだけだった。縛られていない 3 つのうち 2 つがその場で誤っており、`assets/manifest.webmanifest` の `theme_color` / `background_color` は **`--bg` がどの版でも取ったことのない値**だった (パス 363)。パリティ検査が `.ts` しか見ないと、webmanifest・ビルド script・生成 HTML に載った写しは永久に映らない。畳めるなら畳んで同一性を主張するほうが強い (パリティは標本の外で割れうる)。',
+    provenance: ['パターン 0-a-4', 'パターン 0-a-14', 'パス 331', 'パス 363 (写しは .ts の外にも在る)'],
+    enforcedBy: [test(T.shared('dualBuildDecisions')), test(T.main('stateEqualsParity')), test(T.shared('stocksConstantsParity')), test(T.renderer('webShimSnapshotParity')), test(T.shared('advisorQuestionParity')), test(T.shared('hostChromeColorCensus'))],
   },
   {
     id: 'same-question-before-parity',

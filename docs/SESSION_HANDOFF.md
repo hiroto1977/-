@@ -7,6 +7,132 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 363 (2026-09-21) — 母体へ伝える下地色の写しが 5 つ在り、縛られていたのは 1 つだった
+
+### 欠陥 —— 再設計が双子の片方だけを直した
+
+下地色の出どころは 1 つしかない: `src/renderer/styles.css` の `:root { --bg }` (既定 = ライト) と
+`:root[data-theme="dark"] { --bg }`。ところが**この決定の写しは実測で 5 つ**在り、
+機械が縛っていたのは **1 つだけ**だった。
+
+```
+  src/main/windowPrefs.ts       #fff7fa    ✅ windowPrefs.test.ts が styles.css と照合
+  src/renderer/theme.ts         字面なし     ✅ theme.test.ts + e2e (--bg の実値を読む)
+  scripts/inject-pwa.cjs        #fff7fa    ❌ 何も縛っていない
+  assets/manifest.webmanifest   #0e0f13    ❌ 何も縛っていない
+  scripts/build-landing.cjs     #0f1117 ×2 ❌ 同じファイルの中に 2 度
+```
+
+**縛られていない 3 つのうち 2 つが、その場で誤っていた。**
+
+### ① manifest の色は、どの版の `--bg` とも一致しない
+
+`assets/manifest.webmanifest` の `theme_color` / `background_color` は `#0e0f13`。実測:
+
+```
+  今のライト        #fff7fa
+  今のダーク        #1b1520
+  再設計前 (〜9/17) #0f1117
+  manifest         #0e0f13   ← どれとも違う
+  git log -S '#0e0f13' -- src/renderer/styles.css  →  0 コミット
+```
+
+**履歴が原因を持っている。** `#0e0f13` は `423da6df` (2026-08-31) で
+`inject-pwa.cjs` と `manifest.webmanifest` の**両方**に入った。UI 再設計 `1f87b259`
+(2026-09-17) は `inject-pwa.cjs` を `#fff7fa` へ直し、**manifest を置き去りにした**
+(その日の handoff にも「`inject-pwa.cjs` を `#0e0f13` → `#fff7fa`」とだけ書いてある)。
+manifest はそれ以来 1 度も触られていない。
+
+**なぜ `syncHostChrome` (パス 318) が直せないか。** `background_color` は
+**インストールした PWA の起動画面**、`theme_color` は OS がインストール時に控える色で、
+**どちらも頁の JS より先に読まれる**。パス 318 の docblock は母体を 2 つ
+(PWA の `<meta name="theme-color">` とデスクトップの窓) しか数えておらず、
+**届かない 3 つ目がこれ**だった。結果: インストールした PWA は起動のたびに
+ほぼ黒 (`#0e0f13`) の起動画面を出してから淡いピンクのアプリを描く。
+ダークを選んだ人にとっても誤り (今のダークは `#1b1520`)。
+
+### ② 注入した色が、3 文書のうち 1 つに対して誤っていた
+
+`inject-pwa.cjs` は `content="#fff7fa"` を**注入先 3 文書すべてに**足していた。
+ランディング (`_site/index.html` = 公開サイトの根) は `--bg: #0f1117` の暗い頁で、
+自分の theme-color を既に持っている。実測 (注入を実物の成果物に当てた):
+
+```
+  _site/index.html   theme-color × 2   ['#0f1117', '#fff7fa']   ← 2 つの答え
+  _site/app.html     theme-color × 1   ['#fff7fa']
+  _site/lite.html    theme-color × 1   ['#fff7fa']
+```
+
+HTML の規定では最初の 1 つが使われるので**今日の見た目は正しかった**。
+偽だったのは「正しい理由」のほうで、**どちらが効くかを決めていたのは byte の順序**である。
+
+### 直し
+
+1. `assets/manifest.webmanifest` → `#fff7fa` (= 既定 (ライト) の `--bg`。
+   `DEFAULT_WINDOW_PREFS.background` が持つのと同じ 1 値)。
+2. `scripts/inject-pwa.cjs` → 定数をやめ、**`syncHostChrome` と同じ規則**にする ——
+   文書自身が theme-color を名乗っていれば足さない / 名乗っていなければ
+   その文書の**修飾の無い** `:root { --bg }` の実値を足す / どちらでもなければ足さない
+   (誤った色は誰も受けられないが、無色は manifest の `theme_color` が受ける)。
+   既定を名乗る `<style>` が食い違ったら**落とす** (走査順で公開色を決めない)。
+3. `scripts/build-landing.cjs` → `LANDING_BG` 1 つから meta と `:root{--bg}` の両方を出す。
+
+実測 (直したあと、実物の 3 成果物へ注入): `index.html` `['#0f1117']` /
+`app.html` `['#fff7fa']` / `lite.html` `['#fff7fa']` —— 各 1 つ・各文書に対して正しい。
+
+### 機械
+
+`shared/__tests__/hostChromeColorCensus.test.ts` (16 件)。母集団は**走査で導く** ——
+`src` / `scripts` / `assets` のうち母体の色に関わる綴りを持つファイル**全 13 件**を
+種類 (`pinned-literal` / `own-document` / `derives` / `no-op` / `observes` / `ledger`)
+と理由つきの台帳と**両方向**に突き合わせる。種類ごとの要求:
+`pinned-literal` はコード中の `#rrggbb` が 1 つ残らずライトの `--bg` と一致すること・
+`derives` は色の字面を **1 つも持たない**こと・`own-document` は 1 か所で持つこと。
+
+**色の字面は「コード」だけを見る** (ブロックコメントと行頭が `//` / `*` の行は落とす)
+—— この検査の docblock 自身が上の表で 4 つの色を挙げているので、注記を読んだままだと
+「字面を持たない」の主張が**自分の説明文で落ちる** (パス 348 と同じ形)。
+
+対照 **7 方向すべて鳴る**: manifest を `#0e0f13` へ戻す ❌2 / `inject-pwa` に色の字面を
+書き戻す ❌1 / ランディングの meta に字面を書き戻す ❌1 / 食い違いで落とすのをやめる ❌1 /
+台帳に無いファイルが母集団に増える ❌1 / 台帳から 1 行消す ❌1 / 母集団に居ない行を台帳へ ❌1。
+
+### 測って何も無かったこと
+
+この日ほかに 4 面を読み、**どれも穴は無かった**:
+
+- **`assets/sw.js` (Service Worker)** —— 最初は「出荷される origin 特権のコードがどのゲートにも
+  入っていない」と見立てたが、実測すると `lint:forbidden` の `MUST_SCAN` に**名指しで載って**おり、
+  完全性チェーンの保護対象 83 件にも入っていた。**見立ては偽。**
+- **バックアップの復元** —— 読む前の大きさの門 (`readImportText` + `MAX_BACKUP_IMPORT_BYTES`)・
+  checksum の必須化・暗号化封筒の再帰が 1 段で止まること・`assertKdfIterations`
+  (攻撃者が PBKDF2 の回数を指定できない) がすべて在る。
+- **`shellOpenGate.ts`** —— realpath で symlink を解いてから閉じ込めを見る・拡張子の allowlist・
+  `+ path.sep` での兄弟ディレクトリ除け・長さと NUL/CR/LF。
+- **`library/preview.ts`** —— 画像は読む前に 8 MB で断り、テキストは `blob.slice` で**切ってから**読む。
+
+**`src/renderer/web-shim.ts` の `#0f1117` / `#e6e8ec` は母体の色ではない** ——
+書き出す文書 (事業ダッシュボード) 自身の配色で、main の双子 (`clients/business.ts`) と
+一致している (`teamRadarSvg` / `stocks` / `templates` も同じ配色)。台帳に理由つきで `no-op` として載せた。
+
+### ★ この検査は作業中に自分の編集を 2 回捕まえた
+
+法則の statement に `theme_color` / `background_color` を書いた瞬間に
+`src/shared/ontology/laws.ts` が母集団へ入り、`lint:forbidden` の
+`KNOWN_SUPPRESSIONS` に注記を足した瞬間に `scripts/lint-forbidden-patterns.cjs` が入った ——
+どちらも「母集団のファイルはすべて台帳に在る」がその場で落ちた。
+**走査が生きている証拠なので、綴りを避けずに `names-only` として台帳へ載せた。**
+
+### 写しは 1 つ残した (避けられないので留める)
+
+`inject-pwa.cjs` は素の CJS で `shared/escape.ts` の `isHexColor` を読めないため、
+`#[0-9a-fA-F]{6}` の写しを 1 つ持つ (`build-academic-md.cjs` / `build-landing.cjs` /
+`gen-econ-*.cjs` と同じ前例)。`lint:forbidden` の台帳に理由つきで登録し、
+**同じ標本 9 種を実物と `isHexColor` の両方に通して**答えが割れないことを census が留める
+(法則 `copy-pinned-by-parity` —— この写しを作ったのは私なので、自分で作った写しに
+自分で拡張した法則を当てたことになる)。
+
+
 ## パス 362 (2026-09-21) — 偽と測った主張が、写しの片方に残っていた
 
 ### 欠陥 —— 撤回が 2 部のうち 1 部にしか届いていなかった

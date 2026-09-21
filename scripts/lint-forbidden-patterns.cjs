@@ -928,6 +928,13 @@ const KNOWN_SUPPRESSIONS = [
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 5',
+  // 2026-09-21 (パス 363): `inject-pwa.cjs` は注入先の文書自身の `:root { --bg }` を
+  // 読んで theme-color を決める (それまでは `#fff7fa` の手書きで、3 文書のうち
+  // ランディングに対して誤っていた)。素の CJS なので `src/shared/escape.ts` の
+  // `isHexColor` を読めず、`#[0-9a-fA-F]{6}` の写しを 1 つ持つ。写しが共有実装と
+  // ずれていないことは `src/shared/__tests__/hostChromeColorCensus.test.ts` が
+  // **実物の関数と `isHexColor` に同じ標本を通して**留める。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/inject-pwa.cjs :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 10',
   // `securityRange.ts` は**出口のエスケープではない**。`applyEvasion` は
