@@ -7,6 +7,78 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 370 (2026-09-21) — セッション開始のたびに走るコマンドを、どのゲートも読んでいなかった
+
+### 見つけた物
+
+`.claude/settings.json` は**追跡されている**設定で、実行面を **2 つ**持つ:
+
+```
+  hooks.SessionStart[].hooks[].command   Claude Code が起動のたびに実行する
+  mcpServers                             npx -y / uvx で「その時の最新」を取って走らせる (25 件)
+```
+
+`lint:mcp-servers` は 2026-08-25 からこのファイルを開いている。ところが読んでいたのは
+**`json?.mcpServers` だけ**で、`hooks` は**どのゲートも見ていなかった**。
+
+### 対照 (2026-09-21 実測)
+
+hook のコマンドを `node -e "require(process.env.HOME+'/.evil.js')"` に替えて回すと:
+
+```
+  npm run verify:all (37 ゲート)   exit 0
+  npm run chain:verify             exit 0
+  npm test                         緑
+```
+
+**走る側は守られていた** —— `scripts/session-context.cjs` は `lint:forbidden` の走査対象で、
+子プロセスを作る例外まで台帳に載っている。守られていなかったのは
+**どの script を走らせるかを決める側**である。パス 347 (`vite.config.ts`) と
+パス 349 (`docs/PROXY_EXAMPLE.md`) と同じ「**守る順番の逆転**」。
+
+### 直し
+
+1. **門をファイル全体へ広げた** (`lint:mcp-servers`):
+   - hook のコマンドは**リポジトリ内の Node script ただ 1 つ**の形だけ
+     (`node scripts/<name>.cjs`)。シェルの一行・`curl | sh`・`npx` は**形で落ちる**。
+     指す script が実在することも見る。
+   - hook は理由つきの台帳と**双方向**。
+   - **最上位の鍵は知っている 2 つだけ (fail closed)** —— Claude Code の設定は
+     `statusLine` など**他にもコマンドを走らせる鍵**を持ちうるので、
+     「見る鍵を挙げる」形だと 3 つ目が同じように静かに入る。
+2. **`.claude/settings.json` を整合性チェーンへ** (保護対象 83 → **84**・block **#249**)。
+   門は**形**を見て、鎖は**変わったこと自体**を見る —— 別の仕事である。
+   安定資産の基準も満たす (全履歴 **1 コミット**)。
+3. `sessionStartCodeGuarded.test.ts` (6 件) が**実物**をその規則の下に留める
+   (門の `evaluate` を借りる形・`artifactCspCensus` と同じ)。
+   `lint:mcp-servers` が CI から外れても `npm test` が鳴る。
+
+### 対照 (直した後・3 方向とも鳴る)
+
+```
+  node -e "…"                      ❌ 形で落ちる
+  curl https://…/i.sh | sh         ❌ 形で落ちる
+  statusLine を足す                ❌ 知らない最上位の鍵
+```
+
+### 法則
+
+**94 本目** `config-that-picks-code-is-guarded` (**どのコードが走るかを決める設定は、
+コードと同じ門と鎖に入れる**)。出典はパス 347 / 349 / 370 の 3 件。
+
+### ★ この作業中に私の散文が 3 回ゲートに捕まった
+
+法則の statement と 2 つの docblock に禁止の綴り (`child_process`) をそのまま書いたため
+`lint:forbidden` が鳴った (パス 347 と同じ)。言い換えた。
+**注記の中でも鳴るのは正しい** —— 走査は綴りしか見ないので、例外を作ると穴になる。
+
+### 検証
+
+- `typecheck` / `npm test` (**17,919 件 ❌ 0**) / `verify:all` (37 ゲート) すべて green
+- `chain:verify` OK (block #250・保護対象 84)
+- 出荷物は **11,931,716 B / 3,344,237 B で byte 単位で不変**
+  (直したのは `scripts/` 2 本・`__tests__/` 1 本・オントロジー・文書だけ。両方を組んで実測した)
+
 ## パス 369 (2026-09-21) — 綴りで数えた針が、両方向に外れていた (振る舞いで測り直す)
 
 ### 1. 頼まれた仕事 —— 残り 32 本を共有の待ちへ寄せた

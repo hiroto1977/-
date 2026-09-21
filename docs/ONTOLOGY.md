@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (93)
+## 5. 法則と執行者 (94)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -281,13 +281,14 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `vault-and-graph-in-sync` | **生成物は本体と同期し、本体を網羅する** — vault・graph・概念表は本体から生成し、committed == 再生成に加えて本体との網羅を検査する。手で行を書かない。 | パターン 0-a-5 / CLAUDE.md knowledge:md | ゲート `npm run vault:check`<br>ゲート `npm run verify:graph`<br>ゲート `npm run verify:orchestration` |
 | `legal-text-current` | **法令の記述は現行法** — 刑名の表記ゆれは 1 行ずつ裁定する (拘禁刑へ・旧刑名は括弧・米国法は対象外)。日付の無い率は lint:rate-freshness が期限で落とす。 | 刑名の裁定 (残作業 8) / lint:rate-freshness | ゲート `npm run lint:rate-freshness`<br>散文だけ `docs/SESSION_HANDOFF.md` — 「現行法か」は機械に映らない。率と日付の期限だけを機械が見る |
 
-### 供給網と CI (7)
+### 供給網と CI (8)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
 | `deps-ledgered` | **依存の閉包・床・取得元は台帳** — 本番依存は単一 HTML へ畳まれ保管庫と同じオリジンで走るので、増やすなら理由を書く。取得元は registry のみ・integrity 必須。「自分で押さえた版」の床は 1 つの台帳。週次の監査が狭い PR の門の外側を受け持つ。 | CLAUDE.md lint:deps / パス 306 | ゲート `npm run lint:deps`<br>CI `.github/workflows/dependency-audit.yml`<br>検査 `src/shared/__tests__/dependencyAuditWorkflow.test.ts` |
 | `workflows-pinned-and-least-privilege` | **workflow は permissions 明示・第三者 action は SHA 固定** — pull_request_target 禁止。run: へ信用できない値を埋め込まない。第一者 action は runner の Node に合わせて上げる。 | CLAUDE.md lint:workflow-security / パス 316 | ゲート `npm run lint:workflow-security`<br>検査 `src/shared/__tests__/workflowSecurityWitness.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `shell-scripts-strict` | **.sh は strict、遠隔コードと破壊的操作は台帳** — 追跡されている .sh すべて。bash shebang・set -euo pipefail・bash -n・curl \| sh は台帳のみ・後戻りできない書き込みと秘密の扱いは台帳のみ (双方向)・台帳の --self-test を実際に走らせる。 | CLAUDE.md lint:shell / パス 279 | ゲート `npm run lint:shell` |
+| `config-that-picks-code-is-guarded` | **どのコードが走るかを決める設定は、コードと同じ門と鎖に入れる** — 走るコードを守っても、**そのコードを選ぶ設定**が外に居れば守りは効かない。この repo は同じ形を 3 度見つけた —— パス 347 `vite.config.ts` (出荷 HTML の中身を決めるのに `SCAN_ROOTS` はディレクトリの一覧なので直下のファイルがどの根にも入らなかった)、パス 349 `docs/PROXY_EXAMPLE.md` (アプリ側の双子は保護対象なのに、実際に要求を投げる Worker が外)、パス 370 `.claude/settings.json` の `hooks` (**セッション開始のたびに走るコマンド**。走る側の `scripts/session-context.cjs` は `lint:forbidden` が走査し 子プロセスを作る例外まで台帳に載っているのに、どれを走らせるかを決める設定は無縛だった)。実測 (2026-09-21): hook のコマンドを `node -e "…"` に替えると **`verify:all` の 37 ゲートすべてが exit 0**・`chain:verify` も exit 0・単体検査も緑。門は形で落とす (`node scripts/&lt;name>.cjs` だけ) ことと、**最上位の鍵を閉じる (知らない鍵は落とす)** ことの 2 つが要る —— 設定は `statusLine` など別の実行面を後から増やせるので、「見る鍵を挙げる」形だと 3 つ目が静かに入る。 | パス 347 (vite.config.ts) / パス 349 (PROXY_EXAMPLE.md) / パス 370 (.claude/settings.json の hooks) | ゲート `npm run lint:mcp-servers`<br>ゲート `npm run lint:forbidden`<br>ゲート `npm run chain:verify`<br>検査 `src/shared/__tests__/sessionStartCodeGuarded.test.ts` |
 | `integrity-chain-with-closure` | **守りを決めるファイルは封緘し、読んでいる先を 1 段見る** — 保護対象の一覧が読んでいる先 (PBKDF2 の反復を持つ定数など) が保護か理由つきの除外に載っていることを機械で確かめる。1 段ずつでよい。除外の理由は「実行時に残るか」で決める。 | パターン 0-a-10 / パターン 0-a-18 / パス 285 / パス 286 / パス 287 | ゲート `npm run chain:verify`<br>検査 `src/shared/__tests__/integrityChainWitness.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `mutation-scope-protected` | **保護対象は変異検査の中** — 権限・資格情報・書き出し先を決める壁が mutate から外れると変異体が 1 つも作られず、測っていないのに緑になる。 | lint:mutation-scope の docblock / パス 318 | ゲート `npm run lint:mutation-scope`<br>実機 `npm run mutate` |
 | `release-artifacts-reread` | **公開先は前のランの残骸を溜める — 置いてある一覧を読み返す** — CI の緑はそのランが何を出したかしか保証しない。追記しかしない置き場 (リリース資産) は公開後に一覧を読み返す。数は宣言側 (electron-builder.json) から導く。 | パターン 0-a-19 | ゲート `npm run verify:release-artifacts` |
@@ -301,6 +302,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 93 (機械あり 90 / 散文だけ 3)
+- 法則 94 (機械あり 91 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

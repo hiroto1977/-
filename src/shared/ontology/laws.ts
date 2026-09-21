@@ -853,6 +853,30 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [gate('lint:shell')],
   },
   {
+    id: 'config-that-picks-code-is-guarded',
+    family: 'supply-chain',
+    name: 'どのコードが走るかを決める設定は、コードと同じ門と鎖に入れる',
+    statement:
+      '走るコードを守っても、**そのコードを選ぶ設定**が外に居れば守りは効かない。'
+      + 'この repo は同じ形を 3 度見つけた —— パス 347 `vite.config.ts` (出荷 HTML の中身を決めるのに '
+      + '`SCAN_ROOTS` はディレクトリの一覧なので直下のファイルがどの根にも入らなかった)、'
+      + 'パス 349 `docs/PROXY_EXAMPLE.md` (アプリ側の双子は保護対象なのに、実際に要求を投げる Worker が外)、'
+      + 'パス 370 `.claude/settings.json` の `hooks` (**セッション開始のたびに走るコマンド**。'
+      + '走る側の `scripts/session-context.cjs` は `lint:forbidden` が走査し 子プロセスを作る例外まで'
+      + '台帳に載っているのに、どれを走らせるかを決める設定は無縛だった)。'
+      + '実測 (2026-09-21): hook のコマンドを `node -e "…"` に替えると **`verify:all` の 37 ゲートすべてが exit 0**・'
+      + '`chain:verify` も exit 0・単体検査も緑。門は形で落とす (`node scripts/<name>.cjs` だけ) '
+      + 'ことと、**最上位の鍵を閉じる (知らない鍵は落とす)** ことの 2 つが要る —— '
+      + '設定は `statusLine` など別の実行面を後から増やせるので、「見る鍵を挙げる」形だと 3 つ目が静かに入る。',
+    provenance: ['パス 347 (vite.config.ts)', 'パス 349 (PROXY_EXAMPLE.md)', 'パス 370 (.claude/settings.json の hooks)'],
+    enforcedBy: [
+      gate('lint:mcp-servers'),
+      gate('lint:forbidden'),
+      gate('chain:verify'),
+      test(T.shared('sessionStartCodeGuarded')),
+    ],
+  },
+  {
     id: 'integrity-chain-with-closure',
     family: 'supply-chain',
     name: '守りを決めるファイルは封緘し、読んでいる先を 1 段見る',

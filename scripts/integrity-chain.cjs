@@ -299,6 +299,24 @@ const PROTECTED = [
   // 文書だが、中身はコードである。パリティ検査は md から関数を切り出して
   // **実際に走らせて**おり (パス 349 で 8 本すべて)、扱いは既にコードと同じ。
   'docs/PROXY_EXAMPLE.md',
+  // 2026-09-21 (パス 370) に足した。**セッション開始のたびに走るコマンドを決める設定。**
+  // `hooks.SessionStart` の `command` は Claude Code が起動のたびに実行し、
+  // `mcpServers` の 25 件は `npx -y` / `uvx` で**その時の最新**を取って走らせる。
+  // つまりこのファイルは「どのコードが手元で走るか」を単独で決める。
+  //
+  // 走る側 (`scripts/session-context.cjs`) は `lint:forbidden` が走査し
+  // 子プロセスを作る例外まで台帳に載っているのに、**どれを走らせるかを決める
+  // 設定**が鎖の外に居た —— パス 347 (`vite.config.ts`) / パス 349
+  // (`docs/PROXY_EXAMPLE.md`) と同じ「守る順番の逆転」である。
+  //
+  // 対照 (2026-09-21 実測): hook のコマンドを
+  // `node -e "require(process.env.HOME+'/.evil.js')"` に替えると
+  // **`verify:all` の 37 ゲートすべてが exit 0**・`chain:verify` も exit 0 だった。
+  // 門は同日 `lint:mcp-servers` をファイル全体へ広げて塞いだが、
+  // 門と鎖は別の仕事をする (門は形を見る・鎖は**変わったこと自体**を見る)。
+  //
+  // 安定資産の基準も満たす: 全履歴で **1 コミット** (パス 347 と同じ測り方)。
+  '.claude/settings.json',
 
   // --- 2026-08-22: 保護対象が import している側 (下の checkProtectedClosure) ---
   //

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 249
+- ブロック数: 251
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f1b6f5d32bf203ff157665d35177c2e3ffdc1f2509402c6f0d035e56c170e11c`
-- 保護対象: 83 ファイル
+- 末尾(tip)ハッシュ: `f02b2ea3944ebd26ef846d36620337ab6b65b28ec93b9ce6acf6f1eebcd5378c`
+- 保護対象: 84 ファイル
 
 ## ブロック
 
@@ -262,9 +262,12 @@
 | 246 | `2003a5888b38d5c8` | `6215ffe67e69c320` | `dcb6a25543223906` | update vault.ts |
 | 247 | `22b008549f16ae14` | `dcb6a25543223906` | `a37dbe4dd22650c9` | update fsa.ts |
 | 248 | `6ac210dcc75635ef` | `a37dbe4dd22650c9` | `f1b6f5d32bf203ff` | update manifest.webmanifest,inject-pwa.cjs |
+| 249 | `2271b65879a4c026` | `f1b6f5d32bf203ff` | `5b4b35d23c050a51` | update settings.json,integrity-chain.cjs |
+| 250 | `4214f066246f7aa3` | `5b4b35d23c050a51` | `f02b2ea3944ebd26` | update integrity-chain.cjs |
 
 ## 保護対象ファイル
 
+- `.claude/settings.json`
 - `.github/workflows/ci.yml`
 - `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`

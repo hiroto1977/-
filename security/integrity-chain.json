@@ -2,6 +2,7 @@
   "algorithm": "sha256",
   "genesisHash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9",
   "protected": [
+    ".claude/settings.json",
     ".github/workflows/ci.yml",
     ".github/workflows/pages.yml",
     ".github/workflows/release.yml",
@@ -2078,9 +2079,26 @@
       "leafCount": 83,
       "note": "update manifest.webmanifest,inject-pwa.cjs",
       "hash": "f1b6f5d32bf203ff157665d35177c2e3ffdc1f2509402c6f0d035e56c170e11c"
+    },
+    {
+      "index": 249,
+      "prevHash": "f1b6f5d32bf203ff157665d35177c2e3ffdc1f2509402c6f0d035e56c170e11c",
+      "merkleRoot": "2271b65879a4c026218bc24b41ef09b64c4b4bf3f6f29c9cf240590d8f77dc50",
+      "leafCount": 84,
+      "note": "update settings.json,integrity-chain.cjs",
+      "hash": "5b4b35d23c050a514e7ed93cb2619b72fbd247451a81b3b2cff5b933799b1c30"
+    },
+    {
+      "index": 250,
+      "prevHash": "5b4b35d23c050a514e7ed93cb2619b72fbd247451a81b3b2cff5b933799b1c30",
+      "merkleRoot": "4214f066246f7aa32da94825ea6e453c3966dd19b5f16cd5952c95577fa17ea1",
+      "leafCount": 84,
+      "note": "update integrity-chain.cjs",
+      "hash": "f02b2ea3944ebd26ef846d36620337ab6b65b28ec93b9ce6acf6f1eebcd5378c"
     }
   ],
   "tipManifest": {
+    ".claude/settings.json": "863e3324b3891fc0501306890ebfa18c7dba50fb3ec50906e87ce386d7ceb102",
     ".github/workflows/ci.yml": "2294afce5d44eb97c7f1ad4cab1e9586564799850f9c5ba4934cece56a180d00",
     ".github/workflows/pages.yml": "02c826156e8b095f0fdf3d8774263bf0c4d778cc9543f9d5de954b9a14b7d85a",
     ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
@@ -2093,7 +2111,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "6132193d7bc008c883e4c4b2dcfe0485e1854497062885c38287d4ddc187513f",
+    "scripts/integrity-chain.cjs": "1719abf7d97ca6172c965edf81d89f93507823c1e21d42ebde8bfdabacd954d1",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
