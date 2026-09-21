@@ -70,7 +70,7 @@ import {
   type CropNumericField,
 } from '../../shared/hydroponicCrops';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, readNumberOrNull, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { usePlan } from '../plan/usePlan';
 import { pctOrDash } from '../../shared/formatters';
@@ -858,8 +858,12 @@ export function OverviewPage() {
 
   const [targetProfit, setTargetProfit] = useState('');
   const targetRevenue = useMemo(() => {
-    const t = Number(targetProfit);
-    if (!overview.kpi.hasData || !Number.isFinite(t) || targetProfit.trim() === '') return null;
+    // 読み取りはアプリで 1 つ (`shared/readNumeric.ts`)。ここだけ `Number()` で読んでおり、
+    // 同じ画面の他の欄 (`n` = `readNumberOr0`) と答えが割れていた (パス 375) ——
+    // 実測: `'1,000,000'` は `Number` だと NaN で「—」になり (他の欄は読める)、
+    // 逆に `'0x10'` / `'1e3'` は `Number` だけが受ける。
+    const t = readNumberOrNull(targetProfit);
+    if (!overview.kpi.hasData || t === null) return null;
     return requiredRevenueForTarget(fundamentals, t);
   }, [overview.kpi.hasData, fundamentals, targetProfit]);
 

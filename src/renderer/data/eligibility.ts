@@ -37,6 +37,8 @@
  *
  * 出典は各ルールに URL を持たせ、画面から辿れるようにする。
  */
+import { readNumeric } from '../../shared/readNumeric';
+
 
 export type Gender = 'male' | 'female' | 'other' | 'unspecified';
 export type Entity = 'individual' | 'corporation';
@@ -375,13 +377,14 @@ export function judgeEligibility(
  * 年齢を入れたのに「未入力扱い」になり、判定が動いていないように見える。
  * 空文字・数値でない文字列は `null`（未入力）を返し、**0 に落とさない**
  * — 0 に落とすと「0 歳」として年齢要件を判定してしまう。
+ *
+ * **読み取りそのものは書かない** (2026-09-21 · パス 375)。以前はここに
+ * 全角化 → カンマ除去 → `Number()` の写しを持っており、`shared/readNumeric.ts` が
+ * 同じ入力に別の答えを返していた (実測: `'1e3'` → 1000 / `'0x10'` → 16 /
+ * `'.5'` → 0.5 をこちらだけが受け、`'1,23'` を 123 と読んでいた)。
+ * 補助金の適用判定は年齢と従事年数で決まるので、読み方が画面ごとに
+ * 違うこと自体が欠陥である。読み取りはアプリで 1 つ。
  */
 export function parseNumericInput(raw: string): number | null {
-  const normalized = raw
-    .replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))
-    .replace(/[,，]/g, '')
-    .trim();
-  if (normalized === '') return null;
-  const n = Number(normalized);
-  return Number.isFinite(n) ? n : null;
+  return readNumeric(raw);
 }

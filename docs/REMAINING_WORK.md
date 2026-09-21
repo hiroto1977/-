@@ -14506,7 +14506,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **108 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **108 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -14523,7 +14523,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/linux.ts` | 5 |
 | `src/renderer/data/cashflowDebtService.ts` | 5 |
 | `src/renderer/library/library.ts` | 5 |
-| `src/renderer/pages/TaxPage.tsx` | 5 |
 | `src/shared/buildingIso.ts` | 5 |
 | `src/shared/savingsPlanning.ts` | 5 |
 | `src/main/clients/funding.ts` | 4 |
@@ -14565,6 +14564,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
+| `src/renderer/pages/TaxPage.tsx` | 2 |
 | `src/shared/num.ts` | 2 |
 | `src/shared/talent.ts` | 2 |
 | `src/shared/taxCalc.ts` | 2 |
@@ -27190,7 +27190,7 @@ shared **156** モジュール / 両ビルドが import **79** / うち否定で
 | `mutualFundsMetrics` | 0 | 1 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**2 つだけ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct` (`pct < RETURN_FLOOR_PCT` の 1 行)。**その述語は確かに越境する** —— `adviseService` の中で真の枝 (:586 警告を組む) と偽の枝 (:596 測れる集合から外す) の両方が使われる。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollama` | 1 | 4 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
-| `readNumeric` | 0 | 3 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
+| `readNumeric` | 0 | 5 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `rfc2822` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本 |
 | `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは `RETURN_FLOOR_PCT` と `isImpossibleReturnPct` の 2 つだけで、**`isPlannableRate` / `isPlannableYears` はどちらの中からも呼ばれない** (`isImpossibleReturnPct` は 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |
 | `scanTarget` | 0 | 1 | 対称 (実測・パス 282 で辿り直した) —— パス 247 は「対称 (実測)」の 4 文字だけで、**根拠が書かれていなかった**。パス 247 は母集団を初めて数えた回で、しかも到達は 1 ホップで測っていた (閉包へ直したのはパス 268) ので、その「実測」が何を見たのかは今から確かめられない。 ★ 実測 (パス 282): 越境するのは `validateScanUrl` **1 つだけ** (`main/clients/security.ts` と `renderer/data/saasWriteWeb.ts` の両方が呼ぶ)。否定のあとの動作は**字まで同じ 1 行** —— `if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);`。`describeScanUrlRisk` (内部・社内ホストの警告) の読み手は `SecurityPage.tsx` だけ、`looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけなので越境しない。 ★ ただし `SCAN_URL_MESSAGES` (4 行) は**ビルドごとに 1 つずつ**在った —— 字は一致していたが一致を留めている物が何も無く、パス 167 / 250 / 252 / 269 / 273 が1 件ずつ閉じてきた家系。URL を第三者 (VirusTotal) へ渡す前の関門の断り文なので、`shared/scanTarget.ts` へ寄せて `scanTarget.test.ts` が「読む側は共有の表を読み、自分の写しを持たない」を両方向に留める。 ★ 設計として残る非対称ではない点: 内部ホスト・秘密らしきクエリ引数は**関門ではなく警告**である (`validateScanUrl` の失敗は empty / too-long / not-a-url / not-web の 4 つだけ)。警告を出す画面は両ビルドで同じ 1 本なので対称。 ★ パス 321: `validateScanUrl` / `validateBreachEmail` を呼ぶのは `shared/api/security.ts` の `checkScanUrl` / `checkBreachEmail` の 1 つずつになり、main と saasWriteWeb はそれを通る (直に import しない)。「字まで同じ 1 行」は 1 行になった |

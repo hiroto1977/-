@@ -15,7 +15,20 @@ describe('parseAmountInput', () => {
 
   it('strips thousands separators', () => {
     expect(parseAmountInput('1,200,000')).toEqual({ ok: true, value: 1_200_000 });
-    expect(parseAmountInput('12 000')).toEqual({ ok: true, value: 12_000 });
+  });
+
+  /**
+   * **空白区切りの桁は読まない** (2026-09-21 · パス 375 で変更)。
+   *
+   * 2026-09-21 までこの機能を `{ ok: true, value: 12_000 }` として留めていたが、
+   * それは `shared/readNumeric.ts` が 2026-09-06 に**欠陥として実測した形**である:
+   * 「桁区切りの空白」と「2 つの数が続いている」を区別する手立てが無いので、
+   * `'1 2 3'` を 123 と読むことになる。**弱さを仕様として書き留めない**
+   * (法則 `no-weakness-as-spec`)。断る側に倒したので、断ることを留め直す。
+   */
+  it('refuses whitespace-separated digits (they may be two numbers)', () => {
+    expect(parseAmountInput('12 000')).toEqual({ ok: false });
+    expect(parseAmountInput('1 2 3')).toEqual({ ok: false });
   });
 
   it('normalizes full-width digits and punctuation', () => {
@@ -29,10 +42,15 @@ describe('parseAmountInput', () => {
     expect(parseAmountInput('+800')).toEqual({ ok: true, value: 800 });
   });
 
-  it('strips tab / newline / NBSP as whitespace', () => {
-    expect(parseAmountInput('1\t200')).toEqual({ ok: true, value: 1200 });
-    expect(parseAmountInput('1\n200')).toEqual({ ok: true, value: 1200 });
-    expect(parseAmountInput('1 200')).toEqual({ ok: true, value: 1200 });
+  /**
+   * 内部の空白類 (タブ / 改行 / NBSP) も同じ理由で断る。**前後の空白は
+   * 今までどおり落とす** (貼り付けで普通に混ざるし、桁を繋げない)。
+   */
+  it('refuses interior tab / newline / NBSP, but still trims the edges', () => {
+    expect(parseAmountInput('1\t200')).toEqual({ ok: false });
+    expect(parseAmountInput('1\n200')).toEqual({ ok: false });
+    expect(parseAmountInput('1\u00a0200')).toEqual({ ok: false });
+    expect(parseAmountInput('  1200  ')).toEqual({ ok: true, value: 1200 });
   });
 
   it('handles full/half-width mixed input', () => {

@@ -1,14 +1,36 @@
 /**
  * **数字の読み取り —— アプリで 1 つの方針。**
  *
- * 入力欄の文字列を数にする口は 4 つあり、**全部ここを通す**:
+ * 入力欄の文字列を数にする口は、**全部ここを通す**:
  *
  * ```
- *   renderer/data/inputGuards.ts        画面の番人 (readNumber / guardNumber)
- *   shared/hydroponicCrops.ts           品目の数値 (EC / pH / 株数 / 収穫重量)
- *   renderer/data/investments.ts        物件・保有銘柄の金額
- *   renderer/data/businessUnits.ts      事業の売上・変動費・固定費
+ *   renderer/data/inputGuards.ts          画面の番人 (readNumber / readNumberOr0 / readNumberOrNull / guardNumber)
+ *   shared/hydroponicCrops.ts             品目の数値 (EC / pH / 株数 / 収穫重量)
+ *   renderer/data/investments.ts          物件・保有銘柄の金額
+ *   renderer/data/businessUnits.ts        事業の売上・変動費・固定費
+ *   components/serviceActionUtils.ts      金額入力 (返り値の形だけ持つ —— 未入力と読めないを分ける)
+ *   renderer/data/eligibility.ts          補助金の適用判定の年齢・従事年数
  * ```
+ *
+ * ## ★ この一覧は 2026-09-21 まで**偽だった** (パス 375)
+ *
+ * 上 4 行を挙げて「4 つあり、全部ここを通す」と述べていたが、数値入力
+ * (`inputMode` を持つ `<input>` と `<GuardedNumber>`・実測 **13 ファイル / 119 欄**) から
+ * 読み手を辿ると、ここを通らない口が **3 つ / 呼び出し 7 か所**残っていた
+ * (`parseAmountInput` × 5 / `parseNumericInput` × 2 / `OverviewPage` の素の `Number()`)。
+ *
+ * いちばん重かったのは `TaxPage` で、**関門 (`guardAll` → `GuardSummary`) は
+ * こちらで判定し、①課税所得 / ②額面年収 / 目標手取りの計算だけを
+ * `parseAmountInput` で読んでいた** —— 実測 (jsdom):
+ *
+ * ```
+ *   '5,000,00'    ⛔「0 として計算されています」と断りながら 所得税 ¥25,525
+ *   '5,000,000円'  ⛔ が 1 つも出ずに               所得税 ¥0
+ * ```
+ *
+ * 母集団と読み手の台帳 (両方向) は
+ * `renderer/__tests__/numericInputReaderCensus.test.ts` が持つ ——
+ * **散文で数えた一覧は古びるので、機械が走査で導く** (法則 `center-then-count-callers`)。
  *
  * かつては口ごとにパーサが違い、同じ入力で結果が食い違っていた
  * (`renderer/data/inputGuards.ts` 冒頭の経緯と、2026-09-06 の

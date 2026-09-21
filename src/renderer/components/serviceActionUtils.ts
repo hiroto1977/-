@@ -10,42 +10,42 @@
  * (ここと `ServiceActionPanel.tsx` の `maxLength`) だけが写し**だった。
  */
 import { clampToCeiling } from '../../shared/inputCeiling';
+import { readNumeric } from '../../shared/readNumeric';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
-
-/** 全角英数記号 (U+FF01–U+FF5E) → 半角 (U+0021–U+007E) へ変換。 */
-function toHalfWidth(input: string): string {
-  return input.replace(/[！-～]/g, (ch) =>
-    String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
-  );
-}
 
 export type AmountParse =
   | { readonly ok: true; readonly value?: number }
   | { readonly ok: false };
 
 /**
- * 金額入力を locale 寛容にパースする。
+ * 金額入力を数にする。
  *
- * - 全角数字 (０-９) / 全角ピリオド / 全角マイナスを半角化
- * - 桁区切りカンマ (半角・全角) と空白を除去
  * - 空文字は「金額なし」= `{ ok: true, value: undefined }`
- * - 数値にならない場合は `{ ok: false }`
+ * - 読めなければ `{ ok: false }` (呼び手が画面へ断りを出す)
+ *
+ * **読み取りそのものは書かない** (2026-09-21 · パス 375)。以前はここに
+ * 「全角化 → カンマと空白を**どこからでも**除去 → 厳格な 10 進数」の写しを持っており、
+ * `shared/readNumeric.ts` と同じ入力に別の答えを返していた (実測 26 標本中 11):
+ *
+ * ```
+ *   '5,000,00'  こちら 500000 / readNumeric null   桁区切りの位置が違う
+ *   '30 000'    こちら 30000  / readNumeric null   空白区切り
+ *   '1 2 3'     こちら 123    / readNumeric null   2 つの数の連結
+ *   '500円'     こちら 断る   / readNumeric 500    単位つき
+ * ```
+ *
+ * `TaxPage` は**関門 (`guardAll` → `GuardSummary`) を `readNumeric` で判定し、
+ * ①課税所得 / ②額面年収 / 目標手取りの計算だけをこちらで読んでいた** ——
+ * そのため「読み取れなかった欄は 0 として計算されています」と断りながら
+ * ¥25,525 を出す (`'5,000,00'`)・⛔ を 1 つも出さずに ¥0 を出す (`'5,000,000円'`)
+ * が両方起きていた。答えを決めるのは 1 つにし、ここは**返り値の形**
+ * (未入力と読めないを分ける) だけを持つ。母集団は
+ * `renderer/__tests__/numericInputReaderCensus.test.ts`。
  */
 export function parseAmountInput(raw: string): AmountParse {
-  const trimmed = raw.trim();
-  if (trimmed.length === 0) return { ok: true };
-
-  const normalized = toHalfWidth(trimmed).replace(/[,\s]/g, ''); // 桁区切り・空白を除去
-
-  // 厳格な 10 進数のみ許容 (任意の先頭 +/- + 整数 + 任意の小数部)。
-  // これにより "++500" / "+-500" / "1e3" / "0x10" / "Infinity" / "NaN" /
-  // "1..2" などを弾く。Number() の寛容な解釈には委ねない。
-  if (!/^[+-]?\d+(\.\d+)?$/.test(normalized)) return { ok: false };
-
-  const n = Number(normalized);
-  if (!Number.isFinite(n)) return { ok: false };
-
-  return { ok: true, value: n };
+  if (raw.trim().length === 0) return { ok: true };
+  const value = readNumeric(raw);
+  return value === null ? { ok: false } : { ok: true, value };
 }
 
 /**

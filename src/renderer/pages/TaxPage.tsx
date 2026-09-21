@@ -8,7 +8,6 @@ import { useServiceData } from '../hooks/useServiceData';
 import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
 import { DASH, jpy, jpyOrDash } from '../../shared/formatters';
 import { localIsoDate } from '../../shared/localDate';
-import { parseAmountInput } from '../components/serviceActionUtils';
 import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
 import {
   MAX_RATE,
@@ -170,6 +169,21 @@ const inputStyle: React.CSSProperties = {
  * 課税価格そのものが測れない** —— パス 208 が「課税価格は率に依らないので
  * 出し続ける」と決めたのは**率**の話で、金額では逆になる。
  */
+/**
+ * 文字列入力を数にする。**読み取りはアプリで 1 つ** (`shared/readNumeric.ts`) で、
+ * この画面の関門 (`guardAll` → `GuardSummary`) と**同じ関数**で判定する。
+ *
+ * **モジュール直下に置くのが胝** (2026-09-21 · パス 375)。以前は関数の中に
+ * 宣言しており、それより上の useMemo (①課税所得 / ②額面年収 / 目標手取り) は
+ * TDZ でこれを呼べず、`parseAmountInput` という**別の読み手**を使っていた ——
+ * 同じ画面が 2 つの答えを持ち、関門の文面が実物と食い違う形だった。
+ * 宣言を上へ出すと TDZ そのものが無くなる (この関数は何も閉じ込めていない)。
+ */
+const num = (s: string): number => {
+  const v = readNumber(s);
+  return v !== null && v > 0 ? v : 0;
+};
+
 const TRADE_SPECS = {
   imGoods: { label: '商品代金 (輸入・円)', kind: 'money', allowZero: false },
   imFreight: { label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true },
@@ -216,20 +230,11 @@ export function TaxPage() {
     incorporation: '法人化 (法人成り)',
   };
 
-  const taxableIncome = useMemo(() => {
-    const p = parseAmountInput(incomeStr);
-    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
-  }, [incomeStr]);
+  const taxableIncome = useMemo(() => num(incomeStr), [incomeStr]);
 
-  const netAmount = useMemo(() => {
-    const p = parseAmountInput(netStr);
-    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
-  }, [netStr]);
+  const netAmount = useMemo(() => num(netStr), [netStr]);
 
-  const grossAnnual = useMemo(() => {
-    const p = parseAmountInput(grossStr);
-    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
-  }, [grossStr]);
+  const grossAnnual = useMemo(() => num(grossStr), [grossStr]);
 
   // 台帳の数値パラメータ (設定画面で上書きできる)。計算の関数へ引数で渡し、
   // 表示の % も同じ値から出す (文言だけ古い率のまま、を作らない)。
@@ -269,14 +274,6 @@ export function TaxPage() {
   const [careInsurance, setCareInsurance] = useState(false);
   const [bonusPerStr, setBonusPerStr] = useState('0');
   const [bonusCountStr, setBonusCountStr] = useState('2');
-  // 文字列入力を数値に変換する純粋ヘルパ。下の useMemo 群がレンダー時に
-  // 即時実行されるため、それより前に宣言しておく必要がある (TDZ 回避)。
-  // 読み取りは inputGuards に統一し、下の GuardSummary と同じ関数で判定する。
-  // （従来の parseAmountInput は「500円」のような単位付きを 0 に落としていた）
-  const num = (s: string): number => {
-    const v = readNumber(s);
-    return v !== null && v > 0 ? v : 0;
-  };
   const socialInsurancePrecise = useMemo(() => {
     const bonusPer = num(bonusPerStr);
     const bonusCount = num(bonusCountStr);
