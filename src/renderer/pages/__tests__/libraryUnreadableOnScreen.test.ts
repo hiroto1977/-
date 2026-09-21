@@ -37,14 +37,6 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
 /** 素の IndexedDB へ控えを直接書く (put() を通らない経路 = 壊れた控えの再現)。 */
 async function writeRaw(records: readonly Record<string, unknown>[]): Promise<void> {
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -66,14 +58,14 @@ async function writeRaw(records: readonly Record<string, unknown>[]): Promise<vo
   db.close();
 }
 
-async function mountLibrary(): Promise<void> {
+async function mountLibrary(waitFor: string): Promise<void> {
   const def = SERVICES.find((s) => s.id === 'library');
   if (!def) throw new Error('library service missing');
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  await waitForText(text, waitFor);
 }
 
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
@@ -105,7 +97,7 @@ const base = { filename: 'a.svg', mime: 'image/svg+xml', serviceId: 'templates' 
 describe('ライブラリ — 読めない値を「読めない」と言う', () => {
   it('★ 読めない保存時刻は「時刻不明」(NaN/NaN/NaN ではない)', async () => {
     await writeRaw([{ ...base, id: 'bad', filename: '時刻の壊れた書類.svg', createdAt: Number.NaN, size: 100 }]);
-    await mountLibrary();
+    await mountLibrary('時刻不明');
     const t = text();
     expect(t).toContain('時刻の壊れた書類.svg');
     expect(t).toContain('時刻不明');
@@ -117,7 +109,7 @@ describe('ライブラリ — 読めない値を「読めない」と言う', ()
       { ...base, id: 'ok', createdAt: 1_700_000_000_000, size: 2048 },
       { ...base, id: 'bad', filename: 'サイズの壊れた書類.svg', createdAt: 1_700_000_000_001, size: Number.NaN },
     ]);
-    await mountLibrary();
+    await mountLibrary('サイズが読めない 1 件は合計に含めていません');
     const t = text();
     expect(t).toContain('サイズ不明');
     expect(t).toContain('2.0 KB'); // 読める分の合計 (見出しと行)
@@ -130,7 +122,7 @@ describe('ライブラリ — 読めない値を「読めない」と言う', ()
       { ...base, id: 'a', createdAt: Number.NaN, size: Number.NaN },
       { ...base, id: 'b', createdAt: 1_700_000_000_002, size: Number.NaN },
     ]);
-    await mountLibrary();
+    await mountLibrary('サイズが読めない 2 件');
     const note = container.querySelector('[data-library-unreadable]');
     expect(note).not.toBeNull();
     const n = (note!.textContent ?? '').replace(/\s+/g, ' ');
@@ -142,7 +134,7 @@ describe('ライブラリ — 読めない値を「読めない」と言う', ()
 
   it('★ 対照: そろった控えだけなら断りは出ない (常に出る文ではない)', async () => {
     await writeRaw([{ ...base, id: 'ok', createdAt: 1_700_000_000_000, size: 2048 }]);
-    await mountLibrary();
+    await mountLibrary('a.svg');
     expect(container.querySelector('[data-library-unreadable]')).toBeNull();
     expect(text()).not.toContain('サイズ不明');
     expect(text()).not.toContain('時刻不明');

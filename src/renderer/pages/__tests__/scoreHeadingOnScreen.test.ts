@@ -35,6 +35,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -51,14 +52,6 @@ beforeAll(() => {
 
 let container: HTMLDivElement;
 let root: Root | null = null;
-
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
 
 /** 売上が立つ前 (販管費だけ)。採点できる指標が 1 つも出ない。 */
 const NO_REVENUE: KpiActual = {
@@ -77,7 +70,10 @@ async function mountWith(a: KpiActual): Promise<void> {
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  // **回数ではなく条件で待つ** (法則 `wait-for-condition-not-ticks`)。
+  // 節は `overview.kpi.hasData` で出るので、見出しが現れた時点で
+  // KPI のレコードは既に届いている。
+  await settleUntil(() => scorecardHeading() !== '', '経営スコアカードの見出しが出る');
 }
 
 /** 「経営スコアカード」で始まる節の見出しの文字列。 */
@@ -115,6 +111,7 @@ afterEach(async () => {
 describe('経営サマリー — 採点できる指標が無いときの見出し', () => {
   it('★ 「総合 0/100（要改善）」ではなく「未算定」と掲げる', async () => {
     await mountWith(NO_REVENUE);
+    await waitForText(scorecardHeading, '未算定');
     const h = scorecardHeading();
     expect(h).not.toBe('');
     // 直す前の文面
@@ -126,6 +123,10 @@ describe('経営サマリー — 採点できる指標が無いときの見出�
 
   it('★ 対照: 採点できれば数と判定を掲げる (上の不在の検査が空でない証拠)', async () => {
     await mountWith(WITH_REVENUE);
+    await settleUntil(
+      () => /総合 \d+\/100/.test(scorecardHeading()),
+      '採点済みの見出しが出る',
+    );
     const h = scorecardHeading();
     // 営業利益率 30% / 粗利率 60% → 収益性 100 → 総合 100（優良）
     expect(h).toMatch(/総合 \d+\/100（(要改善|注意|良好|優良)）/);
@@ -136,6 +137,9 @@ describe('経営サマリー — 採点できる指標が無いときの見出�
     // 経営ハイライトの見出しも同じ判定を出す。**片方だけ直すのが
     // パス 66 でやった失敗**なので、ページ全体を見る。
     await mountWith(NO_REVENUE);
+    // **待ってから主張する 2 段** —— 否定は待てないので、
+    // 先に肯定の前提 (未算定の見出し) を条件で待つ。
+    await waitForText(scorecardHeading, '未算定');
     const t = (container.textContent ?? '').replace(/\s+/g, ' ');
     expect(t).not.toContain('総合 0/100');
   });

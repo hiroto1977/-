@@ -7,6 +7,63 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 376 (2026-09-21) — 0 周で落ちる台帳を 31 → 28 本へ消化 + 5 面を測って何も無かった
+
+### 寄せた 3 本 (どれも `text-captured`)
+
+`scoreHeadingOnScreen` / `balanceSheetInsightsOnScreen` / `libraryUnreadableOnScreen`。
+形は共通で、**取る前に回数で待っていた**:
+
+```
+  await settle();            // 固定回数 (6 または 8)
+  const t = text();          // 文をここで取る
+  expect(t).toContain(…);   // 以降はそのスナップショットを読むだけ
+```
+
+直し方は 1 つ: **mount の helper に `waitFor: string` を取らせ、固定回数の代わりに
+その文が出るまで待つ**。取った後の主張 (否定を含む) はそのままでよい。
+否定だけの `it` は **肯定の前提を先に待つ 2 段**にした
+(台帳の `text-with-message` の行が名指していた形)。
+
+### ★ 針を 2 度直した
+
+1. 変換の正規表現を `i < 8` で書いたが、`balanceSheetInsightsOnScreen` は **`i < 6`** だった。
+   **回数はファイルごとに違う**ので、回数に依らない形へ直した。
+2. 最初は**ラベル**を錠にしたが、`ネットデット` は出ていても `30%` はまだで **1 件落ちた** ——
+   **ラベルは先に出て、算定された値は後から来る**。錠は**その `it` が真に見たい値**にする。
+
+### 検証
+
+`npm run audit:tick-sensitivity` で実測 —— **「落ちたファイルは台帳どおり (双方向)」**で、
+寄せた 3 本は 0 周でも落ちない。`typecheck` 緑・`npm test` **805 / 17,963**・`verify:all` exit 0。
+出荷物 **11,935,880 B / 3,348,401 B (byte 単位で不変)**。
+
+### ★ 測って何も無かった 5 面
+
+| 測った物 | 結果 |
+| --- | --- |
+| 内蔵サンプルのバッジ | `sample` 40 画面中 **36** が出す。出ない 4 つは正しい (`charts` は自分の言葉で言い、`sales`/`team`/`overview` は利用者自身の記録)。消すと **12 件 / 3 ファイル**が鳴る |
+| `isMock` の申告 | funding / stocks / kpi の 3 つとも立てており、`useServiceData` が構造で拾う |
+| CSV の数式インジェクション | 3 つの書き出しが全部 `toCsv` → `guardFormula` を通る。手書きを植えると `csvExportGate.test.ts` が鳴る |
+| 24 語をクリップボードへ | 30 秒の自動消去を外すと**専用の検査 2 件 + 鎖の外側の証人**が鳴る |
+| `orchestration/` | `lint:forbidden` の `SCAN_ROOTS` に入っている (min 2) |
+
+### ★ この日、私は一度偽を述べて訂正した
+
+CSV を調べている途中で「`text/csv` の census は無い」と述べたが、**偽だった**。
+検査ファイルを `text/csv` の綴りで grep して 0 件と結論したが、実物の
+`csvExportGate.test.ts` は **mime ではなく「行を自分で組み立てている形」で母集団を採る**ので、
+その針には映らない。**植えて測って初めて分かった。**
+このセッションで綴りベースの針が実物を取りこぼしたのは **3 度目**である
+(パス 375 の `<input>` 走査・`ShigyoConsole` の `StatusBar`・今回)。
+
+### 残り (台帳 28 本)
+
+`text-captured` 5 / `setup-flush` 7 / `element-presence` 5 / `store-roundtrip` 3 /
+`text-helper` 3 / `mock-call` 2 / `hook-state` 1 / `attribute` 1 / `text-with-message` 1。
+
+---
+
 ## パス 375 (2026-09-21) — 関門と計算が別の読み手を使い、断りの文面が両方向に嘘になっていた
 
 ### 見つけた物 (実測)

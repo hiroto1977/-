@@ -119,11 +119,6 @@ const LEDGER = [
     why: '`getAttribute(\'data-bs-row\')` —— 文ではなく属性。`waitForElement` + 属性の主張に寄せられる (未着手)',
   },
   {
-    file: 'src/renderer/pages/__tests__/balanceSheetInsightsOnScreen.test.ts',
-    kind: 'text-captured',
-    why: '文を**先に変数へ取って**から主張する (`const body = …; expect(body).toContain(…)`)。読み直さないので待ちに渡せない —— 読みを関数にすれば寄せられる (未着手)',
-  },
-  {
     file: 'src/renderer/pages/__tests__/budgetPeriodScopeVisible.test.ts',
     kind: 'text-captured',
     why: '文を `const t = text();` へ取ってから主張する。加えて `toBeDefined()` の要素待ちが 1 件',
@@ -147,11 +142,6 @@ const LEDGER = [
     file: 'src/renderer/pages/__tests__/libraryCorruptContent.test.ts',
     kind: 'text-with-message',
     why: '`expect(text(), \'説明\').toContain(…)` —— 第 2 引数の説明を持つ形。寄せると説明が落ちるので、待ってから主張する 2 段にする (未着手)',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/libraryUnreadableOnScreen.test.ts',
-    kind: 'text-captured',
-    why: '文を `const t = text();` へ取ってから主張する。加えて `not.toBeNull()` の要素待ちが 1 件',
   },
   {
     file: 'src/renderer/pages/__tests__/manualOverrideDisclosure.test.ts',
@@ -207,11 +197,6 @@ const LEDGER = [
     file: 'src/renderer/pages/__tests__/salesDuplicateImport.test.ts',
     kind: 'setup-flush',
     why: '寄せた `waitForText` 自身が届かない (取り込みが流れていない) + `toBeDefined()` が 1 件',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/scoreHeadingOnScreen.test.ts',
-    kind: 'text-captured',
-    why: '`expect(h).not.toBe(\'\')` / `toMatch(…)` —— 取ってから主張する形',
   },
   {
     file: 'src/renderer/pages/__tests__/sensitivityMarginOnScreen.test.ts',

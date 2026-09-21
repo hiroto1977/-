@@ -38,14 +38,6 @@ beforeAll(() => {
   };
 });
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 6; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
 let container: HTMLDivElement;
 let root: Root | null = null;
 
@@ -83,18 +75,27 @@ async function seedBs(extra: Record<string, unknown>): Promise<void> {
   });
 }
 
-async function mountKpi(): Promise<void> {
+/**
+ * 貼ってから、**`waitFor` が画面に出るまで条件で待つ** (法則 `wait-for-condition-not-ticks`)。
+ *
+ * 以前は固定回数の `settle()` のあとに `const body = text();` で文を取っていたので、
+ * **回数が足りるかどうかが機械の負荷に依っていた** (実測: 0 周で落ちる)。
+ * 取る前に条件で待てば、取った後の主張 (否定を含む) はそのままでよい。
+ */
+async function mountKpi(waitFor: string): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(KpiPage));
   });
-  await settle();
+  await waitForText(text, waitFor);
 }
 
 describe('KPI — 貸借対照表の分析が画面に出る', () => {
   it('★ 有利子負債と現預金を入れると、ネットデット・有利子負債比率が出る', async () => {
     await seedBs({ cash: 150, interestBearingDebt: 300 });
-    await mountKpi();
+    // **算定された値まで待つ** —— ラベル (「ネットデット」) は先に出るので、
+    // それを錠にすると値が揃う前に進む (実測で 1 件落ちた)。
+    await mountKpi('30%');
     const body = text();
     expect(body).toContain('ネットデット');
     expect(body).toContain('有利子負債比率');
@@ -105,7 +106,7 @@ describe('KPI — 貸借対照表の分析が画面に出る', () => {
 
   it('★ 有利子負債が未入力なら「—」と、算定していない理由を出す (実質無借金と言わない)', async () => {
     await seedBs({ cash: 150 });
-    await mountKpi();
+    await mountKpi('有利子負債が未入力のため');
     const body = text();
     expect(body).toContain('ネットデット');
     expect(body).toContain('有利子負債が未入力のため');
@@ -120,7 +121,7 @@ describe('KPI — 貸借対照表の分析が画面に出る', () => {
 
   it('★ 0 と入力したときは算定し、実質無借金と言ってよい', async () => {
     await seedBs({ cash: 150, interestBearingDebt: 0 });
-    await mountKpi();
+    await mountKpi(NET_CASH_CLAIM);
     const body = text();
     expect(body).toContain(NET_CASH_CLAIM);
     expect(body).not.toContain('有利子負債が未入力のため');
@@ -129,18 +130,18 @@ describe('KPI — 貸借対照表の分析が画面に出る', () => {
   it('★ 実質債務超過の懸念は、算定できたときだけ警告する', async () => {
     // 純資産 600 に対しネットデット 800 − 50 = 750 > 600。
     await seedBs({ cash: 50, interestBearingDebt: 800 });
-    await mountKpi();
+    await mountKpi('ネットデット');
     await waitForText(text, '実質債務超過の懸念');
   });
 
   it('対照: 懸念が無い形では警告を出さない', async () => {
     await seedBs({ cash: 150, interestBearingDebt: 300 });
-    await mountKpi();
+    await mountKpi('ネットデット');
     expect(text()).not.toContain('実質債務超過の懸念');
   });
 
   it('入力欄そのものが在る (それまでどの画面にも無かった)', async () => {
-    await mountKpi();
+    await mountKpi('ネットデット');
     const has = Array.from(container.querySelectorAll('input')).some(
       (el) => el.getAttribute('placeholder') === '有利子負債',
     );
