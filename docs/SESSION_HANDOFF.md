@@ -7,6 +7,68 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 378 (2026-09-21) — 台帳を 25 → 20 本へ (`element-presence` を空にした)
+
+| ファイル | 錠の置き方 |
+| --- | --- |
+| `settingsUnreadableCards` | `mount(node, ready, label)`。★ の 2 本は「確認できません」の札、対照の 2 本は**その裏の「未設定」の札** |
+| `kpiDuplicateActuals` | `mount(rows)` —— **実績一覧が n 行になる**まで待つ (予算の表と取り違えないよう見出し 3 列で選ぶ) |
+| `teamDuplicateMember` | `mount(rows)` —— メンバー一覧が n 行 |
+| `sensitivityMarginOnScreen` | `mountOverview(ready, label)` —— 損益感度分析の表に 5 行 / 月次推移 2 期 / 目標利益の欄 |
+| `docstudioImport` | `mount(id, ready, label)` —— 取り込み表・取り込み行・書式のボタン・検索語の入った欄 |
+
+### 文ではなく「在るか・何本か」なので、錠も別の道具にした
+
+パス 376・377 は **文**を錠にした (`waitFor: string`)。この 5 本の主張は
+`not.toBeNull()` / `toBeDefined()` / `rows.length` なので、
+`waitForElement` か、**数える述語**を渡す `settleUntil` を使う。
+
+### ★ 固定回数が効いていたのは「待ち」だけではなかった
+
+`click` / `clickButtonExact` は押した**後**にも `settle()` を持っていた。
+押した後に何が出るかは `it` ごとに違うので、**押す側は押すだけ**にして、
+待つのは呼び手が自分の見たい物で待つ形にした
+(kpi / team は「一覧が n 行になる」、docstudio は「件を取り込みました」)。
+
+### ★ 0 周にすると本文が 1 度も走らない `it` が 1 本在った
+
+`sensitivityMarginOnScreen` の「★ 同じ行の営業利益は赤字の額をそのまま出す」は
+`for (const r of rows)` の中だけで主張するので、**表が空なら何も当てずに緑**になる
+(だから 0 周の掃引でも落ちなかった)。行数の錠がその空回りを塞ぐ。
+明示の `expect(rows.length).toBeGreaterThanOrEqual(5)` も併せて置いた。
+
+### ★ 「件数が増えていない」を押した直後に見ていた 2 本を 2 段にした
+
+`kpiDuplicateActuals` / `teamDuplicateMember` の ★ は
+`clickButtonExact('追加')` の直後に `expect(await countActuals()).toBe(1)` を置いていたが、
+**何も起きていなければそれは当たる**。断りの文を先に待ってから件数を見る順序へ入れ替えた。
+
+### ★ 台帳の床を 20 → 10 へ下げた
+
+`tickSensitivityLedger.test.ts` の `toBeGreaterThanOrEqual(20)` は
+**「針が死んでいない」ことだけを言う床**なのに、実測の行数に張り付いていた。
+台帳は消化するたびに短くなるので、そのままだと**直した日に落ちる門**になり、
+「減らすのが正しい向き」と真逆の圧力をかける。
+上限の側は `fixedTickAssertionCensus.test.ts` が別に持つ。
+
+### 検証
+
+`npm run audit:tick-sensitivity`: **0 周で落ちるのは 20 本 / 98 本で台帳どおり (双方向)**
+(母集団も 103 → 98 本 —— 固定回数の待ちを 1 つも持たないファイルは走査から外れる)。
+`typecheck` 緑・`npm test` **805 / 17,963** (`it()` は増減なし)・`verify:all` exit 0・
+出荷物 **11,935,880 B / 3,348,401 B (byte 単位で不変)**。
+
+### 残り 20 本
+
+`setup-flush` 6 / `store-roundtrip` 3 / `text-helper` 3 / `text-captured` 2 /
+`mock-call` 2 / `hook-state` 1 / `attribute` 1 / `text-with-message` 1。
+
+次に手を付けるなら `text-helper` 3 本
+(`overviewBankSheet` / `refusedSave` / `taxPageMethodAvailability`) ——
+読むのが helper なので、**述語を切り出して `settleUntil` へ渡す**形になる。
+
+---
+
 ## パス 377 (2026-09-21) — 台帳を 28 → 25 本へ (text-captured の残り 3 本)
 
 パス 376 で確立した形をそのまま適用した:

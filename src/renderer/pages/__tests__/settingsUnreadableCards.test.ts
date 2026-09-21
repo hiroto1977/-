@@ -19,7 +19,7 @@ import 'fake-indexeddb/auto';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { FsaSection, ProxySection } from '../SettingsPage';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil } from '../../__tests__/jsdomWait';
 
 const realIndexedDb = globalThis.indexedDB;
 
@@ -51,23 +51,37 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 6; i += 1) {
-    await act(async () => {
-      await new Promise<void>((r) => setTimeout(r, 0));
-    });
-  }
-}
-
-async function mount(node: Parameters<Root['render']>[0]): Promise<void> {
+/**
+ * 札が出るまで**条件で**待って描く (2026-09-21 · パス 378)。
+ *
+ * ここは 2026-09-21 まで固定 6 周の `settle()` だった —— 周回数を 0 にすると
+ * `[data-proxy-unreadable]` も `[data-fsa-unreadable]` も掴めずに落ちる
+ * (`npm run audit:tick-sensitivity` の実測)。札の後ろには IndexedDB の
+ * 往復が在るので、**空いている機械では間に合い、全件実行の負荷の下では
+ * 間に合わないことがある**。
+ *
+ * 錠は「その `it` が真に見たい物」にする —— ★ の 2 本は「確認できません」の札、
+ * 対照の 2 本は**その裏である「未設定」の札**。対照を「札が無いこと」で
+ * 待つことはできない (最初から無いので、描き終える前に通ってしまう)。
+ */
+async function mount(
+  node: Parameters<Root['render']>[0],
+  ready: () => boolean,
+  label: string,
+): Promise<void> {
   container = document.createElement('div');
   document.body.appendChild(container);
   root = createRoot(container);
   await act(async () => {
     root!.render(node);
   });
-  await settle();
+  await settleUntil(ready, label);
 }
+
+/** 札は `<span>` で出る。本文の一致だと説明文の「未設定」まで拾う。 */
+const badges = (): (string | null)[] => [...container.querySelectorAll('span')].map((el) => el.textContent);
+const unsetBadge = (): boolean => badges().includes('未設定');
+const shows = (selector: string) => (): boolean => container.querySelector(selector) !== null;
 
 beforeEach(() => {
   vi.stubGlobal('indexedDB', realIndexedDb);
@@ -92,7 +106,7 @@ afterEach(async () => {
 describe('プロキシの札', () => {
   it('★ 読めない端末では「確認できません」と理由が出て、「未設定」は出ない', async () => {
     breakIndexedDb();
-    await mount(createElement(ProxySection));
+    await mount(createElement(ProxySection), shows('[data-proxy-unreadable]'), 'プロキシの「確認できません」の札が出る');
     expect(container.querySelector('[data-proxy-unreadable]')).not.toBeNull();
     const reason = container.querySelector('[data-proxy-unreadable-reason]');
     expect(reason?.getAttribute('role')).toBe('alert');
@@ -103,31 +117,28 @@ describe('プロキシの札', () => {
   });
 
   it('対照: 読める端末では「未設定」が出て、理由は出ない', async () => {
-    await mount(createElement(ProxySection));
+    await mount(createElement(ProxySection), unsetBadge, 'プロキシの「未設定」の札が出る');
     expect(container.querySelector('[data-proxy-unreadable]')).toBeNull();
     expect(container.querySelector('[data-proxy-unreadable-reason]')).toBeNull();
-    await waitForText(() => container.textContent ?? '', '未設定');
   });
 });
 
 describe('フォルダ連携の札', () => {
   it('★ 読めない端末では「確認できません」と理由が出て、「未設定」は出ない', async () => {
     breakIndexedDb();
-    await mount(createElement(FsaSection));
+    await mount(createElement(FsaSection), shows('[data-fsa-unreadable]'), 'フォルダ連携の「確認できません」の札が出る');
     expect(container.querySelector('[data-fsa-unreadable]')?.textContent).toBe('確認できません');
     const reason = container.querySelector('[data-fsa-unreadable-reason]');
     expect(reason?.getAttribute('role')).toBe('alert');
     expect(reason?.textContent).toContain('この端末に保存した設定を読めませんでした');
     // 「未設定」の札は出ていない (この 2 つは同時に出ない)。
-    const badges = [...container.querySelectorAll('span')].map((el) => el.textContent);
-    expect(badges).not.toContain('未設定');
+    expect(badges()).not.toContain('未設定');
   });
 
   it('対照: 読める端末で選んでいなければ「未設定」が出て、理由は出ない', async () => {
-    await mount(createElement(FsaSection));
+    await mount(createElement(FsaSection), unsetBadge, 'フォルダ連携の「未設定」の札が出る');
     expect(container.querySelector('[data-fsa-unreadable]')).toBeNull();
     expect(container.querySelector('[data-fsa-unreadable-reason]')).toBeNull();
-    const badges = [...container.querySelectorAll('span')].map((el) => el.textContent);
-    expect(badges).toContain('未設定');
+    expect(badges()).toContain('未設定');
   });
 });

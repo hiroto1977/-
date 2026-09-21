@@ -39,6 +39,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
+import { settleUntil, waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -56,14 +57,6 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
 /** 売上が立つ前の事業者 (販管費 300,000 だけ)。 */
 const NO_REVENUE: KpiActual = {
   period: '2026-04', unit: '全社', revenue: 0, cogs: 0, advertising: 0, sga: 300_000, depreciation: 0,
@@ -79,15 +72,32 @@ async function seed(a: KpiActual): Promise<void> {
   await getRecordStore().insert<KpiActual>(KPI_ACTUALS_COLLECTION, a);
 }
 
-async function mountOverview(): Promise<void> {
+/**
+ * 画面を描いて、`ready` になるまで**条件で**待つ (2026-09-21 · パス 378)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * 表そのものが空で、`for (const r of rows)` の本文が**1 度も走らない**
+ * (落ちない `it` が 1 本在った)。行数の錠はその空回りも塞ぐ。
+ * 後ろに在るのは IndexedDB の往復で、**空いている機械では間に合い、
+ * 全件実行の負荷の下では間に合わないことがある**
+ * (`npm run audit:tick-sensitivity` の実測)。
+ */
+async function mountOverview(ready: () => boolean, label: string): Promise<void> {
   const def = SERVICES.find((s) => s.id === 'overview');
   if (!def) throw new Error('overview service missing');
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  await settleUntil(ready, label);
 }
+
+/** 損益感度分析の表は既定 5 シナリオ。これが出るまでは、どの行の主張も空回りする。 */
+const sensitivityReady = (): boolean => sensitivityRows().length >= 5;
+/** 目標利益の逆算の欄。 */
+const goalInput = (): HTMLInputElement | null =>
+  container.querySelector<HTMLInputElement>('input[placeholder="目標営業利益 (円)"]');
+const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 
 /**
  * 損益感度分析の表の行を読む (`売上変動 / 売上高 / 営業利益 / 営業利益率`)。
@@ -145,7 +155,7 @@ afterEach(async () => {
 describe('経営サマリー 損益感度分析 — 売上 0 の期', () => {
   it('★ 対照: 売上が在れば 4 列すべて数で出る (表そのものが生きている)', async () => {
     await seed(WITH_REVENUE);
-    await mountOverview();
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
     const rows = sensitivityRows();
     expect(rows.length).toBeGreaterThanOrEqual(5); // 既定 5 シナリオ
     const baseline = rows.find((r) => r[0]?.startsWith('0%'));
@@ -156,7 +166,7 @@ describe('経営サマリー 損益感度分析 — 売上 0 の期', () => {
 
   it('★ 売上 0 の期は「0.0%」ではなく「—」を刷る', async () => {
     await seed(NO_REVENUE);
-    await mountOverview();
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
     const rows = sensitivityRows();
     expect(rows.length).toBeGreaterThanOrEqual(5);
     for (const r of rows) {
@@ -169,8 +179,10 @@ describe('経営サマリー 損益感度分析 — 売上 0 の期', () => {
   it('★ 同じ行の営業利益は赤字の額をそのまま出す (率だけが算定不能)', async () => {
     // **「率が出せない」と「額が分からない」は別**。固定費だけの赤字額は言える。
     await seed(NO_REVENUE);
-    await mountOverview();
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
     const rows = sensitivityRows();
+    // **行が 0 本なら下の for は 1 度も走らない。** 空回りの `it` にしない。
+    expect(rows.length).toBeGreaterThanOrEqual(5);
     for (const r of rows) {
       expect(r[2]).toContain('300,000');
       expect(r[2]).toContain('-'); // マイナス符号 (書式は Intl 依存なので符号だけ見る)
@@ -183,7 +195,10 @@ describe('経営サマリー 損益感度分析 — 売上 0 の期', () => {
     // 月次推移の節は `monthlyTrend.length >= 2` でしか出ないので 2 期入れる。
     await seed(NO_REVENUE);
     await seed(NO_REVENUE_2);
-    await mountOverview();
+    await mountOverview(
+      () => sensitivityReady() && trendRows().length === 2,
+      '月次推移の 2 期と損益感度分析の表が出る',
+    );
     const trend = trendRows();
     const sens = sensitivityRows();
     expect(trend).toHaveLength(2);
@@ -194,16 +209,17 @@ describe('経営サマリー 損益感度分析 — 売上 0 の期', () => {
 
   it('★ 目標利益の逆算は「算定できません」と述べ、必要売上 0 円を刷らない', async () => {
     await seed(NO_REVENUE);
-    await mountOverview();
-    const input = container.querySelector<HTMLInputElement>('input[placeholder="目標営業利益 (円)"]');
-    expect(input).not.toBeNull();
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
+    const input = await waitForElement(goalInput, '目標営業利益の欄');
     const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
     await act(async () => {
-      setter?.call(input!, '1000000');
-      input!.dispatchEvent(new Event('input', { bubbles: true }));
+      setter?.call(input, '1000000');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    await settle();
-    const t = (container.textContent ?? '').replace(/\s+/g, ' ');
+    // **肯定の前提を先に待つ** —— 下の不在の主張は、まだ何も算定していない
+    // 画面でも当たってしまう (パス 377 と同じ 2 段)。
+    await waitForText(text, '限界利益が非正のため算定できません');
+    const t = text();
     expect(t).toContain('限界利益が非正のため算定できません');
     // **不在の主張には標本を添える** —— 節の見出し自身が「必要売上を逆算」を
     // 含むので、`toContain('必要売上')` はどの状態でも当たる空の検査になる。
@@ -214,17 +230,16 @@ describe('経営サマリー 損益感度分析 — 売上 0 の期', () => {
 
   it('★ 対照: 売上が在れば必要売上が数で出る (上の不在の検査が空でない証拠)', async () => {
     await seed(WITH_REVENUE);
-    await mountOverview();
-    const input = container.querySelector<HTMLInputElement>('input[placeholder="目標営業利益 (円)"]');
-    expect(input).not.toBeNull();
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
+    const input = await waitForElement(goalInput, '目標営業利益の欄');
     const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
     await act(async () => {
-      setter?.call(input!, '1000000');
-      input!.dispatchEvent(new Event('input', { bubbles: true }));
+      setter?.call(input, '1000000');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    await settle();
-    const t = (container.textContent ?? '').replace(/\s+/g, ' ');
     // 固定費 30 万 + 目標 100 万 ÷ 限界利益率 0.6 = 2,166,667 円
+    await waitForText(text, '2,166,667');
+    const t = text();
     expect(t).toMatch(/必要売上\s*￥/);
     expect(t).toContain('2,166,667');
     expect(t).not.toContain('限界利益が非正のため算定できません');

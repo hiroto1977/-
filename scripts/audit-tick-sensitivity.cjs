@@ -87,10 +87,13 @@ function zeroTicks(src) {
  *     「待ち」ではなく**状態遷移の流し込み**として効いている。
  *     **条件で待っても、遷移が起きていなければ待てない** —— この 0 周の掃引が
  *     ファイル単位であることの限界でもある (寄せ終えた主張まで巻き込んで落ちる)。
- *   - `text-captured` / `text-helper` / `text-with-message` / `attribute` / `element-presence`
+ *   - `text-captured` / `text-helper` / `text-with-message` / `attribute`
  *     / `hook-state` / `mock-call` —— 寄せられるが未着手。**パス 368 の針が
  *     見落とした形**はここに集まっている (`toBe` の matcher・helper 越しの読み・
  *     入れ子の括弧)。
+ *   - `element-presence` —— **2026-09-21 (パス 378) に 5 本とも寄せ終えて空になった。**
+ *     語を残すのは、次に同じ形が出たときに分類として使うため (`waitForElement` か、
+ *     行数のように**数える**条件なら `settleUntil`)。
  */
 const LEDGER = [
   {
@@ -119,19 +122,9 @@ const LEDGER = [
     why: '`getAttribute(\'data-bs-row\')` —— 文ではなく属性。`waitForElement` + 属性の主張に寄せられる (未着手)',
   },
   {
-    file: 'src/renderer/pages/__tests__/docstudioImport.test.ts',
-    kind: 'element-presence',
-    why: '`not.toBeNull()` と helper 越しの厳密一致。`waitForElement` に寄せられる (未着手)',
-  },
-  {
     file: 'src/renderer/pages/__tests__/investmentDemoMixOnScreen.test.ts',
     kind: 'text-captured',
     why: '文を `const t = text();` へ取ってから主張する。読み直さないので待ちに渡せない',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/kpiDuplicateActuals.test.ts',
-    kind: 'element-presence',
-    why: '`toBeDefined()` で警告の要素を待つ。`waitForElement` に寄せられる (未着手)',
   },
   {
     file: 'src/renderer/pages/__tests__/libraryCorruptContent.test.ts',
@@ -189,16 +182,6 @@ const LEDGER = [
     why: '寄せた `waitForText` 自身が届かない (取り込みが流れていない) + `toBeDefined()` が 1 件',
   },
   {
-    file: 'src/renderer/pages/__tests__/sensitivityMarginOnScreen.test.ts',
-    kind: 'element-presence',
-    why: '行数 (`rows.length`) と要素の在否。`settleUntil` に寄せられる (未着手)',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/settingsUnreadableCards.test.ts',
-    kind: 'element-presence',
-    why: '`not.toBeNull()` と `?.textContent).toBe(…)` —— **パス 368 の針が見落とした matcher (`toBe`)**',
-  },
-  {
     file: 'src/renderer/pages/__tests__/shopifyDuplicateOrder.test.ts',
     kind: 'store-roundtrip',
     why: '`expect(await sales()).toHaveLength(2)` —— 非同期の述語が要る',
@@ -207,11 +190,6 @@ const LEDGER = [
     file: 'src/renderer/pages/__tests__/taxPageMethodAvailability.test.ts',
     kind: 'text-helper',
     why: '`recommended()` が文を返す helper。`toBe` の厳密一致',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/teamDuplicateMember.test.ts',
-    kind: 'element-presence',
-    why: '行数と `toBeDefined()`',
   },
   {
     file: 'src/renderer/pages/__tests__/teamLastOwner.test.ts',

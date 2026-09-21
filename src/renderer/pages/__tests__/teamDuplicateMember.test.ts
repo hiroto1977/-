@@ -19,7 +19,7 @@ import { TeamPage } from '../TeamPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MEMBERS_COLLECTION } from '../../data/members';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -37,20 +37,23 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
+/** メンバー一覧の行数 (この画面の表は 1 つ —— 見出しは「氏名 / メール / 役割」)。 */
+const memberRows = (): number => container.querySelectorAll('tbody tr').length;
 
-async function mount(): Promise<void> {
+/**
+ * 一覧が `n` 行になるまで**条件で**待って描く (2026-09-21 · パス 378)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * 重複の `[role="alert"]` が掴めず、対照の「件数が 2 になる」も 1 のままで落ちる
+ * (`npm run audit:tick-sensitivity` の実測)。後ろに在るのは IndexedDB の往復で、
+ * **空いている機械では間に合い、全件実行の負荷の下では間に合わないことがある**。
+ */
+async function mount(rows: number): Promise<void> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(TeamPage));
   });
-  await settle();
+  await settleUntil(() => memberRows() === rows, `メンバーの一覧が ${rows} 行になる`);
 }
 
 function changeInput(input: HTMLInputElement, value: string): void {
@@ -73,7 +76,6 @@ async function clickButtonExact(label: string): Promise<void> {
   await act(async () => {
     button.click();
   });
-  await settle();
 }
 
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
@@ -116,33 +118,39 @@ afterEach(async () => {
 describe('チーム — 同じメールアドレスを 2 人にしない', () => {
   it('★ 同じメール (大文字・前後の空白違い) の招待は断られ、件数は増えず、訂正の案内が出る', async () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '太郎', email: 'taro@example.com', role: 'owner' });
-    await mount();
+    await mount(1);
     expect(await countMembers()).toBe(1);
     await invite('太郎 (再)', '  TARO@Example.com ');
-    expect(await countMembers()).toBe(1);
+    // **断りが出たことを先に待つ。** 「件数が増えていない」は押した直後なら
+    // 何も起きていなくても当たるので、肯定の前提を先に置く (パス 377 と同じ形)。
     await waitForText(text, 'taro@example.com は「太郎」として既に登録されています');
     await waitForText(text, '一覧の × で消してから入れ直してください');
+    expect(await countMembers()).toBe(1);
     // 一覧にも 1 行だけ (シートの表示も 1)
     expect((text().match(/taro@example\.com/gi) ?? []).length).toBeGreaterThanOrEqual(1);
-    expect(container.querySelectorAll('tbody tr').length).toBe(1);
+    expect(memberRows()).toBe(1);
   });
 
   it('対照: 別のメールなら通る (件数が増え、断りは出ない)', async () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '太郎', email: 'taro@example.com', role: 'owner' });
-    await mount();
+    await mount(1);
     await invite('花子', 'hanako@example.com');
+    // 一覧が 2 行になるまで待つ —— 保存の完了は画面に出る (`useCollection`)。
+    await settleUntil(() => memberRows() === 2, 'メンバーの一覧が 2 行になる');
     expect(await countMembers()).toBe(2);
     expect(text()).not.toContain('既に登録されています');
-    expect(container.querySelectorAll('tbody tr').length).toBe(2);
+    expect(memberRows()).toBe(2);
   });
 
   it('★ 既に重複が在れば、一覧の上で「2 度数えられている」と警告する', async () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '太郎', email: 'taro@example.com', role: 'owner' });
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '太郎 (再)', email: 'Taro@example.com', role: 'member' });
-    await mount();
-    const alert = Array.from(container.querySelectorAll('[role="alert"]')).find((el) => (el.textContent ?? '').includes('重複'));
-    expect(alert, 'role="alert" に重複の警告が無い').toBeDefined();
-    const t = (alert!.textContent ?? '').replace(/\s+/g, ' ');
+    await mount(2);
+    const alert = await waitForElement(
+      () => Array.from(container.querySelectorAll('[role="alert"]')).find((el) => (el.textContent ?? '').includes('重複')),
+      'role="alert" の重複の警告',
+    );
+    const t = (alert.textContent ?? '').replace(/\s+/g, ' ');
     expect(t).toContain('同じメールアドレスのメンバーが 1 組重複しており、従業員数に 2 度数えられています');
     expect(t).toContain('taro@example.com ×2');
   });
@@ -150,7 +158,7 @@ describe('チーム — 同じメールアドレスを 2 人にしない', () =>
   it('対照: 重複が無ければ警告は出ない', async () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '太郎', email: 'taro@example.com', role: 'owner' });
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: '花子', email: 'hanako@example.com', role: 'member' });
-    await mount();
+    await mount(2);
     expect(text()).not.toContain('重複');
   });
 });

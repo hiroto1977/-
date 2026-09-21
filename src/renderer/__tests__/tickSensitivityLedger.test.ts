@@ -88,7 +88,11 @@ describe('固定回数の待ちへの依存は、綴りではなく振る舞い�
     const sample = "  {\n    file: 'src/x.test.ts',\n    kind: 'mock-call',\n    why: 'なぜそれでよいかの説明',\n  },\n";
     expect(ledgerRows(sample), '標本を読めていない').toHaveLength(1);
     expect(ledgerRows(sample)[0]!.file).toBe('src/x.test.ts');
-    expect(rows.length, '実物の台帳が読めていない').toBeGreaterThanOrEqual(20);
+    // **この床は「針が死んでいない」ことだけを言う。** 台帳は消化するたびに
+    // 短くなるので、実測の行数に張り付けると**直した日に落ちる門**になり、
+    // 「減らすのが正しい向き」と真逆の圧力をかける (パス 378 で 25 → 20 本)。
+    // 上限の側は `fixedTickAssertionCensus.test.ts` が別に持つ。
+    expect(rows.length, '実物の台帳が読めていない').toBeGreaterThanOrEqual(10);
   });
 
   it('★ 台帳の行はすべて実在する検査を指す', () => {
