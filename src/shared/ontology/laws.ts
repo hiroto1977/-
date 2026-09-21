@@ -653,9 +653,9 @@ export const LAWS: readonly Law[] = [
     id: 'egress-notice-before-send',
     family: 'surface',
     name: '外へ送る画面は何を送るかを言う',
-    statement: 'AI へ送る 8 画面・全画面のマイクは、何を・どこへ・どれだけ送るかを送る前に言う。断りが送る量を 2 倍に述べていてはならない。',
-    provenance: ['パス 106', 'パス 107', 'パス 108', 'パス 186'],
-    enforcedBy: [test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'), test(T.renderer('aiDataDisclosure'))],
+    statement: 'AI へ送る 8 画面・全画面のマイクは、何を・どこへ・どれだけ送るかを送る前に言う。断りが送る量を 2 倍に述べていてはならない。**母集団は AI とマイクだけではない** —— 利用者が打った個人データを第三者へ送る経路は他にも在り、実測 (2026-09-21) で `security/check-email-breach` (メールアドレス → Have I Been Pwned) と `security/scan-url` (URL → VirusTotal・投稿された URL は他の利用者が検索できる状態で残る) の 2 本が数えられていなかった。断り自体はよく書けていたが、**HIBP の断りを丸ごと消しても 17,868 件すべて緑**だった (パス 365)。受け手を名前で出すこと・その近くで「送る」と言うこと・**操作子より前に在ること** (押してから知る形にしない) を、実装から導いた母集団に対して要求する。',
+    provenance: ['パス 106', 'パス 107', 'パス 108', 'パス 186', 'パス 365 (AI 以外の第三者送信)'],
+    enforcedBy: [test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'), test(T.renderer('aiDataDisclosure')), test('src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts')],
   },
 
   // ───────────────────────── 数字の健全性 ─────────────────────────
