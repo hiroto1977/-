@@ -87,10 +87,13 @@ function zeroTicks(src) {
  *     「待ち」ではなく**状態遷移の流し込み**として効いている。
  *     **条件で待っても、遷移が起きていなければ待てない** —— この 0 周の掃引が
  *     ファイル単位であることの限界でもある (寄せ終えた主張まで巻き込んで落ちる)。
- *   - `text-captured` / `text-helper` / `text-with-message` / `attribute`
- *     / `hook-state` / `mock-call` —— 寄せられるが未着手。**パス 368 の針が
- *     見落とした形**はここに集まっている (`toBe` の matcher・helper 越しの読み・
- *     入れ子の括弧)。
+ *   - `text-captured` / `text-with-message` / `attribute` / `hook-state` / `mock-call`
+ *     —— 寄せられるが未着手。**パス 368 の針が見落とした形**はここに集まっている
+ *     (`toBe` の matcher・入れ子の括弧)。
+ *   - `text-helper` —— **2026-09-21 (パス 379) に 3 本とも寄せ終えて空になった。**
+ *     直し方は「helper をそのまま述語として `settleUntil` へ渡す」で、
+ *     読むのが helper なら `expect(…)` の行に `textContent` の綴りが 1 字も無い
+ *     (それがこの家系の特徴で、綴りの針が最後まで見落とした形である)。
  *   - `element-presence` —— **2026-09-21 (パス 378) に 5 本とも寄せ終えて空になった。**
  *     語を残すのは、次に同じ形が出たときに分類として使うため (`waitForElement` か、
  *     行数のように**数える**条件なら `settleUntil`)。
@@ -157,11 +160,6 @@ const LEDGER = [
     why: '`addHolding` が欄を掴めない。落ちるのは主張ではなく操作の側',
   },
   {
-    file: 'src/renderer/pages/__tests__/overviewBankSheet.test.ts',
-    kind: 'text-helper',
-    why: '文を読むのが helper (`q.cell` / `q.sheet`) で、`expect(…)` の行に `textContent` の綴りが無い —— **パス 368 の針が見落とした形そのもの**',
-  },
-  {
     file: 'src/renderer/pages/__tests__/overviewHydroponics.test.ts',
     kind: 'setup-flush',
     why: '`q.button(…)` が押す物を掴めない (17 件)。操作の側',
@@ -172,11 +170,6 @@ const LEDGER = [
     why: '99 か所を共有の待ちへ寄せた**あとも**落ちる —— 落ちるのは寄せた `waitForText` 自身で、その前の上書きの適用が流れていない。**条件で待っても、遷移が起きていなければ待てない**',
   },
   {
-    file: 'src/renderer/pages/__tests__/refusedSave.test.ts',
-    kind: 'text-helper',
-    why: '`says(…)` が真偽値を返す helper。待ちに渡すには述語を切り出す (未着手)',
-  },
-  {
     file: 'src/renderer/pages/__tests__/salesDuplicateImport.test.ts',
     kind: 'setup-flush',
     why: '寄せた `waitForText` 自身が届かない (取り込みが流れていない) + `toBeDefined()` が 1 件',
@@ -185,11 +178,6 @@ const LEDGER = [
     file: 'src/renderer/pages/__tests__/shopifyDuplicateOrder.test.ts',
     kind: 'store-roundtrip',
     why: '`expect(await sales()).toHaveLength(2)` —— 非同期の述語が要る',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/taxPageMethodAvailability.test.ts',
-    kind: 'text-helper',
-    why: '`recommended()` が文を返す helper。`toBe` の厳密一致',
   },
   {
     file: 'src/renderer/pages/__tests__/teamLastOwner.test.ts',

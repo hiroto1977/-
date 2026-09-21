@@ -30,6 +30,7 @@ import { _resetNavigationIntentForTests } from '../../navigate';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 import { getRecordStore } from '../../data/store';
 import { HYDROPONICS_COLLECTION } from '../../data/hydroponicsSetup';
+import { settleUntil, waitForElement } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -68,12 +69,6 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 12; i += 1) {
-    await act(async () => { await new Promise<void>((resolve) => setTimeout(resolve, 0)); });
-  }
-}
-
 function setVal(input: HTMLInputElement, value: string): void {
   const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
   if (!setter) throw new Error('value setter not found');
@@ -92,7 +87,6 @@ function field(label: string): HTMLInputElement {
 async function type(label: string, value: string): Promise<HTMLInputElement> {
   const input = field(label);
   await act(async () => { setVal(input, value); });
-  await settle();
   return input;
 }
 
@@ -103,9 +97,17 @@ function saveButton(): HTMLButtonElement {
   return b as HTMLButtonElement;
 }
 
+/**
+ * 押すだけ。**待つのは呼び手が** —— 保存が通る場面と断られる場面で待つ物が違う
+ * (2026-09-21 · パス 379)。
+ *
+ * ここは 2026-09-21 まで固定 12 周の `settle()` だった —— 周回数を 0 にすると
+ * 「保存しました」を主張する 3 件が落ちる (`npm run audit:tick-sensitivity` の実測)。
+ * 後ろに在るのは IndexedDB への書き込みで、**空いている機械では間に合い、
+ * 全件実行の負荷の下では間に合わないことがある**。
+ */
 async function clickSave(): Promise<void> {
   await act(async () => { saveButton().click(); });
-  await settle();
 }
 
 /**
@@ -123,6 +125,18 @@ async function storedSetups(): Promise<readonly { readonly floorAreaSqm: number 
 const says = (s: string): boolean => text().includes(s);
 const SAVED_LINE = '保存しました。経営サマリーに反映されています。';
 
+/**
+ * 保存が通った印が出るまで待つ (記録の書き込みが解決してから出る)。
+ *
+ * **断られる側には対になる待ちが無い** —— 断りの文 (`[data-refused-fields]`) は
+ * 押す前から出ているので、それを待っても「押した結果」を待ったことにならない。
+ * 断りの側の主張は**記録そのもの** (`storedSetups()`) で、そちらは非同期の読みなので
+ * 待たずに聞ける。押す仕組みが生きていることは、この下の ★ 対照が保つ。
+ */
+async function waitForSaved(): Promise<void> {
+  await settleUntil(() => says(SAVED_LINE), `「${SAVED_LINE}」が出る`);
+}
+
 const refusals = (): readonly string[] =>
   Array.from(container.querySelectorAll('[data-refused-fields]')).map((el) =>
     (el.textContent ?? '').replace(/\s+/g, ' '),
@@ -138,7 +152,10 @@ beforeEach(async () => {
   const def = SERVICES.find((s) => s.id === 'overview');
   if (!def) throw new Error('overview page missing');
   await act(async () => { root!.render(createElement(def.page)); });
-  await settle();
+  await waitForElement(
+    () => Array.from(container.querySelectorAll('button')).find((x) => (x.textContent ?? '').includes('保存して経営サマリーへ反映')),
+    '水耕栽培の「保存して経営サマリーへ反映」',
+  );
 });
 
 afterEach(async () => {
@@ -156,6 +173,7 @@ describe('水耕栽培の設備・費用 — ⛔ の欄が在るまま保存し�
     expect(refusals()).toEqual([]);
     expect(saveButton().disabled).toBe(false);
     await clickSave();
+    await waitForSaved();
     expect(says(SAVED_LINE)).toBe(true);
     expect((await storedSetups()).length).toBe(1);
   });
@@ -190,6 +208,7 @@ describe('水耕栽培の設備・費用 — ⛔ の欄が在るまま保存し�
     await type('棚の段数', '4');
     expect(refusals()).toEqual([]);
     await clickSave();
+    await waitForSaved();
     expect(says(SAVED_LINE)).toBe(true);
   });
 
@@ -198,6 +217,7 @@ describe('水耕栽培の設備・費用 — ⛔ の欄が在るまま保存し�
     // 残って「この値で保存されている」と読める。実際に保存されているのは前の値で、
     // 画面の欄はもう別の (範囲外の) 値を表示している —— 2 つが食い違う。
     await clickSave();
+    await waitForSaved();
     expect(says(SAVED_LINE)).toBe(true);
     const stored = await storedSetups();
     await type('床面積 (m²)', '-9999');

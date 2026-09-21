@@ -7,6 +7,63 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 379 (2026-09-21) — 台帳を 20 → 17 本へ (`text-helper` を空にした)
+
+| ファイル | 錠の置き方 |
+| --- | --- |
+| `overviewBankSheet` | `mountOverview(ready, label)` + `settleUntil(() => q.cell('売上高') === '12,345,678', …)`。`click` は押すだけに |
+| `refusedSave` | `waitForSaved()` = `settleUntil(() => says(SAVED_LINE), …)`。`clickSave` は押すだけに |
+| `taxPageMethodAvailability` | ★ 錠は `recommended()` **ではなく**「外した理由」の文。`chooseEntity` は「現在 法人」を待つ |
+
+### この家系の特徴
+
+`expect(…)` の行に **`textContent` の綴りが 1 字も無い** (`q.cell('売上高')` / `says(…)` /
+`recommended()`)。だからパス 368 の綴りの針が最後まで見落とした。
+直し方は 1 つ —— **その helper をそのまま述語として `settleUntil` へ渡す**。
+
+### ★ 錠を「主張そのもの」に置けない場面が在った
+
+`taxPageMethodAvailability` の 0 周の失敗 2 件は **`seed()` した上書きが
+IndexedDB から届いていない**ことが原因で、画面は既定のしきい値のままの答え
+(簡易課税) を返す。ところが `recommended()` で待つと**待ちが主張を飲み込む** ——
+その `it` が確かめたいのはまさにその値だからである。
+
+届いた印は**別に在った**: 「簡易課税（基準期間の課税売上¥5,000,000超）」という
+**外した理由の文**。上書きを使う 2 件はそれを先に待つ 2 段にした。
+
+### ★ 対になる待ちが無い側は、無いと書いた
+
+`refusedSave` の**断られる**場面には待てる印が無い ——
+断りの文 (`[data-refused-fields]`) は押す前から出ているので、
+それを待っても「押した結果」を待ったことにならない。
+断りの側の主張は**記録そのもの** (`storedSetups()`) で、非同期の読みなので待たずに聞ける。
+押す仕組みが生きていることは同じファイルの ★ 対照が保つ。
+**無い物を在るように見せる待ちは足さない** (docblock にそう書いた)。
+
+### ★ ついでに二重 mount を 1 つ消した
+
+`overviewBankSheet` の NaN の検査は `mountOverview()` の後に `openSheet()` を呼んでおり、
+`openSheet()` 自身がもう 1 度 `createRoot(container)` していた ——
+同じ器に 2 つの木が載り、`q.cell` がどちらを読むかは綴りからは決まらない。
+
+### 検証
+
+`npm run audit:tick-sensitivity`: **0 周で落ちるのは 17 本 / 95 本で台帳どおり (双方向)**。
+`typecheck` 緑・`npm test` **805 / 17,963** (`it()` は増減なし)・`verify:all` exit 0・
+出荷物 **11,935,880 B / 3,348,401 B (byte 単位で不変)**。
+
+### 残り 17 本
+
+`setup-flush` 6 / `store-roundtrip` 3 / `text-captured` 2 / `mock-call` 2 /
+`hook-state` 1 / `attribute` 1 / `text-with-message` 1。
+
+次は `store-roundtrip` 3 本 (`ParametersPanel.render` / `mutualFundsDoubleSubmit` /
+`shopifyDuplicateOrder`) —— **パス 378 の kpi / team と同じ手** が効く可能性が高い
+(画面の行数を錠にして、store はそのあとに聞く)。
+`setup-flush` 6 本は**落ちるのが主張ではなく操作の側**なので、別の見立てが要る。
+
+---
+
 ## パス 378 (2026-09-21) — 台帳を 25 → 20 本へ (`element-presence` を空にした)
 
 | ファイル | 錠の置き方 |
