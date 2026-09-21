@@ -96,12 +96,21 @@ function zeroTicks(src) {
  *     4 本 (`mutualFundsCostUnentered` / `mutualFundsYtdUnentered` /
  *     `mutualFundsImpossibleReturn` / `teamLastOwner`) は、mount と押す helper に
  *     条件待ちを取らせるだけで**全部寄せられた** (0 周でも落ちない)。
- *     残る 3 本も**寄せられる**が、25〜40 件と大きいので未着手である。
- *     **分類は「見た形」であって「測った原因」ではない** —— パス 380・382 に
- *     続いて 3 度目に台帳の `why` が実物と食い違っていた。
+ *     **2026-09-21 (パス 385) に残る 2 本 (`overviewHydroponics` /
+ *     `parameterWiring`) も寄せ終えて空になった。** `why` は「遷移が起きて
+ *     いなければ待てない」と書いていたが、**遷移は起きていて、ただ待って
+ *     いなかっただけ**である (4 度目の偽)。ただし**押す操作が絡む 2 件だけは
+ *     「押した後に待つ」では直らなかった** —— 「改善提案」は押した瞬間の
+ *     有効値で payload を組む**一度きりの計算**なので、既定値で走り切った
+ *     あとに待っても文言は変わらない。**待つ場所は押す前**である。
+ *     **分類は「見た形」であって「測った原因」ではない** —— パス 380・382・383 に
+ *     続いて 4 度目に台帳の `why` が実物と食い違っていた。
  *   - `text-captured` —— 文を `const t = text();` へ取ってから主張する形。
- *     残り 1 本 (`investmentDemoMixOnScreen`) は marker ごとの注記を
- *     3 画面 10 か所で読むので、錠を 1 つに決められない (未着手)。
+ *     **2026-09-21 (パス 385) に最後の 1 本 (`investmentDemoMixOnScreen`) を
+ *     寄せて空になった。** `why` は「読み直さないので待ちに渡せない」と
+ *     書いていたが**偽**で、0 周の失敗 5 件はすべて**置いた記録が届いて
+ *     いない**ことだった —— **取る前に待てばよく、取ったあとの主張
+ *     (否定を含む) はそのままでよい。**
  *   - `text-with-message` —— **2026-09-21 (パス 382) に空になった。**
  *     `expect(text(), '説明').toContain(…)` の第 2 引数は、寄せると落ちる ——
  *     ので**待ちの label へ移す**。説明が要る主張はたいてい
@@ -125,23 +134,24 @@ function zeroTicks(src) {
  *     語を残すのは、次に同じ形が出たときに分類として使うため (`waitForElement` か、
  *     行数のように**数える**条件なら `settleUntil`)。
  */
-const LEDGER = [
-  {
-    file: 'src/renderer/pages/__tests__/investmentDemoMixOnScreen.test.ts',
-    kind: 'text-captured',
-    why: '文を `const t = text();` へ取ってから主張する。読み直さないので待ちに渡せない',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/overviewHydroponics.test.ts',
-    kind: 'setup-flush',
-    why: '0 周で 17 件。品目の追加・削除が届かず `q.button(…)` が押す物を掴めない。**寄せられる** (パス 383 で同家系 4 本を寄せた) が 25 件と大きく、1 パスでは終わらない',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/parameterWiring.test.ts',
-    kind: 'setup-flush',
-    why: '0 周で 14 件。99 か所を共有の待ちへ寄せた**あとも**落ちる —— 2 件は寄せた `waitForText` 自身が 5 秒で時間切れ、残りは上書きの seed が届かず `[]` を読む。**上書きを置く側 (seed) を条件で待つ形が要る**。40 件と大きく未着手',
-  },
-];
+/**
+ * **今日は 0 本である** (2026-09-21 · パス 385)。
+ *
+ * つまり `IS_SETTLE` に当たる固定回数の待ちを持つ検査 (実測 78 本) は、
+ * **周回数を 0 にしても 1 件も落ちない** —— どれも条件で待っているか、
+ * その回数に依っていない。
+ *
+ * **0 本は「この道具が要らない」ではない。** 次に固定回数の待ちへ寄りかかった
+ * 検査が入ったら、`npm run audit:tick-sensitivity` がそれを 1 本として挙げ、
+ * この台帳に無いので落ちる。**逆向きにも鳴る** —— 寄せ終わった行を消し忘れれば
+ * 「台帳に在るのに落ちない」で落ちる。
+ *
+ * 語 (`kind`) は残す —— 次に同じ形が出たときの分類として使う。ただし
+ * **分類は「見た形」であって「測った原因」ではない**: パス 380 / 382 / 383 / 385 の
+ * 4 度とも、`why` に書いてあった原因は 0 周で測った原因と食い違っていた。
+ * **新しい行を足すときは、先に 0 周で測ってから `why` を書く。**
+ */
+const LEDGER = [];
 
 function patchAll(files) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tick-sensitivity-'));

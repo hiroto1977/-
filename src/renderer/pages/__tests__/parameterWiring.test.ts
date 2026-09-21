@@ -8,7 +8,7 @@
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { act, createElement, type ComponentType } from 'react';
+import { Fragment, act, createElement, type ComponentType, type ReactElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { navigateTo } from '../../navigate';
@@ -20,7 +20,7 @@ import { DocstudioPage } from '../DocstudioPage';
 import { MutualFundsPage } from '../MutualFundsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
-import { PARAMETER_OVERRIDES_COLLECTION } from '../../data/parameterOverrides';
+import { PARAMETER_OVERRIDES_COLLECTION, useParameters } from '../../data/parameterOverrides';
 import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
 import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
 import {
@@ -40,7 +40,7 @@ import { jpy } from '../../../shared/formatters';
 import type { ParameterOverrides } from '../../../shared/parameters';
 import { adviseService } from '../../../shared/serviceAdvisor';
 import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -55,27 +55,76 @@ beforeAll(() => {
   };
 });
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 6; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
 let container: HTMLDivElement;
 let root: Root | null = null;
 
+/**
+ * `seed()` が置いた上書きの件数。`mount()` の錠がこれを使う。
+ *
+ * **数を持ち回るのは、錠を「主張そのもの」にしないため**である (パス 379)。
+ * 上書きが届いたかは「画面がその数字を出したか」でも分かるが、それは
+ * この検査が確かめたい当のことなので、待ちに使うと**待ちが主張を飲み込む**。
+ * 件数は主張の外に在る独立な印である。
+ */
+let seededCount = 0;
+
 async function seed(overrides: ParameterOverrides): Promise<void> {
   await getRecordStore().insert(PARAMETER_OVERRIDES_COLLECTION, { values: { ...overrides } });
+  seededCount = Object.keys(overrides).length;
 }
 
+/**
+ * **上書きが画面に届いたことを DOM に出す観測子。**
+ *
+ * `useParameters()` は `useCollection` の購読なので、保管層から届くまでは
+ * `overrides` が空である。観測子は検査対象の画面と**同じ root** に並べて描くので、
+ * 購読が 1 度の通知で両方を起こし、React が 1 つの commit にまとめる ——
+ * つまり**観測子が件数を出した時点で、画面の側も同じ上書きを持っている**。
+ *
+ * 文字は出さない (属性だけ) ので `text()` や枠の走査には 1 字も混ざらない。
+ */
+function ParamProbe(): ReactElement {
+  const p = useParameters();
+  return createElement('span', {
+    'data-params-probe': p.loading ? 'loading' : String(Object.keys(p.overrides).length),
+  });
+}
+
+/**
+ * 画面を描き、**置いた上書きが届くまで**条件で待つ
+ * (法則 `wait-for-condition-not-ticks`)。
+ *
+ * 2026-09-21 (パス 385) まで固定回数 (6 周) で待っており、周回数を 0 にすると
+ * **14 件が落ちた**。落ち方は 2 通りで、**どちらも「上書きが届く前に測った」**:
+ *
+ * - 画面が既定値のまま刷る (`expected '¥150,000' to be '¥100,000'`)。
+ * - 上書きで初めて現れる枠がまだ無い (`stat "固定資産税 (2%)" not found`)。
+ *
+ * ★ **押す操作が絡む 2 件は「押した後に待つ」では直らない** ——
+ * 「改善提案」は押した瞬間の有効値で payload を組む一度きりの計算なので、
+ * 既定値で走り切ったあとに待っても文言は変わらない
+ * (0 周では実際に `waitForText` が 5 秒で時間切れになった)。
+ * **待つ場所は押す前**である。
+ */
 async function mount(page: ComponentType): Promise<void> {
   root = createRoot(container);
   await act(async () => {
-    root!.render(createElement(page));
+    root!.render(createElement(Fragment, null, createElement(page), createElement(ParamProbe)));
   });
-  await settle();
+  const probe = (): string | null =>
+    container.querySelector('[data-params-probe]')?.getAttribute('data-params-probe') ?? null;
+  // ★ **生きた値は catch で読む。** 最初はこれを label の中に書いたが、label は
+  // 呼び出しの時点で組まれる template なので、**描いた直後の値 (`"loading"`) を
+  // 「いま」として刷った** —— 落ちた理由を読む人が、5 秒後ではなく 0 秒の姿を見る。
+  // (パス 382 の e2e が ❌ の隣に期待値を刷っていたのと同じ形。`waitForText` は
+  // 最初からこの形で書かれている。)
+  try {
+    await settleUntil(() => probe() === String(seededCount), `上書き ${seededCount} 件が画面に届く`);
+  } catch (e) {
+    throw new Error(
+      `${e instanceof Error ? e.message : String(e)} 観測子の値: ${JSON.stringify(probe())}`,
+    );
+  }
 }
 
 async function unmount(): Promise<void> {
@@ -110,7 +159,6 @@ async function typeIntoLabeled(labelText: string, value: string): Promise<void> 
   await act(async () => {
     changeInput(input, value);
   });
-  await settle();
 }
 
 /** ラベル → 値 の 2 段の枠 (Stat / Tile / stat) を読む。 */
@@ -139,6 +187,7 @@ function tile(label: string): HTMLElement {
 }
 
 beforeEach(async () => {
+  seededCount = 0;
   _resetRecordStoreForTests();
   _resetCollectionSubscribersForTests();
   await new Promise<void>((resolve) => {
@@ -278,10 +327,11 @@ const hub = (): Hub => (globalThis as unknown as { serviceHub: Hub }).serviceHub
 async function clickButton(label: string): Promise<void> {
   const button = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label));
   if (!button) throw new Error(`button "${label}" not found`);
+  // **押すだけ。** 押した結果を待つのは呼び手 (パス 378) —— この画面の「改善提案」は
+  // 押した瞬間の有効値で payload を組むので、**待つべきは押す前** (`mount` の錠) である。
   await act(async () => {
     button.click();
   });
-  await settle();
 }
 
 describe('改善提案 — 台帳のしきい値が、画面が渡す payload を通って提案の文言に効く', () => {
@@ -450,8 +500,7 @@ describe('税 — 消費税率', () => {
       setter?.call(select, 'continuousBasicContract');
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
-    await settle();
-    expect(statValue('印紙税額')).toBe(jpy(5_000));
+    await settleUntil(() => statValue('印紙税額') === jpy(5_000), '印紙税額が 5,000 円になる');
   });
 
   it('事業者の消費税: 税率・2 割特例・3 割特例の割合・境目の上書きが ⑩ の 4 方式と文言に出る', async () => {
@@ -570,7 +619,6 @@ describe('税 — 消費税率', () => {
     await act(async () => {
       box.click();
     });
-    await settle();
     await waitForText(text, '消費税 (5%)');
   });
 });

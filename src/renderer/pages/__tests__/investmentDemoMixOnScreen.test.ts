@@ -48,22 +48,32 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
+/** 画面ぜんぶの文 (改行・連続空白を畳んだもの)。 */
+const allText = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 
-async function mountPage(id: ServiceId): Promise<void> {
+/**
+ * 画面を描き、`waitFor` の文が出るまで**条件で**待つ (法則 `wait-for-condition-not-ticks`)。
+ *
+ * **錠はその `it` が真に見たい文にする。** この画面の断りは 1 本の template から
+ * 組まれるので、置いた記録が届いた瞬間に文ぜんぶが「まだ登録されていません」から
+ * 内訳へ入れ替わる —— つまり待てる印は**断りそのもの**に在り、
+ * 件数と算定された額 (¥90,000 / 5.3% ほか) は同じ描画で一緒に出る。
+ *
+ * 2026-09-21 (パス 385) まで固定回数 (8 周) で待っており、周回数を 0 にすると
+ * **5 件が落ちた** —— どれも「置いた記録がまだ届いていない」ので、画面は
+ * 既定の枝 (見本だけ) を刷る。台帳はこの家系を `text-captured`
+ * (「`const t = text();` へ取ってから主張するので待ちに渡せない」) と
+ * 説明していたが、**それは偽だった** —— 取る前に待てばよく、
+ * 取ったあとの主張 (否定を含む) はそのままでよい。
+ */
+async function mountPage(id: ServiceId, waitFor: string): Promise<void> {
   const def = SERVICES.find((s) => s.id === id);
   if (!def) throw new Error(`${id} service missing`);
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  await waitForText(allText, waitFor);
 }
 
 /** 指定の目印の要素の文字 (改行・連続空白を畳んだもの)。無ければ null。 */
@@ -100,7 +110,7 @@ const demoHoldings = SNAPSHOT.mutualFunds.holdings.length;
 
 describe('不動産投資 — 合計に見本が混ざっていることを画面が言う', () => {
   it('★ 何も登録していないとき「見本を表示している」と述べる', async () => {
-    await mountPage('real-estate');
+    await mountPage('real-estate', '自分の物件はまだ登録されていません');
     const t = noteText('data-portfolio-demo-mix');
     expect(t).not.toBeNull();
     expect(t).toContain(`同梱の見本 ${demoProps} 件を表示しています`);
@@ -113,7 +123,7 @@ describe('不動産投資 — 合計に見本が混ざっていることを画�
       monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true,
       monthlyExpenses: 30_000, monthlyLoan: 55_000,
     });
-    await mountPage('real-estate');
+    await mountPage('real-estate', '自分の物件は 1 件');
     const t = noteText('data-portfolio-demo-mix');
     expect(t).not.toBeNull();
     expect(t).toContain(`同梱の見本 ${demoProps} 件が含まれています`);
@@ -122,7 +132,7 @@ describe('不動産投資 — 合計に見本が混ざっていることを画�
     expect(t).toContain('¥90,000');
     expect(t).toContain('¥5,000');
     // 対照: 合計の側は変えていない (タイルに ¥913,000 が在る)。
-    const all = (container.textContent ?? '').replace(/\s+/g, ' ');
+    const all = allText();
     expect(all).toContain('¥913,000');
   });
 
@@ -132,14 +142,14 @@ describe('不動産投資 — 合計に見本が混ざっていることを画�
       monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true,
       monthlyExpenses: 30_000, monthlyLoan: 55_000,
     });
-    await mountPage('real-estate');
+    await mountPage('real-estate', '自分の物件は 1 件');
     const t = noteText('data-portfolio-demo-mix') ?? '';
     // 断りが**在る**ことを先に言う —— 無い断りは not.toContain を無条件に通す。
     expect(t).toContain('自分の物件は 1 件');
     expect(t).not.toContain('¥913,000');
     expect(t).not.toContain('¥248,000');
     // 対照: この 2 つは画面には在る (not.toContain が綴り違いで黙る空検査でないこと)。
-    const all = (container.textContent ?? '').replace(/\s+/g, ' ');
+    const all = allText();
     expect(all).toContain('¥913,000');
     expect(all).toContain('¥248,000');
   });
@@ -147,7 +157,7 @@ describe('不動産投資 — 合計に見本が混ざっていることを画�
 
 describe('投資信託 — 合計に見本が混ざっていることを画面が言う', () => {
   it('★ 何も登録していないとき「見本を表示している」と述べる', async () => {
-    await mountPage('mutual-funds');
+    await mountPage('mutual-funds', '自分の銘柄はまだ登録されていません');
     const t = noteText('data-fund-demo-mix');
     expect(t).not.toBeNull();
     expect(t).toContain(`同梱の見本 ${demoHoldings} 銘柄を表示しています`);
@@ -160,7 +170,7 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
       code: 'MINE0001', name: '自分の銘柄',
       valuation: 100_000, acquisitionCost: 95_000, ytdReturnPct: 4,
     });
-    await mountPage('mutual-funds');
+    await mountPage('mutual-funds', '自分の銘柄は 1 銘柄');
     const t = noteText('data-fund-demo-mix');
     expect(t).not.toBeNull();
     expect(t).toContain(`同梱の見本 ${demoHoldings} 銘柄が含まれています`);
@@ -169,7 +179,7 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
     expect(t).toContain('¥5,000');
     expect(t).toContain('5.3%');
     // 対照: 合計のタイルは変えていない。
-    await waitForText(() => (container.textContent ?? '').replace(/\s+/g, ' '), '¥8,340,140');
+    expect(allText()).toContain('¥8,340,140');
   });
 
   it('★ 実質コストの元本に見本が入っていることを述べ、自分の分の額も出す (83 倍)', async () => {
@@ -177,7 +187,7 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
       code: 'MINE0001', name: '自分の銘柄',
       valuation: 100_000, acquisitionCost: 95_000, ytdReturnPct: 4,
     });
-    await mountPage('mutual-funds');
+    await mountPage('mutual-funds', '見本を除く元本 ¥100,000');
     const t = noteText('data-fund-cost-user-only');
     expect(t).not.toBeNull();
     expect(t).toContain(`同梱の見本 ${demoHoldings} 銘柄が含まれています`);
@@ -186,14 +196,15 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
     expect(t).toContain('¥1,200');
     expect(t).toContain('¥7,128');
     // 合計の側 (¥594,505) は節の中に残っている —— 消していない。
-    const all = (container.textContent ?? '').replace(/\s+/g, ' ');
+    const all = allText();
     expect(all).toContain('¥594,505');
   });
 
   it('★ 対照: 自分の銘柄が無ければ元本の断りは出ない (常に出る文ではない)', async () => {
-    await mountPage('mutual-funds');
+    // 肯定の前提 (元本の節そのもの) を**先に**待つ —— 待たずに否定を見ると、
+    // 節がまだ描かれていないだけで通る。
+    await mountPage('mutual-funds', 'を元本とし');
     expect(noteText('data-fund-cost-user-only')).toBeNull();
-    await waitForText(() => (container.textContent ?? ''), 'を元本とし');
   });
 });
 
@@ -204,7 +215,7 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
  */
 describe('士業コンソール — 見出しの数と顧問料の出所を言う', () => {
   it('★ 何も登録していないとき「見本です」と述べる (税理士)', async () => {
-    await mountPage('tax-accountant');
+    await mountPage('tax-accountant', '自分の連携先はまだ登録されていません');
     const t = noteText('data-shigyo-demo-mix');
     expect(t).not.toBeNull();
     expect(t).toContain('表示中の連携先 1 名と月次顧問料 ¥33,000 は同梱の見本です');
@@ -215,19 +226,19 @@ describe('士業コンソール — 見出しの数と顧問料の出所を言�
     await getRecordStore().insert(SHIGYO_CONTACTS_COLLECTION, {
       serviceId: 'tax-accountant', name: '自分の税理士', firm: '', phone: '', email: '',
     });
-    await mountPage('tax-accountant');
+    await mountPage('tax-accountant', '自分が登録した連携先は 1 名');
     const t = noteText('data-shigyo-demo-mix');
     expect(t).not.toBeNull();
     expect(t).toContain('「連携 2 名」には同梱の見本 1 名が含まれています');
     expect(t).toContain('自分が登録した連携先は 1 名');
     expect(t).toContain('月次顧問料 ¥33,000 は見本の値です');
     // 対照: 見出しそのものは変えていない。
-    await waitForText(() => (container.textContent ?? '').replace(/\s+/g, ' '), '連携 2 名');
+    expect(allText()).toContain('連携 2 名');
   });
 
   it('★ 8 士業のどれでも出る (共有部品なので 1 つ直せば全部に効くこと)', async () => {
     for (const id of ['labor-consultant', 'lawyer'] as const) {
-      await mountPage(id);
+      await mountPage(id, 'は同梱の見本です');
       expect(noteText('data-shigyo-demo-mix'), id).not.toBeNull();
       if (root) {
         await act(async () => { root!.unmount(); });
