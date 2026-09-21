@@ -20,6 +20,7 @@ import { TeamPage } from '../TeamPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MEMBERS_COLLECTION } from '../../data/members';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -105,7 +106,7 @@ describe('チーム — 最後のオーナー', () => {
     });
     await settle();
 
-    expect(text()).toContain('最後のオーナーは降格できません');
+    await waitForText(text, '最後のオーナーは降格できません');
     // 保存もされていない (実物の store を読み直して確かめる)。
     const rows = await getRecordStore().list<{ name: string; role: string }>(MEMBERS_COLLECTION);
     expect(rows.find((r) => r.data.name === '一人目')?.data.role).toBe('owner');

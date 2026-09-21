@@ -14,6 +14,7 @@ import { ChatbotWidget } from '../../components/ChatbotWidget';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -104,13 +105,13 @@ describe('形の違う保存値でも画面が開く', () => {
     localStorage.setItem('servicehub.teamradar.draft.v1', JSON.stringify({ title: '下書きのチャート名', members: [{ id: 'm1', name: '下書きの山田', scores: [1, 2, 3, 4, 5] }] }));
     await mountService('teamradar');
     expect(container.querySelector<HTMLInputElement>('input[aria-label="チャート名"]')?.value).toBe('下書きのチャート名');
-    expect(container.textContent).toContain('下書きの山田');
+    await waitForText(() => container.textContent ?? '', '下書きの山田');
   });
 
   it('★ アシスタント: 履歴に null や role 違いが混じっていても開き、形の合う発話だけ残る', async () => {
     localStorage.setItem('assistant-history', JSON.stringify([null, 'x', { role: 'user', text: '保存された質問' }, { role: 'assistant', text: 5 }, { role: 'admin', text: '偽' }]));
     await mountService('assistant');
-    expect(container.textContent).toContain('保存された質問');
+    await waitForText(() => container.textContent ?? '', '保存された質問');
     expect(container.textContent).not.toContain('偽');
   });
 

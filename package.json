@@ -103,6 +103,7 @@
     "lint:mutation-scope": "node scripts/lint-mutation-scope.cjs && node scripts/lint-mutation-scope.cjs --self-test",
     "audit:floors": "node scripts/audit-floors.cjs",
     "audit:survivors": "node scripts/verify-survivors.cjs --self-test",
+    "audit:tick-sensitivity": "node scripts/audit-tick-sensitivity.cjs && node scripts/audit-tick-sensitivity.cjs --self-test",
     "audit:regex-poly": "node scripts/audit-regex-polynomial.cjs --n=200000 && node scripts/audit-regex-polynomial.cjs --self-test",
     "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test && node scripts/dependency-audit-issue.cjs --self-test"
   },

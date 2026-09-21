@@ -26,6 +26,7 @@ import { MutualFundsPage } from '../MutualFundsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { HOLDINGS_COLLECTION } from '../../data/investments';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -96,7 +97,7 @@ describe('保有銘柄 — 任意の欄が無い控えでも画面が出る', ()
     await getRecordStore().insert(HOLDINGS_COLLECTION, CORE_ONLY);
     await mount();
     // 画面が枠 (PageErrorBoundary) に落ちていない = 銘柄名が出ている。
-    expect(text()).toContain('古い版で保存した投信');
+    await waitForText(text, '古い版で保存した投信');
     // 年初来が無い控えは「—」= 未入力 (パス 122)。それまでは既定 0 で「+0.0%」を刷っていた —— 測った 0% と同じ顔。
     expect(text()).not.toContain('+0.0%');
     expect(text()).toContain('未入力 1 銘柄は除外'); // リスクの注記が、その控えを 0% として数えていないと言う
@@ -109,7 +110,7 @@ describe('保有銘柄 — 任意の欄が無い控えでも画面が出る', ()
     await mount();
     // パス 123 までは取得原価が評価額と同額に倒れていた (NaN は出ないが、損益 0 の銘柄を作る)。
     expect(text()).not.toMatch(/NaN|Infinity|∞/);
-    expect(text()).toContain('取得額未入力 1 銘柄');
+    await waitForText(text, '取得額未入力 1 銘柄');
   });
 
   it('対照: 揃った控えは自分の数字で出る (既定に倒れていない)', async () => {
@@ -118,9 +119,9 @@ describe('保有銘柄 — 任意の欄が無い控えでも画面が出る', ()
       valuationMode: 'manual', acquisitionCost: 1_500_000, ytdReturnPct: 12.5,
     });
     await mount();
-    expect(text()).toContain('揃っている投信');
-    expect(text()).toContain('ABC123');
-    expect(text()).toContain('+12.5%');
+    await waitForText(text, '揃っている投信');
+    await waitForText(text, 'ABC123');
+    await waitForText(text, '+12.5%');
     expect(text()).not.toContain('+0.0%');
   });
 });

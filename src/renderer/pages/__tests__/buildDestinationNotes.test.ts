@@ -18,6 +18,7 @@ import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 let version: string;
 /** `getVersion` を保留させる (分かる前の描画を見るため)。null なら即座に答える。 */
@@ -92,8 +93,7 @@ afterEach(async () => {
 describe('株式 — 保存先と「登録が無いとき」の文 (パス 161)', () => {
   it('デスクトップ版は state.json と見本の銘柄を言う (標本: 規則が空振りしていない)', async () => {
     await mount('stocks');
-    const band = container.querySelector('[data-watchlist-storage]');
-    expect(band).not.toBeNull();
+    const band = await waitForElement(() => container.querySelector('[data-watchlist-storage]'), "container.querySelector('[data-watchlist-storage]')");
     expect(band!.textContent).toContain('~/.local/business-hub/state.json');
     expect(band!.textContent).toContain('見本');
   });
@@ -101,8 +101,7 @@ describe('株式 — 保存先と「登録が無いとき」の文 (パス 161)'
   it('★ ブラウザ版は state.json を名乗らず、一覧が空だと言う', async () => {
     version = '0.1.0-web';
     await mount('stocks');
-    const band = container.querySelector('[data-watchlist-storage]');
-    expect(band).not.toBeNull();
+    const band = await waitForElement(() => container.querySelector('[data-watchlist-storage]'), "container.querySelector('[data-watchlist-storage]')");
     expect(band!.textContent).not.toContain('state.json');
     expect(band!.textContent).toContain('このブラウザの保存領域');
     expect(band!.textContent).toContain('一覧は空です');
@@ -112,22 +111,21 @@ describe('株式 — 保存先と「登録が無いとき」の文 (パス 161)'
     version = '0.1.0-web';
     await mount('stocks');
     expect(text()).not.toContain('~/.local/business-hub/data/dashboard.html');
-    expect(text()).toContain('ライブラリ');
+    await waitForText(text, 'ライブラリ');
   });
 });
 
 describe('Skills — 読み取り元 (パス 161)', () => {
   it('デスクトップ版はパスと「ディレクトリを作って」の案内を出す', async () => {
     await mount('skills');
-    expect(text()).toContain('~/.claude/skills');
-    expect(text()).toContain('SKILL.md');
+    await waitForText(text, '~/.claude/skills');
+    await waitForText(text, 'SKILL.md');
   });
 
   it('★ ブラウザ版は「読み取れません」と言い、できない指示を出さない', async () => {
     version = '0.1.0-web';
     await mount('skills');
-    const note = container.querySelector('[data-skills-unavailable]');
-    expect(note).not.toBeNull();
+    const note = await waitForElement(() => container.querySelector('[data-skills-unavailable]'), "container.querySelector('[data-skills-unavailable]')");
     expect(note!.textContent).toContain('読み取れません');
     expect(note!.textContent).toContain('デスクトップ版で開く');
     // 「ディレクトリを作って SKILL.md を置け」は出さない (やっても一覧は空のまま)。
@@ -158,8 +156,7 @@ describe('実行形態が分かる前 (パス 161)', () => {
       release();
     });
     await settle();
-    const band = container.querySelector('[data-watchlist-storage]');
-    expect(band).not.toBeNull();
+    const band = await waitForElement(() => container.querySelector('[data-watchlist-storage]'), "container.querySelector('[data-watchlist-storage]')");
     expect(band!.textContent).toContain('このブラウザの保存領域');
   });
 });
@@ -167,7 +164,7 @@ describe('実行形態が分かる前 (パス 161)', () => {
 describe('Team Radar / テンプレート — 書き出し先 (パス 161)', () => {
   it('デスクトップ版は SVG のパスを言う', async () => {
     await mount('teamradar');
-    expect(text()).toContain('~/.local/business-hub/data/team-radar.svg');
+    await waitForText(text, '~/.local/business-hub/data/team-radar.svg');
   });
 
   it('★ ブラウザ版はパスを言わない', async () => {

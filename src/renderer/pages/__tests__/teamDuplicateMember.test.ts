@@ -19,6 +19,7 @@ import { TeamPage } from '../TeamPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MEMBERS_COLLECTION } from '../../data/members';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -119,8 +120,8 @@ describe('チーム — 同じメールアドレスを 2 人にしない', () =>
     expect(await countMembers()).toBe(1);
     await invite('太郎 (再)', '  TARO@Example.com ');
     expect(await countMembers()).toBe(1);
-    expect(text()).toContain('taro@example.com は「太郎」として既に登録されています');
-    expect(text()).toContain('一覧の × で消してから入れ直してください');
+    await waitForText(text, 'taro@example.com は「太郎」として既に登録されています');
+    await waitForText(text, '一覧の × で消してから入れ直してください');
     // 一覧にも 1 行だけ (シートの表示も 1)
     expect((text().match(/taro@example\.com/gi) ?? []).length).toBeGreaterThanOrEqual(1);
     expect(container.querySelectorAll('tbody tr').length).toBe(1);

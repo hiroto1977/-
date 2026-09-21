@@ -24,6 +24,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { sanitizeTalentState, buildTalentSnapshot, type TalentState } from '../../../shared/talent';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -165,7 +166,7 @@ describe('人材ページ — 保存で落ちた項目を言う', () => {
   it('★ 対照: 何も編集せず保存しても断りは出ない (いつでも鳴る形になっていない)', async () => {
     await mount();
     await click(saveButton());
-    expect(text()).toContain('保存しました');
+    await waitForText(text, '保存しました');
     expect(text()).not.toContain('保存されませんでした');
   });
 });

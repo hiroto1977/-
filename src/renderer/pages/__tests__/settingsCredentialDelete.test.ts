@@ -21,6 +21,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICE_IDS, type ServiceId } from '../../../shared/serviceId';
 import { unusedStoredCredentials } from '../../../shared/credentialUse';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 /** 保管庫はモックする (施錠を再現するため)。 */
 const vaultClear = vi.fn<(key: string) => Promise<void>>();
@@ -134,7 +135,7 @@ describe('使われていない資格情報 — 数えられなかったら「0 
     const { UnusedCredentialSection } = await import('../SettingsPage');
     await mount(createElement(UnusedCredentialSection, { refreshKey: 0 }));
     expect(container.querySelector('[data-unused-unreadable]')).toBeNull();
-    expect(container.textContent).toContain('使われていない資格情報 1 件');
+    await waitForText(() => container.textContent ?? '', '使われていない資格情報 1 件');
   });
 });
 
@@ -199,8 +200,8 @@ describe('保管庫スロット — 削除が投げたら画面に出す', () =>
 
     await click(button('削除'));
 
-    expect(container.textContent).toContain('削除できませんでした');
-    expect(container.textContent).toContain('Vault がロックされています');
+    await waitForText(() => container.textContent ?? '', '削除できませんでした');
+    await waitForText(() => container.textContent ?? '', 'Vault がロックされています');
   });
 
   it('対照: 削除できたら文面は出ない', async () => {

@@ -14,6 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { ChatbotWidget } from '../ChatbotWidget';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const REQUESTS_KEY = 'chatbot-requests';
 /** `REQUEST_MARKERS` の「作って」を含む文 —— 要望として受け付けられる。 */
@@ -115,23 +116,23 @@ describe('要望の記録', () => {
     const dialog = await openWidget();
     failWrites();
     await ask(dialog, REQUEST_TEXT);
-    expect(dialog.textContent).toContain('記録できませんでした');
+    await waitForText(() => dialog.textContent ?? '', '記録できませんでした');
     // 理由 (容量超過) と打ち手まで出す
-    expect(dialog.textContent).toContain('保存領域が一杯');
+    await waitForText(() => dialog.textContent ?? '', '保存領域が一杯');
   });
 
   it('★ プライベートモード (SecurityError) では別の打ち手を出す', async () => {
     const dialog = await openWidget();
     failWrites('SecurityError');
     await ask(dialog, REQUEST_TEXT);
-    expect(dialog.textContent).toContain('記録できませんでした');
-    expect(dialog.textContent).toContain('プライベートモード');
+    await waitForText(() => dialog.textContent ?? '', '記録できませんでした');
+    await waitForText(() => dialog.textContent ?? '', 'プライベートモード');
   });
 
   it('対照: 書ける端末では言い切ったまま、警告は出ない', async () => {
     const dialog = await openWidget();
     await ask(dialog, REQUEST_TEXT);
-    expect(dialog.textContent).toContain('バックログ候補として記録します');
+    await waitForText(() => dialog.textContent ?? '', 'バックログ候補として記録します');
     expect(dialog.textContent).not.toContain('記録できませんでした');
   });
 

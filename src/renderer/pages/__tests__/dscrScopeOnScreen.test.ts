@@ -26,6 +26,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { SNAPSHOT } from '../../data/snapshot';
 import type { DebtServiceMetrics } from '../../../shared/funding';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 /**
  * `SNAPSHOT` は `as const` なので `typeof SNAPSHOT.funding` の各欄はリテラル型
@@ -171,7 +172,7 @@ describe('資金調達 — 返済余力 (DSCR) が算定できない期', () => 
         true,
       ),
     );
-    expect(text()).toContain('⚠️ 営業CFが返済を下回っています');
+    await waitForText(text, '⚠️ 営業CFが返済を下回っています');
   });
 
   it('★ 出荷する既定データに「返済ゼロで DSCR 0」を同梱しない', async () => {

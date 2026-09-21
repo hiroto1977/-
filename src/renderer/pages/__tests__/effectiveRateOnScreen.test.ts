@@ -19,6 +19,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { FinancialAnalysis, type FinancialUnit } from '../../components/FinancialAnalysis';
 import { SNAPSHOT } from '../../data/snapshot';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -144,7 +145,7 @@ describe('財務分析 — 実効税率は割れないとき「—」', () => {
     const total = totalTaxCell();
     expect(total).not.toBeNull();
     expect(total).not.toBe('¥0');
-    expect(text()).toContain('繰越欠損金控除');
+    await waitForText(text, '繰越欠損金控除');
   });
 
   it('★ 打ち込みを消せば率が戻る (関門が値に追随していること)', async () => {

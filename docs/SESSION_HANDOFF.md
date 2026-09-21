@@ -7,6 +7,103 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 369 (2026-09-21) — 綴りで数えた針が、両方向に外れていた (振る舞いで測り直す)
+
+### 1. 頼まれた仕事 —— 残り 32 本を共有の待ちへ寄せた
+
+パス 368 の台帳に残っていた 32 本を `renderer/__tests__/jsdomWait.ts` へ寄せた
+(`waitForText` / `waitForElement`)。**針を HEAD と突き合わせて、主張を 1 つも
+落としていないことを確かめた** (肯定の主張の針が完全に一致)。
+ついでに `recordShapeAuditPanel` の手書きの待ちも共有へ寄せた。
+
+### 2. ★ ところが、その針は最も多い形を 1 件も見ていなかった
+
+寄せ終えてから「本当に回数に依らなくなったか」を確かめようと、
+**固定回数の `settle` を持つ 109 本すべての周回数を 0 にして走らせた**。
+結果を読むと、パス 368 で私が書いた針の限界が出た:
+
+```js
+// パス 368 の針
+/expect\([^)]*textContent[^)]*\)\s*\.toContain\(|expect\(text\)\.toContain\(/
+```
+
+| 形 | 実測 (HEAD = パス 368) | 針は |
+| --- | --- | --- |
+| `expect(text()).toContain(…)` | **67 ファイル / 363 か所** | **見えない** (`expect(text)` は裸の識別子) |
+| `expect(q.sheet()!.textContent).toContain(…)` | `overviewBankSheet` | **見えない** (`[^)]*` が入れ子の括弧を跨げない) |
+| `expect(el?.textContent).toBe('確認できません')` | `settingsUnreadableCards` | **今も見えない** (matcher が `toContain` だけ) |
+| `expect(q.cell('売上高')).toBe(…)` | `overviewBankSheet` | **今も見えない** (読むのが helper) |
+| `const t = text(); expect(t).toContain(…)` | 6 ファイル | **今も見えない** (取ってから主張する) |
+
+**逆向きにも外れる。** 条件で待った**あと**の `expect(…).toContain(…)` は
+もう当て物ではないのに、針はその区別ができない。さらに `USES_SHARED_WAIT` は
+**ファイル単位の免除**なので、1 か所寄せるとそのファイルの残りが見えなくなる。
+
+これはパス 334 が名指しした形そのものである ——
+「**その関数を使っている場所ではなく、同じことをしている場所を数えろ**」。
+
+### 3. だから測る側を振る舞いへ移した (`npm run audit:tick-sensitivity`)
+
+知りたいのは綴りではなく「**この主張は settle の回数に依っているか**」で、
+それは**回数を 0 にして走らせれば直接答えが出る**。
+`scripts/audit-tick-sensitivity.cjs` (定期点検の道具 3 本 → **4 本**) が:
+
+- 固定回数の `settle` を持つ検査 (実測 **109 本**) の周回数を 0 に書き換え
+- `npx vitest run <その 109 本>` を走らせ
+- **必ず元へ戻し** (`finally` + **内容で照合**)
+- 落ちたファイルを**理由つきの台帳**と**双方向**に突き合わせる
+
+パス 356 の `audit:survivors` と同じ家系である (静的な報告が偽だったので、
+報告ではなく当て直して確かめた)。**CI では走らせない** ——
+判定のためにソースを書き換えるし、落ちること自体は欠陥ではないため。
+
+### 4. 実測と、直した分
+
+```
+  固定回数の settle を持つ検査                       109 本
+  0 周で落ちた (= 回数に依っている)   最初 34 本 → 寄せて 31 本
+  共有の待ちを import している検査     HEAD 19 本 → 97 本
+  await waitForText / waitForElement   HEAD 25 / 16 → 397 / 34
+  広げた針での危ない形                                 0 本
+  手書きの待ちの台帳 (waitHelperCensus)            6 本 → 3 本
+```
+
+寄せたのは 3 波:
+
+1. 頼まれた 32 本 (パス 368 の台帳)。
+2. 0 周で落ちた 14 本の `expect(text()).toContain(…)` **148 か所**
+   (+ `restorePassphraseField` / `backupPassphraseFloor` の手書きの待ちを共有へ)。
+3. 針を広げて出た 26 本 **99 か所** と、入れ子の括弧を持つ 5 本 **14 か所**。
+
+### 5. 残った 31 本は「依って当たり前」を含む —— 理由を台帳が持つ
+
+`kind` は 9 種類:
+
+- `store-roundtrip` —— IndexedDB へ書いて読み直す主張。解決が `act` の外なので
+  条件で待つには**非同期の述語**が要る (共有の待ちは同期の述語しか取らない)。
+- `setup-flush` —— 落ちるのは主張ではなく**操作**の側。固定回数の周回が
+  「待ち」ではなく**状態遷移の流し込み**として効いている。
+  **条件で待っても、遷移が起きていなければ待てない**。
+- `text-captured` / `text-helper` / `text-with-message` / `attribute` /
+  `element-presence` / `hook-state` / `mock-call` —— 寄せられるが未着手。
+  **針が今も見えない形はここに集まっている**。
+
+### 6. 針は捨てない (速い側の見張りとして残す)
+
+`fixedTickAssertionCensus.test.ts` は残し、**見えていた 2 形を広げ**、
+**今も見えない 3 形を標本で固定した** (見えるようになったら鳴って表を直させる)。
+注記の中の言及を数えないよう `codeOnly()` も足した ——
+`taxDeductionCeilings.test.ts` は docblock で「`expect(text()).toContain(…)` は
+落ちたときに画面ぜんぶを刷る」と**説明している**だけで、その形の主張を持たない
+(法則 `mention-vs-declaration`)。
+
+### 7. 検証
+
+- `npm run typecheck` / `npm test` / `npm run verify:all` すべて green
+- `npm run audit:tick-sensitivity` 双方向で green (31 本が台帳どおり)
+- 出荷物は **11,931,716 B / 3,344,237 B で byte 単位で不変**
+  (直したのは `__tests__/` と `scripts/` と文書だけ。両方を組んで実測した)
+
 ## パス 368 (2026-09-21) — 固定回数で待つ検査の 3 件目が出た (共有の待ちは 9 日前から在った)
 
 ### まず訂正 —— 「待つ道が無い」のではない

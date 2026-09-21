@@ -23,6 +23,7 @@ import { getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -129,7 +130,7 @@ describe('KPI — 貸借対照表の分析が画面に出る', () => {
     // 純資産 600 に対しネットデット 800 − 50 = 750 > 600。
     await seedBs({ cash: 50, interestBearingDebt: 800 });
     await mountKpi();
-    expect(text()).toContain('実質債務超過の懸念');
+    await waitForText(text, '実質債務超過の懸念');
   });
 
   it('対照: 懸念が無い形では警告を出さない', async () => {

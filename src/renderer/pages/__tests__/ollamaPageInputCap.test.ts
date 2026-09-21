@@ -23,6 +23,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { OllamaPage } from '../OllamaPage';
 import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS, MIN_SAFE_VERSION } from '../../../shared/ollama';
 import { inputTooLongMessage } from '../../../shared/assistantLimits';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const MODEL = 'llama3.2:1b';
 /** 接続済み + モデル 1 つ (fetchSnapshot が返す。既定の snapshot は「未起動」でチャット欄が開かない)。 */
@@ -168,14 +169,14 @@ describe('OllamaPage のチャット欄', () => {
     await openChat();
     await send('長い質問');
     expect(invoke).toHaveBeenCalledWith('ollama', 'chat', { model: MODEL, prompt: '長い質問', system: undefined });
-    expect(container.textContent).toContain(message);
+    await waitForText(() => container.textContent ?? '', message);
   });
 
   it('★ 対照: 成功なら共有の型の reply が応答として出る (手写しの欄を読んでいない)', async () => {
     invokeResult = { ok: true, data: { reply: 'およそ 22 か月です。', durationMs: 12 } };
     await openChat();
     await send('ゾウの妊娠期間は');
-    expect(container.textContent).toContain('およそ 22 か月です。');
-    expect(container.textContent).toContain('応答 (12ms)');
+    await waitForText(() => container.textContent ?? '', 'およそ 22 か月です。');
+    await waitForText(() => container.textContent ?? '', '応答 (12ms)');
   });
 });

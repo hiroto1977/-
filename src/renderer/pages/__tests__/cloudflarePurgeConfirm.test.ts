@@ -18,6 +18,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 interface Call {
   readonly action: string;
@@ -170,9 +171,9 @@ afterEach(async () => {
 describe('Cloudflare の書き込み操作 (カバレッジ 38.98% だった側 · パス 154)', () => {
   it('★ 走査が実物に当たる: ゾーンが 1 つ在り、2 つのフォームが開ける', async () => {
     await mount();
-    expect(container.textContent).toContain('example.com');
-    expect(container.textContent).toContain('DNS レコード作成');
-    expect(container.textContent).toContain('キャッシュパージ');
+    await waitForText(() => container.textContent ?? '', 'example.com');
+    await waitForText(() => container.textContent ?? '', 'DNS レコード作成');
+    await waitForText(() => container.textContent ?? '', 'キャッシュパージ');
     // ゾーンが在るので押せる (0 件なら disabled)。
     expect(buttons('パージ')[0]!.disabled).toBe(false);
   });
@@ -210,7 +211,7 @@ describe('Cloudflare の書き込み操作 (カバレッジ 38.98% だった側 
     expect(invoked).toEqual([
       { action: 'purge-cache', payload: { zoneId: ZONE.id, purgeEverything: true } },
     ]);
-    expect(container.textContent).toContain('ゾーン全体をパージしました');
+    await waitForText(() => container.textContent ?? '', 'ゾーン全体をパージしました');
   });
 
   it('★ 対照: URL 指定のパージは確認を求めない (破壊的と名乗っていない側)', async () => {
@@ -226,7 +227,7 @@ describe('Cloudflare の書き込み操作 (カバレッジ 38.98% だった側 
         payload: { zoneId: ZONE.id, files: ['https://example.com/a.css', 'https://example.com/b.js'] },
       },
     ]);
-    expect(container.textContent).toContain('2 URL をパージしました');
+    await waitForText(() => container.textContent ?? '', '2 URL をパージしました');
     // 使った一覧は成功後に空にする (欄そのものは URL モードのまま残る)。
     expect((container.querySelector('textarea') as HTMLTextAreaElement).value).toBe('');
   });
@@ -252,7 +253,7 @@ describe('Cloudflare の書き込み操作 (カバレッジ 38.98% だった側 
     await openPurge();
     await chooseWholeZone();
     await click(buttons('パージ実行')[0]!);
-    expect(container.textContent).toContain('Zone not found');
+    await waitForText(() => container.textContent ?? '', 'Zone not found');
     expect(container.textContent).not.toContain('ゾーン全体をパージしました');
   });
 
@@ -277,14 +278,14 @@ describe('Cloudflare の書き込み操作 (カバレッジ 38.98% だった側 
         payload: { zoneId: ZONE.id, type: 'A', name: 'www', content: '203.0.113.1', proxied: false },
       },
     ]);
-    expect(container.textContent).toContain('A www.example.com を作成');
+    await waitForText(() => container.textContent ?? '', 'A www.example.com を作成');
   });
 
   it('★ TXT / MX はプロキシの選択肢を出さない (proxied は必ず false)', async () => {
     await mount();
     await click(buttons('作成')[0]!);
     // 既定の A ではオレンジ雲が出ている。
-    expect(container.textContent).toContain('Cloudflare プロキシを通す');
+    await waitForText(() => container.textContent ?? '', 'Cloudflare プロキシを通す');
     const selects = Array.from(container.querySelectorAll('select')) as HTMLSelectElement[];
     await act(async () => {
       setValue(selects[1]!, 'TXT');

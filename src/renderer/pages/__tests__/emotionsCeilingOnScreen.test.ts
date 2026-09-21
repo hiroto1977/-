@@ -58,6 +58,7 @@ import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForElement } from '../../__tests__/jsdomWait';
 
 /** `analyze-text` へ実際に渡された payload (切られていないことを確かめる)。 */
 let invoked: { serviceId: string; action: string; payload: unknown }[];
@@ -192,8 +193,7 @@ describe('分析するテキスト — 切らずに断る (パス 168)', () => {
     await mountEmotions();
     const length = MAX_ANALYZE_TEXT_CHARS + 2300;
     await typeInto(analyzeBox(), 'あ'.repeat(length));
-    const note = overNote();
-    expect(note, '超えているのに何も言っていない').not.toBeNull();
+    const note = await waitForElement(() => overNote(), '超えているのに何も言っていない');
     // 節は共有の `CeilingNotice` (パス 175 で寄せた)。欄の名前が属性に載る。
     expect(note!.getAttribute('data-ceiling-notice')).toBe('分析するテキスト');
     expect(note!.textContent).toContain(String(MAX_ANALYZE_TEXT_CHARS));
@@ -233,8 +233,7 @@ describe('気分のメモ — 切ったことを述べる (パス 167 と同じ�
     expect(moodNoteBox().hasAttribute('maxlength'), 'maxLength が戻っている').toBe(false);
     await typeInto(moodNoteBox(), 'あ'.repeat(MAX_MOOD_NOTE_CHARS + 37));
     expect(moodNoteBox().value).toHaveLength(MAX_MOOD_NOTE_CHARS);
-    const note = moodNote();
-    expect(note, '落ちたのに何も言っていない').not.toBeNull();
+    const note = await waitForElement(() => moodNote(), '落ちたのに何も言っていない');
     expect(note!.getAttribute('data-mood-note-overflow')).toBe('37');
     expect(note!.textContent).toContain('37');
     expect(note!.textContent).toContain(String(MAX_MOOD_NOTE_CHARS));

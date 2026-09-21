@@ -24,6 +24,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -130,14 +131,14 @@ describe('不動産 レバレッジ試算 — 算定不能から判定を作ら�
     expect(statValue('実質利回り')).toBe('—');
     expect(statValue('イールドギャップ')).toBe('—');
     expect(statColor('イールドギャップ')).toBe(''); // 色を付けない = 判定しない
-    expect(scopeBand()).toContain('物件価格が未入力');
+    await waitForText(scopeBand, '物件価格が未入力');
   });
 
   it('★ 自己資金 0 (フルローン) で CCR を「0%」と刷らない', async () => {
     await mountPage();
     await typeInto('自己資金', '0');
     expect(statValue('CCR (自己資金回収率)')).toBe('—');
-    expect(scopeBand()).toContain('自己資金が 0 円');
+    await waitForText(scopeBand, '自己資金が 0 円');
     // **返済後 CF は算定できている** —— 率が出せないことと、手残りが分からない
     // ことは別。フルローンでも持ち出しの額は言える。
     expect(statValue('返済後CF (年)')).not.toBe('—');

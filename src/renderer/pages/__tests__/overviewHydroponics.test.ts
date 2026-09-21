@@ -25,6 +25,7 @@ import {
 } from '../../data/hydroponicsSetup';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
 import { latestRecord } from '../../data/latestRecord';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -126,7 +127,7 @@ describe('経営サマリー — 水耕栽培の品目の増減', () => {
   it('初期表示は参考値の 5 品目で、どれも消せる (5 > 1)', async () => {
     await mountOverview();
     expect(q.options().map((o) => o.value)).toEqual(['leaf-lettuce', 'frill-lettuce', 'romaine', 'baby-leaf', 'basil']);
-    expect(container.textContent).toContain('品目を増やす・減らす（現在 5 品目）');
+    await waitForText(() => container.textContent ?? '', '品目を増やす・減らす（現在 5 品目）');
     expect(q.removeButton('リーフレタス').disabled).toBe(false);
     expect(await savedCropLists()).toEqual([]);
   });
@@ -146,7 +147,7 @@ describe('経営サマリー — 水耕栽培の品目の増減', () => {
     expect(q.options().map((o) => o.label)).toContain('ミズナ');
     expect(q.select().value).toBe('custom-1');
     expect(q.status()).toContain('「ミズナ」を足して品目に選びました');
-    expect(container.textContent).toContain('現在 6 品目');
+    await waitForText(() => container.textContent ?? '', '現在 6 品目');
   });
 
   it('形が通らなければ保存せず、欄ごとの指摘を出す', async () => {
@@ -179,7 +180,7 @@ describe('経営サマリー — 水耕栽培の品目の増減', () => {
     await click(q.removeButton('ロメインレタス'));
     expect(q.status()).toContain('「ロメインレタス」を消しました');
     expect(q.options().map((o) => o.value)).toEqual(['leaf-lettuce', 'frill-lettuce', 'baby-leaf', 'basil']);
-    expect(container.textContent).toContain('参考値の品目を戻す（ロメインレタス）');
+    await waitForText(() => container.textContent ?? '', '参考値の品目を戻す（ロメインレタス）');
 
     await unmountOverview();
     await mountOverview();
@@ -218,7 +219,7 @@ describe('経営サマリー — 水耕栽培の品目の増減', () => {
     const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
     expect(setups).toHaveLength(1);
     expect(setups[0]!.data.cropId).toBe('custom-1');
-    expect(container.textContent).toContain('保存しました。経営サマリーに反映されています。');
+    await waitForText(() => container.textContent ?? '', '保存しました。経営サマリーに反映されています。');
   });
 
   it('保存した設定の品目を消すと、先頭で試算している旨を出す', async () => {
@@ -227,7 +228,7 @@ describe('経営サマリー — 水耕栽培の品目の増減', () => {
     await click(q.button('この品目を足す'));
     await click(q.button('保存して経営サマリーへ反映'));
     await click(q.removeButton('ミズナ'));
-    expect(container.textContent).toContain('保存した設定の品目「custom-1」は一覧にありません。先頭の品目（リーフレタス）で試算しています。');
+    await waitForText(() => container.textContent ?? '', '保存した設定の品目「custom-1」は一覧にありません。先頭の品目（リーフレタス）で試算しています。');
   });
 });
 

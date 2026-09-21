@@ -19,6 +19,7 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION, type SalesEntry } from '../../data/sales';
 import { salesToCsv } from '../../data/salesCsv';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -106,8 +107,8 @@ describe('売上集計 — 同じ CSV を 2 度読まない', () => {
     expect(await countSales()).toBe(2);
     await pickCsv(salesToCsv(ROWS));
     expect(await countSales()).toBe(2);
-    expect(text()).toContain('この CSV の 2 行はすべて既に取り込まれている記録と同じ内容');
-    expect(text()).toContain('同じファイルを 2 度読んだと判断し、取り込みませんでした');
+    await waitForText(text, 'この CSV の 2 行はすべて既に取り込まれている記録と同じ内容');
+    await waitForText(text, '同じファイルを 2 度読んだと判断し、取り込みませんでした');
     expect(text()).not.toContain('件を取り込みました');
   });
 
@@ -116,8 +117,8 @@ describe('売上集計 — 同じ CSV を 2 度読まない', () => {
     await mount();
     await pickCsv(salesToCsv([ROWS[0]!, { date: '2026-05-03', channel: 'rakuten', amount: 400, orders: 1 }]));
     expect(await countSales()).toBe(4);
-    expect(text()).toContain('2 件を取り込みました');
-    expect(text()).toContain('うち 1 件は既存の記録と同じ内容です');
+    await waitForText(text, '2 件を取り込みました');
+    await waitForText(text, 'うち 1 件は既存の記録と同じ内容です');
   });
 
   it('対照: 既存と重ならない CSV は従来どおり (件数の断りは無い)', async () => {
@@ -125,7 +126,7 @@ describe('売上集計 — 同じ CSV を 2 度読まない', () => {
     await mount();
     await pickCsv(salesToCsv([{ date: '2026-05-03', channel: 'rakuten', amount: 400, orders: 1 }]));
     expect(await countSales()).toBe(3);
-    expect(text()).toContain('1 件を取り込みました');
+    await waitForText(text, '1 件を取り込みました');
     expect(text()).not.toContain('既存の記録と同じ内容');
   });
 });

@@ -18,6 +18,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -127,8 +128,8 @@ describe('KPI 実績 — 同じ期・事業を 2 件にしない', () => {
     await fillActual('2026-04', '全社', '2000000');
     await clickButtonExact('追加');
     expect(await countActuals()).toBe(1);
-    expect(text()).toContain('2026-04 の「全社」の実績は既に入力されています');
-    expect(text()).toContain('一覧の × で消してから入れ直してください');
+    await waitForText(text, '2026-04 の「全社」の実績は既に入力されています');
+    await waitForText(text, '一覧の × で消してから入れ直してください');
     // 合算されなかった (実績合計は 1 件分のまま。¥ は環境で全角/半角が揺れる)
     expect(text()).toMatch(/[¥￥]1,000,000/);
     expect(text()).not.toMatch(/[¥￥]3,000,000/);

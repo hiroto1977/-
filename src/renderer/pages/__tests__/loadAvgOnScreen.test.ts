@@ -28,6 +28,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { SNAPSHOT } from '../../data/snapshot';
 import { buildLinuxSnapshot } from '../../../main/clients/linux';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 /**
  * `SNAPSHOT` は `as const` なので `typeof SNAPSHOT.linux` の多くの欄はリテラル型
@@ -197,7 +198,7 @@ describe('Linux モニター — ロードアベレージを提供しない OS',
     await mountWith(payload('win32', [0, 0, 0]));
     expect(statValue('メモリ使用率')?.value).toBe('50.0%');
     expect(statValue('CPU コア')?.value).toBe('4 論理コア');
-    expect(text()).toContain('1日 1時間 1分');
+    await waitForText(text, '1日 1時間 1分');
   });
 
   it('★ 状況メモにも同じ 1 本の理由が出る (文面を写していない)', async () => {

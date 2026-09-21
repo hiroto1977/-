@@ -75,6 +75,7 @@ import {
   _resetDeviceStoreFailureForTests,
   currentDeviceStoreFailure,
 } from '../../data/deviceStoreFailure';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -156,11 +157,11 @@ describe('ライブラリが読めないとき', () => {
 
   it('★ 読めなかった回は、前に読めた一覧を空に置き換えない', async () => {
     await mount();
-    expect(container.textContent).toContain('提案書.svg');
+    await waitForText(() => container.textContent ?? '', '提案書.svg');
     h.failOn.add('list');
     await click(buttonWith('更新'));
     // 出ているのは前回読めた一覧。報せは別に出る。
-    expect(container.textContent).toContain('提案書.svg');
+    await waitForText(() => container.textContent ?? '', '提案書.svg');
     expect(currentDeviceStoreFailure()?.op).toBe('read');
   });
 
@@ -176,7 +177,7 @@ describe('ライブラリが読めないとき', () => {
     await mount();
     h.items = []; // 別のタブで消された
     await click(buttonWith('開く'));
-    expect(container.textContent).toContain('ファイルが見つかりません');
+    await waitForText(() => container.textContent ?? '', 'ファイルが見つかりません');
     expect(currentDeviceStoreFailure()).toBeNull();
   });
 });
@@ -193,7 +194,7 @@ describe('ライブラリから消せないとき', () => {
     expect(f?.message).toContain('一覧はそのままです');
     expect(container.textContent).not.toContain('削除しました');
     // 消えていないので行は残る。
-    expect(container.textContent).toContain('提案書.svg');
+    await waitForText(() => container.textContent ?? '', '提案書.svg');
   });
 
   it('★ 全件削除が断られても同じ (files / delete)', async () => {
@@ -207,7 +208,7 @@ describe('ライブラリから消せないとき', () => {
   it('対照: 消せる端末では「削除しました」が出て行が消え、報せは出ない', async () => {
     await mount();
     await click(buttonWith('削除'));
-    expect(container.textContent).toContain('削除しました');
+    await waitForText(() => container.textContent ?? '', '削除しました');
     expect(container.textContent).not.toContain('提案書.svg');
     expect(currentDeviceStoreFailure()).toBeNull();
   });

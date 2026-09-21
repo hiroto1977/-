@@ -20,6 +20,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { GoogleConnectCard } from '../GoogleConnectCard';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const KEY = 'google-client-id';
 const ID = '1234-abcd.apps.googleusercontent.com';
@@ -140,7 +141,7 @@ afterEach(async () => {
 describe('Google かんたん接続カード (カバレッジ 38.46% だった側 · パス 155)', () => {
   it('★ 走査が実物に当たる: 保存できる端末では「1 回貼れば各ページで使えます」と言い、注意は出ない', async () => {
     await mount();
-    expect(container.textContent).toContain('1 回貼れば各ページで使えます');
+    await waitForText(() => container.textContent ?? '', '1 回貼れば各ページで使えます');
     expect(notice()).toBeNull();
   });
 
@@ -162,7 +163,7 @@ describe('Google かんたん接続カード (カバレッジ 38.46% だった�
     await click(signInButton());
     expect(authorized).toEqual([{ id: 'calendar', clientId: ID }]);
     expect(localStorage.getItem(KEY)).toBe(ID);
-    expect(container.textContent).toContain('サインインしました');
+    await waitForText(() => container.textContent ?? '', 'サインインしました');
     expect(connected).toBe(1);
     expect(notice()).toBeNull();
   });
@@ -172,7 +173,7 @@ describe('Google かんたん接続カード (カバレッジ 38.46% だった�
     await mount();
     await type(ID);
     await click(signInButton());
-    expect(container.textContent).toContain('クライアント ID が不正です');
+    await waitForText(() => container.textContent ?? '', 'クライアント ID が不正です');
     expect(connected).toBe(0);
   });
 
@@ -188,7 +189,7 @@ describe('Google かんたん接続カード (カバレッジ 38.46% だった�
     expect(n).toContain('それぞれの画面で貼り直してください');
     // **約束そのものを取り下げる。** 「1 回貼れば」は出ない。
     expect(container.textContent).not.toContain('1 回貼れば各ページで使えます');
-    expect(container.textContent).toContain('この端末では保存できないため、画面ごとに貼り直しが必要です');
+    await waitForText(() => container.textContent ?? '', 'この端末では保存できないため、画面ごとに貼り直しが必要です');
   });
 
   it('★ 書けない端末ではサインインは通るが、保存できなかったと言う', async () => {
@@ -198,7 +199,7 @@ describe('Google かんたん接続カード (カバレッジ 38.46% だった�
     await click(signInButton());
     // サインイン自体は止めない (トークンは別の保管層)。
     expect(authorized).toEqual([{ id: 'drive', clientId: ID }]);
-    expect(container.textContent).toContain('サインインしました');
+    await waitForText(() => container.textContent ?? '', 'サインインしました');
     // だが約束は取り下げる。文面は `data/localWrite.ts` の容量超過の枝。
     const n = notice();
     expect(n).toContain('保存領域が一杯で保存できませんでした');
@@ -214,7 +215,7 @@ describe('Google かんたん接続カード (カバレッジ 38.46% だった�
     undo();
     await click(signInButton());
     expect(notice()).toBeNull();
-    expect(container.textContent).toContain('1 回貼れば各ページで使えます');
+    await waitForText(() => container.textContent ?? '', '1 回貼れば各ページで使えます');
   });
 
   /**

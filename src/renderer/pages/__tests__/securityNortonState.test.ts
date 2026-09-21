@@ -17,6 +17,7 @@ import { SecurityPage } from '../SecurityPage';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { NORTON_UNAVAILABLE_DETAILS } from '../../../shared/nortonDetection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 /** `fetchSnapshot` の返し方を差し替えて、実行形態ごとの payload を描く。 */
 let snapshotResult: { ok: boolean; code?: string; message?: string; data?: unknown };
@@ -180,6 +181,6 @@ describe('Norton 360 の札 (パス 165)', () => {
     expect(badge()!.className).toContain('ok');
     expect(badge()!.textContent).toBe('Installed');
     expect(details()).toBe('win32 · Norton 360 を検出');
-    expect(container.textContent).toContain('C:\\Program Files\\Norton 360');
+    await waitForText(() => container.textContent ?? '', 'C:\\Program Files\\Norton 360');
   });
 });

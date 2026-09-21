@@ -35,6 +35,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const REC = {
   ok: true,
@@ -164,17 +165,17 @@ describe('業務操作パネル — 記録と提案は互いを消さない', ()
 
     await click('改善提案');
     expect(screen(), '★ 提案を押したら記録の確認が消えました').toContain('受け付けました');
-    expect(screen()).toContain('BASIS_TEXT');
+    await waitForText(screen, 'BASIS_TEXT');
   });
 
   it('★ 記録しても、読んでいる提案は残る', async () => {
     await click('改善提案');
-    expect(screen()).toContain('ADVICE_TITLE');
+    await waitForText(screen, 'ADVICE_TITLE');
 
     await typeNote('固定資産税');
     await click('メモを記録');
     expect(screen(), '★ 記録したら提案が消えました').toContain('ADVICE_TITLE');
-    expect(screen()).toContain('受け付けました');
+    await waitForText(screen, '受け付けました');
   });
 
   it('★ 記録が飛行中に提案を押しても、記録ボタンは押せる状態に戻らない', async () => {
@@ -223,7 +224,7 @@ describe('業務操作パネル — 記録と提案は互いを消さない', ()
   it('提案が失敗しても、記録の確認は残る (失敗は提案の側に出る)', async () => {
     await typeNote('先に記録');
     await click('メモを記録');
-    expect(screen()).toContain('受け付けました');
+    await waitForText(screen, '受け付けました');
 
     // 次の invoke だけ失敗させる。
     const hub = (globalThis as unknown as { serviceHub: { invoke: unknown } }).serviceHub;
@@ -244,7 +245,7 @@ describe('業務操作パネル — 記録と提案は互いを消さない', ()
 
   it('記録が失敗しても、読んでいる提案は残る (失敗は記録の側に出る)', async () => {
     await click('改善提案');
-    expect(screen()).toContain('ADVICE_TITLE');
+    await waitForText(screen, 'ADVICE_TITLE');
 
     const hub = (globalThis as unknown as { serviceHub: { invoke: unknown } }).serviceHub;
     const original = hub.invoke;

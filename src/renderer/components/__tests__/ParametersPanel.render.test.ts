@@ -12,6 +12,7 @@ import { PARAMETER_OVERRIDES_COLLECTION, type ParameterOverrideRecord } from '..
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETERS, PARAMETER_BY_ID, parameterFeatures } from '../../../shared/parameters';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -241,7 +242,7 @@ describe('数値パラメータの設定画面', () => {
       'realEstate.dscrDangerThreshold',
       'realEstate.dscrCautionThreshold',
     ]);
-    expect(container.textContent).toContain('不動産');
+    await waitForText(() => container.textContent ?? '', '不動産');
     expect(container.textContent).not.toContain('水耕栽培');
 
     await type('パラメータを検索', '所得税法施行令');
@@ -249,7 +250,7 @@ describe('数値パラメータの設定画面', () => {
 
     await type('パラメータを検索', 'zzz');
     expect(q.rows()).toEqual([]);
-    expect(container.textContent).toContain('該当するパラメータはありません');
+    await waitForText(() => container.textContent ?? '', '該当するパラメータはありません');
 
     await type('パラメータを検索', '');
     expect(q.rows().length).toBe(PARAMETERS.length);

@@ -11,6 +11,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { EMPTY_TALENT_STATE, buildTalentSnapshot, talentProvenance, type StoredTalent } from '../../../shared/talent';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let stored: StoredTalent = { kind: 'none' };
 
@@ -72,7 +73,7 @@ describe('人材ページ — 保存先の 3 状態を注記が言い分ける (
   it('対照: まだ保存していない → 注記は無い', async () => {
     stored = { kind: 'none' };
     await mountPage();
-    expect(text()).toContain('5つの企業組織病');
+    await waitForText(text, '5つの企業組織病');
     expect(text()).not.toContain('読めませんでした');
     expect(text()).not.toContain('読み込みで落としました');
   });
@@ -84,15 +85,15 @@ describe('人材ページ — 保存先の 3 状態を注記が言い分ける (
       dropped: null,
     };
     await mountPage();
-    expect(text()).toContain('申告 1 部署');
+    await waitForText(text, '申告 1 部署');
     expect(text()).not.toContain('読めませんでした');
   });
 
   it('★ 読めなかった保存 → 空を表示しつつ、理由つきの注記を出す (黙って空にしない)', async () => {
     stored = { kind: 'unreadable', reason: 'JSON として読めません' };
     await mountPage();
-    expect(text()).toContain('保存した人材育成の状態を読めませんでした (JSON として読めません)');
-    expect(text()).toContain('元の保存値は戻りません');
+    await waitForText(text, '保存した人材育成の状態を読めませんでした (JSON として読めません)');
+    await waitForText(text, '元の保存値は戻りません');
   });
 
   it('★ 読み込みで落とした項目 → 件数の注記を出す', async () => {
@@ -102,6 +103,6 @@ describe('人材ページ — 保存先の 3 状態を注記が言い分ける (
       dropped: 'メンバー 1 件 (氏名は 1〜64 文字・STEP は 1〜4・滞留年数は 0〜60) は読み込みで落としました。このまま保存すると、これらは失われます。',
     };
     await mountPage();
-    expect(text()).toContain('メンバー 1 件 (氏名は 1〜64 文字・STEP は 1〜4・滞留年数は 0〜60) は読み込みで落としました');
+    await waitForText(text, 'メンバー 1 件 (氏名は 1〜64 文字・STEP は 1〜4・滞留年数は 0〜60) は読み込みで落としました');
   });
 });

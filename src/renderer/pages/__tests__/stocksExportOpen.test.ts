@@ -33,6 +33,7 @@ import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 /** 書き出し先として action が返す道 (実物と同じ形の絶対パス)。 */
 const EXPORT_PATH = '/home/user/.local/business-hub/data/dashboard.html';
@@ -140,7 +141,7 @@ afterEach(async () => {
 describe('株式ダッシュボードの書き出しと「開く」(パス 151)', () => {
   it('★ 走査が実物に当たる (書き出す前は開く手立てが出ていない)', async () => {
     await mountStocks();
-    expect(container.textContent).toContain('ダッシュボード書き出し');
+    await waitForText(() => container.textContent ?? '', 'ダッシュボード書き出し');
     expect(() => buttonByText('ファイルを開く')).toThrow();
   });
 
@@ -173,7 +174,7 @@ describe('株式ダッシュボードの書き出しと「開く」(パス 151)'
     expect(calls.reveal).toEqual([EXPORT_PATH]);
     // `ExportActions` は意図してファイル名だけを出す (「never show the raw path」)。
     // 手書きだった頃は `<code>{exportPath}</code>` で絶対パスを刷っていた。
-    expect(container.textContent).toContain('dashboard.html');
+    await waitForText(() => container.textContent ?? '', 'dashboard.html');
     expect(container.textContent, '絶対パスが画面に出ている').not.toContain(EXPORT_PATH);
   });
 
@@ -182,7 +183,7 @@ describe('株式ダッシュボードの書き出しと「開く」(パス 151)'
       Promise.resolve({ ok: false, code: 'action_failed', message: '書き出せませんでした' });
     await mountStocks();
     await click('ダッシュボードを書き出す');
-    expect(container.textContent).toContain('書き出せませんでした');
+    await waitForText(() => container.textContent ?? '', '書き出せませんでした');
     expect(() => buttonByText('ファイルを開く')).toThrow();
     expect(calls.openPath).toEqual([]);
   });
@@ -213,12 +214,12 @@ describe('株式画面の残りの操作 (カバレッジ 28.45% だった側 ·
     await mountStocks();
     // 銘柄コードの欄は空 (既定)。
     await click('登録');
-    expect(container.textContent).toContain('銘柄コードを入力してください');
+    await waitForText(() => container.textContent ?? '', '銘柄コードを入力してください');
     await click('解除');
-    expect(container.textContent).toContain('銘柄コードを入力してください');
+    await waitForText(() => container.textContent ?? '', '銘柄コードを入力してください');
     // 質問の欄も空。
     await click('AI に聞く');
-    expect(container.textContent).toContain(ADVISOR_QUESTION_MESSAGES.empty);
+    await waitForText(() => container.textContent ?? '', ADVISOR_QUESTION_MESSAGES.empty);
     expect(invoked, '空入力で IPC を呼んでいる').toBe(0);
   });
 
@@ -227,7 +228,7 @@ describe('株式画面の残りの操作 (カバレッジ 28.45% だった側 ·
     await mountStocks();
     // 戦略比較の欄には既定値 'AAPL' が入っているので、そのまま押せる。
     await click('3 戦略を比較');
-    expect(container.textContent).toContain('取引所に接続できませんでした');
+    await waitForText(() => container.textContent ?? '', '取引所に接続できませんでした');
   });
 
   it('★ 銘柄の絞り込みは選択が動く (同梱の見本は空なので一覧は変わらない)', async () => {

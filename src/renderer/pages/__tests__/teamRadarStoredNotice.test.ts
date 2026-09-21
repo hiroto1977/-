@@ -12,6 +12,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { DEFAULT_TEAM_RADAR_STATE, buildTeamRadarSnapshot, type StoredTeamRadar } from '../../../shared/teamRadarState';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let stored: StoredTeamRadar = { kind: 'none' };
 
@@ -87,9 +88,9 @@ describe('チームレーダー — 保存先の 3 状態を画面が言い分�
     stored = { kind: 'none' };
     await mountPage();
     // 開いた直後は同梱の snapshot (バッジ「スナップショット」)。読むのは「更新」から。
-    expect(text()).toContain('スナップショット');
+    await waitForText(text, 'スナップショット');
     await clickRefresh();
-    expect(text()).toContain('同梱データ');
+    await waitForText(text, '同梱データ');
     expect(text()).not.toContain('読めませんでした');
   });
 
@@ -97,7 +98,7 @@ describe('チームレーダー — 保存先の 3 状態を画面が言い分�
     stored = { kind: 'saved', state: { department: '開発部', evaluatedAt: '2026-09-09', members: DEFAULT_TEAM_RADAR_STATE.members } };
     await mountPage();
     await clickRefresh();
-    expect(text()).toContain('ローカル');
+    await waitForText(text, 'ローカル');
     expect(text()).not.toContain('同梱データ');
     expect(text()).not.toContain('読めませんでした');
   });
@@ -107,8 +108,8 @@ describe('チームレーダー — 保存先の 3 状態を画面が言い分�
     await mountPage();
     expect(text()).not.toContain('読めませんでした');
     await clickRefresh();
-    expect(text()).toContain('保存したチームの状態を読めませんでした (JSON として読めません)');
-    expect(text()).toContain('元の保存値は戻りません');
-    expect(text()).toContain('同梱データ');
+    await waitForText(text, '保存したチームの状態を読めませんでした (JSON として読めません)');
+    await waitForText(text, '元の保存値は戻りません');
+    await waitForText(text, '同梱データ');
   });
 });

@@ -25,6 +25,7 @@ import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 const DOCSTUDIO_KEY = 'servicehub.docstudio.v1';
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
@@ -101,10 +102,9 @@ describe('書類スタジオ — 差込値を読み出せない端末 (パス 16
   it('★ 見出しが「自動保存」と言わず、読めていないことを言う', async () => {
     failReads();
     await mount('docstudio');
-    expect(text()).toContain('保存した入力を読み出せていません');
+    await waitForText(text, '保存した入力を読み出せていません');
     expect(text()).not.toContain('入力は端末内に自動保存');
-    const band = container.querySelector('[data-store-unreadable]');
-    expect(band).not.toBeNull();
+    const band = await waitForElement(() => container.querySelector('[data-store-unreadable]'), "container.querySelector('[data-store-unreadable]')");
     expect(band!.textContent).toContain('プライベートモード');
     expect(band!.textContent).toContain('この端末には残りません');
   });
@@ -123,7 +123,7 @@ describe('書類スタジオ — 差込値を読み出せない端末 (パス 16
   it('★ 標本: 読める端末では帯が出ず、「自動保存」と言う (規則が空振りしていない)', async () => {
     await mount('docstudio');
     expect(container.querySelector('[data-store-unreadable]')).toBeNull();
-    expect(text()).toContain('入力は端末内に自動保存');
+    await waitForText(text, '入力は端末内に自動保存');
   });
 
   it('読める端末では、保存済みの差込値がフォームに戻る', async () => {
@@ -138,9 +138,8 @@ describe('Team Radar — 下書きを読み出せない端末 (パス 160)', () 
   it('★ 見出しと帯が「読み出せていない」と言い、見本だと断る', async () => {
     failReads();
     await mount('teamradar');
-    expect(text()).toContain('保存した下書きを読み出せていません');
-    const band = container.querySelector('[data-draft-unreadable]');
-    expect(band).not.toBeNull();
+    await waitForText(text, '保存した下書きを読み出せていません');
+    const band = await waitForElement(() => container.querySelector('[data-draft-unreadable]'), "container.querySelector('[data-draft-unreadable]')");
     expect(band!.textContent).toContain('プライベートモード');
     expect(band!.textContent).toContain('同梱の見本');
   });
@@ -164,7 +163,7 @@ describe('Team Radar — 下書きを読み出せない端末 (パス 160)', () 
     );
     await mount('teamradar');
     expect(container.querySelector('[data-draft-unreadable]')).toBeNull();
-    expect(text()).toContain('営業チーム 2026');
-    expect(text()).toContain('山田');
+    await waitForText(text, '営業チーム 2026');
+    await waitForText(text, '山田');
   });
 });

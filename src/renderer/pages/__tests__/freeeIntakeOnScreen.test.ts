@@ -21,6 +21,7 @@ import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { NO_DEAL_INTAKE, type FreeeDealIntake } from '../../../shared/freeeIntake';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 interface FreeePayload {
   readonly companyName: string;
@@ -110,8 +111,8 @@ describe('freee 会計連携の画面 (カバレッジ 33.33% だった側 · �
   it('★ 走査が実物に当たる: 月次が在るとグラフと明細が出る (見本では出ない枝)', async () => {
     await mount();
     // 見本 (`SNAPSHOT.freee.monthly` は空) では出ない節が出ている。
-    expect(container.textContent).toContain('月次キャッシュフロー (収入 / 支出 / 営業CF)');
-    expect(container.textContent).toContain('月次明細');
+    await waitForText(() => container.textContent ?? '', '月次キャッシュフロー (収入 / 支出 / 営業CF)');
+    await waitForText(() => container.textContent ?? '', '月次明細');
     expect(container.textContent).not.toContain('アクセストークンを設定して「更新」を押すと');
     // 棒グラフ: 2 か月 × (収入・支出) の 4 本 + 凡例の見本 2 本 + 枠 1。
     const svg = container.querySelector('svg');
@@ -159,20 +160,20 @@ describe('freee 会計連携の画面 (カバレッジ 33.33% だった側 · �
     await mount();
     expect(noticeText()).toBeNull();
     // 節そのものは出ている (注記が消えただけで画面が壊れていない)。
-    expect(container.textContent).toContain('月次明細');
+    await waitForText(() => container.textContent ?? '', '月次明細');
   });
 
   it('見本のまま (未連携) でも落ちず、取得前の案内を出す', async () => {
     (globalThis as unknown as { serviceHub: { listConfigured: () => Promise<string[]> } })
       .serviceHub.listConfigured = () => Promise.resolve([]);
     await mount();
-    expect(container.textContent).toContain('アクセストークンを設定して「更新」を押すと');
+    await waitForText(() => container.textContent ?? '', 'アクセストークンを設定して「更新」を押すと');
     expect(noticeText()).toBeNull();
-    expect(container.textContent).toContain('営業CF 合計');
+    await waitForText(() => container.textContent ?? '', '営業CF 合計');
   });
 
   it('事業所名は取得できたときだけ添える', async () => {
     await mount();
-    expect(container.textContent).toContain('テスト商会');
+    await waitForText(() => container.textContent ?? '', 'テスト商会');
   });
 });

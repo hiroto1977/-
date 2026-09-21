@@ -17,6 +17,7 @@ import { FinancialAnalysis, type FinancialUnit } from '../FinancialAnalysis';
 import { compareBusinessTaxMethods } from '../../../shared/taxConsumptionBusiness';
 import { deriveBusinessFinancials } from '../../data/businessFinancials';
 import { thirtyPercentMeasureYearsLabel } from '../../../shared/taxConsumption';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -125,12 +126,12 @@ describe('消費税カード — 3割特例 (2割特例の後継) は事業形�
   it('★ 2027 年・未選択: 3割特例の額は出るが候補に入らず、「事業形態を選ぶと候補に入ります」と書く', async () => {
     clockAt(2027, 6, 1);
     await mount();
-    expect(text()).toContain('3割特例');
-    expect(text()).toContain(`事業形態を選ぶと候補に入ります`);
+    await waitForText(text, '3割特例');
+    await waitForText(text, `事業形態を選ぶと候補に入ります`);
     expect(isBest('3割特例')).toBe(false);
     // 未選択の 2割特例は「期限を含む課税期間」の帯 (言い切れない) なので候補に残る。
     const e = expected({ twentyPercent: true, thirtyPercent: false });
-    expect(text()).toContain(yen.format(e.thirtyPercent));
+    await waitForText(text, yen.format(e.thirtyPercent));
     expect(isBest('2割特例')).toBe(e.best === 'twenty-percent');
   });
 
@@ -138,22 +139,22 @@ describe('消費税カード — 3割特例 (2割特例の後継) は事業形�
     clockAt(2027, 6, 1);
     await mount();
     await chooseKind('sole-proprietor');
-    expect(text()).toContain('個人事業者は令和8年分で終了');
-    expect(text()).toContain(`${thirtyPercentMeasureYearsLabel()}の対象年分です`);
+    await waitForText(text, '個人事業者は令和8年分で終了');
+    await waitForText(text, `${thirtyPercentMeasureYearsLabel()}の対象年分です`);
     const e = expected({ twentyPercent: false, thirtyPercent: true });
     expect(e.best).toBe('thirty-percent'); // 前提: 小規模事業なら 3割特例が最も安い
     expect(isBest('3割特例')).toBe(true);
     expect(isBest('2割特例')).toBe(false);
     // 免税見込みの場面なので合計の枠は「免税見込みのため消費税 0 で合算」——
     // 方式は札のほうにしか出ない (`FinancialAnalysis.ctEligibility.test.ts` と同じ理由)。
-    expect(text()).toContain('免税見込みのため消費税 0 で合算');
+    await waitForText(text, '免税見込みのため消費税 0 で合算');
   });
 
   it('★ 2027 年・法人: 3割特例は「法人は対象外」で候補に入らない (2割特例は課税期間しだいで残る)', async () => {
     clockAt(2027, 6, 1);
     await mount();
     await chooseKind('corporation');
-    expect(text()).toContain('法人は対象外');
+    await waitForText(text, '法人は対象外');
     expect(isBest('3割特例')).toBe(false);
     const e = expected({ twentyPercent: true, thirtyPercent: false });
     expect(isBest(e.best === 'twenty-percent' ? '2割特例' : '簡易課税')).toBe(true);
@@ -163,8 +164,8 @@ describe('消費税カード — 3割特例 (2割特例の後継) は事業形�
     clockAt(2026, 9, 9);
     await mount();
     await chooseKind('sole-proprietor');
-    expect(text()).toContain('個人事業者は令和8年分まで');
-    expect(text()).toContain(`${thirtyPercentMeasureYearsLabel()}から`);
+    await waitForText(text, '個人事業者は令和8年分まで');
+    await waitForText(text, `${thirtyPercentMeasureYearsLabel()}から`);
     expect(isBest('3割特例')).toBe(false);
     const e = expected({ twentyPercent: true, thirtyPercent: false });
     expect(e.best).toBe('twenty-percent');
@@ -175,7 +176,7 @@ describe('消費税カード — 3割特例 (2割特例の後継) は事業形�
     clockAt(2029, 1, 15);
     await mount();
     await chooseKind('sole-proprietor');
-    expect(text()).toContain(`${thirtyPercentMeasureYearsLabel()}で終了しました`);
+    await waitForText(text, `${thirtyPercentMeasureYearsLabel()}で終了しました`);
     expect(isBest('3割特例')).toBe(false);
     expect(isBest('2割特例')).toBe(false);
   });

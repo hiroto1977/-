@@ -22,6 +22,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -121,7 +122,8 @@ describe('投資信託 — 生活費が未入力なら予備資金の充足率�
     // 隣のタイルは元から「—」。**2 枚が同じ答え方をしている**ことを留める。
     expect(stat('現預金でまかなえる月数')).toContain('—');
     // 理由を画面に出している
-    expect((container.textContent ?? '').replace(/\s+/g, ' ')).toContain(
+    await waitForText(
+      () => (container.textContent ?? '').replace(/\s+/g, ' '),
       '毎月の生活費を入力すると予備資金の充足率を算定します',
     );
   });

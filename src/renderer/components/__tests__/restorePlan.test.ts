@@ -16,6 +16,7 @@ import { _resetRecordStoreForTests, getRecordStore, type StoredRecord } from '..
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION } from '../../data/sales';
 import { serializeBackup } from '../../data/backup';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -120,7 +121,7 @@ describe('バックアップの復元 — 何が足され・残り・消える�
     );
     await mount();
     await chooseFile(backup, 'older.json');
-    expect(text()).toContain('0 件のレコードを復元しました（マージ: 追加 0・更新 0・この端末の方が新しい 1 件はそのまま）');
+    await waitForText(text, '0 件のレコードを復元しました（マージ: 追加 0・更新 0・この端末の方が新しい 1 件はそのまま）');
     expect((await getRecordStore().get<SalesRow>(local.id))?.data.amount).toBe(2000);
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });
@@ -130,7 +131,7 @@ describe('バックアップの復元 — 何が足され・残り・消える�
     const backup = await serializeBackup([{ ...local, updatedAt: local.updatedAt + 60_000, data: ROW }, FROM_BACKUP]);
     await mount();
     await chooseFile(backup, 'newer.json');
-    expect(text()).toContain('2 件のレコードを復元しました（マージ: 追加 1・更新 1・この端末の方が新しい 0 件はそのまま）');
+    await waitForText(text, '2 件のレコードを復元しました（マージ: 追加 1・更新 1・この端末の方が新しい 0 件はそのまま）');
     expect((await getRecordStore().get<SalesRow>(local.id))?.data.amount).toBe(1000);
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(2);
   });
@@ -160,7 +161,7 @@ describe('バックアップの復元 — 何が足され・残り・消える�
     await mount();
     await checkReplace();
     await chooseFile(backup, 'replace.json');
-    expect(text()).toContain('1 件のレコードを復元しました（既存データは置換。消えた 1 件 = バックアップに無い 1 件 + この端末の方が新しかった 0 件）');
+    await waitForText(text, '1 件のレコードを復元しました（既存データは置換。消えた 1 件 = バックアップに無い 1 件 + この端末の方が新しかった 0 件）');
     expect(await getRecordStore().get(local.id)).toBeNull();
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });

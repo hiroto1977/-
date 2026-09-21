@@ -29,6 +29,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -160,7 +161,7 @@ describe('用途地域プランナー — 未入力の敷地寸法を画面が�
     await mountPage();
     await setField('敷地の奥行 (m)', '');
     expect(container.querySelector('[data-iso-unset]')).not.toBeNull();
-    expect(text()).toContain('立体プレビューは描いていません');
+    await waitForText(text, '立体プレビューは描いていません');
     expect(text()).not.toContain('間口 0 m × 奥行 0 m');
     expect(text()).not.toMatch(/間口 0 m/);
   });
@@ -247,7 +248,7 @@ describe('用途地域プランナー — 立体プレビューが延べ床を�
     expect(container.querySelector('[data-iso-truncated]')).toBeNull();
     // 図そのものは出ている (帯が無いのは「図が無いから」ではない)。
     expect(container.querySelector('[data-iso-unset]')).toBeNull();
-    expect(text()).toContain('模式図です');
+    await waitForText(text, '模式図です');
   });
 
   it('★ 載り切らない延べ床では帯が出て、必要な階数と描けた階数の両方を述べる', async () => {

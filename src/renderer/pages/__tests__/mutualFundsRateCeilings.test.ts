@@ -35,6 +35,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -192,7 +193,7 @@ describe('投資信託 — ⛔ の率から答えを作らない (パス 207)', 
     const t = tiles();
     expect(t.get('実質利回り (インフレ調整後)')).toBe('—');
     expect(t.get('目標額のインフレ調整後 実質価値')).toBe('—');
-    expect(text()).toContain('想定インフレ率 (%)は 100% 以下で');
+    await waitForText(text, '想定インフレ率 (%)は 100% 以下で');
     // 年率側は範囲内なので名指しに混ざらない。
     expect(text()).not.toContain('想定年率 (%)・想定インフレ率 (%)');
   });
@@ -204,7 +205,7 @@ describe('投資信託 — ⛔ の率から答えを作らない (パス 207)', 
     expect(t.get('年率換算 (CAGR)')).toBe('—');
     // トータルリターンは年数に依らないので残る (隣の測れている数字まで隠さない)。
     expect(t.get('トータルリターン')).toBe('15.06%');
-    expect(text()).toContain('年率換算 (CAGR) は算定していません');
-    expect(text()).toContain('保有年数は 100 年以下で');
+    await waitForText(text, '年率換算 (CAGR) は算定していません');
+    await waitForText(text, '保有年数は 100 年以下で');
   });
 });

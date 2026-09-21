@@ -96,6 +96,7 @@ import { _resetRecordStoreForTests } from '../data/store';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetDeviceStoreFailureForTests } from '../data/deviceStoreFailure';
 import { _resetNavigationIntentForTests } from '../navigate';
+import { waitForText } from './jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -205,14 +206,14 @@ describe('端末が保存を断ったとき、App が報せる', () => {
     const el = banner();
     expect(el, '報せが出ていない').toBeTruthy();
     expect(el?.getAttribute('data-device-store-failure')).toBe('save');
-    expect(el?.textContent).toContain('この端末に保存できませんでした');
-    expect(el?.textContent).toContain('この端末の保存領域が一杯です');
+    await waitForText(() => banner()?.textContent ?? '', 'この端末に保存できませんでした');
+    await waitForText(() => banner()?.textContent ?? '', 'この端末の保存領域が一杯です');
   });
 
   it('★ 報せが名乗るとおり、打ち込んだ内容は画面に残っている', async () => {
     h.refuseWrites = true;
     await addBusinessUnit('断られる事業');
-    expect(banner()?.textContent).toContain('打ち込んだ内容は画面に残っています');
+    await waitForText(() => banner()?.textContent ?? '', '打ち込んだ内容は画面に残っています');
     // 文面と画面が食い違っていないこと (消していたら嘘になる)。
     expect(byLabel('事業名')?.value).toBe('断られる事業');
     // 行は増えていない (保存できていないので増えては困る)。
@@ -231,7 +232,10 @@ describe('端末が保存を断ったとき、App が報せる', () => {
     expect(banner()).toBeNull();
     const rows = [...container.querySelectorAll('[data-business-unit]')];
     expect(rows).toHaveLength(1);
-    expect(rows[0]?.textContent).toContain('通る事業');
+    await waitForText(
+      () => container.querySelector('[data-business-unit]')?.textContent ?? '',
+      '通る事業',
+    );
     // 通ったときは欄が空に戻る。
     expect(byLabel('事業名')?.value).toBe('');
   });

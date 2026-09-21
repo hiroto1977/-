@@ -29,6 +29,10 @@
  * | 出るまで待つ | **落ちる** (出るはずの物が出ていない) | ✅ `settleUntil` / `waitForElement` / `waitForText` |
  * | 届くのを待つ | **落ちない** (届かないことも検査したい) | ❌ 未だ無い —— だから手書きが残る |
  *
+ * **2026-09-21 (パス 369) に `recordShapeAuditPanel` を共有の `waitForText` へ寄せた** ——
+ * 台帳は 6 → 5 本。残る 5 本のうち 2 本は鍵導出 (PBKDF2 60 万回) の後を待つ形で、
+ * 上限を渡せば寄せられる。3 本は下の「届くのを待つ」形で、契約が違うので残る。
+ *
  * 2 つ目 (`waitFor(seen)` の形) は BroadcastChannel の配達を待ち、届かない場合も
  * 「0 件のまま」と確かめる。落ちる待ちに置き換えると**不在の検査ができなくなる**ので
  * 変えていない。共有側に非投げの待ちを足すのは別のパスで (理由が要るのはこの差である)。
@@ -79,11 +83,6 @@ const SELF = path.basename(__filename);
 
 /** 自前で回してよいファイルと、その理由 (`src` からの相対)。 */
 const HAND_ROLLED_ALLOWED: Readonly<Record<string, string>> = {
-  'renderer/components/__tests__/recordShapeAuditPanel.test.ts':
-    '文が出るまで待つ形。2026-09-09 にこの 1 本が全件実行で落ちた当事者で、doc に経緯が書かれている。共有の waitForText へ寄せられる (別パス)',
-  'renderer/components/__tests__/restorePassphraseField.test.ts':
-    '保管庫の鍵導出 (PBKDF2 60 万回) の後の文を待つ。上限 20 秒は共有の既定 (5 秒) より長く、上限を渡す形で寄せられる (別パス)',
-  'renderer/components/__tests__/backupPassphraseFloor.test.ts': '同上 (同じ形の兄弟)',
   'renderer/pages/__tests__/settingsHardReset.test.ts':
     '**届くのを待つ形** —— 時間切れでも落ちず、届かなかったことも検査する。落ちる待ちに置き換えると不在の検査ができない',
   'renderer/security/__tests__/LockScreen.test.ts':

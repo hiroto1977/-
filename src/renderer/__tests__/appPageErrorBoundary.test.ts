@@ -23,6 +23,7 @@ import { SERVICES } from '../services';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetNavigationIntentForTests } from '../navigate';
 import { resetRecordStore } from './recordStoreHarness';
+import { waitForElement } from './jsdomWait';
 
 const BROKEN = SERVICES.find((s) => s.id === 'templates')!;
 const HOME = SERVICES.find((s) => s.id === 'home')!;
@@ -103,7 +104,10 @@ describe('App — 画面の描画エラーは枠に閉じる', () => {
   it('★ 落ちる画面を開くと、その枠だけが文面になり、サイドバーは残り、別の画面へ移れる', async () => {
     expect(sidebarItem(HOME.id), 'サイドバーが出ていない').toBeTruthy();
     await click(sidebarItem(BROKEN.id));
-    const alert = container.querySelector('[role="alert"][data-page-error]');
+    const alert = await waitForElement(
+      () => container.querySelector('[role="alert"][data-page-error]'),
+      '画面の境界が出す報せ',
+    );
     expect(alert?.getAttribute('data-page-error')).toBe(BROKEN.label);
     expect(alert?.textContent).toContain('この画面は必ず落ちる');
     expect(sidebarItem(HOME.id), '落ちた後もサイドバーは残る').toBeTruthy();

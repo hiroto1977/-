@@ -16,6 +16,7 @@ import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../../data/balanceS
 import { BANK_SUBMISSION_COLLECTION, type BankSubmissionSettings } from '../../data/bankSubmission';
 import { BANK_FORMAT_DEFAULT } from '../../../shared/bankFormat';
 import { _resetNavigationIntentForTests, navigateTo, onNavigate, takeNavigationIntent } from '../../navigate';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const LS_KEY = 'servicehub.docstudio.v1';
 
@@ -152,8 +153,8 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
     navigateTo('docstudio', { doc: 'kessan' });
     await mount('docstudio');
     expect(q.importTable()).toBeNull();
-    expect(container.textContent).toContain('取り込めない: 損益');
-    expect(container.textContent).toContain('取り込めない: 資産・負債');
+    await waitForText(() => container.textContent ?? '', '取り込めない: 損益');
+    await waitForText(() => container.textContent ?? '', '取り込めない: 資産・負債');
     expect(q.button('この内容で取り込む').disabled).toBe(true);
   });
 
@@ -167,7 +168,7 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
     navigateTo('docstudio', { doc: 'shikin-guri' });
     await mount('docstudio');
     expect(q.store().recent?.[0]).toBe('shikin-guri');
-    expect(container.textContent).toContain('月ごとの入出金');
+    await waitForText(() => container.textContent ?? '', '月ごとの入出金');
     await unmount();
     navigateTo('docstudio', { doc: 'teikan-gk' });
     await mount('docstudio');
@@ -217,7 +218,7 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
     navigateTo('docstudio', { doc: 'shikin-guri' });
     await mount('docstudio');
     expect(q.importRow('期首の現預金残高（円）')).toBe('3,000,000');
-    expect(container.textContent).toContain('取り込めない: 月ごとの入出金');
+    await waitForText(() => container.textContent ?? '', '取り込めない: 月ごとの入出金');
     expect(q.button('この内容で取り込む').disabled).toBe(false);
   });
 

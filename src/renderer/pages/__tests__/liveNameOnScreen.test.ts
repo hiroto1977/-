@@ -29,6 +29,7 @@ import { SERVICES } from '../../services';
 import { SNAPSHOT } from '../../data/snapshot';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -93,26 +94,26 @@ describe('live 取得の名前が見出しに出る (型の上で死んでいた
   it('★ freee: live の companyName が「freee 会計連携 · 〜」に出る', async () => {
     installHub('freee', { ...SNAPSHOT.freee, companyName: 'サンプル商事株式会社', isMock: false });
     await mount('freee');
-    expect(text()).toContain('freee 会計連携 · サンプル商事株式会社');
+    await waitForText(text, 'freee 会計連携 · サンプル商事株式会社');
   });
 
   it('★ 対照: companyName が空なら区切りの「·」を足さない', async () => {
     installHub('freee', { ...SNAPSHOT.freee, companyName: '', isMock: false });
     await mount('freee');
-    expect(text()).toContain('freee 会計連携');
+    await waitForText(text, 'freee 会計連携');
     expect(text()).not.toContain('freee 会計連携 ·');
   });
 
   it('★ Microsoft 365: live の userName が「Microsoft 365 · 〜」に出る', async () => {
     installHub('microsoft-365', { ...SNAPSHOT.microsoft365, userName: '山田 太郎', isMock: false });
     await mount('microsoft-365');
-    expect(text()).toContain('Microsoft 365 · 山田 太郎');
+    await waitForText(text, 'Microsoft 365 · 山田 太郎');
   });
 
   it('★ 対照: userName が空なら区切りの「·」を足さない', async () => {
     installHub('microsoft-365', { ...SNAPSHOT.microsoft365, userName: '', isMock: false });
     await mount('microsoft-365');
-    expect(text()).toContain('Microsoft 365');
+    await waitForText(text, 'Microsoft 365');
     expect(text()).not.toContain('Microsoft 365 ·');
   });
 

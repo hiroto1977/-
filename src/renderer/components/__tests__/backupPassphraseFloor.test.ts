@@ -13,6 +13,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { BackupPanel } from '../BackupPanel';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -74,15 +75,11 @@ async function exportWith(passphrase: string): Promise<void> {
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 
 /** 文が出るまで待つ (暗号化は PBKDF2 60 万回を回すので、settle の数 tick では終わらない)。 */
-async function waitForText(needle: string, timeoutMs = 20_000): Promise<void> {
-  const started = Date.now();
-  while (!text().includes(needle)) {
-    if (Date.now() - started > timeoutMs) throw new Error(`timed out waiting for "${needle}"; text: ${text().slice(0, 300)}`);
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 50));
-    });
-  }
-}
+/**
+ * バックアップは PBKDF2 (600k 周) を回すので、空いている機械でも数秒かかる。
+ * 2026-09-21 (パス 369) に手書きの待ちをやめ、共有の `waitForText` へ寄せた。
+ */
+const WAIT_LONG = { timeoutMs: 20_000, stepMs: 50 } as const;
 
 beforeEach(async () => {
   _resetRecordStoreForTests();
@@ -114,7 +111,7 @@ describe('バックアップ — 暗号化の合言葉の下限', () => {
   it('★ 3 文字の合言葉では断り、「バックアップしました」は出ない (下限は保管庫と同じ 12 文字)', async () => {
     await mount();
     await exportWith('abc');
-    await waitForText('12 文字以上で設定してください');
+    await waitForText(text, '12 文字以上で設定してください', WAIT_LONG);
     expect(text()).toContain('暗号化バックアップのパスワードは 12 文字以上で設定してください');
     expect(text()).not.toContain('件のレコードをバックアップしました');
   });
@@ -122,7 +119,7 @@ describe('バックアップ — 暗号化の合言葉の下限', () => {
   it('対照: 12 文字なら書き出せる (暗号化済み)', async () => {
     await mount();
     await exportWith('correct-horse');
-    await waitForText('件のレコードをバックアップしました');
+    await waitForText(text, '件のレコードをバックアップしました', WAIT_LONG);
     expect(text()).toContain('件のレコードをバックアップしました（暗号化済み）');
     expect(text()).not.toContain('12 文字以上で設定してください');
   });
@@ -130,7 +127,7 @@ describe('バックアップ — 暗号化の合言葉の下限', () => {
   it('対照: 空欄 (暗号化しない) は従来どおり平文で書き出す', async () => {
     await mount();
     await exportWith('');
-    await waitForText('件のレコードをバックアップしました');
+    await waitForText(text, '件のレコードをバックアップしました', WAIT_LONG);
     expect(text()).toContain('件のレコードをバックアップしました');
     expect(text()).not.toContain('暗号化済み');
   });

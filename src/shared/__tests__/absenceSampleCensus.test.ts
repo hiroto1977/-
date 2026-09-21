@@ -153,9 +153,9 @@ const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
     '針は検査自身が注入した見出し (`## 偽の見出し`)。main 側 business.test.ts:1987 の双子',
   'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1139':
     '針は検査自身が注入した見出し (`## 偽`)。main 側 stocks.test.ts:3687 の双子',
-  'src/renderer/pages/__tests__/emotionRadarNoData.test.ts:161':
+  'src/renderer/pages/__tests__/emotionRadarNoData.test.ts:162':
     'パス 65 の「記録が無い人を評価しない」。針は `活力 \\d` で、ラベルは肯定側で主張されている',
-  'src/renderer/pages/__tests__/siteDimensionsUnsetOnScreen.test.ts:165':
+  'src/renderer/pages/__tests__/siteDimensionsUnsetOnScreen.test.ts:166':
     'パス 206 の「空欄の寸法から判定を作らない」。針は `間口 0 m`。標本未付',
   'src/shared/__tests__/nortonDetection.test.ts:52':
     '針は 3 つの語の択一 (`detected|検出されません|無い`) で、うち 2 つは日本語。標本未付',

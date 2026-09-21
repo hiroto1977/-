@@ -33,6 +33,7 @@ import {
   buildTeamRadarSnapshot,
   type StoredTeamRadar,
 } from '../../../shared/teamRadarState';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
 const AXES = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
@@ -138,7 +139,7 @@ describe('更新ボタン 1 回で、端末の編集内容が見本に置き換�
     await pressRefresh();
     expect(draftMemberNames()).toEqual(['私が入れた人']);
     // 画面も見本に化けていない。
-    expect(text()).toContain('私が入れた人');
+    await waitForText(text, '私が入れた人');
   });
 
   it('★ 保存値がまだ無いときも、下書きは利用者の物のまま', async () => {
@@ -168,7 +169,7 @@ describe('更新ボタン 1 回で、端末の編集内容が見本に置き換�
     expect(draftMemberNames()).toEqual(['私が入れた人']);
     await pressRefresh();
     expect(draftMemberNames()).toEqual(['保存した人']);
-    expect(text()).toContain('保存した人');
+    await waitForText(text, '保存した人');
   });
 
   it('対照 — 下書きが無ければマウント時は見本から始まる (この検査の前提)', async () => {
@@ -189,8 +190,7 @@ describe('読めなかったときの注記は、画面に何が出ているか�
     stored = { kind: 'unreadable', reason: 'JSON として読めません' };
     await mount();
     await pressRefresh();
-    const note = container.querySelector('[data-stored-fallback]');
-    expect(note).not.toBeNull();
+    const note = await waitForElement(() => container.querySelector('[data-stored-fallback]'), "container.querySelector('[data-stored-fallback]')");
     expect(note!.textContent).toContain('この端末に残っていた編集中の内容は、そのままにしています。');
     expect(text()).not.toContain('見本を表示しています');
   });
@@ -210,8 +210,8 @@ describe('読めなかったときの注記は、画面に何が出ているか�
       stored = { kind: 'unreadable', reason: 'JSON として読めません' };
       await mount();
       await pressRefresh();
-      expect(text()).toContain('保存したチームの状態を読めませんでした (JSON として読めません)');
-      expect(text()).toContain('元の保存値は戻りません');
+      await waitForText(text, '保存したチームの状態を読めませんでした (JSON として読めません)');
+      await waitForText(text, '元の保存値は戻りません');
       if (root) {
         const r = root;
         root = null;

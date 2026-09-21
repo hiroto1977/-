@@ -41,6 +41,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { checkTokenInput } from '../../../shared/tokenInput';
 import { MAX_TOKEN_CHARS } from '../../security/vault';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -180,7 +181,7 @@ describe('設定画面の資格情報スロット — 隣の口が断る値を�
     // 文面は `checkTokenInput` から採る (写経するとずれた日に誰も気付かない)
     const check = checkTokenInput(secret);
     expect(check.ok).toBe(false);
-    expect(errorText()).toContain(check.ok ? '' : check.message);
+    await waitForText(errorText, check.ok ? '' : check.message);
   });
 
   it('★ 垂直タブ (\u000b) も同じく断る (改行だけの話ではない)', async () => {
@@ -188,7 +189,7 @@ describe('設定画面の資格情報スロット — 隣の口が断る値を�
     type(field(), `${'c'.repeat(32)}${String.fromCharCode(11)}x`);
     await click(button('保存'));
     expect(vaultSet).not.toHaveBeenCalled();
-    expect(errorText()).toContain('制御文字');
+    await waitForText(errorText, '制御文字');
   });
 
   /*

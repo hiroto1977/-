@@ -12,6 +12,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { ChatbotWidget } from '../ChatbotWidget';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 /** どの定型にも当たらない文 —— `replyTo` は `fallback` を返す。 */
 const FREE_QUESTION = 'ゾウの妊娠期間はどれくらい';
@@ -111,7 +112,7 @@ describe('チャットボットの自由質問 → Ollama', () => {
     const dialog = await openWidget();
     await ask(dialog, FREE_QUESTION);
     expect(invoke).toHaveBeenCalledWith('ollama', 'chat', expect.objectContaining({ prompt: FREE_QUESTION }));
-    expect(dialog.textContent).toContain(`🧠 ${LLM_ANSWER}`);
+    await waitForText(() => dialog.textContent ?? '', `🧠 ${LLM_ANSWER}`);
     expect(dialog.textContent).not.toContain('うまく解釈できませんでした');
   });
 
@@ -119,7 +120,7 @@ describe('チャットボットの自由質問 → Ollama', () => {
     invokeResult = { ok: false, code: 'ollama_unreachable', message: 'x' };
     const dialog = await openWidget();
     await ask(dialog, FREE_QUESTION);
-    expect(dialog.textContent).toContain('うまく解釈できませんでした');
+    await waitForText(() => dialog.textContent ?? '', 'うまく解釈できませんでした');
     expect(dialog.textContent).not.toContain('🧠');
   });
 
@@ -127,6 +128,6 @@ describe('チャットボットの自由質問 → Ollama', () => {
     invokeResult = { ok: true, data: { reply: '   ', durationMs: 1 } };
     const dialog = await openWidget();
     await ask(dialog, FREE_QUESTION);
-    expect(dialog.textContent).toContain('うまく解釈できませんでした');
+    await waitForText(() => dialog.textContent ?? '', 'うまく解釈できませんでした');
   });
 });

@@ -28,6 +28,7 @@ import { SERVICES } from '../../services';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../../data/teamEmotionRadar';
 import { buildTeamCare, carePriority } from '../../data/memberCare';
 import { analyzeProfile } from '../../data/emotionInsights';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -142,8 +143,8 @@ describe('感情ウェルビーイング — 記録が無い人を測定値に�
 describe('感情ウェルビーイング — 画面', () => {
   it('★ 既定の画面が描け、レーダーの軸が出る', async () => {
     await mountPage();
-    expect(text()).toContain('感情ウェルビーイング');
-    expect(text()).toContain('活力');
+    await waitForText(text, '感情ウェルビーイング');
+    await waitForText(text, '活力');
   });
 
   it('★ 既定状態 (気分の記録が 1 件も無い) で数を刷らない', async () => {

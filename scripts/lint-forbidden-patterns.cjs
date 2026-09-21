@@ -861,6 +861,12 @@ const KNOWN_SUPPRESSIONS = [
   // なので、プロセスを作らずには成り立たない。渡す引数は台帳 (`SECURITY_FLOORS`) の
   // パッケージ名と版だけで、シェルを経由しない (`execFileSync`)。
   'child_process exec/spawn :: scripts/audit-floors.cjs :: 1',
+  // 固定回数の待ちへの依存を**振る舞いで**測る定期点検の道具 (パス 369)。
+  // 周回数を 0 に書き換えた検査を `npx vitest run <ファイル…>` で実際に走らせる ——
+  // 「その回数に依っているか」は走らせないと答えが出ないので、
+  // プロセスを作らずには成り立たない。母集団は `git ls-files` に聞き、
+  // どちらも引数を配列で渡す (シェルを経由しない)。
+  'child_process exec/spawn :: scripts/audit-tick-sensitivity.cjs :: 1',
   // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
   // 突き合わせる。npm の勧告データベースを使うのが目的なので、
   // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。

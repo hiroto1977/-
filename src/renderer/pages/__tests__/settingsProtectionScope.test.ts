@@ -11,6 +11,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { StorageProtectionNotice } from '../SettingsPage';
 import { STATE_STORES } from '../../../shared/atRestInventory';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 type Mechanism = 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
 interface Protection {
@@ -65,32 +66,32 @@ describe('保存時の保護状態 — トークン以外の保存物も言う',
   it('★ OS のキーチェーンがあるデスクトップ: 3 つの状態ファイルも同じ鍵で封緘、と言う', async () => {
     protection = { encrypted: true, plainCount: 0, file: '/home/u/.config/app/service-hub-secrets.json', mechanism: 'os-keychain', durability: 'file' };
     await mount();
-    expect(text()).toContain('トークンは暗号化されています');
-    for (const s of STATE_STORES) expect(text()).toContain(s.label);
-    expect(text()).toContain('同じ OS のキーチェーン由来の鍵で封緘して保存されています');
+    await waitForText(text, 'トークンは暗号化されています');
+    for (const s of STATE_STORES) await waitForText(text, s.label);
+    await waitForText(text, '同じ OS のキーチェーン由来の鍵で封緘して保存されています');
   });
 
   it('★ キーチェーンの無いデスクトップ: 3 つも難読化のみ、と言う (トークンの警告は残る)', async () => {
     protection = { encrypted: false, plainCount: 2, file: '/home/u/.config/app/service-hub-secrets.json', mechanism: 'obfuscated', durability: 'file' };
     await mount();
-    expect(text()).toContain('トークンを暗号化できません');
-    for (const s of STATE_STORES) expect(text()).toContain(s.label);
-    expect(text()).toContain('状態ファイルも base64 の難読化のみです');
+    await waitForText(text, 'トークンを暗号化できません');
+    for (const s of STATE_STORES) await waitForText(text, s.label);
+    await waitForText(text, '状態ファイルも base64 の難読化のみです');
   });
 
   it('★ ブラウザ版 (保管庫): 3 つは保管庫の外の localStorage に平文、と言う', async () => {
     protection = { encrypted: true, plainCount: 0, file: 'IndexedDB (business-hub-vault)', mechanism: 'webcrypto-vault', durability: 'persistent' };
     await mount();
-    expect(text()).toContain('マスターパスワードから導出した鍵');
-    for (const s of STATE_STORES) expect(text()).toContain(s.label);
-    expect(text()).toContain('ブラウザの localStorage に平文で保存されています');
-    expect(text()).toContain('マスターパスワードでは守られません');
+    await waitForText(text, 'マスターパスワードから導出した鍵');
+    for (const s of STATE_STORES) await waitForText(text, s.label);
+    await waitForText(text, 'ブラウザの localStorage に平文で保存されています');
+    await waitForText(text, 'マスターパスワードでは守られません');
   });
 
   it('対照: 取得に失敗すれば、その旨だけ言う (保存物の文は上の 3 本で出ることを確かめている)', async () => {
     protection = new Error('bridge down');
     await mount();
-    expect(text()).toContain('保護状態を取得できませんでした');
+    await waitForText(text, '保護状態を取得できませんでした');
     expect(text()).not.toContain('localStorage に平文');
     expect(text()).not.toContain('封緘して保存されています');
   });

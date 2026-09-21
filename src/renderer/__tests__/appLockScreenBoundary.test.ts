@@ -16,6 +16,7 @@ vi.mock('../security/LockScreen', () => ({
 }));
 
 import { App } from '../App';
+import { waitForElement } from './jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -65,7 +66,10 @@ afterEach(async () => {
 
 describe('App — ロック画面の描画エラーも枠に閉じる', () => {
   it('★ ロック画面が投げても真っ白にならず、文面と「もう一度開く」が出る (ホームへ戻るは無い)', async () => {
-    const alert = container.querySelector('[role="alert"][data-page-error]');
+    const alert = await waitForElement(
+      () => container.querySelector('[role="alert"][data-page-error]'),
+      '画面の境界が出す報せ',
+    );
     expect(alert?.getAttribute('data-page-error')).toBe('ロック画面');
     expect(alert?.textContent).toContain('ロック画面が壊れている');
     const buttons = Array.from(alert!.querySelectorAll('button')).map((b) => b.textContent);

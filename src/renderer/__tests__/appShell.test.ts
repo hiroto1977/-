@@ -21,6 +21,7 @@ import { EMPTY_SHELL, useShell } from '../shellContext';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetNavigationIntentForTests } from '../navigate';
 import { resetRecordStore } from './recordStoreHarness';
+import { waitForText } from './jsdomWait';
 
 /** OS の「動きを減らす」設定。検査ごとに切り替える。 */
 let reducedMotion = false;
@@ -189,7 +190,7 @@ describe('シェル: 検索 (パス 322)', () => {
   it('一致しなければ「一致するサービスはありません」', async () => {
     await mount(createElement(App));
     await type(q<HTMLInputElement>('.sidebar-search-input')!, 'zzzz-no-such-service');
-    expect(q('.sidebar-empty')?.textContent).toContain('一致するサービスはありません');
+    await waitForText(() => q('.sidebar-empty')?.textContent ?? '', '一致するサービスはありません');
     expect(qa('.sidebar-nav .sidebar-item').length).toBe(0);
   });
 });
@@ -226,7 +227,7 @@ describe('シェル: お気に入りは 1 つの並びを 3 か所が映す (パ
   it('★ トップバーの ♡ → サイドバーの節と項目の ♥ とホームの列 → 項目の ♥ で外すとすべて戻る', async () => {
     await mount(createElement(App));
     expect(q('.sidebar-item.active')?.getAttribute('data-service-id')).toBe('home');
-    expect(q('[data-home-favorites]')?.textContent).toContain('ここに並びます');
+    await waitForText(() => q('[data-home-favorites]')?.textContent ?? '', 'ここに並びます');
     expect(q('[data-section="favorites"]')).toBeNull();
 
     const topFav = q<HTMLButtonElement>('.topbar-fav')!;
@@ -246,13 +247,13 @@ describe('シェル: お気に入りは 1 つの並びを 3 か所が映す (パ
     expect(q('.topbar-fav')?.getAttribute('aria-pressed')).toBe('false');
     expect(q('[data-section="favorites"]')).toBeNull();
     expect(q('[data-home-favorites] button.chip')).toBeNull();
-    expect(q('[data-home-favorites]')?.textContent).toContain('ここに並びます');
+    await waitForText(() => q('[data-home-favorites]')?.textContent ?? '', 'ここに並びます');
     expect(JSON.parse(localStorage.getItem('servicehub.favorites')!)).toEqual([]);
   });
 
   it('★ 最近使った列は新しい順・自分 (ホーム) を出さず、押すとそこへ移る', async () => {
     await mount(createElement(App));
-    expect(q('[data-home-recents]')?.textContent).toContain('ここへ並びます');
+    await waitForText(() => q('[data-home-recents]')?.textContent ?? '', 'ここへ並びます');
     await click(sidebarItem('business'), 'business');
     await click(sidebarItem('templates'), 'templates');
     await click(sidebarItem('home'), 'home');
@@ -287,8 +288,8 @@ describe('シェル: お気に入りは 1 つの並びを 3 か所が映す (パ
 
   it('文脈の外のホームは案内文だけで chip を出さない (対照: 文脈が要ることの証明)', async () => {
     await mount(createElement(HomePage));
-    expect(q('[data-home-favorites]')?.textContent).toContain('ここに並びます');
-    expect(q('[data-home-recents]')?.textContent).toContain('ここへ並びます');
+    await waitForText(() => q('[data-home-favorites]')?.textContent ?? '', 'ここに並びます');
+    await waitForText(() => q('[data-home-recents]')?.textContent ?? '', 'ここへ並びます');
     expect(q('[data-home-favorites] button.chip')).toBeNull();
     expect(q('.home-date')?.hasAttribute('data-live-clock'), '日付は壁時計の印を持つ').toBe(true);
     expect(qa('.home-card').length, '8 つの近道は残る').toBe(8);
@@ -382,7 +383,7 @@ describe('シェル: ドロワー (パス 322)', () => {
     await mount(createElement(App));
     await click(sidebarItem('business'), 'business');
     expect(q('.topbar-icon')?.textContent).toBe(sidebarItem('business')!.querySelector('.icon')!.textContent);
-    expect(q('.topbar .crumb')?.textContent).toContain('おすすめ');
+    await waitForText(() => q('.topbar .crumb')?.textContent ?? '', 'おすすめ');
     expect(q('.topbar .description')?.textContent?.length).toBeGreaterThan(0);
   });
 });

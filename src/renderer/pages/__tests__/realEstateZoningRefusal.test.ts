@@ -34,6 +34,7 @@ import {
   zoningRefusalNote,
   type ZoningField,
 } from '../RealEstatePage';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -124,9 +125,9 @@ describe('敷地プランナー — ⛔ の欄から判定を作らない', () =
     await mountPage();
     // **標本つきの対照** —— この文面が実際に画面へ出ることを確かめてから、
     // 下の検査で「消えること」を見る (綴り違いで黙る検査にしない)。
-    expect(text()).toContain('道路斜線の高さ限度');
-    expect(text()).toContain('適用建ぺい率');
-    expect(text()).toContain('作業場 (栽培室等)');
+    await waitForText(text, '道路斜線の高さ限度');
+    await waitForText(text, '適用建ぺい率');
+    await waitForText(text, '作業場 (栽培室等)');
     expect(refusals()).toEqual([]);
     expect(container.querySelector('input[data-guard="fatal"]')).toBeNull();
   });

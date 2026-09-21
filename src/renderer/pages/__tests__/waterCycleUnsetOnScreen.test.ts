@@ -29,6 +29,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -128,7 +129,7 @@ describe('水循環プランナー — 未入力の膜仕様を画面が測定�
     expect(tile('透過水の EC 持ち越し')).not.toBe('100.0%');
     // パス 69 の断り書きは出たままで、両者が同じ向きを述べる。
     expect(container.querySelector('[data-rejection-unset]')).not.toBeNull();
-    expect(text()).toContain('RO 塩除去率が未入力のため、塩類蓄積の判定はしていません');
+    await waitForText(text, 'RO 塩除去率が未入力のため、塩類蓄積の判定はしていません');
     // 除去率は回収率と独立 —— 水収支の側を巻き込まない。
     expect(container.querySelector('[data-recovery-unset]')).toBeNull();
     expect(tile('実際の水回収率')).toBe('75.0%');
@@ -145,7 +146,7 @@ describe('水循環プランナー — 未入力の膜仕様を画面が測定�
     expect(tile('実際の水回収率')).not.toBe('0.0%');
     expect(tile('濃縮倍率')).not.toBe('1倍');
     expect(container.querySelector('[data-recovery-unset]')).not.toBeNull();
-    expect(text()).toContain('RO 回収率が未入力のため、水収支');
+    await waitForText(text, 'RO 回収率が未入力のため、水収支');
     // 「100% は成立しません」の赤帯を未入力に当てない。
     expect(text()).not.toContain('回収率 100% は物質収支上成立しません');
   });
@@ -157,7 +158,7 @@ describe('水循環プランナー — 未入力の膜仕様を画面が測定�
     expect(tile('年間 窒素排出')).toBe('—');
     expect(tile('年間 りん排出')).toBe('—');
     expect(container.querySelector('[data-wpcl-undetermined]')).not.toBeNull();
-    expect(text()).toContain('水質汚濁防止法の窒素・りん規制の対象かは判定していません');
+    await waitForText(text, '水質汚濁防止法の窒素・りん規制の対象かは判定していません');
     // 濃度だけで決まる欄は答える —— 床を当てすぎない。
     expect(tile('地下水基準比 (硝酸性N)')).toMatch(/^[\d.]+倍$/);
   });

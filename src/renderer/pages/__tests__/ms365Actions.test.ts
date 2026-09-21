@@ -14,6 +14,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 interface Call {
   readonly action: string;
@@ -143,8 +144,8 @@ afterEach(async () => {
 describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった側 · パス 152)', () => {
   it('★ 走査が実物に当たる (かんたん接続とアクションの節が出ている)', async () => {
     await mount();
-    expect(container.textContent).toContain('かんたん接続');
-    expect(container.textContent).toContain('アクション (書き込み)');
+    await waitForText(() => container.textContent ?? '', 'かんたん接続');
+    await waitForText(() => container.textContent ?? '', 'アクション (書き込み)');
     // クライアント ID が空ならサインインは押せない。
     expect(button('サインイン').disabled).toBe(true);
   });
@@ -155,7 +156,7 @@ describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった�
     expect(button('サインイン').disabled).toBe(false);
     await click('サインイン');
     expect(authorized).toEqual(['00000000-1111-2222-3333-444444444444']);
-    expect(container.textContent).toContain('サインインしました');
+    await waitForText(() => container.textContent ?? '', 'サインインしました');
     expect(localStorage.getItem('ms365-client-id')).toBe('00000000-1111-2222-3333-444444444444');
   });
 
@@ -164,7 +165,7 @@ describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった�
     await mount();
     await type('[aria-label="Entra クライアント ID"]', 'abcdefgh');
     await click('サインイン');
-    expect(container.textContent).toContain('ユーザーが取り消しました');
+    await waitForText(() => container.textContent ?? '', 'ユーザーが取り消しました');
     expect(container.textContent).not.toContain('サインインしました');
   });
 
@@ -178,7 +179,7 @@ describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった�
     expect(invoked).toHaveLength(1);
     expect(invoked[0]?.action).toBe('send-mail');
     expect(invoked[0]?.payload).toEqual({ to: 'a@example.com', subject: 'ご連絡', body: '本文です' });
-    expect(container.textContent).toContain('送信しました');
+    await waitForText(() => container.textContent ?? '', '送信しました');
     // 成功したら欄は空に戻る (同じ宛先へ二重送信しにくくする)。
     expect((container.querySelector('[placeholder="宛先 (to@example.com)"]') as HTMLInputElement).value).toBe('');
   });
@@ -202,7 +203,7 @@ describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった�
       end: '2026-09-20T11:00:00',
       location: '',
     });
-    expect(container.textContent).toContain('予定を作成しました');
+    await waitForText(() => container.textContent ?? '', '予定を作成しました');
   });
 
   it('★ 予定の webLink は openExternal で開く (https なので関門を通る)', async () => {
@@ -242,7 +243,7 @@ describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった�
     await type('[placeholder="宛先 (to@example.com)"]', 'a@example.com');
     await type('[placeholder="件名"]', 'ご連絡');
     await click('送信');
-    expect(container.textContent).toContain('送信しました');
+    await waitForText(() => container.textContent ?? '', '送信しました');
 
     // メールの節を閉じて予定の節を開く。
     await click('閉じる');
@@ -259,10 +260,10 @@ describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった�
     await type('[placeholder="宛先 (to@example.com)"]', 'a@example.com');
     await type('[placeholder="件名"]', 'ご連絡');
     await click('送信');
-    expect(container.textContent).toContain('送信しました');
+    await waitForText(() => container.textContent ?? '', '送信しました');
     // 本文を打ち直しても結果は残る (消し方が乱暴になっていないことの対照)。
     await type('[placeholder="本文"]', '追記');
-    expect(container.textContent).toContain('送信しました');
+    await waitForText(() => container.textContent ?? '', '送信しました');
   });
 
   it('★ action の失敗は理由を出し、欄を空にしない', async () => {
@@ -272,7 +273,7 @@ describe('Microsoft 365 の書き込み操作 (カバレッジ 32.05% だった�
     await type('[placeholder="宛先 (to@example.com)"]', 'a@example.com');
     await type('[placeholder="件名"]', 'ご連絡');
     await click('送信');
-    expect(container.textContent).toContain('Graph が 403 を返しました');
+    await waitForText(() => container.textContent ?? '', 'Graph が 403 を返しました');
     // 失敗したら打ち込んだ物は残す (もう一度押せる)。
     expect((container.querySelector('[placeholder="宛先 (to@example.com)"]') as HTMLInputElement).value).toBe('a@example.com');
   });

@@ -16,6 +16,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests, navigateTo } from '../../navigate';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const LS_KEY = 'servicehub.docstudio.v1';
 
@@ -226,7 +227,7 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     localStorage.setItem(LS_KEY, JSON.stringify({ recent: [firstTemplate.id, 42, null] }));
     _resetNavigationIntentForTests();
     await mount();
-    expect(container.textContent).toContain('最近使った書類');
+    await waitForText(() => container.textContent ?? '', '最近使った書類');
     const recentBlock = Array.from(container.querySelectorAll('div')).find((d) => d.textContent === '最近使った書類')?.parentElement;
     expect(recentBlock?.querySelectorAll('button').length).toBe(1);
     expect(recentBlock?.textContent).toContain(firstTemplate.label);

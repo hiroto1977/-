@@ -30,6 +30,7 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { jpy } from '../../../shared/formatters';
 import { adviseService } from '../../../shared/serviceAdvisor';
 import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -165,7 +166,7 @@ describe('投資信託 — 取得額を入力していない銘柄を「評価�
     expect(stat('取得原価')).not.toContain(jpy(demo.totalCostBasis + 300_000));
     expect(stat('評価損益率')).toContain(`${demo.unrealizedGainPct.toFixed(1)}%`);
     expect(stat('評価損益率')).not.toContain('14.2%');
-    expect(text()).toContain(`取得額未入力 1 銘柄 (評価額 ${jpy(300_000)}) は取得原価・評価損益・評価損益率・トータルリターンに含めていません`);
+    await waitForText(text, `取得額未入力 1 銘柄 (評価額 ${jpy(300_000)}) は取得原価・評価損益・評価損益率・トータルリターンに含めていません`);
   });
 
   it('★ 編集フォームに、入力していない取得額 (= 評価額) を入れて戻さない', async () => {
@@ -181,8 +182,8 @@ describe('投資信託 — 取得額を入力していない銘柄を「評価�
     await mount();
     await addHolding('E2Eファンド', '300000', '');
     await clickButton('改善提案');
-    expect(text()).toContain(`含み益 ${demo.unrealizedGainPct.toFixed(1)}%`);
-    expect(text()).toContain(`評価損益率 ${demo.unrealizedGainPct.toFixed(1)}%`);
+    await waitForText(text, `含み益 ${demo.unrealizedGainPct.toFixed(1)}%`);
+    await waitForText(text, `評価損益率 ${demo.unrealizedGainPct.toFixed(1)}%`);
     expect(text()).not.toContain('含み益 14.2%');
   });
 

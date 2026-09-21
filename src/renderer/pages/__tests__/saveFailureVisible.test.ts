@@ -18,6 +18,7 @@ import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -102,7 +103,7 @@ describe('書類スタジオ: 端末に保存できなかったら見出しと�
   it('★ 容量超過: 見出しが「保存できていません」に変わり、打ち手つきの警告が出る', async () => {
     failWrites();
     await mount('docstudio');
-    expect(container.textContent).toContain('⚠ 端末に保存できていません');
+    await waitForText(() => container.textContent ?? '', '⚠ 端末に保存できていません');
     expect(container.textContent).not.toContain('入力は端末内に自動保存');
     expect(banner()).toContain('保存領域が一杯');
     expect(banner()).toContain('控え');
@@ -127,7 +128,7 @@ describe('書類スタジオ: 端末に保存できなかったら見出しと�
   it('対照: 普通に書ければ警告は出ず、見出しは自動保存のまま、値は保存される', async () => {
     await mount('docstudio');
     expect(container.querySelector('[data-save-error]')).toBeNull();
-    expect(container.textContent).toContain('入力は端末内に自動保存');
+    await waitForText(() => container.textContent ?? '', '入力は端末内に自動保存');
     const input = firstTextInput();
     await type(input, '株式会社テスト');
     expect(localStorage.getItem('servicehub.docstudio.v1') ?? '').toContain('株式会社テスト');

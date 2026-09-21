@@ -15,6 +15,7 @@ import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { bonusWithholdingTax, publicTransportCommute } from '../../../shared/payroll';
 import { jpy } from '../../../shared/formatters';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -110,7 +111,7 @@ describe('チームページ — 給与計算の入力欄は黙って 0 にし�
     // 読めない賞与額から源泉徴収税額 ¥0 を出すのは「源泉徴収しなくてよい」と
     // 読めるので、段ごと断る (`PAYROLL_READS.bonus`)。
     expect(() => q.stat('源泉徴収税額')).toThrow('not found');
-    expect(container.querySelector('[data-refused-fields]')?.textContent ?? '').toContain('賞与額 (円)');
+    await waitForText(() => container.querySelector('[data-refused-fields]')?.textContent ?? '', '賞与額 (円)');
     // ⚠️ **文言の「0 円 として計算されています」は、この欄については既に正しくない。**
     // `guardNumber` は自分の値を読む段が断るかどうかを知らないので、読めない値の
     // 3 枝が共通で「0 として計算されています」と述べている。断りの表で覆った欄が

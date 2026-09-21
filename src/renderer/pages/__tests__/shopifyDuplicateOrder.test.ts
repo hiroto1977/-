@@ -14,6 +14,7 @@ import { ShopifyPage } from '../ShopifyPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION, type SalesEntry } from '../../data/sales';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -106,12 +107,12 @@ describe('Shopify — 同じ注文名を 2 度記録しない', () => {
   it('★ 同じ注文名の 2 度目は断られ、売上集計は 1 件のまま (訂正の案内つき)', async () => {
     await mount();
     await record('#1001', '¥12,000');
-    expect(text()).toContain('売上集計に記録しました');
+    await waitForText(text, '売上集計に記録しました');
     expect(await sales()).toHaveLength(1);
     await record(' #1001 ', '¥15,000');
     expect(await sales()).toHaveLength(1);
-    expect(text()).toContain('Shopify #1001 は既に売上集計に記録されています');
-    expect(text()).toContain('売上集計の一覧の × で消してから記録し直してください');
+    await waitForText(text, 'Shopify #1001 は既に売上集計に記録されています');
+    await waitForText(text, '売上集計の一覧の × で消してから記録し直してください');
   });
 
   it('対照: 別の注文名なら通り、注文名の無い記録は判定しない', async () => {

@@ -23,6 +23,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 type SaveResult = { ok: true } | { ok: false; code: string; message: string };
 
@@ -134,8 +135,8 @@ describe('アシスタントの API キー保存', () => {
     await act(async () => saveButton().click());
     await settle();
 
-    expect(messages()).toContain('保存できませんでした');
-    expect(messages()).toContain('金庫が施錠されています');
+    await waitForText(messages, '保存できませんでした');
+    await waitForText(messages, '金庫が施錠されています');
     // 打った鍵が消えていない (保存できていないので打ち直しにさせない)
     expect(input('Anthropic API キー').value).toBe('sk-ant-test-key');
     // 「保存しました」とは言っていない
@@ -148,7 +149,7 @@ describe('アシスタントの API キー保存', () => {
     await act(async () => saveButton().click());
     await settle();
 
-    expect(messages()).toContain('OS のキーチェーン由来の鍵で暗号化');
+    await waitForText(messages, 'OS のキーチェーン由来の鍵で暗号化');
     expect(input('Anthropic API キー').value).toBe('');
     expect(saved).toHaveLength(1);
     expect(saved[0]).toContain('sk-ant-test-key');
@@ -161,8 +162,8 @@ describe('アシスタントの API キー保存', () => {
     await act(async () => saveButton().click());
     await settle();
 
-    expect(messages()).toContain('暗号化されていません');
-    expect(messages()).toContain('base64 の難読化のみ');
+    await waitForText(messages, '暗号化されていません');
+    await waitForText(messages, 'base64 の難読化のみ');
   });
 
   it('★ 守り方が分からないときは暗号化を名乗らない', async () => {
@@ -172,8 +173,8 @@ describe('アシスタントの API キー保存', () => {
     await act(async () => saveButton().click());
     await settle();
 
-    expect(messages()).toContain('保存しました');
-    expect(messages()).toContain('保存の守り方は設定 → セキュリティで確認できます');
+    await waitForText(messages, '保存しました');
+    await waitForText(messages, '保存の守り方は設定 → セキュリティで確認できます');
     expect(messages()).not.toContain('暗号化ストレージ');
   });
 
@@ -182,7 +183,7 @@ describe('アシスタントの API キー保存', () => {
     await act(async () => saveButton().click());
     await settle();
     expect(saved).toHaveLength(0);
-    expect(messages()).toContain('少なくとも 1 つの API キー');
+    await waitForText(messages, '少なくとも 1 つの API キー');
   });
 });
 
@@ -214,9 +215,9 @@ describe('エージェント資格情報 — 包む前に 1 欄ずつ検証す�
     await act(async () => saveButton().click());
     await settle();
     expect(saved, '包んで保存してしまっている').toHaveLength(0);
-    expect(messages()).toContain('保存できませんでした');
-    expect(messages()).toContain('anthropic');
-    expect(messages()).toContain('制御文字');
+    await waitForText(messages, '保存できませんでした');
+    await waitForText(messages, 'anthropic');
+    await waitForText(messages, '制御文字');
   });
 
   it('★ 正しい欄が隣にあっても、まとめて断る (一部だけ黙って保存しない)', async () => {
@@ -226,7 +227,7 @@ describe('エージェント資格情報 — 包む前に 1 欄ずつ検証す�
     await act(async () => saveButton().click());
     await settle();
     expect(saved).toHaveLength(0);
-    expect(messages()).toContain('openai');
+    await waitForText(messages, 'openai');
   });
 
   it('対照: 制御文字が無ければこれまでどおり包んで保存する', async () => {

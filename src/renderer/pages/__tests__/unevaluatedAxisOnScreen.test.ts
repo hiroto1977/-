@@ -24,6 +24,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
 
@@ -131,7 +132,7 @@ describe('Team Radar — 未評価の軸', () => {
     const t = text();
     expect(t).toContain('強み・伸びしろ: —（評価が入っていません）');
     expect(t).toContain('まだ評価が入っていません');
-    expect(alerts()).toContain('評価が 1 軸も入っていません');
+    await waitForText(alerts, '評価が 1 軸も入っていません');
     // 空の鍵括弧を刷らない (旧実装は軸名 '' で「『』を活かし」になりえた)
     expect(t).not.toContain('「」');
   });
@@ -150,6 +151,6 @@ describe('Team Radar — 未評価の軸', () => {
     seedDraft([4, 4, 4, 4, 4]);
     await mountPage();
     expect(alerts()).toBe('');
-    expect(text()).toContain('スキル 4/5 (良好)');
+    await waitForText(text, 'スキル 4/5 (良好)');
   });
 });

@@ -30,6 +30,7 @@ import { HOLDINGS_COLLECTION, PROPERTIES_COLLECTION } from '../../data/investmen
 import { SHIGYO_CONTACTS_COLLECTION } from '../../data/shigyoDirectory';
 import { SNAPSHOT } from '../../data/snapshot';
 import type { ServiceId } from '../../../shared/serviceId';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -168,7 +169,7 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
     expect(t).toContain('¥5,000');
     expect(t).toContain('5.3%');
     // 対照: 合計のタイルは変えていない。
-    expect((container.textContent ?? '').replace(/\s+/g, ' ')).toContain('¥8,340,140');
+    await waitForText(() => (container.textContent ?? '').replace(/\s+/g, ' '), '¥8,340,140');
   });
 
   it('★ 実質コストの元本に見本が入っていることを述べ、自分の分の額も出す (83 倍)', async () => {
@@ -192,7 +193,7 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
   it('★ 対照: 自分の銘柄が無ければ元本の断りは出ない (常に出る文ではない)', async () => {
     await mountPage('mutual-funds');
     expect(noteText('data-fund-cost-user-only')).toBeNull();
-    expect((container.textContent ?? '')).toContain('を元本とし');
+    await waitForText(() => (container.textContent ?? ''), 'を元本とし');
   });
 });
 
@@ -221,7 +222,7 @@ describe('士業コンソール — 見出しの数と顧問料の出所を言�
     expect(t).toContain('自分が登録した連携先は 1 名');
     expect(t).toContain('月次顧問料 ¥33,000 は見本の値です');
     // 対照: 見出しそのものは変えていない。
-    expect((container.textContent ?? '').replace(/\s+/g, ' ')).toContain('連携 2 名');
+    await waitForText(() => (container.textContent ?? '').replace(/\s+/g, ' '), '連携 2 名');
   });
 
   it('★ 8 士業のどれでも出る (共有部品なので 1 つ直せば全部に効くこと)', async () => {

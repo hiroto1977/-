@@ -16,6 +16,7 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION } from '../../data/sales';
 import { SHIGYO_CONTACTS_COLLECTION } from '../../data/shigyoDirectory';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const originalConfirm = window.confirm;
 let anchorClicks = 0;
@@ -114,7 +115,7 @@ describe('バックアップ — 平文の書き出しは個人情報の件数�
     expect(message).toContain('平文 (暗号化なし) で書き出します');
     expect(message).toContain('個人情報を含む記録が 1 件入ります: 士業の連絡先 (電話番号・メールアドレス) 1 件。');
     expect(message).toContain('合言葉 (12 文字以上) を入れて暗号化してください');
-    expect(text()).toContain('書き出しをやめました');
+    await waitForText(text, '書き出しをやめました');
     expect(text()).not.toContain('件のレコードをバックアップしました');
     expect(anchorClicks).toBe(0);
   });
@@ -124,7 +125,7 @@ describe('バックアップ — 平文の書き出しは個人情報の件数�
     window.confirm = vi.fn((_message?: string) => true);
     await mount();
     await exportPlain();
-    expect(text()).toContain('1 件のレコードをバックアップしました（平文）');
+    await waitForText(text, '1 件のレコードをバックアップしました（平文）');
     expect(anchorClicks).toBe(1);
   });
 
@@ -135,7 +136,7 @@ describe('バックアップ — 平文の書き出しは個人情報の件数�
     await mount();
     await exportPlain();
     expect(confirm).not.toHaveBeenCalled();
-    expect(text()).toContain('1 件のレコードをバックアップしました（平文）');
+    await waitForText(text, '1 件のレコードをバックアップしました（平文）');
     expect(anchorClicks).toBe(1);
   });
 });

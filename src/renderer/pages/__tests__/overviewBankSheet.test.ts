@@ -15,6 +15,7 @@ import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../../data/balanceSheet';
 import { BANK_SUBMISSION_COLLECTION, type BankSubmissionSettings } from '../../data/bankSubmission';
 import { _resetNavigationIntentForTests, navigateTo, onNavigate, takeNavigationIntent } from '../../navigate';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -137,7 +138,7 @@ describe('経営サマリー — 金融機関等提出用の書面', () => {
   it('ボタンで書面が開き、千円単位・△・和暦で並ぶ。戻ると経営サマリーに戻る', async () => {
     await mountOverview();
     expect(q.sheet()).toBeNull();
-    expect(container.textContent).toContain('経営サマリー — ');
+    await waitForText(() => container.textContent ?? '', '経営サマリー — ');
     await click(q.button('金融機関等提出用の書式で表示'));
     const sheet = q.sheet();
     expect(sheet).not.toBeNull();
@@ -154,7 +155,7 @@ describe('経営サマリー — 金融機関等提出用の書面', () => {
     expect(container.textContent).not.toContain('経営スコアカード — ');
     await click(q.button('経営サマリーへ戻る'));
     expect(q.sheet()).toBeNull();
-    expect(container.textContent).toContain('経営サマリー — ');
+    await waitForText(() => container.textContent ?? '', '経営サマリー — ');
   });
 
   it('表示単位を円にすると数字が桁ごと変わり、保存されて読み直しても残る', async () => {

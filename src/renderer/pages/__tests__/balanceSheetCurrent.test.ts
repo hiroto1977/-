@@ -17,6 +17,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../../data/balanceSheet';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -104,7 +105,7 @@ describe('貸借対照表 — 「現在」は基準日で決まる', () => {
     expect(rowFor('2025-03-31').getAttribute('data-bs-row')).toBe('other');
     expect(rowFor('2025-03-31').textContent).not.toContain('使用中');
     // 自己資本比率は新しい控え (66.7%)、古い控え (25%) ではない
-    expect(text()).toContain('66.7%');
+    await waitForText(text, '66.7%');
     expect(text()).not.toContain('25%');
     const alert = Array.from(container.querySelectorAll('[role="alert"]')).find((el) => (el.textContent ?? '').includes('より新しい基準日の控え'));
     expect(alert, 'role="alert" に控えの選び方の注記が無い').toBeDefined();
@@ -115,7 +116,7 @@ describe('貸借対照表 — 「現在」は基準日で決まる', () => {
     await insertInOrder([OLD_BS, NEW_BS]);
     await mount();
     expect(rowFor('2026-03-31').getAttribute('data-bs-row')).toBe('current');
-    expect(text()).toContain('66.7%');
+    await waitForText(text, '66.7%');
     expect(text()).not.toContain('より新しい基準日の控え');
   });
 

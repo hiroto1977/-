@@ -29,6 +29,7 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { calcStdDev } from '../../../shared/mutualFundsMetrics';
 import { adviseService } from '../../../shared/serviceAdvisor';
 import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -173,7 +174,7 @@ describe('投資信託 — 年初来リターンを入力していない銘柄�
   it('★ リスク (標準偏差) は入力された 4 銘柄だけで取り、注記が「未入力 1 銘柄は除外」と言う', async () => {
     await mount();
     // 対照: 足す前は見本 4 銘柄で、除外の注記は無い
-    expect(text()).toContain('入力された 4 銘柄の母標準偏差です。');
+    await waitForText(text, '入力された 4 銘柄の母標準偏差です。');
     expect(text()).not.toContain('除外');
     await addHolding('E2Eファンド', '300000', '');
     const measuredOnly = calcStdDev(demoYtd());
@@ -181,16 +182,16 @@ describe('投資信託 — 年初来リターンを入力していない銘柄�
     expect(measuredOnly).not.toBe(withZero); // 2 つが同じなら、この検査は何も見ていない
     expect(stat('リスク (銘柄YTDの標準偏差)')).toContain(`${measuredOnly}%`);
     expect(stat('リスク (銘柄YTDの標準偏差)')).not.toContain(`${withZero}%`);
-    expect(text()).toContain('入力された 4 銘柄の母標準偏差です (未入力 1 銘柄は除外)。');
+    await waitForText(text, '入力された 4 銘柄の母標準偏差です (未入力 1 銘柄は除外)。');
   });
 
   it('★ 改善提案は入力していない銘柄を「最低」と名指ししない (パス 119 の null の枝が画面から届く)', async () => {
     await mount();
     await addHolding('E2Eファンド', '300000', '');
     await clickButton('改善提案');
-    expect(text()).toContain('根拠: 5 銘柄 (同梱の見本 4 件を含む)');
-    expect(text()).toContain('年初来の牽引役: eMAXIS Slim 米国株式 (S&P500)');
-    expect(text()).toContain('最低は eMAXIS Slim 先進国債券インデックス の 3.4%');
+    await waitForText(text, '根拠: 5 銘柄 (同梱の見本 4 件を含む)');
+    await waitForText(text, '年初来の牽引役: eMAXIS Slim 米国株式 (S&P500)');
+    await waitForText(text, '最低は eMAXIS Slim 先進国債券インデックス の 3.4%');
     expect(text()).not.toContain('最低は E2Eファンド');
     expect(text()).not.toContain('E2Eファンド の 0.0%');
     expect(text()).not.toContain('提案の取得に失敗');
@@ -202,9 +203,9 @@ describe('投資信託 — 年初来リターンを入力していない銘柄�
     expect(ytdCell('E2Eファンド').textContent?.trim()).toBe('+0.0%');
     expect(ytdCell('E2Eファンド').getAttribute('title')).toBeNull();
     expect(stat('リスク (銘柄YTDの標準偏差)')).toContain(`${calcStdDev([...demoYtd(), 0])}%`);
-    expect(text()).toContain('入力された 5 銘柄の母標準偏差です。');
+    await waitForText(text, '入力された 5 銘柄の母標準偏差です。');
     expect(text()).not.toContain('除外');
     await clickButton('改善提案');
-    expect(text()).toContain('最低は E2Eファンド の 0.0%');
+    await waitForText(text, '最低は E2Eファンド の 0.0%');
   });
 });

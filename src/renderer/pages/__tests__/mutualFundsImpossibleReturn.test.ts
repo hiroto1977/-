@@ -41,6 +41,7 @@ import { HOLDINGS_COLLECTION } from '../../data/investments';
 import { calcStdDev } from '../../../shared/mutualFundsMetrics';
 import { adviseService } from '../../../shared/serviceAdvisor';
 import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -203,8 +204,8 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
     expect(clean).not.toBe(withImpossible); // 2 つが同じなら、この検査は何も見ていない
     expect(stat('リスク (銘柄YTDの標準偏差)')).toContain(`${clean}%`);
     expect(stat('リスク (銘柄YTDの標準偏差)')).not.toContain(`${withImpossible}%`);
-    expect(text()).toContain('年初来リターンが -100% より下の銘柄が 1 件あります');
-    expect(text()).toContain('入力された 4 銘柄の母標準偏差です (在り得ない値 1 銘柄は除外)。');
+    await waitForText(text, '年初来リターンが -100% より下の銘柄が 1 件あります');
+    await waitForText(text, '入力された 4 銘柄の母標準偏差です (在り得ない値 1 銘柄は除外)。');
     const marked = container.querySelector('[data-impossible-returns]');
     expect(marked?.getAttribute('data-impossible-returns')).toBe('1');
   });
@@ -239,14 +240,14 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
     expect(stat('リスク (銘柄YTDの標準偏差)')).toContain(`${calcStdDev([...demoYtd(), -100])}%`);
     expect(text()).not.toContain('在り得ない値');
     await clickButton('改善提案');
-    expect(adviceText()).toContain('年初来マイナスの銘柄: 全損ファンド');
-    expect(adviceText()).toContain('全損ファンド は年初来 -100.0% です');
+    await waitForText(adviceText, '年初来マイナスの銘柄: 全損ファンド');
+    await waitForText(adviceText, '全損ファンド は年初来 -100.0% です');
     expect(adviceText()).not.toContain('在り得ない値');
   });
 
   it('対照: 見本 4 銘柄だけなら、除外の注記も ⛔ の印も出ない', async () => {
     await mount();
-    expect(text()).toContain(`入力された ${demoYtd().length} 銘柄の母標準偏差です。`);
+    await waitForText(text, `入力された ${demoYtd().length} 銘柄の母標準偏差です。`);
     expect(text()).not.toContain('在り得ない値');
     expect(container.querySelector('[data-impossible-returns]')).toBeNull();
   });

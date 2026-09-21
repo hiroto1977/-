@@ -10,6 +10,15 @@ import { createRoot, type Root } from 'react-dom/client';
 import { RecordShapeAuditPanel } from '../RecordShapeAuditPanel';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { SALES_COLLECTION } from '../../data/sales';
+import { waitForText } from '../../__tests__/jsdomWait';
+
+/**
+ * **点検は IndexedDB を何度も往復する。** 既定の 5 秒では足りないことがあるので
+ * ここだけ 10 秒にする (2026-09-09 に全件実行でこの 1 本が落ちた —— 単独では 3/3 通った)。
+ * 待つのは**出るはずの文**で、出なければ本物の失敗として落ちる。
+ * 2026-09-21 (パス 369) に手書きの待ちをやめ、共有の `waitForText` へ寄せた。
+ */
+const WAIT_LONG = { timeoutMs: 10_000 } as const;
 
 const GOOD = { date: '2026-04-01', channel: 'amazon', amount: 1000, orders: 1, note: '' };
 const BAD = { date: '2026-04-02', channel: 'amazon', amount: 'abc', orders: 1, note: '' };
@@ -22,20 +31,6 @@ async function settle(): Promise<void> {
   }
 }
 
-/**
- * 文が出るまで待つ (最大 10 秒)。点検は IndexedDB を何度も往復するので、固定回数の settle では
- * 全件実行の負荷の下で間に合わないことがある (2026-09-09 実測: 14,521 件中この 1 本だけ落ち、
- * 単独では 3/3 通った)。待つのは**出るはずの文**で、出なければ本物の失敗として落ちる。
- */
-async function waitForText(needle: string, timeoutMs = 10_000): Promise<void> {
-  const until = Date.now() + timeoutMs;
-  while (!(container.textContent ?? '').includes(needle)) {
-    if (Date.now() > until) throw new Error(`timed out waiting for ${JSON.stringify(needle)} — got: ${(container.textContent ?? '').slice(0, 200)}`);
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 20));
-    });
-  }
-}
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -89,11 +84,11 @@ describe('RecordShapeAuditPanel', () => {
     await mount();
     expect(container.querySelector('[data-shape-audit-delete]')).toBeNull();
     await click('[data-shape-audit-scan]');
-    await waitForText('調べた 2 件のうち 1 件の形式が合いません (sales-entries 1 件)');
+    await waitForText(() => container.textContent ?? '', '調べた 2 件のうち 1 件の形式が合いません (sales-entries 1 件)', WAIT_LONG);
     await click('[data-shape-audit-delete]');
     expect(confirm).toHaveBeenCalledWith('形式の合わないレコード 1 件を削除します。元に戻せません。よろしいですか？');
-    await waitForText('1 件を削除しました');
-    expect(container.textContent).toContain('調べた 1 件に形式の合わないレコードはありません');
+    await waitForText(() => container.textContent ?? '', '1 件を削除しました', WAIT_LONG);
+    await waitForText(() => container.textContent ?? '', '調べた 1 件に形式の合わないレコードはありません');
     expect(container.querySelector('[data-shape-audit-delete]')).toBeNull();
     expect(await store.count(SALES_COLLECTION)).toBe(1);
   });
@@ -104,10 +99,10 @@ describe('RecordShapeAuditPanel', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(false);
     await mount();
     await click('[data-shape-audit-scan]');
-    await waitForText('1 件の形式が合いません');
+    await waitForText(() => container.textContent ?? '', '1 件の形式が合いません', WAIT_LONG);
     await click('[data-shape-audit-delete]');
     expect(container.textContent).not.toContain('削除しました');
-    expect(container.textContent).toContain('1 件の形式が合いません');
+    await waitForText(() => container.textContent ?? '', '1 件の形式が合いません');
     expect(await store.count(SALES_COLLECTION)).toBe(1);
   });
 
@@ -115,7 +110,7 @@ describe('RecordShapeAuditPanel', () => {
     await getRecordStore().insert(SALES_COLLECTION, GOOD);
     await mount();
     await click('[data-shape-audit-scan]');
-    await waitForText('調べた 1 件に形式の合わないレコードはありません');
+    await waitForText(() => container.textContent ?? '', '調べた 1 件に形式の合わないレコードはありません', WAIT_LONG);
     expect(container.querySelector('[data-shape-audit-delete]')).toBeNull();
   });
 });

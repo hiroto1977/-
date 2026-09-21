@@ -20,6 +20,7 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { MAX_ANALYZE_TEXT_CHARS } from '../../../shared/emotionsLimits';
 import { SLACK_MESSAGE_FIELDS } from '../../../shared/writeFieldLimits';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 interface Call {
   readonly action: string;
@@ -210,7 +211,7 @@ describe('Gmail の受信トーン分析 (カバレッジ 36.36% だった側 ·
       profile: { emailAddress: 'me@example.com' },
     };
     await mount('gmail');
-    expect(note()).toContain('分析に送れる行がありません');
+    await waitForText(() => note() ?? '', '分析に送れる行がありません');
     expect(analyzeButton().disabled).toBe(true);
     await click(analyzeButton());
     expect(invoked).toEqual([]);

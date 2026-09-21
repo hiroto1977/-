@@ -31,6 +31,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -161,7 +162,7 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     for (const label of ['関税 (100円未満切捨て)', '消費税の課税標準', '消費税 (国税)', '地方消費税', '税の合計', '通関までの原価']) {
       expect(t.get(label), label).toBe('—');
     }
-    expect(text()).toContain('関税率が入力できる範囲の外');
+    await waitForText(text, '関税率が入力できる範囲の外');
     // **兆円の金額がタイルに 1 つも残っていない。**
     for (const v of t.values()) expect(v).not.toMatch(/999999999|\d{2},\d{3},\d{3},\d{3}/);
     // 輸出の節は別の率なので黙らせない。
@@ -179,7 +180,7 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     // 仕向国側は別の率なので出る。
     expect(t.get('仕向国の課税価格')).toBe('¥1,090,000');
     expect(t.get('買手の負担')).toBe('¥283,400');
-    expect(text()).toContain('輸出税率');
+    await waitForText(text, '輸出税率');
   });
 
   it('★ 仕向国の付加価値税が上限超過なら、そこから下を出さない (関税は残す)', async () => {
@@ -190,7 +191,7 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     expect(t.get('仕向国の付加価値税')).toBe('—');
     expect(t.get('仕向国の税 合計')).toBe('—');
     expect(t.get('買手の負担')).toBe('—');
-    expect(text()).toContain('仕向国の付加価値税');
+    await waitForText(text, '仕向国の付加価値税');
   });
 
   // --- パス 212: 率ではなく**金額**が ⛔ のとき ---
@@ -211,7 +212,7 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     ]) {
       expect(t.get(label), label).toBeUndefined();
     }
-    expect(text()).toContain('商品代金 (輸入・円)が入力できる範囲の外');
+    await waitForText(text, '商品代金 (輸入・円)が入力できる範囲の外');
     // **0 に倒れた課税価格 (¥35,000 = 運賃 30,000 + 保険料 5,000) が出ていない。**
     for (const v of t.values()) expect(v).not.toBe('¥35,000');
     // 輸出の節は別の欄なので残る。
@@ -225,7 +226,7 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     expect(t.get('課税価格 (1,000円未満切捨て)')).toBeUndefined();
     // 運賃を 0 として再計算した ¥505,000 が出ていない。
     for (const v of t.values()) expect(v).not.toBe('¥505,000');
-    expect(text()).toContain('国際運賃 (輸入・円)');
+    await waitForText(text, '国際運賃 (輸入・円)');
     expect(t.get('買手の負担')).toBe('¥283,400');
   });
 
@@ -239,7 +240,7 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
       expect(t.get(label), label).toBeUndefined();
     }
     for (const v of t.values()) expect(v).not.toBe('¥90,000');
-    expect(text()).toContain('商品代金 (輸出・円)');
+    await waitForText(text, '商品代金 (輸出・円)');
     // **入力に依らない事実は断らない** —— 日本が輸出に関税を課さないことと
     // 輸出免税は金額が ⛔ でも真である (消すと「日本も課すかも」と読める)。
     expect(t.get('日本の輸出関税')).toBe('¥0');
@@ -258,6 +259,6 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     expect(t.get('買手の負担')).toBe('—');
     // 輸出税は別の率なので出る (既定 0%)。
     expect(t.get('輸出税（日本以外の場合）')).toBe('¥0');
-    expect(text()).toContain('仕向国の関税率');
+    await waitForText(text, '仕向国の関税率');
   });
 });

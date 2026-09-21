@@ -23,6 +23,7 @@ import {
   buildTeamRadarSnapshot,
   type StoredTeamRadar,
 } from '../../../shared/teamRadarState';
+import { waitForElement } from '../../__tests__/jsdomWait';
 
 const stored: StoredTeamRadar = { kind: 'none' };
 
@@ -126,8 +127,7 @@ describe('付箋コメントの天井 (パス 174)', () => {
     await mountPage();
     await openNotes();
     await type(noteField(), 'い'.repeat(MAX_MEMBER_NOTE_CHARS + 7));
-    const note = container.querySelector('[data-note-clamped]');
-    expect(note, '落とした分の警告が出ていない').not.toBeNull();
+    const note = await waitForElement(() => container.querySelector('[data-note-clamped]'), '落とした分の警告が出ていない');
     expect(note!.textContent).toContain(`${MAX_MEMBER_NOTE_CHARS} 字までです`);
     expect(note!.textContent).toContain('7 字超えていた');
     expect(note!.textContent).toContain('超えた分は入っていません');

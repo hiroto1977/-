@@ -30,6 +30,7 @@ import {
   _resetDeviceStoreFailureForTests,
   currentDeviceStoreFailure,
 } from '../../data/deviceStoreFailure';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 /**
  * 保管庫はモックする —— 読みの拒否を再現したいので、実物の IndexedDB では
@@ -165,7 +166,7 @@ describe('資格情報の札 — 読める端末 (標本: 規則が空振りし�
   it('設定済みなら「設定済み」と「変更」「削除」', async () => {
     listConfigured = () => Promise.resolve(['github']);
     await mount();
-    expect(text()).toContain('設定済み');
+    await waitForText(text, '設定済み');
     expect(button('変更')).toBeDefined();
     expect(button('削除')).toBeDefined();
   });
@@ -182,8 +183,7 @@ describe('資格情報の札 — 読めない端末 (パス 159)', () => {
     expect(container.querySelector('[data-credential-unreadable]')).not.toBeNull();
     // 札としての「未設定」は出ない (理由の文が引用するのは別の話)。
     expect(hasNotConfiguredBadge()).toBe(false);
-    const why = container.querySelector('[data-credential-unreadable-reason]');
-    expect(why).not.toBeNull();
+    const why = await waitForElement(() => container.querySelector('[data-credential-unreadable-reason]'), "container.querySelector('[data-credential-unreadable-reason]')");
     expect(why!.textContent).toContain('この端末に保存した設定を読めませんでした');
     expect(why!.textContent).toContain('保存領域が一杯です');
   });
@@ -222,14 +222,14 @@ describe('資格情報の札 — 読めない端末 (パス 159)', () => {
     listConfigured = () => Promise.resolve(['github']);
     await click(button('やり直す')!);
     expect(container.querySelector('[data-credential-unreadable]')).toBeNull();
-    expect(text()).toContain('設定済み');
+    await waitForText(text, '設定済み');
     expect(button('削除')).toBeDefined();
   });
 
   it('★ 対照: 読めていた札が読めなくなると、逆向きにも動く', async () => {
     listConfigured = () => Promise.resolve(['github']);
     await mount();
-    expect(text()).toContain('設定済み');
+    await waitForText(text, '設定済み');
     // 保存が通ると `refresh()` が走る —— そこで読めなくなった場合。
     failWith('InvalidStateError');
     await click(button('変更')!);

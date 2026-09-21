@@ -19,6 +19,7 @@ import 'fake-indexeddb/auto';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { FsaSection, ProxySection } from '../SettingsPage';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const realIndexedDb = globalThis.indexedDB;
 
@@ -105,7 +106,7 @@ describe('プロキシの札', () => {
     await mount(createElement(ProxySection));
     expect(container.querySelector('[data-proxy-unreadable]')).toBeNull();
     expect(container.querySelector('[data-proxy-unreadable-reason]')).toBeNull();
-    expect(container.textContent).toContain('未設定');
+    await waitForText(() => container.textContent ?? '', '未設定');
   });
 });
 

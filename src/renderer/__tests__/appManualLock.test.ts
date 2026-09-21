@@ -41,6 +41,7 @@ import {
   lockEverywhere,
 } from '../security/lockWorkspace';
 import { navigateTo } from '../navigate';
+import { waitForText } from './jsdomWait';
 
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -255,7 +256,7 @@ describe('App — ハードリセットが消せなかった理由は画面に�
       await settle();
 
       // 理由が画面に在る。
-      expect(text()).toContain('他のタブをすべて閉じて');
+      await waitForText(text, '他のタブをすべて閉じて');
       // **ロック画面へ行っていない** (行くと上の文言ごと消える)。
       expect(showsLockScreen()).toBe(false);
       // 何も消えていないので鍵も生きている (半分だけ適用しない)。

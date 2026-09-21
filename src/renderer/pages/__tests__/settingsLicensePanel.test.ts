@@ -33,6 +33,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -85,26 +86,25 @@ describe('社内ライセンスのパネル — ビルドが開放している�
   it('★ 解除ボタンを出さない (押しても何も起きない操作をボタンにしない)', async () => {
     await mount();
     expect(revokeButton()).toBeUndefined();
-    const why = container.querySelector('[data-license-cannot-revoke]');
-    expect(why).not.toBeNull();
+    const why = await waitForElement(() => container.querySelector('[data-license-cannot-revoke]'), "container.querySelector('[data-license-cannot-revoke]')");
     expect(why!.textContent).toContain('このビルドでは解除できません');
     expect(why!.textContent).toContain('Free には戻りません');
   });
 
   it('★ 「入力すると使えます」と言わない (入力を求めずに開いている)', async () => {
     await mount();
-    expect(text()).toContain('このビルドは招待コードを必要としません');
+    await waitForText(text, 'このビルドは招待コードを必要としません');
     expect(text()).not.toContain('招待コードを入力すると');
   });
 
   it('有効であることは言う (開いている事実は隠さない)', async () => {
     await mount();
-    expect(text()).toContain('社内ライセンス有効');
+    await waitForText(text, '社内ライセンス有効');
   });
 
   it('★ オーナー向けの節は「配っても見え方は変わらない」と付け足す', async () => {
     await mount();
-    expect(text()).toContain('受け取った人の見え方は変わりません');
+    await waitForText(text, '受け取った人の見え方は変わりません');
     // コード自体は出す (有償配布へ切り替えたときに効くので消さない)。
     expect(text()).toMatch(/SVCHUB-[0-9A-Z]{8}/);
   });

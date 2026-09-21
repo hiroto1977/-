@@ -19,6 +19,7 @@ import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
 import { FOLDER_PERMISSION_TEXT, LIBRARY_FAILED_TEXT } from '../../data/exportOutcome';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 type Sinks = Record<string, unknown>;
 
@@ -110,7 +111,7 @@ describe('書き出しの結果に、収まらなかった先が出る', () => {
     await click(buttonByText('SVG を保存'));
     expect(warningText()).toContain(FOLDER_PERMISSION_TEXT);
     // 出来上がった物への案内は残す (警告で置き換えてしまうと、書き出した物に辿れない)
-    expect(container.textContent).toContain('保存しました');
+    await waitForText(() => container.textContent ?? '', '保存しました');
   });
 
   it('★ テンプレート: ライブラリに残せなかったことも出る', async () => {
@@ -123,7 +124,7 @@ describe('書き出しの結果に、収まらなかった先が出る', () => {
   it('対照: テンプレート — 3 か所とも収まったら警告は出ない', async () => {
     await mount('templates');
     await click(buttonByText('SVG を保存'));
-    expect(container.textContent).toContain('保存しました');
+    await waitForText(() => container.textContent ?? '', '保存しました');
     expect(warningText()).toBeNull();
   });
 
@@ -133,14 +134,14 @@ describe('書き出しの結果に、収まらなかった先が出る', () => {
     await click(buttonByText('今すぐ作る'));
     expect(warningText()).toContain(FOLDER_PERMISSION_TEXT);
     // done の表示 (ファイル名と「ファイルを開く」) は残る
-    expect(container.textContent).toContain('出来上がりました');
-    expect(container.textContent).toContain('x.svg');
+    await waitForText(() => container.textContent ?? '', '出来上がりました');
+    await waitForText(() => container.textContent ?? '', 'x.svg');
   });
 
   it('対照: ホーム — 収まったら警告は出ない', async () => {
     await mount('home');
     await click(buttonByText('今すぐ作る'));
-    expect(container.textContent).toContain('出来上がりました');
+    await waitForText(() => container.textContent ?? '', '出来上がりました');
     expect(warningText()).toBeNull();
   });
 

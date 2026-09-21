@@ -144,9 +144,21 @@ export const LAWS: readonly Law[] = [
       + '共有の待ちへ寄せると **ticks=0 でも通る**。'
       + '危ないのは「固定回数」だけではなく「その後で**肯定の**文を主張する」形で '
       + '(否定は待っても意味が無い)、実測は 固定回数 108 本 / 肯定の主張つき 34 本 / '
-      + '共有の待ちを使う 2 本 → 危ない形 32 本。数は減る方向にしか動かさない。',
-    provenance: ['パス 169 (共有の待ち)', 'パス 368 (3 件目と母集団)'],
-    enforcedBy: [test(T.renderer('fixedTickAssertionCensus')), test(T.renderer('waitHelperCensus'))],
+      + '共有の待ちを使う 2 本 → 危ない形 32 本。数は減る方向にしか動かさない。'
+      + '**ただしその針 (綴り) は両方向に外れていた (パス 369 実測)** —— 最も多い形 '
+      + '`expect(text()).toContain(…)` を 1 件も見ておらず (HEAD で 67 ファイル / 363 か所)、'
+      + '逆に条件で待った後の主張まで数える。知りたいのは綴りではなく'
+      + '「**この主張は settle の回数に依っているか**」で、それは**回数を 0 にして走らせれば'
+      + '直接答えが出る** (`npm run audit:tick-sensitivity`)。実測 109 本中 **31 本**が 0 周で落ち、'
+      + 'その内訳は store の往復・要素の在否・操作の流し込みなど「依って当たり前」の物を含む ——'
+      + 'だから門ではなく**理由つきの台帳を持つ定期点検の道具**にした。',
+    provenance: ['パス 169 (共有の待ち)', 'パス 368 (3 件目と母集団)', 'パス 369 (針の訂正と振る舞いでの測定)'],
+    enforcedBy: [
+      test(T.renderer('fixedTickAssertionCensus')),
+      test(T.renderer('waitHelperCensus')),
+      test(T.renderer('tickSensitivityLedger')),
+      harness('audit:tick-sensitivity'),
+    ],
   },
   {
     id: 'count-has-floor',

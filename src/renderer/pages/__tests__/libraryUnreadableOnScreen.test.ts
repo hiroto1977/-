@@ -16,6 +16,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetLibraryForTests } from '../../library/library';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -146,6 +147,6 @@ describe('ライブラリ — 読めない値を「読めない」と言う', ()
     expect(text()).not.toContain('サイズ不明');
     expect(text()).not.toContain('時刻不明');
     // 対照が空でないこと: 行そのものは出ている。
-    expect(text()).toContain('a.svg');
+    await waitForText(text, 'a.svg');
   });
 });

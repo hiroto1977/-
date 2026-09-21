@@ -25,6 +25,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PROPERTIES_COLLECTION } from '../../data/investments';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -102,7 +103,7 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
     expect(text()).not.toContain('表面利回りの平均から外して');
     expect(text()).not.toContain('家賃が読めないため');
     // 箱は在る —— 合計に見本が混ざっているので、そのことは述べる。
-    expect(scopeBox()?.textContent ?? '').toContain('見本');
+    await waitForText(() => scopeBox()?.textContent ?? '', '見本');
   });
 
   it('★ 取得価格の欄が読めない物件を足すと、外したことを画面が述べる', async () => {
@@ -131,7 +132,7 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
     await mountPage();
     expect(text()).not.toContain('表面利回りの平均から外して');
     // 自分の物件が 1 件在るので、合計との差を述べる (パス 187)。
-    expect(scopeBox()?.textContent ?? '').toContain('自分の物件は 1 件');
+    await waitForText(() => scopeBox()?.textContent ?? '', '自分の物件は 1 件');
   });
 
   /**

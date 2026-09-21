@@ -33,6 +33,7 @@ import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MAX_RECORD_NOTE_CHARS } from '../../../shared/recordEntryLimits';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -121,8 +122,7 @@ afterEach(async () => {
 describe('メモの天井 — 不動産投資の画面 (パス 167)', () => {
   it('★ 天井を画面が述べる (2026-09-12 まで数字は画面のどこにも無かった)', async () => {
     await mountPage('real-estate');
-    const cap = container.querySelector('[data-note-cap]');
-    expect(cap, '天井を述べる帯が無い').not.toBeNull();
+    const cap = await waitForElement(() => container.querySelector('[data-note-cap]'), '天井を述べる帯が無い');
     expect(cap!.textContent).toContain(String(MAX_RECORD_NOTE_CHARS));
     expect(cap!.textContent).toContain('字まで');
   });
@@ -139,8 +139,7 @@ describe('メモの天井 — 不動産投資の画面 (パス 167)', () => {
     await type('あ'.repeat(MAX_RECORD_NOTE_CHARS + 412));
     // 欄は天井で止まる (DOM に無制限の値を持たない)。
     expect(noteInput().value).toHaveLength(MAX_RECORD_NOTE_CHARS);
-    const box = overflowBox();
-    expect(box, '超えたのに何も言っていない').not.toBeNull();
+    const box = await waitForElement(() => overflowBox(), '超えたのに何も言っていない');
     expect(box!.getAttribute('data-note-overflow')).toBe('412');
     expect(box!.textContent).toContain('412');
     expect(box!.textContent).toContain(String(MAX_RECORD_NOTE_CHARS));
@@ -166,8 +165,7 @@ describe('メモの天井 — 不動産投資の画面 (パス 167)', () => {
 
   it('投資信託の画面も同じ天井を述べる (1 画面だけ直して満足しない)', async () => {
     await mountPage('mutual-funds');
-    const cap = container.querySelector('[data-note-cap]');
-    expect(cap).not.toBeNull();
+    const cap = await waitForElement(() => container.querySelector('[data-note-cap]'), "container.querySelector('[data-note-cap]')");
     expect(cap!.textContent).toContain(String(MAX_RECORD_NOTE_CHARS));
     await type('あ'.repeat(MAX_RECORD_NOTE_CHARS + 7));
     expect(overflowBox()!.getAttribute('data-note-overflow')).toBe('7');
@@ -175,7 +173,7 @@ describe('メモの天井 — 不動産投資の画面 (パス 167)', () => {
 
   it('対照: 天井の文は既定の描画で出ている (探し方が空振りしていない)', async () => {
     await mountPage('real-estate');
-    expect(text()).toContain('業務操作');
-    expect(text()).toContain('メモを記録');
+    await waitForText(text, '業務操作');
+    await waitForText(text, 'メモを記録');
   });
 });

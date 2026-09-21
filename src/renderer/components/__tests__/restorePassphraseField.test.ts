@@ -17,6 +17,7 @@ import { _resetRecordStoreForTests, getRecordStore, type StoredRecord } from '..
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION } from '../../data/sales';
 import { serializeBackup, serializeEncryptedBackup } from '../../data/backup';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 const originalPrompt = window.prompt;
 let promptCalls = 0;
@@ -81,15 +82,11 @@ async function chooseFile(content: string, name: string): Promise<void> {
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 
 /** 文が出るまで待つ (復号は PBKDF2 60 万回を回すので、settle の数 tick では終わらない)。 */
-async function waitForText(needle: string, timeoutMs = 20_000): Promise<void> {
-  const started = Date.now();
-  while (!text().includes(needle)) {
-    if (Date.now() - started > timeoutMs) throw new Error(`timed out waiting for "${needle}"; text: ${text().slice(0, 300)}`);
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 50));
-    });
-  }
-}
+/**
+ * 復元は PBKDF2 (600k 周) を回すので、空いている機械でも数秒かかる。
+ * 2026-09-21 (パス 369) に手書きの待ちをやめ、共有の `waitForText` へ寄せた。
+ */
+const WAIT_LONG = { timeoutMs: 20_000, stepMs: 50 } as const;
 
 const ROW: StoredRecord = {
   id: 'from-backup',
@@ -135,7 +132,7 @@ describe('バックアップの復元 — 合言葉はマスクされた欄で�
     const encrypted = await serializeEncryptedBackup([ROW], PASSPHRASE);
     await mount();
     await chooseFile(encrypted, 'enc.json');
-    expect(text()).toContain(ENCRYPTED_RESTORE_NEEDS_FIELD);
+    await waitForText(text, ENCRYPTED_RESTORE_NEEDS_FIELD, WAIT_LONG);
     expect(text()).not.toContain('レコードを復元しました');
     expect(promptCalls).toBe(0);
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(0);
@@ -146,7 +143,7 @@ describe('バックアップの復元 — 合言葉はマスクされた欄で�
     await mount();
     await fillPassphrase(PASSPHRASE);
     await chooseFile(encrypted, 'enc.json');
-    await waitForText('1 件のレコードを復元しました');
+    await waitForText(text, '1 件のレコードを復元しました', WAIT_LONG);
     expect(promptCalls).toBe(0);
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });
@@ -155,7 +152,7 @@ describe('バックアップの復元 — 合言葉はマスクされた欄で�
     const plain = await serializeBackup([ROW]);
     await mount();
     await chooseFile(plain, 'plain.json');
-    expect(text()).toContain('1 件のレコードを復元しました');
+    await waitForText(text, '1 件のレコードを復元しました', WAIT_LONG);
     expect(text()).not.toContain(ENCRYPTED_RESTORE_NEEDS_FIELD);
     expect(promptCalls).toBe(0);
   });
