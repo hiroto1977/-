@@ -110,8 +110,8 @@ export const LAWS: readonly Law[] = [
       + '外の母集団は書き方の前提が違うので、同じ検出器を当てると偽陽性で埋まり、'
       + '本当に危ない物は元の検出器の設計上の除外（例: 素の識別子の送り先）に隠れたままになる。'
       + '外が小さいなら「危ない構文か」を問うのをやめ、**全件**を守りつきで台帳に載せる。',
-    provenance: ['パス 342', 'パターン 0-a'],
-    enforcedBy: [gate('lint:network-targets'), test(T.shared('networkTargetWitness'))],
+    provenance: ['パス 342', 'パターン 0-a', 'パス 364 (lint:storage の外は 8 本・保存は 3 本)'],
+    enforcedBy: [gate('lint:network-targets'), test(T.shared('networkTargetWitness')), test(T.shared('distributedArtifactStorage'))],
   },
   {
     id: 'gate-runs-in-ci',
@@ -491,9 +491,9 @@ export const LAWS: readonly Law[] = [
     id: 'storage-ledger-and-hard-reset',
     family: 'at-rest',
     name: '端末に残す物は台帳、ハードリセットは全行を覆う',
-    statement: '新しい保存先が黙って増えない。媒体が DATA_PROTECTION の在庫に載る。入口 (localWrite) へ流れる鍵は登録の鍵と一致する (双方向)。「すべてのデータを削除」が台帳の全行を消す。',
-    provenance: ['lint:storage 規則 11', 'lint:storage 規則 12', 'パス 136', 'パス 310'],
-    enforcedBy: [gate('lint:storage'), test('src/renderer/security/__tests__/eraseAll.test.ts')],
+    statement: '新しい保存先が黙って増えない。媒体が DATA_PROTECTION の在庫に載る。入口 (localWrite) へ流れる鍵は登録の鍵と一致する (双方向)。「すべてのデータを削除」が台帳の全行を消す。**台帳が覆うのはアプリの生成元だけである** —— `lint:storage` の走査範囲は `src/renderer` なので、**利用者がダウンロードして開く単一 HTML** は母集団の外に居る。実測 (2026-09-21): 配る 8 本のうち 3 本 (電子定款メーカー / 就業規則メーカー / 経営書類スタジオ) が入力を `localStorage` へ自動保存しており、**商号・本店・発起人の氏名と住所**まで入るのに、3 本とも `removeItem` が 0 件で**文書の中から消す口が無かった**。保存先はその文書自身の生成元なので「すべてのデータを削除」は構造的に届かず、`eraseAll` を直しても解決しない (パス 364)。',
+    provenance: ['lint:storage 規則 11', 'lint:storage 規則 12', 'パス 136', 'パス 310', 'パス 364 (配る文書は別の生成元)'],
+    enforcedBy: [gate('lint:storage'), test('src/renderer/security/__tests__/eraseAll.test.ts'), test(T.shared('distributedArtifactStorage'))],
   },
   {
     id: 'read-policy-three-states',
@@ -507,9 +507,9 @@ export const LAWS: readonly Law[] = [
     id: 'escape-hatch-stays-open',
     family: 'at-rest',
     name: '壊れた行があっても逃げ口は開く',
-    statement: '保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。',
-    provenance: ['パス 136', 'パス 225', 'パス 360'],
-    enforcedBy: [test(T.renderer('malformedStoreRenders')), test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts')],
+    statement: '保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。**逃げ口が「壊れている」のではなく「最初から無い」形も在る** —— 配る単一 HTML 3 本は入力を `localStorage` へ自動保存しながら消す口を 1 つも持たず、利用者はブラウザのサイトデータ設定を知らないかぎり自分の氏名と住所を残したままにするほか無かった (パス 364)。書類を作る道具なので、残っている自覚が持ちにくい側である。',
+    provenance: ['パス 136', 'パス 225', 'パス 360', 'パス 364 (逃げ口が最初から無い)'],
+    enforcedBy: [test(T.renderer('malformedStoreRenders')), test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts'), test(T.shared('distributedArtifactStorage'))],
   },
   {
     id: 'sample-never-written-back',
