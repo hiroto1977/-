@@ -2062,6 +2062,14 @@
       "leafCount": 83,
       "note": "update vault.ts",
       "hash": "dcb6a255432239062235966e974114b9e1be7b151a533b8e6c888ffb31c5e021"
+    },
+    {
+      "index": 247,
+      "prevHash": "dcb6a255432239062235966e974114b9e1be7b151a533b8e6c888ffb31c5e021",
+      "merkleRoot": "22b008549f16ae14599167709f2634a05cc2ca9b538ee16a5c515a779579fc16",
+      "leafCount": 83,
+      "note": "update fsa.ts",
+      "hash": "a37dbe4dd22650c9d4b3261c086be975c0bff355c5114334f1c9773443179f3b"
     }
   ],
   "tipManifest": {
@@ -2106,7 +2114,7 @@
     "src/renderer/data/assistantMarkdown.ts": "7d08dc362233f8ca3d52257e84c2bd6c95ad34d3ea97d5208359aa730d969d6b",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
     "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",
-    "src/renderer/fs/fsa.ts": "fb721de4a0aa024a6834b04e4bb22fc891d6c380518458957af18084b88b3e3d",
+    "src/renderer/fs/fsa.ts": "d38f695c737809da99791ab61051dca1718c8827277a293e197e2f3ff4271054",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
     "src/renderer/network/proxy.ts": "5f94ffd57f2626df3a51466ff55fdd2f56166755f160043bf200f2662bff6e09",
     "src/renderer/oauth/pkce.ts": "3402979779496b753369150623558c774e6c8f5d525cde4d557e550693d37e24",

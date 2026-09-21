@@ -169,8 +169,33 @@ export async function clearFolderHandle(): Promise<void> {
  * ことで、入口 (library) が出口 (ここ) より緩い状態は「新しい書き出し経路が
  * 再検査を忘れた瞬間」に穴になる。厳しい側へ寄せて統合した。
  *
- * (渡ってくる名前はアプリが組み立てたもの (`service-hub-YYYYMMDD-HHMM.txt`
- *  など) で利用者入力ではないため、これは多層防御。)
+ * ## 「利用者入力ではない」は偽である (2026-08-23 実測 · 2026-09-21 パス 362 でここにも反映)
+ *
+ * ここには長らく「渡ってくる名前はアプリが組み立てたもの
+ * (`service-hub-YYYYMMDD-HHMM.txt` など) で利用者入力ではないため、これは
+ * 多層防御」と書いてあった。**2026-08-23 にその主張は偽と測られ、
+ * `shared/safeFilename.ts` では撤回されている** —— ところが**同じ文の写しが
+ * ここに残り、パス 362 まで誰も直さなかった**。撤回が 2 部のうち 1 部にしか
+ * 届いていなかった。
+ *
+ * 実物の経路 (実測):
+ *
+ * ```
+ *   teamradar の export-svg → filenameFromTitle(p.title, …)   ← p.title は画面で利用者が打つ
+ *     → saveToLibrary('teamradar', filename, …)
+ *       → mirrorToFolder(REAL_MIRROR, filename, blob)
+ *         → REAL_MIRROR.write === writeBlobToFolder            ← 実ディスクへ書く
+ * ```
+ *
+ * **今日この関門は破れない** —— `filenameFromTitle` が `[^\w.-]+` を `-` へ畳み、
+ * 時刻の接尾辞が付くので `.` / `..` にもならず、`writeBlobToFolder` は
+ * それでも `isSafeFilename` を先に通す。危ないのは**説明のほう**である:
+ * 「入力は安全だからここは飾り」と読んだ次の人が、この関門を緩める判断を
+ * **既に偽と分かっている前提**から下すことになる (`safeFilename.ts` が
+ * その危険を名指ししている)。
+ *
+ * 利用者の入力がここへ届くことは `folderMirrorUserInput.test.ts` が
+ * 振る舞いで留める (綴りではなく経路を測るので、この文が再び古びても鳴る)。
  */
 
 
