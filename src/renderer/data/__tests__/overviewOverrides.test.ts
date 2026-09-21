@@ -746,3 +746,63 @@ describe('手入力の断り書き (manualOverrideNote / staleDerivedNote)', () 
     expect(stale === null || !stale.includes('営業利益率')).toBe(true);
   });
 });
+
+/**
+ * **`placed` —— 置いた値そのもの** (2026-09-21 · パス 382)。
+ *
+ * `overridden` はパスの一覧でしかないので、画面はそれだけでは
+ * 「どの欄を置いたか」しか言えない。**いくらで置いたか**を言うのに要る。
+ *
+ * ★ **値は適用する瞬間に取る。** 後から適用後の器をパスで歩き直しても同じ値が
+ * 得られるが、それは**同じ数の 2 つ目の導出**になる (しかも歩き直す側は
+ * 画面 = `.tsx` に入るので変異検査の外に出る)。
+ */
+describe('placed — 手で置いた値を表示名と単位つきで返す', () => {
+  it('★ 置いた欄を label / value / unit つきで返す', () => {
+    const r = applyOverviewOverrides(baseOverview(), [entry('kpi.revenue', 50_000_000)]);
+    expect(r.placed).toEqual([
+      { path: 'kpi.revenue', label: '売上高', value: 50_000_000, unit: 'yen' },
+    ]);
+    // 画面はこれを `formatMetric` に通す —— 数の形を 2 か所で決めない。
+    expect(formatMetric(r.placed[0]!.value, r.placed[0]!.unit)).toBe('50,000,000 円');
+  });
+
+  it('上書きが 1 件も無ければ空', () => {
+    expect(applyOverviewOverrides(baseOverview(), []).placed).toEqual([]);
+  });
+
+  it('★ placed の欄は overridden と同じ集合 (両方向)', () => {
+    const r = applyOverviewOverrides(baseOverview(), [
+      entry('kpi.revenue', 1), entry('team.members', 2), entry('sales.totalAmount', 3),
+    ]);
+    expect(r.placed.map((x) => x.path).sort()).toEqual([...r.overridden].sort());
+  });
+
+  it('台帳に無いパス・不正な値は placed に入らない (ignored 側へ)', () => {
+    const r = applyOverviewOverrides(baseOverview(), [
+      entry('kpi.nope', 1), entry('kpi.revenue', Number.NaN),
+    ]);
+    expect(r.placed).toEqual([]);
+    expect(r.ignored).toEqual(['kpi.nope', 'kpi.revenue']);
+  });
+
+  it('★ 同じパスを 2 度置いたら後の値が残る (画面に出ている値と一致させる)', () => {
+    // `setAtPath` は後から呼ばれた方で潰れるので、一覧が先勝ちだと
+    // **画面が実際に表示している値と、断りが名指しする値が食い違う**。
+    const r = applyOverviewOverrides(baseOverview(), [
+      entry('kpi.revenue', 111), entry('kpi.revenue', 222),
+    ]);
+    expect(r.overridden).toEqual(['kpi.revenue']);
+    expect(r.placed).toEqual([{ path: 'kpi.revenue', label: '売上高', value: 222, unit: 'yen' }]);
+    expect((r.overview as { kpi: { revenue: number } }).kpi.revenue).toBe(222);
+  });
+
+  it('★ 台帳の全欄が placed に出せる (単位は台帳のもの)', () => {
+    // 器はパスから組み立てる (`buildShell`) —— 概況の形に依存させない。
+    expect(OVERRIDABLE_FIELDS.length).toBeGreaterThanOrEqual(45);
+    for (const f of OVERRIDABLE_FIELDS) {
+      const r = applyOverviewOverrides(buildShell([f.path]), [entry(f.path, 7)]);
+      expect(r.placed, f.path).toEqual([{ path: f.path, label: f.label, value: 7, unit: f.unit }]);
+    }
+  });
+});

@@ -7,6 +7,92 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 382 (2026-09-21) — 画面の断りが書面より弱かった (28 欄で黙る) + e2e が期待値を刷りながら ❌ を出していた
+
+出荷物 **11,936,559 B / 3,349,080 B (両方 +679 B)**。`renderer` は両ビルドが読むので LITE も同じだけ増える。
+
+### ★ 門が「結果」に掛かっていて「事実」に掛かっていなかった
+
+経営サマリーの手入力の断りは `applied.staleDerived.length > 0` を門にしていた。実測:
+
+| 面 | 断る条件 | 上書きが在ると断るか |
+| --- | --- | --- |
+| 書面 (`bankSubmission`) | `overridden.length > 0` | ○ 45 欄すべて |
+| 経営レポート (`managementReport`) | `overridden.length > 0` | ○ 45 欄すべて |
+| **画面 (`OverviewPage`)** | `staleDerived.length > 0` | **× 28 欄で黙る** |
+
+上書きできる 45 欄のうち **28 欄は誰の計算元でもない** (`derivedFrom` で参照されていない) ので、
+その 28 欄を手で置くと `staleDerived` は空になり、**画面はこの節ごと出さなかった**。
+いちばん重いのは比率で、営業利益率を手で置くと画面の Tile は 99.9% を自動計算と見分けられない形で出し、
+書面だけが「手で置いた数値です」と言っていた。`manualOverrideNote` の**画面側の読み手は 0 件**だった。
+
+直し: `applyOverrides` が `placed` (path / label / value / unit) を返し、画面が `formatMetric` で刷る。
+門は `overridden.length > 0` へ。**値は適用する瞬間に取る** —— 後から器をパスで歩き直すと
+同じ数の 2 つ目の導出になり、しかも歩き直す側は `.tsx` = 変異検査の外に出る。
+
+### ★ 検査に映らなかった理由 —— 錠が消費税の注記で満たされていた
+
+`manualOverrideDisclosure` の ★ 画面の錠は `expect(t).toContain('50,000,000')` に
+`// 手で置いた売上高` と注記していた。実測: 画面 11,868 字のうち `50,000,000` は**ちょうど 1 か所**で、
+それは「簡易課税は基準期間の課税売上高 ￥50,000,000 以下」 —— **上書きの有無で同じ**。
+しかも `overview.kpi.revenue` の描画は **0 件**。**落ちようがない錠で、見ていると称する物は画面に無かった。**
+
+### ★ 自戒: 最初の枠組みは偽だった
+
+「利用者は置いた値を見る手段が無い」と述べたが、`ManualDataSection` (`data-overridden` の
+「手入力 50,000,000 円」) は **`App.tsx` が描く**ので実機では見える。検査が画面を単独で mount して
+いただけである。**測り直して初めて本物の非対称 (28 欄) が出た** (法則 `measure-before-claim`)。
+
+### ★ e2e が ❌ の隣に期待どおりの値を刷っていた
+
+`sales: ★ 同じ注文名の 2 度目は断られ、売上集計は 1 行のまま (実際 1 行)` で ❌。
+`ok()` が同じ locator を **2 度** `count()` しており、1 度目 (判定) は `#sales` へ移った直後で
+まだ 0 行、2 度目 (文面) では 1 行。隣の funds / KPI は最初から `waitForSelector` で行を待っており、
+**画面をまたぐこの 1 本だけが待っていなかった**。
+
+1. 行が出るのを待ってから数える。★ 待つのは「1 行になること」ではなく「**1 行目が出ること**」 ——
+   2 行になる欠陥のとき前者は 2 行目が来る前に通る (パス 380 の教訓)。
+2. **数えるのは 1 度だけ**にして判定と文面が同じ値を使う (4 か所)。
+   残る 2 か所は別々の locator を数える行なので矛盾しえない。
+
+### 台帳 10 → 8 本 (`text-with-message` を空にした)
+
+| ファイル | 錠 |
+| --- | --- |
+| `libraryCorruptContent` | `mountLibrary(ROW)` —— 行の名前で待つ。押した後は `settleUntil` に**説明を label として**渡す |
+| `manualOverrideDisclosure` | `mountOverview()` は `損益分岐点 (BEP)`・断りは `[data-placed-overrides]` の中の値 |
+
+★ **台帳の `kind` は落ちる理由ではなかった (2 度目)** —— `libraryCorruptContent` は
+`text-with-message` と分類されていたが、0 周の失敗は 5 件すべて `mountLibrary()` の側だった。
+
+### ★ 床が 2 度目に「直した日に落ちる門」として鳴った
+
+`tickSensitivityLedger` の `rows.length >= 10` は、**その注記自身が**「実測の行数に張り付けると
+直した日に落ちる」と警告しているのに実測に張り付いており、パス 378 (25 → 20) と
+パス 382 (10 → 8) で **2 度**その通りに落ちた。行数の床をやめ、`ledgerRows` が読んだ行数が
+**別の綴りで数えた行数と一致すること**にした (台帳が 0 本になっても動かない)。
+
+### 対照
+
+| 壊した物 | 結果 |
+| --- | --- |
+| 門を `staleDerived` へ戻す | ❌1 |
+| `placed` を空へ倒す | ❌6 |
+| 置いた値の描画を潰す | ❌2 |
+| 上書きを効かなくする | ❌4 |
+| `kind` の針からハイフンを落とす | ❌1 |
+| `why` に escape した引用符 | **鳴らない** —— 欠陥ではなく `ledgerRows` が最初からその形を扱えるため。**鳴らない対照はその検査についての報せ** |
+
+### 検証
+
+`audit:tick-sensitivity` **8 / 86 で双方向 OK**・`typecheck` 緑・`npm test` **805 / 17,970**・
+`verify:all` exit 0・`chain:verify` 緑・`perf` OK (LITE DCL 157 ms / FULL DCL 426 ms)・
+`e2e` **455 件 ❌ 0**・`e2e:lite` **455 件 ❌ 0**。
+
+**残り 8 本**: `setup-flush` 7 / `text-captured` 1。
+★ 記録を訂正: パス 380 / 381 は内訳を「`setup-flush` 6」と書いていたが実物は **7**。
+合計 (14 / 10) は正しく、内訳だけが 1 ずれて**足しても合わなかった**。
+
 ## パス 381 (2026-09-21) — 台帳を 14 → 10 本へ (`attribute` / `hook-state` / `mock-call` を空にした)
 
 | ファイル | 錠 |
@@ -53,7 +139,7 @@
 
 ### 残り 10 本
 
-`setup-flush` 6 / `text-captured` 2 / `text-with-message` 1。
+`setup-flush` 7 / `text-captured` 2 / `text-with-message` 1。
 
 - `text-with-message` 1 本 (`libraryCorruptContent`) —— `expect(text(), '説明').toContain(…)`。
   寄せると第 2 引数の説明が落ちるので、待ってから主張する 2 段にする。
@@ -106,7 +192,7 @@ React の state を動かすことがあり、`act` の外で起こすと警告�
 
 ### 残り 14 本
 
-`setup-flush` 6 / `text-captured` 2 / `mock-call` 2 / `hook-state` 1 / `attribute` 1 /
+`setup-flush` 7 / `text-captured` 2 / `mock-call` 2 / `hook-state` 1 / `attribute` 1 /
 `text-with-message` 1。
 
 次は `attribute` 1 本 (`balanceSheetCurrent` —— `getAttribute('data-bs-row')`・
@@ -163,7 +249,7 @@ IndexedDB から届いていない**ことが原因で、画面は既定のし�
 
 ### 残り 17 本
 
-`setup-flush` 6 / `store-roundtrip` 3 / `text-captured` 2 / `mock-call` 2 /
+`setup-flush` 7 / `store-roundtrip` 3 / `text-captured` 2 / `mock-call` 2 /
 `hook-state` 1 / `attribute` 1 / `text-with-message` 1。
 
 次は `store-roundtrip` 3 本 (`ParametersPanel.render` / `mutualFundsDoubleSubmit` /
@@ -226,7 +312,7 @@ IndexedDB から届いていない**ことが原因で、画面は既定のし�
 
 ### 残り 20 本
 
-`setup-flush` 6 / `store-roundtrip` 3 / `text-helper` 3 / `text-captured` 2 /
+`setup-flush` 7 / `store-roundtrip` 3 / `text-helper` 3 / `text-captured` 2 /
 `mock-call` 2 / `hook-state` 1 / `attribute` 1 / `text-with-message` 1。
 
 次に手を付けるなら `text-helper` 3 本

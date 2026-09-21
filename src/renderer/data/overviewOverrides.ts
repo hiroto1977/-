@@ -184,11 +184,43 @@ export interface OverrideEntry extends Record<string, unknown> {
   readonly note?: string;
 }
 
+/**
+ * **画面に出す「手で置いた値」1 件。**
+ *
+ * `overridden` はパスの一覧でしかないので、それだけでは画面は
+ * 「どの欄を置いたか」しか言えない。**いくらで置いたか**を言うには
+ * 値と単位が要る —— そして値は `applyOverrides` が適用する瞬間に
+ * 手の中に在るので、ここで一緒に返す (画面が経路を歩き直すと
+ * `.tsx` に算術が入り、変異検査の外で 2 つ目の導出を持つことになる)。
+ */
+export interface PlacedOverride {
+  readonly path: string;
+  /** 台帳の表示名 (`OVERRIDABLE_FIELDS`)。 */
+  readonly label: string;
+  readonly value: number;
+  /** 整形は画面が `formatMetric` で行う —— 数の形を 2 か所で決めない。 */
+  readonly unit: MetricUnit;
+}
+
 export interface AppliedOverviewOverrides<T> {
   /** 上書き後の経営概況。 */
   readonly overview: T;
   /** 手入力に置き換わったパス。画面で「手入力」と示すために使う。 */
   readonly overridden: readonly string[];
+  /**
+   * 手入力に置き換わった値 —— **表示名と単位つき**。
+   *
+   * ★ **2026-09-21 (パス 382) まで、画面はこれを持っていなかった。** 実測: 経営
+   * サマリーで売上高を 1,200 万 → 5,000 万に置いても、画面の文字は
+   * **1 字も変わらなかった** (`overview.kpi.revenue` の描画は 0 件 —— KPI カードは
+   * 営業利益・粗利・EBITDA と比率だけを出し、売上高そのものは出さない)。
+   * 画面の断りは `staleDerived` = 「**どの指標が古いか**」しか言わず、
+   * 一方で書面は `manualOverrideNote` で「売上高は手で置いた数値です」と
+   * **置いた欄を名指ししていた** —— つまり**画面の断りが書面より弱かった**。
+   * 置いた本人が「私の 5,000 万は入ったか」を画面で確かめる手段が無く、
+   * 桁を 1 つ打ち間違えても気付けない。
+   */
+  readonly placed: readonly PlacedOverride[];
   /** 一覧に無い / 値が不正で無視したもの。 */
   readonly ignored: readonly string[];
   /**
@@ -243,6 +275,7 @@ export function applyOverrides<T>(
 ): AppliedOverviewOverrides<T> {
   let overview = base;
   const overridden: string[] = [];
+  const placed: PlacedOverride[] = [];
   const ignored: string[] = [];
 
   for (const o of overrides) {
@@ -263,6 +296,15 @@ export function applyOverrides<T>(
     }
     overview = next;
     if (!overridden.includes(field.path)) overridden.push(field.path);
+    // **同じパスを 2 度置いたら後の値が勝つ** —— 適用と同じ順序で上書きする
+    // (`setAtPath` は後から呼ばれた方で潰れるので、一覧が先勝ちだと画面の値が
+    // 実際に表示されている値とずれる)。
+    const already = placed.findIndex((x) => x.path === field.path);
+    const entry: PlacedOverride = {
+      path: field.path, label: field.label, value: o.value, unit: field.unit,
+    };
+    if (already >= 0) placed[already] = entry;
+    else placed.push(entry);
   }
 
   const staleDerived: { path: string; label: string; because: readonly string[] }[] = [];
@@ -273,7 +315,7 @@ export function applyOverrides<T>(
     if (because.length > 0) staleDerived.push({ path: f.path, label: f.label, because });
   }
 
-  return { overview, overridden, ignored, staleDerived };
+  return { overview, overridden, placed, ignored, staleDerived };
 }
 
 /**

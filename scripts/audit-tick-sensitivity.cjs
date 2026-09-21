@@ -93,7 +93,18 @@ function zeroTicks(src) {
  *     「待ち」ではなく**状態遷移の流し込み**として効いている。
  *     **条件で待っても、遷移が起きていなければ待てない** —— この 0 周の掃引が
  *     ファイル単位であることの限界でもある (寄せ終えた主張まで巻き込んで落ちる)。
- *   - `text-captured` / `text-with-message` —— 寄せられるが未着手。
+ *   - `text-captured` —— 文を `const t = text();` へ取ってから主張する形。
+ *     残り 1 本 (`investmentDemoMixOnScreen`) は marker ごとの注記を
+ *     3 画面 10 か所で読むので、錠を 1 つに決められない (未着手)。
+ *   - `text-with-message` —— **2026-09-21 (パス 382) に空になった。**
+ *     `expect(text(), '説明').toContain(…)` の第 2 引数は、寄せると落ちる ——
+ *     ので**待ちの label へ移す**。説明が要る主張はたいてい
+ *     「押しても画面が変わらない」で、それは*待ち切れなかったこと*として
+ *     現れるから、label に書けばいちばん要る場面で出る。
+ *     ★ ただし**この分類名は落ちる理由ではなかった**: `libraryCorruptContent` の
+ *     0 周の失敗は 5 件すべて `mountLibrary()` の側 (IndexedDB の一覧が
+ *     届く前に当てていた) で、第 2 引数とは無関係だった —— **台帳の `kind` は
+ *     見た形であって、測った原因ではない** (パス 380 の教訓の 2 度目)。
  *   - `attribute` / `hook-state` / `mock-call` —— **2026-09-21 (パス 381) に
  *     4 本とも寄せ終えて空になった。** 錠は画面の文でなくてよい ——
  *     属性を持つ行の数 (`tr[data-bs-row]`)・hook の戻り (`loading` / 上書きの件数)・
@@ -113,16 +124,6 @@ const LEDGER = [
     file: 'src/renderer/pages/__tests__/investmentDemoMixOnScreen.test.ts',
     kind: 'text-captured',
     why: '文を `const t = text();` へ取ってから主張する。読み直さないので待ちに渡せない',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/libraryCorruptContent.test.ts',
-    kind: 'text-with-message',
-    why: '`expect(text(), \'説明\').toContain(…)` —— 第 2 引数の説明を持つ形。寄せると説明が落ちるので、待ってから主張する 2 段にする (未着手)',
-  },
-  {
-    file: 'src/renderer/pages/__tests__/manualOverrideDisclosure.test.ts',
-    kind: 'text-captured',
-    why: '文を `const t = text();` へ取ってから主張する。加えてコピー操作の流し込みが 2 件',
   },
   {
     file: 'src/renderer/pages/__tests__/mutualFundsCostUnentered.test.ts',

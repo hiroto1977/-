@@ -30,6 +30,22 @@
  * 移行に失敗した控えの形)。なお `fake-indexeddb` は Blob 自体を保てないので、
  * 普通に `put()` した控えもこの層では「壊れている」になる —— それは代役の限界で、
  * `library.test.ts` の引き線が留めている。
+ *
+ * ## 待ちは回数ではなく条件で (2026-09-21 · パス 382)
+ *
+ * `audit:tick-sensitivity` の台帳はこのファイルを `text-with-message`
+ * (`expect(text(), '説明').toContain(…)` の形) と分類していたが、**それは
+ * 落ちる理由ではなかった**。周回数を 0 にして実測すると **5 件すべて**が
+ * `mountLibrary()` の側で落ちる —— IndexedDB の一覧が届く前に
+ * 行もボタンも無い状態で当てていたからで、`clickAttr` は
+ * 「ボタンが無い: data-library-download=broken」と**押す前に**死ぬ。
+ * 錠は `mountLibrary(waitFor)` が持ち、押した後に何を待つかは `it` ごとに
+ * 呼び手が決める (パス 378)。
+ *
+ * ★ **第 2 引数の説明は待ちの label へ移す。** 説明が要る主張はたいてい
+ * 「押しても画面が変わらない」で、それは**待ち切れなかったこと**として
+ * 現れる —— `settleUntil` の label に書けば、いちばん要る場面
+ * (時間切れ) でその説明が出る。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -37,6 +53,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetLibraryForTests } from '../../library/library';
+import { settleUntil, waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -56,14 +73,6 @@ beforeAll(() => {
 
 let container: HTMLDivElement;
 let root: Root | null = null;
-
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
 
 /** 素の IndexedDB へ控えを直接書く (`put()` を通らない経路 = 壊れた控えの再現)。 */
 async function writeRaw(records: readonly Record<string, unknown>[]): Promise<void> {
@@ -86,25 +95,34 @@ async function writeRaw(records: readonly Record<string, unknown>[]): Promise<vo
   db.close();
 }
 
-async function mountLibrary(): Promise<void> {
+const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
+
+/**
+ * 一覧を描いて、`waitFor` が出るまで待つ。
+ *
+ * 待つ物を引数で取るのは、**この `it` が真に見たい物**で待つため ——
+ * 行の名前で待てば、行と一緒に描かれるボタンの在否はそのまま主張に残せる
+ * (錠と主張を同じ物にすると、主張が待ちに飲み込まれる)。
+ */
+async function mountLibrary(waitFor: string): Promise<void> {
   const def = SERVICES.find((s) => s.id === 'library');
   if (!def) throw new Error('library service missing');
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await settle();
+  await waitForText(text, waitFor);
 }
 
-const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
-
+/** 押す。**押した後は待たない** —— 何が出るかは `it` ごとに違う。 */
 async function clickAttr(attr: string, id: string): Promise<void> {
-  const b = container.querySelector(`[${attr}="${id}"]`);
-  if (!(b instanceof HTMLElement)) throw new Error(`ボタンが無い: ${attr}=${id}`);
+  const b = await waitForElement<HTMLElement>(
+    () => container.querySelector<HTMLElement>(`[${attr}="${id}"]`),
+    `ボタン ${attr}=${id}`,
+  );
   await act(async () => {
     b.click();
   });
-  await settle();
 }
 
 beforeEach(async () => {
@@ -140,35 +158,50 @@ const BROKEN = {
   blob: { not: 'a blob' },
 };
 
+/** 壊れた控えの行。一覧が届いた印として、どの `it` もこれを錠にする。 */
+const ROW = '中身の壊れた書類.svg';
+const CORRUPT = '中身が取り出せません';
+
 describe('ライブラリ — 中身が取り出せない控え', () => {
   it('走査の的が在る (行とボタン 2 つ)', async () => {
     await writeRaw([BROKEN]);
-    await mountLibrary();
-    expect(text(), '壊れた控えの行が出ていない').toContain('中身の壊れた書類.svg');
+    // 行が出たことは `mountLibrary` の錠が持つ (待ちが落ちれば
+    // 「5000ms 待っても『"中身の壊れた書類.svg"が出る』にならなかった」と言う)。
+    await mountLibrary(ROW);
+    // ボタンは行と同じ描画で出るので、**在否はここで当てたまま**にする ——
+    // 錠を行にしておけば、ボタンを消す編集はこの 2 行が鳴らす。
     expect(container.querySelector('[data-library-download="broken"]')).not.toBeNull();
     expect(container.querySelector('[data-library-open="broken"]')).not.toBeNull();
   });
 
   it('★ ダウンロードを押すと「中身が取り出せません」と出る (無反応ではない)', async () => {
     await writeRaw([BROKEN]);
-    await mountLibrary();
-    expect(text(), '押す前から文が出ている (対照が成り立たない)').not.toContain('中身が取り出せません');
+    await mountLibrary(ROW);
+    expect(text(), '押す前から文が出ている (対照が成り立たない)').not.toContain(CORRUPT);
 
     await clickAttr('data-library-download', 'broken');
+    // ★ 説明は待ちの label へ —— 押しても変わらないなら、ここで
+    //   「5000ms 待っても『…が出る (押しても画面が変わらなければ落ちる)』」と落ちる。
+    await settleUntil(
+      () => text().includes(CORRUPT),
+      `「${CORRUPT}」が出る (押しても画面が変わらなければ落ちる)`,
+    );
     const t = text();
-    expect(t, '★ 押しても画面が何も変わりませんでした').toContain('中身が取り出せません');
     // 名前を挙げる —— どの行を消せばよいか分かる (パス 136: 保存した物は消せる道が要る)。
-    expect(t).toContain('中身の壊れた書類.svg');
+    expect(t).toContain(ROW);
     expect(t, '打ち手 (削除) を言っていない').toContain('削除');
   });
 
   it('★ 開くを押しても同じ 1 文が出る (双子で文面が割れない)', async () => {
     await writeRaw([BROKEN]);
-    await mountLibrary();
+    await mountLibrary(ROW);
     await clickAttr('data-library-open', 'broken');
+    await settleUntil(
+      () => text().includes(CORRUPT),
+      `「${CORRUPT}」が出る (開く側でも同じ 1 文になる)`,
+    );
     const t = text();
-    expect(t).toContain('中身が取り出せません');
-    expect(t).toContain('中身の壊れた書類.svg');
+    expect(t).toContain(ROW);
     // 「プレビューを生成できませんでした」ではない —— 壊れているのは控えであって、
     // 描き出しに失敗したのではない。理由が違うなら文も違う。
     expect(t, '壊れた控えを「プレビュー生成の失敗」と言っています').not.toContain(
@@ -178,7 +211,7 @@ describe('ライブラリ — 中身が取り出せない控え', () => {
 
   it('★ 壊れた控えは削除できる (出口が在る)', async () => {
     await writeRaw([BROKEN]);
-    await mountLibrary();
+    await mountLibrary(ROW);
     const del = container.querySelector('[data-library-delete="broken"]');
     expect(del, '削除ボタンが無い (消す道が無い)').not.toBeNull();
   });
@@ -187,7 +220,7 @@ describe('ライブラリ — 中身が取り出せない控え', () => {
     // 行を描いてから、画面の裏で控えを消す。ボタンは残っているので
     // 「削除済みの可能性」の枝に入る。
     await writeRaw([BROKEN]);
-    await mountLibrary();
+    await mountLibrary(ROW);
     await new Promise<void>((resolve, reject) => {
       const open = indexedDB.open('business-hub-library', 1);
       open.onsuccess = () => {
@@ -203,8 +236,11 @@ describe('ライブラリ — 中身が取り出せない控え', () => {
       open.onerror = () => reject(open.error);
     });
     await clickAttr('data-library-download', 'broken');
-    const t = text();
-    expect(t).toContain('ファイルが見つかりません');
-    expect(t, '消えている控えを「壊れている」と言っています').not.toContain('中身が取り出せません');
+    // 否定 (「壊れている」と言っていない) を見る前に、肯定の文を待つ (パス 377 の 2 段)。
+    await settleUntil(
+      () => text().includes('ファイルが見つかりません'),
+      '「ファイルが見つかりません」が出る (消えた控えの枝に入る)',
+    );
+    expect(text(), '消えている控えを「壊れている」と言っています').not.toContain(CORRUPT);
   });
 });

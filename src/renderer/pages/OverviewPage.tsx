@@ -81,6 +81,7 @@ import {
   applyManualOverrides,
   type ManualOverrideEntry,
 } from '../data/manualData';
+import { formatMetric } from '../data/overviewOverrides';
 import { verdictLabel, buildManagementScorecard, type ManagementScorecard } from '../../shared/managementScorecard';
 import { scorecardMetrics } from '../data/overviewScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
@@ -1111,21 +1112,52 @@ export function OverviewPage() {
         </Section>
       )}
 
-      {applied.staleDerived.length > 0 && (
-        <Section title="自動値のままの指標">
+      {/*
+        **断る条件は「上書きが在る」で、「古い指標が在る」ではない。**
+
+        2026-09-21 (パス 382) までここは `applied.staleDerived.length > 0` を門にして
+        いた。実測すると、上書きできる 45 欄のうち **28 欄は誰の計算元でもない**
+        (`derivedFrom` で参照されていない) ので、その 28 欄を手で置くと
+        `staleDerived` は空になり —— **画面はこの節ごと出さなかった**。
+        一方で書面 (`bankSubmission`) と経営レポート (`managementReport`) は
+        `manualOverrideNote` を `overridden.length > 0` で出すので **45 欄すべてで断る**。
+        つまり**画面の断りだけが、条件を取り違えて 28 欄で黙っていた** ——
+        たとえば営業利益率を手で置くと、画面の Tile は 37.5% を自動計算と
+        見分けられない形で出し、書面だけが「手で置いた数値です」と言っていた。
+        (`manualOverrideNote` の画面側の読み手は 2026-09-21 まで 0 件だった。)
+      */}
+      {applied.overridden.length > 0 && (
+        <Section title="手入力の上書き">
           <div
-            data-stale-derived
+            data-placed-overrides
             style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)' }}
           >
             <strong style={{ color: 'var(--warning)' }}>
-              手で置いた数値から計算される指標が、自動値のままです。
+              下の数値は手で置いたものです（自動計算を表示上だけ置き換えたもので、実績の累計ではありません）。
             </strong>
-            <div style={{ marginTop: 4 }}>{applied.staleDerived.map((d) => d.label).join(' / ')}</div>
             <div style={{ marginTop: 4 }}>
-              上書きは表示の置き換えであり、再計算はしません。必要なものは画面下の
-              「事業・数値の手入力」から併せて置いてください。
+              {applied.placed.map((p) => (
+                <div key={p.path} data-placed-override={p.path}>
+                  {`${p.label} ${formatMetric(p.value, p.unit)}`}
+                </div>
+              ))}
             </div>
           </div>
+          {applied.staleDerived.length > 0 && (
+            <div
+              data-stale-derived
+              style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)', marginTop: 10 }}
+            >
+              <strong style={{ color: 'var(--warning)' }}>
+                自動値のままの指標 — 手で置いた数値から計算される指標が、自動値のままです。
+              </strong>
+              <div style={{ marginTop: 4 }}>{applied.staleDerived.map((d) => d.label).join(' / ')}</div>
+              <div style={{ marginTop: 4 }}>
+                上書きは表示の置き換えであり、再計算はしません。必要なものは画面下の
+                「事業・数値の手入力」から併せて置いてください。
+              </div>
+            </div>
+          )}
         </Section>
       )}
 

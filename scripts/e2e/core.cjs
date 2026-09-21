@@ -180,7 +180,11 @@ async function desktopSuite(browser) {
   await page.getByPlaceholder('例: ニッセイ外国株式').fill('x');
   await page.getByPlaceholder('例: ニッセイ外国株式').fill('');
   const dblRows = page.locator('tbody tr', { hasText: 'E2E二度押し' });
-  ok((await dblRows.count()) === 1, `funds: ★ 追加ボタンのダブルクリックでも銘柄は 1 件 (実際 ${await dblRows.count()} 件)`);
+  // **数えるのは 1 度だけ。** 判定と文面で別々に数えると、その間に行が増減した
+  // とき**❌ の隣に期待どおりの値が刷られる** —— 読んだ人は製品を疑わず
+  // ゲートを疑う (「誤った理由で落ちる関門は、無いより悪い」)。実測でそれが起きた。
+  const dblRowCount = await dblRows.count();
+  ok(dblRowCount === 1, `funds: ★ 追加ボタンのダブルクリックでも銘柄は 1 件 (実際 ${dblRowCount} 件)`);
   while ((await dblRows.count()) > 0) {
     const before = await page.locator('tbody tr').count();
     await dblRows.first().locator('button', { hasText: '削除' }).click();
@@ -207,7 +211,8 @@ async function desktopSuite(browser) {
   // 2 度目の入力 (7 欄を埋める間に、旧版の 2 件目の保存が在れば終わっている)
   for (const [ph, v] of dupForm) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
   const dupRows = page.locator('tbody tr', { hasText: 'E2E重複' });
-  ok((await dupRows.count()) === 1, `KPI: ★ 追加ボタンのダブルクリックでも実績は 1 件 (実際 ${await dupRows.count()} 件)`);
+  const dupRowCount = await dupRows.count();
+  ok(dupRowCount === 1, `KPI: ★ 追加ボタンのダブルクリックでも実績は 1 件 (実際 ${dupRowCount} 件)`);
   await dupFormBox.getByRole('button', { name: '追加' }).first().click();
   await page.waitForFunction(() => document.body.textContent.includes('既に入力されています'), undefined, { timeout: 15000 });
   ok((await dupRows.count()) === 1, 'KPI: ★ 同じ期・事業の 2 件目は断られ、1 件のまま (訂正の案内つき)');
@@ -225,7 +230,8 @@ async function desktopSuite(browser) {
   await page.getByRole('button', { name: '招待', exact: true }).click();
   await page.waitForFunction(() => document.body.textContent.includes('既に登録されています'), undefined, { timeout: 15000 });
   const dupMembers = page.locator('tbody tr', { hasText: 'e2e-dup@example.com' });
-  ok((await dupMembers.count()) === 1, `team: ★ 同じメールアドレスの 2 度目は断られ、1 行のまま (実際 ${await dupMembers.count()} 行)`);
+  const dupMemberRows = await dupMembers.count();
+  ok(dupMemberRows === 1, `team: ★ 同じメールアドレスの 2 度目は断られ、1 行のまま (実際 ${dupMemberRows} 行)`);
   while ((await dupMembers.count()) > 0) {
     const before = await page.locator('tbody tr').count();
     await dupMembers.first().getByRole('button', { name: '削除' }).click();
@@ -243,8 +249,18 @@ async function desktopSuite(browser) {
   await page.getByRole('button', { name: '売上集計に記録', exact: true }).click();
   await page.waitForFunction(() => document.body.textContent.includes('既に売上集計に記録されています'), undefined, { timeout: 15000 });
   await gotoService(page, '#sales', 'input[placeholder="YYYY-MM-DD"]');
+  // **行が出るのを待ってから数える** (2026-09-21 · パス 382)。`gotoService` は
+  // 入力欄が在ることしか待たないが、記録した行が一覧に載るには保管層
+  // (IndexedDB) の往復が要る —— 待たずに数えると**まだ 0 行**を見る。
+  // 実測: このゲートはここで ❌ を出しながら文面には「実際 1 行」と刷っていた。
+  // 隣の funds / KPI は最初から `waitForSelector` で行を待っており、
+  // **画面をまたぐこの 1 本だけが待っていなかった** (母集団のうち 1 か所)。
+  // ★ 待つのは「1 行になること」ではなく「**1 行目が出ること**」 —— 2 行に
+  //   なる欠陥のとき「1 行になるまで待つ」と、2 行目が来る前に通ってしまう。
+  await page.waitForSelector('tbody tr:has-text("Shopify #E2E-DUP")', { timeout: 15000 });
   const dupOrders = page.locator('tbody tr', { hasText: 'Shopify #E2E-DUP' });
-  ok((await dupOrders.count()) === 1, `sales: ★ 同じ注文名の 2 度目は断られ、売上集計は 1 行のまま (実際 ${await dupOrders.count()} 行)`);
+  const dupOrderRows = await dupOrders.count();
+  ok(dupOrderRows === 1, `sales: ★ 同じ注文名の 2 度目は断られ、売上集計は 1 行のまま (実際 ${dupOrderRows} 行)`);
   while ((await dupOrders.count()) > 0) {
     const before = await page.locator('tbody tr').count();
     await dupOrders.first().getByRole('button', { name: '削除' }).click();
