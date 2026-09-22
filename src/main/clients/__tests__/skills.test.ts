@@ -975,9 +975,17 @@ describe('スキルの鍵と題 (パス 179)', () => {
     await fs.mkdir(root, { recursive: true });
     prevHome = process.env.HOME;
     process.env.HOME = home;
+    // **`os.homedir()` も差し替える** (2026-09-22 · パス 402)。skills.ts が読むのは
+    // `os.homedir()` であって `$HOME` ではない —— POSIX では前者が後者を返すので
+    // 普段は通るが、**モジュールの読み込み順が変わると通らない**。同じファイルの
+    // 他の 5 つの describe は最初から spy を置いており、ここだけが置いていなかった。
+    // 実測: 変異検査の dry run (全件を 1 度に走らせる) でこの describe だけが
+    // `skill "invoice" not found in ~/.claude/skills` で落ちていた。
+    vi.spyOn(os, 'homedir').mockReturnValue(home);
   });
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     if (prevHome === undefined) delete process.env.HOME;
     else process.env.HOME = prevHome;
     await fs.rm(home, { recursive: true, force: true });

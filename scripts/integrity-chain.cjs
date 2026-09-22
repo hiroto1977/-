@@ -466,6 +466,7 @@ const PROTECTED = [
   'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
   'src/shared/ollama.ts',                   // Ollama の接続先判定
+  'src/shared/versionOrder.ts',             // 版の順序 (プレリリース) — ollama.ts の CVE 判定が読む
 ];
 
 /**

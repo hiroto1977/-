@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 252
+- ブロック数: 254
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `17aa34be3fdcc87fb4689cc853a2e351ef8aaab7b0e8a8bf3a238bfc1a333d16`
-- 保護対象: 88 ファイル
+- 末尾(tip)ハッシュ: `fab34a09f75da08044bc362eb0ccad1d9b105092df2e0ab14c128acd8213dd6f`
+- 保護対象: 89 ファイル
 
 ## ブロック
 
@@ -265,6 +265,8 @@
 | 249 | `2271b65879a4c026` | `f1b6f5d32bf203ff` | `5b4b35d23c050a51` | update settings.json,integrity-chain.cjs |
 | 250 | `4214f066246f7aa3` | `5b4b35d23c050a51` | `f02b2ea3944ebd26` | update integrity-chain.cjs |
 | 251 | `c8100c9a08e21559` | `f02b2ea3944ebd26` | `17aa34be3fdcc87f` | update 00-project.mdc,10-boundaries.mdc,20-gates.mdc,30-conventions.mdc,integrity-chain.cjs |
+| 252 | `ff9eea1aa2624c70` | `17aa34be3fdcc87f` | `601c33c1e8dc731b` | update ollama.ts |
+| 253 | `6f5a37a33b4ffa5e` | `601c33c1e8dc731b` | `fab34a09f75da080` | update integrity-chain.cjs,versionOrder.ts |
 
 ## 保護対象ファイル
 
@@ -353,6 +355,7 @@
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`
+- `src/shared/versionOrder.ts`
 - `src/shared/writeFieldLimits.ts`
 - `vite.config.ts`
 - `vitest.config.ts`

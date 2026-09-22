@@ -47,9 +47,19 @@ describe('compareVersions', () => {
     expect(compareVersions('1', '1.0.0')).toBe(0);
     expect(compareVersions('1.2', '1.2.5')).toBe(-1);
   });
-  it('ignores -rc / -beta / + build tags (compares numeric prefix only)', () => {
-    expect(compareVersions('0.1.46-rc1', '0.1.46')).toBe(0);
+  it('ignores + build tags (semver §10: build metadata has no precedence)', () => {
     expect(compareVersions('0.1.46+sha.abc', '0.1.46')).toBe(0);
+  });
+  /**
+   * **2026-09-22 (パス 402) に主張を反転した。** この `it` の題名は
+   * "ignores -rc / -beta ... (compares numeric prefix only)" で、欠陥そのものを
+   * 仕様として留めていた (法則 `no-weakness-as-spec`)。同じ弱さが
+   * `src/shared/__tests__/ollama.test.ts` にもう 1 件在り、**写しの数だけ訂正が要った**。
+   * 実測と全文は `src/shared/__tests__/prereleaseVersionOrder.test.ts`。
+   */
+  it('★ prerelease sorts before its release (semver §11.3)', () => {
+    expect(compareVersions('0.1.46-rc1', '0.1.46')).toBe(-1);
+    expect(compareVersions('0.1.46', '0.1.46-rc1')).toBe(1);
   });
   it('treats non-numeric segments as 0', () => {
     expect(compareVersions('xxx', '0.0.0')).toBe(0);

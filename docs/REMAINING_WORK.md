@@ -21,6 +21,95 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 402 (2026-09-22) — Ollama の CVE 判定がプレリリースを剥がし、rc 版に「該当なし」と言っていた
+
+出荷物 **11,944,620 B / 3,357,139 B (両方 +1,188 B)** —— 順序の規則を持つ
+`shared/versionOrder.ts` (3 関数) と、原因を 3 つの面へ渡す `unsafeVersionTexts` の分。
+LITE の余裕は警告線まで **42,861 B**。
+
+### 見つけ方 —— 死んだコードを経由して、同名の export に着いた
+
+パス 400 が残した手がかり (「漏斗の呼び手を数えるのではなく、漏斗を持つ器の中を見る」) から
+**軸を作り直す filter** を探し、`cashForecast.seasonalIndices` が `history.filter` の後で
+`i % p` を使う (= 月の位相がずれる) のを見つけた。**が、それは呼び手 0 件の死んだ export** で、
+同じリポジトリの `salesAnalytics` が正しい形を持ち、その `linearTrend` の docblock は
+「残った点の**元インデックス**を x に使う」と理由まで書いている。
+そこで**同名の export** を走査したら 38 組出て、その 1 つが本命だった。
+
+### 実測 (2026-09-22 · 直す前)
+
+| 版 | 該当する勧告 | 黙った物 |
+| --- | ---: | --- |
+| `0.1.33` | 7 件 | —— |
+| **`0.1.34-rc1`** | **6 件** | **CVE-2024-37032 (critical・Probllama の RCE)** |
+| **`0.1.46-rc5`** | **2 件** | 2024 年の 4 件 |
+| **`0.17.1-rc1`** | **1 件** | **CVE-2026-7482 (CVSS 8.8)** |
+| **`0.31.2-rc1`** | `isVersionSafe` = **true** | 画面が「Up to date」 |
+
+台帳 8 件のうち `fixedIn` を持つ **7 件すべて**が、`fixedIn + '-rc1'` を名乗るだけで黙った。
+原因は `compareVersions` の `v.split('-')[0]` —— semver §11.3 が
+「プレリリースは対応する正式版より前」と決めている識別子を捨てていた。
+Ollama は `-rc` 付きのリリースを実際に公開し、`/api/version` はその文字列をそのまま返す。
+
+### 同じアプリが同じ問いに 2 通り答えていた
+
+`shared/updateCheck.ts` の `compareVersions` は**正しく**答えており、その docblock は
+「必要なのは『x.y.z の大小』と『プレリリースは正式版より古い』の 2 点だけ」と
+**この規則を名指ししている**。**弱い方が security の側に立っていた。**
+
+### 直し
+
+1. 順序の規則は `shared/versionOrder.ts` **ただ 1 つ**。`updateCheck` の私有の写しは消した。
+2. **数の読み方は共有しない** —— `updateCheck` は自分たちのタグを読むので厳格 (読めなければ null)、
+   `ollama` は第三者が名乗る任意の文字列を読むので読めない成分を 0 に倒して**必ず答えを出す**
+   (不明な版を「安全」と言わないための fail-closed)。揃えると片方が必ず緩む。
+3. **原因を選ぶのは 1 か所** (`unsafeVersionCause`)。順序は `isVersionSafe` と同じ。
+   パス 264 の「読めない / 古い」に **4 つ目の状態 `prerelease`** が加わる ——
+   `0.31.2-rc1` の利用者は「0.31.2 以上へ」を読んで自分は 0.31.2 だと思うので、
+   **番号と矛盾する主張には理由が要る**。
+4. **3 つの面 (札 / 1 行 / 全文) は 1 つの switch から返す** (`unsafeVersionTexts`)。
+   画面がそれを読むので `version === '' ? … : …` の写し 2 か所が消えた。
+
+正常な版の答えは 1 つも変わらない (`0.31.2` / `0.32.0-rc1` は safe・`''` は `unreadable`)。
+
+### 既存の検査 2 本が、この欠陥を題名ごと仕様として留めていた
+
+`プレリリース/ビルドタグは無視する` (shared) と
+`ignores -rc / -beta / + build tags (compares numeric prefix only)` (main)。
+**写しが 2 つ在ったので訂正も 2 回要った** (パス 362 の「訂正は写しの数だけ要る」)。
+
+### ゲートが 3 つ捕まえた
+
+1. 鎖の**閉包検査** —— 保護対象 `ollama.ts` が新しい `versionOrder.ts` を読むので、
+   **判定が保護の外へ出ていた** (保護対象 88 → **89**・block #252 / #253)。
+2. `lint:mutation-scope` —— 保護対象は変異検査に載せる (`mutate` 296 → **297**)。
+3. `verify:arch` の live metric 4 件。
+
+### 変異検査の dry run が落ち、原因は私の変更ではなかった
+
+`skills.test.ts` の 6 つの describe のうち **1 つだけが `os.homedir()` を差し替えず**
+`process.env.HOME` に頼っており、全件を 1 度に走らせると
+`skill "invoice" not found in ~/.claude/skills` で落ちた (単体では 79 件とも緑)。
+他の 5 つに揃えたら dry run が通り、`versionOrder.ts` は
+**100.00% (Killed 17 / 生存 0 / 未到達 0)**。
+
+### 閉じていない物 (測った)
+
+- `versionSafe` は 3 つの生産者が書くのに**画面の読み手が 0 件になった** ——
+  原因の判定が `version` から導くため。値は同じだが、今日この欄を読む面は無い。
+  消すなら型と 3 生産者と検査をまとめて動かす別パス。
+- `cashForecast.ts` の 8 つの export のうち**アプリが呼ぶのは 2 つだけ**で、
+  月の位相がずれる `seasonalIndices` はその死んだ 6 つの中に在る
+  (**罠であって生きた欠陥ではない** —— 配線した日に生きる)。
+- 同名の export **38 組**のうち、読んだのは `isLoopbackHostname` (意図的な差・
+  `loopbackChecks.test.ts` が既に留めている)・`compareVersions` (このパス)・
+  `residentialLandTaxableBase` (固定資産税と不動産取得税・**未読**) の 3 つ。
+
+### 自戒
+
+検査は緑なのに `typecheck` だけが 2 件捕まえた (`waitForElement` の型引数と第 2 引数の形)。
+vitest は型を剥がすので、**パス 373 が記録したのと同じ罠**である。
+
 ## パス 401 (2026-09-22) — 住宅ローン控除の「¥0」は法的結論なのに理由が無かった
 
 画面 ③ は `住宅ローン (所得税 ¥0 / 住民税 ¥0)` と刷るだけで理由を出さず、¥0 になる道は
@@ -27400,7 +27489,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **156** モジュール / 両ビルドが import **79** / うち否定で答えられる **37**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **157** モジュール / 両ビルドが import **80** / うち否定で答えられる **37**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |

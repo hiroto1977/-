@@ -230,9 +230,21 @@ describe('compareVersions / isVersionSafe', () => {
     expect(compareVersions('0.2.1', '0.2')).toBe(1);
   });
 
-  it('プレリリース/ビルドタグは無視する', () => {
-    expect(compareVersions('0.1.46-rc1', '0.1.46')).toBe(0);
+  it('ビルドタグは順序に関与しない (semver §10)', () => {
     expect(compareVersions('0.1.46+build9', '0.1.46')).toBe(0);
+  });
+
+  /**
+   * **2026-09-22 (パス 402) に主張を反転した。** この `it` は題名からして
+   * 「プレリリース/ビルドタグは無視する」で、`compareVersions('0.1.46-rc1','0.1.46')`
+   * が 0 であることを**仕様として留めていた** —— それが欠陥そのものである
+   * (法則 `no-weakness-as-spec`)。実測: 台帳 8 件のうち `fixedIn` を持つ 7 件が
+   * `fixedIn + '-rc1'` を名乗るだけで黙り、`isVersionSafe('0.31.2-rc1')` は true だった。
+   * 全文は `shared/__tests__/prereleaseVersionOrder.test.ts`。
+   */
+  it('★ プレリリースは対応する正式版より前 (semver §11.3)', () => {
+    expect(compareVersions('0.1.46-rc1', '0.1.46')).toBe(-1);
+    expect(compareVersions('0.1.46', '0.1.46-rc1')).toBe(1);
   });
 
   it('MIN_SAFE_VERSION 境界を含めて判定する', () => {

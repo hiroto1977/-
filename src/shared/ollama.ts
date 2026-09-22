@@ -53,6 +53,7 @@
  * 2024 年の 5 件は 2026-05-12 の監査 (docs/OLLAMA_SECURITY.md) で確認した値。
  */
 import { MAX_LOCAL_MODEL_ERROR_CHARS, redactForMessage } from './redact';
+import { prereleaseKey, splitVersionPrerelease } from './versionOrder';
 
 export interface OllamaAdvisory {
   readonly id: string;
@@ -352,20 +353,35 @@ export function isSafeModelName(name: unknown): name is string {
   return /^[a-z0-9][a-z0-9._:/-]{0,127}$/i.test(name);
 }
 
-/** semver 風の比較。-1 / 0 / +1 を返す (Array.sort と同じ規約)。 */
+/** 数の成分だけを読む。読めない成分は 0 (第三者が名乗る任意の文字列を相手にするので必ず答えを出す)。 */
+function versionNumbers(core: string): number[] {
+  return core.split('.').map((x) => {
+    const n = Number(x);
+    return Number.isFinite(n) ? n : 0;
+  });
+}
+
+/**
+ * semver 風の比較。-1 / 0 / +1 を返す (Array.sort と同じ規約)。
+ *
+ * **プレリリースは対応する正式版より前** (semver §11.3)。2026-09-22 (パス 402) まで
+ * ここは `v.split('-')[0]` で識別子を**捨てて**おり、`0.1.34-rc1` と `0.1.34` が
+ * 等しくなっていた。効くのは下流の 2 つで、どちらも安全側の判断である:
+ *
+ * - `applicableAdvisories` —— 実測で台帳 8 件のうち **7 件**が `fixedIn + '-rc1'`
+ *   を名乗るだけで黙った (CVE-2024-37032 critical の RCE を含む)。
+ * - `isVersionSafe` —— `isVersionSafe('0.31.2-rc1')` が **true** を返し、
+ *   画面の「Up to date」の帯が出ていた。
+ *
+ * 順序の規則は `shared/versionOrder.ts` **ただ 1 つ** —— `updateCheck.ts` が
+ * 同じ規則を正しく持っていたのに、こちらだけが持っていなかった。
+ * 数の読み方は共有しない (理由は versionOrder.ts の docblock)。
+ */
 export function compareVersions(a: string, b: string): number {
-  const parse = (v: string): number[] => {
-    // split は必ず 1 要素以上返すので [0] は常に存在する。オプショナル
-    // チェーンと ?? '' は型の narrowing 用で、実行時には到達しない。
-    // Stryker disable next-line OptionalChaining,StringLiteral
-    const clean = v.split('-')[0]?.split('+')[0] ?? '';
-    return clean.split('.').map((x) => {
-      const n = Number(x);
-      return Number.isFinite(n) ? n : 0;
-    });
-  };
-  const pa = parse(a);
-  const pb = parse(b);
+  const sa = splitVersionPrerelease(a);
+  const sb = splitVersionPrerelease(b);
+  const pa = versionNumbers(sa.core);
+  const pb = versionNumbers(sb.core);
   const len = Math.max(pa.length, pb.length);
   // Stryker disable next-line EqualityOperator
   for (let i = 0; i < len; i++) {
@@ -374,7 +390,26 @@ export function compareVersions(a: string, b: string): number {
     if (ai > bi) return 1;
     if (ai < bi) return -1;
   }
+  const ka = prereleaseKey(sa.prerelease);
+  const kb = prereleaseKey(sb.prerelease);
+  if (ka > kb) return 1;
+  if (ka < kb) return -1;
   return 0;
+}
+
+/**
+ * `version` がプレリリースで、**識別子を無視すれば `floor` 以上になる**場合に true。
+ *
+ * つまり「番号だけ読むと足りているように見えるのに、足りていない」状態。
+ * これは画面と警告文が**理由を述べなければならない唯一の状態**である ——
+ * `0.31.2-rc1` の利用者は「0.31.2 以上へ更新してください」を読んで、自分は
+ * 0.31.2 だと思う。パス 264 が同じファイルで「版が読めなかったことを『古い』と
+ * 言わない」と分けたのと同じ形で、**4 つ目の状態**にあたる。
+ */
+export function prereleaseIsBelowFloor(version: string, floor: string): boolean {
+  const { core, prerelease } = splitVersionPrerelease(version);
+  if (prerelease === null) return false;
+  return compareVersions(version, floor) < 0 && compareVersions(core, floor) >= 0;
 }
 
 /**
@@ -394,6 +429,61 @@ export function isVersionSafe(version: string): boolean {
     return false;
   }
   // Stryker restore BlockStatement,BooleanLiteral
+}
+
+/**
+ * `versionSafe` が false である**原因**。選ぶのはここ 1 か所で、順序は
+ * `isVersionSafe` の判定と同じ —— 別の順序だと「判定が使った理由」と
+ * 「画面が述べる理由」が食い違う (パス 388 の形)。
+ *
+ * - `unreadable`  —— 版が読めなかった (パス 264。「古い」と言わない)
+ * - `prerelease`  —— 番号だけ読めば足りているが、プレリリースなので足りない (パス 402)
+ * - `outdated`    —— 単純に古い
+ *
+ * 安全なら null。
+ */
+export type UnsafeVersionCause = 'unreadable' | 'prerelease' | 'outdated';
+
+export function unsafeVersionCause(version: string): UnsafeVersionCause | null {
+  if (!version || typeof version !== 'string') return 'unreadable';
+  if (isVersionSafe(version)) return null;
+  if (prereleaseIsBelowFloor(version, MIN_SAFE_VERSION)) return 'prerelease';
+  return 'outdated';
+}
+
+/** 原因を 3 つの面 (札 / 1 行 / 全文) へ。**switch は 1 つ** —— 面ごとに分けて書くと、
+ * 札は新しい原因を出しているのに文は古い原因のまま、という形が型の上で開く
+ * (パス 386 の `bepDisplay` が「値と理由を 1 つの判定から返す」のと同じ理由)。 */
+export interface UnsafeVersionTexts {
+  /** 帯の短い札。 */
+  readonly badge: string;
+  /** ボタンの隣に出す 1 行。 */
+  readonly short: string;
+  /** 全文 (tooltip)。 */
+  readonly note: string;
+}
+
+export function unsafeVersionTexts(cause: UnsafeVersionCause): UnsafeVersionTexts {
+  switch (cause) {
+    case 'unreadable':
+      return {
+        badge: 'Version unknown',
+        short: '⚠ バージョンを読み取れませんでした — 版を確認してください',
+        note: `バージョンを読み取れませんでした (/api/version の応答に version がありません)。最低 ${MIN_SAFE_VERSION} 以上か確認してください`,
+      };
+    case 'prerelease':
+      return {
+        badge: 'Pre-release — not the fixed build',
+        short: '⚠ プレリリース版で実行中 — 正式版へ更新してください',
+        note: `プレリリース版で実行中です。番号は ${MIN_SAFE_VERSION} 以上に見えますが、プレリリースは対応する正式版より前なので、修正が入っているとは限りません。正式版へ更新してください`,
+      };
+    case 'outdated':
+      return {
+        badge: 'Outdated — known CVEs',
+        short: '⚠ 古いバージョンで実行中 — アップグレード推奨',
+        note: `既知 CVE。最低 ${MIN_SAFE_VERSION} へ更新推奨`,
+      };
+  }
 }
 
 /** 台帳のうち、この版に当てはまる項目 (修正版が公表され、その版未満)。版が不明なら空。 */
@@ -720,10 +810,19 @@ export function buildWarnings(
   const warnings: string[] = [advisoryLedgerNotice(now, ledger)];
   const applicable = applicableAdvisories(version, ledger);
   if (applicable.length > 0) {
+    // **番号だけ読めば足りて見える版には、なぜ足りないかを言う** (パス 402)。
+    // これを言わないと `0.31.2-rc1` の利用者は「0.31.2 で修正・0.31.2 以上へ」を
+    // 読んで、自分は 0.31.2 だと思う —— 紙の上で矛盾した文になる。
+    const looksEnough = applicable.some(
+      (a) => a.fixedIn !== null && prereleaseIsBelowFloor(version, a.fixedIn),
+    );
     warnings.unshift(
       `検出された Ollama ${version} には既知の脆弱性 ${applicable.length} 件が当てはまります: ` +
         applicable.map((a) => `${a.id} (${a.summary}・${a.fixedIn} で修正)`).join(' / ') +
-        `。${MIN_SAFE_VERSION} 以上へ更新してください。`,
+        `。${MIN_SAFE_VERSION} 以上へ更新してください。` +
+        (looksEnough
+          ? 'プレリリースは対応する正式版より前なので、番号が同じでも修正が入っているとは限りません。'
+          : ''),
     );
   }
   return warnings;

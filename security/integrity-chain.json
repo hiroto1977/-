@@ -87,6 +87,7 @@
     "src/shared/tokenInput.ts",
     "src/shared/tokenResponse.ts",
     "src/shared/vaultToken.ts",
+    "src/shared/versionOrder.ts",
     "src/shared/writeFieldLimits.ts",
     "vite.config.ts",
     "vitest.config.ts"
@@ -2107,6 +2108,22 @@
       "leafCount": 88,
       "note": "update 00-project.mdc,10-boundaries.mdc,20-gates.mdc,30-conventions.mdc,integrity-chain.cjs",
       "hash": "17aa34be3fdcc87fb4689cc853a2e351ef8aaab7b0e8a8bf3a238bfc1a333d16"
+    },
+    {
+      "index": 252,
+      "prevHash": "17aa34be3fdcc87fb4689cc853a2e351ef8aaab7b0e8a8bf3a238bfc1a333d16",
+      "merkleRoot": "ff9eea1aa2624c708acc492090b03fd3afd9c4dc9fc0b16929343242d1993bef",
+      "leafCount": 88,
+      "note": "update ollama.ts",
+      "hash": "601c33c1e8dc731b52e87f03ece820a472edb3cfbf2a68e5f59b89e4b3e92cc7"
+    },
+    {
+      "index": 253,
+      "prevHash": "601c33c1e8dc731b52e87f03ece820a472edb3cfbf2a68e5f59b89e4b3e92cc7",
+      "merkleRoot": "6f5a37a33b4ffa5e5575453f87fbd80f540344ffd098b4459e8a74d38145e68b",
+      "leafCount": 89,
+      "note": "update integrity-chain.cjs,versionOrder.ts",
+      "hash": "fab34a09f75da08044bc362eb0ccad1d9b105092df2e0ab14c128acd8213dd6f"
     }
   ],
   "tipManifest": {
@@ -2127,7 +2144,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "79302d8229c985ec7940aa83e4c9e8fd3fa41784490e3076fb7be9f40a1bcf01",
+    "scripts/integrity-chain.cjs": "5ec7ce018fd3bc378d0cfd255bd14bfb3be362c4238b8dcb36b75e75d2d2403f",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
@@ -2186,7 +2203,7 @@
     "src/shared/httpLimits.ts": "fd03385ff7c5873d1d273d6f35aa8007cffad7ce36f57c25e0cfb67c714742bb",
     "src/shared/imageUrlGate.ts": "3a380023ab15c106574638f6b1b2420632b3df5377bf8744e51d59700ec6e43c",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
-    "src/shared/ollama.ts": "54fb23af95ca9cbde3f2dcd7252692fce5591479ce6d01c70ae1f31ec42caf53",
+    "src/shared/ollama.ts": "572758d190e6798ca73faddeb265ca9a1820ecae4e2fe84a82bf2102224305ca",
     "src/shared/privateTarget.ts": "c5429a2478187926ea84bc3f951bde96e7dde70122ffb7edb3525a67b1d489da",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",
@@ -2195,6 +2212,7 @@
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",
+    "src/shared/versionOrder.ts": "2a70283bc54f74023e9e4a6f002d2678440d9cfcffeb5ac60fc047ee8b604d37",
     "src/shared/writeFieldLimits.ts": "067e11979cea363286f440df77ffdb6baf3ec5cb8a07188801730abf4648d4e3",
     "vite.config.ts": "390b859eedad810d9e539adfd2c421fe37fc00a168f28e62d15a20fb7096dcd6",
     "vitest.config.ts": "082d5d607a48177918bdd841ca4592b861b2b1d0842005da0b8a6f0a4b42f900"

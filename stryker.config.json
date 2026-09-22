@@ -242,6 +242,7 @@
     "src/shared/mutualFundsMetrics.ts",
     "src/shared/num.ts",
     "src/shared/ollama.ts",
+    "src/shared/versionOrder.ts",
     "src/shared/parameters.ts",
     "src/shared/passwordStrength.ts",
     "src/shared/payroll.ts",

@@ -18,6 +18,8 @@ import {
   MAX_OLLAMA_PROMPT_CHARS,
   MAX_OLLAMA_SYSTEM_CHARS,
   isLoopbackHostname,
+  unsafeVersionCause,
+  unsafeVersionTexts,
   parseOllamaEndpoint,
 } from '../../shared/ollama';
 import type { ActionData } from '../../shared/actionData';
@@ -42,7 +44,14 @@ export function OllamaPage() {
     // (「つながっているのか」がこのページの主目的)。
     { autoFetch: true },
   );
-  const { running, version, versionSafe, versionMinRecommended, models, warnings } = data;
+  const { running, version, models, warnings } = data;
+  /**
+   * `versionSafe` が false である原因を **1 度だけ**導く (パス 402)。
+   * 面ごとに `version === '' ? … : …` と書き分けていた頃は、原因が 1 つ増えた日に
+   * **片方の面だけが古い分け方のまま**になる形だった (下の 2 か所がその写しだった)。
+   */
+  const versionCause = unsafeVersionCause(version);
+  const versionTexts = versionCause === null ? null : unsafeVersionTexts(versionCause);
 
   const modelOptions = useMemo(() => models.map((m) => m.name), [models]);
 
@@ -103,20 +112,18 @@ export function OllamaPage() {
                   * (バッジは出る) が、理由は事実に合わせる: 既知 CVE が在ると
                   * 分かったのではなく、**版が分からない**のである。
                   */}
-                {!versionSafe ? (
+                {versionTexts !== null ? (
                   <span
                     className="badge warn"
                     style={{ marginLeft: 8 }}
-                    title={
-                      version === ''
-                        ? `バージョンを読み取れませんでした (/api/version の応答に version がありません)。最低 ${versionMinRecommended} 以上か確認してください`
-                        : `既知 CVE。最低 ${versionMinRecommended} へ更新推奨`
-                    }
+                    title={versionTexts.note}
+                    data-version-badge
+                    data-version-cause={versionCause}
                   >
-                    {version === '' ? 'Version unknown' : 'Outdated — known CVEs'}
+                    {versionTexts.badge}
                   </span>
                 ) : (
-                  <span className="badge ok" style={{ marginLeft: 8 }}>
+                  <span className="badge ok" style={{ marginLeft: 8 }} data-version-badge>
                     Up to date
                   </span>
                 )}
@@ -226,11 +233,12 @@ export function OllamaPage() {
                   {errMsg}
                 </span>
               ) : null}
-              {!versionSafe ? (
-                <span style={{ color: 'var(--warning)', fontSize: 12, alignSelf: 'center' }}>
-                  {version === ''
-                    ? '⚠ バージョンを読み取れませんでした — 版を確認してください'
-                    : '⚠ 古いバージョンで実行中 — アップグレード推奨'}
+              {versionTexts !== null ? (
+                <span
+                  style={{ color: 'var(--warning)', fontSize: 12, alignSelf: 'center' }}
+                  title={versionTexts.note}
+                >
+                  {versionTexts.short}
                 </span>
               ) : null}
             </div>

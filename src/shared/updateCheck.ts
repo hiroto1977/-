@@ -22,11 +22,15 @@
  * `semver` を依存に足さないのは、必要なのが「x.y.z の大小」と
  * 「プレリリースは正式版より古い」の 2 点だけで、そこは 30 行で書けるうえ、
  * **更新経路に依存を足すこと自体がリスク**だからである。
+ *
+ * そのうち後者 (順序の規則) は `shared/versionOrder.ts` が 1 つだけ持つ ——
+ * 2026-09-22 (パス 402) まで `shared/ollama.ts` が同じ問いに**別の答え**を
+ * 出しており、そちらは既知の脆弱性の台帳と突き合わせる側だった。
  */
 
+import { prereleaseKey } from './versionOrder';
+
 /** 版の表記。`v` 接頭辞は許す (GitHub のタグは `v0.1.0` の形)。 */
-
-
 export interface ParsedVersion {
   readonly major: number;
   readonly minor: number;
@@ -68,16 +72,6 @@ function cmp3(a: number | string, b: number | string): number {
   return 0;
 }
 
-/**
- * プレリリース識別子の比較キー。
- *
- * 正式版 (prerelease なし) は**どのプレリリースより後**に来る (0.2.0-beta < 0.2.0)。
- * 版の正規表現は `[0-9A-Za-z.-]` しか通さないので、そこに現れない U+FFFF を
- * 正式版のキーにすれば、辞書順の比較 1 本で順序が付く。
- */
-function prereleaseKey(prerelease: string | null): string {
-  return prerelease === null ? '\uFFFF' : prerelease;
-}
 
 /**
  * 版の大小。`a` が新しければ 1、古ければ -1、同じなら 0。
