@@ -18,7 +18,7 @@ import { isCalendarMonth } from '../../shared/isoDate';
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
-import { duplicateActualsSheetNote, isValidPeriod, unreadablePeriodSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
+import { duplicateActualsSheetNote, isValidPeriod, noBepSheetNote, unreadablePeriodSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import { duplicateMembersSheetNote } from './members';
 import { duplicateOrdersSheetNote } from './sales';
 import { dealIntakeSheetNote } from '../../shared/freeeIntake';
@@ -332,12 +332,18 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    */
   const sectionOneCaption = (): string | null => {
     if (!has) return 'KPI 実績が未入力のため算定していません。';
-    // 断り書きは 4 つまで並ぶ: 対象期間 (パス 34) → 売上 0 の理由 (パス 52) →
-    // 同じ期・事業の重複 = 合算値 (パス 124) → 期が読めず除いた件数 (パス 225)。
-    // 画面の警告と同じ事実を、相手に渡る面でも言う。
+    // 断り書きは 5 つまで並ぶ: 対象期間 (パス 34) → 売上 0 の理由 (パス 52) →
+    // **損益分岐点が存在しない理由 (パス 387)** → 同じ期・事業の重複 = 合算値 (パス 124)
+    // → 期が読めず除いた件数 (パス 225)。画面の警告と同じ事実を、相手に渡る面でも言う。
+    //
+    // ★ 損益分岐点の行は 2026-09-22 まで理由なしで `―` を出していた —— 同じ状態を
+    // 経営レポートは critical の所見として述べ、画面は `bepDisplay` が `—` + 理由で
+    // 述べるのに、**相手に渡るこの書面だけが黙っていた** (`noBepSheetNote` に実測)。
+    // 売上 0 のときは `zeroRevenueRatioNote` のほうが情報量が多いので出さない。
     const parts = [
       periodScopeNote(p.fiscalYearEnd, o.kpi.periods, f),
       k.revenue > 0 ? null : zeroRevenueRatioNote(),
+      k.revenue > 0 ? noBepSheetNote(k.bep) : null,
       duplicateActualsSheetNote(k.duplicateActuals),
       unreadablePeriodSheetNote(k.unreadablePeriods),
     ].filter((s): s is string => s !== null);
@@ -674,7 +680,12 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   if (h !== null) {
     sections.push({
       title: '参考：水耕栽培事業の試算（計画値・実績ではありません）',
-      caption: '設備・品目・費用の入力から算出した計画値です。上の各節の実績とは混ぜていません。',
+      // この節も「損益分岐点売上高（月）」を持つので、**同じ書面の中で答え方を割らない**
+      // (単価が株あたり変動費以下なら計画の損益分岐点も存在しない・パス 84 / 387)。
+      caption: [
+        '設備・品目・費用の入力から算出した計画値です。上の各節の実績とは混ぜていません。',
+        noBepSheetNote(h.bep),
+      ].filter((x): x is string => x !== null).join(''),
       rows: [
         row('月商（計画）', amt(h.revenue)),
         row('営業利益（計画）', amt(h.operatingProfit)),
