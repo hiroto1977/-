@@ -5,7 +5,7 @@ import {
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import {
   JIRA_ISSUE_PATH,
   basicAuthorization,
@@ -98,10 +98,24 @@ export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<Atlassi
       },
     ],
     jiraProjects: objectRows<JiraProject>(projects.values).map((p) => ({
-      key: p.key,
-      name: p.name,
-      projectTypeKey: p.projectTypeKey,
-      style: p.style,
+      /*
+       * **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+       *
+       * 実測 (直す前・実物の `fetchAtlassianSnapshot` に食わせる): この 4 欄に
+       * 200,000 字を入れると `AtlassianPage` の総文字数が **800,279 字**になった
+       * —— このパスで最大である。
+       *
+       * ★ **パス 409 / 413 / 414 が 3 度続けて「atlassian の一覧は振る舞いで
+       *   確かめていない」と残していた当の所** である。理由はどれも「資格情報の
+       *   関門に先に当たる」で、実際には `parseAtlassianToken` が要求するのは
+       *   `{email, token, site}` の JSON と **`https://` で始まる site** だけだった
+       *   —— 私の見本が `ex.atlassian.net` とスキーム無しで書かれていたために
+       *   3 パス続けて測れていなかった。**測れなかったのではなく、当てていなかった。**
+       */
+      key: displayField(p.key),
+      name: displayField(p.name),
+      projectTypeKey: displayField(p.projectTypeKey),
+      style: displayField(p.style),
     })),
   };
 }

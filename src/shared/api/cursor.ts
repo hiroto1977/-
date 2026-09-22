@@ -18,7 +18,7 @@
  * 混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
  */
 
-import { finiteNumberOf } from '../apiResponse';
+import { displayField, finiteNumberOf } from '../apiResponse';
 import { finiteOrNull } from '../num';
 import { isoDateFromTimestamp } from '../isoDate';
 
@@ -284,10 +284,17 @@ export function usageWindow(now: number, days: number): { startDate: number; end
 
 /** members 応答を正規化する。 */
 export function normalizeMembers(body: unknown): CursorSection<CursorMember> {
+  /*
+   * **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+   *
+   * この正規化は **両ビルドが読む** (`shared/api/`) ので、天井もここに置けば
+   * 1 つで済む。実測 (直す前・見本の欄を長くして `CursorPage` を描く):
+   * 画面の総文字数が **+399,791 字**になった。
+   */
   return sectionOf(readRows<MembersRow>(body, 'teamMembers'), (m) => ({
-    name: m.name ?? '',
-    email: m.email ?? '',
-    role: m.role ?? '',
+    name: displayField(m.name),
+    email: displayField(m.email),
+    role: displayField(m.role),
   }));
 }
 
@@ -311,7 +318,7 @@ export function normalizeUsage(body: unknown): CursorSection<CursorUsageDay> {
         readNum(d.agentRequests),
         readNum(d.cmdkUsages),
       ]),
-      model: d.mostUsedModel ?? '',
+      model: displayField(d.mostUsedModel),
     };
   });
 }
@@ -332,9 +339,9 @@ export function normalizeSpend(
     const cents = Number.isFinite(r.spendCents) ? (r.spendCents as number) : null;
     if (cents === null) amountsUnreadable += 1;
     return {
-      name: r.name ?? '',
-      email: r.email ?? '',
-      role: r.role ?? '',
+      name: displayField(r.name),
+      email: displayField(r.email),
+      role: displayField(r.role),
       spendUsd: cents === null ? null : Math.round(cents) / 100,
       fastPremiumRequests: readNum(r.fastPremiumRequests),
       hardLimitUsd: Number.isFinite(r.hardLimitOverrideDollars)

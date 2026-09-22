@@ -1,5 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import {
   CALENDAR_CREATE_EVENT_PATH,
   GOOGLE_CALENDAR_API,
@@ -54,9 +54,12 @@ export async function fetchCalendarSnapshot(ctx: FetchContext): Promise<Calendar
 
   return {
     calendars: objectRows<CalListItem>(list.items).map((c) => ({
-      id: c.id,
-      summary: c.summary,
-      timeZone: c.timeZone,
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): カレンダー名と予定の件名に 200,000 字を入れると
+      // `CalendarPage` の総文字数が **400,946 字**になった。
+      id: displayField(c.id),
+      summary: displayField(c.summary),
+      timeZone: displayField(c.timeZone),
     })),
     events: objectRows<CalEvent>(events.items).map((e) => {
       /*
@@ -75,8 +78,8 @@ export async function fetchCalendarSnapshot(ctx: FetchContext): Promise<Calendar
       const dateTime = typeof start.dateTime === 'string' ? start.dateTime : '';
       const allDay = date !== '';
       return {
-        id: e.id,
-        summary: e.summary ?? '（タイトルなし）',
+        id: displayField(e.id),
+        summary: displayField(e.summary) || '（タイトルなし）',
         startDate: allDay ? date : dateTime,
         allDay,
       };

@@ -1,6 +1,7 @@
 import { jsonFetch, type FetchContext } from './types';
 import { NO_DEAL_INTAKE, type FreeeDealIntake } from '../../shared/freeeIntake';
 import { isoMonthOf } from '../../shared/isoDate';
+import { displayField } from '../../shared/apiResponse';
 
 /**
  * freee 会計 API 連携クライアント (実 API)。
@@ -190,7 +191,10 @@ export async function fetchFreeeSnapshot(ctx: FetchContext): Promise<FreeeSnapsh
   // Stryker disable next-line ArrayDeclaration
   const aggregated = aggregateDeals(deals.deals ?? []);
   return {
-    companyName: company.display_name ?? company.name ?? '',
+    // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+    // 実測 (直す前): 事業所名に 200,000 字を入れると `FreeePage` の
+    // 総文字数が **200,315 字**になった (`StatusBar` の who 行に素で載る)。
+    companyName: displayField(company.display_name ?? company.name),
     monthly: aggregated.monthly,
     intake: aggregated.intake,
     fetchedAt: new Date().toISOString(),

@@ -1,6 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { displayDateOf } from '../../shared/isoDate';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import { DRIVE_CREATE_FOLDER_PATH, GOOGLE_DRIVE_API, checkDriveFolder, driveFolderInit, parseCreatedDriveFolder } from '../../shared/api/google';
 import type { ActionData } from '../../shared/actionData';
 
@@ -41,9 +41,13 @@ export async function fetchDriveSnapshot(ctx: FetchContext): Promise<DriveSnapsh
 
   return {
     files: objectRows<DriveFile>(data.files).map((f) => ({
-      id: f.id,
-      title: f.name,
-      mimeType: f.mimeType,
+      id: displayField(f.id),
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): ファイル名と MIME 型に 200,000 字を入れると
+      // `DrivePage` の総文字数が **400,909 字**になった (MIME 型は
+      // `TYPE_LABEL` に無ければ**そのまま**画面の meta 行へ出る)。
+      title: displayField(f.name),
+      mimeType: displayField(f.mimeType),
       // **日付として読めるかで決める** (2026-09-22 · パス 410)。パス 409 は投げない
       // ようにしただけで `slice(0, 10)` を据え置いていた —— 読み手は 1 つ
       // (`displayDateOf`) で、読めなければ `null` を返して画面が理由を言う。

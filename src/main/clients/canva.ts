@@ -1,5 +1,5 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { objectRows, optionalString } from '../../shared/apiResponse';
+import { displayField, objectRows, optionalString } from '../../shared/apiResponse';
 import { CANVA_API, CANVA_FOLDERS_PATH, canvaFolderInit, checkFolder, parseCreatedFolder } from '../../shared/api/canva';
 import type { ActionData } from '../../shared/actionData';
 
@@ -68,10 +68,14 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
   ]);
 
   return {
-    brandKits: objectRows<CanvaBrandKit>(brandKitsRes.items).map((b) => ({ id: b.id })),
+    brandKits: objectRows<CanvaBrandKit>(brandKitsRes.items).map((b) => ({ id: displayField(b.id) })),
     designs: objectRows<CanvaDesign>(designsRes.items).slice(0, 12).map((d) => ({
-      id: d.id,
-      title: d.title ?? '(無題のデザイン)',
+      id: displayField(d.id),
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): デザイン名に 200,000 字を入れると `CanvaPage` の
+      // 総文字数が **200,181 字**になった (パス 410 はこの欄の**型**を直したが、
+      // **長さ**は据え置かれていた)。
+      title: displayField(d.title) || '(無題のデザイン)',
       updatedAt: d.updated_at ?? 0,
       pageCount: d.page_count ?? 1,
       /*

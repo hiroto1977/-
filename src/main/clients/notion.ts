@@ -1,6 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { displayDateOf } from '../../shared/isoDate';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import { readArrayField } from '../../shared/apiResponse';
 import { NOTION_API, NOTION_PAGES_PATH, checkPage, notionPageInit, parseCreatedPage } from '../../shared/api/notion';
 import type { ActionData } from '../../shared/actionData';
@@ -78,11 +78,14 @@ export async function fetchNotionSnapshot(ctx: FetchContext): Promise<NotionSnap
    * 日付が数だと `NotionPage:85` の `p.lastEditedTime.slice` が**描画で投げた**。
    */
   const pages = objectRows<NotionPage>(list.rows).map((p) => ({
-    id: p.id,
-    title: extractTitle(p),
+    id: displayField(p.id),
+    // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+    // 実測 (直す前): 頁の題名に 200,000 字を入れると `NotionPage` の
+    // 総文字数が **200,089 字**になった。
+    title: displayField(extractTitle(p)),
     url: p.url,
     lastEditedTime: displayDateOf(p.last_edited_time),
-    kind: p.object,
+    kind: displayField(p.object),
   }));
 
   return {

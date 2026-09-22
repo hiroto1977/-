@@ -1,5 +1,5 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import {
   SLACK_API,
   SLACK_POST_MESSAGE_PATH,
@@ -85,9 +85,12 @@ export async function fetchSlackSnapshot(ctx: FetchContext): Promise<SlackSnapsh
 
   return {
     channels: objectRows<SlackChannel>(convoRes.channels).map((c) => ({
-      id: c.id,
-      name: c.name,
-      purpose: c.purpose?.value || c.topic?.value || '',
+      id: displayField(c.id),
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): チャンネル名と purpose に 200,000 字を入れると
+      // `SlackPage` の総文字数が **400,313 字**になった。
+      name: displayField(c.name),
+      purpose: displayField(c.purpose?.value || c.topic?.value),
       isArchived: c.is_archived,
       permalink: buildChannelPermalink(c.id, workspaceDomain),
     })),

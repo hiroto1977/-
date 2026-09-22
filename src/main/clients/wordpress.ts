@@ -1,6 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { displayDateOf } from '../../shared/isoDate';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import { WORDPRESS_API, checkPost, parseCreatedPost, wordpressPostInit, wordpressPostsPath } from '../../shared/api/wordpress';
 import type { ActionData } from '../../shared/actionData';
 
@@ -59,8 +59,11 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
   return {
     sites: objectRows<WpSite>(data.sites).map((s) => ({
       blogId: s.ID,
-      name: s.name,
-      description: s.description,
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): サイト名と説明に 200,000 字を入れると
+      // `WordPressPage` の総文字数が **200,291 字**になった。
+      name: displayField(s.name),
+      description: displayField(s.description),
       url: s.URL,
       platform: s.jetpack ? 'jetpack' : 'simple',
       status: s.is_private ? 'private' : 'active',

@@ -1,5 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import { localIsoDate } from '../../shared/localDate';
 import { GMAIL_API, GMAIL_DRAFTS_PATH, checkGmailDraft, gmailDraftInit, parseCreatedDraft } from '../../shared/api/google';
 import type { ActionData } from '../../shared/actionData';
@@ -70,9 +70,13 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
       // 受信日は利用者の時計で (UTC の日付だと日本の朝の受信が前日に見える)。
       const date = localIsoDate(new Date(Number(m.internalDate)));
       return {
-        id: m.threadId,
-        sender: headerValue(m, 'From'),
-        subject: headerValue(m, 'Subject') || '(件名なし)',
+        // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+        // 実測 (直す前): 差出人と件名に 200,000 字を入れると `GmailPage` の
+        // 総文字数が **401,170 字**になった。差出人は**メールを送れる誰でも**
+        // 決められる欄である。
+        id: displayField(m.threadId),
+        sender: displayField(headerValue(m, 'From')),
+        subject: displayField(headerValue(m, 'Subject')) || '(件名なし)',
         date,
       };
     }),

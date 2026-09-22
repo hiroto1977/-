@@ -1,5 +1,5 @@
 import { jsonFetch, type FetchContext } from './types';
-import { finiteNumberOf, objectRows } from '../../shared/apiResponse';
+import { displayField, finiteNumberOf, objectRows } from '../../shared/apiResponse';
 
 /**
  * BASE (thebase.com) — ネットショップ作成 EC プラットフォーム連携。
@@ -44,8 +44,11 @@ export async function fetchBaseSnapshot(ctx: FetchContext): Promise<BaseSnapshot
 
   return {
     items: objectRows<BaseApiItem>(data.items).map((it) => ({
-      id: String(it.item_id),
-      name: it.title,
+      id: displayField(String(it.item_id)),
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): 商品名に 200,000 字を入れると `BasePage` の
+      // 総文字数が **200,050 字**になった。
+      name: displayField(it.title),
       // 数として読めなければ `null` —— **0 に倒さない** (「¥0 の商品」「在庫切れ」
       // という嘘になり、壊れていることが画面から消える · パス 395 / 408)。
       price: finiteNumberOf(it.price),
