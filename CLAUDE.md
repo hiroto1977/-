@@ -28,7 +28,15 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.38 MiB full / 3.19 MiB `build:web:lite` mobile variant — **2026-09-22 パス 395 後の計測: 11,940,266 B / 3,352,785 B (両方 +1,398 B** —— 空欄の理由 3 文 (`noSalesRecordsSheetNote` / `noSalesRecordsNote` / `growthBlankSheetNote`) と `sales.hasData` の 1 欄・整形を通す `sv` / `salesValue` の 2 つ・画面の `<p>` 1 つの分。**増分の大半は日本語の文**で、docblock は最小化で落ちる。`renderer/data/` と `renderer/pages/` は両ビルドが読むので LITE も同じだけ増える。**金融機関等提出用の書面が、未入力の販売記録を「売上高 0・受注件数 0件」と事実として刷っていた。** パス 388 が「閉じていない物 (測った)」として残した 1 行 (「書面の `zeroRevenueRatioNote` が名指しするのは 8 つの**比率**で `損益分岐点売上高` は入っていない」) を閉じに行き、同じ節を測って**3 件出た**。実測 (2026-09-22):
+   file (実測 11.38 MiB full / 3.19 MiB `build:web:lite` mobile variant — **2026-09-22 パス 396 / 397 後も 11,940,266 B / 3,352,785 B で byte 単位で不変** (直したのは `scripts/` と `__tests__/` と `src/shared/ontology/` だけ —— **どれも出荷物に入らない** (オントロジーを読むのは検査と生成 script だけなので tree-shaking で丸ごと落ちる)。両方を組んで実測した。**実機 e2e に 30 秒ちょうどの sleep が 1 件あり、それは「待ち」と書かれていた。** パス 393 の揺れ (`TimeoutError`・連鎖の中で 1 度だけ) は忠実な条件での **4 反復すべてで 再現しなかった** ので、「落ちるのを待つ」のをやめて**待ちごとの 実測 ÷ 制限**を測る道具 (`npm run audit:e2e-wait-margin`・**定期点検の道具 5 本目**) を作った —— 時間切れは「いちばん余裕の無い待ち」から順に起きるので、**どちらに転んでも結論が出る**。★ **母集団を 2 度広げ、広げた回に欠陥が出た** (実測):
+
+| 回 | 包んだ物 | 報告した最大 |
+| --- | --- | ---: |
+| 1 | `page.waitFor*` の 3 つ | 13.5% |
+| 2 | + `page.goto` / `click` / `fill` (この 3 つも自動で待ち、**既定 30 秒**) | 13.5% |
+| 3 | **+ Locator の action** | **100.0%** ← 欠陥が出た |
+
+`talent :: waitFor@locator(div)>filter>first` が **30,004 ms / 制限 30,000 ms** ——`page.locator('div').filter({ hasText: /^営業$/ })` は `営業` が `<input>` の**値**であってどの `div` の textContent でもないため**永久に 0 件**で、`.catch(() => {})` が時間切れを飲み、**次の行に主張が無い**ので実体は **30 秒の sleep** だった (FULL と LITE で毎回・連鎖 1 回あたり **60 秒**)。検査が通っていたのは次行の `check()` が自分で待つからで、**通っていた理由が書かれていた理由と違った**。★ **page だけ包むと半分以上が映らない** —— 実測で `.click(` は **135 か所のうち 117 が `page.` 以外** (`.fill(` は 121 / 107) で、ほぼ全部が `page.getByRole(…).click()` / `page.locator(…).first().click()` である。パス 334 / 368 / 369 と同じ家系。**直し**: 法則 `wait-for-condition-not-ticks` のとおり**条件で待つ** (`input[aria-label="申告 1 の部署名"]` の `value` が `営業` になること)。飲み込みもやめた ——**飲んでよいのは直後に絶対の主張が在るときだけ**で、同じファイルの theme の 1 件はその形。実測 talent suite は **36 秒 → 6 秒**・14 件とも通る。★ **#74 の答え**: 再現はしなかった —— 忠実な条件で **6 回** (完走 5 回 + LITE が鮮度の門で断られた 1 回)・**FULL 6 回 / LITE 5 回とも 455 ❌ 0**・ログに `TimeoutError` は 0 件。そのうえで **制限の 50% 以上を使う待ちは直した 1 件を除いて両ビルドとも 0 件** (母集団は待ち **1,146 回 / 種類 697**)。最も薄いのは `shell :: waitForFunction:fn` (**598〜674 ms / 5,000 ms = 12.0〜13.5%**) と `crossTabLock :: click@getByRole(button)` (**1,542〜3,766 ms / 30,000 ms = 5.1〜12.6%** ——実測で 2 倍以上揺れる唯一の待ち)。**個々の待ちが限界に近いという線は消えた**ので、次に同じ形が出たら見るのは起動・ハング・別プロセスとの奪い合いの側である (この 2 つは名前で記録した)。検査は `shared/__tests__/e2eWaitMargin.test.ts` (**17 件**) が① 畳み方の意味 (**最大**を残す・並びは割合) ② **飲み込んだ待ちの両方向の台帳** ③ **記録子の母集団の両方向** (runner が呼ぶ Locator のメソッドは測るか理由つきで免除) を留める。対照 **8 方向すべて鳴る**。★ **自戒 1: 対照 1 つが「鳴らなかった」が、当てていなかっただけだった** —— `sed` の錠を行頭 4 空白の `'boundingBox'` に置いたが実物の行はその前に 2 つ識別子が在り、**置換が 1 度も起きていなかった**。「落ちなかった」と「当てていなかった」を混ぜない。★ **自戒 2: 連鎖が走っている間に `src/` を編集し、鮮度の門が正しく LITE を断った** (`laws.ts` は材料なので `e2e:lite` が exit 2)。**門は正しく、破ったのは私の手順**である。★ **自戒 3: 「その形が無いこと」の主張が自分の注記に当たった** —— 直しの docblock は古い形を**引用して**いるので `codeOnly()` を通し、**その綴りが注記の中には在ること**も標本で留めた (法則 `mention-vs-declaration`)。**測って何も無かった軸も 2 つ記録した**: ① **IPC の境界** —— 引数を取る 10 ハンドラすべてが `unknown` を受けて絞っており (`shellTargetOrNull` は先頭で `typeof !== 'string'` を落とす)、`mainIpc.test.ts` 79 件が `__proto__` / `42` / 非文字列を実際に食わせる。② **パリティ検査 19 本** —— 法則 `parity-is-not-correctness` の機械化案として「絶対の主張が在るか」を測ったが **19 本すべてに在った** ので台帳は作らない(作っても 0 件の表が増えるだけ)。**出荷物が動いていないので実機を回す義務は無いが、e2e の runner 自身を直したので回した**: `perf` OK (LITE DCL 198 ms / heap 10.3 MB・FULL DCL 549 ms / heap 37 MB)・`e2e` **455 件 ❌ 0**・`e2e:lite` **455 件 ❌ 0**・組み直して **11,940,266 B / 3,352,785 B** を実測 (不変)。`typecheck` 緑・`verify:arch` のユニットテスト数を 15155 → 15172 へ (**今回も予想せず門に訊いた**))・**2026-09-22 パス 395 後の計測: 11,940,266 B / 3,352,785 B (両方 +1,398 B** —— 空欄の理由 3 文 (`noSalesRecordsSheetNote` / `noSalesRecordsNote` / `growthBlankSheetNote`) と `sales.hasData` の 1 欄・整形を通す `sv` / `salesValue` の 2 つ・画面の `<p>` 1 つの分。**増分の大半は日本語の文**で、docblock は最小化で落ちる。`renderer/data/` と `renderer/pages/` は両ビルドが読むので LITE も同じだけ増える。**金融機関等提出用の書面が、未入力の販売記録を「売上高 0・受注件数 0件」と事実として刷っていた。** パス 388 が「閉じていない物 (測った)」として残した 1 行 (「書面の `zeroRevenueRatioNote` が名指しするのは 8 つの**比率**で `損益分岐点売上高` は入っていない」) を閉じに行き、同じ節を測って**3 件出た**。実測 (2026-09-22):
 
 | 見つけ方 | 欠陥 |
 | --- | --- |
@@ -172,6 +180,22 @@ npm run audit:tick-sensitivity  # 固定回数で待つ検査が**その回数�
                          #   `expect(text()).toContain(…)` (HEAD で 67 ファイル / 363 か所) を
                          #   1 件も見ておらず、逆に条件で待った後の主張まで数えていた。
                          #   台帳の形は `tickSensitivityLedger.test.ts` が毎回の npm test で見る
+npm run audit:e2e-wait-margin   # e2e の待ちが**制限にどれだけ近いか** (実測 ÷ 制限) を測る
+                         #   (定期点検の道具 5 本目。CI では走らせない —— 落とさない道具で、
+                         #   薄い余裕は欠陥ではなく手がかりである)。記録子は
+                         #   `scripts/e2e/core.cjs` の `installWaitMarginRecorder` で、
+                         #   **`SERVICE_HUB_E2E_WAIT_MARGIN=<path>` が無ければ何もしない**
+                         #   (常時有効にすると全 suite に費用が乗り、落ちたときの stack に
+                         #   包みが挟まる)。捕るのは**連鎖の中で** ——
+                         #   `perf` → `SERVICE_HUB_E2E_WAIT_MARGIN=… npm run e2e` →
+                         #   同じく `e2e:lite` → `npm run audit:e2e-wait-margin -- <json> <json>`。
+                         #   **「再現」の代わりに使う** —— 時間切れは「いちばん余裕の無い待ち」
+                         #   から順に起きるので、落ちるのを待つ (1 反復 ≒ 15 分・外れたら何も
+                         #   分からない) 代わりに余裕を測れば**どちらに転んでも結論が出る**:
+                         #   制限の大半を使う待ちが在ればそれが容疑者 (直しは「制限を上げる」か
+                         #   「遅い原因を直す」に決まる)、どれも数 % なら**原因は待ちの側ではない**。
+                         #   畳むのは**最大**で、平均ではない (時間切れは最悪の 1 回で起きる)。
+                         #   2026-09-22 (パス 397) の実測は上の出荷物の節に在る
 npm run test:watch       # vitest watch mode
 npm run lint             # eslint . --max-warnings 0 (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
 npm run smoke            # xvfb + Electron screenshot smoke test of every page

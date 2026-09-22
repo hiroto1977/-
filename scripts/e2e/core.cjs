@@ -2813,7 +2813,29 @@ async function talentSuite(browser) {
   // 2 部署が同じ病を挙げる = 仕組みの問題、という判定が出るところまで通す。
   await page.getByRole('button', { name: '部署の申告を追加' }).click();
   await page.getByLabel('申告 1 の部署名').fill('営業');
-  await page.locator('div').filter({ hasText: /^営業$/ }).first().waitFor({ state: 'attached' }).catch(() => {});
+  /*
+   * **待つのは「打った値が制御された input に入ったこと」** (2026-09-22 · パス 397)。
+   *
+   * ここはそれまで
+   * `page.locator('div').filter({ hasText: /^営業$/ }).first()
+   *    .waitFor({ state: 'attached' }).catch(() => {})`
+   * だった。`営業` は `<input>` の**値**で、この時点でその文字を textContent に
+   * 持つ `div` は 1 つも無いので、この locator は**永久に 0 件**である。
+   * `.catch(() => {})` が時間切れを飲み、しかも次の行に主張が無いので、
+   * 実体は **30 秒ちょうどの sleep** だった —— 実測 **30,004 ms / 制限 30,000 ms**
+   * (FULL) ・**30,002 ms** (LITE) で、**毎回**ぴったり上限まで待っていた。
+   * `npm run audit:e2e-wait-margin` の母集団を Locator まで広げたその日に、
+   * **制限の 50% 以上を使う唯一の待ち**として出た (他はすべて 12.3% 以下)。
+   *
+   * 直しは法則 `wait-for-condition-not-ticks` のとおり**条件で待つ**。
+   * 飲み込みもやめる —— 飲んでよいのは**直後に絶対の主張が在る**ときだけで
+   * (同じファイルの theme の 1 件はその形)、ここには無かった。
+   */
+  await page.waitForFunction(
+    () => document.querySelector('input[aria-label="申告 1 の部署名"]')?.value === '営業',
+    undefined,
+    { timeout: 15000 },
+  );
   const firstCard = page.locator('input[aria-label="申告 1 の部署名"]').locator('xpath=../..');
   await firstCard.locator('label', { hasText: '職務定義の刷り込み誤認' }).locator('input').check();
 
@@ -3787,12 +3809,156 @@ async function hardResetSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * **待ちの余裕を測る** (`SERVICE_HUB_E2E_WAIT_MARGIN=<path>` のときだけ)。
+ *
+ * ## なぜ「再現」ではなく「余裕」を測るのか
+ *
+ * 2026-09-22 (パス 393) に `e2e` (FULL) が**連鎖の中で 1 度だけ** `TimeoutError` で
+ * 落ちた。単独で再走すると 455 件 ❌ 0 で、忠実な条件 (`perf → e2e → e2e:lite` を
+ * 続けて) でも **2 反復とも再現しなかった** (パス 395 / 396)。
+ * 反復で捕まえるのは費用が高く (1 回 ≒ 15 分)、外れたときに**何も分からない**。
+ *
+ * 時間切れは「いちばん余裕の無い待ち」から順に起きる。だから**落ちるのを待つ代わりに、
+ * 待ちごとの実測 ÷ 制限を測る** —— 12 秒かかる 15 秒の待ちが在れば、それが容疑者で
+ * あり、直しは「制限を上げる」か「遅い原因を直す」のどちらかに決まる。
+ * どの待ちも制限の数 % しか使っていないなら、**時間切れの原因は待ちの側ではない**と
+ * 言える (起動・ハング・別プロセスの奪い合いなど)。**どちらに転んでも結論が出る。**
+ *
+ * 母集団は**明示の待ちだけではない** (下の `WATCHED` にその理由)。
+ *
+ * 既定では**何もしない** —— 計測は page の 6 つのメソッドを包むので、常時有効に
+ * すると全 suite の実行にわずかな費用が乗るし、落ちたときの stack に包みが挟まる。
+ */
+/** いま走っている suite の名前 (待ちの余裕の記録を suite に帰属させるため)。 */
+let CURRENT_SUITE = '(boot)';
+
+function installWaitMarginRecorder(browser) {
+  const out = process.env.SERVICE_HUB_E2E_WAIT_MARGIN;
+  if (!out) return;
+  const rows = [];
+  const flush = () => {
+    try {
+      fs.writeFileSync(out, `${JSON.stringify(rows)}\n`);
+    } catch {
+      /* 計測の失敗で e2e を落とさない */
+    }
+  };
+  process.on('exit', flush);
+  // **既定の制限も記録する** (呼び手が省略したときは Playwright の既定 30000 が
+  // 効くので —— この runner は `setDefaultTimeout` を呼んでいない —— その数を
+  // 書いておかないと割合が計算できない)。
+  const DEFAULT_TIMEOUT_MS = 30000;
+  // 明示の待ちだけでは母集団が足りない。**`goto` / `click` / `fill` も時間切れを
+  // 投げる** —— Playwright はこの 3 つでも要素 (や読み込み) を自動で待ち、
+  // どれも既定 30 秒である。実測 (2026-09-22) で runner は
+  // `page.goto` 36 / `page.click` 18 / `page.fill` 14 か所を持ち、しかも
+  // **11 MB の file:// を読ませる `goto` は、奪い合いの下でいちばん遅くなりうる
+  // 操作**である。明示の待ちだけを測って「余裕は十分」と言うと、
+  // いちばん重い容疑者を母集団から外したことになる。
+  const WATCHED = ['waitForSelector', 'waitForFunction', 'waitForURL', 'goto', 'click', 'fill'];
+  /**
+   * **Locator の側も測る** —— ここを外すと母集団の半分以上が映らない。
+   *
+   * 実測 (2026-09-22 · この runner): `.click(` は **135 か所のうち 117 が
+   * `page.` 以外**で、ほぼ全部が `page.getByRole(…).click()` /
+   * `page.locator(…).first().click()` の形である (`.fill(` も 121 / 107)。
+   * Locator の action は**要素が操作可能になるまで自動で待ち**、既定は
+   * 30 秒 —— つまり「要素が出てこない」で時間切れになる本命がここに居る。
+   * page のメソッドだけ包んで「余裕は十分」と言うと、**数えなかった 220 の
+   * 操作について何も言っていない**ことになる (パス 334 / 368 と同じ形)。
+   *
+   * 包み方は Proxy で、**連鎖したら包み直す** (`.first()` / `.filter()` /
+   * `.locator()` / `.getByRole()` は新しい Locator を返す)。Locator かどうかは
+   * 名前ではなく**形** (`click` と `first` を関数として持つ) で見分ける ——
+   * 版が上がって名前が増えても追随する。
+   */
+  const LOC_FACTORIES = ['locator', 'getByRole', 'getByLabel', 'getByPlaceholder', 'getByText', 'getByTestId', 'getByTitle', 'getByAltText'];
+  // 自動で待つ Locator のメソッド。`count()` / `isVisible()` / `allTextContents()` /
+  // `evaluateAll()` は**待たない**ので入れない (入れると「0 ms の待ち」が母集団を
+  // 薄めて、割合の分母が意味を失う)。`evaluate()` は要素を待つので入れる ——
+  // 実物にも 5 か所在る (`shell` の算出スタイルの確認)。
+  // 一致は `shared/__tests__/e2eWaitMargin.test.ts` が**両方向**に留める。
+  const LOC_WAITS = new Set([
+    'click', 'dblclick', 'fill', 'check', 'uncheck', 'press', 'pressSequentially', 'type', 'hover',
+    'selectOption', 'selectText', 'setInputFiles', 'tap', 'focus', 'blur', 'dragTo',
+    'waitFor', 'scrollIntoViewIfNeeded', 'evaluate',
+    'textContent', 'innerText', 'innerHTML', 'inputValue', 'getAttribute', 'isChecked', 'isEnabled',
+    'isDisabled', 'isEditable', 'boundingBox', 'screenshot',
+  ]);
+  const looksLikeLocator = (v) => v !== null && typeof v === 'object'
+    && typeof v.click === 'function' && typeof v.first === 'function';
+  const timed = (fn, self, label) => async (...args) => {
+    const opts = args.find((a) => a && typeof a === 'object' && 'timeout' in a);
+    const limit = opts && typeof opts.timeout === 'number' ? opts.timeout : DEFAULT_TIMEOUT_MS;
+    const started = Date.now();
+    try {
+      return await fn.apply(self, args);
+    } finally {
+      rows.push({ suite: CURRENT_SUITE, what: label, ms: Date.now() - started, limit });
+    }
+  };
+  const wrapLocator = (loc, label) => new Proxy(loc, {
+    get(target, prop) {
+      const v = target[prop];
+      if (typeof v !== 'function') return v;
+      if (LOC_WAITS.has(prop)) return timed(v, target, `${String(prop)}@${label}`);
+      return (...args) => {
+        const r = v.apply(target, args);
+        // 連鎖は包み直す。**戻り値が Locator かを形で見る** ——
+        // `count()` は Promise を返すので通り抜ける (Promise に click は無い)。
+        return looksLikeLocator(r) ? wrapLocator(r, `${label}>${String(prop)}${args.length > 0 && typeof args[0] !== 'object' ? `(${String(args[0]).slice(0, 40)})` : ''}`) : r;
+      };
+    },
+  });
+  const wrap = (page) => {
+    for (const method of WATCHED) {
+      const orig = page[method];
+      if (typeof orig !== 'function') continue;
+      page[method] = async (...args) => {
+        const opts = args.find((a) => a && typeof a === 'object' && 'timeout' in a);
+        const limit = opts && typeof opts.timeout === 'number' ? opts.timeout : DEFAULT_TIMEOUT_MS;
+        const started = Date.now();
+        try {
+          return await orig.apply(page, args);
+        } finally {
+          const ms = Date.now() - started;
+          // 待った物の見分けは第 1 引数の綴り (関数なら 'fn')。長い式は切る。
+          // `goto` の引数は 11 MB の絶対パスなので**末尾の名前だけ**にする
+          // (`file:///…/standalone.html` が 1 行を埋めると表が読めない)。
+          const raw = typeof args[0] === 'string' ? args[0] : 'fn';
+          const what = `${method}:${method === 'goto' ? raw.split('/').pop() : raw.slice(0, 80)}`;
+          rows.push({ suite: CURRENT_SUITE, what, ms, limit });
+        }
+      };
+    }
+    for (const factory of LOC_FACTORIES) {
+      const orig = page[factory];
+      if (typeof orig !== 'function') continue;
+      page[factory] = (...args) => {
+        const loc = orig.apply(page, args);
+        const arg0 = typeof args[0] === 'string' ? args[0].slice(0, 50) : String(args[0] ?? '');
+        return looksLikeLocator(loc) ? wrapLocator(loc, `${factory}(${arg0})`) : loc;
+      };
+    }
+    return page;
+  };
+  const origNewContext = browser.newContext.bind(browser);
+  browser.newContext = async (...a) => {
+    const ctx = await origNewContext(...a);
+    const origNewPage = ctx.newPage.bind(ctx);
+    ctx.newPage = async (...b) => wrap(await origNewPage(...b));
+    return ctx;
+  };
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
     ...(EXEC ? { executablePath: EXEC } : {}),
     args: ['--no-sandbox'],
   });
+  installWaitMarginRecorder(browser);
   // `SERVICE_HUB_E2E_ONLY=dataOrigin,manualData` で一部だけ流す。
   // 目的は対照実験 — 「本体を壊したらこの検査が実際に落ちるのか」を確かめる時、
   // 全 suite (数分) を回さずに済む。既定 (未設定) は全 suite。
@@ -3887,6 +4053,7 @@ async function hardResetSuite(browser) {
     if (!run(name)) continue;
     const floor = floorOf(measured);
     const before = checks;
+    CURRENT_SUITE = name;
     await suite(browser);
     const ran = checks - before;
     console.log(`  (${name}: ${ran} 件)`);

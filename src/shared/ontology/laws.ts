@@ -151,13 +151,32 @@ export const LAWS: readonly Law[] = [
       + '「**この主張は settle の回数に依っているか**」で、それは**回数を 0 にして走らせれば'
       + '直接答えが出る** (`npm run audit:tick-sensitivity`)。実測 109 本中 **31 本**が 0 周で落ち、'
       + 'その内訳は store の往復・要素の在否・操作の流し込みなど「依って当たり前」の物を含む ——'
-      + 'だから門ではなく**理由つきの台帳を持つ定期点検の道具**にした。',
-    provenance: ['パス 169 (共有の待ち)', 'パス 368 (3 件目と母集団)', 'パス 369 (針の訂正と振る舞いでの測定)'],
+      + 'だから門ではなく**理由つきの台帳を持つ定期点検の道具**にした。'
+      + '**同じ法則は実機 (Playwright) の側にも当たる (パス 397)** —— あちらの待ちは'
+      + '条件で書かれているが、*その条件が成り立ち得ない*ことは綴りからは分からない。'
+      + '実測: `talent` の `page.locator(\'div\').filter({ hasText: /^営業$/ }).first()'
+      + '.waitFor({ state: \'attached\' }).catch(() => {})` は、`営業` が `<input>` の**値**で'
+      + 'あってどの `div` の textContent でもないため**永久に 0 件**で、'
+      + '**30,004 ms / 制限 30,000 ms を毎回** (FULL・LITE とも) 使っていた ——'
+      + '実体は 30 秒の sleep で、しかも次の行に主張が無いので「待った」ことは'
+      + '1 度も確かめられていなかった。**飲み込んでよいのは直後に絶対の主張が在るときだけ**'
+      + '(同じファイルの theme の 1 件はその形)。見つけ方は回数ではなく'
+      + '**実測 ÷ 制限** (`npm run audit:e2e-wait-margin`) で、'
+      + '母集団は Locator の action まで含める —— `.click(` は 135 か所のうち **117 が '
+      + '`page.` 以外**なので、page のメソッドだけ包むと半分以上が映らない (実測で'
+      + 'page だけの回では最大 13.5%・Locator を含めた回で 100.0% が出た)。',
+    provenance: [
+      'パス 169 (共有の待ち)',
+      'パス 368 (3 件目と母集団)',
+      'パス 369 (針の訂正と振る舞いでの測定)',
+      'パス 397 (実機の待ちも余裕で測る・成り立ち得ない条件を 1 件)',
+    ],
     enforcedBy: [
       test(T.renderer('fixedTickAssertionCensus')),
       test(T.renderer('waitHelperCensus')),
       test(T.renderer('tickSensitivityLedger')),
       harness('audit:tick-sensitivity'),
+      harness('audit:e2e-wait-margin'),
     ],
   },
   {
