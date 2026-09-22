@@ -21,6 +21,25 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 398 (2026-09-22) — 調製量の関門が 5 欄のうち 4 つしか見ていなかった
+
+`acidToNeutralizeAlkalinity` は `tankLiters` / `alkalinityMgCaCO3PerL` /
+`acidNormality` を検めるのに、`residualAlkalinityMgCaCO3PerL` (非 null) だけは
+素で引き算に使っていた。実測 (タンク 100 L / アルカリ度 120 / 1 N):
+
+| 残すアルカリ度 | 結果 |
+| --- | --- |
+| `NaN` | `'add-acid'` で `ml` が NaN |
+| `-1e9` | `'add-acid'` で **`ml` = 1,998,401,518 (≒ 2,000 m³ の酸)** |
+| `+Infinity` | `'none'` だが文が「残す量 Infinity mg/L」 |
+
+**今日この値が壊れて届く道は無い** (入力と読みの両方が `[0, 1000]` に絞る・パス 373)
+—— **罠を外したもので、生きた欠陥ではない**。幅は `CONTROL_FIELD_BOUNDS` から
+`controlFieldOutOfRange` 経由で読み、同じ寄せを `ecDose` / `topUpLiters` にも掛けた。
+
+**残作業なし。** 母集団は `hydroponicsDoseBounds.test.ts` が両方向に持つので、
+`DosingSetup` に 6 つ目の数値の欄が足されて素で使われたら鳴る (対照 D で確かめた)。
+
 ## パス 397 (2026-09-22) — 実機 e2e に 30 秒の sleep が 1 件あった (残作業 #74 完了)
 
 ### 見つけた物

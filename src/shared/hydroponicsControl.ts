@@ -484,7 +484,7 @@ export function ecDose(
     return { kind: 'none', why: `EC ${ec} は適正域 ${crop.ecLow}〜${crop.ecHigh} mS/cm の中です。` };
   }
   const tank = setup.tankLiters;
-  if (tank === null || !Number.isFinite(tank) || tank <= 0) {
+  if (tank === null || tank <= 0 || controlFieldOutOfRange('tankLiters', tank)) {
     return {
       kind: 'cannot',
       missing: ['養液タンクの容量 (L)'],
@@ -493,7 +493,7 @@ export function ecDose(
   }
   if (ec < crop.ecLow) {
     const rise = setup.stockEcRisePerMlPerL;
-    if (rise === null || !Number.isFinite(rise) || rise <= 0) {
+    if (rise === null || rise <= 0 || controlFieldOutOfRange('stockEcRisePerMlPerL', rise)) {
       return {
         kind: 'cannot',
         missing: ['原液の EC 上昇率 (mS/cm per mL/L)'],
@@ -544,9 +544,40 @@ export function acidToNeutralizeAlkalinity(setup: DosingSetup): DoseAdvice {
   const tank = setup.tankLiters;
   const alk = setup.alkalinityMgCaCO3PerL;
   const n = setup.acidNormality;
-  if (tank === null || !Number.isFinite(tank) || tank <= 0) missing.push('養液タンクの容量 (L)');
-  if (alk === null || !Number.isFinite(alk) || alk < 0) missing.push('原水のアルカリ度 (mg-CaCO₃/L)');
-  if (n === null || !Number.isFinite(n) || n <= 0) missing.push('使う酸の規定度 (N)');
+  const res = setup.residualAlkalinityMgCaCO3PerL;
+  if (tank === null || tank <= 0 || controlFieldOutOfRange('tankLiters', tank)) missing.push('養液タンクの容量 (L)');
+  if (alk === null || alk < 0 || controlFieldOutOfRange('alkalinityMgCaCO3PerL', alk)) missing.push('原水のアルカリ度 (mg-CaCO₃/L)');
+  if (n === null || n <= 0 || controlFieldOutOfRange('acidNormality', n)) missing.push('使う酸の規定度 (N)');
+  /*
+   * **5 つ目の欄も検める** (2026-09-22 · パス 398)。
+   *
+   * ここは 4 つのうち 3 つしか検めておらず、`residualAlkalinityMgCaCO3PerL` は
+   * `number` (非 null) なので**素で引き算に使っていた**。実測:
+   *
+   * | 残すアルカリ度 | 結果 (タンク 100 L・アルカリ度 120・1 N) |
+   * | --- | --- |
+   * | `NaN` | `kind: 'add-acid'` で **`ml` が NaN**・文は「120 → NaN mg-CaCO₃/L」 |
+   * | `-1e9` | `kind: 'add-acid'` で **`ml` = 1,998,401,518 (≒ 2,000 m³ の酸)** |
+   * | `+Infinity` | `'none'` だが文が「残す量 Infinity mg/L 以下です」と刷る |
+   * | `30` (既定) | `ml` = 179.86 |
+   *
+   * **負が最も重い** —— `remove = alk - res` が大きくなるので、**多すぎる酸**を
+   * 自信のある指示として出す。これは*物理的に手を動かす*指示である。
+   *
+   * 今日この値が壊れて届く道は無い (`parseControlRecord` と `readControlRecord` が
+   * 両方 [0, 1000] に絞る・パス 373) —— だからこれは**罠を外した**もので、
+   * 生きた欠陥を直した物ではない (パス 386 と同じ位置づけ)。それでも置くのは、
+   * 隣の 3 つが「呼び手が検めていないかもしれない」を前提に検めているのに
+   * **4 つ目だけがその前提を持たない**という非対称が、次に `DosingSetup` を
+   * 手で組む呼び手が 1 つ増えた日に静かに開くからである (パス 359 の
+   * 「入口が出口より厳しい」の裏返し)。
+   *
+   * 幅は**書き写さない** —— 保存側と同じ `CONTROL_FIELD_BOUNDS` を
+   * `controlFieldOutOfRange` 経由で読む (数を 2 度書くと片方だけ動く)。
+   */
+  if (controlFieldOutOfRange('residualAlkalinityMgCaCO3PerL', res)) {
+    missing.push('残すアルカリ度 (mg-CaCO₃/L)');
+  }
   if (missing.length > 0) {
     return {
       kind: 'cannot',
@@ -554,18 +585,18 @@ export function acidToNeutralizeAlkalinity(setup: DosingSetup): DoseAdvice {
       how: 'アルカリ度は水質検査か簡易試薬で測れます。埋まるまでは、酸を少量ずつ加えて撹拌し、pH を測り直してください。',
     };
   }
-  const remove = alk! - setup.residualAlkalinityMgCaCO3PerL;
+  const remove = alk! - res;
   if (remove <= 0) {
     return {
       kind: 'none',
-      why: `アルカリ度 ${alk!} mg/L は残す量 ${setup.residualAlkalinityMgCaCO3PerL} mg/L 以下です。中和する分がありません。`,
+      why: `アルカリ度 ${alk!} mg/L は残す量 ${res} mg/L 以下です。中和する分がありません。`,
     };
   }
   const meq = (remove / MG_CACO3_PER_MEQ) * tank!;
   return {
     kind: 'add-acid',
     ml: meq / n!,
-    why: `アルカリ度を ${alk!} → ${setup.residualAlkalinityMgCaCO3PerL} mg-CaCO₃/L にする当量です。**目標 pH までの量ではありません** —— 少量ずつ加えて pH を測り直してください。`,
+    why: `アルカリ度を ${alk!} → ${res} mg-CaCO₃/L にする当量です。**目標 pH までの量ではありません** —— 少量ずつ加えて pH を測り直してください。`,
   };
 }
 
@@ -582,7 +613,7 @@ export function topUpLiters(levelPct: number | null, setup: DosingSetup): DoseAd
   ) {
     missing.push('読める液位 (%)');
   }
-  if (tank === null || !Number.isFinite(tank) || tank <= 0) missing.push('養液タンクの容量 (L)');
+  if (tank === null || tank <= 0 || controlFieldOutOfRange('tankLiters', tank)) missing.push('養液タンクの容量 (L)');
   if (missing.length > 0) {
     return { kind: 'cannot', missing, how: '液位とタンク容量を入れてください。' };
   }
