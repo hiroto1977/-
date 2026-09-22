@@ -25,7 +25,9 @@ import {
   duplicateActualsOverviewNote,
   type BepInputs,
   monthlyTrendSeries,
+  readablePeriodRows,
   summarizeFundamentals,
+  unreadablePeriodNote,
   type KpiActual,
 } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
@@ -854,7 +856,39 @@ export function OverviewPage() {
   );
   const highlightSummary = useMemo(() => summarizeHighlights(highlights), [highlights]);
 
-  const monthlyTrend = useMemo(() => monthlyTrendSeries(kpiRecords.map((r) => r.data)), [kpiRecords]);
+  /*
+   * **期が読める行だけを通す** (2026-09-22 · パス 392)。
+   *
+   * ここと `fundamentals` は 2026-09-22 まで**素の購読**を読んでいた。
+   * `buildBusinessOverview` は `readablePeriodRows` で絞るので、同じ画面が
+   * **同じ量について 3 つの答え**を出していた —— 実測 (読める 1 件 100 万 +
+   * 期が `'bad'` の 1 件 999 万 9,999):
+   *
+   * | 読み手 | 売上高 | 漏斗 |
+   * | --- | --- | --- |
+   * | 収益性 (KPI) のタイル | **1,000,000** | `readablePeriodRows` |
+   * | 損益感度分析 | **10,999,999** | **無し** |
+   * | 月次推移 | 期が `bad` の行が並ぶ (前期比 **+900%**) | **無し** |
+   *
+   * いちばん重いのは月次推移で、**アプリ自身が「読めない」と宣言した期に対して
+   * 成長率を計算していた**。しかもその trend は `buildManagementReport` へ渡るので、
+   * レポートは「期 (YYYY-MM) が読めない 1 件は集計から除いています」と述べながら
+   * 同じ紙に `bad` の行と ￥9,999,999 を刷っていた (実測で 3 つとも true)。
+   *
+   * 漏斗は `readablePeriodRows` の 1 つ (パス 225) —— ここで絞り直さない。
+   */
+  const readableKpi = useMemo(() => readablePeriodRows(kpiRecords.map((r) => r.data)), [kpiRecords]);
+  const monthlyTrend = useMemo(() => monthlyTrendSeries(readableKpi.rows), [readableKpi]);
+
+  /**
+   * 落とした件数の断り。**`overview.kpi.unreadablePeriods` を読む** —— 書面と
+   * レポートが読むのと同じ値なので、3 つの面が同じ件数を言う (実績 + 予算の和)。
+   * 文は `unreadablePeriodNote` の `kind` 引数で足りる (3 つ目の関数は作らない)。
+   */
+  const unreadablePeriodsNote = useMemo(
+    () => unreadablePeriodNote('実績・予算', overview.kpi.unreadablePeriods),
+    [overview.kpi.unreadablePeriods],
+  );
 
   /*
    * 秒単位の帯に出す行。
@@ -888,7 +922,7 @@ export function OverviewPage() {
     }
     return rows;
   }, [overview.sales.totalAmount, overview.kpi.hasData, overview.kpi.operatingProfit]);
-  const fundamentals = useMemo(() => summarizeFundamentals(kpiRecords.map((r) => r.data)), [kpiRecords]);
+  const fundamentals = useMemo(() => summarizeFundamentals(readableKpi.rows), [readableKpi]);
   const sensitivity = useMemo(() => {
     if (!overview.kpi.hasData) return null;
     return { rows: profitSensitivity(fundamentals), breakEvenDelta: breakEvenDeltaPct(fundamentals), fixedCuts: fixedCostReductionImpact(fundamentals), dol: operatingLeverage(fundamentals) };
@@ -1265,6 +1299,20 @@ export function OverviewPage() {
             経営サマリーは黙って倍の金額を刷っていた (パス 390 で実測: 同じ行を 2 件
             入れると `revenue` が 1,000,000 → 2,000,000 になり、画面は何も言わない)。
             **空欄は読み手が気付くが、倍になった金額は正しく見える。** */}
+        {/* 期が読めない行は集計・期間・成長率のすべてから除かれるので、この画面の
+            金額は利用者の記録より**小さく**出る。書面とレポートと KPI 画面は
+            2026-09 から述べていたのに、経営サマリーは読み手を 1 つも持たなかった
+            (パス 392 で実測: 読める 1 件 + 期が `'bad'` の 1 件で、画面の
+            断りは 0 文)。 */}
+        {unreadablePeriodsNote !== null && (
+          <p
+            role="alert"
+            data-unreadable-periods
+            style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, margin: '0 0 8px' }}
+          >
+            {unreadablePeriodsNote}
+          </p>
+        )}
         {duplicateActualsNote !== null && (
           <p
             role="alert"

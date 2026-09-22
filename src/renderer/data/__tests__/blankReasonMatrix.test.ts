@@ -51,6 +51,9 @@ import {
   KPI_ACTUALS_COLLECTION,
   NO_BEP_REASON,
   ZERO_REVENUE_BEP_REASON,
+  monthlyTrendSeries,
+  readablePeriodRows,
+  summarizeFundamentals,
   zeroMembersPerCapitaNote,
   zeroRevenueRatioNote,
   type KpiActual,
@@ -94,6 +97,18 @@ const DUPLICATE_ORDERS: readonly SalesEntry[] = [
 const DUPLICATE_ACTUALS: readonly KpiActual[] = [
   { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
   { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
+];
+
+/**
+ * **期が読めない行** (パス 392)。書き手は `YYYY-MM` を強制するが保管層の形は
+ * `period: str` だけなので、復元や古い版の控えはこういう行を持ち込める
+ * (`collectionShapes.ts` の `KPI_SHAPE` で実測)。読める 2 件 + 読めない 1 件 ——
+ * 月次推移が出る (`length >= 2`) 状態にしておくと「`bad` の行が並ばない」を見られる。
+ */
+const UNREADABLE_PERIODS: readonly KpiActual[] = [
+  { period: '2026-07', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
+  { period: '2026-08', unit: '全社', revenue: 1_200_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
+  { period: 'bad', unit: '全社', revenue: 9_999_999, cogs: 0, advertising: 0, sga: 0, depreciation: 0 } as unknown as KpiActual,
 ];
 
 type Surface = 'screen-overview' | 'screen-kpi' | 'screen-sales' | 'report' | 'sheet';
@@ -197,6 +212,18 @@ const MATRIX: readonly Row[] = [
       },
       // ★ パス 390 と同じ —— 経営サマリーに一覧は無いので「一覧の ×」と言ってはいけない。
       { surface: 'screen-overview', kind: 'wrong-reason-would-be', forbidden: '一覧の × で余分な行を消してください' },
+    ],
+  },
+  {
+    state: 'unreadable-periods',
+    rows: UNREADABLE_PERIODS,
+    members: 1,
+    why: '期 (YYYY-MM) が読めない行が 1 件 —— **パス 390 / 391 の裏返し**で、落ちた行は集計から除かれるので画面の金額は利用者の記録より**小さく**出る。書面・レポート・KPI 画面は述べるのに経営サマリーは読み手を 0 件しか持たず、しかも月次推移と損益感度分析が**漏斗を通さず**同じ画面に 3 つ目・2 つ目の答えを出していた (パス 392)',
+    cells: [
+      { surface: 'screen-overview', kind: 'reason', contains: '期 (YYYY-MM) が読めないため' },
+      { surface: 'screen-kpi', kind: 'reason', contains: '期 (YYYY-MM) が読めないため' },
+      { surface: 'report', kind: 'reason', contains: '期 (YYYY-MM) が読めない' },
+      { surface: 'sheet', kind: 'reason', contains: '期 (YYYY-MM) が読めない' },
     ],
   },
 ];
@@ -419,6 +446,69 @@ describe.each(MATRIX.map((r) => [r.state, r] as const))(
     });
   },
 );
+
+/**
+ * ★ **同じ画面が同じ量について 2 つ以上の答えを出さない** (2026-09-22 · パス 392)。
+ *
+ * これは「空欄の理由」ではなく**値そのもの**の話だが、原因は同じ家系である ——
+ * **同じ事実を読む口が複数在り、全部が同じ漏斗を通っていない**。
+ *
+ * 実測 (読める 1 件 100 万 + 期が `'bad'` の 1 件 999 万 9,999):
+ *
+ * | 読み手 | 売上高 | 漏斗 |
+ * | --- | --- | --- |
+ * | `buildBusinessOverview` → 収益性 (KPI) のタイル | **1,000,000** | `readablePeriodRows` |
+ * | `summarizeFundamentals(素の購読)` → 損益感度分析 | **10,999,999** | **無し** |
+ * | `monthlyTrendSeries(素の購読)` → 月次推移 | 期が `bad` の行・前期比 **+900%** | **無し** |
+ *
+ * いちばん重いのは月次推移で、**アプリ自身が「読めない」と宣言した期に対して
+ * 成長率を計算していた**。しかもその trend は `buildManagementReport` へ渡るので、
+ * レポートは「期 (YYYY-MM) が読めない 1 件は集計から除いています」と述べながら
+ * 同じ紙に `bad` の行と ￥9,999,999 を刷っていた (実測で 3 つとも true) ——
+ * **自分の断りと矛盾する紙**である。
+ *
+ * ここは**画面を実際に描いて**見る (`.tsx` は変異検査の対象外なので、
+ * 漏斗を外しても他の誰も鳴らない)。
+ */
+describe('★ 同じ画面の読み手が同じ漏斗を通る (パス 392)', () => {
+  const ROW: Row = { state: 'unreadable-periods', rows: UNREADABLE_PERIODS, members: 1, why: 'x', cells: [] };
+
+  it('★ 標本: 期が読めない行は保管層に入る (入らなければ以下は空虚)', async () => {
+    await seedFor(ROW);
+    const stored = await getRecordStore().list<KpiActual>(KPI_ACTUALS_COLLECTION);
+    expect(stored.map((r) => r.data.period).sort()).toEqual(['2026-07', '2026-08', 'bad']);
+  });
+
+  it('★ 月次推移に「読めない期」の行が並ばない (成長率も計算しない)', async () => {
+    await seedFor(ROW);
+    const t = await renderScreen('screen-overview', '月次推移');
+    // 肯定の前提: 読める 2 期は並んでいる (表そのものが消えていたら空虚)。
+    expect(t, '読める期が月次推移に出ていない —— 表が消えている').toContain('2026-07');
+    expect(t).toContain('2026-08');
+    // 直す前は `bad￥9,999,999￥9,999,999100.0%+900%` が並んでいた。
+    expect(t, '期が読めない行が月次推移に並んでいる').not.toContain('9,999,999');
+  });
+
+  it('★ 損益感度分析の現状値が、収益性のタイルと同じ売上高を使う', async () => {
+    await seedFor(ROW);
+    // 錠は感度分析の見出し —— タイルより後に描かれる。
+    const t = await renderScreen('screen-overview', '損益感度分析');
+    // 読める 2 件の和 = 2,200,000。直す前は 12,199,999 (999 万 9,999 を含む) だった。
+    expect(t, '感度分析が漏斗を通っていない (読めない行の額が入っている)').toContain('￥2,200,000');
+    expect(t).not.toContain('12,199,999');
+  });
+
+  it('★ 対照の標本: 漏斗を通さなければ答えが割れる (この検査が空虚でないこと)', () => {
+    const raw = [...UNREADABLE_PERIODS];
+    const readable = readablePeriodRows(raw);
+    expect(readable.dropped, '走査が 1 件も落としていない').toBe(1);
+    // **漏斗の有無で答えが違う**ことを、製品を壊さずに標本で示す。
+    expect(summarizeFundamentals(raw).revenue).toBe(12_199_999);
+    expect(summarizeFundamentals(readable.rows).revenue).toBe(2_200_000);
+    expect(monthlyTrendSeries(raw).map((r) => r.period)).toContain('bad');
+    expect(monthlyTrendSeries(readable.rows).map((r) => r.period)).not.toContain('bad');
+  });
+});
 
 /**
  * ★ **文面が面ごとに本当に違うことを、関数の側からも留める** (パス 391)。
