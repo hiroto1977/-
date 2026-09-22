@@ -138,15 +138,37 @@ interface Guard {
   readonly bounded: boolean;
 }
 
-/** `Array.isArray(X)` のうち「空を断る」物を集め、件数の上限が在るかを見る。 */
+/**
+ * `Array.isArray(X)` のうち「空を断る」物を集め、件数の上限が在るかを見る。
+ *
+ * ★ **窓は「素の行」ではなく「コードの行」で数える** (2026-09-22 · パス 405)。
+ *
+ * パス 404 の初版は `lines.slice(i, i + 14)` と**素の行**で窓を切っていた。
+ * `codeOnly()` は行番号を保つためにブロックコメントを**改行へ**潰すので、
+ * **注記を 1 つ足すだけで門が窓の外へ出る**。実際にそうなった —— 同じパスの中で
+ * `lint:mutation-scope` に言われて門を広い `Stryker disable` の帯の外へ移し、
+ * そのとき 10 行の docblock を門の直前に入れたので、`main/clients/stocks.ts` の
+ * `riskFactors` が「上限なし」と報告された。**製品は正しく、針だけが盲目になった。**
+ *
+ * 空行を飛ばして数えれば、注記の長さに依らない (行番号の報告は素の番号のまま)。
+ * パス 334 / 348 / 369 / 375 と同じ家系 —— **綴りの針は、綴りでない物に動かされる**。
+ */
 function arrayGuards(label: string, code: string): Guard[] {
   const lines = code.split('\n');
   const out: Guard[] = [];
+  /** i 行目から先の「空でない行」を n 本だけ繋ぐ (注記は codeOnly で空行になっている)。 */
+  const codeWindow = (i: number, n: number): string => {
+    const picked: string[] = [];
+    for (let j = i; j < lines.length && picked.length < n; j += 1) {
+      if (lines[j]!.trim() !== '') picked.push(lines[j]!);
+    }
+    return picked.join('\n');
+  };
   for (let i = 0; i < lines.length; i += 1) {
     for (const m of lines[i]!.matchAll(/Array\.isArray\(\s*([A-Za-z_$][\w$.]*)\s*\)/g)) {
       const name = m[1]!;
       const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const win = lines.slice(i, i + 14).join('\n');
+      const win = codeWindow(i, 14);
       if (!new RegExp(`${esc}\\.length\\s*===\\s*0`).test(win)) continue;
       out.push({
         file: label,
@@ -202,6 +224,31 @@ describe('助言の検証器: 配列の件数の門の母集団', () => {
 
     // 空を断らない配列は母集団の外 (別の関心事)。
     expect(arrayGuards('sample', 'if (!Array.isArray(x.a)) throw 0;')).toHaveLength(0);
+
+    /*
+     * ★ **注記が門を窓の外へ押し出さない** (パス 405 の回帰)。
+     *
+     * `codeOnly()` はブロックコメントを改行へ潰すので、素の行で窓を切ると
+     * **注記を足しただけで門が見えなくなる** (パス 404 で実際に起きた)。
+     * 空行を 12 本挟んだ標本で、見え続けることを留める。
+     */
+    const spaced = [
+      'if (!Array.isArray(x.a) || x.a.length === 0) throw 0;',
+      ...Array.from({ length: 12 }, () => ''),
+      'if (x.a.length > MAX_X) throw 0;',
+    ].join('\n');
+    const spacedGuards = arrayGuards('sample', spaced);
+    expect(spacedGuards).toHaveLength(1);
+    expect(spacedGuards[0]!.bounded, '注記を挟んでも門は見える').toBe(true);
+    expect(spacedGuards[0]!.line, '行番号は素の行のまま').toBe(1);
+
+    // ★ 逆向き: 本当に遠い門は窓の外 (窓が無限になっていない)。
+    const far = [
+      'if (!Array.isArray(x.a) || x.a.length === 0) throw 0;',
+      ...Array.from({ length: 20 }, (_, k) => `const filler${k} = ${k};`),
+      'if (x.a.length > MAX_X) throw 0;',
+    ].join('\n');
+    expect(arrayGuards('sample', far)[0]!.bounded, 'コード 20 行の先は窓の外').toBe(false);
   });
 });
 
