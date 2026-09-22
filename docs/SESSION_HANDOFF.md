@@ -90,12 +90,37 @@
 `typecheck` 緑・`npm test` **810 / 18,038**・`verify:all` exit 0・`chain:verify` 緑
 (block 252)・`perf` OK (LITE DCL 234 ms / heap 10.2 MB・FULL DCL 593 ms / heap 37 MB)・`e2e` **455 件 ❌ 0**・`e2e:lite` **455 件 ❌ 0**。
 
-### 次に読むなら
+### そのあと母集団を測った —— 生きた欠陥は 0 件だった (2026-09-22)
 
 この 3 パス (390 / 391 / 392) はどれも **`OverviewPage.tsx` が保管層の購読を
-自分で読み直す所**から出た。同じ形の読み手が他にも在るかは**未測定** ——
-`kpiRecords` / `salesRecords` 等の素の購読を `useMemo` で加工している箇所を
-数えて、`buildBusinessOverview` が通す漏斗と突き合わせるのが次の 1 手。
+自分で読み直す所**から出たので、同じ形が他に在るかを測った。**何も無かったので、
+無かったことを記録する。**
+
+**① `OverviewPage` に残る素の購読の読み手** —— 実測 4 か所で、3 つは
+`buildBusinessOverview` への入力 (漏斗は中に在る) か上書きの適用。4 つ目
+`kpiPeriods = kpiRecords.map((r) => r.data.period)` (`:963`) は未選別だが、
+**`useMemo` の依存配列にしか出てこない** (`buildBankSubmissionSheet` へは渡さない)
+ので `kpiRecords` に依存するのと等価で、欠陥ではない。
+★ **読み進めたら判定が反転した 4 度目** —— 最初は「未選別の期の一覧が書面へ渡る」と
+見えた。
+
+**② 期の判定の写し 3 つ** —— `calendarDateCensus.test.ts` の ALLOWED に
+理由つきで 3 件在る。**3 件とも今日は正しい**:
+
+| 写し | 形 | 実測した判定 |
+| --- | --- | --- |
+| `kessanImport.PERIOD_RE` | `/^(\d{4})-(0[1-9]\|1[0-2])$/` | **標本 27 種で `isValidPeriod` と 1 件も食い違わない** (両方 true が 6・両方 false が 21 —— 走査は空虚でない) |
+| `balanceSheetFreshness.readMonth` | 末尾アンカー無し | `YYYY-MM-DD` の月の部分を読むためで**用途どおり正しい** |
+| `kpiActuals.yearEarlier` | 月が `\d{2}` (= `2026-00` / `2026-13` を通す) | **共有の判定より緩いが到達しない** —— 呼び手 `computeYoYGrowth` の `series` は `groupRevenueByPeriod` 経由で、そこが `readablePeriodRows` を通している (`:235`) |
+
+★ **`PERIOD_RE` は「書類スタジオ → 計算書類 / 事業計画書」の 2 経路に効く**
+(`buildKessanImport` / `buildBusinessPlanImport`) ので、いちばん重い紙の側である。
+今日は一致しているが、**一致を保つ物は無い** —— census は「自前の日付の式を持つ物」を
+数えて理由つきで免除するだけで、**受理集合が共有の判定と同じかは誰も比べていない**。
+法則 `copy-pinned-by-parity` が言うパリティ検査が付いていない 1 件で、
+**次の 1 手はこれ** (`kessanImportPeriodParity` —— 検査だけなので出荷物は動かない)。
+`yearEarlier` の注記は**アンカーの差**について述べており月の範囲には触れていない ——
+偽ではないが、**免除の理由が実際の差を名指ししていない**。
 
 ## パス 391 (2026-09-22) — 同じ欠陥が「別の入力」の側に残っていた
 
