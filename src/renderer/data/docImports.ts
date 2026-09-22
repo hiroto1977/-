@@ -15,7 +15,8 @@ import type { BalanceSheet } from './balanceSheet';
 import type { KpiActual } from './kpiActuals';
 import type { SubmissionProfile } from './bankSubmission';
 import { PLAN_ITEMS, PLAN_MONTHS, planKey } from './cashPlan';
-import { PERIOD_RE, fiscalYearMonths, fiscalYearWindow, monthLabel } from './kessanImport';
+import { fiscalYearMonths, fiscalYearWindow, monthLabel } from './kessanImport';
+import { isValidPeriod, readablePeriodRows } from './kpiActuals';
 import { parseIsoDate } from '../../shared/isoDate';
 import { NO_DEAL_INTAKE, dealIntakeImportNote, type FreeeDealIntake } from '../../shared/freeeIntake';
 
@@ -70,7 +71,7 @@ export function buildCashPlanImport(input: CashPlanImportInput): ImportPreview {
   }
 
   const months = input.accounting
-    .filter((m) => PERIOD_RE.test(m.month))
+    .filter((m) => isValidPeriod(m.month))
     .sort((a, b) => a.month.localeCompare(b.month))
     .slice(-PLAN_MONTHS);
   if (months.length === 0) {
@@ -131,7 +132,15 @@ export function buildBusinessPlanImport(input: BusinessPlanImportInput): ImportP
   else skipped.push('代表者名: 提出者情報の代表者が未設定');
   rows.push({ k: 'date', label: '作成日', value: dateLabel(input.today), source: '今日' });
 
-  const valid = input.kpiActuals.filter((r) => PERIOD_RE.test(r.period));
+  /*
+   * **判定は共有の 1 つを通す** (2026-09-22 · パス 393)。ここは 2026-09-22 まで
+   * `PERIOD_RE.test` で選別しており、**選別そのものは正しかった** (兄弟の
+   * `kessanImport` が事業年度の枝で落としていたのがパス 393 の欠陥) が、
+   * 受理集合が `readablePeriodRows` と同じであることを誰も比べていなかった。
+   * 正規表現は**組 (年・月) を取る**ために残し (`monthLabel` ほか)、
+   * 「読めるか」の判定は共有の漏斗へ寄せる (法則 `center-then-count-callers`)。
+   */
+  const valid = readablePeriodRows(input.kpiActuals).rows;
   if (valid.length === 0) {
     skipped.push('1 年目の売上高・経常利益: KPI 実績が未入力');
     return finish(rows, notes, skipped, input.existing);

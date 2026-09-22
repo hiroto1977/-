@@ -13,7 +13,7 @@
  * 内訳が分からないので、資産合計 − 負債 − 資本金等 − 当期純利益 を期首の
  * 繰越利益剰余金に置いて貸借を合わせる。逆算したことは行の出所と注記で示す。
  */
-import type { KpiActual } from './kpiActuals';
+import { readablePeriodRows, unreadablePeriodSheetNote, type KpiActual } from './kpiActuals';
 import { utcMsFromParts } from '../../shared/isoDate';
 import type { BalanceSheet } from './balanceSheet';
 import type { SubmissionProfile } from './bankSubmission';
@@ -124,18 +124,48 @@ export function buildKessanImport(input: KessanImportInput): KessanImportResult 
   }
 
   // ── 損益: KPI 実績を事業年度で切り出す ───────────────────────────────
-  const periods = input.kpiActuals.map((r) => r.period).filter((p) => PERIOD_RE.test(p)).sort();
+  /*
+   * **期が読める行だけを通す** (2026-09-22 · パス 393)。
+   *
+   * ここは 2026-09-22 まで、事業年度の枝だけが**文字列の大小だけ**で切り出していた
+   * (`r.period >= fy.from && r.period <= fy.to`)。下の `else` の枝と、兄弟の
+   * `docImports.ts` の事業計画書 (`valid.filter(...)`) は先に選別していたので、
+   * **同じ形の 3 か所のうち 1 か所だけが選別を落としていた**。
+   *
+   * 文字列の大小は `YYYY-MM` の形を要求しないので、**窓に入るが読めない**形が
+   * 通る。実測 (`fy = 2025-04〜2026-03`) で 6 形 ——
+   * `'2025-6'` / `'2025-13'` / `'2025-06-15'` / `'2025-99'` / `'2025-1x'` / `'2026-00'`。
+   *
+   * 効くのは**いちばん重い紙**である。実測 (読める 1 件 100 万 + `'2025-6'` の
+   * 1 件 900 万):
+   *
+   * | 面 | 売上高 |
+   * | --- | --- |
+   * | **計算書類 (損益計算書)** | **10,000,000** —— 読めない 1 行で 10 倍 |
+   * | 事業計画書 | 1,000,000 (選別している) |
+   * | 経営サマリー | 1,000,000 (`readablePeriodRows`) |
+   *
+   * しかもその行の出所は `KPI 実績 (2025年4月〜2026年3月)` と**事業年度の窓を
+   * 名乗る** —— その窓のどの月にも無い行を含んでいる。注記も棚卸と雑費の 2 件だけで、
+   * 混ぜたことを 1 文も言っていなかった。
+   *
+   * 漏斗は `readablePeriodRows` の 1 つ (パス 225) —— **ここで選別を書き直さない**。
+   * 落とした件数は下で `unreadablePeriodSheetNote` が述べる (相手に渡る紙なので、
+   * 画面向けではなく書面向けの 1 文・パス 392 と同じ向き)。
+   */
+  const readable = readablePeriodRows(input.kpiActuals);
+  const periods = readable.rows.map((r) => r.period).sort();
   const fy = fiscalYearWindow(input.profile.fiscalYearEnd);
   let window: { from: string; to: string } | null = null;
   let selected: readonly KpiActual[] = [];
   if (periods.length > 0) {
-    const fyRows = fy === null ? null : { window: fy, rows: input.kpiActuals.filter((r) => r.period >= fy.from && r.period <= fy.to) };
+    const fyRows = fy === null ? null : { window: fy, rows: readable.rows.filter((r) => r.period >= fy.from && r.period <= fy.to) };
     if (fyRows !== null && fyRows.rows.length > 0) {
       window = fyRows.window;
       selected = fyRows.rows;
     } else {
       window = { from: periods[0]!, to: periods[periods.length - 1]! };
-      selected = input.kpiActuals.filter((r) => PERIOD_RE.test(r.period));
+      selected = readable.rows;
       notes.push(
         fy === null
           ? `決算期が未設定のため、KPI 実績の全期間 (${monthLabel(window.from)}〜${monthLabel(window.to)}) を合算した。提出者情報で決算期を入れると事業年度で切り出せる。`
@@ -143,6 +173,15 @@ export function buildKessanImport(input: KessanImportInput): KessanImportResult 
       );
     }
   }
+  /*
+   * 落とした行を紙が述べる (パス 393)。**黙って除くと売上高が小さく出て利用者は
+   * 気づけない** —— 逆に除かないと 10 倍になる (上の経緯)。どちらにしても
+   * 「何件を除いたか」は紙に要る。文は書面・レポート向けの 1 つ
+   * (`unreadablePeriodSheetNote`) で、経営サマリー・金融機関等提出用の書面・
+   * 経営レポートと**同じ文**である。
+   */
+  const unreadableNote = unreadablePeriodSheetNote(readable.dropped);
+  if (unreadableNote !== null) notes.push(unreadableNote);
   // 事業年度の欄: KPI を切り出した範囲 (無ければ決算期そのもの)。決算期どおりなら出所は提出者情報。
   const range = window ?? fy;
   if (range !== null) {
