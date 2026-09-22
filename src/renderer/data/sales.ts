@@ -368,6 +368,47 @@ export function duplicateOrdersNote(groups: readonly DuplicateOrderGroup[]): str
   return `同じ注文名の記録が ${groups.length} 組重複しており、売上高と受注件数に 2 度数えられています（${listOrderGroups(groups)}）。一覧の × で余分な行を消してください。`;
 }
 
+/**
+ * **経営サマリーの断り** (2026-09-22 · パス 391)。無ければ null。
+ *
+ * ## なぜ 3 つ目の文が要るのか
+ *
+ * 同じ事実 (同じ注文名が 2 件以上入っていて売上高と受注件数に 2 度数えられている) を、
+ * 面ごとに言い方を変える必要がある —— **読み手が次に何をできるかが面ごとに違う**:
+ *
+ * | 面 | 文 | 直し方の案内 |
+ * | --- | --- | --- |
+ * | 売上集計の画面 | `duplicateOrdersNote` | **一覧の × で消せる** (一覧がその画面に在る) |
+ * | 書面 §2 | `duplicateOrdersSheetNote` | 「売上高と受注件数はその重複を含んだ値」 |
+ * | 経営サマリー | ここ | **一覧が無い**ので、どの画面で消すかを指さす |
+ *
+ * 売上集計の文をそのまま出すと「一覧の ×」が**この画面に無い物**を指す。だから 3 つ目を置く。
+ * パス 390 (`duplicateActualsOverviewNote`) と同じ形で、**逃げ口が別の画面に在るなら
+ * その画面の名前を言う** (法則 `escape-hatch-stays-open`)。
+ *
+ * ## なぜ経営サマリーに要るのか (実測)
+ *
+ * 2026-09-22 に同じ注文名 (`Shopify #1001`・500,000 円 × 1 件) を 2 件入れて実測すると:
+ *
+ * ```
+ * overview.sales.duplicateOrders = [{ ref: 'Shopify #1001', count: 2 }]
+ * overview.sales.totalAmount     = 1,000,000   (1 件なら 500,000)
+ * overview.sales.totalOrders     = 2           (1 件なら 1)
+ * 書面 §2                        = 述べる
+ * 経営レポート                    = 売上の節そのものを持たない (述べる必要が無い)
+ * 経営サマリー                    = **総売上 ￥1,000,000 を黙って刷る**
+ * ```
+ *
+ * これは空欄より重い —— **空欄は読み手が気付くが、倍になった金額は正しく見える。**
+ * しかも経営サマリーは書面とレポートの元になる画面で、利用者はここで見た数字を信じて
+ * 書面を出す。パス 390 の `duplicateActualsOverviewNote` と同じ欠陥が、
+ * **KPI 実績の側だけ直り販売記録の側に残っていた**。
+ */
+export function duplicateOrdersOverviewNote(groups: readonly DuplicateOrderGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `同じ注文名の記録が ${groups.length} 組重複しており（${listOrderGroups(groups)}）、この画面の総売上・総注文件数はその重複を 2 度数えた値です。「売上集計」の画面で余分な行を消してください。`;
+}
+
 /** 書面 §2 の但し書き (**相手に渡る面**)。無ければ null。 */
 export function duplicateOrdersSheetNote(groups: readonly DuplicateOrderGroup[]): string | null {
   if (groups.length === 0) return null;

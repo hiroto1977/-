@@ -55,6 +55,14 @@ import {
   zeroRevenueRatioNote,
   type KpiActual,
 } from '../kpiActuals';
+import {
+  SALES_COLLECTION,
+  duplicateOrdersNote,
+  duplicateOrdersOverviewNote,
+  duplicateOrdersSheetNote,
+  findDuplicateOrders,
+  type SalesEntry,
+} from '../sales';
 import { waitForText } from '../../__tests__/jsdomWait';
 
 // --- 状態を作る見本 -----------------------------------------------------------
@@ -74,12 +82,21 @@ const ZERO_REVENUE: KpiActual = {
  * **同じ (期, 事業) が 2 件** —— 利用者が二重に入力した形。欄は空にならず、
  * **金額が合算されて倍になる**。空欄より重い: 空欄は気付くが、倍の金額は正しく見える。
  */
+/**
+ * **同じ注文名が 2 件** —— 販売記録の側の同じ家系 (パス 391)。`totalAmount` が
+ * 500,000 → 1,000,000・`totalOrders` が 1 → 2 になる (実測)。
+ */
+const DUPLICATE_ORDERS: readonly SalesEntry[] = [
+  { date: '2026-08-01', channel: 'shopify', amount: 500_000, orders: 1, note: 'Shopify #1001' },
+  { date: '2026-08-01', channel: 'shopify', amount: 500_000, orders: 1, note: 'Shopify #1001' },
+];
+
 const DUPLICATE_ACTUALS: readonly KpiActual[] = [
   { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
   { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
 ];
 
-type Surface = 'screen-overview' | 'screen-kpi' | 'report' | 'sheet';
+type Surface = 'screen-overview' | 'screen-kpi' | 'screen-sales' | 'report' | 'sheet';
 
 type Cell =
   /** この面はこの文を出す。 */
@@ -93,6 +110,8 @@ interface Row {
   readonly state: string;
   /** この状態を作る KPI 実績 (複数行の状態も在る)。 */
   readonly rows: readonly KpiActual[];
+  /** この状態を作る販売記録 (売上の側の状態だけが使う)。 */
+  readonly salesRows?: readonly SalesEntry[];
   readonly members: number;
   readonly cells: readonly Cell[];
   readonly why: string;
@@ -162,6 +181,24 @@ const MATRIX: readonly Row[] = [
       { surface: 'screen-overview', kind: 'wrong-reason-would-be', forbidden: '一覧の × で余分な行を消してください' },
     ],
   },
+  {
+    state: 'duplicate-orders',
+    rows: [],
+    salesRows: DUPLICATE_ORDERS,
+    members: 1,
+    why: '同じ注文名が 2 件 —— 販売記録の側の同じ家系。実測で `totalAmount` が 500,000 → 1,000,000・`totalOrders` が 1 → 2 になり、書面 §2 は述べるのに経営サマリーだけが黙って倍の金額を刷っていた (パス 391)。**KPI 実績の側 (パス 390) を直しても、こちらは別の入力なので残っていた**',
+    cells: [
+      { surface: 'screen-overview', kind: 'reason', contains: 'この画面の総売上・総注文件数はその重複を 2 度数えた値です' },
+      { surface: 'screen-sales', kind: 'reason', contains: '売上高と受注件数に 2 度数えられています' },
+      { surface: 'sheet', kind: 'reason', contains: '売上高と受注件数はその重複を含んだ値です' },
+      {
+        surface: 'report', kind: 'silent-but-correct', absent: '注文名',
+        why: '経営レポートは販売記録の節そのものを持たない (実測: 総売上・総注文件数・販売記録のどれも出ない)。重複した値を 1 つも刷らないので述べる必要が無い',
+      },
+      // ★ パス 390 と同じ —— 経営サマリーに一覧は無いので「一覧の ×」と言ってはいけない。
+      { surface: 'screen-overview', kind: 'wrong-reason-would-be', forbidden: '一覧の × で余分な行を消してください' },
+    ],
+  },
 ];
 
 // --- 面を作る -----------------------------------------------------------------
@@ -183,13 +220,26 @@ let container: HTMLDivElement;
 let root: Root | null = null;
 const screenText = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 
-const PAGE: Record<'screen-overview' | 'screen-kpi', ComponentType> = {
+type ScreenSurface = 'screen-overview' | 'screen-kpi' | 'screen-sales';
+
+const PAGE: Record<ScreenSurface, ComponentType> = {
   'screen-overview': SERVICES.find((s) => s.id === 'overview')!.page,
   'screen-kpi': SERVICES.find((s) => s.id === 'kpi')!.page,
+  'screen-sales': SERVICES.find((s) => s.id === 'sales')!.page,
 };
 
+/**
+ * この行の状態を保管層へ置く。**画面はどちらの入力も購読している**ので、
+ * KPI 実績と販売記録の両方を置く (行が持っていない側は 0 件)。
+ */
+async function seedFor(row: Row): Promise<void> {
+  const store = getRecordStore();
+  for (const r of row.rows) await store.insert(KPI_ACTUALS_COLLECTION, r);
+  for (const r of row.salesRows ?? []) await store.insert(SALES_COLLECTION, r);
+}
+
 /** 画面を描き、**その状態でだけ出る印**を待つ (ラベルで待つと届く前に測る・パス 388)。 */
-async function renderScreen(which: 'screen-overview' | 'screen-kpi', waitFor: string): Promise<string> {
+async function renderScreen(which: ScreenSurface, waitFor: string): Promise<string> {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(PAGE[which]));
@@ -201,7 +251,7 @@ async function renderScreen(which: 'screen-overview' | 'screen-kpi', waitFor: st
 function overviewFor(row: Row): BusinessOverview {
   const members = Array.from({ length: row.members }, () => ({ role: 'member' }));
   return buildBusinessOverview({
-    plan: 'pro', sales: [], kpiActuals: [...row.rows], members: members as never,
+    plan: 'pro', sales: [...(row.salesRows ?? [])], kpiActuals: [...row.rows], members: members as never,
   });
 }
 
@@ -319,7 +369,7 @@ describe.each(MATRIX.map((r) => [r.state, r] as const))(
     it('★ 経営サマリーの画面', async () => {
       const mine = cells('screen-overview');
       if (mine.length === 0) return;
-      for (const r of row.rows) await getRecordStore().insert(KPI_ACTUALS_COLLECTION, r);
+      await seedFor(row);
       // 錠は**その状態でだけ出る文** —— 肯定の cell が在ればそれ、無ければ
       // 「この状態でも必ず描かれる物」(損益分岐点のタイル) を待つ。
       const positive = mine.find((c) => c.kind === 'reason');
@@ -337,7 +387,7 @@ describe.each(MATRIX.map((r) => [r.state, r] as const))(
     it('★ KPI 実績の画面', async () => {
       const mine = cells('screen-kpi');
       if (mine.length === 0) return;
-      for (const r of row.rows) await getRecordStore().insert(KPI_ACTUALS_COLLECTION, r);
+      await seedFor(row);
       const positive = mine.find((c) => c.kind === 'reason');
       const t = await renderScreen(
         'screen-kpi',
@@ -349,5 +399,57 @@ describe.each(MATRIX.map((r) => [r.state, r] as const))(
         if (c.kind === 'silent-but-correct') expect(t, `KPI 画面に「${c.absent}」が出ている (${c.why})`).not.toContain(c.absent);
       }
     });
+
+    it('★ 売上集計の画面', async () => {
+      const mine = cells('screen-sales');
+      if (mine.length === 0) return;
+      await seedFor(row);
+      // 錠は**その状態でだけ出る文** —— 「総売上」の見出しは記録が届く前から
+      // 出ているので待てない (パス 376 / 390 で 2 度踏んだ形)。
+      const positive = mine.find((c) => c.kind === 'reason');
+      if (positive === undefined || positive.kind !== 'reason') {
+        throw new Error('screen-sales の行に肯定の cell が無い —— 何を待てばよいか決まらない');
+      }
+      const t = await renderScreen('screen-sales', positive.contains);
+      for (const c of mine) {
+        if (c.kind === 'reason') expect(t, `売上画面が「${c.contains}」を述べていない`).toContain(c.contains);
+        if (c.kind === 'wrong-reason-would-be') expect(t, '売上画面が別の原因の文を出している').not.toContain(c.forbidden);
+        if (c.kind === 'silent-but-correct') expect(t, `売上画面に「${c.absent}」が出ている (${c.why})`).not.toContain(c.absent);
+      }
+    });
   },
 );
+
+/**
+ * ★ **文面が面ごとに本当に違うことを、関数の側からも留める** (パス 391)。
+ *
+ * 行列は「画面がこの文を出す」を見るが、**3 つの文が同じ物になったら**
+ * 行列の主張は満たされたまま「一覧の ×」が経営サマリーへ戻りうる
+ * (`wrong-reason-would-be` が 1 つの面しか見ていないため)。
+ * だから関数そのものの非対称も別に主張する。
+ */
+describe('★ 重複の断りは面ごとに別の文 (パス 390 / 391)', () => {
+  const groups = findDuplicateOrders([...DUPLICATE_ORDERS]);
+
+  it('★ 標本: 走査が実際に 1 組を見つけている (見つけていなければ以下は空虚)', () => {
+    expect(groups).toEqual([{ ref: 'Shopify #1001', count: 2 }]);
+  });
+
+  it('★ 売上画面の文は「一覧の ×」を言い、経営サマリーの文は言わない', () => {
+    const sales = duplicateOrdersNote(groups);
+    const overview = duplicateOrdersOverviewNote(groups);
+    expect(sales).not.toBeNull();
+    expect(overview).not.toBeNull();
+    expect(sales!).toContain('一覧の × で余分な行を消してください');
+    // 経営サマリーには一覧が無い —— 代わりに**どの画面で消すか**を名指しする。
+    expect(overview!).not.toContain('一覧の ×');
+    expect(overview!).toContain('「売上集計」の画面');
+    expect(overview).not.toBe(sales);
+  });
+
+  it('★ 重複が無ければ 3 つとも null (出しっぱなしにしない)', () => {
+    expect(duplicateOrdersNote([])).toBeNull();
+    expect(duplicateOrdersOverviewNote([])).toBeNull();
+    expect(duplicateOrdersSheetNote([])).toBeNull();
+  });
+});

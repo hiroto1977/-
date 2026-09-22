@@ -18,7 +18,7 @@ import {
 } from '../data/highlightSettings';
 import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
-import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
+import { SALES_COLLECTION, duplicateOrdersOverviewNote, type SalesEntry } from '../data/sales';
 import {
   KPI_ACTUALS_COLLECTION,
   bepDisplay,
@@ -830,6 +830,16 @@ export function OverviewPage() {
     [overview.kpi.duplicateActuals],
   );
 
+  /**
+   * 同じ注文名の重複 (売上高と受注件数に 2 度数えられている) の断り (パス 391)。
+   * 隣の `duplicateActualsNote` と**同じ形で、別の入力についての別の事実**である ——
+   * 販売記録と KPI 実績は別の入力なので、どちらか一方だけが重複していることが在りうる。
+   */
+  const duplicateOrdersNote = useMemo(
+    () => duplicateOrdersOverviewNote(overview.sales.duplicateOrders),
+    [overview.sales.duplicateOrders],
+  );
+
   // 経営スコアカード — 組み替えは `data/overviewScorecard.ts` が持つ。
   // **画面の中に算術と条件を書かない** —— `.tsx` は変異検査の対象外なので、
   // ここに書いた判断はずれても誰も気付けない (実際 1 件ずれていた。経緯は同モジュール)。
@@ -1218,6 +1228,21 @@ export function OverviewPage() {
           <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '0 0 6px' }}>
             {`販売記録 ${overview.sales.period.from}〜${overview.sales.period.to}・${overview.sales.period.months} か月分の累計です（KPI 実績とは別の入力です）。`}
           </div>
+        )}
+        {/* **数字より先に読ませる** —— 同じ注文名が 2 件以上入っていると、総売上と
+            総注文件数はその重複を 2 度数えた値になる。書面 §2 は 2026-09 から
+            述べていたのに、経営サマリーは黙って倍の金額を刷っていた (パス 391 で実測:
+            同じ注文名を 2 件入れると `totalAmount` が 500,000 → 1,000,000・
+            `totalOrders` が 1 → 2 になり、画面は何も言わない)。
+            **空欄は読み手が気付くが、倍になった金額は正しく見える。** */}
+        {duplicateOrdersNote !== null && (
+          <p
+            role="alert"
+            data-duplicate-orders
+            style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, margin: '0 0 8px' }}
+          >
+            {duplicateOrdersNote}
+          </p>
         )}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           <Tile label="総売上" value={yen.format(overview.sales.totalAmount)} sub={overview.sales.topChannel ? `主力: ${overview.sales.topChannel}` : undefined} />
