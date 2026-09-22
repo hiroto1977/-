@@ -104,7 +104,7 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/shared/connectors/freeConnectors.ts': { kind: 'data', why: '認証不要コネクタのカタログ。宣言の集まりで、実行は connectorRegistry / pluginRuntime (どちらも分母に在る) が持つ。' },
   'src/shared/connectors/mcpConnectors.ts': { kind: 'data', why: 'MCP サーバの宣言的レジストリ。docs/MCP_SETUP.md と 1 対 1 で、判断は持たない。' },
   'src/shared/freeeIntake.ts': { kind: 'measure-next', why: '会計連携で落ちた取引を数えて述べる (パス 153)。数え落としは画面の数字を静かに変える。' },
-  'src/shared/hydroponicsControl.ts': { kind: 'measure-next', why: '**1,165 行の運転管理**。日々の測定から判定と次の作業を出す、この機能の中核の判断。' },
+  'src/shared/hydroponicsControl.ts': { kind: 'measure-next', why: '**1,390 行の運転管理**。日々の測定から判定と次の作業を出す、この機能の中核の判断。2026-09-22 (パス 399) に測った —— **67.15% / 覆われた分 68.20%・Killed 652 / Survived 304 / NoCoverage 15**。`thresholds.break = 99.8` を大きく下回るので**入れれば週次 CI が永続的に赤くなる**。生存を潰すのが先で、`audit:survivors` はここでは全件に使えない (1 変異体 3 分 02 秒 × 321 件 ≒ 16 時間・`--top=N` の標本で見る)。' },
   'src/shared/nortonDetection.ts': { kind: 'measure-next', why: '「見た結果」と「見られなかった」を分ける (パス 165)。安全の名乗りを作る側。' },
   'src/shared/paperAccount.ts': { kind: 'measure-next', why: '取引 0 件の口座を「損益 ±0」と言わない判断 (パス 189)。e2e の suite が別に在る。' },
   'src/shared/parameterConsistency.ts': { kind: 'measure-next', why: '台帳 (parameters.ts) の欄と欄の順序・相異を検める。ここが緩むと設定できる値の関門が消える。' },
@@ -165,6 +165,41 @@ describe('変異検査の分母の外 (パス 354)', () => {
     const gen = readOriginalSource(join(REPO, 'scripts/quality-report.cjs'));
     expect(gen).toContain('mutateScopeLine');
     expect(gen).toContain('分母の範囲');
+  });
+
+  /**
+   * **散文に書いた行数を、機械が引き直す。**
+   *
+   * 2026-09-22 (パス 399) に `hydroponicsControl.ts` の行を直したとき、そこには
+   * **「1,165 行」**と書かれていた —— 実物は **1,389 行**で、**209 行ずれていた**
+   * (2026-09 の 6 パスがこのファイルへ足した分)。理由の欄は誰も検算しないので、
+   * ファイルが伸びても文だけが古びる —— このリポジトリが繰り返し直してきた形である
+   * (パス 346 の e2e の床・パス 363 の色・パス 372 のゲート数と同じ)。
+   *
+   * だから**数は機械が持ち、判断は散文が持つ**: 理由の中の `N 行` は実物と一致すること。
+   * 書きたくなければ書かなくてよい (この検査は在る物だけを見る)。
+   *
+   * 数え方は `LINES` (= `split('\n').length`) で、**この census が母集団を決めるのに
+   * 使っているのと同じ 1 つ**である。末尾の改行が 1 要素になるので `wc -l` より 1 大きい ——
+   * 2 通りに数えるほうが危ないので、閾値と理由の欄で同じ関数を読む。
+   *
+   * 対照 3 方向とも鳴る: 古い 1,165 へ戻す ❌1 (**この検査が在れば 209 行の古びは
+   * その日に鳴っていた**) / 行数を名乗る文を数ごと消す ❌1 (床) / 1 件だけ残す ❌1 (床)。
+   * ★ **1 度目の「消す」対照は鳴らなかったが、当てていなかっただけだった** ——
+   * `' 行'` を `' 行目あたり'` へ替えたので針 `/([\d,]+) 行/` は**まだ当たっていた**。
+   * 「落ちなかった」と「当てていなかった」を混ぜない (パス 397 と同じ形)。
+   */
+  it('★ 台帳の理由が名乗る行数は実物と一致する (数は機械が持つ)', () => {
+    let checked = 0;
+    for (const [file, row] of Object.entries(LEDGER)) {
+      for (const m of row.why.matchAll(/([\d,]+) 行/g)) {
+        const digits = m[1] ?? '';
+        checked += 1;
+        expect(Number(digits.replace(/,/g, '')), `${file} の理由が名乗る行数`).toBe(LINES(file));
+      }
+    }
+    // 走査が空虚でない床 —— 行数を名乗る行が実際に在る。
+    expect(checked, '行数を名乗る理由の件数').toBeGreaterThanOrEqual(2);
   });
 
   it('薄いスタブと検査の無い物は台帳に要らない (母集団の定義が効いている)', () => {

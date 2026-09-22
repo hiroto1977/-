@@ -989,6 +989,21 @@ export interface ControlInput {
 
 /** 期限と今日から、遅れ日数と重さを決める。 */
 function overdue(today: string, due: string | null): { days: number | null; late: boolean } {
+  /*
+   * **この `late: false` は観測できない (2026-09-22 · パス 399 実測)。**
+   *
+   * 変異検査で BooleanLiteral が生存し `audit:survivors` も「本当に生存」と
+   * 答えたが、`true` へ倒しても**どの入力からも答えが変わらない**:
+   * 呼び手は 4 つで、`sched.transplantDue` / `sched.harvestDue` を渡す 2 つは
+   * 型が `string` なので `null` を渡せず (`BatchSchedule`)、残る 2 つ
+   * (低カリウムの切替日・養液交換日) は `.late` を読む前に `due !== null` /
+   * `change !== null` を再確認する。**等価変異なので検査では殺せない。**
+   * 理由を書いて残す —— 黙らせると「測っていない」と区別できなくなる
+   * (`lint:mutation-scope` は理由の無い pragma を落とす)。
+   * 等価を支えている「予定日は常に string」は
+   * `__tests__/hydroponicsEquivalentSurvivors.test.ts` が機械で持つ。
+   */
+  // Stryker disable next-line BooleanLiteral
   if (due === null) return { days: null, late: false };
   const d = isoDaysBetween(due, today);
   return { days: d, late: d !== null && d >= 0 };
