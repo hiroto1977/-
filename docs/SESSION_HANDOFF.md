@@ -31,6 +31,7 @@
 
 `typecheck` 緑・`npm test` **834 / 18,327**・`verify:all` exit 0・
 出荷物は **size 不変だが md5 は変わっている** (共有の cursor の 7 欄が最小化後に同じ長さ)。
+`perf` OK (LITE DCL 208 ms / FULL DCL 568 ms)・`e2e` / `e2e:lite` とも **455 件 ❌ 0**。
 
 ---
 
