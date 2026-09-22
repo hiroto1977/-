@@ -3,7 +3,7 @@
  * プラン) を 1 つの経営概況に束ねる純粋な集約ロジック。各機能の純粋関数を
  * 合成するだけで、IO は持たない (呼び出し側が record store から渡す)。
  */
-import { findDuplicateOrders, summarizeSales, type DuplicateOrderGroup, type SalesEntry, type SalesPeriod } from './sales';
+import { findDuplicateOrders, readableSalesRows, summarizeSales, type DuplicateOrderGroup, type SalesEntry, type SalesPeriod } from './sales';
 import {
   summarizeFundamentals,
   findDuplicateActuals,
@@ -138,6 +138,12 @@ export interface BusinessOverview {
      * 2 通り答えていた。
      */
     hasData: boolean;
+    /**
+     * 日付 (YYYY-MM-DD) が読めないために**この集計から外した**行の数
+     * (2026-09-22 · パス 400)。刷る面はこれを述べる —— 黙って除くと売上高が
+     * 小さく出て、利用者は気づけない (`kpi.unreadablePeriods` と同じ役目)。
+     */
+    unreadableDates: number;
     totalAmount: number;
     totalOrders: number;
     /** 平均受注単価。**注文が 0 件なら null** (経緯は `sales.ts` の同名の欄)。 */
@@ -313,7 +319,12 @@ export interface BusinessOverview {
 export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const planDef = getPlan(input.plan);
 
+  /*
+   * **販売記録も期が読める行だけで集計する** (2026-09-22 · パス 400)。
+   * 漏斗は `summarizeSales` の中 (`readableSalesRows`) —— ここで絞り直さない。
+   */
   const salesSummary = summarizeSales(input.sales);
+  const readableSales = readableSalesRows(input.sales).rows;
   const topChannel = salesSummary.byChannel[0]?.label ?? null;
 
   /*
@@ -381,16 +392,28 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   return {
     plan: { tier: planDef.id, label: planDef.label, audience: planDef.audience },
     sales: {
-      // **記録の件数そのもので測る** —— `totalAmount > 0` を写すと、返品で
-      // 合計が 0 になった月を「未入力」と言い始める (条件は値そのもので書く)。
-      hasData: input.sales.length > 0,
+      /*
+       * **記録の件数そのもので測る** —— `totalAmount > 0` を写すと、返品で
+       * 合計が 0 になった月を「未入力」と言い始める (条件は値そのもので書く)。
+       *
+       * ★ **数えるのは「集計できる行」** (2026-09-22 · パス 400) —— 上の
+       * `salesSummary` は日付の読める行だけを足すので、`input.sales.length` で
+       * 測ると「`hasData` は true なのに合計は 0」という、**理由の無い 0** が
+       * 紙に出る (パス 395 が閉じた形が別の入口から戻る)。`kpiActuals.ts` の
+       * 「`hasData` も選別後で測る」と同じ向き。原因の言い分けは
+       * `blankSalesCause` が 1 か所で持つ (「未入力」と「読めない」は別の原因)。
+       */
+      hasData: readableSales.length > 0,
+      unreadableDates: salesSummary.unreadableDates,
       totalAmount: salesSummary.totalAmount,
       totalOrders: salesSummary.totalOrders,
       aov: salesSummary.aov,
       channelCount: salesSummary.byChannel.length,
       topChannel,
       concentration: computeRevenueConcentration(salesSummary.byChannel),
-      duplicateOrders: findDuplicateOrders(input.sales),
+      // **重複も同じ部分集合から数える** —— 合計に入っていない行の重複を
+      // 「売上高と受注件数に 2 度数えられています」と述べると、その文が偽になる。
+      duplicateOrders: findDuplicateOrders(readableSales),
       period: salesSummary.period,
     },
     kpi: {

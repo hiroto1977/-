@@ -18,7 +18,7 @@ import {
 } from '../data/highlightSettings';
 import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
-import { SALES_COLLECTION, duplicateOrdersOverviewNote, noSalesRecordsNote, type SalesEntry } from '../data/sales';
+import { SALES_COLLECTION, droppedSalesRowsNote, duplicateOrdersOverviewNote, noSalesRecordsNote, type SalesEntry } from '../data/sales';
 import {
   KPI_ACTUALS_COLLECTION,
   bepDisplay,
@@ -846,7 +846,17 @@ export function OverviewPage() {
    * その理由を数字より先に読ませる。KPI 実績が入っていれば画面冒頭の空状態は
    * 出ないので、この文が無いと**何も断らずに `―` が 4 枚並ぶ**。
    */
-  const noSalesNote = useMemo(() => noSalesRecordsNote(overview.sales.hasData), [overview.sales.hasData]);
+  const noSalesNote = useMemo(() => noSalesRecordsNote(overview.sales), [overview.sales]);
+  /**
+   * **落とした行を画面が述べる** (2026-09-22 · パス 400)。下のタイルは日付の
+   * 読める行だけの累計なので、除いた件数を言わないと「売上集計の月別と合わない」
+   * を利用者が説明できない。逃げ口 (設定の「形式の合わない記録」) はこの文が
+   * 名指しする (法則 `escape-hatch-stays-open`)。
+   */
+  const unreadableSalesNote = useMemo(
+    () => droppedSalesRowsNote(overview.sales),
+    [overview.sales],
+  );
   /** §2 の数値。**書面の `sv` と同じ役目** —— 入力が無ければ値を刷らない。 */
   const salesValue = (n: number, fmt: (x: number) => string): string =>
     overview.sales.hasData ? fmt(n) : DASH;
@@ -1297,6 +1307,17 @@ export function OverviewPage() {
             style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, margin: '0 0 8px' }}
           >
             {noSalesNote}
+          </p>
+        )}
+        {/* **日付が読めない行を落としたこと** (パス 400)。下のタイルはその行を
+            含まないので、言わないと「売上集計の月別と合わない」が説明できない。 */}
+        {unreadableSalesNote !== null && (
+          <p
+            role="alert"
+            data-unreadable-sales-dates
+            style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, margin: '0 0 8px' }}
+          >
+            {unreadableSalesNote}
           </p>
         )}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>

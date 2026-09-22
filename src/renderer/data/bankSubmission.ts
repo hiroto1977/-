@@ -20,7 +20,7 @@ import { isCalendarMonth } from '../../shared/isoDate';
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
 import { duplicateActualsSheetNote, growthBlankSheetNote, isValidPeriod, noBepSheetNote, unreadablePeriodSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import { duplicateMembersSheetNote } from './members';
-import { duplicateOrdersSheetNote, noSalesRecordsSheetNote } from './sales';
+import { droppedSalesRowsSheetNote, duplicateOrdersSheetNote, noSalesRecordsSheetNote } from './sales';
 import { dealIntakeSheetNote } from '../../shared/freeeIntake';
 import {
   BANK_FORMAT_DEFAULT,
@@ -394,8 +394,12 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     // 丸ごと空欄なので、そちらを言う (§3 の `perCapitaBase` と同じ向き)。
     // そのとき期間も重複も在り得ないので、下の 2 つは必ず null になる。
     const parts = [
-      noSalesRecordsSheetNote(o.sales.hasData),
+      noSalesRecordsSheetNote(o.sales),
       salesScopeBase(),
+      // **落とした行を紙が述べる** (2026-09-22 · パス 400) —— 上の金額は日付の
+      // 読める行だけの累計なので、除いた件数を言わないと「期間の合計と紙の合計が
+      // 合わない」を利用者が説明できない。期間の但し書きの直後に置く (同じ話)。
+      droppedSalesRowsSheetNote(o.sales),
       duplicateOrdersSheetNote(o.sales.duplicateOrders),
     ].filter((s): s is string => s !== null);
     return parts.length === 0 ? null : parts.join('');

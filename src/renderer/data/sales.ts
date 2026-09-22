@@ -157,6 +157,15 @@ export interface SalesSummary {
    *  at least one entry appear. */
   readonly byChannel: readonly ChannelTotal[];
   /**
+   * 日付が読めないために**この集計から外した**行の数 (2026-09-22 · パス 400)。
+   *
+   * 上のすべての数は `readableSalesRows` を通った行だけの物である。落とした数を
+   * 返すのは、刷る面が**それを述べられるように**するため —— 黙って除くと
+   * 売上高が小さく出て、利用者は気づけない (`kpiActuals.ts` の
+   * `readablePeriodRows.dropped` と同じ役目)。
+   */
+  readonly unreadableDates: number;
+  /**
    * 合計額が覆っている期間。**読める日付が 1 件も無ければ `null`** ——
    * 期間を測れないことと「期間が 0」は別なので 0 に倒さない。
    */
@@ -182,13 +191,43 @@ export function salesPeriod(entries: readonly SalesEntry[]): SalesPeriod | null 
   };
 }
 
-/** Roll up entries into totals + per-channel breakdown. */
+/**
+ * Roll up entries into totals + per-channel breakdown.
+ *
+ * ## ★ 分子と分母を同じ部分集合から取る (2026-09-22 · パス 400)
+ *
+ * 2026-09-22 まで、この関数は**合計を全行から**取りながら `period` だけを
+ * `salesPeriod` (= 暦に在る日だけ) で絞っていた。**同じ器の中に、選別前の分子と
+ * 選別後の分母が並んでいた** —— `kpiActuals.ts` の `readablePeriodRows` が
+ * パス 225 で KPI について直した当の形で、売上の側だけが残っていた。
+ *
+ * 実測 (2026-09-22 · 直す前・100 万 × 2 件 + 日付 `2026-02-31` の 1 件 9,900 万):
+ *
+ * | 面 | 値 |
+ * | --- | ---: |
+ * | **金融機関等提出用の書面 §2「売上高（販売記録）」** | **101,000 千円** |
+ * | 同じ §2 の但し書き | 「販売記録の**令和8年1月〜令和8年2月・2 か月分**の累計です」 |
+ * | 同じデータの月別合計 (`monthlyTotals` —— 漏斗を通る) | **2,000,000** |
+ * | 紙が「読めない行を落とした」と述べるか | **述べない** |
+ *
+ * ★ **紙の合計が、紙が名乗る月の合計の 50.5 倍**になり、代表者名つきで
+ * 「上記のとおり相違ありません。」と署名する紙がそれを刷っていた。
+ * `2026-02-31` は暦に無い日で、アプリ自身の `isCalendarDate` が読めないと言う値である
+ * (復元や古い版の控えで入りうる —— `readableSalesRows` の docblock に経緯)。
+ *
+ * 落とした件数は {@link SalesSummary.unreadableDates} で返す。**黙って絞ると
+ * 売上高が小さく出る**ので、絞ることと述べることは対で入れる (パス 225 / 392 / 393)。
+ */
 export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
-  const totalAmount = entries.reduce((acc, e) => acc + e.amount, 0);
-  const totalOrders = entries.reduce((acc, e) => acc + e.orders, 0);
+  // **漏斗はこのファイルの 1 つ** —— ここで `isCalendarDate` を書き直すと
+  // 「同じ問いの 2 実装」になる (`salesKpiBridge.monthOf` の注記と同じ理由)。
+  const readable = readableSalesRows(entries);
+  const rows = readable.rows;
+  const totalAmount = rows.reduce((acc, e) => acc + e.amount, 0);
+  const totalOrders = rows.reduce((acc, e) => acc + e.orders, 0);
 
   const acc = new Map<SalesChannel, { amount: number; orders: number }>();
-  for (const e of entries) {
+  for (const e of rows) {
     const cur = acc.get(e.channel) ?? { amount: 0, orders: 0 };
     cur.amount += e.amount;
     cur.orders += e.orders;
@@ -221,7 +260,18 @@ export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
     // `c.aov > 0 ? yen.format(c.aov) : '—'` で「―」と刷っている。
     aov: totalOrders > 0 ? totalAmount / totalOrders : null,
     byChannel,
-    period: salesPeriod(entries),
+    /*
+     * **絞った行を渡す** —— 「上のすべてが同じ部分集合から出ている」ことが
+     * この 1 か所で読めるように。
+     *
+     * ★ **これは読みやすさのためで、振る舞いは変わらない (測った)** ——
+     * `salesPeriod` は中で `isCalendarDate` で絞るので、`entries` を渡しても
+     * 同じ答えになる。**等価変異なので検査では殺せない**: 対照でここを
+     * `salesPeriod(entries)` へ戻すと 63 件すべて緑だった (2026-09-22 実測)。
+     * 元の欠陥は「分子が絞られていないこと」で、そちらは対照 A が殺す。
+     */
+    period: salesPeriod(rows),
+    unreadableDates: readable.dropped,
   };
 }
 
@@ -268,10 +318,52 @@ export function readableSalesRows(entries: readonly SalesEntry[]): ReadableSales
  *
  * **肯定形で書く** (`dropped <= 0` は `undefined <= 0` が false なので
  * `undefined` を通す —— `unreadablePeriodNote` が 2026-09-14 に踏んだ穴)。
+ *
+ * ★ **2026-09-22 (パス 400) に文言を実測へ直した** —— 「**月別の集計**から除いて
+ * います」と書いていたが、そのとき `summarizeSales` は全行を足しており、
+ * 落ちていたのは月別の集計**だけ**だった。漏斗を合計にも通したので、いまは
+ * 合計・件数・単価・チャネル・期間の**すべて**から除かれる。文はその方を述べる
+ * (`unreadablePeriodNote` の「集計・期間・成長率のすべてから」と同じ言い方)。
  */
 export function unreadableSalesDateNote(dropped: number): string | null {
   if (!(Number.isFinite(dropped) && dropped > 0)) return null;
-  return `売上の記録のうち ${dropped} 件は日付 (YYYY-MM-DD) が読めないため、月別の集計から除いています。バックアップの復元や古い版で入った控えの可能性があります（設定の「形式の合わない記録」から消せます）。`;
+  return `売上の記録のうち ${dropped} 件は日付 (YYYY-MM-DD) が読めないため、集計・期間のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（設定の「形式の合わない記録」から消せます）。`;
+}
+
+/**
+ * 同じことを、相手に渡る書面・レポート向けの 1 文で (2026-09-22 · パス 400)。
+ *
+ * `kpiActuals.ts` の `unreadablePeriodSheetNote` と対になる —— 画面は**どこで
+ * 消せるか**を名指しし、紙は事実だけを短く述べる (紙に「設定の画面で」と書いても
+ * 紙を読む人はその画面を持っていない)。
+ */
+export function unreadableSalesDateSheetNote(dropped: number): string | null {
+  // 画面側と同じ肯定形 (`undefined` / NaN は言わない)。
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `日付 (YYYY-MM-DD) が読めない ${dropped} 件は集計から除いています。`;
+}
+
+/**
+ * **落とした行を述べるのは、部分的に読めるときだけ** (2026-09-22 · パス 400)。
+ *
+ * 1 件も読めなければ `noSalesRecordsSheetNote` / `noSalesRecordsNote` が
+ * *原因ごと*述べる (件数まで含む) ので、ここで同じ事実を 2 度言わない ——
+ * 書面 §2 の caption が最初からそう組まれている
+ * (「**狭い理由より広い理由を先に述べる**…そのとき期間も重複も在り得ないので、
+ * 下の 2 つは必ず null になる」)。**その不変条件を、足した文でも保つ。**
+ *
+ * 判定を面ごとに書くと (caption に `if` を 1 つ足すと) そこが 2 つ目の選択になり、
+ * 面ごとに違うことを言い始める。だから**この 2 つの関数が持つ**。
+ */
+export function droppedSalesRowsSheetNote(state: SalesAggregateState): string | null {
+  if (blankSalesCause(state) !== null) return null;
+  return unreadableSalesDateSheetNote(state.unreadableDates);
+}
+
+/** 同じことを、画面の言い方で (逃げ口を名指しする側)。 */
+export function droppedSalesRowsNote(state: SalesAggregateState): string | null {
+  if (blankSalesCause(state) !== null) return null;
+  return unreadableSalesDateNote(state.unreadableDates);
 }
 
 /** Group entries by `YYYY-MM` month, newest month first, with each month's
@@ -369,6 +461,40 @@ export function duplicateOrdersNote(groups: readonly DuplicateOrderGroup[]): str
 }
 
 /**
+ * §2 (販売の状況) が空欄になる理由を選ぶための、**この節が知っている 2 つの事実**。
+ *
+ * `hasData` は「**集計できる**記録が在るか」で、日付が読めない行を除いたあとで
+ * 測る (`kpiActuals.ts` が「`hasData` も選別後で測る」と書いている当のこと)。
+ */
+export interface SalesAggregateState {
+  /** 集計できる記録が 1 件でも在るか (日付が読める行の件数 > 0)。 */
+  readonly hasData: boolean;
+  /** 日付が読めないために除いた行の数。 */
+  readonly unreadableDates: number;
+}
+
+/** §2 が空欄になる原因。空欄でなければ `null`。 */
+export type BlankSalesCause = 'no-records' | 'all-unreadable';
+
+/**
+ * **空欄の原因を 1 か所で選ぶ** (2026-09-22 · パス 400)。
+ *
+ * 「入っていない」と「入っているが読めない」は**別の原因**で、直す手も違う ——
+ * 前者は記録を足す、後者は設定の「形式の合わない記録」から消して入れ直す。
+ * 2 つを混ぜて「未入力」と言うと、記録を入れた利用者に**入れていないと告げる**
+ * ことになる (パス 388 が経営サマリーで直した「原因を取り違えた断り」と同じ形)。
+ *
+ * 選ぶのはここだけ。面ごとに `if` を書くと、面ごとに違う原因を言い始める。
+ */
+export function blankSalesCause(state: SalesAggregateState): BlankSalesCause | null {
+  if (state.hasData) return null;
+  // 肯定形 (`<= 0` は `undefined` を通す —— このファイルの他の断りと同じ規則)。
+  return Number.isFinite(state.unreadableDates) && state.unreadableDates > 0
+    ? 'all-unreadable'
+    : 'no-records';
+}
+
+/**
  * **販売記録が 1 件も無いときの、書面の断りの一文** (2026-09-22 · パス 395)。
  *
  * 書面 §2「販売の状況」は 2026-09-22 まで、記録が 1 件も無い控えで
@@ -394,8 +520,15 @@ export function duplicateOrdersNote(groups: readonly DuplicateOrderGroup[]): str
  * 答え方が 2 通り並んでいた」と書いた。**上の 2 行は据え置かれた** —— そちらは
  * 「割れない」ではなく「入っていない」だったので、同じ網に掛からなかった。
  */
-export function noSalesRecordsSheetNote(hasData: boolean): string | null {
-  return hasData ? null : '販売記録が未入力のため算定していません。';
+export function noSalesRecordsSheetNote(state: SalesAggregateState): string | null {
+  switch (blankSalesCause(state)) {
+    case null:
+      return null;
+    case 'no-records':
+      return '販売記録が未入力のため算定していません。';
+    case 'all-unreadable':
+      return `販売記録は入力されていますが、日付 (YYYY-MM-DD) が読める記録が 1 件も無いため算定していません（${state.unreadableDates} 件を除きました）。`;
+  }
 }
 
 /**
@@ -410,10 +543,15 @@ export function noSalesRecordsSheetNote(hasData: boolean): string | null {
  * 画面は**どこで入れられるかを名指しする** (法則 `escape-hatch-stays-open`)。
  * 「本表」と言う紙ではない。
  */
-export function noSalesRecordsNote(hasData: boolean): string | null {
-  return hasData
-    ? null
-    : '販売記録が 1 件も入力されていないため、総売上・総注文件数・平均注文単価・販売チャネル数は算定していません。「売上集計」の画面で記録を追加すると算定します。';
+export function noSalesRecordsNote(state: SalesAggregateState): string | null {
+  switch (blankSalesCause(state)) {
+    case null:
+      return null;
+    case 'no-records':
+      return '販売記録が 1 件も入力されていないため、総売上・総注文件数・平均注文単価・販売チャネル数は算定していません。「売上集計」の画面で記録を追加すると算定します。';
+    case 'all-unreadable':
+      return `販売記録は ${state.unreadableDates} 件ありますが、日付 (YYYY-MM-DD) が読める記録が 1 件も無いため、総売上・総注文件数・平均注文単価・販売チャネル数は算定していません。設定の「形式の合わない記録」から消して、「売上集計」の画面で入れ直してください。`;
+  }
 }
 
 /**

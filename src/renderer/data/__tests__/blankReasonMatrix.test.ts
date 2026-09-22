@@ -96,6 +96,19 @@ const DUPLICATE_ORDERS: readonly SalesEntry[] = [
   { date: '2026-08-01', channel: 'shopify', amount: 500_000, orders: 1, note: 'Shopify #1001' },
 ];
 
+/**
+ * **日付が読めない行が 1 件** —— 売上の側の `unreadable-periods` (パス 400)。
+ *
+ * `2026-02-31` は暦に無い日で、アプリ自身の `isCalendarDate` が読めないと言う
+ * (復元や古い版の控えで入りうる)。読める 2 件 + 読めない 1 件にしておくと
+ * 「合計は読める 2 件ぶん・紙は落とした 1 件を述べる」の両方を見られる。
+ */
+const UNREADABLE_SALES_DATES: readonly SalesEntry[] = [
+  { date: '2026-01-15', channel: 'shopify', amount: 1_000_000, orders: 10, note: 'A' },
+  { date: '2026-02-15', channel: 'shopify', amount: 1_000_000, orders: 10, note: 'B' },
+  { date: '2026-02-31', channel: 'shopify', amount: 99_000_000, orders: 999, note: 'C' },
+];
+
 const DUPLICATE_ACTUALS: readonly KpiActual[] = [
   { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
   { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
@@ -232,6 +245,25 @@ const MATRIX: readonly Row[] = [
       },
       // ★ 面ごとに別の文 —— 紙は画面の操作 (「売上集計」の画面で…) を指示しない。
       { surface: 'sheet', kind: 'wrong-reason-would-be', forbidden: '「売上集計」の画面' },
+    ],
+  },
+  {
+    state: 'unreadable-sales-dates',
+    rows: [{ period: '2026-08', unit: '全社', revenue: 5_000_000, cogs: 2_000_000, advertising: 0, sga: 1_000_000, depreciation: 0 }],
+    salesRows: UNREADABLE_SALES_DATES,
+    members: 1,
+    why: '販売記録の日付 (YYYY-MM-DD) が読めない行が 1 件 —— **`unreadable-periods` の売上側**で、2026-09-22 まで `summarizeSales` は**合計を全行から**取りながら `period` だけを絞っていた。実測: 書面 §2 は **101,000 千円 / 1,019 件**を「販売記録の令和8年1月〜令和8年2月・**2 か月分**の累計です」として刷り、同じデータの月別合計は 2,000,000 —— **紙の合計が紙の名乗る月の合計の 50.5 倍**で、落とした 1 件を 1 文も言わなかった (パス 400)',
+    cells: [
+      { surface: 'screen-overview', kind: 'reason', contains: '日付 (YYYY-MM-DD) が読めないため' },
+      { surface: 'screen-sales', kind: 'reason', contains: '日付 (YYYY-MM-DD) が読めないため' },
+      { surface: 'sheet', kind: 'reason', contains: '日付 (YYYY-MM-DD) が読めない 1 件は集計から除いています' },
+      {
+        surface: 'report', kind: 'silent-but-correct', absent: '総注文件数',
+        why: '経営レポートは販売記録の節そのものを持たない (no-sales-records の行と同じ実測)。空欄も過大な合計も出さないので理由は要らない',
+      },
+      // ★ 紙は「未入力」と言ってはいけない —— 記録は入っており、読めないだけである
+      // (パス 388 の「原因を取り違えた断り」を売上側で塞いだ形)。
+      { surface: 'sheet', kind: 'wrong-reason-would-be', forbidden: '販売記録が未入力のため' },
     ],
   },
   {
@@ -588,16 +620,16 @@ describe('★ 重複の断りは面ごとに別の文 (パス 390 / 391)', () =>
  */
 describe('★ 販売記録が無い断りは面ごとに別の文', () => {
   it('画面は入れる場所を名指しし、紙はしない', () => {
-    const screen = noSalesRecordsNote(false) ?? '';
-    const sheet = noSalesRecordsSheetNote(false) ?? '';
+    const screen = noSalesRecordsNote({ hasData: false, unreadableDates: 0 }) ?? '';
+    const sheet = noSalesRecordsSheetNote({ hasData: false, unreadableDates: 0 }) ?? '';
     expect(screen).toContain('「売上集計」の画面');
     expect(sheet).not.toContain('画面');
     expect(screen).not.toBe(sheet);
   });
 
   it('記録が在れば両方 null (断る状態でないときに文を作らない)', () => {
-    expect(noSalesRecordsNote(true)).toBeNull();
-    expect(noSalesRecordsSheetNote(true)).toBeNull();
+    expect(noSalesRecordsNote({ hasData: true, unreadableDates: 0 })).toBeNull();
+    expect(noSalesRecordsSheetNote({ hasData: true, unreadableDates: 0 })).toBeNull();
   });
 });
 
