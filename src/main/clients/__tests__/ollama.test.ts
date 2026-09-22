@@ -317,11 +317,19 @@ describe('fetchOllamaSnapshot', () => {
     expect(snap.models[0]!.quantization).not.toContain('Stryker');
     expect(snap.models[0]!.family).not.toContain('Stryker');
     expect(snap.models[0]!.parameterSize).not.toContain('Stryker');
+    /*
+     * **`'—'` はブラウザ版と揃えた値** (2026-09-22 · パス 407)。
+     *
+     * 直す前、main はこの 3 欄を `?? ''` で読み、ブラウザ版の `normalizeModels` は
+     * `'—'` を入れていた。画面 (`OllamaPage`) は `${m.family || '?'}` と書くので、
+     * **同じ画面が build によって `?` と `—` を出していた**。
+     * main を共有の読み手へ寄せたので、両ビルドが `—` で揃う。
+     */
     expect(snap.models[0]).toMatchObject({
       name: 'bare-model',
-      family: '',
-      parameterSize: '',
-      quantization: '',
+      family: '—',
+      parameterSize: '—',
+      quantization: '—',
     });
   });
 
@@ -971,5 +979,54 @@ describe('chat — endpoint allowlist enforcement', () => {
     expect(isAllowedEndpoint('http://127.0.0.1:11434/api/chat ')).toBe(false); // trailing space
     expect(isAllowedEndpoint('http://127.0.0.1:11434//api/chat')).toBe(false);
     expect(isAllowedEndpoint('')).toBe(false);
+  });
+});
+
+describe('★ モデル一覧の読みは共有の 1 つ (パス 407)', () => {
+  /*
+   * 直す前、main は 6 欄を素の `??` で読む**もう 1 つの読み手**を持っていた。
+   * `??` は null / undefined しか受けないので、第三者 (利用者が設定した Ollama
+   * ホスト) が非文字列を返すと途中で投げ、**黙って短くなった一覧**が画面に出た。
+   */
+  function tagsFetch(models: unknown): typeof fetch {
+    return vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/version')) return new Response(JSON.stringify({ version: '9.9.9' }), { status: 200 });
+      if (u.endsWith('/api/tags')) return new Response(JSON.stringify({ models }), { status: 200 });
+      return new Response('{}', { status: 200 });
+    }) as unknown as typeof fetch;
+  }
+
+  const good = (name: string): Record<string, unknown> => ({
+    name,
+    modified_at: '2026-09-22T10:00:00Z',
+    size: 1048576,
+    details: { family: 'llama', parameter_size: '7B', quantization_level: 'Q4' },
+  });
+
+  it('★ 非文字列の modified_at が 1 件在っても、残りの一覧が消えない', async () => {
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: tagsFetch([good('a'), { ...good('b'), modified_at: 20260922 }, good('c')]) });
+    // 直す前は 2 件 push した所で TypeError → catch → 警告だけが残った。
+    expect(snap.models.map((m) => m.name)).toEqual(['a', 'b', 'c']);
+    expect(snap.models[1]!.modifiedAt, '読めない日付は空にする').toBe('');
+    expect(snap.warnings.join(' ')).not.toContain('Listing models failed');
+  });
+
+  it('★ 名前が安全でないモデルは落とす (main も isSafeModelName を通る)', async () => {
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: tagsFetch([good('ok'), { ...good('x'), name: 42 }, { ...good('y'), name: '../../etc/passwd' }]) });
+    expect(snap.models.map((m) => m.name)).toEqual(['ok']);
+  });
+
+  it('★ 大きさが数でなければ NaN MB を刷らない', async () => {
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: tagsFetch([{ ...good('a'), size: '1MB' }]) });
+    expect(Number.isFinite(snap.models[0]!.sizeMb)).toBe(true);
+    expect(snap.models[0]!.sizeMb).toBe(0);
+  });
+
+  it('正常な応答の答えは変えない (日付は main の都合で 10 字)', async () => {
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: tagsFetch([good('llama3')]) });
+    expect(snap.models[0]).toEqual({
+      name: 'llama3', family: 'llama', parameterSize: '7B', quantization: 'Q4', sizeMb: 1, modifiedAt: '2026-09-22',
+    });
   });
 });

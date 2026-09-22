@@ -21,6 +21,53 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 407 (2026-09-22) — Ollama のモデル一覧が main だけ素の読みで、1 件の非文字列で一覧が黙って短くなった
+
+`/api/tags` の応答を `OllamaModelInfo[]` にする読み手が **2 つ**在った —— ブラウザ版は
+`shared/ollama.ts` の `normalizeModels`、main は**自前の 6 欄の `??`**。`??` は
+**null / undefined しか受けない**ので、第三者が非文字列を返すと素通りする。
+実測 (2026-09-22 ・ 直す前・モデル 3 件のうち 2 件目を壊す):
+
+| 壊し方 | `normalizeModels` (ブラウザ版) | main の素の読み |
+| --- | --- | --- |
+| `modified_at: 20260922` (数) | その欄を `''` にして**3 件とも通す** | **TypeError** (`.slice` が無い) —— **一覧が 2 件に縮む** |
+| `size: '1MB'` (文字列) | `sizeMb: 0` | **`NaN MB`** を画面に刷る |
+| `name: 42` (非文字列) | **その項目を飛ばす** | **`isSafeModelName` を通らないまま**画面へ |
+| `item: null` | 飛ばす | `m.name` で **TypeError** |
+
+**いちばん重いのは 1 行目で、失敗が「短い一覧」として現れる** —— 投げた所で `push`
+済みの分だけが残り、外側の `catch` が warning (「Listing models failed」) にするので、
+利用者は 3 件のうち 2 件だけの一覧を見る。**何件落ちたかはどこにも出ない。**
+
+パス 402 (`compareVersions`) とまったく同じ向き —— **同じアプリが同じ問いに 2 通り
+答え、弱い方が main に立っていた**。`isSafeModelName` は main も import しているのに、
+使っていたのは `chat` の `model` 引数だけだった。
+
+**直し**: main も `normalizeModels` を通す 1 行にする。**整形は呼び手が持つ**
+(パス 386 の `bepDisplay` と同じ)。対照 2 方向とも鳴る (A 素の読みへ戻す ❌4 /
+B `normalizeModels` の `isSafeModelName` を外す ❌2)。
+
+### 残作業 (パス 408 の候補・測って実在を確かめた)
+
+**`normalizeModels` が検めているのは型だけで、大きさは `name` しか見ていない。**
+
+| 欄 | 天井 | 画面へ出る所 |
+| --- | --- | --- |
+| `name` | **128 字** (`isSafeModelName` の正規表現) | `DataList` の title |
+| `family` / `parameterSize` / `quantization` | **無し** (`typeof` だけ) | `OllamaPage:180` の meta 行 |
+| `modifiedAt` | **無し** | 同 (`更新 ${m.modifiedAt}`) |
+| `sizeMb` | **無し** (`Math.round(size / 1MB)`) | 同 (`1e300` なら指数表記で刷る) |
+
+応答の上限は `MAX_OLLAMA_RESPONSE_BYTES` (2 MiB) なので、**1 件で ~2 MB の第三者
+文字列が 1 行に載る**。`isSafeModelName` が 128 字に収めている理由がそのままここにも
+当てはまるのに、**同じオブジェクトリテラルの隣の 4 欄だけが前提を持たない**
+(パス 398 と同じ非対称)。天井の梯子は `shared/redact.ts` が既に持つ (パス 273 / 320)。
+
+**もう 1 つ同じ所に**: `modifiedAt` は main だけが `.slice(0, 10)` するので、
+**同じ `OllamaPage` が build によって `2026-09-22` と `2026-09-22T10:00:00Z` を出す**。
+非文字列のときは両ビルドとも `''` で、画面は `更新 ` と**理由なしの空欄**を刷る
+(法則 `blank-states-its-reason`)。
+
 ## パス 406 (2026-09-22) — 更新確認の URL: 調べたのは parsed、返すのは raw
 
 **これは罠の除去であって、生きた欠陥ではない (測った)。**
@@ -15046,7 +15093,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **108 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **108 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -15089,7 +15136,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
 | `src/shared/taxConsumptionBusiness.ts` | 3 |
-| `src/main/clients/ollama.ts` | 2 |
 | `src/renderer/App.tsx` | 2 |
 | `src/renderer/components/AxonometricCharts.tsx` | 2 |
 | `src/renderer/data/businessUnits.ts` | 2 |
@@ -15117,6 +15163,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/cloudflare.ts` | 1 |
 | `src/main/clients/devEnv.ts` | 1 |
 | `src/main/clients/emotions.ts` | 1 |
+| `src/main/clients/ollama.ts` | 1 |
 | `src/main/oauth.ts` | 1 |
 | `src/renderer/components/RealtimeTicker.tsx` | 1 |
 | `src/renderer/components/RecordShapeAuditPanel.tsx` | 1 |

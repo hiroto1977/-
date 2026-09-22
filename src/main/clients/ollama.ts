@@ -40,6 +40,7 @@ import {
   buildWarnings,
   compareVersions,
   isSafeModelName,
+  normalizeModels,
   isVersionSafe,
   type OllamaSnapshot,
 } from '../../shared/ollama';
@@ -226,15 +227,35 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
           await readBodyWithCap(tagsRes, MAX_RESPONSE_BYTES, 'Ollama /api/tags'),
           'Ollama /api/tags',
         ) as OllamaTagsResponse;
-        for (const m of tags.models ?? []) {
-          models.push({
-            name: m.name,
-            family: m.details?.family ?? '',
-            parameterSize: m.details?.parameter_size ?? '',
-            quantization: m.details?.quantization_level ?? '',
-            sizeMb: Math.round((m.size ?? 0) / (1024 * 1024)),
-            modifiedAt: (m.modified_at ?? '').slice(0, 10),
-          });
+        /*
+         * **モデル一覧の読みは `shared/ollama.ts` の `normalizeModels` ただ 1 つ**
+         * (2026-09-22 · パス 407)。
+         *
+         * 直す前、ここは 6 欄を素で読む**もう 1 つの読み手**だった —— ブラウザ版が
+         * 通る `normalizeModels` は ① 物でない項目を飛ばし ② **`isSafeModelName` で
+         * 名前を検め** ③ `Number.isFinite` で大きさを ④ 残り 4 欄を `typeof` で
+         * 検めるのに、main は `??` だけで読んでいた。`??` は **null / undefined しか
+         * 受けない**ので、第三者 (利用者が設定した Ollama ホスト) が非文字列を返すと:
+         *
+         *   modified_at: 20260922 → `(… ?? '').slice` が **TypeError**
+         *   size: '1MB'          → `Math.round(NaN)` = **NaN MB** を画面に刷る
+         *   name: 非文字列        → **`isSafeModelName` を通らないまま**画面へ
+         *
+         * 実測 (直す前・3 件中 2 件目が非文字列): **2 件 push した所で投げ**、
+         * 外側の catch が warning にするので、利用者は**黙って短くなった一覧**を見る
+         * (「Listing models failed」は出るが、何件落ちたかは分からない)。
+         *
+         * パス 402 と同じ形 —— **同じアプリが同じ問いに 2 通り答え、弱い方が main に
+         * 立っていた**。`isSafeModelName` は main も import しているのに、
+         * 使っていたのは chat の model 引数 (279 行) だけだった。
+         *
+         * **整形は呼び手が持つ** (パス 386 の `bepDisplay` と同じ) —— 日付を 10 字へ
+         * 切るのは main の画面の都合なので、判定を共有したうえでここで切る。
+         * ★ その結果、**同じ `OllamaPage` が build によって `2026-09-22` と
+         *   `2026-09-22T10:00:00Z` を出す**非対称は残る (測った・別の話)。
+         */
+        for (const m of normalizeModels(tags)) {
+          models.push({ ...m, modifiedAt: m.modifiedAt.slice(0, 10) });
         }
       });
     } catch (err) {
