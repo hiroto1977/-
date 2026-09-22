@@ -20,9 +20,28 @@ export interface GmailSnapshot {
 }
 
 function headerValue(message: GmailMessage, name: string): string {
-  const headers = message.payload?.headers ?? [];
+  /*
+   * **`?? []` は配列であることも要素が物であることも保証しない** (2026-09-22 · パス 412)。
+   *
+   * 実測 (直す前・実物の `fetchGmailSnapshot` に食わせる) —— **3 形とも投げ、
+   * Gmail の取得が丸ごと失敗した**:
+   *
+   * | 相手の応答 | 直す前 |
+   * | --- | --- |
+   * | `payload.headers` が文字列 | `headers.find is not a function` |
+   * | 要素が `null` | `Cannot read properties of null (reading 'name')` |
+   * | `h.name` が数 | `h.name.toLowerCase is not a function` |
+   *
+   * パス 409 は gmail の**一覧**を `objectRows` へ通したが、**ここは通っていなかった** ——
+   * その census の針が `(… ?? []).map(` を 1 行で探す形だったので、
+   * **変数へ入れてから使う形が母集団に入っていなかった**。
+   */
   const target = name.toLowerCase();
-  return headers.find((h) => h.name.toLowerCase() === target)?.value ?? '';
+  for (const h of objectRows<{ name?: unknown; value?: unknown }>(message.payload?.headers)) {
+    if (typeof h.name !== 'string' || h.name.toLowerCase() !== target) continue;
+    return typeof h.value === 'string' ? h.value : '';
+  }
+  return '';
 }
 
 export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapshot> {

@@ -21,6 +21,32 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 412 (2026-09-22) — パス 409 の針が 2 形を見落とし、3 サービスが応答 1 件で取得ごと失敗していた
+
+パス 411 の残作業を辿って `youtube.ts` を読んだら、**`(pl.items ?? [])` の次の行に `.map(`** が在った ——
+パス 409 の census は「素の `(… ?? []).map(` は `main/clients/` に **0 件**」と主張しており、
+**その主張が偽だった**。実測 (直す前・実物の client に食わせる) —— **7 形とも投げ、取得が丸ごと失敗する**:
+
+| client | 壊し方 | 直す前 |
+| --- | --- | --- |
+| **youtube** | 要素が `null` / `items` が文字列・数 | `Cannot read properties of null (reading 'snippet')` / `.map is not a function` |
+| **gmail** | `headers` が文字列 / 要素が `null` / `h.name` が数 | `headers.find is not a function` / `… (reading 'name')` / `h.name.toLowerCase is not a function` |
+| **github** | `search.items` が文字列 / 要素が `null` | `items.map is not a function` / `… (reading 'number')` |
+
+★ **なぜ見落としたか** —— 針が `.test(line)` で**1 行ずつ**当てていた。
+① 改行を跨ぐ形 (youtube) ② 変数へ入れてから使う形 (github / **gmail はパス 409 が一覧を直した当のファイル**)。
+
+**直し**: 3 本とも `objectRows` へ / 針を両方の形へ広げる / **振る舞いの背骨を 3 本**足す。
+免除は `shopify.ts:127` の 1 件だけで、**理由そのものを別の `it` が検める**
+(`assertOrder` の中で `checkShopifyLineItems` が呼ばれていること —— 関門が外れた日に鳴る)。
+
+### 残作業 (パス 412 の後)
+
+① **`?? ''` で第三者の文字列を受ける欄** —— `microsoft-365` 4 / `shopify` 2 / `skills` 1 / `youtube` 2。
+   天井 (`displayField`) はパス 411 で置いたので、同じ測り方で 1 画面ずつ通せる。
+② **cursor の 6 欄は罠のまま** (パス 410)。
+③ **atlassian の一覧は振る舞いで確かめていない** (資格情報の関門が先に当たる)。
+
 ## パス 411 (2026-09-22) — 生の第三者文字列が meta 行に載り、1 行で画面が 1.4M 字になる
 
 パス 410 が残した母集団 (生の第三者文字列が `DataList` の meta 行に載る画面 2 枚) を、

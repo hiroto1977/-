@@ -1,6 +1,13 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { displayDateOf } from '../../shared/isoDate';
-import { optionalString, requireNumber, requireObject, requireString, displayField } from '../../shared/apiResponse';
+import {
+  displayField,
+  objectRows,
+  optionalString,
+  requireNumber,
+  requireObject,
+  requireString,
+} from '../../shared/apiResponse';
 import { GITHUB_API, checkIssue, githubIssueInit, githubIssuesPath, parseCreatedIssue } from '../../shared/api/github';
 import type { ActionData } from '../../shared/actionData';
 
@@ -90,7 +97,13 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
   // pull_request.url for the full PR shape. Individual failures (e.g.
   // a private repo we lost access to) degrade gracefully to the search-
   // only fields.
-  const items = search.items ?? [];
+  /*
+   * **要素が物であることも、配列であることも検める** (2026-09-22 · パス 412)。
+   * 実測 (直す前): `items` が文字列 → `items.map is not a function` /
+   * 要素が `null` → `Cannot read properties of null (reading 'number')` ——
+   * **どちらも GitHub の取得が丸ごと失敗する**。
+   */
+  const items = objectRows<SearchItem>(search.items);
   const pulls = await Promise.all(
     items.map(async (item): Promise<GithubSnapshot['pullRequests'][number]> => {
       const fallback = {

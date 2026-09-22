@@ -40,6 +40,8 @@ import { fetchSlackSnapshot } from '../slack';
 import { fetchBaseSnapshot } from '../base';
 import { fetchCanvaSnapshot } from '../canva';
 import { fetchGmailSnapshot } from '../gmail';
+import { fetchYoutubeSnapshot } from '../youtube';
+import { fetchGithubSnapshot } from '../github';
 
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
 const CLIENTS_DIR = 'src/main/clients';
@@ -79,6 +81,74 @@ describe('objectRows —— 物である要素だけを残す', () => {
 });
 
 describe('★ 壊れた行が 1 つ在っても、一覧は出る (振る舞い)', () => {
+  /*
+   * ★ **パス 412 で足した 3 本** —— youtube / gmail の header / github は
+   *   パス 409 の母集団に**入っていなかった** (針が 1 行ずつ当てる形だったので、
+   *   改行を跨ぐ形と変数へ入れる形が見えなかった)。実測するとどれも投げ、
+   *   **その画面の取得が丸ごと失敗していた**。
+   */
+  const YT_CHANNEL = {
+    items: [
+      {
+        id: 'c1',
+        snippet: { title: 'ch' },
+        statistics: { subscriberCount: '1', viewCount: '2', videoCount: '3' },
+        contentDetails: { relatedPlaylists: { uploads: 'UU1' } },
+      },
+    ],
+  };
+  const YT_TOKEN = JSON.stringify({ apiKey: 'k', channelId: 'c1' });
+  const GOOD_VIDEO = { snippet: { title: 't', publishedAt: '2026-01-01T00:00:00Z', resourceId: { videoId: 'v1' } } };
+
+  it('youtube: 要素が null / items が配列でなくても投げず、良い行は残る', async () => {
+    for (const items of [[null, GOOD_VIDEO], 'x', 42, [42, GOOD_VIDEO]] as unknown[]) {
+      const snap = await fetchYoutubeSnapshot({
+        token: YT_TOKEN,
+        fetch: seq(YT_CHANNEL, { items }),
+      });
+      // 配列でない形では動画は 0 件・良い行が在れば残る。
+      expect(snap.recentVideos.every((v) => v.videoId.length > 0)).toBe(true);
+    }
+    const ok = await fetchYoutubeSnapshot({ token: YT_TOKEN, fetch: seq(YT_CHANNEL, { items: [GOOD_VIDEO] }) });
+    expect(ok.recentVideos[0]?.videoId).toBe('v1');
+  });
+
+  it('gmail: headers が配列でない / 要素が null / name が数でも投げない', async () => {
+    const list = { messages: [{ id: 'm1' }] };
+    for (const headers of ['x', [null], [{ name: 42, value: 'v' }], 7] as unknown[]) {
+      const snap = await fetchGmailSnapshot({
+        token: 't',
+        fetch: seq(list, { id: 'm1', payload: { headers }, snippet: 's' }),
+      });
+      expect(snap.threads).toHaveLength(1);
+      expect(snap.threads[0]!.sender).toBe('');
+    }
+    const ok = await fetchGmailSnapshot({
+      token: 't',
+      fetch: seq(list, { id: 'm1', payload: { headers: [{ name: 'From', value: 'a@b' }] }, snippet: 's' }),
+    });
+    expect(ok.threads[0]!.sender).toBe('a@b');
+  });
+
+  it('github: search.items が配列でない / 要素が null でも投げない', async () => {
+    const user = {
+      login: 'l',
+      name: 'n',
+      company: 'c',
+      avatar_url: 'https://a/b',
+      html_url: 'https://github.com/l',
+      public_repos: 1,
+      followers: 1,
+    };
+    const good = { number: 1, title: 't', state: 'open', html_url: 'https://x/y' };
+    for (const items of ['x', [null], 42, [null, good]] as unknown[]) {
+      const snap = await fetchGithubSnapshot({ token: 't', fetch: seq(user, { items }) });
+      expect(Array.isArray(snap.pullRequests)).toBe(true);
+    }
+    const ok = await fetchGithubSnapshot({ token: 't', fetch: seq(user, { items: [good] }) });
+    expect(ok.pullRequests[0]?.number).toBe(1);
+  });
+
   it('drive: 4 形とも投げず、良い行は残る', async () => {
     const bad = [
       { label: '要素が null', files: [GOOD_DRIVE, null] },
@@ -168,21 +238,103 @@ describe('母集団 (走査で導く・両方向)', () => {
     expect(users.length, `objectRows を通す client: ${users.join(', ')}`).toBeGreaterThanOrEqual(8);
   });
 
-  it('★ 素の `(応答 ?? []).map(` は 1 つも残っていない (次に足されたら鳴る)', () => {
-    const raw: string[] = [];
-    for (const f of clientFiles()) {
-      const src = codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)));
-      src.split('\n').forEach((line, i) => {
-        if (/\?\?\s*\[\]\s*\)\s*\.(map|slice|filter|forEach)\(/.test(line)) raw.push(`${f}:${i + 1}  ${line.trim()}`);
-      });
-    }
-    expect(raw, `素の形が残っている:\n${raw.join('\n')}`).toEqual([]);
-  });
+  /**
+   * `(応答 ?? []).map(` **とその仲間**を探す。
+   *
+   * ★ **パス 409 のこの針は 2 つの形を見落としていた** (2026-09-22 · パス 412 で測った)。
+   * 当時の針は `.test(line)` で**1 行ずつ**当てていたので:
+   *
+   *   1. `recentVideos = (pl.items ?? [])` 改行 `.map((it) => {` —— `youtube.ts`
+   *   2. `const items = search.items ?? [];` … `items.map(…)` —— `github.ts` / `gmail.ts`
+   *
+   * のどちらも母集団に入らず、**census は「素の形は 0 件」と言い続けた**。
+   * 実測するとその 3 本は**どれも投げ、取得が丸ごと失敗した** (youtube 2 形 /
+   * gmail 3 形 / github 2 形)。パス 334 / 369 / 375 / 411 と同じ家系:
+   * **綴りの針は、綴りでない物に動かされる**。
+   *
+   * 今の針は改行を跨ぎ、**変数へ入れてから使う形**も見る。行番号は
+   * 「その一致までに在る改行の数」で数えるので、素の行番号のまま報告できる。
+   */
+  function rawArrayReads(src: string): { readonly line: number; readonly text: string }[] {
+    const out: { line: number; text: string }[] = [];
+    const at = (index: number): number => src.slice(0, index).split('\n').length;
 
-  it('★ 標本: 針はその形に当たる (空の検査になっていない)', () => {
-    const sample = '    files: (data.files ?? []).map((f) => ({';
-    expect(/\?\?\s*\[\]\s*\)\s*\.(map|slice|filter|forEach)\(/.test(sample)).toBe(true);
-    // 注記の中の言及は数えない (この検査自身の docblock が同じ綴りを持つ)。
-    expect(codeOnly('/* (data.files ?? []).map( */').includes('?? []).map(')).toBe(false);
+    // 形 1: `(… ?? []) .map(` —— 改行・空白を跨ぐ。
+    for (const m of src.matchAll(/\?\?\s*\[\]\s*\)\s*\.(map|slice|filter|forEach)\s*\(/g)) {
+      out.push({ line: at(m.index), text: m[0].replace(/\s+/g, ' ') });
+    }
+    // 形 2: `const x = … ?? [];` のあと、その名前へ配列のメソッドを呼ぶ。
+    for (const m of src.matchAll(/(?:const|let)\s+([A-Za-z0-9_]+)\s*=\s*[^;\n]*\?\?\s*\[\]\s*;/g)) {
+      const name = m[1] as string;
+      const rest = src.slice(m.index + m[0].length);
+      const used = new RegExp(`\\b${name}\\s*\\.(map|slice|filter|forEach|find|some|every|reduce)\\s*\\(`).exec(rest);
+      if (used !== null) out.push({ line: at(m.index), text: `${m[0].trim()} → ${name}.${used[1]}(` });
+    }
+    return out;
+  }
+
+  describe('母集団: 素の配列の読み (両方の形)', () => {
+    /**
+     * **免除は「第三者の応答ではない」ことを測ったときだけ。**
+     *
+     * `shopify.ts` の `orderLines` が受けるのは**画面が送る payload** で、
+     * `assertOrder` が `checkWriteFields` + `checkShopifyLineItems` を通してから
+     * しか届かない (パス 282 がそのために置いた関門)。**相手の応答ではない**ので
+     * `objectRows` の母集団ではない —— 足すと型の上で死んだ枝になり、
+     * 等価変異として pragma が要る (パス 351 の形)。
+     *
+     * ★ **理由そのものも検める** —— 下の `it` が `assertOrder` の中で
+     *   `checkShopifyLineItems` が呼ばれていることを見る。関門が外れた日、
+     *   この免除の理由は偽になるので、そのとき鳴る。
+     */
+    const EXEMPT: Readonly<Record<string, string>> = {
+      'shopify.ts:127': '画面が送る payload (assertOrder → checkShopifyLineItems を通った後)・第三者の応答ではない',
+    };
+
+    it('★ 素の形は 1 つも残っていない (免除は理由つきの台帳のみ)', () => {
+      const raw: string[] = [];
+      for (const f of clientFiles()) {
+        const src = codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)));
+        for (const hit of rawArrayReads(src)) {
+          const key = `${f}:${hit.line}`;
+          if (EXEMPT[key] !== undefined) continue;
+          raw.push(`${key}  ${hit.text}`);
+        }
+      }
+      expect(raw, `素の形が残っている:\n${raw.join('\n')}`).toEqual([]);
+    });
+
+    it('★ 台帳の免除はすべて実在する (直したら消せと鳴る・両方向)', () => {
+      const found = new Set<string>();
+      for (const f of clientFiles()) {
+        const src = codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)));
+        for (const hit of rawArrayReads(src)) found.add(`${f}:${hit.line}`);
+      }
+      expect(Object.keys(EXEMPT).filter((k) => !found.has(k))).toEqual([]);
+    });
+
+    it('★ 免除の理由が今日も成り立つ (関門が外れたら鳴る)', () => {
+      const src = codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, 'shopify.ts')));
+      const body = src.slice(src.indexOf('export function assertOrder'));
+      const end = body.indexOf('\n}');
+      expect(body.slice(0, end)).toContain('checkShopifyLineItems(');
+    });
+
+    it('★ 標本: 針は 2 つの形に当たる (パス 409 が見落とした物を含む)', () => {
+      // 形 1 (1 行)。
+      expect(rawArrayReads('    files: (data.files ?? []).map((f) => ({')).toHaveLength(1);
+      // ★ 形 1 の**複数行** —— パス 409 の針が見落とした youtube の形。
+      const multiline = ['    recentVideos = (pl.items ?? [])', '      .map((it) => {'].join('\n');
+      expect(rawArrayReads(multiline)).toEqual([
+        { line: 1, text: '?? []) .map(' },
+      ]);
+      // ★ 形 2 (変数へ入れてから) —— github / gmail の形。
+      const viaVar = ['  const items = search.items ?? [];', '  const n = items.map((x) => x);'].join('\n');
+      expect(rawArrayReads(viaVar)).toHaveLength(1);
+      // 使わなければ拾わない (宣言だけは形ではない)。
+      expect(rawArrayReads('  const items = search.items ?? [];')).toEqual([]);
+      // 注記の中の言及は数えない (この検査自身の docblock が同じ綴りを持つ)。
+      expect(rawArrayReads(codeOnly('/* (data.files ?? []).map( */'))).toEqual([]);
+    });
   });
 });

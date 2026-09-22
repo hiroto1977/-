@@ -1,4 +1,5 @@
 import { jsonFetch, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 
 /**
  * YouTube — YouTube Data API v3 連携 (read-only)。
@@ -88,10 +89,16 @@ export async function fetchYoutubeSnapshot(ctx: FetchContext): Promise<YoutubeSn
       {},
       fetchCtx,
     ).catch(() => ({ items: [] }) as PlaylistItemsResponse);
-    // pl.items 欠落時の [] フォールバック。別配列要素を入れても下流の map+filter
-    // (videoId.length>0) が除外し空配列になるため、ArrayDeclaration 変異は equivalent。
-    // Stryker disable next-line ArrayDeclaration
-    recentVideos = (pl.items ?? [])
+    /*
+     * **`?? []` は配列であることも要素が物であることも保証しない** (2026-09-22 · パス 412)。
+     * 実測 (直す前): 要素が `null` → `Cannot read properties of null (reading 'snippet')` /
+     * `items` が文字列・数 → `(pl.items ?? []).map is not a function` ——
+     * **どちらも YouTube の取得が丸ごと失敗する**。
+     *
+     * ★ パス 409 の census はこの行を**見ていなかった** —— 針が 1 行で
+     *   `(… ?? []).map(` を探す形で、ここは `)` と `.map(` が別の行に在る。
+     */
+    recentVideos = objectRows<PlaylistItemResource>(pl.items)
       .map((it) => {
         const videoId = it.snippet?.resourceId?.videoId ?? '';
         return {
