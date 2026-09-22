@@ -144,3 +144,75 @@ export function summarizeVtReport(url: string, report: unknown): ScanSummary {
     reportUrl: `${VIRUSTOTAL_REPORT_GUI}/${vtUrlId(url)}`,
   };
 }
+
+/**
+ * スキャン結果の判定。**`total === 0` は「きれい」ではない。** (2026-09-22 · パス 403)
+ *
+ * VirusTotal を呼ぶ流れは「POST /urls で解析を投入 → GET でレポートを読む」なので、
+ * **その URL を VirusTotal が初めて見たときは解析が待ち行列に入っただけ**で、
+ * `last_analysis_stats` は 4 欄とも 0 で返る。つまり `0 / 0` は異常な応答ではなく
+ * **新しい URL の通常の経路**である。
+ *
+ * 実測 (2026-09-22 · 直す前):
+ *
+ * | 応答 | positives / total | 画面 |
+ * | --- | --- | --- |
+ * | 解析が未完了 (0 エンジン) | 0 / 0 | **`badge ok` (緑)** |
+ * | 70 エンジンが無害と判定 | 0 / 75 | `badge ok` (緑) |
+ *
+ * **「誰も調べていない」と「75 台が調べて何も出なかった」が同じ緑の帯**になっていた。
+ * 利用者はこの画面に「この URL を開いてよいか」を尋ねに来るので、数えられなかったことを
+ * 「安全」として返してはいけない —— 法則 `blank-states-its-reason` の、安全の判定と
+ * いちばん重い現れである (`vtScanStats` がパス 261 で「数えられなかったことを
+ * 数え上げてはいけない」と欄の欠落を断ったのと同じ向きで、**全部 0 はその網を通る**)。
+ *
+ * しきい値 (検出 0 / 1〜2 / 3 以上) も**ここ 1 か所**で持つ —— 画面は同じ数を
+ * className と style の 2 か所に書き写していた。
+ */
+export type ScanVerdict = 'unscanned' | 'clean' | 'few-detections' | 'many-detections';
+
+/** 判定の 3 つの面 (札 / 帯の重さ / 全文)。**switch は 1 つ** (パス 386 / 402 と同じ理由)。 */
+export interface ScanDescription {
+  readonly verdict: ScanVerdict;
+  /** 帯に出す短い札。 */
+  readonly label: string;
+  /** 重さ —— 画面はこれを見た目へ写す (`ok` だけが緑)。 */
+  readonly level: 'ok' | 'warn' | 'danger';
+  /** 利用者向けの 1 文。 */
+  readonly note: string;
+}
+
+export function describeScan(s: { readonly positives: number; readonly total: number }): ScanDescription {
+  // 検出が在れば、解析したエンジン数に関わらず「検出」である (順序が先)。
+  if (s.positives > 2) {
+    return {
+      verdict: 'many-detections',
+      label: `${s.positives} / ${s.total} エンジン検出`,
+      level: 'danger',
+      note: `${s.total} エンジンのうち ${s.positives} 件が脅威として検出しました。開かないでください。`,
+    };
+  }
+  if (s.positives > 0) {
+    return {
+      verdict: 'few-detections',
+      label: `${s.positives} / ${s.total} エンジン検出`,
+      level: 'warn',
+      note: `${s.total} エンジンのうち ${s.positives} 件が検出しました。詳細レポートで内容を確かめてください。`,
+    };
+  }
+  // ここから先は検出 0 件 —— **その 0 には 2 つの意味が在る。**
+  if (s.total <= 0) {
+    return {
+      verdict: 'unscanned',
+      label: '未解析 (0 エンジン)',
+      level: 'warn',
+      note: 'まだどのエンジンも解析していません。VirusTotal へ解析を投入したところなので、少し時間を置いて再実行するか、詳細レポートで結果を確かめてください。この表示は「安全」を意味しません。',
+    };
+  }
+  return {
+    verdict: 'clean',
+    label: `${s.positives} / ${s.total} エンジン検出`,
+    level: 'ok',
+    note: `${s.total} エンジンが解析し、脅威としての検出は 0 件でした。`,
+  };
+}

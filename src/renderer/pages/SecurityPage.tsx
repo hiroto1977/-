@@ -1,5 +1,6 @@
 import { useMemo, useState, useSyncExternalStore } from 'react';
 import { nortonBadgeLabel, nortonBadgeTone, nortonDetailsLine } from '../../shared/nortonDetection';
+import { describeScan } from '../../shared/api/security';
 import { describeScanUrlRisk } from '../../shared/scanTarget';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -120,6 +121,8 @@ export function SecurityPage() {
   const [urlInput, setUrlInput] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
   const [scanResult, setScanResult] = useState<ActionData<'security/scan-url'> | null>(null);
+  /** 検出数から判定・札・文を **1 度だけ**導く (パス 403)。 */
+  const scanVerdict = scanResult === null ? null : describeScan(scanResult);
 
   // パスワード強度チェッカー (ローカル評価・送信しない)。
   const [pwInput, setPwInput] = useState('');
@@ -357,20 +360,23 @@ export function SecurityPage() {
                 </span>
               ) : null}
             </div>
-            {scanResult ? (
+            {scanResult !== null && scanVerdict !== null ? (
               <div style={{ fontSize: 13 }}>
+                {/*
+                  * 判定は `describeScan` **ただ 1 つ** (パス 403)。ここは以前
+                  * `positives === 0 ? 'badge ok'` と書いており、**まだどのエンジンも
+                  * 解析していない `0 / 0` を緑にしていた**。しきい値も className と
+                  * style の 2 か所に書き写していた。
+                  */}
                 <span
-                  className={
-                    scanResult.positives === 0 ? 'badge ok'
-                    : scanResult.positives < 3 ? 'badge warn'
-                    : 'badge'
-                  }
+                  className={scanVerdict.level === 'ok' ? 'badge ok' : scanVerdict.level === 'warn' ? 'badge warn' : 'badge'}
                   style={{
-                    background: scanResult.positives > 2 ? 'rgba(248,113,113,0.12)' : undefined,
-                    color: scanResult.positives > 2 ? 'var(--danger)' : undefined,
+                    background: scanVerdict.level === 'danger' ? 'rgba(248,113,113,0.12)' : undefined,
+                    color: scanVerdict.level === 'danger' ? 'var(--danger)' : undefined,
                   }}
+                  data-scan-verdict={scanVerdict.verdict}
                 >
-                  {scanResult.positives} / {scanResult.total} エンジン検出
+                  {scanVerdict.label}
                 </span>{' '}
                 <a
                   href="#"
@@ -382,6 +388,13 @@ export function SecurityPage() {
                 >
                   詳細レポート
                 </a>
+                <div
+                  style={{ marginTop: 6, color: 'var(--text-mute)', lineHeight: 1.6 }}
+                  data-scan-note
+                  role={scanVerdict.level === 'ok' ? undefined : 'alert'}
+                >
+                  {scanVerdict.note}
+                </div>
               </div>
             ) : null}
           </div>
