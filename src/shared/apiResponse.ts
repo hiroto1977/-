@@ -54,6 +54,8 @@
  * 両方向に留め、`.json()` が 0 件であることは `jsonBodyCensus.test.ts` が留める。
  */
 
+import { charsOverCeiling, clampToCeiling } from './inputCeiling';
+
 /**
  * 上限つきで読み終えた本文を JSON として読む。**読めなければ文言は定数** (2026-09-17 · パス 311)。
  *
@@ -255,4 +257,48 @@ export function objectRows<T = Record<string, unknown>>(v: unknown): readonly T[
  */
 export function finiteNumberOf(v: unknown): number | null {
   return typeof v === 'number' && Number.isFinite(v) ? v : null;
+}
+
+/**
+ * **画面の欄に入れる第三者の文字列の天井。** (2026-09-22 · パス 411)
+ *
+ * 根拠は**相手の側が既に持っている上限**である (実測して選んだ):
+ *
+ * | 欄 | 相手の上限 |
+ * | --- | --- |
+ * | GitHub の PR タイトル / 利用者名 / 会社名 | **255 字** |
+ * | git の ref (ブランチ名) | 実用上 255 byte |
+ * | DNS のドメイン名 / ネームサーバ名 | **253 字** (RFC 1035) |
+ * | Cloudflare の plan / status | `Free Website` / `active` など 20 字未満 |
+ *
+ * つまり**正当な値はすべてここに収まる** —— 天井に当たるのは相手が壊れているか、
+ * 相手を装う何か (乗っ取られた BYO プロキシ・ブラウザ版の Cloudflare は
+ * 利用者の Worker を通る) が返したときだけである。
+ */
+export const MAX_DISPLAY_FIELD_CHARS = 256;
+
+/**
+ * **第三者の文字列を画面の欄へ入れる口。** 型を検め、天井で切る。 (パス 411)
+ *
+ * 実測 (2026-09-22 ・ 直す前・実物の client に 200,000 字を 1 行ぶん食わせて描く):
+ *
+ * | 画面 | 素通りした欄 | 画面の総文字数 |
+ * | --- | --- | ---: |
+ * | Cloudflare | `name` / `status` / `plan` / `accountName` / `nameServers` ×2 | **1,400,077** |
+ * | GitHub | `title` / `state` / `head` / `base` / 利用者の `name` / `company` | **1,400,096** |
+ *
+ * `DataList` は**件数**の天井 (`MAX_LIST_ITEMS` 2000) を持つが、**1 件の長さ**の
+ * 天井は持たない。パス 408 が Ollama のモデル一覧について閉じたのと同じ形で、
+ * そのときの直し (`modelDetail`) は `shared/ollama.ts` の私有だった ——
+ * **2 つ目・3 つ目の client が要ったのでここへ出した** (法則 `center-then-count-callers`)。
+ *
+ * ★ **切ったことは `…` で述べる** (絞ることと述べることは対 · パス 400)。
+ * ★ **行ごとは落とさない** —— 欄が長いだけの zone や PR が一覧から消えるほうが
+ *   利用者に悪い (パス 408 と同じ判断)。
+ * ★ **非文字列は空** —— `?? ''` は null / undefined しか受けないので、
+ *   数やオブジェクトはそのまま画面へ流れていた。ここは型から始める。
+ */
+export function displayField(v: unknown, max: number = MAX_DISPLAY_FIELD_CHARS): string {
+  if (typeof v !== 'string') return '';
+  return charsOverCeiling(v, max) === 0 ? v : clampToCeiling(v, max) + '…';
 }

@@ -1,6 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { displayDateOf } from '../../shared/isoDate';
-import { optionalString, requireNumber, requireObject, requireString } from '../../shared/apiResponse';
+import { optionalString, requireNumber, requireObject, requireString, displayField } from '../../shared/apiResponse';
 import { GITHUB_API, checkIssue, githubIssueInit, githubIssuesPath, parseCreatedIssue } from '../../shared/api/github';
 import type { ActionData } from '../../shared/actionData';
 
@@ -95,8 +95,12 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
     items.map(async (item): Promise<GithubSnapshot['pullRequests'][number]> => {
       const fallback = {
         number: item.number,
-        title: item.title,
-        state: item.state,
+        // 画面の欄へ入る第三者の文字列は天井を通す (パス 411) —— 実測で
+        // 6 欄に 200,000 字を入れると `GithubPage` の総文字数が 1,400,096 字に
+        // なった。PR のタイトルとブランチ名は**フォークから PR を開ける誰でも**
+        // 決められる欄である。
+        title: displayField(item.title),
+        state: displayField(item.state),
         draft: item.draft ?? false,
         head: '',
         base: '',
@@ -131,13 +135,13 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
         const pr = await jsonFetch<PullDetail>(prUrl.href, init, fetchCtx);
         return {
           number: pr.number,
-          title: pr.title,
-          state: pr.state,
+          title: displayField(pr.title),
+          state: displayField(pr.state),
           draft: pr.draft,
           // Stryker disable next-line OptionalChaining
-          head: pr.head?.ref ?? '',
+          head: displayField(pr.head?.ref),
           // Stryker disable next-line OptionalChaining
-          base: pr.base?.ref ?? '',
+          base: displayField(pr.base?.ref),
           updatedAt: displayDateOf(pr.updated_at),
           htmlUrl: pr.html_url,
         };
@@ -158,9 +162,9 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
   const u = requireObject(user, 'GitHub API');
   return {
     user: {
-      login: requireString(u, 'login', 'GitHub API'),
-      name: optionalString(u, 'name') ?? requireString(u, 'login', 'GitHub API'),
-      company: optionalString(u, 'company') ?? '',
+      login: displayField(requireString(u, 'login', 'GitHub API')),
+      name: displayField(optionalString(u, 'name') ?? requireString(u, 'login', 'GitHub API')),
+      company: displayField(u['company']),
       avatarUrl: requireString(u, 'avatar_url', 'GitHub API'),
       profileUrl: requireString(u, 'html_url', 'GitHub API'),
       publicRepos: requireNumber(u, 'public_repos', 'GitHub API'),

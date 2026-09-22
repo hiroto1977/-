@@ -21,6 +21,42 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 411 (2026-09-22) — 生の第三者文字列が meta 行に載り、1 行で画面が 1.4M 字になる
+
+パス 410 が残した母集団 (生の第三者文字列が `DataList` の meta 行に載る画面 2 枚) を、
+**実物の client に 200,000 字を 1 行ぶん食わせて描いて**測った。実測 (直す前):
+
+| 画面 | 素通りした欄 | 画面の総文字数 |
+| --- | --- | ---: |
+| **Cloudflare** | `name` / `status` / `plan` / `accountName` / `nameServers` ×2 | **1,400,077** |
+| **GitHub** | `title` / `state` / `head` / `base` / 利用者の `name` / `company` | **1,400,096** |
+
+★ **`DataList` は件数の天井 (2000) を持つが、1 件の長さの天井は持たない。**
+パス 408 が Ollama について閉じたのと同じ形で、そのときの直し (`modelDetail`) は
+`shared/ollama.ts` の私有だった —— 2 つ目・3 つ目の client が要ったので
+`shared/apiResponse.ts` の `displayField` として出した (法則 `center-then-count-callers`)。
+
+★ **相手は「乗っ取られた proxy」でありうる** —— ブラウザ版の Cloudflare は利用者の
+BYO Worker を通る。**GitHub の PR タイトルとブランチ名は、フォークから PR を開ける誰でも決められる。**
+
+**直し**: ① 型から始める (`?? ''` は null / undefined しか受けない) ② 天井は **256 字**で、
+根拠は**相手の側が既に持っている上限** (GitHub の title / name / company 255 字・git の ref 255 byte・
+DNS 名 253 字) —— 正当な値はすべてここに収まる ③ 切ったことは `…` で述べる ④ 行ごとは落とさない。
+
+**機械**: `renderer/pages/__tests__/thirdPartyFieldCeiling.test.ts` (14 件)。背骨は**振る舞い** ——
+実物の client に 200,000 字を食わせて画面を描き、総文字数が 20,000 未満であることを見る。
+綴りの台帳は両方向だが、**その限界を測って書いた**: 対照 C を回すと落ちたのは振る舞いの 1 件だけで、
+名前の台帳は通った (同じ欄名が `fallback` にも在るため)。
+
+### 残作業 (パス 411 の後・今日実測した)
+
+① **`?? ''` だけで第三者の文字列を受ける欄がまだ 9 件**: `microsoft-365.ts:128,139,147,278`
+   (`userName` / `from` / `location` / `webLink`) / `shopify.ts:189,309` (`ts` / `url`) /
+   `skills.ts:482` (`stopReason`) / `youtube.ts:96,100` (`videoId` / `publishedAt`)。
+   同じ測り方 (実物の client に 200,000 字を食わせて画面を描く) で 1 画面ずつ閉じられる。
+② **cursor の 6 欄は罠のまま** (パス 410 から持ち越し)。
+③ **atlassian の一覧は振る舞いで確かめていない** (資格情報の関門が先に当たる)。
+
 ## パス 410 (2026-09-22) — 画面が第三者の値にメソッドを呼び、1 欄の型違いで画面が落ちる
 
 パス 409 の残作業 ②③ を辿り、**「数えて回る」のをやめて画面を実際に壊して測った** ——

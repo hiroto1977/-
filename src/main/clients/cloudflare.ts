@@ -32,7 +32,7 @@ import {
   readCloudflareEnvelope,
 } from '../../shared/api/cloudflare';
 import type { ActionData } from '../../shared/actionData';
-import { optionalStringArray } from '../../shared/apiResponse';
+import { displayField, optionalStringArray } from '../../shared/apiResponse';
 
 /** 送り先は shared の 1 つ (書き込みも読みも同じ定数を通る)。 */
 const API_BASE = CLOUDFLARE_API;
@@ -107,14 +107,26 @@ export async function fetchCloudflareSnapshot(ctx: FetchContext): Promise<Cloudf
     user: { email: user.email, username: user.username },
     zones: zones.map((z) => ({
       id: z.id,
-      name: z.name,
-      status: z.status,
-      plan: z.plan?.name ?? '',
-      accountName: z.account?.name ?? '',
+      /*
+       * **画面の欄へ入る第三者の文字列は天井を通す** (2026-09-22 · パス 411)。
+       *
+       * 実測 (直す前): 5 欄 + ネームサーバ 2 件に 200,000 字を入れると
+       * `CloudflarePage` の総文字数が **1,400,077 字**になった。`DataList` は
+       * 件数の天井 (2000) を持つが 1 件の長さの天井は持たない。
+       * ブラウザ版の Cloudflare は**利用者の BYO Worker を通る**ので、
+       * 相手は「乗っ取られた proxy」でありうる (`assistantLimits.ts` が
+       * 名指ししている脅威そのもの)。
+       */
+      name: displayField(z.name),
+      status: displayField(z.status),
+      plan: displayField(z.plan?.name),
+      accountName: displayField(z.account?.name),
       // **配列であることを検める** (2026-09-22 · パス 410)。`??` は null / undefined
       // しか受けないので、文字列が来ると `CloudflarePage:155` の
       // `z.nameServers.slice(0, 2).join(', ')` が**描画で投げた** (実測)。
-      nameServers: optionalStringArray(z as unknown as Record<string, unknown>, 'name_servers'),
+      nameServers: optionalStringArray(z as unknown as Record<string, unknown>, 'name_servers').map(
+        (ns) => displayField(ns),
+      ),
       // development_mode is "seconds remaining" (0 means off).
       devModeRemainingSec: z.development_mode ?? 0,
     })),
