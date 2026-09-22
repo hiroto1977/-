@@ -79,6 +79,10 @@ import {
   applyTaxCreditsWithSurtax,
   resolveMortgageParams,
   mortgagePeriodStatus,
+  calcMortgageCredit,
+  noMortgageCreditCause,
+  noMortgageCreditNote,
+  HOUSING_PERFORMANCE_LABELS,
   calcDividendLevyCredit,
   type HousingPerformance,
   type DividendKind,
@@ -386,19 +390,39 @@ export function TaxPage() {
     const mortgageParams = resolveMortgageParams(mortgageYear, mortgagePerf);
     // 控除期間 (新築13年/中古10年) の判定。現在年は試算基準年とする。
     const mortgagePeriod = mortgagePeriodStatus(mortgageYear, new Date().getFullYear(), mortgagePerf);
+    /*
+     * **入力は 1 度だけ組む** (2026-09-22 · パス 401) —— 同じ器を
+     * `calcAllTaxCredits` と `noMortgageCreditCause` の両方へ渡す。
+     * 2 度組むと「計算が使った入力」と「原因を選んだ入力」が割れる。
+     */
+    const mortgageInput = mortgageBalance > 0
+      ? {
+          yearEndBalance: mortgageBalance,
+          rate: mortgageParams.rate,
+          balanceCap: mortgageParams.balanceCap,
+          incomeTaxBeforeCredit: result.baseIncomeTax,
+          taxableIncomeForResident: result.taxableIncomeForResidentTax,
+          // 合計所得金額の近似 (給与所得)。2,000万超で住宅ローン控除は不適用。
+          totalIncome: result.employmentIncome,
+          outsidePeriod: !mortgagePeriod.withinPeriod,
+        }
+      : null;
+    const mortgageResult = mortgageInput === null
+      ? null
+      : calcMortgageCredit(mortgageInput, mortgageCreditP);
+    /*
+     * **¥0 の理由** —— 5 通りあり、意味も直す手も違う (経緯は `taxCredits.ts` の
+     * `noMortgageCreditCause`)。判定は共有の 1 つで、画面は刷るだけ。
+     */
+    const mortgageCause = noMortgageCreditCause(mortgageInput, mortgageResult, mortgageCreditP);
+    const mortgageNote = mortgageCause === null
+      ? null
+      // `?? 0` は**この枝が読まない引数**の埋め (`mortgageResult` が null なのは
+      // 残高未入力のときだけで、その原因の文は算定額を 1 字も使わない)。
+      // 算定できない値を 0 に倒しているのではない (法則 `no-zero-fold`)。
+      : noMortgageCreditNote(mortgageCause, mortgageResult?.creditable ?? 0, mortgageCreditP);
     const credits = calcAllTaxCredits({
-      mortgage: mortgageBalance > 0
-        ? {
-            yearEndBalance: mortgageBalance,
-            rate: mortgageParams.rate,
-            balanceCap: mortgageParams.balanceCap,
-            incomeTaxBeforeCredit: result.baseIncomeTax,
-            taxableIncomeForResident: result.taxableIncomeForResidentTax,
-            // 合計所得金額の近似 (給与所得)。2,000万超で住宅ローン控除は不適用。
-            totalIncome: result.employmentIncome,
-            outsidePeriod: !mortgagePeriod.withinPeriod,
-          }
-        : undefined,
+      mortgage: mortgageInput ?? undefined,
       dividend: dividendIncome > 0
         ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax, kind: dividendKind }
         : undefined,
@@ -411,7 +435,7 @@ export function TaxPage() {
     );
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
-    return { ded, result, credits, afterCredits, finalTakeHome };
+    return { ded, result, credits, afterCredits, finalTakeHome, mortgageNote, mortgageParams };
   }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind, salaryParams, surtaxRate, dedParams, mortgageCreditP]);
 
   // --- ④ 退職所得の試算 ---
@@ -1115,12 +1139,19 @@ export function TaxPage() {
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             住宅性能区分
-            <select value={mortgagePerf} onChange={(e) => setMortgagePerf(e.target.value as HousingPerformance)} style={{ ...inputStyle, width: 200 }}>
-              <option value="long-life">認定長期優良・低炭素 (5,000万)</option>
-              <option value="zeh">ZEH水準省エネ (4,500万)</option>
-              <option value="standard">省エネ基準適合 (4,000万)</option>
-              <option value="non-standard">その他/非適合 (〜3,000万)</option>
-              <option value="used">中古住宅 (3,000万)</option>
+            {/* **札は表から導く** (パス 401) —— 2026-09-22 まで 5 つの上限を
+                手で書いており、`non-standard` は**どの年でも「〜3,000万」**と
+                名乗っていた。実物は 2024 年以降の居住で **0** (省エネ基準
+                非適合の新築は対象外) なので、2 つの選べる年について札が偽だった。 */}
+            <select value={mortgagePerf} onChange={(e) => setMortgagePerf(e.target.value as HousingPerformance)} style={{ ...inputStyle, width: 240 }}>
+              {HOUSING_PERFORMANCE_LABELS.map(([value, label]) => {
+                const cap = resolveMortgageParams(mortgageYear, value).balanceCap;
+                return (
+                  <option key={value} value={value}>
+                    {label} ({cap === 0 ? '対象外' : `${cap / 10_000}万`})
+                  </option>
+                );
+              })}
             </select>
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -1150,6 +1181,17 @@ export function TaxPage() {
           <strong>税額控除</strong>: 住宅ローン (所得税 {jpy(precise.credits.mortgageIncomeTax)} / 住民税 {jpy(precise.credits.mortgageResidentTax)}) /
           配当控除 (所得税 {jpy(precise.credits.dividendIncomeTax)} / 住民税 {jpy(precise.credits.dividendResidentTax)})。
         </div>
+        {/* **¥0 は「適用されない」という主張である** (パス 401) —— 5 通りの原因は
+            意味も直す手も違うので、数字のすぐ後ろで名指しする。判定は
+            `taxCredits.ts` の `noMortgageCreditCause` ただ 1 つ。 */}
+        {precise.mortgageNote !== null && (
+          <div
+            data-no-mortgage-credit
+            style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}
+          >
+            住宅ローン控除が 0 円の理由: {precise.mortgageNote}
+          </div>
+        )}
         <div style={{ fontSize: 11, color: 'var(--warning)', marginTop: 8, lineHeight: 1.6 }}>
           ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。配当は総合課税を選択した配当を想定 (申告分離・上場株式の特例は別計算)。
           住宅ローン控除は居住年・住宅性能区分で控除率/上限が変わります (上のセレクタで選択)。

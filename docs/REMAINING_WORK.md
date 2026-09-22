@@ -21,6 +21,35 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 401 (2026-09-22) — 住宅ローン控除の「¥0」は法的結論なのに理由が無かった
+
+画面 ③ は `住宅ローン (所得税 ¥0 / 住民税 ¥0)` と刷るだけで理由を出さず、¥0 になる道は
+**5 つ**あった (所得 2,000 万超 / 控除期間外 / 2024 年以降 × 省エネ基準非適合 /
+残高未入力 / **差し引く税額が無い**)。いちばん重い 5 つ目は **210,000 円を算定してから
+全額を `unused` として捨て**ており、利用者は「適用されない」と読む。しかも画面の但し書きは
+5 つのうち 4 つで「セレクタを動かせ」と誤導していた。
+
+もう 1 つ: 性能区分の `<option>` が上限を手書きしており、`その他/非適合` は**どの年でも
+「〜3,000万」**と名乗っていた (実物は 2024・2025 年の居住で **0**)。**選べる 6 年のうち
+2 年について札が偽**で、既定の年 (2024) がその 1 つ。
+
+直し: 原因を選ぶのは 1 か所 (`noMortgageCreditCause`・順序は `calcMortgageCredit` の
+早期 return と同じ) / 文は原因ごとに別物で逃げ口を名指し / 入力は 1 度だけ組む /
+札は `resolveMortgageParams` から導く。法則 `blank-states-its-reason` を延長した。
+
+**残作業なし** (背骨は両方向の不変条件 ——「原因が無い」⟺「画面に出る 2 つの額の
+合計が 0 でない」)。
+
+### 閉じていない物 (測った)
+
+1. **部分的に引けない場合** (`unused > 0` だが表示額は 0 でない) は断りを出さない。
+   「なぜ算定額より少ないのか」は別の問いで、今回の不変条件の外に在る。
+2. `residenceYear` に `NaN` を渡すと `resolveMortgageParams` (2022〜2023 の表を選ぶ) と
+   `mortgagePeriodStatus` (`withinPeriod: false`) が**食い違う** ——
+   `resolveTaxYear` の docblock が名指しする形そのもの。ただし入力は選択肢が固定の
+   `<select>` なので**今日 NaN は届かない** (罠であって生きた欠陥ではない)。
+   `residenceYear` を手で組む呼び手が 1 つ増えた日に開く。
+
 ## パス 400 (2026-09-22) — 書面 §2 が「2 か月分」と述べながら 50.5 倍の売上高を刷る
 
 `summarizeSales` は合計を全行から取りながら `period` だけを絞っていた
@@ -14716,7 +14745,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **108 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **108 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -14754,6 +14783,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/financialStatements.ts` | 3 |
 | `src/renderer/pages/OverviewPage.tsx` | 3 |
 | `src/renderer/pages/StocksPage.tsx` | 3 |
+| `src/renderer/pages/TaxPage.tsx` | 3 |
 | `src/shared/invoiceTax.ts` | 3 |
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
@@ -14774,7 +14804,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
-| `src/renderer/pages/TaxPage.tsx` | 2 |
 | `src/shared/num.ts` | 2 |
 | `src/shared/talent.ts` | 2 |
 | `src/shared/taxCalc.ts` | 2 |
