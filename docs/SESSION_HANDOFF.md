@@ -7,6 +7,45 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 406 (2026-09-22) — 更新確認の URL: 調べたのは parsed、返すのは raw
+
+**これは罠の除去であって、生きた欠陥ではない (測った)。**
+
+`parseLatestRelease` は `isGithubReleaseUrl` で **`new URL()` の解析結果**に対して
+判定を下してから、**生の文字列**を返していた。実測 8 形のうち **6 形でずれる**:
+
+| 生の `html_url` | 解析結果 |
+| --- | --- |
+| `https://github.com/o/r/../../evil` | `https://github.com/evil` |
+| `https://GitHub.com/o/r/releases` | `https://github.com/o/r/releases` |
+| `https://github.com/o/r/releases\u0000` | (NUL が落ちる) |
+| `https://github.com/o/r/rel\teases` | (タブが落ちる) |
+| `https://github.com:443/o/r/releases` | (既定ポートが落ちる) |
+| `https://ｇithub.com/a` (全角 ｇ) | `https://github.com/a` (IDNA) |
+
+**今日は届かない** —— `verdict.url` の読み手は `openExternal` **ただ 1 つ**で、
+その先の `externalUrlOrNull` が再解析して `parsed.toString()` を `shell` へ渡す
+(画面のボタンの label は固定文字列で、URL の字面は出さない)。
+
+**それでも揃えるのは**、同じ関数の docblock が「**送られてきた URL を
+そのまま信用しない**」と述べており、**その主張が偽**だったから。
+2 つ目の読み手 (label として描く・`a.download` へ置く・fetch する) が増えた日に開く。
+パス 291 / 325 と同じ家系、パス 359 / 398 と同じ位置づけ。
+
+**直し**: `githubReleaseUrlOrNull` (repo の `*OrNull` の形 —— `externalUrlOrNull` /
+`slackWorkspaceDomainOrNull` / `isoMonthOf` と同じ) を置き、`isGithubReleaseUrl` は
+その薄い包みにする。**判定は 1 つ**で、`parseLatestRelease` は返り値を使う
+(`url as string` のキャストも消えた)。
+
+★ **全角 ｇ の正規化が効き目そのもの** —— `https://ｇithub.com/a` は IDNA で
+**本物の github.com** になる。生を返すと「本物なのに偽物に見える文字列」を
+画面側へ渡すことになる (既存の検査 1 件がこの正規化を既に留めていた)。
+
+対照 **4 方向すべて鳴る**: A 生へ戻す ❌6 (**罠がそのまま再現**) /
+B `parseLatestRelease` が生を返す ❌6 (同) / C ホストの判定を潰す ❌4 /
+D 真偽の包みを常に true ❌5。標本が的に当たることも別に留めた
+(6 形とも生の綴りと違う・床つき)。
+
 ## パス 405 (2026-09-22) — CI が落ち、原因は私の針と私の手順だった
 
 出荷物 **11,945,922 B / 3,358,441 B (不変)** —— 直したのは `__tests__/` 1 本だけ。

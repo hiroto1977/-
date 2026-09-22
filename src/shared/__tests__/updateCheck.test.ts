@@ -3,6 +3,7 @@ import {
   compareVersions,
   describeUpdate,
   evaluateUpdate,
+  githubReleaseUrlOrNull,
   isGithubReleaseUrl,
   parseLatestRelease,
   parseVersion,
@@ -236,6 +237,49 @@ describe('isGithubReleaseUrl', () => {
   it('正規化すると本物になる綴りは通す (判定が解析後のホストを見ている証拠)', () => {
     expect(new URL('https://\uFF47ithub.com/a').hostname).toBe('github.com');
     expect(isGithubReleaseUrl('https://\uFF47ithub.com/a')).toBe(true);
+  });
+});
+
+describe('★ 調べた物と返す物が同じ (パス 406)', () => {
+  /*
+   * `githubReleaseUrlOrNull` は `new URL()` の**解析結果**に対して判定を下すので、
+   * 生の文字列を返すと「github.com だと認めた物」と呼び手が持つ文字列が別になる。
+   *
+   * 実測 (2026-09-22 · 直す前): 8 形のうち **6 形**でずれた。今日の読み手は
+   * `openExternal` 1 つで、その先の `externalUrlOrNull` が再解析するので
+   * **生きた欠陥ではない** —— 2 つ目の読み手が増えた日に開く罠を外す。
+   */
+  const DIVERGED: readonly (readonly [string, string])[] = [
+    ['https://github.com/o/r/../../evil', 'https://github.com/evil'],
+    ['https://GitHub.com/o/r/releases', 'https://github.com/o/r/releases'],
+    ['https://github.com/o/r/releases\u0000', 'https://github.com/o/r/releases'],
+    ['https://github.com/o/r/rel\teases', 'https://github.com/o/r/releases'],
+    ['https://github.com:443/o/r/releases', 'https://github.com/o/r/releases'],
+    // 全角 ｇ は IDNA で ASCII の g へ正規化される —— **本物の github.com** である。
+    ['https://\uFF47ithub.com/a', 'https://github.com/a'],
+  ];
+
+  it.each(DIVERGED)('%s は解析結果を返す', (raw, want) => {
+    expect(githubReleaseUrlOrNull(raw)).toBe(want);
+    expect(parseLatestRelease({ tag_name: 'v1.0.0', html_url: raw })?.url).toBe(want);
+  });
+
+  it('★ 標本が的に当たる —— どれも生の綴りとは違う (走査が空虚でない)', () => {
+    for (const [raw, want] of DIVERGED) expect(raw, raw).not.toBe(want);
+    expect(DIVERGED.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it('既に正規な URL は 1 字も変えない', () => {
+    const ok = 'https://github.com/o/r/releases/tag/v1.0.0';
+    expect(githubReleaseUrlOrNull(ok)).toBe(ok);
+    expect(parseLatestRelease({ tag_name: 'v1.0.0', html_url: ok })?.url).toBe(ok);
+  });
+
+  it('断る物は null を返す (真偽の包みと答えが一致する)', () => {
+    for (const bad of ['https://evil.example/x', 'http://github.com/a', 'https://github.com@evil.example/', 7, null]) {
+      expect(githubReleaseUrlOrNull(bad), String(bad)).toBeNull();
+      expect(isGithubReleaseUrl(bad), String(bad)).toBe(false);
+    }
   });
 });
 

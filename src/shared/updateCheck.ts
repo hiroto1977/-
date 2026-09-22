@@ -110,8 +110,12 @@ export function parseLatestRelease(json: unknown): LatestRelease | null {
   // 型の確認は parseVersion / isGithubReleaseUrl が unknown を受けて行う。
   // ここで typeof を重ねると、下で必ず落ちる値をもう一度見るだけの
   // 分岐になり、テストで守れない。
-  if (parseVersion(tag) === null || !isGithubReleaseUrl(url)) return null;
-  return { version: tag as string, url: url as string };
+  // **調べた物をそのまま返す** (2026-09-22 · パス 406) —— 判定は `new URL()` の
+  // 解析結果に対して下すので、生の文字列を返すと「検めた物」と「使う物」が割れる
+  // (実測 8 形のうち 6 形: NUL / タブ / 改行 / 未正規化の `..` / `:443` / 全角 ｇ)。
+  const checked = githubReleaseUrlOrNull(url);
+  if (parseVersion(tag) === null || checked === null) return null;
+  return { version: tag as string, url: checked };
 }
 
 /**
@@ -122,21 +126,37 @@ export function parseLatestRelease(json: unknown): LatestRelease | null {
  * そのまま渡すと通ってしまう。JSON からはそんな値は来ないが、
  * 「unknown を安全に受ける」のがこの関数の役目なので入口で断つ。
  */
-export function isGithubReleaseUrl(raw: unknown): boolean {
-  if (typeof raw !== 'string') return false;
+export function githubReleaseUrlOrNull(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null;
   let parsed: URL;
   try {
     parsed = new URL(raw);
   } catch {
-    return false;
+    return null;
   }
-  if (parsed.protocol !== 'https:') return false;
+  if (parsed.protocol !== 'https:') return null;
   // 認証情報付き (`https://github.com@evil.example/`) は落とす。ホスト固定と
   // 二重になるが、ここは**案内先として画面に出す**値なので、字面の信用と
   // 実際の送り先を割らせない (同じ判断を `externalUrlGate.ts` も下している)。
-  if (parsed.username !== '' || parsed.password !== '') return false;
+  if (parsed.username !== '' || parsed.password !== '') return null;
   const host = parsed.hostname.toLowerCase();
-  return host === 'github.com' || host === 'www.github.com';
+  if (host !== 'github.com' && host !== 'www.github.com') return null;
+  /*
+   * **返すのは解析結果** —— `externalUrlOrNull` が `parsed.toString()` を返すのと
+   * 同じ理由 (パス 298 / 325)。生を返すと、この関数が「github.com だ」と認めた物と
+   * 呼び手が持つ文字列が別になる。今日の読み手は `openExternal` 1 つだけで、
+   * その先の `externalUrlOrNull` が再解析するので**生きた欠陥ではない** ——
+   * 罠を外すために揃える (パス 359 / 398 と同じ位置づけ)。
+   *
+   * ★ 全角 `ｇithub.com` は IDNA で `github.com` へ正規化される (下の検査が留める)。
+   *   **本物なのに偽物に見える文字列**を画面へ渡さないのは、この正規化の効き目である。
+   */
+  return parsed.toString();
+}
+
+/** 上の関門の真偽だけが要るとき。**判定は 1 つ**で、こちらはその薄い包み。 */
+export function isGithubReleaseUrl(raw: unknown): boolean {
+  return githubReleaseUrlOrNull(raw) !== null;
 }
 
 export type UpdateStatus =
