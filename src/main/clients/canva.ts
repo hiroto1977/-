@@ -1,5 +1,5 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
-import { objectRows } from '../../shared/apiResponse';
+import { objectRows, optionalString } from '../../shared/apiResponse';
 import { CANVA_API, CANVA_FOLDERS_PATH, canvaFolderInit, checkFolder, parseCreatedFolder } from '../../shared/api/canva';
 import type { ActionData } from '../../shared/actionData';
 
@@ -74,7 +74,16 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
       title: d.title ?? '(無題のデザイン)',
       updatedAt: d.updated_at ?? 0,
       pageCount: d.page_count ?? 1,
-      thumbnailUrl: d.thumbnail?.url ?? '',
+      /*
+       * `?? ''` は **null / undefined しか受けない** ので、`thumbnail: {url: 42}`
+       * がそのまま `thumbnailUrl` に入り、`safeImageSrc` が `url.replace is not a
+       * function` で投げて**画面が丸ごと落ちていた** (2026-09-22 · 実測 · パス 410)。
+       * 関門の側にも床を置いたが、**境界で型を確かめるのが先**である。
+       */
+      thumbnailUrl:
+        d.thumbnail !== null && typeof d.thumbnail === 'object'
+          ? optionalString(d.thumbnail as unknown as Record<string, unknown>, 'url') ?? ''
+          : '',
       viewUrl: d.urls?.view_url ?? `https://www.canva.com/design/${d.id}`,
     })),
   };

@@ -1,4 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayDateOf } from '../../shared/isoDate';
+import { objectRows } from '../../shared/apiResponse';
 import { readArrayField } from '../../shared/apiResponse';
 import { NOTION_API, NOTION_PAGES_PATH, checkPage, notionPageInit, parseCreatedPage } from '../../shared/api/notion';
 import type { ActionData } from '../../shared/actionData';
@@ -20,7 +22,8 @@ interface NotionSearchResponse {
 export interface NotionSnapshot {
   teams: { id: string; name: string }[];
   note: string;
-  pages: { id: string; title: string; url: string; lastEditedTime: string; kind: string }[];
+  /** `lastEditedTime` は `YYYY-MM-DD`。**読めなければ `null`** (パス 410)。 */
+  pages: { id: string; title: string; url: string; lastEditedTime: string | null; kind: string }[];
 }
 
 function extractTitle(page: NotionPage): string {
@@ -66,11 +69,19 @@ export async function fetchNotionSnapshot(ctx: FetchContext): Promise<NotionSnap
    * 共有は正しいのに共有設定を直しに行かせることになる。
    */
   const list = readArrayField(search, 'results');
-  const pages = (list.rows as readonly NotionPage[]).map((p) => ({
+  /*
+   * **要素が物であることと、日付が読めることを分けて検める** (2026-09-22 · パス 410)。
+   *
+   * `readArrayField` は「鍵が在って配列だったか」までしか言わない (パス 264) ので、
+   * 要素は `unknown` のままである。実測 (直す前): `{ results: [null] }` は
+   * `Cannot read properties of null (reading 'id')` で**取得ごと失敗**し、
+   * 日付が数だと `NotionPage:85` の `p.lastEditedTime.slice` が**描画で投げた**。
+   */
+  const pages = objectRows<NotionPage>(list.rows).map((p) => ({
     id: p.id,
     title: extractTitle(p),
     url: p.url,
-    lastEditedTime: p.last_edited_time,
+    lastEditedTime: displayDateOf(p.last_edited_time),
     kind: p.object,
   }));
 

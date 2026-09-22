@@ -118,8 +118,28 @@ import { isPrivateOrReservedTarget } from './privateTarget';
  *
  * 認証情報の側は迷う余地が無い (authority に資格情報を持つ正当な画像 URL は無い)。
  */
-export function safeImageSrc(url: string | undefined | null): string | undefined {
-  if (!url) return undefined;
+export function safeImageSrc(url: unknown): string | undefined {
+  /*
+   * **文字列でなければ落とす** (2026-09-22 · パス 410)。
+   *
+   * 直す前の宣言は `url: string | undefined | null` で、`if (!url)` は
+   * その型を信じて書かれていた。ところが**ここへ来る値の大半は第三者の
+   * 応答**で、その型は `jsonFetch<T>` のキャストが作った見せかけである
+   * (canva は `d.thumbnail?.url ?? ''` と書くが、`??` は null / undefined
+   * しか受けないので `{url: 42}` はそのまま通る)。
+   *
+   * 実測 (2026-09-22 · 直す前): `safeImageSrc(42)` / `(true)` / `({})` /
+   * `(['https://x/y.png'])` は **4 形とも `url.replace is not a function` で
+   * 投げ**、実物の `fetchCanvaSnapshot` に `thumbnail: {url: 42}` を返すと
+   * **Canva の画面が丸ごと落ちた**。
+   *
+   * ★ **ここが funnel なので、ここに床を置く** —— この関門は
+   * `DataList` の thumbnail と `StatusBar` の avatar、つまり**全 76 画面**の
+   * 第三者の画像 URL が通る 1 つである (`jpy` の docblock と同じ理由)。
+   * 境界 (client) 側の型の確かめはそれとして要るが、**次に 1 つ足された
+   * 呼び手が確かめ忘れた日**に効くのはこちらである。
+   */
+  if (typeof url !== 'string' || url === '') return undefined;
   const normalized = url.replace(/[\t\n\r]/g, '').trim();
   if (/^https?:\/\//i.test(normalized)) {
     let parsed: URL;
@@ -153,7 +173,7 @@ export function safeImageSrc(url: string | undefined | null): string | undefined
  * 自分で打った値 (アシスタントの背景画像) には掛けない —— `safeCssUrl` は
  * `safeImageSrc` を読む。理由は上の docblock「パス 300 で閉じた」。
  */
-export function safeRemoteImageSrc(url: string | undefined | null): string | undefined {
+export function safeRemoteImageSrc(url: unknown): string | undefined {
   const src = safeImageSrc(url);
   if (src === undefined) return undefined;
   // `safeImageSrc` が http(s) を通すのは解析後の形だけなので、ここで再解析は失敗しない。
@@ -175,7 +195,7 @@ export function safeRemoteImageSrc(url: string | undefined | null): string | und
  * 入ると宣言そのものが壊れて背景が黙って出なくなる
  * (`https://example.com/a(b).png` は実在しうる形)。
  */
-export function safeCssUrl(url: string | undefined | null): string | undefined {
+export function safeCssUrl(url: unknown): string | undefined {
   const src = safeImageSrc(url);
   if (src === undefined) return undefined;
   // 置換は関数形にする。文字列形だと `$&` が特別扱いされる

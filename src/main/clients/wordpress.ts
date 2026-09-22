@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayDateOf } from '../../shared/isoDate';
 import { objectRows } from '../../shared/apiResponse';
 import { WORDPRESS_API, checkPost, parseCreatedPost, wordpressPostInit, wordpressPostsPath } from '../../shared/api/wordpress';
 import type { ActionData } from '../../shared/actionData';
@@ -29,7 +30,8 @@ export interface WordPressSnapshot {
     url: string;
     platform: string;
     status: string;
-    lastUpdated: string;
+  /** 更新日 (`YYYY-MM-DD`・利用者の時計)。**読めなければ `null`** (パス 410)。 */
+    lastUpdated: string | null;
     paidPlan: boolean;
   }[];
 }
@@ -62,11 +64,8 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
       url: s.URL,
       platform: s.jetpack ? 'jetpack' : 'simple',
       status: s.is_private ? 'private' : 'active',
-      // **非文字列の `last_updated` で投げない** (2026-09-22 · パス 409)。`??` は
-      // null / undefined しか受けないので、数が来ると `.slice` が無く投げていた
-      // (実測: `(s.last_updated ?? "").slice is not a function`)。
-      // 読める値の答えは変えていない (drive と同じ理由で日付の読みへはまだ寄せていない)。
-      lastUpdated: typeof s.last_updated === 'string' ? s.last_updated.slice(0, 10) : '',
+      // **日付として読めるかで決める** (2026-09-22 · パス 410 —— drive と同じ 1 つの読み手)。
+      lastUpdated: displayDateOf(s.last_updated),
       paidPlan: isPaidPlan(s.plan),
     })),
   };

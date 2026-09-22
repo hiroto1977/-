@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayDateOf } from '../../shared/isoDate';
 import { optionalString, requireNumber, requireObject, requireString } from '../../shared/apiResponse';
 import { GITHUB_API, checkIssue, githubIssueInit, githubIssuesPath, parseCreatedIssue } from '../../shared/api/github';
 import type { ActionData } from '../../shared/actionData';
@@ -55,7 +56,8 @@ export interface GithubSnapshot {
     draft: boolean;
     head: string;
     base: string;
-    updatedAt: string;
+    /** 更新日 (`YYYY-MM-DD`・利用者の時計)。**読めなければ `null`** (パス 410)。 */
+    updatedAt: string | null;
     htmlUrl: string;
   }[];
 }
@@ -98,7 +100,7 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
         draft: item.draft ?? false,
         head: '',
         base: '',
-        updatedAt: item.updated_at,
+        updatedAt: displayDateOf(item.updated_at),
         htmlUrl: item.html_url,
       };
       // Stryker disable next-line ConditionalExpression: the `!url` early
@@ -136,7 +138,7 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
           head: pr.head?.ref ?? '',
           // Stryker disable next-line OptionalChaining
           base: pr.base?.ref ?? '',
-          updatedAt: pr.updated_at,
+          updatedAt: displayDateOf(pr.updated_at),
           htmlUrl: pr.html_url,
         };
       } catch {

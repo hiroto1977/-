@@ -1,3 +1,5 @@
+import { localIsoDate } from './localDate';
+
 /**
  * **`YYYY-MM-DD` / `YYYY-MM` の綴りと暦 —— 判定を 1 か所に置く。** (2026-09-09 · パス 115)
  *
@@ -219,6 +221,56 @@ export function isoDateFromTimestamp(v: unknown): string | null {
    * (呼び出し側 3 か所が同じ `slice(0, 10)` を写していたのも、これで消える)。
    */
   return d.toISOString().split('T')[0]!;
+}
+
+/**
+ * **第三者が名乗る瞬間 → 画面に出す暦の日付。読めなければ `null`** (2026-09-22 · パス 410)。
+ *
+ * ## なぜ 1 つに要るか —— 実測 (2026-09-22 · 直す前)
+ *
+ * 第三者の日付を `slice(0, 10)` で切る所が **5 つ**在り、そのうち **3 つが投げた**:
+ *
+ * | 場所 | 壊し方 | 直す前 |
+ * | --- | --- | --- |
+ * | `GithubPage:77` | `updatedAt` 欠落 | `Cannot read properties of undefined (reading 'slice')` |
+ * | `NotionPage:85` | `lastEditedTime` が数 | `p.lastEditedTime.slice is not a function` |
+ * | `microsoft-365.ts:130` | `receivedDateTime` が数 | `(m.receivedDateTime ?? "").slice is not a function` |
+ * | `drive.ts` / `wordpress.ts` | (パス 409 で `typeof` は足した) | 空文字になるだけ |
+ *
+ * 画面の 2 つは**描画の途中で投げる**ので、`PageErrorBoundary` が受けて
+ * **その画面には一覧が 1 件も出ない**。利用者に直す手は無い (相手の API が返す値である)。
+ *
+ * ## 何をするか
+ *
+ * `typeof` を先に見る —— `parseTimestamp` は**数を epoch ミリ秒として受ける**ので、
+ * `20260101` を `1970-01-01` と読むのは**でっち上げ**になる (パス 394 / 408 と同じ理由)。
+ * 日付にするのは `localIsoDate` で、UTC で切ると日本 (UTC+9) では 0〜9 時の間だけ
+ * **前日**になる (`localDate.ts` が「利用者に見せるなら同じ関数でよい」と書いている)。
+ *
+ * ★ **受けるのは「瞬間」である** —— 実測した 5 つの出どころ (Drive / WordPress /
+ * GitHub / Notion / Graph) はどれも**時刻と時差を含む**値を返すので、暦の日付だけの
+ * 文字列を時刻帯で動かす心配は今日は無い。渡す側が素の `YYYY-MM-DD` を持つなら
+ * それは瞬間ではないので、この関数ではなく `isCalendarDate` の側で扱う。
+ */
+export function displayDateOf(v: unknown): string | null {
+  if (typeof v !== 'string') return null;
+  const d = parseTimestamp(v);
+  return d === null ? null : localIsoDate(d);
+}
+
+/**
+ * 読めなかった日付を画面に出す文 —— **1 つだけ持つ** (2026-09-22 · パス 410)。
+ *
+ * パス 408 が `OllamaPage` に書いた文で、パス 410 で 5 画面 (Drive / GitHub /
+ * Notion / WordPress / Microsoft 365) が同じ状態を出すようになったので共有へ移した。
+ * **空欄にしない** —— `${null}` はテンプレートで `"null"` と刷られ、空文字は
+ * 「まだ取れていない」と区別できない (法則 `blank-states-its-reason`)。
+ */
+export const UNREADABLE_DATE_TEXT = '日付が読めません';
+
+/** `displayDateOf` の結果を画面の 1 行へ。読めなければ理由を言う。 */
+export function dateText(v: string | null): string {
+  return v ?? UNREADABLE_DATE_TEXT;
 }
 
 /**

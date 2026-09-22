@@ -54,7 +54,9 @@ describe('buildMicrosoft365Snapshot', () => {
         { id: 'e1', subject: '' }, // subject 空 → '(件名なし)' / start なし → '' / location なし → ''
       ],
     );
-    expect(snap.messages[0]).toEqual({ id: 'm1', subject: '(件名なし)', from: '', received: '', unread: false });
+    // 受信日時は**読めたときだけ日付**で、読めなければ `null` (パス 410) ——
+    // 直す前は `''` で、画面は「受信 」とだけ刷って理由を言わなかった。
+    expect(snap.messages[0]).toEqual({ id: 'm1', subject: '(件名なし)', from: '', received: null, unread: false });
     expect(snap.messages[1]!.from).toBe('');
     expect(snap.events[0]).toEqual({ id: 'e1', subject: '(件名なし)', start: '', location: '' });
   });

@@ -201,7 +201,9 @@ describe('母集団 (宣言から導く・両方向)', () => {
       parameterSize: /parameterSize: modelDetail\(/,
       quantization: /quantization: modelDetail\(/,
       sizeMb: /sizeMb: Math\.round\(size \/ /,
-      modifiedAt: /modifiedAt: modelModifiedAt\(/,
+      // パス 410 で私有の `modelModifiedAt` を消し、共有の `displayDateOf`
+      // (`typeof` → `parseTimestamp` → `localIsoDate`) へ寄せた。判定は同じ 1 つ。
+      modifiedAt: /modifiedAt: displayDateOf\(/,
     };
     for (const f of declaredFields()) {
       expect(GATE[f], `欄 ${f} の関門が台帳に無い —— 足したなら、どの関門を通るかをここへ書く`).toBeDefined();

@@ -53,8 +53,7 @@
  * 2024 年の 5 件は 2026-05-12 の監査 (docs/OLLAMA_SECURITY.md) で確認した値。
  */
 import { charsOverCeiling, clampToCeiling } from './inputCeiling';
-import { parseTimestamp } from './isoDate';
-import { localIsoDate } from './localDate';
+import { displayDateOf } from './isoDate';
 import { MAX_LOCAL_MODEL_ERROR_CHARS, redactForMessage } from './redact';
 import { prereleaseKey, splitVersionPrerelease } from './versionOrder';
 
@@ -600,24 +599,6 @@ function modelDetail(v: unknown): string {
   return clampToCeiling(v, MAX_OLLAMA_MODEL_DETAIL_CHARS) + '…';
 }
 
-/**
- * 更新日を読む —— **日付として読めるか**で決める (パス 408)。
- *
- * `typeof` を先に見るのは、`parseTimestamp` が**数値を epoch ミリ秒として受ける**
- * ため。Ollama の `modified_at` は RFC 3339 の**文字列**なので、`20260922` という
- * 数が来たら壊れた応答であり、それを `1970-01-01` と読むのは**でっち上げ**になる
- * (パス 394 の `isoMonthOf` が同じ理由で `typeof` を先に置いている)。
- *
- * 日付にするのは `localIsoDate` —— `localDate.ts` が「**瞬間 (epoch) を日付に
- * するときも、利用者に見せるなら同じ関数でよい**」と書いている当のことで、
- * UTC で切ると日本 (UTC+9) では 0〜9 時の間だけ**前日**になる。
- */
-function modelModifiedAt(v: unknown): string | null {
-  if (typeof v !== 'string') return null;
-  const d = parseTimestamp(v);
-  return d === null ? null : localIsoDate(d);
-}
-
 /** /api/tags のレスポンスを OllamaModelInfo[] へ正規化する (未知形状は捨てる)。 */
 export function normalizeModels(raw: unknown): OllamaModelInfo[] {
   const list = (raw as { models?: unknown } | null)?.models;
@@ -646,7 +627,7 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
       parameterSize: modelDetail(m.details?.parameter_size),
       quantization: modelDetail(m.details?.quantization_level),
       sizeMb: Math.round(size / (1024 * 1024)),
-      modifiedAt: modelModifiedAt(m.modified_at),
+      modifiedAt: displayDateOf(m.modified_at),
     });
   }
   return out;

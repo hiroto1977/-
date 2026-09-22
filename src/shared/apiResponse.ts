@@ -228,3 +228,31 @@ export function objectRows<T = Record<string, unknown>>(v: unknown): readonly T[
     (x): x is T => x !== null && typeof x === 'object' && !Array.isArray(x),
   );
 }
+
+/**
+ * **第三者の応答の数値欄**を読む。有限な数でなければ `null`。 (2026-09-22 · パス 410)
+ *
+ * パス 409 が `objectRows` で「要素は物」までを閉じたあと、**欄の型**を測ったら
+ * 画面が落ちる形が残っていた。実測 (2026-09-22 · 直す前・実物の
+ * `fetchBaseSnapshot` に `{"items":[{"item_id":1,"title":"商品A","visible":1}]}`
+ * を食わせて BASE の画面を描く):
+ *
+ * | 相手の応答 | 画面 |
+ * | --- | --- |
+ * | `price` の無い商品が 1 件 | **`Cannot read properties of undefined (reading 'toLocaleString')`** —— 画面が丸ごと落ちる |
+ * | `price: '1000'` (文字列) | 落ちないが **`¥1000`** —— 桁区切りの無い値を金額として刷る |
+ *
+ * ## なぜ `shared/num.ts` の `finiteOrNull` を呼ばないか
+ *
+ * 中身は同じ判定だが、あちらの引数の型は `number` である。**それは
+ * 自分たちが計算した数を受ける関数で、文字列を渡したら型エラーになるのが
+ * 正しい**。ここは `jsonFetch<T>` のキャストが作った「型が在るように見える
+ * `unknown`」を受けるので、文字列が来るのは**想定内の入力**である。
+ * 揃えると片方が必ず緩む —— `loopbackChecks.test.ts` や パス 402 の
+ * 「数の読み方は共有しない」と同じ判断で、**受理集合が同じでも母集団が違う**。
+ *
+ * 呼び手は `numericFieldReaders.test.ts` が両方向で数える。
+ */
+export function finiteNumberOf(v: unknown): number | null {
+  return typeof v === 'number' && Number.isFinite(v) ? v : null;
+}

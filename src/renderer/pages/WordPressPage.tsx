@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { dateText } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -80,7 +81,7 @@ export function WordPressPage() {
           items={sites.map((site) => ({
             key: String(site.blogId),
             title: site.name,
-            meta: `${site.url} · platform: ${site.platform} · 最終更新 ${site.lastUpdated}`,
+            meta: `${site.url} · platform: ${site.platform} · 最終更新 ${dateText(site.lastUpdated)}`,
             badge: site.paidPlan ? 'paid' : 'free',
             href: site.url,
           }))}

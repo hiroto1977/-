@@ -18,6 +18,7 @@
  * 混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
  */
 
+import { finiteNumberOf } from '../apiResponse';
 import { finiteOrNull } from '../num';
 import { isoDateFromTimestamp } from '../isoDate';
 
@@ -154,7 +155,8 @@ export interface CursorSnapshot {
  * になる。「提案の 0% しか採用しなかった」は測った結果に見えるが、実際は鍵が
  * 無かっただけである。
  */
-const readNum = (v: number | undefined): number | null => (Number.isFinite(v) ? (v as number) : null);
+/** 共有の読み手へ 1 行で寄せた (2026-09-22 · パス 410) —— 受理集合は同じ。 */
+const readNum = (v: number | undefined): number | null => finiteNumberOf(v);
 
 /**
  * **1 項目でも読めなければ合計を作らない** (2026-09-15 · パス 266)。

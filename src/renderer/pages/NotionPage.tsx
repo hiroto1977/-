@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { dateText } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -82,7 +83,7 @@ export function NotionPage() {
             items={pages.map((p) => ({
               key: p.id,
               title: p.title,
-              meta: `${p.kind} · 更新 ${p.lastEditedTime.slice(0, 10)}`,
+              meta: `${p.kind} · 更新 ${dateText(p.lastEditedTime)}`,
               href: p.url,
             }))}
           />

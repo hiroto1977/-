@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { dateText } from '../../shared/isoDate';
 import { GITHUB_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
@@ -74,7 +75,7 @@ export function GithubPage() {
           items={pullRequests.map((pr) => ({
             key: String(pr.number),
             title: `#${pr.number} ${pr.title}`,
-            meta: `${pr.state}${pr.draft ? ' · draft' : ''} · ${pr.head} → ${pr.base} · 更新 ${pr.updatedAt.slice(0, 10)}`,
+            meta: `${pr.state}${pr.draft ? ' · draft' : ''} · ${pr.head} → ${pr.base} · 更新 ${dateText(pr.updatedAt)}`,
             badge: pr.draft ? 'draft' : pr.state,
             href: pr.htmlUrl,
           }))}

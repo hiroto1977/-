@@ -2134,6 +2134,14 @@
       "leafCount": 91,
       "note": "update integrity-chain.cjs,isoDate.ts,localDate.ts,ollama.ts",
       "hash": "ae26e30e071e2e5cd6528063f3b15c1ec9839f395167ea05d063650cc8f5e78a"
+    },
+    {
+      "index": 255,
+      "prevHash": "ae26e30e071e2e5cd6528063f3b15c1ec9839f395167ea05d063650cc8f5e78a",
+      "merkleRoot": "1171c2ce896e57a40a18759032dcf5c0ca14c7bf69193875cf39abc4af79d778",
+      "leafCount": 91,
+      "note": "update imageUrlGate.ts,isoDate.ts,ollama.ts",
+      "hash": "3b9a268d86588536eb146366cf44bc600e028ead220f85975c85cd178ab9c0c7"
     }
   ],
   "tipManifest": {
@@ -2211,11 +2219,11 @@
     "src/shared/externalUrlGate.ts": "75d54e0ec94c7568521e4fa31ad90596d18e59519434c42edb562d939806eb4b",
     "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
     "src/shared/httpLimits.ts": "fd03385ff7c5873d1d273d6f35aa8007cffad7ce36f57c25e0cfb67c714742bb",
-    "src/shared/imageUrlGate.ts": "3a380023ab15c106574638f6b1b2420632b3df5377bf8744e51d59700ec6e43c",
+    "src/shared/imageUrlGate.ts": "a1f2fad05923c97539971c4f2d5aba4e732d460f90d7d83657c391d5199aef68",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
-    "src/shared/isoDate.ts": "097f652b9152b638362f3894ad72ee10161166e84d5f8b034889add395a8efe6",
+    "src/shared/isoDate.ts": "20a4924fda86c7d334f6582ee3fbe56b154adbb476b257998075c145a53db988",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
-    "src/shared/ollama.ts": "f8114468726c0172f723d0aeb0e89e7e5a0094d2c933779b29ca73040facc9da",
+    "src/shared/ollama.ts": "b20c4a0d8983b39cd57da20aa3162d54225753df922190709c92967a908a6fd0",
     "src/shared/privateTarget.ts": "c5429a2478187926ea84bc3f951bde96e7dde70122ffb7edb3525a67b1d489da",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",

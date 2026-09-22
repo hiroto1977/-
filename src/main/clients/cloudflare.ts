@@ -32,6 +32,7 @@ import {
   readCloudflareEnvelope,
 } from '../../shared/api/cloudflare';
 import type { ActionData } from '../../shared/actionData';
+import { optionalStringArray } from '../../shared/apiResponse';
 
 /** 送り先は shared の 1 つ (書き込みも読みも同じ定数を通る)。 */
 const API_BASE = CLOUDFLARE_API;
@@ -67,7 +68,8 @@ export interface CloudflareSnapshot {
     status: string;
     plan: string;
     accountName: string;
-    nameServers: string[];
+    /** 応答が配列でなければ空 (パス 410 —— 画面が `.slice(...).join` を呼ぶ)。 */
+    nameServers: readonly string[];
     devModeRemainingSec: number;
   }[];
 }
@@ -109,7 +111,10 @@ export async function fetchCloudflareSnapshot(ctx: FetchContext): Promise<Cloudf
       status: z.status,
       plan: z.plan?.name ?? '',
       accountName: z.account?.name ?? '',
-      nameServers: z.name_servers ?? [],
+      // **配列であることを検める** (2026-09-22 · パス 410)。`??` は null / undefined
+      // しか受けないので、文字列が来ると `CloudflarePage:155` の
+      // `z.nameServers.slice(0, 2).join(', ')` が**描画で投げた** (実測)。
+      nameServers: optionalStringArray(z as unknown as Record<string, unknown>, 'name_servers'),
       // development_mode is "seconds remaining" (0 means off).
       devModeRemainingSec: z.development_mode ?? 0,
     })),

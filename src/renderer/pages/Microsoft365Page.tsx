@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { dateText } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -224,7 +225,7 @@ export function Microsoft365Page() {
           items={messages.map((m) => ({
             key: m.id,
             title: `${m.unread ? '● ' : ''}${m.subject}`,
-            meta: `${m.from} · ${m.received}`,
+            meta: `${m.from} · ${dateText(m.received)}`,
           }))}
           empty="アクセストークンを設定して更新するとメールが表示されます"
         />

@@ -397,3 +397,49 @@ describe('imageUrlGate — 呼び出し側が読む段 (パス 300)', () => {
     expect(s).not.toMatch(REMOTE_CALL);
   });
 });
+
+describe('関門は「文字列である」ところから始まる (パス 410)', () => {
+  /*
+   * 直す前の宣言は `url: string | undefined | null` で、`if (!url)` はその型を
+   * 信じて書かれていた。ところが**ここへ来る値の大半は第三者の応答**で、
+   * その型は `jsonFetch<T>` のキャストが作った見せかけである。
+   *
+   * 実測 (2026-09-22 · 直す前): 下の 4 形すべてが
+   * `url.replace is not a function` で投げ、実物の `fetchCanvaSnapshot` に
+   * `thumbnail: {url: 42}` を返すと **Canva の画面が丸ごと落ちた**。
+   */
+  const NOT_STRINGS: readonly unknown[] = [
+    42,
+    -0,
+    true,
+    {},
+    { url: 'https://example.com/a.png' },
+    ['https://example.com/a.png'],
+    Symbol.iterator,
+    () => 'https://example.com/a.png',
+  ];
+
+  it('非文字列は投げずに undefined (8 形)', () => {
+    for (const v of NOT_STRINGS) {
+      expect(() => safeImageSrc(v as never)).not.toThrow();
+      expect(safeImageSrc(v as never)).toBeUndefined();
+    }
+  });
+
+  it('上に重なる 2 段も同じ (投げない)', () => {
+    for (const v of NOT_STRINGS) {
+      expect(safeRemoteImageSrc(v as never)).toBeUndefined();
+      expect(safeCssUrl(v as never)).toBeUndefined();
+    }
+  });
+
+  it('★ 読める値の答えは 1 つも変わらない', () => {
+    expect(safeImageSrc('https://example.com/a.png')).toBe('https://example.com/a.png');
+    expect(safeImageSrc('data:image/png;base64,AAA')).toBe('data:image/png;base64,AAA');
+    expect(safeImageSrc('')).toBeUndefined();
+    expect(safeImageSrc(null)).toBeUndefined();
+    expect(safeImageSrc(undefined)).toBeUndefined();
+    expect(safeRemoteImageSrc('https://example.com/a.png')).toBe('https://example.com/a.png');
+    expect(safeCssUrl('https://example.com/a.png')).toBe('url("https://example.com/a.png")');
+  });
+});

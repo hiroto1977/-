@@ -1,4 +1,6 @@
 import { jsonFetch, limitedFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayDateOf } from '../../shared/isoDate';
+import { objectRows } from '../../shared/apiResponse';
 import { readArrayField } from '../../shared/apiResponse';
 import type { ActionData } from '../../shared/actionData';
 /* ホストと要求の組み立ては共有に 1 つだけ (パス 274 —— ブラウザ版も同じ関数を通る)。 */
@@ -87,7 +89,8 @@ export interface Microsoft365Snapshot {
     readonly id: string;
     readonly subject: string;
     readonly from: string;
-    readonly received: string;
+    /** 受信日 (`YYYY-MM-DD`・利用者の時計)。**読めなければ `null`** (パス 410)。 */
+    readonly received: string | null;
     readonly unread: boolean;
   }>;
   /** 直近のカレンダー予定。 */
@@ -123,14 +126,21 @@ export function buildMicrosoft365Snapshot(
   read: { readonly messages: boolean; readonly events: boolean } = { messages: true, events: true },
 ): Microsoft365Snapshot {
   const userName = user.displayName ?? user.userPrincipalName ?? user.mail ?? '';
-  const msgs = messages.map((m) => ({
+  /*
+   * **要素が物であることを検める** (2026-09-22 · パス 410)。`readArrayField` は
+   * 鍵と配列までしか見ないので、実測 (直す前) で `{ value: [null] }` は
+   * `Cannot read properties of null (reading 'id')` で**取得ごと失敗**した。
+   * 日付も同じ —— `(m.receivedDateTime ?? '').slice` は数が来ると投げる
+   * (`??` は null / undefined しか受けない)。
+   */
+  const msgs = objectRows<GraphMessage>(messages).map((m) => ({
     id: m.id,
     subject: m.subject || '(件名なし)',
     from: m.from?.emailAddress?.name ?? m.from?.emailAddress?.address ?? '',
-    received: (m.receivedDateTime ?? '').slice(0, 10),
+    received: displayDateOf(m.receivedDateTime),
     unread: m.isRead === false,
   }));
-  const evs = events.map((e) => ({
+  const evs = objectRows<GraphEvent>(events).map((e) => ({
     id: e.id,
     subject: e.subject || '(件名なし)',
     start: (e.start?.dateTime ?? '').slice(0, 16).replace('T', ' '),

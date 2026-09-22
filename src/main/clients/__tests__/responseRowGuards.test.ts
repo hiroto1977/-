@@ -128,7 +128,8 @@ describe('★ 壊れた行が 1 つ在っても、一覧は出る (振る舞い)
     expect(withNull.sites).toHaveLength(1);
     expect(withNull.sites[0]!.lastUpdated).toBe('2025-12-01');
     const numeric = await fetchWordPressSnapshot({ token: 't', fetch: seq({ sites: [{ ...site, last_updated: 20251201 }] }) });
-    expect(numeric.sites[0]!.lastUpdated).toBe('');
+    // 数は日付として読めないので `null` (パス 410) —— 画面が理由を名乗る。
+    expect(numeric.sites[0]!.lastUpdated).toBeNull();
   });
 
   it('slack / base / canva / gmail: 要素が null でも落ちない', async () => {

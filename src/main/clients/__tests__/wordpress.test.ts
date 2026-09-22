@@ -61,7 +61,7 @@ describe('fetchWordPressSnapshot', () => {
     );
 
     const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
-    expect(snap.sites[0]).toMatchObject({ status: 'private', platform: 'jetpack', lastUpdated: '' });
+    expect(snap.sites[0]).toMatchObject({ status: 'private', platform: 'jetpack', lastUpdated: null });
   });
 
   it('returns empty list when the API returns no sites', async () => {
@@ -257,7 +257,18 @@ describe('fetchWordPressSnapshot — 送り先と表示の既定', () => {
     expect(snap.sites[0]).toMatchObject({ platform: 'simple', status: 'active' });
   });
 
-  it('last_updated が無いサイトは空文字にする（undefined を画面に出さない）', async () => {
+  /*
+   * **題名を実測へ直した** (2026-09-22 · パス 410)。
+   *
+   * 直す前の題名は「空文字にする（undefined を画面に出さない）」で、
+   * **弱さを仕様として留めていた** (法則 `no-weakness-as-spec`) ——
+   * `''` は画面に「更新 」とだけ刷らせ、**「まだ取れていない」と
+   * 「相手が日付を返さなかった」が同じ見え方**になる
+   * (法則 `blank-states-its-reason`)。今は `null` で、画面が
+   * `dateText` で理由を名乗る。**主張は変えていない** ——
+   * 見たいのは「生の `undefined` を画面に出さない」ことである。
+   */
+  it('last_updated が無いサイトは null (画面が理由を名乗る)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({
         sites: [
@@ -273,7 +284,7 @@ describe('fetchWordPressSnapshot — 送り先と表示の既定', () => {
       }),
     );
     const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
-    expect(snap.sites[0]!.lastUpdated).toBe('');
+    expect(snap.sites[0]!.lastUpdated).toBeNull();
   });
 });
 

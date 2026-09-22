@@ -110,7 +110,10 @@ export const SNAPSHOT = {
         draft: true,
         head: 'claude/add-claude-documentation-F7HIa',
         base: 'main',
-        updatedAt: '2026-05-11T09:09:04Z',
+        updatedAt: '2026-05-11T09:09:04Z' as string | null,  // ★ パス 410: 画面の型は**この見本**から推論される ——
+        // 実物 (client) は読めない日付を null にするので、見本を狭いままにすると
+        // 画面は `.slice` を呼べてしまい、描画で投げる (パス 265 の `as boolean` と同じ形)。
+
         htmlUrl: 'https://github.com/hiroto1977/-/pull/2',
       },
       {
@@ -136,7 +139,10 @@ export const SNAPSHOT = {
         url: 'https://example-blog-a.wordpress.com',
         platform: 'simple',
         status: 'active',
-        lastUpdated: '2025-11-18',
+        lastUpdated: '2025-11-18' as string | null,  // ★ パス 410: 画面の型は**この見本**から推論される ——
+        // 実物 (client) は読めない日付を null にするので、見本を狭いままにすると
+        // 画面は `.slice` を呼べてしまい、描画で投げる (パス 265 の `as boolean` と同じ形)。
+
         paidPlan: false,
       },
       {
@@ -185,7 +191,8 @@ export const SNAPSHOT = {
   notion: {
     teams: [] as { id: string; name: string }[],
     note: '参加中のチームスペースなし。Notion AI 検索でもヒットなし。',
-    pages: [] as { id: string; title: string; url: string; lastEditedTime: string; kind: string }[],
+    // 読めない日付は null (パス 410 —— 実物の client と同じ形)。
+    pages: [] as { id: string; title: string; url: string; lastEditedTime: string | null; kind: string }[],
   },
 
   drive: {
@@ -194,7 +201,10 @@ export const SNAPSHOT = {
         id: '1ExampleDocumentIdAAAAAAAAAAAAAAAAAAAAAAAAAA',
         title: 'SYSTEM_BLUEPRINT.md',
         mimeType: 'application/vnd.google-apps.document',
-        modifiedTime: '2026-04-24',
+        modifiedTime: '2026-04-24' as string | null,  // ★ パス 410: 画面の型は**この見本**から推論される ——
+        // 実物 (client) は読めない日付を null にするので、見本を狭いままにすると
+        // 画面は `.slice` を呼べてしまい、描画で投げる (パス 265 の `as boolean` と同じ形)。
+
         viewUrl:
           'https://docs.google.com/document/d/1ExampleDocumentIdAAAAAAAAAAAAAAAAAAAAAAAAAA/edit',
       },
@@ -376,7 +386,8 @@ export const SNAPSHOT = {
       status: string;
       plan: string;
       accountName: string;
-      nameServers: string[];
+      // 応答が配列でなければ空 (パス 410 —— 画面が `.slice(...).join` を呼ぶ)。
+      nameServers: readonly string[];
       devModeRemainingSec: number;
     }[],
   },
@@ -555,7 +566,8 @@ export const SNAPSHOT = {
     // 一方 live 取得は `userName: string` を返すので**その枝は実際に走る**。
     // 直下の配列が既に `as T[]` で広げているのと同じ理由 (プレースホルダは実物の型で持つ)。
     userName: '' as string,
-    messages: [] as { id: string; subject: string; from: string; received: string; unread: boolean }[],
+    // 読めない受信日は null (パス 410)。
+    messages: [] as { id: string; subject: string; from: string; received: string | null; unread: boolean }[],
     events: [] as { id: string; subject: string; start: string; location: string }[],
     items: [
       { id: 'outlook-1', name: '📧 Outlook: 未読 23 件 / 今日の送信 7 件' },
@@ -886,7 +898,10 @@ export const SNAPSHOT = {
       { id: 'base-1', name: 'オリジナルパーカー', price: 6800, stock: 24, visible: true },
       { id: 'base-2', name: 'キャンバストートバッグ', price: 2400, stock: 53, visible: true },
       { id: 'base-3', name: '限定ステッカーセット', price: 800, stock: 0, visible: false },
-    ] as { id: string; name: string; price: number; stock: number; visible: boolean }[],
+    // ★ パス 410: 画面の型は**この見本**から推論される —— 実物 (client) は
+    //    相手が返さなかった欄を `null` にするので、見本を `number` のままに
+    //    すると画面は `.toLocaleString` を呼べてしまい、1 件の欠落で落ちる。
+    ] as { id: string; name: string; price: number | null; stock: number | null; visible: boolean }[],
   },
 
   netsea: {

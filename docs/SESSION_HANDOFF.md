@@ -7,6 +7,54 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## パス 410 (2026-09-22) — 画面が第三者の値にメソッドを呼び、1 欄の型違いで画面が落ちる
+
+パス 409 の残作業 (`?? ''` の 13 件・`slice(0, 10)` の 6 件) を**数えて回るのをやめ、
+画面を実際に壊して測った** —— 16 の network client の見本について各行の各欄を 1 つずつ
+壊し、76 画面を jsdom で描く。実測は **8 欄 / 3 サービス**で、そのうち**実物の client を
+通して届くのは 2 つ**だった (残る 6 つは cursor で、`readNum` が正規化するので**罠**)。
+
+| 画面 | 相手の応答 | 直す前 |
+| --- | --- | --- |
+| **BASE** | `price` の無い商品が 1 件 | `Cannot read properties of undefined (reading 'toLocaleString')` |
+| **BASE** | `price: '1000'` (文字列) | 落ちないが **`¥1000`** (桁区切り無し) |
+| **Canva** | `thumbnail: {url: 42}` | `url.replace is not a function` |
+
+★ **投げていたのは関門そのもの** —— `safeImageSrc(url: string | undefined | null)` の
+`if (!url)` は宣言の型を信じて書かれていたが、ここへ来る値の大半は第三者の応答で、
+その型は `jsonFetch<T>` のキャストが作った見せかけである。この関門は `DataList` の
+thumbnail と `StatusBar` の avatar、つまり**全 76 画面**が通る 1 つ。
+
+★ **見本が「型の出どころ」である** —— 画面は `useServiceData(id, SNAPSHOT[id])` で描くので
+`T` は client の宣言ではなく**見本のリテラル**から推論される。client を広げても見本が
+狭いままだと画面は `.toLocaleString()` を呼べてしまい、`typecheck` も黙る。
+写しが在る理由は境界 (`lint:imports` が renderer → main の import を禁じる)。
+
+**直し**: ① 関門は文字列であるところから始める (引数を `unknown` に) ② 境界で型を確かめる
+(`finiteNumberOf` / `optionalString`) ③ 見本の型を client と同じ幅へ ④ 画面が理由を名乗る
+(「価格不明」「在庫不明」) ⑤ 数の読み手は `shared/apiResponse.ts` の `finiteNumberOf` 1 つ。
+
+**機械**: `main/clients/__tests__/nullableSnapshotFieldWidth.test.ts` が `X | null` を宣言する
+**19 欄**を宣言から走査して台帳と両方向に突き合わせ、見本と client の **`null` の幅**を型で
+照合する。隣の `snapshotFieldWidth.test.ts` は同じ不変条件を 2026-09-14 から持つが
+**母集団は真偽値 13 欄だけ**だった (真偽値が狭いと「起きない枝」・**`X | null` が狭いと画面が落ちる**)。
+`renderer/pages/__tests__/thirdPartyFieldOnScreen.test.ts` が実物の client に応答を食わせて描く。
+
+★ **自戒**: 最初の針は**構造の同一性**を求めていて `devEnv.project` で落ちた —— 実測すると
+見本は既に `| null` を持ち画面も守っており、差は `readonly` の付き方だけ。**針の側の誤り**で、
+見るべきは `null` の有無ただ 1 つ (`SameNullability`)。
+
+`typecheck` 緑・`npm test` **829 / 18,264**・`verify:all` exit 0・chain block **#255**・
+出荷物 **11,946,172 B / 3,358,691 B (両方 +156 B)**・`perf` OK・`e2e` / `e2e:lite` とも **455 件 ❌ 0**。
+
+**次 (パス 410 の後・今日実測した)**: ① `?? ''` だけで第三者の文字列を受ける欄が **11 件**
+(canva と ms365 が閉じた) ② 生の第三者文字列が `DataList` の meta 行に載る画面が 2 枚
+(`CloudflarePage:155` / `GithubPage:77`) ③ cursor の 6 欄は**罠のまま残す** (床を広げると
+型の上で死んだ枝になり、等価変異の pragma が要る · パス 351 の形) ④ atlassian の一覧は
+振る舞いで確かめていない。
+
+---
+
 ## パス 409 (2026-09-22) — 相手の一覧に壊れた行が 1 つ在ると、その画面が丸ごと落ちた
 
 パス 408 の残作業を辿ったら、そこに在ったのは天井ではなく**「投げる」**だった。

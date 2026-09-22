@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { dateText } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -88,7 +89,7 @@ export function DrivePage() {
           items={files.map((f) => ({
             key: f.id,
             title: f.title,
-            meta: `${TYPE_LABEL[f.mimeType] ?? f.mimeType} · 更新 ${f.modifiedTime}`,
+            meta: `${TYPE_LABEL[f.mimeType] ?? f.mimeType} · 更新 ${dateText(f.modifiedTime)}`,
             href: f.viewUrl,
           }))}
         />
