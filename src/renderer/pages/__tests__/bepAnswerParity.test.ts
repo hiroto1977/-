@@ -44,7 +44,9 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import {
   KPI_ACTUALS_COLLECTION,
   NO_BEP_REASON,
+  ZERO_REVENUE_BEP_REASON,
   bepDisplay,
+  noBepReason,
   type KpiActual,
 } from '../../data/kpiActuals';
 import { waitForText } from '../../__tests__/jsdomWait';
@@ -155,6 +157,14 @@ const LOSS: KpiActual = {
   period: '2026-08', unit: '全社',
   revenue: 1_000_000, cogs: 1_200_000, advertising: 0, sga: 300_000, depreciation: 0,
 };
+/**
+ * **売上 0 で費用だけ入っている期** (売上前・取り込み前)。`bep` は非有限になるが、
+ * 原因は「限界利益 ≤ 0」ではなく「売上がまだ無い」である (パス 388)。
+ */
+const ZERO_REVENUE: KpiActual = {
+  period: '2026-08', unit: '全社',
+  revenue: 0, cogs: 0, advertising: 0, sga: 300_000, depreciation: 0,
+};
 /** 限界利益が在る期。BEP = 固定費 30 万 ÷ 限界利益率 60% = 50 万。 */
 const OK: KpiActual = {
   period: '2026-08', unit: '全社',
@@ -253,15 +263,45 @@ describe('損益分岐点のタイル — 母集団と、判定が 1 つであ�
   });
 
   it('★ bepDisplay そのもの: 非有限は「—」+ 理由、有限は金額 (副文は渡した物)', () => {
-    expect(bepDisplay(Infinity, (n) => `X${n}`, '比率 1%')).toEqual({
+    // 売上が在って限界利益 ≤ 0 (限界利益率は算定できている = 非 null)。
+    const noContribution = { bep: Infinity, contributionRatio: -20 };
+    expect(bepDisplay(noContribution, (n) => `X${n}`, '比率 1%')).toEqual({
       value: '—', sub: NO_BEP_REASON,
     });
-    expect(bepDisplay(Number.NaN, (n) => `X${n}`)).toEqual({ value: '—', sub: NO_BEP_REASON });
-    expect(bepDisplay(500_000.4, (n) => `X${n}`, '比率 50%')).toEqual({
+    expect(bepDisplay({ bep: Number.NaN, contributionRatio: -1 }, (n) => `X${n}`)).toEqual({
+      value: '—', sub: NO_BEP_REASON,
+    });
+    expect(bepDisplay({ bep: 500_000.4, contributionRatio: 60 }, (n) => `X${n}`, '比率 50%')).toEqual({
       value: 'X500000', sub: '比率 50%',
     });
     // 副文を渡さなければ付かない (経営サマリーの形)。
-    expect(bepDisplay(1, (n) => `X${n}`)).toEqual({ value: 'X1', sub: undefined });
+    expect(bepDisplay({ bep: 1, contributionRatio: 60 }, (n) => `X${n}`)).toEqual({
+      value: 'X1', sub: undefined,
+    });
+  });
+
+  /**
+   * ★ **空欄の原因は 2 つに分かれ、選ぶのは 1 か所だけである** (パス 388)。
+   *
+   * 売上 0 で費用だけ入っている事業に `NO_BEP_REASON` を出すと
+   * 「変動費と単価を見直せ」と読めるが、実際の状態は「売上がまだ入っていない」。
+   * 実測 (2026-09-22) では**画面が出す唯一の理由がそれ**で、同じ状態について
+   * 書面とレポートは `zeroRevenueRatioNote` で正しい原因を言っていた。
+   */
+  it('★ 売上 0 (限界利益率が算定不能) なら、原因は「売上が 0」と言う', () => {
+    const zeroRevenue = { bep: Infinity, contributionRatio: null };
+    expect(noBepReason(zeroRevenue)).toBe(ZERO_REVENUE_BEP_REASON);
+    expect(bepDisplay(zeroRevenue, (n) => `X${n}`, '比率 —')).toEqual({
+      value: '—', sub: ZERO_REVENUE_BEP_REASON,
+    });
+    // **2 つの理由は別の文である** (どちらかに畳んだら、片方の原因が言えない)。
+    expect(ZERO_REVENUE_BEP_REASON).not.toBe(NO_BEP_REASON);
+    // その 1 文で 3 つの空欄すべてが説明される (読み手が欄ごとに探し回らない)。
+    for (const name of ['損益分岐点', '限界利益率', '安全余裕率']) {
+      expect(ZERO_REVENUE_BEP_REASON, `${name} を名指ししていない`).toContain(name);
+    }
+    // 算定できているなら理由は要らない。
+    expect(noBepReason({ bep: 500_000, contributionRatio: 60 })).toBeNull();
   });
 });
 
@@ -288,6 +328,35 @@ describe('損益分岐点が存在しない期 — 2 画面が同じ形で答え
     expect(t).toContain('残り 無制限');
     expect((t.match(/∞/g) ?? []).length).toBe(1);
     expect(t).not.toMatch(/NaN|Infinity/);
+  });
+
+  /**
+   * ★ **売上 0 は「限界利益 ≤ 0」とは別の原因である** (パス 388)。
+   *
+   * 実測 (2026-09-22 · jsdom): 売上 0 / 販管費 30 万の KPI 実績 1 件で経営サマリーを
+   * 描くと 9 つのタイルが `—` になり、**画面が出す唯一の理由が `NO_BEP_REASON`**
+   * だった。売上前の事業に「どれだけ売っても固定費を回収できません」と言うと、
+   * 直す所 (変動費・単価) を取り違えて案内することになる。
+   */
+  it('★ 売上 0: 画面は「売上が 0」を原因として述べ、限界利益の文は出さない', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, ZERO_REVENUE);
+    await mount(OverviewPage, ZERO_REVENUE_BEP_REASON);
+    const t = text();
+    // 空欄そのものは残る (算定できないので数は出せない)。
+    expect(t).toContain('損益分岐点 (BEP)');
+    expect(t).toContain('—');
+    // **原因を取り違えない。**
+    expect(t, '売上 0 なのに限界利益の文を出している').not.toContain(NO_BEP_REASON);
+    expect(t).not.toMatch(/NaN|Infinity/);
+  });
+
+  it('★ 売上 0: KPI 実績の画面も同じ原因を述べる', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, ZERO_REVENUE);
+    await mount(KpiPage, ZERO_REVENUE_BEP_REASON);
+    const t = text();
+    expect(t).toContain('損益分岐点 (BEP)');
+    expect(t, '売上 0 なのに限界利益の文を出している').not.toContain(NO_BEP_REASON);
+    expect((t.match(/∞/g) ?? []).length).toBe(0);
   });
 
   it('★ 対照: 限界利益が在れば両画面とも金額で出し、理由は出さない', async () => {

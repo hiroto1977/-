@@ -571,7 +571,7 @@ function ActualsPanel() {
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
             <Tile label="実績合計 売上高" value={safeYen(fundamentals.revenue)} />
-            <Tile label="損益分岐点 (BEP)" {...bepDisplay(summary.bep, (n) => yen.format(n), `比率 ${pct(summary.bepRatio)}`)} />
+            <Tile label="損益分岐点 (BEP)" {...bepDisplay(summary, (n) => yen.format(n), `比率 ${pct(summary.bepRatio)}`)} />
             <Tile label="安全余裕率" value={pctOrDash(summary.safetyMargin)} sub="高いほど安全" />
             <Tile label="限界利益率" value={pctOrDash(summary.contributionRatio)} />
             <Tile label="営業利益" value={safeYen(summary.operatingProfit)} />
@@ -994,7 +994,7 @@ export function KpiPage() {
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
         <Tile label="売上高" value={yen.format(selected.fundamentals.revenue)} />
-        <Tile label="損益分岐点 (BEP)" {...bepDisplay(selected.kpi.bep, (n) => yen.format(n), `比率 ${pct(selected.kpi.bepRatio)}`)} />
+        <Tile label="損益分岐点 (BEP)" {...bepDisplay(selected.kpi, (n) => yen.format(n), `比率 ${pct(selected.kpi.bepRatio)}`)} />
         <Tile label="安全余裕率" value={pctOrDash(selected.kpi.safetyMargin)} sub="高いほど安全" />
         {/* **上の実績タイル群と同じ答え方にする。** 2026-09-08 まで、こちらは
             `pct` で「0.0%」・上は `pctOrDash` で「—」を刷っており、**同じラベルの

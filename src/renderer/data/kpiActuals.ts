@@ -616,6 +616,62 @@ export function finiteBep(bep: number): number | null {
 export const NO_BEP_REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
 
 /**
+ * **売上が 0 で損益分岐点が算定できないときの理由** (2026-09-22 · パス 388)。
+ *
+ * `NO_BEP_REASON` (「限界利益が 0 以下です。どれだけ売っても固定費を回収できません。」)
+ * とは**別の原因**である。売上 0 で費用だけ入っている事業 (売上前・取り込み前) に
+ * 前者を出すと、**変動費と単価を見直せ**と読める —— 実際の状態は
+ * 「売上がまだ入っていない」で、直す所が違う。
+ *
+ * 実測 (2026-09-22 · jsdom): 売上 0 / 販管費 30 万の KPI 実績 1 件で経営サマリーを
+ * 描くと、`限界利益率` / `安全余裕率` / `損益分岐点 (BEP)` が `—` になり、
+ * **画面が出す唯一の理由が `NO_BEP_REASON`** だった (`hasBepReason=true` /
+ * 売上 0 の断りは `false`)。同じ状態について**書面とレポートは
+ * `zeroRevenueRatioNote` で正しい原因を言う** —— 画面だけが原因を取り違えていた。
+ *
+ * 文が 3 つの欄を名指しするのは、この 1 文でその 3 つの空欄すべてが説明されるため
+ * (読み手が空欄ごとに理由を探し回らない)。
+ */
+export const ZERO_REVENUE_BEP_REASON =
+  '対象期間の売上高が 0 のため、損益分岐点・限界利益率・安全余裕率は算定していません。';
+
+/** {@link bepDisplay} と {@link noBepReason} が要る最小の入力。 */
+export interface BepInputs {
+  readonly bep: number;
+  /**
+   * 限界利益率。**`null` ⟺ 売上高が 0** (この欄の定義そのもの)。
+   *
+   * ここで `revenue` を取らないのは、`KpiMetrics` が売上高を持たないからでもあるが、
+   * 主たる理由は**条件を値そのもので書く**ためである —— `revenue > 0` を写すと
+   * 同じ規則が画面と書面に分かれる (`OverviewPage` のコスト構造の枠が
+   * 2026-09-08 に同じ轍を踏んでいる)。
+   */
+  readonly contributionRatio: number | null;
+}
+
+/**
+ * **損益分岐点が空欄になる理由を 1 か所で選ぶ。**
+ *
+ * 算定できているなら `null` (理由は要らない)。算定できないなら原因は 2 つに分かれ、
+ * **どちらを出すかをここだけが決める** —— 呼び手が分岐を写すと、面ごとに違う原因を
+ * 言い始める (それがパス 388 で見つけた欠陥そのものである)。
+ */
+export function noBepReason(m: BepInputs): string | null {
+  return Number.isFinite(m.bep) ? null : blankBepReason(m);
+}
+
+/**
+ * 空欄の理由 (**必ず在る**)。`bep` が非有限であることは呼び手が確かめる。
+ *
+ * `noBepReason` と 2 つに分けているのは型のためだけではない —— `bepDisplay` は
+ * 非有限の枝の中で呼ぶので `null` を受けられず、`?? 既定` と書くと**そこが
+ * 2 つ目の選択**になる (面ごとに違う原因を言い始める元である)。
+ */
+function blankBepReason(m: BepInputs): string {
+  return m.contributionRatio === null ? ZERO_REVENUE_BEP_REASON : NO_BEP_REASON;
+}
+
+/**
  * **損益分岐点のタイル 1 枚の「値」と「副文」を、1 つの判定から返す。**
  *
  * 別々に書くと「— なのに理由が出ない」「数が出ているのに理由が付く」形が
@@ -659,12 +715,12 @@ export const NO_BEP_REASON = '限界利益が 0 以下です。どれだけ売�
  * @param sub   **算定できたときだけ**添える副文 (比率など)。算定できなければ理由が優先する
  */
 export function bepDisplay(
-  bep: number,
+  m: BepInputs,
   money: (n: number) => string,
   sub?: string,
 ): { value: string; sub?: string } {
-  if (!Number.isFinite(bep)) return { value: DASH, sub: NO_BEP_REASON };
-  return { value: money(Math.round(bep)), sub };
+  if (!Number.isFinite(m.bep)) return { value: DASH, sub: blankBepReason(m) };
+  return { value: money(Math.round(m.bep)), sub };
 }
 
 /**
