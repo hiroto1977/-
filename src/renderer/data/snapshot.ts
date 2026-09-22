@@ -412,7 +412,8 @@ export const SNAPSHOT = {
       parameterSize: string;
       quantization: string;
       sizeMb: number;
-      modifiedAt: string;
+      // 読めない / 欠けている更新日は null (パス 408 —— 判定は shared/ollama.ts が 1 つ持つ)。
+      modifiedAt: string | null;
     }[],
     warnings: [] as string[],
   },

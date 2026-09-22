@@ -678,13 +678,14 @@ export const LAWS: readonly Law[] = [
     id: 'envelope-checked-at-read',
     family: 'surface',
     name: '第三者の応答は読むところで確かめる',
-    statement: '`as T` は封筒も確かめない。200 の {} を成功にしない・null で型エラーを画面へ漏らさない・[] が 5 つの事実を意味しない・認可サーバの応答 1 つで資格情報を失わない。**自分が prompt で述べた上限は自分で検める** —— 件数も欄の 1 つで、相手の善意は門ではない。',
-    provenance: ['パス 259', 'パス 260', 'パス 261', 'パス 262', 'パス 263', 'パス 264', 'パス 404'],
+    statement: '`as T` は封筒も確かめない。200 の {} を成功にしない・null で型エラーを画面へ漏らさない・[] が 5 つの事実を意味しない・認可サーバの応答 1 つで資格情報を失わない。**自分が prompt で述べた上限は自分で検める** —— 件数も欄の 1 つで、相手の善意は門ではない。**型を検めても大きさを検めなければ門ではない** —— typeof だけ通した欄は 200,000 字でも通る。',
+    provenance: ['パス 259', 'パス 260', 'パス 261', 'パス 262', 'パス 263', 'パス 264', 'パス 404', 'パス 408'],
     enforcedBy: [
       test(T.shared('tokenResponse')),
       test(T.shared('apiResponse')),
       test(T.shared('securityResponse')),
       test(T.shared('advisorArrayBounds')),
+      test(T.shared('ollamaModelFieldCeilings')),
     ],
   },
   {
@@ -868,9 +869,14 @@ export const LAWS: readonly Law[] = [
     id: 'dates-parsed-once',
     family: 'numbers',
     name: '日付の判定は 1 つ',
-    statement: '同じ YYYY-MM-DD の判定が 7 通りに割れていた。暦を見る判定を 1 つにし、Date.UTC の 0〜99 (1900 年代) を通さない。',
-    provenance: ['パス 115', 'パス 200'],
-    enforcedBy: [test(T.shared('isoDate')), test(T.shared('dateAssemblyCensus')), test(T.shared('calendarDateCensus'))],
+    statement: '同じ YYYY-MM-DD の判定が 7 通りに割れていた。暦を見る判定を 1 つにし、Date.UTC の 0〜99 (1900 年代) を通さない。**第三者が名乗る日付も同じ** —— 生の文字列を画面へ通さず、読めなければ null (数を epoch ミリ秒として読むと 1970-01-01 を捏造する)。',
+    provenance: ['パス 115', 'パス 200', 'パス 394', 'パス 408'],
+    enforcedBy: [
+      test(T.shared('isoDate')),
+      test(T.shared('dateAssemblyCensus')),
+      test(T.shared('calendarDateCensus')),
+      test(T.shared('ollamaModelFieldCeilings')),
+    ],
   },
 
   // ───────────────────────── 両ビルドの対称 ─────────────────────────

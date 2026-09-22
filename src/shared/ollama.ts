@@ -52,6 +52,9 @@
  * CERT VU#518910・NVD・OSV は取得できなかったので、届いた物だけを出典に書く。
  * 2024 年の 5 件は 2026-05-12 の監査 (docs/OLLAMA_SECURITY.md) で確認した値。
  */
+import { charsOverCeiling, clampToCeiling } from './inputCeiling';
+import { parseTimestamp } from './isoDate';
+import { localIsoDate } from './localDate';
 import { MAX_LOCAL_MODEL_ERROR_CHARS, redactForMessage } from './redact';
 import { prereleaseKey, splitVersionPrerelease } from './versionOrder';
 
@@ -531,6 +534,29 @@ export function advisoryLedgerNotice(
   );
 }
 
+/**
+ * モデル一覧の 1 行に並ぶ「**相手が名乗る**」欄の上限 (**文字**) —— 2026-09-22 · パス 408。
+ *
+ * `name` は `isSafeModelName` の正規表現が **128 字**で切る (超えた項目は行ごと落とす)
+ * のに、**同じオブジェクトリテラルの隣の 3 欄には天井が無かった** —— `typeof` で
+ * 型だけを検め、長さは 1 度も見ていない。実測 (2026-09-22 · 直す前): 1 件に
+ * 200,000 字を 4 欄入れると **`OllamaPage` の meta 行が 800,038 字**になる。
+ * 応答の上限は `MAX_OLLAMA_RESPONSE_BYTES` (2 MiB) なので、**1 件で ~2 MB** 入る。
+ *
+ * 相手は「利用者が設定した Ollama ホスト」である —— `isAllowedOllamaBase` は
+ * ループバックのほか**頁と同じホスト**と任意の https を通すので、127.0.0.1 の
+ * 別プロセスや LAN のホストが相手になりうる。`isSafeModelName` がそもそも在る
+ * 理由がそれであり、**その理由はこの 3 欄にも等しく当てはまる**。
+ *
+ * **64 にした根拠は実物の値** —— `family` は `llama` / `gemma` / `qwen2` / `clip`
+ * (≤ 6)、`parameter_size` は `7B` / `8.0B` / `70.6B` (≤ 5)、`quantization_level` は
+ * `Q4_0` / `Q4_K_M` / `F16` (≤ 6)。いちばん長い実物の 10 倍の余地が在る。
+ * **切ったことは `…` で述べる** (法則 `blank-states-its-reason` の「絞ることと
+ * 述べることは対」の側・パス 400)。行ごと落とさないのは、`family` が長いだけの
+ * モデルが**一覧から消える**ほうが利用者にとって悪いからである。
+ */
+export const MAX_OLLAMA_MODEL_DETAIL_CHARS = 64;
+
 /** /api/tags の 1 件を UI 用に正規化した形。 */
 export interface OllamaModelInfo {
   name: string;
@@ -538,7 +564,16 @@ export interface OllamaModelInfo {
   parameterSize: string;
   quantization: string;
   sizeMb: number;
-  modifiedAt: string;
+  /**
+   * 更新日 (`YYYY-MM-DD`・**利用者の時計**)。**読めなければ `null`** (パス 408)。
+   *
+   * パス 407 まで**生の文字列**で、main だけが `.slice(0, 10)` していた ——
+   * つまり同じ `OllamaPage` が build によって `2026-09-22` と
+   * `2026-09-22T10:00:00.277302595-07:00` を出していた。`isoDate.ts` の
+   * `isoDateFromTimestamp` は「**呼び出し側 3 か所が同じ `slice(0, 10)` を
+   * 写していたのも、これで消える**」と書いているが、**4 つ目の写しがここに在った**。
+   */
+  modifiedAt: string | null;
 }
 
 /** Ollama ページが描画する状態 (main / browser 共通)。 */
@@ -549,6 +584,38 @@ export interface OllamaSnapshot {
   versionMinRecommended: string;
   models: OllamaModelInfo[];
   warnings: string[];
+}
+
+/**
+ * 一覧に並ぶ欄を 1 つ読む —— **型と長さの両方**を検める (パス 408)。
+ *
+ * 非文字列は `—` (既定の綴りは 1 つ)。天井を超えたら切って `…` を付ける ——
+ * **黙って切ると、利用者は「この Ollama はこういう値を返す」と読む**。
+ * 空文字はそのまま返す (画面が `m.family || '?'` で `?` に倒す既存の振る舞いを
+ * 変えない —— **今日の正常な入力の答えは 1 つも変えていない**)。
+ */
+function modelDetail(v: unknown): string {
+  if (typeof v !== 'string') return '—';
+  if (charsOverCeiling(v, MAX_OLLAMA_MODEL_DETAIL_CHARS) === 0) return v;
+  return clampToCeiling(v, MAX_OLLAMA_MODEL_DETAIL_CHARS) + '…';
+}
+
+/**
+ * 更新日を読む —— **日付として読めるか**で決める (パス 408)。
+ *
+ * `typeof` を先に見るのは、`parseTimestamp` が**数値を epoch ミリ秒として受ける**
+ * ため。Ollama の `modified_at` は RFC 3339 の**文字列**なので、`20260922` という
+ * 数が来たら壊れた応答であり、それを `1970-01-01` と読むのは**でっち上げ**になる
+ * (パス 394 の `isoMonthOf` が同じ理由で `typeof` を先に置いている)。
+ *
+ * 日付にするのは `localIsoDate` —— `localDate.ts` が「**瞬間 (epoch) を日付に
+ * するときも、利用者に見せるなら同じ関数でよい**」と書いている当のことで、
+ * UTC で切ると日本 (UTC+9) では 0〜9 時の間だけ**前日**になる。
+ */
+function modelModifiedAt(v: unknown): string | null {
+  if (typeof v !== 'string') return null;
+  const d = parseTimestamp(v);
+  return d === null ? null : localIsoDate(d);
 }
 
 /** /api/tags のレスポンスを OllamaModelInfo[] へ正規化する (未知形状は捨てる)。 */
@@ -566,16 +633,20 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
     };
     // isSafeModelName が非文字列を弾くので typeof の前置きは要らない。
     if (!isSafeModelName(m.name)) continue;
-    // Number.isFinite は値を変換しないので、文字列も Infinity も false になる。
-    const size = Number.isFinite(m.size as number) ? (m.size as number) : 0;
+    /*
+     * Number.isFinite は値を変換しないので、文字列も Infinity も false になる。
+     * **負も落とす** (パス 408) —— ファイルの大きさに負は無いので壊れた応答であり、
+     * 実測で `size: -1e300` は `-9.5367431640625e+293 MB` を画面に刷っていた。
+     */
+    const raw = m.size as number;
+    const size = Number.isFinite(raw) && raw >= 0 ? raw : 0;
     out.push({
       name: m.name,
-      family: typeof m.details?.family === 'string' ? m.details.family : '—',
-      parameterSize: typeof m.details?.parameter_size === 'string' ? m.details.parameter_size : '—',
-      quantization:
-        typeof m.details?.quantization_level === 'string' ? m.details.quantization_level : '—',
+      family: modelDetail(m.details?.family),
+      parameterSize: modelDetail(m.details?.parameter_size),
+      quantization: modelDetail(m.details?.quantization_level),
       sizeMb: Math.round(size / (1024 * 1024)),
-      modifiedAt: typeof m.modified_at === 'string' ? m.modified_at : '',
+      modifiedAt: modelModifiedAt(m.modified_at),
     });
   }
   return out;

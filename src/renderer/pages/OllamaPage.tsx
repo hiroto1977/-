@@ -177,7 +177,13 @@ export function OllamaPage() {
             items={models.map((m) => ({
               key: m.name,
               title: m.name,
-              meta: `${m.family || '?'} · ${m.parameterSize || '?'} · ${m.quantization || '?'} · ${m.sizeMb} MB · 更新 ${m.modifiedAt}`,
+              /*
+               * **空欄は理由を言う** (パス 408・法則 `blank-states-its-reason`) ——
+               * `modifiedAt` は読めない / 欠けているとき `null` で、パス 407 まで
+               * ここは空文字を素で挿していたので `更新 ` とだけ刷っていた。
+               * 「まだ取れていない」と「相手が読めない値を返した」が同じ見え方になる。
+               */
+              meta: `${m.family || '?'} · ${m.parameterSize || '?'} · ${m.quantization || '?'} · ${m.sizeMb} MB · 更新 ${m.modifiedAt ?? '日付が読めません'}`,
             }))}
           />
         )}

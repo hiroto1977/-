@@ -333,7 +333,14 @@ describe('fetchOllamaSnapshot', () => {
     });
   });
 
-  it('defaults modifiedAt to empty string when modified_at is missing (kills `?? ""` → "Stryker...")', async () => {
+  /*
+   * **題名を 2 度直した。** 元は「defaults modifiedAt to empty string … (kills `?? ""`)」で、
+   * その `?? ''` は**パス 407 で消えた** (main が `normalizeModels` を通るようになった)。
+   * さらにパス 408 で「無い / 読めない」の値が `''` → **`null`** になった ——
+   * 空文字だと「相手が空を返した」と区別できず、画面が理由を言えない。
+   * **主張は変えていない**: `modified_at` が無い応答でも一覧は出て、日付は捏造しない。
+   */
+  it('modified_at が無ければ modifiedAt は null (捏造も Stryker の綴りも出さない)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
@@ -351,8 +358,8 @@ describe('fetchOllamaSnapshot', () => {
         }),
       );
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
-    expect(snap.models[0]!.modifiedAt).toBe('');
-    expect(snap.models[0]!.modifiedAt).not.toContain('Stryker');
+    expect(snap.models[0]!.modifiedAt).toBeNull();
+    expect(String(snap.models[0]!.modifiedAt)).not.toContain('Stryker');
   });
 
   it('pushes an HTTP-status warning when /api/version returns non-ok (kills if(res.ok) → true)', async () => {
@@ -1008,7 +1015,9 @@ describe('★ モデル一覧の読みは共有の 1 つ (パス 407)', () => {
     const snap = await fetchOllamaSnapshot({ token: '', fetch: tagsFetch([good('a'), { ...good('b'), modified_at: 20260922 }, good('c')]) });
     // 直す前は 2 件 push した所で TypeError → catch → 警告だけが残った。
     expect(snap.models.map((m) => m.name)).toEqual(['a', 'b', 'c']);
-    expect(snap.models[1]!.modifiedAt, '読めない日付は空にする').toBe('');
+    // パス 408: 読めない日付は **null** (「相手が空を返した」と混ぜない)。
+    // ★ 数を epoch ミリ秒として読むと 1970-01-01 になる —— それは捏造なので `typeof` が先に落とす。
+    expect(snap.models[1]!.modifiedAt, '読めない日付は null').toBeNull();
     expect(snap.warnings.join(' ')).not.toContain('Listing models failed');
   });
 

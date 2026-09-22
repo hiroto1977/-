@@ -21,6 +21,104 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 408 (2026-09-22) — 一覧の欄は型だけ検めており、~2 MB の第三者文字列が 1 行に載った
+
+パス 407 で「`/api/tags` を読む口を 1 つにする」を直したあと、**その 1 つの口を読み直した**。
+検めていたのは**型だけ**だった:
+
+```
+  name                → isSafeModelName の正規表現が 128 字で切る (行ごと落とす)
+  family              → typeof だけ・長さは見ない      ← 天井なし
+  parameter_size      → 同                              ← 天井なし
+  quantization_level  → 同                              ← 天井なし
+  modified_at         → 同 (生の文字列をそのまま画面へ) ← 天井なし
+  size                → Number.isFinite だけ (負も通る) ← 下限なし
+```
+
+実測 (2026-09-22 ・ 直す前):
+
+| 入力 | 出力 | 画面 |
+| --- | --- | --- |
+| 4 欄に 200,000 字 | そのまま 200,000 字 | **meta 行が 800,038 字** |
+| `size: -1e300` | `sizeMb: -9.5367431640625e+293` | `-9.5367431640625e+293 MB` |
+| `modified_at: 20260922` (数) | `''` | `更新 ` (**理由なしの空欄**) |
+| `name: 'x'.repeat(200)` | —— | **行ごと落ちる** (128 字の天井) |
+
+**最後の 1 行が非対称そのもの** —— `name` は天井を持ち、**同じオブジェクトリテラルの
+隣の 4 欄は持たない**。応答の上限は `MAX_OLLAMA_RESPONSE_BYTES` (2 MiB) なので、
+**1 件で ~2 MB が 1 行に載る**。相手は「利用者が設定した Ollama ホスト」で、
+`isAllowedOllamaBase` はループバックのほか**頁と同じホスト**と任意の https を通す ——
+`isSafeModelName` がそもそも在る理由がそれであり、**その理由は隣の 4 欄にも等しく当てはまる**
+(パス 398 と同じ形: 隣が検めているのに 1 つだけ前提を持たない)。
+
+**直し**:
+
+1. **3 つの札は天井 64 字 + `…`** (`MAX_OLLAMA_MODEL_DETAIL_CHARS`)。根拠は実物の値
+   (`llama` ≤ 6 / `7B` ≤ 5 / `Q4_K_M` ≤ 6) の **10 倍**。**行ごとは落とさない** ——
+   `family` が長いだけのモデルが一覧から消えるほうが利用者に悪い。
+   **切ったことは `…` で述べる** (絞ることと述べることは対・パス 400)。
+2. **更新日は「日付として読めるか」で決める** —— `typeof` → `parseTimestamp` →
+   `localIsoDate`。`typeof` を先に置くのは、`parseTimestamp` が**数を epoch ミリ秒として
+   受ける**ため (`20260922` を `1970-01-01` と読むのは捏造・パス 394 と同じ理由)。
+   **これでパス 407 が残した build 間の差も消える** —— `main/clients/ollama.ts` の
+   `.slice(0, 10)` は**`isoDateFromTimestamp` の docblock が「呼び出し側 3 か所が同じ
+   `slice(0, 10)` を写していたのも、これで消える」と書いている当の 4 つ目の写し**だった。
+3. **負の大きさは 0 へ** (ファイルに負の大きさは無い)。★ **桁違いの正の値は直さないと決めた** ——
+   `1e300` は有限で非負なので「読めた大きさ」で、0 へ倒すと**「0 MB のモデル」という嘘**に
+   なり壊れていることが画面から消える。`9.5e+293 MB` は誰の目にも壊れて見えるので正直である。
+4. **画面は理由を言う** —— `更新 ${m.modifiedAt ?? '日付が読めません'}`
+   (法則 `blank-states-its-reason`)。
+
+**★ 答えが変わる入力が在る (正直に言う)**: 正常な応答の答えは 1 つも変わらないが、
+① 64 字を超える札は切られる ② `modifiedAt` が**生の文字列から暦の日付になる**
+(ブラウザ版は今まで `2026-09-22T10:00:00.277302595-07:00` をそのまま刷っていた)
+③ 負の `size` が 0 になる。どれも意図した変更である。
+
+検査は `shared/__tests__/ollamaModelFieldCeilings.test.ts` (**16 件**) と
+`renderer/pages/__tests__/ollamaModelMetaOnScreen.test.ts` (**3 件**・jsdom で実際に描く)。
+母集団は `OllamaModelInfo` の**宣言から導く** (欄を並べて書くと 7 つ目が黙る)。
+対照 **6 方向すべて鳴り、それぞれ狙った検査に当たる**:
+A 欄の天井を外す ❌4 (**800,019 → 600,029 字が再現**) / B 日付の `typeof` を外す ❌3 /
+C 日付を生のまま返す ❌9 / D 負の大きさの門を外す ❌1 (`-9.5367431640625e+293`) /
+E 画面が理由を言わない ❌1 / F 7 つ目の欄を足す ❌2 (**欄名を名指しして「どの関門を通るか書け」と言う**)。
+
+**ゲートが 1 つ捕まえた**: `chain:verify` の**閉包検査** —— 保護対象 `shared/ollama.ts` が
+新しく `isoDate.ts` / `localDate.ts` を読むので、**判定が保護の外へ出ていた** (パス 402 と同じ形)。
+2 本とも保護対象へ (保護対象 89 → **91**・block **#254**)。どちらも安定資産 (全履歴 6 / 2 コミット)
+で、`mutate` には既に載っていた (297 のまま)。
+
+### 残作業 (パス 409 の候補・今日実測した)
+
+**同じ形が他の client / 画面にも在る。**
+
+① **`main/clients/drive.ts:44` の `f.modifiedTime.slice(0, 10)` は `??` すら無い** ——
+   Google Drive が 1 件でも `modifiedTime` を返さなければ `undefined.slice` で**投げ**、
+   Drive のスナップショット取得ごと失敗する (**パス 407 の Ollama とまったく同じ形**)。
+
+② **`?? ''` だけで第三者の文字列を受ける欄が 13 件** (実測・`main/clients/`):
+   `canva.ts:76 thumbnailUrl` / `cloudflare.ts:110-111 plan・accountName` /
+   `github.ts:136,138 head・base` / `microsoft-365.ts:137,268 location・webLink` /
+   `shopify.ts:189,309 ts・url` / `skills.ts:229,249,482 description・stop_reason` /
+   `youtube.ts:100 publishedAt`。**`??` は null / undefined しか受けない**ので型も長さも
+   検めていない。うち Canva の画像 URL は下流の `safeRemoteImageSrc` (パス 300) が受け、
+   YouTube の `publishedAt` は画面が `parseTimestamp(...) ?? '公開日が読めません'` で
+   受けている —— **良い前例が同じ repo に在る**。
+
+③ **`slice(0, 10)` で第三者の日付を切る所が 6 件** (`isoDateFromTimestamp` の docblock が
+   「3 か所」と書いているより多い): `NotionPage.tsx:85` / `ObsidianPage.tsx:100` /
+   `GithubPage.tsx:77` / `wordpress.ts:64` / `microsoft-365.ts:130` / `drive.ts:44`。
+
+④ **同じ `DataList` の meta 行に生の第三者文字列が載る画面が 2 枚**:
+   `CloudflarePage.tsx:155` (`plan` / `accountName`) と `GithubPage.tsx:77` (`head` / `base`)。
+
+### 測って何も無かった軸 (パス 408)
+
+- **`typeof x === 'string' ? x : …` の 35 件**を数えたが、`shared/api/*.ts` の大半は
+  **`checkX` の入力読み** (レンダラーが送る payload) で、同じ関数の中で
+  `writeFieldLimits` の天井が続く —— **この形は母集団ではない**。
+- `name` が `DataList` の title に入る経路は `isSafeModelName` の 128 字で閉じている。
+- 警告の一覧は `MAX_WARNING_BODY_CHARS` (100) を既に通る。
+
 ## パス 407 (2026-09-22) — Ollama のモデル一覧が main だけ素の読みで、1 件の非文字列で一覧が黙って短くなった
 
 `/api/tags` の応答を `OllamaModelInfo[]` にする読み手が **2 つ**在った —— ブラウザ版は

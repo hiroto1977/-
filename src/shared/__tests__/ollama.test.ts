@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { localIsoDate } from '../localDate';
 import {
   DEFAULT_OLLAMA_PORT,
   MIN_SAFE_VERSION,
@@ -281,9 +282,14 @@ describe('normalizeModels — 未知形状を落とし、危険な名前を弾�
         parameterSize: '3B',
         quantization: 'Q4_K_M',
         sizeMb: 2048,
-        modifiedAt: '2026-07-01T10:00:00Z',
+        // **パス 408 で生の文字列から暦の日付になった。** 日付そのものの意味
+        // (利用者の時計 / 読めなければ null) は `ollamaModelFieldCeilings.test.ts`
+        // が時間帯を切り替えて見るので、ここは**形**だけを主張する
+        // (期待値を字面で書くと、この 1 本が時間帯依存になる)。
+        modifiedAt: localIsoDate(new Date(Date.parse('2026-07-01T10:00:00Z'))),
       },
     ]);
+    expect(models[0]!.modifiedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
   it('details 欠落は — で埋める', () => {
@@ -968,9 +974,12 @@ describe('normalizeModels — 未知の形は捨てる', () => {
         parameterSize: '3B',
         quantization: 'Q4_K_M',
         sizeMb: 2,
-        modifiedAt: '2026-01-01T00:00:00Z',
+        // パス 408: 生の文字列 → 暦の日付 (時間帯に依らない形で書く。上と同じ理由)。
+        modifiedAt: localIsoDate(new Date(Date.parse('2026-01-01T00:00:00Z'))),
       },
-      { name: 'bare:1b', family: '—', parameterSize: '—', quantization: '—', sizeMb: 0, modifiedAt: '' },
+      // パス 408: `modified_at` が無ければ **`null`** (空文字ではない —— 画面が
+      // 「日付が読めません」と言えるように、「無い」を値として持つ)。
+      { name: 'bare:1b', family: '—', parameterSize: '—', quantization: '—', sizeMb: 0, modifiedAt: null },
     ]);
   });
 

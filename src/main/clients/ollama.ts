@@ -249,14 +249,15 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
          * 立っていた**。`isSafeModelName` は main も import しているのに、
          * 使っていたのは chat の model 引数 (279 行) だけだった。
          *
-         * **整形は呼び手が持つ** (パス 386 の `bepDisplay` と同じ) —— 日付を 10 字へ
-         * 切るのは main の画面の都合なので、判定を共有したうえでここで切る。
-         * ★ その結果、**同じ `OllamaPage` が build によって `2026-09-22` と
-         *   `2026-09-22T10:00:00Z` を出す**非対称は残る (測った・別の話)。
+         * ★ **パス 407 はここに `.slice(0, 10)` を残していた** (「整形は呼び手が
+         *   持つ」) —— その結果**同じ `OllamaPage` が build によって `2026-09-22` と
+         *   `2026-09-22T10:00:00.277302595-07:00` を出して**いた。パス 408 で
+         *   `normalizeModels` が `YYYY-MM-DD` か `null` を返すようにしたので、
+         *   ここは**素通し**になる。日付にするのは**正規化**であって画面の都合ではない
+         *   (`isoDate.ts` の `isoDateFromTimestamp` が「呼び出し側 3 か所が同じ
+         *   `slice(0, 10)` を写していた」と書いている当の 4 つ目の写しだった)。
          */
-        for (const m of normalizeModels(tags)) {
-          models.push({ ...m, modifiedAt: m.modifiedAt.slice(0, 10) });
-        }
+        for (const m of normalizeModels(tags)) models.push(m);
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);

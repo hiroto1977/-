@@ -467,6 +467,21 @@ const PROTECTED = [
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
   'src/shared/ollama.ts',                   // Ollama の接続先判定
   'src/shared/versionOrder.ts',             // 版の順序 (プレリリース) — ollama.ts の CVE 判定が読む
+  // 2026-09-22 (パス 408) に足した。**ここも保護の閉包が教えてくれた** (パス 402 と同じ形)。
+  //
+  // `shared/ollama.ts` の `normalizeModels` が、モデル一覧の**更新日**を
+  // 「読めるか」で判定するようになった —— 相手 (利用者が設定した Ollama ホスト) が
+  // 名乗る文字列を画面へ生で通さないための関門で、その判定の本体はこの 2 本に在る:
+  //   `isoDate.ts`   … `parseTimestamp` (読めない / 桁外れは null・MAX_TIMESTAMP_MS)
+  //   `localDate.ts` … `localIsoDate`   (UTC で切ると JST の 0〜9 時が前日になる)
+  //
+  // 黙って `parseTimestamp` を `new Date(v)` へ戻されると `Invalid Date` が
+  // 素通りし、`localIsoDate` の NaN の床を外されると `NaN-NaN-NaN` が日付欄に出る
+  // —— **どちらも「読めなかった」を「読めた」として画面へ出す**側の変更である。
+  // どちらも安定資産 (全履歴 6 / 2 コミット・パス 347 の基準)。
+  // ★ 閉包の費用は 0 —— この 2 本の import は 0 件 (実測)。
+  'src/shared/isoDate.ts',                  // 日付・時刻を読む唯一の場所 (読めなければ null)
+  'src/shared/localDate.ts',                // 瞬間 → 利用者の時計の YYYY-MM-DD (UTC で切らない)
 ];
 
 /**
