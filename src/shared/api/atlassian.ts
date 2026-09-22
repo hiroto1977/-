@@ -13,7 +13,7 @@ import {
 } from './http';
 import { utf8ToBase64 } from '../base64';
 import { jiraBrowseUrl } from '../atlassianLinks';
-import { requireObject, requireString } from '../apiResponse';
+import { displayField, requireObject, requireString } from '../apiResponse';
 import { ATLASSIAN_ISSUE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
 
 export interface JiraIssue {
@@ -214,6 +214,6 @@ export interface CreatedJiraIssue {
 
 /** 応答の `key` を**形を確かめて**取り、`/browse/<key>` を添える (組み立ては `atlassianLinks.ts` の 1 つ)。 */
 export function parseCreatedJiraIssue(body: unknown, site: string): CreatedJiraIssue {
-  const key = requireString(requireObject(body, 'Atlassian API'), 'key', 'Atlassian API');
+  const key = displayField(requireString(requireObject(body, 'Atlassian API'), 'key', 'Atlassian API'));
   return { key, url: jiraBrowseUrl(site, key) };
 }

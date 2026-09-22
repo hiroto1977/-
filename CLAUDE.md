@@ -28,7 +28,24 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.39 MiB full / 3.20 MiB `build:web:lite` mobile variant — **2026-09-22 パス 413 後の計測: 11,946,176 B / 3,358,695 B (両方 +4 B** —— 画面が `dateText(` で包んだ分だけ (client 側の直しは main なので出荷物に入らない)。**Microsoft 365 の開始日時が 3 形で投げ、取得ごと失敗していた。** **見つけ方**: パス 411 の残作業 (`?? ''` の 9 欄) を辿ったら、**天井より先に「投げる」が残っていた**。実測 (2026-09-22 ・ 直す前):
+   file (実測 11.39 MiB full / 3.20 MiB `build:web:lite` mobile variant — **2026-09-22 パス 414 後の計測: 11,946,421 B / 3,358,940 B (両方 +245 B** —— 書き込みの結果の欄 17 件に天井を通し、作成された予定の読みを両ビルドで 1 つにし、Drive のフォルダ URL を符号化した分。`shared/api/` は両ビルドが読むので LITE も同じだけ増える。**書き込みの結果が画面に素で載り、Canva で画面が 400,451 字になっていた。** **見つけ方**: パス 411 / 413 が閉じたのは**読み取り** (`fetchSnapshot`) の側で、残っていた母集団は**書き込みの結果**だった。実物の action handler に 200,000 字を 1 欄ぶん食わせ、**画面のボタンを実際に押して**測った。実測 (2026-09-22 ・ 直す前 → 直した後):
+
+| 画面 | 操作 | 直す前 | 直した後 |
+| --- | --- | ---: | ---: |
+| **Canva** | フォルダ作成 | **400,451 字** | 965 字 |
+| **GitHub** | Issue を作成 | **200,338 字** | 595 字 |
+| Cloudflare | DNS レコード作成 | `name` / `type` 各 200,000 | 各 257 |
+| Drive | フォルダ作成 | `name` 200,000 | 257 |
+
+★ **型は 2026-09-14 (パス 262) から `requireString` で見ていたので投げない** —— 空いていたのは**長さだけ**だった。**型を見ていることは天井が在ることではない** (法則 `mention-vs-declaration` の、この家系での現れ)。漏斗はパス 321 が両ビルドで 1 つにした `shared/api/*.ts` の `parseCreated*` なので、**11 本のうち該当する欄を全部そこで通す**。★ **URL の欄には天井を通さない** —— 256 字で切った URL は**別の頁を指す**ので、切るより型で落とすほうが正しい (外側の関門は `externalUrlOrNull`)。その **6 欄**は理由つきの台帳に載り、**両方向**なので天井を通した日にも「台帳から消せ」と鳴る。★ **2 つ目: `microsoft-365/create-event` だけが両ビルドで答えが違った** —— `shared/api/microsoft365.ts` は「欄の判定 (`checkEvent`) → 要求の組み立て (`graphEventInit`)」まで 1 つに揃えてあったのに、**3 つ目 (応答の読み) だけが 2 つ在った**。実測 (直す前・実物の handler に食わせる):
+
+| 応答 | ブラウザ版 | **デスクトップ版** |
+| --- | --- | --- |
+| `{subject: {a:1}}` | `optionalString` が落とす | **物がそのまま** |
+| `{webLink: 42}` | 落とす | **数がそのまま** |
+| `{}` (id 無し) | `requireString` が投げる | **`id=undefined` で「作成しました」** |
+
+**今日この違いは画面に出ない** (`Microsoft365Page` は `webLink` をリンクの宛先にするだけで `subject` を描かない) —— **罠であって生きた欠陥ではない**。それでも 1 つにするのは、パス 402 / 407 と同じ「**同じアプリが同じ問いに 2 通り答え、弱い方が main に立っている**」形だからである。`parseCreatedGraphEvent` を置き、両ビルドがそこを通る。★ **3 つ目: `parseCreatedDriveFolder` の fallback URL が `${id}` を素で挿していた** —— 実測: `id = '../../../evil'` → 開く先は **`https://drive.google.com/evil`**・`'x?next=1'` → `…/folders/x?next=1`。**オリジンは固定なので別のサーバへは飛ばない** (起きるのは「押すと思っていない頁が開く」) が、`atlassianLinks.ts` の `jiraBrowseUrl` が 2026-09-12 (パス 181) から `encodeURIComponent` を通し、その docblock が「**動的部分は必ず `encodeURIComponent`**」と**規則として書いている** —— 4 か所目がここに在った。`lint:url-encoding` はこの母集団を**意図して**見ない (「画面に出すリンクは対象外」と自分の docblock で述べている) ので、機械は検査の側に置いた。**正当な答えは 1 つも変わらない** (Drive のファイル ID は `[A-Za-z0-9_-]+` で `encodeURIComponent` はどの字も書き換えない・実測)。検査は `shared/api/__tests__/createdResponseFields.test.ts` (**13 件**) と `renderer/pages/__tests__/actionResultCeiling.test.ts` (**4 件**・jsdom で実際に押す)・`microsoft-365.test.ts` に **4 件**。母集団は**走査で導く** —— `shared/api/*.ts` の `export function parse*` **12 本**を役目の台帳 (`created-response` / `own-input`) と両方向に突き合わせ、第三者の文字列の欄 **23 件**のうち天井を通らないのは URL の **6 件**だけであることを両方向で留める。対照 **8 方向すべて鳴り、それぞれ狙った検査に当たる** (A 天井そのものを外す ❌4 / B github の title を素へ ❌2 / C canva の 2 欄を素へ ❌3 / D main の ms365 を `??` へ戻す ❌5 / E drive の符号化をやめる ❌1 / F 天井なしの台帳から 1 行消す ❌1 / G 役目の台帳から 1 行消す ❌1 / H 針を 1 行の形だけに戻す ❌1・復帰後 ❌0)。★ **自戒: D は最初 ❌1 (綴りの照合) しか鳴らなかった** —— 振る舞いの主張を**共有の関数に直接**当てていたので、main を戻しても当たらなかった。実物の handler を呼ぶ 4 件を足して ❌5 に。**「対照が鳴った」ことと「振る舞いが測れている」ことは別**である。**閉じていない物 (測った)**: ① **200,000 字の URL** (`webLink` / `htmlLink`) はそのまま通る —— 画面に**文字としては出ない** (リンクの宛先だけ) ので今日は膨らまない。切るのは誤りなので、直すなら「長すぎる URL は落とす」側である ② shopify の 4 つの sync action の応答 (`ts` / `channel` / `url` / `pageId`) は型を見ていないが、**どの画面からも呼ばれていない** (実測: `ShopifyPage` は `record-entry` だけ・`ConnectorsPage` は別経路の `executeFreeConnector`) ③ `skills.ts:482` の `stopReason` は画面に読み手が **0 件**。`typecheck` 緑・`npm test` **833 / 18,311**・`verify:all` exit 0 (`verify:arch` のユニットテスト数を 15324 → **15345** へ —— **今回も予想せず門に訊いた**)・****2026-09-22 パス 413 後の計測: 11,946,176 B / 3,358,695 B (両方 +4 B** —— 画面が `dateText(` で包んだ分だけ (client 側の直しは main なので出荷物に入らない)。**Microsoft 365 の開始日時が 3 形で投げ、取得ごと失敗していた。** **見つけ方**: パス 411 の残作業 (`?? ''` の 9 欄) を辿ったら、**天井より先に「投げる」が残っていた**。実測 (2026-09-22 ・ 直す前):
 
 | 壊し方 | 直す前 |
 | --- | --- |

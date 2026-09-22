@@ -1,6 +1,6 @@
 import { NotConfiguredError, type ServiceClient, type ServiceCredentials } from './types';
 import { NotImplementedError, apiFetch, bearer, jsonBody, withQuery, type FetchFn } from './http';
-import { requireChild, requireObject, requireString } from '../apiResponse';
+import { displayField, requireChild, requireObject, requireString } from '../apiResponse';
 import { CANVA_FOLDER_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
 
 /** 送り先は 1 つ。読み (下の class) も書き (フォルダの作成) も同じ定数を通る。 */
@@ -171,5 +171,8 @@ export interface CreatedFolder {
 /** 応答の `folder.id` / `folder.name` を**形を確かめて**取る (パス 261 / 262)。 */
 export function parseCreatedFolder(body: unknown): CreatedFolder {
   const folder = requireChild(requireObject(body, 'Canva API'), 'folder', 'Canva API');
-  return { id: requireString(folder, 'id', 'Canva API'), name: requireString(folder, 'name', 'Canva API') };
+  return {
+    id: displayField(requireString(folder, 'id', 'Canva API')),
+    name: displayField(requireString(folder, 'name', 'Canva API')),
+  };
 }

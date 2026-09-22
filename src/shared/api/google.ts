@@ -1,6 +1,6 @@
 import { NotConfiguredError, type ServiceClient, type ServiceCredentials } from './types';
 import { apiFetch, bearer, jsonBody, withQuery, type FetchFn } from './http';
-import { optionalString, requireChild, requireObject, requireString } from '../apiResponse';
+import { displayField, optionalString, requireChild, requireObject, requireString } from '../apiResponse';
 import {
   CALENDAR_EVENT_FIELDS,
   DRIVE_FOLDER_FIELDS,
@@ -263,14 +263,43 @@ export interface CreatedDriveFolder {
   readonly url: string;
 }
 
+/**
+ * `webViewLink` が無いときに組むフォルダの URL。**動的部分は符号化する。**
+ *
+ * 2026-09-22 (パス 414) まで `https://drive.google.com/drive/folders/${id}` と
+ * 素で挿しており、実測 (応答の `id` を変える):
+ *
+ * | 応答の `id` | 開く先 (正規化後) |
+ * | --- | --- |
+ * | `x/../../../evil` | **`https://drive.google.com/evil`** |
+ * | `x?next=1` | `…/folders/x?next=1` |
+ * | `x#frag` | `…/folders/x#frag` |
+ *
+ * オリジンは固定なので**別のサーバへは飛ばない** —— 起きるのは「押すと
+ * drive.google.com の思っていない頁が開く」ことである。`lint:url-encoding` は
+ * この母集団を**意図して**見ない (画面に出すリンクはパス片でオリジンを変えられない、
+ * と自分の docblock で述べている)。それでも直すのは、**同じ問い (応答の値を URL の
+ * パスに置く) にこのアプリが既に別の答えを出していた**ため —— `atlassianLinks.ts` の
+ * `jiraBrowseUrl` は 2026-09-12 (パス 181) から `encodeURIComponent` を通しており、
+ * その docblock は「3 か所とも API が返した値を生のまま URL に挿していた」
+ * 「動的部分は必ず `encodeURIComponent`」と**規則として書いている**。
+ * 4 か所目がここに在った。
+ *
+ * ★ **正当な答えは 1 つも変わらない** —— Drive のファイル ID は
+ * `[A-Za-z0-9_-]+` で、`encodeURIComponent` はどの字も書き換えない (実測)。
+ */
+export function driveFolderUrl(id: string): string {
+  return `https://drive.google.com/drive/folders/${encodeURIComponent(id)}`;
+}
+
 /** 応答の `id` / `name` を**形を確かめて**取り、`webViewLink` が無ければフォルダの URL を組む。 */
 export function parseCreatedDriveFolder(body: unknown): CreatedDriveFolder {
   const o = requireObject(body, 'Google Drive API');
-  const id = requireString(o, 'id', 'Google Drive API');
+  const id = displayField(requireString(o, 'id', 'Google Drive API'));
   return {
     id,
-    name: requireString(o, 'name', 'Google Drive API'),
-    url: optionalString(o, 'webViewLink') ?? `https://drive.google.com/drive/folders/${id}`,
+    name: displayField(requireString(o, 'name', 'Google Drive API')),
+    url: optionalString(o, 'webViewLink') ?? driveFolderUrl(id),
   };
 }
 
@@ -357,7 +386,10 @@ export interface CreatedEvent {
 /** 応答の `id` / `htmlLink` を**形を確かめて**取る (パス 261 / 262)。 */
 export function parseCreatedEvent(body: unknown): CreatedEvent {
   const o = requireObject(body, 'Google Calendar API');
-  return { id: requireString(o, 'id', 'Google Calendar API'), htmlLink: requireString(o, 'htmlLink', 'Google Calendar API') };
+  return {
+    id: displayField(requireString(o, 'id', 'Google Calendar API')),
+    htmlLink: requireString(o, 'htmlLink', 'Google Calendar API'),
+  };
 }
 
 // --- Gmail: 下書きの作成 (`gmail/create-draft` / `shopify/sync-to-gmail`) ---------------
@@ -420,7 +452,7 @@ export interface CreatedDraft {
 export function parseCreatedDraft(body: unknown): CreatedDraft {
   const o = requireObject(body, 'Gmail API');
   return {
-    id: requireString(o, 'id', 'Gmail API'),
-    messageId: requireString(requireChild(o, 'message', 'Gmail API'), 'id', 'Gmail API'),
+    id: displayField(requireString(o, 'id', 'Gmail API')),
+    messageId: displayField(requireString(requireChild(o, 'message', 'Gmail API'), 'id', 'Gmail API')),
   };
 }

@@ -14,6 +14,7 @@ import {
   checkEvent,
   checkMail,
   createGraphEvent,
+  parseCreatedGraphEvent,
   sendGraphMail,
   type GraphEventFields,
   type GraphMailFields,
@@ -52,12 +53,7 @@ import {
 import { checkJiraIssue, createJiraIssueRequest, parseCreatedJiraIssue } from '../../shared/api/atlassian';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, readFailureBody } from '../../shared/httpLimits';
-import {
-  optionalString,
-  parseJsonText,
-  requireObject,
-  requireString,
-} from '../../shared/apiResponse';
+import { parseJsonText } from '../../shared/apiResponse';
 import { hibpBreaches } from '../../shared/securityResponse';
 import {
   HIBP_NO_BREACH_STATUS,
@@ -527,10 +523,6 @@ export async function createMicrosoftEvent(
   const event = checkEvent(input);
   const res = await createGraphEvent(event, token, transport);
   await ensureOk(res, 'Microsoft Graph');
-  const o = requireObject(await readJson(res, 'Microsoft Graph'), 'Microsoft Graph');
-  return {
-    id: requireString(o, 'id', 'Microsoft Graph'),
-    subject: optionalString(o, 'subject') ?? event.subject,
-    webLink: optionalString(o, 'webLink') ?? '',
-  };
+  // 応答の読みは共有の 1 つ (パス 414 —— main もこの関数を通る)。
+  return parseCreatedGraphEvent(await readJson(res, 'Microsoft Graph'), event.subject);
 }

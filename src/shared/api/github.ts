@@ -1,6 +1,6 @@
 import { NotConfiguredError, type ServiceClient, type ServiceCredentials } from './types';
 import { apiFetch, bearer, withQuery, type FetchFn } from './http';
-import { requireNumber, requireObject, requireString } from '../apiResponse';
+import { displayField, requireNumber, requireObject, requireString } from '../apiResponse';
 import {
   GITHUB_ISSUE_FIELDS,
   GITHUB_LABELS,
@@ -248,6 +248,6 @@ export function parseCreatedIssue(body: unknown): CreatedIssue {
   return {
     number: requireNumber(o, 'number', 'GitHub API'),
     url: requireString(o, 'html_url', 'GitHub API'),
-    title: requireString(o, 'title', 'GitHub API'),
+    title: displayField(requireString(o, 'title', 'GitHub API')),
   };
 }

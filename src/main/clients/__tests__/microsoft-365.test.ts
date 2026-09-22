@@ -324,3 +324,53 @@ describe('サマリーの件数は「読めた」ときだけ (パス 264)', () 
     ]);
   });
 });
+
+/**
+ * **作成された予定の読みは両ビルドで 1 つ** (2026-09-22 · パス 414)。
+ *
+ * 直す前、main だけが `res.subject ?? event.subject` / `res.webLink ?? ''` と
+ * **型を見ずに**受けていた (ブラウザ版の `createMicrosoftEvent` は
+ * `optionalString` を通していた)。`??` は null / undefined しか受けないので、
+ * 実測 (直す前・実物の handler に食わせる):
+ *
+ * | 応答 | 直す前 |
+ * | --- | --- |
+ * | `{subject: {a:1}}` | `subject` が**物のまま** |
+ * | `{webLink: 42}` | `webLink` が**数のまま** |
+ * | `{}` (id 無し) | `id=undefined` で「作成しました」と言う |
+ *
+ * 今日この違いは画面に出ない (`Microsoft365Page` は `webLink` をリンクの宛先に
+ * するだけで `subject` を描かない) —— **罠であって生きた欠陥ではない**。それでも
+ * 1 つにするのは、パス 402 / 407 と同じ「同じアプリが同じ問いに 2 通り答え、
+ * 弱い方が main に立っている」形だからである。
+ */
+describe('ACTIONS["create-event"] の応答の読み (パス 414)', () => {
+  const call = (body: unknown) =>
+    ACTIONS['create-event']!({
+      token: 't',
+      fetch: vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse(body, 201)),
+      payload: { subject: '会議', start: '2026-07-01T10:00:00', end: '2026-07-01T11:00:00' },
+    }) as Promise<{ id: string; subject: string; webLink: string }>;
+
+  it('★ 物の subject は落ちて、送った件名に戻る', async () => {
+    expect(await call({ id: 'e1', subject: { a: 1 } })).toEqual({
+      id: 'e1',
+      subject: '会議',
+      webLink: '',
+    });
+  });
+
+  it('★ 数の webLink は落ちる (リンクにしない)', async () => {
+    expect((await call({ id: 'e1', webLink: 42 })).webLink).toBe('');
+  });
+
+  it('★ id が無ければ投げる (「作成しました」と言わない)', async () => {
+    await expect(call({ subject: 's' })).rejects.toThrow(/Microsoft Graph/);
+  });
+
+  it('★ 200,000 字の subject は天井を通る', async () => {
+    const got = await call({ id: 'e1', subject: 'x'.repeat(200_000) });
+    expect(got.subject.length).toBe(257);
+    expect(got.subject.endsWith('…')).toBe(true);
+  });
+});

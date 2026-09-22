@@ -1,5 +1,5 @@
 import { jsonBody } from './http';
-import { optionalString, requireObject, requireString } from '../apiResponse';
+import { displayField, optionalString, requireObject, requireString } from '../apiResponse';
 import {
   CLOUDFLARE_DNS_FIELDS,
   CLOUDFLARE_PURGE_FIELDS,
@@ -131,9 +131,9 @@ export interface CreatedDnsRecord {
 export function parseCreatedDnsRecord(result: unknown): CreatedDnsRecord {
   const record = requireObject(result, 'Cloudflare API');
   return {
-    id: requireString(record, 'id', 'Cloudflare API'),
-    name: requireString(record, 'name', 'Cloudflare API'),
-    type: requireString(record, 'type', 'Cloudflare API'),
+    id: displayField(requireString(record, 'id', 'Cloudflare API')),
+    name: displayField(requireString(record, 'name', 'Cloudflare API')),
+    type: displayField(requireString(record, 'type', 'Cloudflare API')),
   };
 }
 
@@ -199,5 +199,8 @@ export interface PurgeResult {
 /** 封筒の `result` から `id` を取り、何を落としたかを添える。 */
 export function parsePurgeResult(result: unknown, purge: CheckedPurge): PurgeResult {
   const o = requireObject(result, 'Cloudflare API');
-  return { id: requireString(o, 'id', 'Cloudflare API'), purged: purge.purgeEverything ? 'all' : purge.files.length };
+  return {
+    id: displayField(requireString(o, 'id', 'Cloudflare API')),
+    purged: purge.purgeEverything ? 'all' : purge.files.length,
+  };
 }

@@ -1,6 +1,6 @@
 import { NotConfiguredError, type ServiceClient, type ServiceCredentials } from './types';
 import { apiFetch, jsonBody, type FetchFn } from './http';
-import { requireObject, requireString } from '../apiResponse';
+import { displayField, requireObject, requireString } from '../apiResponse';
 import { NOTION_PAGE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
 
 /** 送り先は 1 つ。読み (下の class) も書き (ページの作成) も同じ定数を通る。 */
@@ -146,5 +146,8 @@ export interface CreatedPage {
 /** 200 の本文から `id` / `url` を**形を確かめて**取る (パス 261 / 262)。 */
 export function parseCreatedPage(body: unknown): CreatedPage {
   const o = requireObject(body, 'Notion API');
-  return { id: requireString(o, 'id', 'Notion API'), url: requireString(o, 'url', 'Notion API') };
+  return {
+    id: displayField(requireString(o, 'id', 'Notion API')),
+    url: requireString(o, 'url', 'Notion API'),
+  };
 }

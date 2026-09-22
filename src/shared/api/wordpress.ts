@@ -1,6 +1,6 @@
 import { NotConfiguredError, type ServiceClient, type ServiceCredentials } from './types';
 import { apiFetch, bearer, jsonBody, type FetchFn } from './http';
-import { requireNumber, requireObject, requireString } from '../apiResponse';
+import { displayField, requireNumber, requireObject, requireString } from '../apiResponse';
 import { WORDPRESS_POST_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
 
 /** 送り先は 1 つ。読み (下の class) も書き (下書きの作成) も同じ定数を通る。 */
@@ -169,6 +169,6 @@ export function parseCreatedPost(body: unknown): CreatedPost {
   return {
     id: requireNumber(o, 'ID', 'WordPress.com API'),
     url: requireString(o, 'URL', 'WordPress.com API'),
-    title: requireString(o, 'title', 'WordPress.com API'),
+    title: displayField(requireString(o, 'title', 'WordPress.com API')),
   };
 }

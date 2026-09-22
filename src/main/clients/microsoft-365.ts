@@ -12,6 +12,7 @@ import {
   checkMail,
   graphEventInit,
   graphMailInit,
+  parseCreatedGraphEvent,
 } from '../../shared/api/microsoft365';
 
 /**
@@ -282,12 +283,6 @@ export interface CreateEventPayload {
   readonly location?: unknown;
 }
 
-interface GraphCreatedEvent {
-  id: string;
-  subject?: string;
-  webLink?: string;
-}
-
 /**
  * カレンダー予定を作成する (POST /me/events)。201 Created・作成された予定を返す。
  *
@@ -300,12 +295,14 @@ async function createEvent(
 ): Promise<ActionData<'microsoft-365/create-event'>> {
   // 欄の判定と要求の組み立ては共有の 1 つを通る (パス 275。send-mail と同じ形)。
   const event = checkEvent(ctx.payload as Record<string, unknown>);
-  const res = await jsonFetch<GraphCreatedEvent>(
+  const res = await jsonFetch<unknown>(
     `${GRAPH_BASE}${GRAPH_CREATE_EVENT_PATH}`,
     graphEventInit(event, ctx.token),
     { fetch: ctx.fetch, serviceId: 'microsoft-365' },
   );
-  return { id: res.id, subject: res.subject ?? event.subject, webLink: res.webLink ?? '' };
+  // 応答の読みも共有の 1 つを通る (パス 414)。直す前はここだけが `??` で、
+  // 物や数がそのまま画面側へ渡っていた —— 理由は `parseCreatedGraphEvent` の注記。
+  return parseCreatedGraphEvent(res, event.subject);
 }
 
 export const ACTIONS: ActionMap = {

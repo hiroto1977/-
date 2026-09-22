@@ -31,6 +31,7 @@ import {
   checkWriteFields,
   describeWriteFieldFailure,
 } from '../writeFieldLimits';
+import { displayField, optionalString, requireObject, requireString } from '../apiResponse';
 
 /** Graph の土台。版まで含めて 1 つ (`beta` へ動かすとき片側だけが動かないように)。 */
 export const GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
@@ -188,4 +189,52 @@ export async function createGraphEvent(
 ): Promise<Response> {
   // ホストは送信の呼び出しと**同じ行**に置く (理由は `sendGraphMail` の注記)。
   return transport(`${GRAPH_BASE}${GRAPH_CREATE_EVENT_PATH}`, graphEventInit(event, token));
+}
+
+/** 作成された予定のうち、画面へ渡す 3 欄。 */
+export interface CreatedGraphEvent {
+  readonly id: string;
+  readonly subject: string;
+  readonly webLink: string;
+}
+
+/**
+ * 応答の `id` / `subject` / `webLink` を**形を確かめて**取る。
+ *
+ * ## なぜ 3 つ目の部品をここに置いたか (2026-09-22 · パス 414)
+ *
+ * この module は「欄の判定 (`checkEvent`) → 要求の組み立て (`graphEventInit`)」
+ * まで**両ビルドで 1 つ**に揃えてあったが、**応答の読みだけが 2 つ在った**:
+ *
+ * | ビルド | 直す前 |
+ * | --- | --- |
+ * | ブラウザ版 (`saasWriteWeb.ts`) | `requireString(o, 'id')` / `optionalString(o, 'subject')` / `optionalString(o, 'webLink')` |
+ * | **デスクトップ版** (`main/clients/microsoft-365.ts`) | **`res.id` / `res.subject ?? …` / `res.webLink ?? ''`** |
+ *
+ * `??` は null / undefined しか受けないので、実測 (直す前・実物の handler に食わせる):
+ *
+ * | 応答 | デスクトップ版が返した物 |
+ * | --- | --- |
+ * | `{subject: {a:1}}` | `subject=object:{"a":1}` (物がそのまま) |
+ * | `{webLink: 42}` | `webLink=number:42` |
+ * | `{id: undefined}` | `id=undefined` (**画面は「作成しました」と言う**) |
+ *
+ * ★ **今日この違いは画面に出ない** —— `Microsoft365Page` は `webLink` を
+ * リンクの宛先にするだけで (非文字列は `shellTargetOrNull` が落とす)、`subject` は
+ * 描いていない。つまりこれは**罠であって生きた欠陥ではない**。それでも 1 つに
+ * するのは、パス 402 / 407 と同じ理由で「**同じアプリが同じ問いに 2 通り答え、
+ * 弱い方が main に立っている**」形だからである (どちらが危ない側かは名前からは
+ * 分からない)。
+ *
+ * `subject` / `id` は画面へ出しうるので天井 (`displayField`) を通す。
+ * `webLink` は**通さない** —— URL を 256 字で切ると「押すと別の頁が開く」に
+ * なるので、切るより型で落とすほうが正しい (外側の関門は `externalUrlOrNull`)。
+ */
+export function parseCreatedGraphEvent(body: unknown, fallbackSubject: string): CreatedGraphEvent {
+  const o = requireObject(body, 'Microsoft Graph');
+  return {
+    id: displayField(requireString(o, 'id', 'Microsoft Graph')),
+    subject: displayField(optionalString(o, 'subject') ?? fallbackSubject),
+    webLink: optionalString(o, 'webLink') ?? '',
+  };
 }
