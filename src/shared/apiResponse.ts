@@ -260,6 +260,34 @@ export function finiteNumberOf(v: unknown): number | null {
 }
 
 /**
+ * **第三者が「文字列で」返す数**を読む。読めなければ `null`。
+ *
+ * YouTube Data API の `statistics.subscriberCount` などは **10 進の文字列**で来る
+ * (`"12500"`)。だから `finiteNumberOf` (数だけを受ける) では読めず、かといって
+ * `Number(x ?? 0)` は**読めない物を 0 に倒す**:
+ *
+ * | 相手が返した物 | `Number(x ?? 0)` | ここ |
+ * | --- | --- | --- |
+ * | `"12500"` | 12500 | 12500 |
+ * | `"abc"` / `{}` | **NaN** (画面に `NaN` と出る) | `null` |
+ * | `null` / `""` / `[]` | **0** (「登録者 0 人」という**事実の主張**になる) | `null` |
+ *
+ * 実測 (2026-09-22 · パス 416 · 直す前・実物の `fetchYoutubeSnapshot` に食わせる):
+ * `subscriberCount` が読めない値だと **画面に `NaN` が出た**。
+ *
+ * ★ **`shared/readNumeric.ts` とは揃えない** —— あちらは**利用者が打つ欄**を読む
+ *   (全角・カンマ・単位語を扱う)。ここは**第三者の API の 10 進文字列**で、
+ *   母集団が違う (パス 410 が `shared/num.ts` の `finiteOrNull` について下したのと
+ *   同じ判断)。緩めると「1,２３4」のような値を API の数として受けることになる。
+ */
+export function apiNumberOf(v: unknown): number | null {
+  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+  if (typeof v !== 'string' || !/^-?\d+(?:\.\d+)?$/.test(v)) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
  * **画面の欄に入れる第三者の文字列の天井。** (2026-09-22 · パス 411)
  *
  * 根拠は**相手の側が既に持っている上限**である (実測して選んだ):

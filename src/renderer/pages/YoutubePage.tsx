@@ -6,6 +6,9 @@ import { useServiceData } from '../hooks/useServiceData';
 
 const num = new Intl.NumberFormat('ja-JP');
 
+/** 数として読めなければ「不明」と言う (0 と混ぜない · パス 416)。 */
+const countText = (n: number | null): string => (n === null ? '不明' : num.format(n));
+
 /** 公開日。読めない値を「Invalid Date」と刷らない (パス 185)。 */
 function youtubePublished(publishedAt: string | undefined): string | undefined {
   if (!publishedAt) return undefined;
@@ -50,9 +53,15 @@ export function YoutubePage() {
       />
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
-        <Tile label="登録者数" value={num.format(channel.subscribers)} />
-        <Tile label="総再生回数" value={num.format(channel.views)} />
-        <Tile label="動画本数" value={num.format(channel.videos)} />
+        {/*
+          * **読めなかったことを画面が言う** (2026-09-22 · パス 416)。
+          * 直す前は `Number(x ?? 0)` だったので、読めない値は `NaN` として、
+          * 欠けた値は `0` として刷られた —— 前者は壊れて見えるが、
+          * **後者は「登録者 0 人」という事実の主張**になる (法則 `blank-states-its-reason`)。
+          */}
+        <Tile label="登録者数" value={countText(channel.subscribers)} />
+        <Tile label="総再生回数" value={countText(channel.views)} />
+        <Tile label="動画本数" value={countText(channel.videos)} />
       </div>
 
       <Section title="最近の動画" count={recentVideos.length}>

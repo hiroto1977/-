@@ -71,6 +71,18 @@ const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
  * それは判断ではなく願望である (パス 247 の方針)。
  */
 const VERDICTS = {
+  apiResponse:
+    '対称 (実測・2026-09-22 パス 416) —— このモジュールが母集団に入ったのは、'
+    + '`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」'
+    + '述語が増えたため。**しかし両ビルドの食い違いは無い**: 実測すると renderer が'
+    + 'このモジュールから直接読むのは `parseJsonText` **1 つだけ** '
+    + '(`web-shim.ts` と `saasWriteWeb.ts`) で、それは `null` を返さず**投げる**側である。'
+    + '`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / '
+    + '`objectRows` / `displayField`) に両ビルドが届く道は `shared/api/*.ts` '
+    + '(cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。'
+    + '残りは `src/main/clients/` の 15 本が読む main 専用の経路で、'
+    + '**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。'
+    + 'つまり非対称になりうる組が今日 0 件である',
   constantTimeEquals:
     '対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、'
     + '両ビルドは同じ関数を別名 (`safeStateEquals`) で export する '

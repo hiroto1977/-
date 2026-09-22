@@ -21,6 +21,42 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 416 (2026-09-22) — 数の葉も測った。実物を通って届くのは 1 件だけだった
+
+パス 415 の harness を**数**へ当てた。① 全 76 画面に `NaN` / `Infinity` / `1e308` /
+`'1000'` を入れる → **14 画面 / 45 形**が膨らむか投げる。② そのうち網の口を持つ
+client を**実物で**測る → **届くのは youtube の 1 件だけ**。
+
+| `statistics.subscriberCount` | 直す前 | 直した後 |
+| --- | --- | --- |
+| `"12500"` | 12,500 | 12,500 |
+| `NaN` / `"abc"` / `{}` | **画面に `NaN`** | 「不明」 |
+| `null` / `""` / `[]` | **`0`** (「登録者 0 人」という事実の主張) | 「不明」 |
+
+`shared/apiResponse.ts` に `apiNumberOf` (10 進の文字列 or 有限の数・他は `null`) を
+1 つ置いた。**`shared/readNumeric.ts` とは揃えない** —— あちらは利用者の欄で
+全角・カンマを読む。実測 `readNumeric('１２３')` = 123 / `apiNumberOf('１２３')` = null。
+
+★ **他の 5 client は実物を通すと届かない (測った)**: github は `requireNumber` が
+4 形すべて断り、base / canva / freee は `finiteNumberOf` ほかの門が在る。
+
+★ **`1e308` は直さない (測って理由を書いた)** —— 有限なので「読めた数」で、
+`1e+308` と刷るほうが 0 へ倒すより正直 (パス 408 と同じ判断)。
+
+★ **自戒**: 対照 D (見本の型を狭める) は **vitest では ❌0**。型の主張なので
+`typecheck` が `TS2344` で鳴らす。**鳴らない対照は報せ**である。
+
+### 残作業 (パス 416 の後)
+
+① **ローカルの画面の数は測っていない** —— ①の走査で `business` / `linux` /
+   `templates` / `kpi` / `charts` / `funding` / `talent` が膨らみ、うち 4 つは
+   `'1000'` で `toFixed is not a function` と**投げる**。値の出どころは利用者の
+   記録・システム情報・見本なので第三者ではないが、**復元や古い版の控えが
+   持ち込む形**は在りうる (パス 360 の家系)。次に測るならここ。
+② **`1e308` は意図して残した** (上の理由)。桁で画面が崩れるかは測っていない。
+③ パス 414 / 415 の残作業 (200,000 字の URL・shopify の sync 応答・skills の
+   stopReason・画面側に天井が無いこと) はそのまま。
+
 ## パス 415 (2026-09-22) — 4 パス続けた家系を面の側から一斉に測り、11 client を閉じた
 
 パス 408 / 411 / 413 / 414 は**人が 1〜2 枚ずつ** grep で見つけていた。共通の不変条件は
@@ -15514,7 +15550,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **108 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 277 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -15547,7 +15583,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
 | `src/main/clients/kpi.ts` | 3 |
-| `src/main/clients/youtube.ts` | 3 |
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
 | `src/renderer/pages/OverviewPage.tsx` | 3 |
@@ -28169,7 +28204,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **157** モジュール / 両ビルドが import **80** / うち否定で答えられる **37**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **157** モジュール / 両ビルドが import **80** / うち否定で答えられる **38**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -28178,6 +28213,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
+| `apiResponse` | 15 | 2 | 対称 (実測・2026-09-22 パス 416) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため。**しかし両ビルドの食い違いは無い**: 実測すると renderer がこのモジュールから直接読むのは `parseJsonText` **1 つだけ** (`web-shim.ts` と `saasWriteWeb.ts`) で、それは `null` を返さず**投げる**側である。`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / `objectRows` / `displayField`) に両ビルドが届く道は `shared/api/*.ts` (cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。残りは `src/main/clients/` の 15 本が読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。つまり非対称になりうる組が今日 0 件である |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `constantTimeEquals` | 1 | 1 | 対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、両ビルドは同じ関数を別名 (`safeStateEquals`) で export する (`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。**畳む前は等価ですらなかった**: main は `Buffer.from(s,'utf8')` → `timingSafeEqual` で、UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち 4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は `classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、**「交換しない」という結論は同じ**なので非対称ではない |

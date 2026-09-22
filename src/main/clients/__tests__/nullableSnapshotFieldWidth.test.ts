@@ -38,6 +38,7 @@ import type { DriveSnapshot } from '../drive';
 import type { FundingSnapshot } from '../funding';
 import type { GithubSnapshot } from '../github';
 import type { SystemSnapshot } from '../linux';
+import type { YoutubeSnapshot } from '../youtube';
 import type { Microsoft365Snapshot } from '../microsoft-365';
 import type { NotionSnapshot } from '../notion';
 import type { StocksSnapshot } from '../stocks';
@@ -81,6 +82,10 @@ describe('見本の nullable 欄は実物と同じ幅である (型で照合)', 
     sameWidth<SameNullability<(typeof SNAPSHOT.wordpress.sites)[number]['lastUpdated'], WordPressSnapshot['sites'][number]['lastUpdated']>>(true);
     sameWidth<SameNullability<(typeof SNAPSHOT.microsoft365.messages)[number]['received'], Microsoft365Snapshot['messages'][number]['received']>>(true);
     sameWidth<SameNullability<(typeof SNAPSHOT.microsoft365.events)[number]['start'], Microsoft365Snapshot['events'][number]['start']>>(true);
+    // パス 416 で広げた 3 欄 (YouTube の統計)。
+    sameWidth<SameNullability<typeof SNAPSHOT.youtube.channel.subscribers, YoutubeSnapshot['channel']['subscribers']>>(true);
+    sameWidth<SameNullability<typeof SNAPSHOT.youtube.channel.views, YoutubeSnapshot['channel']['views']>>(true);
+    sameWidth<SameNullability<typeof SNAPSHOT.youtube.channel.videos, YoutubeSnapshot['channel']['videos']>>(true);
     expect(true).toBe(true);
   });
 
@@ -136,6 +141,11 @@ const NULLABLE_LEDGER: Readonly<Record<string, string>> = {
   'microsoft-365.ts Microsoft365Snapshot.received': 'SNAPSHOT.microsoft365.messages[number].received',
   'microsoft-365.ts Microsoft365Snapshot.start': 'SNAPSHOT.microsoft365.events[number].start',
   'notion.ts NotionSnapshot.lastEditedTime': 'SNAPSHOT.notion.pages[number].lastEditedTime',
+  // パス 416 —— 統計は 10 進の文字列で来るので、読めなければ `null` (0 に倒すと
+  // 「登録者 0 人」という事実の主張になる)。
+  'youtube.ts YoutubeSnapshot.subscribers': 'SNAPSHOT.youtube.channel.subscribers',
+  'youtube.ts YoutubeSnapshot.views': 'SNAPSHOT.youtube.channel.views',
+  'youtube.ts YoutubeSnapshot.videos': 'SNAPSHOT.youtube.channel.videos',
   'stocks.ts StocksSnapshot.storedNote': 'SNAPSHOT.stocks.storedNote',
   'wordpress.ts WordPressSnapshot.lastUpdated': 'SNAPSHOT.wordpress.sites[number].lastUpdated',
   'cursor.ts CursorSnapshot.members': 'SNAPSHOT.cursor.totals.members',
@@ -210,7 +220,7 @@ describe('母集団: 実物が `| null` を宣言する欄', () => {
   });
 
   it('走査が空虚でない (床)', () => {
-    expect(found.length).toBeGreaterThanOrEqual(16);
+    expect(found.length).toBeGreaterThanOrEqual(19);
   });
 
   it('母集団の欄はすべて台帳に在る (型の照合を書け)', () => {

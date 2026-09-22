@@ -980,7 +980,15 @@ export const SNAPSHOT = {
   },
 
   youtube: {
-    channel: { id: 'UC_demo', title: 'デモチャンネル', subscribers: 12_500, views: 982_000, videos: 142 },
+    // 見本の型は client と同じ幅を持つ (パス 410 / 413 —— 画面の型は
+    // `SNAPSHOT` から推論されるので、client だけ広げても画面へ届かない)。
+    channel: {
+      id: 'UC_demo',
+      title: 'デモチャンネル',
+      subscribers: 12_500 as number | null,
+      views: 982_000 as number | null,
+      videos: 142 as number | null,
+    },
     recentVideos: [
       { videoId: 'demo1', title: '【2026年版】ネットショップの始め方', publishedAt: '2026-05-20T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo1' },
       { videoId: 'demo2', title: '売上が伸びる商品写真の撮り方', publishedAt: '2026-05-12T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo2' },

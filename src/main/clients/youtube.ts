@@ -1,5 +1,5 @@
 import { jsonFetch, type FetchContext } from './types';
-import { displayField, objectRows } from '../../shared/apiResponse';
+import { apiNumberOf, displayField, objectRows } from '../../shared/apiResponse';
 
 /**
  * YouTube — YouTube Data API v3 連携 (read-only)。
@@ -39,9 +39,12 @@ export interface YoutubeSnapshot {
   channel: {
     id: string;
     title: string;
-    subscribers: number;
-    views: number;
-    videos: number;
+    /** 登録者数。**読めなければ `null`** (パス 416 —— 0 に倒すと「登録者 0 人」という事実の主張になる)。 */
+    subscribers: number | null;
+    /** 総再生回数。読めなければ `null`。 */
+    views: number | null;
+    /** 動画本数。読めなければ `null`。 */
+    videos: number | null;
   };
   recentVideos: {
     videoId: string;
@@ -123,9 +126,15 @@ export async function fetchYoutubeSnapshot(ctx: FetchContext): Promise<YoutubeSn
       id: channel.id,
       // チャンネル名も第三者の文字列 (実測で 200,000 字が画面へ素通りした · パス 413)。
       title: displayField(channel.snippet?.title) || channelId,
-      subscribers: Number(stats.subscriberCount ?? 0),
-      views: Number(stats.viewCount ?? 0),
-      videos: Number(stats.videoCount ?? 0),
+      /*
+       * **統計は 10 進の文字列で来る** (`"12500"`) ので専用の読み手を通す
+       * (2026-09-22 · パス 416)。実測 (直す前): 読めない値で `Number(x ?? 0)` が
+       * **`NaN` を返し、画面に `NaN` がそのまま出た**。`?? 0` の側も
+       * 「登録者 0 人」という**事実の主張**になるので 0 へは倒さない。
+       */
+      subscribers: apiNumberOf(stats.subscriberCount),
+      views: apiNumberOf(stats.viewCount),
+      videos: apiNumberOf(stats.videoCount),
     },
     recentVideos,
   };
