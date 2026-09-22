@@ -46,6 +46,9 @@ client を**実物で**測る → **届くのは youtube の 1 件だけ**。
 ★ **自戒**: 対照 D (見本の型を狭める) は **vitest では ❌0**。型の主張なので
 `typecheck` が `TS2344` で鳴らす。**鳴らない対照は報せ**である。
 
+`typecheck` 緑・`npm test` **835 / 18,337**・`verify:all` exit 0・出荷物 **11,946,439 B / 3,358,958 B (両方 +18 B)**・
+`perf` OK (LITE DCL 217 ms / heap 10.3 MB・FULL DCL 592 ms / heap 37 MB)・`e2e` **455 件 ❌ 0**・`e2e:lite` **455 件 ❌ 0**。
+
 ### 残作業 (パス 416 の後)
 
 ① **ローカルの画面の数は測っていない** —— ①の走査で `business` / `linux` /

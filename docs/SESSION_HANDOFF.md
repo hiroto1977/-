@@ -34,6 +34,7 @@
 **鳴らない対照は報せ**。当てる先を測って記録した。
 
 `typecheck` 緑・`npm test` **835 / 18,337**・`verify:all` exit 0・出荷物 **+18 B**。
+`perf` OK (LITE DCL 217 ms / FULL DCL 592 ms)・`e2e` / `e2e:lite` とも **455 件 ❌ 0**。
 
 ---
 
