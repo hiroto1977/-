@@ -1,5 +1,5 @@
 import { jsonFetch, type FetchContext } from './types';
-import { objectRows } from '../../shared/apiResponse';
+import { displayField, objectRows } from '../../shared/apiResponse';
 
 /**
  * YouTube — YouTube Data API v3 連携 (read-only)。
@@ -103,12 +103,15 @@ export async function fetchYoutubeSnapshot(ctx: FetchContext): Promise<YoutubeSn
         const videoId = it.snippet?.resourceId?.videoId ?? '';
         return {
           videoId,
-          title: it.snippet?.title ?? '(無題)',
-          publishedAt: it.snippet?.publishedAt ?? '',
+          title: displayField(it.snippet?.title) || '(無題)',
+          publishedAt: displayField(it.snippet?.publishedAt),
           // videoId が空のとき url は '' だが、その行は下の filter (videoId.length>0) で除外され
           // 出力に出ないため、この '' の StringLiteral 変異は equivalent。
           // Stryker disable next-line StringLiteral
-          url: videoId ? `https://www.youtube.com/watch?v=${videoId}` : '',
+          // **同じファイルが要求の URL 3 本は既に符号化している** (73 / 74 / 88 行) ——
+          // 表示の URL だけが素だった (2026-09-22 · パス 413)。`&` を含む videoId は
+          // 別の query を注ぎ足せる (ホストは youtube.com のままなので越境はしない)。
+          url: videoId ? `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}` : '',
         };
       })
       .filter((v) => v.videoId.length > 0);
@@ -118,7 +121,8 @@ export async function fetchYoutubeSnapshot(ctx: FetchContext): Promise<YoutubeSn
   return {
     channel: {
       id: channel.id,
-      title: channel.snippet?.title ?? channelId,
+      // チャンネル名も第三者の文字列 (実測で 200,000 字が画面へ素通りした · パス 413)。
+      title: displayField(channel.snippet?.title) || channelId,
       subscribers: Number(stats.subscriberCount ?? 0),
       views: Number(stats.viewCount ?? 0),
       videos: Number(stats.videoCount ?? 0),

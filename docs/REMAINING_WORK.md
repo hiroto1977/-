@@ -21,6 +21,32 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 413 (2026-09-22) — ms365 の開始日時が 3 形で投げ、両画面が 1 行で 1M / 400K 字になる
+
+パス 411 の残作業 (`?? ''` の 9 欄) を辿ったら、**天井より先に「投げる」が残っていた**。
+実測 (直す前): `start.dateTime` が数 / 物 / 配列で `((intermediate value) ?? "").slice is not a function`
+—— **Microsoft 365 の取得が丸ごと失敗する**。パス 410 は同じファイルの `received` を直したが
+`start` は残った (隣の欄が直り、この欄だけ前提を持たない形)。
+
+| 壊し方 | 直す前 |
+| --- | --- |
+| ms365 の 5 欄に 200,000 字 | 画面の総文字数 **1,001,057** |
+| youtube の 3 欄に 200,000 字 | 画面の総文字数 **400,067** |
+| youtube の `videoId` が `a&list=EVIL` | URL が `?v=a&list=EVIL` (同じファイルは要求 URL 3 本を符号化済み) |
+
+**直し**: `eventStart` (型を見て `null`)・`displayField` 8 欄・`encodeURIComponent`・
+見本の型を広げ画面が `dateText` で理由を言う。**読める値の答えは 1 つも変わらない**。
+
+★ **`displayDateOf` は使わない** —— Graph の `dateTime` は時間帯を持たない現地時刻なので、
+`parseTimestamp` に通すと環境の時間帯で解釈し直してしまう。
+
+### 残作業 (パス 413 の後)
+
+① **action の応答の文字列** —— `microsoft-365.ts:278 webLink` / `shopify.ts:189,309 ts・url` /
+   `skills.ts:482 stopReason`。**画面の経路 (`ServiceActionPanel`) をまだ測っていない**。
+② **cursor の 6 欄は罠のまま** (パス 410)。
+③ **atlassian の一覧は振る舞いで確かめていない** (資格情報の関門が先に当たる)。
+
 ## パス 412 (2026-09-22) — パス 409 の針が 2 形を見落とし、3 サービスが応答 1 件で取得ごと失敗していた
 
 パス 411 の残作業を辿って `youtube.ts` を読んだら、**`(pl.items ?? [])` の次の行に `.map(`** が在った ——

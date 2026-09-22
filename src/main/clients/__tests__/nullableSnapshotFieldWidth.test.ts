@@ -80,6 +80,7 @@ describe('見本の nullable 欄は実物と同じ幅である (型で照合)', 
     sameWidth<SameNullability<(typeof SNAPSHOT.notion.pages)[number]['lastEditedTime'], NotionSnapshot['pages'][number]['lastEditedTime']>>(true);
     sameWidth<SameNullability<(typeof SNAPSHOT.wordpress.sites)[number]['lastUpdated'], WordPressSnapshot['sites'][number]['lastUpdated']>>(true);
     sameWidth<SameNullability<(typeof SNAPSHOT.microsoft365.messages)[number]['received'], Microsoft365Snapshot['messages'][number]['received']>>(true);
+    sameWidth<SameNullability<(typeof SNAPSHOT.microsoft365.events)[number]['start'], Microsoft365Snapshot['events'][number]['start']>>(true);
     expect(true).toBe(true);
   });
 
@@ -133,6 +134,7 @@ const NULLABLE_LEDGER: Readonly<Record<string, string>> = {
   'linux.ts SystemSnapshot.perCorePct': 'SNAPSHOT.linux.load.perCorePct',
   'linux.ts SystemSnapshot.unavailableNote': 'SNAPSHOT.linux.load.unavailableNote',
   'microsoft-365.ts Microsoft365Snapshot.received': 'SNAPSHOT.microsoft365.messages[number].received',
+  'microsoft-365.ts Microsoft365Snapshot.start': 'SNAPSHOT.microsoft365.events[number].start',
   'notion.ts NotionSnapshot.lastEditedTime': 'SNAPSHOT.notion.pages[number].lastEditedTime',
   'stocks.ts StocksSnapshot.storedNote': 'SNAPSHOT.stocks.storedNote',
   'wordpress.ts WordPressSnapshot.lastUpdated': 'SNAPSHOT.wordpress.sites[number].lastUpdated',
@@ -208,7 +210,7 @@ describe('母集団: 実物が `| null` を宣言する欄', () => {
   });
 
   it('走査が空虚でない (床)', () => {
-    expect(found.length).toBeGreaterThanOrEqual(15);
+    expect(found.length).toBeGreaterThanOrEqual(16);
   });
 
   it('母集団の欄はすべて台帳に在る (型の照合を書け)', () => {

@@ -568,7 +568,10 @@ export const SNAPSHOT = {
     userName: '' as string,
     // 読めない受信日は null (パス 410)。
     messages: [] as { id: string; subject: string; from: string; received: string | null; unread: boolean }[],
-    events: [] as { id: string; subject: string; start: string; location: string }[],
+    // ★ パス 413: 画面の型は**この見本**から推論される —— 実物は読めない
+    //    開始日時を `null` にするので、見本を狭いままにすると画面が
+    //    `filter(Boolean)` で黙って落とし、理由を言えない。
+    events: [] as { id: string; subject: string; start: string | null; location: string }[],
     items: [
       { id: 'outlook-1', name: '📧 Outlook: 未読 23 件 / 今日の送信 7 件' },
       { id: 'onedrive-1', name: '☁ OneDrive: 12.4 GB / 1 TB (1.2%) · 最近 4 ファイル' },

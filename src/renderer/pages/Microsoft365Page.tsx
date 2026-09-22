@@ -236,7 +236,7 @@ export function Microsoft365Page() {
           items={events.map((e) => ({
             key: e.id,
             title: e.subject,
-            meta: [e.start, e.location].filter(Boolean).join(' · '),
+            meta: [dateText(e.start), e.location].filter(Boolean).join(' · '),
           }))}
           empty="アクセストークンを設定して更新すると予定が表示されます"
         />

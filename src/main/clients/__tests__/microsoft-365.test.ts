@@ -58,7 +58,9 @@ describe('buildMicrosoft365Snapshot', () => {
     // 直す前は `''` で、画面は「受信 」とだけ刷って理由を言わなかった。
     expect(snap.messages[0]).toEqual({ id: 'm1', subject: '(件名なし)', from: '', received: null, unread: false });
     expect(snap.messages[1]!.from).toBe('');
-    expect(snap.events[0]).toEqual({ id: 'e1', subject: '(件名なし)', start: '', location: '' });
+    // 開始日時は**読めたときだけ文字列**で、読めなければ `null` (パス 413) ——
+    // 直す前は `(… ?? '').slice(0, 16)` で、数・物・配列だと**投げて取得ごと失敗**した。
+    expect(snap.events[0]).toEqual({ id: 'e1', subject: '(件名なし)', start: null, location: '' });
   });
 
   it('builds the outlook/calendar summary items with live counts', () => {

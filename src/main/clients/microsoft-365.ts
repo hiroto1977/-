@@ -1,6 +1,6 @@
 import { jsonFetch, limitedFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { displayDateOf } from '../../shared/isoDate';
-import { objectRows } from '../../shared/apiResponse';
+import { objectRows, displayField } from '../../shared/apiResponse';
 import { readArrayField } from '../../shared/apiResponse';
 import type { ActionData } from '../../shared/actionData';
 /* ホストと要求の組み立ては共有に 1 つだけ (パス 274 —— ブラウザ版も同じ関数を通る)。 */
@@ -97,7 +97,8 @@ export interface Microsoft365Snapshot {
   readonly events: ReadonlyArray<{
     readonly id: string;
     readonly subject: string;
-    readonly start: string;
+    /** 開始日時 (`YYYY-MM-DD HH:MM`)。**読めなければ `null`** (パス 413)。 */
+    readonly start: string | null;
     readonly location: string;
   }>;
   /** サマリ行 (既存 UI / DataList 互換)。 */
@@ -119,13 +120,41 @@ export interface Microsoft365Snapshot {
  * そこでは配列を渡す = 読めた、で正しいから (呼び出し側の
  * `fetchMicrosoft365Snapshot` は実測した値を渡す)。
  */
+/**
+ * 予定の開始日時を画面の形 (`YYYY-MM-DD HH:MM`) にする。**読めなければ `null`**。
+ *
+ * ★ **直す前は `(e.start?.dateTime ?? '').slice(0, 16)` で、3 形とも投げた**
+ * (2026-09-22 · パス 413 で実測) —— `?? ` は null / undefined しか受けないので:
+ *
+ * | `start.dateTime` | 直す前 |
+ * | --- | --- |
+ * | 数 | `((intermediate value) ?? "").slice is not a function` |
+ * | 物 | 同上 |
+ * | 配列 | `… .slice(...).replace is not a function` |
+ *
+ * **どれも Microsoft 365 の取得が丸ごと失敗する。** パス 410 は同じファイルの
+ * `received` を `displayDateOf` へ寄せたが、**`start` は残っていた** (隣の欄が
+ * 直り、この欄だけ前提を持たないまま在る形 —— パス 398 / 408 と同じ非対称)。
+ *
+ * ★ **`displayDateOf` は使わない** —— Graph の `dateTime` は
+ * `2026-01-01T10:00:00.0000000` のように**時間帯を持たない現地時刻**で
+ * (時間帯は隣の `timeZone` 欄に在る)、`parseTimestamp` に通すと
+ * 環境の時間帯で解釈し直してしまう。**読める値の答えを変えない**ために、
+ * 型だけ検めて今までと同じ整形を掛ける。
+ */
+export function eventStart(v: unknown): string | null {
+  if (typeof v !== 'string' || v === '') return null;
+  return v.slice(0, 16).replace('T', ' ');
+}
+
 export function buildMicrosoft365Snapshot(
   user: GraphUser,
   messages: readonly GraphMessage[],
   events: readonly GraphEvent[],
   read: { readonly messages: boolean; readonly events: boolean } = { messages: true, events: true },
 ): Microsoft365Snapshot {
-  const userName = user.displayName ?? user.userPrincipalName ?? user.mail ?? '';
+  const userName =
+    displayField(user.displayName) || displayField(user.userPrincipalName) || displayField(user.mail);
   /*
    * **要素が物であることを検める** (2026-09-22 · パス 410)。`readArrayField` は
    * 鍵と配列までしか見ないので、実測 (直す前) で `{ value: [null] }` は
@@ -135,16 +164,17 @@ export function buildMicrosoft365Snapshot(
    */
   const msgs = objectRows<GraphMessage>(messages).map((m) => ({
     id: m.id,
-    subject: m.subject || '(件名なし)',
-    from: m.from?.emailAddress?.name ?? m.from?.emailAddress?.address ?? '',
+    subject: displayField(m.subject) || '(件名なし)',
+    from:
+      displayField(m.from?.emailAddress?.name) || displayField(m.from?.emailAddress?.address),
     received: displayDateOf(m.receivedDateTime),
     unread: m.isRead === false,
   }));
   const evs = objectRows<GraphEvent>(events).map((e) => ({
     id: e.id,
-    subject: e.subject || '(件名なし)',
-    start: (e.start?.dateTime ?? '').slice(0, 16).replace('T', ' '),
-    location: e.location?.displayName ?? '',
+    subject: displayField(e.subject) || '(件名なし)',
+    start: eventStart(e.start?.dateTime),
+    location: displayField(e.location?.displayName),
   }));
   const unreadCount = msgs.filter((m) => m.unread).length;
   const items = [
