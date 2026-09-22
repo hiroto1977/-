@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 import { DRIVE_CREATE_FOLDER_PATH, GOOGLE_DRIVE_API, checkDriveFolder, driveFolderInit, parseCreatedDriveFolder } from '../../shared/api/google';
 import type { ActionData } from '../../shared/actionData';
 
@@ -37,11 +38,21 @@ export async function fetchDriveSnapshot(ctx: FetchContext): Promise<DriveSnapsh
   const data = await jsonFetch<DriveListResponse>(url, { headers }, fetchCtx);
 
   return {
-    files: (data.files ?? []).map((f) => ({
+    files: objectRows<DriveFile>(data.files).map((f) => ({
       id: f.id,
       title: f.name,
       mimeType: f.mimeType,
-      modifiedTime: f.modifiedTime.slice(0, 10),
+      /*
+       * **非文字列の `modifiedTime` で投げない** (2026-09-22 · パス 409)。
+       * 実測 (直す前): 欄が無い / 数だと `.slice` が無く TypeError になり、
+       * **Drive 画面が丸ごと使えなくなった** (10 件のうち 1 件で全部)。
+       *
+       * ★ **読める値の答えは変えていない** —— ここはまだ `slice(0, 10)` で、
+       *   パス 408 が Ollama について閉じた「日付として読めるかで決める」側
+       *   (`parseTimestamp` → `localIsoDate`・読めなければ `null` + 画面が理由を言う)
+       *   には**まだ寄せていない**。母集団は `docs/REMAINING_WORK.md` に在る。
+       */
+      modifiedTime: typeof f.modifiedTime === 'string' ? f.modifiedTime.slice(0, 10) : '',
       viewUrl: f.webViewLink ?? `https://drive.google.com/file/d/${f.id}/view`,
     })),
   };

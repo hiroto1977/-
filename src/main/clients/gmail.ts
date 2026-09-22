@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 import { localIsoDate } from '../../shared/localDate';
 import { GMAIL_API, GMAIL_DRAFTS_PATH, checkGmailDraft, gmailDraftInit, parseCreatedDraft } from '../../shared/api/google';
 import type { ActionData } from '../../shared/actionData';
@@ -34,7 +35,7 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
     fetchCtx,
   );
 
-  const ids = (list.messages ?? []).map((m) => m.id);
+  const ids = objectRows<{ id: string }>(list.messages).map((m) => m.id);
   const messages = await Promise.all(
     ids.map((id) =>
       jsonFetch<GmailMessage>(

@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 import { WORDPRESS_API, checkPost, parseCreatedPost, wordpressPostInit, wordpressPostsPath } from '../../shared/api/wordpress';
 import type { ActionData } from '../../shared/actionData';
 
@@ -54,14 +55,18 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
   );
 
   return {
-    sites: (data.sites ?? []).map((s) => ({
+    sites: objectRows<WpSite>(data.sites).map((s) => ({
       blogId: s.ID,
       name: s.name,
       description: s.description,
       url: s.URL,
       platform: s.jetpack ? 'jetpack' : 'simple',
       status: s.is_private ? 'private' : 'active',
-      lastUpdated: (s.last_updated ?? '').slice(0, 10),
+      // **非文字列の `last_updated` で投げない** (2026-09-22 · パス 409)。`??` は
+      // null / undefined しか受けないので、数が来ると `.slice` が無く投げていた
+      // (実測: `(s.last_updated ?? "").slice is not a function`)。
+      // 読める値の答えは変えていない (drive と同じ理由で日付の読みへはまだ寄せていない)。
+      lastUpdated: typeof s.last_updated === 'string' ? s.last_updated.slice(0, 10) : '',
       paidPlan: isPaidPlan(s.plan),
     })),
   };

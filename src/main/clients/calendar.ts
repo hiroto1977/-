@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 import {
   CALENDAR_CREATE_EVENT_PATH,
   GOOGLE_CALENDAR_API,
@@ -52,17 +53,31 @@ export async function fetchCalendarSnapshot(ctx: FetchContext): Promise<Calendar
   );
 
   return {
-    calendars: (list.items ?? []).map((c) => ({
+    calendars: objectRows<CalListItem>(list.items).map((c) => ({
       id: c.id,
       summary: c.summary,
       timeZone: c.timeZone,
     })),
-    events: (events.items ?? []).map((e) => {
-      const allDay = !!e.start.date;
+    events: objectRows<CalEvent>(events.items).map((e) => {
+      /*
+       * **`start` が無い予定でも投げない** (2026-09-22 · パス 409)。
+       *
+       * 実測 (直す前): `{ id: 'e1' }` を 1 件混ぜると
+       * `Cannot read properties of undefined (reading 'date')` で
+       * **カレンダー画面が丸ごと使えなくなった**。型宣言は `start` を必須と
+       * 言うが、それは `jsonFetch<T>` のキャストが作った見せかけである。
+       *
+       * ★ 読める値の答えは 1 つも変えていない —— `date` が在れば終日、
+       *   無ければ `dateTime`、どちらも無ければ空 (今日と同じ)。
+       */
+      const start = e.start !== null && typeof e.start === 'object' ? e.start : {};
+      const date = typeof start.date === 'string' ? start.date : '';
+      const dateTime = typeof start.dateTime === 'string' ? start.dateTime : '';
+      const allDay = date !== '';
       return {
         id: e.id,
         summary: e.summary ?? '（タイトルなし）',
-        startDate: allDay ? e.start.date! : (e.start.dateTime ?? ''),
+        startDate: allDay ? date : dateTime,
         allDay,
       };
     }),

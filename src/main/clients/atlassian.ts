@@ -5,6 +5,7 @@ import {
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 import {
   JIRA_ISSUE_PATH,
   basicAuthorization,
@@ -96,7 +97,7 @@ export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<Atlassi
         scopes: ['basic-auth'],
       },
     ],
-    jiraProjects: (projects.values ?? []).map((p) => ({
+    jiraProjects: objectRows<JiraProject>(projects.values).map((p) => ({
       key: p.key,
       name: p.name,
       projectTypeKey: p.projectTypeKey,

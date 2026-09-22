@@ -1,4 +1,5 @@
 import { jsonFetch, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 
 /**
  * BASE (thebase.com) — ネットショップ作成 EC プラットフォーム連携。
@@ -37,7 +38,7 @@ export async function fetchBaseSnapshot(ctx: FetchContext): Promise<BaseSnapshot
   );
 
   return {
-    items: (data.items ?? []).map((it) => ({
+    items: objectRows<BaseApiItem>(data.items).map((it) => ({
       id: String(it.item_id),
       name: it.title,
       price: it.price,

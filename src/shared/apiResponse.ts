@@ -188,3 +188,43 @@ export function readArrayField(obj: unknown, field: string): ArrayFieldRead {
   const v = (obj as Record<string, unknown>)[field];
   return Array.isArray(v) ? { rows: v, read: true } : { rows: [], read: false };
 }
+
+/**
+ * 第三者の応答の配列から、**物である要素だけ**を取り出す (2026-09-22 · パス 409)。
+ *
+ * ## なぜ要るか —— 実測 (2026-09-22 · 直す前)
+ *
+ * `(data.files ?? []).map((f) => ({ id: f.id, … }))` は、**配列でない値**と
+ * **物でない要素**のどちらも防がない。`??` は null / undefined しか受けないので、
+ * 相手が 1 件でも壊れた行を返すと**その画面が丸ごと使えなくなる**:
+ *
+ * | client | 壊し方 | 結果 |
+ * | --- | --- | --- |
+ * | drive | 要素が `null` | `Cannot read properties of null (reading 'id')` |
+ * | drive | `files` が文字列 | `(data.files ?? []).map is not a function` |
+ * | calendar | 要素が `null` / `start` が無い | 同上 (2 形) |
+ * | wordpress / slack / base / canva / gmail | 要素が `null` | 同上 |
+ *
+ * `library.ts` の「行そのものは落とさない」(パス 136) や
+ * `recordShapeAudit.ts` の「壊れた行で画面が投げると、画面から消せなくなる」
+ * (パス 360 · 法則 `escape-hatch-stays-open`) と**同じ問い**が、
+ * 保管層ではなく**第三者の応答**の側に在った。
+ *
+ * ## 何を保証し、何を保証しないか
+ *
+ * 保証するのは **① 配列でなければ空 ② 要素は物 (null・配列・スカラーは落とす)**
+ * の 2 つだけである。**欄の型は見ない** —— `row.name` は `unknown` のままで、
+ * 呼ぶ側が `optionalString` などで読むか、少なくとも**投げない形**で読む責任を持つ。
+ * 欄ごとの型と天井は別の軸で、`docs/REMAINING_WORK.md` に母集団を残してある
+ * (パス 408 が `normalizeModels` について閉じたのと同じ話)。
+ *
+ * 型引数は**呼ぶ側の宣言をそのまま使う**ための物で、`jsonFetch<T>` が既に
+ * 置いているのと同じ嘘の大きさである (欄の型は誰も確かめていない) ——
+ * **この関数が新しく嘘を増やすわけではない**が、増やしてもいない。
+ */
+export function objectRows<T = Record<string, unknown>>(v: unknown): readonly T[] {
+  if (!Array.isArray(v)) return [];
+  return v.filter(
+    (x): x is T => x !== null && typeof x === 'object' && !Array.isArray(x),
+  );
+}

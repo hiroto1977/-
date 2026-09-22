@@ -21,6 +21,72 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 409 (2026-09-22) — 相手の一覧に壊れた行が 1 つ在ると、その画面が丸ごと落ちた
+
+パス 408 の残作業として数えた母集団を辿ったら、**そこに在ったのは天井ではなく「投げる」**だった。
+
+`(data.files ?? []).map((f) => ({ id: f.id, … }))` は、**配列でない値**と**物でない要素**の
+どちらも防がない (`??` は null / undefined しか受けない)。実測 (2026-09-22 ・ 直す前) ——
+**8 client のうち 7 本が 1 件で投げた**:
+
+| client | 壊し方 | 直す前 |
+| --- | --- | --- |
+| drive | 要素が `null` / `modifiedTime` が無い / 数 / `files` が文字列 | **4 形とも投げる** |
+| calendar | 要素が `null` / `start` が無い / `items` が文字列 | **3 形とも投げる** |
+| wordpress | 要素が `null` / `last_updated` が数 / `sites` が文字列 | **3 形とも投げる** |
+| slack / base / canva / gmail | 要素が `null` | **投げる** |
+| atlassian | (資格情報の関門に先に当たり **測れていない**) | —— |
+
+**投げると `fetchSnapshot` ごと失敗する** ので、10 件のうち 1 件が壊れているだけで
+**その画面には何も出ない**。Ollama (パス 407) は外側の `catch` が warning にしていたので
+「黙って短い一覧」で済んだが、ここは画面が丸ごと落ちる側である。
+
+★ **同じ問いは保管層の側で 2 度閉じられていた** —— `library.ts` の「行そのものは
+落とさない」(パス 136) と `recordShapeAudit.ts` の「壊れた行で画面が投げると、画面から
+消せなくなる」(パス 360 · 法則 `escape-hatch-stays-open`)。**第三者の応答の側だけが
+空いていた。**
+
+**直し**: `shared/apiResponse.ts` に `objectRows(v)` を 1 つ置き、**10 か所すべて**を通す
+(atlassian / base / calendar ×2 / canva ×2 / drive / gmail / slack / wordpress)。
+保証するのは **① 配列でなければ空 ② 要素は物 (null・配列・スカラーは落とす)** の 2 つだけで、
+**欄の型は見ない**。加えて、要素が物でも投げる欄の読み **3 か所**を直した:
+`calendar` の `e.start.date` (start が無い予定)・`drive` の `f.modifiedTime.slice`・
+`wordpress` の `(s.last_updated ?? '').slice`。
+
+★ **読める値の答えは 1 つも変えていない** (実測: 終日 / 時刻つきの予定・Drive の
+`2026-05-10`・WordPress の `2025-12-01` はすべて同じ)。壊れた行は**落ちるか空欄になる**。
+
+検査は `main/clients/__tests__/responseRowGuards.test.ts` (**11 件**) で、背骨は**振る舞い** ——
+7 client を実際に呼んで「投げない・良い行は残る」を見る。綴りの走査は
+**`main/clients/` 全体から母集団を導き**、素の `(… ?? []).map(` が **0 件**であることを
+両方向で留める (次に足された一覧が素の形なら鳴る)。
+対照 **6 方向すべて鳴り、それぞれ狙った検査に当たる**:
+A 要素の選別をやめる ❌5 / B 配列の判定をやめる ❌2 / C drive の日付の門 ❌1 /
+D calendar の start の門 ❌1 / E wordpress の日付の門 ❌1 / F 素の形を 1 つ戻す ❌3。
+
+★ **自戒**: 床を `includes('objectRows(')` で書いたら **0 件**になった —— 呼び手は
+`objectRows<DriveFile>(data.files)` と**型引数を挟む**ので名前と `(` が隣り合わない。
+**床が落ちて気付いた** (パス 334 / 369 と同じ家系: 綴りの針は綴りでない物に動かされる)。
+
+### 残作業 (パス 410 以降・パス 408 から引き継いだ軸)
+
+**「投げない」は閉じたが、「欄の型と天井」は空いたままである。**
+
+- `objectRows` は**欄の型を見ない** —— `row.name` は `unknown` のままで、型引数は
+  `jsonFetch<T>` が既に置いているのと同じ嘘である (新しく増やしてはいない)。
+- `?? ''` だけで第三者の文字列を受ける欄が `main/clients/` に **13 件**
+  (canva `thumbnailUrl` / cloudflare `plan`・`accountName` / github `head`・`base` /
+  microsoft-365 `location`・`webLink` / shopify `ts`・`url` /
+  skills `description` ×2・`stop_reason` / youtube `publishedAt`)。
+- `slice(0, 10)` で第三者の日付を切る所が **6 件** (`NotionPage:85` / `ObsidianPage:100` /
+  `GithubPage:77` / `wordpress.ts` / `microsoft-365.ts` / `drive.ts`) —— パス 408 が
+  Ollama について閉じた「日付として読めるかで決める」(`parseTimestamp` → `localIsoDate`・
+  読めなければ `null` + 画面が理由を言う) へはまだ寄せていない。
+- 生の第三者文字列が `DataList` の meta 行に載る画面が **2 枚**
+  (`CloudflarePage:155` の `plan` / `accountName`、`GithubPage:77` の `head` / `base`)。
+- **atlassian の一覧は今日の probe では測れていない** (資格情報の関門が先に当たった)。
+  `objectRows` は通したが、**投げないことを振る舞いで確かめていない**。
+
 ## パス 408 (2026-09-22) — 一覧の欄は型だけ検めており、~2 MB の第三者文字列が 1 行に載った
 
 パス 407 で「`/api/tags` を読む口を 1 つにする」を直したあと、**その 1 つの口を読み直した**。

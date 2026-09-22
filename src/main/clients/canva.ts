@@ -1,4 +1,5 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 import { CANVA_API, CANVA_FOLDERS_PATH, canvaFolderInit, checkFolder, parseCreatedFolder } from '../../shared/api/canva';
 import type { ActionData } from '../../shared/actionData';
 
@@ -67,8 +68,8 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
   ]);
 
   return {
-    brandKits: (brandKitsRes.items ?? []).map((b) => ({ id: b.id })),
-    designs: (designsRes.items ?? []).slice(0, 12).map((d) => ({
+    brandKits: objectRows<CanvaBrandKit>(brandKitsRes.items).map((b) => ({ id: b.id })),
+    designs: objectRows<CanvaDesign>(designsRes.items).slice(0, 12).map((d) => ({
       id: d.id,
       title: d.title ?? '(無題のデザイン)',
       updatedAt: d.updated_at ?? 0,

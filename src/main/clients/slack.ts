@@ -1,4 +1,5 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { objectRows } from '../../shared/apiResponse';
 import {
   SLACK_API,
   SLACK_POST_MESSAGE_PATH,
@@ -83,7 +84,7 @@ export async function fetchSlackSnapshot(ctx: FetchContext): Promise<SlackSnapsh
   const workspaceDomain = teamRes.ok ? teamRes.team?.domain : undefined;
 
   return {
-    channels: (convoRes.channels ?? []).map((c) => ({
+    channels: objectRows<SlackChannel>(convoRes.channels).map((c) => ({
       id: c.id,
       name: c.name,
       purpose: c.purpose?.value || c.topic?.value || '',
