@@ -32,7 +32,8 @@
 当てていたので main を戻しても当たらない。実物の handler を呼ぶ 4 件を足して ❌5。
 **「対照が鳴った」と「振る舞いが測れている」は別。**
 
-`npm test` **833 / 18,311**・`verify:all` exit 0・出荷物 **+245 B**。
+`npm test` **833 / 18,311**・`verify:all` exit 0・出荷物 **+245 B**・
+`perf` OK (LITE DCL 197 ms / FULL DCL 544 ms)・`e2e` / `e2e:lite` とも **455 件 ❌ 0**。
 
 ---
 
