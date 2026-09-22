@@ -678,9 +678,14 @@ export const LAWS: readonly Law[] = [
     id: 'envelope-checked-at-read',
     family: 'surface',
     name: '第三者の応答は読むところで確かめる',
-    statement: '`as T` は封筒も確かめない。200 の {} を成功にしない・null で型エラーを画面へ漏らさない・[] が 5 つの事実を意味しない・認可サーバの応答 1 つで資格情報を失わない。',
-    provenance: ['パス 259', 'パス 260', 'パス 261', 'パス 262', 'パス 263', 'パス 264'],
-    enforcedBy: [test(T.shared('tokenResponse')), test(T.shared('apiResponse')), test(T.shared('securityResponse'))],
+    statement: '`as T` は封筒も確かめない。200 の {} を成功にしない・null で型エラーを画面へ漏らさない・[] が 5 つの事実を意味しない・認可サーバの応答 1 つで資格情報を失わない。**自分が prompt で述べた上限は自分で検める** —— 件数も欄の 1 つで、相手の善意は門ではない。',
+    provenance: ['パス 259', 'パス 260', 'パス 261', 'パス 262', 'パス 263', 'パス 264', 'パス 404'],
+    enforcedBy: [
+      test(T.shared('tokenResponse')),
+      test(T.shared('apiResponse')),
+      test(T.shared('securityResponse')),
+      test(T.shared('advisorArrayBounds')),
+    ],
   },
   {
     id: 'ceiling-unit-is-chars',

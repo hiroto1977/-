@@ -21,6 +21,73 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 404 (2026-09-22) — LLM に「riskFactors 1-3 件」と指示しながら、その上限を両ビルドとも検めていなかった
+
+出荷物 **11,945,922 B / 3,358,441 B (両方 +99 B)** —— 件数の門 1 つと、prompt の数字 3 か所を
+定数から導いた分。main 側の同じ直しはブラウザ版の束に入らない。
+
+**見つけ方**: パス 402 が走査した同名 export 38 組の残りを読み、`validateAdvisorJson` が
+**3 つ**在ることに気付いた (株式 2 + 事業 1)。実測 (直す前):
+
+| 検証器 | riskFactors 100,000 件 | 件数の門 |
+| --- | --- | --- |
+| **株式 · main** | **通る** | **無し** |
+| **株式 · ブラウザ版** | **通る** | **無し** |
+| 事業 · main / ブラウザ版 | 断る | `MAX_ADVISOR_RISK_FACTORS` = 3 |
+
+**アプリ自身が上限を宣言していた** —— 両ビルドの prompt が「各 recommendation には必ず
+riskFactors (1-3 件) を含めること。」と書いており、検めていたのは相手の善意だけだった。
+`advisorResponseLimits.ts` の docblock は事業の 6 行の表を持ち、その 1 行が `riskFactors 1..3`。
+**株式の節はその 40 行下に在り、その行が無い。**
+
+**なぜ抜けたか (構造的な理由が 2 つ)**:
+
+1. パリティ検査 2 本 (`advisorResponseParity` / `advisorValidationParity`) の母集団は
+   **どちらも事業の 2 本だけ**で、株式は 1 度も入っていなかった (パス 334 の家系)。
+2. **`dualBuildParity.test.ts` は株式の受理集合を実際に比べていて、通っていた** ——
+   主張が `expect(accepts(web)).toBe(accepts(main))` なので**両側が等しく緩ければ緑になる**。
+   しかもその標本の一覧は `recommendations が 6 件 (境界・弾く)` を持ちながら `riskFactors` には
+   型と空しか無く、**同じ一覧の中で片方の配列だけ件数を見ていなかった**。
+   法則 `parity-is-not-correctness` の最も明白な実例。
+
+**直し**: 両ビルドで `riskFactors.length > MAX_ADVISOR_RISK_FACTORS` を断る / 新しい数は作らず
+事業と同じ定数を読む (2 つの prompt の文が同じ 1 文。理由の長さ 600 / 400 が別なのは表示欄の幅が
+違うからで、そちらは別の数で正しい) / prompt の数も定数から導く (3 か所・組み上がる文字列は不変)。
+
+**答えが変わる入力が在る (正直に言う)**: 1〜3 件の応答の答えは 1 つも変わらないが、**4 件以上は
+今まで通っていたものが断られる**。意図した変更で、隣の事業側が 2026-08-25 から同じ扱いをしている。
+
+検査 `shared/__tests__/advisorArrayBounds.test.ts` (14 件)。背骨は**振る舞い** —— 4 つの検証器を
+実際に呼ぶ。綴りの走査は「6 つ目の検証器が忘れたら鳴る」網で、免除台帳は両方向・今日 0 件。
+対照 6 方向すべて鳴り、A / B は欠陥をそのまま再現する。
+
+### 閉じていない物 (測った)
+
+- **`recommendations` の件数を減らす道は塞いでいない** —— 5 件 × 3 リスク要因 × 各 200 字は今も通る
+  (それが宣言どおりの上限なので正しい)。閉じたのは「宣言を超える件数」だけである。
+- **事業の prompt は main とブラウザ版で述べることが違う** (実測) —— `web-shim.ts` は
+  「actionItems 1-5 件、riskFactors 1-3 件。」と件数を述べ、`main/clients/business.ts` は述べない。
+  **両方とも門は持っている**ので安全の穴ではなく、モデルの答えの形が揃いにくいだけ。
+  直すと送る文が変わるので別パスで。
+- **同名 export 38 組のうち読んだのは 10 組** (パス 402 の 3 + 今回の 7)。残り 28 組は大半が
+  株価指標の純計算 (sma / ema / rsi / macd / bollingerBands / backtest / maxDrawdown ほか) で、
+  `dualBuildParity` の対象外。**計算が両ビルドでずれると売買シグナルがずれる**ので、次に読むならそこ。
+
+### 測って何も無かった軸
+
+- **HIBP の漏洩 0 件**は「調べられなかった」と混ざらない —— 失敗の枝は両ビルドとも投げ、画面は
+  `breachError` を出す。404 は HIBP の**答え**であって未解析ではない (VirusTotal の `0 / 0` と違う)。
+- **消費税の最有利方式** —— `compareBusinessTaxMethods` の `available` は省略すると簡易課税・
+  2割特例を候補にするが、製品の呼び手 2 つ (TaxPage / FinancialAnalysis) は**どちらも渡している**。
+  2 つの画面は 3割特例の条件式が違う (`ctKind === 'sole-proprietor' &&` が片方に無い) が、
+  TaxPage の `entity` は `'corporation' | 'sole-proprietor'` で `'unknown'` を取らないので**等価**。
+- `isSafeSvgExportPath` / `readCapped` / `parseAtlassianToken` は**共有の実装への 1 行の別名**。
+  `extractJson` / `normalizeAnalysis` (emotions) は**写しだが等価**で、危機の相談窓口はモデルの
+  答えではなく端末側の `detectCrisis` が決めるので、この写しは安全の判定を持たない。
+- **配列の件数の門の母集団 13 件**のうち上限を持たない残り 3 件は検証器ではない
+  (`latestTurnTooLong` は末尾 1 件しか読まない述語・`calcStdDev` と `seasonalIndices` は
+  利用者自身の数列を受ける純関数)。
+
 ## パス 403 (2026-09-22) — URL スキャンが「誰も解析していない」を緑の帯で出していた
 
 出荷物 **11,945,823 B / 3,358,342 B (両方 +1,203 B)** —— 判定・札・重さ・文を 1 つの

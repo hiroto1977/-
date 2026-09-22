@@ -157,6 +157,19 @@ describe('validateAdvisorJson (株価) — main とブラウザ版で同じ判�
     ['riskFactors が空', wrap(rec({ riskFactors: [] }))],
     ['riskFactor が空文字', wrap(rec({ riskFactors: [''] }))],
     ['riskFactor が文字列でない', wrap(rec({ riskFactors: [1] }))],
+    /*
+     * **件数の境界** (2026-09-22 · パス 404)。上の `recommendations` には
+     * 5 / 6 の組が在ったのに、`riskFactors` には型と空しか無かった ——
+     * **同じ一覧の中で、片方の配列だけ件数を見ていなかった**。
+     *
+     * この検査は「両側が同じ答えを返すか」しか見ないので、**両側が等しく
+     * 緩ければ通る**。実際に通っていた: 直す前は main もブラウザ版も
+     * 100,000 件を受理し、この一覧は緑だった (法則 `parity-is-not-correctness`)。
+     * 上限そのものは `shared/__tests__/advisorArrayBounds.test.ts` が
+     * **振る舞いで**留める。ここは一致だけを見る。
+     */
+    ['riskFactors が 3 件 (境界・通す)', wrap(rec({ riskFactors: ['a', 'b', 'c'] }))],
+    ['riskFactors が 4 件 (境界・弾く)', wrap(rec({ riskFactors: ['a', 'b', 'c', 'd'] }))],
   ];
 
   it.each(CASES)('%s', (_label, raw) => {

@@ -483,7 +483,7 @@ function advisorSystemPrompt(allowed: readonly string[]): string {
     '- categoryId は必ず次の許可済みリストから選ぶこと: [' + allowed.map((s) => '"' + s + '"').join(', ') + ']',
     '- 知らない categoryId を提示してはならない。',
     '- 具体的な株式・金融商品の売買助言や、具体的な投資金額の指示を含めてはならない。',
-    '- rationale は 40-300 文字。actionItems 1-5 件、riskFactors 1-3 件。',
+    `- rationale は 40-300 文字。actionItems 1-${MAX_ADVISOR_ACTION_ITEMS} 件、riskFactors 1-${MAX_ADVISOR_RISK_FACTORS} 件。`,
   ].join('\n');
 }
 

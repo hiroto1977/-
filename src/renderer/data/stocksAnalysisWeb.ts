@@ -19,6 +19,7 @@ import { portfolioEquity } from '../../shared/paperAccount';
 import { ratioPctOrDash } from '../../shared/num';
 import {
   MAX_ADVISOR_RECOMMENDATIONS,
+  MAX_ADVISOR_RISK_FACTORS,
   MAX_STOCK_ADVISOR_RATIONALE_CHARS,
   MAX_STOCK_ADVISOR_RISK_CHARS,
 } from '../../shared/advisorResponseLimits';
@@ -532,7 +533,7 @@ export function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
     '- symbol は必ず次の許可済みリストから選ぶこと: [' + allowedSymbols.map((s) => '"' + s + '"').join(', ') + ']',
     '- 知らないティッカーや実在しないティッカーを提示してはならない。',
     '- 具体的な売買タイミング (例: "今買え") や具体的な価格予測を含めてはならない。',
-    '- 各 recommendation には必ず riskFactors (1-3 件) を含めること。',
+    `- 各 recommendation には必ず riskFactors (1-${MAX_ADVISOR_RISK_FACTORS} 件) を含めること。`,
     '- rationale は 40-160 文字。テクニカル指標を根拠として簡潔に。',
     '- 過去パフォーマンスは将来を保証しない、という注意を念頭に置く。',
   ].join('\n');
@@ -567,6 +568,8 @@ export function validateAdvisorJson(
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) throw new Error('recommendation has empty rationale');
     if (countChars(rec.rationale) > MAX_STOCK_ADVISOR_RATIONALE_CHARS) throw new Error(`recommendation rationale exceeds ${MAX_STOCK_ADVISOR_RATIONALE_CHARS} chars`);
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) throw new Error('recommendation has no riskFactors');
+    // **述べた上限は検める** (パス 404) —— prompt が「1-N 件」と言う側を門にする。
+    if (rec.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) throw new Error(`recommendation exceeds ${MAX_ADVISOR_RISK_FACTORS} riskFactors`);
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
       if (typeof rf !== 'string' || rf.length === 0 || countChars(rf) > MAX_STOCK_ADVISOR_RISK_CHARS) throw new Error(`riskFactor entry is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`);

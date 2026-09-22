@@ -28,6 +28,7 @@ import {
 } from '../../shared/advisorQuestionLimits';
 import {
   MAX_ADVISOR_RECOMMENDATIONS,
+  MAX_ADVISOR_RISK_FACTORS,
   MAX_STOCK_ADVISOR_RATIONALE_CHARS,
   MAX_STOCK_ADVISOR_RISK_CHARS,
 } from '../../shared/advisorResponseLimits';
@@ -1125,7 +1126,7 @@ function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
     '- symbol は必ず次の許可済みリストから選ぶこと: [' + allowedSymbols.map((s) => '"' + s + '"').join(', ') + ']',
     '- 知らないティッカーや実在しないティッカーを提示してはならない。',
     '- 具体的な売買タイミング (例: "今買え") や具体的な価格予測を含めてはならない。',
-    '- 各 recommendation には必ず riskFactors (1-3 件) を含めること。',
+    `- 各 recommendation には必ず riskFactors (1-${MAX_ADVISOR_RISK_FACTORS} 件) を含めること。`,
     '- rationale は 40-160 文字。テクニカル指標を根拠として簡潔に。',
     '- 過去パフォーマンスは将来を保証しない、という注意を念頭に置く。',
   ].join('\n');
@@ -1201,6 +1202,22 @@ export function validateAdvisorJson(
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) {
       throw new Error('recommendation has no riskFactors');
     }
+    // Stryker restore ConditionalExpression
+    /*
+     * **述べた上限は検める** (2026-09-22 · パス 404) —— 上の prompt が
+     * 「riskFactors (1-N 件)」と言うので、件数も長さと同じく門にする。
+     * 直す前は両ビルドとも 100,000 件を通した。
+     *
+     * **この 1 つは上の帯の外に置く。** 帯は「perTest が撃墜を取り違える」
+     * ための物だが、この門は `advisorArrayBounds.test.ts` が**振る舞いで**
+     * 直接殺す (対照 A で実測 ❌3)。帯に入れると測っていない範囲が
+     * 「100%」として報告されるうえ、帯が 30 行の上限を超えて
+     * `lint:mutation-scope` が鳴る (実際に鳴って気付いた)。
+     */
+    if (rec.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) {
+      throw new Error(`recommendation exceeds ${MAX_ADVISOR_RISK_FACTORS} riskFactors`);
+    }
+    // Stryker disable ConditionalExpression: 上の帯の続き (perTest が撃墜を取り違えるため)
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
       if (typeof rf !== 'string' || rf.length === 0 || countChars(rf) > MAX_STOCK_ADVISOR_RISK_CHARS) {
