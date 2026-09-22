@@ -18,7 +18,7 @@ import {
 } from '../data/highlightSettings';
 import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
-import { SALES_COLLECTION, duplicateOrdersOverviewNote, type SalesEntry } from '../data/sales';
+import { SALES_COLLECTION, duplicateOrdersOverviewNote, noSalesRecordsNote, type SalesEntry } from '../data/sales';
 import {
   KPI_ACTUALS_COLLECTION,
   bepDisplay,
@@ -83,7 +83,7 @@ import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, readNumberOrNull, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { usePlan } from '../plan/usePlan';
-import { pctOrDash } from '../../shared/formatters';
+import { DASH, pctOrDash } from '../../shared/formatters';
 import { localIsoDate } from '../../shared/localDate';
 import { buildBusinessOverview } from '../data/overview';
 import {
@@ -841,6 +841,15 @@ export function OverviewPage() {
     () => duplicateOrdersOverviewNote(overview.sales.duplicateOrders),
     [overview.sales.duplicateOrders],
   );
+  /**
+   * **販売記録が 1 件も無いときの断り** (パス 395)。下の 4 枚は `―` になるので、
+   * その理由を数字より先に読ませる。KPI 実績が入っていれば画面冒頭の空状態は
+   * 出ないので、この文が無いと**何も断らずに `―` が 4 枚並ぶ**。
+   */
+  const noSalesNote = useMemo(() => noSalesRecordsNote(overview.sales.hasData), [overview.sales.hasData]);
+  /** §2 の数値。**書面の `sv` と同じ役目** —— 入力が無ければ値を刷らない。 */
+  const salesValue = (n: number, fmt: (x: number) => string): string =>
+    overview.sales.hasData ? fmt(n) : DASH;
 
   // 経営スコアカード — 組み替えは `data/overviewScorecard.ts` が持つ。
   // **画面の中に算術と条件を書かない** —— `.tsx` は変異検査の対象外なので、
@@ -1278,11 +1287,23 @@ export function OverviewPage() {
             {duplicateOrdersNote}
           </p>
         )}
+        {/* **記録が 1 件も無ければ「値」ではない** —— 空集合の和は算術としては 0 だが、
+            「総売上 ￥0」は*売れていない*と読める。2026-09-22 まで 4 枚のうち
+            `平均注文単価` だけが `—` で、残る 3 枚が `0` を刷っていた
+            (書面 §2 とまったく同じ非対称・パス 52 は真ん中の 1 行だけを直していた)。 */}
+        {noSalesNote !== null && (
+          <p
+            data-no-sales-records
+            style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, margin: '0 0 8px' }}
+          >
+            {noSalesNote}
+          </p>
+        )}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-          <Tile label="総売上" value={yen.format(overview.sales.totalAmount)} sub={overview.sales.topChannel ? `主力: ${overview.sales.topChannel}` : undefined} />
-          <Tile label="総注文件数" value={num.format(overview.sales.totalOrders)} />
+          <Tile label="総売上" value={salesValue(overview.sales.totalAmount, (n) => yen.format(n))} sub={overview.sales.topChannel ? `主力: ${overview.sales.topChannel}` : undefined} />
+          <Tile label="総注文件数" value={salesValue(overview.sales.totalOrders, (n) => num.format(n))} />
           <Tile label="平均注文単価" value={yenOrDash(overview.sales.aov)} />
-          <Tile label="販売チャネル数" value={`${overview.sales.channelCount}`} />
+          <Tile label="販売チャネル数" value={salesValue(overview.sales.channelCount, (n) => `${n}`)} />
           {overview.sales.concentration && (
             <Tile
               label="売上分散スコア"

@@ -64,6 +64,8 @@ import {
   duplicateOrdersOverviewNote,
   duplicateOrdersSheetNote,
   findDuplicateOrders,
+  noSalesRecordsNote,
+  noSalesRecordsSheetNote,
   type SalesEntry,
 } from '../sales';
 import { waitForText } from '../../__tests__/jsdomWait';
@@ -215,6 +217,24 @@ const MATRIX: readonly Row[] = [
     ],
   },
   {
+    state: 'no-sales-records',
+    // KPI 実績は在る —— これが要点で、画面冒頭の空状態 (`hasData`) は出ない。
+    rows: [{ period: '2026-08', unit: '全社', revenue: 5_000_000, cogs: 2_000_000, advertising: 0, sga: 1_000_000, depreciation: 0 }],
+    salesRows: [],
+    members: 1,
+    why: '販売記録が 1 件も無い —— 2026-09-22 まで**書面 §2 は「売上高（販売記録） 0・受注件数 0件・販売チャネル数 0」を値として刷り** caption は null だった (実測)。空集合の和は算術としては 0 だが、紙の上の「販売記録の合計 = 0」は*売れていない*と読める。§1 は同じ状態を `k.hasData` で `―` にして理由を述べており、紙の冒頭の注記自身が「該当なし・算定不能は「―」」と宣言している —— §2 だけが破っていた (パス 395)',
+    cells: [
+      { surface: 'screen-overview', kind: 'reason', contains: '販売記録が 1 件も入力されていないため' },
+      { surface: 'sheet', kind: 'reason', contains: '販売記録が未入力のため算定していません' },
+      {
+        surface: 'report', kind: 'silent-but-correct', absent: '総注文件数',
+        why: '経営レポートは販売記録の節そのものを持たない (実測: 総売上・総注文件数・販売記録・主力チャネル・売上分散 のどれも出ない)。空欄を出さないので理由も要らない',
+      },
+      // ★ 面ごとに別の文 —— 紙は画面の操作 (「売上集計」の画面で…) を指示しない。
+      { surface: 'sheet', kind: 'wrong-reason-would-be', forbidden: '「売上集計」の画面' },
+    ],
+  },
+  {
     state: 'unreadable-periods',
     rows: UNREADABLE_PERIODS,
     members: 1,
@@ -246,6 +266,22 @@ beforeAll(() => {
 let container: HTMLDivElement;
 let root: Root | null = null;
 const screenText = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
+
+/**
+ * `Tile` の値を**構造で**引く (label の div → その次の兄弟が値)。
+ *
+ * 文字の位置で引くと、同じ label を名指しする断りの文に当たる ——
+ * パス 395 で実際に踏んだ (「総売上・総注文件数・…は算定していません」が先に出る)。
+ */
+const tileValue = (label: string): string | null => {
+  for (const el of Array.from(container.querySelectorAll('div'))) {
+    const first = el.firstElementChild;
+    if (first === null || el.children.length < 2) continue;
+    if ((first.textContent ?? '').trim() !== label) continue;
+    return (el.children[1]?.textContent ?? '').trim();
+  }
+  return null;
+};
 
 type ScreenSurface = 'screen-overview' | 'screen-kpi' | 'screen-sales';
 
@@ -541,5 +577,60 @@ describe('★ 重複の断りは面ごとに別の文 (パス 390 / 391)', () =>
     expect(duplicateOrdersNote([])).toBeNull();
     expect(duplicateOrdersOverviewNote([])).toBeNull();
     expect(duplicateOrdersSheetNote([])).toBeNull();
+  });
+});
+
+/**
+ * ★ **面ごとに別の文であること**を関数そのもので比べる (パス 391 と同じ形)。
+ *
+ * 上の行列は「その面がこの文を出す」を見るが、**3 つの文が同じ物になったら**
+ * 行列の主張は満たされたまま、紙が画面の操作を指示し始めうる。
+ */
+describe('★ 販売記録が無い断りは面ごとに別の文', () => {
+  it('画面は入れる場所を名指しし、紙はしない', () => {
+    const screen = noSalesRecordsNote(false) ?? '';
+    const sheet = noSalesRecordsSheetNote(false) ?? '';
+    expect(screen).toContain('「売上集計」の画面');
+    expect(sheet).not.toContain('画面');
+    expect(screen).not.toBe(sheet);
+  });
+
+  it('記録が在れば両方 null (断る状態でないときに文を作らない)', () => {
+    expect(noSalesRecordsNote(true)).toBeNull();
+    expect(noSalesRecordsSheetNote(true)).toBeNull();
+  });
+});
+
+/**
+ * ★ **画面のタイルも「0」を刷らない** (パス 395)。
+ *
+ * 2026-09-22 まで 4 枚のうち `平均注文単価` だけが `—` で、総売上 / 総注文件数 /
+ * 販売チャネル数 は `0` を刷っていた —— **書面 §2 とまったく同じ非対称**で、
+ * パス 52 は真ん中の 1 行だけを直していた。
+ */
+describe('★ 経営サマリーの販売タイル', () => {
+  const KPI_ONLY: KpiActual = {
+    period: '2026-08', unit: '全社', revenue: 5_000_000, cogs: 2_000_000, advertising: 0, sga: 1_000_000, depreciation: 0,
+  };
+  const ONE_SALE: SalesEntry = { date: '2026-08-01', channel: 'shopify', amount: 500_000, orders: 2, note: '' };
+
+  it('記録が無ければ 4 枚とも「—」で、理由を出す', async () => {
+    await seedFor({ state: 'x', rows: [KPI_ONLY], salesRows: [], members: 1, cells: [], why: '' });
+    const t = await renderScreen('screen-overview', '販売記録が 1 件も入力されていないため');
+    expect(t).not.toContain('総売上 ￥0');
+    expect(container.querySelector('[data-no-sales-records]')).not.toBeNull();
+    // ★ **文字の位置では探さない** —— この断りの文は 4 つの label をそのまま
+    //   名指しするので、`t.indexOf('総売上')` は**タイルではなく断りの文**に当たる
+    //   (最初にそう書いて落ちた)。`Tile` の構造 (label の div → 値の div) で引く。
+    for (const label of ['総売上', '総注文件数', '平均注文単価', '販売チャネル数']) {
+      expect(tileValue(label), `タイル「${label}」が「—」でない`).toBe('—');
+    }
+  });
+
+  it('★ 対照: 記録が在れば値を刷り、理由は出さない', async () => {
+    await seedFor({ state: 'x', rows: [KPI_ONLY], salesRows: [ONE_SALE], members: 1, cells: [], why: '' });
+    const t = await renderScreen('screen-overview', '￥500,000');
+    expect(container.querySelector('[data-no-sales-records]')).toBeNull();
+    expect(t).not.toContain('販売記録が 1 件も入力されていないため');
   });
 });

@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (94)
+## 5. 法則と執行者 (95)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -239,7 +239,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `write-then-read-loop` | **書く口を足したら読みの一巡** — 「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。 | パターン 0-a-22 | 検査 `src/renderer/__tests__/webShimSnapshotBranches.test.ts`<br>検査 `src/renderer/__tests__/webShimInputGatesAndSaves.test.ts`<br>検査 `src/renderer/__tests__/deviceStoreWritePolicy.test.ts` |
 | `destructive-ops-have-owner` | **破壊的な操作は「宛先を誰が決めるか」で数える** — 名前がデータ由来でなくても、宛先が環境変数なら守りが要る。rmSync / unlinkSync / 上書きは書き込み先の名前とは別の軸。台帳の ✅ には問いを書く。 | パターン 0-a-20 | 検査 `src/shared/__tests__/notebooklmExportClear.test.ts`<br>検査 `src/main/__tests__/exportSymlinkContainment.test.ts`<br>ゲート `npm run lint:shell` |
 
-### 画面へ出る文言・外へ出る本文 (9)
+### 画面へ出る文言・外へ出る本文 (10)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -252,12 +252,13 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `refuse-dont-truncate` | **外へ書く欄は切らずに断る** — 外へ送る本文を黙って slice しない。天井を超えたら理由を言って送らない。天井は型と長さの上限を持ち (12 家系)、画面の maxLength は関門ではない。 | パス 110 / パス 111 / パス 172 / パス 175 / パス 183 | 検査 `src/shared/__tests__/writeFieldLimits.test.ts`<br>検査 `src/renderer/__tests__/writeBodyCeilingCensus.test.ts` |
 | `egress-notice-before-send` | **外へ送る画面は何を送るかを言う** — AI へ送る 8 画面・全画面のマイクは、何を・どこへ・どれだけ送るかを送る前に言う。断りが送る量を 2 倍に述べていてはならない。**母集団は AI とマイクだけではない** —— 利用者が打った個人データを第三者へ送る経路は他にも在り、実測 (2026-09-21) で `security/check-email-breach` (メールアドレス → Have I Been Pwned) と `security/scan-url` (URL → VirusTotal・投稿された URL は他の利用者が検索できる状態で残る) の 2 本が数えられていなかった。断り自体はよく書けていたが、**HIBP の断りを丸ごと消しても 17,868 件すべて緑**だった (パス 365)。受け手を名前で出すこと・その近くで「送る」と言うこと・**操作子より前に在ること** (押してから知る形にしない) を、実装から導いた母集団に対して要求する。 | パス 106 / パス 107 / パス 108 / パス 186 / パス 365 (AI 以外の第三者送信) | 検査 `src/renderer/pages/__tests__/aiEgressDisclosed.test.ts`<br>検査 `src/renderer/__tests__/aiDataDisclosure.test.ts`<br>検査 `src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts` |
 | `user-facing-claim-held-at-render` | **利用者へ出す約束は、描く所で留める** — 定数の検査は「文言が在る」しか言わない —— 利用者に届くかは**描いているか**で決まる。実測 (2026-09-21): 免責の描画 7 か所を 1 つずつ潰すと **5 か所は 17,883 件すべて緑**のままだった (`StocksPage` / `BusinessPage` の「投資助言ではありません・過去パフォーマンスは将来のリターンを保証しません」・`ShigyoConsole` の ⚖️「法的助言ではない」・`DocstudioPage` の 12 種の書式の紙・`EmotionsPage`)。同じ形は断りの側でも出ており、HIBP の egress の断りを丸ごと消しても全件緑だった (パス 365)。だから**描画を母集団として数え**、助言本体を描くなら免責も描くこと・紙 1 枚につき断り 1 つ、を機械で結ぶ。字面だけで留めると言い換えで黙るので、振る舞いの背骨 (実際に描いて DOM を見る) を 1 本は置く。**免責だけの話ではない** —— 同じ測り方を安全側の断りへ当てると、`EmotionsPage` の**危機のときの相談窓口** (「相談できる窓口（日本）」+ いのちの電話ほか + 厚労省へのボタン) と `SettingsPage` の**立ち退きの警告** (「控えた 24 語では戻せません」・2 か所とも) も、潰して 17,895 件すべて緑だった (パス 367)。判定の側は測られている —— `crisisDeliberation` / `counseling` は `predictCategory` / `detectCrisis` / 窓口の確証を見て、パス 351 は `durability` の判断、パス 353 は `EVICTION_RECOVERY` の表を機械に載せた。**測られていないのは配達の側**である。しかも `settingsProtectionScope` の標本は型が `'file' \| 'persistent'` で、警告が出る `'best-effort'` を構造的に除いていた。 | パス 365 / パス 366 / パス 367 (免責だけでなく危機の窓口と立ち退きの警告も) | 検査 `src/renderer/__tests__/disclaimerRendered.test.ts`<br>検査 `src/renderer/__tests__/safetyNoticeRendered.test.ts`<br>検査 `src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts`<br>検査 `src/renderer/pages/__tests__/aiEgressDisclosed.test.ts` |
+| `blank-states-its-reason` | **空欄は理由を連れて出る・未入力を 0 と刷らない** — `―` は「算定していない」という**主張**である —— 理由が無ければ読み手は入力漏れと区別できない。金融機関等提出用の書面は冒頭の注記で「該当なし・算定不能は「―」」と自分でその規約を宣言し、末尾は「上記のとおり相違ありません。」で代表者名つきで終わる。**行ごとに名指しさせるのは針の誤り** —— 実測 (2026-09-22) で健全な状態でも空欄は 37 行あり、その大半は節の caption (「貸借対照表が未入力のため算定していません。」が 10 行をまとめて説明する) で正しく覆われていた。数えるのは**節**である: 空欄を 1 つでも出す節は caption を持つ。その形にした瞬間、7 状態のうち 6 つで §7「成長性」が鳴った —— `caption: has ? null : …` なので**実績が 1 期でも在れば caption が消え**、4 行が理由なしで `―` のまま並んでいた。**人が読んで見つけた 2 件の外に、機械が 3 件目を出した。**しきい値が複数あるときは**文を値から組む** (前期比は 2 期・売上トレンドは 4 期・前年同月比は前年同月の実績) —— 1 つの数を写すと `computeRevenueTrend` の窓を変えた日に紙が嘘をつく。**そして「入っていない」を 0 と刷らない** —— 空集合の和は算術としては 0 だが、紙の上の「販売記録の合計 = 0」は*売れていない*と読める。§1 は同じ状態を `k.hasData` で `―` にして理由を述べており、§2 だけが同じ問いに別の答えを出していた。判定は**記録の件数そのもの**で書く —— `totalAmount > 0` を写すと返品で合計が 0 になった月を「未入力」と言い始める。空欄を出さない面 (画面の枠を隠す・レポートが行を積まない) に理由は要らない (`silent-but-correct`)。 | パス 387 (書面だけが黙っていた) / パス 388 (理由は出すが原因が違う) / パス 389 (状態 × 面の行列) / パス 395 (節の不変条件が §7 を出した・§2 は未入力を 0 と刷っていた) | 検査 `src/renderer/data/__tests__/blankRowReasonOnSheet.test.ts`<br>検査 `src/renderer/data/__tests__/blankReasonMatrix.test.ts` |
 
 ### 数字の健全性 (5)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
-| `no-zero-fold` | **割れない値を 0 に倒さない** — 平均受注単価 0 円・実効税率 0.0%・勝率 0% は測った結果ではない。「—」か断りへ。母集団 (? … : 0 / ?? 0 / \|\| 0) は生成物で、判断は散文が持つ。 | パス 204 / パス 229 / パス 266 / lint:zero-fold | ゲート `npm run lint:zero-fold`<br>検査 `src/shared/__tests__/zeroFoldCensus.test.ts`<br>検査 `src/shared/__tests__/nonFiniteEntryPoints.test.ts` |
+| `no-zero-fold` | **割れない値を 0 に倒さない** — 平均受注単価 0 円・実効税率 0.0%・勝率 0% は測った結果ではない。「—」か断りへ。母集団 (? … : 0 / ?? 0 / \|\| 0) は生成物で、判断は散文が持つ。**「割れない」と「入っていない」は別の 0 である** —— 後者は倒し込みの綴りを持たないので、この門の母集団に 1 件も現れない。実測 (2026-09-22): 書面 §2 は販売記録が 1 件も無い控えで 売上高（販売記録）= 0・受注件数 = 0件・販売チャネル数 = 0 を**値として**刷っていたが、それは `?? 0` ではなく**空集合の和**なので `lint:zero-fold` には見えない。`sales.ts` の `aov` の docblock は**その表そのもの**を載せており、パス 52 は真ん中の 1 行 (平均受注単価 0円 → ―) だけを直していた。詳しくは `blank-states-its-reason`。 | パス 204 / パス 229 / パス 266 / lint:zero-fold | ゲート `npm run lint:zero-fold`<br>検査 `src/shared/__tests__/zeroFoldCensus.test.ts`<br>検査 `src/shared/__tests__/nonFiniteEntryPoints.test.ts` |
 | `refused-values-make-no-judgement` | **⛔ の値から判定を作らない** — 画面が断っている値 (マイナス・率の天井超・非有限) を判定へ通すと「最も都合のよい答え」が出る。段ごとに断り、⛔ の欄が在れば保存しない。 | パス 206 / パス 209 / パス 210 / パス 214 / パス 216 | 検査 `src/renderer/__tests__/guardedJudgements.test.ts` |
 | `parameters-ledgered-and-wired` | **計算の定数は台帳に登録し、配線し、画面は同じ出所を刷る** — 法定値・参考値・しきい値は parameters.ts の台帳。登録した値は必ず配線し「上書きすると画面が動く」を対照つきで留める。欄と欄の順序・等しくてはならない組も台帳。 | CLAUDE.md Conventions / パス 220 / パス 221 / パス 222 | ゲート `npm run lint:parameter-prose`<br>検査 `src/shared/__tests__/parameters.test.ts`<br>検査 `src/shared/__tests__/parameterConsistency.test.ts`<br>検査 `src/shared/__tests__/parameterReachability.test.ts` |
 | `safety-limits-not-parameters` | **安全上限は台帳に載せない** — timeout / 応答サイズ / PBKDF2 反復 / 入力長は利用者が上書きできる台帳に置かない。名前と理由つきの定数 (梯子) にする。 | CLAUDE.md Conventions / パス 273 | 検査 `src/shared/__tests__/writeFieldLimits.test.ts`<br>検査 `src/shared/__tests__/ontologyLaws.test.ts` |
@@ -302,6 +303,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 94 (機械あり 91 / 散文だけ 3)
+- 法則 95 (機械あり 92 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

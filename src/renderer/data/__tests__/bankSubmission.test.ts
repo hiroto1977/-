@@ -206,14 +206,17 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     expect(m.sections.some((x) => x.title.startsWith('8.'))).toBe(false);
     expect(m.meta.find((x) => x.label === '対象期間')?.value).toBe(BLANK);
   });
-  it('販売: 記録が無ければ単価・主力チャネルは「―」、件数は 0', () => {
+  // ★ 2026-09-22 (パス 395) に反転した。**題名は「件数は 0」と述べていた** ——
+  //   記録が 1 件も無いのに 0 を刷るのは「売れていない」と読める側で、
+  //   §1 は同じ状態を `k.hasData` で `―` にしている (法則 `no-weakness-as-spec`)。
+  it('販売: 記録が無ければ 6 行すべて「―」 (§1 と同じ答え方)', () => {
     const m = buildBankSubmissionSheet(inputWith(overviewWith()));
     const s = section(m.sections, '2.');
-    expect(value(s, '売上高（販売記録）')).toBe('0');
-    expect(value(s, '受注件数')).toBe('0件');
+    expect(value(s, '売上高（販売記録）')).toBe(BLANK);
+    expect(value(s, '受注件数')).toBe(BLANK);
     expect(value(s, '主力チャネル')).toBe(BLANK);
     expect(value(s, '売上分散スコア')).toBe(BLANK);
-    expect(value(s, '販売チャネル数')).toBe('0');
+    expect(value(s, '販売チャネル数')).toBe(BLANK);
   });
   it('人員・生産性: 名数と一人当たり、人件費の率', () => {
     const m = buildBankSubmissionSheet(inputWith(overviewWith()));
@@ -719,10 +722,18 @@ describe('境目の追加検査 (変異検査で残った分岐)', () => {
       '回転日数は実績の令和8年4月・1 か月分（30.4 日）で算定しています。1 年分の回転日数ではありません。',
     );
     expect(section(m.sections, '6.').caption).toBeNull();
-    expect(section(m.sections, '7.').caption).toBeNull();
+    // ★ 2026-09-22 (パス 395) まで §7 も `toBeNull()` だった —— 見本は KPI 1 期なので
+    //   §7 の 4 行は `―` で、**空欄が 4 つ在るのに理由が 0 文**の状態を留めていた。
+    //   しきい値は 3 つとも違う (前期比 2 期・トレンド 4 期・前年同月比は前年同月の実績)。
+    expect(section(m.sections, '7.').caption).toBe(
+      '比べられる期がまだ揃っていないため、前期比売上高成長率・平均成長率（CAGR）・売上トレンドは算定していません（期を追加すると算定します）。'
+      + '前年同月の実績が無いため、前年同月比は算定していません。',
+    );
     // §2 / §3 は**期間**を述べる (見本は KPI 1 か月・販売記録なし)。
-    // 販売記録が 1 件も無い控えでは §2 に述べることが無い。
-    expect(section(m.sections, '2.').caption).toBeNull();
+    // ★ 2026-09-22 (パス 395) まで、ここは `toBeNull()` に
+    //   「販売記録が 1 件も無い控えでは §2 に述べることが無い」と注記していた ——
+    //   **§2 はそのとき 3 行の数値を `0` として刷っていた**ので、述べることは在った。
+    expect(section(m.sections, '2.').caption).toBe('販売記録が未入力のため算定していません。');
     expect(section(m.sections, '3.').caption).toBe(
       '一人当たりの金額と人件費は、実績の令和8年4月・1 か月分の累計を従業員数で割ったものです（年額ではありません）。',
     );
@@ -1360,17 +1371,34 @@ describe('注記 — 手入力の上書きを述べる', () => {
  *
  * パス 52 で「相手に渡る面の『割れないを 0 として刷る』は closed」と書いたが、
  * それは `overview.kpi` と `productivity` の話で、**`sales` は別の値だった**。
+ *
+ * ## ★ 2026-09-22 (パス 395): この検査は残りの半分を仕様として留めていた
+ *
+ * 上の docblock は「1 つの節に答え方が 2 通り並んでいた」と正しく述べているのに、
+ * 直した後の主張は **`売上高（販売記録）= '0'` / `受注件数 = '0件'`** で、
+ * つまり**答え方は 2 通りのまま**だった (空欄 3・0 が 2)。題名の括弧
+ * 「額と比率を分ける」がその分け方を正当化していたが、**受注件数は比率ではなく件数**で、
+ * **主力チャネルは額でも比率でもない**のに空欄である —— 述べた規則は、
+ * 自分が主張している物を説明していなかった。
+ *
+ * そして 0 の側のほうが重い: 空欄は「出せなかった」と読めるが、
+ * 紙の上の「販売記録の合計 = 0」は***売れていない*という事業についての主張**として読める。
+ * §1 は同じ状態を `k.hasData` で `―` にして理由を述べ、紙の冒頭の注記自身が
+ * 「該当なし・算定不能は「―」」と規約を宣言していた —— §2 だけが破っていた。
+ * 法則 `no-weakness-as-spec` / `blank-states-its-reason`。
  */
-describe('§2 平均受注単価 — 割れないものを 0 円として刷らない', () => {
-  it('★ 販売記録が無ければ ―、売上高と受注件数は 0 のまま (額と比率を分ける)', () => {
+describe('§2 — 割れないものも、入っていないものも 0 として刷らない', () => {
+  it('★ 販売記録が無ければ 6 行すべて ― で、理由を述べる', () => {
     const o = overviewWith({ sales: [] });
-    const s2 = section(buildBankSubmissionSheet(inputWith(o)).sections, '2.');
-    expect(value(s2, '売上高（販売記録）')).toBe('0');
-    expect(value(s2, '受注件数')).toBe('0件');
+    const m = buildBankSubmissionSheet(inputWith(o));
+    const s2 = section(m.sections, '2.');
+    expect(value(s2, '売上高（販売記録）')).toBe(BLANK);
+    expect(value(s2, '受注件数')).toBe(BLANK);
     expect(value(s2, '平均受注単価')).toBe(BLANK);
     // 同じ節の他の「算定不能」と答え方が揃っていること
     expect(value(s2, '主力チャネル')).toBe(BLANK);
     expect(value(s2, '売上分散スコア')).toBe(BLANK);
+    expect(s2.caption).toContain('販売記録が未入力のため算定していません');
   });
 
   it('★ 対照: 販売記録が在れば平均受注単価は円で出る', () => {

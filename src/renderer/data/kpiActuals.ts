@@ -423,8 +423,76 @@ export function computeLaborMetrics(
  * (同じ数字を刷る面が 2 つあるなら断り書きも 2 つ要る — パス 50 の教訓)。
  */
 export function zeroRevenueRatioNote(): string {
-  return '対象期間の売上高が 0 のため、売上高を分母とする比率（売上総利益率・営業利益率・EBITDA マージン・売上原価率・広告宣伝費率・販売費及び一般管理費率・限界利益率・安全余裕率）は算定していません。';
+  return (
+    '対象期間の売上高が 0 のため、売上高を分母とする比率（売上総利益率・営業利益率・EBITDA マージン・売上原価率・広告宣伝費率・販売費及び一般管理費率・限界利益率・安全余裕率）は算定していません。' +
+    // ★ 2026-09-22 (パス 395) に足した 1 文。**この文は空欄を列挙するので、
+    // 列挙から漏れた 1 つは「別の理由で空」と読める。** 実測 (売上 0 / 販管費 30 万で
+    // 書面を組む) では §1 の空欄は 9 行で、上の括弧が名指しするのは 8 行 ——
+    // 漏れていたのは `損益分岐点売上高` で、**限界利益率と安全余裕率の間に挟まった 1 行**
+    // だった。同じ状態を画面は `ZERO_REVENUE_BEP_REASON` で 3 つとも名指しし、
+    // 限界利益 ≤ 0 の側は `noBepSheetNote` が損益分岐点売上高を名指しする ——
+    // **売上 0 のときだけ、この 1 行が紙の上で説明を持たなかった。**
+    //
+    // 比率の括弧には入れない —— 損益分岐点売上高は**比率ではなく金額**なので、
+    // 「売上高を分母とする比率（…）」の列挙に混ぜると種類として誤りになる。
+    // 別の文にして、**上で空と述べた限界利益率から導く** (割るべき率が無い)。
+    '損益分岐点売上高（固定費 ÷ 限界利益率）も、限界利益率が算定できないため算定していません。'
+  );
 }
+
+/**
+ * **成長性の欄が空になる理由の一文** (2026-09-22 · パス 395)。
+ *
+ * 書面 §7「成長性」は 2026-09-22 まで `caption: has ? null : 'KPI 実績が未入力…'`
+ * だったので、**実績が 1 期でも在れば caption は null** になり、
+ * 4 行が理由なしで `―` のまま並んでいた。実測 (状態 7 通りで書面を組む) では
+ * §7 は **7 状態のうち 6 つで「空欄が在るのに caption が無い」唯一の節**だった ——
+ * 唯一の例外は実績 0 件のとき (そのときだけ上の枝が働く)。
+ *
+ * ## 3 つのしきい値が別々である (実測 2026-09-22)
+ *
+ * | 期の数 | 前期比 / CAGR | 売上トレンド | 前年同月比 |
+ * | ---: | --- | --- | --- |
+ * | 1 | ― | ― | ― |
+ * | 2〜3 | 算定 | ― | ― |
+ * | 4〜12 | 算定 | 算定 | ― |
+ * | 13 | 算定 | 算定 | 算定 |
+ *
+ * トレンドは移動平均なので `window + 1` 期 (既定 4)、前年同月比は
+ * **前年同月の実績そのもの**が要る。だから 1 つの数 (「2 期以上」等) では
+ * 説明できない —— **文はしきい値を写さず、値から組む**。写すと
+ * `computeRevenueTrend` の窓を変えた日に紙が嘘をつく。
+ *
+ * ## 画面とレポートは正しく黙っている (実測)
+ *
+ * 画面は成長の枠を `revenueGrowthPct !== null || revenueCagrPct !== null` で
+ * 丸ごと隠し、前年同月比のタイルは `yoy &&` で隠す。レポートは
+ * `if (k.revenueGrowthPct !== null)` の行だけを積む。**空欄を出さない面に
+ * 理由は要らない** (パス 388 の `silent-but-correct`)。空欄を出すのは書面だけで、
+ * その書面だけが黙っていた —— パス 387 とまったく同じ向きである。
+ */
+export function growthBlankSheetNote(m: {
+  readonly revenueGrowthPct: number | null;
+  readonly revenueCagrPct: number | null;
+  readonly revenueTrend: RevenueTrend;
+  readonly yoy: YoYComparison | null;
+}): string | null {
+  const needPeriods: string[] = [];
+  if (m.revenueGrowthPct === null) needPeriods.push('前期比売上高成長率');
+  if (m.revenueCagrPct === null) needPeriods.push('平均成長率（CAGR）');
+  if (m.revenueTrend === null) needPeriods.push('売上トレンド');
+  const parts: string[] = [];
+  if (needPeriods.length > 0) {
+    parts.push(`比べられる期がまだ揃っていないため、${needPeriods.join('・')}は算定していません（期を追加すると算定します）。`);
+  }
+  // 書面の行は `yoy === null ? BLANK : pct(yoy.revenueYoYPct)` で、`pct(null)` も
+  // 空欄になる (パス 229) —— **空欄になる条件のほうを写す**。
+  if (m.yoy === null || m.yoy.revenueYoYPct === null) {
+    parts.push('前年同月の実績が無いため、前年同月比は算定していません。');
+  }
+  return parts.length === 0 ? null : parts.join('');
+}
+
 
 /**
  * **損益分岐点が存在しないために欄が空になる理由の一文** (2026-09-22 · パス 387)。

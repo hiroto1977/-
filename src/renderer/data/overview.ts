@@ -128,6 +128,16 @@ export interface HydroponicsOverview {
 export interface BusinessOverview {
   readonly plan: { tier: PlanTier; label: string; audience: string };
   readonly sales: {
+    /**
+     * 販売記録が 1 件でも在るか。**`false` のとき下の合計・件数は「値」ではない**
+     * (空集合の和・空集合の要素数) —— 刷る面はそれを `―` にして理由を述べる
+     * (`noSalesRecordsSheetNote` / `noSalesRecordsNote`・パス 395)。
+     *
+     * `kpi.hasData` と同じ役目。§1 は 2026-09 からこれを持っていたのに §2 には
+     * 無かったので、同じ紙が同じ問い (「入力が無いときに 0 と刷るか」) に
+     * 2 通り答えていた。
+     */
+    hasData: boolean;
     totalAmount: number;
     totalOrders: number;
     /** 平均受注単価。**注文が 0 件なら null** (経緯は `sales.ts` の同名の欄)。 */
@@ -371,6 +381,9 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   return {
     plan: { tier: planDef.id, label: planDef.label, audience: planDef.audience },
     sales: {
+      // **記録の件数そのもので測る** —— `totalAmount > 0` を写すと、返品で
+      // 合計が 0 になった月を「未入力」と言い始める (条件は値そのもので書く)。
+      hasData: input.sales.length > 0,
       totalAmount: salesSummary.totalAmount,
       totalOrders: salesSummary.totalOrders,
       aov: salesSummary.aov,

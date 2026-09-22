@@ -18,9 +18,9 @@ import { isCalendarMonth } from '../../shared/isoDate';
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
-import { duplicateActualsSheetNote, isValidPeriod, noBepSheetNote, unreadablePeriodSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
+import { duplicateActualsSheetNote, growthBlankSheetNote, isValidPeriod, noBepSheetNote, unreadablePeriodSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import { duplicateMembersSheetNote } from './members';
-import { duplicateOrdersSheetNote } from './sales';
+import { duplicateOrdersSheetNote, noSalesRecordsSheetNote } from './sales';
 import { dealIntakeSheetNote } from '../../shared/freeeIntake';
 import {
   BANK_FORMAT_DEFAULT,
@@ -390,11 +390,20 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   };
   // 同じ注文名の重複 (パス 126) は期間の断りの後に続ける (相手に渡る面は画面の警告と同じ事実を述べる)。
   const salesScopeCaption = (): string | null => {
-    const parts = [salesScopeBase(), duplicateOrdersSheetNote(o.sales.duplicateOrders)].filter((s): s is string => s !== null);
+    // **狭い理由より広い理由を先に述べる** —— 記録が 1 件も無ければこの節は
+    // 丸ごと空欄なので、そちらを言う (§3 の `perCapitaBase` と同じ向き)。
+    // そのとき期間も重複も在り得ないので、下の 2 つは必ず null になる。
+    const parts = [
+      noSalesRecordsSheetNote(o.sales.hasData),
+      salesScopeBase(),
+      duplicateOrdersSheetNote(o.sales.duplicateOrders),
+    ].filter((s): s is string => s !== null);
     return parts.length === 0 ? null : parts.join('');
   };
 
   const conc = o.sales.concentration;
+  /** §2 の数値。**§1 の `kv` と同じ役目** —— 入力が無ければ値を刷らない。 */
+  const sv = (n: number, fmt: (x: number) => string): string => (o.sales.hasData ? fmt(n) : BLANK);
   sections.push({
     title: '2. 販売の状況',
     // **§1 と §2 は別の入力から来た別の期間の売上高である。** §1 は KPI 実績の
@@ -403,10 +412,14 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     // 12,000 千円 と 36,000 千円 が並んだまま理由が読めなかった (実測)。
     caption: salesScopeCaption(),
     rows: [
-      row('売上高（販売記録）', amt(o.sales.totalAmount), '販売記録の合計'),
-      row('受注件数', formatCount(o.sales.totalOrders, f, '件')),
+      // **記録が 1 件も無ければ「値」ではないので刷らない** (パス 395)。空集合の和は
+      // 算術としては 0 だが、紙の上の「販売記録の合計 = 0」は*売れていない*と読める ——
+      // §1 の売上高が `k.hasData` で同じ答え方をしており、紙の冒頭の注記自身が
+      // 「該当なし・算定不能は「―」」と規約を宣言している。
+      row('売上高（販売記録）', sv(o.sales.totalAmount, amt), '販売記録の合計'),
+      row('受注件数', sv(o.sales.totalOrders, (n) => formatCount(n, f, '件'))),
       row('平均受注単価', yenAmt(o.sales.aov), '売上高 ÷ 受注件数'),
-      row('販売チャネル数', formatCount(o.sales.channelCount, f)),
+      row('販売チャネル数', sv(o.sales.channelCount, (n) => formatCount(n, f))),
       row(
         '主力チャネル',
         o.sales.topChannel === null ? BLANK : o.sales.topChannel,
@@ -588,7 +601,11 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   const yoy = k.yoy;
   sections.push({
     title: '7. 成長性',
-    caption: has ? null : 'KPI 実績が未入力のため算定していません。',
+    // ★ 2026-09-22 (パス 395) まで `has ? null : …` だったので、**実績が 1 期でも
+    //   在れば caption は null** になり 4 行が理由なしで `―` のまま並んでいた。
+    //   しきい値は 3 つとも違う (前期比 2 期・トレンド 4 期・前年同月比は前年同月の
+    //   実績) ので、文は**値から組む** (`growthBlankSheetNote` に実測表)。
+    caption: has ? growthBlankSheetNote(k) : 'KPI 実績が未入力のため算定していません。',
     rows: [
       row('前期比売上高成長率', kp(k.revenueGrowthPct), '直近期 ÷ 前期 − 1'),
       row('平均成長率（CAGR）', kp(k.revenueCagrPct), '1 期あたり'),
