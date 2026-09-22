@@ -22,6 +22,7 @@ import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import {
   KPI_ACTUALS_COLLECTION,
   bepDisplay,
+  duplicateActualsOverviewNote,
   type BepInputs,
   monthlyTrendSeries,
   summarizeFundamentals,
@@ -819,6 +820,16 @@ export function OverviewPage() {
   );
   const overview = applied.overview;
 
+  /**
+   * 同じ期・事業の重複 (合算されている) の断り。**上書き後の `overview` から読む** ——
+   * 重複の検出は `buildBusinessOverview` が既に済ませて `kpi.duplicateActuals` に
+   * 載せており、画面はそれを描くだけである (判断を `.tsx` に書かない)。
+   */
+  const duplicateActualsNote = useMemo(
+    () => duplicateActualsOverviewNote(overview.kpi.duplicateActuals),
+    [overview.kpi.duplicateActuals],
+  );
+
   // 経営スコアカード — 組み替えは `data/overviewScorecard.ts` が持つ。
   // **画面の中に算術と条件を書かない** —— `.tsx` は変異検査の対象外なので、
   // ここに書いた判断はずれても誰も気付けない (実際 1 件ずれていた。経緯は同モジュール)。
@@ -1224,6 +1235,20 @@ export function OverviewPage() {
         </div>
 
         <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>収益性 (KPI)</div>
+        {/* **数字より先に読ませる** —— 同じ期・事業が 2 件以上入っていると、この画面の
+            金額はその合算値になる。書面とレポートは 2026-09 から述べていたのに、
+            経営サマリーは黙って倍の金額を刷っていた (パス 390 で実測: 同じ行を 2 件
+            入れると `revenue` が 1,000,000 → 2,000,000 になり、画面は何も言わない)。
+            **空欄は読み手が気付くが、倍になった金額は正しく見える。** */}
+        {duplicateActualsNote !== null && (
+          <p
+            role="alert"
+            data-duplicate-actuals
+            style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, margin: '0 0 8px' }}
+          >
+            {duplicateActualsNote}
+          </p>
+        )}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           {overview.kpi.hasData ? (
             <>

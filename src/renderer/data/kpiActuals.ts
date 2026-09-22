@@ -822,6 +822,38 @@ export function duplicateActualsNote(kind: ActualKind, groups: readonly Duplicat
   return `同じ期・事業の${kind}が ${groups.length} 組重複しており、合算されています（${listGroups(groups)}）。一覧の × で余分な行を消してください。`;
 }
 
+/**
+ * **経営サマリーの但し書き** (2026-09-22 · パス 390)。無ければ null。
+ *
+ * ## なぜ 3 つ目の文が要るのか
+ *
+ * 同じ事実 (同じ期・事業が 2 件以上入っていて金額が合算されている) を、面ごとに
+ * 言い方を変える必要がある —— **読み手が次に何をできるかが面ごとに違う**:
+ *
+ * | 面 | 文 | 直し方の案内 |
+ * | --- | --- | --- |
+ * | KPI 実績の画面 | `duplicateActualsNote` | **一覧の × で消せる** (一覧がその画面に在る) |
+ * | 書面 / レポート | `duplicateActualsSheetNote` | 「本表の金額は合算値」(**表**なのでそう呼べる) |
+ * | 経営サマリー | ここ | **一覧が無い**ので、どの画面で消すかを指さす |
+ *
+ * KPI 画面の文をそのまま出すと「一覧の ×」が**この画面に無い物**を指し、書面の文を
+ * そのまま出すと「本表」が表でない物を指す。だから 3 つ目を置く。
+ *
+ * ## なぜ経営サマリーに要るのか (実測)
+ *
+ * 2026-09-22 に同じ (期, 事業) を 2 件入れて実測すると、`duplicateActuals` は
+ * **1 組を検出しており** (`overview.kpi.duplicateActuals.length === 1`)、
+ * `overview.kpi.revenue` は **2,000,000** (1 件なら 1,000,000) になった。
+ * 書面とレポートはその旨を述べるのに、**経営サマリーは ￥2,000,000 を黙って刷っていた。**
+ *
+ * これは空欄より重い —— **空欄は読み手が気付くが、倍になった金額は正しく見える。**
+ * 経営サマリーは「経営概況がまとまって表示されます」と自ら名乗る面である。
+ */
+export function duplicateActualsOverviewNote(groups: readonly DuplicateActualGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `同じ期・事業の実績が ${groups.length} 組重複しており（${listGroups(groups)}）、この画面の金額はその合算値です。「KPI 実績」の画面で余分な行を消してください。`;
+}
+
 /** 書面 §1 と経営レポートの但し書き (**相手に渡る面**)。無ければ null。 */
 export function duplicateActualsSheetNote(groups: readonly DuplicateActualGroup[]): string | null {
   if (groups.length === 0) return null;

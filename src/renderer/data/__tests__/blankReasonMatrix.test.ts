@@ -70,6 +70,15 @@ const ZERO_REVENUE: KpiActual = {
   revenue: 0, cogs: 0, advertising: 0, sga: 300_000, depreciation: 0,
 };
 
+/**
+ * **同じ (期, 事業) が 2 件** —— 利用者が二重に入力した形。欄は空にならず、
+ * **金額が合算されて倍になる**。空欄より重い: 空欄は気付くが、倍の金額は正しく見える。
+ */
+const DUPLICATE_ACTUALS: readonly KpiActual[] = [
+  { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
+  { period: '2026-08', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 200_000, depreciation: 0 },
+];
+
 type Surface = 'screen-overview' | 'screen-kpi' | 'report' | 'sheet';
 
 type Cell =
@@ -82,7 +91,8 @@ type Cell =
 
 interface Row {
   readonly state: string;
-  readonly kpi: KpiActual;
+  /** この状態を作る KPI 実績 (複数行の状態も在る)。 */
+  readonly rows: readonly KpiActual[];
   readonly members: number;
   readonly cells: readonly Cell[];
   readonly why: string;
@@ -91,7 +101,7 @@ interface Row {
 const MATRIX: readonly Row[] = [
   {
     state: 'contribution-le-0',
-    kpi: CONTRIBUTION_LE_0,
+    rows: [CONTRIBUTION_LE_0],
     members: 1,
     why: '限界利益 ≤ 0。どれだけ売っても固定費を回収できない —— 事業として最も重い状態で、損益分岐点と安全余裕率が空になる (パス 386 / 387)',
     cells: [
@@ -107,7 +117,7 @@ const MATRIX: readonly Row[] = [
   },
   {
     state: 'zero-revenue',
-    kpi: ZERO_REVENUE,
+    rows: [ZERO_REVENUE],
     members: 1,
     why: '売上 0 で費用だけ。比率と損益分岐点が空になるが、原因は「限界利益 ≤ 0」ではなく「売上がまだ無い」 —— パス 388 で画面がここを取り違えていた',
     cells: [
@@ -122,7 +132,7 @@ const MATRIX: readonly Row[] = [
   },
   {
     state: 'no-members',
-    kpi: CONTRIBUTION_LE_0,
+    rows: [CONTRIBUTION_LE_0],
     members: 0,
     why: '従業員 0 名。一人当たりの 3 行が空になる —— ただし空欄を出すのは書面だけで、画面とレポートは枠ごと出さない (実測・パス 388)',
     cells: [
@@ -135,6 +145,21 @@ const MATRIX: readonly Row[] = [
         surface: 'screen-overview', kind: 'silent-but-correct', absent: '一人当たり売上',
         why: '画面は「生産性 (一人当たり)」の枠を `revenuePerCapita !== null` で丸ごと隠す。空欄が無いので理由も要らない',
       },
+    ],
+  },
+  {
+    state: 'duplicate-actuals',
+    rows: DUPLICATE_ACTUALS,
+    members: 1,
+    why: '同じ (期, 事業) が 2 件 —— 欄は空にならず**金額が合算されて倍になる**。実測で `revenue` が 1,000,000 → 2,000,000 になり、書面とレポートは述べるのに経営サマリーだけが黙って倍の金額を刷っていた (パス 390)',
+    cells: [
+      { surface: 'screen-overview', kind: 'reason', contains: 'この画面の金額はその合算値です' },
+      { surface: 'screen-kpi', kind: 'reason', contains: '合算されています' },
+      { surface: 'report', kind: 'reason', contains: '本表の金額はその合算値です' },
+      { surface: 'sheet', kind: 'reason', contains: '本表の金額はその合算値です' },
+      // ★ 面ごとに直し方の案内が違う —— 経営サマリーには一覧が無いので
+      //   「一覧の ×」と言ってはいけない (その画面に無い物を指す)。
+      { surface: 'screen-overview', kind: 'wrong-reason-would-be', forbidden: '一覧の × で余分な行を消してください' },
     ],
   },
 ];
@@ -176,7 +201,7 @@ async function renderScreen(which: 'screen-overview' | 'screen-kpi', waitFor: st
 function overviewFor(row: Row): BusinessOverview {
   const members = Array.from({ length: row.members }, () => ({ role: 'member' }));
   return buildBusinessOverview({
-    plan: 'pro', sales: [], kpiActuals: [row.kpi], members: members as never,
+    plan: 'pro', sales: [], kpiActuals: [...row.rows], members: members as never,
   });
 }
 
@@ -294,7 +319,7 @@ describe.each(MATRIX.map((r) => [r.state, r] as const))(
     it('★ 経営サマリーの画面', async () => {
       const mine = cells('screen-overview');
       if (mine.length === 0) return;
-      await getRecordStore().insert(KPI_ACTUALS_COLLECTION, row.kpi);
+      for (const r of row.rows) await getRecordStore().insert(KPI_ACTUALS_COLLECTION, r);
       // 錠は**その状態でだけ出る文** —— 肯定の cell が在ればそれ、無ければ
       // 「この状態でも必ず描かれる物」(損益分岐点のタイル) を待つ。
       const positive = mine.find((c) => c.kind === 'reason');
@@ -312,7 +337,7 @@ describe.each(MATRIX.map((r) => [r.state, r] as const))(
     it('★ KPI 実績の画面', async () => {
       const mine = cells('screen-kpi');
       if (mine.length === 0) return;
-      await getRecordStore().insert(KPI_ACTUALS_COLLECTION, row.kpi);
+      for (const r of row.rows) await getRecordStore().insert(KPI_ACTUALS_COLLECTION, r);
       const positive = mine.find((c) => c.kind === 'reason');
       const t = await renderScreen(
         'screen-kpi',
