@@ -1,5 +1,6 @@
 import { jsonFetch, type FetchContext } from './types';
 import { NO_DEAL_INTAKE, type FreeeDealIntake } from '../../shared/freeeIntake';
+import { isoMonthOf } from '../../shared/isoDate';
 
 /**
  * freee 会計 API 連携クライアント (実 API)。
@@ -93,8 +94,33 @@ export function aggregateDeals(deals: readonly FreeeDeal[]): FreeeDealAggregate 
   let skippedBadAmount = 0;
   let clampedNegative = 0;
   for (const d of deals) {
-    const month = (d.issue_date ?? '').slice(0, 7);
-    if (month.length !== 7) {
+    /*
+     * **取引日は「暦に在る日か」で検める** (2026-09-22 · パス 394)。
+     *
+     * ここは 2026-09-22 まで `(d.issue_date ?? '').slice(0, 7)` を
+     * **長さ 7 だけ**で検めていた。`issue_date` は freee API の応答で、
+     * `jsonFetch` は `JSON.parse(...) as T` なので形が保証されない ——
+     * すぐ下の `amount` を `Number.isFinite` で検めているのと同じ理由である。
+     * **月だけが検められていなかった。**
+     *
+     * 実測 (2026-09-22 · 直す前):
+     *   `'abcdefg'`     → 月キー `'abcdefg'` になり `skippedNoDate` は **0**
+     *   `'9999-13-01'`  → 月キー `'9999-13'`
+     *   `20250615` (数) → `.slice` が無く **TypeError** —— 1 件で全月が落ちる
+     *
+     * `latestMonth` は綴りの最大で決まる (`renderer/data/accounting.ts` の
+     * 「最新月は**綴りで**決める」) ので `'abcdefg'` が「最新月」になり、
+     * **金融機関等提出用の書面**が会計連携の対象期間としてそれを刷る
+     * (`bankSubmission.ts`)・経営レポート・画面の Tile・鮮度の判定
+     * (`accountingRecency`) にも入る。
+     *
+     * `skippedNoDate` の名前 (「取引日が読めない取引」) は元から正しく、
+     * `shared/freeeIntake.ts` も「`issue_date` が **`YYYY-MM` として読めない**
+     * 取引を外す」と述べていた —— **検めの側が名前と散文に追いついていなかった**。
+     * 判定は共有の 1 つ (`isoMonthOf` → `parseIsoDate`) を通し、月は**切らずに作る**。
+     */
+    const month = isoMonthOf(d.issue_date);
+    if (month === null) {
       // 取引日が読めない取引は集計から外す。**外したことを数える** ——
       // 数えないと「この月は取引が無かった」と区別が付かない。
       skippedNoDate += 1;

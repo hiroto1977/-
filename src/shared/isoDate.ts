@@ -129,6 +129,27 @@ export function isCalendarDateOrMonth(v: unknown): v is string {
   return typeof v === 'string' && parseIsoDate(v) !== null;
 }
 
+/**
+ * 日付の綴りから**月 (`YYYY-MM`)** を作る。暦に無い日・文字列以外は `null`
+ * (2026-09-22 · パス 394)。
+ *
+ * **`slice(0, 7)` で切らない。** このファイルは下の `isoDateFromTimestamp` で
+ * 既に「**`slice(0, 10)` では切る位置がずれる**」と述べ、
+ * `balanceSheetFreshness.ts` も「月の文字列は**一致した部分から作る**」と
+ * 述べている —— それでも `main/clients/freee.ts` が第三者 (freee API) の
+ * `issue_date` を `(d.issue_date ?? '').slice(0, 7)` で切り、**長さ 7 だけ**で
+ * 月キーにしていた。実測: `'abcdefg'` がそのまま月になり、`'9999-13-01'` も通る。
+ *
+ * `parseIsoDate` は `String(iso)` で読むので配列 `['2026-01-31']` を通す
+ * (同関数の注記どおり) —— ここは**型も見る**。
+ */
+export function isoMonthOf(v: unknown): string | null {
+  if (typeof v !== 'string') return null;
+  const d = parseIsoDate(v);
+  if (d === null) return null;
+  return `${String(d.year).padStart(4, '0')}-${String(d.month).padStart(2, '0')}`;
+}
+
 /** 断りの文面 (欄の名前を受ける)。両ビルドと画面が同じ 1 つを読む。 */
 export function calendarDateMessage(label: string): string {
   return `${label} は暦に在る日付 (YYYY-MM-DD) で入力してください`;

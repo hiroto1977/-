@@ -49,9 +49,21 @@ describe('aggregateDealsByMonth', () => {
     expect(aggregateDealsByMonth([])).toEqual([]);
   });
 
-  it('skips a deal with a missing issue_date (?? "" fallback → length 0 skip)', () => {
-    // issue_date 欠落時の `?? ''` を別文字列にする mutant は "Stryker"(len7) を月扱いして
-    // しまうため、欠落取引が出力に出ないことを確認して撃墜。
+  it('skips a deal with a missing issue_date', () => {
+    /*
+     * ★ **この注記は 2026-09-22 (パス 394) に書き直した。**
+     *
+     * 元の題名と注記は「`?? ""` fallback → length 0 skip」で、
+     * 「`issue_date` 欠落時の `?? ''` を別文字列にする mutant は
+     * `"Stryker"`(len7) を月扱いしてしまう」と述べていた ——
+     * **その「月扱いしてしまう」が欠陥そのものだった** (長さ 7 なら何でも
+     * 月キーになる)。検査は弱さを利用して mutant を撃墜していた。
+     *
+     * パス 394 で `isoMonthOf` (暦を見る・型も見る) に替えたので `?? ''` は
+     * もう無く、その mutant も無い。**主張は変えていない** ——
+     * 取引日の無い取引が出力に出ないこと。長さ 7 の紛れ物を月扱いしないことは
+     * `freeeIssueDateShape.test.ts` が別に見る。
+     */
     const rows = aggregateDealsByMonth([
       { id: 1, type: 'income', issue_date: undefined as unknown as string, amount: 5000 },
       { id: 2, type: 'income', issue_date: '2026-05-10', amount: 1000 },
