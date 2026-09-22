@@ -19,7 +19,13 @@ import {
 import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
-import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
+import {
+  KPI_ACTUALS_COLLECTION,
+  bepDisplay,
+  monthlyTrendSeries,
+  summarizeFundamentals,
+  type KpiActual,
+} from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
 import { budgetComparedRangeLabel, budgetScopeSentence, KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { periodDaysForMonths } from '../data/workingCapital';
@@ -129,9 +135,15 @@ const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) :
  *
  * | タイル | 刷っていた物 | 理由の説明 |
  * | --- | --- | --- |
- * | 損益分岐点 (BEP) | `∞` (`safeYen` — パス 198 で「—」に直した) | 無し |
+ * | 損益分岐点 (BEP) | `∞` | 無し |
  * | **損益分岐点売上高 (月)** | **`￥∞`** (生の `yen.format`) | 無し |
  * | 損益分岐の出荷株数 (月) | `—` | **有り** (同じ行の 1 つ左) |
+ *
+ * ★ **この表は 2026-09-21 (パス 386) まで 1 行目に「(`safeYen` — パス 198 で「—」に
+ * 直した)」と書いていたが、それは偽だった** —— `KpiPage.tsx` の `safeYen` は
+ * その日の実測でまだ `'∞'` を返しており、KPI 画面の BEP タイルは `∞` / 「比率 ∞」を
+ * 理由なしで刷っていた (**散文が先に直り、コードが残っていた**)。判定は
+ * `data/kpiActuals.ts` の `bepDisplay` へ寄せ、両画面がそれを読む。
  *
  * `￥∞` は**金額として読める形**で、しかも ∞ は「無限に安全」と読み違えられる ——
  * 実際は正反対である。**規準は隣のタイルに在った**: 同じ限界利益 ≤ 0 を
@@ -142,9 +154,10 @@ const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) :
  * **値と理由は 1 つの判定から返す。** 別々に書くと「— なのに理由が出ない」
  * 「数が出ているのに理由が付く」形が型の上で開く (パス 57 と同じ轍)。
  */
-const NO_BEP_REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
-const bepDisplay = (bep: number): { value: string; sub?: string } =>
-  Number.isFinite(bep) ? { value: yen.format(Math.round(bep)) } : { value: '—', sub: NO_BEP_REASON };
+// 判定 (値と理由) は `data/kpiActuals.ts` の `bepDisplay` が 1 つ持つ。
+// **整形だけをこの画面が渡す** —— 金額の綴りは画面ごとに違う (パス 386)。
+const bepTile = (bep: number): { value: string; sub?: string } =>
+  bepDisplay(bep, (n) => yen.format(n));
 /**
  * 小数第 1 位の比率。算定不能 (null) は「—」 —— **`0.0%` は「その比率が 0 である」
  * という主張**であり、「割れない」とは別のこと (経緯は `data/overview.ts` の
@@ -1228,7 +1241,7 @@ export function OverviewPage() {
                 sub={`償却前営業利益・マージン ${pct1OrDash(overview.kpi.ebitdaMarginPct)}`}
               />
               <Tile label="限界利益率" value={pct1OrDash(overview.kpi.contributionRatio)} sub="高いほど固定費を回収しやすい" />
-              <Tile label="損益分岐点 (BEP)" {...bepDisplay(overview.kpi.bep)} />
+              <Tile label="損益分岐点 (BEP)" {...bepTile(overview.kpi.bep)} />
               <Tile
                 label="安全余裕率"
                 value={pct1OrDash(overview.kpi.safetyMargin)}
@@ -1559,7 +1572,7 @@ export function OverviewPage() {
                       : `現在の出荷は ${num.format(overview.hydroponics.shippedPlantsPerMonth)} 株。単価か歩留まりを上げるか、固定費を下げる必要があります。`
                 }
               />
-              <Tile label="損益分岐点売上高 (月)" {...bepDisplay(overview.hydroponics.bep)} />
+              <Tile label="損益分岐点売上高 (月)" {...bepTile(overview.hydroponics.bep)} />
               <Tile label="限界利益率" value={pct1OrDash(overview.hydroponics.contributionRatio)} />
             </div>
 

@@ -14,6 +14,7 @@ import {
   parseKpiActual,
   summarizeFundamentals,
   computeKpiMetrics,
+  bepDisplay,
   finiteBep,
   noBreakEvenNote,
   duplicateActualMessage,
@@ -24,6 +25,7 @@ import {
   hasSamePeriodUnit,
   type KpiActual,
 } from '../data/kpiActuals';
+import { DASH } from '../../shared/formatters';
 import { SALES_COLLECTION, readableSalesRows, unreadableSalesDateNote, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
@@ -64,14 +66,30 @@ export type Kpi = Unit['kpi'];
 export type Fund = Unit['fundamentals'];
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
-const pct = (n: number) => (Number.isFinite(n) ? n.toFixed(1) + '%' : '∞');
-const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(n) : '∞');
 /**
- * 算定不能 (`null`) は「—」。**`pct` の '∞' に倒さない** —— 安全余裕率に ∞ を
- * 出すと「無限に安全」と読めるが、`null` になるのは限界利益が 0 以下で
- * 損益分岐点が存在しないとき、つまり最も危ない側である。
+ * **非有限は `—`。** 2026-09-21 (パス 386) まで、この 2 つは `'∞'` へ倒していた ——
+ * `∞` は「無限に安全」と読めるが、非有限になるのは**限界利益が 0 以下で損益分岐点が
+ * 存在しないとき**、つまり最も危ない側である。実測では BEP のタイルが
+ * `∞` / 「比率 ∞」を**理由なしで**刷り、同じ状態を経営サマリーは
+ * 「—」+ 理由で答えていた (`data/kpiActuals.ts` の `bepDisplay` に経緯)。
+ *
+ * **床は `shared/formatters.ts` の `pct` / `jpy` に最初から在った** (パス 198 / 229) ——
+ * ここが局所の双子を持っていたので、その床が掛からなかった。金額の綴りだけは
+ * 画面ごとに違う (`Intl` の `￥` と `jpy` の `¥`) ので `yen` は残す。
+ *
+ * ★ **この 2 行を `'∞'` へ戻す対照は鳴らない (実測)。** BEP のタイルは
+ * `bepDisplay` を通るようになったので、**今日この 2 つに非有限が届く呼び手は 1 つも無い**
+ * (実測: `safeYen` の 10 か所のうち残り 8 つは売上・純資産・運転資本などの有限な和、
+ * `pct` の残る呼び手は `pctOrDash` 経由で `null` を先に落とす)。
+ * つまりこの床は**罠を外した**もので、生きた欠陥を直した物ではない ——
+ * それでも残すのは、金融の画面に「非有限なら ∞ と刷る」既定を置いたままにすると、
+ * 次に非有限が届く呼び手が 1 つ増えた日に黙って `∞` が出るからである
+ * (法則 `no-weakness-as-spec`)。**鳴らない対照は合格ではなく報せである。**
  */
-const pctOrDash = (n: number | null) => (n === null ? '—' : pct(n));
+const pct = (n: number) => (Number.isFinite(n) ? n.toFixed(1) + '%' : DASH);
+const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(n) : DASH);
+/** 算定不能 (`null`) は「—」。非有限も `pct` が同じ `—` へ倒す。 */
+const pctOrDash = (n: number | null) => (n === null ? DASH : pct(n));
 
 const COLORS = {
   revenue: 'var(--success)',
@@ -553,7 +571,7 @@ function ActualsPanel() {
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
             <Tile label="実績合計 売上高" value={safeYen(fundamentals.revenue)} />
-            <Tile label="損益分岐点 (BEP)" value={safeYen(summary.bep)} sub={`比率 ${pct(summary.bepRatio)}`} />
+            <Tile label="損益分岐点 (BEP)" {...bepDisplay(summary.bep, (n) => yen.format(n), `比率 ${pct(summary.bepRatio)}`)} />
             <Tile label="安全余裕率" value={pctOrDash(summary.safetyMargin)} sub="高いほど安全" />
             <Tile label="限界利益率" value={pctOrDash(summary.contributionRatio)} />
             <Tile label="営業利益" value={safeYen(summary.operatingProfit)} />
@@ -976,7 +994,7 @@ export function KpiPage() {
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
         <Tile label="売上高" value={yen.format(selected.fundamentals.revenue)} />
-        <Tile label="損益分岐点 (BEP)" value={safeYen(selected.kpi.bep)} sub={`比率 ${pct(selected.kpi.bepRatio)}`} />
+        <Tile label="損益分岐点 (BEP)" {...bepDisplay(selected.kpi.bep, (n) => yen.format(n), `比率 ${pct(selected.kpi.bepRatio)}`)} />
         <Tile label="安全余裕率" value={pctOrDash(selected.kpi.safetyMargin)} sub="高いほど安全" />
         {/* **上の実績タイル群と同じ答え方にする。** 2026-09-08 まで、こちらは
             `pct` で「0.0%」・上は `pctOrDash` で「—」を刷っており、**同じラベルの

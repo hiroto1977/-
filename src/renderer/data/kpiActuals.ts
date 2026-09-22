@@ -10,6 +10,7 @@
  * (enforced by `lint:imports`); both derive from docs/ARCHITECTURE.md §3.
  */
 
+import { DASH } from '../../shared/formatters';
 import { finiteOrNull } from '../../shared/num';
 import { isCalendarMonth } from '../../shared/isoDate';
 import { relationIssue } from './recordRelations';
@@ -567,6 +568,66 @@ export function computeRevenueLandingForecast(
  */
 export function finiteBep(bep: number): number | null {
   return Number.isFinite(bep) ? bep : null;
+}
+
+/**
+ * **損益分岐点が存在しないときの理由。** 座標ではなく*文字*として出す側が使う。
+ *
+ * 文面をここに置くのは `noBreakEvenNote` と同じ理由 —— 画面が組み立てると、
+ * 同じ状態の説明が画面ごとに言い換わる。実際に言い換わっていた (下参照)。
+ */
+export const NO_BEP_REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
+
+/**
+ * **損益分岐点のタイル 1 枚の「値」と「副文」を、1 つの判定から返す。**
+ *
+ * 別々に書くと「— なのに理由が出ない」「数が出ているのに理由が付く」形が
+ * 型の上で開く (パス 57 と同じ轍)。
+ *
+ * ## なぜここに移したか (2026-09-21 · パス 386)
+ *
+ * **同じ状態を、2 つの画面が別々の形で答えていた。** 限界利益 ≤ 0 の期
+ * (`bep = Infinity`) を入れて実測すると:
+ *
+ * | 画面 | 値 | 副文 |
+ * | --- | --- | --- |
+ * | 経営サマリー | `—` | 「限界利益が 0 以下です。…」 |
+ * | **KPI 実績** | **`∞`** | **「比率 ∞」** (理由は 1 文も無い) |
+ *
+ * **`∞` は「無限に安全」と読めるが、これは最も危ない側である** (どれだけ売っても
+ * 固定費を回収できない)。しかも `KpiPage.tsx` の `pctOrDash` の注記は**その規則を
+ * 自分で述べていた** —— 適用されていたのは安全余裕率だけで、BEP の値と比率は
+ * 素の `∞` のままだった。原因は写しで、`KpiPage` が `pct` / `safeYen` の局所の
+ * 双子を持ち、どちらも非有限を `'∞'` へ倒していた (`shared/formatters.ts` の
+ * `pct` / `jpy` には**どちらにも `—` の床が在る**)。
+ *
+ * ★ **`OverviewPage` の docblock は「`safeYen` — パス 198 で「—」に直した」と
+ * 書いていたが、2026-09-21 の実測ではまだ `'∞'` を返していた** (散文が先に直り、
+ * コードが残っていた)。
+ *
+ * ★ さらに `noBreakEvenOnScreen.test.ts` が
+ * `expect(t).toContain('∞')` で**その弱さを仕様として留めていた** ——
+ * 題名は「(値の側の答え方は変えていない)」とパス 59 の範囲を述べる印だったが、
+ * 主張として置かれている限り**直すと落ちる門**になっていた
+ * (法則 `no-weakness-as-spec`)。
+ *
+ * ## 整形は呼び手が持つ
+ *
+ * 金額の綴りは画面ごとに違う (経営サマリーと KPI は `Intl` の `￥`、
+ * `shared/formatters` の `jpy` は `¥`) ので、**判定だけを共有して整形は渡す** ——
+ * `demoMixNote(p, yen)` と同じ形である。
+ *
+ * @param bep   `computeKpiMetrics` の `bep` (存在しなければ `Infinity`)
+ * @param money 金額 1 つの整形 (呼び手の画面の綴り)
+ * @param sub   **算定できたときだけ**添える副文 (比率など)。算定できなければ理由が優先する
+ */
+export function bepDisplay(
+  bep: number,
+  money: (n: number) => string,
+  sub?: string,
+): { value: string; sub?: string } {
+  if (!Number.isFinite(bep)) return { value: DASH, sub: NO_BEP_REASON };
+  return { value: money(Math.round(bep)), sub };
 }
 
 /**

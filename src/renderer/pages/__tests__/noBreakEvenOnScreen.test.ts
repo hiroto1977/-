@@ -27,7 +27,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { computeKpiMetrics, type KpiFundamentals } from '../../data/kpiActuals';
+import { NO_BEP_REASON, computeKpiMetrics, type KpiFundamentals } from '../../data/kpiActuals';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 /** 限界利益が 0 以下の期 (売上 100 万・変動費 120 万)。BEP は存在しない。 */
 const LOSS: KpiFundamentals = { revenue: 1_000_000, cogs: 1_200_000, advertising: 0, sga: 300_000, depreciation: 0 };
@@ -135,13 +136,18 @@ beforeEach(() => {
   document.body.appendChild(container);
 });
 
-afterEach(async () => {
+/** 木を畳む (`afterEach` と、1 つの `it` で 2 度描く検査が使う)。 */
+async function unmountRoot(): Promise<void> {
   if (root) {
     await act(async () => {
       root!.unmount();
     });
     root = null;
   }
+}
+
+afterEach(async () => {
+  await unmountRoot();
   container.remove();
 });
 
@@ -191,15 +197,46 @@ describe('KPI — 損益分岐点が存在しない期', () => {
     expect(t).toContain('BEP の棒を描いていません');
   });
 
-  it('★ タイルは「∞」と「—」のまま (値の側の答え方は変えていない)', async () => {
+  /**
+   * ★ **2026-09-21 (パス 386) に、この `it` は弱さを仕様として留めていた。**
+   *
+   * 題名は「★ タイルは「∞」と「—」のまま (値の側の答え方は変えていない)」で、
+   * 本文は `expect(t).toContain('∞')` だった。題名はパス 59 の**範囲**を述べる印
+   * だったが、主張として置かれている限り**直すと落ちる門**になる
+   * (法則 `no-weakness-as-spec`)。
+   *
+   * 実測: 限界利益 ≤ 0 の期で KPI 画面は BEP を `∞` / 「比率 ∞」と刷り、
+   * **理由は 1 文も出していなかった** —— 同じ状態を経営サマリーは
+   * 「—」+「限界利益が 0 以下です。…」と答えていた。判定を
+   * `data/kpiActuals.ts` の `bepDisplay` へ寄せ、両画面がそれを読む。
+   */
+  it('★ タイルは「—」と理由 (∞ を値として刷らない・経営サマリーと同じ答え方)', async () => {
     await mountWith({
       units: [unit('u1', '赤字事業', LOSS, [LOSS])],
       aggregate: unit('all', '全社合算', LOSS, [LOSS]),
       isMock: false,
     });
+    // 錠は**この it が真に見たい文** —— 理由そのもの。
+    await waitForText(text, NO_BEP_REASON);
     const t = text();
-    expect(t).toContain('∞'); // 損益分岐点 (BEP)
-    // 安全余裕率は「—」(∞ に倒さない。理由は KpiPage の pctOrDash の注記)
+    // 損益分岐点 (BEP) と 安全余裕率 はどちらも「—」。
     expect(t).toContain('—');
+    // **理由を述べる** —— 「—」だけでは「データが無い」と読まれる。
+    expect(t).toContain(NO_BEP_REASON);
+    // 値として ∞ を刷らない。**この画面には正しい ∞ の用途が 1 つも無い**
+    // (経営サマリーの「残り 無制限」に当たる物を持たない) ので 0 件を要求できる。
+    expect((t.match(/∞/g) ?? []).length, `∞ が残っている: ${t.slice(0, 200)}`).toBe(0);
+    // 対照: 限界利益が在る期なら金額で出て、理由は出ない。
+    await unmountRoot();
+    await mountWith({
+      units: [unit('u1', '黒字事業', OK, [OK])],
+      aggregate: unit('all', '全社合算', OK, [OK]),
+      isMock: false,
+    });
+    // BEP = 固定費 30 万 ÷ 限界利益率 60% = 50 万。**金額で出るのを待ってから**見る。
+    await waitForText(text, '￥500,000');
+    const ok = text();
+    expect(ok).toMatch(/￥[\d,]+/);
+    expect(ok).not.toContain(NO_BEP_REASON);
   });
 });
