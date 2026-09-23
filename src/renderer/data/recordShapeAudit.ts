@@ -69,12 +69,66 @@ export function summarizeMalformed(malformed: readonly MalformedRecord[]): strin
   return [...counts.entries()].map(([collection, n]) => `${collection} ${n} 件`).join(' / ');
 }
 
-/** 指定 id を消す。消せた数を返す (途中で失敗したら投げる —— 半端に消えた数は呼び出し側が再点検で知る)。 */
-export async function deleteRecords(store: Pick<RecordStore, 'remove'>, ids: readonly string[]): Promise<number> {
-  let n = 0;
+/** 削除の結果。**消さなかった件数を必ず返す** —— 呼び出し側が利用者へ本当の数を言えるように。 */
+export interface DeleteOutcome {
+  /** 実際に消した件数。 */
+  readonly deleted: number;
+  /** 消さなかった件数 (もう形が合う / もう無い / 判定できない)。 */
+  readonly skipped: number;
+}
+
+/**
+ * 指定 id のうち、**今も形が合わない物だけ**を消す (2026-09-23 · パス 433)。
+ *
+ * 2026-09-23 まで、この関数は渡された id を無条件に消していた。渡す側 (`RecordShapeAuditPanel`)
+ * は**点検した時点の一覧**を持ち続けるので、点検から押すまでの間に中身が変わると
+ * **今は形の合う記録を消す**。実測 (直す前):
+ *
+ * ```
+ *   ① 点検      調べた 3 件 / 合わない 2 件 → ボタン「2 件を削除」
+ *   ② 復元      良いバックアップをマージ → 同じ id が put で置き換わり、合わない行は 0 件
+ *   ③ 押す      確認文「形式の合わないレコード 2 件を削除します。元に戻せません。」
+ *              → 復元したばかりの正しい 2 件が消え、「2 件を削除しました。」と報せる
+ * ```
+ *
+ * ★ **確認文が名乗る種別 (`形式の合わないレコード`) と件数が、押した瞬間にはどちらも偽である。**
+ *   しかも消えるのは**元に戻せない**。①②③ はどれも設定画面の中で続けて起きる
+ *   (点検パネルとバックアップパネルは同じ画面に並ぶ) し、別のタブでも同じことが起きる。
+ *
+ * ★ **だから数え直しはここでする** —— 呼び出し側が忘れられない所に置く
+ *   (法則 `one-subset-per-answer`: 器が「これから起きる事」なら、部分集合は実行が読む関門から取る)。
+ *   読み直しは点検と**同じ `auditRecordShapes`** で、封緘済み・読めない collection の扱いも同じになる。
+ *
+ * 途中で失敗したら投げる —— 半端に消えた数は呼び出し側が再点検で知る。
+ */
+export async function deleteRecords(
+  store: ShapeAuditSource & Pick<RecordStore, 'remove'>,
+  ids: readonly string[],
+): Promise<DeleteOutcome> {
+  const now = await auditRecordShapes(store);
+  const stillMalformed = new Set(now.malformed.map((m) => m.id));
+  let deleted = 0;
   for (const id of ids) {
+    if (!stillMalformed.has(id)) continue;
     await store.remove(id);
-    n += 1;
+    deleted += 1;
   }
-  return n;
+  return { deleted, skipped: ids.length - deleted };
+}
+
+/**
+ * 削除の結果の文 —— **消さなかった分は理由つきで言う** (2026-09-23 · パス 433)。
+ *
+ * `deleteRecords` は「今も形が合わない物」だけを消すので、確認してから消すまでの間に
+ * 中身が変わると `deleted` が確認した件数より少なくなる。黙って少なく消すと、利用者は
+ * 「消えていない記録がまだ形式不正なのか、消し損ねたのか」を区別できない。
+ * 画面の文を関数にしてあるのは、**消した数と消さなかった理由を 1 か所から返す**ため
+ * (別々に書くと「少なく消えたのに理由が出ない」形が開く)。
+ */
+export function deleteResultMessage(outcome: DeleteOutcome): string {
+  const kept =
+    outcome.skipped > 0
+      ? `${outcome.skipped} 件は消す直前に形が合うようになっていたので残しました。`
+      : '';
+  return `${outcome.deleted} 件を削除しました。${kept}再読み込みで反映されます。`;
 }

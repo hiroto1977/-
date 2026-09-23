@@ -9,7 +9,7 @@ import { createPassphraseRecordCipher } from '../recordCipher';
 import { randomSaltB64 } from '../../security/dataCrypto';
 import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
-import { auditRecordShapes, deleteRecords, summarizeMalformed } from '../recordShapeAudit';
+import { auditRecordShapes, deleteRecords, deleteResultMessage, summarizeMalformed } from '../recordShapeAudit';
 
 async function resetDb(): Promise<void> {
   _resetRecordStoreForTests();
@@ -103,14 +103,63 @@ describe('deleteRecords', () => {
     const bad2 = await store.insert(SALES_COLLECTION, { ...BAD, date: 5 } as unknown as Record<string, unknown>);
     const r = await auditRecordShapes(store);
     expect(r.malformed.map((m) => m.id).sort()).toEqual([bad1.id, bad2.id].sort());
-    expect(await deleteRecords(store, r.malformed.map((m) => m.id))).toBe(2);
+    expect(await deleteRecords(store, r.malformed.map((m) => m.id))).toEqual({ deleted: 2, skipped: 0 });
     expect((await store.list(SALES_COLLECTION)).map((x) => x.id)).toEqual([good.id]);
     expect((await auditRecordShapes(store)).malformed).toEqual([]);
   });
 
+  /**
+   * **渡された一覧は「点検した時点」の物である** (2026-09-23 · パス 433)。
+   *
+   * 点検から押すまでの間に中身が変わりうる —— この画面のすぐ下でバックアップを復元すれば
+   * 同じ id が `put` で置き換わる。直す前の `deleteRecords` は渡された id を無条件に消したので、
+   * **復元したばかりの正しい記録**が「形式の合わないレコード」として消えた (元に戻せない)。
+   */
+  it('★ 点検の後に形が合うようになった id は消さない (復元で置き換わった場合)', async () => {
+    const store = getRecordStore();
+    const bad1 = await store.insert(SALES_COLLECTION, BAD as unknown as Record<string, unknown>);
+    const bad2 = await store.insert(SALES_COLLECTION, BAD as unknown as Record<string, unknown>);
+    const audit = await auditRecordShapes(store);
+    expect(audit.malformed).toHaveLength(2);
+
+    // 良いバックアップをマージ復元する (importAll は id ごとの upsert)。
+    await store.importAll([
+      { id: bad1.id, collection: SALES_COLLECTION, createdAt: 1, updatedAt: 999, data: GOOD },
+      { id: bad2.id, collection: SALES_COLLECTION, createdAt: 1, updatedAt: 999, data: { ...GOOD, amount: 2000 } },
+    ]);
+    expect((await auditRecordShapes(store)).malformed, '復元で形は合うようになった').toEqual([]);
+
+    // 画面が持っている古い一覧で消しにいく。
+    expect(await deleteRecords(store, audit.malformed.map((m) => m.id))).toEqual({ deleted: 0, skipped: 2 });
+    expect((await store.list(SALES_COLLECTION)).map((x) => x.id).sort(), '2 件とも残る').toEqual([bad1.id, bad2.id].sort());
+  });
+
+  it('★ 混ざっていれば、今も合わない分だけ消す', async () => {
+    const store = getRecordStore();
+    const bad1 = await store.insert(SALES_COLLECTION, BAD as unknown as Record<string, unknown>);
+    const bad2 = await store.insert(SALES_COLLECTION, BAD as unknown as Record<string, unknown>);
+    const audit = await auditRecordShapes(store);
+    await store.importAll([{ id: bad1.id, collection: SALES_COLLECTION, createdAt: 1, updatedAt: 999, data: GOOD }]);
+    expect(await deleteRecords(store, audit.malformed.map((m) => m.id))).toEqual({ deleted: 1, skipped: 1 });
+    expect((await store.list(SALES_COLLECTION)).map((x) => x.id), '直った側だけ残る').toEqual([bad1.id]);
+    expect(bad2.id).not.toBe(bad1.id);
+  });
+
+  it('★ 消さなかった分は理由つきで言う (黙って少なく消さない)', () => {
+    expect(deleteResultMessage({ deleted: 2, skipped: 0 })).toBe('2 件を削除しました。再読み込みで反映されます。');
+    expect(deleteResultMessage({ deleted: 1, skipped: 1 })).toBe(
+      '1 件を削除しました。1 件は消す直前に形が合うようになっていたので残しました。再読み込みで反映されます。',
+    );
+    // 針が的に当たる標本: 0 件のときは理由の句が出ない。
+    expect(deleteResultMessage({ deleted: 0, skipped: 0 })).not.toContain('残しました');
+  });
+
   it('消す途中で失敗したら投げる (半端に消えた分は再点検で分かる)', async () => {
     let calls = 0;
+    // 点検が a / b / c を「形が合わない」と答える store (消す側だけを失敗させる)。
+    const rows = ['a', 'b', 'c'].map((id) => ({ id, data: BAD as unknown as Record<string, unknown> }));
     const store = {
+      list: async (collection: string) => (collection === SALES_COLLECTION ? rows : []),
       remove: async (id: string) => {
         calls += 1;
         if (id === 'b') throw new Error('remove failed');

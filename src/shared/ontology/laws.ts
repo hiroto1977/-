@@ -837,13 +837,22 @@ export const LAWS: readonly Law[] = [
       + '**利用者が頼った当の 1 文が偽**で、記録は元に戻せない。'
       + '関門は 1 つ (`isImportableRecord`) にして計画も実行もそこを読む。'
       + '★ **全部拒まれるなら訊かない** —— 消す方は必ず成功するので、OK を貰っても'
-      + '結果は「全部消えて何も入らない」。アプリは**訊く前にそれを知っている** (判定は純関数)。',
+      + '結果は「全部消えて何も入らない」。アプリは**訊く前にそれを知っている** (判定は純関数)。'
+      + '★ **部分集合は「調べた時点」でなく「実行する時点」で取る** (パス 433)。'
+      + '点検パネルは調べた時点の一覧を持ち続け、押すと無条件にその id を消していた。'
+      + '実測 (2026-09-23): 点検 (合わない 2 件) → 同じ画面でバックアップをマージ復元 '
+      + '(同じ id が `put` で置き換わり、合わない行は 0 件) → 古いボタンを押すと確認文が'
+      + '「**形式の合わないレコード 2 件**を削除します。元に戻せません。」と述べ、'
+      + '**復元したばかりの正しい 2 件が消えた**。'
+      + '種別も件数も押した瞬間には偽で、消えるのは元に戻せない。'
+      + '**数え直しは訊く前 (確認文を本当にするため) と実行の中 (床) の両方に置く。**',
     provenance: [
       'パス 225 (KPI 実績: 月数は選別後・分子は選別前)',
       'パス 392 (同じ画面が同じ売上高について 3 つの答えを出す)',
       'パス 393 (計算書類が読めない期の行を合算し 10 倍になる)',
       'パス 400 (書面 §2 が「2 か月分」と述べて 50.5 倍を刷る)',
       'パス 432 (置換復元の確認が「消える記録はありません」と述べて全部消す)',
+      'パス 433 (点検パネルが古い一覧で消し、復元で直った記録を消す)',
     ],
     enforcedBy: [
       test('src/renderer/data/__tests__/salesSubsetParity.test.ts'),
@@ -851,6 +860,8 @@ export const LAWS: readonly Law[] = [
       test('src/renderer/data/__tests__/unreadablePeriods.test.ts'),
       test('src/renderer/data/__tests__/restorePlanMatchesImport.test.ts'),
       test('src/renderer/components/__tests__/restorePlan.test.ts'),
+      test('src/renderer/data/__tests__/recordShapeAudit.test.ts'),
+      test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts'),
     ],
   },
   {

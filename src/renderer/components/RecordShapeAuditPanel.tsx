@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { getRecordStore } from '../data/store';
-import { auditRecordShapes, deleteRecords, summarizeMalformed, type ShapeAuditResult } from '../data/recordShapeAudit';
+import { auditRecordShapes, deleteRecords, deleteResultMessage, summarizeMalformed, type ShapeAuditResult } from '../data/recordShapeAudit';
 
 /**
  * 形の合わないレコードの点検と削除 —— 抜け出す道 (`data/recordShapeAudit.ts`)。
@@ -28,16 +28,30 @@ export function RecordShapeAuditPanel() {
     }
   }
 
+  /**
+   * **訊く前に数え直す** (2026-09-23 · パス 433)。
+   *
+   * 画面が持つ `result` は**調べた時点**の物で、押すまでの間に中身は変わりうる ——
+   * この画面のすぐ下でバックアップを復元すれば同じ id が置き換わるし、別のタブでも起きる。
+   * 古い一覧のまま訊くと、確認文が名乗る種別と件数がどちらも偽になり、
+   * **今は形の合う記録を「形式の合わないレコード」として消す** (実測は `deleteRecords` の注記)。
+   * 数え直しは `deleteRecords` の中にも在る (床) —— ここで数え直すのは**確認文を本当にする**ため。
+   */
   async function remove(): Promise<void> {
     if (!result || result.malformed.length === 0) return;
-    const n = result.malformed.length;
-    if (!window.confirm(`形式の合わないレコード ${n} 件を削除します。元に戻せません。よろしいですか？`)) return;
     setErr(undefined);
     setMsg(undefined);
     setBusy(true);
     try {
-      const deleted = await deleteRecords(getRecordStore(), result.malformed.map((m) => m.id));
-      setMsg(`${deleted} 件を削除しました。再読み込みで反映されます。`);
+      const fresh = await auditRecordShapes(getRecordStore());
+      setResult(fresh);
+      const targets = fresh.malformed.map((m) => m.id);
+      if (targets.length === 0) {
+        setMsg('形式の合わないレコードはもうありません。削除していません。');
+        return;
+      }
+      if (!window.confirm(`形式の合わないレコード ${targets.length} 件を削除します。元に戻せません。よろしいですか？`)) return;
+      setMsg(deleteResultMessage(await deleteRecords(getRecordStore(), targets)));
       setResult(await auditRecordShapes(getRecordStore()));
     } catch (e) {
       setErr(e instanceof Error ? e.message : '削除に失敗しました');
