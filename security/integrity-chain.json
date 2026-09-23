@@ -2142,6 +2142,14 @@
       "leafCount": 91,
       "note": "update imageUrlGate.ts,isoDate.ts,ollama.ts",
       "hash": "3b9a268d86588536eb146366cf44bc600e028ead220f85975c85cd178ab9c0c7"
+    },
+    {
+      "index": 256,
+      "prevHash": "3b9a268d86588536eb146366cf44bc600e028ead220f85975c85cd178ab9c0c7",
+      "merkleRoot": "5cf97c4467c18e21760e675bac08bee79b019a92b515c959f46698c64e7b57a6",
+      "leafCount": 91,
+      "note": "update chat.ts,httpLimits.ts",
+      "hash": "85a96af8da4f54677911c9f02814f61d30513debc5efa14a2808fa67ea5eb488"
     }
   ],
   "tipManifest": {
@@ -2206,7 +2214,7 @@
     "src/renderer/security/vault.ts": "e33c5c05b8d22b3b91edf909d4d8547c37436d0282c5c49060f7f91a37f7adc9",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
-    "src/shared/ai/chat.ts": "74e522f8aab95280eb6e203d33b274e03378d3665d188f3f1d9126f77c55bbd9",
+    "src/shared/ai/chat.ts": "9f226eb4ab625c9445b5e13c8ec6fab8b109048fd0776b041f9016088d3f7cf8",
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
@@ -2218,7 +2226,7 @@
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "75d54e0ec94c7568521e4fa31ad90596d18e59519434c42edb562d939806eb4b",
     "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
-    "src/shared/httpLimits.ts": "fd03385ff7c5873d1d273d6f35aa8007cffad7ce36f57c25e0cfb67c714742bb",
+    "src/shared/httpLimits.ts": "0293ccc080492de207962376b6fc345bf194c568f5875586fbccee2b90db03a2",
     "src/shared/imageUrlGate.ts": "a1f2fad05923c97539971c4f2d5aba4e732d460f90d7d83657c391d5199aef68",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/isoDate.ts": "20a4924fda86c7d334f6582ee3fbe56b154adbb476b257998075c145a53db988",

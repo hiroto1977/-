@@ -42,6 +42,7 @@ import {
   type FetchContext,
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
@@ -331,7 +332,11 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
         messages: [{ role: 'user', content: text }],
       }),
     },
-    { fetch: ctx.fetch, serviceId: 'emotions' },
+    // **LLM の補完には LLM の予算を渡す** (2026-09-23 · パス 424)。
+    // `max_tokens` は 512 なので `skills` (2048) ほど際どくはないが、
+    // 予算を分ける理由 (補完は通常の HTTP より長くかかりうる) は同じで、
+    // 判断を口ごとに変える理由が無い。
+    { fetch: ctx.fetch, serviceId: 'emotions', timeoutMs: AI_CHAT_TIMEOUT_MS },
   );
 
   const body = res.content?.find((c) => c.type === 'text')?.text ?? '';

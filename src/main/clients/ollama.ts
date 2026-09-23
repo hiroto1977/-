@@ -47,7 +47,9 @@ import {
 import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 import type { ActionData } from '../../shared/actionData';
 import {
+  DEFAULT_HTTP_TIMEOUT_MS,
   MAX_OLLAMA_RESPONSE_BYTES,
+  OLLAMA_CHAT_TIMEOUT_MS,
   egressInit,
   isOverCap,
   isRedirectResponse,
@@ -61,7 +63,17 @@ export { MIN_SAFE_VERSION, compareVersions, isSafeModelName, isVersionSafe };
 export type { OllamaSnapshot };
 
 const OLLAMA_BASE = 'http://127.0.0.1:11434';
-const REQUEST_TIMEOUT_MS = 30_000;
+/**
+ * **疎通確認 (`/api/version` / `/api/tags`) の締切。** 生成はこれではなく
+ * `OLLAMA_CHAT_TIMEOUT_MS` (2 分) を使う —— 別の要求なので別の数である。
+ *
+ * 2026-09-23 (パス 424) まで、ここは `30_000` という**私有の写し**で、
+ * しかも `withTimeout` の既定引数だったので**生成にも掛かっていた**。
+ * 画面の「セキュリティポリシー」欄はこの数を直書きしており、renderer は
+ * `src/main/` から import できない (`lint:imports`) ので定数から出せなかった。
+ * `shared` の同じ値を読むことで、画面もそこから出せるようになった。
+ */
+const REQUEST_TIMEOUT_MS = DEFAULT_HTTP_TIMEOUT_MS;
 // 応答本文の上限は **`shared/httpLimits.ts` の 1 つ** (2026-09-20 · パス 336)。
 // 2026-08-23 から 2026-09-20 まで、ここだけ 10 MB・ブラウザ版だけ 2 MB だった ——
 // 実測して 2 MiB に揃えた (理由と数字は `MAX_OLLAMA_RESPONSE_BYTES` の docblock)。
@@ -420,6 +432,11 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
     durationMs: Math.round((parsed.total_duration ?? 0) / 1_000_000),
   };
     },
+    // **生成には生成の予算を渡す** (2026-09-23 · パス 424)。ここは第 5 引数を
+    // 省いており、`withTimeout` の既定 —— 疎通確認の 30 秒 —— が掛かっていた。
+    // ブラウザ版の同じ生成は 120 秒で、その注記が理由を述べている
+    // (「生成は診断より時間がかかる」)。理由はこちらにも等しく当てはまる。
+    OLLAMA_CHAT_TIMEOUT_MS,
   );
 }
 

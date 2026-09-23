@@ -16,6 +16,7 @@ import {
   type ActionMap,
   type FetchContext,
 } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import type { ActionData } from '../../shared/actionData';
 
 export interface SkillEntry {
@@ -473,7 +474,13 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
         messages: [{ role: 'user', content: prompt }],
       }),
     },
-    { fetch: ctx.fetch, serviceId: 'skills' },
+    // **LLM の補完には LLM の予算を渡す** (2026-09-23 · パス 424)。ここは
+    // `timeoutMs` を渡しておらず、`limitedFetch` の既定 (`DEFAULT_HTTP_TIMEOUT_MS`
+    // = 通常の HTTP の 30 秒) で切れていた —— 実測で 31 秒に
+    // 「skills が時間内に応答しませんでした」。`max_tokens` は 2048 で、
+    // system にはスキール本文がまるごと載るので、30 秒はしばしば足りない。
+    // 兄弟 (`stocks` / `business`) は最初から同じ定数を渡している。
+    { fetch: ctx.fetch, serviceId: 'skills', timeoutMs: AI_CHAT_TIMEOUT_MS },
   );
 
   const text = res.content?.find((c) => c.type === 'text')?.text ?? '';

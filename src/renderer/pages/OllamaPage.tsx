@@ -5,7 +5,6 @@ import { dateText } from '../../shared/isoDate';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
-  CHAT_TIMEOUT_MS as WEB_CHAT_TIMEOUT_MS,
   OLLAMA_ENDPOINT_KEY,
   REQUEST_TIMEOUT_MS as WEB_REQUEST_TIMEOUT_MS,
   desktopSetupCommands,
@@ -13,7 +12,11 @@ import {
   originsSetupSteps,
   setupCommands,
 } from '../network/ollamaWeb';
-import { MAX_OLLAMA_RESPONSE_BYTES } from '../../shared/httpLimits';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_OLLAMA_RESPONSE_BYTES,
+  OLLAMA_CHAT_TIMEOUT_MS,
+} from '../../shared/httpLimits';
 import {
   DEFAULT_OLLAMA_PORT,
   MAX_OLLAMA_PROMPT_CHARS,
@@ -307,11 +310,19 @@ export function OllamaPage() {
             * **レスポンスの上限は 2026-09-20 (パス 336) から両ビルドで 1 つ** ——
             * それまで「デスクトップ版 10 MB」だけが**画面に直書き**されており、
             * 定数から出していたのはブラウザ版の数字だけだった。
+            *
+            * ★ **締切も 2026-09-23 (パス 424) に同じ所まで来た。** それまで
+            * 「デスクトップ版はリクエスト 30 秒」だけが**直書き**で、しかも
+            * その 30 秒は疎通確認の予算が生成にも掛かっていた実物の姿だった。
+            * 直書きが残っていた理由は構造的で、renderer は `src/main/` から
+            * import できない (`lint:imports`) —— だから先に `shared` へ
+            * 置いた (応答の上限がパス 336 で辿ったのと同じ道)。
+            * **今はこの欄に秒・MB の裸の数が 1 つも無い** (検査が両方向で見る)。
             */}
           <div>
-            🔒 デスクトップ版はリクエスト 30 秒、
-            ブラウザ版は疎通確認 {WEB_REQUEST_TIMEOUT_MS / 1000} 秒 / チャット{' '}
-            {WEB_CHAT_TIMEOUT_MS / 1000} 秒。レスポンスはどちらも{' '}
+            🔒 疎通確認はデスクトップ版 {DEFAULT_HTTP_TIMEOUT_MS / 1000} 秒 /{' '}
+            ブラウザ版 {WEB_REQUEST_TIMEOUT_MS / 1000} 秒、生成 (チャット) は
+            どちらも {OLLAMA_CHAT_TIMEOUT_MS / 1000} 秒。レスポンスはどちらも{' '}
             {MAX_OLLAMA_RESPONSE_BYTES / (1024 * 1024)} MB で切り詰め
           </div>
           <div>🔒 Streaming レスポンス未対応 (有限長応答のみ受理)</div>

@@ -17,6 +17,8 @@ import type { SkillEntry } from '../skills';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../../shared/skillIdentity';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
 import { FetchError } from '../types';
+import { AI_CHAT_TIMEOUT_MS } from '../../../shared/ai/chat';
+import { DEFAULT_HTTP_TIMEOUT_MS } from '../../../shared/httpLimits';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
   MAX_ASSISTANT_CONTENT_CHARS,
@@ -338,6 +340,63 @@ describe('ACTIONS["run-skill"]', () => {
     process.env.HOME = originalHome;
     vi.restoreAllMocks();
     await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  /*
+   * **LLM の補完には LLM の予算を渡す。** (2026-09-23 · パス 424)
+   *
+   * ここは `jsonFetch` に `timeoutMs` を渡しておらず、`limitedFetch` の既定
+   * (`DEFAULT_HTTP_TIMEOUT_MS` = 通常の HTTP の 30 秒) で切れていた。
+   * 実測 (直す前・偽の fetch を吊るして締切だけを進める):
+   *
+   *   @31s : abort 済み / rejected: skills が時間内に応答しませんでした
+   *
+   * `max_tokens` は 2048 で、system にはスキル本文がまるごと載る。
+   * 兄弟 (`stocks/advise` / `business/advise`) は最初から
+   * `timeoutMs: AI_CHAT_TIMEOUT_MS` を渡しており、**この口だけが
+   * 既定のままだった** —— 渡し忘れは在るべき引数が無いだけなので綴りに現れない。
+   * 母集団は `shared/__tests__/llmDeadlineCensus.test.ts` が実装から導く。
+   */
+  it('★ 補完の締切は LLM の予算 (通常の HTTP の 30 秒では切らない)', async () => {
+    let aborted = false;
+    let called = false;
+    const fetchMock = ((_u: string | URL | Request, init?: RequestInit) => {
+      called = true;
+      return new Promise<Response>((_res, rej) => {
+        init?.signal?.addEventListener('abort', () => {
+          aborted = true;
+          rej(new DOMException('aborted', 'AbortError'));
+        });
+      });
+    }) as unknown as typeof fetch;
+    vi.useFakeTimers();
+    const p = ACTIONS['run-skill']!({
+      token: 'sk-ant-xxxxx',
+      fetch: fetchMock,
+      payload: { id: 'echo', prompt: 'ping' },
+    }).then(
+      () => undefined,
+      () => undefined,
+    );
+    /*
+     * **条件で待つ** (法則 `wait-for-condition-not-ticks` · パス 368)。
+     * ここは最初「20 周まわす」と固定回数で書いており、**単体では通るのに
+     * 全件実行では落ちた** —— スキル本文の読み取りは実 I/O なので、負荷の下では
+     * 20 周では終わらず、`fetch` が呼ばれる前に締切を進めていた
+     * (timer がまだ無いので進めても何も起きず、abort が来ない)。
+     * 待つのは「fetch に届いたこと」で、届かなければ**名指しで落とす**。
+     */
+    for (let i = 0; i < 2_000 && !called; i += 1) await vi.advanceTimersByTimeAsync(0);
+    expect(called, 'スキル本文の読み取りが終わらず fetch に届いていない').toBe(true);
+    await vi.advanceTimersByTimeAsync(DEFAULT_HTTP_TIMEOUT_MS + 1_000);
+    expect(aborted, '通常の HTTP の予算で補完が切れている').toBe(false);
+    await vi.advanceTimersByTimeAsync(AI_CHAT_TIMEOUT_MS - DEFAULT_HTTP_TIMEOUT_MS - 2_000);
+    expect(aborted, 'LLM の予算より前に切れている').toBe(false);
+    // 無制限にはしない —— 予算を越えたら必ず切れる。
+    await vi.advanceTimersByTimeAsync(2_000);
+    expect(aborted, 'LLM の予算を越えても切れない').toBe(true);
+    await p;
+    vi.useRealTimers();
   });
 
   it('★ 長すぎるスキル本文は API へ送らずに断る (パス 308 —— system の天井は assistant と同じ 1 つ)', async () => {

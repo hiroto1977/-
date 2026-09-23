@@ -45,6 +45,7 @@ import {
 } from '../../shared/ollama';
 import {
   MAX_OLLAMA_RESPONSE_BYTES,
+  OLLAMA_CHAT_TIMEOUT_MS,
   egressInit,
   isOverCap,
   isRedirectResponse,
@@ -440,9 +441,16 @@ export async function probeOllama(
 
 /* ─────────────────────────────  チャット  ───────────────────────────── */
 
-/** 生成は診断より時間がかかる。5 秒で切ると実用にならないので別枠にする。 */
-/** 画面の「セキュリティポリシー」欄が読む。値と表示をずらさないため export する。 */
-export const CHAT_TIMEOUT_MS = 120_000;
+/**
+ * 生成は診断より時間がかかる。5 秒で切ると実用にならないので別枠にする。
+ *
+ * **値は `shared/httpLimits.ts` の 1 つ** (2026-09-23 · パス 424) ——
+ * それまでここに `120_000` の私有の写しが在り、デスクトップ版の同じ生成は
+ * **疎通確認の 30 秒**で切れていた。上の docblock が「同じ制約 (… タイムアウト)
+ * でここに実装する」と述べていたが、**タイムアウトだけは同じではなかった**。
+ * 名前は残す —— 画面と既存の検査がこの名前で読んでいる。
+ */
+export const CHAT_TIMEOUT_MS = OLLAMA_CHAT_TIMEOUT_MS;
 /** 送信サイズの上限 (main プロセス側の chat と同じ)。 */
 // 上限は `shared/ollama.ts` に 1 つだけ置く (main も同じものを読む)。
 
@@ -463,7 +471,11 @@ export interface OllamaChatInput {
  * Electron 版は main プロセスの `clients/ollama.ts` が同じことをする。ブラウザ版に
  * これが無いと **画面にチャット欄はあるのに送信だけ動かない**ので、同じ制約
  * (接続先 3 通り・/api/chat のみ・モデル名検証・NUL 拒否・長さ上限・タイムアウト)
- * でここに実装する。失敗時は shared/ollama.ts の分類器を通して「次の一手」まで返す。
+ * でここに実装する。★ **この「同じ」は 2026-09-23 (パス 424) まで
+ * タイムアウトについては偽だった** —— こちらは 120 秒、main は疎通確認の
+ * 既定 30 秒で、実測で 4 倍違った。今は両方が `OLLAMA_CHAT_TIMEOUT_MS` を読む。
+ *
+ * 失敗時は shared/ollama.ts の分類器を通して「次の一手」まで返す。
  */
 export async function chatOllama(
   input: OllamaChatInput,

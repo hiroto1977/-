@@ -39,7 +39,7 @@ CVE になっていない設計上の注意点:
 | **巨大モデルで OOM** | 70B+ モデルをロードするとホスト OOM | クライアントから直接 pull はせず、ユーザが `ollama pull` で取得済みのモデルだけリストして使う |
 | **GGUF ファイルパーサのバグ** | 不正な GGUF で Ollama がクラッシュ | これは Ollama 本体の問題。最新版維持で対処 |
 | **無制限のレスポンス** | 大量出力で OOM | レスポンス読み取り時に 2 MB で truncate (両ビルド共通・`MAX_OLLAMA_RESPONSE_BYTES`。2026-09-20 まで main だけ 10 MB だった) |
-| **長いストリーミング**で UI freeze | streaming 応答が無限に続く | 30 秒タイムアウト + AbortController |
+| **長いストリーミング**で UI freeze | streaming 応答が無限に続く | AbortController で必ず打ち切る。予算は用途で 2 つ —— 疎通確認 (`/api/version` / `/api/tags`) は通常の HTTP の 30 秒 (`DEFAULT_HTTP_TIMEOUT_MS`)、生成 (`/api/chat`) は 2 分 (`OLLAMA_CHAT_TIMEOUT_MS`・両ビルド共通)。**2026-09-23 まで main の生成だけが疎通確認の 30 秒で切れており**、ブラウザ版の 同じ生成は 120 秒だった |
 | **テレメトリ** | 古い Ollama で匿名利用統計が外部送信 | アプリ側で制御不可、Ollama 設定で `OLLAMA_DISABLE_TELEMETRY=1` を設定推奨 |
 
 ## 2026-05 に「未パッチ」と書いた GGUF の範囲外読み取り —— CVE-2026-7482 (0.17.1 で修正済み)
