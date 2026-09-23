@@ -20,6 +20,7 @@
  * ときに困る（CSV 取り込みで実際に踏んだ形）。列挙にしておけば
  * 「置ける数値の一覧」がそのまま画面の入力欄にもなる。
  */
+import { moreThanChars } from '../../shared/inputCeiling';
 
 /** 数値の種類。入力の検証と表示単位に使う。 */
 export type MetricUnit = 'yen' | 'pct' | 'count' | 'days' | 'months';
@@ -426,14 +427,14 @@ export function parseCustomMetric(input: {
 }): CustomMetricResult {
   const label = (input.label ?? '').trim();
   if (label.length === 0) return { ok: false, reason: '項目名を入力してください。' };
-  if (label.length > CUSTOM_METRIC_MAX_LABEL) {
+  if (moreThanChars(label, CUSTOM_METRIC_MAX_LABEL)) {
     return { ok: false, reason: `項目名は ${CUSTOM_METRIC_MAX_LABEL} 文字までです。` };
   }
   if (!isMetricUnit(input.unit)) return { ok: false, reason: '単位を選んでください。' };
   const parsed = parseOverrideValue(input.value ?? '', input.unit);
   if (!parsed.ok) return { ok: false, reason: parsed.reason };
   const note = (input.note ?? '').trim();
-  if (note.length > CUSTOM_METRIC_MAX_NOTE) {
+  if (moreThanChars(note, CUSTOM_METRIC_MAX_NOTE)) {
     return { ok: false, reason: `メモは ${CUSTOM_METRIC_MAX_NOTE} 文字までです。` };
   }
   const entry: CustomMetricInput = note.length > 0

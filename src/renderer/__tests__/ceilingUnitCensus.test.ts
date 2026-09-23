@@ -48,6 +48,33 @@
  * 残る 2 つは**符号単位のままが正しい** —— OS が符号単位/バイトで上限を持つので、
  * 文字で数えると OS の上限を超える値を通してしまう (下の `UNIT_LEDGER`)。
  *
+ * ## 綴りで拾う針は、綴りでない物に動かされる (2026-09-23 · パス 422)
+ *
+ * 上の走査は**定数の名前**を錨にする。だから名前が `_CHARS` でなければ、
+ * 文面が「N 文字」と言っていても見えない。実測 **6 か所**がそこに在った:
+ *
+ * | 入口 | 天井 | 直す前の実測 |
+ * | --- | --- | --- |
+ * | 事業名 (`businessUnits`) | `BUSINESS_NAME_MAX` 60 | 絵文字 **31 個 (= 31 文字)** で「60 文字までです」 |
+ * | 区分 (同) | `BUSINESS_CATEGORY_MAX` 30 | 絵文字 **16 個**で「30 文字までです」 |
+ * | メモ (同) | `BUSINESS_NOTE_MAX` 200 | 同じ形 |
+ * | 項目名 (`overviewOverrides`) | `CUSTOM_METRIC_MAX_LABEL` 40 | 絵文字 **21 個**で「40 文字までです」 |
+ * | メモ (同) | `CUSTOM_METRIC_MAX_NOTE` 200 | 同じ形 |
+ * | 事業名 (`kpiActuals`) | **裸の 64** | 絵文字 **33 個**で「1〜64 文字で入力してください」 |
+ *
+ * ★ **文面が、その文面を読む利用者に対して証明可能に偽である** —— 31 文字を打った人が
+ *   「60 文字までです」と断られる。★ **しかも出口と食い違っていた** —— パス 419 が
+ *   同じ 5 つの定数を `displayField` に通したが、`clampToCeiling` は**文字**を数える。
+ *   つまり**入口はコード単位・出口は文字**で、パス 359 の「入口が出口より厳しい」の
+ *   別の現れである。
+ *
+ * **だから 2 本目の錨を足した** —— `DECLARED_UNIT` は名前ではなく
+ * **その場の文面が名乗る単位**で拾う: 「`${CONST} 文字`」または「`64 文字`」と
+ * 述べる文の近くで、その同じ天井を `.length` で比べていたら鳴る。
+ * 綴りがどうであれ、**アプリが利用者に約束した単位**で数えているかだけを見る。
+ * 6 つ目 (裸の 64) には名前 (`MAX_KPI_UNIT_CHARS`) も付けたので、
+ * **上の名前の走査も同時に覆う** (パス 196 と同じ直し方)。
+ *
  * ## この走査が見えない所 (対照で実測した死角)
  *
  * **名前で拾う走査は、名前が消えた所を拾えない。** 定数を引数や台帳の欄に
@@ -123,6 +150,43 @@ const UNIT_LEDGER: Readonly<Record<string, string>> = {
   MAX_CONTACT_EMAIL_LEN: '同上 (士業の連絡先。members.ts と同じ規格の同じ数)',
 };
 
+/**
+ * **文面が名乗る単位で拾う針** (パス 422)。名前ではなく、同じ場所の断りの文が
+ * 「N 文字」と述べているかを錨にする。窓はコードの行で数えず**素の行**でよい ——
+ * 文面は判定のすぐ後ろ (同じ `if` の本体) に在り、間に注記が挟まっても
+ * `stripComments` が空白に潰すので行数は変わらない。
+ */
+const DECLARED_WINDOW = 6;
+
+/** 文面は「文字」と言うのに、コード単位で比べている形。 */
+const DECLARED_WRONG: readonly RegExp[] = [
+  /([A-Za-z0-9_.$[\]']+)\.length\s*(?:>=|<=|>|<)\s*([A-Z][A-Z0-9_]*)\b/g,
+  /([A-Za-z0-9_.$[\]']+)\.length\s*(?:>=|<=|>|<)\s*(\d+)\b/g,
+];
+
+/** 文面も比較も「文字」の形 (走査が死んでいないことの床に使う)。 */
+const DECLARED_RIGHT: readonly RegExp[] = [
+  /\b(?:moreThanChars|atLeastChars)\s*\([^,]+,\s*([A-Z][A-Z0-9_]*)\s*\)/g,
+  /\b(?:moreThanChars|atLeastChars)\s*\([^,]+,\s*(\d+)\s*\)/g,
+];
+
+/** その窓が「この天井は N 文字だ」と名乗っているか。 */
+function declaresChars(window: string, token: string): boolean {
+  // 名前つき: `${CONST} 文字` / 裸の数: `64 文字` (数の途中に当たらないよう前を見る)。
+  const named = new RegExp(`\\$\\{${token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\}\\s*文字`);
+  if (named.test(window)) return true;
+  if (!/^\d+$/.test(token)) return false;
+  return new RegExp(`(?<!\\d)${token}\\s*文字`).test(window);
+}
+
+/**
+ * **文面が「N 文字」と名乗りながらコード単位で数えてよい所** (両方向・今日 **0 件**)。
+ *
+ * 空なのは「要らない」ではない —— 次に 1 つ生えたらここへ理由を書くことになり、
+ * 消し忘れれば「鳴らないのに台帳に在る」で落ちる。
+ */
+const DECLARED_UNIT_LEDGER: Readonly<Record<string, string>> = {};
+
 interface Hit {
   readonly where: string;
   readonly why: string;
@@ -154,6 +218,33 @@ function scan(): { wrong: Hit[]; right: number; filesWithChars: number; lengthNa
     });
   }
   return { wrong, right, filesWithChars, lengthNames };
+}
+
+/** 文面が名乗る単位で走査する (パス 422)。名前ではなく約束した単位を錨にする。 */
+function scanDeclared(): { wrong: Hit[]; right: number } {
+  const wrong: Hit[] = [];
+  let right = 0;
+  for (const f of sourceFiles(SRC)) {
+    const lines = stripComments(readOriginalSource(f)).split('\n');
+    lines.forEach((line, i) => {
+      const win = lines.slice(i, i + DECLARED_WINDOW).join('\n');
+      for (const re of DECLARED_WRONG) {
+        for (const m of line.matchAll(re)) {
+          if (declaresChars(win, m[2]!)) {
+            wrong.push({
+              where: `${path.relative(SRC, f)}:${i + 1}`,
+              why: `文面は「${m[2]!} 文字」と言うのに ${m[1]!}.length (コード単位) で比べている`,
+              line: line.trim(),
+            });
+          }
+        }
+      }
+      for (const re of DECLARED_RIGHT) {
+        for (const m of line.matchAll(re)) if (declaresChars(win, m[1]!)) right++;
+      }
+    });
+  }
+  return { wrong, right };
 }
 
 describe('天井の単位 — `MAX_*_CHARS` は文字で数え、文字で切る', () => {
@@ -215,6 +306,65 @@ describe('天井の単位 — `MAX_*_CHARS` は文字で数え、文字で切る
         WRONG.some(([re]) => re.test(s)),
         s,
       ).toBe(false);
+    }
+  });
+
+  // --- 2 本目の錨: 文面が名乗る単位 (パス 422) --------------------------------
+
+  const declared = scanDeclared();
+
+  it('★ 文面が「N 文字」と名乗るのにコード単位で数える箇所は 0 件', () => {
+    const unexpected = declared.wrong.filter((h) => !(h.where in DECLARED_UNIT_LEDGER));
+    const report = unexpected.map((h) => `  ${h.where}  ${h.why}\n    ${h.line}`).join('\n');
+    expect(
+      unexpected,
+      'アプリが利用者に約束した単位と、実際に数える単位が違います'
+        + ` (moreThanChars / atLeastChars を使ってください):\n${report}`,
+    ).toEqual([]);
+    // 台帳の側も両方向 —— 鳴らなくなった行が残っていると、次の 1 件を隠す。
+    const found = new Set(declared.wrong.map((h) => h.where));
+    for (const k of Object.keys(DECLARED_UNIT_LEDGER)) {
+      expect(found.has(k), `${k} はもう鳴らない —— DECLARED_UNIT_LEDGER から消すこと`).toBe(true);
+    }
+  });
+
+  it('★ この走査が空撃ちでない (文面と比較が揃っている所を実際に数えている)', () => {
+    // 2026-09-23 (パス 422) 実測 14 件。床はその 7 割 —— 「0 件」が自明に真に
+    // ならないための物で、実測に張り付けると正しい削除で落ちる (パス 378 の形)。
+    expect(
+      declared.right,
+      '文面が「N 文字」と名乗る天井が 1 つも見つからない —— 走査が死んでいる',
+    ).toBeGreaterThanOrEqual(10);
+  });
+
+  it('★ 対照: 針はパス 422 で直した 6 つの形を拾い、直した形は拾わない', () => {
+    // 直す前に実在した形 (名前つき 5 + 裸の数 1)。
+    const broken: readonly (readonly [string, string])[] = [
+      ['  if (name.length > BUSINESS_NAME_MAX) {', '    return { ok: false, reason: `事業名は ${BUSINESS_NAME_MAX} 文字までです。` };'],
+      ['  if (label.length > CUSTOM_METRIC_MAX_LABEL) {', '    return { ok: false, reason: `項目名は ${CUSTOM_METRIC_MAX_LABEL} 文字までです。` };'],
+      ["  if (unit.length === 0 || unit.length > 64) throw new Error('事業名は 1〜64 文字で入力してください');", ''],
+    ];
+    for (const [head, body] of broken) {
+      const win = `${head}\n${body}`;
+      const hit = DECLARED_WRONG.some((re) =>
+        [...head.matchAll(re)].some((m) => declaresChars(win, m[2]!)),
+      );
+      expect(hit, head).toBe(true);
+    }
+    // 直した形は拾わない。
+    const fixedNow: readonly (readonly [string, string])[] = [
+      ['  if (moreThanChars(name, BUSINESS_NAME_MAX)) {', '    return { ok: false, reason: `事業名は ${BUSINESS_NAME_MAX} 文字までです。` };'],
+      ['  if (moreThanChars(unit, MAX_KPI_UNIT_CHARS)) {', '    throw new Error(`事業名は 1〜${MAX_KPI_UNIT_CHARS} 文字で入力してください`);'],
+      // 文面が「文字」と言わない天井は対象外 (件数・バイト)。
+      ['  if (obj.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) {', '    throw new Error(`推奨は ${MAX_ADVISOR_RECOMMENDATIONS} 件までです`);'],
+      ['  if (buf.length > MAX_RESPONSE_BYTES) {', '    throw new Error(`応答は ${MAX_RESPONSE_BYTES} バイトまでです`);'],
+    ];
+    for (const [head, body] of fixedNow) {
+      const win = `${head}\n${body}`;
+      const hit = DECLARED_WRONG.some((re) =>
+        [...head.matchAll(re)].some((m) => declaresChars(win, m[2]!)),
+      );
+      expect(hit, head).toBe(false);
     }
   });
 });

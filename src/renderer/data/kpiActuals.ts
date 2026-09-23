@@ -14,6 +14,7 @@ import { DASH } from '../../shared/formatters';
 import { finiteOrNull } from '../../shared/num';
 import { isCalendarMonth } from '../../shared/isoDate';
 import { relationIssue } from './recordRelations';
+import { moreThanChars } from '../../shared/inputCeiling';
 
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
 
@@ -159,6 +160,15 @@ export function formatPeriodWindow(w: PeriodWindow): string {
 
 /** Validate + coerce a partial input into a clean KpiActual, or throw with a
  *  user-facing message. Numbers must be finite and non-negative. */
+/**
+ * 事業名の天井 —— **単位は文字**。2026-09-23 (パス 422) まで裸の `64` を
+ * `unit.length`(UTF-16 コード単位) と比べており、文面は「1〜64 文字」と言うのに
+ * **絵文字 33 個 (= 33 文字 / 66 コード単位) を断って**いた (実測)。
+ * 名前を付けたので `ceilingUnitCensus` (`MAX_*_CHARS` の走査) が自動で覆う ——
+ * パス 196 がこの家系を閉じたときと同じ直し方で、**新しい規則を足さずに済む**。
+ */
+export const MAX_KPI_UNIT_CHARS = 64;
+
 export function parseKpiActual(input: {
   period?: unknown;
   unit?: unknown;
@@ -171,7 +181,9 @@ export function parseKpiActual(input: {
 }): KpiActual {
   if (!isValidPeriod(input.period)) throw new Error('期間は YYYY-MM 形式で入力してください');
   const unit = typeof input.unit === 'string' ? input.unit.trim() : '';
-  if (unit.length === 0 || unit.length > 64) throw new Error('事業名は 1〜64 文字で入力してください');
+  if (unit.length === 0 || moreThanChars(unit, MAX_KPI_UNIT_CHARS)) {
+    throw new Error(`事業名は 1〜${MAX_KPI_UNIT_CHARS} 文字で入力してください`);
+  }
 
   const num = (v: unknown, label: string): number => {
     // Number(number)===number なので typeof 分岐は不要 (equivalent mutant 排除)。

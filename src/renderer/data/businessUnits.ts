@@ -16,6 +16,7 @@ import type { MonthlyBusinessKpi } from './businessFinancials';
 import { readNumeric } from '../../shared/readNumeric';
 import { hasControlChar } from '../../shared/controlChars';
 import { isCalendarDateOrMonth } from '../../shared/isoDate';
+import { moreThanChars } from '../../shared/inputCeiling';
 
 export const BUSINESS_UNITS_COLLECTION = 'business-units';
 
@@ -79,13 +80,13 @@ export function parseBusinessUnit(input: {
 }): BusinessUnitResult {
   const name = (input.name ?? '').trim();
   if (name.length === 0) return { ok: false, reason: '事業名を入力してください。' };
-  if (name.length > BUSINESS_NAME_MAX) {
+  if (moreThanChars(name, BUSINESS_NAME_MAX)) {
     return { ok: false, reason: `事業名は ${BUSINESS_NAME_MAX} 文字までです。` };
   }
   if (hasControlChar(name)) return { ok: false, reason: '事業名に制御文字は使えません。' };
 
   const category = (input.category ?? '').trim();
-  if (category.length > BUSINESS_CATEGORY_MAX) {
+  if (moreThanChars(category, BUSINESS_CATEGORY_MAX)) {
     return { ok: false, reason: `区分は ${BUSINESS_CATEGORY_MAX} 文字までです。` };
   }
 
@@ -95,7 +96,7 @@ export function parseBusinessUnit(input: {
   }
 
   const note = (input.note ?? '').trim();
-  if (note.length > BUSINESS_NOTE_MAX) {
+  if (moreThanChars(note, BUSINESS_NOTE_MAX)) {
     return { ok: false, reason: `メモは ${BUSINESS_NOTE_MAX} 文字までです。` };
   }
 
