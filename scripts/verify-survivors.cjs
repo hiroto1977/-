@@ -3,6 +3,44 @@
  * **「生存」と報告された変異体を、1 つずつ実際に当てて確かめる。**
  * (2026-09-20 · パス 356)
  *
+ * ## ★★ 訂正 —— **この道具は 2026-09-23 まで、ほぼ常に同じ答えを返していた** (パス 430)
+ *
+ * `applyReplacement` が Stryker の **列を 0 始まりとして扱っていた**。実物は
+ * 行も列も 1 始まりなので、当てるたびに**前後 1 文字ずつを余分に食っていた**:
+ *
+ * ```
+ *   原文    out.push({ pair: `${a}=${b}`, text: `…` });
+ *   当てた  out.push({ pair: ``` text: `…` });
+ * ```
+ *
+ * 壊れたソースは vitest が transform の時点で落とす。ところが `runRelated` は
+ * **非 0 終了をすべて「検査が落ちた」と読んでいた**ので、結果はいつも
+ * 「実は殺されている」になる。**当て方の誤りが、判定に飲み込まれて見えなかった。**
+ *
+ * 実測 (2026-09-23 · `src/shared/parameterConsistency.ts` の生存 78 件):
+ *
+ * | 道具 | 答え | 1 件あたり |
+ * | --- | --- | ---: |
+ * | 直す前 | **78 件すべて「実は殺されている」** | 約 19 秒 (= 壊れて落ちるまでの時間) |
+ * | 手で当てた `AXIS_BAND_SUFFIX` の `$` 落とし | 検査 2 件が落ちる (**本当に偽の生存**) | —— |
+ * | 手で当てた `i + 1 < len` → `<=` | **102 ファイル 1,093 件すべて通る** (本当に生存) | 170 秒 |
+ *
+ * 列が 1 始まりであることは**当て推量ではなく実測**で決めた —— 報告の
+ * StringLiteral 51 件について、`slice(column - 1)` は 51 件すべてで元の
+ * リテラルを復元し、`slice(column)` は **0 件**だった。
+ *
+ * **だから、この道具を根拠に書かれた数は信用できない。** パス 356 の
+ * 「35 / 35 が偽」・パス 399 の「10 件のうち 7 件が偽」・パス 353 / 355 について
+ * 遡って当てた 26 件は、**どれもこの判定を通っている**。ただし
+ * パス 356 が**手で**当てた 1 件 (`apiResponse.ts:124` → 検査 5 件が落ちる) と、
+ * 今日手で当てた 1 件は独立して確かめられており、そちらは生きている。
+ * **「偽の生存が在る」は正しく、「何件が偽か」は測り直しが要る。**
+ *
+ * 自己テストがこれを捕まえなかったのは、**同じ誤った前提で書かれていた**
+ * ためである (`if (x > 0) {` の `x > 0` を 0 始まりの 4..9 と置いていた) ——
+ * 法則 `no-weakness-as-spec` の、道具の側での現れ。今の自己テストは
+ * 実物と同じ形の標本を持ち、**0 始まりで当てると壊れること**を対照で示す。
+ *
  * ## なぜ要るのか —— 実測した偽の「生存」
  *
  * `npx stryker run --mutate <file>` を config の一覧に無いファイルへ当てると、
@@ -112,8 +150,21 @@ const { execFileSync } = require('node:child_process');
 const REPO = path.resolve(__dirname, '..');
 
 /**
- * 変異体の位置 (Stryker は 1 始まりの行・0 始まりの列で持つ) に
- * `replacement` を当てた原文を返す。**行末を跨ぐ範囲も扱う。**
+ * 変異体の位置に `replacement` を当てた原文を返す。**行末を跨ぐ範囲も扱う。**
+ *
+ * ★ **行も列も 1 始まりである** (mutation-testing-elements の schema)。
+ * 2026-09-20 (パス 356) から 2026-09-23 (パス 430) まで、ここは列を 0 始まりと
+ * して扱っており、**前後 1 文字ずつを余分に食っていた**。実測 (パス 430):
+ *
+ * ```
+ *   原文    out.push({ pair: `${a}=${b}`, text: `…` });
+ *   当てた  out.push({ pair: ``` text: `…` });        ← 引用符と読点が壊れる
+ * ```
+ *
+ * 壊れたソースは vitest が transform の時点で落とすので、`runRelated` が
+ * 「非 0 終了 = 検査が落ちた = 殺されている」と読み、**どの変異体も
+ * 「実は殺されている」になっていた**。51 件の StringLiteral で
+ * `slice(column - 1)` だけが元のリテラルを復元する (0 始まりでは 0/51)。
  */
 function applyReplacement(source, location, replacement) {
   const lines = source.split('\n');
@@ -125,8 +176,29 @@ function applyReplacement(source, location, replacement) {
   const tail = lines.slice(end.line);
   const firstLine = lines[start.line - 1];
   const lastLine = lines[end.line - 1];
-  const middle = firstLine.slice(0, start.column) + replacement + lastLine.slice(end.column);
+  const middle = firstLine.slice(0, start.column - 1) + replacement + lastLine.slice(end.column - 1);
   return [...head, middle, ...tail].join('\n');
+}
+
+/**
+ * 当てた結果が **TypeScript として読めるか**。読めなければ位置か置換の扱いが
+ * 誤っているので、検査を走らせても分かるのは「壊れたソースは通らない」だけ
+ * である (パス 430 はこの門が無かったために 3 パス分の結論が偽になった)。
+ * esbuild が引けない環境では `null` を返して門を飛ばす (判定は増やさない)。
+ */
+function parseError(code) {
+  let esbuild;
+  try {
+    esbuild = require('esbuild');
+  } catch {
+    return null;
+  }
+  try {
+    esbuild.transformSync(code, { loader: 'ts' });
+    return '';
+  } catch (e) {
+    return String(e.message ?? e).split('\n')[0];
+  }
 }
 
 /** 報告 (incremental か JSON reporter) を読む。見つからなければ null。 */
@@ -145,6 +217,16 @@ function notKilled(report, file) {
   return (entry.mutants ?? []).filter((m) => m.status !== 'Killed' && m.status !== 'Ignored');
 }
 
+/**
+ * 関係する検査を走らせ、**3 通りに分ける**。
+ *
+ * ★ **「検査が落ちた」と「コマンドが落ちた」は別物である。** 2026-09-23
+ * (パス 430) まで、ここは非 0 終了をすべて「殺されている」と読んでいた ——
+ * transform の失敗も・時間切れも・メモリ不足も同じ答えになるので、
+ * **当て方が壊れていることが判定に飲み込まれて見えなくなっていた**。
+ * 殺されたと言えるのは vitest が「N 件が落ちた」と述べたときだけで、
+ * それ以外は判定ではなく**道具の側の報せ** (`error`) として上へ出す。
+ */
 function runRelated(file) {
   try {
     const out = execFileSync('npx', ['vitest', 'related', file, '--run'], {
@@ -153,10 +235,22 @@ function runRelated(file) {
       stdio: ['ignore', 'pipe', 'pipe'],
       timeout: 600_000,
     });
-    return { ok: true, out };
+    return { verdict: 'survived', out };
   } catch (e) {
-    return { ok: false, out: String(e.stdout ?? '') + String(e.stderr ?? '') };
+    const out = String(e.stdout ?? '') + String(e.stderr ?? '');
+    return { verdict: classifyRun(out), out };
   }
+}
+
+/**
+ * 非 0 終了した vitest の出力を読み、**検査が落ちたのか**を決める。
+ * `Tests  2 failed | 51 passed` のように**件数つきで落ちた**と述べていれば
+ * 殺された。`Tests  no tests` (読み込みで落ちた) やそもそも要約が無い場合は
+ * 判定できない —— 黙って「殺された」に倒すと、道具の欠陥が結論になる。
+ */
+function classifyRun(out) {
+  if (/^\s*Tests\s+.*\b\d+\s+failed/m.test(out)) return 'killed';
+  return 'error';
 }
 
 function selfTest() {
@@ -167,13 +261,33 @@ function selfTest() {
   };
   const src = ['const a = 1;', 'if (x > 0) {', '  y();', '}', ''].join('\n');
 
-  // 1 行の中を置き換える
-  const one = applyReplacement(src, { start: { line: 2, column: 4 }, end: { line: 2, column: 9 } }, 'false');
+  // 1 行の中を置き換える (列は **1 始まり** —— `x > 0` は 5 列目から 9 列目)
+  const one = applyReplacement(src, { start: { line: 2, column: 5 }, end: { line: 2, column: 10 } }, 'false');
   ok('1 行の中を置き換える', one.split('\n')[1] === 'if (false) {');
 
   // 行を跨ぐ範囲を置き換える (ブロック文の除去)
-  const many = applyReplacement(src, { start: { line: 2, column: 11 }, end: { line: 4, column: 1 } }, '{}');
+  const many = applyReplacement(src, { start: { line: 2, column: 12 }, end: { line: 4, column: 2 } }, '{}');
   ok('行を跨ぐ範囲を置き換える', many.includes('if (x > 0) {}') && !many.includes('y();'));
+
+  // ★ **パス 430 の標本** —— 列を 0 始まりとして扱うと前後 1 文字ずつ食う。
+  // 実物の報告と同じ形 (文字列リテラルを空へ) で、**読点と引用符が残ること**を見る。
+  const lit = "const o = { k: 'abc', n: 1 };";
+  const litLoc = { start: { line: 1, column: 16 }, end: { line: 1, column: 21 } };
+  const fixed = applyReplacement(lit, litLoc, "''");
+  ok('文字列リテラルの置換が前後を食わない', fixed === "const o = { k: '', n: 1 };");
+
+  // 針が的に当たること: 旧い扱い (0 始まり) なら**構文として壊れる**。
+  const broken = lit.slice(0, litLoc.start.column) + "''" + lit.slice(litLoc.end.column);
+  ok('対照: 0 始まりで当てると壊れる', broken === "const o = { k: ''' n: 1 };");
+  const badParse = parseError(broken);
+  ok('対照: 壊れた結果は読めないと分かる', badParse === null || badParse !== '');
+  const goodParse = parseError(fixed);
+  ok('正しく当てた結果は読める', goodParse === null || goodParse === '');
+
+  // 実行の分類: 「検査が落ちた」だけが殺されたであって、読み込みの失敗は判定ではない。
+  ok('件数つきで落ちたら killed', classifyRun(' Tests  2 failed | 51 passed (53)') === 'killed');
+  ok('no tests は判定できず', classifyRun(' Test Files  1 failed (1)\n      Tests  no tests') === 'error');
+  ok('要約が無ければ判定できず', classifyRun('') === 'error');
 
   // 原文は変えない
   ok('原文を書き換えない', src.split('\n')[1] === 'if (x > 0) {');
@@ -242,19 +356,27 @@ function main() {
   console.log('|--:|-----:|---------|------|------|');
 
   const falsePositives = [];
+  const errors = [];
   try {
     target.forEach((m, i) => {
       const mutated = applyReplacement(original, m.location, m.replacement ?? '');
-      fs.writeFileSync(abs, mutated);
-      const res = runRelated(file);
-      fs.writeFileSync(abs, original);
-      const verdict = res.ok ? '**本当に生存**' : '実は殺されている';
-      if (res.ok) {
-        // 誰も鳴らなかった = 報告どおり
+      // 当てた結果が読めないなら、走らせても分かるのは「壊れたソースは通らない」
+      // だけである。判定ではなく道具の誤りなので、そう言う (パス 430)。
+      const bad = parseError(mutated);
+      let verdict;
+      if (bad) {
+        verdict = 'error';
+        errors.push(`${file}:${m.location.start.line} ${m.mutatorName} — 当てた結果が読めない: ${bad}`);
       } else {
-        falsePositives.push(`${file}:${m.location.start.line} ${m.mutatorName}`);
+        fs.writeFileSync(abs, mutated);
+        const res = runRelated(file);
+        fs.writeFileSync(abs, original);
+        verdict = res.verdict;
+        if (verdict === 'killed') falsePositives.push(`${file}:${m.location.start.line} ${m.mutatorName}`);
+        if (verdict === 'error') errors.push(`${file}:${m.location.start.line} ${m.mutatorName} — 検査の失敗ではない終了`);
       }
-      console.log(`| ${i + 1} | ${m.location.start.line} | ${m.mutatorName} | ${m.status} | ${verdict} |`);
+      const label = { survived: '**本当に生存**', killed: '実は殺されている', error: '⚠ 判定できず' }[verdict];
+      console.log(`| ${i + 1} | ${m.location.start.line} | ${m.mutatorName} | ${m.status} | ${label} |`);
     });
   } finally {
     fs.writeFileSync(abs, original);
@@ -265,18 +387,26 @@ function main() {
   }
 
   console.log();
+  if (errors.length > 0) {
+    // **判定できなかった物を「生存」にも「殺された」にも倒さない。**
+    // どちらかへ倒すと道具の欠陥がそのまま結論になる (パス 430)。
+    console.log(`⚠ **判定できなかった ${errors.length} 件** (道具の側の報せ — 結論に使わないこと):`);
+    for (const e of errors) console.log(`  - ${e}`);
+    console.log();
+  }
   if (falsePositives.length > 0) {
     console.log(`**報告が誤っていた ${falsePositives.length} 件** (既存の検査が殺す):`);
     for (const f of falsePositives) console.log(`  - ${f}`);
     console.log();
     console.log('報告の「生存」をそのまま欠陥として書かないこと。');
-  } else {
+  } else if (errors.length === 0) {
     console.log('報告どおり、当てた変異体はどれも誰にも鳴らされなかった。');
   }
+  if (errors.length > 0) process.exit(1);
 }
 
 // **直に呼ばれたときだけ走る。** 検査が `require` して純粋な部分だけを見られるように
 // する (呼びっぱなしだと import の時点で `process.exit` が走る・実測)。
 if (require.main === module) main();
 
-module.exports = { applyReplacement, notKilled, readReport };
+module.exports = { applyReplacement, classifyRun, notKilled, parseError, readReport };

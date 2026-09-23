@@ -39,6 +39,24 @@
  * 無駄ではない** (score が実物を映すようになり、本物の 3 件も出た)。
  * 偽だったのは**生存の解釈**である。
  *
+ * ## ★★ 訂正 —— **上の実測そのものが、壊れた道具の出力だった** (2026-09-23 · パス 430)
+ *
+ * `applyReplacement` が Stryker の**列を 0 始まりとして扱っていた** (実物は
+ * 行も列も 1 始まり)。当てるたびに前後 1 文字ずつを食って**構文として壊れた
+ * ソース**を書き、vitest が transform で落ちる。`runRelated` はその非 0 終了を
+ * 「検査が落ちた」と読んでいたので、**どの変異体も「実は殺されている」に
+ * なっていた** —— 上の 5 行も、パス 357 の「35/35」も、パス 399 の「10 件中 7 件」も
+ * 同じ判定を通っている。**「偽の生存が在る」は手で当てた 2 件
+ * (`apiResponse.ts:124` とパス 430 の `AXIS_BAND_SUFFIX`) で独立に確かめられており
+ * 生きているが、件数はどれも測り直しが要る。**
+ *
+ * 直した道具で測り直すと `parameterConsistency.ts` の標本 6 件は
+ * **5 件が偽 / 1 件が本物**で、本物の 1 件は保存の関門の穴だった。
+ *
+ * **この検査自身も同じ誤った前提で書かれていたので通っていた** ——
+ * 法則 `no-weakness-as-spec` の、道具の側での現れ。今は実物と同じ形の標本を持ち、
+ * 0 始まりで当てると壊れることを対照で示す。
+ *
  * ## この検査が留めるもの
  *
  * `npm run audit:survivors` (= `scripts/verify-survivors.cjs`) は報告の
@@ -59,16 +77,18 @@ const tool = req('../../../scripts/verify-survivors.cjs') as {
     replacement: string,
   ) => string;
   notKilled: (report: unknown, file: string) => { id: string }[] | null;
+  classifyRun: (out: string) => 'killed' | 'error';
+  parseError: (code: string) => string | null;
 };
 
 const REPO = join(__dirname, '..', '..', '..');
 const SRC = ['const a = 1;', 'if (x > 0) {', '  y();', '}', ''].join('\n');
 
 describe('verify-survivors —— 位置の当て方 (パス 356)', () => {
-  it('1 行の中を置き換える', () => {
+  it('1 行の中を置き換える (列は **1 始まり**)', () => {
     const out = tool.applyReplacement(
       SRC,
-      { start: { line: 2, column: 4 }, end: { line: 2, column: 9 } },
+      { start: { line: 2, column: 5 }, end: { line: 2, column: 10 } },
       'false',
     );
     expect(out.split('\n')[1]).toBe('if (false) {');
@@ -77,22 +97,60 @@ describe('verify-survivors —— 位置の当て方 (パス 356)', () => {
   it('★ 行を跨ぐ範囲を置き換える (ブロック文の除去は複数行に及ぶ)', () => {
     const out = tool.applyReplacement(
       SRC,
-      { start: { line: 2, column: 11 }, end: { line: 4, column: 1 } },
+      { start: { line: 2, column: 12 }, end: { line: 4, column: 2 } },
       '{}',
     );
     expect(out).toContain('if (x > 0) {}');
     expect(out).not.toContain('y();');
   });
 
+  it('★ 文字列リテラルの置換が前後を食わない (パス 430 の標本)', () => {
+    // 実物の報告と同じ形。列を 0 始まりとして扱うと引用符と読点を巻き込み、
+    // **構文として壊れたソース**になる —— それを vitest が transform で
+    // 落とし、道具が「検査が落ちた」と読んでいた。
+    const LIT = "const o = { k: 'abc', n: 1 };";
+    const loc = { start: { line: 1, column: 16 }, end: { line: 1, column: 21 } };
+    expect(tool.applyReplacement(LIT, loc, "''")).toBe("const o = { k: '', n: 1 };");
+    // 標本: 旧い扱い (0 始まり) なら壊れる —— 針が的に当たることを示す。
+    expect(LIT.slice(0, loc.start.column) + "''" + LIT.slice(loc.end.column))
+      .toBe("const o = { k: ''' n: 1 };");
+  });
+
+  it('★ 当てた結果が読めるかを見る門を持つ (壊れたソースを検査へ渡さない)', () => {
+    // esbuild が引けない環境では null (門を飛ばす)。引ければ '' か理由が返る。
+    const good = tool.parseError("const o = { k: '', n: 1 };");
+    expect(good === null || good === '').toBe(true);
+    const bad = tool.parseError("const o = { k: ''' n: 1 };");
+    expect(bad === null || bad.length > 0).toBe(true);
+  });
+
   it('原文を書き換えない (呼び出し側が退避に頼れる)', () => {
-    tool.applyReplacement(SRC, { start: { line: 1, column: 0 }, end: { line: 1, column: 5 } }, 'X');
+    tool.applyReplacement(SRC, { start: { line: 1, column: 1 }, end: { line: 1, column: 6 } }, 'X');
     expect(SRC.split('\n')[0]).toBe('const a = 1;');
   });
 
   it('★ 原文の外の位置は投げる (黙って別の行を壊さない)', () => {
     expect(() =>
-      tool.applyReplacement(SRC, { start: { line: 99, column: 0 }, end: { line: 99, column: 1 } }, 'x'),
+      tool.applyReplacement(SRC, { start: { line: 99, column: 1 }, end: { line: 99, column: 2 } }, 'x'),
     ).toThrow(/location が原文の外/);
+  });
+});
+
+describe('verify-survivors —— 走らせた結果の読み分け (パス 430)', () => {
+  // ★ **「検査が落ちた」と「コマンドが落ちた」は別物である。**
+  // 2026-09-23 まで非 0 終了をすべて「殺された」と読んでいたので、
+  // 当て方が壊れていることが判定に飲み込まれて 3 パス分の結論が偽になった。
+  it('件数つきで落ちたときだけ killed', () => {
+    expect(tool.classifyRun(' Tests  2 failed | 51 passed (53)')).toBe('killed');
+  });
+
+  it('★ 読み込みで落ちた (no tests) は判定できない —— 「殺された」に倒さない', () => {
+    expect(tool.classifyRun(' Test Files  1 failed (1)\n      Tests  no tests')).toBe('error');
+  });
+
+  it('★ 要約が無ければ判定できない (時間切れ・メモリ不足・transform の失敗)', () => {
+    expect(tool.classifyRun('')).toBe('error');
+    expect(tool.classifyRun('Error: ENOENT')).toBe('error');
   });
 });
 

@@ -162,6 +162,32 @@ describe('parameterConsistencyIssueFor — 保存の前の関門', () => {
     expect(issue).not.toBeNull();
     expect(issue).toContain('法人事業税の所得段階の境目');
   });
+
+  it('★ すでに破れている組が在っても、別の**相違**の組を新たに破る保存は断る', () => {
+    // すぐ上の 1 件は**順序**どうしの組を見ている。関門は「直している途中の
+    // 1 手を断らない」ために破れている**組**を数えるので、その鍵が組を
+    // 見分けないと **1 組でも破れていれば 2 組目を黙って通す**。
+    //
+    // 順序の側はその鍵を上の検査が留めていたが、**相違の側は誰も見ていなかった**
+    // —— `PARAMETER_DISTINCT` の枝の鍵を定数にする変異体が生き残る (2026-09-23 ·
+    // パス 430 で実測。それまで `audit:survivors` が列の扱いを誤っており、
+    // この生存を「実は殺されている」と報告していたので気付けなかった)。
+    const first = PARAMETER_DISTINCT[0]!;
+    const second = PARAMETER_DISTINCT[1]!;
+    const clean = DEFAULT_PARAMETER_VALUES;
+    // 前提: 既定値ではどの相違の組も破れていない (破れていたら標本が的を外す)。
+    expect(PARAMETER_DISTINCT.filter((d) => clean[d.ids[0]] === clean[d.ids[1]])).toHaveLength(0);
+
+    const already = resolveParameters({ [first.ids[0]]: clean[first.ids[1]] });
+    expect(parameterConsistencyIssues(already)).toHaveLength(1);
+
+    const candidate = clean[second.ids[1]];
+    const onClean = parameterConsistencyIssueFor(second.ids[0], candidate, clean);
+    const onBroken = parameterConsistencyIssueFor(second.ids[0], candidate, already);
+    expect(onClean).not.toBeNull();
+    // **別の組が破れていることは、この組の答えを変えない。**
+    expect(onBroken).toBe(onClean);
+  });
 });
 
 describe('PARAMETER_DISTINCT — 等しいと上書きが黙って捨てられる組 (パス 222)', () => {
