@@ -2,14 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../kpiActualsCsv';
 import type { KpiActual } from '../kpiActuals';
 
+// **標本は形の全欄を埋める** —— 2026-09-23 (パス 429) まで `laborCost` (人件費) が
+// 抜けており、下の `toEqual(ROWS)` は正しい不変条件 (往復の等値) を主張しながら
+// **その欄が落ちることを見分けられなかった**。書き出しも取り込みも人件費を扱わず、
+// 往復すると労働分配率・人件費率・一人当たり人件費と、金融機関等提出用の書面の
+// 「人件費」の行が空になった。欄の被覆そのものは `csvColumnCoverage.test.ts` が
+// 形の宣言から導いて数える。
 const ROWS: KpiActual[] = [
-  { period: '2026-05', unit: 'EC', revenue: 1000, cogs: 400, advertising: 100, sga: 200, depreciation: 50 },
+  { period: '2026-05', unit: 'EC', revenue: 1000, cogs: 400, advertising: 100, sga: 200, depreciation: 50, laborCost: 150 },
 ];
 
 describe('kpiActualsToCsv', () => {
   it('emits header + rows in column order', () => {
     expect(kpiActualsToCsv(ROWS)).toBe(
-      'period,unit,revenue,cogs,advertising,sga,depreciation\r\n2026-05,EC,1000,400,100,200,50',
+      'period,unit,revenue,cogs,advertising,sga,depreciation,laborCost\r\n2026-05,EC,1000,400,100,200,50,150',
     );
   });
 });
@@ -34,6 +40,7 @@ describe('kpiActualsFromCsv', () => {
   });
 
   it('returns empty for header-only or empty input', () => {
+    // 見出し行は 7 列 (人件費を持たない古い書き出し) —— 今も読めることを兼ねて留める。
     expect(kpiActualsFromCsv('period,unit,revenue,cogs,advertising,sga,depreciation').entries).toEqual([]);
     expect(kpiActualsFromCsv('').entries).toEqual([]);
   });

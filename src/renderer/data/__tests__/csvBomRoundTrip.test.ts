@@ -27,7 +27,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
-import { readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { readOriginalSource, readOriginalDir } from '../../../shared/__tests__/originalSource';
 import { CSV_BOM, parseCsv, parseCsvRecords } from '../csv';
 import { salesToCsv, salesFromCsv } from '../salesCsv';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../kpiActualsCsv';
@@ -95,25 +95,46 @@ describe('書き出した CSV を読み戻せる (BOM)', () => {
 /**
  * **付ける側と外す側は同じ 1 つを読む** (法則 `center-then-count-callers`)。
  *
- * 母集団は走査で導く —— `text/csv` の Blob / ダウンロードを組む所。3 画面が
- * それぞれ生の不可視文字を書いていたのが、この欠陥が 3 か所で同時に成立した
- * 理由である。生のままだと `lint:charset` の台帳に理由を書くことになり、
+ * 3 画面がそれぞれ生の不可視文字を書いていたのが、この欠陥が 3 か所で同時に
+ * 成立した理由である。生のままだと `lint:charset` の台帳に理由を書くことになり、
  * 「Excel のために要る」とだけ書けて**剥がす側が居ないこと**は誰も問わない。
+ *
+ * ## 訂正 (2026-09-23 · パス 429)
+ *
+ * この docblock はパス 428 で「**母集団は走査で導く**」と書いていたが、**偽だった** ——
+ * `CSV_WRITERS` は手書きの 3 行で、`csvWriterFiles()` は**その手書きの一覧を濾す**
+ * だけだった。4 枚目の画面が `text/csv` を組んでも走査には 1 度も映らない。
+ * パス 421 が `referenceFields()` について自分で捕まえたのと同じ形を、
+ * **1 パス後に書いた本人がまた踏んだ** (法則 `measure-before-claim`)。
+ *
+ * 今は `pages/` と `components/` を**実際に歩いて** `text/csv` を組むファイルを拾い、
+ * 手書きの台帳と**両方向**に突き合わせる (実測 2026-09-23: 3 枚)。
  */
 const CSV_WRITERS = ['../../pages/SalesPage.tsx', '../../pages/KpiPage.tsx', '../../components/FinancialAnalysis.tsx'] as const;
 
-function csvWriterFiles(): string[] {
+/** `text/csv` を組む画面を、書かれた一覧ではなく**木**から拾う。 */
+function scanCsvWriters(): string[] {
   const out: string[] = [];
-  for (const rel of CSV_WRITERS) {
-    const src = readOriginalSource(path.resolve(__dirname, rel));
-    if (/text\/csv/.test(src)) out.push(rel);
+  for (const dir of ['../../pages', '../../components'] as const) {
+    const abs = path.resolve(__dirname, dir);
+    for (const name of readOriginalDir(abs)) {
+      if (!name.endsWith('.tsx') && !name.endsWith('.ts')) continue;
+      if (/text\/csv/.test(readOriginalSource(path.join(abs, name)))) out.push(`${dir}/${name}`);
+    }
   }
-  return out;
+  return out.sort();
+}
+
+function csvWriterFiles(): string[] {
+  return scanCsvWriters();
 }
 
 describe('CSV の印は 1 つの定数から出る', () => {
   it('走査が空虚でない (text/csv を組む画面が 3 枚とも在る)', () => {
-    expect(csvWriterFiles()).toEqual([...CSV_WRITERS]);
+    // 走査が死んで「0 件だから健全」にならないための床。
+    expect(scanCsvWriters().length).toBeGreaterThanOrEqual(3);
+    // **両方向** —— 木に在るのに台帳に無ければ落ち、台帳に在るのに木から消えても落ちる。
+    expect(scanCsvWriters()).toEqual([...CSV_WRITERS].sort());
   });
 
   it('★ 書き出す画面は生の不可視文字ではなく CSV_BOM を読む', () => {

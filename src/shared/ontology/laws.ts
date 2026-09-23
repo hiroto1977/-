@@ -636,9 +636,9 @@ export const LAWS: readonly Law[] = [
     id: 'write-then-read-loop',
     family: 'at-rest',
     name: '書く口を足したら読みの一巡',
-    statement: '「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。',
-    provenance: ['パターン 0-a-22'],
-    enforcedBy: [test(T.renderer('webShimSnapshotBranches')), test(T.renderer('webShimInputGatesAndSaves')), test(T.renderer('deviceStoreWritePolicy'))],
+    statement: '「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。**書き出しも同じ** —— 「N 件取り込みました」は往復した証拠ではない。アプリが書き出した CSV をアプリが読み戻せなかった実例が 2 つ在る: 書き出しが付ける印 (BOM · U+FEFF) を剥がす側がどこにも無く、正しい日付を指して「日付は YYYY-MM-DD 形式で入力してください」と断っていた (パス 428)。**行が戻ることは、行が変わらず戻ることではない** —— `KPI_CSV_COLUMNS` は 7 列で記録の形は 8 欄を宣言しており、人件費が往復で消えて金融機関等提出用の書面の「人件費」の行・労働分配率・人件費率・付加価値が空になった (パス 429)。**列の母集団は形の宣言から導く** (手で並べると 9 つ目が黙る)。',
+    provenance: ['パターン 0-a-22', 'パス 428 (付ける印と剥がす印が同じ 1 つ)', 'パス 429 (往復の等値・列は形の全欄を覆う)'],
+    enforcedBy: [test(T.renderer('webShimSnapshotBranches')), test(T.renderer('webShimInputGatesAndSaves')), test(T.renderer('deviceStoreWritePolicy')), test('src/renderer/data/__tests__/csvBomRoundTrip.test.ts'), test('src/renderer/data/__tests__/csvColumnCoverage.test.ts')],
   },
   {
     id: 'destructive-ops-have-owner',
