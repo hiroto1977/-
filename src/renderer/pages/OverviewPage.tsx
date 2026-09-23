@@ -79,6 +79,7 @@ import {
   type CropListChange,
   type CropNumericField,
 } from '../../shared/hydroponicCrops';
+import { cropIdText } from '../../shared/hydroponicsControl';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, readNumberOrNull, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
@@ -483,7 +484,7 @@ function HydroponicsPanel({
 
       {current !== null && savedCrop === undefined && (
         <div style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, marginBottom: 8 }}>
-          保存した設定の品目「{current.cropId}」は一覧にありません。先頭の品目（{crops[0]!.label}）で試算しています。
+          保存した設定の品目「{cropIdText(current.cropId)}」は一覧にありません。先頭の品目（{crops[0]!.label}）で試算しています。
           品目を選び直して保存してください。
         </div>
       )}

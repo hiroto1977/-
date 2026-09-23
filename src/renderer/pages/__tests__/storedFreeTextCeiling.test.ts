@@ -57,6 +57,7 @@ import { MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS
 import { BUSINESS_CATEGORY_MAX, BUSINESS_NAME_MAX, BUSINESS_NOTE_MAX } from '../../data/businessUnits';
 import { CUSTOM_METRIC_MAX_LABEL, CUSTOM_METRIC_MAX_NOTE } from '../../data/overviewOverrides';
 import { ManualDataSection } from '../../components/ManualDataSection';
+import { OverviewPage } from '../OverviewPage';
 import { HydroponicsPage } from '../HydroponicsPage';
 import { MAX_CONSULTATION_TOPIC_CHARS } from '../../data/shigyoDirectory';
 import { MAX_BATCH_ID_CHARS } from '../../../shared/hydroponicsControl';
@@ -92,6 +93,16 @@ const LEDGER: readonly { readonly collection: string; readonly field: string; re
   { collection: 'shigyo-consultations', field: 'topic', max: MAX_CONSULTATION_TOPIC_CHARS },
   { collection: 'hydroponics-batches', field: 'id', max: MAX_BATCH_ID_CHARS },
   { collection: 'hydroponics-batches', field: 'cropId', max: MAX_CROP_ID_CHARS },
+  /*
+   * パス 421 —— **パス 419 と 420 の掃き掃除が 2 度とも見落とした欄**。
+   *
+   * 419 は入口の天井の定数から、420 は `COLLECTION_SHAPES` の文字列の欄から
+   * 母集団を引いたが、**どちらの走査も「参照が解決できなかったときの断りの文」を
+   * 見ていなかった** —— `hydroponics-setup.cropId` は画面の一覧にも表にも出ず、
+   * **一覧に無いときの 1 文の中にだけ**現れる。実測 (直す前): 経営サマリーが
+   * 10,033 → **210,534 字**。天井の数はパス 420 が既に持っていた。
+   */
+  { collection: 'hydroponics-setup', field: 'cropId', max: MAX_CROP_ID_CHARS },
 ];
 
 /** 形に合う行 (BIG を入れる欄だけ差し替える)。**正しいことを検査が先に確かめる。** */
@@ -104,6 +115,7 @@ const VALID: Readonly<Record<string, Record<string, unknown>>> = {
   'manual-metrics': { scope: 'business', label: '項目', value: 1, unit: 'yen', note: 'メモ' },
   'shigyo-consultations': { serviceId: 'tax-accountant', date: '2026-01-01', topic: '相談', status: '対応中' },
   'hydroponics-batches': { id: 'b1', cropId: 'lettuce', sowDate: '2026-01-01', panels: 1, state: 'nursery', transplantedDate: null, harvestedDate: null, solutionChangedDate: null, note: 'メモ' },
+  'hydroponics-setup': { floorAreaSqm: 100, tiers: 3, usableRatioPct: 70, cropId: 'leaf-lettuce' },
 };
 
 /**
@@ -117,7 +129,7 @@ const VALID: Readonly<Record<string, Record<string, unknown>>> = {
  *   そこを錠にすると自分で消してしまう。
  */
 const LOCK = 'QQLOCKQQ';
-const SCREENS: Readonly<Record<string, { readonly page: ComponentType; readonly lockField: string; readonly expand?: boolean; readonly lockRow?: (lock: string) => Record<string, unknown> }>> = {
+const SCREENS: Readonly<Record<string, { readonly page: ComponentType; readonly lockField: string; readonly expand?: boolean; readonly lockRow?: (lock: string) => Record<string, unknown>; readonly lockText?: string }>> = {
   'team-members': { page: TeamPage, lockField: 'email' },
   'shigyo-contacts': { page: SERVICES.find((x) => x.id === 'tax-accountant')!.page as ComponentType, lockField: 'firm' },
   'mutualfund-holdings': { page: MutualFundsPage, lockField: 'code' },
@@ -133,6 +145,12 @@ const SCREENS: Readonly<Record<string, { readonly page: ComponentType; readonly 
    */
   'shigyo-consultations': { page: SERVICES.find((x) => x.id === 'tax-accountant')!.page as ComponentType, lockField: 'topic', lockRow: (lock) => ({ ...VALID['shigyo-consultations']!, topic: lock }) },
   'hydroponics-batches': { page: HydroponicsPage, lockField: 'id', lockRow: (lock) => ({ ...VALID['hydroponics-batches']!, id: lock }) },
+  /*
+   * ★ **錠はこの欄が現れる条件そのもの** —— `cropId` は一覧に在れば画面に出ない。
+   *   断りの文 (「は一覧にありません」) が出ていなければ**この欄は測れていない**ので、
+   *   その文を待つ (対照 C を回すと、錠を外した版は 5 秒で時間切れになる)。
+   */
+  'hydroponics-setup': { page: OverviewPage, lockField: 'cropId', lockText: 'は一覧にありません' },
 };
 
 /** 対象の欄が錠の欄と重なるときは、別の欄を錠にする。 */
@@ -218,7 +236,7 @@ describe('保管した自由文の天井 (パス 419)', () => {
       const row = { ...VALID[collection]!, [field]: BIG };
       expect(hasCollectionShape(collection, row), `${collection}.${field} が形で断られる`).toBe(true);
     }
-    expect(LEDGER.length).toBeGreaterThanOrEqual(18);
+    expect(LEDGER.length).toBeGreaterThanOrEqual(19);
   });
 
   it('★ 天井は入口が宣言している数と同じ (新しい数を作っていない)', () => {
@@ -234,14 +252,17 @@ describe('保管した自由文の天井 (パス 419)', () => {
     '★ %s が 200,000 字でも画面は膨らまない',
     async (_name, l) => {
       const screen = SCREENS[l.collection]!;
-      if (screen.lockRow === undefined) {
+      if (screen.lockText !== undefined) {
+        // 錠が「その欄が現れる条件」そのものの面 —— 行は 1 件だけ入れる。
+        await getRecordStore().insert(l.collection, { ...VALID[l.collection]!, [l.field]: BIG });
+      } else if (screen.lockRow === undefined) {
         const lockField = lockFieldFor(l.collection, l.field);
         await getRecordStore().insert(l.collection, { ...VALID[l.collection]!, [lockField]: LOCK, [l.field]: BIG });
       } else {
         await getRecordStore().insert(l.collection, { ...VALID[l.collection]!, [l.field]: BIG });
         await getRecordStore().insert(l.collection, screen.lockRow(LOCK));
       }
-      const t = await mount(screen.page, LOCK, screen.expand === true);
+      const t = await mount(screen.page, screen.lockText ?? LOCK, screen.expand === true);
       expect(t.length, `画面が ${t.length} 字 (直す前は ~200,000)`).toBeLessThan(SCREEN_BOUND);
       // 切ったことを述べる (絞ることと述べることは対 · パス 400)。
       expect(t).toContain('x'.repeat(l.max) + '…');

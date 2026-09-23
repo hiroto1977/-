@@ -21,6 +21,45 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## パス 421 (2026-09-23) — 参照の欄を形の表から数える機械を置いた
+
+母集団 (`COLLECTION_SHAPES[*].fields` を `*Id` / `*Ids` で濾す) は **7 件**で、
+`renderer/data/__tests__/referenceFieldCensus.test.ts` が両方向に持つ。
+
+### 残作業 (パス 421 の後・今日実測した)
+
+#### ★ 入口が「N 文字まで」と述べながらコード単位で数えている 5 か所 (パス 422 の候補)
+
+**パス 252 が名指しした欠陥が、5 か所に生きている。** 針は
+**「`.length > 定数` の近くで『文字』と言っている」**で、実測 **5 件 / 2 ファイル**
+(6 件目の `stocksAnalysisWeb.ts:551` は**配列の件数**なので針の偽陽性):
+
+| 入口 | 宣言 | 実測 (絵文字で) |
+| --- | ---: | --- |
+| `businessUnits.ts:82` 事業名 | `BUSINESS_NAME_MAX` **60** | **31 個 (= 31 文字)** で「事業名は 60 文字までです。」 |
+| `businessUnits.ts:88` 区分 | `BUSINESS_CATEGORY_MAX` **30** | **16 個**で「区分は 30 文字までです。」 |
+| `businessUnits.ts:98` メモ | `BUSINESS_NOTE_MAX` **200** | 同じ形 |
+| `overviewOverrides.ts:429` 項目名 | `CUSTOM_METRIC_MAX_LABEL` **40** | **21 個**で「項目名は 40 文字までです。」 |
+| `overviewOverrides.ts:436` メモ | `CUSTOM_METRIC_MAX_NOTE` **200** | 同じ形 |
+
+★ **文面が、その文面を読む利用者に対して証明可能に偽である** —— 31 文字を打った人が
+「60 文字までです」と断られる。★ **しかも出口と食い違う** —— パス 419 が同じ 5 つの定数を
+`displayField` に通したが、`clampToCeiling` は `for (const ch of value)` で**文字**を数える。
+つまり**入口はコード単位・出口は文字**で、パス 359 の「入口が出口より厳しい」の別の現れである。
+
+★ **`ceilingUnitCensus` がこれを見なかった理由は綴り** —— 針は `MAX_*_CHARS` を探すが、
+この 5 つは `X_MAX` (`BUSINESS_NAME_MAX`) と `MAX_*_LABEL` (`CUSTOM_METRIC_MAX_LABEL`) で、
+**どちらも母集団から落ちる**。パス 419 が「天井の定数には綴りが 3 通りある」と残した当のことで、
+**直し方は針を綴りから「文面が名乗る単位」へ移すこと**である (`moreThanChars` へ替えれば
+入口と出口の答えが揃い、**正当な値の答えは 1 つも変わらない** —— BMP の文字しか打たない
+利用者には差が出ない)。
+
+#### 使われていない collection 2 つ (低優先・測った)
+
+`OVERVIEW_OVERRIDES_COLLECTION` / `OVERVIEW_CUSTOM_METRICS_COLLECTION` は
+**書き手も読み手も 0 件** (宣言と形の表だけが参照する)。実際に使われているのは
+`manual-overrides` / `manual-metrics` の側。消すなら形の表の行も一緒に。
+
 ## パス 420 (2026-09-23) — 参照は、参照先より緩かった
 
 閉じたのは 3 欄 (`shigyo-consultations.topic` / `hydroponics-batches.id` / `.cropId`)。
@@ -28329,7 +28368,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `httpLimits` | 8 | 6 | 対称 (実測・パス 282 で総当たりにした) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts)。 ★ パス 248 は「手で選んだ 3 経路だけで母集団の総当たりではない」と**自分で認めていた**。パス 282 でその総当たりをやったら、**認めていた穴の中に生きた欠陥が 1 件**在った —— `main/main.ts` の `app:checkUpdate` が `AbortSignal.timeout(10_000)` という**裸の数**で、ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた。**同じ問いに 3 倍違う締切**で、遅い回線で先に諦めるのは「新しい版が出た」を受けて実際に更新できる**デスクトップ版**の側だった。しかも同じ関数の 3 行下の注記が 2026-08-31 に**本文の上限**の同じ食い違いを直したときのもので、そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い」と書いてある —— **その直しは 1 行手前で止まっていた**。 直しと同時に `shared/__tests__/deadlineCensus.test.ts` が母集団を走査する: 締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / `timeoutMs`) の時間の引数が**名前**であること (値の一致は要求しない —— `AI_CHAT_TIMEOUT_MS` の 2 分のように意図して違う締切は在る。名前が付いていれば理由が定義の隣に書ける)。実測 24 呼び出し・裸の数 0 件・例外の台帳 0 件 |
 | `hydroponicCrops` | 0 | 4 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。2026-09-23 (パス 420) に renderer 側の読み手が 3 → 4 になった (`data/hydroponicsLog.ts` が `CROP_ID_RE` を読み、ロットの `cropId` が**参照先と同じ形**であることを要求する) が、**main の側は 1 つも増えていない** —— 実測で `cropIdText` / `MAX_CROP_ID_CHARS` の `src/main/` からの参照は **0 件**である。 |
 | `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
-| `hydroponicsControl` | 1 | 5 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
+| `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
 | `inputCeiling` | 13 | 44 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれ、`atLeastChars` / `moreThanChars` の呼び手は `renderer/security/vault.ts` **1 ファイルだけ**である(デスクトップ版にマスターパスワードは無い —— 資格情報は OS のキーチェーンが封緘するので、床の双子が存在しない)。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
 | `isoDate` | 8 | 29 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 |
 | `mutualFundsMetrics` | 0 | 1 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**2 つだけ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct` (`pct < RETURN_FLOOR_PCT` の 1 行)。**その述語は確かに越境する** —— `adviseService` の中で真の枝 (:586 警告を組む) と偽の枝 (:596 測れる集合から外す) の両方が使われる。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
