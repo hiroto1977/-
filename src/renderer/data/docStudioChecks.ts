@@ -213,25 +213,47 @@ function fmtYen(n: number): string {
 }
 
 /**
+ * 差引支給額の欄を**書面の宣言そのものから**取る。
+ *
+ * `DocTable.sum` は `minus` を持つとき「支給額合計 − 控除額合計」の行で、
+ * その docblock が理由つきで **「差引は常に同じ欄から導く」** と規則にしている。
+ * 書面はその規則を守っていたが、**検算だけが同じ一覧を手で写していた**
+ * (2026-09-23 · パス 431)。実測: 4 書面 × 支給 / 控除 の 7 方向すべてで、
+ * 写した一覧から 1 欄落としても検査は 1 件も鳴らなかった —— 1 度だけ鳴ったのは
+ * 標本がたまたまその欄 (住民税) を埋めていたからで、標本が 0 のままの欄
+ * (`otherDed` / `otherPay`) を落とすと 4 書面とも黙った。
+ *
+ * 写しを消したので、**書面が足す欄と検算が足す欄はもう分かれようがない。**
+ */
+function netPaySumFields(doc: StudioDoc): { pay: readonly string[]; ded: readonly string[] } | null {
+  for (const b of doc.body) {
+    const sum = b.table?.sum;
+    if (sum?.minus !== undefined && sum.minus.length > 0 && sum.keys.length > 0) {
+      return { pay: sum.keys, ded: sum.minus };
+    }
+  }
+  return null;
+}
+
+/**
  * 支払明細書の差引支給額。**書面の合計と同じ欄・同じ読み方で検算する** ——
  * ここだけ別の欄を足すと、書面はマイナスを刷っているのに何も指摘されない。
+ * 欄は写さず `netPaySumFields` が書面から引く。
  *
  * 断るのは「控除が支給を超えた」ときだけ。料率が正しいかは判定しない
  * (書式が料率を持たないので、判定できない物を「問題なし」と黙るより良い)。
  */
-function netPayIssues(
-  v: Values,
-  payKeys: readonly string[],
-  dedKeys: readonly string[],
-  firstPayKey: string,
-): DocIssue[] {
-  const paid = payKeys.reduce((n, k) => n + money(v, k), 0);
-  const deducted = dedKeys.reduce((n, k) => n + money(v, k), 0);
+function netPayIssues(v: Values, doc: StudioDoc): DocIssue[] {
+  const f = netPaySumFields(doc);
+  // 差引の行を持たない書面ではこの検算は成り立たない (黙る)。
+  if (f === null) return [];
+  const paid = f.pay.reduce((n, k) => n + money(v, k), 0);
+  const deducted = f.ded.reduce((n, k) => n + money(v, k), 0);
   if (!Number.isFinite(paid) || !Number.isFinite(deducted)) return [];
   if (deducted <= paid) return [];
   return [{
     level: 'warn',
-    field: firstPayKey,
+    field: f.pay[0]!,
     message: `控除額の合計（${fmtYen(deducted)}）が支給額の合計（${fmtYen(paid)}）を超えています。`
       + `差引支給額が ${fmtYen(paid - deducted)} になります。`,
     basis: '労働基準法24条1項',
@@ -664,29 +686,16 @@ const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
    *   ② 役員賞与の**届出どおりでない支給** (原則として全額損金不算入)
    *   ③ 標準賞与額が賞与額を超えている (1,000円未満切捨てなので超えるはずがない)
    */
-  'kyuyo-meisai'(v) {
-    return netPayIssues(
-      v,
-      ['base', 'postAllow', 'famAllow', 'houseAllow', 'otPay', 'holidayPay', 'nightPay', 'commuteFree', 'commuteTax', 'otherPay'],
-      ['health', 'care', 'pension', 'empIns', 'incomeTax', 'residentTax', 'otherDed'],
-      'base',
-    );
+  'kyuyo-meisai'(v, doc) {
+    return netPayIssues(v, doc);
   },
 
-  'shoyo-meisai'(v) {
-    return [
-      ...netPayIssues(v, ['bonus', 'otherPay'], ['health', 'care', 'pension', 'empIns', 'incomeTax', 'otherDed'], 'bonus'),
-      ...standardBonusIssues(v, 'bonus'),
-    ];
+  'shoyo-meisai'(v, doc) {
+    return [...netPayIssues(v, doc), ...standardBonusIssues(v, 'bonus')];
   },
 
-  'yakuin-hoshu-meisai'(v) {
-    const out = netPayIssues(
-      v,
-      ['hoshu', 'commuteFree', 'commuteTax', 'otherPay'],
-      ['health', 'care', 'pension', 'incomeTax', 'residentTax', 'otherDed'],
-      'hoshu',
-    );
+  'yakuin-hoshu-meisai'(v, doc) {
+    const out = netPayIssues(v, doc);
     // 定期同額給与 (法人税法34条1項1号) —— 決議の月額と支給額が違えば、
     // 期中改定として損金不算入の部分が生じ得る。**判定はしない** (改定が
     // 定時改定か・業績の著しい悪化によるものかはこの書面から分からない)。
@@ -703,8 +712,8 @@ const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
     return out;
   },
 
-  'yakuin-shoyo-meisai'(v) {
-    const out = netPayIssues(v, ['bonus'], ['health', 'care', 'pension', 'incomeTax', 'otherDed'], 'bonus');
+  'yakuin-shoyo-meisai'(v, doc) {
+    const out = netPayIssues(v, doc);
     out.push(...standardBonusIssues(v, 'bonus'));
     const kind = text(v, 'kind');
     if (kind.startsWith('いずれにも当たらない')) {
