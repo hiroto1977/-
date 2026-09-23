@@ -75,6 +75,43 @@ export function StatusBar({
   // 「errorMessage スロットに出す」と書いてあったが、実際には出せない)。
   const [credentialError, setCredentialError] = useState<string>();
 
+  /**
+   * **保存 / 削除の直後、親の `isConfigured` は古い** (2026-09-23 · パス 427)。
+   *
+   * 親 (`useServiceData`) がこの判定を出すのは `listConfigured` を読む
+   * `useEffect` で、依存は `[serviceId, refresh, autoFetch]` —— **保存しても
+   * 削除しても、どれも変わらない**ので効果は再実行されない。実測 (jsdom で
+   * 実物の GithubPage を描く):
+   *
+   * | 操作 | 保管層 | この行の札 | パネルの中 |
+   * | --- | --- | --- | --- |
+   * | 保存 (未登録 → 登録) | `['github']` | **「PAT を設定」のまま** (= 未登録の札) | **「削除」が出ない** |
+   * | 削除 (登録 → 未登録) | `[]` | **「トークン更新」のまま** (= 登録済みの札) | —— |
+   *
+   * ★ **同じ行が同じ問いに 2 通り答えていた** —— 保存した直後、札は
+   * 「PAT を設定」(まだ何も預かっていない) と言い、隣のバッジは「ライブ」
+   * (今その資格情報で取ってきた) と言う。
+   *
+   * ★ **重いのは保存の側で、逃げ口が閉じる** —— 「削除」は `configured` の
+   * ときだけ描くので、**打ち込んだ直後の利用者はこの画面から消せない**。
+   * 設定画面の掃除の節は `unusedStoredCredentials`、つまり**読み手のいない**
+   * サービスだけを並べるので、github のような使われている資格情報はそこにも
+   * 出ない (法則 `escape-hatch-stays-open`)。
+   *
+   * **判定の出どころ**: 追加の IPC は要らない —— `setToken` / `clearToken` の
+   * 戻り値が `{ ok: true }` なら、main も保管庫も**書き終えている**
+   * (どちらも読み書きを都度ディスク / IndexedDB へ通し、控えを持たない)。
+   *
+   * **親が言い直したら、こちらの覚えは捨てる** —— 親がこの prop を動かすのは
+   * 取得が `not_configured` を返したときで、それは保管層についての**より新しい**
+   * 報せである。
+   */
+  const [changedHere, setChangedHere] = useState<boolean | null>(null);
+  useEffect(() => {
+    setChangedHere(null);
+  }, [serviceId, isConfigured]);
+  const configured = changedHere ?? isConfigured;
+
   // 読み手のいない資格情報は求めない (`shared/credentialUse.ts`)。判定は 1 か所で
   // 行い、以降は `tokenUi` だけを見る — 入力欄・OAuth ボタン・自動編集開始の
   // 3 か所へ同じ条件を書き写すと、どれか 1 つが必ず残る。
@@ -156,6 +193,7 @@ export function StatusBar({
     }
     setToken('');
     setEditing(false);
+    setChangedHere(true);
     onRefresh?.();
   };
 
@@ -168,11 +206,14 @@ export function StatusBar({
       setCredentialError(`削除できませんでした: ${res.message}`);
       return;
     }
+    // **削除できたことは、札と「削除」ボタンの消滅で示す。** 親の判定は
+    // 動かないので、ここで言い直さないと「トークン更新」のまま残る。
+    setChangedHere(false);
     setEditing(false);
   };
 
   const editButtonLabel =
-    errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
+    errorKind === 'auth' ? '再認証' : configured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
 
   // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外・認証情報つき・
   // **内側を向いた送り先 (loopback / プライベート帯)** なら `undefined` になり <img> ごと
@@ -189,7 +230,7 @@ export function StatusBar({
       <DutyOwner serviceId={serviceId} />
       {tokenUi && !editing && oauthSupported ? (
         <button onClick={browserAuth} disabled={authorizing}>
-          {authorizing ? '認証中…' : isConfigured ? '再認証 (ブラウザ)' : 'ブラウザで認証'}
+          {authorizing ? '認証中…' : configured ? '再認証 (ブラウザ)' : 'ブラウザで認証'}
         </button>
       ) : null}
       {tokenUi && !editing ? (
@@ -217,7 +258,7 @@ export function StatusBar({
             保存
           </button>
           <button onClick={() => setEditing(false)}>キャンセル</button>
-          {isConfigured ? <button onClick={clearToken}>削除</button> : null}
+          {configured ? <button onClick={clearToken}>削除</button> : null}
         </span>
       ) : null}
       {onRefresh && isRefreshable(origin) ? (

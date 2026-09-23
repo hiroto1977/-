@@ -9,18 +9,32 @@
  *
  *   - openExternal()           → window.open(url, '_blank', 'noopener')
  *   - revealInFolder() / openPath() → alert("ブラウザ版では使えません…")
- *   - setToken / clearToken / listConfigured → no-op
- *   - fetchSnapshot()          → returns "not_implemented" — pages already
- *                                fall back to SNAPSHOT[id] (the bundled
- *                                static snapshot), so the UI still shows
- *                                meaningful data
+ *   - setToken / clearToken / listConfigured
+ *                              → **保管庫 (security/vault.ts) への実物の読み書き**。
+ *                                2026-09-23 (パス 427) に訂正: ここは長らく
+ *                                「no-op」と書かれていたが偽で、資格情報が実際に
+ *                                生きている 3 経路である (setToken は
+ *                                `checkTokenInput` を通してから AES-GCM で
+ *                                包み、listConfigured は読めなければ投げる)。
+ *                                **この行を読んで「ブラウザ版はどこにも預からない」と
+ *                                判断してはいけない。**
+ *   - fetchSnapshot()          → サービスごとに分岐する (stocks / hydroponics /
+ *                                ollama / emotions …)。実装の無い物だけが
+ *                                "not_implemented" に落ち、ページはそこで
+ *                                SNAPSHOT[id] (同梱の静的スナップショット) へ戻る。
+ *                                2026-09-23 (パス 427) に訂正: 「常に
+ *                                not_implemented を返す」は偽
  *   - invoke('templates', 'export-template', …)
  *                              → renders SVG client-side and triggers
  *                                a browser download via <a download>
  *   - invoke('teamradar', 'export-svg', …)
- *                              → same, but expects the page to provide
- *                                the SVG (we extract from the live <svg>
- *                                element on the page)
+ *                              → デスクトップ版と**同じ** `renderTeamRadarSvg` を呼ぶ。
+ *                                2026-09-23 (パス 427) に訂正: 「画面の <svg> を
+ *                                掻き取る」はパス 268 で消した実装の説明で、
+ *                                掻き取ると ⚠ の断り・標題・部署・評価時点・凡例が
+ *                                落ちる (理由は `readStoredTeamRadarState` の
+ *                                docblock に在る —— **同じファイルの中で、
+ *                                この行だけが古いままだった**)
  *   - invoke('stocks', 'register-ticker' / 'unregister-ticker', …)
  *                              → persist the watchlist in localStorage;
  *                                fetchSnapshot('stocks') then synthesizes a
