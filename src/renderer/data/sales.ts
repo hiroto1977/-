@@ -10,6 +10,8 @@
  */
 
 import { isCalendarDate } from '../../shared/isoDate';
+import { displayField } from '../../shared/apiResponse';
+import { moreThanChars } from '../../shared/inputCeiling';
 
 export const SALES_COLLECTION = 'sales-entries';
 
@@ -61,6 +63,41 @@ export function isValidDate(s: unknown): s is string {
   return isCalendarDate(s);
 }
 
+/**
+ * メモの上限。**入口が既に持っていた数**で、読み出し側の天井の根拠もこれ 1 つである
+ * (数を 2 度書かない)。画面に出す所は `displayField(…, MAX_SALES_NOTE_CHARS)` を通す ——
+ * 実測 (2026-09-22 · パス 417 の直す前) で 200,000 字のメモ 1 件が
+ * **売上集計の画面を 200,257 字**・**金融機関等提出用の書面 §2 の但し書きを 200,056 字**・
+ * **Shopify の断りの文を 200,112 字**にしていた (入口は 200 字で断るのに、
+ * 復元や古い版が入れた行はその門を通っていない · 法則 `envelope-checked-at-read`)。
+ */
+export const MAX_SALES_NOTE_CHARS = 200;
+
+/**
+ * 控えのメモを**文字列として**読む 1 つの口。**型から始める。**
+ *
+ * `COLLECTION_SHAPES` の `note: opt(str)` は**入口**で型を見るが、
+ * `store.list()` は読みで落とさない (`recordShapeAudit.ts` の設計 —— 読みで落とすと
+ * 壊れた行が UI から触れなくなる)。だから復元・古い版・別の道具が入れた非文字列は
+ * ここへ届く。`(e.note ?? '').trim()` は **null / undefined しか受けない**ので、
+ * 数・物・配列・真偽値は素通りして `.trim is not a function` で投げていた ——
+ * 実測 (2026-09-22 · パス 417 の直す前・正しい日付を持つ行 1 件):
+ *
+ * | note | 売上集計 | 経営サマリー |
+ * | --- | --- | --- |
+ * | `42` / `{z:1}` / `[1]` / `true` | **4 形とも投げる** | **4 形とも投げる** |
+ *
+ * 投げると `PageErrorBoundary` が受けるので**その画面は開けず、開けないので
+ * その画面からは消せない** (逃げ口は設定の点検パネル 1 つだけになる)。
+ *
+ * ★ **天井は通さない** —— この値は `salesOrderRef` が注文の**同一性**を決めるのに使う。
+ *   切った注文名は**別の注文を指す**ので、切るのは誤りである (パス 414 の
+ *   「URL の欄には天井を通さない」と同じ理由)。天井は**画面に出す所**に掛ける。
+ */
+export function salesNoteText(e: Pick<SalesEntry, 'note'>): string {
+  return typeof e.note === 'string' ? e.note.trim() : '';
+}
+
 /** Validate + coerce raw input into a clean SalesEntry, or throw with a
  *  user-facing message. */
 export function parseSalesEntry(input: {
@@ -83,7 +120,11 @@ export function parseSalesEntry(input: {
   const entry: SalesEntry = { date: input.date, channel: input.channel, amount, orders };
   if (typeof input.note === 'string' && input.note.trim().length > 0) {
     const note = input.note.trim();
-    if (note.length > 200) throw new Error('メモは 200 文字以内で入力してください');
+    // **文字で数える** —— 名前が `_CHARS` なら単位も文字 (パス 252)。`.length` で数えると
+    // 絵文字 101 個 (= 101 文字 / 202 コード単位) を「200 文字を超えた」と断り、
+    // **自分の文面と矛盾する**。天井を掛ける `displayField` も文字で数えるので、
+    // 入口と画面の答えがこれで揃う。
+    if (moreThanChars(note, MAX_SALES_NOTE_CHARS)) throw new Error(`メモは ${MAX_SALES_NOTE_CHARS} 文字以内で入力してください`);
     return { ...entry, note };
   }
   return entry;
@@ -406,7 +447,7 @@ export function shopifyOrderNote(name: string | undefined): string {
  * 注文名は 1 注文に 1 つである。
  */
 export function salesOrderRef(e: Pick<SalesEntry, 'note'>): string | null {
-  const note = (e.note ?? '').trim();
+  const note = salesNoteText(e);
   return note.startsWith(SHOPIFY_NOTE_PREFIX) && note.length > SHOPIFY_NOTE_PREFIX.length ? note : null;
 }
 
@@ -447,12 +488,14 @@ export function findDuplicateOrders(entries: readonly SalesEntry[]): DuplicateOr
 
 /** 同じ注文名の記録を断るときの文。訂正の道 (売上集計の × で消してから) を言う。 */
 export function duplicateOrderMessage(existing: SalesEntry): string {
-  const ref = salesOrderRef(existing) ?? (existing.note ?? '').trim();
+  // 画面に出す文なので天井を通す (同一性を決める `salesOrderRef` の側は切らない)。
+  const ref = displayField(salesOrderRef(existing) ?? salesNoteText(existing), MAX_SALES_NOTE_CHARS);
   return `${ref} は既に売上集計に記録されています（${existing.date}・${existing.amount.toLocaleString('ja-JP')} 円）。訂正するときは売上集計の一覧の × で消してから記録し直してください（同じ注文を 2 度記録すると売上高に 2 度数えられます）。`;
 }
 
+/** 注文名を並べる (画面の断りと書面の但し書きが**同じここ**を読む)。**画面に出すので天井を通す。** */
 const listOrderGroups = (groups: readonly DuplicateOrderGroup[]): string =>
-  groups.map((g) => `${g.ref} ×${g.count}`).join('、');
+  groups.map((g) => `${displayField(g.ref, MAX_SALES_NOTE_CHARS)} ×${g.count}`).join('、');
 
 /** 売上集計の一覧の上の警告 (既に重複が在るとき)。無ければ null。 */
 export function duplicateOrdersNote(groups: readonly DuplicateOrderGroup[]): string | null {
@@ -606,7 +649,7 @@ export function duplicateOrdersSheetNote(groups: readonly DuplicateOrderGroup[])
  * ありうる。CSV の取り込みが「同じファイルを 2 度読んだか」を測るために使う。
  */
 export function salesRowKey(e: SalesEntry): string {
-  return `${e.date}|${e.channel}|${e.amount}|${e.orders}|${(e.note ?? '').trim()}`;
+  return `${e.date}|${e.channel}|${e.amount}|${e.orders}|${salesNoteText(e)}`;
 }
 
 /** `rows` のうち、内容が `existing` に既に在る行の数 (多重集合として 1 対 1 に当てる)。 */

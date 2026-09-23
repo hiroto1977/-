@@ -17,7 +17,9 @@ import {
   findDuplicateOrders,
   readableSalesRows,
   unreadableSalesDateNote,
+  MAX_SALES_NOTE_CHARS,
 } from '../data/sales';
+import { displayField } from '../../shared/apiResponse';
 import { salesToCsv, salesFromCsv } from '../data/salesCsv';
 import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import {
@@ -91,14 +93,18 @@ export function SalesPage() {
     [computedSummary, overrideRecords],
   );
   const months = useMemo(() => monthlyTotals(entries), [entries]);
+  // 日付が読める行だけの部分集合 (パス 360 の漏斗)。**1 度だけ組んで両方の断りが読む** ——
+  // 分子と分母を同じ部分集合から取る (法則 `one-subset-per-answer`)。
+  const readable = useMemo(() => readableSalesRows(entries), [entries]);
   // 日付が読めない行は月次推移から落ちる (パス 360)。**落としたことを言う** ——
   // 黙って除くと売上高が小さく出て、利用者は気づけない。
-  const unreadableDateNote = useMemo(
-    () => unreadableSalesDateNote(readableSalesRows(entries).dropped),
-    [entries],
-  );
+  const unreadableDateNote = useMemo(() => unreadableSalesDateNote(readable.dropped), [readable]);
   // 同じ注文名の重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 126)。
-  const duplicateNote = useMemo(() => duplicateOrdersNote(findDuplicateOrders(entries)), [entries]);
+  // **合計と同じ部分集合から数える** —— 素の購読から数えると、日付が読めなくて合計に
+  // 入っていない行の重複を「売上高と受注件数に 2 度数えられています」と述べることになり、
+  // その文が偽になる (`overview.ts` は 2026-09-22 からそう書いていて、この画面だけが
+  // 素のままだった。実測: 総売上 1,000,000 のまま「2 度数えられています」と言っていた)。
+  const duplicateNote = useMemo(() => duplicateOrdersNote(findDuplicateOrders(readable.rows)), [readable]);
 
   async function onAdd() {
     try {
@@ -334,7 +340,7 @@ export function SalesPage() {
                     <td style={{ padding: '4px 8px' }}>{CHANNEL_LABEL[r.data.channel]}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.amount)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{r.data.orders}</td>
-                    <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{r.data.note ?? ''}</td>
+                    <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.note, MAX_SALES_NOTE_CHARS)}</td>
                     <td style={{ padding: '4px 8px' }}>
                       <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
                     </td>

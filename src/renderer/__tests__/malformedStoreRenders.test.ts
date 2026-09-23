@@ -39,6 +39,36 @@
  * 素で `.slice` していた —— **同じファイルの中で同じ問いが 2 通りに答えられていた。**
  * パス 360 で両方を `readableSalesRows` に通し、落とした件数を画面が言う。
  *
+ * ## その「型が違う → 0」は、壊し方が狭かっただけだった (2026-09-22 · パス 417)
+ *
+ * `wrongTypedRow` は**最初に拒まれた 1 欄**を壊して返す。`sales-entries` の欄の並びは
+ * `date / channel / amount / orders / note` なので、返るのは常に `{ date: 'bad' }` ——
+ * **`note` には 1 度も当たっていなかった。** 台帳が空なのは「投げる画面が無い」ではなく
+ * 「**当てていなかった**」で、実測すると:
+ *
+ * | 壊し方 (**正しい日付**を持つ販売記録 1 件) | 投げた画面 |
+ * | --- | --- |
+ * | `note: 42` / `{z:1}` / `[1]` / `true` | **2** —— `sales` と `overview` |
+ *
+ * `(e.note ?? '').trim()` の 3 つの写しが `??` だけで受けていた (`??` は
+ * null / undefined しか受けない)。パス 417 が `salesNoteText` へ寄せて閉じた。
+ *
+ * ## 広げた 4 家系は、その欠陥を捕まえない (対照で測った)
+ *
+ * **壊し方を 2 → 4 家系へ広げた** —— `wrong-type-*-all` は**全欄**に同じ型違いの値を
+ * 置く (欄の一覧は形自身から導く)。**ただしそれでも足りない**: 対照 (パス 417 の直しを
+ * 戻す) を当てると、この機械は **9 件すべて緑のまま**だった。理由は
+ * `allFieldsRow` が `date` も壊すので、`readableSalesRows` が読む前に行を落とすこと ——
+ * **「正しい日付 + 1 欄だけ壊れている」という一番現実的な形が、どの家系にも無い。**
+ * それを捕まえるのは `renderer/pages/__tests__/storedNoteReads.test.ts` である
+ * (対照でそちらは ❌9)。
+ *
+ * つまりこの機械の主張は「**全欄が壊れた行でも投げない**」で、
+ * 「どんな壊れ方でも投げない」ではない。**欄ごとに 1 つずつ壊す**走査は
+ * 実測 281 通り × 76 画面 = 21,356 回の描画で 1 回あたり ~40ms かかるので
+ * `npm test` には置けない (実測 2026-09-22 · 直した後で**投げた画面は 0**)。
+ * 走らせ方と結果は `docs/REMAINING_WORK.md` に母集団つきで残した。
+ *
  * ## ここで見るもの
  *
  * - ★ 逃げ口 (設定画面の点検パネル) が**壊れた行の下でも描ける** —— 両方の壊し方で。
@@ -63,8 +93,25 @@ import { resetRecordStore } from './recordStoreHarness';
  */
 const THROWING_PAGES: Readonly<Record<string, string>> = {};
 
-/** 形の判定が拒む行 —— 2 通りの壊し方。 */
-type Family = 'missing' | 'wrong-type';
+/** 形の判定が拒む行 —— 4 通りの壊し方。 */
+type Family = 'missing' | 'wrong-type' | 'wrong-type-str-all' | 'wrong-type-num-all';
+
+/** 4 家系ぜんぶ (`it.each` と床が同じ 1 つを読む —— 家系を 2 か所に書かない)。 */
+const FAMILIES: readonly Family[] = ['missing', 'wrong-type', 'wrong-type-str-all', 'wrong-type-num-all'];
+
+/**
+ * **全欄**に同じ型違いの値を置いた行。`wrongTypedRow` が「最初に拒まれた 1 欄」しか
+ * 壊さないので、並びの後ろの欄 (販売記録の `note` など) に当たらない —— パス 417 の
+ * 欠陥はそこに居た。2 方向要る: **数の欄に文字列**を置くと `.toFixed` が、
+ * **文字列の欄に数**を置くと `.trim` / `.slice` が落ちる。
+ */
+export function allFieldsRow(collection: string, v: unknown): Record<string, unknown> | null {
+  const shape = COLLECTION_SHAPES[collection];
+  if (shape === undefined) return null;
+  const row: Record<string, unknown> = {};
+  for (const field of shape.fields) row[field] = v;
+  return hasCollectionShape(collection, row) ? null : row;
+}
 
 /**
  * 欄が在って型が違う行を、**形自身の欄の一覧から導く** (手書きの候補表だと、
@@ -90,6 +137,8 @@ export function wrongTypedRow(collection: string): Record<string, unknown> | nul
 /** その壊し方で実際に拒まれる行 (拒まれないなら `null` = その collection は対象外)。 */
 export function malformedRow(collection: string, family: Family): Record<string, unknown> | null {
   if (family === 'missing') return hasCollectionShape(collection, {}) ? null : {};
+  if (family === 'wrong-type-str-all') return allFieldsRow(collection, '1000');
+  if (family === 'wrong-type-num-all') return allFieldsRow(collection, -987654.321);
   return wrongTypedRow(collection);
 }
 
@@ -209,12 +258,21 @@ describe('壊れた行の下で全画面を描く (パス 360)', () => {
     // `hydroponics-crops` / `highlight-settings`)。型違いは全件拒まれる。
     expect(missing.length).toBeGreaterThanOrEqual(19);
     expect(wrong.length).toBe(Object.keys(COLLECTION_SHAPES).length);
+    // 全欄を壊す 2 家系も実際に拒まれること。**全件ではない** —— 欄が全部
+    // `any` / `opt` の形は 1 方向では拒めない (実測 2026-09-22: 文字列を置くと
+    // 21 / 23・数を置くと 21 / 23 で、通る 2 件は家系ごとに違う)。
+    for (const family of ['wrong-type-str-all', 'wrong-type-num-all'] as const) {
+      const hit = Object.keys(COLLECTION_SHAPES).filter((c) => malformedRow(c, family) !== null);
+      expect(hit.length, `${family} がどの collection にも当たらない`).toBeGreaterThanOrEqual(20);
+    }
+    // 針の標本 —— 全欄を壊す形が実際に「1 欄だけ」と違う物を返す。
+    expect(Object.keys(allFieldsRow('sales-entries', 1) ?? {})).toContain('note');
     // 針の標本 —— 合う行は拒まれない (どの行でも拒む判定になっていないこと)。
     expect(hasCollectionShape('sales-entries', { date: '2026-04-01', channel: 'amazon', amount: 1, orders: 1 })).toBe(true);
     expect(hasCollectionShape('sales-entries', {})).toBe(false);
   });
 
-  it.each(['missing', 'wrong-type'] as const)(
+  it.each(FAMILIES)(
     '★ 逃げ口 (点検パネル) は壊れた行の下でも描ける — %s',
     async (family) => {
       const seeded = await seedMalformed(family);
@@ -233,7 +291,7 @@ describe('壊れた行の下で全画面を描く (パス 360)', () => {
     120_000,
   );
 
-  it.each(['missing', 'wrong-type'] as const)(
+  it.each(FAMILIES)(
     '★ 投げる画面は台帳と両方向に一致する — %s',
     async (family) => {
       await seedMalformed(family);
