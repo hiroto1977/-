@@ -576,7 +576,17 @@ function FieldInputs({
           <label key={f.k} style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 11, color: 'var(--text-mute)' }}>
             <span>
               {f.label}
-              {f.req && <span style={{ color: '#e5484d', marginLeft: 4 }} title="必須">＊</span>}
+              {/*
+                **印の色は指摘の段階と同じ。** 2026-09-23 (パス 436) まで `#e5484d`
+                = `LEVEL_COLOR.fatal` の直書きで、同じ欄の指摘は `warn` の橙だった ——
+                1 つの入力行の中で ＊ が赤・枠が橙という 2 つの答えが並んでいた。
+                段階の選び方の根拠は `DocField.req` の宣言に在る。
+              */}
+              {f.req && (
+                <span data-req-mark style={{ color: LEVEL_COLOR.warn, marginLeft: 4 }} title="交付前に埋める欄">
+                  ＊
+                </span>
+              )}
             </span>
             {f.options ? (
               <select
@@ -2168,10 +2178,17 @@ export function DocstudioPage() {
               </div>
             )}
             {blanks && (
-              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
-                ＊ は空欄のまま交付すると書類として成立しない項目。
-                ＊ の未入力 {blanks.required} / {blanks.requiredTotal} 件・
-                その他の欄 {blanks.optional} / {blanks.optionalTotal} 件。
+              <div data-blank-guide style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
+                {blanks.requiredTotal === 0 ? (
+                  <>この書式に ＊ の欄はありません。未入力 {blanks.optional} / {blanks.optionalTotal} 件。</>
+                ) : (
+                  <>
+                    ＊ は交付前に埋める欄 —— 未入力は下の交付前チェックが「{LEVEL_MARK.warn}{' '}
+                    {LEVEL_NAME.warn}」として 1 件ずつ挙げます。
+                    ＊ の未入力 {blanks.required} / {blanks.requiredTotal} 件・
+                    その他の欄 {blanks.optional} / {blanks.optionalTotal} 件。
+                  </>
+                )}
               </div>
             )}
             <FieldInputs fields={inputFields} values={filled} onChange={setValue} flagged={flagged} />

@@ -61,7 +61,7 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/AssistantPage.tsx': 5,
   'src/renderer/pages/BusinessPage.tsx': 3,
   'src/renderer/pages/ChartsPage.tsx': 9,
-  'src/renderer/pages/DocstudioPage.tsx': 5,
+  'src/renderer/pages/DocstudioPage.tsx': 4, // パス 436: ＊ の印の #e5484d を LEVEL_COLOR.warn の参照へ
   'src/renderer/pages/EmotionsPage.tsx': 3,
   'src/renderer/pages/FreeePage.tsx': 10,
   'src/renderer/pages/FundingPage.tsx': 16,

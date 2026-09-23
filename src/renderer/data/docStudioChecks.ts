@@ -1162,7 +1162,14 @@ export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
 
 /** 未入力の内訳。**必須 (`req`) とそれ以外を分けて数える。** */
 export interface BlankCounts {
-  /** ＊ の欄のうち未入力の数。**これが 0 なら「空欄のまま交付すると成立しない」項目は残っていない。** */
+  /**
+   * ＊ の欄のうち未入力の数。**これが 0 なら交付前に埋める欄は残っていない。**
+   *
+   * 「成立しない」とは言わない —— パス 435 (この型を足した手) はこの 1 行に
+   * 「空欄のまま交付すると成立しない」と書いたが、それは `fatal` の定義の逐語で、
+   * この未入力を報告する段階は 56 書面すべて `warn` である (パス 436 で実測)。
+   * 根拠は `DocField.req` の宣言に在る。
+   */
   readonly required: number;
   /** ＊ の欄の総数。 */
   readonly requiredTotal: number;

@@ -109,7 +109,7 @@ async function openDoc(id: string): Promise<void> {
     `書式の一覧に ${id} が出る`,
   );
   await act(async () => { btn.click(); });
-  await settleUntil(() => guide().startsWith('＊ は空欄のまま'), '未入力の案内が出る');
+  await settleUntil(() => guide().includes('＊ の未入力'), '未入力の案内が出る');
 }
 
 const textOf = (starts: string): string =>
@@ -117,7 +117,13 @@ const textOf = (starts: string): string =>
     .map((d) => (d.textContent ?? '').replace(/\s+/g, ' ').trim())
     .find((t) => t.startsWith(starts)) ?? '';
 
-const guide = (): string => textOf('＊ は空欄のまま');
+/**
+ * 案内は**構造で引く** (`[data-blank-guide]`)。文面で引いていた 2026-09-23 (パス 435)
+ * の形は、パス 436 がその文面を訂正した瞬間に的を失った —— **直せる物を locator に
+ * してはいけない。** 数の形はこの下の `it` が主張する。
+ */
+const guide = (): string =>
+  (container.querySelector('[data-blank-guide]')?.textContent ?? '').replace(/\s+/g, ' ').trim();
 const checkPanel = (): string => textOf('🔍 交付前チェック');
 
 async function type(key: string, value: string): Promise<void> {
@@ -153,7 +159,7 @@ describe('未入力の件数 — 実物の画面 (適格請求書)', () => {
     const g = guide();
     expect(g, '＊ と任意は別に出る').toMatch(/＊ の未入力 \d+ \/ \d+ 件・ ?その他の欄 \d+ \/ \d+ 件/);
     // 針が的に当たる標本 —— 合算した 1 つの数だけの文はこの形に当たらない。
-    expect('＊ は空欄のまま交付すると書類として成立しない項目。未入力 28 / 35 件。')
+    expect('＊ は交付前に埋める欄 —— 未入力は下の交付前チェックが挙げます。未入力 28 / 35 件。')
       .not.toMatch(/＊ の未入力 \d+ \/ \d+ 件・ ?その他の欄 \d+ \/ \d+ 件/);
   });
 });
