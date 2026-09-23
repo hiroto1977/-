@@ -40,8 +40,34 @@
 - **`deadlineCensus` は「値が揃っているか」を見ない** —— その docblock が自分で
   そう述べている (「…両ビルドが同じ名前を読んでいるかは**読めば分かる**」)。
   パス 424 が足した `llmDeadlineCensus` は **LLM の口についてだけ**その穴を塞ぐ。
-  LLM 以外の締切 (更新確認・SaaS の読み書き) について「同じ問いに違う値」が
-  無いかは**測っていない**。母集団は `TIMEOUT_MS` を名乗る定数 4 つで小さい。
+
+### パス 424 の直後に測って、何も無かった 4 軸
+
+**次のセッションが同じ所を勘で掘らないために書く。** どれも実測で、
+「たぶん大丈夫」ではない。
+
+| 軸 | 測り方 | 結果 |
+| --- | --- | --- |
+| **LLM 以外の締切に「同じ問いに違う値」が無いか** | 締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / `timeoutMs:`) を全部列挙 | **無い。** 母集団は 23 か所で、読む定数は 4 つだけ (`DEFAULT_HTTP_TIMEOUT_MS` 30s / `AI_CHAT_TIMEOUT_MS` · `OLLAMA_CHAT_TIMEOUT_MS` 120s / `ollamaWeb.REQUEST_TIMEOUT_MS` 5s = 対話的な診断 / `OAUTH_CALLBACK_WINDOW_MS`)。**裸の数は 0 件** |
+| **更新確認の締切が本文の読みを覆うか** | `main.ts` の `AbortSignal.timeout(...)` を読む | **覆う。** `withBodyDeadline` が要るのは「ヘッダで解決したら `clearTimeout` する」形だが、ここは signal を fetch に渡したままなので、`readBodyWithCap` が読んでいる最中にも同じ signal が発火する |
+| **応答の大きさの上限を、口ごとに上書きしている所** | `ctx.maxBytes` の呼び手 | **0 件。** 欄は 2 つの ctx 型に在るが**誰も渡していない** —— Ollama の 2 MiB は client が `readBodyWithCap` へ直接渡す。使われていない任意の口なので今日の欠陥ではないが、**広げる向きにも使える** (`?? 既定` なので大きい値を渡せば緩む) |
+| **LLM の応答の天井 (`capAssistantReply`) が 7 つの口すべてに掛かるか** | `aiActionHandlers(ANY_AI_MARKS)` の 7 件を `reaches` で | **掛かる (`emotions` を除いて、それは掛ける物が無い)。** 4 件は `runAiChat` 経由・ollama 2 ビルドと `skills` は手で呼ぶ。**`emotions/analyze-text` だけが呼ばないが、そこはモデルの自由文が 1 文字も残らない** —— `normalizeAnalysis` が scores を `[0,1]` に clamp し `sentiment` を 3 値の enum に、`dominant` を `isDominantLabel` に通す。生の本文が出るのは JSON として読めなかったときだけで、そこは既に `redactForMessage(body, MAX_MALFORMED_JSON_ECHO_CHARS)` を通る |
+
+★ **書き出した紙に「見本のデータ」の断りが要るか、も測った** —— 要らない。
+`a.download` の **11 か所**はすべて**利用者自身の記録**
+(バックアップ / 財務分析 / 売上 CSV / KPI CSV / 経営レポート / 要望 /
+ライブラリ / 復旧の 24 語) で、**第三者や同梱の見本のスナップショットを
+書き出す口は 1 つも無い**。`SERVICE_DATA_ORIGIN` を読むのも
+オントロジーと `lint:credential-use` だけで、画面のバッジは
+`useServiceData` の `source` から出る (パス 376 で実測済み)。
+
+★ **UTC の日付を暦日として使う形も測った** —— `toISOString()` は 20 か所で、
+`slice(0, 10)` するのは 2 つだけ。`isoDate.ts` の `isoDateFromTimestamp` は
+**瞬間を UTC の日付にする**と自分で名乗り、暦日用には `localDate.ts` が別に在る
+(パス 408 が「日本 (UTC+9) では 0〜9 時の間だけ前日になる」と実測した当の分岐)。
+`taxConsumptionSchedule.ts` の `iso()` は、同じファイルが
+「**すべて UTC。表示は YYYY-MM-DD**」と宣言し `utcMsFromParts` だけで
+Date を組むので**一貫している** —— ここを `localIsoDate` へ替えるほうが誤りになる。
 
 ## パス 423 (2026-09-23) — 測って何も無かった軸 (次のセッションが測り直さないために)
 
