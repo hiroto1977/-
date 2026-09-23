@@ -72,12 +72,15 @@ const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
  */
 const VERDICTS = {
   apiResponse:
-    '対称 (実測・2026-09-23 パス 417 で数え直した) —— このモジュールが母集団に入ったのは、'
+    '対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、'
     + '`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」'
     + '述語が増えたため (パス 416)。**しかし両ビルドの食い違いは無い**: renderer が'
-    + 'このモジュールから直接読むのは **2 種類** —— `parseJsonText` '
-    + '(`web-shim.ts` / `saasWriteWeb.ts`・`null` を返さず**投げる**側) と、'
-    + '`displayField` (`data/sales.ts` / `pages/SalesPage.tsx`・パス 417 で足した)。'
+    + 'このモジュールから直接読むのは **2 種類だけ** —— `parseJsonText` '
+    + '(`null` を返さず**投げる**側) と `displayField` である。'
+    + '★ **読み手の一覧はここに書かない** —— `displayField` の呼び手は '
+    + 'パス 417 の 2 つからパス 419 で 7 つへ増えた (保管した自由文の天井を 5 画面に通した)。'
+    + '数は左の列が数え、この欄は**なぜ対称なのか**だけを述べる '
+    + '(名前を並べると、増えた日に散文だけが古びる)。'
     + '**`displayField` は `null` を返さない** —— 非文字列は空文字・長すぎる値は天井 + `…` で、'
     + '「no」と言う枝そのものを持たないので両ビルドで割れる余地が無い。'
     + '`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / '

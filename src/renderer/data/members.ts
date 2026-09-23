@@ -5,6 +5,34 @@
  * renderer via `useCollection(MEMBERS_COLLECTION)`.
  */
 import { isRole, ROLE_ORDER, type Role } from '../../shared/team';
+import { moreThanChars } from '../../shared/inputCeiling';
+
+/**
+ * **保管した自由文を画面へ出すときの天井。数は入口が既に宣言している物**
+ * (2026-09-23 · パス 419)。
+ *
+ * 入口 (フォームの関門) は 200,000 字を断るのに、**形 (復元の境界) は通す** ——
+ * `COLLECTION_SHAPES` の `str` は長さを見ない。だから手で直した控えや古い版が
+ * 書いた行は入口を通らずに入り、読み手には天井が無かった。実測 (直す前・1 欄 200,000 字):
+ * この画面の総文字数が **素の 40〜450 倍**になる。
+ *
+ * ★ **形の側では断らない** —— `collectionShapes.ts` 自身が
+ * 「**落とし過ぎは復元の欠落 = 別の事故になる**」と書いている。1 欄が長いだけで
+ * 行ごと捨てると、利用者は復元でその行を失う。天井は**画面に出す所**に掛け、
+ * 行は残す (パス 408 / 411 / 417 と同じ判断)。
+ * ★ **正当な値は 1 つも変わらない** —— 入口がその長さで既に断っているので。
+ */
+export const MAX_MEMBER_NAME_CHARS = 64; // `parseMember` が 1〜64 文字で断る。
+// **`_CHARS` ではない** —— RFC 5321 の 254 は**オクテット**の上限で、文字数ではない
+// (パス 419: `_CHARS` と名付けたら `ceilingUnitCensus` が「文字で数えろ」と正しく鳴った)。
+/**
+ * メールアドレスの上限 —— **`_CHARS` ではない。** RFC 5321 §4.5.3.1.3 の経路 256 オクテット
+ * から山括弧 2 つを引いた 254 は**オクテット**の上限で、文字数ではない。`isEmail` が
+ * `s.length` (符号単位) で当てるのは近似だが、**文字で数えると逆に緩む** (絵文字 1 字 =
+ * UTF-8 で 4 オクテット)。名前が単位を言わないので `ceilingUnitCensus` の台帳に載る。
+ */
+export const MAX_MEMBER_EMAIL_LEN = 254;
+
 
 export const MEMBERS_COLLECTION = 'team-members';
 
@@ -16,12 +44,12 @@ export interface Member extends Record<string, unknown> {
 
 /** Permissive but sane email check — we only persist it, never send mail. */
 function isEmail(s: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= 254;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= MAX_MEMBER_EMAIL_LEN;
 }
 
 export function parseMember(input: { name?: unknown; email?: unknown; role?: unknown }): Member {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (name.length === 0 || name.length > 64) throw new Error('氏名は 1〜64 文字で入力してください');
+  if (name.length === 0 || moreThanChars(name, MAX_MEMBER_NAME_CHARS)) throw new Error(`氏名は 1〜${MAX_MEMBER_NAME_CHARS} 文字で入力してください`);
 
   // 非文字列時のフォールバックは何であれ isEmail で false になり同じエラーになるため、
   // '' の StringLiteral mutation は equivalent。

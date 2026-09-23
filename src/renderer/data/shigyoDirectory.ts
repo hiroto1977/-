@@ -12,6 +12,31 @@
 import type { ServiceId } from '../../shared/serviceId';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import type { ShigyoConsultationStatus } from '../../shared/shigyoTypes';
+import { moreThanChars } from '../../shared/inputCeiling';
+
+/**
+ * **保管した自由文を画面へ出すときの天井。数は入口が既に宣言している物**
+ * (2026-09-23 · パス 419)。
+ *
+ * 入口 (フォームの関門) は 200,000 字を断るのに、**形 (復元の境界) は通す** ——
+ * `COLLECTION_SHAPES` の `str` は長さを見ない。だから手で直した控えや古い版が
+ * 書いた行は入口を通らずに入り、読み手には天井が無かった。実測 (直す前・1 欄 200,000 字):
+ * この画面の総文字数が **素の 40〜450 倍**になる。
+ *
+ * ★ **形の側では断らない** —— `collectionShapes.ts` 自身が
+ * 「**落とし過ぎは復元の欠落 = 別の事故になる**」と書いている。1 欄が長いだけで
+ * 行ごと捨てると、利用者は復元でその行を失う。天井は**画面に出す所**に掛け、
+ * 行は残す (パス 408 / 411 / 417 と同じ判断)。
+ * ★ **正当な値は 1 つも変わらない** —— 入口がその長さで既に断っているので。
+ */
+export const MAX_CONTACT_NAME_CHARS = 64; // `parseShigyoContact` が 1〜64 文字で断る。
+export const MAX_CONTACT_FIRM_CHARS = 80; // 同 80 文字。
+export const MAX_CONTACT_PHONE_CHARS = 20; // `isLoosePhone` の `{3,20}`。
+// **`_CHARS` ではない** —— RFC 5321 の 254 は**オクテット**の上限で、文字数ではない
+// (パス 419: `_CHARS` と名付けたら `ceilingUnitCensus` が「文字で数えろ」と正しく鳴った)。
+/** メールアドレスの上限 —— **オクテット**。単位の理由は `members.ts` の同じ定数に書いた。 */
+export const MAX_CONTACT_EMAIL_LEN = 254;
+
 
 export const SHIGYO_CONTACTS_COLLECTION = 'shigyo-contacts';
 export const SHIGYO_CONSULTATIONS_COLLECTION = 'shigyo-consultations';
@@ -46,12 +71,12 @@ export interface ShigyoContactEntry extends Record<string, unknown> {
 
 /** 緩めのメール形式チェック (保存するだけで送信はしない)。 */
 function isLooseEmail(s: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= 254;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= MAX_CONTACT_EMAIL_LEN;
 }
 
 /** 緩めの電話形式チェック (数字・ハイフン・括弧・+・空白)。 */
 function isLoosePhone(s: string): boolean {
-  return /^[0-9+()\-\s]{3,20}$/.test(s);
+  return new RegExp(`^[0-9+()\\-\\s]{3,${MAX_CONTACT_PHONE_CHARS}}$`).test(s);
 }
 
 export function parseShigyoContact(input: {
@@ -62,10 +87,10 @@ export function parseShigyoContact(input: {
   email?: unknown;
 }): ShigyoContactEntry {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (name.length === 0 || name.length > 64) throw new Error('氏名は 1〜64 文字で入力してください');
+  if (name.length === 0 || moreThanChars(name, MAX_CONTACT_NAME_CHARS)) throw new Error(`氏名は 1〜${MAX_CONTACT_NAME_CHARS} 文字で入力してください`);
 
   const firm = typeof input.firm === 'string' ? input.firm.trim() : '';
-  if (firm.length > 80) throw new Error('事務所名は 80 文字以内で入力してください');
+  if (moreThanChars(firm, MAX_CONTACT_FIRM_CHARS)) throw new Error(`事務所名は ${MAX_CONTACT_FIRM_CHARS} 文字以内で入力してください`);
 
   const phone = typeof input.phone === 'string' ? input.phone.trim() : '';
   if (phone !== '' && !isLoosePhone(phone)) throw new Error('電話番号の形式が正しくありません');

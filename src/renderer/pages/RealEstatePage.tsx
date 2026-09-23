@@ -61,6 +61,8 @@ function fmtDscr(x: number): string {
 }
 import { BuildingIso } from '../components/BuildingIso';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
+import { displayField } from '../../shared/apiResponse';
+import { MAX_PROPERTY_NAME_CHARS, MAX_PROPERTY_TYPE_CHARS } from '../data/investments';
 import {
   planWaterBalance,
   planRoSizing,
@@ -845,14 +847,14 @@ export function RealEstatePage() {
               return (
               <tr key={p.rowId}>
                 <td style={tdStyle}>
-                  {p.name}
+                  {displayField(p.name, MAX_PROPERTY_NAME_CHARS)}
                   {!p.user && (
                     <span style={{ marginLeft: 6, padding: '1px 6px', background: 'var(--bg-elev)', color: 'var(--text-mute)', borderRadius: 3, fontSize: 10 }}>
                       デモ
                     </span>
                   )}
                 </td>
-                <td style={tdStyle}>{p.type}</td>
+                <td style={tdStyle}>{displayField(p.type, MAX_PROPERTY_TYPE_CHARS)}</td>
                 <td style={tdNum}>{jpy(p.monthlyRent)}</td>
                 <td style={tdNum}>{jpyM(p.purchasePrice)}</td>
                 {/* 価格が読めない行は「—」。パス 54 は平均だけを直して**行を残していた** ——

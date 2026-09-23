@@ -18,7 +18,11 @@ import { useState } from 'react';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { fireReported } from '../data/deviceStoreFailure';
+import { displayField } from '../../shared/apiResponse';
 import {
+  BUSINESS_CATEGORY_MAX,
+  BUSINESS_NAME_MAX,
+  BUSINESS_NOTE_MAX,
   BUSINESS_UNITS_COLLECTION,
   findBusinessName,
   parseBusinessUnit,
@@ -36,7 +40,13 @@ import {
   type ManualMetricEntry,
   type ManualOverrideEntry,
 } from '../data/manualData';
-import { formatMetric, parseOverrideValue, type MetricUnit } from '../data/overviewOverrides';
+import {
+  CUSTOM_METRIC_MAX_LABEL,
+  CUSTOM_METRIC_MAX_NOTE,
+  formatMetric,
+  parseOverrideValue,
+  type MetricUnit,
+} from '../data/overviewOverrides';
 
 const input: React.CSSProperties = {
   background: 'var(--bg)',
@@ -201,15 +211,15 @@ function BusinessUnits({
           data-business-unit
           style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, flexWrap: 'wrap' }}
         >
-          <strong style={{ minWidth: 140 }}>{u.data.name}</strong>
+          <strong style={{ minWidth: 140 }}>{displayField(u.data.name, BUSINESS_NAME_MAX)}</strong>
           {typeof u.data.category === 'string' && (
-            <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{u.data.category}</span>
+            <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{displayField(u.data.category, BUSINESS_CATEGORY_MAX)}</span>
           )}
           {typeof u.data.startedOn === 'string' && (
             <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{u.data.startedOn}〜</span>
           )}
           {typeof u.data.note === 'string' && (
-            <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{u.data.note}</span>
+            <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{displayField(u.data.note, BUSINESS_NOTE_MAX)}</span>
           )}
           {typeof u.data.revenue === 'number' && Number.isFinite(u.data.revenue) && (
             <span data-business-amounts style={{ fontSize: 11, color: 'var(--text-mute)' }}>
@@ -340,13 +350,13 @@ function ManualMetrics({
             data-manual-metric
             style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, flexWrap: 'wrap' }}
           >
-            <span style={{ minWidth: 170 }}>{r.data.label}</span>
+            <span style={{ minWidth: 170 }}>{displayField(r.data.label, CUSTOM_METRIC_MAX_LABEL)}</span>
             <strong>{formatMetric(r.data.value, r.data.unit)}</strong>
             <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-              {business ?? '事業の指定なし'}
+              {business === null ? '事業の指定なし' : displayField(business, BUSINESS_NAME_MAX)}
             </span>
             {typeof r.data.note === 'string' && (
-              <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{r.data.note}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{displayField(r.data.note, CUSTOM_METRIC_MAX_NOTE)}</span>
             )}
             <button type="button" onClick={() => fireReported(onRemove(r.id))} style={{ fontSize: 12 }}>
               削除
@@ -393,7 +403,7 @@ function ManualMetrics({
           <option value="">事業の指定なし</option>
           {units.map((u) => (
             <option key={u.id} value={u.id}>
-              {u.data.name}
+              {displayField(u.data.name, BUSINESS_NAME_MAX)}
             </option>
           ))}
         </select>

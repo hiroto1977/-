@@ -13,6 +13,8 @@ import { jpy } from '../../shared/formatters';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
 import { docsForProfessional } from '../data/businessTriage';
+import { displayField } from '../../shared/apiResponse';
+import { MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS, MAX_CONTACT_EMAIL_LEN } from '../data/shigyoDirectory';
 import {
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
@@ -438,16 +440,16 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               {contacts.map((c) => (
                 <tr key={c.rowId}>
                   <td style={tdStyle}>
-                    {c.name}
+                    {displayField(c.name, MAX_CONTACT_NAME_CHARS)}
                     {!c.user && (
                       <span style={{ marginLeft: 6, padding: '1px 6px', background: 'var(--bg-elev)', color: 'var(--text-mute)', borderRadius: 3, fontSize: 10 }}>
                         デモ
                       </span>
                     )}
                   </td>
-                  <td style={tdStyle}>{c.firm}</td>
+                  <td style={tdStyle}>{displayField(c.firm, MAX_CONTACT_FIRM_CHARS)}</td>
                   <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)' }}>
-                    {c.email ?? ''}{c.phone ? ` · ${c.phone}` : ''}
+                    {displayField(c.email, MAX_CONTACT_EMAIL_LEN)}{c.phone ? ` · ${displayField(c.phone, MAX_CONTACT_PHONE_CHARS)}` : ''}
                   </td>
                   <td style={tdStyle}>
                     {c.user && (

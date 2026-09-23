@@ -17,6 +17,28 @@
 
 import { readNumeric } from '../../shared/readNumeric';
 import type { NumSpec } from './inputGuards';
+import { moreThanChars } from '../../shared/inputCeiling';
+
+/**
+ * **保管した自由文を画面へ出すときの天井。数は入口が既に宣言している物**
+ * (2026-09-23 · パス 419)。
+ *
+ * 入口 (フォームの関門) は 200,000 字を断るのに、**形 (復元の境界) は通す** ——
+ * `COLLECTION_SHAPES` の `str` は長さを見ない。だから手で直した控えや古い版が
+ * 書いた行は入口を通らずに入り、読み手には天井が無かった。実測 (直す前・1 欄 200,000 字):
+ * この画面の総文字数が **素の 40〜450 倍**になる。
+ *
+ * ★ **形の側では断らない** —— `collectionShapes.ts` 自身が
+ * 「**落とし過ぎは復元の欠落 = 別の事故になる**」と書いている。1 欄が長いだけで
+ * 行ごと捨てると、利用者は復元でその行を失う。天井は**画面に出す所**に掛け、
+ * 行は残す (パス 408 / 411 / 417 と同じ判断)。
+ * ★ **正当な値は 1 つも変わらない** —— 入口がその長さで既に断っているので。
+ */
+export const MAX_PROPERTY_NAME_CHARS = 64; // `parseProperty` が 1〜64 文字で断る。
+export const MAX_PROPERTY_TYPE_CHARS = 16; // 同 16 文字。
+export const MAX_FUND_NAME_CHARS = 80; // `parseHolding` が 1〜80 文字で断る。
+export const MAX_FUND_CODE_CHARS = 16; // 同 16 文字 (空白なし)。
+
 
 export const PROPERTIES_COLLECTION = 'realestate-properties';
 export const HOLDINGS_COLLECTION = 'mutualfund-holdings';
@@ -136,13 +158,13 @@ export function parsePropertyEntry(input: {
   monthlyLoan?: unknown;
 }): PropertyEntry {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (name.length === 0 || name.length > 64) throw new Error('物件名は 1〜64 文字で入力してください');
+  if (name.length === 0 || moreThanChars(name, MAX_PROPERTY_NAME_CHARS)) throw new Error(`物件名は 1〜${MAX_PROPERTY_NAME_CHARS} 文字で入力してください`);
 
   // Stryker disable next-line StringLiteral: '' を Stryker のセンチネル (17 文字) にしても
   // 直後の length > 16 で同じ 種別 エラーになる (等価変異)。name 側は上限 64 のため
   // センチネルが通ってしまい等価にならず、そちらはテストで殺している。
   const type = typeof input.type === 'string' ? input.type.trim() : '';
-  if (type.length === 0 || type.length > 16) throw new Error('種別を選択してください');
+  if (type.length === 0 || moreThanChars(type, MAX_PROPERTY_TYPE_CHARS)) throw new Error('種別を選択してください');
 
   const monthlyRent = toAmount(input.monthlyRent);
   if (monthlyRent === null) throw new Error('家賃 (月額) は 0 以上の数値で入力してください');
@@ -483,10 +505,10 @@ export function parseHoldingEntry(input: {
   ytdReturnPct?: unknown;
 }): HoldingEntry {
   const code = typeof input.code === 'string' ? input.code.trim() : '';
-  if (code.length > 16 || /\s/.test(code)) throw new Error('銘柄コードは空白なし 16 文字以内で入力してください');
+  if (moreThanChars(code, MAX_FUND_CODE_CHARS) || /\s/.test(code)) throw new Error(`銘柄コードは空白なし ${MAX_FUND_CODE_CHARS} 文字以内で入力してください`);
 
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (name.length === 0 || name.length > 80) throw new Error('ファンド名は 1〜80 文字で入力してください');
+  if (name.length === 0 || moreThanChars(name, MAX_FUND_NAME_CHARS)) throw new Error(`ファンド名は 1〜${MAX_FUND_NAME_CHARS} 文字で入力してください`);
 
   const manual = input.valuation !== undefined && input.valuation !== '';
 

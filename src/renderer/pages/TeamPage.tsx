@@ -29,6 +29,8 @@ import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
+import { displayField } from '../../shared/apiResponse';
+import { MAX_MEMBER_NAME_CHARS, MAX_MEMBER_EMAIL_LEN } from '../data/members';
 
 /**
  * 給与計算の入力欄の性質。読み取り (`readNumberOr0`) と警告 (`GuardedNumber`) が
@@ -297,8 +299,8 @@ export function TeamPage() {
             <tbody>
               {records.map((r) => (
                 <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
-                  <td style={{ padding: '4px 8px' }}>{r.data.name}</td>
-                  <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{r.data.email}</td>
+                  <td style={{ padding: '4px 8px' }}>{displayField(r.data.name, MAX_MEMBER_NAME_CHARS)}</td>
+                  <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.email, MAX_MEMBER_EMAIL_LEN)}</td>
                   <td style={{ padding: '4px 8px' }}>
                     <select
                       value={r.data.role}

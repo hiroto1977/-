@@ -56,6 +56,8 @@ import { convertToJpy, fxGainLoss, ttRates, roundTripCost } from '../../shared/f
 import { useParameters } from '../data/parameterOverrides';
 import { advisorThresholds } from '../../shared/parameters';
 import type { MutualFundsAdviceInput } from '../../shared/serviceAdvisor';
+import { displayField } from '../../shared/apiResponse';
+import { MAX_FUND_CODE_CHARS, MAX_FUND_NAME_CHARS } from '../data/investments';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -630,9 +632,9 @@ export function MutualFundsPage() {
           <tbody>
             {holdings.map((h) => (
               <tr key={h.rowId}>
-                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{h.code || '—'}</td>
+                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{displayField(h.code, MAX_FUND_CODE_CHARS) || '—'}</td>
                 <td style={tdStyle}>
-                  {h.name}
+                  {displayField(h.name, MAX_FUND_NAME_CHARS)}
                   {h.userTag && (
                     <span style={{ marginLeft: 6, padding: '1px 6px', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', borderRadius: 3, fontSize: 10 }}>
                       {h.userTag}
