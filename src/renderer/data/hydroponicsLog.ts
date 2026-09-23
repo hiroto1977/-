@@ -18,6 +18,8 @@
 import { charsOverCeiling, countChars, refusedCeilingNote } from '../../shared/inputCeiling';
 import { isCalendarDate } from '../../shared/isoDate';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
+import { CROP_ID_RE } from '../../shared/hydroponicCrops';
+import { MAX_BATCH_ID_CHARS } from '../../shared/hydroponicsControl';
 import {
   batchFromStored,
   isBatchState,
@@ -354,8 +356,13 @@ export function settingsFrom(
 // **空欄は `null` (未測定) にする。0 に倒さない。** 読めない値 (数でない・範囲外) は
 // **黙って落とさず断る** —— 「測っていない」と「間違って入れた」は打ち手が違う。
 
-/** ロット名の天井 (画面の一覧と作業リストに出る名前)。 */
-export const MAX_BATCH_ID_CHARS = 40;
+/**
+ * ロット名の天井 (画面の一覧と作業リストに出る名前)。
+ * **実体は `shared/hydroponicsControl.ts` に在る** —— 2026-09-23 (パス 420) に移した。
+ * 保存値の理由の文を組むのは shared なので、天井もそこに要る (shared は renderer を読めない)。
+ * ここは別名で、**数は 1 つだけ**である。
+ */
+export { MAX_BATCH_ID_CHARS } from '../../shared/hydroponicsControl';
 /** パネル枚数の天井。桁誤りを止める幅であって、設備の上限ではない。 */
 export const MAX_BATCH_PANELS = 100_000;
 
@@ -440,7 +447,19 @@ export function parseBatch(input: {
   if (countChars(id) > MAX_BATCH_ID_CHARS) {
     throw new Error(refusedCeilingNote('ロット名', id, MAX_BATCH_ID_CHARS));
   }
+  /*
+   * **参照は参照先と同じ形でなければならない** (2026-09-23 · パス 420)。
+   *
+   * `cropId` は品目一覧の id を指す参照で、その id は `CROP_ID_RE` にしか成り得ない
+   * (`sanitizeCropList` が同じ式で選別する)。ところがここは 2026-09-23 まで
+   * 「文字列で空でない」しか見ておらず、**参照のほうが参照先より緩かった**:
+   * 実測で `'x'.repeat(200)` / `'A B/C'` / `'../../evil'` がすべて通った。
+   *
+   * **画面から入る値の答えは 1 つも変わらない** —— 入力は品目一覧の `<select>` なので、
+   * 選べる値はどれも `CROP_ID_RE` に合う (既定の 5 件は実測で最長 13 字)。
+   */
   if (typeof input.cropId !== 'string' || input.cropId === '') throw new Error('品目を選んでください');
+  if (!CROP_ID_RE.test(input.cropId)) throw new Error('品目の id が不正です (一覧から選び直してください)');
   if (!isCalendarDate(input.sowDate)) throw new Error('播種日は YYYY-MM-DD 形式の実在する日付で入力してください');
   const panels = Number(input.panels);
   if (!Number.isInteger(panels) || panels < 1) throw new Error('パネル枚数は 1 以上の整数で入力してください');

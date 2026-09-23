@@ -23,6 +23,7 @@ import {
   READING_FIELDS,
 } from '../../../shared/hydroponicsControl';
 import { MAX_RECORD_NOTE_CHARS } from '../../../shared/recordEntryLimits';
+import { DEFAULT_CROP_LIST, MAX_CROP_ID_CHARS } from '../../../shared/hydroponicCrops';
 
 /*
  * 水耕栽培の運転記録の保存 (2026-09-13 · パス 194)。
@@ -122,6 +123,25 @@ describe('ロットを書く (parseBatch)', () => {
     expect(() => parseBatch({ ...good, panels: '1.5' })).toThrow(/1 以上の整数/);
     expect(() => parseBatch({ ...good, panels: String(MAX_BATCH_PANELS + 1) })).toThrow(/枚まで/);
     expect(() => parseBatch({ ...good, state: 'sprouting' })).toThrow(/状態/);
+  });
+
+  /*
+   * **参照は参照先と同じ形でなければならない** (2026-09-23 · パス 420)。
+   *
+   * `cropId` は品目一覧の id を指す参照で、その id は `CROP_ID_RE` にしか成り得ない。
+   * ところが 2026-09-23 まで入口は「文字列で空でない」しか見ておらず、実測で
+   * 200,000 字の `cropId` が通り、画面に 2 か所で出て 401,346 字になった。
+   */
+  it('★ 品目 id は参照先と同じ形でなければ断る (参照が参照先より緩くない)', () => {
+    // 既定の品目 5 件はどれも通る —— **画面から入る値の答えは変わらない**。
+    for (const c of DEFAULT_CROP_LIST) {
+      expect(() => parseBatch({ ...good, cropId: c.id }), c.id).not.toThrow();
+    }
+    // 利用者が足した品目の id も通る。
+    expect(() => parseBatch({ ...good, cropId: 'custom-12' })).not.toThrow();
+    for (const bad of ['x'.repeat(MAX_CROP_ID_CHARS + 1), 'A B/C', '../../evil', 'Lettuce', '-lead', 'にほんご']) {
+      expect(() => parseBatch({ ...good, cropId: bad }), JSON.stringify(bad.slice(0, 20))).toThrow(/品目の id/);
+    }
   });
 
   it('★ 読めない日付は今日に倒さず断る', () => {

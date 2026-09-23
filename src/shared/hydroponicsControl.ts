@@ -39,6 +39,8 @@
  */
 
 import { addIsoDays, isCalendarDate, isoDaysBetween, parseIsoDate } from './isoDate';
+import { displayField } from './apiResponse';
+import { MAX_CROP_ID_CHARS } from './hydroponicCrops';
 import {
   DEFAULT_CROP_LIST,
   HYDROPONIC_CROP_BOUNDS,
@@ -630,6 +632,31 @@ export function topUpLiters(levelPct: number | null, setup: DosingSetup): DoseAd
 /** 栽培ロットの状態。 */
 export type BatchState = 'nursery' | 'growing' | 'harvested' | 'discarded';
 
+/**
+ * **ロット名の天井** (2026-09-23 · パス 420 で `renderer/data/hydroponicsLog.ts` から移した)。
+ *
+ * 入口 (`parseBatch`) はこの数で断るのに、**画面と作業リストの理由は生の保存値を刷っていた**
+ * —— 実測で 200,000 字のロット名は 3 か所に出て画面が 601,354 字になった。
+ * 理由の文はここ (shared) で組むので、天井もここに要る (renderer から import はできない)。
+ */
+export const MAX_BATCH_ID_CHARS = 40;
+
+/**
+ * 保存値のロット名・品目 id を**文へ入れるときの形**。
+ *
+ * パス 320 が teamradar について閉じたのと同じ家系 —— **壊れ方の理由に生の保存値が載る**。
+ * 入口が断る値でも、復元で入った行はここへ届く (`COLLECTION_SHAPES` の `str` は長さを見ない)。
+ * 切ったことは `…` で述べる (絞ることと述べることは対 · パス 400)。
+ */
+export function batchIdText(id: string): string {
+  return displayField(id, MAX_BATCH_ID_CHARS);
+}
+
+/** 同上 (品目 id。天井は参照先の `CROP_ID_RE` が持つ長さ)。 */
+export function cropIdText(id: string): string {
+  return displayField(id, MAX_CROP_ID_CHARS);
+}
+
 export const BATCH_STATE_LABELS: Readonly<Record<BatchState, string>> = {
   nursery: '育苗中',
   growing: '定植済み',
@@ -1137,7 +1164,7 @@ export function dailyTasks(input: ControlInput): readonly ControlTask[] {
       tasks.push({
         id: `batch:${b.id}:crop-missing`,
         label: 'ロットの品目が見つかりません',
-        why: `ロット ${b.id} の品目 "${b.cropId}" が一覧にありません (消された品目です)。品目を戻すか、ロットの品目を選び直してください。`,
+        why: `ロット ${batchIdText(b.id)} の品目 "${cropIdText(b.cropId)}" が一覧にありません (消された品目です)。品目を戻すか、ロットの品目を選び直してください。`,
         severity: 'warn',
         dueDate: null,
         overdueDays: null,
@@ -1151,7 +1178,7 @@ export function dailyTasks(input: ControlInput): readonly ControlTask[] {
       tasks.push({
         id: `batch:${b.id}:schedule-unreadable`,
         label: 'ロットの日程が計算できません',
-        why: `ロット ${b.id} の播種日・品目の日数が読めないか、日付の前後が逆になっています (播種 → 定植 → 収穫)。`,
+        why: `ロット ${batchIdText(b.id)} の播種日・品目の日数が読めないか、日付の前後が逆になっています (播種 → 定植 → 収穫)。`,
         severity: 'warn',
         dueDate: null,
         overdueDays: null,

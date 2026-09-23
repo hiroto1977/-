@@ -14,7 +14,7 @@ import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
 import { docsForProfessional } from '../data/businessTriage';
 import { displayField } from '../../shared/apiResponse';
-import { MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS, MAX_CONTACT_EMAIL_LEN } from '../data/shigyoDirectory';
+import { MAX_CONSULTATION_TOPIC_CHARS, MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS, MAX_CONTACT_EMAIL_LEN } from '../data/shigyoDirectory';
 import {
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
@@ -527,7 +527,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               {recentConsultations.map((c) => (
                 <tr key={c.rowId}>
                   <td style={tdStyle}>{c.date}</td>
-                  <td style={tdStyle}>{c.topic}</td>
+                  <td style={tdStyle}>{displayField(c.topic, MAX_CONSULTATION_TOPIC_CHARS)}</td>
                   <td style={tdStyle}>
                     {c.user ? (
                       <select

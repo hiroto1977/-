@@ -40,7 +40,7 @@ import {
   type HydroponicReadingRecord,
   type HydroponicsControlRecord,
 } from '../data/hydroponicsLog';
-import { outOfRangeControlNote, type ControlFieldKey } from '../../shared/hydroponicsControl';
+import { batchIdText, cropIdText, outOfRangeControlNote, type ControlFieldKey } from '../../shared/hydroponicsControl';
 import {
   assessReading,
   batchSchedule,
@@ -516,7 +516,7 @@ export function HydroponicsPage() {
               <option value="">指定しない</option>
               {batches.items.map((b) => (
                 <option key={b.id} value={b.id}>
-                  {b.id}
+                  {batchIdText(b.id)}
                 </option>
               ))}
             </select>
@@ -607,8 +607,8 @@ export function HydroponicsPage() {
                     : lowPotassiumSwitchDate(sched, input.settings.lowPotassiumSwitchDays);
                 return (
                   <tr key={b.id} data-hydroponics-batch={b.id}>
-                    <td style={tdStyle}>{b.id}</td>
-                    <td style={tdStyle}>{crop?.label ?? `(${b.cropId} — 見つかりません)`}</td>
+                    <td style={tdStyle}>{batchIdText(b.id)}</td>
+                    <td style={tdStyle}>{crop?.label ?? `(${cropIdText(b.cropId)} — 見つかりません)`}</td>
                     <td style={tdStyle}>{BATCH_STATE_LABELS[b.state]}</td>
                     <td style={tdStyle}>{b.sowDate}</td>
                     <td style={tdStyle}>{sched?.transplantDue ?? '—'}</td>

@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   acidToNeutralizeAlkalinity,
   assessField,
+  batchIdText,
+  cropIdText,
+  MAX_BATCH_ID_CHARS,
   assessReading,
   batchFromStored,
   batchSchedule,
@@ -32,7 +35,7 @@ import {
   type HydroponicReading,
 } from '../hydroponicsControl';
 import { HYDROPONIC_CROPS } from '../hydroponics';
-import { HYDROPONIC_CROP_BOUNDS, DEFAULT_CROP_LIST } from '../hydroponicCrops';
+import { HYDROPONIC_CROP_BOUNDS, DEFAULT_CROP_LIST, MAX_CROP_ID_CHARS } from '../hydroponicCrops';
 
 /*
  * 水耕栽培の運転管理 (2026-09-13 · パス 194)。
@@ -793,5 +796,66 @@ describe('batchSchedule — 前後が逆なら null (パス 223)', () => {
 
   it('養液交換日が播種より前でも日程は出る (播種前に培養液を仕込むのは通常の作業)', () => {
     expect(batchSchedule({ ...base, solutionChangedDate: '2026-09-01' }, crop)).not.toBeNull();
+  });
+});
+
+/**
+ * **保存値の id を文へ入れるときの天井** (2026-09-23 · パス 420)。
+ *
+ * パス 320 が teamradar について閉じたのと同じ家系 —— **壊れ方の理由に生の保存値が載る**。
+ * 入口 (`parseBatch`) は 40 字で断るのに、`dailyTasks` の `why` はロット名と品目 id を
+ * そのまま補間していた。復元で入った行はその入口を通らない
+ * (`COLLECTION_SHAPES` の `str` は長さを見ない —— 実測で 200,000 字が通る)。
+ *
+ * 実測 (直す前・実物の画面を描く): ロット名 200,000 字 → 画面 **601,354 字** (3 か所に出る)・
+ * 品目 id 200,000 字 → **401,346 字** (2 か所)。
+ */
+describe('保存値の id を文へ入れる天井 (パス 420)', () => {
+  it('★ 読める長さの id はそのまま (答えを変えない)', () => {
+    expect(batchIdText('b1')).toBe('b1');
+    expect(cropIdText('leaf-lettuce')).toBe('leaf-lettuce');
+    expect(batchIdText('x'.repeat(MAX_BATCH_ID_CHARS))).toBe('x'.repeat(MAX_BATCH_ID_CHARS));
+  });
+
+  it('★ 天井を超えたら切って、切ったことを述べる', () => {
+    expect(batchIdText('x'.repeat(200_000))).toBe('x'.repeat(MAX_BATCH_ID_CHARS) + '…');
+    expect(cropIdText('y'.repeat(200_000))).toBe('y'.repeat(MAX_CROP_ID_CHARS) + '…');
+  });
+
+  it('★ 文字列でない保存値は空文字 (投げない)', () => {
+    for (const v of [42, null, undefined, {}, []] as unknown[]) {
+      expect(batchIdText(v as string)).toBe('');
+      expect(cropIdText(v as string)).toBe('');
+    }
+  });
+
+  it('★ 作業リストの理由も天井を通る (品目が見つからないロット)', () => {
+    const tasks = dailyTasks({
+      today: '2026-02-01',
+      readings: [],
+      batches: [
+        {
+          id: 'x'.repeat(200_000),
+          cropId: 'y'.repeat(200_000),
+          sowDate: '2026-01-01',
+          panels: 1,
+          state: 'nursery',
+          transplantedDate: null,
+          harvestedDate: null,
+          solutionChangedDate: null,
+          note: '',
+        },
+      ],
+      crops: DEFAULT_CROP_LIST,
+      settings: DEFAULT_CONTROL_SETTINGS,
+      dosing: DEFAULT_DOSING_SETUP,
+      targets: DEFAULT_ENVIRONMENT_TARGETS,
+    });
+    const missing = tasks.find((t) => t.label === 'ロットの品目が見つかりません');
+    expect(missing, '品目が見つからない作業が出ていない').toBeDefined();
+    // **文の長さが天井に収まる** —— 直す前は 1 つの `why` が 400,000 字を超えた。
+    expect(missing!.why.length).toBeLessThan(300);
+    expect(missing!.why).toContain('x'.repeat(MAX_BATCH_ID_CHARS) + '…');
+    expect(missing!.why).toContain('y'.repeat(MAX_CROP_ID_CHARS) + '…');
   });
 });

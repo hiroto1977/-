@@ -32,8 +32,21 @@ export const MAX_CROP_LABEL_CHARS = 40;
 /** 一覧の上限。壊れた保存や取り込みで select が何千行にもならないための砦。 */
 export const MAX_CROPS = 50;
 
-/** id の形。参考値の id (`leaf-lettuce`) も `custom-12` もこれに収まる。 */
-export const CROP_ID_RE = /^[a-z0-9][a-z0-9-]{0,39}$/;
+/**
+ * **品目 id の天井** (2026-09-23 · パス 420 で名前を付けた)。
+ *
+ * それまで長さは `CROP_ID_RE` の `{0,39}` の中にだけ在り、**名前を持たなかった**ので
+ * 他所から引けなかった。`hydroponics-batches.cropId` は**この id を指す参照**なのに、
+ * 入口 (`parseBatch`) はその形を 1 つも検めていなかった —— **参照が参照先より緩い**形で、
+ * 実測で 200,000 字の `cropId` が通り、画面に 2 か所で出て 401,346 字になった。
+ */
+export const MAX_CROP_ID_CHARS = 40;
+
+/**
+ * id の形。参考値の id (`leaf-lettuce`) も `custom-12` もこれに収まる。
+ * **長さは `MAX_CROP_ID_CHARS` から組む** —— 数を 2 か所に書くと、片方だけが動く。
+ */
+export const CROP_ID_RE = new RegExp(`^[a-z0-9][a-z0-9-]{0,${MAX_CROP_ID_CHARS - 1}}$`);
 
 /** 利用者が足した品目の id の接頭辞。 */
 export const CUSTOM_CROP_ID_PREFIX = 'custom-';

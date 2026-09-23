@@ -32,6 +32,12 @@ import { moreThanChars } from '../../shared/inputCeiling';
 export const MAX_CONTACT_NAME_CHARS = 64; // `parseShigyoContact` が 1〜64 文字で断る。
 export const MAX_CONTACT_FIRM_CHARS = 80; // 同 80 文字。
 export const MAX_CONTACT_PHONE_CHARS = 20; // `isLoosePhone` の `{3,20}`。
+/**
+ * 相談テーマの天井 (2026-09-23 · パス 420 で名前を付けた)。
+ * それまで 80 は**関門の式の中の裸の数**で、画面から引けなかった ——
+ * だから表示側は天井を持てず、復元で入った 200,000 字がそのまま一覧に出た (実測 201,933 字)。
+ */
+export const MAX_CONSULTATION_TOPIC_CHARS = 80;
 // **`_CHARS` ではない** —— RFC 5321 の 254 は**オクテット**の上限で、文字数ではない
 // (パス 419: `_CHARS` と名付けたら `ceilingUnitCensus` が「文字で数えろ」と正しく鳴った)。
 /** メールアドレスの上限 —— **オクテット**。単位の理由は `members.ts` の同じ定数に書いた。 */
@@ -123,7 +129,9 @@ export function parseShigyoConsultation(input: {
   if (!isCalendarDate(date)) throw new Error(`${calendarDateMessage('相談日')} (例: 2026-07-25)`);
 
   const topic = typeof input.topic === 'string' ? input.topic.trim() : '';
-  if (topic.length === 0 || topic.length > 80) throw new Error('相談テーマは 1〜80 文字で入力してください');
+  if (topic.length === 0 || moreThanChars(topic, MAX_CONSULTATION_TOPIC_CHARS)) {
+    throw new Error(`相談テーマは 1〜${MAX_CONSULTATION_TOPIC_CHARS} 文字で入力してください`);
+  }
 
   if (!isConsultationStatus(input.status)) throw new Error('ステータスが不正です');
 
