@@ -135,7 +135,34 @@ export function readablePeriodRows<T extends { readonly period: string }>(
 
 /**
  * 期が読めない行を落としたことを述べる 1 文。落としていなければ `null`。
- * 画面向け (`kind` = 実績 / 予算) —— 相手に渡る面は `unreadablePeriodSheetNote`。
+ * **KPI 実績の画面向け** (`kind` = 実績 / 予算) —— 経営サマリーは
+ * `unreadablePeriodOverviewNote`、相手に渡る面は `unreadablePeriodSheetNote`。
+ *
+ * ## 逃げ口は「設定の点検パネル」ではない (2026-09-23 · パス 425)
+ *
+ * この文は 2026-09-13 (パス 225) から **設定の「形式の合わない記録」**を名指ししていた。
+ * 隣の `sales.ts` の `unreadableSalesDateNote` が同じ文面を持ち、**売上の側では正しい**
+ * ので写したものである。ところが実測すると、KPI では**その逃げ口が対象を見つけない**:
+ *
+ * | collection | 標本 | 形の表 (`COLLECTION_SHAPES`) | 点検パネル |
+ * | --- | --- | --- | --- |
+ * | `sales-entries` | `date: '2026-02-31'` | `calendarDate` —— **断る** | **見つける** ✅ |
+ * | `kpi-actuals` | `period: 'bad'` | **`str`** —— 通す | **見つけない** ❌ |
+ *
+ * 点検パネルが見るのは**形**であって暦ではない。`KPI_SHAPE.period` は `str` なので
+ * `'bad'` は形として正しく、パネルは `malformed = 0` を返す。**利用者が文のとおりに
+ * 設定へ行くと、その画面は「調べた 2 件に形式の合わないレコードはありません。」と
+ * 答える** —— つまり警告と行き先が**互いに矛盾する** (2026-09-23 に jsdom で実測)。
+ *
+ * そして**本物の逃げ口はその人が今見ている画面に在った** —— KPI の一覧は
+ * `records.map` で**選別せずに**描くので、`bad` の行は `bad A ￥1,000,000 ￥1,000,000 ×`
+ * として一覧に出ており、× を 1 度押せば消える。案内は 1 画面ぶん遠回りをさせたうえ、
+ * 着いた先で否定されていた。
+ *
+ * **形の表は緩めない。** `period` を暦の月に厳しくすると復元の入口
+ * (`store.importAll`) がその行を**捨てる** —— 期の綴りが崩れているだけで売上の数字は
+ * 本物なので、落とすのは別の事故である (`collectionShapes.ts` の「落とし過ぎは復元の
+ * 欠落 = 別の事故になる」)。直すのは**文のほう**である。
  */
 export function unreadablePeriodNote(kind: string, dropped: number): string | null {
   // **肯定形で書く。** `dropped <= 0` は `undefined <= 0` が false なので
@@ -143,7 +170,22 @@ export function unreadablePeriodNote(kind: string, dropped: number): string | nu
   // golden 検査が「読めない undefined 件」を突き返した (手で組んだ overview に新しい欄が
   // 無かった)。非有限・未定義は「言うことが無い」と同じ扱い (パス 98 / 201 / 203 の規則)。
   if (!(Number.isFinite(dropped) && dropped > 0)) return null;
-  return `${kind}のうち ${dropped} 件は期 (YYYY-MM) が読めないため、集計・期間・成長率のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（設定の「形式の合わない記録」から消せます）。`;
+  return `${kind}のうち ${dropped} 件は期 (YYYY-MM) が読めないため、集計・期間・成長率のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（その行も下の一覧に出ています —— 一覧の × で消せます）。`;
+}
+
+/**
+ * **経営サマリーの但し書き** (2026-09-23 · パス 425)。無ければ `null`。
+ *
+ * 同じ事実を面ごとに言い分ける理由は `duplicateActualsOverviewNote` (パス 390) と同じ ——
+ * **読み手が次に何をできるかが面ごとに違う**。経営サマリーには実績の一覧が無いので
+ * 「一覧の ×」は**この画面に無い物**を指す。どの画面へ行けばその行が在るかを名指しする。
+ *
+ * 件数は `overview.kpi.unreadablePeriods` (実績 + 予算の和) なので `kind` は取らない。
+ */
+export function unreadablePeriodOverviewNote(dropped: number): string | null {
+  // 画面側と同じ肯定形 (`undefined` / NaN は言わない)。
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `実績・予算のうち ${dropped} 件は期 (YYYY-MM) が読めないため、集計・期間・成長率のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（その行は「KPI / BEP」の画面の一覧に出ています —— 一覧の × で消せます）。`;
 }
 
 /** 同じことを、相手に渡る書面・レポート向けの 1 文で。 */
@@ -916,6 +958,11 @@ export function duplicateActualsNote(kind: ActualKind, groups: readonly Duplicat
  * | 書面 / レポート | `duplicateActualsSheetNote` | 「本表の金額は合算値」(**表**なのでそう呼べる) |
  * | 経営サマリー | ここ | **一覧が無い**ので、どの画面で消すかを指さす |
  *
+ * **2026-09-23 (パス 425) に画面名を直した。** それまで「KPI 実績」と書いていたが、
+ * サイドバーに**その名前の画面は無い** (実物のラベルは `KPI / BEP`)。指さす先は
+ * 利用者が探せる綴りでなければ指さしたことにならない —— 一致は
+ * `namedEscapeHatchReachable.test.ts` が `SERVICES` と突き合わせる。
+ *
  * KPI 画面の文をそのまま出すと「一覧の ×」が**この画面に無い物**を指し、書面の文を
  * そのまま出すと「本表」が表でない物を指す。だから 3 つ目を置く。
  *
@@ -931,7 +978,7 @@ export function duplicateActualsNote(kind: ActualKind, groups: readonly Duplicat
  */
 export function duplicateActualsOverviewNote(groups: readonly DuplicateActualGroup[]): string | null {
   if (groups.length === 0) return null;
-  return `同じ期・事業の実績が ${groups.length} 組重複しており（${listGroups(groups)}）、この画面の金額はその合算値です。「KPI 実績」の画面で余分な行を消してください。`;
+  return `同じ期・事業の実績が ${groups.length} 組重複しており（${listGroups(groups)}）、この画面の金額はその合算値です。「KPI / BEP」の画面で余分な行を消してください。`;
 }
 
 /** 書面 §1 と経営レポートの但し書き (**相手に渡る面**)。無ければ null。 */

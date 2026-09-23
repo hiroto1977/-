@@ -39,6 +39,7 @@ import {
   periodWindow,
   readablePeriodRows,
   unreadablePeriodNote,
+  unreadablePeriodOverviewNote,
   unreadablePeriodSheetNote,
   type KpiActual,
 } from '../kpiActuals';
@@ -112,9 +113,40 @@ describe('断りの文 — 落としたことを言う', () => {
     expect(note).toContain('2 件');
     expect(note).toContain('実績');
     expect(note).toContain('YYYY-MM');
-    // 出所と出口の両方を言う (パス 70 の「復元」・設定の削除パネル)。
+    // 出所と出口の両方を言う (パス 70 の「復元」・一覧の ×)。
     expect(note).toContain('復元');
-    expect(note).toContain('形式の合わない記録');
+    expect(note).toContain('一覧の ×');
+  });
+
+  /**
+   * **この検査は 2026-09-23 (パス 425) まで逆を主張していた。**
+   *
+   * `expect(note).toContain('形式の合わない記録')` と書いてあり、つまり
+   * **偽の案内を仕様として凍結していた** (法則 `no-weakness-as-spec`)。実測では
+   * `KPI_SHAPE.period` は `str` なので `period: 'bad'` の行は形として正しく、
+   * 点検パネルは `malformed = 0` —— 行った先が「ありません」と答える。
+   */
+  it('★ 設定の点検パネルは名指ししない (そこからは消せないため)', () => {
+    expect(unreadablePeriodNote('実績', 2)).not.toContain('形式の合わない記録');
+    expect(unreadablePeriodOverviewNote(2)).not.toContain('形式の合わない記録');
+  });
+
+  it('★ 経営サマリーは一覧が無いので KPI の画面を名指しする (実在するラベルで)', () => {
+    const note = unreadablePeriodOverviewNote(3);
+    expect(note).not.toBeNull();
+    expect(note).toContain('3 件');
+    // **サイドバーの綴りで指さす** —— 「KPI 実績」という画面は存在しない (パス 425)。
+    // 実在するかどうかは `namedEscapeHatchReachable.test.ts` が SERVICES と突き合わせる。
+    expect(note).toContain('「KPI / BEP」の画面');
+    expect(note).not.toContain('「KPI 実績」の画面');
+    expect(note).toContain('一覧の ×');
+    expect(unreadablePeriodOverviewNote(0)).toBeNull();
+    expect(unreadablePeriodOverviewNote(Number.NaN)).toBeNull();
+  });
+
+  it('★ 画面ごとに逃げ口の名指しが違う (KPI は「下の一覧」・経営サマリーは別画面)', () => {
+    expect(unreadablePeriodNote('実績', 1)).toContain('下の一覧');
+    expect(unreadablePeriodOverviewNote(1)).not.toContain('下の一覧');
   });
 
   it('予算にも同じ規則で使える (種別を引数で受ける)', () => {

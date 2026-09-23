@@ -27,7 +27,7 @@ import {
   monthlyTrendSeries,
   readablePeriodRows,
   summarizeFundamentals,
-  unreadablePeriodNote,
+  unreadablePeriodOverviewNote,
   type KpiActual,
 } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
@@ -903,10 +903,15 @@ export function OverviewPage() {
   /**
    * 落とした件数の断り。**`overview.kpi.unreadablePeriods` を読む** —— 書面と
    * レポートが読むのと同じ値なので、3 つの面が同じ件数を言う (実績 + 予算の和)。
-   * 文は `unreadablePeriodNote` の `kind` 引数で足りる (3 つ目の関数は作らない)。
+   *
+   * **2026-09-23 (パス 425) に 3 つ目の関数を置いた。** それまでは
+   * `unreadablePeriodNote` の `kind` 引数で足りると書いてあったが、**足りるのは
+   * 件数の種別だけで、逃げ口は足りなかった** —— KPI の画面の文は「下の一覧の ×」を
+   * 指し、この画面にその一覧は無い。`duplicateActualsOverviewNote` (パス 390) が
+   * 同じ理由で既に 3 つ目を持っており、ここだけがその形に揃っていなかった。
    */
   const unreadablePeriodsNote = useMemo(
-    () => unreadablePeriodNote('実績・予算', overview.kpi.unreadablePeriods),
+    () => unreadablePeriodOverviewNote(overview.kpi.unreadablePeriods),
     [overview.kpi.unreadablePeriods],
   );
 
