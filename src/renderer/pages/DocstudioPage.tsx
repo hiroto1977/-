@@ -33,7 +33,7 @@ import {
   teikanClosing,
   type TeikanChapter,
 } from '../data/docStudioTeikan';
-import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChecks';
+import { blankCounts, checkDoc, toNum, type DocIssue } from '../data/docStudioChecks';
 import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor, fieldBorder } from '../components/issueLevelUi';
 import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
@@ -1902,7 +1902,7 @@ export function DocstudioPage() {
     }
     return out;
   }, [issues]);
-  const blanks = collection === 'studio' ? countBlank(studioDoc, filled) : 0;
+  const blanks = collection === 'studio' ? blankCounts(studioDoc, filled) : null;
   // **書式の指摘と計算書類の検算を両方数える。** 2026-09-06 まで studio だけを
   // 見ていたので、貸借が一致していない計算書類でも「印刷 / PDF 保存」の隣は
   // 無言だった —— 検算パネルは下にあり、畳んだまま印刷されうる。
@@ -2167,9 +2167,11 @@ export function DocstudioPage() {
                 ⚠ {saveError}
               </div>
             )}
-            {collection === 'studio' && (
+            {blanks && (
               <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
-                ＊ は空欄のまま交付すると書類として成立しない項目。未入力 {blanks} / {fields.length} 件。
+                ＊ は空欄のまま交付すると書類として成立しない項目。
+                ＊ の未入力 {blanks.required} / {blanks.requiredTotal} 件・
+                その他の欄 {blanks.optional} / {blanks.optionalTotal} 件。
               </div>
             )}
             <FieldInputs fields={inputFields} values={filled} onChange={setValue} flagged={flagged} />

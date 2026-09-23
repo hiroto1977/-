@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { STUDIO_CATEGORIES, STUDIO_TEMPLATES, type StudioDoc } from '../data/docStudioData';
 import { DEFAULT_SHAREHOLDERS } from '../data/shareholders';
-import { checkDoc, countBlank, interestCap, isRegistrationNo, parseJpDate, toNum, ruleDocIds, type DocIssue } from '../data/docStudioChecks';
+import { blankCounts, checkDoc, interestCap, isRegistrationNo, parseJpDate, toNum, ruleDocIds, type DocIssue } from '../data/docStudioChecks';
 
 const doc = (id: string): StudioDoc => {
   const found = STUDIO_TEMPLATES.find((d) => d.id === id);
@@ -73,11 +73,31 @@ describe('汎用チェック', () => {
     expect(out.some((m) => m.startsWith('warn:') && m.includes('読み取れません'))).toBe(true);
   });
 
-  it('countBlank は未入力のフィールド数を返す', () => {
+  it('blankCounts は未入力を必須とそれ以外に分けて返す', () => {
     const d = doc('nda');
-    expect(countBlank(d, {})).toBe(d.fields.length);
-    expect(countBlank(d, { kou: '株式会社サンプル' })).toBe(d.fields.length - 1);
-    expect(countBlank(d, { kou: '   ' })).toBe(d.fields.length); // 空白のみは未入力扱い
+    const req = d.fields.filter((f) => f.req).length;
+    const opt = d.fields.length - req;
+    // 空のときは、どちらも「全部未入力」。
+    expect(blankCounts(d, {})).toEqual({ required: req, requiredTotal: req, optional: opt, optionalTotal: opt });
+    // `kou` は必須なので、埋めると必須の側だけが 1 減る。
+    expect(d.fields.find((f) => f.k === 'kou')?.req, 'kou は必須の標本').toBe(true);
+    const one = blankCounts(d, { kou: '株式会社サンプル' });
+    expect(one.required).toBe(req - 1);
+    expect(one.optional).toBe(opt); // それ以外は動かない
+    // 空白のみは未入力扱い。
+    expect(blankCounts(d, { kou: '   ' }).required).toBe(req);
+  });
+
+  it('★ 必須を全部埋めれば ＊ の未入力は 0 になる (旧実装では全欄を数えていたので 0 にならなかった)', () => {
+    // 適格請求書 —— ＊ は 4 欄だが全体は 35 欄 (消費税法57条の4)。
+    const d = doc('invoice');
+    const req = d.fields.filter((f) => f.req);
+    expect(req.length, '＊ の欄数').toBeLessThan(d.fields.length); // 標本が的に当たる
+    const filled: Record<string, string> = {};
+    for (const f of req) filled[f.k] = 'x';
+    const n = blankCounts(d, filled);
+    expect(n.required, '＊ の未入力').toBe(0);
+    expect(n.optional, 'その他の欄は残る').toBeGreaterThan(0);
   });
 
   it('fatal → warn → info の順に並ぶ', () => {

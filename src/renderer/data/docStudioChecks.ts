@@ -1160,7 +1160,51 @@ export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
   return [...out].sort(byIssueLevel);
 }
 
-/** 未入力のフィールド数（差込プレビューで【】のまま残る数）。 */
-export function countBlank(doc: StudioDoc, values: Values): number {
-  return doc.fields.filter((f) => !(values[f.k] ?? '').trim()).length;
+/** 未入力の内訳。**必須 (`req`) とそれ以外を分けて数える。** */
+export interface BlankCounts {
+  /** ＊ の欄のうち未入力の数。**これが 0 なら「空欄のまま交付すると成立しない」項目は残っていない。** */
+  readonly required: number;
+  /** ＊ の欄の総数。 */
+  readonly requiredTotal: number;
+  /** ＊ でない欄のうち未入力の数。 */
+  readonly optional: number;
+  /** ＊ でない欄の総数。 */
+  readonly optionalTotal: number;
+}
+
+/**
+ * 未入力のフィールド数を**必須とそれ以外に分けて**数える (2026-09-23 · パス 435)。
+ *
+ * 分けるのは、呼ぶ側がこの数を「＊ の未入力」として見せていたからである。実測
+ * (2026-09-23 · 直す前 · 適格請求書を実物の画面で開く):
+ *
+ * ```
+ *   空のとき            「＊ は…書類として成立しない項目。未入力 28 / 35 件。」
+ *   ＊ の 4 欄を埋めた後  「＊ は…書類として成立しない項目。未入力 24 / 35 件。」
+ *   同じ画面の交付前チェック「無効リスクは見つかりませんでした」
+ * ```
+ *
+ * **＊ の未入力は 0 になっているのに、その ＊ を説明した直後の数は 24 と出る。**
+ * 適格請求書 (消費税法57条の4) の ＊ は 4 欄 (宛先 / 自社名 / 登録番号 / 発行日) で、
+ * 残る 31 欄は任意である —— 旧実装は `f.req` を見ずに全欄を数えていたので、
+ * **この数はどの書面でも 0 にならない** (実測: 56 書面すべてで必須数と一致しない)。
+ * つまり「あと何を埋めれば交付できるか」に答えない数を、その問いの文の隣に置いていた。
+ * しかも同じ画面の交付前チェックは「無効リスクは見つかりませんでした」と答えており、
+ * **2 つのパネルが同じ問いに違う答えを出していた** (パス 392 と同じ形)。
+ *
+ * 合計を 1 つ返すのをやめて内訳を返すのは、呼ぶ側が足し直して
+ * また「どちらの数か分からない 1 つ」に戻すのを防ぐため (パス 433 の `{deleted, skipped}`
+ * と同じ形)。このファイルの 789 行目も、この数を
+ * 「必須フィールドの空欄カウント」と呼んでいる。
+ */
+export function blankCounts(doc: StudioDoc, values: Values): BlankCounts {
+  const blank = (f: { readonly k: string }) => !(values[f.k] ?? '').trim();
+  const req = doc.fields.filter((f) => f.req);
+  const opt = doc.fields.filter((f) => !f.req);
+  return {
+    required: req.filter(blank).length,
+    requiredTotal: req.length,
+    optional: opt.filter(blank).length,
+    optionalTotal: opt.length,
+  };
 }

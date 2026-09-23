@@ -15769,16 +15769,16 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **107 ファイル / 277 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 276 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
 | `src/shared/funding.ts` | 13 |
 | `src/renderer/data/investments.ts` | 11 |
 | `src/shared/taxDeductions.ts` | 9 |
-| `src/renderer/pages/DocstudioPage.tsx` | 8 |
 | `src/main/clients/stocks.ts` | 7 |
 | `src/renderer/data/stocksAnalysisWeb.ts` | 7 |
+| `src/renderer/pages/DocstudioPage.tsx` | 7 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
 | `src/renderer/pages/RealEstatePage.tsx` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
