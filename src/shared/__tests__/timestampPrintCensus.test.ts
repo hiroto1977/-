@@ -30,6 +30,7 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripNonCode } from './stripNonCode';
 
 const SRC = path.resolve(__dirname, '../..');
 
@@ -41,56 +42,27 @@ const SRC = path.resolve(__dirname, '../..');
  * (パス 181 で `lint:forbidden` に同じことをされた)。
  */
 /**
- * コメントと文字列リテラルを落とす —— **1 度で走る小さな走査器**。
+ * コメントと文字列リテラルを落とす走査は **`./stripNonCode` の 1 つ**を読む
+ * (2026-09-23 · パス 418 で写しをやめた)。
  *
- * **並べた `replace` では壊れる** (2026-09-12 · パス 188 で気付いた)。パス 185 は
- * ブロック → 行 → テンプレート → `'` → `"` の順で置換していたが、
- * **行コメントの規則が文字列の中の `https://…` にも当たる**ので、
+ * **`keepQuoteChars: true` が要る** —— 字面の境界が消えると
+ * `new Date('x').getHours()` のような形が**繋がって見える** (パス 188 の実測)。
  *
- *     const url = 'https://api.cursor.com/teams/daily-usage-data';
+ * ここは 2026-09-12 (パス 188) から**自前の写し**を持っていた。理由は正しく、
+ * 当時の共有版は「並べた `replace`」で壊れていた (行コメントの規則が文字列の中の
+ * `https://…` に当たり、閉じない引用符が残って**その先のコードが丸ごと消える** ——
+ * その壊れ方のせいで `shared/api/cursor.ts` の対照が鳴らなかった)。
+ * 共有版は既に状態を持つ走査器になっているので、写す理由はもう無い。
  *
- * は `const url = 'https:` になり、**閉じない引用符**が残る。その引用符は次の
- * 引用符と対にされ、**間に挟まれた本物のコードが丸ごと消える**。
- *
- * 実測: この壊れ方のせいで、`shared/api/cursor.ts` を元の (守りの無い) 形へ
- * 戻した対照が**鳴らなかった** —— 走査はそのファイルの後半を見ていなかった。
- * **対照が、私が広げた規則ではなく、前から在った走査の欠陥を教えた。**
- *
- * 状態を持って 1 度歩けば、どの規則も互いを壊せない。
+ * ★ **写しのままだと死角が残った** —— パス 417 が共有版で閉じた「テンプレートの
+ * `${…}` を補間ごと落とす」形が、この写しだけに残っていた。実測 (2026-09-23):
+ * `Date` の読み出しが補間の中に在る所は `src` に **66 件**あり、この走査からは
+ * 全部見えていなかった。**今日の判定は変わらない** (66 件のうち `Date` 形は 2 件
+ * だけで、`RealtimeTicker.clock` と `backup.exportedAtLabel` はどちらも
+ * `parseTimestamp(...) === null` を先に見ている) —— つまり罠であって欠陥ではないが、
+ * 補間は「利用者に見せる文を組む場所」なので、この走査が最も見たい場所である。
  */
-export function stripNonCode(src: string): string {
-  let out = '';
-  let i = 0;
-  while (i < src.length) {
-    const two = src.slice(i, i + 2);
-    if (two === '//') {
-      while (i < src.length && src[i] !== '\n') i += 1;
-      continue;
-    }
-    if (two === '/*') {
-      i += 2;
-      while (i < src.length && src.slice(i, i + 2) !== '*/') i += 1;
-      i += 2;
-      continue;
-    }
-    const ch = src[i]!;
-    if (ch === "'" || ch === '"' || ch === '`') {
-      i += 1;
-      while (i < src.length && src[i] !== ch) {
-        // バックスラッシュの次の 1 文字は中身として飛ばす。
-        i += src[i] === '\\' ? 2 : 1;
-      }
-      i += 1;
-      // 中身は落とすが、**引用符は残す** (字面の境界が消えると
-      // `new Date('x').getHours()` のような形が繋がって見える)。
-      out += `${ch}${ch}`;
-      continue;
-    }
-    out += ch;
-    i += 1;
-  }
-  return out;
-}
+const stripForCensus = (src: string): string => stripNonCode(src, { keepQuoteChars: true });
 
 /**
  * **`Date` から読み出す口の一覧** (2026-09-12 · パス 188 で広げた)。
@@ -114,7 +86,7 @@ export function stripNonCode(src: string): string {
 const READERS = 'toLocale|getFullYear|getMonth|getDate|getDay|getHours|getMinutes|getSeconds|toISOString|toJSON';
 
 export function rawDatePrints(src: string): string[] {
-  const code = stripNonCode(src);
+  const code = stripForCensus(src);
   const out: string[] = [];
   // (a) 直に繋いだ形: new Date(<引数あり>) から**読む**形。
   for (const m of code.matchAll(new RegExp(`new Date\\(\\s*[^)\\s][^)]*\\)\\s*\\.\\s*(?:${READERS})`, 'g'))) out.push(m[0]);
@@ -243,11 +215,11 @@ describe('時刻を刷る所の母集団 (パス 185)', () => {
     // 直す前の並べた replace はここで空を返した (URL の // で切れ、引用符が残った)。
     expect(rawDatePrints(sample)).toHaveLength(1);
     // 走査器の単体: 文字列の中身は落ちるが、境界の引用符は残り、後続は残る。
-    expect(stripNonCode("const u = 'a//b';\nconst v = 1;")).toBe("const u = '';\nconst v = 1;");
-    expect(stripNonCode('// 行コメント\nconst v = 1;')).toBe('\nconst v = 1;');
-    expect(stripNonCode('/* 塊 */const v = 1;')).toBe('const v = 1;');
+    expect(stripForCensus("const u = 'a//b';\nconst v = 1;")).toBe("const u = '';\nconst v = 1;");
+    expect(stripForCensus('// 行コメント\nconst v = 1;')).toBe('\nconst v = 1;');
+    expect(stripForCensus('/* 塊 */const v = 1;')).toBe('const v = 1;');
     // 逃した引用符も飲み込まない。
-    expect(stripNonCode("const s = 'a\\'b';\nconst v = 2;")).toBe("const s = '';\nconst v = 2;");
+    expect(stripForCensus("const s = 'a\\'b';\nconst v = 2;")).toBe("const s = '';\nconst v = 2;");
   });
 
   it('★ 走査が実ファイルを読めている (0 ファイルで通る検査になっていない)', () => {

@@ -30,7 +30,19 @@
  */
 type Mode = 'code' | 'line' | 'block' | 'sq' | 'dq' | 'tpl';
 
-export function stripNonCode(src: string): string {
+/**
+ * `keepQuoteChars`: 中身は落とすが**引用符そのものは残す** (既定 false)。
+ *
+ * `timestampPrintCensus` がこれを要る —— 字面の境界が消えると
+ * `new Date('x').getHours()` のような形が**繋がって見える** (パス 188 が実測した)。
+ * そこは 2026-09-23 (パス 418) まで**自前の写し**を持っており、
+ * その写しだけが補間を落とす古い形のまま残っていた。
+ */
+export interface StripOptions {
+  readonly keepQuoteChars?: boolean;
+}
+
+export function stripNonCode(src: string, opts: StripOptions = {}): string {
   let out = '';
   let i = 0;
   let mode: Mode = 'code';
@@ -88,6 +100,7 @@ export function stripNonCode(src: string): string {
       continue;
     }
     if ((mode === 'sq' && src[i] === "'") || (mode === 'dq' && src[i] === '"') || (mode === 'tpl' && src[i] === '`')) {
+      if (opts.keepQuoteChars === true) out += `${src[i]!}${src[i]!}`;
       const frame = stack.pop();
       mode = frame === undefined ? 'code' : frame.mode;
       if (frame !== undefined) depth = frame.depth;

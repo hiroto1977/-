@@ -84,14 +84,86 @@ function actionsOf(serviceId) {
  */
 const DOM_GLOBALS = /\b(document|window|localStorage|sessionStorage|indexedDB|navigator|location|HTMLElement|Element|Node|MutationObserver|IntersectionObserver|requestAnimationFrame|createRoot|fireEvent|screen)\b/;
 
-/** 行コメント・ブロックコメント・文字列リテラルを落として実コードだけ残す。 */
-function stripNonCode(text) {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
-    .replace(/\/\/[^\n]*/g, ' ')
-    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
-    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
-    .replace(/`(?:[^`\\]|\\.)*`/g, '``');
+/**
+ * 行コメント・ブロックコメント・文字列リテラルを落として実コードだけ残す。
+ *
+ * **`${…}` は文字列ではなく式なので残す** (2026-09-23 · パス 418)。
+ * これは `src/shared/__tests__/stripNonCode.ts` と**同じ算法の写し**である ——
+ * `.cjs` からは `.ts` を require できないので写しは避けられない (前例:
+ * `scripts/inject-pwa.cjs` の色の正規表現・パス 363)。**3 つが黙って割れないよう、
+ * `src/shared/__tests__/stripNonCodeParity.test.ts` が同じ標本を 3 つに通して
+ * 出力が 1 字も違わないことを見る** (台帳は両方向)。
+ *
+ * 補間を落とす形だと、このリポジトリが利用者に見せる文を組む場所 ——
+ * つまり最も危ない式が並ぶ所 —— がどの走査にも映らない (パス 417 の実測)。
+ */
+function stripNonCode(src, opts = {}) {
+  let out = '';
+  let i = 0;
+  let mode = 'code';
+  /** 戻り先と、そのとき保留にした `{}` の深さ (入れ子のテンプレートに耐えるため)。 */
+  const stack = [];
+  /** 今の code フレームの `{}` の深さ。0 で `}` を見たら補間の終わり。 */
+  let depth = 0;
+  while (i < src.length) {
+    const two = src.slice(i, i + 2);
+    if (mode === 'code') {
+      if (two === '//') { mode = 'line'; i += 2; continue; }
+      if (two === '/*') { mode = 'block'; i += 2; continue; }
+      if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; i += 1; continue; }
+      if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; i += 1; continue; }
+      if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; i += 1; continue; }
+      if (src[i] === '{') { depth += 1; out += '{'; i += 1; continue; }
+      if (src[i] === '}') {
+        const frame = depth === 0 ? stack.pop() : undefined;
+        if (frame !== undefined) {
+          out += ' ';
+          mode = frame.mode;
+          depth = frame.depth;
+        } else {
+          if (depth > 0) depth -= 1;
+          out += '}';
+        }
+        i += 1;
+        continue;
+      }
+      out += src[i];
+      i += 1;
+      continue;
+    }
+    if (mode === 'line') {
+      if (src[i] === '\n') { mode = 'code'; out += '\n'; }
+      i += 1;
+      continue;
+    }
+    if (mode === 'block') {
+      if (two === '*/') { mode = 'code'; i += 2; continue; }
+      if (src[i] === '\n') out += '\n';
+      i += 1;
+      continue;
+    }
+    // 文字列の中: 改行だけ残して行番号を保つ。エスケープは 1 文字飛ばす。
+    if (src[i] === '\\') { i += 2; continue; }
+    if (mode === 'tpl' && two === '${') {
+      // **補間は式** —— code として出す (区切りの空白つき)。
+      out += ' ';
+      stack.push({ mode, depth });
+      mode = 'code';
+      depth = 0;
+      i += 2;
+      continue;
+    }
+    if ((mode === 'sq' && src[i] === "'") || (mode === 'dq' && src[i] === '"') || (mode === 'tpl' && src[i] === '`')) {
+      if (opts.keepQuoteChars === true) out += `${src[i]}${src[i]}`;
+      const frame = stack.pop();
+      mode = frame === undefined ? 'code' : frame.mode;
+      if (frame !== undefined) depth = frame.depth;
+    } else if (src[i] === '\n') {
+      out += '\n';
+    }
+    i += 1;
+  }
+  return out;
 }
 
 /** `.ts(x)` を集める (テストは除く / 含むを選べる)。 */
@@ -575,4 +647,10 @@ function main(argv) {
   return 1;
 }
 
-process.exit(main(process.argv.slice(2)));
+module.exports = { stripNonCode };
+
+// **require されたときは走らせない** —— パリティ検査がこの写しを borrow するため
+// (`process.exit` が module 読み込みの時点で走ると、検査プロセスごと落ちる)。
+if (require.main === module) {
+  process.exit(main(process.argv.slice(2)));
+}
