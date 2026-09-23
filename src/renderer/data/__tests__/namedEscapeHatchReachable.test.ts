@@ -42,8 +42,8 @@ import { MEMBERS_COLLECTION } from '../members';
 import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
 
-/** 設定の点検パネルを名指しする綴り。 */
-const AUDIT_PANEL = '形式の合わない記録';
+/** 設定の点検パネルを名指しする綴り (**実物のパネルの見出しと同じ語** —— パス 426 で「記録」から直した)。 */
+const AUDIT_PANEL = '形式の合わないレコード';
 /** 一覧の削除ボタンを名指しする綴り。 */
 const LIST_X = '一覧の ×';
 /** 別の画面を名指しする綴り (`「X」の画面`)。 */
@@ -247,9 +247,9 @@ describe('名指しした逃げ口は、対象をそこに持っている (パ�
   });
 
   it('★ 針は実物の文に当たり、注記の中の言及には当たらない (mention-vs-declaration)', () => {
-    const line = "  return `…（設定の「形式の合わない記録」から消せます）。`;";
+    const line = "  return `…（設定の「形式の合わないレコード」から消せます）。`;";
     expect(codeOnly(line).includes(AUDIT_PANEL)).toBe(true);
-    expect(codeOnly(' * 逃げ口 (設定の「形式の合わない記録」) はこの文が').includes(AUDIT_PANEL)).toBe(false);
+    expect(codeOnly(' * 逃げ口 (設定の「形式の合わないレコード」) はこの文が').includes(AUDIT_PANEL)).toBe(false);
     expect(codeOnly('/* 一覧の × で消せます */').includes(LIST_X)).toBe(false);
     // 行番号を保つ (掴んだ位置をそのまま実物の行として報せられる)
     expect(codeOnly('a\n/* x\ny */\nb').split('\n')).toHaveLength(4);

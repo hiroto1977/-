@@ -195,8 +195,8 @@ describe('★ 空欄の原因は 1 つだけ、しかも正しい方 (パス 400
   it('★ 画面と紙は別の文 —— 紙は画面の操作を指示しない', () => {
     const sheet = unreadableSalesDateSheetNote(1) ?? '';
     const screen = unreadableSalesDateNote(1) ?? '';
-    expect(screen).toContain('形式の合わない記録');
-    expect(sheet, '紙が画面の逃げ口を名指ししている').not.toContain('形式の合わない記録');
+    expect(screen).toContain('形式の合わないレコード');
+    expect(sheet, '紙が画面の逃げ口を名指ししている').not.toContain('形式の合わない');
     expect(sheet).not.toBe(screen);
   });
 });

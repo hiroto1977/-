@@ -127,8 +127,9 @@ describe('断りの文 — 落としたことを言う', () => {
    * 点検パネルは `malformed = 0` —— 行った先が「ありません」と答える。
    */
   it('★ 設定の点検パネルは名指ししない (そこからは消せないため)', () => {
-    expect(unreadablePeriodNote('実績', 2)).not.toContain('形式の合わない記録');
-    expect(unreadablePeriodOverviewNote(2)).not.toContain('形式の合わない記録');
+    // 綴りに依らない主張にする —— パネルは「レコード」と綴る (パス 426)。
+    expect(unreadablePeriodNote('実績', 2)).not.toContain('形式の合わない');
+    expect(unreadablePeriodOverviewNote(2)).not.toContain('形式の合わない');
   });
 
   it('★ 経営サマリーは一覧が無いので KPI の画面を名指しする (実在するラベルで)', () => {

@@ -95,7 +95,7 @@ describe('期が読めない実績 —— 逃げ口は一覧の × である (�
     await mountKpi();
     expect(text()).toContain('期 (YYYY-MM) が読めない');
     expect(text(), '点検パネルはこの行を見つけられない (行った先が「ありません」と答える)')
-      .not.toContain('形式の合わない記録');
+      .not.toContain('形式の合わない');
     expect(text()).toContain('一覧の ×');
   });
 
