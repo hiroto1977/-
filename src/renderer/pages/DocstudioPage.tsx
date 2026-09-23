@@ -34,7 +34,7 @@ import {
   type TeikanChapter,
 } from '../data/docStudioTeikan';
 import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChecks';
-import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
+import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor, fieldBorder } from '../components/issueLevelUi';
 import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
 import { navigateTo, takeNavigationIntent } from '../navigate';
@@ -571,7 +571,7 @@ function FieldInputs({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {fields.map((f) => {
         const level = flagged[f.k];
-        const border = level ? `1px solid ${LEVEL_COLOR[level]}` : '1px solid var(--border)';
+        const border = fieldBorder(level, '1px solid var(--border)');
         return (
           <label key={f.k} style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 11, color: 'var(--text-mute)' }}>
             <span>
@@ -1153,10 +1153,13 @@ function ShareholderInputs({
   values,
   onPatch,
   onChange,
+  flagged = {},
 }: {
   values: Values;
   onPatch: (patch: Record<string, string>) => void;
   onChange: (k: string, v: string) => void;
+  /** 指摘が指した欄 → 段階。**可変行も宣言された欄と同じ印を出す** (パス 434)。 */
+  flagged?: Record<string, DocIssue['level']>;
 }) {
   const rows = listShareholders(values);
   const count = readShareholderCount(values);
@@ -1231,7 +1234,8 @@ function ShareholderInputs({
                       value={values[k] ?? ''}
                       placeholder={c.ph}
                       onChange={(e) => onChange(k, e.target.value)}
-                      style={{ width: '100%' }}
+                      data-field={k}
+                      style={{ width: '100%', border: fieldBorder(flagged[k], '1px solid var(--border-strong)') }}
                     />
                   </label>
                 );
@@ -2170,7 +2174,7 @@ export function DocstudioPage() {
             )}
             <FieldInputs fields={inputFields} values={filled} onChange={setValue} flagged={flagged} />
             {collection === 'studio' && docId === 'kabunushi-meibo' && (
-              <ShareholderInputs values={values} onPatch={setValues} onChange={setValue} />
+              <ShareholderInputs values={values} onPatch={setValues} onChange={setValue} flagged={flagged} />
             )}
             {collection === 'studio' && docId === 'shikin-guri' && (
               <div style={{ marginTop: 12 }}>
