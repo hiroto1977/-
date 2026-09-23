@@ -556,7 +556,7 @@ describe('平文バックアップは、個人情報の件数を言ってから�
     expect(x.parts.map((p) => `${p.collection}:${p.count}`)).toEqual(['team-members:2', 'shigyo-contacts:1', 'bank-submission-settings:1']);
     const msg = plaintextBackupConfirmMessage(x);
     expect(msg).toContain('平文 (暗号化なし) で書き出します');
-    expect(msg).toContain('個人情報を含む記録が 4 件入ります: チームメンバー (メールアドレス) 2 件・士業の連絡先 (電話番号・メールアドレス) 1 件・提出者情報 (代表者名・住所) 1 件。');
+    expect(msg).toContain('個人情報・機微な記録が 4 件入ります: チームメンバー (メールアドレス) 2 件・士業の連絡先 (電話番号・メールアドレス) 1 件・提出者情報 (代表者名・住所) 1 件。');
     expect(msg).toContain(`合言葉 (${MIN_PASSWORD_LENGTH} 文字以上) を入れて暗号化してください`);
     expect(msg).toContain('このまま平文で書き出しますか？');
   });

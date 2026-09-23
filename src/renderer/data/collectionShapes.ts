@@ -281,13 +281,41 @@ export const NESTED_PERSONAL_DATA: Readonly<Record<string, { readonly fields: re
   },
 };
 
+/**
+ * **中身で機微な collection** (2026-09-23 · パス 423) —— 欄の名前からは導けない第 3 の分類。
+ *
+ * 上の 2 つは「欄の名前が `email` / `phone` 等である」か「入れ物の形なので欄が走査に出ない」で、
+ * どちらも**欄の名前**を手がかりにする。ところが **何を記録しているかだけが機微**な collection が在る:
+ * 士業の相談記録は `{serviceId, date, topic, status}` で、名前の手がかりを 1 つも持たないのに
+ * **「いつ・どの士業に・何を相談したか」**を綴った記録である (入口の placeholder は
+ * 「例: 決算前の節税相談」で、弁護士・司法書士の画面なら相続や解雇の相談がそのまま入る)。
+ *
+ * ★ **実測 (2026-09-23 · 直す前)**: 相談記録だけを持つ利用者は平文で書き出しても
+ *   **確認文が `null`** (無言で書かれる)。連絡先 1 件 + 相談 2 件の利用者は
+ *   **「個人情報を含む記録が 1 件入ります」** —— 数が**過少**に出る。
+ *   **同じ士業 CRM の連絡先は個人情報と判定されるのに、より機微な側が判定されない。**
+ *
+ * ★ **確認文の目的は「個人情報か」ではなく「持ち出すと困るか」である** ——
+ *   その文自身が「このファイルを持ち出す・共有するなら…暗号化してください」と言う。
+ *   だから分類も目的に合わせて広げ、文面も「個人情報・機微な記録」と名乗り直した。
+ *
+ * **空の理由は認めない** (検査が見る)。
+ */
+export const SENSITIVE_BY_CONTENT: Readonly<Record<string, { readonly fields: readonly string[]; readonly why: string }>> = {
+  'shigyo-consultations': {
+    fields: ['topic', 'date', 'serviceId'],
+    why: '「いつ・どの士業に・何を相談したか」の記録。欄の名前に個人情報の手がかりは無いが、'
+      + '相続・解雇・破産などの相談テーマがそのまま入るので、持ち出せば連絡先より機微になりうる。',
+  },
+};
+
 export interface PersonalDataCollection {
   readonly collection: string;
   /** 個人情報の欄 (走査で当たった名前、または台帳の名前)。 */
   readonly fields: readonly string[];
 }
 
-/** 個人情報を持つ collection —— 走査 (欄の名前) + 台帳 (入れ子)。同じ collection が両方に出ることはない (検査が留める)。 */
+/** 持ち出すと困る記録を持つ collection —— 走査 (欄の名前) + 台帳 2 つ (入れ子 / 中身で機微)。同じ collection が 2 つに出ることはない (検査が留める)。 */
 export function personalDataCollections(): readonly PersonalDataCollection[] {
   const out: PersonalDataCollection[] = [];
   for (const [collection, s] of Object.entries(COLLECTION_SHAPES)) {
@@ -295,6 +323,9 @@ export function personalDataCollections(): readonly PersonalDataCollection[] {
     if (fields.length > 0) out.push({ collection, fields });
   }
   for (const [collection, entry] of Object.entries(NESTED_PERSONAL_DATA)) {
+    if (!out.some((p) => p.collection === collection)) out.push({ collection, fields: entry.fields });
+  }
+  for (const [collection, entry] of Object.entries(SENSITIVE_BY_CONTENT)) {
     if (!out.some((p) => p.collection === collection)) out.push({ collection, fields: entry.fields });
   }
   return out;

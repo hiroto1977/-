@@ -118,7 +118,7 @@ describe('バックアップ — 平文の書き出しは個人情報の件数�
     expect(confirm).toHaveBeenCalledTimes(1);
     const message = String(confirm.mock.calls[0]?.[0]);
     expect(message).toContain('平文 (暗号化なし) で書き出します');
-    expect(message).toContain('個人情報を含む記録が 1 件入ります: 士業の連絡先 (電話番号・メールアドレス) 1 件。');
+    expect(message).toContain('個人情報・機微な記録が 1 件入ります: 士業の連絡先 (電話番号・メールアドレス) 1 件。');
     expect(message).toContain('合言葉 (12 文字以上) を入れて暗号化してください');
     expect(text()).not.toContain('件のレコードをバックアップしました');
     expect(anchorClicks).toBe(0);

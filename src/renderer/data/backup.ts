@@ -383,11 +383,12 @@ export interface PlaintextExposure {
   readonly parts: readonly { readonly collection: string; readonly label: string; readonly count: number }[];
 }
 
-/** 個人情報を持つ collection の表示名。走査が新しい collection を見つけたら、ここにも名前が要る (検査が留める)。 */
+/** 持ち出すと困る記録を持つ collection の表示名。走査か台帳が新しい collection を見つけたら、ここにも名前が要る (検査が留める)。 */
 export const PERSONAL_DATA_LABELS: Readonly<Record<string, string>> = {
   'team-members': 'チームメンバー (メールアドレス)',
   'shigyo-contacts': '士業の連絡先 (電話番号・メールアドレス)',
   'bank-submission-settings': '提出者情報 (代表者名・住所)',
+  'shigyo-consultations': '士業の相談記録 (相談日・相談テーマ)',
 };
 
 export function plaintextExposure(records: readonly { readonly collection: string }[]): PlaintextExposure {
@@ -399,13 +400,13 @@ export function plaintextExposure(records: readonly { readonly collection: strin
   return { total: parts.reduce((sum, p) => sum + p.count, 0), parts };
 }
 
-/** 平文で書き出す前の確認文。個人情報の記録が無ければ null (確認しない)。 */
+/** 平文で書き出す前の確認文。持ち出すと困る記録が無ければ null (確認しない)。 */
 export function plaintextBackupConfirmMessage(exposure: PlaintextExposure): string | null {
   if (exposure.total === 0) return null;
   const parts = exposure.parts.map((p) => `${p.label} ${p.count} 件`).join('・');
   return [
     '合言葉が空なので、平文 (暗号化なし) で書き出します。',
-    `個人情報を含む記録が ${exposure.total} 件入ります: ${parts}。`,
+    `個人情報・機微な記録が ${exposure.total} 件入ります: ${parts}。`,
     `このファイルを持ち出す・共有するなら、上の欄に合言葉 (${MIN_PASSWORD_LENGTH} 文字以上) を入れて暗号化してください。`,
     'このまま平文で書き出しますか？',
   ].join('\n');
