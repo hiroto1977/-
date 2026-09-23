@@ -29,7 +29,7 @@
  *
  * IndexedDB の読み書きは `store.exportAll()` / `store.importAll()`。
  */
-import type { StoredRecord } from './store';
+import { isImportableRecord, type StoredRecord } from './store';
 import { parseTimestamp } from '../../shared/isoDate';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
 import { MIN_PASSWORD_LENGTH, meetsPasswordPolicy } from '../security/vault';
@@ -273,18 +273,31 @@ export type RestoreMode = 'merge' | 'replace';
 export interface RestorePlan {
   readonly mode: RestoreMode;
   readonly exportedAt: string | null;
-  /** バックアップの件数 / この端末の件数。 */
+  /** バックアップの件数 (ファイルに在った全件) / この端末の件数。 */
   readonly incoming: number;
   readonly existing: number;
+  /**
+   * バックアップに在るが**取り込めない**件数 (形式不正)。判定は `importAll` と同じ
+   * `isImportableRecord`。下の数はすべて**この分を除いた**後の数である (パス 432)。
+   */
+  readonly dropped: number;
   /** バックアップにあってこの端末に無い id —— 足される。 */
   readonly added: number;
   /** 両方にあり、バックアップの方が新しいか同時刻 —— バックアップの中身になる。 */
   readonly overwritten: number;
   /** 両方にあり、この端末の方が新しい —— マージでは残し、置換では消える。 */
   readonly newerLocal: number;
-  /** この端末にだけある id —— マージでは残り、置換では消える。 */
+  /** この端末にだけある id (バックアップに 1 件も無い) —— マージでは残り、置換では消える。 */
   readonly localOnly: number;
-  /** 置換で失う (元に戻せない) 件数 = localOnly + newerLocal。マージでは 0。 */
+  /**
+   * バックアップに同じ id が在るのに、その記録が**取り込めない**件数 ——
+   * 置換では消える (消してから、入れる物が無い)。マージでは残る。
+   *
+   * 2026-09-23 まで、この件数は `overwritten` (= バックアップの中身になる) に数えられていた。
+   * 実測: 確認文が「**消える記録はありません**」と述べ、押すとその記録が消えた (パス 432)。
+   */
+  readonly unusableLocal: number;
+  /** 置換で失う (元に戻せない) 件数 = localOnly + newerLocal + unusableLocal。マージでは 0。 */
   readonly lost: number;
   /** 実際に書く物 —— マージでは newerLocal を除き、置換では全部。 */
   readonly toImport: readonly StoredRecord[];
@@ -298,13 +311,18 @@ export function planRestore(
 ): RestorePlan {
   const local = new Map<string, number>();
   for (const r of existing) local.set(r.id, r.updatedAt);
-  const incomingIds = new Set<string>();
+  // **入るのはこれだけ。** 関門は `importAll` と同じ 1 つ (`isImportableRecord`) ——
+  // 2 つ書くと、数える側と実行する側が割れる (パス 432)。
+  const usable = incoming.filter(isImportableRecord);
+  const fileIds = new Set<string>();
+  for (const rec of incoming) fileIds.add(rec.id);
+  const usableIds = new Set<string>();
   let added = 0;
   let overwritten = 0;
   let newerLocal = 0;
   const toImport: StoredRecord[] = [];
-  for (const rec of incoming) {
-    incomingIds.add(rec.id);
+  for (const rec of usable) {
+    usableIds.add(rec.id);
     const mine = local.get(rec.id);
     if (mine === undefined) {
       added += 1;
@@ -318,12 +336,21 @@ export function planRestore(
     }
   }
   let localOnly = 0;
+  let unusableLocal = 0;
   for (const id of local.keys()) {
-    if (!incomingIds.has(id)) localOnly += 1;
+    if (usableIds.has(id)) continue;
+    // バックアップに同じ id が在るのに取り込めない物と、そもそも無い物は**別に数える** ——
+    // 確認文がどちらの理由で消えるのかを言い分けるため。
+    if (fileIds.has(id)) unusableLocal += 1;
+    else localOnly += 1;
   }
   let lost = 0;
-  if (mode === 'replace') lost = localOnly + newerLocal;
-  return { mode, exportedAt, incoming: incoming.length, existing: existing.length, added, overwritten, newerLocal, localOnly, lost, toImport };
+  if (mode === 'replace') lost = localOnly + newerLocal + unusableLocal;
+  return {
+    mode, exportedAt,
+    incoming: incoming.length, existing: existing.length, dropped: incoming.length - usable.length,
+    added, overwritten, newerLocal, localOnly, unusableLocal, lost, toImport,
+  };
 }
 
 /** 書き出し時刻の表示 (端末のロケール)。null は「書き出し時刻不明」。 */
@@ -335,18 +362,62 @@ export function exportedAtLabel(exportedAt: string | null): string {
 /**
  * 置換の確認文 —— **何件消えるか**を言う。一文だけの確認は、何も言っていないのと同じ。
  * 消える物が無いときはそう言う (「消える記録はありません」) —— 空欄ではなく明示。
+ *
+ * ★ **数えるのは「入る物」でなければならない** (2026-09-23 · パス 432)。
+ *   2026-09-23 まで `planRestore` はファイルの全件で id を突き合わせており、
+ *   `importAll` が形で落とす記録も「バックアップの中身になる」に数えていた。
+ *   実測 (直す前・同じ id の控えが形式不正・置換):
+ *
+ *     確認文  「この端末: 1 件 —— **消える記録はありません** (…バックアップの方が新しいか同時刻です)。」
+ *     押した後 ストア **0 件**・結果の文も「消えた **0 件**」
+ *
+ *   **利用者が頼った当の 1 文が偽**で、記録は元に戻せない。だから確認は
+ *   「取り込めない件数」と「その id が消えること」を別々に述べる。
+ *   取り込めない物が 0 件なら文面は 1 字も変わらない。
  */
 export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
+  const reasons = [
+    `バックアップに無い ${plan.localOnly} 件`,
+    `この端末の方が新しい ${plan.newerLocal} 件`,
+    // 形式不正の控えは「上書き」ではなく**消えるだけ** —— 消してから入れる物が無い。
+    ...(plan.unusableLocal > 0 ? [`バックアップ側が形式不正で入れ替えられない ${plan.unusableLocal} 件`] : []),
+  ];
   const loss =
     plan.lost === 0
       ? '消える記録はありません (この端末の記録は全てバックアップにあり、バックアップの方が新しいか同時刻です)。'
-      : `バックアップに無い ${plan.localOnly} 件と、この端末の方が新しい ${plan.newerLocal} 件 (計 ${plan.lost} 件) が消え、元に戻せません。`;
+      : `${reasons.join('と、')} (計 ${plan.lost} 件) が消え、元に戻せません。`;
+  const unusable = plan.dropped > 0 ? `（うち ${plan.dropped} 件は形式が不正で取り込めません）` : '';
   return [
     '既存の業務データを全て削除してから復元します。',
-    `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件`,
+    `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件${unusable}`,
     `この端末: ${plan.existing} 件 —— ${loss}`,
     'よろしいですか？',
   ].join('\n');
+}
+
+/**
+ * **取り込める記録が 1 件も無い控えでの置換は、訊く前に断る** (2026-09-23 · パス 432)。
+ *
+ * 置換は「既存を全部消してから復元する」操作で、**消す方は必ず成功し、入れる方は
+ * 形の検査を通った物だけが入る**。全件が形式不正なら結果は「全部消えて、何も入らない」 ——
+ * それは復元ではない。しかもアプリは**訊く前にそれを知っている** (判定は純関数で、
+ * 記録は手元に在る)。だから確認を出さずに断る。
+ *
+ * 消したいだけの利用者には**別の操作子が在る**ので、その名前を言う
+ * (法則 `escape-hatch-stays-open`)。マージは何も消さないので対象外 ——
+ * そちらは今までどおり「0 件復元しました…N 件は形式が不正」と結果で述べる。
+ *
+ * 断る理由が無ければ null。
+ */
+export function unusableBackupRefusal(plan: RestorePlan): string | null {
+  if (plan.mode !== 'replace') return null;
+  if (plan.dropped === 0 || plan.dropped !== plan.incoming) return null;
+  return (
+    `このバックアップは ${plan.incoming} 件すべてが形式不正で、取り込める記録が 1 件もありません。`
+    + `置換すると、この端末の ${plan.existing} 件を消して何も入らないため復元しませんでした。`
+    + '別のバックアップファイルを選んでください。業務データを消したいだけなら、'
+    + '設定の「すべてのデータを削除」をお使いください。'
+  );
 }
 
 /**
@@ -359,9 +430,11 @@ export function restoreResultMessage(plan: RestorePlan, imported: number, droppe
   // 出てくる `dropped` しか挙げず、文に埋まる `imported` は挙げなかった側)。
   const importedLabel = Number.isFinite(imported) ? `${imported} 件` : '不明な件数';
   const droppedNote = Number.isFinite(dropped) && dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
+  // 消えた理由は**確認文と同じ 3 つ**を同じ順序で並べる (形式不正が 0 件なら文面は変わらない)。
+  const unusable = plan.unusableLocal > 0 ? ` + バックアップ側が形式不正だった ${plan.unusableLocal} 件` : '';
   const detail =
     plan.mode === 'replace'
-      ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件`
+      ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件${unusable}`
       : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
   return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
 }

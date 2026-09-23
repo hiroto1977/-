@@ -157,6 +157,57 @@ describe('バックアップの復元 — 何が足され・残り・消える�
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });
 
+  /**
+   * **形式不正の控えで置換すると、確認が「消える記録はありません」と述べて全部消えた**
+   * (2026-09-23 · パス 432)。同じ id の記録が控えに在っても、その記録が形の検査に
+   * 落ちるなら**入れ替えは起きない** —— 消えるだけである。直す前の計画はそれを
+   * `overwritten` (= バックアップの中身になる) に数えていた。
+   *
+   * ここは実物の画面で、**訊く前に断ること**と**この端末の記録が残ること**を見る。
+   */
+  it('★ 控えが形式不正なら、置換は訊く前に断り、この端末の記録は残る', async () => {
+    const local = await seedLocal();
+    // 同じ id・新しい時刻・**形の検査に落ちる中身** (金額が文字列)。
+    const backup = await serializeBackup([
+      { ...local, updatedAt: local.updatedAt + 60_000, data: { ...ROW, amount: 'abc' } },
+    ]);
+    const confirm = vi.fn((_message?: string) => true);
+    window.confirm = confirm;
+    await mount();
+    await checkReplace();
+    await chooseFile(backup, 'broken.json');
+    await waitForText(text, '取り込める記録が 1 件もありません');
+    // **訊いていない** —— OK を貰っても結果は「全部消えて何も入らない」ので、訊く意味が無い。
+    expect(confirm).not.toHaveBeenCalled();
+    expect(text()).toContain('すべてのデータを削除');
+    expect((await getRecordStore().get<SalesRow>(local.id))?.data.amount).toBe(2000);
+    expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
+  });
+
+  it('★ 一部だけ形式不正なら訊く —— 確認文が取り込めない件数と消える理由を言う', async () => {
+    const local = await seedLocal();
+    const backup = await serializeBackup(
+      [
+        FROM_BACKUP,
+        { ...local, updatedAt: local.updatedAt + 60_000, data: { ...ROW, amount: 'abc' } },
+      ],
+      new Date('2026-06-01T12:00:00Z'),
+    );
+    const confirm = vi.fn((_message?: string) => true);
+    window.confirm = confirm;
+    await mount();
+    await checkReplace();
+    await chooseFile(backup, 'partly-broken.json');
+    await waitForText(text, '1 件のレコードを復元しました');
+    const message = String(confirm.mock.calls[0]?.[0]);
+    expect(message).toContain('（うち 1 件は形式が不正で取り込めません）');
+    expect(message).toContain('バックアップ側が形式不正で入れ替えられない 1 件');
+    // 直す前は「消える記録はありません」と述べ、この端末の記録が黙って消えていた。
+    expect(message).not.toContain('消える記録はありません');
+    expect(await getRecordStore().get(local.id)).toBeNull();
+    expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
+  });
+
   it('対照: 確認で OK すれば置き換わり、結果の文が消えた件数の内訳を言う', async () => {
     const local = await seedLocal();
     const backup = await serializeBackup([FROM_BACKUP]);

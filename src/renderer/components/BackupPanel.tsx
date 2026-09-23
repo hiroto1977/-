@@ -9,6 +9,7 @@ import {
   planRestore,
   replaceRestoreConfirmMessage,
   restoreResultMessage,
+  unusableBackupRefusal,
   plaintextExposure,
   plaintextBackupConfirmMessage,
   isEncryptedBackup,
@@ -92,6 +93,15 @@ export function BackupPanel() {
       const plan = planRestore(await store.exportAll(), parsed.records, replace ? 'replace' : 'merge', parsed.exportedAt);
       // 置換は元に戻せない。確認は「何件消えるか」を言う —— 一文だけの確認は何も言っていないのと同じ。
       // (2026-09-09 まで確認は読む**前**にあった —— 何も知らない時点の確認だった。)
+      // **取り込める記録が 1 件も無い置換は、訊く前に断る** (2026-09-23 · パス 432)。
+      // 消す方は必ず成功し、入れる方は形の検査を通った物だけが入るので、
+      // OK を貰っても結果は「全部消えて何も入らない」—— それは復元ではない。
+      const refusal = unusableBackupRefusal(plan);
+      if (refusal !== null) {
+        setErr(refusal);
+        if (fileRef.current) fileRef.current.value = '';
+        return;
+      }
       if (plan.mode === 'replace' && !window.confirm(replaceRestoreConfirmMessage(plan))) {
         if (fileRef.current) fileRef.current.value = '';
         return;
@@ -99,7 +109,9 @@ export function BackupPanel() {
       const n = await store.importAll(plan.toImport, { replace });
       // importAll は形式の合わないレコードを黙って捨てる。捨てた件数を言わないと
       // 「100 件のファイルを入れたのに 60 件と出た」理由が利用者に分からない。
-      setMsg(restoreResultMessage(plan, n, plan.toImport.length - n));
+      // 数えるのは**計画が落とした分** —— `toImport` は入る物だけなので引き算では 0 になる。
+      // 第 2 項は 2 つの関門が食い違ったときだけ効く保険で、同じ述語を読む今は常に 0 (パス 432)。
+      setMsg(restoreResultMessage(plan, n, plan.dropped + (plan.toImport.length - n)));
     } catch (e) {
       setErr(e instanceof Error ? e.message : '復元に失敗しました');
     }

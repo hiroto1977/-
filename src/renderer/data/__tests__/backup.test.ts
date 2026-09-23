@@ -483,7 +483,16 @@ describe('docs/DATA_PROTECTION.md の暗号化バックアップの節は実物�
 });
 
 describe('復元の計画 — 何が足され・残り・消えるか (パス 129)', () => {
-  const env = (id: string, updatedAt: number): StoredRecord => ({ id, collection: 'sales-entries', createdAt: updatedAt, updatedAt, data: { amount: updatedAt } });
+  /**
+   * **中身は形の検査 (`collectionShapes.ts`) を通る物にする** —— `planRestore` は
+   * 2026-09-23 (パス 432) から `importAll` と同じ関門を先に通すので、欄の欠けた
+   * スタブを渡すと「取り込めない」に数えられ、ここで測りたい id の突き合わせに届かない。
+   * (通らない中身を渡したときの数え方は `restorePlanMatchesImport.test.ts` が見る。)
+   */
+  const env = (id: string, updatedAt: number): StoredRecord => ({
+    id, collection: 'sales-entries', createdAt: updatedAt, updatedAt,
+    data: { date: '2026-04-01', channel: 'amazon', amount: updatedAt, orders: 1 },
+  });
   const EXISTING = [env('same-newer-here', 200), env('same-older-here', 100), env('only-here', 50)];
   const INCOMING = [env('same-newer-here', 100), env('same-older-here', 150), env('only-in-backup', 10)];
 

@@ -81,6 +81,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../services';
 import { COLLECTION_SHAPES, hasCollectionShape } from '../data/collectionShapes';
+import { FAMILIES, allFieldsRow, malformedRow, type Family } from './malformedRows';
 import { getRecordStore } from '../data/store';
 import { RecordShapeAuditPanel } from '../components/RecordShapeAuditPanel';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
@@ -92,55 +93,6 @@ import { resetRecordStore } from './recordStoreHarness';
  * パス 360 の直し前は `kpi` と `sales` が居た。
  */
 const THROWING_PAGES: Readonly<Record<string, string>> = {};
-
-/** 形の判定が拒む行 —— 4 通りの壊し方。 */
-type Family = 'missing' | 'wrong-type' | 'wrong-type-str-all' | 'wrong-type-num-all';
-
-/** 4 家系ぜんぶ (`it.each` と床が同じ 1 つを読む —— 家系を 2 か所に書かない)。 */
-const FAMILIES: readonly Family[] = ['missing', 'wrong-type', 'wrong-type-str-all', 'wrong-type-num-all'];
-
-/**
- * **全欄**に同じ型違いの値を置いた行。`wrongTypedRow` が「最初に拒まれた 1 欄」しか
- * 壊さないので、並びの後ろの欄 (販売記録の `note` など) に当たらない —— パス 417 の
- * 欠陥はそこに居た。2 方向要る: **数の欄に文字列**を置くと `.toFixed` が、
- * **文字列の欄に数**を置くと `.trim` / `.slice` が落ちる。
- */
-export function allFieldsRow(collection: string, v: unknown): Record<string, unknown> | null {
-  const shape = COLLECTION_SHAPES[collection];
-  if (shape === undefined) return null;
-  const row: Record<string, unknown> = {};
-  for (const field of shape.fields) row[field] = v;
-  return hasCollectionShape(collection, row) ? null : row;
-}
-
-/**
- * 欄が在って型が違う行を、**形自身の欄の一覧から導く** (手書きの候補表だと、
- * たまたま当たらなかった collection が「拒めない」に見える —— パス 360 の
- * 最初の計測がそれで `highlight-settings` を取り違えた)。
- *
- * `Symbol` は入れない —— IndexedDB の structured clone が通さないので、
- * **保存値として存在し得ない** (実測: `DataCloneError`)。
- */
-export function wrongTypedRow(collection: string): Record<string, unknown> | null {
-  const shape = COLLECTION_SHAPES[collection];
-  if (shape === undefined) return null;
-  const sentinels: unknown[] = ['bad', -1 / 0, null, true, { z: 1 }, [1]];
-  for (const field of shape.fields) {
-    for (const v of sentinels) {
-      const row = { [field]: v } as Record<string, unknown>;
-      if (!hasCollectionShape(collection, row)) return row;
-    }
-  }
-  return null;
-}
-
-/** その壊し方で実際に拒まれる行 (拒まれないなら `null` = その collection は対象外)。 */
-export function malformedRow(collection: string, family: Family): Record<string, unknown> | null {
-  if (family === 'missing') return hasCollectionShape(collection, {}) ? null : {};
-  if (family === 'wrong-type-str-all') return allFieldsRow(collection, '1000');
-  if (family === 'wrong-type-num-all') return allFieldsRow(collection, -987654.321);
-  return wrongTypedRow(collection);
-}
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {

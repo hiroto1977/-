@@ -532,9 +532,9 @@ class IndexedDBRecordStore implements RecordStore {
    * トランザクションは待っている間に自動で閉じるため。
    */
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
-    // 封筒の形 (`isValidStoredRecord`) に加えて **中身の形** (`collectionShapes.ts`) も見る。
-    // 封緘済みの中身は見られないので封筒だけ。捨てた件数は呼び出し側 (BackupPanel) が利用者に言う。
-    const valid = records.filter((r) => isValidStoredRecord(r) && (isSealedData(r.data) || hasCollectionShape(r.collection, r.data)));
+    // 関門は `isImportableRecord` **ただ 1 つ** —— 復元の計画 (`planRestore`) が
+    // 「何件入るか」を数えるのに同じ判定を要るため (パス 432)。捨てた件数は呼び出し側が利用者に言う。
+    const valid = records.filter(isImportableRecord);
     const prepared = await Promise.all(
       valid.map(async (rec) =>
         isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
@@ -616,6 +616,23 @@ function isValidStoredRecord(v: unknown): v is StoredRecord {
     Number.isFinite(r.updatedAt) &&
     isPlainJsonObject(r.data)
   );
+}
+
+/**
+ * **復元が受け取る記録か —— 関門はこの 1 つ** (2026-09-23 · パス 432)。
+ *
+ * `importAll` の filter をそのまま関数にした物で、中身は 1 字も変えていない。
+ * 外へ出したのは、**訊く前に「何件入るか」を数える側** (`backup.ts` の `planRestore`)
+ * が同じ判定を要るからである。2 つ書くと必ず割れ、割れた側は
+ * 「入る」と数えて「入らない」を実行する —— 実測 (2026-09-23 · 直す前):
+ * 置換復元の確認が「**消える記録はありません**」と述べ、押すとストアが空になった。
+ *
+ * 封緘済み (`__enc`) は中身を見られないので封筒だけで通す —— ここを落とすと
+ * 暗号化バックアップが丸ごと復元できなくなる。
+ */
+export function isImportableRecord(v: unknown): v is StoredRecord {
+  if (!isValidStoredRecord(v)) return false;
+  return isSealedData(v.data) || hasCollectionShape(v.collection, v.data);
 }
 
 let singleton: RecordStore | null = null;
