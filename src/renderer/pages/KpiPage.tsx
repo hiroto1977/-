@@ -29,6 +29,7 @@ import { DASH } from '../../shared/formatters';
 import { SALES_COLLECTION, readableSalesRows, unreadableSalesDateNote, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
+import { CSV_BOM } from '../data/csv';
 import { budgetComparedRangeLabel, budgetUnmatchedNote, KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 import {
   MANUAL_OVERRIDES_COLLECTION,
@@ -422,7 +423,7 @@ function ActualsPanel() {
   }
 
   function onExportCsv() {
-    const blob = new Blob(['﻿' + kpiActualsToCsv(records.map((r) => r.data))], {
+    const blob = new Blob([CSV_BOM + kpiActualsToCsv(records.map((r) => r.data))], {
       type: 'text/csv;charset=utf-8',
     });
     const url = URL.createObjectURL(blob);

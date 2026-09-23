@@ -223,18 +223,6 @@ const ALLOWLIST = new Map([
     'src/renderer/security/__tests__/mnemonic.test.ts::U+FEFF',
     { n: 1, why: '同上 (BOM) — 貼り付けの先頭に付くので剥がす' },
   ],
-  [
-    'src/renderer/components/FinancialAnalysis.tsx::U+FEFF',
-    { n: 1, why: 'CSV 書き出しの BOM — これが無いと Excel が UTF-8 を読まない' },
-  ],
-  [
-    'src/renderer/pages/SalesPage.tsx::U+FEFF',
-    { n: 1, why: '同上 (販売記録の CSV)' },
-  ],
-  [
-    'src/renderer/pages/KpiPage.tsx::U+FEFF',
-    { n: 1, why: '同上 (KPI 実績の CSV)' },
-  ],
 ]);
 
 /** 走査対象。生成物 (dist / vault / graph) は元データを直せば直るので見ない。 */

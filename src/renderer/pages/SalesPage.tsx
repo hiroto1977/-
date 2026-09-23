@@ -21,6 +21,7 @@ import {
 } from '../data/sales';
 import { displayField } from '../../shared/apiResponse';
 import { salesToCsv, salesFromCsv } from '../data/salesCsv';
+import { CSV_BOM } from '../data/csv';
 import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import {
   MANUAL_OVERRIDES_COLLECTION,
@@ -119,7 +120,7 @@ export function SalesPage() {
 
   function onExport() {
     // Prepend a UTF-8 BOM so Excel opens Japanese text correctly.
-    const blob = new Blob(['﻿' + salesToCsv(entries)], { type: 'text/csv;charset=utf-8' });
+    const blob = new Blob([CSV_BOM + salesToCsv(entries)], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

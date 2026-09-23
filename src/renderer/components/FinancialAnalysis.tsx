@@ -42,6 +42,7 @@ import { buildFinancialReportMarkdown } from '../data/financialReport';
 import { consolidationScope, consolidationLabel } from '../data/consolidation';
 import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, statementEstimateNotes, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 import { localIsoDate } from '../../shared/localDate';
+import { CSV_BOM } from '../data/csv';
 
 export interface FinancialUnit {
   readonly id: string;
@@ -968,7 +969,7 @@ export function FinancialAnalysis({
     a.click();
     URL.revokeObjectURL(url);
   }
-  const downloadCsv = (csv: string, name: string) => downloadBlob('﻿' + csv, 'text/csv;charset=utf-8', name);
+  const downloadCsv = (csv: string, name: string) => downloadBlob(CSV_BOM + csv, 'text/csv;charset=utf-8', name);
   function onExportCsv() {
     // 出所は**中に**書く。ファイル名は改名や転送で消えるが、行は残る。
     const samples = perUnit.filter((p) => p.unit.sample === true).length;
