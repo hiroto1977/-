@@ -5,6 +5,7 @@
  *
  * **重要 — 概算の経営診断であり財務・税務助言ではありません。**
  */
+import { splitMissingStocks } from './balanceSheet';
 import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 
@@ -263,12 +264,25 @@ export function buildManagementHighlights(
   // 名前で述べる** —— 黙って落とすと、利用者は「自社に運転資金の負担が無い」と読む。
   // (以前は 0 に倒しており、空欄のまま保存した控えが下の good「仕入の支払より先に
   //  回収できています」を出していた。経緯は `data/balanceSheet.ts` の `BalanceSheet`。)
+  // **原因ごとに別の所見にする** (2026-09-24 · パス 444)。打ち込んだ値が数として
+  // 読めないだけの利用者に「未入力のため…入力してください」と言うと、**直す手ごと
+  // 誤らせる** (その欄は入力済みで、消す口は設定の点検パネルにある · パス 388)。
   if (wc !== null && wc.missingStocks.length > 0) {
-    out.push({
-      severity: 'warning',
-      category: '運転資金',
-      message: `貸借対照表の${wc.missingStocks.join('・')}が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。KPI ページの貸借対照表に入力してください。`,
-    });
+    const stocks = splitMissingStocks(wc.missingStocks, overview.balanceSheetUnreadableFields);
+    if (stocks.blank.length > 0) {
+      out.push({
+        severity: 'warning',
+        category: '運転資金',
+        message: `貸借対照表の${stocks.blank.join('・')}が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。KPI ページの貸借対照表に入力してください。`,
+      });
+    }
+    if (stocks.unreadable.length > 0) {
+      out.push({
+        severity: 'warning',
+        category: '運転資金',
+        message: `貸借対照表の${stocks.unreadable.join('・')}が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。`,
+      });
+    }
   }
   if (wc && wc.ccc !== null) {
     if (wc.ccc > 60) {

@@ -572,10 +572,15 @@ describe('normalizeBalanceSheet / balanceSheetOrNull', () => {
     expect(m.netAssets).toBe(5_000_000);
   });
 
-  it('対照: 揃った控えは 1 つも書き換えない', () => {
+  it('対照: 揃った控えは 1 つも書き換えない (名簿は足すが、値には触らない)', () => {
     const full = { ...core, cash: 1_000_000, inventory: 400_000, accountsReceivable: 900_000,
       accountsPayable: 700_000, interestBearingDebt: 2_500_000 };
-    expect(normalizeBalanceSheet(full)).toEqual(full);
+    // **値の主張は 1 文字も緩めない** —— `unreadableFields` は 2026-09-24 (パス 444) に
+    // 足した「倒した欄の名簿」で、値ではない。だから名簿を外して元の主張をそのまま当て、
+    // 名簿が空であることを**別に**主張する (畳むと「名簿さえ空なら値は何でもよい」になる)。
+    const { unreadableFields, ...values } = normalizeBalanceSheet(full);
+    expect(values).toEqual(full);
+    expect(unreadableFields).toEqual({ zeroed: [], missing: [] });
   });
 
   it('任意の欄 (現預金・有利子負債) は無いまま残す (0 を作らない)', () => {

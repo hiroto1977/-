@@ -41,6 +41,7 @@ import { auditRecordShapes } from '../recordShapeAudit';
 import { MEMBERS_COLLECTION } from '../members';
 import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
+import { BALANCE_SHEET_COLLECTION } from '../balanceSheet';
 
 /** 設定の点検パネルを名指しする綴り (**実物のパネルの見出しと同じ語** —— パス 426 で「記録」から直した)。 */
 const AUDIT_PANEL = '形式の合わないレコード';
@@ -77,6 +78,22 @@ const KPI_BAD_PERIOD = { period: 'bad', unit: 'A', revenue: 1, cogs: 0, advertis
 const KPI_BAD_AMOUNT = { period: '2026-04', unit: 'A', revenue: null, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const KPI_OK = { period: '2026-04', unit: 'A', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const MEMBER_OK = { name: '山田', email: 'a@example.com', role: 'member' };
+// 貸借対照表の欄が数でない —— 形の表 (`currentAssets: num`) が断る側 (パス 444)。
+// **内数 ≦ 親項目** (`recordRelations.ts`) も同時に満たす必要があるので、
+// 壊す欄以外は 0 にしておく (親を壊すと内数との関係でも落ち、原因が 2 つになる)。
+const BS_BAD_AMOUNT = {
+  asOf: '2026-03-31',
+  currentAssets: null,
+  cash: 0,
+  inventory: 0,
+  accountsReceivable: 0,
+  fixedAssets: 0,
+  currentLiabilities: 0,
+  accountsPayable: 0,
+  fixedLiabilities: 0,
+  interestBearingDebt: 0,
+  netIncome: 0,
+};
 
 /**
  * **今日の全量。** 走査が見つけた関数と 1 件ずつ対応する (両方向)。
@@ -196,6 +213,22 @@ const LEDGER: readonly Row[] = [
     collection: MEMBERS_COLLECTION,
     sample: MEMBER_OK,
     why: '同上 —— 一覧の上に出る警告。',
+  },
+  {
+    fn: 'unreadableBalanceSheetNote',
+    file: 'src/renderer/data/balanceSheet.ts',
+    kinds: ['audit-panel'],
+    collection: BALANCE_SHEET_COLLECTION,
+    sample: BS_BAD_AMOUNT,
+    why: '**数でない欄は形の表 (`currentAssets: num` ほか) が断る**ので、点検パネルが見つけて消せる (パス 444)。貸借対照表は一覧に × を持たない —— 画面から行ごと消す口はこのパネルだけなので、ここを名指しするほかに逃げ口は無い。',
+  },
+  {
+    fn: 'buildManagementHighlights',
+    file: 'src/renderer/data/managementHighlights.ts',
+    kinds: ['audit-panel'],
+    collection: BALANCE_SHEET_COLLECTION,
+    sample: BS_BAD_AMOUNT,
+    why: '同じ名簿を読む所見 (パス 444)。**未入力の所見とは別の文**で、こちらは「入力してください」と言わない —— 打ち込んだ値が読めないだけの人に入力を促すと直す手ごと誤らせる (パス 388)。',
   },
 ];
 

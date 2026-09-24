@@ -19,6 +19,7 @@ import { isCalendarMonth } from '../../shared/isoDate';
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
 import { duplicateActualsSheetNote, growthBlankSheetNote, isValidPeriod, noBepSheetNote, unreadableKpiRowsSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
+import { splitMissingStocks, unreadableBalanceSheetSheetNote } from './balanceSheet';
 import { duplicateMembersSheetNote } from './members';
 import { droppedSalesRowsSheetNote, duplicateOrdersSheetNote, noSalesRecordsSheetNote } from './sales';
 import { dealIntakeSheetNote } from '../../shared/freeeIntake';
@@ -477,9 +478,23 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   });
 
   const fp = o.financialPosition;
+  /**
+   * §4 の但し書き。**倒した欄が在れば必ず述べる** ——
+   * 「純資産 △4,000 千円 / 自己資本比率 △100.0%（債務超過）」が理由なしで紙に載ると、
+   * 読み手はそれを事業についての事実として読む (実測はパス 444。`balanceSheet.ts` の名簿)。
+   * 基準日のずれの但し書きと併記する (§5 の `workingCapitalCaption` と同じ形)。
+   */
+  const financialPositionCaption = (): string | null => {
+    if (fp === null) return '貸借対照表が未入力のため算定していません。';
+    const notes = [
+      unreadableBalanceSheetSheetNote(o.balanceSheetUnreadableFields),
+      staleBsNote(),
+    ].filter((n): n is string => n !== null);
+    return notes.length === 0 ? null : notes.join(' ');
+  };
   sections.push({
     title: '4. 財政状態（貸借対照表 基準日現在）',
-    caption: fp === null ? '貸借対照表が未入力のため算定していません。' : staleBsNote(),
+    caption: financialPositionCaption(),
     rows: [
       row('総資産', fp === null ? BLANK : amt(fp.totalAssets)),
       row('負債合計', fp === null ? BLANK : amt(fp.totalLiabilities)),
@@ -516,6 +531,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     wc === null ? 0 : Math.round(periodDaysForMonths(wc.periodMonths) * 10) / 10;
   const workingCapitalCaption = (): string | null => {
     if (wc === null) return '貸借対照表と売上高が揃っていないため算定していません。';
+    const wcStocks = splitMissingStocks(wc.missingStocks, o.balanceSheetUnreadableFields);
     const notes = [
       // **何か月分の実績で出した回転日数か。** 溜まり ÷ 流れ の答えは期間の長さで
       // 決まるので、1 年分でないなら必ず述べる (述べることが無ければ null にするのは
@@ -523,9 +539,15 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
       wc.periodMonths === monthsPerYear()
         ? null
         : `回転日数は実績の${periodSpan(o.kpi.periods, f)}分（${periodDayCount()} 日）で算定しています。1 年分の回転日数ではありません。`,
-      wc.missingStocks.length === 0
+      // **原因を言い分ける** —— 打ち込んだ値が読めないだけの利用者に「未入力のため」と
+      // 言うと、その人は同じ欄を見に行く (直す手は入力ではなく点検パネルで消すこと)。
+      // 名簿は `balanceSheet.ts` が 1 つ持ち、分けるのは `splitMissingStocks` (パス 444)。
+      wcStocks.blank.length === 0
         ? null
-        : `貸借対照表の${wc.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は算定していません（0 円としては扱っていません）。`,
+        : `貸借対照表の${wcStocks.blank.join('・')}が未入力のため、該当する回転日数と運転資本は算定していません（0 円としては扱っていません）。`,
+      wcStocks.unreadable.length === 0
+        ? null
+        : `貸借対照表の${wcStocks.unreadable.join('・')}が数として読めないため、該当する回転日数と運転資本は算定していません（0 円としては扱っていません）。`,
       staleBsNote(),
     ].filter((n): n is string => n !== null);
     return notes.length === 0 ? null : notes.join(' ');

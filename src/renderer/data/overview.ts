@@ -38,9 +38,11 @@ import {
   BALANCE_SHEET_STALE_AFTER_MONTHS,
   balanceSheetFreshness,
   computeBalanceSheetMetrics,
+  NO_UNREADABLE_BS_FIELDS,
   type BalanceSheet,
   type BalanceSheetFreshness,
   type BalanceSheetMetrics,
+  type UnreadableBalanceSheetFields,
 } from './balanceSheet';
 import { computeCashConversionCycle, type CashConversionCycle } from './workingCapital';
 import { forecastCashBalance, type CashForecast } from './cashForecast';
@@ -291,6 +293,15 @@ export interface BusinessOverview {
   /** 財政状態指標 (ROA/ROE/自己資本比率/流動比率)。BS 未入力なら null。 */
   readonly financialPosition: BalanceSheetMetrics | null;
   /**
+   * **貸借対照表のうち、保管値が数として読めなかった欄** (2026-09-24 · パス 444)。
+   *
+   * 入力は既に `normalizeBalanceSheet` を通った器なので、**ここで数え直さない** ——
+   * 倒した当の関数が立てた名簿をそのまま持ち上げる (`OverviewInput` に引数を足すと
+   * 107 の呼び手が「渡し忘れうる」形になり、渡し忘れは*断り書きの無い紙*になる)。
+   * 手で組んだ控え (検査・見本) は保管値ではないので名簿を持たない → 空。
+   */
+  readonly balanceSheetUnreadableFields: UnreadableBalanceSheetFields;
+  /**
    * 貸借対照表の基準日と実績の期の隔たり。貸借対照表が無ければ null。
    * **溜まり ÷ 流れ の指標 (総資産回転率・CCC・ランウェイ) が両辺で別の期を
    * 見ていないかを、所見と書面がここから述べる。** 詳細は `balanceSheet.ts`。
@@ -479,6 +490,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
         ? budgetPeriodAlignment(kpiBudgets, kpiActuals)
         : null,
     financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
+    balanceSheetUnreadableFields: input.balanceSheet?.unreadableFields ?? NO_UNREADABLE_BS_FIELDS,
     // 会計連携と貸借対照表の**両方**が在るときだけ測れる (片方だけでは隔たりが無い)。
     accountingRecency: accountingSummary && input.balanceSheet
       ? accountingRecency(

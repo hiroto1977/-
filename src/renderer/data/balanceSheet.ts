@@ -43,6 +43,28 @@ export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
  * いまは未入力を `undefined` のまま通し、**読む側がそれぞれ「算定不能」を選ぶ**。
  * 0 を算定不能にしてはいけない —— 現金商売の DSO 0 日は正しく有用な数字である。
  */
+/**
+ * **保管値が数として読めなかった欄を、倒した先ごとに分ける** (2026-09-24 · パス 444)。
+ *
+ * 2 つに分かれているのは、**倒した先が違えば直す手も断りの文も違う**からである
+ * (法則 `blank-states-its-reason`・原因を取り違えた断りは直す手ごと誤らせる · パス 388):
+ *
+ * - `zeroed` —— 必須の欄。**0 円として計算に入った**。自己資本比率・流動比率などは
+ *   その前提の値で、実測では健全な会社が「自己資本比率 △100.0%」を名乗る。
+ * - `missing` —— 任意の欄。**未入力として扱われた**。既存の 3 つの面
+ *   (書面 §5 / 経営ハイライト / 経営サマリーの画面) はこれを「未入力のため」と述べており、
+ *   **打ち込んだ利用者にとって偽**である。
+ */
+export interface UnreadableBalanceSheetFields {
+  /** 必須の欄で読めなかった物の日本語ラベル —— **0 円として計算に入っている**。 */
+  readonly zeroed: readonly string[];
+  /** 任意の欄で読めなかった物の日本語ラベル —— **未入力として扱われている**。 */
+  readonly missing: readonly string[];
+}
+
+/** 読めない欄が 1 つも無いときの値 (器を毎回作らない)。 */
+export const NO_UNREADABLE_BS_FIELDS: UnreadableBalanceSheetFields = { zeroed: [], missing: [] };
+
 export interface BalanceSheet extends Record<string, unknown> {
   /** 基準日ラベル (任意, 例 "2026-03-31")。 */
   readonly asOf: string;
@@ -65,6 +87,13 @@ export interface BalanceSheet extends Record<string, unknown> {
   readonly interestBearingDebt?: number;
   /** 当期純利益 (損失はマイナス可)。ROA・ROE に使う。 */
   readonly netIncome: number;
+  /**
+   * **保管値が数として読めず、倒した欄** (2026-09-24 · パス 444)。
+   *
+   * `normalizeBalanceSheet` **だけ**が立てる。手で組んだ控え (検査・見本) は保管値では
+   * ないので持たない —— だから任意にしてある。
+   */
+  readonly unreadableFields?: UnreadableBalanceSheetFields;
 }
 
 /** BS から導出した財政状態指標。比率は算定不能なら null。 */
@@ -176,6 +205,26 @@ export function parseBalanceSheet(input: {
 const pct = (numer: number, denom: number): number | null =>
   denom > 0 ? Math.round((numer / denom) * 1000) / 10 : null;
 
+/**
+ * **数の欄の表** —— `normalizeBalanceSheet` も「倒した欄」の報告も、ここ 1 つから導く。
+ *
+ * 2 つに分けて書くと、6 つ目の欄が足された日に**倒すのに報告しない欄**ができる
+ * (その欄はどの面にも痕跡を残さない)。ラベルは画面・書面が使う日本語で、
+ * 形の表 (`COLLECTION_SHAPES['balance-sheet']`) との過不足は census が両方向に留める。
+ */
+export const BS_NUMERIC_FIELDS: readonly { readonly key: string; readonly label: string; readonly required: boolean }[] = [
+  { key: 'currentAssets', label: '流動資産', required: true },
+  { key: 'cash', label: '現預金', required: false },
+  { key: 'inventory', label: '棚卸資産', required: false },
+  { key: 'accountsReceivable', label: '売上債権', required: false },
+  { key: 'fixedAssets', label: '固定資産', required: true },
+  { key: 'currentLiabilities', label: '流動負債', required: true },
+  { key: 'accountsPayable', label: '仕入債務', required: false },
+  { key: 'fixedLiabilities', label: '固定負債', required: true },
+  { key: 'interestBearingDebt', label: '有利子負債', required: false },
+  { key: 'netIncome', label: '当期純利益', required: true },
+];
+
 /** BS から財政状態指標を計算する。 */
 /**
  * 保存された 1 件を `BalanceSheet` の形に整える (**読み取りの境界**)。
@@ -222,6 +271,115 @@ export function normalizeBalanceSheet(raw: unknown): BalanceSheet {
     fixedLiabilities: num(r.fixedLiabilities),
     interestBearingDebt: opt(r.interestBearingDebt),
     netIncome: num(r.netIncome),
+    /*
+     * **倒したことを名簿にする** (2026-09-24 · パス 444)。
+     *
+     * ここは型から読むので投げも連結もしないが、**倒した先を誰にも言わない**。
+     * 実測 (直す前・健全な控え = 自己資本比率 33.3% / 流動比率 160.0% · 書面 §4):
+     *
+     * | 壊した欄 | 総資産 | 純資産 | 自己資本比率 | 流動比率 | 紙の但し書き |
+     * | --- | ---: | ---: | ---: | ---: | --- |
+     * | `currentAssets` (必須) | 4,000 | **△4,000** | **△100.0%** | **0.0%** | **無し** |
+     * | `fixedAssets` (必須) | 8,000 | **0** | **0.0%** | 160.0% | **無し** |
+     *
+     * `'9000000'` / `{z:1}` / `[1]` / `true` / `null` の 5 形すべてで同じで、
+     * **健全な会社の紙が「実質債務超過」を名乗る**。パス 443 と同じ家系で**向きが逆**
+     * (あちらは 10 兆円の利益で過大に、こちらは債務超過で過小に見せる)。
+     * どちらも「上記のとおり相違ありません。」と代表者名つきで金融機関へ出す紙である。
+     *
+     * 任意の欄は `undefined` へ倒れるので、既存の 3 つの面は**原因を取り違えて**
+     * 「未入力のため」と述べる (実測: `inventory: '500'` → 書面 §5 と経営ハイライトと
+     * 画面がそろって「貸借対照表の棚卸資産が未入力のため」)。打ち込んだ利用者にとって
+     * 偽であり、しかも経営ハイライトは「KPI ページの貸借対照表に入力してください」と
+     * **直す手まで名指しする** (パス 388 の形)。
+     *
+     * **行ごとは落とさない** —— 貸借対照表は 1 件しか無いので、落とすと紙全体が
+     * 「未入力」になる。倒したうえで**倒した欄と倒した先を名乗る**のが
+     * パス 227 (`defaultBandNote`) と同じ形である。
+     */
+    unreadableFields: unreadableOf(r, isFiniteNumber),
+  };
+}
+
+/** 読めなかった欄を、倒した先ごとに分ける (`normalizeBalanceSheet` の私有の助け)。 */
+function unreadableOf(
+  r: Record<string, unknown>,
+  isFiniteNumber: (v: unknown) => boolean,
+): UnreadableBalanceSheetFields {
+  const zeroed: string[] = [];
+  const missing: string[] = [];
+  for (const f of BS_NUMERIC_FIELDS) {
+    // **未入力は読めなかったのではない。** 欄そのものが無い控え (前方互換) は
+    // ここに数えない —— 数えると「入力してください」しか言えない利用者に
+    // 「読めません」と言うことになる。
+    if (r[f.key] === undefined || isFiniteNumber(r[f.key])) continue;
+    (f.required ? zeroed : missing).push(f.label);
+  }
+  return { zeroed, missing };
+}
+
+/** 読めない欄が 1 つでも在るか。 */
+export function hasUnreadableBalanceSheetFields(u: UnreadableBalanceSheetFields | undefined): boolean {
+  return u !== undefined && (u.zeroed.length > 0 || u.missing.length > 0);
+}
+
+/**
+ * 倒した欄を述べる 1 文 (**画面向け** —— 逃げ口を名指しする)。倒していなければ `null`。
+ *
+ * 逃げ口は設定の点検パネル —— 数でない値は形の表 (`balance-sheet` の `num`) が拒むので
+ * そこが見つける (パス 443 の金額の断りと同じ判断。**一覧の × ではない** ——
+ * 貸借対照表を行ごと消す口は画面に無く、消せるのは点検パネルだけである)。
+ */
+export function unreadableBalanceSheetNote(u: UnreadableBalanceSheetFields | undefined): string | null {
+  const body = unreadableBalanceSheetBody(u);
+  return body === null
+    ? null
+    : `${body}古い版で入った控えの可能性があります（設定の「形式の合わないレコード」から消せます）。`;
+}
+
+/** 同じことを、相手に渡る書面・レポート向けの 1 文で (逃げ口はこの紙の読み手の話ではない)。 */
+export function unreadableBalanceSheetSheetNote(u: UnreadableBalanceSheetFields | undefined): string | null {
+  return unreadableBalanceSheetBody(u);
+}
+
+/**
+ * **倒した先ごとに言い分ける** —— 0 円として計算に入った欄と、未入力として扱われた欄。
+ *
+ * 1 文に畳むと「0 円として計算しています」が任意の欄にも掛かって読め、
+ * 利用者は「当座比率が変なのは 0 を入れたからだ」と読む (実際は算定していない)。
+ */
+function unreadableBalanceSheetBody(u: UnreadableBalanceSheetFields | undefined): string | null {
+  if (!hasUnreadableBalanceSheetFields(u) || u === undefined) return null;
+  const said: string[] = [];
+  if (u.zeroed.length > 0) {
+    said.push(
+      `貸借対照表の${u.zeroed.join('・')}が数として読めないため 0 円として計算しています。自己資本比率・流動比率などはその前提の値です。`,
+    );
+  }
+  if (u.missing.length > 0) {
+    said.push(
+      `貸借対照表の${u.missing.join('・')}が数として読めないため未入力として扱っています（0 円としては扱っていません）。`,
+    );
+  }
+  return said.join('');
+}
+
+/**
+ * 運転資本の「溜まりが無い」理由を、**未入力**と**読めない**に分ける。
+ *
+ * 書面 §5・経営ハイライト・経営サマリーの画面はどれも `missingStocks` を
+ * 「未入力のため」と述べていた。打ち込んだ値が読めないだけの利用者にとっては偽で、
+ * しかも直す手が違う (入力 / 点検パネルで消す)。**名簿は 1 つ、文は面ごと**なので、
+ * ここが返すのは分けた名前だけである。
+ */
+export function splitMissingStocks(
+  stocks: readonly string[],
+  u: UnreadableBalanceSheetFields | undefined,
+): { readonly blank: readonly string[]; readonly unreadable: readonly string[] } {
+  const bad = u === undefined ? [] : u.missing;
+  return {
+    blank: stocks.filter((x) => !bad.includes(x)),
+    unreadable: stocks.filter((x) => bad.includes(x)),
   };
 }
 

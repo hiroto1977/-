@@ -33,7 +33,7 @@ import {
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
 import { budgetComparedRangeLabel, budgetScopeSentence, KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { periodDaysForMonths } from '../data/workingCapital';
-import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, currentBalanceSheet, type BalanceSheet } from '../data/balanceSheet';
+import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, currentBalanceSheet, splitMissingStocks, unreadableBalanceSheetNote, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
   HYDROPONICS_COLLECTION,
@@ -1850,6 +1850,14 @@ export function OverviewPage() {
               <strong style={{ color: 'var(--danger)' }}> ⚠ 純資産がマイナス（債務超過）です。</strong>
             )}
           </p>
+          {/* **倒した欄が在れば必ず述べる** —— 「自己資本比率 △100.0%」「債務超過です」を
+              理由なしで出すと、利用者はそれを自社についての事実として読む (パス 444)。
+              逃げ口 (設定の点検パネル) は文が名指しする。 */}
+          {unreadableBalanceSheetNote(overview.balanceSheetUnreadableFields) !== null && (
+            <p role="alert" data-bs-unreadable style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+              ⚠ {unreadableBalanceSheetNote(overview.balanceSheetUnreadableFields)}
+            </p>
+          )}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <Tile label="自己資本比率" value={pctOrDash(overview.financialPosition.equityRatioPct)} sub="高いほど安全 (目安40%以上)" />
             <Tile label="流動比率" value={pctOrDash(overview.financialPosition.currentRatioPct)} sub="目安200%以上" />
@@ -1866,9 +1874,16 @@ export function OverviewPage() {
               <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '0 0 6px' }}>
                 {`回転日数は実績 ${overview.workingCapital.periodMonths} か月分（${Math.round(periodDaysForMonths(overview.workingCapital.periodMonths) * 10) / 10} 日）で算定しています。`}
               </div>
-              {overview.workingCapital.missingStocks.length > 0 && (
+              {/* **原因を言い分ける** —— 打ち込んだ値が読めないだけの人に「未入力」と
+                  言うと、その人は入力済みの欄を見に行く (パス 388 / 444)。 */}
+              {splitMissingStocks(overview.workingCapital.missingStocks, overview.balanceSheetUnreadableFields).blank.length > 0 && (
                 <div style={{ fontSize: 12, color: 'var(--warning)', margin: '0 0 6px' }}>
-                  貸借対照表の{overview.workingCapital.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は「—」です (0 円として扱っていません)。
+                  貸借対照表の{splitMissingStocks(overview.workingCapital.missingStocks, overview.balanceSheetUnreadableFields).blank.join('・')}が未入力のため、該当する回転日数と運転資本は「—」です (0 円として扱っていません)。
+                </div>
+              )}
+              {splitMissingStocks(overview.workingCapital.missingStocks, overview.balanceSheetUnreadableFields).unreadable.length > 0 && (
+                <div style={{ fontSize: 12, color: 'var(--warning)', margin: '0 0 6px' }}>
+                  貸借対照表の{splitMissingStocks(overview.workingCapital.missingStocks, overview.balanceSheetUnreadableFields).unreadable.join('・')}が数として読めないため、該当する回転日数と運転資本は「—」です (0 円として扱っていません)。
                 </div>
               )}
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

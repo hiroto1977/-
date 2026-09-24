@@ -7,6 +7,7 @@
  *
  * **重要 — 概算の経営診断であり財務・税務助言ではありません。**
  */
+import { unreadableBalanceSheetSheetNote } from './balanceSheet';
 import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 import { verdictLabel, type ManagementScorecard } from '../../shared/managementScorecard';
@@ -158,6 +159,10 @@ export function buildManagementReport(
           : `- ⚠ 基準日が実績の最新期 (${fresh.latestPeriod}) より ${-fresh.monthsBehind} か月先で、溜まり ÷ 流れ の指標は別の期の数字を割っています。`,
       );
     }
+    // **倒した欄が在れば必ず述べる** —— 「自己資本比率 △100.0%」「債務超過です」を
+    // 理由なしで紙に載せない (書面 §4 と同じ判断・実測はパス 444)。
+    const bsUnreadable = unreadableBalanceSheetSheetNote(overview.balanceSheetUnreadableFields);
+    if (bsUnreadable !== null) lines.push(`- ⚠ ${bsUnreadable}`);
     lines.push(`- 自己資本比率: ${pctOrDash(fp.equityRatioPct)} / 流動比率: ${pctOrDash(fp.currentRatioPct)}`);
     lines.push(`- ROA: ${pctOrDash(fp.roaPct)} / ROE: ${pctOrDash(fp.roePct)}`);
     if (fp.insolvent) lines.push('- ⚠ 純資産がマイナス (債務超過) です。');
