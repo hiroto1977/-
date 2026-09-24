@@ -9,6 +9,34 @@
  * import すると中の describe がもう一度走る** (実測: 14 件と報告された)。走査の道具は
  * 検査ではないので、ここへ出す。
  *
+ * ## 正規表現のリテラルも**コードではない** (2026-09-24 · パス 451)
+ *
+ * 2026-09-24 まで正規表現を知らず、`/^(["'])([\\s\\S]*)\\1$/` のように**引用符を含む
+ * 正規表現**を見ると文字の所で文字列へ入り、**次の同じ引用符までを丸ごと飲んだ** ——
+ * 多くの場合ファイルの末尾までである。実測 (2026-09-24 · 直す前 · `src` の 1,428 本):
+ *
+ * | 盲点 | ファイル | 飲まれたコード行 |
+ * | ---: | --- | ---: |
+ * | **79.5%** | `main/clients/skills.ts` | **194** |
+ * | **79.7%** | `shared/api/google.ts` | **267** |
+ * | **85.2%** | `renderer/data/voiceCommand.ts` | **327** |
+ * | —— | **10% 以上の盲点を持つ 63 本の合計** | **5,226** |
+ *
+ * ★ **見つけ方は、この道具を使った針が偽を返したこと** —— パス 451 の census が
+ * 「`skills` は `ctx.token` を読まない」と答えた。実物の 466 行目は
+ * `'x-api-key': ctx.token,` で、**同じ形の `stocks` / `business` は数えられていた**。
+ * 差は 90 行目の正規表現 1 つだった。
+ *
+ * ★ **落とすのが正しい** —— 正規表現は文字列と同じリテラルで、その中身はコードではない。
+ * 区切りの空白を出す (`x.match(/a/)` の前後が地続きにならないように)。
+ * **行内で閉じなければコードへ戻す** —— 割り算を正規表現と読み違えたときに
+ * ファイルを飲まないための、失敗の向きの選び方である。
+ *
+ * ★ **`/` が正規表現か割り算かは前の字で決める** —— 直前の意味のある字が
+ * 識別子・`)`・`]` なら割り算 (今までと同じ扱い)、それ以外 (`(` `,` `=` `:` `!` `&` `|`
+ * `return` の後ほか) なら正規表現。**読み違えたときに今までの振る舞いへ倒れる**ので、
+ * この向きなら新しい飲み込みは生まれない。
+ *
  * ## `${…}` は文字列ではなく**式**である (2026-09-22 · パス 417)
  *
  * 2026-09-22 まで `tpl` は閉じのバッククォートまで丸ごと落としており、**中の
@@ -58,6 +86,16 @@ export function stripNonCode(src: string, opts: StripOptions = {}): string {
       if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; i += 1; continue; }
       if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; i += 1; continue; }
       if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; i += 1; continue; }
+      if (src[i] === '/' && startsRegex(out)) {
+        const end = skipRegex(src, i);
+        if (end > i) {
+          // 正規表現のリテラル —— 中身は落とし、区切りの空白だけ出す。
+          out += ' ';
+          i = end;
+          continue;
+        }
+        // 行内で閉じなかった (= 割り算だったか、壊れた綴り)。今までどおりコードとして出す。
+      }
       if (src[i] === '{') { depth += 1; out += '{'; i += 1; continue; }
       if (src[i] === '}') {
         const frame = depth === 0 ? stack.pop() : undefined;
@@ -110,4 +148,70 @@ export function stripNonCode(src: string, opts: StripOptions = {}): string {
     i += 1;
   }
   return out;
+}
+
+/**
+ * `/` が正規表現の始まりか。**直前の意味のある字**で決める (上の docblock に理由)。
+ * 読み違えた場合は「割り算」へ倒れ、今までと同じ振る舞いになる。
+ */
+function startsRegex(emitted: string): boolean {
+  let j = emitted.length - 1;
+  while (j >= 0 && /\s/.test(emitted[j]!)) j -= 1;
+  if (j < 0) return true;
+  const c = emitted[j]!;
+  // 識別子・`)`・`]` の後ろは割り算。ただし予約語 (`return` / `typeof` ほか) の後ろは
+  // 正規表現なので、識別子のときだけ語を取り出して見る。
+  if (c === ')' || c === ']') return false;
+  if (/[\w$]/.test(c)) {
+    let k = j;
+    while (k >= 0 && /[\w$]/.test(emitted[k]!)) k -= 1;
+    const word = emitted.slice(k + 1, j + 1);
+    return isRegexPrecedingKeyword(word);
+  }
+  return true;
+}
+
+/**
+ * この語の直後の `/` は正規表現である (値ではなく演算子・文の一部なので)。
+ *
+ * **`const` の集合にはしない** —— `.cjs` の写しは読み込みの時点で `main()` を走らせるので、
+ * ファイル末尾の `const` は TDZ で `ReferenceError` になる (2026-09-24 · パス 451 で
+ * `lint:test-coverage` が実際に落ちた。パス 371 で同じ罠を踏んでおり **2 度目**)。
+ * **関数宣言は巻き上げられる**ので、3 つの写しで同じ形にできる。
+ */
+function isRegexPrecedingKeyword(word: string): boolean {
+  switch (word) {
+    case 'return': case 'typeof': case 'case': case 'in': case 'of':
+    case 'instanceof': case 'new': case 'delete': case 'void':
+    case 'do': case 'else': case 'yield': case 'await':
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * 正規表現のリテラルを読み飛ばし、**閉じた位置の次**を返す。
+ * 行内で閉じなければ `-1` ではなく `i` を返す (呼び手が「正規表現ではなかった」と扱う)。
+ */
+function skipRegex(src: string, start: number): number {
+  let j = start + 1;
+  let inClass = false;
+  while (j < src.length) {
+    const c = src[j]!;
+    if (c === '\n') return start; // 行内で閉じない
+    if (c === '\\') { j += 2; continue; }
+    if (inClass) {
+      if (c === ']') inClass = false;
+    } else if (c === '[') {
+      inClass = true;
+    } else if (c === '/') {
+      j += 1;
+      // フラグ
+      while (j < src.length && /[a-z]/.test(src[j]!)) j += 1;
+      return j;
+    }
+    j += 1;
+  }
+  return start;
 }

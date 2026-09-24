@@ -43,6 +43,7 @@ import {
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
+import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../shared/advisorQuestionLimits';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
@@ -310,7 +311,9 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   if (countChars(text) > MAX_ANALYZE_TEXT_CHARS) {
     throw new Error(`text exceeds ${MAX_ANALYZE_TEXT_CHARS} chars`);
   }
-  if (!ctx.token) throw new Error('Anthropic API key required for analyze-text');
+  // **日本語の画面に英語を出さない** —— 文は 3 画面と両ビルドで 1 つ (パス 451)。
+  // `ADVISOR_QUESTION_MESSAGES` の docblock が同じ形を 2026-09-15 に直した当のこと。
+  if (!ctx.token) throw new Error(MISSING_ANTHROPIC_KEY_MESSAGE);
   // 保存できない保存先なら**送る前に**断る。断るのが保存の直前だと、本文は Anthropic へ渡り
   // API 呼び出しも済んだ後で捨てることになる (2026-09-05 まではそうだった)。
   // 送っている間に壊れる分は、保存の直前でもう一度読んで断る (下)。

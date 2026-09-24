@@ -25,6 +25,7 @@ import {
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
   checkAdvisorQuestion,
   ADVISOR_QUESTION_MESSAGES,
+  MISSING_ANTHROPIC_KEY_MESSAGE,
 } from '../../shared/advisorQuestionLimits';
 import {
   MAX_ADVISOR_RECOMMENDATIONS,
@@ -1314,6 +1315,18 @@ async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise
     const def = MOCK_TICKERS.find((t) => t.symbol === sym);
     analyses.push(buildTickerAnalysis(sym, def ? def.label : sym, candles));
   }
+
+  /*
+   * **鍵が無ければ送らない** (2026-09-24 · パス 451)。
+   *
+   * ここは 2026-09-24 まで門を持たず、`'x-api-key': ''` を Anthropic へ送っていた
+   * (実測: 網の口を 1 回叩き、返った 401 の本文「invalid x-api-key」が
+   * `safeErrorMessage` を通って画面へ出る)。**鍵は不正ではなく存在しない**ので、
+   * その文は原因を取り違えさせる。兄弟の `emotions/analyze-text` は最初からここで
+   * 断っており、**この 2 つだけがその前提を持っていなかった**。
+   * 文は `shared/advisorQuestionLimits.ts` が 1 つだけ持つ (逃げ口を名乗る)。
+   */
+  if (!ctx.token) throw new Error(MISSING_ANTHROPIC_KEY_MESSAGE);
 
   // Compose the Anthropic Messages API request. Tight system prompt
   // (symbol allowlist + structured JSON only + no buy-now language).

@@ -96,6 +96,19 @@ const SAMPLES: readonly { readonly name: string; readonly src: string }[] = [
   { name: 'エスケープした引用符', src: "const s = 'a\\'b';\nconst t = 2;\n" },
   { name: 'テンプレートの中の改行', src: 'const s = `a\nb`;\nconst t = 2;\n' },
   { name: '普通のコード (何も落ちない)', src: 'function f(x) { return x + 1; }\n' },
+  /*
+   * **正規表現のリテラル** (2026-09-24 · パス 451)。1 つ目が本物の欠陥そのもので、
+   * 引用符を含む正規表現を見ると文字列へ入り**次の同じ引用符までを飲んでいた** ——
+   * 実測で `main/clients/skills.ts` の 82% が走査から消え、その先の
+   * `'x-api-key': ctx.token,` が見えなかった。
+   */
+  { name: '正規表現に引用符 (飲まない)', src: 'const m = s.match(/^(["\'])(.*)\\1$/);\nconst t = ctx.token;\n' },
+  { name: '正規表現の文字クラスに / ', src: 'const r = /[a-z/]+/g;\nconst t = 2;\n' },
+  { name: 'エスケープした / ', src: 'const r = /a\\/b/;\nconst t = 2;\n' },
+  { name: '割り算は正規表現ではない', src: 'const q = (a + b) / c / d;\n' },
+  { name: '識別子の後ろの / も割り算', src: 'const q = total / count;\n' },
+  { name: 'return の後ろは正規表現', src: 'function f(s) { return /x"y/.test(s); }\n' },
+  { name: '閉じない / は飲まない (割り算へ倒れる)', src: 'const q = a / b;\nconst t = ctx.token;\n' },
 ];
 
 describe('stripNonCode の写し — 3 つが同じ答えを返す (パス 418)', () => {
@@ -159,6 +172,42 @@ describe('stripNonCode の写し — 3 つが同じ答えを返す (パス 418)'
     // 隣り合う補間が地続きにならない (実物に無い綴りを作らない)。
     expect(stripNonCode('const k = `${aa}${bb}`;')).not.toContain('aabb');
     // 標本の総数が縮んでいないこと (母集団の床)。
-    expect(SAMPLES.length).toBeGreaterThanOrEqual(11);
+    expect(SAMPLES.length).toBeGreaterThanOrEqual(18);
+  });
+});
+
+/**
+ * **飲み込みが閉じたことを実物で留める** (2026-09-24 · パス 451)。
+ *
+ * 上の標本は算法を縛るが、「実物のどのファイルが見えるようになったか」は言わない。
+ * ここは**実在の 3 本**について、正規表現より後ろのコードが走査に映ることを見る ——
+ * 直す前の実測は 79.5% / 79.7% / 85.2% が消えていた。
+ */
+describe('★ 実物: 正規表現より後ろのコードが見える (パス 451)', () => {
+  const CASES = [
+    // 90 行目の `/^(["'])([\s\S]*)\1$/` より後ろ。466 行目が鍵をヘッダへ載せる。
+    { file: 'src/main/clients/skills.ts', needle: 'ctx.token' },
+    // Google の API のパスを組む所 —— 正規表現より後ろに在る。
+    { file: 'src/shared/api/google.ts', needle: 'export' },
+    // 音声コマンドの語彙表 —— 85.2% が消えていた。
+    { file: 'src/renderer/data/voiceCommand.ts', needle: 'export' },
+  ] as const;
+
+  it.each(CASES.map((c) => [c.file, c.needle] as const))(
+    '%s の %s が走査に映る',
+    (file, needle) => {
+      const raw = readOriginalSource(path.join(REPO, file));
+      const code = stripNonCode(raw);
+      expect(raw.includes(needle), `${file}: 原文に ${needle} が無い (標本が古い)`).toBe(true);
+      expect(code.includes(needle), `${file}: 走査から ${needle} が消えている`).toBe(true);
+    },
+  );
+
+  it('★ 対照: 飲み込みの形を再現すると見えなくなる', () => {
+    // 引用符を含む正規表現 → その後ろの `ctx.token` は、正規表現を知らない走査では消える。
+    const src = 'const m = s.match(/^(["\'])$/);\nconst t = ctx.token;\n';
+    expect(stripNonCode(src).includes('ctx.token')).toBe(true);
+    // 標本が的に当たることを示す —— 引用符が 1 つだけ残る形なら、文字列として飲まれる。
+    expect(stripNonCode('const s = "a\nconst t = ctx.token;\n').includes('ctx.token')).toBe(false);
   });
 });

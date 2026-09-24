@@ -117,7 +117,7 @@ const VERDICTS = {
     + ' ★ 重さ: この組は `scanTarget` より**軽い** —— 判定は 2026-08-25 から 1 つで、'
     + '写しだったのは文だけなので安全の主張は乗っていない (HIBP は述語が写しで、'
     + '片側の trim が落ちて偽の安心を返した)。同じ家系でも重さは分けて書く。'
-    + '母集団はパス 251 で 118 件と測った',
+    + '母集団はパス 251 で 118 件と測った ★ パス 451 で main 側が 2 → 3 になった —— `emotions` が入った。「鍵が未設定」の断り (`MISSING_ANTHROPIC_KEY_MESSAGE`) も**同じ家系の 5 組目**で、main の `emotions` だけが英語 (`Anthropic API key required for analyze-text`)・ブラウザ版の 3 つが日本語だった。**パス 284 / 285 の census がこれを見なかったのは「両ビルドに双子が在る断り」を数えたから** —— `stocks` / `business` は main 側に断りが 1 つも無かったので、対を数える走査の母集団に入らない (パス 450 と同じ死角)',
   rfc2822:
     '対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、'
     + '両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。'

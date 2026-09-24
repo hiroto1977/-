@@ -1,5 +1,9 @@
 import { readFailureBody } from '../../shared/httpLimits';
-import { checkAdvisorQuestion, ADVISOR_QUESTION_MESSAGES } from '../../shared/advisorQuestionLimits';
+import {
+  ADVISOR_QUESTION_MESSAGES,
+  MISSING_ANTHROPIC_KEY_MESSAGE,
+  checkAdvisorQuestion,
+} from '../../shared/advisorQuestionLimits';
 import { countChars } from '../../shared/inputCeiling';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../../shared/advisorResponseLimits';
 import { seededNoise } from '../../shared/seededNoise';
@@ -662,6 +666,10 @@ export async function askBusinessAdvisorImpl(
   const analyses: CategoryAnalysis[] = units
     .filter((u) => allowedSet.has(u.id))
     .map((u) => buildCategoryAnalysis(u));
+
+  // **鍵が無ければ送らない** —— 理由は `stocks/advise` の同じ門と 1 つ
+  // (`shared/advisorQuestionLimits.ts` の `MISSING_ANTHROPIC_KEY_MESSAGE`・パス 451)。
+  if (!ctx.token) throw new Error(MISSING_ANTHROPIC_KEY_MESSAGE);
 
   const systemPrompt = businessAdvisorSystemPrompt(universeList);
   // Spacer / label glyphs are decorative.

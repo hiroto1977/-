@@ -1,5 +1,51 @@
 # Service Hub — 残りの作業手順書
 
+## パス 451 が測って、次のパスへ残した物 (2026-09-24)
+
+パス 451 は「宣言した能力が実際に届くか」を**面の側から両方向に**数えた
+(`src/shared/__tests__/credentialFaceCensus.test.ts`)。資格情報を預かる 23 サービスに
+ついて「client が `ctx.token` を読むか (読み手)」と「画面がそのスロットへ書く口を持つか
+(書き手)」を測ると、**3 つの形**が出た。生きた欠陥 1 件は閉じ、残り 2 件は宣言の側の
+誤りなので**ゲートの針ごと**直す必要が在る —— 測った事実をここに残す。
+
+| 形 | サービス | 実測 | 今日の重さ |
+| --- | --- | --- | --- |
+| 読み手が在って書き手が 0 件 | `stocks` / `business` | main が空の鍵を Anthropic へ送り、相手の「鍵が不正」を画面に出す。鍵を置く口はどの画面にも無い | **生きた欠陥 —— パス 451 で閉じた** |
+| **書き手が在って読み手が 0 件** | **`shopify`** | 画面は「API トークン」を預かるが、どの handler も `ctx.token` を読まない (10 個の connector は `payload.token` = **連携先**のトークンを読む)。読み取りも静的 stub (`_ctx`) | **残す** (下記) |
+| 読み手が在るが**渡す先が無視** | **`teamradar`** | `ctx.token` を `fetchTeamRadarSnapshotImpl(_ctx, deps)` へ素通しするだけ。画面に入力欄も無い | **残す** (下記) |
+
+### なぜ 2 件を同じパスで閉じなかったか
+
+どちらも直しは「`SERVICE_CREDENTIAL_USE` を `'none'` へ」だが、**そのままだと
+`lint:credential-use` が鳴る** —— ゲートの `touchesToken` は `/\btoken\b/` を
+**ファイル全体**に当てるので、`payload.token` も**注記の中の言及**も同じに見える
+(実測: `shopify.ts` の `ctx.token` は**注記 1 件だけ**で、`stripNonCode` を通すと 0 件)。
+つまり宣言を直すには**針を「`ctx.token` を読むか」へ替える**必要が在り、それは
+23 サービス全部の分類をやり直すことになる。パス 451 の主題 (生きた欠陥) と
+別の変更なので分けた。
+
+閉じるときの手順 (測ってある):
+
+1. `scripts/lint-credential-use.cjs` の `touchesToken` を `ctx.token` の走査へ
+   (注記と文字列は `stripNonCode` で落とす —— **パス 451 でその道具の盲点も直した**)。
+2. `shopify` / `teamradar` を `'none'` へ。
+3. `ShopifyPage.tsx` の `tokenSetup` を外す (掃除の節が拾えるようになる —— 既に保存した
+   利用者の逃げ口は `unusedStoredCredentials`)。今日は `StatusBar` の「削除」が在るので
+   **逃げ口は閉じていない** (パス 427)。
+4. `credentialFaceCensus` の台帳から 2 行が消える (両方向なので消し忘れると鳴る)。
+
+### `stripNonCode` の盲点の残り (測った)
+
+パス 451 は正規表現のリテラルを飲む欠陥を直した (63 本 / コード 5,226 行 → 3 本 / 97 行)。
+**残る 3 本は私の測り方の偽陽性である** —— `shared/welfareDocs.ts` (62 行) は
+Markdown を組む**テンプレートリテラルの本文**で、コードではないので落ちて正しい
+(probe は「`*` / `//` で始まらない行」をコードらしいと数えていた)。
+`talentTables.test.ts` (28 行) と `templateRendererCensus.test.ts` (7 行) も同じ形。
+
+★ **直した後に 25 本の消費者を走らせると 24 本が緑のまま** —— つまり
+**盲点は実在したが、今日どの census の答えも変えなかった**。唯一変わったのは
+パス 451 が新しく書いた census で、それが**この盲点を見つけた当のもの**である。
+
 ## パス 450 で測って、何も無かった軸 (2026-09-24)
 
 パス 449 の技 (**面の側から数え、読み手が在って書き手が 0 件の物を探す**) を
@@ -28696,7 +28742,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
-| `advisorQuestionLimits` | 2 | 3 | 対称 (実測・パス 251 / パス 285 で文も閉じた) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。 ★ パス 285 まで**同じ条件に文が 2 通り在った** —— main の 2 か所が英語 (`question is required` / `question exceeds 1000 chars`)、ブラウザ版の 2 か所が日本語。main の文は safeErrorMessage を通って**そのまま画面へ出る** (redact.ts は伏字にするだけで翻訳はしない) ので、**日本語の画面にだけ英語が出て**、同じ操作がブラウザ版では日本語で断られていた。`ADVISOR_QUESTION_MESSAGES` (shared/advisorQuestionLimits.ts) に 3 文を置き、4 か所すべてが台帳を読む —— **運び方は変えていない** (main は今も throw、ブラウザ版は今も err('action_failed', …))。docblock が「呼び出し側がそれぞれの**流儀**で伝えられるように」と述べた決定はそこに在るので、それは守った。 ★ 重さ: この組は `scanTarget` より**軽い** —— 判定は 2026-08-25 から 1 つで、写しだったのは文だけなので安全の主張は乗っていない (HIBP は述語が写しで、片側の trim が落ちて偽の安心を返した)。同じ家系でも重さは分けて書く。母集団はパス 251 で 118 件と測った |
+| `advisorQuestionLimits` | 3 | 3 | 対称 (実測・パス 251 / パス 285 で文も閉じた) —— checkAdvisorQuestion の 3 つの理由 (empty / too-long / control-chars) を呼ぶ所 3 つすべてが 1 つずつ扱う (main の stocks / business、ブラウザ版の web-shim)。 ★ パス 285 まで**同じ条件に文が 2 通り在った** —— main の 2 か所が英語 (`question is required` / `question exceeds 1000 chars`)、ブラウザ版の 2 か所が日本語。main の文は safeErrorMessage を通って**そのまま画面へ出る** (redact.ts は伏字にするだけで翻訳はしない) ので、**日本語の画面にだけ英語が出て**、同じ操作がブラウザ版では日本語で断られていた。`ADVISOR_QUESTION_MESSAGES` (shared/advisorQuestionLimits.ts) に 3 文を置き、4 か所すべてが台帳を読む —— **運び方は変えていない** (main は今も throw、ブラウザ版は今も err('action_failed', …))。docblock が「呼び出し側がそれぞれの**流儀**で伝えられるように」と述べた決定はそこに在るので、それは守った。 ★ 重さ: この組は `scanTarget` より**軽い** —— 判定は 2026-08-25 から 1 つで、写しだったのは文だけなので安全の主張は乗っていない (HIBP は述語が写しで、片側の trim が落ちて偽の安心を返した)。同じ家系でも重さは分けて書く。母集団はパス 251 で 118 件と測った ★ パス 451 で main 側が 2 → 3 になった —— `emotions` が入った。「鍵が未設定」の断り (`MISSING_ANTHROPIC_KEY_MESSAGE`) も**同じ家系の 5 組目**で、main の `emotions` だけが英語 (`Anthropic API key required for analyze-text`)・ブラウザ版の 3 つが日本語だった。**パス 284 / 285 の census がこれを見なかったのは「両ビルドに双子が在る断り」を数えたから** —— `stocks` / `business` は main 側に断りが 1 つも無かったので、対を数える走査の母集団に入らない (パス 450 と同じ死角) |
 | `aiEndpoint` | 0 | 0 | 対称 (実測・パス 269) —— 直接の import は **両ビルドとも 0 件** (表の 0 / 0)。越境するのは shared を 2 段たどった先だけで、辿ると否定は 1 つに絞れる: `normalizeAiBaseUrl` の `{ok:false, reason}` を読むのは `ai/providers.ts` の `resolveBase` **だけ**で、そこは `buildRequest` の中に在り、両ビルドは `runAiChat` (main/clients/assistant.ts:44 / web-shim.ts:188) からそこへ入る。**投げたあとの動作が一致する**: main は `action:invoke` の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、ブラウザ版は `err('action_failed', e.message)` で、その `err()` 自身が `redactForMessage(message, ERROR_MESSAGE_MAX_CHARS)` を掛ける —— **同じ関数・同じ天井**なので code も伏字も文面の長さも同じ (serviceAdvisor と同じ形)。 ★ ただし `chatAll` の**提供者ごと**の伏字だけは、2026-09-15 まで `redactForMessage(msg, 300)` という**字面がビルドごとに 1 つずつ**在った (パス 167/250/252 と同じ家系)。パス 269 で `MAX_ENSEMBLE_ERROR_CHARS` を `shared/assistantLimits.ts` に置き、両ビルドがその名を読むようにして `assistantTurnsParity.test.ts` に字面の再登場を禁じる門を足した。 もう 1 つの輸出 `isLoopbackHostname` は越境しない —— 唯一の読み手 `shared/proxyEndpoint.ts` の消費者が renderer だけ (network/proxy.ts / SettingsPage.tsx) である |
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |

@@ -164,7 +164,7 @@ function Tile({ label, value, sub, accent }: { label: string; value: string; sub
 export function StocksPage() {
   /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
   const buildKind = useBuildKind();
-  const { data, source, status, errorMessage, refresh } = useServiceData<StocksSnapshot>(
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData<StocksSnapshot>(
     'stocks',
     SNAPSHOT.stocks,
   );
@@ -389,14 +389,23 @@ export function StocksPage() {
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/*
+        * **読む口が在るなら、書く口も在る** (2026-09-24 · パス 451)。
+        * この画面の「AI 投資アドバイザー」は Anthropic を呼ぶので main / ブラウザ版とも
+        * この資格情報を読む。ところが 2026-09-24 まで**書く口がどの画面にも無く**、
+        * main は空の鍵をそのまま送って相手の「鍵が不正」という文を画面に出していた (実測)。
+        * 兄弟の感情ログは最初からこの欄を持つ —— 同じラベル・同じ placeholder。
+        * 断りの文 (`MISSING_ANTHROPIC_KEY_MESSAGE`) が名乗る逃げ口はこの欄である。
+        */}
       <StatusBar
         who="Stocks · 模擬データ"
         serviceId="stocks"
         source={source}
         status={status}
         errorMessage={errorMessage}
-        isConfigured
+        isConfigured={isConfigured}
         onRefresh={refresh}
+        tokenSetup={{ label: 'Anthropic API キー', placeholder: 'sk-ant-…' }}
       />
 
       {data.isMock && (

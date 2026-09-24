@@ -46,6 +46,11 @@ const REPO_ROOT = path.resolve(__dirname, '..');
  * 行コメント・ブロックコメント・文字列リテラルを落として実コードだけ残す。
  *
  * **`${…}` は文字列ではなく式なので残す** (2026-09-23 · パス 418)。
+ * **正規表現のリテラルも落とす** (2026-09-24 · パス 451) —— 引用符を含む正規表現
+ * (`["']` ほか) を見ると文字列へ入り、**次の同じ引用符までを飲んでいた** (実測:
+ * `src` の 63 本 / コード 5,226 行が走査から消えていた)。理由と失敗の向きの選び方は
+ * `src/shared/__tests__/stripNonCode.ts` の docblock に在る。
+ *
  * これは `src/shared/__tests__/stripNonCode.ts` と**同じ算法の写し**である ——
  * `.cjs` からは `.ts` を require できないので写しは避けられない (前例:
  * `scripts/inject-pwa.cjs` の色の正規表現・パス 363)。**3 つが黙って割れないよう、
@@ -71,6 +76,15 @@ function stripNonCode(src, opts = {}) {
       if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; i += 1; continue; }
       if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; i += 1; continue; }
       if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; i += 1; continue; }
+      if (src[i] === '/' && startsRegex(out)) {
+        const end = skipRegex(src, i);
+        if (end > i) {
+          // 正規表現のリテラル —— 中身は落とし、区切りの空白だけ出す (パス 451)。
+          out += ' ';
+          i = end;
+          continue;
+        }
+      }
       if (src[i] === '{') { depth += 1; out += '{'; i += 1; continue; }
       if (src[i] === '}') {
         const frame = depth === 0 ? stack.pop() : undefined;
@@ -284,4 +298,60 @@ module.exports = { analyze, scanTest, stripNonCode };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
+}
+
+/**
+ * `/` が正規表現の始まりか。**直前の意味のある字**で決める (パス 451)。
+ * 読み違えた場合は「割り算」へ倒れ、今までと同じ振る舞いになる。
+ */
+function startsRegex(emitted) {
+  let j = emitted.length - 1;
+  while (j >= 0 && /\s/.test(emitted[j])) j -= 1;
+  if (j < 0) return true;
+  const c = emitted[j];
+  if (c === ')' || c === ']') return false;
+  if (/[\w$]/.test(c)) {
+    let k = j;
+    while (k >= 0 && /[\w$]/.test(emitted[k])) k -= 1;
+    return isRegexPrecedingKeyword(emitted.slice(k + 1, j + 1));
+  }
+  return true;
+}
+
+/**
+ * この語の直後の `/` は正規表現である。**`const` の集合にはしない** ——
+ * この本は読み込みの時点で `main()` を走らせるので、末尾の `const` は TDZ で落ちる
+ * (2026-09-24 · パス 451 で実際に落ちた)。関数宣言は巻き上げられる。
+ */
+function isRegexPrecedingKeyword(word) {
+  switch (word) {
+    case 'return': case 'typeof': case 'case': case 'in': case 'of':
+    case 'instanceof': case 'new': case 'delete': case 'void':
+    case 'do': case 'else': case 'yield': case 'await':
+      return true;
+    default:
+      return false;
+  }
+}
+
+/** 正規表現のリテラルを読み飛ばす。行内で閉じなければ `start` を返す。 */
+function skipRegex(src, start) {
+  let j = start + 1;
+  let inClass = false;
+  while (j < src.length) {
+    const c = src[j];
+    if (c === '\n') return start;
+    if (c === '\\') { j += 2; continue; }
+    if (inClass) {
+      if (c === ']') inClass = false;
+    } else if (c === '[') {
+      inClass = true;
+    } else if (c === '/') {
+      j += 1;
+      while (j < src.length && /[a-z]/.test(src[j])) j += 1;
+      return j;
+    }
+    j += 1;
+  }
+  return start;
 }

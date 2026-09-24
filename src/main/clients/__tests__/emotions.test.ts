@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
+// 断りの文は 3 画面と両ビルドで 1 つ (パス 451) —— 字面で写すと片方だけ動かせる。
+import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../../shared/advisorQuestionLimits';
 import { calendarDateMessage } from '../../../shared/isoDate';
 import { extractJson, normalizeAnalysis } from '../emotions';
 import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
@@ -239,6 +241,8 @@ describe('ACTIONS["analyze-text"]', () => {
     ).rejects.toThrow(/text is required/);
   });
 
+  // 2026-09-24 (パス 451) まで文は英語で、**日本語の画面にだけ英語が出ていた** ——
+  // `ADVISOR_QUESTION_MESSAGES` の docblock が 2026-09-15 に同じ形を直した当のこと。
   it('rejects when API key (ctx.token) is empty', async () => {
     await expect(
       ACTIONS['analyze-text']!({
@@ -246,7 +250,7 @@ describe('ACTIONS["analyze-text"]', () => {
         fetch: vi.fn<typeof fetch>(),
         payload: { text: 'hello' },
       }),
-    ).rejects.toThrow(/Anthropic API key required/);
+    ).rejects.toThrow(MISSING_ANTHROPIC_KEY_MESSAGE);
   });
 });
 
@@ -546,7 +550,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['analyze-text']!({ token: '', fetch: fetchMock, payload: { text: 'あ' } }),
-    ).rejects.toThrow(/Anthropic API key required/);
+    ).rejects.toThrow(MISSING_ANTHROPIC_KEY_MESSAGE);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

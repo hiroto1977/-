@@ -79,6 +79,7 @@ import {
   capAdvisorUniverse,
   checkAdvisorQuestion,
   ADVISOR_QUESTION_MESSAGES,
+  MISSING_ANTHROPIC_KEY_MESSAGE,
 } from '../shared/advisorQuestionLimits';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
@@ -556,21 +557,52 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
   return out;
 }
 
+/**
+ * Anthropic の鍵を読む —— **サービスのスロットを先に、`anthropic` を後に** (2026-09-24 · パス 451)。
+ *
+ * ## なぜ 2 つ見るか (実測して決めた)
+ *
+ * 直す前、ブラウザ版のアドバイザー 2 つは `anthropic` のスロットだけを読み、
+ * main はサービスのスロット (`stocks` / `business`) だけを読んでいた ——
+ * **同じ質問にアプリが 2 通り答えていた**。兄弟の `emotions/analyze-text` は
+ * 両ビルドとも**サービスのスロット**を読み、画面の `tokenSetup` がそこへ書く。
+ * その形が 3 つとも揃っている唯一の例なので、そちらへ寄せる。
+ *
+ * ただし `anthropic` を落とすと、**設定画面の「Anthropic API キー」に入れた
+ * 既存の利用者がその場で鍵を失う** (ブラウザ版はそこが唯一の入口だった)。
+ * だから順序は「サービスのスロット → `anthropic`」で、**誰も何も失わない**。
+ *
+ * 断りの文は `shared/advisorQuestionLimits.ts` が 1 つだけ持ち、逃げ口
+ * (画面の上の「Anthropic API キー」) を名乗る。
+ */
+async function readAnthropicKey(
+  serviceId: 'stocks' | 'business',
+): Promise<{ key: string } | { refusal: ActionResult<never> }> {
+  let key: string | null = null;
+  try {
+    key = (await vault.getToken(serviceId)) ?? (await vault.getToken('anthropic'));
+  } catch {
+    return {
+      refusal: err(
+        'not_configured',
+        'Vault がロックされています。再読み込みしてマスターパスワードを入力してください',
+      ) as ActionResult<never>,
+    };
+  }
+  if (!key) {
+    return { refusal: err('not_configured', MISSING_ANTHROPIC_KEY_MESSAGE) as ActionResult<never> };
+  }
+  return { key };
+}
+
 async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'business/advise'>>> {
   const question = payload['question'];
   const qProblem = checkAdvisorQuestion(question);
   if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
-  // Read the Anthropic key from Vault.
-  let apiKey: string | null = null;
-  try {
-    apiKey = await vault.getToken('anthropic');
-  } catch {
-    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
-  }
-  if (!apiKey) {
-    return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
-  }
+  const read = await readAnthropicKey('business');
+  if ('refusal' in read) return read.refusal;
+  const apiKey = read.key;
 
   // Fetch the current business snapshot from the bundled static data and
   // build analyses inline (no IPC available).
@@ -665,13 +697,9 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   const qProblem = checkAdvisorQuestion(question);
   if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
-  let apiKey: string | null = null;
-  try {
-    apiKey = await vault.getToken('anthropic');
-  } catch {
-    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
-  }
-  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
+  const read = await readAnthropicKey('stocks');
+  if ('refusal' in read) return read.refusal;
+  const apiKey = read.key;
 
   // ユニバースは**画面が送ってきた物を優先**する (パス 105)。デスクトップ版は
   // main の `askAdvisor` が `payload.universe` を読むので、画面が 1 か所から
@@ -773,7 +801,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   } catch {
     return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
   }
-  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。上の「Anthropic API キー」から設定してください');
+  if (!apiKey) return err('not_configured', MISSING_ANTHROPIC_KEY_MESSAGE);
   // 保存できない保管値なら**送る前に**断る (本文と API 呼び出しを無駄にしない。main 側と同じ順)。
   // 送っている間に壊れた分は `recordAnalysis` が保存の直前にもう一度見る。
   try {
