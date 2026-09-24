@@ -15,7 +15,7 @@ import { finiteOrNull } from '../../shared/num';
 import { isCalendarMonth } from '../../shared/isoDate';
 import { relationIssue } from './recordRelations';
 import { moreThanChars } from '../../shared/inputCeiling';
-import { displayField } from '../../shared/apiResponse';
+import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
 
@@ -135,6 +135,85 @@ export function readablePeriodRows<T extends { readonly period: string }>(
 }
 
 /**
+ * **合計に入る金額の欄** —— 手書きの一覧を置かず `summarizeFundamentals` の出力から導く。
+ *
+ * 6 つ目の欄が `KpiFundamentals` に足された日、この配列も自動で伸びるので
+ * 下の `kpiNumbersReadable` が黙らない (`function` 宣言は巻き上げられるので、
+ * この定数がモジュール読み込み時に呼んでも未定義にはならない)。
+ */
+export const KPI_SUM_FIELDS: readonly string[] = Object.keys(summarizeFundamentals([]));
+
+/**
+ * **金額の欄が数として読めるか。**
+ *
+ * 任意の人件費は**在るときだけ**検める —— 入口 (`parseKpiActual`) が
+ * `input.laborCost != null && input.laborCost !== ''` で「未入力」を通すのと同じ境目で、
+ * 揃えないと「入口は通すのに読みが落とす」非対称になる (パス 359 の裏返し)。
+ */
+export function kpiNumbersReadable(a: KpiActual): boolean {
+  for (const f of KPI_SUM_FIELDS) {
+    if (finiteNumberOf(a[f]) === null) return false;
+  }
+  return a.laborCost == null || finiteNumberOf(a.laborCost) !== null;
+}
+
+/** 期と金額の両方が読める行だけを返す。落とした件数は**原因ごとに**分ける。 */
+export interface ReadableKpiRows<T> extends ReadablePeriodRows<T> {
+  /** 期 (YYYY-MM) が読めなかった行数。 */
+  readonly unreadablePeriods: number;
+  /** 期は読めるが、金額の欄が数として読めなかった行数。 */
+  readonly unreadableNumbers: number;
+}
+
+/**
+ * **アプリが読める実績・予算の行だけを返す。** (2026-09-24 · パス 443)
+ *
+ * パス 225 の `readablePeriodRows` は**期だけ**を見ていた。`KPI_SHAPE` は
+ * `revenue` ほか 5 欄を `num` と宣言するので、**数でない金額の行は形が拒む** ——
+ * つまり届く道は復元と古い版の控えだけで、`sales-entries.amount` (パス 442) と同じ出所である。
+ *
+ * ## 実測 (2026-09-24 · 直す前 · 正しい 1 件 + `revenue` だけを壊した 1 件)
+ *
+ * `summarizeFundamentals` は `acc.revenue + a.revenue` と**素で足す**ので、
+ * 数でない値は JS の `+` の規則に従って**投げずに嘘になる**:
+ *
+ * | revenue | 書面 §1 売上高 | 書面 §1 営業利益 | 営業利益率 | 損益分岐点 |
+ * | --- | ---: | ---: | ---: | ---: |
+ * | (正しい 2 行) | 2,000 千円 | 880 千円 | 44.0% | 646 千円 |
+ * | `'9000000'` (10 進の文字列) | **―** | **10,000,007,880 千円** | **100.0%** | **420 千円** |
+ * | `[1]` | **―** | **8,880 千円** | **88.8%** | **451 千円** |
+ * | `true` | **1,000 千円** | **△119 千円** | **△12.0%** | **1,399 千円** |
+ * | `null` | **1,000 千円** | **△120 千円** | **△12.0%** | **1,400 千円** |
+ * | `{z:1}` | ― | ― | ― | ― |
+ *
+ * **5 形すべてが誤った紙を作り、5 形とも理由を 1 文も述べなかった。**
+ * いちばん重いのは 10 進の文字列で、`1_000_000 + '9000000'` が
+ * **連結** (`'10000009000000'`) になる一方 `revenue - cost` は**数に戻る**ので、
+ * 売上高だけが `―` になり**営業利益 10 兆円・営業利益率 100.0%** が刷られる ——
+ * これは「上記のとおり相違ありません。」と代表者名つきで金融機関へ出す紙である。
+ *
+ * `null` と `true` はもっと静かで、`1_000_000 + null === 1_000_000` なので
+ * **壊れた行が黙って 0 円として合算され**、どの面にも痕跡が残らない。
+ *
+ * ★ **`{z:1}` だけは全部 `―` になるが、そのとき出る但し書きは
+ *   「対象期間の売上高が 0 のため」で、原因が違う** (パス 388 の家系) ——
+ *   利用者は「売上を入れろ」と読むが、直すべきは壊れた 1 行を消すことである。
+ *
+ * **だから漏斗で落とし、落としたことを原因ごとに言う。**
+ */
+export function readableKpiRows<T extends KpiActual>(input: readonly T[]): ReadableKpiRows<T> {
+  const rows: T[] = [];
+  let unreadablePeriods = 0;
+  let unreadableNumbers = 0;
+  for (const r of input) {
+    if (!isValidPeriod(r.period)) unreadablePeriods += 1;
+    else if (!kpiNumbersReadable(r)) unreadableNumbers += 1;
+    else rows.push(r);
+  }
+  return { rows, dropped: unreadablePeriods + unreadableNumbers, unreadablePeriods, unreadableNumbers };
+}
+
+/**
  * 期が読めない行を落としたことを述べる 1 文。落としていなければ `null`。
  * **KPI 実績の画面向け** (`kind` = 実績 / 予算) —— 経営サマリーは
  * `unreadablePeriodOverviewNote`、相手に渡る面は `unreadablePeriodSheetNote`。
@@ -194,6 +273,65 @@ export function unreadablePeriodSheetNote(dropped: number): string | null {
   // 画面側と同じ肯定形 (`undefined` / NaN は言わない)。
   if (!(Number.isFinite(dropped) && dropped > 0)) return null;
   return `期 (YYYY-MM) が読めない ${dropped} 件は集計から除いています。`;
+}
+
+/**
+ * **金額の欄が読めない行を落としたことを述べる 1 文** (2026-09-24 · パス 443)。
+ *
+ * 期の側 (`unreadablePeriodNote`) と**別に**持つ理由は パス 388 と同じ ——
+ * 原因が違えば直す手も違う。期が崩れた行と金額が崩れた行は別々に在りうるので、
+ * 片方の文でまとめると**その人がしていない失敗**を告げることになる。
+ */
+export function unreadableNumberNote(kind: string, dropped: number): string | null {
+  // 期の側と同じ肯定形 (`undefined` / NaN は言わない)。
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `${kind}のうち ${dropped} 件は金額の欄（売上高・売上原価・広告宣伝費・販管費・減価償却費・人件費）が数として読めないため、集計・期間・成長率のすべてから除いています。古い版で入った控えの可能性があります（設定の「形式の合わないレコード」から消せます）。`;
+}
+
+/** 同じことを、相手に渡る書面・レポート向けの 1 文で。 */
+export function unreadableNumberSheetNote(dropped: number): string | null {
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `金額の欄が数として読めない ${dropped} 件は集計から除いています。`;
+}
+
+/** 落とした件数を原因ごとに持つ器 (`readableKpiRows` の返り値がそのまま入る)。 */
+export interface DroppedKpiCounts {
+  readonly unreadablePeriods: number;
+  readonly unreadableNumbers: number;
+}
+
+/**
+ * 2 つの原因を 1 つの文へ。**どちらも起きていなければ `null`。**
+ *
+ * 面ごとに 3 つ在るのは、逃げ口が面ごとに違うため (パス 390 / 425 と同じ理由)。
+ * 順序は「期 → 金額」で固定する —— 面ごとに並びが変わると、同じ控えについて
+ * 2 つの画面が違う順で述べることになる。
+ */
+export function unreadableKpiRowsNote(kind: string, c: DroppedKpiCounts): string | null {
+  return joinKpiNotes([unreadablePeriodNote(kind, c.unreadablePeriods), unreadableNumberNote(kind, c.unreadableNumbers)]);
+}
+
+/**
+ * 経営サマリー向け。
+ *
+ * ★ **金額の側だけ 3 つ目の関数を作らない** —— 期の文が画面ごとに分かれるのは
+ * 逃げ口が「その画面の一覧の ×」で、経営サマリーにその一覧が無いからである
+ * (パス 425)。金額が読めない行は**形の表が断る**ので逃げ口は
+ * 設定の点検パネル 1 つ、つまりどの画面から指さしても同じ ——
+ * 違うのは件数の種別だけなので `kind` 引数で足りる。
+ */
+export function unreadableKpiRowsOverviewNote(c: DroppedKpiCounts): string | null {
+  return joinKpiNotes([unreadablePeriodOverviewNote(c.unreadablePeriods), unreadableNumberNote('実績・予算', c.unreadableNumbers)]);
+}
+
+/** 相手に渡る書面・レポート向け。 */
+export function unreadableKpiRowsSheetNote(c: DroppedKpiCounts): string | null {
+  return joinKpiNotes([unreadablePeriodSheetNote(c.unreadablePeriods), unreadableNumberSheetNote(c.unreadableNumbers)]);
+}
+
+function joinKpiNotes(parts: readonly (string | null)[]): string | null {
+  const said = parts.filter((p): p is string => p !== null);
+  return said.length === 0 ? null : said.join(' ');
 }
 
 /** 窓を画面・レポート向けの 1 語にする (`2026-04〜2026-06・3 か月`)。 */
@@ -335,7 +473,7 @@ export function groupRevenueByPeriod(actuals: readonly KpiActual[]): PeriodReven
   const byPeriod = new Map<string, number>();
   // 期が読めない行は系列に入れない (パス 225 —— 入れると「対象年 全社」の
   // 着地見込みや 592.3% の前月比が出る)。
-  for (const a of readablePeriodRows(actuals).rows) {
+  for (const a of readableKpiRows(actuals).rows) {
     byPeriod.set(a.period, (byPeriod.get(a.period) ?? 0) + a.revenue);
   }
   return [...byPeriod.entries()]
@@ -359,7 +497,7 @@ export function groupOperatingProfitByPeriod(
 ): PeriodOperatingProfit[] {
   const byPeriod = new Map<string, KpiActual[]>();
   // 期が読めない行は系列に入れない (パス 225)。
-  for (const a of readablePeriodRows(actuals).rows) {
+  for (const a of readableKpiRows(actuals).rows) {
     const list = byPeriod.get(a.period) ?? [];
     list.push(a);
     byPeriod.set(a.period, list);

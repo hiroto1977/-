@@ -13,7 +13,7 @@
  * 内訳が分からないので、資産合計 − 負債 − 資本金等 − 当期純利益 を期首の
  * 繰越利益剰余金に置いて貸借を合わせる。逆算したことは行の出所と注記で示す。
  */
-import { readablePeriodRows, unreadablePeriodSheetNote, type KpiActual } from './kpiActuals';
+import { readableKpiRows, unreadableKpiRowsSheetNote, type KpiActual } from './kpiActuals';
 import { utcMsFromParts } from '../../shared/isoDate';
 import type { BalanceSheet } from './balanceSheet';
 import type { SubmissionProfile } from './bankSubmission';
@@ -143,17 +143,17 @@ export function buildKessanImport(input: KessanImportInput): KessanImportResult 
    * | --- | --- |
    * | **計算書類 (損益計算書)** | **10,000,000** —— 読めない 1 行で 10 倍 |
    * | 事業計画書 | 1,000,000 (選別している) |
-   * | 経営サマリー | 1,000,000 (`readablePeriodRows`) |
+   * | 経営サマリー | 1,000,000 (`readableKpiRows`) |
    *
    * しかもその行の出所は `KPI 実績 (2025年4月〜2026年3月)` と**事業年度の窓を
    * 名乗る** —— その窓のどの月にも無い行を含んでいる。注記も棚卸と雑費の 2 件だけで、
    * 混ぜたことを 1 文も言っていなかった。
    *
-   * 漏斗は `readablePeriodRows` の 1 つ (パス 225) —— **ここで選別を書き直さない**。
-   * 落とした件数は下で `unreadablePeriodSheetNote` が述べる (相手に渡る紙なので、
+   * 漏斗は `readableKpiRows` の 1 つ (パス 225 / 443) —— **ここで選別を書き直さない**。
+   * 落とした件数は下で `unreadableKpiRowsSheetNote` が述べる (相手に渡る紙なので、
    * 画面向けではなく書面向けの 1 文・パス 392 と同じ向き)。
    */
-  const readable = readablePeriodRows(input.kpiActuals);
+  const readable = readableKpiRows(input.kpiActuals);
   const periods = readable.rows.map((r) => r.period).sort();
   const fy = fiscalYearWindow(input.profile.fiscalYearEnd);
   let window: { from: string; to: string } | null = null;
@@ -177,10 +177,10 @@ export function buildKessanImport(input: KessanImportInput): KessanImportResult 
    * 落とした行を紙が述べる (パス 393)。**黙って除くと売上高が小さく出て利用者は
    * 気づけない** —— 逆に除かないと 10 倍になる (上の経緯)。どちらにしても
    * 「何件を除いたか」は紙に要る。文は書面・レポート向けの 1 つ
-   * (`unreadablePeriodSheetNote`) で、経営サマリー・金融機関等提出用の書面・
+   * (`unreadableKpiRowsSheetNote`) で、経営サマリー・金融機関等提出用の書面・
    * 経営レポートと**同じ文**である。
    */
-  const unreadableNote = unreadablePeriodSheetNote(readable.dropped);
+  const unreadableNote = unreadableKpiRowsSheetNote(readable);
   if (unreadableNote !== null) notes.push(unreadableNote);
   // 事業年度の欄: KPI を切り出した範囲 (無ければ決算期そのもの)。決算期どおりなら出所は提出者情報。
   const range = window ?? fy;

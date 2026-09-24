@@ -73,6 +73,8 @@ const SALES_OK = { date: '2026-04-01', channel: 'shopify', amount: 1000, orders:
 // 日付は読めるが金額が数でない —— 形の表 (`amount: num`) が断る側 (パス 442)。
 const SALES_BAD_AMOUNT = { date: '2026-04-01', channel: 'shopify', amount: null, orders: 1 };
 const KPI_BAD_PERIOD = { period: 'bad', unit: 'A', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
+// 期は読めるが金額が数でない —— 形の表 (`revenue: num`) が断る側 (パス 443)。
+const KPI_BAD_AMOUNT = { period: '2026-04', unit: 'A', revenue: null, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const KPI_OK = { period: '2026-04', unit: 'A', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const MEMBER_OK = { name: '山田', email: 'a@example.com', role: 'member' };
 
@@ -146,6 +148,14 @@ const LEDGER: readonly Row[] = [
     collection: KPI_ACTUALS_COLLECTION,
     sample: KPI_BAD_PERIOD,
     why: '同じ行を、一覧を持たない経営サマリーから指さす —— 画面名つき。',
+  },
+  {
+    fn: 'unreadableNumberNote',
+    file: 'src/renderer/data/kpiActuals.ts',
+    kinds: ['audit-panel'],
+    collection: KPI_ACTUALS_COLLECTION,
+    sample: KPI_BAD_AMOUNT,
+    why: '**金額が数でない実績は形の表 (`revenue: num`) が断る**ので、点検パネルが見つけて消せる (パス 443)。期が崩れた行 (`period: str` で通る) と逃げ口が違うのはそのため —— 同じ画面の 2 つの文が別の逃げ口を名乗るのは、行の届き方が違うからである。',
   },
   {
     fn: 'duplicateActualMessage',

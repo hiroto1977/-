@@ -15,7 +15,7 @@ import {
   computeYoYGrowth,
   computeLaborMetrics,
   isValidPeriod,
-  readablePeriodRows,
+  readableKpiRows,
   periodWindow,
   type KpiActual,
   type DuplicateActualGroup,
@@ -196,6 +196,17 @@ export interface BusinessOverview {
      * 月数 4 に対し分子が 5 行ぶん、という控えが作れた (`readablePeriodRows` の表)。
      */
     unreadablePeriods: number;
+    /**
+     * **金額の欄が数として読めない**ため、すべての集計から除いた行数
+     * (実績 + 予算・2026-09-24 · パス 443)。
+     *
+     * 期とは**別に数える** —— 原因が違えば直す手も違うので、1 つに畳むと
+     * その人がしていない失敗を告げることになる (パス 388)。直す前は選別自体が
+     * 無く、`acc.revenue + a.revenue` が 10 進の文字列を**連結**して
+     * 書面 §1 に「営業利益 10,000,007,880 千円 / 営業利益率 100.0%」を刷っていた
+     * (`readableKpiRows` の実測表)。
+     */
+    unreadableNumbers: number;
     revenue: number;
     operatingProfit: number;
     bep: number;
@@ -342,8 +353,8 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
    * `revenueLanding` は非 null」という `overviewScorecard.ts` の不変条件が**保たれる**
    * (選別だけ入れて `hasData` を素の件数で測ると、その不変条件が破れる)。
    */
-  const readableActuals = readablePeriodRows(input.kpiActuals);
-  const readableBudgets = readablePeriodRows(input.kpiBudgets ?? []);
+  const readableActuals = readableKpiRows(input.kpiActuals);
+  const readableBudgets = readableKpiRows(input.kpiBudgets ?? []);
   const kpiActuals = readableActuals.rows;
   const hasKpi = kpiActuals.length > 0;
   const kpiBudgets = readableBudgets.rows;
@@ -428,7 +439,8 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       periods: validKpiPeriods,
       periodWindow: periodWindow(validKpiPeriods),
       duplicateActuals: findDuplicateActuals(kpiActuals),
-      unreadablePeriods: readableActuals.dropped + readableBudgets.dropped,
+      unreadablePeriods: readableActuals.unreadablePeriods + readableBudgets.unreadablePeriods,
+      unreadableNumbers: readableActuals.unreadableNumbers + readableBudgets.unreadableNumbers,
       revenue: fundamentals.revenue,
       operatingProfit: kpi.operatingProfit,
       bep: kpi.bep,

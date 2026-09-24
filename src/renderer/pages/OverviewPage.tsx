@@ -25,9 +25,9 @@ import {
   duplicateActualsOverviewNote,
   type BepInputs,
   monthlyTrendSeries,
-  readablePeriodRows,
+  readableKpiRows,
   summarizeFundamentals,
-  unreadablePeriodOverviewNote,
+  unreadableKpiRowsOverviewNote,
   type KpiActual,
 } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
@@ -895,9 +895,9 @@ export function OverviewPage() {
    * レポートは「期 (YYYY-MM) が読めない 1 件は集計から除いています」と述べながら
    * 同じ紙に `bad` の行と ￥9,999,999 を刷っていた (実測で 3 つとも true)。
    *
-   * 漏斗は `readablePeriodRows` の 1 つ (パス 225) —— ここで絞り直さない。
+   * 漏斗は `readableKpiRows` の 1 つ (パス 225 / 443) —— ここで絞り直さない。
    */
-  const readableKpi = useMemo(() => readablePeriodRows(kpiRecords.map((r) => r.data)), [kpiRecords]);
+  const readableKpi = useMemo(() => readableKpiRows(kpiRecords.map((r) => r.data)), [kpiRecords]);
   const monthlyTrend = useMemo(() => monthlyTrendSeries(readableKpi.rows), [readableKpi]);
 
   /**
@@ -911,8 +911,9 @@ export function OverviewPage() {
    * 同じ理由で既に 3 つ目を持っており、ここだけがその形に揃っていなかった。
    */
   const unreadablePeriodsNote = useMemo(
-    () => unreadablePeriodOverviewNote(overview.kpi.unreadablePeriods),
-    [overview.kpi.unreadablePeriods],
+    // 期と金額は**別の原因**なので別の文 (パス 443)。両方起きていれば 2 文が並ぶ。
+    () => unreadableKpiRowsOverviewNote(overview.kpi),
+    [overview.kpi],
   );
 
   /*

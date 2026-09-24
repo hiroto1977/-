@@ -18,7 +18,7 @@ import { isCalendarMonth } from '../../shared/isoDate';
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
-import { duplicateActualsSheetNote, growthBlankSheetNote, isValidPeriod, noBepSheetNote, unreadablePeriodSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
+import { duplicateActualsSheetNote, growthBlankSheetNote, isValidPeriod, noBepSheetNote, unreadableKpiRowsSheetNote, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import { duplicateMembersSheetNote } from './members';
 import { droppedSalesRowsSheetNote, duplicateOrdersSheetNote, noSalesRecordsSheetNote } from './sales';
 import { dealIntakeSheetNote } from '../../shared/freeeIntake';
@@ -345,7 +345,9 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
       k.revenue > 0 ? null : zeroRevenueRatioNote(),
       k.revenue > 0 ? noBepSheetNote(k.bep) : null,
       duplicateActualsSheetNote(k.duplicateActuals),
-      unreadablePeriodSheetNote(k.unreadablePeriods),
+      // 期が読めない行と、金額が数として読めない行は**別の原因**なので別の文で述べる
+      // (パス 443)。どちらも起きていなければ `null`。
+      unreadableKpiRowsSheetNote(k),
     ].filter((s): s is string => s !== null);
     return parts.length === 0 ? null : parts.join('');
   };

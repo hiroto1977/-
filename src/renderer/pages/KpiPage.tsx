@@ -19,14 +19,15 @@ import {
   noBreakEvenNote,
   duplicateActualMessage,
   duplicateActualsNote,
-  readablePeriodRows,
-  unreadablePeriodNote,
+  kpiNumbersReadable,
+  readableKpiRows,
+  unreadableKpiRowsNote,
   findDuplicateActuals,
   hasSamePeriodUnit,
   MAX_KPI_UNIT_CHARS,
   type KpiActual,
 } from '../data/kpiActuals';
-import { displayField } from '../../shared/apiResponse';
+import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 import { DASH } from '../../shared/formatters';
 import { SALES_COLLECTION, readableSalesRows, unreadableSalesRowsNote, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
@@ -91,6 +92,21 @@ const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY',
  */
 const pct = (n: number) => (Number.isFinite(n) ? n.toFixed(1) + '%' : DASH);
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(n) : DASH);
+/**
+ * **保管した金額を画面に出す** —— 型から始める (2026-09-24 · パス 443)。
+ *
+ * `Intl.NumberFormat#format` は**何を渡しても投げない**ので、生で渡すと
+ * `{z:1}` が `￥NaN`・`null` が `￥0`・`true` と `[1]` が `￥1` になる。
+ * `￥0` は「その期の売上は 0 だった」という**事実の主張**で、`￥NaN` は
+ * 壊れて見えるが理由を述べない (法則 `blank-states-its-reason`)。
+ *
+ * 一覧は素の購読を描く (期や金額が読めない行もここに出るから × で消せる)
+ * ので、**読む側で**型を見る。落とした理由は上の `unreadableNote` が述べる。
+ */
+const kpiAmountText = (v: unknown): string => {
+  const n = finiteNumberOf(v);
+  return n === null ? DASH : yen.format(n);
+};
 /** 算定不能 (`null`) は「—」。非有限も `pct` が同じ `—` へ倒す。 */
 const pctOrDash = (n: number | null) => (n === null ? DASH : pct(n));
 
@@ -384,13 +400,15 @@ function ActualsPanel() {
   /*
    * **期が読める行だけで集計する** (パス 225)。復元の入口は期が文字列であることだけを
    * 見るので `period: '全社'` の控えが入りうる —— 混ざると合計だけが膨らみ、期間・
-   * 成長率とは別の母数になる (`kpiActuals.ts` の `readablePeriodRows` に実測表)。
+   * 成長率とは別の母数になる (`kpiActuals.ts` の `readableKpiRows` に実測表)。
+   * **金額の欄も見る** (パス 443) —— `revenue` が 10 進の文字列だと `+` が連結になり、
+   * 合計だけが桁違いに膨らんだまま書面へ流れていた。
    */
-  const readable = useMemo(() => readablePeriodRows(records.map((r) => r.data)), [records]);
+  const readable = useMemo(() => readableKpiRows(records.map((r) => r.data)), [records]);
   // 既に在る重複 (同じ期・事業が 2 件以上)。一覧の上で「合算されている」と言う (パス 124)。
   const duplicateNote = useMemo(() => duplicateActualsNote('実績', findDuplicateActuals(readable.rows)), [readable]);
-  // 期が読めず除いた件数を言う (黙って落とすと、合計が説明できない数字になる)。
-  const unreadableNote = useMemo(() => unreadablePeriodNote('実績', readable.dropped), [readable]);
+  // 期・金額が読めず除いた件数を**原因ごとに**言う (黙って落とすと、合計が説明できない数字になる)。
+  const unreadableNote = useMemo(() => unreadableKpiRowsNote('実績', readable), [readable]);
 
   // 実績の素の合計。**画面で数え直さない** —— 以前は「実績合計 売上高」の札だけが
   // 別の `reduce` を持っており、同じ量に 2 つの出所が在った (2026-09-07)。
@@ -591,7 +609,14 @@ function ActualsPanel() {
             </thead>
             <tbody>
               {records.map((r) => {
-                const m = computeKpiMetrics(summarizeFundamentals([r.data]));
+                /*
+                 * **漏斗が落とした行は、その行の導出値も出さない** (2026-09-24 · パス 443)。
+                 * 売上高を「—」と言いながら営業利益に確信のある数字を並べると、
+                 * 同じ行が同じ問いに 2 通り答えることになる —— 実測で `revenue: '1000'`
+                 * の行は 売上高 `—` の隣に **-￥559,000** を出していた
+                 * (`0 + '1000'` は連結だが `'01000' - 費用` は数に戻るため)。
+                 */
+                const m = kpiNumbersReadable(r.data) ? computeKpiMetrics(summarizeFundamentals([r.data])) : null;
                 return (
                   <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
                     {/*
@@ -605,8 +630,8 @@ function ActualsPanel() {
                     */}
                     <td style={{ padding: '4px 8px' }}>{displayField(r.data.period)}</td>
                     <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(m.operatingProfit)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{m === null ? DASH : safeYen(m.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px' }}>
                       <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
                     </td>
@@ -640,10 +665,10 @@ function BudgetPanel() {
   // 「突合できなかった期」の断り書きは **1 回だけ**呼ぶ (関門と表示で同じ値を見る)。
   const unmatchedNote = variance === null ? null : budgetUnmatchedNote(variance.alignment);
   const submit = useSubmitGuard();
-  const readable = useMemo(() => readablePeriodRows(budgets.map((r) => r.data)), [budgets]);
+  const readable = useMemo(() => readableKpiRows(budgets.map((r) => r.data)), [budgets]);
   const duplicateNote = useMemo(() => duplicateActualsNote('予算', findDuplicateActuals(readable.rows)), [readable]);
-  // 期が読めず除いた件数 (実績と同じ規則・パス 225)。
-  const unreadableNote = useMemo(() => unreadablePeriodNote('予算', readable.dropped), [readable]);
+  // 期・金額が読めず除いた件数 (実績と同じ規則・パス 225 / 443)。
+  const unreadableNote = useMemo(() => unreadableKpiRowsNote('予算', readable), [readable]);
 
   async function onAdd() {
     try {
@@ -742,7 +767,7 @@ function BudgetPanel() {
                 {/* 実績の一覧と同じ理由 (素の購読を描くので、値は画面の側で型から読む)。 */}
                 <td style={{ padding: '4px 8px' }}>{displayField(r.data.period)}</td>
                 <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
-                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
+                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
                 <td style={{ padding: '4px 8px' }}>
                   <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
                 </td>
