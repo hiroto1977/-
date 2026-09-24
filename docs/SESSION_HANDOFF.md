@@ -7,6 +7,71 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近のパス (441) — 走査を道具にしたら、初回実行が 3 件見つけた
+
+**2026-09-24 · パス 441** —— 出荷物 **11,951,949 B / 3,364,468 B (両方 +128 B)**。
+
+パス 419 が残作業として書いた「欄ごとに 1 つずつ壊す全面走査」を**定期点検の道具の 6 本目**
+`npm run audit:malformed-fields` にした。その初回実行が**投げる画面を 3 件**返した:
+
+```
+kpi-actuals.unit (num) → kpi:      TypeError: a.unit.trim is not a function
+kpi-actuals.unit (num) → overview: TypeError: a.unit.trim is not a function
+kpi-budgets.unit (num) → kpi:      TypeError: a.unit.trim is not a function
+```
+
+### ★ その残作業の記録そのものが誤っていた
+
+節は母集団を **281 通り**と書き、「**正しい日付 + 1 欄だけ壊れている**という一番現実的な形が
+どの家系にも無い」を覆うために在った。実測すると **281 は「空の行に 1 欄だけ置いた」組の数**
+(143 欄 × 2 方向 = 286 のうち形が受ける 5 組を引いた数) で、**正しい行**の上で 1 欄だけ壊すと
+**175 通り**にしかならない。
+
+| 行 | 残った | 落とした |
+| --- | ---: | ---: |
+| `{ note: 42 }` (空の行に 1 欄) | **0** | 1 |
+| `{ …正しい販売記録, note: 42 }` | **1** | 0 |
+
+空の行は他の必須の欄を全部欠いているので**読む側の漏斗が読む前に落とす** ——
+**覆うために書かれた走査が、覆うはずだった形をそのまま外していた** (法則 `measure-before-claim`)。
+画面の数も誤っており、`SERVICES` は **74 件** (サービスは 76 だが `uber-eats` / `demae-can` は
+サイドバーの項目を持たない)。直した走査の初回実測は **175 組 × 74 画面 = 12,950 回の描画**。
+
+### 直し (パス 417 と同じ形)
+
+- 読みは `kpiUnitText` (型から始めて trim する) **1 つの口**へ。
+- 画面に出す 4 つの `<td>` と 2 つの文面は `displayField(…, MAX_KPI_UNIT_CHARS)` ——
+  **入口が既に持つ数**なので正当な事業名は 1 字も変わらない。
+- **天井は同一性の側に通さない** (`actualKey` の鍵。切った事業名は別の事業を指す)。
+- `kpiPeriodText` は**罠の除去**で今日の欠陥ではない (呼び手 3 つはどれも `readablePeriodRows` を
+  通すので非文字列の期は届かない ——実測)。**鍵には通さない** (無い重複を主張しないため)。
+
+届く先は 3 つの描画 (`KpiPage.tsx:389` / `KpiPage.tsx:633` / `OverviewPage.tsx:787` →
+`overview.ts:423`) で、**KPI / BEP と経営サマリーの両方が開けなくなる** ——
+開けない画面からその行は消せない (法則 `escape-hatch-stays-open`)。
+
+### 2 形では足りない (測った)
+
+`.trim` / `.toFixed` を落とすのは数と文字列だが、**物と配列は JSX が
+「Objects are not valid as a React child」で落とし**、`null` は `??` を通り抜けた先で
+`.trim` を落とす。`ONE_FIELD_VALUES` を **6 形**へ広げた。
+
+### ゲートが 3 つ、新しいファイルを捕まえた (どれも設計どおり)
+
+1. `lint:forbidden` —— 走査の子プロセス (`spawnSync`) が台帳に無い例外。理由つきで登録。
+2. `rootConfigScanned` (パス 347) —— `vitest.audit.config.ts` は直下のコードなので
+   `SCAN_FILES` / `MUST_SCAN` / 整合性チェーンの 3 つへ (block **#257**)。
+3. `typecheckCoverage` (パス 278) —— `tsconfig.node.json` の include へ (CLAUDE.md の写しも)。
+
+`deviceStoreWritePolicy` の台帳は `__audits__/` を `__tests__/` と同じく外した ——
+この台帳が見るのは**製品の書き込み口**で、道具の書き込みを報せる画面は存在しない。
+
+検査は `renderer/pages/__tests__/storedKpiUnitReads.test.ts` (**25 件**) と
+`renderer/__tests__/oneFieldMalformed.test.ts` (6 件)。
+`typecheck` 緑・`npm test` **859 / 18,592**・`verify:all` exit 0・`verify:arch` 15532 → **15544**。
+
+---
+
 ## 直近のパス (440) — 記録の義務に、アプリが勝手な金額の下限を付けていた
 
 **2026-09-24 · パス 440** —— 出荷物 **11,951,821 B / 3,364,340 B (両方 +401 B)**。

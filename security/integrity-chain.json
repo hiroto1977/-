@@ -92,6 +92,7 @@
     "src/shared/versionOrder.ts",
     "src/shared/writeFieldLimits.ts",
     "vite.config.ts",
+    "vitest.audit.config.ts",
     "vitest.config.ts"
   ],
   "blocks": [
@@ -2150,6 +2151,14 @@
       "leafCount": 91,
       "note": "update chat.ts,httpLimits.ts",
       "hash": "85a96af8da4f54677911c9f02814f61d30513debc5efa14a2808fa67ea5eb488"
+    },
+    {
+      "index": 257,
+      "prevHash": "85a96af8da4f54677911c9f02814f61d30513debc5efa14a2808fa67ea5eb488",
+      "merkleRoot": "a6b3405fa277402b1cfc7c523aaa43454fe06dad1bf79af5d248738a38c7e19c",
+      "leafCount": 92,
+      "note": "update integrity-chain.cjs,vitest.audit.config.ts",
+      "hash": "5b6a4a278dbef7821f1d05bc93578c644ce25d4eae75ca19a4b10bb18b7310e7"
     }
   ],
   "tipManifest": {
@@ -2170,7 +2179,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "4c21b457ffcacf01e49c18200d59c589a688bf5ad233721c83eb89801110db9e",
+    "scripts/integrity-chain.cjs": "725972477487f06f7344e290f3027677474ca7074520078f87513aafeb4d7b84",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "d54c2138e1b968613e0146f0a9c4320c55e60e3f17055a456d2164637556559b",
@@ -2243,6 +2252,7 @@
     "src/shared/versionOrder.ts": "2a70283bc54f74023e9e4a6f002d2678440d9cfcffeb5ac60fc047ee8b604d37",
     "src/shared/writeFieldLimits.ts": "067e11979cea363286f440df77ffdb6baf3ec5cb8a07188801730abf4648d4e3",
     "vite.config.ts": "390b859eedad810d9e539adfd2c421fe37fc00a168f28e62d15a20fb7096dcd6",
+    "vitest.audit.config.ts": "2461afaaddfa15b7a4520cca93807db66b7ebb3db25e46db4dac38b0002a7978",
     "vitest.config.ts": "082d5d607a48177918bdd841ca4592b861b2b1d0842005da0b8a6f0a4b42f900"
   }
 }

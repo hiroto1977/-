@@ -65,9 +65,17 @@
  *
  * つまりこの機械の主張は「**全欄が壊れた行でも投げない**」で、
  * 「どんな壊れ方でも投げない」ではない。**欄ごとに 1 つずつ壊す**走査は
- * 実測 281 通り × 76 画面 = 21,356 回の描画で 1 回あたり ~40ms かかるので
- * `npm test` には置けない (実測 2026-09-22 · 直した後で**投げた画面は 0**)。
- * 走らせ方と結果は `docs/REMAINING_WORK.md` に母集団つきで残した。
+ * 描画の回数が桁違いなので `npm test` には置けない —— 2026-09-24 (パス 441) に
+ * **定期点検の道具の 6 本目** `npm run audit:malformed-fields` にした
+ * (`__audits__/malformedFieldSweep.audit.ts`)。
+ *
+ * ★ **その走査の母集団は、2026-09-22 の記録では誤っていた** —— あの節が書いた
+ *   **281 通り**は「**空の行に 1 欄だけ置いた**」組の数で、*正しい行の上*で
+ *   1 欄だけ壊す組ではない (実測でそちらは 175 通り)。空の行は他の必須の欄を
+ *   全部欠いているので**読む側の漏斗が読む前に落とす** —— つまりあの
+ *   「投げた画面 0」は、覆うはずだった形についての証拠ではなかった
+ *   (法則 `measure-before-claim`)。直した走査の初回実行は
+ *   **3 件の投げる画面**を見つけている (KPI 実績・予算の事業名が非文字列)。
  *
  * ## ここで見るもの
  *
@@ -87,6 +95,7 @@ import { RecordShapeAuditPanel } from '../components/RecordShapeAuditPanel';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetNavigationIntentForTests } from '../navigate';
 import { resetRecordStore } from './recordStoreHarness';
+import { installPageRenderGlobals, renderPageFailure, settlePage } from './pageRenderHarness';
 
 /**
  * 投げる画面の台帳。**空であること自体が主張**である ——
@@ -95,43 +104,9 @@ import { resetRecordStore } from './recordStoreHarness';
 const THROWING_PAGES: Readonly<Record<string, string>> = {};
 
 beforeAll(() => {
-  (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
-    getVersion: () => Promise.resolve('0.1.0'), // Electron 扱い (ロック画面を出さない)
-    listConfigured: () => Promise.resolve([]),
-    fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
-    invoke: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
-    openExternal: () => Promise.resolve(),
-    oauthSupported: () => Promise.resolve(false),
-    setToken: () => Promise.resolve(),
-    clearToken: () => Promise.resolve(),
-    storageProtection: () => Promise.resolve({ mechanism: 'none', counts: {} }),
-    checkUpdate: () => Promise.resolve({ ok: true }),
-    revealInFolder: () => Promise.resolve({ ok: true }),
-    openPath: () => Promise.resolve({ ok: true }),
-    setColorScheme: () => Promise.resolve(),
-    eraseAll: () => Promise.resolve({ ok: true }),
-    authorize: () => Promise.resolve({ ok: false }),
-  };
-  if (typeof window.matchMedia !== 'function') {
-    Object.defineProperty(window, 'matchMedia', {
-      value: () => ({
-        matches: false,
-        addEventListener: () => undefined,
-        removeEventListener: () => undefined,
-        addListener: () => undefined,
-        removeListener: () => undefined,
-      }),
-      configurable: true,
-    });
-  }
-  for (const name of ['scrollTo', 'scrollIntoView'] as const) {
-    if (typeof (Element.prototype as unknown as Record<string, unknown>)[name] !== 'function') {
-      Object.defineProperty(Element.prototype, name, { value: () => undefined, configurable: true, writable: true });
-    }
-  }
-  // 描画中の警告は本題ではない (投げたかどうかだけを見る)。
-  vi.spyOn(console, 'error').mockImplementation(() => undefined);
-  vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  installPageRenderGlobals((name) => {
+    vi.spyOn(console, name).mockImplementation(() => undefined);
+  });
 });
 
 let host: HTMLDivElement;
@@ -156,14 +131,6 @@ afterEach(() => {
   host.remove();
 });
 
-async function settle(): Promise<void> {
-  for (let i = 0; i < 8; i += 1) {
-    await act(async () => {
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
-    });
-  }
-}
-
 /** 台帳のすべての collection に 1 件ずつ壊れた行を入れ、入れた数を返す。 */
 async function seedMalformed(family: Family): Promise<number> {
   const store = getRecordStore();
@@ -177,27 +144,9 @@ async function seedMalformed(family: Family): Promise<number> {
   return seeded;
 }
 
-/** 1 画面を素で描いて、投げたら理由を返す (境界で包まない —— 包むと文面になって区別できない)。 */
+/** 1 画面を素で描いて、投げたら理由を返す (足場は `pageRenderHarness` と 1 つ)。 */
 async function renderFailure(page: () => unknown): Promise<string | null> {
-  try {
-    root = createRoot(host);
-    const r = root;
-    await act(async () => {
-      r.render(createElement(page as never));
-    });
-    await settle();
-    return null;
-  } catch (err) {
-    return err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-  } finally {
-    if (root) {
-      const r = root;
-      root = null;
-      act(() => {
-        r.unmount();
-      });
-    }
-  }
+  return renderPageFailure(host, page);
 }
 
 describe('壊れた行の下で全画面を描く (パス 360)', () => {
@@ -237,7 +186,7 @@ describe('壊れた行の下で全画面を描く (パス 360)', () => {
       await act(async () => {
         r.render(createElement(RecordShapeAuditPanel));
       });
-      await settle();
+      await settlePage();
       expect(host.querySelector('[data-shape-audit-scan]')).not.toBeNull();
     },
     120_000,

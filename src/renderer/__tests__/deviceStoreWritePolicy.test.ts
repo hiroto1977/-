@@ -119,7 +119,15 @@ function rendererSources(): string[] {
     absolute: true,
     // 保存層そのもの (store.ts) は自分の中で this.* を呼ぶので対象外。
     // 保管庫そのもの (store.ts / library.ts) は自分の中で this.* を呼ぶので対象外。
-    ignore: ['**/__tests__/**', 'src/renderer/data/store.ts', 'src/renderer/library/library.ts'],
+    // `__audits__/` は定期点検の道具 (`npm test` の外・出荷物に入らない) なので
+    // `__tests__/` と同じ扱い —— この台帳が見るのは**製品の書き込み口**である
+    // (道具の書き込みは利用者の画面に何も出さないし、出す画面が無い · パス 441)。
+    ignore: [
+      '**/__tests__/**',
+      '**/__audits__/**',
+      'src/renderer/data/store.ts',
+      'src/renderer/library/library.ts',
+    ],
   });
 }
 

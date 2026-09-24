@@ -173,37 +173,102 @@ Date を組むので**一貫している** —— ここを `localIsoDate` へ�
    (`MAX_X_CHARS` / `X_MAX` / `MAX_X_LEN` の 3 通りが実在する)。
    `ceilingUnitCensus` は `MAX_*_CHARS` と `*_LENGTH` / `*_LEN` を見るが、
    **`X_MAX` は母集団に入っていない** —— 単位を言わない名前という点では同じである。
-3. **欄ごとに 1 つずつ壊す全面走査は、まだ定期点検の道具になっていない**
-   (281 の組 × 76 画面 ≒ 21,356 回の描画。`npm test` に置く物ではない)。
+3. ~~**欄ごとに 1 つずつ壊す全面走査は、まだ定期点検の道具になっていない**~~
+   → **2026-09-24 (パス 441) に `npm run audit:malformed-fields` にした** (下の節)。
+   ★ ここに書いてあった「281 の組 × 76 画面」は**2 か所とも誤り**だった ——
+   281 は「空の行に 1 欄だけ置いた」組の数 (覆うはずだった形ではない) で、
+   画面は 76 ではなく **74** (`SERVICES` の件数) である。
 4. **`ManualDataSection` は今回初めて harness から見えた** —— `App.tsx` が描くので
    画面を単独で mount する検査には映らない。**同じ理由で見えていない部品が他に在るか**は
    数えていない (`App.tsx` が直接描く部品の一覧を走査すれば分かる)。
 
-## 保管した記録の型と長さ — 欄ごとに 1 つずつ壊す走査 (パス 417 で測った)
+## 保管した記録の型と長さ — 欄ごとに 1 つずつ壊す走査 (パス 441 で閉じた)
 
-**状態**: 走査は書いて回したが、`npm test` には置いていない (費用のため)。**今日の結果は 0 件**。
+**状態**: 消化済み。**定期点検の道具の 6 本目** `npm run audit:malformed-fields`
+(`scripts/audit-malformed-fields.cjs` → `src/renderer/__audits__/malformedFieldSweep.audit.ts`)。
+CI では走らせない。契約は `src/renderer/__tests__/oneFieldMalformed.test.ts` (6 件) が
+毎回の `npm test` で留める。
 
-パス 360 の機械 (`renderer/__tests__/malformedStoreRenders.test.ts`) は壊し方を **4 家系**持つが、
-どれも**行の全欄**を壊す (`{}` / 最初に拒まれた 1 欄 / 全欄に文字列 / 全欄に数)。
-**「正しい日付 + 1 欄だけ壊れている」という一番現実的な形がどの家系にも無い** ——
-パス 417 の欠陥 (販売記録のメモが非文字列で売上集計と経営サマリーが投げる) は
-そこに居て、対照で測ると**あの機械は 9 件すべて緑のまま**だった
-(`allFieldsRow` が `date` も壊すので `readableSalesRows` が読む前に行が落ちる)。
+### ★ パス 417 が書いたこの節の走査は、覆うはずだった形をそのまま外していた
 
-**走らせ方** (使い捨ての probe。`src/renderer/__tests__/` に置いて回し、消す):
+この節は 2026-09-22 から母集団を **281 通り**と記録し、
+「**正しい日付 + 1 欄だけ壊れている**という一番現実的な形がどの家系にも無い」を
+覆うために書かれていた。**パス 441 で実測すると、281 は「空の行に 1 欄だけ置いた」組の数**である ——
+143 欄 × 2 方向 = 286 のうち、形が受ける 5 組 (`business-units.name` と
+`highlight-settings` の 4 欄) を引いた数がちょうど 281。**正しい行の上**で
+1 欄だけ壊すと **175 通り**にしかならない。
 
-- 母集団は `COLLECTION_SHAPES` から導く —— 全 collection × 全欄 × 2 方向
-  (`'1000'` = 数の欄に文字列 / `-987654.321` = 文字列の欄に数)。
-  `hasCollectionShape` が拒む組だけを残す。
-- 1 組ごとに `resetRecordStore()` → その 1 行だけを入れる → **76 画面**を素で描いて
-  投げた画面を記録する (境界で包まない —— 包むと文面になって区別できない)。
+その差は飾りではない。実測 (2026-09-24 · `readableSalesRows` に直接食わせる):
 
-**実測 (2026-09-23 · パス 417 の直した後)**: **281 通り** × 76 画面 = **21,356 回の描画**で
-**投げた画面は 0**。1 回あたり ~40ms で 15 分ほどかかるので `npm test` には置けない。
+| 行 | 残った | 落とした |
+| --- | ---: | ---: |
+| `{ note: 42 }` (空の行に 1 欄) | **0** | 1 |
+| `{ …正しい販売記録, note: 42 }` | **1** | 0 |
 
-**置くなら**: `audit:tick-sensitivity` / `audit:survivors` / `audit:e2e-wait-margin` と同じ
-**定期点検の道具**の家系である (CI では走らせない)。vitest の `include` が
-`src/**/__tests__/**/*.test.ts` なので、既定の収集から外すには別の config が要る。
+空の行は他の必須の欄を全部欠いているので、**読む側の漏斗が読む前に落とす** ——
+パス 417 の欠陥 (`(e.note ?? '').trim()` が非文字列で投げる) には**届かない**。
+つまりあの「投げた画面 0」は、この形についての証拠ではなかった
+(法則 `measure-before-claim`)。
+
+### ★ 直した走査は、初回実行で 3 件の投げる画面を見つけた
+
+**2 方向 (文字列 / 数) で回した初回の実測 (2026-09-24)**: **175 組 × 74 画面 =
+12,950 回の描画**で、**投げた画面 3 件** ——
+
+```
+kpi-actuals.unit (num) → kpi:      TypeError: a.unit.trim is not a function
+kpi-actuals.unit (num) → overview: TypeError: a.unit.trim is not a function
+kpi-budgets.unit (num) → kpi:      TypeError: a.unit.trim is not a function
+```
+
+根は `kpiActuals.ts` の `actualKey` が `a.unit.trim()` を**素で**呼ぶこと
+(`??` すら無い)。届く先は 3 つの描画 —— `KpiPage.tsx:389` (実績パネル) /
+`KpiPage.tsx:633` (予算パネル) / `OverviewPage.tsx:787` → `overview.ts:423`
+(`buildBusinessOverview`) —— つまり **KPI / BEP と経営サマリーの両方が開けなくなる**。
+開けない画面からその行は消せない (法則 `escape-hatch-stays-open`)。
+`readablePeriodRows` (パス 225) は**期**しか見ないので、この値は選別を通り抜ける。
+
+直しはパス 417 と同じ形: 読みを 1 つの口 (`kpiUnitText` —— 型から始めて trim する)
+へ寄せ、画面に出す 4 つの `<td>` と 2 つの文面は `displayField(…, MAX_KPI_UNIT_CHARS)`
+(入口が既に持つ数) を通す。**同一性を決める `actualKey` には天井を通さない** ——
+切った事業名は別の事業を指す。検査は
+`src/renderer/pages/__tests__/storedKpiUnitReads.test.ts` (25 件)。
+
+### ★ 2 方向では足りなかった (実測して 6 形へ広げた)
+
+`.trim` / `.toFixed` を落とすのは数と文字列だが、**物と配列は JSX が
+「Objects are not valid as a React child」で落とし**、`null` は `??` を
+通り抜けた先で `.trim` を落とす —— **別の壊れ方**であり、どれも
+`structuredClone` が通すので保管値として実在しうる。
+`ONE_FIELD_VALUES` を **6 形** (`'1000'` / `-987654.321` / `{z:1}` / `[1]` /
+`true` / `null`) にした。
+
+### 今の走査
+
+- 母集団は**形の台帳から導く** —— collection ごとに `data/__tests__/collectionSamples.ts`
+  の**正しい標本**を土台にし、欄を 1 つだけ 6 形に壊す。形が拒む組だけを残す。
+- 1 組ごとに `resetRecordStore()` → その 1 行だけを入れる → **74 画面**
+  (`SERVICES` の全件) を素で描く (境界で包まない —— 包むと文面になって区別できない)。
+  ★ **74 であって 76 ではない** —— サービスは 76 だが `uber-eats` / `demae-can` は
+  サイドバーの項目を持たず、業務ダッシュボードの中で読まれる (CLAUDE.md の冒頭)。
+
+### 走らせた結果 (正直に言う)
+
+- **2 形 (文字列 / 数) の初回実行は完走した** —— 175 組 × 74 画面 = 12,950 回の描画・
+  投げた画面 **3 件** (上の表)。直した後、その 3 件は
+  `pages/__tests__/storedKpiUnitReads.test.ts` (25 件) が `npm test` で毎回見る。
+- **6 形へ広げた後の全走査は、パス 441 の中では完走していない** (組数が約 3 倍になり、
+  他の検証と同じ機械を奪い合ったため)。**次に走らせる人はここから始める** ——
+  `npm run audit:malformed-fields` を単独で (他のビルドや `npm test` と並行させずに) 回す。
+  6 形が必要なことは実測済み (上の節) だが、**6 形での「投げた画面 0」はまだ誰も見ていない。**
+
+### 出した共有モジュール (写しを作らないため)
+
+- `src/renderer/data/__tests__/collectionSamples.ts` — 正しい標本 (`collectionShapes.test.ts` から)。
+  標本は手書きだが**形の台帳と両方向に突き合わされている**ので、23 個目が足された日は
+  そちらが先に落ちる (パス 439)。
+- `src/renderer/__tests__/pageRenderHarness.ts` — jsdom の足場と「素で描いて投げたら理由を返す」。
+  `malformedStoreRenders.test.ts` と走査が**同じ 1 つ**を読む (法則 `copy-pinned-by-parity`)。
 
 ## `stripNonCode` の写し — パス 418 で閉じた (3 つではなく **4 つ**だった)
 
@@ -28432,7 +28497,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
-| `apiResponse` | 15 | 9 | 対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**しかし両ビルドの食い違いは無い**: renderer がこのモジュールから直接読むのは **2 種類だけ** —— `parseJsonText` (`null` を返さず**投げる**側) と `displayField` である。★ **読み手の一覧はここに書かない** —— `displayField` の呼び手は パス 417 の 2 つからパス 419 で 7 つへ増えた (保管した自由文の天井を 5 画面に通した)。数は左の列が数え、この欄は**なぜ対称なのか**だけを述べる (名前を並べると、増えた日に散文だけが古びる)。**`displayField` は `null` を返さない** —— 非文字列は空文字・長すぎる値は天井 + `…` で、「no」と言う枝そのものを持たないので両ビルドで割れる余地が無い。`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / `objectRows`) に両ビルドが届く道は `shared/api/*.ts` (cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。残りは `src/main/clients/` の 15 本が読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。つまり非対称になりうる組が今日 0 件である |
+| `apiResponse` | 15 | 11 | 対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**しかし両ビルドの食い違いは無い**: renderer がこのモジュールから直接読むのは **2 種類だけ** —— `parseJsonText` (`null` を返さず**投げる**側) と `displayField` である。★ **読み手の一覧はここに書かない** —— `displayField` の呼び手は パス 417 の 2 つからパス 419 で 7 つへ増えた (保管した自由文の天井を 5 画面に通した)。数は左の列が数え、この欄は**なぜ対称なのか**だけを述べる (名前を並べると、増えた日に散文だけが古びる)。**`displayField` は `null` を返さない** —— 非文字列は空文字・長すぎる値は天井 + `…` で、「no」と言う枝そのものを持たないので両ビルドで割れる余地が無い。`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / `objectRows`) に両ビルドが届く道は `shared/api/*.ts` (cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。残りは `src/main/clients/` の 15 本が読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。つまり非対称になりうる組が今日 0 件である |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `constantTimeEquals` | 1 | 1 | 対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、両ビルドは同じ関数を別名 (`safeStateEquals`) で export する (`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。**畳む前は等価ですらなかった**: main は `Buffer.from(s,'utf8')` → `timingSafeEqual` で、UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち 4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は `classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、**「交換しない」という結論は同じ**なので非対称ではない |

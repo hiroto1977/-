@@ -867,6 +867,12 @@ const KNOWN_SUPPRESSIONS = [
   // プロセスを作らずには成り立たない。母集団は `git ls-files` に聞き、
   // どちらも引数を配列で渡す (シェルを経由しない)。
   'child_process exec/spawn :: scripts/audit-tick-sensitivity.cjs :: 1',
+  // 「正しい行 + 1 欄だけ壊す」全面走査の定期点検の道具 (パス 441)。
+  // `npx vitest run --config vitest.audit.config.ts` を子プロセスで走らせる ——
+  // 「壊れた 1 行の下で 74 画面が投げるか」は**実際に描かないと答えが出ない**ので、
+  // プロセスを作らずには成り立たない。引数は固定の 5 語で、シェルを経由しない
+  // (`spawnSync` に配列で渡す)。
+  'child_process exec/spawn :: scripts/audit-malformed-fields.cjs :: 1',
   // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
   // 突き合わせる。npm の勧告データベースを使うのが目的なので、
   // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。
@@ -1019,14 +1025,14 @@ const SCAN_ROOTS = [
  * 根を `'.'` にすると木全体を歩いてしまう (`knowledge-vault/` 7,000 本ほか)。
  * 単体の名前で数えるほうが、**増えたときに気付ける**side でもある。
  */
-const SCAN_FILES = ['vite.config.ts', 'vitest.config.ts', 'eslint.config.js'];
+const SCAN_FILES = ['vite.config.ts', 'vitest.config.ts', 'vitest.audit.config.ts', 'eslint.config.js'];
 
 /**
  * **名前で在ることを確かめるファイル。**
  *
  * 本数の床だけでは「1 本」が別の 1 本に置き換わっても気付けない。出荷される
  * Service Worker は `assets/` にただ 1 つなので、名前で留める。
- * `SCAN_FILES` の 3 本も同じ理由で名前で留める (走査したことを別に確かめる —
+ * `SCAN_FILES` の 4 本も同じ理由で名前で留める (走査したことを別に確かめる —
  * 一覧に足しただけで歩き忘れると、また静かに外へ出る)。
  */
 const MUST_SCAN = ['assets/sw.js', ...SCAN_FILES];

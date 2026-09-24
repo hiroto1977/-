@@ -15,6 +15,7 @@ import { finiteOrNull } from '../../shared/num';
 import { isCalendarMonth } from '../../shared/isoDate';
 import { relationIssue } from './recordRelations';
 import { moreThanChars } from '../../shared/inputCeiling';
+import { displayField } from '../../shared/apiResponse';
 
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
 
@@ -210,6 +211,54 @@ export function formatPeriodWindow(w: PeriodWindow): string {
  * パス 196 がこの家系を閉じたときと同じ直し方で、**新しい規則を足さずに済む**。
  */
 export const MAX_KPI_UNIT_CHARS = 64;
+
+/**
+ * **保管した事業名を「文字列として」読む 1 つの口。型から始める。** (2026-09-24 · パス 441)
+ *
+ * `COLLECTION_SHAPES` の `unit: str` は**入口**で型を見るが、`store.list()` は
+ * 読みで落とさない (`recordShapeAudit.ts` の設計 —— 読みで落とすと壊れた行が
+ * UI から触れなくなる · パス 360)。だから復元・古い版・別の道具が入れた非文字列は
+ * ここへ届く。`a.unit.trim()` は**素の呼び出し**なので、数・物・配列・真偽値・null が
+ * そのまま `.trim is not a function` で投げていた —— 実測 (2026-09-24 · 直す前・
+ * **期も金額も正しい**実績 1 件の `unit` だけを壊す):
+ *
+ * | unit | KPI / BEP | 経営サマリー |
+ * | --- | --- | --- |
+ * | `42` / `{z:1}` / `[1]` / `true` | **投げる** | **投げる** |
+ * | `null` | **投げる** (`Cannot read properties of null`) | **投げる** |
+ *
+ * 投げると `PageErrorBoundary` が受けるので**その画面は開けず、開けないので
+ * その行はその画面からは消せない** (法則 `escape-hatch-stays-open`)。しかも
+ * `readablePeriodRows` (パス 225) は**期**しか見ないので、この値は選別を通り抜ける。
+ *
+ * ★ **倒し込み先が `''` なのは入口と同じだから** —— `parseKpiActual` は
+ *   `typeof input.unit === 'string' ? input.unit.trim() : ''` と書き、その `''` を
+ *   「事業名は 1〜64 文字」で断る。**入口と出口が同じ規則を読む** (パス 420)。
+ * ★ **天井は通さない** —— この値は `actualKey` が (期, 事業) の**同一性**を決めるのに
+ *   使う。切った事業名は**別の事業を指す**ので、切るのは誤りである (パス 417 の
+ *   `salesOrderRef` と同じ理由)。天井は**画面に出す所**に掛ける。
+ */
+export function kpiUnitText({ unit }: Pick<KpiActual, 'unit'>): string {
+  return typeof unit === 'string' ? unit.trim() : '';
+}
+
+/**
+ * 同じ規則を期にも当てる **—— ただし表示と並びの側だけ**。
+ *
+ * ★ **これは罠の除去であって、今日の欠陥ではない (測った)** —— `findDuplicateActuals` の
+ *   呼び手 3 つはどれも `readablePeriodRows` (パス 225) を通しており、`isValidPeriod` は
+ *   `YYYY-MM` の 7 文字しか通さないので**非文字列の期はここへ届かない**
+ *   (実測 2026-09-24: `period: 42` を 2 件置いても KPI 画面は投げない)。それでも閉じるのは、
+ *   同じ関数の中で `unit` は型から読み `period` だけが素という**非対称**が残ると、
+ *   次に `readablePeriodRows` を通さない 4 つ目の呼び手が増えた日に
+ *   `x.period.localeCompare is not a function` で静かに開くからである (パス 398 と同じ位置づけ)。
+ * ★ **`actualKey` には通さない** —— 鍵は (期, 事業) の**同一性**で、`${a.period}` の
+ *   暗黙の変換は `42` と `null` を別の鍵に保つ。ここで両方を `''` へ倒すと、
+ *   **別々の行を「同じ期・事業が 2 件」と報せる** (無い重複を主張する側の誤り)。
+ */
+function kpiPeriodText({ period }: Pick<KpiActual, 'period'>): string {
+  return typeof period === 'string' ? period : '';
+}
 
 export function parseKpiActual(input: {
   period?: unknown;
@@ -897,7 +946,7 @@ export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
  * 期は `isValidPeriod` の 7 文字なので区切りは要らないが、読めるように `|` を挟む。
  */
 export function actualKey(a: Pick<KpiActual, 'period' | 'unit'>): string {
-  return `${a.period}|${a.unit.trim()}`;
+  return `${a.period}|${kpiUnitText(a)}`;
 }
 
 /** 同じ (期間, 事業) が既に在るか。画面が追加を断る判断。 */
@@ -920,7 +969,7 @@ export function findDuplicateActuals(actuals: readonly KpiActual[]): DuplicateAc
   for (const a of actuals) {
     const key = actualKey(a);
     const g = groups.get(key);
-    groups.set(key, g ? { ...g, count: g.count + 1 } : { period: a.period, unit: a.unit.trim(), count: 1 });
+    groups.set(key, g ? { ...g, count: g.count + 1 } : { period: kpiPeriodText(a), unit: kpiUnitText(a), count: 1 });
   }
   return [...groups.values()]
     .filter((g) => g.count >= 2)
@@ -932,11 +981,16 @@ export type ActualKind = '実績' | '予算';
 
 /** 同じ (期間, 事業) の追加を断るときの文。訂正の道 (× で消してから) を言う。 */
 export function duplicateActualMessage(kind: ActualKind, c: Pick<KpiActual, 'period' | 'unit'>): string {
-  return `${c.period} の「${c.unit.trim()}」の${kind}は既に入力されています。訂正するときは一覧の × で消してから入れ直してください（同じ期・事業を 2 件入れると合算されます）。`;
+  return `${c.period} の「${displayField(kpiUnitText(c), MAX_KPI_UNIT_CHARS)}」の${kind}は既に入力されています。訂正するときは一覧の × で消してから入れ直してください（同じ期・事業を 2 件入れると合算されます）。`;
 }
 
+/**
+ * 画面に出す所は天井を通す —— 入口が既に持っている `MAX_KPI_UNIT_CHARS` なので
+ * **正当な事業名は 1 字も変わらない** (`sales.ts` の `listGroups` と同じ形・パス 417)。
+ * 同一性を決める `actualKey` には通さない (切った事業名は別の事業を指す)。
+ */
 const listGroups = (groups: readonly DuplicateActualGroup[]): string =>
-  groups.map((g) => `${g.period} ${g.unit} ×${g.count}`).join('、');
+  groups.map((g) => `${g.period} ${displayField(g.unit, MAX_KPI_UNIT_CHARS)} ×${g.count}`).join('、');
 
 /** 一覧の上の警告 (既に重複が在るとき)。無ければ null。 */
 export function duplicateActualsNote(kind: ActualKind, groups: readonly DuplicateActualGroup[]): string | null {

@@ -106,7 +106,8 @@
     "audit:tick-sensitivity": "node scripts/audit-tick-sensitivity.cjs && node scripts/audit-tick-sensitivity.cjs --self-test",
     "audit:regex-poly": "node scripts/audit-regex-polynomial.cjs --n=200000 && node scripts/audit-regex-polynomial.cjs --self-test",
     "audit:e2e-wait-margin": "node scripts/audit-e2e-wait-margin.cjs --self-test && node scripts/audit-e2e-wait-margin.cjs",
-    "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test && node scripts/dependency-audit-issue.cjs --self-test"
+    "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test && node scripts/dependency-audit-issue.cjs --self-test",
+    "audit:malformed-fields": "node scripts/audit-malformed-fields.cjs --self-test && node scripts/audit-malformed-fields.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

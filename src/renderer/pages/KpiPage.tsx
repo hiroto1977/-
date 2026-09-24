@@ -23,8 +23,10 @@ import {
   unreadablePeriodNote,
   findDuplicateActuals,
   hasSamePeriodUnit,
+  MAX_KPI_UNIT_CHARS,
   type KpiActual,
 } from '../data/kpiActuals';
+import { displayField } from '../../shared/apiResponse';
 import { DASH } from '../../shared/formatters';
 import { SALES_COLLECTION, readableSalesRows, unreadableSalesDateNote, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
@@ -592,8 +594,17 @@ function ActualsPanel() {
                 const m = computeKpiMetrics(summarizeFundamentals([r.data]));
                 return (
                   <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
-                    <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
-                    <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
+                    {/*
+                      **一覧は素の購読を描く (選別しない)** —— 期が読めない行もここに出るから
+                      × で消せる (法則 `escape-hatch-stays-open`)。だから値は**画面の側で**
+                      型から読む: 物・配列を素で置くと React が
+                      「Objects are not valid as a React child」で落とし、その画面ごと開けなくなる。
+                      天井は事業名だけ入口の数 (`MAX_KPI_UNIT_CHARS`) を読む —— 期の入口は
+                      `YYYY-MM` の 7 文字ちょうどなので、共有の既定でも正当な値は 1 字も変わらない
+                      (**新しい数を作らない**)。
+                    */}
+                    <td style={{ padding: '4px 8px' }}>{displayField(r.data.period)}</td>
+                    <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(m.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px' }}>
@@ -728,8 +739,9 @@ function BudgetPanel() {
           <tbody>
             {budgets.map((r) => (
               <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
-                <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
-                <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
+                {/* 実績の一覧と同じ理由 (素の購読を描くので、値は画面の側で型から読む)。 */}
+                <td style={{ padding: '4px 8px' }}>{displayField(r.data.period)}</td>
+                <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
                 <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
                 <td style={{ padding: '4px 8px' }}>
                   <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 257
+- ブロック数: 258
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `85a96af8da4f54677911c9f02814f61d30513debc5efa14a2808fa67ea5eb488`
-- 保護対象: 91 ファイル
+- 末尾(tip)ハッシュ: `5b6a4a278dbef7821f1d05bc93578c644ce25d4eae75ca19a4b10bb18b7310e7`
+- 保護対象: 92 ファイル
 
 ## ブロック
 
@@ -270,6 +270,7 @@
 | 254 | `6fbacb7e8851b479` | `fab34a09f75da080` | `ae26e30e071e2e5c` | update integrity-chain.cjs,isoDate.ts,localDate.ts,ollama.ts |
 | 255 | `1171c2ce896e57a4` | `ae26e30e071e2e5c` | `3b9a268d86588536` | update imageUrlGate.ts,isoDate.ts,ollama.ts |
 | 256 | `5cf97c4467c18e21` | `3b9a268d86588536` | `85a96af8da4f5467` | update chat.ts,httpLimits.ts |
+| 257 | `a6b3405fa277402b` | `85a96af8da4f5467` | `5b6a4a278dbef782` | update integrity-chain.cjs,vitest.audit.config.ts |
 
 ## 保護対象ファイル
 
@@ -363,4 +364,5 @@
 - `src/shared/versionOrder.ts`
 - `src/shared/writeFieldLimits.ts`
 - `vite.config.ts`
+- `vitest.audit.config.ts`
 - `vitest.config.ts`
