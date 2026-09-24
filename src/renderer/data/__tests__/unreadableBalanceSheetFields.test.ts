@@ -37,6 +37,8 @@ import {
   hasUnreadableBalanceSheetFields,
   normalizeBalanceSheet,
   splitMissingStocks,
+  unreadableBalanceSheetField,
+  netDebtUnavailableNote,
   unreadableBalanceSheetNote,
   unreadableBalanceSheetSheetNote,
 } from '../balanceSheet';
@@ -360,5 +362,105 @@ describe('4 つの面が述べる (パス 444)', () => {
         members: [{ role: 'owner' }],
       }).balanceSheetUnreadableFields,
     ).toEqual({ zeroed: [], missing: [] });
+  });
+});
+
+/**
+ * **ネットデットが算定できない理由** (2026-09-24 · パス 445)。
+ *
+ * パス 444 は名簿を 4 つの面へ配線したが、**貸借対照表を打ち込む当の画面**
+ * (KPI ページのパネル) が抜けていた。そこは `interestBearingDebtUnentered` /
+ * `cashUnentered` を `=== undefined` から直に読むので、**打ち込んだ値が
+ * 読めなかった控え**と**欄そのものが無い控え**を見分けられない。
+ */
+describe('鍵で問う口と、原因ごとの断り (パス 445)', () => {
+  /** 任意の欄 —— 名簿の `missing` に入りうる側。 */
+  const OPTIONAL = BS_NUMERIC_FIELDS.filter((f) => !f.required);
+
+  it('★ 母集団の床 —— 任意の欄が 2 つ以上ある (下の全欄の主張が自明に通らない)', () => {
+    expect(OPTIONAL.length).toBeGreaterThanOrEqual(2);
+    // ネットデットの材料 2 欄はどちらも任意である (必須なら 0 へ倒れ、この家系に入らない)。
+    expect(OPTIONAL.map((f) => f.key)).toEqual(expect.arrayContaining(['interestBearingDebt', 'cash']));
+  });
+
+  it.each(OPTIONAL.map((f) => [f.key, f.label] as const))(
+    '★ 鍵で問う口とラベルで分ける口は %s (%s) について同じ答えを出す',
+    (key, label) => {
+      for (const [, bad] of NON_NUMBERS) {
+        const u = normalizeBalanceSheet({ ...GOOD_RAW, [key]: bad }).unreadableFields;
+        expect(unreadableBalanceSheetField(key, u)).toBe(true);
+        // 判定は 1 つ —— ラベル側の口と食い違わない。
+        expect(splitMissingStocks([label], u).unreadable).toEqual([label]);
+      }
+      // 欄そのものが無い控えは「読めなかった」ではない (どちらの口も false)。
+      const absent: Record<string, unknown> = { ...GOOD_RAW };
+      delete absent[key];
+      const ua = normalizeBalanceSheet(absent).unreadableFields;
+      expect(unreadableBalanceSheetField(key, ua)).toBe(false);
+      expect(splitMissingStocks([label], ua).blank).toEqual([label]);
+    },
+  );
+
+  it('★ 必須の欄は鍵で問っても false —— 0 として算定したのであって、算定していないのではない', () => {
+    for (const f of BS_NUMERIC_FIELDS.filter((x) => x.required)) {
+      const u = normalizeBalanceSheet({ ...GOOD_RAW, [f.key]: null }).unreadableFields;
+      expect(unreadableBalanceSheetField(f.key, u)).toBe(false);
+      expect(u?.zeroed).toContain(f.label);
+    }
+  });
+
+  it('★ 名簿が無ければ鍵で問っても false (今までどおり「未入力」)', () => {
+    expect(unreadableBalanceSheetField('cash', undefined)).toBe(false);
+    // 針が的に当たる標本 —— 名簿が在れば true になる鍵である。
+    expect(unreadableBalanceSheetField('cash', { zeroed: [], missing: ['現預金'] })).toBe(true);
+  });
+
+  it('★ 打ち込んだ値が読めない人に「0 と入力してください」と言わない', () => {
+    const u = normalizeBalanceSheet({ ...GOOD_RAW, interestBearingDebt: '9000000' }).unreadableFields;
+    const note = netDebtUnavailableNote({ interestBearingDebtUnentered: true, cashUnentered: false }, u);
+    expect(note).toContain('有利子負債が数として読めないため');
+    expect(note).toContain('形式の合わないレコード');
+    // 直す手を取り違えない (パス 388) —— 0 を入れると「—」が確信のある誤った数になる。
+    expect(note).not.toContain('0 と入力してください');
+    expect(note).not.toContain('未入力のため');
+  });
+
+  it('★ 本当に未入力の人への文は 1 字も変えていない', () => {
+    const absent: Record<string, unknown> = { ...GOOD_RAW };
+    delete absent.interestBearingDebt;
+    const u = normalizeBalanceSheet(absent).unreadableFields;
+    expect(netDebtUnavailableNote({ interestBearingDebtUnentered: true, cashUnentered: false }, u)).toBe(
+      '有利子負債が未入力のため、ネットデット・有利子負債比率・実質債務超過の判定は算定していません。借入が無いなら 0 と入力してください（0 と「未入力」は別の事実として扱います）。',
+    );
+  });
+
+  it('★ 混ざっていれば 2 文に分かれ、それぞれの直す手を言う', () => {
+    const u = normalizeBalanceSheet({ ...GOOD_RAW, cash: { z: 1 } }).unreadableFields;
+    // 有利子負債は欄ごと無く、現預金は読めない。
+    const note = netDebtUnavailableNote({ interestBearingDebtUnentered: true, cashUnentered: true }, u);
+    expect(note).toContain('有利子負債が未入力のため');
+    expect(note).toContain('現預金が数として読めないため');
+    expect(note).toContain('0 と入力してください');
+    expect(note).toContain('形式の合わないレコード');
+  });
+
+  it('★ 止まる物の名前は原因ではなく欠けた欄で決まる', () => {
+    const readable = { zeroed: [], missing: [] };
+    // 有利子負債が欠ければ、原因が何であれ有利子負債比率も止まる。
+    for (const u of [readable, { zeroed: [], missing: ['有利子負債'] }]) {
+      expect(netDebtUnavailableNote({ interestBearingDebtUnentered: true, cashUnentered: false }, u)).toContain(
+        'ネットデット・有利子負債比率・実質債務超過の判定',
+      );
+    }
+    // 現預金だけなら有利子負債比率は算定できる (その名前を挙げない)。
+    const cashOnly = netDebtUnavailableNote({ interestBearingDebtUnentered: false, cashUnentered: true }, readable);
+    expect(cashOnly).toContain('ネットデットと実質債務超過の判定');
+    expect(cashOnly).not.toContain('有利子負債比率');
+  });
+
+  it('★ どちらも在るなら断りは出ない', () => {
+    expect(
+      netDebtUnavailableNote({ interestBearingDebtUnentered: false, cashUnentered: false }, { zeroed: [], missing: [] }),
+    ).toBeNull();
   });
 });

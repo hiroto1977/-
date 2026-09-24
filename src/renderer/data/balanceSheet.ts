@@ -383,6 +383,86 @@ export function splitMissingStocks(
   };
 }
 
+/**
+ * **その欄 1 つが「読めなかった」側か** (鍵で問う · 2026-09-24 · パス 445)。
+ *
+ * `splitMissingStocks` は上流 (`computeCashConversionCycle`) が**ラベルの一覧**で
+ * 返すので一覧を分ける。一方 KPI ページの貸借対照表パネルは**欄そのもの**
+ * (有利子負債 / 現預金) を名指しするので、鍵で問える方が良い —— 画面が
+ * 「有利子負債」という綴りを持たずに済み、ラベルを表で直した日に追随する。
+ *
+ * **判定は 1 つ** —— どちらも `BS_NUMERIC_FIELDS` の同じ行と `u.missing` を見る
+ * (検査が 2 つの口の答えが揃うことを全欄で留める)。必須の欄は `missing` に
+ * 入らない (0 円として計算に入る) ので、鍵で問うても false になる —— それが正しい:
+ * 必須の欄は「算定していない」のではなく「0 として算定した」である。
+ */
+export function unreadableBalanceSheetField(
+  key: string,
+  u: UnreadableBalanceSheetFields | undefined,
+): boolean {
+  if (u === undefined) return false;
+  const label = BS_NUMERIC_FIELDS.find((f) => f.key === key)?.label;
+  return label !== undefined && u.missing.includes(label);
+}
+
+/**
+ * **ネットデットが算定できない理由を、原因ごとに述べる** (2026-09-24 · パス 445)。
+ *
+ * KPI ページの貸借対照表パネルはそれまで `interestBearingDebtUnentered` /
+ * `cashUnentered` をそのまま「未入力のため」と読み、末尾で
+ * **「借入が無いなら 0 と入力してください」と直す手まで名指し**していた。
+ * ところが 2 つの旗は `=== undefined` なので、**打ち込んだ値が数として読めなかった控え**
+ * でも真になる (パス 444 の `missing` に入る側)。実測 (直す前): 有利子負債に
+ * 10 進の文字列を入れた控えと、欄そのものが無い控えで**この文は 1 字も違わなかった**。
+ *
+ * 打ち込んだ利用者にとって偽であるうえ、その直す手は**事態を悪くする** ——
+ * 「0 と入力してください」に従うと 5,000,000 が 0 に置き換わり、ネットデットが
+ * 「—」から**確信のある誤った数**に変わる (パス 388 の家系)。しかも同じ文が
+ * 「0 と「未入力」は別の事実として扱います」と**自分で名乗っていた**:
+ * 2 つを分けると称しながら、3 つ目をその片方へ畳んでいた。
+ *
+ * ★ **何が算定できないかは欠けた欄で決まり、原因では決まらない** ——
+ *   有利子負債が無ければ有利子負債比率も落ちる。だから止まる物の名前は
+ *   2 つの文で共有し、分けるのは**原因と直す手**だけにする。
+ * ★ **文はここに置く** —— 画面 (`.tsx`) は変異検査の母集団の外なので、
+ *   そこで組むと「どちらの文が出るか」を誰も測らない (パス 386 と同じ判断)。
+ */
+export function netDebtUnavailableNote(
+  insights: Pick<BalanceSheetInsights, 'interestBearingDebtUnentered' | 'cashUnentered'>,
+  u: UnreadableBalanceSheetFields | undefined,
+): string | null {
+  const blank: string[] = [];
+  const unreadable: string[] = [];
+  for (const [key, label] of NET_DEBT_INPUTS) {
+    if (!(key === 'cash' ? insights.cashUnentered : insights.interestBearingDebtUnentered)) continue;
+    (unreadableBalanceSheetField(key, u) ? unreadable : blank).push(label);
+  }
+  if (blank.length === 0 && unreadable.length === 0) return null;
+  const stopped = insights.interestBearingDebtUnentered
+    ? 'ネットデット・有利子負債比率・実質債務超過の判定'
+    : 'ネットデットと実質債務超過の判定';
+  const said: string[] = [];
+  if (blank.length > 0) {
+    said.push(
+      `${blank.join('と')}が未入力のため、${stopped}は算定していません。借入が無いなら 0 と入力してください（0 と「未入力」は別の事実として扱います）。`,
+    );
+  }
+  if (unreadable.length > 0) {
+    said.push(
+      `${unreadable.join('と')}が数として読めないため、${stopped}は算定していません。打ち込んだ値は残っていますが数として読めないので、設定の「形式の合わないレコード」から消して入れ直してください。`,
+    );
+  }
+  return said.join('');
+}
+
+/**
+ * ネットデットの材料 2 欄 (鍵とラベル)。**ラベルは表から引く** ——
+ * ここで綴りを書くと `BS_NUMERIC_FIELDS` のラベルを直した日に食い違う。
+ */
+const NET_DEBT_INPUTS: readonly (readonly [key: 'interestBearingDebt' | 'cash', label: string])[] = (
+  ['interestBearingDebt', 'cash'] as const
+).map((key) => [key, BS_NUMERIC_FIELDS.find((f) => f.key === key)?.label ?? key] as const);
+
 /** 控えが無ければ null、在れば整えて返す (未入力とゼロを混ぜない)。 */
 export function balanceSheetOrNull(raw: unknown): BalanceSheet | null {
   return raw === null || raw === undefined ? null : normalizeBalanceSheet(raw);

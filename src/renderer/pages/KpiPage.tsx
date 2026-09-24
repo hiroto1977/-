@@ -44,6 +44,8 @@ import {
   normalizeBalanceSheet,
   parseBalanceSheet,
   computeBalanceSheetInsights,
+  netDebtUnavailableNote,
+  unreadableBalanceSheetNote,
   computeBalanceSheetMetrics,
   balanceSheetAsOfKey,
   balanceSheetChoiceNote,
@@ -799,18 +801,20 @@ function BalanceSheetPanel() {
   const bsRows = useMemo(() => [...records].sort(compareBalanceSheetRecords), [records]);
   const choiceNote = useMemo(() => balanceSheetChoiceNote(records, latest ?? null), [records, latest]);
   const submit = useSubmitGuard();
+  /*
+   * **整えるのは 1 度** (2026-09-24 · パス 445) —— それまで `normalizeBalanceSheet` を
+   * 2 度呼んでおり、どちらの結果も `unreadableFields` (パス 444 の名簿) を捨てていた。
+   * 1 つにすると名簿が画面へ届き、下の 2 つの断りが**同じ控え**について述べる。
+   */
+  const read = useMemo(() => (latest ? normalizeBalanceSheet(latest.data) : undefined), [latest]);
   // 欄の無い控えも 0 と読んでから集計する (NaN のタイルを出さない)。
-  const metrics = useMemo(
-    () => (latest ? computeBalanceSheetMetrics(normalizeBalanceSheet(latest.data)) : undefined),
-    [latest],
-  );
+  const metrics = useMemo(() => (read ? computeBalanceSheetMetrics(read) : undefined), [read]);
+  /** 倒した欄を述べる 1 文 (パス 444 の 4 つの面に続く**5 つ目**)。無ければ `null`。 */
+  const unreadableNote = read === undefined ? null : unreadableBalanceSheetNote(read.unreadableFields);
   // **2026-09-10 に配線した。** それまでこの 101 行は検査からしか呼ばれていなかった
   // (`balanceSheet.ts` の冒頭に経緯)。算定できない欄は「—」で、**なぜ算定できないかを
   // 隣で言う** —— 「借入なし」と「入力していない」を同じ顔で出さないため。
-  const insights = useMemo(
-    () => (latest ? computeBalanceSheetInsights(normalizeBalanceSheet(latest.data)) : undefined),
-    [latest],
-  );
+  const insights = useMemo(() => (read ? computeBalanceSheetInsights(read) : undefined), [read]);
 
   async function onAdd() {
     try {
@@ -867,6 +871,20 @@ function BalanceSheetPanel() {
       </div>
       {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
+      {/*
+        * **倒した欄をこの画面でも述べる** (2026-09-24 · パス 445)。
+        *
+        * パス 444 は名簿を 4 つの面 (書面 §4 の caption・書面 §5・経営ハイライト・
+        * 経営サマリーの画面) へ配線したが、**貸借対照表を打ち込む当の画面**が抜けていた。
+        * 実測 (直す前): 流動資産に真偽値が入った控えで、この画面は
+        * 「自己資本比率 -100% / 純資産 -￥4,000,000 / 流動比率 0%」を理由 1 文も無しで出していた。
+        * ここは入力欄の真下なので、**直す手にいちばん近い面**である。
+        */}
+      {unreadableNote !== null && (
+        <p role="alert" data-bs-unreadable style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          ⚠ {unreadableNote}
+        </p>
+      )}
       {metrics && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
           <Tile label="自己資本比率" value={metrics.equityRatioPct === null ? '—' : `${metrics.equityRatioPct}%`} sub={`純資産 ${safeYen(metrics.netAssets)}`} />
@@ -900,14 +918,10 @@ function BalanceSheetPanel() {
               sub="総負債 ÷ 純資産"
             />
           </div>
-          {(insights.interestBearingDebtUnentered || insights.cashUnentered) && (
-            <p style={{ color: 'var(--text-mute)', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
-              {insights.interestBearingDebtUnentered && insights.cashUnentered
-                ? '有利子負債と現預金が未入力のため、ネットデット・有利子負債比率・実質債務超過の判定は算定していません。'
-                : insights.interestBearingDebtUnentered
-                  ? '有利子負債が未入力のため、ネットデット・有利子負債比率・実質債務超過の判定は算定していません。'
-                  : '現預金が未入力のため、ネットデットと実質債務超過の判定は算定していません。'}
-              借入が無いなら 0 と入力してください（0 と「未入力」は別の事実として扱います）。
+          {/* 原因ごとの言い分けは `netDebtUnavailableNote` が 1 つ持つ (パス 445 ・ 画面は刷るだけ)。 */}
+          {netDebtUnavailableNote(insights, read?.unreadableFields) !== null && (
+            <p style={{ color: 'var(--text-mute)', fontSize: 12, marginTop: 6, lineHeight: 1.6 }} data-netdebt-cause>
+              {netDebtUnavailableNote(insights, read?.unreadableFields)}
             </p>
           )}
         </div>

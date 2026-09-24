@@ -223,6 +223,14 @@ const LEDGER: readonly Row[] = [
     why: '**数でない欄は形の表 (`currentAssets: num` ほか) が断る**ので、点検パネルが見つけて消せる (パス 444)。貸借対照表は一覧に × を持たない —— 画面から行ごと消す口はこのパネルだけなので、ここを名指しするほかに逃げ口は無い。',
   },
   {
+    fn: 'netDebtUnavailableNote',
+    file: 'src/renderer/data/balanceSheet.ts',
+    kinds: ['audit-panel'],
+    collection: BALANCE_SHEET_COLLECTION,
+    sample: BS_BAD_AMOUNT,
+    why: '同じ逃げ口を、KPI ページの貸借対照表パネルから名指しする (パス 445)。**「読めない」側の文だけが名指しする** —— 本当に未入力の人には「0 と入力してください」と言い、点検パネルへは送らない (そこには消す物が無い)。',
+  },
+  {
     fn: 'buildManagementHighlights',
     file: 'src/renderer/data/managementHighlights.ts',
     kinds: ['audit-panel'],
