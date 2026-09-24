@@ -69,6 +69,9 @@ kpi-budgets.unit (num) → kpi:      TypeError: a.unit.trim is not a function
 検査は `renderer/pages/__tests__/storedKpiUnitReads.test.ts` (**25 件**) と
 `renderer/__tests__/oneFieldMalformed.test.ts` (6 件)。
 `typecheck` 緑・`npm test` **859 / 18,592**・`verify:all` exit 0・`verify:arch` 15532 → **15544**。
+実機も回した: `perf` OK (LITE DCL 248 ms / heap 10.3 MB・FULL DCL 729 ms / heap 36.8 MB)・
+`e2e` **455 件 ❌ 0**・`e2e:lite` **455 件 ❌ 0**。
+**6 形の全走査だけは完走していない** (理由は `docs/REMAINING_WORK.md`)。
 
 ---
 
