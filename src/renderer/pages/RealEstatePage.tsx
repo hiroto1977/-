@@ -22,6 +22,7 @@ import {
   computeRealEstatePortfolio,
   demoMixNote,
   occupiedWithoutRentNote,
+  unreadableCostNote,
   yieldScopeNote,
   type PropertyEntry,
 } from '../data/investments';
@@ -406,6 +407,11 @@ export function RealEstatePage() {
   // (文面は `data/investments.ts` が 1 か所で持つ)。
   const yieldNote = useMemo(() => yieldScopeNote(portfolio), [portfolio]);
   const rentNote = useMemo(() => occupiedWithoutRentNote(portfolio), [portfolio]);
+  /**
+   * **月次経費・月次返済が読めず 0 として差し引いた**ことの断り (パス 446)。
+   * この 2 欄だけが黙っており、手残りを**過大**に見せていた。
+   */
+  const costNote = useMemo(() => unreadableCostNote(portfolio), [portfolio]);
   /** 合計に見本が混ざっていることの断り (自分の分の数字つき · パス 187)。 */
   const mixNote = useMemo(() => demoMixNote(portfolio, jpy), [portfolio]);
 
@@ -768,7 +774,7 @@ export function RealEstatePage() {
         </div>
         {/* **なぜ件数が合わないか**を述べる。文面は `data/investments.ts` が 1 か所で持つ
             (数字だけ直しても、読み手には物件数と平均の分母の違いが読めない)。 */}
-        {(yieldNote !== null || rentNote !== null || mixNote !== null) && (
+        {(yieldNote !== null || rentNote !== null || mixNote !== null || costNote !== null) && (
           <div
             data-portfolio-scope
             role="alert"
@@ -778,6 +784,8 @@ export function RealEstatePage() {
             {mixNote !== null && <div data-portfolio-demo-mix>⚠ {mixNote}</div>}
             {yieldNote !== null && <div>⚠ {yieldNote}</div>}
             {rentNote !== null && <div>⚠ {rentNote}</div>}
+            {/* **月次キャッシュフローが過大に出ている**ことを言う (パス 446)。 */}
+            {costNote !== null && <div data-portfolio-cost-unreadable>⚠ {costNote}</div>}
           </div>
         )}
       </Section>

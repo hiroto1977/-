@@ -42,6 +42,7 @@ import { MEMBERS_COLLECTION } from '../members';
 import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
 import { BALANCE_SHEET_COLLECTION } from '../balanceSheet';
+import { PROPERTIES_COLLECTION } from '../investments';
 
 /** 設定の点検パネルを名指しする綴り (**実物のパネルの見出しと同じ語** —— パス 426 で「記録」から直した)。 */
 const AUDIT_PANEL = '形式の合わないレコード';
@@ -93,6 +94,16 @@ const BS_BAD_AMOUNT = {
   fixedLiabilities: 0,
   interestBearingDebt: 0,
   netIncome: 0,
+};
+// 物件の金額の欄が数でない —— 形の表 (`monthlyExpenses: opt(num)` ほか) が断る側 (パス 446)。
+const PROPERTY_BAD_AMOUNT = {
+  name: '一棟目',
+  type: 'アパート',
+  monthlyRent: 100_000,
+  purchasePrice: 20_000_000,
+  occupied: true,
+  monthlyExpenses: '20000',
+  monthlyLoan: 10_000,
 };
 
 /**
@@ -237,6 +248,30 @@ const LEDGER: readonly Row[] = [
     collection: BALANCE_SHEET_COLLECTION,
     sample: BS_BAD_AMOUNT,
     why: '同じ名簿を読む所見 (パス 444)。**未入力の所見とは別の文**で、こちらは「入力してください」と言わない —— 打ち込んだ値が読めないだけの人に入力を促すと直す手ごと誤らせる (パス 388)。',
+  },
+  {
+    fn: 'unreadableCostNote',
+    file: 'src/renderer/data/investments.ts',
+    kinds: ['audit-panel'],
+    collection: PROPERTIES_COLLECTION,
+    sample: PROPERTY_BAD_AMOUNT,
+    why: '**数でない金額の欄は形の表 (`monthlyExpenses: opt(num)` ほか) が断る**ので、点検パネルが見つけて消せる (パス 446)。物件の一覧には × が在るが、それは**行ごと**消す口である —— 経費が読めないだけの物件を行ごと消すと家賃も入居率も一緒に消えるので、ここが正しい逃げ口になる。',
+  },
+  {
+    fn: 'yieldScopeNote',
+    file: 'src/renderer/data/investments.ts',
+    kinds: ['audit-panel'],
+    collection: PROPERTIES_COLLECTION,
+    sample: PROPERTY_BAD_AMOUNT,
+    why: '同じ逃げ口を、**家賃が読めない側の文だけ**が名指しする (パス 446)。取得価格が読めない側は「0% として平均すると全体が下がります」と述べるだけで点検パネルへは送らない —— 欄そのものが無い控えでもそこへ来るので、消す物が無い人を送ってはいけない。',
+  },
+  {
+    fn: 'occupiedWithoutRentNote',
+    file: 'src/renderer/data/investments.ts',
+    kinds: ['audit-panel'],
+    collection: PROPERTIES_COLLECTION,
+    sample: PROPERTY_BAD_AMOUNT,
+    why: '同上 —— **「読めない」側の文だけ**が名指しする。家賃 0 円の人には「空室でないなら家賃を入力してください」と言い、点検パネルへは送らない (そこには消す物が無い · パス 445 と同じ判断)。',
   },
 ];
 

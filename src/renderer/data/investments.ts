@@ -62,6 +62,45 @@ export interface PropertyEntry extends Record<string, unknown> {
   readonly monthlyExpenses: number;
   /** 月次のローン返済額 (円・任意、既定 0)。 */
   readonly monthlyLoan: number;
+  /**
+   * **保管値が数として読めず 0 に倒した欄**の日本語ラベル (2026-09-24 · パス 446)。
+   *
+   * `normalizeProperty` **だけ**が立てる。入力欄が組む控え (`parsePropertyEntry`) と
+   * 手で書いた見本は保管値ではないので持たない —— だから任意にしてある
+   * (貸借対照表の `unreadableFields` と同じ扱い · パス 444)。
+   */
+  readonly unreadableFields?: readonly string[];
+}
+
+/**
+ * **数として読む欄の表は 1 つ** (2026-09-24 · パス 446)。
+ *
+ * 倒す側 (`normalizeProperty`) と報告する側 (`computeRealEstatePortfolio` と
+ * 3 つの断り) がここだけを見る。2 つに分けて書くと、5 つ目の欄が足された日に
+ * **倒すのに報告しない欄**ができる (その欄はどの面にも痕跡を残さない)。
+ *
+ * `required` は**形の表** (`COLLECTION_SHAPES['realestate-properties']`) の側の話で、
+ * 倒す先ではない —— 4 欄とも 0 へ倒れる。任意の 2 欄は「任意、既定 0」という
+ * 宣言どおりの 0 なので、**欄が無い控えは名簿に入れない** (`unreadablePropertyFields`)。
+ */
+export const PROPERTY_NUMERIC_FIELDS: readonly { readonly key: string; readonly label: string; readonly required: boolean }[] = [
+  { key: 'monthlyRent', label: '家賃', required: true },
+  { key: 'purchasePrice', label: '取得価格', required: true },
+  { key: 'monthlyExpenses', label: '月次経費', required: false },
+  { key: 'monthlyLoan', label: '月次返済額', required: false },
+];
+
+/**
+ * その欄が「保管値は在るが数として読めなかった」側か (**鍵で問う口**)。
+ *
+ * 画面や集計が綴り (`'家賃'`) を持たずに済むようにする —— ラベルは
+ * `PROPERTY_NUMERIC_FIELDS` の同じ行から引くので、表を直した日に食い違わない
+ * (パス 445 の `unreadableBalanceSheetField` と同じ形)。
+ */
+export function unreadablePropertyField(key: string, fields: readonly string[] | undefined): boolean {
+  if (fields === undefined) return false;
+  const label = PROPERTY_NUMERIC_FIELDS.find((f) => f.key === key)?.label;
+  return label !== undefined && fields.includes(label);
 }
 
 /**
@@ -75,7 +114,16 @@ export interface PropertyEntry extends Record<string, unknown> {
  */
 export function normalizeProperty(raw: unknown): PropertyEntry {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
-  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  /**
+   * 有限の数か。**判定を 1 か所に置く** —— 倒す側と名簿を作る側が同じ述語を見る。
+   *
+   * `typeof v === 'number'` は実行時には冗長 (`Number.isFinite` は数値以外を型変換
+   * せずに false にする) が、`v is number` の絞り込みを型検査に伝えるために残す
+   * (`normalizeBalanceSheet` と同じ判断 · パス 444)。
+   */
+  // Stryker disable next-line ConditionalExpression: Number.isFinite が数値以外を false にするので実行時は等価 (型の絞り込みのために残す)
+  const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
   return {
     name: typeof r.name === 'string' ? r.name : '',
     type: typeof r.type === 'string' ? r.type : '',
@@ -84,7 +132,48 @@ export function normalizeProperty(raw: unknown): PropertyEntry {
     occupied: r.occupied === true,
     monthlyExpenses: num(r.monthlyExpenses),
     monthlyLoan: num(r.monthlyLoan),
+    /*
+     * **倒したことを名簿にする** (2026-09-24 · パス 446)。
+     *
+     * ここは型から読むので投げも連結もしないが、**倒した先を誰にも言わない**。
+     * 実測 (直す前・1 件・正しい控え = 月次キャッシュフロー ¥70,000 / 表面利回り 6%):
+     *
+     * | 壊した欄 | 月次キャッシュフロー | 表面利回り | 画面の断り |
+     * | --- | ---: | ---: | --- |
+     * | (正しい控え) | ¥70,000 | 6% | 無し |
+     * | **月次経費** | **¥90,000** | 6% | **無し** |
+     * | **月次返済額** | **¥80,000** | 6% | **無し** |
+     * | 家賃 | △¥30,000 | **0%** | 「家賃が読めないため」(入居中のみ) |
+     * | 取得価格 | ¥70,000 | ― | 「取得価格が読めない 1 件」 |
+     *
+     * `'30000'` / `{z:1}` / `[1]` / `true` / `null` / `NaN` の 6 形すべてで同じ。
+     * **経費と返済は手残りを過大に見せる向きに外れ、理由を 1 文も述べない** ——
+     * 同じ関数の隣 2 欄 (家賃・取得価格) は原因を述べるので、4 欄のうち 2 つだけが
+     * 黙っている非対称である (パス 398 / 408 と同じ形)。
+     *
+     * **行ごとは落とさない** —— 経費が読めないだけの物件を一覧から消すと、家賃も
+     * 入居率も一緒に消える。倒したうえで**倒した欄を名乗る**のがこのリポジトリの
+     * 既定である (パス 227 / 444)。
+     */
+    unreadableFields: unreadablePropertyFields(r, isFiniteNumber),
   };
+}
+
+/** 読めなかった欄のラベルを集める (`normalizeProperty` の私有の助け)。 */
+function unreadablePropertyFields(
+  r: Record<string, unknown>,
+  isFiniteNumber: (v: unknown) => boolean,
+): readonly string[] {
+  const out: string[] = [];
+  for (const f of PROPERTY_NUMERIC_FIELDS) {
+    // **未入力は読めなかったのではない。** 任意の 2 欄は「任意、既定 0」と型が宣言し
+    // 入力欄も「空欄は 0」と約束しているので、欄が無いのは宣言どおりの 0 である。
+    // 必須の 2 欄が無い控え (前方互換) も「入力してください」としか言えない ——
+    // 数えると、打ち込んでいない利用者に「読めません」と言うことになる。
+    if (r[f.key] === undefined || isFiniteNumber(r[f.key])) continue;
+    out.push(f.label);
+  }
+  return out;
 }
 
 /**
@@ -216,6 +305,11 @@ export interface PortfolioProperty {
    * 「見本と自分の記録は別物」を知っていた。
    */
   readonly demo?: boolean;
+  /**
+   * **保管値が数として読めず 0 に倒した欄**のラベル (`normalizeProperty` が立てる)。
+   * 見本 (snapshot) 行と手で組んだ控えは持たない —— だから任意 (パス 446)。
+   */
+  readonly unreadableFields?: readonly string[];
 }
 
 export interface RealEstatePortfolio {
@@ -242,10 +336,30 @@ export interface RealEstatePortfolio {
   readonly portfolioYield: number | null;
   /** 入居率 (0..1、物件数ベース・小数第 4 位まで)。物件 0 件は null (算定不能)。 */
   readonly occupancyRate: number | null;
-  /** 表面利回りを測れた物件数 (取得価格 > 0)。 */
+  /** 表面利回りを測れた物件数 (取得価格 > 0 かつ家賃が読める)。 */
   readonly yieldMeasured: number;
-  /** 取得価格が読めず、利回りの平均から外した物件数。 */
+  /**
+   * 利回りの平均から外した物件数 (= 物件数 − `yieldMeasured`)。
+   *
+   * **原因ごとの内訳が下の 2 つ**で、`yieldUnmeasuredPrice + yieldUnmeasuredRent`
+   * は必ずこの数に等しい (外した物件は 1 件につき 1 つの原因に数える)。
+   */
   readonly yieldUnmeasured: number;
+  /** そのうち**取得価格**が読めなかった物件数 (割る物が無い)。 */
+  readonly yieldUnmeasuredPrice: number;
+  /**
+   * そのうち**家賃**が数として読めなかった物件数 (2026-09-24 · パス 446)。
+   *
+   * 取得価格は読めているので割れはするが、分子が分からない。0% として平均すると
+   * 全体が下がる —— 実測で 3 件そろい 5.50% が 4 件目 1 件で **4.13%** になり、
+   * `yieldScopeNote` は 1 文も出さなかった (その文自身が「0% として平均すると
+   * 全体が下がります」と名指ししている当の失敗である)。
+   *
+   * **本当に 0 円の家賃は外さない** —— 入力欄は家賃 0 を受け付けるので、0 は
+   * 打ち込まれた事実でありうる (空室の表面利回り 0% は既存の検査が仕様として
+   * 留めている)。外すのは「読めなかった」側だけである。
+   */
+  readonly yieldUnmeasuredRent: number;
   /** 同梱の見本 (snapshot) 行の件数。 */
   readonly demoCount: number;
   /** 利用者が登録した行の件数。 */
@@ -279,6 +393,20 @@ export interface RealEstatePortfolio {
    * 「稼働率 100% / 月次家賃収入 ¥0」は両立しない。
    */
   readonly occupiedWithoutRent: number;
+  /**
+   * そのうち家賃が**数として読めなかった**物件数 (`occupiedWithoutRent` の内数)。
+   *
+   * 残り (`occupiedWithoutRent − occupiedWithoutRentUnreadable`) は家賃が 0 円の
+   * 物件で、**直す手が違う** —— 0 円のほうは家賃を入力すればよく、読めないほうは
+   * 打ち込んだ値が残っているので消して入れ直すしかない。原因を取り違えた断りは
+   * 直す手ごと誤らせる (パス 388)。
+   */
+  readonly occupiedWithoutRentUnreadable: number;
+  /**
+   * 月次経費・月次返済が数として読めず 0 として差し引いた物件数 (パス 446)。
+   * **月次キャッシュフローはその分だけ過大に出ている。**
+   */
+  readonly unreadableCostRows: number;
 }
 
 /**
@@ -286,14 +414,60 @@ export interface RealEstatePortfolio {
  * **画面がこの 1 文を出す** (数字だけ直しても、なぜ件数が合わないかは読めない)。
  */
 export function yieldScopeNote(p: RealEstatePortfolio): string | null {
-  if (p.yieldUnmeasured === 0) return null;
-  return `取得価格が読めない ${p.yieldUnmeasured} 件は表面利回りの平均から外しています（測れた ${p.yieldMeasured} 件の平均です）。0% として平均すると全体が下がります。`;
+  const said: string[] = [];
+  if (p.yieldUnmeasuredPrice > 0) {
+    said.push(
+      `取得価格が読めない ${p.yieldUnmeasuredPrice} 件は表面利回りの平均から外しています（測れた ${p.yieldMeasured} 件の平均です）。0% として平均すると全体が下がります。`,
+    );
+  }
+  if (p.yieldUnmeasuredRent > 0) {
+    said.push(
+      `家賃が数として読めない ${p.yieldUnmeasuredRent} 件は表面利回りの平均から外しています（取得価格は読めていますが、分子が分かりません）。打ち込んだ値は残っていますが数として読めないので、設定の「形式の合わないレコード」から消して入れ直してください。`,
+    );
+  }
+  return said.length === 0 ? null : said.join('');
 }
 
-/** 入居中なのに家賃が読めない物件が在ることの断り。1 件も無ければ `null`。 */
+/**
+ * 入居中なのに家賃が家賃収入に入っていない物件が在ることの断り。1 件も無ければ `null`。
+ *
+ * **原因を 2 つに分ける** (2026-09-24 · パス 446) —— 直す前は 1 文で
+ * 「家賃が読めないため」と述べていたが、家賃 0 円は**入力欄が受け付ける値**
+ * (`parsePropertyEntry` は 0 以上を通す) なので、0 と打ち込んだ利用者にとって偽だった。
+ * しかも直す手が違う: 0 円のほうは家賃を入力すればよく、読めないほうは打ち込んだ値が
+ * 残っているので消して入れ直すしかない (パス 388)。
+ */
 export function occupiedWithoutRentNote(p: RealEstatePortfolio): string | null {
-  if (p.occupiedWithoutRent === 0) return null;
-  return `入居中と記録されている ${p.occupiedWithoutRent} 件は家賃が読めないため、月次家賃収入に含まれていません（入居率にはこの物件も数えています）。`;
+  const zero = p.occupiedWithoutRent - p.occupiedWithoutRentUnreadable;
+  const said: string[] = [];
+  if (zero > 0) {
+    said.push(
+      `入居中と記録されている ${zero} 件は家賃が 0 円のため、月次家賃収入に含まれていません（入居率にはこの物件も数えています）。空室でないなら家賃を入力してください。`,
+    );
+  }
+  if (p.occupiedWithoutRentUnreadable > 0) {
+    said.push(
+      `入居中と記録されている ${p.occupiedWithoutRentUnreadable} 件は家賃が数として読めないため、月次家賃収入に含まれていません（入居率にはこの物件も数えています）。設定の「形式の合わないレコード」から消して入れ直してください。`,
+    );
+  }
+  return said.length === 0 ? null : said.join('');
+}
+
+/**
+ * **月次経費・月次返済が読めず 0 として差し引いた**ことの断り (2026-09-24 · パス 446)。
+ *
+ * 直す前はこの 2 欄だけが黙っていた —— 実測で月次キャッシュフローが
+ * ¥70,000 → ¥80,000 / ¥90,000 と**過大**に出て、断りは 1 文も無い。
+ * 隣の 2 欄 (家賃・取得価格) は 2026-09-08 から原因を述べており、
+ * 同じ関数の 4 欄のうち 2 つだけがその前提を持たなかった。
+ *
+ * **向きを名乗る** —— 「0 として差し引いた」とだけ言うと、読み手は手残りが
+ * 小さく出ていると読みうる。過大であることは、この紙を見て買い増しを決める人に
+ * とって逆向きの誤りである。
+ */
+export function unreadableCostNote(p: RealEstatePortfolio): string | null {
+  if (p.unreadableCostRows === 0) return null;
+  return `月次経費・月次返済が数として読めない ${p.unreadableCostRows} 件は 0 円として差し引いています。月次キャッシュフローはその分だけ過大に出ています。打ち込んだ値は残っていますが数として読めないので、設定の「形式の合わないレコード」から消して入れ直してください。`;
 }
 
 /**
@@ -313,6 +487,12 @@ export function computeRealEstatePortfolio(
   let yieldMeasured = 0;
   let occupiedCount = 0;
   let occupiedWithoutRent = 0;
+  // 原因ごとの内訳 (パス 446)。**外した物件は 1 件につき 1 つの原因に数える** ——
+  // 取得価格が読めなければ家賃が読めても割れないので、取得価格の側を先に見る。
+  let occupiedWithoutRentUnreadable = 0;
+  let yieldUnmeasuredPrice = 0;
+  let yieldUnmeasuredRent = 0;
+  let unreadableCostRows = 0;
   // 見本を除いた側 (パス 187)。基準の運営費用・返済額は snapshot の値なので
   // **自分の分には入れない** —— 入れると、自分の物件 1 件の人が見本の
   // 経費 ¥380,000 と返済 ¥200,000 を背負い、手残り +¥5,000 が −¥575,000 に
@@ -324,12 +504,18 @@ export function computeRealEstatePortfolio(
   for (const p of properties) {
     const isDemo = p.demo === true;
     if (isDemo) demoCount += 1;
+    // **保管値が読めなかった欄を鍵で問う** (綴りは持たない · パス 446)。
+    const rentUnreadable = unreadablePropertyField('monthlyRent', p.unreadableFields);
     if (p.occupied) {
       grossRent += p.monthlyRent;
       if (!isDemo) userRent += p.monthlyRent;
       occupiedCount += 1;
-      // 入居中なのに家賃が 0 = 読めない。数えて画面が述べる (上の欄の脇)。
-      if (!(p.monthlyRent > 0)) occupiedWithoutRent += 1;
+      // 入居中なのに家賃が 0 円。数えて画面が述べる (上の欄の脇) ——
+      // **原因は 2 つ**で、0 円と入力された場合と、打ち込んだ値が読めない場合。
+      if (!(p.monthlyRent > 0)) {
+        occupiedWithoutRent += 1;
+        if (rentUnreadable) occupiedWithoutRentUnreadable += 1;
+      }
     }
     expenses += p.monthlyExpenses ?? 0;
     loan += p.monthlyLoan ?? 0;
@@ -337,10 +523,23 @@ export function computeRealEstatePortfolio(
       userExpenses += p.monthlyExpenses ?? 0;
       userLoan += p.monthlyLoan ?? 0;
     }
+    // 経費・返済が読めない行は 0 として差し引いている = **手残りが過大に出る**。
+    if (
+      unreadablePropertyField('monthlyExpenses', p.unreadableFields) ||
+      unreadablePropertyField('monthlyLoan', p.unreadableFields)
+    ) {
+      unreadableCostRows += 1;
+    }
     // 表面利回りは表示と同じく物件ごとに小数第 1 位へ丸めてから平均する
     // (snapshot の portfolioYield 6.15 = (4.8+6.2+5.5+8.1)/4 と一致させる)。
     // **取得価格が読めない物件は分子にも分母にも入れない** (0% は主張である)。
-    if (p.purchasePrice > 0) {
+    // **家賃が読めない物件も分子にも分母にも入れない** (パス 446) —— 0% として
+    // 足すと平均が下がり、その 1 件はどの断りにも現れない (実測 5.50% → 4.13%)。
+    if (p.purchasePrice <= 0) {
+      yieldUnmeasuredPrice += 1;
+    } else if (rentUnreadable) {
+      yieldUnmeasuredRent += 1;
+    } else {
       yieldSum += Math.round(((p.monthlyRent * 12) / p.purchasePrice) * 1000) / 10;
       yieldMeasured += 1;
     }
@@ -355,6 +554,8 @@ export function computeRealEstatePortfolio(
     occupancyRate: count > 0 ? Math.round((occupiedCount / count) * 10000) / 10000 : null,
     yieldMeasured,
     yieldUnmeasured: count - yieldMeasured,
+    yieldUnmeasuredPrice,
+    yieldUnmeasuredRent,
     demoCount,
     userCount: count - demoCount,
     userOnly: {
@@ -364,6 +565,8 @@ export function computeRealEstatePortfolio(
       netCashflow: userRent - userExpenses - userLoan,
     },
     occupiedWithoutRent,
+    occupiedWithoutRentUnreadable,
+    unreadableCostRows,
   };
 }
 

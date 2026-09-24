@@ -114,14 +114,23 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
     expect(t).toContain('0% として平均すると全体が下がります');
   });
 
-  it('★ 入居中なのに家賃が読めない物件を足すと、家賃に入っていない旨を述べる', async () => {
+  /**
+   * **原因は 2026-09-24 (パス 446) に 2 つへ分けた。** ここは家賃の欄そのものが
+   * 無い控えなので「読めなかった」ではなく **0 円**である —— 家賃 0 は入力欄が
+   * 受け付ける値 (`parsePropertyEntry` は 0 以上を通す) なので、直す手は
+   * 「家賃を入力する」であって「消して入れ直す」ではない (パス 388)。
+   */
+  it('★ 入居中なのに家賃が 0 円の物件を足すと、家賃に入っていない旨を述べる', async () => {
     await getRecordStore().insert(PROPERTIES_COLLECTION, { name: '家賃の無い物件', type: '区分', purchasePrice: 20_000_000, occupied: true });
-    await mountPage('入居中と記録されている 1 件は家賃が読めないため');
+    await mountPage('入居中と記録されている 1 件は家賃が 0 円のため');
     const box = scopeBox();
     expect(box).not.toBeNull();
     const t = (box!.textContent ?? '').replace(/\s+/g, ' ');
-    expect(t).toContain('入居中と記録されている 1 件は家賃が読めないため');
+    expect(t).toContain('入居中と記録されている 1 件は家賃が 0 円のため');
     expect(t).toContain('月次家賃収入に含まれていません');
+    expect(t).toContain('家賃を入力してください');
+    // **逆向き** —— 0 円の利用者に「読めない」とは言わない (直す手が違う)。
+    expect(t).not.toContain('家賃が数として読めない');
   });
 
   it('★ 対照: 取得価格も家賃も在る物件を足しても利回りの断りは出ない', async () => {

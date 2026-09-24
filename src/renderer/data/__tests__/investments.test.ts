@@ -163,6 +163,9 @@ describe('computeRealEstatePortfolio', () => {
       grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0,
       portfolioYield: null, occupancyRate: null,
       yieldMeasured: 0, yieldUnmeasured: 0, occupiedWithoutRent: 0,
+      // 原因ごとの内訳 (パス 446)。0 件なら全部 0。
+      yieldUnmeasuredPrice: 0, yieldUnmeasuredRent: 0,
+      occupiedWithoutRentUnreadable: 0, unreadableCostRows: 0,
       // 見本と自分の分の内訳 (パス 187)。0 件なら両方 0。
       demoCount: 0, userCount: 0,
       userOnly: { grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0 },
@@ -633,9 +636,15 @@ describe('normalizeProperty', () => {
     expect(p.monthlyLoan).toBe(0);
   });
 
+  // **名簿を外して元の主張をそのまま当てる** (パス 446)。畳んで
+  // `toEqual({ ...full, unreadableFields: [] })` と書くと「名簿さえ空なら値は
+  // 何でもよい」になるので、名簿が空であることは別に主張する
+  // (パス 444 が `balanceSheet.test.ts` で下したのと同じ判断)。
   it('対照: 揃った控えは 1 つも書き換えない', () => {
     const full = { ...core, monthlyExpenses: 50_000, monthlyLoan: 120_000 };
-    expect(normalizeProperty(full)).toEqual(full);
+    const { unreadableFields, ...values } = normalizeProperty(full);
+    expect(values).toEqual(full);
+    expect(unreadableFields).toEqual([]);
   });
 
   it('NaN / ±∞ の欄も 0 に倒す (数であるだけでは通さない)', () => {
