@@ -47,56 +47,10 @@ import { STUDIO_TEMPLATES } from '../docStudioData';
 import { checkDoc } from '../docStudioChecks';
 import { countByLevel, type IssueLevel } from '../../../shared/issueLevel';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
+// 走査の道具は検査 2 本が読む 1 つ (パス 438 で共有へ出した —— 写しにしない)。
+import { messageSource, objectsMatching } from './docCheckSource';
 
 const SRC = readOriginalSource(join(__dirname, '..', 'docStudioChecks.ts'));
-
-/**
- * ファイル全体の `{` と `}` を対応づける (文字列リテラルは飛ばす)。
- *
- * **綴りで切り出さない** —— この検査の最初の版は `out.push({` だけを探し、
- * `return [{ level: 'info' as const, … }]` の形の **13 件を 1 つも見なかった**
- * (実測 23 件中 10 件しか映らなかった)。パス 334 / 412 / 418 と同じ家系
- * (**綴りの針は、綴りでない物に動かされる**) なので、器そのものを対応づける。
- */
-function bracePairs(src: string): ReadonlyMap<number, number> {
-  const open: number[] = [];
-  const pair = new Map<number, number>();
-  for (let i = 0; i < src.length; i += 1) {
-    const ch = src[i]!;
-    if (ch === '`' || ch === "'" || ch === '"') {
-      const q = ch;
-      i += 1;
-      while (i < src.length && src[i] !== q) {
-        if (src[i] === '\\') i += 1;
-        i += 1;
-      }
-    } else if (ch === '{') open.push(i);
-    else if (ch === '}') {
-      const o = open.pop();
-      if (o !== undefined) pair.set(o, i);
-    }
-  }
-  return pair;
-}
-
-/** `level: 'info'` を囲むいちばん内側のオブジェクトリテラルを返す。 */
-function infoObjects(src: string): readonly string[] {
-  const pairs = bracePairs(src);
-  const opens = [...pairs.keys()].sort((a, b) => a - b);
-  const out: string[] = [];
-  const re = /level:\s*'info'/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(src)) !== null) {
-    let best: readonly [number, number] | null = null;
-    for (const o of opens) {
-      if (o > m.index) break;
-      const c = pairs.get(o)!;
-      if (c > m.index && (best === null || o > best[0])) best = [o, c];
-    }
-    if (best) out.push(src.slice(best[0], best[1] + 1));
-  }
-  return out;
-}
 
 /** 台帳の鍵は**利用者が読む文の書き出し**。文を書き換えたら分類を問い直すべきなので、それでよい。 */
 const keyOf = (message: string): string => message.replace(/\s+/g, '').slice(0, 20);
@@ -128,8 +82,8 @@ const INFO_LEDGER: readonly InfoRow[] = [
     why: '同上 —— 印紙は交付する紙に貼る。文書の効力には影響しない。' },
   { key: '継続的取引の基本となる契約書は印紙税第7', kind: 'at-issuance',
     why: '同上 —— 印紙税の話で、契約の成立とは別。' },
-  { key: '紙で交付する受取書は、受取金額5万円以上', kind: 'at-issuance',
-    why: '同上 —— 受取書に貼る印紙。領収の効力は変わらない。' },
+  { key: '紙で交付する受取書には収入印紙が必要です', kind: 'at-issuance',
+    why: '同上 —— 受取書に貼る印紙。領収の効力は変わらない。階級と税額はパス 438 で金額から導くようにした。' },
   { key: '役員変更は原則として就任の日から2週間以', kind: 'post-issuance',
     why: '変更登記は議事録を作った後の手続で、2 週間の期限つき。' },
   { key: '本店移転・役員変更は2週間以内の変更登記', kind: 'post-issuance',
@@ -148,7 +102,7 @@ const INFO_LEDGER: readonly InfoRow[] = [
     why: '誰を対象に記録するかの助言。特定の 1 枚の交付を止める話ではない。' },
   { key: '時季・日数・基準日の3点を労働者ごとに明', kind: 'post-issuance',
     why: '管理簿を作った後の保存 (期間中および満了後 3 年間)。' },
-  { key: '借入円を年で返す場合、元金だけで年', kind: 'informational',
+  { key: '借入円を年で返す場合、元金だけで年円の返', kind: 'informational',
     why: '返済額の試算を示すだけ。やる事も直す事も無い。' },
   { key: '契約を結んだだけでは委託先の監督義務を果', kind: 'post-issuance',
     why: '委託先の選定・定期確認・再委託の記録。契約した後に続く義務。' },
@@ -162,10 +116,10 @@ const INFO_LEDGER: readonly InfoRow[] = [
 
 function infoMessages(): readonly string[] {
   const out: string[] = [];
-  for (const body of infoObjects(SRC)) {
-    const m = /message:\s*([`'])([\s\S]*?)\1/.exec(body);
-    // 補間 (`${…}`) は落とす —— 値によって変わるので鍵にできない。
-    if (m) out.push(m[2]!.replace(/\$\{[^}]*\}/g, ''));
+  // 補間 (`${…}`) は `messageSource` が落とす —— 値によって変わるので鍵にできない。
+  for (const body of objectsMatching(SRC, /level:\s*'info'/)) {
+    const msg = messageSource(body);
+    if (msg !== null) out.push(msg);
   }
   return out;
 }
