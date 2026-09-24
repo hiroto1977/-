@@ -34,9 +34,13 @@ import {
   MANUAL_METRICS_COLLECTION,
   MANUAL_OVERRIDES_COLLECTION,
   belongsToScope,
+  inertOverrideNote,
+  inertOverrides,
+  overrideCause,
   parseManualMetric,
   sectionsFor,
   hasCatalog,
+  type InertOverride,
   type ManualMetricEntry,
   type ManualOverrideEntry,
 } from '../data/manualData';
@@ -84,6 +88,14 @@ export function ManualDataSection({ scope }: { scope: string }) {
    */
   const myMetrics = metrics.records.filter((r) => belongsToScope(scope, r.data));
   const myOverrides = overrides.records.filter((r) => belongsToScope(scope, r.data));
+  /*
+   * **効く行と効かない行を、同じ 1 つの判定 (`overrideCause`) で分ける**
+   * (2026-09-24 · パス 447)。置き換え欄の緑の札は「効いている」という主張なので、
+   * 捨てられる行にそれを出すと**適用されていない値を適用されたと名乗る**
+   * (実測: 値が `NaN` の行は「手入力 NaN 円」と緑で出ながら、画面の数字は自動値のまま)。
+   */
+  const inert = inertOverrides(scope, myOverrides);
+  const appliedOverrides = myOverrides.filter((r) => overrideCause(scope, r.data) === null);
 
   return (
     <div
@@ -120,7 +132,8 @@ export function ManualDataSection({ scope }: { scope: string }) {
         <span>事業・数値の手入力</span>
         <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-mute)' }}>
           この画面に任意の数値を足す / 置き換える（{myMetrics.length} 件
-          {myOverrides.length > 0 ? ` ・置き換え ${myOverrides.length} 件` : ''}）
+          {myOverrides.length > 0 ? ` ・置き換え ${myOverrides.length} 件` : ''}
+          {inert.length > 0 ? `（うち ${inert.length} 件は未適用）` : ''}）
         </span>
       </button>
 
@@ -143,7 +156,7 @@ export function ManualDataSection({ scope }: { scope: string }) {
           {hasCatalog(scope) && (
             <Overrides
               scope={scope}
-              rows={myOverrides}
+              rows={appliedOverrides}
               onSave={async (path, value) => {
                 const existing = myOverrides.find((r) => r.data.path === path);
                 if (existing !== undefined) await overrides.edit(existing.id, { value });
@@ -151,6 +164,16 @@ export function ManualDataSection({ scope }: { scope: string }) {
               }}
               onClear={(id) => overrides.remove(id)}
             />
+          )}
+
+          {/*
+            **`hasCatalog` では囲わない** —— 一覧を持たない画面に保存された上書きは、
+            囲うとこの欄ごと消えて「数えられるだけで見ることも消すこともできない」
+            状態になる (実測: `linux` に 1 件置くと見出しは「置き換え 1 件」と言い、
+            パネルは出ず「削除」は 0 件)。逃げ口は保存できた所に置く。
+          */}
+          {inert.length > 0 && (
+            <InertOverrides rows={inert} onRemove={(id) => overrides.remove(id)} />
           )}
         </div>
       )}
@@ -514,6 +537,54 @@ function Overrides({
               </div>
             );
           })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * 保存されているのに効かない上書きの一覧 (2026-09-24 · パス 447)。
+ *
+ * 置き換え欄は**一覧 (catalog) を並べる**ので、一覧に無いパスの行は行そのものが
+ * 生えない。ここが**その行を見せて消せる唯一の面**である。
+ *
+ * パスは保管した文字列なので `displayField` の天井を通す —— 形の表は
+ * `path: str` としか言わず長さを見ないので、復元や別の道具が入れた行は
+ * いくらでも長くなりうる (パス 419 / 420 の家系)。天井は共有の既定 (256 字) で、
+ * 一覧のパスは最長 30 字ほどなので**正当な値は 1 字も切らない**。
+ */
+function InertOverrides({
+  rows,
+  onRemove,
+}: {
+  rows: readonly InertOverride[];
+  onRemove: (id: string) => Promise<void> | void;
+}) {
+  const note = inertOverrideNote(rows);
+  return (
+    <div data-inert-overrides style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <Heading text="使われていない置き換え" hint="保存されていますが、計算には使われていません。" />
+      {note !== null && (
+        <div role="alert" style={{ fontSize: 11, color: 'var(--warning)', lineHeight: 1.6 }}>
+          ⚠ {note}
+        </div>
+      )}
+      {rows.map((r) => (
+        <div
+          key={r.id}
+          data-inert-override={r.cause}
+          style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}
+        >
+          <span style={{ fontSize: 12, fontFamily: 'monospace' }}>
+            {displayField(r.path)}
+          </span>
+          <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+            {Number.isFinite(r.value) ? r.value.toLocaleString('ja-JP') : String(r.value)}
+          </span>
+          <button type="button" onClick={() => fireReported(onRemove(r.id))} style={{ fontSize: 12 }}>
+            削除
+          </button>
         </div>
       ))}
     </div>

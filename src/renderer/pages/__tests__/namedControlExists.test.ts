@@ -72,6 +72,12 @@ const LEDGER: readonly Row[] = [
   { name: '接続テスト', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/OllamaPage.tsx', why: '同じ Ollama 画面の疎通確認ボタン —— 文も同じ画面の案内文なので、押す所は目の前に在る。' },
   { name: '暗号化パスワード', kind: 'same-screen-control', renderedIn: 'src/renderer/components/BackupPanel.tsx', why: '同じ部品の入力欄 (placeholder がその綴りを出す)。' },
   { name: '更新', kind: 'same-screen-control', renderedIn: 'src/renderer/components/StatusBar.tsx', why: '全サービス画面が載せる共通の取得ボタン —— freee の空状態がそれを名指しする。' },
+  {
+    name: '削除',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/components/ManualDataSection.tsx',
+    why: '効かない上書きを消すボタン (2026-09-24 · パス 447)。文は `manualData.ts` が組むが、押す所は同じ欄の同じ行に在る —— その行を見せる面はここだけなので、別の画面へ送ってはいけない。',
+  },
   { name: 'KPI / BEP', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
   { name: '売上集計', kind: 'screen-label', why: '同じく画面の名前で、同じ検査が `SERVICES` と突き合わせる。' },
   { name: 'Access token', kind: 'third-party', why: 'Azure ポータル側のタブで、このアプリの画面ではない —— 実物の綴りを当てに行けない (相手が変えたら文も古びるが、それは相手の UI の話である)。' },

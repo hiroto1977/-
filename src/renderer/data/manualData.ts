@@ -28,6 +28,7 @@
 
 import {
   applyOverrides,
+  findFieldIn,
   groupFieldsBySection,
   parseCustomMetric,
   type AppliedOverviewOverrides,
@@ -221,6 +222,115 @@ export function overridesForScope(
   records: readonly ManualOverrideEntry[],
 ): readonly ManualOverrideEntry[] {
   return records.filter((r) => belongsToScope(scope, r));
+}
+
+/**
+ * 保存されているのに**効かない**上書きの原因。
+ *
+ * - `no-field` — その画面の一覧 (allowlist) にそのパスが無い。欄の名前を変えた・
+ *   欄を無くした後に、前に保存した行が残るとこうなる。
+ * - `bad-value` — 値が数として読めない (`NaN` / `±Infinity` / 非数)。
+ */
+export type InertOverrideCause = 'no-field' | 'bad-value';
+
+/** 効かない上書き 1 件。消せるように id を持つ。 */
+export interface InertOverride {
+  readonly id: string;
+  readonly path: string;
+  readonly value: number;
+  readonly cause: InertOverrideCause;
+}
+
+/**
+ * その上書きが効かない原因。効くなら `null`。
+ *
+ * ★ **2026-09-24 (パス 447) まで、この判定はどこにも無かった。**
+ * `applyOverrides` は捨てた物を `ignored` で返すが、**出荷コードにその読み手は
+ * 0 件**だった (走査で確認)。実測 (直す前・`kpi` の画面に、一覧に在る 1 件と
+ * 一覧に無い 1 件を保存する):
+ *
+ * | 見るもの | 直す前 |
+ * | --- | --- |
+ * | 見出しの件数 | **置き換え 2 件** |
+ * | 一覧に出る行 | **1 行** |
+ * | 「自動に戻す」 | **1 件** |
+ * | 孤児のパスの綴り | **画面に 1 字も無い** |
+ *
+ * 並べているのは `myOverrides` ではなく**一覧 (catalog)** なので、一覧に無いパスは
+ * 行そのものが生えない —— **数えるのに出さない**形で、
+ * `belongsToScope` の docblock が名指しする パス 61 / 170 の家系
+ * (「3 件」と書いてあるのに 2 行しか出ない) が別の戸から戻っていた。
+ * しかも `hasCatalog(scope)` が false の画面 (実測 `linux`) では欄ごと出ないので、
+ * その行は**数えられるだけで、見ることも消すこともできない** ——
+ * 逃げ口が「すべてのデータを削除」しか無い (法則 `escape-hatch-stays-open`)。
+ *
+ * **点検パネルは孤児を見つけない** (実測: 形の表は `path: str` なので通る)。
+ * 値が数でない側は形の表が拒むので点検パネルが見つけるが、**画面の札は
+ * 緑で「手入力 NaN 円」と出る** —— 適用されていないのに適用されたと名乗る。
+ *
+ * **順序は `applyOverrides` と同じ** —— 一覧を先に引き、それから値を見る。
+ * 逆にすると、パスも値も壊れている行について
+ * 「計算が使った理由」と「画面が述べる理由」が食い違う (パス 401 の形)。
+ *
+ * ★ **3 つ目の原因はここからは見えない** —— `applyOverrides` は
+ * 「一覧に在るが土台のオブジェクトにその階層が無い」ときも捨てる。これは
+ * 保存された記録ではなく**一覧と土台の食い違い**で、しかもその行は一覧に
+ * 在るので画面に出ており「自動に戻す」で消せる (逃げ口は開いている)。
+ */
+export function overrideCause(
+  scope: ManualScope,
+  entry: { readonly path: string; readonly value: number },
+): InertOverrideCause | null {
+  if (findFieldIn(catalogFor(scope), entry.path) === null) return 'no-field';
+  if (!Number.isFinite(entry.value)) return 'bad-value';
+  return null;
+}
+
+/**
+ * その画面の上書きのうち、保存されているのに効かないもの。
+ *
+ * 画面はこれを並べて「削除」を出し、逆に**効く行だけ**を置き換え欄の札に使う ——
+ * 判定を 2 度書かず、同じ `overrideCause` の答えで分ける。
+ */
+export function inertOverrides(
+  scope: ManualScope,
+  records: readonly { readonly id: string; readonly data: ManualOverrideEntry }[],
+): readonly InertOverride[] {
+  const out: InertOverride[] = [];
+  for (const r of records) {
+    if (!belongsToScope(scope, r.data)) continue;
+    const cause = overrideCause(scope, r.data);
+    if (cause === null) continue;
+    out.push({ id: r.id, path: r.data.path, value: r.data.value, cause });
+  }
+  return out;
+}
+
+/**
+ * 効かない上書きについての断り。無ければ `null`。
+ *
+ * **原因ごとに別の文**にする —— 直す手が違うためで、片方の文で両方を述べると
+ * その人がしていない失敗を告げることになる (パス 388 / 443 / 446 と同じ規則)。
+ * 逃げ口はどちらも同じ行の「削除」なので、**その綴りで名指しする**
+ * (法則 `escape-hatch-stays-open`・パス 426 の「名指しした操作子は画面に在る」)。
+ *
+ * 文は data 層が持つ —— `.tsx` は変異検査の母集団の外なので、画面側に置くと
+ * 「どちらの文が出るか」を誰も測らない (パス 386 / 445 と同じ判断)。
+ */
+export function inertOverrideNote(rows: readonly InertOverride[]): string | null {
+  if (rows.length === 0) return null;
+  const noField = rows.filter((r) => r.cause === 'no-field').length;
+  const badValue = rows.filter((r) => r.cause === 'bad-value').length;
+  const said: string[] = [];
+  if (noField > 0) {
+    said.push(
+      `${noField} 件は、この画面の置き換えられる欄にそのパスがありません（欄の名前が変わった・欄が無くなった）。`,
+    );
+  }
+  if (badValue > 0) {
+    said.push(`${badValue} 件は、値が数として読めません。`);
+  }
+  return `${said.join('')}下の数値は保存されていますが計算には使われていません。要らなければ各行の「削除」で消せます。`;
 }
 
 /**
