@@ -83,6 +83,7 @@ type Kind = 'data' | 'measure-next';
 const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/main/clients/talent.ts': { kind: 'measure-next', why: '人材の採用判定と育成計画を組む fetcher。判断を持つので入れる側だが、未測定。' },
   'src/renderer/cloud/cloudProviderAdapter.ts': { kind: 'measure-next', why: '同期計画を実 I/O へ写す薄いラッパ。純粋核 (cloudSync.ts) は分母に在るが、写す側が外。' },
+  'src/renderer/data/aiCredentialFields.ts': { kind: 'data', why: 'エージェント設定の入力欄の表 (ラベルと placeholder の宣言)。「読める欄は書ける」の判定は data/__tests__/aiCredentialFields.test.ts が母集団 (AI_CREDENTIAL_STRING_KEYS) と両方向で、描画は pages/__tests__/aiCredentialFieldsWritable.test.ts が実物の DOM で見る。' },
   'src/renderer/data/assistantContext.ts': { kind: 'measure-next', why: 'AI へ送る文脈を組む純ロジック。何を入れ何を落とすかを決めるので、送信内容そのものを左右する。' },
   'src/renderer/data/hydroponicsLog.ts': { kind: 'measure-next', why: '運転記録の保存と読み戻し。壊れた保存値の扱いを決める (パス 120 の家系)。' },
   'src/renderer/data/kessanSheets.ts': { kind: 'measure-next', why: '計算書類 4 点をどの紙に載せるかの切り分け。会社法435条2項の範囲を決める。' },

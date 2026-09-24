@@ -27,8 +27,20 @@ const SRC = path.resolve(__dirname, '../..');
 /** 宣言してよい token。`on` は「ブラウザに任せる」なので秘密の欄では選べない。 */
 const ALLOWED_TOKENS: readonly string[] = ['off', 'new-password', 'current-password'];
 
-/** 走査が実物に当たっていることの床 (空の母集団で通らない)。実測 2026-09-11: 16。 */
-const POPULATION_FLOOR = 16;
+/**
+ * 走査が実物に当たっていることの床 (空の母集団で通らない)。実測 2026-09-11: 16。
+ *
+ * **2026-09-24 (パス 450) に 16 → 13 へ下げた。** `AssistantPage` の資格情報パネルが
+ * 4 つの秘密の欄を手書きで並べるのをやめ、`data/aiCredentialFields.ts` の表から
+ * 組むようにしたので、**この走査が数える字面は 4 → 1 に縮む** (欄の数は変わらない)。
+ *
+ * 縮んだのは数え方であって守りではない ——
+ * `pages/__tests__/aiCredentialFieldsWritable.test.ts` が**描いた DOM で**
+ * 秘密の欄を 1 つ残らず見る (`type === 'password'` かつ `autocomplete === 'off'`)。
+ * 床は「針が死んでいないか」だけを言う物なので、実測に合わせて下げる
+ * (実測へ張り付けた床が「直した日に落ちる門」になる形は パス 378 で外した)。
+ */
+const POPULATION_FLOOR = 13;
 
 interface Field {
   /** `src/` からの相対の道 + 行。 */

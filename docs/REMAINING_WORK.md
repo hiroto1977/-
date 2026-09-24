@@ -1,5 +1,37 @@
 # Service Hub — 残りの作業手順書
 
+## パス 450 で測って、何も無かった軸 (2026-09-24)
+
+パス 449 の技 (**面の側から数え、読み手が在って書き手が 0 件の物を探す**) を
+localStorage の外へ広げた。**4 軸のうち 3 つは何も無かった** —— 次に同じ技を
+使う人が同じ所を測り直さないように、測った事実を残す。
+
+| 軸 | 実測 | 判定 |
+| --- | --- | --- |
+| **sessionStorage の 4 鍵** (`pkce.verifier` / `state` / `clientId` / `redirectUri`) | 書き・読み・消しの 3 つとも `oauth/pkceSession.ts` **ただ 1 つ**が持ち、鍵の一覧も同ファイルの `KEYS` 1 つ | **対称** —— 扉が 1 つなので非対称を作れない |
+| **金庫 (IndexedDB) の `VaultMeta` 11 欄** | `recoveryVersion` を含め**全欄が書き手を持つ** (走査で読み手 2〜5 / 書き手 1〜7) | 何も無し |
+| **main の userData の状態ファイル** | `service-hub-window.json` の 2 欄は `sanitizeWindowPrefs` を**読み書きの両方**が通る (入口と出口が同じ関門 —— この家系の正しい形) | 何も無し |
+| **環境変数 13 個** | すべて `?? ''` へ倒れ、`oauthSupported` / `requiresClientSecret` が「未設定」として扱う | 何も無し (ただし**隣で本物が出た** —— 下記) |
+
+**本物は 4 つ目の軸の隣に在った** —— 環境変数を数えていて OAuth の `clientSecret`
+の非対称 (`clientAuth` が `'none'` の 4 プロバイダは secret を読まない) に気付き、
+そこから「資格情報の欄そのもの」を数え直したら `anthropicModel` / `openaiModel` /
+`geminiModel` が**出荷コードに書き手 0 件**だった (パス 450 で閉じた)。
+
+### 同じ技で測ったが今日は欠陥ではない物
+
+- **`teamradar` の `SERVICE_CREDENTIAL_USE` が `'action'`** —— ゲートは
+  「client モジュールが `token` という名前に触るか」で分類し、`teamradar.ts` は
+  `ctx.token` を `fetchTeamRadarSnapshot` へ素通しするだけ。`credentialUse.ts` の
+  docblock が**その限界を自分で述べている** (「触るが実は使っていない形は通る」)。
+  画面に入力欄が無いので**今日この資格情報を保存する道は無く**、欠陥ではない。
+  ただし `'action'` と宣言されている限り `unusedStoredCredentials` (設定の掃除の節)
+  には出ないので、**古い版が保存した値が在れば消す口が無い** —— 罠として残す。
+- **エージェント設定パネルの「まるごと置き換え」** —— フォームの 8 欄から組んだ
+  JSON で `setToken` を呼ぶので、今回打たなかった鍵は消える。**パネル自身が
+  「空欄は未変更ではなく「未設定」として保存」と述べている**ので、開示済みであり
+  欠陥ではない (述べていなければパス 432 の家系だった)。
+
 最終更新: 2026-09-24
 対象ブランチ: `claude/eager-brown-7cev3c`（既定ブランチは `main`）
 

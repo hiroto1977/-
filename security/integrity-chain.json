@@ -2159,6 +2159,14 @@
       "leafCount": 92,
       "note": "update integrity-chain.cjs,vitest.audit.config.ts",
       "hash": "5b6a4a278dbef7821f1d05bc93578c644ce25d4eae75ca19a4b10bb18b7310e7"
+    },
+    {
+      "index": 258,
+      "prevHash": "5b6a4a278dbef7821f1d05bc93578c644ce25d4eae75ca19a4b10bb18b7310e7",
+      "merkleRoot": "2b107539c6239f539315e10afc5ab6ecd1fe0a0f30f412f1ebb76cc673a71e0c",
+      "leafCount": 92,
+      "note": "update credentials.ts",
+      "hash": "911557dfbce3c75cacf12150deded2540c39d787230b816cb9b4b968b26ad8e2"
     }
   ],
   "tipManifest": {
@@ -2224,7 +2232,7 @@
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "9f226eb4ab625c9445b5e13c8ec6fab8b109048fd0776b041f9016088d3f7cf8",
-    "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",
+    "src/shared/ai/credentials.ts": "2f0ff1a2f26ddd5aec1ab9beb682e53c898716e720bdcfb72a255945d2e12315",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
     "src/shared/atlassianSite.ts": "fbbad4ce7a10f5731a44b0c3f902818285aadb6305aabd2a7522bac7aa3d8cf2",

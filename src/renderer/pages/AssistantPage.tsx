@@ -42,6 +42,11 @@ import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { checkTokenInput } from '../../shared/tokenInput';
+import {
+  AI_CREDENTIAL_FIELDS,
+  emptyAiCredentialForm,
+  type AiCredentialFormValues,
+} from '../data/aiCredentialFields';
 import type { ActionData } from '../../shared/actionData';
 
 interface ChatMessage {
@@ -55,30 +60,16 @@ interface ChatMessage {
   readonly provider?: string;
 }
 
-/** エージェント設定パネルの入力フィールド (保存時に空欄は除外)。 */
-interface AgentCredsForm {
-  default: string;
-  anthropic: string;
-  openai: string;
-  gemini: string;
-  ollamaUrl: string;
-  ollamaModel: string;
-  compatUrl: string;
-  compatKey: string;
-  compatModel: string;
-}
+/**
+ * エージェント設定パネルの入力フィールド (保存時に空欄は除外)。
+ *
+ * **欄は `data/aiCredentialFields.ts` が持つ** —— 手で並べていた 2026-09-24 まで、
+ * `anthropicModel` / `openaiModel` / `geminiModel` の 3 欄は「アプリが読むのに
+ * 画面からは書けない」状態だった (パス 450。理由と実測はあのファイルの docblock)。
+ */
+type AgentCredsForm = AiCredentialFormValues;
 
-const EMPTY_CREDS_FORM: AgentCredsForm = {
-  default: '',
-  anthropic: '',
-  openai: '',
-  gemini: '',
-  ollamaUrl: '',
-  ollamaModel: '',
-  compatUrl: '',
-  compatKey: '',
-  compatModel: '',
-};
+const EMPTY_CREDS_FORM: AgentCredsForm = emptyAiCredentialForm();
 
 interface Theme {
   readonly bg: string;
@@ -665,90 +656,39 @@ export function AssistantPage() {
               <option value="compat">OpenAI 互換 API</option>
             </select>
           </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            Anthropic API キー
-            <input
-              type="password"
-              autoComplete="off"
-              value={credsForm.anthropic}
-              placeholder="sk-ant-…"
-              aria-label="Anthropic API キー"
-              onChange={(e) => setCredsForm((f) => ({ ...f, anthropic: e.target.value }))}
-            />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            OpenAI API キー (ChatGPT)
-            <input
-              type="password"
-              autoComplete="off"
-              value={credsForm.openai}
-              placeholder="sk-…"
-              aria-label="OpenAI API キー"
-              onChange={(e) => setCredsForm((f) => ({ ...f, openai: e.target.value }))}
-            />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            Google Gemini API キー
-            <input
-              type="password"
-              autoComplete="off"
-              value={credsForm.gemini}
-              placeholder="AIza…"
-              aria-label="Google Gemini API キー"
-              onChange={(e) => setCredsForm((f) => ({ ...f, gemini: e.target.value }))}
-            />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            Ollama URL (ローカル)
-            <input
-              type="text"
-              value={credsForm.ollamaUrl}
-              placeholder="http://127.0.0.1:11434"
-              aria-label="Ollama URL"
-              onChange={(e) => setCredsForm((f) => ({ ...f, ollamaUrl: e.target.value }))}
-            />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            Ollama モデル (任意)
-            <input
-              type="text"
-              value={credsForm.ollamaModel}
-              placeholder="llama3.2"
-              aria-label="Ollama モデル"
-              onChange={(e) => setCredsForm((f) => ({ ...f, ollamaModel: e.target.value }))}
-            />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            互換 API ベース URL (LiteLLM / Groq 等)
-            <input
-              type="text"
-              value={credsForm.compatUrl}
-              placeholder="http://localhost:4000 または https://…/openai/v1"
-              aria-label="互換 API ベース URL"
-              onChange={(e) => setCredsForm((f) => ({ ...f, compatUrl: e.target.value }))}
-            />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            互換 API キー (任意)
-            <input
-              type="password"
-              autoComplete="off"
-              value={credsForm.compatKey}
-              placeholder="キー不要のサーバーは空欄"
-              aria-label="互換 API キー"
-              onChange={(e) => setCredsForm((f) => ({ ...f, compatKey: e.target.value }))}
-            />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            互換 API モデル
-            <input
-              type="text"
-              value={credsForm.compatModel}
-              placeholder="例: groq/llama-3.3-70b"
-              aria-label="互換 API モデル"
-              onChange={(e) => setCredsForm((f) => ({ ...f, compatModel: e.target.value }))}
-            />
-          </label>
+          {/*
+            * **入力の種類は式で書かない。** 秘密の欄と見せる欄を枝で分け、属性は字面で置く ——
+            * `__tests__/secretFieldAutocomplete.test.ts` は綴りで母集団を数えるので、
+            * 三項演算子で組むと**その欄が走査から消える** (2026-09-24 · パス 450 で
+            * 実際に母集団を 16 → 12 へ落とし、門が捕まえた)。
+            *
+            * 表から組むので**枝は 1 つずつ**になり、走査の母集団は 4 → 1 に縮む。
+            * 縮んだ分は `pages/__tests__/aiCredentialFieldsWritable.test.ts` が
+            * **描いた DOM で**受け持つ (秘密の欄は 1 つ残らず伏せ字 + 補完なし)。
+            */}
+          {AI_CREDENTIAL_FIELDS.map((f) => (
+            <label key={f.key} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {f.label}
+              {f.secret ? (
+                <input
+                  type="password"
+                  autoComplete="off"
+                  value={credsForm[f.key]}
+                  placeholder={f.placeholder}
+                  aria-label={f.aria}
+                  onChange={(e) => setCredsForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
+                />
+              ) : (
+                <input
+                  type="text"
+                  value={credsForm[f.key]}
+                  placeholder={f.placeholder}
+                  aria-label={f.aria}
+                  onChange={(e) => setCredsForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
+                />
+              )}
+            </label>
+          ))}
           <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 10, alignItems: 'center' }}>
             <button type="button" className="primary" onClick={() => void saveAgentCreds()}>
               保存
