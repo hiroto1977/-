@@ -22,6 +22,48 @@ export type ExecutionTargetKind = 'library' | 'storage' | 'unsupported';
 /** ストレージ書き込み先のレコードコレクション名。 */
 export const CONNECTOR_OUTPUT_COLLECTION = 'connector-output';
 
+/**
+ * 保存した 1 件を画面へ出すための読み口 (2026-09-24 · パス 448)。
+ *
+ * ★ **2026-09-24 まで、この collection を購読する画面は 1 つも無かった** (走査で確認)。
+ * 実行できる無料コネクタは **10 件**で、行き先は**ちょうど半分ずつ**に割れている:
+ *
+ * | 行き先 | 件数 | 画面に出るか | 消せるか |
+ * | --- | ---: | --- | --- |
+ * | `library` | **5** | ライブラリ画面に出る | 「削除」が在る |
+ * | `storage` (ここ) | **5** | **どの画面にも出ない** | **「すべてのデータを削除」だけ** |
+ *
+ * **同じパネルの同じボタンで、行き先だけが違う。** どちらも押すと
+ * 「ストレージに「7203」を記録しました。」「ライブラリに x.json を保存しました。」と
+ * **記録したことを告げる**のに、片方は見ることも消すこともできなかった
+ * (法則 `escape-hatch-stays-open`)。点検パネルは形が合う行を出さないので
+ * (実測: 3 件押した後「調べた 3 件 / 形式不正 0 件」)、そこにも現れない。
+ *
+ * 行は押すたびに 1 件増える。中身は画面が持つ見本の payload なので利用者のデータでは
+ * ないが、**暗号化された保管庫と同じ origin に溜まる** —— 立ち退き (`EVICTION_RECOVERY`)
+ * はトークンごと持っていくので、要らない行を消せることには意味がある。
+ */
+export interface ConnectorOutputRow {
+  readonly id: string;
+  readonly connectorId: string;
+  readonly key: string;
+}
+
+/**
+ * 保管した行を画面が並べられる形にする。**読めない行も落とさない** ——
+ * 落とすとその行だけが画面から消えて、また消せなくなる (パス 227 / 444 と同じ判断)。
+ * 欄が読めなければその旨を綴りで出し、**id は必ず返す** (消すのに要る唯一の鍵である)。
+ */
+export function connectorOutputRows(
+  records: readonly { readonly id: string; readonly data: Record<string, unknown> }[],
+): readonly ConnectorOutputRow[] {
+  return records.map((r) => ({
+    id: r.id,
+    connectorId: typeof r.data.connectorId === 'string' ? r.data.connectorId : '(読めません)',
+    key: typeof r.data.key === 'string' ? r.data.key : '(読めません)',
+  }));
+}
+
 /** targetService をシンク種別へ写す (free コネクタの target は storage / library)。 */
 export function targetKind(targetService: string): ExecutionTargetKind {
   if (targetService === 'library') return 'library';

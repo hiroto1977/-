@@ -17,7 +17,15 @@ import {
   UNKNOWN_CAPABILITY_PERMISSION,
   type HookDispatchStep,
 } from '../../shared/connectors/pluginRuntime';
-import { executeFreeConnector, type ExecutionResult } from '../data/connectorExecution';
+import {
+  CONNECTOR_OUTPUT_COLLECTION,
+  connectorOutputRows,
+  executeFreeConnector,
+  type ExecutionResult,
+} from '../data/connectorExecution';
+import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
+import { displayField } from '../../shared/apiResponse';
 import { realConnectorSinks } from '../data/connectorSinks';
 import {
   MCP_CONNECTORS_FREE,
@@ -78,6 +86,14 @@ export function ConnectorsPage() {
   // 実実行: 連携ごとの実行中フラグと直近結果。
   const [runningId, setRunningId] = useState<string | null>(null);
   const [runResults, setRunResults] = useState<Record<string, ExecutionResult>>({});
+  /*
+   * **storage へ書いた行を、押した所で見せて消せるようにする** (2026-09-24 · パス 448)。
+   * それまでこの collection を購読する画面は 1 つも無く、実行できる 10 件のうち
+   * **storage へ行く 5 件**だけが「記録しました」と言われたきり見ることも消すことも
+   * できなかった (library へ行く 5 件はライブラリ画面に出て「削除」も在る)。
+   */
+  const stored = useCollection<Record<string, unknown>>(CONNECTOR_OUTPUT_COLLECTION);
+  const storedRows = connectorOutputRows(stored.records);
 
   const runConnector = async (id: string) => {
     setRunningId(id);
@@ -240,6 +256,55 @@ export function ConnectorsPage() {
             </tbody>
           </table>
         </div>
+      </Section>
+
+      {/*
+        **storage へ書いた物の面** —— 押した所に置く (パス 447 と同じ判断: 逃げ口は
+        保存できた所に在る)。`library` 側はライブラリ画面が同じ役目を既に果たす。
+      */}
+      <Section title="ストレージに記録した実行結果" count={storedRows.length}>
+        <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 10px', lineHeight: 1.6 }}>
+          上の <strong>▶ 実行</strong> で <code>storage</code> へ書いた行です。押すたびに 1 件増えます。
+          要らなくなったら各行の <strong>削除</strong> で消せます
+          （<code>library</code> へ書いた分は「ライブラリ」の画面に出ます）。
+        </p>
+        {storedRows.length === 0 ? (
+          <p data-connector-output-empty style={{ fontSize: 12, color: 'var(--text-mute)', margin: 0 }}>
+            まだ 1 件も記録していません。
+          </p>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={thStyle}>コネクタ</th>
+                  <th style={thStyle}>キー</th>
+                  <th style={{ ...thStyle, textAlign: 'center' }}>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {storedRows.map((r) => (
+                  <tr key={r.id} data-connector-output-row={r.id}>
+                    <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>
+                      {displayField(r.connectorId)}
+                    </td>
+                    <td style={tdStyle}>{displayField(r.key)}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', whiteSpace: 'nowrap' }}>
+                      <button
+                        type="button"
+                        onClick={() => fireReported(stored.remove(r.id))}
+                        aria-label={`${r.connectorId} の記録を削除`}
+                        style={{ fontSize: 12 }}
+                      >
+                        削除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Section>
 
       {/* 要認証コネクター (外部サービス連携・Microsoft 365 等) */}

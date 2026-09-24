@@ -80,6 +80,13 @@ const LEDGER: readonly Row[] = [
   },
   { name: 'KPI / BEP', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
   { name: '売上集計', kind: 'screen-label', why: '同じく画面の名前で、同じ検査が `SERVICES` と突き合わせる。' },
+  {
+    name: 'ライブラリ',
+    kind: 'screen-label',
+    why:
+      '画面の名前 (2026-09-24 · パス 448)。コネクタの実行結果は `storage` と `library` に半分ずつ行くので、' +
+      '`storage` の面がもう半分の行き先を名指しする —— 下の ★ がこの綴りを `SERVICES` のラベルと突き合わせる。',
+  },
   { name: 'Access token', kind: 'third-party', why: 'Azure ポータル側のタブで、このアプリの画面ではない —— 実物の綴りを当てに行けない (相手が変えたら文も古びるが、それは相手の UI の話である)。' },
   { name: '{this.props.label}', kind: 'runtime-label', why: '描画の時点で画面のラベルが入る補間で、綴りは固定されない (入る値は `SERVICES` のラベルそのもの)。' },
 ];

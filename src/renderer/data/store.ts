@@ -18,6 +18,7 @@
 
 import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
 import { hasCollectionShape } from './collectionShapes';
+import { notifyRecordStoreChanged } from './collectionChange';
 
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -314,6 +315,9 @@ class IndexedDBRecordStore implements RecordStore {
       tx.objectStore(STORE).add({ id, collection, createdAt: ts, updatedAt: ts, data: storedData });
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return { id, collection, createdAt: ts, updatedAt: ts, data };
   }
 
@@ -349,6 +353,9 @@ class IndexedDBRecordStore implements RecordStore {
       // nothing is committed (all-or-nothing).
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return built.map((b) => b.plain);
   }
 
@@ -414,6 +421,9 @@ class IndexedDBRecordStore implements RecordStore {
       tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return { ...existing, updatedAt, data: mergedData };
   }
 
@@ -470,6 +480,10 @@ class IndexedDBRecordStore implements RecordStore {
         await txDone(tx);
       });
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+
   }
 
   async clearCollection(collection: string): Promise<number> {
@@ -480,6 +494,9 @@ class IndexedDBRecordStore implements RecordStore {
       for (const rec of all) store.delete(rec.id);
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return all.length;
   }
 
@@ -547,6 +564,9 @@ class IndexedDBRecordStore implements RecordStore {
       for (const rec of prepared) store.put(rec); // put = upsert by id
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return prepared.length;
   }
 

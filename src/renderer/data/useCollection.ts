@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getRecordStore, type StoredRecord } from './store';
+import { subscribeCollection } from './collectionChange';
 import { reportDeviceStoreFailure, type DeviceStoreOp } from './deviceStoreFailure';
 
 /**
- * 同じ collection を見ている**別の** hook へ変更を知らせる仕組み。
+ * 同じ collection を見ている**別の** hook へ変更を知らせる仕組みは
+ * `data/collectionChange.ts` に在る。
  *
  * この hook は instance ごとに records を持つので、A と B が同じ collection を
  * 見ているとき、A が書いても B は古いまま残る。2026-08 に実際に踏んだ形:
@@ -11,55 +13,19 @@ import { reportDeviceStoreFailure, type DeviceStoreOp } from './deviceStoreFailu
  * 再読込まで古い数字を出し続けた。**入力欄には「手入力」と印が付くのに、
  * 画面の数字が変わらない**という、いちばん分かりにくい壊れ方だった。
  *
+ * ★ **2026-09-24 (パス 448) に、知らせる側をストアへ移した。** ここに置くと
+ * **hook を通らない書き込み** (コネクタ実行・点検パネルの削除・バックアップの復元)
+ * がどの画面にも届かない —— 実測と理由は `collectionChange.ts` の docblock に在る。
+ * hook は購読するだけで、`add` / `edit` / `remove` は**自分で知らせない**
+ * (ストアが必ず知らせるので、ここで重ねると 1 書き込みに 2 度飛ぶ)。
+ *
  * 書いた instance は自分で `reload()` を await する (呼び出し側が
  * `await add(...)` の直後に新しい records を読めるようにするため)。
- * 他の instance へは通知だけを送る。
  */
-const subscribers = new Map<string, Set<() => void>>();
-
-/**
- * その collection の購読者集合。無ければ作る。
- *
- * `subscribers.get(c) ?? []` と書くと、**到達しない既定値**が残る
- * (通知は必ず購読済みの hook から来るので undefined にならない)。
- * 集合を必ず返す入口を 1 つ置けば、その分岐ごと消える。
- */
-function subscriberSet(collection: string): Set<() => void> {
-  const existing = subscribers.get(collection);
-  if (existing !== undefined) return existing;
-  const created = new Set<() => void>();
-  subscribers.set(collection, created);
-  return created;
-}
-
-function subscribe(collection: string, fn: () => void): () => void {
-  const set = subscriberSet(collection);
-  set.add(fn);
-  return () => {
-    set.delete(fn);
-  };
-}
-
-/**
- * その collection を見ている hook すべてに読み直させる。
- *
- * 書いた本人も含めて呼ぶ。「自分以外」に絞ると読み直しが 1 回減るが、
- * **観測できる差が無いぶんテストで守れない**分岐が増える。読み直しは
- * IndexedDB の 1 read なので、分岐を消すほうを採る。
- */
-function notifyCollection(collection: string): void {
-  for (const fn of subscriberSet(collection)) fn();
-}
-
-/** テスト用: 購読者を空にする。 */
-export function _resetCollectionSubscribersForTests(): void {
-  subscribers.clear();
-}
-
-/** テスト用: 購読者数。解除が効いているかを見るために公開する。 */
-export function _collectionSubscriberCountForTests(collection: string): number {
-  return subscribers.get(collection)?.size ?? 0;
-}
+export {
+  _collectionSubscriberCountForTests,
+  _resetCollectionSubscribersForTests,
+} from './collectionChange';
 
 /**
  * **断られたら、断られたと届けてから投げ直す。**
@@ -133,7 +99,7 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   const reload = useCallback(async () => {
     // **後から返った古い読みで records を戻さない。**
     //
-    // `reload()` は重なる: 書いた本人が await する分と、`notifyCollection` で
+    // `reload()` は重なる: 書いた本人が await する分と、ストアの通知で
     // 他 instance に飛ぶ分、マウント effect の分がある。`list()` は IndexedDB の
     // 読みだけでは終わらず、**1 件ずつ復号してから**返る (`recordEncryption` を
     // 有効にした端末)。読みの要求順は IndexedDB が守っても、**復号にかかる時間は
@@ -170,13 +136,12 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   const onExternalChange = useRef(() => {
     void reloadRef.current();
   });
-  useEffect(() => subscribe(collection, onExternalChange.current), [collection]);
+  useEffect(() => subscribeCollection(collection, onExternalChange.current), [collection]);
 
   const add = useCallback(
     async (data: T) => {
       await reporting('save', collection, () => getRecordStore().insert<T>(collection, data));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );
@@ -185,7 +150,6 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     async (rows: readonly T[]) => {
       await reporting('save', collection, () => getRecordStore().insertMany<T>(collection, rows));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );
@@ -194,7 +158,6 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     async (id: string, patch: Partial<T>) => {
       await reporting('save', collection, () => getRecordStore().update<T>(id, patch));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );
@@ -203,7 +166,6 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     async (id: string) => {
       await reporting('delete', collection, () => getRecordStore().remove(id));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );

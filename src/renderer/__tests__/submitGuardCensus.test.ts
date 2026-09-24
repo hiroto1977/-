@@ -56,6 +56,11 @@ const RECORD_ACTION = /['"`]record-entry['"`]/;
 const OWN_GUARD: Readonly<Record<string, string>> = {
   'src/renderer/components/RecordShapeAuditPanel.tsx':
     '`busy` state が走査と削除の両ボタンを disabled にしている (scan / remove の冒頭で setBusy(true)・finally で false)',
+  'src/renderer/pages/ConnectorsPage.tsx':
+    '`runningId` state が押した行のボタンだけを disabled にしている (runConnector の冒頭で setRunningId(id)・finally で null)。' +
+    '**ここは「同じ意図の二重送信」ではなく「もう 1 回実行する」なので、押すたびに 1 件増えるのが仕様である** ' +
+    '(2026-09-24 · パス 448 で行が画面に出て「削除」で消せるようになったので、取り消せる)。' +
+    'このファイルが母集団に入ったのは同じパスで `connector-output` を購読し始めたためで、ボタン自身は前から在った。',
 };
 
 /** コメントを落とす (説明文の中の `onClick={onAdd}` を数えない)。 */

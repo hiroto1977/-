@@ -10,6 +10,48 @@
 
 ---
 
+## パス 448 (2026-09-24) — 測って、このパスでは直さないと決めた軸
+
+パス 448 は「保管はされるのに、どの画面も見せない collection」を実測して閉じた
+(`connector-output` に面を足し、知らせる仕組みをストアへ移した)。その走査で
+**残った 2 件**を、実測つきで残す。
+
+### ① 書き手も読み手も 0 件の collection が 2 つ在る (罠であって今日の欠陥ではない)
+
+形の表 (`COLLECTION_SHAPES`) は 23 件を宣言するが、そのうち
+`overview-overrides` と `overview-custom-metrics` は **書き手も読み手も 0 件**である
+(実測 2026-09-24 · `src/` の `__tests__` を除く走査):
+
+| collection | 定数の宣言 | 参照 | 形の表 |
+| --- | --- | ---: | --- |
+| `overview-overrides` | `overviewOverrides.ts:176` | **0** | 在る |
+| `overview-custom-metrics` | `overviewOverrides.ts:395` | **0** | 在る |
+
+★ **生まれてから 1 度も書かれていない** —— `git log -S` で
+`OVERVIEW_OVERRIDES_COLLECTION` に触れたコミットは**導入した 1 つだけ**で、
+`useCollection<OverviewOverrideEntry>` は全履歴に **0 コミット**。つまり
+**利用者の端末にこの行が存在する道が無い** (復元も、書いた物しか持ち込めない)。
+
+**だから今日の欠陥ではない** —— 閉じていないのは罠のほうで、誰かが書き手を
+1 つ配線した日、その行は**どの画面にも出ず、点検パネルも形が合うので見つけず**
+(パス 448 で閉じた `connector-output` とまったく同じ形になる)。
+
+**直すなら 2 通りあり、どちらかは測ってから決める**:
+① 形の表から 2 行を外す (**復元が落とす物が増える**ので、古い控えに行が無いことを
+先に確かめる —— 上の実測はそれを示している) ② 書き手を配線するときに面も足す。
+**今日は消さない** —— 形を外す編集は復元の欠落と同じ形なので、
+「使う予定がある名前か」を知らないまま削るほうが危ない (パス 227 / 444 と同じ判断)。
+
+### ② 手で置いた上書きの面は `manual-overrides` に 1 つだけ
+
+パス 421 の台帳は `manual-overrides.path` を安全と分類し、その理由に
+「**目録に無い path の行は画面に 1 行も出ない**」と書いた —— パス 447 が
+**その文そのものが欠陥である**と実測して閉じた (数えるのに出さない)。
+今日その面は 1 つ (`ManualDataSection`) で、効く行と効かない行を同じ口で分けている。
+**2 つ目の面が増えたら、同じ分け方を通すこと** (`overrideCause` を読む)。
+
+---
+
 ## パス 445 (2026-09-24) — 測って、このパスでは直さないと決めた軸
 
 パス 445 は「投げない嘘」の残り ~50 欄の**到達先**を測る途中で見つけた欠陥を閉じた
@@ -16002,6 +16044,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/chartSelfCheck.ts` | 1 |
 | `src/renderer/data/chatOrg.ts` | 1 |
 | `src/renderer/data/cloudBackup.ts` | 1 |
+| `src/renderer/data/collectionChange.ts` | 1 |
 | `src/renderer/data/crisisDeliberation.ts` | 1 |
 | `src/renderer/data/emotionsWeb.ts` | 1 |
 | `src/renderer/data/financialCsv.ts` | 1 |
@@ -16012,7 +16055,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/recordShapeAudit.ts` | 1 |
 | `src/renderer/data/teamRadarDraft.ts` | 1 |
 | `src/renderer/data/trendAlerts.ts` | 1 |
-| `src/renderer/data/useCollection.ts` | 1 |
 | `src/renderer/data/villageData.ts` | 1 |
 | `src/renderer/data/villageLayout.ts` | 1 |
 | `src/renderer/data/workingCapital.ts` | 1 |
@@ -28585,7 +28627,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
-| `apiResponse` | 15 | 11 | 対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**しかし両ビルドの食い違いは無い**: renderer がこのモジュールから直接読むのは **2 種類だけ** —— `parseJsonText` (`null` を返さず**投げる**側) と `displayField` である。★ **読み手の一覧はここに書かない** —— `displayField` の呼び手は パス 417 の 2 つからパス 419 で 7 つへ増えた (保管した自由文の天井を 5 画面に通した)。数は左の列が数え、この欄は**なぜ対称なのか**だけを述べる (名前を並べると、増えた日に散文だけが古びる)。**`displayField` は `null` を返さない** —— 非文字列は空文字・長すぎる値は天井 + `…` で、「no」と言う枝そのものを持たないので両ビルドで割れる余地が無い。`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / `objectRows`) に両ビルドが届く道は `shared/api/*.ts` (cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。残りは `src/main/clients/` の 15 本が読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。つまり非対称になりうる組が今日 0 件である |
+| `apiResponse` | 15 | 12 | 対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**しかし両ビルドの食い違いは無い**: renderer がこのモジュールから直接読むのは **2 種類だけ** —— `parseJsonText` (`null` を返さず**投げる**側) と `displayField` である。★ **読み手の一覧はここに書かない** —— `displayField` の呼び手は パス 417 の 2 つからパス 419 で 7 つへ増えた (保管した自由文の天井を 5 画面に通した)。数は左の列が数え、この欄は**なぜ対称なのか**だけを述べる (名前を並べると、増えた日に散文だけが古びる)。**`displayField` は `null` を返さない** —— 非文字列は空文字・長すぎる値は天井 + `…` で、「no」と言う枝そのものを持たないので両ビルドで割れる余地が無い。`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / `objectRows`) に両ビルドが届く道は `shared/api/*.ts` (cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。残りは `src/main/clients/` の 15 本が読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。つまり非対称になりうる組が今日 0 件である |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `constantTimeEquals` | 1 | 1 | 対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、両ビルドは同じ関数を別名 (`safeStateEquals`) で export する (`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。**畳む前は等価ですらなかった**: main は `Buffer.from(s,'utf8')` → `timingSafeEqual` で、UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち 4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は `classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、**「交換しない」という結論は同じ**なので非対称ではない |
