@@ -184,15 +184,15 @@ describe('★ §2 は未入力の販売記録を「0」と刷らない', () => {
   });
 
   it('★ 紙は画面の言い方をしない (面ごとに別の文)', () => {
-    const sheetNote = noSalesRecordsSheetNote({ hasData: false, unreadableDates: 0 }) ?? '';
-    const screenNote = noSalesRecordsNote({ hasData: false, unreadableDates: 0 }) ?? '';
+    const sheetNote = noSalesRecordsSheetNote({ hasData: false, unreadableDates: 0, unreadableAmounts: 0 }) ?? '';
+    const screenNote = noSalesRecordsNote({ hasData: false, unreadableDates: 0, unreadableAmounts: 0 }) ?? '';
     expect(sheetNote).not.toBe('');
     expect(screenNote).not.toBe('');
     // 画面は逃げ口を名指しする / 紙は「本表」の言い方で、画面の操作を指示しない。
     expect(screenNote).toContain('「売上集計」の画面');
     expect(sheetNote).not.toContain('画面');
-    expect(noSalesRecordsSheetNote({ hasData: true, unreadableDates: 0 })).toBeNull();
-    expect(noSalesRecordsNote({ hasData: true, unreadableDates: 0 })).toBeNull();
+    expect(noSalesRecordsSheetNote({ hasData: true, unreadableDates: 0, unreadableAmounts: 0 })).toBeNull();
+    expect(noSalesRecordsNote({ hasData: true, unreadableDates: 0, unreadableAmounts: 0 })).toBeNull();
   });
 });
 

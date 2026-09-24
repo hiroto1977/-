@@ -10,7 +10,7 @@
  */
 
 import { isCalendarDate } from '../../shared/isoDate';
-import { displayField } from '../../shared/apiResponse';
+import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 import { moreThanChars } from '../../shared/inputCeiling';
 
 export const SALES_COLLECTION = 'sales-entries';
@@ -206,6 +206,8 @@ export interface SalesSummary {
    * `readablePeriodRows.dropped` と同じ役目)。
    */
   readonly unreadableDates: number;
+  /** 金額・受注件数が数として読めないために**この集計から外した**行の数 (パス 442)。 */
+  readonly unreadableAmounts: number;
   /**
    * 合計額が覆っている期間。**読める日付が 1 件も無ければ `null`** ——
    * 期間を測れないことと「期間が 0」は別なので 0 に倒さない。
@@ -312,7 +314,8 @@ export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
      * 元の欠陥は「分子が絞られていないこと」で、そちらは対照 A が殺す。
      */
     period: salesPeriod(rows),
-    unreadableDates: readable.dropped,
+    unreadableDates: readable.unreadableDates,
+    unreadableAmounts: readable.unreadableAmounts,
   };
 }
 
@@ -343,15 +346,56 @@ export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
  * 黙って除くと売上高が小さく出て、利用者は気づけない。数は返し、画面は
  * `unreadableSalesDateNote` で述べる —— `kpiActuals.ts` の
  * `readablePeriodRows` / `unreadablePeriodNote` (パス 225) と同じ形。
+ *
+ * ## 金額と受注件数も「読める」を要求する (2026-09-24 · パス 442)
+ *
+ * パス 400 までこの漏斗は**日付しか見ていなかった**。金額は `reduce` で
+ * そのまま足されるので、保管値が数でないと **JS の `+` が文字列連結に落ちる**。
+ * 実測 (2026-09-24 · 直す前 · 正しい 1,000 円の行 1 件と、金額だけ壊した行 1 件):
+ *
+ * | 保管した `amount` | `totalAmount` | 画面と書面が刷る額 |
+ * | --- | --- | ---: |
+ * | `'1000'` (**10 進の文字列**) | `"10001000"` | **￥10,001,000** (5,000 倍) |
+ * | `[1]` | `"10001"` | ￥10,001 |
+ * | `{z:1}` | `"1000[object Object]"` | `￥NaN` |
+ * | `true` | `1001` | ￥1,001 |
+ * | `null` | `1000` | ￥1,000 (**その行を 0 円として黙って数える**) |
+ *
+ * ★ **文字列の場合がいちばん重い** —— 10 進の文字列は手で直した JSON や
+ *   古い取り込みが普通に作る形で、**桁が跳ね上がる向き**に外れる。しかも
+ *   この数は `summarizeSales` → 経営サマリー → **金融機関等提出用の書面 §2
+ *   「売上高（販売記録）」**へそのまま載り、その紙は「上記のとおり相違ありません。」で
+ *   代表者名つきで終わる。
+ * ★ **`null` は逆向きに外れる** —— 0 円として黙って数えるので売上高が小さく出る
+ *   (パス 395 が「0 を事実の主張として刷らない」と決めた当の形)。
+ * ★ **落とすのが正しい** —— 読めない額は 0 でも合計でもないので、
+ *   行ごと外して**その件数を述べる**。理由は日付とは別に数える ——
+ *   「日付が読めない」と言われた利用者は日付を直しに行くので、
+ *   原因を取り違えた断りは直す手ごと誤らせる (パス 388)。
  */
 export interface ReadableSalesRows {
   readonly rows: readonly SalesEntry[];
+  /** 落とした行の合計。`unreadableDates + unreadableAmounts` と必ず一致する。 */
   readonly dropped: number;
+  /** 日付 (`YYYY-MM-DD`) が読めないために落とした行。 */
+  readonly unreadableDates: number;
+  /** 日付は読めるが、**金額か受注件数が数として読めない**ために落とした行 (パス 442)。 */
+  readonly unreadableAmounts: number;
 }
 
 export function readableSalesRows(entries: readonly SalesEntry[]): ReadableSalesRows {
-  const rows = entries.filter((e) => isCalendarDate(e.date));
-  return { rows, dropped: entries.length - rows.length };
+  const rows: SalesEntry[] = [];
+  let unreadableDates = 0;
+  let unreadableAmounts = 0;
+  for (const e of entries) {
+    // **原因は 1 行につき 1 つだけ数える** —— 日付が読めない行の金額も
+    // たいてい読めないので、両方に数えると `dropped` と合わなくなる
+    // (法則 `one-subset-per-answer`: 分子と分母を同じ部分集合から取る)。
+    if (!isCalendarDate(e.date)) unreadableDates += 1;
+    else if (finiteNumberOf(e.amount) === null || finiteNumberOf(e.orders) === null) unreadableAmounts += 1;
+    else rows.push(e);
+  }
+  return { rows, dropped: unreadableDates + unreadableAmounts, unreadableDates, unreadableAmounts };
 }
 
 /**
@@ -385,6 +429,24 @@ export function unreadableSalesDateSheetNote(dropped: number): string | null {
 }
 
 /**
+ * **金額・受注件数が読めない行を落としたことを述べる 1 文** (2026-09-24 · パス 442)。
+ *
+ * 日付の側 ({@link unreadableSalesDateNote}) と**別の文**にする —— 直す手が違う。
+ * 日付が読めない行は日付を、金額が読めない行は金額を直す (あるいは消す) ので、
+ * 1 つの文に畳むと**その利用者にとって偽の原因**を名乗ることになる (パス 388)。
+ */
+export function unreadableSalesAmountNote(dropped: number): string | null {
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `売上の記録のうち ${dropped} 件は金額または受注件数が数として読めないため、集計・期間のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（設定の「形式の合わないレコード」から消せます）。`;
+}
+
+/** 同じことを、相手に渡る書面・レポート向けの 1 文で ({@link unreadableSalesDateSheetNote} と対)。 */
+export function unreadableSalesAmountSheetNote(dropped: number): string | null {
+  if (!(Number.isFinite(dropped) && dropped > 0)) return null;
+  return `金額または受注件数が数として読めない ${dropped} 件は集計から除いています。`;
+}
+
+/**
  * **落とした行を述べるのは、部分的に読めるときだけ** (2026-09-22 · パス 400)。
  *
  * 1 件も読めなければ `noSalesRecordsSheetNote` / `noSalesRecordsNote` が
@@ -398,13 +460,47 @@ export function unreadableSalesDateSheetNote(dropped: number): string | null {
  */
 export function droppedSalesRowsSheetNote(state: SalesAggregateState): string | null {
   if (blankSalesCause(state) !== null) return null;
-  return unreadableSalesDateSheetNote(state.unreadableDates);
+  return unreadableSalesRowsSheetNote(state);
 }
 
 /** 同じことを、画面の言い方で (逃げ口を名指しする側)。 */
 export function droppedSalesRowsNote(state: SalesAggregateState): string | null {
   if (blankSalesCause(state) !== null) return null;
-  return unreadableSalesDateNote(state.unreadableDates);
+  return unreadableSalesRowsNote(state);
+}
+
+/** 落とした理由の内訳 —— {@link ReadableSalesRows} と {@link SalesAggregateState} が共に持つ。 */
+export interface DroppedSalesCounts {
+  readonly unreadableDates: number;
+  readonly unreadableAmounts: number;
+}
+
+/**
+ * **落とした行を、原因ごとに述べる** (2026-09-24 · パス 442)。
+ *
+ * 2 つの原因は**別の文**で並べる。畳むと、片方しか起きていない利用者に
+ * 起きていない方の原因まで告げることになり、直す手ごと誤らせる (パス 388)。
+ * 起きていない側は `null` なので 1 文も増えない。
+ */
+export function unreadableSalesRowsNote(counts: DroppedSalesCounts): string | null {
+  return joinNotes([
+    unreadableSalesDateNote(counts.unreadableDates),
+    unreadableSalesAmountNote(counts.unreadableAmounts),
+  ]);
+}
+
+/** 同じことを、相手に渡る書面・レポート向けの言い方で。 */
+export function unreadableSalesRowsSheetNote(counts: DroppedSalesCounts): string | null {
+  return joinNotes([
+    unreadableSalesDateSheetNote(counts.unreadableDates),
+    unreadableSalesAmountSheetNote(counts.unreadableAmounts),
+  ]);
+}
+
+/** 出る文だけを 1 つに繋ぐ。1 文も出なければ `null` (空文字を刷らない)。 */
+function joinNotes(parts: readonly (string | null)[]): string | null {
+  const said = parts.filter((p): p is string => p !== null);
+  return said.length === 0 ? null : said.join(' ');
 }
 
 /** Group entries by `YYYY-MM` month, newest month first, with each month's
@@ -510,10 +606,12 @@ export function duplicateOrdersNote(groups: readonly DuplicateOrderGroup[]): str
  * 測る (`kpiActuals.ts` が「`hasData` も選別後で測る」と書いている当のこと)。
  */
 export interface SalesAggregateState {
-  /** 集計できる記録が 1 件でも在るか (日付が読める行の件数 > 0)。 */
+  /** 集計できる記録が 1 件でも在るか (漏斗を通った行の件数 > 0)。 */
   readonly hasData: boolean;
   /** 日付が読めないために除いた行の数。 */
   readonly unreadableDates: number;
+  /** 金額・受注件数が数として読めないために除いた行の数 (パス 442)。 */
+  readonly unreadableAmounts: number;
 }
 
 /** §2 が空欄になる原因。空欄でなければ `null`。 */
@@ -540,9 +638,14 @@ export type BlankSalesCause = 'no-records' | 'all-unreadable';
 export function blankSalesCause(state: SalesAggregateState): BlankSalesCause | null {
   if (state.hasData) return null;
   // 肯定形 (`<= 0` は `undefined` を通す —— このファイルの他の断りと同じ規則)。
-  return Number.isFinite(state.unreadableDates) && state.unreadableDates > 0
-    ? 'all-unreadable'
-    : 'no-records';
+  // **2 つの原因のどちらでも「入っているが読めない」である** (パス 442) ——
+  // 金額だけが読めない控えを「未入力」と言うと、記録を入れた利用者に
+  // 入れていないと告げることになる。
+  // 真偽で組む (`? … : 0` にすると `lint:zero-fold` の母集団が増えるが、
+  // それは**到達しない防御の倒し込み**である —— どちらの数も整数の計数器から来る)。
+  const droppedDates = Number.isFinite(state.unreadableDates) && state.unreadableDates > 0;
+  const droppedAmounts = Number.isFinite(state.unreadableAmounts) && state.unreadableAmounts > 0;
+  return droppedDates || droppedAmounts ? 'all-unreadable' : 'no-records';
 }
 
 /**

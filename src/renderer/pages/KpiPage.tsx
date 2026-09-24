@@ -28,7 +28,7 @@ import {
 } from '../data/kpiActuals';
 import { displayField } from '../../shared/apiResponse';
 import { DASH } from '../../shared/formatters';
-import { SALES_COLLECTION, readableSalesRows, unreadableSalesDateNote, type SalesEntry } from '../data/sales';
+import { SALES_COLLECTION, readableSalesRows, unreadableSalesRowsNote, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
 import { CSV_BOM } from '../data/csv';
@@ -412,7 +412,7 @@ function ActualsPanel() {
   // 取り込み元の売上に日付の読めない行が在れば言う (パス 360)。KPI 行の側は
   // `unreadableNote` が既に述べるが、**橋で渡ってくる側**は何も言っていなかった。
   const unreadableSalesNote = useMemo(
-    () => unreadableSalesDateNote(readableSalesRows(salesEntries).dropped),
+    () => unreadableSalesRowsNote(readableSalesRows(salesEntries)),
     [salesEntries],
   );
 

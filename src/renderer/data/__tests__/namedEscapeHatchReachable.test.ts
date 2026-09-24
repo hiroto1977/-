@@ -70,6 +70,8 @@ interface Row {
 
 const SALES_BAD_DATE = { date: '2026-02-31', channel: 'shopify', amount: 1000, orders: 1 };
 const SALES_OK = { date: '2026-04-01', channel: 'shopify', amount: 1000, orders: 1 };
+// 日付は読めるが金額が数でない —— 形の表 (`amount: num`) が断る側 (パス 442)。
+const SALES_BAD_AMOUNT = { date: '2026-04-01', channel: 'shopify', amount: null, orders: 1 };
 const KPI_BAD_PERIOD = { period: 'bad', unit: 'A', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const KPI_OK = { period: '2026-04', unit: 'A', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const MEMBER_OK = { name: '山田', email: 'a@example.com', role: 'member' };
@@ -88,6 +90,14 @@ const LEDGER: readonly Row[] = [
     collection: SALES_COLLECTION,
     sample: SALES_BAD_DATE,
     why: '日付が読めない売上は形の表 (`date: calendarDate`) が断るので、点検パネルが見つけて消せる。',
+  },
+  {
+    fn: 'unreadableSalesAmountNote',
+    file: 'src/renderer/data/sales.ts',
+    kinds: ['audit-panel'],
+    collection: SALES_COLLECTION,
+    sample: SALES_BAD_AMOUNT,
+    why: '金額が数でない売上は形の表 (`amount: num`) が断るので、点検パネルが見つけて消せる (パス 442)。',
   },
   {
     fn: 'noSalesRecordsNote',

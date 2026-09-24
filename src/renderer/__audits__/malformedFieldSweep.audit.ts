@@ -49,6 +49,32 @@
  * 投げた画面を数える。**2 形では足りない** —— `.trim` / `.toFixed` を落とすのは
  * 数と文字列だが、**物と配列は JSX が「Objects are not valid as a React child」で
  * 落とし**、`null` は `??` を通り抜けた先で `.trim` を落とす (パス 441 で実測)。
+ *
+ * ## 6 形で初めて通した結果 (2026-09-24 · パス 442)
+ *
+ * `組 726 × 画面 74 = 53,724 回の描画`・**投げた画面 4 件** —— どれも
+ * **物を React の子として素で置いた**形で、2 形の標本では構造的に届かなかった:
+ *
+ * ```
+ * business-units.name       (obj) → overview
+ * sales-entries.date        (obj) → sales
+ * sales-entries.orders      (obj) → sales
+ * shigyo-consultations.date (obj) → tax-accountant
+ * ```
+ *
+ * **配列は投げない** —— React は `[1]` を子の一覧として描く (記録しておく:
+ * 「6 形すべてが同じ強さ」ではない)。
+ *
+ * ## 1 行では見えない物が在る (パス 442 で 1 件出た)
+ *
+ * だから **良い行 + 壊れた行の 2 行**を置く。理由はコードの中の注記に。
+ * それでも見えない家系は残る (測って書く):
+ *
+ * - **`App.tsx` が描く部品** (`ManualDataSection` ほか) —— ここは
+ *   `svc.page` を単独で描くので、目録つきの全画面に載る部品は 1 度も通らない
+ *   (パス 419 が同じ死角を記録している)。
+ * - **投げない嘘** —— `Intl.NumberFormat#format` は何を渡しても投げないので、
+ *   `￥NaN` / `￥0` / 桁違いはこの網に掛からない (パス 442 で実測・別の検査が持つ)。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -118,6 +144,14 @@ describe('正しい行 + 1 欄だけ壊す走査 (パス 441)', () => {
       for (const combo of combos) {
         await resetRecordStore();
         _resetCollectionSubscribersForTests();
+        // **良い行を先に、壊れた行を後に置く** (2026-09-24 · パス 442)。
+        // `Array.prototype.sort` は**要素が 1 つなら比較関数を呼ばない**ので、
+        // 1 行だけ置く走査は並べ替えの中の読みを**構造的に見られない**。
+        // 実際 `sortBusinessUnits` の `a.data.name.localeCompare(...)` は
+        // 5 形すべてで投げるのに、パス 441 の走査は 1 件も報告しなかった。
+        // 並びは V8 が `comparefn(arr[1], arr[0])` から始めるので、
+        // 壊れた行が比較関数の左に立つ**後ろ**に置く。
+        await store.insert(combo.collection, SAMPLES[combo.collection]!.good as Record<string, unknown>);
         await store.insert(combo.collection, combo.row);
         for (const svc of SERVICES) {
           _resetCollectionSubscribersForTests();

@@ -144,6 +144,12 @@ export interface BusinessOverview {
      * 小さく出て、利用者は気づけない (`kpi.unreadablePeriods` と同じ役目)。
      */
     unreadableDates: number;
+    /**
+     * 金額・受注件数が数として読めないために**この集計から外した**行の数
+     * (2026-09-24 · パス 442)。日付とは**別に数える** —— 直す手が違うので、
+     * 畳むとその利用者にとって偽の原因を名乗ることになる (パス 388)。
+     */
+    unreadableAmounts: number;
     totalAmount: number;
     totalOrders: number;
     /** 平均受注単価。**注文が 0 件なら null** (経緯は `sales.ts` の同名の欄)。 */
@@ -405,6 +411,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
        */
       hasData: readableSales.length > 0,
       unreadableDates: salesSummary.unreadableDates,
+      unreadableAmounts: salesSummary.unreadableAmounts,
       totalAmount: salesSummary.totalAmount,
       totalOrders: salesSummary.totalOrders,
       aov: salesSummary.aov,

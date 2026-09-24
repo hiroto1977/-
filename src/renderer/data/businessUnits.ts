@@ -175,10 +175,38 @@ export interface BusinessUnitRecord {
 }
 
 /**
+ * **保管した事業名を型から読む 1 つの口** (2026-09-24 · パス 442)。
+ *
+ * 宣言は `name: string` だが、`store.list()` は `cur.value as StoredRecord<T>` で
+ * 何も検めない (`recordShapeAudit.ts` の設計 —— 読みで落とすと壊れた行が
+ * UI から触れなくなる)。復元・古い版・別の道具が入れた行はその宣言を満たさない。
+ *
+ * ## 実測 (2026-09-24 · 直す前)
+ *
+ * | 読み手 | 非文字列を渡すと |
+ * | --- | --- |
+ * | `sortBusinessUnits` (2 行以上) | **5 形すべてで TypeError** (`localeCompare is not a function`) |
+ * | `financialUnitsFromBusinessUnits` → `<option>{u.label}</option>` | **物で「Objects are not valid as a React child」** |
+ * | `findBusinessName` | 宣言は `string | null` なのに**物や数をそのまま返す** |
+ *
+ * ★ **並べ替えが最も重い** —— `ManualDataSection` は `App.tsx` が
+ *   目録を持つ全画面に描くので、ここが投げると**その画面すべてが開けなくなる**
+ *   (法則 `escape-hatch-stays-open`: 開けない画面からその行は消せない)。
+ *   しかも `Array.prototype.sort` は**要素が 1 つなら比較関数を呼ばない**ので、
+ *   1 行だけ置く走査 (パス 441) からは**構造的に見えなかった**。
+ */
+export function businessUnitName({ name }: Pick<BusinessUnitInput, 'name'>): string {
+  return typeof name === 'string' ? name : '';
+}
+
+/**
  * 事業名を引く。消えた事業 / 指定なしは null。
  *
  * 「消えた事業に紐づく数値」を落とさないための入口でもある。呼び出し側は
  * null を「事業の指定なし」として出せばよく、数値そのものは残る。
+ *
+ * 見つかった行の名前は {@link businessUnitName} を通す —— 通さないと
+ * 返り値の宣言 (`string | null`) が保管値について偽になる (パス 442)。
  */
 export function findBusinessName(
   units: readonly BusinessUnitRecord[],
@@ -187,7 +215,7 @@ export function findBusinessName(
   // `businessId === undefined` の早期 return は要らない。id が undefined の
   // レコードは存在しないので `find` がそのまま見つからない側へ落ちる。
   const hit = units.find((u) => u.id === businessId);
-  return hit === undefined ? null : hit.data.name;
+  return hit === undefined ? null : businessUnitName(hit.data);
 }
 
 /**
@@ -213,7 +241,7 @@ export function sortBusinessUnits(
   // 利用者のロケールに従うのが正しい。ここだけ 'ja' を固定すると、
   // アプリの他の一覧と並びが食い違う（ひらがな・カタカナの順序は
   // 既定のロケールでも日本語の五十音順になる）。
-  undated.sort((a, b) => a.data.name.localeCompare(b.data.name));
+  undated.sort((a, b) => businessUnitName(a.data).localeCompare(businessUnitName(b.data)));
   return [...dated.map((d) => d.rec), ...undated];
 }
 
@@ -273,7 +301,7 @@ export function financialUnitsFromBusinessUnits(
     const profit = revenue - variableCost - fixedCost;
     out.push({
       id: u.id,
-      label: u.data.name,
+      label: businessUnitName(u.data),
       current: { revenue, variableCost, fixedCost, profit, profitMargin: marginPct(revenue, profit) },
       history: [],
     });

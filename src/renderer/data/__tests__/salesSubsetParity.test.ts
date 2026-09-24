@@ -151,7 +151,7 @@ describe('★ 販売の集計は 1 つの部分集合から出る (パス 400)',
 describe('★ 空欄の原因は 1 つだけ、しかも正しい方 (パス 400)', () => {
   const state = (rows: readonly SalesEntry[]) => {
     const r = readableSalesRows(rows);
-    return { hasData: r.rows.length > 0, unreadableDates: r.dropped };
+    return { hasData: r.rows.length > 0, unreadableDates: r.unreadableDates, unreadableAmounts: r.unreadableAmounts };
   };
 
   it('★ 3 状態がそれぞれ別の原因を返す', () => {

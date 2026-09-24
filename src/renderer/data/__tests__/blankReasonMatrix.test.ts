@@ -620,16 +620,16 @@ describe('★ 重複の断りは面ごとに別の文 (パス 390 / 391)', () =>
  */
 describe('★ 販売記録が無い断りは面ごとに別の文', () => {
   it('画面は入れる場所を名指しし、紙はしない', () => {
-    const screen = noSalesRecordsNote({ hasData: false, unreadableDates: 0 }) ?? '';
-    const sheet = noSalesRecordsSheetNote({ hasData: false, unreadableDates: 0 }) ?? '';
+    const screen = noSalesRecordsNote({ hasData: false, unreadableDates: 0, unreadableAmounts: 0 }) ?? '';
+    const sheet = noSalesRecordsSheetNote({ hasData: false, unreadableDates: 0, unreadableAmounts: 0 }) ?? '';
     expect(screen).toContain('「売上集計」の画面');
     expect(sheet).not.toContain('画面');
     expect(screen).not.toBe(sheet);
   });
 
   it('記録が在れば両方 null (断る状態でないときに文を作らない)', () => {
-    expect(noSalesRecordsNote({ hasData: true, unreadableDates: 0 })).toBeNull();
-    expect(noSalesRecordsSheetNote({ hasData: true, unreadableDates: 0 })).toBeNull();
+    expect(noSalesRecordsNote({ hasData: true, unreadableDates: 0, unreadableAmounts: 0 })).toBeNull();
+    expect(noSalesRecordsSheetNote({ hasData: true, unreadableDates: 0, unreadableAmounts: 0 })).toBeNull();
   });
 });
 

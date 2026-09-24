@@ -16,10 +16,11 @@ import {
   duplicateOrdersNote,
   findDuplicateOrders,
   readableSalesRows,
-  unreadableSalesDateNote,
+  unreadableSalesRowsNote,
   MAX_SALES_NOTE_CHARS,
 } from '../data/sales';
-import { displayField } from '../../shared/apiResponse';
+import { displayField, finiteNumberOf } from '../../shared/apiResponse';
+import { DASH } from '../../shared/formatters';
 import { salesToCsv, salesFromCsv } from '../data/salesCsv';
 import { CSV_BOM } from '../data/csv';
 import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
@@ -30,6 +31,18 @@ import {
 } from '../data/manualData';
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
+
+/**
+ * 保管した金額を刷る。数として読めなければ `—` (パス 442)。
+ *
+ * `shared/formatters.ts` の `jpyOrDash` は使わない —— あちらは `¥` (U+00A5)、
+ * この一覧は `Intl` の `￥` (U+FFE5) で、揃えると**正しい行の見た目まで変わる**。
+ * 床の意味は同じなので、ここは綴りではなく判定を借りる。
+ */
+function salesAmountText(v: unknown): string {
+  const n = finiteNumberOf(v);
+  return n === null ? DASH : yen.format(n);
+}
 
 const CHANNEL_COLOR: Record<SalesChannel, string> = {
   amazon: '#ff9900',
@@ -89,23 +102,42 @@ export function SalesPage() {
   // ここは読んで適用するだけ。上書きが無ければ計算値がそのまま出る。
   const overridesCol = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
   const overrideRecords = overridesCol.records;
-  const summary = useMemo(
-    () => applyManualOverrides('sales', computedSummary, overrideRecords.map((r) => r.data)).overview,
+  const applied = useMemo(
+    () => applyManualOverrides('sales', computedSummary, overrideRecords.map((r) => r.data)),
     [computedSummary, overrideRecords],
   );
+  const summary = applied.overview;
   const months = useMemo(() => monthlyTotals(entries), [entries]);
   // 日付が読める行だけの部分集合 (パス 360 の漏斗)。**1 度だけ組んで両方の断りが読む** ——
   // 分子と分母を同じ部分集合から取る (法則 `one-subset-per-answer`)。
   const readable = useMemo(() => readableSalesRows(entries), [entries]);
   // 日付が読めない行は月次推移から落ちる (パス 360)。**落としたことを言う** ——
   // 黙って除くと売上高が小さく出て、利用者は気づけない。
-  const unreadableDateNote = useMemo(() => unreadableSalesDateNote(readable.dropped), [readable]);
+  // 日付と「金額・受注件数」は**別の原因**なので、出る文だけを並べる (パス 442)。
+  const unreadableDateNote = useMemo(() => unreadableSalesRowsNote(readable), [readable]);
   // 同じ注文名の重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 126)。
   // **合計と同じ部分集合から数える** —— 素の購読から数えると、日付が読めなくて合計に
   // 入っていない行の重複を「売上高と受注件数に 2 度数えられています」と述べることになり、
   // その文が偽になる (`overview.ts` は 2026-09-22 からそう書いていて、この画面だけが
   // 素のままだった。実測: 総売上 1,000,000 のまま「2 度数えられています」と言っていた)。
   const duplicateNote = useMemo(() => duplicateOrdersNote(findDuplicateOrders(readable.rows)), [readable]);
+  /**
+   * **読める行が 1 件も無いときの集計は「—」** (2026-09-24 · パス 442)。
+   *
+   * 空集合の和は算術としては 0 だが、画面の「総売上 ￥0」は*売れていない*という
+   * **事実の主張**として読める。実際は*記録が読めていない*で、その理由は
+   * すぐ上の断り (`data-unreadable-sales-dates`) が述べている ——
+   * パス 395 が書面 §2 と経営サマリーについて下した判断と同じで、
+   * **この画面のタイルだけが残っていた** (実測: 日付が読めない行 1 件だけの控えで
+   * 総売上 ￥0 / 総注文件数 0 / チャネル数 0)。
+   *
+   * ★ **手で置いた値は消さない** —— 上書きした欄は利用者自身の主張なので、
+   *   読める行が 0 でもその値を出す (パス 382 の `overridden` を読む)。
+   * ★ **一覧そのものは畳まない** —— × で消せる逃げ口を閉じない (パス 425)。
+   */
+  const overridden = useMemo(() => new Set(applied.overridden), [applied]);
+  const aggregateText = (path: string, text: string): string =>
+    readable.rows.length > 0 || overridden.has(path) ? text : DASH;
 
   async function onAdd() {
     try {
@@ -270,12 +302,13 @@ export function SalesPage() {
       ) : (
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
-            <Tile label="総売上" value={yen.format(summary.totalAmount)} />
-            <Tile label="総注文件数" value={summary.totalOrders.toLocaleString('ja-JP')} />
+            <Tile label="総売上" value={aggregateText('totalAmount', yen.format(summary.totalAmount))} />
+            <Tile label="総注文件数" value={aggregateText('totalOrders', summary.totalOrders.toLocaleString('ja-JP'))} />
             {/* 注文が 0 件なら「—」。`¥0` は「平均単価が 0 円」という主張になる
                 (経緯は `data/sales.ts` の `SalesSummary.aov`)。 */}
-            <Tile label="平均注文単価 (AOV)" value={summary.aov === null ? '—' : yen.format(Math.round(summary.aov))} />
-            <Tile label="チャネル数" value={`${summary.byChannel.length}`} />
+            <Tile label="平均注文単価 (AOV)" value={summary.aov === null ? DASH : yen.format(Math.round(summary.aov))} />
+            {/* チャネル数は上書きの対象ではない (一覧の異なり数なので置き換える欄が無い)。 */}
+            <Tile label="チャネル数" value={aggregateText('', `${summary.byChannel.length}`)} />
           </div>
 
           <Section title="チャネル別構成">
@@ -337,10 +370,17 @@ export function SalesPage() {
               <tbody>
                 {records.map((r) => (
                   <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
-                    <td style={{ padding: '4px 8px' }}>{r.data.date}</td>
+                    {/*
+                      一覧は**素の購読**を描く (日付が読めない行もここに出るから × で消せる・パス 425)。
+                      だから値は**画面の側で型から読む** —— 物を素で置くと React が
+                      「Objects are not valid as a React child」で落とし、その画面ごと開けなくなる。
+                      数は `finiteNumberOf` を通す: `Intl` の `format` は投げないが**嘘を刷る**
+                      (実測 パス 442: `null` → `￥0` / `[1]` → `￥1` / `true` → `￥1`)。
+                    */}
+                    <td style={{ padding: '4px 8px' }}>{displayField(r.data.date)}</td>
                     <td style={{ padding: '4px 8px' }}>{CHANNEL_LABEL[r.data.channel]}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.amount)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{r.data.orders}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{salesAmountText(r.data.amount)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{finiteNumberOf(r.data.orders) ?? DASH}</td>
                     <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.note, MAX_SALES_NOTE_CHARS)}</td>
                     <td style={{ padding: '4px 8px' }}>
                       <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>

@@ -526,7 +526,12 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             <tbody>
               {recentConsultations.map((c) => (
                 <tr key={c.rowId}>
-                  <td style={tdStyle}>{c.date}</td>
+                  {/*
+                    一覧は保管層の行も描く (× で消せるように) ので、日付も**型から読む** ——
+                    物を素で置くと React が「Objects are not valid as a React child」で
+                    落とし、士業の画面ごと開けなくなる (パス 442 で実測)。
+                  */}
+                  <td style={tdStyle}>{displayField(c.date)}</td>
                   <td style={tdStyle}>{displayField(c.topic, MAX_CONSULTATION_TOPIC_CHARS)}</td>
                   <td style={tdStyle}>
                     {c.user ? (
