@@ -263,7 +263,9 @@ describe('上限つきの読みと、その別名 (パス 334)', () => {
 
   it('数えた内訳を留める (別名を含めて数える)', () => {
     expect({ 呼び出し: CAPPED_CALLS.length, 失敗: FAILURE_CALLS.length, 別名: ALIASES.length }).toEqual({
-      呼び出し: 44,
+      // 45 = 44 + パス 449 が main の Ollama に足した `/api/tags` の読み
+      // (未取得モデルの助言に導入済みの名前を添えるための 1 か所)。
+      呼び出し: 45,
       失敗: 16,
       別名: 4,
     });

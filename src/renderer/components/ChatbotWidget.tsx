@@ -28,7 +28,12 @@ import {
   voiceWriteRefusal,
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
-import { MAX_OLLAMA_PROMPT_CHARS } from '../../shared/ollama';
+import { MAX_OLLAMA_PROMPT_CHARS, type OllamaSnapshot } from '../../shared/ollama';
+import {
+  CHATBOT_MODEL_KEY,
+  chatbotOllamaModel,
+  ollamaRefusalNote,
+} from '../data/chatbotOllama';
 import { CeilingNotice } from './CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
@@ -163,26 +168,54 @@ function downloadRequests(): void {
   URL.revokeObjectURL(url);
 }
 
-/** Ollama 接続時の自由質問フォールバック (失敗したら null)。 */
-async function tryOllama(prompt: string): Promise<string | null> {
-  if (!window.serviceHub) return null;
-  const model = (() => {
-    try {
-      return localStorage.getItem('chatbot-ollama-model') ?? 'llama3.2';
-    } catch {
-      return 'llama3.2';
-    }
-  })();
+/**
+ * 自由質問の結末。**「答えた」「断られた」「橋が無い」を混ぜない**
+ * (2026-09-24 · パス 449)。直す前は 3 つとも `null` で、画面は
+ * 「Ollama 接続時は自由質問にもお答えします。」とだけ言っていた ——
+ * 接続している利用者にとって偽である。理由は `data/chatbotOllama.ts`。
+ */
+type OllamaTry = { readonly reply: string } | { readonly refusal: string } | null;
+
+/** 上書きの読み。読めない端末 (プライベートモード等) は上書き無しとして扱う。 */
+function storedChatbotModel(): string | null {
+  try {
+    return localStorage.getItem(CHATBOT_MODEL_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 導入済みのモデル名。**取れなければ空** —— 名前を推測する材料が無いだけで、
+ * 失敗ではない ({@link chatbotOllamaModel} が種をそのまま返し、断りが説明する)。
+ */
+async function installedOllamaModels(hub: Window['serviceHub']): Promise<string[]> {
+  try {
+    const snap = await hub.fetchSnapshot<OllamaSnapshot>('ollama');
+    return snap.ok ? snap.data.models.map((m) => m.name) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Ollama 接続時の自由質問フォールバック。 */
+async function tryOllama(prompt: string): Promise<OllamaTry> {
+  const hub = window.serviceHub;
+  if (!hub) return null;
+  // **名前は推測しない** —— アプリの 2 つの導入手順が別のモデルを入れるので、
+  // 直書きの既定はどちらか一方にしか当たらない (`data/chatbotOllama.ts` の表)。
+  const model = chatbotOllamaModel(storedChatbotModel(), await installedOllamaModels(hub));
   try {
     // 戻り値の型は台帳 (`ollama/chat` = 共有の `OllamaChatResult`) を読む (パス 113 / 117)。それまで
     // `{ response?, message? }` と手で写しており、実物の `reply` を 1 度も読めていなかった —— Ollama の
     // 答えは常に空として捨てられ、定型の「解釈できません」だけが出ていた。
-    const res = await window.serviceHub.invoke<ActionData<'ollama/chat'>>('ollama', 'chat', { model, prompt });
-    if (!res.ok) return null;
+    const res = await hub.invoke<ActionData<'ollama/chat'>>('ollama', 'chat', { model, prompt });
+    // **断りを捨てない** —— アプリは既に原因と直す手を組んでいる (パス 449)。
+    if (!res.ok) return { refusal: ollamaRefusalNote(res.message) };
     const text = res.data.reply.trim();
-    return text.length > 0 ? text : null;
+    return text.length > 0 ? { reply: text } : { refusal: ollamaRefusalNote('') };
   } catch {
-    return null;
+    return { refusal: ollamaRefusalNote('') };
   }
 }
 
@@ -294,17 +327,21 @@ export function ChatbotWidget() {
     }
 
     // 解釈不能のときだけ、Ollama 接続環境なら自由質問として LLM へ。
+    let ollamaNote = '';
     if (reply.kind === 'fallback') {
       setBusy(true);
       const llm = await tryOllama(text);
       setBusy(false);
-      if (llm) {
-        append({ role: 'bot', text: `🧠 ${llm}`, routedThrough: 'Ollama (ローカル LLM)' });
+      if (llm !== null && 'reply' in llm) {
+        append({ role: 'bot', text: `🧠 ${llm.reply}`, routedThrough: 'Ollama (ローカル LLM)' });
         return;
       }
+      // 試して断られたなら、そう言う。橋が無い (`null`) ときは定型文が正しい
+      // ——「Ollama 接続時は…」はその人にとって真である (パス 449)。
+      if (llm !== null) ollamaNote = `\n\n${llm.refusal}`;
     }
 
-    append({ role: 'bot', text: reply.text + storeNote, routedThrough: reply.routedThrough });
+    append({ role: 'bot', text: reply.text + storeNote + ollamaNote, routedThrough: reply.routedThrough });
 
     if (reply.kind === 'action' && reply.intent) {
       // **起こり得ないことに承認を求めない** (パス 109)。書き込み操作の必須項目は

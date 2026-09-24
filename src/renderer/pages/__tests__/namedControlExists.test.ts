@@ -79,6 +79,13 @@ const LEDGER: readonly Row[] = [
     why: '効かない上書きを消すボタン (2026-09-24 · パス 447)。文は `manualData.ts` が組むが、押す所は同じ欄の同じ行に在る —— その行を見せる面はここだけなので、別の画面へ送ってはいけない。',
   },
   { name: 'KPI / BEP', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
+  {
+    name: 'Ollama',
+    kind: 'screen-label',
+    why:
+      '画面の名前 (2026-09-24 · パス 449)。AI コンシェルジュの自由質問にモデルを選ぶ口は無いので、' +
+      '導入済みの一覧が出るこの画面を名乗る —— 下の ★ がこの綴りを `SERVICES` のラベルと突き合わせる。',
+  },
   { name: '売上集計', kind: 'screen-label', why: '同じく画面の名前で、同じ検査が `SERVICES` と突き合わせる。' },
   {
     name: 'ライブラリ',

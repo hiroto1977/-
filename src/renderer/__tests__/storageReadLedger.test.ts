@@ -37,6 +37,7 @@ import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripNonCode } from '../../shared/__tests__/stripNonCode';
 
 type Policy = 'entrance' | 'three-state' | 'fold' | 'abort';
 
@@ -159,7 +160,12 @@ export function findReadSites(files: readonly string[]): Site[] {
   const found: Site[] = [];
   for (const abs of files) {
     const file = relative(REPO, abs).split('\\').join('/');
-    const text = readOriginalSource(abs);
+    // **注記の中の言及は数えない** (2026-09-24 · パス 449)。直す前は素の
+    // 本文を行ごとに見ていたので、**直した欠陥を docblock で正確に引用すると
+    // その引用が読み取り箇所として数えられた** (法則 `mention-vs-declaration`)。
+    // 実測: `stripNonCode` を通すと `src/renderer` の一致は 20 → 19 件で、
+    // 減ったのは引用の 1 行だけ (他は 1 件も動かない)。行番号は保たれる。
+    const text = stripNonCode(readOriginalSource(abs));
     text.split('\n').forEach((line, i) => {
       if (RAW_READ.test(line)) found.push({ file, line: i + 1, via: 'getItem' });
       // 入口の**定義**は数えない (呼び出しだけ)。
@@ -253,6 +259,13 @@ describe('端末からの読み取りの台帳 (パス 310)', () => {
     );
     expect(moved).toEqual([]);
     expect(SITES.some((s) => s.file === 'src/renderer/components/GoogleConnectCard.tsx' && s.via === 'entrance')).toBe(true);
+  });
+
+  it('標本: 注記の中の言及は読み取り箇所として数えない (パス 449)', () => {
+    // **この標本は「注記を落とす」の両向きを 1 つの `it` で持つ** ——
+    // 数えないこと (ここ) と、実際のコードなら数えること (すぐ下の対照)。
+    const mention = findReadSites([join(__dirname, 'fixtures', 'mentionOnlyRead.txt')]);
+    expect(mention).toEqual([]);
   });
 
   it('対照: 台帳に無いファイルを混ぜると鳴る', () => {

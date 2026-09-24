@@ -63,10 +63,15 @@ interface Row {
   readonly file: string;
   /** その文が指さす逃げ口。文が 2 つ名指しするなら 2 つ書く。 */
   readonly kinds: readonly Kind[];
-  /** その文を出させる記録の collection。 */
-  readonly collection: string;
+  /**
+   * その文を出させる記録の collection。**記録から生まれない文は持たない**
+   * (2026-09-24 · パス 449) —— 端末内のモデルが答えなかったときの断りは
+   * 保管した行についての文ではないので、点検パネルにも一覧にも標本が無い。
+   * 持たない行は `other-screen` だけを名乗れる (下の検査が両方向で留める)。
+   */
+  readonly collection?: string;
   /** その文を出させる記録そのもの (実物の関門に食わせる)。 */
-  readonly sample: Record<string, unknown>;
+  readonly sample?: Record<string, unknown>;
   readonly why: string;
 }
 
@@ -208,6 +213,12 @@ const LEDGER: readonly Row[] = [
     collection: KPI_ACTUALS_COLLECTION,
     sample: KPI_OK,
     why: '経営サマリーには一覧が無いので KPI の画面を名乗る (2026-09-23 まで実在しない綴りだった)。',
+  },
+  {
+    fn: 'CHATBOT_OLLAMA_ESCAPE',
+    file: 'src/renderer/data/chatbotOllama.ts',
+    kinds: ['other-screen'],
+    why: '**記録ではなくモデルについての文** —— AI コンシェルジュに行き先を選ぶ口が無いので、導入済みの一覧が出る「Ollama」の画面を名乗る (パス 449)。',
   },
   {
     fn: 'duplicateMemberMessage',
@@ -369,10 +380,28 @@ describe('名指しした逃げ口は、対象をそこに持っている (パ�
     expect(SHORTHAND.test('同上）')).toBe(true);
     expect(SHORTHAND.test('同じ判定 (`date: calendarDate`) —— 全件が読めないときの文。')).toBe(false);
     for (const r of LEDGER) {
-      expect(readOriginalSource(r.file), `${r.fn} の宣言が ${r.file} に無い`)
-        .toContain(`export function ${r.fn}(`);
+      const src = readOriginalSource(r.file);
+      expect(
+        src.includes(`export function ${r.fn}(`) || src.includes(`export const ${r.fn} `),
+        `${r.fn} の宣言が ${r.file} に無い`,
+      ).toBe(true);
       expect(r.why.length, `${r.fn} の理由が短すぎる`).toBeGreaterThanOrEqual(15);
       expect(r.why, `${r.fn} の理由が省略形`).not.toMatch(SHORTHAND);
+    }
+  });
+
+  it('★ 標本を持たない行は other-screen だけを名乗る (パス 449)', () => {
+    // 記録から生まれない文 (モデルが答えなかった等) は、点検パネルにも
+    // 一覧にも「その行」が無い —— **そこを名乗ったら消す物が無い所へ送る**。
+    const noSample = LEDGER.filter((r) => r.sample === undefined);
+    expect(noSample.length, '標本を持たない行が 1 つも無ければ、この規則は空虚').toBeGreaterThanOrEqual(1);
+    for (const r of noSample) {
+      expect(r.collection, `${r.fn}: 標本が無いのに collection を名乗っている`).toBeUndefined();
+      expect(r.kinds, `${r.fn}: 標本が無い行は other-screen だけ`).toEqual(['other-screen']);
+    }
+    // 逆向き: 標本を持つ行は必ず collection も持つ
+    for (const r of LEDGER.filter((x) => x.sample !== undefined)) {
+      expect(r.collection, `${r.fn}: 標本は在るのに collection が無い`).toBeDefined();
     }
   });
 
@@ -380,7 +409,8 @@ describe('名指しした逃げ口は、対象をそこに持っている (パ�
     const rows = LEDGER.filter((r) => r.kinds.includes('audit-panel'));
     expect(rows.length).toBeGreaterThanOrEqual(2);
     for (const r of rows) {
-      const res = await auditRecordShapes(storeWith(r.collection, r.sample));
+      expect(r.sample, `${r.fn}: 点検パネルを名乗る行には標本が要る`).toBeDefined();
+      const res = await auditRecordShapes(storeWith(r.collection!, r.sample!));
       expect(res.checked, `${r.fn}: 標本が判定されていない`).toBe(1);
       expect(
         res.malformed.map((m) => m.collection),
@@ -393,8 +423,9 @@ describe('名指しした逃げ口は、対象をそこに持っている (パ�
     const rows = LEDGER.filter((r) => r.kinds.includes('list-x'));
     expect(rows.length).toBeGreaterThanOrEqual(7);
     for (const r of rows) {
+      expect(r.sample, `${r.fn}: 一覧の × を名乗る行には標本が要る`).toBeDefined();
       expect(
-        hasCollectionShape(r.collection, r.sample),
+        hasCollectionShape(r.collection!, r.sample!),
         `${r.fn} は一覧の × を名指しするが、その標本は形の表が断る (復元で捨てられ一覧に出ない)`,
       ).toBe(true);
     }

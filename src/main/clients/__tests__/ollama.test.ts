@@ -17,6 +17,8 @@ import {
   type OllamaReadPath,
 } from '../../../shared/ollama';
 import { FetchError } from '../types';
+import { resolve } from 'node:path';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
   MAX_ASSISTANT_REPLY_CHARS,
@@ -1037,5 +1039,111 @@ describe('★ モデル一覧の読みは共有の 1 つ (パス 407)', () => {
     expect(snap.models[0]).toEqual({
       name: 'llama3', family: 'llama', parameterSize: '7B', quantization: 'Q4', sizeMb: 1, modifiedAt: '2026-09-22',
     });
+  });
+});
+
+/**
+ * **両ビルドが同じ助言を出す** (2026-09-24 · パス 449)。
+ *
+ * `describeOllamaError` は `installed` を渡されたときだけ「インストール済みの
+ * 「X」を指定すると動きます。」を出す。ブラウザ版 (`network/ollamaWeb.ts`) は
+ * 失敗の枝で `/api/tags` を引いて渡すのに、**main だけが渡していなかった** ——
+ * 実測 (2026-09-24 · `llama3.2:1b` が入っている端末で `llama3.2` を要求):
+ *
+ * | ビルド | 画面に出る 1 行 |
+ * | --- | --- |
+ * | ブラウザ版 | 「… (インストール済みの「llama3.2:1b」を指定すると動きます。)」 |
+ * | デスクトップ版 | 「… (取得する: ollama pull llama3.2)」—— 目の前のモデルを言わない |
+ *
+ * 同じ関数が同じ状況に 2 通り答え、弱い方が main に立っていた (パス 402 / 407 の家系)。
+ */
+describe('Ollama chat — 失敗の助言に導入済みモデルを添える (両ビルド)', () => {
+  function bothEndpoints(chatRes: Response, tagsRes: Response | Error): ReturnType<typeof vi.fn<typeof fetch>> {
+    return vi.fn<typeof fetch>().mockImplementation(async (input) => {
+      const url = String(input);
+      if (url.endsWith('/api/tags')) {
+        if (tagsRes instanceof Error) throw tagsRes;
+        return tagsRes;
+      }
+      return chatRes;
+    });
+  }
+
+  const NOT_FOUND = () =>
+    new Response(JSON.stringify({ error: 'model "llama3.2" not found, try pulling it first' }), {
+      status: 404,
+    });
+
+  it('★ 導入済みの名前を助言に載せる (直す前は載らなかった)', async () => {
+    const fetchMock = bothEndpoints(
+      NOT_FOUND(),
+      jsonResponse({ models: [{ name: 'llama3.2:1b', size: 1, modified_at: '2026-07-01T00:00:00Z' }] }),
+    );
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeInstanceOf(FetchError);
+    expect(caught!.message).toContain('llama3.2:1b');
+    // 一覧を引くのは**失敗の枝だけ** (正常な生成に往復を増やさない)
+    expect(fetchMock.mock.calls.map((c) => String(c[0]).replace(/^https?:\/\/[^/]+/, ''))).toEqual([
+      '/api/chat',
+      '/api/tags',
+    ]);
+  });
+
+  it('一覧が引けなくても、結論は変わらない (要求したモデルを名乗る)', async () => {
+    for (const tags of [new Error('boom'), new Response('nope', { status: 500 })]) {
+      const fetchMock = bothEndpoints(NOT_FOUND(), tags);
+      let caught: Error | undefined;
+      try {
+        await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } });
+      } catch (err) {
+        caught = err as Error;
+      }
+      expect(caught).toBeInstanceOf(FetchError);
+      expect(caught!.message).toContain('llama3.2');
+    }
+  });
+
+  it('未取得モデル以外では一覧を引かない (失敗した相手への往復を増やさない)', async () => {
+    const fetchMock = bothEndpoints(
+      new Response(JSON.stringify({ error: 'boom' }), { status: 500 }),
+      new Error('tags は呼ばれない'),
+    );
+    await expect(
+      ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } }),
+    ).rejects.toBeInstanceOf(FetchError);
+    expect(fetchMock.mock.calls).toHaveLength(1);
+  });
+
+  it('正常な生成は /api/chat だけを叩く (助言の一覧を引きに行かない)', async () => {
+    const fetchMock = bothEndpoints(jsonResponse({ message: { content: 'yo' } }), new Error('tags は呼ばれない'));
+    await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2:1b', prompt: 'hi' } });
+    expect(fetchMock.mock.calls).toHaveLength(1);
+  });
+
+  it('★ 両ビルドとも、失敗の枝で adviseFromBody に installed を渡す (走査・両方向)', () => {
+    const files = {
+      'デスクトップ版': readOriginalSource(resolve(__dirname, '../ollama.ts')),
+      'ブラウザ版': readOriginalSource(resolve(__dirname, '../../../renderer/network/ollamaWeb.ts')),
+    };
+    for (const [build, src] of Object.entries(files)) {
+      const calls = src.match(/adviseFromBody\([^;]*?\)/gs) ?? [];
+      // 床: 走査が空虚に通らないこと (綴りが変われば 0 件になり、ここで鳴る)
+      expect(calls.length, `${build}: adviseFromBody の呼び出し`).toBeGreaterThanOrEqual(2);
+      // 分類だけの呼び出し (installed 無し) と、名前を添える呼び出しが 1 つずつ。
+      // **どちらか片方しか無い形が、直す前の main である。**
+      expect(
+        calls.filter((c) => c.includes('installed')).length,
+        `${build}: installed を添える adviseFromBody`,
+      ).toBe(1);
+      expect(
+        calls.filter((c) => !c.includes('installed')).length,
+        `${build}: 分類だけの adviseFromBody`,
+      ).toBe(1);
+    }
   });
 });

@@ -24,6 +24,7 @@ import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripNonCode } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 const ACCESS_RE = /\b(?:localStorage|sessionStorage)\.(?:getItem|removeItem|clear)\(/g;
@@ -75,7 +76,10 @@ function rendererSources(): { file: string; text: string }[] {
     ignore: ['**/__tests__/**'],
   }).map((abs) => ({
     file: relative(REPO, abs).split('\\').join('/'),
-    text: readOriginalSource(abs),
+    // **注記の中の言及は数えない** (2026-09-24 · パス 449)。直した欠陥を
+    // docblock で正確に引用すると、その引用が「素の呼び出し」として鳴っていた
+    // (法則 `mention-vs-declaration`)。行番号は `stripNonCode` が保つ。
+    text: stripNonCode(readOriginalSource(abs)),
   }));
 }
 
@@ -89,6 +93,14 @@ describe('端末から読む / 消す側の作法', () => {
   it('★ 素で読む / 消す場所は無い', () => {
     const bare = SITES.filter((s) => !s.guarded).map((s) => `${s.file}:${s.line}`);
     expect(bare, '`getItem` / `removeItem` は同じ関数の中で失敗を受けること (SecurityError は触れるだけで飛ぶ)').toEqual([]);
+  });
+
+  it('標本: 注記の中の言及は数えない / 同じ綴りでもコードなら数える (パス 449)', () => {
+    const code = 'export function f() {\n  return localStorage.getItem(K);\n}\n';
+    // 直した欠陥を docblock で引用した形。**同じ綴り**だが宣言ではない。
+    const mention = `// 直す前: localStorage.getItem('k') ?? 'x'\n${code}`;
+    expect(scan([{ file: 'x.ts', text: stripNonCode(mention) }])).toHaveLength(1);
+    expect(scan([{ file: 'x.ts', text: stripNonCode("// localStorage.getItem('k')\n") }])).toEqual([]);
   });
 
   it('標本: 判定は素の呼び出しを実際に素と読む', () => {

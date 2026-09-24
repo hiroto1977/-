@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **15688** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **15713** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1850,7 +1850,7 @@ union を参照する。
 | cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | **共有台帳 `CLOUDFLARE_PURGE_FIELDS`** を共有の `checkPurge` が読む (files は文字列の配列で件数と 1 件の長さに天井・purgeEverything は真偽値・どちらかが要る = `CLOUDFLARE_PURGE_NEEDS_TARGET`) + URL (`cloudflarePurgePath`)・要求 (`purgeCacheInit`)・結果の読み (`parsePurgeResult`) も共有 (2026-09-19)。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する。宣言は main の PurgeCachePayload | `src/shared/api/cloudflare.ts:140-202` |
 | emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:116-285` |
 | emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:245-315` |
-| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:297-418` |
+| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:297-488` |
 | microsoft-365 | `send-mail` | `{ to, subject, body? }` | **共有台帳 `MS365_MAIL_FIELDS`** を共有の `checkMail` が読む (型・長さ) + Graph message envelope も共有 (`graphMailInit`)。宣言は `SendMailPayload`、欄の名前のずれは検査が留める | `microsoft-365.ts:17-269` |
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | **共有台帳 `MS365_EVENT_FIELDS`** を共有の `checkEvent` が読む (型・長さ) + Graph event envelope も共有 (`graphEventInit`・時間帯は `GRAPH_EVENT_TIME_ZONE`)。宣言は `CreateEventPayload` | `microsoft-365.ts:17-300` |
 | assistant | `chat` | `{ messages, system, model, provider }` | **最新の発話が 1 発話の天井を超えていれば切らずに断る (`latestTurnTooLong` · パス 112。履歴は窓)**。sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model / provider は利用者が選ぶ設計**なので許可リストは掛けない —— provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:134-256` |

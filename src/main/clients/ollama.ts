@@ -307,6 +307,28 @@ interface OllamaChatResponse {
   total_duration?: number;
 }
 
+/**
+ * 失敗の助言に添える**導入済みモデル名**。取れなければ空 —— 助言が名前を
+ * 挙げないだけで、失敗ではない (ブラウザ版の `listInstalledModels` と同じ判断)。
+ * 呼ぶのは失敗の枝だけなので、正常な生成に往復は増えない。
+ */
+async function installedModelNames(fetchFn: typeof fetch): Promise<string[]> {
+  try {
+    return await withTimeout(fetchFn, `${OLLAMA_BASE}/api/tags`, {}, async (res) => {
+      if (!res.ok) return [];
+      const tags = parseJsonText(
+        await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'Ollama /api/tags'),
+        'Ollama /api/tags',
+      );
+      return normalizeModels(tags).map((m) => m.name);
+    });
+  } catch {
+    // 一覧が引けない理由 (接続断・締切・壊れた本文) は**この経路の結論を
+    // 変えない** —— 助言は既に組めており、名前を添えられないだけである。
+    return [];
+  }
+}
+
 async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
@@ -372,7 +394,27 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
     // 生の英語エラーをそのまま投げると UI に内部メッセージが出るだけなので、
     // 共有ロジックで「何が起きて次に何をすればいいか」に翻訳してから投げる
     // (長さ上限も adviseFromBody 側で掛かる)。
-    const advice = adviseFromBody(res.status, body, { model });
+    // **導入済みの一覧を添える** (2026-09-24 · パス 449)。ブラウザ版
+    // (`network/ollamaWeb.ts:576`) は失敗の枝で `/api/tags` を引いて
+    // `installed` を渡すのに、**ここだけが渡していなかった** —— 同じ
+    // `describeOllamaError` が両ビルドで別の答えを出していた。実測
+    // (2026-09-24 · `llama3.2:1b` が入っている端末で `llama3.2` を要求):
+    //
+    //   ブラウザ版 … 「モデル「llama3.2」がまだ取得されていません。
+    //                  (インストール済みの「llama3.2:1b」を指定すると動きます。)」
+    //   デスクトップ版 …「… (取得する: ollama pull llama3.2)」
+    //                  —— 目の前に在るモデルの名前を 1 度も言わない。
+    //                  2 つ目の hint は「まだ 1 つもモデルがありません」で、
+    //                  **入っている利用者に対して偽**だった (画面には
+    //                  `hints[0]` しか出さないので今日そこは見えていない)。
+    // **形はブラウザ版に合わせる** —— まず分類し、未取得モデルのときだけ
+    // `/api/tags` を引いて名前を添える。接続断・403・500 で一覧を引きに行くと、
+    // 既に失敗している相手へ往復を 1 つ増やすだけで、助言は 1 字も変わらない。
+    const first = adviseFromBody(res.status, body, { model });
+    const advice =
+      first.kind === 'model-not-found'
+        ? adviseFromBody(res.status, body, { model, installed: await installedModelNames(f) })
+        : first;
     throw new FetchError(
       advice.hints.length > 0 ? `${advice.message} (${advice.hints[0]})` : advice.message,
       res.status,

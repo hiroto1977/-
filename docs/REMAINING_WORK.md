@@ -10,6 +10,48 @@
 
 ---
 
+## パス 449 (2026-09-24) — 測って、このパスでは直さないと決めた軸
+
+### ① ライブラリ (IndexedDB blob) の「届く」は、今日は遠回りで足りている (罠)
+
+パス 448 は業務レコードのストアについて「書いたのにどの画面にも届かない」を直した。
+**同じ問いをライブラリへ当てた実測 (2026-09-24 · jsdom で実物の `LibraryPage` を描く):**
+
+| 操作 | 保管層 | 画面 |
+| --- | ---: | ---: |
+| 描いた直後 (空) | 0 件 | 「ライブラリ · 0 件 / 0 B」 |
+| **描いたまま `realConnectorSinks.putLibrary` で書く** | **1 件** | **0 件** (`p449.json` は 1 字も出ない) |
+| 描き直す (ページを離れて戻る) | 1 件 | **1 件 / 7 B** |
+
+つまり `library.ts` には**知らせる仕組みが 1 つも無い** (`subscribe` / `notify` は 0 件)
+—— 構造はパス 448 が直した欠陥とまったく同じである。**それでも今日は欠陥ではない**:
+
+* 書き手は **5 か所**で、**5 か所とも `LibraryPage` と別の画面**から走る
+  (`web-shim.ts` の `saveToLibrary` を呼ぶ 4 つの書き出し action = templates /
+  teamradar / stocks / business、そして `connectorSinks.putLibrary` = コネクタ画面)。
+* `App.tsx` は `<div key={active.id}>` で画面を**入れ替える**ので、ライブラリへ移ると
+  必ず mount し直され、`useEffect(..., [])` の `refresh()` が走る。
+* `LibraryPage` 自身の削除・全削除は `await refresh()` を持ち、`更新` ボタンも在る。
+
+**だから「罠であって今日の生きた欠陥ではない」** (パス 359 / 398 / 439 と同じ位置づけ)。
+生きるのは ① ライブラリの一覧を出す部品が 2 つ目の画面に載った日 ② 書き込みが
+`LibraryPage` と同じ root から起きるようになった日 —— そのとき直し方は
+パス 448 と同じ (**知らせる仕組みを保管層へ置き、画面は購読するだけ**)。
+
+**タブを跨ぐ通知はどちらにも無い** —— パス 448 の `notifyRecordStoreChanged` も
+同じ document の中だけである。これはライブラリ固有の穴ではないので、ここには数えない。
+
+### ② `chatbot-ollama-model` は読み手 1 / 書き手 0 の鍵 (残した理由を測った)
+
+パス 449 が直した当の鍵。**出荷コードに書く所は 0 件**で、消す側
+(`security/eraseAll.ts`) と台帳だけが名を挙げる。読みは残した ——
+`chatbotOllamaModel` が導入済みの一覧から決めるので**鍵が空でも自由質問は通り**、
+手で置いた人の意思を尊重する口としてだけ生きているから。
+**画面から書く口は足していない** (この widget にモデルを選ぶ欄を作ると、
+「Ollama」の画面の一覧と 2 つ目の選び方ができる —— 断りはそちらを名指しする)。
+
+---
+
 ## パス 448 (2026-09-24) — 測って、このパスでは直さないと決めた軸
 
 パス 448 は「保管はされるのに、どの画面も見せない collection」を実測して閉じた
@@ -28646,7 +28688,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `inputCeiling` | 13 | 47 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
 | `isoDate` | 8 | 29 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 |
 | `mutualFundsMetrics` | 0 | 1 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**2 つだけ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct` (`pct < RETURN_FLOOR_PCT` の 1 行)。**その述語は確かに越境する** —— `adviseService` の中で真の枝 (:586 警告を組む) と偽の枝 (:596 測れる集合から外す) の両方が使われる。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
-| `ollama` | 1 | 4 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
+| `ollama` | 1 | 5 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
 | `readNumeric` | 0 | 5 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `rfc2822` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本 |

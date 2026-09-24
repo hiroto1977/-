@@ -762,13 +762,33 @@ describe('伏字の天井 — 呼ぶ側の第 2 引数は名前で書く (パス
   });
 
   it('★ 使っている名前はすべて redact / assistantLimits の輸出である', () => {
-    const allowed = new Set([
+    /*
+     * **母集団は輸出から導く** (2026-09-24 · パス 449)。直す前は 5 つの
+     * 手書きの一覧で、題名は「redact / assistantLimits の輸出である」と
+     * 名乗っていた —— **名乗る集合と数える集合が別**だったので、梯子に
+     * 新しい段を足して使うと「輸出ではない」と鳴った
+     * (`MAX_LOCAL_MODEL_ERROR_CHARS` は 2026-09-22 から redact.ts の輸出)。
+     */
+    const allowed = new Set(
+      ['src/shared/redact.ts', 'src/shared/assistantLimits.ts'].flatMap((f) =>
+        [...readOriginalSource(resolve(REPO, f)).matchAll(/export const ([A-Z][A-Z0-9_]*)\s*=/g)].map(
+          (m) => m[1]!,
+        ),
+      ),
+    );
+    // 床: 導出が死んだら「何でも輸出」にならないこと。直す前の手書きの
+    // 5 つは全部輸出なので、そこも標本として当てる。
+    expect(allowed.size).toBeGreaterThanOrEqual(10);
+    for (const name of [
       'ERROR_MESSAGE_MAX_CHARS',
       'MAX_ENSEMBLE_ERROR_CHARS',
       'MAX_RESPONSE_BODY_IN_MESSAGE',
       'MAX_WARNING_BODY_CHARS',
       'MAX_MALFORMED_JSON_ECHO_CHARS',
-    ]);
+    ]) {
+      expect(allowed.has(name), `${name} が輸出の走査から落ちている`).toBe(true);
+    }
+    expect(allowed.has('MAX_NOT_AN_EXPORT_AT_ALL')).toBe(false);
     const unknown = new Set<string>();
     for (const p of sources) {
       for (const arg of secondArgs(readOriginalSource(p))) {
