@@ -51,7 +51,10 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['asana', 'none'],
   ['linear', 'none'],
   ['sentry', 'none'],
-  ['shopify', 'action'],
+  // **`action` → `none`** (2026-09-24 · パス 452)。7 つのコネクタは `ctx.payload` から
+  // **連携先**の資格情報を取り出し、Shopify 自身の `ctx.token` を読む出荷コードは 0 件
+  // だった (ゲートの針が `\btoken\b` をファイル全体に当てていたため通っていた)。
+  ['shopify', 'none'],
   ['stripe', 'none'],
   ['line', 'none'],
   ['storage', 'none'],
@@ -91,7 +94,16 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['cursor', 'fetch'],
 ];
 
-/** 監査で見つかった 8 件。ここが変わる時は必ず理由がある。 */
+/**
+ * 監査で見つかった **9 件**。ここが変わる時は必ず理由がある。
+ *
+ * ★ **9 件目は `shopify` で、2026-09-24 (パス 452) に足した。**
+ * 2026-08 の監査の規則は「`LIVE_ACTIONS` に登録が無い」を条件にしており、
+ * shopify は 7 つのコネクタを持つので**構造的に母集団へ入らなかった**。
+ * 見つけたのは別の道 —— ゲートの針が `\btoken\b` をファイル全体に当てており、
+ * コネクタが読む `ctx.payload.token` (= **連携先**の資格情報) を
+ * 自分の読み手として数えていた。
+ */
 const AUDITED_UNUSED: readonly ServiceId[] = [
   'asana',
   'discord',
@@ -101,6 +113,8 @@ const AUDITED_UNUSED: readonly ServiceId[] = [
   'salesforce',
   'sentry',
   'stripe',
+  // 9 件目 (パス 452) —— 別の道で見つかった。上の docblock に理由。
+  'shopify',
 ];
 
 describe('SERVICE_CREDENTIAL_USE', () => {
@@ -118,11 +132,12 @@ describe('SERVICE_CREDENTIAL_USE', () => {
   it('3 分類の件数を固定する', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
     expect(count('fetch')).toBe(15);
-    expect(count('action')).toBe(8);
-    expect(count('none')).toBe(53);
+    // shopify が `action` → `none` (パス 452)。
+    expect(count('action')).toBe(7);
+    expect(count('none')).toBe(54);
   });
 
-  it('監査で見つかった 8 件は none のままである', () => {
+  it('監査で見つかった 9 件は none のままである', () => {
     for (const id of AUDITED_UNUSED) {
       expect(credentialUseOf(id), id).toBe('none');
     }

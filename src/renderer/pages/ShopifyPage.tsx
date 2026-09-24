@@ -92,7 +92,15 @@ export function ShopifyPage() {
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Shopify · {count} 件</>}
-        tokenSetup={{ label: 'API トークン', placeholder: 'Bearer token' }}
+        /*
+         * **資格情報の入力欄は置かない** (2026-09-24 · パス 452)。
+         * 2026-09-24 まで「API トークン」を預かっていたが、**それを読む出荷コードは
+         * 0 件**だった —— 7 つのコネクタは `ctx.payload` から**連携先** (Slack / LINE /
+         * Gmail / Notion / Salesforce / Stripe / Discord) の資格情報を取り出し、
+         * fetcher は静的 stub である。`SERVICE_CREDENTIAL_USE.shopify` が `'none'` を
+         * 宣言し、`lint:credential-use` が「読まないのに欄を出す」形を落とす。
+         * 既に保存した分は設定画面の掃除 (`unusedStoredCredentials`) から消せる。
+         */
       />
 
       <Section title="注文を売上集計に記録 (→ KPI に反映)">

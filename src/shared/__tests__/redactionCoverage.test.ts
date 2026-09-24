@@ -356,7 +356,6 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     },
     { service: 'slack', issuer: 'Slack bot トークン', carrier: 'prefix', sample: `xoxb-1111-2222-${FILL}` },
     { service: 'atlassian', issuer: 'Atlassian API トークン', carrier: 'prefix', sample: `ATATT3xFfGF0${FILL}` },
-    { service: 'shopify', issuer: 'Shopify 管理 API', carrier: 'prefix', sample: `shpat_${FILL}` },
     { service: 'assistant', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'emotions', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'skills', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
@@ -387,7 +386,14 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * **双方向。** 預かるサービスは必ず 1 行持ち、行は必ず預かるサービスを指す。
    * 片方向だと「台帳に在る分だけ見る」= 抜けを構造的に見られない検査になる。
    */
-  it('★ 預かる 23 サービスすべてに行が在り、余計な行が無い', () => {
+  /*
+   * ★ **`shopify` は 2026-09-24 (パス 452) に母集団から抜けた** —— 宣言が
+   * `action` → `none` になったので `collectsCredential` が false を返す
+   * (預からない資格情報に伏字の行は要らない)。**接頭辞の主張は消えていない** ——
+   * `shpat_` / `shpss_` は上の `PREFIXED` が母集団に依らず留めており、
+   * 既に保存した人の値や第三者が本文に反射した値には今日も掛かる。
+   */
+  it('★ 預かる 22 サービスすべてに行が在り、余計な行が無い', () => {
     const listed = HELD_FORMATS.map((f) => f.service);
     expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
   });

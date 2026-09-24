@@ -18,12 +18,29 @@
  *
  * ## 判定規則 (判断を挟まない)
  *
- * - `fetch`  — `dataOrigin` が 'remote' で client モジュールが `token` を参照する
- * - `action` — remote ではないが `LIVE_ACTIONS` にあり client が `token` を参照する
+ * - `fetch`  — `dataOrigin` が 'remote' で client モジュールが **`ctx.token` を読む**
+ * - `action` — remote ではないが `LIVE_ACTIONS` にあり client が **`ctx.token` を読む**
  * - `none`   — どちらでもない
  *
- * 見ているのは「client モジュールが `token` という名前に触るか」で、データフロー
- * 解析ではない。「触るが実は使っていない」形は通る。**触りもしないのに預かる**形は落ちる。
+ * ## 針は `\btoken\b` ではない (2026-09-24 · パス 452)
+ *
+ * 2026-09-24 まで、この判定は **`/\btoken\b/` を client モジュールの全文**に当てていた ——
+ * 注記も文字列も、そして**別人のトークン**も同じに見える。`shopify` がそれで通っていた:
+ * 7 つのコネクタはどれも `ctx.payload` から**連携先** (Slack / LINE / Gmail / Notion /
+ * Salesforce / Stripe / Discord) のトークンを取り出すので `token` の綴りは 20 回以上出るが、
+ * **`ctx.token` (= Shopify 自身の資格情報) の出現は注記 1 行だけ**だった。
+ * つまり `ShopifyPage` は「API トークン」を預かり、**どの経路もそれを読まなかった** ——
+ * この門が存在する理由そのもの (「読み手のいない資格情報を預かること自体が漏えい面の追加」)
+ * が、この門を素通りしていた。実測で針を替えると動くのは **3 / 76 サービス**で、
+ * 分類が変わるのは `shopify` **1 件だけ** (`kpi` / `funding` は元から `none`)。
+ *
+ * 見ているのは「client モジュールが **自分の** `ctx.token` を読むか」で、データフロー
+ * 解析ではない。**「読むが渡した先が無視する」形は通る** —— 今日の実例は `teamradar` で、
+ * `exportTeamRadarSvgImpl` が `ctx.token` を `fetchTeamRadarSnapshot` へ渡し、その実体
+ * `fetchTeamRadarSnapshotImpl(_ctx, deps)` が**明示的に無視する**。ここを落とすには呼び先を
+ * 辿る必要があり、それはこの門がしないと宣言している解析である ——
+ * **その面は `src/shared/__tests__/credentialFaceCensus.test.ts` が両方向で持つ**
+ * (`ignoredByCallee` の行は、原文の `_` 接頭辞で免除の理由そのものを検める)。
  *
  * 使い方:  node scripts/lint-credential-use.cjs
  *          node scripts/lint-credential-use.cjs --self-test
@@ -34,6 +51,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { fetcherEntries, localServiceIds, declaredOrigins } = require('./lint-data-origin.cjs');
+// 注記・文字列・正規表現のリテラルを落とす算法は `.cjs` の側に 1 つだけ (パス 452)。
+const { stripNonCode } = require('./lib/strip-non-code.cjs');
+
+/**
+ * **自分の資格情報を読む**形。`ctx.payload` から取り出す連携先のトークンとは別物で、
+ * 注記の中の言及も数えない (呼び手が `stripNonCode` を通してから当てる)。
+ */
+const READS_OWN_TOKEN = /\bctx\s*\.\s*token\b/;
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const CLIENTS_DIR = path.join(REPO_ROOT, 'src/main/clients');
@@ -109,7 +134,7 @@ function evaluateCredentialUse({ entries, origins, actionIds, sources, declared,
       problems.push(`${id}: fetcher \`${fetcher}\` を export するモジュールが見つかりません`);
       continue;
     }
-    const touchesToken = /\btoken\b/.test(mod.text);
+    const touchesToken = READS_OWN_TOKEN.test(stripNonCode(mod.text));
     const derived =
       origins.get(id) === 'remote' && touchesToken ? 'fetch'
       : actionIds.has(id) && touchesToken ? 'action'
@@ -196,6 +221,56 @@ function selfTest() {
       1,
     ],
     ['fetcher の定義モジュールが無い', { ...base, sources: new Map() }, 1],
+    /*
+     * **針が `ctx.token` であることの対照** (パス 452)。どちらも旧い `\btoken\b` では
+     * 「読んでいる」に見え、`shopify` がその形で 2026-09-24 まで通っていた。
+     */
+    /*
+     * ★ **入力欄は外しておく** —— 残すと件数が針の新旧で**どちらも 1** になり
+     * (新: 「読まないのに欄が在る」/ 旧: 「宣言が古い」)、**理由が違うだけで数が同じ**
+     * なので針を見分けられない。パス 452 の対照でそれを踏んで直した。
+     */
+    [
+      '連携先のトークン (ctx.payload) は自分の資格情報ではない',
+      {
+        ...base,
+        origins: new Map([['alpha', 'local']]),
+        actionIds: new Set(['alpha']),
+        sources: new Map([['fetchAlpha', {
+          file: 'alpha.ts',
+          text: 'const { token, channel } = ctx.payload; post(token, channel);',
+        }]]),
+        declared: new Map([['alpha', 'none']]),
+        tokenPages: new Map(),
+      },
+      0,
+    ],
+    [
+      '注記の中の ctx.token は読み手ではない',
+      {
+        ...base,
+        sources: new Map([['fetchAlpha', {
+          file: 'alpha.ts',
+          text: '/** `ctx.token` は alpha のトークン。 */\nreturn STUB;',
+        }]]),
+        declared: new Map([['alpha', 'none']]),
+        tokenPages: new Map(),
+      },
+      0,
+    ],
+    [
+      '文字列の中の ctx.token も読み手ではない',
+      {
+        ...base,
+        sources: new Map([['fetchAlpha', {
+          file: 'alpha.ts',
+          text: "throw new Error('ctx.token is required');",
+        }]]),
+        declared: new Map([['alpha', 'none']]),
+        tokenPages: new Map(),
+      },
+      0,
+    ],
   ];
   let failed = 0;
   for (const [label, input, want] of cases) {

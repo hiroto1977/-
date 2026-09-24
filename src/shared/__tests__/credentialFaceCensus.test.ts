@@ -18,6 +18,22 @@
  * | 読み手が在るが**渡す先が無視** | `teamradar` | 宣言だけが `action` (fetcher の引数は `_ctx`)。綴りの走査では `reader-only` に見える |
  * | 両方在る | 残る 20 | —— |
  *
+ * ## `shopify` は閉じた (2026-09-24 · パス 452)
+ *
+ * 宣言を `none` へ直し、`ShopifyPage` の欄を外した。**母集団から抜けたので**
+ * この census の `HELD` は 23 → **22**・`writer-only` は 1 → **0** になる
+ * (0 は「要らない」ではない —— 次に同じ形が生えたら台帳に無いので鳴る)。
+ * 合わせて `scripts/lint-credential-use.cjs` の針を `\btoken\b` から
+ * **`ctx.token`** (注記と文字列は落としてから) へ替えた ——
+ * `payload.token` = **連携先**のトークンを自分の読み手として数えていた当のものである。
+ *
+ * ★ **`teamradar` は同じパスで閉じられない (測って決めた)** —— 針を `ctx.token` へ
+ * 替えても `exportTeamRadarSvgImpl` の 1 件は**本物の読み**なので分類は動かない
+ * (実測: 針を替えて動く 3 / 76 サービスのうち、分類が変わるのは `shopify` だけ)。
+ * 落とすには呼び先を辿る必要が在り、それはあの門が「しない」と宣言している解析である。
+ * **代わりにこの census の `ignoredByCallee` が両方向で持つ** ——
+ * 入力欄が生えれば `kind` が `both` になって台帳とずれ、その場で鳴る。
+ *
  * ★ **既存の census が見なかった理由は「対を数えたから」** —— パス 284 / 285 は
  * 「両ビルドに双子が在る断り」を数えたので、**片側が 0 件の組は母集団に入らない**。
  * パス 450 の「読み手が在って書き手が 0 件」と同じ死角である。
@@ -98,19 +114,6 @@ const LEDGER: Readonly<Partial<Record<ServiceId, Row>>> = {
       + '`AssistantPage` のエージェント設定パネルが 11 欄から組んで `setToken(\'assistant\', …)` へ渡す '
       + '(パス 450 が入力欄を表から組む形にした)。',
   },
-  shopify: {
-    kind: 'writer-only',
-    why:
-      '**画面は「API トークン」を預かるのに、どの handler も `ctx.token` を読まない** (実測: '
-      + '`ctx.token` の出現は注記 1 件だけで、10 個の connector はどれも `payload.token` = '
-      + '**連携先** (Slack / LINE / Gmail ほか) のトークンを読む)。読み取りも静的な stub で '
-      + '`_ctx` を無視する。**2026-08 の監査が 8 サービスについて閉じた形の 9 件目**だが、'
-      + 'あの規則は「`LIVE_ACTIONS` に登録が無い」を条件にしており、shopify は登録を持つので '
-      + '通っていた。宣言を `none` へ直すと `lint:credential-use` の `touchesToken` が '
-      + '(注記と `payload.token` を見て) 「`action` のはず」と鳴るので、**ゲートの針ごと**'
-      + '直す必要が在る —— 別のパスで測ってから閉じる。'
-      + '逃げ口は今日も開いている (パス 427 が直した `StatusBar` の「削除」)。',
-  },
   teamradar: {
     kind: 'reader-only',
     ignoredByCallee: true,
@@ -122,8 +125,13 @@ const LEDGER: Readonly<Partial<Record<ServiceId, Row>>> = {
       + '別に確かめて**免除する (下の `it`)。画面に入力欄も無いので今日保存される道は無く、'
       + '**罠であって生きた欠陥ではない** —— ただし `collectsCredential` が true を返す間は '
       + '`unusedStoredCredentials` に載らないので、万一の保存値に掃除の導線が無い。'
-      + '宣言 (`action` → `none`) を直すには `lint:credential-use` の針も要るので、'
-      + 'shopify と同じパスで閉じる。',
+      + '**パス 452 で shopify は閉じたが、こちらは閉じられなかった (測った)** —— ゲートの針を '
+      + '`ctx.token` へ替えても `exportTeamRadarSvgImpl` の 1 件は**本物の読み**なので分類は '
+      + '動かず、落とすには呼び先を辿る解析が要る (あの門が「しない」と宣言している物)。'
+      + 'しかも呼び先の `deps.fetchSnapshot` は差し替え可能な継ぎ目で、'
+      + '既存の検査が「空のオブジェクトを渡すと認証の要る取得へ差し替えたときに黙って失敗する」'
+      + 'として渡すこと自体を仕様にしている。**だから面はここが両方向で持つ** —— '
+      + '入力欄が生えれば `kind` が `both` になって台帳とずれ、その場で鳴る。',
   },
 };
 
@@ -143,7 +151,8 @@ describe('資格情報の面 —— 読む口と書く口を両方向に数え�
   }
 
   it('母集団が空でない (走査が死んでいない)', () => {
-    expect(HELD.length).toBeGreaterThanOrEqual(23);
+    // shopify が母集団から抜けたので 23 → 22 (パス 452)。
+    expect(HELD.length).toBeGreaterThanOrEqual(22);
     expect(writers.size).toBeGreaterThanOrEqual(19);
   });
 
@@ -197,12 +206,19 @@ describe('資格情報の面 —— 読む口と書く口を両方向に数え�
     );
   });
 
-  it('★ 実測: 3 つの形がそれぞれ 1 つ以上在る / 無い', () => {
+  it('★ 実測: 形ごとの件数 (パス 452 で writer-only は 0 になった)', () => {
     const shapes = HELD.map(shapeOf);
     expect(shapes.filter((s) => s === 'both').length).toBeGreaterThanOrEqual(20);
-    // `reader-only` は免除の 1 件 (teamradar) だけ・`writer-only` は shopify だけ。
+    // `reader-only` は免除の 1 件 (teamradar) だけ。
     expect(shapes.filter((s) => s === 'reader-only').length).toBe(1);
-    expect(shapes.filter((s) => s === 'writer-only').length).toBe(1);
+    /*
+     * **`writer-only` は 0** —— shopify を閉じた分 (パス 452)。
+     * 0 は「この検査が要らない」ではない: 次に「読まないのに預かる」画面が生えると
+     * 台帳に無い行として `両方向` の `it` が鳴る。`lint:credential-use` も同じ形を
+     * 落とすが、あちらは `LIVE_FETCHERS` に載る 76 件しか見ないので、
+     * 面の側 (`tokenSetup` を持つ画面) から数えるのはここだけである。
+     */
+    expect(shapes.filter((s) => s === 'writer-only').length).toBe(0);
     expect(shapes.filter((s) => s === 'neither').length).toBe(0);
   });
 });

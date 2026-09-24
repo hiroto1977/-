@@ -107,7 +107,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `security` | tools | local | action | ✅ |  |  | `check-email-breach` `scan-url` | `check-email-breach` `scan-url` | — |
 | `sentry` | integrations | sample | none |  |  |  | — | — | — |
 | `settings` | featured | local | none | ✅ |  |  | — | — | — |
-| `shopify` | integrations | sample | action |  |  |  | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` | — | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` |
+| `shopify` | integrations | sample | none | ✅ |  |  | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` | — | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` |
 | `skills` | tools | local | action | ✅ |  |  | `run-skill` | — | `run-skill` |
 | `slack` | integrations | remote | fetch |  | ✅ |  | `send-message` | `send-message` | — |
 | `sme-consultant` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
@@ -132,8 +132,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 21 / 外部サービス連携 33 / 消費されるだけ 2
 - 出所: remote 15 / local 19 / sample 42
-- 資格情報の読み手 — fetch 15 / action 8 / none 53
-- LOCAL_SERVICES 52 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
+- 資格情報の読み手 — fetch 15 / action 7 / none 54
+- LOCAL_SERVICES 53 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
 

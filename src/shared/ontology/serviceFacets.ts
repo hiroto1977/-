@@ -123,6 +123,19 @@ export const FACET_AXIOMS: readonly FacetAxiom[] = [
     exceptions: {},
   },
   {
+    /*
+     * ★ **この公理は 2026-09-24 (パス 452) に本物の退行を捕まえた。**
+     *
+     * `shopify` の資格情報の宣言を `action` → `none` へ直し (7 つのコネクタは
+     * `ctx.payload` から**連携先**のトークンを取り、Shopify 自身の `ctx.token` を
+     * 読む出荷コードは 0 件)、画面から入力欄を外した。そこで公理が鳴った ——
+     * shopify は `LOCAL_SERVICES` に居なかったので、`fetch:snapshot` と
+     * `action:invoke` は「トークン未設定」で断り続ける。つまり
+     * **読まれない資格情報が「門」として働いており、欄を外すと開ける手が消えた。**
+     * 直しは shopify を `LOCAL_SERVICES` へ足すこと (そこに理由を書いた)。
+     *
+     * 「行き先が無い」は抽象ではなく、この 2 つのハンドラの `not_configured` である。
+     */
     id: 'actions-need-reader-or-local',
     statement: 'action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。',
     holds: (f) => f.actions.length === 0 || f.credentialUse !== 'none' || f.local,

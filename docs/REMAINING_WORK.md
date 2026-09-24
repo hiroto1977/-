@@ -1,50 +1,74 @@
 # Service Hub — 残りの作業手順書
 
-## パス 451 が測って、次のパスへ残した物 (2026-09-24)
+## パス 452 が測って、次のパスへ残した物 (2026-09-24)
 
-パス 451 は「宣言した能力が実際に届くか」を**面の側から両方向に**数えた
-(`src/shared/__tests__/credentialFaceCensus.test.ts`)。資格情報を預かる 23 サービスに
-ついて「client が `ctx.token` を読むか (読み手)」と「画面がそのスロットへ書く口を持つか
-(書き手)」を測ると、**3 つの形**が出た。生きた欠陥 1 件は閉じ、残り 2 件は宣言の側の
-誤りなので**ゲートの針ごと**直す必要が在る —— 測った事実をここに残す。
+パス 451 が残した 2 件のうち **`shopify` は閉じた**。**`teamradar` は測った結果、
+同じ手では閉じられない**ことが分かったので、その測定をここに残す。
 
-| 形 | サービス | 実測 | 今日の重さ |
-| --- | --- | --- | --- |
-| 読み手が在って書き手が 0 件 | `stocks` / `business` | main が空の鍵を Anthropic へ送り、相手の「鍵が不正」を画面に出す。鍵を置く口はどの画面にも無い | **生きた欠陥 —— パス 451 で閉じた** |
-| **書き手が在って読み手が 0 件** | **`shopify`** | 画面は「API トークン」を預かるが、どの handler も `ctx.token` を読まない (10 個の connector は `payload.token` = **連携先**のトークンを読む)。読み取りも静的 stub (`_ctx`) | **残す** (下記) |
-| 読み手が在るが**渡す先が無視** | **`teamradar`** | `ctx.token` を `fetchTeamRadarSnapshotImpl(_ctx, deps)` へ素通しするだけ。画面に入力欄も無い | **残す** (下記) |
+### `shopify` —— 閉じた。ただし本体は「宣言の誤り」ではなかった
 
-### なぜ 2 件を同じパスで閉じなかったか
+| 測った物 | 実測 |
+| --- | --- |
+| `ctx.token` を読む出荷コード | **0 件** (出現は `shopify.ts:35` の注記 1 行だけ) |
+| 7 つのコネクタが読む物 | `ctx.payload.token` = **連携先** (Slack / LINE / Gmail / Notion / Salesforce / Stripe / Discord) のトークン |
+| 取得 (`fetchShopifySnapshotImpl(_ctx)`) | 引数を無視して STUB を返す |
+| 出荷コードからコネクタを呼ぶ所 | **0 件** (`ShopifyPage` は保管層へ書く `OrderToSalesForm` だけ・`ConnectorsPage` は別経路) |
+| 画面 | 「API トークン」を預かっていた (`placeholder: 'Bearer token'`) |
 
-どちらも直しは「`SERVICE_CREDENTIAL_USE` を `'none'` へ」だが、**そのままだと
-`lint:credential-use` が鳴る** —— ゲートの `touchesToken` は `/\btoken\b/` を
-**ファイル全体**に当てるので、`payload.token` も**注記の中の言及**も同じに見える
-(実測: `shopify.ts` の `ctx.token` は**注記 1 件だけ**で、`stripNonCode` を通すと 0 件)。
-つまり宣言を直すには**針を「`ctx.token` を読むか」へ替える**必要が在り、それは
-23 サービス全部の分類をやり直すことになる。パス 451 の主題 (生きた欠陥) と
-別の変更なので分けた。
+★ **針を替えて分類が動いたのは 76 サービス中 `shopify` **1 件だけ** (実測: 針で
+`touchesToken` の答えが動くのは 3 件だが、`kpi` / `funding` は元から `none`)。
 
-閉じるときの手順 (測ってある):
+★★ **本体はここではなかった** —— 宣言を `none` にして欄を外した瞬間、
+オントロジーの公理 `actions-need-reader-or-local` が鳴った。shopify は
+`LOCAL_SERVICES` に居なかったので、`fetch:snapshot` と `action:invoke` は
+**「トークン未設定」で断り続ける**。つまり **読まれない資格情報が「門」として
+働いており**、アプリは「Shopify の Admin API トークンを預けないと静的な見本すら
+見せない」状態だった。欄を外すだけだと**開ける手が消える**ので、
+`LOCAL_SERVICES` へ足して閉じた。
 
-1. `scripts/lint-credential-use.cjs` の `touchesToken` を `ctx.token` の走査へ
-   (注記と文字列は `stripNonCode` で落とす —— **パス 451 でその道具の盲点も直した**)。
-2. `shopify` / `teamradar` を `'none'` へ。
-3. `ShopifyPage.tsx` の `tokenSetup` を外す (掃除の節が拾えるようになる —— 既に保存した
-   利用者の逃げ口は `unusedStoredCredentials`)。今日は `StatusBar` の「削除」が在るので
-   **逃げ口は閉じていない** (パス 427)。
-4. `credentialFaceCensus` の台帳から 2 行が消える (両方向なので消し忘れると鳴る)。
+### `teamradar` —— 同じ手では閉じられない (測った)
 
-### `stripNonCode` の盲点の残り (測った)
+| 測った物 | 実測 |
+| --- | --- |
+| `ctx.token` の出現 | **1 件** —— `exportTeamRadarSvgImpl` が `fetchTeamRadarSnapshot({ token: ctx.token, … })` へ渡す |
+| 渡す先 | `fetchTeamRadarSnapshotImpl(_ctx, deps)` が**明示的に無視する** |
+| 針を `ctx.token` へ替えると | **分類は動かない** (これは本物の読みである) |
+| 画面の入力欄 | **無い** (今日保存される道が無い) |
+| `LOCAL_SERVICES` | **居る** —— だから shopify と違い、門としては働いていない |
+
+落とすには**呼び先を辿る解析**が要り、それは `lint:credential-use` が
+「しない」と docblock で宣言している物である。しかも呼び先の `deps.fetchSnapshot` は
+差し替え可能な継ぎ目で、既存の検査が
+「空のオブジェクトを渡すと認証の要る取得へ差し替えたときに黙って失敗する」として
+**渡すこと自体を仕様にしている**。
+
+**だから面は `credentialFaceCensus` の `ignoredByCallee` の行が両方向で持つ** ——
+入力欄が生えれば `kind` が `both` になって台帳とずれ、その場で鳴る。
+閉じるなら「呼び先を 1 段辿る」針を別に作るパスが要る (今日の実害は 0)。
+
+### `stripNonCode` の写しは 3 → 2 になった (パス 452)
+
+3 人目の消費者 (`lint-credential-use.cjs`) が要ったので、素直に写すと 4 つ目になる。
+`scripts/lib/strip-non-code.cjs` へ出して 2 つのゲートがそこを require する形にした
+(**判定は 1 行も変わらない** —— 両ゲートの出力を before / after で diff して同一)。
+
+★ **そのときパリティ検査の走査自身の死角が出た** —— 母集団の走査は
+`['src/shared/__tests__', 'scripts']` を**直下だけ**歩いており、`scripts/lib/` は
+既に在るのに 1 度も見ていなかった。**写しを 1 階層下へ動かすだけで両方向の台帳が黙る**
+形で、私はまさにそこへ動かそうとしていた。走査を再帰にした。
+
+★ **さらに、走査が自分の注記を宣言として数えた** —— 針を素の原文へ当てていたので、
+`DECLARATION` の説明文に綴った名前が 3 件目として出た (法則 `mention-vs-declaration`)。
+**この道具を自分自身に当てる** (注記を落としてから針) のが正しい形で、
+その注記は今は**標本として意図的に残してある** (消すと `it` が「標本が古い」と鳴る)。
+
+### `stripNonCode` の盲点の残り (パス 451 で測った・変わっていない)
 
 パス 451 は正規表現のリテラルを飲む欠陥を直した (63 本 / コード 5,226 行 → 3 本 / 97 行)。
 **残る 3 本は私の測り方の偽陽性である** —— `shared/welfareDocs.ts` (62 行) は
 Markdown を組む**テンプレートリテラルの本文**で、コードではないので落ちて正しい
 (probe は「`*` / `//` で始まらない行」をコードらしいと数えていた)。
 `talentTables.test.ts` (28 行) と `templateRendererCensus.test.ts` (7 行) も同じ形。
-
-★ **直した後に 25 本の消費者を走らせると 24 本が緑のまま** —— つまり
-**盲点は実在したが、今日どの census の答えも変えなかった**。唯一変わったのは
-パス 451 が新しく書いた census で、それが**この盲点を見つけた当のもの**である。
 
 ## パス 450 で測って、何も無かった軸 (2026-09-24)
 
