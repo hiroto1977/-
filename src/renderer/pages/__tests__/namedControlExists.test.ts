@@ -38,6 +38,12 @@ type Kind =
   | 'settings-control'
   /** その画面 (か、その画面が載せる部品) の操作子 —— 宣言のファイルに綴りが在る。 */
   | 'same-screen-control'
+  /**
+   * **別の画面**の操作子 (2026-09-25 · パス 454)。綴りが描画元のファイルに在ることに加え、
+   * **そのファイルを実際に載せている画面が 1 枚以上在る**ことも要る ——
+   * 部品だけ在って誰も載せていなければ、利用者はその操作子へ辿り着けない。
+   */
+  | 'other-screen-control'
   /** 画面の名前 —— `namedEscapeHatchReachable` が `SERVICES` と突き合わせる。 */
   | 'screen-label'
   /** このアプリの外の UI (第三者の管理画面)。 */
@@ -48,7 +54,7 @@ type Kind =
 interface Row {
   readonly name: string;
   readonly kind: Kind;
-  /** `same-screen-control` のとき、その綴りを描いているファイル。 */
+  /** `same-screen-control` / `other-screen-control` のとき、その綴りを描いているファイル。 */
   readonly renderedIn?: string;
   readonly why: string;
 }
@@ -77,6 +83,17 @@ const LEDGER: readonly Row[] = [
     kind: 'same-screen-control',
     renderedIn: 'src/renderer/components/ManualDataSection.tsx',
     why: '効かない上書きを消すボタン (2026-09-24 · パス 447)。文は `manualData.ts` が組むが、押す所は同じ欄の同じ行に在る —— その行を見せる面はここだけなので、別の画面へ送ってはいけない。',
+  },
+  {
+    name: 'Google でサインイン',
+    kind: 'other-screen-control',
+    renderedIn: 'src/renderer/components/GoogleConnectCard.tsx',
+    why:
+      'Drive / カレンダー / Gmail の 3 画面が載せる認証ボタン (2026-09-25 · パス 454)。'
+      + '設定画面の貼り付け式 PKCE はデスクトップ版が読まない保管庫へ書くので、書く前に断って'
+      + '**働く道**を名指しする —— そちらは `authorize()` → main の `setOAuthTokens` で'
+      + '更新トークンつきの TokenSet を書く。**別の画面**なので、下の ★ は綴りだけでなく'
+      + '「その部品を載せている画面が在るか」も見る。',
   },
   { name: 'KPI / BEP', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
   {
@@ -227,6 +244,24 @@ describe('名指しした操作子は、その綴りで実在する (パス 426)
         withoutMentions(readOriginalSource(r.renderedIn!)),
         `「${r.name}」を名指しするが、${r.renderedIn} がその綴りを描いていない`,
       ).toContain(r.name);
+    }
+  });
+
+  it('★ other-screen-control は綴りが在り、しかもその部品を載せる画面が在る', () => {
+    const rows = LEDGER.filter((r) => r.kind === 'other-screen-control');
+    expect(rows.length).toBeGreaterThanOrEqual(1);
+    for (const r of rows) {
+      expect(r.renderedIn, `「${r.name}」に描画元が書かれていない`).toBeDefined();
+      const src = withoutMentions(readOriginalSource(r.renderedIn!));
+      expect(src, `「${r.name}」を名指しするが、${r.renderedIn} がその綴りを描いていない`).toContain(r.name);
+      /*
+       * **載せている画面を数える。** 部品のファイルに綴りが在っても、誰も描いていなければ
+       * 利用者はその操作子へ辿り着けない —— `same-screen-control` は文と同じ画面なので
+       * この問いが自明に真だが、別の画面を指すときは自明ではない。
+       */
+      const tag = `<${r.renderedIn!.split('/').pop()!.replace(/\.tsx?$/, '')}`;
+      const hosts = walk('src/renderer/pages').filter((f) => codeOnly(readOriginalSource(f)).includes(tag));
+      expect(hosts.length, `${r.renderedIn} を載せている画面が 0 枚 (${tag} を描く画面が無い)`).toBeGreaterThanOrEqual(1);
     }
   });
 

@@ -19,6 +19,8 @@ import { checkTokenInput } from '../../shared/tokenInput';
 import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
 import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
 import { isBrowserBuild } from '../runtimeMode';
+import { useBuildKind } from '../hooks/useBuildKind';
+import { pasteOAuthUnreadNote } from '../../shared/buildDestinations';
 import { announceLockToOtherTabs, lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
@@ -1812,6 +1814,18 @@ export function GoogleOAuthSection() {
   /** 消し切れなかった一時秘密の鍵名。空なら全部消えた。 */
   const [leftover, setLeftover] = useState<readonly string[]>([]);
 
+  /*
+   * **この端末は、ここが書く保管庫を読むのか** (2026-09-25 · パス 454)。
+   *
+   * 判定は `runtimeMode.ts` の 1 つ (`App` と `VaultControls` が読むのと同じ) を
+   * `useBuildKind` 経由で。**分かるまで (`null`) は断らない** —— 既定を
+   * `'desktop'` に倒すと、橋の `getVersion` が一瞬遅れただけでブラウザ版の
+   * *唯一の* Google 認証の道が死ぬ。間違って断るほうが、1 フレーム遅れて
+   * 断るより害が大きい (同じ判断が `useBuildKind` の docblock に在る)。
+   */
+  const buildKind = useBuildKind();
+  const vaultUnread = buildKind === null ? null : pasteOAuthUnreadNote(buildKind);
+
   /** 後片付けの結果を画面へ (残ったら「タブを閉じて」まで言う)。 */
   function sweep(): void {
     setLeftover(clearPkceSession());
@@ -1820,6 +1834,12 @@ export function GoogleOAuthSection() {
   async function start() {
     setErr(null);
     setMsg(null);
+    // **働かない道へ送らない。** 認可ページを開く前に断る (開いてから断ると、
+    // 利用者は単回使用の code を使い切ってから「読まない」と知る)。
+    if (vaultUnread !== null) {
+      setErr(vaultUnread);
+      return;
+    }
     if (clientId.length === 0) {
       setErr('Google OAuth Client ID を入力してください');
       return;
@@ -1902,6 +1922,14 @@ export function GoogleOAuthSection() {
   async function complete() {
     setErr(null);
     setMsg(null);
+    // **書く直前にもう 1 度断る。** `start()` の門だけだと、セッションが
+    // 残った状態 (前に別の実行形態で始めた / 手で置いた) から書き込みへ届く。
+    // 断るのは交換より前 —— 交換してから捨てると、Google へ code を
+    // 送って使い切ったうえで何も残らない。
+    if (vaultUnread !== null) {
+      setErr(vaultUnread);
+      return;
+    }
     if (code.length === 0) {
       setErr('ブラウザのアドレスバーに出た URL 全体 (code= と state= を含む) を貼り付けてください');
       return;
@@ -1990,6 +2018,21 @@ export function GoogleOAuthSection() {
           </div>
         </div>
       </div>
+
+      {/*
+        **押す前に言う。** `start()` / `complete()` が断るだけだと、利用者は
+        Client ID を発行し Cloud Console を往復したあとに「読まない」と知る。
+        働く操作子 (`GoogleConnectCard` の「Google でサインイン」) もこの文が名指しする。
+      */}
+      {vaultUnread !== null && (
+        <div
+          role="alert"
+          data-vault-unread
+          style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8, lineHeight: 1.7 }}
+        >
+          ⚠ {vaultUnread}
+        </div>
+      )}
 
       {!authUrl && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>

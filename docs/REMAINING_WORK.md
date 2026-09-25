@@ -1,5 +1,59 @@
 # Service Hub — 残りの作業手順書
 
+## パス 454 が測って、次のパスへ残した物 (2026-09-25)
+
+パス 453 の隣 (「消す口が在るか」) から**保管先そのもの**へ降りた。renderer の保管先は 2 つ在り、
+**どちらが生きているかは実行形態で決まる**。実測 (2026-09-25):
+
+| 保管先 | 書く口 | 読む口 | 生きている実行形態 |
+| --- | --- | --- | --- |
+| main の保管ファイル | 橋 `window.serviceHub.setToken` | 橋 `listConfigured` / main の client | **デスクトップ版** |
+| ブラウザ版の保管庫 (IndexedDB) | `getVault().setToken` | **`web-shim.ts` の 11 か所だけ** | **ブラウザ版** |
+
+`web-shim.ts:1966` は `if (typeof window !== 'undefined' && !window.serviceHub)` ——
+**shim はブラウザ版だけ据え付き、デスクトップ版では保管庫を読む物が 1 つも無い。**
+それなのに保管庫へ**直接**書く節が 2 つ在り、どちらも実行形態を問わず描かれていた。
+**`GoogleOAuthSection` は閉じた。`CredentialRow` は設計が要るので残る。**
+
+### `CredentialRow` (「API キーとトークン」9 スロット) —— 残る
+
+| 測った物 | 実測 |
+| --- | --- |
+| 書く所 | `SettingsPage.tsx:244` `getVault().setToken(slot.vaultKey, …)` |
+| デスクトップ版で読む物 | **0 件** |
+| カードの札 (「設定済み」) | **真** (保管庫を読むので整合する) |
+| 「削除」 | **効く** (同じ保管庫の `clearToken`) |
+| 説明文 | 「AI 経営アドバイザー / Skills / Emotions で使用」—— **デスクトップ版では偽** |
+
+**今日の穴は「偽の保証」だけで、消す口は在る** (だから `GoogleOAuthSection` より軽い)。
+直すには 9 スロットそれぞれに*働く道*を名乗らせる必要が在るが、**`anthropic` は `ServiceId` ではない**
+(デスクトップ版の AI の鍵は skills / emotions / business / stocks / assistant の 5 つに分かれる) ので
+1 つの操作子では名乗れない。**名指しした操作子は実在しなければならない** (パス 426 の門) ので、
+`CredentialSlot` に「デスクトップ版での行き先」を持たせる設計が要る。
+
+**今日の面は `credentialWriteStoreCensus` の `vault-ungated` の行が両方向で持つ**
+(`vault-gated` へ直せば「実行形態を問う口を読め」と要求され、消えれば台帳から落ちる)。
+
+### `complete()` 側の門は床であって、今日の働く門ではない (正直に書く)
+
+2 段目は `authUrl` 状態でしか描かれず、`authUrl` は `start()` しか立てない ——
+つまり `start()` が断つと **2 段目へ届く道が無い**。だから `complete()` の門そのものに当たる対照は
+**鳴らない** (検査は「2 段目が出ないこと」を主張する)。床を残すのは、2 段目を
+「保存したセッションから再開する」形に変えた日 (自然な改善) に書き込みの道が再び開くからである。
+
+### 測って何も無かった軸 (記録する)
+
+- **`google-access` は掃除の節で消せる** (パス 453 の測定どおり) —— `ServiceId` ではないので
+  `credentialUseOf` が `'none'` へ倒し、`unusedStoredCredentials` が拾う。ブラウザ版では
+  `web-shim.clearToken` が id を検めないので実際に消える。**デスクトップ版の `secrets:clear` は
+  `isServiceId` で断る**が、main の保管ファイルにこの鍵が入る道は今日 1 つも無い
+  (`secrets:set` も `isServiceId` を要求し、`SERVICE_IDS` は全履歴 2 コミットで**削除が 0 件**)。
+- **デスクトップ版の「すべてのデータを削除」は保管庫も消す** (`session.clearStorageData()`)。
+  つまり孤児になった 4 本にも最後の逃げ口は在る —— ただし「1 つだけ消す」の代わりにはならない。
+- **`listConfiguredServices()` は `Object.keys(store)` を濾さない**ので、非 `ServiceId` の鍵が
+  ファイルに在れば掃除の節に行が出て、その「削除」は `isServiceId` に断られる。
+  **今日そこへ届く道は無い**ので罠であって生きた欠陥ではない (`SERVICE_IDS` から id を消した日に生きる)。
+
 ## パス 453 が測って、次のパスへ残した物 (2026-09-25)
 
 パス 452 の裏返し (宣言が「預かる」と言うサービスの画面に、預ける欄と消す口が在るか) を

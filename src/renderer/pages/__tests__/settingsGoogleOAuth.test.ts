@@ -48,6 +48,17 @@ function stubHub(): void {
       opened.push(url);
       return Promise.resolve();
     },
+    /*
+     * **どちらの実行形態を試しているかを、標本が名乗る** (2026-09-25 · パス 454)。
+     *
+     * この節はブラウザ版の保管庫へ書くので、デスクトップ版では書く前に断る。
+     * 判定は `runtimeMode.ts` の `getVersion() === '0.1.0-web'` で、**橋がこの
+     * メソッドを持たないと `catch` が `false` = デスクトップ版へ倒す** ——
+     * 2026-09-25 まで 6 本の検査がどれも `getVersion` を持たず、実行形態を
+     * 名乗らないまま「ブラウザ版の節」を押していた。ここで名乗る。
+     * デスクトップ版の側は `googleOAuthPasteBuildGate.test.ts` が押す。
+     */
+    getVersion: () => Promise.resolve('0.1.0-web'),
   };
 }
 
