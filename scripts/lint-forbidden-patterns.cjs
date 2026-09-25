@@ -886,7 +886,15 @@ const KNOWN_SUPPRESSIONS = [
   // どれを数えても取りこぼす)。引数は台帳のリテラルで、シェルを経由する形は
   // `git` の呼び出しと空にする手だけ (どちらもこの道具が組んだ文字列で、外から
   // 値は入らない)。写しは `finally` で必ず片付ける。
-  'child_process exec/spawn :: scripts/audit-gate-floors.cjs :: 1',
+  // (2 件目はパス 470 —— self-test が前置きを子プロセスで実際に走らせて、
+  //  `keep` がどの群も空にしないこと・広い一覧だけが間引かれることを確かめる。
+  //  このプロセスの fs を書き換えずに測るには子プロセスが要る。)
+  'child_process exec/spawn :: scripts/audit-gate-floors.cjs :: 2',
+  // 走査を「一部だけ」殺す前置き (パス 470 で 2 つ目の数え方を包んだ)。
+  // `git ls-files` の出力を母集団にするゲートは木を歩かないので、同期実行の
+  // 戻り値を包む以外に間引く手が無い。**呼び出しは元の実装へそのまま委ね**、
+  // 一覧を濾すだけ (新しいプロセスは作らない)。1 件はコード・1 件は注記。
+  'child_process exec/spawn :: scripts/lib/partial-scan-preamble.cjs :: 2 (code 1)',
   // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
   // 突き合わせる。npm の勧告データベースを使うのが目的なので、
   // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。

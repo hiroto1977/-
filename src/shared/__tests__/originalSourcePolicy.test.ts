@@ -183,6 +183,13 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     count: 9,
     why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった',
   },
+  'src/shared/__tests__/trackedPopulationWitness.test.ts': {
+    count: 1,
+    why: '**この検査自身は 1 度も読まない** —— 当たっているのは子プロセスへ渡すコード文字列の中の `readdirSync` で、'
+      + '「走査を一部だけ殺す細工が木を無傷のまま残しているか」を別のプロセスで確かめるためのもの (パス 470)。'
+      + '読むのは `scripts/` の**一覧**で中身ではないし、この検査は前置きで `fs` を書き換えた状態を測るので'
+      + '**この worker の中では走らせられない** (原文の道具へ移す先が無い)',
+  },
   'src/main/__tests__/electronFuses.test.ts': {
     count: 1,
     why: 'ファイル局所の定数 CONFIG (electron-builder の設定) を読む。台帳の外のファイルで、書き換わらない',

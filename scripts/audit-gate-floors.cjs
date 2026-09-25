@@ -277,7 +277,7 @@ const RECIPES = [
     recipe: {
       file: 'scripts/lint-repo-size.cjs',
       needle: 'function trackedFiles()',
-      edit: (s) => s.replace('function trackedFiles()', 'function trackedFiles() { return []; } function _unusedTrackedFiles()'),
+      edit: (s) => s.replace('function trackedFiles()', 'function trackedFiles() { return { files: [], raw: [] }; } function _unusedTrackedFiles()'),
     },
   },
   {
@@ -469,7 +469,104 @@ const PARTIAL_GATES = [
   'lint:regex',
   'lint:charset',
   'lint:sample-data',
+  // 母集団が `git ls-files` の 2 本 (パス 470 で前置きが包めるようになった)。
+  'lint:shell',
+  'lint:repo-size',
 ];
+
+/*
+ * **「任意の割合で死んだ走査」の期待値** (2026-09-25 · パス 470)。
+ *
+ * 上の群ごとの床は「宣言した群が丸ごと消えた」にしか当たらない。**一様に間引かれる形
+ * (走査が半分だけ回って止まる・一覧が途中で切れる) は、群ごとの床には構造的に映らない**
+ * —— どの群も ~N% は残るので「1 件以上」を満たしてしまう。合計の床も実測の 10〜60% に
+ * 在るので、そこに届くまで黙る。
+ *
+ * ★★ **実測すると、鳴るかどうかは「そのゲートの設計」ではなく「床の位置 ÷ 実測」で決まっていた。**
+ * 6 本のうち 4 本が鳴るが、理由はどれも**合計の床が半分をまたいだ**からである
+ * (実測 2026-09-25): `lint:url-encoding` / `lint:imports` は床 300 に対し 528 → 264、
+ * `lint:charset` は床 1000 に対し 1,663 → 844、`lint:network-targets` は
+ * `src` の外の床 60 に対し 111 → 55。**床を 1 つ下げれば黙る**ので、これは守りではなく偶然である。
+ * 残る 2 本 (`lint:regex` 786 件 / `lint:sample-data` 724 件) は黙る。
+ *
+ * だから**割合の床を足して塞ぐのではない** —— 実測に張り付けた床は直した日に落ちる門になる
+ * (パス 378)。塞ぐなら「独立した 2 つ目の数え方と突き合わせる」形しかなく、
+ * `git ls-files` の 2 本はパス 470 でそれを持った (`crossCheckProblem` —— git 自身の答えと
+ * 突き合わせるので**割合に依らない**)。`readdirSync` を歩く 6 本は**まだ持っていない**ので、
+ * この台帳が測った答えをそのまま持つ —— 次に 2 つ目の数え方が入れば `rings` へ変わり、
+ * 台帳が古ければこの道具が鳴る (双方向)。
+ */
+/*
+ * **宣言した群を守っているのはどの機構か** (2026-09-25 · パス 470)。
+ *
+ * パス 469 は「`REQUIRED_GROUPS` を宣言するゲートは共有の判定 (`reportGroupFloor`) を
+ * 呼ぶ」ことを外側の証人に要求した。ところが `git ls-files` の 2 本では**群ごとの床が
+ * 何も足さない** —— `lint:shell` の母集団は「1 つの拡張子 × 1 つの根」なので、群が消える形は
+ * 合計の床がそのまま捕まえる。**弱くなっていない所に床を足さない** (パス 469) のだから、
+ * 宣言を「どの機構で守るか」と一緒に持つ。
+ *
+ * `REQUIRED_GROUPS` は「**この群が消えたらこのゲートは鳴らなければならない**」という
+ * 振る舞いの宣言で、機構の宣言ではない —— 道具はどう鳴るかを問わない。
+ */
+const ENFORCEMENT = {
+  'lint:network-targets': { by: 'shared-floor', why: '木を歩く走査。群が丸ごと消える形は群ごとの床でしか見えない' },
+  'lint:url-encoding': { by: 'shared-floor', why: '同じ形 (src の木を歩く)' },
+  'lint:imports': { by: 'shared-floor', why: '同じ形 (src の木を歩く)' },
+  'lint:regex': { by: 'shared-floor', why: '同じ形 (src / scripts / orchestration の木を歩く)' },
+  'lint:charset': { by: 'shared-floor', why: '同じ形。要求する拡張子は宣言 (SCAN_EXTS) から導く' },
+  'lint:sample-data': { by: 'shared-floor', why: '同じ形 (母集団が 2 つあり、ソース側の木を歩く)' },
+  'lint:shell': {
+    by: 'cross-check',
+    why: '母集団は「追跡されている .sh 全部」。群ごとの床は合計の床と同じ所しか捕まえないので、'
+      + 'git に 2 度訊いて食い違いを見る (crossCheckProblem) —— 1 本だけ落ちた形も鳴る',
+  },
+  'lint:repo-size': {
+    by: 'cross-check',
+    why: '母集団は追跡ファイル全部。合計の床は実測の 11% に在るので一部の死に当たらない。'
+      + 'git 自身の答えと件数を突き合わせるので、割合を問わず鳴る',
+  },
+};
+
+const KEEP_PCT = 50;
+const THINNING = {
+  'lint:network-targets': {
+    expect: 'rings',
+    why: 'src の外の母集団の床 (OUTSIDE_POPULATION_FLOOR 60) に当たる —— 実測 111 件が半分で 55 件。'
+      + '**床の位置が半分をまたいだから**で、この床は 2026-09 に別の理由で置かれた物である',
+  },
+  'lint:url-encoding': {
+    expect: 'rings',
+    why: '合計の床 (300) に当たる —— 実測 528 件が半分で 264 件。これも位置の偶然で、'
+      + '床が 260 なら黙る',
+  },
+  'lint:imports': {
+    expect: 'rings',
+    why: '同じ床 (300) に当たる (実測 528 → 264)',
+  },
+  'lint:regex': {
+    expect: 'silent',
+    why: '786 件落としても exit 0 (実測)。式の総数の床 (MIN_PATTERNS) は残った半分でも越える',
+  },
+  'lint:charset': {
+    expect: 'rings',
+    why: '合計の床 (1000) に当たる (実測 1,663 → 844)。加えて ALLOWLIST の双方向も鳴る'
+      + ' (「台帳に載っているのに検出されない項目が 12 件」) —— 群ごとの床ではない',
+  },
+  'lint:sample-data': {
+    expect: 'silent',
+    why: '724 件落としても exit 0 (実測)。見本の側とソースの側の床はどちらも合計なので半分では届かない',
+  },
+  'lint:shell': {
+    expect: 'rings',
+    why: 'crossCheckProblem が git 自身の答えと突き合わせるので、割合を問わず鳴る'
+      + ' (実測: .sh が 9 → 5 でも「一覧に無い」と名指しする)',
+  },
+  'lint:repo-size': {
+    expect: 'rings',
+    why: 'crossCheckProblem が git 自身の件数と突き合わせるので、割合を問わず鳴る'
+      + ' (実測: 9,084 → 4,560 で「git は 9084 件」と名指しする)',
+  },
+};
 
 /** `cmd` から入口の script を読む (`node scripts/x.cjs --check` → `scripts/x.cjs`)。 */
 function scriptOf(cmd) {
@@ -529,57 +626,87 @@ function runPartial(argv) {
   try {
     fs.mkdirSync(path.join(wt, 'scripts', 'lib'), { recursive: true });
     fs.copyFileSync(path.join(REPO_ROOT, PREAMBLE_SRC), path.join(wt, PREAMBLE_SRC));
+    // `git ls-files` を母集団にするゲートは、**その一覧だけ**を殺す
+    // (木ごと消すとフォールバックも死に、鳴った理由がすり替わる · パス 470 の実測)。
+    const targetOf = (r) => (r.kind === 'git-ls-files' ? 'git' : 'fs');
+
+    const measure = (r, g) => {
+      const out = path.join(wt, '.audit-partial-report.json');
+      try { fs.unlinkSync(out); } catch { /* 初回は無い */ }
+      const res = spawnSync('bash', ['-c', r.cmd], {
+        cwd: wt,
+        encoding: 'utf8',
+        timeout: 900000,
+        env: {
+          ...process.env,
+          AUDIT_PARTIAL_MODE: g.mode,
+          AUDIT_PARTIAL_ARG: g.arg,
+          AUDIT_PARTIAL_OUT: out,
+          AUDIT_PARTIAL_TARGET: targetOf(r),
+        },
+      });
+      let report = null;
+      try { report = JSON.parse(fs.readFileSync(out, 'utf8')); } catch { /* 読めなければ null */ }
+      const status = res.status ?? -1;
+      const verdict = report === null ? 'no-report'
+        : report.dropped === 0 ? 'not-dropped'
+          : status === 0 ? 'silent' : 'rings';
+      return { verdict, status, dropped: report?.dropped ?? null };
+    };
+
     for (const r of gates) {
       const script = scriptOf(r.cmd);
       injectPreamble(wt, script);
       for (const g of declaredGroups(script)) {
-        const out = path.join(wt, '.audit-partial-report.json');
-        try { fs.unlinkSync(out); } catch { /* 初回は無い */ }
-        const res = spawnSync('bash', ['-c', r.cmd], {
-          cwd: wt,
-          encoding: 'utf8',
-          timeout: 900000,
-          env: {
-            ...process.env,
-            AUDIT_PARTIAL_MODE: g.mode,
-            AUDIT_PARTIAL_ARG: g.arg,
-            AUDIT_PARTIAL_OUT: out,
-          },
-        });
-        let report = null;
-        try { report = JSON.parse(fs.readFileSync(out, 'utf8')); } catch { /* 読めなければ null */ }
-        const status = res.status ?? -1;
-        const verdict = report === null ? 'no-report'
-          : report.dropped === 0 ? 'not-dropped'
-            : status === 0 ? 'silent' : 'rings';
-        rows.push({ gate: r.gate, group: `${g.mode} ${g.arg}`, verdict, status, dropped: report?.dropped ?? null });
-        const mark = verdict === 'rings' ? '✓' : '✗';
+        const m = measure(r, g);
+        rows.push({ gate: r.gate, group: `${g.mode} ${g.arg}`, want: 'rings', ...m });
+        const mark = m.verdict === 'rings' ? '✓' : '✗';
         console.log(
-          `  ${mark} ${r.gate.padEnd(22)} ${`${g.mode}:${g.arg}`.padEnd(18)} ${verdict.padEnd(11)}`
-          + ` exit=${status} 落とした=${report?.dropped ?? '-'}`,
+          `  ${mark} ${r.gate.padEnd(22)} ${`${g.mode}:${g.arg}`.padEnd(18)} ${m.verdict.padEnd(11)}`
+          + ` exit=${m.status} 落とした=${m.dropped ?? '-'}`,
         );
       }
+      // 一様な間引き (「任意の割合で死んだ走査」)。期待値は台帳が持つ。
+      const t = THINNING[r.gate];
+      const m = measure(r, { mode: 'keep', arg: String(KEEP_PCT) });
+      const ok = m.verdict === t.expect;
+      rows.push({ gate: r.gate, group: `keep ${KEEP_PCT}%`, want: t.expect, why: t.why, ...m });
+      console.log(
+        `  ${ok ? '✓' : '✗'} ${r.gate.padEnd(22)} ${`keep:${KEEP_PCT}%`.padEnd(18)} ${m.verdict.padEnd(11)}`
+        + ` exit=${m.status} 落とした=${m.dropped ?? '-'} (期待 ${t.expect})`,
+      );
     }
   } finally {
     if (made) made.cleanup();
   }
 
-  const bad = rows.filter((x) => x.verdict !== 'rings');
+  const bad = rows.filter((x) => x.verdict !== x.want);
   console.log('');
-  console.log(`測った: ${rows.length} 組 / 鳴った: ${rows.length - bad.length} / 鳴らなかった: ${bad.length}`);
+  console.log(
+    `測った: ${rows.length} 組 / 台帳どおり: ${rows.length - bad.length} / 食い違い: ${bad.length}`
+    + ` (うち一様な間引き ${rows.filter((x) => x.group.startsWith('keep ')).length} 組)`,
+  );
   if (bad.length === 0) {
-    console.log('✅ 宣言した群をどれ 1 つ落としても、そのゲートは落ちます');
+    console.log('✅ 宣言した群をどれ 1 つ落としても鳴り、一様な間引きの答えは台帳どおりです');
     return 0;
   }
-  console.error(`❌ ${bad.length} 組が鳴りません:`);
+  console.error(`❌ ${bad.length} 組が台帳と食い違います:`);
   for (const b of bad) {
-    if (b.verdict === 'silent') {
-      console.error(`  ${b.gate} — ${b.group} を ${b.dropped} 件落としても exit 0 でした (群ごとの床がありません)`);
-    } else if (b.verdict === 'not-dropped') {
+    if (b.verdict === 'not-dropped') {
       console.error(`  ${b.gate} — ${b.group} は母集団に 1 件もありません (宣言が実物からずれています)`);
       console.error('      ★ これは「床が在る」ではありません');
-    } else {
+    } else if (b.verdict === 'no-report') {
       console.error(`  ${b.gate} — ${b.group}: 前置きが走っていません (差し込みに失敗しています)`);
+    } else if (b.want === 'rings') {
+      console.error(`  ${b.gate} — ${b.group} を ${b.dropped} 件落としても exit 0 でした (群ごとの床がありません)`);
+    } else {
+      // 台帳が「黙る」と言っている所が鳴った = 機構が増えた。台帳の側を直す。
+      console.error(
+        `  ${b.gate} — ${b.group} は鳴りました。台帳は「黙る」と言っています:`
+        + `\n      台帳の理由: ${b.why}`
+        + '\n      ★ 一様な間引きに当たる機構が入ったのなら、THINNING を rings へ直してください'
+        + ' (古い「黙る」の登録は、次に弱くなったときを隠します)',
+      );
     }
   }
   return 1;
@@ -784,6 +911,86 @@ function selfTest() {
   //   鳴らない対照は合格ではなく、その検査についての報せである)。
   check('★ 前置きはディレクトリを落とさない', seen !== null && seen.dirs > 3);
 
+  // --- 一様な間引きの台帳 (パス 470) ------------------------------------
+  check(
+    '★ THINNING と PARTIAL_GATES が双方向に一致する',
+    PARTIAL_GATES.every((g) => Object.hasOwn(THINNING, g))
+      && Object.keys(THINNING).every((g) => PARTIAL_GATES.includes(g)),
+  );
+  check(
+    '★ ENFORCEMENT と PARTIAL_GATES が双方向に一致する',
+    PARTIAL_GATES.every((g) => Object.hasOwn(ENFORCEMENT, g))
+      && Object.keys(ENFORCEMENT).every((g) => PARTIAL_GATES.includes(g)),
+  );
+  check(
+    '★ ENFORCEMENT の機構は 2 つのどちらかで、理由が埋まっている',
+    Object.values(ENFORCEMENT).every(
+      (e) => ['shared-floor', 'cross-check'].includes(e.by) && typeof e.why === 'string' && e.why.length >= 8,
+    ),
+  );
+  check(
+    '★ THINNING の期待は rings / silent のどちらかで、理由が埋まっている',
+    Object.values(THINNING).every(
+      (t) => ['rings', 'silent'].includes(t.expect) && typeof t.why === 'string' && t.why.length >= 8,
+    ),
+  );
+  check(
+    '★ 間引く割合は 0 でも 100 でもない (0 は「空にする」・100 は「何もしない」で別の測定)',
+    KEEP_PCT > 0 && KEEP_PCT < 100,
+  );
+
+  /*
+   * ★ **`keep` はどの群も空にしない。** 通し番号で間引くと 1 件しか無い群が位置で
+   * 丸ごと消え、群ごとの床が*偶然*鳴る (パス 470 の実測で 6 本のうち 5 本がそうなった)。
+   * 群ごとの計数器であることを、合成の 1 群 + 2 群で確かめる。
+   */
+  const keepProbe = spawnSync(process.execPath, ['-e', `
+    process.env.AUDIT_PARTIAL_MODE = 'keep';
+    process.env.AUDIT_PARTIAL_ARG = '50';
+    const fs = require('node:fs');
+    const os = require('node:os');
+    const path = require('node:path');
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'keep-probe-'));
+    for (const n of ['a.x', 'b.y', 'c.y', 'd.y', 'e.y']) fs.writeFileSync(path.join(dir, n), '');
+    require(${JSON.stringify(path.join(REPO_ROOT, PREAMBLE_SRC))});
+    const got = fs.readdirSync(dir).sort();
+    fs.rmSync(dir, { recursive: true, force: true });
+    console.log(JSON.stringify(got));
+  `], { encoding: 'utf8', timeout: 60000 });
+  const kept = (() => {
+    try { return JSON.parse(String(keepProbe.stdout).trim()); } catch { return null; }
+  })();
+  check('★ keep は 1 件しかない群を残す (.x)', Array.isArray(kept) && kept.includes('a.x'));
+  check(
+    '★ keep は 4 件の群を半分にする (.y が 2 件)',
+    Array.isArray(kept) && kept.filter((n) => n.endsWith('.y')).length === 2,
+  );
+
+  /*
+   * ★ **前置きは `git ls-files` の広い一覧だけを間引く。** pathspec つきの呼び出しを
+   * 間引いてしまうと、「権威に 2 度訊いて食い違いを見る」検査 (`crossCheckProblem`) が
+   * この道具の下で永久に観測できなくなる —— 鳴らない対照を「合格」と読む形そのもの。
+   * 子プロセスで実際に両方の呼び出しを投げて確かめる。
+   */
+  const gitProbe = spawnSync(process.execPath, ['-e', `
+    process.env.AUDIT_PARTIAL_MODE = 'keep';
+    process.env.AUDIT_PARTIAL_ARG = '0';
+    require(${JSON.stringify(path.join(REPO_ROOT, PREAMBLE_SRC))});
+    const { execFileSync } = require('node:child_process');
+    const n = (args) => execFileSync('git', ['-C', ${JSON.stringify(REPO_ROOT)}, 'ls-files', '-z', ...args],
+      { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).split('\\0').filter((x) => x.length > 0).length;
+    console.log(JSON.stringify({ broad: n([]), pathspec: n(['--', '.']) }));
+  `], { encoding: 'utf8', timeout: 120000 });
+  const git = (() => {
+    try { return JSON.parse(String(gitProbe.stdout).trim()); } catch { return null; }
+  })();
+  check('★ 広い `git ls-files` は間引かれる (keep 0)', git !== null && git.broad === 0);
+  check(
+    '★ すべての RECIPES に kind が在る (target の振り分けが黙って fs へ倒れない)',
+    RECIPES.every((r) => typeof r.kind === 'string' && r.kind.length > 0),
+  );
+  check('★ pathspec つきは間引かれない', git !== null && git.pathspec > 1000);
+
   // ★ 忠実さの標本: 宣言オブジェクトは「名前替え」では空にならない (パス 468 の実測)。
   const src = "export const X: Record<string, string> = {\n  a: 'b',\n  c: 'd',\n};\n";
   const renamed = src.replace('X: Record<string, string> = {', "X = {} as Record<string, string>; const _u = {");
@@ -801,7 +1008,8 @@ function selfTest() {
 
 module.exports = {
   RECIPES, NO_POPULATION, KINDS, applyRecipe, emptyObjectBody,
-  PARTIAL_GATES, scriptOf, declaredGroups, injectPreamble, PREAMBLE_SRC, PREAMBLE_MARK,
+  PARTIAL_GATES, THINNING, ENFORCEMENT, KEEP_PCT, scriptOf, declaredGroups, injectPreamble,
+  PREAMBLE_SRC, PREAMBLE_MARK,
 };
 
 if (require.main === module) {

@@ -35,25 +35,132 @@ const { spawnSync, execFileSync } = require('node:child_process');
 const REPO_ROOT = path.resolve(__dirname, '..');
 
 /**
- * 追跡されている `.sh` を全部返す (リポジトリ相対)。
- * git が使えない環境では `scripts/` 直下に落とす —— 黙って 0 件にはしない。
+ * **落とす群** (`audit:gate-partial` が 1 つずつ一覧から消して、このゲートが鳴るかを見る)。
+ *
+ * ここは `reportGroupFloor` (群ごとの床) を呼ばない —— 母集団が「1 つの拡張子 × 1 つの根」
+ * なので、群が消える形は合計の床 (`MIN_SHELL_FILES`) がそのまま捕まえる。**弱くなっていない
+ * ゲートに床を足さない** (パス 469 の判断)。このゲートを支えるのは下の
+ * `crossCheckProblem` —— 群では表せない「1 本だけ一覧から落ちた」を見る側である。
  */
-function shellFiles() {
+const REQUIRED_GROUPS = { exts: ['.sh'], roots: ['scripts'] };
+
+/**
+ * 追跡ファイルの一覧を git に訊く。**git が使えなければ `null`** ——
+ * 「git が居ない」と「git が 0 件と答えた」を混ぜない。
+ */
+function gitLsFiles(extraArgs) {
   try {
-    const out = execFileSync('git', ['-C', REPO_ROOT, 'ls-files', '-z'], {
+    const out = execFileSync('git', ['-C', REPO_ROOT, 'ls-files', '-z', ...extraArgs], {
       encoding: 'utf8',
       maxBuffer: 64 * 1024 * 1024,
     });
-    const all = out.split('\0').filter((f) => f.endsWith('.sh'));
-    if (all.length > 0) return all.sort();
+    return out.split('\0').filter((f) => f.length > 0);
   } catch {
-    /* git の無い環境 — 下のフォールバックへ */
+    return null;
   }
-  return fs
-    .readdirSync(path.join(REPO_ROOT, 'scripts'))
-    .filter((f) => f.endsWith('.sh'))
-    .map((f) => `scripts/${f}`)
-    .sort();
+}
+
+/*
+ * **一覧の出どころを、使った側が名乗る** (2026-09-25 · パス 470)。
+ *
+ * 直す前の `shellFiles()` は「git の一覧に `.sh` が 1 件も無ければ `scripts/` 直下へ落ちる」
+ * 形だった。**その枝は「git が居ない」と「git の一覧が narrow された」を見分けられない。**
+ * 実測 (隔離した写しの上で `git ls-files` の出力から `.sh` を落とす · `tools/deploy.sh` に
+ * strict mode 無し + `curl … | sh` + `dd of=/dev/sda` を植えた木):
+ *
+ * ```
+ *   素の木                          → ❌ 3 件 (strict mode / 遠隔実行 / 破壊的書き込み)
+ *   一覧から `.sh` が全部落ちる     → ✅ exit 0 「Checked 9 shell script(s)
+ *                                      (追跡ファイル全体から収集)」
+ *   一覧から `tools/` が落ちる      → ✅ exit 0 「Checked 9 …」
+ * ```
+ *
+ * ★ **2 行目は成功行そのものが偽だった** —— 一覧は `readdirSync('scripts')` から来ており、
+ * 「追跡ファイル全体」ではない。しかも数 (9) が素の木と同じなので、読んだ人には
+ * 見分けが付かない。**2026-08-22 に走査を広げた当の理由 (`tools/deploy.sh` が誰にも
+ * 見られないままになる) が、フォールバックの引き金を通って戻っていた。**
+ *
+ * 直し: フォールバックは **`catch` (git が使えない) のときだけ**。空の一覧は
+ * 合計の床 (`MIN_SHELL_FILES`) で落とす。成功行は**実際に使った出どころ**を名乗る。
+ */
+function shellFilesWithSource() {
+  const broad = gitLsFiles([]);
+  if (broad === null) {
+    const files = fs
+      .readdirSync(path.join(REPO_ROOT, 'scripts'))
+      .filter((f) => f.endsWith('.sh'))
+      .map((f) => `scripts/${f}`)
+      .sort();
+    return { source: 'scripts-dir', files, witness: null };
+  }
+  return {
+    source: 'git',
+    files: broad.filter((f) => f.endsWith('.sh')).sort(),
+    witness: gitLsFiles(['--', '*.sh']),
+  };
+}
+
+/** 追跡されている `.sh` を全部返す (リポジトリ相対)。 */
+function shellFiles() {
+  return shellFilesWithSource().files;
+}
+
+/*
+ * **成功行は、実際に使った出どころを名乗る。**
+ *
+ * 直す前は出どころに関わらず「(追跡ファイル全体から収集)」と刷っていた。
+ * フォールバックで走った回でも同じ文・同じ件数なので、**読んだ人には
+ * 走査範囲が縮んだことが見分けられない** (成功行そのものが偽になる形)。
+ *
+ * 文を組む所を関数に出してあるのは、外側の証人 (`trackedPopulationWitness.test.ts`) が
+ * 「出どころごとに違う主張になる」ことを**門を丸ごと走らせずに**留められるようにするため。
+ */
+function summaryLine(count, source, selfTested) {
+  const where = source === 'git'
+    ? 'git ls-files の全件・git 自身の答えと一致'
+    : 'git が使えないので scripts/ 直下へ落とした';
+  return (
+    `Checked ${count} shell script(s) (${where})、`
+    + `うち危ない操作を持つ ${selfTested} 本は --self-test も実行`
+  );
+}
+
+/*
+ * **権威に 2 度訊いて、食い違いを見る** (2026-09-25 · パス 470)。
+ *
+ * 床は「0 件」にしか当たらない (パス 468) し、群ごとの床は「宣言した群が丸ごと消えた」
+ * にしか当たらない (パス 469)。**`.sh` が 1 本だけ一覧から落ちる形はどちらにも映らない** ——
+ * 実測: `scripts/setup-linux.sh` (`curl … | sh` を持つ本) を一覧から 1 件落としても
+ * `Checked 8 shell script(s)` + ✅ exit 0 だった。
+ *
+ * 母集団の定義は「追跡されている `.sh` 全部」なので、**同じ権威 (git) に別の綴りで
+ * 2 度訊いて、答えが一致することを要求する**。割合も台帳も要らない:
+ *
+ *   ① 広い一覧 `git ls-files -z` を自分で `.endsWith('.sh')` で濾す (ゲートが使う側)
+ *   ② git 自身の pathspec `git ls-files -z -- '*.sh'` (狙いを定めた問い合わせ)
+ *
+ * これで捕まるのは **①が narrow された**形すべて —— pathspec が足された・ふるいが
+ * 変わった・出力が切れた・一部が落ちた (割合を問わず)。**捕まらないのは**「①と②の
+ * 両方を同時に narrow する編集」と「この検査そのものを消す編集」で、そちらは
+ * `npm test` の外側の証人 (`trackedPopulationWitness.test.ts`) が見る。
+ */
+function crossCheckProblem({ source, files, witness }) {
+  if (source !== 'git') return null;
+  if (witness === null) {
+    return (
+      'git に 2 度目を訊けませんでした (`git ls-files -- \'*.sh\'`)。'
+      + '一覧が narrow されていないかを確かめられないので落とします。'
+    );
+  }
+  const have = new Set(files);
+  const missing = witness.filter((f) => !have.has(f));
+  const extra = files.filter((f) => !witness.includes(f));
+  if (missing.length === 0 && extra.length === 0) return null;
+  return (
+    '追跡されている `.sh` の一覧が、git 自身の答えと食い違います —— 走査が narrow されています。'
+    + (missing.length > 0 ? `\n      一覧に無い: ${missing.join(', ')}` : '')
+    + (extra.length > 0 ? `\n      git に無い: ${extra.join(', ')}` : '')
+  );
 }
 
 
@@ -376,11 +483,17 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
-  const files = shellFiles();
+  const population = shellFilesWithSource();
+  const files = population.files;
   // git でも scripts/ 直下でも拾えない = 0 件を「問題なし」と読まない (実測 9 本、2026-09-05)。
   const MIN_SHELL_FILES = 3;
   if (files.length < MIN_SHELL_FILES) {
     console.error(`❌ .sh を ${files.length} 本しか拾えませんでした (${MIN_SHELL_FILES} 本以上を期待)。走査が壊れています。`);
+    return 1;
+  }
+  const narrowed = crossCheckProblem(population);
+  if (narrowed !== null) {
+    console.error(`❌ 走査の母集団が信用できません:\n      ${narrowed}`);
     return 1;
   }
   const failures = [];
@@ -390,10 +503,7 @@ function main(argv) {
 
   failures.push(...runDestructiveSelfTests());
 
-  console.log(
-    `Checked ${files.length} shell script(s) (追跡ファイル全体から収集)、` +
-      `うち危ない操作を持つ ${Object.keys(SELF_TEST_REQUIRED).length} 本は --self-test も実行`,
-  );
+  console.log(summaryLine(files.length, population.source, Object.keys(SELF_TEST_REQUIRED).length));
   if (failures.length === 0) {
     console.log('✅ all shell scripts pass syntax + strict-mode checks');
     return 0;
@@ -403,7 +513,10 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { checkScript, shellFiles, destructiveLines, secretLines, SELF_TEST_REQUIRED };
+module.exports = {
+  checkScript, shellFiles, shellFilesWithSource, crossCheckProblem, summaryLine,
+  destructiveLines, secretLines, SELF_TEST_REQUIRED, REQUIRED_GROUPS,
+};
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

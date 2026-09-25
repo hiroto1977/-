@@ -12,10 +12,24 @@
  * 木の側を消すと、ゲートは床とは別の理由 (参照が解けない・生成物と合わない) で鳴りうるので、
  * 「床が捕まえた」と読み違える (パス 468 の忠実さの教訓)。
  *
+ * ## 2 つ目の出どころ: `git ls-files` (2026-09-25 · パス 470)
+ *
+ * 母集団を `readdirSync` で歩かないゲートが 2 本ある (`lint:shell` / `lint:repo-size`)。
+ * どちらも `git ls-files` の出力を母集団にするので、この前置きでは 1 件も落とせなかった
+ * (パス 469 が「測っていない」として残した所)。`child_process` の同期実行を包んで
+ * **同じ述語で**一覧を間引く。
+ *
+ * ★ **間引くのは「広い一覧」だけ** —— 引数に `--` (pathspec) を持つ呼び出しは
+ * そのまま通す。模したい失敗は「git が嘘をつく」ことではなく
+ * **「ゲートが使う広い一覧が narrow された」**ことで、そのとき狙いを定めた問い合わせは
+ * 今も正しく答える。だから「権威に 2 度訊いて食い違いを見る」検査は、この前置きの下で
+ * ちゃんと鳴る (全部の呼び出しを間引くと、その検査は永久に観測できなくなる)。
+ *
  * 環境変数:
  *   AUDIT_PARTIAL_MODE   'ext' | 'root' | 'keep'   落とし方
- *   AUDIT_PARTIAL_ARG    '.tsx' | 'scripts' | '50' 対象 (keep は残す百分率)
+ *   AUDIT_PARTIAL_ARG    '.tsx' | 'scripts' | '50' 対象 (keep は**群ごとに**残す百分率)
  *   AUDIT_PARTIAL_OUT    書き出す先 (kept / dropped / 群ごとの件数)
+ *   AUDIT_PARTIAL_TARGET 'all' | 'git' | 'fs'      どの数え方を殺すか (既定 all)
  *
  * **答えは終了コードで、この前置きは 1 度も終了コードに触らない。** 報告が書けなくても
  * ゲートの答えは変えない (書けなかったことは呼ぶ側が「落とせていない」として扱う)。
@@ -27,35 +41,114 @@
   const MODE = process.env.AUDIT_PARTIAL_MODE || '';
   const ARG = process.env.AUDIT_PARTIAL_ARG || '';
   const OUT = process.env.AUDIT_PARTIAL_OUT || '';
+  /*
+   * **どの数え方を殺すか** (2026-09-25 · パス 470)。
+   *
+   * 既定は両方 (`all`)。ところが `lint:shell` は「git の一覧 → 空なら `scripts/` 直下」の
+   * 2 段構えなので、両方を殺すと**フォールバックも一緒に死ぬ** —— ゲートは鳴るが、
+   * 鳴った理由は「一覧が narrow された」ではなく「木ごと消えた」になる。
+   * それを「床が捕まえた」と読むと、**フォールバックが詰め直す欠陥が永久に見えない**
+   * (実測: 直す前のこのゲートは、git の一覧だけを殺すと ✅ exit 0 で
+   * 「Checked 9 (追跡ファイル全体から収集)」と刷った · パス 469 の忠実さの教訓)。
+   */
+  const TARGET = process.env.AUDIT_PARTIAL_TARGET || 'all';
   if (!MODE) return;
   const seen = { mode: MODE, arg: ARG, kept: 0, dropped: 0, exts: {}, roots: {} };
+
+  /*
+   * `keep` は**群ごとに**割合で間引く (2026-09-25 · パス 470 で直した)。
+   *
+   * 最初の実装は「通し番号 % 100 < N」だった。**それは一様な間引きではなく、
+   * 走査順のかたまりを落とす形** —— 1 件しか無い群 (`lint:charset` の `.html` /
+   * `.css` / `.webmanifest`) は番号の位置で丸ごと消えるので、群ごとの床が
+   * *偶然* 鳴る。実測 (2026-09-25): その形だと 6 本のうち 5 本が `rings` になり、
+   * しかもファイルを 1 つ足せば番号がずれて答えが変わる —— **台帳に書けない
+   * 揺れる測定**だった。
+   *
+   * 群ごとの計数器にすると ① どの群も空にならない (1 件の群は必ず残る)
+   * ② 他の群にファイルが増えても答えが動かない。これで測れるのは
+   * **「群ごとの床では構造的に見えない部分的な死」**だけになり、問いが尖る。
+   */
+  const bucket = new Map();
+
+  /** 1 件を残すか。落とし方は 1 つだけ定義し、`readdirSync` と `git ls-files` が共有する。 */
+  const keepEntry = (rel) => {
+    const ext = path.extname(rel) || '(拡張子なし)';
+    const root = rel.split(path.sep)[0] || '(直下)';
+    let keep = true;
+    if (MODE === 'ext') keep = ext !== ARG;
+    else if (MODE === 'root') keep = root !== ARG;
+    else if (MODE === 'keep') {
+      // 群の中で **歩幅** で間引く (`(i % 100) < N` だと 4 件の群が 4 件とも残る)。
+      // 50 → 2 件に 1 件・20 → 5 件に 1 件。0 は「何も残さない」。
+      const pct = Number(ARG);
+      const key = `${root}|${ext}`;
+      const i = bucket.get(key) ?? 0;
+      bucket.set(key, i + 1);
+      keep = pct <= 0 ? false : i % Math.max(1, Math.round(100 / pct)) === 0;
+    }
+    if (keep) {
+      seen.kept += 1;
+      seen.exts[ext] = (seen.exts[ext] || 0) + 1;
+      seen.roots[root] = (seen.roots[root] || 0) + 1;
+    } else {
+      seen.dropped += 1;
+    }
+    return keep;
+  };
+
   const realRead = fs.readdirSync;
-  fs.readdirSync = function auditPartialReaddirSync(dir, opts) {
+  if (TARGET !== 'git') fs.readdirSync = function auditPartialReaddirSync(dir, opts) {
     const res = realRead.call(fs, dir, opts);
     if (!Array.isArray(res)) return res;
     return res.filter((e) => {
-      const name = typeof e === 'string' ? e : e.name;
+      // ★ 名前が読めない項目 (Buffer で返る・独自の形) は**そのまま通す**。
+      //   触ると呼び手が壊れ、その落ち方を「床が鳴った」と読み違える
+      //   (実測: `fs.rmSync` の内部が読む一覧でここが投げた · パス 470)。
+      const name = typeof e === 'string' ? e : (e && typeof e.name === 'string' ? e.name : null);
+      if (name === null) return true;
       const isDir = (() => {
         if (typeof e !== 'string') return typeof e.isDirectory === 'function' && e.isDirectory();
         try { return fs.statSync(path.join(String(dir), name)).isDirectory(); } catch { return false; }
       })();
       if (isDir) return true;
-      const ext = path.extname(name) || '(拡張子なし)';
-      const rel = path.relative(process.cwd(), path.join(String(dir), name));
-      const root = rel.split(path.sep)[0] || '(直下)';
-      let keep = true;
-      if (MODE === 'ext') keep = ext !== ARG;
-      else if (MODE === 'root') keep = root !== ARG;
-      else if (MODE === 'keep') keep = ((seen.kept + seen.dropped) % 100) < Number(ARG);
-      if (keep) {
-        seen.kept += 1;
-        seen.exts[ext] = (seen.exts[ext] || 0) + 1;
-        seen.roots[root] = (seen.roots[root] || 0) + 1;
-      } else {
-        seen.dropped += 1;
-      }
-      return keep;
+      return keepEntry(path.relative(process.cwd(), path.join(String(dir), name)));
     });
+  };
+
+  /*
+   * **`git ls-files` の出力を包む。** 追跡ファイルの一覧を母集団にするゲート
+   * (`lint:shell` / `lint:repo-size`) は `readdirSync` を通らないので、こちらが要る。
+   */
+  const cp = require('node:child_process');
+  const isBroadLsFiles = (file, args) => {
+    if (!/(^|[\\/])git(\.exe)?$/.test(String(file))) return false;
+    if (!Array.isArray(args) || !args.includes('ls-files')) return false;
+    return !args.includes('--'); // pathspec つきは「狙いを定めた問い合わせ」なので通す
+  };
+  const thin = (text) => {
+    const sep = text.includes('\0') ? '\0' : '\n';
+    return text
+      .split(sep)
+      .filter((rel) => rel.length === 0 || keepEntry(rel))
+      .join(sep);
+  };
+  const realExecFile = cp.execFileSync;
+  if (TARGET !== 'fs') cp.execFileSync = function auditPartialExecFileSync(file, args, opts) {
+    const res = realExecFile.call(cp, file, args, opts);
+    if (!isBroadLsFiles(file, args)) return res;
+    if (typeof res === 'string') return thin(res);
+    if (Buffer.isBuffer(res)) return Buffer.from(thin(res.toString('utf8')), 'utf8');
+    return res;
+  };
+  const realExec = cp.execSync;
+  if (TARGET !== 'fs') cp.execSync = function auditPartialExecSync(cmd, opts) {
+    const res = realExec.call(cp, cmd, opts);
+    const words = String(cmd).split(/\s+/);
+    if (!isBroadLsFiles(words[0], words.slice(1))) return res;
+    if (typeof res === 'string') return thin(res);
+    if (Buffer.isBuffer(res)) return Buffer.from(thin(res.toString('utf8')), 'utf8');
+    return res;
   };
   if (OUT) {
     process.on('exit', () => {

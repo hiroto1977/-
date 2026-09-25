@@ -61,6 +61,8 @@ const floor = req('../../../scripts/lib/population-floor.cjs') as {
 const tool = req('../../../scripts/audit-gate-floors.cjs') as {
   RECIPES: readonly { gate: string; cmd: string }[];
   PARTIAL_GATES: readonly string[];
+  ENFORCEMENT: Record<string, { by: string; why: string }>;
+  THINNING: Record<string, { expect: string; why: string }>;
   scriptOf: (cmd: string) => string;
   declaredGroups: (script: string) => { mode: string; arg: string }[];
   PREAMBLE_SRC: string;
@@ -131,18 +133,72 @@ describe('宣言と道具の台帳 (双方向)', () => {
     expect(gatesDeclaring, '道具の台帳と実物がずれている').toEqual([...tool.PARTIAL_GATES].sort());
   });
 
-  it('★ 宣言したゲートは共有の判定を実際に呼ぶ (注記の中の言及では満たされない)', () => {
+  /*
+   * **宣言した群を守っているのはどの機構か** (パス 470 で 2 つに分けた)。
+   *
+   * パス 469 はここで「共有の判定 (`reportGroupFloor`) を呼ぶこと」を全ゲートに要求した。
+   * ところが `git ls-files` の 2 本では**群ごとの床が何も足さない** ——
+   * `lint:shell` の母集団は「1 つの拡張子 × 1 つの根」なので、群が消える形は合計の床が
+   * そのまま捕まえる。弱くなっていない所に床を足さないのがこのリポジトリの判断なので、
+   * 機構を台帳 (`ENFORCEMENT`) で名乗らせ、**名乗った機構が実際に在ること**を見る。
+   *
+   * `REQUIRED_GROUPS` は「この群が消えたらこのゲートは鳴らなければならない」という
+   * **振る舞いの宣言**で、機構の宣言ではない。
+   */
+  it('★ 宣言したゲートは、名乗った機構を実際に呼ぶ (注記の中の言及では満たされない)', () => {
     for (const gate of tool.PARTIAL_GATES) {
       const recipe = tool.RECIPES.find((r) => r.gate === gate);
       expect(recipe, `${gate} が RECIPES にない`).toBeTruthy();
       const script = tool.scriptOf(recipe!.cmd);
       const code = stripComments(readOriginalSource(join(REPO, script)));
-      expect(code, `${gate} が lib/population-floor を読んでいない`).toContain('population-floor.cjs');
-      expect(
-        /reportGroupFloor\(|groupFloorProblems\(/.test(code),
-        `${gate} が共有の判定を呼んでいない`,
-      ).toBe(true);
+      const how = tool.ENFORCEMENT[gate];
+      expect(how, `${gate} が ENFORCEMENT にない`).toBeTruthy();
+      if (how!.by === 'shared-floor') {
+        expect(code, `${gate} が lib/population-floor を読んでいない`).toContain('population-floor.cjs');
+        expect(
+          /reportGroupFloor\(|groupFloorProblems\(/.test(code),
+          `${gate} が共有の判定を呼んでいない`,
+        ).toBe(true);
+      } else {
+        // cross-check: 権威に 2 度訊いて食い違いを見る。**呼んでいること**まで見る
+        // (定義だけ在って誰も呼ばない形は、このリポジトリが繰り返し踏んでいる罠)。
+        expect(code, `${gate} が crossCheckProblem を定義していない`).toContain('function crossCheckProblem');
+        expect(
+          /crossCheckProblem\((?!\s*\))/.test(code.replace('function crossCheckProblem', '')),
+          `${gate} が crossCheckProblem を呼んでいない`,
+        ).toBe(true);
+        // pathspec つきの 2 度目を投げていること (広い一覧をもう 1 度読むだけでは照合にならない)。
+        expect(code, `${gate} が pathspec つきの 2 度目を訊いていない`).toContain("'--'");
+      }
     }
+  });
+
+  it('★ 機構の台帳は PARTIAL_GATES と双方向で、理由が埋まっている', () => {
+    expect(Object.keys(tool.ENFORCEMENT).sort()).toEqual([...tool.PARTIAL_GATES].sort());
+    for (const [gate, e] of Object.entries(tool.ENFORCEMENT)) {
+      expect(['shared-floor', 'cross-check'], `${gate} の機構が未知`).toContain(e.by);
+      expect(e.why.length, `${gate} の理由が短すぎる`).toBeGreaterThanOrEqual(8);
+    }
+  });
+
+  /** 保留の決まり文句 (この針が当たる標本は下の `it` が持つ)。 */
+  const STUB_REASON = /^(同上|未定|TBD|後で)/;
+
+  it('★ 一様な間引きの台帳も双方向で、決まり文句を置けない', () => {
+    expect(Object.keys(tool.THINNING).sort()).toEqual([...tool.PARTIAL_GATES].sort());
+    for (const [gate, t] of Object.entries(tool.THINNING)) {
+      expect(['rings', 'silent'], `${gate} の期待が未知`).toContain(t.expect);
+      // 「同上」「未定」のような保留は書けない (法則 no-weakness-as-spec)。
+      expect(t.why, `${gate} の理由が省略形`).not.toMatch(STUB_REASON);
+      expect(t.why.length, `${gate} の理由が短すぎる`).toBeGreaterThanOrEqual(20);
+    }
+  });
+
+  it('★ 針が的に当たる標本 —— 保留の決まり文句は実際に捕まる', () => {
+    for (const stub of ['同上。', '未定 (次のパスで)', 'TBD', '後で測る']) {
+      expect(stub, `${stub} が針に当たらない`).toMatch(STUB_REASON);
+    }
+    expect('786 件落としても exit 0 (実測)。床は残った半分でも越える').not.toMatch(STUB_REASON);
   });
 
   it('★ 針が的に当たる標本 —— 注記の中だけの言及は数えない', () => {
