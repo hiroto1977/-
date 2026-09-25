@@ -8,6 +8,7 @@ import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { NOTION_PAGE_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -108,6 +109,7 @@ export function NotionPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="ページの作成" />
             <input
               placeholder="親ページ ID (インテグレーションに共有済みの)"
               value={parentPageId}

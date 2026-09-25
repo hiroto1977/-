@@ -9,6 +9,7 @@ import { charsOverCeiling } from '../../shared/inputCeiling';
 import { WORDPRESS_POST_FIELDS } from '../../shared/writeFieldLimits';
 import { mcpAccessNote } from '../data/wordpressMcpAccess';
 import type { ActionData } from '../../shared/actionData';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -98,6 +99,7 @@ export function WordPressPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="下書きの作成" />
             <input
               placeholder="サイト ID (blog_id または hostname)"
               value={siteId}

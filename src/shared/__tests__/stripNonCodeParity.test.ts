@@ -155,6 +155,13 @@ const SAMPLES: readonly { readonly name: string; readonly src: string }[] = [
   { name: '識別子の後ろの / も割り算', src: 'const q = total / count;\n' },
   { name: 'return の後ろは正規表現', src: 'function f(s) { return /x"y/.test(s); }\n' },
   { name: '閉じない / は飲まない (割り算へ倒れる)', src: 'const q = a / b;\nconst t = ctx.token;\n' },
+  /*
+   * **JSX の素のテキストは落ちない / 文字列リテラルの中身は落ちる** (2026-09-25 · パス 459)。
+   * 下の `describe` がこの非対称そのものを主張する。ここに置くのは**写しが揃って
+   * いること**を見るため (片方だけが JSX を別扱いし始めたら鳴る)。
+   */
+  { name: 'JSX の素のテキスト', src: 'const el = <b>削除</b>;\n' },
+  { name: '文字列リテラルの中の日本語', src: "const m = '削除しました';\n" },
 ];
 
 describe('stripNonCode の写し — 2 つが同じ答えを返す (パス 418 / 452)', () => {
@@ -275,5 +282,71 @@ describe('★ 実物: 正規表現より後ろのコードが見える (パス 4
     expect(stripNonCode(src).includes('ctx.token')).toBe(true);
     // 標本が的に当たることを示す —— 引用符が 1 つだけ残る形なら、文字列として飲まれる。
     expect(stripNonCode('const s = "a\nconst t = ctx.token;\n').includes('ctx.token')).toBe(false);
+  });
+});
+
+/*
+ * **`stripNonCode` を通した本文に、文字列リテラルの中身を探してはいけない**
+ * (2026-09-25 · パス 459)。
+ *
+ * ## なぜここに書くか
+ *
+ * パス 458 で、私はこの罠に落ちた。`web-shim.ts` に「ダウンロードフォルダに
+ * 保存されています」という文が**無いこと**を、`stripNonCode` を通した本文に対して
+ * `not.toContain` で主張した —— **この道具は文字列リテラルの中身を落とす**ので、
+ * その主張は**どの入力でも通る空の検査**だった。対照を当てても鳴らず、
+ * 原因が製品ではなく自分の検査だと分かるまで時間を使った。
+ *
+ * ## 罠が見えにくい理由 (実測)
+ *
+ * 同じ日本語でも**どこに住んでいるか**で答えが割れる:
+ *
+ * | 住んでいる所 | `stripNonCode` の後 | 不在の主張は |
+ * | --- | --- | --- |
+ * | JSX の素のテキスト (`<b>削除</b>`) | **残る** | 意味が在る |
+ * | 文字列リテラル (`'削除しました'`) | **落ちる** | **空 (どの入力でも通る)** |
+ * | 注記 | 落ちる | 空 |
+ *
+ * 主張の字面はどちらも同じなので、**書いた人には見分けが付かない**。
+ * だから見分けを機械に持たせる。
+ *
+ * ★ **数えたら、今日この罠に落ちている検査は 0 件だった** (2026-09-25 実測:
+ * 本物の `stripNonCode` を読む 18 ファイルで、stripped な本文へ日本語の針を
+ * 当てている所は 0 —— 見つかった 8 行は「注記を食わせる標本」3 件と
+ * 「日本語は主張の説明文で、針は ASCII」4 件と、JSX テキストを探す 1 件だった)。
+ * ここが留めるのは**次に書く人のため**で、規約
+ * 「不在の主張には標本を添える」に 1 行足す: **標本は、走査に掛ける物と
+ * 同じ加工を通す。** 生の文字列に当てた標本は「針は生きている」しか示さない。
+ */
+describe('不在の主張を空にする非対称 (パス 459)', () => {
+  it('★ 文字列リテラルの中身は落ち、JSX の素のテキストは残る', () => {
+    const inLiteral = stripNonCode("const m = '保存されています';\n");
+    expect(inLiteral, '文字列の中身が残っている').not.toContain('保存されています');
+    const inJsx = stripNonCode('const el = <b>保存されています</b>;\n');
+    expect(inJsx, 'JSX の素のテキストまで落ちている').toContain('保存されています');
+  });
+
+  it('★ 引用符を残す指定でも、中身は落ちる (見た目に騙されない)', () => {
+    const kept = stripNonCode("const m = '保存されています';\n", { keepQuoteChars: true });
+    expect(kept, '引用符が消えている').toContain("''");
+    expect(kept, '中身が残っている').not.toContain('保存されています');
+  });
+
+  it('★ だから「stripped な本文に日本語の文が無い」は主張になっていない', () => {
+    // 実物にその文が**在って**も、走査の後には無い —— 対照の両側を並べて示す。
+    const src = "alert('ダウンロードフォルダに保存されています。');\n";
+    expect(src, '標本が古い').toContain('ダウンロードフォルダに保存されています');
+    expect(stripNonCode(src)).not.toContain('ダウンロードフォルダに保存されています');
+    // 同じ文が JSX テキストなら、走査の後も残る (= そこでの不在の主張は生きている)。
+    const jsx = 'const el = <p>ダウンロードフォルダに保存されています。</p>;\n';
+    expect(stripNonCode(jsx)).toContain('ダウンロードフォルダに保存されています');
+  });
+
+  it('★ 識別子は落ちないので、綴りの側は識別子で見る', () => {
+    const src = "import { LIBRARY_HATCH_TEXT } from './data/exportOutcome';\n";
+    const code = stripNonCode(src, { keepQuoteChars: true });
+    expect(code).toContain('LIBRARY_HATCH_TEXT');
+    // module 指定子は**文字列リテラル**なので落ちる —— ここを錠にしてはいけない。
+    expect(code).not.toContain('./data/exportOutcome');
   });
 });

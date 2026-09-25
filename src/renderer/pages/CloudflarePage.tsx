@@ -8,6 +8,7 @@ import { charsOverCeiling } from '../../shared/inputCeiling';
 import { CLOUDFLARE_DNS_FIELDS } from '../../shared/writeFieldLimits';
 import { purgeEverythingConfirmMessage, purgeUrlList } from '../data/cachePurge';
 import type { ActionData } from '../../shared/actionData';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -171,6 +172,7 @@ export function CloudflarePage() {
       >
         {showDns ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="DNS レコードの作成" />
             <div style={{ display: 'flex', gap: 8 }}>
               <select
                 value={dnsZone}
@@ -266,6 +268,7 @@ export function CloudflarePage() {
       >
         {showPurge ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="キャッシュのパージ" />
             <select
               value={purgeZone}
               onChange={(e) => setPurgeZone(e.target.value)}

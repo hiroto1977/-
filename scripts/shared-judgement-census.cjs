@@ -85,7 +85,7 @@ const VERDICTS = {
     + 'その答えの正しさは `pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate,proxySectionBuildGate}.test.ts` と'
     + ' `components/__tests__/{googleConnectCardBuildGate,exportActionsBuildGate}.test.ts` が両方の実行形態を実際に描いて留める'
     + ' (パス 457 で足した `googleLiveScopeNote` / `googleSignInUnsupportedNote` はブラウザ版が'
-    + '**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける)。',
+    + '**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける。パス 459 の `proxyRequiredNote` は**ブラウザ版でだけ言う**側で (main は各サービスへ直接つなぐので、そこで「Worker を建てろ」と言うと偽の前提になる)、実際に描くのは `components/ProxyRequiredNote.tsx` 1 つ・振る舞いは `pages/__tests__/proxyRequiredOnScreen.test.ts` が 3 つの実行形態で見る)。',
   apiResponse:
     '対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、'
     + '`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」'

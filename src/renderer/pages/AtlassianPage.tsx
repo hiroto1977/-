@@ -8,6 +8,7 @@ import { charsOverCeiling } from '../../shared/inputCeiling';
 import { ATLASSIAN_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
 import { jiraBrowseUrl } from '../../shared/atlassianLinks';
 import type { ActionData } from '../../shared/actionData';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -118,6 +119,7 @@ export function AtlassianPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="課題の作成" />
             <div style={{ display: 'flex', gap: 8 }}>
               <input
                 placeholder="プロジェクト Key (e.g. KAN)"

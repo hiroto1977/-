@@ -10,6 +10,7 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import type { ActionData } from '../../shared/actionData';
 import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -144,6 +145,7 @@ export function SlackPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="メッセージの送信" />
             {/* 上限は main / ブラウザ版と同じ台帳から読む (パス 110)。数を写さない。 */}
             <input
               placeholder="チャンネル ID (C…) または #channel-name"

@@ -21,6 +21,7 @@ import { buildDbSecurityReport } from '../../shared/dbSecurityPosture';
 import { currentDbSecurityInputs } from '../data/dbPosture';
 import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock';
 import type { ActionData } from '../../shared/actionData';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const GRADE_COLOR: Record<string, string> = {
   A: 'var(--success)',
@@ -248,6 +249,7 @@ export function SecurityPage() {
               ブラウザ版では、設定した<strong>プロキシ (Cloudflare Worker) を経由</strong>するため、
               その運用者からも照会したアドレスが見えます。
             </div>
+            <ProxyRequiredNote what="メールアドレスの照会" />
             <input
               placeholder="your@example.com"
               type="email"
@@ -330,6 +332,7 @@ export function SecurityPage() {
               ブラウザ版では、設定した<strong>プロキシ (Cloudflare Worker) を経由</strong>するため、
               その運用者からも送信した URL が見えます。
             </div>
+            <ProxyRequiredNote what="URL の送信" />
             <input
               placeholder="https://example.com/suspicious"
               value={urlInput}

@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES } from '../../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
+import { proxyRoutedActions } from './webShimScan';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
@@ -266,37 +267,6 @@ describe('応答の大きさにも上限が付く', () => {
  * 足すまでここが落ちる (パス 117 で片方向の台帳が登録漏れを見落とした形の裏返し)。
  */
 
-/** `web-shim.ts` の分岐から「プロキシを通る action」を集める。 */
-export function proxyRoutedActions(source: string): string[] {
-  const keys: string[] = [];
-  const re = /serviceId === '([a-z0-9-]+)' && action === '([a-z-]+)'/g;
-  const starts: { key: string; at: number }[] = [];
-  for (let m = re.exec(source); m !== null; m = re.exec(source)) {
-    starts.push({ key: `${m[1]}/${m[2]}`, at: m.index });
-  }
-  /*
-   * **1 つの条件が複数の action を受けることが在る** ——
-   * `if ((serviceId === 'notion' && …) || (serviceId === 'slack' && …)) { … }`
-   * の形で、本体は 1 つ。鍵の次の鍵までを本体とみなすと、**前の鍵が本体を
-   * 持たない**ことになって落ちる (2026-09-14 に実測: notion が消えた)。
-   * 鍵と鍵の間に `{` が無ければ同じ条件の続きとみなして束ねる。
-   */
-  const groups: { keys: string[]; at: number }[] = [];
-  for (let i = 0; i < starts.length; i += 1) {
-    const prev = groups[groups.length - 1];
-    const between = i === 0 ? '{' : source.slice(starts[i - 1]!.at, starts[i]!.at);
-    if (prev !== undefined && !between.includes('{')) prev.keys.push(starts[i]!.key);
-    else groups.push({ keys: [starts[i]!.key], at: starts[i]!.at });
-  }
-  for (let g = 0; g < groups.length; g += 1) {
-    const body = source.slice(groups[g]!.at, groups[g + 1]?.at ?? source.length);
-    // `runProxyBearer<unknown>(` のように**型引数が挟まる**呼び方が在る。
-    // 最初は `runProxyBearer\(` だけを見ていて notion / slack を落とした
-    // (2026-09-14 に実測。名前で引く走査が綴りの変種で黙る、この日 2 度目の形)。
-    if (/runProxyBearer[<(]|getProxyTransport\(\)/.test(body)) keys.push(...groups[g]!.keys);
-  }
-  return keys.sort();
-}
 
 /** 台帳: プロキシを通る書き込みと、関門を通る最小の payload。 */
 const PROXY_WRITES: Readonly<Record<string, Record<string, unknown>>> = {

@@ -8,6 +8,7 @@ import { charsOverCeiling } from '../../shared/inputCeiling';
 import { localIsoDate } from '../../shared/localDate';
 import { CANVA_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -109,6 +110,7 @@ export function CanvaPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="フォルダの作成" />
             <input
               placeholder="フォルダ名"
               value={name}
