@@ -254,6 +254,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/nonFiniteEntryPoints.test.ts',
   'src/shared/__tests__/ollamaInputLimits.test.ts',
   'src/shared/__tests__/ollamaModelFieldCeilings.test.ts',
+  'src/shared/__tests__/orchestrationPopulationFloors.test.ts',
   'src/shared/__tests__/originalSourcePolicy.test.ts',
   'src/shared/__tests__/parsedUrlGateCensus.test.ts',
   'src/shared/__tests__/permissionJustification.test.ts',

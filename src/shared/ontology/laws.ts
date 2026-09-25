@@ -183,9 +183,33 @@ export const LAWS: readonly Law[] = [
     id: 'count-has-floor',
     family: 'gate-hygiene',
     name: '件数を出す検査は床を持つ',
-    statement: '「Checked 0 … ✅」は走査が壊れても緑。ゲートは件数に下限を置き、検査は「全件について〜」の前に非空を主張する。台帳にせず命名規約 (VERIFIED_*) で絞る。',
-    provenance: ['パターン 0-a-7'],
-    enforcedBy: [gate('lint:test-coverage'), test(T.shared('e2eSuiteFloors')), gate('lint:deps')],
+    statement: '「Checked 0 … ✅」は走査が壊れても緑。ゲートは件数に下限を置き、検査は「全件について〜」の前に非空を主張する。台帳にせず命名規約 (VERIFIED_*) で絞る。'
+      + ' **床は 3 つの軸に分かれる (2026-09-25 · パス 467 の実測)。**'
+      + ' ① **読めない ≠ 空** —— `lint:knowledge-refs` は台帳を `catch { return null }` で読み、呼ぶ側が `null` を素通りしていた。'
+      + ' 実物にマージ衝突の印を 1 行入れると「Checked 0 adjudicated pair(s)」と刷って **exit 0**、**`verify:all` の 37 ゲートも全部素通り** (`src/` にこの台帳を読む検査は 0 件なので `npm test` にも映らない)。'
+      + ' 消費者 (`knowledge-autopilot`) も同じ形だったので、読めない台帳は**裁定済み 127 件がまるごと重複疑いキューへ戻る**ことを意味した'
+      + ' (実測: `sourceDedupeSuspects` 0 → 16 件・`sharedSourceDedupeSuspects` 0 → 12 件)。**件数の床では表せない軸**で、読む口が「空」と「読めない」を別の値で返して初めて問える。'
+      + ' ② **正当に 0 になる母集団には床を置かない** —— 裁定の件数も backlog も課題が片付けば 0 になりうるので、実測に張り付けた床は**直した日に落ちる門**になる (パス 378)。'
+      + ' **確かめる物が無いことと、検査が消えたことは別である。**'
+      + ' ③ **床は床の値を読んで主張すると自己満足になる** —— 対照 (`MIN_CORPUS_IDS` を 0 へ) を回すと、同じ定数を読む主張は**門の側も検査の側も鳴らなかった**。'
+      + ' 値に依らない側 (`corpusTooSmall(0) === true`) を留める。'
+      + ' ★ **同じ家系が `verify:orchestration` にも 4 件在った** —— このゲートは 2026-08-22 に `org` と `policy.cycles` を「鍵を必須にする」で閉じているのに、**配列を空にする側**が残っていた。'
+      + ' 実測: `rounds: []` / `policy.minTeamsForRound: []` / `org.secretaries` を消す —— **3 つとも exit 0** で、成功行に「rounds: 0 / 直近 round 0 は 0 チーム」「秘書室 0室(計0体)」と刷っていた。'
+      + ' いちばん重いのは秘書室で、そこには「必須にはしない … **0 室になったら CI の出力でそう分かる**」と書いてあった —— **緑のゲートの成功行は誰も読まない**ので、'
+      + ' 出力に出すことは検査することではない (法則 `no-weakness-as-spec` の、保留をゲートに書き残した形)。「どちらが意図かコードからは決まらない」も偽で、'
+      + ' **不変条件 9b と `--plan` の組織図がどちらも「常設」と述べていた** —— 決まっていなかったのではなく、囲いだけがそれを読んでいなかった。'
+      + ' ★ **床が在ることと、床が当たることは別** —— 「床を `main` から外す (呼ばない)」対照は self-test も検査も鳴らず、門だけが exit 0 へ戻った。'
+      + ' 門を丸ごと走らせる継ぎ目 (`--registry <path>`) を開けて閉じた。',
+    provenance: ['パターン 0-a-7', 'パス 467 (読めない台帳が「空」として緑になり、37 ゲート全部が素通りした)'],
+    enforcedBy: [
+      gate('lint:test-coverage'),
+      test(T.shared('e2eSuiteFloors')),
+      gate('lint:deps'),
+      gate('lint:knowledge-refs'),
+      gate('verify:orchestration'),
+      test(T.shared('knowledgeLedgerReadable')),
+      test(T.shared('orchestrationPopulationFloors')),
+    ],
   },
   {
     id: 'table-pinned-by-literal',

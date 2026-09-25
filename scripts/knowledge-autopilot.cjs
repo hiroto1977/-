@@ -123,14 +123,38 @@ function shardOffset(week, shardSize, total) {
 // ---------------------------------------------------------------------------
 // 1. AUDIT
 // ---------------------------------------------------------------------------
-/** 裁定済み「別概念」ペア台帳（重複疑いから機械的に除外）。 */
-function loadDistinctPairs() {
+/**
+ * 裁定済み「別概念」ペア台帳（重複疑いから機械的に除外）。
+ *
+ * ★ **読めなければ投げる (2026-09-25 · パス 467)** —— 2026-09-25 まで
+ * `catch { return new Set(); }` だったので、台帳が壊れる・鍵の綴りが変わる・
+ * ファイルが消えるのどれでも **「裁定 0 件」として静かに続行**していた。
+ * その先で 5 つの重複検出器がこの Set で除外するので、**「別概念として残す」と
+ * 裁定した対がまるごと重複疑いキューへ戻り、LLM にもう一度統合を勧められる**。
+ * 実測 (2026-09-25 · 空の Set を実物の検出器へ渡す): `sourceDedupeSuspects`
+ * 0 → **16 件**・`sharedSourceDedupeSuspects` 0 → **12 件**。
+ *
+ * 同じ状態について検査 (`lint:knowledge-refs`) も同じ答えを出す —— 片方だけを
+ * 直すと「門は鳴るのに走ると静かに壊れる」形になる。
+ */
+function loadDistinctPairs(file = DISTINCT_PAIRS_PATH) {
+  let raw;
   try {
-    const raw = JSON.parse(fs.readFileSync(DISTINCT_PAIRS_PATH, 'utf8'));
-    return new Set((raw.adjudicatedDistinct || []).map(([a, b]) => (a < b ? `${a}|${b}` : `${b}|${a}`)));
-  } catch {
-    return new Set();
+    raw = JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (e) {
+    throw new Error(
+      `裁定台帳 ${file} を読めません (${(e && e.message) || e})。`
+        + ' 空として続けると、裁定済みのペアがまるごと重複疑いキューへ戻ります。',
+      { cause: e },
+    );
   }
+  if (!Array.isArray(raw.adjudicatedDistinct)) {
+    throw new Error(
+      `裁定台帳 ${file} の adjudicatedDistinct が配列ではありません`
+        + ` (${typeof raw.adjudicatedDistinct})。鍵の綴りが変わると黙って 0 件になります。`,
+    );
+  }
+  return new Set(raw.adjudicatedDistinct.map(([a, b]) => (a < b ? `${a}|${b}` : `${b}|${a}`)));
 }
 
 function audit(entries, today) {
@@ -740,4 +764,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { monthsSince, corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDois, sourceDedupeSuspects, sharedSourceDedupeSuspects, missingKeyFiguresSuspects, idSimilarity, SHARED_ID_SIMILARITY, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };
+module.exports = { loadDistinctPairs, monthsSince, corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDois, sourceDedupeSuspects, sharedSourceDedupeSuspects, missingKeyFiguresSuspects, idSimilarity, SHARED_ID_SIMILARITY, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };

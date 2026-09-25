@@ -142,13 +142,23 @@ describe('語彙は実物と一致する', () => {
 });
 
 describe('negative-control: 自作ゲートは --self-test を持つ', () => {
-  /** --self-test を持たないゲートと、その理由 (双方向)。 */
+  /**
+   * --self-test を持たないゲートと、その理由 (双方向)。
+   *
+   * ★ **「実物へ違反を植えて鳴る」は足りなかった** (2026-09-25 · パス 467) ——
+   * `lint:knowledge-refs` と `verify:orchestration` はこの理由で免除されていた。
+   * 違反を植えれば確かに鳴る (実測) が、それは**母集団が非空のとき**の話である。
+   * **母集団を空にする**側は 1 度も試されておらず、実測すると
+   * `lint:knowledge-refs` は壊れた台帳を「裁定 0 件」として ✅ exit 0、
+   * `verify:orchestration` は `rounds: []` / `minTeamsForRound: []` /
+   * `org.secretaries` 削除の **3 つとも ✅ exit 0** だった。2 本とも
+   * `--self-test` を持つようになったので台帳から外した。
+   */
   const WITHOUT_SELF_TEST: Readonly<Record<string, string>> = {
     typecheck: '外部ツール (tsc)。対照は typecheckCoverage.test.ts が「型の誤りを植えると 1 件出る」で持つ',
     lint: '外部ツール (eslint)',
-    'lint:doi-prefix': '知識コーパス系。2026-08-25 に実物へ違反を植えて鳴ることを確かめた (ARCHITECTURE TL;DR)',
-    'lint:knowledge-refs': '同上',
-    'verify:orchestration': '同上',
+    'lint:doi-prefix': '知識コーパス系。2026-08-25 に実物へ違反を植えて鳴ることを確かめた (ARCHITECTURE TL;DR)。'
+      + ' ★ ただしそれは母集団が非空のときの対照で、**空にする側は測っていない** (パス 467 の残作業)',
     'chain:verify': '対照は integrityChainWitness.test.ts (保護対象を改変すると鳴る) が持つ',
   };
 

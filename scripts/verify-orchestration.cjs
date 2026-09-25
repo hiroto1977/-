@@ -34,9 +34,106 @@ function fail(messages) {
   process.exit(1);
 }
 
+/**
+ * **空にすると検査が丸ごと消える母集団の床** (2026-09-25 · パス 467)。
+ *
+ * このゲートは 2026-08-22 に同じ家系を 2 度直している —— `org` を消すと
+ * 不変条件 7〜11 が、`policy.cycles` を消すと 12 が、**静かに検査対象外**に
+ * なった。どちらも「鍵を必須にする」で閉じた。ところが**配列を空にする**側は
+ * 残っていた。実測 (2026-09-25 · 実物の registry を 1 か所ずつ壊す):
+ *
+ * | 壊し方 | exit | 何が起きたか |
+ * | --- | ---: | --- |
+ * | `rounds: []` | **0** | 「rounds: 0 / 直近 round 0 は 0 チーム」と刷って ✅ (不変条件 2〜5 が空虚) |
+ * | `policy.minTeamsForRound: []` | **0** | 最低チーム数 (不変条件 3) がまるごと消えて ✅ |
+ * | `org.secretaries` を消す | **0** | 「秘書室 0室(計0体)」と刷って ✅ |
+ * | `teams: []` | 1 | 鳴る —— ただし round / 管理職の参照が外れる**副作用**で、床としてではない |
+ * | `backlog: []` | **0** | **床を置かない** (下記) |
+ *
+ * ★ **`backlog` だけは床を置かない** —— 着手候補が片付けば 0 件になりうるので、
+ * 実測に張り付けた床は**直した日に落ちる門**になる (パス 378 の tick 台帳と
+ * 同じ形)。空の backlog では「id が一意 / team が実在」が空虚に成立するが、
+ * それは**確かめる物が無い**のであって、消えた検査ではない。
+ */
+function checkPopulations(reg) {
+  const problems = [];
+  const need = [
+    ['teams', reg.teams, '一般職 (teams) が 0 件 —— round と管理職の参照検査が空虚になる'],
+    ['rounds', reg.rounds, 'rounds が 0 件 —— 単調増加・最低チーム数・teamCount の一致 (不変条件 2〜5) がまるごと空虚になる'],
+    ['policy.minTeamsForRound', reg.policy && reg.policy.minTeamsForRound,
+      'policy.minTeamsForRound が 0 件 —— 最低チーム数 (不変条件 3) がどの round にも当たらなくなる'],
+    ['org.executives', reg.org && reg.org.executives, '役員が 0 名 —— 秘書室・管理職の所属検査が空虚になる'],
+    ['org.managers', reg.org && reg.org.managers, '管理職が 0 名 —— 全 active team の所属検査 (不変条件 11) が空虚になる'],
+    ['org.secretaries', reg.org && reg.org.secretaries,
+      '秘書室が 0 室 —— 不変条件 9b は「各 AI役員 に 1 室を常設」と述べている'],
+  ];
+  for (const [name, arr, why] of need) {
+    if (!Array.isArray(arr) || arr.length === 0) problems.push(`${name}: ${why}`);
+  }
+  return problems;
+}
+
+function selfTest() {
+  const base = () => ({
+    teams: [{ id: 't' }],
+    rounds: [{ round: 1 }],
+    policy: { minTeamsForRound: [{ round: 1, minTeams: 1 }] },
+    org: { executives: [{ id: 'e' }], managers: [{ id: 'm' }], secretaries: [{ id: 's' }] },
+    backlog: [],
+  });
+  const strip = (mut) => {
+    const reg = base();
+    mut(reg);
+    return checkPopulations(reg).length;
+  };
+  const cases = [
+    ['健全な registry は 0 件', (r) => r, 0],
+    ['★ rounds を空にすると鳴る', (r) => { r.rounds = []; }, 1],
+    ['★ minTeamsForRound を空にすると鳴る', (r) => { r.policy.minTeamsForRound = []; }, 1],
+    ['★ 秘書室を消すと鳴る', (r) => { delete r.org.secretaries; }, 1],
+    ['★ teams を空にすると鳴る', (r) => { r.teams = []; }, 1],
+    ['★ 役員を空にすると鳴る', (r) => { r.org.executives = []; }, 1],
+    ['★ 管理職を空にすると鳴る', (r) => { r.org.managers = []; }, 1],
+    ['配列でなければ鳴る (鍵の綴りが変わった形)', (r) => { r.rounds = {}; }, 1],
+    ['空の backlog は鳴らない (課題が片付けば 0 になる)', (r) => { r.backlog = []; }, 0],
+    ['まとめて空にすると全部鳴る', (r) => { r.rounds = []; r.teams = []; r.policy.minTeamsForRound = []; }, 3],
+  ];
+  let bad = 0;
+  for (const [name, mut, want] of cases) {
+    const got = strip(mut);
+    const pass = got === want;
+    if (!pass) bad += 1;
+    console.log(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
+  }
+  if (bad > 0) {
+    console.error(`\n❌ self-test ${bad} 件が不一致`);
+    process.exit(1);
+  }
+  console.log('✅ self-test 全件一致');
+}
+
+/**
+ * 検査する registry の道。既定は実物で、`--registry <path>` で差し替えられる。
+ *
+ * ★ **継ぎ目を開けたのは「床を main から外す」対照が鳴らなかったため**
+ * (2026-09-25 · パス 467)。`checkPopulations` を借りる検査は床の**中身**しか
+ * 見ないので、`main` がそれを**呼ばなくなっても**両方の層が黙った
+ * (実測: self-test ✗0 / 検査 0 失敗 / 実物は exit 0 に戻る)。
+ * **鳴らない対照は合格ではなく、その検査についての報せ**なので、門を丸ごと
+ * 走らせられるようにした。
+ */
+function registryPath() {
+  const i = process.argv.indexOf('--registry');
+  return i >= 0 && process.argv[i + 1] ? path.resolve(process.argv[i + 1]) : REGISTRY;
+}
+
 function main() {
+  if (process.argv.includes('--self-test')) {
+    selfTest();
+    return;
+  }
   const wantPlan = process.argv.includes('--plan');
-  const raw = fs.readFileSync(REGISTRY, 'utf8');
+  const raw = fs.readFileSync(registryPath(), 'utf8');
   let reg;
   try {
     reg = JSON.parse(raw);
@@ -62,6 +159,10 @@ function main() {
   for (const key of ['version', 'policy', 'teams', 'rounds', 'backlog', 'org']) {
     if (!(key in reg)) problems.push(`必須キー "${key}" がありません`);
   }
+  if (problems.length) fail(problems);
+
+  // 母集団の床 (空にすると下の不変条件が丸ごと空虚になる物)。
+  problems.push(...checkPopulations(reg));
   if (problems.length) fail(problems);
 
   // teams の id 集合。
@@ -138,11 +239,21 @@ function main() {
       if (s.members !== 4) problems.push(`秘書室 ${s.id} は 4 体であること (現在: ${s.members})`);
       if (s.staffedByAI === false) problems.push(`秘書室 ${s.id} は AI 配置であること (staffedByAI=true)`);
     }
-    // 秘書室を導入する場合、全役員がちょうど 1 室を持つ (常設サポート)。
-    if ((org.secretaries || []).length > 0) {
-      for (const e of org.executives || []) {
-        if (!supportedExecs.has(e.id)) problems.push(`役員 ${e.id} に秘書室が未配置 (各役員に1室を常設)`);
-      }
+    /*
+     * 全役員がちょうど 1 室を持つ (常設サポート)。
+     *
+     * ★ 2026-09-25 まで `if ((org.secretaries || []).length > 0)` で囲まれており、
+     * **全室を消すとこの検査ごと消えて緑のまま**だった —— このファイルが
+     * 2026-08-22 に `if (reg.org)` について直した当の形である。囲いを外した。
+     *
+     * ★ **「任意か常設か」は勝手に決めていない** —— 冒頭の不変条件 9b は
+     * 「各 "AI役員" に 1 室 (4 体の AI チーム) を**常設**し継続サポートする」と
+     * 書き、`--plan` の組織図も「(常設サポート)」と刷る。**リポジトリは既に
+     * 常設と宣言していて、囲いだけがそれを任意として扱っていた**。
+     * 室の存在そのものは `checkPopulations` の床が見る。
+     */
+    for (const e of org.executives || []) {
+      if (!supportedExecs.has(e.id)) problems.push(`役員 ${e.id} に秘書室が未配置 (各役員に1室を常設)`);
     }
 
     // 10. 各管理職が属する上位 (役員 or COO直轄) の owns に含まれるか (双方向整合)。
@@ -259,10 +370,13 @@ function main() {
    * 0 室でも表示する。以前は `length > 0` のときだけ出していたので、
    * **全室を消すと出力から消えるだけで緑のまま**だった (対照実験で確認)。
    *
-   * 秘書室を必須にはしない —— 検査側のコメントは「秘書室を導入する場合」と
-   * 任意扱いなのに、不変条件の文面は「各役員に 1 室を常設」と書いており、
-   * どちらが意図かはコードからは決まらない。**勝手に決めずに、数を見える所へ
-   * 出す**。0 室になったら CI の出力でそう分かる。
+   * ★ **ここに在った「秘書室を必須にはしない ... 0 室になったら CI の出力で
+   * そう分かる」は 2026-09-25 (パス 467) に撤回した** —— 緑のゲートの成功行は
+   * 誰も読まないので、**出力に出すことは検査することではない**。実測でも
+   * `org.secretaries` を消すと「秘書室 0室(計0体)」と刷って **exit 0** だった。
+   * 「どちらが意図かコードからは決まらない」も偽で、冒頭の不変条件 9b と
+   * `--plan` の組織図が**どちらも「常設」と述べている** —— 決まっていなかった
+   * のではなく、囲いだけがそれを読んでいなかった。
    */
   const secLabel = `秘書室 ${secList.length}室(計${secMembers}体) / `;
   console.log(
@@ -321,4 +435,6 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { checkPopulations };
