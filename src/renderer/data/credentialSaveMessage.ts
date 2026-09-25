@@ -48,3 +48,32 @@ export function savedCredentialMessage(mechanism: StorageMechanism | null): stri
   }
   return '保存しました (再表示はしません。保存の守り方は設定 → セキュリティで確認できます)';
 }
+
+/**
+ * 削除の確認文 —— **まとめて消えることを、押す前に言う。**
+ *
+ * アシスタントのキーは `assistant` スロットへ **1 つの JSON にまとめて**保存される
+ * (`AssistantPage.saveAgentCreds`)。だから削除も提供者ごとにはできず、
+ * Claude だけ消して ChatGPT を残す、という操作は構造上あり得ない。
+ * 「削除しますか?」だけだと押した人は自分が選んだ 1 つだけが消えると読むので、
+ * **まとめて消えることと、消えた後どうなるかを、押す前に述べる**。
+ *
+ * 提供者の名前は**数えも写しもしない** —— `AI_CREDENTIAL_FIELDS` が増えた日に
+ * この文だけが古びる (法則 `measure-before-claim` の「訂正は写しの数だけ要る」)。
+ */
+export function deleteCredentialConfirm(): string {
+  return (
+    '保存した AI の API キーを削除しますか? キーは 1 つのスロットにまとめて保存されているため、'
+    + '提供者ごとに残すことはできません (すべて消えます)。削除すると AI への問い合わせは'
+    + '端末内のルールエンジンの答えに戻ります。元に戻せません。'
+  );
+}
+
+/**
+ * 削除できたときの一言。**守り方は名乗らない** —— 消えた後に「何で暗号化されていたか」を
+ * 述べても利用者の次の一手は変わらないし、`savedCredentialMessage` と違って
+ * 取り違えて安心させる余地もない (もう預かっていない)。
+ */
+export function deletedCredentialMessage(): string {
+  return '削除しました (保存していた API キーはすべて消えました)';
+}

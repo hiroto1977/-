@@ -1,5 +1,49 @@
 # Service Hub — 残りの作業手順書
 
+## パス 453 が測って、次のパスへ残した物 (2026-09-25)
+
+パス 452 の裏返し (宣言が「預かる」と言うサービスの画面に、預ける欄と消す口が在るか) を
+数えて **2 件**出た。**`assistant` は閉じた。`teamradar` は今日の実害 0 の罠として残る。**
+
+### `assistant` —— 閉じた (AI の API キーを消す手が 1 つも無かった)
+
+| 測った物 | 直す前の実測 |
+| --- | --- |
+| `AssistantPage:359` | `hub.setToken('assistant', JSON.stringify(creds))` (**画面から書ける**) |
+| 資格情報パネルの削除らしいボタン | **0 件** (「🗑 消去」は `clearChat` = 会話履歴) |
+| 空のフォームで「保存」 | **断られる** (「少なくとも 1 つの API キー / URL を入力してください」) |
+| `unusedStoredCredentials(['assistant'])` | **`[]`** (`collectsCredential` が true だから) |
+| 設定画面の掃除の節 | **描かれない** |
+| この画面の `tokenSetup` | **無い** → `StatusBar` の「削除」も出ない |
+
+**消す道が 3 つとも塞がっており**、残るのは「すべてのデータを削除」だけだった
+(法則 `escape-hatch-stays-open`)。機械は 2 層 ——
+`pages/__tests__/assistantCredsDelete.test.ts` (6 件・実物を押す) と
+`__tests__/credentialDeletePathCensus.test.ts` (8 件・両方向)。
+
+### `teamradar` —— 罠として残る (書き手が 0 件なので今日の実害 0)
+
+宣言は `action` で `collectsCredential` は true だが、**この鍵を保存する道が画面にも
+出荷コードにも無い** (実測・パス 452)。`ctx.token` の 1 件は `exportTeamRadarSvgImpl` が
+`fetchTeamRadarSnapshot` へ渡す本物の読みだが、渡す先の `fetchTeamRadarSnapshotImpl(_ctx)` は
+明示的に無視する。
+
+**宣言を `'none'` へ直すには呼び先を 1 段辿る針が要る** (`lint:credential-use` が
+「データフロー解析ではない」と docblock で宣言している物)。しかも実測すると**呼び先は 2 段**で
+(`fetchTeamRadarSnapshot(ctx)` → `fetchTeamRadarSnapshotImpl(_ctx)`)、深さ 1 の解析では届かない。
+既存の検査が `deps.fetchSnapshot` へ token を渡すこと自体を仕様にしてもいる。
+
+**今日の面は 2 つの台帳が両方向で持つ** —— `credentialFaceCensus` の `ignoredByCallee` の行と、
+`credentialDeletePathCensus` の `no-writer` の行。**書き手が生えれば必ず鳴る**
+(`tokenSetup` を足せば向き A、`.setToken('teamradar'` を足せば向き B の件数)。
+
+### `stripNonCode` は文字列の中身を読む走査には使えない (パス 453 で踏んだ)
+
+この道具は設計どおり文字列リテラルの中身を落とすので、**スロットの名前や綴りを読む census では
+「原文を肯定形で見る」ほうが正しい** (肯定の検査は綴りが外れれば必ず鳴る)。
+`keepQuoteChars: true` は**数える**用で、中身は戻らない。
+`stripComments` の写しは検査ファイルに既に 5 つ在るので、6 つ目は作らない。
+
 ## パス 452 が測って、次のパスへ残した物 (2026-09-24)
 
 パス 451 が残した 2 件のうち **`shopify` は閉じた**。**`teamradar` は測った結果、

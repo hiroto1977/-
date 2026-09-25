@@ -14,7 +14,14 @@
  * 画面遷移は `servicehub:navigate` CustomEvent (App.tsx が listen)。
  */
 import { navigateTo } from '../navigate';
-import { readMechanism, savedCredentialMessage, type StorageMechanism } from '../data/credentialSaveMessage';
+import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
+import {
+  deleteCredentialConfirm,
+  deletedCredentialMessage,
+  readMechanism,
+  savedCredentialMessage,
+  type StorageMechanism,
+} from '../data/credentialSaveMessage';
 import { chatMessages } from '../data/persistedShape';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
@@ -277,6 +284,18 @@ export function AssistantPage() {
   const [showAgents, setShowAgents] = useState(false);
   const [credsForm, setCredsForm] = useState<AgentCredsForm>(EMPTY_CREDS_FORM);
   const [credsMessage, setCredsMessage] = useState('');
+  /**
+   * `assistant` スロットに何か預かっているか。**「消す口」を出すかを決める唯一の判断**で、
+   * 出どころは設定画面の掃除の節と `StatusBar` の「削除」が読むのと同じ `listConfigured()`。
+   *
+   * ★ **分からないときは出す側へ倒す** (`null` で出す・`false` のときだけ隠す)。
+   * プロバイダの設定状況 (`providers`) から導くと、保管庫が施錠されていて読めないときや、
+   * 包みに互換 API の URL しか入っていないとき (どの提供者も `configured` にならない) に
+   * **預かっているのに消す口が消える** —— それはこのパスで直している欠陥そのものである。
+   */
+  const [credsStored, setCredsStored] = useState<boolean | null>(null);
+  /** 削除の実行中 (二重押しで確認を 2 度出さない)。 */
+  const [credsBusy, setCredsBusy] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
 
   /**
@@ -288,6 +307,15 @@ export function AssistantPage() {
     const read = await readProviderStatuses();
     setProviders(read.providers);
     setProvidersUnknown(read.unknown);
+    // 預かりの有無は別に読む (上の注記のとおり `providers` からは導けない)。
+    // 読めなければ `null` のまま = 消す口は出したままにする。
+    const hub = window.serviceHub;
+    if (!hub) return;
+    try {
+      setCredsStored((await hub.listConfigured()).includes('assistant'));
+    } catch {
+      setCredsStored(null);
+    }
   };
 
   useEffect(() => {
@@ -368,6 +396,68 @@ export function AssistantPage() {
       await refreshProviders();
     } catch (e) {
       setCredsMessage(`保存に失敗しました: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  };
+
+  /**
+   * **預けた API キーを消す。**
+   *
+   * ## なぜこの口が要るのか (2026-09-24 · パス 453)
+   *
+   * この画面は `hub.setToken('assistant', …)` で**自分でスロットへ書く**のに、
+   * 消す口をどこにも持っていなかった。実測 (jsdom で実物を描いて押す):
+   *
+   *   - このパネルのボタンは「保存」だけ (「🗑 消去」は `clearChat` = 会話履歴)
+   *   - 空のフォームで「保存」を押しても**断られる** (「少なくとも 1 つの…」) ので、
+   *     空の包みで上書きして消すこともできない
+   *   - `collectsCredential('assistant')` は true なので
+   *     `unusedStoredCredentials(['assistant'])` は `[]` —— 設定画面の掃除の節にも出ない
+   *   - この画面は `tokenSetup` を渡さないので `StatusBar` の「削除」も出ない
+   *
+   * つまり **AI の API キーを預けた利用者には、「すべてのデータを削除」以外に
+   * 消す手段が 1 つも無かった** (法則 `escape-hatch-stays-open`)。対象はこのアプリが
+   * 預かるうちで最も価値の高い資格情報 —— 使うと課金される —— である。
+   *
+   * ## 形は既に在る 2 つに揃える
+   *
+   * 確認つき・`res.ok` を見る・失敗を黙らないのは `components/StatusBar.tsx` の
+   * 「削除」と `SettingsPage` の保管庫スロットの `clear()` と同じ。**削除の失敗を黙ると
+   * 「消したつもりの資格情報が残っている」状態になる**ので、そこだけは必ず述べる。
+   */
+  const clearAgentCreds = async () => {
+    const hub = window.serviceHub;
+    if (!hub) {
+      setCredsMessage('serviceHub が利用できません');
+      return;
+    }
+    if (!window.confirm(deleteCredentialConfirm())) return;
+    setCredsBusy(true);
+    try {
+      const res = await hub.clearToken('assistant');
+      if (!res.ok) {
+        setCredsMessage(`削除できませんでした: ${res.message}`);
+        return;
+      }
+      setCredsMessage(deletedCredentialMessage());
+      setCredsForm(EMPTY_CREDS_FORM);
+      await refreshProviders();
+    } catch (e) {
+      /*
+       * **例外の文面は梯子の最後の段を通す。** `clearToken` は橋 (デスクトップ版) と
+       * 保管庫 (ブラウザ版) のどちらでも投げうる。今日この文面に鍵が載る道は見つかって
+       * いないが、**伏せられるなら伏せる**のがこのリポジトリの既定で (法則
+       * `mention-vs-declaration` の隣 —— パス 290 が `redactForMessage` を
+       * 「全経路の最後の関門」と定めた当のこと)、しかも同じ段が天井も掛ける。
+       *
+       * ★ **これはゲートが捕まえた** —— パス 314 の `errorMessageSurfaceCensus` が
+       * 「伏字を通らずに例外の文面を流す行が台帳とずれた」と鳴らし、その注記が
+       * 「同じ行で伏せられるなら伏せる」と言っていた (2026-09-24 · パス 453)。
+       */
+      // 1 行に置く —— census の判定は**行単位** (`REDACTED_ON_LINE.test(line)`) なので、
+      // `const raw = …` へ分けると「伏字を通らない行」として数えられる (実際に 1 度そうなった)。
+      setCredsMessage(`削除できませんでした: ${redactForMessage(e instanceof Error ? e.message : String(e), ERROR_MESSAGE_MAX_CHARS)}`);
+    } finally {
+      setCredsBusy(false);
     }
   };
 
@@ -693,6 +783,21 @@ export function AssistantPage() {
             <button type="button" className="primary" onClick={() => void saveAgentCreds()}>
               保存
             </button>
+            {/*
+              * **預かっていないと分かったときだけ隠す。** `credsStored === null`
+              * (まだ読めていない / 読めなかった) では出したままにする —— 隠す側へ倒すと、
+              * 保管庫が施錠されている利用者から消す口が消える (パス 453 の欠陥そのもの)。
+              */}
+            {credsStored === false ? null : (
+              <button
+                type="button"
+                data-clear-agent-creds
+                disabled={credsBusy}
+                onClick={() => void clearAgentCreds()}
+              >
+                API キーを削除
+              </button>
+            )}
             <span style={{ fontSize: 12, opacity: 0.75 }}>{credsMessage}</span>
           </div>
           <div style={{ gridColumn: '1 / -1', fontSize: 11, opacity: 0.65, lineHeight: 1.6 }}>
