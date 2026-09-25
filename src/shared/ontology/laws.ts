@@ -214,13 +214,23 @@ export const LAWS: readonly Law[] = [
       '実測: 同じ禁止された呼び出しを素の行に置くと `lint:forbidden` は鳴り、同じ行の JSX テキストに URL を 1 つ足すと **1 件も鳴らない** ——' +
       'つまり**宣言が言及として分類され**、「外部 URL は openExternal 経由に統一する」という規約が URL 1 つで迂回できた。' +
       '向きが重い: 見分けを誤ると偽陽性 (見過ぎ) ではなく**偽陰性 (門が黙る)** になる。直しは `://` は行注記を始めないの 1 条件で、' +
-      '`src` + `scripts` の 1,537 本のうち出力が変わったのは **3 本 (すべて .tsx)** だけだった。',
-    provenance: ['パス 292', 'パス 289', 'パス 291', 'パス 464 (言語を取り違えた走査器)'],
+      '`src` + `scripts` の 1,537 本のうち出力が変わったのは **3 本 (すべて .tsx)** だけだった。' +
+      '★ **「この検査は注記に騙されているか」は綴りに現れない** (パス 465) ので、振る舞いで測る ——' +
+      '`.ts` / `.cjs` の注記の本文だけを無意味にして全件を走らせる (`npm run audit:comment-blind`)。' +
+      '初回の実測で 1,428 本を書き換えると **13 ファイル / 15 件**が落ち、**11 本は設計どおり** (注記を読むのが仕事) で、' +
+      '**2 本が散文で満たされていた**: `lawCoverageLedger` は `shell-open-gate` を「母集団を走査する検査を持つ」と分類していたが、' +
+      'その根拠は `exportSymlinkContainment.test.ts:49` の**注記 1 行**で、しかもその注記は「一時の道に使うと的が外れる」と' +
+      '**使っていないこと**を述べていた。`limitCoverageCensus` は `MAX_STOCK_ADVISOR_RISK_CHARS` を「名前で参照されている」と' +
+      '数えていたが、根拠は別の検査の docblock の例示 1 行で、その文は「同じ数だが別物」と述べていた。',
+    provenance: ['パス 292', 'パス 289', 'パス 291', 'パス 464 (言語を取り違えた走査器)', 'パス 465 (散文が答えになっていた 2 件)'],
     enforcedBy: [
       gate('verify:arch'),
       gate('lint:forbidden'),
+      harness('audit:comment-blind'),
       test(T.shared('stripNonCodeParity')),
       test(T.shared('forbiddenPatternWitness')),
+      test(T.shared('commentBlindLedger')),
+      test(T.main('shellOpenCallSites')),
     ],
   },
   {
@@ -488,7 +498,7 @@ export const LAWS: readonly Law[] = [
     name: 'OS の「開く」は書き出し根の内側 + 拡張子 allowlist',
     statement: 'realpath で symlink を辿ってから閉じ込めを見る。字面の閉じ込めは symlink を見ない。',
     provenance: ['ARCHITECTURE §1.4 app:openPath', 'パス 0-a-2'],
-    enforcedBy: [test(T.main('exportSymlinkContainment')), chain],
+    enforcedBy: [test(T.main('exportSymlinkContainment')), test(T.main('shellOpenCallSites')), chain],
   },
   {
     id: 'redirects-refused',

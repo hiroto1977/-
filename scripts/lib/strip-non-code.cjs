@@ -53,10 +53,20 @@
 
 /**
  * 走査器の本体。`keepLiterals` ならリテラルの**中身を残す** (= `stripComments`)。
- * @param {string} src  @param {{keepQuoteChars?: boolean, keepLiterals?: boolean}} opts
+ *
+ * `opts.spans` を渡すと、落とした注記の範囲 `[start, end, kind]` をそこへ積む
+ * (2026-09-25 · パス 465 —— `audit:comment-blind` が注記の本文だけを無意味にするのに要る)。
+ * **走査器は 1 つのまま**である: 範囲を採るために 2 つ目の字句解析器を書くと、
+ * それは「同じ算法の 5 つ目の綴り」になる (法則 `measure-before-claim` の
+ * 「母集団は名前ではなく算法で数える」)。出力は `spans` の有無で 1 字も変わらない。
+ *
+ * @param {string} src
+ * @param {{keepQuoteChars?: boolean, keepLiterals?: boolean, spans?: Array<[number, number, string]>}} opts
  */
 function scan(src, opts) {
   const keep = opts.keepLiterals === true;
+  const spans = opts.spans;
+  let commentStart = 0;
   let out = '';
   let i = 0;
   let mode = 'code';
@@ -67,8 +77,8 @@ function scan(src, opts) {
   while (i < src.length) {
     const two = src.slice(i, i + 2);
     if (mode === 'code') {
-      if (two === '//' && src[i - 1] !== ':') { mode = 'line'; i += 2; continue; }
-      if (two === '/*') { mode = 'block'; i += 2; continue; }
+      if (two === '//' && src[i - 1] !== ':') { mode = 'line'; commentStart = i; i += 2; continue; }
+      if (two === '/*') { mode = 'block'; commentStart = i; i += 2; continue; }
       if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; if (keep) out += src[i]; i += 1; continue; }
       if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; if (keep) out += src[i]; i += 1; continue; }
       if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; if (keep) out += src[i]; i += 1; continue; }
@@ -101,12 +111,22 @@ function scan(src, opts) {
       continue;
     }
     if (mode === 'line') {
-      if (src[i] === '\n') { mode = 'code'; out += '\n'; }
+      if (src[i] === '\n') {
+        if (spans !== undefined) spans.push([commentStart, i, 'line']);
+        mode = 'code';
+        out += '\n';
+      }
       i += 1;
+      if (i >= src.length && mode === 'line' && spans !== undefined) spans.push([commentStart, src.length, 'line']);
       continue;
     }
     if (mode === 'block') {
-      if (two === '*/') { mode = 'code'; i += 2; continue; }
+      if (two === '*/') {
+        if (spans !== undefined) spans.push([commentStart, i + 2, 'block']);
+        mode = 'code';
+        i += 2;
+        continue;
+      }
       if (src[i] === '\n') out += '\n';
       i += 1;
       continue;
@@ -205,4 +225,16 @@ function stripComments(src) {
   return scan(src, { keepLiterals: true });
 }
 
-module.exports = { stripNonCode, stripComments };
+/**
+ * 落とした注記の範囲 `[start, end, kind]` (`kind` は `'line'` | `'block'`)。
+ * 走査器は `scan` ただ 1 つで、ここは記録を頼むだけ。
+ * @param {string} src
+ */
+function commentSpans(src) {
+  /** @type {Array<[number, number, string]>} */
+  const spans = [];
+  scan(src, { keepLiterals: true, spans });
+  return spans;
+}
+
+module.exports = { stripNonCode, stripComments, commentSpans };

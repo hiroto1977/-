@@ -873,6 +873,13 @@ const KNOWN_SUPPRESSIONS = [
   // プロセスを作らずには成り立たない。引数は固定の 5 語で、シェルを経由しない
   // (`spawnSync` に配列で渡す)。
   'child_process exec/spawn :: scripts/audit-malformed-fields.cjs :: 1',
+  // 「注記が答えになっている検査」の定期点検の道具 (パス 465)。注記の本文を
+  // 無意味にしてから `npm test` を子プロセスで走らせる —— 「この検査は注記に
+  // 騙されているか」は**走らせないと答えが出ない** (綴りに現れない) ので、
+  // プロセスを作らずには成り立たない。引数は固定の 1 語で、シェルを経由しない
+  // (`spawnSync` に配列で渡す)。書き換えたソースは `finally` で必ず戻し、
+  // **戻したことを内容で照合する**。
+  'child_process exec/spawn :: scripts/audit-comment-blind.cjs :: 1',
   // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
   // 突き合わせる。npm の勧告データベースを使うのが目的なので、
   // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。

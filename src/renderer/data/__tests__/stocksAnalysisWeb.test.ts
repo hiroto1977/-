@@ -32,7 +32,7 @@ import {
   type Strategy,
 } from '../stocksAnalysisWeb';
 import { mockCandles, type WebCandle } from '../stocksWatchlistWeb';
-import { MAX_STOCK_ADVISOR_RATIONALE_CHARS } from '../../../shared/advisorResponseLimits';
+import { MAX_STOCK_ADVISOR_RATIONALE_CHARS, MAX_STOCK_ADVISOR_RISK_CHARS } from '../../../shared/advisorResponseLimits';
 
 /** close 配列から最小限の WebCandle 列を作る (戦略・指標は close のみ参照)。 */
 function mkCandles(closes: readonly number[]): WebCandle[] {
@@ -524,13 +524,16 @@ describe('validateAdvisorJson (mutation hardening — every throw path + boundar
     expect(() => recs([rec({ rationale: 'x'.repeat(401) })])).toThrow(/exceeds 400/);
     expect(recs([rec({ rationale: 'x'.repeat(400) })])[0]!.rationale).toHaveLength(400);
   });
-  it('rejects non-array / empty / malformed riskFactors, accepts a 200-char one (>200 strict)', () => {
+  // ★ 天井は定数から引く (2026-09-25 · パス 465) —— main 側の双子と同じ理由。
+  it(`rejects non-array / empty / malformed riskFactors, accepts a ${MAX_STOCK_ADVISOR_RISK_CHARS}-char one (strict >)`, () => {
+    const cap = new RegExp(`1-${MAX_STOCK_ADVISOR_RISK_CHARS} char`);
     expect(() => recs([rec({ riskFactors: 'x' })])).toThrow(/no riskFactors/);
     expect(() => recs([rec({ riskFactors: [] })])).toThrow(/no riskFactors/);
-    expect(() => recs([rec({ riskFactors: [''] })])).toThrow(/1-200 char/);
-    expect(() => recs([rec({ riskFactors: [5] })])).toThrow(/1-200 char/);
-    expect(() => recs([rec({ riskFactors: ['x'.repeat(201)] })])).toThrow(/1-200 char/);
-    expect(recs([rec({ riskFactors: ['x'.repeat(200), 'y'] })])[0]!.riskFactors).toEqual(['x'.repeat(200), 'y']);
+    expect(() => recs([rec({ riskFactors: [''] })])).toThrow(cap);
+    expect(() => recs([rec({ riskFactors: [5] })])).toThrow(cap);
+    expect(() => recs([rec({ riskFactors: ['x'.repeat(MAX_STOCK_ADVISOR_RISK_CHARS + 1)] })])).toThrow(cap);
+    const ok = 'x'.repeat(MAX_STOCK_ADVISOR_RISK_CHARS);
+    expect(recs([rec({ riskFactors: [ok, 'y'] })])[0]!.riskFactors).toEqual([ok, 'y']);
   });
 });
 

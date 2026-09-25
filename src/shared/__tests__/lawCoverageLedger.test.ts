@@ -24,6 +24,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import { LAWS } from '../ontology/laws';
 
 const REPO = join(__dirname, '..', '..', '..');
@@ -58,7 +59,12 @@ function scansPopulation(file: string): boolean {
   const abs = join(REPO, file);
   if (!existsSync(abs)) return false;
   // 原文の道具を通す (`originalSourcePolicy` の規則 1)。変異検査の中でも本物の綴りを読む。
-  const src = readOriginalSource(abs);
+  // ★ **注記は落とす** (2026-09-25 · パス 465) —— 生のまま読んでいた頃、
+  // `shell-open-gate` は `exportSymlinkContainment.test.ts:49` の**注記 1 行**
+  // (`readOriginalSource` の綴り) で「母集団を走査している」側に落ちていた。
+  // しかもその注記は「一時の道に使うと的が外れる」と**使っていないこと**を述べている
+  // (法則 `mention-vs-declaration`)。見つけ方は `npm run audit:comment-blind`。
+  const src = stripComments(readOriginalSource(abs));
   return SCAN_MARKERS.some((m) => src.includes(m));
 }
 
@@ -136,6 +142,30 @@ describe('法則の執行者は母集団を見ているか (パス 327)', () => 
   it('★ 対照: 例の表だけで留めている検査は、印に当たらない', () => {
     expect(scansPopulation('src/shared/__tests__/cryptoParams.test.ts')).toBe(false);
     expect(scansPopulation('src/shared/__tests__/loopbackChecks.test.ts')).toBe(false);
+  });
+
+  /*
+   * ★ **注記の中の言及は印に当たらない** (2026-09-25 · パス 465)。
+   * 標本は走査に掛ける物と同じ加工 (`stripComments`) を通す —— 生の文字列に当てた
+   * 標本は「針は生きている」しか示さない (CLAUDE.md の規約)。
+   */
+  /*
+   * ★ **実物の事例を留める** (2026-09-25 · パス 465)。
+   * `stripComments` を外す対照が**鳴らなかった** —— 直しの一部として
+   * `shellOpenCallSites` (本物の母集団の走査) を書いたので、生の原文でも通るからである。
+   * **鳴らない対照は合格ではなく、その検査についての報せ**。木から実物を採って留める。
+   */
+  it('★ 実物: exportSymlinkContainment の印は注記の中にしか無い (パス 465)', () => {
+    const f = 'src/main/__tests__/exportSymlinkContainment.test.ts';
+    const raw = readOriginalSource(join(REPO, f));
+    expect(SCAN_MARKERS.some((m) => raw.includes(m)), '前提: 原文には印の綴りが在る').toBe(true);
+    expect(scansPopulation(f), '注記を落とすと消える = 走査ではなく言及').toBe(false);
+  });
+
+  it('★ 標本: 注記の中の綴りは走査と数えない', () => {
+    const marker = SCAN_MARKERS[0];
+    expect(stripComments(`const a = ${marker}(x);\n`).includes(marker), 'code の走査が消えている').toBe(true);
+    expect(stripComments(`// ${marker} を一時の道に使うと的が外れる\n`).includes(marker), '注記の言及が残っている').toBe(false);
   });
 
   it('印が緩すぎない (台帳が空でない = 判定が生きている)', () => {

@@ -2,7 +2,7 @@ import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fsp } from 'node:fs';
 import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
-import { MAX_STOCK_ADVISOR_RATIONALE_CHARS } from '../../../shared/advisorResponseLimits';
+import { MAX_STOCK_ADVISOR_RATIONALE_CHARS, MAX_STOCK_ADVISOR_RISK_CHARS } from '../../../shared/advisorResponseLimits';
 import {
   sma,
   ema,
@@ -1353,7 +1353,9 @@ describe('validateAdvisorJson', () => {
     ).toThrow(/no riskFactors/);
   });
 
-  it('rejects riskFactor that is not a 1-200 char string', () => {
+  // ★ 天井は定数から引く (2026-09-25 · パス 465)。数字 200 を写していた頃は、定数を
+  // 動かしてもこの検査は動かず、`limitCoverageCensus` は別の検査の**注記**で満たされていた。
+  it(`rejects riskFactor that is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`, () => {
     expect(() =>
       validateAdvisorJson(
         { recommendations: [goodRec({ riskFactors: [''] })] },
@@ -1362,10 +1364,17 @@ describe('validateAdvisorJson', () => {
     ).toThrow(/riskFactor entry/);
     expect(() =>
       validateAdvisorJson(
-        { recommendations: [goodRec({ riskFactors: ['x'.repeat(201)] })] },
+        { recommendations: [goodRec({ riskFactors: ['x'.repeat(MAX_STOCK_ADVISOR_RISK_CHARS + 1)] })] },
         allowed,
       ),
-    ).toThrow(/riskFactor entry/);
+    ).toThrow(new RegExp(`1-${MAX_STOCK_ADVISOR_RISK_CHARS} char`));
+    // 境界ちょうどは通る (天井を下げたらここが鳴る)。
+    expect(
+      validateAdvisorJson(
+        { recommendations: [goodRec({ riskFactors: ['x'.repeat(MAX_STOCK_ADVISOR_RISK_CHARS)] })] },
+        allowed,
+      )[0]!.riskFactors,
+    ).toEqual(['x'.repeat(MAX_STOCK_ADVISOR_RISK_CHARS)]);
     expect(() =>
       validateAdvisorJson(
         { recommendations: [{ ...(goodRec() as object), riskFactors: [42] }] },
