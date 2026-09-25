@@ -20,7 +20,7 @@ import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
 import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
 import { isBrowserBuild } from '../runtimeMode';
 import { useBuildKind } from '../hooks/useBuildKind';
-import { pasteOAuthUnreadNote, credentialSlotUnreadNote } from '../../shared/buildDestinations';
+import { pasteOAuthUnreadNote, credentialSlotUnreadNote, proxyUnusedNote } from '../../shared/buildDestinations';
 import { announceLockToOtherTabs, lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
@@ -924,12 +924,37 @@ export function LicenseSection() {
 }
 
 /** 接続状況ハブ — 全サービスの資格情報設定状況を一覧し、未接続はページへ誘導する。 */
-function ConnectionHub({ refreshKey }: { refreshKey: number }) {
+/** 検査のために公開 (`ProxySection` / `FsaSection` / `CredentialRow` と同じ理由)。 */
+export function ConnectionHub({ refreshKey }: { refreshKey: number }) {
   const [configured, setConfigured] = useState<ReadonlySet<string> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    getVault()
+    /*
+     * **橋を読む。保管庫を直に読まない** (2026-09-25 · パス 456)。
+     *
+     * 橋の `listConfigured` は実行形態ごとに振り分く —— ブラウザ版は shim が
+     * 保管庫へ、デスクトップ版は main の保管ファイルへ。ここが `getVault()` を
+     * 直に読んでいたので、**デスクトップ版では必ず空**だった (あの保管庫は
+     * デスクトップ版で書けないため · パス 455)。
+     *
+     * 実測 (2026-09-25 · 直す前 · 橋が github / slack を「設定済み」と答える端末):
+     * この節は **0 / 74 サービスが接続済み**・未接続 74 件と述べ、
+     * 「✅ 接続済み」の節そのものが出なかった。**設定した本人に、1 件も
+     * 設定していないと告げていた** —— しかも「クリックで開いて接続」と
+     * 74 件ぜんぶをやり直しに誘う。
+     *
+     * 隣の `UnusedCredentialSection` は最初から橋を読んでいる (同じ画面で
+     * 同じ問いに 2 通り答えていた)。
+     */
+    const hub = window.serviceHub;
+    if (!hub) {
+      // 橋が無いのは「1 件も設定していない」ではないが、この節に出せる面が
+      // 無い (札は上端の報せが持つ)。空で描いて、読めた側の報せに任せる。
+      setConfigured(new Set());
+      return;
+    }
+    hub
       .listConfigured()
       .then((ids) => {
         if (!cancelled) setConfigured(new Set(ids));
@@ -1524,6 +1549,23 @@ export function ProxySection() {
    */
   const [unreadable, setUnreadable] = useState<string | null>(null);
 
+  /*
+   * **この実行形態は、ここが書く設定を読むのか** (2026-09-25 · パス 456)。
+   *
+   * 実測: `getProxyConfig` / `fetchViaProxy` を呼ぶ出荷コードは `web-shim.ts` と
+   * それだけが import する `data/saasWriteWeb.ts` で、shim はブラウザ版にしか
+   * 据え付かない (`web-shim.ts:1966`)。main 側にプロキシの仕組みは **0 件**なので、
+   * デスクトップ版で保存された設定は**誰も読まない**。
+   * 直す前はそれでも保存が成功し、画面は「プロキシ設定を保存しました」と言い、
+   * 札まで「設定済み」へ変わっていた (共有秘密も一緒に入る)。
+   *
+   * **分からないあいだ (`null`) は断らない** —— 既定を `'desktop'` に倒すと、
+   * 橋の `getVersion` が一瞬遅れただけでブラウザ版の唯一の中継の道が死ぬ
+   * (同じ判断が `useBuildKind` の docblock と `GoogleOAuthSection` に在る)。
+   */
+  const buildKind = useBuildKind();
+  const unused = buildKind === null ? null : proxyUnusedNote(buildKind);
+
   async function refresh() {
     const { config, rejected: why, unreadable: cause } = await inspectStoredProxyConfig();
     setUnreadable(cause === null ? null : deviceStoreFailureMessage('settings', 'read', cause));
@@ -1539,6 +1581,12 @@ export function ProxySection() {
   async function save() {
     setErr(null);
     setMsg(null);
+    // **働かない道へは書かない。** 下の「設定する」を出さないので今日ここへは
+    // 届かないが、2 つ目の呼び手が生えた日のための床である (パス 455 と同じ形)。
+    if (unused !== null) {
+      setErr(unused);
+      return;
+    }
     try {
       const next: ProxyConfig = secret.length > 0
         ? { url, sharedSecret: secret }
@@ -1680,14 +1728,33 @@ export function ProxySection() {
               )}
             </div>
           )}
-          <button type="button" onClick={() => setEditing(true)} style={btn(cfg ? undefined : 'accent')}>
-            {cfg ? '変更' : '設定する'}
-          </button>
+          {/*
+            **断りは押す前に言う** —— 読まれない設定へ共有秘密を打たせてから
+            断るのでは遅い (パス 453 / 455 で削除・保存について下したのと同じ判断)。
+            **「削除」は実行形態で隠さない** —— 条件は「値が在るか」だけである。
+            既にデスクトップ版で保存した人から消す口まで消すと、
+            法則 `escape-hatch-stays-open` を破る。
+          */}
+          {unused === null && (
+            <button type="button" onClick={() => setEditing(true)} style={btn(cfg ? undefined : 'accent')}>
+              {cfg ? '変更' : '設定する'}
+            </button>
+          )}
           {cfg && (
             <button type="button" onClick={disconnect} style={{ ...btn(), color: 'var(--danger)' }}>
               削除
             </button>
           )}
+        </div>
+      )}
+
+      {unused !== null && (
+        <div
+          role="alert"
+          data-proxy-unused
+          style={{ fontSize: 11, color: 'var(--warning)', marginTop: 6, lineHeight: 1.6 }}
+        >
+          ⚠ {unused}
         </div>
       )}
 

@@ -7,7 +7,107 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
-## 直近のパス (455) — 働かない実行形態が、本物の API キーを貼らせてから断っていた
+## 直近のパス (456) — 誰も読まない所へ共有秘密を保存させ、その隣で設定済みを「0 / 74」と言っていた
+
+パス 454 / 455 の問い (「この実行形態で本当に働くか」) を**保管庫の外**へ当てた。
+
+### 先に測った 3 軸 —— 2 つは何も無かった
+
+| 軸 | 実測 (2026-09-25) |
+| --- | --- |
+| `renderer/fs/fsa.ts` | デスクトップ版 (Electron 43 · `file://` · `sandbox: true`) で `typeof window.showDirectoryPicker === 'function'`・`isSecureContext === true`・`showDirectoryPicker({mode:'readwrite'})` は**投げずにダイアログを開く** (12 秒待っても解決しない)。**本当に使える**ので門は要らない |
+| `renderer/library/library.ts` | 保管庫・施錠・実行形態・橋への参照が **0 件**。依らないことが構造から出る |
+| **`renderer/network/proxy.ts`** | **本物** (下記) |
+
+### 実測 (直す前 · jsdom で実物の `ProxySection` を描き、実際に打って押す)
+
+| 段 | 実測 (デスクトップ版) |
+| --- | --- |
+| 札 (開く前) | 未設定 |
+| 「設定する」 | 出る |
+| URL 欄・共有秘密の欄 | 出る |
+| 「保存」 | 押せる (`disabled === false`) |
+| 押した結果 | **「プロキシ設定を保存しました」** (札も「設定済み」へ) |
+| 保管層 | **`{"url":"…","sharedSecret":"SUPER-SECRET-…"}`** —— 実際に入る |
+| デスクトップ版の読み手 | **0 件** |
+
+★ **パス 454 / 455 と同じ家系だが、こちらは静かに成功する。** あちらは保管庫が施錠されていて
+断られた。ここは**平文の IndexedDB** (`business-hub-preferences` / key `proxy`) なので
+書き込みは本当に成功し、画面は成功したと言い、札まで変わる —— 気付く手がかりが 1 つも無い。
+
+★ **読み手は全部ブラウザ版に居る** —— `getProxyConfig` / `fetchViaProxy` を呼ぶ出荷コードは
+`web-shim.ts` と、それだけが import する `data/saasWriteWeb.ts`。`web-shim.ts:1966` は
+`if (typeof window !== 'undefined' && !window.serviceHub)`。**main 側にプロキシの仕組みは
+1 つも無い** (`setProxy` / `proxy-server` / `ProxyConfig` / `HTTPS_PROXY` は `src/main` と
+`src/preload` で **0 件**)。
+
+★ **向きが利用者の損である。** プロキシを設定する人は*経路を自分の側で押さえる*ためにそうする
+(出口統制・SaaS 側の IP 許可・自宅 IP を晒さない)。デスクトップ版は各サービスへ**直接**つなぐので
+その統制はまるごと効かず、画面は効いていると言う。節が名乗る理由 (「CORS でブラウザ直接呼び出し
+不可」) も**デスクトップ版では偽**である。
+
+### 新しい census が、書いたその場で 4 件目を見つけた —— こちらは読み側
+
+`ConnectionHub` (設定画面の先頭の節) が `getVault().listConfigured()` を**直に**読んでいた。
+あの保管庫はデスクトップ版で 1 バイトも書けないので (パス 455)、`vault.listConfigured()` は
+`requireKey()` を通らず**投げずに `[]` を返す**。実測 (橋が github / slack を「設定済み」と答える端末):
+
+| 見るもの | 直す前 |
+| --- | --- |
+| 見出しの行 | **0 / 74 サービスが接続済み** |
+| ⚪ 未接続 | **74 件** |
+| 「✅ 接続済み」の節 | **出ない** |
+
+**設定した本人に、1 件も設定していないと告げていた** —— しかも「クリックで開いて接続」と
+74 件ぜんぶをやり直しに誘う。**家系の鏡**である: あちらは「この実行形態が読まない保管先へ書く」、
+こちらは「**この実行形態が書かない保管先から読む**」。隣の `UnusedCredentialSection` (:1072) は
+最初から橋を読んでいた (**同じ画面が同じ問いに 2 通り答えていた**)。
+
+### 直し
+
+- 文は `shared/buildDestinations.ts` の `proxyUnusedNote(kind)` (`.tsx` は変異検査の母集団の外)
+- `useBuildKind()` で問い、デスクトップ版では**「設定する」を出さない** (**断りは押す前に言う**)。
+  `save()` にも床
+- **分からないあいだ (`null`) は断らない**
+- **「削除」は実行形態で隠さない** (法則 `escape-hatch-stays-open`)
+- `ConnectionHub` は橋を読む —— 橋が実行形態ごとに振り分くので**両ビルドで正しくなる**
+
+### 機械は 3 層
+
+| 検査 | 件数 | 何を見るか |
+| --- | ---: | --- |
+| `pages/__tests__/proxySectionBuildGate.test.ts` | 6 | 実物の節を 3 つの実行形態で描いて押す |
+| `pages/__tests__/connectionHubReadsBridge.test.ts` | 4 | 橋の答えがそのまま出る・本当に 0 件なら 0 件 (逆向き)・例外の文面を流さない |
+| `renderer/__tests__/settingsSectionBuildReachCensus.test.ts` | 8 | **母集団** —— 設定画面の JSX の大文字タグ (実測 17) を両方向に |
+
+★ **逆向きも入れた (パス 455 の対照 J の教訓)** —— **分類を下げるのも退行の 1 手**なので、
+原文からブラウザ版だけの保存先 (`getVault()` / `setProxyConfig(`) を探し、それに触る節が
+`browser-only` を名乗ることを要求する。★ **その針が書いたその場で私の docblock に当たった**
+(法則 `mention-vs-declaration`) —— `stripNonCode` を通し、針が的に当たることと注記では
+当たらないことを標本で留めた。
+
+**対照 11 方向すべて鳴り**、復帰後 18 / 18。
+
+### 自戒 3 つ
+
+1. **`typecheck` だけが 2 件捕まえた** (`querySelector` が `Element | null`) —— vitest は型を剥がす。
+   **11 度目**である。
+2. **jsdom で React の制御された欄へ打つときは `act` で包まない** —— 包むと `input` の後に
+   React が制御された値を戻し、**state が動かないまま欄が空に戻る**。既存の
+   `aiCredentialFieldsWritable` は包んでおらず、**そちらが正しい形**だった。
+3. **`pkill -f electron` が自分の bash を殺した** —— コマンドラインにその綴りが入っているので
+   自己一致する (2 度、exit 144 で無音に終わった)。
+
+### 測って何も無かった軸
+
+- `UnusedCredentialSection` は最初から橋を読む
+- `CredentialRow` が保管庫を読むのは正しい (スロットそのものが保管庫)
+- `CloudSyncPanel` は保存を 1 つも持たない (送信路も未実装で、それは既に画面が述べている)
+- `FsaSection` の「Chrome / Edge / Opera のみ対応」はデスクトップ版で紛らわしいが偽ではない
+
+---
+
+## 前のパス (455) — 働かない実行形態が、本物の API キーを貼らせてから断っていた
 
 パス 454 が残した `CredentialRow` (「API キーとトークン」9 スロット) を閉じた。
 **測り直したら、パス 454 の記述が 2 つ偽だった** (下の「訂正」)。
