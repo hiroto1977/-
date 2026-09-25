@@ -38,19 +38,12 @@ import {
   readOriginalDirEntries,
 } from '../../shared/__tests__/originalSource';
 import { GOOGLE_BROWSER_SEND, type GoogleServiceId } from '../../shared/buildDestinations';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
 const read = (rel: string): string => readOriginalSource(path.join(REPO_ROOT, rel));
 
 /** 注記だけを落とす (**文字列の中身は残す** —— 針が読むのは文そのものなので)。 */
-function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .split('\n')
-    .map((line) => (/^\s*(\/\/|\*)/.test(line) ? '' : line))
-    .join('\n');
-}
-
 interface Row {
   /** `data/saasWriteWeb.ts` の export された writer。 */
   readonly writer: string;
@@ -85,7 +78,7 @@ const LEDGER: readonly Row[] = [
 
 /** `web-shim.ts` が実際に呼ぶ `saasWriteWeb` の writer を走査で導く。 */
 function scanWriters(): string[] {
-  const shim = codeOnly(read('src/renderer/web-shim.ts'));
+  const shim = stripComments(read('src/renderer/web-shim.ts'));
   const declared = [...read('src/renderer/data/saasWriteWeb.ts').matchAll(/export async function ([A-Za-z0-9_]+)/g)]
     .map((m) => m[1]!);
   return declared.filter((w) => new RegExp(`\\b${w}\\s*\\(`).test(shim));
@@ -107,7 +100,7 @@ function walk(dir: string, out: string[] = []): string[] {
 const SENDS = /送信|送りま|書き込み/;
 const DESKTOP_ONLY = /デスクトップ版の機能|デスクトップ版のみ|Electron 版の機能/;
 function claimsSendIsDesktopOnly(src: string): string[] {
-  return codeOnly(src)
+  return stripComments(src)
     .split(/[。\n]/)
     .map((s) => s.trim())
     .filter((s) => SENDS.test(s) && DESKTOP_ONLY.test(s));
@@ -129,7 +122,7 @@ describe('ブラウザ版が実際に送る action の母集団 (パス 457)', (
   });
 
   it('台帳の service / action の綴りは web-shim.ts の振り分けに在る', () => {
-    const shim = codeOnly(read('src/renderer/web-shim.ts'));
+    const shim = stripComments(read('src/renderer/web-shim.ts'));
     for (const r of LEDGER) {
       expect(shim, `${r.writer}: serviceId === '${r.service}'`).toContain(`serviceId === '${r.service}'`);
       expect(shim, `${r.writer}: action === '${r.action}'`).toContain(`action === '${r.action}'`);
@@ -149,9 +142,18 @@ describe('ブラウザ版が実際に送る action の母集団 (パス 457)', (
   it('★ 針が的に当たる (直す前の文そのものを標本に) / 注記の中では数えない', () => {
     const before = "          サインインはサービスごとに行い、必要スコープのみ同意します。ライブ接続（実データ取得・送信）は\n"
       + '          デスクトップ版の機能で、ブラウザ版は同梱スナップショットを表示します。';
-    expect(claimsSendIsDesktopOnly(before.replace(/\n\s+/g, ''))).toHaveLength(1);
+    const one = before.replace(/\n\s+/g, '');
+    expect(claimsSendIsDesktopOnly(one)).toHaveLength(1);
     // 同じ綴りでも、注記の中なら数えない (法則 `mention-vs-declaration`)。
-    expect(claimsSendIsDesktopOnly(` * ${before.replace(/\n\s+/g, '')}`)).toEqual([]);
+    //
+    // ★ **標本は、走査に掛ける物と同じ形にする** (2026-09-25 · パス 461) —— 裸の
+    //   ` * 続き行` は実物では 1 度も来ない (走査はファイル全体を渡すので、続き行は
+    //   必ず `/*` の内側に在る)。CLAUDE.md の規約が言う「同じ加工を通す」の、
+    //   **標本の形**についての現れである。
+    expect(claimsSendIsDesktopOnly(`/**\n * ${one}\n */`)).toEqual([]);
+    // ★ **行末の注記も数えない** —— パス 461 までこの census は自前の写しを持ち、
+    //   **行頭が `//` の行しか落とさなかった**ので、この形は code として残っていた。
+    expect(claimsSendIsDesktopOnly(`const x = 1; // ${one}`)).toEqual([]);
     // 向きを分けて書いた文は当たらない (Microsoft365Page が最初から持っている形)。
     const ok = '実データの取得はデスクトップ版の機能です（ブラウザ版は同梱スナップショットを表示します）。'
       + 'メール送信と予定作成はブラウザ版でも動きます —— プロキシ設定が要ります（設定ページ）。';
@@ -159,7 +161,7 @@ describe('ブラウザ版が実際に送る action の母集団 (パス 457)', (
   });
 
   it('★ GOOGLE_BROWSER_SEND は web-shim.ts の振り分けと一致する (両方向)', () => {
-    const shim = codeOnly(read('src/renderer/web-shim.ts'));
+    const shim = stripComments(read('src/renderer/web-shim.ts'));
     const googleRows = LEDGER.filter((r) => Object.hasOwn(GOOGLE_BROWSER_SEND, r.service));
     expect(googleRows.map((r) => r.service).sort()).toEqual(Object.keys(GOOGLE_BROWSER_SEND).sort());
     for (const r of googleRows) {

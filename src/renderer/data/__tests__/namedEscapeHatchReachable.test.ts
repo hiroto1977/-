@@ -43,6 +43,7 @@ import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
 import { BALANCE_SHEET_COLLECTION } from '../balanceSheet';
 import { PROPERTIES_COLLECTION } from '../investments';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /** 設定の点検パネルを名指しする綴り (**実物のパネルの見出しと同じ語** —— パス 426 で「記録」から直した)。 */
 const AUDIT_PANEL = '形式の合わないレコード';
@@ -303,14 +304,6 @@ const LEDGER: readonly Row[] = [
  * **文字列は落とさない** —— ここで数えたいのは*利用者が読む文*そのものなので、
  * `stripNonCode` (文字列も落とす) は使えない。落とすのは注記だけである。
  */
-function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .split('\n')
-    .map((line) => (/^\s*(\/\/|\*)/.test(line) ? '' : line))
-    .join('\n');
-}
-
 function walk(dir: string, out: string[] = []): string[] {
   for (const e of readOriginalDirEntries(dir)) {
     const full = `${dir}/${e.name}`;
@@ -334,7 +327,7 @@ function scanHits(): Hit[] {
   const hits: Hit[] = [];
   for (const file of walk('src/renderer/data')) {
     let fn = '(top)';
-    for (const line of codeOnly(readOriginalSource(file)).split('\n')) {
+    for (const line of stripComments(readOriginalSource(file)).split('\n')) {
       const decl = /^export (?:async )?(?:function|const) ([A-Za-z0-9_]+)/.exec(line);
       if (decl) fn = decl[1]!;
       const kinds: Kind[] = [];
@@ -366,11 +359,17 @@ describe('名指しした逃げ口は、対象をそこに持っている (パ�
 
   it('★ 針は実物の文に当たり、注記の中の言及には当たらない (mention-vs-declaration)', () => {
     const line = "  return `…（設定の「形式の合わないレコード」から消せます）。`;";
-    expect(codeOnly(line).includes(AUDIT_PANEL)).toBe(true);
-    expect(codeOnly(' * 逃げ口 (設定の「形式の合わないレコード」) はこの文が').includes(AUDIT_PANEL)).toBe(false);
-    expect(codeOnly('/* 一覧の × で消せます */').includes(LIST_X)).toBe(false);
+    expect(stripComments(line).includes(AUDIT_PANEL)).toBe(true);
+    // ★ **標本は、走査に掛ける物と同じ形にする** (2026-09-25 · パス 461) —— 裸の
+    //   ` * 続き行` は実物では 1 度も来ない (走査はファイル全体を渡すので、続き行は
+    //   必ず `/*` の内側に在る)。
+    expect(stripComments('/**\n * 逃げ口 (設定の「形式の合わないレコード」) はこの文が\n */').includes(AUDIT_PANEL)).toBe(false);
+    expect(stripComments('/* 一覧の × で消せます */').includes(LIST_X)).toBe(false);
+    // ★ **行末の注記も数えない** —— パス 461 までこの census は自前の写しを持ち、
+    //   **行頭が `//` の行しか落とさなかった**ので、この形は code として残っていた。
+    expect(stripComments(`${line} // 一覧の × で消せます`).includes(LIST_X)).toBe(false);
     // 行番号を保つ (掴んだ位置をそのまま実物の行として報せられる)
-    expect(codeOnly('a\n/* x\ny */\nb').split('\n')).toHaveLength(4);
+    expect(stripComments('a\n/* x\ny */\nb').split('\n')).toHaveLength(4);
   });
 
   it('★ 走査が見つけた文は全部台帳に在る', () => {
@@ -491,7 +490,7 @@ describe('「X」の画面 の X は実在するラベル (パス 425)', () => {
     let seen = 0;
     for (const dir of ['src/renderer/data', 'src/renderer/pages', 'src/shared']) {
       for (const file of walk(dir)) {
-        const code = codeOnly(readOriginalSource(file));
+        const code = stripComments(readOriginalSource(file));
         code.split('\n').forEach((line, i) => {
           for (const m of line.matchAll(SCREEN_RE)) {
             seen += 1;

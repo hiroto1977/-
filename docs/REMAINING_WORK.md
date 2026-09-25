@@ -1,5 +1,35 @@
 # Service Hub — 残りの作業手順書
 
+## パス 461 が測って、次のパスへ残した物 (2026-09-25)
+
+パス 460 が残した 2 件目 (「`codeOnly` の写し 10 個の契約が同じか測る」) を閉じた。
+**題は「写し 10 個」だが、数えたら 13 個で、契約は 7 通りだった** —— 文字列の中の URL で
+切る物 (実測 15,361 行)・行末の注記を code として残す物 (実測 2,420 行 / 480 本)・
+行番号を詰める物が混ざっていた。共有の字句解析器に `stripComments` を足し、13 本を寄せた。
+**今日どの census の答えも変わらなかった** (落ちた 2 件はどちらも人工的な標本) ので、
+これは**罠の除去**である。
+
+残っている物:
+
+1. **自前の注記除去がまだ 66 本ある** —— 名前ではなく**算法**で数えた実測 (2026-09-25):
+   `codeOnly` は 1 つの名前にすぎず、同じ物が `code()` / `read()` / `withoutComments()` /
+   `isCommentLine()` ほかの名前でも書かれている。台帳は
+   `shared/__tests__/commentStripperCensus.test.ts` の `REMAINING` が**両方向**で持つ
+   (理由の欄は作らない —— どの行も同じ「まだ寄せていない」で、理由が埋まると
+   「保留を検査に書く」形になる · パス 368 の tick 台帳と同じ判断)。
+   **先に測ること**: `.cjs` の 5 本 (`check-import-boundaries` / `lint-forbidden-patterns` /
+   `lint-network-targets` / `lint-parameter-prose` / `verify-architecture`) は `.ts` を
+   require できないので、寄せるなら `scripts/lib/strip-non-code.cjs` に `stripComments` を
+   足して**パリティ検査で縛る**(パス 418 / 452 と同じ形)。`.ts` の 61 本は import 1 行で済む。
+
+2. **`package.json` の版をブラウザ版へ注入していない** (パス 460 から持ち越し) ——
+   `vite.config.ts` にも `vitest.config.ts` にも `define` は 1 つも無い (実測) ので、
+   ブラウザ版は自分の版を**手書きするしかない**。今は 1 か所 (`WEB_BUILD_VERSION`) で、
+   **身元は版に依らなくなった**ので実行形態が動く道は無い。
+   **採らなかった理由 (測った)**: `vitest.config.ts` は別の config なので両方に `define` が要り、
+   899 ファイルの検査が読み込み時に未定義の global に当たる形を作る。
+   **先に測ること**: vitest 側に `define` を置いたとき、`src/**/__tests__` の読み込みが壊れないか。
+
 ## パス 460 が測って、次のパスへ残した物 (2026-09-25)
 
 パス 459 が残した 1 件目 (「`web-shim` が版を 2 か所に直書き」) を閉じた。
@@ -18,7 +48,7 @@
    898 ファイルの検査が読み込み時に未定義の global に当たる形を作る。
    **先に測ること**: vitest 側に `define` を置いたとき、`src/**/__tests__` の読み込みが壊れないか。
 
-2. **`codeOnly` (注記だけを落とす道具) の写しが 10 個ある** —— 実測 (2026-09-25):
+2. **~~`codeOnly` の写しが 10 個ある~~ (パス 461 で閉じた —— 実物は 13 個で契約は 7 通りだった)** —— 当時の実測 (2026-09-25):
    `e2eWaitMargin` / `hostChromeColorCensus` / `advisorArrayBounds` / `createdResponseFields` /
    `financialAnalysisNumberReading` / `fixedTickAssertionCensus` / `disclaimerRendered` /
    `browserSendClaimCensus` / `numericInputReaderCensus` / `namedEscapeHatchReachable`。

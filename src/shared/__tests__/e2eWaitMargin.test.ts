@@ -45,6 +45,7 @@ import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 const req = createRequire(join(REPO, 'package.json'));
@@ -69,17 +70,6 @@ const runnerSource = (): string => readOriginalSource(join(REPO, RUNNER));
  * 「その形が無いこと」を全文に対して主張すると自分の注記で落ちる
  * (法則 `mention-vs-declaration`。実際にこの検査を書いたとき 1 度落ちた)。
  */
-function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((line) => {
-      const t = line.trim();
-      return !(t.startsWith('//') || t.startsWith('*'));
-    })
-    .join('\n');
-}
-
 /**
  * `.catch(() => {})` が付いている**式**を、行ではなく**文**の単位で取る。
  *
@@ -89,7 +79,7 @@ function codeOnly(src: string): string {
  * 終わっていないか」で決める (この runner の書き方に対してはそれで足りる)。
  */
 export function swallowedWaitStatements(source: string): string[] {
-  const lines = codeOnly(source).split('\n');
+  const lines = stripComments(source).split('\n');
   const out: string[] = [];
   for (let i = 0; i < lines.length; i++) {
     if (!/\.catch\(\(\)\s*=>\s*\{\}\)/.test(lines[i]!)) continue;
@@ -210,11 +200,11 @@ describe('e2e runner: 時間切れを飲む待ち', () => {
 
   it('★ パス 397 が直した形は戻っていない (成り立ち得ない条件を待って飲む)', () => {
     // **コードだけを見る** —— 直しの docblock がその古い形を引用している。
-    expect(codeOnly(source)).not.toContain('filter({ hasText: /^営業$/ })');
-    // 針の標本: この綴りは実物の注記の中には在る (だから codeOnly が要る)。
+    expect(stripComments(source)).not.toContain('filter({ hasText: /^営業$/ })');
+    // 針の標本: この綴りは実物の注記の中には在る (だから stripComments が要る)。
     expect(source).toContain('filter({ hasText: /^営業$/ })');
     // 肯定の側: 直しは**条件で待つ** (法則 wait-for-condition-not-ticks)。
-    expect(codeOnly(source)).toContain("input[aria-label=\"申告 1 の部署名\"]')?.value === '営業'");
+    expect(stripComments(source)).toContain("input[aria-label=\"申告 1 の部署名\"]')?.value === '営業'");
   });
 });
 

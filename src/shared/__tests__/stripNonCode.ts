@@ -70,7 +70,47 @@ export interface StripOptions {
   readonly keepQuoteChars?: boolean;
 }
 
+/**
+ * **注記だけを落とす。文字列・テンプレート・正規表現の中身は残す。** (2026-09-25 · パス 461)
+ *
+ * `stripNonCode` との違いはただ 1 つ —— こちらは**リテラルの中身を残す**。
+ * 「この綴りがコードに在るか」を数える走査は、`'https://api.example.com'` のような
+ * 文字列**も**コードとして読みたい (落とすと、探している物そのものが消える)。
+ *
+ * ## 写しが 13 個あり、契約は 7 通りだった (2026-09-25 の実測)
+ *
+ * `codeOnly` という名前で 13 の検査が自前の注記除去器を持っており、
+ * **弁別標本 10 種に対する答えで分けると 7 通り**あった。違いは 2 つの軸に落ちる:
+ *
+ * | 軸 | 形 | 何が起きるか |
+ * | --- | --- | --- |
+ * | 行末の `//` を素の正規表現で消す | 4 写し | **`'https://x'` が `'https:` で切れる** (実測 15,361 行) |
+ * | 同・`(^\|[^:])` で守る | 3 写し | `https://` は無事だが `'a//b'` / `'//cdn'` は切れる (1,375 行) |
+ * | 行頭が `//` の行だけ落とす | 6 写し | **行末の注記が code として残る** (実測 2,420 行 / 480 本) |
+ * | ブロック注記を `''` や `' '` へ | 6 写し | **行番号がずれる** (行で報せる走査は位置を誤る) |
+ *
+ * ★ **どちらの向きの誤りも在る** —— 落とし過ぎ (探している綴りが消えて「0 件だから健全」)
+ * と、残し過ぎ (注記の中の言及を宣言として数える · 法則 `mention-vs-declaration`)。
+ *
+ * ★ **行番号は保つ** —— 落とした注記は改行だけ残すので、掴んだ位置をそのまま報せられる。
+ */
+export function stripComments(src: string): string {
+  return scan(src, { keepLiterals: true });
+}
+
 export function stripNonCode(src: string, opts: StripOptions = {}): string {
+  return scan(src, { keepQuoteChars: opts.keepQuoteChars === true });
+}
+
+interface ScanOptions {
+  /** 文字列・テンプレート・正規表現の**中身を残す** (`stripComments`)。 */
+  readonly keepLiterals?: boolean;
+  /** 中身は落とすが引用符そのものは残す (`stripNonCode` の `keepQuoteChars`)。 */
+  readonly keepQuoteChars?: boolean;
+}
+
+function scan(src: string, opts: ScanOptions): string {
+  const keep = opts.keepLiterals === true;
   let out = '';
   let i = 0;
   let mode: Mode = 'code';
@@ -83,14 +123,15 @@ export function stripNonCode(src: string, opts: StripOptions = {}): string {
     if (mode === 'code') {
       if (two === '//') { mode = 'line'; i += 2; continue; }
       if (two === '/*') { mode = 'block'; i += 2; continue; }
-      if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; i += 1; continue; }
-      if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; i += 1; continue; }
-      if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; i += 1; continue; }
+      if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; if (keep) out += src[i]; i += 1; continue; }
+      if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; if (keep) out += src[i]; i += 1; continue; }
+      if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; if (keep) out += src[i]; i += 1; continue; }
       if (src[i] === '/' && startsRegex(out)) {
         const end = skipRegex(src, i);
         if (end > i) {
-          // 正規表現のリテラル —— 中身は落とし、区切りの空白だけ出す。
-          out += ' ';
+          // 正規表現のリテラル —— 中身は落とし、区切りの空白だけ出す
+          // (`keepLiterals` ならそのまま出す —— 探している綴りが中に在りうる)。
+          out += keep ? src.slice(i, end) : ' ';
           i = end;
           continue;
         }
@@ -101,7 +142,7 @@ export function stripNonCode(src: string, opts: StripOptions = {}): string {
         const frame = depth === 0 ? stack.pop() : undefined;
         if (frame !== undefined) {
           // 補間の終わり —— 文字列へ帰る。区切りの空白で隣の補間と地続きにしない。
-          out += ' ';
+          out += keep ? '}' : ' ';
           mode = frame.mode;
           depth = frame.depth;
         } else {
@@ -126,11 +167,12 @@ export function stripNonCode(src: string, opts: StripOptions = {}): string {
       i += 1;
       continue;
     }
-    // 文字列の中: 改行だけ残して行番号を保つ。エスケープは 1 文字飛ばす。
-    if (src[i] === '\\') { i += 2; continue; }
+    // 文字列の中: 改行だけ残して行番号を保つ。エスケープは 1 文字飛ばす
+    // (`keepLiterals` なら中身をそのまま出す)。
+    if (src[i] === '\\') { if (keep) out += src.slice(i, i + 2); i += 2; continue; }
     if (mode === 'tpl' && two === '${') {
       // **補間は式** —— code として出す (区切りの空白つき)。
-      out += ' ';
+      out += keep ? '${' : ' ';
       stack.push({ mode, depth });
       mode = 'code';
       depth = 0;
@@ -138,12 +180,13 @@ export function stripNonCode(src: string, opts: StripOptions = {}): string {
       continue;
     }
     if ((mode === 'sq' && src[i] === "'") || (mode === 'dq' && src[i] === '"') || (mode === 'tpl' && src[i] === '`')) {
-      if (opts.keepQuoteChars === true) out += `${src[i]!}${src[i]!}`;
+      if (keep) out += src[i]!;
+      else if (opts.keepQuoteChars === true) out += `${src[i]!}${src[i]!}`;
       const frame = stack.pop();
       mode = frame === undefined ? 'code' : frame.mode;
       if (frame !== undefined) depth = frame.depth;
-    } else if (src[i] === '\n') {
-      out += '\n';
+    } else if (keep || src[i] === '\n') {
+      out += src[i];
     }
     i += 1;
   }

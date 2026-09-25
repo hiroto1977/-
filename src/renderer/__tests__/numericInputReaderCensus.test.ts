@@ -91,14 +91,11 @@ import { parseNumericInput } from '../data/eligibility';
 import { waitForElement, waitForText } from './jsdomWait';
 import { resetRecordStore } from './recordStoreHarness';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const SRC = join(__dirname, '..', '..');
 
 /** 注記を落とす —— **綴りの言及は宣言ではない** (法則 `mention-vs-declaration`)。 */
-export function codeOnly(src: string): string {
-  return src.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
-}
-
 /**
  * `<tag` から、**波括弧の外に在る**最初の `>` までを 1 要素として切り出す。
  *
@@ -145,7 +142,7 @@ export type NumericInputFile = { readonly file: string; readonly fields: number;
 export function numericInputFiles(): NumericInputFile[] {
   const out: NumericInputFile[] = [];
   for (const f of tsxFiles()) {
-    const c = codeOnly(readOriginalSource(f));
+    const c = stripComments(readOriginalSource(f));
     const vars = new Set<string>();
     for (const el of elements(c, 'input')) {
       if (!/inputMode/.test(el)) continue;
@@ -289,7 +286,7 @@ describe('入力欄の文字列を数にする口は 1 つ (パス 375)', () => 
   });
 
   it('★ 注記の中の言及は数えない', () => {
-    expect(elements(codeOnly('/* <input inputMode="decimal" value={x} /> */'), 'input')).toEqual([]);
+    expect(elements(stripComments('/* <input inputMode="decimal" value={x} /> */'), 'input')).toEqual([]);
   });
 
   it('★ 読み手の台帳は双方向 (走査 ↔ 台帳)', () => {

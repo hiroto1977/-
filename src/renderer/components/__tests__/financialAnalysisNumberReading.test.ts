@@ -49,14 +49,11 @@ import { join } from 'node:path';
 import { FinancialAnalysis, type FinancialUnit } from '../FinancialAnalysis';
 import { readNumberOrNull } from '../../data/inputGuards';
 import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 const SRC = join(__dirname, '..', '..', '..');
 
 /** 注記を落とす —— **綴りの言及は宣言ではない** (パス 369 と同じ理由)。 */
-export function codeOnly(src: string): string {
-  return src.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
-}
-
 /**
  * `parseFloat` を出荷コードで使ってよい所。
  *
@@ -85,7 +82,7 @@ function shippingSources(dir: string = SRC): string[] {
 
 function parseFloatUsers(): string[] {
   return shippingSources()
-    .filter((f) => /parseFloat\s*\(/.test(codeOnly(readOriginalSource(f))))
+    .filter((f) => /parseFloat\s*\(/.test(stripComments(readOriginalSource(f))))
     .map((f) => f.slice(SRC.length + 1).split(/[\\/]/).join('/'))
     .sort();
 }
@@ -151,9 +148,9 @@ describe('入力の読み取りはアプリで 1 つ (パス 374)', () => {
   it('★ 走査が実物に当たる (空の母集団で通っていない)', () => {
     expect(shippingSources().length, '出荷ソースを集められていない').toBeGreaterThan(200);
     // 標本: 針が実際の綴りに当たる。
-    expect(/parseFloat\s*\(/.test(codeOnly('const n = parseFloat(x);')), '針が当たらない').toBe(true);
+    expect(/parseFloat\s*\(/.test(stripComments('const n = parseFloat(x);')), '針が当たらない').toBe(true);
     // 標本: 注記の中の言及は数えない。
-    expect(/parseFloat\s*\(/.test(codeOnly('/** ここは parseFloat(x) だった */')), '注記を数えている').toBe(false);
+    expect(/parseFloat\s*\(/.test(stripComments('/** ここは parseFloat(x) だった */')), '注記を数えている').toBe(false);
   });
 
   it('★ 出荷コードで parseFloat を使う所は台帳どおり (双方向)', () => {

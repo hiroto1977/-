@@ -29,16 +29,11 @@ import { readOriginalDir, readOriginalSource } from '../../__tests__/originalSou
 import { MAX_DISPLAY_FIELD_CHARS } from '../../apiResponse';
 import { parseCreatedDriveFolder } from '../google';
 import { parseCreatedGraphEvent } from '../microsoft365';
+import { stripComments } from '../../__tests__/stripNonCode';
 
 const API_DIR = path.resolve(__dirname, '..');
 
 /** 注記と文字列の中の綴りは数えない (法則 `mention-vs-declaration`)。 */
-function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .replace(/\/\/[^\n]*/g, (m) => m.replace(/[^\n]/g, ' '));
-}
-
 /** `export function <name>(` から対応する閉じ括弧までの本体。 */
 function functionBody(src: string, name: string): string {
   const head = src.indexOf(`export function ${name}(`);
@@ -115,7 +110,7 @@ function returnedFields(body: string): { name: string; expr: string }[] {
 function parseFunctions(): { file: string; name: string; body: string }[] {
   const out: { file: string; name: string; body: string }[] = [];
   for (const f of readOriginalDir(API_DIR).filter((n) => n.endsWith('.ts')).sort()) {
-    const src = codeOnly(readOriginalSource(path.join(API_DIR, f)));
+    const src = stripComments(readOriginalSource(path.join(API_DIR, f)));
     for (const m of src.matchAll(/^export function (parse\w+)\(/gm)) {
       out.push({ file: f, name: m[1]!, body: functionBody(src, m[1]!) });
     }
@@ -231,7 +226,7 @@ describe('作成された予定の読みは両ビルドで 1 つ (パス 414)', 
 
   it('★ 両ビルドが同じ関数を通る', () => {
     for (const rel of ['../../../main/clients/microsoft-365.ts', '../../../renderer/data/saasWriteWeb.ts']) {
-      const src = codeOnly(readOriginalSource(path.resolve(__dirname, rel)));
+      const src = stripComments(readOriginalSource(path.resolve(__dirname, rel)));
       expect(src, rel).toContain('parseCreatedGraphEvent(');
     }
   });

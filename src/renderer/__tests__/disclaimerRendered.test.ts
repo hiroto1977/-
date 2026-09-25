@@ -6,6 +6,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
 import { ShigyoConsole } from '../components/ShigyoConsole';
 import { SNAPSHOT } from '../data/snapshot';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 /*
  * **投資助言・法的助言の免責が、画面に出たままであること** — 2026-09-21 · パス 366。
@@ -47,19 +48,11 @@ import { SNAPSHOT } from '../data/snapshot';
 const RENDERER = path.join(__dirname, '..');
 
 /** 注記を落としてから読む (注記の中の `{x.disclaimer}` を描画と数えない)。 */
-export function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((line) => !line.trim().startsWith('//'))
-    .join('\n');
-}
-
 /** JSX の `{ 識別子[.メンバー…] }` のうち、末尾が disclaimer である物。 */
 const RENDER_RE = /\{\s*([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*\}/g;
 
 export function disclaimerRenders(src: string): string[] {
-  return [...codeOnly(src).matchAll(RENDER_RE)]
+  return [...stripComments(src).matchAll(RENDER_RE)]
     .map((m) => m[1]!)
     .filter((expr) => /disclaimer/i.test(expr.split('.').pop()!));
 }
@@ -177,7 +170,7 @@ describe('免責の描画 — 助言だけを描かない', () => {
   for (const [file, row] of Object.entries(LEDGER)) {
     if (row.companion === null) continue;
     it(`★ ${file}: ${row.companion} を描くなら ${row.expr} も描く`, () => {
-      const src = codeOnly(readOriginalSource(path.join(RENDERER, file)));
+      const src = stripComments(readOriginalSource(path.join(RENDERER, file)));
       expect(src, `${file}: 相方 (${row.companion}) が見つからない — 台帳が古い`).toContain(row.companion!);
       expect(
         disclaimerRenders(src),
@@ -187,7 +180,7 @@ describe('免責の描画 — 助言だけを描かない', () => {
   }
 
   it('★ 書類スタジオは紙 1 枚につき断り 1 つ', () => {
-    const src = codeOnly(readOriginalSource(path.join(RENDERER, 'pages/DocstudioPage.tsx')));
+    const src = stripComments(readOriginalSource(path.join(RENDERER, 'pages/DocstudioPage.tsx')));
     const papers = (src.match(/className="ds-paper\b/g) ?? []).length;
     const notes = (src.match(/className="ds-disclaimer"/g) ?? []).length;
     expect(papers, '紙が 1 枚も見つからない — 走査が死んでいる').toBeGreaterThan(0);

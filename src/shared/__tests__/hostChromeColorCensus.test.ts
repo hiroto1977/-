@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { isHexColor } from '../escape';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **母体 (OS / ブラウザの枠) へ伝える下地色の母集団** — 2026-09-21 · パス 363。
@@ -68,19 +69,8 @@ const HEX6 = /#[0-9a-fA-F]{6}\b/g;
  * URL (`https://…`) を含む行を巻き込むと、その行の色を見落とす側に倒れる。
  * 行末注記に色を書いたら落ちるが、それは安全側の誤りである。
  */
-export function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((line) => {
-      const t = line.trim();
-      return !(t.startsWith('//') || t.startsWith('*'));
-    })
-    .join('\n');
-}
-
 export function hexLiterals(src: string): string[] {
-  return [...codeOnly(src).matchAll(HEX6)].map((m) => m[0].toLowerCase());
+  return [...stripComments(src).matchAll(HEX6)].map((m) => m[0].toLowerCase());
 }
 
 /** `styles.css` の `:root` (修飾なし = 既定) / `:root[data-theme="dark"]` の `--bg`。 */
@@ -272,7 +262,7 @@ describe('母体へ伝える下地色 — 種類ごとの要求', () => {
 
   it('★ ランディングは自分の下地を 1 か所 (LANDING_BG) で持ち、2 つの出口がそれを読む', () => {
     const src = readOriginalSource(path.join(ROOT, 'scripts/build-landing.cjs'));
-    const decl = [...codeOnly(src).matchAll(/const LANDING_BG = '(#[0-9a-fA-F]{6})';/g)];
+    const decl = [...stripComments(src).matchAll(/const LANDING_BG = '(#[0-9a-fA-F]{6})';/g)];
     expect(decl.length, 'LANDING_BG の宣言がちょうど 1 つであること').toBe(1);
     expect(src).toContain('<meta name="theme-color" content="${LANDING_BG}">');
     expect(src).toContain(':root{--bg:${LANDING_BG};');

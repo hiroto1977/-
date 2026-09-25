@@ -42,6 +42,7 @@ import { fetchCanvaSnapshot } from '../canva';
 import { fetchGmailSnapshot } from '../gmail';
 import { fetchYoutubeSnapshot } from '../youtube';
 import { fetchGithubSnapshot } from '../github';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
 const CLIENTS_DIR = 'src/main/clients';
@@ -222,10 +223,6 @@ describe('母集団 (走査で導く・両方向)', () => {
   }
 
   /** 注記と行コメントを落とした本文 (綴りの走査は実物の行にだけ当てる)。 */
-  function codeOnly(src: string): string {
-    return src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' ')).replace(/\/\/[^\n]*/g, '');
-  }
-
   it('走査が空虚でない (client が 20 本以上・objectRows の呼び手が 8 本以上)', () => {
     const files = clientFiles();
     expect(files.length).toBeGreaterThanOrEqual(20);
@@ -233,7 +230,7 @@ describe('母集団 (走査で導く・両方向)', () => {
     //   `objectRows<DriveFile>(data.files)` と**型引数を挟む**ので、名前と `(` が
     //   隣り合わない (最初にそう書いて、この床が落ちて気付いた)。
     const users = files.filter((f) =>
-      /objectRows\s*(<[^>]*>)?\s*\(/.test(codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)))),
+      /objectRows\s*(<[^>]*>)?\s*\(/.test(stripComments(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)))),
     );
     expect(users.length, `objectRows を通す client: ${users.join(', ')}`).toBeGreaterThanOrEqual(8);
   });
@@ -294,7 +291,7 @@ describe('母集団 (走査で導く・両方向)', () => {
     it('★ 素の形は 1 つも残っていない (免除は理由つきの台帳のみ)', () => {
       const raw: string[] = [];
       for (const f of clientFiles()) {
-        const src = codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)));
+        const src = stripComments(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)));
         for (const hit of rawArrayReads(src)) {
           const key = `${f}:${hit.line}`;
           if (EXEMPT[key] !== undefined) continue;
@@ -307,14 +304,14 @@ describe('母集団 (走査で導く・両方向)', () => {
     it('★ 台帳の免除はすべて実在する (直したら消せと鳴る・両方向)', () => {
       const found = new Set<string>();
       for (const f of clientFiles()) {
-        const src = codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)));
+        const src = stripComments(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, f)));
         for (const hit of rawArrayReads(src)) found.add(`${f}:${hit.line}`);
       }
       expect(Object.keys(EXEMPT).filter((k) => !found.has(k))).toEqual([]);
     });
 
     it('★ 免除の理由が今日も成り立つ (関門が外れたら鳴る)', () => {
-      const src = codeOnly(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, 'shopify.ts')));
+      const src = stripComments(readOriginalSource(path.join(REPO_ROOT, CLIENTS_DIR, 'shopify.ts')));
       const body = src.slice(src.indexOf('export function assertOrder'));
       const end = body.indexOf('\n}');
       expect(body.slice(0, end)).toContain('checkShopifyLineItems(');
@@ -334,7 +331,7 @@ describe('母集団 (走査で導く・両方向)', () => {
       // 使わなければ拾わない (宣言だけは形ではない)。
       expect(rawArrayReads('  const items = search.items ?? [];')).toEqual([]);
       // 注記の中の言及は数えない (この検査自身の docblock が同じ綴りを持つ)。
-      expect(rawArrayReads(codeOnly('/* (data.files ?? []).map( */'))).toEqual([]);
+      expect(rawArrayReads(stripComments('/* (data.files ?? []).map( */'))).toEqual([]);
     });
   });
 });

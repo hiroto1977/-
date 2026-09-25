@@ -29,6 +29,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { SERVICES } from '../../services';
 import { settleUntil } from '../../__tests__/jsdomWait';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /** `「X」` のあとが UI 要素を名乗る語。 */
 const NAMED = /「([^」]{1,24})」(ボタン|タブ|欄|パネル|の画面|を押|から消せ|で消)/g;
@@ -142,14 +143,6 @@ const LEDGER: readonly Row[] = [
 ];
 
 /** 注記を落として**コードだけ**にする (**行番号は保つ**)。文字列は落とさない —— 数えたいのは利用者が読む文である。 */
-function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .split('\n')
-    .map((line) => (/^\s*(\/\/|\*)/.test(line) ? '' : line))
-    .join('\n');
-}
-
 function walk(dir: string, out: string[] = []): string[] {
   for (const e of readOriginalDirEntries(dir)) {
     const full = `${dir}/${e.name}`;
@@ -166,7 +159,7 @@ function scanNames(): { name: string; at: string }[] {
   const hits: { name: string; at: string }[] = [];
   for (const dir of ['src/renderer', 'src/shared']) {
     for (const file of walk(dir)) {
-      codeOnly(readOriginalSource(file)).split('\n').forEach((line, i) => {
+      stripComments(readOriginalSource(file)).split('\n').forEach((line, i) => {
         for (const m of line.matchAll(new RegExp(NAMED.source, 'g'))) {
           if (!hits.some((h) => h.name === m[1])) hits.push({ name: m[1]!, at: `${file}:${i + 1}` });
         }
@@ -221,7 +214,7 @@ describe('名指しした操作子は、その綴りで実在する (パス 426)
   });
 
   it('★ 針は実物の文に当たり、注記の中の言及には当たらない (mention-vs-declaration)', () => {
-    const grab = (s: string): string[] => [...codeOnly(s).matchAll(new RegExp(NAMED.source, 'g'))].map((m) => m[1]!);
+    const grab = (s: string): string[] => [...stripComments(s).matchAll(new RegExp(NAMED.source, 'g'))].map((m) => m[1]!);
     expect(grab('  return `…（設定の「形式の合わないレコード」から消せます）。`;')).toEqual(['形式の合わないレコード']);
     expect(grab('            「ホーム」ページの「今すぐ作る」を押すと、ここに保存されます')).toEqual(['今すぐ作る']);
     expect(grab(' * 逃げ口 (設定の「形式の合わないレコード」) はこの文が')).toEqual([]);
@@ -306,7 +299,7 @@ describe('名指しした操作子は、その綴りで実在する (パス 426)
        * この問いが自明に真だが、別の画面を指すときは自明ではない。
        */
       const tag = `<${r.renderedIn!.split('/').pop()!.replace(/\.tsx?$/, '')}`;
-      const hosts = walk('src/renderer/pages').filter((f) => codeOnly(readOriginalSource(f)).includes(tag));
+      const hosts = walk('src/renderer/pages').filter((f) => stripComments(readOriginalSource(f)).includes(tag));
       expect(hosts.length, `${r.renderedIn} を載せている画面が 0 枚 (${tag} を描く画面が無い)`).toBeGreaterThanOrEqual(1);
     }
   });

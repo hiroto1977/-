@@ -11,6 +11,7 @@ import { validateAdvisorJson as stocksWeb } from '../../renderer/data/stocksAnal
 import { validateAdvisorJson as businessWeb } from '../../renderer/web-shim';
 import { BUSINESS_CATEGORY_IDS } from '../businessAdvisor';
 import { validateBusinessAdvisorJson as businessMain } from '../../main/clients/business';
+import { stripComments } from './stripNonCode';
 
 /*
  * **第三者 (LLM) の応答を受け取る検証器は、配列の「件数」にも上限を持つ。**
@@ -125,12 +126,6 @@ const SOURCES = [
 ] as const;
 
 /** 行番号を保ったままコメントを落とす (注記の中の言及を数えない)。 */
-function codeOnly(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => '\n'.repeat((m.match(/\n/g) ?? []).length))
-    .replace(/^.*?\/\/.*$/gm, (line) => (line.includes('//') ? line.slice(0, line.indexOf('//')) : line));
-}
-
 interface Guard {
   readonly file: string;
   readonly line: number;
@@ -144,7 +139,7 @@ interface Guard {
  * ★ **窓は「素の行」ではなく「コードの行」で数える** (2026-09-22 · パス 405)。
  *
  * パス 404 の初版は `lines.slice(i, i + 14)` と**素の行**で窓を切っていた。
- * `codeOnly()` は行番号を保つためにブロックコメントを**改行へ**潰すので、
+ * `stripComments()` は行番号を保つためにブロックコメントを**改行へ**潰すので、
  * **注記を 1 つ足すだけで門が窓の外へ出る**。実際にそうなった —— 同じパスの中で
  * `lint:mutation-scope` に言われて門を広い `Stryker disable` の帯の外へ移し、
  * そのとき 10 行の docblock を門の直前に入れたので、`main/clients/stocks.ts` の
@@ -156,7 +151,7 @@ interface Guard {
 function arrayGuards(label: string, code: string): Guard[] {
   const lines = code.split('\n');
   const out: Guard[] = [];
-  /** i 行目から先の「空でない行」を n 本だけ繋ぐ (注記は codeOnly で空行になっている)。 */
+  /** i 行目から先の「空でない行」を n 本だけ繋ぐ (注記は stripComments で空行になっている)。 */
   const codeWindow = (i: number, n: number): string => {
     const picked: string[] = [];
     for (let j = i; j < lines.length && picked.length < n; j += 1) {
@@ -190,7 +185,7 @@ function arrayGuards(label: string, code: string): Guard[] {
 const UNBOUNDED_ALLOWED: readonly { readonly file: string; readonly name: string; readonly why: string }[] = [];
 
 describe('助言の検証器: 配列の件数の門の母集団', () => {
-  const guards = SOURCES.flatMap(([label, path]) => arrayGuards(label, codeOnly(readOriginalSource(path))));
+  const guards = SOURCES.flatMap(([label, path]) => arrayGuards(label, stripComments(readOriginalSource(path))));
 
   it('走査が死んでいない (床)', () => {
     // 4 本の検証器に 6 欄 (株式 2 本 × 2 欄 + 事業 2 本 × 3 欄 = 10) 以上。
@@ -228,7 +223,7 @@ describe('助言の検証器: 配列の件数の門の母集団', () => {
     /*
      * ★ **注記が門を窓の外へ押し出さない** (パス 405 の回帰)。
      *
-     * `codeOnly()` はブロックコメントを改行へ潰すので、素の行で窓を切ると
+     * `stripComments()` はブロックコメントを改行へ潰すので、素の行で窓を切ると
      * **注記を足しただけで門が見えなくなる** (パス 404 で実際に起きた)。
      * 空行を 12 本挟んだ標本で、見え続けることを留める。
      */
@@ -265,7 +260,7 @@ describe('prompt が述べた上限は、門と同じ数である', () => {
 
   it('★ riskFactors の件数を prompt に書き写していない', () => {
     for (const [label, path] of PROMPT_SOURCES) {
-      const code = codeOnly(readOriginalSource(path));
+      const code = stripComments(readOriginalSource(path));
       // 「riskFactors (1-3 件)」「riskFactors 1-3 件」のように数字を直接書かない。
       expect(/riskFactors[^\n]{0,4}1-\d/.test(code), `${label} が件数を字面で持つ`).toBe(false);
       expect(code, label).toContain('MAX_ADVISOR_RISK_FACTORS');

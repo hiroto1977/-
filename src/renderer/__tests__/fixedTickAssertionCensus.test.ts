@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 /*
  * **「固定回数だけ待ってから文を主張する」検査を数える** — 2026-09-21 · パス 368。
@@ -118,12 +119,8 @@ export const USES_SHARED_WAIT = /from '[^']*jsdomWait'/;
  * 「`expect(text()).toContain(…)` は落ちたときに画面ぜんぶを刷る」と**説明している**だけで、
  * その形の主張は 1 つも持たない。落とさないと、危険を説明した文が危険として数えられる。
  */
-export function codeOnly(src: string): string {
-  return src.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
-}
-
 export function isRisky(src: string): boolean {
-  const code = codeOnly(src);
+  const code = stripComments(src);
   return FIXED_TICK.test(code) && POSITIVE_TEXT.test(code) && !USES_SHARED_WAIT.test(code);
 }
 

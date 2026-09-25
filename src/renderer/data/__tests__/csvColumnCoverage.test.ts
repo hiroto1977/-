@@ -38,16 +38,11 @@ import { SALES_COLLECTION, type SalesEntry } from '../sales';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../kpiActuals';
 import { SALES_CSV_COLUMNS, salesToCsv, salesFromCsv } from '../salesCsv';
 import { KPI_CSV_COLUMNS, kpiActualsToCsv, kpiActualsFromCsv } from '../kpiActualsCsv';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 const DATA_DIR = resolve(__dirname, '..');
 
 /** 注記と文字列を落とす —— 説明の中の言及を宣言と数えないため (法則 `mention-vs-declaration`)。 */
-function codeOnly(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .replace(/\/\/[^\n]*/g, '');
-}
-
 /**
  * CSV を組み立てるモジュールの種類。
  *
@@ -87,7 +82,7 @@ const CSV_MODULES: readonly CsvModule[] = [
 function csvBuildingFiles(): string[] {
   return readOriginalDir(DATA_DIR)
     .filter((f) => f.endsWith('.ts') && f !== 'csv.ts')
-    .filter((f) => /\b(recordsToCsv|toCsv)\s*\(/.test(codeOnly(readOriginalSource(resolve(DATA_DIR, f)))))
+    .filter((f) => /\b(recordsToCsv|toCsv)\s*\(/.test(stripComments(readOriginalSource(resolve(DATA_DIR, f)))))
     .sort();
 }
 
@@ -136,11 +131,11 @@ describe('CSV の列は記録の形をすべて覆う (パス 429)', () => {
 
   it('report-only は読み戻す口を持たない (だから欄の被覆を要求しない)', () => {
     for (const m of CSV_MODULES.filter((x) => x.kind === 'report-only')) {
-      const src = codeOnly(readOriginalSource(resolve(DATA_DIR, m.file)));
+      const src = stripComments(readOriginalSource(resolve(DATA_DIR, m.file)));
       expect(src, m.file).not.toMatch(/\bparseCsvRecords\s*\(/);
     }
     // 標本: 針は往復する側には当たる。
-    expect(codeOnly(readOriginalSource(resolve(DATA_DIR, 'kpiActualsCsv.ts')))).toMatch(/\bparseCsvRecords\s*\(/);
+    expect(stripComments(readOriginalSource(resolve(DATA_DIR, 'kpiActualsCsv.ts')))).toMatch(/\bparseCsvRecords\s*\(/);
   });
 });
 
