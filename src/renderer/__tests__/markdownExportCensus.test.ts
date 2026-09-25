@@ -48,6 +48,7 @@ import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import { escapeMarkdownInline } from '../../shared/escape';
 import { requestsMarkdown } from '../components/ChatbotWidget';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 const MD_ARTIFACT = /text\/markdown/;
@@ -86,11 +87,11 @@ function artifactSites(files: readonly string[]): { file: string; line: number }
   const out: { file: string; line: number }[] = [];
   for (const abs of files) {
     const file = relative(REPO, abs).split('\\').join('/');
-    readOriginalSource(abs)
+    // 注記は共有の字句解析器で落とす (行番号は保たれる)。行頭が `//` かで見ると
+    // **行末の注記が code として残る** —— 法則 `mention-vs-declaration` の形である。
+    stripComments(readOriginalSource(abs))
       .split('\n')
       .forEach((line, i) => {
-        const t = line.trim();
-        if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return;
         if (MD_ARTIFACT.test(line)) out.push({ file, line: i + 1 });
       });
   }
@@ -170,11 +171,7 @@ describe('text/markdown を書き出す所の母集団 (パス 332)', () => {
       if (row.freeText !== 'escaped') continue;
       // `producer` は複数書ける (business のように片方が定数の場合)。先頭のパスを見る。
       const path = row.producer.split(' ')[0]!;
-      const src = readOriginalSource(join(REPO, path))
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        .split('\n')
-        .filter((l) => !l.trim().startsWith('//'))
-        .join('\n');
+      const src = stripComments(readOriginalSource(join(REPO, path)));
       expect(importsEscaper(src), `${path} が shared/escape から escapeMarkdown* を import していない`).toBe(true);
     }
   });

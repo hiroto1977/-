@@ -20,6 +20,7 @@ vi.mock('electron', () => ({
 import { MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
 import { logMood as logMoodWeb, loadStore, EMOTIONS_STORE_KEY } from '../emotionsWeb';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /*
  * **`log-mood` の note の上限を、注記ではなく振る舞いで留める。**
@@ -142,9 +143,7 @@ describe('保持件数の上限は共有の 1 つ', () => {
   });
 
   it.each(SRC)('%s が自前で宣言していない', (_label, path) => {
-    const code = readOriginalSource(path)
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+    const code = stripComments(readOriginalSource(path));
     expect(code, 'MAX_MOODS を自前で宣言しています').not.toMatch(/const\s+MAX_MOODS\s*=/);
     expect(code, 'MAX_ANALYSES を自前で宣言しています').not.toMatch(/const\s+MAX_ANALYSES\s*=/);
     // 空撃ちでないこと —— そのファイルが実際に共有の値を使っている。

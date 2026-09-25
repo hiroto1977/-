@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SERVICE_IDS } from '../../shared/serviceId';
 import { join } from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 /*
  * ブラウザ版の**資格情報の出口**。`runProxyBearer` は、プロキシ経由で書き込む
@@ -341,9 +342,7 @@ describe('API キーの送り先とヘッダ', () => {
   const TARGET_RE = /(?<!function\s)\btimedFetchAi\([\s\S]{0,300}?'(https?:\/\/[^']+)'/g;
 
   it('★ 鍵を載せて直接叩く送り先は 1 つだけ (計装後の源でも数えられる形で)', () => {
-    const src = readOriginalSource(join(__dirname, '..', 'web-shim.ts'))
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+    const src = stripComments(readOriginalSource(join(__dirname, '..', 'web-shim.ts')));
 
     // 1. 口の数。定義 1 + 呼び出し 3。
     const occurrences = [...src.matchAll(/\btimedFetchAi\b/g)];

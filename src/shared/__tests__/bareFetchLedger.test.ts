@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import { readOriginalDir, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /**
  * **素の `fetch` が入ってこられる口の台帳。**
@@ -78,7 +79,7 @@ const BARE_FETCH = /(\?\?\s*fetch\b|[:=]\s*fetch\b(?!\s*\())/;
 
 /** コメントを落としてから判定する (説明文の中の `?? fetch` で鳴らさない)。 */
 export function bindsBareFetch(source: string): boolean {
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const code = stripComments(source);
   return BARE_FETCH.test(code);
 }
 

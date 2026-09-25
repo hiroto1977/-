@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS } from '../ollama';
 import { MAX_OLLAMA_RESPONSE_BYTES } from '../httpLimits';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **チャット入力の上限を、2 つの版が同じ 1 つから読み、超えたら切らずに断る。**
@@ -32,11 +33,7 @@ const BUILDS = [
 
 /** コメントを落とす (説明文の中の数字を数えないため)。 */
 function code(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((l) => !l.trim().startsWith('//'))
-    .join('\n');
+  return stripComments(text);
 }
 
 describe('ollama のチャット入力の上限は 1 つだけ', () => {

@@ -13,6 +13,7 @@ import path from 'node:path';
 import { jiraBrowseUrl } from '../atlassianLinks';
 import { normalizeAtlassianSiteResult } from '../atlassianSite';
 import { readOriginalSource, readOriginalDirEntries } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 describe('jiraBrowseUrl (パス 181)', () => {
   it('★ `/browse/<key>` を組む (出荷済みの形)', () => {
@@ -64,8 +65,7 @@ describe('jiraBrowseUrl (パス 181)', () => {
  * この module 自身が掛かることを先に確かめる (綴りが変わったら鳴らなくなる)。
  */
 function code(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+  return stripComments(src)
     .split('\n')
     .map((l) => (/^\s*\/\//.test(l) ? '' : l))
     .join('\n');

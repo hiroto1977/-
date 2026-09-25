@@ -18,6 +18,7 @@ import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import { DESKTOP_PATHS } from '../../shared/buildDestinations';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -26,17 +27,6 @@ const REPO = join(__dirname, '..', '..', '..');
  * `DESKTOP_PATHS` が持つ実物もこの 2 つの接頭辞に収まる (下の検査で確かめる)。
  */
 const PATH_RE = /~\/\.(?:local|claude)\//;
-
-/**
- * コメントを落とす。`/* … *\/` (JSX の `{/* … *\/}` を含む) と行末までの `//`。
- * **文字列の中の `//` まで落ちるが、この走査には害が無い** —— 落とし過ぎると
- * 見逃す方向なので、下の対照で「実物の書き方が拾えること」を確かめる。
- */
-function stripComments(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
-}
 
 interface Site {
   readonly file: string;

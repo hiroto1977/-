@@ -40,13 +40,13 @@ import {
   VOICE_RECOGNITION_MECHANISM,
   voiceEgressNoticeLines,
 } from '../../../shared/voiceEgressNotice';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 const RENDERER = path.resolve(__dirname, '../..');
 
 /** コメントを落とした本体 (説明の中の綴りを配線と読まない)。 */
 function code(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
+  return stripComments(src)
     .split('\n')
     .filter((l) => !/^\s*\/\//.test(l))
     .join('\n');

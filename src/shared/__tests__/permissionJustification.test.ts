@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **権限を拒む根拠は「使っていない」—— その「使っていない」を測る。** (2026-09-11 · パス 148)
@@ -48,8 +49,7 @@ const PROSE = 'main/main.ts';
 
 /** コメントと文字列を落とす (説明の中の綴りを呼び出しと読まない)。 */
 function code(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
+  return stripComments(src)
     .split('\n')
     .filter((l) => !/^\s*\/\//.test(l))
     .join('\n')

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalSource } from './originalSource';
 import { EXTERNAL_URL_SCHEMES, externalUrlOrNull } from '../externalUrlGate';
+import { stripComments } from './stripNonCode';
 
 /*
  * 外部 URL の関門は**アプリ全体で 1 つ**。表もここ 1 つにする。
@@ -222,7 +223,7 @@ describe('main.ts の中で OS へ URL を渡す扉は、全部この関門を�
  */
 describe('web-shim.ts の中で外へ開く扉も、全部この関門を通る', () => {
   const SHIM = readOriginalSource(path.resolve(__dirname, '../../renderer/web-shim.ts'));
-  const code = SHIM.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const code = stripComments(SHIM);
   const count = (re: RegExp): number => (code.match(re) ?? []).length;
 
   it('window.open の呼び出しと externalUrlOrNull の呼び出しが同数', () => {

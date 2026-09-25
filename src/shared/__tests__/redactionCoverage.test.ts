@@ -8,6 +8,7 @@ import { MAX_LOCAL_MODEL_ERROR_CHARS } from '../redact';
 import { redactSecrets } from '../redact';
 import { SERVICE_CREDENTIAL_USE, collectsCredential } from '../credentialUse';
 import type { ServiceId } from '../serviceId';
+import { stripComments } from './stripNonCode';
 
 // scripts/scan-credential-headers.cjs は CJS (Node 走査スクリプト) 設計のため、
 // テストだけが createRequire で読み込む (inline-html.cjs と同じ扱い)。
@@ -41,11 +42,7 @@ const REPO = resolve(__dirname, '../../..');
 
 /** 行コメントを落とす —— 注記の中の `?key=${…}` を走査が掴まないため。 */
 function stripLineComments(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((l) => !/^\s*(\/\/|\*)/.test(l))
-    .join('\n');
+  return stripComments(text);
 }
 
 /** 失敗応答が資格情報ヘッダを映して返すときの、実際に見かける 3 つの形。 */

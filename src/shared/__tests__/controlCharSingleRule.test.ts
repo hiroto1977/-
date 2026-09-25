@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { hasControlChar } from '../controlChars';
 import { hasControlChars } from '../tokenInput';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **制御文字の判定は、アプリ全体で 1 つだけ。** (2026-09-15 · パス 280)
@@ -34,16 +35,6 @@ import { readOriginalSource } from './originalSource';
  * ② だけでは足りない —— 綴りを変えて同じことをする道が残る。
  * ① だけでも足りない —— 今日一致しているだけで、分岐は許されたままになる。
  */
-
-/**
- * ブロックコメントと行コメントを落とす。
- *
- * **文字列リテラルは残す** —— 落とすと下の「規則が実物の綴りに当たる」標本
- * (旧実装を文字列で持つ) まで消えて、その検査が空になる。
- */
-function stripComments(src: string): string {
-  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-}
 
 /** 制御文字はリテラルで書かない (`lint:charset` が混入を落とす)。 */
 const ch = (code: number): string => String.fromCharCode(code);

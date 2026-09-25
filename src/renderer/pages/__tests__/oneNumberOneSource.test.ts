@@ -24,18 +24,10 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 const PAGES = path.resolve(__dirname, '..');
 const read = (file: string): string => readOriginalSource(path.join(PAGES, file));
-
-/** コメントを落とす (経緯の説明文の中の例を数えないため)。 */
-function stripComments(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((l) => !l.trim().startsWith('//'))
-    .join('\n');
-}
 
 interface Rule {
   readonly page: string;

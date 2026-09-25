@@ -45,6 +45,7 @@ import type { StocksSnapshot } from '../stocks';
 import type { WordPressSnapshot } from '../wordpress';
 import type { CursorSnapshot } from '../../../shared/api/cursor';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /** `A` と `B` が**同じ幅**なら true。片方が狭ければ false。 */
 type SameWidth<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
@@ -178,10 +179,8 @@ export function nullableSnapshotFields(src: string, file: string): string[] {
         }
       }
     }
-    const body = src
-      .slice(open, end)
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/\/\/.*/g, '');
+    const body = stripComments(src
+      .slice(open, end));
     for (const f of body.matchAll(/([A-Za-z0-9_]+)\??\s*:\s*([^;\n]*\|\s*null[^;\n]*)/g)) {
       out.push(`${file} ${m[1]}.${f[1]}`);
     }

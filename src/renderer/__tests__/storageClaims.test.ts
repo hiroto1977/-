@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { statSync } from 'node:fs';
 import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
 const CARD = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/components/GoogleConnectCard.tsx'));
@@ -263,9 +264,7 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
    *   だから免除ごと外す: 名乗っていても直書きは落とす。
    */
   it('秒 / MB の数は 1 つも直書きしていない (名乗っても免除しない)', () => {
-    const code = PAGE.replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+    const code = stripComments(PAGE.replace(/\{\/\*[\s\S]*?\*\/\}/g, ''));
     const blocks = code.match(/<div>[\s\S]*?<\/div>/g) ?? [];
     expect(blocks.length, 'ブロックが取れていない — 検査が的を外している').toBeGreaterThan(3);
     const literal = blocks
@@ -347,11 +346,6 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
    *
    * コメントは落としてから見る —— 直した経緯を書いた注記に当ててしまうため。
    */
-  const stripComments = (t: string): string =>
-    t
-      .replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
 
   it.each([
     ['SettingsPage', () => SETTINGS],

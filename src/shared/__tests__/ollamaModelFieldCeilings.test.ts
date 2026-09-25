@@ -37,6 +37,7 @@ import { describe, expect, it } from 'vitest';
 import { MAX_OLLAMA_MODEL_DETAIL_CHARS, normalizeModels } from '../ollama';
 import { localIsoDate } from '../localDate';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
 const SRC = readOriginalSource(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
@@ -177,7 +178,7 @@ describe('母集団 (宣言から導く・両方向)', () => {
   function declaredFields(): string[] {
     const m = /export interface OllamaModelInfo \{([\s\S]*?)\n\}/.exec(SRC);
     expect(m, 'OllamaModelInfo の宣言が読めない').not.toBeNull();
-    const body = m![1]!.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+    const body = stripComments(m![1]!);
     return [...body.matchAll(/^\s*(\w+)\s*:/gm)].map((x) => x[1]!);
   }
 

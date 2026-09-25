@@ -6,6 +6,7 @@ import {
   readPkceSession,
   savePkceSession,
 } from '../pkceSession';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /*
  * **PKCE の一時秘密が、使い終わったら消えているか。**
@@ -292,7 +293,7 @@ describe('pkce.* を直に触る場所は pkceSession.ts だけ', () => {
         if (!/\.tsx?$/.test(name)) continue;
         if (full.endsWith('oauth/pkceSession.ts')) continue;
         const text = readOriginalSource(full);
-        const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+        const code = stripComments(text);
         if (/['"`]pkce\./.test(code)) hits.push(full);
       }
     };

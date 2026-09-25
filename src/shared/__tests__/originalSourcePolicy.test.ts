@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **`mutate` 台帳のファイルを原文で読む検査は、`readOriginalSource` を通す。**
@@ -78,11 +79,6 @@ function testFiles(dir = path.join(REPO_ROOT, 'src')): string[] {
     else if (e.name.endsWith('.test.ts') || e.name.endsWith('.test.tsx')) out.push(p);
   }
   return out;
-}
-
-/** 行コメントとブロックコメントを落とす (注記の中の綴りを掴まない)。 */
-export function stripComments(text: string): string {
-  return text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
 /**
@@ -184,8 +180,8 @@ const ALLOWED: Readonly<Record<string, string>> = {};
  */
 const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: string }>> = {
   'src/main/__tests__/fileReadSizeGateCensus.test.ts': {
-    count: 6,
-    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する** (5 行 + 標本 1)。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)',
+    count: 9,
+    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった',
   },
   'src/main/__tests__/electronFuses.test.ts': {
     count: 1,
@@ -213,11 +209,11 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
   },
   'src/renderer/__tests__/tickSensitivityLedger.test.ts': {
     count: 1,
-    why: 'この検査は `scripts/audit-tick-sensitivity.cjs` が「元へ戻したことを内容で確かめる」形を持つかを見るので、**その綴りを文字列として引用する** (`fs.readFileSync(s.abs, …) !== s.src`)。引用は文字列リテラルで走らない —— `verifySurvivors.test.ts` と同じ理由で、綴りを分割して走査を避けるより理由つきで載せる (パス 369)',
+    why: 'この検査は `scripts/audit-tick-sensitivity.cjs` が「元へ戻したことを内容で確かめる」形を持つかを見るので、**その綴りを文字列として引用する** (読み戻した本文と控えを比べる形)。引用は文字列リテラルで走らない —— `verifySurvivors.test.ts` と同じ理由で、綴りを分割して走査を避けるより理由つきで載せる (パス 369)。**綴りは再現しない** —— この行はこの検査自身の本文なので、写すとこの検査の自己検査 (★ この検査自身は生の読みを 1 件も持たない) が偽になる (2026-09-25 · パス 462 の実測)',
   },
   'src/shared/__tests__/verifySurvivors.test.ts': {
     count: 1,
-    why: 'この検査は `scripts/verify-survivors.cjs` が「原文へ戻したことを内容で確かめる」形を持つかを見るので、**その綴りを文字列として引用する** (`fs.readFileSync(abs, …) !== original`)。引用は文字列リテラルで走らない —— `fileReadSizeGateCensus.test.ts` と同じ理由で、綴りを分割して走査を避けるより理由つきで載せる (パス 356)',
+    why: 'この検査は `scripts/verify-survivors.cjs` が「原文へ戻したことを内容で確かめる」形を持つかを見るので、**その綴りを文字列として引用する** (原文へ戻した本文と控えを比べる形)。引用は文字列リテラルで走らない —— `fileReadSizeGateCensus.test.ts` と同じ理由で、綴りを分割して走査を避けるより理由つきで載せる (パス 356)。**綴りは再現しない** (同上)',
   },
   'src/shared/__tests__/scriptEmbedGate.test.ts': {
     count: 2,
@@ -248,8 +244,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '同じく一時 userData の secrets.json と .prev を読み戻す。repo のファイルではない',
   },
   'src/main/__tests__/stateWritePolicy.test.ts': {
-    count: 1,
-    why: '一時ディレクトリに書いた状態ファイル (封緘済み talent.json) を読み戻す。repo のファイルではない',
+    count: 3,
+    why: '一時ディレクトリを歩き (readdir)、そこへ書いた状態ファイル (封緘済み talent.json) を 2 度読み戻す。どれも repo のファイルではない。**件数は 2026-09-25 (パス 462) に 1 → 3 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 71 行 (68〜139 行) を食っており、3 件のうち 2 件が台帳に載っていなかった',
   },
   'src/main/clients/__tests__/emotions.test.ts': {
     count: 10,

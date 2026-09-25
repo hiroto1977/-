@@ -32,6 +32,7 @@ import { fetchGithubSnapshot } from '../../../main/clients/github';
 import { MAX_DISPLAY_FIELD_CHARS, displayField } from '../../../shared/apiResponse';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { waitForText } from '../../__tests__/jsdomWait';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 const BIG = 'x'.repeat(200_000);
 
@@ -232,7 +233,7 @@ const CAPPED_FIELDS: Readonly<Record<string, readonly string[]>> = {
  * 終わるところまでを窓にする。
  */
 export function cappedAssignments(src: string): string[] {
-  const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*/g, '');
+  const code = stripComments(src);
   const out: string[] = [];
   for (const m of code.matchAll(/([A-Za-z0-9_]+)\s*:\s*/g)) {
     const name = m[1] as string;
@@ -306,7 +307,7 @@ describe('母集団: 天井を通す欄', () => {
       const src = readOriginalSource(
         path.join(__dirname, '..', '..', '..', 'main', 'clients', file),
       );
-      const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*/g, '');
+      const code = stripComments(src);
       const bare = [...code.matchAll(/([A-Za-z0-9_]+)\s*:\s*[^,;\n]*\?\?\s*''/g)].map(
         (m) => m[1] as string,
       );

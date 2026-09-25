@@ -63,28 +63,12 @@ import {
   MAX_OAUTH_CLIENT_ID_CHARS,
   MAX_OAUTH_REDIRECT_URI_CHARS,
 } from '../oauth/callbackPaste';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 
 /** `maxLength={<数字>}` —— 字面の天井。 */
 const LITERAL_RE = /maxLength=\{\s*\d/;
-
-/**
- * コメントを落とす (`desktopPathClaims.test.ts` と同じ理由・同じ形)。
- *
- * **これを付けるまで、この検査は自分の説明文を掴んで落ちた** —— 直した形を説明する
- * ために `ServiceActionPanel.tsx` の注記が古い書き方 (`maxLength={2000}`) を引用して
- * おり、走査はそれを現物として数えた (パス 161 で同じことを 1 度やっている:
- * 「規則について書いた文書は、規則そのものと見分けられなければならない」)。
- *
- * 落とし過ぎは**見逃す向き**なので、下の「対照」が規則が実際に当たることを標本で
- * 確かめる (落とし過ぎて何も見えなくなったら、床の検査が鳴る)。
- */
-function stripComments(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
-}
 
 /** `maxLength` そのもの (走査の生死を見る床に使う)。 */
 const ANY_RE = /maxLength\s*=/;

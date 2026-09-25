@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import { readOriginalDir, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **デスクトップ版とブラウザ版で「同じ名前の関数」を 2 度書いている所の台帳。**
@@ -224,9 +225,7 @@ describe('2 実装ある関数は、すべて台帳で分類されている', ()
      */
     const imports = new Set<string>();
     for (const f of parityFiles) {
-      const src = readOriginalSource(f)
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        .replace(/^\s*\/\/.*$/gm, '');
+      const src = stripComments(readOriginalSource(f));
       /*
        * 静的 `import { a } from '…'` と、**動的 `const { a } = await import('…')`**
        * の両方を拾う。最初は静的だけを見ていて `safeStateEquals` を
@@ -362,11 +361,7 @@ describe('2 実装ある関数は、すべて台帳で分類されている', ()
     // **コメントを落としてから見る。** 最初はそのまま `toContain` していて、
     // 突き合わせを外す対照実験が鳴らなかった —— 検査ファイルの説明文に
     // 名前が書いてあるので、本文が読まなくなっても字面は残る (0-a-17)。
-    const parity = readOriginalSource(pair.parity)
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .split('\n')
-      .filter((l) => !l.trim().startsWith('//'))
-      .join('\n');
+    const parity = stripComments(readOriginalSource(pair.parity));
     expect(parity, `${pair.parity} が ${pair.web} を読んでいない`).toContain(pair.web);
     expect(parity, `${pair.parity} が ${pair.main} を読んでいない`).toContain(pair.main);
   });

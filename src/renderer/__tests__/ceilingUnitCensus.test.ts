@@ -95,6 +95,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const SRC = path.resolve(__dirname, '../..');
 
@@ -110,13 +111,6 @@ function sourceFiles(dir: string, out: string[] = []): string[] {
     if (/\.(ts|tsx)$/.test(e.name)) out.push(p);
   }
   return out;
-}
-
-/** コメントを空白に潰す (行番号は保つ)。 */
-function stripComments(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .replace(/\/\/[^\n]*/g, '');
 }
 
 /** 単位を取り違えている形。 */

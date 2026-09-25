@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { readOriginalSource } from '../shared/__tests__/originalSource';
 import { RECORD_ENTRY_SERVICE_IDS } from '../shared/recordEntryLimits';
+import { stripComments } from '../shared/__tests__/stripNonCode';
 
 /*
  * **二つの版の「書き込み操作の面」を読む助け。**
@@ -22,15 +23,6 @@ const REPO_ROOT = path.resolve(__dirname, '../..');
 const read = (rel: string): string => readOriginalSource(path.join(REPO_ROOT, rel));
 /** リポジトリ相対パスを読む (dualBuildActionSurface の「実物」の検査が使う)。 */
 export const readRepoFile = read;
-
-/** コメントを落とす (説明文の中の例を数えないため)。 */
-export function stripComments(text: string): string {
-  const noBlock = text.replace(/\/\*[\s\S]*?\*\//g, '');
-  return noBlock
-    .split('\n')
-    .filter((l) => !l.trim().startsWith('//'))
-    .join('\n');
-}
 
 /** `{` から対応する `}` までを返す。 */
 export function braceBlock(text: string, from: number): string {

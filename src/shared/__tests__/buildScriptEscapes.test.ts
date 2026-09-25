@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDir, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **出荷物の markup を作るビルドスクリプトも、同じ 5 文字を落とす。**
@@ -24,15 +25,6 @@ import { readOriginalDir, readOriginalSource } from './originalSource';
  */
 
 const SCRIPTS_DIR = path.resolve(__dirname, '../../../scripts');
-
-/** 注記を落とす。規則として字面を持つファイルを実装と取り違えないため。 */
-function stripComments(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((l) => !l.trim().startsWith('//'))
-    .join('\n');
-}
 
 /** 5 文字それぞれの置換。`escape.ts` と同じ集合。 */
 const REQUIRED: readonly (readonly [string, RegExp])[] = [

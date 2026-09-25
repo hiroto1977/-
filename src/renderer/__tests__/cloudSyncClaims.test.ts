@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { statSync } from 'node:fs';
 import path from 'node:path';
 import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
 const SRC = path.join(REPO_ROOT, 'src');
@@ -56,11 +57,7 @@ function transportIsWired(): { wired: boolean; why: string[] } {
   for (const { file, text } of productionFiles()) {
     if (file.endsWith('cloud/cloudProviderAdapter.ts')) continue;
     // コメント行・ブロックコメントを潰してから見る。
-    const code = text
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .split('\n')
-      .filter((l) => !l.trim().startsWith('//'))
-      .join('\n');
+    const code = stripComments(text);
     if (/\bfrom\s+['"][^'"]*cloudProviderAdapter['"]/.test(code)) {
       why.push(`${file} が cloudProviderAdapter を import している`);
     }
@@ -239,11 +236,7 @@ describe('クラウド同期: 送信路の有無と、画面の言い分が噛�
   it('★ クラウド関連モジュールに通信の基本語が 1 つも無い', () => {
     const hits: string[] = [];
     for (const { file, text } of cloudModules()) {
-      const code = text
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        .split('\n')
-        .filter((l) => !l.trim().startsWith('//'))
-        .join('\n');
+      const code = stripComments(text);
       for (const p of EGRESS_PRIMITIVES) {
         if (p.re.test(code)) hits.push(`${file}: ${p.label}`);
       }

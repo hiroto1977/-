@@ -36,6 +36,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
 import { addIsoDays, isCalendarDate, isoDaysBetween, parseIsoDate, utcMsFromParts } from '../isoDate';
+import { stripComments } from './stripNonCode';
 
 const SRC = path.resolve(__dirname, '../..');
 
@@ -55,15 +56,6 @@ function tsFiles(dir: string, out: string[] = []): string[] {
     }
   }
   return out;
-}
-
-/** 行コメント・ブロックコメント・文字列の中身を落とす (散文の `Date.UTC(` を拾わない)。 */
-function stripComments(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1')
-    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
-    .replace(/`(?:[^`\\]|\\.)*`/g, '``');
 }
 
 interface Site {

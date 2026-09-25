@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { stripComments } from './stripNonCode';
 
 /*
  * **`<script>` の中へ書く物は、共通の退避を通る。**
@@ -85,7 +86,7 @@ function sources(): Source[] {
 
 /** コメントを落とす —— 注記に書いた字面を埋め込みと読み違えない。 */
 function code(text: string): string {
-  return text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  return stripComments(text);
 }
 
 /** `<script …>${…}</script>` の形で値を差し込んでいるか。 */

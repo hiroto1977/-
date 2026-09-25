@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { join, relative, resolve, sep } from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **「main はこの問いを 1 度も発しない」の根拠を、機械に持たせる。** (2026-09-15 · パス 281)
@@ -205,14 +206,6 @@ function sourceFiles(): Rel[] {
   };
   walk(join(REPO_ROOT, 'src'));
   return found;
-}
-
-/**
- * コメントだけ落とす (文字列は残す)。module specifier は文字列そのものなので、
- * 文字列を潰すと綴りが消える (census の `stripComments` と同じ理由)。
- */
-function stripComments(src: string): string {
-  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
 /** `from` の相対 specifier を repo 相対の道へ。解けなければ `null`。 */

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
 import { externalUrlOrNull } from '../externalUrlGate';
+import { stripComments } from './stripNonCode';
 
 /*
  * **ローカルのファイルは `openPath` で開く。`openExternal` に `file:` を渡さない。** (2026-09-12 · パス 151)
@@ -40,11 +41,7 @@ const CALLER_FLOOR = 15;
  * 文字列リテラルそのものなので、文字列を消す走査では何も見つからない。
  */
 export function withoutComments(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((l) => !/^\s*(\/\/|\*)/.test(l))
-    .join('\n');
+  return stripComments(src);
 }
 
 /** `src/` の実装ファイル (検査・型定義を除く)。 */

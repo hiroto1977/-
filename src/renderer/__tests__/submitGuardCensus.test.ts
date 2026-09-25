@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 /*
  * **記録を保存する画面の「押しただけの操作」は、押している間の関門を通る** —— 母集団を実装から数える
@@ -65,7 +66,7 @@ const OWN_GUARD: Readonly<Record<string, string>> = {
 
 /** コメントを落とす (説明文の中の `onClick={onAdd}` を数えない)。 */
 function code(src: string): string {
-  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  return stripComments(src);
 }
 
 interface Hit {

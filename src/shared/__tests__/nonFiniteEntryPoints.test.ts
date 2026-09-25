@@ -171,6 +171,7 @@ import { calcSocialInsurance } from '../taxSocialInsurance';
 import { solveGrossForTakeHomeChecked } from '../welfareScheme';
 
 import { readOriginalSource, readOriginalDirEntries, isInstrumented } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /** 非有限の 3 形。`-Infinity` も入れる —— `Math.max(0, -Infinity)` は 0 に落ちるので見逃しやすい。 */
 const NON_FINITE: readonly number[] = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -526,8 +527,7 @@ interface GuardHit {
 }
 
 function stripCommentsAndStrings(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+  return stripComments(src)
     .replace(/(^|[^:])\/\/[^\n]*/gm, (m, p1: string) => p1 + ' '.repeat(m.length - p1.length));
 }
 

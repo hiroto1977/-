@@ -21,6 +21,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 /** 走査する場所 (renderer の画面と共通部品)。 */
 const ROOTS = ['src/renderer/pages', 'src/renderer/components'] as const;
@@ -33,16 +34,6 @@ const DEMO_ROW_MARK = /user:\s*false\s+as\s+const/;
  * `data-…-demo-mix` の目印つきの節を持つこと (画面のテストが掴む所)。
  */
 const DISCLOSURE_MARK = /data-[a-z-]*demo-mix\b/;
-
-/**
- * コメントを落とす —— 説明の散文 (「同梱の見本 4 銘柄が入っている人には…」) は
- * 画面が刷る文字ではない。これを落とさないと、**理由を書いたことで検査が落ちる**
- * (`lint:zero-fold` と同じ扱い)。文字列リテラルの中の `//` までは解かないが、
- * この検査が見るのは日本語の一文の有無なので実害は無い。
- */
-function stripComments(src: string): string {
-  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-}
 
 function listFiles(dir: string): string[] {
   const out: string[] = [];

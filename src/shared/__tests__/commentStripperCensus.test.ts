@@ -25,7 +25,36 @@
  * | **残し過ぎ** | **行末の注記が code として残る** (法則 `mention-vs-declaration`) | **2,420 行 / 480 本** (契約 2 / 3 / 6) |
  * | 行番号 | ブロック注記の行が詰まり、**掴んだ位置が実物とずれる** | 6 写し |
  *
- * ## 正直に書く —— **今日どの census の答えも変わらなかった**
+ * ## パス 462 —— **glob の `**` が偽の注記を開き、71 行を食っていた** (2026-09-25)
+ *
+ * パス 461 は 13 本を寄せて「どの census の答えも変わらなかった」と書いた。残り 66 本の
+ * うち**ファイル全体を落とす 43 本**を寄せたら、**2 つの census の答えが変わった** ——
+ * どちらも `originalSourcePolicy` (mutate 台帳のファイルを原文で読む検査は
+ * `readOriginalSource` を通す、という規則の母集団) である。
+ *
+ * ★ **原因は、素朴なブロック注記の正規表現が文字列の中の `/**` から始まること。**
+ * このリポジトリの検査は glob を多用する —— `globSync(['src/main/**' + '/*.ts'], …)` の
+ * `/**` がそこで「注記の始まり」になり、**次のブロック注記の閉じまで丸ごと食う**。実測 (直す前):
+ *
+ * | ファイル | 食われた範囲 | 台帳の件数 | 実測 |
+ * | --- | --- | ---: | ---: |
+ * | `stateWritePolicy.test.ts` | **68〜139 行 (71 行)** | 1 | **3** |
+ * | `fileReadSizeGateCensus.test.ts` | **99〜144 行 (45 行)** | 6 | **9** |
+ *
+ * ★ **向きは両方** —— `stateWritePolicy` は**一時ディレクトリの生の読み 2 件が台帳に
+ * 載っていなかった** (台帳は「`count` は実測の件数で、増えたら鳴る (台帳が白紙委任に
+ * ならないように)」と自分で述べている)。`fileReadSizeGateCensus` は逆に、引用 3 件が
+ * 見えていなかった。**どちらも「数が偽」で、偽にしていたのは道具である。**
+ *
+ * ★ **そして `originalSourcePolicy` 自身の自己検査が偽だった** —— 「★ この検査自身は
+ * 生の読みを 1 件も持たない (標本は綴りを割って組み立てている)」と主張しながら、台帳の
+ * `why` の散文 2 か所がその綴りを**割らずに引用**していた。旧い道具はそこも食っていたので
+ * 通っていた。綴りを再現せずに述べる形へ直した (パス 372 と同じ手)。
+ *
+ * ★ **母集団の実測 (2026-09-25 · `src` + `scripts` の 1,537 本)**: 素朴な正規表現が
+ * 食うファイルは **42 本 / 合計 1,274 行**。最大は `shared-judgement-census.cjs` の 394 行。
+ *
+ * ## パス 461 の記録 —— **あの日はどの census の答えも変わらなかった**
  *
  * 13 本を寄せて走らせると、**落ちたのは 2 件だけ**で、どちらも「裸の続き行を注記として
  * 食わせる**人工的な標本**」だった (実物の走査はファイル全体を渡すので、続き行は必ず
@@ -82,6 +111,10 @@ const EXEMPT: readonly { readonly file: string; readonly why: string }[] = [
     why: 'この検査そのもの。**針の綴りを定数として持つ**だけで実装は持たない —— この道具を自分自身に当てるのが正しい形で (パス 452 が stripNonCodeParity で同じことを書いた)、下の it が「共有の道具を import している = 自前を持たない」を確かめる',
   },
   {
+    file: 'src/renderer/__tests__/themeTokens.test.ts',
+    why: '落とす相手が **CSS** (styles.css) で、共有の字句解析器は JS/TS のもの —— CSS に行注記も正規表現リテラルもテンプレート補間も無いので、当てても「今日たまたま同じ答え」にしかならない。実測 (2026-09-25 · パス 462): この CSS には注記の外の `//` が 0 件なので今日の答えは変わらないが、`url(//cdn…)` を 1 行書いた日に JS の行注記として行末まで食う。**言語が違う物に同じ道具を当てない**',
+  },
+  {
     file: 'src/shared/securityRange.ts',
     why: '出荷コードの検知前正規化 (WAF 風)。ソースの注記ではなく SQL インジェクションの comment 挿入を打ち消すためで、securityRange.test.ts が標本つきで留めている',
   },
@@ -97,66 +130,22 @@ const REMAINING: readonly string[] = [
   'scripts/lint-network-targets.cjs',
   'scripts/lint-parameter-prose.cjs',
   'scripts/verify-architecture.cjs',
-  'src/__tests__/actionSurface.ts',
   'src/main/__tests__/atRestPolicy.test.ts',
   'src/main/__tests__/fileReadSizeGateCensus.test.ts',
   'src/main/__tests__/stateWritePolicy.test.ts',
-  'src/main/__tests__/writeModeGate.test.ts',
-  'src/main/clients/__tests__/exportPathGate.test.ts',
-  'src/main/clients/__tests__/nullableSnapshotFieldWidth.test.ts',
-  'src/renderer/__tests__/ceilingUnitCensus.test.ts',
-  'src/renderer/__tests__/cloudSyncClaims.test.ts',
-  'src/renderer/__tests__/demoMixDisclosureCensus.test.ts',
-  'src/renderer/__tests__/desktopPathClaims.test.ts',
   'src/renderer/__tests__/deviceStoreWritePolicy.test.ts',
   'src/renderer/__tests__/errorMessageSurfaceCensus.test.ts',
   'src/renderer/__tests__/inlineColorCensus.test.ts',
-  'src/renderer/__tests__/inputCapLiterals.test.ts',
-  'src/renderer/__tests__/invokeFailureSurfaced.test.ts',
-  'src/renderer/__tests__/markdownExportCensus.test.ts',
-  'src/renderer/__tests__/maxLengthCensus.test.ts',
-  'src/renderer/__tests__/staticProseClaims.test.ts',
-  'src/renderer/__tests__/storageClaims.test.ts',
-  'src/renderer/__tests__/submitGuardCensus.test.ts',
-  'src/renderer/__tests__/themeTokens.test.ts',
   'src/renderer/__tests__/webShimAnalyzeCeiling.test.ts',
   'src/renderer/__tests__/webShimAssistantProxyNotice.test.ts',
-  'src/renderer/__tests__/webShimCredentials.test.ts',
-  'src/renderer/components/__tests__/voiceEgressDisclosed.test.ts',
-  'src/renderer/data/__tests__/csvExportGate.test.ts',
-  'src/renderer/data/__tests__/emotionsLogMoodParity.test.ts',
-  'src/renderer/oauth/__tests__/pkceSession.test.ts',
-  'src/renderer/pages/__tests__/aiEgressPairs.helpers.ts',
-  'src/renderer/pages/__tests__/oneNumberOneSource.test.ts',
-  'src/renderer/pages/__tests__/thirdPartyFieldCeiling.test.ts',
   'src/shared/__tests__/absenceSampleCensus.test.ts',
-  'src/shared/__tests__/advisorQuestionParity.test.ts',
-  'src/shared/__tests__/advisorResponseParity.test.ts',
-  'src/shared/__tests__/atlassianLinks.test.ts',
-  'src/shared/__tests__/bareFetchLedger.test.ts',
-  'src/shared/__tests__/buildScriptEscapes.test.ts',
   'src/shared/__tests__/businessPayloadParity.test.ts',
-  'src/shared/__tests__/calendarDateCensus.test.ts',
-  'src/shared/__tests__/controlCharSingleRule.test.ts',
-  'src/shared/__tests__/dateAssemblyCensus.test.ts',
-  'src/shared/__tests__/dualBuildDecisions.test.ts',
-  'src/shared/__tests__/externalUrlGate.test.ts',
   'src/shared/__tests__/hostInterpolationCensus.test.ts',
   'src/shared/__tests__/jsonBodyCensus.test.ts',
-  'src/shared/__tests__/judgementReachEdges.test.ts',
   'src/shared/__tests__/kdfParamsCensus.test.ts',
-  'src/shared/__tests__/linkRedirectGuard.test.ts',
-  'src/shared/__tests__/localFileOpenPolicy.test.ts',
-  'src/shared/__tests__/nonFiniteEntryPoints.test.ts',
-  'src/shared/__tests__/ollamaInputLimits.test.ts',
-  'src/shared/__tests__/ollamaModelFieldCeilings.test.ts',
-  'src/shared/__tests__/originalSourcePolicy.test.ts',
   'src/shared/__tests__/parsedUrlGateCensus.test.ts',
-  'src/shared/__tests__/permissionJustification.test.ts',
   'src/shared/__tests__/pluginPlanConsumers.test.ts',
-  'src/shared/__tests__/redactionCoverage.test.ts',
   'src/shared/__tests__/responseBodyCapCensus.test.ts',
-  'src/shared/__tests__/scriptEmbedGate.test.ts',
   'src/shared/__tests__/typecheckCoverage.test.ts',
 ];
 
@@ -187,18 +176,61 @@ function selfRolled(): string[] {
 
 /** パス 461 で `codeOnly` の写しから寄せた 13 本。共有の道具を読んでいること。 */
 const MIGRATED: readonly string[] = [
+  'src/__tests__/actionSurface.ts',
+  'src/main/__tests__/writeModeGate.test.ts',
+  'src/main/clients/__tests__/exportPathGate.test.ts',
+  'src/main/clients/__tests__/nullableSnapshotFieldWidth.test.ts',
   'src/main/clients/__tests__/responseRowGuards.test.ts',
   'src/renderer/__tests__/browserSendClaimCensus.test.ts',
+  'src/renderer/__tests__/ceilingUnitCensus.test.ts',
+  'src/renderer/__tests__/cloudSyncClaims.test.ts',
+  'src/renderer/__tests__/demoMixDisclosureCensus.test.ts',
+  'src/renderer/__tests__/desktopPathClaims.test.ts',
   'src/renderer/__tests__/disclaimerRendered.test.ts',
   'src/renderer/__tests__/fixedTickAssertionCensus.test.ts',
+  'src/renderer/__tests__/inputCapLiterals.test.ts',
+  'src/renderer/__tests__/invokeFailureSurfaced.test.ts',
+  'src/renderer/__tests__/markdownExportCensus.test.ts',
+  'src/renderer/__tests__/maxLengthCensus.test.ts',
   'src/renderer/__tests__/numericInputReaderCensus.test.ts',
+  'src/renderer/__tests__/staticProseClaims.test.ts',
+  'src/renderer/__tests__/storageClaims.test.ts',
+  'src/renderer/__tests__/submitGuardCensus.test.ts',
+  'src/renderer/__tests__/webShimCredentials.test.ts',
   'src/renderer/components/__tests__/financialAnalysisNumberReading.test.ts',
+  'src/renderer/components/__tests__/voiceEgressDisclosed.test.ts',
   'src/renderer/data/__tests__/csvColumnCoverage.test.ts',
+  'src/renderer/data/__tests__/csvExportGate.test.ts',
+  'src/renderer/data/__tests__/emotionsLogMoodParity.test.ts',
   'src/renderer/data/__tests__/namedEscapeHatchReachable.test.ts',
+  'src/renderer/oauth/__tests__/pkceSession.test.ts',
+  'src/renderer/pages/__tests__/aiEgressPairs.helpers.ts',
   'src/renderer/pages/__tests__/namedControlExists.test.ts',
+  'src/renderer/pages/__tests__/oneNumberOneSource.test.ts',
+  'src/renderer/pages/__tests__/thirdPartyFieldCeiling.test.ts',
   'src/shared/__tests__/advisorArrayBounds.test.ts',
+  'src/shared/__tests__/advisorQuestionParity.test.ts',
+  'src/shared/__tests__/advisorResponseParity.test.ts',
+  'src/shared/__tests__/atlassianLinks.test.ts',
+  'src/shared/__tests__/bareFetchLedger.test.ts',
+  'src/shared/__tests__/buildScriptEscapes.test.ts',
+  'src/shared/__tests__/calendarDateCensus.test.ts',
+  'src/shared/__tests__/controlCharSingleRule.test.ts',
+  'src/shared/__tests__/dateAssemblyCensus.test.ts',
+  'src/shared/__tests__/dualBuildDecisions.test.ts',
   'src/shared/__tests__/e2eWaitMargin.test.ts',
+  'src/shared/__tests__/externalUrlGate.test.ts',
   'src/shared/__tests__/hostChromeColorCensus.test.ts',
+  'src/shared/__tests__/judgementReachEdges.test.ts',
+  'src/shared/__tests__/linkRedirectGuard.test.ts',
+  'src/shared/__tests__/localFileOpenPolicy.test.ts',
+  'src/shared/__tests__/nonFiniteEntryPoints.test.ts',
+  'src/shared/__tests__/ollamaInputLimits.test.ts',
+  'src/shared/__tests__/ollamaModelFieldCeilings.test.ts',
+  'src/shared/__tests__/originalSourcePolicy.test.ts',
+  'src/shared/__tests__/permissionJustification.test.ts',
+  'src/shared/__tests__/redactionCoverage.test.ts',
+  'src/shared/__tests__/scriptEmbedGate.test.ts',
   'src/shared/api/__tests__/createdResponseFields.test.ts',
 ];
 
@@ -233,7 +265,11 @@ describe('注記を落とす道具は 1 つ (パス 461)', () => {
   });
 
   it('★ 針が的に当たり、注記の中では当たらない', () => {
-    expect(selfRolled().length).toBeGreaterThanOrEqual(40);
+    // **床は「見つけた件数」には置かない** —— この台帳は**減るのが正しい向き**なので、
+    // 実測に張り付けると寄せた日に落ちる (パス 378 が `tickSensitivityLedger` で
+    // 同じ形を直した)。床は**走査が木を歩いたこと**に置き、針が生きていることは
+    // 下の 3 つの標本が直接見る。
+    expect(walk('src').length + walk('scripts').length).toBeGreaterThanOrEqual(1000);
     expect(stripComments(`const R = ${BLOCK_STRIP};`).includes(BLOCK_STRIP)).toBe(true);
     expect(stripComments(`/** 直す前は ${BLOCK_STRIP} だった */`).includes(BLOCK_STRIP)).toBe(false);
     expect(stripComments(`// ${LINE_STRIP_RE}`).includes(LINE_STRIP_RE)).toBe(false);
@@ -258,8 +294,31 @@ describe('注記を落とす道具は 1 つ (パス 461)', () => {
     expect(stripComments(self)).toMatch(/import \{ stripComments, stripNonCode \} from '\.\/stripNonCode';/);
   });
 
-  it('★ 寄せた 13 本は共有の道具を読み、自前の除去を持たない (両方向)', () => {
-    expect(MIGRATED).toHaveLength(13);
+  /**
+   * 共有の `stripComments` を import しているファイル (この検査自身と道具の在処は除く)。
+   * **`MIGRATED` は手書きの一覧ではなく、この走査と一致することを要求する** ——
+   * パス 462 の対照 F がここを撃った: 台帳から 1 行消すと、その行の主張
+   * (「共有の道具を読む」「自前へ戻っていない」) が黙って消え、しかも自前を持たない
+   * ファイルは `selfRolled()` にも出ないので**どちらの向きからも見えなかった**。
+   * **分類を下げるのも退行の 1 手である** (パス 455 の対照 J と同じ形)。
+   */
+  const importsShared = (): string[] =>
+    [...walk('src'), ...walk('scripts')]
+      .filter((rel) => !HOMES.includes(rel) && !EXEMPT.some((e) => e.file === rel))
+      .filter((rel) =>
+        /import \{[^}]*\bstripComments\b[^}]*\} from '[^']*stripNonCode';/.test(
+          readOriginalSource(path.join(REPO, rel)),
+        ),
+      )
+      .sort();
+
+  it('★ 寄せた本の一覧は走査から導く (台帳から消しても鳴る · 両方向)', () => {
+    expect(importsShared()).toEqual([...MIGRATED].sort());
+  });
+
+  it('★ 寄せた本は共有の道具を読み、自前の除去を持たない (両方向)', () => {
+    // 寄せる方向にしか動かないので、床だけ置く (実測 2026-09-25 · パス 462 で 13 → 56)。
+    expect(MIGRATED.length).toBeGreaterThanOrEqual(13);
     const found = new Set(selfRolled());
     for (const rel of MIGRATED) {
       const src = readOriginalSource(path.join(REPO, rel));

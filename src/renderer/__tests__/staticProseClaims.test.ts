@@ -29,6 +29,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalSource, readOriginalDirEntries } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const PAGES = path.resolve(__dirname, '../pages');
 
@@ -47,8 +48,7 @@ const MIN_CHARS = 25;
  * この検査でも 1 度踏んだ (`WordPressPage` の注記が直す前の文を引用しているため)。
  */
 function code(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+  return stripComments(src)
     .split('\n')
     .map((l) => (/^\s*\/\//.test(l) ? '' : l))
     .join('\n');

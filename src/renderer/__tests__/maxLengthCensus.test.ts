@@ -41,6 +41,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const RENDERER = path.resolve(__dirname, '..');
 
@@ -64,13 +65,6 @@ function tsxFiles(dir: string, out: string[] = []): string[] {
     if (e.name.endsWith('.tsx')) out.push(p);
   }
   return out;
-}
-
-/** コメントを空白に潰す (行番号は保つ)。注記の中の `maxLength={2000}` を拾わない。 */
-function stripComments(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .replace(/\/\/[^\n]*/g, '');
 }
 
 interface Hit {

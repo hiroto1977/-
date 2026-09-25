@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **日付の綴りを判定する正規表現は `shared/isoDate.ts` の外に無い。** (2026-09-09 · パス 115)
@@ -29,8 +30,7 @@ const ALLOWED: Readonly<Record<string, string>> = {
 
 /** コメントを落とす (説明の中の綴りを判定と読まない)。 */
 function code(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
+  return stripComments(src)
     .split('\n')
     .filter((l) => !/^\s*\/\//.test(l))
     .join('\n');

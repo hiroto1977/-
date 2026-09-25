@@ -3,6 +3,7 @@ import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import { needsFormulaGuard, toCsv } from '../csv';
 import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /*
  * **CSV を書き出す経路は、全部 `data/csv.ts` の関門を通る。**
@@ -54,7 +55,7 @@ describe('CSV の書き出しは関門を通る', () => {
     for (const f of sourceFiles('src')) {
       if (norm(f).endsWith(GATE)) continue;
       const text = readOriginalSource(f);
-      const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+      const code = stripComments(text);
       if (!/export function \w*Csv\b/.test(code)) continue;
       // `from './csv'` / `from '../data/csv'` などを受ける。
       if (!/from\s+'[^']*\/csv'/.test(code)) offenders.push(f);
@@ -69,9 +70,7 @@ describe('CSV の書き出しは関門を通る', () => {
     const offenders: string[] = [];
     for (const f of sourceFiles('src')) {
       if (norm(f).endsWith(GATE)) continue;
-      const code = readOriginalSource(f)
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        .replace(/^\s*\/\/.*$/gm, '');
+      const code = stripComments(readOriginalSource(f));
       const joinsFields = /\.join\(\s*','\s*\)/.test(code);
       const joinsRows = /\.join\(\s*'\\r\\n'\s*\)|\.join\(\s*'\\n'\s*\)/.test(code);
       if (joinsFields && joinsRows) offenders.push(f);

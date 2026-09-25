@@ -8,6 +8,7 @@ import {
   MAX_ADVISOR_RECOMMENDATIONS,
   MAX_ADVISOR_RISK_FACTORS,
 } from '../advisorResponseLimits';
+import { stripComments } from './stripNonCode';
 
 /*
  * **第三者が返してくる値の上限は、両ビルドで同じでなければならない。**
@@ -51,9 +52,7 @@ describe('アドバイザーの応答の上限は 1 つだけ', () => {
   });
 
   it.each(SRC)('%s に応答の上限が字面で書かれていない', (_label, path) => {
-    const code = readOriginalSource(path)
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+    const code = stripComments(readOriginalSource(path));
     const back = LITERAL_BOUNDS.filter(([, re]) => re.test(code)).map(([name]) => name);
     expect(back, '上限が字面へ戻っています (shared/advisorResponseLimits.ts を使ってください)').toEqual([]);
   });

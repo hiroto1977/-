@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { statSync } from 'node:fs';
 import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { join } from 'node:path';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /*
  * **payload からパスを受けてファイルを書く関数は、必ず関門を通る。**
@@ -84,7 +85,7 @@ export function topLevelFunctions(text: string): { name: string; line: number; b
 export function ungatedWriters(text: string): string[] {
   return topLevelFunctions(text)
     .filter(({ body }) => {
-      const code = body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+      const code = stripComments(body);
       if (!WRITE.test(code)) return false;
       if (!code.includes('payload')) return false;
       return !GUARD.test(code);
