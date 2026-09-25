@@ -23,6 +23,14 @@
  * 「不在を主張していて注記のせいで偽に近かった検査」は**逆に通ってしまう**ので映らない
  * (そちらの母集団は `absenceSampleCensus.test.ts` が別に持つ)。
  *
+ * ## 直した後に実物で走らせた (2026-09-25 · 予測ではなく測った)
+ *
+ * 1,431 本 / 落ちるのは **14 本**。★ パス 465 で直した 2 本
+ * (`lawCoverageLedger` / `limitCoverageCensus`) は **台帳から抜けなかった** ——
+ * 直しの一部として「注記の中にしか無い言及」そのものを木から採って標本に留めたので、
+ * **今度は意図して注記を読む** (`sample-in-comment`)。私は「抜ける」と予測して
+ * commit の文面にそう書き、**走らせて偽と分かった**。この道具の値打ちはそこに在る。
+ *
  * ## `.tsx` を除く理由 (2026-09-25 · パス 464 の実測)
  *
  * 最初の実験は `.tsx` も含めて走らせ、**変換が壊れた** —— そして壊れた理由が
@@ -149,6 +157,12 @@ const LEDGER = [
     why: 'fold-must-pair は「必ず … と併用する」と述べる注記の母集団を数える —— 注記そのものが対象' },
   { file: 'src/shared/__tests__/pluginPlanConsumers.test.ts', kind: 'reads-docblock',
     why: 'pluginRuntime の docblock が「実行直前はまだ存在しない」と述べていることを留める (古い断定を残さない) + 標本が注記の中に在る' },
+  { file: 'src/shared/__tests__/commentBlindLedger.test.ts', kind: 'reads-docblock',
+    why: 'この道具の docblock が 5 つの kind を説明していることを留める (説明の無い語を台帳に置かせない)。道具の説明文そのものが対象なので、無意味にすれば必ず落ちる' },
+  { file: 'src/shared/__tests__/lawCoverageLedger.test.ts', kind: 'sample-in-comment',
+    why: 'パス 465 の直しの一部として「実物: exportSymlinkContainment の印は注記の中にしか無い」を標本に留めた。その前提の側 (原文には綴りが在る) が注記を読むので落ちる —— 騙されているのではなく、騙されうる実物を標本にしている' },
+  { file: 'src/shared/__tests__/limitCoverageCensus.test.ts', kind: 'sample-in-comment',
+    why: 'パス 465 の直しの一部として「実物: ceilingLiteralCensus の docblock の言及は参照に数えない」を標本に留めた。その前提の側 (原文には綴りが在る) が注記を読むので落ちる —— 上の双子と同じ形' },
   { file: 'src/shared/__tests__/regexPolynomialLedger.test.ts', kind: 'reads-docblock',
     why: 'lint:regex の門の説明文が「実物の最大の上限」を引いていることを留める —— 上限が増えたら説明文を読み直させる' },
 ];

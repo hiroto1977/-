@@ -18,9 +18,9 @@
  *
  * ## 2026-09-25 の初回実測
  *
- * 1,428 本を書き換えて `npm test` を走らせると **13 ファイル / 15 件**が落ちた。
- * 仕分けると **11 本は設計どおり** (注記を読むのが仕事 / 内容ハッシュ) で、
- * **2 本が「散文が答えになっていた」**:
+ * 隔離した写し (直す前) で 1,428 本を書き換えて `npm test` を走らせると
+ * **13 ファイル / 15 件**が落ちた。仕分けると **11 本は設計どおり**
+ * (注記を読むのが仕事 / 内容ハッシュ) で、**2 本が「散文が答えになっていた」**:
  *
  * | 検査 | 散文で満たされていた物 |
  * | --- | --- |
@@ -153,12 +153,23 @@ describe('注記への依存は、綴りではなく振る舞いで測る (パ�
     expect(`${ci}\naudit:comment-blind`).toContain('audit:comment-blind');
   });
 
-  it('★ 2026-09-25 に閉じた 2 件は台帳に居ない (直したら消す)', () => {
-    const files = rows.map((r) => r.file);
-    expect(files).not.toContain('src/shared/__tests__/lawCoverageLedger.test.ts');
-    expect(files).not.toContain('src/shared/__tests__/limitCoverageCensus.test.ts');
-    // 直しが効いていること —— どちらも `stripComments` を通してから針を当てる。
-    for (const f of ['src/shared/__tests__/lawCoverageLedger.test.ts', 'src/shared/__tests__/limitCoverageCensus.test.ts']) {
+  /*
+   * ★ **予測は外れた (2026-09-25 · パス 465)。**
+   * 直した 2 本は台帳から抜けると書いて commit したが、実物で走らせたら**抜けなかった** ——
+   * 直しの一部として「注記の中にしか無い言及」そのものを木から採って標本に留めたので、
+   * **今度は意図して注記を読む**からである (`sample-in-comment`)。
+   * ここは「抜けたか」ではなく **直しが効いていること**と**正しい種類で載っていること**を見る。
+   */
+  it('★ 2026-09-25 に閉じた 2 件は、直った上で sample-in-comment として台帳に居る', () => {
+    const fixed = [
+      'src/shared/__tests__/lawCoverageLedger.test.ts',
+      'src/shared/__tests__/limitCoverageCensus.test.ts',
+    ];
+    for (const f of fixed) {
+      const row = rows.find((r) => r.file === f);
+      expect(row, `${f} が台帳に無い`).toBeDefined();
+      expect(row!.kind, f).toBe('sample-in-comment');
+      // 直しが効いていること —— どちらも `stripComments` を通してから針を当てる。
       expect(stripComments(readOriginalSource(join(REPO, f))), f).toContain('stripComments(readOriginalSource(');
     }
   });

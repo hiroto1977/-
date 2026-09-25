@@ -26,6 +26,10 @@
 | `lawCoverageLedger` | `shell-open-gate` が「母集団を走査する検査を持つ」—— 根拠は `exportSymlinkContainment.test.ts:49` の**注記 1 行**で、しかもその注記は「一時の道に使うと的が外れる」と**使っていないこと**を述べていた |
 | `limitCoverageCensus` | `MAX_STOCK_ADVISOR_RISK_CHARS` が「検査から名前で参照されている」—— 根拠は `ceilingLiteralCensus.test.ts` の docblock の**例示 1 行**で、その文は「同じ数だが別物」と述べていた |
 
+★★ **直した後に実物で走らせると 1,431 本 / 落ちるのは 14 本** —— 直した 2 本は
+**台帳から抜けなかった** (「注記の中にしか無い言及」を標本に留めたので、今度は意図して
+注記を読む · `sample-in-comment`)。**予測ではなく走らせて分かった。**
+
 残っている物:
 
 1. **見えるのは片側だけ (測って残す)** —— 「注記のおかげで通っていた検査」は落ちるが、
