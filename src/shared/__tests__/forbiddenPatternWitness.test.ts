@@ -1,5 +1,11 @@
 import { createRequire } from 'node:module';
+import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
+
+import { readOriginalSource } from './originalSource';
+
+const REPO_ROOT = path.resolve(__dirname, '../../..');
 
 /*
  * `lint:forbidden` の**外側の証人**。
@@ -256,5 +262,92 @@ describe('★ JSX テキストの URL で規則を迂回できない (パス 464
   it('★ 対照: 本物の行注記に書いた禁止語は今までどおり数えない', () => {
     // 言及と宣言を見分ける側 (法則 `mention-vs-declaration`) は壊していない。
     expect(hits("    // かつて window.open('x') と書いていた")).toBe(0);
+  });
+});
+
+/*
+ * **免除の枠に散文が混ざっていた** (2026-09-25 · パス 466)。
+ *
+ * 台帳の鍵は `規則 :: ファイル :: 件数` で、件数はパス 273 が
+ * 「ファイル名だけだと新しい違反を足しても鳴らない」として足した物である。
+ * ところが `codeOnly` でない規則 (実測 38 中 14) は**注記の中でも鳴る** ——
+ * それは測って決めた方針で (パス 370)、走査は綴りしか見ないので例外を作れば
+ * そこが穴になる。**問題は枠のほうだった**: 件数が 1 つの数なので散文が食う。
+ *
+ * 決定的な対照 (2026-09-25 · 実測): `src/main/clients/ollama.ts` の免除は
+ * `:: 2` で、その 2 件は**どちらも注記**である。注記から綴りを消し、
+ * 同じ数だけ**本物の書き込み口への fetch** を入れると件数は 2 のままなので、
+ * ゲートは `✅ no forbidden patterns found (例外 53 件はすべて台帳どおり)` と答えた ——
+ * CVE-2024-37032 (Probllama) ほかが実装される当の口が CI を素通りした。
+ *
+ * ここはその害が閉じたことを**ゲート本体の鍵で**留める。
+ * **綴りは再現しない** —— この検査ファイル自身が走査対象なので、
+ * 書き込み口の経路名をそのまま書くと**この検査が規則に当たる** (パス 372 と同じ手)。
+ */
+describe('★ 免除の枠に散文が混ざらない (パス 466)', () => {
+  const OLLAMA_MAIN = 'src/main/clients/ollama.ts';
+  const RULE = 'Ollama write-side endpoints in network code';
+  /**
+   * 綴りを再現せずに組み立てる (この検査ファイル自身が走査対象なので、
+   * 経路名をそのまま書くと**この検査が規則に当たる**)。
+   */
+  const WRITE_WORDS = ['pull', 'create', 'push', 'copy', 'delete', 'blobs', 'upload'];
+  const WRITE_PATHS = WRITE_WORDS.map((w) => `/api/${w}`);
+  /** 実物の綴りを無意味にする (規則は**行**で数えるので、1 行の全部を潰す)。 */
+  const BLUR = new RegExp(`/api/(${WRITE_WORDS.join('|')})`, 'g');
+
+  /** そのファイル 1 枚に対して、ゲートが記録する免除の鍵。 */
+  const keyOf = (rel: string, text: string): string[] => {
+    const sup = new Set<string>();
+    gate.scanText(rel, text, [], sup);
+    return [...sup].filter((k) => k.startsWith(RULE));
+  };
+
+  /** 免除の鍵から件数だけを取る (直す前の鍵の形)。 */
+  const countOf = (key: string): string => key.replace(/ \(code \d+\)$/, '');
+
+  const real = readOriginalSource(path.join(REPO_ROOT, OLLAMA_MAIN));
+  /** 注記の 2 行を消し、同じ数だけ**本物の呼び出し**を足した姿 (決定的な対照)。 */
+  const swapped = `${real.replace(BLUR, '/api/xxxx')}
+async function probe(base: string, f: typeof fetch): Promise<void> {
+  await f(\`\${base}${WRITE_PATHS[0]}\`, { method: 'POST' });
+  await f(\`\${base}${WRITE_PATHS[1]}\`, { method: 'POST' });
+}
+`;
+
+  it('前提: 実物の 2 件はどちらも注記で、台帳がそう名乗っている', () => {
+    const keys = keyOf(OLLAMA_MAIN, real);
+    expect(keys, '免除が 1 つだけ立つ').toHaveLength(1);
+    expect(keys[0]).toContain('(code 0)');
+    expect(gate.KNOWN_SUPPRESSIONS as string[]).toContain(keys[0]);
+  });
+
+  it('★ 散文を同じ数の本物の呼び出しへ入れ替えると、台帳に無い鍵になる (= 鳴る)', () => {
+    const keys = keyOf(OLLAMA_MAIN, swapped);
+    expect(keys).toHaveLength(1);
+    // **台帳の綴りに依らない主張** —— 鍵そのものが動くこと。
+    // 台帳だけを見ると、門を直す前へ戻したのに台帳が新しいままのとき緑になる。
+    expect(keys[0], '実物と入れ替えた姿が同じ鍵 = 門が入れ替えを見ていない').not.toBe(
+      keyOf(OLLAMA_MAIN, real)[0],
+    );
+    expect(keys[0], '入れ替えたのに code 0 のまま = 内訳が効いていない').not.toContain('(code 0)');
+    expect(
+      gate.KNOWN_SUPPRESSIONS as string[],
+      '台帳に在る = 本物の書き込み口が CI を素通りする',
+    ).not.toContain(keys[0]);
+  });
+
+  it('★ 対照: 件数だけの鍵 (直す前の形) では同じ鍵になり、門が黙る', () => {
+    const before = countOf(keyOf(OLLAMA_MAIN, real)[0] ?? '');
+    const after = countOf(keyOf(OLLAMA_MAIN, swapped)[0] ?? '');
+    expect(before, '前提: 鍵が取れている').not.toBe('');
+    expect(after, '直す前の鍵では入れ替えが見えない (これが欠陥)').toBe(before);
+  });
+
+  it('入れ替えた姿には本物の呼び出しが 2 本在る (標本が的に当たっている)', () => {
+    const v = scanOne(OLLAMA_MAIN, swapped);
+    // 免除の効くファイルなので違反としては出ない —— 出るのは免除の鍵のほう。
+    expect(v).toHaveLength(0);
+    expect(keyOf(OLLAMA_MAIN, swapped)[0]).toMatch(/:: 2$/);
   });
 });

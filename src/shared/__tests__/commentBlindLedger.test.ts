@@ -174,3 +174,106 @@ describe('注記への依存は、綴りではなく振る舞いで測る (パ�
     }
   });
 });
+
+/** ゲートの台帳の 1 行 (`--gates` · パス 466)。 */
+export interface GateRow {
+  readonly gate: string;
+  readonly kind: string;
+  readonly why: string;
+}
+
+/** ゲートの台帳を綴りから読む (`require` せず原文を読む —— 変異体を読まないため)。 */
+export function gateRows(src: string): GateRow[] {
+  const out: GateRow[] = [];
+  const re = /\{\s*gate: '([^']+)',\s*kind: '([^']+)',\s*\n?\s*why: '((?:[^'\\]|\\.)*)'\s*\},/g;
+  for (const m of src.matchAll(re)) out.push({ gate: m[1]!, kind: m[2]!, why: m[3]! });
+  return out;
+}
+
+/** ゲートの台帳が使ってよい `kind`。**docblock がこの語を説明していること**を下で要求する。 */
+const GATE_KINDS = [
+  'prose-funds-the-budget',
+  'spawns-another-gate',
+  'reads-comment-directive',
+  'self-test-sample',
+  'content-hash',
+] as const;
+
+/*
+ * **ゲートの側も同じ実験に掛ける** (2026-09-25 · パス 466)。
+ *
+ * パス 465 の道具は `npm test` しか覆っていなかった —— **`verify:all` の 37 ゲートは
+ * 1 度も注記を無意味にして走らせていない**。ゲートは CI の執行層 (落ちれば push できない)
+ * なので、答えが散文に依っているなら検査より重い。
+ *
+ * 実測 (2026-09-25 · 実物の木で 1,380 本を書き換え、37 ゲートを 1 本ずつ走らせる):
+ * **素の木は 37 / 37 が exit 0・注記を無意味にすると落ちるのは 5 / 37** で、
+ * その 5 本は理由つきの台帳と双方向に一致した。★ **そのうち 1 件が本物の欠陥だった** ——
+ * `lint:forbidden` の免除の枠に散文が混ざっていた (`forbiddenPatternWitness.test.ts` の
+ * 末尾がその害を鍵で留める)。
+ *
+ * ここは毎回の `npm test` で**台帳の形**だけを見る (走らせはしない)。
+ */
+describe('ゲートの答えも散文に依らない (パス 466)', () => {
+  const audit = readOriginalSource(join(REPO, AUDIT));
+  const rows = gateRows(audit);
+  const pkg = JSON.parse(readOriginalSource(join(REPO, 'package.json'))) as {
+    scripts: Record<string, string>;
+  };
+  const verifyAllGates = (pkg.scripts['verify:all'] ?? '')
+    .split('&&')
+    .map((x) => x.trim().replace(/^npm run /, ''))
+    .filter(Boolean);
+
+  it('★ 針が実物の台帳に当たる (標本 — 空の台帳で通っていない)', () => {
+    const sample = "  { gate: 'lint:x', kind: 'content-hash',\n    why: 'なぜ注記と無関係に落ちるのかの説明' },\n";
+    expect(gateRows(sample), '標本を読めていない').toHaveLength(1);
+    expect(gateRows(sample)[0]!.gate).toBe('lint:x');
+    expect(rows.length, '実物の台帳が読めていない').toBeGreaterThanOrEqual(5);
+  });
+
+  it('★ 台帳の行はすべて verify:all が実際に並べるゲートを指す', () => {
+    expect(verifyAllGates.length, '母集団を package.json から導けていない').toBeGreaterThanOrEqual(30);
+    for (const r of rows) {
+      expect(verifyAllGates, `${r.gate} は verify:all に無い`).toContain(r.gate);
+    }
+  });
+
+  it('★ kind は既知の語で、道具の docblock がその語を説明している', () => {
+    for (const r of rows) {
+      expect(GATE_KINDS as readonly string[], `${r.gate}: ${r.kind}`).toContain(r.kind);
+    }
+    for (const k of GATE_KINDS) {
+      expect(audit.includes(`\`${k}\``), `docblock が ${k} を説明していない`).toBe(true);
+    }
+    const used = new Set(rows.map((r) => r.kind));
+    expect([...GATE_KINDS].filter((k) => !used.has(k)), '説明だけ在って 1 行も使っていない kind').toEqual([]);
+  });
+
+  it('★ 理由はその行だけで読める (「同上」を置かない)', () => {
+    for (const r of rows) {
+      expect(r.why.trim().length, r.gate).toBeGreaterThan(20);
+      expect(/^(同上|同じ|上と同じ)/.test(r.why.trim()), `${r.gate}: 省略形の理由`).toBe(false);
+    }
+  });
+
+  it('★ 台帳に重複が無い', () => {
+    expect(new Set(rows.map((r) => r.gate)).size, '同じゲートが 2 行').toBe(rows.length);
+  });
+
+  /*
+   * ★ **1 本ずつ走らせること。** `verify:all` は `&&` で繋がっているので、
+   * 先頭が落ちると 3 番目から先が 1 度も走らない —— まとめて走らせる形では
+   * 「5 / 37」を測れず、最初に落ちた 1 本しか分からない。
+   */
+  it('★ ゲートは 1 本ずつ走らせる (verify:all をまとめて呼んでいない)', () => {
+    const code = stripComments(audit);
+    expect(code).toContain("spawnSync('npm', ['run', g]");
+    // **`verify:all` の綴りそれ自体は在ってよい** —— 母集団を package.json から
+    // 導くのに読む (`pkg.scripts['verify:all']`)。禁じたいのは**まとめて走らせる形**である。
+    const BULK = /spawnSync\([^)]*verify:all/;
+    expect(BULK.test(code), 'verify:all をまとめて呼ぶと 1 本目で止まる').toBe(false);
+    // 標本: 針は当たる (禁じたい形を足せば見つかる)。
+    expect(BULK.test(`${code}\ncp.spawnSync('npm', ['run', 'verify:all'], {});`)).toBe(true);
+  });
+});

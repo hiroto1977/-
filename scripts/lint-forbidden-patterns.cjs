@@ -845,7 +845,7 @@ const KNOWN_SUPPRESSIONS = [
   // `dist/` / `dist-electron/` の生成物を拾って母集団が走るたびに変わるし、
   // 未追跡のファイルを落とすと「手元では緑・CI では赤」になる (パス 341 の実績)。
   // 引数は固定でシェルを経由しない (`execFileSync`)。2 件は require と呼び出し。
-  'child_process exec/spawn :: scripts/lint-network-targets.cjs :: 2',
+  'child_process exec/spawn :: scripts/lint-network-targets.cjs :: 2 (code 1)',
   // 報告の「生存」を 1 件ずつ原文へ当てて `vitest related` を走らせる定期点検の道具
   // (パス 356)。**検査を実際に走らせずには成り立たない** —— 目的は
   // 「その書き換えで本当に誰も鳴らないか」を測ることそのものである。
@@ -899,16 +899,16 @@ const KNOWN_SUPPRESSIONS = [
   // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。
   // TS の helper (`localIsoDate`) を .cjs から import できないのは orchestrate.cjs と同じ。
   '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/dependency-audit-report.cjs :: 1',
-  'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
+  'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1 (code 0)',
   // 2026-09-14 (パス 248): 3 → 2。許可表を `OLLAMA_READ_PATHS` から組み立てるようにした際、
   // ヘッダの docblock が同じ経路名を**もう一度**並べていたのをやめた —— 2 か所で数え上げても
   // 守りは増えず、抑止する字面が増えるだけである。今の 2 行はどちらも `ALLOWED_ENDPOINTS` の注記。
-  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 2',
+  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 2 (code 0)',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
   // 2026-09-09 (パス 139): 3 → 8。脆弱性の台帳 OLLAMA_ADVISORIES の要約 5 行が「呼ばない口」の名前を
   // 事実として書く (Probllama = /api/pull、CVE-2024-39719/39721 と CVE-2026-7482 = /api/create、
   // CVE-2024-39722 = /api/push)。呼び出しではなく台帳の文言。
-  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 8',
+  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 8 (code 6)',
   // CSS の url() を組み立ててよい唯一の場所。`safeCssUrl` の本体で、
   // スキーム検証 (`safeImageSrc`) を通した値だけを引用して包む。
   // ここを例外にしないと関門自身が自分の規則に引っかかる。
@@ -972,7 +972,7 @@ const KNOWN_SUPPRESSIONS = [
   'shell.openExternal direct call outside main process :: src/main/main.ts :: 2',
   'shell.openExternal direct call outside main process :: src/main/oauth.ts :: 1',
   'window.open :: src/renderer/web-shim.ts :: 1',
-  '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2',
+  '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2 (code 0)',
 ];
 
 /**
@@ -1375,6 +1375,74 @@ function selfTest() {
     );
   }
 
+  /*
+   * **免除の枠の内訳** (2026-09-25 · パス 466)。
+   *
+   * 台帳の鍵は `規則 :: ファイル :: 件数` で、件数はパス 273 が
+   * 「ファイル名だけだと新しい違反を足しても鳴らない」として足した物である。
+   * ところが `codeOnly` でない規則 (38 中 14) は**注記の中でも鳴る**ので、
+   * **その件数に散文が混ざる** —— 散文を消して同じ数だけ本物の違反を足すと
+   * 件数が変わらず、門が黙る。
+   *
+   * 実測 (2026-09-25 · 決定的な対照): `src/main/clients/ollama.ts` の
+   * 注記 2 行から綴りを消し、`/api/pull` と `/api/create` への**本物の fetch** を
+   * 2 本入れると `✅ no forbidden patterns found (例外 53 件はすべて台帳どおり)`。
+   *
+   * だから**散文が枠を食っている行だけ** code の件数も名乗る。
+   * 48 / 53 行は今までどおりで、`codeOnly` の規則は元から注記を見ないので付かない。
+   */
+  {
+    const P = [
+      { name: 'prose-too', pattern: /NEEDLE/, allowFile: () => true },
+      { name: 'code-only', pattern: /NEEDLE/, codeOnly: true, allowFile: () => true },
+    ];
+    const key = (text, patterns, rel = 'x.ts') => {
+      const sup = new Set();
+      scanText(rel, text, [], sup, patterns);
+      return [...sup].sort().join(' | ');
+    };
+    const splitCases = [
+      ['コードだけなら今までどおり (内訳を足さない)', 'const a = NEEDLE;\nconst b = NEEDLE;\n', [P[0]],
+        'prose-too :: x.ts :: 2'],
+      ['★ 散文が枠の一部を食っていれば内訳を名乗る', 'const a = NEEDLE;\n// NEEDLE\n', [P[0]],
+        'prose-too :: x.ts :: 2 (code 1)'],
+      ['★ 散文が枠の全部を食っていれば code 0', '// NEEDLE\n/* NEEDLE */\n', [P[0]],
+        'prose-too :: x.ts :: 2 (code 0)'],
+      ['codeOnly の規則は注記を見ないので内訳が要らない', 'const a = NEEDLE;\n// NEEDLE\n', [P[1]],
+        'code-only :: x.ts :: 1'],
+      ['codeOnly の規則は散文だけなら例外そのものが立たない', '// NEEDLE\n', [P[1]], ''],
+    ];
+    for (const [label, text, patterns, want] of splitCases) {
+      const got = key(text, patterns);
+      const ok = got === want;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 免除の枠: ${label}: ${got || '(無し)'} (期待 ${want || '(無し)'})`);
+    }
+    // ★ **これが欠陥そのもの** —— 散文 2 件をコード 2 件へ入れ替えても
+    // 件数は 2 のままなので、直す前の鍵 (`:: 2`) では**同じ鍵**になり門が黙る。
+    {
+      const prose = key('// NEEDLE\n/* NEEDLE */\n', [P[0]]);
+      const code = key('const a = NEEDLE;\nconst b = NEEDLE;\n', [P[0]]);
+      const okSwap = prose !== code;
+      if (!okSwap) bad += 1;
+      console.log(
+        `  ${okSwap ? '✓' : '✗'} 免除の枠: ★ 散文 2 件とコード 2 件は別の鍵 (パス 466 の欠陥): ` +
+          `${prose} / ${code}`,
+      );
+    }
+    // **実物で確かめる** —— 標本だけだと「実在する行がこの形になるか」は分からない。
+    const realFile = 'src/main/clients/ollama.ts';
+    const realKey = key(
+      fs.readFileSync(path.join(REPO_ROOT, realFile), 'utf8'),
+      FORBIDDEN_PATTERNS.filter((fp) => fp.name === 'Ollama write-side endpoints in network code'),
+      realFile,
+    );
+    const wantReal = 'Ollama write-side endpoints in network code :: ' + realFile + ' :: 2 (code 0)';
+    const okReal = realKey === wantReal;
+    if (!okReal) bad += 1;
+    console.log(`  ${okReal ? '✓' : '✗'} 免除の枠: ★ 実物: main の Ollama は 2 件とも注記: ${realKey} (期待 ${wantReal})`);
+  }
+
   for (const [label, line, expected] of cases) {
     let n = 0;
     for (const fp of FORBIDDEN_PATTERNS) {
@@ -1447,12 +1515,30 @@ function scanText(rel, text, violations, suppressions, patterns = FORBIDDEN_PATT
       // 閉じなければならない。記録しないと「もう鳴らない規則に対する
       // 例外」が永久に残り、そのファイルだけ規則の外に居続ける。
       const hits = (fp.codeOnly === true ? codeLines : lines).filter((l) => fp.pattern.test(l)).length;
+      const codeHits = codeLines.filter((l) => fp.pattern.test(l)).length;
       if (hits > 0) {
         // **件数まで記録する。** ファイル名だけで台帳を突き合わせると、
         // 例外の効いているファイルに**新しい違反を足しても鳴らない** ——
         // 規則がそのファイルで丸ごと無効になる (実測で確認: web-shim.ts へ
         // `noopener` 無しの `window.open` を足しても緑のままだった)。
-        suppressions.add(`${fp.name} :: ${rel} :: ${hits}`);
+        //
+        // ★ **その件数に散文が混ざっていた** (2026-09-25 · パス 466)。
+        // `codeOnly` でない規則 (実測 38 中 14) は注記の中の綴りでも鳴る ——
+        // それは測って決めた方針である (パス 370: 「注記の中でも鳴るのは正しい ——
+        // 走査は綴りしか見ないので、例外を作るとそこが穴になる」)。ところが
+        // **免除の枠が 1 つの数で、そこに散文が入る**ので、注記の綴りを消して
+        // 同じ数だけ**本物の code の違反**を足すと件数が変わらず門が黙る。
+        // 実測: `src/main/clients/ollama.ts :: 2` は 2 件とも注記で、
+        // 注記を消して `/api/pull` と `/api/create` への実際の fetch を 2 本
+        // 入れると **`✅ no forbidden patterns found` のまま通った**
+        // (CVE-2024-37032 Probllama ほかが実装される当の書き込み口)。
+        // だから**散文が枠を食っている行だけ** code の件数も名乗らせる ——
+        // 48 / 53 行は今までどおりで、動くのは食っている 5 行だけである (うち 3 行は全額が散文)。
+        suppressions.add(
+          fp.codeOnly === true || codeHits === hits
+            ? `${fp.name} :: ${rel} :: ${hits}`
+            : `${fp.name} :: ${rel} :: ${hits} (code ${codeHits})`,
+        );
       }
       continue;
     }
