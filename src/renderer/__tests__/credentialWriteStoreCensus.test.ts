@@ -30,12 +30,14 @@
  * 消えた行が台帳に残っても鳴る。**判定そのものの正しさは振る舞いの検査が持つ**
  * (`pages/__tests__/googleOAuthPasteBuildGate.test.ts`)。
  *
- * ★ **`CredentialRow` は今日は `vault-ungated` として残した (理由を測って書く)。**
- * 消す口が在るので今日の穴は「偽の保証」だけで、直すには 9 スロットそれぞれに
- * *働く道*を名乗らせる必要が在る —— ところが `anthropic` は `ServiceId` ではなく
- * (デスクトップ版の AI の鍵は skills / emotions / business / stocks / assistant に
- * 分かれる)、1 つの操作子では名乗れない。**名指しした操作子は実在しなければならない**
- * (パス 426 の門) ので、設計が要る。`docs/REMAINING_WORK.md` に実測を残した。
+ * ★ **2026-09-25 (パス 455) で `vault-ungated` は 0 件になった。**
+ * パス 454 は `CredentialRow` をそこへ置き「消す口が在るので今日の穴は偽の保証だけ」
+ * と書いたが、測り直すと**もっと単純に壊れていた** —— デスクトップ版の保管庫は
+ * 施錠されたまま解錠できない (`unlock()` を呼ぶのは `LockScreen` だけ・その画面は
+ * `browserMode` の下にしか描かれない) ので、**9 枚とも 1 枚も保存できない**。
+ * 実測では利用者が本物の API キーを貼ってから「Vault がロックされています」を
+ * 受け取り、その状態を動かす操作子がどこにも無かった。
+ * **0 件は「要らない」ではない** —— 新しい書き込みが門を持たずに生えれば鳴る。
  */
 import { describe, expect, it } from 'vitest';
 import { join } from 'node:path';
@@ -68,6 +70,14 @@ interface Row {
   readonly receiver: string;
   readonly store: Store;
   readonly why: string;
+  /**
+   * `vault-gated` の行だけが持つ —— **この行が読むべき断りの文の名前**。
+   * 名前を行ごとに持たせないと、同じファイルに 2 つの門が在るとき
+   * **隣の門の名前で満たされてしまう** (実測: `SettingsPage.tsx` には
+   * `GoogleOAuthSection` と `CredentialRow` の 2 つが在り、
+   * ファイル単位の `toContain` では片方を外しても鳴らなかった)。
+   */
+  readonly note?: string;
 }
 
 /** 理由の欄に置いてはいけない省略形。 */
@@ -94,18 +104,21 @@ const LEDGER: readonly Row[] = [
   {
     file: 'pages/SettingsPage.tsx',
     receiver: 'getVault()',
-    store: 'vault-ungated',
+    store: 'vault-gated',
+    note: 'credentialSlotUnreadNote',
     why:
-      '`CredentialRow` の 9 スロット。読み (`listConfigured`) と削除 (`clearToken`) も同じ保管庫なので'
-      + '**カードの中では整合**し、消す口も在る —— 今日の穴は説明文がデスクトップ版で偽になること'
-      + '(「AI 経営アドバイザー / Skills / Emotions で使用」の 3 つは main の保管ファイルを読む)。'
-      + '直すには 9 スロットそれぞれに働く道を名乗らせる必要が在り、`anthropic` は `ServiceId` ではないので'
-      + '1 つの操作子では名乗れない (デスクトップ版の AI の鍵は 5 サービスに分かれる)。設計が要るので次のパスへ。',
+      '`CredentialRow` の 9 スロット。デスクトップ版の保管庫は施錠されたまま解錠できないので'
+      + '**1 枚も保存できない** (実測: 本物の鍵を貼ってから「Vault がロックされています」が出る)。'
+      + '`useBuildKind()` で問い、デスクトップ版と分かったときだけ「設定する」を出さず'
+      + '働く道 (`desktopScreen` = そのサービスの画面の資格情報欄) を名指しする。'
+      + '`anthropic` だけは `ServiceId` ではなく 5 サービスに分かれるので、1 枚ではなく'
+      + '使う画面それぞれの欄を述べる枝を `credentialSlotUnreadNote` が持つ。',
   },
   {
     file: 'pages/SettingsPage.tsx',
     receiver: 'v',
     store: 'vault-gated',
+    note: 'pasteOAuthUnreadNote',
     why:
       '`GoogleOAuthSection` の 4 本 (`drive` / `calendar` / `gmail` / `google-access`)。'
       + 'デスクトップ版には読む物も消す物も無いので、`useBuildKind()` で問い、'
@@ -118,6 +131,31 @@ const LEDGER: readonly Row[] = [
 interface Hit {
   readonly file: string;
   readonly receiver: string;
+  /** 一致の位置。**門を「その書き手の関数の中で」探す**のに要る。 */
+  readonly at: number;
+}
+
+/**
+ * `at` を含む最上位の関数の本文を返す。
+ *
+ * **なぜ要るか (2026-09-25 · パス 455 の実測)。** 門の名前をファイル単位で
+ * `toContain` すると、**同じファイルに 2 つの門が在るとき隣の名前で満たされる** ——
+ * `SettingsPage.tsx` は `CredentialRow` と `GoogleOAuthSection` の両方を持つので、
+ * 行の `note` を隣の門の名前へ入れ替える対照が**鳴らなかった**。
+ * 書き手の関数へ絞ると、その行が読んでいる物だけを見る。
+ */
+function enclosingFunction(src: string, at: number): string {
+  const MARK = /\n(?:export )?(?:async )?function /g;
+  let start = 0;
+  let end = src.length;
+  for (const m of src.matchAll(MARK)) {
+    if (m.index! < at) start = m.index!;
+    else {
+      end = m.index!;
+      break;
+    }
+  }
+  return src.slice(start, end);
 }
 
 function walk(dir: string, rel: string, out: string[]): void {
@@ -139,7 +177,7 @@ function hits(): readonly Hit[] {
   const out: Hit[] = [];
   for (const file of shippingFiles()) {
     const src = readOriginalSource(join(ROOT, file));
-    for (const m of src.matchAll(WRITE)) out.push({ file, receiver: m[1] ?? '' });
+    for (const m of src.matchAll(WRITE)) out.push({ file, receiver: m[1] ?? '', at: m.index ?? 0 });
   }
   return out;
 }
@@ -147,6 +185,14 @@ function hits(): readonly Hit[] {
 /** 受け手の綴り 1 つあたり 1 行 (同じ受け手の複数回は 1 件に畳む)。 */
 function pairs(): readonly string[] {
   return [...new Set(hits().map((h) => `${h.file}::${h.receiver}`))].sort();
+}
+
+/** 台帳の行が指す書き手の、関数の本文。 */
+function writerFunction(row: { file: string; receiver: string }): string {
+  const src = readOriginalSource(join(ROOT, row.file));
+  const hit = hits().find((h) => h.file === row.file && h.receiver === row.receiver);
+  expect(hit, `${row.file}::${row.receiver} の書き込みが走査に無い`).toBeTruthy();
+  return enclosingFunction(src, hit!.at);
 }
 
 describe('資格情報を書く出荷コードの母集団', () => {
@@ -192,13 +238,33 @@ describe('資格情報を書く出荷コードの母集団', () => {
     }
   });
 
-  it('★ `vault-gated` の行は、実行形態を問う口を読んでいる', () => {
+  it('★ `vault-gated` の行は、実行形態を問う口と**自分の**断りの文を読んでいる', () => {
     const gated = LEDGER.filter((r) => r.store === 'vault-gated');
     expect(gated.length).toBeGreaterThanOrEqual(1);
     for (const row of gated) {
-      const src = readOriginalSource(join(ROOT, row.file));
-      expect(src, `${row.file} が useBuildKind を読んでいない`).toContain('useBuildKind');
-      expect(src, `${row.file} が断りの文を読んでいない`).toContain('pasteOAuthUnreadNote');
+      const fn = writerFunction(row);
+      expect(fn, `${row.file}::${row.receiver} が useBuildKind を読んでいない`).toContain('useBuildKind');
+      expect(row.note, `${row.file}::${row.receiver} に note が無い`).toBeTruthy();
+      expect(fn, `${row.file}::${row.receiver} が ${row.note} を読んでいない`).toContain(row.note!);
+    }
+  });
+
+  it('★ `vault-ungated` を名乗る行は、門を持っていてはいけない (逆向き)', () => {
+    /*
+     * **この向きが 2026-09-25 (パス 455) まで無かった。** 実測した対照:
+     * 門を足した行の分類を `vault-ungated` へ戻しても **17 件とも緑**だった ——
+     * `vault-gated` の要求から外れるだけで、「門を持たないこと」は誰も見ていない。
+     * その状態で門が消されると、台帳は既に「無い」と言っているので何も鳴らない。
+     * **分類を下げるのも、退行の 1 手である。**
+     */
+    const ungated = LEDGER.filter((r) => r.store === 'vault-ungated');
+    for (const row of ungated) {
+      expect(row.note, `${row.file}::${row.receiver} は門が無い側なのに note を持つ`).toBeUndefined();
+      const fn = writerFunction(row);
+      expect(
+        fn.includes('useBuildKind'),
+        `${row.file} は \`vault-ungated\` を名乗るのに useBuildKind を読んでいる —— 門が在るなら \`vault-gated\` へ`,
+      ).toBe(false);
     }
   });
 

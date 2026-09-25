@@ -71,6 +71,19 @@ const NEGATIVE = /return\s+null\b|return\s+false\b|ok:\s*false/;
  * それは判断ではなく願望である (パス 247 の方針)。
  */
 const VERDICTS = {
+  buildDestinations:
+    '対称 —— というより **main はこのモジュールの問いを 1 度も発しない** (実測・2026-09-25 パス 455)。'
+    + '母集団に入ったのは `credentialSlotUnreadNote` (`string | null`) を足したためだが、'
+    + '**`src/main` / `src/preload` からの直の import は 0 件**で、走査に映ったのは*閉包*の 1 辺だけ —— '
+    + '`shared/paperAccount.ts:69` の `import type { BuildKind }` である。**型だけの辺**なので'
+    + 'ビルドの時点で消え、`paperAccount` はこのモジュールの値を 1 つも読まない '
+    + '(7 つの export すべてを走査して 0 件)。しかも `paperAccount` を読む main 側の物は'
+    + '**検査 1 本だけ** (`main/clients/__tests__/paperAccountReality.test.ts`) で出荷コードではない。'
+    + 'したがって「否定で答えたあとの動作」が両ビルドで割れる道は**原理的に無い** —— '
+    + 'このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** (renderer の 7 か所が読み、'
+    + '`null` は「ブラウザ版には言うことが無い」という答えである)。その答えの正しさは'
+    + '`pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate}.test.ts` が'
+    + '両方の実行形態を実際に描いて留める。',
   apiResponse:
     '対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、'
     + '`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」'

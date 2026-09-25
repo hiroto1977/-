@@ -74,6 +74,19 @@ let changes: number;
 function stubHub(): void {
   // 札は `openExternal` しか橋を使わない (保管庫はモック)。
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
+    /*
+     * **どちらの実行形態を試しているかを名乗る** (2026-09-25 · パス 455)。
+     *
+     * この 9 スロットは保管庫 (= ブラウザ版だけが読む) へ書くので、
+     * `CredentialRow` は `useBuildKind()` で実行形態を問い、デスクトップ版では
+     * 「設定する」を出さない (そちらでは保管庫が施錠されたままで解錠できず、
+     * 押しても必ず失敗するため)。この代役は `getVersion` を持っていなかったので
+     * `isBrowserBuild()` の `catch` が **デスクトップ版へ倒し**、
+     * 「ブラウザ版の節」を名乗りながら別の実行形態を押していた
+     * (標本が母集団を名乗らない形 · パス 429 の家系。パス 454 が
+     *  `settingsGoogleOAuth.test.ts` について直したのと同じ)。
+     */
+    getVersion: () => Promise.resolve('0.1.0-web'),
     openExternal: () => Promise.resolve(),
   };
 }

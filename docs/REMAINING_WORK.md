@@ -1,58 +1,37 @@
 # Service Hub — 残りの作業手順書
 
-## パス 454 が測って、次のパスへ残した物 (2026-09-25)
+## パス 455 が測って、次のパスへ残した物 (2026-09-25)
 
-パス 453 の隣 (「消す口が在るか」) から**保管先そのもの**へ降りた。renderer の保管先は 2 つ在り、
-**どちらが生きているかは実行形態で決まる**。実測 (2026-09-25):
+パス 454 の続きで、残っていた `CredentialRow` (「API キーとトークン」9 スロット) を閉じた。
+**そのとき、パス 454 が publish した記述が 2 つ偽だと分かったので訂正した。**
 
-| 保管先 | 書く口 | 読む口 | 生きている実行形態 |
-| --- | --- | --- | --- |
-| main の保管ファイル | 橋 `window.serviceHub.setToken` | 橋 `listConfigured` / main の client | **デスクトップ版** |
-| ブラウザ版の保管庫 (IndexedDB) | `getVault().setToken` | **`web-shim.ts` の 11 か所だけ** | **ブラウザ版** |
+### 訂正 —— デスクトップ版の保管庫は「読む物が無い」のではなく「書けない」
 
-`web-shim.ts:1966` は `if (typeof window !== 'undefined' && !window.serviceHub)` ——
-**shim はブラウザ版だけ据え付き、デスクトップ版では保管庫を読む物が 1 つも無い。**
-それなのに保管庫へ**直接**書く節が 2 つ在り、どちらも実行形態を問わず描かれていた。
-**`GoogleOAuthSection` は閉じた。`CredentialRow` は設計が要るので残る。**
+| 問い | パス 454 の記述 | **2026-09-25 の実測** |
+| --- | --- | --- |
+| トークンは保管庫へ入るか | 「入る」 | **入らない** (`Vault がロックされています`) |
+| 画面は何と言うか | 「Google 連携を有効化しました」 | **`Vault がロックされています`** |
 
-### `CredentialRow` (「API キーとトークン」9 スロット) —— 残る
+`unlock()` / `initialize()` を呼ぶ出荷コードは `security/LockScreen.tsx` の 2 行だけで、
+その画面は `App.tsx` の `if (browserMode && !vaultUnlocked)` の下にしか描かれない ——
+デスクトップ版は `setVaultUnlocked(true)` で**素通りする**が、それは App の state であって
+保管庫の鍵ではない。だから `setToken` の入口 `requireKey()` が必ず投げる。
+**直しの向きは変わらない (むしろ強くなる)**: 断りが無ければ利用者は単回使用の code を
+実際の交換で使い切ってから、**動かせない状態を名指しする断り**を受け取る。
 
-| 測った物 | 実測 |
-| --- | --- |
-| 書く所 | `SettingsPage.tsx:244` `getVault().setToken(slot.vaultKey, …)` |
-| デスクトップ版で読む物 | **0 件** |
-| カードの札 (「設定済み」) | **真** (保管庫を読むので整合する) |
-| 「削除」 | **効く** (同じ保管庫の `clearToken`) |
-| 説明文 | 「AI 経営アドバイザー / Skills / Emotions で使用」—— **デスクトップ版では偽** |
+### 次のパスの候補 (測って残す)
 
-**今日の穴は「偽の保証」だけで、消す口は在る** (だから `GoogleOAuthSection` より軽い)。
-直すには 9 スロットそれぞれに*働く道*を名乗らせる必要が在るが、**`anthropic` は `ServiceId` ではない**
-(デスクトップ版の AI の鍵は skills / emotions / business / stocks / assistant の 5 つに分かれる) ので
-1 つの操作子では名乗れない。**名指しした操作子は実在しなければならない** (パス 426 の門) ので、
-`CredentialSlot` に「デスクトップ版での行き先」を持たせる設計が要る。
+| 軸 | 実測 | 位置づけ |
+| --- | --- | --- |
+| デスクトップ版で保管庫を**読む**物 | **0 件** | 書く道も断ったので、今日この保管庫はデスクトップ版で完全に死んでいる |
+| `web-shim.ts` の `vault.getToken(` | **11 か所** | すべてブラウザ版だけ (`!window.serviceHub` の下) |
+| ブラウザ版で保管庫が施錠中のときの 9 スロット | 札は**「確認できません」**・理由つき (パス 159) | **既に閉じている** |
+| `google-access` (`ServiceId` ではない鍵) | ブラウザ版の掃除の節で消せる | パス 453 / 454 の測定どおり |
 
-**今日の面は `credentialWriteStoreCensus` の `vault-ungated` の行が両方向で持つ**
-(`vault-gated` へ直せば「実行形態を問う口を読め」と要求され、消えれば台帳から落ちる)。
-
-### `complete()` 側の門は床であって、今日の働く門ではない (正直に書く)
-
-2 段目は `authUrl` 状態でしか描かれず、`authUrl` は `start()` しか立てない ——
-つまり `start()` が断つと **2 段目へ届く道が無い**。だから `complete()` の門そのものに当たる対照は
-**鳴らない** (検査は「2 段目が出ないこと」を主張する)。床を残すのは、2 段目を
-「保存したセッションから再開する」形に変えた日 (自然な改善) に書き込みの道が再び開くからである。
-
-### 測って何も無かった軸 (記録する)
-
-- **`google-access` は掃除の節で消せる** (パス 453 の測定どおり) —— `ServiceId` ではないので
-  `credentialUseOf` が `'none'` へ倒し、`unusedStoredCredentials` が拾う。ブラウザ版では
-  `web-shim.clearToken` が id を検めないので実際に消える。**デスクトップ版の `secrets:clear` は
-  `isServiceId` で断る**が、main の保管ファイルにこの鍵が入る道は今日 1 つも無い
-  (`secrets:set` も `isServiceId` を要求し、`SERVICE_IDS` は全履歴 2 コミットで**削除が 0 件**)。
-- **デスクトップ版の「すべてのデータを削除」は保管庫も消す** (`session.clearStorageData()`)。
-  つまり孤児になった 4 本にも最後の逃げ口は在る —— ただし「1 つだけ消す」の代わりにはならない。
-- **`listConfiguredServices()` は `Object.keys(store)` を濾さない**ので、非 `ServiceId` の鍵が
-  ファイルに在れば掃除の節に行が出て、その「削除」は `isServiceId` に断られる。
-  **今日そこへ届く道は無い**ので罠であって生きた欠陥ではない (`SERVICE_IDS` から id を消した日に生きる)。
+**閉じていない物は測った範囲では無い。** 次に見るなら、同じ問い (「この実行形態で本当に働くか」) を
+**保管庫以外の面** —— `fs/fsa.ts` (File System Access API)・`library/library.ts` (IndexedDB blob)・
+`network/proxy.ts` (ブラウザ版だけの Worker 経由) —— へ当てる。どれも
+`web-shim.ts` と同じ「ブラウザ版だけ据え付く」構造を持つかを、まず**実測**すること。
 
 ## パス 453 が測って、次のパスへ残した物 (2026-09-25)
 
@@ -28860,7 +28839,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **157** モジュール / 両ビルドが import **80** / うち否定で答えられる **38**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **157** モジュール / 両ビルドが import **80** / うち否定で答えられる **39**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -28872,6 +28851,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `apiResponse` | 15 | 12 | 対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**しかし両ビルドの食い違いは無い**: renderer がこのモジュールから直接読むのは **2 種類だけ** —— `parseJsonText` (`null` を返さず**投げる**側) と `displayField` である。★ **読み手の一覧はここに書かない** —— `displayField` の呼び手は パス 417 の 2 つからパス 419 で 7 つへ増えた (保管した自由文の天井を 5 画面に通した)。数は左の列が数え、この欄は**なぜ対称なのか**だけを述べる (名前を並べると、増えた日に散文だけが古びる)。**`displayField` は `null` を返さない** —— 非文字列は空文字・長すぎる値は天井 + `…` で、「no」と言う枝そのものを持たないので両ビルドで割れる余地が無い。`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / `objectRows`) に両ビルドが届く道は `shared/api/*.ts` (cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。残りは `src/main/clients/` の 15 本が読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。つまり非対称になりうる組が今日 0 件である |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
+| `buildDestinations` | 0 | 7 | 対称 —— というより **main はこのモジュールの問いを 1 度も発しない** (実測・2026-09-25 パス 455)。母集団に入ったのは `credentialSlotUnreadNote` (`string | null`) を足したためだが、**`src/main` / `src/preload` からの直の import は 0 件**で、走査に映ったのは*閉包*の 1 辺だけ —— `shared/paperAccount.ts:69` の `import type { BuildKind }` である。**型だけの辺**なのでビルドの時点で消え、`paperAccount` はこのモジュールの値を 1 つも読まない (7 つの export すべてを走査して 0 件)。しかも `paperAccount` を読む main 側の物は**検査 1 本だけ** (`main/clients/__tests__/paperAccountReality.test.ts`) で出荷コードではない。したがって「否定で答えたあとの動作」が両ビルドで割れる道は**原理的に無い** —— このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** (renderer の 7 か所が読み、`null` は「ブラウザ版には言うことが無い」という答えである)。その答えの正しさは`pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate}.test.ts` が両方の実行形態を実際に描いて留める。 |
 | `constantTimeEquals` | 1 | 1 | 対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、両ビルドは同じ関数を別名 (`safeStateEquals`) で export する (`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。**畳む前は等価ですらなかった**: main は `Buffer.from(s,'utf8')` → `timingSafeEqual` で、UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち 4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は `classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、**「交換しない」という結論は同じ**なので非対称ではない |
 | `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ **パス 280 の訂正**: ここには「`shared/tokenInput.ts` の `hasControlChars` (複数形) は別のモジュールで、名前が似ているだけである」と書いてあった —— **それは読み足りなかった**。名前が似ているだけでなく、**同じ判定の 2 つ目の実装**だった (片方は正規表現の文字クラス・もう片方は文字ごとの走査で、どちらも C0 と DEL を見る)。しかも読む側は資格情報の入口と保管層の床である。 ★ 範囲そのものをここに書かない —— `lint:forbidden` が「共有モジュールの外で制御文字の判定を書き直した」として落とす (パス 280 で実際に落ちた。**判定について書いた散文が、判定の写しと見分けられなくなる**)。 2 つは**ほんとうに一致していた** —— BMP のスカラー値すべて + astral + lone surrogate + 貼り付けで混ざる形、計 63,504 標本で食い違い 0 件 (実測)。だから欠陥ではなかったが、`controlChars.ts` 自身の docblock が「同じ判定が 2 つ目を作りかけたので独立させた・片方だけ緩んでも気付けない」と書いている当の形だったので、`hasControlChars` は `hasControlChar` へ委譲する**1 つの実装**にした。`__tests__/controlCharSingleRule.test.ts` が振る舞いの一致と「2 つ目が戻らないこと」を両方留める。JSON の包みの中を見られないという限界 (パス 245) はそのまま残る |
 | `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、**パス 272 が書いた理由は偽だった**。 ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は**真**だが、後半は**偽** —— 実測した鎖は `main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である(到達していなければ行は存在しない)。 ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / `straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。だから main 側は否定で答える問いを発しない。`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る) |

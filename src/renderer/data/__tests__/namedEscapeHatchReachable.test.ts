@@ -440,6 +440,24 @@ describe('名指しした逃げ口は、対象をそこに持っている (パ�
   });
 });
 
+/**
+ * **補間で画面名が入る所の台帳** (2026-09-25 · パス 455)。
+ *
+ * この走査は綴りしか見られないので、`「${x}」の画面` のように**実行時に値が入る**形は
+ * ラベルと突き合わせられない。黙って外すと `「${'でたらめ'}」の画面` まで通るので、
+ * **1 件ずつ「入る値は何か」と「それを誰が確かめるか」を書かせる** (両方向)。
+ */
+const INTERPOLATED: readonly { readonly at: string; readonly heldBy: string; readonly why: string }[] = [
+  {
+    at: 'src/shared/buildDestinations.ts',
+    heldBy: 'src/renderer/pages/__tests__/credentialSlotBuildGate.test.ts',
+    why:
+      '資格情報スロットの行き先 (`CredentialSlot.desktopScreen` の 8 つ)。'
+      + '入る値が `SERVICES` のラベルであることと、その画面に働く資格情報欄が在ることを'
+      + '`heldBy` が両方向で持つ —— この走査は綴りしか見られない。',
+  },
+];
+
 describe('「X」の画面 の X は実在するラベル (パス 425)', () => {
   const LABELS = new Set(SERVICES.map((s) => s.label));
 
@@ -447,8 +465,18 @@ describe('「X」の画面 の X は実在するラベル (パス 425)', () => {
     expect(LABELS.size).toBeGreaterThanOrEqual(70);
   });
 
+  it('★ 補間の台帳は、理由と「誰が確かめるか」を持ち、その検査が実在する', () => {
+    for (const r of INTERPOLATED) {
+      expect(r.why.length, r.at).toBeGreaterThanOrEqual(30);
+      expect(() => readOriginalSource(r.heldBy), `${r.heldBy} が無い`).not.toThrow();
+      // その検査が実際にラベルと突き合わせていること (名前だけ書いて終わらせない)。
+      expect(readOriginalSource(r.heldBy), `${r.heldBy} が SERVICES を読んでいない`).toContain('SERVICES');
+    }
+  });
+
   it('★ 利用者へ出す文が名指しする画面名は、サイドバーの綴りと一致する', () => {
     const bad: string[] = [];
+    const interpolated: string[] = [];
     let seen = 0;
     for (const dir of ['src/renderer/data', 'src/renderer/pages', 'src/shared']) {
       for (const file of walk(dir)) {
@@ -456,6 +484,11 @@ describe('「X」の画面 の X は実在するラベル (パス 425)', () => {
         code.split('\n').forEach((line, i) => {
           for (const m of line.matchAll(SCREEN_RE)) {
             seen += 1;
+            // 補間は綴りではない —— 台帳に在れば飛ばし、無ければ下の ★ が鳴らす。
+            if (m[1]!.includes('${')) {
+              interpolated.push(file);
+              continue;
+            }
             if (!LABELS.has(m[1]!)) bad.push(`${file}:${i + 1} 「${m[1]}」`);
           }
         });
@@ -463,6 +496,10 @@ describe('「X」の画面 の X は実在するラベル (パス 425)', () => {
     }
     expect(seen, '走査が 1 件も見つけていない (針が死んでいる)').toBeGreaterThanOrEqual(4);
     expect(bad, 'サイドバーに無い綴りで画面を指さしている').toEqual([]);
+    // **両方向** —— 補間の在るファイルは台帳に在り、台帳の行は実物に在る。
+    const known = new Set(INTERPOLATED.map((r) => r.at));
+    expect([...new Set(interpolated)].filter((f) => !known.has(f)), '補間で画面を指さすのに台帳に無い').toEqual([]);
+    expect(INTERPOLATED.filter((r) => !interpolated.includes(r.at)).map((r) => r.at), '台帳に在るのに走査に無い').toEqual([]);
   });
 
   it('★ 針は標本に当たる (綴り違いで黙る検査でないこと)', () => {

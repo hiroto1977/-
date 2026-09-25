@@ -48,6 +48,14 @@ type Kind =
   | 'screen-label'
   /** このアプリの外の UI (第三者の管理画面)。 */
   | 'third-party'
+  /**
+   * **サービスの画面そのものが持つ操作子** (2026-09-25 · パス 455)。
+   * `StatusBar` の `tokenSetup` のように、部品ではなく**画面のファイル**が
+   * 綴りを持つ形。綴りを持つ画面が 1 枚以上在り、**その画面が `services.ts` から
+   * 辿れる** (= 利用者が行ける) ことを要求する —— `other-screen-control` の
+   * 「載せている画面が在るか」は、載せているのが画面自身のときは問えない。
+   */
+  | 'service-page-control'
   /** 実行時に値が入るので綴りが固定されない。 */
   | 'runtime-label';
 
@@ -113,6 +121,24 @@ const LEDGER: readonly Row[] = [
   },
   { name: 'Access token', kind: 'third-party', why: 'Azure ポータル側のタブで、このアプリの画面ではない —— 実物の綴りを当てに行けない (相手が変えたら文も古びるが、それは相手の UI の話である)。' },
   { name: '{this.props.label}', kind: 'runtime-label', why: '描画の時点で画面のラベルが入る補間で、綴りは固定されない (入る値は `SERVICES` のラベルそのもの)。' },
+  {
+    name: 'Anthropic API キー',
+    kind: 'service-page-control',
+    why:
+      'デスクトップ版で AI の鍵を入れる欄 (2026-09-25 · パス 455)。設定画面の `anthropic` スロットは'
+      + '保管庫 (ブラウザ版だけが読む) へ書くので、デスクトップ版では断って働く道を名指しする —— '
+      + 'ところが `anthropic` は `ServiceId` ではなく、デスクトップ版の鍵は skills / emotions / '
+      + 'business / stocks / assistant の**サービスごとのスロット**に分かれるので、1 枚の画面では'
+      + '名乗れない。だから「使う画面それぞれの欄」と述べ、下の ★ がその綴りを持つ画面を数える。',
+  },
+  {
+    name: '${screen}',
+    kind: 'runtime-label',
+    why:
+      'スロットごとの行き先 (2026-09-25 · パス 455)。入る値は `CredentialSlot.desktopScreen` の 8 つで、'
+      + '**それが `SERVICES` のラベルであること**と**その画面に働く資格情報欄が在ること**は'
+      + '`pages/__tests__/credentialSlotBuildGate.test.ts` が両方向で持つ (この走査は綴りしか見られない)。',
+  },
 ];
 
 /** 注記を落として**コードだけ**にする (**行番号は保つ**)。文字列は落とさない —— 数えたいのは利用者が読む文である。 */
@@ -244,6 +270,26 @@ describe('名指しした操作子は、その綴りで実在する (パス 426)
         withoutMentions(readOriginalSource(r.renderedIn!)),
         `「${r.name}」を名指しするが、${r.renderedIn} がその綴りを描いていない`,
       ).toContain(r.name);
+    }
+  });
+
+  it('★ service-page-control は、綴りを持つ画面が在り、そこへ利用者が行ける', () => {
+    const rows = LEDGER.filter((r) => r.kind === 'service-page-control');
+    expect(rows.length).toBeGreaterThanOrEqual(1);
+    const services = readOriginalSource('src/renderer/services.ts');
+    for (const r of rows) {
+      const pages = walk('src/renderer/pages').filter(
+        (f) => f.endsWith('.tsx') && withoutMentions(readOriginalSource(f)).includes(r.name),
+      );
+      expect(pages.length, `「${r.name}」を描く画面が 0 枚`).toBeGreaterThanOrEqual(1);
+      for (const f of pages) {
+        // その画面が `services.ts` から辿れる (= サイドバーから行ける)。
+        const base = f.split('/').pop()!.replace(/\.tsx$/, '');
+        expect(
+          services.includes(`pages/${base}`),
+          `${base} は services.ts から辿れない —— 名指ししても利用者が行けない`,
+        ).toBe(true);
+      }
     }
   });
 

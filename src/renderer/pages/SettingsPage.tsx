@@ -20,7 +20,7 @@ import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
 import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
 import { isBrowserBuild } from '../runtimeMode';
 import { useBuildKind } from '../hooks/useBuildKind';
-import { pasteOAuthUnreadNote } from '../../shared/buildDestinations';
+import { pasteOAuthUnreadNote, credentialSlotUnreadNote } from '../../shared/buildDestinations';
 import { announceLockToOtherTabs, lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
@@ -80,6 +80,18 @@ interface CredentialSlot {
   placeholder: string;
   /** リファレンス URL (任意)。クリックで新規タブに飛ぶ。 */
   helpUrl?: string;
+  /**
+   * **デスクトップ版でこの鍵が効く画面の `SERVICES` ラベル** (パス 455)。
+   *
+   * この行は保管庫 (= ブラウザ版だけが読む) へ書くので、デスクトップ版では
+   * 1 枚も保存できない (保管庫が施錠されたままで解錠の操作子が無い)。
+   * 断りが利用者を送る先がここで、**省くと「どこで設定するか」を言えない**。
+   *
+   * 省略してよいのは `anthropic` だけ —— `ServiceId` ではなく、
+   * デスクトップ版の AI 鍵は使うサービスごとのスロットに分かれるので
+   * 1 枚の画面では名乗れない (`credentialSlotUnreadNote` がその枝を持つ)。
+   */
+  desktopScreen?: string;
 }
 
 const SLOTS: readonly CredentialSlot[] = [
@@ -98,6 +110,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'GitHub サービスで使用。github.com/settings/tokens で発行 (ghp_ で始まる)。',
     placeholder: 'ghp_...',
     helpUrl: 'https://github.com/settings/tokens',
+    desktopScreen: 'GitHub',
   },
   {
     vaultKey: 'notion',
@@ -106,6 +119,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Notion サービスで使用。notion.so/profile/integrations で発行 (secret_ で始まる)。',
     placeholder: 'secret_...',
     helpUrl: 'https://www.notion.so/profile/integrations',
+    desktopScreen: 'Notion',
   },
   {
     vaultKey: 'slack',
@@ -114,6 +128,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Slack サービスで使用。api.slack.com/apps で発行 (xoxp- で始まる)。',
     placeholder: 'xoxp-...',
     helpUrl: 'https://api.slack.com/apps',
+    desktopScreen: 'Slack',
   },
   {
     vaultKey: 'wordpress',
@@ -121,6 +136,7 @@ const SLOTS: readonly CredentialSlot[] = [
     label: 'WordPress.com Bearer',
     description: 'WordPress.com サービスで使用。',
     placeholder: 'Bearer token',
+    desktopScreen: 'WordPress.com',
   },
   {
     vaultKey: 'atlassian',
@@ -130,6 +146,7 @@ const SLOTS: readonly CredentialSlot[] = [
       'Atlassian (Jira) 課題作成で使用。JSON 形式で保存: {"email":"you@example.com","token":"<APIトークン>","site":"https://your-team.atlassian.net"}。id.atlassian.com で API トークンを発行。',
     placeholder: '{"email":"...","token":"...","site":"https://...atlassian.net"}',
     helpUrl: 'https://id.atlassian.com/manage-profile/security/api-tokens',
+    desktopScreen: 'Atlassian',
   },
   {
     vaultKey: 'canva',
@@ -138,6 +155,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Canva フォルダ作成で使用。Canva Developers で Connect API のアクセストークンを発行。',
     placeholder: 'Bearer token',
     helpUrl: 'https://www.canva.com/developers/',
+    desktopScreen: 'Canva',
   },
   {
     vaultKey: 'cloudflare',
@@ -146,6 +164,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Cloudflare DNS / キャッシュ操作で使用。dash.cloudflare.com の My Profile → API Tokens で Zone 編集権限のトークンを発行。',
     placeholder: 'Cloudflare API token',
     helpUrl: 'https://dash.cloudflare.com/profile/api-tokens',
+    desktopScreen: 'Cloudflare',
   },
   {
     vaultKey: 'security',
@@ -155,6 +174,7 @@ const SLOTS: readonly CredentialSlot[] = [
       'メール漏洩チェック (HIBP) と URL スキャン (VirusTotal) で使用。JSON 形式で保存: {"hibp":"<HIBPキー>","vt":"<VirusTotalキー>"}。どちらか一方だけでも可。',
     placeholder: '{"hibp":"...","vt":"..."}',
     helpUrl: 'https://haveibeenpwned.com/API/Key',
+    desktopScreen: 'Security',
   },
 ];
 
@@ -167,6 +187,24 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
   const [err, setErr] = useState<string | null>(null);
   /** 一覧が読めなかった理由。**「未設定」と混ぜない** (パス 159)。 */
   const [unreadable, setUnreadable] = useState<string | null>(null);
+  /*
+   * **この実行形態でこの欄が働くか** (2026-09-25 · パス 455)。
+   *
+   * 保管庫を読む出荷コードは `web-shim.ts` だけで、その shim は
+   * ブラウザ版にしか据え付かない。さらにデスクトップ版の保管庫は
+   * **施錠されたままで解錠する操作子が無い** (`unlock()` を呼ぶのは
+   * `LockScreen` だけ・その画面は `browserMode` の下にしか描かれない) ので、
+   * `setToken` の入口 `requireKey()` が必ず投げる。実測すると利用者は
+   * 本物の API キーを貼ってから「Vault がロックされています」を受け取り、
+   * その状態を動かす手がどこにも無い (パス 388 の家系)。
+   *
+   * **分からないあいだ (`null`) は断らない。** 既定を `'desktop'` へ倒すと
+   * 橋の `getVersion` が一瞬遅れただけで、ブラウザ版の**唯一の**
+   * 資格情報入力欄が死ぬ —— 間違って断るほうが、1 フレーム遅れて断るより
+   * 害が大きい (同じ判断が `useBuildKind` の docblock に在る)。
+   */
+  const buildKind = useBuildKind();
+  const unread = buildKind === null ? null : credentialSlotUnreadNote(buildKind, slot.desktopScreen);
   /*
    * **貼ったトークンを黙って切らない** (2026-09-13 · パス 196)。
    *
@@ -209,6 +247,14 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
 
   async function save() {
     setErr(null);
+    // **床。** 下の描画がこの実行形態では「設定する」を出さないので今日ここへ
+    // 届く道は無いが、欄を別の入口から開けるようにした日に書き込みが復活する。
+    // 断りは保管庫の内部の文言 (`Vault がロックされています`) ではなく、
+    // **働く道を名指しする文**にする。
+    if (unread !== null) {
+      setErr(unread);
+      return;
+    }
     /*
      * **同じ規則を通す。**
      *
@@ -381,9 +427,24 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
             </button>
           ) : (
             <>
-              <button type="button" onClick={() => setEditing(true)} style={btn(configured ? undefined : 'accent')}>
-                {configured ? '変更' : '設定する'}
-              </button>
+              {/*
+                **働かない実行形態では、秘密を貼らせない** (パス 455)。
+                ここで「設定する」を出すと、利用者は本物の API キーを
+                貼り付けた**後で**断られる。断りは押す前に言う
+                (パス 453 で削除の確認について下したのと同じ判断)。
+              */}
+              {unread === null && (
+                <button type="button" onClick={() => setEditing(true)} style={btn(configured ? undefined : 'accent')}>
+                  {configured ? '変更' : '設定する'}
+                </button>
+              )}
+              {/*
+                **「削除」は実行形態で隠さない** (法則 `escape-hatch-stays-open`)。
+                デスクトップ版で保管庫に値が入る道は今日 1 つも無い (書けないので)
+                が、隠す条件を実行形態にすると、書ける道が 1 つ生えた日に
+                **消す口だけが消える** —— パス 453 / 454 で閉じた当の形である。
+                条件は今までどおり「値が在るか」だけにする。
+              */}
               {configured && (
                 <button type="button" onClick={clear} disabled={busy} style={{ ...btn(), color: 'var(--danger)' }}>
                   削除
@@ -394,6 +455,15 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
         </div>
       )}
 
+      {unread !== null && (
+        <div
+          role="alert"
+          data-credential-unread={slot.vaultKey}
+          style={{ fontSize: 11, color: 'var(--warning)', lineHeight: 1.6 }}
+        >
+          ⚠ {unread}
+        </div>
+      )}
       {unreadable !== null && (
         <div
           role="alert"
