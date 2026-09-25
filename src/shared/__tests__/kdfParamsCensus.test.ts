@@ -28,6 +28,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import { PBKDF2_HASH, PBKDF2_ITERATIONS, kdfLabel } from '../cryptoParams';
 
 const REPO = join(__dirname, '..', '..', '..');
@@ -55,9 +56,7 @@ function sitesMatching(re: RegExp): Site[] {
   const out: Site[] = [];
   for (const abs of shippedSources()) {
     const file = relative(REPO, abs).split('\\').join('/');
-    readOriginalSource(abs).split('\n').forEach((line, i) => {
-      const t = line.trim();
-      if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return;
+    stripComments(readOriginalSource(abs)).split('\n').forEach((line, i) => {
       if (re.test(line)) out.push({ file, line: i + 1, text: line.trim() });
     });
   }

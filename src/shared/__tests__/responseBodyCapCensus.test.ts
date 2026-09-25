@@ -43,6 +43,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, readFailureBody } from '../httpLimits';
 
 const REPO = join(__dirname, '..', '..', '..');
@@ -69,12 +70,10 @@ export function sitesMatching(files: readonly string[], needle: RegExp): Site[] 
   const out: Site[] = [];
   for (const abs of files) {
     const file = relative(REPO, abs).split('\\').join('/');
-    readOriginalSource(abs)
+    stripComments(readOriginalSource(abs))
       .split('\n')
       .forEach((line, i) => {
-        const t = line.trim();
-        if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return;
-        if (needle.test(line)) out.push({ file, line: i + 1, text: t });
+        if (needle.test(line)) out.push({ file, line: i + 1, text: line.trim() });
       });
   }
   return out;

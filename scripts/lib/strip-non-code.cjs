@@ -28,10 +28,25 @@
  *   今までの振る舞いへ倒れるので、新しい飲み込みは生まれない。
  * - `opts.keepQuoteChars` —— 引用符そのものは残す (字面の境界が消えると
  *   `new Date('x').getHours()` のような形が繋がって見える · パス 188)。
+ *
+ * ## `stripComments` —— 注記だけを落とす (2026-09-25 · パス 463)
+ *
+ * **文字列・テンプレート・正規表現の中身は残す。** 探している綴りがリテラルの中に
+ * 在る走査 (「この行は `readFileSync(` を呼ぶか」「この画面は `'#ef4444'` を直書き
+ * するか」) は `stripNonCode` では答えを失う —— あちらは中身を落とすので、
+ * 針そのものが消えて**どの入力でも通る走査**になる。
+ *
+ * 走査器は 1 つで、`keepLiterals` で分ける。**`.ts` 側の `stripComments` と
+ * 1 字も違わない** ことを `src/shared/__tests__/stripNonCodeParity.test.ts` が
+ * 同じ標本を両モードで通して見る。
  */
 
-/** @param {string} src  @param {{keepQuoteChars?: boolean}} [opts] */
-function stripNonCode(src, opts = {}) {
+/**
+ * 走査器の本体。`keepLiterals` ならリテラルの**中身を残す** (= `stripComments`)。
+ * @param {string} src  @param {{keepQuoteChars?: boolean, keepLiterals?: boolean}} opts
+ */
+function scan(src, opts) {
+  const keep = opts.keepLiterals === true;
   let out = '';
   let i = 0;
   let mode = 'code';
@@ -44,14 +59,15 @@ function stripNonCode(src, opts = {}) {
     if (mode === 'code') {
       if (two === '//') { mode = 'line'; i += 2; continue; }
       if (two === '/*') { mode = 'block'; i += 2; continue; }
-      if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; i += 1; continue; }
-      if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; i += 1; continue; }
-      if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; i += 1; continue; }
+      if (src[i] === "'") { stack.push({ mode, depth }); mode = 'sq'; if (keep) out += src[i]; i += 1; continue; }
+      if (src[i] === '"') { stack.push({ mode, depth }); mode = 'dq'; if (keep) out += src[i]; i += 1; continue; }
+      if (src[i] === '`') { stack.push({ mode, depth }); mode = 'tpl'; if (keep) out += src[i]; i += 1; continue; }
       if (src[i] === '/' && startsRegex(out)) {
         const end = skipRegex(src, i);
         if (end > i) {
           // 正規表現のリテラル —— 中身は落とし、区切りの空白だけ出す (パス 451)。
-          out += ' ';
+          // `keepLiterals` ならそのまま出す —— 探している綴りが中に在りうる。
+          out += keep ? src.slice(i, end) : ' ';
           i = end;
           continue;
         }
@@ -60,7 +76,7 @@ function stripNonCode(src, opts = {}) {
       if (src[i] === '}') {
         const frame = depth === 0 ? stack.pop() : undefined;
         if (frame !== undefined) {
-          out += ' ';
+          out += keep ? '}' : ' ';
           mode = frame.mode;
           depth = frame.depth;
         } else {
@@ -86,10 +102,10 @@ function stripNonCode(src, opts = {}) {
       continue;
     }
     // 文字列の中: 改行だけ残して行番号を保つ。エスケープは 1 文字飛ばす。
-    if (src[i] === '\\') { i += 2; continue; }
+    if (src[i] === '\\') { if (keep) out += src.slice(i, i + 2); i += 2; continue; }
     if (mode === 'tpl' && two === '${') {
       // **補間は式** —— code として出す (区切りの空白つき)。
-      out += ' ';
+      out += keep ? '${' : ' ';
       stack.push({ mode, depth });
       mode = 'code';
       depth = 0;
@@ -97,12 +113,13 @@ function stripNonCode(src, opts = {}) {
       continue;
     }
     if ((mode === 'sq' && src[i] === "'") || (mode === 'dq' && src[i] === '"') || (mode === 'tpl' && src[i] === '`')) {
-      if (opts.keepQuoteChars === true) out += `${src[i]}${src[i]}`;
+      if (keep) out += src[i];
+      else if (opts.keepQuoteChars === true) out += `${src[i]}${src[i]}`;
       const frame = stack.pop();
       mode = frame === undefined ? 'code' : frame.mode;
       if (frame !== undefined) depth = frame.depth;
-    } else if (src[i] === '\n') {
-      out += '\n';
+    } else if (keep || src[i] === '\n') {
+      out += src[i];
     }
     i += 1;
   }
@@ -166,4 +183,16 @@ function skipRegex(src, start) {
   return start;
 }
 
-module.exports = { stripNonCode };
+/** 中身は落とす (文字列・テンプレート・正規表現)。 */
+/** @param {string} src  @param {{keepQuoteChars?: boolean}} [opts] */
+function stripNonCode(src, opts = {}) {
+  return scan(src, { keepQuoteChars: opts.keepQuoteChars === true });
+}
+
+/** 注記だけを落とす —— リテラルの中身は残す (上の docblock に理由)。 */
+/** @param {string} src */
+function stripComments(src) {
+  return scan(src, { keepLiterals: true });
+}
+
+module.exports = { stripNonCode, stripComments };

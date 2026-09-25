@@ -48,10 +48,7 @@ const MIN_CHARS = 25;
  * この検査でも 1 度踏んだ (`WordPressPage` の注記が直す前の文を引用しているため)。
  */
 function code(src: string): string {
-  return stripComments(src)
-    .split('\n')
-    .map((l) => (/^\s*\/\//.test(l) ? '' : l))
-    .join('\n');
+  return stripComments(src);
 }
 
 export function staticProse(): StaticProse[] {

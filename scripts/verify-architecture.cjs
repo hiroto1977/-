@@ -29,6 +29,7 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 // 「何が送信か」の名前は lint-network-targets と 1 つの一覧を共有する。§3.3 の照合が
 // 別の一覧を持てば、必ずどちらかに無い名前が出る (2026-09-09 に 4 つ抜けていた)。
 const { NETWORK_CALL_NAMES } = require('./lint-network-targets.cjs');
@@ -381,11 +382,6 @@ function parseDiagramRef(line) {
  * **見落とす向きではなく厳しい向きに外れる** —— 拾いすぎれば「散文だけ」と
  * 判定されて鳴るので、人が見て直すことになる)。
  */
-function isProseLine(line) {
-  const t = line.trim();
-  return t === '' || t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
-}
-
 /**
  * 記号が**コードとして**その行に現れるか (パス 292)。
  *
@@ -409,7 +405,6 @@ function isProseLine(line) {
  * (= 宣言が在る物) なので、そこだけを締める。母集団の性質が違えば規則も違う。
  */
 function symbolAppearsAsCode(line, sym) {
-  if (isProseLine(line)) return false;
   // 引用符の中身を落としてから探す (URL の末尾が記号名と一致する形を弾く)。
   return line.replace(/'[^']*'|"[^"]*"|`[^`]*`/g, '').includes(sym);
 }
@@ -435,6 +430,10 @@ function verifyDiagramRefs(archText) {
     }
 
     const srcArr = readFileSafe(refPath).split('\n');
+    // **注記は共有の字句解析器で落としてから**記号を探す (行番号は保たれる)。
+    // 行頭で見る述語では `foo(); // setToken(...)` のような**行末の注記**が
+    // 宣言として数えられた (パス 292 が閉じた形の、行末での現れ · パス 463)。
+    const codeArr = stripComments(readFileSafe(refPath)).split('\n');
     if (ref.line < 1 || ref.line > srcArr.length) {
       failures.push({
         archLine: lineNo,
@@ -448,11 +447,11 @@ function verifyDiagramRefs(archText) {
     const hi = Math.min(srcArr.length, ref.line + SYMBOL_WINDOW);
     // **コードとしての出現**を要求する (パス 292) —— docblock の使用例や
     // URL リテラルの末尾一致では満たされない。
-    const inWindow = srcArr
+    const inWindow = codeArr
       .slice(lo - 1, hi)
       .some((l) => symbolAppearsAsCode(l, ref.symbol));
     if (!inWindow) {
-      const actual = srcArr
+      const actual = codeArr
         .map((l, i) => (symbolAppearsAsCode(l, ref.symbol) ? i + 1 : 0))
         .filter(Boolean);
       // 散文だけで満たされていた場合は、それを名指しする —— 「見つからない」と
@@ -1250,6 +1249,8 @@ function selfTest() {
     return 1;
   }
   const srcLines = srcText.split('\n');
+  // 記号の規則は**注記を落とした本文**に当てる (行番号は保たれる)。
+  const srcCode = stripComments(srcText).split('\n');
   const total = srcLines.length;
   const symLine = srcLines.findIndex((l) => l.includes('SERVICE_IDS')) + 1;
 
@@ -1290,7 +1291,7 @@ function selfTest() {
    * だから `once` を締めると囲まれた側の標本が作れなくなる ——
    * **規則が分かれたのだから標本も分ける**。
    */
-  const onceCode = onceAll.find((x) => symbolAppearsAsCode(srcLines[x.at[0] - 1], x.sym));
+  const onceCode = onceAll.find((x) => symbolAppearsAsCode(srcCode[x.at[0] - 1], x.sym));
   if (!onceCode) {
     console.error(
       `❌ self-test: ${REF} に「コードの行に 1 度だけ現れる」識別子が無く、`
@@ -2017,17 +2018,20 @@ const DESTINATION_FIELD = /\bdefaultBaseUrl\s*:/;
 const HOST_LITERAL = /https?:\/\/([A-Za-z0-9._-]+)/g;
 const URL_CONST = /\bconst ([A-Z][A-Z0-9_]*)\s*(?::\s*string)?\s*=\s*['"`]https?:\/\/([A-Za-z0-9._-]+)/;
 
-/** コメントを落とす (注記の中の URL で鳴らさない)。行数は保つ —— 文脈の窓が行で数えるため。 */
-function stripComments(src) {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .map((l) => (/^\s*(\/\/|\*)/.test(l) ? '' : l));
+/**
+ * コメントを落とした**行の配列**。行数は保つ —— 文脈の窓が行で数えるため。
+ *
+ * 2026-09-25 (パス 463) まで自前の正規表現で、`globSync(['src/main/**' + '/*.ts'])`
+ * のような**文字列の中の `/**`** から注記が始まったことにして次の閉じまで食っていた
+ * (パス 462 の実測で 42 本 / 1,274 行)。共有の字句解析器へ寄せた。
+ */
+function codeLines(src) {
+  return stripComments(src).split('\n');
 }
 
 /** 1 ファイル分の宛先。`mode` は `'all'` (字面を全部) か `'send'` (送信文脈だけ)。 */
 function egressHostsInFile(text, mode) {
-  const code = stripComments(text);
+  const code = codeLines(text);
   const hosts = new Set();
   if (mode === 'all') {
     for (const m of code.join('\n').matchAll(HOST_LITERAL)) hosts.add(m[1]);
@@ -2204,10 +2208,8 @@ function verifyActionPayloads(archText) {
       continue;
     }
     checked += 1;
-    const body = im[1]
-      .split('\n')
-      .filter((l) => !l.trim().startsWith('//'))
-      .join('\n');
+    // 注記は共有の字句解析器で落とす (行末の注記も落ちる)。
+    const body = stripComments(im[1]);
     /*
      * **`readonly` を飛ばしてから欄名を取る。**
      *

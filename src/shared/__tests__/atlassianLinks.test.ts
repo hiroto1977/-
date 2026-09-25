@@ -65,10 +65,7 @@ describe('jiraBrowseUrl (パス 181)', () => {
  * この module 自身が掛かることを先に確かめる (綴りが変わったら鳴らなくなる)。
  */
 function code(src: string): string {
-  return stripComments(src)
-    .split('\n')
-    .map((l) => (/^\s*\/\//.test(l) ? '' : l))
-    .join('\n');
+  return stripComments(src);
 }
 
 /** `src` 配下の .ts / .tsx を再帰で読む (検査は除く)。 */

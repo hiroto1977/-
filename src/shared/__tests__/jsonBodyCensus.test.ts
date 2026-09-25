@@ -22,6 +22,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import { notJsonMessage, parseJsonText } from '../apiResponse';
 
 const REPO = join(__dirname, '..', '..', '..');
@@ -37,9 +38,7 @@ export function jsonCallSites(files: readonly string[]): { file: string; line: n
   const out: { file: string; line: number }[] = [];
   for (const abs of files) {
     const file = relative(REPO, abs).split('\\').join('/');
-    readOriginalSource(abs).split('\n').forEach((line, i) => {
-      const t = line.trim();
-      if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return;
+    stripComments(readOriginalSource(abs)).split('\n').forEach((line, i) => {
       if (JSON_CALL.test(line)) out.push({ file, line: i + 1 });
     });
   }

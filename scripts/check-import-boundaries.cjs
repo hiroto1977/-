@@ -35,6 +35,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(REPO_ROOT, 'src');
@@ -163,16 +164,13 @@ const IMPORT_RE = /^\s*import\s+(?<typeOnly>type\s+)?(?:[^'"]+\s+from\s+)?['"](?
  */
 const RELATIVE_REQUIRE_RE = /\brequire\s*\(\s*['"](\.[^'"]*)['"]\s*\)/g;
 
-function isCommentLineForRequire(line) {
-  const t = line.trim();
-  return t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
-}
-
 function relativeRequires(text) {
   const out = [];
-  const lines = String(text).split('\n');
+  // 注記は共有の字句解析器で落とす (行番号は保たれる)。行頭が `//` かで見ると
+  // `const x = 1; // require('./y')` のような**行末の注記**が code として残った
+  // (法則 `mention-vs-declaration` · パス 463)。
+  const lines = stripComments(String(text)).split('\n');
   for (let i = 0; i < lines.length; i += 1) {
-    if (isCommentLineForRequire(lines[i])) continue;
     RELATIVE_REQUIRE_RE.lastIndex = 0;
     let m;
     while ((m = RELATIVE_REQUIRE_RE.exec(lines[i])) !== null) out.push({ line: i + 1, spec: m[1] });
@@ -187,7 +185,12 @@ const RELATIVE_REQUIRE_CASES = [
   ['npm パッケージは見ない (バンドラが解決する)', "const { app } = require('electron');", 0],
   ['node: 組み込みも見ない', "const fs = require('node:fs');", 0],
   ['行コメントは見ない (説明に綴りが出るため)', "  // const x = require('../y');", 0],
-  ['ブロックコメントも見ない', "   * require('../y') と書くと残る", 0],
+  // **標本は走査に掛ける物と同じ形**で —— 実物はファイル全体を渡すので、`*` の
+  // 続き行は必ずブロック注記の内側に在る (裸の `*` 行は掛け算の続きで、code として
+  // 残るのが正しい · 2026-09-25 パス 463)。
+  ['ブロックコメントも見ない', "/**\n * require('../y') と書くと残る\n */\nconst a = 1;", 0],
+  // **行末の注記**も落ちる —— 行頭で見る述語ではここが code として残っていた。
+  ['行末のコメントも見ない', "const a = 1; // require('../y')", 0],
   ['import 文は対象外 (バンドラが書き換える)', "import { x } from '../../shared/serviceId';", 0],
 ];
 

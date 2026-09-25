@@ -33,6 +33,7 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 // 走査対象。**ここに書き忘れると、そのディレクトリは丸ごと見えない。**
@@ -636,14 +637,16 @@ function collect() {
 /** 送り先が丸ごと変数の送信を、1 ファイル分だけ集める（BARE_SEND の説明を参照）。 */
 function bareSendFindings(rel, lines) {
   const found = [];
+  // **注記は共有の字句解析器で落とす** (行番号は保たれる)。行頭が `//` かで
+  // 見ると `send(x); // f(a.b)` のような**行末の注記**が code として残った
+  // (法則 `mention-vs-declaration` · パス 463)。文字列の中身は残るので、
+  // 学術コーパスの本文を拾わない床は下の引用符の判定が引き続き持つ。
+  const code = stripComments(lines.join('\n')).split('\n');
   {
     {
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        // 文字列 / コメントの中の `f(a.b, …)` を拾わない（学術コーパスの
-        // 本文に `f(A,M,O)` のような記法が実在する）。
+      for (let i = 0; i < code.length; i++) {
+        const line = code[i];
         const trimmed = line.trim();
-        if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
         // **1 行だけ見ると、この repo の書き方の大半を取りこぼす。**
         //
         //   1. 長い呼び出しは prettier が引数を次の行へ送る:
@@ -654,7 +657,7 @@ function bareSendFindings(rel, lines) {
         // どちらも実測で素通りした (2026-08-23)。次の行までを 1 つに繋ぎ、
         // 型引数を落としてから当てる。名前が今の行に在るときだけ数える
         // ので、次の行を見た分の二重計上は起きない。
-        const joined = `${line} ${lines[i + 1] ?? ''}`.replace(/<[^<>]*>/g, '');
+        const joined = `${line} ${code[i + 1] ?? ''}`.replace(/<[^<>]*>/g, '');
         const m = BARE_SEND.exec(joined);
         if (!m) continue;
         if (m.index >= line.replace(/<[^<>]*>/g, '').length) continue;
@@ -687,19 +690,12 @@ function collectBareSends() {
  */
 function outsideSendFindings(rel, lines) {
   const found = [];
-  let inBlock = false;
-  for (let i = 0; i < lines.length; i++) {
-    const trimmed = lines[i].trim();
-    if (inBlock) {
-      if (trimmed.includes('*/')) inBlock = false;
-      continue;
-    }
-    if (trimmed.startsWith('/*')) {
-      if (!trimmed.includes('*/')) inBlock = true;
-      continue;
-    }
-    if (trimmed.startsWith('//') || trimmed.startsWith('*')) continue;
-    const code = lines[i].replace(/'(?:[^'\\]|\\.)*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
+  // 注記は共有の字句解析器で落とす (行番号は保たれる)。手書きのブロック追跡では
+  // **行末の注記**が code として残り、閉じ方によっては範囲もずれた (パス 463)。
+  const stripped = stripComments(lines.join('\n')).split('\n');
+  for (let i = 0; i < stripped.length; i++) {
+    const trimmed = stripped[i].trim();
+    const code = stripped[i].replace(/'(?:[^'\\]|\\.)*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
     if (!OUTSIDE_SEND.test(code)) continue;
     found.push({ file: rel, line: i + 1, call: trimmed.slice(0, 140) });
   }

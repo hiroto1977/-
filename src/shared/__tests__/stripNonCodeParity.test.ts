@@ -55,7 +55,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
-import { stripNonCode } from './stripNonCode';
+import { stripComments, stripNonCode } from './stripNonCode';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
 
 const REPO = path.resolve(__dirname, '../../..');
@@ -75,16 +75,18 @@ const COPIES: readonly { readonly file: string; readonly why: string }[] = [
 interface Impl {
   readonly file: string;
   readonly fn: (src: string, opts?: { keepQuoteChars?: boolean }) => string;
+  /** 注記だけを落とす側 (リテラルの中身は残す · パス 463 で `.cjs` にも足した)。 */
+  readonly comments: (src: string) => string;
 }
 
 function loadCopies(): Impl[] {
+  const cjs = require(path.join(REPO, 'scripts/lib/strip-non-code.cjs')) as {
+    stripNonCode: (s: string, o?: { keepQuoteChars?: boolean }) => string;
+    stripComments: (s: string) => string;
+  };
   return [
-    { file: 'src/shared/__tests__/stripNonCode.ts', fn: stripNonCode },
-    {
-      file: 'scripts/lib/strip-non-code.cjs',
-      fn: (require(path.join(REPO, 'scripts/lib/strip-non-code.cjs')) as { stripNonCode: (s: string, o?: { keepQuoteChars?: boolean }) => string })
-        .stripNonCode,
-    },
+    { file: 'src/shared/__tests__/stripNonCode.ts', fn: stripNonCode, comments: stripComments },
+    { file: 'scripts/lib/strip-non-code.cjs', fn: cjs.stripNonCode, comments: cjs.stripComments },
   ];
 }
 
@@ -98,6 +100,21 @@ function loadCopies(): Impl[] {
 const DECLARATION = /\bfunction stripNonCode\s*\(/;
 
 /**
+ * **注記だけを落とす側の宣言の針** (2026-09-25 · パス 463)。
+ *
+ * ★ **これが無いあいだ、3 つ目の実装が在っても・戻しても誰も鳴らなかった。**
+ * `scripts/shared-judgement-census.cjs` は `function stripComments(` を
+ * 手書きの状態機械として持っており (正規表現リテラルの扱いが無く、
+ * `/^(["'])$/` で文字列モードへ入って次の引用符まで飲む —— パス 451 が
+ * `stripNonCode` で閉じた当の欠陥)、上の針は `stripNonCode` しか見ないので
+ * 母集団の外に居た。実測で共有の実装と **121 本 / 4,073 行**の食い違い。
+ *
+ * ★ この行も標本である —— 綴りを注記の中に置いてあるので、注記を落とさない
+ * 針ならこのファイルが母集団に入る。
+ */
+const DECLARATION_COMMENTS = /\bfunction stripComments\s*\(/;
+
+/**
  * この算法を宣言しているファイルを**再帰**で集める。
  *
  * ★ **直下だけを歩く形だと `scripts/lib/` が死角になる** (パス 452 で実測) ——
@@ -108,7 +125,7 @@ const DECLARATION = /\bfunction stripNonCode\s*\(/;
  * 数えられて 2 件のはずが 3 件になった (法則 `mention-vs-declaration`)。
  * つまり**この道具を自分自身に当てるのが正しい形**である。
  */
-function declarationsUnder(roots: readonly string[]): string[] {
+function declarationsUnder(roots: readonly string[], needle: RegExp = DECLARATION): string[] {
   const found: string[] = [];
   const walk = (rel: string): void => {
     for (const e of readOriginalDirEntries(path.join(REPO, rel))) {
@@ -119,7 +136,7 @@ function declarationsUnder(roots: readonly string[]): string[] {
       }
       if (!/\.(?:ts|cjs)$/.test(e.name)) continue;
       const code = stripNonCode(readOriginalSource(path.join(REPO, child)));
-      if (DECLARATION.test(code)) found.push(child);
+      if (needle.test(code)) found.push(child);
     }
   };
   for (const r of roots) walk(r);
@@ -186,6 +203,18 @@ describe('stripNonCode の写し — 2 つが同じ答えを返す (パス 418 /
     for (const c of COPIES) expect(c.why.length, `${c.file} の理由が空`).toBeGreaterThan(20);
   });
 
+  it('★ 注記だけを落とす側の宣言も 2 つだけ (3 つ目が戻ったら鳴る · パス 463)', () => {
+    const found = declarationsUnder(['src/shared/__tests__', 'scripts'], DECLARATION_COMMENTS);
+    expect(found.sort()).toEqual(COPIES.map((c) => c.file).sort());
+    // 針が的に当たり、注記の中では当たらない (この検査自身が標本)。
+    const self = 'src/shared/__tests__/stripNonCodeParity.test.ts';
+    const raw = readOriginalSource(path.join(REPO, self));
+    expect(DECLARATION_COMMENTS.test(raw), '標本が古い (上の注記を消した?)').toBe(true);
+    expect(DECLARATION_COMMENTS.test(stripNonCode(raw))).toBe(false);
+    expect(found).not.toContain(self);
+    expect(DECLARATION_COMMENTS.test('function stripComments(src) {')).toBe(true);
+  });
+
   it('★ 2 つの実装が同じ関数を読めている (借用が死んでいない)', () => {
     const impls = loadCopies();
     expect(impls).toHaveLength(COPIES.length);
@@ -197,15 +226,36 @@ describe('stripNonCode の写し — 2 つが同じ答えを返す (パス 418 /
    * ゲートが宣言せずに**中身だけ貼り直す**形 (別名の関数・無名関数) は映らない。
    * 同一性で見ると、その形もその場で鳴る。
    */
-  it('★ ゲート 3 本が同じ関数の実体を読んでいる', () => {
-    const shared = (require(path.join(REPO, 'scripts/lib/strip-non-code.cjs')) as { stripNonCode: unknown }).stripNonCode;
-    for (const gate of ['lint-collection-time-tests', 'lint-test-coverage']) {
-      const mod = require(path.join(REPO, `scripts/${gate}.cjs`)) as { stripNonCode: unknown };
-      expect(mod.stripNonCode, `${gate}.cjs が自分の写しを持っている`).toBe(shared);
+  /**
+   * **`.cjs` の読み手は走査で導く** (2026-09-25 · パス 463)。手書きの 3 本を
+   * 並べていた頃は、4 本目が自分の写しを持って増えても気付けなかった ——
+   * パス 463 で読み手は **9 本**になり、そのうち 6 本はこのパスで寄せた。
+   */
+  const cjsReaders = (): string[] =>
+    readOriginalDirEntries(path.join(REPO, 'scripts'))
+      .filter((e) => !e.isDirectory() && e.name.endsWith('.cjs'))
+      .map((e) => `scripts/${e.name}`)
+      .filter((rel) => readOriginalSource(path.join(REPO, rel)).includes("require('./lib/strip-non-code.cjs')"))
+      .sort();
+
+  it('★ `.cjs` のゲートは自分の写しを持たず、共有の実体を読んでいる', () => {
+    const readers = cjsReaders();
+    // 走査が死んでいない床 (実測 9 本 · パス 463)。
+    expect(readers.length).toBeGreaterThanOrEqual(9);
+    const shared = require(path.join(REPO, 'scripts/lib/strip-non-code.cjs')) as {
+      stripNonCode: unknown;
+      stripComments: unknown;
+    };
+    // re-export する本は**実体の同一性**で見る (中身だけ貼り直す形もその場で鳴る)。
+    for (const rel of readers) {
+      const mod = require(path.join(REPO, rel)) as { stripNonCode?: unknown; stripComments?: unknown };
+      if (mod.stripNonCode !== undefined) {
+        expect(mod.stripNonCode, `${rel} が自分の写しを持っている`).toBe(shared.stripNonCode);
+      }
+      if (mod.stripComments !== undefined) {
+        expect(mod.stripComments, `${rel} が自分の写しを持っている`).toBe(shared.stripComments);
+      }
     }
-    // 3 本目 (`lint-credential-use.cjs`) は re-export しないので、綴りで読んでいることを見る。
-    const use = readOriginalSource(path.join(REPO, 'scripts/lint-credential-use.cjs'));
-    expect(use).toContain("require('./lib/strip-non-code.cjs')");
   });
 
   it.each(SAMPLES.map((s) => [s.name, s.src] as const))(
@@ -219,6 +269,12 @@ describe('stripNonCode の写し — 2 つが同じ答えを返す (パス 418 /
         for (const im of impls.slice(1)) {
           expect(im.fn(src, opts), `${im.file} の答えが本体と違う (opts=${JSON.stringify(opts)})`).toBe(base);
         }
+      }
+      // **注記だけを落とす側も同じ標本で比べる** (2026-09-25 · パス 463) ——
+      // `.cjs` のゲート 9 本がこちらを読むようになったので、片方だけ直したら鳴る。
+      const baseComments = impls[0]!.comments(src);
+      for (const im of impls.slice(1)) {
+        expect(im.comments(src), `${im.file} の stripComments が本体と違う`).toBe(baseComments);
       }
     },
   );

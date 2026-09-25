@@ -26,6 +26,7 @@ import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -93,19 +94,15 @@ interface Site {
   readonly line: number;
 }
 
-/** コメント行は数えない (説明の中に `store.importAll()` と書くことがある)。 */
-function isComment(line: string): boolean {
-  const t = line.trim();
-  return t.startsWith('*') || t.startsWith('//') || t.startsWith('/*');
-}
-
 function findSites(files: readonly string[], pattern: RegExp): Site[] {
   const found: Site[] = [];
   for (const abs of files) {
-    readOriginalSource(abs)
+    // 注記は数えない (説明の中に `store.importAll()` と書くことがある)。共有の
+    // 字句解析器を通すので**行末の注記**も落ちる (行頭で見ると残っていた)。
+    stripComments(readOriginalSource(abs))
       .split('\n')
       .forEach((line, i) => {
-        if (!isComment(line) && pattern.test(line)) {
+        if (pattern.test(line)) {
           found.push({ file: relative(REPO, abs).split('\\').join('/'), line: i + 1 });
         }
       });

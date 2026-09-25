@@ -50,9 +50,6 @@ const PROSE = 'main/main.ts';
 /** コメントと文字列を落とす (説明の中の綴りを呼び出しと読まない)。 */
 function code(src: string): string {
   return stripComments(src)
-    .split('\n')
-    .filter((l) => !/^\s*\/\//.test(l))
-    .join('\n')
     .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
     .replace(/"(?:[^"\\\n]|\\.)*"/g, '""');
 }

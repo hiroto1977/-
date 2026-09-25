@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { join, relative, sep } from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **TypeScript のファイルが 1 つでも `npm run typecheck` の外に居てはいけない。** (2026-09-15)
@@ -65,11 +66,13 @@ const REPO_ROOT = join(__dirname, '..', '..', '..');
  */
 function readTsconfig(relPath: string): { include?: string[]; exclude?: string[]; references?: { path: string }[] } {
   const raw = readOriginalSource(join(REPO_ROOT, relPath));
-  const stripped = raw
-    .split('\n')
-    .filter((line) => !line.trimStart().startsWith('//'))
-    .join('\n');
-  return JSON.parse(stripped) as { include?: string[]; exclude?: string[]; references?: { path: string }[] };
+  // tsconfig は JSONC。**共有の字句解析器で落とす** —— JSONC の注記と文字列は
+  // JS のそれの真部分集合 (正規表現リテラルもテンプレートも単引用符も無く、
+  // 文字列の外の `/` は注記の始まりしかない) なので、この道具で正しく読める。
+  // 行頭が `//` かで見る形だと `"strict": true // 注記` のような**行末の注記**で
+  // `JSON.parse` が落ち、素朴なブロック注記の正規表現だと `"src/**\/*.ts"` の
+  // `/**` を注記の始まりとして食う (パス 462 の当の欠陥)。
+  return JSON.parse(stripComments(raw)) as { include?: string[]; exclude?: string[]; references?: { path: string }[] };
 }
 
 /** 覆っている範囲。枝 (`src/renderer`) と 1 ファイル (`vite.config.ts`) の両方が来る。 */

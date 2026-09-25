@@ -30,6 +30,7 @@
  * | `bankFormat` の `formatAmount` + 「円」 | **金融機関提出書面** | `1,234,567円` |
  */
 import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -48,14 +49,13 @@ const PAGES_ROOT = path.resolve(__dirname, '..');
  * **コメント行は数えない。** この本の冒頭の表は両方の綴りを説明として書いているので、
  * 数えると自分自身を欠陥として報告する (パス 98 で 1 度やった)。
  */
-const COMMENT_LINE = /^\s*(\/\/|\*|\/\*)/;
-
 function countStyles(text: string): { jpy: number; intl: number } {
-  const lines = text.split('\n');
+  // 注記は共有の字句解析器で落とす —— 行頭で見ると `jpy(x) // yen.format(` の
+  // ような**行末の注記**が数えられた (法則 `mention-vs-declaration` · パス 463)。
+  const lines = stripComments(text).split('\n');
   let jpy = 0;
   let intl = 0;
   for (const line of lines) {
-    if (COMMENT_LINE.test(line)) continue;
     jpy += (line.match(/\bjpy\(/g) ?? []).length;
     intl += (line.match(/\b(?:yen|YEN_FMT)\.format\(/g) ?? []).length;
   }
@@ -101,11 +101,17 @@ describe('BusinessPage — 金額の書式が 1 つ', () => {
 
   it('★ 走査規則が両側の標本に当たる (どの入力でも通る形になっていない)', () => {
     // 規則そのものを標本に当てる。
+    // **標本は走査に掛ける物と同じ形**で —— 実物はファイル全体を渡すので、
+    // `*` の続き行は必ずブロック注記の内側に在る (裸の `*` 行は掛け算の続きで、
+    // code として残るのが正しい)。**行末の注記**も落ちる (パス 463)。
     const sample = [
       '        <Stat label="a" value={jpy(x)} />',
       '        <div>{yen.format(y)}</div>',
       '  // jpy(z) と yen.format(z) の違いを説明する散文 (数えない)',
+      '  /**',
       '   * jpy(w)',
+      '   */',
+      '        const q = 1; // jpy(v)',
     ].join('\n');
     // **一時ファイルを置かない。** 綴りを数えるのは本文であって道ではないので、
     // 標本は文字列のまま当てる (`countStyles` は本文を受け取る)。
@@ -113,10 +119,7 @@ describe('BusinessPage — 金額の書式が 1 つ', () => {
   });
 
   it('★ 半角の円記号を字面で持っていない (書式を戻したら鳴る)', () => {
-    const src = readOriginalSource(file)
-      .split('\n')
-      .filter((l) => !COMMENT_LINE.test(l))
-      .join('\n');
+    const src = stripComments(readOriginalSource(file));
     expect(src.includes(YEN_HALF), 'コード側に U+00A5 の円記号が入っている').toBe(false);
     // 対照: 全角側は説明ではなく実物の書式から出るので、字面には無くてよい。
     // ここで「無いこと」だけを見ると空の検査になるので、**書式の本数**を上の

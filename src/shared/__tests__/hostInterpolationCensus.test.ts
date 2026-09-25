@@ -18,6 +18,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import { SLACK_WORKSPACE_DOMAIN, slackWorkspaceDomainOrNull } from '../api/slack';
 
 const REPO = join(__dirname, '..', '..', '..');
@@ -48,9 +49,7 @@ export function hostPositionSites(files: readonly string[]): Site[] {
   const out: Site[] = [];
   for (const abs of files) {
     const file = relative(REPO, abs).split('\\').join('/');
-    readOriginalSource(abs).split('\n').forEach((line, i) => {
-      const t = line.trim();
-      if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return;
+    stripComments(readOriginalSource(abs)).split('\n').forEach((line, i) => {
       if (HOST_POSITION.test(line)) out.push({ file, line: i + 1, text: line });
     });
   }

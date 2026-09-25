@@ -24,6 +24,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 const READ_CALL = /\breadFile(Sync)?\s*\(/;
@@ -94,9 +95,7 @@ export function readSites(files: readonly string[]): Site[] {
   const out: Site[] = [];
   for (const abs of files) {
     const file = relative(REPO, abs).split('\\').join('/');
-    readOriginalSource(abs).split('\n').forEach((line, i) => {
-      const t = line.trim();
-      if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return;
+    stripComments(readOriginalSource(abs)).split('\n').forEach((line, i) => {
       if (READ_CALL.test(line)) out.push({ file, line: i + 1, text: line });
     });
   }
@@ -158,7 +157,9 @@ describe('ディスクから読む所の母集団 (パス 326)', () => {
 
   it('★ secrets は本体と控えの両方に同じ上限を渡す', () => {
     const src = readOriginalSource(join(REPO, 'src/main/secrets.ts'));
-    const calls = src.split('\n').filter((l) => l.includes('readFileWithBackup(') && !l.trim().startsWith('//') && !l.includes('import'));
+    const calls = stripComments(src)
+      .split('\n')
+      .filter((l) => l.includes('readFileWithBackup(') && !l.includes('import'));
     expect(calls).toHaveLength(2);
     for (const c of calls) expect(c).toContain('MAX_STORE_SIZE');
   });

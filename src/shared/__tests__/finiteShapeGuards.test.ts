@@ -43,6 +43,7 @@
  * (`shared/talent.ts:362` の注記どおり —— 「残すのは TS の絞り込みのため」)。
  */
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { isAnalysisEntry, isMoodEntry, readStoredList } from '../emotionsShape';
@@ -206,8 +207,6 @@ const LEDGER: readonly { file: string; code: string; why: string }[] = [
 /** 同じ文の中に有限性・整数性・境目の判定が在るか。 */
 const NEARBY = /Number\.isFinite|Number\.isInteger|<=\s|>=\s|\.min\b|\.max\b/;
 const HAS_TYPEOF_NUMBER = /typeof\s+[^;]*===\s*'number'/;
-/** 行そのものがコメントか (走査は生の行を読むので、ここで落とす)。 */
-const COMMENT_LINE = /^\s*(\/\/|\*|\/\*)/;
 /** 台帳の鍵に使う正規形 (空白の詰め方の違いで外れないように)。 */
 const norm = (s: string): string => s.trim().replace(/\s+/g, ' ');
 
@@ -222,10 +221,12 @@ function scanTypeofNumber(): { file: string; line: number; code: string }[] {
       }
       if (!/\.tsx?$/.test(e.name)) continue;
       const file = path.relative(SRC_ROOT, p).split(path.sep).join('/');
-      const raw = readOriginalSource(p).split('\n');
+      // 注記は共有の字句解析器で落とす (行番号は保たれるので `i + 1` はそのまま)。
+      // 行頭で見ると `if (typeof n === 'number') …  // 説明` の**行末の注記**が
+      // 判定として数えられた (法則 `mention-vs-declaration` · パス 463)。
+      const raw = stripComments(readOriginalSource(p)).split('\n');
       for (let i = 0; i < raw.length; i++) {
         const line = raw[i]!;
-        if (COMMENT_LINE.test(line)) continue;
         if (!HAS_TYPEOF_NUMBER.test(line)) continue;
         // 同じ文が `&&` で次の行へ続く形も窓に入れる。
         const stmt = [line, raw[i + 1] ?? '', raw[i + 2] ?? '', raw[i + 3] ?? ''].join('\n');
@@ -257,10 +258,14 @@ describe("回帰の番人 — 裸の `typeof x === 'number'` を増やさない"
     expect(NEARBY.test(bare)).toBe(false); // → 捕まえる
     // 境目つきの比較も通す (hydroponicCrops.ts の形)
     expect(NEARBY.test("typeof v === 'number' && v >= bound.min && v <= bound.max")).toBe(true);
-    // コメント行は落とす
-    expect(COMMENT_LINE.test("  // `typeof n === 'number'` は NaN を通す")).toBe(true);
-    expect(COMMENT_LINE.test("   * `typeof x === 'number'` は冗長")).toBe(true);
-    expect(COMMENT_LINE.test(bare)).toBe(false);
+    // **注記は落とす** —— 標本は走査に掛ける物と同じ形で (ファイル全体を渡すので、
+    // `*` の続き行は必ずブロック注記の内側に在る)。
+    expect(stripComments("  // `typeof n === 'number'` は NaN を通す").trim()).toBe('');
+    expect(stripComments("/**\n * `typeof x === 'number'` は冗長\n */").trim()).toBe('');
+    // **行末の注記**も落ちる —— 行頭で見る述語ではここが判定として残っていた。
+    expect(HAS_TYPEOF_NUMBER.test(stripComments(`const a = 1; // ${bare}`))).toBe(false);
+    // 針が死んでいないことは、同じ加工を通した本物の綴りで示す。
+    expect(HAS_TYPEOF_NUMBER.test(stripComments(`${bare} // 説明`))).toBe(true);
   });
 
   it('★ 台帳に無い裸の判定が 0 件', () => {

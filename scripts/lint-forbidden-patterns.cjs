@@ -28,6 +28,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -799,9 +800,8 @@ const FORBIDDEN_PATTERNS = [
  * ソースの散文で説明できるようにすることだけで、コメントの中の呼び出しは
  * 実行されないので、緩めても見逃しにはならない。
  */
-function isCommentLine(line) {
-  const t = line.trim();
-  return t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
+function hitsCodeOnly(fp, line) {
+  return fp.pattern.test(fp.codeOnly === true ? stripComments(line) : line);
 }
 
 /**
@@ -1371,8 +1371,7 @@ function selfTest() {
   for (const [label, line, expected] of cases) {
     let n = 0;
     for (const fp of FORBIDDEN_PATTERNS) {
-      if (fp.codeOnly && isCommentLine(line)) continue;
-      if (fp.pattern.test(line)) n++;
+      if (hitsCodeOnly(fp, line)) n++;
     }
     const ok = n === expected;
     if (!ok) bad++;
@@ -1401,9 +1400,7 @@ function selfTest() {
   const positiveLines = cases.filter(([, , want]) => want > 0).map(([, line]) => line);
   const uncovered = FORBIDDEN_PATTERNS.filter(
     (fp) =>
-      !positiveLines.some((line) =>
-        fp.codeOnly && isCommentLine(line) ? false : fp.pattern.test(line),
-      ),
+      !positiveLines.some((line) => hitsCodeOnly(fp, line)),
   );
   if (uncovered.length > 0) {
     bad += uncovered.length;
@@ -1433,14 +1430,16 @@ function selfTest() {
  */
 function scanText(rel, text, violations, suppressions, patterns = FORBIDDEN_PATTERNS) {
   const lines = text.split('\n');
+  // **`codeOnly` の規則は、注記を落とした本文で見る。** 行頭が `//` かで見ると
+  // `foo(); // eval(x)` のような**行末の注記**が code として残った
+  // (法則 `mention-vs-declaration` · パス 463)。行番号は保たれる。
+  const codeLines = stripComments(text).split('\n');
   for (const fp of patterns) {
     if (fp.allowFile && fp.allowFile(rel)) {
       // **握り潰した事実を記録する。** 例外は穴なので、要らなくなったら
       // 閉じなければならない。記録しないと「もう鳴らない規則に対する
       // 例外」が永久に残り、そのファイルだけ規則の外に居続ける。
-      const hits = lines.filter((l) =>
-        fp.codeOnly && isCommentLine(l) ? false : fp.pattern.test(l),
-      ).length;
+      const hits = (fp.codeOnly === true ? codeLines : lines).filter((l) => fp.pattern.test(l)).length;
       if (hits > 0) {
         // **件数まで記録する。** ファイル名だけで台帳を突き合わせると、
         // 例外の効いているファイルに**新しい違反を足しても鳴らない** ——
@@ -1451,8 +1450,8 @@ function scanText(rel, text, violations, suppressions, patterns = FORBIDDEN_PATT
       continue;
     }
     for (let i = 0; i < lines.length; i++) {
-      if (fp.codeOnly && isCommentLine(lines[i])) continue;
-      if (fp.pattern.test(lines[i])) {
+      if (!fp.pattern.test(fp.codeOnly === true ? codeLines[i] : lines[i])) continue;
+      {
         violations.push({
           file: rel,
           line: i + 1,
@@ -1565,7 +1564,7 @@ module.exports = {
   SCAN_FILES,
   FORBIDDEN_PATTERNS,
   KNOWN_SUPPRESSIONS,
-  isCommentLine,
+  hitsCodeOnly,
   EXCLUDE_PATTERNS,
   scanText,
   // 走査の生存 —— 外側の証人 (`forbiddenPatternWitness.test.ts`) が読む。

@@ -19,6 +19,7 @@ import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 const HEX = /#[0-9a-fA-F]{3,8}\b/g;
@@ -27,9 +28,9 @@ export const SEMANTIC_HEX: readonly string[] = ['#22c55e', '#4ade80', '#ef4444',
 
 export function hexLiterals(text: string): string[] {
   const out: string[] = [];
-  for (const line of text.split('\n')) {
-    const t = line.trimStart();
-    if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) continue;
+  // 注記は共有の字句解析器で落とす —— 行頭で見ると `color: '#ef4444', // 危険`
+  // のような**行末の注記**が code として残る (法則 `mention-vs-declaration`)。
+  for (const line of stripComments(text).split('\n')) {
     for (const m of line.matchAll(HEX)) out.push(m[0].toLowerCase());
   }
   return out;

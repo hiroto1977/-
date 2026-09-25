@@ -44,6 +44,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import path from 'node:path';
 import {
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
@@ -78,8 +79,7 @@ function interfaceBody(src: string, name: string): string {
 
 /** 欄の型を字面で引く (コメントは落とす)。 */
 function fieldType(body: string, field: string): string | null {
-  for (const line of body.split('\n')) {
-    if (/^\s*(\/\/|\*|\/\*)/.test(line)) continue;
+  for (const line of stripComments(body).split('\n')) {
     const m = new RegExp(`^\\s*(?:readonly\\s+)?${field}\\s*\\??:\\s*([^;]+);`).exec(line);
     if (m) return m[1]!.trim();
   }
@@ -114,10 +114,7 @@ describe('機構 — 上限は 1 つ、そして外した件数を必ず持つ',
 describe('上限の綴りが 1 か所 — 2 つの実装が同じ数を読む', () => {
   it('★ どちらの実装も shared の規則を読む (数を写していない)', () => {
     const code = (rel: string): string =>
-      read(rel)
-        .split('\n')
-        .filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l))
-        .join('\n');
+      stripComments(read(rel));
     // main は**比べる**ので上限そのものを読む。
     expect(code(MAIN_CLIENT), 'main が共有の上限を読んでいない').toContain(
       'MAX_ADVISOR_UNIVERSE_SYMBOLS',

@@ -30,10 +30,7 @@ const ALLOWED: Readonly<Record<string, string>> = {
 
 /** コメントを落とす (説明の中の綴りを判定と読まない)。 */
 function code(src: string): string {
-  return stripComments(src)
-    .split('\n')
-    .filter((l) => !/^\s*\/\//.test(l))
-    .join('\n');
+  return stripComments(src);
 }
 
 /** `src/` の実装ファイル (検査・型定義・node_modules を除く)。 */

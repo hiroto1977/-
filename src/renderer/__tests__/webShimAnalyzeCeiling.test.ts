@@ -41,6 +41,7 @@ import { join as joinPath, relative as relativePath } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { MAX_ANALYZE_TEXT_CHARS } from '../../shared/emotionsLimits';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const tokenReads: string[] = [];
 vi.mock('../security/vault', () => ({
@@ -202,11 +203,10 @@ describe('MAX_ANALYZE_TEXT_CHARS を比べている層の母集団 (パス 350)'
     });
     const out: string[] = [];
     for (const abs of files) {
-      const hit = readOriginalSource(abs)
+      const hit = stripComments(readOriginalSource(abs))
         .split('\n')
         .some((line) => {
           const t = line.trim();
-          if (t.startsWith('//') || t.startsWith('*') || t.startsWith('/*')) return false;
           if (!t.includes('MAX_ANALYZE_TEXT_CHARS')) return false;
           return /[<>]\s*MAX_ANALYZE_TEXT_CHARS|MAX_ANALYZE_TEXT_CHARS\s*[<>]|charsOverCeiling\(|max=\{MAX_ANALYZE_TEXT_CHARS\}/.test(t);
         });

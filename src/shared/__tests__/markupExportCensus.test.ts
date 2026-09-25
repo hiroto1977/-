@@ -82,6 +82,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -124,82 +125,29 @@ function skipString(src: string, at: number): number {
 }
 
 /**
- * 注記を空白へ潰す (行数と位置は保つ)。
+ * 注記を落とす —— **共有の字句解析器 1 つ** (2026-09-25 · パス 463)。
  *
  * このリポジトリの docblock は**バッククォートだらけ**で、潰さずに走査すると
  * 説明文の `` `code` `` がテンプレートとして数えられる。文字列とテンプレートの
- * 中の `//` は注記ではないので、そこは飛ばしてから見る。
+ * 中の `//` は注記ではないので、そこは飛ばしてから見る —— それが共有の道具の仕事。
+ *
+ * ★ **パス 463 まで、ここには自前の字句解析器が在った** (5 つ目)。
+ * 正規表現リテラルの扱いが無く、`/^(["'])$/` のような引用符を含む正規表現で
+ * 文字列モードへ入って次の引用符まで飲む —— パス 451 が `stripNonCode` で
+ * 閉じた当の欠陥である。実測 (2026-09-25 · `src` の 1,447 本): 共有の実装と
+ * **79 本 / 550 行**で食い違った (この census の答えは変わらなかったので、
+ * これは**罠の除去**であって生きた欠陥の修復ではない)。
+ *
+ * ★ **どの census も見ていなかった** —— `commentStripperCensus` は注記除去の
+ * *正規表現の綴り*を数え、`stripNonCodeParity` は `function stripNonCode(` を
+ * 数えるので、**手書きの状態機械**はどちらの針にも映らない。パス 463 で
+ * `function stripComments(` の母集団を足して閉じた。
  */
-export function stripComments(src: string): string {
-  let out = '';
-  let i = 0;
-  while (i < src.length) {
-    const c = src[i]!;
-    if (c === '/' && src[i + 1] === '/') {
-      while (i < src.length && src[i] !== '\n') {
-        out += ' ';
-        i++;
-      }
-      continue;
-    }
-    if (c === '/' && src[i + 1] === '*') {
-      const e = src.indexOf('*/', i + 2);
-      const end = e < 0 ? src.length : e + 2;
-      out += src.slice(i, end).replace(/[^\n]/g, ' ');
-      i = end;
-      continue;
-    }
-    if (c === "'" || c === '"') {
-      const e = skipString(src, i);
-      if (e < 0) {
-        out += c;
-        i++;
-        continue;
-      }
-      out += src.slice(i, e);
-      i = e;
-      continue;
-    }
-    if (c === '`') {
-      const e = skipTemplate(src, i);
-      out += src.slice(i, e);
-      i = e;
-      continue;
-    }
-    out += c;
-    i++;
-  }
-  return out;
-}
+export { stripComments };
 
-/** テンプレートの終わり (入れ子の `${ … ` … ` … }` を数える)。 */
-function skipTemplate(src: string, at: number): number {
-  let i = at + 1;
-  while (i < src.length) {
-    const c = src[i]!;
-    if (c === '\\') i += 2;
-    else if (c === '`') return i + 1;
-    else if (c === '$' && src[i + 1] === '{') {
-      let j = i + 2;
-      let depth = 1;
-      while (j < src.length && depth > 0) {
-        const d = src[j]!;
-        if (d === '\\') j += 2;
-        else if (d === "'" || d === '"') {
-          const e = skipString(src, j);
-          j = e < 0 ? j + 1 : e;
-        } else if (d === '`') j = skipTemplate(src, j);
-        else {
-          if (d === '{') depth++;
-          else if (d === '}') depth--;
-          j++;
-        }
-      }
-      i = j;
-    } else i++;
-  }
-  return i;
-}
+// 注記を落とす所がテンプレートを読み飛ばしていた頃の `skipTemplate` は、
+// 共有の字句解析器へ寄せたので要らなくなった (2026-09-25 · パス 463)。
+// テンプレートを読むのは下の `scanTemplate` 1 つである。
 
 /** 1 つのテンプレートを読む (開きの位置から)。入れ子は `out` に積む。 */
 function scanTemplate(src: string, start: number, out: Tmpl[]): number {

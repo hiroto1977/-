@@ -42,10 +42,7 @@ const RENDERER = path.resolve(__dirname, '..');
 
 /** コメントを落とす (説明の中の綴りを配線と読まない。行数は保つ)。 */
 function code(src: string): string {
-  return stripComments(src)
-    .split('\n')
-    .map((l) => (/^\s*\/\//.test(l) ? '' : l))
-    .join('\n');
+  return stripComments(src);
 }
 
 /** renderer の実装ファイル (検査は除く)。 */

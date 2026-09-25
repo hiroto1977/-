@@ -38,10 +38,7 @@ export const ANY_AI_MARKS: readonly RegExp[] = [...AI_MARKS, ...LOCAL_AI_MARKS];
 
 /** コメントを落とした本体 (説明の中の綴りを配線と読まない)。 */
 export function code(src: string): string {
-  return stripComments(src)
-    .split('\n')
-    .filter((l) => !/^\s*\/\//.test(l))
-    .join('\n');
+  return stripComments(src);
 }
 
 /** `open` から対応する `close` までの中身 (入れ子で切れない)。 */

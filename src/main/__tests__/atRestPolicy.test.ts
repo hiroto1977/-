@@ -12,6 +12,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -28,15 +29,13 @@ const PLAINTEXT_LEDGER: Record<string, string> = {
 const STATE_PATH_DEF = /\bfunction (defaultStatePath|storePath|secretsPath)\(\): string\b/;
 const SEALS = /\bsealJsonDocument\(|\bsafeStorage\.encryptString\(/;
 
-/** コメント行を落とす (説明の中で名前を挙げる箇所がある)。 */
+/**
+ * 注記を落とす (説明の中で名前を挙げる箇所がある)。共有の字句解析器を通すので、
+ * **行末の注記**も落ちる —— 行頭で見ると `foo(); // setPassword` が code として残った
+ * (法則 `mention-vs-declaration`)。
+ */
 function code(src: string): string {
-  return src
-    .split('\n')
-    .filter((line) => {
-      const t = line.trim();
-      return !(t.startsWith('*') || t.startsWith('//') || t.startsWith('/*'));
-    })
-    .join('\n');
+  return stripComments(src);
 }
 
 interface StateModule {
@@ -92,8 +91,15 @@ describe('main: 状態ファイルの封緘の台帳 (母集団は実装から)'
     expect(SEALS.test('  await write(p, sealJsonDocument(JSON.stringify(clean)));')).toBe(true);
     expect(SEALS.test("    return safeStorage.encryptString(value).toString('base64');")).toBe(true);
     expect(SEALS.test('  await write(p, JSON.stringify(clean, null, 2));')).toBe(false);
-    // コメントは数えない (説明の中で名前を挙げる)
+    // 注記は数えない (説明の中で名前を挙げる)。**標本は走査に掛ける物と同じ形**で ——
+    // 実物はファイル全体を渡すので、`*` の続き行は必ずブロック注記の内側に在る
+    // (裸の `*` 行は掛け算の続きで、code として残るのが正しい)。
     expect(SEALS.test(code('// sealJsonDocument( を通す\nconst x = 1;'))).toBe(false);
-    expect(SEALS.test(code(' * safeStorage.encryptString( の写し\nconst y = 2;'))).toBe(false);
+    expect(SEALS.test(code('/**\n * safeStorage.encryptString( の写し\n */\nconst y = 2;'))).toBe(false);
+    // **行末の注記**も落ちる —— 行頭で見る述語ではここが code として残っていた
+    // (法則 `mention-vs-declaration`)。
+    expect(SEALS.test(code('const z = 3; // sealJsonDocument( を通す'))).toBe(false);
+    // 針が死んでいないことは、同じ加工を通した本物の綴りで示す。
+    expect(SEALS.test(code('const w = sealJsonDocument(x); // 説明'))).toBe(true);
   });
 });

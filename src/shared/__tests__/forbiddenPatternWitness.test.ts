@@ -24,7 +24,7 @@ const req = createRequire(import.meta.url);
 const gate = req('../../../scripts/lint-forbidden-patterns.cjs') as {
   FORBIDDEN_PATTERNS: { name: string; pattern: RegExp; codeOnly?: boolean }[];
   KNOWN_SUPPRESSIONS: unknown[];
-  isCommentLine: (line: string) => boolean;
+  hitsCodeOnly: (fp: { pattern: RegExp; codeOnly?: boolean }, line: string) => boolean;
   EXCLUDE_PATTERNS: RegExp[];
   scanText: (
     rel: string,
@@ -45,8 +45,7 @@ function scanOne(rel: string, text: string): { file: string; line: number; name:
 function hits(line: string): number {
   let n = 0;
   for (const fp of gate.FORBIDDEN_PATTERNS) {
-    if (fp.codeOnly && gate.isCommentLine(line)) continue;
-    if (fp.pattern.test(line)) n += 1;
+    if (gate.hitsCodeOnly(fp, line)) n += 1;
   }
   return n;
 }

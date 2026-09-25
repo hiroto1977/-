@@ -15,8 +15,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import * as path from 'node:path';
-import { createRequire } from 'node:module';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
 /** 原文 (表の `// 実測 N` はコメントなので、表の読み取りだけはこちら)。 */
@@ -25,10 +25,13 @@ const src = readOriginalSource(path.join(REPO_ROOT, 'scripts/e2e/core.cjs'));
  * 構造の主張 (一覧を表から導く・ループ・合計の床) はコメントを落とした原文に当てる ——
  * `// const SUITES = SUITE_TABLE.map(…)` という**言及**で満たされないように
  * (パス 297 / 298 / 302 の家系。最初の版は原文のままだった)。
+ *
+ * ★ **2026-09-25 (パス 463) まで、これは `scripts/shared-judgement-census.cjs` の
+ * 手書きの字句解析器を `createRequire` で借りていた** —— つまり**3 つ目の実装**で、
+ * `stripNonCodeParity` の台帳 (走査の針は `function stripNonCode(`) にも
+ * `commentStripperCensus` の針 (正規表現の綴り) にも映らなかった。
+ * 共有の 1 つへ寄せた。
  */
-const { stripComments } = createRequire(__filename)(path.join(REPO_ROOT, 'scripts/shared-judgement-census.cjs')) as {
-  stripComments: (s: string) => string;
-};
 const code = stripComments(src);
 
 /**
@@ -161,7 +164,10 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
  */
 describe('e2e の ok(true, …) は投げる wait の直後にしか置けない (パス 303)', () => {
   const THROWING_WAIT = /waitForFunction\(|waitForSelector\(|\.waitFor\(|waitForURL\(|waitForEvent\(/;
-  const lines = src.split('\n');
+  // 注記は共有の字句解析器で落とす (行番号は保たれる)。行頭が `//` かで見ると
+  // `await w(); // ok(true, …)` のような**行末の注記**が呼び出しとして数えられ、
+  // 逆に直前の文を遡る所では注記行を飛ばせなかった (パス 463)。
+  const lines = stripComments(src).split('\n');
   const sites = lines.map((l, i) => (l.includes('ok(true,') ? i : -1)).filter((i) => i >= 0);
 
   /**
@@ -172,7 +178,7 @@ describe('e2e の ok(true, …) は投げる wait の直後にしか置けない
    */
   function precedingStatement(i: number): string {
     let end = i - 1;
-    while (end >= 0 && /^\s*(\/\/|$)/.test(lines[end]!)) end -= 1;
+    while (end >= 0 && /^\s*$/.test(lines[end]!)) end -= 1;
     let start = end;
     while (start >= 0 && !/^\s*await /.test(lines[start]!)) start -= 1;
     if (start < 0) return '';

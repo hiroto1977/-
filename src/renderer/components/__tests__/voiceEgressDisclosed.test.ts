@@ -46,10 +46,7 @@ const RENDERER = path.resolve(__dirname, '../..');
 
 /** コメントを落とした本体 (説明の中の綴りを配線と読まない)。 */
 function code(src: string): string {
-  return stripComments(src)
-    .split('\n')
-    .filter((l) => !/^\s*\/\//.test(l))
-    .join('\n');
+  return stripComments(src);
 }
 
 /** renderer の .ts / .tsx をすべて (画面も部品も)。 */

@@ -43,6 +43,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const LEDGER = path.join(REPO_ROOT, 'src/shared/parameters.ts');
@@ -88,18 +89,11 @@ function ledgerNames(ledgerText) {
 function codeLines(text) {
   const out = [];
   let inBraceList = false;
-  let inBlockComment = false;
-  text.split('\n').forEach((line, i) => {
+  // 注記は共有の字句解析器で落とす (行番号は保たれる)。手書きのブロック追跡では
+  // `const a = 1; // DEFAULT_X` のような**行末の注記**が code として残り、
+  // 同じ行に `/*` と `*/` が両方在る形の扱いもここだけの流儀だった (パス 463)。
+  stripComments(text).split('\n').forEach((line, i) => {
     const t = line.trim();
-    if (inBlockComment) {
-      if (t.includes('*/')) inBlockComment = false;
-      return;
-    }
-    if (t.startsWith('/*')) {
-      if (!t.includes('*/')) inBlockComment = true;
-      return;
-    }
-    if (t.startsWith('//') || t.startsWith('*')) return;
     if (inBraceList) {
       if (t.includes('}')) inBraceList = false;
       return;

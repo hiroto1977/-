@@ -84,6 +84,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { nonNeg } from '../num';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 const SRC = path.join(REPO_ROOT, 'src');
@@ -260,7 +261,7 @@ function findBareClamps(
     if (!BARE.test(arg)) continue; // 式の床 (a - b) は上流の責務
     const line = source.slice(0, m.index).split('\n').length;
     const text = lines[line - 1] ?? '';
-    if (/^\s*(\/\/|\*|\/\*)/.test(text)) continue; // 散文の中の引用
+    if (stripComments(text).trim() === '') continue; // 散文の中の引用
     const { params, body } = enclosingFunction(source, m.index);
     const root = (arg.split(/\??\./)[0] ?? '');
     if (!params.has(root)) continue; // 局所値は対象外

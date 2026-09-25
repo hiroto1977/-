@@ -38,6 +38,7 @@
 import { describe, expect, it } from 'vitest';
 import { join } from 'node:path';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 const CLIENT = join(__dirname, '../../main/clients/business.ts');
 const PAGE = join(__dirname, '../../renderer/pages/BusinessPage.tsx');
@@ -61,9 +62,9 @@ function interfaceBody(src: string, name: string): string {
 /** 本体から「欄名 → 型注釈」を読む (注釈行・コメント行は飛ばす)。 */
 function fieldTypes(body: string): Map<string, string> {
   const out = new Map<string, string>();
-  for (const raw of body.split('\n')) {
+  // 注記は共有の字句解析器で落とす (行末の注記も落ちる)。
+  for (const raw of stripComments(body).split('\n')) {
     const line = raw.trim();
-    if (line.startsWith('*') || line.startsWith('//') || line.startsWith('/*')) continue;
     const m = /^(?:readonly\s+)?([A-Za-z_][A-Za-z0-9_]*)\??\s*:\s*(.+?);?$/.exec(line);
     // 捕獲群は `noUncheckedIndexedAccess` の下では `string | undefined` になる。
     // マッチが成立していれば在るが、**型検査器は跨いで知らない** —— 明示的に確かめる

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /**
  * **「不在を主張する検査には、標本を添える」に機械を付ける** (2026-09-15 · パス 293)。
@@ -96,17 +97,17 @@ export interface AbsenceSite {
   isRegex: boolean;
 }
 
-/** コメント行は検査ではない (直す前の壊れた規則を注記が引用している場合が在る)。 */
-function isCommentLine(line: string): boolean {
-  const t = line.trim();
-  return t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
-}
-
-/** 1 ファイルの本文から、針が日本語の散文である不在の主張を取る。 */
+/**
+ * 1 ファイルの本文から、針が日本語の散文である不在の主張を取る。
+ *
+ * 注記は検査ではない (直す前の壊れた規則を注記が引用している場合が在る) ので、
+ * **共有の字句解析器**で落としてから見る —— 行頭が `//` かで見ると
+ * `const a = 1; // expect(x).not.toContain('…')` のような**行末の注記**が
+ * 主張として数えられた (法則 `mention-vs-declaration`)。行番号は保たれる。
+ */
 export function absenceSites(file: string, text: string): AbsenceSite[] {
   const sites: AbsenceSite[] = [];
-  text.split('\n').forEach((line, i) => {
-    if (isCommentLine(line)) return;
+  stripComments(text).split('\n').forEach((line, i) => {
     for (const m of line.matchAll(ABSENCE)) {
       const needle = (m[1] ?? '').trim();
       if (!JP.test(needle)) continue;
@@ -284,9 +285,20 @@ describe('走査が実際に当たる (自分の標本)', () => {
     expect(absenceSites('f.ts', src)).toEqual([]);
   });
 
-  it('★ コメント行は数えない (直す前の規則の引用が母集団に入らない)', () => {
-    const src = `   *   expect(rec)${NOT}${M}(/有効化してください/);`;
-    expect(absenceSites('f.ts', src)).toEqual([]);
+  it('★ 注記は数えない (直す前の規則の引用が母集団に入らない)', () => {
+    // **標本は走査に掛ける物と同じ形**で —— 実物はファイル全体を渡すので、
+    // `*` の続き行は必ずブロック注記の内側に在る (裸の `*` 行は掛け算の続きで、
+    // code として残るのが正しい)。
+    const block = `/**\n *   expect(rec)${NOT}${M}(/有効化してください/);\n */\nconst a = 1;`;
+    expect(absenceSites('f.ts', block)).toEqual([]);
+    expect(absenceSites('f.ts', `  //  expect(rec)${NOT}${M}(/有効化してください/);`)).toEqual([]);
+    // **行末の注記**も落ちる —— 行頭で見る述語ではここが主張として数えられていた
+    // (法則 `mention-vs-declaration`)。
+    expect(absenceSites('f.ts', `const a = 1; // expect(rec)${NOT}${M}(/有効化してください/);`)).toEqual([]);
+    // 針が死んでいないことは、同じ加工を通した本物の綴りで示す。
+    expect(absenceSites('f.ts', `  expect(rec)${NOT}${M}(/有効化してください/); // 説明`)).toEqual([
+      { file: 'f.ts', line: 1, needle: '/有効化してください/', isRegex: true },
+    ]);
   });
 
   it('★ 肯定形の針は不在の主張として数えない', () => {

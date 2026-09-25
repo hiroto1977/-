@@ -24,6 +24,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { saveTalentState, type TalentState } from '../clients/talent';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 import { unsealForTest } from './safeStorageMock';
 
 // talent の保存は OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
@@ -50,12 +51,10 @@ interface Site {
 function findDirectWrites(files: readonly string[]): Site[] {
   const found: Site[] = [];
   for (const abs of files) {
-    readOriginalSource(abs)
+    // 注記は共有の字句解析器で落とす (行番号は保たれる)。
+    stripComments(readOriginalSource(abs))
       .split('\n')
       .forEach((line, i) => {
-        // コメント行は数えない (説明の中で名前を挙げている箇所がある)。
-        const code = line.trim();
-        if (code.startsWith('*') || code.startsWith('//')) return;
         if (/\bfs\.writeFile\(|\bwriteFileSync\(/.test(line)) {
           found.push({ file: relative(REPO, abs).split('\\').join('/'), line: i + 1 });
         }

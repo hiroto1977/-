@@ -40,6 +40,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const DOC = path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md');
@@ -629,50 +630,21 @@ function stripCommentsAndStrings(src) {
  *
  * `stripCommentsAndStrings` と分けてあるのは import の走査のため —— module
  * specifier は文字列リテラルそのもので、文字列を潰すと綴りが消える。
- * 文字列の中に入った `//` を誤ってコメント開始と読まないよう、文字列は
- * 「読み飛ばして原文のまま出す」。
+ *
+ * ★ **2026-09-25 (パス 463) まで、ここには自前の状態機械が在り、
+ * 正規表現リテラルの扱いが無かった。** `/^(["'])$/` のような引用符を含む
+ * 正規表現を見ると**文字列モードへ入り、次の同じ引用符までを飲む** ——
+ * パス 451 が `stripNonCode` で閉じた当の欠陥が、この写しの中に生きたまま
+ * 残っていた (隣の `stripCommentsAndStrings` はパス 296 で直っていた)。
+ * 実測 (2026-09-25 · `src` + `scripts` の 1,537 本): 共有の実装と
+ * **121 本 / 4,073 行**で食い違い、飲まれた区間では**注記の本文が
+ * code として出ていた** (法則 `mention-vs-declaration`)。
+ *
+ * ★ **どちらの census の針にも映らなかった** —— `commentStripperCensus` は
+ * 注記除去の**正規表現の綴り**を数え、`stripNonCodeParity` は
+ * `function stripNonCode(` を数えるので、**手書きの状態機械を別の名前で
+ * 書いた 3 つ目**はどちらからも見えない。共有の 1 つへ寄せた。
  */
-function stripComments(src) {
-  let out = '';
-  let i = 0;
-  const n = src.length;
-  while (i < n) {
-    const c = src[i];
-    const c2 = src[i + 1];
-    if (c === '/' && c2 === '/') {
-      while (i < n && src[i] !== '\n') i += 1;
-      continue;
-    }
-    if (c === '/' && c2 === '*') {
-      i += 2;
-      while (i < n && !(src[i] === '*' && src[i + 1] === '/')) {
-        if (src[i] === '\n') out += '\n';
-        i += 1;
-      }
-      i += 2;
-      continue;
-    }
-    if (c === '"' || c === "'" || c === '`') {
-      const quote = c;
-      out += c;
-      i += 1;
-      while (i < n && src[i] !== quote) {
-        if (src[i] === '\\') {
-          out += src[i];
-          i += 1;
-        }
-        out += src[i] ?? '';
-        i += 1;
-      }
-      out += src[i] ?? '';
-      i += 1;
-      continue;
-    }
-    out += c;
-    i += 1;
-  }
-  return out;
-}
 
 /** `root` 配下の .ts / .tsx (`__tests__` / `.d.ts` を除く) をパス順で。 */
 function sourceFiles(root) {

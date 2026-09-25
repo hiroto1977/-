@@ -129,6 +129,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 /** 指数の探り。 */
 const N_EXP = 26;
@@ -183,16 +184,17 @@ const REVIEWED = [];
 const LITERAL =
   /(^|[=(,:[!&|?{;>\s]|return|=>)\/((?:[^/\\\n[]|\\.|\[(?:[^\]\\]|\\.)*\])+)\/([gimsuyd]*)/g;
 
-/** コメントだけの行か。 */
-function isCommentLine(line) {
-  return /^\s*(\/\/|\*|\/\*)/.test(line);
-}
-
-/** ファイル 1 本から `{ body, flags, file, line }` を集める。 */
+/**
+ * ファイル 1 本から `{ body, flags, file, line }` を集める。
+ *
+ * 注記は共有の字句解析器で落とす (行番号は保たれる)。行頭が `//` かで見ると
+ * `const r = /a/; // /b+c+/ は危ない` のような**行末の注記**の正規表現まで
+ * 母集団に入った (法則 `mention-vs-declaration` · パス 463)。
+ * `stripComments` は**正規表現リテラルの中身を残す**ので、探している物は消えない。
+ */
 function extractLiterals(text, file) {
   const out = [];
-  text.split('\n').forEach((line, i) => {
-    if (isCommentLine(line)) return;
+  stripComments(text).split('\n').forEach((line, i) => {
     let m;
     LITERAL.lastIndex = 0;
     while ((m = LITERAL.exec(line))) {
@@ -469,9 +471,20 @@ async function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} /${c.body}/${c.flags} → ${shown} (期待 ${c.bad ? '破滅的' : '白'})`);
   });
 
-  // 抽出そのものの対照 —— コメント行の式を拾わないこと (0-a-17)。
+  // 抽出そのものの対照 —— 注記の中の式を拾わないこと (0-a-17)。
+  // **標本は走査に掛ける物と同じ形**で: 実物はファイル全体を渡すので、`*` の
+  // 続き行は必ずブロック注記の内側に在る (裸の `*` 行は掛け算の続きで、code として
+  // 残るのが正しい)。**行末の注記**も落ちる —— 行頭で見る述語ではそこが残っており、
+  // 実測で母集団が 3,653 → 3,505 種になった (2026-09-25 · パス 463)。
   const extracted = extractLiterals(
-    ['const ok = /^[-*]\\s+(.*)$/;', '// 説明: /^(a+)+$/ は破滅的', ' * また /(x|x)*y/ も'].join('\n'),
+    [
+      'const ok = /^[-*]\\s+(.*)$/;',
+      '// 説明: /^(a+)+$/ は破滅的',
+      '/**',
+      ' * また /(x|x)*y/ も',
+      ' */',
+      'const n = 1; // /^(b+)+$/ も危ない',
+    ].join('\n'),
     'inline',
   );
   const bodies = extracted.map((e) => e.body);

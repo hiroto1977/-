@@ -23,6 +23,7 @@ import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -45,9 +46,13 @@ export interface Site {
   readonly safe: boolean;
 }
 
+/**
+ * **1 行を判じる** —— 注記かどうかは見ない。落とすのは `scan` が**ファイル全体**に
+ * 共有の字句解析器を当てて行うので、`foo(); // setErr(e.message)` のような
+ * **行末の注記**もそこで落ちる (行頭で見る述語では code として残っていた ——
+ * 法則 `mention-vs-declaration`)。
+ */
 export function classifyLine(file: string, line: string): 'skip' | 'safe' | 'raw' {
-  const t = line.trim();
-  if (t.startsWith('*') || t.startsWith('//') || t.startsWith('/*')) return 'skip';
   if (!MESSAGE_SURFACE.test(line)) return 'skip';
   if (READ_ONLY_USE.test(line)) return 'skip';
   if (REDACTED_ON_LINE.test(line)) return 'safe';
@@ -58,7 +63,7 @@ export function classifyLine(file: string, line: string): 'skip' | 'safe' | 'raw
 export function scan(files: readonly { readonly file: string; readonly text: string }[]): Site[] {
   const out: Site[] = [];
   for (const { file, text } of files) {
-    text.split('\n').forEach((line, i) => {
+    stripComments(text).split('\n').forEach((line, i) => {
       const c = classifyLine(file, line);
       if (c !== 'skip') out.push({ file, line: i + 1, safe: c === 'safe' });
     });
@@ -183,7 +188,15 @@ describe('例外の文面 → 画面 (パス 314): 伏字を通らない行は�
     expect(classifyLine('x.ts', "      setErr(e instanceof Error ? e.message : '入力エラー');")).toBe('raw');
     expect(classifyLine('x.ts', '      const m = (err as Error).message;')).toBe('raw');
     expect(classifyLine('x.ts', '      throw new Error(cause.message);')).toBe('raw');
-    expect(classifyLine('x.ts', '  // setErr(e instanceof Error ? e.message : String(e));')).toBe('skip');
+    // 注記は `classifyLine` ではなく `scan` が落とす —— **走査に掛ける物と同じ形**で示す
+    // (行注記・ブロック注記・**行末の注記**の 3 形)。
+    expect(scan([{ file: 'x.ts', text: '  // setErr(e instanceof Error ? e.message : String(e));' }])).toEqual([]);
+    expect(scan([{ file: 'x.ts', text: '/**\n * setErr(e.message);\n */\nconst a = 1;' }])).toEqual([]);
+    expect(scan([{ file: 'x.ts', text: 'const a = 1; // setErr(e.message);' }])).toEqual([]);
+    // 針が死んでいないことは、同じ加工を通した本物の綴りで示す。
+    expect(scan([{ file: 'x.ts', text: '  setErr(e.message); // 説明' }])).toEqual([
+      { file: 'x.ts', line: 1, safe: false },
+    ]);
     expect(classifyLine('x.ts', '      setErr(fixedMessage);')).toBe('skip');
   });
 

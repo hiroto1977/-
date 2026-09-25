@@ -36,6 +36,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { join as joinPath } from 'node:path';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const h = vi.hoisted(() => ({ unreadable: null as unknown }));
 
@@ -144,7 +145,8 @@ describe('「読めなかった」を分ける規則を持つ所の母集団 (�
 
   /** `proxy.unreadable !== null ? deviceStoreFailureMessage(...)` を持つ関数。 */
   function sitesInShim(): string[] {
-    const src = readOriginalSource(joinPath(REPO, 'src/renderer/web-shim.ts')).split('\n');
+    // 注記は共有の字句解析器で落とす (行番号は保たれるので `fnOf` の対応はそのまま)。
+    const src = stripComments(readOriginalSource(joinPath(REPO, 'src/renderer/web-shim.ts'))).split('\n');
     const decls: [number, string][] = [];
     src.forEach((line, i) => {
       const m = /^(?:export )?(?:async )?function ([A-Za-z_$][\w$]*)\(/.exec(line);
@@ -160,9 +162,7 @@ describe('「読めなかった」を分ける規則を持つ所の母集団 (�
     };
     const out = new Set<string>();
     src.forEach((line, i) => {
-      const t = line.trim();
-      if (t.startsWith('//') || t.startsWith('*')) return;
-      if (/unreadable !== null/.test(t)) out.add(fnOf(i + 1));
+      if (/unreadable !== null/.test(line)) out.add(fnOf(i + 1));
     });
     return [...out].sort();
   }

@@ -33,6 +33,7 @@ import { describe, expect, it } from 'vitest';
 import { join, relative } from 'node:path';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 import { planPermittedSteps, type HookDispatchStep } from '../connectors/pluginRuntime';
 
 const REPO = join(__dirname, '..', '..', '..');
@@ -53,13 +54,7 @@ function planReaders(): string[] {
     const rel = relative(REPO, abs).split('\\').join('/');
     if (rel === 'src/shared/connectors/pluginRuntime.ts') continue;
     const src = readOriginalSource(abs);
-    const hit = src
-      .split('\n')
-      .some((line) => {
-        const t = line.trim();
-        if (t.startsWith('//') || t.startsWith('*') || t.startsWith('/*')) return false;
-        return /(?<![\w$])resolveHookPlan\s*\(/.test(t);
-      });
+    const hit = /(?<![\w$])resolveHookPlan\s*\(/.test(stripComments(src));
     if (hit) out.push(rel);
   }
   return out.sort();
