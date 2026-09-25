@@ -448,6 +448,143 @@ const NO_POPULATION = {
 
 // ---------------------------------------------------------------------------
 
+/**
+ * **`--partial`: 走査が「一部だけ」死んだときに鳴るか** (2026-09-25 · パス 469)。
+ *
+ * 上の `RECIPES` は母集団を**空**にする。ところが床は「0 件」にしか当たらない ——
+ * 合計の床は実測の 10〜60% に置かれているので、走査が一部だけ死んでも素通りする。
+ * 実測 (直す前): `.tsx` 108 件が走査から消えても `lint:network-targets` /
+ * `lint:url-encoding` / `lint:regex` / `lint:imports` / `lint:charset` は ✅ exit 0 で、
+ * `scripts/` や `docs/` が丸ごと消えても `lint:regex` / `lint:charset` /
+ * `lint:sample-data` は ✅ だった。
+ *
+ * **落とす群はゲート本体の `REQUIRED_GROUPS` から読む** —— 道具の側にも群を並べると、
+ * 2 つ目の台帳が静かに古びる (`gateFloorLedger.test.ts` が「宣言している 6 本」と
+ * `PARTIAL_GATES` を双方向に突き合わせる)。
+ */
+const PARTIAL_GATES = [
+  'lint:network-targets',
+  'lint:url-encoding',
+  'lint:imports',
+  'lint:regex',
+  'lint:charset',
+  'lint:sample-data',
+];
+
+/** `cmd` から入口の script を読む (`node scripts/x.cjs --check` → `scripts/x.cjs`)。 */
+function scriptOf(cmd) {
+  const m = /^node\s+(\S+)/.exec(cmd);
+  if (!m) throw new Error(`cmd から入口の script を読めません: ${cmd}`);
+  return m[1];
+}
+
+/** ゲートが宣言した群 (写しを作らず、本体から読む)。 */
+function declaredGroups(script) {
+  const mod = require(path.join(REPO_ROOT, script));
+  const g = mod && mod.REQUIRED_GROUPS;
+  if (!g || ((g.exts ?? []).length === 0 && (g.roots ?? []).length === 0)) {
+    throw new Error(`${script}: REQUIRED_GROUPS を export していません`);
+  }
+  return [
+    ...(g.exts ?? []).map((arg) => ({ mode: 'ext', arg })),
+    ...(g.roots ?? []).map((arg) => ({ mode: 'root', arg })),
+  ];
+}
+
+const PREAMBLE_SRC = 'scripts/lib/partial-scan-preamble.cjs';
+const PREAMBLE_MARK = "require('./lib/partial-scan-preamble.cjs');";
+
+/** 入口の script に前置きを 1 度だけ差し込む (shebang の後ろ)。 */
+function injectPreamble(wt, script) {
+  const full = path.join(wt, script);
+  const src = fs.readFileSync(full, 'utf8');
+  if (src.includes(PREAMBLE_MARK)) return false;
+  const lines = src.split('\n');
+  const at = lines[0].startsWith('#!') ? 1 : 0;
+  lines.splice(at, 0, PREAMBLE_MARK);
+  fs.writeFileSync(full, lines.join('\n'), 'utf8');
+  return true;
+}
+
+function runPartial(argv) {
+  const only = (() => {
+    const i = argv.indexOf('--only');
+    return i >= 0 && argv[i + 1] ? new Set(argv[i + 1].split(',')) : null;
+  })();
+  const given = (() => {
+    const i = argv.indexOf('--worktree');
+    return i >= 0 && argv[i + 1] ? path.resolve(argv[i + 1]) : null;
+  })();
+  const gates = RECIPES.filter((r) => PARTIAL_GATES.includes(r.gate) && (!only || only.has(r.gate)));
+  if (gates.length === 0) {
+    console.error('❌ --only がどのゲートにも当たりません');
+    return 1;
+  }
+
+  const made = given ? null : makeWorktree();
+  const wt = given ?? made.wt;
+  console.log(`走査を「一部だけ」殺して ${gates.length} ゲートを測ります (写し: ${wt})`);
+
+  const rows = [];
+  try {
+    fs.mkdirSync(path.join(wt, 'scripts', 'lib'), { recursive: true });
+    fs.copyFileSync(path.join(REPO_ROOT, PREAMBLE_SRC), path.join(wt, PREAMBLE_SRC));
+    for (const r of gates) {
+      const script = scriptOf(r.cmd);
+      injectPreamble(wt, script);
+      for (const g of declaredGroups(script)) {
+        const out = path.join(wt, '.audit-partial-report.json');
+        try { fs.unlinkSync(out); } catch { /* 初回は無い */ }
+        const res = spawnSync('bash', ['-c', r.cmd], {
+          cwd: wt,
+          encoding: 'utf8',
+          timeout: 900000,
+          env: {
+            ...process.env,
+            AUDIT_PARTIAL_MODE: g.mode,
+            AUDIT_PARTIAL_ARG: g.arg,
+            AUDIT_PARTIAL_OUT: out,
+          },
+        });
+        let report = null;
+        try { report = JSON.parse(fs.readFileSync(out, 'utf8')); } catch { /* 読めなければ null */ }
+        const status = res.status ?? -1;
+        const verdict = report === null ? 'no-report'
+          : report.dropped === 0 ? 'not-dropped'
+            : status === 0 ? 'silent' : 'rings';
+        rows.push({ gate: r.gate, group: `${g.mode} ${g.arg}`, verdict, status, dropped: report?.dropped ?? null });
+        const mark = verdict === 'rings' ? '✓' : '✗';
+        console.log(
+          `  ${mark} ${r.gate.padEnd(22)} ${`${g.mode}:${g.arg}`.padEnd(18)} ${verdict.padEnd(11)}`
+          + ` exit=${status} 落とした=${report?.dropped ?? '-'}`,
+        );
+      }
+    }
+  } finally {
+    if (made) made.cleanup();
+  }
+
+  const bad = rows.filter((x) => x.verdict !== 'rings');
+  console.log('');
+  console.log(`測った: ${rows.length} 組 / 鳴った: ${rows.length - bad.length} / 鳴らなかった: ${bad.length}`);
+  if (bad.length === 0) {
+    console.log('✅ 宣言した群をどれ 1 つ落としても、そのゲートは落ちます');
+    return 0;
+  }
+  console.error(`❌ ${bad.length} 組が鳴りません:`);
+  for (const b of bad) {
+    if (b.verdict === 'silent') {
+      console.error(`  ${b.gate} — ${b.group} を ${b.dropped} 件落としても exit 0 でした (群ごとの床がありません)`);
+    } else if (b.verdict === 'not-dropped') {
+      console.error(`  ${b.gate} — ${b.group} は母集団に 1 件もありません (宣言が実物からずれています)`);
+      console.error('      ★ これは「床が在る」ではありません');
+    } else {
+      console.error(`  ${b.gate} — ${b.group}: 前置きが走っていません (差し込みに失敗しています)`);
+    }
+  }
+  return 1;
+}
+
 function sh(cmd, cwd, timeout = 900000) {
   return spawnSync('bash', ['-c', cmd], { cwd, encoding: 'utf8', timeout });
 }
@@ -603,6 +740,50 @@ function selfTest() {
     noop !== null && noop.includes('1 文字も'),
   );
 
+  // --- --partial (パス 469) ---------------------------------------------
+  check(
+    '★ PARTIAL_GATES はすべて RECIPES に在る',
+    PARTIAL_GATES.every((g) => RECIPES.some((r) => r.gate === g)),
+  );
+  check('PARTIAL_GATES が空でない', PARTIAL_GATES.length >= 5);
+  check(
+    'scriptOf は cmd の引数を落とす',
+    scriptOf('node scripts/x.cjs --check') === 'scripts/x.cjs',
+  );
+  check('scriptOf は読めない cmd で投げる', (() => {
+    try { scriptOf('npm run x'); return false; } catch { return true; }
+  })());
+  check(
+    '★ 宣言を持たないゲートは declaredGroups が投げる (道具が黙って 0 組にならない)',
+    (() => {
+      try { declaredGroups('scripts/lint-docs.cjs'); return false; } catch { return true; }
+    })(),
+  );
+  check('前置きが実在する', fs.existsSync(path.join(REPO_ROOT, PREAMBLE_SRC)));
+  check('差し込む印が前置きを指す', PREAMBLE_MARK.includes('partial-scan-preamble'));
+
+  // ★ 前置きは**ディレクトリを落とさない** —— 落とすと部分木ごと消えて「どれだけ
+  //   死んだか」が読めなくなる。子プロセスで実際に走らせて確かめる (このプロセスの
+  //   fs を書き換えない)。
+  const probe = spawnSync(process.execPath, ['-e', `
+    process.env.AUDIT_PARTIAL_MODE = 'keep';
+    process.env.AUDIT_PARTIAL_ARG = '0';
+    require(${JSON.stringify(path.join(REPO_ROOT, PREAMBLE_SRC))});
+    const fs = require('node:fs');
+    const e = fs.readdirSync(${JSON.stringify(REPO_ROOT)}, { withFileTypes: true });
+    const dirs = e.filter((x) => x.isDirectory()).length;
+    const files = e.filter((x) => x.isFile()).length;
+    console.log(JSON.stringify({ dirs, files }));
+  `], { encoding: 'utf8', timeout: 60000 });
+  const seen = (() => {
+    try { return JSON.parse(String(probe.stdout).trim()); } catch { return null; }
+  })();
+  check('★ 前置きはファイルを落とす (keep 0)', seen !== null && seen.files === 0);
+  // ★ 錠は `keep 0` でなければならない —— `ext` では拡張子を持たない項目に針が
+  //   当たらないので、`isDir` の門を外しても通る (対照 H を回して実測した。
+  //   鳴らない対照は合格ではなく、その検査についての報せである)。
+  check('★ 前置きはディレクトリを落とさない', seen !== null && seen.dirs > 3);
+
   // ★ 忠実さの標本: 宣言オブジェクトは「名前替え」では空にならない (パス 468 の実測)。
   const src = "export const X: Record<string, string> = {\n  a: 'b',\n  c: 'd',\n};\n";
   const renamed = src.replace('X: Record<string, string> = {', "X = {} as Record<string, string>; const _u = {");
@@ -618,9 +799,13 @@ function selfTest() {
   return 0;
 }
 
-module.exports = { RECIPES, NO_POPULATION, KINDS, applyRecipe, emptyObjectBody };
+module.exports = {
+  RECIPES, NO_POPULATION, KINDS, applyRecipe, emptyObjectBody,
+  PARTIAL_GATES, scriptOf, declaredGroups, injectPreamble, PREAMBLE_SRC, PREAMBLE_MARK,
+};
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
-  process.exit(argv.includes('--self-test') ? selfTest() : run(argv));
+  if (argv.includes('--self-test')) process.exit(selfTest());
+  process.exit(argv.includes('--partial') ? runPartial(argv) : run(argv));
 }

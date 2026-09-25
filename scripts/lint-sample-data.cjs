@@ -72,6 +72,10 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx', '.cjs'], roots: ['src', 'scripts', 'orchestration'] };
 const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -529,7 +533,8 @@ function main(argv) {
     ...listFiles(DATA_DIR, DATA_EXTS),
     ...ledgered.map((rel) => path.join(REPO_ROOT, rel)).filter((p) => fs.existsSync(p)),
   ].map(read);
-  const srcFiles = SCANNED_DIRS.flatMap((d) => listFiles(d, SRC_EXTS)).map(read);
+  const srcPaths = SCANNED_DIRS.flatMap((d) => listFiles(d, SRC_EXTS));
+  const srcFiles = srcPaths.map(read);
   problems.push(...check({ srcFiles, dataFiles, owner }));
   console.log(
     `見本データ ${dataFiles.length} ファイル (うち出荷 JSON ${ledgered.length}) / ` +
@@ -541,6 +546,12 @@ function main(argv) {
   // ★ **2 つの母集団を別々に見る** —— パス 468 の実測では SCANNED_DIRS を空にすると
   //   「ソース・スクリプト 0 ファイル」と刷ったうえで ✅ で通った。見本の側 (279) は
   //   生きていたので、合計だけを床にすると片側が死んでも気づけない。
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `scripts/` (102 件) や `orchestration/` を丸ごと落としても
+  //   1,452 → 1,350 / 1,442 件で、床 300 は素通りした。**パス 468 で 2 つの母集団を
+  //   分けたのと同じ理由が、1 つの母集団の「中」にも当てはまる。**
+  //   `.js` / `.mjs` は今日 0 件なので宣言しない (正当に 0 になる群に床を置かない · パス 467)。
+  if (reportGroupFloor(srcPaths, REQUIRED_GROUPS, REPO_ROOT, 'lint:sample-data') !== 0) return 1;
   const FLOORS = [
     ['見本データ', dataFiles.length, 100],
     ['ソース・スクリプト', srcFiles.length, 300],
@@ -563,6 +574,6 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { check, checkArtifacts, ownerIdentifiers, bundledJsonImports, EMAIL_ALLOW, VENDOR_ID_SHAPES, BUNDLED_JSON, SRC_EXTS, DATA_EXTS };
+module.exports = { check, checkArtifacts, ownerIdentifiers, bundledJsonImports, EMAIL_ALLOW, VENDOR_ID_SHAPES, BUNDLED_JSON, SRC_EXTS, DATA_EXTS, REQUIRED_GROUPS };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));

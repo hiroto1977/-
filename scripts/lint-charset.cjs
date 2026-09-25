@@ -47,6 +47,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { groupFloorProblems } = require('./lib/population-floor.cjs');
 
 const REPO_ROOT = path.join(__dirname, '..');
 
@@ -262,6 +263,22 @@ const SCAN_EXTS = new Set([
   '.sh', '.yml', '.yaml', '.html', '.css', '.js', '.mjs', '.svg', '.webmanifest',
   '.txt', '.example',
 ]);
+
+/**
+ * **宣言はしているが、今日 1 件も無い拡張子** (2026-09-25 · パス 469 の実測)。
+ *
+ * 下の「宣言した群はどれも 1 件以上」の床から**意図して外す**群である。足された日に
+ * 走査へ入るための受け皿なので、床を置くと今日落ちる (正当に 0 になる母集団には
+ * 床を置かない · パス 467)。既定は「要求する」側で、外すにはここへ綴りと理由が要る ——
+ * 17 個目の拡張子を `SCAN_EXTS` へ足した人は、自動的に床の下に入る。
+ */
+const OPTIONAL_EXTS = new Set(['.yaml', '.mjs']);
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (宣言からそのまま導く)。 */
+const REQUIRED_GROUPS = {
+  exts: [...SCAN_EXTS].filter((e) => !OPTIONAL_EXTS.has(e)),
+  roots: [...SCAN_DIRS],
+};
 
 /**
  * 走査が生きていることの床。
@@ -580,6 +597,25 @@ function main() {
     );
   }
 
+  /*
+   * ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測)。
+   * `readdirSync` から `.tsx` (108 件) を落としても `docs/` (61 件) を丸ごと落としても
+   * 1,668 → 1,560 / 1,607 件で、床 1,000 は素通りした。
+   *
+   * ★★ **このゲートは既に「宣言」を検めていた** —— 上の自己テストは `SCAN_EXTS` が
+   * `.sh .yml .html .css .js .svg` を**含むこと**を要求する (パス 255)。それは宣言に
+   * 綴りが在ることであって、**1 件でも読んだこと**ではない。走査の側が拡張子を落とし、
+   * 宣言はそのままという形は素通りする (法則 `mention-vs-declaration` の、ゲート自身の
+   * 中での現れ)。だから**要求は宣言からそのまま導き**、結果の側で数える ——
+   * 宣言を縮めれば上の自己テストが、結果が縮めばここが鳴る。
+   */
+  const groupProblems = groupFloorProblems(files, REQUIRED_GROUPS, REPO_ROOT);
+  if (groupProblems.length > 0) {
+    failed = true;
+    console.error('\n❌ 宣言した母集団の一部が走査から消えています:');
+    for (const g of groupProblems) console.error(`  ${g}`);
+  }
+
   if (findings.length > 0) {
     failed = true;
     console.error(`\n❌ ${findings.length} 件の混入を検出しました\n`);
@@ -627,8 +663,15 @@ function context(text, index) {
   return text.slice(a, b).replace(/\s+/g, ' ');
 }
 
-if (process.argv.slice(2).includes('--self-test')) {
-  process.exit(selfTest());
-}
+/*
+ * **外側から読めるようにする。** `require.main` の番をつけないと、require した瞬間に
+ * ゲートが走って process ごと落ちる (`check-import-boundaries.cjs` が同じ理由で
+ * 同じ番をつけている)。`audit:gate-floors --partial` は宣言を**このゲートから読む** ——
+ * 群の一覧を道具の側にも書くと、2 つ目の台帳が静かに古びる。
+ */
+module.exports = { SCAN_EXTS, SCAN_DIRS, OPTIONAL_EXTS, REQUIRED_GROUPS };
 
-main();
+if (require.main === module) {
+  if (process.argv.slice(2).includes('--self-test')) process.exit(selfTest());
+  main();
+}

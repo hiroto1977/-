@@ -35,6 +35,10 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx'], roots: ['src'] };
 const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -423,6 +427,7 @@ function boundaryViolations(rel, text) {
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
   const violations = [];
+  const scannedFiles = [];
   let fileCount = 0;
   let importCount = 0;
 
@@ -430,6 +435,7 @@ function main() {
     const rel = path.relative(REPO_ROOT, full).replace(/\\/g, '/');
     if (!detectZone(rel)) continue;
     fileCount++;
+    scannedFiles.push(full);
     const text = fs.readFileSync(full, 'utf8');
     importCount += (text.match(IMPORT_RE) || []).length;
     violations.push(...boundaryViolations(rel, text));
@@ -441,6 +447,11 @@ function main() {
   // 走査が死んで 0 件になったのを「違反なし」と読まない (2026-09-05、e2e の空振り合格を
   // 塞いだ同じ日に、走査数を表示するだけで床の無いゲートをここと lint:regex に見つけた)。
   // 実測 440 ファイル / 1,360 import。src/ の半分が消えるような変化は、境界検査の前に気づくべき事故。
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `.tsx` を落とすと 530 → 422 件になるが、床 300 は素通りする。
+  //   境界の規則は renderer / main / preload の別を見る物なので、`.tsx` (= renderer の画面)
+  //   が丸ごと消えた走査で「違反なし」と言うのは、0 件を「違反なし」と読むのと同じ形である。
+  if (reportGroupFloor(scannedFiles, REQUIRED_GROUPS, REPO_ROOT, 'lint:imports') !== 0) return 1;
   const MIN_FILES = 300;
   if (fileCount < MIN_FILES) {
     console.error(`❌ src/**/*.ts(x) を ${fileCount} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
@@ -461,6 +472,6 @@ function main() {
  * **外側の証人のために公開する。** `require.main` の番をつけないと、
  * require した瞬間に CLI が走って process ごと落ちる。
  */
-module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES };
+module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES, REQUIRED_GROUPS };
 
 if (require.main === module) process.exit(main());

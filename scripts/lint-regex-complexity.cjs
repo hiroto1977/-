@@ -128,6 +128,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const { stripComments } = require('./lib/strip-non-code.cjs');
 
@@ -159,6 +160,9 @@ const BOOT_TIMEOUT_MS = 30000;
 const CONFIRM_PASSES = 1;
 
 const ROOTS = ['src', 'scripts', 'orchestration'];
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx', '.cjs'], roots: [...ROOTS] };
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'dist-electron', 'coverage']);
 const EXT = /\.(ts|tsx|cjs|js|mjs)$/;
 
@@ -408,10 +412,12 @@ function walk(dir, out = []) {
 /** 走査対象の式を集める (同じ式は 1 つにまとめ、出所は全部覚える)。 */
 function collect(roots) {
   const literals = [];
+  const paths = [];
   let files = 0;
   for (const root of roots) {
     for (const file of walk(root)) {
       files += 1;
+      paths.push(file);
       literals.push(...extractLiterals(fs.readFileSync(file, 'utf8'), file));
     }
   }
@@ -421,17 +427,17 @@ function collect(roots) {
     if (!byBody.has(key)) byBody.set(key, { body: lit.body, flags: lit.flags, sites: [] });
     byBody.get(key).sites.push(`${lit.file}:${lit.line}`);
   }
-  return { files, items: [...byBody.values()] };
+  return { files, paths, items: [...byBody.values()] };
 }
 
 async function scan(roots) {
-  const { files, items } = collect(roots);
+  const { files, paths, items } = collect(roots);
   const { verdicts, retracted } = await runProbesConfirmed(items);
   const hits = [];
   items.forEach((item, i) => {
     if (verdicts[i]) hits.push({ ...item, ...verdicts[i] });
   });
-  return { files, distinct: items.length, hits, retracted };
+  return { files, paths, distinct: items.length, hits, retracted };
 }
 
 // ---------------------------------------------------------------------------
@@ -533,7 +539,7 @@ async function selfTest() {
 async function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
-  const { files, distinct, hits, retracted } = await scan(ROOTS);
+  const { files, paths, distinct, hits, retracted } = await scan(ROOTS);
 
   const seen = new Set();
   const problems = [];
@@ -549,6 +555,11 @@ async function main(argv) {
 
   console.log(`Scanned ${files} file(s): 正規表現 ${distinct} 種を実測 (台帳 ${REVIEWED.length} 件)`);
   // 走査が死んで 0 件になったのを「ReDoS なし」と読まない (実測 976 ファイル / 2,456 種、2026-09-05)。
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `.tsx` を落としても `scripts/` を丸ごと落としても、床 500 は素通りした
+  //   (1,577 → 1,469 / 1,475 件)。`.js` / `.mjs` は今日 0 件なので**宣言しない**
+  //   (正当に 0 になる群に床を置かない · パス 467)。
+  if (reportGroupFloor(paths, REQUIRED_GROUPS, path.resolve(__dirname, '..'), 'lint:regex') !== 0) process.exit(1);
   const MIN_FILES = 500;
   if (files < MIN_FILES) {
     console.error(`❌ ${files} ファイルしか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
@@ -599,6 +610,7 @@ module.exports = {
   REVIEWED,
   N_EXP,
   BOOT_TIMEOUT_MS,
+  REQUIRED_GROUPS,
 };
 
 if (require.main === module && isMainThread) {

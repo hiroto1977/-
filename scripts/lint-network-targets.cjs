@@ -33,6 +33,7 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
 const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -669,6 +670,26 @@ function bareSendFindings(rel, lines) {
   return found;
 }
 
+/**
+ * `src` 側の母集団 (上の 2 つの検出器が実際に読むファイル)。**群ごとの床のために数える。**
+ *
+ * ★ 合計の床は「一部だけ死んだ走査」を見ない (2026-09-25 · パス 469 の実測) ——
+ * `readdirSync` から `.tsx` を落とすと 1,060 → 844 件になるが、このゲートは exit 0 だった。
+ * 送り先が変数で決まる通信は**資格情報の流出経路**で、`.tsx` (= 画面) はそこへ値を
+ * 渡す層である。宣言した群はどれも 1 件以上を要求する。
+ */
+function srcPopulation() {
+  const out = [];
+  for (const root of ROOTS) {
+    const abs = path.join(REPO_ROOT, root);
+    if (!fs.existsSync(abs)) continue;
+    for (const file of walk(abs)) out.push(file);
+  }
+  return out;
+}
+
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx'], roots: ['src'] };
+
 function collectBareSends() {
   const found = [];
   for (const root of ROOTS) {
@@ -783,6 +804,7 @@ function* walk(dir) {
 
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
+  if (reportGroupFloor(srcPopulation(), REQUIRED_GROUPS, REPO_ROOT, 'lint:network-targets') !== 0) return 1;
   const found = collect();
   const problems = [];
 
@@ -907,6 +929,8 @@ module.exports = {
   NETWORK_CALL_NAMES,
   OUTSIDE_SEND_NAMES,
   OUTSIDE_POPULATION_FLOOR,
+  srcPopulation,
+  REQUIRED_GROUPS,
 };
 
 if (require.main === module) process.exit(main());

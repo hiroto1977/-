@@ -21,6 +21,7 @@
     "scripts/inline-html.cjs",
     "scripts/integrity-chain.cjs",
     "scripts/lib/artifact-freshness.cjs",
+    "scripts/lib/population-floor.cjs",
     "scripts/lint-artifact-csp.cjs",
     "scripts/lint-sample-data.cjs",
     "scripts/make-autoinstall.sh",
@@ -2175,6 +2176,14 @@
       "leafCount": 92,
       "note": "update lint-sample-data.cjs",
       "hash": "6f25fc10019165160117eec5608f015111cbc9c527d0d3a234fa6d53c0670e8e"
+    },
+    {
+      "index": 260,
+      "prevHash": "6f25fc10019165160117eec5608f015111cbc9c527d0d3a234fa6d53c0670e8e",
+      "merkleRoot": "ea639cce61f4dcafa3a41aed2da8395226b24f3eb6c8ea7c7aa22c37278593eb",
+      "leafCount": 93,
+      "note": "update integrity-chain.cjs,population-floor.cjs,lint-sample-data.cjs",
+      "hash": "246874b2fdcd2f94e5ee2e9a28a874b528d2c5ad1368929eabeba86d8fc7b613"
     }
   ],
   "tipManifest": {
@@ -2195,10 +2204,11 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "725972477487f06f7344e290f3027677474ca7074520078f87513aafeb4d7b84",
+    "scripts/integrity-chain.cjs": "47f63f6e06d22cbe02d876b02107765840734c0ae8866960d425e344497f87cd",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
+    "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
-    "scripts/lint-sample-data.cjs": "b0f00983c7ba31259f04582b8c6511d3a3542b8d08fdc5752e173516872cbcd8",
+    "scripts/lint-sample-data.cjs": "a3fc867884b5abb19ab4e94625e71707fb7abf071c1f2f4f3c4fd89512040542",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
     "scripts/migrate.sh": "fe793636d6c87f42b663a42e300207346b40d6adbb057d0ba5696fd4604311ed",

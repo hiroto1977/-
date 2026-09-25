@@ -53,6 +53,10 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx'], roots: ['src'] };
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -157,7 +161,7 @@ function analyze() {
     const rel = path.relative(REPO_ROOT, abs).split(path.sep).join('/');
     hits.push(...scanFile(rel, fs.readFileSync(abs, 'utf8')));
   }
-  return { hits, scanned: files.length };
+  return { hits, scanned: files.length, files };
 }
 
 // ---------------------------------------------------------------------------
@@ -221,7 +225,7 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
-  const { hits, scanned } = analyze();
+  const { hits, scanned, files } = analyze();
   const problems = [];
   const seen = new Set();
 
@@ -246,6 +250,11 @@ function main(argv) {
   //   床を src/ の半分 (300) に置くのは lint:imports と同じ判断 —— src/ がそこまで縮む
   //   ような変化は、URL の符号化を確かめる前に気づくべき事故である。
   const MIN_FILES = 300;
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `.tsx` を落とすと 530 → 422 件になるが、床 300 は素通りする。
+  //   画面 (`.tsx`) はまさに URL を組み立てて見せる層なので、そこが丸ごと消えるのは
+  //   「補間 0 件」と同じ形の見落としである。宣言した群はどれも 1 件以上を要求する。
+  if (reportGroupFloor(files, REQUIRED_GROUPS, REPO_ROOT, 'lint:url-encoding') !== 0) return 1;
   if (scanned < MIN_FILES) {
     console.error(
       `❌ src/**/*.ts(x) を ${scanned} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。`
@@ -281,7 +290,7 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { scanFile, rawInterpolations, encodedBindings, REVIEWED };
+module.exports = { scanFile, rawInterpolations, encodedBindings, REVIEWED, REQUIRED_GROUPS };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

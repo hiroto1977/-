@@ -28,7 +28,16 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-25 パス 468 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 6 本と `__tests__/` 1 本・`ontology/`・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**母集団を空にすると、37 ゲートのうち 5 本が ✅ exit 0 で通った。** **見つけ方**: パス 467 が残した問い (「走査した件数を刷るゲートのうち、母集団が空になったら落ちるのは何本か」) を測りに行った。**綴りでは測れない** —— 床の効き方は実測で **7 通り**あり (`MIN_*` の定数・台帳の双方向・名指しの走査・生成物の byte 一致・正典の値が計算不能・保護対象の不一致・**副作用としての床**)、どの綴りを数えても取りこぼす。だから `audit:comment-blind --gates` と同じ形 —— **隔離した写しの上で母集団を空にして終了コードを読む** —— にした (`npm run audit:gate-floors`・**定期点検の道具 8 本目**)。実測 (2026-09-25):
+   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-25 パス 469 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` のゲート 6 本と道具 1 本・新しい `scripts/lib/` 2 本・`__tests__/` 1 本・`ontology/`・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**床は「0 件」にしか当たらない —— 画面 (`.tsx` 108 件) が走査から消えても 5 本のゲートが ✅ exit 0 だった。** **見つけ方**: パス 468 が残した問い —— 「`audit:gate-floors` は母集団を**空**にしてしか試していない」 —— をそのまま測りに行った。隔離した写し (`git worktree`) の上でゲートの入口に前置きを差し込み、`readdirSync` から**ファイルの項目だけ**を落として (ディレクトリは落とさない —— 落とすと部分木ごと消えて、どれだけ死んだのかが読めない) 終了コードを読む。実測 (2026-09-25 · 13 ゲート):
+
+| 落とした群 | 直す前 |
+| --- | --- |
+| **`.tsx` 108 件 (= 画面そのもの)** | **`lint:network-targets` / `lint:url-encoding` / `lint:regex` / `lint:imports` / `lint:charset` が ✅ exit 0** |
+| 根 `scripts/` 102 件 | **`lint:regex` / `lint:charset` / `lint:sample-data` が ✅** |
+| 根 `docs/` 61 件 | **`lint:charset` が ✅** |
+| 根 `orchestration/` | **`lint:regex` / `lint:sample-data` が ✅** |
+
+★ **合計の床が捕まえたのは 13 のうち 2 本だけ** (`lint:parameter-prose` 170 < 200 / `lint:zero-fold` 228 < 240) で、しかも**どちらも床がたまたま実測のすぐ下に在った**ためである。残りで鳴った 4 本 (`lint:forbidden` / `lint:sample-data` / `lint:storage` / `lint:shared-judgement`) は**台帳の双方向・生成物の一致という別の機構が偶然**捕まえた物で、床ではない (実測: 失敗の文面がどれも「台帳にあるのに実在しない」「census が古い」だった)。★ **向きが重い** —— `.tsx` はこのアプリの画面そのもので、消えた 5 本は **URL の符号化** (`lint:url-encoding`)・**送り先が変数の通信** (`lint:network-targets` = 資格情報の流出経路)・**プロセス境界** (`lint:imports`)・**ReDoS** (`lint:regex`)・**Trojan Source ほか不可視文字** (`lint:charset`) である。**パス 464 が「`.tsx` は JS ではない」で 1 度捕まった当の層**が、今度は「走査から丸ごと消えても誰も鳴らない」形で残っていた。★★ **`lint:charset` は「宣言」を検めていた** —— 2026-09-14 (パス 255) から `SCAN_EXTS` が `.sh .yml .html .css .js .svg` を**含むこと**を自己テストで要求しているが、それは**宣言に綴りが在ること**であって**1 件でも読んだこと**ではない。走査の側が拡張子を落とし、宣言はそのままという形は素通りする (法則 `mention-vs-declaration` の、**ゲート自身の中での現れ**)。**直し**: ① 判定は共有の 1 つ `scripts/lib/population-floor.cjs` (`groupFloorProblems` / `reportGroupFloor`) で、**「宣言した群はどれも 1 件以上」**を要求する ② **割合にはしない** —— 実測に張り付けた床は直した日に落ちる門になる (パス 378 で実際にそうなった)。群ごとに 1 件あれば通るので、母集団が増えても減っても床は動かない ③ **正当に 0 になる群は宣言しない** (パス 467) —— `lint:charset` の `.yaml` / `.mjs` は今日 0 件の**受け皿**なので `OPTIONAL_EXTS` として床の下に置き、**既定は「要求する」側**にした (17 個目の拡張子を `SCAN_EXTS` へ足した人は自動的に床の中に入る) ④ `lint:charset` の要求は**宣言からそのまま導く** (`SCAN_EXTS` − `OPTIONAL_EXTS` / `SCAN_DIRS`) ので、**宣言を縮めれば上の自己テストが、結果が縮めばこちらが鳴る** ⑤ `lint:regex` / `lint:sample-data` の `.js` / `.mjs` は今日 0 件なので宣言しない。★ **道具は常設にした** (`npm run audit:gate-partial` —— **同じ道具の 2 つ目のモード**で、数は 8 本のまま。CI では走らせない)。**落とす群はゲート本体の `REQUIRED_GROUPS` から読む** —— 道具の側にも群を並べると 2 つ目の台帳が静かに古びるので、`lint:charset` に `require.main` の番と `module.exports` を足して外から読めるようにした (`check-import-boundaries.cjs` が同じ理由で同じ番を持つ)。実測: **6 ゲート × 42 組すべてが鳴る**。台帳の形は `src/shared/__tests__/populationGroupFloor.test.ts` (**15 件**) が毎回の `npm test` で見る (共有の判定の振る舞い・**宣言しているゲートと `PARTIAL_GATES` の双方向**・宣言したゲートが**実際に共有の判定を呼ぶ** (注記の中の言及では満たされない・標本つき)・床が実測に張り付いていないこと)。★ **対照 9 方向すべて鳴り、それぞれ狙った層に当たる** (A `lint:url-encoding` の群の床を外す → 道具が **`ext .tsx` を 108 件落としても exit 0** と名指し (`.ts` と `root:src` は合計の床が捕まえる —— **直した後の絵が、合計の床と群の床の分担をそのまま示す**) / B `lint:charset` の群の床を外す → **12 組が silent** / **C 受け皿 (`OPTIONAL_EXTS`) を空にする → 実物のゲートが今日落ちる** (過剰の向き・`.yaml` / `.mjs` を名指し) / D 共有の判定が「宣言が空」を受け入れる ❌1 / E `PARTIAL_GATES` から 1 本消す ❌1 / F ゲートが `REQUIRED_GROUPS` を export しなくなる ❌3 / G 共有の判定が根を見ない ❌1 / **H 前置きがディレクトリも落とす → self-test ✗1** / I `lint:sample-data` の群の床を外す ❌3)。★★ **自戒: 対照 H は 1 度目に鳴らず、原因は私の錠だった** —— 「ディレクトリは落とさない」を `ext` モード (`.md` を落とす) で確かめていたが、**ディレクトリは拡張子を持たないので針が当たらない** (`'' !== '.md'` で残る)。門を外しても通るので、その検査は**違う理由で**合格していた。`keep 0` (何も残さない) へ替えると H は ✗1 で鳴る。**鳴らない対照は合格ではなく、その検査についての報せである** (パス 468 の対照 J と同じ形で、2 パス連続)。★ **測って何も無かった軸も記録する**: ① **`lint:test-coverage` は `.tsx` が消えても弱くならない** —— 数える母集団はサービス (`SERVICE_IDS`) と**検査ファイル** (`.test.ts`) で、画面の `.tsx` は 1 件も入っていない (実測: 432 件落としても答えは同じ)。**弱くなっていないゲートに床を足さない** ② **`lint:workflow-security` の母集団に `.tsx` は 0 件** (`.github/workflows/*.yml` だけ) ③ **`git ls-files` を読む 2 本 (`lint:shell` / `lint:repo-size`) は `readdirSync` を通らない**のでこの前置きでは測れない —— 同じ形で測るなら子プロセスの出力を包む別の手が要る (測っていないことを残す)。`typecheck` 緑・`npm test` **905 / 19,152**・`verify:all` exit 0・`chain:verify` 緑 (`lint-sample-data.cjs` が保護対象なので block **#260** を採掘)。**実機は回していない** —— 出荷物が 1 byte も動いておらず md5 も同じなので)・****2026-09-25 パス 468 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 6 本と `__tests__/` 1 本・`ontology/`・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**母集団を空にすると、37 ゲートのうち 5 本が ✅ exit 0 で通った。** **見つけ方**: パス 467 が残した問い (「走査した件数を刷るゲートのうち、母集団が空になったら落ちるのは何本か」) を測りに行った。**綴りでは測れない** —— 床の効き方は実測で **7 通り**あり (`MIN_*` の定数・台帳の双方向・名指しの走査・生成物の byte 一致・正典の値が計算不能・保護対象の不一致・**副作用としての床**)、どの綴りを数えても取りこぼす。だから `audit:comment-blind --gates` と同じ形 —— **隔離した写しの上で母集団を空にして終了コードを読む** —— にした (`npm run audit:gate-floors`・**定期点検の道具 8 本目**)。実測 (2026-09-25):
 
 | 測った物 | 実測 |
 | --- | --- |
@@ -942,6 +951,25 @@ npm run audit:comment-blind     # **注記が答えになっている検査**を
                          #   `reads-comment-directive` / `self-test-sample` / `content-hash`)。
                          #   ★ **そのうち 1 件が本物の欠陥だった** —— `lint:forbidden` の
                          #   免除の枠に散文が混ざっていた (下の出荷物の節に実測)
+npm run audit:gate-partial      # **走査が「一部だけ」死んだときにゲートが鳴るか**を測る
+                         #   (**同じ道具 (`audit-gate-floors.cjs`) の 2 つ目のモード** ——
+                         #   道具の数は 8 本のまま。CI では走らせない —— 判定のために
+                         #   ソースを書き換えるし、隔離した写し (`git worktree`) の上で
+                         #   ゲートを何十回も走らせる)。
+                         #   `audit:gate-floors` は母集団を**空**にする。**ところが床は
+                         #   「0 件」にしか当たらない** —— 合計の床は実測の 10〜60% に
+                         #   置かれているので、走査が一部だけ死んでも素通りする。
+                         #   `scripts/lib/partial-scan-preamble.cjs` を入口に差し込んで
+                         #   `readdirSync` から**ファイルの項目だけ**を落とし
+                         #   (ディレクトリは落とさない —— 落とすと部分木ごと消えて
+                         #   どれだけ死んだかが読めない)、終了コードを読む。
+                         #   **落とす群はゲート本体の `REQUIRED_GROUPS` から読む** ——
+                         #   道具の側にも群を並べると 2 つ目の台帳が静かに古びる。
+                         #   実測 (2026-09-25 · パス 469): 宣言している 6 ゲート ×
+                         #   42 組すべてが鳴る。直す前は **`.tsx` 108 件 (= 画面そのもの) が
+                         #   消えても 5 本が ✅ exit 0**・根 `scripts/` (102 件) が丸ごと
+                         #   消えても 3 本が ✅・`docs/` (61 件) で 1 本が ✅ だった。
+                         #   台帳の形は `populationGroupFloor.test.ts` が毎回の npm test で見る
 npm run audit:e2e-wait-margin   # e2e の待ちが**制限にどれだけ近いか** (実測 ÷ 制限) を測る
                          #   (定期点検の道具 5 本目。CI では走らせない —— 落とさない道具で、
                          #   薄い余裕は欠陥ではなく手がかりである)。記録子は

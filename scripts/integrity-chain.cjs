@@ -249,6 +249,7 @@ const PROTECTED = [
   //                               返せる (run() の先頭で呼ぶ) —— 守っている検査を
   //                               黙らせられる物は、除外ではなく保護対象。
   'scripts/lint-sample-data.cjs',
+  'scripts/lib/population-floor.cjs',
   'scripts/lint-artifact-csp.cjs',
   'scripts/verify-release-artifacts.cjs',
   'scripts/checksum-release.cjs',
