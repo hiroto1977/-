@@ -285,3 +285,122 @@ export function proxyUnusedNote(kind: BuildKind): string | null {
     + '保存しても通信の経路は変わらないので、この欄からは保存できません。'
     + '経路を自分の Worker に通したいときは、ブラウザ版（単一 HTML）で開いて設定してください。';
 }
+
+/**
+ * Google 3 サービス (Drive / Calendar / Gmail) が**この実行形態で実際に送る物**
+ * (2026-09-25 · パス 457)。
+ *
+ * ## 何が偽だったか
+ *
+ * `GoogleConnectCard` (Drive / Calendar / Gmail の 3 画面が共有) の末尾は
+ * 2026-08 から「ライブ接続（実データ取得・送信）はデスクトップ版の機能で、
+ * ブラウザ版は同梱スナップショットを表示します。」と述べていた。
+ * **取得については真で、送信については偽である。** 実測 (2026-09-25 · 直す前):
+ *
+ * | 向き | ブラウザ版の実測 |
+ * | --- | --- |
+ * | 取得 | **同梱スナップショット** —— `LIVE_READERS` は `cursor` **1 件だけ**なので、 |
+ * |      | drive / calendar / gmail は `not_implemented` へ落ちる |
+ * | 送信 | **本当に送る** —— `web-shim.ts` の invoke が 3 つの action を |
+ * |      | `runProxyBearer` → `saasWriteWeb` の writer へ振り分ける |
+ *
+ * 偽の fetch で要求を読むと (実測・保管庫のトークンを Bearer に載せて):
+ *
+ * ```
+ *   POST https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink
+ *   POST https://www.googleapis.com/calendar/v3/calendars/primary/events
+ *   POST https://gmail.googleapis.com/gmail/v1/users/me/drafts
+ *   網を叩いた回数: 3
+ * ```
+ *
+ * ★ **向きが利用者の損である。** この 1 文は「この実行形態では何も外へ出ない」と
+ * 読める唯一の文で、それを読んだ人が同じ 3 画面に在るフォームを押すと、
+ * **本人の Google Drive に実際のフォルダが、Gmail に実際の下書きが作られる**。
+ * 法則 `egress-notice-before-send` は「外へ送る画面は何を送るかを言う」と述べるが、
+ * ここは**逆を言っていた**。
+ *
+ * ★ **同じアプリが別の場所で正しく書いていた** —— `Microsoft365Page.tsx:209` は
+ * 「実データの取得はデスクトップ版の機能です（…）。メール送信と予定作成は
+ * ブラウザ版でも動きます —— プロキシ設定が要ります（設定ページ）。」と述べる
+ * (あちらは JSX の素のテキストに `**` を書いているので画面には星印が出る —— 文意は正しいが、
+ * その形は写さない)。
+ * ms365 の書き込みは**同じ形** (`runProxyBearer` → `saasWriteWeb`) で、同じ 2 action。
+ * つまり直す向きはアプリ自身が既に持っており、Google のカードだけがその前提を
+ * 持っていなかった (パス 398 / 408 と同じ非対称)。
+ *
+ * ★ **送る物の名前は表から引く。** 「書き込み」と曖昧に言うと、読んだ人は
+ * *何が*作られるのか分からない。3 サービスで 1 action ずつなので表に書き、
+ * `renderer/__tests__/browserSendClaimCensus.test.ts` が **`web-shim.ts` の
+ * 振り分けと両方向で**突き合わせる (4 つ目の action が生えた日に鳴る)。
+ */
+export const GOOGLE_BROWSER_SEND: Readonly<Record<'drive' | 'calendar' | 'gmail', {
+  /** `web-shim.ts` の invoke がこの綴りで振り分ける action。 */
+  readonly action: string;
+  /** 利用者に見せる「何が作られるか」。 */
+  readonly label: string;
+}>> = {
+  drive: { action: 'create-folder', label: 'フォルダの作成' },
+  calendar: { action: 'create-event', label: '予定の登録' },
+  gmail: { action: 'create-draft', label: '下書きの作成' },
+} as const;
+
+/** `GOOGLE_BROWSER_SEND` の鍵。 */
+export type GoogleServiceId = keyof typeof GOOGLE_BROWSER_SEND;
+
+/**
+ * 「この実行形態で、取得と送信はそれぞれどうなるか」。
+ *
+ * **向きごとに別に言う** —— 1 つの文で「ライブ接続は」とまとめると、
+ * 取得が真でも送信が偽になる (それが直した欠陥そのものである)。
+ * 文の形は `Microsoft365Page` の正しい 1 文に揃える (同じ事実を同じ言い方で)。
+ */
+export function googleLiveScopeNote(kind: BuildKind, serviceId: GoogleServiceId): string {
+  if (kind === 'desktop') {
+    return `実データの取得と${GOOGLE_BROWSER_SEND[serviceId].label}は、どちらもこの実行形態で動きます。`;
+  }
+  return '実データの取得はデスクトップ版の機能です（ブラウザ版は同梱スナップショットを表示します）。'
+    + `いっぽう${GOOGLE_BROWSER_SEND[serviceId].label}はブラウザ版でも実際に Google へ送信します`
+    + '（サインイン済みのアカウントに本当に作られます）—— プロキシ設定が要ります（設定ページ）。';
+}
+
+/**
+ * 方法 A (Google Cloud のクライアント ID + サインイン) が**この実行形態で走るか**。
+ *
+ * ## 何が起きていたか (実測 2026-09-25 · 直す前 · jsdom で実物のカードを描き、打って押す)
+ *
+ * | 段 | 実測 (ブラウザ版) |
+ * | --- | --- |
+ * | 方法 A（推奨・恒久） | 出る |
+ * | Google Cloud Console への手順 3 段 | 出る |
+ * | クライアント ID の欄 | 出る |
+ * | Google でサインイン | 出る・打てば押せる |
+ * | 押した結果 | **ブラウザ版では OAuth フローを実行しません** |
+ * | localStorage | クライアント ID は**実際に保存される** |
+ *
+ * ★ **断りが押した後に来る。** そこへ辿り着くまでに利用者は Google Cloud Console で
+ * OAuth クライアントを作り、Drive / Calendar / Gmail の 3 つの API を有効化している
+ * (カードの手順 1-2 がそう指示する)。**数分の実作業を終えてから、その道が
+ * この実行形態に無いと知る。** パス 454 / 455 / 456 で 3 度下したのと同じ判断で、
+ * **断りは押す前に言う。**
+ *
+ * ★ **しかも順位が逆だった** —— 方法 A は「推奨・恒久」、方法 B (OAuth Playground の
+ * トークンを貼る) は「即時・お試し」と札が付く。ブラウザ版では**推奨が不可能で、
+ * お試しだけが働く**。さらに「恒久」はブラウザ版には存在しない: 設定ページの
+ * 貼り付け式 PKCE も `accessToken` だけを持つので (パス 454 の実測)、
+ * ブラウザ版で取れる Google の資格情報はどちらも約 1 時間である。
+ *
+ * ★ **働く道は 2 つあり、どちらも名指しできる** —— 同じカードの方法 B
+ * (トークン設定へ貼る) と、設定ページの貼り付け式。断りはその両方を言う。
+ *
+ * `null` = 断らない。**分からないあいだ (`null`) は呼ばない**のは呼び手の側の約束で、
+ * 理由は `pasteOAuthUnreadNote` と同じ (間違って断るほうが、1 フレーム遅れて
+ * 断るより害が大きい)。
+ */
+export function googleSignInUnsupportedNote(kind: BuildKind): string | null {
+  if (kind !== 'browser') return null;
+  return 'ブラウザ版はこのサインイン（Google Cloud のクライアント ID + 認可）を実行できません'
+    + '（loopback で受け取る仕組みがデスクトップ版にしか無いため）。'
+    + 'Google Cloud Console でクライアント ID を作る前にお伝えします —— 作っても、この実行形態では使えません。'
+    + 'ブラウザ版で Google につなぐ道は 2 つあります: 下の方法 B（OAuth Playground のトークンを貼る）と、'
+    + '設定ページの Google OAuth の節（貼り付け式）。どちらも約 1 時間有効です。';
+}

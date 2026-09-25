@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { Section } from './StatusBar';
 import { readLocalString, writeLocalString } from '../data/localWrite';
+import { useBuildKind } from '../hooks/useBuildKind';
+import {
+  googleLiveScopeNote,
+  googleSignInUnsupportedNote,
+  type GoogleServiceId,
+} from '../../shared/buildDestinations';
 
 /**
  * Google ワークスペース「かんたん接続」カード (Drive / Calendar / Gmail 共通)。
@@ -11,7 +17,15 @@ import { readLocalString, writeLocalString } from '../data/localWrite';
  * 同じ ID でサインインできる (スコープはサービスごとに oauth.ts が付与)。
  *
  * サインイン自体は利用者本人のブラウザ認証 (代行不可)。ID は公開識別子であり
- * 秘密情報ではない。ライブ接続はデスクトップ版の機能 (ブラウザ版は snapshot 表示)。
+ * 秘密情報ではない。
+ *
+ * **実行形態で変わるのは 2 つで、向きが逆である** (2026-09-25 · パス 457 で実測):
+ * 取得はブラウザ版では同梱スナップショットのまま (`LIVE_READERS` は `cursor` 1 件だけ)、
+ * **送信はブラウザ版でも本当に走る** (`web-shim.ts` の invoke が 3 つの action を
+ * `runProxyBearer` → `saasWriteWeb` へ振り分け、googleapis.com へ POST する)。
+ * 方法 A のサインインは逆にデスクトップ版だけ (loopback で受け取るため)。
+ * 文は `shared/buildDestinations.ts` が持つ —— `.tsx` は変異検査の母集団の外なので、
+ * ここに書くと「どちらの文が出るか」を誰も測らない。
  */
 
 /** Google OAuth クライアント ID の共有保存キー (3 サービス共通)。 */
@@ -29,7 +43,7 @@ const inputStyle: React.CSSProperties = {
 
 export interface GoogleConnectCardProps {
   /** サインイン対象のサービス (drive / calendar / gmail)。 */
-  readonly serviceId: 'drive' | 'calendar' | 'gmail';
+  readonly serviceId: GoogleServiceId;
   /** サインイン成功後に呼ぶ (ページの refresh)。 */
   readonly onConnected?: () => void;
 }
@@ -67,10 +81,31 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
     saved.readable ? null : `この端末ではクライアント ID を保存できません —— ${saved.reason}`,
   );
 
+  /**
+   * **この実行形態でサインインが走るか** (2026-09-25 · パス 457)。
+   *
+   * 判定は `runtimeMode.ts` の 1 つ (`App` と設定画面が読むのと同じ) を
+   * `useBuildKind` 経由で。**分かるまで (`null`) は断らない** —— 既定を
+   * `'browser'` に倒すと、橋の `getVersion` が一瞬遅れただけでデスクトップ版の
+   * 唯一の恒久的な Google 認証の道が消える。間違って断るほうが、1 フレーム
+   * 遅れて断るより害が大きい (同じ判断が `useBuildKind` の docblock に在る)。
+   */
+  const buildKind = useBuildKind();
+  const signInUnsupported = buildKind === null ? null : googleSignInUnsupportedNote(buildKind);
+
   const openExternal = (url: string) => window.serviceHub?.openExternal(url);
 
   const signIn = async () => {
     if (!window.serviceHub) return;
+    /*
+     * **床。** 下の描画がこの実行形態では欄もボタンも出さないので今日ここへ届く道は
+     * 無いが、別の入口からこの関数を呼べるようにした日に静かに復活する。
+     * **保存より前に断る** —— 走らない道のためにクライアント ID を端末へ残さない。
+     */
+    if (signInUnsupported !== null) {
+      setResult({ kind: 'error', message: signInUnsupported });
+      return;
+    }
     setSigningIn(true);
     setResult(undefined);
     /*
@@ -94,6 +129,33 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
   return (
     <Section title="かんたん接続 (Google ワークスペース共通)">
       <div className="card" style={{ gap: 10 }}>
+        {signInUnsupported !== null ? (
+          /*
+           * **断りは押す前に言う。** 方法 A の手順 1-2 は Google Cloud Console で
+           * OAuth クライアントを作り 3 つの API を有効化させる —— 数分の実作業を
+           * 終えてから「この実行形態では走らない」と知るのでは遅い (パス 454 / 455 / 456
+           * と同じ判断)。だから手順・欄・ボタンを**出さない**。
+           *
+           * 方法 B はこの下にそのまま残る (ブラウザ版で働く道であり、
+           * 断りがそれを名指しする)。
+           */
+          <div
+            data-google-signin-unsupported
+            role="alert"
+            style={{
+              fontSize: 12,
+              lineHeight: 1.7,
+              padding: '8px 10px',
+              borderRadius: 6,
+              border: '1px solid var(--warning)',
+              background: 'rgba(251, 191, 36, 0.08)',
+              color: 'var(--warning)',
+            }}
+          >
+            ⚠ {signInUnsupported}
+          </div>
+        ) : (
+          <>
         <div style={{ fontSize: 13, lineHeight: 1.7 }}>
           <strong>方法 A（推奨・恒久）: Google Cloud でクライアント ID を作成 + サインイン</strong>
           <ol style={{ margin: '6px 0 0', paddingLeft: 20, fontSize: 12, color: 'var(--text-mute)' }}>
@@ -124,6 +186,8 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
             {signingIn ? 'サインイン中…' : '🔐 Google でサインイン'}
           </button>
         </div>
+          </>
+        )}
         {result ? (
           <span style={{ color: result.kind === 'ok' ? 'var(--success)' : 'var(--danger)', fontSize: 13 }}>
             {result.message}
@@ -159,8 +223,10 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
         )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
           ※ クライアント ID は Drive / Calendar / Gmail で共通（{shareNote === null ? '1 回貼れば各ページで使えます' : 'ただしこの端末では保存できないため、画面ごとに貼り直しが必要です'}）。
-          サインインはサービスごとに行い、必要スコープのみ同意します。ライブ接続（実データ取得・送信）は
-          デスクトップ版の機能で、ブラウザ版は同梱スナップショットを表示します。
+          サインインはサービスごとに行い、必要スコープのみ同意します。
+          {buildKind !== null && (
+            <span data-google-live-scope>{googleLiveScopeNote(buildKind, serviceId)}</span>
+          )}{' '}
           トークンの保存方法はビルドと環境で変わります —— デスクトップ版は OS キーチェーン由来の鍵で暗号化、
           ブラウザ版は Vault（AES-GCM-256）で暗号化します。<strong>OS キーチェーンが無い環境
           （gnome-keyring / kwallet 不在の Linux 等）では base64 の難読化のみ</strong>になります。
