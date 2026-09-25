@@ -157,12 +157,31 @@ describe('橋の 15 本 — 読み直して static 変異体を届かせる', ()
    */
   it('★ CLAUDE.md の列挙は橋の実物と両方向に一致する', () => {
     const claude = readOriginalSource(join(REPO, 'CLAUDE.md'));
-    const m = /`serviceHub\.([A-Za-z/ \n]+)`/.exec(claude);
-    expect(m, 'CLAUDE.md に serviceHub の列挙が無い').not.toBeNull();
-    const listed = m![1]!
-      .split('/')
-      .map((x) => x.trim())
-      .filter((x) => x.length > 0);
+    /*
+     * **列挙は「最初の一致」では取れない** (2026-09-25 · パス 464)。
+     *
+     * 針は長らく `exec` の**最初の一致**を列挙として使っていた。ところが
+     * CLAUDE.md の散文が橋の口を 1 つ引用すれば (パス 464 は
+     * 「外部 URL は…経由に統一する」の説明でそれをやった)、**その言及が
+     * 列挙より前に来て針が横取りされる** —— 実測で
+     * `expected [ 'openExternal' ] to deeply equal [ …15 件 ]` と落ちた。
+     * 落ちたのは良いことだが、**言及と列挙が構造で見分けられていなかった**
+     * (法則 `mention-vs-declaration`)。
+     *
+     * 列挙であることは**散文の言い回しではなく形**で決める —— `/` で区切られた
+     * 名前が多数並ぶ一致はただ 1 つで、それが列挙である。
+     */
+    const names = (t: string): string[] =>
+      t
+        .split('/')
+        .map((x) => x.trim())
+        .filter((x) => x.length > 0);
+    const all = [...claude.matchAll(/`serviceHub\.([A-Za-z/ \n]+)`/g)].map((x) => names(x[1]!));
+    const enumerations = all.filter((xs) => xs.length >= 10);
+    expect(enumerations, 'CLAUDE.md に serviceHub の列挙が無い (または 2 つ在る)').toHaveLength(1);
+    // 針が生きている床 —— 散文の言及も拾えていること (拾えなければ見分けが自明に真)。
+    expect(all.length, '言及を 1 つも拾えていない = 針が死んでいる').toBeGreaterThan(1);
+    const listed = enumerations[0]!;
     const real = CHANNELS.map(([method]) => method);
     expect([...listed].sort(), '列挙と実物がずれている').toEqual([...real].sort());
     // 標本 —— 落ちていた 9 件のうち、面として重い 3 つが実際に載っていること。
@@ -171,6 +190,10 @@ describe('橋の 15 本 — 読み直して static 変異体を届かせる', ()
     }
     // 対照 —— 針が「何でも通る」形でないこと (存在しない名前は拾わない)。
     expect(listed).not.toContain('sendRawToken');
+    // 対照 —— 散文の言及 1 件は列挙として選ばれない (パス 464 に実際に起きた形)。
+    const prose = '規約 (外部 URL は `serviceHub.openExternal` 経由に統一する) が…';
+    expect([...prose.matchAll(/`serviceHub\.([A-Za-z/ \n]+)`/g)].map((x) => names(x[1]!)).filter((xs) => xs.length >= 10))
+      .toHaveLength(0);
   });
 
   it('★ 露出するのは関数だけ (状態や生の ipcRenderer を渡さない)', async () => {

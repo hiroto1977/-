@@ -178,6 +178,26 @@ const SAMPLES: readonly { readonly name: string; readonly src: string }[] = [
    * いること**を見るため (片方だけが JSX を別扱いし始めたら鳴る)。
    */
   { name: 'JSX の素のテキスト', src: 'const el = <b>削除</b>;\n' },
+  /*
+   * **JSX テキストの中の URL は行注記ではない** (2026-09-25 · パス 464)。
+   *
+   * この走査器は **JS の字句解析器**で、JSX の素のテキストは JS ではない ——
+   * `<p>docs: http://example.com</p>` の `//` を行注記として読み、**その行の
+   * 後ろを丸ごと飲んでいた**。実測 (パス 464 · 対照 C / D): 同じ
+   * `void window.open(…)` を素の行に置くと `lint:forbidden` は鳴り、
+   * 同じ行の JSX テキストに URL を 1 つ足すと **1 件も鳴らない** ——
+   * 「外部 URL は `openExternal` 経由に統一する」という CLAUDE.md の規約が、
+   * URL を 1 つ書くだけで迂回できた。
+   *
+   * 直しは **`://` は行注記を始めない** の 1 条件で、実測の影響は
+   * `src` + `scripts` の 1,537 本のうち **3 本 (どれも `.tsx`)** だけ。
+   * **失敗の向きを選んでいる** —— 読み違えたときは「注記を code として残す」
+   * 側へ倒れるので、走査は*多く見る* (偽陽性) ことはあっても
+   * **見落とす (偽陰性) ことはない**。
+   */
+  { name: 'JSX テキストの URL (行注記ではない)', src: "const el = <p>docs: http://example.com</p>;\nconst t = ctx.token;\n" },
+  { name: 'URL の後ろの本物の注記は落ちる', src: "const u = 'http://x'; // document.title\nconst t = 2;\n" },
+  { name: '行頭の注記は今までどおり落ちる', src: '// document.title\nconst t = 2;\n' },
   { name: '文字列リテラルの中の日本語', src: "const m = '削除しました';\n" },
 ];
 
@@ -301,7 +321,7 @@ describe('stripNonCode の写し — 2 つが同じ答えを返す (パス 418 /
     // 隣り合う補間が地続きにならない (実物に無い綴りを作らない)。
     expect(stripNonCode('const k = `${aa}${bb}`;')).not.toContain('aabb');
     // 標本の総数が縮んでいないこと (母集団の床)。
-    expect(SAMPLES.length).toBeGreaterThanOrEqual(18);
+    expect(SAMPLES.length).toBeGreaterThanOrEqual(21);
   });
 });
 
@@ -404,5 +424,61 @@ describe('不在の主張を空にする非対称 (パス 459)', () => {
     expect(code).toContain('LIBRARY_HATCH_TEXT');
     // module 指定子は**文字列リテラル**なので落ちる —— ここを錠にしてはいけない。
     expect(code).not.toContain('./data/exportOutcome');
+  });
+});
+
+/**
+ * **`.tsx` は JS ではない —— JSX テキストの URL が行注記として読まれていた**
+ * (2026-09-25 · パス 464)。
+ *
+ * 上の標本は算法を縛るが、「**その読み違えで何が起きるか**」は言わない。
+ * ここは*害*の側を振る舞いで留める。実測 (パス 464):
+ *
+ * | 対照 | 置いた行 | `lint:forbidden` |
+ * | --- | --- | --- |
+ * | C | 素の行に外部窓を開く呼び出し | **❌ 1 件** |
+ * | D | 同じ行の JSX テキストに URL を 1 つ足す | **✅ 0 件 (見落とし)** |
+ *
+ * 直す前の出荷 `.tsx` で、行ごとの走査が URL の所で切れていたのは **8 行**
+ * (うち 7 行は JSX テキスト・1 行は docblock)。数は小さいが、機構は無制限である ——
+ * このアプリは画面に URL を出すので、**新しい行を 1 つ書くたびに死角が増えうる**。
+ *
+ * ★ **残っている限界は正直に書く。** この走査器は今も JSX を解析しない:
+ * JSX テキストの中の `'` (省略符) は文字列モードへ入りうるし、
+ * `<code>/api/x</code>` のような形は `stripNonCode` では正規表現として落ちる。
+ * どちらも 2026-09-25 の出荷 `src` では **0 行 / 影響なし**と実測したので
+ * 今日は直していない (`docs/REMAINING_WORK.md` に測って残した)。
+ * **直すなら JSX を本当に解析する**ことになり、読み違えれば*コードを飲む*側 ——
+ * つまり今より悪い向き —— に倒れうるので、消費者が要るまで広げない。
+ */
+describe('★ JSX テキストの URL は行注記ではない (パス 464)', () => {
+  /** 直す前に走査から消えていた形そのもの。 */
+  const JSX_URL = "const el = <p>docs: http://example.com</p>;\nconst t = ctx.token;\n";
+
+  it('両方のモード・すべての写しで、URL の後ろが残る', () => {
+    for (const im of loadCopies()) {
+      expect(im.comments(JSX_URL), `${im.file}: stripComments が URL の後ろを飲んだ`).toContain('</p>');
+      expect(im.fn(JSX_URL, {}), `${im.file}: stripNonCode が URL の後ろを飲んだ`).toContain('</p>');
+      // 次の行も生きている (行をまたいで飲んでいない)。
+      expect(im.comments(JSX_URL)).toContain('ctx.token');
+    }
+  });
+
+  it('★ 対照: 本物の行注記は今までどおり落ちる (針が死んでいない)', () => {
+    for (const im of loadCopies()) {
+      expect(im.comments("const u = 'http://x'; // document.title\n"), im.file).not.toContain('document.title');
+      expect(im.comments('// document.title\nconst t = 2;\n'), im.file).not.toContain('document.title');
+      // 行頭が `//` のときは前の字が無い —— そこを取り違えない。
+      expect(im.comments('//http://x\nconst t = 2;\n'), im.file).not.toContain('http');
+    }
+  });
+
+  it('★ 読み違えの向きは「code を多く見る」側 (偽陰性を作らない)', () => {
+    // `://` の直後に本物の注記を書く形は実在しないが、書かれても**残す**ので
+    // 走査は見落とさない (見過ぎるだけで、それは失敗として見える)。
+    for (const im of loadCopies()) {
+      expect(im.comments('const a = 1; //x\n'), im.file).not.toContain('x');
+      expect(im.comments('const a = b://x\n'), im.file).toContain('x');
+    }
   });
 });

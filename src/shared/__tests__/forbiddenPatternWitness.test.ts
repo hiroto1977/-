@@ -218,3 +218,43 @@ describe('lint:forbidden — 走査が生きていること (外側の証人)', 
     expect(live.rootShortfalls({}, withFloor)).toHaveLength(withFloor.length);
   });
 });
+
+/**
+ * **JSX テキストの URL 1 つで `codeOnly` の規則を迂回できた** (2026-09-25 · パス 464)。
+ *
+ * `hitsCodeOnly` は行を `stripComments` に通してから針を当てる。その走査器は
+ * **JS の字句解析器**なので、JSX の素のテキストに在る `//` を行注記として読み、
+ * **その行の後ろを丸ごと落としていた**。実測 (実物のゲートを `A8netPage.tsx` に当てる):
+ *
+ * - 素の行に外部窓を開く呼び出しを置く → **❌ 1 件**
+ * - 同じ行の JSX テキストに URL を 1 つ足す → **✅ 0 件**
+ *
+ * つまり「外部 URL は `serviceHub.openExternal` 経由に統一する」という CLAUDE.md の
+ * 規約は、**URL を 1 つ書くだけで迂回できた**。直しは共有の走査器の側
+ * (`://` は行注記を始めない) で、ここはその害が閉じたことを**ゲート本体で**留める。
+ *
+ * **標本はゲートの正規表現を写さない** —— 上の `MUST_RING` と同じ規準で、
+ * 「禁じたい書き方」を書く。
+ */
+describe('★ JSX テキストの URL で規則を迂回できない (パス 464)', () => {
+  /** 迂回に使えた形。前半は JSX の素のテキスト、後半が禁じたい書き方。 */
+  const EVASION = "    <p>docs: http://example.com</p>{void window.open('https://evil.example')}";
+  /** 同じ禁止に当たる素の行 (錠が生きていることの対照)。 */
+  const PLAIN = "    <p>{void window.open('https://evil.example')}</p>";
+
+  it('素の行も、JSX テキストに URL が在る行も、同じだけ鳴る', () => {
+    expect(hits(PLAIN), '素の行で鳴らない = 錠が死んでいる').toBeGreaterThanOrEqual(1);
+    expect(hits(EVASION), 'URL を 1 つ足しただけで見落としている').toBe(hits(PLAIN));
+  });
+
+  it('ゲート本体の走査 (ファイル 1 枚) でも見落とさない', () => {
+    const v = scanOne('src/renderer/pages/Probe.tsx', `export function P() {\n  return (\n${EVASION}\n  );\n}\n`);
+    expect(v.map((x) => x.name)).toContain('window.open');
+    expect(v[0]?.line, '行番号がずれている').toBe(3);
+  });
+
+  it('★ 対照: 本物の行注記に書いた禁止語は今までどおり数えない', () => {
+    // 言及と宣言を見分ける側 (法則 `mention-vs-declaration`) は壊していない。
+    expect(hits("    // かつて window.open('x') と書いていた")).toBe(0);
+  });
+});

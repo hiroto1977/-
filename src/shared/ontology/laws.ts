@@ -207,9 +207,21 @@ export const LAWS: readonly Law[] = [
     id: 'mention-vs-declaration',
     family: 'gate-hygiene',
     name: '言及と宣言を見分ける',
-    statement: '名前が「在るか」で照合する検査は、コメントや文字列の中の言及で満たされる。宣言の出現には「コメント行でない・引用符の外」を要求する。',
-    provenance: ['パス 292', 'パス 289', 'パス 291'],
-    enforcedBy: [gate('verify:arch')],
+    statement:
+      '名前が「在るか」で照合する検査は、コメントや文字列の中の言及で満たされる。宣言の出現には「コメント行でない・引用符の外」を要求する。' +
+      '**その見分けは、見分ける道具が正しい言語を読んでいることに全体重を掛けている** (パス 464) —— 共有の走査器は JS の字句解析器で、' +
+      'JSX の素のテキストは JS ではない。`<p>docs: http://example.com</p>{…}` の `//` を行注記として読み、**その行の後ろを丸ごと落としていた**。' +
+      '実測: 同じ禁止された呼び出しを素の行に置くと `lint:forbidden` は鳴り、同じ行の JSX テキストに URL を 1 つ足すと **1 件も鳴らない** ——' +
+      'つまり**宣言が言及として分類され**、「外部 URL は openExternal 経由に統一する」という規約が URL 1 つで迂回できた。' +
+      '向きが重い: 見分けを誤ると偽陽性 (見過ぎ) ではなく**偽陰性 (門が黙る)** になる。直しは `://` は行注記を始めないの 1 条件で、' +
+      '`src` + `scripts` の 1,537 本のうち出力が変わったのは **3 本 (すべて .tsx)** だけだった。',
+    provenance: ['パス 292', 'パス 289', 'パス 291', 'パス 464 (言語を取り違えた走査器)'],
+    enforcedBy: [
+      gate('verify:arch'),
+      gate('lint:forbidden'),
+      test(T.shared('stripNonCodeParity')),
+      test(T.shared('forbiddenPatternWitness')),
+    ],
   },
   {
     id: 'general-form-not-one-file',
