@@ -536,6 +536,24 @@ function main(argv) {
       `ソース・スクリプト ${srcFiles.length} ファイルを検査 ` +
       `(持ち主の識別子 / example 以外のメール / 到達しうる ID・台帳 ${Object.keys(EMAIL_ALLOW).length} 件)`,
   );
+  // 走査が死んで 0 件になったのを「混ざっていない」と読まない
+  // (実測 見本 279 / ソース 629 ファイル、2026-09-25)。
+  // ★ **2 つの母集団を別々に見る** —— パス 468 の実測では SCANNED_DIRS を空にすると
+  //   「ソース・スクリプト 0 ファイル」と刷ったうえで ✅ で通った。見本の側 (279) は
+  //   生きていたので、合計だけを床にすると片側が死んでも気づけない。
+  const FLOORS = [
+    ['見本データ', dataFiles.length, 100],
+    ['ソース・スクリプト', srcFiles.length, 300],
+  ];
+  for (const [what, got, floor] of FLOORS) {
+    if (got < floor) {
+      console.error(
+        `❌ ${what}を ${got} ファイルしか走査できませんでした (${floor} 件以上を期待)。`
+        + ' 走査が壊れています —— 0 件でも「実在の個人データは混ざっていません」になるため落とします。',
+      );
+      return 1;
+    }
+  }
   if (problems.length === 0) {
     console.log('✅ 見本データに実在の個人データは混ざっていません');
     return 0;

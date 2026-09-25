@@ -28,7 +28,15 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-25 パス 467 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 3 本と `__tests__/` 4 本・`ontology/`・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**「読めない台帳」を「空の台帳」として ✅ exit 0 で通し、37 ゲート全部が素通りした。** **見つけ方**: パス 466 が残した入口 —— 37 ゲートのうち陰性対照 (`--self-test`) を持たないのは 5 本で、外部ツール 2 本と `chain:verify` を除く **`lint:knowledge-refs` / `verify:orchestration` は self-test も外側の証人も 0 件** —— をそのまま測りに行った。実測 (2026-09-25 · `orchestration/knowledge-distinct-pairs.json` にマージ衝突の印を 1 行入れる):
+   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-25 パス 468 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 6 本と `__tests__/` 1 本・`ontology/`・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**母集団を空にすると、37 ゲートのうち 5 本が ✅ exit 0 で通った。** **見つけ方**: パス 467 が残した問い (「走査した件数を刷るゲートのうち、母集団が空になったら落ちるのは何本か」) を測りに行った。**綴りでは測れない** —— 床の効き方は実測で **7 通り**あり (`MIN_*` の定数・台帳の双方向・名指しの走査・生成物の byte 一致・正典の値が計算不能・保護対象の不一致・**副作用としての床**)、どの綴りを数えても取りこぼす。だから `audit:comment-blind --gates` と同じ形 —— **隔離した写しの上で母集団を空にして終了コードを読む** —— にした (`npm run audit:gate-floors`・**定期点検の道具 8 本目**)。実測 (2026-09-25):
+
+| 測った物 | 実測 |
+| --- | --- |
+| 空にする母集団を持つゲート | **33 / 37** (残る 4 本は理由つきの免除) |
+| 直す前に母集団を空にしても exit 0 | **5 本** |
+| 直した後 | **0 本** (33 / 33 が鳴る) |
+
+★ **いちばん重いのは `verify:knowledge`** —— コーパスの **85% (academic 3,417 件)** が母集団から丸ごと消えても「確証ゲート検証: 622 項目」と刷って **✅ exit 0** だった。**出典を確かめるのが仕事のゲートが、確かめる物が消えたことに黙っていた** —— しかも隣の `lint:knowledge-refs` は同じ状態で `MIN_CORPUS_IDS` (1000) に当たって鳴る (パス 467 で私が足した床)。つまり**同じコーパスについて、床は 1 つのゲートに在って、もう 1 つには無かった**。★ 残る 4 本: `lint:url-encoding` (「Scanned 0 file(s): 通信 URL の補間 0 件」)・**`lint:sample-data`** (「ソース・スクリプト **0** ファイルを検査」——見本の側 279 件は生きているので**合計の床では片側の死が見えない**。この門は「見本データに実在の個人データは混ざっていません」と答える)・`lint:collection-time` (「Scanned 0 mutate-listed file(s)」—— 同じ `mutate` を見る隣の `lint:mutation-scope` は台帳の双方向で鳴るので、**同じ母集団について片方だけが黙っていた**)・`lint:test-coverage` (「Checked **0** services」——「**すべての**サービスに検査がある」は空の母集団に対して自明に真)。★★ **2026-09-05 の注記が母集団を 2 本と書いていた** —— `lint:imports` の中の「走査数を表示するだけで床の無いゲートを**ここと lint:regex** に見つけた」。あの日の掃除は 2 本を直したが、**何本在るかは数えていなかった** (法則 `measure-before-claim`)。**直し**: 5 本に床を置く (**新しい規則は 1 つも作らない** —— 既存の床の言い方をそのまま使う)。`lint:sample-data` は**2 つの母集団を別々に**見て、`lint:test-coverage` は**3 つ**を見る (どれも walk が死ねば 0 になる)。`verify:knowledge` は合計の床 (1000・`lint:knowledge-refs` と同じ値・同じコーパスを同じ理由で見るので数を揃える) に加えて **宣言したコレクションはどれも 1 件以上** を要求する —— 合計だけだと academic が消えても残り 622 件が床を越える (実測がまさにそれ)。`unknownCollections` (データに在るのに分類が無い) の**逆向き**である。★ **道具は常設にした** —— `git worktree` で HEAD の写しを作り、母集団を空にして、**必ず片付ける** (`finally`)。**CI では走らせない** (ソースを書き換えるし、1 件あたりゲート 1 回ぶんの時間が掛かる)。★ **空にする手は忠実でなければならない** —— 最初の測定は `lint:data-origin` / `lint:credential-use` を「床が無い」と**誤って報告しかけた**: 宣言オブジェクトの**名前だけ**を替えたので、原文を正規表現で読む走査には 76 件がそのまま見えていた (忠実に本体を落とすと 76 件鳴る)。だから各手は `needle` を持ち、**当たらなければ落とす** —— 「空にできなかった」を「床が在る」と読まない (**この道具自身の `count-has-floor`**)。★★ **その self-test も 1 度は弱かった** —— 「投げたか」だけを見ていたので、針の確認を外しても **2 つ目の門 (「1 文字も変わらない」) が投げて違う理由で通った** (対照 J で実測: self-test ✓ のまま検査だけが鳴った)。文面で見分ける形へ直すと J は **self-test ✗1 + 検査 ❌1** で両層に当たる。★ **対照 10 方向すべて鳴り、それぞれ狙った層に当たる** (A〜E 5 本の床を 1 つずつ直す前へ戻す → **道具が `silent exit=0` と報告し、鳴るはずの機構を名指しする** / F 台帳から 1 行消す ❌1 / G 針を実物からずらす ❌1 / H 同じゲートを両方の台帳へ ❌2 / I 道具を `verify:all` へ混ぜる ❌2 / J 針の確認を外す ✗1 + ❌1・復帰後 **9 / 9**)。★ **測って何も無かった軸も記録する**: ① **`MIN_*` を 1 つも持たないのに鳴るゲートは 13 本** (実測。**最初は 7 本と書きかけて、数えたら 13 だった** · 法則 `measure-before-claim`) —— 台帳の双方向 (`lint:mcp-servers`)・名指しの走査 (`lint:forbidden`)・生成物の byte 一致 (`verify:graph` / `vault:check`)・保護対象の不一致 (`chain:verify`)・図の参照の下限 (`verify:arch`)・**副作用としての床** (`lint:data-origin` / `lint:credential-use` は宣言 0 件なら 76 サービスすべてが鳴る)・0 件の明示の枝 (`lint:ipc-handlers`)・`OUTSIDE_POPULATION_FLOOR` (`lint:network-targets`)・`checkPopulations` (`verify:orchestration`)。**「`MIN_*` が無い」は「床が無い」ではない** —— ★ **そして 13 本のうち 2 本は私がこのパスで足した床である** (`lint:sample-data` / `lint:test-coverage` は母集団が 2 つ / 3 つなので `FLOORS` の表にした)。同じパスの中で綴りが 2 通りに分かれたので、**綴りでは測れないことがその場で実証された** ② **空にする母集団を持たないゲートは 4 本** (`typecheck` / `lint` は外部ツール・`lint:csp` / `verify:release-artifacts` は `verify:all` では `--self-test` だけ) —— **「測っていない」ではなく「測る物が無い」**で、どちらも exit 0 に見えるので理由を書かせて見分ける ③ **`lint:doi-prefix` は床を 3 つ持つ** (パス 467 の訂正どおり) が `--self-test` は今も無い —— 空にすると `MIN_ISBN_CHECKED` で鳴るので陰性対照は在る。`typecheck` 緑・`npm test` **904 / 19,137**・`verify:all` exit 0・`chain:verify` 緑 (保護対象は 1 つも触っていない)。**実機は回していない** —— 出荷物が 1 byte も動いておらず md5 も同じなので)・**2026-09-25 パス 467 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 3 本と `__tests__/` 4 本・`ontology/`・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**「読めない台帳」を「空の台帳」として ✅ exit 0 で通し、37 ゲート全部が素通りした。** **見つけ方**: パス 466 が残した入口 —— 37 ゲートのうち陰性対照 (`--self-test`) を持たないのは 5 本で、外部ツール 2 本と `chain:verify` を除く **`lint:knowledge-refs` / `verify:orchestration` は self-test も外側の証人も 0 件** —— をそのまま測りに行った。実測 (2026-09-25 · `orchestration/knowledge-distinct-pairs.json` にマージ衝突の印を 1 行入れる):
 
 | 測った物 | 実測 |
 | --- | --- |
@@ -876,6 +884,32 @@ npm run audit:tick-sensitivity  # 固定回数で待つ検査が**その回数�
                          #   `expect(text()).toContain(…)` (HEAD で 67 ファイル / 363 か所) を
                          #   1 件も見ておらず、逆に条件で待った後の主張まで数えていた。
                          #   台帳の形は `tickSensitivityLedger.test.ts` が毎回の npm test で見る
+npm run audit:gate-floors       # **ゲートの床**を振る舞いで測る (定期点検の道具 8 本目。
+                         #   CI では走らせない —— 判定のためにソースを書き換えるし、
+                         #   1 件あたりゲート 1 回ぶんの時間が掛かる)。
+                         #   `git worktree` で HEAD の写しを作り、**母集団を空にして
+                         #   終了コードを読む** —— 答えは終了コードだけで、出力の文面は
+                         #   数えない (`audit:comment-blind --gates` と同じ判断)。
+                         #   **綴りでは測れないので足した** —— 床の効き方は実測で
+                         #   **7 通り** (`MIN_*` の定数・台帳の双方向・名指しの走査・
+                         #   生成物の byte 一致・正典の値が計算不能・保護対象の不一致・
+                         #   **副作用としての床**) あり、どの綴りを数えても取りこぼす。
+                         #   2026-09-25 (パス 468) の初回実測: 空にする母集団を持つゲート
+                         #   **33 / 37**・**直す前に 5 本が exit 0 だった**
+                         #   (`verify:knowledge` はコーパスの 85% が消えても ✅・
+                         #   `lint:sample-data` はソース側 0 件で ✅・`lint:test-coverage` は
+                         #   「Checked 0 services」で ✅・`lint:collection-time` と
+                         #   `lint:url-encoding` も 0 件で ✅)・**直した後は 33 / 33 が鳴る**。
+                         #   ★ **空にする手は忠実でなければならない** —— 最初の測定は
+                         #   宣言の**名前だけ**を替えたので、原文を読む走査には 76 件が
+                         #   そのまま見えており、2 本を「床が無い」と誤って報告しかけた。
+                         #   各手は `needle` を持ち、**当たらなければ落とす**
+                         #   (「空にできなかった」を「床が在る」と読まない)。
+                         #   母集団の種類は 11 種 (台帳 / コーパス / ソースツリー /
+                         #   lockfile / git の追跡一覧 / 文書の参照 ほか) で、種類ごとに
+                         #   空にする手が別物である。台帳の**形**は
+                         #   `gateFloorLedger.test.ts` が毎回の `npm test` で見る
+                         #   (`verify:all` のゲートと双方向・針が実物に当たること)
 npm run audit:comment-blind     # **注記が答えになっている検査**を実測する
                          #   (定期点検の道具 7 本目。CI では走らせない —— 判定のために
                          #   ソースを書き換えるし、落ちること自体は欠陥ではないため)。

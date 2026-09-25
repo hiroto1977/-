@@ -7,6 +7,62 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近のパス (468) — 母集団を空にすると、37 ゲートのうち 5 本が ✅ で通った
+
+パス 467 が残した問いを測った: **「走査した件数を刷るゲートのうち、母集団が空になったら落ちるのは何本か」**。
+
+### 綴りでは測れない
+
+床の効き方は実測で **7 通り**在る:
+
+```
+  MIN_* の定数          lint:regex / lint:charset / lint:deps ほか 21 本
+  台帳の双方向          lint:mcp-servers / lint:mutation-scope / lint:rate-freshness
+  名指しの走査          lint:forbidden (MUST_SCAN)
+  生成物の byte 一致    verify:graph / vault:check
+  正典の値が計算不能    lint:docs
+  保護対象の不一致      chain:verify
+  副作用としての床      lint:data-origin (宣言 0 件なら 76 サービスすべてが鳴る)
+```
+
+だから **`npm run audit:gate-floors`** —— `git worktree` で HEAD の写しを作り、母集団を空にして
+終了コードを読む (答えは終了コードだけで、出力の文面は数えない)。**CI では走らせない。**
+
+### 実測 (2026-09-25)
+
+| 測った物 | 実測 |
+| --- | --- |
+| 空にする母集団を持つゲート | **33 / 37** |
+| 直す前に空にしても exit 0 | **5 本** |
+| 直した後 | **0 本** |
+
+黙っていた 5 本 (重い順):
+
+1. **`verify:knowledge`** — コーパスの 85% (academic 3,417 件) が消えても
+   「確証ゲート検証: 622 項目」で ✅。**出典を確かめるのが仕事のゲートが、
+   確かめる物が消えたことに黙っていた。** 隣の `lint:knowledge-refs` は同じ状態で鳴る。
+2. **`lint:sample-data`** — 「ソース・スクリプト **0** ファイル」で ✅。見本の側 279 件は
+   生きているので**合計の床では片側の死が見えない**。
+3. `lint:test-coverage` — 「Checked **0** services」で ✅ (全称命題は空の母集団に対して自明に真)。
+4. `lint:collection-time` — 「Scanned 0 mutate-listed file(s)」で ✅。同じ `mutate` を見る
+   隣の `lint:mutation-scope` だけが鳴っていた。
+5. `lint:url-encoding` — 「Scanned 0 file(s)」で ✅。
+
+### 罠 (次に測る人へ)
+
+- **空にする手は忠実でなければならない。** 最初の測定は `lint:data-origin` /
+  `lint:credential-use` を「床が無い」と誤って報告しかけた —— 宣言オブジェクトの
+  **名前だけ**を替えたので、原文を正規表現で読む走査には 76 件がそのまま見えていた。
+  道具は各手に `needle` を持たせ、**当たらなければ落とす**。
+- **「投げたか」だけを見る self-test は独立していない。** 針の確認を外しても
+  2 つ目の門 (「1 文字も変わらない」) が投げて**違う理由で通る** (対照 J で実測)。
+  文面で見分ける。
+- `bash -lc` でゲートを回すと `node_modules/.bin` が PATH に無い ——
+  `typecheck` だけが別の `tsc` を掴んで偽の失敗を出す。
+- 写しの worktree は `node_modules` を持たないので、`typescript` を require する
+  ゲート (verify:graph / verify:knowledge / vault:check / lint:knowledge-refs /
+  lint:citations / lint:doi-prefix) は symlink が要る。
+
 ## 直近のパス (467) — 「読めない台帳」を「空の台帳」として ✅ で通していた
 
 パス 466 が残した入口 (37 ゲートのうち陰性対照を持たない 5 本・うち外側の証人も無い 2 本) を測った。

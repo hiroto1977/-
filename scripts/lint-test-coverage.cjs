@@ -560,6 +560,26 @@ function main(argv) {
       + `, ${uncollectedChecked} test-shaped file(s) against the vitest include`
       + `, and ${withActions.length} client ACTIONS map(s) for registration in LIVE_ACTIONS`,
   );
+  // 走査が死んで 0 件になったのを「全サービスに検査がある」と読まない
+  // (実測 サービス 76 / jsdom 251 / 検査の形 903、2026-09-25)。
+  // ★ パス 468 の実測では SERVICE_IDS の読みを空にすると「Checked 0 services」と刷ったうえで
+  //   ✅ で通った。このゲートの主張は「**すべての**サービスに検査がある」で、
+  //   母集団が空なら全称命題は自明に真になる —— 0 件は「全部一致」ではない。
+  //   jsdom と検査の形も同じ理由で床を置く (どれも walk が死ねば 0 になる)。
+  const FLOORS = [
+    ['サービス', ids.length, 50],
+    ['jsdom の検査', jsdomChecked, 100],
+    ['検査の形をしたファイル', uncollectedChecked, 300],
+  ];
+  for (const [what, got, floor] of FLOORS) {
+    if (got < floor) {
+      console.error(
+        `❌ ${what}を ${got} 件しか走査できませんでした (${floor} 件以上を期待)。`
+        + ' 走査が壊れています —— 空の母集団に対する全称命題は自明に真なので、ここで落とします。',
+      );
+      return 1;
+    }
+  }
   if (failures.length === 0) {
     console.log('✅ every service has a test file and every action is exercised');
     return 0;

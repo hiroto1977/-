@@ -106,6 +106,45 @@ const TAXONOMY_BY_COLLECTION = {
 };
 
 /**
+ * コーパスの床。**確証ゲートは全称命題なので、母集団が空なら自明に真になる。**
+ *
+ * 2026-09-25 (パス 468) の実測: `VERIFIED_CONCEPTS` を空にすると academic 3,417 件
+ * (コーパスの 85%) が母集団から丸ごと消え、それでもこのゲートは
+ * 「確証ゲート検証: 622 項目」と刷って **exit 0** だった。隣の `lint:knowledge-refs` は
+ * 同じ状態で `MIN_CORPUS_IDS` (1000) に当たって鳴る —— つまり**出典を確かめるのが仕事の
+ * ゲートだけが、確かめる物が消えたことに黙っていた**。
+ *
+ * 見るのは 2 つで、どちらも「減るのが正しい向き」ではない側に置く:
+ *
+ *   1. 合計の床 (1000)。`lint:knowledge-refs` の `MIN_CORPUS_IDS` と同じ値で、
+ *      同じコーパスを同じ理由で見ているので数を揃える。
+ *   2. **宣言したコレクションはどれも 1 件以上**。合計だけだと、いちばん大きい
+ *      academic が消えても残り 622 件が床を越えてしまう (実測がまさにそれ)。
+ *      `unknownCollections` は「データに在るのに分類が無い」を見るので、これはその逆向き。
+ */
+function collectionFloorProblems(counts, total) {
+  const MIN_TOTAL = 1000;
+  const out = [];
+  if (total < MIN_TOTAL) {
+    out.push(
+      `コーパスを ${total} 件しか読めませんでした (${MIN_TOTAL} 件以上を期待)。`
+      + ' 読み込みが壊れている可能性があります —— '
+      + '確証ゲートは全称命題なので、空の母集団に対しては自明に真になります。',
+    );
+  }
+  for (const col of Object.keys(TAXONOMY_BY_COLLECTION)) {
+    if ((counts[col] ?? 0) === 0) {
+      out.push(
+        `コレクション ${col} が 0 件です。`
+        + ' TAXONOMY_BY_COLLECTION に宣言があるのに項目が 1 件も読めていません —— '
+        + '読み込みが壊れたか、このコレクションをやめたなら宣言も消してください。',
+      );
+    }
+  }
+  return out;
+}
+
+/**
  * コレクションの分類。**素の添字にしない。**
  *
  * `TAXONOMY_BY_COLLECTION[c]` と書くと `'constructor'` / `'toString'` /
@@ -331,6 +370,12 @@ function main(argv) {
     console.log(`  ・${col} ${n} 件 [${TAXONOMY_BY_COLLECTION[col]}]`);
   }
 
+  const emptyFloors = collectionFloorProblems(counts, total);
+  if (emptyFloors.length > 0) {
+    for (const e of emptyFloors) console.error(`❌ ${e}`);
+    return 1;
+  }
+
   let failed = false;
 
   if (violations.length > 0) {
@@ -365,7 +410,7 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { assess, TAXONOMIES, TAXONOMY_BY_COLLECTION };
+module.exports = { assess, TAXONOMIES, TAXONOMY_BY_COLLECTION, collectionFloorProblems };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

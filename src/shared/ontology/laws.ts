@@ -199,8 +199,14 @@ export const LAWS: readonly Law[] = [
       + ' 出力に出すことは検査することではない (法則 `no-weakness-as-spec` の、保留をゲートに書き残した形)。「どちらが意図かコードからは決まらない」も偽で、'
       + ' **不変条件 9b と `--plan` の組織図がどちらも「常設」と述べていた** —— 決まっていなかったのではなく、囲いだけがそれを読んでいなかった。'
       + ' ★ **床が在ることと、床が当たることは別** —— 「床を `main` から外す (呼ばない)」対照は self-test も検査も鳴らず、門だけが exit 0 へ戻った。'
-      + ' 門を丸ごと走らせる継ぎ目 (`--registry <path>`) を開けて閉じた。',
-    provenance: ['パターン 0-a-7', 'パス 467 (読めない台帳が「空」として緑になり、37 ゲート全部が素通りした)'],
+      + ' 門を丸ごと走らせる継ぎ目 (`--registry <path>`) を開けて閉じた。'
+      + ' ★★ **何本在るのかは、パス 468 まで誰も数えていなかった。** 2026-09-05 の注記 (`lint:imports` の中) は「走査数を表示するだけで床の無いゲートを**ここと lint:regex** に見つけた」と書くが、その日の掃除は 2 本を直しただけで母集団を測っていない。**床の綴りは 1 つではない** (実測 7 通り: `MIN_*` の定数・台帳の双方向・名指しの走査・生成物の byte 一致・正典の値が計算不能・保護対象の不一致・**副作用としての床**) ので、綴りを数えても取りこぼす —— だから**母集団を空にして終了コードを読む** (`npm run audit:gate-floors`)。'
+      + ' 実測 (2026-09-25 · 隔離した写しの上で): 空にする母集団を持つゲート **33 / 37**・直す前に鳴らなかったのは **5 本**・直した後は **33 / 33 が鳴る**。'
+      + ' 黙っていた 5 本のうちいちばん重いのは **`verify:knowledge`** で、コーパスの 85% (academic 3,417 件) が母集団から丸ごと消えても「確証ゲート検証: 622 項目」と刷って ✅ だった —— **出典を確かめるのが仕事のゲートが、確かめる物が消えたことに黙っていた**。'
+      + ' 残る 4 本は `lint:url-encoding` (「Scanned 0 file(s)」)・`lint:sample-data` (ソース側だけ 0 件になるので合計の床では見えない)・`lint:collection-time` (同じ `mutate` を見る隣の `lint:mutation-scope` だけが鳴っていた)・`lint:test-coverage` (「**すべての**サービスに検査がある」は空の母集団に対して自明に真)。'
+      + ' ★ **空にする手は忠実でなければならない** —— 最初の測定は `lint:data-origin` / `lint:credential-use` を「床が無い」と誤って報告しかけた (宣言の**名前だけ**を替えたので、原文を読む走査には 76 件がそのまま見えていた)。だから道具は各手に針を持たせ、**当たらなければ落とす** —— 「空にできなかった」を「床が在る」と読まない。'
+      + ' ★★ **その self-test も 1 度は弱かった** —— 「投げたか」だけを見ていたので、針の確認を外しても 2 つ目の門 (「1 文字も変わらない」) が投げて**違う理由で通っていた** (対照 J で実測)。文面で見分ける形へ直した。',
+    provenance: ['パターン 0-a-7', 'パス 467 (読めない台帳が「空」として緑になり、37 ゲート全部が素通りした)', 'パス 468 (母集団を空にして測ると、33 ゲートのうち 5 本が exit 0 だった)'],
     enforcedBy: [
       gate('lint:test-coverage'),
       test(T.shared('e2eSuiteFloors')),
@@ -209,6 +215,12 @@ export const LAWS: readonly Law[] = [
       gate('verify:orchestration'),
       test(T.shared('knowledgeLedgerReadable')),
       test(T.shared('orchestrationPopulationFloors')),
+      harness('audit:gate-floors'),
+      test(T.shared('gateFloorLedger')),
+      gate('verify:knowledge'),
+      gate('lint:url-encoding'),
+      gate('lint:sample-data'),
+      gate('lint:collection-time'),
     ],
   },
   {

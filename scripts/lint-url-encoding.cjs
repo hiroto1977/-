@@ -239,6 +239,21 @@ function main(argv) {
     `Scanned ${scanned} file(s): 通信 URL の補間 ${hits.length} 件 (台帳 ${REVIEWED.length} 件)`,
   );
 
+  // 走査が死んで 0 件になったのを「符号化されている」と読まない (実測 528 ファイル、2026-09-25)。
+  // ★ この門は 2026-09-05 に lint:imports / lint:regex へ足された物の 3 件目である ——
+  //   あの日の注記は「走査数を表示するだけで床の無いゲートをここと lint:regex に見つけた」と
+  //   書いたが、母集団は 2 本ではなかった (パス 468 が振る舞いで測り、5 本見つけた)。
+  //   床を src/ の半分 (300) に置くのは lint:imports と同じ判断 —— src/ がそこまで縮む
+  //   ような変化は、URL の符号化を確かめる前に気づくべき事故である。
+  const MIN_FILES = 300;
+  if (scanned < MIN_FILES) {
+    console.error(
+      `❌ src/**/*.ts(x) を ${scanned} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。`
+      + ' 走査が壊れています —— 0 件でも「補間 0 件」になるので、ここで落とします。',
+    );
+    return 1;
+  }
+
   let failed = false;
   if (problems.length > 0) {
     failed = true;

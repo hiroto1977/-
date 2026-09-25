@@ -880,6 +880,13 @@ const KNOWN_SUPPRESSIONS = [
   // (`spawnSync` に配列で渡す)。書き換えたソースは `finally` で必ず戻し、
   // **戻したことを内容で照合する**。
   'child_process exec/spawn :: scripts/audit-comment-blind.cjs :: 1',
+  // 「ゲートの床」の定期点検の道具 (パス 468)。隔離した写し (git worktree) を作り、
+  // 母集団を空にしてから**ゲート自身を子プロセスで走らせる** —— 測るのは終了コードで、
+  // 「空にしても落ちないか」は走らせないと答えが出ない (床の綴りは 7 通りあり、
+  // どれを数えても取りこぼす)。引数は台帳のリテラルで、シェルを経由する形は
+  // `git` の呼び出しと空にする手だけ (どちらもこの道具が組んだ文字列で、外から
+  // 値は入らない)。写しは `finally` で必ず片付ける。
+  'child_process exec/spawn :: scripts/audit-gate-floors.cjs :: 1',
   // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
   // 突き合わせる。npm の勧告データベースを使うのが目的なので、
   // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。
