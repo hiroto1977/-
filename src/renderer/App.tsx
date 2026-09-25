@@ -27,8 +27,9 @@ import {
 } from '../shared/plan';
 
 // True when the renderer is loaded in a plain browser (no Electron preload).
-// The Electron preload sets serviceHub via contextBridge — if `getVersion`
-// returns the web shim's '0.1.0-web', we're in the browser.
+// The Electron preload sets serviceHub via contextBridge — the web shim adds the
+// `-web` suffix to the version it reports, and that suffix is what we look at
+// (2026-09-25 · パス 460: 版の数まで見ると、版を上げた日に実行形態が動く).
 /** 設定画面と同じ判定 (`runtimeMode.ts` · パス 137) —— 片方だけ写すとデスクトップ版に保管庫の操作が出る。 */
 const detectBrowserMode = isBrowserBuild;
 
@@ -547,8 +548,15 @@ export function App() {
               ✅ 全機能 開放中（無償）
             </div>
           )}
+          {/*
+            * 版が分かっていないときに数を名乗らない (2026-09-25 · パス 460)。
+            * 直す前は `'v0.1.0'` を直書きしており、**橋の `getVersion` が落ちると
+            * その文字列が残り続ける** (実測: reject する橋で描くとサイドバーは
+            * 永久に `v0.1.0` と言う)。版を上げた日には、動いているどの版に対しても偽になる。
+            * 「価格不明」「在庫不明」(パス 410) と同じで、**空欄ではなく理由を名乗る。**
+            */}
           <div className="sidebar-version">
-            {version ? `v${version}` : 'v0.1.0'} · build: ALL-ACCESS
+            {version ? `v${version}` : '版不明'} · build: ALL-ACCESS
           </div>
         </div>
       </aside>

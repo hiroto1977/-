@@ -1,26 +1,44 @@
 # Service Hub — 残りの作業手順書
 
-## パス 459 が測って、次のパスへ残した物 (2026-09-25)
+## パス 460 が測って、次のパスへ残した物 (2026-09-25)
 
-パス 458 が残した 3 件目 (「ブラウザ版が外へ送る 15 の道のうち、測ったのは Google 3 と ms365 2 だけ」)
-を閉じた。残っている物:
+パス 459 が残した 1 件目 (「`web-shim` が版を 2 か所に直書き」) を閉じた。
+**題は「版の直書き」だったが、測ったら本体は身元のほうだった** —— 実行形態の判定が
+「橋が名乗った版と完全に一致するか」で、作る側 (`web-shim.ts`) と比べる側 (`runtimeMode.ts`) に
+分かれていたので、**版を 1 つ上げる編集で 19,048 件すべて緑のままロック画面が消える**
+(ブラウザ版が保管庫を解錠する唯一の入口)。身元は接尾辞 1 つに寄せ、版は 1 度だけ名乗る形にした。
 
-1. **`web-shim.ts` がブラウザ版の版を 2 か所に直書きしている** —— `'0.1.0-web'` (`getVersion`) と
-   `const current = '0.1.0'` (`checkUpdate`)。`package.json` が 0.1.0 なので**今日は一致している**
-   ので罠であって生きた欠陥ではない。上げた日に `checkUpdate` だけが古い版を名乗る。
-   **先に測ること**: 版を名乗る所が他に無いか (`renderer` / `scripts` / `assets`)。
+残っている物:
 
-2. **`security/scan-url` の断りの順序** —— 実測でこの 1 件だけ「VirusTotal の鍵が未設定」が
+1. **`package.json` の版をブラウザ版へ注入していない** —— `vite.config.ts` にも `vitest.config.ts` にも
+   `define` は 1 つも無い (実測) ので、ブラウザ版は自分の版を**手書きするしかない**。
+   今は 1 か所 (`WEB_BUILD_VERSION`) なので「上げ忘れ」は 1 行で済み、**身元は版に依らなくなった**ので
+   実行形態が動く道は無い。それでも注入すれば手書きが 0 になる。
+   **採らなかった理由 (測った)**: `vitest.config.ts` は別の config なので両方に `define` が要り、
+   898 ファイルの検査が読み込み時に未定義の global に当たる形を作る。
+   **先に測ること**: vitest 側に `define` を置いたとき、`src/**/__tests__` の読み込みが壊れないか。
+
+2. **`codeOnly` (注記だけを落とす道具) の写しが 10 個ある** —— 実測 (2026-09-25):
+   `e2eWaitMargin` / `hostChromeColorCensus` / `advisorArrayBounds` / `createdResponseFields` /
+   `financialAnalysisNumberReading` / `fixedTickAssertionCensus` / `disclaimerRendered` /
+   `browserSendClaimCensus` / `numericInputReaderCensus` / `namedEscapeHatchReachable`。
+   **5 つは `export` されているが全部 `.test.ts` の中**なので、import すると
+   その describe が再登録される (パス 459 が `webShimScan.ts` を切り出した当の罠)。
+   パス 460 は**自分の散文を言い換えて 11 個目を作らずに済ませた**ので、今日は直していない。
+   **先に測ること**: 10 個の**契約が同じか** (`stripNonCode` は 2026-09-14 に写しが 4 つで
+   1 つだけ契約が違った · パス 418)。違えば、どの census がどの死角を持つかが先に分かる。
+
+3. **`security/scan-url` の断りの順序** —— 実測でこの 1 件だけ「VirusTotal の鍵が未設定」が
    プロキシより先に来る。どちらも正しい断りだが、**鍵を入れてから初めてプロキシの壁に当たる**ので
    2 段になる。ms365 / Google と同じく前提を先に言う形にはしたが、**断りの順序そのものは測っていない**。
 
-3. **`SecurityPage` の開示と前提が別の段落に居る** —— 「経由する」(開示) と「要る」(前提) が
+4. **`SecurityPage` の開示と前提が別の段落に居る** —— 「経由する」(開示) と「要る」(前提) が
    隣り合って出る。読みやすさの問題で、今日の欠陥ではない (どちらも真)。
 
-4. **`stripNonCode` の非対称を使う検査の母集団** —— **JSX の素のテキストを探す不在の主張**は生きているが、
-   それが「JSX テキストだから生きている」と知って書かれたかは分からない (実測 1 件:
-   `credentialSlotBuildGate.test.ts` の `body.indexOf('削除')`)。
-   **先に測ること**: JSX テキストを錠にしている主張が、その文を `<strong>` などで包んだ日に黙らないか。
+5. **`stripNonCode` の非対称を使う検査の母集団** —— **JSX の素のテキストを探す不在の主張**は生きているが、
+   その主張を書いた人が非対称を知っていたかは分からない。実測で 1 件
+   (`credentialSlotBuildGate.test.ts` の `body.indexOf('削除')`) —— その文が
+   `<strong>` で包まれたら黙るか。
 
 ## パス 458 が測って、次のパスへ残した物 (2026-09-25)
 
@@ -28982,7 +29000,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `apiResponse` | 15 | 12 | 対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**しかし両ビルドの食い違いは無い**: renderer がこのモジュールから直接読むのは **2 種類だけ** —— `parseJsonText` (`null` を返さず**投げる**側) と `displayField` である。★ **読み手の一覧はここに書かない** —— `displayField` の呼び手は パス 417 の 2 つからパス 419 で 7 つへ増えた (保管した自由文の天井を 5 画面に通した)。数は左の列が数え、この欄は**なぜ対称なのか**だけを述べる (名前を並べると、増えた日に散文だけが古びる)。**`displayField` は `null` を返さない** —— 非文字列は空文字・長すぎる値は天井 + `…` で、「no」と言う枝そのものを持たないので両ビルドで割れる余地が無い。`null` を返す読み手 (`finiteNumberOf` / `apiNumberOf` / `optionalString` / `objectRows`) に両ビルドが届く道は `shared/api/*.ts` (cursor ほか) **ただ 1 つ**で、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。残りは `src/main/clients/` の 15 本が読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。つまり非対称になりうる組が今日 0 件である |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
-| `buildDestinations` | 0 | 10 | 対称 —— というより **main はこのモジュールの問いを 1 度も発しない** (実測・2026-09-25 パス 455 / 457 で数え直した)。母集団に入ったのは `credentialSlotUnreadNote` (`string | null`) を足したためだが、**`src/main` / `src/preload` からの直の import は 0 件**で、走査に映ったのは*閉包*の 1 辺だけ —— `shared/paperAccount.ts:69` の `import type { BuildKind }` である。**型だけの辺**なのでビルドの時点で消え、`paperAccount` はこのモジュールの値を 1 つも読まない (export を 1 つずつ走査して 0 件)。しかも `paperAccount` を読む main 側の物は**検査 1 本だけ** (`main/clients/__tests__/paperAccountReality.test.ts`) で出荷コードではない。したがって「否定で答えたあとの動作」が両ビルドで割れる道は**原理的に無い** —— このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** (読み手の数は左の列が数える。`null` は「ブラウザ版には言うことが無い」という答えである)。その答えの正しさは `pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate,proxySectionBuildGate}.test.ts` と `components/__tests__/{googleConnectCardBuildGate,exportActionsBuildGate}.test.ts` が両方の実行形態を実際に描いて留める (パス 457 で足した `googleLiveScopeNote` / `googleSignInUnsupportedNote` はブラウザ版が**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける。パス 459 の `proxyRequiredNote` は**ブラウザ版でだけ言う**側で (main は各サービスへ直接つなぐので、そこで「Worker を建てろ」と言うと偽の前提になる)、実際に描くのは `components/ProxyRequiredNote.tsx` 1 つ・振る舞いは `pages/__tests__/proxyRequiredOnScreen.test.ts` が 3 つの実行形態で見る)。 |
+| `buildDestinations` | 0 | 12 | 対称 —— というより **main はこのモジュールの問いを 1 度も発しない** (実測・2026-09-25 パス 455 / 457 で数え直した)。母集団に入ったのは `credentialSlotUnreadNote` (`string | null`) を足したためだが、**`src/main` / `src/preload` からの直の import は 0 件**で、走査に映ったのは*閉包*の 1 辺だけ —— `shared/paperAccount.ts:69` の `import type { BuildKind }` である。**型だけの辺**なのでビルドの時点で消え、`paperAccount` はこのモジュールの値を 1 つも読まない (export を 1 つずつ走査して 0 件)。しかも `paperAccount` を読む main 側の物は**検査 1 本だけ** (`main/clients/__tests__/paperAccountReality.test.ts`) で出荷コードではない。したがって「否定で答えたあとの動作」が両ビルドで割れる道は**原理的に無い** —— このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** (読み手の数は左の列が数える。`null` は「ブラウザ版には言うことが無い」という答えである)。その答えの正しさは `pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate,proxySectionBuildGate}.test.ts` と `components/__tests__/{googleConnectCardBuildGate,exportActionsBuildGate}.test.ts` が両方の実行形態を実際に描いて留める (パス 457 で足した `googleLiveScopeNote` / `googleSignInUnsupportedNote` はブラウザ版が**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける。パス 459 の `proxyRequiredNote` は**ブラウザ版でだけ言う**側で (main は各サービスへ直接つなぐので、そこで「Worker を建てろ」と言うと偽の前提になる)、実際に描くのは `components/ProxyRequiredNote.tsx` 1 つ・振る舞いは `pages/__tests__/proxyRequiredOnScreen.test.ts` が 3 つの実行形態で見る)。 **パス 460 でこのモジュールは 2 つ目の役目を持った** —— 実行形態の**身元**そのもの (`WEB_BUILD_SUFFIX` / `isWebBuildVersion`)。それまで身元は「橋が名乗った版と完全に一致するか」で決まり、綴りは `web-shim.ts` (作る側) と `runtimeMode.ts` (比べる側) に分かれていた —— 実測で、作る側だけを 1 つ上の版にすると **19,048 件すべて緑のままブラウザ版がデスクトップ版を名乗り、保管庫を解錠する唯一の入口 (ロック画面) が出なくなる**。判定はここに 1 つ置き、両側が読む。**main は今もこのモジュールを 1 行も import しない** (実測: `src/main` / `src/preload` から `buildDestinations` / `WEB_BUILD_SUFFIX` / `isWebBuildVersion` への参照は 0 件) ので、上の判定は変わらない。身元の安定は `renderer/__tests__/buildSentinelStability.test.ts` が振る舞いで、綴りが 1 つであることは `renderer/__tests__/versionNamingCensus.test.ts` が両方向で留める。 |
 | `constantTimeEquals` | 1 | 1 | 対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、両ビルドは同じ関数を別名 (`safeStateEquals`) で export する (`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。**畳む前は等価ですらなかった**: main は `Buffer.from(s,'utf8')` → `timingSafeEqual` で、UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち 4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は `classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、**「交換しない」という結論は同じ**なので非対称ではない |
 | `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ **パス 280 の訂正**: ここには「`shared/tokenInput.ts` の `hasControlChars` (複数形) は別のモジュールで、名前が似ているだけである」と書いてあった —— **それは読み足りなかった**。名前が似ているだけでなく、**同じ判定の 2 つ目の実装**だった (片方は正規表現の文字クラス・もう片方は文字ごとの走査で、どちらも C0 と DEL を見る)。しかも読む側は資格情報の入口と保管層の床である。 ★ 範囲そのものをここに書かない —— `lint:forbidden` が「共有モジュールの外で制御文字の判定を書き直した」として落とす (パス 280 で実際に落ちた。**判定について書いた散文が、判定の写しと見分けられなくなる**)。 2 つは**ほんとうに一致していた** —— BMP のスカラー値すべて + astral + lone surrogate + 貼り付けで混ざる形、計 63,504 標本で食い違い 0 件 (実測)。だから欠陥ではなかったが、`controlChars.ts` 自身の docblock が「同じ判定が 2 つ目を作りかけたので独立させた・片方だけ緩んでも気付けない」と書いている当の形だったので、`hasControlChars` は `hasControlChar` へ委譲する**1 つの実装**にした。`__tests__/controlCharSingleRule.test.ts` が振る舞いの一致と「2 つ目が戻らないこと」を両方留める。JSON の包みの中を見られないという限界 (パス 245) はそのまま残る |
 | `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、**パス 272 が書いた理由は偽だった**。 ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は**真**だが、後半は**偽** —— 実測した鎖は `main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である(到達していなければ行は存在しない)。 ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / `straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。だから main 側は否定で答える問いを発しない。`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る) |

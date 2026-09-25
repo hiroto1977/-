@@ -68,6 +68,7 @@
  */
 
 import { readFailureBody } from '../shared/httpLimits';
+import { WEB_BUILD_SUFFIX } from '../shared/buildDestinations';
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import {
   normalizeTemplateParams,
@@ -1169,8 +1170,29 @@ function readStoredTeamRadarState(): StoredTeamRadar {
   }
 }
 
+/**
+ * ブラウザ版が名乗る版 (2026-09-25 · パス 460)。
+ *
+ * **ブラウザ版はここでしか版を名乗らない。** 直す前は 2 か所に在り
+ * (`getVersion` が返す接尾辞つきの版と、`checkUpdate` の `current` に直書きされた版)、
+ * `package.json` を上げた日に `checkUpdate` だけが古い版と比べる形だった ——
+ * 実測: 古い版と新しいリリースを `evaluateUpdate` に渡すと `update-available` なので、
+ * **最新の HTML を配信されている利用者に「更新があります」と言い続ける**。
+ *
+ * ★ **接尾辞は `getVersion` が付ける** —— `checkUpdate` に付けた物を渡すと、
+ * パス 402 で入れた semver の順序 (プレリリースは正式版より前) が効いて、
+ * **同じ版に対して `update-available` になる** (実測)。つまり自分自身より新しい版が在ると言い出す。
+ * **版は数として持ち、身元は接尾辞が足す。**
+ *
+ * `package.json` からの注入 (vite の `define`) は採っていない ——
+ * `vitest.config.ts` が別の config なので両方に置く必要が在り、
+ * 896 ファイルの検査が読み込み時に未定義の global に当たる形を作る。
+ * 残作業として `docs/REMAINING_WORK.md` に測って残した。
+ */
+const WEB_BUILD_VERSION = '0.1.0';
+
 const unguarded = {
-  getVersion: (): Promise<string> => Promise.resolve('0.1.0-web'),
+  getVersion: (): Promise<string> => Promise.resolve(`${WEB_BUILD_VERSION}${WEB_BUILD_SUFFIX}`),
 
   /**
    * 更新の有無。ブラウザ版は自分自身を更新できないが、**新しい版が出たことは
@@ -1178,7 +1200,7 @@ const unguarded = {
    * デスクトップ版と同じ純ロジックで判定する。
    */
   checkUpdate: async (): Promise<UpdateVerdict> => {
-    const current = '0.1.0';
+    const current = WEB_BUILD_VERSION;
     try {
       const res = await timedFetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
         headers: { accept: 'application/vnd.github+json' },
