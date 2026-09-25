@@ -16,7 +16,7 @@ import {
 } from '../data/memberCare';
 import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
 import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteResult } from '../data/localWrite';
-import { exportWarning } from '../data/exportOutcome';
+import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
 // スナップショットの形は shared が 1 つだけ持つ (パス 120 までは画面が写しを持っていた —— パス 62 / 116 の形)。
 import {
@@ -243,7 +243,7 @@ export function TeamRadarPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; saved?: string; warning?: string } | null>(null);
   // 感情ウェルビーイング連携: メンバーごとの「今日の気分」(1-5)。
   const [moods, setMoods] = useState<Record<string, number>>({});
 
@@ -482,7 +482,7 @@ export function TeamRadarPage() {
         },
       );
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -1030,6 +1030,7 @@ export function TeamRadarPage() {
               bytes={lastExport.bytes}
               openLabel="Canva を開く"
               openUrl="https://www.canva.com/"
+              saved={lastExport.saved}
               warning={lastExport.warning}
             />
           </div>

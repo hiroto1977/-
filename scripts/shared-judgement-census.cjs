@@ -83,9 +83,9 @@ const VERDICTS = {
     + 'このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** '
     + '(読み手の数は左の列が数える。`null` は「ブラウザ版には言うことが無い」という答えである)。'
     + 'その答えの正しさは `pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate,proxySectionBuildGate}.test.ts` と'
-    + ' `components/__tests__/googleConnectCardBuildGate.test.ts` が両方の実行形態を実際に描いて留める'
+    + ' `components/__tests__/{googleConnectCardBuildGate,exportActionsBuildGate}.test.ts` が両方の実行形態を実際に描いて留める'
     + ' (パス 457 で足した `googleLiveScopeNote` / `googleSignInUnsupportedNote` はブラウザ版が'
-    + '**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ)。',
+    + '**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける)。',
   apiResponse:
     '対称 (実測・2026-09-23 パス 419 で数え直した) —— このモジュールが母集団に入ったのは、'
     + '`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」'

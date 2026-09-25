@@ -215,6 +215,17 @@ const LEDGER: readonly Row[] = [
     why: '経営サマリーには一覧が無いので KPI の画面を名乗る (2026-09-23 まで実在しない綴りだった)。',
   },
   {
+    fn: 'LIBRARY_HATCH_TEXT',
+    file: 'src/renderer/data/exportOutcome.ts',
+    kinds: ['other-screen'],
+    why:
+      '**記録ではなく書き出した成果物についての文** (2026-09-25 · パス 458) —— '
+      + 'ブラウザ版で OS のファイルへ届く道は 1 つも無く (「ファイルを開く」「保存先フォルダを開く」は断る)、'
+      + '実際に開けるのは「ライブラリ」の画面だけである (`library.list()` は serviceId で絞らず全件を返し、'
+      + '`LibraryPage` は開く・ダウンロード・削除を持つ)。標本を持たないのは、この文が保管した*記録*の'
+      + '不備から生まれる物ではなく、書き出しの結末 (`libraryCopy === "saved"`) から生まれるため。',
+  },
+  {
     fn: 'CHATBOT_OLLAMA_ESCAPE',
     file: 'src/renderer/data/chatbotOllama.ts',
     kinds: ['other-screen'],

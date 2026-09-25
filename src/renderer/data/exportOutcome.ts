@@ -69,3 +69,44 @@ export function exportWarning(data: unknown): string | undefined {
   // （`length` を数える書き方だと、比較の変異が同じ結果になって残る）。
   return parts.join(' ') || undefined;
 }
+
+/** 書き出した物へこの実行形態で辿り着ける唯一の道を名指しする 1 文 (パス 458)。 */
+export const LIBRARY_HATCH_TEXT =
+  '書き出したファイルは「ライブラリ」の画面から開く・ダウンロード・削除ができます。';
+
+/**
+ * **収まった先のうち、この実行形態で実際に開ける物を名指しする** (2026-09-25 · パス 458)。
+ *
+ * ## 実測 (2026-09-25 · 直す前 · jsdom で実物の `ExportActions` を描いて押す)
+ *
+ * 書き出しの後に出る 3 つの操作子は、ブラウザ版では**どれも OS のファイルへ
+ * 届かない**:
+ *
+ * | 操作子 | ブラウザ版 |
+ * | --- | --- |
+ * | ファイルを開く | 断る —— 名指しするのは「ダウンロードフォルダ」だけ |
+ * | 保存先フォルダを開く | 同 |
+ * | 保存場所をコピー | ファイル名を置く (パス 458 で札を直した) |
+ *
+ * ★ **この実行形態で実際に開ける場所は「ライブラリ」**である
+ * (`library.list()` は serviceId で絞らず全件を返し、`LibraryPage` は
+ * 開く・ダウンロード・削除を持つ) のに、**書き出しの流れのどこもそれを
+ * 名指ししていなかった** —— 失敗したときだけ `DOWNLOAD_FAILED_TEXT` が
+ * 「ライブラリから開いて保存し直してください」と言う。**成功した人には
+ * 働く道が 1 度も示されない** (法則 `escape-hatch-stays-open`)。
+ *
+ * ★ **実行形態は問わない —— 欄の有無で決まる。** デスクトップ版の同じ action は
+ * `libraryCopy` / `folderCopy` を返さない (OS のファイルへ直接書くので中継が無い)
+ * ので、**欄が無いときは何も言わない**という `exportWarning` と同じ規則で
+ * 両ビルドが正しくなる (`useBuildKind` の 1 フレームの遅れも入らない)。
+ *
+ * ★ **`⚠` と食い違わない** —— ライブラリに残せていないとき (`'failed'`) は
+ * `LIBRARY_FAILED_TEXT` が既にそう述べるので、ここは**黙る**。
+ * 同じ画面が同じ問いに 2 通り答える形 (パス 392 / 447) を作らない。
+ */
+export function exportSavedNote(data: unknown): string | undefined {
+  const rec: Record<string, unknown> = isRecord(data) ? data : {};
+  // 欄が無い = デスクトップ版 (または別の action)。言えることは無い。
+  if (rec.libraryCopy === undefined) return undefined;
+  return rec.libraryCopy === 'saved' ? LIBRARY_HATCH_TEXT : undefined;
+}

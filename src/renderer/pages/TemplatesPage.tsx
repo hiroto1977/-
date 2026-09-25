@@ -13,7 +13,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
-import { exportWarning } from '../data/exportOutcome';
+import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
@@ -65,7 +65,7 @@ export function TemplatesPage() {
 
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; saved?: string; warning?: string } | null>(null);
 
   /*
    * **プレビューは書き出す物そのもの** (2026-09-12 · パス 184)。
@@ -126,7 +126,7 @@ export function TemplatesPage() {
         { templateId: selected.id, params },
       );
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
         setMsg('エクスポート失敗: ' + r.message);
       }
@@ -410,6 +410,7 @@ export function TemplatesPage() {
               bytes={lastExport.bytes}
               openLabel="Canva を開く"
               openUrl="https://www.canva.com/"
+              saved={lastExport.saved}
               warning={lastExport.warning}
             />
           </div>

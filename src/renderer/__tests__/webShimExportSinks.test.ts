@@ -143,3 +143,50 @@ describe('web-shim: 書き出しの収まった先', () => {
     expect(data.downloaded).toBe(true);
   });
 });
+
+/**
+ * **OS のファイル操作の断りは、場所を断定せず働く道を名指しする** (2026-09-25 · パス 458)。
+ *
+ * 直す前は「ファイルはお使いのブラウザのダウンロードフォルダに保存されています。」と
+ * **無条件に場所を主張していた**。`notSupportedAlert` は書き出しの結末
+ * (`downloaded` / `libraryCopy`) を**何も知らない**ので、端末へのダウンロードが
+ * 失敗した状態 (アプリ自身が `DOWNLOAD_FAILED_TEXT` として持っている状態) では**偽**になり、
+ * しかも**その人を、そのファイルが無いフォルダへ探しに行かせる**。
+ *
+ * ★ **この 2 件は振る舞いで測る** —— 綴りの走査では `stripNonCode` が
+ * 文字列の中身を落とすので、この文面についてはどの主張も空になる (パス 458 の自戒)。
+ */
+describe('web-shim — OS 操作の断り (パス 458)', () => {
+  type OsHub = { openPath: (p: string) => Promise<{ ok: boolean; message?: string }>;
+                 revealInFolder: (p: string) => Promise<{ ok: boolean; message?: string }> };
+
+  async function osHub(): Promise<OsHub> {
+    vi.resetModules();
+    delete (window as unknown as { serviceHub?: unknown }).serviceHub;
+    (globalThis as unknown as { alert: (m: string) => void }).alert = () => {};
+    await import('../web-shim');
+    return (window as unknown as { serviceHub: OsHub }).serviceHub;
+  }
+
+  it('★ openPath / revealInFolder は「ライブラリ」の画面を名指しして断る', async () => {
+    const hub = await osHub();
+    for (const op of [hub.openPath, hub.revealInFolder]) {
+      const r = await op('team-radar-1758000000000.svg');
+      expect(r.ok).toBe(false);
+      expect(r.message).toContain('「ライブラリ」の画面');
+    }
+  });
+
+  it('★ 場所を断定しない —— 直す前の文は出ない', async () => {
+    const hub = await osHub();
+    // 針が的に当たる標本 (直す前の文そのもの)。
+    const NEEDLE = 'ダウンロードフォルダに保存されています';
+    expect('ファイルはお使いのブラウザのダウンロードフォルダに保存されています。').toContain(NEEDLE);
+    const alerts: string[] = [];
+    (globalThis as unknown as { alert: (m: string) => void }).alert = (m: string) => { alerts.push(m); };
+    const r = await hub.openPath('x.svg');
+    expect(r.message).not.toContain(NEEDLE);
+    expect(alerts.join(' ')).not.toContain(NEEDLE);
+    expect(alerts.join(' ')).toContain('「ライブラリ」の画面');
+  });
+});

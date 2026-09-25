@@ -114,10 +114,17 @@ describe('ExportActions — 常時表示ボタン', () => {
     expect(html).toContain('保存先フォルダを開く');
   });
 
-  it('"保存場所をコピー" ボタンを常に表示', () => {
+  /*
+   * **札は実行形態で変わるが、操作子そのものは消えない** (2026-09-25 · パス 458)。
+   * `renderToStaticMarkup` は効果を走らせないので `useBuildKind()` は `null` ——
+   * そのときの札はデスクトップ版の物 (= パス 458 より前と同じ) である。
+   * 実行形態ごとの札は `exportActionsBuildGate.test.ts` が実物を描いて留める。
+   */
+  it('コピーの操作子を常に表示する (分からないあいだの札はデスクトップ版の物)', () => {
     const html = renderToStaticMarkup(
       createElement(ExportActions, { path: '/tmp/out.csv' }),
     );
+    expect(html).toContain('data-export-copy');
     expect(html).toContain('保存場所をコピー');
   });
 

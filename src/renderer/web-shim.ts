@@ -142,6 +142,7 @@ import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken, brokenStoredCredentialMessage } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { REAL_MIRROR, mirrorToFolder } from './fs/folderMirror';
+import { LIBRARY_HATCH_TEXT } from './data/exportOutcome';
 import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
@@ -373,16 +374,33 @@ async function saveToLibrary(
   return { libraryCopy, folderCopy };
 }
 
+/**
+ * OS のファイル操作 (`openPath` / `revealInFolder`) をブラウザ版で断る。
+ *
+ * **2026-09-25 (パス 458) まで、断りは「場所」を無条件に主張していた** ——
+ * 「ファイルはお使いのブラウザのダウンロードフォルダに保存されています。」。
+ * この関数は書き出しの結末 (`ExportSinks` / `downloaded`) を**何も知らない**ので、
+ * 端末へのダウンロードが失敗した状態 (`downloaded === false` ——
+ * `DOWNLOAD_FAILED_TEXT` としてアプリ自身がその状態を持っている) では**偽**になり、
+ * しかも**その人を、そのファイルが無いフォルダへ探しに行かせる**
+ * (パス 388 の「原因を取り違えた断りは、直す手ごと誤らせる」の形)。
+ *
+ * だから今は**場所ではなく「働く道」を名指しする** —— この実行形態で実際に
+ * 開けるのは「ライブラリ」の画面だけである (`library.list()` は serviceId で
+ * 絞らず全件を返し、`LibraryPage` は開く・ダウンロード・削除を持つ)。
+ * 綴りは `LIBRARY_HATCH_TEXT` 1 つで、書き出した画面が出す 1 文と同じ物を読む。
+ * 残せていないときは**書き出した画面の `⚠` がそう述べる** ——
+ * ここで重ねて断定すると、同じ画面が同じ問いに 2 通り答える形 (パス 392 / 447)
+ * を作ることになる。
+ */
 function notSupportedAlert(): Promise<OsOpResult> {
    
-  alert(
-    'ブラウザ版では使えません。\nファイルはお使いのブラウザのダウンロードフォルダに保存されています。',
-  );
+  alert(`ブラウザ版ではファイルを OS で開けません。\n${LIBRARY_HATCH_TEXT}`);
   // Electron 版と同じ形で「できなかった」ことを返す。呼び出し側が結果を見て
   // 案内を出せるようにするため (alert だけに頼らない)。
   return Promise.resolve({
     ok: false,
-    message: 'ブラウザ版ではファイルを OS で開けません。ダウンロードフォルダをご確認ください。',
+    message: `ブラウザ版ではファイルを OS で開けません。${LIBRARY_HATCH_TEXT}`,
   });
 }
 

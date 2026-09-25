@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useBuildKind } from '../hooks/useBuildKind';
+import { exportCopyLabel } from '../../shared/buildDestinations';
 
 /**
  * Common post-export quick-action buttons.
@@ -10,6 +12,13 @@ import { useState } from 'react';
  *
  * `path` is the absolute path returned by the export action — but we never
  * show the raw path; only the filename is displayed.
+ *
+ * **ただしブラウザ版では `path` は絶対パスではない** (2026-09-25 · パス 458) ——
+ * `web-shim.ts` の 4 つの書き出しは `path: filename` を返すので、3 つ目のボタンは
+ * 「保存場所」と名乗って**場所ではない物**をクリップボードへ置いていた。隣の 2 つは
+ * 騒がしく断るので、**同じ並びの 3 つのうち 1 つだけが静かに名前と違う事をしていた**。
+ * 札は `exportCopyLabel(kind)` が実行形態ごとに決める (`null` のあいだは
+ * デスクトップ版の札 = 今までの札のまま)。
  */
 function basename(p: string): string {
   // Strip directory parts. Works for both POSIX (/) and Windows (\) paths.
@@ -22,12 +31,23 @@ export function ExportActions({
   bytes,
   openLabel,
   openUrl,
+  saved,
   warning,
 }: {
   path: string;
   bytes?: number;
   openLabel?: string;
   openUrl?: string;
+  /**
+   * 収まった先のうち、**この実行形態で実際に開ける物**を名指しする 1 文
+   * (`data/exportOutcome.ts` の `exportSavedNote()`)。
+   *
+   * ブラウザ版で OS のファイルへ届く道は 1 つも無く (上の 2 つは断る)、
+   * 実際に開けるのは「ライブラリ」の画面だけなのに、**書き出しの流れの
+   * どこもそれを名指ししていなかった** (法則 `escape-hatch-stays-open`)。
+   * デスクトップ版は欄が無いので `undefined` = 何も足さない。
+   */
+  saved?: string;
   /**
    * 収まらなかった先の説明 (`data/exportOutcome.ts` の `exportWarning()`)。
    *
@@ -39,6 +59,8 @@ export function ExportActions({
   warning?: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const buildKind = useBuildKind();
+  const copyLabel = exportCopyLabel(buildKind ?? 'desktop');
   // 開けなかった理由を出す場所。監査前は catch で握り潰していたため、書き出した
   // 書類が開けなくても画面には何も出なかった (押しても無反応に見える)。
   const [opFailure, setOpFailure] = useState<string>();
@@ -105,6 +127,14 @@ export function ExportActions({
           ⚠ {warning}
         </div>
       ) : null}
+      {saved ? (
+        <div
+          data-export-saved
+          style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6 }}
+        >
+          {saved}
+        </div>
+      ) : null}
       {opFailure ? (
         <div data-os-op-error role="alert" style={{ fontSize: 12, color: 'var(--danger)' }}>
           {opFailure}
@@ -144,6 +174,7 @@ export function ExportActions({
         </button>
         <button
           type="button"
+          data-export-copy
           onClick={copy}
           style={{
             padding: '6px 12px',
@@ -155,7 +186,7 @@ export function ExportActions({
             fontSize: 12,
           }}
         >
-          {copied ? '✓ コピー済み' : '保存場所をコピー'}
+          {copied ? '✓ コピー済み' : copyLabel}
         </button>
         {openUrl && openLabel && (
           <button

@@ -13,7 +13,7 @@ import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling'
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { ExportActions } from '../components/ExportActions';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
-import { exportWarning } from '../data/exportOutcome';
+import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, emptyWatchlistNote, exportDestinationNote, persistDestinationNote } from '../../shared/buildDestinations';
@@ -291,6 +291,7 @@ export function StocksPage() {
   const [exportBytes, setExportBytes] = useState<number | null>(null);
   /** 収まらなかった先 (ライブラリ / PC の指定フォルダ / ダウンロード) の説明。 */
   const [exportWarn, setExportWarn] = useState<string>();
+  const [exportSaved, setExportSaved] = useState<string>();
 
   async function exportDashboard() {
     setExportBusy(true);
@@ -311,6 +312,7 @@ export function StocksPage() {
         setExportPath(r.data.path);
         setExportBytes(r.data.bytes);
         setExportWarn(exportWarning(r.data));
+        setExportSaved(exportSavedNote(r.data));
       } else {
         setExportError(r.message);
       }
@@ -1051,6 +1053,7 @@ export function StocksPage() {
           <ExportActions
             path={exportPath}
             bytes={exportBytes ?? undefined}
+            saved={exportSaved}
             warning={exportWarn}
           />
         )}

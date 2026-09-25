@@ -9,7 +9,7 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
-import { exportWarning } from '../data/exportOutcome';
+import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
@@ -688,7 +688,7 @@ export function BusinessPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; saved?: string; warning?: string } | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState('');
   /* 貼り付けを黙って切らない (パス 175)。1,000 字は打って届く量ではない —— `maxLength` が
      発火するのは貼り付けのときだけで、そのとき超過分は黙って消える。 */
@@ -714,7 +714,7 @@ export function BusinessPage() {
       // html / md は同じ形 (台帳の ExportFileResult)。型は台帳から読む (パス 116)。
       const r = await window.serviceHub.invoke<ActionData<'business/export-dashboard'>>('business', action, payload);
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -992,7 +992,7 @@ export function BusinessPage() {
               borderRadius: 6,
             }}
           >
-            <ExportActions path={lastExport.path} bytes={lastExport.bytes} warning={lastExport.warning} />
+            <ExportActions path={lastExport.path} bytes={lastExport.bytes} saved={lastExport.saved} warning={lastExport.warning} />
           </div>
         )}
         {exportMsg && (

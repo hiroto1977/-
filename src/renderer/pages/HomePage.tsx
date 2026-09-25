@@ -4,7 +4,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { useServiceData } from '../hooks/useServiceData';
 import { useShell, type ShellService } from '../shellContext';
 import type { ServiceId } from '../../shared/serviceId';
-import { exportWarning } from '../data/exportOutcome';
+import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 
 interface HomeSnapshot {
   greeting: string;
@@ -126,7 +126,7 @@ type Status =
   | { kind: 'busy' }
   // 出来上がった後も「どこに収まらなかったか」を持つ。done を壊さずに載せる
   // ——「作れたが指定フォルダには置けていない」は成功と失敗の間の状態である。
-  | { kind: 'done'; path: string; warning?: string }
+  | { kind: 'done'; path: string; saved?: string; warning?: string }
   | { kind: 'error'; message: string };
 
 function basename(p: string): string {
@@ -148,7 +148,7 @@ function ActionCard({ action }: { action: QuickAction }) {
         // popup is jarring for non-technical users. Instead, surface a
         // "ファイルを開く" button in the success state so the user
         // explicitly chooses to view the result.
-        setStatus({ kind: 'done', path: r.data.path, warning: exportWarning(r.data) });
+        setStatus({ kind: 'done', path: r.data.path, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
         setStatus({ kind: 'error', message: r.message });
       }
@@ -205,6 +205,16 @@ function ActionCard({ action }: { action: QuickAction }) {
           {status.warning ? (
             <div data-export-warning role="alert" className="home-note">
               ⚠ {status.warning}
+            </div>
+          ) : null}
+          {/*
+            * この実行形態で実際に開ける場所を名指しする (2026-09-25 · パス 458)。
+            * 下の「ファイルを開く」はブラウザ版では断るので、断りだけを見た人には
+            * 働く道が 1 つも示されていなかった (法則 `escape-hatch-stays-open`)。
+            */}
+          {status.saved ? (
+            <div data-export-saved className="home-note">
+              {status.saved}
             </div>
           ) : null}
           {openFailure ? (
