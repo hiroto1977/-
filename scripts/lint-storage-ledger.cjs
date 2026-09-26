@@ -94,7 +94,7 @@ const BACKED_UP_STORE = 'business-hub-data';
  * 媒体の表示名。**監査報告と突き合わせるために要る。**
  *
  * 規則 9 は「sensitive な保存先が名前で載っているか」を見るが、
- * `service-hub-v3` (Cache Storage) は sensitive でないので**規則 9 では
+ * `service-hub-v4` (Cache Storage) は sensitive でないので**規則 9 では
  * 呼ばれない** —— 2026-08-26 に測ったとき、Cache Storage は
  * `docs/DATA_PROTECTION.md` に**媒体ごと**在庫から抜けていた。
  * 個々の行ではなく**媒体**を数える規則が要る (規則 10)。
@@ -146,19 +146,27 @@ const STORES = {
   // 保存枠を食い、枠が尽きたときの立ち退きは暗号化されたトークンごと持っていく
   // (`storageDurability.ts` / パス 351)。1 度も開かれていないアプリ本体のために
   // 枠を埋めておくのは、その危険を見返りなく上げることである。
-  'service-hub-v3': {
+  //
+  // 2026-09-26 (パス 485) に v3 → v4 へ。鍵をパスだけで作るようにした (クエリと
+  // 断片を落とす) ので、以前の鍵で焼いた写し —— `app.html?fbclid=…` のような
+  // クエリ違いが 1 つ 11.8 MB ずつ —— は新しいコードからは読まれも上書きもされない。
+  // 実 chromium の実測: クエリ違いの遷移 5 回で同じ 11,831,187 B が 6 つ = 71,024,096 B。
+  'service-hub-v4': {
     medium: 'cachestorage',
     /*
      * **同一オリジンの成功応答だけ**が入る。第三者 API の応答 (業務データ・
-     * 漏洩調査の結果) が入らないことは `assets/sw.js` の `sameOrigin` 判定と
+     * 漏洩調査の結果) が入らないことは `assets/sw.js` の同一オリジンの判定と
      * `src/shared/__tests__/serviceWorker.test.ts` が留めている。
      * ここが `sensitive: true` に変わるとしたら、その 2 つが同時に壊れたとき。
      *
      * install で先読みするのは**小さなシェル 3 件だけ** (index.html / manifest /
      * icon = gzip 合計 9,570 B)。アプリ本体は network-first の fetch ハンドラが
      * **実際に開かれた時点で**焼くので、ここに入るのは利用者が読み込んだ物だけである。
+     *
+     * **鍵はパスだけ** (パス 485) —— 焼く物の数は公開しているファイルの数で頭打ちになる。
+     * クエリを鍵に入れていた頃は、追跡パラメタ 1 つにつきアプリ本体の写しが 1 つ増えた。
      */
-    holds: 'アプリシェル (index.html / アイコン / manifest) + 実際に開いたアプリ HTML',
+    holds: 'アプリシェル (index.html / アイコン / manifest) + 実際に開いたアプリ HTML (パスごとに 1 つ)',
     backedUp: false,
     sensitive: false,
   },

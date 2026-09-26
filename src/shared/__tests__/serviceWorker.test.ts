@@ -316,13 +316,13 @@ describe('service worker — install が取る物 (パス 480)', () => {
     // `keys()` の結果を使わなくなった日に黙る。
     const sw = loadSw({
       fetchResult: () => Promise.resolve(res(200)),
-      existingCacheNames: ['service-hub-v1', 'service-hub-v2', 'service-hub-v3'],
+      existingCacheNames: ['service-hub-v1', 'service-hub-v2', 'service-hub-v3', 'service-hub-v4'],
     });
     const ev = makeExtendableEvent();
     sw.activateHandler(ev);
     await Promise.all(ev.waited);
-    expect(sw.deleted.sort(), '古い版を消さないと、以前の precache (生 11.97 MB) が端末に残り続ける')
-      .toEqual(['service-hub-v1', 'service-hub-v2']);
+    expect(sw.deleted.sort(), '古い版を消さないと、以前の precache (生 11.97 MB) やクエリ違いの写しが端末に残り続ける')
+      .toEqual(['service-hub-v1', 'service-hub-v2', 'service-hub-v3']);
   });
 
   it('★ 版が上がっている (v2 のままでは既存の端末から回収できない)', async () => {
@@ -330,13 +330,17 @@ describe('service worker — install が取る物 (パス 480)', () => {
     // 立ち退きは暗号化されたトークンごと持っていく (storageDurability.ts · パス 351)。
     const sw = loadSw({
       fetchResult: () => Promise.resolve(res(200)),
-      existingCacheNames: ['service-hub-v2'],
+      existingCacheNames: ['service-hub-v2', 'service-hub-v3'],
     });
     const ev = makeExtendableEvent();
     sw.activateHandler(ev);
     await Promise.all(ev.waited);
     expect(sw.deleted, 'v2 が「今の版」なら消されない = パス 480 より前の precache が残る')
       .toContain('service-hub-v2');
+    // パス 485: 鍵の作り方を変えたので、v3 に以前の鍵で焼いた写し
+    // (`app.html?fbclid=…` が 1 つ 11.8 MB ずつ) は新しいコードから読まれも上書きもされない。
+    expect(sw.deleted, 'v3 が「今の版」なら、クエリ違いの写しが回収されずに残る')
+      .toContain('service-hub-v3');
   });
 });
 
@@ -377,5 +381,56 @@ describe('service worker — オフラインの遷移の落とし先 (パス 480
     const got = await offlineNavigate({});
     // Response.error() は Node の Response でも作れる (type: 'error')。
     expect(got === undefined || (got as Response).type === 'error').toBe(true);
+  });
+});
+
+/*
+ * **焼く鍵と引く鍵** (2026-09-26 · パス 485)。
+ *
+ * 以前は `c.put(req, copy)` / `caches.match(req)` で、鍵は要求の URL 全体 (クエリ込み)
+ * だった。配信は静的 (GitHub Pages) でどのクエリにも同じファイルを返すので、追跡パラメタ
+ * (`?fbclid=…` など) で開くたびにアプリ本体の写しが 1 つずつ増えていた —— 実 chromium で
+ * 5 回の遷移が 71,024,096 B (同じ 11,831,187 B が 6 つ)。
+ *
+ * 実物の Cache の照合 (同じ鍵の上書き・相対 URL の解決) は
+ * `renderer/__tests__/serviceWorker.test.ts` の Map と実 chromium の実測が持つ。
+ * ここは vm で読み込んだ実物の sw.js が**どの鍵を渡しているか**だけを見る ——
+ * 焼く鍵と引く鍵が別なら、焼いた物は二度と読まれない。
+ */
+describe('service worker — 焼く鍵と引く鍵 (パス 485)', () => {
+  it('★ 焼く鍵はクエリと断片を落としたパス', async () => {
+    const h = loadSw({ fetchResult: () => Promise.resolve(res(200)) });
+    const ev = makeEvent(`${ORIGIN}/-/app.html?fbclid=IwAR1#home`, 'GET', 'navigate');
+    h.fetchHandler(ev);
+    await ev.responded;
+    await new Promise((r) => setTimeout(r, 0));
+    expect(h.cache.puts.map((p) => p.req)).toEqual([`${ORIGIN}/-/app.html`]);
+  });
+
+  it('★ オフラインで最初に引く鍵も同じパス (クエリ違いでも焼いた物を引ける)', async () => {
+    const asked: unknown[] = [];
+    const app = { tag: 'app' };
+    const h = loadSw({
+      fetchResult: () => Promise.reject(new Error('offline')),
+      cacheMatch: (req) => {
+        asked.push(req);
+        return Promise.resolve(req === `${ORIGIN}/-/app.html` ? app : undefined);
+      },
+    });
+    const ev = makeEvent(`${ORIGIN}/-/app.html?utm_source=y`, 'GET', 'navigate');
+    h.fetchHandler(ev);
+    expect(await ev.responded).toBe(app);
+    expect(asked[0]).toBe(`${ORIGIN}/-/app.html`);
+  });
+
+  it('対照: 別のファイルは別の鍵 (畳みすぎない)', async () => {
+    const h = loadSw({ fetchResult: () => Promise.resolve(res(200)) });
+    for (const url of [`${ORIGIN}/-/app.html?x=1`, `${ORIGIN}/-/lite.html?x=1`]) {
+      const ev = makeEvent(url, 'GET', 'navigate');
+      h.fetchHandler(ev);
+      await ev.responded;
+    }
+    await new Promise((r) => setTimeout(r, 0));
+    expect(h.cache.puts.map((p) => p.req)).toEqual([`${ORIGIN}/-/app.html`, `${ORIGIN}/-/lite.html`]);
   });
 });

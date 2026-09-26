@@ -762,6 +762,26 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [gate('lint:storage'), test('src/renderer/security/__tests__/eraseAll.test.ts'), test(T.shared('distributedArtifactStorage'))],
   },
   {
+    id: 'cache-key-is-what-the-server-distinguishes',
+    family: 'at-rest',
+    name: '端末に焼く物の鍵は、配信側が区別する物だけで作る',
+    statement:
+      '鍵に**外から付く部分**を入れると、焼く物の数に上限が無くなる。`assets/sw.js` は 2026-07 から'
+      + '同一オリジンの成功応答を**要求の URL 全体 (クエリ込み)** で焼いていたが、配信は静的 (GitHub Pages) で'
+      + 'どのクエリにも同じファイルを返す。追跡パラメタ (`?fbclid=…` / `?utm_source=…` —— SNS や広告のリンクは'
+      + '1 クリックごとに違う値を付ける) で開くたびに、アプリ本体の写しが 1 つずつ増えた。'
+      + '実 chromium で実測 (2026-09-26 · `pages.yml` と同じ形に組んだ `_site`): 5 回の遷移で同じ 11,831,187 B が 6 つ = '
+      + '**71,024,096 B**。しかも `?utm_source=x` でしか来ていない利用者は、オフラインで `app.html` や別のクエリを開くと'
+      + '**ランディングが出た** (アプリは焼いてあるのに) —— **費用は訪問ごとに積み上がり、効き目はほぼ 0** だった。'
+      + '積み上がる枠は暗号化された保管庫と同じオリジンの物で、枠が尽きたときの立ち退きはトークンごと持っていく (パス 351)。'
+      + '鍵をパスだけにすると焼く物は公開ファイルの数で頭打ちになり (直した後の同じ測定は 11,864,027 B)、'
+      + 'どのクエリで開いてもオフラインで同じ画面が開く。**鍵の作り方を変えたら版も上げる** —— 以前の鍵で焼いた写しは'
+      + '新しいコードから読まれも上書きもされないので、`activate` に捨てさせるしかない (v3 → v4)。'
+      + '★ この規則が正しいのは**配信がクエリを見ないから**で、その前提は `cacheKey` の docblock が名指しする。',
+    provenance: ['パス 485', 'パス 480 (同じ SW の precache)', 'パス 351 (立ち退きは保管庫ごと)'],
+    enforcedBy: [test(T.shared('serviceWorker')), test(T.renderer('serviceWorker')), gate('lint:storage'), chain],
+  },
+  {
     id: 'read-policy-three-states',
     family: 'at-rest',
     name: '「無い」「読めなかった」「読めた」を分ける',

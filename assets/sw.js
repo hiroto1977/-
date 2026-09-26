@@ -25,8 +25,50 @@
  *
  * 代わりの費用も書く: アプリを実際に開いていた利用者は、次にオンラインで
  * 開いたときに 1 度だけ取り直す (network-first なので画面は変わらない)。
+ *
+ * **v3 → v4 (2026-09-26 / パス 485)**: 鍵の作り方を変えた (下の `cacheKey`) ので、
+ * 以前の鍵で焼いた写し —— クエリ違いの `app.html?fbclid=…` が 1 つ 11.8 MB ずつ ——
+ * は新しいコードからは**読まれも上書きもされない**。名前を変えて `activate` に捨てさせる。
+ * (本番の `main` は 2026-09-26 時点で v2 で、同じ写しを v2 に持つ —— こちらは
+ * パス 480 の版上げの時点で既に捨てられる。v4 が足すのは、この枝の SW を走らせた
+ * 端末に残った v3 の写しの回収である。)
  */
-const CACHE = 'service-hub-v3';
+const CACHE = 'service-hub-v4';
+/**
+ * **キャッシュの鍵はパスだけで作る —— クエリと断片は落とす** (2026-09-26 / パス 485)。
+ *
+ * 以前は `c.put(req, copy)` / `caches.match(req)` で、鍵は**要求の URL 全体**だった。
+ * 配信は静的 (GitHub Pages) で、**同じファイルをどのクエリにも同じ中身で返す**のに、
+ * 鍵はクエリごとに別になる。追跡パラメタ (`?fbclid=…` / `?utm_source=…` —— SNS や
+ * 広告のリンクは 1 クリックごとに違う値を付ける) で開くたびに、**アプリ本体の写しが
+ * 1 つずつ増えて上限が無かった**。実 chromium で実測 (2026-09-26 · `pages.yml` と同じ形に
+ * 組んだ `_site` · `inject-pwa` 適用後):
+ *
+ * ```
+ *   app.html を開き、?fbclid=… を 5 通り付けて開く
+ *     → 同じ 11,831,187 B が 6 つ = Cache Storage 71,024,096 B
+ *   ?utm_source=x でしか来ていない利用者がオフラインになる
+ *     app.html               → ランディング (アプリは 11.8 MB 焼いてあるのに)
+ *     app.html?utm_source=y  → ランディング
+ *     app.html?utm_source=x  → アプリ (完全に同じ URL のときだけ)
+ * ```
+ *
+ * つまり**費用は訪問ごとに積み上がり、オフラインの効き目はほぼ 0** だった。
+ * 積み上がる枠は暗号化された保管庫と同じオリジンの物で、枠が尽きたときの立ち退きは
+ * トークンごと持っていく (`storageDurability.ts` / パス 351)。
+ *
+ * 鍵をパスにすると、焼く物の数は**公開しているファイルの数**で頭打ちになり、
+ * どのクエリで開いてもオフラインで同じ画面が開く。断片 (`#home`) は Cache の照合が
+ * もともと無視するが、鍵を読みやすくするために落とす。
+ * ★ **ここが正しいのは配信がクエリを見ないからである** —— クエリで中身を変える配信の
+ * 後ろにこの SW を置くなら、この関数を先に見直すこと。
+ */
+function cacheKey(url) {
+  const u = new URL(url);
+  u.search = '';
+  u.hash = '';
+  return u.href;
+}
 /*
  * **install で取るのは小さなシェルだけ。アプリ本体は入れない。** (2026-09-26 / パス 480)
  *
@@ -116,13 +158,14 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   // 同一オリジン以外は素通し (キャッシュにも触れない)。third-party API の
   // レスポンスを端末へ平文保存しないための境界。
-  let sameOrigin;
+  let url;
   try {
-    sameOrigin = new URL(req.url).origin === self.location.origin;
+    url = new URL(req.url);
   } catch {
-    sameOrigin = false;
+    return; // 読めない URL は別オリジンと同じ扱い (fail-closed)
   }
-  if (!sameOrigin) return;
+  if (url.origin !== self.location.origin) return;
+  const key = cacheKey(url);
 
   event.respondWith(
     fetch(req)
@@ -137,12 +180,12 @@ self.addEventListener('fetch', (event) => {
         // 404 を期待している呼び出し側が壊れる。
         if (res.ok) {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy).catch(() => undefined));
+          caches.open(CACHE).then((c) => c.put(key, copy).catch(() => undefined));
         }
         return res;
       })
       .catch(() =>
-        caches.match(req).then((hit) => {
+        caches.match(key).then((hit) => {
           if (hit) return hit;
           // ナビゲーション (ページ遷移) だけアプリシェルへフォールバックする。
           // サブリソース要求に HTML を返すと、呼び出し側が HTML を JSON として

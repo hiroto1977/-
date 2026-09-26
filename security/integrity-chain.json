@@ -2252,6 +2252,14 @@
       "leafCount": 97,
       "note": "update integrity-chain.cjs,json-for-script.cjs",
       "hash": "1006db0ed44424c6376fee9c993d9d67360b19ffe7f814e5c521bc011bc904bc"
+    },
+    {
+      "index": 269,
+      "prevHash": "1006db0ed44424c6376fee9c993d9d67360b19ffe7f814e5c521bc011bc904bc",
+      "merkleRoot": "21ff816f2822f6482e5b1d47c25a5c5900f1aceb628ea76a5c268643fb0201c4",
+      "leafCount": 97,
+      "note": "update sw.js",
+      "hash": "cae61502ae7543fdca29cd6ee54120991366bf9bf4b387073bc82c24ec9079b6"
     }
   ],
   "tipManifest": {
@@ -2264,7 +2272,7 @@
     ".github/workflows/pages.yml": "02c826156e8b095f0fdf3d8774263bf0c4d778cc9543f9d5de954b9a14b7d85a",
     ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
     "assets/manifest.webmanifest": "2c7d9a98a5e3ec4026970816cfc12ad4994269c02c2f328b4ab8ad40f0b9de8a",
-    "assets/sw.js": "5c6e8716e471bcaf00247fe34f43059f2fe9e4608701a6e200a1920568876ec3",
+    "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
     "docs/PROXY_EXAMPLE.md": "02114bb2d044db44cda64244bb78fc6b54169714e6e90854c5b31d044b43c39b",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",

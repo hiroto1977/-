@@ -150,7 +150,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (100)
+## 5. 法則と執行者 (101)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -223,11 +223,12 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `loopback-oauth-host-pin` | **OAuth callback の Host は loopback だけ** — DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。 | 不変条件 #12 / パターン 0-a-14 | 検査 `src/shared/__tests__/loopbackChecks.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `header-values-one-rule` | **Headers が何を受理するかは 1 つの判定** — 資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。 | パス 244 / パス 296 | 検査 `src/shared/__tests__/headerValue.test.ts`<br>検査 `src/shared/__tests__/headerValueLeak.test.ts` |
 
-### 保存と復元 (13)
+### 保存と復元 (14)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
 | `storage-ledger-and-hard-reset` | **端末に残す物は台帳、ハードリセットは全行を覆う** — 新しい保存先が黙って増えない。媒体が DATA_PROTECTION の在庫に載る。入口 (localWrite) へ流れる鍵は登録の鍵と一致する (双方向)。「すべてのデータを削除」が台帳の全行を消す。**台帳が覆うのはアプリの生成元だけである** —— `lint:storage` の走査範囲は `src/renderer` なので、**利用者がダウンロードして開く単一 HTML** は母集団の外に居る。実測 (2026-09-21): 配る 8 本のうち 3 本 (電子定款メーカー / 就業規則メーカー / 経営書類スタジオ) が入力を `localStorage` へ自動保存しており、**商号・本店・発起人の氏名と住所**まで入るのに、3 本とも `removeItem` が 0 件で**文書の中から消す口が無かった**。保存先はその文書自身の生成元なので「すべてのデータを削除」は構造的に届かず、`eraseAll` を直しても解決しない (パス 364)。 | lint:storage 規則 11 / lint:storage 規則 12 / パス 136 / パス 310 / パス 364 (配る文書は別の生成元) | ゲート `npm run lint:storage`<br>検査 `src/renderer/security/__tests__/eraseAll.test.ts`<br>検査 `src/shared/__tests__/distributedArtifactStorage.test.ts` |
+| `cache-key-is-what-the-server-distinguishes` | **端末に焼く物の鍵は、配信側が区別する物だけで作る** — 鍵に**外から付く部分**を入れると、焼く物の数に上限が無くなる。`assets/sw.js` は 2026-07 から同一オリジンの成功応答を**要求の URL 全体 (クエリ込み)** で焼いていたが、配信は静的 (GitHub Pages) でどのクエリにも同じファイルを返す。追跡パラメタ (`?fbclid=…` / `?utm_source=…` —— SNS や広告のリンクは1 クリックごとに違う値を付ける) で開くたびに、アプリ本体の写しが 1 つずつ増えた。実 chromium で実測 (2026-09-26 · `pages.yml` と同じ形に組んだ `_site`): 5 回の遷移で同じ 11,831,187 B が 6 つ = **71,024,096 B**。しかも `?utm_source=x` でしか来ていない利用者は、オフラインで `app.html` や別のクエリを開くと**ランディングが出た** (アプリは焼いてあるのに) —— **費用は訪問ごとに積み上がり、効き目はほぼ 0** だった。積み上がる枠は暗号化された保管庫と同じオリジンの物で、枠が尽きたときの立ち退きはトークンごと持っていく (パス 351)。鍵をパスだけにすると焼く物は公開ファイルの数で頭打ちになり (直した後の同じ測定は 11,864,027 B)、どのクエリで開いてもオフラインで同じ画面が開く。**鍵の作り方を変えたら版も上げる** —— 以前の鍵で焼いた写しは新しいコードから読まれも上書きもされないので、`activate` に捨てさせるしかない (v3 → v4)。★ この規則が正しいのは**配信がクエリを見ないから**で、その前提は `cacheKey` の docblock が名指しする。 | パス 485 / パス 480 (同じ SW の precache) / パス 351 (立ち退きは保管庫ごと) | 検査 `src/shared/__tests__/serviceWorker.test.ts`<br>検査 `src/renderer/__tests__/serviceWorker.test.ts`<br>ゲート `npm run lint:storage`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `read-policy-three-states` | **「無い」「読めなかった」「読めた」を分ける** — 壊れた保存値を「まだ無い」に畳むと、次の登録が元の一覧を上書きする。読みは 3 状態で返し、画面は ⚠ で言う。端末からの読み 22 か所は方針 4 通りと理由で台帳。 | パス 120 / パス 121 / パス 309 / パス 310 / パス 313 | 検査 `src/renderer/__tests__/storageReadLedger.test.ts`<br>検査 `src/shared/__tests__/watchlistState.test.ts`<br>検査 `src/shared/__tests__/teamRadarState.test.ts`<br>検査 `src/main/__tests__/stateFile.test.ts` |
 | `escape-hatch-stays-open` | **壊れた行があっても逃げ口は開く** — 保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。**逃げ口が「壊れている」のではなく「最初から無い」形も在る** —— 配る単一 HTML 3 本は入力を `localStorage` へ自動保存しながら消す口を 1 つも持たず、利用者はブラウザのサイトデータ設定を知らないかぎり自分の氏名と住所を残したままにするほか無かった (パス 364)。書類を作る道具なので、残っている自覚が持ちにくい側である。 | パス 136 / パス 225 / パス 360 / パス 364 (逃げ口が最初から無い) | 検査 `src/renderer/__tests__/malformedStoreRenders.test.ts`<br>検査 `src/renderer/components/__tests__/recordShapeAuditPanel.test.ts`<br>検査 `src/shared/__tests__/distributedArtifactStorage.test.ts` |
 | `sample-never-written-back` | **見本を利用者の保管場所へ書き戻さない** — 「まだ無い」「読めなかった」ときに返る同梱の見本は飾りであって利用者の物ではない。それを画面の状態へ取り込むと自動保存がそのまま端末へ書き、利用者が何も押していないのに編集中の内容が消える。取り込むのは stored === "saved" のときだけ。「読めていない下書きを書き戻さない」(パス 160) と対になる、書く側の規則。 | パス 160 / パス 335 | 検査 `src/renderer/__tests__/snapshotAdoptionCensus.test.ts`<br>検査 `src/renderer/pages/__tests__/teamRadarSampleNeverOverwrites.test.ts`<br>実機 `npm run e2e` |
@@ -308,6 +309,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 100 (機械あり 97 / 散文だけ 3)
+- 法則 101 (機械あり 98 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 37: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`
