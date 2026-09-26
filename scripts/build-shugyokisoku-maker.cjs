@@ -151,6 +151,8 @@ var CHAPTERS = __CHAPTERS__;
 var STEPS = __STEPS__;
 var NOTES = __NOTES__;
 var LS_KEY = 'shugyokisoku-maker-values-v1';
+// 何が消えるかを名指しする。「よろしいですか」だけの確認は何も言っていないのと同じ。
+var CLEAR_CONFIRM = 'この端末に保存した入力内容（事業場の名称・所在地・代表者名など）を消します。元に戻せません。よろしいですか？';
 
 var values = {};
 try { values = JSON.parse(localStorage.getItem(LS_KEY) || '{}') || {}; } catch (e) { values = {}; }
@@ -261,6 +263,14 @@ function renderForm() {
 document.addEventListener('DOMContentLoaded', function () {
   renderForm(); renderPaper();
   $('btn-print').addEventListener('click', function () { window.print(); });
+  // **入力を消す口** (2026-09-21 · パス 364)。この頁は入力を localStorage へ自動保存する。
+  // 消す手段が頁の中に無いと、利用者はブラウザのサイトデータ設定を知らないかぎり残したままになる。
+  $('btn-clear').addEventListener('click', function () {
+    if (!window.confirm(CLEAR_CONFIRM)) return;
+    try { localStorage.removeItem(LS_KEY); } catch (e) { /* 使えない環境でも画面は戻す */ }
+    values = {};
+    renderForm(); renderPaper();
+  });
 });
 `;
 
@@ -281,9 +291,11 @@ const PAGE_CSS = `
   header.bar h1 { font-size: 15px; font-weight: 600; white-space: nowrap;
          overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   header.bar .spacer { margin-left: auto; }
-  #btn-print { background: #fff; color: var(--accent); border: 0; border-radius: 8px;
+  #btn-print, #btn-clear { background: #fff; color: var(--accent); border: 0; border-radius: 8px;
          padding: 9px 16px; font-weight: 700; cursor: pointer; white-space: nowrap;
          font-family: inherit; }
+  #btn-clear { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.55);
+         font-weight: 600; margin-right: 8px; }
   .layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); min-height: 0; }
   aside.formpane { background: var(--panel); border-right: 1px solid var(--line);
          overflow-y: auto; padding: 14px;
@@ -359,6 +371,7 @@ function buildHtml() {
     '<header class="bar">',
     '  <h1>📖 就業規則メーカー — 意見聴取・届出・周知までの導入ガイド付き</h1>',
     '  <span class="spacer"></span>',
+    '  <button id="btn-clear" type="button">🗑 入力を消す</button>',
     '  <button id="btn-print" type="button">🖨 印刷 / PDF 保存</button>',
     '</header>',
     '<div class="layout">',
@@ -385,6 +398,8 @@ function main() {
     '65歳までの継続雇用',
     '労働契約法9条・10条',
     'btn-print',
+    'btn-clear',
+    'localStorage.removeItem(LS_KEY)',
   ];
   for (const marker of required) {
     if (!html.includes(marker)) throw new Error(`self-check failed: missing "${marker}"`);

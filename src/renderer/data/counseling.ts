@@ -34,6 +34,19 @@ export type CounselTone =
 export interface SupportResource {
   readonly label: string;
   readonly detail: string;
+  /**
+   * この案内の種類。**確証を要するかどうかが変わる**ので欄にする。
+   *
+   * - `hotline` … 相談窓口。**番号と受付時間を自分で名乗る**ので、
+   *   `counselorKnowledge.ts` の `VERIFIED_SUPPORT_RESOURCES` に同じ
+   *   `label|detail` が在り、独立 2 出典 (うち公的 1) で確証されていなければならない
+   * - `emergency` … 法定の緊急通報 (119 / 110) への案内。窓口の番号を自前で
+   *   名乗らないため確証の対象外。**代わりに `119` か `110` を必ず含み、
+   *   自前のダイヤルイン番号を持てない** (未確証の窓口をここに隠せないようにする)
+   *
+   * 危機応答で人に見せる一覧なので、**足したら検査が鳴る**側に倒す。
+   */
+  readonly kind: 'hotline' | 'emergency';
 }
 
 /** カウンセリング応答。 */
@@ -182,10 +195,10 @@ export const DESTRUCTIVE_MARKERS: readonly string[] = [
 
 /** 日本の相談窓口 (crisis 応答で提示)。 */
 export const SUPPORT_RESOURCES: readonly SupportResource[] = [
-  { label: 'いのちの電話 (ナビダイヤル)', detail: '0570-783-556（10:00〜22:00）' },
-  { label: 'よりそいホットライン', detail: '0120-279-338（24時間・通話無料）' },
-  { label: 'こころの健康相談統一ダイヤル', detail: '0570-064-556（公的機関の相談窓口へ接続）' },
-  { label: '緊急時', detail: '生命の危険が迫っているときは 119（救急）/ 110（警察）へ' },
+  { kind: 'hotline', label: 'いのちの電話 (ナビダイヤル)', detail: '0570-783-556（10:00〜22:00）' },
+  { kind: 'hotline', label: 'よりそいホットライン', detail: '0120-279-338（24時間・通話無料）' },
+  { kind: 'hotline', label: 'こころの健康相談統一ダイヤル', detail: '0570-064-556（公的機関の相談窓口へ接続）' },
+  { kind: 'emergency', label: '緊急時', detail: '生命の危険が迫っているときは 119（救急）/ 110（警察）へ' },
 ];
 
 const CRISIS_DISCLAIMER =

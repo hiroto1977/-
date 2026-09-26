@@ -15,6 +15,31 @@
  * **概算であり投資助言ではありません。**
  */
 
+import { readNumeric } from '../../shared/readNumeric';
+import type { NumSpec } from './inputGuards';
+import { moreThanChars } from '../../shared/inputCeiling';
+
+/**
+ * **保管した自由文を画面へ出すときの天井。数は入口が既に宣言している物**
+ * (2026-09-23 · パス 419)。
+ *
+ * 入口 (フォームの関門) は 200,000 字を断るのに、**形 (復元の境界) は通す** ——
+ * `COLLECTION_SHAPES` の `str` は長さを見ない。だから手で直した控えや古い版が
+ * 書いた行は入口を通らずに入り、読み手には天井が無かった。実測 (直す前・1 欄 200,000 字):
+ * この画面の総文字数が **素の 40〜450 倍**になる。
+ *
+ * ★ **形の側では断らない** —— `collectionShapes.ts` 自身が
+ * 「**落とし過ぎは復元の欠落 = 別の事故になる**」と書いている。1 欄が長いだけで
+ * 行ごと捨てると、利用者は復元でその行を失う。天井は**画面に出す所**に掛け、
+ * 行は残す (パス 408 / 411 / 417 と同じ判断)。
+ * ★ **正当な値は 1 つも変わらない** —— 入口がその長さで既に断っているので。
+ */
+export const MAX_PROPERTY_NAME_CHARS = 64; // `parseProperty` が 1〜64 文字で断る。
+export const MAX_PROPERTY_TYPE_CHARS = 16; // 同 16 文字。
+export const MAX_FUND_NAME_CHARS = 80; // `parseHolding` が 1〜80 文字で断る。
+export const MAX_FUND_CODE_CHARS = 16; // 同 16 文字 (空白なし)。
+
+
 export const PROPERTIES_COLLECTION = 'realestate-properties';
 export const HOLDINGS_COLLECTION = 'mutualfund-holdings';
 
@@ -37,15 +62,180 @@ export interface PropertyEntry extends Record<string, unknown> {
   readonly monthlyExpenses: number;
   /** 月次のローン返済額 (円・任意、既定 0)。 */
   readonly monthlyLoan: number;
+  /**
+   * **保管値が数として読めず 0 に倒した欄**の日本語ラベル (2026-09-24 · パス 446)。
+   *
+   * `normalizeProperty` **だけ**が立てる。入力欄が組む控え (`parsePropertyEntry`) と
+   * 手で書いた見本は保管値ではないので持たない —— だから任意にしてある
+   * (貸借対照表の `unreadableFields` と同じ扱い · パス 444)。
+   */
+  readonly unreadableFields?: readonly string[];
 }
 
-/** 数値入力 (文字列可) を非負の有限数に。不正は null。 */
+/**
+ * **数として読む欄の表は 1 つ** (2026-09-24 · パス 446)。
+ *
+ * 倒す側 (`normalizeProperty`) と報告する側 (`computeRealEstatePortfolio` と
+ * 3 つの断り) がここだけを見る。2 つに分けて書くと、5 つ目の欄が足された日に
+ * **倒すのに報告しない欄**ができる (その欄はどの面にも痕跡を残さない)。
+ *
+ * `required` は**形の表** (`COLLECTION_SHAPES['realestate-properties']`) の側の話で、
+ * 倒す先ではない —— 4 欄とも 0 へ倒れる。任意の 2 欄は「任意、既定 0」という
+ * 宣言どおりの 0 なので、**欄が無い控えは名簿に入れない** (`unreadablePropertyFields`)。
+ */
+export const PROPERTY_NUMERIC_FIELDS: readonly { readonly key: string; readonly label: string; readonly required: boolean }[] = [
+  { key: 'monthlyRent', label: '家賃', required: true },
+  { key: 'purchasePrice', label: '取得価格', required: true },
+  { key: 'monthlyExpenses', label: '月次経費', required: false },
+  { key: 'monthlyLoan', label: '月次返済額', required: false },
+];
+
+/**
+ * その欄が「保管値は在るが数として読めなかった」側か (**鍵で問う口**)。
+ *
+ * 画面や集計が綴り (`'家賃'`) を持たずに済むようにする —— ラベルは
+ * `PROPERTY_NUMERIC_FIELDS` の同じ行から引くので、表を直した日に食い違わない
+ * (パス 445 の `unreadableBalanceSheetField` と同じ形)。
+ */
+export function unreadablePropertyField(key: string, fields: readonly string[] | undefined): boolean {
+  if (fields === undefined) return false;
+  const label = PROPERTY_NUMERIC_FIELDS.find((f) => f.key === key)?.label;
+  return label !== undefined && fields.includes(label);
+}
+
+/**
+ * 保存された 1 件を `PropertyEntry` の形に整える (**読み取りの境界**)。
+ *
+ * `normalizeHolding` と同じ穴 (2026-09-06): 復元の形の検査は
+ * `realestate-properties` の `monthlyExpenses` / `monthlyLoan` を**任意**に
+ * しているのに、型は必須と言う。欄の無い控えが復元を通ると年間キャッシュフローの
+ * 引き算が NaN になり、不動産ページの「¥NaN」になる。既定 0 は型の注記
+ * (「任意、既定 0」) と入力側 `parsePropertyEntry` の「空欄は 0」と同じ約束。
+ */
+export function normalizeProperty(raw: unknown): PropertyEntry {
+  const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  /**
+   * 有限の数か。**判定を 1 か所に置く** —— 倒す側と名簿を作る側が同じ述語を見る。
+   *
+   * `typeof v === 'number'` は実行時には冗長 (`Number.isFinite` は数値以外を型変換
+   * せずに false にする) が、`v is number` の絞り込みを型検査に伝えるために残す
+   * (`normalizeBalanceSheet` と同じ判断 · パス 444)。
+   */
+  // Stryker disable next-line ConditionalExpression: Number.isFinite が数値以外を false にするので実行時は等価 (型の絞り込みのために残す)
+  const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
+  return {
+    name: typeof r.name === 'string' ? r.name : '',
+    type: typeof r.type === 'string' ? r.type : '',
+    monthlyRent: num(r.monthlyRent),
+    purchasePrice: num(r.purchasePrice),
+    occupied: r.occupied === true,
+    monthlyExpenses: num(r.monthlyExpenses),
+    monthlyLoan: num(r.monthlyLoan),
+    /*
+     * **倒したことを名簿にする** (2026-09-24 · パス 446)。
+     *
+     * ここは型から読むので投げも連結もしないが、**倒した先を誰にも言わない**。
+     * 実測 (直す前・1 件・正しい控え = 月次キャッシュフロー ¥70,000 / 表面利回り 6%):
+     *
+     * | 壊した欄 | 月次キャッシュフロー | 表面利回り | 画面の断り |
+     * | --- | ---: | ---: | --- |
+     * | (正しい控え) | ¥70,000 | 6% | 無し |
+     * | **月次経費** | **¥90,000** | 6% | **無し** |
+     * | **月次返済額** | **¥80,000** | 6% | **無し** |
+     * | 家賃 | △¥30,000 | **0%** | 「家賃が読めないため」(入居中のみ) |
+     * | 取得価格 | ¥70,000 | ― | 「取得価格が読めない 1 件」 |
+     *
+     * `'30000'` / `{z:1}` / `[1]` / `true` / `null` / `NaN` の 6 形すべてで同じ。
+     * **経費と返済は手残りを過大に見せる向きに外れ、理由を 1 文も述べない** ——
+     * 同じ関数の隣 2 欄 (家賃・取得価格) は原因を述べるので、4 欄のうち 2 つだけが
+     * 黙っている非対称である (パス 398 / 408 と同じ形)。
+     *
+     * **行ごとは落とさない** —— 経費が読めないだけの物件を一覧から消すと、家賃も
+     * 入居率も一緒に消える。倒したうえで**倒した欄を名乗る**のがこのリポジトリの
+     * 既定である (パス 227 / 444)。
+     */
+    unreadableFields: unreadablePropertyFields(r, isFiniteNumber),
+  };
+}
+
+/** 読めなかった欄のラベルを集める (`normalizeProperty` の私有の助け)。 */
+function unreadablePropertyFields(
+  r: Record<string, unknown>,
+  isFiniteNumber: (v: unknown) => boolean,
+): readonly string[] {
+  const out: string[] = [];
+  for (const f of PROPERTY_NUMERIC_FIELDS) {
+    // **未入力は読めなかったのではない。** 任意の 2 欄は「任意、既定 0」と型が宣言し
+    // 入力欄も「空欄は 0」と約束しているので、欄が無いのは宣言どおりの 0 である。
+    // 必須の 2 欄が無い控え (前方互換) も「入力してください」としか言えない ——
+    // 数えると、打ち込んでいない利用者に「読めません」と言うことになる。
+    if (r[f.key] === undefined || isFiniteNumber(r[f.key])) continue;
+    out.push(f.label);
+  }
+  return out;
+}
+
+/**
+ * 数値入力 (文字列可) を非負の有限数に。不正は null。空欄は 0
+ * (入力欄の番人も「未入力です。0 円 として計算されています」と言う)。
+ *
+ * 文字列は**画面と同じ** `readNumeric` で読む。2026-09-06 まではここだけ
+ * `Number(カンマと空白を外した文字列)` で、同じ欄について
+ * **画面の指摘と保存される数が食い違っていた**:
+ *
+ * ```
+ *   '1,5'     画面: ⛔ 読み取れません  保存: 15    ← 桁区切りの位置を見ていない
+ *   '1 5'     画面: ⛔                保存: 15
+ *   '0x10'    画面: ⛔                保存: 16
+ *   '１２００'  画面: 1200 (読める)     保存: ⛔ エラー ← 逆向きの食い違い
+ * ```
+ */
 function toAmount(v: unknown): number | null {
-  // Stryker disable next-line ConditionalExpression: typeof v === 'number' を true 固定にしても
-  // 直後の Number.isFinite が非数値をすべて弾くため返り値は同一 (等価変異)。
-  const n = typeof v === 'string' ? Number(v.replace(/[,，\s]/g, '')) : typeof v === 'number' ? v : NaN;
+  const n = numberFrom(v);
   return Number.isFinite(n) && n >= 0 ? n : null;
 }
+
+/**
+ * 数として扱える形 (数値そのもの / 入力欄の文字列) を数にし、他は NaN。
+ *
+ * 三項の**途中**に `Stryker disable next-line` を置くと効かない
+ * (2026-09-06 実測・生存 1 件)。等価変異の 1 行を独立した文にして、
+ * 直上の pragma がその行だけに掛かるようにしている。
+ */
+function numberFrom(v: unknown): number {
+  if (typeof v === 'string') return readTypedAmount(v);
+  // Stryker disable next-line ConditionalExpression: typeof v === 'number' を true 固定にしても、呼び出し側の Number.isFinite が非数値をすべて弾くため返り値は同一 (等価変異)
+  return typeof v === 'number' ? v : Number.NaN;
+}
+
+/**
+ * 入力欄の文字列を数へ。**空欄は 0** —— 入力欄の番人も「未入力です。
+ * 0 円 として計算されています」と言うので、保存も同じ読み方をする。
+ * 読めなければ NaN (呼び出し側の `Number.isFinite` が 1 か所で断る)。
+ */
+function readTypedAmount(text: string): number {
+  return text.trim() === '' ? 0 : (readNumeric(text) ?? Number.NaN);
+}
+
+/**
+ * **物件フォームの入力欄の性質。** 宣言を**書き手 (`parsePropertyEntry`) の隣に置く** ——
+ * 画面の ⛔ と保存の断りが食い違うと、**画面が赤で断っている値が保存される** (パス 214 で
+ * 経営サマリー側の同じ形を直した)。ここで一致していることは
+ * `__tests__/guardVsWriter.test.ts` が総当たりで留めている。
+ *
+ * 実測 2026-09-13 (パス 215): 4 欄 × 15 通りの入力で食い違い **0 件** ——
+ * `toAmount` が負・非有限・読めない値を落とし、取得価格は `<= 0` も落とすので、
+ * `guardNumber` が `fatal` を返す入力はすべて保存前に断られている。
+ * この検査は**将来のずれ**のためにある (たとえば天井 `sane` を宣言に足すと、
+ * 画面は ⛔ にするが `toAmount` は通してしまう)。
+ */
+export const PROPERTY_FORM_SPECS = {
+  monthlyRent: { label: '家賃 (月・円)', kind: 'money' },
+  purchasePrice: { label: '取得価格 (円)', kind: 'money', allowZero: false },
+  monthlyExpenses: { label: '月次経費 (任意)', kind: 'money', allowEmpty: true, allowZero: true },
+  monthlyLoan: { label: '月次返済 (任意)', kind: 'money', allowEmpty: true, allowZero: true },
+} as const satisfies Record<string, NumSpec>;
 
 export function parsePropertyEntry(input: {
   name?: unknown;
@@ -57,13 +247,13 @@ export function parsePropertyEntry(input: {
   monthlyLoan?: unknown;
 }): PropertyEntry {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (name.length === 0 || name.length > 64) throw new Error('物件名は 1〜64 文字で入力してください');
+  if (name.length === 0 || moreThanChars(name, MAX_PROPERTY_NAME_CHARS)) throw new Error(`物件名は 1〜${MAX_PROPERTY_NAME_CHARS} 文字で入力してください`);
 
   // Stryker disable next-line StringLiteral: '' を Stryker のセンチネル (17 文字) にしても
   // 直後の length > 16 で同じ 種別 エラーになる (等価変異)。name 側は上限 64 のため
   // センチネルが通ってしまい等価にならず、そちらはテストで殺している。
   const type = typeof input.type === 'string' ? input.type.trim() : '';
-  if (type.length === 0 || type.length > 16) throw new Error('種別を選択してください');
+  if (type.length === 0 || moreThanChars(type, MAX_PROPERTY_TYPE_CHARS)) throw new Error('種別を選択してください');
 
   const monthlyRent = toAmount(input.monthlyRent);
   if (monthlyRent === null) throw new Error('家賃 (月額) は 0 以上の数値で入力してください');
@@ -76,14 +266,14 @@ export function parsePropertyEntry(input: {
   // 任意項目: 空欄・未指定は 0 (不正な文字列だけエラーにする)。
   const expensesRaw = input.monthlyExpenses;
   // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-  // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+  // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
   // 意図を明示するために式は残す。
   const monthlyExpenses = expensesRaw === undefined || expensesRaw === '' ? 0 : toAmount(expensesRaw);
   if (monthlyExpenses === null) throw new Error('月次経費は 0 以上の数値で入力してください');
 
   const loanRaw = input.monthlyLoan;
   // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-  // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+  // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
   // 意図を明示するために式は残す。
   const monthlyLoan = loanRaw === undefined || loanRaw === '' ? 0 : toAmount(loanRaw);
   if (monthlyLoan === null) throw new Error('月次返済額は 0 以上の数値で入力してください');
@@ -107,6 +297,19 @@ export interface PortfolioProperty {
   /** ユーザー行のみ >0 になりうる (snapshot 行は集計値側で一括計上)。 */
   readonly monthlyExpenses?: number;
   readonly monthlyLoan?: number;
+  /**
+   * 同梱の見本 (snapshot) 行か (2026-09-12 · パス 187)。
+   *
+   * **`computeFundPortfolio` は 2026-09-09 から銘柄ごとに `demo` を受けている**
+   * のに、こちらは受けていなかった —— 同じファイルの中で片方だけが
+   * 「見本と自分の記録は別物」を知っていた。
+   */
+  readonly demo?: boolean;
+  /**
+   * **保管値が数として読めず 0 に倒した欄**のラベル (`normalizeProperty` が立てる)。
+   * 見本 (snapshot) 行と手で組んだ控えは持たない —— だから任意 (パス 446)。
+   */
+  readonly unreadableFields?: readonly string[];
 }
 
 export interface RealEstatePortfolio {
@@ -114,10 +317,157 @@ export interface RealEstatePortfolio {
   readonly operatingExpenses: number;
   readonly mortgagePayment: number;
   readonly netCashflow: number;
-  /** 各物件の表面利回り (%) の単純平均 (小数第 2 位まで)。物件 0 件は 0。 */
-  readonly portfolioYield: number;
-  /** 入居率 (0..1、物件数ベース・小数第 4 位まで)。物件 0 件は 0。 */
-  readonly occupancyRate: number;
+  /**
+   * 各物件の表面利回り (%) の単純平均 (小数第 2 位まで)。
+   *
+   * **取得価格が読めない物件は分母から外す。** 2026-09-08 まで 0% として
+   * 足しつつ分母は全件だったので、**1 件で全体が下がった**:
+   *
+   * | 控え | 表示 | 測れた物件だけの平均 |
+   * | --- | ---: | ---: |
+   * | 3 件そろい | 5.50% | 5.50% |
+   * | **+ 取得価格の欄が無い 1 件** | **4.13%** | 5.50% |
+   *
+   * 取得価格 0 は「利回り 0%」ではなく「割れない」である
+   * (`normalizeProperty` は欄の無い控えを 0 に倒す —— 復元・古い版・手で
+   * 直した JSON の経路。入力欄の `parseProperty` は 1 円以上を要求する)。
+   * 測れた物件が 1 件も無ければ `null`。
+   */
+  readonly portfolioYield: number | null;
+  /** 入居率 (0..1、物件数ベース・小数第 4 位まで)。物件 0 件は null (算定不能)。 */
+  readonly occupancyRate: number | null;
+  /** 表面利回りを測れた物件数 (取得価格 > 0 かつ家賃が読める)。 */
+  readonly yieldMeasured: number;
+  /**
+   * 利回りの平均から外した物件数 (= 物件数 − `yieldMeasured`)。
+   *
+   * **原因ごとの内訳が下の 2 つ**で、`yieldUnmeasuredPrice + yieldUnmeasuredRent`
+   * は必ずこの数に等しい (外した物件は 1 件につき 1 つの原因に数える)。
+   */
+  readonly yieldUnmeasured: number;
+  /** そのうち**取得価格**が読めなかった物件数 (割る物が無い)。 */
+  readonly yieldUnmeasuredPrice: number;
+  /**
+   * そのうち**家賃**が数として読めなかった物件数 (2026-09-24 · パス 446)。
+   *
+   * 取得価格は読めているので割れはするが、分子が分からない。0% として平均すると
+   * 全体が下がる —— 実測で 3 件そろい 5.50% が 4 件目 1 件で **4.13%** になり、
+   * `yieldScopeNote` は 1 文も出さなかった (その文自身が「0% として平均すると
+   * 全体が下がります」と名指ししている当の失敗である)。
+   *
+   * **本当に 0 円の家賃は外さない** —— 入力欄は家賃 0 を受け付けるので、0 は
+   * 打ち込まれた事実でありうる (空室の表面利回り 0% は既存の検査が仕様として
+   * 留めている)。外すのは「読めなかった」側だけである。
+   */
+  readonly yieldUnmeasuredRent: number;
+  /** 同梱の見本 (snapshot) 行の件数。 */
+  readonly demoCount: number;
+  /** 利用者が登録した行の件数。 */
+  readonly userCount: number;
+  /**
+   * **見本を除いた** 家賃収入・運営費用・返済額・キャッシュフロー
+   * (2026-09-12 · パス 187)。
+   *
+   * 合計の側は見本を含む (追加ゼロでも画面が空にならないための設計で、
+   * 一覧の行も「デモ」と印がついている)。だが**合計しか出さないと、
+   * 自分の物件の数字が読めない** —— 実測で、自分の物件 1 件 (家賃 9 万・
+   * 経費 3 万・返済 5.5 万) だけの人に対し 家賃収入 ¥913,000・月次
+   * キャッシュフロー **+¥248,000** と出ていた。自分の分は ¥90,000 と
+   * **+¥5,000** —— 家賃は 10 倍、手残りは 49 倍である。両方を持ち、画面が並べる。
+   *
+   * 見本の基準費用 (¥380,000) と返済 (¥200,000) を自分の側へ足すのは**逆の
+   * 誤り**で、同じ人の手残りが **−¥575,000** (符号が逆) になる。だから
+   * `computeRealEstatePortfolio` は自分の側に基準額を入れない。
+   *
+   * 見本が 0 件なら合計と同じ値になる。
+   */
+  readonly userOnly: {
+    readonly grossRent: number;
+    readonly operatingExpenses: number;
+    readonly mortgagePayment: number;
+    readonly netCashflow: number;
+  };
+  /**
+   * 入居中と記録されているのに家賃が読めない (0 の) 物件数。
+   * **入居率と家賃収入が食い違う元**なので数えて画面に出す ——
+   * 「稼働率 100% / 月次家賃収入 ¥0」は両立しない。
+   */
+  readonly occupiedWithoutRent: number;
+  /**
+   * そのうち家賃が**数として読めなかった**物件数 (`occupiedWithoutRent` の内数)。
+   *
+   * 残り (`occupiedWithoutRent − occupiedWithoutRentUnreadable`) は家賃が 0 円の
+   * 物件で、**直す手が違う** —— 0 円のほうは家賃を入力すればよく、読めないほうは
+   * 打ち込んだ値が残っているので消して入れ直すしかない。原因を取り違えた断りは
+   * 直す手ごと誤らせる (パス 388)。
+   */
+  readonly occupiedWithoutRentUnreadable: number;
+  /**
+   * 月次経費・月次返済が数として読めず 0 として差し引いた物件数 (パス 446)。
+   * **月次キャッシュフローはその分だけ過大に出ている。**
+   */
+  readonly unreadableCostRows: number;
+}
+
+/**
+ * 利回りの平均から外した物件が在ることの断り。1 件も無ければ `null`。
+ * **画面がこの 1 文を出す** (数字だけ直しても、なぜ件数が合わないかは読めない)。
+ */
+export function yieldScopeNote(p: RealEstatePortfolio): string | null {
+  const said: string[] = [];
+  if (p.yieldUnmeasuredPrice > 0) {
+    said.push(
+      `取得価格が読めない ${p.yieldUnmeasuredPrice} 件は表面利回りの平均から外しています（測れた ${p.yieldMeasured} 件の平均です）。0% として平均すると全体が下がります。`,
+    );
+  }
+  if (p.yieldUnmeasuredRent > 0) {
+    said.push(
+      `家賃が数として読めない ${p.yieldUnmeasuredRent} 件は表面利回りの平均から外しています（取得価格は読めていますが、分子が分かりません）。打ち込んだ値は残っていますが数として読めないので、設定の「形式の合わないレコード」から消して入れ直してください。`,
+    );
+  }
+  return said.length === 0 ? null : said.join('');
+}
+
+/**
+ * 入居中なのに家賃が家賃収入に入っていない物件が在ることの断り。1 件も無ければ `null`。
+ *
+ * **原因を 2 つに分ける** (2026-09-24 · パス 446) —— 直す前は 1 文で
+ * 「家賃が読めないため」と述べていたが、家賃 0 円は**入力欄が受け付ける値**
+ * (`parsePropertyEntry` は 0 以上を通す) なので、0 と打ち込んだ利用者にとって偽だった。
+ * しかも直す手が違う: 0 円のほうは家賃を入力すればよく、読めないほうは打ち込んだ値が
+ * 残っているので消して入れ直すしかない (パス 388)。
+ */
+export function occupiedWithoutRentNote(p: RealEstatePortfolio): string | null {
+  const zero = p.occupiedWithoutRent - p.occupiedWithoutRentUnreadable;
+  const said: string[] = [];
+  if (zero > 0) {
+    said.push(
+      `入居中と記録されている ${zero} 件は家賃が 0 円のため、月次家賃収入に含まれていません（入居率にはこの物件も数えています）。空室でないなら家賃を入力してください。`,
+    );
+  }
+  if (p.occupiedWithoutRentUnreadable > 0) {
+    said.push(
+      `入居中と記録されている ${p.occupiedWithoutRentUnreadable} 件は家賃が数として読めないため、月次家賃収入に含まれていません（入居率にはこの物件も数えています）。設定の「形式の合わないレコード」から消して入れ直してください。`,
+    );
+  }
+  return said.length === 0 ? null : said.join('');
+}
+
+/**
+ * **月次経費・月次返済が読めず 0 として差し引いた**ことの断り (2026-09-24 · パス 446)。
+ *
+ * 直す前はこの 2 欄だけが黙っていた —— 実測で月次キャッシュフローが
+ * ¥70,000 → ¥80,000 / ¥90,000 と**過大**に出て、断りは 1 文も無い。
+ * 隣の 2 欄 (家賃・取得価格) は 2026-09-08 から原因を述べており、
+ * 同じ関数の 4 欄のうち 2 つだけがその前提を持たなかった。
+ *
+ * **向きを名乗る** —— 「0 として差し引いた」とだけ言うと、読み手は手残りが
+ * 小さく出ていると読みうる。過大であることは、この紙を見て買い増しを決める人に
+ * とって逆向きの誤りである。
+ */
+export function unreadableCostNote(p: RealEstatePortfolio): string | null {
+  if (p.unreadableCostRows === 0) return null;
+  return `月次経費・月次返済が数として読めない ${p.unreadableCostRows} 件は 0 円として差し引いています。月次キャッシュフローはその分だけ過大に出ています。打ち込んだ値は残っていますが数として読めないので、設定の「形式の合わないレコード」から消して入れ直してください。`;
 }
 
 /**
@@ -134,17 +484,65 @@ export function computeRealEstatePortfolio(
   let expenses = Number.isFinite(baseExpenses) && baseExpenses > 0 ? baseExpenses : 0;
   let loan = Number.isFinite(baseLoan) && baseLoan > 0 ? baseLoan : 0;
   let yieldSum = 0;
+  let yieldMeasured = 0;
   let occupiedCount = 0;
+  let occupiedWithoutRent = 0;
+  // 原因ごとの内訳 (パス 446)。**外した物件は 1 件につき 1 つの原因に数える** ——
+  // 取得価格が読めなければ家賃が読めても割れないので、取得価格の側を先に見る。
+  let occupiedWithoutRentUnreadable = 0;
+  let yieldUnmeasuredPrice = 0;
+  let yieldUnmeasuredRent = 0;
+  let unreadableCostRows = 0;
+  // 見本を除いた側 (パス 187)。基準の運営費用・返済額は snapshot の値なので
+  // **自分の分には入れない** —— 入れると、自分の物件 1 件の人が見本の
+  // 経費 ¥380,000 と返済 ¥200,000 を背負い、手残り +¥5,000 が −¥575,000 に
+  // なる (符号が逆)。`demoMixNote.test.ts` がこの対照を持つ。
+  let demoCount = 0;
+  let userRent = 0;
+  let userExpenses = 0;
+  let userLoan = 0;
   for (const p of properties) {
+    const isDemo = p.demo === true;
+    if (isDemo) demoCount += 1;
+    // **保管値が読めなかった欄を鍵で問う** (綴りは持たない · パス 446)。
+    const rentUnreadable = unreadablePropertyField('monthlyRent', p.unreadableFields);
     if (p.occupied) {
       grossRent += p.monthlyRent;
+      if (!isDemo) userRent += p.monthlyRent;
       occupiedCount += 1;
+      // 入居中なのに家賃が 0 円。数えて画面が述べる (上の欄の脇) ——
+      // **原因は 2 つ**で、0 円と入力された場合と、打ち込んだ値が読めない場合。
+      if (!(p.monthlyRent > 0)) {
+        occupiedWithoutRent += 1;
+        if (rentUnreadable) occupiedWithoutRentUnreadable += 1;
+      }
     }
     expenses += p.monthlyExpenses ?? 0;
     loan += p.monthlyLoan ?? 0;
+    if (!isDemo) {
+      userExpenses += p.monthlyExpenses ?? 0;
+      userLoan += p.monthlyLoan ?? 0;
+    }
+    // 経費・返済が読めない行は 0 として差し引いている = **手残りが過大に出る**。
+    if (
+      unreadablePropertyField('monthlyExpenses', p.unreadableFields) ||
+      unreadablePropertyField('monthlyLoan', p.unreadableFields)
+    ) {
+      unreadableCostRows += 1;
+    }
     // 表面利回りは表示と同じく物件ごとに小数第 1 位へ丸めてから平均する
     // (snapshot の portfolioYield 6.15 = (4.8+6.2+5.5+8.1)/4 と一致させる)。
-    yieldSum += p.purchasePrice > 0 ? Math.round(((p.monthlyRent * 12) / p.purchasePrice) * 1000) / 10 : 0;
+    // **取得価格が読めない物件は分子にも分母にも入れない** (0% は主張である)。
+    // **家賃が読めない物件も分子にも分母にも入れない** (パス 446) —— 0% として
+    // 足すと平均が下がり、その 1 件はどの断りにも現れない (実測 5.50% → 4.13%)。
+    if (p.purchasePrice <= 0) {
+      yieldUnmeasuredPrice += 1;
+    } else if (rentUnreadable) {
+      yieldUnmeasuredRent += 1;
+    } else {
+      yieldSum += Math.round(((p.monthlyRent * 12) / p.purchasePrice) * 1000) / 10;
+      yieldMeasured += 1;
+    }
   }
   const count = properties.length;
   return {
@@ -152,9 +550,47 @@ export function computeRealEstatePortfolio(
     operatingExpenses: expenses,
     mortgagePayment: loan,
     netCashflow: grossRent - expenses - loan,
-    portfolioYield: count > 0 ? Math.round((yieldSum / count) * 100) / 100 : 0,
-    occupancyRate: count > 0 ? Math.round((occupiedCount / count) * 10000) / 10000 : 0,
+    portfolioYield: yieldMeasured > 0 ? Math.round((yieldSum / yieldMeasured) * 100) / 100 : null,
+    occupancyRate: count > 0 ? Math.round((occupiedCount / count) * 10000) / 10000 : null,
+    yieldMeasured,
+    yieldUnmeasured: count - yieldMeasured,
+    yieldUnmeasuredPrice,
+    yieldUnmeasuredRent,
+    demoCount,
+    userCount: count - demoCount,
+    userOnly: {
+      grossRent: userRent,
+      operatingExpenses: userExpenses,
+      mortgagePayment: userLoan,
+      netCashflow: userRent - userExpenses - userLoan,
+    },
+    occupiedWithoutRent,
+    occupiedWithoutRentUnreadable,
+    unreadableCostRows,
   };
+}
+
+/**
+ * **合計に同梱の見本が混ざっていることの断り** (2026-09-12 · パス 187)。
+ *
+ * 見本が 0 件 (利用者の記録だけ) なら `null` —— 断る物が無い。
+ * 利用者の記録が 0 件なら「見本だけを表示している」と述べる。
+ * 両方在るときは**自分の分の数字も並べる** (合計しか出さないと、自分の
+ * 物件のキャッシュフローが読めない。実測で符号まで違っていた)。
+ *
+ * 文面をここに置くのは `yieldScopeNote` / `occupiedWithoutRentNote` と同じ理由
+ * —— 画面が組み立てると、同じ説明が画面ごとに言い換わる。
+ */
+export function demoMixNote(p: RealEstatePortfolio, yen: (n: number) => string): string | null {
+  if (p.demoCount === 0) return null;
+  if (p.userCount === 0) {
+    return `同梱の見本 ${p.demoCount} 件を表示しています（自分の物件はまだ登録されていません）。`;
+  }
+  return (
+    `合計には同梱の見本 ${p.demoCount} 件が含まれています（自分の物件は ${p.userCount} 件）。` +
+    `見本を除くと 家賃収入 ${yen(p.userOnly.grossRent)}／月・` +
+    `月次キャッシュフロー ${yen(p.userOnly.netCashflow)}／月です。`
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -182,15 +618,76 @@ export interface HoldingEntry extends Record<string, unknown> {
   readonly valuation: number;
   /** 評価額の算出モード (過去データに無い場合は auto 扱い)。 */
   readonly valuationMode: ValuationMode;
-  /** 取得額 (円・任意)。空欄は評価額と同額 (損益 0) とみなす。 */
-  readonly acquisitionCost: number;
-  /** 年初来リターン (%・任意、既定 0)。 */
-  readonly ytdReturnPct: number;
+  /**
+   * 取得額 (円・任意)。**空欄は null = 未入力** —— 評価額と同額 (損益 0) とはみなさない (2026-09-09 · パス 123)。
+   *
+   * パス 123 までは「空欄は評価額と同額 (損益 0) とみなす」で、取得額を入れずに足した銘柄が
+   * **取得原価のタイルを増やし** (見本 ¥7,180,000 + ¥300,000)、**評価損益率を薄め** (14.8% → 14.2%、
+   * ¥3,000,000 なら 10.4%)、編集フォームには入力していない取得額が入って戻った。
+   * 規準は隣の欄 (`ytdReturnPct: number | null`・パス 122) と不動産側 (`yieldUnmeasured`・パス 54)。
+   */
+  readonly acquisitionCost: number | null;
+  /**
+   * 年初来リターン (%・任意)。**空欄は null = 未入力** —— 0% ではない (2026-09-09 · パス 122)。
+   *
+   * パス 122 までは「既定 0」だった。空欄で足した銘柄が一覧に **「+0.0%」(緑)** と刷られ、
+   * リスク (標準偏差) に 0% の銘柄として入り、改善提案 (パス 119) が「最低は X の 0.0%」と
+   * **入力していない銘柄を最低と名指し**していた。規準は同じファイルの不動産側に在った ——
+   * `grossYieldPct: number | null` と `yieldUnmeasured` (パス 54) は「測れない物件」を数に入れない。
+   */
+  readonly ytdReturnPct: number | null;
 }
 
 /** 基準価額 (1 万口あたり) と口数から評価額を導出する。 */
 export function fundValuation(units: number, navPerUnit: number): number {
   return Math.round((units / 10_000) * navPerUnit);
+}
+
+/**
+ * 保存された 1 件を `HoldingEntry` の形に整える (**読み取りの境界**)。
+ *
+ * なぜ要るか (2026-09-06): 復元の形の検査 (`data/collectionShapes.ts`) は
+ * `mutualfund-holdings` の `code` / `valuationMode` / `acquisitionCost` /
+ * `ytdReturnPct` を**任意**にしている —— 前方互換のため意図してそうしてあり、
+ * `valuationMode` の説明も「過去データに無い場合は auto 扱い」と書いている。
+ * ところが `HoldingEntry` の型はこの 4 つを**必須**と言うので、欄の無いレコード
+ * (古い版・手で直した控え・別の道具が書いた控え) が復元を通ると型が嘘になる:
+ *
+ *   `ytdReturnPct` が無い … 一覧の `h.ytdReturnPct.toFixed(1)` が TypeError で、
+ *     **投資信託の画面が枠になる**。しかもその画面が保有銘柄の一覧なので、
+ *     利用者はそのレコードを消せない (形は正しいので設定の点検にも出ない)。
+ *   `acquisitionCost` が無い … 取得原価の合計が NaN になり「¥NaN」が出る。
+ *
+ * 直し方は「使う場所ごとに `??` を置く」ではなく**読む所を 1 つにする** ——
+ * 散らすと必ずどれか 1 つが漏れる (`valuationMode` だけ画面側で補われていて、
+ * 残り 3 つが漏れていたのがまさにそれ)。既定値は型の注記どおり:
+ * 銘柄コードは空文字、評価モードは auto、取得額と年初来リターンは **null = 未入力**
+ * (取得額を評価額に倒すと損益 0 の銘柄を作り、年初来を 0 に倒すと測った 0% と見分けが付かない・パス 122 / 123)。
+ * 数でない値・非有限値も既定に倒す。
+ */
+export function normalizeHolding(raw: unknown): HoldingEntry {
+  const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  // 取得額と年初来リターンは「無い / 読めない = 未入力 (null)」。0 や評価額に倒すと、測った値と見分けが付かない (パス 122 / 123)。
+  const numOrNull = (v: unknown): number | null => (Number.isFinite(v) ? (v as number) : null);
+  const units = num(r.units);
+  const navPerUnit = num(r.navPerUnit);
+  // 評価額が無い控えは口数 × 基準価額 から導く (auto と同じ式)。
+  const valuation = typeof r.valuation === 'number' && Number.isFinite(r.valuation)
+    ? r.valuation
+    : fundValuation(units, navPerUnit);
+  return {
+    code: str(r.code),
+    name: str(r.name),
+    units,
+    navPerUnit,
+    valuation,
+    valuationMode: r.valuationMode === 'manual' ? 'manual' : 'auto',
+    // 取得額が無い / 読めない控えは null = 未入力 (パス 123 までは評価額と同額 = 損益 0 の銘柄にしていた)。
+    acquisitionCost: numOrNull(r.acquisitionCost),
+    ytdReturnPct: numOrNull(r.ytdReturnPct),
+  };
 }
 
 /**
@@ -211,10 +708,10 @@ export function parseHoldingEntry(input: {
   ytdReturnPct?: unknown;
 }): HoldingEntry {
   const code = typeof input.code === 'string' ? input.code.trim() : '';
-  if (code.length > 16 || /\s/.test(code)) throw new Error('銘柄コードは空白なし 16 文字以内で入力してください');
+  if (moreThanChars(code, MAX_FUND_CODE_CHARS) || /\s/.test(code)) throw new Error(`銘柄コードは空白なし ${MAX_FUND_CODE_CHARS} 文字以内で入力してください`);
 
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (name.length === 0 || name.length > 80) throw new Error('ファンド名は 1〜80 文字で入力してください');
+  if (name.length === 0 || moreThanChars(name, MAX_FUND_NAME_CHARS)) throw new Error(`ファンド名は 1〜${MAX_FUND_NAME_CHARS} 文字で入力してください`);
 
   const manual = input.valuation !== undefined && input.valuation !== '';
 
@@ -229,12 +726,12 @@ export function parseHoldingEntry(input: {
     // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
     if (v === null || v <= 0) throw new Error('評価額は 1 円以上の数値で入力してください (空欄にすると自動計算)');
     // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
     // 意図を明示するために式は残す。
     const u = input.units === undefined || input.units === '' ? 0 : toAmount(input.units);
     if (u === null) throw new Error('口数は 0 以上の数値で入力してください');
     // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
     // 意図を明示するために式は残す。
     const nav = input.navPerUnit === undefined || input.navPerUnit === '' ? 0 : toAmount(input.navPerUnit);
     if (nav === null) throw new Error('基準価額は 0 以上の数値で入力してください');
@@ -261,19 +758,25 @@ export function parseHoldingEntry(input: {
   const acqRaw = input.acquisitionCost;
   // Stryker disable next-line StringLiteral: '' を別文字列にしても、その値は toAmount で
   // NaN → null になり同じ 取得額 エラーへ落ちる (等価変異)。
-  const acquisitionCost = acqRaw === undefined || acqRaw === '' ? valuation : toAmount(acqRaw);
-  if (acquisitionCost === null) throw new Error('取得額は 0 以上の数値で入力してください');
+  // 空欄は null = 未入力 (パス 123 —— それまでは評価額と同額にして「損益 0」の銘柄を作っていた)。
+  let acquisitionCost: number | null = null;
+  if (acqRaw !== undefined && acqRaw !== '') {
+    const cost = toAmount(acqRaw);
+    if (cost === null) throw new Error('取得額は 0 以上の数値で入力してください');
+    acquisitionCost = cost;
+  }
 
   const ytdRaw = input.ytdReturnPct;
-  let ytdReturnPct = 0;
-  // Stryker disable next-line StringLiteral,ConditionalExpression: `!== ''` は冗長 —
-  // 空文字で入ってきても Number('') は 0 で、スキップしたときの既定値 0 と一致するため
-  // 観測できる差がない (等価変異)。'' を別文字列にした場合はその値が Number() で NaN に
-  // なり同じ YTD エラーへ落ちる。空欄の意図を明示するため式自体は残す。
+  // 空欄は null (未入力)。0 にすると測った 0% と同じ顔になる (パス 122)。
+  let ytdReturnPct: number | null = null;
+  // `!== ''` は**冗長ではない**: 読み取りが `readNumeric` になった 2026-09-06 から、
+  // 空文字は 0 ではなく「読めない」なので、この門を外すと空欄が YTD エラーになる
+  // (保存 → 入力欄 → 再保存 の往復の検査が落ちる)。
   if (ytdRaw !== undefined && ytdRaw !== '') {
     // Stryker disable next-line ConditionalExpression: typeof ytdRaw === 'number' を true 固定に
     // しても直後の Number.isFinite が非数値を弾くため同じエラーになる (等価変異)。
-    const n = typeof ytdRaw === 'string' ? Number(ytdRaw.replace(/[,，\s]/g, '')) : typeof ytdRaw === 'number' ? ytdRaw : NaN;
+    // 文字列は画面と同じ読み取り (`readNumeric`) —— `1,5` を 15% にしない。
+    const n = typeof ytdRaw === 'string' ? (readNumeric(ytdRaw) ?? Number.NaN) : typeof ytdRaw === 'number' ? ytdRaw : NaN;
     if (!Number.isFinite(n) || n < -100 || n > 1000) throw new Error('YTD リターン (%) は −100〜1000 の数値で入力してください');
     ytdReturnPct = n;
   }
@@ -284,7 +787,9 @@ export function parseHoldingEntry(input: {
 /**
  * 保存済みエントリを編集フォームの初期値 (文字列) に変換する。
  * auto の評価額は空欄にして「自動計算のまま」を保つ (値を入れると manual に
- * 切り替わる)。0 の任意項目は空欄に戻す。
+ * 切り替わる)。0 の任意項目 (口数・基準価額) は空欄に戻す。取得額と年初来リターンは
+ * null (未入力) のときだけ空欄 —— 測った 0 は '0' のまま残す (パス 122 / 123。取得額はそれまで
+ * 評価額と同額の数を入れて戻していた = 利用者が入力していない取得額)。
  */
 export function holdingToForm(h: HoldingEntry): {
   code: string; name: string; units: string; navPerUnit: string;
@@ -299,8 +804,8 @@ export function holdingToForm(h: HoldingEntry): {
     units: h.units > 0 ? String(h.units) : '',
     navPerUnit: h.navPerUnit > 0 ? String(h.navPerUnit) : '',
     valuation: mode === 'manual' ? String(h.valuation) : '',
-    acquisitionCost: String(h.acquisitionCost),
-    ytdReturnPct: h.ytdReturnPct !== 0 ? String(h.ytdReturnPct) : '',
+    acquisitionCost: h.acquisitionCost === null ? '' : String(h.acquisitionCost),
+    ytdReturnPct: h.ytdReturnPct === null ? '' : String(h.ytdReturnPct),
   };
 }
 
@@ -323,37 +828,186 @@ export function propertyToForm(p: PropertyEntry): {
 /** 集計に必要な保有銘柄の最小 shape。 */
 export interface PortfolioHolding {
   readonly valuation: number;
+  /** 取得額。null = 未入力 (パス 123)。見本 (`demo`) は銘柄別に持たず、一括の `baseCostBasis` で見る。 */
+  readonly acquisitionCost: number | null;
+  /** 同梱の見本か (snapshot 行)。 */
+  readonly demo: boolean;
 }
 
 export interface FundPortfolio {
+  /** 評価額の合計 —— **全銘柄** (取得額の有無を問わない)。 */
   readonly totalValuation: number;
+  /** 取得原価 —— **取得額が分かる銘柄だけ** (見本は一括の `baseCostBasis`)。 */
   readonly totalCostBasis: number;
+  /** 取得額が分かる銘柄の評価額 (損益の分子側。トータルリターンの終値もこれ)。 */
+  readonly costMeasuredValuation: number;
+  /** 評価損益 = `costMeasuredValuation` − `totalCostBasis`。 */
   readonly unrealizedGain: number;
-  /** 評価損益率 (%・小数第 1 位まで)。取得原価 0 は 0。 */
-  readonly unrealizedGainPct: number;
+  /** 評価損益率 (%・小数第 1 位まで)。取得額が分かる銘柄が無ければ null (0 ではない・パス 123)。 */
+  readonly unrealizedGainPct: number | null;
+  /** 取得額が未入力で、原価・損益・損益率に**入れていない**銘柄 (画面はこれを注記に刷る)。 */
+  readonly costUnmeasured: { readonly count: number; readonly valuation: number };
+  /** 同梱の見本 (snapshot) 行の件数。 */
+  readonly demoCount: number;
+  /** 利用者が登録した行の件数。 */
+  readonly userCount: number;
+  /**
+   * **見本を除いた** 評価額・取得原価・評価損益 (2026-09-12 · パス 187)。
+   *
+   * 不動産側の `RealEstatePortfolio.userOnly` と同じ理由 —— 合計は見本を含む
+   * (追加ゼロでも画面が空にならない設計) が、**合計しか出さないと自分の
+   * 銘柄の数字が読めない**。実測で、自分の銘柄 1 件 (評価額 10 万・取得額
+   * 9.5 万 = +5.3%) の人に 評価額 ¥8,340,140・評価損益 **+¥1,065,140
+   * (+14.6%)** と出ていた。しかも「実質コスト」の節は `totalValuation` を
+   * **元本として** コストを複利で積むので、画面の既定 (信託報酬 1.0% /
+   * 隠れコスト 0.2% / 想定年率 5% / 保有 5 年) で 年間 ¥100,082・5 年累計
+   * ¥594,505 と出る —— 自分の 10 万だけなら ¥1,200 / ¥7,128 で **83 倍**。
+   *
+   * 見本が 0 件なら合計と同じ値になる。取得額が未入力の銘柄は合計側と
+   * 同じく原価・損益から外す (パス 123 の規準をそのまま使う)。
+   */
+  readonly userOnly: {
+    readonly totalValuation: number;
+    readonly totalCostBasis: number;
+    readonly costMeasuredValuation: number;
+    readonly unrealizedGain: number;
+    readonly unrealizedGainPct: number | null;
+  };
 }
 
 /**
  * 保有銘柄リスト (snapshot + ユーザー追加) からポートフォリオ集計を再計算する。
- * snapshot 側の取得原価は銘柄別に持っていないため `baseCostBasis` で一括計上し、
- * ユーザー行の取得額は `userCosts` (取得額の配列) で加算する。
+ * snapshot 側の取得原価は銘柄別に持っていないため `baseCostBasis` で一括計上する
+ * (それが 0 なら見本ぜんぶが「取得額が分からない」側)。
+ *
+ * **取得額が未入力の銘柄を「原価 = 評価額」として数えない** (2026-09-09 · パス 123)。
+ * パス 123 までは `userCosts` に評価額と同じ数が来て、取得原価が増え・評価損益率が薄まった
+ * (見本 14.8% → ¥3,000,000 の銘柄を取得額なしで足すと 10.4%)。不動産側の `yieldUnmeasured` (パス 54)
+ * と同じく、分からない物は分母にも分子にも入れず、**数だけ言う**。負の取得額・NaN は「読めない」= 未入力側。
  */
-export function computeFundPortfolio(
-  holdings: readonly PortfolioHolding[],
-  baseCostBasis: number,
-  userCosts: readonly number[],
-): FundPortfolio {
+export function computeFundPortfolio(holdings: readonly PortfolioHolding[], baseCostBasis: number): FundPortfolio {
+  const base = Number.isFinite(baseCostBasis) && baseCostBasis > 0 ? baseCostBasis : 0;
   let totalValuation = 0;
-  for (const h of holdings) totalValuation += Number.isFinite(h.valuation) ? h.valuation : 0;
-  let totalCostBasis = Number.isFinite(baseCostBasis) && baseCostBasis > 0 ? baseCostBasis : 0;
-  // Stryker disable next-line EqualityOperator: `c > 0` → `c >= 0` は c が ±0 のときだけ差が出るが、
-  // どちらも加算結果は同一 (x + -0 === x + 0) のため観測不能 (等価変異)。
-  for (const c of userCosts) totalCostBasis += Number.isFinite(c) && c > 0 ? c : 0;
-  const unrealizedGain = totalValuation - totalCostBasis;
+  let demoValuation = 0;
+  let demoCount = 0;
+  let measuredValuation = 0;
+  let userCost = 0;
+  let unmeasuredCount = 0;
+  let unmeasuredValuation = 0;
+  for (const h of holdings) {
+    const v = Number.isFinite(h.valuation) ? h.valuation : 0;
+    totalValuation += v;
+    if (h.demo) {
+      demoValuation += v;
+      demoCount += 1;
+    } else if (h.acquisitionCost !== null && Number.isFinite(h.acquisitionCost) && h.acquisitionCost >= 0) {
+      measuredValuation += v;
+      userCost += h.acquisitionCost;
+    } else {
+      unmeasuredCount += 1;
+      unmeasuredValuation += v;
+    }
+  }
+  // 見本は一括の取得原価が在るときだけ「分かる」側。無ければ見本ぜんぶが未入力側 (数も言う)。
+  const demoMeasured = base > 0;
+  const costMeasuredValuation = measuredValuation + (demoMeasured ? demoValuation : 0);
+  const totalCostBasis = base + userCost;
+  const unrealizedGain = costMeasuredValuation - totalCostBasis;
+  // 見本を除いた側 (パス 187)。`base` は snapshot の一括取得原価なので**入れない**。
+  const userGain = measuredValuation - userCost;
   return {
     totalValuation,
     totalCostBasis,
+    costMeasuredValuation,
     unrealizedGain,
-    unrealizedGainPct: totalCostBasis > 0 ? Math.round((unrealizedGain / totalCostBasis) * 1000) / 10 : 0,
+    unrealizedGainPct: totalCostBasis > 0 ? Math.round((unrealizedGain / totalCostBasis) * 1000) / 10 : null,
+    costUnmeasured: {
+      count: unmeasuredCount + (demoMeasured ? 0 : demoCount),
+      valuation: unmeasuredValuation + (demoMeasured ? 0 : demoValuation),
+    },
+    demoCount,
+    userCount: holdings.length - demoCount,
+    userOnly: {
+      totalValuation: totalValuation - demoValuation,
+      totalCostBasis: userCost,
+      costMeasuredValuation: measuredValuation,
+      unrealizedGain: userGain,
+      unrealizedGainPct: userCost > 0 ? Math.round((userGain / userCost) * 1000) / 10 : null,
+    },
   };
+}
+
+/**
+ * **合計に同梱の見本が混ざっていることの断り** (投資信託・2026-09-12 · パス 187)。
+ * 不動産側の `demoMixNote` の双子 —— 文面を 1 か所に置く理由も同じ。
+ *
+ * 評価損益率は取得額が分かる銘柄が無ければ述べない (`null` → 金額だけ)。
+ */
+export function fundDemoMixNote(p: FundPortfolio, yen: (n: number) => string): string | null {
+  if (p.demoCount === 0) return null;
+  if (p.userCount === 0) {
+    return `同梱の見本 ${p.demoCount} 銘柄を表示しています（自分の銘柄はまだ登録されていません）。`;
+  }
+  const pct = p.userOnly.unrealizedGainPct;
+  return (
+    `合計には同梱の見本 ${p.demoCount} 銘柄が含まれています（自分の銘柄は ${p.userCount} 銘柄）。` +
+    `見本を除くと 評価額 ${yen(p.userOnly.totalValuation)}・` +
+    `評価損益 ${yen(p.userOnly.unrealizedGain)}` +
+    `${pct === null ? '（取得額が入力された銘柄が無いので損益率は算定しません）' : `（${pct.toFixed(1)}%）`}です。`
+  );
+}
+
+/**
+ * **「実質コスト」の元本に見本が混ざっていることの断り** (2026-09-12 · パス 187)。
+ *
+ * この節は `totalValuation` を元本としてコストを複利で積む。見本 4 銘柄
+ * (¥8,240,140) が入った状態で自分が 10 万しか持っていなければ、刷られる
+ * 負担は **83 倍** になる (既定の入力で 5 年累計 ¥594,505 / 自分だけなら ¥7,128)。
+ * 合計の側は消さず、自分の元本での額を並べる。
+ *
+ * 自分の銘柄が 0 件なら出さない —— 「見本を除く元本 ¥0」は読み手を惑わせる。
+ *
+ * @param years  実際に計算に使った保有年数 (画面の入力欄の値)
+ * @param userAnnualCostYen      見本を除く元本での年間コスト
+ * @param userCumulativeCostYen  同・`years` 年の累計
+ */
+export function fundCostPrincipalNote(
+  p: FundPortfolio,
+  yen: (n: number) => string,
+  years: number,
+  /**
+   * 見本を除いた元本での 1 年あたりコスト。**コスト率の欄が範囲外なら `null`**
+   * (`calcRealCost` が算定しない・2026-09-13 · パス 207)。
+   */
+  userAnnualCostYen: number | null,
+  /**
+   * 見本を除いた元本での期間累計コスト。**保有年数が範囲外なら `null`**
+   * (`calcRealCost` が算定しない・2026-09-13 · パス 198)。
+   * 想定年率が範囲外のときも `null` (パス 207)。
+   */
+  userCumulativeCostYen: number | null,
+): string | null {
+  if (p.demoCount === 0 || p.userCount === 0) return null;
+  // **算定できなかった数字を文に混ぜない。** 以前は `number` を受けていたので
+  // `NaN` がそのまま `¥NaN` として断り書きの中に入っていた —— 断り書き自体が
+  // 壊れた数字を運ぶ形になる。累計が出ていないときは年間コストだけを述べる。
+  //
+  // **年間コストも出ていないなら、断り書きは金額を 1 つも持たない** (パス 207)。
+  // コスト率の欄が ⛔ のときは元本の話しかできないので、そこだけを述べる。
+  if (userAnnualCostYen === null) {
+    return (
+      `この元本には同梱の見本 ${p.demoCount} 銘柄が含まれています。` +
+      `見本を除く元本は ${yen(p.userOnly.totalValuation)} です` +
+      `（コスト率の欄が範囲外のため、見本を除いた負担額は算定していません）。`
+    );
+  }
+  const cumulative =
+    userCumulativeCostYen === null
+      ? `${years}年累計は保有年数または想定年率が範囲外のため算定していません。`
+      : `${years}年累計 ${yen(userCumulativeCostYen)} です。`;
+  return (
+    `この元本には同梱の見本 ${p.demoCount} 銘柄が含まれています。` +
+    `見本を除く元本 ${yen(p.userOnly.totalValuation)} なら ` +
+    `年間コスト ${yen(userAnnualCostYen)}・${cumulative}`
+  );
 }

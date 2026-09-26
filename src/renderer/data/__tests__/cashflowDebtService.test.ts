@@ -27,13 +27,59 @@ describe('combineCashflowDebtService', () => {
     expect(r.shortfallMonths).toBe(1); // the 0.75 month is < 1.0
   });
 
-  it('treats a repayment month with no matching cashflow as 0 CF (DSCR 0)', () => {
+  /**
+   * **この検査は 2026-09-07 まで、欠陥のほうを「仕様」として留めていた。**
+   * 旧: 「会計連携に月次CFが無い返済月は 営業CF 0 (DSCR 0) として扱う」。
+   * 返済予定は借入期間ぶん将来へ伸びる (`shared/funding.ts` の `monthlyFlow` が
+   * そう作る) のに、実績CF は過去しか無いので、**将来の月がすべて返済不足月に
+   * 数えられていた** —— 実測 2.85 倍で返せている会社が 0.24 倍・55/60 か月不足と
+   * 報告された (画面・金融機関等提出用の書面・スコアカードの軸・ハイライト)。
+   */
+  it('★ 会計連携に月次CFが無い返済月は突合しない (0 として数えない)', () => {
     const r = combineCashflowDebtService(
       [cf('2026-04', 300_000)],
-      [{ month: '2026-05', repayment: 100_000 }], // no CF for 2026-05
+      [{ month: '2026-04', repayment: 100_000 }, { month: '2026-05', repayment: 100_000 }],
     )!;
-    expect(r.months[0]).toEqual({ month: '2026-05', operatingCashflow: 0, repayment: 100_000, dscr: 0 });
+    // 2026-05 は分子が無いので対象外。2026-04 だけで 3.0 倍。
+    expect(r.months.map((m) => m.month)).toEqual(['2026-04']);
+    expect(r.overallDscr).toBe(3);
+    expect(r.worstMonthDscr).toBe(3);
+    expect(r.shortfallMonths).toBe(0);
+    expect(r.coveredMonths).toBe(1);
+    expect(r.unmatchedMonths).toBe(1);
+  });
+
+  it('★ 返済月がすべて未突合なら null (0 を並べた答えを作らない)', () => {
+    expect(
+      combineCashflowDebtService([cf('2026-04', 300_000)], [{ month: '2026-05', repayment: 100_000 }]),
+    ).toBeNull();
+  });
+
+  it('★ 実測して 0 だった月は対象に残る (未取得と実測ゼロを混ぜない)', () => {
+    const r = combineCashflowDebtService(
+      [cf('2026-04', 0), cf('2026-05', 300_000)],
+      [{ month: '2026-04', repayment: 100_000 }, { month: '2026-05', repayment: 100_000 }],
+    )!;
+    expect(r.months.map((m) => m.month)).toEqual(['2026-04', '2026-05']);
+    expect(r.months[0]!.dscr).toBe(0); // 実測の 0 は 0 のまま
     expect(r.shortfallMonths).toBe(1);
+    expect(r.unmatchedMonths).toBe(0);
+  });
+
+  it('★ 実測: 借入 60 回のうち会計が 6 か月しか無い会社 —— 突合できた月で測る', () => {
+    // 営業CF 30 万/月・返済 105,167 円/月 × 60 回・会計は 2026-01〜2026-06。
+    const acc = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06'].map((m) => cf(m, 300_000));
+    const repay = Array.from({ length: 60 }, (_, i) => {
+      const y = 2026 + Math.floor((1 + i) / 12);
+      const mo = ((1 + i) % 12) + 1;
+      return { month: `${y}-${String(mo).padStart(2, '0')}`, repayment: 105_167 };
+    });
+    const r = combineCashflowDebtService(acc, repay)!;
+    expect(r.overallDscr).toBe(2.85); // 直す前は 0.24
+    expect(r.worstMonthDscr).toBe(2.85); // 直す前は 0
+    expect(r.shortfallMonths).toBe(0); // 直す前は 55
+    expect(r.coveredMonths).toBe(5);
+    expect(r.unmatchedMonths).toBe(55);
   });
 
   it('ignores months without repayment when computing the overall ratio', () => {

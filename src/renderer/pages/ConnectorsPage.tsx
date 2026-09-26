@@ -11,11 +11,21 @@ import {
 import { planConnectorRun, CONNECTOR_CATALOG } from '../../shared/connectors/connectorCatalog';
 import { PLUGIN_CATALOG } from '../../shared/connectors/pluginCatalog';
 import {
+  planPermittedSteps,
   resolveHookPlan,
   requiredPermissionFor,
+  UNKNOWN_CAPABILITY_PERMISSION,
   type HookDispatchStep,
 } from '../../shared/connectors/pluginRuntime';
-import { executeFreeConnector, type ExecutionResult } from '../data/connectorExecution';
+import {
+  CONNECTOR_OUTPUT_COLLECTION,
+  connectorOutputRows,
+  executeFreeConnector,
+  type ExecutionResult,
+} from '../data/connectorExecution';
+import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
+import { displayField } from '../../shared/apiResponse';
 import { realConnectorSinks } from '../data/connectorSinks';
 import {
   MCP_CONNECTORS_FREE,
@@ -76,6 +86,14 @@ export function ConnectorsPage() {
   // 実実行: 連携ごとの実行中フラグと直近結果。
   const [runningId, setRunningId] = useState<string | null>(null);
   const [runResults, setRunResults] = useState<Record<string, ExecutionResult>>({});
+  /*
+   * **storage へ書いた行を、押した所で見せて消せるようにする** (2026-09-24 · パス 448)。
+   * それまでこの collection を購読する画面は 1 つも無く、実行できる 10 件のうち
+   * **storage へ行く 5 件**だけが「記録しました」と言われたきり見ることも消すことも
+   * できなかった (library へ行く 5 件はライブラリ画面に出て「削除」も在る)。
+   */
+  const stored = useCollection<Record<string, unknown>>(CONNECTOR_OUTPUT_COLLECTION);
+  const storedRows = connectorOutputRows(stored.records);
 
   const runConnector = async (id: string) => {
     setRunningId(id);
@@ -120,10 +138,13 @@ export function ConnectorsPage() {
   );
 
   const totalSteps = pluginPlans.reduce((n, pp) => n + pp.steps.length, 0);
-  const permittedSteps = pluginPlans.reduce(
-    (n, pp) => n + pp.steps.filter((s) => s.permitted).length,
-    0,
-  );
+  // **数えるのも `planPermittedSteps` を通す** (2026-09-20 · パス 358)。
+  // `pluginRuntime.ts` の docblock は「defense in depth は実行直前の
+  // `planPermittedSteps` で担保する」と述べているのに、この行は同じ判定
+  // (`s.permitted` の filter) を**手で書き写して**いた —— つまりその関数は
+  // 出荷コードから 1 度も呼ばれておらず、名指しされた関門が配線されていなかった。
+  // 画面が数えるだけの今は実害が無いが、**実行を書く人はこの行を真似る**。
+  const permittedSteps = pluginPlans.reduce((n, pp) => n + planPermittedSteps(pp.steps).length, 0);
 
   return (
     <div>
@@ -163,7 +184,7 @@ export function ConnectorsPage() {
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
             aria-label="ドライラン対象のコネクター"
-            style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', padding: '4px 6px', fontSize: 13 }}
+            style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '4px 6px', fontSize: 13 }}
           >
             {FREE_CONNECTORS.map((c) => (
               <option key={c.id} value={c.id}>
@@ -224,7 +245,7 @@ export function ConnectorsPage() {
                         {runningId === c.id ? '実行中…' : '▶ 実行'}
                       </button>
                       {res ? (
-                        <div style={{ fontSize: 10, marginTop: 4, color: res.ok ? 'var(--success)' : 'var(--danger, #ef4444)' }}>
+                        <div style={{ fontSize: 10, marginTop: 4, color: res.ok ? 'var(--success)' : 'var(--danger)' }}>
                           {res.ok ? '✅' : '⛔'} {res.message}
                         </div>
                       ) : null}
@@ -235,6 +256,55 @@ export function ConnectorsPage() {
             </tbody>
           </table>
         </div>
+      </Section>
+
+      {/*
+        **storage へ書いた物の面** —— 押した所に置く (パス 447 と同じ判断: 逃げ口は
+        保存できた所に在る)。`library` 側はライブラリ画面が同じ役目を既に果たす。
+      */}
+      <Section title="ストレージに記録した実行結果" count={storedRows.length}>
+        <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 10px', lineHeight: 1.6 }}>
+          上の <strong>▶ 実行</strong> で <code>storage</code> へ書いた行です。押すたびに 1 件増えます。
+          要らなくなったら各行の <strong>削除</strong> で消せます
+          （<code>library</code> へ書いた分は「ライブラリ」の画面に出ます）。
+        </p>
+        {storedRows.length === 0 ? (
+          <p data-connector-output-empty style={{ fontSize: 12, color: 'var(--text-mute)', margin: 0 }}>
+            まだ 1 件も記録していません。
+          </p>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={thStyle}>コネクタ</th>
+                  <th style={thStyle}>キー</th>
+                  <th style={{ ...thStyle, textAlign: 'center' }}>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {storedRows.map((r) => (
+                  <tr key={r.id} data-connector-output-row={r.id}>
+                    <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>
+                      {displayField(r.connectorId)}
+                    </td>
+                    <td style={tdStyle}>{displayField(r.key)}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', whiteSpace: 'nowrap' }}>
+                      <button
+                        type="button"
+                        onClick={() => fireReported(stored.remove(r.id))}
+                        aria-label={`${r.connectorId} の記録を削除`}
+                        style={{ fontSize: 12 }}
+                      >
+                        削除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Section>
 
       {/* 要認証コネクター (外部サービス連携・Microsoft 365 等) */}
@@ -297,8 +367,8 @@ export function ConnectorsPage() {
                 {steps.map((s: HookDispatchStep) => (
                   <tr key={s.connectorId}>
                     <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{s.connectorId}</td>
-                    <td style={{ ...tdStyle, fontSize: 12 }}>{requiredPermissionFor(s.capability)}</td>
-                    <td style={{ ...tdStyle, color: s.permitted ? 'var(--success)' : '#ef4444' }}>
+                    <td style={{ ...tdStyle, fontSize: 12 }}>{requiredPermissionFor(s.capability) ?? UNKNOWN_CAPABILITY_PERMISSION}</td>
+                    <td style={{ ...tdStyle, color: s.permitted ? 'var(--success)' : 'var(--danger)' }}>
                       {s.permitted ? '✅ 実行可' : '⛔ 権限不足'}
                     </td>
                   </tr>

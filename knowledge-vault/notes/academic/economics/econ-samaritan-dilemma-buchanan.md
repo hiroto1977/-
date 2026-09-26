@@ -33,13 +33,13 @@ aliases:
 - [[econ-becker-crime|犯罪の経済学]] — 同じ思想家
 - [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
 - [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
-- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 同じ思想家
-- [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同じ思想家
+- [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]] — 同じ思想家
 - [[econ-rent-seeking|レントシーキング]] — 同じ思想家
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
 - [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
 - [[econ-soft-budget-constraint|ソフトな予算制約（コルナイ）]] — 同じ思想家
 - [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
+- [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

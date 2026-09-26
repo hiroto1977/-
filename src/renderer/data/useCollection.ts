@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getRecordStore, type StoredRecord } from './store';
+import { subscribeCollection } from './collectionChange';
+import { reportDeviceStoreFailure, type DeviceStoreOp } from './deviceStoreFailure';
 
 /**
- * 同じ collection を見ている**別の** hook へ変更を知らせる仕組み。
+ * 同じ collection を見ている**別の** hook へ変更を知らせる仕組みは
+ * `data/collectionChange.ts` に在る。
  *
  * この hook は instance ごとに records を持つので、A と B が同じ collection を
  * 見ているとき、A が書いても B は古いまま残る。2026-08 に実際に踏んだ形:
@@ -10,54 +13,36 @@ import { getRecordStore, type StoredRecord } from './store';
  * 再読込まで古い数字を出し続けた。**入力欄には「手入力」と印が付くのに、
  * 画面の数字が変わらない**という、いちばん分かりにくい壊れ方だった。
  *
+ * ★ **2026-09-24 (パス 448) に、知らせる側をストアへ移した。** ここに置くと
+ * **hook を通らない書き込み** (コネクタ実行・点検パネルの削除・バックアップの復元)
+ * がどの画面にも届かない —— 実測と理由は `collectionChange.ts` の docblock に在る。
+ * hook は購読するだけで、`add` / `edit` / `remove` は**自分で知らせない**
+ * (ストアが必ず知らせるので、ここで重ねると 1 書き込みに 2 度飛ぶ)。
+ *
  * 書いた instance は自分で `reload()` を await する (呼び出し側が
  * `await add(...)` の直後に新しい records を読めるようにするため)。
- * 他の instance へは通知だけを送る。
  */
-const subscribers = new Map<string, Set<() => void>>();
+export {
+  _collectionSubscriberCountForTests,
+  _resetCollectionSubscribersForTests,
+} from './collectionChange';
 
 /**
- * その collection の購読者集合。無ければ作る。
+ * **断られたら、断られたと届けてから投げ直す。**
  *
- * `subscribers.get(c) ?? []` と書くと、**到達しない既定値**が残る
- * (通知は必ず購読済みの hook から来るので undefined にならない)。
- * 集合を必ず返す入口を 1 つ置けば、その分岐ごと消える。
+ * ここが唯一の入口なので、ここで写せば呼び出し側 13 か所を回らずに済む
+ * (回ると必ずどれか 1 つが漏れる)。投げ直すのは、既に `try/catch` で
+ * 自分の欄に出している画面 (`ShigyoConsole` / 経営ハイライト) の契約を
+ * 変えないため —— 二重に見えるが、片方は「この欄の保存」、もう片方は
+ * 「この端末の保存領域」で、利用者の打ち手が違う。
  */
-function subscriberSet(collection: string): Set<() => void> {
-  const existing = subscribers.get(collection);
-  if (existing !== undefined) return existing;
-  const created = new Set<() => void>();
-  subscribers.set(collection, created);
-  return created;
-}
-
-function subscribe(collection: string, fn: () => void): () => void {
-  const set = subscriberSet(collection);
-  set.add(fn);
-  return () => {
-    set.delete(fn);
-  };
-}
-
-/**
- * その collection を見ている hook すべてに読み直させる。
- *
- * 書いた本人も含めて呼ぶ。「自分以外」に絞ると読み直しが 1 回減るが、
- * **観測できる差が無いぶんテストで守れない**分岐が増える。読み直しは
- * IndexedDB の 1 read なので、分岐を消すほうを採る。
- */
-function notifyCollection(collection: string): void {
-  for (const fn of subscriberSet(collection)) fn();
-}
-
-/** テスト用: 購読者を空にする。 */
-export function _resetCollectionSubscribersForTests(): void {
-  subscribers.clear();
-}
-
-/** テスト用: 購読者数。解除が効いているかを見るために公開する。 */
-export function _collectionSubscriberCountForTests(collection: string): number {
-  return subscribers.get(collection)?.size ?? 0;
+async function reporting<R>(op: DeviceStoreOp, collection: string, run: () => Promise<R>): Promise<R> {
+  try {
+    return await run();
+  } catch (err) {
+    reportDeviceStoreFailure('records', op, collection, err);
+    throw err;
+  }
 }
 
 /**
@@ -88,6 +73,10 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   // 変異させても観測上の振る舞いは変わらない (equivalent)。防御の明示性のため残す。
   /* Stryker disable all */
   const alive = useRef(true);
+  /* Stryker restore all */
+  /** 最新の読みの札。古い読みの結果を捨てるために持つ (`reload` の冒頭を参照)。 */
+  const latestRead = useRef<object>({});
+  /* Stryker disable all */
   useEffect(() => {
     alive.current = true;
     return () => {
@@ -96,11 +85,41 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   }, []);
   /* Stryker restore all */
 
+  /**
+   * 読み直す。**読めなかったときは投げずに届ける。**
+   *
+   * マウント effect (`useEffect(() => { setLoading(true); reload(); })`) と
+   * 他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない
+   * ——`indexedDB` が開けない端末では、**全コレクションが空**のまま
+   * 「まだ何も入力していない」画面になっていた (2026-09-06 実測)。
+   * 空の理由を画面が言えるように、失敗をここで写す。
+   *
+   * `loading` は落とす。落とさないと「読み込み中…」が永遠に出続ける。
+   */
   const reload = useCallback(async () => {
-    const list = await getRecordStore().list<T>(collection);
+    // **後から返った古い読みで records を戻さない。**
+    //
+    // `reload()` は重なる: 書いた本人が await する分と、ストアの通知で
+    // 他 instance に飛ぶ分、マウント effect の分がある。`list()` は IndexedDB の
+    // 読みだけでは終わらず、**1 件ずつ復号してから**返る (`recordEncryption` を
+    // 有効にした端末)。読みの要求順は IndexedDB が守っても、**復号にかかる時間は
+    // 件数で変わる**ので、返る順は要求順とは限らない。先に始まった大きい読みが
+    // 後から返ると、書いた直後の一覧が書く前の姿に戻る。
+    // 番人は `useServiceData` と同じ形 (最新の札を持つ読みだけが書き換える)。
+    const mine = {};
+    latestRead.current = mine;
+    let list: readonly StoredRecord<T>[] | null = null;
+    try {
+      list = await getRecordStore().list<T>(collection);
+    } catch (err) {
+      reportDeviceStoreFailure('records', 'read', collection, err);
+    }
+    if (mine !== latestRead.current) return;
     // Stryker disable next-line ConditionalExpression: 上記のとおり alive ガードは React 18 では equivalent。
     if (alive.current) {
-      setRecords(list);
+      // 読めなかったときは**今持っている records を残す** —— 空に置き換えると
+      // 「入力した物が消えた」画面になり、失敗の報せより先に目に入る。
+      if (list !== null) setRecords(list);
       setLoading(false);
     }
   }, [collection]);
@@ -117,40 +136,36 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   const onExternalChange = useRef(() => {
     void reloadRef.current();
   });
-  useEffect(() => subscribe(collection, onExternalChange.current), [collection]);
+  useEffect(() => subscribeCollection(collection, onExternalChange.current), [collection]);
 
   const add = useCallback(
     async (data: T) => {
-      await getRecordStore().insert<T>(collection, data);
+      await reporting('save', collection, () => getRecordStore().insert<T>(collection, data));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );
 
   const addMany = useCallback(
     async (rows: readonly T[]) => {
-      await getRecordStore().insertMany<T>(collection, rows);
+      await reporting('save', collection, () => getRecordStore().insertMany<T>(collection, rows));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );
 
   const edit = useCallback(
     async (id: string, patch: Partial<T>) => {
-      await getRecordStore().update<T>(id, patch);
+      await reporting('save', collection, () => getRecordStore().update<T>(id, patch));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );
 
   const remove = useCallback(
     async (id: string) => {
-      await getRecordStore().remove(id);
+      await reporting('delete', collection, () => getRecordStore().remove(id));
       await reload();
-      notifyCollection(collection);
     },
     [collection, reload],
   );

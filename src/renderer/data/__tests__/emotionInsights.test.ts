@@ -109,8 +109,22 @@ describe('analyzeProfile', () => {
       lowStreak: 0,
       dominantEmotion: null,
       sentimentBalance: 0,
+      // `sentimentBalance` の分母。0 だけでは「解析が無い」と
+      // 「ちょうど中立」を区別できないので、件数を別に持つ (パス 65)。
+      analysisCount: 0,
       topTriggers: [],
     });
+  });
+
+  it('★ analysisCount は sentimentBalance と別の情報 (中立と未解析を分ける)', () => {
+    // 解析 1 件・positive と negative が同数 → balance は 0 だが「解析はした」
+    const balanced = analyzeProfile([], [
+      { dominant: 'joy', sentiment: 'positive' },
+      { dominant: 'anger', sentiment: 'negative' },
+    ]);
+    expect(balanced.sentimentBalance).toBe(0);
+    expect(balanced.analysisCount).toBe(2); // ← ここが 0 と区別する唯一の手掛かり
+    expect(analyzeProfile([], []).analysisCount).toBe(0);
   });
 
   it('uses recentAverage as prior when history is shorter than the window (→ stable)', () => {

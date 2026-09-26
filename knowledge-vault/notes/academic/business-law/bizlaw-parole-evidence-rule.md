@@ -27,8 +27,8 @@ Samuel Williston ／ Arthur Linton Corbin ／ Karl Nickerson Llewellyn
 
 ## 出典
 - [Cornell Law School LII — Parol Evidence Rule](https://www.law.cornell.edu/wex/parol_evidence_rule) `リファレンス`
-- [UCC § 2-202: Parol or Extrinsic Evidence (Cornell LII)](https://www.law.cornell.edu/ucc/2/2-202) `公的`
-- [American Law Institute — Restatement (Second) of Contracts](https://www.ali.org/publications/show/contracts/) `学術`
+- [UCC § 2-202: Parol or Extrinsic Evidence (Cornell LII)](https://www.law.cornell.edu/ucc/2/2-202) `リファレンス`
+- [American Law Institute — Restatement (Second) of Contracts](https://www.ali.org/publications/show/contracts/) `リファレンス`
 - [Uniform Law Commission — Uniform Commercial Code](https://www.uniformlaws.org/acts/ucc) `公的`
 
 ## 関連概念

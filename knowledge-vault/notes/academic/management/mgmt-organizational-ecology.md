@@ -3,38 +3,40 @@ collection: academic
 id: mgmt-organizational-ecology
 category: "management"
 category_ja: "経営学"
-title: "組織エコロジー（Organizational Ecology）"
-as_of: "2026-06"
-source_count: 2
+title: "組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する"
+as_of: "2026-09"
+source_count: 4
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "組織エコロジー（Organizational Ecology）"
+  - "組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する"
 ---
 
-# 組織エコロジー（Organizational Ecology）
+# 組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-組織エコロジー（organizational ecology）とは、マイケル・T・ハナンとジョン・フリーマンが1977年の論文「The Population Ecology of Organizations」（American Journal of Sociology, Vol.82, No.5, pp.929-964, DOI: 10.1086/226424）において提唱した組織理論の研究プログラムであり、個別組織の合理的適応（rational adaptation）ではなく、組織個体群（organizational population）レベルでの環境淘汰（environmental selection）が組織形態の多様性と変化を説明する主要メカニズムであると主張する。この理論は三つの中核概念を持つ。第一に構造的慣性（structural inertia）：組織は信頼性（reliability）と説明責任（accountability）を確保するために公式化・標準化された構造を発達させるが、これが環境変化への迅速な適応を阻害する（Hannan & Freeman 1984, American Sociological Review, Vol.49, No.2, pp.149-164, DOI: 10.2307/2095567）。第二に密度依存（density dependence）：組織個体群における創設率と消滅率は個体群密度の非単調関数であり、低密度期には正当性効果（legitimation effect）が支配して創設率が上昇し、高密度期には競争効果（competition effect）が支配して創設率が低下し消滅率が上昇する逆U字型の関係を示す。Carroll and Swaminathan (1991) は1633年から1988年までの米国醸造業7,709社のデータで密度依存の逆U字パターンを実証した。第三に新しさの不利益（liability of newness）：Stinchcombe (1965) が「Social Structure and Organizations」において提唱した概念で、新設組織は確立されたルーティン・社会的正当性・外部関係ネットワークを欠くため、既存組織より体系的に高い消滅率を示す。Freeman, Carroll and Hannan (1983) は労働組合・半導体メーカー・新聞社の三つの個体群でこのパターンを実証した。Hannan and Freeman (1989) の著書『Organizational Ecology』（Harvard University Press, ISBN: 978-0-674-64348-2）はこれらの知見を体系化した。
+組織エコロジー（organizational ecology、組織の個体群生態学）は、マイケル・ハナンとジョン・フリーマンが1977年の論文（American Journal of Sociology 82巻5号）で提唱した研究プログラムで、組織形態の多様性と変化を個別組織の合理的適応ではなく個体群レベルで働く環境の選択（淘汰）で説明し、分析単位を個体群へ移した。三つの中核概念がある。第一に構造的慣性で、組織は信頼性と説明責任のために標準化された構造を発達させるが、それが環境変化への適応を妨げ、慣性の強い組織ほど選択で残るため慣性自体が淘汰の産物になる（ハナンとフリーマン1984）。第二に密度依存で、個体群の密度が低い段階では密度の増加が組織形態の正統性を高めて設立率を上げ消滅率を下げるが、高密度では競争効果が支配して設立率が下がり消滅率が上がるため、設立率と密度は逆U字、消滅率と密度はU字の関係を示す。ハナンとグレン・キャロル（1992）は新聞社・労働組合・醸造所の歴史データでこれを検証した。第三にアーサー・スティンチコムが指摘した新しさの不利益で、若い組織ほど役割やルーティンが未確立で外部との信頼関係が薄いため消滅率が高い。批判としては、組織の意図的な変革や学習を過小評価すること、選択の単位や個体群の境界の定義が恣意的になりうること、戦略論との対立が指摘される。中小企業には、新規参入の成否が自社の努力だけでなく業種の密度（正統性と競争）や参入時期に左右されること、若い会社ほど信頼と定型化を早く築くことが生存率を上げること、慣性は信頼の裏返しである以上、変革は新しい単位で始める方が通りやすいことが含意となる。
 
 ## 提唱者・初出
-Michael T. Hannan・John H. Freeman（AJS 82(5), 1977; ASR 49(2), 1984）／Arthur L. Stinchcombe（Handbook of Organizations, 1965, 新しさの不利益）／Glenn R. Carroll・Anand Swaminathan（醸造業密度依存実証, 1991）
+マイケル・ハナン＆ジョン・フリーマン（1977 個体群生態学／1984 構造的慣性）／マイケル・ハナン＆グレン・キャロル（1992 密度依存）／アーサー・スティンチコム（1965 新しさの不利益）
 
 ## 出典
-- [Hannan & Freeman (1977) The Population Ecology of Organizations — AJS 82(5), pp.929-964](https://www.journals.uchicago.edu/doi/abs/10.1086/226424) `学術`
-- [Hannan & Freeman (1984) Structural Inertia and Organizational Change — ASR 49(2), pp.149-164](https://www.jstor.org/stable/2095567) `学術`
+- [Hannan, M. T. & Freeman, J. (1977) The Population Ecology of Organizations — American Journal of Sociology 82(5), 929–964（原典）](https://www.journals.uchicago.edu/doi/abs/10.1086/226424) `学術`
+- [Hannan, M. T. & Freeman, J. (1984) Structural Inertia and Organizational Change — American Sociological Review 49(2), 149–164（構造的慣性）](https://www.jstor.org/stable/2095567) `学術`
+- [Hannan, M. T. & Carroll, G. R. (1992) Dynamics of Organizational Populations: Density, Legitimation, and Competition — Oxford University Press（密度依存モデルの体系化）](https://doi.org/10.1093/oso/9780195071917.001.0001) `学術`
+- [Wikipedia: Organizational ecology — population-level analysis, structural inertia, density dependence, liability of newness](https://en.wikipedia.org/wiki/Organizational_ecology) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-death-theory|組織死亡理論]] — 同じ思想家
-- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同じ思想家
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同分野の近傍
-- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
-- [[mgmt-paradox-of-embeddedness|埋め込みのパラドックス（Paradox of Embeddedness）]] — 同分野の近傍
+- [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同じ思想家
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 同じ思想家
+- [[mgmt-resource-munificence-aldrich|資源余剰性と組織生態学（アルドリッチ）]] — 同じ思想家
+- [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同分野の近傍
+- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

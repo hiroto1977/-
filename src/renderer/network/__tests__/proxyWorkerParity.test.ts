@@ -1,10 +1,13 @@
 import { afterAll, describe, expect, it } from 'vitest';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { isPrivateOrReservedTarget } from '../proxy';
+import { fetchViaProxy, isPrivateOrReservedTarget, MAX_PROXY_RESPONSE_BYTES } from '../proxy';
+import { REDIRECT_STATUSES } from '../../../shared/httpLimits';
+import { constantTimeEquals } from '../../../shared/constantTimeEquals';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const req = createRequire(import.meta.url);
 const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.cjs') as {
@@ -18,7 +21,8 @@ const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.c
  * (`docs/PROXY_EXAMPLE.md`) を通す。宛先が私設 / 予約レンジでないことは
  * **両側**が見ている:
  *
- *   - client : `proxy.ts` の `isPrivateOrReservedTarget`
+ *   - client : `proxy.ts` の `isPrivateOrReservedTarget` (本体は 2026-09-17・パス 300 から
+ *              `shared/privateTarget.ts`。`proxy.ts` は re-export —— ここは import 先を変えない)
  *   - Worker : `docs/PROXY_EXAMPLE.md` の `isBlockedIp`
  *
  * Worker 側の注記は「client と同じレンジを塞ぐ」と書いていた。だが
@@ -45,15 +49,40 @@ const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.c
  *
  * ただし 1 点だけ意図的に違う —— CI 側は**名前**も受け取る
  * (`example.com` のような host)。名前は解決してから判定するので、
- * ここでの比較は**リテラル (IP) の標本に限る**。
+ * 下の 3 実装の比較は**リテラル (IP) の標本に限る**。
+ *
+ * ## 名前を比べていなかったので、名前でずれた (2026-09-12)
+ *
+ * 「名前は解決してから判定する」は正しいが、**解決を待たずに落とす名前**が
+ * 両側に在る (loopback を指す名前。hosts の書き換えと検索ドメインの補完で
+ * 揺れるので、揺れる物を唯一の守りにしないため)。そこは比較の外に在った。
+ * 名前 21 形を当ててみると **11 形で答えが違い、ずれは両方向だった**:
+ *
+ * ```
+ *   CI 側だけが通した : localhost. / LOCALHOST. / ip6-localhost / ip6-loopback
+ *                       ← 末尾ドットの迂回は 2026-07 の監査が client 側で
+ *                         見つけて直したもので、CI 側には来ていなかった
+ *   client だけが通した: foo.localhost / foo.localhost.
+ *                       ← RFC 6761 §6.3 は `localhost.` 直下の**すべて**を
+ *                         loopback と定める。完全一致しか見ていなかった
+ * ```
+ *
+ * 残りの差 (`metadata.google.internal` / `printer.local` / `x.internal` /
+ * `x.home.arpa` など) は**設計どおりの違い**である —— client は proxy へ
+ * 渡す前の先回り、CI 側は解決後の IP で見る。だから下の名前の標本は
+ * 「両方が解決を待たずに落とす組」と「両方が通す組」だけを持ち、
+ * 設計で分かれる組は別に**違うことを**留める。
  */
 
 const MD = join(__dirname, '../../../../docs/PROXY_EXAMPLE.md');
 
 /** md の中から名前付き関数を 1 つ、波括弧の対応で切り出す。 */
 function extractFunction(source: string, name: string): string {
-  const at = source.indexOf(`function ${name}(`);
+  let at = source.indexOf(`function ${name}(`);
   if (at < 0) throw new Error(`docs/PROXY_EXAMPLE.md に function ${name} が見つかりません`);
+  // `async function f(` は `function f(` を含むので indexOf は当たるが、`async` を
+  // 落とすと中の `await` が構文エラーになる。前置きを取り込む (2026-09-20 · パス 343)。
+  if (source.slice(Math.max(0, at - 6), at) === 'async ') at -= 6;
   let depth = 0;
   for (let i = source.indexOf('{', at); i < source.length; i += 1) {
     if (source[i] === '{') depth += 1;
@@ -65,7 +94,7 @@ function extractFunction(source: string, name: string): string {
   throw new Error(`function ${name} の波括弧が閉じていません`);
 }
 
-const md = readFileSync(MD, 'utf8');
+const md = readOriginalSource(MD);
 const dir = mkdtempSync(join(tmpdir(), 'proxy-worker-parity-'));
 const modulePath = join(dir, 'workerIp.mjs');
 writeFileSync(
@@ -190,5 +219,433 @@ describe('proxy の宛先判定は client と Worker で同じ', () => {
     expect(workerBlocks('127.0.0.1')).toBe(true);
     expect(workerBlocks('8.8.8.8')).toBe(false);
     expect(extractFunction(md, 'isBlockedIp')).toContain('169.254');
+  });
+});
+
+/*
+ * **名前の突き合わせ。** 上の 3 実装比較はリテラルに限っている (Worker の
+ * `isBlockedIp` は**解決後の IP** しか受け取らないので、名前は原理的に
+ * 比べられない)。ここは名前を受け取る 2 実装 —— client の
+ * `isPrivateOrReservedTarget` と CI の `isPrivateOrReservedHost` —— を当てる。
+ */
+
+/** 両方が「解決を待たずに」落とすべき名前。同じ相手を指す別表記を含む。 */
+const LOOPBACK_NAMES_SAMPLE = [
+  'localhost',
+  'localhost.', // FQDN 形。`URL` は名前の末尾ドットを残す
+  'LOCALHOST.', // 大文字 + 末尾ドット
+  '.localhost', // 先頭ドット
+  'ip6-localhost', // Debian / Ubuntu の /etc/hosts の既定の別名
+  'ip6-loopback',
+  'foo.localhost', // RFC 6761 §6.3 — localhost. 直下はすべて loopback
+  'foo.localhost.',
+];
+
+/** 両方が通すべき名前。**片側に寄った標本は「常に true」の偽物を通す。** */
+const PUBLIC_NAMES_SAMPLE = [
+  'www.nta.go.jp',
+  'example.com',
+  'doi.org',
+  'link.springer.com',
+  'notlocalhost.example', // 部分一致で当たらないこと
+  'localhost.example.com', // 最終ラベルが localhost でないこと
+];
+
+/**
+ * **設計で分かれる組。** client は proxy へ渡す前の先回りなので内部 TLD と
+ * メタデータ名も落とす。CI 側は名前を解決してから IP で見る役割分担なので
+ * ここでは通す (`resolvesToPublicHost` が受け持つ)。**同じでないことを
+ * 留めておく** —— 黙って揃えると、どちらかの役割が消えたのに気付けない。
+ */
+const BY_DESIGN_DIFFERENT = [
+  'metadata.google.internal',
+  'x.metadata.cloud.google.com',
+  'printer.local',
+  'x.internal',
+  'x.home.arpa',
+];
+
+describe('名前の判定は client と CI の関門で同じ (Worker は IP しか受け取らない)', () => {
+  it('標本が両側を持つ', () => {
+    expect(LOOPBACK_NAMES_SAMPLE.length).toBeGreaterThan(5);
+    expect(PUBLIC_NAMES_SAMPLE.length).toBeGreaterThan(4);
+  });
+
+  it.each(LOOPBACK_NAMES_SAMPLE)('★ %s は 2 実装とも解決を待たずに落とす', (name) => {
+    expect(clientBlocks(name), `client が ${name} を通しています`).toBe(true);
+    expect(isPrivateOrReservedHost(name), `CI の関門が ${name} を通しています`).toBe(true);
+  });
+
+  it.each(PUBLIC_NAMES_SAMPLE)('%s は 2 実装とも通す', (name) => {
+    expect(clientBlocks(name), `client が ${name} を塞いでいます`).toBe(false);
+    expect(isPrivateOrReservedHost(name), `CI の関門が ${name} を塞いでいます`).toBe(false);
+  });
+
+  it.each(BY_DESIGN_DIFFERENT)('%s は client だけが落とす (役割分担・意図した差)', (name) => {
+    expect(clientBlocks(name), `client が ${name} を通しています`).toBe(true);
+    expect(
+      isPrivateOrReservedHost(name),
+      `CI の関門が ${name} をリテラル段で落としました。役割分担が変わったなら注記を直してください`,
+    ).toBe(false);
+  });
+});
+
+/*
+ * **上流本文の上限も、同じ判断が 2 か所にある** (2026-09-20 · パス 343)。
+ *
+ * アプリ側は `MAX_PROXY_RESPONSE_BYTES` (= `MAX_HTTP_RESPONSE_BYTES`) を
+ * `readBodyWithCap` で掛けている。**Worker 側には 2026-09-20 まで 1 つも無く**、
+ * `await upstream.text()` が素で置かれていた。
+ *
+ * 実測 (Node 22・上流が大きな 200 を返す):
+ *
+ * ```
+ *    64 MiB の応答 / 上限なし → rss +223 MiB / 2,034 ms
+ *   256 MiB の応答 / 上限なし → rss +956 MiB / 6,787 ms
+ *   どちらも上限あり          → 断り / rss +0〜1 MiB / 26〜32 ms
+ * ```
+ *
+ * **Workers の isolate は 128 MiB** なので、64 MiB の応答 1 つで Worker ごと落ちる。
+ * そしてアプリ側の上限は**この Worker が返した封筒**に掛かるので、Worker が先に
+ * 落ちる限り一度も効かない —— パス 330 の「読む所で切る」がそのまま当てはまる。
+ *
+ * 同じ Worker は**ホップ数**には上限を持ち、その理由に「無制限に追うと CPU time と
+ * subrequest 枠を使い切る」と書いてある。**資源の枯渇を 1 つの軸でだけ見ていた。**
+ */
+describe('上流本文の上限は client と Worker で同じ (パス 343)', () => {
+  const CAP_DECL = /const MAX_UPSTREAM_BYTES = (\d+) \* 1024 \* 1024;/;
+
+  it('★ Worker の上限がアプリ側の MAX_HTTP_RESPONSE_BYTES と一致する', () => {
+    const m = CAP_DECL.exec(md);
+    expect(m, 'docs/PROXY_EXAMPLE.md に MAX_UPSTREAM_BYTES がありません').not.toBeNull();
+    expect(Number(m![1]) * 1024 * 1024).toBe(MAX_PROXY_RESPONSE_BYTES);
+    // 針が実際に当たることを、同じ検査の中で標本で確かめる。
+    expect(CAP_DECL.test('const MAX_UPSTREAM_BYTES = 10 * 1024 * 1024;')).toBe(true);
+    expect(CAP_DECL.test('const MAX_UPSTREAM_BYTES = someVariable;')).toBe(false);
+  });
+
+  it('★ 封筒を組む所は上限つきの読みを通る (素の text() を置かない)', () => {
+    const handler = md.slice(md.indexOf('async fetch(request)'), md.indexOf('function isRedirect'));
+    expect(handler).toContain('await readCappedText(upstream)');
+    // 不在の主張には標本を添える —— 針が「素の読み」に当たることを見せる。
+    const BARE = /const text = await upstream\.text\(\);/;
+    expect(BARE.test('    const text = await upstream.text();')).toBe(true);
+    expect(handler).not.toMatch(BARE);
+  });
+
+  /**
+   * 振る舞いで確かめる。**上限の数字だけは差し替える** —— 10 MiB を実際に
+   * 流すと検査が重くなるためで、確かめたいのは数ではなく**打ち切る loop** の方である
+   * (数そのものは上の検査が実物に当てている)。
+   */
+  function buildReader(capBytes: number, withGuard: boolean) {
+    let body = extractFunction(md, 'readCappedText');
+    if (!withGuard) {
+      // 対照: 上限の枝を消す。これで「読み切ってしまう」ことを見る。
+      const before = body;
+      body = body.replace(/\s*if \(seen > MAX_UPSTREAM_BYTES\) \{[\s\S]*?\n {4}\}/, '');
+      if (body === before) throw new Error('対照: 上限の枝を消せませんでした (抽出が変わった)');
+    }
+    const file = join(dir, `reader-${capBytes}-${withGuard ? 'on' : 'off'}.mjs`);
+    writeFileSync(file, `const MAX_UPSTREAM_BYTES = ${capBytes};\n${body}\nexport { readCappedText };\n`);
+    return file;
+  }
+
+  /** 要求された分だけ作るので、打ち切れば作られない (= 費用が測れる)。 */
+  function upstreamOf(totalBytes: number) {
+    let produced = 0;
+    let cancelled = false;
+    const chunk = 64 * 1024;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (produced >= totalBytes) {
+          controller.close();
+          return;
+        }
+        const n = Math.min(chunk, totalBytes - produced);
+        produced += n;
+        controller.enqueue(new Uint8Array(n).fill(0x61));
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+    return { res: { body }, produced: () => produced, cancelled: () => cancelled };
+  }
+
+  const CAP = 1024 * 1024; // 1 MiB (検査用の縮尺)
+  const OVER = 4 * 1024 * 1024;
+
+  it('★ 上限を超える本文は読み切らずに断る (cancel まで)', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, true)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    const up = upstreamOf(OVER);
+    await expect(mod.readCappedText(up.res)).resolves.toBeNull();
+    expect(up.cancelled(), '上流を cancel していません').toBe(true);
+    // 上限 + 1 チャンク分までしか作られていない = 読み切っていない。
+    expect(up.produced()).toBeLessThanOrEqual(CAP + 64 * 1024);
+    expect(up.produced()).toBeLessThan(OVER);
+  });
+
+  it('上限内の本文はそのまま返す', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, true)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    const up = upstreamOf(CAP - 1);
+    await expect(mod.readCappedText(up.res)).resolves.toHaveLength(CAP - 1);
+    expect(up.cancelled()).toBe(false);
+  });
+
+  it('本文の無い応答 (204 / 304) は空文字', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, true)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    await expect(mod.readCappedText({ body: null })).resolves.toBe('');
+  });
+
+  it('★ 対照: 上限の枝を消すと読み切ってしまう (守っているのはこの枝である)', async () => {
+    const mod = (await import(pathToFileURL(buildReader(CAP, false)).href)) as {
+      readCappedText: (res: unknown) => Promise<string | null>;
+    };
+    const up = upstreamOf(OVER);
+    await expect(mod.readCappedText(up.res)).resolves.toHaveLength(OVER);
+    expect(up.cancelled(), '対照なのに cancel されています').toBe(false);
+    expect(up.produced()).toBe(OVER);
+  });
+
+  /**
+   * 見出しの行数は**実物から数える**。2026-09-20 まで「約 290 行」と書かれており、
+   * 実測は 325 行だった (13% ずれ)。散文だけが古びる形なので機械に留める。
+   */
+  it('★ 見出しの行数が実物のコードブロックと一致する', () => {
+    const heading = /## 2\. Cloudflare Worker 実装 \((\d+) 行\)/.exec(md);
+    expect(heading, '見出しの行数が読めません').not.toBeNull();
+    const open = md.indexOf('```js\n// proxy-worker.js');
+    const close = md.indexOf('\n```', open);
+    const lines = md.slice(md.indexOf('\n', open) + 1, close).split('\n').length;
+    expect(Number(heading![1])).toBe(lines);
+  });
+});
+
+/*
+ * **上流のスキームも、同じ判断が 2 か所にある** (2026-09-20 · パス 345)。
+ *
+ * この Worker が上流へ送る要求には利用者の `Authorization` がそのまま載る。
+ * 2026-09-20 まで `denyReason` は `http:` を通しており、md から切り出して走らせた実測で
+ *
+ * ```
+ *   denyReason(new URL('http://api.notion.com/v1/x'))  → null (通す)
+ * ```
+ *
+ * だった。**さらに資格情報を落とす条件が `next.host !== target.host`** だったので、
+ * `https://api.notion.com` → `http://api.notion.com` の転送では host が等しく、
+ * **平文へ落ちるのに `Authorization` を持ち越していた** —— 許可リスト内の上流が
+ * `302 Location: http://` を 1 つ返すだけで、利用者のトークンが素のまま流れる。
+ *
+ * 正当な用途は測って 0 件だった: `fetchViaProxy` の呼び出し口 3 つ
+ * (`web-shim.ts` の 246 / 911 / 982) はどれも `shared/api/*.ts` の https リテラルを渡し、
+ * LAN / loopback は `isPrivateOrReservedTarget` が別に拒んでいる。
+ *
+ * 判定の順序は**具体的な理由が先** —— 許可リスト外の `http://evil.example` には
+ * 「リストに無い」、private な `http://127.0.0.1:8080/admin` には「SSRF」と答える。
+ */
+describe('上流のスキームは client と Worker で同じ (パス 345)', () => {
+  /** md の `denyReason` を、その依存ごと切り出して走らせる。DoH は公開 IP を返す stub。 */
+  async function workerDenyReason(): Promise<(u: URL) => Promise<string | null>> {
+    const allowlist = /const UPSTREAM_ALLOWLIST = new Set\(\[[\s\S]*?\n\]\);/.exec(md);
+    const doh = /const DOH_ENDPOINT = '[^']*';/.exec(md);
+    expect(allowlist, 'UPSTREAM_ALLOWLIST が見つかりません').not.toBeNull();
+    expect(doh, 'DOH_ENDPOINT が見つかりません').not.toBeNull();
+    const file = join(dir, 'workerDeny.mjs');
+    writeFileSync(
+      file,
+      [
+        allowlist![0],
+        doh![0],
+        // DoH は「公開 IP を返した」ことにする。ここで見たいのはスキームの判定であり、
+        // 解決後 IP の判定は上の isBlockedIp の表が別に持っている。
+        "globalThis.fetch = async () => ({ ok: true, json: async () => ({ Answer: [{ type: 1, data: '104.18.0.1' }] }) });",
+        extractFunction(md, 'expandV6'),
+        extractFunction(md, 'isBlockedIp'),
+        extractFunction(md, 'resolvedIpDenyReason'),
+        extractFunction(md, 'denyReason'),
+        'export { denyReason };',
+      ].join('\n'),
+    );
+    const mod = (await import(pathToFileURL(file).href)) as {
+      denyReason: (u: URL) => Promise<string | null>;
+    };
+    return mod.denyReason;
+  }
+
+  it('★ Worker は許可リストの https だけを通す (平文 http は断る)', async () => {
+    const denyReason = await workerDenyReason();
+    await expect(denyReason(new URL('https://api.notion.com/v1/x'))).resolves.toBeNull();
+    await expect(denyReason(new URL('http://api.notion.com/v1/x'))).resolves.toMatch(/plaintext http/);
+    await expect(denyReason(new URL('https://evil.example/x'))).resolves.toMatch(/allowlist/);
+    await expect(denyReason(new URL('ftp://api.notion.com/x'))).resolves.toMatch(/http\(s\) only/);
+  });
+
+  it('★ client も同じ標本を同じように扱う (平文 http の公開ホストを断る)', async () => {
+    await expect(
+      fetchViaProxy('http://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://proxy.example' }),
+    ).rejects.toThrow(/https のみ対応/);
+    // 具体的な理由が先: private なら SSRF のほうを答える (順序が入れ替わっていない)。
+    await expect(
+      fetchViaProxy('http://127.0.0.1:8080/admin', { method: 'GET' }, { url: 'https://proxy.example' }),
+    ).rejects.toThrow(/プライベート \/ 予約アドレス/);
+  });
+
+  it('★ 資格情報を落とす条件は origin で比べる (host だけだと scheme 落ちを見逃す)', () => {
+    const handler = md.slice(md.indexOf('async fetch(request)'), md.indexOf('function isRedirect'));
+    expect(handler).toContain('next.origin !== target.origin');
+    // 不在の主張には標本を添える —— 針が旧い書き方に当たることを見せる。
+    const HOST_ONLY = /next\.host !== target\.host/;
+    expect(HOST_ONLY.test('      if (next.host !== target.host) {')).toBe(true);
+    expect(handler).not.toMatch(HOST_ONLY);
+    // なぜ origin か: 同じ host でも scheme が落ちれば平文になる。
+    const a = new URL('https://api.notion.com/a');
+    const b = new URL('http://api.notion.com/b');
+    expect(b.host === a.host).toBe(true);
+    expect(b.origin === a.origin).toBe(false);
+  });
+});
+
+/**
+ * **配る Worker の関数を、全部機械に通す** (2026-09-20 · パス 349)。
+ *
+ * ## 何が在ったか
+ *
+ * パス 345 で「Worker の関数は 9 本、機械が**実際に走らせて**いたのは 2 本」と
+ * 測り、パス 347 で 5 本になった。**その数はどこにも機械が持っておらず、
+ * パスごとに人が数え直していた** —— 数を散文にだけ書くと古びる、という
+ * このリポジトリが繰り返し直してきた形そのものである
+ * (`live-metrics-not-prose`)。しかも数え直しは「今の本数」しか言わず、
+ * **Worker に 10 本目が生えたとき**には何も鳴らない。
+ *
+ * ## この検査が持つもの
+ *
+ * 母集団は **md の js ブロックが宣言する関数の全量** (走査で数える)。
+ * 台帳は 1 本ずつ `run` (この検査が実際に走らせる) か
+ * `read` (走らせない理由を書く) を持ち、**両方向**に突き合わせる。
+ * 新しい関数が生えれば「走らせるのか、走らせない理由は何か」を書くことになる。
+ *
+ * ## 実測 (2026-09-20)
+ *
+ * 宣言は **8 本 + 既定エクスポートの `fetch` ハンドラ**。
+ * パス 349 で `isRedirect` / `timingSafeEqualStr` / `json` を走らせ、
+ * **`fetch` ハンドラ以外の 8 本すべてが `run`** になった。
+ * ハンドラだけは `read` —— 走らせるには Workers の実行環境 (`Response` /
+ * `fetch` / `env`) を丸ごと作ることになり、**作った模型が正しいことを別に
+ * 確かめる必要が出る**。代わりに、ハンドラが持つ 3 つの判断
+ * (資格情報を落とす条件・転送の再検査・上限超過の扱い) は、それぞれ
+ * **切り出した関数の側**で測っている。
+ */
+describe('配る Worker の関数の母集団 (パス 349)', () => {
+  /** md の js ブロックが宣言する関数名 (`async` も含む)。 */
+  function declaredFunctions(source: string): string[] {
+    const names = new Set<string>();
+    for (const m of source.matchAll(/^(?:async )?function ([A-Za-z_$][\w$]*)\(/gm)) names.add(m[1]!);
+    // 既定エクスポートのハンドラは `function` 宣言ではないので別に拾う。
+    if (/^\s*async fetch\(request\)/m.test(source)) names.add('fetch (default export)');
+    return [...names].sort();
+  }
+
+  const FUNCTION_LEDGER: Readonly<Record<string, { run: boolean; why: string }>> = {
+    isBlockedIp: { run: true, why: 'client / CI の 2 実装と同じ標本に当てる (この検査の先頭の表)。' },
+    expandV6: { run: true, why: 'isBlockedIp の依存。IPv6 の短縮形を展開する所で答えが割れる。' },
+    denyReason: { run: true, why: '§3 が「これが主たる防御線」と呼ぶ判定。許可リスト / 平文 http / 解決後 IP の順を実際に走らせる。' },
+    resolvedIpDenyReason: { run: true, why: 'DoH の失敗 4 経路 (network error / !res.ok / JSON 不正 / 0 件) で fail closed になることを走らせて確かめる。' },
+    readCappedText: { run: true, why: '上限を超えた応答で null を返し、reader を cancel することを実際に走らせる (パス 343)。' },
+    isRedirect: { run: true, why: 'アプリ側の REDIRECT_STATUSES と同じ集合であること。写して比べると比べているのが写しになる (パス 349)。' },
+    timingSafeEqualStr: { run: true, why: 'アプリ側の constantTimeEquals と同じ答えを返すこと。孤立サロゲートで割れた前例が在る (パス 331・パス 349)。' },
+    json: { run: true, why: '断りの応答を組む唯一の口。Access-Control-Allow-Origin と Content-Type がここだけで決まる (パス 349)。' },
+    'fetch (default export)': {
+      run: false,
+      why: '走らせるには Workers の実行環境を丸ごと模すことになり、模型が正しいことを別に確かめる必要が出る。ハンドラが持つ 3 つの判断 (資格情報を落とす条件・転送の再検査・上限超過の扱い) は切り出した関数の側で測り、条件の綴りは下の字面の検査が留める。',
+    },
+  };
+
+  it('★ 台帳と md の宣言が一致する (両方向)', () => {
+    expect(declaredFunctions(md)).toEqual(Object.keys(FUNCTION_LEDGER).sort());
+  });
+
+  it('★ 走らせない物は 1 本だけで、理由が書かれている', () => {
+    const notRun = Object.entries(FUNCTION_LEDGER).filter(([, v]) => !v.run);
+    expect(notRun.map(([k]) => k)).toEqual(['fetch (default export)']);
+    for (const [name, v] of Object.entries(FUNCTION_LEDGER)) {
+      expect(v.why.length, name).toBeGreaterThan(20);
+      expect(v.why, name).not.toMatch(/分かる人が決め|誰かが決め|要検討|TODO|同上/);
+    }
+    // 標本: この針は実際に保留の文面へ当たる。
+    expect('同上。').toMatch(/分かる人が決め|誰かが決め|要検討|TODO|同上/);
+  });
+
+  it('標本: 走査は `async function` も既定エクスポートも拾う', () => {
+    expect(declaredFunctions('function a() {}\nasync function b() {}')).toEqual(['a', 'b']);
+    expect(declaredFunctions('  async fetch(request) {')).toEqual(['fetch (default export)']);
+    expect(declaredFunctions('const c = () => {};')).toEqual([]);
+  });
+
+  it('★ isRedirect は アプリ側の REDIRECT_STATUSES と同じ集合', async () => {
+    const file = join(dir, 'workerRedirect.mjs');
+    writeFileSync(file, `${extractFunction(md, 'isRedirect')}\nexport { isRedirect };\n`);
+    const { isRedirect } = (await import(pathToFileURL(file).href)) as {
+      isRedirect: (s: number) => boolean;
+    };
+    const disagreements: number[] = [];
+    for (let s = 100; s <= 599; s += 1) {
+      if (isRedirect(s) !== REDIRECT_STATUSES.has(s)) disagreements.push(s);
+    }
+    expect(disagreements).toEqual([]);
+    // 標本: 比較そのものが生きている (どちらも 302 を転送と呼び、304 は呼ばない)。
+    expect(isRedirect(302)).toBe(true);
+    expect(isRedirect(304)).toBe(false);
+    expect(REDIRECT_STATUSES.has(302)).toBe(true);
+  });
+
+  it('★ timingSafeEqualStr は アプリ側の constantTimeEquals と同じ答え', async () => {
+    const file = join(dir, 'workerEq.mjs');
+    writeFileSync(
+      file,
+      `${extractFunction(md, 'timingSafeEqualStr')}\nexport { timingSafeEqualStr };\n`,
+    );
+    const { timingSafeEqualStr } = (await import(pathToFileURL(file).href)) as {
+      timingSafeEqualStr: (a: unknown, b: unknown) => boolean;
+    };
+    const SAMPLES: [unknown, unknown][] = [
+      ['abc', 'abc'],
+      ['abc', 'abd'],
+      ['abc', 'ab'],
+      ['', ''],
+      ['\uD800', '\uDC00'], // 孤立サロゲート —— main の Buffer 実装はここで割れた (パス 331)
+      ['𐀀', '𐀀'],
+      ['a\u0000b', 'a\u0000b'],
+      ['A', 'a'],
+    ];
+    for (const [a, b] of SAMPLES) {
+      expect(timingSafeEqualStr(a, b), `${JSON.stringify(a)} vs ${JSON.stringify(b)}`).toBe(
+        constantTimeEquals(a as string, b as string),
+      );
+    }
+    // 文字列でない物はどちらも false (Worker 側はヘッダが無いと null を受け取る)。
+    expect(timingSafeEqualStr(null, 'x')).toBe(false);
+    // 標本: 差が在る組では両方とも false を返す (どちらも「常に true」ではない)。
+    expect(timingSafeEqualStr('abc', 'abd')).toBe(false);
+    expect(constantTimeEquals('abc', 'abd')).toBe(false);
+  });
+
+  it('★ json は断りの応答を 1 つの形で組む (CORS と Content-Type がここだけで決まる)', async () => {
+    const file = join(dir, 'workerJson.mjs');
+    writeFileSync(file, `${extractFunction(md, 'json')}\nexport { json };\n`);
+    const { json } = (await import(pathToFileURL(file).href)) as {
+      json: (obj: unknown, status: number) => Response;
+    };
+    const res = json({ error: 'unauthorized' }, 401);
+    expect(res.status).toBe(401);
+    expect(res.headers.get('content-type')).toBe('application/json');
+    expect(res.headers.get('access-control-allow-origin')).toBe('*');
+    await expect(res.json()).resolves.toEqual({ error: 'unauthorized' });
   });
 });

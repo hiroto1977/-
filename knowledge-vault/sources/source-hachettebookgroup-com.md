@@ -2,7 +2,7 @@
 title: "hachettebookgroup.com"
 type: source-domain
 host: "hachettebookgroup.com"
-cite_count: 2
+cite_count: 3
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # hachettebookgroup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 2 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — Zuboff,S.(2019).TheAgeofSurveillanceCapitalism—PublicAffairs（PublicAf…
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — Zuboff(2019)TheAgeofSurveillanceCapitalism—PublicAffairs（PublicAffair…
+- [[mgmt-culture-map-eight-scales-meyer|カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み]] — Meyer,E.(2014).TheCultureMap:BreakingThroughtheInvisibleBoundariesofG…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

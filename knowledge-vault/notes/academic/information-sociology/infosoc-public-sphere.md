@@ -26,7 +26,7 @@ aliases:
 ユルゲン・ハーバーマス（1962『公共性の構造転換』）／市民的公共圏・再封建化
 
 ## 出典
-- [Stanford Encyclopedia of Philosophy — Jürgen Habermas（公共圏・再封建化）](https://plato.stanford.edu/entries/habermas/) `学術`
+- [Stanford Encyclopedia of Philosophy — Jürgen Habermas（公共圏・再封建化）](https://plato.stanford.edu/entries/habermas/) `リファレンス`
 - [Wikipedia — The Structural Transformation of the Public Sphere（1962）](https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere) `リファレンス`
 - [MIT Press — The Structural Transformation of the Public Sphere（英訳版書誌）](https://mitpress.mit.edu/9780262581080/the-structural-transformation-of-the-public-sphere/) `学術`
 
@@ -37,7 +37,8 @@ aliases:
 - [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同分野の近傍
+- [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — 同分野の近傍
+- [[infosoc-cultural-capital|文化資本（ブルデュー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

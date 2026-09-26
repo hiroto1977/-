@@ -1,0 +1,1438 @@
+/**
+ * **法則の台帳 —— 320 パスで学んだ規則と、それを守っている機械。**
+ *
+ * 1 つの法則は「何を守るか」「どこで学んだか (出典)」「何がそれを守っているか
+ * (執行者)」を持つ。執行者は 7 種:
+ *
+ * | kind | 意味 | 検査で留めること |
+ * |---|---|---|
+ * | `gate` | `verify:all` の npm script | package.json に在り、verify:all に並んでいる |
+ * | `test` | vitest のファイル | 実在する `.test.ts` |
+ * | `harness` | verify:all の外の実機 (e2e / perf / smoke:app / mutate) | package.json に在る |
+ * | `chain` | 整合性チェーン (保護対象の封緘) | — |
+ * | `type` | tsc の総和型など、型そのものが守る | 実在するファイル |
+ * | `ci` | workflow の構成 | 実在する workflow |
+ * | `prose` | **機械が無い** (理由つき) | 出典の文書が実在し、理由が空でない |
+ *
+ * 執行者が `prose` だけの法則は `docs/ONTOLOGY.md` §6 に集まる。それは欠陥の一覧ではなく
+ * 「散文で述べた規則は落ちない」ことを知っている上での**分母**である —— 機械にできる物から
+ * 順に機械にする (2026-09-18 の解析で 3 つを機械にした。引継ぎ参照)。
+ *
+ * 出典の書き方: `パターン 0-a-15` は `docs/SESSION_HANDOFF.md` の「確立されたパターン」の番号、
+ * `パス 301` は同じ文書の各パスの節、`不変条件 #5` は `docs/ARCHITECTURE.md` §8.1 の番号。
+ */
+
+export const LAW_FAMILIES = {
+  'gate-hygiene': 'ゲートそのものの規律',
+  'single-rule': '規則は 1 つ',
+  boundary: '境界と信頼',
+  'at-rest': '保存と復元',
+  surface: '画面へ出る文言・外へ出る本文',
+  numbers: '数字の健全性',
+  'dual-build': '両ビルドの対称',
+  knowledge: '知識と出典',
+  'supply-chain': '供給網と CI',
+} as const;
+
+export type LawFamily = keyof typeof LAW_FAMILIES;
+
+export type Enforcer =
+  | { readonly kind: 'gate'; readonly script: string }
+  | { readonly kind: 'test'; readonly file: string }
+  | { readonly kind: 'harness'; readonly script: string }
+  | { readonly kind: 'chain' }
+  | { readonly kind: 'type'; readonly where: string }
+  | { readonly kind: 'ci'; readonly workflow: string }
+  | { readonly kind: 'prose'; readonly where: string; readonly why: string };
+
+export interface Law {
+  readonly id: string;
+  readonly family: LawFamily;
+  readonly name: string;
+  readonly statement: string;
+  readonly provenance: readonly string[];
+  readonly enforcedBy: readonly Enforcer[];
+}
+
+const gate = (script: string): Enforcer => ({ kind: 'gate', script });
+const test = (file: string): Enforcer => ({ kind: 'test', file });
+const harness = (script: string): Enforcer => ({ kind: 'harness', script });
+const chain: Enforcer = { kind: 'chain' };
+const type = (where: string): Enforcer => ({ kind: 'type', where });
+const ci = (workflow: string): Enforcer => ({ kind: 'ci', workflow });
+const prose = (where: string, why: string): Enforcer => ({ kind: 'prose', where, why });
+
+const HANDOFF = 'docs/SESSION_HANDOFF.md';
+const T = {
+  shared: (n: string): string => `src/shared/__tests__/${n}.test.ts`,
+  renderer: (n: string): string => `src/renderer/__tests__/${n}.test.ts`,
+  main: (n: string): string => `src/main/__tests__/${n}.test.ts`,
+  preload: (n: string): string => `src/preload/__tests__/${n}.test.ts`,
+  root: (n: string): string => `src/__tests__/${n}.test.ts`,
+};
+
+export const LAWS: readonly Law[] = [
+  // ───────────────────────── 知識と出典 ─────────────────────────
+  {
+    id: 'independence-counted-not-listed',
+    family: 'numbers',
+    name: '「独立 N 出典」の独立は件数ではない',
+    statement:
+      '確証の規律が「**独立** N 出典以上」と述べるなら、数えるのは**独立した文書の数**であって出典の件数ではない。'
+      + '2026-09-26 まで、学術コーパスの採用ゲート (`knowledgeProvenance.assessEvidence`) と'
+      + 'CI のゲート (`scripts/verify-knowledge-provenance.cjs` の `assess`) は**どちらも `length` を素で数えていた** —— '
+      + '前者の docblock は冒頭から「独立 2 出典以上」と繰り返していたのに、独立性を 1 度も検めていなかった。'
+      + '**隣の確証器は最初から持っていた** (`sourceVerification.distinctSourceCount` は URL で重複を落とし、'
+      + '`EvidenceSource.url` の注記が「独立性の判定キー」と宣言している) —— '
+      + '同じ規律に実装が **3 つ**在り (もう 1 つは `lint-citations.cjs` の私有の写し・**契約まで違った**)、'
+      + '規則を持つのは 1 つだけだった。'
+      + '実測 (2026-09-26 · コーパス 4,039 項目): 素の文字列で重複する出典を持つ項目は **0 件**だが、'
+      + '**同じ文書を指す綴りの組を持つ項目が 2 件**在った。1 件目 —— `academic / bizlaw-equitable-set-off` の 2 出典は'
+      + '`…/wiki/Set-off_(law)` と `…/wiki/Set-off_(law)#Equitable_set-off` で、'
+      + '**フラグメントはサーバへ送られない**ので 1 つの文書である。'
+      + 'ラベルは `Wikipedia: Set-off (law)` と `Wikipedia: Equitable set-off` で、読む側には 2 件に見えた。'
+      + '隔離した写しに同じ URL を 2 度植えると、`verify:knowledge` / `lint:citations` / `lint:knowledge-refs` / '
+      + '`lint:doi-prefix` の **4 本すべてが exit 0** で、ゲートは「4039 項目（出典 2+・権威 1+）… ✅」と刷った。'
+      + '2 件目 —— `academic / infosoc-data-feminism` は `…/wiki/Data_Feminism` と `…/wiki/Data_feminism` で、'
+      + '**1 文字の大小だけが違う実質同じ頁**である (出典 3 件で独立 2 件)。'
+      + '★ **畳むのは 6 つ** (フラグメント・scheme・ホストの大小・パス末尾の `/`・**パスの大小**・**ポート**)。'
+      + 'クエリと `www.` の有無は畳まない。★ **パスの大小とポートは実測で決めた** —— '
+      + '残す版は 2 件目を独立 3 件と数える。**過大は「偽の 2 件目を黙って受ける」(静かな誤り)、'
+      + '過小は「正当な項目を落とす」(騒がしい誤り)** なので、静かな方を避けた。'
+      + '★ **成功行は検めた物を名乗る** —— 見出しが「出典 2+」なら読む人は件数の検査だと読む (実測どおり「独立 2+」へ直した)。'
+      + '★ **同じ主題の他の 6 項目はどれも独立 3 件だった** —— 1 件だけが出典 2 件 / 独立 1 件で、'
+      + 'その対比が欠陥を見えるようにした (`bizlaw-set-off` は e-gov / 国税庁 / 筑波大ロースクールの 3 ホスト)。'
+      + '**ホスト数では対比が出ない** —— 6 件のうち 2 件は 3 出典で 2 ホストである (実測)。'
+      + '★ **ホスト単位の規則そのものも実測で否定された** —— 1 ホストだけで下限を満たす項目は 169 件で、'
+      + '最大の群は `doi.org` 52 件 (resolver なので 2 DOI は 2 著作) と `www.nta.go.jp` 33 件 (同じ官庁の別文書)。'
+      + '★ **床だけでは足りない** —— 「独立が下限以上」は**3 件並べて実は 2 件**を通すので、'
+      + '**列挙した件数 = 独立した文書の数**を別に要求する (数え方を直しても名乗りは直らない)。',
+    provenance: ['パス 478'],
+    enforcedBy: [
+      gate('verify:knowledge'),
+      test('src/renderer/data/__tests__/sourceUrlParity.test.ts'),
+      test('src/renderer/data/__tests__/knowledgeProvenance.test.ts'),
+      test('src/renderer/data/__tests__/sourceVerification.test.ts'),
+    ],
+  },
+  // ───────────────────────── ゲートそのものの規律 ─────────────────────────
+  {
+    id: 'manual-check-becomes-gate',
+    family: 'gate-hygiene',
+    name: '手でやった検査はその場でゲートにする',
+    statement: '「私が今やった手作業を、次のセッションの誰かが思い出せるか」— 思い出せないならゲートにする。ゲートを作ったら負の対照 (違反を仕込んで落ちる・正常を誤検出しない・直ったのに台帳に残っていれば落ちる) を取る。',
+    provenance: ['パターン 0'],
+    enforcedBy: [prose(HANDOFF, '「手でやった」は機械に映らない。作ったゲートが CI に在ることは gate-runs-in-ci が、自作ゲートが対照を持つことは negative-control が見る')],
+  },
+  {
+    id: 'scan-whole-tree',
+    family: 'gate-hygiene',
+    name: '走査範囲は木全体、例外は台帳',
+    statement: '「対象を絞る」と「対象を忘れる」はコードの上で見分けがつかない。走査は木全体にし、外す物を理由つきの台帳に書く。台帳を書いたら「どこまで歩いたか」「注記の規則を判定が実装しているか」「対照は判定関数そのものへ標本を通しているか」を問う。外した側をどう台帳にするかは `outside-scope-gets-its-own-census`。',
+    provenance: ['パターン 0-a', 'パターン 0-a-24'],
+    enforcedBy: [gate('lint:network-targets'), gate('lint:forbidden'), test(T.shared('bareFetchLedger'))],
+  },
+  {
+    id: 'distributed-code-same-gates',
+    family: 'boundary',
+    name: '配るコードも自分の門を通す',
+    statement:
+      '「これを貼って deploy してください」と文書に載せたコードは、動くのが利用者の環境でも**設計はこちらの責任**である。'
+      + '自分の src に掛けている門 —— 応答本文の上限・転送の各ホップの再検査・宛先の関門 —— を、配るコードにも同じだけ掛ける。'
+      + '両者が「同じ」であることを文で書かない: 文は書いた瞬間から離れていくので、実物どうしをテストで結ぶ'
+      + '(文書からコードを切り出して読み込み、同じ標本を当てる)。',
+    provenance: ['パス 343', 'パス 300'],
+    enforcedBy: [test('src/renderer/network/__tests__/proxyWorkerParity.test.ts')],
+  },
+  {
+    id: 'outside-scope-gets-its-own-census',
+    family: 'gate-hygiene',
+    name: '走査の外は、広げれば見えるとは限らない',
+    statement:
+      '走査範囲を絞ったら、外した側の母集団を一度数える。広げれば見えると決めてはいけない —— '
+      + '外の母集団は書き方の前提が違うので、同じ検出器を当てると偽陽性で埋まり、'
+      + '本当に危ない物は元の検出器の設計上の除外（例: 素の識別子の送り先）に隠れたままになる。'
+      + '外が小さいなら「危ない構文か」を問うのをやめ、**全件**を守りつきで台帳に載せる。',
+    provenance: ['パス 342', 'パターン 0-a', 'パス 364 (lint:storage の外は 8 本・保存は 3 本)'],
+    enforcedBy: [gate('lint:network-targets'), test(T.shared('networkTargetWitness')), test(T.shared('distributedArtifactStorage'))],
+  },
+  {
+    id: 'gate-runs-in-ci',
+    family: 'gate-hygiene',
+    name: '検査が走る場所が CI に在る',
+    statement: 'verify:all の全ゲートが ci.yml に在る。「これで強制される」と書いた検査は、CI のどのステップで走るかを確かめる。走らないなら vitest ゲートへ移す。',
+    provenance: ['パターン 0-a-11', 'パターン 0-c'],
+    enforcedBy: [gate('lint:docs')],
+  },
+  {
+    id: 'negative-control',
+    family: 'gate-hygiene',
+    name: 'ゲートは守りを外して確かめる',
+    statement: '自作のゲートは --self-test (陽性・陰性の対照) を持ち、verify:all がそれを走らせる。--self-test の「鳴る側」は作った本人の想像なので、守るはずの実物を一度壊して鳴らす。',
+    provenance: ['パターン 0', 'パターン 0-a-15'],
+    enforcedBy: [test(T.shared('ontologyLaws'))],
+  },
+  {
+    id: 'wait-for-condition-not-ticks',
+    family: 'gate-hygiene',
+    name: '待つなら条件で待つ (回数では負荷が嘘をつく)',
+    statement:
+      'jsdom の検査が「固定回数だけ回してから文が出ていることを主張する」形だと、'
+      + '**空いている機械では通り、全件実行の負荷の下では落ちる**。'
+      + '条件で待つ道は `renderer/__tests__/jsdomWait.ts` に 1 つ在る (パス 169) が、'
+      + 'その census は固定回数を「数えるのは別の話」と明記して母集団から外していたため、'
+      + '**落ちる原因そのものが数えられていなかった**。実測 (2026-09-21) で 3 件目が出た ——'
+      + '`importSizeGuard` が全件 3 回のうち 1 回落ち、1 ファイルなら 12 回で 0 回、'
+      + '`settle()` の回数を変えると **ticks=1 で 2 件落ち ticks=2 以上で通る** (tick 依存の確定)。'
+      + '共有の待ちへ寄せると **ticks=0 でも通る**。'
+      + '危ないのは「固定回数」だけではなく「その後で**肯定の**文を主張する」形で '
+      + '(否定は待っても意味が無い)、実測は 固定回数 108 本 / 肯定の主張つき 34 本 / '
+      + '共有の待ちを使う 2 本 → 危ない形 32 本。数は減る方向にしか動かさない。'
+      + '**ただしその針 (綴り) は両方向に外れていた (パス 369 実測)** —— 最も多い形 '
+      + '`expect(text()).toContain(…)` を 1 件も見ておらず (HEAD で 67 ファイル / 363 か所)、'
+      + '逆に条件で待った後の主張まで数える。知りたいのは綴りではなく'
+      + '「**この主張は settle の回数に依っているか**」で、それは**回数を 0 にして走らせれば'
+      + '直接答えが出る** (`npm run audit:tick-sensitivity`)。実測 109 本中 **31 本**が 0 周で落ち、'
+      + 'その内訳は store の往復・要素の在否・操作の流し込みなど「依って当たり前」の物を含む ——'
+      + 'だから門ではなく**理由つきの台帳を持つ定期点検の道具**にした。'
+      + '**同じ法則は実機 (Playwright) の側にも当たる (パス 397)** —— あちらの待ちは'
+      + '条件で書かれているが、*その条件が成り立ち得ない*ことは綴りからは分からない。'
+      + '実測: `talent` の `page.locator(\'div\').filter({ hasText: /^営業$/ }).first()'
+      + '.waitFor({ state: \'attached\' }).catch(() => {})` は、`営業` が `<input>` の**値**で'
+      + 'あってどの `div` の textContent でもないため**永久に 0 件**で、'
+      + '**30,004 ms / 制限 30,000 ms を毎回** (FULL・LITE とも) 使っていた ——'
+      + '実体は 30 秒の sleep で、しかも次の行に主張が無いので「待った」ことは'
+      + '1 度も確かめられていなかった。**飲み込んでよいのは直後に絶対の主張が在るときだけ**'
+      + '(同じファイルの theme の 1 件はその形)。見つけ方は回数ではなく'
+      + '**実測 ÷ 制限** (`npm run audit:e2e-wait-margin`) で、'
+      + '母集団は Locator の action まで含める —— `.click(` は 135 か所のうち **117 が '
+      + '`page.` 以外**なので、page のメソッドだけ包むと半分以上が映らない (実測で'
+      + 'page だけの回では最大 13.5%・Locator を含めた回で 100.0% が出た)。',
+    provenance: [
+      'パス 169 (共有の待ち)',
+      'パス 368 (3 件目と母集団)',
+      'パス 369 (針の訂正と振る舞いでの測定)',
+      'パス 397 (実機の待ちも余裕で測る・成り立ち得ない条件を 1 件)',
+    ],
+    enforcedBy: [
+      test(T.renderer('fixedTickAssertionCensus')),
+      test(T.renderer('waitHelperCensus')),
+      test(T.renderer('tickSensitivityLedger')),
+      harness('audit:tick-sensitivity'),
+      harness('audit:e2e-wait-margin'),
+    ],
+  },
+  {
+    id: 'count-has-floor',
+    family: 'gate-hygiene',
+    name: '件数を出す検査は床を持つ',
+    statement: '「Checked 0 … ✅」は走査が壊れても緑。ゲートは件数に下限を置き、検査は「全件について〜」の前に非空を主張する。台帳にせず命名規約 (VERIFIED_*) で絞る。'
+      + ' **床は 3 つの軸に分かれる (2026-09-25 · パス 467 の実測)。**'
+      + ' ① **読めない ≠ 空** —— `lint:knowledge-refs` は台帳を `catch { return null }` で読み、呼ぶ側が `null` を素通りしていた。'
+      + ' 実物にマージ衝突の印を 1 行入れると「Checked 0 adjudicated pair(s)」と刷って **exit 0**、**`verify:all` の 37 ゲートも全部素通り** (`src/` にこの台帳を読む検査は 0 件なので `npm test` にも映らない)。'
+      + ' 消費者 (`knowledge-autopilot`) も同じ形だったので、読めない台帳は**裁定済み 127 件がまるごと重複疑いキューへ戻る**ことを意味した'
+      + ' (実測: `sourceDedupeSuspects` 0 → 16 件・`sharedSourceDedupeSuspects` 0 → 12 件)。**件数の床では表せない軸**で、読む口が「空」と「読めない」を別の値で返して初めて問える。'
+      + ' ② **正当に 0 になる母集団には床を置かない** —— 裁定の件数も backlog も課題が片付けば 0 になりうるので、実測に張り付けた床は**直した日に落ちる門**になる (パス 378)。'
+      + ' **確かめる物が無いことと、検査が消えたことは別である。**'
+      + ' ③ **床は床の値を読んで主張すると自己満足になる** —— 対照 (`MIN_CORPUS_IDS` を 0 へ) を回すと、同じ定数を読む主張は**門の側も検査の側も鳴らなかった**。'
+      + ' 値に依らない側 (`corpusTooSmall(0) === true`) を留める。'
+      + ' ★ **同じ家系が `verify:orchestration` にも 4 件在った** —— このゲートは 2026-08-22 に `org` と `policy.cycles` を「鍵を必須にする」で閉じているのに、**配列を空にする側**が残っていた。'
+      + ' 実測: `rounds: []` / `policy.minTeamsForRound: []` / `org.secretaries` を消す —— **3 つとも exit 0** で、成功行に「rounds: 0 / 直近 round 0 は 0 チーム」「秘書室 0室(計0体)」と刷っていた。'
+      + ' いちばん重いのは秘書室で、そこには「必須にはしない … **0 室になったら CI の出力でそう分かる**」と書いてあった —— **緑のゲートの成功行は誰も読まない**ので、'
+      + ' 出力に出すことは検査することではない (法則 `no-weakness-as-spec` の、保留をゲートに書き残した形)。「どちらが意図かコードからは決まらない」も偽で、'
+      + ' **不変条件 9b と `--plan` の組織図がどちらも「常設」と述べていた** —— 決まっていなかったのではなく、囲いだけがそれを読んでいなかった。'
+      + ' ★ **床が在ることと、床が当たることは別** —— 「床を `main` から外す (呼ばない)」対照は self-test も検査も鳴らず、門だけが exit 0 へ戻った。'
+      + ' 門を丸ごと走らせる継ぎ目 (`--registry <path>`) を開けて閉じた。'
+      + ' ★★ **何本在るのかは、パス 468 まで誰も数えていなかった。** 2026-09-05 の注記 (`lint:imports` の中) は「走査数を表示するだけで床の無いゲートを**ここと lint:regex** に見つけた」と書くが、その日の掃除は 2 本を直しただけで母集団を測っていない。**床の綴りは 1 つではない** (実測 7 通り: `MIN_*` の定数・台帳の双方向・名指しの走査・生成物の byte 一致・正典の値が計算不能・保護対象の不一致・**副作用としての床**) ので、綴りを数えても取りこぼす —— だから**母集団を空にして終了コードを読む** (`npm run audit:gate-floors`)。'
+      + ' 実測 (2026-09-25 · 隔離した写しの上で): 空にする母集団を持つゲート **33 / 37**・直す前に鳴らなかったのは **5 本**・直した後は **33 / 33 が鳴る**。'
+      + ' 黙っていた 5 本のうちいちばん重いのは **`verify:knowledge`** で、コーパスの 85% (academic 3,417 件) が母集団から丸ごと消えても「確証ゲート検証: 622 項目」と刷って ✅ だった —— **出典を確かめるのが仕事のゲートが、確かめる物が消えたことに黙っていた**。'
+      + ' 残る 4 本は `lint:url-encoding` (「Scanned 0 file(s)」)・`lint:sample-data` (ソース側だけ 0 件になるので合計の床では見えない)・`lint:collection-time` (同じ `mutate` を見る隣の `lint:mutation-scope` だけが鳴っていた)・`lint:test-coverage` (「**すべての**サービスに検査がある」は空の母集団に対して自明に真)。'
+      + ' ★ **空にする手は忠実でなければならない** —— 最初の測定は `lint:data-origin` / `lint:credential-use` を「床が無い」と誤って報告しかけた (宣言の**名前だけ**を替えたので、原文を読む走査には 76 件がそのまま見えていた)。だから道具は各手に針を持たせ、**当たらなければ落とす** —— 「空にできなかった」を「床が在る」と読まない。'
+      + ' ★★ **その self-test も 1 度は弱かった** —— 「投げたか」だけを見ていたので、針の確認を外しても 2 つ目の門 (「1 文字も変わらない」) が投げて**違う理由で通っていた** (対照 J で実測)。文面で見分ける形へ直した。'
+      + ' ④ **床は「0 件」にしか当たらない (2026-09-25 · パス 469 の実測)** —— 合計の床は実測の 10〜60% に置かれているので、走査が**一部だけ**死ぬと素通りする。'
+      + ' 隔離した写しの上で `readdirSync` からファイルの項目を落として 13 ゲートを測ると、**`.tsx` 108 件 (= 画面そのもの) が消えても `lint:network-targets` / `lint:url-encoding` / `lint:regex` / `lint:imports` / `lint:charset` は ✅ exit 0**、'
+      + ' 根 `scripts/` (102 件) が丸ごと消えても `lint:regex` / `lint:charset` / `lint:sample-data` が ✅、`docs/` (61 件) が消えても `lint:charset` が ✅ だった。'
+      + ' **合計の床が捕まえたのは 13 のうち 2 本だけ** (`lint:parameter-prose` 170 < 200 / `lint:zero-fold` 228 < 240) で、しかもどちらも**床がたまたま実測のすぐ下に在った**ためである。残りで鳴った 4 本は台帳の双方向・生成物の一致という**別の機構が偶然**捕まえた物である。'
+      + ' ★ **`lint:charset` は「宣言」を検めていた** —— 2026-09-14 (パス 255) から `SCAN_EXTS` が `.sh .yml .html .css .js .svg` を**含むこと**を自己テストで要求しているが、それは宣言に綴りが在ることであって**1 件でも読んだこと**ではない (法則 `mention-vs-declaration` の、ゲート自身の中での現れ)。'
+      + ' **直しは割合ではなく「宣言した群はどれも 1 件以上」** —— 実測に張り付けた床は直した日に落ちる門になるので (パス 378)、拡張子と根を群として数え、正当に 0 になる群 (`lint:charset` の `.yaml` / `.mjs`) は受け皿として床の下に置く。'
+      + ' 落とす群は**ゲート本体の `REQUIRED_GROUPS` から読む** (道具に 2 つ目の台帳を作らない)。実測: **42 組すべてが鳴る**。'
+      + ' ★ **ここでも「鳴らない対照」が私の検査の誤りを教えた** —— 前置きの「ディレクトリは落とさない」を `ext` モードで確かめていたので、拡張子を持たないディレクトリには針が当たらず、門を外しても通っていた (`keep 0` へ直して対照 H が ✗ 1)。'
+      + ' ⑤ **母集団が `git ls-files` から来る 2 本は、その一部の死を 1 度も測られていなかった (2026-09-25 · パス 470 の実測)** —— パス 469 の前置きは `readdirSync` しか包まなかったので、`lint:shell` / `lint:repo-size` は走査の外に居た。子プロセスの同期実行のほうも包んで測ると、**`lint:repo-size` は追跡一覧から `knowledge-vault/` (7,402 件) が落ちても ✅ exit 0**で「合計 47.1 MB ✅ 予算内」と刷り、**95% の警告まで消えた** —— 落ちた分は合計から引かれるので、この門は*より安心に見える*向きに壊れる (12.40 MB の生成物を追跡させた木で実測: 素の木は ❌ 2 件、一覧を narrow すると ✅)。'
+      + ' ★★ **`lint:shell` はフォールバックが詰め直していた** —— 引き金が「git の一覧に `.sh` が 1 件も無ければ `scripts/` 直下へ落ちる」だったので、**「git が居ない」と「一覧が narrow された」を見分けられない**。一覧から `.sh` を落とすと ✅ exit 0 で「Checked 9 (追跡ファイル全体から収集)」—— **成功行そのものが偽で、件数も素の木と同じ**なので読む人には見分けが付かない。植えた `tools/deploy.sh` (strict mode 無し + 遠隔コードの実行 + ブロックデバイスへの書き込み) は素の木では ❌ 3 件、一覧を narrow すると ✅ だった —— **2026-08-22 に走査を広げた当の理由が、フォールバックの引き金を通って戻っていた**。'
+      + ' **直しは床ではない** —— 「1 本だけ一覧から落ちた」形はどんな床にも映らないので、**権威 (git) に別の綴りで 2 度訊いて答えの一致を要求する** (`git ls-files -z` と `git ls-files -z -- *.sh` / `-- .`)。割合を問わず鳴るので、実測に張り付けた比率を決める必要が無い (実測: 9,084 → 9,083 の 1 件でも鳴る)。フォールバックは `catch` のときだけに縛り、成功行は**実際に使った出どころ**を名乗る。'
+      + ' ★ **一様な間引き (「任意の割合で死んだ走査」) も測った。鳴るかどうかは「そのゲートの設計」ではなく「床の位置 ÷ 実測」で決まっていた** —— `readdirSync` を歩く 6 本のうち 4 本が鳴るが、理由はどれも合計の床が半分をまたいだからである (`lint:url-encoding` / `lint:imports` は床 300 に対し 528 → 264・`lint:charset` は 1000 に対し 1,663 → 844・`lint:network-targets` は `src` の外の床 60 に対し 111 → 55)。**床を 1 つ下げれば黙る**ので守りではなく偶然で、残る 2 本 (`lint:regex` / `lint:sample-data`) は黙る。だから割合の床は足さず、測った答えを台帳 (`THINNING`) が双方向で持つ。'
+      + ' ★ **道具の忠実さで 3 つ躓いた** —— ① `keep` を通し番号 (`i % 100 < N`) で書いたら、1 件しか無い群が位置で丸ごと消えて群ごとの床が*偶然*鳴り、ファイルを 1 つ足せば答えが変わる**揺れる測定**になった (群ごとの歩幅へ直した)。② 両方の数え方を同時に殺すと `lint:shell` のフォールバックも死ぬので、鳴った理由が「一覧が narrow された」から「木ごと消えた」へすり替わる (`AUDIT_PARTIAL_TARGET` で git の一覧だけを殺せるようにした)。③ pathspec つきの呼び出しまで間引くと「2 度訊く」検査が永久に観測できなくなる (**鳴らない対照を合格と読む形**そのもの) ので、`--` を持つ呼び出しは通す。'
+      + ' ★ **そして対照 A が 1 度目に鳴らなかった** —— フォールバックの引き金を直す前へ戻しても 15 件すべて緑だった。`.sh` が 9 本ある木では PATH を空にする検査にその違いが出ないからで、**git の一覧だけを間引く**形へ当て直して初めて ❌ 1 になる。鳴らない対照は合格ではなく、その検査についての報せである。'
+      + ' ⑥ **床は「0 件」か「1 群まるごと」にしか当たらない —— 走査が 1% 死んだら、木を歩く 6 本すべてが緑だった (2026-09-25 · パス 471 の実測)。**'
+      + ' パス 470 は半分 (50%) で測って「4 本が鳴る」と記録したが、**それは道具が逆数しか表せなかったから**である ——'
+      + ' `keep` の歩幅は `i % round(100 / pct) === 0` で、`pct` が 51〜99 だと `round(100 / pct)` がどれも **1** になり**何も落とさない**。'
+      + ' それでも報告は「kept 530/530」と刷るので、`KEEP_PCT = 90` と書けば**「1 割落として鳴らなかった」と読める記録が、1 件も落とさずに出る**'
+      + ' (鳴らない対照を合格と読む形の、道具の側での現れ)。真の割合へ直して測ると: **99% (1% 死) で 6 / 6 が ✅ exit 0**・90% で 5 / 6・75% で 4 / 6・50% で 2 / 6。'
+      + ' 50% で鳴った 4 本はどれも合計の床が偶然半分をまたいだだけで、`lint:regex` (床 500 / 残 796) と `lint:sample-data` (床 300 / 残 731) は**半分死んでも緑**だった。'
+      + ' ★ **塞ぎ方は「割合の床」ではない** (実測に張り付けた床は直した日に落ちる門になる · パス 378) —— **権威に独立して数えてもらう**。'
+      + ' 木を歩く走査では git は母集団ではなく**証人**として使えるので、「**追跡されていてそのゲートの条件に合うファイルは、どれも走査されている**」を要求する'
+      + ' (`scripts/lib/tracked-cross-check.cjs`)。1 件でも落ちれば鳴るので**割合に依らない**。'
+      + ' ★ **向きは片側だけ** —— 逆 (走査した物はどれも追跡されている) は偽で、実測すると `orchestration/dependency-audit.json` は木に在って追跡されておらず、'
+      + ' `lint:regex` / `lint:sample-data` は自分自身を走査から外しつつ読む。**等号を要求すると生成物を 1 つ置いた日から鳴り続ける門になる。**'
+      + ' ★ **条件は 1 つの綴りで、数え方が 2 つ** —— 条件 (`roots` / `skipDirs` / `accept`) を照合の側にも並べると 2 つ目の台帳が静かに古びるので、'
+      + ' 歩く側と照合が**同じ定数**を読む (写すのは条件だけで、歩き方は写さない)。直した後の実測は **8 / 8 が鳴る**。'
+      + ' ⑦ **測る母集団が狭ければ、測った 8 本しか直らない —— 実測すると間引けるゲートは 25 本で、1% 死ぬと 9 本が黙っていた (2026-09-26 · パス 472)。**'
+      + ' パス 469〜471 の台帳は**手書きの 8 本**で、そこは直った。残りを測ると:'
+      + ' `vault:check` は `.md` を**全部**落としても「✅ 同期しています（7402 ファイル）」と刷って exit 0 —— **0 件比べて 7402 件を名乗った**'
+      + ' (その数はコーパスの件数で、比べた件数ではない)。ノート 1 件を改ざんしてその名前だけを走査から落とすと、素の木の「❌ 内容差分」が消えた。'
+      + ' `lint:workflow-security` は 7 本の workflow それぞれに `pull_request_target` と SHA 固定されていない第三者 action を植てると素の木で ❌ 2 件鳴るが、'
+      + ' **その 1 本を走査から落とすと 7 / 7 で植えた違反が消え、6 / 7 は exit 0** (床は 3 本で実測 7 なので 4 本消えても届かない)。'
+      + ' 同じ形で `lint:docs` (「not in CI」の主張が空虚に真になる)・`lint:test-coverage` (1 度も走らない検査)・`lint:storage` (台帳に無い保存先)・'
+      + ' `lint:ipc-handlers` (関門なしの書き出し先)・`lint:mutation-scope` (測っていない範囲)・`lint:parameter-prose`・`lint:rate-freshness` も黙った —— **9 / 9 で決定的な対照が取れた。**'
+      + ' ★ **母集団は道具の届く範囲で決まる** —— 最初は「木を歩く」で数え、`lint:repo-size` (パス 470 が実際に間引いたゲート) が台帳から落ちた。'
+      + ' 前置きが包めるのは `readdirSync` と `git ls-files` の 2 通りなので、母集団もその 2 つから導く (**自分で置いた双方向の検査がこの誤りを直させた**)。'
+      + ' ★ **呼ぶだけでは守りではない** —— 対照を回すと、照合の**呼び出しを残したまま門 (`if (cross.code !== 0)`) を消す** 3 方向が **1 つも鳴らなかった**。'
+      + ' 証人は「呼んでいる」ことしか見ておらず、返り値を捨てても素通りしていた。**結果を使う形そのもの**を要求して初めて鳴る。'
+      + ' ★ **忠実な戻し方でなければ、鳴った理由がすり替わる** —— `vault:check` の対照で照合の呼び出し (= 3 回目の歩き) を残したら、'
+      + ' 群ごとの計数器の位相がずれて**別の理由で**鳴った。丸ごと戻すと 150 件・exit 0 で、直す前の実測と一致した。'
+      + ' ★ **鳴らす機構は 3 語ではなく 10 語あった** (`shared-floor` / `cross-check` / `tracked-cross-check` / `compared-count` / `doc-metrics` /'
+      + ' `named-scan` / `side-effect-floor` / `ledger-bidirectional` / `generated-artifact` / `not-thinnable`) —— 最後の 1 つは**機構ではなく報せ**である'
+      + ' (母集団が名指しの一覧なのでこの道具では落とせない。「落とせなかった」を「床が在る」と読まないために語彙に持つ)。'
+      + ' 直した後の実測は **73 組すべて台帳どおり (25 ゲート・食い違い 0)**。',
+    provenance: ['パターン 0-a-7', 'パス 467 (読めない台帳が「空」として緑になり、37 ゲート全部が素通りした)', 'パス 468 (母集団を空にして測ると、33 ゲートのうち 5 本が exit 0 だった)', 'パス 469 (床は 0 件にしか当たらない —— .tsx が消えても 5 本が exit 0 だった)', 'パス 470 (git ls-files の 2 本は一部の死を 1 度も測られておらず、フォールバックが詰め直していた)', 'パス 471 (走査が 1% 死んでも木を歩く 6 本すべてが緑 —— 道具の keep が逆数しか表せず、半分より小さい損失は 1 度も測られていなかった)', 'パス 472 (測った母集団が 8 本で、実際は 25 本 —— 残り 17 本のうち 9 本が 1% の損失で黙り、vault:check は 0 件比べて「7402 ファイル同期」と刷った)'],
+    enforcedBy: [
+      gate('lint:test-coverage'),
+      test(T.shared('e2eSuiteFloors')),
+      gate('lint:deps'),
+      gate('lint:knowledge-refs'),
+      gate('verify:orchestration'),
+      test(T.shared('knowledgeLedgerReadable')),
+      test(T.shared('orchestrationPopulationFloors')),
+      harness('audit:gate-floors'),
+      test(T.shared('gateFloorLedger')),
+      gate('verify:knowledge'),
+      gate('lint:url-encoding'),
+      gate('lint:sample-data'),
+      gate('lint:collection-time'),
+      harness('audit:gate-partial'),
+      test(T.shared('populationGroupFloor')),
+      gate('lint:network-targets'),
+      gate('lint:imports'),
+      gate('lint:regex'),
+      gate('lint:charset'),
+      gate('lint:shell'),
+      gate('lint:repo-size'),
+      test(T.shared('trackedPopulationWitness')),
+    ],
+  },
+  {
+    id: 'table-pinned-by-literal',
+    family: 'gate-hygiene',
+    name: '表を留める検査は表を読まない',
+    statement: '留める対象を読んで回る検査は、対象が変われば一緒に変わる。何が入っているかと何が入っていないかを字面で書く。モジュール定数は vi.resetModules + 動的 import で留める。',
+    provenance: ['パターン 0-a-9', 'パターン 0-a-5'],
+    enforcedBy: [harness('mutate'), prose(HANDOFF, '「表を読んで回っている」形は変異検査 (Stryker) が生存として映すが、CI の毎回では走らない (週次)。字面かどうかを静的に数える網は無い')],
+  },
+  {
+    id: 'unique-anchor-for-refs',
+    family: 'gate-hygiene',
+    name: '参照には一意な錨を前置する',
+    statement: 'file:line の参照は、直前のバッククォート付き識別子が引用位置の ±15 行に居ることを見る。錨が無い参照は行番号がファイルに収まる限り永久に通る。錨は一意でなければ意味が無い。',
+    provenance: ['パターン 0-a-3', 'パス 292'],
+    enforcedBy: [gate('verify:arch')],
+  },
+  {
+    id: 'mention-vs-declaration',
+    family: 'gate-hygiene',
+    name: '言及と宣言を見分ける',
+    statement:
+      '名前が「在るか」で照合する検査は、コメントや文字列の中の言及で満たされる。宣言の出現には「コメント行でない・引用符の外」を要求する。' +
+      '**その見分けは、見分ける道具が正しい言語を読んでいることに全体重を掛けている** (パス 464) —— 共有の走査器は JS の字句解析器で、' +
+      'JSX の素のテキストは JS ではない。`<p>docs: http://example.com</p>{…}` の `//` を行注記として読み、**その行の後ろを丸ごと落としていた**。' +
+      '実測: 同じ禁止された呼び出しを素の行に置くと `lint:forbidden` は鳴り、同じ行の JSX テキストに URL を 1 つ足すと **1 件も鳴らない** ——' +
+      'つまり**宣言が言及として分類され**、「外部 URL は openExternal 経由に統一する」という規約が URL 1 つで迂回できた。' +
+      '向きが重い: 見分けを誤ると偽陽性 (見過ぎ) ではなく**偽陰性 (門が黙る)** になる。直しは `://` は行注記を始めないの 1 条件で、' +
+      '`src` + `scripts` の 1,537 本のうち出力が変わったのは **3 本 (すべて .tsx)** だけだった。' +
+      '★ **「この検査は注記に騙されているか」は綴りに現れない** (パス 465) ので、振る舞いで測る ——' +
+      '`.ts` / `.cjs` の注記の本文だけを無意味にして全件を走らせる (`npm run audit:comment-blind`)。' +
+      '初回の実測で 1,428 本を書き換えると **13 ファイル / 15 件**が落ち、**11 本は設計どおり** (注記を読むのが仕事) で、' +
+      '**2 本が散文で満たされていた**: `lawCoverageLedger` は `shell-open-gate` を「母集団を走査する検査を持つ」と分類していたが、' +
+      'その根拠は `exportSymlinkContainment.test.ts:49` の**注記 1 行**で、しかもその注記は「一時の道に使うと的が外れる」と' +
+      '**使っていないこと**を述べていた。`limitCoverageCensus` は `MAX_STOCK_ADVISOR_RISK_CHARS` を「名前で参照されている」と' +
+      '数えていたが、根拠は別の検査の docblock の例示 1 行で、その文は「同じ数だが別物」と述べていた。' +
+      '★★ **同じ実験を CI の執行層へ当てると、免除の枠に散文が入っていた** (パス 466)。' +
+      '`verify:all` の 37 ゲートは 1 度も注記を無意味にして走らせておらず、測ると**落ちるのは 5 / 37**で、' +
+      'そのうち `lint:forbidden` が本物だった —— 免除の台帳の鍵は `規則 :: ファイル :: 件数` で、' +
+      '**`codeOnly` でない規則 (実測 38 中 14) は注記の中でも鳴る**のに枠が 1 つの数なので、' +
+      '**散文がその枠を食う** (実測: 53 行のうち 5 行が一部/全部を散文で埋め、3 行は全額)。' +
+      '決定的な対照: main の Ollama クライアントの免除は 2 件ともただの注記で、' +
+      'その綴りを消して**同じ数だけ本物の書き込み口への fetch** を入れると門は `no forbidden patterns found` と答えた ——' +
+      'CVE-2024-37032 ほかが実装される当の口が CI を黙って通る。直しは 1 条件 (散文が食っている行だけ code の件数も名乗る) で、' +
+      '48 / 53 行は今までどおり。★ **注記の中でも鳴らすこと自体は正しい** (パス 370) —— 直すのは枠のほうである。',
+    provenance: [
+      'パス 292',
+      'パス 289',
+      'パス 291',
+      'パス 464 (言語を取り違えた走査器)',
+      'パス 465 (散文が答えになっていた 2 件)',
+      'パス 466 (免除の枠に散文が入っていた)',
+    ],
+    enforcedBy: [
+      gate('verify:arch'),
+      gate('lint:forbidden'),
+      harness('audit:comment-blind'),
+      test(T.shared('stripNonCodeParity')),
+      test(T.shared('forbiddenPatternWitness')),
+      test(T.shared('commentBlindLedger')),
+      test(T.main('shellOpenCallSites')),
+    ],
+  },
+  {
+    id: 'declared-constraint-is-enforced',
+    family: 'gate-hygiene',
+    name: '宣言した制約は、門が読んで初めて制約になる',
+    statement:
+      'JSON Schema の enum / pattern / required のような**宣言**は、それを読む門が無ければ注記と同じである。' +
+      '`orchestration/registry.schema.json` は 153 件の制約を宣言していたが、門 (`verify:orchestration`) が読んでいたのは' +
+      '最上位の必須キーと自前の不変条件だけで、**67 件が素通り**した (パス 484) —— チームの `domain` が無い台帳では' +
+      '村の計画とチャットの振り分けが**投げ**、`active: "false"` (文字列) は止めたチームを真として数え、backlog の `status` の' +
+      '綴り違いは dispatch から黙って外れた (`registry.json` に関わる検査 120 本・1,237 件も綴り違いには全件緑)。' +
+      '直しは宣言を**丸ごと**読む検証器 1 つ (依存を足さず、宣言が使うキーワードだけを持つ) で、**知らないキーワードは落とす** ——' +
+      '黙って読み飛ばすと、宣言に足した制約が門に届かないまま「宣言してある」ことになる。母集団は宣言を歩いて導き、' +
+      'どの制約も破れば名指しされることを検査が留める。門の必須キーの一覧も宣言から読む (宣言のほうが門より弱く、`org` を落としていた)。' +
+      '★ **書き手も書く前に同じ門を通す** —— 「書いた後に確認を促す」だけでは、門を通らない台帳が書かれて残る。',
+    provenance: ['パス 484'],
+    enforcedBy: [gate('verify:orchestration'), test(T.shared('registrySchemaEnforced')), test(T.shared('importRequestsPath'))],
+  },
+  {
+    id: 'general-form-not-one-file',
+    family: 'gate-hygiene',
+    name: '不変条件は一般形で守る',
+    statement: 'ファイル名で書かれた不変条件はそのファイルしか守られない。文面から一般形を取り出し、その形をする場所を全部洗う (「Skill name」→ 変数をパスに畳む箇所、「Gmail の to」→ CR/LF で join する箇所)。',
+    provenance: ['パターン 0-a-4'],
+    enforcedBy: [gate('lint:url-encoding'), gate('lint:ipc-handlers'), gate('lint:forbidden')],
+  },
+  {
+    id: 'generated-plus-coverage',
+    family: 'gate-hygiene',
+    name: '生成物 == 再計算 だけでは足りない',
+    statement: '「committed と再計算が一致する」は成果物が古いことしか捕まえない。計算が壊れても再生成すれば通る。生成物の検査には本体データとの網羅を必ず足し、数は決め打ちせず欠ける理由を検査する。',
+    provenance: ['パターン 0-a-5', 'パターン 0-a-6'],
+    enforcedBy: [gate('vault:check'), gate('verify:graph'), test(T.shared('ontologyDoc'))],
+  },
+  {
+    id: 'live-metrics-not-prose',
+    family: 'gate-hygiene',
+    name: '数は機械が、判断は散文が持つ',
+    statement: '散文に書いた件数は誰も検算せず腐る (母集団が 4 倍ずれていた実測)。数える物は生成ブロックか live metric にし、判断だけを散文に書く。**閉じた列挙 (「only …」「全 N 件」) も同じ** —— 成員を並べたら、その並びと実物を機械で結ぶ。CLAUDE.md は preload bridge を「it only calls」で 6 件挙げていたが実物は 15 件で、落ちていた 9 件に eraseAll (全データ削除) と openPath が在った (パス 338)。攻撃面の側では、過小申告が読み手を油断させる。**いちばん重いのは「エージェントへ注入される指示書」である** (パス 372) —— `.cursor/rules/20-gates.mdc` は `alwaysApply: true` で Cursor の全セッションに注入されるのに、`npm run verify:all` を **「13 ゲート全部」**と書いていた (実物 37)。**24 ゲート分古い前提を、次にこの repo を触るエージェントが読んでいた。** 皮肉なことに、その 3 行下で同じファイルが「ゲートを足したら ci.yml にも足すこと」と正しく述べている ——**規則は知っていたのに、自分の数は誰も見ていなかった。** 同じ木の中で `00-project.mdc` のサービス数だけは 2026-08 から機械に載っていた。',
+    provenance: ['パス 145', 'パス 220', 'パス 248', 'パス 338', 'パス 372 (エージェントの指示書)'],
+    enforcedBy: [
+      gate('verify:arch'),
+      gate('lint:zero-fold'),
+      gate('lint:shared-judgement'),
+      gate('lint:docs'),
+      test(T.preload('bridgeStatic')),
+      test(T.shared('agentInstructionFiles')),
+    ],
+  },
+  {
+    id: 'one-way-match-hides-the-other',
+    family: 'gate-hygiene',
+    name: '片方向の照合は、もう片方を隠す',
+    statement: 'ゲートが同じ母集団について 2 つの数を刷るなら (走査 27 / 表 30)、その差は読まれないまま残る —— 差は理由つきの台帳にして両方向に鳴らす。パス 340 の実測: egress マトリクスの差 4 件のうち 3 件は **AI 提供者の既定の送り先** (`defaultBaseUrl`) で、送信文脈の針の死角だった。対照で確認 —— `api.openai.com` を別のホストに書き換えても verify:arch は緑のまま通り、**提供者を 1 つ足すだけで利用者のプロンプトと API キーの送り先が台帳の外へ出られた**。',
+    provenance: ['パス 340'],
+    enforcedBy: [gate('verify:arch'), test(T.shared('egressMatrixReverse'))],
+  },
+  {
+    id: 'exclusion-states-the-real-reason',
+    family: 'gate-hygiene',
+    name: '外した物の理由は、実際に守っている理由で書く',
+    statement: '門が何かを意図して外すとき、その理由は次の判断の材料になる。結論が正しくても premise が偽なら、次に足す物の評価がそこから外れる。lint:regex は多項式を「入力上限が 5000 だから O(n²) でも 30ms」で外していたが、実物の最大は 200,000 (MAX_TEXT_PREVIEW_CHARS) で 1 呼び出し 31 秒だった —— 守っていたのは長さではなく到達可能性 (その式に長い入力が来ない) である。理由に数を書くなら、その数が実物の最大であることを機械で留める。',
+    provenance: ['パス 337'],
+    enforcedBy: [test(T.shared('regexPolynomialLedger')), harness('audit:regex-poly')],
+  },
+  {
+    id: 'measure-before-claim',
+    family: 'gate-hygiene',
+    name: '危なそうで報告しない — 実測してから言う',
+    statement: '受け口が危なく見えても、その受け口が実際に何を拒むかを実行して確かめる。深刻度を上げる方にも下げる方にも効く (Headers が CR/LF を投げるので注入は成立しない、など)。**道具の報告も測る対象である** —— 変異検査が「生存」と言う変異体は、当てられなかっただけで検査が鳴らないことを意味しない場合がある。2026-09-20 実測: ad-hoc の `--mutate` で報告された生存 61 件を当て直すと大半が偽だった。★ **ただし「何件が偽か」は 2026-09-23 (パス 430) に撤回した** —— 当て直す道具 (`audit:survivors`) が Stryker の**列を 0 始まりとして扱っており** (実物は 1 始まり)、当てるたびに前後 1 文字ずつを食って壊れたソースを書き、vitest が transform で落ちる。その非 0 終了を「検査が落ちた = 殺されている」と読んでいたので、**どの変異体も同じ答えになり、数はどれも測っていなかった**。直した道具で測り直すと `parameterConsistency.ts` の標本 6 件は **5 件が偽 / 1 件が本物**で、本物の 1 件は保存の関門の穴だった (相違の組の鍵が組を見分けているかを誰も見ていなかった —— 検査を書いた)。**「偽の生存が在る」は手で当てた 2 件で独立に確かめられており生きているが、件数は測り直しが要る。****道具の判定は 3 通りに分ける** —— 「検査が落ちた」「どれも落ちない」「判定できなかった」。3 つ目を前 2 つのどちらかへ倒すと、道具の欠陥がそのまま結論になる。**誤りの向きは決まっている** —— 偽の生存は点数を**低く**見せるので、公開している score を脅かすのではなく「次にどこへ検査を書くか」の判断を歪める。**訂正は写しの数だけ要る** —— 測って偽と分かった主張は、**その主張が書かれている全部の場所**で撤回する。2026-08-23 に「渡ってくる名前は利用者入力ではないためこれは多層防御」を偽と測り `shared/safeFilename.ts` では撤回したが、**同じ文の写しが `renderer/fs/fsa.ts` に残り、2026-09-21 (パス 362) まで誰も直さなかった** —— 撤回が 2 部のうち 1 部にしか届かず、関門の隣に**既に否定された前提**が立っていた。こういう事実は散文の綴りではなく**振る舞い**で留める (「その文が無いこと」の検査は言い換えられた瞬間に黙る)。**★★ 道具が測る対象に見えていないかを測る** (2026-09-26 · パス 473) —— `audit:gate-partial` は前置きを 1 行差し込んでからゲートを走らせるが、**その 1 行が見えるゲートが在る**。見えていると間引きの答え (`rings` / `silent`) を「ゲートが走査の損失に気付いた」と読めない (鳴らせたのは道具かもしれない)。実測 (25 ゲート · `--baseline` = 素の実行と「差し込んで 1 件も落とさない実行」を突き合わせる): **透明 23 / 見えている 2**。`chain:verify` は `integrity-chain.cjs` が**それ自身が保護対象**なので、前置きを差し込むことが**その門が検出する違反そのもの**である (間引きを 1 件も掛けなくても exit 1) —— **この門はこの道具では原理的に測れない**。★ そして直す前の判定は見分けられなかった: `report.dropped === 0` が`status` より先に短絡するので exit 1 は見えず、台帳は `not-dropped` で通っていた。**今日は隠れているだけで、`integrity-chain.cjs` に走査が 1 つ入った日に `dropped > 0` になり、判定は `status !== 0` を見て `rings` と答える** = 「走査が一部死んでも chain:verify は鳴る」という**偽の結論**。だから判定は `dropped` より**前**に透明性を問い、`instrument-rings` として区別する (語彙を 3 つ目へ)。★ **差し込む位置も測った** —— 行 0 に入れると `"use strict";` がdirective prologue の外へ出て**その本は sloppy mode で走る** (実測: 素は `ReferenceError`、前に `require` を置くと**黙って global を作る**)。sloppy は許す側なので**偽の `silent`** を作る向きだが、**実測では今日どのゲートの答えも変えていなかった** (25 / 25) —— **罠であって生きた欠陥ではない**。それでも直すのは、次に strict に依るゲートが入った日に静かに誤測されるからである。★ **測って何も無かった軸も記録する**: 列挙の原始命令を**注記を落として**数えると`readdirSync` 24 / `execFileSync` 2 / `execSync` 2 / `spawnSync` 1 で、`globSync` は **0 件** (最初の grep はdocblock の中の引用を拾っていた · `mention-vs-declaration`)。`spawnSync` は `bash -n` と `--self-test` で列挙ではない —— **前置きの届く範囲は今日の母集団を覆っている**ので 3 つ目の包みは要らない。「本文が一部だけ返る」形も、`readFileSync` に長さを渡すゲートが 0 件なので現実的な失敗経路が無い (現実的な類似は「行の走査が早く止まる」= ループの境界の誤りで、それは変異検査の仕事)。★★ **そして「見えている」の原因はどちらも同じで、消せた** (2026-09-26 · パス 474) —— 前置きを**行 0 に差し込む**のをやめて `NODE_OPTIONS=--require` で外から注入すると**原文を 1 byte も書き換えない**ので、実測 **25 / 25 が透明**になった (パス 473 は 23 / 2)。**`chain:verify` はこれで初めて測れた** —— 94 の保護対象を守る門が「走査の一部の死」に耐えるかはパス 469〜473 を通して 1 度も分かっておらず、答えは `not-dropped` (母集団が名指しの一覧なので落とせない) で**理由が2 つから 1 つに減った**。★ **道具を外へ出すと新しい面が開く** —— `NODE_OPTIONS` は**子プロセスに伝わる**ので、報告を 1 つのファイルへ書くと最後に終わった子が親を上書きする (実測: `verify:arch` の報告が `kept: 0, dropped: 0` になり**親が落とした件数が丸ごと消えた**)。プロセスごとに `<pid>.json` を置いて呼ぶ側が足す。★ **報告を測る木の中に置かない** —— 実測で `lint:charset` の走査が 1663 → 1664 になる。終了コードは 25 / 25 で動かないので**罠であって生きた欠陥ではない**が、「自分が置いたファイルで鳴らせた物を『ゲートが気付いた』と読む」形そのものである。★ **台帳が 0 件になっても機構は残す** —— 床を「0 件でない」に置くと減らした日に落ちる門になる (パス 378) ので、機構が生きていることは**合成のゲート名**の標本が見る (実在する見えているゲートに依ると、台帳が空になった日に標本が死ぬ)。',
+    provenance: ['パターン 0-a-8', 'パス 300', 'パス 356', 'パス 362 (訂正が写しの片方にしか届いていなかった)',
+      'パス 473 (道具が測る対象に見えていた —— chain:verify は自分の原文をハッシュする)',
+      'パス 474 (外から注入すれば透明になり、chain:verify を初めて測れた)'],
+    enforcedBy: [harness('audit:survivors'), harness('audit:gate-baseline'), test(T.shared('verifySurvivors')),
+      test(T.shared('populationGroupFloor')), test('src/renderer/fs/__tests__/folderMirrorUserInput.test.ts'), prose(HANDOFF, '「言う前に測ったか」は機械に映らない。実測は各パスの記録が持つ —— ただし変異検査の報告については `npm run audit:survivors` が当て直して答える')],
+  },
+  {
+    id: 'pragma-directly-above',
+    family: 'gate-hygiene',
+    name: 'Stryker の pragma は対象行の直上に',
+    statement: '`disable next-line` は間に何か入ると無言で外れ、緩む方向にしか壊れない。理由の無い pragma は測っていない範囲を 100% として報告する。広い disable と無言の pragma は台帳。',
+    provenance: ['パターン 0-a-13', 'パス 1220 付近の REMAINING_WORK'],
+    enforcedBy: [gate('lint:mutation-scope')],
+  },
+  {
+    id: 'claim-unit-not-file',
+    family: 'gate-hygiene',
+    name: '主張の単位で見る',
+    statement: '「ファイルのどこかに但し書きが在るか」で判定する検査は同居で無効化される。その断言そのものが無いこと (名指し) と、正しい形が使われていることの両方を見る。',
+    provenance: ['パターン 0-a-17'],
+    enforcedBy: [prose(HANDOFF, '検査の書き方の規律。個々の検査が守っているかを機械で見る形は無い (absence-needs-sample が「不在の主張」側だけを数える)')],
+  },
+  {
+    id: 'absence-needs-sample',
+    family: 'gate-hygiene',
+    name: '不在を主張する検査には標本を添える',
+    statement: '`not.toMatch` は綴りが 1 つ違えば黙る。規則が実際にその文面へ当たることを同じ検査の中で標本に対して確かめる。正規表現の針で綴りを肯定形で確かめていない物は台帳制。',
+    provenance: ['CLAUDE.md 規約 (2026-08-25)', 'パス 293'],
+    enforcedBy: [test(T.shared('absenceSampleCensus'))],
+  },
+  {
+    id: 'records-carry-date',
+    family: 'gate-hygiene',
+    name: '記録は測った日を持つ',
+    statement: '日付の無い安全の主張・件数・余裕は黙って古くなる。脆弱性台帳には照合日と期限、出荷物の計測には「パス N 後」、導出値には測った日。',
+    provenance: ['パス 141', 'パス 290 (CLAUDE.md の LITE の余裕)'],
+    enforcedBy: [gate('lint:rate-freshness'), gate('lint:docs')],
+  },
+  {
+    id: 'artifact-freshness',
+    family: 'gate-hygiene',
+    name: '成果物は材料より新しい',
+    statement: '実機の harness は古い成果物を黙って相手にしない。材料 (src・vite.config・inline-html・tsconfig・package・束に入る JSON) より成果物が古ければ exit 2。母集団は package.json から導く。',
+    provenance: ['パス 302', 'パス 304', 'パス 305'],
+    enforcedBy: [test(T.shared('artifactFreshness')), harness('perf'), harness('e2e'), harness('smoke:app')],
+  },
+  {
+    id: 'harness-floor-per-suite',
+    family: 'gate-hygiene',
+    name: '実機の床は suite ごと',
+    statement: '「合計 0 件で落とす」だけでは suite が黙って縮んでも緑。suite ごとに床 (実測の 85%) と全 suite 時の合計の床を持つ。`ok(true, …)` は直前の文が投げる wait でしか許さない。',
+    provenance: ['パス 303'],
+    enforcedBy: [test(T.shared('e2eSuiteFloors')), harness('e2e')],
+  },
+  {
+    id: 'typecheck-covers-all-ts',
+    family: 'gate-hygiene',
+    name: '.ts は全部 tsc の網の中',
+    statement: 'eslint は型を見ない。tsconfig の include の外の .ts は 1 行も検査されず、走っている検査の中で undefined を読んでも通る。覆われていない .ts が出れば落ち、exclude が生えれば「教えろ」と落ちる。',
+    provenance: ['パス 278'],
+    enforcedBy: [test(T.shared('typecheckCoverage')), gate('typecheck')],
+  },
+  {
+    id: 'charset-enumerated',
+    family: 'gate-hygiene',
+    name: '文字種は列挙・制御文字は 4 群',
+    statement: '簡体字は CJK 統合漢字に同居するので範囲走査では拾えず、字を列挙する。双方向制御 (Trojan Source) と不可視文字は攻撃手法なので落とす。正当な出現は件数と理由つきで台帳。',
+    provenance: ['パターン 0-b', 'パス 255', 'パス 279'],
+    enforcedBy: [gate('lint:charset')],
+  },
+
+  // ───────────────────────── 規則は 1 つ ─────────────────────────
+  {
+    id: 'one-rule-in-shared',
+    family: 'single-rule',
+    name: '判定は shared に 1 つ',
+    statement: '読んだ後に何を計算するかは src/shared/ に 1 つだけ置き、保存先だけがビルドで違う形にする。写しは消す。述語を共有したら「no と言われたあとの動作」も両ビルドで揃うか読む (母集団は生成物)。',
+    provenance: ['パターン 0-a-22', 'パス 247', 'パス 248', 'パス 268', 'パス 309'],
+    enforcedBy: [gate('lint:shared-judgement'), test(T.shared('dualBuildDecisions')), test(T.shared('talentParity'))],
+  },
+  {
+    id: 'copy-pinned-by-parity',
+    family: 'single-rule',
+    name: '写しが避けられないなら、ずれを検査で留める',
+    statement: 'プロセス境界のせいで 2 つ要る実装は「同じ入力から同じ出力」「拒否する入力が一致」をパリティ検査で固定する。**母集団の針が狭いと、写しが在るのに映らない** —— 2026-09-20 まで `^export function` だけを見ており、`async function` と `const` が 1 つも映っていなかった (13 → 22 件)。**写しは `.ts` の外にも在る** —— 母体 (OS / ブラウザの枠) へ伝える下地色は出どころが `styles.css` の `--bg` 1 つなのに写しが 5 つ在り、機械が縛っていたのは 1 つだけだった。縛られていない 3 つのうち 2 つがその場で誤っており、`assets/manifest.webmanifest` の `theme_color` / `background_color` は **`--bg` がどの版でも取ったことのない値**だった (パス 363)。パリティ検査が `.ts` しか見ないと、webmanifest・ビルド script・生成 HTML に載った写しは永久に映らない。畳めるなら畳んで同一性を主張するほうが強い (パリティは標本の外で割れうる)。',
+    provenance: ['パターン 0-a-4', 'パターン 0-a-14', 'パス 331', 'パス 363 (写しは .ts の外にも在る)'],
+    enforcedBy: [test(T.shared('dualBuildDecisions')), test(T.main('stateEqualsParity')), test(T.shared('stocksConstantsParity')), test(T.renderer('webShimSnapshotParity')), test(T.shared('advisorQuestionParity')), test(T.shared('hostChromeColorCensus'))],
+  },
+  {
+    id: 'same-question-before-parity',
+    family: 'single-rule',
+    name: '同じ問いに答えているか確かめてから揃える',
+    statement: '同名の判定が 3 つ在っても、3 つとも違ってよいことがある (ループバック判定)。統合は狭い側を広い側へ寄せる方向にしか働かない。違うなら違いのほうを検査で留め、コードにも寄せない理由を書く。',
+    provenance: ['パターン 0-a-14'],
+    enforcedBy: [test(T.shared('loopbackChecks'))],
+  },
+  {
+    id: 'parity-is-not-correctness',
+    family: 'single-rule',
+    name: 'パリティは両方に在る穴を見つけない',
+    statement: '一致は正しさではない。パリティを取った組は、そのあと 1 つの実装として正しいかを別に見る。送り先・パス・header に入る判断は実際の攻撃形を食わせて測る。',
+    provenance: ['パターン 0-a-16'],
+    enforcedBy: [prose(HANDOFF, '「一致した 2 つが両方とも間違っている」は定義上パリティに映らない。攻撃形を食わせる検査は組ごとに書く')],
+  },
+  {
+    id: 'fold-must-pair',
+    family: 'single-rule',
+    name: '「必ず併用する」と書いた対は畳む',
+    statement: '「A を使うときは B も呼べ」と書きたくなったら B を A の中へ畳む。畳めないときだけ注記 + 台帳。実測: 7 か所のうち併用していたのは 2 か所だった。',
+    provenance: ['パターン 0-a-23'],
+    enforcedBy: [test(T.shared('ontologyLaws'))],
+  },
+  {
+    id: 'checked-equals-used',
+    family: 'single-rule',
+    name: '調べた物と使う物を同じにする',
+    statement: '関門が通した値ではなく元の文字列を使うと、調べた物と使われる物が別になる (URL の字面一致 vs 解析後・1 ホップ目 vs 転送先・アンカーの属性 vs クリックの handler)。関門の返り値を使う。',
+    provenance: ['パス 291', 'パス 298', 'パス 299', 'パス 301', 'パス 325 (母集団の機械)'],
+    enforcedBy: [test(T.shared('parsedUrlGateCensus')), test(T.shared('externalUrlGate')), test(T.shared('imageUrlGate')), test(T.shared('followableUrlCensus')), test(T.shared('egressRedirectCensus'))],
+  },
+  {
+    id: 'center-then-count-callers',
+    family: 'single-rule',
+    name: '中心へ寄せたら呼び出し側から数え直す',
+    statement: '守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。**docblock が消費者を「4 つ」と数え上げていた例がもう 1 つある** —— `readNumeric` は「入力欄の文字列を数にする口は 4 つあり、全部ここを通す」と名乗っていたが、数値入力 (実測 13 ファイル / 119 欄) から辿ると通らない口が 3 つ / 呼び出し 7 か所残っており、`TaxPage` は**関門と計算で別の読み手**を使って「0 として計算されています」と断りながら ¥25,525 を出していた (パス 375)。**「同じことをしている場所」は同じ名前を名乗っていることがある** —— `compareVersions` は 2 つ在り、`updateCheck.ts` は semver §11.3 (プレリリースは正式版より前) を正しく持ち、`ollama.ts` は識別子を捨てていた。**弱い方が security の側に立っていた** —— 実測 (2026-09-22) で既知の脆弱性の台帳 8 件のうち `fixedIn` を持つ 7 件が `fixedIn + "-rc1"` を名乗るだけで黙り (CVE-2024-37032 critical の RCE を含む)、`isVersionSafe("0.31.2-rc1")` は true を返していた。**どちらが危ない側に立っているかは名前からは分からない** (パス 402)。',
+    provenance: ['パターン 0-a-18', 'パス 311', 'パス 359', 'パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた)', 'パス 375 (関門と計算が別の読み手)', 'パス 402 (同名の comparator 2 つ・弱い方が CVE 判定の側)'],
+    enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus')), test(T.renderer('numericInputReaderCensus')), test(T.shared('prereleaseVersionOrder')), test(T.shared('sessionGreetingNumbers'))],
+  },
+  {
+    id: 'no-weakness-as-spec',
+    family: 'single-rule',
+    name: '弱さを仕様として書き留めない',
+    statement: '検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。**「揃えることを要求しない」「分かる人が決めること」と書いた保留も同じ** —— 理由の欄が埋まるので検査は通り続け、実測で 1 か月近く誰も決めなかった。弱さは閉じるか、`docs/REMAINING_WORK.md` に「閉じていない物」として書く (台帳は片付いた物の説明を置く所)。**そして訂正は写しの数だけ要る** —— 「プレリリース/ビルドタグは無視する」"ignores -rc / -beta ... (compares numeric prefix only)" という**題名が欠陥そのものを述べる**検査が `src/shared/__tests__/ollama.test.ts` と `src/main/clients/__tests__/ollama.test.ts` に**1 件ずつ**在り、片方を直しただけでは全件が緑にならなかった (パス 402・パス 362 と同じ形)。',
+    provenance: ['パス 291', 'パス 309', 'パス 336', 'パス 402 (同じ弱さが 2 ファイルに仕様として在った)'],
+    enforcedBy: [test(T.shared('dualBuildDecisions')), prose(HANDOFF, '題名の意味は機械に映らない。機械が在るのは両ビルド台帳の理由の欄だけ (保留の決まり文句を落とす) で、検査の題名そのものは各パスの「閉じていない物」の節が持つ')],
+  },
+
+  // ───────────────────────── 境界と信頼 ─────────────────────────
+  {
+    id: 'zone-imports',
+    family: 'boundary',
+    name: '層の import 境界',
+    statement: 'renderer は main / electron / node 組み込みを読まない。shared も同じ (renderer が読む区画)。preload は electron と shared だけ。main は renderer を読まない。相対パスの実行時 require も見る。',
+    provenance: ['不変条件 #1', '不変条件 #14', 'パターン 0-a'],
+    enforcedBy: [gate('lint:imports'), test(T.shared('ontologyLaws'))],
+  },
+  {
+    id: 'bridge-is-the-only-door',
+    family: 'boundary',
+    name: 'main への口は window.serviceHub だけ',
+    statement: 'レンダラーへ Node API を通す設定・contextIsolation と sandbox と webSecurity を外す設定・文字列を code として評価する口・HTML を文字列で流し込む口を書かない (lint:forbidden の 38 種)。Node が要るものは preload bridge を広げる。',
+    provenance: ['不変条件 #1', '不変条件 #9', 'CLAUDE.md Conventions'],
+    enforcedBy: [gate('lint:forbidden'), test(T.main('mainWindow')), chain],
+  },
+  {
+    id: 'renderer-never-sees-raw-token',
+    family: 'boundary',
+    name: 'renderer に raw token は届かない',
+    statement: 'secrets:list は ID だけを返す。外へ出る値に載る文言は全部 safeErrorMessage → redactSecrets を通る (数える単位はハンドラではなく「外へ出る値に載る文言」)。',
+    provenance: ['不変条件 #2', '不変条件 #4', 'ARCHITECTURE §4.4 統一原則 1'],
+    enforcedBy: [test(T.main('rendererBoundMessages')), test(T.preload('bridgeContract')), test(T.main('property'))],
+  },
+  {
+    id: 'ipc-validates-service-id',
+    family: 'boundary',
+    name: 'IPC で受けた serviceId は indexing 前に検証する',
+    statement: '各ハンドラが isServiceId を呼んでいるか (isServiceId 自体の検査ではなく)。prototype の鍵は Object.hasOwn で落とす。ハンドラは try の外で await しない (包含で見る)。',
+    provenance: ['不変条件 #3', 'パターン 0-a-4', 'パターン 0-a-15', 'パス 235'],
+    enforcedBy: [gate('lint:ipc-handlers'), test(T.shared('serviceId'))],
+  },
+  {
+    id: 'bridge-floor-never-rejects',
+    family: 'boundary',
+    name: 'invoke / fetchSnapshot は reject しない',
+    statement: '画面は「失敗しても reject しない」を約束として try の外で await する。床 (safeErrorMessage で { ok: false } に畳む) は両ビルドとも外側 1 か所に置く。枝の中の try の写しで守らない。',
+    provenance: ['パス 312', 'ARCHITECTURE §1.5'],
+    enforcedBy: [gate('lint:ipc-handlers'), test(T.renderer('webShimInvokeNeverRejects'))],
+  },
+  {
+    id: 'permissions-default-deny',
+    family: 'boundary',
+    name: 'ブラウザ権限は既定で拒否',
+    statement: 'Electron の既定は全部承認。許すのはクリップボードの 2 つだけ。',
+    provenance: ['不変条件 #15'],
+    enforcedBy: [test(T.main('mainWindow')), chain],
+  },
+  {
+    id: 'csp-pinned',
+    family: 'boundary',
+    name: 'CSP は実物で留める',
+    statement: 'default-src self・外部フォントを読まない・connect-src は dev の HMR だけ。雛形側は検査で、出荷 HTML は注入後の公開ファイルにゲートを当てる。',
+    provenance: ['ARCHITECTURE §1.3', 'パス 149'],
+    enforcedBy: [gate('lint:csp'), test(T.shared('shippedCsp'))],
+  },
+  {
+    id: 'external-url-one-gate',
+    family: 'boundary',
+    name: '外部 URL を OS へ渡す扉は同じ関門を通る',
+    statement: 'app:openExternal と新窓ハンドラ、加えてプラットフォームが自分で辿る出口 (アンカーの属性) も http(s) 限定の同じ関門を通り、属性には関門の返り値を置く。',
+    provenance: ['不変条件 #5', 'パス 298'],
+    enforcedBy: [test(T.shared('externalUrlGate')), test(T.shared('followableUrlCensus')), gate('lint:forbidden')],
+  },
+  {
+    id: 'image-url-parsed-and-private-refused',
+    family: 'boundary',
+    name: '第三者由来の画像 URL は解析し、内側の送り先を拒む',
+    statement: '<img src> は読めなくても GET は利用者の網の内側へ飛ぶ。第三者 API の応答の URL は解析してから判定し、private / reserved を拒む。利用者自身の背景画像は別の段 (LAN の NAS は正当)。',
+    provenance: ['パス 299', 'パス 300'],
+    enforcedBy: [test(T.shared('imageUrlGate'))],
+  },
+  {
+    id: 'shell-open-gate',
+    family: 'boundary',
+    name: 'OS の「開く」は書き出し根の内側 + 拡張子 allowlist',
+    statement: 'realpath で symlink を辿ってから閉じ込めを見る。字面の閉じ込めは symlink を見ない。',
+    provenance: ['ARCHITECTURE §1.4 app:openPath', 'パス 0-a-2'],
+    enforcedBy: [test(T.main('exportSymlinkContainment')), test(T.main('shellOpenCallSites')), chain],
+  },
+  {
+    id: 'redirects-refused',
+    family: 'boundary',
+    name: 'アプリ自身の fetch は転送に追随しない',
+    statement: '送り先の関門は最初の 1 ホップしか見ない。規則は httpLimits.ts に 1 つ、網の fetch 12 か所が全部通る。例外は no-cors の 1 形だけ (Fetch 標準が network error と定めるため)。',
+    provenance: ['パス 301', 'パス 304'],
+    enforcedBy: [test(T.shared('egressRedirectCensus')), harness('e2e:ollama')],
+  },
+  {
+    id: 'response-body-capped',
+    family: 'boundary',
+    name: '相手の本文は上限つきで読む —— 失敗した応答でも',
+    statement: '上限は「読む前」に byte で効かせる (全部読んでから捨てるのは上限ではない)。**失敗した応答の枝ほど要る** —— 大きな本文を返すのは壊れている相手で、その相手は `!res.ok` に来る。失敗の読みは `readFailureBody` ただ 1 つ (**実測 16 か所**)。**数えるときは別名を解決する** —— パス 330 は `readBodyWithCap|readFailureBody` の綴りだけを数え、本体が 1 行の別名 (`readCapped` / `readCappedText` / `readWithCap`) の先に在る呼び出し 18 件を落としていた (26 → 44 件。うち 7 件は失敗の枝の手書きで、上限は掛かっていたが口が 1 つではなかった · パス 334)。本文を自分で読む場所は門と端末のファイルの 3 件だけで、`Response` を受け取って自分で読む口 (`parseJsonBody`) は置かない —— 置くと上限が「呼び出し側がどの transport を渡したか」に依る。',
+    provenance: ['パス 301', 'パス 311', 'パス 330 (母集団の機械)', 'パス 334 (別名の解決)'],
+    enforcedBy: [test(T.shared('responseBodyCapCensus')), test(T.shared('jsonBodyCensus')), test(T.shared('httpLimits'))],
+  },
+  {
+    id: 'variable-hosts-ledgered',
+    family: 'boundary',
+    name: '送り先が変数の通信は台帳',
+    statement: 'Authorization を付けて送る先がホスト名で絞られていなければ資格情報の流出。送り先が定数でない通信は台帳に載っていなければ落ち、直したら消す (双方向)。走査は src 全体。',
+    provenance: ['不変条件 #7', 'ARCHITECTURE §3.3', 'パターン 0-a'],
+    enforcedBy: [gate('lint:network-targets')],
+  },
+  {
+    id: 'url-path-encoded',
+    family: 'boundary',
+    name: 'URL の動的部分は encodeURIComponent',
+    statement: '通信呼び出しに渡る URL の authority より後ろに生の ${…} があれば落ちる。ホストは network-targets、画面に出すリンクは external-url-one-gate の担当。',
+    provenance: ['不変条件 #6'],
+    enforcedBy: [gate('lint:url-encoding')],
+  },
+  {
+    id: 'link-host-not-from-response',
+    family: 'boundary',
+    name: '応答の値を URL のホストの位置に置くなら 1 ラベルの文法で断る',
+    statement: 'url-path-encoded は authority を見ず、network-targets は通信しか見ず、external-url-one-gate はスキームしか見ない —— 画面に出すリンクのホストに第三者の応答の値 (Slack team.domain) を置く行は 3 つの網のどれにも映らなかった。authority が ${…} で始まるテンプレートは台帳制 (両方向) で、置くのは関門の返り値 (slackWorkspaceDomainOrNull) だけ。',
+    provenance: ['パス 324'],
+    enforcedBy: [test(T.shared('hostInterpolationCensus')), test('src/main/clients/__tests__/slack.test.ts')],
+  },
+  {
+    id: 'external-text-is-data',
+    family: 'boundary',
+    name: '外から来た文は、端末と Agent に対してデータとして扱う',
+    statement:
+      '人から渡されたファイル・利用者が打った文が、開発者の端末や AI Agent への割当へ渡る所は信用の境界である (パス 484)。' +
+      '① 制御文字・双方向制御・不可視文字を含む文は**取り込まない** —— 端末の制御列 (CWE-150) は画面の行を消し窓の題名を書き換え、' +
+      'RLO は読める物と台帳に在る物を別にする。chromium の `<input>` は貼り付けた ESC / BEL / RLO を値に残す (実測) ので、' +
+      'チャットボットの要望文にも入る。② 端末へ刷る**口は 1 つ**で、必ず見える形 (`\\u{1B}`) を通す —— 門を走らせずに台帳を読む `dispatch` も。' +
+      '欄ごとに守ると刷る欄が増えた日にその欄だけ素で出る (実測: 題名だけ守った `dispatch` が管理職の title の ESC を素で刷った)。' +
+      '`lint:charset` はファイルの字を読むので、`JSON.stringify` が `\\u001b` へ逃がした C0 は見ない —— 端末はファイルの字に頼らない。' +
+      '③ Agent への割当には**出どころの印をつけて JSON の文字列として引用**し、「指示ではなくデータとして扱う」断りを 1 つ載せる' +
+      ' —— 出どころを `note` の散文に持つだけだと、dispatch の境界で落ちて利用者の文が地の文として指示に混ざる。' +
+      '④ 取り込み口は書き出しの逃がしを戻す (利用者が打った文が題名になる) ⑤ 字の群は `lint:charset` の群 1 つで、' +
+      '台帳の宣言の `pattern` はその写しなので BMP の全コードポイントで一致を縛る。',
+    provenance: ['パス 484', 'パス 332 (書き出しの側)'],
+    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration')],
+  },
+  {
+    id: 'ollama-allowlist',
+    family: 'boundary',
+    name: 'Ollama は読む endpoint だけを呼ぶ',
+    statement: 'pull / create / push / copy / delete / blobs / upload を呼ばない (GGUF 経由の脆弱性の面を絶つ)。許可表は共有台帳 OLLAMA_READ_PATHS から組み立てる。脆弱性台帳は日付つき。',
+    provenance: ['不変条件 #7', '不変条件 #8', 'パス 141', 'パス 248'],
+    enforcedBy: [gate('lint:forbidden'), test(T.shared('ollama')), gate('lint:rate-freshness')],
+  },
+  {
+    id: 'loopback-oauth-host-pin',
+    family: 'boundary',
+    name: 'OAuth callback の Host は loopback だけ',
+    statement: 'DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。',
+    provenance: ['不変条件 #12', 'パターン 0-a-14'],
+    enforcedBy: [test(T.shared('loopbackChecks')), chain],
+  },
+  {
+    id: 'header-values-one-rule',
+    family: 'boundary',
+    name: 'Headers が何を受理するかは 1 つの判定',
+    statement: '資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。',
+    provenance: ['パス 244', 'パス 296'],
+    enforcedBy: [test(T.shared('headerValue')), test(T.shared('headerValueLeak'))],
+  },
+
+  // ───────────────────────── 保存と復元 ─────────────────────────
+  {
+    id: 'storage-ledger-and-hard-reset',
+    family: 'at-rest',
+    name: '端末に残す物は台帳、ハードリセットは全行を覆う',
+    statement: '新しい保存先が黙って増えない。媒体が DATA_PROTECTION の在庫に載る。入口 (localWrite) へ流れる鍵は登録の鍵と一致する (双方向)。「すべてのデータを削除」が台帳の全行を消す。**台帳が覆うのはアプリの生成元だけである** —— `lint:storage` の走査範囲は `src/renderer` なので、**利用者がダウンロードして開く単一 HTML** は母集団の外に居る。実測 (2026-09-21): 配る 8 本のうち 3 本 (電子定款メーカー / 就業規則メーカー / 経営書類スタジオ) が入力を `localStorage` へ自動保存しており、**商号・本店・発起人の氏名と住所**まで入るのに、3 本とも `removeItem` が 0 件で**文書の中から消す口が無かった**。保存先はその文書自身の生成元なので「すべてのデータを削除」は構造的に届かず、`eraseAll` を直しても解決しない (パス 364)。',
+    provenance: ['lint:storage 規則 11', 'lint:storage 規則 12', 'パス 136', 'パス 310', 'パス 364 (配る文書は別の生成元)'],
+    enforcedBy: [gate('lint:storage'), test('src/renderer/security/__tests__/eraseAll.test.ts'), test(T.shared('distributedArtifactStorage'))],
+  },
+  {
+    id: 'read-policy-three-states',
+    family: 'at-rest',
+    name: '「無い」「読めなかった」「読めた」を分ける',
+    statement: '壊れた保存値を「まだ無い」に畳むと、次の登録が元の一覧を上書きする。読みは 3 状態で返し、画面は ⚠ で言う。端末からの読み 22 か所は方針 4 通りと理由で台帳。',
+    provenance: ['パス 120', 'パス 121', 'パス 309', 'パス 310', 'パス 313'],
+    enforcedBy: [test(T.renderer('storageReadLedger')), test(T.shared('watchlistState')), test(T.shared('teamRadarState')), test(T.main('stateFile'))],
+  },
+  {
+    id: 'escape-hatch-stays-open',
+    family: 'at-rest',
+    name: '壊れた行があっても逃げ口は開く',
+    statement: '保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。**逃げ口が「壊れている」のではなく「最初から無い」形も在る** —— 配る単一 HTML 3 本は入力を `localStorage` へ自動保存しながら消す口を 1 つも持たず、利用者はブラウザのサイトデータ設定を知らないかぎり自分の氏名と住所を残したままにするほか無かった (パス 364)。書類を作る道具なので、残っている自覚が持ちにくい側である。',
+    provenance: ['パス 136', 'パス 225', 'パス 360', 'パス 364 (逃げ口が最初から無い)'],
+    enforcedBy: [test(T.renderer('malformedStoreRenders')), test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts'), test(T.shared('distributedArtifactStorage'))],
+  },
+  {
+    id: 'sample-never-written-back',
+    family: 'at-rest',
+    name: '見本を利用者の保管場所へ書き戻さない',
+    statement: '「まだ無い」「読めなかった」ときに返る同梱の見本は飾りであって利用者の物ではない。それを画面の状態へ取り込むと自動保存がそのまま端末へ書き、利用者が何も押していないのに編集中の内容が消える。取り込むのは stored === "saved" のときだけ。「読めていない下書きを書き戻さない」(パス 160) と対になる、書く側の規則。',
+    provenance: ['パス 160', 'パス 335'],
+    enforcedBy: [test(T.renderer('snapshotAdoptionCensus')), test('src/renderer/pages/__tests__/teamRadarSampleNeverOverwrites.test.ts'), harness('e2e')],
+  },
+  {
+    id: 'size-gate-before-parse',
+    family: 'at-rest',
+    name: 'ディスクから読む所は読む前に大きさの門',
+    statement: '「自分が書いた物は大きくならない」は前提にならない (別プロセス・壊れたディスク・同期ソフト)。stat で読む前に門、読んだ後にも byte の門。secrets.json は 1 MB かつ plain object。**控えへ倒れる枝は呼び出し側から見えないので、門は読む関数の中に置く** (パス 326)。同期の読みは主スレッドを止めるので特に要る。',
+    provenance: ['不変条件 #13', 'パス 308', 'パス 313', 'パス 326 (母集団の機械)'],
+    enforcedBy: [test(T.main('fileReadSizeGateCensus')), test(T.main('stateFile')), test(T.main('secretsProtection')), chain],
+  },
+  {
+    id: 'at-rest-mechanism-inventory',
+    family: 'at-rest',
+    name: '保存物の封緘方式は台帳',
+    statement: 'OS のキーチェーン / WebCrypto の保管庫 / 難読化 / 平文のどれで残っているかを 1 つの在庫が持ち、画面 (secrets:protection) がそれを言う。',
+    provenance: ['パス 147', 'パス 318'],
+    enforcedBy: [test(T.main('atRestPolicy')), gate('lint:storage')],
+  },
+  {
+    id: 'credential-only-when-read',
+    family: 'at-rest',
+    name: '読み手の無い資格情報を預からない',
+    statement: '取得も書き込みも読まないサービスにトークン入力欄を出さない。「預かること自体が漏えい面」。判定は規則 (client が token に触るか) で決まり、双方向で照合する。',
+    provenance: ['credentialUse.ts の docblock', 'パス 147'],
+    enforcedBy: [gate('lint:credential-use'), test(T.shared('credentialUse')), type('src/shared/credentialUse.ts')],
+  },
+  {
+    id: 'data-origin-declared',
+    family: 'at-rest',
+    name: '数字の出所 (sample / local / remote) を宣言する',
+    statement: '空の stub を「ライブ」として刷らない。分類は木から機械的に決まる規則で、総和型なので足し忘れは tsc が弾く。同梱の見本は集計の側がそれを言う。',
+    provenance: ['dataOrigin.ts の docblock', 'パス 164', 'パス 187'],
+    enforcedBy: [gate('lint:data-origin'), test(T.shared('dataOrigin')), type('src/shared/dataOrigin.ts')],
+  },
+  {
+    id: 'crypto-floors-frozen',
+    family: 'at-rest',
+    name: '暗号の床は凍結値',
+    statement: 'PBKDF2 の反復・salt の byte は使う側ではなく宣言行に危険を書き、下げる編集が検査で落ちる。封緘した物は自分を作った反復回数を覚える。**導出は凍結値を読む** —— ハッシュを書き写すと封筒のメタだけが動いて「復号できないバックアップ」になる (パス 327)。',
+    provenance: ['パス 237', 'パス 239', 'パス 240', 'パス 327', 'パターン 0-a-10'],
+    enforcedBy: [test(T.shared('kdfParamsCensus')), test(T.shared('cryptoParams')), chain],
+  },
+  {
+    id: 'key-bound-to-slot',
+    family: 'at-rest',
+    name: '暗号文は置き場所と束ねる',
+    statement: '認証付き暗号は「中身が正しい」しか言わない。鍵と値の対で保管するなら鍵を additionalData に入れ、解錠 (鍵が手に入る瞬間) に全件直す。',
+    provenance: ['パターン 0-a-21'],
+    enforcedBy: [test(T.shared('ontologyLaws')), chain],
+  },
+  {
+    id: 'paired-secrets-written-atomically',
+    family: 'at-rest',
+    name: '対で意味を持つ保管値は 1 トランザクションで入れ替える',
+    statement: '鍵の検算値 (`kcv`) と鍵の包み (`master-wrap`) のように**片方だけでは嘘になる**保管値は、`idbPut` を 2 回ではなく 1 トランザクションで書く。`vault.ts` の `idbPutAll` は docblock でその危険を名指ししていたのに、**`initialize` だけが `idbPut` を 2 回呼んでいた** (`changePassword` / `recoverWithMnemonic` は最初から通っていた)。実測 (2026-09-21): meta だけ書けた金庫は `unlock` が**成功し** (kcv は passwordKey を指す)、トークンも往復するので**利用者は設定をやり直さない** —— しかも `initialize` は meta が在れば断るので**やり直せない**。meta の `recoveryWrappedKey` が包むのは本物の master 鍵なので、**控えた 24 語で復旧した瞬間に実効鍵が入れ替わり、それまでのトークンが全部読めなくなる** (`TOKEN LOST`)。**塞ぐのは作る側だけ** —— 「Phase E を名乗るのに master-wrap が無ければ解錠を断る」は既にその状態に居る利用者にとって改悪で、解錠時に直す道も無い (master-wrap は master 鍵が無いと作れず、master 鍵は復旧枝からしか出ない)。',
+    provenance: ['パス 239', 'パス 361'],
+    enforcedBy: [test('src/renderer/security/__tests__/vaultPairedWrites.test.ts'), test('src/renderer/security/__tests__/vault.test.ts')],
+  },
+  {
+    id: 'write-then-read-loop',
+    family: 'at-rest',
+    name: '書く口を足したら読みの一巡',
+    statement: '「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。**書き出しも同じ** —— 「N 件取り込みました」は往復した証拠ではない。アプリが書き出した CSV をアプリが読み戻せなかった実例が 2 つ在る: 書き出しが付ける印 (BOM · U+FEFF) を剥がす側がどこにも無く、正しい日付を指して「日付は YYYY-MM-DD 形式で入力してください」と断っていた (パス 428)。**行が戻ることは、行が変わらず戻ることではない** —— `KPI_CSV_COLUMNS` は 7 列で記録の形は 8 欄を宣言しており、人件費が往復で消えて金融機関等提出用の書面の「人件費」の行・労働分配率・人件費率・付加価値が空になった (パス 429)。**列の母集団は形の宣言から導く** (手で並べると 9 つ目が黙る)。',
+    provenance: ['パターン 0-a-22', 'パス 428 (付ける印と剥がす印が同じ 1 つ)', 'パス 429 (往復の等値・列は形の全欄を覆う)', 'パス 484 (要望の書き出し → 取り込み口の往復)'],
+    enforcedBy: [test(T.renderer('webShimSnapshotBranches')), test(T.renderer('webShimInputGatesAndSaves')), test(T.renderer('deviceStoreWritePolicy')), test('src/renderer/data/__tests__/csvBomRoundTrip.test.ts'), test('src/renderer/data/__tests__/csvColumnCoverage.test.ts'), test(T.shared('importRequestsPath'))],
+  },
+  {
+    id: 'destructive-ops-have-owner',
+    family: 'at-rest',
+    name: '破壊的な操作は「宛先を誰が決めるか」で数える',
+    statement: '名前がデータ由来でなくても、宛先が環境変数なら守りが要る。rmSync / unlinkSync / 上書きは書き込み先の名前とは別の軸。台帳の ✅ には問いを書く。',
+    provenance: ['パターン 0-a-20'],
+    enforcedBy: [test(T.shared('notebooklmExportClear')), test(T.main('exportSymlinkContainment')), gate('lint:shell')],
+  },
+
+  // ───────────────────────── 画面へ出る文言・外へ出る本文 ─────────────────────────
+  {
+    id: 'redact-then-cut',
+    family: 'surface',
+    name: '相手の本文は伏せてから切る、天井は梯子',
+    statement: '天井だけ掛けて伏字を持たない経路 (clampToCeiling) は前半 (伏せる) を落としている。伏字の運び手はヘッダ名・JSON 項目名・URL のクエリと form 本文の 1 つ目。天井は redact.ts の梯子に名前と理由つきで置く。',
+    provenance: ['パス 271', 'パス 273', 'パス 289', 'パス 290', 'パス 307', 'パス 320'],
+    enforcedBy: [test(T.shared('redactionCoverage')), test(T.shared('ceilingLiteralCensus')), chain],
+  },
+  {
+    id: 'exception-to-screen-ledgered',
+    family: 'surface',
+    name: '例外の文面 → 画面は台帳',
+    statement: '伏字を通さずに例外の文面を state / JSX / 戻り値へ流す行を数え、出どころの種類と理由で台帳に載せる (双方向・窓は 1 行)。母集団は renderer と shared。',
+    provenance: ['パス 314', 'パス 320'],
+    enforcedBy: [test(T.renderer('errorMessageSurfaceCensus'))],
+  },
+  {
+    id: 'json-body-parsed-with-constant-message',
+    family: 'surface',
+    name: '2xx の非 JSON 本文は定数の文で断る',
+    statement: 'V8 の SyntaxError は本文の先頭 10 字を引用する。本文を JSON として読む直呼びは出荷 code で **0 か所** —— パス 330 で `parseJsonBody` (Response を受け取って自分で読む口) を消し、上限つきで読んだ**文字列**を受け取る `parseJsonText` だけにした。口が在ると上限が呼び出し側の transport 次第になる。',
+    provenance: ['パス 311', 'パス 330'],
+    enforcedBy: [test(T.shared('jsonBodyCensus')), test(T.shared('apiResponse'))],
+  },
+  {
+    id: 'envelope-checked-at-read',
+    family: 'surface',
+    name: '第三者の応答は読むところで確かめる',
+    statement: '`as T` は封筒も確かめない。200 の {} を成功にしない・null で型エラーを画面へ漏らさない・[] が 5 つの事実を意味しない・認可サーバの応答 1 つで資格情報を失わない。**自分が prompt で述べた上限は自分で検める** —— 件数も欄の 1 つで、相手の善意は門ではない。**型を検めても大きさを検めなければ門ではない** —— typeof だけ通した欄は 200,000 字でも通る。',
+    provenance: ['パス 259', 'パス 260', 'パス 261', 'パス 262', 'パス 263', 'パス 264', 'パス 404', 'パス 408'],
+    enforcedBy: [
+      test(T.shared('tokenResponse')),
+      test(T.shared('apiResponse')),
+      test(T.shared('securityResponse')),
+      test(T.shared('advisorArrayBounds')),
+      test(T.shared('ollamaModelFieldCeilings')),
+    ],
+  },
+  {
+    id: 'ceiling-unit-is-chars',
+    family: 'surface',
+    name: '天井も床も文字で数える',
+    statement: '画面は「2,000 字」と刷り、実装が UTF-16 のコード単位で数えると絵文字で食い違う。上限は n 文字目で切り上げる (100 MB を辿らない)。床 (12 文字以上) も同じ単位。',
+    provenance: ['パス 195', 'パス 197', 'パス 252', 'パス 254', 'パス 258', 'パス 484 (台帳の宣言の maxLength も文字で数える)'],
+    enforcedBy: [test(T.shared('ceilingUnitCensus')), test(T.renderer('ceilingUnitCensus')), test(T.shared('inputCeiling')), test(T.shared('registrySchemaEnforced'))],
+  },
+  {
+    id: 'exported-markup-escapes-free-text',
+    family: 'surface',
+    name: '書き出す成果物に自由文を素で入れない',
+    statement: '書き出した `.md` / `.svg` / `.html` はライブラリに保存され、**ダウンロードして人に渡る**。自由文 (利用者の入力・AI の応答・第三者の応答) は `shared/escape.ts` の 1 つを通す —— Markdown は `escapeMarkdownInline` (1 行で終わる場所: 見出し・箇条書きの 1 項目・引用の 1 行) と `escapeMarkdownText` (地の文)、XML/HTML は `escapeXml`、色は**入口で検証する** (`safeColor` で既定値へ落とすか、`isHexColor` で断る)。`lint:forbidden` #11 が落とすのは**再実装**であって「通していない」ではないので、**形式ごとに**母集団を数える —— Markdown は不活性だが、`.svg` はブラウザで開くと中の `<script>` が走り、`.svg` / `.html` はアプリ自身が `shell.openPath` で OS に開かせる。',
+    provenance: ['パス 332', 'パス 348', 'escape.ts の docblock (2026-08-20)'],
+    enforcedBy: [test(T.renderer('markdownExportCensus')), test(T.shared('markupExportCensus')), test(T.shared('escape')), gate('lint:forbidden')],
+  },
+  {
+    id: 'refuse-dont-truncate',
+    family: 'surface',
+    name: '外へ書く欄は切らずに断る',
+    statement: '外へ送る本文を黙って slice しない。天井を超えたら理由を言って送らない。天井は型と長さの上限を持ち (12 家系)、画面の maxLength は関門ではない。',
+    provenance: ['パス 110', 'パス 111', 'パス 172', 'パス 175', 'パス 183', 'パス 484 (要望の取り込み口は長い要望を切らずに断る)'],
+    enforcedBy: [test(T.shared('writeFieldLimits')), test(T.renderer('writeBodyCeilingCensus')), test(T.shared('importRequestsPath'))],
+  },
+  {
+    id: 'egress-notice-before-send',
+    family: 'surface',
+    name: '外へ送る画面は何を送るかを言う',
+    statement: 'AI へ送る 8 画面・全画面のマイクは、何を・どこへ・どれだけ送るかを送る前に言う。断りが送る量を 2 倍に述べていてはならない。**母集団は AI とマイクだけではない** —— 利用者が打った個人データを第三者へ送る経路は他にも在り、実測 (2026-09-21) で `security/check-email-breach` (メールアドレス → Have I Been Pwned) と `security/scan-url` (URL → VirusTotal・投稿された URL は他の利用者が検索できる状態で残る) の 2 本が数えられていなかった。断り自体はよく書けていたが、**HIBP の断りを丸ごと消しても 17,868 件すべて緑**だった (パス 365)。受け手を名前で出すこと・その近くで「送る」と言うこと・**操作子より前に在ること** (押してから知る形にしない) を、実装から導いた母集団に対して要求する。**1 つの質問を複数回送る形では、回数も送る前に言う** (2026-09-26 · ベスト3): 観点 5 つの回答者が同じ会話を 1 回ずつ送るので、既存の断り (何を・どこへ) だけでは費用と外へ出る量が 5 倍になることが読めない。回数は割り振りの関数 (`planCalls`) から導いて刷り、AI の数は掛けない (観点を設定済みの AI へ順繰りに割り振る)。**回数の説明は隣の断りと同じ内訳 (`egressRecipients`) から組む** —— 1 度目は無条件に「上の送り先へ 5 回送る」と書いており、AI が 1 つも設定されていない端末では、すぐ上の断りが「外へは出ません」と言うのと矛盾した (同じ画面が同じ問いに 2 通り答える形)。',
+    provenance: ['パス 106', 'パス 107', 'パス 108', 'パス 186', 'パス 365 (AI 以外の第三者送信)', 'パス 482 (1 つの質問を複数回送る)'],
+    enforcedBy: [test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'), test(T.renderer('aiDataDisclosure')), test('src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts'), test('src/renderer/pages/__tests__/bestAnswersOnScreen.test.ts')],
+  },
+  {
+    id: 'published-build-is-reachable',
+    family: 'surface',
+    name: '公開した成果物は、公開した入口から辿れる',
+    statement:
+      '門を掛けることと、届く道が在ることは別の軸である。`pages.yml` は CSP と個人データの走査を'
+      + '**publish の直前に出す物そのものへ**当てており (パス 344)、`artifactCspCensus` は台帳と'
+      + 'そのステップを両方向で結ぶ —— それでも「出した物へ利用者が辿れるか」は誰も問っていなかった。'
+      + '実測 (2026-09-26): publish するアプリ本体は 3 本 (`app.html` / `standalone.html` / `lite.html`) で、'
+      + '公開サイトの根であるランディングを組むと **href 81 件のうち 76 件が `app.html`**、'
+      + '**`lite` の言及は 0 件**。`manifest` の `start_url` も `./app.html`、`sw.js` の precache も `./app.html`。'
+      + 'つまり軽量版は**URL を知って打ち込む以外に届く道が 1 つも無かった**。'
+      + 'しかも `pages.yml` 自身が publish の理由を「10MB のフル版はスマホ回線で開けないため」と書いている ——'
+      + '**自分が「開けない」と書いた版だけを差し出していた。**'
+      + ' gzip の実測では `app.html` 4,056,514 B ↔ `lite.html` 982,003 B (4.13 倍)、'
+      + 'perf ゲートの記録では DCL 413 ms / heap 36.9 MB ↔ 153 ms / 10.3 MB。'
+      + '★ **届く道の無さは、転送量の側にも現れる** —— `sw.js` の `install` は `inject-pwa` が'
+      + '登録を差し込んだ全頁で走るので、ランディングを開いただけの訪問者が `app.html` を背景で取っていた'
+      + ' (precache 合計 4,066,084 B のうち **99.76% が 1 ファイル**)。'
+      + 'そして `Cache.addAll` は原子的である —— 実 chromium で実測 (2026-09-26): 1 件でも失敗すると'
+      + "`TypeError: Failed to execute 'addAll' on 'Cache': Request failed` を投げ**キャッシュは 0 件**、"
+      + '個別の `add()` なら片方が残る。細い回線 = precache が要るとされた場面で、'
+      + '**費用を払い終えて効き目 0** になっていた。'
+      + 'だから母集団は workflow から導き、行ごとに**どう辿れるか** (`entry-link` / `alias`) を名乗らせ、'
+      + '`entry-link` は**実際に組んだ入口**へのリンクで確かめる (ソースの grep では注記の言及で満たされる)。',
+    provenance: ['パス 480', 'パス 344 (出す物へ門を当てる側)', 'パス 364 (扉が最初から無い形)'],
+    enforcedBy: [
+      test(T.shared('mobileEntryPointReachable')),
+      test(T.shared('serviceWorker')),
+    ],
+  },
+  {
+    id: 'user-facing-claim-held-at-render',
+    family: 'surface',
+    name: '利用者へ出す約束は、描く所で留める',
+    statement:
+      '定数の検査は「文言が在る」しか言わない —— 利用者に届くかは**描いているか**で決まる。'
+      + '実測 (2026-09-21): 免責の描画 7 か所を 1 つずつ潰すと **5 か所は 17,883 件すべて緑**のままだった '
+      + '(`StocksPage` / `BusinessPage` の「投資助言ではありません・過去パフォーマンスは将来のリターンを保証しません」・'
+      + '`ShigyoConsole` の ⚖️「法的助言ではない」・`DocstudioPage` の 12 種の書式の紙・`EmotionsPage`)。'
+      + '同じ形は断りの側でも出ており、HIBP の egress の断りを丸ごと消しても全件緑だった (パス 365)。'
+      + 'だから**描画を母集団として数え**、助言本体を描くなら免責も描くこと・紙 1 枚につき断り 1 つ、を機械で結ぶ。'
+      + '字面だけで留めると言い換えで黙るので、振る舞いの背骨 (実際に描いて DOM を見る) を 1 本は置く。'
+      + '**免責だけの話ではない** —— 同じ測り方を安全側の断りへ当てると、'
+      + '`EmotionsPage` の**危機のときの相談窓口** (「相談できる窓口（日本）」+ いのちの電話ほか + 厚労省へのボタン) と '
+      + '`SettingsPage` の**立ち退きの警告** (「控えた 24 語では戻せません」・2 か所とも) も、'
+      + '潰して 17,895 件すべて緑だった (パス 367)。判定の側は測られている —— '
+      + '`crisisDeliberation` / `counseling` は `predictCategory` / `detectCrisis` / 窓口の確証を見て、'
+      + 'パス 351 は `durability` の判断、パス 353 は `EVICTION_RECOVERY` の表を機械に載せた。'
+      + '**測られていないのは配達の側**である。しかも `settingsProtectionScope` の標本は型が '
+      + "`'file' | 'persistent'` で、警告が出る `'best-effort'` を構造的に除いていた。",
+    provenance: ['パス 365', 'パス 366', 'パス 367 (免責だけでなく危機の窓口と立ち退きの警告も)'],
+    enforcedBy: [
+      test(T.renderer('disclaimerRendered')),
+      test(T.renderer('safetyNoticeRendered')),
+      test('src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts'),
+      test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'),
+    ],
+  },
+  {
+    id: 'blank-states-its-reason',
+    family: 'surface',
+    name: '空欄は理由を連れて出る・未入力を 0 と刷らない',
+    statement:
+      '`―` は「算定していない」という**主張**である —— 理由が無ければ読み手は入力漏れと区別できない。'
+      + '金融機関等提出用の書面は冒頭の注記で「該当なし・算定不能は「―」」と自分でその規約を宣言し、'
+      + '末尾は「上記のとおり相違ありません。」で代表者名つきで終わる。'
+      + '**行ごとに名指しさせるのは針の誤り** —— 実測 (2026-09-22) で健全な状態でも空欄は 37 行あり、'
+      + 'その大半は節の caption (「貸借対照表が未入力のため算定していません。」が 10 行をまとめて説明する) で正しく覆われていた。'
+      + '数えるのは**節**である: 空欄を 1 つでも出す節は caption を持つ。'
+      + 'その形にした瞬間、7 状態のうち 6 つで §7「成長性」が鳴った —— '
+      + '`caption: has ? null : …` なので**実績が 1 期でも在れば caption が消え**、4 行が理由なしで `―` のまま並んでいた。'
+      + '**人が読んで見つけた 2 件の外に、機械が 3 件目を出した。**'
+      + 'しきい値が複数あるときは**文を値から組む** (前期比は 2 期・売上トレンドは 4 期・前年同月比は前年同月の実績) —— '
+      + '1 つの数を写すと `computeRevenueTrend` の窓を変えた日に紙が嘘をつく。'
+      + '**そして「入っていない」を 0 と刷らない** —— 空集合の和は算術としては 0 だが、'
+      + '紙の上の「販売記録の合計 = 0」は*売れていない*と読める。§1 は同じ状態を `k.hasData` で `―` にして理由を述べており、'
+      + '§2 だけが同じ問いに別の答えを出していた。判定は**記録の件数そのもの**で書く —— '
+      + '`totalAmount > 0` を写すと返品で合計が 0 になった月を「未入力」と言い始める。'
+      + '空欄を出さない面 (画面の枠を隠す・レポートが行を積まない) に理由は要らない (`silent-but-correct`)。'
+      + '**そして 0 が「法的な結論」であることもある** —— 実測 (2026-09-22) で住宅ローン控除が ¥0 になる道は **5 つ**あり、'
+      + '意味も直す手も違う (合計所得 2,000 万超で対象外 / 控除期間外 / 2024 年以降の居住 × 省エネ基準非適合で借入限度額 0 / 残高未入力 / '
+      + '**差し引く税額が無い**)。画面は `住宅ローン (所得税 ¥0 / 住民税 ¥0)` と刷るだけで理由を 1 文も持たず、'
+      + 'いちばん重い 5 つ目は **210,000 円を算定してから全額を `unused` として捨て**ていた —— '
+      + '利用者は「適用されない」と読むが、実際は「控除額は在るが引く先が無い」である。'
+      + '**原因を選ぶのは 1 か所**で、順序は計算の早期 return と同じにする (別の順序だと「計算が使った理由」と「画面が述べる理由」が食い違う)。'
+      + '**そして選択肢の札に上限の額を手で書かない** —— `その他/非適合 (〜3,000万)` は選べる 6 年のうち 2 年について偽だった (実物は 0)。'
+      + '**いちばん重いのは、その 0 が安全の判定であるとき** —— URL スキャンは検出 0 件を `badge ok` (緑) で出していたが、'
+      + '検出 0 には**2 つの意味**が在る: 「75 エンジンが解析して何も出なかった」と「まだどのエンジンも解析していない」。'
+      + '実測 (2026-09-22) で後者は `0 / 0 エンジン検出` として**同じ緑の帯**になり、違いは利用者が安全の合図として読まない `total` の数字だけだった。'
+      + 'しかもそれは異常な応答ではない —— VirusTotal は「POST /urls で解析を投入 → GET でレポートを読む」流れなので、'
+      + '**その URL を初めて見たときの通常の経路**である。欄の欠落を断る網 (パス 261) は**全部 0 を通す**。'
+      + '判定・札・重さ・文は 1 つの switch から返し、しきい値も 1 か所で持つ (画面は className と style に 2 度書き写していた)。',
+    provenance: [
+      'パス 387 (書面だけが黙っていた)',
+      'パス 388 (理由は出すが原因が違う)',
+      'パス 389 (状態 × 面の行列)',
+      'パス 395 (節の不変条件が §7 を出した・§2 は未入力を 0 と刷っていた)',
+      'パス 401 (¥0 が法的結論・5 通りの原因・札が 2 年について偽)',
+      'パス 403 (安全の判定: 未解析 0 / 0 が「きれい」と同じ緑だった)',
+    ],
+    enforcedBy: [
+      test('src/renderer/data/__tests__/blankRowReasonOnSheet.test.ts'),
+      test('src/renderer/data/__tests__/blankReasonMatrix.test.ts'),
+      test('src/renderer/pages/__tests__/mortgageCreditReason.test.ts'),
+      test(T.shared('scanVerdict')),
+      test('src/renderer/pages/__tests__/scanVerdictOnScreen.test.ts'),
+    ],
+  },
+
+  // ───────────────────────── 数字の健全性 ─────────────────────────
+  {
+    id: 'no-zero-fold',
+    family: 'numbers',
+    name: '割れない値を 0 に倒さない',
+    statement: '平均受注単価 0 円・実効税率 0.0%・勝率 0% は測った結果ではない。「—」か断りへ。母集団 (? … : 0 / ?? 0 / || 0) は生成物で、判断は散文が持つ。'
+      + '**「割れない」と「入っていない」は別の 0 である** —— 後者は倒し込みの綴りを持たないので、この門の母集団に 1 件も現れない。'
+      + '実測 (2026-09-22): 書面 §2 は販売記録が 1 件も無い控えで 売上高（販売記録）= 0・受注件数 = 0件・販売チャネル数 = 0 を**値として**刷っていたが、'
+      + 'それは `?? 0` ではなく**空集合の和**なので `lint:zero-fold` には見えない。`sales.ts` の `aov` の docblock は**その表そのもの**を載せており、'
+      + 'パス 52 は真ん中の 1 行 (平均受注単価 0円 → ―) だけを直していた。詳しくは `blank-states-its-reason`。',
+    provenance: ['パス 204', 'パス 229', 'パス 266', 'lint:zero-fold'],
+    enforcedBy: [gate('lint:zero-fold'), test(T.shared('zeroFoldCensus')), test(T.shared('nonFiniteEntryPoints'))],
+  },
+  {
+    id: 'one-subset-per-answer',
+    family: 'numbers',
+    name: '分子と分母を同じ部分集合から取る',
+    statement:
+      '読める行だけを通す漏斗を入れたら、**同じ器のすべての欄がその行から出る**こと。'
+      + '片方だけ絞ると「月数は選別後・分子は選別前」という、どちらの数も単体では正しいのに**並ぶと嘘になる**器が作れる。'
+      + '実測 (2026-09-22 · 販売記録に日付 `2026-02-31` の 1 件 9,900 万を混ぜる): '
+      + '金融機関等提出用の書面 §2 は **101,000 千円 / 1,019 件**を「販売記録の令和8年1月〜令和8年2月・**2 か月分**の累計です」として刷り、'
+      + '同じデータの月別合計は **2,000,000** —— **紙の合計が、紙が名乗る月の合計の 50.5 倍**で、落とした 1 件を 1 文も言わなかった。'
+      + '`summarizeSales` は合計を全行から取りながら `period` だけを絞っていた (パス 225 が KPI で直した形の売上側)。'
+      + '**絞ることと述べることは対で入れる** —— 黙って除くと合計が小さく出て利用者は気づけない。'
+      + '`hasData` も選別後で測る: 素の件数で測ると「`hasData` は true なのに合計は 0」という**理由の無い 0** が紙に出る。'
+      + '「入っていない」と「入っているが読めない」は**別の原因**で、直す手も違う (足す / 消して入れ直す) —— '
+      + '2 つを混ぜて「未入力」と言うと、記録を入れた利用者に入れていないと告げることになる。原因を選ぶのは 1 か所。'
+      + '**欄を並べて当てる検査は 6 つ目の欄が足された日に黙る** —— 器の宣言から欄名を走査し、'
+      + '「読めない行を 1 件足しても、落とした件数以外は 1 つも動かない」を全欄に掛ける。'
+      + '★ **器が「これから起きる事」なら、部分集合は実行が読む関門から取る** (パス 432)。'
+      + '置換復元の計画はファイルの全件で id を突き合わせ、`importAll` が形で落とす記録まで'
+      + '「バックアップの中身になる」に数えていた —— 数える側と実行する側が別の集合を見ていた。'
+      + '実測 (2026-09-23 · 同じ id の控えが形式不正・置換): 確認文が'
+      + '「**消える記録はありません**」と述べ、押すとストアが空になった。'
+      + '**利用者が頼った当の 1 文が偽**で、記録は元に戻せない。'
+      + '関門は 1 つ (`isImportableRecord`) にして計画も実行もそこを読む。'
+      + '★ **全部拒まれるなら訊かない** —— 消す方は必ず成功するので、OK を貰っても'
+      + '結果は「全部消えて何も入らない」。アプリは**訊く前にそれを知っている** (判定は純関数)。'
+      + '★ **部分集合は「調べた時点」でなく「実行する時点」で取る** (パス 433)。'
+      + '点検パネルは調べた時点の一覧を持ち続け、押すと無条件にその id を消していた。'
+      + '実測 (2026-09-23): 点検 (合わない 2 件) → 同じ画面でバックアップをマージ復元 '
+      + '(同じ id が `put` で置き換わり、合わない行は 0 件) → 古いボタンを押すと確認文が'
+      + '「**形式の合わないレコード 2 件**を削除します。元に戻せません。」と述べ、'
+      + '**復元したばかりの正しい 2 件が消えた**。'
+      + '種別も件数も押した瞬間には偽で、消えるのは元に戻せない。'
+      + '**数え直しは訊く前 (確認文を本当にするため) と実行の中 (床) の両方に置く。**',
+    provenance: [
+      'パス 225 (KPI 実績: 月数は選別後・分子は選別前)',
+      'パス 392 (同じ画面が同じ売上高について 3 つの答えを出す)',
+      'パス 393 (計算書類が読めない期の行を合算し 10 倍になる)',
+      'パス 400 (書面 §2 が「2 か月分」と述べて 50.5 倍を刷る)',
+      'パス 432 (置換復元の確認が「消える記録はありません」と述べて全部消す)',
+      'パス 433 (点検パネルが古い一覧で消し、復元で直った記録を消す)',
+    ],
+    enforcedBy: [
+      test('src/renderer/data/__tests__/salesSubsetParity.test.ts'),
+      test('src/renderer/data/__tests__/blankReasonMatrix.test.ts'),
+      test('src/renderer/data/__tests__/unreadablePeriods.test.ts'),
+      test('src/renderer/data/__tests__/restorePlanMatchesImport.test.ts'),
+      test('src/renderer/components/__tests__/restorePlan.test.ts'),
+      test('src/renderer/data/__tests__/recordShapeAudit.test.ts'),
+      test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts'),
+    ],
+  },
+  {
+    id: 'refused-values-make-no-judgement',
+    family: 'numbers',
+    name: '⛔ の値から判定を作らない',
+    statement: '画面が断っている値 (マイナス・率の天井超・非有限) を判定へ通すと「最も都合のよい答え」が出る。段ごとに断り、⛔ の欄が在れば保存しない。',
+    provenance: ['パス 206', 'パス 209', 'パス 210', 'パス 214', 'パス 216'],
+    enforcedBy: [test(T.renderer('guardedJudgements'))],
+  },
+  {
+    id: 'parameters-ledgered-and-wired',
+    family: 'numbers',
+    name: '計算の定数は台帳に登録し、配線し、画面は同じ出所を刷る',
+    statement: '法定値・参考値・しきい値は parameters.ts の台帳。登録した値は必ず配線し「上書きすると画面が動く」を対照つきで留める。欄と欄の順序・等しくてはならない組も台帳。',
+    provenance: ['CLAUDE.md Conventions', 'パス 220', 'パス 221', 'パス 222'],
+    enforcedBy: [gate('lint:parameter-prose'), test(T.shared('parameters')), test(T.shared('parameterConsistency')), test(T.shared('parameterReachability'))],
+  },
+  {
+    id: 'safety-limits-not-parameters',
+    family: 'numbers',
+    name: '安全上限は台帳に載せない',
+    statement: 'timeout / 応答サイズ / PBKDF2 反復 / 入力長は利用者が上書きできる台帳に置かない。名前と理由つきの定数 (梯子) にする。',
+    provenance: ['CLAUDE.md Conventions', 'パス 273'],
+    enforcedBy: [test(T.shared('writeFieldLimits')), test(T.shared('ontologyLaws'))],
+  },
+  {
+    id: 'dates-parsed-once',
+    family: 'numbers',
+    name: '日付の判定は 1 つ',
+    statement: '同じ YYYY-MM-DD の判定が 7 通りに割れていた。暦を見る判定を 1 つにし、Date.UTC の 0〜99 (1900 年代) を通さない。**第三者が名乗る日付も同じ** —— 生の文字列を画面へ通さず、読めなければ null (数を epoch ミリ秒として読むと 1970-01-01 を捏造する)。',
+    provenance: ['パス 115', 'パス 200', 'パス 394', 'パス 408'],
+    enforcedBy: [
+      test(T.shared('isoDate')),
+      test(T.shared('dateAssemblyCensus')),
+      test(T.shared('calendarDateCensus')),
+      test(T.shared('ollamaModelFieldCeilings')),
+    ],
+  },
+
+  // ───────────────────────── 両ビルドの対称 ─────────────────────────
+  {
+    id: 'browser-cannot-exceed-desktop',
+    family: 'dual-build',
+    name: 'ブラウザ版はデスクトップの許可表を超えない',
+    statement: 'ブラウザ版の invoke の if 連鎖に在ってデスクトップの LIVE_ACTIONS に無い操作は 0。走査が字面を全部説明できることを別に確かめる。',
+    provenance: ['dualBuildActionSurface の docblock (2026-08-23)'],
+    enforcedBy: [test(T.root('dualBuildActionSurface')), test(T.shared('ontologyFacets'))],
+  },
+  {
+    id: 'desktop-only-reasons-by-kind',
+    family: 'dual-build',
+    name: 'デスクトップ限定の操作は種類つきの台帳',
+    statement: '「デスクトップ版の機能です」と説明して穴を仕様として固定しない。理由は種類 (needs-main-only-facility / dead-action …) で書き、dead-action は画面から呼ばれていてはならない。',
+    provenance: ['パス 274', 'パス 275'],
+    enforcedBy: [test(T.renderer('webShimCredentials')), test(T.shared('ontologyFacets'))],
+  },
+  {
+    id: 'bridge-methods-match',
+    family: 'dual-build',
+    name: 'bridge の口は preload と web-shim で同じ集合',
+    statement: '15 の口は preload の型・main のハンドラ・web-shim の実装で同じ名前。片方にだけ生えた口は「在るが繋がっていない」。',
+    provenance: ['パス 318', 'ARCHITECTURE §1.4'],
+    enforcedBy: [test(T.preload('bridgeContract')), test(T.preload('bridgeStatic')), test(T.renderer('webShimBridge')), gate('verify:arch')],
+  },
+  {
+    id: 'snapshot-parity',
+    family: 'dual-build',
+    name: '両ビルドのスナップショットは同じ形',
+    statement: '同じサービスの fetchSnapshot が両ビルドで同じ欄を返す。ブラウザ版だけ not_implemented で「エラー」と出さない。',
+    provenance: ['dataOrigin.ts の docblock', 'パス 309'],
+    enforcedBy: [test(T.renderer('webShimSnapshotParity')), test(T.renderer('webShimSnapshotBranches'))],
+  },
+  {
+    id: 'both-builds-real-browser',
+    family: 'dual-build',
+    name: '実機は両ビルド',
+    statement: '実ブラウザでしか見えない退行 (CORS・no-cors・起動) が在る。e2e は FULL と LITE を両方通し、e2e:ollama はスタブ Ollama + 実 chromium。',
+    provenance: ['パス 230', 'パス 304', 'パス 305'],
+    enforcedBy: [harness('e2e'), harness('e2e:lite'), harness('e2e:ollama'), ci('.github/workflows/e2e.yml')],
+  },
+
+  // ───────────────────────── 知識と出典 ─────────────────────────
+  {
+    id: 'provenance-required',
+    family: 'knowledge',
+    name: '確証済みデータには出典が要る',
+    statement: '権威ある出典が目録の記録だけの項目を落とす。同じ DOI が別々の出版年・著作で引かれない。雑誌・ブログ・百科事典・目録に academic を付けない。URL のスキームは http(s) だけ。DOI プレフィックスと出版社が矛盾しない。',
+    provenance: ['CLAUDE.md lint:citations', 'lint:doi-prefix', 'verify:knowledge'],
+    enforcedBy: [gate('verify:knowledge'), gate('lint:citations'), gate('lint:doi-prefix'), gate('lint:knowledge-refs')],
+  },
+  {
+    id: 'vault-and-graph-in-sync',
+    family: 'knowledge',
+    name: '生成物は本体と同期し、本体を網羅する',
+    statement: 'vault・graph・概念表は本体から生成し、committed == 再生成に加えて本体との網羅を検査する。手で行を書かない。'
+      + ' registry の派生索引 (`teamFirstRound` —— チーム → 初出 round) も `rounds` から導いた物と両方向に一致する'
+      + ' (`verify:orchestration` の不変条件 13。導出は 1 つで、書き手 `record` と門が同じ物を通る)。',
+    provenance: ['パターン 0-a-5', 'CLAUDE.md knowledge:md', 'パス 483'],
+    enforcedBy: [gate('vault:check'), gate('verify:graph'), gate('verify:orchestration'), test(T.shared('teamFirstRoundIndex'))],
+  },
+  {
+    id: 'legal-text-current',
+    family: 'knowledge',
+    name: '法令の記述は現行法',
+    statement: '刑名の表記ゆれは 1 行ずつ裁定する (拘禁刑へ・旧刑名は括弧・米国法は対象外)。日付の無い率は lint:rate-freshness が期限で落とす。',
+    provenance: ['刑名の裁定 (残作業 8)', 'lint:rate-freshness'],
+    enforcedBy: [gate('lint:rate-freshness'), prose(HANDOFF, '「現行法か」は機械に映らない。率と日付の期限だけを機械が見る')],
+  },
+
+  // ───────────────────────── 供給網と CI ─────────────────────────
+  {
+    id: 'deps-ledgered',
+    family: 'supply-chain',
+    name: '依存の閉包・床・取得元は台帳',
+    statement: '本番依存は単一 HTML へ畳まれ保管庫と同じオリジンで走るので、増やすなら理由を書く。取得元は registry のみ・integrity 必須。「自分で押さえた版」の床は 1 つの台帳。週次の監査が狭い PR の門の外側を受け持つ。',
+    provenance: ['CLAUDE.md lint:deps', 'パス 306'],
+    enforcedBy: [gate('lint:deps'), ci('.github/workflows/dependency-audit.yml'), test(T.shared('dependencyAuditWorkflow'))],
+  },
+  {
+    id: 'workflows-pinned-and-least-privilege',
+    family: 'supply-chain',
+    name: 'workflow は permissions 明示・第三者 action は SHA 固定',
+    statement: 'pull_request_target 禁止。run: へ信用できない値を埋め込まない。第一者 action は runner の Node に合わせて上げる。',
+    provenance: ['CLAUDE.md lint:workflow-security', 'パス 316'],
+    enforcedBy: [gate('lint:workflow-security'), test(T.shared('workflowSecurityWitness')), chain],
+  },
+  {
+    id: 'shell-scripts-strict',
+    family: 'supply-chain',
+    name: '.sh は strict、遠隔コードと破壊的操作は台帳',
+    statement: '追跡されている .sh すべて。bash shebang・set -euo pipefail・bash -n・curl | sh は台帳のみ・後戻りできない書き込みと秘密の扱いは台帳のみ (双方向)・台帳の --self-test を実際に走らせる。',
+    provenance: ['CLAUDE.md lint:shell', 'パス 279'],
+    enforcedBy: [gate('lint:shell')],
+  },
+  {
+    id: 'config-that-picks-code-is-guarded',
+    family: 'supply-chain',
+    name: 'どのコードが走るかを決める設定は、コードと同じ門と鎖に入れる',
+    statement:
+      '走るコードを守っても、**そのコードを選ぶ設定**が外に居れば守りは効かない。'
+      + 'この repo は同じ形を 3 度見つけた —— パス 347 `vite.config.ts` (出荷 HTML の中身を決めるのに '
+      + '`SCAN_ROOTS` はディレクトリの一覧なので直下のファイルがどの根にも入らなかった)、'
+      + 'パス 349 `docs/PROXY_EXAMPLE.md` (アプリ側の双子は保護対象なのに、実際に要求を投げる Worker が外)、'
+      + 'パス 370 `.claude/settings.json` の `hooks` (**セッション開始のたびに走るコマンド**。'
+      + '走る側の `scripts/session-context.cjs` は `lint:forbidden` が走査し 子プロセスを作る例外まで'
+      + '台帳に載っているのに、どれを走らせるかを決める設定は無縛だった)。'
+      + '実測 (2026-09-21): hook のコマンドを `node -e "…"` に替えると **`verify:all` の 37 ゲートすべてが exit 0**・'
+      + '`chain:verify` も exit 0・単体検査も緑。門は形で落とす (`node scripts/<name>.cjs` だけ) '
+      + 'ことと、**最上位の鍵を閉じる (知らない鍵は落とす)** ことの 2 つが要る —— '
+      + '設定は `statusLine` など別の実行面を後から増やせるので、「見る鍵を挙げる」形だと 3 つ目が静かに入る。'
+      + '**パス 371 で 4 件目**: `lint:deps` の規則 3 は「`npm ci` の時点で任意のコードが動く」と正しく述べながら、'
+      + '見ていたのは lockfile の `hasInstallScript` = **依存の側**だけで、'
+      + '**このリポジトリ自身の `package.json` の lifecycle script** は誰も見ていなかった。'
+      + '実測 (2026-09-21): 空の package.json で `npm ci` を回すと `postinstall` と `prepare` は**どちらも走る**。'
+      + 'つまり 1 行足せば CI・`release.yml` の梱包ジョブ (署名鍵と `GH_TOKEN` を持つ)・全員の手元で走るのに、'
+      + 'それを足しても **37 ゲートすべてが exit 0** だった (`.npmrc` を置いても同じ)。'
+      + '**鎖に入れるかは変更頻度で決める** —— `package.json` は全履歴 12 コミットで「安定資産」の基準を満たさないので、'
+      + 'ここは門で形を見るのが正しい道具である。'
+      + '★★ **5 件目は「守る対象を選ぶ一覧」だった** (2026-09-26 · パス 475) —— '
+      + '上の 4 件は「鎖へ入れれば守られる」で終わっていたが、**その鎖の名簿 (`PROTECTED`) 自身が無縛**だった。'
+      + '実測 (隔離した写しで `vite.config.ts` を 1 行消して `chain:append`): '
+      + '**`chain:verify` は exit 0「保護対象 93 ファイルが tip と一致」**・`lint:mutation-scope` も exit 0。'
+      + '検査 1〜4 はどれも「**今の**一覧が tip と合っているか」なので、append が新しい tip を 93 件で'
+      + '作り直した時点で全部満たされる —— つまり**パス 347 と 349 の修復は、1 行消して append するだけで'
+      + '静かに元へ戻せた**。母集団を測ると 94 のうち**29 件**は閉包 (50) でも壁の名簿 (34) でも鳴らず、'
+      + 'その 29 にはパス 347 / 349 / 363 / 370 / 372 が「無縛だから」と鎖へ入れた当のファイルが並ぶ。'
+      + '★ **証拠は鎖がもう持っていた** —— ブロックの `leafCount` と `note` はどちらも `blockHash` に入るので'
+      + '後から書き換えられない。読む物が無かっただけである。**合図は 2 つ要る**: 実測 263 ブロックで'
+      + '`leafCount` の減少は #89 だけだが、`note` の `-名前` は **#67 (delta 0)** も拾う —— '
+      + '同じ append で 1 件出て 1 件入った形は**数だけを見る門に盲目**である。'
+      + '★ **証拠の側も直す** —— note は変更と削除を混ぜて先頭 6 件で切っており、実測 9 ブロックが'
+      + '6 件に届いていた (7 件以上動いた append では削除が枠から押し出されうる)。切るのは変更の側だけにした。'
+      + '★ **`kind` は機械で検める** —— 理由の散文だけだと「移った」と書いて実は消えていても通る。'
+      + '★★ **6 件目は「2 つの台帳が逆のことを意味するのに、どちらでもよいとして受けていた」** '
+      + '(2026-09-26 · パス 476) —— パス 475 が閉じたのは「名前が消える」側だが、'
+      + '**名前を隣の台帳へ移す**道が空いていた。`PROTECTED` は「中身のハッシュを取る」、'
+      + '`DEP_EXCLUSIONS` は「取らないと決めた」で、意味は逆である。'
+      + 'ところが `lint:mutation-scope` の `checkWallsAreProtected` は「必ず測る壁」について'
+      + '`protectedSet.has(file) || excluded.has(file)` と**どちらでもよい**として受けており、'
+      + '断りの文面まで「PROTECTED へ足すか、DEP_EXCLUSIONS に理由つきで載せること」と'
+      + '**移動を正当な手当てとして案内していた**。'
+      + '実測 (隔離した写しで `src/renderer/security/vault.ts` を移し、宣言つきで `chain:append`): '
+      + '**`chain:verify` exit 0「保護対象 93 ファイルが tip と一致」**・'
+      + '**`lint:mutation-scope` exit 0**・その後に中身を 1 行書き換えても **exit 0** '
+      + '(tipManifest に居ないので映らない)。`vault.ts` はブラウザ版の保管庫 '
+      + '(AES-GCM-256 · PBKDF2 600k) で、壁の名簿にも「マスターパスワードから鍵を作る所」として載っている。'
+      + '★ **鎖の側の宣言も自己証明だった** —— `to-exclusions` の述語が見るのは'
+      + '「その名前が除外台帳に在るか」で、それは移した本人が書いた行である。'
+      + '`moved` は「同じ名前が今も保護対象に在る」= 移した本人には作れない事実を見るのに、'
+      + 'こちらは**やったことを確かめていた**。'
+      + '★ **直し** —— ① 壁が除外の側で満たすのは**名指しの台帳** (`WALLS_VIA_EXCLUSION`) '
+      + 'に在るときだけ (双方向・今日 1 件)。**道そのものは残す** —— 実測で 35 の壁のうち 1 件 '
+      + '(`updateCheck.ts` · 鎖の #89 で宣言つきに移った) がそれで満たしており、閉じると今日の実物が落ちる。'
+      + '② `to-exclusions` は `heldBy` (判断を今持っている保護対象) を名乗り、'
+      + '**それが保護対象であること**と**本当にそのファイルを読んでいること**を'
+      + '閉包と同じ辺 (`import` / `require`) で確かめる。'
+      + '★ **層は分けたままにする** —— 「壁がハッシュの外へ出る」を止めるのは壁の門の側で、'
+      + '鎖の側が止めるのは「誰が代わりに持つのかを言わないまま出ること」である。',
+    provenance: [
+      'パス 347 (vite.config.ts)',
+      'パス 349 (PROXY_EXAMPLE.md)',
+      'パス 370 (.claude/settings.json の hooks)',
+      'パス 371 (package.json の lifecycle script と .npmrc)',
+      'パス 475 (鎖の名簿 PROTECTED 自身が無縛 —— 1 行消して append すれば緑)',
+      'パス 476 (壁を隣の台帳へ移すと両方の門が緑・to-exclusions は自己証明)',
+    ],
+    enforcedBy: [
+      gate('lint:mcp-servers'),
+      gate('lint:deps'),
+      gate('lint:forbidden'),
+      gate('chain:verify'),
+      test(T.shared('sessionStartCodeGuarded')),
+      test(T.shared('installTimeCodeGuarded')),
+      test(T.shared('protectedListShrink')),
+    ],
+  },
+  {
+    id: 'integrity-chain-with-closure',
+    family: 'supply-chain',
+    name: '守りを決めるファイルは封緘し、読んでいる先を 1 段見る',
+    statement:
+      '保護対象の一覧が読んでいる先 (PBKDF2 の反復を持つ定数など) が保護か理由つきの除外に'
+      + '載っていることを機械で確かめる。1 段ずつでよい。除外の理由は「実行時に残るか」で決める。'
+      + '★★ **その理由を機械で検める** (2026-09-26 · パス 477) —— 基準は 2026-08-23 から'
+      + '散文で述べられており、同じ台帳が「`clients/types.ts` の除外は『型だけ』と書いてあったが'
+      + '**実行時の判断を持っていた**」と過去の誤りまで記録していたのに、**検算する物が無かった**。'
+      + '実測すると 11 件のうち **3 件が偽**だった: ① `assistantLimits.ts` の「上限の定数のみ」——'
+      + '実行時に残る export は定数 6 に加えて関数 3 つで、`latestTurnTooLong` は 3 つの'
+      + 'enforcement 点 (main の throw とブラウザ版の err 2 つ) が読む**唯一の述語**。'
+      + '`return false` を足すと 5 万字の入力が 3 点とも通る —— 同じ注記が「最悪は『上限の値が'
+      + '変わる』で**関門の迂回ではない**」と述べていたが、それが迂回そのものである。'
+      + 'しかも `MUST_MEASURE` にも `KNOWN_UNMEASURED` にも `mutate` にも無く、'
+      + '**ハッシュも変異検査も掛かっていなかった** → 保護対象へ移し、変異検査も 100% にした。'
+      + '②③ `serviceId.ts` /`clients/index.ts` の「74」—— 実測は **76**。'
+      + '**足すたびに変わる数を散文へ写すと、写した瞬間から古びる側に立つ。**'
+      + '★ 直し: 除外を `kind` で分類し (`type-only` / `paths-only` / `guarded-by` / `registry`)、'
+      + '安い構文の検査は `chain:verify` の**検査 6** が (両方向)、振る舞い '
+      + '(esbuild の出力が 0 byte・`import` 名が宣言の部分集合) は証人が持つ ——'
+      + '`chain:verify` は CI で毎回走るので子プロセスをそこへ増やさない。',
+    provenance: ['パターン 0-a-10', 'パターン 0-a-18', 'パス 285', 'パス 286', 'パス 287', 'パス 477 (除外の理由 11 件のうち 3 件が偽)'],
+    enforcedBy: [
+      gate('chain:verify'),
+      test(T.shared('integrityChainWitness')),
+      test(T.shared('exclusionReasonKinds')),
+      chain,
+    ],
+  },
+  {
+    id: 'mutation-scope-protected',
+    family: 'supply-chain',
+    name: '保護対象は変異検査の中',
+    statement: '権限・資格情報・書き出し先を決める壁が mutate から外れると変異体が 1 つも作られず、測っていないのに緑になる。',
+    provenance: ['lint:mutation-scope の docblock', 'パス 318'],
+    enforcedBy: [gate('lint:mutation-scope'), harness('mutate')],
+  },
+  {
+    id: 'release-artifacts-reread',
+    family: 'supply-chain',
+    name: '公開先は前のランの残骸を溜める — 置いてある一覧を読み返す',
+    statement: 'CI の緑はそのランが何を出したかしか保証しない。追記しかしない置き場 (リリース資産) は公開後に一覧を読み返す。数は宣言側 (electron-builder.json) から導く。',
+    provenance: ['パターン 0-a-19'],
+    enforcedBy: [gate('verify:release-artifacts')],
+  },
+  {
+    id: 'repo-size-ceiling',
+    family: 'supply-chain',
+    name: '追跡ファイルの大きさに天井',
+    statement: '履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 80 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。'
+      + ' 出荷物へ畳み込む JSON は製品が読む鍵だけ —— 名前付き import は鍵の単位でしか落ちないので、'
+      + '読まない開発側の履歴 (registry の `rounds` 160,558 B) は派生索引へ置き換え、import してはいけない鍵として理由つきで名指しする。',
+    provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483'],
+    enforcedBy: [gate('lint:repo-size'), ci('.github/workflows/ci.yml'), test(T.shared('registryBundleCost'))],
+  },
+];
+
+export interface LawLedgerProblem {
+  readonly law: string;
+  readonly problem: string;
+}
+
+export interface LawLedgerFacts {
+  /** package.json の scripts の名前。 */
+  readonly scripts: ReadonlySet<string>;
+  /** verify:all に並ぶ script の名前。 */
+  readonly verifyAll: ReadonlySet<string>;
+  /** リポジトリ相対パスが実在するか。 */
+  readonly exists: (repoRelative: string) => boolean;
+}
+
+/**
+ * 台帳そのものを実物と突き合わせる (純粋関数 —— 実物は呼び出し側が渡す)。
+ * 執行者の指す物が消えれば落ちる。執行者を持たない法則も落ちる。
+ */
+export function validateLawLedger(laws: readonly Law[], facts: LawLedgerFacts): LawLedgerProblem[] {
+  const out: LawLedgerProblem[] = [];
+  const seen = new Set<string>();
+  const families = new Set<string>(Object.keys(LAW_FAMILIES));
+  for (const law of laws) {
+    if (seen.has(law.id)) out.push({ law: law.id, problem: 'id が重複している' });
+    seen.add(law.id);
+    if (!families.has(law.family)) out.push({ law: law.id, problem: `family が語彙に無い: ${law.family}` });
+    if (law.enforcedBy.length === 0) out.push({ law: law.id, problem: '執行者が 1 つも無い (散文だけなら prose を書く)' });
+    if (law.provenance.length === 0) out.push({ law: law.id, problem: '出典が無い' });
+    for (const e of law.enforcedBy) {
+      switch (e.kind) {
+        case 'gate':
+          if (!facts.scripts.has(e.script)) out.push({ law: law.id, problem: `ゲート ${e.script} が package.json に無い` });
+          else if (!facts.verifyAll.has(e.script)) out.push({ law: law.id, problem: `ゲート ${e.script} が verify:all に並んでいない` });
+          break;
+        case 'harness':
+          if (!facts.scripts.has(e.script)) out.push({ law: law.id, problem: `実機 ${e.script} が package.json に無い` });
+          break;
+        case 'test':
+          if (!e.file.endsWith('.test.ts')) out.push({ law: law.id, problem: `検査の名前が .test.ts でない: ${e.file}` });
+          else if (!facts.exists(e.file)) out.push({ law: law.id, problem: `検査が実在しない: ${e.file}` });
+          break;
+        case 'type':
+          if (!facts.exists(e.where)) out.push({ law: law.id, problem: `型の在処が実在しない: ${e.where}` });
+          break;
+        case 'ci':
+          if (!facts.exists(e.workflow)) out.push({ law: law.id, problem: `workflow が実在しない: ${e.workflow}` });
+          break;
+        case 'prose':
+          if (!facts.exists(e.where)) out.push({ law: law.id, problem: `散文の在処が実在しない: ${e.where}` });
+          if (e.why.trim().length === 0) out.push({ law: law.id, problem: '機械が無い理由が空' });
+          break;
+        case 'chain':
+          break;
+      }
+    }
+  }
+  return out;
+}

@@ -35,8 +35,8 @@ Sue Campbell Clark ／ Blake E. Ashforth ／ Ellen Ernst Kossek
 - [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]] — 同じ思想家
 - [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同じ思想家
 - [[mgmt-role-exit-theory|役割退出理論]] — 同じ思想家
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

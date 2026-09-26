@@ -18,6 +18,10 @@
  * 混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
  */
 
+import { displayField, finiteNumberOf } from '../apiResponse';
+import { finiteOrNull } from '../num';
+import { isoDateFromTimestamp } from '../isoDate';
+
 /** Cursor Admin API の基底 URL。 */
 export const CURSOR_API_BASE = 'https://api.cursor.com';
 
@@ -69,8 +73,9 @@ export interface CursorUsageDay {
   /** YYYY-MM-DD（UTC）。Cursor は epoch ミリ秒で返す。 */
   date: string;
   active: boolean;
-  linesAdded: number;
-  linesAccepted: number;
+  /** **読めなかった欄は `null`** —— 0 行と区別する (パス 266)。 */
+  linesAdded: number | null;
+  linesAccepted: number | null;
   /**
    * 提案行のうち受け入れられた割合（%）。分母が 0 のときは null。
    * Cursor 側の集計では受入行が総追加行を上回ることがあるため、
@@ -79,9 +84,14 @@ export interface CursorUsageDay {
   acceptRate: number | null;
   /** acceptRate が 100% を超えた（＝ Cursor 側の集計が噛み合っていない）。 */
   overCounted: boolean;
-  tabsShown: number;
-  tabsAccepted: number;
-  requests: number;
+  tabsShown: number | null;
+  tabsAccepted: number | null;
+  /**
+   * `composerRequests` + `chatRequests` + `agentRequests` + `cmdkUsages`。
+   * **1 項目でも読めなければ `null`** —— 足りない合計は合計ではない
+   * (パス 54 / 226 / 263 と同じ規準)。
+   */
+  requests: number | null;
   model: string;
 }
 
@@ -89,11 +99,33 @@ export interface CursorSpend {
   name: string;
   email: string;
   role: string;
-  /** 米ドル。為替は当てないので円に換算しない。 */
-  spendUsd: number;
-  fastPremiumRequests: number;
+  /**
+   * 米ドル。為替は当てないので円に換算しない。
+   * **金額が読めなかった行は `null`** —— 0 ドルと区別する (パス 263)。
+   */
+  spendUsd: number | null;
+  /** 読めなければ `null` —— 0 回と区別する (パス 266)。 */
+  fastPremiumRequests: number | null;
   /** 上限の個別設定（米ドル）。設定が無ければ null。 */
   hardLimitUsd: number | null;
+}
+
+/**
+ * 節ごとの素性 (2026-09-14 · パス 263)。
+ *
+ *   `read`       相手が答えた。**0 件も答えである** (メンバーが居ない・
+ *                期間内に稼働が無い・今月の支出が無い)。
+ *   `unreadable` 形が読めなかった。件数は**0 ではなく「分からない」**。
+ */
+export type CursorSectionState = 'read' | 'unreadable';
+
+/** 3 つの照会それぞれの素性と、行の中で読めなかった金額の数。 */
+export interface CursorIntake {
+  readonly members: CursorSectionState;
+  readonly usage: CursorSectionState;
+  readonly spend: CursorSectionState;
+  /** 行は在るが金額 (`spendCents`) が数でなかった支出の行数。 */
+  readonly spendAmountsUnreadable: number;
 }
 
 export interface CursorSnapshot {
@@ -101,26 +133,74 @@ export interface CursorSnapshot {
   usage: CursorUsageDay[];
   spend: CursorSpend[];
   totals: {
-    members: number;
-    /** 期間内に 1 日でも稼働のあった日数。 */
-    activeDays: number;
-    spendUsd: number;
+    /** 読めなかったら null (0 名と区別する)。 */
+    members: number | null;
+    /** 期間内に 1 日でも稼働のあった日数。読めなかったら null。 */
+    activeDays: number | null;
+    /** 米ドル。節が読めない・金額の読めない行が在れば null (足りない合計は合計ではない)。 */
+    spendUsd: number | null;
   };
+  /** 上の数字の素性。**画面はこれを読んで「0」と「分からない」を書き分ける。** */
+  intake: CursorIntake;
 }
 
-const num = (v: number | undefined): number => (Number.isFinite(v) ? (v as number) : 0);
+/**
+ * **読めた数だけを返す。読めなければ `null`** (2026-09-15 · パス 266)。
+ *
+ * このモジュールの冒頭の規則は「欠けている数値は 0 ではなく『取れなかった』として
+ * 扱う (0 と欠測を混ぜると、使っていないのか取得に失敗したのか画面から判別できなく
+ * なる)」である。パス 263 は封筒と支出の金額をその規則へ寄せたが、**日次利用の 5 欄は
+ * `num()` で 0 に倒したまま残っていた** —— `acceptedLinesAdded` が欠けた日は
+ * 「採用 0 行」と刷られ、`acceptRateOf(0, 5000)` が **0 を返して バッジが「0%」**
+ * になる。「提案の 0% しか採用しなかった」は測った結果に見えるが、実際は鍵が
+ * 無かっただけである。
+ */
+/** 共有の読み手へ 1 行で寄せた (2026-09-22 · パス 410) —— 受理集合は同じ。 */
+const readNum = (v: number | undefined): number | null => finiteNumberOf(v);
 
-/** epoch ミリ秒 → YYYY-MM-DD（UTC）。読めない値は空文字にして日付欄を詐称しない。 */
+/**
+ * **1 項目でも読めなければ合計を作らない** (2026-09-15 · パス 266)。
+ *
+ * 日次のリクエスト数は 4 つの鍵の和 (`composerRequests` / `chatRequests` /
+ * `agentRequests` / `cmdkUsages`) で、以前はそれぞれを 0 に倒してから足していた。
+ * だから `{composerRequests: 40}` だけが返った日に画面は「リクエスト 40」と
+ * **その日の総数として**刷っていた —— 4 つのうち 1 つだけを数えた値である。
+ * パス 263 が支出の合計へ当てた規準と同じで、足りない合計は合計ではない。
+ *
+ * **どの項目が欠けたかは持たない** —— 画面が刷るのは「—」だけなので、
+ * 区別しても出す場所が無い。必要になったら項目ごとに返す形へ広げる。
+ */
+function sumOrNull(parts: readonly (number | null)[]): number | null {
+  let total = 0;
+  for (const p of parts) {
+    if (p === null) return null;
+    total += p;
+  }
+  return total;
+}
+
+/**
+ * epoch ミリ秒 → YYYY-MM-DD（UTC）。読めない値は空文字にして日付欄を詐称しない。
+ *
+ * **`Number.isFinite` だけでは足りなかった** (2026-09-12 · パス 188) —— `1e20` は
+ * 有限で、しかも `new Date(1e20).toISOString()` は `RangeError` を**投げる**。
+ * ここは `normalizeUsage` が `api.cursor.com` の JSON の `date` をそのまま渡す所で、
+ * 投げると**1 行の日付が読めないだけで取得そのものが失敗する**。範囲の判定は
+ * `shared/isoDate.ts` が 1 か所で持つ (日付を読むのは 1 ファイル · パス 115)。
+ */
 export function toIsoDate(epochMs: number | undefined): string {
-  if (!Number.isFinite(epochMs)) return '';
-  return new Date(epochMs as number).toISOString().slice(0, 10);
+  return isoDateFromTimestamp(epochMs) ?? '';
 }
 
 /**
  * 受入率を出す。分母が 0 なら null（0% ではない — 提案が無いことと
  * 提案が全部拒否されたことは違う）。
  */
-export function acceptRateOf(accepted: number, total: number): number | null {
+export function acceptRateOf(accepted: number | null, total: number | null): number | null {
+  // 非有限は「率 0%」ではなく「算定不能」(既に `null` の道が在る)。
+  // **`null` も同じ扱い** (パス 266) —— 読めなかった行数から率は作れない。
+  if (accepted === null || total === null) return null;
+  if (finiteOrNull(accepted) === null || finiteOrNull(total) === null) return null;
   if (total <= 0) return null;
   return Math.round((accepted / total) * 1000) / 10;
 }
@@ -132,21 +212,68 @@ export function acceptRateOf(accepted: number, total: number): number | null {
  * JS のセマンティクスに寄りかかることになり、条件の片方が観測できなくなる。
  * 行数そのもので判定すれば、分母 0 のときも上回りのときも別々に確かめられる。
  */
-export function isOverCounted(accepted: number, total: number): boolean {
+export function isOverCounted(accepted: number | null, total: number | null): boolean {
+  // 読めなかった行数からは「Cursor 側の集計が噛み合っていない」とは言えない
+  // (パス 266)。`total > 0` の守りは既に在るが、`null` はそこを通らない。
+  if (accepted === null || total === null) return false;
   return total > 0 && accepted > total;
+}
+
+/** 取り出した行と、**取り出せたのかどうか**。 */
+export interface CursorRows<T> {
+  readonly rows: T[];
+  /** 相手が答えたと言えるか (`rows` が空でも true なら「0 件」が答え)。 */
+  readonly read: boolean;
 }
 
 /**
  * 配列そのものか、キーで包まれた配列かのどちらでも取り出す。
+ * **取り出せたかどうかを一緒に返す。**
  *
  * body が null や配列でないものでも落とさない — 相手の API が形を変えたときに
  * 画面が真っ白になるより、その節が空で出るほうが原因を追える。
+ *
+ * ## `read` を足した理由 (2026-09-14 · パス 263)
+ *
+ * これは `[]` を返すだけの関数だった。実測すると、**5 つの違う状況が
+ * byte 単位で同じ画面**になっていた:
+ *
+ *   `{teamMembers: []}`   相手が「0 名」と答えた
+ *   `null`                本文が読めない
+ *   `{}`                  封筒に鍵が無い
+ *   `{teamMembers: 'x'}`  鍵は在るが配列でない
+ *   `42`                  スカラー
+ *
+ * どれも見出しに `Cursor · 0 名 / 稼働 0 日 / $0.00` を**緑のライブ表示で**
+ * 刷り、節は「メンバーを取得できていません。」と出す。**両方向に嘘になる** ——
+ * 本当に 0 名のチームには「取得できていません」と言い、読めなかったときは
+ * 0 名・$0.00 を事実として刷る。
+ *
+ * このモジュールの冒頭には最初から「**欠けている数値は 0 ではなく「取れなかった」
+ * として扱う** (0 と欠測を混ぜると、使っていないのか取得に失敗したのか画面から
+ * 判別できなくなる)」と書いてある。欄の側 (`acceptRate` / `hardLimitUsd` /
+ * `toIsoDate`) はそれを守っていたが、**封筒の側が守っていなかった。**
+ *
+ * **鍵が無い `{}` は `read: false`。** Cursor Admin API は空でも
+ * `{teamMembers: []}` を返すので、鍵そのものが無いのは形が変わった印である ——
+ * そして「鍵が無い」と「空の配列」を同じに扱うと、まさにこの pass が
+ * 直している混同を残すことになる。
  */
-export function rowsOf<T>(body: unknown, key: string): T[] {
-  if (Array.isArray(body)) return body as T[];
-  if (body === null || body === undefined) return [];
+export function readRows<T>(body: unknown, key: string): CursorRows<T> {
+  if (Array.isArray(body)) return { rows: body as T[], read: true };
+  if (body === null || typeof body !== 'object') return { rows: [], read: false };
   const v = (body as Record<string, unknown>)[key];
-  return Array.isArray(v) ? (v as T[]) : [];
+  return Array.isArray(v) ? { rows: v as T[], read: true } : { rows: [], read: false };
+}
+
+/** 節の行と素性。 */
+export interface CursorSection<T> {
+  readonly rows: T[];
+  readonly state: CursorSectionState;
+}
+
+function sectionOf<T, U>(r: CursorRows<T>, map: (row: T) => U): CursorSection<U> {
+  return { rows: r.rows.map(map), state: r.read ? 'read' : 'unreadable' };
 }
 
 /** 日次利用の照会期間。終了日を含む直近 `days` 日。 */
@@ -156,19 +283,26 @@ export function usageWindow(now: number, days: number): { startDate: number; end
 }
 
 /** members 応答を正規化する。 */
-export function normalizeMembers(body: unknown): CursorMember[] {
-  return rowsOf<MembersRow>(body, 'teamMembers').map((m) => ({
-    name: m.name ?? '',
-    email: m.email ?? '',
-    role: m.role ?? '',
+export function normalizeMembers(body: unknown): CursorSection<CursorMember> {
+  /*
+   * **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+   *
+   * この正規化は **両ビルドが読む** (`shared/api/`) ので、天井もここに置けば
+   * 1 つで済む。実測 (直す前・見本の欄を長くして `CursorPage` を描く):
+   * 画面の総文字数が **+399,791 字**になった。
+   */
+  return sectionOf(readRows<MembersRow>(body, 'teamMembers'), (m) => ({
+    name: displayField(m.name),
+    email: displayField(m.email),
+    role: displayField(m.role),
   }));
 }
 
 /** 日次利用の応答を正規化する。 */
-export function normalizeUsage(body: unknown): CursorUsageDay[] {
-  return rowsOf<DailyUsageRow>(body, 'data').map((d) => {
-    const linesAdded = num(d.totalLinesAdded);
-    const linesAccepted = num(d.acceptedLinesAdded);
+export function normalizeUsage(body: unknown): CursorSection<CursorUsageDay> {
+  return sectionOf(readRows<DailyUsageRow>(body, 'data'), (d) => {
+    const linesAdded = readNum(d.totalLinesAdded);
+    const linesAccepted = readNum(d.acceptedLinesAdded);
     return {
       date: toIsoDate(d.date),
       active: d.isActive === true,
@@ -176,44 +310,113 @@ export function normalizeUsage(body: unknown): CursorUsageDay[] {
       linesAccepted,
       acceptRate: acceptRateOf(linesAccepted, linesAdded),
       overCounted: isOverCounted(linesAccepted, linesAdded),
-      tabsShown: num(d.totalTabsShown),
-      tabsAccepted: num(d.totalTabsAccepted),
-      requests:
-        num(d.composerRequests) + num(d.chatRequests) + num(d.agentRequests) + num(d.cmdkUsages),
-      model: d.mostUsedModel ?? '',
+      tabsShown: readNum(d.totalTabsShown),
+      tabsAccepted: readNum(d.totalTabsAccepted),
+      requests: sumOrNull([
+        readNum(d.composerRequests),
+        readNum(d.chatRequests),
+        readNum(d.agentRequests),
+        readNum(d.cmdkUsages),
+      ]),
+      model: displayField(d.mostUsedModel),
     };
   });
 }
 
-/** 支出の応答を正規化する。 */
-export function normalizeSpend(body: unknown): CursorSpend[] {
-  return rowsOf<SpendRow>(body, 'teamMemberSpend').map((r) => ({
-    name: r.name ?? '',
-    email: r.email ?? '',
-    role: r.role ?? '',
-    spendUsd: Math.round(num(r.spendCents)) / 100,
-    fastPremiumRequests: num(r.fastPremiumRequests),
-    hardLimitUsd: typeof r.hardLimitOverrideDollars === 'number' ? r.hardLimitOverrideDollars : null,
-  }));
+/**
+ * 支出の応答を正規化する。
+ *
+ * **金額が読めない行は `spendUsd: null`** (パス 263)。`num()` で 0 に倒すと、
+ * その行は「$0.00 使った人」として一覧に並び、**合計にも 0 として足される** ——
+ * 行が在るのに金額が読めないことと、本当に使っていないことは違う。
+ * 読めなかった行数は呼び出し側へ返して、合計を出すかどうかの判断に使う。
+ */
+export function normalizeSpend(
+  body: unknown,
+): CursorSection<CursorSpend> & { readonly amountsUnreadable: number } {
+  let amountsUnreadable = 0;
+  const section = sectionOf(readRows<SpendRow>(body, 'teamMemberSpend'), (r) => {
+    const cents = Number.isFinite(r.spendCents) ? (r.spendCents as number) : null;
+    if (cents === null) amountsUnreadable += 1;
+    return {
+      name: displayField(r.name),
+      email: displayField(r.email),
+      role: displayField(r.role),
+      spendUsd: cents === null ? null : Math.round(cents) / 100,
+      fastPremiumRequests: readNum(r.fastPremiumRequests),
+      hardLimitUsd: Number.isFinite(r.hardLimitOverrideDollars)
+        ? (r.hardLimitOverrideDollars as number)
+        : null,
+    };
+  });
+  return { ...section, amountsUnreadable };
 }
 
-/** 3 つの応答から画面に出す形を組む。 */
+/**
+ * 3 つの応答から画面に出す形を組む。
+ *
+ * **読めなかった節の数字は `null`** (パス 263) —— 0 名のチームと、メンバーを
+ * 読めなかったチームは別の事実である。支出の合計は「金額の読めない行が
+ * 1 行でも在れば null」: 足りない合計は合計ではない (パス 54 / 226 と同じ規準)。
+ */
 export function buildCursorSnapshot(
-  members: CursorMember[],
-  usage: CursorUsageDay[],
-  spend: CursorSpend[],
+  members: CursorSection<CursorMember>,
+  usage: CursorSection<CursorUsageDay>,
+  spend: CursorSection<CursorSpend> & { readonly amountsUnreadable: number },
 ): CursorSnapshot {
+  const spendReadable = spend.state === 'read' && spend.amountsUnreadable === 0;
   return {
-    members,
-    usage,
-    spend,
+    members: members.rows,
+    usage: usage.rows,
+    spend: spend.rows,
     totals: {
-      members: members.length,
-      activeDays: usage.filter((d) => d.active).length,
+      members: members.state === 'read' ? members.rows.length : null,
+      activeDays: usage.state === 'read' ? usage.rows.filter((d) => d.active).length : null,
       // 円未満ならぬセント未満の誤差を持ち込まないよう、セントで足してから戻す。
-      spendUsd: Math.round(spend.reduce((s, r) => s + r.spendUsd * 100, 0)) / 100,
+      // **`?? 0` は意味を持たない** (`spendReadable` が真の枝でしか走らず、
+      // そこでは `amountsUnreadable === 0` なので `spendUsd` は必ず数である)。
+      // 型を狭めるためだけの写しで、0 倒しの census にはそう読んでほしい。
+      spendUsd: spendReadable
+        ? Math.round(spend.rows.reduce((s, r) => s + (r.spendUsd ?? 0) * 100, 0)) / 100
+        : null,
+    },
+    intake: {
+      members: members.state,
+      usage: usage.state,
+      spend: spend.state,
+      spendAmountsUnreadable: spend.amountsUnreadable,
     },
   };
+}
+
+/** 節の日本語名 (注記と画面が同じ語を使う)。 */
+const SECTION_LABEL: Readonly<Record<keyof Omit<CursorIntake, 'spendAmountsUnreadable'>, string>> = {
+  members: 'メンバー',
+  usage: '日次の利用状況',
+  spend: '今月の支出',
+};
+
+/**
+ * 読めなかった物を述べる 1 文。全部読めていれば `null`。
+ *
+ * 画面がこれを刷る。**「0 件」とは言わない** —— 言えないことを言わないための
+ * 文なので、件数の代わりに「分かりません」と述べる。
+ */
+export function cursorIntakeNote(intake: CursorIntake): string | null {
+  const unread = (['members', 'usage', 'spend'] as const).filter((k) => intake[k] === 'unreadable');
+  const parts: string[] = [];
+  if (unread.length > 0) {
+    parts.push(
+      `${unread.map((k) => SECTION_LABEL[k]).join('・')}の応答を読めませんでした`
+        + '（件数・金額は 0 ではなく「分かりません」です）',
+    );
+  }
+  if (intake.spendAmountsUnreadable > 0) {
+    parts.push(
+      `支出 ${intake.spendAmountsUnreadable} 行の金額を読めませんでした（合計は出せません）`,
+    );
+  }
+  return parts.length === 0 ? null : `${parts.join('。')}。Cursor 側の応答の形が変わった可能性があります。`;
 }
 
 /**

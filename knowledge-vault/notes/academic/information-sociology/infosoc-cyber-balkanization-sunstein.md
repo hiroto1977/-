@@ -39,10 +39,10 @@ aliases:
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
 - [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 同じ思想家
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 同じ思想家
 - [[econ-technological-unemployment|技術的失業]] — 同じ思想家
-- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

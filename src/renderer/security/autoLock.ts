@@ -40,7 +40,6 @@ export interface AutoLockOptions {
 const DEFAULT_HIDDEN_MS = 5 * 60 * 1000;
 // Stryker disable next-line ArithmeticOperator,ArrayDeclaration,StringLiteral
 const DEFAULT_IDLE_MS = 15 * 60 * 1000;
-// Stryker disable next-line ArrayDeclaration,StringLiteral
 const ACTIVITY_EVENTS = ['mousemove', 'keydown', 'touchstart', 'pointerdown'];
 
 export interface AutoLockHandle {

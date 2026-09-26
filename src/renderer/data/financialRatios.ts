@@ -43,7 +43,7 @@ export interface FinancialInputs {
   readonly effectiveTaxRate?: number; // 実効税率 (0-1; NOPAT 算定用; 無ければ DEFAULT_EFFECTIVE_TAX_RATE)
 }
 
-import { RADAR_AXIS_BANDS, type AxisBand, type RadarAxisKey, type RadarBands } from '../../shared/financialHealthBands';
+import { RADAR_AXIS_BANDS, RADAR_AXIS_KEYS, type AxisBand, type RadarAxisKey, type RadarBands } from '../../shared/financialHealthBands';
 
 /** NOPAT / ROIC / FCF 算定で参照する既定値 (概算)。法人実効税率は約 30% を仮置き。 */
 export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
@@ -88,6 +88,23 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 
 function roundNullable(v: number | null, r: (n: number) => number): number | null {
   return v == null ? null : r(v);
+}
+
+/**
+ * **総資産回転率 (倍) —— この 1 か所だけが持つ。**
+ *
+ * `computeFinancialRatios` のデュポン分解と、経営スコアカードの効率性軸が
+ * 同じ数字を使う。2026-09-07 まで**別々に書かれていて**、`OverviewPage.tsx` の
+ * 中に `Math.round((revenue / totalAssets) * 100) / 100` が直に在った。
+ * 画面の中の算術は変異検査の対象外 (`mutate` に `.tsx` は 1 件も無い) なので、
+ * ずれても誰も気付けない位置だった。
+ *
+ * **算定不能は「総資産 0」のときだけ。** 売上 0 は算定不能ではなく **0 倍**で、
+ * それが最も悪い値である。ここを `revenue > 0` で切ると、スコアカードは
+ * 「最悪の場合だけ採点しない」形になる (実際そうなっていた)。
+ */
+export function assetTurnoverRatio(revenue: number, totalAssets: number): number | null {
+  return roundNullable(ratio(revenue, totalAssets), round2);
 }
 
 /** すべての指標を算出する。純粋。 */
@@ -145,7 +162,12 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
     nopat: round0(nopat),
     // ROIC: 投下資本が 0 以下なら算定不能。pct は 0 のみガードするため <=0 を明示。
     roicPct: roundNullable(investedCapital <= 0 ? null : (nopat / investedCapital) * 100, round1),
-    quickRatioPct: roundNullable(pct(f.currentAssets - f.inventory, f.currentLiabilities), round1),
+    // 棚卸資産が流動資産を超える記録は**算定不能** —— 2 つの門より前に保存された控えは
+    // 残りうる (パス 224。`balanceSheet.computeBalanceSheetMetrics` と同じ判断)。
+    quickRatioPct: roundNullable(
+      f.inventory > f.currentAssets ? null : pct(f.currentAssets - f.inventory, f.currentLiabilities),
+      round1,
+    ),
     cashRatioPct: roundNullable(pct(cash, f.currentLiabilities), round1),
     freeCashflow: round0(freeCashflow),
     // インタレストカバレッジ: 支払利息 (任意) が未指定/0 なら算定不能。
@@ -156,7 +178,7 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
       round2,
     ),
     dupontNetMarginPct: roundNullable(pct(f.netProfit, f.revenue), round1),
-    dupontAssetTurnover: roundNullable(ratio(f.revenue, f.totalAssets), round2),
+    dupontAssetTurnover: assetTurnoverRatio(f.revenue, f.totalAssets),
     dupontEquityMultiplier: roundNullable(ratio(f.totalAssets, f.equity), round2),
   } as FinancialRatios;
 }
@@ -166,31 +188,103 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
 // 指標ごとに違う (高いほど良い / 低いほど良い) ため、ベンチマークで吸収する。
 
 export interface RadarAxis {
+  /**
+   * 軸の鍵。`radarAxes` が作るのは `RADAR_AXIS_KEYS` の 15 個だけなので
+   * `RadarAxisKey` に狭めたくなるが、**`string` のままにしてある** ——
+   * `diagnoseFinancials` は軸の鍵について**総称的**で、未知の鍵をカテゴリ無しとして
+   * 扱う枝を持ち、その枝を検査が合成鍵 (`'zzz'` / `'a'`) で通している
+   * (パス 227 で実際に狭めてみて、そこで気付いた)。**広い型が常に嘘とは限らない。**
+   * 帯を引く側 ({@link defaultBandAxes}) が `RADAR_AXIS_KEYS` の側から回す。
+   */
   readonly key: string;
   readonly label: string;
   readonly unit: string;
   readonly raw: number | null;
-  /** 0-100。null (算定不能) は 0 とみなす。 */
-  readonly score: number;
+  /**
+   * 0-100。**算定不能 (`raw === null`) なら `score` も `null` (未評価)。**
+   *
+   * 2026-09-08 まで「null は 0 とみなす」と書いて 0 を返していた。0 点は
+   * レーダーの**中心に頂点を落とし**、`diagnoseFinancials` の平均・カテゴリ・
+   * 要改善のすべてに混ざる。実測 (production 経路 `deriveBusinessFinancials`):
+   *
+   * | 入力 | null 軸 | 総合 | 要改善に名指しされた軸 |
+   * | --- | --- | --- | --- |
+   * | 物販 (変動費あり) | 0/15 | 86 S | 実測された 3 軸 (正しい) |
+   * | **サービス業 (変動費 0)** | 2/15 | 78 A | **棚卸資産回転率(0) · CCC(0)** |
+   * | **創業前 (売上 0)** | **12/15** | **7 D** | 全部が未入力の軸 |
+   *
+   * 仕入が無い事業 (士業・コンサル・サービス業) に
+   * **「棚卸資産回転率が低め。在庫の滞留に注意。」**と言っていた ——
+   * **在庫を持たない事業に、在庫の滞留を警告していた。**
+   *
+   * パス 55 が team radar で直したのと同じ形。パス 39 は**この同じ
+   * 財務健全度 grade** の「定数軸による希釈」を直したが、null 軸は残っていた。
+   */
+  readonly score: number | null;
 }
 
-/** 線形スコア: raw が good で 100、bad で 0。範囲外はクランプ。 */
-function linScore(raw: number | null, bad: number, good: number): number {
-  if (raw == null) return 0;
+/**
+ * 線形スコア: raw が good で 100、bad で 0。範囲外はクランプ。
+ * **算定不能は `null`** —— 0 点という評価を作らない。
+ */
+function linScore(raw: number | null, bad: number, good: number): number | null {
+  if (raw == null) return null;
   const t = (raw - bad) / (good - bad);
   return Math.max(0, Math.min(100, Math.round(t * 100)));
 }
 
 /**
- * 軸の帯を引く。0 点と 100 点の水準が同じ帯 (幅 0) は割り算が壊れるので既定の帯に戻す —
- * 台帳は 1 件ずつしか検査できず、2 件の組み合わせの矛盾はここで受ける。
+ * 軸の帯を引く。0 点と 100 点の水準が同じ帯 (幅 0) は割り算が壊れるので既定の帯に戻す。
+ *
+ * **これは防御であって、断りではない。** 倒し込んだことをここで言う口は無いので、
+ * 2026-09-13 まで「上書き中と表示されているのに上書きが 1 度も効かない」状態が
+ * 画面のどこにも現れなかった (実測: `equityRatioBad = equityRatioGood = 50` で
+ * スコアが上書きなしと完全に同じ 60 点)。**言う役は設定画面が持つ** ——
+ * `shared/parameterConsistency.ts` の `PARAMETER_DISTINCT` が保存を断り、
+ * すでに保存されている組を画面上部で名指しする (パス 222)。倒し込み自体は
+ * 古い保存・復元したバックアップのために残す (0 除算は作れない)。
  */
 export function axisBand(key: RadarAxisKey, bands: RadarBands): AxisBand {
   const b = bands[key];
   return b.good === b.bad ? RADAR_AXIS_BANDS[key] : b;
 }
 
-function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number {
+/**
+ * **既定の帯へ倒した軸** (2026-09-14 · パス 227)。
+ *
+ * パス 222 は「幅 0 の帯 (`good === bad`) を {@link axisBand} が黙って既定へ倒す」ことを
+ * 見つけ、**設定画面**に断りを付けた (保存を断り、すでに保存されている組を名指しする)。
+ * だが**採点する画面の側は何も言わない** —— 診断カードは「自己資本比率 60 点」と刷り、
+ * その 60 点が**利用者が保存した水準ではなく既定の水準で付いた**ことを示さない。
+ *
+ * 倒し込み自体は正しい防御である (幅 0 の帯では 0 除算になる) が、
+ * **黙って倒す防御は、倒したことを誰かが言わなければ嘘になる** (パス 219 / 222 / 225 / 226)。
+ * 設定画面が言うのは「その組は効きません」で、診断画面が言うべきは
+ * 「**この点数は既定の水準で付いています**」——**別の面には別の文が要る。**
+ *
+ * ラベルは {@link radarAxes} が作った `RadarAxis` から取る (軸名を写さない)。
+ */
+export function defaultBandAxes(axes: readonly RadarAxis[], bands: RadarBands = RADAR_AXIS_BANDS): readonly RadarAxis[] {
+  // **台帳 (`RADAR_AXIS_KEYS`) の側から回す。** 軸の側から `bands[a.key]` を引くと
+  // `key: string` では引けず、cast を足すと「知らない鍵」が黙って通る。
+  // 並びも台帳の順になるので、画面の軸の並びと一致する。
+  return RADAR_AXIS_KEYS.flatMap((k) => {
+    const b = bands[k];
+    if (b.good !== b.bad) return [];
+    const hit = axes.find((a) => a.key === k);
+    return hit === undefined ? [] : [hit];
+  });
+}
+
+/** {@link defaultBandAxes} の結果を 1 文にする。0 件なら null (断りを出さない)。 */
+export function defaultBandNote(axes: readonly RadarAxis[]): string | null {
+  if (axes.length === 0) return null;
+  return `${axes.map((a) => a.label).join('・')} の ${axes.length} 軸は、`
+    + '0 点 / 100 点の水準が同じ値で保存されているため**既定の水準で採点しています**'
+    + '（設定の「数値パラメータ」で違う値にすると効きます）。';
+}
+
+function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number | null {
   const b = axisBand(key, bands);
   return linScore(raw, b.bad, b.good);
 }

@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Global game — equilibrium selection, coordination, currency attacks, Morris–Shin](https://en.wikipedia.org/wiki/Global_game) `リファレンス`
 
 ## 関連概念
-- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 同じ思想家
 - [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — 同分野の近傍
 - [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
 

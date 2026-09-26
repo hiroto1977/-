@@ -26,7 +26,7 @@ aliases:
 ジョン・アーキラ ／ デヴィッド・ロンフェルト ／ ジョセフ・ナイ ／ ピエール・テイヤール・ド・シャルダン
 
 ## 出典
-- [Arquilla, J. & Ronfeldt, D. (1999) The Emergence of Noopolitik — RAND Corporation](https://www.worldcat.org/oclc/43367015) `学術`
+- [Arquilla, J. & Ronfeldt, D. (1999) The Emergence of Noopolitik — RAND Corporation](https://www.worldcat.org/oclc/43367015) `リファレンス`
 - [Wikipedia: Noopolitik — noosphere, soft power, Realpolitik, information strategy](https://en.wikipedia.org/wiki/Noopolitik) `リファレンス`
 
 ## 関連概念

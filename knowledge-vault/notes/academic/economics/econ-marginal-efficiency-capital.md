@@ -26,7 +26,7 @@ aliases:
 ジョン・メイナード・ケインズ ／ アーヴィング・フィッシャー ／ アバ・ラーナー ／ ジョーン・ロビンソン
 
 ## 出典
-- [Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Ch. 11, Marginal Efficiency of Capital (WorldCat)](https://www.worldcat.org/oclc/180851) `学術`
+- [Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Ch. 11, Marginal Efficiency of Capital (WorldCat)](https://www.worldcat.org/oclc/180851) `リファレンス`
 - [Wikipedia: Marginal efficiency of capital — Keynes, expected yield vs interest rate, animal spirits, investment](https://en.wikipedia.org/wiki/Marginal_efficiency_of_capital) `リファレンス`
 
 ## 関連概念

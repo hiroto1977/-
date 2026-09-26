@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+  MAX_SHOPIFY_LINE_ITEMS,
+  MAX_WRITE_TITLE_CHARS,
+  SHOPIFY_ORDER_FIELDS,
+  describeWriteFieldFailure,
+} from '../../../shared/writeFieldLimits';
+import {
   fetchShopifySnapshot,
   ACTIONS,
   CONNECTORS,
@@ -84,13 +90,13 @@ describe('order formatting helpers', () => {
 
   it('assertOrder rejects when only id is missing', () => {
     expect(() => assertOrder({ order: { id: '', name: '#9' } })).toThrow(
-      /order.id and order.name are required/,
+      /id は必須です/,
     );
   });
 
   it('assertOrder rejects when only name is missing', () => {
     expect(() => assertOrder({ order: { id: '1', name: '' } })).toThrow(
-      /order.id and order.name are required/,
+      /name は必須です/,
     );
   });
 
@@ -385,7 +391,7 @@ describe('ACTIONS["sync-to-line"]', () => {
 
 describe('ACTIONS["sync-to-gmail"]', () => {
   it('creates a base64url draft addressed to the customer', async () => {
-    const fetchMock = okJson({ id: 'draft-9' });
+    const fetchMock = okJson({ id: 'draft-9', message: { id: 'm-9' } });
     const res = (await ACTIONS['sync-to-gmail']!({
       token: 's',
       fetch: fetchMock,
@@ -407,7 +413,7 @@ describe('ACTIONS["sync-to-gmail"]', () => {
     const decoded = Buffer.from(raw.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
     const subject = `=?UTF-8?B?${Buffer.from('ご注文ありがとうございます #1001', 'utf8').toString('base64')}?=`;
     expect(decoded).toBe(
-      // 2026-08-22: 手組みをやめて gmail.ts の `buildRfc2822` に寄せた。
+      // 2026-08-22: 手組みをやめて `buildRfc2822` (当時 gmail.ts・2026-09-19 から shared/rfc2822.ts) に寄せた。
       // charset が引用符つきになり、`MIME-Version: 1.0` が入る (RFC 2045 が要求する)。
       [
         'To: taro@example.com',
@@ -432,20 +438,20 @@ describe('ACTIONS["sync-to-gmail"]', () => {
     ['CR だけでも', 'a@b.example\rBcc: attacker@evil.example'],
     ['NUL', 'a@b.example\u0000'],
   ])('%s は下書きを作らずに落とす', async (_label, email) => {
-    const fetchMock = okJson({ id: 'd' });
+    const fetchMock = okJson({ id: 'd', message: { id: 'm' } });
     await expect(
       ACTIONS['sync-to-gmail']!({
         token: 's',
         fetch: fetchMock,
         payload: { order: { ...ORDER, email }, token: 'ya29' },
       }),
-    ).rejects.toThrow(/CR\/LF\/NUL/);
+    ).rejects.toThrow(/email に制御文字を含めることはできません/);
     // **要求そのものが飛んでいない**ことまで見る (投げてから送っては意味が無い)。
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('email が文字列でなければ落とす (assertOrder は型を見ていない)', async () => {
-    const fetchMock = okJson({ id: 'd' });
+    const fetchMock = okJson({ id: 'd', message: { id: 'm' } });
     await expect(
       ACTIONS['sync-to-gmail']!({
         token: 's',
@@ -461,7 +467,7 @@ describe('ACTIONS["sync-to-gmail"]', () => {
     { name: '#11', desc: 'one padding char (=)' },
     { name: '#11111', desc: 'no padding' },
   ])('strips all base64url padding and round-trips: $desc', async ({ name }) => {
-    const fetchMock = okJson({ id: 'd' });
+    const fetchMock = okJson({ id: 'd', message: { id: 'm' } });
     const order = { ...ORDER, name };
     await ACTIONS['sync-to-gmail']!({
       token: 's',
@@ -480,7 +486,7 @@ describe('ACTIONS["sync-to-gmail"]', () => {
   });
 
   it('falls back to お客様 when the customer name is blank', async () => {
-    const fetchMock = okJson({ id: 'd' });
+    const fetchMock = okJson({ id: 'd', message: { id: 'm' } });
     await ACTIONS['sync-to-gmail']!({
       token: 's',
       fetch: fetchMock,
@@ -774,7 +780,8 @@ describe('connector HTTP method + serviceId tagging', () => {
       payload: { order: ORDER, token: 'sk' },
     },
   ])('$action issues a POST and tags HTTP errors with $serviceId', async ({ action, serviceId, payload }) => {
-    const okMock = okJson({ id: 'x', success: true, url: '' });
+    // 共有の読み手 (パス 321) は Gmail の下書きに message.id を要求する —— 実物の応答と同じ形。
+    const okMock = okJson({ id: 'x', success: true, url: '', message: { id: 'm' } });
     await ACTIONS[action]!({ token: 's', fetch: okMock, payload });
     expect((okMock.mock.calls[0]![1] as RequestInit).method).toBe('POST');
 
@@ -806,5 +813,82 @@ describe('assertUniqueConnectors invariant', () => {
 
   it('accepts an empty connector list', () => {
     expect(() => assertUniqueConnectors([])).not.toThrow();
+  });
+});
+
+/*
+ * **注文の欄は共有台帳が見る。** (2026-09-15 · パス 282)
+ *
+ * `assertOrder` は 2026-09-15 まで**裸のキャストと presence 2 つ**だけで、
+ * 外へ書く 11 クライアントのうち**この 1 本だけ**が共有台帳を読んでいなかった。
+ * 下の 3 つは、直す前に**実測した害**である (どれも payload は
+ * `action:invoke` 経由で renderer から来る)。
+ */
+describe('注文の欄は共有台帳で断る (パス 282)', () => {
+  const good = {
+    id: 'gid://shopify/Order/1',
+    name: '#1001',
+    customer: '山田太郎',
+    total: '¥12,000',
+    currency: 'JPY',
+    lineItems: [{ title: 'Tシャツ', quantity: 2 }],
+  };
+
+  it('対照: 正しい注文は通る (規則が厳し過ぎない)', () => {
+    expect(() => assertOrder({ order: good })).not.toThrow();
+    expect(assertOrder({ order: good }).name).toBe('#1001');
+    // 明細の無い注文も通る (画面は「(明細なし)」を出す)
+    expect(() => assertOrder({ order: { ...good, lineItems: undefined } })).not.toThrow();
+  });
+
+  it('★ lineItems が配列でなければ断る (直す前は items.map が投げた)', () => {
+    // 実測 (パス 282): 3 形すべてで `TypeError: items.map is not a function`。
+    for (const bad of ['xx', { length: 2 }, 7]) {
+      expect(() => assertOrder({ order: { ...good, lineItems: bad } }), String(bad)).toThrow(
+        /lineItems/,
+      );
+    }
+  });
+
+  it('★ total / customer が文字列でなければ断る (直す前は [object Object] を投稿した)', () => {
+    // 実測 (パス 282): orderHeadline が `(${o.total})` に素で埋めるので
+    // オブジェクトは `[object Object]` として Slack / Discord / LINE へ出た。
+    expect(() => assertOrder({ order: { ...good, total: { a: 1 } } })).toThrow(/total/);
+    expect(() => assertOrder({ order: { ...good, customer: ['x'] } })).toThrow(/customer/);
+  });
+
+  it('★ 明細 1 件ごとに title と quantity を見る', () => {
+    expect(() => assertOrder({ order: { ...good, lineItems: [{ quantity: 1 }] } })).toThrow(/title/);
+    expect(() =>
+      assertOrder({ order: { ...good, lineItems: [{ title: 'T', quantity: 'two' }] } }),
+    ).toThrow(/quantity/);
+    expect(() =>
+      assertOrder({ order: { ...good, lineItems: [{ title: 'T', quantity: Number.NaN }] } }),
+    ).toThrow(/quantity/);
+    // 要素がオブジェクトでない場合も断る
+    expect(() => assertOrder({ order: { ...good, lineItems: ['T シャツ'] } })).toThrow(/lineItems/);
+  });
+
+  it('★ 長さの天井は他の 10 本と同じ定数を読む', () => {
+    const over = 'あ'.repeat(MAX_WRITE_TITLE_CHARS + 1);
+    expect(() => assertOrder({ order: { ...good, name: over } })).toThrow(
+      new RegExp(String(MAX_WRITE_TITLE_CHARS)),
+    );
+    // 境界: ちょうど天井は通る (天井の off-by-one を留める)
+    expect(() =>
+      assertOrder({ order: { ...good, name: 'あ'.repeat(MAX_WRITE_TITLE_CHARS) } }),
+    ).not.toThrow();
+  });
+
+  it('★ 明細の件数にも天井が在る', () => {
+    const many = Array.from({ length: MAX_SHOPIFY_LINE_ITEMS + 1 }, () => ({ title: 'T', quantity: 1 }));
+    expect(() => assertOrder({ order: { ...good, lineItems: many } })).toThrow(/lineItems/);
+  });
+
+  it('★ 断りの文面は台帳のもの (1 経路だけ別の言い方をしない)', () => {
+    // 肯定形 —— 台帳の describeWriteFieldFailure が作る文であること。
+    expect(() => assertOrder({ order: { ...good, id: undefined } })).toThrow(
+      describeWriteFieldFailure({ field: 'id', problem: 'missing', rule: SHOPIFY_ORDER_FIELDS.id! }),
+    );
   });
 });

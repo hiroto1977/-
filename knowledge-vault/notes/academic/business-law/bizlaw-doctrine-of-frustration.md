@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
 - [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
 - [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 出典を共有
-- [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,7 @@ aliases:
 - [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同じ思想家
 - [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
 - [[human-tend-and-befriend-taylor|思いやり・絆反応——闘争逃走に並ぶストレス対処と養護・連帯の様式]] — 同じ思想家
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティング（ワイザー）——コンピュータが環境に溶け込み意識されずに使われる「消えるコンピュータ」の構想と、IoT・アンビエント環境への展開]] — 同じ思想家
 - [[human-fading-affect-bias|感情消失バイアス]] — 同分野の近傍
 
 ## 関連

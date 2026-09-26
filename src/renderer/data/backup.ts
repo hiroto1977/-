@@ -29,8 +29,11 @@
  *
  * IndexedDB の読み書きは `store.exportAll()` / `store.importAll()`。
  */
-import type { StoredRecord } from './store';
+import { isImportableRecord, type StoredRecord } from './store';
+import { parseTimestamp } from '../../shared/isoDate';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
+import { MIN_PASSWORD_LENGTH, meetsPasswordPolicy } from '../security/vault';
+import { personalDataCollections } from './collectionShapes';
 
 export const BACKUP_VERSION = 1;
 
@@ -119,14 +122,35 @@ export async function serializeBackup(
   return JSON.stringify(file, null, 2);
 }
 
+/**
+ * 暗号化バックアップのパスフレーズが短すぎるときの文 (無ければ null)。
+ *
+ * **下限は保管庫のマスターパスワードと同じ 1 つ** (`vault.ts` の `MIN_PASSWORD_LENGTH` = 12)。
+ * それまで保管庫は 12 文字以上を強制していたのに、同じデータを**外へ持ち出す**暗号化バックアップは
+ * 1 文字でも「暗号化済み」を名乗っていた (2026-09-09 実測 —— パス 128)。PBKDF2 は 1 回の試行を
+ * 遅くするだけで、1〜3 文字の合言葉の総当たりは秒で終わる。バックアップファイルは最も持ち出され
+ * やすい流出経路 (docs/DATA_PROTECTION.md 5) なので、書き出しの側で断る。**復元は断らない** ——
+ * 古いファイルの短い合言葉も開ける (開けなくなる方が事故)。
+ */
+export function backupPassphraseTooShort(password: string): string | null {
+  // **下限の規則そのものを写さない** (2026-09-14 · パス 252)。2026-09-09 (パス 128) は
+  // 定数だけを共有し、`>=` の式はここに書き直していた —— その式が
+  // `password.length` (コード単位) だったので、`'😀'.repeat(6)` (実文字数 6) が
+  // 「12 文字以上」の合言葉として通っていた。式ごと `meetsPasswordPolicy` を読む。
+  if (meetsPasswordPolicy(password)) return null;
+  return `暗号化バックアップのパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください（保管庫のパスワードと同じ下限です。短い合言葉は総当たりで開きます）`;
+}
+
 /** Encrypt a backup with a passphrase (AES-GCM). The plaintext is a normal
  *  BackupFile (with its SHA-256 integrity intact) so decryption yields a file
- *  that still verifies. */
+ *  that still verifies. 短い合言葉は断る (`backupPassphraseTooShort`)。 */
 export async function serializeEncryptedBackup(
   records: readonly StoredRecord[],
   password: string,
   now: Date = new Date(),
 ): Promise<string> {
+  const tooShort = backupPassphraseTooShort(password);
+  if (tooShort !== null) throw new Error(tooShort);
   const inner = await serializeBackup(records, now);
   const payload = await encryptString(inner, password);
   const envelope: EncryptedBackupFile = { app: 'service-hub', encrypted: true, payload };
@@ -148,13 +172,13 @@ export function isEncryptedBackup(text: string): boolean {
 
 /**
  * Parse + validate a backup file. Throws a user-facing message if the envelope
- * is wrong or the integrity checksum fails. Returns the records array
- * (record-level validation is done by `store.importAll`, which drops malformed
+ * is wrong or the integrity checksum fails. Returns the records array and the
+ * export time (`exportedAt`; null when unreadable — パス 129) (record-level validation is done by `store.importAll`, which drops malformed
  * entries). checksum が無いファイルは**拒否する** (理由は BackupFile.checksum)。
  *
  * Encrypted backups require `password`; it is ignored for plaintext files.
  */
-export async function parseBackup(text: string, password?: string): Promise<readonly StoredRecord[]> {
+export async function parseBackupFile(text: string, password?: string): Promise<ParsedBackup> {
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -171,7 +195,7 @@ export async function parseBackup(text: string, password?: string): Promise<read
     if (!password) throw new Error('暗号化バックアップの復元にはパスワードが必要です');
     if (!isEncryptedBundle(maybeEnc.payload)) throw new Error('暗号化バックアップの形式が不正です');
     const inner = await decryptString(maybeEnc.payload, password);
-    return parseBackup(inner);
+    return parseBackupFile(inner);
   }
 
   const file = parsed as Partial<BackupFile>;
@@ -192,5 +216,271 @@ export async function parseBackup(text: string, password?: string): Promise<read
     throw new Error('バックアップファイルが破損しています (チェックサム不一致)');
   }
 
-  return file.records as StoredRecord[];
+  return { exportedAt: backupExportedAt(file.exportedAt), records: file.records as StoredRecord[] };
+}
+
+/** レコードだけ要る呼び出し (検査・互換)。 */
+export async function parseBackup(text: string, password?: string): Promise<readonly StoredRecord[]> {
+  return (await parseBackupFile(text, password)).records;
+}
+
+/**
+ * 復元の入口が読むもの —— レコードと、**書き出した時刻**。(2026-09-09 · パス 129)
+ *
+ * `parseBackup` はレコードだけを返していたので、画面は「どのバックアップか」を利用者に
+ * 言えず、置換の確認は「既存の業務データを全て削除してから復元します」の一文だけだった。
+ * `exportedAt` は最初の版から書いてある (`serializeBackup`)。読めない形 (手で直した JSON) は
+ * null —— 復元は断らない (時刻は表示にしか使わない)。
+ */
+export interface ParsedBackup {
+  readonly exportedAt: string | null;
+  readonly records: readonly StoredRecord[];
+}
+
+/** ISO 文字列として読める時刻だけ通す。 */
+export function backupExportedAt(v: unknown): string | null {
+  // 読めるかの判定は `shared/isoDate.ts` の 1 つを通す (パス 185)。
+  // ここが「読めない時刻を断る」唯一の場所だった —— 規準はここに在り、
+  // 刷る側の 6 か所が知らなかった。
+  return typeof v === 'string' && parseTimestamp(v) !== null ? v : null;
+}
+
+/** 復元の計画に要る封筒。中身は見ない —— 封緘済みでも id と時刻は平文 (`exportAll` で読める)。 */
+export interface RestoreEnvelope {
+  readonly id: string;
+  readonly updatedAt: number;
+}
+
+export type RestoreMode = 'merge' | 'replace';
+
+/**
+ * 復元で何が足され・上書きされ・残り・消えるか —— **書く前に**数える。
+ *
+ * 2026-09-09 まで、復元は `importAll` に全件を渡していた (`put` = id ごとの upsert)。
+ * 2 つの形で利用者の記録が黙って戻っていた:
+ *
+ *   マージ: バックアップを取った**後に**直した記録 (同じ id・この端末の updatedAt の方が新しい)
+ *           が、バックアップの古い中身で上書きされる —— 「マージ」は足すだけに読める。
+ *   置換:   確認は一文だけで、消える件数 (バックアップに無い記録・この端末の方が新しい記録) を
+ *           言わない。3 か月前のファイルを選んだ人は、3 か月分を失うと知らずに「OK」を押す。
+ *
+ * マージは id ごとに**新しい方を残す** (この端末の方が新しい id は書かない)。置換は全部書くが、
+ * 確認が消える件数を言う (`replaceRestoreConfirmMessage`)。
+ *
+ * 数えるのは id と updatedAt だけ —— 中身は封緘済みで見られないことがあるし、時刻で足りる。
+ * 削除の墓標は無いので、この端末で消した記録はマージで戻る (REMAINING_WORK パス 129「残る物」)。
+ */
+export interface RestorePlan {
+  readonly mode: RestoreMode;
+  readonly exportedAt: string | null;
+  /** バックアップの件数 (ファイルに在った全件) / この端末の件数。 */
+  readonly incoming: number;
+  readonly existing: number;
+  /**
+   * バックアップに在るが**取り込めない**件数 (形式不正)。判定は `importAll` と同じ
+   * `isImportableRecord`。下の数はすべて**この分を除いた**後の数である (パス 432)。
+   */
+  readonly dropped: number;
+  /** バックアップにあってこの端末に無い id —— 足される。 */
+  readonly added: number;
+  /** 両方にあり、バックアップの方が新しいか同時刻 —— バックアップの中身になる。 */
+  readonly overwritten: number;
+  /** 両方にあり、この端末の方が新しい —— マージでは残し、置換では消える。 */
+  readonly newerLocal: number;
+  /** この端末にだけある id (バックアップに 1 件も無い) —— マージでは残り、置換では消える。 */
+  readonly localOnly: number;
+  /**
+   * バックアップに同じ id が在るのに、その記録が**取り込めない**件数 ——
+   * 置換では消える (消してから、入れる物が無い)。マージでは残る。
+   *
+   * 2026-09-23 まで、この件数は `overwritten` (= バックアップの中身になる) に数えられていた。
+   * 実測: 確認文が「**消える記録はありません**」と述べ、押すとその記録が消えた (パス 432)。
+   */
+  readonly unusableLocal: number;
+  /** 置換で失う (元に戻せない) 件数 = localOnly + newerLocal + unusableLocal。マージでは 0。 */
+  readonly lost: number;
+  /** 実際に書く物 —— マージでは newerLocal を除き、置換では全部。 */
+  readonly toImport: readonly StoredRecord[];
+}
+
+export function planRestore(
+  existing: readonly RestoreEnvelope[],
+  incoming: readonly StoredRecord[],
+  mode: RestoreMode,
+  exportedAt: string | null,
+): RestorePlan {
+  const local = new Map<string, number>();
+  for (const r of existing) local.set(r.id, r.updatedAt);
+  // **入るのはこれだけ。** 関門は `importAll` と同じ 1 つ (`isImportableRecord`) ——
+  // 2 つ書くと、数える側と実行する側が割れる (パス 432)。
+  const usable = incoming.filter(isImportableRecord);
+  const fileIds = new Set<string>();
+  for (const rec of incoming) fileIds.add(rec.id);
+  const usableIds = new Set<string>();
+  let added = 0;
+  let overwritten = 0;
+  let newerLocal = 0;
+  const toImport: StoredRecord[] = [];
+  for (const rec of usable) {
+    usableIds.add(rec.id);
+    const mine = local.get(rec.id);
+    if (mine === undefined) {
+      added += 1;
+      toImport.push(rec);
+    } else if (mine > rec.updatedAt) {
+      newerLocal += 1;
+      if (mode === 'replace') toImport.push(rec);
+    } else {
+      overwritten += 1;
+      toImport.push(rec);
+    }
+  }
+  let localOnly = 0;
+  let unusableLocal = 0;
+  for (const id of local.keys()) {
+    if (usableIds.has(id)) continue;
+    // バックアップに同じ id が在るのに取り込めない物と、そもそも無い物は**別に数える** ——
+    // 確認文がどちらの理由で消えるのかを言い分けるため。
+    if (fileIds.has(id)) unusableLocal += 1;
+    else localOnly += 1;
+  }
+  let lost = 0;
+  if (mode === 'replace') lost = localOnly + newerLocal + unusableLocal;
+  return {
+    mode, exportedAt,
+    incoming: incoming.length, existing: existing.length, dropped: incoming.length - usable.length,
+    added, overwritten, newerLocal, localOnly, unusableLocal, lost, toImport,
+  };
+}
+
+/** 書き出し時刻の表示 (端末のロケール)。null は「書き出し時刻不明」。 */
+export function exportedAtLabel(exportedAt: string | null): string {
+  const at = parseTimestamp(exportedAt);
+  return at === null ? '書き出し時刻不明' : `${at.toLocaleString('ja-JP')} 書き出し`;
+}
+
+/**
+ * 置換の確認文 —— **何件消えるか**を言う。一文だけの確認は、何も言っていないのと同じ。
+ * 消える物が無いときはそう言う (「消える記録はありません」) —— 空欄ではなく明示。
+ *
+ * ★ **数えるのは「入る物」でなければならない** (2026-09-23 · パス 432)。
+ *   2026-09-23 まで `planRestore` はファイルの全件で id を突き合わせており、
+ *   `importAll` が形で落とす記録も「バックアップの中身になる」に数えていた。
+ *   実測 (直す前・同じ id の控えが形式不正・置換):
+ *
+ *     確認文  「この端末: 1 件 —— **消える記録はありません** (…バックアップの方が新しいか同時刻です)。」
+ *     押した後 ストア **0 件**・結果の文も「消えた **0 件**」
+ *
+ *   **利用者が頼った当の 1 文が偽**で、記録は元に戻せない。だから確認は
+ *   「取り込めない件数」と「その id が消えること」を別々に述べる。
+ *   取り込めない物が 0 件なら文面は 1 字も変わらない。
+ */
+export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
+  const reasons = [
+    `バックアップに無い ${plan.localOnly} 件`,
+    `この端末の方が新しい ${plan.newerLocal} 件`,
+    // 形式不正の控えは「上書き」ではなく**消えるだけ** —— 消してから入れる物が無い。
+    ...(plan.unusableLocal > 0 ? [`バックアップ側が形式不正で入れ替えられない ${plan.unusableLocal} 件`] : []),
+  ];
+  const loss =
+    plan.lost === 0
+      ? '消える記録はありません (この端末の記録は全てバックアップにあり、バックアップの方が新しいか同時刻です)。'
+      : `${reasons.join('と、')} (計 ${plan.lost} 件) が消え、元に戻せません。`;
+  const unusable = plan.dropped > 0 ? `（うち ${plan.dropped} 件は形式が不正で取り込めません）` : '';
+  return [
+    '既存の業務データを全て削除してから復元します。',
+    `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件${unusable}`,
+    `この端末: ${plan.existing} 件 —— ${loss}`,
+    'よろしいですか？',
+  ].join('\n');
+}
+
+/**
+ * **取り込める記録が 1 件も無い控えでの置換は、訊く前に断る** (2026-09-23 · パス 432)。
+ *
+ * 置換は「既存を全部消してから復元する」操作で、**消す方は必ず成功し、入れる方は
+ * 形の検査を通った物だけが入る**。全件が形式不正なら結果は「全部消えて、何も入らない」 ——
+ * それは復元ではない。しかもアプリは**訊く前にそれを知っている** (判定は純関数で、
+ * 記録は手元に在る)。だから確認を出さずに断る。
+ *
+ * 消したいだけの利用者には**別の操作子が在る**ので、その名前を言う
+ * (法則 `escape-hatch-stays-open`)。マージは何も消さないので対象外 ——
+ * そちらは今までどおり「0 件復元しました…N 件は形式が不正」と結果で述べる。
+ *
+ * 断る理由が無ければ null。
+ */
+export function unusableBackupRefusal(plan: RestorePlan): string | null {
+  if (plan.mode !== 'replace') return null;
+  if (plan.dropped === 0 || plan.dropped !== plan.incoming) return null;
+  return (
+    `このバックアップは ${plan.incoming} 件すべてが形式不正で、取り込める記録が 1 件もありません。`
+    + `置換すると、この端末の ${plan.existing} 件を消して何も入らないため復元しませんでした。`
+    + '別のバックアップファイルを選んでください。業務データを消したいだけなら、'
+    + '設定の「すべてのデータを削除」をお使いください。'
+  );
+}
+
+/**
+ * 復元の結果の文。`${imported} 件のレコードを復元しました` で始まる
+ * (`importSizeGuard.test.ts` がこの形を留めている)。`dropped` は importAll が形で捨てた件数。
+ */
+export function restoreResultMessage(plan: RestorePlan, imported: number, dropped: number): string {
+  // **件数が読めなければ数字を出さない。** 実測では `imported` が非有限のとき
+  // 「**NaN 件**のレコードを復元しました」という報告になっていた (走査は関門に
+  // 出てくる `dropped` しか挙げず、文に埋まる `imported` は挙げなかった側)。
+  const importedLabel = Number.isFinite(imported) ? `${imported} 件` : '不明な件数';
+  const droppedNote = Number.isFinite(dropped) && dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
+  // 消えた理由は**確認文と同じ 3 つ**を同じ順序で並べる (形式不正が 0 件なら文面は変わらない)。
+  const unusable = plan.unusableLocal > 0 ? ` + バックアップ側が形式不正だった ${plan.unusableLocal} 件` : '';
+  const detail =
+    plan.mode === 'replace'
+      ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件${unusable}`
+      : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
+  return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
+}
+
+/**
+ * 平文バックアップが**さらす物**を、書く前に数える (2026-09-09 · パス 130)。
+ *
+ * 合言葉が空なら書き出しは平文で、`docs/DATA_PROTECTION.md` が「バックアップファイルは最も
+ * 持ち出されやすい流出経路」と言うファイルに、チームメンバーのメールアドレス・士業の連絡先の
+ * 電話番号・提出者情報の住所が**そのまま**入る。2026-09-09 まで画面は「（任意）」の欄を
+ * 空のまま押せば黙って平文を書いた —— 何が入るかは言わなかった。
+ *
+ * どの collection が個人情報を持つかは `collectionShapes.personalDataCollections()` が
+ * 欄の名前から導く。ここは件数を数え、確認の文を組む。個人情報の記録が 0 件なら確認は要らない
+ * (null) —— 売上だけの控えに合言葉を強いる理由は無い。
+ */
+export interface PlaintextExposure {
+  readonly total: number;
+  readonly parts: readonly { readonly collection: string; readonly label: string; readonly count: number }[];
+}
+
+/** 持ち出すと困る記録を持つ collection の表示名。走査か台帳が新しい collection を見つけたら、ここにも名前が要る (検査が留める)。 */
+export const PERSONAL_DATA_LABELS: Readonly<Record<string, string>> = {
+  'team-members': 'チームメンバー (メールアドレス)',
+  'shigyo-contacts': '士業の連絡先 (電話番号・メールアドレス)',
+  'bank-submission-settings': '提出者情報 (代表者名・住所)',
+  'shigyo-consultations': '士業の相談記録 (相談日・相談テーマ)',
+};
+
+export function plaintextExposure(records: readonly { readonly collection: string }[]): PlaintextExposure {
+  const parts: { collection: string; label: string; count: number }[] = [];
+  for (const { collection } of personalDataCollections()) {
+    const count = records.filter((r) => r.collection === collection).length;
+    if (count > 0) parts.push({ collection, label: PERSONAL_DATA_LABELS[collection] ?? collection, count });
+  }
+  return { total: parts.reduce((sum, p) => sum + p.count, 0), parts };
+}
+
+/** 平文で書き出す前の確認文。持ち出すと困る記録が無ければ null (確認しない)。 */
+export function plaintextBackupConfirmMessage(exposure: PlaintextExposure): string | null {
+  if (exposure.total === 0) return null;
+  const parts = exposure.parts.map((p) => `${p.label} ${p.count} 件`).join('・');
+  return [
+    '合言葉が空なので、平文 (暗号化なし) で書き出します。',
+    `個人情報・機微な記録が ${exposure.total} 件入ります: ${parts}。`,
+    `このファイルを持ち出す・共有するなら、上の欄に合言葉 (${MIN_PASSWORD_LENGTH} 文字以上) を入れて暗号化してください。`,
+    'このまま平文で書き出しますか？',
+  ].join('\n');
 }

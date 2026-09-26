@@ -36,6 +36,7 @@ aliases:
 - [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]] — 同じ思想家
 - [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
+- [[human-general-adaptation-syndrome-selye|汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応]] — 同じ思想家
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 同分野の近傍
 

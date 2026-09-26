@@ -1,15 +1,23 @@
+import { readFailureBody } from '../../shared/httpLimits';
 import {
   jsonFetch,
   limitedFetch,
-  readCapped,
   FetchError,
   redactForMessage,
+  MAX_RESPONSE_BODY_IN_MESSAGE,
   type ActionContext,
   type ActionMap,
   type ServiceAction,
   type FetchContext,
 } from './types';
-import { buildRfc2822 } from './gmail';
+import { GMAIL_API, GMAIL_DRAFTS_PATH, gmailDraftInit, parseCreatedDraft } from '../../shared/api/google';
+import {
+  SHOPIFY_ORDER_FIELDS,
+  checkShopifyLineItems,
+  checkWriteFields,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 /**
  * Shopify — 連携先 + サービス間連携アクション。
@@ -75,10 +83,37 @@ export interface ShopifyOrderSummary {
 
 /** Pull and shallow-validate `payload.order`. Throws a clear error if a
  *  connector was invoked without an order to sync. */
+/**
+ * **注文を他サービスへ送る前に、欄を共有台帳で見る。** (2026-09-15 · パス 282)
+ *
+ * ここは 2026-09-15 まで**裸のキャストと presence 2 つ**だけだった。
+ * `syncToGmail` の注記が 2026-08-22 に「`assertOrder` は `id` と `name` しか
+ * 見ないので」と**その穴を名指ししながら**、直したのは `To:` の CR/LF だけで、
+ * 残りの欄はそのままだった。
+ *
+ * 実測した害 (パス 282):
+ *
+ * | 欄 | 渡した物 | 起きたこと |
+ * | --- | --- | --- |
+ * | `lineItems` | 文字列 / オブジェクト / 数 | `TypeError: items.map is not a function` |
+ * | `total` | オブジェクト | `[object Object]` が Slack / Discord / LINE へ投稿された |
+ * | `customer` | 配列 | 黙って畳まれた |
+ *
+ * payload は `action:invoke` で renderer から来るので、型は約束でしかない。
+ * **外へ書く 11 クライアントのうち、この 1 本だけが共有台帳を読んでいなかった**
+ * (他の 10 本はすべて `checkWriteFields(payload, TABLE)` を通す)。
+ * 断りの文面も台帳の `describeWriteFieldFailure` に揃える —— 1 経路だけ
+ * 別の言い方をする理由が無い。
+ */
 export function assertOrder(payload: Record<string, unknown>): ShopifyOrderSummary {
   const order = payload.order as ShopifyOrderSummary | undefined;
   if (!order || typeof order !== 'object') throw new Error('order is required');
-  if (!order.id || !order.name) throw new Error('order.id and order.name are required');
+  // 台帳で欄を見る (id / name の presence もここが持つ)。
+  const bad = checkWriteFields(order as unknown as Record<string, unknown>, SHOPIFY_ORDER_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 明細は「件数と 1 件」を別に見る (`checkWriteLabels` と同じ形)。
+  const badItems = checkShopifyLineItems((order as { lineItems?: unknown }).lineItems);
+  if (badItems !== null) throw new Error(describeWriteFieldFailure(badItems));
   return order;
 }
 
@@ -100,19 +135,6 @@ function orderMessage(o: ShopifyOrderSummary): string {
   return `${orderHeadline(o)}\n${orderLines(o)}${tail}`;
 }
 
-/** base64url (no padding) — the encoding Gmail's `drafts.create` expects
- *  for the raw RFC 822 message. */
-function toBase64Url(value: string): string {
-  // Buffer.from(string) already defaults to utf8 — drop the explicit arg to
-  // avoid the equivalent `'utf8' → ''` mutant.
-  let s = Buffer.from(value).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
-  // Strip trailing '=' padding (one or two chars). A while/endsWith loop instead
-  // of a `/=+$/` regex so each padding char removed is individually observable —
-  // a one/two-pad input distinguishes the boundary, killing off-by-one mutants.
-  while (s.endsWith('=')) s = s.slice(0, -1);
-  return s;
-}
-
 /** POST to an endpoint that returns an empty body on success (e.g. a
  *  Discord webhook → 204). `jsonFetch` can't be used because it always
  *  parses JSON. */
@@ -126,10 +148,10 @@ async function postExpectOk(
   // 打ち切りまで一緒に落とすのは筋が違う (2026-08-23)。
   await limitedFetch(url, init, ctx, async (res) => {
     if (!res.ok) {
-      const body = await readCapped(res, ctx).catch(() => '');
+      const body = await readFailureBody(res, ctx.serviceId);
       // redactSecrets: 連携先が応答にトークンを反射しても、エラー経由で漏らさない。
       throw new FetchError(
-        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
         res.status,
         ctx.serviceId,
       );
@@ -149,7 +171,7 @@ interface SlackPostResponse {
 
 /** Shopify → Slack: post an order notification to a channel.
  *  payload: `{ order, token (Slack bot token), channel }`. */
-async function syncToSlack(ctx: ActionContext): Promise<{ service: 'slack'; ts: string; channel: string }> {
+async function syncToSlack(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-slack'>> {
   const order = assertOrder(ctx.payload);
   const { token, channel } = ctx.payload as { token?: string; channel?: string };
   if (!token || !channel) throw new Error('token (Slack) and channel are required');
@@ -169,7 +191,7 @@ async function syncToSlack(ctx: ActionContext): Promise<{ service: 'slack'; ts: 
 
 /** Shopify → Discord: deliver an order notification via an incoming webhook.
  *  payload: `{ order, webhookUrl }`. */
-async function syncToDiscord(ctx: ActionContext): Promise<{ service: 'discord'; delivered: true }> {
+async function syncToDiscord(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-discord'>> {
   const order = assertOrder(ctx.payload);
   const { webhookUrl } = ctx.payload as { webhookUrl?: string };
   if (!webhookUrl) throw new Error('webhookUrl is required');
@@ -183,8 +205,9 @@ async function syncToDiscord(ctx: ActionContext): Promise<{ service: 'discord'; 
     throw new Error('webhookUrl must be an https://discord.com URL');
   }
 
+  // 送り先は**関門の返り値** `u.href` (パス 325。隣の salesforce 同期は `base.origin`)。
   await postExpectOk(
-    webhookUrl,
+    u.href,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -201,7 +224,7 @@ interface LinePushResponse {
 
 /** Shopify → LINE: push an order notification to a user/group.
  *  payload: `{ order, token (LINE channel access token), to }`. */
-async function syncToLine(ctx: ActionContext): Promise<{ service: 'line'; delivered: true }> {
+async function syncToLine(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-line'>> {
   const order = assertOrder(ctx.payload);
   const { token, to } = ctx.payload as { token?: string; to?: string };
   if (!token || !to) throw new Error('token (LINE) and to are required');
@@ -218,45 +241,38 @@ async function syncToLine(ctx: ActionContext): Promise<{ service: 'line'; delive
   return { service: 'line', delivered: true };
 }
 
-interface GmailDraftResponse {
-  id: string;
-}
-
 /** Shopify → Gmail: create a draft order-confirmation email to the customer.
  *  payload: `{ order, token (Gmail OAuth access token) }`. */
-async function syncToGmail(ctx: ActionContext): Promise<{ service: 'gmail'; draftId: string }> {
+async function syncToGmail(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-gmail'>> {
   const order = assertOrder(ctx.payload);
   const { token } = ctx.payload as { token?: string };
   if (!token) throw new Error('token (Gmail) is required');
   if (!order.email) throw new Error('order.email is required to draft a customer email');
 
   /*
-   * RFC 2822 の組み立ては `gmail.ts` の `buildRfc2822` に 1 つだけ置く。
+   * RFC 2822 の組み立ては shared の `buildRfc2822` に 1 つだけ置く (`gmailDraftInit` が呼ぶ)。
    *
    * ここは 2026-08-22 まで**同じものを手で組み直していて、`To:` の
    * CR/LF 検査だけが抜けていた**。`assertOrder` は `id` と `name` しか見ないので
    * `order.email` は型も改行も無検査で、payload は `action:invoke` 経由で
    * renderer から来る —— つまり乗っ取られた renderer が
    * `"a@b.com\r\nBcc: attacker@evil.com"` を渡せば、下書きに Bcc が載った。
-   * gmail.ts の同じ処理には最初から `isSafeHeaderValue` の関門があり、
+   * 共有の同じ処理には最初から `isSafeHeaderValue` の関門があり、
    * その理由もコメントに書いてある (不変条件 #11)。写した側だけが落としていた。
+   * パス 321 からは要求の組み立て (base64url・URL・ヘッダ) ごと共有を通る。
    */
-  const mime = buildRfc2822(
-    order.email,
-    `ご注文ありがとうございます ${order.name}`,
-    `${order.customer || 'お客'}様\n\nご注文を承りました。\n\n${orderLines(order)}\n\n合計: ${order.total}`,
-  );
+  const draft = {
+    to: order.email,
+    subject: `ご注文ありがとうございます ${order.name}`,
+    body: `${order.customer || 'お客'}様\n\nご注文を承りました。\n\n${orderLines(order)}\n\n合計: ${order.total}`,
+  };
 
-  const res = await jsonFetch<GmailDraftResponse>(
-    'https://gmail.googleapis.com/gmail/v1/users/me/drafts',
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: { raw: toBase64Url(mime) } }),
-    },
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GMAIL_API}${GMAIL_DRAFTS_PATH}`,
+    gmailDraftInit(draft, token),
     { fetch: ctx.fetch, serviceId: 'shopify→gmail' },
   );
-  return { service: 'gmail', draftId: res.id };
+  return { service: 'gmail', draftId: parseCreatedDraft(res).id };
 }
 
 interface NotionPageResponse {
@@ -266,7 +282,7 @@ interface NotionPageResponse {
 
 /** Shopify → Notion: append the order as a row in an order-log database.
  *  payload: `{ order, token (Notion integration token), databaseId }`. */
-async function syncToNotion(ctx: ActionContext): Promise<{ service: 'notion'; pageId: string; url: string }> {
+async function syncToNotion(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-notion'>> {
   const order = assertOrder(ctx.payload);
   const { token, databaseId } = ctx.payload as { token?: string; databaseId?: string };
   if (!token || !databaseId) throw new Error('token (Notion) and databaseId are required');
@@ -300,7 +316,7 @@ interface SalesforceCreateResponse {
 
 /** Shopify → Salesforce: create a CRM Contact for the customer.
  *  payload: `{ order, token (Salesforce access token), instanceUrl }`. */
-async function syncToSalesforce(ctx: ActionContext): Promise<{ service: 'salesforce'; contactId: string }> {
+async function syncToSalesforce(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-salesforce'>> {
   const order = assertOrder(ctx.payload);
   const { token, instanceUrl } = ctx.payload as { token?: string; instanceUrl?: string };
   if (!token || !instanceUrl) throw new Error('token (Salesforce) and instanceUrl are required');
@@ -350,7 +366,7 @@ interface StripeCustomerResponse {
 
 /** Shopify → Stripe: record the customer for payment reconciliation.
  *  payload: `{ order, token (Stripe secret key) }`. */
-async function syncToStripe(ctx: ActionContext): Promise<{ service: 'stripe'; customerId: string }> {
+async function syncToStripe(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-stripe'>> {
   const order = assertOrder(ctx.payload);
   const { token } = ctx.payload as { token?: string };
   if (!token) throw new Error('token (Stripe) is required');

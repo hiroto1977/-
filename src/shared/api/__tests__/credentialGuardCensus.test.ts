@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../__tests__/originalSource';
 import path from 'node:path';
 import * as API from '../index';
 
@@ -114,9 +114,9 @@ describe('資格情報が無いクライアントは、1 バイトも送らな�
    */
   it('index.ts が全クライアント クラスを公開している', () => {
     const declared: string[] = [];
-    for (const f of readdirSync(API_DIR)) {
+    for (const f of readOriginalDir(API_DIR)) {
       if (!f.endsWith('.ts') || f === 'index.ts') continue;
-      const text = readFileSync(path.join(API_DIR, f), 'utf8');
+      const text = readOriginalSource(path.join(API_DIR, f));
       for (const m of text.matchAll(/export\s+class\s+([A-Za-z_$][\w$]*Client)\b/g)) declared.push(m[1]!);
     }
     expect(declared.length, 'クラス宣言を 1 つも拾えていない').toBeGreaterThanOrEqual(9);

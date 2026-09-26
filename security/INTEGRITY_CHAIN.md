@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 143
+- ブロック数: 269
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `69589af155d3ae5d4aecabb3480e3076e00df8077d77e4063a7614d32668405c`
-- 保護対象: 65 ファイル
+- 末尾(tip)ハッシュ: `1006db0ed44424c6376fee9c993d9d67360b19ffe7f814e5c521bc011bc904bc`
+- 保護対象: 97 ファイル
 
 ## ブロック
 
@@ -156,25 +156,164 @@
 | 140 | `c776e99e54a7f9bc` | `fafa5a0c3110cea9` | `2601e7c68364cc6b` | update integrity-chain.cjs,assistant.ts |
 | 141 | `db33e6606dcb0ff7` | `2601e7c68364cc6b` | `a608dedaf93d15f6` | update integrity-chain.cjs,chat.ts,credentials.ts,providers.ts |
 | 142 | `4809c27beb714f99` | `a608dedaf93d15f6` | `69589af155d3ae5d` | update ci.yml |
+| 143 | `8aea0c2f52f8138b` | `69589af155d3ae5d` | `400e4edecfbd6f11` | update ci.yml |
+| 144 | `81a3ce85f9924fbe` | `400e4edecfbd6f11` | `038f7e0885f100bb` | update proxy.ts |
+| 145 | `f57c861f3614642e` | `038f7e0885f100bb` | `d164f7802730003f` | update fsa.ts,proxy.ts |
+| 146 | `91f3f1436e940d03` | `d164f7802730003f` | `df69a8f51b94e6db` | update proxy.ts |
+| 147 | `06327687108ab3e1` | `df69a8f51b94e6db` | `fd31b6ddfc92568a` | update proxy.ts |
+| 148 | `92e0b65f731bfab2` | `fd31b6ddfc92568a` | `ad0ff862e661ea85` | update proxy.ts |
+| 149 | `be167b4609dfb65c` | `ad0ff862e661ea85` | `6eb22f58157533eb` | update proxy.ts |
+| 150 | `f332d6a8a37247dc` | `6eb22f58157533eb` | `98bae01596737bac` | update main.ts,secrets.ts |
+| 151 | `fdd11550ff27c3e4` | `98bae01596737bac` | `89246daa726d738b` | update LockScreen.tsx,vault.ts |
+| 152 | `f606793c30cff64a` | `89246daa726d738b` | `efc501487f020d47` | update pkceSession.ts |
+| 153 | `f22f939447993c7a` | `efc501487f020d47` | `93584bb44ebbd8bd` | update pkceSession.ts |
+| 154 | `e9cecef70974c4fc` | `93584bb44ebbd8bd` | `372531b5494570e1` | update integrity-chain.cjs,localWrite.ts |
+| 155 | `6cefc543f6675d95` | `372531b5494570e1` | `e7983061ca3ecf07` | update ci.yml |
+| 156 | `50ac0c3c641e6c0a` | `e7983061ca3ecf07` | `e84bab6459b71da0` | update lockWorkspace.ts |
+| 157 | `28202b616742428d` | `e84bab6459b71da0` | `a1917593c3509668` | update LockScreen.tsx,vault.ts |
+| 158 | `9e58c4998b7853e9` | `a1917593c3509668` | `807afadb0f0a2c8e` | update LockScreen.tsx,lockWorkspace.ts,vault.ts |
+| 159 | `fe83631956352e68` | `807afadb0f0a2c8e` | `4fe9956bf0ba2aa0` | update lockWorkspace.ts |
+| 160 | `0a37c64b7de8a45a` | `4fe9956bf0ba2aa0` | `ae1c8f4d8e2dc526` | update autoLock.ts,vault.ts |
+| 161 | `b353d35eee046219` | `ae1c8f4d8e2dc526` | `042c87f96d9711cf` | update ci.yml |
+| 162 | `27c309c5a2d868ea` | `042c87f96d9711cf` | `42c788b02cbc8242` | update secrets.ts,dataCrypto.ts |
+| 163 | `4922e693b9c74d3d` | `42c788b02cbc8242` | `a187e057e798613c` | update assistant.ts |
+| 164 | `476aae4a503b3eb1` | `a187e057e798613c` | `4672ca44bb47bf57` | update chat.ts,ollama.ts |
+| 165 | `9d1cf881f3a4f986` | `4672ca44bb47bf57` | `1702b111a531873e` | update integrity-chain.cjs,assistant.ts |
+| 166 | `4c31dcb1167e631d` | `1702b111a531873e` | `e6256ca397a19d88` | update atomicWrite.ts,secrets.ts |
+| 167 | `0afc115ab54105d1` | `e6256ca397a19d88` | `e86b31d3468802d8` | update fsa.ts |
+| 168 | `bb46d1384b5e1fae` | `e86b31d3468802d8` | `57c7cf667a7ee417` | update integrity-chain.cjs,eraseAll.ts,main.ts,secrets.ts,preload.ts,eraseReport.ts |
+| 169 | `1d2446226be4c549` | `57c7cf667a7ee417` | `1d24807548cffbf3` | update main.ts,eraseReport.ts |
+| 170 | `a5322af408e45912` | `1d24807548cffbf3` | `1b4d7633b405a714` | update ollama.ts |
+| 171 | `be4bcb1f36477b8f` | `1b4d7633b405a714` | `62ea193ca4394f07` | update main.ts |
+| 172 | `9a697517fefa6d02` | `62ea193ca4394f07` | `720192b295ce1200` | update pkce.ts |
+| 173 | `3fe75a462c025e45` | `720192b295ce1200` | `b17be4721c89ceaf` | update localWrite.ts |
+| 174 | `f81458429b0e5a9b` | `b17be4721c89ceaf` | `13893b909040ef22` | update pkce.ts,vault.ts |
+| 175 | `ad1c9a552a1fffdc` | `13893b909040ef22` | `e2f7eacb42e3cb68` | update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts |
+| 176 | `20dfa75dd8e55ea1` | `e2f7eacb42e3cb68` | `f8b634ca56505704` | update integrity-chain.cjs,public-host-guard.cjs,proxy.ts |
+| 177 | `32a23823dfb8765f` | `f8b634ca56505704` | `781a89c3713f97df` | update manifest.webmanifest |
+| 178 | `bf6d7facedc77e05` | `781a89c3713f97df` | `bdf2a0cbc9bd7e20` | update localWrite.ts,pkce.ts,vault.ts |
+| 179 | `61652a96ff1a5874` | `bdf2a0cbc9bd7e20` | `67f759ceadfc90e4` | update integrity-chain.cjs,inputCeiling.ts |
+| 180 | `54e2597aafc6db7b` | `67f759ceadfc90e4` | `df0135fbbcecf630` | update inputCeiling.ts |
+| 181 | `9df0a01dbedd16f2` | `df0135fbbcecf630` | `593ba511b74d9924` | update assistant.ts,aiEndpoint.ts,ollama.ts,proxyEndpoint.ts,redact.ts,scanTarget.ts |
+| 182 | `9456dfd5cd8cbffa` | `593ba511b74d9924` | `e5449b2f42356f95` | update inputCeiling.ts |
+| 183 | `b687da381815bb23` | `e5449b2f42356f95` | `8865af8a70c980f1` | update redact.ts |
+| 184 | `05e1629c029f0bc4` | `8865af8a70c980f1` | `28f4a4dc3013f77b` | update dataCrypto.ts |
+| 185 | `c3d3cf83929d972c` | `28f4a4dc3013f77b` | `c22afe999a4dcb52` | update vault.ts |
+| 186 | `1d211e3379972955` | `c22afe999a4dcb52` | `540801a9343cac0d` | update recordCipher.ts,vault.ts,cryptoParams.ts |
+| 187 | `18cc4589d4c75ad6` | `540801a9343cac0d` | `7f73963a4badea7f` | update dataCrypto.ts,cryptoParams.ts |
+| 188 | `aefb1eeded50b9d8` | `7f73963a4badea7f` | `50fb909a763fa713` | update redact.ts |
+| 189 | `16493095e76909bb` | `50fb909a763fa713` | `99603a884ce00f29` | update secrets.ts,vault.ts,tokenInput.ts |
+| 190 | `b1355dbc7c0c258e` | `99603a884ce00f29` | `a4581b8db1377e1b` | update secrets.ts,vaultToken.ts |
+| 191 | `b8a80c2a515f4d13` | `a4581b8db1377e1b` | `7e915fc8f9d06c05` | update ci.yml,atlassianSite.ts |
+| 192 | `8cd4d58c6b655672` | `7e915fc8f9d06c05` | `fc5b41cfc9978320` | update assistant.ts,vault.ts,inputCeiling.ts |
+| 193 | `9115266c561a5b6d` | `fc5b41cfc9978320` | `daad1efc40fe40a2` | update vault.ts |
+| 194 | `d259d7978fe91ebd` | `daad1efc40fe40a2` | `7ef3df28e9c7c612` | update eraseAll.ts |
+| 195 | `032d93072d4e0d99` | `7ef3df28e9c7c612` | `9da7169a68d4522e` | update migrate.sh |
+| 196 | `18f586e7be21a7e1` | `9da7169a68d4522e` | `366767004bfcda84` | update secrets.ts,vaultToken.ts |
+| 197 | `cde076c101d629d5` | `366767004bfcda84` | `e455dcde10bef152` | update integrity-chain.cjs,oauth.ts,pkce.ts,tokenResponse.ts |
+| 198 | `0d6b93e73d8f0a33` | `e455dcde10bef152` | `d28a33840d12b6a8` | update types.ts |
+| 199 | `f87f4e628848e70e` | `d28a33840d12b6a8` | `a74ff7db3b620e02` | update main.ts |
+| 200 | `ed046f9a62fdfff2` | `a74ff7db3b620e02` | `57415ae713904a65` | update assistant.ts |
+| 201 | `54478df571f93fd5` | `57415ae713904a65` | `5794484979a09ef7` | update redact.ts |
+| 202 | `94818d10d81b4eca` | `5794484979a09ef7` | `1da3835fa97a4169` | update types.ts,oauth.ts,proxy.ts,pkce.ts,chat.ts,redact.ts |
+| 203 | `ffd387afc1a8dfc3` | `1da3835fa97a4169` | `5974986ecab81edf` | update tokenInput.ts |
+| 204 | `8ef84f2f2871a2f7` | `5974986ecab81edf` | `b9a1bfd8ee0fbae5` | update main.ts,oauth.ts,scanTarget.ts |
+| 205 | `8425f5134a7245a9` | `b9a1bfd8ee0fbae5` | `0c1052919fac85f2` | update atlassianSite.ts |
+| 206 | `17f73bba666c801a` | `0c1052919fac85f2` | `7dc897572ce9e709` | update scanTarget.ts |
+| 207 | `bea2854f8d1ba41f` | `7dc897572ce9e709` | `64f02826d03bc6a9` | update integrity-chain.cjs |
+| 208 | `4829002d97eb6601` | `64f02826d03bc6a9` | `1259de2343e18a25` | update integrity-chain.cjs,writeFieldLimits.ts |
+| 209 | `f0b4a3c3337eb2e8` | `1259de2343e18a25` | `4d705ae7f96457a3` | update writeFieldLimits.ts |
+| 210 | `2932bf3681e2eea9` | `4d705ae7f96457a3` | `bfc1d71cf6a4a382` | update redact.ts |
+| 211 | `fcc875b846a2d307` | `bfc1d71cf6a4a382` | `c40edecfac623e07` | update ollama.ts,redact.ts |
+| 212 | `3e4b3cc70e3c63c1` | `c40edecfac623e07` | `f15a9c1268c00628` | update oauth.ts |
+| 213 | `97d738e849b8c4b3` | `f15a9c1268c00628` | `b2360eeb1c6a1345` | update oauth.ts |
+| 214 | `8d31f43402ce6c9b` | `b2360eeb1c6a1345` | `2f148e8ad881657a` | update proxy.ts |
+| 215 | `f0b70d7ce3910b83` | `2f148e8ad881657a` | `a6fbb3d158dd3865` | update proxy.ts |
+| 216 | `778a52b4c2cafedb` | `a6fbb3d158dd3865` | `3291d13bf175cf84` | update integrity-chain.cjs,proxy.ts,headerValue.ts,proxyEndpoint.ts,tokenInput.ts |
+| 217 | `f1d91fad0e60d976` | `3291d13bf175cf84` | `21426058e2257388` | update externalUrlGate.ts |
+| 218 | `c7e80990ace3e969` | `21426058e2257388` | `94dab87df56f68a7` | update imageUrlGate.ts |
+| 219 | `d8280db5b33036f7` | `94dab87df56f68a7` | `584ff738f2e54656` | update imageUrlGate.ts |
+| 220 | `e4c14e4db43effcd` | `584ff738f2e54656` | `9081829e86e19cd9` | update integrity-chain.cjs,proxy.ts,imageUrlGate.ts,privateTarget.ts |
+| 221 | `3867dd78d005fa8e` | `9081829e86e19cd9` | `010833de8c0136f5` | update types.ts,main.ts,oauth.ts,proxy.ts,pkce.ts,chat.ts |
+| 222 | `9a221dc8a7b88486` | `010833de8c0136f5` | `ba43bcaff2f37520` | update main.ts |
+| 223 | `3bad11657753ff7d` | `ba43bcaff2f37520` | `dbef2f67700de4b3` | update lint-sample-data.cjs |
+| 224 | `41cc4592e2328e61` | `dbef2f67700de4b3` | `07ff990376947690` | update smoke-app.cjs,httpLimits.ts |
+| 225 | `938ba9be71b39e54` | `07ff990376947690` | `6a49e8e08b5ff4c2` | update integrity-chain.cjs,artifact-freshness.cjs |
+| 226 | `da67b59058ce8567` | `6a49e8e08b5ff4c2` | `6fee5d6ed429511f` | update integrity-chain.cjs,artifact-freshness.cjs |
+| 227 | `bd20f5455715e558` | `6fee5d6ed429511f` | `cc12d4379bb34aaa` | update localWrite.ts |
+| 228 | `b2f88a11db36b8e4` | `cc12d4379bb34aaa` | `4622ed7f0c87d56a` | update inject-pwa.cjs,main.ts,LockScreen.tsx |
+| 229 | `6e0ef03411cb14e9` | `4622ed7f0c87d56a` | `fe61d314102bf9a8` | update LockScreen.tsx |
+| 230 | `19cbcb46e8a814b5` | `fe61d314102bf9a8` | `1bb6f54ad8b44fa2` | update ci.yml,pages.yml,release.yml |
+| 231 | `ff0d24df824d74da` | `1bb6f54ad8b44fa2` | `1c5bc4d25c104fa5` | update LockScreen.tsx |
+| 232 | `b9c5cd1a1e1e1b52` | `1c5bc4d25c104fa5` | `026e19752fd23417` | update eraseAll.ts,main.ts,preload.ts |
+| 233 | `4e6ba7f326282c1f` | `026e19752fd23417` | `356612b929b814c6` | update integrity-chain.cjs,windowPrefs.ts |
+| 234 | `74dea58ee7310355` | `356612b929b814c6` | `1bb13503b433342c` | update integrity-chain.cjs,stateFile.ts |
+| 235 | `f7c1d88e72bafbde` | `1bb13503b433342c` | `9d5cf2972655164e` | update redact.ts |
+| 236 | `771ba090924652e0` | `9d5cf2972655164e` | `e40f7cb370ef3d37` | update scanTarget.ts |
+| 237 | `5fbf5ce3610df6c0` | `e40f7cb370ef3d37` | `73dadc5f8e9a2da5` | update atomicWrite.ts,secrets.ts |
+| 238 | `7844589184c9bc41` | `73dadc5f8e9a2da5` | `c533a547beb0ad9c` | update dataCrypto.ts,vault.ts |
+| 239 | `b3b796d83f7eb1ea` | `c533a547beb0ad9c` | `0328ccd0ab45e865` | update types.ts,oauth.ts,proxy.ts,pkce.ts,httpLimits.ts |
+| 240 | `c46b55f220c9611b` | `0328ccd0ab45e865` | `ddca16c3dfb3c0b5` | update integrity-chain.cjs,oauth.ts,pkce.ts,constantTimeEquals.ts |
+| 241 | `6406fd3ccaf97f32` | `ddca16c3dfb3c0b5` | `84bb7ee1fff35671` | update oauth.ts,pkce.ts,constantTimeEquals.ts,cryptoParams.ts,httpLimits.ts |
+| 242 | `6260a8cd77642a91` | `84bb7ee1fff35671` | `eceb073a154f3b01` | update proxy.ts |
+| 243 | `5531cfe750bcdc50` | `eceb073a154f3b01` | `6b3c13c99ea27ac2` | update eslint.config.js,integrity-chain.cjs,vite.config.ts,vitest.config.ts |
+| 244 | `034c9619164aba7b` | `6b3c13c99ea27ac2` | `7a9ec8b816efb086` | update integrity-chain.cjs |
+| 245 | `3e42e4291c23c54b` | `7a9ec8b816efb086` | `6215ffe67e69c320` | update PROXY_EXAMPLE.md,integrity-chain.cjs |
+| 246 | `2003a5888b38d5c8` | `6215ffe67e69c320` | `dcb6a25543223906` | update vault.ts |
+| 247 | `22b008549f16ae14` | `dcb6a25543223906` | `a37dbe4dd22650c9` | update fsa.ts |
+| 248 | `6ac210dcc75635ef` | `a37dbe4dd22650c9` | `f1b6f5d32bf203ff` | update manifest.webmanifest,inject-pwa.cjs |
+| 249 | `2271b65879a4c026` | `f1b6f5d32bf203ff` | `5b4b35d23c050a51` | update settings.json,integrity-chain.cjs |
+| 250 | `4214f066246f7aa3` | `5b4b35d23c050a51` | `f02b2ea3944ebd26` | update integrity-chain.cjs |
+| 251 | `c8100c9a08e21559` | `f02b2ea3944ebd26` | `17aa34be3fdcc87f` | update 00-project.mdc,10-boundaries.mdc,20-gates.mdc,30-conventions.mdc,integrity-chain.cjs |
+| 252 | `ff9eea1aa2624c70` | `17aa34be3fdcc87f` | `601c33c1e8dc731b` | update ollama.ts |
+| 253 | `6f5a37a33b4ffa5e` | `601c33c1e8dc731b` | `fab34a09f75da080` | update integrity-chain.cjs,versionOrder.ts |
+| 254 | `6fbacb7e8851b479` | `fab34a09f75da080` | `ae26e30e071e2e5c` | update integrity-chain.cjs,isoDate.ts,localDate.ts,ollama.ts |
+| 255 | `1171c2ce896e57a4` | `ae26e30e071e2e5c` | `3b9a268d86588536` | update imageUrlGate.ts,isoDate.ts,ollama.ts |
+| 256 | `5cf97c4467c18e21` | `3b9a268d86588536` | `85a96af8da4f5467` | update chat.ts,httpLimits.ts |
+| 257 | `a6b3405fa277402b` | `85a96af8da4f5467` | `5b6a4a278dbef782` | update integrity-chain.cjs,vitest.audit.config.ts |
+| 258 | `2b107539c6239f53` | `5b6a4a278dbef782` | `911557dfbce3c75c` | update credentials.ts |
+| 259 | `b124d43d54b1d0d2` | `911557dfbce3c75c` | `6f25fc1001916516` | update lint-sample-data.cjs |
+| 260 | `ea639cce61f4dcaf` | `6f25fc1001916516` | `246874b2fdcd2f94` | update integrity-chain.cjs,population-floor.cjs,lint-sample-data.cjs |
+| 261 | `f39e21e6bb61c860` | `246874b2fdcd2f94` | `43a51da6e33dabfc` | update lint-sample-data.cjs |
+| 262 | `fa27132a818584f9` | `43a51da6e33dabfc` | `48a6f5b9c27762ea` | update integrity-chain.cjs,tracked-cross-check.cjs |
+| 263 | `3f1ddcc92f79b834` | `48a6f5b9c27762ea` | `16e58b8e470d21c5` | update integrity-chain.cjs |
+| 264 | `d0ca7f9b2d5fd979` | `16e58b8e470d21c5` | `d2c435999dee6dce` | update integrity-chain.cjs |
+| 265 | `ceaa5c527f45669b` | `d2c435999dee6dce` | `67b63ab282a13375` | update integrity-chain.cjs |
+| 266 | `d3eaff764ba7bbca` | `67b63ab282a13375` | `c0785b5ed154c317` | update integrity-chain.cjs,assistantLimits.ts |
+| 267 | `14898f4d30d06ab5` | `c0785b5ed154c317` | `1c895191a6d9d57a` | update sw.js,build-landing.cjs,integrity-chain.cjs |
+| 268 | `787d2ad147d24654` | `1c895191a6d9d57a` | `1006db0ed44424c6` | update integrity-chain.cjs,json-for-script.cjs |
 
 ## 保護対象ファイル
 
+- `.claude/settings.json`
+- `.cursor/rules/00-project.mdc`
+- `.cursor/rules/10-boundaries.mdc`
+- `.cursor/rules/20-gates.mdc`
+- `.cursor/rules/30-conventions.mdc`
 - `.github/workflows/ci.yml`
 - `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`
 - `assets/manifest.webmanifest`
 - `assets/sw.js`
+- `docs/PROXY_EXAMPLE.md`
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
+- `eslint.config.js`
+- `scripts/build-landing.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
+- `scripts/lib/artifact-freshness.cjs`
+- `scripts/lib/json-for-script.cjs`
+- `scripts/lib/population-floor.cjs`
+- `scripts/lib/tracked-cross-check.cjs`
 - `scripts/lint-artifact-csp.cjs`
 - `scripts/lint-sample-data.cjs`
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
 - `scripts/migrate.sh`
+- `scripts/public-host-guard.cjs`
 - `scripts/safe-vault-write.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
@@ -185,12 +324,16 @@
 - `src/main/clients/assistant.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
+- `src/main/eraseAll.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
 - `src/main/shellOpenGate.ts`
+- `src/main/stateFile.ts`
+- `src/main/windowPrefs.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`
+- `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
 - `src/renderer/fs/fsa.ts`
 - `src/renderer/network/liveRead.ts`
@@ -205,22 +348,37 @@
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
+- `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.ts`
 - `src/shared/ai/chat.ts`
 - `src/shared/ai/credentials.ts`
 - `src/shared/ai/providers.ts`
 - `src/shared/aiEndpoint.ts`
+- `src/shared/assistantLimits.ts`
 - `src/shared/atlassianSite.ts`
+- `src/shared/constantTimeEquals.ts`
 - `src/shared/controlChars.ts`
 - `src/shared/cryptoParams.ts`
+- `src/shared/eraseReport.ts`
 - `src/shared/escape.ts`
 - `src/shared/externalUrlGate.ts`
+- `src/shared/headerValue.ts`
 - `src/shared/httpLimits.ts`
 - `src/shared/imageUrlGate.ts`
+- `src/shared/inputCeiling.ts`
+- `src/shared/isoDate.ts`
+- `src/shared/localDate.ts`
 - `src/shared/ollama.ts`
+- `src/shared/privateTarget.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.ts`
 - `src/shared/scanTarget.ts`
 - `src/shared/tokenInput.ts`
+- `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`
+- `src/shared/versionOrder.ts`
+- `src/shared/writeFieldLimits.ts`
+- `vite.config.ts`
+- `vitest.audit.config.ts`
+- `vitest.config.ts`

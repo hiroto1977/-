@@ -1,4 +1,8 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayDateOf } from '../../shared/isoDate';
+import { displayField, objectRows } from '../../shared/apiResponse';
+import { WORDPRESS_API, checkPost, parseCreatedPost, wordpressPostInit, wordpressPostsPath } from '../../shared/api/wordpress';
+import type { ActionData } from '../../shared/actionData';
 
 
 // Subset of fields returned by https://public-api.wordpress.com/rest/v1.1/me/sites
@@ -26,7 +30,8 @@ export interface WordPressSnapshot {
     url: string;
     platform: string;
     status: string;
-    lastUpdated: string;
+  /** 更新日 (`YYYY-MM-DD`・利用者の時計)。**読めなければ `null`** (パス 410)。 */
+    lastUpdated: string | null;
     paidPlan: boolean;
   }[];
 }
@@ -52,14 +57,18 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
   );
 
   return {
-    sites: (data.sites ?? []).map((s) => ({
+    sites: objectRows<WpSite>(data.sites).map((s) => ({
       blogId: s.ID,
-      name: s.name,
-      description: s.description,
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): サイト名と説明に 200,000 字を入れると
+      // `WordPressPage` の総文字数が **200,291 字**になった。
+      name: displayField(s.name),
+      description: displayField(s.description),
       url: s.URL,
       platform: s.jetpack ? 'jetpack' : 'simple',
       status: s.is_private ? 'private' : 'active',
-      lastUpdated: (s.last_updated ?? '').slice(0, 10),
+      // **日付として読めるかで決める** (2026-09-22 · パス 410 —— drive と同じ 1 つの読み手)。
+      lastUpdated: displayDateOf(s.last_updated),
       paidPlan: isPaidPlan(s.plan),
     })),
   };
@@ -67,45 +76,28 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
 
 // --- write-side actions --------------------------------------------------
 
-interface CreatePostDraftPayload {
+/**
+ * `create-post-draft` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkPost` (`WordPressPostFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreatePostDraftPayload {
   siteId: string; // blog id or hostname
   title: string;
   content?: string;
   status?: 'draft' | 'publish' | 'pending' | 'private';
 }
 
-interface WpCreatePostResponse {
-  ID: number;
-  URL: string;
-  short_URL?: string;
-  title: string;
-  status: string;
-}
-
 async function createPostDraft(
   ctx: ActionContext,
-): Promise<{ id: number; url: string; title: string }> {
-  const { siteId, title, content, status } = ctx.payload as unknown as CreatePostDraftPayload;
-  if (!siteId || !title) throw new Error('siteId and title are required');
-
-  const res = await jsonFetch<WpCreatePostResponse>(
-    `https://public-api.wordpress.com/rest/v1.1/sites/${encodeURIComponent(siteId)}/posts/new`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title,
-        content: content ?? '',
-        status: status ?? 'draft',
-      }),
-    },
+): Promise<ActionData<'wordpress/create-post-draft'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/wordpress.ts の 1 つ (ブラウザ版も同じ関数 · 2026-09-18)。
+  const post = checkPost(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${WORDPRESS_API}${wordpressPostsPath(post)}`,
+    wordpressPostInit(post, ctx.token),
     { fetch: ctx.fetch, serviceId: 'wordpress' },
   );
-
-  return { id: res.ID, url: res.URL, title: res.title };
+  return parseCreatedPost(res);
 }
 
 export const ACTIONS: ActionMap = {

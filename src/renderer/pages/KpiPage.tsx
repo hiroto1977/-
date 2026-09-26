@@ -1,21 +1,39 @@
+import { nonNeg, finiteOr0 } from '../../shared/num';
 import { useMemo, useState } from 'react';
+import { parseTimestamp } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { latestRecord } from '../data/latestRecord';
+import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
+import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import { localIsoDate } from '../../shared/localDate';
 import {
   KPI_ACTUALS_COLLECTION,
   parseKpiActual,
   summarizeFundamentals,
   computeKpiMetrics,
+  bepDisplay,
+  finiteBep,
+  noBreakEvenNote,
+  duplicateActualMessage,
+  duplicateActualsNote,
+  kpiNumbersReadable,
+  readableKpiRows,
+  unreadableKpiRowsNote,
+  findDuplicateActuals,
+  hasSamePeriodUnit,
+  MAX_KPI_UNIT_CHARS,
   type KpiActual,
 } from '../data/kpiActuals';
-import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
+import { displayField, finiteNumberOf } from '../../shared/apiResponse';
+import { DASH } from '../../shared/formatters';
+import { SALES_COLLECTION, readableSalesRows, unreadableSalesRowsNote, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
-import { KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
+import { CSV_BOM } from '../data/csv';
+import { budgetComparedRangeLabel, budgetUnmatchedNote, KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 import {
   MANUAL_OVERRIDES_COLLECTION,
   applyManualOverrides,
@@ -23,50 +41,82 @@ import {
 } from '../data/manualData';
 import {
   BALANCE_SHEET_COLLECTION,
+  normalizeBalanceSheet,
   parseBalanceSheet,
+  computeBalanceSheetInsights,
+  netDebtUnavailableNote,
+  unreadableBalanceSheetNote,
   computeBalanceSheetMetrics,
+  balanceSheetAsOfKey,
+  balanceSheetChoiceNote,
+  compareBalanceSheetRecords,
+  currentBalanceSheet,
   type BalanceSheet,
 } from '../data/balanceSheet';
 
-interface Fund {
-  revenue: number;
-  cogs: number;
-  advertising: number;
-  sga: number;
-  depreciation: number;
-}
-
-interface Kpi {
-  variableCost: number;
-  fixedCost: number;
-  contribution: number;
-  contributionRatio: number;
-  variableRatio: number;
-  fixedRatio: number;
-  bep: number;
-  bepRatio: number;
-  safetyMargin: number;
-  operatingProfit: number;
-  operatingLeverage: number;
-}
-
-interface Unit {
-  id: string;
-  label: string;
-  fundamentals: Fund;
-  kpi: Kpi;
-  history: Fund[];
-}
+/**
+ * **payload の形は写さずに導出する。**
+ *
+ * `SNAPSHOT.kpi.units` は `[] as {...}[]` と注釈されており、その要素型が
+ * **live 取得の payload が満たすべき形**である (`main/clients/kpi.ts` の
+ * `Unit` / `Kpi` と同じもの)。手で写すと 3 か所 (main・snapshot・この画面) に
+ * なり、**写しがずれても `as` キャストが通るので `tsc` は黙る** ——
+ * 実測では 限界利益率 の型だけを `number` に戻すと、値が `null` のまま
+ * `pct()` に入り **「∞」**(= 無限に高い限界利益率) を刷った (2026-09-08)。
+ *
+ * 規準は同じ層に在った —— `FundingPage.tsx` と `FreeePage.tsx` は最初から
+ * `type X = typeof SNAPSHOT.x` で導出している。
+ */
+export type Unit = (typeof SNAPSHOT.kpi.units)[number];
+export type Kpi = Unit['kpi'];
+export type Fund = Unit['fundamentals'];
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
-const pct = (n: number) => (Number.isFinite(n) ? n.toFixed(1) + '%' : '∞');
-const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(n) : '∞');
+/**
+ * **非有限は `—`。** 2026-09-21 (パス 386) まで、この 2 つは `'∞'` へ倒していた ——
+ * `∞` は「無限に安全」と読めるが、非有限になるのは**限界利益が 0 以下で損益分岐点が
+ * 存在しないとき**、つまり最も危ない側である。実測では BEP のタイルが
+ * `∞` / 「比率 ∞」を**理由なしで**刷り、同じ状態を経営サマリーは
+ * 「—」+ 理由で答えていた (`data/kpiActuals.ts` の `bepDisplay` に経緯)。
+ *
+ * **床は `shared/formatters.ts` の `pct` / `jpy` に最初から在った** (パス 198 / 229) ——
+ * ここが局所の双子を持っていたので、その床が掛からなかった。金額の綴りだけは
+ * 画面ごとに違う (`Intl` の `￥` と `jpy` の `¥`) ので `yen` は残す。
+ *
+ * ★ **この 2 行を `'∞'` へ戻す対照は鳴らない (実測)。** BEP のタイルは
+ * `bepDisplay` を通るようになったので、**今日この 2 つに非有限が届く呼び手は 1 つも無い**
+ * (実測: `safeYen` の 10 か所のうち残り 8 つは売上・純資産・運転資本などの有限な和、
+ * `pct` の残る呼び手は `pctOrDash` 経由で `null` を先に落とす)。
+ * つまりこの床は**罠を外した**もので、生きた欠陥を直した物ではない ——
+ * それでも残すのは、金融の画面に「非有限なら ∞ と刷る」既定を置いたままにすると、
+ * 次に非有限が届く呼び手が 1 つ増えた日に黙って `∞` が出るからである
+ * (法則 `no-weakness-as-spec`)。**鳴らない対照は合格ではなく報せである。**
+ */
+const pct = (n: number) => (Number.isFinite(n) ? n.toFixed(1) + '%' : DASH);
+const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(n) : DASH);
+/**
+ * **保管した金額を画面に出す** —— 型から始める (2026-09-24 · パス 443)。
+ *
+ * `Intl.NumberFormat#format` は**何を渡しても投げない**ので、生で渡すと
+ * `{z:1}` が `￥NaN`・`null` が `￥0`・`true` と `[1]` が `￥1` になる。
+ * `￥0` は「その期の売上は 0 だった」という**事実の主張**で、`￥NaN` は
+ * 壊れて見えるが理由を述べない (法則 `blank-states-its-reason`)。
+ *
+ * 一覧は素の購読を描く (期や金額が読めない行もここに出るから × で消せる)
+ * ので、**読む側で**型を見る。落とした理由は上の `unreadableNote` が述べる。
+ */
+const kpiAmountText = (v: unknown): string => {
+  const n = finiteNumberOf(v);
+  return n === null ? DASH : yen.format(n);
+};
+/** 算定不能 (`null`) は「—」。非有限も `pct` が同じ `—` へ倒す。 */
+const pctOrDash = (n: number | null) => (n === null ? DASH : pct(n));
 
 const COLORS = {
-  revenue: '#4ade80',
-  bep: '#f87171',
+  revenue: 'var(--success)',
+  bep: 'var(--danger)',
   op: '#60a5fa',
-  variable: '#fbbf24',
+  variable: 'var(--warning)',
   fixed: '#a78bfa',
   axis: '#475569',
 };
@@ -98,30 +148,50 @@ function TimeSeriesChart({ unit }: { unit: Unit }) {
   const periods = [...unit.history].reverse();
   if (periods.length === 0) return null;
 
-  // Compute BEP + OP per period
+  // **式は 1 か所** —— この描画は `computeKpiMetrics` の結果を読むだけにする
+  // (以前はここに BEP の式を書き写していて、しかも「無い」を 0 に倒していた)。
   const rows = periods.map((f) => {
-    const variable = f.cogs + f.advertising;
-    const fixed = f.sga + f.depreciation;
-    const contrib = f.revenue - variable;
-    const bep = contrib > 0 ? (fixed / contrib) * f.revenue : 0;
-    const op = contrib - fixed;
-    return { revenue: f.revenue, bep, op };
+    const m = computeKpiMetrics(f);
+    return { revenue: f.revenue, bep: finiteBep(m.bep), op: m.operatingProfit };
   });
-  const maxV = Math.max(...rows.flatMap((r) => [r.revenue, r.bep, Math.max(0, r.op)]));
-  const minOp = Math.min(0, ...rows.map((r) => r.op));
+  const missingBep = rows.filter((r) => r.bep === null).length;
+  // **算定できた BEP だけで縮尺を決める。** 0 を混ぜると軸の最大値まで動く。
+  // **`|| 1` は NaN も吸い込む** (NaN は falsy)。縮尺が黙って 1 に化けると
+  // 棒の高さが全部おかしくなるので、縮尺に入る値を先に落とす (パス 205)。
+  // 売上は非負・営業利益は負を取りうるので消毒の種類が違う。
+  const maxV = Math.max(
+    ...rows.flatMap((r) => [nonNeg(r.revenue), ...(r.bep === null ? [] : [nonNeg(r.bep)]), Math.max(0, finiteOr0(r.op))]),
+  );
+  const minOp = Math.min(0, ...rows.map((r) => finiteOr0(r.op)));
   const range = maxV - minOp || 1;
   const x = (i: number) => P + (i * (W - P * 2)) / Math.max(1, rows.length - 1);
   const y = (v: number) => H - P - ((v - minOp) / range) * (H - P * 2);
 
-  const path = (key: 'revenue' | 'bep' | 'op') =>
+  const path = (key: 'revenue' | 'op') =>
     rows.map((r, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(r[key])}`).join(' ');
+  /**
+   * BEP 線は**算定できない期で途切れる**。null の次の点は新しい部分パス (`M`) で
+   * 始めるので、線が軸の底を通らない。
+   */
+  const bepPath = (): string => {
+    const parts: string[] = [];
+    let open = false;
+    for (let i = 0; i < rows.length; i += 1) {
+      const v = rows[i]!.bep;
+      if (v === null) { open = false; continue; }
+      parts.push(`${open ? 'L' : 'M'} ${x(i)} ${y(v)}`);
+      open = true;
+    }
+    return parts.join(' ');
+  };
 
   return (
+    <>
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
       <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke={COLORS.axis} strokeDasharray="2,3" />
       <text x={P - 4} y={y(0) + 4} fontSize="10" fill={COLORS.axis} textAnchor="end">0</text>
       <path d={path('revenue')} stroke={COLORS.revenue} fill="none" strokeWidth="2" />
-      <path d={path('bep')} stroke={COLORS.bep} fill="none" strokeWidth="2" strokeDasharray="4,3" />
+      <path d={bepPath()} stroke={COLORS.bep} fill="none" strokeWidth="2" strokeDasharray="4,3" />
       <path d={path('op')} stroke={COLORS.op} fill="none" strokeWidth="2" />
       <g fontSize="11">
         <rect x={W - 130} y={8} width="124" height="56" fill="var(--bg)" stroke={COLORS.axis} />
@@ -133,6 +203,16 @@ function TimeSeriesChart({ unit }: { unit: Unit }) {
         <text x={W - 110} y={56} fill="var(--text)">営業利益</text>
       </g>
     </svg>
+    {noBreakEvenNote(missingBep, rows.length) !== null && (
+      <div
+        data-no-breakeven
+        role="alert"
+        style={{ marginTop: 6, fontSize: 11, color: 'var(--danger)', lineHeight: 1.7 }}
+      >
+        ⚠ {noBreakEvenNote(missingBep, rows.length)}
+      </div>
+    )}
+    </>
   );
 }
 
@@ -250,21 +330,36 @@ function DonutChart({ unit }: { unit: Unit }) {
 function UnitBars({ units }: { units: Unit[] }) {
   const W = 720, H = 220, P = 40;
   if (units.length === 0) return null;
-  const maxV = Math.max(...units.flatMap((u) => [u.fundamentals.revenue, Number.isFinite(u.kpi.bep) ? u.kpi.bep : 0, Math.max(0, u.kpi.operatingProfit)]));
+  // **算定できた BEP だけで縮尺を決める** (0 を混ぜると軸の最大値が動く)。
+  const maxV = Math.max(
+    ...units.flatMap((u) => {
+      const bep = finiteBep(u.kpi.bep);
+      return [u.fundamentals.revenue, ...(bep === null ? [] : [bep]), Math.max(0, u.kpi.operatingProfit)];
+    }),
+  );
+  const noBep = units.filter((u) => finiteBep(u.kpi.bep) === null);
   const groupW = (W - P * 2) / units.length;
   const barW = (groupW - 8) / 3;
   const Y = (v: number) => H - P - (v / (maxV || 1)) * (H - P * 2);
 
   return (
+    <>
     <svg width="100%" viewBox={`0 0 ${W} ${H}`}>
       <line x1={P} y1={H - P} x2={W - P} y2={H - P} stroke={COLORS.axis} />
       {units.map((u, i) => {
         const gx = P + i * groupW + 4;
-        const bep = Number.isFinite(u.kpi.bep) ? u.kpi.bep : 0;
+        // **`Number.isFinite` で「無い」と分かったうえで 0 の棒を描いていた** ——
+        // 高さ 0 の棒は「損益分岐点 0 円」と読める。棒を**描かない**。
+        const bep = finiteBep(u.kpi.bep);
         return (
           <g key={u.id}>
             <rect x={gx} y={Y(u.fundamentals.revenue)} width={barW} height={H - P - Y(u.fundamentals.revenue)} fill={COLORS.revenue} />
-            <rect x={gx + barW} y={Y(bep)} width={barW} height={H - P - Y(bep)} fill={COLORS.bep} />
+            {bep !== null && (
+              <rect x={gx + barW} y={Y(bep)} width={barW} height={H - P - Y(bep)} fill={COLORS.bep} />
+            )}
+            {bep === null && (
+              <text x={gx + barW * 1.5} y={H - P - 4} fontSize="10" fill={COLORS.bep} textAnchor="middle">—</text>
+            )}
             <rect x={gx + barW * 2} y={Y(Math.max(0, u.kpi.operatingProfit))} width={barW} height={H - P - Y(Math.max(0, u.kpi.operatingProfit))} fill={COLORS.op} />
             <text x={gx + groupW / 2 - 4} y={H - P + 14} fontSize="10" fill="var(--text-mute)" textAnchor="middle">{u.label}</text>
           </g>
@@ -280,6 +375,16 @@ function UnitBars({ units }: { units: Unit[] }) {
         <text x={W - 88} y={51} fill="var(--text)">営業利益</text>
       </g>
     </svg>
+    {noBep.length > 0 && (
+      <div
+        data-no-breakeven-units
+        role="alert"
+        style={{ marginTop: 6, fontSize: 11, color: 'var(--danger)', lineHeight: 1.7 }}
+      >
+        ⚠ {noBep.map((u) => u.label).join('・')}は限界利益が 0 以下のため損益分岐点が存在せず（どれだけ売っても固定費を回収できない状態）、BEP の棒を描いていません。
+      </div>
+    )}
+    </>
   );
 }
 
@@ -293,11 +398,24 @@ function ActualsPanel() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string>();
   const [importMonth, setImportMonth] = useState('');
+  const submit = useSubmitGuard();
+  /*
+   * **期が読める行だけで集計する** (パス 225)。復元の入口は期が文字列であることだけを
+   * 見るので `period: '全社'` の控えが入りうる —— 混ざると合計だけが膨らみ、期間・
+   * 成長率とは別の母数になる (`kpiActuals.ts` の `readableKpiRows` に実測表)。
+   * **金額の欄も見る** (パス 443) —— `revenue` が 10 進の文字列だと `+` が連結になり、
+   * 合計だけが桁違いに膨らんだまま書面へ流れていた。
+   */
+  const readable = useMemo(() => readableKpiRows(records.map((r) => r.data)), [records]);
+  // 既に在る重複 (同じ期・事業が 2 件以上)。一覧の上で「合算されている」と言う (パス 124)。
+  const duplicateNote = useMemo(() => duplicateActualsNote('実績', findDuplicateActuals(readable.rows)), [readable]);
+  // 期・金額が読めず除いた件数を**原因ごとに**言う (黙って落とすと、合計が説明できない数字になる)。
+  const unreadableNote = useMemo(() => unreadableKpiRowsNote('実績', readable), [readable]);
 
-  const computedSummary = useMemo(() => {
-    const rows = records.map((r) => r.data);
-    return computeKpiMetrics(summarizeFundamentals(rows));
-  }, [records]);
+  // 実績の素の合計。**画面で数え直さない** —— 以前は「実績合計 売上高」の札だけが
+  // 別の `reduce` を持っており、同じ量に 2 つの出所が在った (2026-09-07)。
+  const fundamentals = useMemo(() => summarizeFundamentals(readable.rows), [readable]);
+  const computedSummary = useMemo(() => computeKpiMetrics(fundamentals), [fundamentals]);
 
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
   // 読んで適用するだけ。上書きが無ければ計算値がそのまま出る。
@@ -311,6 +429,12 @@ function ActualsPanel() {
   // Months available from the sales feature, for the "売上集計から取り込む" link.
   const salesEntries = useMemo(() => salesRecords.map((r) => r.data), [salesRecords]);
   const monthOptions = useMemo(() => salesMonths(salesEntries), [salesEntries]);
+  // 取り込み元の売上に日付の読めない行が在れば言う (パス 360)。KPI 行の側は
+  // `unreadableNote` が既に述べるが、**橋で渡ってくる側**は何も言っていなかった。
+  const unreadableSalesNote = useMemo(
+    () => unreadableSalesRowsNote(readableSalesRows(salesEntries)),
+    [salesEntries],
+  );
 
   function importFromSales(month: string) {
     if (!month) return;
@@ -321,7 +445,7 @@ function ActualsPanel() {
   }
 
   function onExportCsv() {
-    const blob = new Blob(['﻿' + kpiActualsToCsv(records.map((r) => r.data))], {
+    const blob = new Blob([CSV_BOM + kpiActualsToCsv(records.map((r) => r.data))], {
       type: 'text/csv;charset=utf-8',
     });
     const url = URL.createObjectURL(blob);
@@ -333,17 +457,47 @@ function ActualsPanel() {
   }
 
   async function onImportCsv(file: File) {
-    const { entries, errors } = kpiActualsFromCsv(await file.text());
+    // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
+    let text: string;
+    try {
+      text = await readImportText(file, MAX_CSV_IMPORT_BYTES, 'CSV ファイル');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      return;
+    }
+    // 既に在る (期間, 事業) とファイル内の重複行はスキップ (パス 124)。
+    // **判定の相手は保管層から読み直す** (パス 384) —— 画面の `records` は購読の写しで、
+    // 一覧が届く前は空。空と比べると重複が 1 件も見つからず、同じ期・事業の 2 件目が
+    // 入って**合算される** (このファイルの `onAdd` が「2 件目を入れると合算される」と書いている当のこと)。
+    const stored = await readCollectionNow<KpiActual>(KPI_ACTUALS_COLLECTION);
+    if (stored === null) {
+      setError(unreadableForJudgementNote('KPI 実績の一覧'));
+      return;
+    }
+    const { entries, errors, duplicates } = kpiActualsFromCsv(text, stored);
     // Atomic: all valid rows commit together or none (no partial import).
     if (entries.length > 0) await addMany(entries);
     setError(
-      errors.length > 0 ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})` : undefined,
+      errors.length > 0
+        ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})${duplicates > 0 ? `。うち ${duplicates} 件は同じ期・事業が既に在る重複行` : ''}`
+        : undefined,
     );
   }
 
   async function onAdd() {
     try {
       const parsed = parseKpiActual(form);
+      // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
+      // 判定の相手は保管層から読み直す (パス 384 —— 写しは一覧が届く前は空)。
+      const stored = await readCollectionNow<KpiActual>(KPI_ACTUALS_COLLECTION);
+      if (stored === null) {
+        setError(unreadableForJudgementNote('KPI 実績の一覧'));
+        return;
+      }
+      if (hasSamePeriodUnit(stored, parsed)) {
+        setError(duplicateActualMessage('実績', parsed));
+        return;
+      }
       setError(undefined);
       await add(parsed);
       setForm(EMPTY_FORM);
@@ -360,7 +514,7 @@ function ActualsPanel() {
       style={{
         background: 'var(--bg)',
         border: '1px solid var(--border)',
-        borderRadius: 6,
+        borderRadius: 10,
         color: 'var(--text)',
         padding: '6px 8px',
         fontSize: 13,
@@ -377,7 +531,7 @@ function ActualsPanel() {
           <select
             value={importMonth}
             onChange={(e) => setImportMonth(e.target.value)}
-            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
+            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
           >
             <option value="">月を選択</option>
             {monthOptions.map((m) => (
@@ -398,7 +552,7 @@ function ActualsPanel() {
         {field('sga', '販管費')}
         {field('depreciation', '減価償却費')}
         {field('laborCost', '人件費(任意)')}
-        <button type="button" onClick={onAdd}>追加</button>
+        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>追加</button>
       </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
         <button type="button" onClick={onExportCsv} disabled={records.length === 0}>CSV エクスポート</button>
@@ -419,15 +573,30 @@ function ActualsPanel() {
           列: period, unit, revenue, cogs, advertising, sga, depreciation
         </span>
       </div>
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
+      {duplicateNote !== null && (
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {duplicateNote}
+        </p>
+      )}
+      {unreadableNote !== null && (
+        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {unreadableNote}
+        </p>
+      )}
+      {unreadableSalesNote !== null && (
+        <p role="alert" data-unreadable-sales-dates style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {unreadableSalesNote}
+        </p>
+      )}
       {records.length > 0 ? (
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
-            <Tile label="実績合計 売上高" value={safeYen(summarizeRevenue(records))} />
-            <Tile label="損益分岐点 (BEP)" value={safeYen(summary.bep)} sub={`比率 ${pct(summary.bepRatio)}`} />
-            <Tile label="安全余裕率" value={pct(summary.safetyMargin)} sub="高いほど安全" />
-            <Tile label="限界利益率" value={pct(summary.contributionRatio)} />
+            <Tile label="実績合計 売上高" value={safeYen(fundamentals.revenue)} />
+            <Tile label="損益分岐点 (BEP)" {...bepDisplay(summary, (n) => yen.format(n), `比率 ${pct(summary.bepRatio)}`)} />
+            <Tile label="安全余裕率" value={pctOrDash(summary.safetyMargin)} sub="高いほど安全" />
+            <Tile label="限界利益率" value={pctOrDash(summary.contributionRatio)} />
             <Tile label="営業利益" value={safeYen(summary.operatingProfit)} />
           </div>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -442,15 +611,31 @@ function ActualsPanel() {
             </thead>
             <tbody>
               {records.map((r) => {
-                const m = computeKpiMetrics(summarizeFundamentals([r.data]));
+                /*
+                 * **漏斗が落とした行は、その行の導出値も出さない** (2026-09-24 · パス 443)。
+                 * 売上高を「—」と言いながら営業利益に確信のある数字を並べると、
+                 * 同じ行が同じ問いに 2 通り答えることになる —— 実測で `revenue: '1000'`
+                 * の行は 売上高 `—` の隣に **-￥559,000** を出していた
+                 * (`0 + '1000'` は連結だが `'01000' - 費用` は数に戻るため)。
+                 */
+                const m = kpiNumbersReadable(r.data) ? computeKpiMetrics(summarizeFundamentals([r.data])) : null;
                 return (
                   <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
-                    <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
-                    <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(m.operatingProfit)}</td>
+                    {/*
+                      **一覧は素の購読を描く (選別しない)** —— 期が読めない行もここに出るから
+                      × で消せる (法則 `escape-hatch-stays-open`)。だから値は**画面の側で**
+                      型から読む: 物・配列を素で置くと React が
+                      「Objects are not valid as a React child」で落とし、その画面ごと開けなくなる。
+                      天井は事業名だけ入口の数 (`MAX_KPI_UNIT_CHARS`) を読む —— 期の入口は
+                      `YYYY-MM` の 7 文字ちょうどなので、共有の既定でも正当な値は 1 字も変わらない
+                      (**新しい数を作らない**)。
+                    */}
+                    <td style={{ padding: '4px 8px' }}>{displayField(r.data.period)}</td>
+                    <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{m === null ? DASH : safeYen(m.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px' }}>
-                      <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                      <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
                     </td>
                   </tr>
                 );
@@ -467,10 +652,6 @@ function ActualsPanel() {
   );
 }
 
-function summarizeRevenue(records: readonly { data: KpiActual }[]): number {
-  return records.reduce((acc, r) => acc + r.data.revenue, 0);
-}
-
 // --- Budget (予算) panel — drives 予算実績差異 (BVA) ----------------------
 
 function BudgetPanel() {
@@ -483,10 +664,22 @@ function BudgetPanel() {
     () => computeBudgetVariance(budgets.map((r) => r.data), actuals.map((r) => r.data)),
     [budgets, actuals],
   );
+  // 「突合できなかった期」の断り書きは **1 回だけ**呼ぶ (関門と表示で同じ値を見る)。
+  const unmatchedNote = variance === null ? null : budgetUnmatchedNote(variance.alignment);
+  const submit = useSubmitGuard();
+  const readable = useMemo(() => readableKpiRows(budgets.map((r) => r.data)), [budgets]);
+  const duplicateNote = useMemo(() => duplicateActualsNote('予算', findDuplicateActuals(readable.rows)), [readable]);
+  // 期・金額が読めず除いた件数 (実績と同じ規則・パス 225 / 443)。
+  const unreadableNote = useMemo(() => unreadableKpiRowsNote('予算', readable), [readable]);
 
   async function onAdd() {
     try {
       const parsed = parseKpiActual(form);
+      // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
+      if (hasSamePeriodUnit(budgets.map((r) => r.data), parsed)) {
+        setError(duplicateActualMessage('予算', parsed));
+        return;
+      }
       setError(undefined);
       await add(parsed);
       setForm(EMPTY_FORM);
@@ -501,7 +694,7 @@ function BudgetPanel() {
       placeholder={placeholder}
       onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
       style={{
-        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
         color: 'var(--text)', padding: '6px 8px', fontSize: 13,
         width: key === 'period' || key === 'unit' ? 110 : 100,
       }}
@@ -511,7 +704,8 @@ function BudgetPanel() {
   return (
     <div>
       <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
-        予算 (計画) を実績と<strong>同じ期間粒度</strong>で入力すると、経営サマリーに予算実績差異 (BVA)・達成率が表示されます。
+        予算 (計画) を実績と<strong>同じ期 (YYYY-MM)</strong> で入力すると、経営サマリーに予算実績差異 (BVA)・達成率が
+        表示されます。達成率は<strong>予算と実績の両方が在る期だけ</strong>で算定します（片側しか無い月は対象外）。
       </p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {field('period', 'YYYY-MM')}
@@ -521,17 +715,44 @@ function BudgetPanel() {
         {field('advertising', '広告費')}
         {field('sga', '販管費')}
         {field('depreciation', '減価償却費')}
-        <button type="button" onClick={onAdd}>予算を追加</button>
+        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>予算を追加</button>
       </div>
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
-      {variance && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
-          <Tile label="売上 達成率" value={variance.revenue.achievementPct === null ? '—' : `${variance.revenue.achievementPct}%`} sub={`予算 ${safeYen(variance.revenue.budget)} / 実績 ${safeYen(variance.revenue.actual)}`} />
-          <Tile label="営業利益 達成率" value={variance.operatingProfit.achievementPct === null ? '—' : `${variance.operatingProfit.achievementPct}%`} sub={`差異 ${variance.operatingProfit.variance >= 0 ? '+' : ''}${safeYen(variance.operatingProfit.variance)}`} />
-        </div>
+      {variance === null && budgets.length > 0 && actuals.length > 0 && (
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          予算と実績で期 (YYYY-MM) が 1 つも重なっていないため、達成率を算定できません。実績と同じ月の予算を入力してください。
+        </p>
       )}
 
+      {variance && (
+        <>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+            <Tile label="売上 達成率" value={variance.revenue.achievementPct === null ? '—' : `${variance.revenue.achievementPct}%`} sub={`予算 ${safeYen(variance.revenue.budget)} / 実績 ${safeYen(variance.revenue.actual)}`} />
+            <Tile label="営業利益 達成率" value={variance.operatingProfit.achievementPct === null ? '—' : `${variance.operatingProfit.achievementPct}%`} sub={`差異 ${variance.operatingProfit.variance >= 0 ? '+' : ''}${safeYen(variance.operatingProfit.variance)}`} />
+          </div>
+          <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6 }}>
+            {`対象: ${budgetComparedRangeLabel(variance.alignment)}（予算と実績の両方が在る期）`}
+            {/* **1 回だけ呼んで束ねる。** 関門と補間で 2 度呼ぶと、`tsc` は跨いで絞れないので
+                補間側の型は `string | null` のまま —— 裸の `${}` なら文字列 "null" を刷る形である
+                (純粋関数なので今は同じ値が返るが、型で守られてはいない)。 */}
+            {unmatchedNote !== null && (
+              <span style={{ color: 'var(--warning)' }}>{`。${unmatchedNote}です`}</span>
+            )}
+          </p>
+        </>
+      )}
+
+      {duplicateNote !== null && (
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {duplicateNote}
+        </p>
+      )}
+      {unreadableNote !== null && (
+        <p role="alert" data-unreadable-periods={readable.dropped} style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {unreadableNote}
+        </p>
+      )}
       {budgets.length > 0 ? (
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
@@ -545,11 +766,12 @@ function BudgetPanel() {
           <tbody>
             {budgets.map((r) => (
               <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
-                <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
-                <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
-                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
+                {/* 実績の一覧と同じ理由 (素の購読を描くので、値は画面の側で型から読む)。 */}
+                <td style={{ padding: '4px 8px' }}>{displayField(r.data.period)}</td>
+                <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
+                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
                 <td style={{ padding: '4px 8px' }}>
-                  <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                  <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
                 </td>
               </tr>
             ))}
@@ -566,17 +788,33 @@ function BudgetPanel() {
 
 // --- Balance sheet (財政状態) panel — drives BS指標 ----------------------
 
-const EMPTY_BS = { asOf: '', currentAssets: '', cash: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', netIncome: '' };
+const EMPTY_BS = { asOf: '', currentAssets: '', cash: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', interestBearingDebt: '', netIncome: '' };
 
 function BalanceSheetPanel() {
   const { records, add, remove } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
   const [form, setForm] = useState(EMPTY_BS);
   const [error, setError] = useState<string>();
 
-  // 最新の 1 レコードを採用 (BS は時点情報)。createdAt で選ぶ — list は新しい順なので
-  // 末尾は最古 (`latestRecord` の説明を参照)。
-  const latest = latestRecord(records) ?? undefined;
-  const metrics = useMemo(() => (latest ? computeBalanceSheetMetrics(latest.data) : undefined), [latest]);
+  // 「現在」の 1 件は**基準日**で選ぶ (入力した順ではない —— パス 127。それまでは最後に入力した
+  // 控えを使い、古い基準日を後から入れると経営サマリー・書面 §4・計算書類が古い方を「現在」とした)。
+  const latest = currentBalanceSheet(records) ?? undefined;
+  const bsRows = useMemo(() => [...records].sort(compareBalanceSheetRecords), [records]);
+  const choiceNote = useMemo(() => balanceSheetChoiceNote(records, latest ?? null), [records, latest]);
+  const submit = useSubmitGuard();
+  /*
+   * **整えるのは 1 度** (2026-09-24 · パス 445) —— それまで `normalizeBalanceSheet` を
+   * 2 度呼んでおり、どちらの結果も `unreadableFields` (パス 444 の名簿) を捨てていた。
+   * 1 つにすると名簿が画面へ届き、下の 2 つの断りが**同じ控え**について述べる。
+   */
+  const read = useMemo(() => (latest ? normalizeBalanceSheet(latest.data) : undefined), [latest]);
+  // 欄の無い控えも 0 と読んでから集計する (NaN のタイルを出さない)。
+  const metrics = useMemo(() => (read ? computeBalanceSheetMetrics(read) : undefined), [read]);
+  /** 倒した欄を述べる 1 文 (パス 444 の 4 つの面に続く**5 つ目**)。無ければ `null`。 */
+  const unreadableNote = read === undefined ? null : unreadableBalanceSheetNote(read.unreadableFields);
+  // **2026-09-10 に配線した。** それまでこの 101 行は検査からしか呼ばれていなかった
+  // (`balanceSheet.ts` の冒頭に経緯)。算定できない欄は「—」で、**なぜ算定できないかを
+  // 隣で言う** —— 「借入なし」と「入力していない」を同じ顔で出さないため。
+  const insights = useMemo(() => (read ? computeBalanceSheetInsights(read) : undefined), [read]);
 
   async function onAdd() {
     try {
@@ -595,7 +833,7 @@ function BalanceSheetPanel() {
       placeholder={placeholder}
       onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
       style={{
-        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
         color: 'var(--text)', padding: '6px 8px', fontSize: 13,
         width: key === 'asOf' ? 120 : 110,
       }}
@@ -607,6 +845,15 @@ function BalanceSheetPanel() {
       <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
         貸借対照表 (最新時点) を入力すると、自己資本比率・流動比率・ROA・ROE などが経営サマリーに表示され、
         スコアカードの安全性に自己資本比率が加点されます。
+        <br />
+        現預金・棚卸資産・売上債権・仕入債務は内数で、<strong>空欄にすると 0 円ではなく「未入力」として扱い、
+        当座比率・現金化サイクル (CCC)・運転資本は算定しません</strong>。
+        本当に 0 円のとき (現金商売で売上債権が無い等) は 0 と入力してください。
+        <br />
+        有利子負債 (借入金・社債など利息の付く負債) は固定負債・流動負債の内数です。
+        <strong>空欄のままだとネットデット・有利子負債比率・実質債務超過の判定は算定しません</strong> ——
+        空欄を「借入なし」と読むと、どの利用者にも「実質無借金」という都合の良い答えが出てしまうためです。
+        <strong>借入が無いなら 0 と入力してください。</strong>
       </p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {field('asOf', '基準日')}
@@ -618,24 +865,106 @@ function BalanceSheetPanel() {
         {field('currentLiabilities', '流動負債')}
         {field('accountsPayable', '仕入債務')}
         {field('fixedLiabilities', '固定負債')}
+        {field('interestBearingDebt', '有利子負債')}
         {field('netIncome', '当期純利益')}
-        <button type="button" onClick={onAdd}>BS を保存</button>
+        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>BS を保存</button>
       </div>
-      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
+      {/*
+        * **倒した欄をこの画面でも述べる** (2026-09-24 · パス 445)。
+        *
+        * パス 444 は名簿を 4 つの面 (書面 §4 の caption・書面 §5・経営ハイライト・
+        * 経営サマリーの画面) へ配線したが、**貸借対照表を打ち込む当の画面**が抜けていた。
+        * 実測 (直す前): 流動資産に真偽値が入った控えで、この画面は
+        * 「自己資本比率 -100% / 純資産 -￥4,000,000 / 流動比率 0%」を理由 1 文も無しで出していた。
+        * ここは入力欄の真下なので、**直す手にいちばん近い面**である。
+        */}
+      {unreadableNote !== null && (
+        <p role="alert" data-bs-unreadable style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          ⚠ {unreadableNote}
+        </p>
+      )}
       {metrics && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
           <Tile label="自己資本比率" value={metrics.equityRatioPct === null ? '—' : `${metrics.equityRatioPct}%`} sub={`純資産 ${safeYen(metrics.netAssets)}`} />
           <Tile label="流動比率" value={metrics.currentRatioPct === null ? '—' : `${metrics.currentRatioPct}%`} />
           <Tile label="ROA" value={metrics.roaPct === null ? '—' : `${metrics.roaPct}%`} />
           <Tile label="ROE" value={metrics.roePct === null ? '—' : `${metrics.roePct}%`} />
-          {latest && (
-            <button type="button" onClick={() => remove(latest.id)} style={{ alignSelf: 'center' }}>最新BSを削除</button>
+        </div>
+      )}
+      {insights && (
+        <div style={{ margin: '12px 0' }} data-bs-insights>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="運転資本" value={safeYen(insights.workingCapital)} sub="流動資産 − 流動負債" />
+            <Tile
+              label="ネットデット"
+              value={insights.netDebt === null ? '—' : safeYen(insights.netDebt)}
+              sub={insights.netDebt === null ? '有利子負債と現預金の両方が要ります' : insights.netCashPositive === true ? '実質無借金 (現預金が上回る)' : '有利子負債 − 現預金'}
+            />
+            <Tile
+              label="有利子負債比率"
+              value={insights.interestBearingDebtRatioPct === null ? '—' : `${insights.interestBearingDebtRatioPct}%`}
+              sub="有利子負債 ÷ 総資産"
+            />
+            <Tile
+              label="固定長期適合率"
+              value={insights.fixedLongTermFitPct === null ? '—' : `${insights.fixedLongTermFitPct}%`}
+              sub="100% 以下が目安"
+            />
+            <Tile
+              label="D/E レシオ"
+              value={insights.debtToEquityPct === null ? '—' : `${insights.debtToEquityPct}%`}
+              sub="総負債 ÷ 純資産"
+            />
+          </div>
+          {/* 原因ごとの言い分けは `netDebtUnavailableNote` が 1 つ持つ (パス 445 ・ 画面は刷るだけ)。 */}
+          {netDebtUnavailableNote(insights, read?.unreadableFields) !== null && (
+            <p style={{ color: 'var(--text-mute)', fontSize: 12, marginTop: 6, lineHeight: 1.6 }} data-netdebt-cause>
+              {netDebtUnavailableNote(insights, read?.unreadableFields)}
+            </p>
           )}
         </div>
       )}
       {metrics?.insolvent && (
-        <div style={{ color: '#ef4444', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
+        <div style={{ color: 'var(--danger)', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
+      )}
+      {insights?.substantiveInsolvencyRisk === true && (
+        <div role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
+          ⚠ 純資産は正ですが、ネットデット（有利子負債 − 現預金）が純資産を上回っています（実質債務超過の懸念）。
+          借入の返済計画と資金繰りを確認してください。
+        </div>
+      )}
+      {choiceNote !== null && (
+        <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {choiceNote}
+        </p>
+      )}
+      {bsRows.length > 0 && (
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, marginTop: 8 }}>
+          <thead>
+            <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+              <th style={{ padding: '4px 8px' }}>基準日</th>
+              <th style={{ padding: '4px 8px' }}>入力</th>
+              <th style={{ padding: '4px 8px', textAlign: 'right' }}>純資産</th>
+              <th style={{ padding: '4px 8px' }}>使用</th>
+              <th style={{ padding: '4px 8px' }} />
+            </tr>
+          </thead>
+          <tbody>
+            {bsRows.map((r) => (
+              <tr key={r.id} data-bs-row={r.id === latest?.id ? 'current' : 'other'} style={{ borderTop: '1px solid var(--border)' }}>
+                <td style={{ padding: '4px 8px' }}>{balanceSheetAsOfKey(r.data.asOf) || '基準日なし'}</td>
+                <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{parseTimestamp(r.createdAt)?.toLocaleString('ja-JP') ?? '時刻不明'}</td>
+                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{safeYen(computeBalanceSheetMetrics(normalizeBalanceSheet(r.data)).netAssets)}</td>
+                <td style={{ padding: '4px 8px' }}>{r.id === latest?.id ? '使用中' : ''}</td>
+                <td style={{ padding: '4px 8px' }}>
+                  <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
@@ -672,8 +1001,8 @@ export function KpiPage() {
       {isMock && (
         <div style={{
           background: 'rgba(251, 191, 36, 0.12)',
-          border: '1px solid #d97706',
-          color: '#fbbf24',
+          border: '1px solid var(--warning)',
+          color: 'var(--warning)',
           padding: '8px 12px',
           borderRadius: 6,
           fontSize: 12,
@@ -704,7 +1033,7 @@ export function KpiPage() {
           style={{
             background: 'var(--bg)',
             border: '1px solid var(--border)',
-            borderRadius: 6,
+            borderRadius: 10,
             color: 'var(--text)',
             padding: '6px 10px',
             fontSize: 13,
@@ -717,9 +1046,13 @@ export function KpiPage() {
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
         <Tile label="売上高" value={yen.format(selected.fundamentals.revenue)} />
-        <Tile label="損益分岐点 (BEP)" value={safeYen(selected.kpi.bep)} sub={`比率 ${pct(selected.kpi.bepRatio)}`} />
-        <Tile label="安全余裕率" value={pct(selected.kpi.safetyMargin)} sub="高いほど安全" />
-        <Tile label="限界利益率" value={pct(selected.kpi.contributionRatio)} />
+        <Tile label="損益分岐点 (BEP)" {...bepDisplay(selected.kpi, (n) => yen.format(n), `比率 ${pct(selected.kpi.bepRatio)}`)} />
+        <Tile label="安全余裕率" value={pctOrDash(selected.kpi.safetyMargin)} sub="高いほど安全" />
+        {/* **上の実績タイル群と同じ答え方にする。** 2026-09-08 まで、こちらは
+            `pct` で「0.0%」・上は `pctOrDash` で「—」を刷っており、**同じラベルの
+            タイルが 1 ページに 2 つ在って答えが違った** (値の双子のうち
+            main 側だけが 0 に倒れていた)。 */}
+        <Tile label="限界利益率" value={pctOrDash(selected.kpi.contributionRatio)} />
         <Tile label="営業利益" value={yen.format(selected.kpi.operatingProfit)} sub={`営業レバレッジ ${selected.kpi.operatingLeverage.toFixed(2)}x`} />
       </div>
 

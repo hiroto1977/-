@@ -26,7 +26,7 @@ PESTEL分析（PESTEL analysis）は、組織が事業を営むマクロ環境�
 フランシス・アギラー ／ リアム・フェイヒー ／ ジェリー・ジョンソン ／ ケヴァン・スコールズ
 
 ## 出典
-- [Aguilar, F.J. (1967) Scanning the Business Environment — Macmillan; ETPS (WorldCat)](https://www.worldcat.org/oclc/385778) `学術`
+- [Aguilar, F.J. (1967) Scanning the Business Environment — Macmillan; ETPS (WorldCat)](https://www.worldcat.org/oclc/385778) `リファレンス`
 - [Wikipedia: PEST/PESTEL analysis — Aguilar, political/economic/social/technological/environmental/legal, macro-environment](https://en.wikipedia.org/wiki/PEST_analysis) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ export type NavigationAction =
   | 'bank-sheet';
 
 export interface NavigationIntent {
-  /** 書類スタジオで開く書類 (書式 id / `kessan` / `teikan-kk` / `teikan-gk` / `shugyo`)。 */
+  /** 書類スタジオで開く書類 (書式 id / `kessan` と 1 点ずつの `kessan-pl` `kessan-bs` `kessan-equity` `kessan-notes` / `teikan-kk` / `teikan-gk` / `shugyo`)。 */
   readonly doc?: string;
   /** 書類スタジオの書式検索に入れる語 (士業とやり取り中の書類の題名など)。 */
   readonly query?: string;

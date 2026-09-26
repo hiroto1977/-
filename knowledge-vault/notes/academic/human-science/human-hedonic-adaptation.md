@@ -31,7 +31,7 @@ Philip Brickman ／ Donald T. Campbell ／ Ronnie Janoff-Bulman ／ Shane Freder
 - [Hedonic Adaptation — BehavioralEconomics.com Mini-Encyclopedia of Behavioral Economics](https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/hedonic-adaptation/) `リファレンス`
 
 ## 関連概念
-- [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]] — 語彙が近い
+- [[human-hedonic-treadmill|快楽の踏み車／快楽適応（ブリックマン＝キャンベル）——重大な出来事の後も主観的幸福が基準水準へ戻る傾向と、その適応が不完全で個人差を持つという修正]] — 語彙が近い
 - [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同じ思想家
 - [[infosoc-information-avoidance-theory|情報回避理論]] — 同じ思想家
 - [[human-decoy-effect|おとり効果（非対称的優位性効果）]] — 出典を共有
@@ -40,7 +40,7 @@ Philip Brickman ／ Donald T. Campbell ／ Ronnie Janoff-Bulman ／ Shane Freder
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 出典を共有
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

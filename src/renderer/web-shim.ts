@@ -9,18 +9,32 @@
  *
  *   - openExternal()           → window.open(url, '_blank', 'noopener')
  *   - revealInFolder() / openPath() → alert("ブラウザ版では使えません…")
- *   - setToken / clearToken / listConfigured → no-op
- *   - fetchSnapshot()          → returns "not_implemented" — pages already
- *                                fall back to SNAPSHOT[id] (the bundled
- *                                static snapshot), so the UI still shows
- *                                meaningful data
+ *   - setToken / clearToken / listConfigured
+ *                              → **保管庫 (security/vault.ts) への実物の読み書き**。
+ *                                2026-09-23 (パス 427) に訂正: ここは長らく
+ *                                「no-op」と書かれていたが偽で、資格情報が実際に
+ *                                生きている 3 経路である (setToken は
+ *                                `checkTokenInput` を通してから AES-GCM で
+ *                                包み、listConfigured は読めなければ投げる)。
+ *                                **この行を読んで「ブラウザ版はどこにも預からない」と
+ *                                判断してはいけない。**
+ *   - fetchSnapshot()          → サービスごとに分岐する (stocks / hydroponics /
+ *                                ollama / emotions …)。実装の無い物だけが
+ *                                "not_implemented" に落ち、ページはそこで
+ *                                SNAPSHOT[id] (同梱の静的スナップショット) へ戻る。
+ *                                2026-09-23 (パス 427) に訂正: 「常に
+ *                                not_implemented を返す」は偽
  *   - invoke('templates', 'export-template', …)
  *                              → renders SVG client-side and triggers
  *                                a browser download via <a download>
  *   - invoke('teamradar', 'export-svg', …)
- *                              → same, but expects the page to provide
- *                                the SVG (we extract from the live <svg>
- *                                element on the page)
+ *                              → デスクトップ版と**同じ** `renderTeamRadarSvg` を呼ぶ。
+ *                                2026-09-23 (パス 427) に訂正: 「画面の <svg> を
+ *                                掻き取る」はパス 268 で消した実装の説明で、
+ *                                掻き取ると ⚠ の断り・標題・部署・評価時点・凡例が
+ *                                落ちる (理由は `readStoredTeamRadarState` の
+ *                                docblock に在る —— **同じファイルの中で、
+ *                                この行だけが古いままだった**)
  *   - invoke('stocks', 'register-ticker' / 'unregister-ticker', …)
  *                              → persist the watchlist in localStorage;
  *                                fetchSnapshot('stocks') then synthesizes a
@@ -36,6 +50,9 @@
  *                              → Anthropic directly (Vault 'emotions' key)
  *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'record-entry')
  *                              → stateless validation (matches Electron)
+ *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'advise', <画面の集計>)
+ *                              → shared/serviceAdvisor.ts の規則で提案を組む
+ *                                (Electron 版と同じ関数・同じ文面 — パス 119)
  *   - invoke('github', 'create-issue', …)
  *                              → POST api.github.com directly (CORS-enabled)
  *                                with the Vault 'github' PAT (Part ②, 外部連携)
@@ -50,38 +67,87 @@
  * already populates window.serviceHub and this shim is skipped.
  */
 
+import { readFailureBody } from '../shared/httpLimits';
+import { WEB_BUILD_SUFFIX } from '../shared/buildDestinations';
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
-import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../shared/advisorQuestionLimits';
+import {
+  normalizeTemplateParams,
+  TEMPLATE_FIELD_LABEL,
+  TEMPLATE_FIELD_LIMITS,
+  tooLongTemplateFields,
+} from '../shared/templateSvg';
+import {
+  capAdvisorUniverse,
+  checkAdvisorQuestion,
+  ADVISOR_QUESTION_MESSAGES,
+  MISSING_ANTHROPIC_KEY_MESSAGE,
+} from '../shared/advisorQuestionLimits';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
+import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
-import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
+import { clampToCeiling, countChars, refusedCeilingNote } from '../shared/inputCeiling';
+import {
+  MAX_RECORD_NOTE_CHARS,
+  isRecordEntryServiceId,
+  type RecordEntryServiceId,
+} from '../shared/recordEntryLimits';
+import { adviseService } from '../shared/serviceAdvisor';
+import type { ActionData } from '../shared/actionData';
+import {
+  BUSINESS_CATEGORY_IDS,
+  isBusinessCategoryId,
+  type BusinessAdvisorRecommendation,
+} from '../shared/businessAdvisor';
 import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_MESSAGES,
   MAX_ASSISTANT_SYSTEM_CHARS,
+  inputTooLongMessage,
+  latestTurnTooLong,
+  MAX_ENSEMBLE_ERROR_CHARS,
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
-  EMPTY_TALENT_STATE,
   TALENT_STORAGE_KEY,
   buildTalentSnapshot,
   judgeLeaderFitness,
+  readStoredTalent,
   sanitizeTalentState,
+  talentProvenance,
+  MAX_LEADER_CANDIDATE_CHARS,
+  type StoredTalent,
 } from '../shared/talent';
-import { getVault } from './security/vault';
-import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import {
-  withBodyDeadline,
+  TEAM_RADAR_STORAGE_KEY,
+  MAX_CHART_TITLE_CHARS,
+  buildTeamRadarSnapshot,
+  readStoredTeamRadar,
+  validateTeamRadarState,
+  type StoredTeamRadar,
+} from '../shared/teamRadarState';
+import { renderTeamRadarSvg } from '../shared/teamRadarSvg';
+import { getVault } from './security/vault';
+import { eraseEverything } from './security/eraseAll';
+import type { EraseAllReport } from '../shared/eraseReport';
+import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_CHARS, MAX_RESPONSE_BODY_IN_MESSAGE, MAX_MALFORMED_JSON_ECHO_CHARS } from '../shared/redact';
+import {
   DEFAULT_HTTP_TIMEOUT_MS,
+  egressInit,
+  isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  redirectRefusal,
+  withBodyDeadline,
 } from '../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
-import { bearerFromStoredToken } from '../shared/vaultToken';
+import { bearerFromStoredToken, brokenStoredCredentialMessage } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
-import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import { REAL_MIRROR, mirrorToFolder } from './fs/folderMirror';
+import { LIBRARY_HATCH_TEXT } from './data/exportOutcome';
+import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
+import { parseJsonText } from '../shared/apiResponse';
 import {
   registerSymbol,
   unregisterSymbol,
@@ -107,6 +173,7 @@ import {
   logMood as emotionsLogMood,
   clearHistory as emotionsClearHistory,
   recordAnalysis as emotionsRecordAnalysis,
+  assertStoreWritable as emotionsAssertStoreWritable,
   normalizeAnalysis as emotionsNormalize,
   extractJson as emotionsExtractJson,
   buildEmotionsSnapshot,
@@ -122,6 +189,8 @@ import {
   createDriveFolder,
   createWordPressPostDraft,
   createCanvaFolder,
+  createMicrosoftEvent,
+  sendMicrosoftMail,
   createCloudflareDnsRecord,
   purgeCloudflareCache,
   scanUrlVirusTotal,
@@ -129,7 +198,8 @@ import {
   parseSecurityKeys,
   type Transport,
 } from './data/saasWriteWeb';
-import { getProxyConfig, fetchViaProxy } from './network/proxy';
+import { inspectStoredProxyConfig, fetchViaProxy } from './network/proxy';
+import { deviceStoreFailureMessage } from './data/deviceStoreFailure';
 import { liveRead, canLiveRead } from './network/liveRead';
 import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
 import {
@@ -153,6 +223,11 @@ import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../share
  */
 async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'> {
   const st = typeof navigator !== 'undefined' ? navigator.storage : undefined;
+  // この早期 return を `false` へ倒す変異体は**等価**である (2026-09-20 · パス 351 の対照で実測)。
+  // 倒すと `st` が無い / `persisted` が関数でない場合は下の try の中で TypeError になり、
+  // `catch` が同じ `best-effort` を返す —— 外から見える答えも `persist()` の呼び出し回数も
+  // 変わらない (門の方が `persisted` に触る前に返るだけ)。読みやすさのために残す。
+  // Stryker disable next-line ConditionalExpression
   if (st === undefined || typeof st.persisted !== 'function') return 'best-effort';
   try {
     if (typeof st.persist === 'function' && !(await st.persisted())) await st.persist();
@@ -162,18 +237,30 @@ async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'>
   }
 }
 
-const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
+// record-entry を持つ 4 サービスは shared/recordEntryLimits.ts の `RECORD_ENTRY_SERVICE_IDS` が持つ
+// (パス 117 まではここに別の集合を手で持っていた)。振り分けは `isRecordEntryServiceId`。
 
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
- *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
+ *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。
+ *
+ *  **「未設定」と「読めなかった」を分ける。** 分けずに一方の案内を出していた頃は、
+ *  設定を保管している IndexedDB が開けないだけで
+ *  「設定で…URL を登録してください」と言っていた —— **登録した本人に、
+ *  登録し直せと言う**ことになり、URL と共有シークレットを打ち直した末に
+ *  同じ所で失敗する。 */
 async function getProxyTransport(): Promise<Transport> {
-  const cfg = await getProxyConfig();
+  const { config: cfg, unreadable } = await inspectStoredProxyConfig();
+  if (unreadable !== null) {
+    throw new Error(deviceStoreFailureMessage('settings', 'read', unreadable));
+  }
   if (!cfg) {
     throw new Error(
       'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
     );
   }
-  // プロキシ経由の 14 経路にまとめて打ち切りを掛ける。`fetchViaProxy` は
+  // プロキシ経由の経路にまとめて打ち切りを掛ける (**数はここに書かない** ——
+  // 2026-09-15 の実測で 13 経路、この行は 14 と書いたまま古びていた。母集団は
+  // `webShimTimeouts.test.ts` の `proxyRoutedActions` が実装から数える)。`fetchViaProxy` は
   // 2026-08-22 から `init.signal` を**捨てずに転送する**が、渡す側が誰も
   // 付けていなかった —— 関門は在るのに、通す物が無い形。
   return (url, init) =>
@@ -207,10 +294,9 @@ async function runProxyBearer<R>(
   // という無関係な案内で利用者を回り道させることにもなる。
   const bearer = bearerFromStoredToken(token);
   if (bearer === null) {
-    return err(
-      'not_configured',
-      `${serviceId} の保存された資格情報が壊れています。設定から登録し直してください`,
-    );
+    // 文面は `shared/vaultToken.ts` が持つ —— main 側も同じ断りを返すように
+    // なったので (パス 246)、2 か所に書けば必ず片方だけ直る日が来る。
+    return err('not_configured', brokenStoredCredentialMessage(serviceId));
   }
   let transport: Transport;
   try {
@@ -264,37 +350,58 @@ function downloadBlob(filename: string, content: string, mime: string): boolean 
   }
 }
 
-/** Save an artifact to the in-app Library and optionally to the user's
- *  picked OS folder (File System Access API). Failures are non-fatal so
- *  the user still gets the browser download. */
-async function saveToLibrary(serviceId: string, filename: string, mime: string, content: string): Promise<void> {
+/**
+ * 成果物をライブラリと (設定されていれば) PC のフォルダへ置き、**どこに収まったかを返す**。
+ *
+ * どちらの失敗も書き出し自体を止めない (端末へのダウンロードは別に走る) —— そこは
+ * 元のままだが、2026-09-06 まで**失敗が利用者に届く経路が 1 つも無かった**。
+ * 呼び出し側は戻り値を action の結果に載せ、画面が `exportWarning()` で 1 行にする。
+ * 飛ばす条件の判断は `fs/folderMirror.ts` に 1 つだけ置く。
+ */
+async function saveToLibrary(
+  serviceId: string,
+  filename: string,
+  mime: string,
+  content: string,
+): Promise<ExportSinks> {
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+  let libraryCopy: SinkOutcome = 'saved';
   try {
     await library.put(serviceId, filename, mime, blob);
   } catch {
-    // ignore — library is best-effort
+    libraryCopy = 'failed';
   }
-  // FSA mirror: only attempt if the user has granted a folder.
-  try {
-    const loaded = await loadFolderHandle();
-    if (loaded && loaded.permission === 'granted') {
-      await writeBlobToFolder(loaded.handle, filename, blob);
-    }
-  } catch {
-    // ignore — folder write is best-effort
-  }
+  const folderCopy = await mirrorToFolder(REAL_MIRROR, filename, blob);
+  return { libraryCopy, folderCopy };
 }
 
+/**
+ * OS のファイル操作 (`openPath` / `revealInFolder`) をブラウザ版で断る。
+ *
+ * **2026-09-25 (パス 458) まで、断りは「場所」を無条件に主張していた** ——
+ * 「ファイルはお使いのブラウザのダウンロードフォルダに保存されています。」。
+ * この関数は書き出しの結末 (`ExportSinks` / `downloaded`) を**何も知らない**ので、
+ * 端末へのダウンロードが失敗した状態 (`downloaded === false` ——
+ * `DOWNLOAD_FAILED_TEXT` としてアプリ自身がその状態を持っている) では**偽**になり、
+ * しかも**その人を、そのファイルが無いフォルダへ探しに行かせる**
+ * (パス 388 の「原因を取り違えた断りは、直す手ごと誤らせる」の形)。
+ *
+ * だから今は**場所ではなく「働く道」を名指しする** —— この実行形態で実際に
+ * 開けるのは「ライブラリ」の画面だけである (`library.list()` は serviceId で
+ * 絞らず全件を返し、`LibraryPage` は開く・ダウンロード・削除を持つ)。
+ * 綴りは `LIBRARY_HATCH_TEXT` 1 つで、書き出した画面が出す 1 文と同じ物を読む。
+ * 残せていないときは**書き出した画面の `⚠` がそう述べる** ——
+ * ここで重ねて断定すると、同じ画面が同じ問いに 2 通り答える形 (パス 392 / 447)
+ * を作ることになる。
+ */
 function notSupportedAlert(): Promise<OsOpResult> {
    
-  alert(
-    'ブラウザ版では使えません。\nファイルはお使いのブラウザのダウンロードフォルダに保存されています。',
-  );
+  alert(`ブラウザ版ではファイルを OS で開けません。\n${LIBRARY_HATCH_TEXT}`);
   // Electron 版と同じ形で「できなかった」ことを返す。呼び出し側が結果を見て
   // 案内を出せるようにするため (alert だけに頼らない)。
   return Promise.resolve({
     ok: false,
-    message: 'ブラウザ版ではファイルを OS で開けません。ダウンロードフォルダをご確認ください。',
+    message: `ブラウザ版ではファイルを OS で開けません。${LIBRARY_HATCH_TEXT}`,
   });
 }
 
@@ -313,7 +420,7 @@ function ok<T>(data: T): ActionResult<T> {
  * `redactForMessage` を通しているので、今のところ二度手間である。それでも
  * 置くのは、main 側の `safeErrorMessage` と同じ理由 — この関数は
  * ブラウザ版の**全ての失敗**が通る 1 本の口で、新しく足された経路が伏字を
- * 忘れても、ここで止まる。片側にしか関門が無い状態を残さない。
+ * 忘れても、ここで止まる (枝の try の外で投げた物も `withFloor` がここへ通す · パス 312)。片側にしか関門が無い状態を残さない。
  * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
  */
 /**
@@ -351,20 +458,26 @@ async function readCappedText(res: Response, label: string): Promise<string> {
 function timedFetch(url: string, init: RequestInit): Promise<Response> {
   // `Response` を返す口なので `withBodyDeadline` —— 締切を早く落とすと
   // 呼び出し側の本文読み取りに掛からない (2026-08-28)。
-  return withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
-    fetch(url, { ...init, signal }),
-  );
+  return withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, async (signal) => {
+    const res = await fetch(url, egressInit({ ...init, signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, new URL(url).host));
+    return res;
+  });
 }
 
 /** 有料 LLM への直呼び出し。main と同じく 2 分 (通常の 30 秒では足りない)。 */
 function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
-  return withBodyDeadline(AI_CHAT_TIMEOUT_MS, init.signal, (signal) =>
-    fetch(url, { ...init, signal }),
-  );
+  return withBodyDeadline(AI_CHAT_TIMEOUT_MS, init.signal, async (signal) => {
+    const res = await fetch(url, egressInit({ ...init, signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, new URL(url).host));
+    return res;
+  });
 }
 
 function err<T = never>(code: string, message: string): ActionResult<T> {
-  return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_LENGTH) };
+  return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_CHARS) };
 }
 
 interface ExportTemplatePayload {
@@ -374,6 +487,11 @@ interface ExportTemplatePayload {
 
 interface ExportSvgPayload {
   title?: string;
+  /**
+   * **画面が見ている図** (パス 190)。形の判定は `validateTeamRadarState` が持つので
+   * `unknown` のまま渡す —— ここで型を写すと main の宣言とずれる (パス 116 の形)。
+   */
+  chart?: unknown;
 }
 
 // --- Anthropic Business advisor (browser-direct) ----------------------
@@ -383,19 +501,9 @@ const BUSINESS_ADVISOR_DISCLAIMER =
   '数値は模擬データに基づくシミュレーションです。' +
   '実際の経営判断はご自身の責任で行ってください。';
 
-const ALLOWED_CATEGORY_IDS = [
-  'ec', 'dropship', 'oem-odm', 'blog', 'blog-affiliate',
-  'ppc-affiliate', 'video-production', 'video-upload',
-  'video-distribution', 'sns-ops',
-] as const;
-
-interface BusinessAdvisorRecommendation {
-  categoryId: string;
-  rank: number;
-  rationale: string;
-  actionItems: string[];
-  riskFactors: string[];
-}
+// カテゴリ id の一覧 (`BUSINESS_CATEGORY_IDS`) と推奨の形 (`BusinessAdvisorRecommendation`) は
+// shared/businessAdvisor.ts が持つ (パス 117 —— それまでここに一覧の写しと `categoryId: string` に
+// 広がった形が在った)。
 
 function advisorSystemPrompt(allowed: readonly string[]): string {
   return [
@@ -409,7 +517,7 @@ function advisorSystemPrompt(allowed: readonly string[]): string {
     '- categoryId は必ず次の許可済みリストから選ぶこと: [' + allowed.map((s) => '"' + s + '"').join(', ') + ']',
     '- 知らない categoryId を提示してはならない。',
     '- 具体的な株式・金融商品の売買助言や、具体的な投資金額の指示を含めてはならない。',
-    '- rationale は 40-300 文字。actionItems 1-5 件、riskFactors 1-3 件。',
+    `- rationale は 40-300 文字。actionItems 1-${MAX_ADVISOR_ACTION_ITEMS} 件、riskFactors 1-${MAX_ADVISOR_RISK_FACTORS} 件。`,
   ].join('\n');
 }
 
@@ -439,19 +547,28 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
   for (const item of o.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('entry is not an object');
     const r = item as Record<string, unknown>;
-    if (typeof r.categoryId !== 'string' || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + String(r.categoryId));
-    if (typeof r.rank !== 'number' || !Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
-    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
+    // **型の門と値の門を分ける。** 束ねると `typeof` の句が観測できない ——
+    // 型違いは後ろの判定 (`allowed.has` / `Number.isFinite`) が同じ文面で落とすので、
+    // 句を消しても振る舞いが変わらず、変異体が生き残る (2026-09-06 実測。main 側は
+    // 同じ形に帯で `Stryker disable ConditionalExpression` を当てている)。
+    // 分ければ「型が違う」と「値が許されない」を別の文面で区別でき、どちらの門も測れる。
+    if (typeof r.categoryId !== 'string') throw new Error('categoryId is not a string');
+    // 型の門 (一覧に在る id か) と値の門 (この呼び出しで許した集合か) の両方 —— 型の門が無いと
+    // `allowed` に一覧の外の文字列が紛れたとき台帳の型を嘘にする (パス 117)。文面は値の門と同じ。
+    if (!isBusinessCategoryId(r.categoryId) || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + r.categoryId);
+    if (typeof r.rank !== 'number') throw new Error('rank is not a number');
+    if (!Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
+    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || countChars(r.rationale) > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
     if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) throw new Error('invalid actionItems');
     const actionItems: string[] = [];
     for (const a of r.actionItems) {
-      if (typeof a !== 'string' || a.length === 0 || a.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid actionItem entry');
+      if (typeof a !== 'string' || a.length === 0 || countChars(a) > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid actionItem entry');
       actionItems.push(a);
     }
     if (!Array.isArray(r.riskFactors) || r.riskFactors.length === 0 || r.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) throw new Error('invalid riskFactors');
     const riskFactors: string[] = [];
     for (const f of r.riskFactors) {
-      if (typeof f !== 'string' || f.length === 0 || f.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid riskFactor entry');
+      if (typeof f !== 'string' || f.length === 0 || countChars(f) > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid riskFactor entry');
       riskFactors.push(f);
     }
     out.push({ categoryId: r.categoryId, rank: r.rank, rationale: r.rationale, actionItems, riskFactors });
@@ -459,25 +576,52 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
   return out;
 }
 
-async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+/**
+ * Anthropic の鍵を読む —— **サービスのスロットを先に、`anthropic` を後に** (2026-09-24 · パス 451)。
+ *
+ * ## なぜ 2 つ見るか (実測して決めた)
+ *
+ * 直す前、ブラウザ版のアドバイザー 2 つは `anthropic` のスロットだけを読み、
+ * main はサービスのスロット (`stocks` / `business`) だけを読んでいた ——
+ * **同じ質問にアプリが 2 通り答えていた**。兄弟の `emotions/analyze-text` は
+ * 両ビルドとも**サービスのスロット**を読み、画面の `tokenSetup` がそこへ書く。
+ * その形が 3 つとも揃っている唯一の例なので、そちらへ寄せる。
+ *
+ * ただし `anthropic` を落とすと、**設定画面の「Anthropic API キー」に入れた
+ * 既存の利用者がその場で鍵を失う** (ブラウザ版はそこが唯一の入口だった)。
+ * だから順序は「サービスのスロット → `anthropic`」で、**誰も何も失わない**。
+ *
+ * 断りの文は `shared/advisorQuestionLimits.ts` が 1 つだけ持ち、逃げ口
+ * (画面の上の「Anthropic API キー」) を名乗る。
+ */
+async function readAnthropicKey(
+  serviceId: 'stocks' | 'business',
+): Promise<{ key: string } | { refusal: ActionResult<never> }> {
+  let key: string | null = null;
+  try {
+    key = (await vault.getToken(serviceId)) ?? (await vault.getToken('anthropic'));
+  } catch {
+    return {
+      refusal: err(
+        'not_configured',
+        'Vault がロックされています。再読み込みしてマスターパスワードを入力してください',
+      ) as ActionResult<never>,
+    };
+  }
+  if (!key) {
+    return { refusal: err('not_configured', MISSING_ANTHROPIC_KEY_MESSAGE) as ActionResult<never> };
+  }
+  return { key };
+}
+
+async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'business/advise'>>> {
   const question = payload['question'];
   const qProblem = checkAdvisorQuestion(question);
-  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
-  if (qProblem === 'too-long')
-    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
-  if (qProblem === 'control-chars')
-    return err('action_failed', '質問に改行・制御文字を含めることはできません');
+  if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
-  // Read the Anthropic key from Vault.
-  let apiKey: string | null = null;
-  try {
-    apiKey = await vault.getToken('anthropic');
-  } catch {
-    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
-  }
-  if (!apiKey) {
-    return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
-  }
+  const read = await readAnthropicKey('business');
+  if ('refusal' in read) return read.refusal;
+  const apiKey = read.key;
 
   // Fetch the current business snapshot from the bundled static data and
   // build analyses inline (no IPC available).
@@ -486,7 +630,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
     return err('action_failed', '事業データを読み込めませんでした');
   }
 
-  const allowed = new Set<string>(ALLOWED_CATEGORY_IDS);
+  const allowed = new Set<string>(BUSINESS_CATEGORY_IDS);
   const systemPrompt = advisorSystemPrompt([...allowed]);
   const userPrompt = [
     'ユーザーの質問: ' + question,
@@ -517,8 +661,8 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
   }
 
   if (!res.ok) {
-    const body = await readCappedText(res, 'Anthropic').catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+    const body = await readFailureBody(res, 'Anthropic');
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
 
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
@@ -567,26 +711,25 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 // stocks/advise: ウォッチリスト(空なら既定ユニバース)のティッカーをモック
 // 指標で分析し、Anthropic に投げてランク提案を得る。投資助言ではない旨を
 // system prompt で制約し、固定の免責を必ず付ける。
-async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'stocks/advise'>>> {
   const question = payload['question'];
   const qProblem = checkAdvisorQuestion(question);
-  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
-  if (qProblem === 'too-long')
-    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
-  if (qProblem === 'control-chars')
-    return err('action_failed', '質問に改行・制御文字を含めることはできません');
+  if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
-  let apiKey: string | null = null;
-  try {
-    apiKey = await vault.getToken('anthropic');
-  } catch {
-    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
-  }
-  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
+  const read = await readAnthropicKey('stocks');
+  if ('refusal' in read) return read.refusal;
+  const apiKey = read.key;
 
-  // ユニバース = 登録ウォッチリスト。空なら既定の主要銘柄。
-  const watch = loadWatchlistSymbols();
-  const universe = watch.length > 0 ? watch.slice(0, 25) : [...DEFAULT_ADVISOR_UNIVERSE];
+  // ユニバースは**画面が送ってきた物を優先**する (パス 105)。デスクトップ版は
+  // main の `askAdvisor` が `payload.universe` を読むので、画面が 1 か所から
+  // 送れば両ビルドが**画面に出ている集合**について答える。送られなければ
+  // 従来どおり保存済みウォッチリスト、それも空なら既定の主要銘柄。
+  const sent = payload['universe'];
+  const requested = Array.isArray(sent)
+    ? sent.filter((v): v is string => typeof v === 'string')
+    : loadWatchlistSymbols();
+  const capped = capAdvisorUniverse(requested.length > 0 ? requested : [...DEFAULT_ADVISOR_UNIVERSE]);
+  const universe = capped.symbols;
   const allowed = new Set<string>(universe);
   const analyses = buildAnalysesForUniverse(universe);
 
@@ -619,8 +762,8 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await readCappedText(res, 'Anthropic').catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+    const body = await readFailureBody(res, 'Anthropic');
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
   // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
@@ -647,7 +790,15 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   }
   try {
     const recommendations = validateStockAdvisorJson(json, allowed);
-    return ok({ recommendations, disclaimer: STOCK_ADVISOR_DISCLAIMER, notForRealMoney: true });
+    // **見た銘柄を答えと一緒に運ぶ。** 上限で外した分が在れば、それも運ぶ ——
+    // 黙って切ると「一覧について答えた」が成り立たなくなる (パス 105)。
+    return ok({
+      recommendations,
+      disclaimer: STOCK_ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+      universeConsidered: universe,
+      universeOmitted: capped.omitted,
+    });
   } catch (e) {
     return err('action_failed', '検証エラー: ' + (e instanceof Error ? e.message : String(e)));
   }
@@ -656,11 +807,11 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
 // --- Anthropic Emotions text analyzer (browser-direct) ----------------
 // emotions/analyze-text: Vault の emotions キーで Anthropic を直接呼び、
 // 感情スコアを正規化して localStorage の分析履歴に保存する。
-async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'emotions/analyze-text'>>> {
   const text = payload['text'];
   const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
   if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
-  if (text.length > MAX_ANALYZE_TEXT_CHARS)
+  if (countChars(text) > MAX_ANALYZE_TEXT_CHARS)
     return err('action_failed', `text が長すぎます (${MAX_ANALYZE_TEXT_CHARS} 字以内)`);
 
   let apiKey: string | null = null;
@@ -669,7 +820,14 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   } catch {
     return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
   }
-  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。上の「Anthropic API キー」から設定してください');
+  if (!apiKey) return err('not_configured', MISSING_ANTHROPIC_KEY_MESSAGE);
+  // 保存できない保管値なら**送る前に**断る (本文と API 呼び出しを無駄にしない。main 側と同じ順)。
+  // 送っている間に壊れた分は `recordAnalysis` が保存の直前にもう一度見る。
+  try {
+    emotionsAssertStoreWritable();
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
+  }
 
   let res: Response;
   try {
@@ -692,8 +850,8 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await readCappedText(res, 'Anthropic').catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+    const body = await readFailureBody(res, 'Anthropic');
+    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
   // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
   // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
@@ -715,7 +873,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   try {
     json = JSON.parse(emotionsExtractJson(body));
   } catch {
-    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + redactForMessage(body, 80));
+    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + redactForMessage(body, MAX_MALFORMED_JSON_ECHO_CHARS));
   }
   const entry = emotionsRecordAnalysis(text, source, emotionsNormalize(json));
   return ok(entry);
@@ -750,7 +908,7 @@ export function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
     const r = (item as { role?: unknown }).role;
     const c = (item as { content?: unknown }).content;
     if ((r !== 'user' && r !== 'assistant') || typeof c !== 'string') continue;
-    const content = c.trim().slice(0, MAX_ASSISTANT_CONTENT_CHARS);
+    const content = clampToCeiling(c.trim(), MAX_ASSISTANT_CONTENT_CHARS);
     if (content.length > 0) out.push({ role: r, content });
   }
   return out.slice(-MAX_ASSISTANT_MESSAGES);
@@ -774,12 +932,14 @@ async function readAssistantCredsRaw(): Promise<
   }
 }
 
-async function callAssistantChat(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callAssistantChat(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'assistant/chat'>>> {
+  // 最新の発話は切らずに断る (パス 112・main と同じ判断)。履歴の窓とは別。
+  if (latestTurnTooLong(payload['messages'])) return err('action_failed', inputTooLongMessage('入力'));
   const turns = sanitizeAssistantTurns(payload['messages']);
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
+  const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -803,11 +963,15 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   const spec = AI_PROVIDERS[resolved.id];
   let fetchFn: typeof fetch | undefined;
   if (!spec.browserDirect) {
-    const proxyCfg = await getProxyConfig().catch(() => null);
+    // **読めなかったことを「未設定」と混ぜない** (`network/proxy.ts` の注記と同じ理由)。
+    const proxy = await inspectStoredProxyConfig();
+    const proxyCfg = proxy.config;
     if (!proxyCfg) {
       return err(
         'not_configured',
-        `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
+        proxy.unreadable !== null
+          ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
+          : `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
       );
     }
     fetchFn = (input, init) => fetchViaProxy(String(input), init ?? {}, proxyCfg);
@@ -839,12 +1003,14 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
  * 回答を並べて返す。1 社の失敗 (CORS プロキシ未設定を含む) は ok:false として
  * 他社の回答を巻き込まない。順序は AI_PROVIDER_IDS の定義順で決定論。
  */
-async function callAssistantChatAll(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callAssistantChatAll(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'assistant/chatAll'>>> {
+  // chat と同じ (パス 112)。
+  if (latestTurnTooLong(payload['messages'])) return err('action_failed', inputTooLongMessage('入力'));
   const turns = sanitizeAssistantTurns(payload['messages']);
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
+  const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -859,7 +1025,8 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
   if (ids.length === 0) {
     return err('not_configured', '設定済みの AI プロバイダがありません (⚙ エージェント設定で API キーを保存してください)');
   }
-  const proxyCfg = await getProxyConfig().catch(() => null);
+  const proxy = await inspectStoredProxyConfig();
+  const proxyCfg = proxy.config;
   const answers = await Promise.all(
     ids.map(async (id) => {
       const spec = AI_PROVIDERS[id];
@@ -871,7 +1038,10 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
             model: '',
             text: '',
             ok: false,
-            error: `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
+            error:
+              proxy.unreadable !== null
+                ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
+                : `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
           };
         }
         fetchFn = (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) =>
@@ -906,7 +1076,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
         // `slice` だけでは伏せられない。`redactForMessage` は
         // **伏せてから切る** (先に切ると模様の終わりが落ちて規則が外れる)。
         const msg = e instanceof Error ? e.message : String(e);
-        return { provider: id, model: '', text: '', ok: false, error: redactForMessage(msg, 300) };
+        return { provider: id, model: '', text: '', ok: false, error: redactForMessage(msg, MAX_ENSEMBLE_ERROR_CHARS) };
       }
     }),
   );
@@ -914,7 +1084,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
 }
 
 /** assistant/providers: 各 AI プロバイダの設定状況 (エージェント選択 UI 用)。 */
-async function callAssistantProviders(): Promise<ActionResult<unknown>> {
+async function callAssistantProviders(): Promise<ActionResult<ActionData<'assistant/providers'>>> {
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
   const creds = parseAiCredentials(credsRead.raw);
@@ -982,22 +1152,47 @@ async function buildBusinessAnalysesForAdvisor(): Promise<Array<{
   });
 }
 
-function tryGrabSvgFromPage(): string | null {
-  // The TeamRadarPage renders the chart as an inline <svg> with role="img".
-  // For the web export fallback, serialize whatever radar svg is currently
-  // shown.
-  const svg = document.querySelector('svg[role="img"][aria-label*="レーダー"]');
-  if (!svg) return null;
-  // Add xmlns if missing (sometimes React strips it).
-  const cloned = svg.cloneNode(true) as SVGElement;
-  if (!cloned.getAttribute('xmlns')) {
-    cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+/**
+ * 保存済みのチームレーダー状態を読む。**`fetchSnapshot` と `export-svg` が同じ 1 つを通る。**
+ *
+ * ここに在ったのは `tryGrabSvgFromPage()` —— 画面の `<svg>` を DOM から掻き取る
+ * 2 つ目の書き出し実装だった。掻き取れるのは `<svg>` 要素**だけ**で、⚠ の断り
+ * (描けなかった人の名指し)・標題・部署・評価時点・凡例はその**外側**の `<div>` に在る
+ * ので、書き出した SVG からは全部落ちていた (パス 268 で実測)。
+ * いまはデスクトップ版と同じ `renderTeamRadarSvg` を呼ぶ。
+ */
+function readStoredTeamRadarState(): StoredTeamRadar {
+  try {
+    return readStoredTeamRadar(localStorage.getItem(TEAM_RADAR_STORAGE_KEY));
+  } catch (e) {
+    // Web Storage そのものが拒む環境 (パス 89) —— 「読めなかった」として見本を返す。
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
-  return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(cloned);
 }
 
-const shim = {
-  getVersion: (): Promise<string> => Promise.resolve('0.1.0-web'),
+/**
+ * ブラウザ版が名乗る版 (2026-09-25 · パス 460)。
+ *
+ * **ブラウザ版はここでしか版を名乗らない。** 直す前は 2 か所に在り
+ * (`getVersion` が返す接尾辞つきの版と、`checkUpdate` の `current` に直書きされた版)、
+ * `package.json` を上げた日に `checkUpdate` だけが古い版と比べる形だった ——
+ * 実測: 古い版と新しいリリースを `evaluateUpdate` に渡すと `update-available` なので、
+ * **最新の HTML を配信されている利用者に「更新があります」と言い続ける**。
+ *
+ * ★ **接尾辞は `getVersion` が付ける** —— `checkUpdate` に付けた物を渡すと、
+ * パス 402 で入れた semver の順序 (プレリリースは正式版より前) が効いて、
+ * **同じ版に対して `update-available` になる** (実測)。つまり自分自身より新しい版が在ると言い出す。
+ * **版は数として持ち、身元は接尾辞が足す。**
+ *
+ * `package.json` からの注入 (vite の `define`) は採っていない ——
+ * `vitest.config.ts` が別の config なので両方に置く必要が在り、
+ * 896 ファイルの検査が読み込み時に未定義の global に当たる形を作る。
+ * 残作業として `docs/REMAINING_WORK.md` に測って残した。
+ */
+const WEB_BUILD_VERSION = '0.1.0';
+
+const unguarded = {
+  getVersion: (): Promise<string> => Promise.resolve(`${WEB_BUILD_VERSION}${WEB_BUILD_SUFFIX}`),
 
   /**
    * 更新の有無。ブラウザ版は自分自身を更新できないが、**新しい版が出たことは
@@ -1005,7 +1200,7 @@ const shim = {
    * デスクトップ版と同じ純ロジックで判定する。
    */
   checkUpdate: async (): Promise<UpdateVerdict> => {
-    const current = '0.1.0';
+    const current = WEB_BUILD_VERSION;
     try {
       const res = await timedFetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
         headers: { accept: 'application/vnd.github+json' },
@@ -1047,6 +1242,10 @@ const shim = {
 
   revealInFolder: notSupportedAlert,
   openPath: notSupportedAlert,
+  // 配色の追随 (パス 318): ブラウザ版に窓は無く、PWA の theme-color は theme.ts 自身が書き換えるので何もしない。
+  setColorScheme: async (): Promise<OsOpResult> => ({ ok: true }),
+  // 「すべてのデータを削除」— ブラウザ版は保管層ごとの在庫 (security/eraseAll.ts) を消す。橋の形は両ビルドで 1 つ (パス 137)。
+  eraseAll: async (): Promise<EraseAllReport> => ({ kind: 'browser', ...(await eraseEverything()) }),
 
   // Electron 側と同じ規則で弾き、弾いた理由を返す (shared/tokenInput.ts)。
   // Vault の書き込み失敗も握り潰さない — 黙って捨てると画面は「保存した」と
@@ -1073,13 +1272,14 @@ const shim = {
     }
     return { ok: true };
   },
-  listConfigured: async (): Promise<string[]> => {
-    try {
-      return await vault.listConfigured();
-    } catch {
-      return [];
-    }
-  },
+  /**
+   * 登録済みサービスの一覧。**読めなかったときは投げる** (main 側と同じ規則)。
+   *
+   * `catch { return []; }` にしていた頃は、保管庫が読めないだけで
+   * **「1 件も登録されていない」**と名乗り、画面は全サービスに「トークン未設定」を
+   * 出していた —— 利用者の次の手は API キーの再入力になる。
+   */
+  listConfigured: async (): Promise<string[]> => vault.listConfigured(),
   // ブラウザ版は常に WebCrypto Vault (AES-GCM-256 + PBKDF2 600k) を通るため、
   // Electron 版のような「OS キーチェーン不在で平文」状態は原理的に起きない。
   storageProtection: async (): Promise<{
@@ -1119,6 +1319,23 @@ const shim = {
     if (serviceId === 'stocks') {
       return ok(buildStocksSnapshot()) as ActionResult<T>;
     }
+    /*
+     * 水耕栽培の運転管理 (2026-09-13 ・ パス 194)。
+     *
+     * 返すのは「何を測るか」の台帳だけで、**デスクトップ版と同じ関数**を呼ぶ
+     * (`shared/hydroponicsControl.ts` の `buildHydroponicsSnapshot`)。
+     *
+     * ここが無いまま `not_implemented` へ落ちると、画面の「測定項目の台帳」が
+     * **空の表**になる (落とし先の `SNAPSHOT.hydroponics` は型だけで中身が無い)。
+     * パス 118 / 120 / 121 と同じ「口はあるが繋がっていない」形で、
+     * **e2e が実測で拾った** (台帳 8 行を期待した検査が 0 行で落ちた)。
+     *
+     * 測定・ロット・設定は record store (IndexedDB) に在り、画面が直接読むので
+     * ここには入れない (デスクトップ版も同じ)。
+     */
+    if (serviceId === 'hydroponics') {
+      return ok(buildHydroponicsSnapshot()) as ActionResult<T>;
+    }
     // ollama はブラウザ版でも **実際にローカルへ接続する**。Ollama は既定で
     // CORS ヘッダを返さないため、失敗時は「未起動」と「OLLAMA_ORIGINS 未設定」を
     // 切り分けて返す (ページがその手順を案内する)。詳細は network/ollamaWeb.ts。
@@ -1151,15 +1368,31 @@ const shim = {
      * `buildTalentSnapshot` を通すので、答えは 2 つの実行形態で一致する。
      */
     if (serviceId === 'talent') {
-      let state = EMPTY_TALENT_STATE;
+      // 「保存した」「まだ無い」「読めなかった」を混ぜない (パス 121)。それまでは「区別しても画面で
+      // することは同じ」として空で続けていた —— 壊れた保存値では申告・施策・メンバーが消えており、
+      // 次の保存で空に上書きされるので、同じではない。判定は shared の同じ関数を通す。
+      let stored: StoredTalent;
       try {
-        const raw = localStorage.getItem(TALENT_STORAGE_KEY);
-        if (raw !== null) state = sanitizeTalentState(JSON.parse(raw) as unknown);
-      } catch {
-        // 壊れた保存値と未保存を区別しても画面ですることは同じ。空で続ける。
-        state = EMPTY_TALENT_STATE;
+        stored = readStoredTalent(localStorage.getItem(TALENT_STORAGE_KEY));
+      } catch (e) {
+        // Web Storage そのものが拒む環境 (パス 89) —— 「読めなかった」として空を返す。
+        stored = { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
       }
-      return ok(buildTalentSnapshot(state)) as ActionResult<T>;
+      const { state, provenance } = talentProvenance(stored);
+      return ok(buildTalentSnapshot(state, provenance)) as ActionResult<T>;
+    }
+    /*
+     * teamradar は保存した部署・評価日・メンバーをそのまま返す (パス 118)。
+     *
+     * ここが無いまま `not_implemented` へ落ちていた —— talent と同じ壊れ方が隣に残っていた:
+     * 画面は「保存しました」の直後に `refresh()` し、赤いバッジ (「ブラウザ版では live fetch を
+     * 行いません」) が並び、保存した状態は 2 度と画面へ戻らなかった。デスクトップ版と同じ
+     * `readStoredTeamRadar` / `buildTeamRadarSnapshot` を通すので、答えは 2 つの実行形態で一致する。
+     * 読めない保存値は見本を返すが、**そう言う** (パス 120 —— それまでは黙って見本に化け、
+     * 保存した物まで「同梱データ」と刷られていた)。
+     */
+    if (serviceId === 'teamradar') {
+      return ok(buildTeamRadarSnapshot(readStoredTeamRadarState())) as ActionResult<T>;
     }
     /*
      * security は「鍵が入っているか」だけがブラウザでも観測できる。
@@ -1178,9 +1411,12 @@ const shim = {
      * 送信側 (`scan-url` / `check-email-breach`) は**この shim に実装済み**で
      * プロキシ経由で動く。**動く機能が、開かない門の向こうに在った。**
      *
-     * Norton の検出だけは端末固有でブラウザからは見られないので、
-     * 同梱スナップショット (`installed: false`) のまま返す —— これは嘘ではない。
-     * すぐ上の `emotions` と同じ形である。
+     * Norton の検出だけは端末固有でブラウザからは見られない。**2026-09-12 (パス 165)
+     * まで「同梱スナップショット (`installed: false`) のまま返す —— これは嘘ではない」
+     * と書いていたが、それは誤りだった**: 画面は `installed` の真偽 1 つで描いており、
+     * 警告色の札「Not detected」と**区切りだけの説明「·」**が出ていた (jsdom で実測)。
+     * **警告の札は主張である** —— 見ていない端末について言ってはいけない。
+     * `detection: 'unavailable'` を明示して、札を中立色・理由つきにした。
      */
     if (serviceId === 'security') {
       let keys: ReturnType<typeof parseSecurityKeys> = {};
@@ -1190,10 +1426,15 @@ const shim = {
         keys = {};
       }
       const mod = (await import('./data/snapshot')) as unknown as {
-        SNAPSHOT: { security: Record<string, unknown> };
+        // `norton` だけ形を書くのは、下で detection を差し替えるため (パス 165)。
+        // 残りは触らないので `unknown` のまま通す。
+        SNAPSHOT: { security: Record<string, unknown> & { norton: Record<string, unknown> } };
       };
       return ok({
         ...mod.SNAPSHOT.security,
+        // 端末のファイルを読めないので「探せない」。同梱値の detection も
+        // 'unavailable' だが、ここで明示しておく (snapshot の既定に依存しない)。
+        norton: { ...mod.SNAPSHOT.security.norton, detection: 'unavailable' },
         keysConfigured: { hibp: Boolean(keys.hibp), vt: Boolean(keys.vt) },
       }) as ActionResult<T>;
     }
@@ -1210,7 +1451,9 @@ const shim = {
           return async (url, init) => {
             const r = await transport(url, init);
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            return (await r.json()) as unknown;
+            // 読む所で切る (パス 330) —— 上限が「渡した transport がプロキシだから
+            // 既に切れている」に依っていた形をやめる。
+            return parseJsonText(await readCappedText(r, serviceId), serviceId);
           };
         },
         now: () => Date.now(),
@@ -1233,6 +1476,29 @@ const shim = {
       const id = p.templateId;
       const def = TEMPLATE_CATALOG_FOR_WEB.find((t) => t.id === id);
       if (!def) return err('action_failed', `unknown template id: ${String(id)}`);
+      /*
+       * **欄の天井を書き出す前に見る** (2026-09-13 · パス 197)。
+       *
+       * `normalizeTemplateParams` は「緩い側の入口」として長さを見ない設計で、
+       * `TEMPLATE_FIELD_LIMITS` を読むのは main の `validateParams` と
+       * **画面の `maxLength` 属性**だけだった。`maxLength` は関門ではないので
+       * (実機 chromium で実測)、ブラウザ版には天井が**無かった** ——
+       * デスクトップ版だけが断る非対称で、同じ操作が版によって別の結果になる。
+       * 判定は `shared/templateSvg.ts` の 1 つを読む (数も単位も写さない)。
+       */
+      const normalized = normalizeTemplateParams(
+        (p.params as Record<string, string> | undefined) ?? {},
+        def.defaults,
+      );
+      const overLong = tooLongTemplateFields(normalized);
+      if (overLong.length > 0) {
+        return err(
+          'action_failed',
+          overLong
+            .map((k) => refusedCeilingNote(TEMPLATE_FIELD_LABEL[k], normalized[k], TEMPLATE_FIELD_LIMITS[k]))
+            .join(' '),
+        );
+      }
       let svg: string;
       try {
         svg = renderTemplateForWeb(def, (p.params as Record<string, string> | undefined) ?? {});
@@ -1240,61 +1506,59 @@ const shim = {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
       const filename = `${def.id}-${Date.now()}.svg`;
-      await saveToLibrary('templates', filename, 'image/svg+xml', svg);
+      const sinks = await saveToLibrary('templates', filename, 'image/svg+xml', svg);
       const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
-    }
-
-    // TeamRadar export: grab the inline svg already rendered on the page.
-    if (serviceId === 'teamradar' && action === 'export-svg') {
-      const svg = tryGrabSvgFromPage();
-      if (!svg) {
-        return err('action_failed', 'チームレーダーページに切り替えてからもう一度お試しください');
-      }
-      const p = payload as ExportSvgPayload;
-      const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
-      const filename = filenameFromTitle(title, Date.now(), '.svg');
-      await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
-      const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     /*
-     * TeamRadar save-state (ブラウザ版)。
+     * TeamRadar export —— **デスクトップ版と同じ `renderTeamRadarSvg` を通す** (パス 268)。
      *
-     * **注意: ここが書く `teamradar.state` を読む所は無い。** 実測
-     * (2026-08-23): この鍵は `src/` 全体で**この 1 行にしか現れない** (検査にも無い)。
-     * リロードで編集が残るのは、`TeamRadarPage` 自身が別の鍵
-     * (`servicehub.teamradar.draft.v1`) へ下書きを保存しているためで、
-     * **この action のおかげではない**。元は「persist into localStorage so
-     * reloads keep edits」と書いてあったが、それは事実ではなかった。
+     * 2026-09-15 まではここが画面の `<svg>` を掻き取っており、⚠ の断り・標題・部署・
+     * 評価時点・凡例が落ちた**裸の図**を渡していた (それらは `<svg>` の外に在る)。
+     * 5 人のうち 2 人が未評価で描かれていないとき、受け取った人には 3 人のチームに見え、
+     * 2 人が落ちた理由はどこにも書かれていなかった —— 断りは渡す物に乗る (パス 41)。
      *
-     * **なぜ消さないか**: デスクトップ版では `save-state` が
-     * `team-radar.json` を書き、`loadTeamRadarState` → `fetchSnapshot` が
-     * それを読む。つまり action 自体は意味を持つ口で、ブラウザ版の実装だけが
-     * 行き止まりになっている。消すのは口の意味を変える話なので触らない。
-     *
-     * **検証の非対称**: main 側は `validateMembers` (最大 50 人・scores は
-     * 長さ 5・id 重複なし) と department/evaluatedAt の長さを見るが、
-     * こちらは素通し。`validateMembers` は `src/main` にあり renderer からは
-     * import できない (`lint:imports` の境界)。揃えるなら `src/shared` へ
-     * 出す必要がある。**今は書いた物を誰も読まないので実害は無いが、
-     * ここを読む人が現れたら先に揃えること。**
+     * 状態の出どころもデスクトップ版と同じ 2 枝: 画面が送った `chart` を判定に通し、
+     * 送られていなければ保存済みを読む。判定は `validateTeamRadarState` の 1 つ。
      */
+    if (serviceId === 'teamradar' && action === 'export-svg') {
+      const p = payload as ExportSvgPayload;
+      let snap;
+      try {
+        snap = p.chart === undefined
+          ? buildTeamRadarSnapshot(readStoredTeamRadarState())
+          : buildTeamRadarSnapshot({ kind: 'saved', state: validateTeamRadarState(p.chart) });
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+      // 天井は shared が 1 つだけ持つ (パス 167)。越える標題は既定へ倒す —— main と同じ式。
+      const titleStr = typeof p.title === 'string' && p.title.length > 0
+        && countChars(p.title) <= MAX_CHART_TITLE_CHARS
+        ? p.title
+        : 'チームレーダーチャート';
+      const svg = renderTeamRadarSvg(snap, { title: titleStr });
+      const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
+      const filename = filenameFromTitle(title, Date.now(), '.svg');
+      const sinks = await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
+      const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
+    }
+
     /**
      * 人材育成の登用判定。**判定そのものは `shared/talent.ts` の同じ関数**を
      * 呼ぶ —— デスクトップ版 (`clients/talent.ts`) と同じ答えが返る。
-     * ここで判定を書き直すと、teamradar の `save-state` で起きている
-     * 「main は検証するのにブラウザ版は素通し」という非対称を新しく作ることになる。
+     * ここで判定を書き直すと「main は検証するのにブラウザ版は素通し」という非対称を
+     * 新しく作ることになる (teamradar の `save-state` に 2026-09-09 まで在った形 —— パス 118 で揃えた)。
      */
     if (serviceId === 'talent' && action === 'judge-leader') {
       const p = payload as { flagged?: unknown; candidate?: unknown };
       const flagged = Array.isArray(p.flagged)
         ? p.flagged.filter((f): f is string => typeof f === 'string')
         : [];
-      return ok({
+      return ok<ActionData<'talent/judge-leader'>>({
         fitness: judgeLeaderFitness(flagged),
-        candidate: typeof p.candidate === 'string' ? p.candidate.slice(0, 64) : '',
+        candidate: typeof p.candidate === 'string' ? clampToCeiling(p.candidate, MAX_LEADER_CANDIDATE_CHARS) : '',
       }) as ActionResult<T>;
     }
 
@@ -1305,16 +1569,30 @@ const shim = {
       const clean = sanitizeTalentState(payload);
       try {
         localStorage.setItem(TALENT_STORAGE_KEY, JSON.stringify(clean));
-        return ok(clean) as ActionResult<T>;
+        return ok<ActionData<'talent/save-state'>>(clean) as ActionResult<T>;
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');
       }
     }
 
+    /*
+     * TeamRadar save-state (ブラウザ版) —— **デスクトップ版と同じ判定を通してから書く** (パス 118)。
+     *
+     * 2026-08-23 の実測では、この鍵 (`teamradar.state`) を書く 1 行が `src/` で唯一の出現で、
+     * 読む所が無く、判定も無かった (main は `validateMembers` で 50 人・scores 長さ 5・id 重複なし・
+     * department / evaluatedAt の長さを見る)。いまは `fetchSnapshot` の teamradar の枝が読み、
+     * 判定は shared の `validateTeamRadarState` (両ビルドで同じ文面) を通す。
+     */
     if (serviceId === 'teamradar' && action === 'save-state') {
+      let next: ReturnType<typeof validateTeamRadarState>;
       try {
-        localStorage.setItem('teamradar.state', JSON.stringify(payload));
-        return ok(payload) as ActionResult<T>;
+        next = validateTeamRadarState(payload);
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        localStorage.setItem(TEAM_RADAR_STORAGE_KEY, JSON.stringify(next));
+        return ok<ActionData<'teamradar/save-state'>>(next) as ActionResult<T>;
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');
       }
@@ -1333,7 +1611,7 @@ const shim = {
         endpoint: loadEndpointSetting(),
       });
       return out.ok
-        ? (ok({ reply: out.reply, durationMs: out.durationMs }) as ActionResult<T>)
+        ? (ok<ActionData<'ollama/chat'>>({ reply: out.reply, durationMs: out.durationMs }) as ActionResult<T>)
         : err<T>(`ollama_${out.kind}`, out.message);
     }
 
@@ -1345,7 +1623,7 @@ const shim = {
         const symbol = (payload as { symbol?: unknown }).symbol;
         const result =
           action === 'register-ticker' ? registerSymbol(symbol) : unregisterSymbol(symbol);
-        return ok(result) as ActionResult<T>;
+        return ok<ActionData<'stocks/register-ticker'> | ActionData<'stocks/unregister-ticker'>>(result) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
@@ -1383,11 +1661,14 @@ const shim = {
         if (!isSafeSymbol(symbol)) {
           return err('action_failed', 'symbol must be 1-16 chars from [A-Za-z0-9.-^]');
         }
+        // **ここで有限性を見てはいけない。** 次の行が非有限と 0 以下を
+        // 明示的に弾くので、先に既定へ倒すと「断り」が「黙った代入」になる
+        // (2026-09-08 · パス 98 で 1 度そう変えてしまい、既存の検査が捕まえた)。
         const initialCash = typeof p.initialCash === 'number' ? p.initialCash : 1_000_000;
         if (!Number.isFinite(initialCash) || initialCash <= 0) {
           return err('action_failed', 'initialCash must be a positive finite number');
         }
-        return ok(compareStrategies(symbol.toUpperCase(), initialCash)) as ActionResult<T>;
+        return ok<ActionData<'stocks/compare-strategies'>>(compareStrategies(symbol.toUpperCase(), initialCash)) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
@@ -1421,9 +1702,9 @@ const shim = {
       const content = isMd ? renderStockDashboardMarkdown(input) : renderStockDashboardHtml(input);
       const ext = isMd ? '.md' : '.html';
       const filename = 'stocks-dashboard-' + Date.now() + ext;
-      await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
+      const sinks = await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
       const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded, ...sinks }) as ActionResult<T>;
     }
 
     // Emotions: 気分ログ / 履歴クリアは localStorage で完結。
@@ -1512,6 +1793,29 @@ const shim = {
     if (serviceId === 'calendar' && action === 'create-event') {
       return (await runProxyBearer('calendar', (t, tok) => createCalendarEvent(payload, tok, t))) as ActionResult<T>;
     }
+    /*
+     * Microsoft 365 の 2 操作 —— どちらもここが無いまま `action_not_found` へ
+     * 落ちていた。send-mail をパス 274 で、create-event をパス 275 で繋いだ。
+     *
+     * **パス 274 の注記の訂正**: あのとき私は「同じフォームの隣の
+     * `create-event` は動いていた」と書いたが、**それは誤り**だった。動いて
+     * いたのは `calendar/create-event` (Google カレンダー) で、
+     * `microsoft-365/create-event` は自分も `DESKTOP_ONLY` の台帳に在った ——
+     * つまりこの画面のボタンは**2 つとも**落ちていた。似ていたのは
+     * 行動名だけで、サービスが違う。
+     *
+     * 押せる条件は両方同じ (`submitting` と欄の天井だけ) で、ビルドを見る枝は無い。
+     */
+    if (serviceId === 'microsoft-365' && action === 'send-mail') {
+      return (await runProxyBearer('microsoft-365', (t, tok) =>
+        sendMicrosoftMail(payload, tok, t),
+      )) as ActionResult<T>;
+    }
+    if (serviceId === 'microsoft-365' && action === 'create-event') {
+      return (await runProxyBearer('microsoft-365', (t, tok) =>
+        createMicrosoftEvent(payload, tok, t),
+      )) as ActionResult<T>;
+    }
     if (serviceId === 'gmail' && action === 'create-draft') {
       return (await runProxyBearer('gmail', (t, tok) => createGmailDraft(payload, tok, t))) as ActionResult<T>;
     }
@@ -1582,9 +1886,11 @@ const shim = {
     }
 
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
-    if (action === 'record-entry' && RECORD_ENTRY_SERVICES.has(serviceId)) {
+    if (action === 'record-entry' && isRecordEntryServiceId(serviceId)) {
       const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
-      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
+      // 天井は**文字**で数える —— 画面が「2000 字まで」と刷る数・main の 4 つの
+      // handler と同じ単位 (`p.note.length` はコード単位・パス 195)。
+      if (typeof p.note !== 'string' || p.note.length === 0 || countChars(p.note) > MAX_RECORD_NOTE_CHARS) {
         return err(
           'action_failed',
           `${serviceId}.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`,
@@ -1593,7 +1899,20 @@ const shim = {
       if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
         return err('action_failed', `${serviceId}.record-entry: amount は finite な数値で指定してください`);
       }
-      return ok({ ok: true, serviceId, recordedAt: new Date().toISOString(), persisted: false }) as ActionResult<T>;
+      return ok<ActionData<`${RecordEntryServiceId}/record-entry`>>({
+        ok: true,
+        serviceId,
+        recordedAt: new Date().toISOString(),
+        persisted: false,
+      }) as ActionResult<T>;
+    }
+
+    // 改善提案 (advise): 画面が渡した集計から規則で組む。判定と文面は shared が 1 つだけ持ち、
+    // Electron 版の 4 つの action と同じ関数を通す (パス 119 —— それまで双子が無く action_not_found だった)。
+    if (action === 'advise' && isRecordEntryServiceId(serviceId)) {
+      const r = adviseService(serviceId, payload);
+      if (!r.ok) return err('action_failed', r.message);
+      return ok<ActionData<`${RecordEntryServiceId}/advise`>>(r.data) as ActionResult<T>;
     }
 
     // マルチエージェント AI アシスタント — Vault の資格情報で解決したプロバイダ
@@ -1622,9 +1941,9 @@ const shim = {
         ? '# 事業ダッシュボード (ブラウザ版)\n\nブラウザ版では完全な事業データのエクスポートに対応していません。\nElectron 版または `npm run dev` で完全な機能をお試しください。\n'
         : '<!doctype html><html><head><meta charset="utf-8"><title>事業ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>事業ダッシュボード (ブラウザ版)</h1><p>ブラウザ版では完全な事業データのエクスポートに対応していません。</p><p>Electron 版または <code>npm run dev</code> で完全な機能をお試しください。</p></body></html>';
       const filename = 'business-dashboard-' + Date.now() + ext;
-      await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
+      const sinks = await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
       const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     return err(
@@ -1636,6 +1955,49 @@ const shim = {
   oauthSupported: (): Promise<boolean> => Promise.resolve(false),
   authorize: (): Promise<ActionResult<unknown>> =>
     Promise.resolve(err('not_supported', 'ブラウザ版では OAuth フローを実行しません')),
+};
+
+/**
+ * **main の IPC ハンドラと同じ床** (2026-09-17 · パス 312)。
+ *
+ * `action:invoke` / `fetch:snapshot` は本体を丸ごと `try` に入れ、投げた物を
+ * `safeErrorMessage` で `{ ok: false }` にして返す —— 「失敗は戻り値で表す」約束を
+ * **ハンドラの外側 1 か所**で守っている (`lint:ipc-handlers` が形を留める)。
+ * ブラウザ版の `invoke` はその約束を **32 の枝の中の 19 の `try`** で守っていた ——
+ * 同じ規則の写しが 19 つ在り、床は無かった。写しは書き忘れが効く: 実測 (2026-09-17) では
+ * 隣の `log-mood` が持つ `try` を `clear-history` が持たず、Web Storage そのものが拒む
+ * 環境 (パス 89 の SecurityError) で **reject** した。null の payload で 11 の枝、
+ * 形の違う payload で 2 の枝 (stocks の書き出し) も同じく reject した。
+ * `webShimInvokeNeverRejects.test.ts` (2026-08-23) は 4 つの敵対条件で全組を叩いて
+ * 「何があっても reject しない」と述べていたが、**列挙した条件の外**は見えない ——
+ * 条件を 1 つ足すたびに穴が 1 つ出る形は、床が無いことの症状である。
+ *
+ * reject の行き先は呼び出し側の `busy` フラグである (30 か所が `try` の外で `await` して
+ * いる —— `actionOutcome.ts` / `VoiceCommandBar.tsx` に「reject しない」と書いてあるとおり、
+ * それが約束だから)。`setSubmitting(false)` が走らず、ボタンは押せないまま残り、画面には
+ * 何も出ない。
+ *
+ * 床は `err()` を通るので、文面は main と同じ `safeErrorMessage` (伏字 + 天井) を経る。
+ * 枝の中の `try` は残す —— それらは `not_configured` など**枝が選ぶ code** を持つ。
+ * 床が持つのは main と同じ汎用の code (`action_failed` / `fetch_failed`) だけである。
+ */
+async function withFloor<T>(
+  code: 'action_failed' | 'fetch_failed',
+  run: () => Promise<ActionResult<T>>,
+): Promise<ActionResult<T>> {
+  try {
+    return await run();
+  } catch (e) {
+    return err<T>(code, safeErrorMessage(e));
+  }
+}
+
+const shim = {
+  ...unguarded,
+  fetchSnapshot: <T>(serviceId?: string): Promise<ActionResult<T>> =>
+    withFloor<T>('fetch_failed', () => unguarded.fetchSnapshot<T>(serviceId)),
+  invoke: <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> =>
+    withFloor<T>('action_failed', () => unguarded.invoke<T>(serviceId, action, payload)),
 };
 
 // Install only if no Electron preload has populated serviceHub already.

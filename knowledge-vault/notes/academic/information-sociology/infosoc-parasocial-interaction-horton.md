@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]] — 同分野の近傍
 - [[infosoc-parasocial|パラソーシャル関係]] — 同分野の近傍
-- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

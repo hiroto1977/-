@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[econ-piketty|ピケティの r>g（資本収益率と格差）]] — LibertyStreetEconomics（ニューヨーク連邦準備銀行）—r>gとrの構成を解説
+- [[econ-inequality-piketty-capital21|ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する]] — LibertyStreetEconomics（ニューヨーク連邦準備銀行、2015）—r＞gの大きさとrの構成の解説
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

@@ -26,7 +26,7 @@ aliases:
 チャールズ・ホートン・クーリー ／ ジョージ・ハーバート・ミード ／ ハーバート・ブルーマー ／ アーヴィング・ゴッフマン
 
 ## 出典
-- [Cooley, C.H. (1902) Human Nature and the Social Order — Scribner; looking-glass self (WorldCat)](https://www.worldcat.org/oclc/1150090) `学術`
+- [Cooley, C.H. (1902) Human Nature and the Social Order — Scribner; looking-glass self (WorldCat)](https://www.worldcat.org/oclc/1150090) `リファレンス`
 - [Wikipedia: Looking-glass self — Cooley, imagined judgment, symbolic interactionism](https://en.wikipedia.org/wiki/Looking-glass_self) `リファレンス`
 
 ## 関連概念

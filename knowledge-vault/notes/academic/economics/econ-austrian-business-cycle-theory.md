@@ -26,7 +26,7 @@ aliases:
 ルートヴィヒ・フォン・ミーゼス ／ フリードリヒ・A・ハイエク ／ クヌート・ヴィクセル ／ マレー・ロスバード
 
 ## 出典
-- [NobelPrize.org — F.A.Hayek Nobel Lecture 'The Pretence of Knowledge' (1974)](https://www.nobelprize.org/prizes/economic-sciences/1974/hayek/lecture/) `学術`
+- [NobelPrize.org — F.A.Hayek Nobel Lecture 'The Pretence of Knowledge' (1974)](https://www.nobelprize.org/prizes/economic-sciences/1974/hayek/lecture/) `リファレンス`
 - [Mises Institute — The Austrian Theory of the Trade Cycle and Other Essays](https://mises.org/library/austrian-theory-trade-cycle-and-other-essays) `学術`
 - [Encyclopaedia Britannica — Austrian school of economics](https://www.britannica.com/topic/Austrian-school-of-economics) `リファレンス`
 

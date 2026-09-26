@@ -40,11 +40,11 @@ Douglas G. Baird ／ Thomas H. Jackson ／ Vern Countryman ／ Robert Charles Cl
 - [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同じ思想家
 - [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 同じ思想家
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
 - [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 出典を共有
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
-- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -51,13 +51,17 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
         '令和5年（2023年）10月1日から開始。仕入税額控除には適格請求書（インボイス）の保存が必要。' +
         '免税事業者等からの課税仕入れの経過措置は令和8年度税制改正で見直され、控除割合は2026年9月30日まで80%、' +
         '以後 70%（〜2028年9月）→50%（〜2030年9月）→30%（〜2031年9月）と段階縮小して2031年9月末で終了する' +
-        '（同一の免税事業者等からの課税仕入れは年1億円が上限。80%か70%かは請求書の発行日ではなく課税仕入れの時期で判定）。',
+        '（同一の免税事業者等からの課税仕入れは年1億円が上限。80%か70%かは請求書の発行日ではなく課税仕入れの時期で判定）。' +
+        'インボイス登録で免税から課税になった小規模事業者の納付税額を売上税額の2割とする「2割特例」は令和8年9月30日の属する課税期間で終了し、' +
+        '同じ令和8年度税制改正で個人事業者に限り令和9年分・令和10年分の納付税額を売上税額の3割とする「3割特例」が創設された' +
+        '（法人に後継措置はない。事前届出は不要で申告書に付記して選ぶ）。',
       authority: '所管: 国税庁（消費税法）',
-      asOf: '2026-07',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm', type: 'government', label: '国税庁 令和8年度税制改正 インボイス関連特集' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/pdf/0026002-095.pdf', type: 'government', label: '国税庁 3割特例の創設（個人事業者の令和9年分・令和10年分の消費税申告）' },
       { url: 'https://www.gov-online.go.jp/article/202210/entry-10343.html', type: 'government', label: '政府広報オンライン インボイス制度' },
       { url: 'https://www.nichizeiren.or.jp/taxaccount/invoice/', type: 'operator', label: '日本税理士会連合会' },
     ],
@@ -1373,18 +1377,19 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
         '義務がある。課税標準額の合計が150万円未満の場合は免税点に達せず課税されないが、申告自体は必要。' +
         '対象になるかどうかは国税側でどの償却方法を選んだかと連動する。' +
         '取得価額10万円未満で一時に損金算入した資産と、20万円未満で3年一括償却を選んだ資産は申告対象から外れる。' +
-        'ところが中小企業者の少額減価償却資産の特例（30万円未満を即時償却）で損金算入した資産は、' +
+        'ところが中小企業者の少額減価償却資産の特例（取得価額30万円未満、2026年4月1日以後の取得分は40万円未満を即時償却）で損金算入した資産は、' +
         '租税特別措置法による特例のため償却資産では対象のままで、申告が必要になる。' +
         '同じ「即時に経費化した資産」でも根拠条文の違いで固定資産税の扱いが分かれるのがこの申告の罠で、' +
-        '30万円特例を多用するほど償却資産の申告漏れが起きやすい。' +
+        '少額減価償却資産の特例を多用するほど償却資産の申告漏れが起きやすい。' +
         '少額でも個別に減価償却を選択した資産は対象になる。税額は課税標準額×1.4%（標準税率）。',
       authority: '所管: 総務省・市町村（地方税法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_08.html', type: 'government', label: '総務省 固定資産税の概要' },
       { url: 'https://www.city.funabashi.lg.jp/kurashi/zei/003/04/p000859.html', type: 'municipality', label: '船橋市 償却資産の概要' },
       { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/shokyak_sis', type: 'municipality', label: '東京都主税局 固定資産税（償却資産）— 少額資産の取扱い' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2026/08taikou_03.htm', type: 'government', label: '財務省 令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）' },
     ],
   },
   {
@@ -1516,13 +1521,16 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'インボイス制度と仕入税額控除の要件',
       statement:
         '2023年10月のインボイス制度開始以後、原則として適格請求書（インボイス）と一定事項を記載した帳簿の保存が' +
-        '仕入税額控除の要件。免税事業者等からの課税仕入れには経過措置（2023/10〜2026/9は80%、2026/10〜2029/9は50%控除）がある。',
+        '仕入税額控除の要件。免税事業者等からの課税仕入れには経過措置があり、控除割合は令和8年度税制改正で見直された' +
+        '（2026年9月30日まで80%、以後 70%（〜2028年9月）→50%（〜2030年9月）→30%（〜2031年9月）と段階縮小して2031年9月末で終了）。' +
+        '適用には区分経理と帳簿への記載が必要で、同一の免税事業者等からの課税仕入れは年1億円が上限。',
       authority: '所管: 国税庁（消費税法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6498.htm', type: 'government', label: '国税庁 No.6498 インボイス制度' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm', type: 'government', label: '国税庁 令和8年度税制改正 インボイス関連特集' },
       { url: 'https://ayusawa-partners.jp/column/invoice-keika-sochi-80-50', type: 'media', label: 'インボイスの経過措置 解説' },
     ],
   },
@@ -1936,9 +1944,11 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       statement:
         '青色申告書を提出する一定の中小企業者等は、取得価額が基準額未満の減価償却資産を取得・事業供用した場合、' +
         'その取得価額の全額を取得事業年度に損金算入できる（租税特別措置法上の時限措置）。基準額は1単位30万円未満であったが、' +
-        '令和8年度税制改正により2026年4月1日以後取得分は40万円未満に引き上げられ、1事業年度の合計上限は300万円。',
+        '令和8年度税制改正により2026年4月1日以後取得分は40万円未満に引き上げられ、1事業年度の合計上限は300万円。' +
+        '同改正で対象は常時使用する従業員数が400人以下（改正前は500人以下）の中小企業者等に絞られ、適用期限は3年延長されて' +
+        '2029年3月31日までに取得した資産が対象（措法67条の5。2年・3年おきに延長されてきた時限措置なので、期限が近づいたら改正の有無を確認）。',
       authority: '所管: 国税庁（租税特別措置法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5408.htm', type: 'government', label: '国税庁 No.5408 中小企業者等の少額減価償却資産の特例' },
@@ -2471,7 +2481,7 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/telemarketing/', type: 'government', label: '消費者庁 特定商取引法ガイド 電話勧誘販売' },
       { url: 'https://www.no-trouble.caa.go.jp/pdf/20180625ac05.pdf', type: 'government', label: '消費者庁 特商法逐条解説 電話勧誘販売（16条・17条）' },
-      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'media', label: '国民生活センター クーリング・オフ（電話勧誘8日間）' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター クーリング・オフ（電話勧誘8日間）' },
     ],
   },
   {
@@ -6276,14 +6286,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       statement:
         '取得価額が20万円未満の減価償却資産については、各事業年度ごとにその全部又は一部を一括し、その取得価額の合計額の3分の1ずつを3年間にわたって' +
         '損金算入できる「一括償却資産」の制度がある（法人税法施行令133条の2、所得税は所得税法施行令139条）。法定耐用年数による通常の減価償却や、中小企業者等の' +
-        '少額減価償却資産の特例（取得価額30万円未満）とは別個に選択できる方法である。',
+        '少額減価償却資産の特例（取得価額30万円未満、2026年4月1日以後の取得分は40万円未満）とは別個に選択できる方法である。',
       authority: '所管: 国税庁（法人税法・所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5403.htm', type: 'government', label: '国税庁 No.5403 少額の減価償却資産の判定' },
       { url: 'https://www.keisan.nta.go.jp/r5yokuaru/aoiroshinkoku/hitsuyokeihi/genkashokyakuhi/ikkatsushokyaku.html', type: 'government', label: '国税庁 一括償却資産とは' },
       { url: 'https://www.freee.co.jp/kb/kb-accounting/lump-sum-depreciable-assets/', type: 'media', label: '一括償却資産 解説' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2026/08taikou_03.htm', type: 'government', label: '財務省 令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）' },
     ],
   },
   {

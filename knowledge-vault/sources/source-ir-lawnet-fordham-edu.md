@@ -2,7 +2,7 @@
 title: "ir.lawnet.fordham.edu"
 type: source-domain
 host: "ir.lawnet.fordham.edu"
-cite_count: 2
+cite_count: 3
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # ir.lawnet.fordham.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 3）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — Bainbridge—"TheGeographyofRevlon-Land",81FordhamL.Rev.3277(2013)
 - [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — Lubben(2016)—TheOverstatedAbsolutePriorityRule,FordhamJ.Corp.&Fin.L.
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — JohnL.Orcutt,"AmendingRegulationD'sAccredited-InvestorDefinitiontoAll…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

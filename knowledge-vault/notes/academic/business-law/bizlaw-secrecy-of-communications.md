@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍
-- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 同分野の近傍
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,7 @@ Warren Earl Burger ／ Michael Selmi ／ George A. Rutherglen
 ## 関連概念
 - [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 出典を共有
 - [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

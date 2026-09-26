@@ -31,7 +31,7 @@ Pinnel's Case（1602・5 Co Rep 117a・一部弁済は債務全体の満足と�
 
 ## 関連概念
 - [[bizlaw-eu-digital-services-act-dsa|EUデジタルサービス法（DSA）——オンライン仲介サービスの責任と透明性]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-nemo-dat-quod-non-habet|ネモ・ダット原則（Nemo Dat Quod Non Habet）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

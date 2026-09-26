@@ -16,9 +16,20 @@
  * 単位（万・億）は**解釈しない**。`4200万` を 42,000,000 と読み替えるのは
  * 親切に見えて、読み替えを誤ったときに気づけない。読み取れないものは
  * 読み取れないと言い、円単位での入力を促す方が安全と判断した。
+ *
+ * 同じ理由で、飾り（通貨記号・単位・桁区切り）は**位置**まで見る。
+ * 位置を見ずに落としていた 2026-09-06 までは `100m2` が 1002、
+ * `2024年12月31日` が 20241231 と読めてしまい、**読めている以上
+ * 指摘も出なかった** —— 詳細は `shared/readNumeric.ts` の `NUMBER_SHAPE` の注記。
  */
 
 import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
+import { hasInteriorNoise, hasUnitWord, readNumeric } from '../../shared/readNumeric';
+
+// 読み取り自体は `shared/readNumeric.ts` が 1 つだけ持つ (画面と共有検査で
+// 同じ文字列が別の数にならないように)。ここは「読めなかったときに何と言うか」。
+export { hasInteriorNoise, hasUnitWord };
+export { readNumeric as readNumber };
 
 /** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。 */
 export type GuardLevel = IssueLevel;
@@ -43,7 +54,13 @@ export type NumKind =
   | 'days' // 日数（整数）
   | 'energy' // kWh/kg（電力原単位）
   | 'mgPer100g' // mg/100g（食品成分）
-  | 'km'; // 距離 (km)
+  | 'km' // 距離 (km)
+  // 水耕栽培の運転設定 (2026-09-21 · パス 373)。
+  | 'celsius' // ℃ (氷点下が正当なので負を断らない)
+  | 'liters' // L
+  | 'ppmAir' // ppm (空気中の CO₂ —— `ppm` は単位語が mg/L なので借りない)
+  | 'normality' // N (規定度)
+  | 'ecRise'; // mS/cm (原液 1 mL/L あたりの EC 上昇)
 
 export interface NumSpec {
   readonly label: string;
@@ -58,45 +75,21 @@ export interface NumSpec {
   readonly sane?: number;
 }
 
-const FULLWIDTH = /[！-～]/g;
-const toHalfWidth = (s: string) => s.replace(FULLWIDTH, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
-
-/** 単位語を含むか（含む場合は数値として読み替えず、指摘に回す）。 */
-const UNIT_WORD = /[万億兆千]|[０-９0-9]\s*[kKmMbB]\b/;
-
-/** 読み取りで無視してよい飾り（通貨記号・単位・区切り）。 */
-const DECORATION = /[¥￥$,\s円％%人年月日個株㎡ｍm]/g;
-
-/**
- * 入力文字列を数値として読む。読めなければ null。
- *
- * - 全角英数記号を半角化
- * - 通貨記号・単位・桁区切り・空白を除去
- * - 空文字は null（「未入力」は呼び出し側で 0 に倒す）
- * - `1e3` `0x10` `Infinity` `NaN` `1..2` `++5` は読まない
- * - `万` `億` などの単位語を含むものは読まない（誤解釈より未読を選ぶ）
- */
-export function readNumber(raw: string | undefined | null): number | null {
-  // null / undefined / 空文字を早期 return しないのは、下の厳格な正規表現が
-  // 'undefined' 'null' '' をいずれも弾くため。分岐を足しても結果は変わらない。
-  const half = toHalfWidth(String(raw));
-  if (UNIT_WORD.test(half)) return null;
-  const bare = half.replace(DECORATION, '');
-  if (!/^[+-]?\d+(\.\d+)?$/.test(bare)) return null;
-  const n = Number(bare);
-  return Number.isFinite(n) ? n : null;
-}
-
 /** 読めなければ 0。計算側はこれを使い、警告側は guardNumber を使う。 */
 export function readNumberOr0(raw: string | undefined | null): number {
-  return readNumber(raw) ?? 0;
+  return readNumeric(raw) ?? 0;
 }
 
-/** 単位語（万・億）が含まれているか。指摘の文面を変えるために使う。 */
-export function hasUnitWord(raw: string | undefined | null): boolean {
-  // 空・null・undefined を早期 return しないのは、'undefined' 'null' '' の
-  // いずれも UNIT_WORD に当たらず false になるため（分岐を足しても同じ）。
-  return UNIT_WORD.test(toHalfWidth(String(raw)));
+/**
+ * 読めなければ `null`。**「未入力」と「0 と入力された」を区別したい欄**で使う。
+ *
+ * `readNumberOr0` は空欄を 0 に倒すので、`allowZero` を持たない欄
+ * (`area` / `length` / `count` — 0 は fatal) では**画面が受け付けない値**が
+ * 計算に入り、算定できていない結果が「0 という測定値」として出る。
+ * 0 が意味を持つ欄 (`allowZero: true`) は従来どおり `readNumberOr0` でよい。
+ */
+export function readNumberOrNull(raw: string | undefined | null): number | null {
+  return readNumeric(raw);
 }
 
 interface KindRule {
@@ -125,7 +118,25 @@ const KIND: Record<NumKind, KindRule> = {
   mgPer100g: { unit: 'mg/100g', negativeIsFatal: true, sane: 10000 },
   // 通勤距離 (片道 km)。`length` は m で 0 を断るが、マイカー通勤なし = 0 km は正当。
   km: { unit: 'km', negativeIsFatal: true, sane: 1000 },
+  // 水耕栽培の運転設定が足した 5 種 (2026-09-21 · パス 373)。**近い kind を借りない** ——
+  // 単位語は「0 X として計算されています」「X 以下で入力してください」の文面に
+  // そのまま出るので、借りると嘘の単位を言う (上の days / energy / mgPer100g と同じ理由)。
+  // 温度だけ `negativeIsFatal` を立てない —— 氷点下の室温は正当な入力である。
+  celsius: { unit: '℃', sane: 60 },
+  liters: { unit: 'L', negativeIsFatal: true, sane: 100000 },
+  ppmAir: { unit: 'ppm', negativeIsFatal: true, sane: 50000 },
+  normality: { unit: 'N', negativeIsFatal: true, sane: 40 },
+  ecRise: { unit: 'mS/cm', negativeIsFatal: true, sane: 5 },
 };
+
+/**
+ * その種類が名乗る単位語。**台帳の単位と突き合わせるため**に公開する ——
+ * 近い kind を借りると「0 倍として計算されています」のように嘘の単位を言うので、
+ * 台帳を持つ側 (`CONTROL_FIELD_BOUNDS` など) が一致を検査できる必要がある。
+ */
+export function unitOfKind(kind: NumKind): string {
+  return KIND[kind].unit;
+}
 
 /**
  * 1 つの入力を検査する。問題がなければ null。
@@ -140,13 +151,20 @@ export function guardNumber(raw: string | undefined | null, spec: NumSpec): Guar
     return { level: 'warn', label: spec.label, message: `未入力です。0 ${rule.unit} として計算されています。` };
   }
 
-  const value = readNumber(text);
+  const value = readNumeric(text);
   if (value === null) {
     if (hasUnitWord(text)) {
       return {
         level: 'fatal',
         label: spec.label,
         message: `「${text}」は単位付きのため読み取れません。0 ${rule.unit} として計算されています。単位を付けず ${rule.unit} の数値だけを入力してください。`,
+      };
+    }
+    if (hasInteriorNoise(text)) {
+      return {
+        level: 'fatal',
+        label: spec.label,
+        message: `「${text}」は数字の間に単位や区切りが入っているため読み取れません。0 ${rule.unit} として計算されています。3 桁区切り以外の記号を外し、${rule.unit} の数値だけを入力してください。`,
       };
     }
     return {
@@ -197,6 +215,62 @@ export function guardAll(entries: readonly (readonly [string | undefined | null,
 
   // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
   return [...out].sort(byIssueLevel);
+}
+
+/**
+ * **⛔ (`level: 'fatal'`) の欄を、宣言の集合から数える。** (パス 206 で敷地用に作り、
+ * パス 209 で試算の段・投資信託にも使うので guard の側へ移した)
+ *
+ * 空欄は `warn` なのでここには入らない —— 「未入力」と「範囲外」は打ち手が違う
+ * (「未入力です。0 円 として計算されています」の家系を壊さない)。
+ */
+export function refusedFields<K extends string>(
+  specs: Readonly<Record<K, NumSpec>>,
+  values: Readonly<Record<K, string>>,
+): readonly K[] {
+  // `Object.keys` は `string[]` を返すので、総称の `K` へは 1 段挟まないと通らない
+  // (`K` が `string` の部分型に具体化されうるため tsc が狭めを拒む)。鍵は `specs`
+  // そのものから採っているので、この主張は宣言と同じ集合である。
+  const keys = Object.keys(specs) as unknown as readonly K[];
+  return keys.filter((k) => guardNumber(values[k], specs[k])?.level === 'fatal');
+}
+
+/**
+ * その段が読んでいる欄のうち ⛔ の物の**表示名**。
+ *
+ * 名前は**宣言から採る** —— 画面が文字列を写すと、欄の名前を直したときに断りの
+ * 文面だけが古くなる (パス 101 で当たった形)。
+ */
+export function refusalLabels<K extends string>(
+  specs: Readonly<Record<K, NumSpec>>,
+  refused: readonly K[],
+  reads: readonly K[],
+): readonly string[] {
+  return reads.filter((k) => refused.includes(k)).map((k) => specs[k].label);
+}
+
+/**
+ * ⛔ の欄が在るときに判定の代わりに出す文 (欄の名前を必ず名指しする)。
+ * 空なら `null` —— 呼び手が「出すかどうか」を分岐しなくていい。
+ */
+export function refusalNote(labels: readonly string[]): string | null {
+  if (labels.length === 0) return null;
+  return `${labels.join('・')}が入力できる範囲の外なので、この判定は算定していません（赤い欄を範囲内に直すと判定が出ます）。`;
+}
+
+/**
+ * **⛔ の欄が在るときに「書かなかった」ことを述べる文** (パス 214)。
+ *
+ * `refusalNote` は**判定**を算定しなかったと述べる。保存はそれとは別の事柄で、
+ * 同じ文面を流用すると嘘になる —— 判定は出し直せるが、**保存した値は残り、
+ * 以後すべての集計・書面がそれを読む**。実測 (パス 214): 経営サマリーの
+ * 水耕栽培は `床面積 = −9999` を ⛔ と表示したまま保存でき、画面は
+ * 「保存しました。経営サマリーに反映されています。」と述べ、そのあと
+ * 営業利益 −￥6,000,000 を出していた (金融機関等提出用の書面まで届く)。
+ */
+export function saveRefusalNote(labels: readonly string[]): string | null {
+  if (labels.length === 0) return null;
+  return `${labels.join('・')}が入力できる範囲の外なので、保存していません（赤い欄を範囲内に直すと保存できます）。`;
 }
 
 /** 画面のバッジ表示用の件数。 */

@@ -28,6 +28,8 @@ _Report age: 0.1h._
 
 **Overall: 100.00% total / 100.00% covered** (27447 killed / 0 survived / 0 no-cov / 27447 valid)
 
+分母の範囲: `stryker.config.json` の `mutate` が名指しする **296 本**。`src/` の `.ts` (検査と `.d.ts` を除く) は **413 本**で、**117 本は分母の外**に在る (学術コーパスなどの定数表を含む。範囲の台帳は `src/shared/__tests__/mutateScopeCensus.test.ts`)
+
 分母から外れたもの: `Ignored` 8081 (`Stryker disable` で測らないと宣言した分 — 範囲は `npm run lint:mutation-scope` が台帳で押さえている) / `RuntimeError`+`CompileError` 0 (**評価が成立しなかった分。0 でないなら盲点**)
 
 | file | score | covered | killed | survived | no-cov | ignored | invalid |

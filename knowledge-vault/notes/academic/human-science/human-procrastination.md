@@ -37,10 +37,10 @@ aliases:
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
 - [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

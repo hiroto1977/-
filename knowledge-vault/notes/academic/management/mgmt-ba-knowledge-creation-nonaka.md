@@ -32,11 +32,11 @@ aliases:
 - [Wikipedia: Ba (knowledge) — overview of the Ba concept and its role in the SECI model](https://en.wikipedia.org/wiki/Ba_(knowledge)) `リファレンス`
 
 ## 関連概念
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論と SECI モデル（野中＝竹内）——暗黙知と形式知が共同化・表出化・連結化・内面化の四モードで相互変換され、「場」を基盤に個人から組織へ螺旋的に増幅する]] — 語彙が近い
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 出典を共有
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 出典を共有
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同分野の近傍
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

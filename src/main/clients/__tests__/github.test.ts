@@ -388,7 +388,9 @@ describe('ACTIONS["create-issue"]', () => {
 
   it('url-encodes owner/repo to prevent path injection', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ number: 1, html_url: '', title: 'x', state: 'open' }), {
+      // html_url は非空を要求する (shared/api/github.ts の parseCreatedIssue —— ブラウザ版が
+      // 前から持っていた封筒の検査を main も通るようになった · 2026-09-18)。
+      new Response(JSON.stringify({ number: 1, html_url: 'https://github.com/o/r/issues/1', title: 'x', state: 'open' }), {
         status: 201,
         headers: { 'content-type': 'application/json' },
       }),

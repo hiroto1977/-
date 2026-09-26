@@ -1,17 +1,19 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { professionalsForService } from '../data/businessTriage';
-import { describeOrigin, isRefreshable, originOf } from '../../shared/dataOrigin';
+import { describeOrigin, isRefreshable, originOf, staleDataNote } from '../../shared/dataOrigin';
 import { collectsCredential, credentialUseOf } from '../../shared/credentialUse';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
-import { safeImageSrc } from '../../shared/imageUrlGate';
+import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
 
 interface Props {
   who: ReactNode;
   serviceId?: ServiceId;
   source?: Source;
+  /** 取ってきた中身が同梱データを名乗っているか (`useServiceData` の `payloadIsMock`)。 */
+  payloadIsMock?: boolean;
   status?: Status;
   errorMessage?: string;
   errorKind?: ErrorKind;
@@ -53,6 +55,7 @@ export function StatusBar({
   who,
   serviceId,
   source = 'snapshot',
+  payloadIsMock = false,
   status = 'idle',
   errorMessage,
   errorKind,
@@ -71,6 +74,43 @@ export function StatusBar({
   // 監査前は OAuth 失敗を console.error にだけ出していた (コメントは
   // 「errorMessage スロットに出す」と書いてあったが、実際には出せない)。
   const [credentialError, setCredentialError] = useState<string>();
+
+  /**
+   * **保存 / 削除の直後、親の `isConfigured` は古い** (2026-09-23 · パス 427)。
+   *
+   * 親 (`useServiceData`) がこの判定を出すのは `listConfigured` を読む
+   * `useEffect` で、依存は `[serviceId, refresh, autoFetch]` —— **保存しても
+   * 削除しても、どれも変わらない**ので効果は再実行されない。実測 (jsdom で
+   * 実物の GithubPage を描く):
+   *
+   * | 操作 | 保管層 | この行の札 | パネルの中 |
+   * | --- | --- | --- | --- |
+   * | 保存 (未登録 → 登録) | `['github']` | **「PAT を設定」のまま** (= 未登録の札) | **「削除」が出ない** |
+   * | 削除 (登録 → 未登録) | `[]` | **「トークン更新」のまま** (= 登録済みの札) | —— |
+   *
+   * ★ **同じ行が同じ問いに 2 通り答えていた** —— 保存した直後、札は
+   * 「PAT を設定」(まだ何も預かっていない) と言い、隣のバッジは「ライブ」
+   * (今その資格情報で取ってきた) と言う。
+   *
+   * ★ **重いのは保存の側で、逃げ口が閉じる** —— 「削除」は `configured` の
+   * ときだけ描くので、**打ち込んだ直後の利用者はこの画面から消せない**。
+   * 設定画面の掃除の節は `unusedStoredCredentials`、つまり**読み手のいない**
+   * サービスだけを並べるので、github のような使われている資格情報はそこにも
+   * 出ない (法則 `escape-hatch-stays-open`)。
+   *
+   * **判定の出どころ**: 追加の IPC は要らない —— `setToken` / `clearToken` の
+   * 戻り値が `{ ok: true }` なら、main も保管庫も**書き終えている**
+   * (どちらも読み書きを都度ディスク / IndexedDB へ通し、控えを持たない)。
+   *
+   * **親が言い直したら、こちらの覚えは捨てる** —— 親がこの prop を動かすのは
+   * 取得が `not_configured` を返したときで、それは保管層についての**より新しい**
+   * 報せである。
+   */
+  const [changedHere, setChangedHere] = useState<boolean | null>(null);
+  useEffect(() => {
+    setChangedHere(null);
+  }, [serviceId, isConfigured]);
+  const configured = changedHere ?? isConfigured;
 
   // 読み手のいない資格情報は求めない (`shared/credentialUse.ts`)。判定は 1 か所で
   // 行い、以降は `tokenUi` だけを見る — 入力欄・OAuth ボタン・自動編集開始の
@@ -120,7 +160,7 @@ export function StatusBar({
   // 必ず漏れる — 74 画面ぶんの判断を書き写さないための 1 箇所。
   // `serviceId` を渡さない呼び出し元 (汎用パネル) は従来どおりの表示にする。
   const origin = serviceId ? originOf(serviceId) : 'remote';
-  const originLabel = describeOrigin(origin, source);
+  const originLabel = describeOrigin(origin, source, payloadIsMock);
 
   const badge =
     status === 'loading' ? { cls: 'badge', text: '読込中…' }
@@ -128,6 +168,18 @@ export function StatusBar({
     : status === 'error' && errorKind === 'rate_limit' ? { cls: 'badge warn', text: 'レート制限' }
     : status === 'error' ? { cls: 'badge warn', text: 'エラー' }
     : { cls: originLabel.tone === 'ok' ? 'badge ok' : 'badge', text: originLabel.text };
+
+  /*
+   * **バッジは 1 枠しか無い** (2026-09-06)。`status === 'error'` のときバッジは
+   * 「認証エラー」等に変わり、`describeOrigin` が返す取得元の宣言 —— 未取得の
+   * remote なら「サンプル（未連携）」—— が**消える**。ところが画面の下では
+   * `SNAPSHOT[id]` の同梱データがそのまま並んでいるので、トークンを保存して
+   * 「更新」を押し 401 が返った人に見えるのは**数字の入ったダッシュボードと
+   * エラー 1 行だけ**になる。取得元の宣言はエラーのときこそ要るので、
+   * バッジとは別の枠で出す。文面は `shared/dataOrigin.ts` が持つ
+   * (取得元の言い回しを 2 か所に散らさない)。
+   */
+  const staleNote = staleDataNote(origin, source, status === 'error');
 
   const saveToken = async () => {
     if (!serviceId || !window.serviceHub) return;
@@ -141,6 +193,7 @@ export function StatusBar({
     }
     setToken('');
     setEditing(false);
+    setChangedHere(true);
     onRefresh?.();
   };
 
@@ -153,15 +206,19 @@ export function StatusBar({
       setCredentialError(`削除できませんでした: ${res.message}`);
       return;
     }
+    // **削除できたことは、札と「削除」ボタンの消滅で示す。** 親の判定は
+    // 動かないので、ここで言い直さないと「トークン更新」のまま残る。
+    setChangedHere(false);
     setEditing(false);
   };
 
   const editButtonLabel =
-    errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
+    errorKind === 'auth' ? '再認証' : configured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
 
-  // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外なら
-  // `undefined` になり <img> ごと描画しない（`src=""` を出さない）。
-  const avatarSrc = safeImageSrc(avatarUrl);
+  // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外・認証情報つき・
+  // **内側を向いた送り先 (loopback / プライベート帯)** なら `undefined` になり <img> ごと
+  // 描画しない（`src=""` を出さない）。第三者の応答なので `safeRemoteImageSrc` (パス 300)。
+  const avatarSrc = safeRemoteImageSrc(avatarUrl);
 
   return (
     <div className="status-bar">
@@ -173,7 +230,7 @@ export function StatusBar({
       <DutyOwner serviceId={serviceId} />
       {tokenUi && !editing && oauthSupported ? (
         <button onClick={browserAuth} disabled={authorizing}>
-          {authorizing ? '認証中…' : isConfigured ? '再認証 (ブラウザ)' : 'ブラウザで認証'}
+          {authorizing ? '認証中…' : configured ? '再認証 (ブラウザ)' : 'ブラウザで認証'}
         </button>
       ) : null}
       {tokenUi && !editing ? (
@@ -183,13 +240,14 @@ export function StatusBar({
         <span style={{ display: 'flex', gap: 6 }}>
           <input
             type="password"
+            autoComplete="off"
             placeholder={tokenUi.placeholder ?? 'トークン'}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             style={{
               background: 'var(--bg)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               padding: '6px 8px',
               fontSize: 13,
@@ -200,7 +258,7 @@ export function StatusBar({
             保存
           </button>
           <button onClick={() => setEditing(false)}>キャンセル</button>
-          {isConfigured ? <button onClick={clearToken}>削除</button> : null}
+          {configured ? <button onClick={clearToken}>削除</button> : null}
         </span>
       ) : null}
       {onRefresh && isRefreshable(origin) ? (
@@ -217,6 +275,11 @@ export function StatusBar({
       {credentialError ? (
         <span data-credential-error role="alert" style={{ color: 'var(--danger)', fontSize: 12 }}>
           {credentialError}
+        </span>
+      ) : null}
+      {staleNote ? (
+        <span data-stale-note style={{ fontSize: 11, color: 'var(--warn)' }}>
+          {staleNote}
         </span>
       ) : null}
       {errorMessage ? (

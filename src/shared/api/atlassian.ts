@@ -11,6 +11,10 @@ import {
   withQuery,
   type FetchFn,
 } from './http';
+import { utf8ToBase64 } from '../base64';
+import { jiraBrowseUrl } from '../atlassianLinks';
+import { displayField, requireObject, requireString } from '../apiResponse';
+import { ATLASSIAN_ISSUE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
 
 export interface JiraIssue {
   readonly key: string;
@@ -117,4 +121,99 @@ export class AtlassianClient implements ServiceClient {
       'Compass は REST を持たず GraphQL (/gateway/api/graphql) のみで、クエリの形を一次資料で確認できていません',
     );
   }
+}
+
+// --- Jira: 課題の作成 (`atlassian/create-issue`) —— 両ビルドが同じ関数を通る (パス 321) ---
+
+export type AtlassianTransport = (url: string, init: RequestInit) => Promise<Response>;
+
+/** 保存 JSON から取り出した資格情報。`site` は `normalizeAtlassianSiteResult` を通った `https://<host>`。 */
+export interface AtlassianBasicCreds {
+  readonly email: string;
+  readonly token: string;
+  readonly site: string;
+}
+
+/**
+ * API token の Basic 認証。`btoa` は Latin-1 しか受けないので UTF-8 を通す
+ * (main は `Buffer` で、ブラウザ版は `btoa` で、と 2 つ在った —— 多バイトの email は
+ * ブラウザ版だけが投げていた)。
+ */
+export function basicAuthorization(email: string, token: string): string {
+  return 'Basic ' + utf8ToBase64(`${email}:${token}`);
+}
+
+export interface AtlassianIssueFields {
+  readonly projectKey?: unknown;
+  readonly summary?: unknown;
+  readonly description?: unknown;
+  readonly issueType?: unknown;
+}
+
+/** 台帳を通った課題。`issueType` は空なら Task (任意の欄の空文字は「無い」)。 */
+export interface CheckedJiraIssue {
+  readonly projectKey: string;
+  readonly summary: string;
+  readonly description?: string;
+  readonly issueType: string;
+}
+
+/** 欄の型と長さは共有の台帳で断る (パス 111)。それまで文字列でない `description` は**落として**送っていた。 */
+export function checkJiraIssue(input: AtlassianIssueFields): CheckedJiraIssue {
+  const bad = checkWriteFields(input, ATLASSIAN_ISSUE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  const description = typeof input.description === 'string' && input.description.length > 0 ? input.description : undefined;
+  const issueType = typeof input.issueType === 'string' && input.issueType.length > 0 ? input.issueType : 'Task';
+  return {
+    projectKey: String(input.projectKey).trim(),
+    summary: String(input.summary).trim(),
+    ...(description === undefined ? {} : { description }),
+    issueType,
+  };
+}
+
+export const JIRA_ISSUE_PATH = '/rest/api/3/issue';
+
+/** 要求の組み立て。Jira Cloud REST v3 は description に Atlassian Document Format を要る。 */
+export function jiraIssueInit(issue: CheckedJiraIssue, creds: { readonly email: string; readonly token: string }): RequestInit {
+  const descBody =
+    issue.description === undefined
+      ? undefined
+      : { type: 'doc', version: 1, content: [{ type: 'paragraph', content: [{ type: 'text', text: issue.description }] }] };
+  return {
+    method: 'POST',
+    headers: {
+      Authorization: basicAuthorization(creds.email, creds.token),
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fields: {
+        project: { key: issue.projectKey },
+        summary: issue.summary,
+        issuetype: { name: issue.issueType },
+        ...(descBody ? { description: descBody } : {}),
+      },
+    }),
+  };
+}
+
+/** ブラウザ版の口: 送って `Response` を返す。送り先は検証済みの `creds.site` だけ (`lint:network-targets` の台帳)。 */
+export async function createJiraIssueRequest(
+  issue: CheckedJiraIssue,
+  creds: AtlassianBasicCreds,
+  transport: AtlassianTransport,
+): Promise<Response> {
+  return transport(`${creds.site}${JIRA_ISSUE_PATH}`, jiraIssueInit(issue, creds));
+}
+
+export interface CreatedJiraIssue {
+  readonly key: string;
+  readonly url: string;
+}
+
+/** 応答の `key` を**形を確かめて**取り、`/browse/<key>` を添える (組み立ては `atlassianLinks.ts` の 1 つ)。 */
+export function parseCreatedJiraIssue(body: unknown, site: string): CreatedJiraIssue {
+  const key = displayField(requireString(requireObject(body, 'Atlassian API'), 'key', 'Atlassian API'));
+  return { key, url: jiraBrowseUrl(site, key) };
 }

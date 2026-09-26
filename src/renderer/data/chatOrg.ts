@@ -6,8 +6,16 @@
  * 構築する。registry が将来のラウンドで成長 (チーム/部長の追加) しても、
  * 本モジュールは**構造から導出**するため自動で追随する (将来拡張に自動連動)。
  *
- * registry.json の `rounds` (履歴・容量の大半) は import しない — Vite の JSON
- * 名前付き export tree-shaking により `org` / `teams` のみがバンドルされる。
+ * **本モジュールは** `rounds` を import しない —— Vite は JSON の名前付き export を
+ * tree-shaking するので、ここから入るのは `org` / `teams` だけである。
+ *
+ * ★ **2026-09-22 (パス 396) に訂正した。** この行は以前
+ * 「`org` / `teams` **のみがバンドルされる**」と**出荷物について**述べていたが、
+ * それは偽だった —— `VillagePage.tsx` が `rounds` と `backlog` を名前で import して
+ * おり、組んだ `dist/standalone.html` を実測すると **102 / 102 の round オブジェクトが
+ * 逐語で入っていた** (`rounds` は minified 160,558 B)。推論は正しく、**前提が古びた**:
+ * 書かれた時点では誰も `rounds` を import していなかった。
+ * 出荷 byte の代金は `shared/__tests__/registryBundleCost.test.ts` が台帳で持つ。
  */
 
 /** registry.json の org.executives[] の 1 要素 (使用フィールドのみ)。 */

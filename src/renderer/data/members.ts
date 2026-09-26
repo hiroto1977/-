@@ -5,6 +5,34 @@
  * renderer via `useCollection(MEMBERS_COLLECTION)`.
  */
 import { isRole, ROLE_ORDER, type Role } from '../../shared/team';
+import { moreThanChars } from '../../shared/inputCeiling';
+
+/**
+ * **保管した自由文を画面へ出すときの天井。数は入口が既に宣言している物**
+ * (2026-09-23 · パス 419)。
+ *
+ * 入口 (フォームの関門) は 200,000 字を断るのに、**形 (復元の境界) は通す** ——
+ * `COLLECTION_SHAPES` の `str` は長さを見ない。だから手で直した控えや古い版が
+ * 書いた行は入口を通らずに入り、読み手には天井が無かった。実測 (直す前・1 欄 200,000 字):
+ * この画面の総文字数が **素の 40〜450 倍**になる。
+ *
+ * ★ **形の側では断らない** —— `collectionShapes.ts` 自身が
+ * 「**落とし過ぎは復元の欠落 = 別の事故になる**」と書いている。1 欄が長いだけで
+ * 行ごと捨てると、利用者は復元でその行を失う。天井は**画面に出す所**に掛け、
+ * 行は残す (パス 408 / 411 / 417 と同じ判断)。
+ * ★ **正当な値は 1 つも変わらない** —— 入口がその長さで既に断っているので。
+ */
+export const MAX_MEMBER_NAME_CHARS = 64; // `parseMember` が 1〜64 文字で断る。
+// **`_CHARS` ではない** —— RFC 5321 の 254 は**オクテット**の上限で、文字数ではない
+// (パス 419: `_CHARS` と名付けたら `ceilingUnitCensus` が「文字で数えろ」と正しく鳴った)。
+/**
+ * メールアドレスの上限 —— **`_CHARS` ではない。** RFC 5321 §4.5.3.1.3 の経路 256 オクテット
+ * から山括弧 2 つを引いた 254 は**オクテット**の上限で、文字数ではない。`isEmail` が
+ * `s.length` (符号単位) で当てるのは近似だが、**文字で数えると逆に緩む** (絵文字 1 字 =
+ * UTF-8 で 4 オクテット)。名前が単位を言わないので `ceilingUnitCensus` の台帳に載る。
+ */
+export const MAX_MEMBER_EMAIL_LEN = 254;
+
 
 export const MEMBERS_COLLECTION = 'team-members';
 
@@ -16,12 +44,12 @@ export interface Member extends Record<string, unknown> {
 
 /** Permissive but sane email check — we only persist it, never send mail. */
 function isEmail(s: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= 254;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= MAX_MEMBER_EMAIL_LEN;
 }
 
 export function parseMember(input: { name?: unknown; email?: unknown; role?: unknown }): Member {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (name.length === 0 || name.length > 64) throw new Error('氏名は 1〜64 文字で入力してください');
+  if (name.length === 0 || moreThanChars(name, MAX_MEMBER_NAME_CHARS)) throw new Error(`氏名は 1〜${MAX_MEMBER_NAME_CHARS} 文字で入力してください`);
 
   // 非文字列時のフォールバックは何であれ isEmail で false になり同じエラーになるため、
   // '' の StringLiteral mutation は equivalent。
@@ -196,4 +224,73 @@ export function revenueNeededForHire(input: {
   const laborCostRatio = laborCost / revenue;
   // laborCostRatio は laborCost>0 かつ revenue>0 のとき必ず正なので除算は安全。
   return Math.round(perHeadLaborCost / laborCostRatio);
+}
+
+// --- 同じメールアドレスの重複 (パス 125) ---------------------------------------
+
+/**
+ * **メンバーはメールアドレスが 1 人の単位。** 同じ人を 2 度招待すると `members.length` が 1 増え、
+ * シートを 2 つ使い、一人当たりの金額 (売上高・営業利益・人件費 = 累計 ÷ 従業員数) が薄まって
+ * 金融機関等提出用の書面 §3「従業員数 (登録メンバー数)」まで届く。氏名に「編集」は無く (役割だけ
+ * 一覧で変えられる)、訂正は × で消してから入れ直す —— 先に入れ直すと 2 人になる。
+ *
+ * 鍵はメールアドレスの前後の空白を落として**小文字**にしたもの。ドメイン部は大文字小文字を
+ * 区別しない (RFC 5321)。ローカル部は規格上は区別しうるが、実際の受信側はほぼ区別しないので
+ * 「別人」とは扱わない (同じ人を 2 度数える方が重い)。
+ */
+export function memberKey(m: Pick<Member, 'email'>): string {
+  return m.email.trim().toLowerCase();
+}
+
+/** 同じメールアドレスのメンバーが既に在ればそれを返す (無ければ null)。画面が招待を断る判断。 */
+export function sameEmailMember(existing: readonly Member[], candidate: Pick<Member, 'email'>): Member | null {
+  const key = memberKey(candidate);
+  return existing.find((m) => memberKey(m) === key) ?? null;
+}
+
+/** 同じメールアドレスが 2 件以上ある組。 */
+export interface DuplicateMemberGroup {
+  /** 鍵 (前後の空白を落とした小文字)。 */
+  readonly email: string;
+  /** その組の件数 (2 以上)。 */
+  readonly count: number;
+}
+
+/**
+ * 既に在る重複 (件数 2 以上の組) をメールアドレスの昇順で返す。無ければ空。
+ * メールの無い控え (役割だけの射影) は数えない —— 経営サマリーの入力は役割だけの形も受ける。
+ */
+export function findDuplicateMembers(members: readonly { readonly email?: string }[]): DuplicateMemberGroup[] {
+  const counts = new Map<string, number>();
+  for (const m of members) {
+    if (typeof m.email !== 'string') continue;
+    const key = memberKey({ email: m.email });
+    if (key.length === 0) continue;
+    const prev = counts.get(key);
+    counts.set(key, prev === undefined ? 1 : prev + 1);
+  }
+  return [...counts.entries()]
+    .filter(([, count]) => count >= 2)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([email, count]) => ({ email, count }));
+}
+
+/** 同じメールアドレスの招待を断るときの文。訂正の道 (× で消してから) を言う。 */
+export function duplicateMemberMessage(existing: Member): string {
+  return `${existing.email} は「${existing.name}」として既に登録されています。氏名を直すときは一覧の × で消してから入れ直してください（役割は一覧で変えられます。同じ人を 2 度登録するとシートを 2 つ使い、一人当たりの金額が薄まります）。`;
+}
+
+const listMemberGroups = (groups: readonly DuplicateMemberGroup[]): string =>
+  groups.map((g) => `${g.email} ×${g.count}`).join('、');
+
+/** 一覧の上の警告 (既に重複が在るとき)。無ければ null。 */
+export function duplicateMembersNote(groups: readonly DuplicateMemberGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `同じメールアドレスのメンバーが ${groups.length} 組重複しており、従業員数に 2 度数えられています（${listMemberGroups(groups)}）。一覧の × で余分な行を消してください。`;
+}
+
+/** 書面 §3 の但し書き (**相手に渡る面**)。無ければ null。 */
+export function duplicateMembersSheetNote(groups: readonly DuplicateMemberGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `登録メンバーに同じメールアドレスの重複が ${groups.length} 組あり（${listMemberGroups(groups)}）、従業員数と一人当たりの金額はその重複を含んだ値です。`;
 }

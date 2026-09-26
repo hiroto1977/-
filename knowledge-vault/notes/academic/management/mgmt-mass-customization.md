@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-experience-economy|経験経済（パイン＆ギルモア）]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同分野の近傍
 - [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
-- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

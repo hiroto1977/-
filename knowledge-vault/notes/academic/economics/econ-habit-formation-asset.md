@@ -36,11 +36,10 @@ aliases:
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
 - [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同じ思想家
-- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 同じ思想家
 - [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同じ思想家
 - [[econ-modigliani-cohn-inflation-illusion|モディリアーニ＝コーンのインフレ錯覚——株式市場はインフレで株を過小評価する]] — 同じ思想家
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同分野の近傍
-- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同分野の近傍
+- [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快なマネタリスト算術——財政が支配的なら、金融引き締めは将来の貨幣化を通じてかえってインフレを高める]] — 同じ思想家
+- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

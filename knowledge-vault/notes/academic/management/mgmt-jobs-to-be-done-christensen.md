@@ -26,7 +26,7 @@ aliases:
 クレイトン・クリステンセン ／ セオドア・レビット ／ アンソニー・アルウィック ／ ボブ・モエスタ
 
 ## 出典
-- [Christensen, C.M. et al. (2016) Know Your Customers Jobs to Be Done — Harvard Business Review 94(9)](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) `学術`
+- [Christensen, C.M. et al. (2016) Know Your Customers Jobs to Be Done — Harvard Business Review 94(9)](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) `メディア`
 - [Wikipedia: Jobs to be done — Christensen, hiring products, milkshake example, Levitt, innovation](https://en.wikipedia.org/wiki/Jobs_to_be_done) `リファレンス`
 
 ## 関連概念

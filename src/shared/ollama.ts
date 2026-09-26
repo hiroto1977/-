@@ -21,11 +21,129 @@
  *     mixed content でも弾かれるうえ、プロンプトが平文で流れる)。
  *   - **読み取り 3 エンドポイントのみ**。/api/pull・/api/create・/api/push・
  *     /api/copy・/api/delete・/api/blobs は呼ばない — これらが上記 CVE の攻撃
- *     ベクトルであり、未パッチ OOB read の入口でもある。
- *   - バージョンが MIN_SAFE_VERSION 未満なら「脆弱」として UI に出す。
+ *     ベクトルであり、GGUF 経由の脆弱性 (CVE-2026-7482 ほか) の入口でもある。
+ *   - 台帳 (`OLLAMA_ADVISORIES`) のうち検出した版に当てはまる項目を名指しし、
+ *     MIN_SAFE_VERSION (= 台帳の修正版の最大) 未満なら「脆弱」として UI に出す。
  */
 
-export const MIN_SAFE_VERSION = '0.1.46';
+/**
+ * **既知の Ollama 脆弱性の台帳 —— 日付つき。** (2026-09-09 · パス 139)
+ *
+ * 2026-05-12 から 2026-09-09 まで、この app は毎スナップショットに
+ * 「Ollama 本体に**未パッチ**の out-of-bounds read が公表されています」と刷り、
+ * 「既知の脆弱性が修正された 0.1.46 以上」を安全の床にしていた。どちらにも日付が
+ * 無く、誰も再確認しなかった。実測 (2026-09-09):
+ *
+ *   - その OOB read は CVE-2026-7482 (GHSA-x8qc-fggm-mpqg・2026-05-04 公表) で、
+ *     修正 (PR #14406) は **2026-02-25 に merge され 0.17.1 に入っていた** ——
+ *     注意書きを書いた 2026-05-12 の時点で既に「未パッチ」ではなかった。
+ *   - 0.1.46 は 2024 年の CVE 5 件の床。0.17.1 未満の版 (例 0.16.x) にも
+ *     「既知の脆弱性が修正された版」と言い、CVSS 8.8 の CVE-2026-7482 が
+ *     当てはまることを黙っていた。
+ *
+ * 日付の無い安全の主張は、正しかった日から黙って嘘になる (税率の門
+ * `lint:rate-freshness` が 2026-08 に見つけたのと同じ形)。だから台帳は
+ * **照合した日** (`OLLAMA_ADVISORIES_VERIFIED_ON`) と**再照合の期限**
+ * (`OLLAMA_ADVISORIES_REVIEW_BY` —— `lint:rate-freshness` が期限を見る) を持ち、
+ * 画面の文面はその日付を刷る。`MIN_SAFE_VERSION` は台帳の修正版の最大で、
+ * `ollamaAdvisories.test.ts` が一致を留める (手で 2 か所に書かない)。
+ *
+ * この環境から届いた一次情報は GitHub (advisory database / PR / releases) だけ。
+ * CERT VU#518910・NVD・OSV は取得できなかったので、届いた物だけを出典に書く。
+ * 2024 年の 5 件は 2026-05-12 の監査 (docs/OLLAMA_SECURITY.md) で確認した値。
+ */
+import { charsOverCeiling, clampToCeiling } from './inputCeiling';
+import { displayDateOf } from './isoDate';
+import { MAX_LOCAL_MODEL_ERROR_CHARS, redactForMessage } from './redact';
+import { prereleaseKey, splitVersionPrerelease } from './versionOrder';
+
+export interface OllamaAdvisory {
+  readonly id: string;
+  /** 1 文の要約 (画面に出る)。 */
+  readonly summary: string;
+  /** この版以上で修正。公表されていなければ null (画面は「修正版未公表」と言う)。 */
+  readonly fixedIn: string | null;
+  readonly severity: 'critical' | 'high' | 'medium' | 'low';
+  /** 出典 (この環境から取得できた物、または 2026-05-12 の監査で確認した物)。 */
+  readonly source: string;
+}
+
+/** 台帳を最後に照合した日。 */
+export const OLLAMA_ADVISORIES_VERIFIED_ON = '2026-09-09';
+/** この日までに再照合する (`lint:rate-freshness` が 60 日前から警告し、過ぎたら落とす)。 */
+export const OLLAMA_ADVISORIES_REVIEW_BY = '2027-03-09';
+
+// 要約の文言は事実の写しなので変異検査の対象にしない (id / fixedIn / severity / source は
+// ollamaAdvisories.test.ts が 1 件ずつ・形で留める)。
+export const OLLAMA_ADVISORIES: readonly OllamaAdvisory[] = [
+  {
+    id: 'CVE-2024-37032',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'Probllama: /api/pull のパストラバーサル → 任意ファイル上書き → RCE',
+    fixedIn: '0.1.34',
+    severity: 'critical',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-37032',
+  },
+  {
+    id: 'CVE-2024-39719',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '/api/create 経由のファイル存在情報の漏洩',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39719',
+  },
+  {
+    id: 'CVE-2024-39720',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '不正な GGUF での範囲外読み取り → DoS',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39720',
+  },
+  {
+    id: 'CVE-2024-39721',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '/api/create に /dev/random を与える DoS',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39721',
+  },
+  {
+    id: 'CVE-2024-39722',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '/api/push 経由のファイルシステム情報の漏洩',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39722',
+  },
+  {
+    id: 'CVE-2025-66960',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'GGUF v1 の文字列長で panic (readGGUFV1String) → DoS (0.12.10 で報告・修正版は未公表)',
+    fixedIn: null,
+    severity: 'high',
+    source: 'https://github.com/advisories/GHSA-jr3x-q8gx-4gw3',
+  },
+  {
+    id: 'CVE-2026-7482',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'GGUF 読み込み時のヒープ範囲外読み取り (/api/create に細工した GGUF) → プロセスメモリ (鍵・会話) の漏洩',
+    fixedIn: '0.17.1',
+    severity: 'high',
+    source: 'https://github.com/advisories/GHSA-x8qc-fggm-mpqg',
+  },
+  {
+    id: 'CVE-2026-86289',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'GGUF の文字列長の整数オーバーフロー (readGGUFV1String)',
+    fixedIn: '0.31.2',
+    severity: 'low',
+    source: 'https://github.com/advisories/GHSA-c2q9-58w2-gjg4',
+  },
+];
+
+/** 台帳の修正版の最大 —— これ未満の版には既知の脆弱性が少なくとも 1 つ当てはまる。 */
+export const MIN_SAFE_VERSION = '0.31.2';
 export const DEFAULT_OLLAMA_PORT = 11434;
 
 /**
@@ -65,6 +183,18 @@ const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
  */
 export const MAX_OLLAMA_SYSTEM_CHARS = 8_192;
 export const MAX_OLLAMA_PROMPT_CHARS = 32_768;
+
+/**
+ * `ollama/chat` が返す形 —— **両ビルドと画面が同じ型を読む** (2026-09-09 · パス 113)。
+ * それまでチャットボットは `{ response?, message? }` と**手で写した型**で読んでおり、
+ * 実物 (`reply`) と食い違っていた —— Ollama の答えは 1 度も画面に出ていなかった
+ * (パス 62 と同じ形: 手写しの型がずれても `tsc` は黙る)。
+ */
+export interface OllamaChatResult {
+  /** モデルの返答本文 (`capAssistantReply` で天井つき)。 */
+  readonly reply: string;
+  readonly durationMs: number;
+}
 
 export const OLLAMA_READ_PATHS = ['/api/version', '/api/tags', '/api/chat'] as const;
 export type OllamaReadPath = (typeof OLLAMA_READ_PATHS)[number];
@@ -225,20 +355,35 @@ export function isSafeModelName(name: unknown): name is string {
   return /^[a-z0-9][a-z0-9._:/-]{0,127}$/i.test(name);
 }
 
-/** semver 風の比較。-1 / 0 / +1 を返す (Array.sort と同じ規約)。 */
+/** 数の成分だけを読む。読めない成分は 0 (第三者が名乗る任意の文字列を相手にするので必ず答えを出す)。 */
+function versionNumbers(core: string): number[] {
+  return core.split('.').map((x) => {
+    const n = Number(x);
+    return Number.isFinite(n) ? n : 0;
+  });
+}
+
+/**
+ * semver 風の比較。-1 / 0 / +1 を返す (Array.sort と同じ規約)。
+ *
+ * **プレリリースは対応する正式版より前** (semver §11.3)。2026-09-22 (パス 402) まで
+ * ここは `v.split('-')[0]` で識別子を**捨てて**おり、`0.1.34-rc1` と `0.1.34` が
+ * 等しくなっていた。効くのは下流の 2 つで、どちらも安全側の判断である:
+ *
+ * - `applicableAdvisories` —— 実測で台帳 8 件のうち **7 件**が `fixedIn + '-rc1'`
+ *   を名乗るだけで黙った (CVE-2024-37032 critical の RCE を含む)。
+ * - `isVersionSafe` —— `isVersionSafe('0.31.2-rc1')` が **true** を返し、
+ *   画面の「Up to date」の帯が出ていた。
+ *
+ * 順序の規則は `shared/versionOrder.ts` **ただ 1 つ** —— `updateCheck.ts` が
+ * 同じ規則を正しく持っていたのに、こちらだけが持っていなかった。
+ * 数の読み方は共有しない (理由は versionOrder.ts の docblock)。
+ */
 export function compareVersions(a: string, b: string): number {
-  const parse = (v: string): number[] => {
-    // split は必ず 1 要素以上返すので [0] は常に存在する。オプショナル
-    // チェーンと ?? '' は型の narrowing 用で、実行時には到達しない。
-    // Stryker disable next-line OptionalChaining,StringLiteral
-    const clean = v.split('-')[0]?.split('+')[0] ?? '';
-    return clean.split('.').map((x) => {
-      const n = Number(x);
-      return Number.isFinite(n) ? n : 0;
-    });
-  };
-  const pa = parse(a);
-  const pb = parse(b);
+  const sa = splitVersionPrerelease(a);
+  const sb = splitVersionPrerelease(b);
+  const pa = versionNumbers(sa.core);
+  const pb = versionNumbers(sb.core);
   const len = Math.max(pa.length, pb.length);
   // Stryker disable next-line EqualityOperator
   for (let i = 0; i < len; i++) {
@@ -247,7 +392,26 @@ export function compareVersions(a: string, b: string): number {
     if (ai > bi) return 1;
     if (ai < bi) return -1;
   }
+  const ka = prereleaseKey(sa.prerelease);
+  const kb = prereleaseKey(sb.prerelease);
+  if (ka > kb) return 1;
+  if (ka < kb) return -1;
   return 0;
+}
+
+/**
+ * `version` がプレリリースで、**識別子を無視すれば `floor` 以上になる**場合に true。
+ *
+ * つまり「番号だけ読むと足りているように見えるのに、足りていない」状態。
+ * これは画面と警告文が**理由を述べなければならない唯一の状態**である ——
+ * `0.31.2-rc1` の利用者は「0.31.2 以上へ更新してください」を読んで、自分は
+ * 0.31.2 だと思う。パス 264 が同じファイルで「版が読めなかったことを『古い』と
+ * 言わない」と分けたのと同じ形で、**4 つ目の状態**にあたる。
+ */
+export function prereleaseIsBelowFloor(version: string, floor: string): boolean {
+  const { core, prerelease } = splitVersionPrerelease(version);
+  if (prerelease === null) return false;
+  return compareVersions(version, floor) < 0 && compareVersions(core, floor) >= 0;
 }
 
 /**
@@ -269,13 +433,128 @@ export function isVersionSafe(version: string): boolean {
   // Stryker restore BlockStatement,BooleanLiteral
 }
 
-/** 未パッチ OOB read についての運用上の注意 (毎スナップショットに載せる)。 */
-export const UNPATCHED_OOB_NOTICE =
-  'Ollama 本体に未パッチの out-of-bounds read (モデル/エンジンファイルパーサ) ' +
-  'が公表されています。本アプリは /api/pull・/api/create・/api/push を呼ばない ' +
-  '設計でこの攻撃ベクトルを遮断していますが、CLI からモデルを取得する場合は ' +
-  '必ず Ollama 公式 library など検証済みソースのみを使用してください。詳細は ' +
-  'docs/OLLAMA_SECURITY.md を参照。';
+/**
+ * `versionSafe` が false である**原因**。選ぶのはここ 1 か所で、順序は
+ * `isVersionSafe` の判定と同じ —— 別の順序だと「判定が使った理由」と
+ * 「画面が述べる理由」が食い違う (パス 388 の形)。
+ *
+ * - `unreadable`  —— 版が読めなかった (パス 264。「古い」と言わない)
+ * - `prerelease`  —— 番号だけ読めば足りているが、プレリリースなので足りない (パス 402)
+ * - `outdated`    —— 単純に古い
+ *
+ * 安全なら null。
+ */
+export type UnsafeVersionCause = 'unreadable' | 'prerelease' | 'outdated';
+
+export function unsafeVersionCause(version: string): UnsafeVersionCause | null {
+  if (!version || typeof version !== 'string') return 'unreadable';
+  if (isVersionSafe(version)) return null;
+  if (prereleaseIsBelowFloor(version, MIN_SAFE_VERSION)) return 'prerelease';
+  return 'outdated';
+}
+
+/** 原因を 3 つの面 (札 / 1 行 / 全文) へ。**switch は 1 つ** —— 面ごとに分けて書くと、
+ * 札は新しい原因を出しているのに文は古い原因のまま、という形が型の上で開く
+ * (パス 386 の `bepDisplay` が「値と理由を 1 つの判定から返す」のと同じ理由)。 */
+export interface UnsafeVersionTexts {
+  /** 帯の短い札。 */
+  readonly badge: string;
+  /** ボタンの隣に出す 1 行。 */
+  readonly short: string;
+  /** 全文 (tooltip)。 */
+  readonly note: string;
+}
+
+export function unsafeVersionTexts(cause: UnsafeVersionCause): UnsafeVersionTexts {
+  switch (cause) {
+    case 'unreadable':
+      return {
+        badge: 'Version unknown',
+        short: '⚠ バージョンを読み取れませんでした — 版を確認してください',
+        note: `バージョンを読み取れませんでした (/api/version の応答に version がありません)。最低 ${MIN_SAFE_VERSION} 以上か確認してください`,
+      };
+    case 'prerelease':
+      return {
+        badge: 'Pre-release — not the fixed build',
+        short: '⚠ プレリリース版で実行中 — 正式版へ更新してください',
+        note: `プレリリース版で実行中です。番号は ${MIN_SAFE_VERSION} 以上に見えますが、プレリリースは対応する正式版より前なので、修正が入っているとは限りません。正式版へ更新してください`,
+      };
+    case 'outdated':
+      return {
+        badge: 'Outdated — known CVEs',
+        short: '⚠ 古いバージョンで実行中 — アップグレード推奨',
+        note: `既知 CVE。最低 ${MIN_SAFE_VERSION} へ更新推奨`,
+      };
+  }
+}
+
+/** 台帳のうち、この版に当てはまる項目 (修正版が公表され、その版未満)。版が不明なら空。 */
+export function applicableAdvisories(
+  version: string,
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): OllamaAdvisory[] {
+  if (!version || typeof version !== 'string') return [];
+  return ledger.filter((a) => a.fixedIn !== null && compareVersions(version, a.fixedIn) < 0);
+}
+
+/** 修正版が公表されていない項目 (版に関係なく注意として出す)。 */
+export function unfixedAdvisories(
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): OllamaAdvisory[] {
+  return ledger.filter((a) => a.fixedIn === null);
+}
+
+/** 再照合の期限 (その日の終わり・UTC) を過ぎたか。 */
+export function advisoriesOverdue(now: Date, reviewBy: string = OLLAMA_ADVISORIES_REVIEW_BY): boolean {
+  return now.getTime() > Date.parse(`${reviewBy}T23:59:59Z`);
+}
+
+/**
+ * 台帳の日付つきの注意 (毎スナップショットに載せる)。
+ *
+ * 2026-09-09 までここは「未パッチの out-of-bounds read が公表されています」という
+ * 日付の無い固定文で、その OOB read は書いた時点で既に修正済みだった (上の注記)。
+ * 文面は**いつの事実か**と**いつまでに見直すか**を必ず持つ。
+ */
+export function advisoryLedgerNotice(
+  now: Date = new Date(),
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): string {
+  const unfixed = unfixedAdvisories(ledger);
+  return (
+    `Ollama の既知の脆弱性 ${ledger.length} 件の台帳は ${OLLAMA_ADVISORIES_VERIFIED_ON} 時点 ` +
+    `(再照合期限 ${OLLAMA_ADVISORIES_REVIEW_BY})。` +
+    (advisoriesOverdue(now) ? ' ⚠ 再照合期限を過ぎており、新しい脆弱性が台帳に無い可能性があります。' : '') +
+    (unfixed.length > 0
+      ? ` 修正版が未公表の項目 ${unfixed.length} 件 (${unfixed.map((a) => a.id).join(', ')})。`
+      : '') +
+    ' 本アプリは /api/pull・/api/create・/api/push を呼ばず、モデルファイル (GGUF) 経由の攻撃面を持ち込みません。' +
+    'CLI でモデルを取得する場合は検証済みソースのみを使用してください。詳細は docs/OLLAMA_SECURITY.md。'
+  );
+}
+
+/**
+ * モデル一覧の 1 行に並ぶ「**相手が名乗る**」欄の上限 (**文字**) —— 2026-09-22 · パス 408。
+ *
+ * `name` は `isSafeModelName` の正規表現が **128 字**で切る (超えた項目は行ごと落とす)
+ * のに、**同じオブジェクトリテラルの隣の 3 欄には天井が無かった** —— `typeof` で
+ * 型だけを検め、長さは 1 度も見ていない。実測 (2026-09-22 · 直す前): 1 件に
+ * 200,000 字を 4 欄入れると **`OllamaPage` の meta 行が 800,038 字**になる。
+ * 応答の上限は `MAX_OLLAMA_RESPONSE_BYTES` (2 MiB) なので、**1 件で ~2 MB** 入る。
+ *
+ * 相手は「利用者が設定した Ollama ホスト」である —— `isAllowedOllamaBase` は
+ * ループバックのほか**頁と同じホスト**と任意の https を通すので、127.0.0.1 の
+ * 別プロセスや LAN のホストが相手になりうる。`isSafeModelName` がそもそも在る
+ * 理由がそれであり、**その理由はこの 3 欄にも等しく当てはまる**。
+ *
+ * **64 にした根拠は実物の値** —— `family` は `llama` / `gemma` / `qwen2` / `clip`
+ * (≤ 6)、`parameter_size` は `7B` / `8.0B` / `70.6B` (≤ 5)、`quantization_level` は
+ * `Q4_0` / `Q4_K_M` / `F16` (≤ 6)。いちばん長い実物の 10 倍の余地が在る。
+ * **切ったことは `…` で述べる** (法則 `blank-states-its-reason` の「絞ることと
+ * 述べることは対」の側・パス 400)。行ごと落とさないのは、`family` が長いだけの
+ * モデルが**一覧から消える**ほうが利用者にとって悪いからである。
+ */
+export const MAX_OLLAMA_MODEL_DETAIL_CHARS = 64;
 
 /** /api/tags の 1 件を UI 用に正規化した形。 */
 export interface OllamaModelInfo {
@@ -284,7 +563,16 @@ export interface OllamaModelInfo {
   parameterSize: string;
   quantization: string;
   sizeMb: number;
-  modifiedAt: string;
+  /**
+   * 更新日 (`YYYY-MM-DD`・**利用者の時計**)。**読めなければ `null`** (パス 408)。
+   *
+   * パス 407 まで**生の文字列**で、main だけが `.slice(0, 10)` していた ——
+   * つまり同じ `OllamaPage` が build によって `2026-09-22` と
+   * `2026-09-22T10:00:00.277302595-07:00` を出していた。`isoDate.ts` の
+   * `isoDateFromTimestamp` は「**呼び出し側 3 か所が同じ `slice(0, 10)` を
+   * 写していたのも、これで消える**」と書いているが、**4 つ目の写しがここに在った**。
+   */
+  modifiedAt: string | null;
 }
 
 /** Ollama ページが描画する状態 (main / browser 共通)。 */
@@ -295,6 +583,20 @@ export interface OllamaSnapshot {
   versionMinRecommended: string;
   models: OllamaModelInfo[];
   warnings: string[];
+}
+
+/**
+ * 一覧に並ぶ欄を 1 つ読む —— **型と長さの両方**を検める (パス 408)。
+ *
+ * 非文字列は `—` (既定の綴りは 1 つ)。天井を超えたら切って `…` を付ける ——
+ * **黙って切ると、利用者は「この Ollama はこういう値を返す」と読む**。
+ * 空文字はそのまま返す (画面が `m.family || '?'` で `?` に倒す既存の振る舞いを
+ * 変えない —— **今日の正常な入力の答えは 1 つも変えていない**)。
+ */
+function modelDetail(v: unknown): string {
+  if (typeof v !== 'string') return '—';
+  if (charsOverCeiling(v, MAX_OLLAMA_MODEL_DETAIL_CHARS) === 0) return v;
+  return clampToCeiling(v, MAX_OLLAMA_MODEL_DETAIL_CHARS) + '…';
 }
 
 /** /api/tags のレスポンスを OllamaModelInfo[] へ正規化する (未知形状は捨てる)。 */
@@ -312,16 +614,20 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
     };
     // isSafeModelName が非文字列を弾くので typeof の前置きは要らない。
     if (!isSafeModelName(m.name)) continue;
-    // Number.isFinite は値を変換しないので、文字列も Infinity も false になる。
-    const size = Number.isFinite(m.size as number) ? (m.size as number) : 0;
+    /*
+     * Number.isFinite は値を変換しないので、文字列も Infinity も false になる。
+     * **負も落とす** (パス 408) —— ファイルの大きさに負は無いので壊れた応答であり、
+     * 実測で `size: -1e300` は `-9.5367431640625e+293 MB` を画面に刷っていた。
+     */
+    const raw = m.size as number;
+    const size = Number.isFinite(raw) && raw >= 0 ? raw : 0;
     out.push({
       name: m.name,
-      family: typeof m.details?.family === 'string' ? m.details.family : '—',
-      parameterSize: typeof m.details?.parameter_size === 'string' ? m.details.parameter_size : '—',
-      quantization:
-        typeof m.details?.quantization_level === 'string' ? m.details.quantization_level : '—',
+      family: modelDetail(m.details?.family),
+      parameterSize: modelDetail(m.details?.parameter_size),
+      quantization: modelDetail(m.details?.quantization_level),
       sizeMb: Math.round(size / (1024 * 1024)),
-      modifiedAt: typeof m.modified_at === 'string' ? m.modified_at : '',
+      modifiedAt: displayDateOf(m.modified_at),
     });
   }
   return out;
@@ -340,24 +646,51 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
  * 取り違えずに案内できるかが、使えるか使えないかの分かれ目になる。
  */
 
-/** エラー文の表示上限。異常に長い本文をそのままログ・UI へ流さないための上限。 */
-const MAX_ERROR_DETAIL = 300;
+/*
+ * **エラー本文は `redactForMessage` を通す** (2026-09-15 · パス 290)。
+ *
+ * ここは `clampToCeiling(x, MAX_ERROR_DETAIL)` で**天井だけ**を掛けていた ——
+ * つまり `redactForMessage` の後半 (切る) を手で書き、前半 (伏せる) を
+ * 持っていなかった。相手の本文を画面の文へ入れる経路のうち、伏字を
+ * 1 度も呼んでいないのはここだけだった (実測: `main/clients/types.ts` 6 /
+ * `renderer/network/proxy.ts` 3 / `renderer/oauth/pkce.ts` 2 /
+ * `shared/ai/chat.ts` 3 / ここ **0**)。
+ *
+ * **今日の実害は 0 である** —— Ollama への要求に資格情報は 1 つも乗らない
+ * (`SERVICE_CREDENTIAL_USE.ollama === 'none'`、`Authorization` /
+ * `api-key` / `Bearer` は両クライアントで実測 0 件)。送っていない物は
+ * 反射されようがない。**ただしその理由はどこにも書かれておらず**、
+ * 本文の出どころは `isAllowedOllamaPlaintextHost` が許す範囲で
+ * **利用者が設定したホスト**である。鍵つきの逆プロキシを前に置く構成は
+ * 作れるので、「送っていないから安全」は設定次第で崩れる前提だった。
+ *
+ * 除外の理由を書いて台帳へ結ぶより、**通すほうが安い** ——
+ * `redactSecrets` は両ビルドに既に入っており (`api/http.ts` ほかが読む)、
+ * 足したのは呼び出し 1 つぶんである。順序も `redactForMessage` が
+ * 正しく持っている (**伏せてから切る**。逆にすると模様の終わりが
+ * 切り落とされて規則が当たらない —— `REDACT_SCAN_LIMIT` の説明に実測が在る)。
+ *
+ * 天井の 300 は `shared/redact.ts` の梯子へ `MAX_LOCAL_MODEL_ERROR_CHARS`
+ * として移した。私有定数のままだと**梯子も census も見えない** ——
+ * パス 273 の census は `redactForMessage` の第 2 引数を見るので、
+ * `redactForMessage` を呼ばない経路は母集団に入らなかった。
+ */
 
 /** エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。 */
 export function extractOllamaError(json: unknown, text = ''): string {
   const err = (json as { error?: unknown } | null)?.error;
   // 空判定は要らない — 空白だけの本文は trim すると '' になり、下へ落として
   // も最後は '' を返すので、書いても結果が変わらない分岐になる。
-  if (typeof err === 'string') return err.trim().slice(0, MAX_ERROR_DETAIL);
+  if (typeof err === 'string') return redactForMessage(err.trim(), MAX_LOCAL_MODEL_ERROR_CHARS);
   // 稀に {"error": {"message": "…"}} の入れ子で返す経路もある。
   const nested = (err as { message?: unknown } | null)?.message;
-  if (typeof nested === 'string') return nested.trim().slice(0, MAX_ERROR_DETAIL);
+  if (typeof nested === 'string') return redactForMessage(nested.trim(), MAX_LOCAL_MODEL_ERROR_CHARS);
   // JSON として読めたのに error が無いなら、本文を出しても情報がない。
   if (json !== null && json !== undefined) return '';
   // JSON ですらない本文 (Ollama が素の "Forbidden" を返す経路など) は短く返す。
   // Stryker disable next-line StringLiteral: text 省略時の '' は「空を返す」で、
   // 番人の値を入れても呼び出し側は同じ「詳細なし」として扱う。
-  return (text ?? '').trim().slice(0, MAX_ERROR_DETAIL);
+  return redactForMessage((text ?? '').trim(), MAX_LOCAL_MODEL_ERROR_CHARS);
 }
 
 export type OllamaErrorKind =
@@ -515,13 +848,33 @@ export function adviseFromBody(
   return describeOllamaError(status, extractOllamaError(parsed, body), ctx);
 }
 
-/** バージョンから警告リストを組み立てる (UI 表示順を固定するため純関数化)。 */
-export function buildWarnings(version: string): string[] {
-  const warnings: string[] = [UNPATCHED_OOB_NOTICE];
-  if (version !== '' && !isVersionSafe(version)) {
+/**
+ * バージョンから警告リストを組み立てる (UI 表示順を固定するため純関数化)。
+ * **両ビルドで 1 つ** —— main も browser もこれを呼ぶ (2026-09-09 まで main は独自の英文
+ * + 「未パッチ」の固定文を持っていた)。当てはまる項目は **名指し**する (「既知の脆弱性が
+ * 修正された X 未満」と丸めない —— どの CVE がその版に当てはまるかを利用者が読める)。
+ */
+export function buildWarnings(
+  version: string,
+  now: Date = new Date(),
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): string[] {
+  const warnings: string[] = [advisoryLedgerNotice(now, ledger)];
+  const applicable = applicableAdvisories(version, ledger);
+  if (applicable.length > 0) {
+    // **番号だけ読めば足りて見える版には、なぜ足りないかを言う** (パス 402)。
+    // これを言わないと `0.31.2-rc1` の利用者は「0.31.2 で修正・0.31.2 以上へ」を
+    // 読んで、自分は 0.31.2 だと思う —— 紙の上で矛盾した文になる。
+    const looksEnough = applicable.some(
+      (a) => a.fixedIn !== null && prereleaseIsBelowFloor(version, a.fixedIn),
+    );
     warnings.unshift(
-      `検出された Ollama ${version} は既知の脆弱性が修正された ${MIN_SAFE_VERSION} 未満です。` +
-        'ただちに更新してください (Probllama / CVE-2024-37032 ほか)。',
+      `検出された Ollama ${version} には既知の脆弱性 ${applicable.length} 件が当てはまります: ` +
+        applicable.map((a) => `${a.id} (${a.summary}・${a.fixedIn} で修正)`).join(' / ') +
+        `。${MIN_SAFE_VERSION} 以上へ更新してください。` +
+        (looksEnough
+          ? 'プレリリースは対応する正式版より前なので、番号が同じでも修正が入っているとは限りません。'
+          : ''),
     );
   }
   return warnings;

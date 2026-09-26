@@ -17,6 +17,8 @@
  */
 
 import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
+import { hasCollectionShape } from './collectionShapes';
+import { notifyRecordStoreChanged } from './collectionChange';
 
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -111,6 +113,20 @@ function openDb(): Promise<IDBDatabase> {
 }
 
 /**
+ * この保管層の DB を丸ごと消す (ハードリセット · 2026-09-09 · パス 136)。`vault.wipeAndReset` と同じ約束 ——
+ * **必ず解決し、何が起きたかを返す**。他のタブが接続を掴んでいれば `blocked` (消えていない)。
+ * 画面は保管庫の内部を触らない (`lint:forbidden`) ので、消すのもここ。呼ぶのは `security/eraseAll.ts`。
+ */
+export function deleteRecordDatabase(): Promise<'deleted' | 'blocked' | 'failed'> {
+  return new Promise((resolve) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve('deleted');
+    req.onerror = () => resolve('failed');
+    req.onblocked = () => resolve('blocked');
+  });
+}
+
+/**
  * 接続を開き、処理が失敗しても**必ず閉じる**。
  *
  * 元は各メソッドが `const db = await openDb(); ... await txDone(tx); db.close();`
@@ -157,6 +173,14 @@ function uuid(): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+/**
+ * Web Locks の最小の形 (`lib.dom` の `LockManager` に依存しない)。
+ * 実行環境に無いこともあるので、**存在を確かめてから使う**。
+ */
+interface LockManagerLike {
+  request<R>(name: string, callback: () => Promise<R>): Promise<R>;
+}
+
 class IndexedDBRecordStore implements RecordStore {
   /** Save-time encryption layer. Default = plaintext (identity). */
   private cipher: RecordCipher = IDENTITY_CIPHER;
@@ -199,11 +223,56 @@ class IndexedDBRecordStore implements RecordStore {
     }));
   }
 
+  /**
+   * **鎖はこの JS 文脈の中だけの物である。** タブを 2 枚開けば、上の実測
+   * (lost update / 消したはずの復活) が**そのまま再現する** —— `perId` は
+   * メモリの Map なので、別タブは別の鎖を持つ。ブラウザ版は 1 枚の HTML を
+   * 開くだけなので、2 枚目を開くのは普通に起きる。
+   *
+   * そこで **Web Locks (`navigator.locks`) があれば、オリジン単位の錠で
+   * 同じ id の書き換えを囲む** (2026-09-06)。無い環境 (jsdom の検査・
+   * 不透明オリジンで拒まれる場合) では鎖だけで進む —— 単一タブでの保証は
+   * 変わらないので、**壊れるより遅れるほうを選ぶ**。
+   *
+   * ## 失敗の切り分けが要る
+   *
+   * `locks.request(name, cb)` は **cb の失敗もそのまま reject する**。
+   * 素朴に catch して `run()` を呼び直すと、**書き換えが 2 回走る**
+   * (1 回目は錠の中で実際に書いている)。`entered` の旗で
+   * 「錠が取れたか」と「操作が失敗したか」を分け、**後者は再実行しない**。
+   */
+  private crossTabLocked<R>(id: string, run: () => Promise<R>): () => Promise<R> {
+    return async () => {
+      const locks = (globalThis.navigator as { locks?: LockManagerLike } | undefined)?.locks;
+      /*
+       * 下の try/catch が「錠が取れなかった」を既に救うので、**この番人は
+       * 観測できる差を作らない** —— 実測 (2026-09-06): `locks = {}` にして
+       * この行を消しても、`locks.request(...)` の TypeError が catch に落ちて
+       * `run()` へ回り、書き換えは同じに成功する。番人が省くのは
+       * 「投げると分かっている呼び出しを組むこと」だけである。
+       * 例外を通常の流れに使わないために残す (等価変異として黙らせる)。
+       */
+      // Stryker disable next-line ConditionalExpression,LogicalOperator: try/catch が同じ結果へ落とすので等価 (上の注記に実測)
+      if (locks === undefined || typeof locks.request !== 'function') return run();
+      let entered = false;
+      try {
+        return await locks.request(`servicehub.record.${id}`, async () => {
+          entered = true;
+          return run();
+        });
+      } catch (e) {
+        if (entered) throw e; // 操作そのものの失敗。錠の中で走り切っているので再実行しない
+        return run(); // 錠が取れなかっただけ (未対応・不透明オリジン等) → 鎖だけで進む
+      }
+    };
+  }
+
   /** `id` の鎖の最後尾に `run` を繋いで、その結果を返す。 */
   private serialize<R>(id: string, run: () => Promise<R>): Promise<R> {
+    const guarded = this.crossTabLocked(id, run);
     const prev = this.perId.get(id) ?? Promise.resolve();
     // 前が失敗しても後続は動かす (失敗は呼んだ側が受け取っている)。
-    const started = prev.then(run, run);
+    const started = prev.then(guarded, guarded);
     const settled = started.then(
       () => undefined,
       () => undefined,
@@ -246,6 +315,9 @@ class IndexedDBRecordStore implements RecordStore {
       tx.objectStore(STORE).add({ id, collection, createdAt: ts, updatedAt: ts, data: storedData });
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return { id, collection, createdAt: ts, updatedAt: ts, data };
   }
 
@@ -281,6 +353,9 @@ class IndexedDBRecordStore implements RecordStore {
       // nothing is committed (all-or-nothing).
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return built.map((b) => b.plain);
   }
 
@@ -346,6 +421,9 @@ class IndexedDBRecordStore implements RecordStore {
       tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return { ...existing, updatedAt, data: mergedData };
   }
 
@@ -402,6 +480,10 @@ class IndexedDBRecordStore implements RecordStore {
         await txDone(tx);
       });
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+
   }
 
   async clearCollection(collection: string): Promise<number> {
@@ -412,6 +494,9 @@ class IndexedDBRecordStore implements RecordStore {
       for (const rec of all) store.delete(rec.id);
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return all.length;
   }
 
@@ -464,7 +549,9 @@ class IndexedDBRecordStore implements RecordStore {
    * トランザクションは待っている間に自動で閉じるため。
    */
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
-    const valid = records.filter(isValidStoredRecord);
+    // 関門は `isImportableRecord` **ただ 1 つ** —— 復元の計画 (`planRestore`) が
+    // 「何件入るか」を数えるのに同じ判定を要るため (パス 432)。捨てた件数は呼び出し側が利用者に言う。
+    const valid = records.filter(isImportableRecord);
     const prepared = await Promise.all(
       valid.map(async (rec) =>
         isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
@@ -477,6 +564,9 @@ class IndexedDBRecordStore implements RecordStore {
       for (const rec of prepared) store.put(rec); // put = upsert by id
       await txDone(tx);
     });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
     return prepared.length;
   }
 
@@ -538,10 +628,31 @@ function isValidStoredRecord(v: unknown): v is StoredRecord {
     typeof r.id === 'string' &&
     r.id.length > 0 &&
     isSafeCollection(r.collection) &&
-    typeof r.createdAt === 'number' &&
-    typeof r.updatedAt === 'number' &&
+    // **封筒の数字も有限でなければならない。** `collectionShapes.ts` は
+    // `data` の中身を `Number.isFinite` で見るが、封筒の時刻は 2026-09-08 まで
+    // `typeof` だけだった —— `1e999` は**有効な JSON** で `Infinity` に読めるので、
+    // 検査数字の合ったバックアップが非有限の時刻を持ち込めた (パス 98)。
+    Number.isFinite(r.createdAt) &&
+    Number.isFinite(r.updatedAt) &&
     isPlainJsonObject(r.data)
   );
+}
+
+/**
+ * **復元が受け取る記録か —— 関門はこの 1 つ** (2026-09-23 · パス 432)。
+ *
+ * `importAll` の filter をそのまま関数にした物で、中身は 1 字も変えていない。
+ * 外へ出したのは、**訊く前に「何件入るか」を数える側** (`backup.ts` の `planRestore`)
+ * が同じ判定を要るからである。2 つ書くと必ず割れ、割れた側は
+ * 「入る」と数えて「入らない」を実行する —— 実測 (2026-09-23 · 直す前):
+ * 置換復元の確認が「**消える記録はありません**」と述べ、押すとストアが空になった。
+ *
+ * 封緘済み (`__enc`) は中身を見られないので封筒だけで通す —— ここを落とすと
+ * 暗号化バックアップが丸ごと復元できなくなる。
+ */
+export function isImportableRecord(v: unknown): v is StoredRecord {
+  if (!isValidStoredRecord(v)) return false;
+  return isSealedData(v.data) || hasCollectionShape(v.collection, v.data);
 }
 
 let singleton: RecordStore | null = null;

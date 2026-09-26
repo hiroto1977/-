@@ -26,7 +26,7 @@ aliases:
 ドナルド・ブロードベント ／ コリン・チェリー ／ アン・トライスマン ／ J・A・ドイチュ
 
 ## 出典
-- [Broadbent, D.E. (1958) Perception and Communication — Pergamon Press (WorldCat)](https://www.worldcat.org/oclc/598382) `学術`
+- [Broadbent, D.E. (1958) Perception and Communication — Pergamon Press (WorldCat)](https://www.worldcat.org/oclc/598382) `リファレンス`
 - [Wikipedia: Broadbents filter model — early selection, dichotic listening, bottleneck, Treisman attenuation](https://en.wikipedia.org/wiki/Broadbent%27s_filter_model_of_attention) `リファレンス`
 
 ## 関連概念

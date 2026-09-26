@@ -36,13 +36,15 @@
     "graph:build": "node scripts/build-knowledge-graph.cjs",
     "ingest:check": "node scripts/ingest-transcripts.cjs && node scripts/ingest-transcripts.cjs --self-test",
     "knowledge:auto": "node scripts/knowledge-autopilot.cjs",
+    "knowledge:md": "node scripts/build-academic-md.cjs",
+    "ontology:md": "node scripts/build-ontology-md.cjs",
     "knowledge:export": "node scripts/export-notebooklm.cjs",
     "lint": "eslint . --max-warnings 0",
     "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",
     "lint:citations": "node scripts/lint-citations.cjs && node scripts/lint-citations.cjs --self-test",
     "lint:doi-prefix": "node scripts/lint-doi-prefix.cjs",
     "lint:charset": "node scripts/lint-charset.cjs && node scripts/lint-charset.cjs --self-test",
-    "lint:knowledge-refs": "node scripts/lint-knowledge-refs.cjs",
+    "lint:knowledge-refs": "node scripts/lint-knowledge-refs.cjs && node scripts/lint-knowledge-refs.cjs --self-test",
     "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs && node scripts/lint-forbidden-patterns.cjs --self-test",
     "lint:workflow-security": "node scripts/lint-workflow-security.cjs && node scripts/lint-workflow-security.cjs --self-test",
     "lint:url-encoding": "node scripts/lint-url-encoding.cjs && node scripts/lint-url-encoding.cjs --self-test",
@@ -80,12 +82,12 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b --noEmit --force",
     "vault:build": "node scripts/build-knowledge-vault.cjs",
-    "vault:check": "node scripts/build-knowledge-vault.cjs --check && node scripts/safe-vault-write.cjs",
-    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:workflow-security && npm run lint:network-targets && npm run lint:url-encoding && npm run lint:regex && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:sample-data && npm run lint:test-coverage && npm run verify:release-artifacts && npm run lint:shell && npm run lint:repo-size && npm run lint:deps && npm run lint:mcp-servers && npm run lint:storage && npm run lint:csp && npm run lint:data-origin && npm run lint:credential-use && npm run lint:ipc-handlers && npm run lint:mutation-scope && npm run lint:collection-time && npm run lint:rate-freshness && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
+    "vault:check": "node scripts/build-knowledge-vault.cjs --check && node scripts/safe-vault-write.cjs && node scripts/build-academic-md.cjs --check && node scripts/build-academic-md.cjs --self-test",
+    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:workflow-security && npm run lint:network-targets && npm run lint:url-encoding && npm run lint:regex && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:sample-data && npm run lint:test-coverage && npm run verify:release-artifacts && npm run lint:shell && npm run lint:repo-size && npm run lint:deps && npm run lint:mcp-servers && npm run lint:storage && npm run lint:csp && npm run lint:data-origin && npm run lint:credential-use && npm run lint:ipc-handlers && npm run lint:mutation-scope && npm run lint:collection-time && npm run lint:parameter-prose && npm run lint:zero-fold && npm run lint:shared-judgement && npm run lint:rate-freshness && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
     "verify:arch": "node scripts/verify-architecture.cjs && node scripts/verify-architecture.cjs --self-test",
     "verify:graph": "node scripts/verify-graph.cjs && node scripts/verify-graph.cjs --self-test",
     "verify:knowledge": "node scripts/verify-knowledge-provenance.cjs && node scripts/verify-knowledge-provenance.cjs --self-test",
-    "verify:orchestration": "node scripts/verify-orchestration.cjs",
+    "verify:orchestration": "node scripts/verify-orchestration.cjs && node scripts/verify-orchestration.cjs --self-test",
     "lint:repo-size": "node scripts/lint-repo-size.cjs && node scripts/lint-repo-size.cjs --self-test",
     "lint:mcp-servers": "node scripts/lint-mcp-servers.cjs && node scripts/lint-mcp-servers.cjs --self-test",
     "lint:deps": "node scripts/lint-dependencies.cjs && node scripts/lint-dependencies.cjs --self-test",
@@ -95,7 +97,22 @@
     "lint:ipc-handlers": "node scripts/lint-ipc-handlers.cjs && node scripts/lint-ipc-handlers.cjs --self-test",
     "lint:rate-freshness": "node scripts/lint-rate-freshness.cjs && node scripts/lint-rate-freshness.cjs --self-test",
     "lint:collection-time": "node scripts/lint-collection-time-tests.cjs && node scripts/lint-collection-time-tests.cjs --self-test",
-    "lint:mutation-scope": "node scripts/lint-mutation-scope.cjs && node scripts/lint-mutation-scope.cjs --self-test"
+    "lint:parameter-prose": "node scripts/lint-parameter-prose.cjs && node scripts/lint-parameter-prose.cjs --self-test",
+    "lint:zero-fold": "node scripts/zero-fold-census.cjs --check && node scripts/zero-fold-census.cjs --self-test",
+    "lint:shared-judgement": "node scripts/shared-judgement-census.cjs --check && node scripts/shared-judgement-census.cjs --self-test",
+    "lint:mutation-scope": "node scripts/lint-mutation-scope.cjs && node scripts/lint-mutation-scope.cjs --self-test",
+    "audit:floors": "node scripts/audit-floors.cjs",
+    "audit:survivors": "node scripts/verify-survivors.cjs --self-test",
+    "audit:tick-sensitivity": "node scripts/audit-tick-sensitivity.cjs && node scripts/audit-tick-sensitivity.cjs --self-test",
+    "audit:gate-floors": "node scripts/audit-gate-floors.cjs --self-test && node scripts/audit-gate-floors.cjs",
+    "audit:gate-partial": "node scripts/audit-gate-floors.cjs --self-test && node scripts/audit-gate-floors.cjs --partial",
+    "audit:gate-baseline": "node scripts/audit-gate-floors.cjs --self-test && node scripts/audit-gate-floors.cjs --baseline",
+    "audit:comment-blind": "node scripts/audit-comment-blind.cjs --self-test && node scripts/audit-comment-blind.cjs",
+    "audit:regex-poly": "node scripts/audit-regex-polynomial.cjs --n=200000 && node scripts/audit-regex-polynomial.cjs --self-test",
+    "audit:e2e-wait-margin": "node scripts/audit-e2e-wait-margin.cjs --self-test && node scripts/audit-e2e-wait-margin.cjs",
+    "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test && node scripts/dependency-audit-issue.cjs --self-test",
+    "audit:mutate-changed": "node scripts/audit-mutate-changed.cjs --self-test && node scripts/audit-mutate-changed.cjs",
+    "audit:malformed-fields": "node scripts/audit-malformed-fields.cjs --self-test && node scripts/audit-malformed-fields.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -105,7 +122,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.11",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
     "eslint": "^10.3.0",
@@ -118,13 +135,14 @@
     "vite": "^6.0.3",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "overrides": {
-    "qs": "^6.15.2"
+    "qs": "^6.16.0",
+    "js-yaml": "^4.3.2"
   }
 }

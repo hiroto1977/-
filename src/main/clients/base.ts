@@ -1,4 +1,5 @@
 import { jsonFetch, type FetchContext } from './types';
+import { displayField, finiteNumberOf, objectRows } from '../../shared/apiResponse';
 
 /**
  * BASE (thebase.com) — ネットショップ作成 EC プラットフォーム連携。
@@ -23,7 +24,12 @@ interface BaseItemsResponse {
 }
 
 export interface BaseSnapshot {
-  items: { id: string; name: string; price: number; stock: number; visible: boolean }[];
+  /**
+   * `price` / `stock` が `number | null` なのは**相手が返さないことが在る**ため
+   * (2026-09-22 · パス 410)。宣言を `number` にすると画面が `.toLocaleString` を
+   * 呼べてしまい、1 件の欠落で BASE の画面が丸ごと落ちる —— 実測した当の形である。
+   */
+  items: { id: string; name: string; price: number | null; stock: number | null; visible: boolean }[];
 }
 
 export async function fetchBaseSnapshot(ctx: FetchContext): Promise<BaseSnapshot> {
@@ -37,11 +43,16 @@ export async function fetchBaseSnapshot(ctx: FetchContext): Promise<BaseSnapshot
   );
 
   return {
-    items: (data.items ?? []).map((it) => ({
-      id: String(it.item_id),
-      name: it.title,
-      price: it.price,
-      stock: it.stock,
+    items: objectRows<BaseApiItem>(data.items).map((it) => ({
+      id: displayField(String(it.item_id)),
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): 商品名に 200,000 字を入れると `BasePage` の
+      // 総文字数が **200,050 字**になった。
+      name: displayField(it.title),
+      // 数として読めなければ `null` —— **0 に倒さない** (「¥0 の商品」「在庫切れ」
+      // という嘘になり、壊れていることが画面から消える · パス 395 / 408)。
+      price: finiteNumberOf(it.price),
+      stock: finiteNumberOf(it.stock),
       visible: it.visible === 1,
     })),
   };

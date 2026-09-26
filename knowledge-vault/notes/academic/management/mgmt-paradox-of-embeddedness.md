@@ -30,8 +30,8 @@ Brian Uzzi（Administrative Science Quarterly 42(1), 1997 — 埋め込みのパ
 - [Northwestern Scholars: Uzzi (1997) — publication record](https://www.scholars.northwestern.edu/en/publications/social-structure-and-competition-in-interfirm-networks-the-parado-2) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -27,11 +27,11 @@ aliases:
 
 ## 出典
 - [Katz, M.L. & Shapiro, C. (1985) Network Externalities, Competition, and Compatibility — American Economic Review](https://www.rand.org/pubs/articles/2005/A3422.html) `学術`
-- [Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — Harvard Business Review Press](https://hbr.org/1999/11/information-rules) `学術`
+- [Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — Harvard Business Review Press](https://hbr.org/1999/11/information-rules) `メディア`
 - [Wikipedia: ネットワーク外部性 — 標準化競争と互換性の解説](https://ja.wikipedia.org/wiki/%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E5%A4%96%E9%83%A8%E6%80%A7) `リファレンス`
 
 ## 関連概念
-- [[infosoc-network-externality|ネットワーク外部性]] — 語彙が近い
+- [[infosoc-network-externality|ネットワーク外部性]] — 分野横断
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
 - [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家

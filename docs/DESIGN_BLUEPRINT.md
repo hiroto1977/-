@@ -90,7 +90,7 @@
 | cloudflare | | | Bearer (API token) | `create-dns-record`, `purge-cache` | |
 | emotions | ✅ | | Bearer (Anthropic) | `log-mood`, `analyze-text` | |
 | ollama | ✅ | | none | `chat` | 127.0.0.1 固定 + CVE 警告 + null byte 拒否 |
-| kpi | ✅ | | none | (read-only) | 6 事業 × 8 指標 × 30 期 mock (Phase 6 で API 接続) |
+| kpi | ✅ | | none | (read-only) | 6 事業 × 11 指標 × 30 期 mock (Phase 6 で API 接続) |
 | stocks | ✅ | | Bearer (Anthropic, advisor のみ) | `register-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` | 5 mock 銘柄 + Phase 7 で broker 接続 |
 
 ---

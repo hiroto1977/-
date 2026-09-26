@@ -108,7 +108,7 @@ describe('parseBusinessUnit — 断るもの', () => {
   it('曖昧な開始時期は断る（推測して解釈しない）', () => {
     for (const d of [
       '2024/04', '令和6年4月', '2024-4', '24-04',
-      '2024-13', '2024-00', '2024-04-32', '2024-04-00', 'あ',
+      '2024-13', '2024-00', '2024-04-32', '2024-04-00', '2024-02-30', '2023-02-29', 'あ',
       // 前後に何か付いた形も断る（部分一致で通さない）。
       'x2024-04', '2024-04x', '2024-04-01x', 'a2024-04-01',
     ]) {
@@ -248,6 +248,17 @@ describe('parseBusinessUnit — 月次の金額', () => {
     expect(r.ok && r.entry.revenue).toBe(1_200_000);
     const z = parseBusinessUnit({ name: '受託', revenue: '１２００' });
     expect(z.ok && z.entry.revenue).toBe(1200);
+  });
+
+  it('★ 桁区切りの位置が違う値は断る (2026-09-06 まで別の数として通っていた)', () => {
+    // `Number('1,5'.replace(/,/g,''))` は 15。打った数と保存された数が
+    // 黙って食い違う経路だったので、読み取りを画面と同じ `readNumeric` に寄せた。
+    for (const bad of ['1,5', '12,34', '1,000,00', '0x10', '1e3', '100m2']) {
+      const r = parseBusinessUnit({ name: 'x', revenue: bad });
+      expect(r.ok, bad).toBe(false);
+      if (r.ok) throw new Error('unreachable');
+      expect(r.reason).toContain('売上高は数値で入力してください');
+    }
   });
 
   it('金額を入れなければ持たせない (未入力と 0 を区別する)', () => {

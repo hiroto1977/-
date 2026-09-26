@@ -45,7 +45,7 @@ export function GuardedNumber({
         style={{
           background: 'var(--bg-elev)',
           border: `1px solid ${color ?? 'var(--border)'}`,
-          borderRadius: 6,
+          borderRadius: 10,
           color: 'var(--text)',
           padding: '6px 8px',
           fontSize: 13,

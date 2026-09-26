@@ -67,13 +67,205 @@
 export const MAX_HTTP_RESPONSE_BYTES = 10 * 1024 * 1024;
 
 /**
+ * **Ollama の応答本文の上限。2 MiB —— 両ビルドで 1 つ** (2026-09-20 · パス 336)。
+ *
+ * 2026-08-23 から 2026-09-20 まで、この判断は**ビルドごとに違う値**で在った ——
+ * `main/clients/ollama.ts` が 10 MiB、`renderer/network/ollamaWeb.ts` が 2 MiB。
+ * その日に食い違いに気付いた人は両方の宣言へ「片方だけ違う」と書き、
+ * 「**揃えるか、違う理由を書くかは、どちらが正しいか分かる人が決めること**」と
+ * 残した。検査 (`ollamaInputLimits`) も「揃えることを要求しない」と明記して、
+ * **違いが在ること自体を仕様として固定していた** (法則 `no-weakness-as-spec`)。
+ *
+ * ## 実測して決めた (2026-09-20)
+ *
+ * この上限が守るのは「壊れた / 悪意ある相手が返す巨大な本文を確保してしまうこと」
+ * だけである。**アプリが使える本文の大きさは、この上限よりずっと小さい所で既に
+ * 決まっている**:
+ *
+ * ```
+ *   /api/chat  応答の封筒 (content が MAX_ASSISTANT_REPLY_CHARS = 10 万字)
+ *     日本語 10 万字               300,124 B  (0.29 MiB)
+ *     全部が \uXXXX へ縮退する最悪  600,124 B  (0.57 MiB)
+ *   /api/tags  1 件あたり 365 B → 2 MiB で 5,745 モデル (10 MiB で 28,728)
+ * ```
+ *
+ * `capAssistantReply` が 10 万字で切るので、**それを超えて読んだ分は必ず捨てる**。
+ * つまり 2 MiB でも最悪の使える本文に対して **3.49 倍**の余裕が在り、10 MiB の
+ * 17.47 倍との差は「捨てる物をどれだけ確保するか」の差でしかない。
+ * 現行のどのローカルモデルも、文脈長の上限 (128k token ≒ 0.5 MiB) から
+ * 1 回の非ストリーム応答で 2 MiB を作れない。
+ *
+ * **だから小さい方 (2 MiB) に揃える。** 大きい方に揃えるのは、捨てる物のために
+ * main プロセスの確保量を 5 倍にすることで、そこは「落ちればタブではなく
+ * アプリ全体が落ちる」側である (`clients/ollama.ts` 自身の注記)。
+ * 2 MiB は画面の「セキュリティポリシー」欄にも出ている値なので、表示も動かない。
+ */
+export const MAX_OLLAMA_RESPONSE_BYTES = 2 * 1024 * 1024;
+
+/**
  * 1 回の HTTP 要求に許す時間。30 秒。
  *
  * `clients/ollama.ts` が先に置いていた値に揃えた。LLM の補完だけは長く
- * かかりうるので、そちらは `shared/ai/chat.ts` の
- * `AI_CHAT_TIMEOUT_MS` (2 分) を別に持っている。
+ * かかりうるので、そちらは別の名前を持つ —— クラウドの提供者は
+ * `shared/ai/chat.ts` の `AI_CHAT_TIMEOUT_MS`、端末内の Ollama は
+ * すぐ下の {@link OLLAMA_CHAT_TIMEOUT_MS} (どちらも 2 分)。
+ *
+ * **デスクトップ版の Ollama の疎通確認 (`/api/version` と `/api/tags`) は
+ * この値を読む** (2026-09-23 · パス 424)。それまで `clients/ollama.ts` が
+ * `REQUEST_TIMEOUT_MS = 30_000` という**私有の写し**を持っており、
+ * 画面の「セキュリティポリシー」欄はその数を**直書き**していた ——
+ * renderer は `src/main/` から import できない (`lint:imports`) ので、
+ * 定数から出すには先にここへ置く必要が在った。応答の上限
+ * ({@link MAX_OLLAMA_RESPONSE_BYTES}) がパス 336 で同じ理由でここへ来ている。
  */
 export const DEFAULT_HTTP_TIMEOUT_MS = 30_000;
+
+/**
+ * **端末内の Ollama に 1 回の生成を許す時間。2 分。両ビルドで 1 つ。**
+ * (2026-09-23 · パス 424)
+ *
+ * ## 直す前に何が起きていたか (実測)
+ *
+ * `main/clients/ollama.ts` の `chat` は `withTimeout` の**第 5 引数を
+ * 省いて**いたので、生成に**疎通確認の予算 (30 秒)** が掛かっていた。
+ * ブラウザ版は同じ生成に 120 秒を掛けていた —— 偽の fetch を吊るして
+ * 締切だけを進める実測 (`ollamaChatDeadline.test.ts`):
+ *
+ * | | @29s | @31s | @119s | @121s |
+ * | --- | --- | --- | --- | --- |
+ * | デスクトップ (直す前) | 生きている | **abort** | —— | —— |
+ * | ブラウザ | 生きている | 生きている | 生きている | abort |
+ *
+ * ## なぜ 30 秒が短すぎると言えるか —— 入口が自分で述べている
+ *
+ * このアプリが受け付けるプロンプトは `MAX_OLLAMA_PROMPT_CHARS` = **32,768 字**
+ * である。端末内の推論は CPU / GPU に律速されるので、32,768 字を読んで
+ * 答えを組み立てる往復が 30 秒で終わる保証はどこにも無い ——
+ * **入口が、締切が応えられない大きさを許している。**
+ *
+ * しかも同じ判断は既にアプリの中に 2 度書かれていた:
+ *
+ * - `shared/ai/chat.ts` —— 「長すぎれば止まったまま気づけない。2 分は
+ *   『正当な補完は余裕で終わり、固まった相手は必ず切れる』側に倒した値」
+ * - `renderer/network/ollamaWeb.ts` —— 「生成は診断より時間がかかる。
+ *   5 秒で切ると実用にならないので別枠にする」
+ *
+ * **後者の理由はデスクトップ版にも等しく当てはまる** (同じ端末の同じ
+ * モデルへ、同じ `/api/chat` を投げる)。デスクトップ版だけがその別枠を
+ * 持たなかったのは、判断の差ではなく**既定引数のまま**だったためである。
+ *
+ * ## `AI_CHAT_TIMEOUT_MS` に畳まない理由 (測った)
+ *
+ * 値は同じ 120,000 だが 1 つにはしない:
+ *
+ * 1. **module graph** —— `shared/ai/chat.ts` はこのファイルを import する
+ *    (`withTimeout` ほか)。逆向きに読むと循環になる。
+ * 2. **母集団が違う** —— あちらは利用者が `baseUrl` を決めるクラウドの
+ *    提供者 (LM Studio / LiteLLM / 自前サーバ / BYO プロキシ) で、
+ *    こちらは loopback か利用者が設定した Ollama ホストである。
+ *    片方を延ばす理由が他方に当てはまるとは限らない
+ *    (パス 410 が `finiteOrNull` と `finiteNumberOf` について下したのと同じ判断)。
+ *
+ * **名前が 2 つ在ること自体は `deadlineCensus` が許している** ——
+ * あの census が要求するのは「裸の数を書かない」ことだけで、
+ * 値が揃っているかは要求しない。だから**揃っていない所は人が見つけるしか
+ * 無く、実際に 1 件在った**のがこのパスである。
+ */
+export const OLLAMA_CHAT_TIMEOUT_MS = 120_000;
+
+/**
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * 送り先の関門は 3 種在る —— `lint:network-targets` (送り先が変数の通信の台帳)・
+ * `docs/ARCHITECTURE.md` §3.3 (外部接続先ホストの一覧)・各 endpoint の検証
+ * (`atlassianSite` / `aiEndpoint` / `proxyEndpoint` / `scanTarget` …)。
+ * どれも**最初の 1 ホップ**しか見ていない。`fetch` の既定は `redirect: 'follow'`
+ * で、相手が `302 Location: http://169.254.169.254/` を返せば、Node (undici) は
+ * **その先を一切検査せずに**取りに行く。つまり台帳が「ここへしか出ない」と
+ * 述べる主張は、相手の応答 1 つで偽になる。
+ *
+ * この規則は既にリポジトリの中に **2 か所**在った:
+ *   - 利用者が配る Worker (`docs/PROXY_EXAMPLE.md` §(c)) は `redirect: 'manual'` で
+ *     ホップごとに `denyReason()` を掛け直し、その注記は「既定の 'follow' は
+ *     Location 先を*一切検査せずに*取得する」と危険を名指ししている
+ *   - `main.ts` の窓の遷移は `will-redirect` を `will-navigate` と同じ関門に通す
+ *     (「otherwise a 3xx …」と注記がある)
+ * **アプリ自身の fetch だけが持っていなかった** (実測 2026-09-17: 網の fetch 呼び出し
+ * 12 か所のうち `redirect` を指定する物 **0**)。
+ *
+ * 追随しないだけで、Worker のように**ホップ先を再検査して進む**ことはしない。
+ * このアプリが呼ぶ API (固定ホストの REST / GraphQL / 認可サーバの token 端点) に
+ * 転送を要る物は無く、転送が来た時点で「相手が動いた」か「相手が乗っ取られた」の
+ * どちらかなので、進まずに**理由を言って止まる**ほうが正しい
+ * (GitHub は改名された repo の API に 301 を返す —— 'follow' だと POST が GET へ
+ * 変わり「issue を作った」つもりで一覧を読む形になる)。
+ *
+ * Node (undici) の `redirect: 'manual'` は 3xx をそのまま返し、ブラウザは
+ * `type: 'opaqueredirect'` (status 0・ヘッダ無し) を返す。`isRedirectResponse` は
+ * その両方を転送と読む。断り文は **Location のホストだけ**を述べる —— パスや
+ * クエリには秘密が載りうる (`?token=` の形はパス 271 が伏字の運び手として数えた)。
+ *
+ * 母集団 (fetch を呼ぶ全ての場所が `egressInit` を通すこと) は
+ * `shared/__tests__/egressRedirectCensus.test.ts` が両方向に留める。
+ */
+export const REDIRECT_STATUSES: ReadonlySet<number> = new Set([301, 302, 303, 307, 308]);
+
+/**
+ * 外へ出る fetch の初期化に「転送へ追随しない」を重ねる。他の欄は変えない。
+ *
+ * ## 例外は `mode: 'no-cors'` の 1 形だけ (2026-09-17 パス 304)
+ *
+ * Fetch 標準の main fetch は「mode が no-cors で redirect mode が follow でなければ
+ * network error」と定めている。chromium で実測 (2026-09-17):
+ *
+ *   fetch(url, { mode: 'no-cors', redirect: 'follow' })  → type 'opaque' / status 0 で解決
+ *   fetch(url, { mode: 'no-cors', redirect: 'manual' })  → **TypeError: Failed to fetch**
+ *
+ * Node (undici) は CORS を実装しないので**同じ呼び出しが type 'basic' / 200 で通り**、
+ * 単体検査には映らない。パス 301 はこの重ねを網の 12 か所へ一律に掛け、
+ * `renderer/network/ollamaWeb.ts` の到達確認 (通常 fetch が落ちた後に no-cors で
+ * 「聞いているか」だけを見る) を壊した —— 「起動しているが OLLAMA_ORIGINS 未設定」が
+ * 「未起動」と診断される。CI に無かった `e2e:ollama` (実 chromium) だけが捕まえた。
+ *
+ * no-cors の要求は**転送に追随しても台帳の外へ何も運ばない**: ヘッダの guard が
+ * CORS-safelisted の外 (`Authorization` など) を落とすので資格情報を載せられず、
+ * 応答は opaque で本文もヘッダも読めない。だからこの 1 形だけは標準どおり
+ * 'follow' を**明示**する。規則が 1 つのままなのは、例外も**この関数の中**に
+ * 在るからで、呼ぶ側は何も知らなくてよい (`egressRedirectCensus.test.ts` は
+ * 'follow' を書く場所がこの枝 1 つであることも留める)。
+ */
+export function egressInit<T extends RequestInit>(init: T): T & { redirect: 'manual' | 'follow' } {
+  if (init.mode === 'no-cors') return { ...init, redirect: 'follow' };
+  return { ...init, redirect: 'manual' };
+}
+
+/**
+ * 応答が転送か。`304 Not Modified` と `300 Multiple Choices` は転送ではない
+ * (Fetch 標準の "redirect status" は 301 / 302 / 303 / 307 / 308 の 5 つ)。
+ */
+export function isRedirectResponse(res: Response): boolean {
+  return res.type === 'opaqueredirect' || REDIRECT_STATUSES.has(res.status);
+}
+
+/**
+ * 転送を断る文。`label` は相手の名前 (サービス id など)。
+ * Location が読めればその**ホストだけ**を添える (相対 Location は要求 URL で解く)。
+ * ブラウザの `opaqueredirect` はヘッダを見せないので、そのときは行き先を述べない。
+ */
+export function redirectRefusal(res: Response, requestUrl: string, label: string): string {
+  let host = '';
+  const location = res.headers.get('location');
+  if (location) {
+    try {
+      host = new URL(location, requestUrl).host;
+    } catch {
+      host = '';
+    }
+  }
+  return host === ''
+    ? `${label} が別の場所へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)`
+    : `${label} が別の場所 (${host}) へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)`;
+}
 
 /**
  * 応答本文を上限つきで読む。超えたら**読むのをやめて**投げる。
@@ -140,6 +332,59 @@ export async function readBodyWithCap(
     off += c.byteLength;
   }
   return new TextDecoder().decode(buf);
+}
+
+/**
+ * **失敗した応答 (`!res.ok`) の本文を読む —— 上限つきで。**
+ *
+ * この 2 段 (上限つきで読む → 読めなければ空) は 2026-09-20 まで
+ * **9 か所に手で書かれており、そのうち 3 か所が上限を落としていた**:
+ *
+ * ```
+ *   shared/api/http.ts            readBodyWithCap(…).catch(() => '')     上限あり
+ *   main/clients/types.ts         readBodyWithCap(…).catch(() => '')     上限あり
+ *   renderer/data/saasWriteWeb.ts readCapped(…).catch(() => '')          上限あり
+ *   renderer/oauth/pkce.ts        readBodyWithCap(…).catch(() => '')     上限あり
+ *   main/oauth.ts (×2)            readBodyWithCap(…).catch(() => '')     上限あり
+ *   renderer/network/proxy.ts     proxyRes.text().catch(() => '')        ← 上限なし
+ *   renderer/network/ollamaWeb.ts res.text() (readTextOrEmpty)           ← 上限なし
+ *   main/clients/ollama.ts        res.text()                             ← 上限なし
+ * ```
+ *
+ * **落ちていた 3 か所は、どれも成功側に上限を持っている。** つまり
+ * 同じ関数の中で、2xx の本文は切るのに、500 の本文は切っていなかった ——
+ * **向きが逆である**。大きな本文を返すのは壊れている相手のほうで、
+ * その相手は定義上 `!res.ok` の枝に来る。`shared/api/http.ts` と
+ * `main/clients/types.ts` は既にその一文を持っていた
+ * (「落ちている相手ほど大きなものを返しうる」) のに、**散文だったので
+ * 他の 3 か所には掛からなかった**。
+ *
+ * ## 実測 (2026-09-20 · Node 22)
+ *
+ * 1 MiB の塊を返す 500 応答に対して:
+ *
+ * ```
+ *   上限なし 256 MiB   引いた 256 MiB   256 M 文字   rss +637 MiB   2,932 ms
+ *   上限あり 256 MiB   引いた  11 MiB   断り        rss   +9 MiB       6 ms
+ *   上限なし 512 MiB   引いた 512 MiB   ERR_STRING_TOO_LONG
+ * ```
+ *
+ * 512 MiB の行が示すとおり、上限が無いと **`catch` は握り潰すが費用は
+ * 払い終えている** —— 利用者に見えるのは「本文なし」だけで、
+ * その裏で 512 MiB を読んでいる。main プロセスならアプリ全体が落ちる。
+ *
+ * ## 空文字を返す理由
+ *
+ * 失敗の本文は**文言のためだけ**に読む。読めなくても状態番号は伝えられる
+ * ので、読めなかった / 大きすぎたは同じ「詳細なし」に畳んでよい。
+ * 畳んでよくないのは**読む量**のほうである。
+ */
+export async function readFailureBody(
+  res: Response,
+  label: string,
+  maxBytes: number = MAX_HTTP_RESPONSE_BYTES,
+): Promise<string> {
+  return readBodyWithCap(res, maxBytes, label).catch(() => '');
 }
 
 /**

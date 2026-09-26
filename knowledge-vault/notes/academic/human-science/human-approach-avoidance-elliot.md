@@ -35,7 +35,8 @@ aliases:
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
 - [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
-- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 同分野の近傍
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家
+- [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連

@@ -229,7 +229,7 @@ describe('ACTIONS["create-folder"] — 送り方', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['create-folder']!({ token: 't', fetch: fetchMock, payload: {} }),
-    ).rejects.toThrow('name is required');
+    ).rejects.toThrow('name は必須です');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

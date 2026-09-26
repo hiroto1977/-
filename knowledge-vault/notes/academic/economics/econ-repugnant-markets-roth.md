@@ -31,9 +31,11 @@ aliases:
 
 ## 関連概念
 - [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同じ思想家
+- [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — 同じ思想家
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
 - [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]] — 同じ思想家
 - [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]] — 同じ思想家
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 同じ思想家
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 

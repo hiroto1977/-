@@ -37,13 +37,13 @@ jobs:
   mutate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # 変更ファイルの割り出しに 1 つ前のコミットが要る。
           fetch-depth: 2
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
@@ -106,7 +106,7 @@ jobs:
           npx stryker run --mutate "$TARGETS"
 
       - name: Save Stryker JSON report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always() && steps.scope.outputs.mode != 'skip'
         with:
           name: mutation-report

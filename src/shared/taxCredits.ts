@@ -11,7 +11,7 @@
  * から差し引く点に注意 (節税インパクトが大きい)。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 
 /** 円未満を四捨五入。 */
 
@@ -29,6 +29,22 @@ export type HousingPerformance =
   | 'long-life' // 認定長期優良・低炭素住宅
   | 'non-standard' // その他 (一般・非適合)
   | 'used'; // 中古 (既存住宅)
+
+/**
+ * 性能区分の表示名。**上限の額はここに書かない** (2026-09-22 · パス 401) ——
+ * 画面は `resolveMortgageParams(居住年, 区分).balanceCap` から導く。
+ * 手で書いていた頃、`non-standard` は**どの年でも「〜3,000万」**と名乗っており、
+ * 実物は 2024 年以降の居住で **0** (対象外) だった。
+ *
+ * 型の上で全区分を要求する (`HousingPerformance` に 6 つ目が増えたら落ちる)。
+ */
+export const HOUSING_PERFORMANCE_LABELS: readonly (readonly [HousingPerformance, string])[] = [
+  ['long-life', '認定長期優良・低炭素'],
+  ['zeh', 'ZEH水準省エネ'],
+  ['standard', '省エネ基準適合'],
+  ['non-standard', 'その他/非適合'],
+  ['used', '中古住宅'],
+];
 
 /** 居住年と性能区分から住宅ローン控除の「控除率」「年末残高上限」を解決する。
  *
@@ -176,20 +192,108 @@ export function calcMortgageCredit(
   }
   const rate = input.rate ?? 0.007;
   const cap = input.balanceCap ?? 30_000_000;
-  const balance = Math.max(0, input.yearEndBalance);
+  const balance = nonNeg(input.yearEndBalance);
   const creditable = yen(Math.min(balance, cap) * rate);
 
-  const fromIncomeTax = Math.min(creditable, Math.max(0, input.incomeTaxBeforeCredit));
+  const fromIncomeTax = Math.min(creditable, nonNeg(input.incomeTaxBeforeCredit));
   const remaining = creditable - fromIncomeTax;
 
   const residentCap = Math.min(
     p.residentCapMax,
-    yen(Math.max(0, input.taxableIncomeForResident) * p.residentCapRate),
+    yen(nonNeg(input.taxableIncomeForResident) * p.residentCapRate),
   );
   const fromResidentTax = Math.min(remaining, residentCap);
   const unused = remaining - fromResidentTax;
 
   return { creditable, fromIncomeTax, fromResidentTax, unused };
+}
+
+/**
+ * **住宅ローン控除が「¥0」になる原因を 1 か所で選ぶ** (2026-09-22 · パス 401)。
+ *
+ * ## なぜ要るのか (実測)
+ *
+ * 画面は `住宅ローン (所得税 ¥0 / 住民税 ¥0)` と刷るだけで、**理由を 1 文も
+ * 出していなかった**。ところが ¥0 になる道は **5 つ**あり、意味も直す手も違う ——
+ * 実測 (2026-09-22 · 残高 3,000 万・性能区分は各行のとおり):
+ *
+ * | 原因 | 実測 | 読み手にとっての意味 |
+ * | --- | --- | --- |
+ * | 合計所得 > 2,000 万 | `creditable: 0` | **その年は対象外** (国税庁 No.1211) |
+ * | 控除期間外 (新築13年 / 中古10年) | `creditable: 0` | **終わった** |
+ * | 2024 年以降の居住 × 省エネ基準非適合 | `balanceCap: 0` → `creditable: 0` | **対象外** (住宅の性能の事実・設定では変わらない) |
+ * | 年末残高 0 | 画面が入力ごと渡さない | **未入力** |
+ * | **差し引く税額が無い** | **`creditable: 210,000` / `unused: 210,000`** | **算定できているが引けない** |
+ *
+ * ★ **最後の 1 行がいちばん重い** —— アプリは 210,000 円の控除額を**算定してから
+ * 全額を `unused` として捨て**、画面には ¥0 だけが出ていた。利用者は「自分には
+ * 適用されない」と読むが、実際は「控除額は在るが差し引く税額が無い」である。
+ *
+ * ★ **そして画面の但し書きは 5 つのうち 4 つで読み手を誤った方へ導いていた** ——
+ * 「住宅ローン控除は居住年・住宅性能区分で控除率/上限が変わります (上のセレクタで選択)」
+ * は*セレクタを動かせ*と読めるが、所得制限・期間外・残高未入力・税額不足は
+ * どれもセレクタでは変わらない。
+ *
+ * ## 順序は {@link calcMortgageCredit} の枝と同じにする
+ *
+ * 別の順序で並べると「計算が使った理由」と「画面が述べる理由」が食い違う
+ * (パス 388 が経営サマリーで直した「原因を取り違えた断り」と同じ形)。
+ * 一致は `mortgageCreditReason.test.ts` が**両方向**で留める ——
+ * `null` ⟺ 画面に出る 2 つの額の合計が 0 でない。
+ */
+export type NoMortgageCreditCause =
+  | 'no-balance'
+  | 'income-over-limit'
+  | 'outside-period'
+  | 'not-energy-compliant'
+  | 'no-tax-to-offset';
+
+/**
+ * 画面に出る控除額が 0 になる原因。0 でなければ `null`。
+ *
+ * `input` が `null` は「年末残高が入っていないので計算にかけていない」= `no-balance`
+ * (画面が `mortgage` を渡さない形。`calcAllTaxCredits` と同じ扱い)。
+ */
+export function noMortgageCreditCause(
+  input: MortgageCreditInput | null,
+  result: MortgageCreditResult | null,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): NoMortgageCreditCause | null {
+  if (input === null || result === null) return 'no-balance';
+  if (nonNeg(input.yearEndBalance) === 0) return 'no-balance';
+  // 以下 3 つは calcMortgageCredit の早期 return と**同じ順序**。
+  if (input.totalIncome !== undefined && input.totalIncome > p.incomeLimit) return 'income-over-limit';
+  if (input.outsidePeriod === true) return 'outside-period';
+  if ((input.balanceCap ?? 30_000_000) === 0) return 'not-energy-compliant';
+  // ここまで来て画面の額が 0 なら、引く先の税額が無い (creditable は在る)。
+  if (result.fromIncomeTax + result.fromResidentTax === 0) return 'no-tax-to-offset';
+  return null;
+}
+
+/**
+ * その原因を利用者へ述べる 1 文。**逃げ口が在るものは名指しし、無いものは無いと言う**
+ * (法則 `escape-hatch-stays-open`)。
+ *
+ * `creditable` は `no-tax-to-offset` のときだけ使う —— 「算定はできている」ことを
+ * 額で示さないと、利用者は「適用されない」と読む。
+ */
+export function noMortgageCreditNote(
+  cause: NoMortgageCreditCause,
+  creditable: number,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): string {
+  switch (cause) {
+    case 'no-balance':
+      return '住宅ローンの年末残高が未入力のため、住宅ローン控除は算定していません。';
+    case 'income-over-limit':
+      return `合計所得金額が ${yen(p.incomeLimit) / 10_000} 万円を超える年は住宅ローン控除の適用がありません（国税庁 No.1211）。居住年・住宅性能区分を変えても適用されません。`;
+    case 'outside-period':
+      return '控除期間（新築13年・中古10年）を過ぎているため、住宅ローン控除はありません。居住年・住宅性能区分を変えても適用されません。';
+    case 'not-energy-compliant':
+      return '2024年以降に居住を開始した新築で省エネ基準に適合しないものは、住宅ローン控除の対象外です（借入限度額 0・国税庁 No.1211-1）。適合する区分であれば限度額が付きます。';
+    case 'no-tax-to-offset':
+      return `住宅ローン控除の額は ${yen(creditable).toLocaleString('ja-JP')} 円と算定できていますが、差し引く所得税・住民税が無いため控除額は 0 円です（控除しきれない分は繰り越せません）。`;
+  }
 }
 
 // --- 配当控除 -------------------------------------------------------------
@@ -231,10 +335,10 @@ const DIVIDEND_RATES: Record<DividendKind, {
 
 /** 配当控除を計算する (種類別の率)。 */
 export function calcDividendCredit(input: DividendCreditInput): DividendCreditResult {
-  const dividend = Math.max(0, input.dividendIncome);
+  const dividend = nonNeg(input.dividendIncome);
   // Stryker disable next-line ConditionalExpression: 早期returnを外しても dividend=0 は計算経路で {0,0} となり同値 (等価変異)。
   if (dividend === 0) return { incomeTax: 0, residentTax: 0 };
-  const total = Math.max(0, input.taxableTotalIncome);
+  const total = nonNeg(input.taxableTotalIncome);
   const THRESHOLD = 10_000_000;
   const r = DIVIDEND_RATES[input.kind ?? 'stock'];
 
@@ -366,7 +470,7 @@ export function calcDividendLevyCredit(
   declaredDividend: number,
   withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
 ): number {
-  return yen(Math.max(0, declaredDividend) * withheldRate);
+  return yen(nonNeg(declaredDividend) * withheldRate);
 }
 
 /**
@@ -380,7 +484,7 @@ export function calcCapitalGainsLevyCredit(
   capitalGain: number,
   withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
 ): number {
-  return yen(Math.max(0, capitalGain) * withheldRate);
+  return yen(nonNeg(capitalGain) * withheldRate);
 }
 
 // --- 一般寄附金税額控除 (住民税・ふるさと納税以外) ----------------------
@@ -403,7 +507,7 @@ export function calcGeneralDonationCredit(
   donation: number,
   kind: GeneralDonationKind = 'both',
 ): number {
-  const amount = Math.max(0, donation);
+  const amount = nonNeg(donation);
   // Stryker disable next-line EqualityOperator: <= と < は amount=2000 で同値 (控除0、連続)。
   if (amount <= GENERAL_DONATION_THRESHOLD) return 0;
   const rate = kind === 'both' ? 0.1 : kind === 'municipal' ? 0.06 : 0.04;

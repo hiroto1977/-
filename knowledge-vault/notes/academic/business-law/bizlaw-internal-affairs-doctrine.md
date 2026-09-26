@@ -31,6 +31,7 @@ Restatement (Second) of Conflict of Laws §302（内部事項の選択規則） 
 - [William L. Cary, "Federalism and Corporate Law: Reflections Upon Delaware," 83 Yale Law Journal 663 (1974)（規制間競争「底辺への競争」論を提示した古典的論文）](https://openyls.law.yale.edu/bitstream/handle/20.500.13051/15589/33_83YaleLJ663_1973_1974_.pdf) `学術`
 
 ## 関連概念
+- [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 語彙が近い
 - [[bizlaw-contra-proferentem|不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）]] — 同じ思想家
 - [[bizlaw-res-judicata|既判力（Res Judicata）]] — 同じ思想家
 - [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
@@ -39,7 +40,7 @@ Restatement (Second) of Conflict of Laws §302（内部事項の選択規則） 
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
 - [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同分野の近傍
-- [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 同分野の近傍
+- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

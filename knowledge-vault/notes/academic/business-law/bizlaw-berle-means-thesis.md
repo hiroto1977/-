@@ -30,8 +30,8 @@ Adolf A. Berle ／ Gardiner C. Means ／ Harold Demsetz ／ The Modern Corporati
 - [Demsetz, H. (1983) The Structure of Ownership and the Theory of the Firm. Journal of Law and Economics, 26(2), 375–390（バーリ＝ミーンズ命題への批判）](https://doi.org/10.1086/467041) `学術`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -86,6 +86,13 @@ const TAXONOMIES = {
 };
 
 const kc = require(path.join(REPO_ROOT, 'orchestration', 'knowledge-context.cjs'));
+const { distinctSourceCount } = require('./lib/source-url.cjs');
+/*
+ * 目録の判定は `lint-citations.cjs` の台帳 1 つを読む (`METADATA_ONLY_HOSTS`)。
+ * ホスト一覧を 2 か所に書くと片方が腐るので写さない —— `require` は
+ * `require.main === module` の守りがあるので main は走らない。
+ */
+const { hostOf, isMetadataOnlyHost } = require(path.join(REPO_ROOT, 'scripts', 'lint-citations.cjs'));
 
 /**
  * コレクション → 適用する分類。`loadEntries()` が返す `collection` キーで引く。
@@ -98,6 +105,45 @@ const TAXONOMY_BY_COLLECTION = {
   subsidy: 'official',
   support: 'official',
 };
+
+/**
+ * コーパスの床。**確証ゲートは全称命題なので、母集団が空なら自明に真になる。**
+ *
+ * 2026-09-25 (パス 468) の実測: `VERIFIED_CONCEPTS` を空にすると academic 3,417 件
+ * (コーパスの 85%) が母集団から丸ごと消え、それでもこのゲートは
+ * 「確証ゲート検証: 622 項目」と刷って **exit 0** だった。隣の `lint:knowledge-refs` は
+ * 同じ状態で `MIN_CORPUS_IDS` (1000) に当たって鳴る —— つまり**出典を確かめるのが仕事の
+ * ゲートだけが、確かめる物が消えたことに黙っていた**。
+ *
+ * 見るのは 2 つで、どちらも「減るのが正しい向き」ではない側に置く:
+ *
+ *   1. 合計の床 (1000)。`lint:knowledge-refs` の `MIN_CORPUS_IDS` と同じ値で、
+ *      同じコーパスを同じ理由で見ているので数を揃える。
+ *   2. **宣言したコレクションはどれも 1 件以上**。合計だけだと、いちばん大きい
+ *      academic が消えても残り 622 件が床を越えてしまう (実測がまさにそれ)。
+ *      `unknownCollections` は「データに在るのに分類が無い」を見るので、これはその逆向き。
+ */
+function collectionFloorProblems(counts, total) {
+  const MIN_TOTAL = 1000;
+  const out = [];
+  if (total < MIN_TOTAL) {
+    out.push(
+      `コーパスを ${total} 件しか読めませんでした (${MIN_TOTAL} 件以上を期待)。`
+      + ' 読み込みが壊れている可能性があります —— '
+      + '確証ゲートは全称命題なので、空の母集団に対しては自明に真になります。',
+    );
+  }
+  for (const col of Object.keys(TAXONOMY_BY_COLLECTION)) {
+    if ((counts[col] ?? 0) === 0) {
+      out.push(
+        `コレクション ${col} が 0 件です。`
+        + ' TAXONOMY_BY_COLLECTION に宣言があるのに項目が 1 件も読めていません —— '
+        + '読み込みが壊れたか、このコレクションをやめたなら宣言も消してください。',
+      );
+    }
+  }
+  return out;
+}
 
 /**
  * コレクションの分類。**素の添字にしない。**
@@ -113,17 +159,48 @@ function taxonomyOf(collection) {
     : undefined;
 }
 
-function assess(types, taxonomy) {
+/**
+ * 出典の並び (`{ type, url }`) を評価して、満たしていない理由を返す。
+ *
+ * **URL も見る**のは目録の規則のため (2026-09-06 に種別だけの評価から変えた)。
+ * 2026-09-26 (パス 478) からは**独立性の判定**にも使う —— それまで件数は
+ * `types.length` を素で数えており、**同じ文書を指す 2 つの綴りが 2 件として通った**
+ * (実測: `bizlaw-equitable-set-off` の 2 出典は同じ Wikipedia の頁で、2 つ目は
+ * 節のアンカーだけが違った。隔離した写しに同じ URL を 2 度植てると 4 つの知識ゲート
+ * すべてが exit 0 で「4039 項目（出典 2+・権威 1+）… ✅」と刷った)。
+ * 正規化の規則は `scripts/lib/source-url.cjs` **1 つ**で、実行時側
+ * (`src/renderer/data/sourceVerification.ts`) の写しとはパリティ検査が縛る。
+ * 図書館の目録・書店の商品頁・検索結果は「その出版物が存在する」ことしか示さないので、
+ * 権威ある出典がそれだけの項目は**中身を誰も確かめていない**。実測では 0 件だったが、
+ * 0 件のまま放置すると次に足す人が気づかないので規則にした (標本は自己検査に置いた)。
+ */
+function assess(sources, taxonomy) {
   const reasons = [];
-  if (types.length < MIN_SOURCES) {
-    reasons.push(`出典 ${types.length} 件（${MIN_SOURCES} 件以上が必要）`);
+  const types = sources.map((s) => s.type);
+  const distinct = distinctSourceCount(sources);
+  if (distinct < MIN_SOURCES) {
+    reasons.push(
+      distinct === types.length
+        ? `出典 ${distinct} 件（${MIN_SOURCES} 件以上が必要）`
+        : `独立した出典 ${distinct} 件（出典 ${types.length} 件のうち同じ文書を指すものを 1 件に畳んだ結果。`
+          + `${MIN_SOURCES} 件以上が必要）`,
+    );
   }
   const set = TAXONOMIES[taxonomy].authoritative;
-  const authoritative = types.filter((t) => set.has(t)).length;
+  const authoritativeSources = sources.filter((s) => set.has(s.type));
+  const authoritative = authoritativeSources.length;
   if (authoritative < MIN_AUTHORITATIVE) {
     reasons.push(
       `権威ある出典 ${authoritative} 件（${MIN_AUTHORITATIVE} 件以上が必要 / ${taxonomy} 分類）`,
     );
+  }
+  /*
+   * `every` は空配列に true を返すので、**1 件以上あるとき限定**にする。
+   * 0 件は上の理由が既に鳴らしており、ここで二重に鳴らす意味がない。
+   */
+  if (authoritative >= MIN_AUTHORITATIVE
+    && authoritativeSources.every((s) => isMetadataOnlyHost(hostOf(String(s.url ?? '').trim())))) {
+    reasons.push('権威ある出典が目録・書店・検索結果の記録だけ（出版物そのものが必要）');
   }
   return reasons;
 }
@@ -155,8 +232,51 @@ function selfTest() {
 
   let failed = 0;
   console.log('self-test:');
+  /*
+   * 表は種別だけを書く。**URL は項ごとに別物を渡す** (2026-09-26 · パス 478) ——
+   * 空文字のままだと独立性の判定がすべて「1 件」に畳まれ、上の表の期待値が
+   * 「独立が足りない」で埋まる。ホストが取れない綴りなので目録判定には当たらない。
+   */
+  const asSources = (types) => types.map((t, i) => ({ type: t, url: `about:sample-${i}` }));
   for (const [label, types, taxonomy, want] of cases) {
-    const got = assess(types, taxonomy).length;
+    const got = assess(asSources(types), taxonomy).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: 理由 ${got} 件 (期待 ${want})`);
+  }
+
+  /* --- 目録の記録だけでは権威にならない。標本を当てて、規則が実際に鳴ることを見る。 --- */
+  const S = (...pairs) => pairs.map(([type, url]) => ({ type, url }));
+  const metaCases = [
+    ['★ 権威が worldcat の目録だけなら鳴る', S(['reference', 'https://search.worldcat.org/title/17234042'], ['media', 'https://hbr.org/x']), 1],
+    ['★ 権威が Google Scholar の検索 URL だけでも鳴る', S(['reference', 'https://scholar.google.com/scholar?q=x'], ['media', 'https://hbr.org/x']), 1],
+    ['目録 + 出版物なら通る', S(['reference', 'https://search.worldcat.org/title/17234042'], ['academic', 'https://doi.org/10.1234/x']), 0],
+    ['目録が非権威 (media) で他に権威があれば通る', S(['academic', 'https://doi.org/10.1234/x'], ['media', 'https://www.worldcat.org/oclc/1']), 0],
+    ['全文を置くホスト (archive.org) は目録ではない', S(['academic', 'https://archive.org/details/logiclimitsofb00jack'], ['media', 'https://hbr.org/x']), 0],
+    ['権威 0 件のときは目録の理由を重ねない (理由は 1 つ)', S(['media', 'https://www.worldcat.org/oclc/1'], ['media', 'https://hbr.org/x']), 1],
+  ];
+  for (const [label, sources, want] of metaCases) {
+    const got = assess(sources, 'academic').length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: 理由 ${got} 件 (期待 ${want})`);
+  }
+
+  /*
+   * --- 独立性 (2026-09-26 · パス 478)。**件数ではなく独立した文書の数**を見る。
+   * 「同じ頁を 2 度」は実測でコーパスに 1 件在った形なので、標本は実物の綴りを使う。
+   */
+  const indepCases = [
+    ['★ 同じ URL を 2 度は独立 1 件', S(['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)'], ['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)']), 1],
+    ['★ 節のアンカーだけが違うのは同じ文書', S(['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)'], ['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)#Equitable_set-off']), 1],
+    ['★ scheme と末尾 / だけが違うのは同じ文書', S(['reference', 'http://example.org/a/'], ['reference', 'https://example.org/a']), 1],
+    ['★ ホストの大小だけが違うのは同じ文書', S(['reference', 'https://EN.wikipedia.org/wiki/X'], ['reference', 'https://en.wikipedia.org/wiki/X']), 1],
+    ['別の頁なら独立 2 件 (対照)', S(['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)'], ['reference', 'https://en.wikipedia.org/wiki/Liquidated_damages']), 0],
+    ['クエリが違えば別の文書 (畳まない)', S(['reference', 'https://example.org/p?id=1'], ['reference', 'https://example.org/p?id=2']), 0],
+    ['www の有無は畳まない', S(['reference', 'https://example.org/a'], ['reference', 'https://www.example.org/a']), 0],
+  ];
+  for (const [label, sources, want] of indepCases) {
+    const got = assess(sources, 'academic').length;
     const ok = got === want;
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: 理由 ${got} 件 (期待 ${want})`);
@@ -257,7 +377,7 @@ function main(argv) {
     counts[e.collection] = (counts[e.collection] ?? 0) + 1;
 
     const types = (e.sources ?? []).map((s) => s.type);
-    const reasons = assess(types, taxonomy);
+    const reasons = assess((e.sources ?? []).map((s) => ({ type: s.type, url: s.url })), taxonomy);
     if (reasons.length > 0) violations.push({ collection: e.collection, id: e.id, reasons });
 
     /*
@@ -283,9 +403,15 @@ function main(argv) {
   }
 
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
-  console.log(`確証ゲート検証: ${total} 項目（出典 ${MIN_SOURCES}+・権威 ${MIN_AUTHORITATIVE}+）`);
+  console.log(`確証ゲート検証: ${total} 項目（独立 ${MIN_SOURCES}+・権威 ${MIN_AUTHORITATIVE}+）`);
   for (const [col, n] of Object.entries(counts)) {
     console.log(`  ・${col} ${n} 件 [${TAXONOMY_BY_COLLECTION[col]}]`);
+  }
+
+  const emptyFloors = collectionFloorProblems(counts, total);
+  if (emptyFloors.length > 0) {
+    for (const e of emptyFloors) console.error(`❌ ${e}`);
+    return 1;
   }
 
   let failed = false;
@@ -322,7 +448,7 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { assess, TAXONOMIES, TAXONOMY_BY_COLLECTION };
+module.exports = { assess, TAXONOMIES, TAXONOMY_BY_COLLECTION, collectionFloorProblems };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

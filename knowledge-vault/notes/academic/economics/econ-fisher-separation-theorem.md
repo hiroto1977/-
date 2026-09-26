@@ -26,7 +26,7 @@ aliases:
 アーヴィング・フィッシャー ／ ジャック・ハーシュライファー ／ フランコ・モディリアーニ ／ マートン・ミラー
 
 ## 出典
-- [Fisher, I. (1930) The Theory of Interest — Macmillan (WorldCat)](https://www.worldcat.org/oclc/977657) `学術`
+- [Fisher, I. (1930) The Theory of Interest — Macmillan (WorldCat)](https://www.worldcat.org/oclc/977657) `リファレンス`
 - [Wikipedia: Fisher separation theorem — investment vs consumption decision, present value maximization, capital market](https://en.wikipedia.org/wiki/Fisher_separation_theorem) `リファレンス`
 
 ## 関連概念

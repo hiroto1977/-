@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Sims (2003) Implications of Rational Inattention — Journal of Monetary Economics](https://doi.org/10.1016/S0304-3932(03)00029-1) `学術`
-- [Matějka & McKay (2015) Rational Inattention to Discrete Choices — AER](https://doi.org/10.1093/restud/rdu044) `学術`
+- [Matějka, F. & McKay, A. (2015) Rational Inattention to Discrete Choices: A New Foundation for the Multinomial Logit Model — American Economic Review 105(1), 272–298（誤った OUP DOI 10.1093/restud/rdu044 を AEA 論文ページへ差し替え）](https://www.aeaweb.org/articles?id=10.1257%2Faer.20130047) `学術`
 - [Wikipedia: Rational inattention — 合理的不注意理論の概説](https://en.wikipedia.org/wiki/Rational_inattention) `リファレンス`
 
 ## 関連概念
@@ -36,7 +36,6 @@ aliases:
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-heckman-selection-model|ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）]] — 同分野の近傍
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同分野の近傍
-- [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

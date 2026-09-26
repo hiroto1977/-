@@ -32,11 +32,10 @@ aliases:
 
 ## 関連概念
 - [[human-place-attachment-theory|場所愛着理論]] — 語彙が近い
-- [[human-place-identity|場所アイデンティティ（Place Identity）]] — 語彙が近い
 - [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 語彙が近い
+- [[human-place-identity|場所アイデンティティ（Place Identity）]] — 同じ思想家
 - [[human-illusory-correlation|錯誤相関]] — 同じ思想家
 - [[human-place-attachment-low-altman|場所愛着理論——人間と場所の情動的絆と環境心理学]] — 同じ思想家
-- [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

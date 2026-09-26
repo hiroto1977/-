@@ -39,9 +39,9 @@ aliases:
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
+- [[econ-rotten-kid-theorem|腐った子定理]] — 出典を共有
+- [[infosoc-alone-together|つながっていても孤独（アローン・トゥギャザー）]] — 出典を共有
+- [[human-cognitive-flexibility-theory|認知的柔軟性理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

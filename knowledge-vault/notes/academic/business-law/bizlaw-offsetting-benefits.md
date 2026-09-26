@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-structure-liability|工作物責任（民法717条）]] — 出典を共有
 - [[bizlaw-corporation-tax|法人税法]] — 同分野の近傍
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 同分野の近傍
+- [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]] — 同分野の近傍
 - [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]] — 同分野の近傍
 
 ## 関連

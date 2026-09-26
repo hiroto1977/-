@@ -26,7 +26,7 @@ aliases:
 リチャード・フロリダ ／ ジェイン・ジェイコブズ ／ ダニエル・ベル ／ ロバート・パットナム
 
 ## 出典
-- [Florida, R. (2002) The Rise of the Creative Class — Basic Books](https://www.worldcat.org/oclc/49544499) `学術`
+- [Florida, R. (2002) The Rise of the Creative Class — Basic Books](https://www.worldcat.org/oclc/49544499) `リファレンス`
 - [Wikipedia: Creative class — three Ts, talent, tolerance, creative city](https://en.wikipedia.org/wiki/Creative_class) `リファレンス`
 
 ## 関連概念
@@ -39,6 +39,7 @@ aliases:
 - [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
 - [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同分野の近傍
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同分野の近傍
+- [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

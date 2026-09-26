@@ -37,6 +37,7 @@ aliases:
 - [[bizlaw-disability-discrimination|障害者差別解消法]] — 出典を共有
 - [[legal-economic-security-promotion-act|経済安全保障推進法（4本柱・段階的施行）]] — 出典を共有
 - [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
+- [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 同分野の近傍
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同分野の近傍
 
 ## 関連

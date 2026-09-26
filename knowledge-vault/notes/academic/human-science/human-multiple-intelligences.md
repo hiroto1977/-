@@ -32,7 +32,8 @@ aliases:
 
 ## 関連概念
 - [[human-triarchic-intelligence-sternberg|知能の鼎立理論——分析的・創造的・実践的知能の三側面]] — 同じ思想家
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同分野の近傍
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

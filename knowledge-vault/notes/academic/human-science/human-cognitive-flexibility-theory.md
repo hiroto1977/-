@@ -34,6 +34,7 @@ aliases:
 - [Spiro et al. (1988) CFT — Cognitive Science Society proceedings (UC eScholarship)](https://escholarship.org/uc/item/1dr9x302) `学術`
 
 ## 関連概念
+- [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 出典を共有
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
 - [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
 - [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
@@ -43,7 +44,6 @@ aliases:
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
 - [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — 出典を共有
 - [[mgmt-competency|コンピテンシー]] — 出典を共有
-- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

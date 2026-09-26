@@ -32,11 +32,11 @@ aliases:
 
 ## 関連概念
 - [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する]] — 同じ思想家
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 同じ思想家
-- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke-gertler|金融加速度効果（バーナンキ＝ガートラー＝ギルクリスト）——借り手の純資産と外部資金プレミアムの相互作用が景気のショックを増幅する]] — 同じ思想家
 - [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
 - [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同じ思想家
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家

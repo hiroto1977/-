@@ -1,15 +1,20 @@
 import { useState } from 'react';
+import { dateText } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import { MS365_EVENT_FIELDS, MS365_MAIL_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '6px 8px',
   background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 4,
+  borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,
 };
@@ -71,18 +76,29 @@ export function Microsoft365Page() {
   const [to, setTo] = useState('');
   const [mailSubject, setMailSubject] = useState('');
   const [mailBody, setMailBody] = useState('');
+  /*
+   * 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。
+   * 宛先 (`to`) は 1 行だが天井 4,096 字 —— **宛先の一覧を貼る欄**で、
+   * `maxLength` に任せると貼った宛先の後ろが黙って落ち、画面は「送信しました」と言う。
+   * 件名が 2 つ在るので (メール / 予定) 断りのラベルで言い分ける。
+   */
+  const toOver = charsOverCeiling(to, MS365_MAIL_FIELDS.to.max);
+  const mailSubjectOver = charsOverCeiling(mailSubject, MS365_MAIL_FIELDS.subject.max);
+  const mailBodyOver = charsOverCeiling(mailBody, MS365_MAIL_FIELDS.body.max);
 
   // 予定作成フォーム
   const [evSubject, setEvSubject] = useState('');
   const [evStart, setEvStart] = useState('');
   const [evEnd, setEvEnd] = useState('');
   const [evLocation, setEvLocation] = useState('');
+  const evSubjectOver = charsOverCeiling(evSubject, MS365_EVENT_FIELDS.subject.max);
+  const evLocationOver = charsOverCeiling(evLocation, MS365_EVENT_FIELDS.location.max);
 
   const sendMail = async () => {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ ok: true; to: string; subject: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'microsoft-365/send-mail'>>(
       'microsoft-365',
       'send-mail',
       { to: to.trim(), subject: mailSubject.trim(), body: mailBody },
@@ -102,7 +118,7 @@ export function Microsoft365Page() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; subject: string; webLink: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'microsoft-365/create-event'>>(
       'microsoft-365',
       'create-event',
       {
@@ -190,7 +206,14 @@ export function Microsoft365Page() {
             </div>
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-            ※ ライブ接続（実データ取得・送信）はデスクトップ版の機能です。ブラウザ版は同梱スナップショットを表示します。
+            {/*
+              **画面に星印を出さない。** ここは JSX の素のテキストなので、Markdown の
+              強調記法 (`**…**`) は 1 文字も解釈されず、そのまま `**取得**` と描かれていた
+              (2026-09-25 · パス 459 の実測。出荷される `.tsx` の JSX テキストで `**` を
+              持つのはこの 1 行だけで、走査で確かめた)。強調は `<strong>` で書く。
+            */}
+            ※ 実データの<strong>取得</strong>はデスクトップ版の機能です（ブラウザ版は同梱スナップショットを表示します）。
+            <strong>メール送信と予定作成はブラウザ版でも動きます</strong> —— プロキシ設定が要ります（設定ページ）。
             サインインはあなたの Microsoft アカウントでのブラウザ認証です。
             トークンの保存方法はビルドと環境で変わります —— デスクトップ版は OS キーチェーン由来の鍵で暗号化、
             ブラウザ版は Vault（AES-GCM-256）で暗号化します。<strong>OS キーチェーンが無い環境
@@ -209,7 +232,7 @@ export function Microsoft365Page() {
           items={messages.map((m) => ({
             key: m.id,
             title: `${m.unread ? '● ' : ''}${m.subject}`,
-            meta: `${m.from} · ${m.received}`,
+            meta: `${m.from} · ${dateText(m.received)}`,
           }))}
           empty="アクセストークンを設定して更新するとメールが表示されます"
         />
@@ -220,7 +243,7 @@ export function Microsoft365Page() {
           items={events.map((e) => ({
             key: e.id,
             title: e.subject,
-            meta: [e.start, e.location].filter(Boolean).join(' · '),
+            meta: [dateText(e.start), e.location].filter(Boolean).join(' · '),
           }))}
           empty="アクセストークンを設定して更新すると予定が表示されます"
         />
@@ -230,10 +253,20 @@ export function Microsoft365Page() {
         title="アクション (書き込み)"
         action={
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => setOpenForm((v) => (v === 'mail' ? 'none' : 'mail'))}>
+            {/*
+              **フォームを切り替えたら前の結果を消す。** (2026-09-12 · パス 152)
+
+              `result` は 1 つの state で、メールの節と予定の節の**両方**が同じものを刷る。
+              2026-09-12 まで切り替えても消えなかったので、メール送信の
+              「送信しました → a@example.com」が**予定作成ボタンの隣**に出ていた ——
+              どの操作の結果なのか読めない (逆向きも同じで、予定作成の失敗が
+              メールの 送信 の隣に出る)。この画面は全域計測で 32.05% で、
+              3 つのハンドラはどれも 1 度も走っていなかった。
+            */}
+            <button onClick={() => { setResult(undefined); setOpenForm((v) => (v === 'mail' ? 'none' : 'mail')); }}>
               {openForm === 'mail' ? '閉じる' : '✉ メール送信'}
             </button>
-            <button onClick={() => setOpenForm((v) => (v === 'event' ? 'none' : 'event'))}>
+            <button onClick={() => { setResult(undefined); setOpenForm((v) => (v === 'event' ? 'none' : 'event')); }}>
               {openForm === 'event' ? '閉じる' : '📅 予定を作成'}
             </button>
           </div>
@@ -242,10 +275,13 @@ export function Microsoft365Page() {
         {openForm === 'mail' ? (
           <div className="card" style={{ gap: 10 }}>
             <input placeholder="宛先 (to@example.com)" value={to} onChange={(e) => setTo(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="宛先" value={to} max={MS365_MAIL_FIELDS.to.max} />
             <input placeholder="件名" value={mailSubject} onChange={(e) => setMailSubject(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="件名 (メール)" value={mailSubject} max={MS365_MAIL_FIELDS.subject.max} />
             <textarea placeholder="本文" value={mailBody} onChange={(e) => setMailBody(e.target.value)} rows={4} style={inputStyle} />
+            <CeilingNotice label="本文" value={mailBody} max={MS365_MAIL_FIELDS.body.max} />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <button className="primary" onClick={sendMail} disabled={submitting || !to.trim() || !mailSubject.trim()}>
+              <button className="primary" onClick={sendMail} disabled={submitting || !to.trim() || !mailSubject.trim() || toOver > 0 || mailSubjectOver > 0 || mailBodyOver > 0}>
                 {submitting ? '送信中…' : '送信'}
               </button>
               {result?.kind === 'ok' ? (
@@ -261,16 +297,18 @@ export function Microsoft365Page() {
         {openForm === 'event' ? (
           <div className="card" style={{ gap: 10 }}>
             <input placeholder="件名" value={evSubject} onChange={(e) => setEvSubject(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="件名 (予定)" value={evSubject} max={MS365_EVENT_FIELDS.subject.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <input type="datetime-local" value={evStart} onChange={(e) => setEvStart(e.target.value)} style={inputStyle} />
               <input type="datetime-local" value={evEnd} onChange={(e) => setEvEnd(e.target.value)} style={inputStyle} />
             </div>
             <input placeholder="場所 (任意)" value={evLocation} onChange={(e) => setEvLocation(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="場所" value={evLocation} max={MS365_EVENT_FIELDS.location.max} />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button
                 className="primary"
                 onClick={createEvent}
-                disabled={submitting || !evSubject.trim() || !evStart || !evEnd}
+                disabled={submitting || !evSubject.trim() || !evStart || !evEnd || evSubjectOver > 0 || evLocationOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

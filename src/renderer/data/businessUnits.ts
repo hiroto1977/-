@@ -13,7 +13,10 @@
  */
 
 import type { MonthlyBusinessKpi } from './businessFinancials';
+import { readNumeric } from '../../shared/readNumeric';
 import { hasControlChar } from '../../shared/controlChars';
+import { isCalendarDateOrMonth } from '../../shared/isoDate';
+import { moreThanChars } from '../../shared/inputCeiling';
 
 export const BUSINESS_UNITS_COLLECTION = 'business-units';
 
@@ -56,14 +59,14 @@ export type BusinessUnitResult =
   | { ok: true; entry: BusinessUnitInput }
   | { ok: false; reason: string };
 
-/**
- * 開始年月の形。`YYYY-MM` と `YYYY-MM-DD` の 2 つだけ受ける。
+/*
+ * 開始年月の形。`YYYY-MM` と `YYYY-MM-DD` の 2 つだけ受ける —— 判定は `shared/isoDate.ts`
+ * (2026-09-09 · パス 115 までは自前の正規表現で、`2024-02-30` を通していた)。
  *
  * 月だけで足りる場面が多いので日付を必須にしない。曖昧な表記
  * (`2026/4`・`令和8年4月`) は受けずに言い直してもらう —
  * 解釈を推測すると、後で並べ替えたときに黙って順序が狂う。
  */
-const STARTED_ON_RE = /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/;
 
 /** 入力を検証して、保存する形にする。 */
 export function parseBusinessUnit(input: {
@@ -77,23 +80,23 @@ export function parseBusinessUnit(input: {
 }): BusinessUnitResult {
   const name = (input.name ?? '').trim();
   if (name.length === 0) return { ok: false, reason: '事業名を入力してください。' };
-  if (name.length > BUSINESS_NAME_MAX) {
+  if (moreThanChars(name, BUSINESS_NAME_MAX)) {
     return { ok: false, reason: `事業名は ${BUSINESS_NAME_MAX} 文字までです。` };
   }
   if (hasControlChar(name)) return { ok: false, reason: '事業名に制御文字は使えません。' };
 
   const category = (input.category ?? '').trim();
-  if (category.length > BUSINESS_CATEGORY_MAX) {
+  if (moreThanChars(category, BUSINESS_CATEGORY_MAX)) {
     return { ok: false, reason: `区分は ${BUSINESS_CATEGORY_MAX} 文字までです。` };
   }
 
   const startedOn = (input.startedOn ?? '').trim();
-  if (startedOn.length > 0 && !STARTED_ON_RE.test(startedOn)) {
+  if (startedOn.length > 0 && !isCalendarDateOrMonth(startedOn)) {
     return { ok: false, reason: '開始時期は YYYY-MM か YYYY-MM-DD で入力してください。' };
   }
 
   const note = (input.note ?? '').trim();
-  if (note.length > BUSINESS_NOTE_MAX) {
+  if (moreThanChars(note, BUSINESS_NOTE_MAX)) {
     return { ok: false, reason: `メモは ${BUSINESS_NOTE_MAX} 文字までです。` };
   }
 
@@ -138,12 +141,13 @@ function parseAmounts(input: {
   for (const key of ['revenue', 'variableCost', 'fixedCost'] as const) {
     const raw = (input[key] ?? '').trim();
     if (raw.length === 0) continue;
-    // 桁区切りと全角数字は日常的に貼り付けられるので受ける。
-    const normalized = raw.replace(/,/g, '').replace(/[０-９]/g, (c) =>
-      String.fromCharCode(c.charCodeAt(0) - 0xfee0),
-    );
-    const value = Number(normalized);
-    if (!Number.isFinite(value)) {
+    // 読み取りはアプリで 1 つ (`shared/readNumeric.ts`)。桁区切りと全角数字は
+    // 日常的に貼り付けられるので受けるが、**位置**は見る —— ここだけ
+    // `Number(カンマを外した文字列)` で読んでいた 2026-09-06 までは、
+    // `1,5` が 15、`0x10` が 16、`1e3` が 1000 として通っていた
+    // (打った数と保存された数が黙って食い違う)。
+    const value = readNumeric(raw);
+    if (value === null) {
       return { ok: false, reason: `${AMOUNT_LABEL[key]}は数値で入力してください。` };
     }
     if (value < 0) {
@@ -171,10 +175,38 @@ export interface BusinessUnitRecord {
 }
 
 /**
+ * **保管した事業名を型から読む 1 つの口** (2026-09-24 · パス 442)。
+ *
+ * 宣言は `name: string` だが、`store.list()` は `cur.value as StoredRecord<T>` で
+ * 何も検めない (`recordShapeAudit.ts` の設計 —— 読みで落とすと壊れた行が
+ * UI から触れなくなる)。復元・古い版・別の道具が入れた行はその宣言を満たさない。
+ *
+ * ## 実測 (2026-09-24 · 直す前)
+ *
+ * | 読み手 | 非文字列を渡すと |
+ * | --- | --- |
+ * | `sortBusinessUnits` (2 行以上) | **5 形すべてで TypeError** (`localeCompare is not a function`) |
+ * | `financialUnitsFromBusinessUnits` → `<option>{u.label}</option>` | **物で「Objects are not valid as a React child」** |
+ * | `findBusinessName` | 宣言は `string | null` なのに**物や数をそのまま返す** |
+ *
+ * ★ **並べ替えが最も重い** —— `ManualDataSection` は `App.tsx` が
+ *   目録を持つ全画面に描くので、ここが投げると**その画面すべてが開けなくなる**
+ *   (法則 `escape-hatch-stays-open`: 開けない画面からその行は消せない)。
+ *   しかも `Array.prototype.sort` は**要素が 1 つなら比較関数を呼ばない**ので、
+ *   1 行だけ置く走査 (パス 441) からは**構造的に見えなかった**。
+ */
+export function businessUnitName({ name }: Pick<BusinessUnitInput, 'name'>): string {
+  return typeof name === 'string' ? name : '';
+}
+
+/**
  * 事業名を引く。消えた事業 / 指定なしは null。
  *
  * 「消えた事業に紐づく数値」を落とさないための入口でもある。呼び出し側は
  * null を「事業の指定なし」として出せばよく、数値そのものは残る。
+ *
+ * 見つかった行の名前は {@link businessUnitName} を通す —— 通さないと
+ * 返り値の宣言 (`string | null`) が保管値について偽になる (パス 442)。
  */
 export function findBusinessName(
   units: readonly BusinessUnitRecord[],
@@ -183,7 +215,7 @@ export function findBusinessName(
   // `businessId === undefined` の早期 return は要らない。id が undefined の
   // レコードは存在しないので `find` がそのまま見つからない側へ落ちる。
   const hit = units.find((u) => u.id === businessId);
-  return hit === undefined ? null : hit.data.name;
+  return hit === undefined ? null : businessUnitName(hit.data);
 }
 
 /**
@@ -209,7 +241,7 @@ export function sortBusinessUnits(
   // 利用者のロケールに従うのが正しい。ここだけ 'ja' を固定すると、
   // アプリの他の一覧と並びが食い違う（ひらがな・カタカナの順序は
   // 既定のロケールでも日本語の五十音順になる）。
-  undated.sort((a, b) => a.data.name.localeCompare(b.data.name));
+  undated.sort((a, b) => businessUnitName(a.data).localeCompare(businessUnitName(b.data)));
   return [...dated.map((d) => d.rec), ...undated];
 }
 
@@ -260,13 +292,16 @@ export function financialUnitsFromBusinessUnits(
   const out: BusinessFinancialUnit[] = [];
   for (const u of units) {
     const revenue = u.data.revenue;
-    if (typeof revenue !== 'number') continue;
-    const variableCost = typeof u.data.variableCost === 'number' ? u.data.variableCost : 0;
-    const fixedCost = typeof u.data.fixedCost === 'number' ? u.data.fixedCost : 0;
+    // 非有限は「入っていない」と同じ扱い。`typeof x === 'number'` は NaN と
+    // ±Infinity を通すので、ここを通ると `deriveBusinessFinancials` から
+    // 財務分析・法人税/消費税カードの全部へ ∞ が広がる (パス 98)。
+    if (typeof revenue !== 'number' || !Number.isFinite(revenue)) continue;
+    const variableCost = typeof u.data.variableCost === 'number' && Number.isFinite(u.data.variableCost) ? u.data.variableCost : 0;
+    const fixedCost = typeof u.data.fixedCost === 'number' && Number.isFinite(u.data.fixedCost) ? u.data.fixedCost : 0;
     const profit = revenue - variableCost - fixedCost;
     out.push({
       id: u.id,
-      label: u.data.name,
+      label: businessUnitName(u.data),
       current: { revenue, variableCost, fixedCost, profit, profitMargin: marginPct(revenue, profit) },
       history: [],
     });

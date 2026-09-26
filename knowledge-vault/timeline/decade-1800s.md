@@ -2,13 +2,14 @@
 title: "1800年代"
 type: timeline-decade
 decade: 1800
-entry_count: 2
+entry_count: 3
 tags:
   - timeline
 ---
 
-# 1800年代 — 2 件
+# 1800年代 — 3 件
 
+- [[year-1800|1800年]]（1件）
 - [[year-1803|1803年]]（2件）
 
 ## 関連

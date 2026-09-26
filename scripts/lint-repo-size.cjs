@@ -34,7 +34,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+const { gitLsFiles: sharedGitLsFiles } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const MB = 1024 * 1024;
@@ -57,16 +57,85 @@ const BUDGET = {
   warnPct: 85,
 };
 
-/** 追跡されている実ファイルの一覧 (パスとバイト数)。 */
+/**
+ * **落とす群** (`audit:gate-partial` が 1 つずつ一覧から消して、このゲートが鳴るかを見る)。
+ *
+ * ここは `reportGroupFloor` (群ごとの床) を呼ばない —— 下の `crossCheckProblem` が
+ * 「一覧が git 自身の答えと食い違う」を見るので、群が消える形はそこで必ず鳴る。
+ * **同じ事実を 2 つの機構で見ない** (弱くなっていない所に床を足さない · パス 469)。
+ *
+ * 宣言するのは「正当に 0 にはならない」群だけ (パス 467) —— 拡張子は宣言しない:
+ * 母集団が**追跡ファイル全部**なので、実測 (2026-09-25) で 50 以上の拡張子が在り、
+ * その多くは 1 件しか無い。1 件の `.ico` を改名した日に鳴る門を作ることになる。
+ */
+const REQUIRED_GROUPS = {
+  roots: ['src', 'scripts', 'docs', 'knowledge-vault'],
+};
+
+/** 追跡ファイルの一覧を git に訊く。使えなければ投げる (「0 件」と混ぜない)。 */
+/**
+ * 追跡ファイルの一覧。**実装は共有の 1 つ** (2026-09-25 · パス 471 で寄せた)。
+ * **投げる側のまま** —— このゲートの母集団そのものが git なので、読めないなら
+ * 答えられない (fail closed。パス 470 より前からの振る舞い)。
+ */
+function gitLsFiles(extraArgs) {
+  return sharedGitLsFiles(REPO_ROOT, extraArgs);
+}
+
+/*
+ * **権威に 2 度訊いて、食い違いを見る** (2026-09-25 · パス 470)。
+ *
+ * `MIN_TRACKED_FILES` (1000) は実測 9,084 の **11%** に在るので、一覧が
+ * *一部だけ* 死んでも素通りする。実測 (隔離した写しの上で `git ls-files` の出力を
+ * 間引く · `knowledge-vault/` に 12.40 MB の生成物を追跡させた木):
+ *
+ * ```
+ *   素の木                         → ❌ 2 件 (1 ファイル 12.40 MB 超過 / 合計 88.6 MB 超過)
+ *   一覧から knowledge-vault/ が落ちる
+ *                                  → ✅ exit 0 「追跡 1683 ファイル / 合計 47.1 MB」
+ *   一覧を 20% に間引く            → ✅ exit 0 「追跡 1820 ファイル / 合計 20.9 MB」
+ * ```
+ *
+ * ★ **向きが「安心させる」側である** —— 落ちた分は合計から引かれるので、この門は
+ * *より予算内に見える*。素の木は 95% で警告を出しているが、間引いた木では
+ * **その警告まで消える**。
+ *
+ * 母集団の定義は「追跡ファイル全部」なので、同じ権威 (git) に別の綴りで 2 度訊く:
+ * `git ls-files -z` と `git ls-files -z -- .` は同じ集合でなければならない (実測で
+ * 9,084 / 9,084 · byte 単位で同一)。これで**割合を問わず**narrow が捕まる ——
+ * 床のように「実測の N%」を決める必要が無い (実測に張り付けた床は直した日に落ちる門になる · パス 378)。
+ *
+ * **捕まらないのは**「両方の呼び出しを同時に narrow する編集」と「この検査を消す編集」で、
+ * そちらは `npm test` の外側の証人 (`trackedPopulationWitness.test.ts`) が見る。
+ */
+function crossCheckProblem(raw) {
+  let witness;
+  try {
+    witness = gitLsFiles(['--', '.']);
+  } catch {
+    return 'git に 2 度目を訊けませんでした (`git ls-files -- .`)。一覧が narrow されていないかを確かめられないので落とします。';
+  }
+  if (raw.length === witness.length) return null;
+  const have = new Set(raw);
+  const missing = witness.filter((f) => !have.has(f));
+  return (
+    `追跡ファイルの一覧が git 自身の答えと食い違います (${raw.length} 件 / git は ${witness.length} 件)`
+    + ' —— 走査が narrow されています。'
+    + (missing.length > 0 ? ` 一覧に無い例: ${missing.slice(0, 5).join(', ')}` : '')
+  );
+}
+
+/**
+ * 追跡されている実ファイルの一覧 (パスとバイト数) と、**濾す前の生の一覧**。
+ *
+ * 生の一覧を一緒に返すのは、権威との照合をそこで行うため —— 非ファイル
+ * (submodule / 切れたシンボリックリンク) を飛ばした後の件数は git の答えより
+ * 必ず少ないので、照合に使うと「いつも食い違う」ことになる。
+ */
 function trackedFiles() {
-  const out = execFileSync('git', ['ls-files', '-z'], {
-    cwd: REPO_ROOT,
-    encoding: 'utf8',
-    maxBuffer: 64 * MB,
-  });
+  const raw = gitLsFiles([]);
   const files = [];
-  for (const rel of out.split('\0')) {
-    if (rel.length === 0) continue;
+  for (const rel of raw) {
     // submodule やシンボリックリンク切れは stat が失敗するので飛ばす。
     let size;
     try {
@@ -78,7 +147,7 @@ function trackedFiles() {
     }
     files.push({ rel, size });
   }
-  return files;
+  return { files, raw };
 }
 
 /** 予算判定。純関数なのでテストから直接呼べる。 */
@@ -114,7 +183,7 @@ function evaluateSizes(files, budget) {
 }
 
 function main() {
-  const files = trackedFiles();
+  const { files, raw } = trackedFiles();
   const { problems, warnings, totalMb, fileCount } = evaluateSizes(files, BUDGET);
 
 /*
@@ -137,9 +206,14 @@ function main() {
     );
     return 1;
   }
+  const narrowed = crossCheckProblem(raw);
+  if (narrowed !== null) {
+    console.error(`❌ ${narrowed}`);
+    return 1;
+  }
   console.log(
     `追跡 ${fileCount} ファイル / 合計 ${totalMb.toFixed(1)} MB ` +
-      `(上限 ${BUDGET.totalMb} MB・1 ファイル ${BUDGET.perFileMb} MB)`,
+      `(上限 ${BUDGET.totalMb} MB・1 ファイル ${BUDGET.perFileMb} MB・git 自身の答えと一致)`,
   );
   for (const w of warnings) console.log(`⚠️  ${w}`);
 
@@ -229,7 +303,7 @@ function selfTest() {
    */
   let tracked;
   try {
-    tracked = trackedFiles();
+    tracked = trackedFiles().files;
   } catch {
     // git が無い / リポジトリ外 → 走査不能。空として扱い、下の床で落とす。
     tracked = [];
@@ -250,7 +324,7 @@ function selfTest() {
   return 0;
 }
 
-module.exports = { BUDGET, evaluateSizes, trackedFiles, selfTest, MB };
+module.exports = { BUDGET, evaluateSizes, trackedFiles, crossCheckProblem, selfTest, MB, REQUIRED_GROUPS };
 
 if (require.main === module) {
   process.exit(process.argv.includes('--self-test') ? selfTest() : main());

@@ -9,6 +9,7 @@
  *
  * 免責: 生成される書類は一般的テンプレートであり法的助言ではない。
  */
+import { invoiceTransitionScheduleLabel } from '../../shared/invoiceTransition';
 
 export interface DocField {
   readonly k: string;
@@ -17,9 +18,42 @@ export interface DocField {
   readonly def?: string;
   readonly options?: readonly string[]; // select
   readonly num?: boolean;
-  /** 空欄のまま交付すると書類として成立しない項目。事前チェックが警告する。 */
+  /**
+   * **交付前に埋める欄。** 未入力は交付前チェックが「⚠️ 要確認」として 1 件ずつ挙げる。
+   *
+   * **「無効」とは名乗らない。** 2026-09-23 (パス 436) までこの 1 文は
+   * 「空欄のまま交付すると書類として成立しない項目。事前チェックが警告する。」と
+   * 書いており、前半は `IssueLevel` の `fatal` の定義 (「その記載・数値のままでは
+   * 成立しない」) の逐語、後半は `warn` (「**成立はする**が実務上ほぼ確実に問題に
+   * なる」) の指定である —— **1 文の中で、同じ語を逆の向きに使っていた。**
+   * 実測 (2026-09-23 · 56 書面): 未入力の ＊ を `fatal` で出す書面は **0 件**で、
+   * ＊ を持つ 54 書面すべてが `warn` である。一貫した政策であって取りこぼしではない。
+   *
+   * **そして `warn` が正しい。この印は混ざった集合に付く。** 実測: `nda` の開示目的・
+   * `gyomu` の委託料・`chintai` の使用目的・`seiyaku` の提出日が空欄の書面は
+   * *不完全*であって**無効ではない** (目的が空欄の NDA も契約である)。法定事項が
+   * 欠ける書面 (`invoice` の登録番号 = 消費税法57条の4・労働条件通知書の法定事項)
+   * は確かに成立しないが、**同じ印がその両方に付く**ので、印の側で「無効」と名乗ると
+   * 大半の書面について偽になる —— しかも「有効な契約を無効と告げる」向きの偽である。
+   * 重大さは段階ではなく**指摘の文**が運ぶ (`RULES.invoice` の登録番号は形式違いでも
+   * `warn` だが、文が「受け取った側が仕入税額控除を受けられません」と結果を述べる)。
+   *
+   * 印の色・案内の文・この宣言が同じ段階を名乗ることは
+   * `pages/__tests__/docRequiredMarkSeverity.test.ts` が留める。
+   */
   readonly req?: true;
 }
+
+/**
+ * 見積書・注文書・注文請書・納品書の「品目N 税率区分」の選択肢。
+ *
+ * **適格請求書 (`i{N}kind`) の 8 択とは意図的に違う。** これらの書式には
+ * 任意税率 A / B の率を入れる欄 (`rateA` / `rateB`) が無いので、選べるようにすると
+ * **率 0% で黙って計算する**ことになる (画面には「任意税率A」と出るのに税額は 0)。
+ * 「（使わない）」も無い —— 行を落とすのは品目と金額が両方空のときで、
+ * 同じことを 2 通りで指示できるようにしない。
+ */
+const ITEM_TAX_KIND_OPTIONS = ['標準税率', '軽減税率', '免税（輸出取引等）', '非課税', '不課税（対象外）'] as const;
 
 /** 汎用の差込表（36協定・精算書・株主名簿など、定型の表を持つ書式で使う）。 */
 export interface DocTable {
@@ -28,8 +62,19 @@ export interface DocTable {
   readonly rows: readonly (readonly string[])[];
   /** 列の寄せ。省略時は全列 左寄せ。'r' は数値右寄せ (ds-num)。 */
   readonly align?: readonly ('l' | 'r')[];
-  /** 合計行。keys の各フィールド値を数値として合計し、最終列に円で表示する。 */
-  readonly sum?: { readonly label: string; readonly keys: readonly string[] };
+  /**
+   * 合計行。`keys` の各フィールド値を数値として合計し、最終列に円で表示する。
+   *
+   * `minus` を与えると **`sum(keys) − sum(minus)`** になる (2026-09-15)。
+   * 支払明細書の「差引支給額」のために足した —— これを手入力の欄にすると、
+   * 上の 2 表が合計している支給額・控除額と**印刷した式が成り立たなくなる**
+   * (パス 53 / 81 で 2 度直した形)。**差引は常に同じ欄から導く。**
+   */
+  readonly sum?: {
+    readonly label: string;
+    readonly keys: readonly string[];
+    readonly minus?: readonly string[];
+  };
 }
 
 /** 書類本文のブロック。text 系は {{k}} プレースホルダを含む。 */
@@ -279,10 +324,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'payterm', label: '支払条件', ph: '納品月の翌月末日 銀行振込' },
       { k: 'item1', req: true, label: '品目1', ph: 'Web サイト制作一式' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '500,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '保守（月額×3か月）' },
       { k: 'amount2', label: '金額2（税抜）', ph: '90,000', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '御　見　積　書' },
@@ -312,10 +360,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'date', req: true, label: '発注日', ph: '2026年7月19日' },
       { k: 'item1', req: true, label: '品目1（給付の内容）', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'due', label: '納期（給付を受領する期日）', ph: '2026年8月10日' },
       { k: 'place', label: '納入場所（受領場所）', ph: '当社本社／データ納品はメール' },
       { k: 'inspect', label: '検査完了期日', ph: '受領後10日以内' },
@@ -395,7 +446,7 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       '品目ごとに税率区分を選ぶと、同じ区分の品目が自動でまとめられ、区分ごとの小計・適用税率・消費税額が表に出ます。区分は 標準税率 / 軽減税率 / 任意税率A・B（0〜50% を自分で指定）/ 免税（輸出取引等）/ 非課税 / 不課税 の 7 つです。',
       '0% と非課税・不課税は消費税額が 0 になる点だけが同じで意味は異なります。免税（輸出取引等）は課税資産の譲渡等にあたるため税率0%の区分として記載し、非課税（土地の譲渡・貸付け等）と不課税（給与・寄附金等）は課税対象外として別に集計します。',
       '消費税額の端数処理は「一の適格請求書につき税率ごとに1回」で、明細行ごとに端数処理して積み上げる方式は認められません。方法（切捨て・切上げ・四捨五入）はフォームで選べます。行ごとに処理した場合との差額があるときは書面に注記されます。',
-      '免税事業者等からの課税仕入れの経過措置は令和8年度改正で見直され、控除割合は 2026年9月30日まで80% → 70%（〜2028年9月）→50%（〜2030年9月）→30%（〜2031年9月）と段階縮小します（判定は請求書の発行日ではなく課税仕入れの時期・同一先からの仕入れは年1億円まで）。',
+      `免税事業者等からの課税仕入れの経過措置は令和8年度改正で見直され、控除割合は ${invoiceTransitionScheduleLabel()} と段階縮小します（判定は請求書の発行日ではなく課税仕入れの時期・同一先からの仕入れは年1億円まで）。`,
       '発行したインボイスの写しと受領したインボイスは保存義務（電子取引データは電子帳簿保存法によりデータのまま保存）。',
     ],
   },
@@ -425,7 +476,8 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { stamp: true },
     ],
     note: [
-      '紙の領収書は受取金額5万円以上で収入印紙が必要（5万円以上100万円以下: 200円）。消費税額を区分記載していれば税抜金額で5万円判定できます。PDF・電子交付の領収書には印紙税は課されません（ただし後日あらためて紙の領収書を交付すると、その紙は課税対象）。',
+      '紙の領収書は受取金額5万円以上で収入印紙が必要です。印紙税額は記載金額の階級で決まり、200円（100万円以下）から20万円（10億円超）まで変わります——金額を入れると、下の交付前チェックがその金額の階級と印紙税額を出します。消費税額を区分記載していれば税抜金額で判定できます。PDF・電子交付の領収書には印紙税は課されません（ただし後日あらためて紙の領収書を交付すると、その紙は課税対象）。',
+      '階級表が当てはまるのは「売上代金に係る受取書」（第17号の1）です。貸付金の返済・保証金や敷金の返還など売上代金以外の受取書は第17号の2で、5万円以上なら金額にかかわらず一律200円です。',
       '「適格簡易請求書」（宛名省略可・税率か消費税額のいずれかで足りる）を交付できるのは小売業・飲食店業・タクシー業等の不特定多数向け事業に限られます。対象外の業種では、宛名と税率・消費税額を記載した通常の適格請求書の要件を満たす必要があります。',
     ],
   },
@@ -995,10 +1047,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'payterm', label: '支払条件', ph: '検収完了月の翌月末日 銀行振込' },
       { k: 'item1', req: true, label: '品目1', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '注　文　請　書' },
@@ -1037,10 +1092,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'place', label: '納入場所', ph: '御社 本社受付' },
       { k: 'item1', req: true, label: '品目1', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '納　品　書' },
@@ -1595,6 +1653,398 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
   },
 
   /* ---------------- 規程（追加） ---------------- */
+  /* ------------------------------------------------------------------ *
+   *  支払明細書 4 種 (2026-09-15)
+   *
+   *  賃金台帳 (`chingin-daicho`) の注記は 2026-08 から
+   *  「給与明細とは別物です。給与明細は労働者へ交付する通知 (所得税法231条等)、
+   *   賃金台帳は事業場に備え付ける帳簿です」と書いていたのに、
+   *  **交付する側の明細書が 1 つも無かった。**
+   *
+   *  従業員と役員で**別の書式にしてある**。同じ表に「役員も可」と書くと、
+   *  雇用保険料の欄が役員の明細に出る (役員は労働者ではないので原則かからない)・
+   *  勤怠の欄が出る (労働時間の概念が無い)・賞与の損金の要件 (事前確定届出給与) が
+   *  どこにも出ない —— **欄が余ることは、書いてよいと言っているのと同じ**である。
+   * ------------------------------------------------------------------ */
+  {
+    id: 'kyuyo-meisai',
+    icon: '🧾',
+    cat: '人事',
+    label: '給与支払明細書（従業員）',
+    kw: ['給与明細', '明細書', '支給', '控除', '差引支給額', '源泉', '社会保険'],
+    fields: [
+      { k: 'company', req: true, label: '会社名', ph: '株式会社サンプル' },
+      { k: 'companyAddr', label: '会社所在地', ph: '東京都千代田区丸の内1-1-1' },
+      { k: 'emp', req: true, label: '氏名', ph: '山田 太郎' },
+      { k: 'empNo', label: '社員番号', ph: 'E-0042' },
+      { k: 'dept', label: '所属', ph: '営業部' },
+      { k: 'period', req: true, label: '計算期間（賃金締切）', ph: '2026年8月1日〜2026年8月31日' },
+      { k: 'payDate', req: true, label: '支給日', ph: '2026年9月25日' },
+      { k: 'payMethod', label: '支払方法', ph: '本人名義口座への振込' },
+      { k: 'workDays', label: '出勤日数', ph: '21', num: true },
+      { k: 'absentDays', label: '欠勤日数', ph: '0', num: true },
+      { k: 'paidUsed', label: '有給取得日数', ph: '1', num: true },
+      { k: 'paidLeft', label: '有給残日数', ph: '13', num: true },
+      { k: 'otHours', label: '時間外労働時間', ph: '12.5', num: true },
+      { k: 'holidayHours', label: '休日労働時間', ph: '0', num: true },
+      { k: 'nightHours', label: '深夜労働時間', ph: '0', num: true },
+      { k: 'base', req: true, label: '基本給（円）', ph: '280000', num: true },
+      { k: 'postAllow', label: '役職手当（円）', ph: '20000', num: true },
+      { k: 'famAllow', label: '家族手当（円）', ph: '10000', num: true },
+      { k: 'houseAllow', label: '住宅手当（円）', ph: '15000', num: true },
+      { k: 'otPay', label: '時間外手当（円）', ph: '27000', num: true },
+      { k: 'holidayPay', label: '休日労働手当（円）', ph: '0', num: true },
+      { k: 'nightPay', label: '深夜労働手当（円）', ph: '0', num: true },
+      { k: 'commuteFree', label: '通勤手当（非課税分・円）', ph: '12000', num: true },
+      { k: 'commuteTax', label: '通勤手当（課税分・円）', ph: '0', num: true },
+      { k: 'otherPay', label: 'その他支給（円）', ph: '0', num: true },
+      { k: 'health', label: '健康保険料（円）', ph: '17800', num: true },
+      { k: 'care', label: '介護保険料（円）', ph: '0', num: true },
+      { k: 'pension', label: '厚生年金保険料（円）', ph: '33000', num: true },
+      { k: 'empIns', label: '雇用保険料（円）', ph: '2180', num: true },
+      { k: 'incomeTax', label: '所得税（源泉徴収・円）', ph: '7300', num: true },
+      { k: 'residentTax', label: '住民税（特別徴収・円）', ph: '14500', num: true },
+      { k: 'otherDed', label: 'その他控除（円）', ph: '0', num: true },
+      { k: 'dedBasis', label: 'その他控除の根拠', ph: '労働協約（社宅費用 / 親睦会費）' },
+    ],
+    body: [
+      { center: '給 与 支 払 明 細 書' },
+      { p: '{{company}}{{companyAddr}}' },
+      { p: '氏名: {{emp}}　社員番号: {{empNo}}　所属: {{dept}}' },
+      { p: '計算期間: {{period}}　支給日: {{payDate}}　支払方法: {{payMethod}}' },
+      { h: '勤怠' },
+      { table: {
+        head: ['項目', '日数・時間'],
+        align: ['l', 'r'],
+        rows: [
+          ['出勤日数', '{{workDays}} 日'],
+          ['欠勤日数', '{{absentDays}} 日'],
+          ['有給取得 / 残', '{{paidUsed}} 日 / {{paidLeft}} 日'],
+          ['時間外労働', '{{otHours}} 時間'],
+          ['休日労働', '{{holidayHours}} 時間'],
+          ['深夜労働', '{{nightHours}} 時間'],
+        ],
+      } },
+      { h: '支給' },
+      { table: {
+        head: ['支給項目', '金額'],
+        align: ['l', 'r'],
+        rows: [
+          ['基本給', '{{base}} 円'],
+          ['役職手当', '{{postAllow}} 円'],
+          ['家族手当', '{{famAllow}} 円'],
+          ['住宅手当', '{{houseAllow}} 円'],
+          ['時間外手当', '{{otPay}} 円'],
+          ['休日労働手当', '{{holidayPay}} 円'],
+          ['深夜労働手当', '{{nightPay}} 円'],
+          ['通勤手当（非課税）', '{{commuteFree}} 円'],
+          ['通勤手当（課税）', '{{commuteTax}} 円'],
+          ['その他支給', '{{otherPay}} 円'],
+        ],
+        sum: { label: '支給額合計', keys: ['base', 'postAllow', 'famAllow', 'houseAllow', 'otPay', 'holidayPay', 'nightPay', 'commuteFree', 'commuteTax', 'otherPay'] },
+      } },
+      { h: '控除' },
+      { table: {
+        head: ['控除項目', '金額'],
+        align: ['l', 'r'],
+        rows: [
+          ['健康保険料', '{{health}} 円'],
+          ['介護保険料', '{{care}} 円'],
+          ['厚生年金保険料', '{{pension}} 円'],
+          ['雇用保険料', '{{empIns}} 円'],
+          ['所得税（源泉徴収）', '{{incomeTax}} 円'],
+          ['住民税（特別徴収）', '{{residentTax}} 円'],
+          ['その他控除', '{{otherDed}} 円'],
+        ],
+        sum: { label: '控除額合計', keys: ['health', 'care', 'pension', 'empIns', 'incomeTax', 'residentTax', 'otherDed'] },
+      } },
+      { table: {
+        head: ['', '金額'],
+        align: ['l', 'r'],
+        rows: [],
+        sum: { label: '差引支給額（支給額合計 − 控除額合計）', keys: ['base', 'postAllow', 'famAllow', 'houseAllow', 'otPay', 'holidayPay', 'nightPay', 'commuteFree', 'commuteTax', 'otherPay'], minus: ['health', 'care', 'pension', 'empIns', 'incomeTax', 'residentTax', 'otherDed'] },
+      } },
+      { p: 'その他控除の根拠: {{dedBasis}}' },
+      { right: '{{company}}' },
+    ],
+    note: [
+      '給与等の支払をする者は、支払を受ける者に対し、支払明細書を交付しなければなりません（所得税法231条1項）。記載事項は支払金額・源泉徴収税額その他で、電磁的方法による提供も本人の承諾があれば認められます（同条2項、所得税法施行規則100条）。',
+      '社会保険料を賃金から控除したときは、控除額を被保険者へ通知しなければなりません（健康保険法167条3項、厚生年金保険法84条3項）。この明細書の控除欄がその通知を兼ねます。',
+      '賃金は全額を支払わなければならず（労働基準法24条1項）、法令に定めのある控除（社会保険料・所得税・住民税）以外を控除するには、労働協約または labour-management の書面協定が必要です。「その他控除」を使うときは根拠欄を埋めてください。',
+      '通勤手当は一定額まで非課税です（所得税法9条1項5号、所得税法施行令20条の2）。非課税分と課税分を分けて記載してください —— 混ぜると源泉徴収税額の計算根拠が追えなくなります。',
+      'この明細書は交付する通知であって、事業場に備え付ける賃金台帳（労働基準法108条）とは別の書類です。明細を綴じただけでは台帳の記載事項を満たさないことがあります。',
+      '金額はすべて入力値です。保険料率・税額表の当てはめはこの書式では行いません（料率は毎年度改定され、都道府県・等級・扶養人数で変わるため）。',
+    ],
+  },
+  {
+    id: 'shoyo-meisai',
+    icon: '🎁',
+    cat: '人事',
+    label: '賞与支払明細書（従業員）',
+    kw: ['賞与明細', 'ボーナス', '標準賞与額', '明細書', '一時金'],
+    fields: [
+      { k: 'company', req: true, label: '会社名', ph: '株式会社サンプル' },
+      { k: 'companyAddr', label: '会社所在地', ph: '東京都千代田区丸の内1-1-1' },
+      { k: 'emp', req: true, label: '氏名', ph: '山田 太郎' },
+      { k: 'empNo', label: '社員番号', ph: 'E-0042' },
+      { k: 'dept', label: '所属', ph: '営業部' },
+      { k: 'period', req: true, label: '算定対象期間', ph: '2026年4月1日〜2026年9月30日' },
+      { k: 'payDate', req: true, label: '支給日', ph: '2026年12月10日' },
+      { k: 'basis', label: '算定の考え方', ph: '基本給 2.0 か月分 × 人事評価係数（0.8〜1.2）' },
+      { k: 'bonus', req: true, label: '賞与額（円）', ph: '600000', num: true },
+      { k: 'otherPay', label: 'その他支給（円）', ph: '0', num: true },
+      { k: 'stdBonus', label: '標準賞与額（1,000円未満切捨て・円）', ph: '600000', num: true },
+      { k: 'stdBonusYtd', label: '当年度の標準賞与額累計（健保・円）', ph: '600000', num: true },
+      { k: 'health', label: '健康保険料（円）', ph: '29700', num: true },
+      { k: 'care', label: '介護保険料（円）', ph: '0', num: true },
+      { k: 'pension', label: '厚生年金保険料（円）', ph: '54900', num: true },
+      { k: 'empIns', label: '雇用保険料（円）', ph: '3600', num: true },
+      { k: 'incomeTax', label: '所得税（源泉徴収・円）', ph: '31000', num: true },
+      { k: 'otherDed', label: 'その他控除（円）', ph: '0', num: true },
+      { k: 'prevMonthPay', label: '前月の社会保険料控除後の給与額（円）', ph: '295000', num: true },
+      { k: 'dependents', label: '扶養親族等の数', ph: '1', num: true },
+    ],
+    body: [
+      { center: '賞 与 支 払 明 細 書' },
+      { p: '{{company}}{{companyAddr}}' },
+      { p: '氏名: {{emp}}　社員番号: {{empNo}}　所属: {{dept}}' },
+      { p: '算定対象期間: {{period}}　支給日: {{payDate}}' },
+      { p: '算定の考え方: {{basis}}' },
+      { h: '支給' },
+      { table: {
+        head: ['支給項目', '金額'],
+        align: ['l', 'r'],
+        rows: [
+          ['賞与', '{{bonus}} 円'],
+          ['その他支給', '{{otherPay}} 円'],
+        ],
+        sum: { label: '支給額合計', keys: ['bonus', 'otherPay'] },
+      } },
+      { h: '控除' },
+      { table: {
+        head: ['控除項目', '金額'],
+        align: ['l', 'r'],
+        rows: [
+          ['健康保険料', '{{health}} 円'],
+          ['介護保険料', '{{care}} 円'],
+          ['厚生年金保険料', '{{pension}} 円'],
+          ['雇用保険料', '{{empIns}} 円'],
+          ['所得税（源泉徴収）', '{{incomeTax}} 円'],
+          ['その他控除', '{{otherDed}} 円'],
+        ],
+        sum: { label: '控除額合計', keys: ['health', 'care', 'pension', 'empIns', 'incomeTax', 'otherDed'] },
+      } },
+      { table: {
+        head: ['', '金額'],
+        align: ['l', 'r'],
+        rows: [],
+        sum: {
+          label: '差引支給額（支給額合計 − 控除額合計）',
+          keys: ['bonus', 'otherPay'],
+          minus: ['health', 'care', 'pension', 'empIns', 'incomeTax', 'otherDed'],
+        },
+      } },
+      { h: '算定の根拠（社会保険・源泉徴収）' },
+      { table: {
+        head: ['項目', '値'],
+        align: ['l', 'r'],
+        rows: [
+          ['標準賞与額（1,000円未満切捨て）', '{{stdBonus}} 円'],
+          ['当年度の標準賞与額累計（健保）', '{{stdBonusYtd}} 円'],
+          ['前月の社会保険料控除後の給与額', '{{prevMonthPay}} 円'],
+          ['扶養親族等の数', '{{dependents}} 人'],
+        ],
+      } },
+      { right: '{{company}}' },
+    ],
+    note: [
+      '**住民税の欄はありません。** 住民税の特別徴収は 6 月から翌年 5 月までの給与から徴収する仕組みで、賞与からは徴収しません（地方税法321条の3以下、特別徴収税額の通知に基づく毎月の徴収）。賞与から住民税を引くと、年間の徴収額が通知額と合わなくなります。',
+      '賞与の社会保険料は「標準賞与額」（賞与額の1,000円未満を切り捨てた額）に保険料率を掛けて計算します。健康保険は年度（4月〜翌年3月）の累計 573 万円が上限、厚生年金は 1 回あたり 150 万円が上限です（健康保険法45条、厚生年金保険法24条の4）。上限を超える部分に保険料はかかりません。',
+      '賞与の源泉徴収税額は「賞与に対する源泉徴収税額の算出率の表」を使い、**前月の社会保険料控除後の給与額**と扶養親族等の数から税率を求めます（所得税法186条）。前月に給与がない場合・賞与が前月給与の10倍を超える場合は別の計算方法になります。算定の根拠として前月給与額と扶養人数を明細に残してください。',
+      '雇用保険料は賞与にもかかります（労働保険の保険料の徴収等に関する法律の賃金に該当）。健康保険・厚生年金と違い上限はなく、賞与額に料率を掛けます。',
+      '支払明細書の交付義務（所得税法231条1項）は賞与にも及びます。給与と同じ様式にまとめず、算定対象期間の分かる別紙にしてください。',
+      '金額はすべて入力値です。料率・税額表の当てはめはこの書式では行いません。',
+    ],
+  },
+  {
+    id: 'yakuin-hoshu-meisai',
+    icon: '👔',
+    cat: '人事',
+    label: '役員報酬支払明細書（役員）',
+    kw: ['役員報酬', '定期同額給与', '明細書', '取締役', '監査役', '損金'],
+    fields: [
+      { k: 'company', req: true, label: '会社名', ph: '株式会社サンプル' },
+      { k: 'companyAddr', label: '会社所在地', ph: '東京都千代田区丸の内1-1-1' },
+      { k: 'officer', req: true, label: '氏名', ph: '佐藤 一郎' },
+      { k: 'title', req: true, label: '役職', ph: '取締役' },
+      { k: 'period', req: true, label: '対象月', ph: '2026年8月分' },
+      { k: 'payDate', req: true, label: '支給日', ph: '2026年8月25日' },
+      { k: 'payMethod', label: '支払方法', ph: '本人名義口座への振込' },
+      { k: 'resolutionDate', label: '報酬決定の決議日', ph: '2026年6月26日（定時株主総会）' },
+      { k: 'resolutionAmount', label: '決議による月額（円）', ph: '800000', num: true },
+      { k: 'hoshu', req: true, label: '役員報酬（円）', ph: '800000', num: true },
+      { k: 'commuteFree', label: '通勤手当（非課税分・円）', ph: '0', num: true },
+      { k: 'commuteTax', label: '通勤手当（課税分・円）', ph: '0', num: true },
+      { k: 'otherPay', label: 'その他支給（円）', ph: '0', num: true },
+      { k: 'health', label: '健康保険料（円）', ph: '48800', num: true },
+      { k: 'care', label: '介護保険料（円）', ph: '8700', num: true },
+      { k: 'pension', label: '厚生年金保険料（円）', ph: '59475', num: true },
+      { k: 'incomeTax', label: '所得税（源泉徴収・円）', ph: '48000', num: true },
+      { k: 'residentTax', label: '住民税（特別徴収・円）', ph: '52000', num: true },
+      { k: 'otherDed', label: 'その他控除（円）', ph: '0', num: true },
+      { k: 'concurrent', label: '使用人兼務役員か', options: ['いいえ（役員のみ）', 'はい（使用人兼務役員）'], def: 'いいえ（役員のみ）' },
+    ],
+    body: [
+      { center: '役 員 報 酬 支 払 明 細 書' },
+      { p: '{{company}}{{companyAddr}}' },
+      { p: '氏名: {{officer}}　役職: {{title}}　使用人兼務: {{concurrent}}' },
+      { p: '対象月: {{period}}　支給日: {{payDate}}　支払方法: {{payMethod}}' },
+      { p: '報酬決定の決議: {{resolutionDate}}　決議による月額: {{resolutionAmount}} 円' },
+      { h: '支給' },
+      { table: {
+        head: ['支給項目', '金額'],
+        align: ['l', 'r'],
+        rows: [
+          ['役員報酬', '{{hoshu}} 円'],
+          ['通勤手当（非課税）', '{{commuteFree}} 円'],
+          ['通勤手当（課税）', '{{commuteTax}} 円'],
+          ['その他支給', '{{otherPay}} 円'],
+        ],
+        sum: { label: '支給額合計', keys: ['hoshu', 'commuteFree', 'commuteTax', 'otherPay'] },
+      } },
+      { h: '控除' },
+      { table: {
+        head: ['控除項目', '金額'],
+        align: ['l', 'r'],
+        rows: [
+          ['健康保険料', '{{health}} 円'],
+          ['介護保険料', '{{care}} 円'],
+          ['厚生年金保険料', '{{pension}} 円'],
+          ['所得税（源泉徴収）', '{{incomeTax}} 円'],
+          ['住民税（特別徴収）', '{{residentTax}} 円'],
+          ['その他控除', '{{otherDed}} 円'],
+        ],
+        sum: { label: '控除額合計', keys: ['health', 'care', 'pension', 'incomeTax', 'residentTax', 'otherDed'] },
+      } },
+      { table: {
+        head: ['', '金額'],
+        align: ['l', 'r'],
+        rows: [],
+        sum: {
+          label: '差引支給額（支給額合計 − 控除額合計）',
+          keys: ['hoshu', 'commuteFree', 'commuteTax', 'otherPay'],
+          minus: ['health', 'care', 'pension', 'incomeTax', 'residentTax', 'otherDed'],
+        },
+      } },
+      { right: '{{company}}' },
+    ],
+    note: [
+      '**雇用保険料の欄はありません。** 役員は労働者ではないため、雇用保険の被保険者になりません（労災保険も同様に対象外で、中小事業主等の特別加入を除きます）。使用人兼務役員は使用人としての部分について被保険者となり得るので、その場合は「使用人兼務役員」を選び、使用人分の給与と役員報酬を分けて別々の明細にしてください。',
+      '健康保険・厚生年金保険は**かかります**。法人の代表者・役員は法人に使用される者として被保険者になります（健康保険法3条1項、厚生年金保険法9条）。標準報酬月額の等級表は従業員と同じものを使います。',
+      '定期同額給与（法人税法34条1項1号）に当たる役員給与は損金になります。**事業年度の途中で増額・減額すると、原則として損金不算入**の部分が生じます（改定は原則として事業年度開始日から3か月以内の定時改定、または職制上の地位の変更・業績の著しい悪化による改定に限られます）。決議日と決議による月額を明細に残し、支給額との一致を確認してください。',
+      '役員報酬の額は定款または株主総会の決議で定めます（会社法361条1項）。決議の範囲を超える支給は会社法上の問題になります。',
+      '支払明細書の交付義務（所得税法231条1項）は役員報酬にも及びます。役員報酬は給与所得です。',
+      '**勤怠の欄はありません。** 役員には労働時間の概念がなく、時間外・休日・深夜の割増賃金（労働基準法37条）の対象にもなりません。時間外手当を役員に支給すると、定期同額給与から外れる（＝損金不算入）おそれがあります。',
+      '金額はすべて入力値です。料率・税額表の当てはめはこの書式では行いません。',
+    ],
+  },
+  {
+    id: 'yakuin-shoyo-meisai',
+    icon: '📜',
+    cat: '人事',
+    label: '役員賞与支払明細書（役員）',
+    kw: ['役員賞与', '事前確定届出給与', '明細書', '損金不算入', '取締役'],
+    fields: [
+      { k: 'company', req: true, label: '会社名', ph: '株式会社サンプル' },
+      { k: 'companyAddr', label: '会社所在地', ph: '東京都千代田区丸の内1-1-1' },
+      { k: 'officer', req: true, label: '氏名', ph: '佐藤 一郎' },
+      { k: 'title', req: true, label: '役職', ph: '取締役' },
+      { k: 'payDate', req: true, label: '実際の支給日', ph: '2026年12月10日' },
+      { k: 'kind', req: true, label: '損金算入の根拠', options: ['事前確定届出給与（法人税法34条1項2号）', '業績連動給与（同3号）', 'いずれにも当たらない（損金不算入）'], def: '事前確定届出給与（法人税法34条1項2号）' },
+      { k: 'resolutionDate', label: '支給を決議した日', ph: '2026年6月26日（定時株主総会）' },
+      { k: 'notifyDate', label: '事前確定届出給与の届出日', ph: '2026年7月31日' },
+      { k: 'notifiedDate', label: '届出した支給日', ph: '2026年12月10日' },
+      { k: 'notifiedAmount', label: '届出した支給額（円）', ph: '1200000', num: true },
+      { k: 'bonus', req: true, label: '実際の賞与額（円）', ph: '1200000', num: true },
+      { k: 'stdBonus', label: '標準賞与額（1,000円未満切捨て・円）', ph: '1200000', num: true },
+      { k: 'stdBonusYtd', label: '当年度の標準賞与額累計（健保・円）', ph: '1200000', num: true },
+      { k: 'health', label: '健康保険料（円）', ph: '59400', num: true },
+      { k: 'care', label: '介護保険料（円）', ph: '10800', num: true },
+      { k: 'pension', label: '厚生年金保険料（円）', ph: '137250', num: true },
+      { k: 'incomeTax', label: '所得税（源泉徴収・円）', ph: '246000', num: true },
+      { k: 'otherDed', label: 'その他控除（円）', ph: '0', num: true },
+      { k: 'prevMonthPay', label: '前月の社会保険料控除後の報酬額（円）', ph: '683025', num: true },
+      { k: 'dependents', label: '扶養親族等の数', ph: '2', num: true },
+    ],
+    body: [
+      { center: '役 員 賞 与 支 払 明 細 書' },
+      { p: '{{company}}{{companyAddr}}' },
+      { p: '氏名: {{officer}}　役職: {{title}}　実際の支給日: {{payDate}}' },
+      { h: '損金算入の要件' },
+      { table: {
+        head: ['項目', '内容'],
+        rows: [
+          ['根拠', '{{kind}}'],
+          ['支給を決議した日', '{{resolutionDate}}'],
+          ['届出日', '{{notifyDate}}'],
+          ['届出した支給日 / 実際の支給日', '{{notifiedDate}} / {{payDate}}'],
+          ['届出した支給額 / 実際の支給額', '{{notifiedAmount}} 円 / {{bonus}} 円'],
+        ],
+      } },
+      { h: '支給' },
+      { table: {
+        head: ['支給項目', '金額'],
+        align: ['l', 'r'],
+        rows: [['役員賞与', '{{bonus}} 円']],
+        sum: { label: '支給額合計', keys: ['bonus'] },
+      } },
+      { h: '控除' },
+      { table: {
+        head: ['控除項目', '金額'],
+        align: ['l', 'r'],
+        rows: [
+          ['健康保険料', '{{health}} 円'],
+          ['介護保険料', '{{care}} 円'],
+          ['厚生年金保険料', '{{pension}} 円'],
+          ['所得税（源泉徴収）', '{{incomeTax}} 円'],
+          ['その他控除', '{{otherDed}} 円'],
+        ],
+        sum: { label: '控除額合計', keys: ['health', 'care', 'pension', 'incomeTax', 'otherDed'] },
+      } },
+      { table: {
+        head: ['', '金額'],
+        align: ['l', 'r'],
+        rows: [],
+        sum: {
+          label: '差引支給額（支給額合計 − 控除額合計）',
+          keys: ['bonus'],
+          minus: ['health', 'care', 'pension', 'incomeTax', 'otherDed'],
+        },
+      } },
+      { h: '算定の根拠（社会保険・源泉徴収）' },
+      { table: {
+        head: ['項目', '値'],
+        align: ['l', 'r'],
+        rows: [
+          ['標準賞与額（1,000円未満切捨て）', '{{stdBonus}} 円'],
+          ['当年度の標準賞与額累計（健保）', '{{stdBonusYtd}} 円'],
+          ['前月の社会保険料控除後の報酬額', '{{prevMonthPay}} 円'],
+          ['扶養親族等の数', '{{dependents}} 人'],
+        ],
+      } },
+      { right: '{{company}}' },
+    ],
+    note: [
+      '**役員賞与は原則として損金になりません。** 損金にするには、事前確定届出給与（法人税法34条1項2号）として所定の期限までに届け出るか、業績連動給与（同3号）の要件を満たす必要があります。届出の期限は、株主総会等の決議日から1か月を経過する日または事業年度開始日から4か月を経過する日のいずれか早い日です（法人税法施行令69条4項）。',
+      '**届出どおりに支給しないと、原則として全額が損金不算入**になります（一部ではなく全額です）。支給日が1日ずれた・支給額を減らしたという場合も含まれるため、この明細は「届出した支給日・支給額」と「実際の支給日・支給額」を並べて残します。一致しないときは税理士に確認してください。',
+      '**雇用保険料の欄はありません。** 役員は労働者ではないため雇用保険の被保険者になりません。',
+      '**住民税の欄はありません。** 住民税の特別徴収は毎月の給与から徴収する仕組みで、賞与からは徴収しません。',
+      '健康保険・厚生年金保険は賞与にもかかります。標準賞与額（1,000円未満切捨て）に料率を掛け、健康保険は年度累計 573 万円、厚生年金は1回あたり 150 万円が上限です（健康保険法45条、厚生年金保険法24条の4）。役員賞与は金額が大きくなりやすく、上限に当たることが珍しくありません。',
+      '源泉徴収税額は「賞与に対する源泉徴収税額の算出率の表」により、前月の社会保険料控除後の報酬額と扶養親族等の数から求めます（所得税法186条）。',
+      '支払明細書の交付義務（所得税法231条1項）は役員賞与にも及びます。役員賞与は受け取る側では給与所得で、損金にならないのは支払う法人の側の扱いです（受け取る側で課税されない、という意味ではありません）。',
+      '金額はすべて入力値です。料率・税額表の当てはめと、届出の要件充足の判定はこの書式では行いません。',
+    ],
+  },
   {
     id: 'chingin',
     icon: '💰',
@@ -1907,9 +2357,9 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
     ],
     note: [
       '適格請求書（インボイス）の保存がない課税仕入れは、原則として仕入税額控除ができません。ただし、3万円未満の公共交通機関による旅客の運送（公共交通機関特例）、従業員等に支給する出張旅費・宿泊費・日当（出張旅費等特例）などは、一定の事項を記載した帳簿のみの保存で控除が認められます。',
-      '2023年10月から2029年9月までは、免税事業者等からの課税仕入れについて仕入税額相当額の一定割合（当初80%、以降50%）を控除できる経過措置があります。適用には区分経理と帳簿への記載が必要です。',
+      `免税事業者等からの課税仕入れは、仕入税額相当額の一定割合を控除できる経過措置の対象です（${invoiceTransitionScheduleLabel()}）。適用には区分経理と帳簿への記載が必要です。`,
       'メールや Web からダウンロードした領収書等は電子取引に当たり、電子帳簿保存法により電子データのまま保存する必要があります。紙で受領した領収書をスキャナ保存する場合は、解像度等の要件と検索機能の確保が必要です。',
-      '3万円以上の交際費・会議費については、参加者の氏名・人数・目的の記録を残してください。',
+      '飲食費を交際費等から除外する特例（社内飲食費を除き、1人当たり1万円以下。2024年4月1日以後の支出）の適用には、金額の大小にかかわらず、飲食等の年月日・参加した得意先等の氏名及び関係・参加人数・費用の金額と飲食店等の名称及び所在地を記載した書類の保存が必要です（租税特別措置法61条の4）。1人当たりの金額が基準額を超えると、その飲食費は全額が交際費等になります。',
     ],
   },
   {

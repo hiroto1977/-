@@ -1,8 +1,19 @@
 import {
+  ATLASSIAN_CREDS_MESSAGES,
   normalizeAtlassianSiteResult,
+  readAtlassianCredentials,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayField, objectRows } from '../../shared/apiResponse';
+import {
+  JIRA_ISSUE_PATH,
+  basicAuthorization,
+  checkJiraIssue,
+  jiraIssueInit,
+  parseCreatedJiraIssue,
+} from '../../shared/api/atlassian';
+import type { ActionData } from '../../shared/actionData';
 
 interface JiraProject {
   key: string;
@@ -26,68 +37,37 @@ interface AtlassianCreds {
   site: string;
 }
 
-/** Per-field hard caps. Atlassian's own limits are well below these
- *  (email ≤ 254 per RFC 5321; PAT ~192 chars; site host ≤ 253). The
- *  caps defend against local-FS tampering that swaps secrets.json
- *  for a payload with multi-MB strings → main process OOM on the
- *  basicAuth Buffer allocation. */
-const MAX_EMAIL = 254;
-const MAX_TOKEN = 1024;
-const MAX_SITE = 256;
 
 export function parseAtlassianToken(raw: string): AtlassianCreds {
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    throw new FetchError(
-      'Atlassian token は { "email": "...", "token": "...", "site": "https://x.atlassian.net" } 形式の JSON で保存してください',
-      0,
-      'atlassian',
-    );
-  }
-  const obj = parsed as Partial<AtlassianCreds>;
-  // Strict per-field validation. typeof checks reject objects /
-  // numbers / null / arrays smuggled into the JSON via local-disk
-  // tampering. Length caps prevent multi-MB strings from OOMing the
-  // basicAuth Buffer allocation.
-  if (
-    typeof obj.email !== 'string' || obj.email.length === 0 || obj.email.length > MAX_EMAIL ||
-    typeof obj.token !== 'string' || obj.token.length === 0 || obj.token.length > MAX_TOKEN ||
-    typeof obj.site !== 'string' || obj.site.length === 0 || obj.site.length > MAX_SITE
-  ) {
-    throw new FetchError(
-      'Atlassian token の email / token / site が欠けているか、形式が不正です',
-      0,
-      'atlassian',
-    );
-  }
-  // Defense in depth: header-injection chars in email would land in
-  // Basic-auth base64 input (where they're safe), but if email is ever
-  // surfaced in error messages or log lines a CRLF could break log
-  // parsers / inject lines.
-  if (/[\r\n\0]/.test(obj.email) || /[\r\n\0]/.test(obj.token)) {
-    throw new FetchError('Atlassian token に制御文字が含まれています', 0, 'atlassian');
-  }
-  // https:// と *.atlassian.net への絞り込みは `src/shared/atlassianSite.ts` に
-  // 1 つだけ持つ。plain http は Basic 認証ヘッダを平文で流し、`javascript:` や
-  // `file:` のような非 URL は後段で URL パーサを壊す。ホスト名を絞らないと、
-  // 書き換えられた secrets.json が email+token を任意の HTTPS 先へ向けられる。
-  //
-  // 以前はこの検証をここに書き写しており、shared 側の説明文が「同じ防御を
-  // 張っている」と書いていたが**同じではなかった**。ここは元の文字列から
-  // 末尾の `/` を落とすだけで、パス・クエリ・フラグメント・ポート・userinfo を
-  // 残していた。試した範囲で資格情報を外へ逃がす経路は作れなかったが
-  // (CR/LF は URL パーサが弾き、タブはホスト名を壊す)、
-  // `https://x.atlassian.net/wiki` を貼ると `/wiki/rest/api/3/search` を叩いて
-  // 404 になる、という壊れ方をしていた。
-  const site = normalizeAtlassianSiteResult(obj.site);
-  if (!site.ok) {
-    throw new FetchError(ATLASSIAN_SITE_MESSAGES[site.reason], 0, 'atlassian');
-  }
-  return { email: obj.email, token: obj.token, site: site.site };
+  /*
+   * 3 段の検査 (JSON → 3 欄と天井 → 制御文字) とその文面は
+   * `shared/atlassianSite.ts` に 1 つだけ置く (パス 284)。それまでは同じ 3 段が
+   * ブラウザ版 (`data/saasWriteWeb.ts`) にも在り、**文面が両方で違い**、
+   * しかも**両方が JSON リテラルの `null` で素の TypeError を投げていた**
+   * (`JSON.parse('null')` は成功して `null` を返すので、次の `typeof obj.email` が
+   * 落ちる。書くつもりだった断りは 1 度も出ない)。共有側の docblock に実測が在る。
+   */
+  const creds = readAtlassianCredentials(raw);
+  if (!creds.ok) throw new FetchError(ATLASSIAN_CREDS_MESSAGES[creds.reason], 0, 'atlassian');
+  // https:// と *.atlassian.net への絞り込みも `shared/atlassianSite.ts` が 1 つ持つ。
+  // plain http は Basic 認証ヘッダを平文で流し、`javascript:` や `file:` のような
+  // 非 URL は後段で URL パーサを壊す。ホスト名を絞らないと、書き換えられた
+  // secrets.json が email+token を任意の HTTPS 先へ向けられる。
+  const site = normalizeAtlassianSiteResult(creds.site);
+  if (!site.ok) throw new FetchError(ATLASSIAN_SITE_MESSAGES[site.reason], 0, 'atlassian');
+  return { email: creds.email, token: creds.token, site: site.site };
 }
 
+
+/*
+ * **site の文面は main 自身が持つ** (パス 284 で一度 shared へ寄せかけて戻した)。
+ * `atlassianSiteParity.test.ts` が「拒否の文言は呼び出し側ごとの言い回しを保つ」
+ * を留めており、その理由は**欄の呼び名が違う**こと —— main は保存 JSON の
+ * `token の site`、`shared/api/atlassian.ts` は引数の `baseUrl` と呼ぶ。
+ * 揃えるのは判定 (`normalizeAtlassianSiteResult`) であって文面ではない。
+ * 上の資格情報の 3 文を共有したのは、あちらに同じ理由が無いため
+ * (両ビルドとも同じ保存 JSON の同じ 3 欄を読み、呼び名も同じ)。
+ */
 const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
   'control-char': 'Atlassian token の site に制御文字が含まれています',
   'not-a-url': 'Atlassian token の site は URL として解釈可能な文字列にしてください',
@@ -95,14 +75,10 @@ const ATLASSIAN_SITE_MESSAGES: Record<AtlassianSiteFailure, string> = {
   'not-atlassian': 'Atlassian token の site は *.atlassian.net である必要があります',
 };
 
-function basicAuth(email: string, token: string): string {
-  return 'Basic ' + Buffer.from(`${email}:${token}`).toString('base64');
-}
-
 export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<AtlassianSnapshot> {
   const creds = parseAtlassianToken(ctx.token);
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'atlassian' };
-  const headers = { Authorization: basicAuth(creds.email, creds.token), Accept: 'application/json' };
+  const headers = { Authorization: basicAuthorization(creds.email, creds.token), Accept: 'application/json' };
 
   const url = new URL(`${creds.site}/rest/api/3/project/search?maxResults=50`);
   const projects = await jsonFetch<JiraProjectsResponse>(url.toString(), { headers }, fetchCtx);
@@ -121,74 +97,55 @@ export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<Atlassi
         scopes: ['basic-auth'],
       },
     ],
-    jiraProjects: (projects.values ?? []).map((p) => ({
-      key: p.key,
-      name: p.name,
-      projectTypeKey: p.projectTypeKey,
-      style: p.style,
+    jiraProjects: objectRows<JiraProject>(projects.values).map((p) => ({
+      /*
+       * **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+       *
+       * 実測 (直す前・実物の `fetchAtlassianSnapshot` に食わせる): この 4 欄に
+       * 200,000 字を入れると `AtlassianPage` の総文字数が **800,279 字**になった
+       * —— このパスで最大である。
+       *
+       * ★ **パス 409 / 413 / 414 が 3 度続けて「atlassian の一覧は振る舞いで
+       *   確かめていない」と残していた当の所** である。理由はどれも「資格情報の
+       *   関門に先に当たる」で、実際には `parseAtlassianToken` が要求するのは
+       *   `{email, token, site}` の JSON と **`https://` で始まる site** だけだった
+       *   —— 私の見本が `ex.atlassian.net` とスキーム無しで書かれていたために
+       *   3 パス続けて測れていなかった。**測れなかったのではなく、当てていなかった。**
+       */
+      key: displayField(p.key),
+      name: displayField(p.name),
+      projectTypeKey: displayField(p.projectTypeKey),
+      style: displayField(p.style),
     })),
   };
 }
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateJiraIssuePayload {
+/*
+ * 欄の判定・ADF・Basic 認証・要求・応答の読みは `shared/api/atlassian.ts` の 1 つで、
+ * ブラウザ版も同じ関数を通る (パス 321)。資格情報の解析 (`parseAtlassianToken`) は
+ * 上のとおり呼び手ごとに残す (断りの運び方と欄の呼び名が違う —— パス 284)。
+ */
+
+export interface CreateJiraIssuePayload {
   projectKey: string;
   summary: string;
   description?: string;
   issueType?: string; // default "Task"
 }
 
-interface JiraCreateIssueResponse {
-  id: string;
-  key: string;
-  self: string;
-}
-
 async function createJiraIssue(
   ctx: ActionContext,
-): Promise<{ key: string; url: string }> {
+): Promise<ActionData<'atlassian/create-issue'>> {
   const creds = parseAtlassianToken(ctx.token);
-  const { projectKey, summary, description, issueType } =
-    ctx.payload as unknown as CreateJiraIssuePayload;
-  if (!projectKey || !summary) throw new Error('projectKey and summary are required');
-
-  // Jira Cloud REST v3 wants Atlassian Document Format for description.
-  const descBody = description
-    ? {
-        type: 'doc',
-        version: 1,
-        content: [
-          {
-            type: 'paragraph',
-            content: [{ type: 'text', text: description }],
-          },
-        ],
-      }
-    : undefined;
-
-  const res = await jsonFetch<JiraCreateIssueResponse>(
-    `${creds.site}/rest/api/3/issue`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: basicAuth(creds.email, creds.token),
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        fields: {
-          project: { key: projectKey },
-          summary,
-          issuetype: { name: issueType ?? 'Task' },
-          ...(descBody ? { description: descBody } : {}),
-        },
-      }),
-    },
+  const issue = checkJiraIssue(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${creds.site}${JIRA_ISSUE_PATH}`,
+    jiraIssueInit(issue, creds),
     { fetch: ctx.fetch, serviceId: 'atlassian' },
   );
-
-  return { key: res.key, url: `${creds.site}/browse/${res.key}` };
+  return parseCreatedJiraIssue(res, creds.site);
 }
 
 export const ACTIONS: ActionMap = {

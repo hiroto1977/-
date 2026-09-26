@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
-const CARD = readFileSync(
-  path.join(REPO_ROOT, 'src/renderer/components/GoogleConnectCard.tsx'),
-  'utf8',
-);
+const CARD = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/components/GoogleConnectCard.tsx'));
 
 /*
  * **トークンの保存方法について画面が言うこと**を留める。
@@ -34,10 +33,39 @@ const CARD = readFileSync(
  * このリポジトリで何度も直している「同じ判断の N 実装」になる)。
  * 代わりに**条件つきで正しいことを書き、実際の状態は「設定」へ送る**。
  */
+/*
+ * **不在の主張には、実行される標本を添える** (2026-09-15 · パス 293)。
+ *
+ * 下の `not.toMatch` を非空にしているのは、上の docblock が引用している
+ * 2026-08-22 までの実物の一文である。**だが docblock は落ちない** ——
+ * 綴りを 1 字外した規則も、注記を読まなければ見分けられない。
+ * `dbSecurityPosture.test.ts` が 2026-08-25 の失敗から作った形
+ * (`OLD_WORDINGS` + 肯定の `it`) をここにも置く。
+ *
+ * 規則の綴りは**この定数 1 つ**に持たせ、不在の主張と標本が同じ物を読む
+ * (写しを 2 つ置くと離れて腐る)。
+ */
+const KEYCHAIN_ASSERTION = /トークンは\s*OS\s*キーチェーンに\s*暗号化保存されます/;
+/** 2026-08-22 まで実際にカードに在った一文 (この節の docblock が引用している物)。 */
+const OLD_KEYCHAIN_WORDING = 'トークンは OS キーチェーンに暗号化保存されます。';
+
 describe('トークン保存の説明が、環境によらず正しいこと', () => {
+  it('★ この規則が空でない (実際に在った一文に当たる)', () => {
+    expect(OLD_KEYCHAIN_WORDING, '規則が実物の文面に当たらない — 綴りを実物から取り直すこと').toMatch(
+      KEYCHAIN_ASSERTION,
+    );
+  });
+
+  it('★ 直したあとの文面には当たらない (過剰でない)', () => {
+    expect(CARD).toContain('base64 の難読化のみ');
+    expect('キーチェーンがあれば暗号化、無ければ base64 の難読化のみ。').not.toMatch(
+      KEYCHAIN_ASSERTION,
+    );
+  });
+
   it('「OS キーチェーンに暗号化保存されます」と断言していない', () => {
     // 条件を伴わない断言だけを禁じる。語そのものは正しい文にも出る。
-    expect(CARD).not.toMatch(/トークンは\s*OS\s*キーチェーンに\s*暗号化保存されます/);
+    expect(CARD).not.toMatch(KEYCHAIN_ASSERTION);
   });
 
   it('キーチェーンが無い環境では難読化のみ、と書いてある', () => {
@@ -61,7 +89,7 @@ describe('トークン保存の説明が、環境によらず正しいこと', (
  */
 describe('同じ断言が他の画面に無い', () => {
   function tsxFiles(dir: string, out: string[] = []): string[] {
-    for (const name of readdirSync(dir)) {
+    for (const name of readOriginalDir(dir)) {
       const p = path.join(dir, name);
       if (statSync(p).isDirectory()) {
         if (name !== '__tests__' && name !== 'node_modules') tsxFiles(p, out);
@@ -101,7 +129,7 @@ describe('同じ断言が他の画面に無い', () => {
   it('断言そのものが、どの画面にも 1 つも無い', () => {
     const offenders: string[] = [];
     for (const f of tsxFiles(path.join(REPO_ROOT, 'src/renderer'))) {
-      const text = readFileSync(f, 'utf8');
+      const text = readOriginalSource(f);
       const hits = text.match(UNCONDITIONAL);
       if (hits) offenders.push(`${path.relative(REPO_ROOT, f)} (${hits.length})`);
     }
@@ -139,10 +167,7 @@ describe('同じ断言が他の画面に無い', () => {
  * 「ブラウザ版は変更できる」という打ち消しが同居していることを要求する。
  */
 describe('Ollama 画面が、接続先について矛盾したことを言っていない', () => {
-  const PAGE = readFileSync(
-    path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'),
-    'utf8',
-  );
+  const PAGE = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'));
 
   it('接続先の入力欄がある (前提)', () => {
     expect(PAGE).toMatch(/aria-label="Ollama の接続先"/);
@@ -181,7 +206,7 @@ describe('Ollama 画面が、接続先について矛盾したことを言って
  * ここではその**台帳**を確かめる —— 定数を変えたら画面の表示も動くこと。
  */
 describe('Ollama 画面の数字が、実物の定数から出ている', () => {
-  const PAGE = readFileSync(path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'), 'utf8');
+  const PAGE = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'));
 
   /*
    * **ファイル単位で「どこかに書いてあるか」を見ない。**
@@ -193,10 +218,19 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
    *
    * 「定数を**使っている**」ことと「古い一文が**無い**」ことを直接見る。
    */
-  it('ブラウザ版の値を定数から描画している (import だけでなく JSX で使っている)', () => {
-    expect(PAGE).toMatch(/\{WEB_CHAT_TIMEOUT_MS \/ 1000\}/);
+  it('4 つの数をすべて定数から描画している (import だけでなく JSX で使っている)', () => {
     expect(PAGE).toMatch(/\{WEB_REQUEST_TIMEOUT_MS \/ 1000\}/);
-    expect(PAGE).toMatch(/\{WEB_MAX_RESPONSE_BYTES \/ \(1024 \* 1024\)\}/);
+    // 2026-09-23 (パス 424) から、**生成の締切は両ビルドで 1 つ** (shared) ——
+    // それまでデスクトップ版は疎通確認の 30 秒で生成を切っており、
+    // 画面はその 30 秒を**直書き**していた。
+    expect(PAGE).toMatch(/\{OLLAMA_CHAT_TIMEOUT_MS \/ 1000\}/);
+    expect(PAGE).toMatch(/\{DEFAULT_HTTP_TIMEOUT_MS \/ 1000\}/);
+    // 2026-09-20 (パス 336) から、応答の上限は両ビルドで 1 つ (shared)。
+    // それまで「デスクトップ版 10 MB」だけが**画面に直書き**されていた。
+    expect(PAGE).toMatch(/\{MAX_OLLAMA_RESPONSE_BYTES \/ \(1024 \* 1024\)\}/);
+    expect(PAGE).not.toMatch(/レスポンス 10 MB/);
+    // 標本 — この針は禁じたい字面に実際に当たる (綴り違いで黙る検査を作らない)。
+    expect('🔒 デスクトップ版はリクエスト 30 秒・レスポンス 10 MB、').toMatch(/レスポンス 10 MB/);
   });
 
   /*
@@ -213,23 +247,50 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
    * ブラウザ利用者に他版の数字を見せる状態に戻る。
    *
    * 誤りの本体は「**どの版の数字か言わずに数字を書いていること**」。
-   * だから「秒 / MB の字面がある塊は、デスクトップ版と名乗っていること」を見る。
-   * ブラウザ版の値は定数から描くので字面の数字にならない。
+   * だから最初は「秒 / MB の字面がある塊は、デスクトップ版と名乗っていること」を見た。
+   *
+   * ★ **その免除そのものが穴だった** (2026-09-23 · パス 424)。
+   *   名乗ることと**定数から出すこと**は別である —— 名乗った直書きは
+   *   実物が動いた日に黙ってずれる。実際、免除されていた 1 行
+   *   「🔒 デスクトップ版はリクエスト 30 秒、」の 30 秒は、
+   *   **疎通確認の予算が生成にも掛かっていた**実物の姿を刷っており、
+   *   ブラウザ版の同じ生成は 120 秒だった。
+   *
+   *   直書きが残っていた理由は構造的で、renderer は `src/main/` から
+   *   import できない (`lint:imports`)。だから定数を `shared` へ置いた
+   *   —— 応答の上限がパス 336 で辿ったのと同じ道である。
+   *
+   *   **今この欄に秒 / MB の裸の数は 1 つも無い** (実測 0 / 10 ブロック)。
+   *   だから免除ごと外す: 名乗っていても直書きは落とす。
    */
-  it('数字を書いている塊は、どの版の値か名乗っている', () => {
-    const code = PAGE.replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+  it('秒 / MB の数は 1 つも直書きしていない (名乗っても免除しない)', () => {
+    const code = stripComments(PAGE.replace(/\{\/\*[\s\S]*?\*\/\}/g, ''));
     const blocks = code.match(/<div>[\s\S]*?<\/div>/g) ?? [];
     expect(blocks.length, 'ブロックが取れていない — 検査が的を外している').toBeGreaterThan(3);
-    const unlabeled = blocks
-      .filter((b) => /\d+\s*(秒|MB|MiB)/.test(b) && !b.includes('デスクトップ版'))
+    const literal = blocks
+      .filter((b) => /\d+\s*(秒|MB|MiB)/.test(b))
       .map((b) => b.trim().replace(/\s+/g, ' ').slice(0, 70));
-    expect(unlabeled, 'どの版の数字か名乗らずに数字を書いています').toEqual([]);
+    expect(literal, '秒 / MB を直書きしています — 実物の定数から出すこと').toEqual([]);
+  });
+
+  /*
+   * **標本 —— この針は禁じたい形に実際に当たる。**
+   *
+   * 免除を外した以上、「デスクトップ版」と名乗る直書きも落ちなければ
+   * ならない。落とす側と落とさない側を 1 件ずつ当てる (綴りを変えただけで
+   * 黙る検査を作らない · パス 293 の規約)。
+   */
+  it('★ 針の標本 — 名乗った直書きも、定数から出した行も、正しく分かれる', () => {
+    const needle = /\d+\s*(秒|MB|MiB)/;
+    // 名乗っていても直書きなら鳴る (パス 424 まで素通りしていた当の形)。
+    expect(needle.test('<div>🔒 デスクトップ版はリクエスト 30 秒、</div>')).toBe(true);
+    expect(needle.test('<div>🔒 レスポンスは 10 MB で切り詰め</div>')).toBe(true);
+    // 定数から出した行は字面の数にならないので鳴らない。
+    expect(needle.test('<div>🔒 生成はどちらも {OLLAMA_CHAT_TIMEOUT_MS / 1000} 秒</div>')).toBe(false);
   });
 
   it('表示する正規表現が実物と一致している (長さ上限と大小無視を落としていない)', () => {
-    const shared = readFileSync(path.join(REPO_ROOT, 'src/shared/ollama.ts'), 'utf8');
+    const shared = readOriginalSource(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
     // **束ね方ではなく模様そのものを見る。** 以前は
     // `const MODEL_NAME_RE = …;` という**行の形**に一致させていたが、
     // モジュール定数を関数の中へ移した (静的変異体になって変異検査から
@@ -258,9 +319,9 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
  * 数字を 2 か所に持たないのが直し方。ここではそれを台帳として留める。
  */
 describe('パスワードの最小長が、画面と実装で 1 つになっている', () => {
-  const SETTINGS = readFileSync(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'), 'utf8');
-  const LOCK = readFileSync(path.join(REPO_ROOT, 'src/renderer/security/LockScreen.tsx'), 'utf8');
-  const VAULT = readFileSync(path.join(REPO_ROOT, 'src/renderer/security/vault.ts'), 'utf8');
+  const SETTINGS = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'));
+  const LOCK = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/security/LockScreen.tsx'));
+  const VAULT = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/security/vault.ts'));
 
   it('強制する側の定数が 1 つだけ在る', () => {
     expect(VAULT).toMatch(/export const MIN_PASSWORD_LENGTH = \d+;/);
@@ -285,11 +346,6 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
    *
    * コメントは落としてから見る —— 直した経緯を書いた注記に当ててしまうため。
    */
-  const stripComments = (t: string): string =>
-    t
-      .replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
 
   it.each([
     ['SettingsPage', () => SETTINGS],
@@ -304,8 +360,16 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
     expect(LOCK).toMatch(/MIN_PASSWORD_LENGTH/);
   });
 
-  it('事前検査も同じ定数で比べている (別の閾値を持たない)', () => {
-    expect(SETTINGS).toMatch(/newPw\.length < MIN_PASSWORD_LENGTH/);
+  it('事前検査は関門そのものを読む (定数だけ共有して式を書き直さない)', () => {
+    /*
+     * **2026-09-14 (パス 252) に要求を強めた。** それまでは
+     * `newPw.length < MIN_PASSWORD_LENGTH` という**式の写し**を要求していた ——
+     * 定数は 1 つでも**規則が 2 か所**に在る形で、実際その写しが
+     * `password.length` (コード単位) を数えており、`'😀'.repeat(6)` (実文字数 6) が
+     * 「12 文字以上」の関門を通っていた。式ごと `meetsPasswordPolicy` を読む。
+     */
+    expect(SETTINGS).toMatch(/meetsPasswordPolicy\(newPw\)/);
+    expect(SETTINGS, '長さの式を書き直している (関門を読むこと)').not.toMatch(/newPw\.length\s*[<>]/);
     expect(SETTINGS, '古い 8 文字の閾値が残っている').not.toMatch(/newPw\.length < 8\b/);
   });
 
@@ -337,7 +401,7 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
 const KEYCHAIN_CLAIM = /キーチェーン(に|由来の鍵で|の鍵で)[^。\n]*(暗号化|保存)/;
 
 describe('保存状態カードの文言は mechanism で分かれる', () => {
-  const PAGE = readFileSync('src/renderer/pages/SettingsPage.tsx', 'utf8');
+  const PAGE = readOriginalSource('src/renderer/pages/SettingsPage.tsx');
 
   it('キーチェーンの一文は mechanism を見た分岐の中にある', () => {
     const claim = KEYCHAIN_CLAIM;
@@ -356,7 +420,7 @@ describe('保存状態カードの文言は mechanism で分かれる', () => {
   });
 
   it('web-shim は webcrypto-vault と名乗る', () => {
-    const shim = readFileSync('src/renderer/web-shim.ts', 'utf8');
+    const shim = readOriginalSource('src/renderer/web-shim.ts');
     expect(shim).toMatch(/mechanism:\s*'webcrypto-vault'/);
   });
 });
@@ -375,17 +439,23 @@ describe('保存状態カードの文言は mechanism で分かれる', () => {
  * 「省いたときに何が起きるかが書いてあること」だけを留める。
  */
 describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
-  const SETTINGS = readFileSync(
-    path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'),
-    'utf8',
-  );
+  const SETTINGS = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'));
 
   it('入力欄がある (前提)', () => {
-    expect(SETTINGS).toMatch(/MAX_PROXY_SECRET_LENGTH/);
+    expect(SETTINGS).toMatch(/MAX_PROXY_SECRET_CHARS/);
+  });
+
+  /* 不在の主張の綴りを 1 つに持ち、標本と共有する (パス 293)。 */
+  const OPTIONAL_ONLY_LABEL = /共有秘密 \(任意・空欄可\)/;
+
+  it('★ この規則が空でない (「任意・空欄可」だけの旧ラベルに当たる)', () => {
+    expect('共有秘密 (任意・空欄可)').toMatch(OPTIONAL_ONLY_LABEL);
+    // 過剰でない: 危険を述べている今のラベルには当たらない。
+    expect('共有秘密 (空欄にすると誰でも中継できます)').not.toMatch(OPTIONAL_ONLY_LABEL);
   });
 
   it('「任意・空欄可」とだけ言って終わっていない', () => {
-    expect(SETTINGS).not.toMatch(/共有秘密 \(任意・空欄可\)/);
+    expect(SETTINGS).not.toMatch(OPTIONAL_ONLY_LABEL);
   });
 
   it('空欄にすると誰でも中継できる、と書いてある', () => {
@@ -422,7 +492,19 @@ describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
   it('「自前で」の一文だけで終わっていない', () => {
     const idx = SETTINGS.indexOf('自前で Cloudflare Worker');
     expect(idx, '前提の一文が消えた — 検査の綴りを実物から取り直すこと').toBeGreaterThan(0);
-    expect(SETTINGS.slice(idx, idx + 1400)).toMatch(/あなたが管理している Worker だけ/);
+    /*
+     * **固定長の窓を使わない** (2026-09-12 · パス 166)。
+     * ここは `slice(idx, idx + 1400)` だった。実測すると目標の一文は **+1009** ——
+     * **余裕は 391 文字**しかなく、この節に注記や欄を足せば越える。越えたとき
+     * 守っている性質は何も壊れていないのに**誤った理由で鳴る**
+     * (パス 165 で `browserSnapshotGates` の窓 4000 を 28 文字で踏み抜いた形)。
+     *
+     * 留めたいのは「前提の一文の**後ろに**、誰の Worker かを述べる一文が在る」——
+     * 距離ではなく**順序**なので、順序で書く。
+     */
+    const follow = SETTINGS.indexOf('あなたが管理している Worker だけ');
+    expect(follow, '誰の Worker かを述べる一文が消えた').toBeGreaterThan(0);
+    expect(follow, '前提の一文より後ろに在ること').toBeGreaterThan(idx);
   });
 
   it('設定済みの表示でも、秘密が無ければそう出す', () => {

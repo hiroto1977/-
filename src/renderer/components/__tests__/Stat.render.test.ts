@@ -2,8 +2,8 @@
  * Stat コンポーネントのレンダー回帰・props 分岐テスト。
  *
  * - label / value の表示
- * - positive=true → 緑 (#22c55e)
- * - positive=false → 赤 (#ef4444)
+ * - positive=true → 緑 (var(--success))
+ * - positive=false → 赤 (var(--danger))
  * - positive=undefined → color 無指定
  */
 import { describe, expect, it } from 'vitest';
@@ -40,20 +40,20 @@ describe('Stat — label / value 表示', () => {
 });
 
 describe('Stat — positive カラーリング', () => {
-  it('positive=true のとき緑 (#22c55e) を適用', () => {
+  it('positive=true のとき緑 (var(--success)) を適用', () => {
     const html = renderToStaticMarkup(
       createElement(Stat, { label: '損益', value: '+100', positive: true }),
     );
-    expect(html).toContain('#22c55e');
-    expect(html).not.toContain('#ef4444');
+    expect(html).toContain('var(--success)');
+    expect(html).not.toContain('var(--danger)');
   });
 
-  it('positive=false のとき赤 (#ef4444) を適用', () => {
+  it('positive=false のとき赤 (var(--danger)) を適用', () => {
     const html = renderToStaticMarkup(
       createElement(Stat, { label: '損益', value: '-100', positive: false }),
     );
-    expect(html).toContain('#ef4444');
-    expect(html).not.toContain('#22c55e');
+    expect(html).toContain('var(--danger)');
+    expect(html).not.toContain('var(--success)');
   });
 
   it('positive=undefined のとき color スタイル指定なし', () => {
@@ -61,8 +61,8 @@ describe('Stat — positive カラーリング', () => {
       createElement(Stat, { label: '売上', value: '¥1,000' }),
     );
     // インラインカラーが付かないことを確認。
-    expect(html).not.toContain('#22c55e');
-    expect(html).not.toContain('#ef4444');
+    expect(html).not.toContain('var(--success)');
+    expect(html).not.toContain('var(--danger)');
   });
 });
 

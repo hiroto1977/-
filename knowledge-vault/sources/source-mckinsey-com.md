@@ -2,7 +2,7 @@
 title: "mckinsey.com"
 type: source-domain
 host: "mckinsey.com"
-cite_count: 4
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # mckinsey.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **4 件**（リファレンス 2 ・ 学術 1 ・ メディア 1）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（メディア 2 ・ リファレンス 2 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
 - [[mgmt-customer-journey|カスタマージャーニー]] — Court,Elzinga,Mulder&Vetvik,"Theconsumerdecisionjourney,"McKinseyQuar…
 - [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — McKinsey&Company—EnduringIdeas:TheGE–McKinseynine-boxmatrix
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — Rumelt,R.(2011).ThePerilsofBadStrategy.McKinseyQuarterly,Issue1,pp.30…
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — McKinsey&Company—EnduringIdeas:Thethreehorizonsofgrowth
 - [[mgmt-value-proposition|バリュープロポジション]] — McKinsey—Deliveringvaluetocustomers（価値提供システム／バリュープロポジションの起源）
 

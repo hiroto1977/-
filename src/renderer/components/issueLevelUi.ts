@@ -28,3 +28,30 @@ export function borderColorFor(counts: { readonly fatal: number; readonly warn: 
   if (counts.warn > 0) return LEVEL_COLOR.warn;
   return 'var(--border)';
 }
+
+/**
+ * **指摘が指した入力欄の枠線。** 段階が無ければ `fallback` をそのまま返す。
+ *
+ * 印の付け方を 1 か所にする —— 2026-09-23 (パス 434) まで、この式は
+ * `DocstudioPage` の宣言された欄の描画の中に**だけ**在り、株主名簿の可変行
+ * (`s1name` …) は `flagged` を 1 度も読まなかった。実測 (空の株主名簿):
+ *
+ * ```
+ *   ⚠️ 「会社名」が未入力です        → 枠が付く
+ *   ⚠️ 「基準日」が未入力です        → 枠が付く
+ *   ⚠️ 「発行済株式の総数」が未入力です → 枠が付く
+ *   ⚠️ 「作成者」が未入力です        → 枠が付く
+ *   ⛔ 株主が 1 名も記載されていません (会社法121条) → **付かない**
+ * ```
+ *
+ * **印が出なかったのは唯一の `fatal` である。** 交付前チェックは自分の目的を
+ * 「書いた本人が気づきにくい失敗だけを挙げます」と述べているのに、いちばん重い
+ * 1 件だけが画面のどこも指していなかった。
+ *
+ * `fallback` を呼ぶ側が渡すのは、印の無いときの見た目が描画ごとに違うため ——
+ * 宣言された欄は `var(--border)`、可変行は stylesheet の既定 (`var(--border-strong)`)
+ * を明示する。ここで既定を 1 つに決めると、印の無い欄の見た目が黙って変わる。
+ */
+export function fieldBorder(level: IssueLevel | undefined, fallback: string): string {
+  return level === undefined ? fallback : `1px solid ${LEVEL_COLOR[level]}`;
+}

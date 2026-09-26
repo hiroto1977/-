@@ -2,7 +2,7 @@
 title: "ウィリアム・プロッサー"
 type: thinker
 person_key: "プロッサー|ウ"
-concept_count: 13
+concept_count: 14
 tags:
   - person
   - index
@@ -10,14 +10,15 @@ tags:
 
 # ウィリアム・プロッサー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **13 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **14 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（13件）
+## 学術概念（14件）
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 動産侵奪（conversion、コンバージョン）は、英米不法行為法において、動産（personalproperty/c…
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 統一商事法典（UCC）第2-314条は、商人たる売主による物品売買契約に商品性の黙示保証が自動的に付随すると規定する。
 - [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 過失（negligence）は、英米不法行為法の中核をなす類型で、合理的で慎重な人（reasonableperson）…
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 法定過失（negligenceperse）は、被告が法律・規則・条例に違反した事実それ自体が不法行為法上の注意義務違反…
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — ニューサンス（nuisance、生活妨害）は、英米不法行為法において、土地の使用と収益（useandenjoyment…
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 過失法における「義務」と「近因」の範囲確定を巡る代表判例。
 - [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 製造物責任（productliability）は、製造物の欠陥により消費者・第三者に損害が生じた場合に製造者に課せられ…
 - [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 製造物責任法（ProductLiabilityLaw）は、欠陥のある製品により消費者に生じた損害について、製造者・販売…
 - [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 製造物責任（ProductLiability）とは，製品の欠陥に起因する損害について製造者等に賠償責任を課す法理であり…

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalDir, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /**
  * **素の `fetch` が入ってこられる口の台帳。**
@@ -77,12 +79,12 @@ const BARE_FETCH = /(\?\?\s*fetch\b|[:=]\s*fetch\b(?!\s*\())/;
 
 /** コメントを落としてから判定する (説明文の中の `?? fetch` で鳴らさない)。 */
 export function bindsBareFetch(source: string): boolean {
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const code = stripComments(source);
   return BARE_FETCH.test(code);
 }
 
 function walk(dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) {
       if (name !== '__tests__' && name !== '__snapshots__') walk(p, out);
@@ -94,7 +96,7 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 function scanSrc(): string[] {
-  return walk('src').filter((f) => bindsBareFetch(readFileSync(f, 'utf8')));
+  return walk('src').filter((f) => bindsBareFetch(readOriginalSource(f)));
 }
 
 describe('素の fetch を束ねている場所の台帳', () => {
@@ -104,7 +106,7 @@ describe('素の fetch を束ねている場所の台帳', () => {
 
   it('台帳の各項に、守りの在りかが実際に書いてある', () => {
     for (const [file, { guard, why }] of Object.entries(LEDGER)) {
-      const src = readFileSync(file, 'utf8');
+      const src = readOriginalSource(file);
       expect(guard.test(src), `${file}: ${why}`).toBe(true);
     }
   });

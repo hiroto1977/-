@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: 営業秘密 — 不正競争防止法と情報保護の解説](https://ja.wikipedia.org/wiki/%E5%96%B6%E6%A5%AD%E7%A7%98%E5%AF%86) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — 同じ思想家
 - [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同じ思想家
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 同じ思想家
 - [[bizlaw-antimonopoly|独占禁止法]] — 同分野の近傍

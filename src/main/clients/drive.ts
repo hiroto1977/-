@@ -1,4 +1,8 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayDateOf } from '../../shared/isoDate';
+import { displayField, objectRows } from '../../shared/apiResponse';
+import { DRIVE_CREATE_FOLDER_PATH, GOOGLE_DRIVE_API, checkDriveFolder, driveFolderInit, parseCreatedDriveFolder } from '../../shared/api/google';
+import type { ActionData } from '../../shared/actionData';
 
 interface DriveFile {
   id: string;
@@ -17,7 +21,8 @@ export interface DriveSnapshot {
     id: string;
     title: string;
     mimeType: string;
-    modifiedTime: string;
+  /** 更新日 (`YYYY-MM-DD`・利用者の時計)。**読めなければ `null`** (パス 410)。 */
+    modifiedTime: string | null;
     viewUrl: string;
   }[];
 }
@@ -35,11 +40,18 @@ export async function fetchDriveSnapshot(ctx: FetchContext): Promise<DriveSnapsh
   const data = await jsonFetch<DriveListResponse>(url, { headers }, fetchCtx);
 
   return {
-    files: (data.files ?? []).map((f) => ({
-      id: f.id,
-      title: f.name,
-      mimeType: f.mimeType,
-      modifiedTime: f.modifiedTime.slice(0, 10),
+    files: objectRows<DriveFile>(data.files).map((f) => ({
+      id: displayField(f.id),
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): ファイル名と MIME 型に 200,000 字を入れると
+      // `DrivePage` の総文字数が **400,909 字**になった (MIME 型は
+      // `TYPE_LABEL` に無ければ**そのまま**画面の meta 行へ出る)。
+      title: displayField(f.name),
+      mimeType: displayField(f.mimeType),
+      // **日付として読めるかで決める** (2026-09-22 · パス 410)。パス 409 は投げない
+      // ようにしただけで `slice(0, 10)` を据え置いていた —— 読み手は 1 つ
+      // (`displayDateOf`) で、読めなければ `null` を返して画面が理由を言う。
+      modifiedTime: displayDateOf(f.modifiedTime),
       viewUrl: f.webViewLink ?? `https://drive.google.com/file/d/${f.id}/view`,
     })),
   };
@@ -47,45 +59,26 @@ export async function fetchDriveSnapshot(ctx: FetchContext): Promise<DriveSnapsh
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateFolderPayload {
+/**
+ * `create-folder` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkDriveFolder` (`DriveFolderFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreateFolderPayload {
   name: string;
   parentId?: string; // omitted → "My Drive" root
 }
 
-interface DriveCreateFileResponse {
-  id: string;
-  name: string;
-  webViewLink?: string;
-}
-
 async function createFolder(
   ctx: ActionContext,
-): Promise<{ id: string; name: string; url: string }> {
-  const { name, parentId } = ctx.payload as unknown as CreateFolderPayload;
-  if (!name) throw new Error('name is required');
-
-  const res = await jsonFetch<DriveCreateFileResponse>(
-    'https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        mimeType: 'application/vnd.google-apps.folder',
-        ...(parentId ? { parents: [parentId] } : {}),
-      }),
-    },
+): Promise<ActionData<'drive/create-folder'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/google.ts の 1 つ (ブラウザ版も同じ関数 · 2026-09-18)。
+  const folder = checkDriveFolder(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GOOGLE_DRIVE_API}${DRIVE_CREATE_FOLDER_PATH}`,
+    driveFolderInit(folder, ctx.token),
     { fetch: ctx.fetch, serviceId: 'drive' },
   );
-
-  return {
-    id: res.id,
-    name: res.name,
-    url: res.webViewLink ?? `https://drive.google.com/drive/folders/${res.id}`,
-  };
+  return parseCreatedDriveFolder(res);
 }
 
 export const ACTIONS: ActionMap = {

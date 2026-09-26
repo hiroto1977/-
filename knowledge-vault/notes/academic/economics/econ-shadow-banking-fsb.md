@@ -3,8 +3,8 @@ collection: academic
 id: econ-shadow-banking-fsb
 category: "economics"
 category_ja: "経済学"
-title: "シャドーバンキング（金融安定理事会定義）"
-as_of: "2026-06-26"
+title: "シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること"
+as_of: "2026-09"
 source_count: 4
 authoritative: true
 tags:
@@ -12,28 +12,33 @@ tags:
   - academic/economics
   - knowledge/verified
 aliases:
-  - "シャドーバンキング（金融安定理事会定義）"
+  - "シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること"
 ---
 
-# シャドーバンキング（金融安定理事会定義）
+# シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-26 ・ 出典: 4件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-09 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-シャドーバンキング（shadow banking）は、金融安定理事会（FSB）が2011年以来定義・監視する「銀行システム外で信用仲介（credit intermediation）を行う実体と活動の総体」であり、マネー・マーケット・ファンド・証券化ビークル（SIV/SPV）・レポ市場・ヘッジファンド・証券貸借などが含まれる。ポスナー（2013）はシャドーバンキングが正規銀行の規制コストを迂回して流動性変換・信用リスク移転・満期変換を行う点で伝統的銀行と機能的に同一である一方、預金保険・中央銀行のLLR機能から切り離されるため取り付け（run）に脆弱であることを論じた。2007〜2009年の金融危機では、MMFのブレーキング・ザ・バック、レポ市場の流動性収縮、ABS/CDO市場の凍結がシャドーバンキングの連鎖的崩壊として現れ、FSBは年次グローバル・モニタリング報告（GMR）で規模（2022年：約63兆ドル）を継続的に集計している。G20委託により策定されたポリシー・フレームワークは、経済機能別（EF1〜EF5）分類と比例的規制を柱とする。
+シャドーバンキング（shadow banking）とは、伝統的な銀行規制の枠外で信用仲介を行う金融機関・取引・市場の総体で、マネー・マーケット・ファンド（MMF）、証券化ビークル、資産担保コマーシャルペーパー、レポ市場、ヘッジファンドなどを含む。ポール・マカリーの造語で、ゾルタン・ポズサー、トビアス・エイドリアン、アダム・アシュクラフト、ヘイリー・ボスキーは2010年のニューヨーク連銀スタッフレポートで、その全体像を初めて体系的に地図化し、正規銀行と同様に満期変換・流動性変換・信用リスク移転を行いながら預金保険や中央銀行の最後の貸し手機能から切り離されているため取り付けに脆弱であることを示した。ゲイリー・ゴートンとアンドリュー・メトリック（2012）は2007〜09年の危機をレポ市場における取り付けとして分析し、伝統的な銀行取り付けと構造的に同型であることを示した。危機ではMMFの元本割れ、レポ市場の流動性収縮、ABS／CDO市場の凍結が連鎖的崩壊として現れた。金融安定理事会（FSB）は2011年以降「銀行システム外の信用仲介」として定義・監視し、経済機能別（EF1〜EF5）の分類と比例的規制を柱とする政策枠組みを策定して年次のグローバル・モニタリング報告で規模を集計し、近年は「ノンバンク金融仲介」へ呼称を改めた。マクロプルーデンス規制の理論的基盤となっている。批判として、定義が広すぎて健全な市場型金融まで含むこと、規制を強めるほど仲介がさらに外側へ移る規制裁定が繰り返されることがある。中小企業には、リース・ファクタリング・ノンバンク融資・決済アプリの残高など銀行外の資金調達と資金保管が預金保険の外にあり、危機時に真っ先に細る経路であることが含意となる。
 
 ## 提唱者・初出
-ポール・マカリー ／ ゾルタン・ポズサール ／ アンドレアス・バックス ／ ゲーリー・ゴートン
+ゾルタン・ポズサー＆トビアス・エイドリアン＆アダム・アシュクラフト＆ヘイリー・ボスキー（2010 NY 連銀）／ゲイリー・ゴートン＆アンドリュー・メトリック（2012 レポの取り付け）／ポール・マカリー（造語）／金融安定理事会（2011〜 監視枠組み）
 
 ## 出典
-- [FSB (2023) Global Monitoring Report on Non-Bank Financial Intermediation 2023 — Financial Stability Board（年次グローバル監視報告）](https://www.fsb.org/2023/12/global-monitoring-report-on-non-bank-financial-intermediation-2023/) `公的`
-- [Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics, 104(3), 425–451（レポ市場取り付けの実証）](https://doi.org/10.1016/j.jfineco.2011.03.016) `学術`
-- [Pozsar, Z. et al. (2013) Shadow Banking — Federal Reserve Bank of New York Staff Reports No. 458（体系的整理）](https://doi.org/10.1093/rfs/hhs100) `学術`
-- [Wikipedia: Shadow banking system — definition, components, FSB framework, 2008 crisis role](https://en.wikipedia.org/wiki/Shadow_banking_system) `リファレンス`
+- [Pozsar, Z., Adrian, T., Ashcraft, A. & Boesky, H. (2010) Shadow Banking — Federal Reserve Bank of New York Staff Report No. 458](https://www.newyorkfed.org/research/staff_reports/sr458) `公的`
+- [Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics 104(3)](https://doi.org/10.1016/j.jfineco.2011.03.016) `学術`
+- [Financial Stability Board (2023) Global Monitoring Report on Non-Bank Financial Intermediation 2023](https://www.fsb.org/2023/12/global-monitoring-report-on-non-bank-financial-intermediation-2023/) `公的`
+- [Wikipedia: Shadow banking system — 定義、構成要素、FSB の枠組み、2008 年危機での役割](https://en.wikipedia.org/wiki/Shadow_banking_system) `リファレンス`
 
 ## 関連概念
-- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 語彙が近い
+- [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — 出典を共有
+- [[econ-leverage-cycle|レバレッジ・サイクル]] — 出典を共有
+- [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
+- [[eh-2007|2007年（平成19年）]] — 出典を共有
+- [[eh-2014|2014年（平成26年）]] — 出典を共有
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同分野の近傍
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 同分野の近傍
 
 ## 関連

@@ -32,12 +32,12 @@ Edward L. Deci ／ Richard M. Ryan ／ Marylène Gagné
 - [Britannica — Self-determination theory](https://www.britannica.com/science/self-determination-theory) `リファレンス`
 
 ## 関連概念
+- [[human-self-determination|自己決定理論（SDT）]] — 語彙が近い
 - [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 同じ思想家
 - [[mgmt-cognitive-evaluation-theory|認知的評価理論]] — 同じ思想家
 - [[infosoc-fomo|FOMO（取り残されることへの恐れ）]] — 出典を共有
-- [[human-self-determination|自己決定理論（SDT）]] — 出典を共有
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同分野の近傍
-- [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]] — 同分野の近傍
+- [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — 同分野の近傍
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同分野の近傍
 
 ## 関連

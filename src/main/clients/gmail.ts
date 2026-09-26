@@ -1,5 +1,8 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayField, objectRows } from '../../shared/apiResponse';
 import { localIsoDate } from '../../shared/localDate';
+import { GMAIL_API, GMAIL_DRAFTS_PATH, checkGmailDraft, gmailDraftInit, parseCreatedDraft } from '../../shared/api/google';
+import type { ActionData } from '../../shared/actionData';
 
 interface GmailListResponse {
   messages?: { id: string; threadId: string }[];
@@ -17,9 +20,28 @@ export interface GmailSnapshot {
 }
 
 function headerValue(message: GmailMessage, name: string): string {
-  const headers = message.payload?.headers ?? [];
+  /*
+   * **`?? []` は配列であることも要素が物であることも保証しない** (2026-09-22 · パス 412)。
+   *
+   * 実測 (直す前・実物の `fetchGmailSnapshot` に食わせる) —— **3 形とも投げ、
+   * Gmail の取得が丸ごと失敗した**:
+   *
+   * | 相手の応答 | 直す前 |
+   * | --- | --- |
+   * | `payload.headers` が文字列 | `headers.find is not a function` |
+   * | 要素が `null` | `Cannot read properties of null (reading 'name')` |
+   * | `h.name` が数 | `h.name.toLowerCase is not a function` |
+   *
+   * パス 409 は gmail の**一覧**を `objectRows` へ通したが、**ここは通っていなかった** ——
+   * その census の針が `(… ?? []).map(` を 1 行で探す形だったので、
+   * **変数へ入れてから使う形が母集団に入っていなかった**。
+   */
   const target = name.toLowerCase();
-  return headers.find((h) => h.name.toLowerCase() === target)?.value ?? '';
+  for (const h of objectRows<{ name?: unknown; value?: unknown }>(message.payload?.headers)) {
+    if (typeof h.name !== 'string' || h.name.toLowerCase() !== target) continue;
+    return typeof h.value === 'string' ? h.value : '';
+  }
+  return '';
 }
 
 export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapshot> {
@@ -32,7 +54,7 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
     fetchCtx,
   );
 
-  const ids = (list.messages ?? []).map((m) => m.id);
+  const ids = objectRows<{ id: string }>(list.messages).map((m) => m.id);
   const messages = await Promise.all(
     ids.map((id) =>
       jsonFetch<GmailMessage>(
@@ -48,9 +70,13 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
       // 受信日は利用者の時計で (UTC の日付だと日本の朝の受信が前日に見える)。
       const date = localIsoDate(new Date(Number(m.internalDate)));
       return {
-        id: m.threadId,
-        sender: headerValue(m, 'From'),
-        subject: headerValue(m, 'Subject') || '(件名なし)',
+        // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+        // 実測 (直す前): 差出人と件名に 200,000 字を入れると `GmailPage` の
+        // 総文字数が **401,170 字**になった。差出人は**メールを送れる誰でも**
+        // 決められる欄である。
+        id: displayField(m.threadId),
+        sender: displayField(headerValue(m, 'From')),
+        subject: displayField(headerValue(m, 'Subject')) || '(件名なし)',
         date,
       };
     }),
@@ -59,81 +85,29 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateDraftPayload {
+/*
+ * 下書きの組み立て (欄の判定・RFC 2822・base64url・要求・応答の読み) は
+ * `shared/api/google.ts` の 1 つで、ブラウザ版も同じ関数を通る (パス 321)。
+ * それまでここに在った `base64url` / `isSafeHeaderValue` / `buildRfc2822` は
+ * shared へ移した —— 検査 (`gmail.test.ts` / `property.test.ts`) と
+ * `shopify.ts` が読むので名前はここからも出す。
+ */
+export { buildRfc2822, isSafeHeaderValue } from '../../shared/rfc2822';
+
+export interface CreateDraftPayload {
   to: string;
   subject: string;
   body?: string;
 }
 
-interface GmailCreateDraftResponse {
-  id: string;
-  message: { id: string; threadId: string };
-}
-
-// Encode a UTF-8 string to base64url (Gmail's raw message format).
-// Stryker disable Regex
-function base64url(input: string): string {
-  // Node 22's Buffer.from silently falls back to utf8 when the encoding
-  // string is unknown, so 'utf8' → '' is an equivalent mutant for the
-  // bytes our callers pass (always already valid UTF-8).
-  // Stryker disable next-line StringLiteral
-  return Buffer.from(input, 'utf8')
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-}
-// Stryker restore Regex
-
-/** Reject CR/LF/NUL in a value that will be concatenated into an
- *  RFC 2822 header line. Without this, a `to` like
- *  `"victim@example.com\r\nBcc: attacker@evil.com"` would smuggle a
- *  Bcc header into the encoded draft. Subject is base64-encoded so
- *  it's safe by construction; only raw-concatenated fields need this. */
-export function isSafeHeaderValue(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
-  return !/[\r\n\0]/.test(value);
-}
-
-/** Build an RFC 2822 message with UTF-8 encoded subject. */
-export function buildRfc2822(to: string, subject: string, body: string): string {
-  if (!isSafeHeaderValue(to)) {
-    throw new Error('to contains a CR/LF/NUL character');
-  }
-  // Same equivalent-mutant note as base64url above: Node 22 treats
-  // unknown encodings as utf8 for our inputs.
-  // Stryker disable next-line StringLiteral
-  const utf8Subject = `=?UTF-8?B?${Buffer.from(subject, 'utf8').toString('base64')}?=`;
-  return [
-    `To: ${to}`,
-    `Subject: ${utf8Subject}`,
-    'Content-Type: text/plain; charset="UTF-8"',
-    'MIME-Version: 1.0',
-    '',
-    body,
-  ].join('\r\n');
-}
-
-async function createDraft(ctx: ActionContext): Promise<{ id: string; messageId: string }> {
-  const { to, subject, body } = ctx.payload as unknown as CreateDraftPayload;
-  if (!to || !subject) throw new Error('to and subject are required');
-
-  const raw = base64url(buildRfc2822(to, subject, body ?? ''));
-
-  const res = await jsonFetch<GmailCreateDraftResponse>(
-    'https://gmail.googleapis.com/gmail/v1/users/me/drafts',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message: { raw } }),
-    },
+async function createDraft(ctx: ActionContext): Promise<ActionData<'gmail/create-draft'>> {
+  const draft = checkGmailDraft(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GMAIL_API}${GMAIL_DRAFTS_PATH}`,
+    gmailDraftInit(draft, ctx.token),
     { fetch: ctx.fetch, serviceId: 'gmail' },
   );
-
-  return { id: res.id, messageId: res.message.id };
+  return parseCreatedDraft(res);
 }
 
 export const ACTIONS: ActionMap = {

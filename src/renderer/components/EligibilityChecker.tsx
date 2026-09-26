@@ -16,6 +16,7 @@
  */
 
 import { useMemo, useState, type ReactElement } from 'react';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
 import {
   judgeEligibility,
   parseNumericInput,
@@ -26,7 +27,7 @@ import {
 } from '../data/eligibility';
 
 const VERDICT_STYLE: Readonly<Record<Verdict, { label: string; color: string }>> = {
-  eligible: { label: '要件を満たす', color: '#3ec98a' },
+  eligible: { label: '要件を満たす', color: 'var(--success)' },
   needsCheck: { label: '入力が足りない', color: '#f5a623' },
   ineligible: { label: '対象外', color: '#e0568a' },
 };
@@ -53,6 +54,23 @@ function triToBool(v: string): boolean | null {
 
 function Card({ j }: { j: ProgramJudgement }): ReactElement {
   const s = VERDICT_STYLE[j.verdict];
+  /*
+   * **属性に入れるのは関門を通した文字列だけ** (パス 298)。
+   *
+   * ここは長らく台帳の生の値を `href` 属性へ渡し、`onClick` の
+   * `preventDefault()` + `openExternal` に頼っていた。`openExternal` は
+   * 両ビルドとも `externalUrlOrNull` を通すが、**属性そのものは関門を
+   * 通らない** —— React の `onClick` は `click` にしか着かないので、
+   * 中クリック (`auxclick`)・右クリックの「新しいタブで開く」
+   * 「リンクをコピー」・リンクのドラッグは `preventDefault` を 1 度も
+   * 呼ばず、素の属性が使われる。「調べた物」と「使われる物」が別になる形で、
+   * パス 291 (端点の前置き一致)・パス 295 / 296 (ヘッダ値) と同じ家系。
+   *
+   * 規準は手の届く所に在った —— `DataList` は同じ「payload 由来の URL」を
+   * `<button onClick={openExternal}>` で開き、属性を持たない。
+   * 母集団と両方向の規則は `shared/__tests__/followableUrlCensus.test.ts`。
+   */
+  const safeSourceUrl = externalUrlOrNull(j.sourceUrl);
   return (
     <li
       style={{
@@ -84,22 +102,28 @@ function Card({ j }: { j: ProgramJudgement }): ReactElement {
           </ul>
         </div>
       )}
-      <a
-        href={j.sourceUrl}
-        onClick={(e) => {
-          e.preventDefault();
-          void window.serviceHub?.openExternal(j.sourceUrl);
-        }}
-        style={{
-          display: 'inline-block',
-          marginTop: 6,
-          fontSize: 11,
-          color: 'var(--text-mute)',
-          textDecoration: 'underline',
-        }}
-      >
-        出典を開く（{j.authority}）
-      </a>
+      {safeSourceUrl === null ? (
+        <div style={{ marginTop: 6, fontSize: 11, color: 'var(--warning)' }}>
+          ⚠ 出典を開けません（{j.authority}）— 台帳の URL が http(s) ではありません
+        </div>
+      ) : (
+        <a
+          href={safeSourceUrl}
+          onClick={(e) => {
+            e.preventDefault();
+            void window.serviceHub?.openExternal(safeSourceUrl);
+          }}
+          style={{
+            display: 'inline-block',
+            marginTop: 6,
+            fontSize: 11,
+            color: 'var(--text-mute)',
+            textDecoration: 'underline',
+          }}
+        >
+          出典を開く（{j.authority}）
+        </a>
+      )}
     </li>
   );
 }

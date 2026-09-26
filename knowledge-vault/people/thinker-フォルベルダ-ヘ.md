@@ -2,7 +2,7 @@
 title: "ヘンク・フォルベルダ"
 type: thinker
 person_key: "フォルベルダ|ヘ"
-concept_count: 2
+concept_count: 3
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # ヘンク・フォルベルダ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（2件）
+## 学術概念（3件）
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 吸収能力（absorptivecapacity）は、ウェズリー・コーエンとダニエル・レヴィンソールが1990年の論文（…
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 戦略的柔軟性（strategicflexibility）は、フォルベルダ（1996,1998）が体系化した、組織が環境…
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 戦略的刷新（strategicrenewal）とは、ヘンク・フォルベルダらが提唱した概念で、既存ビジネスモデルや競争優…
 

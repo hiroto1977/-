@@ -28,6 +28,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -295,19 +296,17 @@ const FORBIDDEN_PATTERNS = [
      * 無検査で、payload は `action:invoke` 経由で renderer から届く。つまり
      * `"a@b.example\r\nBcc: attacker@evil.example"` で下書きに Bcc が載った。
      *
-     * 正典は 2 つだけ (プロセス境界で renderer が main を import できないため):
-     *   src/main/clients/gmail.ts        buildRfc2822
-     *   src/renderer/data/saasWriteWeb.ts buildRfc2822
-     * どちらも `isSafeHeaderValue` を先に通す。3 つ目を作らせない。
+     * 正典は 1 つ: src/shared/rfc2822.ts の buildRfc2822 (`isSafeHeaderValue` を先に通す)。
+     * 2026-09-19 (パス 321) までは main と renderer に 1 つずつ在り (renderer は
+     * main を import できないため)、パリティ検査が同じ答えを返すことで守っていた。
+     * shared は両方が読めるので 1 つに畳んだ。2 つ目を作らせない。
      */
     name: 'hand-rolled RFC 2822 header line',
     pattern: /`(?:To|Cc|Bcc|From|Reply-To|Return-Path|Subject):\s*\$\{/,
     rationale:
-      'メールヘッダの手組み — buildRfc2822 (main: clients/gmail.ts / renderer:'
-      + ' data/saasWriteWeb.ts) を使ってください。写すと CR/LF 検査が落ちます'
-      + ' (不変条件 #11)',
-    allowFile: (rel) =>
-      rel === 'src/main/clients/gmail.ts' || rel === 'src/renderer/data/saasWriteWeb.ts',
+      'メールヘッダの手組み — buildRfc2822 (src/shared/rfc2822.ts) を使ってください。'
+      + '写すと CR/LF 検査が落ちます (不変条件 #11)',
+    allowFile: (rel) => rel === 'src/shared/rfc2822.ts',
   },
   {
     name: 'new Function',
@@ -378,6 +377,9 @@ const FORBIDDEN_PATTERNS = [
         // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、
         // 走るのは UTC の CI。TS の helper を .cjs から import できない。
         'scripts/orchestrate.cjs',
+        // 週次の依存監査の実行日の刻印。走るのは UTC の CI (毎週日曜 22:00 UTC) で、
+        // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。同上の import 制約。
+        'scripts/dependency-audit-report.cjs',
       ].includes(rel),
   },
   {
@@ -439,6 +441,40 @@ const FORBIDDEN_PATTERNS = [
     name: '.innerHTML / .outerHTML / insertAdjacentHTML',
     pattern: /\.(?:inner|outer)HTML\s*=|\.insertAdjacentHTML\s*\(/,
     rationale: 'DOM XSS sink — banned in renderer; React rendering only',
+  },
+  {
+    /*
+     * **同じ HTML パーサへの、上の規則が知らない別名 3 つ + 1。** (2026-09-15 · パス 270)
+     *
+     * 上の規則は 2026-08-22 に `.innerHTML` から `.outerHTML` /
+     * `.insertAdjacentHTML` へ広げられている —— 「別名で抜けられる」と
+     * 分かっていたからである。**その別名の一覧が、その日の DOM で止まっていた。**
+     *
+     * 止まっている間に増えた綴り (どれも文字列を HTML パーサへ流す = 同じ sink):
+     *
+     *   `el.setHTMLUnsafe(s)`              Element / ShadowRoot (2024 年に出荷。
+     *                                      **名前が Unsafe と言っている**)
+     *   `Document.parseHTMLUnsafe(s)`      静的メソッド版
+     *   `range.createContextualFragment(s)` Range —— 古くから在る XSS sink だが、
+     *                                      2026-08-22 の一覧に入っていなかった
+     *   `iframe.srcdoc = s`                 文書ごと差し込む (属性でも JSX でも)
+     *
+     * **実在は 0 件** (src/ を走査して実測)。だから今日の欠陥ではない ——
+     * 直しているのは**網の目の大きさ**である。パス 269 で、同期の綴りしか
+     * 見ていない網が「無いこと」の主張を 1 件空にしていたのと同じ形:
+     * **網の目は、網そのものと同じくらい確かめる必要がある。**
+     *
+     * `DOMParser().parseFromString(s, 'text/html')` は**入れていない** ——
+     * 切り離された文書へ解析するだけで、危険になるのは採り込んだ時である。
+     * 同じ class だと言うには弱いので、言わない (実在も 0 件)。
+     */
+    name: 'setHTMLUnsafe / parseHTMLUnsafe / createContextualFragment / srcdoc',
+    pattern: /\.setHTMLUnsafe\s*\(|\bparseHTMLUnsafe\s*\(|\.createContextualFragment\s*\(|\bsrcdoc\s*=/,
+    codeOnly: true,
+    rationale:
+      '上の規則と同じ DOM XSS sink の別名 (invariant #9)。' +
+      'React の描画だけを使うこと — 文字列から DOM を作る必要が本当に出たら、' +
+      'この台帳に理由つきで例外を登録する',
   },
   {
     // `writeln` も同じ sink。`write` だけを見ていると別名で抜けられる。
@@ -579,8 +615,16 @@ const FORBIDDEN_PATTERNS = [
     // そのまま残る。2026-08-21 の実測では、閉じ引用符が切り口の外側に
     // 落ちる位置で 60 文字のトークンが**全部**残った (断片ではない)。
     // 正しい順序は shared/redact.ts の `redactForMessage` が 1 つだけ持つ。
+    //
+    // **切り方の綴りは 2 つある** (2026-09-13 · パス 196)。パス 196 で
+    // `redactForMessage` の内側を `input.slice(…)` から
+    // `clampToCeiling(input, …)` (文字境界で切る) に替えたところ、
+    // この規則が**その行を見なくなった** —— 意味は同じ「切ってから伏せる」
+    // なのに、綴りが変わったので当たらない。台帳の例外が「効いていない」と
+    // 鳴ったので気付けた (パス 25 の無言 pragma と同じ形を、自分で作りかけた)。
+    // 規則は**切る意味**を追う: `.slice(` と `clampToCeiling(` の両方を見る。
     name: 'redactSecrets(x.slice(…)) — 切ってから伏せている',
-    pattern: /redactSecrets\s*\(\s*[^)]*\.slice\s*\(/,
+    pattern: /redactSecrets\s*\(\s*[^)]*(?:\.slice\s*\(|clampToCeiling\s*\()/,
     allowFile: (rel) => !rel.startsWith('src/') || rel === 'src/shared/redact.ts',
     codeOnly: true,
     rationale:
@@ -655,8 +699,8 @@ const FORBIDDEN_PATTERNS = [
     // and the two modules that *define* the deny-list: the Ollama client
     // (ALLOWED_ENDPOINTS) and src/shared/ollama.ts (OLLAMA_READ_PATHS —
     // the allowlist both processes share). Both enumerate these paths in
-    // order to refuse them, and UNPATCHED_OOB_NOTICE must name them for the
-    // user-facing warning to mean anything. Listed as exact paths, not a
+    // order to refuse them, and the advisory ledger notice (advisoryLedgerNotice /
+    // OLLAMA_ADVISORIES) must name them for the user-facing warning to mean anything. Listed as exact paths, not a
     // prefix, so a new file under src/shared/ is still checked.
     allowFile: (rel) =>
       rel === 'src/main/clients/ollama.ts' ||
@@ -725,6 +769,28 @@ const FORBIDDEN_PATTERNS = [
       + ' 値を変えたいなら表を直すこと (差し替え可能にする変更は、資格情報の宛先を'
       + ' 外部に委ねる変更と同義)',
   },
+  /*
+   * 秘密を prompt で受けない (2026-09-09 · パス 131)。
+   *
+   * ブラウザの prompt は入力を**平文で映す** (マスクが無い) ので、合言葉・トークンの
+   * 入口には使えない。加えて Electron の renderer は prompt を実装しない
+   * (null を返し console に "prompt() is and will not be supported" と出す) ——
+   * つまりデスクトップ版ではその道が必ず「入力されなかった」に落ちる。
+   * 復元の合言葉が 2026-09-09 までこの形だった (`components/BackupPanel.tsx` ——
+   * 隣にマスクされた欄が在るのに、空なら prompt で訊いていた)。受けるなら
+   * `type="password"` の欄で。`prompt` の直後に `(` が続く形だけを当てる
+   * (性質名 `prompt:` / 変数 `prompt` / `buildPrompt(` は当てない)。
+   */
+  {
+    name: 'prompt() で入力を受ける (平文で映る・Electron は未実装)',
+    pattern: /\b(?:window|globalThis|self)\.prompt\(|(?<![\w.$])prompt\(/,
+    codeOnly: true,
+    rationale:
+      'prompt() はマスクの無い平文の入力で、合言葉やトークンを受ける口にできない。'
+      + ' Electron の renderer は prompt() を実装しておらず null を返すので、'
+      + ' デスクトップ版ではその経路が必ず失敗する。type="password" の欄で受けること'
+      + ' (components/BackupPanel.tsx の合言葉欄がその形)',
+  },
 ];
 
 /**
@@ -734,9 +800,8 @@ const FORBIDDEN_PATTERNS = [
  * ソースの散文で説明できるようにすることだけで、コメントの中の呼び出しは
  * 実行されないので、緩めても見逃しにはならない。
  */
-function isCommentLine(line) {
-  const t = line.trim();
-  return t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
+function hitsCodeOnly(fp, line) {
+  return fp.pattern.test(fp.codeOnly === true ? stripComments(line) : line);
 }
 
 /**
@@ -775,12 +840,88 @@ const KNOWN_SUPPRESSIONS = [
   // 直した結果、これまで素通りしていた import 形が全部当たるようになり、
   // scripts/ 側で例外が効く場所が可視化された (2026-08-23)。
   'child_process exec/spawn :: scripts/check-import-boundaries.cjs :: 2',
+  // 2026-09-20 (パス 342): `src` の外の網の口の母集団を **git に聞く**
+  // (`git ls-files --cached --others --exclude-standard`)。無視の規則を書き写すと
+  // `dist/` / `dist-electron/` の生成物を拾って母集団が走るたびに変わるし、
+  // 未追跡のファイルを落とすと「手元では緑・CI では赤」になる (パス 341 の実績)。
+  // 引数は固定でシェルを経由しない (`execFileSync`)。2 件は require と呼び出し。
+  'child_process exec/spawn :: scripts/lint-network-targets.cjs :: 2 (code 1)',
+  // 報告の「生存」を 1 件ずつ原文へ当てて `vitest related` を走らせる定期点検の道具
+  // (パス 356)。**検査を実際に走らせずには成り立たない** —— 目的は
+  // 「その書き換えで本当に誰も鳴らないか」を測ることそのものである。
+  // 引数は固定でシェルを経由しない (`execFileSync` に配列で渡す)。1 件は呼び出し。
+  'child_process exec/spawn :: scripts/verify-survivors.cjs :: 1',
   // 実物のデスクトップアプリを起動する道具。`electron .` を子プロセスで
   // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
   // 確かめるのが目的なので、プロセスを作らずには成り立たない。
   'child_process exec/spawn :: scripts/smoke-app.cjs :: 1',
+  // セキュリティの床を測り直す道具 (`npm run audit:floors`)。床ちょうどの版だけを持つ
+  // **使い捨ての依存関係**を一時ディレクトリに作り、`npm install --package-lock-only` と
+  // `npm audit --json` を子プロセスで走らせる。npm の解決と勧告データベースを使うのが目的
+  // なので、プロセスを作らずには成り立たない。渡す引数は台帳 (`SECURITY_FLOORS`) の
+  // パッケージ名と版だけで、シェルを経由しない (`execFileSync`)。
+  'child_process exec/spawn :: scripts/audit-floors.cjs :: 1',
+  // 固定回数の待ちへの依存を**振る舞いで**測る定期点検の道具 (パス 369)。
+  // 周回数を 0 に書き換えた検査を `npx vitest run <ファイル…>` で実際に走らせる ——
+  // 「その回数に依っているか」は走らせないと答えが出ないので、
+  // プロセスを作らずには成り立たない。母集団は `git ls-files` に聞き、
+  // どちらも引数を配列で渡す (シェルを経由しない)。
+  'child_process exec/spawn :: scripts/audit-tick-sensitivity.cjs :: 1',
+  // 「正しい行 + 1 欄だけ壊す」全面走査の定期点検の道具 (パス 441)。
+  // `npx vitest run --config vitest.audit.config.ts` を子プロセスで走らせる ——
+  // 「壊れた 1 行の下で 74 画面が投げるか」は**実際に描かないと答えが出ない**ので、
+  // プロセスを作らずには成り立たない。引数は固定の 5 語で、シェルを経由しない
+  // (`spawnSync` に配列で渡す)。
+  'child_process exec/spawn :: scripts/audit-malformed-fields.cjs :: 1',
+  // 「注記が答えになっている検査」の定期点検の道具 (パス 465)。注記の本文を
+  // 無意味にしてから `npm test` を子プロセスで走らせる —— 「この検査は注記に
+  // 騙されているか」は**走らせないと答えが出ない** (綴りに現れない) ので、
+  // プロセスを作らずには成り立たない。引数は固定の 1 語で、シェルを経由しない
+  // (`spawnSync` に配列で渡す)。書き換えたソースは `finally` で必ず戻し、
+  // **戻したことを内容で照合する**。
+  'child_process exec/spawn :: scripts/audit-comment-blind.cjs :: 1',
+  // 「ゲートの床」の定期点検の道具 (パス 468)。隔離した写し (git worktree) を作り、
+  // 母集団を空にしてから**ゲート自身を子プロセスで走らせる** —— 測るのは終了コードで、
+  // 「空にしても落ちないか」は走らせないと答えが出ない (床の綴りは 7 通りあり、
+  // どれを数えても取りこぼす)。引数は台帳のリテラルで、シェルを経由する形は
+  // `git` の呼び出しと空にする手だけ (どちらもこの道具が組んだ文字列で、外から
+  // 値は入らない)。写しは `finally` で必ず片付ける。
+  // (2 件目はパス 470 —— self-test が前置きを子プロセスで実際に走らせて、
+  //  `keep` がどの群も空にしないこと・広い一覧だけが間引かれることを確かめる。
+  //  このプロセスの fs を書き換えずに測るには子プロセスが要る。)
+  'child_process exec/spawn :: scripts/audit-gate-floors.cjs :: 2',
+  // `mutate` に載っているファイルを触ったパスが、そのファイルだけを測る道具 (パス 479)。
+  // 週次の変異検査 (`mutation.yml`) は `thresholds.break = 99.8` を掛けるが per-PR には
+  // 無いので、**触った側がその場で測れないと赤は 6 日後に別の人の変更として出る**
+  // (実測: パス 478 が `sourceVerification.ts` を 98.92% に落としていた)。
+  // 子プロセスは 2 通り —— `git` (変更ファイルの一覧・引数は固定リテラル) と
+  // `npx stryker` (測る対象は `mutate` の台帳と git の一覧の**積**なので、外から
+  // 任意の道は入らない)。どちらもシェルを経由しない。測ったあとは `finally` で
+  // `.stryker-incremental.json` と `reports/mutation` を消す (古い incremental は
+  // **偽の生存**を作る —— config の `_commentEquivalentPragmas` が 2026-08 の実例を持つ)。
+  'child_process exec/spawn :: scripts/audit-mutate-changed.cjs :: 1',
+  // オーケストレーションの書き手 (`record` / `import-requests`) が、書き上がる台帳を
+  // **書く前に門そのもの** (`verify-orchestration.cjs --registry <一時ファイル>`) で検める
+  // (パス 484)。門の中身を関数として写すと「書き手が正しいと思う台帳」と「CI の門が正しいと
+  // 思う台帳」が 2 つになるので、プロセスごと走らせる。引数は固定 (node 自身の実行ファイル・
+  // 門の道・一時ファイルの道) で、シェルを経由しない (`spawnSync` に配列で渡す)。
+  // 取り込む要望文は引数にも環境にも渡らない (一時ファイルの中身として門が読むだけ)。
+  'child_process exec/spawn :: scripts/orchestrate.cjs :: 1',
+  // 走査を「一部だけ」殺す前置き (パス 470 で 2 つ目の数え方を包んだ)。
+  // `git ls-files` の出力を母集団にするゲートは木を歩かないので、同期実行の
+  // 戻り値を包む以外に間引く手が無い。**呼び出しは元の実装へそのまま委ね**、
+  // 一覧を濾すだけ (新しいプロセスは作らない)。1 件はコード・1 件は注記。
+  'child_process exec/spawn :: scripts/lib/partial-scan-preamble.cjs :: 2 (code 1)',
+  // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
+  // 突き合わせる。npm の勧告データベースを使うのが目的なので、
+  // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。
+  'child_process exec/spawn :: scripts/dependency-audit-report.cjs :: 1',
   'child_process exec/spawn :: scripts/knowledge-autopilot.cjs :: 1',
-  'child_process exec/spawn :: scripts/lint-repo-size.cjs :: 1',
+  // 追跡ファイルの一覧 (`git ls-files -z`) を引く**共有の 1 つ** (2026-09-25 · パス 471)。
+  // パス 470 は `lint-repo-size.cjs` / `lint-shell.cjs` に写しを 1 つずつ置いていたが、
+  // 木を歩く 6 ゲートが 3 人目の消費者になったので中心へ出した
+  // (法則 `center-then-count-callers`)。引数は固定でシェルを経由しない (execFileSync)。
+  'child_process exec/spawn :: scripts/lib/tracked-cross-check.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-shell.cjs :: 1',
   'child_process exec/spawn :: scripts/mcp-check.cjs :: 1',
   'child_process exec/spawn :: scripts/mutate-changed.cjs :: 1',
@@ -790,10 +931,20 @@ const KNOWN_SUPPRESSIONS = [
   // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、走るのは UTC の CI。
   // TS の helper (`localIsoDate`) を .cjs から import できない (2026-09-02)。
   '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/orchestrate.cjs :: 1',
-  'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
-  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
+  // 週次の依存監査の**実行日の刻印**。走るのは UTC の CI (毎週日曜 22:00 UTC) で、
+  // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。
+  // TS の helper (`localIsoDate`) を .cjs から import できないのは orchestrate.cjs と同じ。
+  '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/dependency-audit-report.cjs :: 1',
+  'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1 (code 0)',
+  // 2026-09-14 (パス 248): 3 → 2。許可表を `OLLAMA_READ_PATHS` から組み立てるようにした際、
+  // ヘッダの docblock が同じ経路名を**もう一度**並べていたのをやめた —— 2 か所で数え上げても
+  // 守りは増えず、抑止する字面が増えるだけである。今の 2 行はどちらも `ALLOWED_ENDPOINTS` の注記。
+  'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 2 (code 0)',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
-  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 3',
+  // 2026-09-09 (パス 139): 3 → 8。脆弱性の台帳 OLLAMA_ADVISORIES の要約 5 行が「呼ばない口」の名前を
+  // 事実として書く (Probllama = /api/pull、CVE-2024-39719/39721 と CVE-2026-7482 = /api/create、
+  // CVE-2024-39722 = /api/push)。呼び出しではなく台帳の文言。
+  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 8 (code 6)',
   // CSS の url() を組み立ててよい唯一の場所。`safeCssUrl` の本体で、
   // スキーム検証 (`safeImageSrc`) を通した値だけを引用して包む。
   // ここを例外にしないと関門自身が自分の規則に引っかかる。
@@ -812,18 +963,33 @@ const KNOWN_SUPPRESSIONS = [
   // 外から確かめる。アプリの層を通しては見えない (通せば復号された値が返る) ので、
   // 生のまま舐めるのがこの検査の目的そのものである。
   '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 13',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 27',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 7',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 11',
+  // 2026-09-09 (パス 136): 各保管層が自分の DB を消す (deleteRecordDatabase / deleteLibraryDatabase /
+  // deletePreferencesDatabase — ハードリセットの在庫 security/eraseAll.ts が呼ぶ)。27→28 / 7→8 / 11→12。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 28',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 8',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 14',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxy.ts :: 6',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 13',
+  // 2026-09-07: 13 → 12。届かない後追い診断 (`indexedDB.databases()` で
+  // 削除を再確認していた) を消したので、直接触る箇所が 1 つ減った。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 12',
   'CSS の url() へ生の値を差し込んでいる :: src/shared/imageUrlGate.ts :: 1',
-  'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
-  'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
+  'hand-rolled RFC 2822 header line :: src/shared/rfc2822.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
+  // `build-academic-md.cjs` は docs/ACADEMIC_KNOWLEDGE.md の概念表を生成する素の CJS で、
+  // TS の `escapeMarkdownInline` を読めないため同じ 4 置換の写しを持つ。写しが共有実装と
+  // ずれていないことは `src/shared/__tests__/academicMdTable.test.ts` が同じ標本を
+  // 両方に通して留める (規則に掛かるのは `|` と `<` の 2 行)。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-academic-md.cjs :: 2',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 5',
+  // 2026-09-21 (パス 363): `inject-pwa.cjs` は注入先の文書自身の `:root { --bg }` を
+  // 読んで theme-color を決める (それまでは `#fff7fa` の手書きで、3 文書のうち
+  // ランディングに対して誤っていた)。素の CJS なので `src/shared/escape.ts` の
+  // `isHexColor` を読めず、`#[0-9a-fA-F]{6}` の写しを 1 つ持つ。写しが共有実装と
+  // ずれていないことは `src/shared/__tests__/hostChromeColorCensus.test.ts` が
+  // **実物の関数と `isHexColor` に同じ標本を通して**留める。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/inject-pwa.cjs :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 10',
   // `securityRange.ts` は**出口のエスケープではない**。`applyEvasion` は
@@ -842,8 +1008,137 @@ const KNOWN_SUPPRESSIONS = [
   'shell.openExternal direct call outside main process :: src/main/main.ts :: 2',
   'shell.openExternal direct call outside main process :: src/main/oauth.ts :: 1',
   'window.open :: src/renderer/web-shim.ts :: 1',
-  '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2',
+  '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2 (code 0)',
 ];
+
+/**
+ * **走査する場所と、そこに必ず在るはずの本数。**
+ *
+ * ## なぜ本数を書くのか (2026-09-07 実測)
+ *
+ * この検査には錨が 1 つあった —— `KNOWN_SUPPRESSIONS` の双方向照合である。
+ * 走査が死んで例外の一致が消えれば「台帳にあるのに効いていない」で鳴る。
+ * 実測で確かめた: `src` の走査を落とすと 20 件、`scripts` でも、
+ * `orchestration` でも鳴る。
+ *
+ * **ところが錨は「例外が在る場所」にしか無い。** 同じ実測で、
+ * `assets` の走査を落とすと **exit 0 のまま**だった (532 → 531 と 1 本減るだけ)。
+ * その 1 本は `assets/sw.js` —— **出荷される Service Worker**、つまり
+ * 単一 HTML の外側で全てのタブに常駐する唯一のスクリプトである。
+ * この根を足したのは 2026-08-22 で、理由は下のコメントに書いてある通り
+ * 「丸ごと見えていなかった」から。その直しに錨が無く、**同じ形で黙って
+ * 元に戻れる**状態だった。
+ *
+ * 実測の内訳 (2026-09-07): src 452 / scripts 76 / build 0 /
+ * orchestration 3 / assets 1 = 532。
+ */
+const SCAN_ROOTS = [
+  { dir: 'src', min: 350 },
+  { dir: 'scripts', min: 50 },
+  {
+    dir: 'build',
+    min: 0,
+    // 走査対象の拡張子は **今日 0 件** (electron-builder のアイコン png/svg だけ)。
+    // 根を消さないのは、ここに置かれるのが `afterSign` などの**ビルドフック**で、
+    // 置かれた日に見られていないと困る側だから。0 を明記して「床が無い」と
+    // 「床が 0」を区別する。
+    why: 'アイコンだけ。ビルドフックが置かれた日に見るための根',
+  },
+  { dir: 'orchestration', min: 2 },
+  { dir: 'assets', min: 1 },
+];
+
+/**
+ * **どの根にも属さないが走査する単体のファイル** (2026-09-20 · パス 347)。
+ *
+ * `SCAN_ROOTS` はディレクトリの一覧なので、**リポジトリ直下のファイルは
+ * どの根にも入らない**。2026-09-20 まで 3 本が走査の外に居た:
+ *
+ * ```
+ *   vite.config.ts     出荷 HTML の中身を決める (plugin・define・inline)
+ *   vitest.config.ts   検査の走り方を決める (環境・除外・カバレッジ)
+ *   eslint.config.js   lint の規則を決める
+ * ```
+ *
+ * 対照 (2026-09-20 実測): `vite.config.ts` に `eval(` を植えると
+ * `lint:forbidden` / `lint:imports` / `lint:network-targets` / `chain:verify`
+ * が**すべて exit 0**。**梱包設定 `electron-builder.json` は整合性チェーンの
+ * 保護対象なのに、束ねる側の設定は走査も封緘もされていなかった。**
+ *
+ * 根を `'.'` にすると木全体を歩いてしまう (`knowledge-vault/` 7,000 本ほか)。
+ * 単体の名前で数えるほうが、**増えたときに気付ける**side でもある。
+ */
+const SCAN_FILES = ['vite.config.ts', 'vitest.config.ts', 'vitest.audit.config.ts', 'eslint.config.js'];
+
+/**
+ * **名前で在ることを確かめるファイル。**
+ *
+ * 本数の床だけでは「1 本」が別の 1 本に置き換わっても気付けない。出荷される
+ * Service Worker は `assets/` にただ 1 つなので、名前で留める。
+ * `SCAN_FILES` の 4 本も同じ理由で名前で留める (走査したことを別に確かめる —
+ * 一覧に足しただけで歩き忘れると、また静かに外へ出る)。
+ */
+const MUST_SCAN = ['assets/sw.js', ...SCAN_FILES];
+
+/**
+ * 実物の木を走査して根ごとの本数を返す (自己検査の標本用)。
+ * 本体と同じ `walk` を通すので、除外規則を変えたらこちらも一緒に動く。
+ */
+function realRootCounts() {
+  const counts = {};
+  for (const root of SCAN_ROOTS) {
+    let n = 0;
+    walk(path.join(REPO_ROOT, root.dir), () => {
+      n += 1;
+    });
+    counts[root.dir] = n;
+  }
+  return counts;
+}
+
+/** 実物の木で走査される相対パスの集合 (自己検査の標本用)。 */
+function realVisited() {
+  const seen = new Set();
+  for (const root of SCAN_ROOTS) {
+    walk(path.join(REPO_ROOT, root.dir), (_full, rel) => {
+      seen.add(rel);
+    });
+  }
+  // 根に属さない単体のファイル (パス 347)。**本体の main() と同じ物を歩く** ——
+  // 片方だけに足すと、self-test が「走査した」と言うのに本体は見ていない形になる。
+  for (const rel of SCAN_FILES) {
+    if (!fs.existsSync(path.join(REPO_ROOT, rel))) continue;
+    if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
+    seen.add(rel);
+  }
+  return seen;
+}
+
+/** 床を割った根を返す。`counts` は根の名前 → 走査した本数。 */
+function rootShortfalls(counts, roots = SCAN_ROOTS) {
+  const out = [];
+  for (const root of roots) {
+    const got = counts[root.dir] ?? 0;
+    if (got < root.min) {
+      out.push(
+        `${root.dir}/ の走査が ${got} 件でした (下限 ${root.min})。` +
+          ' 走査が的を外すと違反 0 件で緑になります — 除外規則か根の綴りを確かめてください',
+      );
+    }
+  }
+  return out;
+}
+
+/** 走査されなかった `MUST_SCAN` を返す。`visited` は走査した相対パスの集合。 */
+function missingMustScan(visited, must = MUST_SCAN) {
+  return must
+    .filter((rel) => !visited.has(rel))
+    .map(
+      (rel) =>
+        `${rel} が走査されていません。出荷する物が検査の外に出ると、` +
+        '違反はそのまま出荷されます (名前が変わったなら MUST_SCAN も直してください)',
+    );
+}
 
 function walk(dir, hit) {
   let entries;
@@ -931,6 +1226,16 @@ function selfTest() {
     ['document.writeln も弾く', "document.writeln('<b>');", 1],
     ['textContent は弾かない (安全な代替)', 'el.textContent = s;', 0],
     ['innerText も弾かない', 'el.innerText = s;', 0],
+    // パス 270 —— 上の規則が知らなかった別名 (実在は 0 件。規則が当たることを標本で示す)
+    ['★ setHTMLUnsafe を弾く', 'el.setHTMLUnsafe(html);', 1],
+    ['★ ShadowRoot の setHTMLUnsafe も弾く', 'root.setHTMLUnsafe(html);', 1],
+    ['★ parseHTMLUnsafe を弾く', 'const d = Document.parseHTMLUnsafe(html);', 1],
+    ['★ createContextualFragment を弾く', 'const f = range.createContextualFragment(html);', 1],
+    ['★ srcdoc の代入を弾く', 'frame.srcdoc = html;', 1],
+    ['★ JSX の srcdoc も弾く', 'return <iframe srcdoc={html} />;', 1],
+    ['setHTML (sanitizer つき) は弾かない — 別の API', 'el.setHTML(html, { sanitizer });', 0],
+    ['src= は弾かない (srcdoc の部分一致にしない)', '<img src={url} />', 0],
+    ['parseFromString は弾かない (切り離された文書・理由は規則の注記)', "new DOMParser().parseFromString(s, 'text/html');", 0],
     ['メールヘッダの手組みを弾く (To)', "const m = [`To: ${addr}`].join('\\r\\n');", 1],
     ['メールヘッダの手組みを弾く (Bcc)', "const m = `Bcc: ${addr}`;", 1],
     ['メールヘッダの手組みを弾く (Subject)', "const m = `Subject: ${s}`;", 1],
@@ -1032,6 +1337,13 @@ function selfTest() {
     ['陰性対照: 素の fetch はこの規則では鳴らない', '  await fetch(url, init);', 0],
     ['陰性対照: JSX の <img> は通す (safeImageSrc を通る正しい形)', '  <img src={thumbSrc} alt="" />', 0],
     ['陰性対照: 名前が注釈に出るだけなら鳴らない', '  // sendBeacon や new WebSocket は使わない', 0],
+    ['window.prompt( を弾く (平文の入力・Electron 未実装)', "const pw = window.prompt('合言葉を入力');", 1],
+    ['裸の prompt( も弾く', "const pw = prompt('合言葉') || '';", 1],
+    ['globalThis.prompt( も弾く', "globalThis.prompt('x');", 1],
+    ['AI の buildPrompt( / systemPrompt( は当てない', 'const p = buildPrompt(text); const q = systemPrompt(x);', 0],
+    ['性質名の prompt: は当てない', 'const body = { prompt: text, model };', 0],
+    ['変数の prompt (呼び出しでない) は当てない', 'const prompt = draft.trim(); send(prompt);', 0],
+    ['注釈の中の言及は当てない', '  // prompt() は Electron に無い', 0],
   ];
 
   /*
@@ -1051,6 +1363,44 @@ function selfTest() {
     ['件数を無視する鍵なら見逃していた (対照)', [`${K}`], [`${K}`], 0, 0],
   ];
   let bad = 0;
+
+  // ── 走査の生存: 根ごとの床と、名前で留めるファイル ──
+  {
+    const ROOTS = [
+      { dir: 'a', min: 2 },
+      { dir: 'b', min: 0, why: '今日は 0 件' },
+    ];
+    const rootCases = [
+      ['床どおりなら鳴らない', { a: 2, b: 0 }, ROOTS, 0],
+      ['多くても鳴らない', { a: 99, b: 5 }, ROOTS, 0],
+      ['★ 床を割ると鳴る', { a: 1, b: 0 }, ROOTS, 1],
+      ['★ 根が消えて 0 件でも鳴る (走査の死)', {}, ROOTS, 1],
+      ['床 0 の根は 0 でも鳴らない (「床が無い」と区別する)', { a: 2 }, ROOTS, 0],
+      ['★ 実物の根はすべて床を満たす (標本)', null, undefined, 0],
+    ];
+    for (const [label, counts, roots, expected] of rootCases) {
+      const got =
+        counts === null ? rootShortfalls(realRootCounts()).length : rootShortfalls(counts, roots).length;
+      const ok = got === expected;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 走査の床: ${label}: ${got} 件 (期待 ${expected})`);
+    }
+    const mustCases = [
+      ['走査されていれば鳴らない', new Set(['x/y.js']), ['x/y.js'], 0],
+      ['★ 走査されていなければ鳴る', new Set(['x/other.js']), ['x/y.js'], 1],
+      ['★ 何も走査していなければ鳴る', new Set(), ['x/y.js'], 1],
+      ['複数ならその数だけ鳴る', new Set(), ['x/y.js', 'x/z.js'], 2],
+      ['★ 実物の sw.js は走査されている (標本)', null, undefined, 0],
+    ];
+    for (const [label, visitedSet, must, expected] of mustCases) {
+      const got =
+        visitedSet === null ? missingMustScan(realVisited()).length : missingMustScan(visitedSet, must).length;
+      const ok = got === expected;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 名指しの走査: ${label}: ${got} 件 (期待 ${expected})`);
+    }
+  }
+
   for (const [label, actual, known, wantAdded, wantGone] of ledgerCases) {
     const r = diffSuppressions(new Set(actual), known);
     const ok = r.added.length === wantAdded && r.gone.length === wantGone;
@@ -1061,11 +1411,78 @@ function selfTest() {
     );
   }
 
+  /*
+   * **免除の枠の内訳** (2026-09-25 · パス 466)。
+   *
+   * 台帳の鍵は `規則 :: ファイル :: 件数` で、件数はパス 273 が
+   * 「ファイル名だけだと新しい違反を足しても鳴らない」として足した物である。
+   * ところが `codeOnly` でない規則 (38 中 14) は**注記の中でも鳴る**ので、
+   * **その件数に散文が混ざる** —— 散文を消して同じ数だけ本物の違反を足すと
+   * 件数が変わらず、門が黙る。
+   *
+   * 実測 (2026-09-25 · 決定的な対照): `src/main/clients/ollama.ts` の
+   * 注記 2 行から綴りを消し、`/api/pull` と `/api/create` への**本物の fetch** を
+   * 2 本入れると `✅ no forbidden patterns found (例外 53 件はすべて台帳どおり)`。
+   *
+   * だから**散文が枠を食っている行だけ** code の件数も名乗る。
+   * 48 / 53 行は今までどおりで、`codeOnly` の規則は元から注記を見ないので付かない。
+   */
+  {
+    const P = [
+      { name: 'prose-too', pattern: /NEEDLE/, allowFile: () => true },
+      { name: 'code-only', pattern: /NEEDLE/, codeOnly: true, allowFile: () => true },
+    ];
+    const key = (text, patterns, rel = 'x.ts') => {
+      const sup = new Set();
+      scanText(rel, text, [], sup, patterns);
+      return [...sup].sort().join(' | ');
+    };
+    const splitCases = [
+      ['コードだけなら今までどおり (内訳を足さない)', 'const a = NEEDLE;\nconst b = NEEDLE;\n', [P[0]],
+        'prose-too :: x.ts :: 2'],
+      ['★ 散文が枠の一部を食っていれば内訳を名乗る', 'const a = NEEDLE;\n// NEEDLE\n', [P[0]],
+        'prose-too :: x.ts :: 2 (code 1)'],
+      ['★ 散文が枠の全部を食っていれば code 0', '// NEEDLE\n/* NEEDLE */\n', [P[0]],
+        'prose-too :: x.ts :: 2 (code 0)'],
+      ['codeOnly の規則は注記を見ないので内訳が要らない', 'const a = NEEDLE;\n// NEEDLE\n', [P[1]],
+        'code-only :: x.ts :: 1'],
+      ['codeOnly の規則は散文だけなら例外そのものが立たない', '// NEEDLE\n', [P[1]], ''],
+    ];
+    for (const [label, text, patterns, want] of splitCases) {
+      const got = key(text, patterns);
+      const ok = got === want;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 免除の枠: ${label}: ${got || '(無し)'} (期待 ${want || '(無し)'})`);
+    }
+    // ★ **これが欠陥そのもの** —— 散文 2 件をコード 2 件へ入れ替えても
+    // 件数は 2 のままなので、直す前の鍵 (`:: 2`) では**同じ鍵**になり門が黙る。
+    {
+      const prose = key('// NEEDLE\n/* NEEDLE */\n', [P[0]]);
+      const code = key('const a = NEEDLE;\nconst b = NEEDLE;\n', [P[0]]);
+      const okSwap = prose !== code;
+      if (!okSwap) bad += 1;
+      console.log(
+        `  ${okSwap ? '✓' : '✗'} 免除の枠: ★ 散文 2 件とコード 2 件は別の鍵 (パス 466 の欠陥): ` +
+          `${prose} / ${code}`,
+      );
+    }
+    // **実物で確かめる** —— 標本だけだと「実在する行がこの形になるか」は分からない。
+    const realFile = 'src/main/clients/ollama.ts';
+    const realKey = key(
+      fs.readFileSync(path.join(REPO_ROOT, realFile), 'utf8'),
+      FORBIDDEN_PATTERNS.filter((fp) => fp.name === 'Ollama write-side endpoints in network code'),
+      realFile,
+    );
+    const wantReal = 'Ollama write-side endpoints in network code :: ' + realFile + ' :: 2 (code 0)';
+    const okReal = realKey === wantReal;
+    if (!okReal) bad += 1;
+    console.log(`  ${okReal ? '✓' : '✗'} 免除の枠: ★ 実物: main の Ollama は 2 件とも注記: ${realKey} (期待 ${wantReal})`);
+  }
+
   for (const [label, line, expected] of cases) {
     let n = 0;
     for (const fp of FORBIDDEN_PATTERNS) {
-      if (fp.codeOnly && isCommentLine(line)) continue;
-      if (fp.pattern.test(line)) n++;
+      if (hitsCodeOnly(fp, line)) n++;
     }
     const ok = n === expected;
     if (!ok) bad++;
@@ -1094,9 +1511,7 @@ function selfTest() {
   const positiveLines = cases.filter(([, , want]) => want > 0).map(([, line]) => line);
   const uncovered = FORBIDDEN_PATTERNS.filter(
     (fp) =>
-      !positiveLines.some((line) =>
-        fp.codeOnly && isCommentLine(line) ? false : fp.pattern.test(line),
-      ),
+      !positiveLines.some((line) => hitsCodeOnly(fp, line)),
   );
   if (uncovered.length > 0) {
     bad += uncovered.length;
@@ -1126,26 +1541,46 @@ function selfTest() {
  */
 function scanText(rel, text, violations, suppressions, patterns = FORBIDDEN_PATTERNS) {
   const lines = text.split('\n');
+  // **`codeOnly` の規則は、注記を落とした本文で見る。** 行頭が `//` かで見ると
+  // `foo(); // eval(x)` のような**行末の注記**が code として残った
+  // (法則 `mention-vs-declaration` · パス 463)。行番号は保たれる。
+  const codeLines = stripComments(text).split('\n');
   for (const fp of patterns) {
     if (fp.allowFile && fp.allowFile(rel)) {
       // **握り潰した事実を記録する。** 例外は穴なので、要らなくなったら
       // 閉じなければならない。記録しないと「もう鳴らない規則に対する
       // 例外」が永久に残り、そのファイルだけ規則の外に居続ける。
-      const hits = lines.filter((l) =>
-        fp.codeOnly && isCommentLine(l) ? false : fp.pattern.test(l),
-      ).length;
+      const hits = (fp.codeOnly === true ? codeLines : lines).filter((l) => fp.pattern.test(l)).length;
+      const codeHits = codeLines.filter((l) => fp.pattern.test(l)).length;
       if (hits > 0) {
         // **件数まで記録する。** ファイル名だけで台帳を突き合わせると、
         // 例外の効いているファイルに**新しい違反を足しても鳴らない** ——
         // 規則がそのファイルで丸ごと無効になる (実測で確認: web-shim.ts へ
         // `noopener` 無しの `window.open` を足しても緑のままだった)。
-        suppressions.add(`${fp.name} :: ${rel} :: ${hits}`);
+        //
+        // ★ **その件数に散文が混ざっていた** (2026-09-25 · パス 466)。
+        // `codeOnly` でない規則 (実測 38 中 14) は注記の中の綴りでも鳴る ——
+        // それは測って決めた方針である (パス 370: 「注記の中でも鳴るのは正しい ——
+        // 走査は綴りしか見ないので、例外を作るとそこが穴になる」)。ところが
+        // **免除の枠が 1 つの数で、そこに散文が入る**ので、注記の綴りを消して
+        // 同じ数だけ**本物の code の違反**を足すと件数が変わらず門が黙る。
+        // 実測: `src/main/clients/ollama.ts :: 2` は 2 件とも注記で、
+        // 注記を消して `/api/pull` と `/api/create` への実際の fetch を 2 本
+        // 入れると **`✅ no forbidden patterns found` のまま通った**
+        // (CVE-2024-37032 Probllama ほかが実装される当の書き込み口)。
+        // だから**散文が枠を食っている行だけ** code の件数も名乗らせる ——
+        // 48 / 53 行は今までどおりで、動くのは食っている 5 行だけである (うち 3 行は全額が散文)。
+        suppressions.add(
+          fp.codeOnly === true || codeHits === hits
+            ? `${fp.name} :: ${rel} :: ${hits}`
+            : `${fp.name} :: ${rel} :: ${hits} (code ${codeHits})`,
+        );
       }
       continue;
     }
     for (let i = 0; i < lines.length; i++) {
-      if (fp.codeOnly && isCommentLine(lines[i])) continue;
-      if (fp.pattern.test(lines[i])) {
+      if (!fp.pattern.test(fp.codeOnly === true ? codeLines[i] : lines[i])) continue;
+      {
         violations.push({
           file: rel,
           line: i + 1,
@@ -1165,18 +1600,33 @@ function main() {
   const suppressions = new Set();
   let filesScanned = 0;
 
-  walk(path.join(REPO_ROOT, 'src'), scan);
-  walk(path.join(REPO_ROOT, 'scripts'), scan);
-  walk(path.join(REPO_ROOT, 'build'), scan);
-  // 2026-08-22 に足した。`src` / `scripts` / `build` だけを見ていたので、
+  // 根は `SCAN_ROOTS` が持つ (本数の床つき)。`orchestration` と `assets` は
+  // 2026-08-22 に足した —— `src` / `scripts` / `build` だけを見ていたので、
   // **出荷される Service Worker (assets/sw.js) と orchestration/*.cjs が
   // 丸ごと見えていなかった**。実際 orchestration に不変条件 #9 違反
   // (new Function) が 1 件あり、誰にも見られないまま残っていた。
-  walk(path.join(REPO_ROOT, 'orchestration'), scan);
-  walk(path.join(REPO_ROOT, 'assets'), scan);
+  const perRoot = {};
+  const visited = new Set();
+  for (const root of SCAN_ROOTS) {
+    const before = filesScanned;
+    walk(path.join(REPO_ROOT, root.dir), scan);
+    perRoot[root.dir] = filesScanned - before;
+  }
+  // 根に属さない単体のファイル (リポジトリ直下の設定。上の SCAN_FILES を参照)。
+  {
+    const before = filesScanned;
+    for (const rel of SCAN_FILES) {
+      const full = path.join(REPO_ROOT, rel);
+      if (!fs.existsSync(full)) continue;
+      if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
+      scan(full, rel);
+    }
+    perRoot['(直下)'] = filesScanned - before;
+  }
 
   function scan(full, rel) {
     filesScanned++;
+    visited.add(rel);
     let text;
     try {
       text = fs.readFileSync(full, 'utf8');
@@ -1187,8 +1637,14 @@ function main() {
   }
 
   console.log(
-    `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns`,
+    `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns` +
+      ` (${[...SCAN_ROOTS.map((r) => r.dir), '(直下)'].map((d) => `${d} ${perRoot[d] ?? 0}`).join(' / ')})`,
   );
+  const dead = [...rootShortfalls(perRoot), ...missingMustScan(visited)];
+  if (dead.length > 0) {
+    console.error(`\n❌ 走査が的を外しています (${dead.length} 件):\n`);
+    for (const x of dead) console.error(`  ${x}`);
+  }
   const { added, gone } = diffSuppressions(suppressions, KNOWN_SUPPRESSIONS);
   if (added.length > 0) {
     console.error(`\n❌ 台帳に無い例外が ${added.length} 件効いています (新しい穴):\n`);
@@ -1200,7 +1656,7 @@ function main() {
     for (const x of gone) console.error(`  ${x}`);
     console.error('\n  規則が当たらなくなっています。KNOWN_SUPPRESSIONS から削除してください。');
   }
-  if (violations.length === 0 && added.length === 0 && gone.length === 0) {
+  if (violations.length === 0 && added.length === 0 && gone.length === 0 && dead.length === 0) {
     console.log(`✅ no forbidden patterns found (例外 ${suppressions.size} 件はすべて台帳どおり)`);
     return 0;
   }
@@ -1233,6 +1689,20 @@ function main() {
  * **別のファイルに在り、`npm test` で走り、変異検査の対象でもある。**
  * 規則表を空にすれば、そちらが鳴る。
  */
-module.exports = { FORBIDDEN_PATTERNS, KNOWN_SUPPRESSIONS, isCommentLine, EXCLUDE_PATTERNS, scanText };
+module.exports = {
+  SCAN_FILES,
+  FORBIDDEN_PATTERNS,
+  KNOWN_SUPPRESSIONS,
+  hitsCodeOnly,
+  EXCLUDE_PATTERNS,
+  scanText,
+  // 走査の生存 —— 外側の証人 (`forbiddenPatternWitness.test.ts`) が読む。
+  SCAN_ROOTS,
+  MUST_SCAN,
+  rootShortfalls,
+  missingMustScan,
+  realRootCounts,
+  realVisited,
+};
 
 if (require.main === module) process.exit(main());

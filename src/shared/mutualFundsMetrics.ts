@@ -6,17 +6,72 @@
  * 元本割れの可能性があります。過去の実績は将来を保証しません。
  */
 
-import { round2, yen } from './num';
+import { round2, yen, nonNeg, finiteOrNull } from './num';
+import { isPlannableRate, isPlannableYears } from './savingsPlanning';
+
+/**
+ * 保有年数を測れる上限。**画面の宣言と同じ数の唯一の出所** (保有年数 欄の `max`)。
+ *
+ * `calcRealCost` は `Math.pow(1 + 率, 年数)` を 2 回引き算する。年数が大きいと
+ * **両方が `Infinity` になり `Infinity - Infinity = NaN`** ——
+ * 実測 100,000 年で `cumulativeCostYen: NaN` で、画面は
+ * **「100000年累計の蝕み効果 `¥NaN`」** と刷っていた (2026-09-13 · パス 198)。
+ *
+ * 100 年は投資信託の保有期間として実在の最長側で、`MAX_PLAN_YEARS` (80) より
+ * 長いのは「積み立てる期間」ではなく「持ち続ける期間」だから (相続を挟んで
+ * 引き継ぐ想定を残す)。**2 つの天井は別の量なので、同じ定数にしない。**
+ */
+export const MAX_HOLDING_YEARS = 100;
+
+/** 保有年数を測れるか (上限は {@link MAX_HOLDING_YEARS})。 */
+export function isMeasurableHoldingYears(years: number): boolean {
+  return Number.isFinite(years) && years <= MAX_HOLDING_YEARS;
+}
+
+/**
+ * **信託報酬・隠れコストの上限 (年率 %)。** (2026-09-13 · パス 207)
+ *
+ * `MutualFundsPage` の `信託報酬 (%)` / `隠れコスト (%)` は `max: 20` を宣言して
+ * ⛔ の赤枠を出すのに、`calcRealCost` はその値を読んでいた。実測 (直す前・
+ * 999,999,999% を入れた時):
+ *
+ * | タイル | 出ていた物 |
+ * | --- | --- |
+ * | 実質コスト率 (年率) | **`999999999.2%`** |
+ * | 年間コスト概算 | **`¥82,401,399,934,079`** (82 兆円) |
+ * | N年累計の蝕み効果 | **`¥8.24 × 10^41`** |
+ *
+ * 20% は投資信託の運用管理費用として実在の最大側 (国内公募投信の上限帯) で、
+ * これを超える入力は打ち間違いである。**黙って 20 に丸めない**: `null` を返し、
+ * 画面が「—」と理由を出す (`MAX_HOLDING_YEARS` / `MAX_PLAN_YEARS` と同じ約束)。
+ */
+export const MAX_COST_RATE_PCT = 20;
+
+/**
+ * コスト率を測れるか (上限は {@link MAX_COST_RATE_PCT})。
+ *
+ * **下限は見ない** —— 0% は「コストが無い」という正しい答えで、負値は
+ * `calcRealCost` が 0 にクランプする既存の契約のままにしてある。
+ */
+export function isMeasurableCostRate(pct: number): boolean {
+  return Number.isFinite(pct) && pct <= MAX_COST_RATE_PCT;
+}
 
 export interface CompoundingSimulation {
-  /** 期間終了時の評価額 (円)。 */
-  readonly futureValue: number;
-  /** 累計拠出額 (円)。 */
-  readonly totalContributed: number;
-  /** 運用益 (評価額 − 拠出額)。 */
-  readonly totalGain: number;
-  /** 運用益率 (%)。 */
-  readonly gainPct: number;
+  /** 期間終了時の評価額 (円)。**年数が範囲外なら `null`** (算定不能)。 */
+  readonly futureValue: number | null;
+  /** 累計拠出額 (円)。**年数が範囲外なら `null`**。 */
+  readonly totalContributed: number | null;
+  /** 運用益 (評価額 − 拠出額)。**年数が範囲外なら `null`**。 */
+  readonly totalGain: number | null;
+  /**
+   * 運用益率 (%) = 運用益 ÷ 累計拠出額。**拠出額が 0 なら `null` = 算定不能。**
+   *
+   * 0 に倒すと「積み立てたが増えも減りもしなかった」という主張になる。
+   * **規準は同じ画面に在った** —— `MutualFundsPage` は為替の損益率
+   * (`fxCurrency.gainPct: number | null`) を 50 行下で「—」と刷っている。
+   */
+  readonly gainPct: number | null;
 }
 
 /**
@@ -35,8 +90,17 @@ export function calcCompoundingFutureValue(
   annualReturnPct: number,
   years: number,
 ): CompoundingSimulation {
-  const pmt = Math.max(0, monthlyContribution);
-  const yrs = Math.max(0, years);
+  // 上限を超えた年数は算定不能。**`Math.pow(1 + r, n)` が `Infinity` になり、
+  // 画面が「将来評価額 ¥∞ / 運用益率 Infinity%」を刷っていた** (パス 198)。
+  // 積立年数の天井は `savingsPlanning` が 1 つ持つ (画面の `max` と同じ出所)。
+  // **年率の天井も同じ関門** (パス 207)。実測: 999,999,999% で
+  // `将来評価額 ¥1.06 × 10^163`。`Infinity` ではないので `¥∞` の関門 (パス 198) を
+  // すり抜けていた —— **有限だがもっともらしくない数**は、無限より見つけにくい。
+  if (!isPlannableYears(years) || !isPlannableRate(annualReturnPct)) {
+    return { futureValue: null, totalContributed: null, totalGain: null, gainPct: null };
+  }
+  const pmt = nonNeg(monthlyContribution);
+  const yrs = nonNeg(years);
   const n = Math.round(yrs * 12);
   // n=0 または pmt=0 のときは totalContributed=0・fvRaw=0・gainPct=0 と計算経路でも
   // すべて 0 に畳まれるため、早期 return ガードは冗長 (equivalent) として置かない。
@@ -49,7 +113,10 @@ export function calcCompoundingFutureValue(
   const fvRaw = Math.abs(r) < 1e-12 ? pmt * n : pmt * ((Math.pow(1 + r, n) - 1) / r);
   const futureValue = yen(fvRaw);
   const totalGain = futureValue - totalContributed;
-  const gainPct = totalContributed > 0 ? Math.round((totalGain / totalContributed) * 100 * 100) / 100 : 0;
+  // **元本が 0 なら増加率は算定不能。** 0 に倒すと「積み立てたが増えも減りも
+  // しなかった」という主張になる。規準は**同じ画面**に在った —— `MutualFundsPage`
+  // は為替の損益率 (`fxCurrency.gainPct: number | null`) を 50 行下で「—」と刷っている。
+  const gainPct = totalContributed > 0 ? Math.round((totalGain / totalContributed) * 100 * 100) / 100 : null;
   return { futureValue, totalContributed, totalGain, gainPct };
 }
 
@@ -57,7 +124,21 @@ export function calcCompoundingFutureValue(
  * シャープレシオ (リスク調整後リターン) を計算する。
  *   SR = (年率リターン − 無リスク金利) / 年率標準偏差
  *
- * 標準偏差が 0 以下のときは指標として定義できないため 0 を返す。
+ * **標準偏差が 0 以下のときは指標として定義できないため `null`。**
+ *
+ * 2026-09-08 まで、この行のすぐ上に「定義できない」と書きながら **`0` を返して
+ * いた**。0 はシャープレシオとして**意味のある値** (超過リターンがちょうど無い) なので、
+ * 変動 0% の 3 つの正反対の状態が同じ数字に潰れていた:
+ *
+ * | 入力 | 実態 | 直す前の戻り値 |
+ * | --- | --- | ---: |
+ * | 年率 +8% / 変動 0% | 無リスクで年 8% (**最良**) | **0** |
+ * | 年率 +0.5% / 変動 0% | 無リスク金利ちょうど (中立) | **0** |
+ * | 年率 −20% / 変動 0% | 確実に年 −20% (**最悪**) | **0** |
+ *
+ * **規準は姉妹モジュールに在った** —— `renderer/data/stocksAnalysisWeb.ts` の
+ * `sharpeRatio(): number | null` は同じ 0 除算に対して
+ * 「リスク調整リターンが定義不能であることを明示」と書いて `null` を返している。
  *
  * @param annualReturnPct 年率リターン (%)
  * @param annualVolatilityPct 年率標準偏差 (%)
@@ -67,8 +148,15 @@ export function calcSharpeRatio(
   annualReturnPct: number,
   annualVolatilityPct: number,
   riskFreeRatePct = 0.5,
-): number {
-  if (annualVolatilityPct <= 0) return 0;
+): number | null {
+  // 契約が `number | null` なので、測れない入力は **null** (「算定不能」) に倒す。
+  // 実測では 3 つの位置のどれに非有限を入れても NaN のシャープレシオが返っていた。
+  if (
+    finiteOrNull(annualReturnPct) === null
+    || finiteOrNull(annualVolatilityPct) === null
+    || finiteOrNull(riskFreeRatePct) === null
+    || annualVolatilityPct <= 0
+  ) return null;
   const sr = (annualReturnPct - riskFreeRatePct) / annualVolatilityPct;
   return Math.round(sr * 100) / 100;
 }
@@ -116,8 +204,16 @@ export function calcTotalReturn(
   const totalReturnPct = round2(totalReturn * 100);
 
   // CAGR は finalValue<=0 (元本全損超) では実数解を持たないため null。
+  //
+  // **保有年数の天井もここで見る** (パス 207)。パス 198 は同じ年数を読む
+  // `calcRealCost` に `isMeasurableHoldingYears` を入れたが、**2 人いる読み手の
+  // 片方しか直していなかった** (パス 66 と同じ形)。実測: 保有年数 999,999,999 年で
+  // `Math.pow(1.1506, 1/1e9) - 1` ≈ 1.4e-10 が `round2` で **`0%`** に落ち、
+  // +15% のポートフォリオが「年率換算 0%」= 横ばい (しかも赤) として刷られていた。
+  // 10^163 のような明らかに変な値ではなく**普通の答えの見た目**をしているので、
+  // 読む側に気づく手がかりが無い。
   let cagrPct: number | null = null;
-  if (isFiniteNumber(years) && years > 0 && finalValue > 0) {
+  if (isMeasurableHoldingYears(years) && isFiniteNumber(years) && years > 0 && finalValue > 0) {
     const cagr = Math.pow(finalValue / principal, 1 / years) - 1;
     cagrPct = round2(cagr * 100);
   }
@@ -125,12 +221,24 @@ export function calcTotalReturn(
 }
 
 export interface RealCost {
-  /** 実質コスト率 (年率, %)。 */
-  readonly annualCostPct: number;
-  /** 1年あたりの概算コスト額 (円)。 */
-  readonly annualCostYen: number;
-  /** 期間累計の概算コスト額 (複利でリターンを蝕む効果込み, 円)。 */
-  readonly cumulativeCostYen: number;
+  /**
+   * 実質コスト率 (年率, %)。
+   * **コスト率の欄が {@link MAX_COST_RATE_PCT} を超えると `null`** (算定不能・パス 207)。
+   */
+  readonly annualCostPct: number | null;
+  /**
+   * 1年あたりの概算コスト額 (円)。
+   * コスト率が範囲外なら `null` (同上)。
+   */
+  readonly annualCostYen: number | null;
+  /**
+   * 期間累計の概算コスト額 (複利でリターンを蝕む効果込み, 円)。
+   * **保有年数が {@link MAX_HOLDING_YEARS} を超えると `null`** (算定不能) ——
+   * `Infinity - Infinity = NaN` が `¥NaN` として刷られていた (パス 198)。
+   * **想定年率が {@link MAX_PLAN_RATE_PCT} を超えるときも `null`** (パス 207) ——
+   * 年率だけが範囲外のとき `¥4.9 × 10^33` を刷っていた。
+   */
+  readonly cumulativeCostYen: number | null;
 }
 
 /**
@@ -160,10 +268,24 @@ export function calcRealCost(
   const gross = isFiniteNumber(grossReturnPct) ? grossReturnPct : 0;
   const yrs = isFiniteNumber(years) ? Math.max(0, years) : 0;
 
+  // **コスト率が範囲外なら年率のコストそのものが測れない** (パス 207) ——
+  // 画面が ⛔ で断っている率を足して「実質コスト率 999999999.2%」と刷っていた。
+  // 3 欄すべてを `null` にするのはここだけ (= 率が読めなければ何も出ない)。
+  if (!isMeasurableCostRate(expenseRatioPct) || !isMeasurableCostRate(hiddenCostPct)) {
+    return { annualCostPct: null, annualCostYen: null, cumulativeCostYen: null };
+  }
+
   const annualCostPct = round2(expense + hidden);
   const annualCostYen = yen(amount * (annualCostPct / 100));
 
   // コスト無し vs コスト控除後の将来価値差 (複利での蝕み効果)。
+  // **年率のコストは年数と無関係に測れる** ので `annualCostPct` / `annualCostYen`
+  // は返し続ける。算定不能なのは累計の蝕み効果だけ —— 1 つの範囲外の欄で
+  // 測れている隣の数字まで隠さない。
+  // 想定年率 (`grossReturnPct`) は累計の蝕み効果**だけ**が読むので、同じ扱い。
+  if (!isMeasurableHoldingYears(years) || !isPlannableRate(grossReturnPct)) {
+    return { annualCostPct, annualCostYen, cumulativeCostYen: null };
+  }
   const grossRate = gross / 100;
   const netRate = (gross - annualCostPct) / 100;
   const fvGross = amount * Math.pow(1 + grossRate, yrs);
@@ -199,6 +321,84 @@ export function calcStdDev(returns: readonly number[], sample = false): number |
   }, 0);
   const divisor = sample ? n - 1 : n;
   return round2(Math.sqrt(sumSq / divisor));
+}
+
+/** 年初来リターンのリスク —— **入力された銘柄だけ**で標準偏差を取り、除外した数を返す (パス 122)。 */
+export interface YtdReturnRisk {
+  /** 母標準偏差 (%・小数 2 桁)。入力された銘柄が無ければ null。 */
+  readonly stdDevPct: number | null;
+  /** 標準偏差に入れた銘柄数。 */
+  readonly measured: number;
+  /** 年初来リターンが未入力 (null) で除外した銘柄数。画面はこの数を注記に刷る。 */
+  readonly unmeasured: number;
+  /**
+   * **リターンとして在り得ない値**で除外した銘柄数 (パス 226)。画面はこの数も刷る。
+   *
+   * 「未入力」とは別に数える —— 未入力は測っていないだけだが、こちらは
+   * **測った値が事実に反している** (下の {@link RETURN_FLOOR_PCT} を参照)。
+   */
+  readonly impossible: number;
+}
+
+/**
+ * 年初来リターンの**下限は事実である** —— 買いのみの投資信託で元本を超えて失うことはないので、
+ * −100% より下のリターンは存在しない (−100% ちょうどは「全額失った」で在りうる)。
+ *
+ * ## 書き手の帯と、読む側の規則は別物である (パス 226 の実測・2026-09-14)
+ *
+ * `parseHoldingEntry` は **−100〜1000%** を強制するが、復元の入口は「null か数値」しか
+ * 見ない (パス 224 で `per-field` = 意図された差と裁定した組)。だから古い版・手で直した
+ * JSON・別の道具が書いた控えは範囲外の値を持ち込める。そのとき:
+ *
+ * | 混ぜた値 | 標準偏差 (見本 4 銘柄は 4.04%) |
+ * | --- | ---: |
+ * | `+1500%` | 596.2% |
+ * | `+99999%` | 39995.79% |
+ * | `−250%` | **103.87%** |
+ *
+ * **上端と下端は同じ種類の規則ではない。** 上端 (1000%) は**打ち間違いの門**で、
+ * 集中投資の投信が 1 年で 10 倍になることは実際に在りうる —— 読む側で落とすと
+ * **測った値を捨てる**ことになる。下端は**事実**なので読む側にも効く。
+ *
+ * ## 届く先は 3 面 (実測)
+ *
+ * | 面 | −250% を混ぜた時に出る物 |
+ * | --- | --- |
+ * | 一覧のセル | `-250.0%` を**赤** —— 実在の大損と同じ顔で、在り得ない旨を言わない |
+ * | リスク (標準偏差) | 4.04% → **103.87%**。注記は「入力された 5 銘柄の母標準偏差」だけで、**どの行が動かしたかを言わない** |
+ * | 改善提案 | 「⚠ 年初来マイナスの銘柄: X —— X は年初来 **-250.0%** です。…保有目的を確認してください」 |
+ *
+ * セルは目に見えるが、あとの 2 面は**派生した集約・文章の中で在り得ない 1 行が見えなくなる**。
+ * だから下端は「読む側の規則」にする —— 集約から外し、**外した数を言う**。
+ */
+export const RETURN_FLOOR_PCT = -100;
+
+/**
+ * リターンとして在り得ない値か (下限より下)。
+ *
+ * 非有限はここまで来ない —— `normalizeHolding` の `numOrNull` が
+ * `Number.isFinite` で `null` (未入力) に倒すので、「測っていない」側で落ちる。
+ */
+export function isImpossibleReturnPct(pct: number): boolean {
+  return pct < RETURN_FLOOR_PCT;
+}
+
+/**
+ * 未入力 (null) を 0% として入れない。パス 122 までは画面が `holdings.map((h) => h.ytdReturnPct)` を
+ * そのまま {@link calcStdDev} へ渡していて、空欄で足した銘柄が **0% の銘柄としてばらつきを作って**いた
+ * (見本 4 銘柄で 4.04% のところ、空欄 1 件で 5.25%)。
+ */
+export function ytdReturnRisk(returns: readonly (number | null)[]): YtdReturnRisk {
+  const measured: number[] = [];
+  let unmeasured = 0;
+  let impossible = 0;
+  for (const r of returns) {
+    if (r === null) { unmeasured += 1; continue; }
+    // **在り得ない値は集約に入れない** (パス 226)。1 件で標準偏差が 4.04% → 103.87% になる。
+    if (isImpossibleReturnPct(r)) { impossible += 1; continue; }
+    measured.push(r);
+  }
+  return { stdDevPct: calcStdDev(measured), measured: measured.length, unmeasured, impossible };
 }
 
 export interface DcaSimulation {

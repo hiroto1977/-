@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
+import { readOriginalDir, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **出荷物の markup を作るビルドスクリプトも、同じ 5 文字を落とす。**
@@ -25,15 +26,6 @@ import path from 'node:path';
 
 const SCRIPTS_DIR = path.resolve(__dirname, '../../../scripts');
 
-/** 注記を落とす。規則として字面を持つファイルを実装と取り違えないため。 */
-function stripComments(text: string): string {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((l) => !l.trim().startsWith('//'))
-    .join('\n');
-}
-
 /** 5 文字それぞれの置換。`escape.ts` と同じ集合。 */
 const REQUIRED: readonly (readonly [string, RegExp])[] = [
   ['&', /replace\(\/&\/g,\s*'&amp;'\)/],
@@ -46,12 +38,12 @@ const REQUIRED: readonly (readonly [string, RegExp])[] = [
 /** markup 用のエスケープを自前で持っているスクリプトを、その場で集める。 */
 function scriptsWithEscape(): { file: string; text: string }[] {
   const out: { file: string; text: string }[] = [];
-  for (const name of readdirSync(SCRIPTS_DIR)) {
+  for (const name of readOriginalDir(SCRIPTS_DIR)) {
     if (!name.endsWith('.cjs')) continue;
     // **コメントを落としてから見る。** `lint-forbidden-patterns.cjs` は
     // 規則の説明として `s.replace(/&/g, '&amp;')` を注記に書いているので、
     // そのまま数えると「エスケープを実装しているファイル」に化ける (0-a-17)。
-    const text = stripComments(readFileSync(path.join(SCRIPTS_DIR, name), 'utf8'));
+    const text = stripComments(readOriginalSource(path.join(SCRIPTS_DIR, name)));
     // 実体参照を**作っている**ものだけ。
     if (!/replace\(\/&\/g,\s*'&amp;'\)/.test(text)) continue;
     out.push({ file: name, text });

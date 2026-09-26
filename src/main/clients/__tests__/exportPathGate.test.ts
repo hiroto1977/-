@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { join } from 'node:path';
+import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
 /*
  * **payload からパスを受けてファイルを書く関数は、必ず関門を通る。**
@@ -41,7 +43,7 @@ const GUARD = /isSafe\w*Path\s*\(/;
 const WRITE = /writeFile\s*\(|createWriteStream\s*\(|appendFile\s*\(/;
 
 function sourceFiles(dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const full = join(dir, name);
     if (statSync(full).isDirectory()) {
       if (name !== '__tests__' && name !== 'node_modules') sourceFiles(full, out);
@@ -83,7 +85,7 @@ export function topLevelFunctions(text: string): { name: string; line: number; b
 export function ungatedWriters(text: string): string[] {
   return topLevelFunctions(text)
     .filter(({ body }) => {
-      const code = body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+      const code = stripComments(body);
       if (!WRITE.test(code)) return false;
       if (!code.includes('payload')) return false;
       return !GUARD.test(code);
@@ -95,7 +97,7 @@ describe('payload からのパスへ書く関数は関門を通る', () => {
   it('main の中に関門を通さない書き出しが無い', () => {
     const offenders: string[] = [];
     for (const f of sourceFiles('src/main')) {
-      for (const fn of ungatedWriters(readFileSync(f, 'utf8'))) offenders.push(`${f}: ${fn}`);
+      for (const fn of ungatedWriters(readOriginalSource(f))) offenders.push(`${f}: ${fn}`);
     }
     expect(
       offenders,
@@ -142,7 +144,7 @@ describe('payload からのパスへ書く関数は関門を通る', () => {
   it('負の対照: 走査は実物を読んでいる', () => {
     const files = sourceFiles('src/main');
     expect(files.length).toBeGreaterThan(50);
-    const all = files.map((f) => readFileSync(f, 'utf8')).join('\n');
+    const all = files.map((f) => readOriginalSource(f)).join('\n');
     expect(topLevelFunctions(all).length).toBeGreaterThan(100);
   });
 });

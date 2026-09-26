@@ -31,7 +31,7 @@ aliases:
 - [Ordóñez et al. (2009) Goals Gone Wild, Academy of Management Perspectives 23(1):6-16（批判）](https://journals.aom.org/doi/10.5465/amp.2009.37007999) `学術`
 
 ## 関連概念
-- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
+- [[human-self-efficacy-theory|自己効力感（バンデューラ）——課題を遂行できるという自分への信念が行動の開始・持続・努力量を規定し、四つの源泉から形成される]] — 同じ思想家
 - [[mgmt-mbo|目標による管理（MBO）]] — 同じ思想家
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有

@@ -9,7 +9,14 @@
  * UI から切り離して単体テスト可能にするため、計算はすべてここに集約する。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
+import {
+  SME_ANNUAL_CAP,
+  SME_MEASURE_END,
+  SME_UNIT_LIMIT,
+  SME_UNIT_LIMIT_BEFORE_STEP,
+  SME_UNIT_LIMIT_STEP_DATE,
+} from './depreciation';
 
 /** 円未満を四捨五入。 */
 
@@ -22,8 +29,9 @@ import { yen } from './num';
 export function floorTaxableThousand(taxableIncome: number): number {
   // `<= 0` を `< 0` にしても 0 のとき `Math.floor(0/1000)*1000` = 0 で同じ。
   // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
-  if (taxableIncome <= 0) return 0;
-  return Math.floor(taxableIncome / 1_000) * 1_000;
+  const income = nonNeg(taxableIncome);
+  if (income <= 0) return 0;
+  return Math.floor(income / 1_000) * 1_000;
 }
 
 // --- 所得税 (速算表ベース、2024 年度) -----------------------------------
@@ -70,9 +78,15 @@ export function calcBaseIncomeTax(taxableIncome: number): number {
   // 0 のときは下の速算表でも 0 円になるので、この早期 return は結果を
   // 変えない (読みやすさのために置いている)。
   // Stryker disable next-line ConditionalExpression,EqualityOperator: 0 での結果が同じ (実測)
-  if (taxableIncome <= 0) return 0;
+  // **非有限は速算表の `find` を全部すり抜け、`bracket!` が投げる。**
+  // 下の「Infinity 上限ブラケットが必ず最後に在るので bracket は常に定義される」は
+  // **有限な入力についてだけ成り立つ** —— `NaN <= Infinity` は false なので
+  // `find` は undefined を返し、`!` が型検査器の異議を消していた (パス 203 で実測:
+  // `calcBaseIncomeTax(NaN)` は TypeError で落ちていた。画面なら枠が文面になる)。
+  const income = nonNeg(taxableIncome);
+  if (income <= 0) return 0;
   // 課税される所得金額の 1,000 円未満を切り捨ててから速算表を適用する。
-  const floored = floorTaxableThousand(taxableIncome);
+  const floored = floorTaxableThousand(income);
   // 境界を `<` にしても税額は変わらない。速算表の控除額の列が
   // 「境界で前後の式が一致する」ように作られているためで、実装の緩さでは
   // ない (`__tests__/taxCalc.test.ts` の連続性の検査を参照)。定数を打ち
@@ -119,6 +133,28 @@ export interface ResidentPerCapitaBreakdown {
 }
 
 /**
+ * 課税年度を 1 か所で解決する。**非有限な年分は現在の年へ倒す。**
+ *
+ * 年分で切り替わる法定の表 (給与所得控除の下限 65 万・基礎控除の段・均等割の
+ * 内訳・配偶者控除の所得上限) はどれも `taxYear >= N` の比較で枝を選ぶ。
+ * `NaN` はどの比較でも false になるので、**関数ごとに別々の版が選ばれる** ——
+ * 実測 (2026 年に測定):
+ *
+ * | 入口 | `taxYear = NaN` のとき選ばれた版 |
+ * | --- | --- |
+ * | `residentPerCapitaBreakdown` | **総額 4,000 円** (2013 年度以前。復興特別も森林環境税も無い) |
+ * | `spouseIncomeLimitYen` | 480,000 円 (令和 6 年分以前) |
+ * | `calcSalaryIncomeDeduction` | 550,000 円 (改正前) |
+ * | `calcBasicDeduction` | **令和 8 年分 (最新)** —— 上の 3 つと逆向き |
+ *
+ * つまり 1 回の試算の中で**新旧の表が混ざる**。倒す先を年分の既定 (現在の年) に
+ * 揃えることで、少なくとも「1 つの申告は 1 つの年分で計算される」を保つ。
+ */
+export function resolveTaxYear(taxYear: number): number {
+  return Number.isFinite(taxYear) ? taxYear : new Date().getFullYear();
+}
+
+/**
  * 住民税均等割 (+森林環境税) の内訳を年度別に分解する。
  *
  * 2014-2023年度: 基礎4,000 + 復興特別1,000 = 5,000円。
@@ -128,7 +164,8 @@ export interface ResidentPerCapitaBreakdown {
  *
  * @param taxYear 課税年度 (例: 2024)
  */
-export function residentPerCapitaBreakdown(taxYear: number): ResidentPerCapitaBreakdown {
+export function residentPerCapitaBreakdown(rawTaxYear: number): ResidentPerCapitaBreakdown {
+  const taxYear = resolveTaxYear(rawTaxYear);
   const forestTax = taxYear >= 2024 ? FOREST_ENVIRONMENT_TAX : 0;
   // 復興特別の均等割上乗せは 2014-2023 年度に限る。
   const reconstruction = taxYear >= 2014 && taxYear <= 2023 ? 1_000 : 0;
@@ -225,15 +262,25 @@ export function calcResidentAdjustmentCredit(
   residentTaxableIncome: number,
   humanDeductionDiff: number,
 ): number {
+  // **入口で消毒してから比較する。** 下の関門は比較だけで「測れるか」を
+  // 決めているが、`NaN <= 0` も `NaN > 0` も false なので、非有限が来ると
+  // **どちらの枝も通らず NaN が結果に乗る** (パス 202 で実測:
+  // `calcResidentAdjustmentCredit(NaN, 50_000)` が NaN を返していた)。
+  // 規準は `depreciation.ts` の `proratedDepreciation` —— あちらは
+  // `!Number.isFinite(...)` を明示的に見て 0 を返す。ここは `nonNeg` で
+  // 0 に倒し、**既に書かれている `<= 0` の枝をそのまま正しく鳴らす**
+  // (パス 201 と同じ方針 —— 関門を足すのではなく、関門に値を届ける)。
+  const income = nonNeg(residentTaxableIncome);
+  const diff = nonNeg(humanDeductionDiff);
   // 負の入力で「税額を増やす控除」を返さないための入口 (検査あり)。
   // `<= 0` → `< 0` は 0 のとき下の式でも 0 になるので観測できない。
   // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
-  if (residentTaxableIncome <= 0 || humanDeductionDiff <= 0) return 0;
-  if (residentTaxableIncome > 25_000_000) return 0;
-  if (residentTaxableIncome <= 2_000_000) {
-    return yen(Math.min(humanDeductionDiff, residentTaxableIncome) * 0.05);
+  if (income <= 0 || diff <= 0) return 0;
+  if (income > 25_000_000) return 0;
+  if (income <= 2_000_000) {
+    return yen(Math.min(diff, income) * 0.05);
   }
-  const adjusted = humanDeductionDiff - (residentTaxableIncome - 2_000_000);
+  const adjusted = diff - (income - 2_000_000);
   return yen(Math.max(2_500, adjusted * 0.05));
 }
 
@@ -253,7 +300,7 @@ export function residentTaxExemption(
   totalIncome: number,
   dependentCount: number,
 ): { readonly perCapitaExempt: boolean; readonly incomeLevyExempt: boolean } {
-  const persons = 1 + Math.max(0, dependentCount);
+  const persons = 1 + nonNeg(dependentCount);
   const hasDependents = dependentCount > 0;
   // 均等割の非課税限度額。
   const perCapitaLimit = hasDependents ? 350_000 * persons + 310_000 : 450_000;
@@ -275,8 +322,9 @@ export const CONSUMPTION_TAX_REDUCED = 0.08;
 export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION_TAX_STANDARD): number {
   // `<= 0` → `< 0` は等価: 税抜 0 のとき `yen(0 × rate)` = 0 でどちらも 0。
   // Stryker disable next-line EqualityOperator: 0 では税額 0 で結果が同じ
-  if (netAmount <= 0) return 0;
-  return yen(netAmount * rate);
+  const net = nonNeg(netAmount);
+  if (net <= 0) return 0;
+  return yen(net * nonNeg(rate));
 }
 
 // --- 給与所得控除 (正式テーブル, 令和2年分以降) -------------------------
@@ -305,9 +353,11 @@ export const SALARY_DEDUCTION_MIN_65_FROM_YEAR = 2025;
 // いる)。定数を打ち間違えると不連続になり、そちらが落ちる。
 // Stryker disable EqualityOperator
 export function calcSalaryIncomeDeduction(
-  grossAnnual: number,
-  taxYear = new Date().getFullYear(),
+  rawGrossAnnual: number,
+  rawTaxYear = new Date().getFullYear(),
 ): number {
+  const grossAnnual = nonNeg(rawGrossAnnual);
+  const taxYear = resolveTaxYear(rawTaxYear);
   if (grossAnnual <= 0) return 0;
   if (taxYear >= SALARY_DEDUCTION_MIN_65_FROM_YEAR) {
     if (grossAnnual <= 1_900_000) return 650_000;
@@ -366,9 +416,10 @@ export const RESIDENT_BASIC_DEDUCTION = 430_000;
  */
 export function calcBasicDeduction(
   totalIncome: number,
-  taxYear = new Date().getFullYear(),
+  rawTaxYear = new Date().getFullYear(),
 ): number {
-  const income = Math.max(0, totalIncome);
+  const income = nonNeg(totalIncome);
+  const taxYear = resolveTaxYear(rawTaxYear);
   // 2,350 万円超の逓減は全年分で共通 (改正されていない)。
   if (income > 23_500_000) {
     if (income <= 24_000_000) return 480_000;
@@ -458,10 +509,12 @@ export interface NetSalary {
  * 高めに出る点に注意。
  */
 export function calcNetSalary(
-  grossAnnual: number,
-  taxYear = new Date().getFullYear(),
+  rawGrossAnnual: number,
+  rawTaxYear = new Date().getFullYear(),
   p: NetSalaryParams = DEFAULT_NET_SALARY_PARAMS,
 ): NetSalary {
+  const grossAnnual = nonNeg(rawGrossAnnual);
+  const taxYear = resolveTaxYear(rawTaxYear);
   // `<= 0` → `< 0` は等価寄り (0 の挙動差は下流テストで pin 済み)。境界の
   // 等価ミュータントを抑制。
   if (grossAnnual <= 0) {
@@ -476,7 +529,11 @@ export function calcNetSalary(
     };
   }
   const socialInsurance = yen(grossAnnual * p.socialInsuranceRate);
-  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
+  // **年分を渡す。** 渡さないと給与所得控除だけが「現在の年」の表で計算され、
+  // 基礎控除は引数の年分で計算される —— 1 回の手取り試算の中で表が 2 つの
+  // 年分に割れていた (実測: `calcNetSalary(1,500,000, 2023)` は 2026 年分の
+  // 給与所得控除 650,000 円と令和 6 年分以前の基礎控除 480,000 円を混ぜていた)。
+  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual, taxYear);
   // 給与所得 (= 合計所得金額の近似)。社会保険料控除は所得控除なので、課税所得は
   // 給与所得から社保・基礎控除を引いて求める。
   const employmentIncome = Math.max(0, grossAnnual - salaryDeduction);
@@ -512,8 +569,10 @@ export function calcFurusatoResidentCredit(
 
 /** 所得税の限界税率 (速算表の該当ブラケットの率) を返す。 */
 export function marginalIncomeTaxRate(taxableIncome: number): number {
-  if (taxableIncome <= 0) return 0;
-  const bracket = INCOME_TAX_BRACKETS.find((b) => taxableIncome <= b.upTo);
+  // 非有限は `find` を全部すり抜けて `bracket!` が投げる (`calcBaseIncomeTax` と同じ)。
+  const income = nonNeg(taxableIncome);
+  if (income <= 0) return 0;
+  const bracket = INCOME_TAX_BRACKETS.find((b) => income <= b.upTo);
   return bracket!.rate;
 }
 
@@ -549,15 +608,24 @@ export interface FullSalaryResult {
  * の両建てで反映。社会保険料を概算で使う `calcNetSalary` とは別系統。
  */
 export function calcSalaryWithDeductions(
-  grossAnnual: number,
-  deductionIncomeTax: number,
-  deductionResidentTax: number,
-  donation = 0,
-  humanDeductionDiff = 0,
-  dependentCount = 0,
-  taxYear = new Date().getFullYear(),
+  rawGrossAnnual: number,
+  rawDeductionIncomeTax: number,
+  rawDeductionResidentTax: number,
+  rawDonation = 0,
+  rawHumanDeductionDiff = 0,
+  rawDependentCount = 0,
+  rawTaxYear = new Date().getFullYear(),
   p: SalaryTaxParams = DEFAULT_SALARY_TAX_PARAMS,
 ): FullSalaryResult {
+  // 6 つの数値の位置すべてを入口で消毒する。実測ではどの位置に非有限を入れても
+  // 内訳のどれかが NaN で返っていた (`totalDeductionIncomeTax` / `furusatoResidentCredit` ほか)。
+  const grossAnnual = nonNeg(rawGrossAnnual);
+  const deductionIncomeTax = nonNeg(rawDeductionIncomeTax);
+  const deductionResidentTax = nonNeg(rawDeductionResidentTax);
+  const donation = nonNeg(rawDonation);
+  const humanDeductionDiff = nonNeg(rawHumanDeductionDiff);
+  const dependentCount = nonNeg(rawDependentCount);
+  const taxYear = resolveTaxYear(rawTaxYear);
   const perCapitaLevy = resolvePerCapita(p.resident);
   if (grossAnnual <= 0) {
     return {
@@ -663,7 +731,24 @@ export interface TaxScheme {
    * **税理士への個別相談が特に必須** の高度スキームか。
    */
   readonly needsAdvisor: boolean;
+  /**
+   * 適用期限 (`YYYY-MM-DD`・この日までの取得等が対象)。**期限つきの措置だけが持つ。**
+   * 値はコードの定数から読む —— 同じ定数を `lint:rate-freshness` の台帳が見て、期限の 180 日前から
+   * 鳴らす。2026-09-09 までカタログは期限を持たず、期限つきの 2 制度 (少額減価償却資産の特例・
+   * 中小企業投資促進税制) を日付なしで案内していた (パス 140)。
+   */
+  readonly until?: string;
 }
+
+/**
+ * 中小企業投資促進税制 (措法 42 の 6) の適用期限 —— 令和 7 年度税制改正で 2 年延長 (令和 9 年 3 月 31 日)、
+ * 令和 8 年度改正では変更なし。出所: 中小企業庁の制度案内・税理士法人の令和 7 年度改正解説 (一次情報の
+ * 国税庁 No.5433 はこの環境から届かず未照合)。`lint:rate-freshness` の台帳が 180 日前から鳴らす。
+ */
+export const INVESTMENT_PROMOTION_MEASURE_END = '2027-03-31';
+
+/** 円を「万円」の数字にする (カタログの文言用)。 */
+const man = (v: number): string => String(v / 10_000);
 
 /**
  * 一般的に知られた節税制度の「案内」カタログ。
@@ -680,12 +765,21 @@ export function taxSchemeCatalog(): readonly TaxScheme[] {
     { id: 'corp-bankruptcy-kyosai', name: '経営セーフティ共済 (倒産防止共済)', entity: 'corporation', summary: '掛金 (月最大20万・年240万) を全額損金算入。40か月以上で解約時 100% 返戻。', needsAdvisor: false },
     { id: 'corp-officer-salary', name: '役員報酬の最適化', entity: 'corporation', summary: '定期同額給与等のルール内で個人/法人の税負担バランスを調整。', needsAdvisor: false },
     { id: 'corp-company-housing', name: '役員社宅制度', entity: 'corporation', summary: '会社契約の住居を役員へ社宅貸与。一定計算の家賃差額を法人経費化。', needsAdvisor: true },
-    { id: 'corp-investment-tax', name: '中小企業投資促進税制', entity: 'corporation', summary: '一定の設備投資で 30% 特別償却 または 7% 税額控除を選択。', needsAdvisor: false },
+    { id: 'corp-investment-tax', name: '中小企業投資促進税制', entity: 'corporation', summary: '一定の設備投資で 30% 特別償却 または 7% 税額控除を選択。', needsAdvisor: false, until: INVESTMENT_PROMOTION_MEASURE_END },
     { id: 'corp-bonus', name: '決算賞与', entity: 'corporation', summary: '決算日までに支給通知し1か月以内に支払えば当期損金に計上可。', needsAdvisor: false },
     // --- 個人事業主 ---
     { id: 'sp-blue', name: '青色申告 (65万円特別控除)', entity: 'sole-proprietor', summary: '複式簿記+e-Tax 等で最大65万円の所得控除。基本かつ最大の節税。', needsAdvisor: false },
     { id: 'sp-family-salary', name: '青色事業専従者給与', entity: 'sole-proprietor', summary: '事前届出で生計同一親族への給与を全額経費化 (所得分散)。', needsAdvisor: true },
-    { id: 'sp-small-depreciation', name: '少額減価償却資産の特例', entity: 'sole-proprietor', summary: '取得価額が基準未満の資産を取得年に一括経費化 (青色限定・年間上限あり)。', needsAdvisor: false },
+    {
+      id: 'sp-small-depreciation',
+      name: '少額減価償却資産の特例',
+      entity: 'sole-proprietor',
+      summary:
+        `取得価額 ${man(SME_UNIT_LIMIT)}万円未満 (${SME_UNIT_LIMIT_STEP_DATE} 以後の取得。それ以前は ${man(SME_UNIT_LIMIT_BEFORE_STEP)}万円未満) の資産を` +
+        `取得年に一括経費化 (青色限定・年 ${man(SME_ANNUAL_CAP)}万円まで)。`,
+      needsAdvisor: false,
+      until: SME_MEASURE_END,
+    },
     { id: 'sp-loss-carryover', name: '純損失の繰越し・繰戻し', entity: 'sole-proprietor', summary: '青色なら赤字を翌3年繰越、または前年へ繰戻し還付。', needsAdvisor: false },
     // --- 両方 ---
     { id: 'both-small-biz-kyosai', name: '小規模企業共済', entity: 'both', summary: '掛金 (月最大7万) が全額所得控除。退職金/廃業資金の準備。', needsAdvisor: false },

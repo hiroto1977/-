@@ -35,12 +35,12 @@ aliases:
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同じ思想家
 - [[econ-rawls-justice|ロールズの正義論（公正としての正義）]] — 出典を共有
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
 - [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 出典を共有
-- [[infosoc-misinformation-correction-backfire|誤情報訂正とバックファイア効果の実証研究]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

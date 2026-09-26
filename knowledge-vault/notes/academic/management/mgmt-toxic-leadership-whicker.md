@@ -36,7 +36,6 @@ aliases:
 - [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 出典を共有
 - [[mgmt-intellectual-capital-edvinsson|知的資本（エドビンソン＆マローン）]] — 出典を共有
 - [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
-- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
 - [[mgmt-team-cohesion-carron|チーム凝集性（キャロン）]] — 同分野の近傍
 
 ## 関連

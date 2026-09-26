@@ -26,7 +26,7 @@ aliases:
 デイヴ・スノーデン（Dave Snowden, 1999）／メアリー・ブーン（Snowden & Boone, 2007 HBR）
 
 ## 出典
-- [Snowden & Boone, "A Leader's Framework for Decision Making", Harvard Business Review (2007年11月)](https://hbr.org/2007/11/a-leaders-framework-for-decision-making) `学術`
+- [Snowden & Boone, "A Leader's Framework for Decision Making", Harvard Business Review (2007年11月)](https://hbr.org/2007/11/a-leaders-framework-for-decision-making) `メディア`
 - [Cynefin framework — Wikipedia](https://en.wikipedia.org/wiki/Cynefin_framework) `リファレンス`
 - [Cynefin framework — Praxis Framework](https://www.praxisframework.org/en/library/cynefin-framework) `リファレンス`
 

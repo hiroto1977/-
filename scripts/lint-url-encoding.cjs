@@ -38,6 +38,13 @@
  * —— 対象を絞ったこと自体を書いておくのは、今日「走査範囲が一覧だったせいで
  * 死角ができた」ゲートを 7 つ直したため (docs/SESSION_HANDOFF.md 0-a)。
  *
+ * **ただし authority の中の `${…}` は別の話** (パス 324)。上の「オリジンは変えられない」は
+ * **パス片**の話で、`https://${domain}.slack.com/…` のようにホストの位置に第三者の応答の値を
+ * 置くと `/` `?` `#` `\` の 1 字でホストが変わる。このゲートは authority を見ない (と宣言している)
+ * ので、その母集団は `src/shared/__tests__/hostInterpolationCensus.test.ts` が台帳制 (両方向) で持つ。
+ * 実物: `main/clients/slack.ts` の permalink が `team.info` の `domain` をそのまま置いていた ——
+ * ここと network-targets (通信だけ) と #5 (スキームだけ) が互いに「隣が見る」と述べていた継ぎ目。
+ *
  * Run:  node scripts/lint-url-encoding.cjs
  *       node scripts/lint-url-encoding.cjs --self-test
  *       npm run lint:url-encoding
@@ -46,6 +53,21 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx'], roots: ['src'] };
+
+/**
+ * 走査の条件。**走査とこの下の照合が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const SCAN_ROOTS = ['src'];
+const SKIP_DIRS = new Set(['__tests__', 'node_modules']);
+const acceptName = (name) => /\.tsx?$/.test(name);
+/** 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。 */
+const CROSS_CHECK = { roots: SCAN_ROOTS, skipDirs: SKIP_DIRS, accept: acceptName };
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -83,8 +105,8 @@ function walk(dir, out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (e.name !== '__tests__' && e.name !== 'node_modules') walk(full, out);
-    } else if (/\.tsx?$/.test(e.name)) out.push(full);
+      if (!SKIP_DIRS.has(e.name)) walk(full, out);
+    } else if (acceptName(e.name)) out.push(full);
   }
   return out;
 }
@@ -144,13 +166,13 @@ function scanFile(rel, text) {
 }
 
 function analyze() {
-  const files = walk(path.join(REPO_ROOT, 'src'));
+  const files = SCAN_ROOTS.flatMap((r) => walk(path.join(REPO_ROOT, r)));
   const hits = [];
   for (const abs of files) {
     const rel = path.relative(REPO_ROOT, abs).split(path.sep).join('/');
     hits.push(...scanFile(rel, fs.readFileSync(abs, 'utf8')));
   }
-  return { hits, scanned: files.length };
+  return { hits, scanned: files.length, files };
 }
 
 // ---------------------------------------------------------------------------
@@ -214,7 +236,7 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
-  const { hits, scanned } = analyze();
+  const { hits, scanned, files } = analyze();
   const problems = [];
   const seen = new Set();
 
@@ -231,6 +253,31 @@ function main(argv) {
   console.log(
     `Scanned ${scanned} file(s): 通信 URL の補間 ${hits.length} 件 (台帳 ${REVIEWED.length} 件)`,
   );
+
+  // 走査が死んで 0 件になったのを「符号化されている」と読まない (実測 528 ファイル、2026-09-25)。
+  // ★ この門は 2026-09-05 に lint:imports / lint:regex へ足された物の 3 件目である ——
+  //   あの日の注記は「走査数を表示するだけで床の無いゲートをここと lint:regex に見つけた」と
+  //   書いたが、母集団は 2 本ではなかった (パス 468 が振る舞いで測り、5 本見つけた)。
+  //   床を src/ の半分 (300) に置くのは lint:imports と同じ判断 —— src/ がそこまで縮む
+  //   ような変化は、URL の符号化を確かめる前に気づくべき事故である。
+  const MIN_FILES = 300;
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `.tsx` を落とすと 530 → 422 件になるが、床 300 は素通りする。
+  //   画面 (`.tsx`) はまさに URL を組み立てて見せる層なので、そこが丸ごと消えるのは
+  //   「補間 0 件」と同じ形の見落としである。宣言した群はどれも 1 件以上を要求する。
+  if (reportGroupFloor(files, REQUIRED_GROUPS, REPO_ROOT, 'lint:url-encoding') !== 0) return 1;
+  // ★ **群ごとの床は「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   1% 落としても 6 ゲートすべてが ✅ exit 0 だった。追跡ファイルの一覧と照合する。
+  const cross = reportTrackedCrossCheck(files, CROSS_CHECK, REPO_ROOT, 'lint:url-encoding');
+  if (cross.code !== 0) return 1;
+  const crossSource = cross.source;
+  if (scanned < MIN_FILES) {
+    console.error(
+      `❌ src/**/*.ts(x) を ${scanned} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。`
+      + ' 走査が壊れています —— 0 件でも「補間 0 件」になるので、ここで落とします。',
+    );
+    return 1;
+  }
 
   let failed = false;
   if (problems.length > 0) {
@@ -255,11 +302,11 @@ function main(argv) {
   }
 
   if (failed) return 1;
-  console.log('✅ 通信 URL の動的部分はすべて符号化されているか、台帳にあります');
+  console.log(`✅ 通信 URL の動的部分はすべて符号化されているか、台帳にあります (${crossCheckSuffix(crossSource)})`);
   return 0;
 }
 
-module.exports = { scanFile, rawInterpolations, encodedBindings, REVIEWED };
+module.exports = { scanFile, rawInterpolations, encodedBindings, REVIEWED, REQUIRED_GROUPS, CROSS_CHECK };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

@@ -54,9 +54,13 @@ describe('buildMicrosoft365Snapshot', () => {
         { id: 'e1', subject: '' }, // subject 空 → '(件名なし)' / start なし → '' / location なし → ''
       ],
     );
-    expect(snap.messages[0]).toEqual({ id: 'm1', subject: '(件名なし)', from: '', received: '', unread: false });
+    // 受信日時は**読めたときだけ日付**で、読めなければ `null` (パス 410) ——
+    // 直す前は `''` で、画面は「受信 」とだけ刷って理由を言わなかった。
+    expect(snap.messages[0]).toEqual({ id: 'm1', subject: '(件名なし)', from: '', received: null, unread: false });
     expect(snap.messages[1]!.from).toBe('');
-    expect(snap.events[0]).toEqual({ id: 'e1', subject: '(件名なし)', start: '', location: '' });
+    // 開始日時は**読めたときだけ文字列**で、読めなければ `null` (パス 413) ——
+    // 直す前は `(… ?? '').slice(0, 16)` で、数・物・配列だと**投げて取得ごと失敗**した。
+    expect(snap.events[0]).toEqual({ id: 'e1', subject: '(件名なし)', start: null, location: '' });
   });
 
   it('builds the outlook/calendar summary items with live counts', () => {
@@ -177,7 +181,7 @@ describe('ACTIONS["send-mail"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-mail']!({ token: 't', fetch: fetchMock, payload: { subject: 'S' } }),
-    ).rejects.toThrow(/to, subject are required/);
+    ).rejects.toThrow(/^to は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -185,7 +189,7 @@ describe('ACTIONS["send-mail"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-mail']!({ token: 't', fetch: fetchMock, payload: { to: 'a@b.com' } }),
-    ).rejects.toThrow(/required/);
+    ).rejects.toThrow(/^subject は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
@@ -252,7 +256,7 @@ describe('ACTIONS["create-event"]', () => {
         fetch: fetchMock,
         payload: { subject: 'S', start: '2026-07-01T10:00:00' },
       }),
-    ).rejects.toThrow(/subject, start, end are required/);
+    ).rejects.toThrow(/^end は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -264,7 +268,109 @@ describe('ACTIONS["create-event"]', () => {
         fetch: fetchMock,
         payload: { start: '2026-07-01T10:00:00', end: '2026-07-01T11:00:00' },
       }),
-    ).rejects.toThrow(/required/);
+    ).rejects.toThrow(/^subject は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * **「サマリー」のカードは、数えられたときだけ件数を言う。** (2026-09-14 · パス 264)
+ *
+ * `items` は「📧 Outlook: 直近 N 件 / 未読 M 件」という**文**で、画面の
+ * 「サマリー」節に 2 件のカードとして並ぶ。`value` が無い応答でも
+ * `messages.value ?? []` で `[]` に畳んでいたので **`直近 0 件 / 未読 0 件` が
+ * 数えた結果のように出ていた** —— 節に 2 件在るので空にも見えない。
+ */
+describe('サマリーの件数は「読めた」ときだけ (パス 264)', () => {
+  const itemsFor = async (messages: unknown, events: unknown): Promise<string[]> => {
+    const f = vi.fn<typeof fetch>(async (url) =>
+      jsonResponse(
+        String(url).includes('/messages') ? messages : String(url).includes('/events') ? events : { displayName: 'A' },
+      ),
+    );
+    const snap = await fetchMicrosoft365Snapshot({ token: 't', fetch: f });
+    return snap.items.map((i) => i.name);
+  };
+
+  it('★ value が無ければ件数を言わない (0 ではなく不明)', async () => {
+    const names = await itemsFor({}, {});
+    expect(names[0]).toContain('読み取れませんでした');
+    expect(names[1]).toContain('読み取れませんでした');
+    for (const n of names) expect(n, n).not.toContain('0 件');
+  });
+
+  it('★ 対照: value: [] は相手の答えなので 0 件と言う', async () => {
+    expect(await itemsFor({ value: [] }, { value: [] })).toEqual([
+      '📧 Outlook: 直近 0 件 / 未読 0 件',
+      '📅 予定: 直近 0 件',
+    ]);
+  });
+
+  /*
+   * 片方が読めない形は**封筒が正しくて鍵だけ無い**場合に限られる ——
+   * `null` の本文はパス 262 の漏斗 (`jsonFetch`) が先に断るので、ここへは来ない
+   * (最初 `null` を渡して書き、その断りで教わった)。
+   */
+  it('★ 片方だけ読めないなら、読めた側は件数を言う', async () => {
+    const names = await itemsFor({ value: [{ id: 'm1', isRead: false }] }, { value: 'x' });
+    expect(names[0]).toBe('📧 Outlook: 直近 1 件 / 未読 1 件');
+    expect(names[1]).toContain('読み取れませんでした');
+  });
+
+  it('buildMicrosoft365Snapshot の既定は「読めた」 (配列を渡す = 数えられた)', () => {
+    expect(buildMicrosoft365Snapshot({}, [], []).items.map((i) => i.name)).toEqual([
+      '📧 Outlook: 直近 0 件 / 未読 0 件',
+      '📅 予定: 直近 0 件',
+    ]);
+  });
+});
+
+/**
+ * **作成された予定の読みは両ビルドで 1 つ** (2026-09-22 · パス 414)。
+ *
+ * 直す前、main だけが `res.subject ?? event.subject` / `res.webLink ?? ''` と
+ * **型を見ずに**受けていた (ブラウザ版の `createMicrosoftEvent` は
+ * `optionalString` を通していた)。`??` は null / undefined しか受けないので、
+ * 実測 (直す前・実物の handler に食わせる):
+ *
+ * | 応答 | 直す前 |
+ * | --- | --- |
+ * | `{subject: {a:1}}` | `subject` が**物のまま** |
+ * | `{webLink: 42}` | `webLink` が**数のまま** |
+ * | `{}` (id 無し) | `id=undefined` で「作成しました」と言う |
+ *
+ * 今日この違いは画面に出ない (`Microsoft365Page` は `webLink` をリンクの宛先に
+ * するだけで `subject` を描かない) —— **罠であって生きた欠陥ではない**。それでも
+ * 1 つにするのは、パス 402 / 407 と同じ「同じアプリが同じ問いに 2 通り答え、
+ * 弱い方が main に立っている」形だからである。
+ */
+describe('ACTIONS["create-event"] の応答の読み (パス 414)', () => {
+  const call = (body: unknown) =>
+    ACTIONS['create-event']!({
+      token: 't',
+      fetch: vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse(body, 201)),
+      payload: { subject: '会議', start: '2026-07-01T10:00:00', end: '2026-07-01T11:00:00' },
+    }) as Promise<{ id: string; subject: string; webLink: string }>;
+
+  it('★ 物の subject は落ちて、送った件名に戻る', async () => {
+    expect(await call({ id: 'e1', subject: { a: 1 } })).toEqual({
+      id: 'e1',
+      subject: '会議',
+      webLink: '',
+    });
+  });
+
+  it('★ 数の webLink は落ちる (リンクにしない)', async () => {
+    expect((await call({ id: 'e1', webLink: 42 })).webLink).toBe('');
+  });
+
+  it('★ id が無ければ投げる (「作成しました」と言わない)', async () => {
+    await expect(call({ subject: 's' })).rejects.toThrow(/Microsoft Graph/);
+  });
+
+  it('★ 200,000 字の subject は天井を通る', async () => {
+    const got = await call({ id: 'e1', subject: 'x'.repeat(200_000) });
+    expect(got.subject.length).toBe(257);
+    expect(got.subject.endsWith('…')).toBe(true);
   });
 });

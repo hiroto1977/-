@@ -1,26 +1,24 @@
+import { nonNeg } from '../../shared/num';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
-import { jpy } from '../../shared/formatters';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
+import { exportSavedNote, exportWarning } from '../data/exportOutcome';
+import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
+import type { ActionData } from '../../shared/actionData';
+import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
 
-interface BusinessAdvisorRecommendation {
-  categoryId: string;
-  rank: number;
-  rationale: string;
-  actionItems: string[];
-  riskFactors: string[];
-}
-
-interface BusinessAdvisorResponse {
-  recommendations: BusinessAdvisorRecommendation[];
-  disclaimer: string;
-  notForRealMoney: true;
-}
+// 助言の戻り値の形は台帳 (`shared/actionData.ts` → `shared/businessAdvisor.ts`) を読む (パス 117)。
+// それまでここの写しは `categoryId: string` に広がっていた (本物は 10 個の合併型)。
 
 interface CategoryKpi {
   readonly revenue: number;
@@ -97,7 +95,7 @@ function Sparkline({
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(' ');
-  const color = positive === false ? '#ef4444' : '#22c55e';
+  const color = positive === false ? 'var(--danger)' : 'var(--success)';
   return (
     <svg width={width} height={height} aria-hidden="true">
       <polyline fill="none" stroke={color} strokeWidth={1.5} points={pts} />
@@ -171,7 +169,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
         <div
           style={{
             padding: '2px 8px',
-            background: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             color: '#fff',
             fontSize: 11,
             fontWeight: 600,
@@ -195,7 +193,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
             style={{
               fontSize: 14,
               fontWeight: 600,
-              color: c.profit >= 0 ? '#22c55e' : '#ef4444',
+              color: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             }}
           >
             {yen.format(c.profit)}
@@ -285,7 +283,7 @@ function Sideboard({
           padding: '8px 10px',
           background: selected === 'all' ? 'var(--accent)' : 'var(--bg-elev)',
           border: '1px solid var(--border)',
-          borderRadius: 6,
+          borderRadius: 14,
           color: 'var(--text)',
           cursor: 'pointer',
           fontSize: 12,
@@ -302,7 +300,7 @@ function Sideboard({
       </button>
       {units.map((u) => {
         const isSel = selected === u.id;
-        const profitColor = u.current.profit >= 0 ? '#22c55e' : '#ef4444';
+        const profitColor = u.current.profit >= 0 ? 'var(--success)' : 'var(--danger)';
         return (
           <button
             key={u.id}
@@ -313,7 +311,7 @@ function Sideboard({
               padding: '6px 10px',
               background: isSel ? 'var(--accent)' : 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 14,
               color: 'var(--text)',
               cursor: 'pointer',
               fontSize: 12,
@@ -391,7 +389,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
         <div
           style={{
             padding: '4px 10px',
-            background: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             color: '#fff',
             fontSize: 12,
             fontWeight: 600,
@@ -415,7 +413,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
             style={{
               fontSize: 20,
               fontWeight: 700,
-              color: c.profit >= 0 ? '#22c55e' : '#ef4444',
+              color: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             }}
           >
             {yen.format(c.profit)}
@@ -501,7 +499,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
                     style={{
                       padding: '4px 8px',
                       textAlign: 'right',
-                      color: h.profit >= 0 ? '#22c55e' : '#ef4444',
+                      color: h.profit >= 0 ? 'var(--success)' : 'var(--danger)',
                     }}
                   >
                     {yen.format(h.profit)}
@@ -510,7 +508,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
                     style={{
                       padding: '4px 8px',
                       textAlign: 'right',
-                      color: h.profitMargin >= 0 ? '#22c55e' : '#ef4444',
+                      color: h.profitMargin >= 0 ? 'var(--success)' : 'var(--danger)',
                     }}
                   >
                     {h.profitMargin.toFixed(1)}%
@@ -679,7 +677,9 @@ function FoodDeliverySection() {
 // --- Page -----------------------------------------------------------
 
 export function BusinessPage() {
-  const { data, source, status, errorMessage, refresh } = useServiceData<BusinessSnapshot>(
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData<BusinessSnapshot>(
     'business',
     SNAPSHOT.business,
   );
@@ -688,11 +688,14 @@ export function BusinessPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; saved?: string; warning?: string } | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。1,000 字は打って届く量ではない —— `maxLength` が
+     発火するのは貼り付けのときだけで、そのとき超過分は黙って消える。 */
+  const advisorQuestionOver = charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS);
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
-  const [advisorResult, setAdvisorResult] = useState<BusinessAdvisorResponse | null>(null);
+  const [advisorResult, setAdvisorResult] = useState<ActionData<'business/advise'> | null>(null);
 
   const labelById = useMemo(() => {
     const m: Record<string, string> = {};
@@ -706,15 +709,12 @@ export function BusinessPage() {
     setLastExport(null);
     try {
       const action = format === 'html' ? 'export-dashboard' : 'export-dashboard-md';
-      const payload: { advisorResult?: BusinessAdvisorResponse } = {};
+      const payload: { advisorResult?: ActionData<'business/advise'> } = {};
       if (advisorResult) payload.advisorResult = advisorResult;
-      const r = await window.serviceHub.invoke<{
-        path: string;
-        bytes: number;
-        generatedAt: string;
-      }>('business', action, payload);
+      // html / md は同じ形 (台帳の ExportFileResult)。型は台帳から読む (パス 116)。
+      const r = await window.serviceHub.invoke<ActionData<'business/export-dashboard'>>('business', action, payload);
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -731,10 +731,20 @@ export function BusinessPage() {
       setAdvisorError('質問を入力してください');
       return;
     }
+    /*
+     * **Enter は `disabled` を見ない** (パス 175)。欄は超過を述べて押せなくなるが、
+     * 下の `onKeyDown` は `advisorBusy` だけを見てここへ来るので、押せない状態のまま
+     * 送れてしまう —— main / ブラウザ版の `checkAdvisorQuestion` が断る道
+     * (`'too-long'`) は `maxLength` のせいで 1 度も通っていなかった。ここが最後の砦。
+     */
+    if (charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS) > 0) {
+      setAdvisorError(refusedCeilingNote('質問', advisorQuestion, MAX_ADVISOR_QUESTION_CHARS));
+      return;
+    }
     setAdvisorBusy(true);
     setAdvisorError(null);
     try {
-      const r = await window.serviceHub.invoke<BusinessAdvisorResponse>(
+      const r = await window.serviceHub.invoke<ActionData<'business/advise'>>(
         'business',
         'advise',
         { question: q },
@@ -791,22 +801,31 @@ export function BusinessPage() {
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/*
+        * **読む口が在るなら、書く口も在る** (2026-09-24 · パス 451)。
+        * この画面の「AI 経営アドバイザー」は Anthropic を呼ぶので main / ブラウザ版とも
+        * この資格情報を読む。ところが 2026-09-24 まで**書く口がどの画面にも無く**、
+        * main は空の鍵をそのまま送って相手の「鍵が不正」という文を画面に出していた (実測)。
+        * 兄弟の感情ログは最初からこの欄を持つ —— 同じラベル・同じ placeholder。
+        * 断りの文 (`MISSING_ANTHROPIC_KEY_MESSAGE`) が名乗る逃げ口はこの欄である。
+        */}
       <StatusBar
         who="事業ダッシュボード · 模擬データ"
         serviceId="business"
         source={source}
         status={status}
         errorMessage={errorMessage}
-        isConfigured
+        isConfigured={isConfigured}
         onRefresh={refresh}
+        tokenSetup={{ label: 'Anthropic API キー', placeholder: 'sk-ant-…' }}
       />
 
       {data.isMock && (
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
@@ -847,7 +866,7 @@ export function BusinessPage() {
             label="月次利益"
             value={(agg.profit >= 0 ? '+' : '') + yen.format(agg.profit)}
             sub={(agg.profitMargin >= 0 ? '+' : '') + agg.profitMargin.toFixed(1) + '%'}
-            accent={agg.profit >= 0 ? '#22c55e' : '#ef4444'}
+            accent={agg.profit >= 0 ? 'var(--success)' : 'var(--danger)'}
           />
           <Tile
             label="月次コンテンツ出力"
@@ -879,7 +898,7 @@ export function BusinessPage() {
                 padding: '4px 12px',
                 background: sortKey === k ? 'var(--accent)' : 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text)',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -895,7 +914,7 @@ export function BusinessPage() {
                 padding: '4px 12px',
                 background: 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text-mute)',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -932,7 +951,7 @@ export function BusinessPage() {
               padding: '6px 14px',
               background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,
@@ -948,7 +967,7 @@ export function BusinessPage() {
               padding: '6px 14px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,
@@ -956,9 +975,12 @@ export function BusinessPage() {
           >
             Markdown を保存
           </button>
-          <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-            保存先: ~/.local/business-hub/data/business-dashboard.{`{html,md}`}
-          </span>
+          {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
+          {buildKind !== null && (
+            <span data-export-destination style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              {exportDestinationNote(buildKind, DESKTOP_PATHS.businessDashboard)}
+            </span>
+          )}
         </div>
         {lastExport && (
           <div
@@ -970,7 +992,7 @@ export function BusinessPage() {
               borderRadius: 6,
             }}
           >
-            <ExportActions path={lastExport.path} bytes={lastExport.bytes} />
+            <ExportActions path={lastExport.path} bytes={lastExport.bytes} saved={lastExport.saved} warning={lastExport.warning} />
           </div>
         )}
         {exportMsg && (
@@ -996,9 +1018,9 @@ export function BusinessPage() {
       >
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '8px 12px',
             borderRadius: 6,
             fontSize: 12,
@@ -1011,19 +1033,31 @@ export function BusinessPage() {
           AI 出力は誤った推論を含む可能性があるため、実際の経営判断は別途裏取りが必要です。
           回答は登録されている 10 事業カテゴリに限定されます。
         </div>
+        {/* **何が外へ出るかを書く。** 質問文だけでなく、各事業カテゴリの
+            現在 KPI と売上トレンドが JSON で system / user 両方のプロンプトに
+            載って Anthropic へ送られる (`web-shim.ts` の `callBusinessAdvisor` /
+            `business.ts` の `askAdvisor` がどちらも `JSON.stringify(analyses)` を
+            userPrompt に積む)。売上は利用者が入れた情報である。
+            2026-09-09 (パス 106) まで、この画面には免責はあっても
+            **外へ出ることに触れる文が 1 つも無かった**。 */}
+        <AiEgressNotice
+          subject={{
+            what: '質問文と、各事業カテゴリの現在 KPI・売上トレンド (JSON) ',
+            recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
+          }}
+        />
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <input
             type="text"
             value={advisorQuestion}
             onChange={(e) => setAdvisorQuestion(e.target.value)}
             placeholder="例: 来期に最も注力すべき事業を 3 つ"
-            maxLength={1000}
             style={{
               flex: 1,
               padding: '8px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,
             }}
@@ -1033,12 +1067,12 @@ export function BusinessPage() {
           />
           <button
             onClick={runAdvisor}
-            disabled={advisorBusy}
+            disabled={advisorBusy || advisorQuestionOver > 0}
             style={{
               padding: '8px 16px',
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: advisorBusy ? 'wait' : 'pointer',
@@ -1047,12 +1081,17 @@ export function BusinessPage() {
             {advisorBusy ? '分析中…' : 'AI に聞く'}
           </button>
         </div>
+        <CeilingNotice label="質問" value={advisorQuestion} max={MAX_ADVISOR_QUESTION_CHARS} />
         {advisorError && (
           <div
+            /* 断りの出所を言い分けられるようにする (パス 175 —— 欄の注記と、
+               Enter の砦が出す文は別物で、どちらが出ているかを検査が見る)。 */
+            data-advisor-error
+            role="alert"
             style={{
-              border: '1px solid #ef4444',
+              border: '1px solid var(--danger)',
               background: 'rgba(239, 68, 68, 0.08)',
-              color: '#ef4444',
+              color: 'var(--danger)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,
@@ -1087,7 +1126,7 @@ export function BusinessPage() {
                       width: 28,
                       height: 28,
                       borderRadius: 14,
-                      background: 'var(--accent)',
+                      background: 'var(--gradient)',
                       color: '#fff',
                       display: 'flex',
                       alignItems: 'center',
@@ -1121,7 +1160,7 @@ export function BusinessPage() {
                 <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, marginBottom: 4 }}>
                   リスク要因:
                 </div>
-                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#fbbf24' }}>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: 'var(--warning)' }}>
                   {r.riskFactors.map((rf, i) => (
                     <li key={i} style={{ marginBottom: 2 }}>
                       {rf}
@@ -1192,17 +1231,34 @@ function CrossServiceKpis() {
   const stocksCash = st?.portfolio?.cash ?? 0;
   const investmentValuation = Math.max(0, stocksCash + mf.portfolio.totalValuation);
   // 不動産取得価格合計 = 取得原価ベースの資産 (非負)。
-  const realEstateAssets = re.properties.reduce((sum, p) => sum + Math.max(0, p.purchasePrice), 0);
+  // `Math.max(0, NaN)` は NaN なので、1 件でも読めない取得価格が在ると
+  // 総資産のタイルが NaN になる。取得価格は負を取らない量 (パス 205)。
+  const realEstateAssets = re.properties.reduce((sum, p) => sum + nonNeg(p.purchasePrice), 0);
   const totalAssets = investmentValuation + realEstateAssets;
 
   return (
     <Section title="業務操作 横断 KPI (フードデリバリー × 投資 × 士業)" count={5}>
+      {/*
+        金額は**この画面で 1 つの流儀**にする (2026-09-08 · パス 99)。
+
+        ここは `shared/formatters` の `jpy` を使っていたが、同じ画面の他の 11 か所は
+        上の `Intl.NumberFormat` (`yen`) を使っており、**実測で 3 つずれていた** ——
+        円記号の文字 (半角 / 全角)・負の符号の位置・小数を出すか円単位に丸めるか。
+        「月次 CF (不動産)」は赤字になりうるので (パス 58 の逆レバレッジ分析はそこが主題)、
+        **同じ画面で負の額が 2 通りに刷られていた**。
+
+        多数側 (11 対 5) に寄せる —— 見える変化がいちばん小さく、符号を記号の前に置く
+        `Intl` の形は日本語の慣行に沿う。実測の表と、リポジトリ全体に 4 つの綴りが
+        在ること (うち 2 つは相手に渡る書面の書式) は
+        `pages/__tests__/moneyNotationOneScreen.test.ts` の冒頭に置いた。
+        **この画面には円記号を字面で書かない** —— 同じテストがそれを留めている。
+      */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 12 }}>
-        <Stat label="月次売上推計 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
-        <Stat label="月次 CF (不動産)" value={jpy(monthlyCashflow)} positive={monthlyCashflow >= 0} />
-        <Stat label="投資元本 (株式cash + 投信評価額)" value={jpy(investmentValuation)} />
-        <Stat label="総資産 (取得原価ベース)" value={jpy(totalAssets)} />
-        <Stat label="士業 月次顧問料 (7 種合計)" value={jpy(shigyoMonthlyFeeTotal)} />
+        <Stat label="月次売上推計 (フードデリバリー)" value={yen.format(monthlyFoodDelivery)} />
+        <Stat label="月次 CF (不動産)" value={yen.format(monthlyCashflow)} positive={monthlyCashflow >= 0} />
+        <Stat label="投資元本 (株式cash + 投信評価額)" value={yen.format(investmentValuation)} />
+        <Stat label="総資産 (取得原価ベース)" value={yen.format(totalAssets)} />
+        <Stat label="士業 月次顧問料 (7 種合計)" value={yen.format(shigyoMonthlyFeeTotal)} />
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
         ※ 各値は snapshot データの集計。フードデリバリーは

@@ -26,7 +26,7 @@ aliases:
 アンリ・ファヨール ／ フレデリック・テイラー ／ リンダル・アーウィック ／ ルーサー・ギューリック
 
 ## 出典
-- [Fayol, H. (1916/1949) General and Industrial Management — Pitman (WorldCat)](https://www.worldcat.org/oclc/1392559) `学術`
+- [Fayol, H. (1916/1949) General and Industrial Management — Pitman (WorldCat)](https://www.worldcat.org/oclc/1392559) `リファレンス`
 - [Wikipedia: Henri Fayol — five functions of management, 14 principles, administrative theory, POSDCORB](https://en.wikipedia.org/wiki/Henri_Fayol) `リファレンス`
 
 ## 関連概念

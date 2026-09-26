@@ -10,6 +10,7 @@ import {
   resolveStandardBonus,
   PENSION_MONTHLY_CAP,
   HEALTH_MONTHLY_CAP,
+  maxEmployeeSocialInsurance,
   PENSION_BONUS_CAP_PER_PAYMENT,
   HEALTH_BONUS_CAP_ANNUAL,
   PENSION_RATE,
@@ -311,5 +312,48 @@ describe('料率と上限を渡す (台帳の値)', () => {
     expect(result.health).toBeLessThan(byDefault.health);
     // 雇用保険は上限に関係なく賃金総額 × 率。
     expect(result.employment).toBe(byDefault.employment);
+  });
+});
+
+describe('maxEmployeeSocialInsurance (被用者としての本人負担の法定最大額・パス 218)', () => {
+  // **数を写さない。** 期待値は上限と料率から組み立てる —— 定数が改正で動いたら
+  // 検査も一緒に動く (写した literal は片方だけ腐る)。
+  const expected = (r = DEFAULT_SOCIAL_INSURANCE_RATES): number => Math.round(
+    (PENSION_MONTHLY_CAP * 12 + r.pensionBonusCapPerPayment * 12) * r.pensionRate
+    + (HEALTH_MONTHLY_CAP * 12 + r.healthBonusCapAnnual) * (r.healthRate + r.careRate),
+  );
+
+  it('標準報酬月額と標準賞与額の上限から組み立てる', () => {
+    expect(maxEmployeeSocialInsurance()).toBe(expected());
+  });
+
+  it('★ 生きている数である (0 でも兆円でもない)', () => {
+    // 式が畳まれて 0 になる・桁が飛ぶ変更を捕まえる帯。
+    const v = maxEmployeeSocialInsurance();
+    expect(v).toBeGreaterThan(3_000_000);
+    expect(v).toBeLessThan(5_000_000);
+  });
+
+  it('料率と賞与の上限を上書きすると動く (台帳から効く)', () => {
+    const doubled = {
+      ...DEFAULT_SOCIAL_INSURANCE_RATES,
+      pensionRate: DEFAULT_SOCIAL_INSURANCE_RATES.pensionRate * 2,
+    };
+    expect(maxEmployeeSocialInsurance(doubled)).toBe(expected(doubled));
+    expect(maxEmployeeSocialInsurance(doubled)).toBeGreaterThan(maxEmployeeSocialInsurance());
+    const lowBonus = { ...DEFAULT_SOCIAL_INSURANCE_RATES, healthBonusCapAnnual: 0 };
+    expect(maxEmployeeSocialInsurance(lowBonus)).toBeLessThan(maxEmployeeSocialInsurance());
+  });
+
+  it('★ 雇用保険は含めない (賃金総額に比例し上限が無いので)', () => {
+    // `employmentRate` を 100 倍しても値が動かないことで「入っていない」を示す。
+    // **不在の主張には標本を添える** —— 上の 3 本が「他の率では動く」ことを示している。
+    const wild = { ...DEFAULT_SOCIAL_INSURANCE_RATES, employmentRate: 0.5 };
+    expect(maxEmployeeSocialInsurance(wild)).toBe(maxEmployeeSocialInsurance());
+  });
+
+  it('介護保険料率は常に足す (40 歳未満でも「最大額」の問いには入る)', () => {
+    const noCare = { ...DEFAULT_SOCIAL_INSURANCE_RATES, careRate: 0 };
+    expect(maxEmployeeSocialInsurance(noCare)).toBeLessThan(maxEmployeeSocialInsurance());
   });
 });

@@ -12,11 +12,15 @@
  * `src/main/clients/*` と同じ作法（`vi.fn<typeof fetch>()`）で書ける。
  */
 
-import { redactForMessage } from '../redact';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../redact';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
+  egressInit,
+  isRedirectResponse,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
+  readFailureBody,
+  redirectRefusal,
   withTimeout,
 } from '../httpLimits';
 
@@ -106,12 +110,16 @@ export async function apiFetch<T>(url: string, init: RequestInit, ctx: RequestCo
   const f = ctx.fetch ?? fetch;
   const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
   return withTimeout(ctx.timeoutMs ?? DEFAULT_HTTP_TIMEOUT_MS, init.signal, async (signal) => {
-    const res = await f(url, { ...init, signal });
+    const res = await f(url, egressInit({ ...init, signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) {
+      throw new ApiError(redirectRefusal(res, url, ctx.serviceId), res.status, ctx.serviceId);
+    }
     if (!res.ok) {
-      // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
-      const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
+      // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる (規則は readFailureBody)。
+      const body = await readFailureBody(res, ctx.serviceId, maxBytes);
       throw new ApiError(
-        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`,
         res.status,
         ctx.serviceId,
       );

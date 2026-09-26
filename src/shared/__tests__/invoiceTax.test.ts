@@ -12,6 +12,7 @@ import {
   type TaxKind,
   type TaxLine,
 } from '../invoiceTax';
+import { CONSUMPTION_TAX_REDUCED, CONSUMPTION_TAX_STANDARD } from '../taxCalc';
 
 const line = (name: string, qty: number, unitPrice: number, kind: TaxKind): TaxLine => ({ name, qty, unitPrice, kind });
 
@@ -310,5 +311,55 @@ describe('集計の細部', () => {
   it('resolveRate は任意税率の指定が無ければ 0 を返す', () => {
     expect(resolveRate('customA', {})).toBe(0);
     expect(resolveRate('customB', {})).toBe(0);
+  });
+});
+
+/*
+ * **標準・軽減の率は 1 か所から来る。** (2026-09-07)
+ *
+ * この 2 つは法定値で、台帳 (`parameters.ts` の `tax.consumptionStandardRate` /
+ * `tax.consumptionReducedRate`) では `kind: 'law'` の**上書きできる項目**である
+ * (法改正の日に変えるための欄)。ところが 2026-09-07 まで `GroupOptions` に
+ * 受け口が無く、書面はいつも既定の 10% / 8% で刷られていた ——
+ * 税ページだけが上書きに従い、相手に渡す書面は従わない状態。
+ *
+ * 併せて `TAX_KINDS` の既定率は `taxCalc.ts` の定数を**参照する** (写さない)。
+ */
+describe('resolveRate — 標準・軽減は台帳の上書きを受ける', () => {
+  it('既定は法定値 (写しではなく参照)', () => {
+    expect(TAX_KINDS.standard.defaultRate).toBe(CONSUMPTION_TAX_STANDARD);
+    expect(TAX_KINDS.reduced.defaultRate).toBe(CONSUMPTION_TAX_REDUCED);
+    expect(resolveRate('standard')).toBe(CONSUMPTION_TAX_STANDARD);
+    expect(resolveRate('reduced')).toBe(CONSUMPTION_TAX_REDUCED);
+  });
+
+  it('★ 上書きが効く', () => {
+    expect(resolveRate('standard', { standardRate: 0.12 })).toBe(0.12);
+    expect(resolveRate('reduced', { reducedRate: 0.05 })).toBe(0.05);
+  });
+
+  it('上書きも 0〜50% に丸める (任意税率と同じ扱い)', () => {
+    expect(resolveRate('standard', { standardRate: 9 })).toBe(MAX_ITEM_RATE);
+    expect(resolveRate('reduced', { reducedRate: -1 })).toBe(0);
+  });
+
+  it('片方の上書きはもう片方に漏れない', () => {
+    expect(resolveRate('reduced', { standardRate: 0.12 })).toBe(CONSUMPTION_TAX_REDUCED);
+    expect(resolveRate('standard', { reducedRate: 0.05 })).toBe(CONSUMPTION_TAX_STANDARD);
+  });
+
+  it('免税・非課税・不課税は上書きの影響を受けない', () => {
+    expect(resolveRate('exportExempt', { standardRate: 0.12 })).toBe(0);
+    expect(resolveRate('nonTaxable', { standardRate: 0.12 })).toBeNull();
+    expect(resolveRate('outOfScope', { reducedRate: 0.05 })).toBeNull();
+  });
+
+  it('★ 集計にも効く (税額と表示の両方)', () => {
+    const lines = [{ name: '制作一式', qty: 1, unitPrice: 500_000, kind: 'standard' as const }];
+    const base = groupByTaxKind(lines);
+    const over = groupByTaxKind(lines, { standardRate: 0.12 });
+    expect(base.totalTax).toBe(50_000);
+    expect(over.totalTax).toBe(60_000);
+    expect(rateLabel(over.groups[0]!)).toBe('12%');
   });
 });

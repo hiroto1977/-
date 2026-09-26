@@ -26,7 +26,7 @@ aliases:
 アリエン・マック ／ アーヴィン・ロック ／ ダニエル・シモンズ ／ クリストファー・チャブリス
 
 ## 出典
-- [Mack, A. & Rock, I. (1998) Inattentional Blindness — MIT Press (WorldCat)](https://www.worldcat.org/oclc/38966531) `学術`
+- [Mack, A. & Rock, I. (1998) Inattentional Blindness — MIT Press (WorldCat)](https://www.worldcat.org/oclc/38966531) `リファレンス`
 - [Wikipedia: Inattentional blindness — Mack & Rock, invisible gorilla, Simons & Chabris, attention and perception](https://en.wikipedia.org/wiki/Inattentional_blindness) `リファレンス`
 
 ## 関連概念

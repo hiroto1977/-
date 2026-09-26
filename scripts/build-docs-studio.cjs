@@ -508,6 +508,8 @@ const PAGE_JS = `
 'use strict';
 var TPL = __TEMPLATES__;
 var LS_KEY = 'docs-studio-values-v1';
+// 何が消えるかを名指しする。「よろしいですか」だけの確認は何も言っていないのと同じ。
+var CLEAR_CONFIRM = 'この端末に保存した入力内容（12 種の書類すべての差込値。会社名・氏名・住所などを含みます）を消します。元に戻せません。よろしいですか？';
 
 var state = { current: TPL[0].id, values: {} };
 try { state.values = JSON.parse(localStorage.getItem(LS_KEY) || '{}') || {}; } catch (e) { state.values = {}; }
@@ -724,6 +726,15 @@ function renderAll() { renderList(); renderForm(); renderPaper(); }
 document.addEventListener('DOMContentLoaded', function () {
   renderAll();
   $('btn-print').addEventListener('click', function () { window.print(); });
+  // **入力を消す口** (2026-09-21 · パス 364)。この頁は 12 種すべての差込値を
+  // localStorage へ自動保存する。消す手段が頁の中に無いと、利用者はブラウザの
+  // サイトデータ設定を知らないかぎり残したままになる。
+  $('btn-clear').addEventListener('click', function () {
+    if (!window.confirm(CLEAR_CONFIRM)) return;
+    try { localStorage.removeItem(LS_KEY); } catch (e) { /* 使えない環境でも画面は戻す */ }
+    state.values = {};
+    renderAll();
+  });
   $('btn-menu').addEventListener('click', function () { document.body.classList.toggle('nav-open'); });
   $('backdrop').addEventListener('click', function () { document.body.classList.remove('nav-open'); });
 });
@@ -749,6 +760,9 @@ const PAGE_CSS = `
   #btn-menu { display: none; background: transparent; color: #fff; border: 1px solid
          rgba(255,255,255,.5); border-radius: 8px; width: 38px; height: 38px;
          font-size: 17px; cursor: pointer; flex: none; }
+  #btn-clear { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.55);
+         border-radius: 8px; padding: 9px 16px; font-weight: 600; cursor: pointer;
+         white-space: nowrap; font-family: inherit; margin-right: 8px; }
   #btn-print { background: #fff; color: var(--accent); border: 0; border-radius: 8px;
          padding: 9px 16px; font-weight: 700; cursor: pointer; white-space: nowrap;
          font-family: inherit; }
@@ -861,6 +875,7 @@ function buildHtml() {
     '  <button id="btn-menu" type="button" aria-label="書類一覧を開く">☰</button>',
     '  <h1>🗂 経営書類スタジオ — 契約・経理・組織・規程 12 書式</h1>',
     '  <span class="spacer"></span>',
+    '  <button id="btn-clear" type="button">🗑 入力を消す</button>',
     '  <button id="btn-print" type="button">🖨 印刷 / PDF 保存</button>',
     '</header>',
     '<div class="layout">',
@@ -892,6 +907,8 @@ function main() {
     '取締役会議事録',
     'プライバシーポリシー',
     'btn-print',
+    'btn-clear',
+    'localStorage.removeItem(LS_KEY)',
   ];
   for (const marker of required) {
     if (!html.includes(marker)) throw new Error(`self-check failed: missing "${marker}"`);

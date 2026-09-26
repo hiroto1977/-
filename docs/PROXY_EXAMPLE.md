@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (約 290 行)
+## 2. Cloudflare Worker 実装 (397 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -44,7 +44,11 @@ X-Proxy-Auth: <optional-shared-secret>
 返す `169-254-169-254.sslip.io` / `localtest.me` 系と DNS rebinding 対策)、
 **(c) リダイレクト各ホップの再検査** (`redirect: 'manual'`。allowlist 済み
 ホストが `302 Location: http://169.254.169.254/` を返す経路を塞ぐ)。
-(b) と (c) はクライアント側では原理的に実装できない — 残余リスクは §3 参照。
+(b) はクライアント側では原理的に実装できない — 残余リスクは §3 参照。(c) はクライアント側も
+**追随しない**という形で持つ (`src/shared/httpLimits.ts` の `egressInit`・2026-09-17 パス 301。
+Worker のように各ホップを再検査して進むのではなく、転送が来た時点で止まって理由を言う。
+例外は `mode: 'no-cors'` の到達確認 1 形だけ —— Fetch 標準が no-cors + manual を network error と
+定めるため、資格情報を載せられず応答も読めないその形だけは 'follow' のまま · パス 304)。
 
 ```js
 // proxy-worker.js
@@ -77,6 +81,26 @@ const DOH_ENDPOINT = 'https://cloudflare-dns.com/dns-query';
 // を回すため、無制限に追うとリダイレクトループで CPU time と subrequest 枠を
 // 使い切る。実運用の API リダイレクトは 3 で足りる。
 const MAX_REDIRECTS = 3;
+
+// 上流本文の上限。10 MiB —— アプリ側の `MAX_HTTP_RESPONSE_BYTES`
+// (`src/shared/httpLimits.ts`) と同じ値にする。**2 つの数はテストで結ばれている**
+// (`src/renderer/network/__tests__/proxyWorkerParity.test.ts`)。
+//
+// 上のホップ上限と**同じ理由**で要る。あちらは「無制限に追うと CPU time と
+// subrequest 枠を使い切る」と書いてあるのに、**バイト数の側には 2026-09-20 まで
+// 上限が無かった** (`await upstream.text()` が素で置かれていた)。
+// 実測 (Node 22・上流が大きな 200 を返す):
+//
+//     64 MiB の応答  → rss +223 MiB / 2,034 ms
+//    256 MiB の応答  → rss +956 MiB / 6,787 ms
+//    上限つき        → どちらも断り / rss +0〜1 MiB / 26〜32 ms
+//
+// **Workers の isolate は 128 MiB** なので、64 MiB の応答 1 つで Worker ごと
+// 落ちる。`text()` は UTF-16 の文字列にするので ASCII でも 2 倍になり、
+// その後の `JSON.stringify` でもう 1 部増える —— だから「64 MiB」では済まない。
+// クライアント側の上限は**この Worker が返した封筒**に掛かるので、
+// Worker が先に落ちる限り一度も効かない。**読む所で切る。**
+const MAX_UPSTREAM_BYTES = 10 * 1024 * 1024;
 
 // ホストが変わるリダイレクトでは持ち越さないヘッダー。allowlist 内に留まる
 // としても、Notion のトークンを別ホストへ渡す必要は無い (横展開の防止)。
@@ -161,8 +185,13 @@ export default {
       const denial = await denyReason(next);
       if (denial) return json({ error: `redirect blocked: ${denial}` }, 403);
 
-      if (next.host !== target.host) {
-        // クロスホストなので資格情報を落とす。
+      if (next.origin !== target.origin) {
+        // **origin** で比べる (2026-09-20 · パス 345)。`host` だけを見ていた頃は
+        // `https://api.notion.com` → `http://api.notion.com` の転送で host が等しく、
+        // **平文へ落ちるのに `Authorization` を持ち越していた**。上の `denyReason` が
+        // 平文を拒むようになったので今は先に落ちるが、資格情報を持ち越さない条件は
+        // 「同じ scheme・同じ host・同じ port」= origin が正しい (多層防御)。
+        // クロス origin なので資格情報を落とす。
         headers = Object.fromEntries(
           Object.entries(headers).filter(([k]) => !CREDENTIAL_HEADERS.test(k)),
         );
@@ -176,13 +205,48 @@ export default {
       target = next;
     }
 
-    const text = await upstream.text();
+    const text = await readCappedText(upstream);
+    if (text === null) {
+      return json({ error: `upstream response exceeds ${MAX_UPSTREAM_BYTES} bytes` }, 502);
+    }
     const outHeaders = {};
     upstream.headers.forEach((v, k) => { outHeaders[k] = v; });
 
     return json({ status: upstream.status, headers: outHeaders, body: text }, 200);
   },
 };
+
+/**
+ * 上流の本文を上限つきで読む。超えたら読むのをやめて `null` を返す。
+ *
+ * `await res.text()` は**全部読み終えてから**長さが分かるので、上限を
+ * 「読んだ後で測る」形にすると費用は払い終えている (実測は
+ * `MAX_UPSTREAM_BYTES` の注記)。だから 1 チャンクずつ数えて、超えた時点で
+ * `cancel()` する。Workers に `Buffer` は無いので `Uint8Array` で連結する。
+ */
+async function readCappedText(res) {
+  if (!res.body) return ''; // 204 / 304 など本文の無い応答
+  const reader = res.body.getReader();
+  const parts = [];
+  let seen = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    seen += value.byteLength;
+    if (seen > MAX_UPSTREAM_BYTES) {
+      await reader.cancel();
+      return null;
+    }
+    parts.push(value);
+  }
+  const all = new Uint8Array(seen);
+  let at = 0;
+  for (const part of parts) {
+    all.set(part, at);
+    at += part.byteLength;
+  }
+  return new TextDecoder().decode(all);
+}
 
 function isRedirect(status) {
   return status === 301 || status === 302 || status === 303 || status === 307 || status === 308;
@@ -200,10 +264,22 @@ function timingSafeEqualStr(a, b) {
   return diff === 0;
 }
 
-/** 宛先を拒否する理由 (string) / 通す場合は null。allowlist → 解決後 IP の順。 */
+/**
+ * 宛先を拒否する理由 (string) / 通す場合は null。allowlist → 平文 http → 解決後 IP の順。
+ *
+ * **平文 http を拒む** (2026-09-20 · パス 345)。この Worker が上流へ送る要求には
+ * 利用者の `Authorization` がそのまま載る。2026-09-20 まで `http:` を通しており、
+ * 実測で `http://api.notion.com/v1/x` は `null` (通す) を返した。
+ * 許可リストの 10 ホストはすべて https の公開 SaaS で、**平文で呼ぶ正当な用途は無い**
+ * (LAN / loopback はクライアント側の `isPrivateOrReservedTarget` が別に拒む)。
+ *
+ * 順序は「具体的な理由が先」。許可リスト外の `http://evil.example` には
+ * 「リストに無い」と答えるほうが読み手の役に立つ。
+ */
 async function denyReason(u) {
   if (u.protocol !== 'https:' && u.protocol !== 'http:') return 'http(s) only';
   if (!UPSTREAM_ALLOWLIST.has(u.hostname)) return 'upstream host not in allowlist';
+  if (u.protocol !== 'https:') return 'plaintext http upstream is not allowed (credentials would travel in the clear)';
   return await resolvedIpDenyReason(u.hostname);
 }
 
@@ -377,19 +453,50 @@ function json(obj, status) {
 ## 3. セキュリティ留意点
 
 - URL は **公開リポジトリにコミットしない** (誰でも使われる)
-- `SHARED_SECRET` を設定し、Settings 画面で同じ値を入力すると簡易認証
+- **「誰が使えるか」と「どこへ繋げるか」は別の関門である** (2026-09-20 · パス 349):
+  - *誰が* — `SHARED_SECRET`。**既定は空文字で、そのとき認証は一切行われない**
+    (`if (SHARED_SECRET)` の中へ入らない)。応答は常に
+    `Access-Control-Allow-Origin: *` なので、**URL を知っている者は誰でも呼べる**。
+    設定しない場合、守りは URL の秘匿だけになる。Settings 画面で同じ値を入力すると
+    アプリ側が `X-Proxy-Auth` に載せる。
+  - *どこへ* — `UPSTREAM_ALLOWLIST`。緩めると繋げる先が広がる。
+  **この節は 2026-09-20 まで「allowlist を空にしたり `*` 相当に緩めた時点で
+  誰でも使えるオープンプロキシになる」と書いていた** —— 緩めなくても、
+  既定の設定なら許可リストの 10 ホストに対して**誰でも使える**。
+  2 つを取り違えたまま読むと、「allowlist さえ絞ってあれば認証は要らない」と
+  判断することになる。
 - **上流ホストを allowlist する** (例: notion.com / atlassian.net のみ受け入れる) — 上の Worker 例ではこれを既定で組み込んでいる。
   **これが主たる防御線**であり、以下の IP 検査はその上に重ねる多層防御に過ぎない。
-  allowlist を空にしたり `*` 相当に緩めた時点で、Worker は誰でも使える
-  オープンプロキシになる
+  allowlist を空にしたり `*` 相当に緩めると、**繋げる先**が任意のホストへ広がる
+  (誰が呼べるかは上の `SHARED_SECRET` が決める)
 - **DNS rebinding / 公開ワイルドカード DNS 対策はプロキシ側の責任**:
   クライアントは hostname 文字列しか見られない (`isPrivateOrReservedTarget` in
-  `src/renderer/network/proxy.ts` — DNS リゾルバを持たない)。したがって
+  `src/shared/privateTarget.ts`、`src/renderer/network/proxy.ts` が re-export —
+  DNS リゾルバを持たない)。したがって
   `169-254-169-254.sslip.io` / `customer1.169.254.169.254.nip.io` /
   `localtest.me` のような **公開名 → 私設 IP** や、同じ名前を
   1 回目=公開 IP / 2 回目=127.0.0.1 と返す rebinding は client 側では
   原理的に防げない。上の Worker はこれを `resolvedIpDenyReason()` で
   塞いでいる (DoH で A / AAAA を引き `isBlockedIp()` に掛ける)
+- **上流は https だけ** (2026-09-20 · パス 345): この Worker が上流へ送る要求には
+  利用者の `Authorization` がそのまま載る。2026-09-20 まで `denyReason` は
+  `http:` も通しており、実測で `http://api.notion.com/v1/x` が `null` (通す) を返した。
+  さらに資格情報を落とす条件が `next.host !== target.host` だったため、
+  **`https://api.notion.com` → `http://api.notion.com` の転送では host が等しく、
+  平文へ落ちるのに `Authorization` を持ち越していた** —— 許可リスト内の上流が
+  `302 Location: http://` を 1 つ返すだけで、利用者のトークンが素のまま流れる。
+  今は `denyReason` が平文を拒み、資格情報の持ち越しは **origin** で判定する
+  (同じ scheme・host・port)。クライアント側 (`fetchViaProxy`) も同じく https を要求し、
+  両者は `proxyWorkerParity.test.ts` が同じ標本へ当てて結んでいる
+- **上流本文には上限を掛ける** (2026-09-20 · パス 343): `await upstream.text()` は
+  全部読み終えてから長さが分かるので、読んだ後で測る形では費用を払い終えている。
+  上の Worker は `readCappedText()` で 1 チャンクずつ数え、`MAX_UPSTREAM_BYTES`
+  (10 MiB・アプリ側の `MAX_HTTP_RESPONSE_BYTES` と同値) を超えた時点で
+  `cancel()` して 502 を返す。実測 (Node 22): 上限なしで 64 MiB の応答を読むと
+  **rss +223 MiB / 2,034 ms**、256 MiB で **rss +956 MiB / 6,787 ms**。
+  **Workers の isolate は 128 MiB** なので 64 MiB の応答 1 つで Worker ごと落ちる。
+  クライアント側の上限は**この Worker が返した封筒**に掛かるため、
+  Worker が先に落ちる限り一度も効かない
 - **リダイレクトは各ホップを再検査する**: `fetch` の既定 `redirect: 'follow'`
   は Location 先を一切検査せずに取得するため、allowlist 済みホストが
   `302 Location: http://169.254.169.254/` を返すだけで SSRF が成立し、
@@ -426,6 +533,15 @@ function json(obj, status) {
   を数値展開して内部 IPv4 に落として検証する。一方、**ネットワーク固有の
   NAT64 prefix (RFC 6052 §2.2 の /32・/40・/48・/56・/64 や RFC 8215 の
   `64:ff9b:1::/48`) は値が任意なため列挙できない**。ここは allowlist のみが砦
+- **許可リストのホストが https を話し続ける保証は無い**: 上流が恒久的に
+  平文へ移行した場合、この Worker はその宛先を通さなくなる (可用性より
+  資格情報の保護を採る)。許可リストは 10 の公開 SaaS で、いずれも https 専用である。
+- **上限内の応答でも封筒は膨らむ**: `text()` は UTF-16 の文字列を作るので
+  ASCII でも 2 倍、その後の `JSON.stringify` でもう 1 部増える。10 MiB の本文で
+  概ね 30 MiB 程度を一度に確保する計算になり、128 MiB の isolate では
+  **同時に走る他のリクエストと分け合う**。上限を下げる余地は運用側にある
+  (下げるときは `MAX_HTTP_RESPONSE_BYTES` と一緒に下げること —— 2 つの数は
+  テストで結ばれている)
 - **プロキシ運用者はトークンを閲覧できる**: 本プロトコルは `Authorization`
   を上流へ透過する必要があるため、Worker の運用者は転送されるトークンを
   技術的に読める。**第三者運用のプロキシを登録しないこと**

@@ -26,7 +26,7 @@ aliases:
 ロナルド・バート ／ マーク・グラノヴェッター ／ ジェームズ・コールマン ／ ゲオルク・ジンメル
 
 ## 出典
-- [Burt, R.S. (1992) Structural Holes: The Social Structure of Competition — Harvard University Press (WorldCat)](https://www.worldcat.org/oclc/25008425) `学術`
+- [Burt, R.S. (1992) Structural Holes: The Social Structure of Competition — Harvard University Press (WorldCat)](https://www.worldcat.org/oclc/25008425) `リファレンス`
 - [Wikipedia: Structural holes — Burt, brokerage, tertius gaudens, information/control benefits, social capital](https://en.wikipedia.org/wiki/Structural_holes) `リファレンス`
 
 ## 関連概念
@@ -34,9 +34,9 @@ aliases:
 - [[infosoc-granovetter-threshold|グラノヴェッターの閾値モデル（集合行動と社会変動）]] — 同じ思想家
 - [[infosoc-strength-weak-ties-granovetter|弱い紐帯の強さ——希薄なつながりが新規情報の橋渡しをする]] — 同じ思想家
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
+- [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同じ思想家
 - [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同じ思想家
 - [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]] — 同じ思想家
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同じ思想家
 - [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — 同じ思想家
 - [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同じ思想家

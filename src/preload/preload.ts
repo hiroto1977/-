@@ -55,6 +55,9 @@ const api = {
     ipcRenderer.invoke('app:revealInFolder', filePath),
   openPath: (filePath: string): Promise<OsOpResult> =>
     ipcRenderer.invoke('app:openPath', filePath),
+  /** 配色の追随 (パス 318): 解いた scheme と stylesheet の `--bg` の実値を main へ (窓の下地と次回起動の色)。 */
+  setColorScheme: (scheme: 'light' | 'dark', background: string): Promise<OsOpResult> =>
+    ipcRenderer.invoke('app:setColorScheme', scheme, background),
 
   setToken: (serviceId: ServiceId, token: string): Promise<TokenSaveResult> =>
     ipcRenderer.invoke('secrets:set', serviceId, token),
@@ -65,6 +68,8 @@ const api = {
    *  秘密そのものは返さない。 */
   storageProtection: (): Promise<StorageProtection> =>
     ipcRenderer.invoke('secrets:protection'),
+  /** 「すべてのデータを削除」— デスクトップ版は main がファイルと renderer の保存領域を消して再起動する (パス 137)。 */
+  eraseAll: (): Promise<import('../shared/eraseReport').EraseAllReport> => ipcRenderer.invoke('app:eraseAll'),
 
   fetchSnapshot: <T = unknown>(serviceId: ServiceId): Promise<FetchResult<T>> =>
     ipcRenderer.invoke('fetch:snapshot', serviceId),

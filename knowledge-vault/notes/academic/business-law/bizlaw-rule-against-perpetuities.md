@@ -35,15 +35,15 @@ Lord Nottingham（1682 ノーフォーク公爵事件で原型を確立）／Joh
 
 ## 関連概念
 - [[bizlaw-comity-of-nations|国際礼譲（Comity of Nations）]] — 同じ思想家
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
-- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+- [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 出典を共有
+- [[bizlaw-doctrine-of-necessities|必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任]] — 出典を共有
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 出典を共有
+- [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
+- [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 出典を共有
+- [[bizlaw-estoppel-by-deed|証書禁反言（エストッペル・バイ・ディード）]] — 出典を共有
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 出典を共有
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

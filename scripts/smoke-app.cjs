@@ -162,6 +162,15 @@ async function run() {
       return 1;
     }
   }
+  // 成果物の鮮度 (判定は e2e / perf / smoke と同じ)。古い dist-electron/ を起動して
+  // 「主プロセスは生きている」と言わない —— この検査の存在理由 (壊れた main.js が
+  // 2 週間緑だった) と同じ形の穴が、検査自身に在った (パス 304 で足した)。
+  require('./lib/artifact-freshness.cjs').assertFreshArtifacts([MAIN, RENDERER], {
+    srcDir: path.join(REPO_ROOT, 'src'),
+    repoRoot: REPO_ROOT,
+    tool: 'smoke:app',
+    allowEnv: 'SERVICE_HUB_SMOKE_ALLOW_STALE',
+  });
   // 静的な検査を先に通す —— 起動する前に分かることは、起動せずに言う。
   if (checkBundle() !== 0) return 1;
 

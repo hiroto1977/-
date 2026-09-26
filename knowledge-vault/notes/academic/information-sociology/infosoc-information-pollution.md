@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Floridi, L. (2011) The Philosophy of Information — Oxford University Press](https://doi.org/10.1093/acprof:oso/9780199232383.001.0001) `学術`
-- [Wardle, C. & Derakhshan, H. (2017) Information Disorder: Toward an Interdisciplinary Framework for Research and Policy Making — Council of Europe](https://rm.coe.int/information-disorder-report-version-august-2018/16808c9c77) `リファレンス`
+- [Wardle, C. & Derakhshan, H. (2017) Information Disorder: Toward an Interdisciplinary Framework for Research and Policy Making — Council of Europe](https://rm.coe.int/information-disorder-report-version-august-2018/16808c9c77) `公的`
 - [Vosoughi, S., Roy, D. & Aral, S. (2018) The Spread of True and False News Online — Science, 359, 1146-1151](https://doi.org/10.1126/science.aap9559) `学術`
 
 ## 関連概念
@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-onlife|オンライフ]] — 同じ思想家
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
 - [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 同じ思想家
-- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
 - [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
+- [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -1,12 +1,12 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 import { webcrypto } from 'node:crypto';
 
 import { getRecordStore, _resetRecordStoreForTests } from '../store';
 import { BACKUP_EXCLUSIONS, serializeBackup } from '../backup';
+import type { EvictionRecovery } from '../../../shared/storageDurability';
 import { _resetVaultForTests, getVault } from '../../security/vault';
-import { EVICTION_RECOVERY } from '../../../shared/storageDurability';
 
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -90,25 +90,49 @@ describe('バックアップが覆う範囲 — 実物で確かめる', () => {
  * **両方を読めるここが唯一の突き合わせ場所**になる。片方だけ直した日に鳴る。
  */
 describe('EVICTION_RECOVERY と BACKUP_EXCLUSIONS が同じことを言っている', () => {
-  const apiRow = EVICTION_RECOVERY.find((r) => r.what.includes('API'));
+  /**
+   * **表は毎回読み直す** (2026-09-20 · パス 353)。
+   *
+   * `EVICTION_RECOVERY` はモジュール直下の定数なので、静的 import だと
+   * **1 度だけ評価された値**を見ることになる。`stryker.config.json` の
+   * `_commentIgnoreStatic` が書いているとおり、覆われた static 変異体は
+   * 「モジュールが変異体の有効化より前に読み込まれている」ために**生存として
+   * 報告される** —— 実測 (2026-09-20・`--mutate src/shared/storageDurability.ts`):
+   * **27.78% / 生存 13**、その 13 件すべてがこの表の行だった
+   * (`recoverable: false` → `true` の反転を含む)。
+   *
+   * ソースを直接書き換えれば下の検査は落ちる (実測で確かめた) ので、
+   * 主張そのものは正しかった。見えていなかったのは**読み込みの時点**である。
+   * `vi.resetModules()` + 動的 `await import()` で読み直せば、表を書き換える
+   * 変異体が比較で落ちる (`oauth.test.ts` の `freshConfigs` と同じ形)。
+   */
+  async function freshTable(): Promise<readonly EvictionRecovery[]> {
+    vi.resetModules();
+    const mod = (await import('../../../shared/storageDurability')) as {
+      EVICTION_RECOVERY: readonly EvictionRecovery[];
+    };
+    return mod.EVICTION_RECOVERY;
+  }
 
-  it('API キーの行がある', () => {
-    expect(apiRow).toBeDefined();
+  it('API キーの行がある', async () => {
+    const table = await freshTable();
+    expect(table.find((r) => r.what.includes('API'))).toBeDefined();
   });
 
-  it('★ 画面は「戻せない」と言い、台帳も「含まれない」と言っている', () => {
-    expect(apiRow?.recoverable).toBe(false);
+  it('★ 画面は「戻せない」と言い、台帳も「含まれない」と言っている', async () => {
+    const table = await freshTable();
+    expect(table.find((r) => r.what.includes('API'))?.recoverable).toBe(false);
     expect(BACKUP_EXCLUSIONS.some((x) => x.includes('API'))).toBe(true);
   });
 
-  it('業務レコードだけが「戻せる」— 覆っているのは 1 つのデータベースだけ', () => {
-    const recoverable = EVICTION_RECOVERY.filter((r) => r.recoverable);
+  it('業務レコードだけが「戻せる」— 覆っているのは 1 つのデータベースだけ', async () => {
+    const recoverable = (await freshTable()).filter((r) => r.recoverable);
     expect(recoverable.length).toBe(1);
     expect(recoverable[0]?.what).toContain('業務レコード');
   });
 
-  it('戻せない行は、その後どうするかを書いている (言い放しにしない)', () => {
-    for (const r of EVICTION_RECOVERY) {
+  it('戻せない行は、その後どうするかを書いている (言い放しにしない)', async () => {
+    for (const r of await freshTable()) {
       expect(r.note.length).toBeGreaterThan(10);
       if (!r.recoverable) expect(r.note).toContain('含まれません');
     }
@@ -118,7 +142,34 @@ describe('EVICTION_RECOVERY と BACKUP_EXCLUSIONS が同じことを言ってい
    * **「バックアップを書き出せばよい」とだけ書いてある状態へ戻さない。**
    * 戻せない物が 1 つも無い表は、この警告の存在理由を消す。
    */
-  it('戻せない物が必ず在る (全部戻せる表にしない)', () => {
-    expect(EVICTION_RECOVERY.some((r) => !r.recoverable)).toBe(true);
+  it('戻せない物が必ず在る (全部戻せる表にしない)', async () => {
+    expect((await freshTable()).some((r) => !r.recoverable)).toBe(true);
+  });
+
+  /*
+   * **行が 1 つも無い表・名前の無い行を作らない** (パス 353)。
+   *
+   * 空の表を渡しても `some` / `filter` / `find` はどれも投げず、警告からは
+   * 箇条書きが丸ごと消える —— 「消えたら何が戻らないか」を言わない警告になる。
+   * 名前が空文字の行も同じで、画面には「・: 戻せません」とだけ出る。
+   */
+  it('★ 表は 3 行で、どの行も名前と理由を持つ', async () => {
+    const table = await freshTable();
+    expect(table.length).toBe(3);
+    for (const r of table) {
+      expect(r.what.length, JSON.stringify(r)).toBeGreaterThan(3);
+      expect(r.note.length, r.what).toBeGreaterThan(10);
+    }
+  });
+
+  it('★ 3 つの行は、立ち退きで失われる 3 つの場所を名指しする', async () => {
+    const table = await freshTable();
+    const names = table.map((r) => r.what).join(' / ');
+    expect(names).toContain('業務レコード');
+    expect(names).toContain('API');
+    expect(names).toContain('ライブラリ');
+    // 戻せる行の理由は「書き出したファイルから戻せる」と述べる (手順を言う)。
+    const ok = table.find((r) => r.recoverable);
+    expect(ok?.note).toContain('戻せます');
   });
 });

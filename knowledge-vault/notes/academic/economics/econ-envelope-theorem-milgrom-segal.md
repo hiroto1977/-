@@ -31,11 +31,11 @@ aliases:
 - [Wikipedia: Envelope theorem — 包絡線定理の数学的定式化と経済学的応用の概説](https://en.wikipedia.org/wiki/Envelope_theorem) `リファレンス`
 
 ## 関連概念
-- [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 語彙が近い
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
 - [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
+- [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 同じ思想家
 - [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同じ思想家
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
 - [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同じ思想家

@@ -26,7 +26,7 @@ aliases:
 ヴォルフガング・ケーラー ／ ヴィラヤヌル・ラマチャンドラン ／ エドワード・ハバード ／ フェルディナン・ド・ソシュール
 
 ## 出典
-- [Ramachandran, V. S. & Hubbard, E. M. (2001) Synaesthesia—a window into perception, thought and language — Journal of Consciousness Studies](https://www.worldcat.org/oclc/48417854) `学術`
+- [Ramachandran, V. S. & Hubbard, E. M. (2001) Synaesthesia—a window into perception, thought and language — Journal of Consciousness Studies](https://www.worldcat.org/oclc/48417854) `リファレンス`
 - [Wikipedia: Bouba/kiki effect — sound symbolism, cross-modal, arbitrariness of the sign](https://en.wikipedia.org/wiki/Bouba/kiki_effect) `リファレンス`
 
 ## 関連概念
@@ -36,6 +36,7 @@ aliases:
 - [[human-charles-bonnet-syndrome|シャルル・ボネ症候群——視力を失った人に現れる鮮明な幻視]] — 同じ思想家
 - [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
 - [[human-fregoli-delusion|フレゴリの錯覚——「変装した同一人物」という妄想的誤認]] — 同じ思想家
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — 同じ思想家
 - [[human-phi-phenomenon-wertheimer|ファイ現象——静止刺激の継起が生む仮現運動とゲシュタルト心理学の出発点]] — 同じ思想家
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍

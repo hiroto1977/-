@@ -35,8 +35,7 @@ John C. Henderson／N. Venkatraman
 - [[infosoc-technical-debt|技術的負債]] — 出典を共有
 - [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
-- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同分野の近傍
-- [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 同分野の近傍
+- [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]] — 同分野の近傍
 - [[mgmt-hoshin-kanri|方針管理]] — 同分野の近傍
 
 ## 関連

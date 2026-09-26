@@ -34,6 +34,7 @@ aliases:
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 同分野の近傍
 - [[human-solution-focused-brief-therapy-deshazer|解決志向ブリーフセラピー——ド・シェイザーの例外探しとミラクル・クエスチョン]] — 同分野の近傍
 - [[human-strengths-perspective|ストレングス視点：ソーシャルワークにおける当事者の強みに基づく支援モデル]] — 同分野の近傍
+- [[human-phenomenological-psychology|現象学的心理学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -29,6 +29,7 @@ const safeWrite = require('./safe-vault-write.cjs');
 const kc = require('../orchestration/knowledge-context.cjs');
 const kg = require('../orchestration/knowledge-graph.cjs');
 const edu = require('../orchestration/education.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const VAULT_DIR = path.join(kc.REPO_ROOT, 'knowledge-vault');
 const EXEC_ORDER = ['coo', 'cso', 'cfo', 'chro', 'cio', 'cqo'];
@@ -773,6 +774,72 @@ function buildOrgFiles(registry, map, entries) {
 // ---------------------------------------------------------------------------
 // 生成
 // ---------------------------------------------------------------------------
+/**
+ * 学術 id は分野の接頭辞で始まる（econ- / mgmt- / human- / bizlaw- / infosoc-）。
+ * 書き手の規約 (docs/BATCH_APPEND_SPECIFICATION.md) であって、検査は無かった ——
+ * 2026-09-05 に接頭辞の無い id が 4 件 (maslow-hierarchy / antimonopoly-surcharge /
+ * agile-development / knowledge-gap-hypothesis) 見つかり、うち 1 件は接頭辞つきの
+ * 同じ概念と二重になっていた。autopilot の id 正規化 (dedupeId) も接頭辞を前提に
+ * しているので、無印の id は重複検出からも外れる。ここで止める。
+ */
+const ACADEMIC_ID_PREFIX = Object.freeze({
+  economics: 'econ',
+  management: 'mgmt',
+  'human-science': 'human',
+  'business-law': 'bizlaw',
+  'information-sociology': 'infosoc',
+});
+function assertAcademicIdPrefixes(entries) {
+  const bad = [];
+  for (const e of entries) {
+    if (e.collection !== 'academic') continue;
+    const prefix = ACADEMIC_ID_PREFIX[e.category];
+    if (!prefix) bad.push(`${e.id} (discipline "${e.category}" に接頭辞の定義がない)`);
+    else if (!String(e.id).startsWith(`${prefix}-`)) bad.push(`${e.id} (${e.category} → ${prefix}-)`);
+  }
+  if (bad.length) {
+    throw new Error(`学術 id が分野の接頭辞で始まっていません（${bad.length} 件）。データ側で直してください: ${bad.slice(0, 20).join(', ')}`);
+  }
+  return entries.length;
+}
+
+/**
+ * `asOf` は**確認した時点**なので、暦に無い月や未来は書かない (2026-09-06)。
+ *
+ * この値はノート 1 枚ごとの frontmatter (`as_of:`) と info コールアウトに載る。
+ * 未来の月を許すと**7,000 枚超のノートが「まだ来ていない時点で確認した」と
+ * 名乗る**うえ、autopilot の再確証キューからも静かに外れる (経過月数が負になり、
+ * 「読めない」にも「期限超過」にも当たらないため —— 同日に `monthsSince` を
+ * 直したが、**書く側でも止める**。週次を待たずに push で気付けるほうがよい)。
+ *
+ * 空の `asOf` は従来どおり許す (frontmatter に出さないだけ)。ここで見るのは
+ * 「値が在るのに時点として成り立たない」場合だけ。
+ */
+function assertAsOfIsPast(entries, today = new Date()) {
+  const nowKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  const bad = [];
+  for (const e of entries) {
+    if (!e.asOf) continue;
+    const m = /^(\d{4})-(\d{2})/.exec(String(e.asOf));
+    if (!m) {
+      bad.push(`${e.id}: "${e.asOf}" (YYYY-MM として読めない)`);
+      continue;
+    }
+    const month = Number(m[2]);
+    if (month < 1 || month > 12) {
+      bad.push(`${e.id}: "${e.asOf}" (暦に無い月)`);
+      continue;
+    }
+    if (`${m[1]}-${m[2]}` > nowKey) bad.push(`${e.id}: "${e.asOf}" (未来。今月は ${nowKey})`);
+  }
+  if (bad.length) {
+    throw new Error(
+      `asOf が時点として成り立ちません（${bad.length} 件）。データ側で直してください: ${bad.slice(0, 20).join(', ')}`,
+    );
+  }
+  return entries.length;
+}
+
 function buildFiles() {
   const entries = kc.loadEntries();
 
@@ -786,6 +853,8 @@ function buildFiles() {
   if (dups.length) {
     throw new Error(`ノート id が重複しています（${dups.length} 件）。データ側で解消してください: ${dups.slice(0, 20).join(', ')}`);
   }
+  assertAcademicIdPrefixes(entries);
+  assertAsOfIsPast(entries);
 
   const byCollection = new Map();
   for (const e of entries) {
@@ -894,6 +963,13 @@ function writeVault(outDir, files) {
   safeWrite.writeFilesInto(outDir, files);
 }
 
+/**
+ * **走査の条件** (`walk` が使う物そのもの)。`knowledge-vault/` の下のすべてのファイルを
+ * 歩くので拡張子のふるいは無いが、実物は `.md` だけである —— 条件を狭く書くと
+ * 照合が「見なかった物」を見逃すので、**歩きと同じ「全部」**を渡す。
+ */
+const CROSS_CHECK = { roots: ['knowledge-vault'], skipDirs: [], accept: () => true };
+
 function walk(dir, base = dir, acc = []) {
   if (!fs.existsSync(dir)) return acc;
   for (const name of fs.readdirSync(dir).sort()) {
@@ -904,6 +980,32 @@ function walk(dir, base = dir, acc = []) {
   return acc;
 }
 
+/**
+ * **走査した件数が、刷る件数と一致すること** (2026-09-26 · パス 472)。
+ *
+ * この関数は `want` (生成側を歩いた結果) と `have` (committed 側を歩いた結果) を
+ * 突き合わせる。**内容の照合は `want` の中だけを回る**ので、走査が名前を 1 つ落とすと
+ * その 1 件は「欠落」にも「余分」にも「内容差分」にも現れない —— そして同じ間引きは
+ * 両方の歩きに等しく掛かるので、比較そのものが打ち消し合う。
+ *
+ * 実測 (2026-09-26 · 隔離した写しの上で `readdirSync` を間引く):
+ *
+ *   - `.md` を**全部**落とす → `✅ knowledge-vault は本体データと同期しています（7402 ファイル）` exit 0。
+ *     **0 件比べて 7402 件を名乗った** —— その数は `buildFiles()` が作ったコーパスの件数で、
+ *     走査した件数ではない。
+ *   - ノート 1 件 (`MOC/人物索引.md`) を改ざんすると素の木は `❌ 内容差分` で鳴るが、
+ *     **その 1 件だけを走査から落とすと ✅** になる。手で書き換えたノートが見えなくなる。
+ *
+ * 床は**割合ではなく同一性**にする —— 成功行が `count` を名乗るのだから、
+ * 比べた件数がそれと一致していなければ、その行は自分が確かめていない数を刷っている
+ * (法則 `count-has-floor`)。実測に張り付けた比率を決める必要も無い。
+ */
+function comparedCountProblem(wantLength, count) {
+  if (wantLength === count) return null;
+  return `生成した ${count} 件のうち ${wantLength} 件しか走査できていません`
+    + ' (成功行はこの件数を「同期しています」と名乗るので、走査が死んだまま緑になります)';
+}
+
 function check(files) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'kvault-'));
   try {
@@ -911,6 +1013,8 @@ function check(files) {
     const want = walk(tmp).sort();
     const have = walk(VAULT_DIR).sort();
     const problems = [];
+    const short = comparedCountProblem(want.length, Object.keys(files).length);
+    if (short !== null) problems.push(short);
     const wantSet = new Set(want);
     const haveSet = new Set(have);
     for (const f of want) if (!haveSet.has(f)) problems.push(`欠落: ${f}`);
@@ -930,9 +1034,13 @@ function main() {
   const files = buildFiles();
   const count = Object.keys(files).length;
   if (isCheck) {
+    // 2 つ目の数え方: 追跡されていて `.md` のノートは、どれも committed 側の歩きに出る。
+    const cross = reportTrackedCrossCheck(walk(VAULT_DIR).map((r) => path.join('knowledge-vault', r)),
+      CROSS_CHECK, kc.REPO_ROOT, 'vault:check');
+    if (cross.code !== 0) return 1;
     const problems = check(files);
     if (problems.length === 0) {
-      console.log(`✅ knowledge-vault は本体データと同期しています（${count} ファイル）。`);
+      console.log(`✅ knowledge-vault は本体データと同期しています（${count} ファイル · ${crossCheckSuffix(cross.source)}）。`);
       return 0;
     }
     console.error(`❌ knowledge-vault がドリフトしています（${problems.length} 件）。\`npm run vault:build\` で再生成してください:`);
@@ -947,6 +1055,18 @@ function main() {
 
 // 読み込むだけで生成が走り、しかも process.exit で落ちていた。外から証人を
 // 立てられない構造そのものだったので、CLI として呼ばれたときだけ走らせる。
-module.exports = { yamlStr, linkSafe, mdInline, assertWikiAliasSafe, assertBareYamlScalar, buildFiles };
+module.exports = {
+  CROSS_CHECK,
+  comparedCountProblem,
+  assertAsOfIsPast,
+  yamlStr,
+  linkSafe,
+  mdInline,
+  assertWikiAliasSafe,
+  assertBareYamlScalar,
+  assertAcademicIdPrefixes,
+  ACADEMIC_ID_PREFIX,
+  buildFiles,
+};
 
 if (require.main === module) process.exit(main());

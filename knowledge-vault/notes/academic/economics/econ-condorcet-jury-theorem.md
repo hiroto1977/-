@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 語彙が近い
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 出典を共有
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { usePlan } from '../plan/usePlan';
 import { getPlan, hasFeature, requiredPlanForFeature, PLANS } from '../../shared/plan';
@@ -7,16 +8,29 @@ import {
   ROLE_ORDER,
   ROLE_LABEL,
   canAddMember,
+  canChangeRole,
   canRemoveMember,
   seatsRemaining,
   type Role,
 } from '../../shared/team';
-import { MEMBERS_COLLECTION, parseMember, countOwners, type Member } from '../data/members';
+import {
+  MEMBERS_COLLECTION,
+  parseMember,
+  countOwners,
+  duplicateMemberMessage,
+  duplicateMembersNote,
+  findDuplicateMembers,
+  sameEmailMember,
+  type Member,
+} from '../data/members';
 import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax } from '../../shared/payroll';
 import { useParameters } from '../data/parameterOverrides';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
+import { displayField } from '../../shared/apiResponse';
+import { MAX_MEMBER_NAME_CHARS, MAX_MEMBER_EMAIL_LEN } from '../data/members';
 
 /**
  * 給与計算の入力欄の性質。読み取り (`readNumberOr0`) と警告 (`GuardedNumber`) が
@@ -31,6 +45,33 @@ const PAYROLL_SPECS = {
   si: { label: '社会保険料 (円)', kind: 'money' },
   prevSalary: { label: '前月給与 (社保控除後・円)', kind: 'money' },
 } as const satisfies Record<string, NumSpec>;
+
+/**
+ * **どの数字がどの欄を読むか** (パス 213)。
+ *
+ * この節の数字は `.stat-grid` ではなく**局所の `stat()` が描く素の div** なので、
+ * パス 210〜212 の走査 (タイルだけを見る) から丸ごと外れていた。パス 209 は
+ * 「`team` はタイルが 1 つも動かない」ことを検査で留めたが —— **その主張は正しく、
+ * そこから読み取った「だから何も起きない」が誤りだった**。⛔ で実際に動いていた物:
+ *
+ * | 欄 | 出ていた物 |
+ * | --- | --- |
+ * | 社会保険料 = −9999 | `課税対象 (賞与−社保) ¥425,000 → **¥500,000**`・`源泉徴収税額 ¥34,713 → **¥40,839**` (社保が 0 になり課税対象が増える) |
+ * | 前月給与 = −9999 | **`源泉徴収税率 8.168% → 0%`**・`源泉徴収税額 → ¥0` —— 「源泉徴収しなくてよい」 |
+ * | 賞与額 = −9999 | `課税対象 → ¥0`・`源泉徴収税額 → ¥0` |
+ * | 公共交通機関の月額 = −9999 | `非課税 ¥150,000 → ¥0`・`課税(超過) ¥10,000 → ¥0` |
+ * | マイカー片道 = −9999 | `非課税限度/月 ¥7,100 → ¥0` |
+ *
+ * **源泉徴収は預かって納める税なので、少なく出る方が重い** (不足分は徴収義務者が負う)。
+ *
+ * 段は依存で切る —— 公共交通の 2 つは `commute` だけ、マイカーは `km` だけ、
+ * 賞与の 3 つは 3 欄すべてを読む。⛔ 1 件で節全体を黙らせない (パス 206 の規準)。
+ */
+const PAYROLL_READS = {
+  publicTransport: ['commute'],
+  car: ['km'],
+  bonus: ['bonus', 'si', 'prevSalary'],
+} as const satisfies Record<string, readonly (keyof typeof PAYROLL_SPECS)[]>;
 
 const EMPTY = { name: '', email: '', role: 'member' as Role };
 
@@ -54,6 +95,14 @@ function PayrollPanel() {
     }),
     [bonus, si, prevSalary],
   );
+  const payrollRefusedBy = useMemo(() => {
+    const refused = refusedFields(PAYROLL_SPECS, { commute, km, bonus, si, prevSalary });
+    return {
+      publicTransport: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.publicTransport),
+      car: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.car),
+      bonus: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.bonus),
+    };
+  }, [commute, km, bonus, si, prevSalary]);
   const stat = (l: string, v: string) => (
     <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12, minWidth: 150 }}>
       <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{l}</div>
@@ -72,9 +121,19 @@ function PayrollPanel() {
         <GuardedNumber spec={PAYROLL_SPECS.km} value={km} width={120} onChange={setKm} />
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-        {stat('公共交通: 非課税', jpy(pt.nonTaxable))}
-        {stat('公共交通: 課税(超過)', jpy(pt.taxable))}
-        {stat('マイカー: 非課税限度/月', jpy(carLimit))}
+        {payrollRefusedBy.publicTransport.length > 0 ? (
+          <RefusedFieldsNote labels={payrollRefusedBy.publicTransport} />
+        ) : (
+          <>
+            {stat('公共交通: 非課税', jpy(pt.nonTaxable))}
+            {stat('公共交通: 課税(超過)', jpy(pt.taxable))}
+          </>
+        )}
+        {payrollRefusedBy.car.length > 0 ? (
+          <RefusedFieldsNote labels={payrollRefusedBy.car} />
+        ) : (
+          stat('マイカー: 非課税限度/月', jpy(carLimit))
+        )}
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '-8px 0 12px' }}>
         公共交通機関の非課税限度は月 {jpy(commuteCap)} (設定 › 数値パラメータ で変更できます)
@@ -85,11 +144,15 @@ function PayrollPanel() {
         <GuardedNumber spec={PAYROLL_SPECS.si} value={si} width={120} onChange={setSi} />
         <GuardedNumber spec={PAYROLL_SPECS.prevSalary} value={prevSalary} width={120} onChange={setPrevSalary} />
       </div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        {stat('課税対象 (賞与−社保)', jpy(bw.taxableBonus))}
-        {stat('源泉徴収税率', `${bw.ratePct}%`)}
-        {stat('源泉徴収税額', jpy(bw.tax))}
-      </div>
+      {payrollRefusedBy.bonus.length > 0 ? (
+        <RefusedFieldsNote labels={payrollRefusedBy.bonus} />
+      ) : (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {stat('課税対象 (賞与−社保)', jpy(bw.taxableBonus))}
+          {stat('源泉徴収税率', `${bw.ratePct}%`)}
+          {stat('源泉徴収税額', jpy(bw.tax))}
+        </div>
+      )}
     </div>
   );
 }
@@ -99,12 +162,15 @@ export function TeamPage() {
   const { records, add, edit, remove } = useCollection<Member>(MEMBERS_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
 
   const members = useMemo(() => records.map((r) => r.data), [records]);
   const planDef = getPlan(plan);
   const usage = { used: records.length, limit: planDef.maxSeats };
   const remaining = seatsRemaining(usage);
   const owners = countOwners(members);
+  // 同じメールアドレスの重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 125)。
+  const duplicateNote = useMemo(() => duplicateMembersNote(findDuplicateMembers(members)), [members]);
 
   const teamFeatureEnabled = hasFeature(plan, 'team-seats');
   const requiredPlan = requiredPlanForFeature('team-seats');
@@ -112,6 +178,12 @@ export function TeamPage() {
   async function onAdd() {
     try {
       const parsed = parseMember(form);
+      // 同じメールアドレスは 1 人 —— 2 度招待するとシートを 2 つ使い、一人当たりの金額が薄まる (パス 125)。
+      const dup = sameEmailMember(members, parsed);
+      if (dup !== null) {
+        setError(duplicateMemberMessage(dup));
+        return;
+      }
       if (!canAddMember(usage)) {
         setError(`シート上限 (${planDef.maxSeats}) に達しています。プランをアップグレードしてください。`);
         return;
@@ -124,7 +196,14 @@ export function TeamPage() {
     }
   }
 
-  async function onChangeRole(id: string, role: Role) {
+  async function onChangeRole(id: string, current: Role, role: Role) {
+    // 最後のオーナーを降格させると、オーナーが 0 人になって削除の守りごと外れる
+    // (`canRemoveMember(*, 0)` は誰でも削除できると答える)。削除と同じ強さで断る。
+    if (!canChangeRole(current, role, owners)) {
+      setError('最後のオーナーは降格できません（オーナーが 0 人になります）。');
+      return;
+    }
+    setError(undefined);
     await edit(id, { role });
   }
 
@@ -140,7 +219,7 @@ export function TeamPage() {
   const inputStyle = {
     background: 'var(--bg)',
     border: '1px solid var(--border)',
-    borderRadius: 6,
+    borderRadius: 10,
     color: 'var(--text)',
     padding: '6px 8px',
     fontSize: 13,
@@ -187,17 +266,22 @@ export function TeamPage() {
               <option key={r} value={r}>{ROLE_LABEL[r]}</option>
             ))}
           </select>
-          <button type="button" onClick={onAdd} disabled={!canAddMember(usage)}>
+          <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy || !canAddMember(usage)}>
             招待
           </button>
           <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
             残りシート: {remaining === Infinity ? '無制限' : remaining}
           </span>
         </div>
-        {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+        {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
       </Section>
 
       <Section title="メンバー" count={records.length}>
+        {duplicateNote !== null && (
+          <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+            {duplicateNote}
+          </p>
+        )}
         {records.length === 0 ? (
           <p style={{ color: 'var(--text-mute)', fontSize: 13 }}>
             まだメンバーがいません。最初のオーナーを招待してください。
@@ -215,24 +299,31 @@ export function TeamPage() {
             <tbody>
               {records.map((r) => (
                 <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
-                  <td style={{ padding: '4px 8px' }}>{r.data.name}</td>
-                  <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{r.data.email}</td>
+                  <td style={{ padding: '4px 8px' }}>{displayField(r.data.name, MAX_MEMBER_NAME_CHARS)}</td>
+                  <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.email, MAX_MEMBER_EMAIL_LEN)}</td>
                   <td style={{ padding: '4px 8px' }}>
                     <select
                       value={r.data.role}
-                      onChange={(e) => onChangeRole(r.id, e.target.value as Role)}
+                      onChange={(e) => onChangeRole(r.id, r.data.role, e.target.value as Role)}
                       style={{ ...inputStyle, width: 110 }}
                     >
                       {ROLE_ORDER.map((role) => (
-                        <option key={role} value={role}>{ROLE_LABEL[role]}</option>
+                        <option
+                          key={role}
+                          value={role}
+                          // 選べない理由を選択肢の側で見せる (押してから断られるより早い)。
+                          disabled={!canChangeRole(r.data.role, role, owners)}
+                        >
+                          {ROLE_LABEL[role]}
+                        </option>
                       ))}
                     </select>
                   </td>
                   <td style={{ padding: '4px 8px' }}>
                     <button
                       type="button"
-                      onClick={() => onRemove(r.id, r.data.role)}
-                      disabled={!canRemoveMember(r.data.role, owners)}
+                      onClick={() => void submit.run(() => onRemove(r.id, r.data.role))}
+                      disabled={submit.busy || !canRemoveMember(r.data.role, owners)}
                       aria-label="削除"
                     >
                       ×

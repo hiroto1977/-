@@ -2,7 +2,7 @@
 title: "ケヴィン・ハガティ"
 type: thinker
 person_key: "ハガティ|ケ"
-concept_count: 4
+concept_count: 2
 tags:
   - person
   - index
@@ -10,12 +10,10 @@ tags:
 
 # ケヴィン・ハガティ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
-- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — データ・ダブル（DataDouble）とは、デジタル監視システムが人間の身体を領域的文脈から抽象化し離散的な情報フロー…
-- [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — データ・ダブル（datadouble）と監視アサンブラージュ（surveillantassemblage）は、ケヴィン…
-- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — データ監視（dataveillance、デイタヴェイランス）は、ロジャー・クラークが1988年の論文「情報技術とデータ…
+## 学術概念（2件）
+- [[infosoc-data-double|データ・ダブルと監視アサンブラージュ（ハガティ＆エリクソン）——別々の監視システムが収束し、身体から切り離されたデータの流れから再構成された「情報上の分身」が判断と介入の対象になる]] — データ・ダブル（datadouble）と監視アサンブラージュ（surveillantassemblage）は、ケヴィン…
 - [[infosoc-surveillance-society|監視社会]] — 監視社会（surveillancesociety）とは、政府や企業が情報通信技術を用いて人々の行動・移動・通信・消費な…
 
 ## 関連

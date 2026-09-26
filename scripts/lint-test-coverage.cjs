@@ -84,17 +84,29 @@ function actionsOf(serviceId) {
  */
 const DOM_GLOBALS = /\b(document|window|localStorage|sessionStorage|indexedDB|navigator|location|HTMLElement|Element|Node|MutationObserver|IntersectionObserver|requestAnimationFrame|createRoot|fireEvent|screen)\b/;
 
-/** 行コメント・ブロックコメント・文字列リテラルを落として実コードだけ残す。 */
-function stripNonCode(text) {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
-    .replace(/\/\/[^\n]*/g, ' ')
-    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
-    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
-    .replace(/`(?:[^`\\]|\\.)*`/g, '``');
-}
+// 注記・文字列・正規表現のリテラルを落とす算法は **`.cjs` の側に 1 つだけ**
+// (2026-09-24 · パス 452 —— それまでゲートごとに 1 つずつ在り、3 人目の消費者
+// (`lint-credential-use.cjs`) が要ったとき、素直に写すと 4 つ目になりかけた)。
+// `.ts` 側の双子とのパリティは `src/shared/__tests__/stripNonCodeParity.test.ts`。
+const { stripNonCode } = require('./lib/strip-non-code.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 /** `.ts(x)` を集める (テストは除く / 含むを選べる)。 */
+/**
+ * **走査の条件** (`walkAll(src, /\.(test|spec)\.tsx?$/, true)` が使う物そのもの ·
+ * 2026-09-26 · パス 472)。
+ *
+ * この歩きが「検査の形なのに vitest の include に一致しない = 置いても走らない検査」を
+ * 見る母集団である。実測 (2026-09-26): include の外に検査ファイルを 1 つ置くと素の木は
+ * ❌ で鳴るが、**その 1 本を走査から落とすと ✅ exit 0** になった —— 1 度も走らない検査が
+ * 見えなくなる。`includeTests` が true なので `__tests__` は飛ばさない。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: [],
+  accept: (name) => /\.(test|spec)\.tsx?$/.test(name),
+};
+
 function walkAll(dir, re, includeTests) {
   const out = [];
   const rec = (d) => {
@@ -551,6 +563,11 @@ function main(argv) {
   failures.push(...checkVerifiedFloors(srcFiles, testFiles));
 
   const uncollectedChecked = checkUncollectedTests(failures);
+  // 2 つ目の数え方: 追跡されている「検査の形」のファイルは、どれも走査に出る (パス 472)。
+  const cross = reportTrackedCrossCheck(
+    walkAll(path.join(REPO_ROOT, 'src'), /\.(test|spec)\.tsx?$/, true).map((f) => f.file),
+    CROSS_CHECK, REPO_ROOT, 'lint:test-coverage');
+  if (cross.code !== 0) return 1;
 
   const withActions = clientsExportingActions();
   failures.push(
@@ -562,8 +579,29 @@ function main(argv) {
       + `, ${jsdomChecked} jsdom test file(s) for actual DOM use`
       + `, ${verified.length} VERIFIED_* dataset(s) for a non-empty floor`
       + `, ${uncollectedChecked} test-shaped file(s) against the vitest include`
-      + `, and ${withActions.length} client ACTIONS map(s) for registration in LIVE_ACTIONS`,
+      + `, and ${withActions.length} client ACTIONS map(s) for registration in LIVE_ACTIONS`
+      + ` (${crossCheckSuffix(cross.source)})`,
   );
+  // 走査が死んで 0 件になったのを「全サービスに検査がある」と読まない
+  // (実測 サービス 76 / jsdom 251 / 検査の形 903、2026-09-25)。
+  // ★ パス 468 の実測では SERVICE_IDS の読みを空にすると「Checked 0 services」と刷ったうえで
+  //   ✅ で通った。このゲートの主張は「**すべての**サービスに検査がある」で、
+  //   母集団が空なら全称命題は自明に真になる —— 0 件は「全部一致」ではない。
+  //   jsdom と検査の形も同じ理由で床を置く (どれも walk が死ねば 0 になる)。
+  const FLOORS = [
+    ['サービス', ids.length, 50],
+    ['jsdom の検査', jsdomChecked, 100],
+    ['検査の形をしたファイル', uncollectedChecked, 300],
+  ];
+  for (const [what, got, floor] of FLOORS) {
+    if (got < floor) {
+      console.error(
+        `❌ ${what}を ${got} 件しか走査できませんでした (${floor} 件以上を期待)。`
+        + ' 走査が壊れています —— 空の母集団に対する全称命題は自明に真なので、ここで落とします。',
+      );
+      return 1;
+    }
+  }
   if (failures.length === 0) {
     console.log('✅ every service has a test file and every action is exercised');
     return 0;
@@ -575,4 +613,13 @@ function main(argv) {
   return 1;
 }
 
-process.exit(main(process.argv.slice(2)));
+module.exports = { stripNonCode, CROSS_CHECK };
+
+// **require されたときは走らせない** —— パリティ検査がこの写しを borrow するため
+// (`process.exit` が module 読み込みの時点で走ると、検査プロセスごと落ちる)。
+if (require.main === module) {
+  process.exit(main(process.argv.slice(2)));
+}
+
+
+

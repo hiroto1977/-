@@ -3,10 +3,12 @@ import {
   compareVersions,
   describeUpdate,
   evaluateUpdate,
+  githubReleaseUrlOrNull,
   isGithubReleaseUrl,
   parseLatestRelease,
   parseVersion,
   type UpdateStatus,
+  type UpdateVerdict,
 } from '../updateCheck';
 
 /** 版文字列を分解して比較に渡す小道具（読めない表記は例外にして気付く）。 */
@@ -238,6 +240,49 @@ describe('isGithubReleaseUrl', () => {
   });
 });
 
+describe('★ 調べた物と返す物が同じ (パス 406)', () => {
+  /*
+   * `githubReleaseUrlOrNull` は `new URL()` の**解析結果**に対して判定を下すので、
+   * 生の文字列を返すと「github.com だと認めた物」と呼び手が持つ文字列が別になる。
+   *
+   * 実測 (2026-09-22 · 直す前): 8 形のうち **6 形**でずれた。今日の読み手は
+   * `openExternal` 1 つで、その先の `externalUrlOrNull` が再解析するので
+   * **生きた欠陥ではない** —— 2 つ目の読み手が増えた日に開く罠を外す。
+   */
+  const DIVERGED: readonly (readonly [string, string])[] = [
+    ['https://github.com/o/r/../../evil', 'https://github.com/evil'],
+    ['https://GitHub.com/o/r/releases', 'https://github.com/o/r/releases'],
+    ['https://github.com/o/r/releases\u0000', 'https://github.com/o/r/releases'],
+    ['https://github.com/o/r/rel\teases', 'https://github.com/o/r/releases'],
+    ['https://github.com:443/o/r/releases', 'https://github.com/o/r/releases'],
+    // 全角 ｇ は IDNA で ASCII の g へ正規化される —— **本物の github.com** である。
+    ['https://\uFF47ithub.com/a', 'https://github.com/a'],
+  ];
+
+  it.each(DIVERGED)('%s は解析結果を返す', (raw, want) => {
+    expect(githubReleaseUrlOrNull(raw)).toBe(want);
+    expect(parseLatestRelease({ tag_name: 'v1.0.0', html_url: raw })?.url).toBe(want);
+  });
+
+  it('★ 標本が的に当たる —— どれも生の綴りとは違う (走査が空虚でない)', () => {
+    for (const [raw, want] of DIVERGED) expect(raw, raw).not.toBe(want);
+    expect(DIVERGED.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it('既に正規な URL は 1 字も変えない', () => {
+    const ok = 'https://github.com/o/r/releases/tag/v1.0.0';
+    expect(githubReleaseUrlOrNull(ok)).toBe(ok);
+    expect(parseLatestRelease({ tag_name: 'v1.0.0', html_url: ok })?.url).toBe(ok);
+  });
+
+  it('断る物は null を返す (真偽の包みと答えが一致する)', () => {
+    for (const bad of ['https://evil.example/x', 'http://github.com/a', 'https://github.com@evil.example/', 7, null]) {
+      expect(githubReleaseUrlOrNull(bad), String(bad)).toBeNull();
+      expect(isGithubReleaseUrl(bad), String(bad)).toBe(false);
+    }
+  });
+});
+
 describe('parseLatestRelease', () => {
   const good = { tag_name: 'v0.2.0', html_url: 'https://github.com/hiroto1977/-/releases/tag/v0.2.0' };
 
@@ -365,5 +410,72 @@ describe('describeUpdate', () => {
     expect(describeUpdate({ status: 'unknown', current: '0.1.0', latest: null, url: null })).toContain(
       '時間をおいて',
     );
+  });
+});
+
+/**
+ * **「更新あり」なのに版が分からない、は成り立たない状態である。**
+ *
+ * 2026-09-08 まで `UpdateVerdict` は平らな interface で `latest: string | null` を
+ * **全 status に**持っていた。`describeUpdate` は
+ * `` `新しい版 ${verdict.latest} があります` `` と**裸で補間する**ので、
+ * その状態を 1 つ作れば利用者は**「新しい版 null があります」**を読む
+ * (裸の `${}` は `tsc` を素通りする —— パス 76・78 で 2 度踏んだ)。
+ * `evaluateUpdate` はそういう値を作らないが、**守っていたのは型ではなく実装**だった。
+ *
+ * 判別可能合併にしたので、ここは**型の側で**留める ——
+ * `@ts-expect-error` は「その行が型エラーであること」を要求するので、
+ * 合併が緩んだ瞬間に**この検査自身が `npm run typecheck` で落ちる** (自ら鳴る対照)。
+ */
+describe('UpdateVerdict — 版が分かる 3 状態で latest を null にできない (型)', () => {
+  it('★ 版の比較ができた 3 状態は latest が必須 (null を代入できない)', () => {
+    const ok: UpdateVerdict[] = [
+      { status: 'update-available', current: '0.1.0', latest: '0.2.0', url: null },
+      { status: 'up-to-date', current: '0.1.0', latest: '0.1.0', url: null },
+      { status: 'ahead', current: '0.3.0', latest: '0.2.0', url: null },
+    ];
+    expect(ok).toHaveLength(3);
+
+    // @ts-expect-error latest: null は 'update-available' では作れない (これが本命)
+    const bad1: UpdateVerdict = { status: 'update-available', current: '0.1.0', latest: null, url: null };
+    // @ts-expect-error 同じ規準を 'ahead' にも当てる
+    const bad2: UpdateVerdict = { status: 'ahead', current: '0.3.0', latest: null, url: null };
+    // @ts-expect-error 同じ規準を 'up-to-date' にも当てる
+    const bad3: UpdateVerdict = { status: 'up-to-date', current: '0.1.0', latest: null, url: null };
+    // 実行時には作れてしまう形なので、値としては触らず「型が拒む」ことだけを主張する。
+    expect([bad1, bad2, bad3]).toHaveLength(3);
+  });
+
+  it('★ 対照: 判定不能 (unknown) のときだけ latest は null を取れる', () => {
+    // ここが型エラーになるなら合併が締まりすぎている (`evaluateUpdate` が実際に返す形)。
+    const unknownWithNull: UpdateVerdict = { status: 'unknown', current: '0.1.0', latest: null, url: null };
+    const unknownWithVersion: UpdateVerdict = { status: 'unknown', current: 'x', latest: '0.2.0', url: null };
+    expect(unknownWithNull.latest).toBeNull();
+    expect(unknownWithVersion.latest).toBe('0.2.0');
+  });
+
+  it('★ どの status でも文面に文字列 "null" / "undefined" が出ない', () => {
+    const verdicts: UpdateVerdict[] = [
+      { status: 'update-available', current: '0.1.0', latest: '0.2.0', url: null },
+      { status: 'up-to-date', current: '0.1.0', latest: '0.1.0', url: null },
+      { status: 'ahead', current: '0.3.0', latest: '0.2.0', url: null },
+      { status: 'unknown', current: '0.1.0', latest: null, url: null },
+      { status: 'unknown', current: '0.1.0', latest: '0.2.0', url: null },
+    ];
+    for (const v of verdicts) {
+      const s = describeUpdate(v);
+      expect(s, v.status).not.toContain('null');
+      expect(s, v.status).not.toContain('undefined');
+      expect(s.length, v.status).toBeGreaterThan(0); // 標本 — 文面が実際に在る
+    }
+  });
+
+  it('★ evaluateUpdate は「版が分かる 3 状態」で必ず latest を埋める (実装と型の一致)', () => {
+    const v = evaluateUpdate('0.1.0', { version: '0.2.0', url: 'https://github.com/o/r/releases/tag/v0.2.0' });
+    expect(v.status).toBe('update-available');
+    expect(v.latest).toBe('0.2.0');
+    // 読めない版は unknown に落ち、そこでだけ latest が null になりうる。
+    expect(evaluateUpdate('not-a-version', null).status).toBe('unknown');
+    expect(evaluateUpdate('not-a-version', null).latest).toBeNull();
   });
 });

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
+import {
+  actionsIsComputed,
+  browserPairs,
+  desktopPairs,
+  desktopServiceModules,
+  invokeBody,
+  KNOWN_EMPTY,
+  readRepoFile as read,
+} from './actionSurface';
 
 /*
  * **ブラウザ版が、デスクトップ版の許可表に無い操作を実行できてはいけない。**
@@ -26,115 +33,59 @@ import path from 'node:path';
  * 数え、走査結果がその全部を説明できることを別に確かめる。
  */
 
-const REPO_ROOT = path.resolve(__dirname, '../..');
-const read = (rel: string): string => readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+// 読み方 (デスクトップの表・ブラウザ版の if 連鎖) は `./actionSurface.ts` に 1 つ。
+// オントロジー (`ontologyFacts.ts`) も同じ物を読むので、ここには写しを置かない。
 
-/** コメントを落とす (説明文の中の例を数えないため)。 */
-function stripComments(text: string): string {
-  const noBlock = text.replace(/\/\*[\s\S]*?\*\//g, '');
-  return noBlock
-    .split('\n')
-    .filter((l) => !l.trim().startsWith('//'))
-    .join('\n');
-}
+/**
+ * **判定が文字数に依らないこと** (2026-09-12 · パス 166)。
+ *
+ * 旧実装 (窓 200) は注記を 3 行足せば静かに逆へ倒れた。ここは**合成した文面**に
+ * 当てて、どちらの書き方も・注記が何行在っても正しく分かれることを留める。
+ */
+describe('ACTIONS の書き方の判定 (パス 166)', () => {
+  const LITERAL = "export const ACTIONS: ActionMap = {\n  'create-issue': createIssue,\n};\n";
+  const COMPUTED = 'export const ACTIONS: ActionMap = Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));\n';
 
-/** `{` から対応する `}` までを返す。 */
-function braceBlock(text: string, from: number): string {
-  const b = text.indexOf('{', from);
-  let depth = 0;
-  for (let i = b; i < text.length; i += 1) {
-    if (text[i] === '{') depth += 1;
-    else if (text[i] === '}') {
-      depth -= 1;
-      if (depth === 0) return text.slice(b + 1, i);
-    }
-  }
-  return '';
-}
+  it('字面の表は組み立てではない', () => {
+    expect(actionsIsComputed(LITERAL)).toBe(false);
+  });
 
-// ===== デスクトップ版の許可表 =====
+  it('Object.fromEntries は組み立て', () => {
+    expect(actionsIsComputed(COMPUTED)).toBe(true);
+  });
 
-/** LIVE_ACTIONS の `serviceId: ALIAS` と、その ALIAS の輸入元ファイル。 */
-function desktopServiceModules(): Map<string, string> {
-  const idx = read('src/main/clients/index.ts');
-  const alias = new Map<string, string>();
-  for (const m of idx.matchAll(
-    /import\s*\{[^}]*\bACTIONS\s+as\s+([A-Z0-9_]+)[^}]*\}\s*from\s*'\.\/([^']+)'/g,
-  )) {
-    alias.set(m[1]!, m[2]!);
-  }
-  const table = braceBlock(idx, idx.indexOf('export const LIVE_ACTIONS'));
-  const out = new Map<string, string>();
-  for (const m of stripComments(table).matchAll(/^\s*'?([a-z0-9-]+)'?:\s*([A-Z0-9_]+),/gm)) {
-    const file = alias.get(m[2]!);
-    if (file) out.set(m[1]!, file);
-  }
-  return out;
-}
+  it('★ 注記を 300 文字挟んでも倒れない (固定長の窓では倒れた)', () => {
+    const note = `// ${'あ'.repeat(300)}\n`;
+    expect(actionsIsComputed(note + COMPUTED)).toBe(true);
+    expect(actionsIsComputed(note + LITERAL)).toBe(false);
+    // 宣言と初期化子の**間**に挟んでも同じ (ここが旧実装の踏み抜き点だった)。
+    const between = `export const ACTIONS: ActionMap =\n  ${note}  Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));\n`;
+    expect(actionsIsComputed(between)).toBe(true);
+  });
 
-/** ACTIONS マップから鍵を取る。3 通りの書き方すべて。 */
-function actionKeysOf(file: string): string[] {
-  const text = read(`src/main/clients/${file}.ts`);
-  const at = text.indexOf('export const ACTIONS');
-  if (at < 0) return [];
-  // shopify は `Object.fromEntries(CONNECTORS.map(…))` で組み立てる。
-  // 字面の表が無いので、その元になる CONNECTORS の action 欄から取る。
-  if (text.slice(at, at + 200).includes('Object.fromEntries')) {
-    const arr = text.slice(text.indexOf('export const CONNECTORS'));
-    return [...stripComments(arr).matchAll(/\baction:\s*'([^']+)'/g)].map((m) => m[1]!);
-  }
-  const body = stripComments(braceBlock(text, at));
-  const keys = new Set<string>();
-  for (const m of body.matchAll(/^\s*'([^']+)'\s*:/gm)) keys.add(m[1]!);
-  for (const m of body.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*:/gm)) keys.add(m[1]!);
-  for (const m of body.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*,\s*$/gm)) keys.add(m[1]!);
-  return [...keys];
-}
+  it('★ 対照: 固定長 200 の窓なら、間に注記を挟むと逆へ倒れていた', () => {
+    // 旧実装を再現して、**直した理由が実在した**ことを標本で示す。
+    const oldRule = (text: string): boolean => {
+      const at = text.indexOf('export const ACTIONS');
+      return at >= 0 && text.slice(at, at + 200).includes('Object.fromEntries');
+    };
+    const note = `// ${'あ'.repeat(300)}\n`;
+    const between = `export const ACTIONS: ActionMap =\n  ${note}  Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));\n`;
+    expect(oldRule(between)).toBe(false); // 旧実装は見失う
+    expect(actionsIsComputed(between)).toBe(true); // 今の実装は見る
+  });
 
-/** 意図的に空の ACTIONS を持つサービス (書き込み操作がまだ無い)。 */
-const KNOWN_EMPTY = ['cursor'];
+  it('ACTIONS が無い文面は組み立てではない', () => {
+    expect(actionsIsComputed('const x = 1;\n')).toBe(false);
+  });
 
-function desktopPairs(): { pairs: Set<string>; empty: string[] } {
-  const pairs = new Set<string>();
-  const empty: string[] = [];
-  for (const [svc, file] of desktopServiceModules()) {
-    const keys = actionKeysOf(file);
-    if (keys.length === 0) empty.push(svc);
-    for (const k of keys) pairs.add(`${svc}/${k}`);
-  }
-  return { pairs, empty };
-}
-
-// ===== ブラウザ版の if 連鎖 =====
-
-/** `invoke:` の本体だけを取る。 */
-function invokeBody(): string {
-  const shim = read('src/renderer/web-shim.ts');
-  return stripComments(braceBlock(shim, shim.indexOf('  invoke: async <T>')));
-}
-
-/** `record-entry` を集合で受ける分岐の対象サービス。 */
-function recordEntryServices(): string[] {
-  const shim = read('src/renderer/web-shim.ts');
-  const decl = shim.slice(shim.indexOf('RECORD_ENTRY_SERVICES ='));
-  const set = decl.slice(0, decl.indexOf(']'));
-  return [...set.matchAll(/'([a-z0-9-]+)'/g)].map((m) => m[1]!);
-}
-
-function browserPairs(body: string): Set<string> {
-  const out = new Set<string>();
-  for (const m of body.matchAll(/serviceId\s*===\s*'([^']+)'\s*&&\s*action\s*===\s*'([^']+)'/g)) {
-    out.add(`${m[1]}/${m[2]}`);
-  }
-  for (const m of body.matchAll(/action\s*===\s*'([^']+)'\s*&&\s*serviceId\s*===\s*'([^']+)'/g)) {
-    out.add(`${m[2]}/${m[1]}`);
-  }
-  for (const m of body.matchAll(/serviceId\s*===\s*'([^']+)'\s*&&\s*\(([^)]*action\s*===[^)]*)\)/g)) {
-    for (const a of m[2]!.matchAll(/action\s*===\s*'([^']+)'/g)) out.add(`${m[1]}/${a[1]}`);
-  }
-  for (const svc of recordEntryServices()) out.add(`${svc}/record-entry`);
-  return out;
-}
+  it('★ 実物: 組み立てで書いているのは shopify だけ (母集団を数える)', () => {
+    const computed = [...desktopServiceModules().values()]
+      .filter((file, i, arr) => arr.indexOf(file) === i)
+      .filter((file) => actionsIsComputed(read(`src/main/clients/${file}.ts`)));
+    expect(computed).toEqual(['shopify']);
+  });
+});
 
 describe('二つの版で、実行できる書き込み操作の面が食い違わない', () => {
   const body = invokeBody();

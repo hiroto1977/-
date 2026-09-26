@@ -31,8 +31,16 @@ aliases:
 - [Wikipedia: Dual process theory — 二重過程理論の歴史・類型・批判の概説](https://en.wikipedia.org/wiki/Dual_process_theory) `リファレンス`
 
 ## 関連概念
-- [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — 同分野の近傍
-- [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]] — 同分野の近傍
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

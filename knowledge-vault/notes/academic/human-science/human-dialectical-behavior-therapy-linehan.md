@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[human-cbt|認知行動療法（CBT）]] — 同じ思想家
 - [[human-dsm-classification|DSM分類体系：精神疾患の診断・統計マニュアルと操作的診断基準の確立]] — 同じ思想家
-- [[human-attachment-style-theory|愛着スタイル理論]] — 出典を共有
 - [[human-motivational-interviewing-miller-rollnick|動機づけ面接——ミラー＆ロルニックのチェンジトークと行動変容支援]] — 出典を共有
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同分野の近傍

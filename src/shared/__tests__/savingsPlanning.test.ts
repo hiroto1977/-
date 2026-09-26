@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { measured } from './measured';
 import {
+  MAX_PLAN_RATE_PCT,
   requiredMonthlyContribution,
   yearsToDouble,
   emergencyFund,
@@ -26,15 +28,15 @@ describe('requiredMonthlyContribution', () => {
 
   it('is the inverse of the compounding future-value calc', () => {
     // Find PMT to reach 10,000,000 in 10y at 3%, then feed it back in.
-    const pmt = requiredMonthlyContribution(10_000_000, 3, 10);
-    const fv = calcCompoundingFutureValue(pmt, 3, 10).futureValue;
+    const pmt = measured(requiredMonthlyContribution(10_000_000, 3, 10));
+    const fv = measured(calcCompoundingFutureValue(pmt, 3, 10).futureValue);
     // Round-trip should land within a small rounding tolerance of the target.
     expect(Math.abs(fv - 10_000_000)).toBeLessThan(1000);
   });
 
   it('requires a smaller monthly amount at a higher return', () => {
-    const low = requiredMonthlyContribution(10_000_000, 1, 10);
-    const high = requiredMonthlyContribution(10_000_000, 8, 10);
+    const low = measured(requiredMonthlyContribution(10_000_000, 1, 10));
+    const high = measured(requiredMonthlyContribution(10_000_000, 8, 10));
     expect(high).toBeLessThan(low);
   });
 });
@@ -76,8 +78,8 @@ describe('futureValueWithFrequency', () => {
   });
 
   it('monthly compounding beats annual for the same nominal rate', () => {
-    const monthly = futureValueWithFrequency(30_000, 5, 20, 'monthly');
-    const annual = futureValueWithFrequency(30_000, 5, 20, 'annual');
+    const monthly = measured(futureValueWithFrequency(30_000, 5, 20, 'monthly'));
+    const annual = measured(futureValueWithFrequency(30_000, 5, 20, 'annual'));
     expect(monthly).toBeGreaterThan(annual);
   });
 
@@ -139,10 +141,27 @@ describe('inflationAdjustedValue', () => {
     expect(inflationAdjustedValue(1_000_000, -150, 5)).toBe(0);
   });
 
-  it('returns 0 for non-finite inputs', () => {
+  /**
+   * 2026-09-13 (パス 198) に**この検査の期待値を 1 行だけ変えた**。
+   *
+   * 守っていた物は「非有限な入力から非有限な出力を作らない」で、それは今も守る。
+   * 変えたのは**年数が非有限のときの答え**で、`0` (= 実質価値はゼロ) から
+   * `null` (= 算定していない) にした —— `0` は「測った結果」として読める値で、
+   * このリポジトリが 3 度直してきた 0 倒し (パス 52 / 85 / 91) と同じ形だった。
+   * 金額・率が非有限のときの `0` はそのまま (年数だけが天井を持つ量である)。
+   */
+  it('金額が非有限なら 0、年数・インフレ率が範囲外なら null (算定不能)', () => {
     expect(inflationAdjustedValue(Number.NaN, 2, 10)).toBe(0);
-    expect(inflationAdjustedValue(1_000_000, Number.NaN, 10)).toBe(0);
-    expect(inflationAdjustedValue(1_000_000, 2, Number.POSITIVE_INFINITY)).toBe(0);
+    expect(inflationAdjustedValue(1_000_000, 2, Number.POSITIVE_INFINITY)).toBeNull();
+    expect(inflationAdjustedValue(1_000_000, 2, Number.NaN)).toBeNull();
+    // **インフレ率の側も `null`** (2026-09-13 · パス 207)。以前は `0` を返しており、
+    // 「実質価値はゼロ」という**別の断定**になっていた (`isPlannableRate` が
+    // 非有限と上限超過の両方を落とす)。
+    expect(inflationAdjustedValue(1_000_000, Number.NaN, 10)).toBeNull();
+    expect(inflationAdjustedValue(1_000_000, 999_999_999, 10)).toBeNull();
+    // 対照: 範囲内の年数・率なら値が出る (この検査が何でも通る形でないこと)
+    expect(inflationAdjustedValue(1_000_000, 2, 10)).toBe(820_348);
+    expect(inflationAdjustedValue(1_000_000, MAX_PLAN_RATE_PCT, 1)).toBe(500_000);
   });
 });
 
@@ -194,13 +213,37 @@ describe('emergencyFundCoverage', () => {
     expect(emergencyFundCoverage(0, 100_000).target).toBe(600_000);
   });
 
-  it('handles a zero target: 100% if cash exists, else 0%', () => {
-    expect(emergencyFundCoverage(50_000, 0, 6).coveragePct).toBe(100);
-    expect(emergencyFundCoverage(0, 0, 6).coveragePct).toBe(0);
+  /**
+   * **この検査は 2026-09-08 まで欠陥を仕様として固定していた。**
+   * 名前が `handles a zero target: 100% if cash exists, else 0%` で、
+   * `toBe(100)` を要求していた。だが目標 0 は「予備資金は要らない」ではなく、
+   * たいていは**月支出を入力していない**という意味である ——
+   * `MutualFundsPage` は `readNumberOr0` で読むので**空欄が 0 になる**。
+   *
+   * **規準はすぐ下の検査に在った**: `monthsCovered` は**同じ入力**
+   * (`expense = 0`) で `null` を要求している。同じ戻り値の 2 つの欄に対して、
+   * 隣り合う 2 本の検査が**逆の判定**を固定していた。
+   *
+   * 画面でも 2 つの `<Stat>` が同じ grid に並び、
+   * 「予備資金 充足率 **100%**」と「現預金でまかなえる月数 **—**」を同時に出していた。
+   */
+  it('★ 目標が定まらなければ充足率は出さない (100% と断定しない)', () => {
+    // 月支出が未入力 → 目標 0 → 充足率は算定不能
+    expect(emergencyFundCoverage(50_000, 0, 6).coveragePct).toBeNull();
+    expect(emergencyFundCoverage(0, 0, 6).coveragePct).toBeNull();
+    // 目標月数 0 も同じ (目標が立たない)
+    expect(emergencyFundCoverage(50_000, 100_000, 0).coveragePct).toBeNull();
   });
 
-  it('returns null monthsCovered when monthly expense is zero', () => {
-    expect(emergencyFundCoverage(500_000, 0, 6).monthsCovered).toBeNull();
+  it('★ 対照: 月支出が在れば充足率は数で出る (床が全部を飲み込んでいない)', () => {
+    expect(emergencyFundCoverage(900_000, 300_000, 6).coveragePct).toBe(50);
+    expect(emergencyFundCoverage(50_000, 100_000, 6).coveragePct).toBeCloseTo(8.3, 1);
+  });
+
+  it('★ 姉妹欄と同じ条件で同じ答え方をする (片方だけが断定しない)', () => {
+    const c = emergencyFundCoverage(500_000, 0, 6);
+    expect(c.monthsCovered).toBeNull();
+    expect(c.coveragePct).toBeNull(); // ← 直す前はここが 100 だった
   });
 
   it('clamps negative and non-finite inputs to zero', () => {
@@ -209,7 +252,8 @@ describe('emergencyFundCoverage', () => {
     expect(c.shortfall).toBe(0);
     const nf = emergencyFundCoverage(Number.NaN, Number.POSITIVE_INFINITY, Number.NaN);
     expect(nf.target).toBe(0);
-    expect(nf.coveragePct).toBe(0);
+    // 読めない入力から目標は立たない → 充足率も出さない (旧: 0)
+    expect(nf.coveragePct).toBeNull();
     expect(nf.monthsCovered).toBeNull();
   });
 });
@@ -217,7 +261,7 @@ describe('emergencyFundCoverage', () => {
 describe('goalProjection', () => {
   it('flags an on-track plan with no shortfall or extra contribution', () => {
     // 必要積立額は切り捨て丸めのため、+1 円だけ上乗せすれば確実に届く。
-    const required = requiredMonthlyContribution(10_000_000, 3, 10);
+    const required = measured(requiredMonthlyContribution(10_000_000, 3, 10));
     const p = goalProjection(required + 1, 10_000_000, 3, 10);
     expect(p.onTrack).toBe(true);
     expect(p.shortfall).toBe(0);

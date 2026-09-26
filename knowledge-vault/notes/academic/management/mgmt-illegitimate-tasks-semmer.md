@@ -38,8 +38,8 @@ aliases:
 - [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同じ思想家
-- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
 - [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 同分野の近傍
+- [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

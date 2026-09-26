@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-coopetition|コーペティション（協調的競争）]] — 同じ思想家
-- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論（レイザー＝ローゼン）——絶対成果ではなく相対順位で報酬を決める仕組みが努力を引き出し、昇進ごとの大きな報酬格差を説明する]] — 同じ思想家
 - [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 同分野の近傍
 - [[mgmt-freemium|フリーミアム]] — 同分野の近傍
 

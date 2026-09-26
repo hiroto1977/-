@@ -108,12 +108,12 @@ function AxonometricLineChart({
       aria-label={`${indicator.label}の全業務推移（縦軸=値・横軸=期間・斜め軸=業務）`}
     >
       {/* 縦軸 (値) */}
-      <line x1={PAD.left} y1={H - PAD.bottom} x2={PAD.left} y2={PAD.top} stroke="#4a5568" />
+      <line x1={PAD.left} y1={H - PAD.bottom} x2={PAD.left} y2={PAD.top} stroke="#cfbfd0" />
       {ticks.map((t) => {
         const p = at(0, t, 0);
         return (
           <g key={`ty${t}`}>
-            <line x1={PAD.left - 4} y1={p.y} x2={PAD.left} y2={p.y} stroke="#4a5568" />
+            <line x1={PAD.left - 4} y1={p.y} x2={PAD.left} y2={p.y} stroke="#cfbfd0" />
             <text x={PAD.left - 6} y={p.y} fontSize={9} fill="#94a3b8" textAnchor="end" dominantBaseline="middle">
               {formatTick(t, indicator)}
             </text>
@@ -137,7 +137,7 @@ function AxonometricLineChart({
         y1={zeroAt(0).y}
         x2={at(periods - 1, Math.max(min, Math.min(max, 0)), 0).x}
         y2={at(periods - 1, Math.max(min, Math.min(max, 0)), 0).y}
-        stroke="#4a5568"
+        stroke="#cfbfd0"
       />
       {series[0]?.points.map((p) => {
         const q = at(p.x, Math.max(min, Math.min(max, 0)), 0);
@@ -158,7 +158,7 @@ function AxonometricLineChart({
           y1={zeroAt(0).y}
           x2={zeroAt(depth).x}
           y2={zeroAt(depth).y}
-          stroke="#4a5568"
+          stroke="#cfbfd0"
           strokeDasharray="3,3"
         />
       )}
@@ -257,7 +257,7 @@ function CompositionPie({
       {composition.negatives.length > 0 && (
         // 負の値は円に描きようがない。0% として黙って消すと、赤字の事業が
         // 無かったことになり全体が黒字に見える。必ず言葉で出す。
-        <div style={{ fontSize: 10, color: '#e36b6b', marginTop: 6, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 10, color: 'var(--danger)', marginTop: 6, lineHeight: 1.5 }}>
           ⚠ 円に含めていない赤字:{' '}
           {composition.negatives.map((n) => `${n.label} ${yen.format(n.value)}`).join(' / ')}
         </div>
@@ -298,7 +298,7 @@ export function AxonometricCharts({ units }: { units: readonly AxonometricUnitIn
             data-axonometric-indicator
             value={indicatorKey}
             onChange={(e) => setIndicatorKey(e.target.value)}
-            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}
+            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}
           >
             {INDICATORS.map((i) => (
               <option key={i.key} value={i.key}>

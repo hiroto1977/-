@@ -266,9 +266,21 @@ describe('lowPotassiumFromSetup — 低カリウム栽培の橋渡し', () => {
     expect(lowPotassiumFromSetup({ ...withLowK, measuredPotassiumMgPer100g: undefined })!.measured).toBe(false);
   });
 
-  it('切替日数が未指定なら範囲外として扱う (既定で「合っている」ことにしない)', () => {
-    expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: undefined })!.switchWindowOk).toBe(false);
+  it('★ 切替日数が未指定なら判定しない (「合っている」とも「範囲外」とも言わない)', () => {
+    // **この検査は 2026-09-09 まで `false` を留めていた。**
+    // 名前が当時の考えを残している —— 「既定で『合っている』ことにしない」。
+    // その懸念は正しい (未入力を合格にしてはいけない) が、**選んだ答えが
+    // もう一方の端だった**。未入力は違反ではないので、正しいのは第三の答え:
+    // **判定しない (null)**。旧実装では、カリウムをきちんと実測している人でも
+    // この欄を埋めていないだけで琥珀色の警告が出ていた。
+    expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: undefined })!.switchWindowOk).toBeNull();
+    // 0 も「未入力」— 0 は「収穫当日に切り替える」という指示で、しかも
+    // フォーム自身が `allowZero: false` で拒否する値である。
+    expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: 0 })!.switchWindowOk).toBeNull();
+    // ★ 対照: **本物の範囲外は今も false** (警告そのものは生きている)
     expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: 20 })!.switchWindowOk).toBe(false);
+    // ★ 対照: 範囲内は true
+    expect(lowPotassiumFromSetup({ ...withLowK, switchDaysBeforeHarvest: 8 })!.switchWindowOk).toBe(true);
   });
 });
 

@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — HarryBrignull,DeceptiveDesign(旧darkpatterns.org,2010〜)概念の一次情報源
+- [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]] — Brignull,H.—DeceptiveDesign（旧darkpatterns.org、2010〜）概念の一次情報源
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

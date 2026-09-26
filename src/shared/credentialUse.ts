@@ -55,6 +55,7 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   teamradar: 'action',
   // 判定はすべて純粋関数。資格情報を読む経路が無いので入力欄も出さない。
   talent: 'none',
+  hydroponics: 'none',
   templates: 'none',
   library: 'none',
   settings: 'none',
@@ -71,7 +72,23 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   asana: 'none',
   linear: 'none',
   sentry: 'none',
-  shopify: 'action',
+  /*
+   * **`shopify` は 2026-09-24 (パス 452) に `action` から `none` へ。**
+   *
+   * 7 つのコネクタ (`sync-to-slack` ほか) は `ctx.payload` から**連携先**の資格情報を
+   * 取り出すので `token` の綴りは 20 回以上出るが、**Shopify 自身の `ctx.token` を
+   * 読む出荷コードは 0 件** (出現は `shopify.ts:35` の注記 1 行だけ)。fetcher も
+   * `dataOrigin` が remote ではない静的 stub で、資格情報を読まない。
+   * それでも `ShopifyPage` は「API トークン」を預かっていた ——
+   * この宣言が在る理由 (読み手のいない資格情報を預かること自体が漏えい面の追加)
+   * そのものである。**ゲートの針が `\btoken\b` をファイル全体に当てていたため、
+   * 連携先のトークンが自分の読み手として数えられていた。**
+   * 実測: 出荷コードからコネクタを呼ぶ所も 0 件 (`ShopifyPage` は保管層へ書く
+   * `OrderToSalesForm` だけ · `ConnectorsPage` は別経路の `executeFreeConnector`)。
+   * `none` にすると `unusedStoredCredentials` が拾うので、**既に保存した人は
+   * 設定画面の掃除から消せる** (法則 `escape-hatch-stays-open`)。
+   */
+  shopify: 'none',
   stripe: 'none',
   line: 'none',
   storage: 'none',

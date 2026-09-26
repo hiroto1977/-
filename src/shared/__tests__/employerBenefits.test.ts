@@ -628,3 +628,75 @@ describe('checkBenefitPlan — 枝ごとに benefitId を確かめる', () => {
     expect(v.benefitId).toBe('commute');
   });
 });
+
+/**
+ * **読めない額を「適合」と答えない。** (2026-09-08 · パス 87)
+ *
+ * `Math.max(0, NaN)` は **NaN** なので、`Math.max(0, x ?? 0)` の手書きは
+ * 非有限を落とせていなかった。NaN は `> 0` が false になるため上限判定が
+ * **丸ごと飛び**、`checkBenefitPlan` は違反 0 件 = 「適合」を返し、
+ * `summarizeBenefitPlan` は合計に **NaN** を出していた。
+ *
+ * `checkBenefitPlan` の doc は「**上限を超えたら黙って丸めない。** 丸めると
+ * 『その額で通った』と読めてしまい、規程に書き出したあとで否認される」と書いており、
+ * 読めない入力で「通った」に見えるのはまさにその失敗である。
+ *
+ * **規準は既にリポジトリに在った** —— `shared/num.ts` の
+ * `nonNeg(n) = Number.isFinite(n) ? Math.max(0, n) : 0`。この module は
+ * **非有限の扱いだけが違う手書き版**を 10 か所に持っていた。
+ */
+describe('checkBenefitPlan / summarizeBenefitPlan — 読めない額を「適合」にしない', () => {
+  const base = { gross: 400_000, baseSalary: 300_000, asOf: new Date('2026-08-21T00:00:00Z') };
+
+  it('★ 掛金が読めなければ違反として名指しする (空 = 適合を返さない)', () => {
+    const v = checkBenefitPlan({ ...base, idecoPlusEmployer: Number.NaN, idecoPlusEmployee: 10_000 });
+    expect(v).not.toEqual([]); // 直す前はここが [] だった
+    expect(v.map((x) => x.benefitId)).toContain('ideco-plus');
+    expect(v.map((x) => x.message).join(' ')).toContain('iDeCo+ 事業主掛金を数値として読み取れない');
+  });
+
+  it('★ 額面・基本給が読めなければ給与振替の上限も判定できないと言う', () => {
+    const v = checkBenefitPlan({ ...base, baseSalary: Number.NaN, salaryConversion: 60_000 });
+    expect(v.map((x) => x.message).join(' ')).toContain('基本給を数値として読み取れない');
+  });
+
+  it('★ 上限そのものが NaN にならない (NaN の上限はどんな額も通す)', () => {
+    // 直す前: Math.max(0, NaN) * 0.2 = NaN → `conversion > cap` が必ず false
+    expect(salaryConversionCapYen(Number.NaN)).toBe(0);
+    expect(Number.isFinite(salaryConversionCapYen(Number.NaN))).toBe(true);
+  });
+
+  it('★ 試算の合計に NaN を出さない', () => {
+    const s = summarizeBenefitPlan({ ...base, idecoPlusEmployer: Number.NaN, commuteAllowance: 20_000 });
+    for (const [k, v] of Object.entries(s)) {
+      if (typeof v === 'number') expect(Number.isFinite(v), `${k} が有限でない`).toBe(true);
+    }
+    // 数字が出ていても、読めない欄が在ることは violations で分かる。
+    expect(s.violations).not.toEqual([]);
+  });
+
+  it('★ 対照: 同じ欄が読めれば違反は出ない (床が広過ぎない)', () => {
+    expect(
+      checkBenefitPlan({
+        ...base,
+        idecoPlusEmployer: 10_000,
+        idecoPlusEmployee: 10_000,
+        employeeCount: 20,
+        corporateDcEmployer: 50_000,
+        salaryConversion: 60_000,
+        commuteAllowance: 20_000,
+      }),
+    ).toEqual([]);
+  });
+
+  it('★ 対照: 欄が無い (undefined) のは「該当なし」で、読めないのとは別', () => {
+    // iDeCo+ を実施していない計画。違反にはしない。
+    expect(checkBenefitPlan({ ...base })).toEqual([]);
+    expect(checkBenefitPlan({ ...base, salaryConversion: 60_000 })).toEqual([]);
+  });
+
+  it('★ 対照: 本物の上限超過は今も鳴る (判定そのものが生きている)', () => {
+    const v = checkBenefitPlan({ ...base, idecoPlusEmployer: 30_000, idecoPlusEmployee: 10_000 });
+    expect(v.map((x) => x.message).join(' ')).toContain('上限');
+  });
+});

@@ -42,6 +42,7 @@ national
 - [[subsidy-jizokuka|小規模事業者持続化補助金]] — 出典を共有
 - [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 出典を共有
 - [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 出典を共有
+- [[subsidy-sendai|仙台市中小企業チャレンジ補助金]] — 同分野の近傍
 - [[subsidy-sagamihara|相模原市ベンチャー・スタートアップ企業進出補助金]] — 同分野の近傍
 
 ## 関連

@@ -82,30 +82,60 @@ export interface WaterBalanceInput {
 export interface WaterBalanceResult {
   /** 1 バッチの RO 供給量 (L) = 循環量。 */
   readonly feedPerBatchL: number;
-  /** 1 バッチで回収・再利用する透過水 (L) = 供給 × 回収率。 */
-  readonly permeatePerBatchL: number;
-  /** 1 バッチで排出する濃縮廃液 (L) = 供給 × (1−回収率)。 */
-  readonly concentratePerBatchL: number;
-  /** 1 バッチで補給する新水 (L) = 濃縮廃液と同量 (回収できなかった分)。 */
-  readonly freshMakeupPerBatchL: number;
-  /** 実際の水回収率 (%) = 回収率そのもの。100 にはならないことの明示。 */
-  readonly recoveryPct: number;
-  /** 濃縮廃液の濃縮倍率 = 1/(1−回収率)。回収率 100% は無限大 (排出口が無い)。 */
+  /**
+   * **回収率に依存する 8 欄は、回収率が未入力なら `null`。**
+   *
+   * `nonNeg` は未入力を 0 にするので、2026-09-08 まで欄を空にすると
+   * `r = 0` として全部が計算され、画面は
+   * **「実際の水回収率 0% / 濃縮倍率 1倍 / 年間節水量 0 L / 年間排出量 = 全量」**
+   * を刷った —— **循環設備が何も回収していないという測定結果**に見える。
+   * 欄の定義は `min: 1, max: 99` (`RealEstatePage.tsx:827`) なので
+   * **0 は画面が受け付けない値**であり、未入力と 0 は別である
+   * (パス 67 / 69 と同じ判断・同じファイル)。
+   */
+  readonly permeatePerBatchL: number | null;
+  readonly concentratePerBatchL: number | null;
+  readonly freshMakeupPerBatchL: number | null;
+  readonly recoveryPct: number | null;
+  /** 濃縮廃液の濃縮倍率 = 1/(1−回収率)。回収率 100% は無限大 (排出口が無い)・未入力も null。 */
   readonly concentrationFactor: number | null;
-  /** 透過水が持ち越す EC 比率 (= 1−除去率)。これが「純水」の EC の下限になる。 */
-  readonly permeateEcCarryoverPct: number;
-  /** 年間 RO 処理量 (L)。 */
+  /**
+   * 透過水が持ち越す EC 比率 (= 1−除去率)。**除去率が未入力なら `null`。**
+   *
+   * **パス 69 の取り残し。** あのパスは `rejSet` を導入して `accumulationRisk` を
+   * `null` にしたが、**同じ `rej` を使うこの欄を直していなかった** ——
+   * 除去率を空にすると `(1 − 0) × 100` = **100%** になり、画面は
+   * **「透過水の EC 持ち越し 100%」**= 膜が塩を 1 つも除去しない、と刷った。
+   *
+   * しかも同じパネルには パス 69 が入れた
+   * **「RO 塩除去率が未入力のため、塩類蓄積の判定はしていません」**が並ぶので、
+   * **矛盾する 2 文が同時に出ていた** ——
+   * 「判定できない」と言いながら最悪の数値を測定値として示す形。
+   */
+  readonly permeateEcCarryoverPct: number | null;
+  /** 年間 RO 処理量 (L)。回収率に依存しない (供給量 × 年間バッチ数)。 */
   readonly annualThroughputL: number;
-  /** 年間排出量 (L) = 年間の濃縮廃液。 */
-  readonly annualDischargeL: number;
-  /** 年間新水消費 (L・循環あり)。 */
-  readonly annualFreshWithRecycleL: number;
-  /** 年間新水消費 (L・循環なし = 毎回全量新水)。 */
+  /** 年間排出量 (L) = 年間の濃縮廃液。回収率が未入力なら null。 */
+  readonly annualDischargeL: number | null;
+  /** 年間新水消費 (L・循環あり)。回収率が未入力なら null。 */
+  readonly annualFreshWithRecycleL: number | null;
+  /** 年間新水消費 (L・循環なし = 毎回全量新水)。**回収率に依存しない**基準線。 */
   readonly annualFreshNoRecycleL: number;
-  /** 年間節水量 (L) = 循環なし − 循環あり。 */
-  readonly annualWaterSavedL: number;
-  /** 塩類蓄積の懸念フラグ: 除去率が低いと透過水の持ち越しで EC が下がりきらない。 */
-  readonly accumulationRisk: boolean;
+  /** 年間節水量 (L) = 循環なし − 循環あり。回収率が未入力なら null。 */
+  readonly annualWaterSavedL: number | null;
+  /**
+   * 塩類蓄積の懸念フラグ: 除去率が低いと透過水の持ち越しで EC が下がりきらない。
+   * **除去率が未入力なら `null`** —— 「入力していない」を「除去率が低い」と報告しない。
+   *
+   * 2026-09-08 まで `boolean` で `rej < 0.9` だった。`nonNeg` は未入力を 0 に
+   * するので、**欄を空にしただけで「⚠ RO 塩除去率が 90% 未満です」という警告**が
+   * 出ていた。しかも欄の定義は `min: 1` で、**0 は画面が受け付けない値**である
+   * (パス 67 の `switchDaysBeforeHarvest` と同じ形・同じファイル)。
+   *
+   * 同じ return の `concentrationFactor` は既に「物理的に成立しない → null」と
+   * していたので、**この欄だけが倒れていた。**
+   */
+  readonly accumulationRisk: boolean | null;
 }
 
 /**
@@ -115,7 +145,15 @@ export interface WaterBalanceResult {
 export function planWaterBalance(input: WaterBalanceInput): WaterBalanceResult {
   const feed = nonNeg(input.systemVolumeL);
   const cycleDays = nonNeg(input.exchangeCycleDays);
+  // **未入力 (0 以下・非有限) は「回収率 0%」ではなく「分からない」。**
+  // 欄の定義は `min: 1, max: 99` なので、0 は画面が受け付けない値である。
+  const recRaw = input.roRecoveryPct;
+  const recSet = Number.isFinite(recRaw) && recRaw > 0;
   const r = Math.min(100, nonNeg(input.roRecoveryPct)) / 100;
+  // **未入力 (0 以下・非有限) は「除去率が低い」ではなく「分からない」。**
+  // 欄の定義は `min: 1` なので、0 は画面が受け付けない値である。
+  const rejRaw = input.roRejectionPct;
+  const rejSet = Number.isFinite(rejRaw) && rejRaw > 0;
   const rej = Math.min(100, nonNeg(input.roRejectionPct)) / 100;
 
   const permeate = feed * r;
@@ -124,20 +162,23 @@ export function planWaterBalance(input: WaterBalanceInput): WaterBalanceResult {
 
   return {
     feedPerBatchL: round1(feed),
-    permeatePerBatchL: round1(permeate),
-    concentratePerBatchL: round1(concentrate),
-    freshMakeupPerBatchL: round1(concentrate),
-    recoveryPct: round1(r * 100),
+    // **回収率に依存する欄は、回収率が未入力なら null。**
+    permeatePerBatchL: recSet ? round1(permeate) : null,
+    concentratePerBatchL: recSet ? round1(concentrate) : null,
+    freshMakeupPerBatchL: recSet ? round1(concentrate) : null,
+    recoveryPct: recSet ? round1(r * 100) : null,
     // r=1 なら排出ゼロ = 濃縮しきれない = 物理的に成立しない → null で表す。
-    concentrationFactor: r < 1 ? round1(1 / (1 - r)) : null,
-    permeateEcCarryoverPct: round1((1 - rej) * 100),
+    concentrationFactor: recSet && r < 1 ? round1(1 / (1 - r)) : null,
+    // **パス 69 の取り残し** —— `accumulationRisk` と同じ `rej` を使うので同じ関門で守る。
+    permeateEcCarryoverPct: rejSet ? round1((1 - rej) * 100) : null,
     annualThroughputL: round1(feed * batchesPerYear),
-    annualDischargeL: round1(concentrate * batchesPerYear),
-    annualFreshWithRecycleL: round1(concentrate * batchesPerYear),
+    annualDischargeL: recSet ? round1(concentrate * batchesPerYear) : null,
+    annualFreshWithRecycleL: recSet ? round1(concentrate * batchesPerYear) : null,
     annualFreshNoRecycleL: round1(feed * batchesPerYear),
-    annualWaterSavedL: round1(permeate * batchesPerYear),
+    annualWaterSavedL: recSet ? round1(permeate * batchesPerYear) : null,
     // 除去率 90% 未満だと透過水に 10% 超の塩が残り、閉ループで積み上がりやすい。
-    accumulationRisk: rej < 0.9,
+    // **未入力は判定しない** —— 偽の警告は本物の警告を薄める (パス 67)。
+    accumulationRisk: rejSet ? rej < 0.9 : null,
   };
 }
 
@@ -303,21 +344,36 @@ export interface EffluentInput {
   readonly concentrateTnMgL: number;
   /** 濃縮廃液の全りん濃度 (mg/L)。 */
   readonly concentrateTpMgL: number;
-  /** 年間排出量 (L)。 */
-  readonly annualDischargeL: number;
+  /**
+   * 年間排出量 (L)。**分からない (RO 回収率が未入力) なら `null`。**
+   *
+   * `planWaterBalance` の `annualDischargeL` をそのまま受ける。回収率が未入力の
+   * ときに 0 として受けると、`wpclNpApplicable` が
+   * **「水質汚濁防止法の窒素・りん規制の対象にならない」**という**法規制の判定**を
+   * 未入力から作ってしまう (`toPublic && 0 >= 50` は必ず false)。
+   */
+  readonly annualDischargeL: number | null;
   /** 公共用水域へ放流するか (放流しない=土壌施用や再利用なら false)。 */
   readonly dischargeToPublicWater: boolean;
 }
 
 export interface EffluentResult {
-  /** 1 日あたり排出量 (m³/日・年間 ÷ 365)。 */
-  readonly dailyDischargeM3: number;
-  /** 年間の窒素排出量 (kg)。 */
-  readonly annualNitrogenKg: number;
-  /** 年間のりん排出量 (kg)。 */
-  readonly annualPhosphorusKg: number;
-  /** 水質汚濁防止法の窒素・りん規制の対象になりうるか (放流かつ 50m³/日以上)。 */
-  readonly wpclNpApplicable: boolean;
+  /** 1 日あたり排出量 (m³/日・年間 ÷ 365)。排出量が不明なら `null`。 */
+  readonly dailyDischargeM3: number | null;
+  /** 年間の窒素排出量 (kg)。排出量が不明なら `null`。 */
+  readonly annualNitrogenKg: number | null;
+  /** 年間のりん排出量 (kg)。排出量が不明なら `null`。 */
+  readonly annualPhosphorusKg: number | null;
+  /**
+   * 水質汚濁防止法の窒素・りん規制の対象になりうるか (放流かつ 50m³/日以上)。
+   * **排出量が不明なら `null` (判定しない)。**
+   *
+   * 2026-09-08 まで `boolean` で、排出量が不明だと `0 >= 50` が false になり
+   * **「規制の対象にならない」**という判定が未入力から出ていた ——
+   * 法規制の当てはまりを「分からない」ではなく「当てはまらない」と答える形で、
+   * 一番安心させる向きに倒れていた。
+   */
+  readonly wpclNpApplicable: boolean | null;
   /** 全窒素が一律排水基準を超えるか (放流時のみ意味を持つ)。 */
   readonly exceedsTn: boolean;
   /** 全りんが一律排水基準を超えるか。 */
@@ -335,7 +391,11 @@ export interface EffluentResult {
 export function checkEffluent(input: EffluentInput, s: EffluentStandards = DEFAULT_EFFLUENT_STANDARDS): EffluentResult {
   const tn = nonNeg(input.concentrateTnMgL);
   const tp = nonNeg(input.concentrateTpMgL);
-  const annualL = nonNeg(input.annualDischargeL);
+  // **排出量が不明なら量に依る 4 欄は算定しない。** 0 として受けると
+  // 「規制の対象にならない」という判定が未入力から出る。
+  const dischargeRaw = input.annualDischargeL;
+  const dischargeKnown = typeof dischargeRaw === 'number' && Number.isFinite(dischargeRaw);
+  const annualL = dischargeKnown ? nonNeg(dischargeRaw) : 0;
   const toPublic = input.dischargeToPublicWater === true;
 
   const dailyM3 = annualL / 365 / 1000;
@@ -343,10 +403,10 @@ export function checkEffluent(input: EffluentInput, s: EffluentStandards = DEFAU
   const annualPKg = (tp * annualL) / 1_000_000;
 
   return {
-    dailyDischargeM3: round1(dailyM3),
-    annualNitrogenKg: round1(annualNKg),
-    annualPhosphorusKg: round1(annualPKg),
-    wpclNpApplicable: toPublic && dailyM3 >= s.npApplicabilityM3PerDay,
+    dailyDischargeM3: dischargeKnown ? round1(dailyM3) : null,
+    annualNitrogenKg: dischargeKnown ? round1(annualNKg) : null,
+    annualPhosphorusKg: dischargeKnown ? round1(annualPKg) : null,
+    wpclNpApplicable: dischargeKnown ? toPublic && dailyM3 >= s.npApplicabilityM3PerDay : null,
     exceedsTn: toPublic && tn > s.tnUniformMgL,
     exceedsTp: toPublic && tp > s.tpUniformMgL,
     // `tn > 0` の判定は置かない — tn が 0 なら商も 0 で、else と同じ答えになる。

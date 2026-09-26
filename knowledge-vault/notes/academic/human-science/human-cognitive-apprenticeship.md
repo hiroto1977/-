@@ -33,7 +33,7 @@ aliases:
 - [[human-spreading-activation|活性化拡散]] — 同じ思想家
 - [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
 - [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティング（ワイザー）——コンピュータが環境に溶け込み意識されずに使われる「消えるコンピュータ」の構想と、IoT・アンビエント環境への展開]] — 同じ思想家
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 

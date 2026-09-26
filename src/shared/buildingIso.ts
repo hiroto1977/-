@@ -228,6 +228,25 @@ export interface SchematicInput {
 }
 
 /**
+ * 模式図に積む階数の上限。これを超える分は**図にならない**。
+ *
+ * 意匠の都合ではなく描画の都合 (層が増えるほど 1 層が薄くなり、面積 0 が続くと
+ * 空回りする)。**上限は打ち切りを意味するので、{@link buildSchematic} が
+ * 打ち切った量を返し、画面がそれを述べる責任を持つ** (2026-09-09 · パス 104)。
+ */
+export const MAX_SCHEMATIC_FLOORS = 8;
+
+/** 模式図と、**図に入らなかった分**。 */
+export interface Schematic {
+  /** 描く階 (1F から最大 {@link MAX_SCHEMATIC_FLOORS} 層)。 */
+  readonly floors: readonly FloorSpec[];
+  /** 積むのに必要な総階数 (打ち切る前)。図の階数より多ければ足りていない。 */
+  readonly floorsNeeded: number;
+  /** 図に入らなかった床面積 (㎡)。0 なら図は延べ床を全部含んでいる。 */
+  readonly unplacedSqm: number;
+}
+
+/**
  * 敷地プランナーの算定値から**模式的な**階構成を導く。
  *
  * 実施設計の平面ではなく「作業場がどれだけを占め、上階に何層積むことになるか」
@@ -238,6 +257,48 @@ export interface SchematicInput {
  * **作業場を 1 階だけに置く**のは意匠の好みではなく、近隣商業地域の 150 ㎡
  * 制限が床面積の**合計**に掛かるため (法48条9項＋別表第二)。上階に同じ用途を
  * 積むと合計で超える。
+ *
+ * ## 打ち切りを黙って捨てない (2026-09-09 · パス 104)
+ *
+ * 2026-09-09 まで、{@link MAX_SCHEMATIC_FLOORS} を超える分は**返り値のどこにも
+ * 現れず**、画面は 8 層の図を完全なものとして出していた。上の一文が言うとおり
+ * 「上階に**何層積むことになるか**」がこの図の目的なのだから、層を落とすことは
+ * 図の主題を落とすことである。実測 (敷地 500 ㎡・建蔽率 80% → 建築面積 400 ㎡):
+ *
+ * | 容積率 | 延べ床 | 必要な階数 | 図の階数 | 図に入らない床 |
+ * | ---: | ---: | ---: | ---: | ---: |
+ * | 600% | 3,000 ㎡ | 8 | 8 | 0 ㎡ |
+ * | 800% | 4,000 ㎡ | 10 | 8 | **800 ㎡** |
+ * | 1000% | 5,000 ㎡ | 13 | 8 | **1,800 ㎡** |
+ * | 1300% | 6,500 ㎡ | 17 | 8 | **3,300 ㎡** (2 階以上 6,100 ㎡ の過半) |
+ *
+ * 1300% は商業地域の法定上限で、架空の入力ではない。しかも同じ画面が
+ * 「2階以上に回せる面積 6,100 ㎡」を数字で出しているので、**図と数字が食い違う**。
+ *
+ * 規準はリポジトリに在った —— `depreciation.ts` の `MAX_SCHEDULE_YEARS` の注記が
+ * 「**黙って切り詰めない**のが要点で、途中まで作った表を出すと『100 年で償却し
+ * 終わる』という誤った内容になる」と書き、超えたら `[]` を返す。ここは図なので
+ * 空にするのではなく、**打ち切った量を一緒に返して画面に述べさせる**。
+ */
+export function buildSchematic(input: SchematicInput): Schematic {
+  const floors = buildSchematicFloors(input);
+  const w = nonNeg(input.widthM);
+  const footprint = w * nonNeg(input.depthM);
+  const upper = round1(nonNeg(input.upperFloorsSqm));
+  // 図が実際に載せた上階の床 (端数階は奥行で表現しているので、そこから戻す)。
+  // `?? 0` は届かない —— `slice(1)` の上階は上のループが必ず `depthM` を入れる
+  // (奥行を持たないのは 1F だけで、それは落としている)。仮に届いたら載せた床を
+  // 少なく見て**打ち切りを過大に報せる**側に倒れるので、黙って通す側ではない。
+  const placedUpper = round1(floors.slice(1).reduce((sum, f) => sum + w * (f.depthM ?? 0), 0));
+  const floorsNeeded = footprint > 0 ? 1 + Math.ceil(upper / footprint) : floors.length;
+  return { floors, floorsNeeded, unplacedSqm: Math.max(0, round1(upper - placedUpper)) };
+}
+
+/**
+ * 模式的な階構成の**階だけ**を返す。
+ *
+ * **打ち切りを知りたいなら {@link buildSchematic} を使う。** こちらは階の配列
+ * だけなので、{@link MAX_SCHEMATIC_FLOORS} を超えた床は返り値に現れない。
  */
 export function buildSchematicFloors(input: SchematicInput): FloorSpec[] {
   const w = nonNeg(input.widthM);
@@ -266,9 +327,9 @@ export function buildSchematicFloors(input: SchematicInput): FloorSpec[] {
   // 残差でちょうど境界に乗ることがなく、`>` と `>=` を区別できない変異が残る。
   let remaining = round1(nonNeg(input.upperFloorsSqm));
   let level = 2;
-  // 端数フロアは奥行を縮めて表現する。上限 8 層で打ち切り (それ以上は模式図の
-  // 意味が薄く、面積 0 が続いたときの空回りも避ける)。
-  while (remaining > 0 && level <= 8) {
+  // 端数フロアは奥行を縮めて表現する。上限で打ち切る (理由と、打ち切りを
+  // 呼び出し側へ伝える道は MAX_SCHEMATIC_FLOORS 参照)。
+  while (remaining > 0 && level <= MAX_SCHEMATIC_FLOORS) {
     const area = Math.min(remaining, footprint);
     const fd = round1(area / w);
     floors.push({

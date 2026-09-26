@@ -1,18 +1,190 @@
+/* ---------------------------------------------------------------------------
+ * Service Hub — 見た目と操作の規則 (2026-09-17 再設計 → 2026-09-19 パス 322 で作り直し)
+ *
+ * 配色は「淡いピンク × ラベンダー × ミント」の明るいパステル。サイドバーと本文は
+ * 角の大きい 2 枚の白いカード (すりガラス) として淡い滲みの上に浮かび、
+ * 影は色つきで柔らかい。文字は丸ゴシック系 (無い環境では OS の標準ゴシックへ倒れる。
+ * 外部フォントは読み込まない —— 出荷 HTML は CSP `default-src 'self'` で単一ファイルなので、
+ * font-src を開けず同梱もしない)。
+ *
+ * 操作の規則 (パス 322): 見えるフォーカス (`:focus-visible`)、押した手応え (`button:active`)、
+ * 画面切替のフェード (`.page-enter` · `prefers-reduced-motion` で止まる)、指で押せる高さ
+ * (サイドバー項目 40px)、検索の × と ⌘K、絵文字つきの分類見出し、♥ のお気に入り、
+ * 先頭へ戻る浮遊ボタン (`.scroll-top`)。
+ *
+ * **画面側 (pages / components) は inline style で `var(--text-mute)` /
+ * `var(--bg-elev)` / `var(--warn)` / `var(--panel)` を読む。** これらは以前は
+ * どこにも定義されておらず (定義は `--text-muted` / `--bg-elevated` だけ)、
+ * 指定が素通りして親の色で描かれていた。ここで別名として必ず定義する。
+ * 名前を 1 つ消すと 600 か所以上の指定が黙って効かなくなるので、消さない。
+ *
+ * 部品の規則に直書きの色は置かない —— 影も光輪もトークン (`--shadow-*` / `--focus-ring`)。
+ * `themeTokens.test.ts` がライト ⇄ ダークの表を両方向に照合し、直書きが 0 であることを留める。
+ * ------------------------------------------------------------------------- */
 :root {
+  color-scheme: light;
+  /* 地の色 */
+  --bg: #fff7fa;
+  --bg-elevated: #ffffff;
+  --bg-elev: var(--bg-elevated);
+  --bg-sidebar: rgba(255, 255, 255, 0.78);
+  --panel: rgba(255, 255, 255, 0.72);
+  --border: #f4dbe6;
+  --border-strong: #ecc6d8;
+  /* 文字 */
+  --text: #4b3f57;
+  --text-muted: #836f8e;
+  --text-mute: var(--text-muted);
+  /* グラデーションの上に載せる文字 (両配色とも白) */
+  --on-gradient: #ffffff;
+  /* 主役の色 */
+  --accent: #ee6fa8;
+  --accent-strong: #cf3a7f;
+  --accent-2: #a98cf5;
+  --accent-soft: #ffe3ef;
+  --accent-soft-2: #ece4ff;
+  --gradient: linear-gradient(135deg, #ff8fc0 0%, #b79cff 100%);
+  /* 意味色 (文字として白地に置いても読める濃さ) */
+  --success: #22a06b;
+  --warning: #c4741a;
+  --warn: var(--warning);
+  --danger: #e8496f;
+  /* 黄の札の地色 (黒い字を載せる)。文字色の --warning とは別に持つ。 */
+  --warning-bg: #ffe3ad;
+  /* 影と角 */
+  --shadow: 0 12px 32px rgba(238, 111, 168, 0.12), 0 2px 8px rgba(120, 90, 150, 0.06);
+  --shadow-sm: 0 4px 14px rgba(238, 111, 168, 0.10);
+  --shadow-ink: rgba(120, 90, 150, 0.06);
+  --shadow-list: rgba(120, 90, 150, 0.05);
+  --shadow-drawer: rgba(120, 90, 150, 0.18);
+  --primary-shadow: rgba(238, 111, 168, 0.28);
+  --thumb-shadow: rgba(238, 111, 168, 0.4);
+  --focus-ring: rgba(238, 111, 168, 0.35);
+  --radius: 18px;
+  --radius-sm: 12px;
+  /* 部品の地 (ボタン・入力欄・検索欄) とその細部。ダークでは `:root[data-theme="dark"]` が同じ名前を
+     上書きする (パス 317)。名前を足したらダークにも書く —— `themeTokens.test.ts` が両方向に照合する。 */
+  --control-bg: #ffffff;
+  --control-hover-bg: #fff5f9;
+  --placeholder: #b9aac2;
+  --range-track: #f1d6e3;
+  --thumb-border: #ffffff;
+  --selection-bg: #ffd4e6;
+  --scrollbar-thumb: #efd0df;
+  --scrollbar-thumb-hover: #e6b9cf;
+  --glow-1: #ffe1ed;
+  --glow-2: #e8dfff;
+  --glow-3: #dcf5ec;
+  --heart: #ff5c9a;
+  --kbd-bg: #fff0f6;
+  --kbd-fg: #b23a78;
+  --kbd-border: #f4c6da;
+  --chip-bg: #fff0f6;
+  --chip-fg: #b23a78;
+  --hero-bg: linear-gradient(135deg, rgba(255, 143, 192, 0.22) 0%, rgba(183, 156, 255, 0.16) 60%, rgba(140, 225, 190, 0.18) 100%);
+  --sidebar-hover-bg: rgba(238, 111, 168, 0.08);
+  --sidebar-press-bg: rgba(238, 111, 168, 0.14);
+  --sidebar-active-bg: linear-gradient(135deg, #ffe0ee 0%, #ebe3ff 100%);
+  --icon-bg: linear-gradient(135deg, #ffd3e6 0%, #dfd3ff 100%);
+  --icon-fg: #b23a78;
+  --backdrop: rgba(80, 50, 90, 0.35);
+  --drawer-bg: rgba(255, 255, 255, 0.94);
+  --heading-accent: #8a6bd6;
+  --empty-bg: rgba(255, 255, 255, 0.5);
+  --list-hover-border: #f5b8d2;
+  --badge-fg: #6d4fd1;
+  --badge-border: #ddd2ff;
+  --badge-warn-bg: #ffe8d1;
+  --badge-warn-fg: #b8661a;
+  --badge-warn-border: #ffd3a8;
+  --badge-ok-bg: #dcf7ea;
+  --badge-ok-fg: #1b8a5d;
+  --badge-ok-border: #b9ecd3;
+  --badge-muted-bg: #f1edf3;
+  --badge-muted-border: #e3dbe8;
+  /* ロック画面の幕 (LockScreen.tsx が読む) */
+  --lock-overlay: linear-gradient(135deg, #ffe6f0 0%, #f3edff 50%, #e3f7ef 100%);
+  font-family: 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', 'Yu Gothic UI', 'Meiryo',
+    'Segoe UI', 'Helvetica Neue', system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+ * ダーク配色 (2026-09-18 · パス 317)。`theme.ts` が `<html data-theme="dark">` を置いたときだけ効く。
+ * 「OS に合わせる」も JS が解いてからこの属性に落とすので、ここに prefers-color-scheme は書かない
+ * (トークン表を 2 か所に持たない)。**ライトの色トークンは全部ここで上書きする** ——
+ * `themeTokens.test.ts` が両方向に照合する (足した名前をここに書き忘れるとライトの色が残る)。
+ * 別名 (--bg-elev / --text-mute / --warn) は var() 越しに追随するので書かない。
+ * 紙の節 (書類スタジオ・銀行提出書式・印刷) は白い紙なので配色の外。
+ * ------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0f1117;
-  --bg-elevated: #161a22;
-  --bg-sidebar: #11141b;
-  --border: #232936;
-  --text: #e6e8ee;
-  --text-muted: #8a93a6;
-  --accent: #6ea8ff;
-  --accent-strong: #4f8cff;
-  --success: #4ade80;
-  --warning: #facc15;
-  --danger: #f87171;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans',
-    'Yu Gothic UI', sans-serif;
+  --bg: #1b1520;
+  --bg-elevated: #261e2e;
+  --bg-sidebar: rgba(31, 24, 38, 0.82);
+  --panel: rgba(38, 30, 46, 0.72);
+  --border: #3a2f45;
+  --border-strong: #4c3f59;
+  --text: #f3e9f5;
+  --text-muted: #b6a3c2;
+  --on-gradient: #ffffff;
+  --accent: #ff8fc0;
+  --accent-strong: #ffb3d3;
+  --accent-2: #c3adff;
+  --accent-soft: #3b2438;
+  --accent-soft-2: #2f2747;
+  --gradient: linear-gradient(135deg, #e86ca6 0%, #8f6cf0 100%);
+  --success: #5fd39a;
+  --warning: #f2b45c;
+  --danger: #ff7a98;
+  /* 黒い字 ('#000' 固定) を載せる札の地なので、ダークでも明るいままにする */
+  --warning-bg: #f6c86b;
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-ink: rgba(0, 0, 0, 0.25);
+  --shadow-list: rgba(0, 0, 0, 0.2);
+  --shadow-drawer: rgba(0, 0, 0, 0.5);
+  --primary-shadow: rgba(0, 0, 0, 0.4);
+  --thumb-shadow: rgba(0, 0, 0, 0.45);
+  --focus-ring: rgba(255, 143, 192, 0.45);
+  --control-bg: #2b2335;
+  --control-hover-bg: #352a40;
+  --placeholder: #7f6f8c;
+  --range-track: #3d3049;
+  --thumb-border: #1b1520;
+  --selection-bg: #5a2f4a;
+  --scrollbar-thumb: #4a3b56;
+  --scrollbar-thumb-hover: #5c4a6b;
+  --glow-1: #3a2033;
+  --glow-2: #2c2446;
+  --glow-3: #1e3a30;
+  --heart: #ff8fc0;
+  --kbd-bg: #3a2a3e;
+  --kbd-fg: #ffb3d3;
+  --kbd-border: #5a3f5e;
+  --chip-bg: #3b2438;
+  --chip-fg: #ffb3d3;
+  --hero-bg: linear-gradient(135deg, rgba(232, 108, 166, 0.28) 0%, rgba(143, 108, 240, 0.22) 60%, rgba(60, 150, 110, 0.22) 100%);
+  --sidebar-hover-bg: rgba(255, 143, 192, 0.10);
+  --sidebar-press-bg: rgba(255, 143, 192, 0.18);
+  --sidebar-active-bg: linear-gradient(135deg, #43263c 0%, #33294f 100%);
+  --icon-bg: linear-gradient(135deg, #4a2a41 0%, #3a2f5a 100%);
+  --icon-fg: #ffb3d3;
+  --backdrop: rgba(0, 0, 0, 0.55);
+  --drawer-bg: rgba(31, 24, 38, 0.96);
+  --heading-accent: #c3adff;
+  --empty-bg: rgba(255, 255, 255, 0.04);
+  --list-hover-border: #6b3f5a;
+  --badge-fg: #c9b6ff;
+  --badge-border: #4a3d6e;
+  --badge-warn-bg: #4a3316;
+  --badge-warn-fg: #f2b45c;
+  --badge-warn-border: #6b4a1e;
+  --badge-ok-bg: #173a2b;
+  --badge-ok-fg: #5fd39a;
+  --badge-ok-border: #23573f;
+  --badge-muted-bg: #2e2637;
+  --badge-muted-border: #43384f;
+  --lock-overlay: linear-gradient(135deg, #2a1c2e 0%, #241f3a 50%, #1c2d27 100%);
 }
 
 * { box-sizing: border-box; }
@@ -24,25 +196,146 @@ html, body, #root {
   color: var(--text);
 }
 
+::selection { background: var(--selection-bg); color: var(--text); }
+
+/* 細くて淡いスクロールバー (WebKit / Chromium) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
+
+/* 見えるフォーカス: キーボードで辿ったときだけ輪を出す (マウスのクリックでは出さない)。
+   入力欄は自分のリング (下) を持つので二重にしない。 */
+:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+
+/* 動きを減らす設定の人には、画面切替のフェードと浮遊ボタンの滑りを止める。 */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter, .scroll-top, .sidebar, .sidebar-item, .card, .home-card { animation: none !important; transition: none !important; }
+}
+
+h1, h2, h3, h4 { color: var(--text); }
+
 button {
   font: inherit;
-  color: inherit;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--control-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 7px 15px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px var(--shadow-ink);
+  transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.12s;
+}
+button:hover { border-color: var(--accent); color: var(--accent-strong); background: var(--control-hover-bg); }
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+button.primary {
+  background: var(--gradient);
+  border-color: transparent;
+  color: var(--on-gradient);
+  box-shadow: 0 6px 16px var(--primary-shadow);
+}
+button.primary:hover { filter: brightness(1.05); color: var(--on-gradient); transform: translateY(-1px); }
+/* 淡いピンクの地の補助ボタン (「ファイルを開く」など) と、地の無いボタン (× など) */
+button.soft { background: var(--accent-soft); border-color: transparent; color: var(--accent-strong); box-shadow: none; }
+button.soft:hover { border-color: var(--list-hover-border); background: var(--accent-soft); }
+button.ghost { background: transparent; border-color: transparent; box-shadow: none; color: var(--text-muted); }
+button.ghost:hover { background: var(--sidebar-hover-bg); color: var(--accent-strong); }
+
+/* 入力欄: 白地・丸い角・ピンクのフォーカスリング。個別ページの inline 指定が勝つ。
+   `:where()` で特異性を (0,0,1) に抑える —— `:not([type=…])` を 4 つ重ねると (0,4,1) になり、
+   クラス 1 つの `.sidebar-search-input` の余白 (🔍 のぶん) が負けて虫眼鏡が placeholder に重なった (パス 322 実測)。 */
+input:where(:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"])),
+select,
+textarea {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--control-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  padding: 7px 11px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:hover, select:hover, textarea:hover { border-color: var(--list-hover-border); }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+input::placeholder, textarea::placeholder { color: var(--placeholder); }
+input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--accent); }
+
+/* スライダー: 淡い溝にグラデーションのつまみ (既定の暗い溝は明るい配色に合わない)。 */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--range-track);
+  padding: 0;
+  border: none;
+  box-shadow: none;
   cursor: pointer;
 }
-button:hover { border-color: var(--accent); color: var(--accent); }
-button.primary {
-  background: var(--accent-strong);
-  border-color: var(--accent-strong);
-  color: white;
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gradient);
+  border: 2px solid var(--thumb-border);
+  box-shadow: 0 2px 6px var(--thumb-shadow);
 }
-button.primary:hover { filter: brightness(1.1); color: white; }
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--thumb-border);
+}
+input[type="range"]:focus { box-shadow: 0 0 0 3px var(--focus-ring); }
 
-a { color: var(--accent); text-decoration: none; }
+a { color: var(--accent-strong); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+/* キーの札 (⌘K など) と、押せる小さな札 (お気に入り / 最近使ったへの近道) */
+kbd.kbd {
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--kbd-bg);
+  color: var(--kbd-fg);
+  border: 1px solid var(--kbd-border);
+  line-height: 1.4;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+  font-size: 11.5px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+button.chip { cursor: pointer; box-shadow: none; }
+button.chip:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); transform: translateY(-1px); }
 
 .app {
   display: grid;
@@ -51,7 +344,7 @@ a:hover { text-decoration: underline; }
      画面外に見切れてしまう (スクロールもできない)。0 を下限にすると列は
      ビューポート幅に収まり、はみ出す中身は .content / .data-section 側で
      スクロールに切り替わる。 */
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 256px minmax(0, 1fr);
   /* 行も 100vh に収める。これがないと暗黙の行が中身の高さ(auto)で広がり、
      height:100vh + overflow:hidden の組み合わせで下側が画面外に切れ、しかも
      スクロールできなくなる (背の高いページでチャートの下が見られない原因)。
@@ -63,42 +356,113 @@ a:hover { text-decoration: underline; }
      100vh だと Android Chrome で下端 (チャットボット等) がバーの裏に隠れる。 */
   height: 100dvh;
   overflow: hidden;
+  /* 画面全体に淡い色の滲み。サイドバーと本文のカードは半透明なので透けて見える。 */
+  background:
+    radial-gradient(900px 480px at -5% -10%, var(--glow-1) 0%, transparent 60%),
+    radial-gradient(800px 460px at 105% -5%, var(--glow-2) 0%, transparent 60%),
+    radial-gradient(700px 420px at 50% 115%, var(--glow-3) 0%, transparent 60%),
+    var(--bg);
 }
 
+/* --- サイドバー: 左に浮かぶ白いカード ------------------------------------------- */
 .sidebar {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0 12px 12px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
   background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  padding: 16px 0;
+  min-height: 0;
+  padding: 14px 0 10px;
 }
 
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 18px 12px;
+}
 .sidebar-header {
-  padding: 4px 20px 16px;
-  font-weight: 700;
+  font-weight: 900;
   letter-spacing: 0.04em;
-  font-size: 14px;
-  color: var(--text-muted);
-  text-transform: uppercase;
+  font-size: 16px;
+  color: var(--accent-strong);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-header::before {
+  content: '✿';
+  color: var(--accent);
+  font-size: 18px;
+}
+/* ドロワーを閉じる × (モバイルだけ表示。メディアクエリ側で display 切替) */
+.drawer-close {
+  display: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-search {
-  padding: 0 16px 12px;
+  position: relative;
+  padding: 0 14px 10px;
+}
+.sidebar-search::before {
+  content: '🔍';
+  position: absolute;
+  left: 26px;
+  top: 10px;
+  font-size: 12px;
+  opacity: 0.75;
+  pointer-events: none;
 }
 .sidebar-search-input {
   width: 100%;
-  padding: 7px 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border, #2a2f3a);
-  border-radius: 8px;
+  padding: 9px 62px 9px 34px;
+  background: var(--control-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
   color: var(--text);
   font-size: 13px;
 }
-.sidebar-search-input::placeholder { color: var(--text-muted); }
+.sidebar-search-input::placeholder { color: var(--placeholder); }
+/* ブラウザ組み込みの消すボタン (type="search") は隠す —— 自前の ✕ と 2 つ並んでいた (パス 322 実測)。 */
+.sidebar-search-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 .sidebar-search-input:focus {
   outline: none;
   border-color: var(--accent);
-  background: rgba(110, 168, 255, 0.06);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.sidebar-search-kbd {
+  position: absolute;
+  right: 26px;
+  top: 9px;
+  pointer-events: none;
+}
+.sidebar-search-clear {
+  position: absolute;
+  right: 20px;
+  top: 5px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 15px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .sidebar-empty {
   padding: 12px 20px;
@@ -107,14 +471,52 @@ a:hover { text-decoration: underline; }
   line-height: 1.5;
 }
 .sidebar-section-label {
-  padding: 4px 12px;
-  margin-top: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 4px;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--heading-accent);
 }
+.sidebar-group { margin-bottom: 2px; }
+.sidebar-group-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--heading-accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: left;
+}
+.sidebar-group-head:hover { background: var(--sidebar-hover-bg); color: var(--accent-strong); }
+.sidebar-group-head:active { transform: none; }
+.sidebar-group-head .group-emoji { font-size: 14px; line-height: 1; }
+.sidebar-group-head .group-count {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+}
+.sidebar-group-head .chev {
+  display: inline-block;
+  font-size: 10px;
+  transition: transform 0.18s;
+}
+.sidebar-group-head[aria-expanded="false"] .chev { transform: rotate(-90deg); }
 .sidebar-item-controls {
   margin-left: auto;
   display: inline-flex;
@@ -122,16 +524,17 @@ a:hover { text-decoration: underline; }
   gap: 6px;
 }
 .fav-toggle {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
   color: var(--text-muted);
   opacity: 0;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  transition: opacity 0.15s, transform 0.15s;
 }
-.sidebar-item:hover .fav-toggle { opacity: 0.5; }
-.fav-toggle.on { opacity: 1; color: var(--warning); }
-.fav-toggle:hover { opacity: 1 !important; color: var(--warning); }
+.sidebar-item:hover .fav-toggle { opacity: 0.6; }
+.fav-toggle.on { opacity: 1; color: var(--heart); }
+.fav-toggle:hover { opacity: 1 !important; transform: scale(1.2); }
 
 .sidebar-nav {
   flex: 1;
@@ -139,73 +542,178 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   gap: 2px;
   overflow-y: auto;
+  min-height: 0;
+  padding: 0 8px;
 }
 
 .sidebar-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 20px;
+  gap: 10px;
+  margin: 1px 4px;
+  padding: 8px 12px;
+  min-height: 40px;
   border: none;
-  border-left: 3px solid transparent;
-  border-radius: 0;
+  border-radius: 14px;
   background: transparent;
   color: var(--text);
   text-align: left;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: none;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
 }
-.sidebar-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.sidebar-item:hover { background: var(--sidebar-hover-bg); color: var(--text); transform: translateX(2px); }
+.sidebar-item:active { transform: translateX(2px) scale(0.99); }
 .sidebar-item.active {
-  background: rgba(110,168,255,0.08);
-  border-left-color: var(--accent);
-  color: var(--accent);
+  background: var(--sidebar-active-bg);
+  color: var(--accent-strong);
+  font-weight: 800;
+  box-shadow: var(--shadow-sm);
+}
+.sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 10px;
+  bottom: 10px;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--gradient);
 }
 .sidebar-item .icon {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  border-radius: 6px;
-  background: var(--bg-elevated);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border-radius: 10px;
+  background: var(--icon-bg);
+  color: var(--icon-fg);
 }
+.sidebar-item.active .icon { background: var(--gradient); color: var(--on-gradient); }
 
 .sidebar-footer {
-  padding: 12px 20px;
+  padding: 10px 16px 4px;
   font-size: 11px;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
 }
+.plan-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--heading-accent);
+}
+.plan-select { width: 100%; }
+.license-pill {
+  margin-top: 8px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: var(--badge-ok-bg);
+  border: 1px solid var(--badge-ok-border);
+  color: var(--badge-ok-fg);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+.sidebar-version {
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
 
+/* --- 本文: 右に浮かぶ白いカード (トップバー + スクロールする中身) --------------- */
 .main {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   min-width: 0; /* グリッド子要素が中身で広がらないようにする (見切れ防止の要) */
+  margin: 12px 12px 12px 10px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-sm);
 }
 
 .topbar {
-  height: 52px;
+  min-height: 60px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  padding: 0 24px;
-  gap: 16px;
-  background: var(--bg-elevated);
+  padding: 0 20px;
+  gap: 12px;
   min-width: 0;
   overflow: hidden;
 }
+.topbar-icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--gradient);
+  color: var(--on-gradient);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-sm);
+}
 .topbar h1 {
-  font-size: 16px;
+  font-size: 17px;
   margin: 0;
-  font-weight: 600;
+  font-weight: 900;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 }
+.topbar .crumb { flex: none; }
+.topbar .description {
+  color: var(--text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.topbar-right {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.topbar-fav {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+.topbar-fav.on { color: var(--heart); border-color: var(--list-hover-border); background: var(--accent-soft); }
+.topbar-fav:hover { transform: scale(1.08); }
 
 /* ハンバーガー (モバイル/タブレットのみ表示 — メディアクエリ側で display 切替) */
 .menu-btn {
@@ -226,7 +734,7 @@ a:hover { text-decoration: underline; }
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--backdrop);
   border: none;
   border-radius: 0;
   padding: 0;
@@ -234,22 +742,47 @@ a:hover { text-decoration: underline; }
 
 /* 音声ボタンが狭い画面で 2 行に折り返してトップバーを壊すのを防ぐ */
 .voice-mic { white-space: nowrap; }
-.topbar .description {
-  color: var(--text-muted);
-  font-size: 13px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
 
 .content {
   flex: 1;
   overflow-y: auto;
   overflow-x: auto; /* 万一の横はみ出しはページ全体ではなくここでスクロール */
-  padding: 24px;
+  padding: 24px 28px calc(96px + env(safe-area-inset-bottom));
   min-width: 0;
 }
+/* 画面を切り替えたときに中身がふわっと現れる (`App.tsx` が画面ごとに key を張り直す) */
+.page-enter { animation: pageIn 0.28s ease-out both; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 先頭へ戻る浮遊ボタン。チャットの吹き出し (右下 48px) の左隣に置く。 */
+.scroll-top {
+  position: fixed;
+  right: 76px;
+  bottom: 20px;
+  z-index: 900;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: var(--on-gradient);
+  box-shadow: var(--shadow);
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.scroll-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.scroll-top:hover { color: var(--on-gradient); filter: brightness(1.05); transform: translateY(-2px); }
 
 /* --- レスポンシブ・ガードレール: どのページでも画面内に収める ---
    個別ページに手を入れなくても、共通の崩れ要因をここで吸収する。 */
@@ -287,24 +820,31 @@ a:hover { text-decoration: underline; }
     grid-template-columns: minmax(0, 1fr); /* サイドバー列を畳む */
   }
   .menu-btn { display: inline-flex; }
+  .drawer-close { display: inline-flex; }
+  .sidebar-search-kbd { display: none; }
   .sidebar {
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
+    margin: 0;
     width: min(300px, 84vw);
     z-index: 50;
+    border-radius: 0 24px 24px 0;
+    background: var(--drawer-bg);
     transform: translateX(-105%);
     transition: transform 0.22s ease;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 8px 0 32px var(--shadow-drawer);
     /* ノッチ/ジェスチャーバーを避ける (viewport-fit=cover 時のみ効く) */
     padding-top: max(16px, env(safe-area-inset-top));
     padding-bottom: env(safe-area-inset-bottom);
   }
   .app.nav-open .sidebar { transform: translateX(0); }
   .app.nav-open .sidebar-backdrop { display: block; }
-  .content { padding: 16px; }
+  .main { margin: 0; border: none; border-radius: 0; box-shadow: none; background: transparent; }
+  .content { padding: 16px 16px calc(96px + env(safe-area-inset-bottom)); }
   .topbar { padding: 0 12px; gap: 10px; }
+  .scroll-top { right: 72px; bottom: 16px; }
   /* フォーカス時の自動ズーム防止: モバイル Safari/Chrome は 16px 未満の
      入力欄にフォーカスするとページ全体を拡大してしまう。ページ側の
      inline style (fontSize: 13 等) にも勝つ必要があるため !important。 */
@@ -334,16 +874,17 @@ a:hover { text-decoration: underline; }
   grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
 }
 @media (max-width: 640px) {
-  .topbar .description { display: none; } /* タイトル+音声ボタンを優先 */
-  .content { padding: 12px; }
+  .topbar .description, .topbar .crumb { display: none; } /* タイトル+音声ボタンを優先 */
+  .content { padding: 12px 12px calc(96px + env(safe-area-inset-bottom)); }
 }
 
 /* タッチデバイス (Android/iPad 等): ホバーが無い前提の操作性を確保する。 */
 @media (pointer: coarse) {
-  .sidebar-item { padding: 13px 20px; } /* 指で押しやすい高さ (~44px) */
-  .sidebar-item:active { background: rgba(255, 255, 255, 0.08); }
+  .sidebar-item { padding: 12px 12px; } /* 指で押しやすい高さ (~44px) */
+  .sidebar-item:active { background: var(--sidebar-press-bg); }
   /* ホバーで出す UI はタッチでは永遠に出ないので、常時うっすら表示 */
   .fav-toggle { opacity: 0.45; }
+  .sidebar-search-kbd { display: none; }
   .data-list-open { padding: 8px 14px; }
   button { touch-action: manipulation; } /* ダブルタップズームの誤発火防止 */
 }
@@ -357,16 +898,19 @@ a:hover { text-decoration: underline; }
 .card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: 20px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, transform 0.2s;
 }
+.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
 .card h3 {
   margin: 0;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--text);
 }
 .card p {
@@ -385,37 +929,55 @@ a:hover { text-decoration: underline; }
 .section-title {
   margin: 0 0 12px;
   font-size: 13px;
-  text-transform: uppercase;
+  font-weight: 800;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  color: var(--heading-accent);
 }
 
 .empty {
-  padding: 32px;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
+  padding: 28px 32px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
   color: var(--text-muted);
   text-align: center;
+  background: var(--empty-bg);
+  line-height: 1.6;
+}
+.empty::before {
+  content: '🌸';
+  display: block;
+  font-size: 26px;
+  margin-bottom: 6px;
+  opacity: 0.8;
 }
 
 .badge {
   display: inline-block;
   font-size: 11px;
-  padding: 2px 8px;
+  font-weight: 700;
+  padding: 2px 10px;
   border-radius: 999px;
-  background: rgba(110,168,255,0.12);
-  color: var(--accent);
-  border: 1px solid rgba(110,168,255,0.3);
+  background: var(--accent-soft-2);
+  color: var(--badge-fg);
+  border: 1px solid var(--badge-border);
 }
 .badge.warn {
-  background: rgba(250,204,21,0.12);
-  color: var(--warning);
-  border-color: rgba(250,204,21,0.3);
+  background: var(--badge-warn-bg);
+  color: var(--badge-warn-fg);
+  border-color: var(--badge-warn-border);
 }
 .badge.ok {
-  background: rgba(74,222,128,0.12);
-  color: var(--success);
-  border-color: rgba(74,222,128,0.3);
+  background: var(--badge-ok-bg);
+  color: var(--badge-ok-fg);
+  border-color: var(--badge-ok-border);
+}
+/* 中立 — 「確認できません」「検出対象外」のように、利用者の環境について
+   何も主張しない札に使う (パス 165)。既定の紫は情報色なので「今ここに何かある」と
+   読めてしまい、警告の橙は不安を作る。どちらでもない色を 1 つ足した。 */
+.badge.muted {
+  background: var(--badge-muted-bg);
+  color: var(--text-muted);
+  border-color: var(--badge-muted-border);
 }
 
 .data-list {
@@ -424,7 +986,7 @@ a:hover { text-decoration: underline; }
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 .data-list-item {
   display: grid;
@@ -433,16 +995,18 @@ a:hover { text-decoration: underline; }
   gap: 12px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
+  border-radius: 16px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 3px var(--shadow-list);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
-.data-list-item:hover { border-color: rgba(110,168,255,0.4); }
+.data-list-item:hover { border-color: var(--list-hover-border); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
 .data-list-thumb {
   width: 56px;
   height: 36px;
   object-fit: cover;
-  border-radius: 4px;
-  background: var(--bg);
+  border-radius: 10px;
+  background: var(--accent-soft);
   grid-row: span 1;
 }
 .data-list-body {
@@ -455,6 +1019,7 @@ a:hover { text-decoration: underline; }
 .data-list-item:not(:has(.data-list-thumb)) .data-list-body { grid-column: 1 / span 2; }
 .data-list-title {
   font-size: 14px;
+  font-weight: 600;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -469,25 +1034,40 @@ a:hover { text-decoration: underline; }
 }
 .data-list-open {
   font-size: 12px;
-  padding: 4px 10px;
+  padding: 4px 12px;
 }
 
 .data-section {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 .data-section-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
 }
+/* 節の題はピルの札 (パス 322)。左の丸い印はグラデーション。 */
 .data-section-header h2 {
   margin: 0;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft-2);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--heading-accent);
+}
+.data-section-header h2::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gradient);
 }
 .data-section-header .count {
   font-size: 12px;
@@ -496,13 +1076,15 @@ a:hover { text-decoration: underline; }
 
 .status-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px 12px;
   margin-bottom: 16px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
 }
 .status-bar .who {
   display: flex;
@@ -519,6 +1101,139 @@ a:hover { text-decoration: underline; }
   border-radius: 50%;
   border: 1px solid var(--border);
 }
+
+/* --- ホーム (HomePage): 挨拶・近道・今すぐ作る・3 ステップ ------------------------ */
+.home { display: flex; flex-direction: column; gap: 20px; }
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 28px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--hero-bg);
+}
+.home-hero::after {
+  content: '🌸';
+  position: absolute;
+  right: 22px;
+  top: 12px;
+  font-size: 56px;
+  opacity: 0.35;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+/* スマホ: 花を小さく薄く、右の余白を花の分だけ取る (折り返した見出しが花の下へ入らない)。
+   **この media 規則は上の基本の規則より後ろに置く** —— ≤640px の共通ブロック (上の方) に書くと、
+   同じ特異性で後ろに在る基本の規則が勝って 1 行も効かない (パス 322 で 2 度撮って気付いた)。 */
+@media (max-width: 640px) {
+  .home-hero { padding: 20px 56px 20px 18px; }
+  .home-hero::after { font-size: 32px; opacity: 0.22; right: 10px; top: 8px; }
+}
+.home-date {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--heading-accent);
+}
+.home-greeting {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+}
+.home-lead {
+  margin: 10px 0 0;
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.home-lead strong { color: var(--text); }
+.home-jump { display: flex; flex-direction: column; gap: 8px; }
+.home-jump-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.home-jump-title { font-size: 12px; font-weight: 800; color: var(--heading-accent); margin-right: 2px; }
+.home-jump-hint { font-size: 12px; color: var(--text-muted); }
+.home-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+}
+.home-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.home-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.home-card-head { display: flex; align-items: flex-start; gap: 12px; }
+.home-card-emoji {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border-radius: 16px;
+  background: var(--accent-soft-2);
+}
+.home-card-title { font-size: 15px; font-weight: 800; color: var(--text); }
+.home-card-sub { margin-top: 4px; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
+.home-card-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.home-card-result { display: flex; flex-direction: column; gap: 6px; }
+.home-done { font-size: 12px; font-weight: 700; color: var(--success); }
+.home-file { font-size: 11px; color: var(--text-muted); }
+.home-note { font-size: 11px; line-height: 1.6; color: var(--warning); }
+.home-error { font-size: 11px; color: var(--danger); }
+.home-steps {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+}
+.home-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+.home-step-num {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: var(--on-gradient);
+  font-size: 13px;
+  font-weight: 900;
+}
+.home-step p { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--text-muted); }
+.home-step strong { color: var(--text); }
+
+/* プランのロック画面 (App.tsx の UpgradeNotice) */
+.upgrade-card {
+  max-width: 440px;
+  padding: 28px;
+  border-radius: 24px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+.upgrade-card .lock { font-size: 40px; margin-bottom: 8px; }
+.upgrade-card h2 { margin: 0 0 8px; font-size: 16px; }
+.upgrade-card p { margin: 0 0 14px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
 
 /* --- 書類スタジオ (DocstudioPage): 書面プレビュー + 印刷 --- */
 .ds-paper {
@@ -555,6 +1270,10 @@ a:hover { text-decoration: underline; }
             padding: 4px; margin-top: 12px; font-family: 'Hiragino Sans', sans-serif; }
 .ds-disclaimer { margin-top: 26px; padding-top: 9px; border-top: 1px solid #d5d9e0; color: #667;
                  font-size: 10.5px; font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+/* 計算書類: 書面ごとに 1 枚の紙 (パス 323)。画面では紙を縦に並べ、紙の上に札を出す。 */
+.ds-sheets { display: flex; flex-direction: column; gap: 22px; }
+.ds-sheet-caption { margin: 0 0 6px 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em;
+                    color: var(--heading-accent); font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
 
 /* 印刷: アプリの UI を隠し、書面 (.ds-paper) だけを A4 に出力する */
 @media print {
@@ -571,6 +1290,12 @@ a:hover { text-decoration: underline; }
   body.ds-printing .ds-paper { box-shadow: none; border-radius: 0; max-width: none;
                                padding: 0; font-size: 11.5pt; }
   body.ds-printing .ds-fill.ds-empty { color: #444; }
+  /* 計算書類は書面ごとに改ページ (1 点 1 枚)。紙の上の札は画面だけの案内なので刷らない。 */
+  body.ds-printing .ds-sheet-caption { display: none !important; }
+  body.ds-printing .ds-sheet-block + .ds-sheet-block { break-before: page; page-break-before: always; }
+  body.ds-printing .ds-title { break-after: avoid; page-break-after: avoid; }
+  body.ds-printing .ds-table thead { display: table-header-group; }
+  body.ds-printing .ds-table tr { break-inside: avoid; page-break-inside: avoid; }
 }
 
 /* ---------------------------------------------------------------------------
@@ -579,12 +1304,12 @@ a:hover { text-decoration: underline; }
  * 決算書・試算表と同じ読み味にするため (画面のテーマ色は使わない)。
  * ------------------------------------------------------------------------- */
 .bank-toolbar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding: 10px 12px;
-                border: 1px solid var(--border, #334); border-radius: 8px; font-size: 12px; }
+                border: 1px solid var(--border); border-radius: 8px; font-size: 12px; }
 .bank-toolbar-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
 .bank-field { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--text-mute); }
 .bank-hint { color: var(--text-mute); font-size: 11px; }
-.bank-error { color: #f87171; }
-.bank-saved { color: #22c55e; }
+.bank-error { color: var(--danger); }
+.bank-saved { color: var(--success); }
 .bank-sheet { background: #fff; color: #111; max-width: 210mm; margin: 0 auto; padding: 16mm 15mm;
               box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3); border-radius: 3px; font-size: 10.5pt; line-height: 1.5;
               font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'MS Mincho', 'Noto Serif JP', serif;

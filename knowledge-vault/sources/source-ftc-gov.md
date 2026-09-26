@@ -21,7 +21,7 @@ tags:
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — FTCNon-CompeteClauseRule(2024)—FederalTradeCommission（連邦規則の概要と法的背景）
 - [[econ-predatory-pricing|略奪的価格設定]] — USFederalTradeCommission—PredatoryorBelow-CostPricing
 - [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — Salop,StevenC.andDavidT.Scheffman,"Cost-RaisingStrategies,"FTCBureauo…
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — U.S.FederalTradeCommission(2022)“BringingDarkPatternstoLight”
+- [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]] — U.S.FederalTradeCommission(2022)BringingDarkPatternstoLight
 - [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — FTC(2022)BringingDarkPatternstoLight—FederalTradeCommission
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — USFTC(2022)BringingDarkPatternstoLight—FTCReport（ダーク・パターン規制の政策指針）
 - [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — FederalTradeCommission—NativeAdvertising:AGuideforBusinesses(2015Enfo…

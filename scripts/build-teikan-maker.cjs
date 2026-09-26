@@ -119,6 +119,8 @@ var FORMS = __FORMS__;
 var STEPS = __STEPS__;
 var NOTES = __NOTES__;
 var LS_KEY = 'teikan-maker-values-v1';
+// 何が消えるかを名指しする。「よろしいですか」だけの確認は何も言っていないのと同じ。
+var CLEAR_CONFIRM = 'この端末に保存した入力内容（商号・本店・発起人の氏名と住所・出資額など）を消します。元に戻せません。よろしいですか？';
 
 var state = { type: 'kk', values: { kk: {}, gk: {} } };
 try {
@@ -367,6 +369,15 @@ document.addEventListener('DOMContentLoaded', function () {
   $('tab-kk').addEventListener('click', function () { switchType('kk'); });
   $('tab-gk').addEventListener('click', function () { switchType('gk'); });
   $('btn-print').addEventListener('click', function () { window.print(); });
+  // **入力を消す口** (2026-09-21 · パス 364)。この頁は発起人の氏名・住所・出資額を
+  // localStorage へ自動保存する。消す手段が頁の中に無いと、利用者はブラウザの
+  // サイトデータ設定を知らないかぎり自分の個人情報を残したままになる。
+  $('btn-clear').addEventListener('click', function () {
+    if (!window.confirm(CLEAR_CONFIRM)) return;
+    try { localStorage.removeItem(LS_KEY); } catch (e) { /* 使えない環境でも画面は戻す */ }
+    state = { type: state.type, values: { kk: {}, gk: {} } };
+    renderTabs(); renderForm(); renderPaper();
+  });
 });
 `;
 
@@ -388,9 +399,11 @@ const PAGE_CSS = `
   header.bar h1 { font-size: 15px; font-weight: 600; white-space: nowrap;
          overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   header.bar .spacer { margin-left: auto; }
-  #btn-print { background: #fff; color: var(--accent); border: 0; border-radius: 8px;
+  #btn-print, #btn-clear { background: #fff; color: var(--accent); border: 0; border-radius: 8px;
          padding: 9px 16px; font-weight: 700; cursor: pointer; white-space: nowrap;
          font-family: inherit; }
+  #btn-clear { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.55);
+         font-weight: 600; margin-right: 8px; }
   .layout { display: grid; grid-template-columns: 360px minmax(0, 1fr); min-height: 0; }
   aside.formpane { background: var(--panel); border-right: 1px solid var(--line);
          overflow-y: auto; padding: 14px;
@@ -473,6 +486,7 @@ function buildHtml() {
     '<header class="bar">',
     '  <h1>📜 電子定款メーカー — 印紙代 4 万円のかからない定款づくり</h1>',
     '  <span class="spacer"></span>',
+    '  <button id="btn-clear" type="button" class="ghost">🗑 入力を消す</button>',
     '  <button id="btn-print" type="button">🖨 印刷 / PDF 保存</button>',
     '</header>',
     '<div class="layout">',
@@ -505,6 +519,8 @@ function main() {
     '公証人の認証は不要',       // 合同会社ステップ
     '会社法49条',
     'btn-print',
+    'btn-clear',
+    'localStorage.removeItem(LS_KEY)',
   ];
   for (const marker of required) {
     if (!html.includes(marker)) throw new Error(`self-check failed: missing "${marker}"`);

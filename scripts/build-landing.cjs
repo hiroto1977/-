@@ -13,6 +13,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const zlib = require('node:zlib');
 const { jsonForScript } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
@@ -22,6 +23,19 @@ const OUT = path.join(ROOT, 'dist/landing.html');
 const SITE_URL = 'https://hiroto1977.github.io/-/';
 const REPO_URL = 'https://github.com/hiroto1977/-';
 const OG_IMAGE = SITE_URL + 'og.png';
+
+/**
+ * ランディングの既定の下地 —— **1 か所で持つ** (2026-09-21 · パス 363)。
+ *
+ * この色は 2 か所に要る: 母体 (スマホのアドレスバー) へ伝える `<meta name="theme-color">` と、
+ * 頁自身の `:root { --bg }`。2026-09-21 まで `#0f1117` を**2 度書いて**おり、片方を直しても
+ * もう片方は黙ったままだった —— アプリ側の同じ決定は `styles.css` の `--bg` 1 つを
+ * `windowPrefs.test.ts` / `theme.test.ts` が縛っているのに、ここだけ写しのままだった。
+ *
+ * `inject-pwa` はこの頁が自分の theme-color を名乗っているのを見て**何も足さない**
+ * (足していた頃は 1 つの文書に 2 つの答えが載っていた)。
+ */
+const LANDING_BG = '#0f1117';
 const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。';
 
 // サイドバー (services.ts の CATEGORY_LABEL) と同じ並び。services.ts に新カテゴリを
@@ -29,18 +43,178 @@ const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッ�
 const CATEGORY_LABEL = { featured: 'おすすめ', professionals: '士業連携', tools: '分析・ツール', integrations: '外部サービス連携' };
 const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'];
 
-/** services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。 */
+/**
+ * services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。
+ *
+ * ## なぜ 1 本の正規表現をやめたか (2026-09-12 · パス 162)
+ *
+ * 元の実装は 1 本の長い正規表現で
+ * `id → label → icon → description → page → … → category` が**連続**していることを
+ * 要求していた。欄の間に注記を 1 行挟む・`category:` を `description:` より前に書く
+ * ——それだけで**その項だけが黙って落ち**、カードが 1 枚消えたランディングが出る。
+ *
+ * 実際に **4 度**起きている (2026-07 に 2 度・2026-08-28・2026-09-12)。落ちるのは
+ * `selfCheck` / `landingServiceParse.test.ts` の**件数の差**で、
+ * 「72 parsed but 73 entries」しか言わないので**どの項が落ちたかは人が目で探す**。
+ *
+ * 直した形: 配列を**項ごとの塊に分け、欄は 1 つずつ読む**。
+ *
+ * - 欄の順序に依らない (どう並べても読める)
+ * - 欄の間・項の間の注記に依らない (引用符を見ながらコメントを落とす)
+ * - 読めない項は**行番号と id を名指しして**投げる (件数の差ではなく場所を言う)
+ *
+ * 件数の突き合わせ (`countEntries`) は**別の数え方のまま残す** ——
+ * 同じ走査で両方を出すと、突き合わせが「自分と自分の一致」になって何も守らない。
+ */
 function parseServices() {
-  const text = fs.readFileSync(SERVICES_TS, 'utf8');
-  const entry =
-    /id:\s*'([^']+)',\s*label:\s*'([^']+)',\s*icon:\s*'([^']+)',\s*description:\s*'([^']*)',\s*page:[\s\S]*?category:\s*'([^']+)'/g;
+  return parseServicesFromText(fs.readFileSync(SERVICES_TS, 'utf8'));
+}
+
+/** 文字列から抽出する本体 (検査が対照を当てられるよう、ファイル読み込みと分けてある)。 */
+function parseServicesFromText(source) {
+  const array = servicesArrayText(source);
   const out = [];
-  let m;
-  while ((m = entry.exec(text)) !== null) {
-    out.push({ id: m[1], label: m[2], icon: m[3], description: m[4], category: m[5] });
+  const problems = [];
+  for (const entry of splitEntries(array.text)) {
+    const body = stripCommentsOutsideStrings(entry.text);
+    const rec = {};
+    for (const field of ['id', 'label', 'icon', 'description', 'category']) {
+      rec[field] = readQuotedField(body, field);
+    }
+    rec.page = readIdentifierField(body, 'page');
+    const missing = ['id', 'label', 'icon', 'description', 'page', 'category'].filter(
+      (f) => rec[f] === null,
+    );
+    if (missing.length > 0) {
+      const line = lineNumberAt(source, array.offset + entry.offset);
+      problems.push(`services.ts:${line} の項 (${rec.id ?? 'id 不明'}) に ${missing.join(' / ')} が無い`);
+      continue;
+    }
+    out.push({ id: rec.id, label: rec.label, icon: rec.icon, description: rec.description, category: rec.category });
+  }
+  if (problems.length > 0) {
+    throw new Error(`SERVICES の項を読み切れません:\n  ${problems.join('\n  ')}`);
   }
   if (out.length === 0) throw new Error('no services parsed from services.ts');
   return out;
+}
+
+/**
+ * `export const SERVICES` の配列リテラルの中身 (角括弧の内側) と、その開始位置。
+ *
+ * 型注釈の `ServiceDefinition[]` を数えないよう、`=` の後の `[` から始める
+ * (最初はそこを踏んで中身が空になった)。
+ */
+function servicesArrayText(source) {
+  const decl = source.indexOf('export const SERVICES');
+  if (decl < 0) throw new Error('services.ts に export const SERVICES がありません');
+  const eq = source.indexOf('=', decl);
+  const open = eq < 0 ? -1 : source.indexOf('[', eq);
+  if (open < 0) throw new Error('SERVICES の配列リテラルが見つかりません');
+  let depth = 0;
+  for (let i = open; i < source.length; i += 1) {
+    const skipped = skipStringOrComment(source, i);
+    if (skipped !== null) {
+      i = skipped;
+      continue;
+    }
+    if (source[i] === '[') depth += 1;
+    else if (source[i] === ']') {
+      depth -= 1;
+      if (depth === 0) return { text: source.slice(open + 1, i), offset: open + 1 };
+    }
+  }
+  throw new Error('SERVICES の配列リテラルが閉じていません');
+}
+
+/** 配列の中身を、深さ 1 の `{ … }` ごとに分ける (中身の位置も返す)。 */
+function splitEntries(arrayText) {
+  const entries = [];
+  let depth = 0;
+  let start = -1;
+  for (let i = 0; i < arrayText.length; i += 1) {
+    const skipped = skipStringOrComment(arrayText, i);
+    if (skipped !== null) {
+      i = skipped;
+      continue;
+    }
+    if (arrayText[i] === '{') {
+      if (depth === 0) start = i;
+      depth += 1;
+    } else if (arrayText[i] === '}') {
+      depth -= 1;
+      if (depth === 0 && start >= 0) {
+        entries.push({ text: arrayText.slice(start, i + 1), offset: start });
+        start = -1;
+      }
+    }
+  }
+  return entries;
+}
+
+/**
+ * `src[i]` が文字列・コメントの開始なら、その**末尾の位置**を返す (でなければ null)。
+ * 文字列の中の `//` を落とさない・コメントの中の引用符で崩れない、の両方をここが持つ。
+ */
+function skipStringOrComment(src, i) {
+  const c = src[i];
+  if (c === "'" || c === '"' || c === '`') {
+    for (let j = i + 1; j < src.length; j += 1) {
+      if (src[j] === '\\') {
+        j += 1;
+        continue;
+      }
+      if (src[j] === c) return j;
+    }
+    return src.length;
+  }
+  if (c === '/' && src[i + 1] === '*') {
+    const end = src.indexOf('*/', i + 2);
+    return end < 0 ? src.length : end + 1;
+  }
+  if (c === '/' && src[i + 1] === '/') {
+    const end = src.indexOf('\n', i);
+    return end < 0 ? src.length : end - 1;
+  }
+  return null;
+}
+
+/** 文字列の外側のコメントだけを空白に落とす (行数は変えない)。 */
+function stripCommentsOutsideStrings(src) {
+  let out = '';
+  for (let i = 0; i < src.length; i += 1) {
+    const skipped = skipStringOrComment(src, i);
+    if (skipped === null) {
+      out += src[i];
+      continue;
+    }
+    const chunk = src.slice(i, skipped + 1);
+    // 文字列はそのまま残す。コメントは改行だけ残して空白に倒す。
+    out += /^['"`]/.test(chunk) ? chunk : chunk.replace(/[^\n]/g, ' ');
+    i = skipped;
+  }
+  return out;
+}
+
+/** `name: '…'` を読む (無ければ null)。項の中で**どこに在っても**読める。 */
+function readQuotedField(body, name) {
+  const m = new RegExp(`(?:^|[\\s{,])${name}:\\s*'([^']*)'`).exec(body);
+  return m === null ? null : m[1];
+}
+
+/** `name: Identifier` を読む (`page: SkillsPage` のような値。無ければ null)。 */
+function readIdentifierField(body, name) {
+  const m = new RegExp(`(?:^|[\\s{,])${name}:\\s*([A-Za-z_$][\\w$]*)`).exec(body);
+  return m === null ? null : m[1];
+}
+
+/** 位置 `index` の 1 始まりの行番号 (人が services.ts を開ける形で言うため)。 */
+function lineNumberAt(source, index) {
+  let line = 1;
+  for (let i = 0; i < index && i < source.length; i += 1) {
+    if (source[i] === '\n') line += 1;
+  }
+  return line;
 }
 
 /** SERVICES 配列の category: 出現数 (parse 漏れ検知の基準)。 */
@@ -104,6 +278,62 @@ const esc = (s) =>
     // 揃っていない状態を残すと、次に `'` で括る人が踏む。
     .replace(/'/g, '&#39;');
 
+/*
+ * **公開した成果物のうち、入口から辿れないものを作らない。** (2026-09-26 / パス 480)
+ *
+ * `pages.yml` は 3 つのアプリ HTML を publish する: `app.html` (フル版) /
+ * `standalone.html` (同じ物の別名) / `lite.html` (学術コーパス非搭載の軽量版)。
+ * そして同じ workflow が軽量版を publish する理由をこう書いている ——
+ * 「スマホ用ライト版: /lite.html (10MB のフル版はスマホ回線で開けないため)」。
+ *
+ * ところがこのランディングは**公開サイトの根**でありながら、2026-09-26 の実測で
+ * `lite` の言及が **0 件**、`href` は **81 件のうち 76 件が `app.html`**
+ * (見出しの 2 つ + 74 枚のカード) だった。スマホから来た利用者には
+ * 「開けない」と自分で書いた版しか差し出していなかった。
+ *
+ * gzip の実測 (2026-09-26・GitHub Pages が実際に転送する形):
+ *
+ *   app.html   4,056,514 B      lite.html   982,003 B      (4.13 倍)
+ *
+ * 起動の実測 (perf ゲートの記録): フル版 DCL 413 ms / heap 36.9 MB ↔
+ * 軽量版 DCL 153 ms / heap 10.3 MB。
+ *
+ * ★ **大きさは測れたときだけ名乗る。** この builder は `build:web` / `build:web:lite`
+ * と独立に走れるので (手元で `npm run build:landing` だけを叩ける)、成果物が
+ * 無いこともある。そこで**古い数を書き写さず**、読めた時だけ 1 文を足す ——
+ * 「入っていない」と「読めなかった」を混ぜないのと同じ規律である。
+ */
+function transferBytes(rel) {
+  try {
+    const buf = fs.readFileSync(path.join(ROOT, rel));
+    // gzip は GitHub Pages が text/html に実際に掛ける形。生の byte 数ではなく
+    // 利用者が払う転送量を名乗る (level は既定で、Pages の設定を再現はしない)。
+    return zlib.gzipSync(buf).length;
+  } catch {
+    return null;
+  }
+}
+
+function megabytes(bytes) {
+  // 10^6 で割る (ブラウザのダウンロード表示と同じ読み方)。
+  return (bytes / 1e6).toFixed(2);
+}
+
+/**
+ * 2 つの版の違いを 1 文で述べ、転送量は**測れたときだけ**続ける。
+ * 違いは `vite.config.ts` の LITE 分岐 (`VERIFIED_CONCEPTS = []`) ただ 1 つで、
+ * それ以外のナレッジ (コンプライアンス / 補助金 / 相談窓口 / 経済史) は両版に載る。
+ */
+function buildChoiceNote(total) {
+  const base =
+    `\u{1F4F1} 軽量版は学術コーパス (AI アシスタントが根拠に引く学術概念) を積んでいません。`
+    + `その 1 点を除き ${total} サービスはフル版と同じで、実機の E2E も両版に同じ件数を通しています。`;
+  const full = transferBytes('dist/standalone.html');
+  const lite = transferBytes('dist/standalone-lite.html');
+  if (full === null || lite === null) return base;
+  return base + ` 転送量の実測 (gzip): 軽量版 ${megabytes(lite)} MB / フル版 ${megabytes(full)} MB。`;
+}
+
 function faviconDataUri() {
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">` +
@@ -165,7 +395,7 @@ function buildHtml(services, tests) {
 <meta name="description" content="${esc(description)}">
 <meta name="robots" content="index,follow">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0f1117">
+<meta name="theme-color" content="${LANDING_BG}">
 <link rel="canonical" href="${SITE_URL}">
 <link rel="icon" href="${faviconDataUri()}">
 <meta property="og:type" content="website">
@@ -180,7 +410,7 @@ function buildHtml(services, tests) {
 <meta name="twitter:image" content="${OG_IMAGE}">
 <script type="application/ld+json">${jsonLd}</script>
 <style>
-  :root{--bg:#0f1117;--elev:#171a22;--elev2:#1e222c;--border:#2a2f3a;--text:#e6e8ee;--mute:#99a0ad;--accent:#4f7cff;--radius:12px;--maxw:1100px}
+  :root{--bg:${LANDING_BG};--elev:#171a22;--elev2:#1e222c;--border:#2a2f3a;--text:#e6e8ee;--mute:#99a0ad;--accent:#4f7cff;--radius:12px;--maxw:1100px}
   *{box-sizing:border-box}html{scroll-behavior:smooth}
   body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:var(--accent);text-decoration:none}.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
@@ -191,6 +421,7 @@ function buildHtml(services, tests) {
   h1{font-size:clamp(34px,6vw,56px);margin:12px 0 8px;line-height:1.1}
   .tagline{color:var(--mute);font-size:clamp(15px,2.5vw,19px);max-width:680px;margin:0 auto 28px}
   .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .build-note{max-width:620px;margin:16px auto 0;font-size:12.5px;line-height:1.7;color:var(--mute)}
   .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:15px;border:1px solid transparent;cursor:pointer}
   .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{filter:brightness(1.08)}
   .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}.btn-ghost:hover{background:var(--elev)}
@@ -222,8 +453,10 @@ function buildHtml(services, tests) {
     <p class="tagline">${esc(total)} のサービス（SaaS 連携・分析ツール・士業・税務試算・業務操作）を統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。</p>
     <nav class="cta" aria-label="主要アクション">
       <a class="btn btn-primary" href="./app.html">▶ フル版をブラウザで開く</a>
+      <a class="btn btn-ghost" href="./lite.html">📱 軽量版を開く</a>
       <a class="btn btn-ghost" href="${REPO_URL}" target="_blank" rel="noopener">GitHub で見る</a>
     </nav>
+    <p class="note build-note">${buildChoiceNote(total)}</p>
   </div></header>
   <div class="wrap"><div class="metrics">
     <div class="metric"><div class="num">${total}</div><div class="lbl">サービス</div></div>
@@ -243,7 +476,7 @@ ${CATEGORY_ORDER.map(section).join('')}
     <div class="feat"><h3>🖥 2 形態 1 コード</h3><p>同一コードから Electron デスクトップとブラウザ単体 HTML を生成。</p></div>
   </div></div></div>
   <footer><div class="wrap">
-    <nav aria-label="フッターリンク"><a href="./app.html">フル版を開く</a> · <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></nav>
+    <nav aria-label="フッターリンク"><a href="./app.html">フル版を開く</a> · <a href="./lite.html">軽量版を開く</a> · <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></nav>
     <p class="note">※ 各サービスの数値は説明用のスナップショットです。実データはフル版でトークンを設定すると取得できます。税・財務は概算であり税務/財務助言ではありません。</p>
     <p class="note">© ${year} Service Hub</p>
   </div></footer>
@@ -258,12 +491,34 @@ function selfCheck(html, services, entryCount) {
     throw new Error(`unknown categor(y/ies) in services.ts: ${unknown.join(', ')} — CATEGORY_LABEL / CATEGORY_ORDER に追加してください`);
   }
   if (services.length !== entryCount) {
-    throw new Error(`parse mismatch: ${services.length} parsed but ${entryCount} SERVICES entries (正規表現の取りこぼし)`);
+    // 2 つの数え方は**別の走査**である (パス 162 でもそこは崩していない):
+    //   parseServices  … 配列を項の塊に分け、欄を 1 つずつ読む
+    //   countEntries   … 行頭の `category: '…'` を数える
+    // 食い違ったら、どちらの走査が届いていないかを人が見る必要があるので、両方の数え方を書く。
+    throw new Error(
+      `parse mismatch: 項として読めたのは ${services.length} 件、行頭の category: は ${entryCount} 件`
+        + ` (読めた id: ${services.map((s) => s.id).join(', ')})`
+        + ' — 1 行で書いた項は countEntries が数えず、注記の中の category: は parseServices が数えない',
+    );
   }
   const cards = (html.match(/class="card"/g) || []).length;
   if (cards !== services.length) throw new Error(`card count ${cards} != services ${services.length}`);
   const external = (html.match(/src=["']https?:|<link[^>]+rel=["']stylesheet/gi) || []).length;
   if (external > 0) throw new Error(`landing must be self-contained but has ${external} external ref(s)`);
+  // **publish した版は入口から辿れる** (パス 480)。`pages.yml` は `lite.html` を
+  // スマホ回線のために publish しているのに、2026-09-26 までこのランディングは
+  // その名前を 1 度も出しておらず (実測 0 件)、唯一の入口がフル版だった。
+  // ここは「消えたら落ちる」ための床で、母集団そのもの (pages.yml が publish する
+  // アプリ HTML の全件) は `mobileEntryPointReachable.test.ts` が両方向で持つ。
+  for (const target of ['./app.html', './lite.html']) {
+    const links = (html.match(new RegExp(`href="${target.replace('.', '\\.')}"`, 'g')) || []).length;
+    if (links < 2) {
+      throw new Error(
+        `landing links to ${target} ${links} time(s) — 見出しとフッターの 2 か所で名乗ること`
+          + ' (publish した版のうち入口から辿れない物を作らない · パス 480)',
+      );
+    }
+  }
 }
 
 function main() {
@@ -280,6 +535,9 @@ function main() {
 
 // 読み込むだけで dist/ へ書き出していたので、外から証人を立てられなかった。
 // (build-knowledge-vault.cjs と同じ形。2026-08-28 に両方へ番をつけた。)
-module.exports = { parseServices, countEntries };
+// `buildHtml` / `selfCheck` / `buildChoiceNote` も出す (パス 480) —— 公開した版が入口から
+// 辿れるかは**組んだ HTML を見ないと言えない**。ソースを grep すると「href の綴りが在る」
+// しか分からず、注記の中の言及でも満たされる (法則 mention-vs-declaration)。
+module.exports = { parseServices, parseServicesFromText, countEntries, buildHtml, selfCheck, buildChoiceNote };
 
 if (require.main === module) main();

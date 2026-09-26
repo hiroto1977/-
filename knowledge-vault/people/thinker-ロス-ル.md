@@ -2,7 +2,7 @@
 title: "ルイス・ロス"
 type: thinker
 person_key: "ロス|ル"
-concept_count: 3
+concept_count: 4
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # ルイス・ロス
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
+## 学術概念（4件）
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — レギュレーションDは、米国証券取引委員会（SEC）が1982年に17C.F.R.§230.500以下として制定した、1…
 - [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 証券詐欺（securitiesfraud）における重要性（materiality）とは、合理的投資家が投資判断において…
 - [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — 証券規制法は、1933年証券法および1934年証券取引所法を基盤とし、発行市場における強制開示制度と流通市場における継…
 - [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 証券規制（securitiesregulation）は、資本市場の公正性・透明性・投資家保護を目的として有価証券の発行…

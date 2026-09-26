@@ -33,6 +33,7 @@ aliases:
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同じ思想家
 - [[econ-dependence-effect|依存効果（ガルブレイス）]] — 同分野の近傍
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同分野の近傍
+- [[econ-lucas-islands-monetary-misperception|ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

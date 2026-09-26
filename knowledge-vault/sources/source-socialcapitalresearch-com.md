@@ -2,7 +2,7 @@
 title: "socialcapitalresearch.com"
 type: source-domain
 host: "socialcapitalresearch.com"
-cite_count: 1
+cite_count: 2
 tags:
   - source-domain
   - index
@@ -10,11 +10,12 @@ tags:
 
 # socialcapitalresearch.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **1 件**（リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **2 件**（リファレンス 2）
 
 ## このドメインを出典とする項目
 
 - [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — Claridge,T.(2020)PutnamonSocialCapital—InstituteforSocialCapital
+- [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — Claridge,T.,InstituteforSocialCapital,"Structural,Cognitive,Relationa…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

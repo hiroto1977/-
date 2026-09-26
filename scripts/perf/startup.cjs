@@ -6,9 +6,9 @@
  *
  *   npm run perf            # dist/standalone.html (フル版) と dist/standalone-lite.html を測定
  *
- * CI には入れていない。playwright/chromium は devDependencies に無く (グローバル導入前提)、
- * CI で入れると無料枠の分数を大きく消費するため、`npm run e2e` と同じくローカル/手動の
- * ゲートとして運用する。リリース前と、起動パスに触る変更のときに回すこと。
+ * 既定の CI (ci.yml) には入れていない。playwright/chromium は devDependencies に無く (グローバル
+ * 導入前提。e2e.yml は module を --no-save で入れてから回す · パス 305)、無料枠の分数を消費するため
+ * `npm run e2e` と同じく手動起動 / `run-e2e` ラベルの e2e.yml とローカルで回す。起動パスに触る変更のときに。
  *
  * 何を守っているか:
  *   単一ファイル配布なのでコード分割ができず、**モジュール評価時に走る処理が
