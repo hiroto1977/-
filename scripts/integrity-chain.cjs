@@ -294,6 +294,35 @@ const PROTECTED = [
   // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
   // 応答を返せる。保護対象として最も効く部類なのに漏れていた。
   'assets/sw.js',
+  // 2026-09-26 (パス 480) に足した。**公開サイトの根を組み立てる script。**
+  // `pages.yml` は `dist/landing.html` を `_site/index.html` として publish するので、
+  // ここが出す HTML が **`https://<owner>.github.io/<repo>/` を開いた人が最初に見る物**
+  // である。どのビルドへ送るか・何を勧めるか・どの数を名乗るかを単独で決める。
+  //
+  // **守る順番が逆になっていた** —— 公開 HTML を*飾る* `scripts/inject-pwa.cjs` と
+  // `assets/manifest.webmanifest` は 2026-09-21 (パス 363) から保護対象なのに、
+  // **その HTML を作る側**が外に居た (パス 349 が `docs/PROXY_EXAMPLE.md` について
+  // 直したのと同じ非対称)。churn も同じで、実測 3 コミット ↔ inject-pwa も 3 コミット。
+  //
+  // パス 480 の実測がその重さを示している: この 1 ファイルの href が 81 件のうち
+  // 76 件を `app.html` へ向けており、スマホ向けに publish した `lite.html` は
+  // 言及 0 件だった。入口が何を勧めるかは、そこだけで決まっている。
+  'scripts/build-landing.cjs',
+  // 2026-09-26 (パス 480) に足した。**閉包の検査が見つけた 3 つ目** ——
+  // `scripts/build-landing.cjs` を保護対象へ入れた瞬間に鎖が
+  // 「保護対象が `scripts/lib/json-for-script.cjs` を読んでいるのに、そちらは
+  // 保護対象でも除外台帳でもない」と鳴った (パス 402 / 410 と同じ形で、
+  // **判定が保護の外へ出ていた**)。
+  //
+  // 中身は `</` + `script>` の閉じ込みを防ぐ関門である: `JSON.stringify` は `<` を
+  // escape しないので、埋め込む値がその並びを含むと inline script がそこで終わり、
+  // 残りが markup として DOM へ漏れて頁の JS が死ぬ (この repo が 2026-07 に
+  // inject-pwa 経由で実際に踏んだ「アプリの代わりにコードの壁が出る」失敗)。
+  // `replaceToken` は `String.replace` の `$&` 置換も止める。
+  //
+  // 読み手は実測 7 本 —— landing・デモ 3 本・配る maker 3 本で、
+  // **公開する HTML と配る HTML のほぼ全部**がここを通る。churn は 1 コミット。
+  'scripts/lib/json-for-script.cjs',
   // 2026-09-20 (パス 349) に足した。**`assets/sw.js` と同じ基準が、もう 1 つに
   // 当てはまったまま残っていた。** `docs/PROXY_EXAMPLE.md` は散文ではなく
   // **利用者が自分の Cloudflare へ貼り付けて動かすプログラム**で、貼られた後は

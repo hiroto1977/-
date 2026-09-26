@@ -220,11 +220,32 @@ describe('キャッシュの世代交代', () => {
     expect([...h.cacheStore.keys()]).toEqual([current]);
   });
 
-  it('install はアプリシェルを先読みする', async () => {
+  /*
+   * ★ **この検査は 2026-09-26 (パス 480) まで欠陥を仕様として留めていた。**
+   *
+   * 題名は「アプリ**シェル**を先読みする」なのに、主張していたのは
+   * `expect(all).toContain('./app.html')` —— **アプリ本体そのもの** (生 11.97 MB /
+   * gzip 4,056,514 B) だった。`install` は `inject-pwa` が登録を差し込んだ全頁で
+   * 走るので、公開サイトの根 (ランディング) を開いただけの訪問者が背景でそれを
+   * 取っていた —— precache 合計 4,066,084 B のうち **99.76% が 1 ファイル**。
+   *
+   * しかも `Cache.addAll` は原子的である (実 chromium で実測): 1 件でも失敗すると
+   * 9.6 KiB のシェルまで一緒に捨てられるので、細い回線ではその費用を払い終えて
+   * 効き目 0 になっていた。この検査が在るかぎり、直そうとした人は**まずこの
+   * 検査に落とされる** —— 法則 `no-weakness-as-spec` の形である。
+   *
+   * 主張は「先読みする」を保ったまま、**何を先読みするか**を直した。
+   */
+  it('install はアプリシェル (小さい 3 件) だけを先読みし、アプリ本体は取らない', async () => {
     await h.listeners.get('install')!({ waitUntil: async (p: Promise<unknown>) => await p });
     const all = [...h.cacheStore.values()].flatMap((m) => [...m.keys()]);
-    expect(all).toContain('./app.html');
+    expect(all).toContain('./index.html');
     expect(all).toContain('./manifest.webmanifest');
+    expect(all).toContain('./icon.svg');
+    expect(
+      all,
+      'アプリ本体を install で取ると、入口を開いただけの訪問者が gzip 3.87 MiB を払う',
+    ).not.toContain('./app.html');
   });
 });
 

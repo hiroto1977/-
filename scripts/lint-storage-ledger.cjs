@@ -94,7 +94,7 @@ const BACKED_UP_STORE = 'business-hub-data';
  * 媒体の表示名。**監査報告と突き合わせるために要る。**
  *
  * 規則 9 は「sensitive な保存先が名前で載っているか」を見るが、
- * `service-hub-v2` (Cache Storage) は sensitive でないので**規則 9 では
+ * `service-hub-v3` (Cache Storage) は sensitive でないので**規則 9 では
  * 呼ばれない** —— 2026-08-26 に測ったとき、Cache Storage は
  * `docs/DATA_PROTECTION.md` に**媒体ごと**在庫から抜けていた。
  * 個々の行ではなく**媒体**を数える規則が要る (規則 10)。
@@ -140,15 +140,25 @@ const STORES = {
   },
 
   // -- Cache Storage (Service Worker) --
-  'service-hub-v2': {
+  // 2026-09-26 (パス 480) に v2 → v3 へ。`activate` は名前の違う古いキャッシュを
+  // 捨てるので、**以前の precache が残した `app.html` (生 11.97 MB) を既存の端末から
+  // 回収する**ため。回収は disk の都合だけではない —— Cache Storage はオリジンの
+  // 保存枠を食い、枠が尽きたときの立ち退きは暗号化されたトークンごと持っていく
+  // (`storageDurability.ts` / パス 351)。1 度も開かれていないアプリ本体のために
+  // 枠を埋めておくのは、その危険を見返りなく上げることである。
+  'service-hub-v3': {
     medium: 'cachestorage',
     /*
      * **同一オリジンの成功応答だけ**が入る。第三者 API の応答 (業務データ・
      * 漏洩調査の結果) が入らないことは `assets/sw.js` の `sameOrigin` 判定と
      * `src/shared/__tests__/serviceWorker.test.ts` が留めている。
      * ここが `sensitive: true` に変わるとしたら、その 2 つが同時に壊れたとき。
+     *
+     * install で先読みするのは**小さなシェル 3 件だけ** (index.html / manifest /
+     * icon = gzip 合計 9,570 B)。アプリ本体は network-first の fetch ハンドラが
+     * **実際に開かれた時点で**焼くので、ここに入るのは利用者が読み込んだ物だけである。
      */
-    holds: 'アプリシェル (HTML / アイコン / manifest)',
+    holds: 'アプリシェル (index.html / アイコン / manifest) + 実際に開いたアプリ HTML',
     backedUp: false,
     sensitive: false,
   },

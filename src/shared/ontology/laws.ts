@@ -895,6 +895,37 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test('src/renderer/pages/__tests__/aiEgressDisclosed.test.ts'), test(T.renderer('aiDataDisclosure')), test('src/renderer/pages/__tests__/thirdPartyEgressDisclosed.test.ts')],
   },
   {
+    id: 'published-build-is-reachable',
+    family: 'surface',
+    name: '公開した成果物は、公開した入口から辿れる',
+    statement:
+      '門を掛けることと、届く道が在ることは別の軸である。`pages.yml` は CSP と個人データの走査を'
+      + '**publish の直前に出す物そのものへ**当てており (パス 344)、`artifactCspCensus` は台帳と'
+      + 'そのステップを両方向で結ぶ —— それでも「出した物へ利用者が辿れるか」は誰も問っていなかった。'
+      + '実測 (2026-09-26): publish するアプリ本体は 3 本 (`app.html` / `standalone.html` / `lite.html`) で、'
+      + '公開サイトの根であるランディングを組むと **href 81 件のうち 76 件が `app.html`**、'
+      + '**`lite` の言及は 0 件**。`manifest` の `start_url` も `./app.html`、`sw.js` の precache も `./app.html`。'
+      + 'つまり軽量版は**URL を知って打ち込む以外に届く道が 1 つも無かった**。'
+      + 'しかも `pages.yml` 自身が publish の理由を「10MB のフル版はスマホ回線で開けないため」と書いている ——'
+      + '**自分が「開けない」と書いた版だけを差し出していた。**'
+      + ' gzip の実測では `app.html` 4,056,514 B ↔ `lite.html` 982,003 B (4.13 倍)、'
+      + 'perf ゲートの記録では DCL 413 ms / heap 36.9 MB ↔ 153 ms / 10.3 MB。'
+      + '★ **届く道の無さは、転送量の側にも現れる** —— `sw.js` の `install` は `inject-pwa` が'
+      + '登録を差し込んだ全頁で走るので、ランディングを開いただけの訪問者が `app.html` を背景で取っていた'
+      + ' (precache 合計 4,066,084 B のうち **99.76% が 1 ファイル**)。'
+      + 'そして `Cache.addAll` は原子的である —— 実 chromium で実測 (2026-09-26): 1 件でも失敗すると'
+      + "`TypeError: Failed to execute 'addAll' on 'Cache': Request failed` を投げ**キャッシュは 0 件**、"
+      + '個別の `add()` なら片方が残る。細い回線 = precache が要るとされた場面で、'
+      + '**費用を払い終えて効き目 0** になっていた。'
+      + 'だから母集団は workflow から導き、行ごとに**どう辿れるか** (`entry-link` / `alias`) を名乗らせ、'
+      + '`entry-link` は**実際に組んだ入口**へのリンクで確かめる (ソースの grep では注記の言及で満たされる)。',
+    provenance: ['パス 480', 'パス 344 (出す物へ門を当てる側)', 'パス 364 (扉が最初から無い形)'],
+    enforcedBy: [
+      test(T.shared('mobileEntryPointReachable')),
+      test(T.shared('serviceWorker')),
+    ],
+  },
+  {
     id: 'user-facing-claim-held-at-render',
     family: 'surface',
     name: '利用者へ出す約束は、描く所で留める',

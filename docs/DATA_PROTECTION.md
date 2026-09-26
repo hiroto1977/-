@@ -125,7 +125,7 @@ GitHub Pages のユーザーリポジトリは `https://hiroto1977.github.io/<re
 
 | キャッシュ | 中身 | 保護 | 立ち退き | バックアップ |
 |---|---|---|---|---|
-| `service-hub-v2` | アプリシェル（`app.html` / `index.html` / `manifest.webmanifest` / `icon.svg`） | **平文**。ただし入るのは**公開されている静的資産だけ** | 消える（再取得されるので実害なし） | **入らない**（要らない） |
+| `service-hub-v3` | アプリシェル（`index.html` / `manifest.webmanifest` / `icon.svg`）+ 実際に開いたアプリ HTML — **install で先読みするのは小さなシェル 3 件だけ**（パス 480。以前は `app.html` も先読みしており、ランディングを開いただけで gzip 3.87 MiB を背景で取っていた） | **平文**。ただし入るのは**公開されている静的資産だけ** | 消える（再取得されるので実害なし） | **入らない**（要らない） |
 
 **2026-08-26 まで、この媒体は在庫にも台帳にも無かった。** `lint:storage` は
 IndexedDB / localStorage / sessionStorage の 3 つしか走査しておらず、

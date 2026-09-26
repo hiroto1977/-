@@ -94,7 +94,16 @@ export const ERASE_LOCAL_STORAGE_KEYS: readonly string[] = [
  */
 export const ERASE_SESSION_STORAGE_KEYS: readonly string[] = pkceSessionKeys();
 
-export const ERASE_CACHE_STORAGE: readonly string[] = ['service-hub-v2'];
+/*
+ * Cache Storage の世代名。**今の世代 1 つだけを挙げる** (2026-09-26 / パス 480 で v2 → v3)。
+ *
+ * 古い世代を並べないのは、`assets/sw.js` の `activate` が**名前の違うキャッシュを
+ * 全部捨てる**ため —— 新しい sw.js は `skipWaiting()` + `clients.claim()` で最初の
+ * 読み込みで主導権を取るので、利用者が「すべてのデータを削除」を押せる時点では
+ * 旧世代はもう無い。ここに古い名前を積むと、台帳 (`lint:storage` の規則 11 は
+ * **両方向**) が「実在しない保存先」として鳴り、在庫が世代の墓場になる。
+ */
+export const ERASE_CACHE_STORAGE: readonly string[] = ['service-hub-v3'];
 
 /**
  * `unavailable` = この環境にその媒体が無い (file:// の Cache Storage など)。残る物は無いので「消えた」と同じ扱い。

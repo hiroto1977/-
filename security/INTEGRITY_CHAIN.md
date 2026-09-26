@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 267
+- ブロック数: 269
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `c0785b5ed154c3177dec9363d4d5f27adeb25a9213a82cb8235aac8036d05a08`
-- 保護対象: 95 ファイル
+- 末尾(tip)ハッシュ: `1006db0ed44424c6376fee9c993d9d67360b19ffe7f814e5c521bc011bc904bc`
+- 保護対象: 97 ファイル
 
 ## ブロック
 
@@ -280,6 +280,8 @@
 | 264 | `d0ca7f9b2d5fd979` | `16e58b8e470d21c5` | `d2c435999dee6dce` | update integrity-chain.cjs |
 | 265 | `ceaa5c527f45669b` | `d2c435999dee6dce` | `67b63ab282a13375` | update integrity-chain.cjs |
 | 266 | `d3eaff764ba7bbca` | `67b63ab282a13375` | `c0785b5ed154c317` | update integrity-chain.cjs,assistantLimits.ts |
+| 267 | `14898f4d30d06ab5` | `c0785b5ed154c317` | `1c895191a6d9d57a` | update sw.js,build-landing.cjs,integrity-chain.cjs |
+| 268 | `787d2ad147d24654` | `1c895191a6d9d57a` | `1006db0ed44424c6` | update integrity-chain.cjs,json-for-script.cjs |
 
 ## 保護対象ファイル
 
@@ -297,11 +299,13 @@
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
 - `eslint.config.js`
+- `scripts/build-landing.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
 - `scripts/lib/artifact-freshness.cjs`
+- `scripts/lib/json-for-script.cjs`
 - `scripts/lib/population-floor.cjs`
 - `scripts/lib/tracked-cross-check.cjs`
 - `scripts/lint-artifact-csp.cjs`

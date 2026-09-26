@@ -13,6 +13,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const zlib = require('node:zlib');
 const { jsonForScript } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
@@ -277,6 +278,62 @@ const esc = (s) =>
     // 揃っていない状態を残すと、次に `'` で括る人が踏む。
     .replace(/'/g, '&#39;');
 
+/*
+ * **公開した成果物のうち、入口から辿れないものを作らない。** (2026-09-26 / パス 480)
+ *
+ * `pages.yml` は 3 つのアプリ HTML を publish する: `app.html` (フル版) /
+ * `standalone.html` (同じ物の別名) / `lite.html` (学術コーパス非搭載の軽量版)。
+ * そして同じ workflow が軽量版を publish する理由をこう書いている ——
+ * 「スマホ用ライト版: /lite.html (10MB のフル版はスマホ回線で開けないため)」。
+ *
+ * ところがこのランディングは**公開サイトの根**でありながら、2026-09-26 の実測で
+ * `lite` の言及が **0 件**、`href` は **81 件のうち 76 件が `app.html`**
+ * (見出しの 2 つ + 74 枚のカード) だった。スマホから来た利用者には
+ * 「開けない」と自分で書いた版しか差し出していなかった。
+ *
+ * gzip の実測 (2026-09-26・GitHub Pages が実際に転送する形):
+ *
+ *   app.html   4,056,514 B      lite.html   982,003 B      (4.13 倍)
+ *
+ * 起動の実測 (perf ゲートの記録): フル版 DCL 413 ms / heap 36.9 MB ↔
+ * 軽量版 DCL 153 ms / heap 10.3 MB。
+ *
+ * ★ **大きさは測れたときだけ名乗る。** この builder は `build:web` / `build:web:lite`
+ * と独立に走れるので (手元で `npm run build:landing` だけを叩ける)、成果物が
+ * 無いこともある。そこで**古い数を書き写さず**、読めた時だけ 1 文を足す ——
+ * 「入っていない」と「読めなかった」を混ぜないのと同じ規律である。
+ */
+function transferBytes(rel) {
+  try {
+    const buf = fs.readFileSync(path.join(ROOT, rel));
+    // gzip は GitHub Pages が text/html に実際に掛ける形。生の byte 数ではなく
+    // 利用者が払う転送量を名乗る (level は既定で、Pages の設定を再現はしない)。
+    return zlib.gzipSync(buf).length;
+  } catch {
+    return null;
+  }
+}
+
+function megabytes(bytes) {
+  // 10^6 で割る (ブラウザのダウンロード表示と同じ読み方)。
+  return (bytes / 1e6).toFixed(2);
+}
+
+/**
+ * 2 つの版の違いを 1 文で述べ、転送量は**測れたときだけ**続ける。
+ * 違いは `vite.config.ts` の LITE 分岐 (`VERIFIED_CONCEPTS = []`) ただ 1 つで、
+ * それ以外のナレッジ (コンプライアンス / 補助金 / 相談窓口 / 経済史) は両版に載る。
+ */
+function buildChoiceNote(total) {
+  const base =
+    `\u{1F4F1} 軽量版は学術コーパス (AI アシスタントが根拠に引く学術概念) を積んでいません。`
+    + `その 1 点を除き ${total} サービスはフル版と同じで、実機の E2E も両版に同じ件数を通しています。`;
+  const full = transferBytes('dist/standalone.html');
+  const lite = transferBytes('dist/standalone-lite.html');
+  if (full === null || lite === null) return base;
+  return base + ` 転送量の実測 (gzip): 軽量版 ${megabytes(lite)} MB / フル版 ${megabytes(full)} MB。`;
+}
+
 function faviconDataUri() {
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">` +
@@ -364,6 +421,7 @@ function buildHtml(services, tests) {
   h1{font-size:clamp(34px,6vw,56px);margin:12px 0 8px;line-height:1.1}
   .tagline{color:var(--mute);font-size:clamp(15px,2.5vw,19px);max-width:680px;margin:0 auto 28px}
   .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .build-note{max-width:620px;margin:16px auto 0;font-size:12.5px;line-height:1.7;color:var(--mute)}
   .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:15px;border:1px solid transparent;cursor:pointer}
   .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{filter:brightness(1.08)}
   .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}.btn-ghost:hover{background:var(--elev)}
@@ -395,8 +453,10 @@ function buildHtml(services, tests) {
     <p class="tagline">${esc(total)} のサービス（SaaS 連携・分析ツール・士業・税務試算・業務操作）を統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。</p>
     <nav class="cta" aria-label="主要アクション">
       <a class="btn btn-primary" href="./app.html">▶ フル版をブラウザで開く</a>
+      <a class="btn btn-ghost" href="./lite.html">📱 軽量版を開く</a>
       <a class="btn btn-ghost" href="${REPO_URL}" target="_blank" rel="noopener">GitHub で見る</a>
     </nav>
+    <p class="note build-note">${buildChoiceNote(total)}</p>
   </div></header>
   <div class="wrap"><div class="metrics">
     <div class="metric"><div class="num">${total}</div><div class="lbl">サービス</div></div>
@@ -416,7 +476,7 @@ ${CATEGORY_ORDER.map(section).join('')}
     <div class="feat"><h3>🖥 2 形態 1 コード</h3><p>同一コードから Electron デスクトップとブラウザ単体 HTML を生成。</p></div>
   </div></div></div>
   <footer><div class="wrap">
-    <nav aria-label="フッターリンク"><a href="./app.html">フル版を開く</a> · <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></nav>
+    <nav aria-label="フッターリンク"><a href="./app.html">フル版を開く</a> · <a href="./lite.html">軽量版を開く</a> · <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></nav>
     <p class="note">※ 各サービスの数値は説明用のスナップショットです。実データはフル版でトークンを設定すると取得できます。税・財務は概算であり税務/財務助言ではありません。</p>
     <p class="note">© ${year} Service Hub</p>
   </div></footer>
@@ -445,6 +505,20 @@ function selfCheck(html, services, entryCount) {
   if (cards !== services.length) throw new Error(`card count ${cards} != services ${services.length}`);
   const external = (html.match(/src=["']https?:|<link[^>]+rel=["']stylesheet/gi) || []).length;
   if (external > 0) throw new Error(`landing must be self-contained but has ${external} external ref(s)`);
+  // **publish した版は入口から辿れる** (パス 480)。`pages.yml` は `lite.html` を
+  // スマホ回線のために publish しているのに、2026-09-26 までこのランディングは
+  // その名前を 1 度も出しておらず (実測 0 件)、唯一の入口がフル版だった。
+  // ここは「消えたら落ちる」ための床で、母集団そのもの (pages.yml が publish する
+  // アプリ HTML の全件) は `mobileEntryPointReachable.test.ts` が両方向で持つ。
+  for (const target of ['./app.html', './lite.html']) {
+    const links = (html.match(new RegExp(`href="${target.replace('.', '\\.')}"`, 'g')) || []).length;
+    if (links < 2) {
+      throw new Error(
+        `landing links to ${target} ${links} time(s) — 見出しとフッターの 2 か所で名乗ること`
+          + ' (publish した版のうち入口から辿れない物を作らない · パス 480)',
+      );
+    }
+  }
 }
 
 function main() {
@@ -461,6 +535,9 @@ function main() {
 
 // 読み込むだけで dist/ へ書き出していたので、外から証人を立てられなかった。
 // (build-knowledge-vault.cjs と同じ形。2026-08-28 に両方へ番をつけた。)
-module.exports = { parseServices, parseServicesFromText, countEntries };
+// `buildHtml` / `selfCheck` / `buildChoiceNote` も出す (パス 480) —— 公開した版が入口から
+// 辿れるかは**組んだ HTML を見ないと言えない**。ソースを grep すると「href の綴りが在る」
+// しか分からず、注記の中の言及でも満たされる (法則 mention-vs-declaration)。
+module.exports = { parseServices, parseServicesFromText, countEntries, buildHtml, selfCheck, buildChoiceNote };
 
 if (require.main === module) main();
