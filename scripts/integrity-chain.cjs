@@ -675,16 +675,98 @@ const DECLARED_REMOVALS = {
   89: {
     removed: ['updateCheck.ts'],
     kind: 'to-exclusions',
-    why: '更新確認を保護対象から除外台帳へ移した回。理由つきで DEP_EXCLUSIONS に在る。',
+    // ★ `to-exclusions` は **それ自身では何も証明しない** —— 述語が見るのは
+    //   「その名前が DEP_EXCLUSIONS に在るか」で、それは移した本人がやったことである。
+    //   だから `heldBy` (判断を今持っている保護対象) を名乗らせ、機械で
+    //   「それが保護対象であること」と「本当にこのファイルを読んでいること」を確かめる。
+    heldBy: 'src/main/main.ts',
+    why: '更新確認を保護対象から除外台帳へ移した回。理由つきで DEP_EXCLUSIONS に在り、'
+      + '読んでいるのは main.ts (保護対象) ただ 1 つ。実際に開いてよいかを決めるのは'
+      + ' externalUrlGate (保護対象)、配布経路は release.yml (保護対象) が持つ。',
   },
 };
+
+/** 読めれば本文、読めなければ null (飾りの初期値を置かないため)。 */
+function readIfPossible(abs) {
+  try {
+    return fs.readFileSync(abs, 'utf8');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `target` を読んでいる保護対象を全部返す (閉包の検査とまったく同じ辺の作り方)。
+ *
+ * 2026-09-26 (パス 476): `to-exclusions` の宣言が名乗る `heldBy` を機械で
+ * 検めるために要った。**綴りで「読んでいそう」を判定しない** —— 辺は
+ * `dependencySpecs` + `resolveRelativeImport` で、閉包が使うのと同じ 1 つである。
+ */
+function protectedReadersOf(target, protectedList) {
+  const out = [];
+  for (const rel of protectedList) {
+    const kind = /\.(ts|tsx)$/.test(rel)
+      ? 'esm'
+      : /\.(cjs|js)$/.test(rel)
+        ? 'cjs'
+        : /^\.github\/workflows\/.*\.ya?ml$/.test(rel)
+          ? 'workflow'
+          : null;
+    if (kind === null) continue;
+    const abs = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(abs)) continue;
+    // 読めなければ飛ばす。**飾りの初期値を置かない** (eslint の no-useless-assignment
+    // が正しく鳴る —— 使われない初期値は「読めたとき」の枝と見分けが付かない)。
+    const text = readIfPossible(abs);
+    if (text === null) continue;
+    for (const spec of dependencySpecs(text, kind)) {
+      const t =
+        kind === 'workflow'
+          ? (fs.existsSync(path.join(REPO_ROOT, spec)) ? spec : null)
+          : resolveRelativeImport(rel, spec);
+      if (t === target) {
+        out.push(rel);
+        break;
+      }
+    }
+  }
+  return out;
+}
 
 /** 使える `kind` と、それが今日も本当かを確かめる述語。 */
 const REMOVAL_KINDS = {
   // 別の道へ移った: 同じ basename が今も保護対象に在る。
-  moved: (name, prot) => prot.some((p) => path.basename(p) === name),
-  // 除外台帳へ移った: 理由つきで DEP_EXCLUSIONS に在る。
-  'to-exclusions': (name, _prot, exc) => Object.keys(exc).some((p) => path.basename(p) === name),
+  //   これは**移した本人には作れない事実**なので、それ自身が証明になる。
+  moved: (name, prot) => (prot.some((p) => path.basename(p) === name) ? null : '同じ名前の保護対象が無い'),
+  /*
+   * 除外台帳へ移った。
+   *
+   * ★ 「DEP_EXCLUSIONS に在るか」だけを見ると**自己証明**になる —— 移した本人が
+   *   その行を書いたのだから、必ず真になる。2026-09-26 (パス 476) に実測した:
+   *   `src/renderer/security/vault.ts` を PROTECTED から DEP_EXCLUSIONS へ移して
+   *   `to-exclusions` として宣言すると `chain:verify` は **exit 0** で、
+   *   以後その中身を書き換えても鎖に映らなかった。
+   *
+   *   だから宣言に `heldBy` (判断を今持っている保護対象) を書かせ、
+   *   ① それが保護対象であること ② **本当にこのファイルを読んでいること** を
+   *   機械で確かめる。②は移した本人には作れない (辺を足すには読み手の側を
+   *   編集することになり、そちらは保護対象なので鎖に出る)。
+   *
+   *   これで「壁がハッシュの外へ出る」ことは止まらない —— 止めるのは
+   *   `lint:mutation-scope` の `WALLS_VIA_EXCLUSION` (名指しの台帳) の側である。
+   *   ここが止めるのは「誰が代わりに持つのかを言わないまま出ること」である。
+   */
+  'to-exclusions': (name, prot, exc, row) => {
+    const target = Object.keys(exc).find((p) => path.basename(p) === name);
+    if (target === undefined) return '除外台帳に無い';
+    const heldBy = row && row.heldBy;
+    if (typeof heldBy !== 'string' || heldBy.trim() === '') return 'heldBy (判断を持つ保護対象) を名乗っていない';
+    if (!prot.includes(heldBy)) return `heldBy の ${heldBy} が保護対象ではない`;
+    if (!protectedReadersOf(target, prot).includes(heldBy)) {
+      return `heldBy の ${heldBy} は ${target} を読んでいない`;
+    }
+    return null;
+  },
 };
 
 /**
@@ -756,10 +838,11 @@ function collectRemovalProblems(chain, declared, protectedList, exclusions) {
       }
     }
     for (const name of row.removed || []) {
-      if (!check(name, protectedList, exclusions || {})) {
+      const why = check(name, protectedList, exclusions || {}, row);
+      if (why !== null) {
         problems.push(
           `ブロック #${ev.index} は ${name} を ${row.kind} と宣言しているが、今日それが成り立たない`
-            + ' (保護対象からも除外台帳からも消えている = 理由の無いまま壁が 1 枚減っている)',
+            + ` (${why})`,
         );
       }
     }
@@ -1267,10 +1350,46 @@ function cmdSelfTest() {
       'moved が今日も成り立てば通る',
       collectRemovalProblems(noteOnly, declared, ['src/other/gone.ts'], {}).length === 0,
     );
+    /*
+     * ★★ パス 476 の決定的な self-test —— **除外台帳に足しただけでは通らない。**
+     *
+     * 直す前の述語は「その名前が DEP_EXCLUSIONS に在るか」だけを見ていた。それは
+     * 移した本人が書いた行なので必ず真になる = 自己証明である。実測では
+     * `src/renderer/security/vault.ts` を移して宣言するだけで exit 0 だった。
+     */
     check(
-      'to-exclusions は除外台帳を見る',
+      '★ to-exclusions: 除外台帳に足しただけでは通らない (heldBy が無い)',
       collectRemovalProblems(noteOnly, { 1: { removed: ['gone.ts'], kind: 'to-exclusions', why: 'これは十分に長い理由の文です。' } },
-        [], { 'src/x/gone.ts': '理由' }).length === 0,
+        [], { 'src/x/gone.ts': '理由' }).some((m) => m.includes('heldBy')),
+    );
+    check(
+      '★ to-exclusions: heldBy が保護対象でなければ鳴る',
+      collectRemovalProblems(noteOnly,
+        { 1: { removed: ['gone.ts'], kind: 'to-exclusions', heldBy: 'src/z/reader.ts', why: 'これは十分に長い理由の文です。' } },
+        [], { 'src/x/gone.ts': '理由' }).some((m) => m.includes('保護対象ではない')),
+    );
+    check(
+      '★ to-exclusions: heldBy が保護対象でも、そのファイルを読んでいなければ鳴る',
+      collectRemovalProblems(noteOnly,
+        { 1: { removed: ['gone.ts'], kind: 'to-exclusions', heldBy: 'src/main/main.ts', why: 'これは十分に長い理由の文です。' } },
+        ['src/main/main.ts'], { 'src/x/gone.ts': '理由' }).some((m) => m.includes('読んでいない')),
+    );
+    check(
+      'to-exclusions: 実物の組 (updateCheck.ts ← main.ts) なら通る',
+      collectRemovalProblems(
+        { blocks: [
+          { index: 0, leafCount: 3, note: 'genesis' },
+          { index: 1, leafCount: 3, note: 'update -src/shared/updateCheck.ts,a.ts' },
+        ] },
+        { 1: { removed: ['updateCheck.ts'], kind: 'to-exclusions', heldBy: 'src/main/main.ts', why: 'これは十分に長い理由の文です。' } },
+        PROTECTED, DEP_EXCLUSIONS,
+      ).length === 0,
+    );
+    check(
+      '★ 読み手を数えるのは閉包と同じ辺 (綴りで「読んでいそう」を判定しない)',
+      protectedReadersOf('src/shared/updateCheck.ts', PROTECTED).length === 1
+        && protectedReadersOf('src/shared/updateCheck.ts', PROTECTED)[0] === 'src/main/main.ts'
+        && protectedReadersOf('src/shared/updateCheck.ts', []).length === 0,
     );
     check(
       '★ 知らない kind は鳴る (語彙を閉じている)',
@@ -1360,6 +1479,7 @@ module.exports = {
   block_note_changed,
   dependencySpecs,
   resolveRelativeImport,
+  protectedReadersOf,
 };
 
 if (require.main === module) {

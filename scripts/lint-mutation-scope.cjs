@@ -194,6 +194,34 @@ const ledgerTotal = () => Object.values(PRAGMA_BARE).reduce((a, b) => a + b, 0);
  * 中の pragma も含めて何も測られていない状態が「緑」に見える。
  * 外すときは、なぜもう壁ではないのかを添えてこの表から消すこと。
  */
+/*
+ * 「必ず測る壁」のうち、改竄検知では**除外台帳の側**に在ることを認めた物。
+ *
+ * 2026-09-26 (パス 476) に足した。それまで `checkWallsAreProtected` は
+ * `PROTECTED` と `DEP_EXCLUSIONS` を **どちらでもよい**として受けていたが、
+ * 2 つの台帳は**逆のことを意味する** —— `PROTECTED` は「中身のハッシュを取る」、
+ * `DEP_EXCLUSIONS` は「取らないと決めた」である。だから壁の名前を
+ * 一方から他方へ移すだけで、壁はハッシュの外へ出られた。
+ *
+ * 実測 (2026-09-26 · 隔離した写しで `src/renderer/security/vault.ts` を
+ * `PROTECTED` から `DEP_EXCLUSIONS` へ移し、鎖に宣言つきで append する):
+ *   chain:verify           ✅ exit 0「保護対象 93 ファイルが tip と一致」
+ *   lint:mutation-scope    ✅ exit 0
+ *   その後に中身を 1 行書き換える → ✅ exit 0 (tipManifest に居ないので映らない)
+ * `vault.ts` はブラウザ版の保管庫 (AES-GCM-256 · PBKDF2 600k) で、
+ * この名簿にも「マスターパスワードから鍵を作る所」として載っている。
+ *
+ * 除外の道そのものは残す —— 実測で 35 の壁のうち **1 件**がそれで満たしており
+ * (`updateCheck.ts` · 鎖のブロック #89 で宣言つきに移った)、道を閉じると
+ * 今日の実物が落ちる。塞ぐのは「名指しされていない移動」のほうである。
+ */
+const WALLS_VIA_EXCLUSION = {
+  'src/shared/updateCheck.ts':
+    '版の比較と案内先 URL のホスト検証。ハッシュの外に置いてよいのは、OS に URL を開かせる可否を'
+    + '決めるのが externalUrlGate (保護対象) で、配布経路は release.yml (保護対象) が持つため。'
+    + '鎖のブロック #89 で宣言つきに移った (DECLARED_REMOVALS)。',
+};
+
 const MUST_MEASURE = {
   'src/main/clients/exportPaths.ts': '書き出し先の唯一の関門 (4 サービスが通る)',
   'src/renderer/network/proxy.ts':   'BYO プロキシの送り先判定 (SSRF の関門)',
@@ -710,20 +738,43 @@ function selfTest() {
   // ── 名簿どうしの突き合わせ ──
   {
     const chain = (prot, exc) => ({ PROTECTED: prot, DEP_EXCLUSIONS: exc });
+    const W = { 'a/w.ts': '理由の散文' };
     const cases = [
-      ['壁が保護対象なら通る', { 'a/w.ts': 'wall' }, chain(['a/w.ts'], {}), 0],
-      ['壁が除外台帳なら通る', { 'a/w.ts': 'wall' }, chain([], { 'a/w.ts': '理由' }), 0],
-      ['★ どちらにも無ければ鳴る', { 'a/w.ts': 'wall' }, chain([], {}), 1],
-      ['複数の壁それぞれで鳴る', { 'a/w.ts': 'w', 'b/x.ts': 'w' }, chain([], {}), 2],
-      ['名簿が読めなければ鳴る', { 'a/w.ts': 'w' }, null, 1],
-      ['PROTECTED が配列でなければ鳴る', { 'a/w.ts': 'w' }, { PROTECTED: 'x' }, 1],
+      ['壁が保護対象なら通る', { 'a/w.ts': 'wall' }, chain(['a/w.ts'], {}), 0, {}],
+      // ★ ここが パス 476 で変えた所 —— 除外の道は台帳に在るときだけ通る。
+      ['★ 壁が除外台帳だけなら鳴る (台帳に無い)', { 'a/w.ts': 'wall' }, chain([], { 'a/w.ts': '理由' }), 1, {}],
+      ['台帳に在れば除外の道も通る', { 'a/w.ts': 'wall' }, chain([], { 'a/w.ts': '理由' }), 0, W],
+      ['★ どちらにも無ければ鳴る', { 'a/w.ts': 'wall' }, chain([], {}), 1, {}],
+      ['複数の壁それぞれで鳴る', { 'a/w.ts': 'w', 'b/x.ts': 'w' }, chain([], {}), 2, {}],
+      ['名簿が読めなければ鳴る', { 'a/w.ts': 'w' }, null, 1, {}],
+      ['PROTECTED が配列でなければ鳴る', { 'a/w.ts': 'w' }, { PROTECTED: 'x' }, 1, {}],
+      // 逆向き (両方向) —— 台帳の行が指す先が変わったら「消せ」と鳴る。
+      ['★ 逆向き: 壁でない物が台帳に在れば鳴る', {}, chain([], { 'a/w.ts': '理由' }), 1, W],
+      ['★ 逆向き: 保護対象へ戻ったのに台帳に在れば鳴る', { 'a/w.ts': 'w' }, chain(['a/w.ts'], {}), 1, W],
+      ['★ 逆向き: 除外台帳から消えたのに台帳に在れば鳴る', { 'a/w.ts': 'w' }, chain(['a/w.ts'], {}), 1, W],
+      // ★ 決定的: 保護対象だった壁を除外台帳へ「移す」形 (パス 476 の実測そのもの)。
+      ['★ 壁を保護対象から除外台帳へ移すと鳴る', { 'a/w.ts': 'w' }, chain([], { 'a/w.ts': '呼び出し側が持つ' }), 1, {}],
     ];
-    for (const [label, must, chainData, expected] of cases) {
-      const n = checkWallsAreProtected(must, chainData).length;
+    for (const [label, must, chainData, expected, via] of cases) {
+      const n = checkWallsAreProtected(must, chainData, via).length;
       const ok = n === expected;
       if (!ok) failed += 1;
       console.log(`  ${ok ? '✓' : '✗'} 名簿: ${label}: ${n} 件 (期待 ${expected})`);
     }
+  }
+
+  // ── 実物: 除外で満たしている壁は台帳どおりか (双方向・実測 35 の壁のうち 1 件) ──
+  {
+    const live = checkWallsAreProtected();
+    const ok = live.length === 0;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 実物: 壁と 2 つの台帳が噛み合っている: ${live.length} 件 (期待 0)`);
+    const okLedger = Object.keys(WALLS_VIA_EXCLUSION).every((f) => Object.hasOwn(MUST_MEASURE, f));
+    if (!okLedger) failed += 1;
+    console.log(`  ${okLedger ? '✓' : '✗'} 実物: WALLS_VIA_EXCLUSION の行はどれも「必ず測る壁」`);
+    const okReason = Object.values(WALLS_VIA_EXCLUSION).every((r) => typeof r === 'string' && r.trim().length >= 15);
+    if (!okReason) failed += 1;
+    console.log(`  ${okReason ? '✓' : '✗'} 実物: WALLS_VIA_EXCLUSION の理由が省略形でない (15 字以上)`);
   }
 
   // ── 逆向き: 守る壁が測られているか ──
@@ -1100,7 +1151,7 @@ function checkProtectedAreMeasured(protectedOverride, mutateOverride, ledgerOver
  *
  * @param mustOverride / @param chainOverride self-test の差し込み口。
  */
-function checkWallsAreProtected(mustOverride, chainOverride) {
+function checkWallsAreProtected(mustOverride, chainOverride, viaOverride) {
   const must = mustOverride ?? MUST_MEASURE;
   const chain =
     chainOverride ??
@@ -1116,13 +1167,33 @@ function checkWallsAreProtected(mustOverride, chainOverride) {
   }
   const protectedSet = new Set(chain.PROTECTED);
   const excluded = new Set(Object.keys(chain.DEP_EXCLUSIONS ?? {}));
+  const viaExc = viaOverride ?? WALLS_VIA_EXCLUSION;
   const problems = [];
   for (const file of Object.keys(must)) {
-    if (protectedSet.has(file) || excluded.has(file)) continue;
+    if (protectedSet.has(file)) continue;
+    if (excluded.has(file)) {
+      // 除外の道は**名指しの台帳に在るときだけ**認める (上の注記の理由)。
+      if (Object.hasOwn(viaExc, file)) continue;
+      problems.push(
+        `${file} は「必ず測る壁」なのに、改竄検知では除外台帳 (= ハッシュを取らない側) に在る ` +
+          '(WALLS_VIA_EXCLUSION に理由つきで載せるか、PROTECTED へ戻すこと)',
+      );
+      continue;
+    }
     problems.push(
       `${file} は「必ず測る壁」なのに改竄検知の保護対象でも除外台帳でもない ` +
         '(integrity-chain.cjs の PROTECTED へ足すか、DEP_EXCLUSIONS に理由つきで載せること)',
     );
+  }
+  // 逆向き: 台帳の行が、もう「除外で満たしている壁」を指していないなら消す。
+  for (const file of Object.keys(viaExc)) {
+    if (!Object.hasOwn(must, file)) {
+      problems.push(`WALLS_VIA_EXCLUSION の ${file} は「必ず測る壁」ではありません (台帳から消すこと)`);
+    } else if (protectedSet.has(file)) {
+      problems.push(`WALLS_VIA_EXCLUSION の ${file} は保護対象へ戻っています (台帳から消すこと)`);
+    } else if (!excluded.has(file)) {
+      problems.push(`WALLS_VIA_EXCLUSION の ${file} は除外台帳に在りません (台帳から消すこと)`);
+    }
   }
   return problems;
 }
@@ -1145,6 +1216,7 @@ module.exports = {
   MAX_SPAN,
   MUST_MEASURE,
   KNOWN_UNMEASURED,
+  WALLS_VIA_EXCLUSION,
 };
 
 if (require.main === module) {
