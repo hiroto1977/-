@@ -66,7 +66,8 @@ const tool = req('../../../scripts/audit-gate-floors.cjs') as {
   MECHANISMS: readonly string[];
   thinnableGates: () => string[];
   TRANSPARENCY: Record<string, { visible: string; why: string }>;
-  partialVerdict: (x: { gate: string; report: { dropped: number } | null; status: number }) => string;
+  partialVerdict: (x: { gate: string; report: { dropped: number } | null; status: number;
+    transparency?: Record<string, { visible: string; why: string }> }) => string;
   preambleInsertAt: (lines: readonly string[]) => number;
   scriptOf: (cmd: string) => string;
   declaredGroups: (script: string) => { mode: string; arg: string }[];
@@ -260,7 +261,11 @@ describe('宣言と道具の台帳 (双方向)', () => {
    */
   it('★ 道具が見えている台帳は THINNING の部分集合で、語彙が閉じている', () => {
     const visibleKinds = ['exit-code', 'output'];
-    expect(Object.keys(tool.TRANSPARENCY).length, '台帳が空').toBeGreaterThanOrEqual(1);
+    // ★ **床は「0 件でない」には置かない** —— 台帳は減るのが正しい向きで、パス 474 で
+    //   外から注入する形へ移したら実測 25 / 25 が透明になり 0 件になった。実測に張り付けた
+    //   床は直した日に落ちる門になる (パス 378)。機構が生きていることは下の it が
+    //   **合成の台帳**で見る (実在するゲートに依らない)。
+    expect(Object.keys(tool.TRANSPARENCY).length, '実測 2026-09-26: 外から注入すると全部透明').toBe(0);
     for (const [gate, v] of Object.entries(tool.TRANSPARENCY)) {
       expect(Object.hasOwn(tool.THINNING, gate), `${gate} が THINNING にない`).toBe(true);
       expect(visibleKinds, `${gate} の visible が未知`).toContain(v.visible);
@@ -274,8 +279,6 @@ describe('宣言と道具の台帳 (双方向)', () => {
     for (const [gate, t] of Object.entries(tool.THINNING)) {
       if (t.expect === 'instrument-rings') expect(tool.TRANSPARENCY[gate]?.visible, gate).toBe('exit-code');
     }
-    // 実測 (2026-09-26): 整合性チェーンは自分の原文をハッシュするので道具が見える。
-    expect(tool.TRANSPARENCY['chain:verify']?.visible).toBe('exit-code');
   });
 
   /**
@@ -284,18 +287,24 @@ describe('宣言と道具の台帳 (双方向)', () => {
    * 見えず、`integrity-chain.cjs` に走査が 1 つ入った日に**偽の `rings`** が出る形だった。
    */
   it('★ 道具が鳴らせた答えを「ゲートが気付いた」と読まない', () => {
+    // **合成の台帳で試す** —— 実物は 0 件なので、実在するゲート名に依ると
+    // `instrument-rings` の枝が 1 度も走らない標本になる (パス 474)。
+    const fake = {
+      'gate:visible': { visible: 'exit-code', why: '合成' },
+      'gate:noisy': { visible: 'output', why: '合成' },
+    };
     const v = (gate: string, dropped: number | null, status: number) =>
-      tool.partialVerdict({ gate, report: dropped === null ? null : { dropped }, status });
-    expect(v('lint:charset', 5, 1)).toBe('rings');
-    expect(v('lint:charset', 5, 0)).toBe('silent');
-    expect(v('lint:charset', 0, 1)).toBe('not-dropped');
-    expect(v('lint:charset', null, 1)).toBe('no-report');
+      tool.partialVerdict({ gate, report: dropped === null ? null : { dropped }, status, transparency: fake });
+    expect(v('gate:plain', 5, 1)).toBe('rings');
+    expect(v('gate:plain', 5, 0)).toBe('silent');
+    expect(v('gate:plain', 0, 1)).toBe('not-dropped');
+    expect(v('gate:plain', null, 1)).toBe('no-report');
     // 落とした件数に依らない —— 走査が生えても rings と読まない (決定的な検査)。
-    expect(v('chain:verify', 0, 1)).toBe('instrument-rings');
-    expect(v('chain:verify', 150, 1)).toBe('instrument-rings');
+    expect(v('gate:visible', 0, 1)).toBe('instrument-rings');
+    expect(v('gate:visible', 150, 1)).toBe('instrument-rings');
     // 出力だけが見えるゲートは、終了コードが素と同じなので間引きの答えを読める。
-    expect(v('verify:arch', 5, 1)).toBe('rings');
-    expect(v('verify:arch', 5, 0)).toBe('silent');
+    expect(v('gate:noisy', 5, 1)).toBe('rings');
+    expect(v('gate:noisy', 5, 0)).toBe('silent');
   });
 
   /**

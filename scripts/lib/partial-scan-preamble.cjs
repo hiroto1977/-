@@ -28,11 +28,24 @@
  * 環境変数:
  *   AUDIT_PARTIAL_MODE   'ext' | 'root' | 'keep'   落とし方
  *   AUDIT_PARTIAL_ARG    '.tsx' | 'scripts' | '50' 対象 (keep は**群ごとに**残す百分率)
- *   AUDIT_PARTIAL_OUT    書き出す先 (kept / dropped / 群ごとの件数)
+ *   AUDIT_PARTIAL_OUT    報告を書く**ディレクトリ** (`<pid>.json` を置く)
  *   AUDIT_PARTIAL_TARGET 'all' | 'git' | 'fs'      どの数え方を殺すか (既定 all)
  *
  * **答えは終了コードで、この前置きは 1 度も終了コードに触らない。** 報告が書けなくても
  * ゲートの答えは変えない (書けなかったことは呼ぶ側が「落とせていない」として扱う)。
+ *
+ * ## 報告は**プロセスごと** (2026-09-26 · パス 474)
+ *
+ * パス 473 までは原文の行 0 に `require` を差し込んでいたので、instrument されるのは
+ * **親だけ**だった。パス 474 で `NODE_OPTIONS=--require` へ移したら**子プロセスも**前置きを
+ * 読むようになり、**同じ 1 つのファイルへ書くと最後に終わったプロセスが上書きする** ——
+ * 実測 (2026-09-26): `verify:arch` (子を 6 回 spawn する) の報告が `kept: 0, dropped: 0` になり、
+ * 親が落とした件数が**丸ごと消えた**。それを「落とせていない」と読むと、鳴った理由が
+ * すり替わる (パス 470 の忠実さの教訓と同じ形)。
+ *
+ * だから `AUDIT_PARTIAL_OUT` は**ディレクトリ**で、各プロセスが `<pid>.json` を置く。
+ * 合計は呼ぶ側が足す —— 親と子は同じ木を歩くので、**どちらの走査が死んだかではなく
+ * 「合わせてどれだけ死んだか」**が測りたい量である。
  */
 
 (() => {
@@ -167,7 +180,8 @@
   };
   if (OUT) {
     process.on('exit', () => {
-      try { fs.writeFileSync(OUT, JSON.stringify(seen)); } catch { /* 報告できなくても答えは変えない */ }
+      // **プロセスごとに別のファイル** —— 1 つに書くと最後に終わった子が親を上書きする。
+      try { fs.writeFileSync(path.join(OUT, `${process.pid}.json`), JSON.stringify(seen)); } catch { /* 報告できなくても答えは変えない */ }
     });
   }
 })();

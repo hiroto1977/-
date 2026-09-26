@@ -808,11 +808,11 @@ const THINNING = {
       + '内容差分が消えた',
   },
   'chain:verify': {
-    expect: 'instrument-rings',
-    why: '母集団が名指しの保護対象の一覧なので readdirSync の間引きでは 1 件も落とせない。★★ そのうえ**この門はこの道具で'
-      + '測れない** —— `integrity-chain.cjs` はそれ自身が保護対象なので、前置きを差し込むことが検出される違反そのものである'
-      + ' (実測 2026-09-26: 間引きを 1 件も掛けなくても exit 1)。「落とせなかった」も「鳴った」も床の証拠にならないので、'
-      + '道具が instrument-rings として区別する',
+    expect: 'not-dropped',
+    why: '母集団が名指しの保護対象の一覧なので readdirSync の間引きでは 1 件も落とせない。★ 「落とせなかった」を「床が在る」と'
+      + '読まない —— 道具が not-dropped として区別する。★★ パス 473 まではもう 1 つ理由が在った: 前置きを**差し込んで**いたので'
+      + ' `integrity-chain.cjs` 自身のハッシュが合わず、間引きを 1 件も掛けなくても exit 1 —— **原理的に測れなかった**。'
+      + 'パス 474 で外から注入する形へ移し**透明になった**ので、残る理由はこの 1 つだけである',
   },
 };
 
@@ -846,17 +846,13 @@ const THINNING = {
  *   'output'    —— 出力だけが変わる。終了コードは動かないので間引きの答えは読める
  */
 const TRANSPARENCY = {
-  'verify:arch': {
-    visible: 'output',
-    why: '差し込んだ 1 行が `tracked line count` に出る (実測 967617 → 967618)。**床は 600000 なので判定は動かない**'
-      + ' —— 終了コードは素と同じ 0 で、間引きの答えはそのまま読める',
-  },
-  'chain:verify': {
-    visible: 'exit-code',
-    why: '`integrity-chain.cjs` はそれ自身が保護対象なので、前置きを差し込むことが**この門が検出する違反そのもの**'
-      + ' (実測: 素 exit 0 / 差し込むと exit 1「変更: integrity-chain.cjs」)。間引きを 1 件も掛けなくても鳴るので、'
-      + '終了コードからは「ゲートが走査の損失に気付いた」を読めない',
-  },
+  // **2026-09-26 (パス 474) から 0 件。** 前置きを外から注入する形 (`NODE_OPTIONS=--require`) に
+  // 変えたので原文を 1 byte も書き換えず、実測 25 / 25 が透明になった。
+  //
+  // ★ **0 件は「要らない」ではない** (パス 385 の判断と同じ) —— 次に道具が見えるゲートが
+  //   現れたら `--baseline` が「台帳に載せろ」と鳴り、`instrument-rings` として区別される。
+  //   機構が生きていることは self-test が**合成のゲート名**で標本を当てて確かめる
+  //   (実物の見えているゲートに依らない —— 依ると台帳が空になった日に標本が死ぬ)。
 };
 
 /**
@@ -872,8 +868,8 @@ const TRANSPARENCY = {
  * 順序を戻す対照は、判定が `runPartial` の中に埋まっていると
  * 隔離した写しでゲートを走らせる高い道具でしか映らなかった (パス 472 の自戒と同じ形)。
  */
-function partialVerdict({ gate, report, status }) {
-  if (TRANSPARENCY[gate]?.visible === 'exit-code') return 'instrument-rings';
+function partialVerdict({ gate, report, status, transparency = TRANSPARENCY }) {
+  if (transparency[gate]?.visible === 'exit-code') return 'instrument-rings';
   if (report === null) return 'no-report';
   if (report.dropped === 0) return 'not-dropped';
   return status === 0 ? 'silent' : 'rings';
@@ -932,6 +928,79 @@ function preambleInsertAt(lines) {
   return at;
 }
 
+/**
+ * **前置きを外から注入してゲートを走らせる** (2026-09-26 · パス 474)。
+ *
+ * ★★ **原文を 1 byte も書き換えない。** パス 473 までは行を 1 つ差し込んでいたが、
+ * 実測でそれが**道具を測る対象に見せていた** ——
+ *
+ * | ゲート | 差し込むと | 外から注入すると |
+ * | --- | --- | --- |
+ * | `chain:verify` | **exit 1** (自分の原文のハッシュが合わない) | **exit 0 (透明)** |
+ * | `verify:arch` | 足した 1 行が `tracked line count` に出る | **透明** |
+ *
+ * `chain:verify` は**これで初めて測れるようになった** —— 94 の保護対象を守る門が
+ * 「走査の一部の死」に耐えるかは、パス 469〜473 を通して 1 度も分かっていなかった。
+ *
+ * ★ **報告はプロセスごとに集める。** `NODE_OPTIONS` は**子プロセスにも伝わる**ので、
+ * 1 つのファイルへ書くと最後に終わった子が親を上書きする (実測: `verify:arch` は子を
+ * 6 回 spawn し、報告が `kept: 0, dropped: 0` になって親の落とした件数が丸ごと消えた)。
+ * 前置きは `<OUT>/<pid>.json` を置き、ここで足す。
+ *
+ * ★ **報告は木の外へ書く。** 木の根に置くと、木を走査するゲートがその 1 件を数える ——
+ * 実測 (2026-09-26): `lint:charset` の走査が **1663 → 1664** になった。今日は終了コードを
+ * 動かさない (25 / 25) ので**罠であって生きた欠陥ではない**が、置いたファイルで鳴らせた物を
+ * 「ゲートが気付いた」と読む形そのものである。
+ */
+function reportDirFor(wt) {
+  /*
+   * **報告は木の外へ。** 木の根に置くと、木を走査するゲートがその 1 件を数える ——
+   * 実測 (2026-09-26): `lint:charset` の走査が **1663 → 1664** になった。
+   *
+   * ★ **今日は終了コードを動かさない** (25 / 25 · 実測) ので**罠であって生きた欠陥ではない**。
+   *   だから対照は「判定がひっくり返る」形では取れない —— 代わりにこの関数が
+   *   **自分の契約を自分で守る** (返す道が `wt` の中なら投げる)。遠くの self-test に
+   *   頼るのではなく**ここで閉じる**ので、次に置き場を変えた人がその場で気付く。
+   */
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gate-partial-out-'));
+  if (path.resolve(dir).startsWith(`${path.resolve(wt)}${path.sep}`)) {
+    fs.rmSync(dir, { recursive: true, force: true });
+    throw new Error(`報告の置き場が測る木の中です (${dir}) —— 走査するゲートがその 1 件を数えます`);
+  }
+  return dir;
+}
+
+function runInstrumented(wt, cmd, extraEnv) {
+  const outDir = reportDirFor(wt);
+  try {
+    const res = spawnSync('bash', ['-c', cmd], {
+      cwd: wt,
+      encoding: 'utf8',
+      timeout: 900000,
+      env: {
+        ...process.env,
+        // 既にある NODE_OPTIONS を潰さない (無いときは空文字なので前に付くだけ)。
+        NODE_OPTIONS: `--require ${path.join(wt, PREAMBLE_SRC)} ${process.env.NODE_OPTIONS ?? ''}`.trim(),
+        AUDIT_PARTIAL_OUT: outDir,
+        ...extraEnv,
+      },
+    });
+    // プロセスごとの報告を足す。1 つも無ければ `null` (= 落とせていない) として扱う。
+    const parts = [];
+    for (const name of fs.readdirSync(outDir)) {
+      try { parts.push(JSON.parse(fs.readFileSync(path.join(outDir, name), 'utf8'))); } catch { /* 読めない報告は数えない */ }
+    }
+    const report = parts.length === 0 ? null : {
+      kept: parts.reduce((n, x) => n + (x.kept ?? 0), 0),
+      dropped: parts.reduce((n, x) => n + (x.dropped ?? 0), 0),
+      processes: parts.length,
+    };
+    return { status: res.status ?? -1, out: `${res.stdout ?? ''}${res.stderr ?? ''}`, report };
+  } finally {
+    fs.rmSync(outDir, { recursive: true, force: true });
+  }
+}
+
 /** 入口の script に前置きを 1 度だけ差し込む (shebang と `'use strict';` の後ろ)。 */
 function injectPreamble(wt, script) {
   const full = path.join(wt, script);
@@ -973,30 +1042,17 @@ function runPartial(argv) {
     const targetOf = (r) => (r.kind === 'git-ls-files' ? 'git' : 'fs');
 
     const measure = (r, g) => {
-      const out = path.join(wt, '.audit-partial-report.json');
-      try { fs.unlinkSync(out); } catch { /* 初回は無い */ }
-      const res = spawnSync('bash', ['-c', r.cmd], {
-        cwd: wt,
-        encoding: 'utf8',
-        timeout: 900000,
-        env: {
-          ...process.env,
-          AUDIT_PARTIAL_MODE: g.mode,
-          AUDIT_PARTIAL_ARG: g.arg,
-          AUDIT_PARTIAL_OUT: out,
-          AUDIT_PARTIAL_TARGET: targetOf(r),
-        },
+      const res = runInstrumented(wt, r.cmd, {
+        AUDIT_PARTIAL_MODE: g.mode,
+        AUDIT_PARTIAL_ARG: g.arg,
+        AUDIT_PARTIAL_TARGET: targetOf(r),
       });
-      let report = null;
-      try { report = JSON.parse(fs.readFileSync(out, 'utf8')); } catch { /* 読めなければ null */ }
-      const status = res.status ?? -1;
-      const verdict = partialVerdict({ gate: r.gate, report, status });
-      return { verdict, status, dropped: report?.dropped ?? null };
+      const verdict = partialVerdict({ gate: r.gate, report: res.report, status: res.status });
+      return { verdict, status: res.status, dropped: res.report?.dropped ?? null };
     };
 
     for (const r of gates) {
       const script = scriptOf(r.cmd);
-      injectPreamble(wt, script);
       for (const g of (PARTIAL_GATES.includes(r.gate) ? declaredGroups(script) : [])) {
         const m = measure(r, g);
         rows.push({ gate: r.gate, group: `${g.mode} ${g.arg}`, want: 'rings', ...m });
@@ -1430,7 +1486,12 @@ function selfTest() {
    * 「ゲートが気付いた」と読めない。形だけをここで見る (実測は `--baseline`)。
    */
   const VISIBLE_KINDS = new Set(['exit-code', 'output']);
-  check('★ TRANSPARENCY は空でない', Object.keys(TRANSPARENCY).length >= 1);
+  /*
+   * ★ **床は「0 件でない」には置かない** (2026-09-26 · パス 474)。
+   *   台帳は**減るのが正しい向き**で、パス 474 で実測 25 / 25 が透明になり 0 件になった。
+   *   実測に張り付けた床は直した日に落ちる門になる (パス 378)。機構が生きていることは
+   *   下の**合成のゲート名**の標本が見る (実物の見えているゲートに依らない)。
+   */
   check(
     '★ TRANSPARENCY の行はすべて THINNING に在る',
     Object.keys(TRANSPARENCY).every((g) => Object.hasOwn(THINNING, g)),
@@ -1455,30 +1516,54 @@ function selfTest() {
       .filter(([, v]) => v.expect === 'instrument-rings')
       .every(([g]) => TRANSPARENCY[g]?.visible === 'exit-code'),
   );
-  check('★ chain:verify は終了コードが見える (実測 2026-09-26)', TRANSPARENCY['chain:verify']?.visible === 'exit-code');
+  check(
+    '★ 実測 2026-09-26: 外から注入すると 25 / 25 が透明 (台帳は 0 件)',
+    Object.keys(TRANSPARENCY).length === 0,
+  );
+
+  /*
+   * **報告は木の外** —— 木の中に置くと走査するゲートがその 1 件を数える
+   * (実測: `lint:charset` が 1663 → 1664)。終了コードは動かないので判定の対照では
+   * 取れない ——**不変条件として**標本で留める。
+   */
+  const fakeWt = fs.mkdtempSync(path.join(os.tmpdir(), 'gate-selftest-wt-'));
+  try {
+    const rd = reportDirFor(fakeWt);
+    try {
+      check('★ 報告のディレクトリは木の外', !path.resolve(rd).startsWith(`${path.resolve(fakeWt)}${path.sep}`));
+      check('★ 報告のディレクトリは実在して書ける', fs.existsSync(rd) && fs.statSync(rd).isDirectory());
+      // ★ **自分の契約を自分で守る** —— 木の中を渡されたら投げる (置き場を変えた人がその場で気付く)。
+      let threw = false;
+      try { reportDirFor(os.tmpdir()); } catch { threw = true; }
+      check('★ 木が置き場を含んでいれば投げる', threw);
+    } finally { fs.rmSync(rd, { recursive: true, force: true }); }
+  } finally { fs.rmSync(fakeWt, { recursive: true, force: true }); }
 
   /*
    * **判定の順序** —— 道具が終了コードに出るゲートでは、間引きの答えから
    * 「ゲートが気付いた」を読めない。`dropped` より前に問うことを標本で留める。
    */
-  const V = (gate, report, status) => partialVerdict({ gate, report, status });
-  check('★ 透明なゲート: 落として鳴れば rings', V('lint:charset', { dropped: 5 }, 1) === 'rings');
-  check('★ 透明なゲート: 落として鳴らなければ silent', V('lint:charset', { dropped: 5 }, 0) === 'silent');
-  check('★ 1 件も落ちなければ not-dropped', V('lint:charset', { dropped: 0 }, 1) === 'not-dropped');
-  check('★ 報告が無ければ no-report', V('lint:charset', null, 1) === 'no-report');
+  // ★ **合成の台帳で試す** —— 実物の台帳は 0 件なので、実在するゲート名に依ると
+  //   `instrument-rings` の枝が 1 度も走らない標本になる (パス 474)。
+  const FAKE = { 'gate:visible': { visible: 'exit-code', why: '合成' }, 'gate:noisy': { visible: 'output', why: '合成' } };
+  const V = (gate, report, status) => partialVerdict({ gate, report, status, transparency: FAKE });
+  check('★ 透明なゲート: 落として鳴れば rings', V('gate:plain', { dropped: 5 }, 1) === 'rings');
+  check('★ 透明なゲート: 落として鳴らなければ silent', V('gate:plain', { dropped: 5 }, 0) === 'silent');
+  check('★ 1 件も落ちなければ not-dropped', V('gate:plain', { dropped: 0 }, 1) === 'not-dropped');
+  check('★ 報告が無ければ no-report', V('gate:plain', null, 1) === 'no-report');
   check(
-    '★ 道具が終了コードに出るゲートは instrument-rings (落とした件数に依らない)',
-    V('chain:verify', { dropped: 5 }, 1) === 'instrument-rings'
-      && V('chain:verify', { dropped: 0 }, 1) === 'instrument-rings'
-      && V('chain:verify', null, 1) === 'instrument-rings',
+    '★ 道具が終了コードに出るゲートは instrument-rings (落とした件数に依らない · 合成の台帳)',
+    V('gate:visible', { dropped: 5 }, 1) === 'instrument-rings'
+      && V('gate:visible', { dropped: 0 }, 1) === 'instrument-rings'
+      && V('gate:visible', null, 1) === 'instrument-rings',
   );
   check(
     '★ 決定的: 走査が生えても rings と読まない (dropped > 0 で exit 1 でも instrument-rings)',
-    V('chain:verify', { dropped: 150 }, 1) === 'instrument-rings',
+    V('gate:visible', { dropped: 150 }, 1) === 'instrument-rings',
   );
   check(
-    '★ 出力だけが見えるゲートは間引きの答えを読める (verify:arch は rings/silent)',
-    V('verify:arch', { dropped: 5 }, 1) === 'rings' && V('verify:arch', { dropped: 5 }, 0) === 'silent',
+    '★ 出力だけが見えるゲートは間引きの答えを読める (rings/silent · 合成の台帳)',
+    V('gate:noisy', { dropped: 5 }, 1) === 'rings' && V('gate:noisy', { dropped: 5 }, 0) === 'silent',
   );
 
   if (failed > 0) {
@@ -1494,7 +1579,7 @@ module.exports = {
   thinnableGates,
   RECIPES, NO_POPULATION, KINDS, applyRecipe, emptyObjectBody,
   PARTIAL_GATES, THINNING, ENFORCEMENT, TRANSPARENCY, KEEP_PCT, scriptOf, declaredGroups, injectPreamble,
-  preambleInsertAt, partialVerdict,
+  preambleInsertAt, partialVerdict, reportDirFor,
   PREAMBLE_SRC, PREAMBLE_MARK,
 };
 
@@ -1530,13 +1615,10 @@ function runBaseline(argv) {
       return { status: r.status ?? -1, out: `${r.stdout ?? ''}${r.stderr ?? ''}` };
     };
     for (const r of gates) {
-      const script = scriptOf(r.cmd);
-      const abs = path.join(wt, script);
-      const orig = fs.readFileSync(abs, 'utf8');
       const bare = run1(r.cmd);
-      injectPreamble(wt, script);
-      const withP = run1(r.cmd);
-      fs.writeFileSync(abs, orig, 'utf8');
+      // ★ 原文は 1 byte も触らない (パス 474) —— 差し込むと `chain:verify` が自分の
+      //   ハッシュの不一致で鳴り、`verify:arch` は足した 1 行を行数に数えた。
+      const withP = runInstrumented(wt, r.cmd, {});
       const seen = bare.status !== withP.status ? 'exit-code'
         : bare.out !== withP.out ? 'output'
           : null;
