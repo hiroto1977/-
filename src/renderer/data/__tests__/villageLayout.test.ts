@@ -17,12 +17,12 @@ import {
   type Rect,
   type Point,
 } from '../villageLayout';
-import { org, teams, rounds, backlog } from '../../../../orchestration/registry.json';
+import { org, teams, teamFirstRound, backlog } from '../../../../orchestration/registry.json';
 
 const REG: VillageRegistry = {
   org: org as VillageRegistry['org'],
   teams: teams as VillageRegistry['teams'],
-  rounds: rounds as VillageRegistry['rounds'],
+  teamFirstRound: teamFirstRound as VillageRegistry['teamFirstRound'],
   backlog: backlog as VillageRegistry['backlog'],
 };
 

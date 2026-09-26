@@ -12,6 +12,9 @@
  *   4. rounds[].teams と backlog[].team は teams[].id に実在する。
  *   5. round.teamCount は round.teams の要素数と一致する。
  *   6. backlog の id は一意。
+ *  13. teamFirstRound (製品が読む派生索引「チーム → 初出 round」) は rounds から
+ *      導いた物と両方向に一致する (2026-09-26 · パス 483。導出は
+ *      scripts/lib/team-first-round.cjs の 1 つで、書き手 orchestrate.cjs record も同じ物を通る)。
  *
  * さらに「次に何チームで・どの領域を細分化するか」を自動算出して出力する
  * (--plan)。これによりレジストリ自体が次サイクルの設計図になり、増やし続けても
@@ -24,6 +27,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { teamFirstRoundProblems } = require('./lib/team-first-round.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
@@ -105,6 +109,29 @@ function selfTest() {
     if (!pass) bad += 1;
     console.log(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
   }
+
+  // 不変条件 13 —— 派生索引 teamFirstRound (パス 483)。
+  const rounds = [
+    { round: 1, teams: ['a', 'b'] },
+    { round: 2, teams: ['a', 'b', 'c'] },
+  ];
+  const good = () => ({ a: 1, b: 1, c: 2 });
+  const indexCases = [
+    ['健全な索引は 0 件', good(), rounds, 0],
+    ['★ 新しいチームの行が無い (round を足して引き直さなかった形)', { a: 1, b: 1 }, rounds, 1],
+    ['★ 初出が違う (最後に出た round を書いた形)', { a: 2, b: 1, c: 2 }, rounds, 1],
+    ['★ どの round にも現れない行が残る (逆向き)', { ...good(), zz: 1 }, rounds, 1],
+    ['★ 索引が無い / object でない', undefined, rounds, 1],
+    ['配列は object と見なさない', [], rounds, 1],
+    ['初出は配列の順ではなく番号の最小', { a: 1, b: 1, c: 2 }, [rounds[1], rounds[0]], 0],
+    ['文字列の番号は数と見なさない', { a: '1', b: 1, c: 2 }, rounds, 1],
+  ];
+  for (const [name, stored, rs, want] of indexCases) {
+    const got = teamFirstRoundProblems(stored, rs).length;
+    const pass = got === want;
+    if (!pass) bad += 1;
+    console.log(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
+  }
   if (bad > 0) {
     console.error(`\n❌ self-test ${bad} 件が不一致`);
     process.exit(1);
@@ -156,7 +183,7 @@ function main() {
    * と exit 0 を返した。`org` を残したまま中身を空にした場合は 108 件鳴る
    * (検査自体は生きている) ので、穴は外側の条件 1 つだけだった。
    */
-  for (const key of ['version', 'policy', 'teams', 'rounds', 'backlog', 'org']) {
+  for (const key of ['version', 'policy', 'teams', 'rounds', 'teamFirstRound', 'backlog', 'org']) {
     if (!(key in reg)) problems.push(`必須キー "${key}" がありません`);
   }
   if (problems.length) fail(problems);
@@ -316,6 +343,12 @@ function main() {
       if (!teamIds.has(id)) problems.push(`round ${r.round}: 未知の team "${id}"`);
     }
   }
+
+  // 13. 製品が読む派生索引 teamFirstRound は rounds から導いた物と両方向に一致する。
+  //     製品 (村のディスパッチ計画) は rounds (160 KB) を import せずにこの索引だけを
+  //     読むので、ここが食い違うと村の並び順が台帳の履歴と黙って食い違う。
+  //     直し方: `node scripts/orchestrate.cjs record …` で round を足せば引き直される。
+  problems.push(...teamFirstRoundProblems(reg.teamFirstRound, reg.rounds));
 
   // 6. backlog の検証。
   const backlogIds = new Set();

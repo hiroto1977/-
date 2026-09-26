@@ -1162,9 +1162,11 @@ export const LAWS: readonly Law[] = [
     id: 'vault-and-graph-in-sync',
     family: 'knowledge',
     name: '生成物は本体と同期し、本体を網羅する',
-    statement: 'vault・graph・概念表は本体から生成し、committed == 再生成に加えて本体との網羅を検査する。手で行を書かない。',
-    provenance: ['パターン 0-a-5', 'CLAUDE.md knowledge:md'],
-    enforcedBy: [gate('vault:check'), gate('verify:graph'), gate('verify:orchestration')],
+    statement: 'vault・graph・概念表は本体から生成し、committed == 再生成に加えて本体との網羅を検査する。手で行を書かない。'
+      + ' registry の派生索引 (`teamFirstRound` —— チーム → 初出 round) も `rounds` から導いた物と両方向に一致する'
+      + ' (`verify:orchestration` の不変条件 13。導出は 1 つで、書き手 `record` と門が同じ物を通る)。',
+    provenance: ['パターン 0-a-5', 'CLAUDE.md knowledge:md', 'パス 483'],
+    enforcedBy: [gate('vault:check'), gate('verify:graph'), gate('verify:orchestration'), test(T.shared('teamFirstRoundIndex'))],
   },
   {
     id: 'legal-text-current',
@@ -1333,9 +1335,11 @@ export const LAWS: readonly Law[] = [
     id: 'repo-size-ceiling',
     family: 'supply-chain',
     name: '追跡ファイルの大きさに天井',
-    statement: '履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 80 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。',
-    provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井'],
-    enforcedBy: [gate('lint:repo-size'), ci('.github/workflows/ci.yml')],
+    statement: '履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 80 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。'
+      + ' 出荷物へ畳み込む JSON は製品が読む鍵だけ —— 名前付き import は鍵の単位でしか落ちないので、'
+      + '読まない開発側の履歴 (registry の `rounds` 160,558 B) は派生索引へ置き換え、import してはいけない鍵として理由つきで名指しする。',
+    provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483'],
+    enforcedBy: [gate('lint:repo-size'), ci('.github/workflows/ci.yml'), test(T.shared('registryBundleCost'))],
   },
 ];
 

@@ -32,6 +32,8 @@
  *       --team a        自動解決できない要望の割当先 team
  *       --priority N    取込む要望の priority (既定 2)
  *       --dry-run       書き込まず取込み内容のみ表示
+ *   共通: --registry <path>  読み書きする registry を差し替える (検査が写しの上で
+ *       書き手を走らせるための継ぎ目。既定は orchestration/registry.json)
  *
  * 設計: registry は単一の真実源。dispatch は read-only (registry を変更しない)。
  * record / import-requests のみ registry.json に追記し、書き込み後に整合検証
@@ -41,19 +43,33 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { deriveTeamFirstRound } = require('./lib/team-first-round.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
+
+/**
+ * 読み書きする registry の道。既定は実物で、`--registry <path>` で差し替えられる
+ * (2026-09-26 · パス 483)。
+ *
+ * `verify-orchestration.cjs` が 2026-09-25 (パス 467) に開けたのと同じ継ぎ目で、
+ * 開けたのは**書き手を検査から走らせるため**である —— `record` は round を足すたびに
+ * 製品が読む派生索引 `teamFirstRound` を引き直すので、「record した直後の台帳が
+ * 門を通る」ことを写しの上で確かめられないと、その引き直しは誰も見ていない。
+ */
+function registryPath(args) {
+  return typeof args.registry === 'string' && args.registry !== '' ? path.resolve(args.registry) : REGISTRY;
+}
 
 function die(msg) {
   console.error(`❌ orchestrate: ${msg}`);
   process.exit(1);
 }
 
-function loadRegistry() {
+function loadRegistry(file) {
   let reg;
   try {
-    reg = JSON.parse(fs.readFileSync(REGISTRY, 'utf8'));
+    reg = JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (e) {
     die(`registry.json を読めません: ${e.message}`);
   }
@@ -313,7 +329,10 @@ function cmdRecord(reg, args) {
     return;
   }
   reg.rounds.push(entry);
-  fs.writeFileSync(REGISTRY, `${JSON.stringify(reg, null, 2)}\n`);
+  // 製品 (村のディスパッチ計画) が読む派生索引。rounds を足したら必ず引き直す ——
+  // 引き直さないと verify:orchestration の不変条件 13 が「初出 round が無い」と落とす。
+  reg.teamFirstRound = deriveTeamFirstRound(reg.rounds);
+  fs.writeFileSync(registryPath(args), `${JSON.stringify(reg, null, 2)}\n`);
   console.log(`✅ round ${round} を registry に記録 (teamCount=${teams.length})。`);
   console.log('   → `npm run verify:orchestration` で整合を確認してください。');
 }
@@ -417,7 +436,7 @@ function cmdImportRequests(reg, args) {
   }
 
   reg.backlog.push(...entries);
-  fs.writeFileSync(REGISTRY, `${JSON.stringify(reg, null, 2)}\n`);
+  fs.writeFileSync(registryPath(args), `${JSON.stringify(reg, null, 2)}\n`);
   console.log(`✅ ${entries.length} 件の要望を backlog (designed) へ取込みました。`);
   console.log('   → `npm run verify:orchestration` で整合を確認してください。');
   console.log('   → `npm run orchestrate:dispatch` で次ラウンドの実行計画に載ります。');
@@ -469,7 +488,7 @@ function main() {
   const argv = process.argv.slice(2);
   const cmd = (argv[0] && !argv[0].startsWith('--') ? argv.shift() : 'status').toLowerCase();
   const args = parseArgs(argv);
-  const reg = loadRegistry();
+  const reg = loadRegistry(registryPath(args));
   switch (cmd) {
     case 'status': return cmdStatus(reg, args);
     case 'cycle': return cmdCycle(reg, args);

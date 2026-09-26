@@ -10,12 +10,12 @@ import {
   villageSummary,
   type VillageRegistry,
 } from '../villageData';
-import { org, teams, rounds, backlog } from '../../../../orchestration/registry.json';
+import { org, teams, teamFirstRound, backlog } from '../../../../orchestration/registry.json';
 
 const REG: VillageRegistry = {
   org: org as VillageRegistry['org'],
   teams: teams as VillageRegistry['teams'],
-  rounds: rounds as VillageRegistry['rounds'],
+  teamFirstRound: teamFirstRound as VillageRegistry['teamFirstRound'],
   backlog: backlog as VillageRegistry['backlog'],
 };
 
@@ -130,6 +130,53 @@ describe('buildDispatchPlan', () => {
     for (const s of plan) {
       if (blockedTeams.has(s.teamId)) expect(s.status).toBe('blocked');
     }
+  });
+
+  /*
+   * ★ **2 つ目・3 つ目の並びの鍵** (2026-09-26 · パス 483)。直す前は
+   * 「状態の重み」しか主張しておらず、初出 round と id の並びは誰も見ていなかった
+   * —— その初出を `rounds` から数えるのをやめて派生索引から読む形にしたので、
+   * ここで並びそのものを留める。
+   */
+  it('★ 同じ状態の中では初出 round の早い順、同じ round なら id の昇順', () => {
+    const plan = buildDispatchPlan(REG);
+    const weight = (s?: string) =>
+      s === 'in-progress' ? 0 : s === 'designed' ? 1 : s === 'blocked' ? 2 : 3;
+    const first = (id: string): number => REG.teamFirstRound[id] ?? Number.MAX_SAFE_INTEGER;
+    let sameWeight = 0;
+    let sameRound = 0;
+    for (let i = 1; i < plan.length; i++) {
+      const a = plan[i - 1]!;
+      const b = plan[i]!;
+      if (weight(a.status) !== weight(b.status)) continue;
+      sameWeight += 1;
+      expect(first(a.teamId), `${a.teamId} → ${b.teamId}`).toBeLessThanOrEqual(first(b.teamId));
+      if (first(a.teamId) === first(b.teamId)) {
+        sameRound += 1;
+        expect(a.teamId < b.teamId, `${a.teamId} → ${b.teamId} (同じ round は id の昇順)`).toBe(true);
+      }
+    }
+    // 走査が空虚でない (実物で両方の鍵が実際に効いている)。
+    expect(sameWeight).toBeGreaterThanOrEqual(50);
+    expect(sameRound).toBeGreaterThanOrEqual(1);
+  });
+
+  it('★ 索引は prototype を経由せずに引き、数でない値は「未出現」として末尾へ', () => {
+    const team = (id: string) => ({ id, domain: 'x', focus: 'x', active: true, manager: 'm' });
+    const mini: VillageRegistry = {
+      org: {
+        ceo: { id: 'ceo', title: 'CEO' },
+        coo: { id: 'coo', title: 'COO', owns: [] },
+        executives: [],
+        secretaries: [],
+        managers: [],
+      },
+      teams: [team('toString'), team('constructor'), team('b'), team('a')],
+      teamFirstRound: { b: 1, a: 2 },
+      backlog: [],
+    };
+    // 素の添字だと 'constructor' / 'toString' は関数を返し、比較が NaN になって並びが壊れる。
+    expect(buildDispatchPlan(mini).map((s) => s.teamId)).toEqual(['b', 'a', 'constructor', 'toString']);
   });
 });
 

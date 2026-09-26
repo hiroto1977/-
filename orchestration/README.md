@@ -40,7 +40,9 @@ node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priori
   サイクルの **do(設計)** ステージにだけ並列 read-only Agent を割当てた計画を出力する。
   COO (Claude本体) はこの計画に沿って **do=並列Agent起動 → check=直列実装+全ゲート検証 → act=record** を実行する。
 - **record** は round を registry に追記する唯一の書込み口。連番・単調増加・team 実在を強制し、
-  書込み後に `verify:orchestration` で整合を再確認する。
+  書込み後に `verify:orchestration` で整合を再確認する。追記のたびに派生索引 `teamFirstRound`
+  (チーム → 初出 round) も引き直す —— アプリの「AIの村」はこの索引だけを読み、`rounds` (履歴・160 KB)
+  は出荷物に入れない (2026-09-26 · パス 483。導出は `scripts/lib/team-first-round.cjs` の 1 つ)。
 - サイクル定義は `registry.json` の `policy.cycles` (PDCA/OODA) に機械可読で持ち、`verify:orchestration` が
   各ステージの `stage/owner/desc/parallel` 構造を検証する。
 
@@ -151,6 +153,8 @@ npm run orchestration:plan
 # 4. registry.json を更新:
 #    - 新領域なら teams[] に追加
 #    - 実装した round を rounds[] に追記 (teamCount は前ラウンド以上)
+#      → `node scripts/orchestrate.cjs record …` で書く。手で追記したら teamFirstRound も
+#        引き直すこと (verify:orchestration の不変条件 13 が食い違いを名指しで落とす)
 #    - 着手済み backlog の status を shipped に、新たな設計論点を designed で追加
 # 5. npm run verify:orchestration が green であることを確認してコミット
 ```

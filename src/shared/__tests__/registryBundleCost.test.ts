@@ -46,6 +46,22 @@
  * データモデルの決定で、開発側の記録 (どのラウンドで何を出したか) を失う側面がある。
  * ここは**代金を見えるようにする**だけにして、判断は `docs/REMAINING_WORK.md` へ回す。
  *
+ * ## パス 483 (2026-09-26) —— `rounds` を製品から外した
+ *
+ * パス 482 で LITE が **3,401,457 B** になり、CI の警告線を **1,457 B** 超えた。
+ * 上の「判断」を実測で決めた —— 製品が `rounds` から要るのは「チーム → 初出 round」
+ * だけなので、それを registry の**派生索引 `teamFirstRound`** (**2,610 B**) として置き、
+ * 製品はそれを読む。`rounds` (**160,558 B**) は両ビルドから消える。
+ * **開発側の履歴は 1 字も失っていない** —— `rounds` は台帳にそのまま残る
+ * (パス 396 が「私が一存で決める所ではない」とした理由は「台帳から削る」側の話で、
+ * この形はどちらの記録も削らない)。索引の導出は `scripts/lib/team-first-round.cjs` の
+ * 1 つで、書き手 (`orchestrate.cjs record`) が引き直し、`verify:orchestration` が
+ * 両方向に一致を検める (`teamFirstRoundIndex.test.ts`)。
+ *
+ * `rounds` は下の `NOT_SHIPPED` に理由つきで載る —— 台帳から消しただけだと、
+ * 誰かが import し直したときの断りが「台帳へ理由と実測を書け」になり、
+ * **台帳へ戻すことを案内してしまう**。
+ *
  * ## この検査が要求すること
  *
  * 1. `src/` (検査を除く) が `registry.json` から名前で import する鍵の集合が、
@@ -83,17 +99,31 @@ const LEDGER: readonly CostRow[] = [
     maxBytes: 60_000, // 実測 36,981 B
   },
   {
-    key: 'rounds',
+    key: 'teamFirstRound',
     importedBy: ['pages/VillagePage.tsx'],
-    why: '村シーンのディスパッチ計画。**読むのは r.round と r.teams の 2 欄だけ**で、'
-      + 'shipped / note / teamCount (計 46,242 B) は誰も読まないまま出荷物に入る (docblock に実測表)',
-    maxBytes: 200_000, // 実測 160,558 B —— **いちばん重い鍵**
+    why: '村シーンのディスパッチ計画の 2 つ目の並びの鍵 (チーム → 初出 round)。'
+      + 'rounds (160,558 B) の代わりに読む派生索引で、導出は scripts/lib/team-first-round.cjs の 1 つ (パス 483)',
+    maxBytes: 8_000, // 実測 2,610 B (108 チーム・1 チーム ≒ 24 B)
   },
   {
     key: 'backlog',
     importedBy: ['pages/VillagePage.tsx'],
     why: '村シーンが各チームの未処理件数と status を出す',
     maxBytes: 20_000, // 実測 7,323 B
+  },
+];
+
+/**
+ * **製品が import してはいけない鍵** と理由 (パス 483)。
+ *
+ * 台帳から消すだけだと、import し直したときの断りが「台帳へ理由と実測を書け」に
+ * なり、台帳へ戻すことを案内してしまう。ここに在る鍵は台帳にも載せられない。
+ */
+const NOT_SHIPPED: readonly { readonly key: string; readonly why: string }[] = [
+  {
+    key: 'rounds',
+    why: '開発側のディスパッチ履歴 (102 ラウンドの編成表とリリースノート・minified 160,558 B)。'
+      + '製品が要るのは初出 round だけなので、派生索引 teamFirstRound (2,610 B) を読むこと (パス 483)',
   },
 ];
 
@@ -190,7 +220,7 @@ describe('registry.json の出荷 byte 代金', () => {
     expect(
       bytes,
       `registry.json の "${key}" が ${bytes} B (上限 ${row.maxBytes} B)。`
-      + `**この鍵は出荷物へ畳み込まれる** —— LITE は CI の警告線まで 47,215 B しか無い。`
+      + `**この鍵は出荷物 (両ビルド) へ畳み込まれる** —— LITE の余裕は CLAUDE.md の計測の段落を見ること。`
       + `増やす理由が在るなら台帳の maxBytes を実測つきで引き直すこと。`,
     ).toBeLessThanOrEqual(row.maxBytes);
   });
@@ -204,5 +234,16 @@ describe('registry.json の出荷 byte 代金', () => {
       const actual = [...(found.get(row.key) ?? [])].sort();
       expect(actual, `"${row.key}" の import 元`).toEqual([...row.importedBy].sort());
     }
+  });
+
+  it('★ 製品が import してはいけない鍵を、誰も import していない (パス 483)', () => {
+    for (const { key, why } of NOT_SHIPPED) {
+      expect(found.get(key) ?? [], `"${key}" を import している —— ${why}`).toEqual([]);
+      expect(LEDGER.some((r) => r.key === key), `"${key}" が台帳に載っている —— ${why}`).toBe(false);
+    }
+    // 走査が「rounds の import」を実際に拾えることは標本で確かめる (針が死んでいれば上は自明に通る)。
+    expect(registryKeysImported(
+      "import { org, rounds as regRounds } from '../../../orchestration/registry.json';",
+    )).toContain('rounds');
   });
 });

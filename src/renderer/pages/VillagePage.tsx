@@ -9,7 +9,12 @@
  *   - 地面・道・池・木などの情景（絵文字＋インライン SVG のみ・画像ファイル不可＝CSP）。
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { org as regOrg, teams as regTeams, rounds as regRounds, backlog as regBacklog } from '../../../orchestration/registry.json';
+import {
+  org as regOrg,
+  teams as regTeams,
+  teamFirstRound as regTeamFirstRound,
+  backlog as regBacklog,
+} from '../../../orchestration/registry.json';
 import {
   buildVillagers,
   buildRegions,
@@ -50,7 +55,9 @@ import type { ActionData } from '../../shared/actionData';
 const REG: VillageRegistry = {
   org: regOrg as VillageRegistry['org'],
   teams: regTeams as VillageRegistry['teams'],
-  rounds: regRounds as VillageRegistry['rounds'],
+  // `rounds` (開発側の履歴・160 KB) は import しない —— 並びに要る「初出 round」だけを
+  // 派生索引で読む (パス 483。理由と実測は villageData.ts の VillageRegistry)。
+  teamFirstRound: regTeamFirstRound as VillageRegistry['teamFirstRound'],
   backlog: regBacklog as VillageRegistry['backlog'],
 };
 const ORG_INDEX: OrgIndex = buildOrgIndex(regOrg as RawOrg, regTeams as readonly RawTeam[]);

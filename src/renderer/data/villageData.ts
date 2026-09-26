@@ -1,7 +1,7 @@
 /**
  * villageData — 「AIの村」シーンの純ロジック（IO なし・決定論的）。
  *
- * `orchestration/registry.json` の org / teams / rounds / backlog から、
+ * `orchestration/registry.json` の org / teams / teamFirstRound / backlog から、
  *   1. 村人ロスター（143 体: CEO 1 / COO 1 / 役員 5 / 秘書室 5×4=20 / 管理職 8 / 一般職 108）
  *   2. 計算されたディスパッチ計画（どのチームがどの順で「作業広場」に集まるか）
  * を導出する。ネットワークや乱数・時刻に依存せず、同じ registry からは常に同じ結果を返す
@@ -9,6 +9,7 @@
  */
 
 import { nonNeg } from '../../shared/num';
+import { lookup } from '../../shared/lookup';
 
 // registry.json の必要スライスだけを型付きで取り込む（純データ）。
 interface RawCeo {
@@ -48,10 +49,6 @@ interface RawTeam {
   readonly manager: string;
   readonly role?: 'research' | 'audit';
 }
-interface RawRound {
-  readonly round: number;
-  readonly teams: readonly string[];
-}
 interface RawBacklog {
   readonly id: string;
   readonly team: string;
@@ -68,7 +65,19 @@ export interface VillageRegistry {
     readonly managers: readonly RawManager[];
   };
   readonly teams: readonly RawTeam[];
-  readonly rounds: readonly RawRound[];
+  /**
+   * チーム id → そのチームが最初に編成された round の番号 (registry の派生索引)。
+   *
+   * ★ **`rounds` そのものは読まない** (2026-09-26 · パス 483)。ここが要るのは
+   * 「初出の順」だけなのに、`rounds` を名前で import すると Vite の JSON の
+   * tree-shaking は鍵の単位でしか落とさないので、102 ラウンドの編成表と
+   * リリースノート (minified 160,558 B) が両ビルドへ丸ごと入っていた
+   * (パス 396 の実測・`shared/__tests__/registryBundleCost.test.ts`)。
+   * 索引は 2,610 B で、導出は `scripts/lib/team-first-round.cjs` の 1 つ ——
+   * 書き手 (`orchestrate.cjs record`) が引き直し、`verify:orchestration` が
+   * `rounds` から導き直して両方向に一致を検める。
+   */
+  readonly teamFirstRound: Readonly<Record<string, number>>;
   readonly backlog: readonly RawBacklog[];
 }
 
@@ -269,12 +278,12 @@ export function buildDispatchPlan(reg: VillageRegistry): DispatchStep[] {
   const status = backlogByTeam(reg);
 
   // ラウンド初出順（小さいほど先）。未出現は大きな値。
-  const firstRound = new Map<string, number>();
-  for (const r of reg.rounds) {
-    for (const tid of r.teams) {
-      if (!firstRound.has(tid)) firstRound.set(tid, r.round);
-    }
-  }
+  // 索引は prototype を経由せずに引く —— 素の添字だと id が 'constructor' の
+  // チームで関数が返り、比較が NaN になって並びが壊れる (shared/lookup.ts)。
+  const firstRoundOf = (teamId: string): number => {
+    const r = lookup(reg.teamFirstRound, teamId);
+    return typeof r === 'number' && Number.isFinite(r) ? r : Number.MAX_SAFE_INTEGER;
+  };
 
   const statusWeight = (s: RawBacklog['status'] | undefined): number => {
     if (s === 'in-progress') return 0;
@@ -301,8 +310,8 @@ export function buildDispatchPlan(reg: VillageRegistry): DispatchStep[] {
   steps.sort((a, b) => {
     const sw = statusWeight(a.status) - statusWeight(b.status);
     if (sw !== 0) return sw;
-    const ra = firstRound.get(a.teamId) ?? Number.MAX_SAFE_INTEGER;
-    const rb = firstRound.get(b.teamId) ?? Number.MAX_SAFE_INTEGER;
+    const ra = firstRoundOf(a.teamId);
+    const rb = firstRoundOf(b.teamId);
     if (ra !== rb) return ra - rb;
     return a.teamId < b.teamId ? -1 : a.teamId > b.teamId ? 1 : 0;
   });

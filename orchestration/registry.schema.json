@@ -3,7 +3,7 @@
   "title": "AI Orchestration Registry",
   "description": "進化し続けるAIオーケストレーションの単一の真実源。チーム・ラウンド・バックログを機械可読に保持する。",
   "type": "object",
-  "required": ["version", "policy", "teams", "rounds", "backlog"],
+  "required": ["version", "policy", "teams", "rounds", "teamFirstRound", "backlog"],
   "additionalProperties": true,
   "properties": {
     "version": { "type": "integer", "minimum": 1 },
@@ -150,6 +150,11 @@
           "shipped": { "type": "array", "items": { "type": "string" } }
         }
       }
+    },
+    "teamFirstRound": {
+      "description": "rounds から導いた派生索引: チーム id → そのチームを含む round の番号の最小値。製品 (村のディスパッチ計画) は rounds (160 KB) を import せずにこれだけを読む。導出は scripts/lib/team-first-round.cjs の 1 つで、orchestrate.cjs record が引き直し、verify:orchestration が両方向に一致を検める。手で書かない。",
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 1 }
     },
     "backlog": {
       "type": "array",
