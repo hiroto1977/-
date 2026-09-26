@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   isOfficial,
   distinctSourceCount,
+  normalizeSourceUrl,
+  DEFAULT_POLICY,
   hasOfficialSource,
   verifyClaim,
   isConfirmed,
@@ -34,6 +36,38 @@ describe('distinctSourceCount', () => {
     expect(distinctSourceCount([gov, muni])).toBe(2);
     expect(distinctSourceCount([gov, gov])).toBe(1);
     expect(distinctSourceCount([])).toBe(0);
+  });
+});
+
+/*
+ * ★ **欄が欠けた出典の鍵** (2026-09-26 · パス 479)。
+ *
+ * パス 478 が `normalizeSourceUrl` を足したとき、`String(url ?? '')` の `?? ''` へ
+ * **到達する検査が 1 つも無かった** —— このファイルは `stryker.config.json` の `mutate` に
+ * 載っており (`thresholds.break = 99.8`)、実測 **98.92% / 未到達 1** で**週次の変異検査 CI が
+ * 赤くなる状態**だった。型は `url: string` と言うが、この関数はコーパス (データ) の欄を受けるので
+ * **欄そのものが無い**形は実行時に在りうる。
+ *
+ * 契約は「**欠けた欄と空文字は同じ鍵**」である —— そうでないと `String(null)` が `'null'`、
+ * `String(undefined)` が `'undefined'` という**別々の非空の鍵**になり、
+ * 「url が無い出典 2 件」が独立 2 件として通る (今日そのデータは 0 件だが、
+ * 畳めば必ず床に当たる = fail closed の側)。
+ */
+describe('normalizeSourceUrl — 欄が欠けた出典', () => {
+  it('★ 欠けた欄 (null / undefined) は空文字と同じ鍵になる', () => {
+    const blank = normalizeSourceUrl('');
+    expect(blank).toBe('');
+    expect(normalizeSourceUrl(null as unknown as string)).toBe(blank);
+    expect(normalizeSourceUrl(undefined as unknown as string)).toBe(blank);
+    // 針が的に当たる標本: 畳まなければ非空の別々の鍵になる (この形を避けている)。
+    expect(String(null)).toBe('null');
+    expect(String(undefined)).toBe('undefined');
+  });
+
+  it('★ url の無い出典が 2 件なら独立 1 件に畳まれ、床に当たる (fail closed)', () => {
+    const missing = [{}, {}] as unknown as readonly { readonly url: string }[];
+    expect(distinctSourceCount(missing)).toBe(1);
+    expect(distinctSourceCount(missing)).toBeLessThan(DEFAULT_POLICY.minSources);
   });
 });
 

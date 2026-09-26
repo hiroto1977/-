@@ -28,7 +28,15 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-26 パス 478 後の計測: 11,971,909 B / 3,384,533 B (FULL +108 B・**LITE +213 B** —— ★ **LITE のほうが大きく増えるのは、FULL だけがコーパスの行を 1 本落としたため**。共有の判定 (`sourceVerification.ts` / `knowledgeProvenance.ts`) は両ビルドが読むので +213 B ずつ増え、**FULL はそこからコーパスの差 −106 B** (消した `Data_feminism` の 1 行 369 B と、差し替えた出典のラベル 263 B の差・実測) を引く。213 − 106 = 107 で**測ったのは 108** —— 残る 1 B は最小化の正規化である。**md5 も見た** (`dbc96561…` / `c01f17e4…`)。直したのは `renderer/data/` 3 本 (確証器 2 + コーパス 2 項目)・`scripts/` 3 本 (新設 1)・`__tests__/` 5 本 (新設 1)・`ontology/`・`docs/`。**知識コーパス 4,039 項目の価値はまるごと採用ゲートに乗っているのに、その「独立 2 出典」は件数しか数えていなかった。** **見つけ方**: パス 477 は除外台帳の理由を機械で検めた。同じ問い (「散文が名乗る事実を誰が検算しているか」) を**コーパスの採用ゲート**へ当てた —— `EvidenceSource.url` の注記は「**独立性の判定キー**」と宣言しているのに、`独立` を実装していたのは 3 つのうち 1 つだけだった:
+   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-26 パス 479 後も 11,971,909 B / 3,384,533 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 2 本 (新設 1)・`__tests__/` 2 本 (新設 1)・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`dbc96561…` / `c01f17e4…`)。**パス 478 は `mutate` に載っているファイルを break 閾値の下へ落として push しており、per-PR の網は 1 つも鳴らなかった。** **見つけ方**: パス 478 が残作業に書いた「`sourceVerification.ts` も `mutate` の外に居る (実測)」を確かめに行ったら、**その「(実測)」が偽だった** —— 実物は `stryker.config.json` の 147 行目に**載っている** (法則 `measure-before-claim` の当のこと)。載っているなら `thresholds.break = 99.8` が掛かる。実測 (2026-09-26 · `npx stryker run --mutate src/renderer/data/sourceVerification.ts`):
+
+| | |
+| --- | --- |
+| パス 478 の push 時点 | **98.92% / 未到達 1** —— **`break` を割る** |
+| 未到達だった 1 件 | `String(url ?? '')` の `?? ''` (欠けた欄へ到達する検査が無かった) |
+| 検査を 2 件足した後 | **100.00% (Killed 93 / 生存 0 / 未到達 0)** |
+
+★ **測定は週次だけ** (`mutation.yml`) なので、**赤は 6 日後に出て、しかも次に push した人の変更に見える。** これは「起こりうる」ではなく**push 済みの状態**だった。★ **per-PR の網が見なかった理由も測った**: ① `npm run test:cov` の母集団は **`src/main/**` だけ** (`--coverage.include`) で、`mutate` 298 件のうち **247 件がその外**に居る (税の計算 60 本以上・保管庫 9 本・プロキシ・コーパスの確証器・両ビルドが読む `shared/` の判定) ② **被覆の閾値はどこにも宣言されていない** (`vitest.config.ts` に `thresholds` は 0 件・CLI も渡さない) —— 実測 Stmts **98.76%** / 分岐 **96.68%** を**刷るだけ**で、下がっても鳴らない (法則 `count-has-floor`) ③ ★★ **そして閾値を足してもこの欠陥は捕まらない** —— 分岐は **1,903 本**なので **1 本 = 0.05%**。1 点の床でも 19 本落ちるまで鳴らない。**だから直しは「床を足す」ではなく「触ったファイルを測る」である。****直し**: ① 未到達だった枝に検査 2 件 —— 契約は「**欠けた欄と空文字は同じ鍵**」(そうでないと `String(null)` が `'null'`、`String(undefined)` が `'undefined'` という**別々の非空の鍵**になり、「url が無い出典 2 件」が独立 2 件として通る。畳めば必ず床に当たる = fail closed) ② **`npm run audit:mutate-changed`** (定期点検の道具 **9 本目**) —— 変更したファイル (既定は `HEAD~1` との差 + 作業ツリー + staged) と `mutate` の**積**を取り、その集合だけに Stryker を当てる。0 件なら何もせず exit 0。**CI では走らせない** (1 ファイル 6 分半なので毎 PR には載せられない —— 回すのは触ったパス自身)。実測: **パス 478 の差分に当てると `sourceVerification.ts` ただ 1 件を名指しする** —— **この道具が在れば、パス 478 はその場で気づけた** ③ 照合は**道の完全一致** (同じ basename のファイルは別の場所にも在る) ④ **後片付けは `finally`** —— `incremental: true` なので古い `.stryker-incremental.json` は**偽の生存**を作る (config が 2026-08 の実例を持つ: `atlassian.ts` が「生存 1」と誤報された) ⑤ **走査の故障を「対象なし」と読まない** (`mutate` が空なら断る) ⑥ **手で回す `audit:*` は CLAUDE.md の命令の一覧に在る**を両方向の検査に (**書いていない道具は誰も回さない**。実測 12 件のうち CI が回す `audit:report` だけが例外で、その行は `dependency-audit.yml` が実際に呼んでいることまで見る)。★ **対照 8 方向すべて鳴り、それぞれ狙った層に当たる** (**A 新しい検査 2 件を外す = 決定的**: 変異検査 **98.92% / 未到達 1** ↔ 戻すと **100.00%** / B' 照合を basename へ ❌1 + self-test ✗1 / C CLAUDE.md の一覧から外す ❌1 / D `audit:*` を `verify:all` へ ❌1 / E `finally` の後片付けを外す ❌1 / F `test:cov` の include を `src/**` へ広げる ❌1 / G 呼んでいない workflow を名乗る (逆向き) ❌1 / H `mutate` を空にする 道具が **exit 1** で断る)・復帰後 **10 / 10** + self-test 全件一致。★ **自戒 2 つ**: ① **B は 1 度目、鳴らなかった** —— 最初の標本は `…/sourceVerificationHelper.ts` で「接頭辞では拾わない」を主張していたが、`mutate` の項は拡張子まで含むので `sourceVerification.ts` はその接頭辞ではない (`.ts` が途中に来る)。**鳴らない対照は合格ではなく、その検査についての報せ**なので、実際に起こりうる誤り (basename での比較) を撃つ標本へ当て直した ② **H の終了コードを `| tail -2` の後ろの `$?` で読んで「exit=0」と見た** —— **パイプは終了コードを嘘にする** (パス 454 と同じ罠)。ファイルへ落として測り直すと exit 1。★ **ゲートが 2 つ捕まえた —— どちらも設計どおり**: `lint:forbidden` が新しい道具の子プロセスを「台帳に無い例外」として鳴らした (理由つきで登録・例外 55 → **56** 件) / `verify:arch` のユニットテスト数を 16034 → **16046** へ (**今回も予想せず門に訊いた**)。★ **測って何も無かった軸も記録する**: ① **コーパスの `minAuthoritative` の側は設計どおり** —— `reference` (百科事典級) を権威に数えるのは `isAuthoritativeSource` の docblock が明示しており、実測で `reference` だけで裏付ける項目は **336 件** (+ `reference` + `media` が 87 件)。**12% が設計なので欠陥ではない** ② **動画 / SNS / AI 集約の出典は 12,200 出典のうち 1 件だけ** (`medium.com`・正しく `media` = 権威に数えない側)。YouTube / TikTok / Perplexity / ChatGPT / Gemini / Claude / Reddit / Quora / X / note / Qiita / Zenn / SlideShare を総当たりして **0 件** —— `isDiscoveryOnly` は出荷コードの読み手が 0 件だが**守る対象が無い**ので罠であって生きた欠陥ではない ③ **正規化を「クエリまで畳む」へ広げるのは誤り** —— 8 項目が該当するが、どれも CELEX ID / SSRN の abstract_id / AEA の article id / ERIC の id で**別の文書**を選んでいる (パス 478 の「クエリは畳まない」をこの測定が裏づけた) ④ **インボイスの経過措置は台帳と実装が一致** (コーパス 2 項目と `INVOICE_TRANSITION_STAGES` が令和 8 年度税制改正後の 80→70→50→30% で揃い、出典は国税庁の改正特集を含む)。`lint:rate-freshness` は**2割特例の期限まで残り 4 日**を既に警告しており (2026-09-30)、3割特例の実装も在る ⑤ **`knowledgeProvenance.ts` は今も測っていない** (`mutate` の外・`measure-next` の 32 件に居る) ——「測っていない」と「測ったら 100%」は別なので、そう書いて残す。`typecheck` 緑・`npm test` **911 / 19,242**・`verify:all` exit 0・`chain:verify` 緑 (保護対象は 1 つも触っていない)・`sourceVerification.ts` の変異検査 **100.00%**。**実機は回していない** —— 出荷物が 1 byte も動いておらず md5 も同じなので)・****2026-09-26 パス 478 後の計測: 11,971,909 B / 3,384,533 B (FULL +108 B・**LITE +213 B** —— ★ **LITE のほうが大きく増えるのは、FULL だけがコーパスの行を 1 本落としたため**。共有の判定 (`sourceVerification.ts` / `knowledgeProvenance.ts`) は両ビルドが読むので +213 B ずつ増え、**FULL はそこからコーパスの差 −106 B** (消した `Data_feminism` の 1 行 369 B と、差し替えた出典のラベル 263 B の差・実測) を引く。213 − 106 = 107 で**測ったのは 108** —— 残る 1 B は最小化の正規化である。**md5 も見た** (`dbc96561…` / `c01f17e4…`)。直したのは `renderer/data/` 3 本 (確証器 2 + コーパス 2 項目)・`scripts/` 3 本 (新設 1)・`__tests__/` 5 本 (新設 1)・`ontology/`・`docs/`。**知識コーパス 4,039 項目の価値はまるごと採用ゲートに乗っているのに、その「独立 2 出典」は件数しか数えていなかった。** **見つけ方**: パス 477 は除外台帳の理由を機械で検めた。同じ問い (「散文が名乗る事実を誰が検算しているか」) を**コーパスの採用ゲート**へ当てた —— `EvidenceSource.url` の注記は「**独立性の判定キー**」と宣言しているのに、`独立` を実装していたのは 3 つのうち 1 つだけだった:
 
 | 確証器 | 母集団 | `独立` を検めるか |
 | --- | --- | --- |
@@ -1035,6 +1043,32 @@ npm run audit:tick-sensitivity  # 固定回数で待つ検査が**その回数�
                          #   `expect(text()).toContain(…)` (HEAD で 67 ファイル / 363 か所) を
                          #   1 件も見ておらず、逆に条件で待った後の主張まで数えていた。
                          #   台帳の形は `tickSensitivityLedger.test.ts` が毎回の npm test で見る
+npm run audit:mutate-changed    # **`mutate` に載っているファイルを触ったら、そのファイルを測る**
+                         #   (定期点検の道具 9 本目。CI では走らせない —— 1 ファイル 6 分半なので
+                         #   毎 PR には載せられない。回すのは `mutate` のファイルを触ったパス自身)。
+                         #   変更したファイル (既定は `HEAD~1` との差 + 作業ツリー) と
+                         #   `stryker.config.json` の `mutate` (298 件) の**積**を取り、
+                         #   その集合だけに Stryker を当てる。0 件なら何もせず exit 0。
+                         #   ★ **なぜ要るか (実測)** —— `mutate` には `thresholds.break = 99.8` が
+                         #   掛かるが、測定は**週次だけ** (`mutation.yml`)。パス 478 が
+                         #   `sourceVerification.ts` に 1 関数足したら **98.92% / 未到達 1** になり、
+                         #   **週次 CI が 6 日後に赤くなる**状態だった (しかも次に push した人の
+                         #   変更に見える)。未到達は `String(url ?? '')` の `?? ''` 1 本で、
+                         #   検査を 2 件足して **100.00% (Killed 93)** に戻した。
+                         #   ★ **per-PR の網が見なかった理由も測った** —— `npm run test:cov` の
+                         #   母集団は **`src/main/**` だけ**で、`mutate` 298 件のうち **247 件が
+                         #   その外**に居る (税の計算 60 本以上・保管庫・プロキシ・コーパスの
+                         #   確証器・76 画面)。**被覆の閾値はどこにも宣言されていない**
+                         #   (`vitest.config.ts` に `thresholds` は 0 件・CLI も渡さない) ので、
+                         #   実測 98.76% / 分岐 96.68% を**刷るだけ**で下がっても鳴らない。
+                         #   ★ **閾値を足してもこの欠陥は捕まらない** —— 分岐は 1,903 本なので
+                         #   **1 本 = 0.05%**。1 点の床でも 19 本落ちるまで鳴らない。
+                         #   だから直しは「床を足す」ではなく「触ったファイルを測る」である。
+                         #   ★ **後片付けは必須** —— `incremental: true` なので古い
+                         #   `.stryker-incremental.json` は**偽の生存**を作る (2026-08 に
+                         #   `atlassian.ts` が「生存 1」と誤報された実例が config に在る)。
+                         #   `finally` で必ず消す。道具の形と母集団は
+                         #   `shared/__tests__/mutateChangedTool.test.ts` が毎回の `npm test` で見る
 npm run audit:gate-floors       # **ゲートの床**を振る舞いで測る (定期点検の道具 8 本目。
                          #   CI では走らせない —— 判定のためにソースを書き換えるし、
                          #   1 件あたりゲート 1 回ぶんの時間が掛かる)。

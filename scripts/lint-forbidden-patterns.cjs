@@ -890,6 +890,16 @@ const KNOWN_SUPPRESSIONS = [
   //  `keep` がどの群も空にしないこと・広い一覧だけが間引かれることを確かめる。
   //  このプロセスの fs を書き換えずに測るには子プロセスが要る。)
   'child_process exec/spawn :: scripts/audit-gate-floors.cjs :: 2',
+  // `mutate` に載っているファイルを触ったパスが、そのファイルだけを測る道具 (パス 479)。
+  // 週次の変異検査 (`mutation.yml`) は `thresholds.break = 99.8` を掛けるが per-PR には
+  // 無いので、**触った側がその場で測れないと赤は 6 日後に別の人の変更として出る**
+  // (実測: パス 478 が `sourceVerification.ts` を 98.92% に落としていた)。
+  // 子プロセスは 2 通り —— `git` (変更ファイルの一覧・引数は固定リテラル) と
+  // `npx stryker` (測る対象は `mutate` の台帳と git の一覧の**積**なので、外から
+  // 任意の道は入らない)。どちらもシェルを経由しない。測ったあとは `finally` で
+  // `.stryker-incremental.json` と `reports/mutation` を消す (古い incremental は
+  // **偽の生存**を作る —— config の `_commentEquivalentPragmas` が 2026-08 の実例を持つ)。
+  'child_process exec/spawn :: scripts/audit-mutate-changed.cjs :: 1',
   // 走査を「一部だけ」殺す前置き (パス 470 で 2 つ目の数え方を包んだ)。
   // `git ls-files` の出力を母集団にするゲートは木を歩かないので、同期実行の
   // 戻り値を包む以外に間引く手が無い。**呼び出しは元の実装へそのまま委ね**、
