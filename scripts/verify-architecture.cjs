@@ -518,11 +518,28 @@ function hasSelfTest(gate, scripts) {
 }
 
 /**
- * 静的な `it(` の数。**2 か所から参照される** (ARCHITECTURE.md の表と
- * CLAUDE.md の `~N tests`)。数え方を写すと、片方だけ直したときに
+ * 静的な `it(` の数。**2 か所から参照される** —— `docs/ARCHITECTURE.md` の表 (この
+ * ゲートが照合する) と、`scripts/session-context.cjs` (SessionStart hook が新しい
+ * セッションへ最初に見せる greeting)。数え方を写すと、片方だけ直したときに
  * 「どちらが正しいのか分からない 2 つの数」になる。
  *
+ * ★ **この警告は実際に当たった (2026-09-26 · パス 481)。** この関数は export されて
+ * いなかったので hook は必然的に写しを持ち、その写しは契約が **2 つの軸で**違って
+ * いた —— 母集団が `.ts|.tsx` (`.test.ts` ではない) で、針が `/^\s*it\(/` (`\s+` では
+ * ない)。実測すると針の軸は今日 **0 件**の差 (列 0 の `it(` はどこにも無い) だが、
+ * 母集団の軸が **1 件**: `src/renderer/__audits__/malformedFieldSweep.audit.ts` は
+ * `vitest.audit.config.ts` だけが拾うので **`npm test` も CI も 1 度も走らせない**。
+ * だから greeting は **16065**、このゲートは **16064** と言い、greeting を信じて
+ * 表を書き換えたセッションはこのゲートを壊す (実際に踏みかけた)。
+ *
+ * 母集団の契約は「**`npm test` が走らせる物**」—— `vitest.config.ts` の `include` は
+ * `src` の下の `__tests__` に在る `.test.ts` だけを拾うので、ここも `.test.ts` だけを歩く。`__audits__/` の
+ * `.audit.ts` は別の config なので数に入れない (入れると、CI が 1 度も走らせない
+ * 検査を「この repo の検査数」として名乗ることになる)。
+ *
  * コメントアウトされた検査 (`// it(`) は行頭の空白＋`it(` に一致しないので入らない。
+ * ただし**ブロック注記の中の素の `it(`** は一致しうる (実測 2026-09-26 で 0 件・
+ * `stripComments` を通しても答えは 16064 のまま。罠であって生きた欠陥ではない)。
  */
 function countStaticIts() {
   let total = 0;
@@ -2306,6 +2323,7 @@ function main() {
  * **同じ 1 つの解析**を呼べるように export する (数え方を 2 つ持たない)。
  */
 module.exports = {
+  countStaticIts,
   documentedEgressHosts,
   egressHostsInFile,
   walkEgressTree,
