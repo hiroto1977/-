@@ -23,11 +23,13 @@
 npm run orchestrate:status        # 組織サマリ + 直近round + backlog + サイクル
 npm run orchestrate:dispatch      # 次roundの実行ディスパッチ計画 (並列Agent割当)
 npm run orchestrate:import-requests  # チャットボット要望 (chatbot-requests.md) を backlog へ取込み
+npm run orchestrate:reindex       # 手で書き換えた台帳の派生索引 (teamFirstRound / teamBacklogStatus) を引き直す
 node scripts/orchestrate.cjs cycle pdca       # PDCA ステージ定義
 node scripts/orchestrate.cjs cycle ooda       # OODA ステージ定義
 node scripts/orchestrate.cjs dispatch --teams a,b --cycle pdca [--json]
 node scripts/orchestrate.cjs record --round N --teams a,b,... --shipped "..." [--note "..."] [--dry-run]
 node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priority N] [--dry-run]
+node scripts/orchestrate.cjs reindex [--dry-run]
 ```
 
 - **import-requests** は AI コンシェルジュ (ChatbotWidget) の「📥 要望」ボタンで書き出した
@@ -41,6 +43,13 @@ node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priori
   `dispatch` はそれを Agent まで運んで、題名を**指示ではなくデータとして** JSON の文字列で引用する。
 - **record / import-requests は書く前に門そのものを走らせる** (パス 484) —— 書き上がる台帳を
   一時ファイルへ置いて `verify-orchestration.cjs` を通し、通ったときだけ書く。
+- **書く口は製品が読む派生索引を必ず引き直す** (パス 486) —— `teamFirstRound` (← `rounds`) と
+  `teamBacklogStatus` (← `backlog`・チーム → 状態)。アプリの「AIの村」はこの 2 つだけを読み、
+  `rounds` (履歴) も `backlog` (題名・note —— **チャットボットの要望 = 外から来た文を含む**) も
+  出荷物に入れない。★ 実測: backlog を名前で import していた頃は、取り込んだ題名 `<!-- <script>` の
+  1 行で `npm run build:web` が exit 1 になった (公開サイトの組み立てが止まる)。
+  backlog の `status` や `rounds` を**手で**書き換えたら `npm run orchestrate:reindex` —— 門
+  (`verify:orchestration` の不変条件 13 / 15) が食い違いを名指しし、この直し方を案内する。
 - **端末へ刷る口は 1 つ** (パス 484) —— `orchestrate.cjs` と `verify-orchestration.cjs` は台帳の
   文字列をすべて `say` / `sayErr` (文は改行だけ残して危ない字を `\u{1B}` の形へ) と `sayJson`
   (値を変えずに `\uXXXX` へ逃がした JSON) を通して刷る。台帳の題名以外の欄は開発側が書く欄で
@@ -54,7 +63,8 @@ node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priori
 - **record** は round を registry に追記する唯一の書込み口。連番・単調増加・team 実在を強制し、
   書く前に `verify-orchestration` を通す (上記)。追記のたびに派生索引 `teamFirstRound`
   (チーム → 初出 round) も引き直す —— アプリの「AIの村」はこの索引だけを読み、`rounds` (履歴・160 KB)
-  は出荷物に入れない (2026-09-26 · パス 483。導出は `scripts/lib/team-first-round.cjs` の 1 つ)。
+  は出荷物に入れない (2026-09-26 · パス 483。導出は `scripts/lib/team-first-round.cjs` の 1 つ。
+  パス 486 からは record だけでなく書く口そのものが引き直す)。
 - サイクル定義は `registry.json` の `policy.cycles` (PDCA/OODA) に機械可読で持ち、`verify:orchestration` が
   各ステージの `stage/owner/desc/parallel` 構造を検証する。
 
@@ -165,9 +175,11 @@ npm run orchestration:plan
 # 4. registry.json を更新:
 #    - 新領域なら teams[] に追加
 #    - 実装した round を rounds[] に追記 (teamCount は前ラウンド以上)
-#      → `node scripts/orchestrate.cjs record …` で書く。手で追記したら teamFirstRound も
-#        引き直すこと (verify:orchestration の不変条件 13 が食い違いを名指しで落とす)
+#      → `node scripts/orchestrate.cjs record …` で書く。手で追記したら
+#        `npm run orchestrate:reindex` で派生索引を引き直すこと
+#        (verify:orchestration の不変条件 13 / 15 が食い違いを名指しで落とす)
 #    - 着手済み backlog の status を shipped に、新たな設計論点を designed で追加
+#      → 手で書き換えたら同じく `npm run orchestrate:reindex` (teamBacklogStatus)
 # 5. npm run verify:orchestration が green であることを確認してコミット
 ```
 

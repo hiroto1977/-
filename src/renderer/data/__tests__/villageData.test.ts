@@ -10,13 +10,13 @@ import {
   villageSummary,
   type VillageRegistry,
 } from '../villageData';
-import { org, teams, teamFirstRound, backlog } from '../../../../orchestration/registry.json';
+import { org, teams, teamFirstRound, teamBacklogStatus, backlog } from '../../../../orchestration/registry.json';
 
 const REG: VillageRegistry = {
   org: org as VillageRegistry['org'],
   teams: teams as VillageRegistry['teams'],
   teamFirstRound: teamFirstRound as VillageRegistry['teamFirstRound'],
-  backlog: backlog as VillageRegistry['backlog'],
+  teamBacklogStatus: teamBacklogStatus as VillageRegistry['teamBacklogStatus'],
 };
 
 describe('buildVillagers — full org roster', () => {
@@ -125,7 +125,10 @@ describe('buildDispatchPlan', () => {
   });
 
   it('surfaces the blocked backlog team with a blocked status', () => {
-    const blockedTeams = new Set(REG.backlog.filter((b) => b.status === 'blocked').map((b) => b.team));
+    // 検査は出荷物に入らないので、台帳の backlog そのものを読んで突き合わせてよい
+    // (製品は派生索引だけを読む —— パス 486)。
+    const blockedTeams = new Set(backlog.filter((b) => b.status === 'blocked').map((b) => b.team));
+    expect(blockedTeams.size, '標本が空 = この主張が空虚').toBeGreaterThanOrEqual(1);
     const plan = buildDispatchPlan(REG);
     for (const s of plan) {
       if (blockedTeams.has(s.teamId)) expect(s.status).toBe('blocked');
@@ -173,7 +176,7 @@ describe('buildDispatchPlan', () => {
       },
       teams: [team('toString'), team('constructor'), team('b'), team('a')],
       teamFirstRound: { b: 1, a: 2 },
-      backlog: [],
+      teamBacklogStatus: {},
     };
     // 素の添字だと 'constructor' / 'toString' は関数を返し、比較が NaN になって並びが壊れる。
     expect(buildDispatchPlan(mini).map((s) => s.teamId)).toEqual(['b', 'a', 'constructor', 'toString']);

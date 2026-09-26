@@ -7,6 +7,147 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近のパス (486) — 製品が読まない backlog の題名を公開サイトへ出荷しており、取り込んだ 1 行で `build:web` が止まった
+
+パス 485 の残作業 4 (= パス 484 の残作業 1) を測り直して閉じた。村 (`villageData.backlogByTeam`) が
+`orchestration/registry.json` の backlog から読むのは **`team` と `status` だけ** (輪の色とディスパッチ計画の
+1 つ目の並びの鍵) なのに、`VillagePage.tsx` が `backlog` を**名前で** import していたので、題名・note・priority まで
+両ビルドへ畳み込まれていた。
+
+### 見つけ方 —— 測り直してから、取り込み口の先まで辿る
+
+直す前の成果物 (パス 485 の `dist/`・md5 `d61ea05d…` / `0dfe23c7…`) を読み直すと、**両ビルドとも題名 43 / 43・note 1 / 1 が
+逐語で**入っていた (UTF-8 7,323 B)。パス 484 で取り込み口 (`import-requests`) が整い、**利用者がチャットボットに打った文が
+題名として台帳へ入る道**が正式に開いたので、それは外から来た文を公開サイトの HTML へ逐語で畳み込むことでもある。
+そこで**隔離した worktree で取り込み → `npm run build:web`** まで実際に通した (2026-09-26):
+
+| 取り込んだ題名 (書き出しの形 `&lt;` で渡す) | 取り込み・門 | 次の `npm run build:web` |
+| --- | --- | --- |
+| `請求書の自動化 <!-- 急ぎ` | 通る | 通る (`<!--` だけなら HTML の読み方は変わらない) |
+| **`請求書の自動化 <!-- <script>`** | **通る** | **exit 1** —— `inline-html: インライン JS が 閉じていない <!-- のあとに <script を含む` |
+
+★ **白画面は出ない** —— `inline-html.cjs` の関門 (パス 480 より前から在る) が正しく断る。だが**公開サイトの組み立てと CI が、
+利用者が打った 1 行で止まる**。★ **題名を制限するのは筋が違う** (要望が `<script>` に触れるのは正当である) ——
+直しは**製品が読まない物を出荷しない**ことにした。
+
+### 直し
+
+1. **派生索引 `teamBacklogStatus`** (チーム → 状態・**1,104 B**・40 チーム) を台帳に置き、製品はそれを読む
+   (`VillagePage.tsx` は `backlog` を import しない)。**題名と note は台帳に 1 字も欠けずに残る**。
+   導出は `scripts/lib/team-backlog-status.cjs` の 1 つで、**直す前の製品の算法をそのまま写した** (より進行中が勝ち、
+   同じ重みなら先の項目 —— `>` で比べる)。
+2. **台帳を書く口が派生索引を必ず引き直す** (`orchestrate.cjs` の `refreshDerivedIndexes` を `writeRegistryChecked` が通す)。
+   ★ パス 483 は `record` の中で `teamFirstRound` を引き直しており、**`import-requests` が backlog を足しても引き直す場所は
+   どこにも無かった** —— 索引が 1 つなら「どの書き手がどの索引に効くか」を覚えられるが、2 つ目で破れる。
+3. **門の不変条件 15** —— `teamBacklogStatus` は backlog から導いた物と両方向に一致する (宣言の `required` にも足した)。
+   食い違いの断りは直す手を名指しする: **`npm run orchestrate:reindex`** (新設 —— 手で backlog の `status` や
+   `rounds` を書き換えたとき用。不変条件 13 の断りも同じ手を案内する)。
+4. **`registryBundleCost` の台帳** —— `backlog` を `NOT_SHIPPED` へ理由つきで移し、`teamBacklogStatus` を載せた。
+   ★ **台帳の旧い理由は偽だった** —— 「村シーンが各チームの**未処理件数**と status を出す」と書いていたが、件数を出す面は
+   1 つも無い (輪の色 1 つ・並びの鍵 1 つ)。
+5. **台帳の census の死角を塞いだ** —— 名前付き import (`import { … } from`) の中括弧しか読んでいなかったので、
+   default / namespace / 動的 import / `export from` は**1 件も映らなかった** (実測: `chatOrg.ts` に default import を 1 行
+   足しても 10 / 10 緑)。今は「`registry.json` を参照する綴り = 名前付き import の数」をファイルごとに要求する。
+
+### ★ 測って訂正した見立て —— 「default import は台帳の全体を出荷する」は偽だった
+
+census の死角を塞ぐ理由を「default import は鍵の単位で落ちず、全体が入る」と**書きかけて**、書く前に測った。
+worktree で `VillagePage` を default import に書き換えて組むと (2026-09-26):
+
+| 書き方 | 出荷物 | `rounds` の round オブジェクト | backlog の題名 |
+| --- | ---: | ---: | ---: |
+| 直す前の名前付き import (パス 485) | 11,830,833 B | 0 | 43 / 43 |
+| default import → `registry.org` などを読む | 11,830,950 B | **0** | 43 / 43 |
+| default import → 値ごと `buildVillagers(registry)` へ渡す | 11,830,867 B | **0** | 43 / 43 |
+
+Rollup は読まれないプロパティを落とすので、**全体は入らない**。危ないのは**台帳が見えなくなること**である ——
+default import のまま `registry.backlog` を読むと題名 43 / 43 が入るのに、名前付き import しか読まない census は `[]` を返し、
+新しく足した `NOT_SHIPPED` の `backlog` は**import の書き方 1 つで迂回できた**。docblock・失敗の文面・法則をこの実測へ直した。
+
+### 機械
+
+- `src/shared/__tests__/teamBacklogStatusIndex.test.ts` (**9 件**) —— 実物の索引が**直す前の製品のコードをそのまま写した証人**と一致する
+  (製品の読み手 `backlogByTeam` を通しても同じ Map) / `import-requests` で取り込むと索引が引き直されて門が通る /
+  手で書き換えた台帳は門が落として `reindex` を名指し → `reindex` で通る (`--dry-run` は書かない・最新なら何も書かない) /
+  値・余分な行・鍵の欠落を門が落とす / 導出の端 (同じ重み・知らない状態・`__proto__`・鍵の並び) / 製品の読み手が
+  prototype を引かず知らない状態を落とす
+- `src/shared/__tests__/registryBundleCost.test.ts` (**+1 件**) —— 名前付き import 以外の形を落とす (標本 6 つ)
+- 門の self-test に不変条件 15 の **9 件**
+- 法則は増やしていない —— `external-text-is-data` に ⑥ (出荷物は 3 つ目の受け手)、`vault-and-graph-in-sync` に 2 つ目の索引と
+  「書く口が必ず引き直す」、`repo-size-ceiling` に `backlog` と census の死角を足した
+
+### 対照
+
+11 方向すべて鳴り、それぞれ狙った層に当たる (`controls.py` —— 1 つずつ壊して狙った検査を走らせ、**中身と時刻を**戻す。
+時刻まで戻すのは、後で回す `perf` / `e2e` の鮮度検査が mtime で判じるため):
+
+| 対照 | 壊した物 | 鳴った層 |
+| --- | --- | --- |
+| A | 製品が `backlog` を名前で import し直す | `registryBundleCost` ❌2 |
+| B | 書く口が派生索引を引き直さない | `teamBacklogStatusIndex` ❌2 + **`teamFirstRoundIndex` ❌1** |
+| C | 門が不変条件 15 を検めない | `teamBacklogStatusIndex` ❌3 (門の self-test は鳴らない) |
+| D | 宣言の `required` から索引を外す | `teamBacklogStatusIndex` ❌1 (`registrySchemaEnforced` は鳴らない) |
+| E | 同じ重みで後の項目が勝つ (`>` を `>=` へ) | `teamBacklogStatusIndex` ❌1 + self-test ✗4 |
+| F | designed と in-progress の重みを入れ替える | `teamBacklogStatusIndex` ❌1 + self-test ✗1 |
+| G | 製品の読み手が知らない状態を落とさない | `teamBacklogStatusIndex` ❌1 |
+| H | 形の census が default import を名前付きと数える | `registryBundleCost` ❌1 |
+| I | 門の断りが直す手 (`reindex`) を名指ししない | `teamBacklogStatusIndex` ❌1 |
+| J | `reindex` が引き直さない | `teamBacklogStatusIndex` ❌1 |
+| K | 製品の読み手が索引を読まない (空の Map) | `teamBacklogStatusIndex` ❌2 + `villageData` ❌2 |
+
+復帰: すべて内容と時刻で一致。
+
+- ★ **B はパス 483 の索引も鳴らす** —— `teamFirstRound` を引き直すのは `record` の中ではなく**書く口**になったので、
+  口を壊すと 2 つの索引が同時に古びる。**1 つの口にまとめたことが、対照で見える**
+- ★ **C で門の self-test が鳴らないのは設計** —— self-test は判定を関数として呼ぶので、`main` が使わなくなっても
+  見えない (パス 472 / 475 / 483 と同じ形)。門を丸ごと走らせる検査 (`--registry` の写しの上で) がそこを持つ
+- ★ **D で `registrySchemaEnforced` が鳴らないのも設計** —— あの検査は「宣言した制約が門に届くか」を見るので、
+  **どの鍵が必須か**は見ない。必須であることは索引の検査の「鍵そのものが無い台帳は門が落とす」が持つ
+
+### 自戒
+
+1. **最初の標本の前提が偽だった** —— `reindex` の検査で「blocked の項目はそのチームの 1 件だけ」と主張したら、payroll には
+   shipped の項目がもう 1 件在った。見たいのは「件数」ではなく**「手の書き換えで索引の答えが変わること」**なので、そちらを主張した
+2. **自分の書いた後始末の assert が自分の新しい行に当たった** —— 旧い綴り (`blocked!.team`) が残っていないことを
+   確かめる assert が、新しく足した `const team = blocked!.team;` に当たって書き込み前に止まった (2 度)。**針は、
+   自分が足す物を除けて書く**
+3. **「default import は全体を出荷する」と書きかけた** —— 上の表のとおり偽で、測ってから理由を書き直した
+   (パス 480 の `manifest` の「74」と同じ —— **正しい物を直すところだった**の逆で、**偽の理由で正しい規則を立てるところだった**)
+4. **全件の検査を回して 2 件を落とした** —— `importRequestsPath` と `orchestrationPopulationFloors` が backlog を**手で**
+   書き換えた台帳を門に通していた。どちらも**書き手と同じ導出で索引を揃える**形へ直した (手で書き換えた台帳を門が落とすのは
+   この pass の設計そのもの)
+5. **直した後の最初の確認で「題名が 3 件残っている」と読みかけた** —— 題名の**部分一致**で数えていたので、`teams[].focus` に
+   開発側が同じ語を書いている 3 件 (`固定費削減のインパクト試算/営業利益改善` ほか) を拾っていた。backlog の id (0 / 43)・
+   独立した文字列としての題名 (0 / 43) で数え直すと 0 である。**部分一致は構造を見ない**
+
+### 測って何も無かった軸
+
+- **backlog の `status` を手で書き換えた回数は、見える履歴の中で 0 回** —— パス 484 は「`status` は手で書き換えることが多いので、
+  書き換えのたびに索引を引き直す手間が増える」を理由に見送った。このクローンは浅い (`git rev-parse --is-shallow-repository` =
+  true・見える履歴は 2026-08-13 からの 761 コミット) が、その中で backlog の `status` の行を動かしたコミットは台帳を持ち込んだ
+  1 件だけだった。**手間の見積もりは実測に支えられていなかった** —— それでも `reindex` を 1 つの口として置き、門の断りが名指しする
+- **台帳の他の鍵 (`org` / `teams`) は開発側の書く欄で、外から入る道は無い** —— 取り込み口が書くのは backlog だけ (`import-requests`)
+- **`</script>` を含む題名は `build:web` を止めない** —— esbuild が `<\/script` へ逃がす (inline-html.cjs の docblock の実測どおり)。
+  止まるのは `<!--` のあとに `<script` + 区切りが来る形だけ
+
+### 検証
+
+`typecheck` 緑 · `npm test` **923 / 19,428** · `verify:all` exit 0 (`verify:arch` のユニットテスト数を 16220 → **16230** へ ——
+**今回も予想せず門に訊いた**) · `chain:verify` 緑 (保護対象は触っていない) · 両ビルドは **11,825,085 B / 3,237,709 B
+(両方 −5,748 B)**、md5 は `d61ea05d…` → **`d9e84a45…`** / `0dfe23c7…` → **`0666a438…`**。直した後の両ビルドでは
+backlog の id が **0 / 43**・題名を独立した文字列として **0 / 43** で、索引の 40 行はすべて入っている (3 行は識別子として
+書ける鍵なので引用符なし —— `payroll:"blocked"`)。LITE は**警告線まで 162,291 B**・天井まで 762,291 B。
+**出荷物が動いたので実機も回した**: `perf` OK (LITE DCL 165 ms / heap 9.5 MB・FULL DCL 456 ms / heap 36.1 MB)・`e2e` **464 件 ❌ 0**・`e2e:lite` **464 件 ❌ 0**。★ **e2e に村の suite は無い**ので、両ビルドで「AIの村」を実際に開いて (保管庫を作り、解錠してから) 作業中のチームを 3 歩ぶん読んだ: 両方とも **給与/賞与 → 税額控除 → 所得控除** (パス 483 と同じ —— 索引から組んだ並びが直す前と変わらない)・console エラー 0。**`e2e:ollama` は回していない** —— Ollama の経路を 1 行も触っていない。★ 記録を書いた後に文書を読む検査 78 ファイルを並べて回すと `skills.test.ts` の締切の検査が **1 度だけ**落ちた (単独 80 / 80・回し直すと 1,536 / 1,536 —— 原因は特定していない。失敗の文面を grep で切って捨てたので断定しない)。
+
+### 残した物 (→ `docs/REMAINING_WORK.md`)
+
+- 取り込み口は `<!--` や `<script` を断らない (意図して —— 題名は出荷物に入らなくなった。製品が題名を画面に出したくなった日は
+  `NOT_SHIPPED` が鳴る)
+- **src/ の外から束へ畳み込まれる物を数える機械は JSON の import にしか無い** —— 今日の母集団は `registry.json` 1 つで
+  `?raw` / `import.meta.glob` は 0 件だが、それが 0 件であることを主張する検査は無い
+- 索引は shipped のチームも持つ (直す前の製品と同じ Map を返す形を選んだので縮めていない)
+- パス 485 の残りはそのまま
+
 ## 直近のパス (485) — Service Worker がクエリ違いの遷移を別々に焼き、追跡パラメタ 1 つにつきアプリ本体 11.8 MB の写しが増えていた
 
 パス 484 の最終検証を待つ間に、`assets/sw.js` の fetch ハンドラを読み直した。同一オリジンの成功応答を

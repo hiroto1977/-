@@ -66,6 +66,7 @@
     "orchestrate:context": "node scripts/orchestrate-context.cjs",
     "orchestrate:dispatch": "node scripts/orchestrate.cjs dispatch",
     "orchestrate:import-requests": "node scripts/orchestrate.cjs import-requests",
+    "orchestrate:reindex": "node scripts/orchestrate.cjs reindex",
     "orchestrate:status": "node scripts/orchestrate.cjs status",
     "orchestration:plan": "node scripts/verify-orchestration.cjs --plan",
     "perf": "node scripts/perf/startup.cjs",

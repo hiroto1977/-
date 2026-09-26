@@ -39,11 +39,16 @@
  *       --team a        自動解決できない要望の割当先 team (稼働中であること)
  *       --priority N    取込む要望の priority (既定 2)
  *       --dry-run       書き込まず取込み内容のみ表示
+ *   node scripts/orchestrate.cjs reindex           製品が読む派生索引を台帳の本体から引き直す
+ *       (teamFirstRound ← rounds / teamBacklogStatus ← backlog)。backlog の status や
+ *       rounds を**手で**書き換えたあとに使う —— 門 (不変条件 13 / 15) の断りが名指しする。
+ *       record / import-requests は書く口が必ず引き直すので要らない (パス 486)
+ *       --dry-run       書き込まず、引き直す索引の名前だけ表示
  *   共通: --registry <path>  読み書きする registry を差し替える (検査が写しの上で
  *       書き手を走らせるための継ぎ目。既定は orchestration/registry.json)
  *
  * 設計: registry は単一の真実源。dispatch は read-only (registry を変更しない)。
- * record / import-requests のみ registry.json に追記する。★ **書く前に門そのもので
+ * record / import-requests / reindex のみ registry.json を書く。★ **書く前に門そのもので
  * 検める** (2026-09-26 · パス 484) —— 書き上がる台帳を一時ファイルへ置いて
  * `verify-orchestration.cjs` を走らせ、通ったときだけ書く。それまでは「書いた後に
  * 整合検証を促す」だけで、門を通らない台帳でも書いて終わっていた。これで
@@ -55,6 +60,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { deriveTeamFirstRound } = require('./lib/team-first-round.cjs');
+const { deriveTeamBacklogStatus } = require('./lib/team-backlog-status.cjs');
 const { unescapeMarkdownInline } = require('./lib/markdown-inline.cjs');
 const { unsafeCharsIn, printable, printableLines, jsonForTerminal } = require('./lib/untrusted-text.cjs');
 
@@ -112,6 +118,43 @@ function loadRegistry(file) {
 }
 
 /**
+ * `obj` の `key` を `value` にした写し。`key` が無ければ `afterKey` の直後へ置く
+ * (台帳の差分が読める並びにするため —— 派生索引はその元の欄の隣に居る)。
+ */
+function withKeyAfter(obj, afterKey, key, value) {
+  if (Object.hasOwn(obj, key)) return { ...obj, [key]: value };
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    out[k] = v;
+    if (k === afterKey) out[key] = value;
+  }
+  if (!Object.hasOwn(out, key)) out[key] = value;
+  return out;
+}
+
+/**
+ * **製品が読む派生索引を、台帳の本体から引き直す** (2026-09-26 · パス 486)。
+ * 台帳を書く口 (`writeRegistryChecked`) が**必ず**通すので、書き手ごとに
+ * 「この書き換えはどの索引に効くか」を覚えておく必要が無い —— パス 483 は
+ * `record` の中で `teamFirstRound` を引き直しており、`import-requests` が backlog を
+ * 足しても索引を引き直す場所はどこにも無かった (索引が 1 つなら覚えられるが、
+ * 2 つ目で「覚えておく」は破れる)。
+ *
+ * 形が壊れた台帳 (本体が配列でない) では引き直さずにそのまま返す —— 断るのは門の
+ * 仕事で、ここで投げると門の名指しより先に素の TypeError が出る。
+ *
+ * - `teamFirstRound` ← `rounds` (パス 483 · 村の並びの 2 つ目の鍵)
+ * - `teamBacklogStatus` ← `backlog` (パス 486 · 村の輪の色と並びの 1 つ目の鍵)。
+ *   製品は backlog の題名と note (外から来た文を含む) を import しない。
+ */
+function refreshDerivedIndexes(reg) {
+  let out = reg;
+  if (Array.isArray(reg.rounds)) out = withKeyAfter(out, 'rounds', 'teamFirstRound', deriveTeamFirstRound(reg.rounds));
+  if (Array.isArray(reg.backlog)) out = withKeyAfter(out, 'backlog', 'teamBacklogStatus', deriveTeamBacklogStatus(reg.backlog));
+  return out;
+}
+
+/**
  * **台帳を書く口は 1 つ —— 書く前に門そのもので検める** (2026-09-26 · パス 484)。
  *
  * 書き上がる台帳を一時ファイルへ置き、`verify-orchestration.cjs --registry <一時>` を
@@ -126,10 +169,13 @@ function loadRegistry(file) {
  *
  * ★ `die` は `process.exit` なので `finally` を走らせない —— 一時ディレクトリを
  * 片付けてから断る。
+ *
+ * ★ **書く物は派生索引を引き直した写し** (パス 486) —— 門が検めるのも本物へ書くのも
+ * その写しなので、「索引を引き直し忘れた台帳」はこの口からは出ない。
  */
 function writeRegistryChecked(reg, args) {
   const target = registryPath(args);
-  const text = `${JSON.stringify(reg, null, 2)}\n`;
+  const text = `${JSON.stringify(refreshDerivedIndexes(reg), null, 2)}\n`;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'orchestrate-check-'));
   let gate;
   try {
@@ -448,9 +494,9 @@ function cmdRecord(reg, args) {
     return;
   }
   reg.rounds.push(entry);
-  // 製品 (村のディスパッチ計画) が読む派生索引。rounds を足したら必ず引き直す ——
-  // 引き直さないと verify:orchestration の不変条件 13 が「初出 round が無い」と落とす。
-  reg.teamFirstRound = deriveTeamFirstRound(reg.rounds);
+  // 製品 (村のディスパッチ計画) が読む派生索引 teamFirstRound は、書く口
+  // (writeRegistryChecked → refreshDerivedIndexes) が必ず引き直す (パス 486)。
+  // 引き直さない台帳は verify:orchestration の不変条件 13 が「初出 round が無い」と落とす。
   writeRegistryChecked(reg, args);
   say(`✅ round ${round} を registry に記録 (teamCount=${teams.length})。`);
   say('   → `npm run verify:orchestration` で整合を確認してください。');
@@ -639,6 +685,36 @@ function cmdImportRequests(reg, args) {
 }
 
 // ---------------------------------------------------------------------------
+// reindex — 手で書き換えた台帳の派生索引を引き直す (パス 486)
+// ---------------------------------------------------------------------------
+
+/** 製品が読む派生索引 (台帳の本体から導く物)。 */
+const DERIVED_INDEX_KEYS = ['teamFirstRound', 'teamBacklogStatus'];
+
+/**
+ * backlog の `status` や `rounds` を**手で**書き換えたあと、製品が読む派生索引を
+ * 引き直す。書く口 (`writeRegistryChecked`) を通るので、門を通らない台帳は書かない。
+ * 索引が既に本体と一致していれば何も書かない (差分を作らない)。
+ *
+ * 門 (不変条件 13 / 15) が食い違いを見つけたときの断りは、このコマンドを名指しする
+ * —— 直す手を 1 つにしておけば、断りを読んだ人が索引を手で書くことは無い。
+ */
+function cmdReindex(reg, args) {
+  const refreshed = refreshDerivedIndexes(reg);
+  const changed = DERIVED_INDEX_KEYS.filter((k) => JSON.stringify(reg[k]) !== JSON.stringify(refreshed[k]));
+  if (changed.length === 0) {
+    say('ℹ️ 派生索引は台帳の本体と一致しています (何も書いていません)。');
+    return;
+  }
+  if (args['dry-run']) {
+    say(`🔎 dry-run — 引き直す索引: ${changed.join(', ')}`);
+    return;
+  }
+  writeRegistryChecked(reg, args);
+  say(`✅ 派生索引を引き直しました: ${changed.join(', ')}。門 (verify-orchestration) は書く前に通しています。`);
+}
+
+// ---------------------------------------------------------------------------
 // context — 役員ロールへの学術知識ブリーフ (knowledge-map.json 経由)
 // ---------------------------------------------------------------------------
 function cmdContext(reg, args) {
@@ -691,8 +767,9 @@ function main() {
     case 'dispatch': return cmdDispatch(reg, args);
     case 'record': return cmdRecord(reg, args);
     case 'import-requests': return cmdImportRequests(reg, args);
+    case 'reindex': return cmdReindex(reg, args);
     case 'context': return cmdContext(reg, args);
-    default: die(`未知のコマンド "${cmd}" (status | cycle | dispatch | record | import-requests | context)`);
+    default: die(`未知のコマンド "${cmd}" (status | cycle | dispatch | record | import-requests | reindex | context)`);
   }
 }
 

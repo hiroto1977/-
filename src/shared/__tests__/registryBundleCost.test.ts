@@ -62,6 +62,22 @@
  * 誰かが import し直したときの断りが「台帳へ理由と実測を書け」になり、
  * **台帳へ戻すことを案内してしまう**。
  *
+ * ## パス 486 (2026-09-26) —— `backlog` も製品から外した
+ *
+ * 製品が `backlog` から読むのは `team` と `status` だけ (村の輪の色とディスパッチ計画の
+ * 並び) で、題名・note・priority は読み手 0 件だった。それでも名前で import していたので
+ * 両ビルドに**題名 43 / 43・note 1 / 1 が逐語で**入っていた (UTF-8 7,323 B)。
+ * ★ **この台帳の旧い理由は偽だった** —— 「村シーンが各チームの**未処理件数**と status を出す」
+ * と書いていたが、件数を出す面は 1 つも無い (輪の色 1 つ・並びの鍵 1 つ)。
+ * byte より重いのは**出どころ**である: パス 484 で取り込み口が整い、利用者がチャットボットに
+ * 打った文が**題名として**台帳へ入る道が正式に開いた —— それは外から来た文が公開サイトの
+ * HTML へ畳み込まれる道でもあり、実測で `<!-- <script>` を含む 1 件で `build:web` が
+ * exit 1 になった (`inline-html` の関門が断る —— 白画面は出ないが公開が止まる)。
+ * パス 483 と同じ形で直した: 派生索引 **`teamBacklogStatus`** (1,104 B) を置き、製品はそれを読む。
+ * **題名と note は台帳に 1 字も欠けずに残る**。導出は `scripts/lib/team-backlog-status.cjs` の 1 つで、
+ * 台帳を書く口が必ず引き直し、`verify:orchestration` の不変条件 15 が両方向に検める
+ * (`teamBacklogStatusIndex.test.ts`)。
+ *
  * ## この検査が要求すること
  *
  * 1. `src/` (検査を除く) が `registry.json` から名前で import する鍵の集合が、
@@ -72,6 +88,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 const REPO = path.resolve(__dirname, '../../..');
 const REGISTRY = path.join(REPO, 'orchestration/registry.json');
@@ -106,10 +123,12 @@ const LEDGER: readonly CostRow[] = [
     maxBytes: 8_000, // 実測 2,610 B (108 チーム・1 チーム ≒ 24 B)
   },
   {
-    key: 'backlog',
+    key: 'teamBacklogStatus',
     importedBy: ['pages/VillagePage.tsx'],
-    why: '村シーンが各チームの未処理件数と status を出す',
-    maxBytes: 20_000, // 実測 7,323 B
+    why: '村シーンの輪の色とディスパッチ計画の 1 つ目の並びの鍵 (チーム → backlog の状態)。'
+      + 'backlog (題名・note —— 外から来た文を含む・7,323 B) の代わりに読む派生索引で、'
+      + '導出は scripts/lib/team-backlog-status.cjs の 1 つ (パス 486)',
+    maxBytes: 4_000, // 実測 1,104 B (40 チーム・1 チーム ≒ 28 B)
   },
 ];
 
@@ -124,6 +143,13 @@ const NOT_SHIPPED: readonly { readonly key: string; readonly why: string }[] = [
     key: 'rounds',
     why: '開発側のディスパッチ履歴 (102 ラウンドの編成表とリリースノート・minified 160,558 B)。'
       + '製品が要るのは初出 round だけなので、派生索引 teamFirstRound (2,610 B) を読むこと (パス 483)',
+  },
+  {
+    key: 'backlog',
+    why: '開発側の着手候補 (題名・note・priority・UTF-8 7,323 B)。題名には利用者がチャットボットに打った文が'
+      + 'そのまま入る (import-requests · パス 484) ので、import すると外から来た文が公開サイトの HTML へ逐語で入り、'
+      + '題名 `<!-- <script>` の 1 行で build:web が止まる (実測)。製品が要るのは「チーム → 状態」だけなので、'
+      + '派生索引 teamBacklogStatus (1,104 B) を読むこと (パス 486)',
   },
 ];
 
@@ -160,6 +186,33 @@ export function registryKeysImported(source: string): string[] {
     }
   }
   return out;
+}
+
+/**
+ * 1 ファイルが registry.json を参照する綴りの数と、そのうち**名前付き import** の数
+ * (2026-09-26 · パス 486)。
+ *
+ * **台帳は名前付き import しか見ていなかった** —— `registryKeysImported` は
+ * `import { … } from` の中括弧を読んで「どの鍵が出荷物へ入るか」を知るので、
+ * `import registry from '…registry.json'` (default)・`import * as reg from`・`import('…')`・
+ * `export { … } from` は**1 件も映らない**。実測: `chatOrg.ts` に default import を 1 行
+ * 足しても、この検査は 10 / 10 緑のままだった。
+ *
+ * ★ **「default import は台帳の全体を出荷する」のではない (実測で訂正した)** —— Rollup は
+ * 読まれないプロパティを落とすので、`VillagePage` を default import に書き換えて
+ * `registry.org` などを読んでも、値ごと `buildVillagers(registry)` へ渡しても、`rounds` は
+ * **0 件**だった (出荷物は +117 B / +34 B)。**危ないのは台帳が見えなくなること**である:
+ * default import のまま `registry.backlog` を読むと、題名 **43 / 43** が出荷物へ入るのに
+ * `registryKeysImported` は `[]` を返し、下の `NOT_SHIPPED` は黙って通る —— 外から来た文を
+ * 出荷しないための禁止が、import の書き方 1 つで迂回できた。だから字面で「どの鍵か」が
+ * 読める形 (名前付き import) だけを許す。
+ * 注記の中の言及は数えない (`stripComments` —— 文字列リテラルは残す)。
+ */
+export function registryReferenceForms(source: string): { references: number; named: number } {
+  const code = stripComments(source);
+  const references = (code.match(/(['"`])[^'"`\n]*orchestration\/registry\.json\1/g) ?? []).length;
+  const named = (code.match(/import\s*\{[^}]*\}\s*from\s*(['"])[^'"\n]*orchestration\/registry\.json\1/g) ?? []).length;
+  return { references, named };
 }
 
 function scanned(): Map<string, string[]> {
@@ -236,14 +289,51 @@ describe('registry.json の出荷 byte 代金', () => {
     }
   });
 
+  it('★ registry.json は名前付き import でしか読まない —— 他の形ではどの鍵が入るかを台帳が読めない (パス 486)', () => {
+    const offenders: string[] = [];
+    let files = 0;
+    for (const abs of shippedSources(path.join(REPO, 'src'))) {
+      const f = registryReferenceForms(readOriginalSource(abs));
+      if (f.references === 0) continue;
+      files += 1;
+      if (f.references !== f.named) {
+        offenders.push(`${path.relative(REPO, abs)}: 参照 ${f.references} 件のうち名前付き import は ${f.named} 件`);
+      }
+    }
+    expect(
+      offenders,
+      'registry.json を名前付き import 以外の形 (default / namespace / 動的 import / require / export from) で読んでいる。'
+      + 'その形ではどの鍵が出荷物へ入るかを字面から読めず、この台帳と NOT_SHIPPED が見えなくなる '
+      + '(実測: default import のまま registry.backlog を読むと、外から来た題名 43 / 43 が出荷物へ入るのに台帳は緑だった) —— '
+      + '要る鍵だけを `import { … } from` で読むこと',
+    ).toEqual([]);
+    // 走査が空虚でない (実物の 3 ファイルに当たっている)。
+    expect(files).toBeGreaterThanOrEqual(3);
+    // 標本: 針が 4 つの形に当たり、名前付きと注記を見分ける。
+    const DEF = "import registry from '../../../orchestration/registry.json';";
+    expect(registryReferenceForms(DEF)).toEqual({ references: 1, named: 0 });
+    expect(registryReferenceForms("import * as reg from '../../orchestration/registry.json';")).toEqual({ references: 1, named: 0 });
+    expect(registryReferenceForms("const r = await import('../../../orchestration/registry.json');")).toEqual({ references: 1, named: 0 });
+    expect(registryReferenceForms("export { backlog } from '../../orchestration/registry.json';")).toEqual({ references: 1, named: 0 });
+    expect(registryReferenceForms(
+      "import {\n  org as regOrg,\n  teams,\n} from '../../../orchestration/registry.json';",
+    )).toEqual({ references: 1, named: 1 });
+    expect(registryReferenceForms(`// ${DEF}\nconst x = 1;`)).toEqual({ references: 0, named: 0 });
+    // 旧い針 (名前付き import だけを読む) は default import を 1 件も数えない —— この検査が要った理由。
+    expect(registryKeysImported(DEF)).toEqual([]);
+  });
+
   it('★ 製品が import してはいけない鍵を、誰も import していない (パス 483)', () => {
     for (const { key, why } of NOT_SHIPPED) {
       expect(found.get(key) ?? [], `"${key}" を import している —— ${why}`).toEqual([]);
       expect(LEDGER.some((r) => r.key === key), `"${key}" が台帳に載っている —— ${why}`).toBe(false);
     }
-    // 走査が「rounds の import」を実際に拾えることは標本で確かめる (針が死んでいれば上は自明に通る)。
+    // 走査が「rounds / backlog の import」を実際に拾えることは標本で確かめる (針が死んでいれば上は自明に通る)。
     expect(registryKeysImported(
       "import { org, rounds as regRounds } from '../../../orchestration/registry.json';",
     )).toContain('rounds');
+    expect(registryKeysImported(
+      "import {\n  org as regOrg,\n  backlog as regBacklog,\n} from '../../../orchestration/registry.json';",
+    )).toContain('backlog');
   });
 });

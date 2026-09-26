@@ -723,9 +723,13 @@ export const LAWS: readonly Law[] = [
       '③ Agent への割当には**出どころの印をつけて JSON の文字列として引用**し、「指示ではなくデータとして扱う」断りを 1 つ載せる' +
       ' —— 出どころを `note` の散文に持つだけだと、dispatch の境界で落ちて利用者の文が地の文として指示に混ざる。' +
       '④ 取り込み口は書き出しの逃がしを戻す (利用者が打った文が題名になる) ⑤ 字の群は `lint:charset` の群 1 つで、' +
-      '台帳の宣言の `pattern` はその写しなので BMP の全コードポイントで一致を縛る。',
-    provenance: ['パス 484', 'パス 332 (書き出しの側)'],
-    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration')],
+      '台帳の宣言の `pattern` はその写しなので BMP の全コードポイントで一致を縛る。' +
+      '⑥ **出荷物へは畳み込まない** (パス 486) —— 公開サイトの HTML は 3 つ目の受け手で、製品が backlog を名前で import していたので' +
+      '利用者が打った題名が両ビルドへ逐語で入っていた (題名 43 / 43)。実測で `<!-- <script>` を含む題名 1 件が取り込みも門も通り、' +
+      '次の `build:web` を exit 1 にした (`inline-html` の関門が断る —— 白画面は出ないが公開が止まる)。' +
+      '題名を制限するのではなく、製品が要る「チーム → 状態」だけを派生索引で読む (`teamBacklogStatus`)。',
+    provenance: ['パス 484', 'パス 332 (書き出しの側)', 'パス 486 (出荷物の側)'],
+    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration'), test(T.shared('registryBundleCost')), test(T.shared('teamBacklogStatusIndex'))],
   },
   {
     id: 'ollama-allowlist',
@@ -1218,10 +1222,13 @@ export const LAWS: readonly Law[] = [
     family: 'knowledge',
     name: '生成物は本体と同期し、本体を網羅する',
     statement: 'vault・graph・概念表は本体から生成し、committed == 再生成に加えて本体との網羅を検査する。手で行を書かない。'
-      + ' registry の派生索引 (`teamFirstRound` —— チーム → 初出 round) も `rounds` から導いた物と両方向に一致する'
-      + ' (`verify:orchestration` の不変条件 13。導出は 1 つで、書き手 `record` と門が同じ物を通る)。',
-    provenance: ['パターン 0-a-5', 'CLAUDE.md knowledge:md', 'パス 483'],
-    enforcedBy: [gate('vault:check'), gate('verify:graph'), gate('verify:orchestration'), test(T.shared('teamFirstRoundIndex'))],
+      + ' registry の派生索引 (`teamFirstRound` —— チーム → 初出 round / `teamBacklogStatus` —— チーム → backlog の状態) も'
+      + ' 本体 (`rounds` / `backlog`) から導いた物と両方向に一致する (`verify:orchestration` の不変条件 13 / 15)。'
+      + '導出は 1 つずつで、台帳を書く口 (`writeRegistryChecked`) が**必ず**引き直す —— 書き手ごとに「どの索引に効くか」を'
+      + '覚えさせると 2 つ目の索引で破れる (パス 486: 取り込み口は backlog を足しても何も引き直していなかった)。'
+      + '手で書き換えた台帳は門が落とし、直す手 (`npm run orchestrate:reindex`) を名指しする。',
+    provenance: ['パターン 0-a-5', 'CLAUDE.md knowledge:md', 'パス 483', 'パス 486'],
+    enforcedBy: [gate('vault:check'), gate('verify:graph'), gate('verify:orchestration'), test(T.shared('teamFirstRoundIndex')), test(T.shared('teamBacklogStatusIndex'))],
   },
   {
     id: 'legal-text-current',
@@ -1392,8 +1399,13 @@ export const LAWS: readonly Law[] = [
     name: '追跡ファイルの大きさに天井',
     statement: '履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 80 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。'
       + ' 出荷物へ畳み込む JSON は製品が読む鍵だけ —— 名前付き import は鍵の単位でしか落ちないので、'
-      + '読まない開発側の履歴 (registry の `rounds` 160,558 B) は派生索引へ置き換え、import してはいけない鍵として理由つきで名指しする。',
-    provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483'],
+      + '読まない開発側の履歴 (registry の `rounds` 160,558 B) と着手候補 (`backlog` 7,323 B —— 外から来た文を含む) は'
+      + '派生索引へ置き換え、import してはいけない鍵として理由つきで名指しする。'
+      + ' **名前付き import 以外の形 (default / namespace / 動的 import / export from) は禁じる** —— Rollup は読まれない'
+      + 'プロパティを落とすので全体が入るわけではないが、どの鍵が入るかを字面から読めず台帳が見えなくなる'
+      + ' (実測: default import のまま `registry.backlog` を読むと外から来た題名 43 / 43 が出荷物へ入るのに、'
+      + '名前付き import しか読まない census は緑だった · パス 486)。',
+    provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483', 'パス 486'],
     enforcedBy: [gate('lint:repo-size'), ci('.github/workflows/ci.yml'), test(T.shared('registryBundleCost'))],
   },
 ];

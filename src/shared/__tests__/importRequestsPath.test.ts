@@ -43,6 +43,9 @@ const req = createRequire(import.meta.url);
 const { unescapeMarkdownInline } = req('../../../scripts/lib/markdown-inline.cjs') as {
   unescapeMarkdownInline: (s: string) => string;
 };
+const { deriveTeamBacklogStatus } = req('../../../scripts/lib/team-backlog-status.cjs') as {
+  deriveTeamBacklogStatus: (backlog: readonly { team: string; status: string }[]) => Record<string, string>;
+};
 const { printableLines, jsonForTerminal, unsafeCharsIn } = req('../../../scripts/lib/untrusted-text.cjs') as {
   printableLines: (s: unknown) => string;
   jsonForTerminal: (v: unknown) => string;
@@ -410,6 +413,10 @@ describe('端末へ刷る口は 1 つ —— 欄ごとには守らない (パス
     for (const m of reg.org.managers) m.title = H('管理職');
     reg.policy.cycles.pdca![0]!.desc = H('段');
     reg.backlog.push({ id: 'zz-dev', team: team.id, title: '開発側の論点', priority: 1, status: 'designed' });
+    // backlog を手で足したので、書き手と同じ導出で派生索引も揃える (パス 486 ——
+    // 揃えないと門の不変条件 15 が「索引が古い」で落ち、この検査が見たい物 —— 端末へ刷る口 —— に届かない)。
+    (reg as unknown as { teamBacklogStatus: Record<string, string> }).teamBacklogStatus =
+      deriveTeamBacklogStatus(reg.backlog as { team: string; status: string }[]);
     const dir = tmp();
     const regFile = join(dir, 'registry.json');
     writeFileSync(regFile, `${JSON.stringify(reg, null, 2)}\n`);

@@ -13,7 +13,7 @@ import {
   org as regOrg,
   teams as regTeams,
   teamFirstRound as regTeamFirstRound,
-  backlog as regBacklog,
+  teamBacklogStatus as regTeamBacklogStatus,
 } from '../../../orchestration/registry.json';
 import {
   buildVillagers,
@@ -58,7 +58,10 @@ const REG: VillageRegistry = {
   // `rounds` (開発側の履歴・160 KB) は import しない —— 並びに要る「初出 round」だけを
   // 派生索引で読む (パス 483。理由と実測は villageData.ts の VillageRegistry)。
   teamFirstRound: regTeamFirstRound as VillageRegistry['teamFirstRound'],
-  backlog: regBacklog as VillageRegistry['backlog'],
+  // `backlog` (題名・note —— 利用者がチャットボットに打った文を含む) も import しない ——
+  // 輪の色と並びに要る「チーム → 状態」だけを派生索引で読む (パス 486。理由と実測は
+  // villageData.ts の VillageRegistry)。
+  teamBacklogStatus: regTeamBacklogStatus as VillageRegistry['teamBacklogStatus'],
 };
 const ORG_INDEX: OrgIndex = buildOrgIndex(regOrg as RawOrg, regTeams as readonly RawTeam[]);
 

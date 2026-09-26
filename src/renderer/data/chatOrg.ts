@@ -16,6 +16,8 @@
  * 逐語で入っていた** (`rounds` は minified 160,558 B)。推論は正しく、**前提が古びた**:
  * 書かれた時点では誰も `rounds` を import していなかった。
  * 出荷 byte の代金は `shared/__tests__/registryBundleCost.test.ts` が台帳で持つ。
+ * (その後 `rounds` はパス 483 で、`backlog` —— 利用者がチャットボットに打った題名を含む ——
+ * はパス 486 で、どちらも製品から外れ、派生索引 `teamFirstRound` / `teamBacklogStatus` に置き換わった。)
  */
 
 /** registry.json の org.executives[] の 1 要素 (使用フィールドのみ)。 */

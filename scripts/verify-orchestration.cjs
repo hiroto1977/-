@@ -20,6 +20,13 @@
  *      (チームの domain が無い / active が文字列 / backlog の status の綴り違い ——
  *      どれも製品が読む欄)。検証器は scripts/lib/json-schema-subset.cjs で、知らない
  *      キーワードは「未対応」として落とす (宣言に足した制約が門に届かないまま残らない)。
+ *  15. teamBacklogStatus (製品が読む派生索引「チーム → backlog の状態」) は backlog から
+ *      導いた物と両方向に一致する (2026-09-26 · パス 486。導出は
+ *      scripts/lib/team-backlog-status.cjs の 1 つで、台帳を書く口 (orchestrate.cjs の
+ *      writeRegistryChecked) も同じ物を通る。backlog を手で書き換えたら
+ *      `npm run orchestrate:reindex`)。製品は backlog (題名・note —— 外から来た文を含む) を
+ *      import しない —— 題名が公開サイトの HTML へ畳み込まれ、`<!-- <script>` の 1 行で
+ *      `build:web` が止まっていた (実測)。
  *
  * さらに「次に何チームで・どの領域を細分化するか」を自動算出して出力する
  * (--plan)。これによりレジストリ自体が次サイクルの設計図になり、増やし続けても
@@ -33,6 +40,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { teamFirstRoundProblems } = require('./lib/team-first-round.cjs');
+const { teamBacklogStatusProblems } = require('./lib/team-backlog-status.cjs');
 const { validateAgainstSchema } = require('./lib/json-schema-subset.cjs');
 const { printableLines } = require('./lib/untrusted-text.cjs');
 
@@ -169,6 +177,33 @@ function selfTest() {
   ];
   for (const [name, stored, rs, want] of indexCases) {
     const got = teamFirstRoundProblems(stored, rs).length;
+    const pass = got === want;
+    if (!pass) bad += 1;
+    say(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
+  }
+  // 不変条件 15 —— 派生索引 teamBacklogStatus (パス 486)。
+  const backlog = [
+    { team: 'a', status: 'shipped' },
+    { team: 'b', status: 'blocked' },
+    { team: 'a', status: 'designed' },
+    { team: 'c', status: 'shipped' },
+    { team: 'c', status: 'dropped' },
+  ];
+  const goodStatus = () => ({ a: 'designed', b: 'blocked', c: 'shipped' });
+  const statusCases = [
+    ['健全な索引は 0 件', goodStatus(), backlog, 0],
+    ['★ 取り込んだ項目のチームが無い (書いて引き直さなかった形)', { a: 'designed', b: 'blocked' }, backlog, 1],
+    ['★ 状態が古い (後の項目の designed が先の shipped に勝つ)', { ...goodStatus(), a: 'shipped' }, backlog, 1],
+    ['★ どの項目にも現れない行が残る (逆向き)', { ...goodStatus(), zz: 'designed' }, backlog, 1],
+    ['★ 索引が無い / object でない', undefined, backlog, 1],
+    ['配列は object と見なさない', [], backlog, 1],
+    ['重みが同じなら先に現れた項目 (後の dropped は先の shipped に勝たない)', { ...goodStatus(), c: 'dropped' }, backlog, 1],
+    ['in-progress は designed に勝つ (後に現れても)', { d: 'in-progress' },
+      [{ team: 'd', status: 'designed' }, { team: 'd', status: 'in-progress' }], 0],
+    ['空の backlog の索引は空', {}, [], 0],
+  ];
+  for (const [name, stored, bl, want] of statusCases) {
+    const got = teamBacklogStatusProblems(stored, bl).length;
     const pass = got === want;
     if (!pass) bad += 1;
     say(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
@@ -428,8 +463,15 @@ function main() {
   // 13. 製品が読む派生索引 teamFirstRound は rounds から導いた物と両方向に一致する。
   //     製品 (村のディスパッチ計画) は rounds (160 KB) を import せずにこの索引だけを
   //     読むので、ここが食い違うと村の並び順が台帳の履歴と黙って食い違う。
-  //     直し方: `node scripts/orchestrate.cjs record …` で round を足せば引き直される。
-  problems.push(...teamFirstRoundProblems(reg.teamFirstRound, reg.rounds));
+  //     直し方: `node scripts/orchestrate.cjs record …` で round を足せば引き直される
+  //     (台帳を書く口が必ず引き直す —— パス 486)。手で書き換えたなら reindex。
+  {
+    const stale = teamFirstRoundProblems(reg.teamFirstRound, reg.rounds);
+    if (stale.length) {
+      problems.push(...stale);
+      problems.push('  → rounds を手で書き換えたなら `npm run orchestrate:reindex` で索引を引き直してください');
+    }
+  }
 
   // 6. backlog の検証。
   const backlogIds = new Set();
@@ -437,6 +479,18 @@ function main() {
     if (backlogIds.has(b.id)) problems.push(`backlog id が重複: ${b.id}`);
     backlogIds.add(b.id);
     if (!teamIds.has(b.team)) problems.push(`backlog "${b.id}": 未知の team "${b.team}"`);
+  }
+
+  // 15. 製品が読む派生索引 teamBacklogStatus は backlog から導いた物と両方向に一致する
+  //     (パス 486)。製品 (村の輪の色とディスパッチ計画) は backlog を import せずに
+  //     この索引だけを読むので、ここが食い違うと村の色と並びが台帳と黙って食い違う。
+  //     直し方は 1 つだけ名指しする —— 手で書き換えた台帳でも同じ口で引き直せる。
+  {
+    const stale = teamBacklogStatusProblems(reg.teamBacklogStatus, reg.backlog);
+    if (stale.length) {
+      problems.push(...stale);
+      problems.push('  → backlog を手で書き換えたなら `npm run orchestrate:reindex` で索引を引き直してください');
+    }
   }
 
   // 12. サイクル定義 (v3): policy.cycles があれば、各サイクルは非空のステージ配列で、

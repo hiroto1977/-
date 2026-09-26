@@ -55,6 +55,7 @@ interface Registry {
   teams: unknown[];
   rounds: unknown[];
   backlog: unknown[];
+  teamBacklogStatus?: Record<string, string>;
   policy: { minTeamsForRound: unknown[] };
   org: { executives: unknown[]; managers: unknown[]; secretaries: { supports: string; id: string }[] };
 }
@@ -133,7 +134,9 @@ describe('空にすると消える検査には床が在る (パス 467)', () => 
     expect(run(without((r) => { r.rounds = []; })), 'rounds を空にしても門が通る').toBe(1);
     expect(run(without((r) => { (r.org as { secretaries?: unknown }).secretaries = undefined; })),
       '秘書室を消しても門が通る').toBe(1);
-    expect(run(without((r) => { r.backlog = []; })), 'backlog を空にすると門が落ちる (床を置かないと決めた側)').toBe(0);
+    // 課題が片付いた台帳は、書く口が派生索引も空へ引き直す (パス 486) —— 正当に 0 件の形はこれ。
+    expect(run(without((r) => { r.backlog = []; r.teamBacklogStatus = {}; })),
+      'backlog を空にすると門が落ちる (床を置かないと決めた側)').toBe(0);
   });
 
   it('★ 秘書室の完全性検査が、また条件で囲まれていない', () => {

@@ -3,7 +3,7 @@
   "title": "AI Orchestration Registry",
   "description": "進化し続けるAIオーケストレーションの単一の真実源。チーム・ラウンド・バックログを機械可読に保持する。",
   "type": "object",
-  "required": ["version", "policy", "teams", "rounds", "teamFirstRound", "backlog", "org"],
+  "required": ["version", "policy", "teams", "rounds", "teamFirstRound", "backlog", "teamBacklogStatus", "org"],
   "additionalProperties": true,
   "properties": {
     "version": { "type": "integer", "minimum": 1 },
@@ -152,9 +152,14 @@
       }
     },
     "teamFirstRound": {
-      "description": "rounds から導いた派生索引: チーム id → そのチームを含む round の番号の最小値。製品 (村のディスパッチ計画) は rounds (160 KB) を import せずにこれだけを読む。導出は scripts/lib/team-first-round.cjs の 1 つで、orchestrate.cjs record が引き直し、verify:orchestration が両方向に一致を検める。手で書かない。",
+      "description": "rounds から導いた派生索引: チーム id → そのチームを含む round の番号の最小値。製品 (村のディスパッチ計画) は rounds (160 KB) を import せずにこれだけを読む。導出は scripts/lib/team-first-round.cjs の 1 つで、台帳を書く口 (orchestrate.cjs の writeRegistryChecked —— record も import-requests も通る) が引き直し、verify:orchestration が両方向に一致を検める。手で書かない —— rounds を手で書き換えたら npm run orchestrate:reindex。",
       "type": "object",
       "additionalProperties": { "type": "integer", "minimum": 1 }
+    },
+    "teamBacklogStatus": {
+      "description": "backlog から導いた派生索引: チーム id → そのチームの backlog の状態 (in-progress > designed > blocked > それ以外。重みが同じなら先に現れた項目)。製品 (村の輪の色とディスパッチ計画) は backlog を import せずにこれだけを読む —— backlog の題名と note (チャットボットの要望 = 外から来た文を含む) を公開サイトの HTML へ畳み込まないため (パス 486)。導出は scripts/lib/team-backlog-status.cjs の 1 つで、台帳を書く口 (orchestrate.cjs の writeRegistryChecked) が引き直し、verify:orchestration が両方向に一致を検める。手で書かない —— backlog を手で書き換えたら npm run orchestrate:reindex。",
+      "type": "object",
+      "additionalProperties": { "type": "string", "enum": ["designed", "in-progress", "shipped", "dropped", "blocked"] }
     },
     "backlog": {
       "type": "array",

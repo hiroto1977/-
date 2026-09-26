@@ -273,6 +273,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/populationGroupFloor.test.ts',
   'src/shared/__tests__/trackedCrossCheck.test.ts',
   'src/shared/__tests__/redactionCoverage.test.ts',
+  'src/shared/__tests__/registryBundleCost.test.ts',
   'src/shared/__tests__/responseBodyCapCensus.test.ts',
   'src/shared/__tests__/sanitizerCensus.test.ts',
   'src/shared/__tests__/scriptEmbedGate.test.ts',

@@ -1,7 +1,7 @@
 /**
  * villageData — 「AIの村」シーンの純ロジック（IO なし・決定論的）。
  *
- * `orchestration/registry.json` の org / teams / teamFirstRound / backlog から、
+ * `orchestration/registry.json` の org / teams / teamFirstRound / teamBacklogStatus から、
  *   1. 村人ロスター（143 体: CEO 1 / COO 1 / 役員 5 / 秘書室 5×4=20 / 管理職 8 / 一般職 108）
  *   2. 計算されたディスパッチ計画（どのチームがどの順で「作業広場」に集まるか）
  * を導出する。ネットワークや乱数・時刻に依存せず、同じ registry からは常に同じ結果を返す
@@ -49,12 +49,11 @@ interface RawTeam {
   readonly manager: string;
   readonly role?: 'research' | 'audit';
 }
-interface RawBacklog {
-  readonly id: string;
-  readonly team: string;
-  readonly title: string;
-  readonly priority: number;
-  readonly status: 'designed' | 'in-progress' | 'shipped' | 'dropped' | 'blocked';
+/** backlog の項目の状態 (registry.schema.json の enum と同じ 5 つ)。 */
+export type BacklogStatus = 'designed' | 'in-progress' | 'shipped' | 'dropped' | 'blocked';
+const BACKLOG_STATUSES: readonly string[] = ['designed', 'in-progress', 'shipped', 'dropped', 'blocked'];
+function isBacklogStatus(s: unknown): s is BacklogStatus {
+  return typeof s === 'string' && BACKLOG_STATUSES.includes(s);
 }
 export interface VillageRegistry {
   readonly org: {
@@ -78,7 +77,21 @@ export interface VillageRegistry {
    * `rounds` から導き直して両方向に一致を検める。
    */
   readonly teamFirstRound: Readonly<Record<string, number>>;
-  readonly backlog: readonly RawBacklog[];
+  /**
+   * チーム id → そのチームの backlog の状態 (registry の派生索引)。
+   *
+   * ★ **`backlog` そのものは読まない** (2026-09-26 · パス 486)。ここが要るのは
+   * 「チーム → 状態」だけなのに、`backlog` を名前で import すると題名・note・priority
+   * まで両ビルドへ入っていた (題名 43 / 43・note 1 / 1・UTF-8 7,323 B)。パス 484 で
+   * **利用者がチャットボットに打った文が題名として台帳へ入る道**が開いたので、それは
+   * 外から来た文を公開サイトの HTML へ逐語で畳み込むことでもあった —— 実測で、取り込んだ
+   * 題名 `<!-- <script>` の 1 行で `npm run build:web` が exit 1 になる
+   * (`inline-html` の関門が正しく断るので白画面は出ないが、公開サイトの組み立てが止まる)。
+   * 索引は 1,104 B で、導出は `scripts/lib/team-backlog-status.cjs` の 1 つ ——
+   * 台帳を書く口 (`orchestrate.cjs` の `writeRegistryChecked`) が引き直し、
+   * `verify:orchestration` の不変条件 15 が backlog から導き直して両方向に一致を検める。
+   */
+  readonly teamBacklogStatus: Readonly<Record<string, string>>;
 }
 
 export type VillagerKind = 'ceo' | 'coo' | 'executive' | 'secretary' | 'manager' | 'team';
@@ -118,7 +131,7 @@ export interface DispatchStep {
   readonly execId: string;
   readonly chain: string;
   /** backlog に紐づく場合の状態（色分け用）。 */
-  readonly status?: RawBacklog['status'];
+  readonly status?: BacklogStatus;
 }
 
 const EXEC_EMOJI: Record<string, string> = {
@@ -254,15 +267,20 @@ export function buildVillagers(reg: VillageRegistry): Villager[] {
   return villagers;
 }
 
-/** backlog の状態を team id で引ける Map。 */
-export function backlogByTeam(reg: VillageRegistry): Map<string, RawBacklog['status']> {
-  const map = new Map<string, RawBacklog['status']>();
-  for (const b of reg.backlog) {
-    // 同一チームに複数あれば「より進行中」を優先（in-progress > designed > blocked > 完了系）。
-    const rank = (s: RawBacklog['status']) =>
-      s === 'in-progress' ? 4 : s === 'designed' ? 3 : s === 'blocked' ? 2 : 1;
-    const prev = map.get(b.team);
-    if (prev === undefined || rank(b.status) > rank(prev)) map.set(b.team, b.status);
+/**
+ * backlog の状態を team id で引ける Map —— 派生索引 `teamBacklogStatus` を読むだけ。
+ *
+ * 「同じチームに複数あれば、より進行中 (in-progress > designed > blocked > 完了系)」の
+ * 導出は `scripts/lib/team-backlog-status.cjs` の 1 つで、ここには写さない (パス 486。
+ * 直す前はここで backlog から導いていた —— 算法は写しのまま向こうへ移した)。
+ * `Object.entries` は own の鍵だけを返すので、`constructor` のような team id でも
+ * prototype の関数を拾わない。知らない状態は落とす (輪は既定の色・並びは最後 ——
+ * 直す前に知らない状態が辿ったのと同じ見た目)。
+ */
+export function backlogByTeam(reg: VillageRegistry): Map<string, BacklogStatus> {
+  const map = new Map<string, BacklogStatus>();
+  for (const [team, status] of Object.entries(reg.teamBacklogStatus)) {
+    if (isBacklogStatus(status)) map.set(team, status);
   }
   return map;
 }
@@ -285,7 +303,7 @@ export function buildDispatchPlan(reg: VillageRegistry): DispatchStep[] {
     return typeof r === 'number' && Number.isFinite(r) ? r : Number.MAX_SAFE_INTEGER;
   };
 
-  const statusWeight = (s: RawBacklog['status'] | undefined): number => {
+  const statusWeight = (s: BacklogStatus | undefined): number => {
     if (s === 'in-progress') return 0;
     if (s === 'designed') return 1;
     if (s === 'blocked') return 2;
