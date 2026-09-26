@@ -327,15 +327,18 @@ describe('走らせる: 7 つの lens を順に働かせ、回答者を並列に
 });
 
 describe('チャットへ渡す形', () => {
-  it('★ 見出し 1 つ + 順位ごとに 1 つ。見出しは 7 つの lens を全部名乗る', async () => {
+  it('★ 見出し 1 つ + 順位ごとに 2 つ (アプリの採点と理由 / 回答者の文)。見出しは 7 つの lens を全部名乗る', async () => {
     const r = await runBestAnswers(REQ, strategyEcho().send);
     const msgs = formatBestAnswers(r, (id) => (id === 'anthropic' ? 'Claude (Anthropic)' : id || '既定'));
-    expect(msgs).toHaveLength(1 + r.best.ranked.length);
+    expect(msgs).toHaveLength(1 + 2 * r.best.ranked.length);
     for (const l of ENGINEERING_LENSES) expect(msgs[0]!.text, `${l.label} を名乗っていない`).toContain(l.label);
     expect(msgs[1]!.text).toContain('🥇 1 位');
-    expect(msgs[2]!.text).toContain('🥈 2 位');
-    expect(msgs[3]!.text).toContain('🥉 3 位');
-    expect(msgs[1]!.servedBy).toBe('Claude (Anthropic)');
+    expect(msgs[3]!.text).toContain('🥈 2 位');
+    expect(msgs[5]!.text).toContain('🥉 3 位');
+    // アプリの声の吹き出しには回答者の札が付かず、回答者の吹き出しは回答の本文そのもの (パス 488)。
+    expect(msgs[1]!.servedBy).toBeUndefined();
+    expect(msgs[2]!.servedBy).toBe('Claude (Anthropic)');
+    expect(msgs[2]!.text).toBe(r.best.ranked[0]!.text.trim());
   });
 
   it('★ 既存の Markdown 描画が採点の表を表として読む (見出しの 1 行目は見出し)', async () => {

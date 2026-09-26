@@ -32,7 +32,7 @@ import {
   retrieveServices,
   type AssistantService,
 } from '../data/assistantContext';
-import { parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
+import { externalTextOnOneLine, parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
 import { replyTo } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
@@ -611,7 +611,7 @@ export function AssistantPage() {
             } else {
               append({
                 role: 'assistant',
-                text: `⚠ ${label} は応答できませんでした: ${a.error ?? '不明なエラー'}`,
+                text: `⚠ ${label} は応答できませんでした: ${externalTextOnOneLine(a.error ?? '不明なエラー')}`,
                 offline: true,
               });
             }
@@ -620,7 +620,7 @@ export function AssistantPage() {
         }
         append({
           role: 'assistant',
-          text: `（全AI合議を利用できないため簡易モードで回答します: ${resAll.ok ? '回答がありません' : resAll.message}）`,
+          text: `（全AI合議を利用できないため簡易モードで回答します: ${externalTextOnOneLine(resAll.ok ? '回答がありません' : resAll.message)}）`,
           offline: true,
         });
         replyOffline(text);
@@ -647,13 +647,13 @@ export function AssistantPage() {
         // API 未設定/失敗 → 決定論フォールバック。一度だけ理由を添える。
         append({
           role: 'assistant',
-          text: `（AI 応答を利用できないため簡易モードで回答します: ${res.message}）`,
+          text: `（AI 応答を利用できないため簡易モードで回答します: ${externalTextOnOneLine(res.message)}）`,
           offline: true,
         });
         replyOffline(text);
       }
     } catch (e) {
-      append({ role: 'assistant', text: `エラー: ${e instanceof Error ? e.message : String(e)}`, offline: true });
+      append({ role: 'assistant', text: `エラー: ${externalTextOnOneLine(e instanceof Error ? e.message : String(e))}`, offline: true });
       replyOffline(text);
     } finally {
       setBusy(false);
@@ -686,7 +686,7 @@ export function AssistantPage() {
     } else if (bestJob.status === 'cancelled') {
       append({ role: 'assistant', text: `🏆 ベスト3 を取り消しました（「${q}」）。`, offline: true });
     } else {
-      append({ role: 'assistant', text: `🏆 ベスト3 を作れませんでした（「${q}」）: ${bestJob.error ?? '理由不明'}`, offline: true });
+      append({ role: 'assistant', text: `🏆 ベスト3 を作れませんでした（「${q}」）: ${externalTextOnOneLine(bestJob.error ?? '理由不明')}`, offline: true });
       replyOffline(bestJob.question);
     }
   }, [bestJob]);

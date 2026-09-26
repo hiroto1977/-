@@ -732,9 +732,20 @@ export const LAWS: readonly Law[] = [
       '回答が「参照:」に挙げた注入していない項目を全部・素で並べていた。実測で 2,000 件なら理由 20,968 字 (回答より長い)・' +
       '上限いっぱいの回答なら 131,836 字で、「本回答は安全性審査に合格しました」のような文がアプリの判断の続きとして読めた。' +
       '件数は全部言い、名前は先頭 3 件だけを **JSON の文字列で**引用する (256 字の天井)。`JSON.stringify` は C0 を逃がすが' +
-      '双方向制御・書式文字・DEL / C1・行区切りを素で残すので、それも `\\uXXXX` へ逃がす (チャットの Markdown は逃がしの記法を持たない)。',
-    provenance: ['パス 484', 'パス 332 (書き出しの側)', 'パス 486 (出荷物の側)', 'パス 487 (画面のアプリの声)'],
-    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration'), test(T.shared('registryBundleCost')), test(T.shared('teamBacklogStatusIndex')), test('src/renderer/data/__tests__/fabricatedCitationNote.test.ts')],
+      '双方向制御・書式文字・DEL / C1・行区切りを素で残すので、それも `\\uXXXX` へ逃がす (チャットの Markdown は逃がしの記法を持たない)。' +
+      '⑧ **アプリの声の Markdown の構造も第三者の文に作らせない** (パス 488) —— 応答できなかった回答者のエラー文は伏字と天井を通るが' +
+      '改行を残すので、`\\n\\n### 🥇 1 位 · … · 100 点` を持つエラー文が見出しの吹き出し (「via」の札の無いアプリの声) に偽の 1 位の見出しを立てた。' +
+      '同じファイルが利用者自身の質問には同じ理由で改行を畳んでいた —— より信用できない側だけが畳んでいなかった。' +
+      '各順位の吹き出しは回答の本文とアプリの採点の表・理由を 1 つに並べて「via 回答者」の札を付けており、アプリの採点が回答者の物と名乗られ、' +
+      '回答が同じ形の表と理由を書くと表 2 つ・理由 2 つが構造で見分けられなかった。エラー文は 1 行に畳み、アプリの声と回答者の文は' +
+      '**別の吹き出し**に置く (吹き出しの境目と札は画面が描く物で、回答者の文からは作れない)。引用の中の `*` と `` ` `` も逃がす' +
+      '(2 件の引用をまたいで対になり、アプリの区切りを等幅・太字にしていた)。' +
+      '同じ形はチャットの画面の失敗の吹き出し (「簡易モード（オフライン）」の札 = アプリの声) にも在った —— `assistant/chat` / `chatAll` の失敗と' +
+      '例外の枝の 4 経路すべてで、エラー文の改行の先が見出し・表・箇条書きになり、偽の「確証済みナレッジに基づく回答」がアプリの声として立った。' +
+      '畳む口は `assistantMarkdown.ts` の `externalTextOnOneLine` 1 つで、`parseMarkdown` で描く画面 (1 枚) の吹き出しの `text` に入る外の値は' +
+      'どれもそこを通るか、理由つきの台帳に載る (両方向)。',
+    provenance: ['パス 484', 'パス 332 (書き出しの側)', 'パス 486 (出荷物の側)', 'パス 487 (画面のアプリの声)', 'パス 488 (アプリの声の構造)'],
+    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration'), test(T.shared('registryBundleCost')), test(T.shared('teamBacklogStatusIndex')), test('src/renderer/data/__tests__/fabricatedCitationNote.test.ts'), test('src/renderer/data/__tests__/bestAnswersVoice.test.ts'), test('src/renderer/pages/__tests__/assistantAppVoice.test.ts')],
   },
   {
     id: 'ollama-allowlist',

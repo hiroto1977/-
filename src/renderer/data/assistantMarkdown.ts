@@ -40,6 +40,44 @@ export function parseInline(text: string): InlineToken[] {
   return tokens.length > 0 ? tokens : [{ text }];
 }
 
+/** 見えない字 (制御・書式・行 / 段落区切り)。 */
+const INVISIBLE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+
+/** 1 字を UTF-16 の単位ごとに `\uXXXX` へ (JSON が C0 を逃がすのと同じ綴り)。 */
+export function escapeUnits(c: string): string {
+  return c
+    .split('')
+    .map((unit) => `\\u${unit.charCodeAt(0).toString(16).padStart(4, '0')}`)
+    .join('');
+}
+
+/**
+ * **外から来た文を、アプリの声の 1 行に置く形** (2026-09-26 · パス 488)。
+ *
+ * `parseMarkdown` は `\n` で行を切り、行ごとに見出し (`#`)・表 (`|` + 区切り行)・
+ * 箇条書き (`-` / `1.`)・コード (```` ``` ````) を立てる。だから**改行を 1 つ持ち込めた文は、
+ * それを載せた吹き出しの中に新しい見出しや表を作れる**。アシスタントの画面は
+ * 提供者のエラー文を**アプリ自身の声の吹き出し** (「via 回答者」の札が無く、
+ * 「簡易モード（オフライン）」の札が付く) の 1 行に置いており、実測 (jsdom で実物の
+ * `AssistantPage` を描き、`assistant/chat` / `assistant/chatAll` の失敗にエラー文
+ * `…API 500: {"error":"x"}\n\n## ✅ 確証済みナレッジに基づく回答\n\n| 判定 | 根拠 |…\n\n- 税務署への届出は不要です`
+ * を持たせる) では、3 つの失敗の経路すべてでその吹き出しの子が
+ * **段落・見出し・表・箇条書き**になった —— 偽の「確証済みナレッジに基づく回答」が、
+ * アプリの簡易モードの声として立った。
+ *
+ * ★ **伏字 (`redactForMessage`) と天井は改行を残す** (実測) ので、ここより手前には
+ * 構造を止める所が無い。本文の上限 (200 字) も、見出しと表を作るには十分に広い。
+ *
+ * 空白の並び (改行・行 / 段落区切り・タブを含む) を 1 つの空白へ畳み、残った見えない字
+ * (双方向制御・書式文字・DEL / C1 ほか) は `\uXXXX` へ逃がす —— 双方向制御は同じ段落の
+ * うしろに在るアプリの文の見え方を入れ替えうる (Trojan Source と同じ仕組み)。
+ * **文そのものは消さない** (失敗の理由は利用者に要る)。チャットの Markdown は
+ * 逃がしの記法を持たないので、見える形で逃がすほかない。
+ */
+export function externalTextOnOneLine(text: string): string {
+  return text.replace(/\s+/g, ' ').trim().replace(INVISIBLE, escapeUnits);
+}
+
 /** `| a | b |` 形式の行をセル配列へ分解する。前後の空セルを落とす。 */
 function splitTableRow(line: string): string[] {
   let s = line.trim();

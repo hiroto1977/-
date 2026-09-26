@@ -34,6 +34,7 @@
 import { displayField } from '../../shared/apiResponse';
 import { countChars } from '../../shared/inputCeiling';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
+import { escapeUnits, externalTextOnOneLine } from './assistantMarkdown';
 import {
   composeSystemPrompt,
   countOccurrences,
@@ -333,13 +334,18 @@ export const MAX_FABRICATED_CITATIONS_SHOWN = 3;
  *   逃がしの記法を持たないので、見える形で逃がすほかない
  */
 export function quoteModelText(text: string): string {
-  return JSON.stringify(displayField(text)).replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, (c) =>
-    c
-      .split('')
-      .map((unit) => `\\u${unit.charCodeAt(0).toString(16).padStart(4, '0')}`)
-      .join(''),
-  );
+  return JSON.stringify(displayField(text)).replace(INVISIBLE_OR_INLINE_MARK, escapeUnits);
 }
+
+/**
+ * 見えない字 + チャットの Markdown がインラインで解く 2 字 (`*` と `` ` ``) —— パス 488。
+ *
+ * `parseInline` は**段落全体**に `**太字**` と `` `コード` `` を当てるので、引用の中の 1 字が
+ * **2 件の引用をまたいで**対になり、あいだの**アプリの区切り ` / ` を太字や等幅にした**
+ * (パス 487 が残した物)。引用するのは**注入していない項目だけ**なので、本物の項目名は
+ * 1 字も変わらない。JSON として読むと元の字へ戻る (`\u002a` / `\u0060`)。
+ */
+const INVISIBLE_OR_INLINE_MARK = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}*`]/gu;
 
 /** 捏造した参照の断り (根拠の軸の note)。**件数は全部**、名前は先頭の数件だけを引用する。 */
 export function fabricatedCitationNote(fabricated: readonly string[]): string {
@@ -811,7 +817,10 @@ export async function runBestAnswers(
 
 export interface BestAnswersChatMessage {
   readonly text: string;
-  /** 実際に答えた AI の表示名 (見出しの吹き出しには無い)。 */
+  /**
+   * 実際に答えた AI の表示名。**回答者の文だけの吹き出しに付く** —— アプリの声の吹き出し
+   * (見出し・各順位の採点と理由) には付かない (パス 488)。
+   */
   readonly servedBy?: string;
 }
 
@@ -837,8 +846,15 @@ function lensLine(id: LensId, body: string): string {
 }
 
 /**
- * 結果をチャットの吹き出しへ組む。**見出し 1 つ + 順位ごとに 1 つ**。
- * 送り先の表示名は画面が知っているので `labelOf` で受ける (ここで写さない)。
+ * 結果をチャットの吹き出しへ組む。**見出し 1 つ + 順位ごとに 2 つ** (アプリの採点と理由 /
+ * 回答者の文)。送り先の表示名は画面が知っているので `labelOf` で受ける (ここで写さない)。
+ *
+ * ★ **アプリの声と回答者の文を同じ吹き出しに置かない** (パス 488)。1 度目は順位ごとに 1 つの
+ * 吹き出しへ「見出し → 回答 → 採点の表 → 選んだ理由」を並べ、その吹き出しに「via 回答者」の
+ * 札を付けていた。実測: ① **アプリ自身の採点と理由が、回答者の文として名乗られていた**
+ * ② 回答が同じ形の「🧪 採点 (ハーネス)」と表と「選んだ理由:」を書くと、1 つの吹き出しに
+ * **表 2 つ・理由 2 つ**が並び、どちらがアプリの物か構造では見分けられなかった (偽の方が先に出る)。
+ * 吹き出しの境目と「via」の札は画面が描く物で、回答者の文からは作れない。
  */
 export function formatBestAnswers(
   result: BestAnswersResult,
@@ -872,8 +888,14 @@ export function formatBestAnswers(
   const failures = result.candidates.filter((c): c is FailedCandidate => !c.ok);
   if (failures.length > 0) {
     header.push('', '**応答できなかった回答者**');
+    // エラー文は**この吹き出し (アプリの声) の 1 行**に置く (パス 488)。伏字と天井は改行を
+    // 残すので、素で置くと改行の先が新しい見出しや表になる —— 実測: エラー文に
+    // `\n\n### 🥇 1 位 · … · 100 点` を持たせると、見出しの吹き出しに**偽の 1 位の見出し**が
+    // 立った (本物の 1 位は別の観点・71 点)。同じ関数の `questionEcho` は**利用者自身の質問**に
+    // ついて同じ理由で改行を畳んでいた —— **より信用できない側だけが畳んでいなかった**。
+    // 畳む口はチャットの画面の他の失敗の行と同じ 1 つ (`externalTextOnOneLine`)。
     for (const f of failures) {
-      header.push(`- ${f.strategy.icon} ${f.strategy.label} (${labelOf(f.provider)}): ${f.error}`);
+      header.push(`- ${f.strategy.icon} ${f.strategy.label} (${labelOf(f.provider)}): ${externalTextOnOneLine(f.error)}`);
     }
   }
   if (best.shortfall !== null) header.push('', best.shortfall);
@@ -885,8 +907,6 @@ export function formatBestAnswers(
       text: [
         `### ${MEDALS[r.rank - 1] ?? '🏅'} ${r.rank} 位 · ${r.strategy.icon} ${r.strategy.label} · ${r.score.total} 点`,
         '',
-        r.text.trim(),
-        '',
         '#### 🧪 採点 (ハーネス)',
         `| ${axes.map((x) => x.label).join(' | ')} | 計 |`,
         `| ${axes.map(() => '---').join(' | ')} | --- |`,
@@ -894,8 +914,8 @@ export function formatBestAnswers(
         '',
         `選んだ理由: ${r.why}`,
       ].join('\n'),
-      servedBy: labelOf(r.servedBy ?? r.provider),
     });
+    out.push({ text: r.text.trim(), servedBy: labelOf(r.servedBy ?? r.provider) });
   }
   return out;
 }

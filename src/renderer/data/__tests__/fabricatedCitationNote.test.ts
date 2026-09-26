@@ -164,8 +164,12 @@ describe('画面へ渡る形でも同じ (runBestAnswers → formatBestAnswers)'
     };
     const r = await runBestAnswers(REQ, send);
     expect(r.best.ranked.length, '上位が選ばれていない').toBeGreaterThan(0);
-    const [, ...ranked] = formatBestAnswers(r, (id) => id);
-    for (const m of ranked) {
+    // 理由の行はアプリの声の吹き出し (回答者の札が無い方) に在る (パス 488 で回答者の文と分けた)。
+    const appVoice = formatBestAnswers(r, (id) => id)
+      .slice(1)
+      .filter((m) => m.servedBy === undefined);
+    expect(appVoice.length, '順位の吹き出しが無い').toBeGreaterThan(0);
+    for (const m of appVoice) {
       const line = m.text.split('\n').find((l) => l.startsWith('選んだ理由:'));
       expect(line, '選んだ理由の行が無い').toBeDefined();
       expect(line!.length, `理由が ${line!.length} 字`).toBeLessThan(1_000);
