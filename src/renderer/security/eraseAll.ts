@@ -73,6 +73,7 @@ export const ERASE_LOCAL_STORAGE_KEYS: readonly string[] = [
   'servicehub.ollama.endpoint',
   'servicehub.ollama.port',
   'servicehub.theme',
+  'servicehub.design',
   'teamradar.state',
   'servicehub.talent.state.v1',
   'assistant-history',

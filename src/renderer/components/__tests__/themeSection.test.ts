@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { ThemeSection } from '../ThemeSection';
-import { THEME_KEY } from '../../theme';
+import { DESIGN_KEY, THEME_KEY } from '../../theme';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -60,6 +60,7 @@ afterEach(() => {
   host = null;
   localStorage.clear();
   document.documentElement.removeAttribute('data-theme');
+  document.documentElement.removeAttribute('data-design');
   vi.restoreAllMocks();
   delete (window as unknown as { matchMedia?: unknown }).matchMedia;
 });
@@ -130,6 +131,61 @@ describe('設定 › 配色', () => {
     expect(btn(h, 'light').getAttribute('aria-pressed')).toBe('true');
     const note = h.querySelector('[data-theme-unreadable]');
     expect(note?.textContent).toContain('既定のライトで表示しています');
+    expect(note?.textContent).toContain('プライベートモード');
+  });
+});
+
+const designBtn = (h: HTMLElement, d: string) => h.querySelector(`[data-design-choice="${d}"]`) as HTMLButtonElement;
+
+describe('設定 › デザイン (2026-09-26)', () => {
+  it('2 択を出し、何も選んでいなければ「すっきり」が押された状態 (配色の 3 択とは別の組)', () => {
+    const h = mount();
+    expect([...h.querySelectorAll('[data-design-choice]')].map((b) => b.textContent)).toEqual(['すっきり', 'かわいい']);
+    expect(designBtn(h, 'clean').getAttribute('aria-pressed')).toBe('true');
+    expect(designBtn(h, 'cute').getAttribute('aria-pressed')).toBe('false');
+    expect(h.querySelector('[role="group"][aria-label="デザイン"]')).not.toBeNull();
+    expect(h.querySelector('[data-design-note]')?.textContent).toContain('3 列');
+    expect(h.querySelector('[data-design-save-error]')).toBeNull();
+    expect(h.querySelector('[data-design-unreadable]')).toBeNull();
+  });
+
+  it('★ 「かわいい」を押すと即座に <html data-design="cute"> になり、端末に残る —— 配色は変えない', () => {
+    localStorage.setItem(THEME_KEY, 'dark');
+    const h = mount();
+    click(designBtn(h, 'cute'));
+    expect(document.documentElement.getAttribute('data-design')).toBe('cute');
+    expect(localStorage.getItem(DESIGN_KEY)).toBe('cute');
+    expect(localStorage.getItem(THEME_KEY)).toBe('dark');
+    expect(designBtn(h, 'cute').getAttribute('aria-pressed')).toBe('true');
+    expect(h.querySelector('[data-design-note]')?.textContent).toContain('右下の 🤖');
+  });
+
+  it('保存された選択で開く', () => {
+    localStorage.setItem(DESIGN_KEY, 'cute');
+    const h = mount();
+    expect(designBtn(h, 'cute').getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('★ 保存できなくてもデザインは変わり、「次回のために保存できなかった」と理由を言う', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw Object.assign(new Error('full'), { name: 'QuotaExceededError' });
+    });
+    const h = mount();
+    click(designBtn(h, 'cute'));
+    expect(document.documentElement.getAttribute('data-design')).toBe('cute');
+    const err = h.querySelector('[data-design-save-error]');
+    expect(err?.textContent).toContain('次回のために保存できませんでした');
+    expect(err?.textContent).toContain('保存領域が一杯');
+  });
+
+  it('★ 保存領域を読めなければ既定の「すっきり」で開き、理由を言う', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw Object.assign(new Error('denied'), { name: 'SecurityError' });
+    });
+    const h = mount();
+    expect(designBtn(h, 'clean').getAttribute('aria-pressed')).toBe('true');
+    const note = h.querySelector('[data-design-unreadable]');
+    expect(note?.textContent).toContain('既定の「すっきり」で表示しています');
     expect(note?.textContent).toContain('プライベートモード');
   });
 });

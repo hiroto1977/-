@@ -1,6 +1,7 @@
 import { navigateTo } from '../navigate';
 import { useCallback, useEffect, useState } from 'react';
 import { ThemeSection } from '../components/ThemeSection';
+import { DESIGN_CHOICES, THEME_CHOICES } from '../theme';
 import { Section, StatusBar } from '../components/StatusBar';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
@@ -1207,7 +1208,7 @@ export function SettingsPage() {
         パスワードを知らない人が IndexedDB を読み取っても復号できません。共用 PC では使わないでください。
       </div>
 
-      <Section title="配色 (ライト / ダーク / OS に合わせる)" count={3}>
+      <Section title="見た目 (デザイン: すっきり / かわいい · 配色: ライト / ダーク / OS に合わせる)" count={DESIGN_CHOICES.length + THEME_CHOICES.length}>
         <ThemeSection />
       </Section>
 

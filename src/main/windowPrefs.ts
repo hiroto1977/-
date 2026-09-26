@@ -29,7 +29,7 @@ export interface WindowPrefs {
  * renderer が伝えてくるまでの起動の色。`styles.css` の `:root { --bg }` (ライト) と同じ値でなければ
  * ならない —— `__tests__/windowPrefs.test.ts` が stylesheet を読んで照合する (写しを 2 か所に置く理由)。
  */
-export const DEFAULT_WINDOW_PREFS: WindowPrefs = { scheme: 'light', background: '#fff7fa' };
+export const DEFAULT_WINDOW_PREFS: WindowPrefs = { scheme: 'light', background: '#faf9f5' };
 
 const FILE_NAME = 'service-hub-window.json';
 

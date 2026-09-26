@@ -48,7 +48,6 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/components/AxonometricCharts.tsx': 21,
   'src/renderer/components/BuildingIso.tsx': 5,
   'src/renderer/components/Charts.tsx': 11,
-  'src/renderer/components/ChatbotWidget.tsx': 13,
   'src/renderer/components/CloudSyncPanel.tsx': 1,
   'src/renderer/components/EligibilityChecker.tsx': 2,
   'src/renderer/components/FinancialAnalysis.tsx': 31,

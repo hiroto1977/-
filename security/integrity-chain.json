@@ -2268,6 +2268,14 @@
       "leafCount": 97,
       "note": "update assistantMarkdown.ts",
       "hash": "1ab05fdd576581abefb0271d760a15aae70cde28a97faeb208087f5704888095"
+    },
+    {
+      "index": 271,
+      "prevHash": "1ab05fdd576581abefb0271d760a15aae70cde28a97faeb208087f5704888095",
+      "merkleRoot": "ac0fd99febe6197a0a42b7e0d42b68629233892c3dee1ba488d6f3a84a531980",
+      "leafCount": 97,
+      "note": "update manifest.webmanifest,windowPrefs.ts",
+      "hash": "953be3f186c4f1b45d6628ec07a3efb5cba5cff66186311d437dd64bd6cb1760"
     }
   ],
   "tipManifest": {
@@ -2279,7 +2287,7 @@
     ".github/workflows/ci.yml": "2294afce5d44eb97c7f1ad4cab1e9586564799850f9c5ba4934cece56a180d00",
     ".github/workflows/pages.yml": "02c826156e8b095f0fdf3d8774263bf0c4d778cc9543f9d5de954b9a14b7d85a",
     ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
-    "assets/manifest.webmanifest": "2c7d9a98a5e3ec4026970816cfc12ad4994269c02c2f328b4ab8ad40f0b9de8a",
+    "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
     "docs/PROXY_EXAMPLE.md": "02114bb2d044db44cda64244bb78fc6b54169714e6e90854c5b31d044b43c39b",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
@@ -2316,7 +2324,7 @@
     "src/main/secrets.ts": "bdbbf6d8b1a36fb5f4daf39886bd11bf2d689b95b59e2d66254a11b6094bdaaf",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/windowPrefs.ts": "9d0e02079fb16b22fcbed648cad378776114beb989708f1080d72fcee753ca71",
+    "src/main/windowPrefs.ts": "deca9ccf36ebaab424694efc9d279f6fb3a033d99473142a8aeb4124066592ec",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/data/assistantMarkdown.ts": "2daf8c0c846e4bb6adb387c386b30c964e3d1e42a33bf6d3f6bdbff19681c998",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",

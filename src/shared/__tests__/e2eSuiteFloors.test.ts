@@ -9,7 +9,7 @@
  * 「知らない suite 名で 0 件走って PASSED」の 1 段下の同じ穴。
  *
  * 床そのものは実機でしか効かない (ブラウザが要る)。ここで留めるのは**表の形**:
- * 33 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
+ * 34 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
  * 「必ず落ちる検査」になり、誰かが床を消す)・名前の一覧は表から導く・
  * 合計の床は suite の床の和を下回らない側に置かない (合計だけが緩い形にしない)。
  */
@@ -109,9 +109,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     expect(code).not.toMatch(staleFails);
   });
 
-  it('★ 33 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(33);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(33);
+  it('★ 34 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(34);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(34);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -148,7 +148,10 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     //   実測で直した = 455 (今日の `e2e` / `e2e:lite` の実測とも一致する)
     // + 2026-09-26 (パス 482) の best3 suite 9 (選ぶ → 回数を名乗る → 送る → 鍵が無いときの
     //   断り・見出しが 1 度だけで質問を名乗る・進み具合と上部バーの印が消える) = 464
-    expect(sumMeasured).toBe(464);
+    // + 2026-09-26 の design suite 32 (既定は「すっきり」・1280px で サイドバー | チャット | 画面 が
+    //   座標で横に並ぶ・列から送る・畳む/戻す・窓の幅に追随・「かわいい」へ切り替えると地と形と
+    //   theme-color が変わり列が 🤖 に戻る・解錠の前から効く・4 枚の表の特異性と順序・スマホのシート) = 496
+    expect(sumMeasured).toBe(496);
   });
 });
 

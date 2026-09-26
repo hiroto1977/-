@@ -732,21 +732,25 @@ export function AssistantPage() {
 
   return (
     <div style={pageStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-        <div>
+      {/*
+        見出しの行は折り返す (2026-09-26)。以前は折り返さない flex で、エージェントの選択肢の最長の札
+        (「🏆 ベスト3 (…)」) が幅を取り、右の 3 つのボタンが 1 字ずつ縦に潰れていた (撮影で実測)。
+      */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+        <div style={{ minWidth: 0, flex: '1 1 260px' }}>
           <strong style={{ fontSize: 18 }}>🤖 AI アシスタント</strong>
           <div style={{ fontSize: 12, opacity: 0.7 }}>
             選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、
             確証済みナレッジと {SERVICES.length} サービスを統合して回答します
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, maxWidth: '100%' }}>
           <select
             value={provider}
             aria-label="AI エージェントを選択"
             title="このチャットが使う AI エージェント"
             onChange={(e) => setProvider(e.target.value)}
-            style={{ fontSize: 12, borderRadius: 10, padding: '4px 8px' }}
+            style={{ fontSize: 12, borderRadius: 10, padding: '4px 8px', maxWidth: 'min(320px, 100%)', minWidth: 0 }}
           >
             <option value="">エージェント自動 (既定)</option>
             <option value={ALL_AGENTS}>
@@ -762,13 +766,13 @@ export function AssistantPage() {
               </option>
             ))}
           </select>
-          <button type="button" onClick={() => setShowAgents((v) => !v)} title="AI エージェントの接続設定">
+          <button type="button" onClick={() => setShowAgents((v) => !v)} title="AI エージェントの接続設定" style={{ whiteSpace: 'nowrap', flex: 'none' }}>
             ⚙ エージェント
           </button>
-          <button type="button" onClick={() => setShowTheme((v) => !v)} title="背景をカスタマイズ">
+          <button type="button" onClick={() => setShowTheme((v) => !v)} title="背景をカスタマイズ" style={{ whiteSpace: 'nowrap', flex: 'none' }}>
             🎨 背景
           </button>
-          <button type="button" onClick={clearChat} title="会話履歴を消去" disabled={messages.length === 0}>
+          <button type="button" onClick={clearChat} title="会話履歴を消去" disabled={messages.length === 0} style={{ whiteSpace: 'nowrap', flex: 'none' }}>
             🗑 消去
           </button>
         </div>

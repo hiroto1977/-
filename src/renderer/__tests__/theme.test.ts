@@ -10,10 +10,23 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  applyDesign,
+  applySavedDesign,
   applySavedTheme,
   applyScheme,
   applyThemeChoice,
+  currentDesign,
+  DEFAULT_DESIGN,
   DEFAULT_THEME,
+  DESIGN_CHOICES,
+  DESIGN_KEY,
+  DESIGN_LABELS,
+  isDesignChoice,
+  readDesignChoice,
+  sanitizeDesignChoice,
+  selectDesign,
+  subscribeDesign,
+  writeDesignChoice,
   isThemeChoice,
   osPrefersDark,
   readThemeChoice,
@@ -54,6 +67,7 @@ function fakeDoc() {
 afterEach(() => {
   localStorage.clear();
   document.documentElement.removeAttribute('data-theme');
+  document.documentElement.removeAttribute('data-design');
   vi.restoreAllMocks();
   // window.matchMedia を置いた検査の後片付け (jsdom は元々持たない)。
   delete (window as unknown as { matchMedia?: unknown }).matchMedia;
@@ -290,5 +304,141 @@ describe('配色の選択: 母体への伝達 (パス 318)', () => {
     fm.fire(true);
     expect(h.calls).toEqual([['light', '#fff7fa'], ['dark', '#fff7fa']]);
     stop();
+  });
+});
+
+/*
+ * デザイン (すっきり / かわいい · 2026-09-26)。配色と同じ形 (入口を通す読み書き・既定へ倒す・
+ * 保存に失敗しても適用する) に加えて、App が聞く (列の構成を切り替える) ための知らせと、
+ * 母体 (窓の下地・PWA の theme-color) へ伝え直すことを留める —— 下地の色はデザインでも変わる。
+ */
+describe('デザインの選択: 値の規則', () => {
+  it('★ 既定は「すっきり」—— 何も選んでいない利用者は 3 列の新しい見た目で開く', () => {
+    expect(DEFAULT_DESIGN).toBe('clean');
+    expect(sanitizeDesignChoice(null)).toBe('clean');
+  });
+
+  it('2 択の綴りだけを通し、それ以外は既定へ倒す', () => {
+    for (const d of DESIGN_CHOICES) expect(sanitizeDesignChoice(d)).toBe(d);
+    for (const bad of ['Cute', 'kawaii', '', null, undefined, 1, {}, ['cute']]) expect(sanitizeDesignChoice(bad)).toBe('clean');
+    expect(isDesignChoice('cute')).toBe(true);
+    expect(isDesignChoice('CUTE')).toBe(false);
+  });
+
+  it('2 択すべてに画面の名札が在る (商標を名乗らない)', () => {
+    expect(DESIGN_CHOICES.map((d) => DESIGN_LABELS[d])).toEqual(['すっきり', 'かわいい']);
+  });
+
+  it('属性から読む: 無い・知らない値は既定', () => {
+    const doc = { documentElement: document.createElement('html') };
+    expect(currentDesign(doc)).toBe('clean');
+    doc.documentElement.setAttribute('data-design', 'cute');
+    expect(currentDesign(doc)).toBe('cute');
+    doc.documentElement.setAttribute('data-design', 'garbage');
+    expect(currentDesign(doc)).toBe('clean');
+    applyDesign('cute', doc);
+    expect(doc.documentElement.getAttribute('data-design')).toBe('cute');
+  });
+});
+
+describe('デザインの選択: 端末との読み書き (入口 localWrite を通す)', () => {
+  it('保存値を読む: 在る / 無い / 壊れている', () => {
+    localStorage.setItem(DESIGN_KEY, 'cute');
+    expect(readDesignChoice()).toEqual({ choice: 'cute', readable: true, message: null });
+    localStorage.removeItem(DESIGN_KEY);
+    expect(readDesignChoice()).toEqual({ choice: 'clean', readable: true, message: null });
+    localStorage.setItem(DESIGN_KEY, 'CUTE');
+    expect(readDesignChoice().choice).toBe('clean');
+  });
+
+  it('★ 保存領域を読めなければ既定で描き、理由 (入口の文) を運ぶ', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw Object.assign(new Error('denied'), { name: 'SecurityError' });
+    });
+    const read = readDesignChoice();
+    expect(read.choice).toBe('clean');
+    expect(read.readable).toBe(false);
+    expect(read.message).toContain('プライベートモード');
+  });
+
+  it('書く: 成功は ok、容量超過は入口の文で断る', () => {
+    expect(writeDesignChoice('cute')).toEqual({ ok: true });
+    expect(localStorage.getItem(DESIGN_KEY)).toBe('cute');
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw Object.assign(new Error('full'), { name: 'QuotaExceededError' });
+    });
+    const r = writeDesignChoice('clean');
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.message).toContain('保存領域が一杯');
+  });
+
+  it('★ selectDesign は適用 → 聞き手へ知らせる → 保存 (聞き手は属性が替わった後に呼ばれる)', () => {
+    const seen: string[] = [];
+    const stop = subscribeDesign(() => seen.push(document.documentElement.getAttribute('data-design') ?? '(なし)'));
+    try {
+      expect(selectDesign('cute')).toEqual({ ok: true });
+      expect(document.documentElement.getAttribute('data-design')).toBe('cute');
+      expect(localStorage.getItem(DESIGN_KEY)).toBe('cute');
+      expect(selectDesign('clean')).toEqual({ ok: true });
+      expect(seen).toEqual(['cute', 'clean']);
+    } finally {
+      stop();
+    }
+    // 聞くのをやめたら呼ばれない (対照)。
+    selectDesign('cute');
+    expect(seen).toEqual(['cute', 'clean']);
+  });
+
+  it('★ 保存に失敗しても適用と知らせは行う (この場では効く。成否は戻り値)', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw Object.assign(new Error('denied'), { name: 'SecurityError' });
+    });
+    let told = 0;
+    const stop = subscribeDesign(() => {
+      told += 1;
+    });
+    try {
+      const r = selectDesign('cute');
+      expect(document.documentElement.getAttribute('data-design')).toBe('cute');
+      expect(told).toBe(1);
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.message).toContain('プライベートモード');
+    } finally {
+      stop();
+    }
+  });
+
+  it('★ デザインを替えたら母体へ伝え直す —— 下地の色 (--bg) はデザインでも変わる', () => {
+    const el = document.createElement('html');
+    el.setAttribute('data-theme', 'dark');
+    let bg = '#262624';
+    const calls: [string, string][] = [];
+    const doc = {
+      documentElement: el,
+      defaultView: {
+        getComputedStyle: () => ({ getPropertyValue: (n: string) => (n === '--bg' ? bg : '') }),
+        serviceHub: {
+          setColorScheme: (s: string, b: string) => {
+            calls.push([s, b]);
+            return Promise.resolve({ ok: true });
+          },
+        },
+      } as unknown as Window,
+      querySelector: () => null,
+    };
+    bg = '#1b1520'; // かわいい × ダークの --bg (属性を替えた後に stylesheet が返す値の代役)
+    selectDesign('cute', doc);
+    expect(el.getAttribute('data-design')).toBe('cute');
+    // 配色 (ダーク) は属性から読み直す —— デザインを替えても配色の側は変えない。
+    expect(calls).toEqual([['dark', '#1b1520']]);
+  });
+
+  it('起動時: 保存されたデザインを読んで適用する', () => {
+    localStorage.setItem(DESIGN_KEY, 'cute');
+    expect(applySavedDesign().choice).toBe('cute');
+    expect(document.documentElement.getAttribute('data-design')).toBe('cute');
+    localStorage.setItem(DESIGN_KEY, 'garbage');
+    expect(applySavedDesign().choice).toBe('clean');
+    expect(document.documentElement.getAttribute('data-design')).toBe('clean');
   });
 });

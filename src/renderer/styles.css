@@ -1,16 +1,29 @@
 /* ---------------------------------------------------------------------------
- * Service Hub — 見た目と操作の規則 (2026-09-17 再設計 → 2026-09-19 パス 322 で作り直し)
+ * Service Hub — 見た目と操作の規則
  *
- * 配色は「淡いピンク × ラベンダー × ミント」の明るいパステル。サイドバーと本文は
- * 角の大きい 2 枚の白いカード (すりガラス) として淡い滲みの上に浮かび、
- * 影は色つきで柔らかい。文字は丸ゴシック系 (無い環境では OS の標準ゴシックへ倒れる。
- * 外部フォントは読み込まない —— 出荷 HTML は CSP `default-src 'self'` で単一ファイルなので、
- * font-src を開けず同梱もしない)。
+ * **デザインは 2 つ、配色は 2 つ —— 表は 4 枚** (2026-09-26)。
+ *
+ *   すっきり (既定・`:root`) …… 白地に細い罫、橙のアクセント 1 色、平らな面。広い画面では
+ *                              サイドバー | AI チャット欄 | 画面 の 3 列 (App.tsx の `chat-docked`)。
+ *   かわいい (`data-design="cute"`) … 2026-09-17 の再設計 → パス 322 の「淡いピンク × ラベンダー ×
+ *                              ミント」。角の大きい 2 枚のすりガラスのカードが滲みの上に浮く。
+ *
+ * 配色 (`data-theme="dark"`) はどちらのデザインにも掛かる。**形の違いもトークンで持つ** —— 角の丸み
+ * (`--radius-*`)・浮いたカードの余白 (`--shell-gap`)・すりガラス (`--shell-blur`)・飾りの記号
+ * (`--brand-mark` / `--empty-mark`)・押したときの浮き上がり (`--hover-*`)。規則の側は 1 通りで、
+ * デザインを選ぶことは**表を 1 枚選ぶこと**である。形を規則の側で分けると、下のメディアクエリ
+ * (スマホのドロワー) と特異性・順序で食い合う —— 表に寄せればその心配が要らない。
+ *
+ * 表の順序は意味を持つ: すっきりのライト → すっきりのダーク → かわいいのライト → かわいいのダーク。
+ * かわいい × ダークでは、同じ特異性の「すっきりのダーク」と「かわいいのライト」がぶつかり、
+ * **後ろに在るかわいいのライトが勝つ** —— その上で (0,3,0) のかわいいのダークが色を上書きする。
+ *
+ * 文字は外部フォントを読み込まない —— 出荷 HTML は CSP `default-src 'self'` で単一ファイルなので、
+ * font-src を開けず同梱もしない。すっきりは OS の標準ゴシック (見出しは OS の明朝)、かわいいは丸ゴシック系。
  *
  * 操作の規則 (パス 322): 見えるフォーカス (`:focus-visible`)、押した手応え (`button:active`)、
- * 画面切替のフェード (`.page-enter` · `prefers-reduced-motion` で止まる)、指で押せる高さ
- * (サイドバー項目 40px)、検索の × と ⌘K、絵文字つきの分類見出し、♥ のお気に入り、
- * 先頭へ戻る浮遊ボタン (`.scroll-top`)。
+ * 画面切替のフェード (`.page-enter` · `prefers-reduced-motion` で止まる)、指で押せる高さ、
+ * 検索の × と ⌘K、分類見出し、♥ のお気に入り、先頭へ戻る浮遊ボタン (`.scroll-top`)。
  *
  * **画面側 (pages / components) は inline style で `var(--text-mute)` /
  * `var(--bg-elev)` / `var(--warn)` / `var(--panel)` を読む。** これらは以前は
@@ -19,9 +32,245 @@
  * 名前を 1 つ消すと 600 か所以上の指定が黙って効かなくなるので、消さない。
  *
  * 部品の規則に直書きの色は置かない —— 影も光輪もトークン (`--shadow-*` / `--focus-ring`)。
- * `themeTokens.test.ts` がライト ⇄ ダークの表を両方向に照合し、直書きが 0 であることを留める。
+ * `themeTokens.test.ts` が 4 枚の表を照合する: 各デザインでライトの色はダークに全部ある・
+ * ダークはライトに無い名前を持たない・2 つのデザインのライトは**同じ名前の集合**を持つ
+ * (片方にしか無い名前は、デザインを替えたときに前のデザインの値が残る)・直書きは 0。
  * ------------------------------------------------------------------------- */
+
+/* すっきり × ライト (既定) —————————————————————————————————————— */
 :root {
+  color-scheme: light;
+  /* 地の色 —— サイドバーが一番濃く、チャット欄 (--bg)、画面 (--panel) の順に明るい */
+  --bg: #faf9f5;
+  --bg-elevated: #ffffff;
+  --bg-elev: var(--bg-elevated);
+  --bg-sidebar: #f3f1ea;
+  --panel: #ffffff;
+  --border: #e7e4da;
+  --border-strong: #d7d3c6;
+  /* 文字 */
+  --text: #1f1e1c;
+  --text-muted: #67655e;
+  --text-mute: var(--text-muted);
+  /* 主役の塗りの上に載せる文字 */
+  --on-gradient: #ffffff;
+  /* 主役の色 (橙 1 色)。`--gradient` はかわいいでは 2 色のグラデーション、ここでは単色の塗り
+     (読み手は全部 `background:` なので単色でも同じ所に効く)。塗りは白い字を載せるので、
+     白との対比 4.82:1 (AA) の濃さにした —— 明るい #c96442 だと 3.9:1 で小さい字が AA に届かない。 */
+  --accent: #b5563a;
+  --accent-strong: #a4492a;
+  --accent-2: #5f8fbf;
+  --accent-soft: #f6e8e0;
+  --accent-soft-2: #efede5;
+  --gradient: #b5563a;
+  /* 意味色 (文字として白地に置いても読める濃さ) */
+  --success: #2f7a45;
+  --warning: #9a5c0f;
+  --warn: var(--warning);
+  --danger: #b93a35;
+  /* 黄の札の地色 (黒い字を載せる)。文字色の --warning とは別に持つ。 */
+  --warning-bg: #f4dba8;
+  /* 影 (薄い 1 段) */
+  --shadow: 0 1px 2px rgba(31, 30, 28, 0.06), 0 6px 20px rgba(31, 30, 28, 0.07);
+  --shadow-sm: 0 1px 2px rgba(31, 30, 28, 0.06);
+  --shadow-ink: rgba(31, 30, 28, 0.05);
+  --shadow-list: rgba(31, 30, 28, 0.03);
+  --shadow-drawer: rgba(31, 30, 28, 0.18);
+  --primary-shadow: rgba(181, 86, 58, 0.2);
+  --thumb-shadow: rgba(31, 30, 28, 0.25);
+  --focus-ring: rgba(181, 86, 58, 0.32);
+  /* 部品の地 (ボタン・入力欄・検索欄) とその細部 */
+  --control-bg: #ffffff;
+  --control-hover-bg: #f3f1ea;
+  --placeholder: #9d9a90;
+  --range-track: #e7e4da;
+  --thumb-border: #ffffff;
+  --selection-bg: #f2d3c5;
+  --scrollbar-thumb: #dcd8cc;
+  --scrollbar-thumb-hover: #c9c4b5;
+  --glow-1: transparent;
+  --glow-2: transparent;
+  --glow-3: transparent;
+  --heart: #b5563a;
+  --kbd-bg: #f3f1ea;
+  --kbd-fg: #67655e;
+  --kbd-border: #dcd8cc;
+  --chip-bg: #efede5;
+  --chip-fg: #45433e;
+  --hero-bg: transparent;
+  --sidebar-hover-bg: rgba(31, 30, 28, 0.05);
+  --sidebar-press-bg: rgba(31, 30, 28, 0.09);
+  --sidebar-active-bg: #e6e3d9;
+  --icon-bg: #ffffff;
+  --icon-fg: #67655e;
+  --backdrop: rgba(31, 30, 28, 0.35);
+  --drawer-bg: #f3f1ea;
+  --heading-accent: #67655e;
+  --empty-bg: #f7f6f1;
+  --list-hover-border: #cfcabb;
+  --badge-fg: #45433e;
+  --badge-border: #dcd8cc;
+  --badge-warn-bg: #f8e7cc;
+  --badge-warn-fg: #85500c;
+  --badge-warn-border: #ecd3a6;
+  --badge-ok-bg: #e2efe4;
+  --badge-ok-fg: #2a6a3c;
+  --badge-ok-border: #c4dfca;
+  --badge-muted-bg: #efede5;
+  --badge-muted-border: #dcd8cc;
+  /* チャット (AI コンシェルジュ): 自分の発言は薄い面、AI の発言は面を持たない平文 */
+  --user-bubble-bg: #ecebe4;
+  --user-bubble-fg: var(--text);
+  --bot-bubble-bg: transparent;
+  --bot-bubble-border: transparent;
+  --bot-bubble-pad: 2px 2px;
+  --composer-bg: #ffffff;
+  /* ロック画面の幕 (LockScreen.tsx が読む) */
+  --lock-overlay: #f3f1ea;
+  /* 形 (色ではないので配色では変わらない —— デザインで変わる) */
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
+    'BIZ UDPGothic', 'Yu Gothic UI', 'Meiryo', system-ui, sans-serif;
+  --font-display: 'Hiragino Mincho ProN', 'Yu Mincho', 'YuMincho', 'Noto Serif JP', Georgia, serif;
+  --greeting-size: 30px;
+  --hero-pad: 12px 0 8px;
+  --hero-pad-phone: 4px 0 6px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-button: 8px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-item: 8px;
+  --radius-shell: 0px;
+  --shell-gap: 0px;
+  --shell-blur: none;
+  --panel-blur: none;
+  --shell-border-width: 0 1px 0 0;
+  --main-border-width: 0px;
+  --shell-shadow: none;
+  --sidebar-w: 248px;
+  --chat-w: 360px;
+  --topbar-h: 52px;
+  --item-h: 34px;
+  --item-pad: 6px 10px;
+  --icon-size: 22px;
+  --icon-radius: 6px;
+  --icon-border: 1px solid var(--border);
+  --icon-active-bg: var(--icon-bg);
+  --icon-active-fg: var(--text);
+  --topbar-icon-size: 28px;
+  --topbar-icon-radius: 7px;
+  --topbar-icon-bg: var(--icon-bg);
+  --topbar-icon-fg: var(--icon-fg);
+  --topbar-icon-border: 1px solid var(--border);
+  --topbar-icon-shadow: none;
+  --fw-button: 500;
+  --fw-item: 400;
+  --fw-item-active: 500;
+  --fw-label: 600;
+  --fw-title: 600;
+  --ls-label: 0.02em;
+  --ls-title: 0;
+  --item-active-fg: var(--text);
+  --item-active-shadow: none;
+  --sidebar-title-fg: var(--text);
+  --active-bar: none;
+  --hover-nudge: none;
+  --hover-lift: none;
+  --hover-lift-sm: none;
+  --card-hover-shadow: var(--shadow-sm);
+  --button-hover-border: var(--border-strong);
+  --button-hover-fg: var(--text);
+  --primary-glow: none;
+  --primary-hover-filter: brightness(0.93);
+  --brand-mark: none;
+  --empty-mark: none;
+  --hero-mark: none;
+  --section-pad: 0;
+  --section-pill-bg: transparent;
+  --section-dot: none;
+  font-family: var(--font-ui);
+}
+
+/* ---------------------------------------------------------------------------
+ * ダーク配色 (2026-09-18 · パス 317)。`theme.ts` が `<html data-theme="dark">` を置いたときだけ効く。
+ * 「OS に合わせる」も JS が解いてからこの属性に落とすので、ここに prefers-color-scheme は書かない
+ * (トークン表を 2 か所に持たない)。**ライトの色トークンは全部ここで上書きする** ——
+ * `themeTokens.test.ts` が両方向に照合する (足した名前をここに書き忘れるとライトの色が残る)。
+ * 別名 (--bg-elev / --text-mute / --warn) は var() 越しに追随するので書かない。
+ * 紙の節 (書類スタジオ・銀行提出書式・印刷) は白い紙なので配色の外。
+ * ------------------------------------------------------------------------- */
+/* すっきり × ダーク —————————————————————————————————————————————— */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #262624;
+  --bg-elevated: #30302d;
+  --bg-sidebar: #1f1e1c;
+  --panel: #2b2a27;
+  --border: #3d3c38;
+  --border-strong: #4d4b46;
+  --text: #f3f1ea;
+  --text-muted: #aba89e;
+  --on-gradient: #ffffff;
+  --accent: #d97757;
+  --accent-strong: #eba081;
+  --accent-2: #8fb3d9;
+  --accent-soft: #3d2c24;
+  --accent-soft-2: #34332f;
+  --gradient: #b5563a;
+  --success: #7cc28e;
+  --warning: #e3a85c;
+  --danger: #f0877b;
+  /* 黒い字 ('#000' 固定) を載せる札の地なので、ダークでも明るいままにする */
+  --warning-bg: #e9c27a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-ink: rgba(0, 0, 0, 0.25);
+  --shadow-list: rgba(0, 0, 0, 0.2);
+  --shadow-drawer: rgba(0, 0, 0, 0.5);
+  --primary-shadow: rgba(0, 0, 0, 0.35);
+  --thumb-shadow: rgba(0, 0, 0, 0.45);
+  --focus-ring: rgba(217, 119, 87, 0.45);
+  --control-bg: #30302d;
+  --control-hover-bg: #3a3a36;
+  --placeholder: #7f7c73;
+  --range-track: #45443f;
+  --thumb-border: #262624;
+  --selection-bg: #5c3a2d;
+  --scrollbar-thumb: #4a4944;
+  --scrollbar-thumb-hover: #5c5a54;
+  --heart: #d97757;
+  --kbd-bg: #34332f;
+  --kbd-fg: #c7c4b9;
+  --kbd-border: #4d4b46;
+  --chip-bg: #34332f;
+  --chip-fg: #d8d5ca;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-press-bg: rgba(255, 255, 255, 0.09);
+  --sidebar-active-bg: #353430;
+  --icon-bg: #30302d;
+  --icon-fg: #c7c4b9;
+  --backdrop: rgba(0, 0, 0, 0.55);
+  --drawer-bg: #1f1e1c;
+  --heading-accent: #aba89e;
+  --empty-bg: #2b2a27;
+  --list-hover-border: #5a5852;
+  --badge-fg: #d8d5ca;
+  --badge-border: #4d4b46;
+  --badge-warn-bg: #45331a;
+  --badge-warn-fg: #e3a85c;
+  --badge-warn-border: #6b4e22;
+  --badge-ok-bg: #1f3a28;
+  --badge-ok-fg: #7cc28e;
+  --badge-ok-border: #2e5a3a;
+  --badge-muted-bg: #34332f;
+  --badge-muted-border: #4d4b46;
+  --user-bubble-bg: #3a3935;
+  --composer-bg: #30302d;
+  --lock-overlay: #1f1e1c;
+}
+
+/* かわいい × ライト (パス 322 の配色と形) ————————————————————————————— */
+:root[data-design="cute"] {
   color-scheme: light;
   /* 地の色 */
   --bg: #fff7fa;
@@ -60,10 +309,7 @@
   --primary-shadow: rgba(238, 111, 168, 0.28);
   --thumb-shadow: rgba(238, 111, 168, 0.4);
   --focus-ring: rgba(238, 111, 168, 0.35);
-  --radius: 18px;
-  --radius-sm: 12px;
-  /* 部品の地 (ボタン・入力欄・検索欄) とその細部。ダークでは `:root[data-theme="dark"]` が同じ名前を
-     上書きする (パス 317)。名前を足したらダークにも書く —— `themeTokens.test.ts` が両方向に照合する。 */
+  /* 部品の地 (ボタン・入力欄・検索欄) とその細部 */
   --control-bg: #ffffff;
   --control-hover-bg: #fff5f9;
   --placeholder: #b9aac2;
@@ -102,21 +348,80 @@
   --badge-ok-border: #b9ecd3;
   --badge-muted-bg: #f1edf3;
   --badge-muted-border: #e3dbe8;
+  /* チャット (AI コンシェルジュ): パス 322 の吹き出し (自分は主役の色・AI は罫の付いた面) */
+  --user-bubble-bg: var(--accent);
+  --user-bubble-fg: var(--on-gradient);
+  --bot-bubble-bg: var(--bg);
+  --bot-bubble-border: var(--border);
+  --bot-bubble-pad: 8px 10px;
+  --composer-bg: var(--bg);
   /* ロック画面の幕 (LockScreen.tsx が読む) */
   --lock-overlay: linear-gradient(135deg, #ffe6f0 0%, #f3edff 50%, #e3f7ef 100%);
-  font-family: 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', 'Yu Gothic UI', 'Meiryo',
+  /* 形 */
+  --font-ui: 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', 'Yu Gothic UI', 'Meiryo',
     'Segoe UI', 'Helvetica Neue', system-ui, sans-serif;
+  --font-display: var(--font-ui);
+  --greeting-size: 24px;
+  --hero-pad: 26px 28px;
+  --hero-pad-phone: 20px 56px 20px 18px;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-button: 999px;
+  --radius-control: 12px;
+  --radius-card: 20px;
+  --radius-item: 14px;
+  --radius-shell: 24px;
+  --shell-gap: 12px;
+  --shell-blur: blur(20px);
+  --panel-blur: blur(14px);
+  --shell-border-width: 1px;
+  --main-border-width: 1px;
+  --shell-shadow: var(--shadow-sm);
+  --sidebar-w: 256px;
+  --chat-w: 360px;
+  --topbar-h: 60px;
+  --item-h: 40px;
+  --item-pad: 8px 12px;
+  --icon-size: 28px;
+  --icon-radius: 10px;
+  --icon-border: 0;
+  --icon-active-bg: var(--gradient);
+  --icon-active-fg: var(--on-gradient);
+  --topbar-icon-size: 34px;
+  --topbar-icon-radius: 12px;
+  --topbar-icon-bg: var(--gradient);
+  --topbar-icon-fg: var(--on-gradient);
+  --topbar-icon-border: 0;
+  --topbar-icon-shadow: var(--shadow-sm);
+  --fw-button: 700;
+  --fw-item: 600;
+  --fw-item-active: 800;
+  --fw-label: 800;
+  --fw-title: 900;
+  --ls-label: 0.06em;
+  --ls-title: 0.02em;
+  --item-active-fg: var(--accent-strong);
+  --item-active-shadow: var(--shadow-sm);
+  --sidebar-title-fg: var(--accent-strong);
+  --active-bar: '';
+  --hover-nudge: translateX(2px);
+  --hover-lift: translateY(-2px);
+  --hover-lift-sm: translateY(-1px);
+  --card-hover-shadow: var(--shadow);
+  --button-hover-border: var(--accent);
+  --button-hover-fg: var(--accent-strong);
+  --primary-glow: 0 6px 16px var(--primary-shadow);
+  --primary-hover-filter: brightness(1.05);
+  --brand-mark: '✿';
+  --empty-mark: '🌸';
+  --hero-mark: '🌸';
+  --section-pad: 4px 12px 4px 10px;
+  --section-pill-bg: var(--accent-soft-2);
+  --section-dot: '';
 }
 
-/* ---------------------------------------------------------------------------
- * ダーク配色 (2026-09-18 · パス 317)。`theme.ts` が `<html data-theme="dark">` を置いたときだけ効く。
- * 「OS に合わせる」も JS が解いてからこの属性に落とすので、ここに prefers-color-scheme は書かない
- * (トークン表を 2 か所に持たない)。**ライトの色トークンは全部ここで上書きする** ——
- * `themeTokens.test.ts` が両方向に照合する (足した名前をここに書き忘れるとライトの色が残る)。
- * 別名 (--bg-elev / --text-mute / --warn) は var() 越しに追随するので書かない。
- * 紙の節 (書類スタジオ・銀行提出書式・印刷) は白い紙なので配色の外。
- * ------------------------------------------------------------------------- */
-:root[data-theme="dark"] {
+/* かわいい × ダーク (パス 317) ————————————————————————————————————— */
+:root[data-design="cute"][data-theme="dark"] {
   color-scheme: dark;
   --bg: #1b1520;
   --bg-elevated: #261e2e;
@@ -216,7 +521,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
 
 /* 動きを減らす設定の人には、画面切替のフェードと浮遊ボタンの滑りを止める。 */
 @media (prefers-reduced-motion: reduce) {
-  .page-enter, .scroll-top, .sidebar, .sidebar-item, .card, .home-card { animation: none !important; transition: none !important; }
+  .page-enter, .scroll-top, .sidebar, .sidebar-item, .card, .home-card, .chat-column, .concierge { animation: none !important; transition: none !important; }
 }
 
 h1, h2, h3, h4 { color: var(--text); }
@@ -224,33 +529,33 @@ h1, h2, h3, h4 { color: var(--text); }
 button {
   font: inherit;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: var(--fw-button);
   color: var(--text);
   background: var(--control-bg);
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   padding: 7px 15px;
   cursor: pointer;
   box-shadow: 0 1px 2px var(--shadow-ink);
   transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.12s;
 }
-button:hover { border-color: var(--accent); color: var(--accent-strong); background: var(--control-hover-bg); }
+button:hover { border-color: var(--button-hover-border); color: var(--button-hover-fg); background: var(--control-hover-bg); }
 button:active { transform: scale(0.97); }
 button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 button.primary {
   background: var(--gradient);
   border-color: transparent;
   color: var(--on-gradient);
-  box-shadow: 0 6px 16px var(--primary-shadow);
+  box-shadow: var(--primary-glow);
 }
-button.primary:hover { filter: brightness(1.05); color: var(--on-gradient); transform: translateY(-1px); }
-/* 淡いピンクの地の補助ボタン (「ファイルを開く」など) と、地の無いボタン (× など) */
+button.primary:hover { filter: var(--primary-hover-filter); color: var(--on-gradient); transform: var(--hover-lift-sm); }
+/* 淡い地の補助ボタン (「ファイルを開く」など) と、地の無いボタン (× など) */
 button.soft { background: var(--accent-soft); border-color: transparent; color: var(--accent-strong); box-shadow: none; }
 button.soft:hover { border-color: var(--list-hover-border); background: var(--accent-soft); }
 button.ghost { background: transparent; border-color: transparent; box-shadow: none; color: var(--text-muted); }
 button.ghost:hover { background: var(--sidebar-hover-bg); color: var(--accent-strong); }
 
-/* 入力欄: 白地・丸い角・ピンクのフォーカスリング。個別ページの inline 指定が勝つ。
+/* 入力欄: 白地・丸い角・主役の色のフォーカスリング。個別ページの inline 指定が勝つ。
    `:where()` で特異性を (0,0,1) に抑える —— `:not([type=…])` を 4 つ重ねると (0,4,1) になり、
    クラス 1 つの `.sidebar-search-input` の余白 (🔍 のぶん) が負けて虫眼鏡が placeholder に重なった (パス 322 実測)。 */
 input:where(:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"])),
@@ -261,7 +566,7 @@ textarea {
   color: var(--text);
   background: var(--control-bg);
   border: 1px solid var(--border-strong);
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   padding: 7px 11px;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -274,7 +579,7 @@ input:focus, select:focus, textarea:focus {
 input::placeholder, textarea::placeholder { color: var(--placeholder); }
 input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--accent); }
 
-/* スライダー: 淡い溝にグラデーションのつまみ (既定の暗い溝は明るい配色に合わない)。 */
+/* スライダー: 淡い溝に主役の色のつまみ (既定の暗い溝は明るい配色に合わない)。 */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -329,13 +634,13 @@ kbd.kbd {
   background: var(--chip-bg);
   color: var(--chip-fg);
   font-size: 11.5px;
-  font-weight: 700;
+  font-weight: var(--fw-button);
   border: 1px solid transparent;
   line-height: 1.4;
   white-space: nowrap;
 }
 button.chip { cursor: pointer; box-shadow: none; }
-button.chip:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); transform: translateY(-1px); }
+button.chip:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); transform: var(--hover-lift-sm); }
 
 .app {
   display: grid;
@@ -344,7 +649,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
      画面外に見切れてしまう (スクロールもできない)。0 を下限にすると列は
      ビューポート幅に収まり、はみ出す中身は .content / .data-section 側で
      スクロールに切り替わる。 */
-  grid-template-columns: 256px minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
   /* 行も 100vh に収める。これがないと暗黙の行が中身の高さ(auto)で広がり、
      height:100vh + overflow:hidden の組み合わせで下側が画面外に切れ、しかも
      スクロールできなくなる (背の高いページでチャートの下が見られない原因)。
@@ -356,7 +661,8 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
      100vh だと Android Chrome で下端 (チャットボット等) がバーの裏に隠れる。 */
   height: 100dvh;
   overflow: hidden;
-  /* 画面全体に淡い色の滲み。サイドバーと本文のカードは半透明なので透けて見える。 */
+  /* 画面全体に淡い色の滲み (かわいい)。サイドバーと本文のカードは半透明なので透けて見える。
+     すっきりでは滲みの色が透明 (`--glow-*: transparent`) なので、地の色だけになる。 */
   background:
     radial-gradient(900px 480px at -5% -10%, var(--glow-1) 0%, transparent 60%),
     radial-gradient(800px 460px at 105% -5%, var(--glow-2) 0%, transparent 60%),
@@ -364,17 +670,18 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
     var(--bg);
 }
 
-/* --- サイドバー: 左に浮かぶ白いカード ------------------------------------------- */
+/* --- サイドバー: すっきりは画面の左端に付いた平らな面、かわいいは左に浮かぶ白いカード --- */
 .sidebar {
   position: relative;
   z-index: 1;
-  margin: 12px 0 12px 12px;
-  border-radius: 24px;
-  border: 1px solid var(--border);
+  margin: var(--shell-gap) 0 var(--shell-gap) var(--shell-gap);
+  border-radius: var(--radius-shell);
+  border: solid var(--border);
+  border-width: var(--shell-border-width);
   background: var(--bg-sidebar);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  box-shadow: var(--shadow-sm);
+  -webkit-backdrop-filter: var(--shell-blur);
+  backdrop-filter: var(--shell-blur);
+  box-shadow: var(--shell-shadow);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -389,16 +696,18 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   padding: 4px 18px 12px;
 }
 .sidebar-header {
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  font-weight: var(--fw-title);
+  letter-spacing: var(--ls-title);
   font-size: 16px;
-  color: var(--accent-strong);
+  font-family: var(--font-display);
+  color: var(--sidebar-title-fg);
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
+/* かわいいの ✿ (すっきりでは `--brand-mark: none` で擬似要素ごと作らない) */
 .sidebar-header::before {
-  content: '✿';
+  content: var(--brand-mark);
   color: var(--accent);
   font-size: 18px;
 }
@@ -432,7 +741,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   padding: 9px 62px 9px 34px;
   background: var(--control-bg);
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   color: var(--text);
   font-size: 13px;
 }
@@ -477,8 +786,8 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   padding: 8px 14px 4px;
   margin-top: 2px;
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-label);
   color: var(--heading-accent);
 }
 .sidebar-group { margin-bottom: 2px; }
@@ -490,13 +799,13 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   margin: 6px 0 2px;
   padding: 8px 12px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-item);
   background: transparent;
   box-shadow: none;
   color: var(--heading-accent);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-label);
   text-align: left;
 }
 .sidebar-group-head:hover { background: var(--sidebar-hover-bg); color: var(--accent-strong); }
@@ -552,29 +861,30 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   align-items: center;
   gap: 10px;
   margin: 1px 4px;
-  padding: 8px 12px;
-  min-height: 40px;
+  padding: var(--item-pad);
+  min-height: var(--item-h);
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius-item);
   background: transparent;
   color: var(--text);
   text-align: left;
   cursor: pointer;
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: var(--fw-item);
   box-shadow: none;
   transition: background 0.15s, color 0.15s, transform 0.15s;
 }
-.sidebar-item:hover { background: var(--sidebar-hover-bg); color: var(--text); transform: translateX(2px); }
-.sidebar-item:active { transform: translateX(2px) scale(0.99); }
+.sidebar-item:hover { background: var(--sidebar-hover-bg); color: var(--text); transform: var(--hover-nudge); }
+.sidebar-item:active { transform: var(--hover-nudge) scale(0.99); }
 .sidebar-item.active {
   background: var(--sidebar-active-bg);
-  color: var(--accent-strong);
-  font-weight: 800;
-  box-shadow: var(--shadow-sm);
+  color: var(--item-active-fg);
+  font-weight: var(--fw-item-active);
+  box-shadow: var(--item-active-shadow);
 }
+/* かわいいの左の縦棒 (すっきりでは `--active-bar: none` で作らない) */
 .sidebar-item.active::before {
-  content: '';
+  content: var(--active-bar);
   position: absolute;
   left: -5px;
   top: 10px;
@@ -584,20 +894,21 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   background: var(--gradient);
 }
 .sidebar-item .icon {
-  width: 28px;
-  height: 28px;
+  width: var(--icon-size);
+  height: var(--icon-size);
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: var(--fw-label);
   letter-spacing: 0.02em;
-  border-radius: 10px;
+  border-radius: var(--icon-radius);
+  border: var(--icon-border);
   background: var(--icon-bg);
   color: var(--icon-fg);
 }
-.sidebar-item.active .icon { background: var(--gradient); color: var(--on-gradient); }
+.sidebar-item.active .icon { background: var(--icon-active-bg); color: var(--icon-active-fg); }
 
 .sidebar-footer {
   padding: 10px 16px 4px;
@@ -609,15 +920,15 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   display: block;
   margin-bottom: 4px;
   font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-label);
   color: var(--heading-accent);
 }
 .plan-select { width: 100%; }
 .license-pill {
   margin-top: 8px;
   padding: 5px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   background: var(--badge-ok-bg);
   border: 1px solid var(--badge-ok-border);
   color: var(--badge-ok-fg);
@@ -632,7 +943,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   text-align: center;
 }
 
-/* --- 本文: 右に浮かぶ白いカード (トップバー + スクロールする中身) --------------- */
+/* --- 本文 (トップバー + スクロールする中身): すっきりは平らな画面、かわいいは右に浮かぶ白いカード --- */
 .main {
   position: relative;
   z-index: 1;
@@ -640,17 +951,18 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   flex-direction: column;
   overflow: hidden;
   min-width: 0; /* グリッド子要素が中身で広がらないようにする (見切れ防止の要) */
-  margin: 12px 12px 12px 10px;
-  border-radius: 24px;
-  border: 1px solid var(--border);
+  margin: var(--shell-gap) var(--shell-gap) var(--shell-gap) max(0px, calc(var(--shell-gap) - 2px));
+  border-radius: var(--radius-shell);
+  border: solid var(--border);
+  border-width: var(--main-border-width);
   background: var(--panel);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-sm);
+  -webkit-backdrop-filter: var(--panel-blur);
+  backdrop-filter: var(--panel-blur);
+  box-shadow: var(--shell-shadow);
 }
 
 .topbar {
-  min-height: 60px;
+  min-height: var(--topbar-h);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -660,32 +972,36 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   overflow: hidden;
 }
 .topbar-icon {
-  width: 34px;
-  height: 34px;
+  width: var(--topbar-icon-size);
+  height: var(--topbar-icon-size);
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  background: var(--gradient);
-  color: var(--on-gradient);
+  border-radius: var(--topbar-icon-radius);
+  border: var(--topbar-icon-border);
+  background: var(--topbar-icon-bg);
+  color: var(--topbar-icon-fg);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: var(--fw-title);
   letter-spacing: 0.02em;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--topbar-icon-shadow);
 }
 .topbar h1 {
   font-size: 17px;
   margin: 0;
-  font-weight: 900;
-  letter-spacing: 0.02em;
+  font-weight: var(--fw-title);
+  letter-spacing: var(--ls-title);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 }
 .topbar .crumb { flex: none; }
+/* 説明は残りの幅だけを使う (flex-basis 0) —— 題名より先に縮む。以前は題名と説明が幅に比例して
+   縮み、3 列で画面が狭くなると題名のほうが「設…」まで削られた (2026-09-26 撮影で実測)。 */
 .topbar .description {
+  flex: 1 1 0;
   color: var(--text-muted);
   font-size: 13px;
   white-space: nowrap;
@@ -714,6 +1030,17 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 }
 .topbar-fav.on { color: var(--heart); border-color: var(--list-hover-border); background: var(--accent-soft); }
 .topbar-fav:hover { transform: scale(1.08); }
+
+/* AI チャット欄の出し入れ (3 列のときだけ App.tsx が描く) */
+.chat-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  font-size: 12.5px;
+}
+.chat-toggle[aria-expanded="true"] { background: var(--sidebar-active-bg); border-color: var(--border-strong); }
 
 /* ハンバーガー (モバイル/タブレットのみ表示 — メディアクエリ側で display 切替) */
 .menu-btn {
@@ -784,6 +1111,166 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .scroll-top.show { opacity: 1; transform: none; pointer-events: auto; }
 .scroll-top:hover { color: var(--on-gradient); filter: brightness(1.05); transform: translateY(-2px); }
 
+/* --- 3 列 (すっきりの広い画面): サイドバー | AI チャット欄 | 画面 -------------------------------
+ * App.tsx が「すっきり」かつ `(min-width: 1200px)` のときだけ `.chat-docked` を付ける。判定は JS の
+ * 1 か所 —— CSS にも同じ幅を書くと、ずれたときに列が崩れる (欄だけが 2 列目に残り、画面が次の行へ落ちる)。
+ * 畳むと `.chat-docked` は外れ、欄そのものを描かない (2 列に戻る)。 */
+.app.chat-docked { grid-template-columns: var(--sidebar-w) var(--chat-w) minmax(0, 1fr); }
+.chat-column {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+}
+/* 3 列では右下の浮いたボタンが無いので、「先頭へ戻る」は右端へ寄せる。 */
+.app.chat-docked .scroll-top { right: 24px; }
+
+/* --- AI コンシェルジュ (ChatbotWidget): 浮いた窓 (`.floating`) と列 (`.docked`) ------------------ */
+.concierge {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  color: var(--text);
+}
+.concierge.floating {
+  position: fixed;
+  right: 16px;
+  bottom: 72px;
+  width: min(380px, calc(100vw - 32px));
+  max-height: min(520px, calc(100vh - 120px));
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  overflow: hidden;
+}
+.concierge.docked { flex: 1; min-height: 0; }
+.concierge-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.concierge.docked .concierge-head { min-height: var(--topbar-h); padding: 0 10px 0 16px; }
+.concierge-title { display: inline-flex; align-items: center; gap: 6px; font-weight: var(--fw-title); white-space: nowrap; }
+.concierge-tools { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.concierge-tools button { padding: 4px 9px; font-size: 12px; white-space: nowrap; }
+.concierge-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.concierge.docked .concierge-log { padding: 18px 16px; gap: 14px; }
+.concierge-intro { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+.concierge.docked .concierge-intro { font-size: 13px; }
+.concierge-msg {
+  max-width: 85%;
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: var(--radius);
+}
+.concierge-msg.user {
+  align-self: flex-end;
+  background: var(--user-bubble-bg);
+  color: var(--user-bubble-fg);
+  padding: 8px 12px;
+}
+.concierge-msg.bot {
+  align-self: flex-start;
+  background: var(--bot-bubble-bg);
+  border: 1px solid var(--bot-bubble-border);
+  padding: var(--bot-bubble-pad);
+}
+/* 列では AI の返事を幅いっぱいの平文にする (会話の読み物として) */
+.concierge.docked .concierge-msg.bot { max-width: 100%; }
+.concierge-route { margin-top: 4px; font-size: 10.5px; color: var(--text-muted); }
+.concierge-busy { font-size: 12px; color: var(--text-muted); }
+.concierge-confirm { font-size: 12px; border: 1px solid var(--danger); border-radius: var(--radius-sm); padding: 8px; }
+.concierge-confirm strong { color: var(--danger); }
+.concierge-confirm-actions { display: flex; gap: 6px; margin-top: 6px; }
+.concierge-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px 4px; }
+.concierge.docked .concierge-chips { padding: 4px 16px 6px; }
+.concierge-chips button { font-size: 11.5px; border-radius: 999px; padding: 3px 10px; }
+.concierge-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.concierge-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  background: var(--composer-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font-size: 13px;
+}
+/* 列の入力欄は「枠の付いた 1 つの箱」(中の入力欄は枠を持たず、箱がフォーカスを受ける) */
+.concierge.docked .concierge-form {
+  margin: 4px 14px 14px;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--composer-bg);
+  box-shadow: var(--shadow);
+}
+.concierge.docked .concierge-form:focus-within { border-color: var(--accent); }
+.concierge.docked .concierge-input { border: none; background: transparent; padding: 8px 0; box-shadow: none; }
+.concierge.docked .concierge-input:focus { box-shadow: none; }
+/* 右下の丸いボタン (浮いた窓を開け閉めする) */
+.concierge-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--gradient);
+  color: var(--on-gradient);
+  font-size: 22px;
+  line-height: 1;
+  box-shadow: var(--shadow);
+}
+.concierge-fab:hover { background: var(--gradient); color: var(--on-gradient); border-color: var(--border); filter: var(--primary-hover-filter); }
+/* スマホ (すっきり): 浮いた窓は画面の下からせり上がる板にする。開いている間は丸いボタンを隠す
+   (板の送信ボタンと重なるので)。閉じるのは板の見出しの ✕。かわいいはパス 322 の浮いた窓のまま。 */
+@media (max-width: 640px) {
+  :root:not([data-design="cute"]) .concierge.floating {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    min-height: 50dvh;
+    max-height: 78dvh;
+    border-width: 1px 0 0 0;
+    border-radius: 16px 16px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  :root:not([data-design="cute"]) .concierge-fab.open { display: none; }
+}
+
 /* --- レスポンシブ・ガードレール: どのページでも画面内に収める ---
    個別ページに手を入れなくても、共通の崩れ要因をここで吸収する。 */
 
@@ -830,7 +1317,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
     margin: 0;
     width: min(300px, 84vw);
     z-index: 50;
-    border-radius: 0 24px 24px 0;
+    border-radius: 0 var(--radius-shell) var(--radius-shell) 0;
     background: var(--drawer-bg);
     transform: translateX(-105%);
     transition: transform 0.22s ease;
@@ -898,7 +1385,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: var(--radius-card);
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -906,11 +1393,11 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.2s, transform 0.2s;
 }
-.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.card:hover { box-shadow: var(--card-hover-shadow); transform: var(--hover-lift); }
 .card h3 {
   margin: 0;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: var(--fw-label);
   color: var(--text);
 }
 .card p {
@@ -929,8 +1416,8 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .section-title {
   margin: 0 0 12px;
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-label);
   color: var(--heading-accent);
 }
 
@@ -943,8 +1430,9 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   background: var(--empty-bg);
   line-height: 1.6;
 }
+/* かわいいの 🌸 (すっきりでは作らない) */
 .empty::before {
-  content: '🌸';
+  content: var(--empty-mark);
   display: block;
   font-size: 26px;
   margin-bottom: 6px;
@@ -954,9 +1442,9 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .badge {
   display: inline-block;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: var(--fw-button);
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   background: var(--accent-soft-2);
   color: var(--badge-fg);
   border: 1px solid var(--badge-border);
@@ -995,12 +1483,12 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   gap: 12px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: calc(var(--radius-card) - 4px);
   padding: 10px 14px;
   box-shadow: 0 1px 3px var(--shadow-list);
   transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
-.data-list-item:hover { border-color: var(--list-hover-border); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.data-list-item:hover { border-color: var(--list-hover-border); box-shadow: var(--shadow-sm); transform: var(--hover-lift-sm); }
 .data-list-thumb {
   width: 56px;
   height: 36px;
@@ -1047,22 +1535,22 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   gap: 12px;
   margin-bottom: 10px;
 }
-/* 節の題はピルの札 (パス 322)。左の丸い印はグラデーション。 */
+/* 節の題: かわいいはピルの札 (パス 322・左の丸い印はグラデーション)、すっきりは小さな見出しの文字だけ。 */
 .data-section-header h2 {
   margin: 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px 4px 10px;
-  border-radius: 999px;
-  background: var(--accent-soft-2);
+  padding: var(--section-pad);
+  border-radius: var(--radius-button);
+  background: var(--section-pill-bg);
   font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-label);
   color: var(--heading-accent);
 }
 .data-section-header h2::before {
-  content: '';
+  content: var(--section-dot);
   display: inline-block;
   width: 8px;
   height: 8px;
@@ -1083,7 +1571,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   padding: 10px 14px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: calc(var(--radius-card) - 4px);
   box-shadow: var(--shadow-sm);
 }
 .status-bar .who {
@@ -1107,13 +1595,15 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .home-hero {
   position: relative;
   overflow: hidden;
-  padding: 26px 28px;
-  border-radius: 24px;
-  border: 1px solid var(--border);
+  padding: var(--hero-pad);
+  border-radius: var(--radius-shell);
+  border: solid var(--border);
+  border-width: var(--main-border-width);
   background: var(--hero-bg);
 }
+/* かわいいの 🌸 (すっきりでは作らない) */
 .home-hero::after {
-  content: '🌸';
+  content: var(--hero-mark);
   position: absolute;
   right: 22px;
   top: 12px;
@@ -1126,20 +1616,22 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
    **この media 規則は上の基本の規則より後ろに置く** —— ≤640px の共通ブロック (上の方) に書くと、
    同じ特異性で後ろに在る基本の規則が勝って 1 行も効かない (パス 322 で 2 度撮って気付いた)。 */
 @media (max-width: 640px) {
-  .home-hero { padding: 20px 56px 20px 18px; }
+  .home-hero { padding: var(--hero-pad-phone); }
   .home-hero::after { font-size: 32px; opacity: 0.22; right: 10px; top: 8px; }
 }
 .home-date {
   margin: 0 0 4px;
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-weight: var(--fw-label);
+  letter-spacing: var(--ls-label);
   color: var(--heading-accent);
 }
+/* 挨拶は表示用の書体 (すっきりは明朝、かわいいは本文と同じ丸ゴシック)。 */
 .home-greeting {
   margin: 0;
-  font-size: 24px;
-  font-weight: 900;
+  font-size: var(--greeting-size);
+  font-weight: var(--fw-title);
+  font-family: var(--font-display);
   color: var(--text);
 }
 .home-lead {
@@ -1152,7 +1644,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .home-lead strong { color: var(--text); }
 .home-jump { display: flex; flex-direction: column; gap: 8px; }
 .home-jump-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.home-jump-title { font-size: 12px; font-weight: 800; color: var(--heading-accent); margin-right: 2px; }
+.home-jump-title { font-size: 12px; font-weight: var(--fw-label); color: var(--heading-accent); margin-right: 2px; }
 .home-jump-hint { font-size: 12px; color: var(--text-muted); }
 .home-grid {
   display: grid;
@@ -1162,15 +1654,15 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .home-card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 22px;
+  border-radius: calc(var(--radius-card) + 2px);
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
-.home-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.home-card:hover { transform: var(--hover-lift); box-shadow: var(--card-hover-shadow); border-color: var(--list-hover-border); }
 .home-card-head { display: flex; align-items: flex-start; gap: 12px; }
 .home-card-emoji {
   width: 52px;
@@ -1180,14 +1672,14 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   align-items: center;
   justify-content: center;
   font-size: 28px;
-  border-radius: 16px;
+  border-radius: calc(var(--radius) - 2px);
   background: var(--accent-soft-2);
 }
-.home-card-title { font-size: 15px; font-weight: 800; color: var(--text); }
+.home-card-title { font-size: 15px; font-weight: var(--fw-label); color: var(--text); }
 .home-card-sub { margin-top: 4px; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
 .home-card-actions { display: flex; flex-wrap: wrap; gap: 6px; }
 .home-card-result { display: flex; flex-direction: column; gap: 6px; }
-.home-done { font-size: 12px; font-weight: 700; color: var(--success); }
+.home-done { font-size: 12px; font-weight: var(--fw-button); color: var(--success); }
 .home-file { font-size: 11px; color: var(--text-muted); }
 .home-note { font-size: 11px; line-height: 1.6; color: var(--warning); }
 .home-error { font-size: 11px; color: var(--danger); }
@@ -1201,7 +1693,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 18px;
+  border-radius: var(--radius);
   background: var(--bg-elevated);
   border: 1px solid var(--border);
 }
@@ -1216,7 +1708,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   background: var(--gradient);
   color: var(--on-gradient);
   font-size: 13px;
-  font-weight: 900;
+  font-weight: var(--fw-title);
 }
 .home-step p { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--text-muted); }
 .home-step strong { color: var(--text); }
@@ -1225,7 +1717,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .upgrade-card {
   max-width: 440px;
   padding: 28px;
-  border-radius: 24px;
+  border-radius: calc(var(--radius-card) + 4px);
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
@@ -1272,7 +1764,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
                  font-size: 10.5px; font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
 /* 計算書類: 書面ごとに 1 枚の紙 (パス 323)。画面では紙を縦に並べ、紙の上に札を出す。 */
 .ds-sheets { display: flex; flex-direction: column; gap: 22px; }
-.ds-sheet-caption { margin: 0 0 6px 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em;
+.ds-sheet-caption { margin: 0 0 6px 6px; font-size: 11.5px; font-weight: var(--fw-label); letter-spacing: var(--ls-label);
                     color: var(--heading-accent); font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
 
 /* 印刷: アプリの UI を隠し、書面 (.ds-paper) だけを A4 に出力する */
@@ -1281,6 +1773,8 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   body.ds-printing .sidebar-backdrop,
   body.ds-printing .topbar,
   body.ds-printing .ds-side,
+  body.ds-printing .chat-column,
+  body.ds-printing .concierge,
   body.ds-printing .chatbot-widget {
     display: none !important;
   }

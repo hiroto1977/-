@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **16271** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **16304** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 34 / 37 (残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 657 | 自己検証 |
+| `file:line` 参照数 | 662 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2680,6 +2680,25 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 残る直書き色を台帳で留める (パス 317 では半透明の影と光輪の 10 件・**パス 322 から 0 件**: 影と光輪も
 `--shadow-*` / `--focus-ring` / `--primary-shadow` のトークンで、ダークでは影も配色に合わせて変わる)。起動時は `main.tsx` が描画より先に適用し、実機の
 `theme` suite (e2e) が「再読込しても解錠の前からダーク」と OS への追随を見る。
+
+**デザインの選択と 3 列の構成** (2026-09-26) —— 見た目は**デザイン** (すっきり = 既定 / かわいい = パス 322 の
+パステル) × **配色** (ライト / ダーク) の掛け合わせで、`styles.css` の `:root` の**トークン表 4 枚**
+(`:root` / `:root[data-theme="dark"]` / `:root[data-design="cute"]` / `:root[data-design="cute"][data-theme="dark"]`・
+この順) が持つ。デザインの選択は `src/renderer/theme.ts` の同じ入口で `servicehub.design` に置き、`<html data-design>`
+に反映する (配色と同じく三状態の読み・書きの成否を画面が言う・起動時は `main.tsx` が**デザイン → 配色**の順に
+描画より先に適用する —— `--bg` はデザインで決まるので、窓の下地と PWA の theme-color を先に誤らせない)。
+形の違い (角・余白・飾りの記号・文字の太さ・浮いたカードか) も**表の値**にした —— デザインで分けた規則を別に
+書くと、スマホ向けの media 規則と特異性でぶつかる。`src/renderer/__tests__/themeTokens.test.ts` が 4 枚を照合する (2 つのデザインの
+ライトは同じ名前の集合・各デザインのダークはライトの色を漏れなく上書き・4 枚とも `color-scheme`・表の順序)。
+広い画面 (`CHAT_DOCK_MIN_WIDTH` = 1200px 以上) の「すっきり」では、AI コンシェルジュが**サイドバーと画面の間の列**
+(`<aside class="chat-column">`) になり、上部バーの「💬 チャット」で畳める (畳んだ状態は保存しない —— 保存先を
+1 つ増やさない)。判定は `src/renderer/chatDock.ts` の `shouldDockChat` **1 か所**で、App.tsx はその答えで
+`.chat-docked` を付け、CSS は組の有無だけを読む (同じ幅を CSS にも書くと、ずれた幅で列だけが 2 列目に残る)。
+それ以外 (かわいい・狭い画面) は右下の 🤖 から開く浮いた窓で、スマホの「すっきり」では下から出るシートになる。
+**入口は常に 1 つ** —— 列のときは 🤖 を出さない。列の送信ボタンの読み上げ名は「コンシェルジュへ送る」で、
+画面の「送信」と名前で区別できる (e2e は `getByRole('button', { name: '送信' })` で画面の送信を押す)。
+jsdom の `src/renderer/__tests__/chatDock.test.ts` (matchMedia の代役で幅を動かす) と実機の `design` suite (座標で 3 列を測る・
+窓の幅への追随・4 枚の表の特異性と順序を出荷した stylesheet の規則から読んだ期待値で見る・スマホのシート) が見る。
 
 **シェルの操作性** (2026-09-19 · パス 322) —— 2026-09-17 の見た目の再設計は色と形だけを変え、構造と文言と
 `data-*` は触らなかった。パス 322 はサイドバー・トップバー・ホームの**操作**を変える: 検索欄の ✕ と件数と

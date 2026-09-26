@@ -3721,21 +3721,24 @@ async function themeSuite(browser) {
   const note = () => page.locator('[data-theme-note]').innerText();
   ok((await attr()) === 'light', `theme: ★ 何も選んでいなければ OS がダークでもライト (実際 ${await attr()})`);
   const lightBg = await bodyBg();
-  // PWA の theme-color (GitHub Pages の配布物だけが持つ meta) が配色に追随するか —— 単一 HTML には無いので足して見る (パス 318)。
-  await page.evaluate(() => {
-    const m = document.createElement('meta');
-    m.setAttribute('name', 'theme-color');
-    m.setAttribute('content', '#fff7fa');
-    document.head.appendChild(m);
-  });
   const themeColor = () => page.evaluate(() => document.querySelector('meta[name="theme-color"]')?.getAttribute('content'));
   const cssBg = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
+  // PWA の theme-color (GitHub Pages の配布物だけが持つ meta) が配色に追随するか —— 単一 HTML には無いので足して見る (パス 318)。
+  // 初期値は注入 (inject-pwa) が書くのと同じ**ライトの --bg の実値**。2026-09-26 まで `#fff7fa` を書き写しており、
+  // 既定のデザインを替えた日にこの suite だけが古びた (色は検査へ写さず、出荷した stylesheet から読む)。
+  const lightCssBg = await cssBg();
+  await page.evaluate((c) => {
+    const m = document.createElement('meta');
+    m.setAttribute('name', 'theme-color');
+    m.setAttribute('content', c);
+    document.head.appendChild(m);
+  }, lightCssBg);
 
   await page.locator('[data-theme-choice="dark"]').click();
   await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'dark', undefined, { timeout: 5000 });
   const darkBg = await bodyBg();
   ok(darkBg !== lightBg, `theme: ★ ダークを選ぶと地の色が実際に変わる (${lightBg} → ${darkBg})`);
-  ok((await themeColor()) === (await cssBg()) && (await themeColor()) !== '#fff7fa', `theme: ★ PWA の theme-color が stylesheet の --bg の実値に追随する (実際 ${await themeColor()} / --bg ${await cssBg()})`);
+  ok((await themeColor()) === (await cssBg()) && (await themeColor()) !== lightCssBg, `theme: ★ PWA の theme-color が stylesheet の --bg の実値に追随する (実際 ${await themeColor()} / --bg ${await cssBg()})`);
   ok((await stored()) === 'dark', 'theme: 選択は servicehub.theme に残る');
   ok((await note()).includes('ダークで表示しています'), 'theme: 注記が「ダークで表示しています」と言う');
 
@@ -3775,9 +3778,229 @@ async function themeSuite(browser) {
   await page.locator('[data-theme-choice="dark"]').click();
   await page.locator('[data-theme-choice="light"]').click();
   await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'light', undefined, { timeout: 5000 });
-  ok((await themeColor()) === '#fff7fa', `theme: ライトへ戻すと theme-color もライトの --bg (実際 ${await themeColor()})`);
+  ok((await themeColor()) === lightCssBg, `theme: ライトへ戻すと theme-color もライトの --bg (実際 ${await themeColor()} / ライトの --bg ${lightCssBg})`);
   ok(errs.length === 0, `theme: ページエラー 0 (実際 ${JSON.stringify(errs)})`);
   await ctx.close();
+}
+
+/**
+ * デザインの選択 (すっきり / かわいい · 2026-09-26) と 3 列の構成。
+ *
+ * 広い画面 (1200px 以上) の「すっきり」ではコンシェルジュがサイドバーと画面の間の**列**になり、
+ * それ以外 (かわいい・狭い画面) は右下の 🤖 から開く浮いた窓になる。判定は JS の 1 か所
+ * (`chatDock.ts`) で、CSS は `.chat-docked` の有無だけを見る。jsdom (`chatDock.test.ts`) は
+ * matchMedia の代役と描いた木までしか見られないので、ここでは実ブラウザでしか測れない物を見る:
+ *   - 列が**実際に横へ並ぶか** (座標)・畳むと画面の列が広がるか
+ *   - 窓の幅を変えたら**追随するか** (`useSyncExternalStore` の購読が生きているか)
+ *   - 4 枚のトークン表の**特異性と重なり順** —— 地の色 (`--bg`) は (0,3,0) の「かわいい × ダーク」が
+ *     持つので順序に依らない。**順序が効くのは、すっきりのダークが持ち、かわいいのダークが持たない名前**
+ *     (実測 2 つ: `--user-bubble-bg` / `--composer-bg` —— かわいいのライトでは別名 `var(…)` なので
+ *     かわいいのダークに書く必要が無い)。そこでは同じ特異性 (0,2,0) の「すっきりのダーク」と
+ *     「かわいいのライト」がぶつかり、**後ろに在る方が勝つ**。期待値は**出荷した stylesheet の規則
+ *     そのもの**から読む (色を検査へ書き写さない —— theme suite が `#fff7fa` を写していて、既定を
+ *     替えた日に古びた当の形)
+ *   - スマホでは下から出るシートになり、開いている間は 🤖 が入力欄と重ならないこと
+ */
+async function designSuite(browser) {
+  console.log('--- デザイン (すっきり / かわいい) と 3 列の構成 ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  const design = () => page.evaluate(() => document.documentElement.getAttribute('data-design'));
+  const box = (sel) => page.locator(sel).first().boundingBox();
+  const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const cssVar = (name) => page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), name);
+  /** 出荷した stylesheet の中で、その selector の表が宣言する値 (期待値を検査へ書き写さない)。 */
+  const tableValue = (selector, name) =>
+    page.evaluate(
+      ([sel, n]) => {
+        for (const sheet of document.styleSheets) {
+          let rules;
+          try {
+            rules = sheet.cssRules;
+          } catch {
+            continue;
+          }
+          for (const r of rules) if (r.selectorText === sel) return r.style.getPropertyValue(n).trim();
+        }
+        return null;
+      },
+      [selector, name],
+    );
+
+  // 1. 既定は「すっきり」、1280px では サイドバー | チャット | 画面 の 3 列
+  ok((await design()) === 'clean', `design: ★ 何も選んでいなければ「すっきり」 (実際 ${await design()})`);
+  await page.waitForSelector('.chat-column [data-concierge]', { timeout: 10000 });
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: ★ 3 列のときは右下の 🤖 を出さない (チャットの入口は 1 つ)');
+  const sb = await box('.sidebar');
+  const col = await box('.chat-column');
+  const main = await box('.main');
+  ok(
+    sb !== null && col !== null && main !== null && sb.x + sb.width <= col.x + 1 && col.x + col.width <= main.x + 1,
+    `design: ★ 実際に サイドバー | チャット | 画面 の順に横へ並ぶ (${JSON.stringify([sb, col, main].map((b) => b && [Math.round(b.x), Math.round(b.width)]))})`,
+  );
+  ok(main !== null && main.width >= 560, `design: 画面の列は ${Math.round(main?.width ?? 0)}px (≥ 560px —— チャット欄に押し潰されない)`);
+  ok(await noHScroll(page), 'design: 3 列でも横スクロールなし');
+
+  // 2. 列の欄から送ると、列の中で会話が進む
+  await page.locator('.chat-column input[aria-label="チャット入力"]').fill('何ができる？');
+  await page.locator('.chat-column').getByRole('button', { name: 'コンシェルジュへ送る' }).click();
+  await page.waitForSelector('.chat-column [data-concierge-role="bot"]', { timeout: 10000 });
+  ok(
+    (await page.locator('.chat-column [data-concierge-role="user"]').first().innerText()).includes('何ができる'),
+    'design: ★ 列の欄から送ると、列の中に利用者の発言と応答が並ぶ',
+  );
+
+  // 3. トップバーの「💬 チャット」で畳む / 戻す
+  const toggle = page.locator('.chat-toggle');
+  ok((await toggle.getAttribute('aria-expanded')) === 'true', 'design: トップバーの「💬 チャット」は開いた状態を名乗る (aria-expanded)');
+  await toggle.click();
+  await page.waitForFunction(() => !document.querySelector('.chat-column'), undefined, { timeout: 5000 });
+  const wide = await box('.main');
+  ok(
+    wide !== null && main !== null && wide.width > main.width + 300,
+    `design: ★ 畳むと画面の列が広がる (${Math.round(main?.width ?? 0)} → ${Math.round(wide?.width ?? 0)}px)`,
+  );
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: 畳んでも右下の 🤖 は出さない (戻す口はトップバーの 1 つ)');
+  await toggle.click();
+  await page.waitForSelector('.chat-column [data-concierge-role="user"]', { timeout: 5000 });
+  ok(true, 'design: ★ もう 1 度押すと列が戻り、さっきの会話も残っている');
+
+  // 4. 窓の幅に追随する: 1024px では浮いた窓 (🤖)、1280px へ戻すと列
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.waitForSelector('.concierge-fab', { timeout: 5000 });
+  ok((await page.locator('.chat-column').count()) === 0, 'design: ★ 1024px に狭めると列は消え、右下の 🤖 に戻る (窓の幅に追随)');
+  ok((await page.locator('.chat-toggle').count()) === 0, 'design: 狭い画面ではトップバーの「💬 チャット」も出さない');
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.waitForSelector('.chat-column', { timeout: 5000 });
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: 1280px へ戻すと列に戻る');
+
+  // 5. 設定で「かわいい」へ
+  await gotoService(page, '#settings', '[data-design-section]');
+  const cleanBg = await bodyBg();
+  const cleanCssBg = await cssVar('--bg');
+  const cleanRadius = await cssVar('--radius-button');
+  // PWA の theme-color (配布物だけが持つ meta) —— 注入は既定のライトの --bg を書く。単一 HTML には無いので同じ値で足す。
+  await page.evaluate((c) => {
+    const m = document.createElement('meta');
+    m.setAttribute('name', 'theme-color');
+    m.setAttribute('content', c);
+    document.head.appendChild(m);
+  }, cleanCssBg);
+  const themeColor = () => page.evaluate(() => document.querySelector('meta[name="theme-color"]')?.getAttribute('content'));
+  await page.locator('[data-design-choice="cute"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-design') === 'cute', undefined, { timeout: 5000 });
+  ok((await bodyBg()) !== cleanBg, `design: ★ 「かわいい」を選ぶと地の色が実際に変わる (${cleanBg} → ${await bodyBg()})`);
+  ok(
+    (await themeColor()) === (await cssVar('--bg')) && (await themeColor()) !== cleanCssBg,
+    `design: ★ PWA の theme-color もデザインに追随する (実際 ${await themeColor()} / --bg ${await cssVar('--bg')})`,
+  );
+  ok(
+    cleanRadius === '8px' && (await cssVar('--radius-button')) === (await tableValue(':root[data-design="cute"]', '--radius-button')),
+    `design: 形のトークンも入れ替わる (ボタンの角 ${cleanRadius} → ${await cssVar('--radius-button')})`,
+  );
+  await page.waitForSelector('.concierge-fab', { timeout: 5000 });
+  ok((await page.locator('.chat-column').count()) === 0, 'design: ★ 「かわいい」では 1280px でも列にせず右下の 🤖 から開く');
+  ok((await page.evaluate(() => localStorage.getItem('servicehub.design'))) === 'cute', 'design: 選択は servicehub.design に残る');
+
+  // 6. 再読込: 解錠の前 (ロック画面) から効いている —— main.tsx が描画より先に適用する
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  ok((await design()) === 'cute', `design: ★ 再読込しても解錠の前から「かわいい」 (実際 ${await design()})`);
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('[data-design-section]', { timeout: 30000 });
+  ok((await page.locator('[data-design-choice="cute"]').getAttribute('aria-pressed')) === 'true', 'design: 設定画面は「かわいい」が選ばれた状態で開く');
+
+  // 7. 4 枚の表の重なり順: かわいい × ダーク の地はかわいいのダーク (すっきりのダークではない)
+  await page.locator('[data-theme-choice="dark"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'dark', undefined, { timeout: 5000 });
+  const cuteDarkBg = await tableValue(':root[data-design="cute"][data-theme="dark"]', '--bg');
+  const cleanDarkBg = await tableValue(':root[data-theme="dark"]', '--bg');
+  ok(
+    cuteDarkBg !== null && cleanDarkBg !== null && cuteDarkBg !== cleanDarkBg && (await cssVar('--bg')) === cuteDarkBg,
+    `design: ★ かわいい × ダークの地はかわいいのダークの表から来る (実際 ${await cssVar('--bg')} / かわいい ${cuteDarkBg} / すっきり ${cleanDarkBg})`,
+  );
+  ok(
+    (await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme)) === 'dark',
+    'design: ★ かわいい × ダークでもフォームの部品はダーク (color-scheme をダークの表が言い直す)',
+  );
+  // 順序が効く名前: すっきりのダークが持ち、かわいいのダークが持たない。かわいい × ダークでは
+  // かわいいのライトの宣言 (別名) を**この場の変数で解いた値**になるはず —— すっきりのダークの値が
+  // 出たら、表の順序が逆 (同じ特異性で後ろの「すっきりのダーク」が勝った)。
+  const orderSensitive = await page.evaluate(() => {
+    const rule = (sel) => {
+      for (const sheet of document.styleSheets) {
+        let rules;
+        try {
+          rules = sheet.cssRules;
+        } catch {
+          continue;
+        }
+        for (const r of rules) if (r.selectorText === sel) return r.style;
+      }
+      return null;
+    };
+    const cleanDark = rule(':root[data-theme="dark"]');
+    const cuteDark = rule(':root[data-design="cute"][data-theme="dark"]');
+    const cuteLight = rule(':root[data-design="cute"]');
+    if (!cleanDark || !cuteDark || !cuteLight) return null;
+    const out = [];
+    for (let i = 0; i < cleanDark.length; i++) {
+      const n = cleanDark[i];
+      if (!n.startsWith('--') || cuteDark.getPropertyValue(n) !== '') continue;
+      const probe = document.createElement('div');
+      document.body.appendChild(probe);
+      probe.style.setProperty('--probe', cuteLight.getPropertyValue(n));
+      const want = getComputedStyle(probe).getPropertyValue('--probe').trim();
+      probe.remove();
+      out.push({ n, got: getComputedStyle(document.documentElement).getPropertyValue(n).trim(), want, cleanDark: cleanDark.getPropertyValue(n).trim() });
+    }
+    return out;
+  });
+  ok(
+    orderSensitive !== null && orderSensitive.length >= 1 && orderSensitive.every((t) => t.got === t.want && t.got !== t.cleanDark),
+    `design: ★ 表の順序が効く名前 (${(orderSensitive ?? []).map((t) => t.n).join(' / ')}) は、かわいい × ダークでかわいいの宣言から来る (${JSON.stringify(orderSensitive)})`,
+  );
+
+  // 8. すっきりへ戻す: 地はすっきりのダーク、列が戻る
+  await page.locator('[data-design-choice="clean"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-design') === 'clean', undefined, { timeout: 5000 });
+  ok((await cssVar('--bg')) === cleanDarkBg, `design: すっきり × ダークの地はすっきりのダーク (実際 ${await cssVar('--bg')})`);
+  await page.waitForSelector('.chat-column', { timeout: 5000 });
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: ★ すっきりへ戻すと、再読込なしで 3 列に戻る');
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(realErrs.length === 0, `design: console エラーゼロ (${JSON.stringify(realErrs).slice(0, 200)})`);
+  await ctx.close();
+
+  // 9. スマホ: 下から出るシート (幅いっぱい・下端に接する)・開いている間は 🤖 を隠す
+  const pctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+  const ppage = await pctx.newPage();
+  const perrs = [];
+  collectErrors(ppage, perrs);
+  await ppage.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await ppage.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(ppage);
+  ok((await ppage.locator('.chat-column').count()) === 0, 'design: スマホでは列にしない');
+  await ppage.locator('.concierge-fab').tap();
+  await ppage.waitForSelector('.concierge.floating', { timeout: 5000 });
+  const sheet = await ppage.locator('.concierge.floating').boundingBox();
+  ok(
+    sheet !== null && Math.abs(sheet.x) <= 1 && Math.abs(sheet.width - 412) <= 1 && Math.abs(sheet.y + sheet.height - 915) <= 1,
+    `design: ★ スマホでは下から出るシート (幅いっぱい・下端に接する: ${JSON.stringify(sheet && [Math.round(sheet.x), Math.round(sheet.width), Math.round(sheet.y + sheet.height)])})`,
+  );
+  ok(!(await ppage.locator('.concierge-fab').isVisible()), 'design: シートを開いている間は 🤖 が隠れて送信ボタンと重ならない');
+  await ppage.getByRole('button', { name: 'チャットを閉じる' }).tap();
+  await ppage.waitForFunction(() => !document.querySelector('.concierge.floating'), undefined, { timeout: 5000 });
+  ok(await ppage.locator('.concierge-fab').isVisible(), 'design: ✕ で閉じると 🤖 が戻る');
+  ok(await noHScroll(ppage), 'design: スマホで横スクロールなし');
+  const prealErrs = perrs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(prealErrs.length === 0, `design: スマホで console エラーゼロ (${JSON.stringify(prealErrs).slice(0, 200)})`);
+  await pctx.close();
 }
 
 async function hardResetSuite(browser) {
@@ -4076,6 +4299,7 @@ function installWaitMarginRecorder(browser) {
     ['aiCeiling', aiCeilingSuite, 10],
     ['best3', best3Suite, 9],
     ['theme', themeSuite, 14],
+    ['design', designSuite, 32],
     ['tablet', tabletSuite, 2],
     ['shell', shellSuite, 27],
   ];

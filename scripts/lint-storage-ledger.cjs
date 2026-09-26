@@ -189,6 +189,7 @@ const STORES = {
   'servicehub.ollama.endpoint': { medium: 'localstorage', holds: 'Ollama の接続先', backedUp: false },
   'servicehub.ollama.port': { medium: 'localstorage', holds: 'Ollama の待ち受けポート', backedUp: false },
   'servicehub.theme': { medium: 'localstorage', holds: '配色の選択 (ライト / ダーク / OS に合わせる)', backedUp: false },
+  'servicehub.design': { medium: 'localstorage', holds: 'デザインの選択 (すっきり / かわいい)', backedUp: false },
   // チームレーダーの保存状態 (部署名・メンバーの氏名・軸ごとの 1〜5 評価・付箋)。第三者の人事評価
   // なので sensitive。デスクトップ版は ~/.local/business-hub/team-radar.json (0600) で、こちらは
   // ブラウザ版の置き場 —— 2026-09-09 (パス 118) から fetchSnapshot が読む (それまで書くだけだった)。
@@ -243,10 +244,10 @@ const INDIRECT_SITES = [
   {
     file: 'src/renderer/data/localWrite.ts',
     expr: 'key',
-    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1', 'chatbot-requests', 'google-client-id', 'servicehub.theme'],
+    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1', 'chatbot-requests', 'google-client-id', 'servicehub.theme', 'servicehub.design'],
     why:
       '成否を返す共通の入口 (書き 2026-09-06・読み 2026-09-12 パス 160)。鍵は呼び出し元の定数で、通るのは書類スタジオの'
-      + '差込値・Team Radar の下書き・チャットの要望 (2026-09-06)・Google のクライアント ID (書きはパス 155・読みはパス 310)・配色の選択 (パス 317・`theme.ts`) の 5 つ。'
+      + '差込値・Team Radar の下書き・チャットの要望 (2026-09-06)・Google のクライアント ID (書きはパス 155・読みはパス 310)・配色の選択 (パス 317・`theme.ts`)・デザインの選択 (2026-09-26・`theme.ts`) の 6 つ。'
       + '**新しい呼び出し元を足したら、その鍵をここへ書く** —— `writeLocalJson(key, …)` は鍵を組み立てないので、台帳が唯一の一覧になる。'
       + '2026-09-17 (パス 310) まで後の 2 つが書かれておらず、直接の getItem が同じ鍵を名乗っていたので誰も鳴らなかった ——'
       + ' Google の読みを入口へ寄せた瞬間に「実在しない保存先」として出た。規則 10 が入口の呼び出しから鍵を解いて突き合わせる。',

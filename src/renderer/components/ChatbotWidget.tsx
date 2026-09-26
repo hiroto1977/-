@@ -1,7 +1,9 @@
 /**
- * ChatbotWidget — AI オーケストレーション組織のコンシェルジュ (フローティング UI)。
+ * ChatbotWidget — AI オーケストレーション組織のコンシェルジュ。
  *
- * 画面右下の 🤖 ボタンからどのページでも開けるチャットパネル。判断ロジックは
+ * 描き方は 2 通り (2026-09-26): 画面右下の 🤖 ボタンから開く**浮いた窓** (既定) と、
+ * 「すっきり」のデザインで広い画面のときに App が置く**列** (`docked` —— サイドバー | この列 | 画面 の 3 列)。
+ * 中身 (会話・入力・確認) は 1 つで、違うのは外枠と開け閉めの口だけ。判断ロジックは
  * 純粋核 (`../data/chatbot.ts` / `../data/chatOrg.ts`) に全委譲し、本コンポーネントは
  * I/O の配線だけを担う:
  *   - 画面遷移   → `servicehub:navigate` CustomEvent (App.tsx が listen)
@@ -242,39 +244,23 @@ async function tryOllama(prompt: string): Promise<OllamaTry> {
   }
 }
 
-const panelStyle: React.CSSProperties = {
-  position: 'fixed',
-  right: 16,
-  bottom: 72,
-  width: 'min(380px, calc(100vw - 32px))',
-  maxHeight: 'min(520px, calc(100vh - 120px))',
-  display: 'flex',
-  flexDirection: 'column',
-  background: 'var(--bg-elev, #1b1d22)',
-  border: '1px solid var(--border, #333)',
-  borderRadius: 18,
-  boxShadow: 'var(--shadow, 0 12px 32px rgba(120,90,150,0.18))',
-  zIndex: 1000,
-  overflow: 'hidden',
-};
+/*
+ * 見た目は `styles.css` の `.concierge*` (2026-09-26 に inline の指定から移した)。inline の頃は
+ * `var(--border, #333)` のような**暗い配色の代わりの色**を 13 か所に持っており、トークンが読めない
+ * 環境では明るい画面に暗い枠を描いた —— デザインを 2 つにしたので、色はトークンの表だけが決める。
+ */
 
-const fabStyle: React.CSSProperties = {
-  position: 'fixed',
-  right: 16,
-  bottom: 16,
-  width: 48,
-  height: 48,
-  borderRadius: '50%',
-  border: '1px solid var(--border, #333)',
-  background: 'var(--gradient, #ee6fa8)',
-  color: '#fff',
-  fontSize: 22,
-  cursor: 'pointer',
-  zIndex: 1000,
-  boxShadow: '0 8px 20px rgba(238,111,168,0.35)',
-};
+export interface ChatbotWidgetProps {
+  /**
+   * 列として描く (「すっきり」のデザインで広い画面 —— App.tsx が決める)。無ければ右下の浮いた窓。
+   * 列は開け閉めの状態を持たない (列そのものの出し入れは App が持つ)。
+   */
+  readonly docked?: boolean;
+  /** 列を畳む (`docked` のときだけ、見出しに「«」を出す)。 */
+  readonly onCollapse?: () => void;
+}
 
-export function ChatbotWidget() {
+export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps = {}) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
@@ -290,7 +276,13 @@ export function ChatbotWidget() {
 
   useEffect(() => {
     saveHistory(messages);
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+    // 最新の発言まで送る。`scrollTo` を持たない環境 (古い WebView・jsdom) は `scrollTop` へ倒す ——
+    // 列 (docked) は開いた瞬間から描かれるので、ここで投げると部品ごと境界に受け止められて会話が消える。
+    const list = listRef.current;
+    if (list) {
+      if (typeof list.scrollTo === 'function') list.scrollTo({ top: list.scrollHeight });
+      else list.scrollTop = list.scrollHeight;
+    }
   }, [messages]);
 
   const append = (msg: ChatMessage) => setMessages((prev) => [...prev, msg].slice(-HISTORY_MAX));
@@ -396,154 +388,143 @@ export function ChatbotWidget() {
     }
   };
 
-  return (
-    <>
-      {open ? (
-        <div style={panelStyle} role="dialog" aria-label="AI コンシェルジュ">
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 12px',
-              borderBottom: '1px solid var(--border, #333)',
-              fontSize: 13,
-            }}
+  const panel = (
+    <div
+      className={docked ? 'concierge docked' : 'concierge floating'}
+      data-concierge={docked ? 'docked' : 'floating'}
+      // 浮いた窓は他の画面の上に開く「窓」なので dialog。列は画面の一部 (見出しの付いた欄は App の <aside> が持つ)。
+      role={docked ? undefined : 'dialog'}
+      aria-label={docked ? undefined : 'AI コンシェルジュ'}
+    >
+      <div className="concierge-head">
+        <strong className="concierge-title">🤖 AI コンシェルジュ</strong>
+        <span className="concierge-tools">
+          <button
+            type="button"
+            className="ghost"
+            onClick={downloadRequests}
+            title="受け付けた機能要望を Markdown で書き出す (orchestration backlog 候補)"
+            aria-label="要望リストをエクスポート"
           >
-            <strong>🤖 AI コンシェルジュ</strong>
-            <span style={{ display: 'flex', gap: 8 }}>
+            📥 要望
+          </button>
+          <button
+            type="button"
+            className="ghost"
+            onClick={() => {
+              clearChatbotHistory();
+              setMessages([]);
+            }}
+            disabled={messages.length === 0}
+            title="この端末に残した会話履歴を消去"
+            aria-label="会話履歴を消去"
+          >
+            🗑 履歴
+          </button>
+          {docked ? (
+            onCollapse ? (
               <button
                 type="button"
-                onClick={downloadRequests}
-                title="受け付けた機能要望を Markdown で書き出す (orchestration backlog 候補)"
-                aria-label="要望リストをエクスポート"
+                className="ghost"
+                onClick={onCollapse}
+                aria-label="チャット欄を畳む"
+                title="チャット欄を畳む (上部バーの「💬 チャット」で戻せます)"
               >
-                📥 要望
+                «
               </button>
+            ) : null
+          ) : (
+            <button type="button" className="ghost" onClick={() => setOpen(false)} aria-label="チャットを閉じる">
+              ✕
+            </button>
+          )}
+        </span>
+      </div>
+
+      <div ref={listRef} className="concierge-log">
+        {messages.length === 0 ? (
+          <div className="concierge-intro">
+            AI オーケストレーション組織 (役員 {ORG_INDEX.counts.executives} / 部長{' '}
+            {ORG_INDEX.counts.managers} / チーム {ORG_INDEX.counts.teams}) がご要望を承ります。
+            サービスへの案内・操作・説明・機能要望の受付ができます。
+          </div>
+        ) : null}
+        {messages.map((m, i) => (
+          <div key={i} className={m.role === 'user' ? 'concierge-msg user' : 'concierge-msg bot'} data-concierge-role={m.role}>
+            {m.text}
+            {m.routedThrough ? <div className="concierge-route">🪪 {m.routedThrough}</div> : null}
+          </div>
+        ))}
+        {busy ? <div className="concierge-busy">考え中…</div> : null}
+        {pendingIntent ? (
+          <div role="alertdialog" aria-label="実行確認" className="concierge-confirm">
+            <strong>確認:</strong> 書き込み操作を実行しますか？
+            <div className="concierge-confirm-actions">
               <button
                 type="button"
                 onClick={() => {
-                  clearChatbotHistory();
-                  setMessages([]);
-                }}
-                disabled={messages.length === 0}
-                title="この端末に残した会話履歴を消去"
-                aria-label="会話履歴を消去"
-              >
-                🗑 履歴
-              </button>
-              <button type="button" onClick={() => setOpen(false)} aria-label="チャットを閉じる">
-                ✕
-              </button>
-            </span>
-          </div>
-
-          <div ref={listRef} style={{ flex: 1, overflowY: 'auto', padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {messages.length === 0 ? (
-              <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}>
-                AI オーケストレーション組織 (役員 {ORG_INDEX.counts.executives} / 部長{' '}
-                {ORG_INDEX.counts.managers} / チーム {ORG_INDEX.counts.teams}) がご要望を承ります。
-                サービスへの案内・操作・説明・機能要望の受付ができます。
-              </div>
-            ) : null}
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                style={{
-                  alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '85%',
-                  background: m.role === 'user' ? 'var(--accent, #4f7cff)' : 'var(--bg, #111)',
-                  color: m.role === 'user' ? '#fff' : 'var(--text)',
-                  border: m.role === 'user' ? 'none' : '1px solid var(--border, #333)',
-                  borderRadius: 10,
-                  padding: '8px 10px',
-                  fontSize: 13,
-                  whiteSpace: 'pre-wrap',
-                  lineHeight: 1.6,
+                  const intent = pendingIntent;
+                  setPendingIntent(null);
+                  void runIntent(intent);
                 }}
               >
-                {m.text}
-                {m.routedThrough ? (
-                  <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4 }}>
-                    🪪 {m.routedThrough}
-                  </div>
-                ) : null}
-              </div>
-            ))}
-            {busy ? <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>考え中…</div> : null}
-            {pendingIntent ? (
-              <div
-                role="alertdialog"
-                aria-label="実行確認"
-                style={{ fontSize: 12, border: '1px solid var(--danger)', borderRadius: 8, padding: 8 }}
-              >
-                <strong style={{ color: 'var(--danger)' }}>確認:</strong> 書き込み操作を実行しますか？
-                <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const intent = pendingIntent;
-                      setPendingIntent(null);
-                      void runIntent(intent);
-                    }}
-                  >
-                    実行
-                  </button>
-                  <button type="button" onClick={() => setPendingIntent(null)}>
-                    やめる
-                  </button>
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <div style={{ display: 'flex', gap: 6, padding: '8px 12px 4px', flexWrap: 'wrap' }}>
-            {suggestions.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => void send(s)}
-                style={{ fontSize: 11, borderRadius: 999, padding: '3px 10px' }}
-              >
-                {s}
+                実行
               </button>
-            ))}
+              <button type="button" onClick={() => setPendingIntent(null)}>
+                やめる
+              </button>
+            </div>
           </div>
+        ) : null}
+      </div>
 
-          <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void send(input);
-            }}
-            style={{ display: 'flex', gap: 6, padding: 12, borderTop: '1px solid var(--border, #333)' }}
-          >
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="例: 税務試算を開いて / 福利厚生の機能が欲しい"
-              aria-label="チャット入力"
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                background: 'var(--bg, #111)',
-                border: '1px solid var(--border, #333)',
-                borderRadius: 10,
-                color: 'var(--text)',
-                fontSize: 13,
-              }}
-            />
-            <button type="submit" className="primary" disabled={busy || !input.trim() || inputOver > 0}>
-              送信
-            </button>
-          </form>
-        </div>
-      ) : null}
+      <div className="concierge-chips">
+        {suggestions.map((s) => (
+          <button key={s} type="button" onClick={() => void send(s)}>
+            {s}
+          </button>
+        ))}
+      </div>
 
+      <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
+      <form
+        className="concierge-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void send(input);
+        }}
+      >
+        <input
+          className="concierge-input"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="例: 税務試算を開いて / 福利厚生の機能が欲しい"
+          aria-label="チャット入力"
+        />
+        {/*
+          読み上げの名前は「送信」を含めない —— 列は画面と並んで常に在るので、画面の側の「送信」
+          (例: AI アシスタント) と同じ名前だと、名前で押す人 (と e2e の getByRole) がどちらか決められない。
+        */}
+        <button
+          type="submit"
+          className="primary"
+          aria-label="コンシェルジュへ送る"
+          disabled={busy || !input.trim() || inputOver > 0}
+        >
+          送信
+        </button>
+      </form>
+    </div>
+  );
+
+  if (docked) return panel;
+
+  return (
+    <>
+      {open ? panel : null}
       <button
         type="button"
-        className="chatbot-widget"
-        style={fabStyle}
+        className={open ? 'chatbot-widget concierge-fab open' : 'chatbot-widget concierge-fab'}
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'チャットを閉じる' : 'AI コンシェルジュを開く'}
         title="AI コンシェルジュ (オーケストレーション組織が応答)"

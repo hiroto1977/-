@@ -14,6 +14,17 @@
  *
  * `data-theme` には**解いた後の値**だけを置く —— CSS 側でも `prefers-color-scheme` を見ると
  * ダークのトークン表が 2 か所になる (規則は 1 つ)。OS の変更に追随するのは JS のこの 1 か所。
+ *
+ * ## デザイン (すっきり / かわいい) —— 2026-09-26
+ *
+ * 配色 (明るさ) とは別の軸を 1 つ持つ: **デザイン** は形と色の表そのもの。
+ *
+ *   保存 … localStorage `servicehub.design` (入口 `data/localWrite.ts` を通す)
+ *   適用 … `<html data-design="clean|cute">` (`styles.css` のトークン表 4 枚のうち 2 枚を選ぶ)
+ *
+ * 既定は **すっきり** (白地・細い罫・橙のアクセント・サイドバー | AI チャット | 画面 の 3 列)。
+ * パス 322 の「かわいい」(パステル・丸いピル・浮いたカード) は設定画面から選び直せる。
+ * 配色とデザインは掛け合わせ (2 × 2) —— どちらを選んでも、もう片方はそのまま残る。
  */
 import { readLocalString, writeLocalString, type LocalWriteResult } from './data/localWrite';
 
@@ -165,5 +176,102 @@ export function applySavedTheme(): ThemeRead {
   const read = readThemeChoice();
   stopFollowing();
   stopFollowing = applyThemeChoice(read.choice);
+  return read;
+}
+
+
+/* ---------------------------------------------------------------------------
+ * デザイン (すっきり / かわいい) —— 2026-09-26
+ * ------------------------------------------------------------------------- */
+
+export type DesignChoice = 'clean' | 'cute';
+
+/** localStorage の鍵。`lint:storage` の台帳・`eraseAll.ts` の在庫・読み書きの台帳と同じ綴り。 */
+export const DESIGN_KEY = 'servicehub.design';
+/**
+ * 既定は**すっきり** —— 利用者の依頼 (2026-09-26「こんな感じの UI にして」) で既定を替えた。
+ * 以前のパステルを選んでいた人も、選んだ記録は持っていない (既定だった) ので、すっきりで開く。
+ * 設定画面の「かわいい」1 つで戻せる。
+ */
+export const DEFAULT_DESIGN: DesignChoice = 'clean';
+export const DESIGN_CHOICES: readonly DesignChoice[] = ['clean', 'cute'];
+export const DESIGN_LABELS: Readonly<Record<DesignChoice, string>> = {
+  clean: 'すっきり',
+  cute: 'かわいい',
+};
+
+export function isDesignChoice(raw: unknown): raw is DesignChoice {
+  return typeof raw === 'string' && (DESIGN_CHOICES as readonly string[]).includes(raw);
+}
+
+/** 保存値をデザインに戻す。知らない値・壊れた値は既定 (すっきり) —— 設定画面から選び直せる。 */
+export function sanitizeDesignChoice(raw: unknown): DesignChoice {
+  return isDesignChoice(raw) ? raw : DEFAULT_DESIGN;
+}
+
+export interface DesignRead {
+  readonly choice: DesignChoice;
+  /** 保存領域を読めたか。値が無い (まだ選んでいない) のは `readable: true`。 */
+  readonly readable: boolean;
+  /** 読めなかった理由 (読めたなら `null`)。入口の文をそのまま画面に渡す。 */
+  readonly message: string | null;
+}
+
+/** 入口 `readLocalString` を通して読む。読めなければ既定で描き、理由は画面に渡す。 */
+export function readDesignChoice(): DesignRead {
+  const got = readLocalString(DESIGN_KEY);
+  return { choice: sanitizeDesignChoice(got.value), readable: got.readable, message: got.message };
+}
+
+export function writeDesignChoice(choice: DesignChoice): LocalWriteResult {
+  return writeLocalString(DESIGN_KEY, choice);
+}
+
+/** `<html data-design>` に置く。 */
+export function applyDesign(choice: DesignChoice, doc: Pick<Document, 'documentElement'> = document): void {
+  doc.documentElement.setAttribute('data-design', choice);
+}
+
+/**
+ * いま効いているデザイン。**属性から読む** (状態を 2 か所に持たない —— 描画より先に `main.tsx` が
+ * 属性を置き、選び直しも属性を書き換える)。知らない値・無い値は既定。
+ */
+export function currentDesign(doc: Pick<Document, 'documentElement'> = document): DesignChoice {
+  return sanitizeDesignChoice(doc.documentElement.getAttribute('data-design'));
+}
+
+const designListeners = new Set<() => void>();
+
+/** デザインの変化を聞く (App が列の構成を切り替える)。戻り値は聞くのをやめる関数。 */
+export function subscribeDesign(listener: () => void): () => void {
+  designListeners.add(listener);
+  return () => {
+    designListeners.delete(listener);
+  };
+}
+
+/** いま解けている配色 (属性から)。デザインを替えたとき、母体へ伝え直すのに使う。 */
+function currentScheme(doc: Pick<Document, 'documentElement'>): ResolvedScheme {
+  return doc.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+
+/**
+ * 設定画面から選ぶ: 適用 → 母体へ伝え直す → 聞き手へ知らせる → 保存。**適用は保存に失敗しても行う**
+ * (配色の `selectTheme` と同じ —— この場では効き、戻り値の成否で画面が「次回のために保存できなかった」と言う)。
+ *
+ * 母体へ伝え直すのは、下地の色 (`--bg`) がデザインで変わるから —— 窓の下地と PWA の theme-color は
+ * 配色だけでなくデザインにも追随する (伝えないと、次回起動の一瞬が前のデザインの色になる)。
+ */
+export function selectDesign(choice: DesignChoice, doc: HostDoc = document): LocalWriteResult {
+  applyDesign(choice, doc);
+  syncHostChrome(currentScheme(doc), doc);
+  for (const listener of [...designListeners]) listener();
+  return writeDesignChoice(choice);
+}
+
+/** 起動時 (`main.tsx`): 保存されたデザインを読んで適用する。配色より先に呼ぶ (母体へ伝える --bg が決まる)。 */
+export function applySavedDesign(doc: Pick<Document, 'documentElement'> = document): DesignRead {
+  const read = readDesignChoice();
+  applyDesign(read.choice, doc);
   return read;
 }

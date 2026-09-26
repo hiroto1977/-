@@ -80,8 +80,8 @@ const LEDGER: Record<string, LedgerEntry> = {
   },
   'src/renderer/theme.ts': {
     policy: 'three-state',
-    keys: ['servicehub.theme'],
-    why: '入口 (readLocalString) を通す。読めなければ既定のライトで描き、設定画面がその理由を言う (パス 317)。壊れた保存値は sanitizeThemeChoice が既定へ倒す —— 選択は設定画面から選び直せる。',
+    keys: ['servicehub.theme', 'servicehub.design'],
+    why: '入口 (readLocalString) を通す。読めなければ既定 (ライト / すっきり) で描き、設定画面がその理由を言う (パス 317 / 2026-09-26)。壊れた保存値は sanitizeThemeChoice / sanitizeDesignChoice が既定へ倒す —— 選択は設定画面から選び直せる。',
   },
   'src/renderer/web-shim.ts': {
     policy: 'three-state',

@@ -177,6 +177,10 @@ const HOST_CHROME: Readonly<Record<string, Row>> = {
     kind: 'names-only',
     why: '法則 copy-pinned-by-parity の statement が欄の名前を引用するだけ。色そのものは持たない',
   },
+  'src/renderer/main.tsx': {
+    kind: 'names-only',
+    why: '起動時の適用順序 (デザイン → 配色) の注記が PWA の theme-color に触れるだけ。色そのものは持たない (theme.ts が --bg の実値を読む)',
+  },
   'scripts/lint-forbidden-patterns.cjs': {
     kind: 'names-only',
     why: 'KNOWN_SUPPRESSIONS の注記が inject-pwa.cjs の theme-color の写しを説明するだけ。色そのものは持たない',

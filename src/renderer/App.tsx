@@ -19,6 +19,7 @@ import { PageErrorBoundary } from './components/PageErrorBoundary';
 import { ShellPartBoundary } from './components/ShellPartBoundary';
 import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import { BestAnswersIndicator } from './components/BestAnswersIndicator';
+import { useChatDocked } from './chatDock';
 import {
   PLAN_ORDER,
   PLANS,
@@ -139,6 +140,11 @@ export function App() {
   const [navOpen, setNavOpen] = useState(false);
   // 本文の縦スクロールが閾値を越えたか (「先頭へ戻る」ボタンの表示)。
   const [scrolled, setScrolled] = useState(false);
+  // AI チャットを列にするか (「すっきり」× 広い画面 —— `chatDock.ts`)。列を畳んだかは利用者の操作で、
+  // 保存はしない (再読込で開いた状態に戻る —— 保存すると端末に鍵が 1 つ増え、台帳と消去の在庫にも要る)。
+  const chatDocked = useChatDocked();
+  const [chatCollapsed, setChatCollapsed] = useState(false);
+  const showChatColumn = chatDocked && !chatCollapsed;
   const contentRef = useRef<HTMLElement>(null);
   const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
@@ -424,9 +430,21 @@ export function App() {
 
   const activeFav = favoriteSet.has(active.id);
 
+  const appClass = ['app', navOpen ? 'nav-open' : '', showChatColumn ? 'chat-docked' : ''].filter(Boolean).join(' ');
+  // コンシェルジュは画面の外の部品なので、どちらの形でも自分の境界に入れる (パス 489)。
+  const concierge = (docked: boolean) => (
+    <ShellPartBoundary
+      label="AI コンシェルジュ"
+      floating={!docked}
+      recover={{ label: '会話履歴を消去してやり直す', run: clearChatbotHistory }}
+    >
+      <ChatbotWidget docked={docked} onCollapse={docked ? () => setChatCollapsed(true) : undefined} />
+    </ShellPartBoundary>
+  );
+
   return (
     <ShellContext.Provider value={shell}>
-    <div className={navOpen ? 'app nav-open' : 'app'}>
+    <div className={appClass}>
       <aside className="sidebar">
         <div className="sidebar-top">
           <div className="sidebar-header">サービスハブ</div>
@@ -569,6 +587,15 @@ export function App() {
           onClick={() => setNavOpen(false)}
         />
       )}
+      {/*
+        3 列 (すっきり × 広い画面) のとき、コンシェルジュはサイドバーと画面の間の列になる。
+        DOM の順もその見た目の順 (サイドバー → チャット → 画面) にする —— Tab で辿る順が見た目と揃う。
+      */}
+      {showChatColumn ? (
+        <aside className="chat-column" aria-label="AI コンシェルジュ" data-chat-column>
+          {concierge(true)}
+        </aside>
+      ) : null}
       <main className="main">
         <header className="topbar">
           <button
@@ -580,6 +607,18 @@ export function App() {
           >
             ☰
           </button>
+          {chatDocked ? (
+            <button
+              type="button"
+              className="chat-toggle ghost"
+              aria-expanded={!chatCollapsed}
+              aria-label={chatCollapsed ? 'AI コンシェルジュを表示' : 'AI コンシェルジュを隠す'}
+              title={chatCollapsed ? 'AI コンシェルジュの欄を開く' : 'AI コンシェルジュの欄を畳む'}
+              onClick={() => setChatCollapsed((c) => !c)}
+            >
+              💬 <span className="chat-toggle-label">チャット</span>
+            </button>
+          ) : null}
           <span className="topbar-icon" aria-hidden="true">
             {active.icon}
           </span>
@@ -656,14 +695,10 @@ export function App() {
         画面の外の部品は、どれも自分の境界に入れる (パス 489)。ここで投げると React はツリーごと外し、
         サイドバーも画面も消える —— 保存した会話履歴の 1 件で、コンシェルジュを開いた瞬間に実際にそうなった。
         復旧の操作は「会話履歴を消してやり直す」(この部品が描く保存値はそれだけ)。
+        列にしない (かわいい・狭い画面) ときは右下の浮いた窓。列を畳んだときは上部バーの「💬 チャット」で戻す
+        —— 浮いた窓を代わりに出すと、同じ会話の入口が 2 つになる。
       */}
-      <ShellPartBoundary
-        label="AI コンシェルジュ"
-        floating
-        recover={{ label: '会話履歴を消去してやり直す', run: clearChatbotHistory }}
-      >
-        <ChatbotWidget />
-      </ShellPartBoundary>
+      {chatDocked ? null : concierge(false)}
     </div>
     </ShellContext.Provider>
   );
