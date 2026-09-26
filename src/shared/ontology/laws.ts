@@ -1212,9 +1212,32 @@ export const LAWS: readonly Law[] = [
     id: 'integrity-chain-with-closure',
     family: 'supply-chain',
     name: '守りを決めるファイルは封緘し、読んでいる先を 1 段見る',
-    statement: '保護対象の一覧が読んでいる先 (PBKDF2 の反復を持つ定数など) が保護か理由つきの除外に載っていることを機械で確かめる。1 段ずつでよい。除外の理由は「実行時に残るか」で決める。',
-    provenance: ['パターン 0-a-10', 'パターン 0-a-18', 'パス 285', 'パス 286', 'パス 287'],
-    enforcedBy: [gate('chain:verify'), test(T.shared('integrityChainWitness')), chain],
+    statement:
+      '保護対象の一覧が読んでいる先 (PBKDF2 の反復を持つ定数など) が保護か理由つきの除外に'
+      + '載っていることを機械で確かめる。1 段ずつでよい。除外の理由は「実行時に残るか」で決める。'
+      + '★★ **その理由を機械で検める** (2026-09-26 · パス 477) —— 基準は 2026-08-23 から'
+      + '散文で述べられており、同じ台帳が「`clients/types.ts` の除外は『型だけ』と書いてあったが'
+      + '**実行時の判断を持っていた**」と過去の誤りまで記録していたのに、**検算する物が無かった**。'
+      + '実測すると 11 件のうち **3 件が偽**だった: ① `assistantLimits.ts` の「上限の定数のみ」——'
+      + '実行時に残る export は定数 6 に加えて関数 3 つで、`latestTurnTooLong` は 3 つの'
+      + 'enforcement 点 (main の throw とブラウザ版の err 2 つ) が読む**唯一の述語**。'
+      + '`return false` を足すと 5 万字の入力が 3 点とも通る —— 同じ注記が「最悪は『上限の値が'
+      + '変わる』で**関門の迂回ではない**」と述べていたが、それが迂回そのものである。'
+      + 'しかも `MUST_MEASURE` にも `KNOWN_UNMEASURED` にも `mutate` にも無く、'
+      + '**ハッシュも変異検査も掛かっていなかった** → 保護対象へ移し、変異検査も 100% にした。'
+      + '②③ `serviceId.ts` /`clients/index.ts` の「74」—— 実測は **76**。'
+      + '**足すたびに変わる数を散文へ写すと、写した瞬間から古びる側に立つ。**'
+      + '★ 直し: 除外を `kind` で分類し (`type-only` / `paths-only` / `guarded-by` / `registry`)、'
+      + '安い構文の検査は `chain:verify` の**検査 6** が (両方向)、振る舞い '
+      + '(esbuild の出力が 0 byte・`import` 名が宣言の部分集合) は証人が持つ ——'
+      + '`chain:verify` は CI で毎回走るので子プロセスをそこへ増やさない。',
+    provenance: ['パターン 0-a-10', 'パターン 0-a-18', 'パス 285', 'パス 286', 'パス 287', 'パス 477 (除外の理由 11 件のうち 3 件が偽)'],
+    enforcedBy: [
+      gate('chain:verify'),
+      test(T.shared('integrityChainWitness')),
+      test(T.shared('exclusionReasonKinds')),
+      chain,
+    ],
   },
   {
     id: 'mutation-scope-protected',

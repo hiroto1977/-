@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 266
+- ブロック数: 267
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `67b63ab282a1337571710a09156b7094b5e9d7716af3e83e627c96765714e4d3`
-- 保護対象: 94 ファイル
+- 末尾(tip)ハッシュ: `c0785b5ed154c3177dec9363d4d5f27adeb25a9213a82cb8235aac8036d05a08`
+- 保護対象: 95 ファイル
 
 ## ブロック
 
@@ -279,6 +279,7 @@
 | 263 | `3f1ddcc92f79b834` | `48a6f5b9c27762ea` | `16e58b8e470d21c5` | update integrity-chain.cjs |
 | 264 | `d0ca7f9b2d5fd979` | `16e58b8e470d21c5` | `d2c435999dee6dce` | update integrity-chain.cjs |
 | 265 | `ceaa5c527f45669b` | `d2c435999dee6dce` | `67b63ab282a13375` | update integrity-chain.cjs |
+| 266 | `d3eaff764ba7bbca` | `67b63ab282a13375` | `c0785b5ed154c317` | update integrity-chain.cjs,assistantLimits.ts |
 
 ## 保護対象ファイル
 
@@ -349,6 +350,7 @@
 - `src/shared/ai/credentials.ts`
 - `src/shared/ai/providers.ts`
 - `src/shared/aiEndpoint.ts`
+- `src/shared/assistantLimits.ts`
 - `src/shared/atlassianSite.ts`
 - `src/shared/constantTimeEquals.ts`
 - `src/shared/controlChars.ts`

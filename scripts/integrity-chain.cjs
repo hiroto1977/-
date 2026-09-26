@@ -438,6 +438,22 @@ const PROTECTED = [
   // `countChars` を `length` へ戻されると、**述べる数と守る数がずれ**、
   // 天井の半分で断る / 孤立サロゲートを保存側へ渡す状態に戻る。
   'src/shared/inputCeiling.ts',             // 天井を数える・切る唯一の場所 (単位は「字」)
+  /*
+   * 2026-09-26 (パス 477) に**除外台帳から移した**。除外の理由は「AI へ送る量の上限の
+   * 定数のみ (判断は呼び出し側が持つ)」で、注記は「ここを書き換えたときの最悪は
+   * 『上限の値が変わる』——それは値の変更であって、関門の迂回ではない」と述べていた。
+   * **どちらも偽だった。** 実行時に残る export は定数 6 に加えて関数 3 つ ——
+   * `latestTurnTooLong` (断るかを決める述語) / `inputTooLongMessage` (断りの文) /
+   * `capAssistantReply` (返答の天井)。前者は 3 つの enforcement 点が読む**唯一の**述語で
+   * (`main/clients/assistant.ts` の throw と `web-shim.ts` の 2 つの err)、実測で
+   * `return false` を先頭に足すと 5 万字の入力が 3 点とも通る = **関門の迂回そのもの**。
+   * `capAssistantReply` は `httpLimits.ts` が「10 万字で切るので、それを超えて読んだ分は
+   * 必ず捨てる」と明示的に依存している。
+   * ★ これは台帳自身が記録している過去の誤り (`clients/types.ts` は「型だけ」と
+   *   書いてあったが実行時の判断を持っていた · 2026-08-23) の **2 件目**である。
+   */
+  'src/shared/assistantLimits.ts',     // AI へ送る量の関門 (述語 latestTurnTooLong と返答の天井)
+
   // 2026-09-15 (パス 287) に足した。**数える助けは封緘されているのに、
   // 何を数えるかの表が封緘されていなかった。**
   //
@@ -514,11 +530,13 @@ const DEP_EXCLUSIONS = {
   'src/main/clients/teamradar.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
   'src/main/clients/stocks.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath / defaultDashboardPath だけ (上の注記)。',
   'src/shared/serviceId.ts':
-    'サービスを 1 つ足すたびに変わる (現在 74)。かつ、この一覧自体は関門ではない — '
+    'サービスを 1 つ足すたびに変わる (件数は書かない —— 上の注記に経緯)。'
+    + 'かつ、この一覧自体は関門ではない — '
     + '未知の id を弾いているのは SERVICE_ID_SET を使う isServiceId で、'
     + 'id を足しただけでは LIVE_FETCHERS の起動時不変条件が throw する。',
   'src/main/clients/index.ts':
-    'サービス追加のたびに変わる登録簿 (74 エントリ)。中身は各 client への振り分けで、'
+    'サービス追加のたびに変わる登録簿 (件数は書かない —— 上の注記に経緯)。'
+    + '中身は各 client への振り分けで、'
     + '判断は各 client と main.ts 側の検証が持つ。',
   // **本当に型だけ**のファイル。`export` は `interface` が 1 つで、
   // 実行時には何も残らない (TypeScript が消す)。ここを書き換えても
@@ -527,13 +545,6 @@ const DEP_EXCLUSIONS = {
   // `clients/types.ts` の除外を 2026-08-23 に外したのと同じ基準で判断した ——
   // あちらは「型だけ」と書いてあったが**実行時の判断を持っていた**。
   // 除外の理由は「型だけに見えるか」ではなく「実行時に残るか」で決める。
-// 2026-09-01: assistant.ts の閉包で出てきた。**定数 5 つだけ**で判断を持たない。
-  // 上限を実際に当てているのは assistant.ts / web-shim (どちらも測っている) の側で、
-  // ここを書き換えたときの最悪は「上限の値が変わる」——それは値の変更であって、
-  // 関門の迂回ではない。変異検査からも意図的に外してある (定数で書いた検査では
-  // その定数の変異を殺せないため。docs/SESSION_HANDOFF.md に経緯)。
-  'src/shared/assistantLimits.ts':
-    'AI へ送る量の上限の定数のみ (判断は呼び出し側が持ち、両方とも保護対象)。',
   'src/shared/advisorTypes.ts':
     '実行時に残らない型定義のみ (interface 1 つ)。書き換えても生成 JS が変わらない。',
   // 2026-09-09 (パス 116): assistant.ts の閉包で出てきた。action の戻り値の形の台帳 —— 
@@ -685,6 +696,133 @@ const DECLARED_REMOVALS = {
       + ' externalUrlGate (保護対象)、配布経路は release.yml (保護対象) が持つ。',
   },
 };
+
+/*
+ * 除外の**理由を機械で検める**ための分類 (2026-09-26 · パス 477)。
+ *
+ * それまで `DEP_EXCLUSIONS` の値は散文だけで、誰も検算していなかった。実測すると
+ * **3 件が偽**だった:
+ *   ① `assistantLimits.ts` の「上限の定数のみ」—— 実行時に残る export は定数 6 に加えて
+ *      関数 3 つで、`latestTurnTooLong` は 3 つの enforcement 点が読む**唯一の述語**。
+ *      `return false` を足すと 5 万字が 3 点とも通る (= 関門の迂回)。→ 保護対象へ移した。
+ *   ②③ `serviceId.ts` / `clients/index.ts` の「74」—— 実測は **76** (SERVICE_IDS と
+ *      LIVE_FETCHERS のキー数)。**件数はサービスを足すたびに変わる**ので散文に書かない。
+ *
+ * ★ 同じ台帳の注記が「`clients/types.ts` の除外は『型だけ』と書いてあったが**実行時の
+ *   判断を持っていた**」(2026-08-23) と過去の誤りを記録し、基準も「型だけに見えるか」
+ *   ではなく「**実行時に残るか**」と述べていた —— 機械だけが無かった。
+ *
+ * 分類は閉じた語彙で、`kind` ごとに述語を当てる (`REMOVAL_KINDS` と同じ形)。
+ * 述語は**安い構文の検査だけ**をここで持ち、振る舞い (esbuild の出力が 0 byte・
+ * import 名の包含) は `src/shared/__tests__/exclusionReasonKinds.test.ts` が持つ ——
+ * `chain:verify` は CI で毎回走るので、子プロセスをここに増やさない。
+ * ★ ②③ の実測 (2026-09-26): 散文は「現在 74」「74 エントリ」と書いていたが、
+ *   `SERVICE_IDS.length` と `LIVE_FETCHERS` のキー数はどちらも **76** だった。
+ *   だから `registry` の述語は「理由に件数を書かない」を要求する —— 数はサービスを
+ *   足すたびに変わるので、散文に写した瞬間から古びる側に立つ。
+ */
+const EXCLUSION_KINDS = {
+  'src/main/clients/emotions.ts': { kind: 'paths-only', reads: ['storePath'] },
+  'src/main/clients/talent.ts': { kind: 'paths-only', reads: ['defaultStatePath'] },
+  'src/main/clients/teamradar.ts': { kind: 'paths-only', reads: ['defaultStatePath'] },
+  'src/main/clients/stocks.ts': { kind: 'paths-only', reads: ['defaultDashboardPath', 'defaultStatePath'] },
+  'src/shared/serviceId.ts': { kind: 'registry' },
+  'src/main/clients/index.ts': { kind: 'registry' },
+  'src/shared/advisorTypes.ts': { kind: 'type-only' },
+  'src/shared/actionData.ts': { kind: 'type-only' },
+  'src/shared/updateCheck.ts': { kind: 'guarded-by', guardedBy: ['src/shared/externalUrlGate.ts', '.github/workflows/release.yml'] },
+  'src/shared/api/cursor.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
+};
+
+/**
+ * `rel` が `target` から import している名前 (`import type` は runtime に残らないので除く)。
+ * 相対 import だけを見る —— 除外台帳の相手は必ずリポジトリ内である。
+ */
+function importedNamesFrom(rel, target) {
+  const text = readIfPossible(path.join(REPO_ROOT, rel));
+  if (text === null) return [];
+  const out = [];
+  for (const m of text.matchAll(/^\s*import\s+(type\s+)?\{([^}]*)\}\s+from\s+'([^']+)'/gm)) {
+    if (m[1]) continue; // `import type` は消える
+    if (resolveRelativeImport(rel, m[3]) !== target) continue;
+    for (const part of m[2].split(',')) {
+      const name = part.trim().split(/\s+as\s+/)[0]?.trim();
+      if (name) out.push(name);
+    }
+  }
+  return out;
+}
+
+/** 使える `kind` と、それが今日も本当かを確かめる述語 (安い構文の検査だけ)。 */
+const EXCLUSION_CHECKS = {
+  // 実行時に残らない: `export` はすべて `interface` / `type` である。
+  'type-only': (rel) => {
+    const text = readIfPossible(path.join(REPO_ROOT, rel));
+    if (text === null) return 'ファイルが読めない';
+    const bad = [...text.matchAll(/^export\s+(\w+)/gm)].map((m) => m[1]).filter((w) => w !== 'interface' && w !== 'type');
+    return bad.length === 0 ? null : `実行時に残る export が在る (${[...new Set(bad)].join(' / ')})`;
+  },
+  // 置き場所だけを読む: 保護対象の読み手が宣言した名前だけを import している。
+  'paths-only': (rel, row, prot) => {
+    const declared = new Set(row.reads || []);
+    if (declared.size === 0) return 'reads (読んでよい名前) を名乗っていない';
+    const readers = protectedReadersOf(rel, prot);
+    if (readers.length === 0) return '保護対象の読み手が居ない (古い除外)';
+    for (const reader of readers) {
+      const used = importedNamesFrom(reader, rel);
+      if (used.length === 0) return `${reader} の import 名が読めない`;
+      const extra = used.filter((n) => !declared.has(n));
+      if (extra.length > 0) return `${reader} が宣言の外の名前を読んでいる (${extra.join(' / ')})`;
+    }
+    return null;
+  },
+  // 判断は別の保護対象が持つ: 名乗った相手が全部保護対象である。
+  'guarded-by': (rel, row, prot) => {
+    const named = row.guardedBy || [];
+    if (named.length === 0) return 'guardedBy (判断を持つ保護対象) を名乗っていない';
+    const missing = named.filter((p) => !prot.includes(p));
+    return missing.length === 0 ? null : `guardedBy が保護対象でない (${missing.join(' / ')})`;
+  },
+  /*
+   * 足すたびに変わる登録簿: **理由に件数を書かない。**
+   *
+   * 針は「数 + 数え上げの語」と「現在 N」だけを見る —— 素の数字をすべて禁じると
+   * 日付や条文番号まで拾い、理由の書きぶりを不必要に縛る (実測: 最初に書いた広い針は
+   * 自分の説明文の日付を 3 件拾った)。
+   */
+  registry: (rel, _row, _prot, why) => {
+    const claims = [
+      ...String(why).matchAll(/[0-9０-９]{1,}\s*(?:件|エントリ|個|entries)/g),
+      ...String(why).matchAll(/現在\s*[0-9０-９]+/g),
+    ].map((m) => m[0]);
+    return claims.length === 0 ? null : `理由が件数を名乗っている (${claims.join(' / ')}) —— 足すたびに変わるので書かない`;
+  },
+};
+
+/** 除外の理由と分類を突き合わせる (両方向)。 */
+function collectExclusionKindProblems(exclusions, kinds, checks, protectedList) {
+  const problems = [];
+  for (const [rel, why] of Object.entries(exclusions)) {
+    const row = kinds[rel];
+    if (row === undefined) {
+      problems.push(`除外 ${rel} に分類 (EXCLUSION_KINDS) が無い`);
+      continue;
+    }
+    const check = checks[row.kind];
+    if (check === undefined) {
+      problems.push(`除外 ${rel} の kind が不明: ${String(row.kind)} (使えるのは ${Object.keys(checks).join(' / ')})`);
+      continue;
+    }
+    const bad = check(rel, row, protectedList, why);
+    if (bad !== null) problems.push(`除外 ${rel} の理由 (${row.kind}) が今日は成り立たない: ${bad}`);
+  }
+  for (const rel of Object.keys(kinds)) {
+    if (!Object.hasOwn(exclusions, rel)) {
+      problems.push(`EXCLUSION_KINDS の ${rel} は除外台帳に無い (古い分類。消すこと)`);
+    }
+  }
+  return problems;
+}
 
 /** 読めれば本文、読めなければ null (飾りの初期値を置かないため)。 */
 function readIfPossible(abs) {
@@ -1089,6 +1227,10 @@ function cmdVerify() {
   const removals = collectRemovalProblems(chain, DECLARED_REMOVALS, PROTECTED, DEP_EXCLUSIONS);
   if (removals.length > 0) fail(`保護対象が外れた記録に宣言がありません:\n  - ${removals.join('\n  - ')}`);
 
+  // 6. 除外の理由は、分類ごとに今日も成り立つか (両方向)
+  const kinds = collectExclusionKindProblems(DEP_EXCLUSIONS, EXCLUSION_KINDS, EXCLUSION_CHECKS, PROTECTED);
+  if (kinds.length > 0) fail(`除外台帳の理由が実物と合いません:\n  - ${kinds.join('\n  - ')}`);
+
   console.log(
     `✅ integrity-chain OK — ブロック ${chain.blocks.length} 連結・保護対象 ${chain.protected.length} ファイルが tip と一致`
     + `（閉包 OK: 除外 ${Object.keys(DEP_EXCLUSIONS).length} 件は台帳どおり / tip ${tip.hash.slice(0, 16)}…）。`,
@@ -1292,6 +1434,64 @@ function cmdSelfTest() {
   );
   check('除外の理由が空でない', Object.values(DEP_EXCLUSIONS).every((r) => r.trim().length > 0));
 
+  // ── 除外の理由を分類ごとに検める (パス 477) ──
+  {
+    const K = EXCLUSION_CHECKS;
+    check('実物の除外はどれも分類どおり', collectExclusionKindProblems(DEP_EXCLUSIONS, EXCLUSION_KINDS, EXCLUSION_CHECKS, PROTECTED).length === 0);
+    check(
+      '★ 分類の無い除外は鳴る',
+      collectExclusionKindProblems({ 'src/x/new.ts': '理由' }, {}, EXCLUSION_CHECKS, PROTECTED)
+        .some((m) => m.includes('分類 (EXCLUSION_KINDS) が無い')),
+    );
+    check(
+      '★ 逆向き: 除外台帳に無い分類が残っていれば鳴る',
+      collectExclusionKindProblems({}, { 'src/x/gone.ts': { kind: 'type-only' } }, EXCLUSION_CHECKS, PROTECTED)
+        .some((m) => m.includes('古い分類')),
+    );
+    check(
+      '★ 知らない kind は鳴る (語彙を閉じている)',
+      collectExclusionKindProblems({ 'src/x/n.ts': '理由' }, { 'src/x/n.ts': { kind: 'vanished' } }, EXCLUSION_CHECKS, PROTECTED)
+        .some((m) => m.includes('kind が不明')),
+    );
+    // type-only —— 実行時に残る export が在れば鳴る
+    check('type-only: 実物の 2 件は通る',
+      K['type-only']('src/shared/advisorTypes.ts') === null && K['type-only']('src/shared/actionData.ts') === null);
+    check('★ type-only: 定数を持つ本は鳴る', typeof K['type-only']('src/shared/inputCeiling.ts') === 'string');
+    check('★ type-only: 読めない本は鳴る', typeof K['type-only']('src/x/実在しない.ts') === 'string');
+    // paths-only —— 宣言の外の名前を読んでいれば鳴る
+    check('paths-only: 実物の 4 件は通る',
+      ['src/main/clients/emotions.ts', 'src/main/clients/talent.ts', 'src/main/clients/teamradar.ts', 'src/main/clients/stocks.ts']
+        .every((f) => K['paths-only'](f, EXCLUSION_KINDS[f], PROTECTED) === null));
+    check('★ paths-only: reads を名乗らなければ鳴る',
+      K['paths-only']('src/main/clients/emotions.ts', {}, PROTECTED) === 'reads (読んでよい名前) を名乗っていない');
+    check('★ paths-only: 宣言の外の名前を読んでいれば鳴る',
+      String(K['paths-only']('src/main/clients/emotions.ts', { reads: ['別の名前'] }, PROTECTED)).includes('宣言の外の名前'));
+    check('★ paths-only: 保護対象の読み手が居なければ鳴る',
+      K['paths-only']('src/main/clients/emotions.ts', { reads: ['storePath'] }, []) === '保護対象の読み手が居ない (古い除外)');
+    // guarded-by —— 名乗った相手が保護対象でなければ鳴る
+    check('guarded-by: 実物の 2 件は通る',
+      ['src/shared/updateCheck.ts', 'src/shared/api/cursor.ts']
+        .every((f) => K['guarded-by'](f, EXCLUSION_KINDS[f], PROTECTED) === null));
+    check('★ guarded-by: 名乗らなければ鳴る',
+      K['guarded-by']('src/shared/updateCheck.ts', {}, PROTECTED) === 'guardedBy (判断を持つ保護対象) を名乗っていない');
+    check('★ guarded-by: 名乗った相手が保護対象でなければ鳴る',
+      String(K['guarded-by']('src/shared/updateCheck.ts', { guardedBy: ['src/x/none.ts'] }, PROTECTED)).includes('保護対象でない'));
+    // registry —— 件数を名乗れば鳴る / 日付は拾わない
+    check('registry: 実物の 2 件は通る',
+      K.registry('src/shared/serviceId.ts', {}, PROTECTED, DEP_EXCLUSIONS['src/shared/serviceId.ts']) === null
+      && K.registry('src/main/clients/index.ts', {}, PROTECTED, DEP_EXCLUSIONS['src/main/clients/index.ts']) === null);
+    check('★ registry: 「74 エントリ」は鳴る', String(K.registry('x', {}, PROTECTED, '登録簿 (74 エントリ)。')).includes('件数を名乗っている'));
+    check('★ registry: 「現在 74」も鳴る', String(K.registry('x', {}, PROTECTED, '一覧 (現在 74)。')).includes('件数を名乗っている'));
+    check('★ registry: 全角の数も鳴る', String(K.registry('x', {}, PROTECTED, '一覧 (７６件)。')).includes('件数を名乗っている'));
+    check('registry: 日付は件数ではない (針が広すぎない)', K.registry('x', {}, PROTECTED, '2026-09-26 に測った登録簿。') === null);
+    // import 名の読み取り
+    check('★ import 名は `as` を外して読む',
+      importedNamesFrom('src/main/eraseAll.ts', 'src/main/clients/stocks.ts').sort().join(',') === 'defaultDashboardPath,defaultStatePath');
+    check('★ 相手が違えば 0 件', importedNamesFrom('src/main/eraseAll.ts', 'src/x/実在しない.ts').length === 0);
+    check('★ assistantLimits は保護対象 (除外ではない)',
+      PROTECTED.includes('src/shared/assistantLimits.ts') && !Object.hasOwn(DEP_EXCLUSIONS, 'src/shared/assistantLimits.ts'));
+  }
+
   // --- 履歴から「壁が 1 枚減った」を読めるか (パス 475) ---
   {
     /*
@@ -1480,6 +1680,10 @@ module.exports = {
   dependencySpecs,
   resolveRelativeImport,
   protectedReadersOf,
+  importedNamesFrom,
+  EXCLUSION_KINDS,
+  EXCLUSION_CHECKS,
+  collectExclusionKindProblems,
 };
 
 if (require.main === module) {

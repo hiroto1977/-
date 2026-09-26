@@ -115,6 +115,13 @@ export const ASSISTANT_REPLY_TRUNCATED_NOTICE =
  * 履歴として送るときに、断ると会話そのものが止まるから —— そちらは窓のまま。
  */
 export function latestTurnTooLong(raw: unknown): boolean {
+  /*
+   * `raw.length === 0` は**速い道**で、答えは変えない —— 空の配列は次の行で
+   * `raw[-1] === undefined` になり、その下の門が `typeof undefined !== 'object'` で
+   * 同じ `false` を返す。2026-09-26 (パス 477) に変異検査で測って等価と確かめた
+   * (この条件を `false` に潰しても、外から見える答えはどの入力でも変わらない)。
+   */
+  // Stryker disable next-line ConditionalExpression: 空の配列は下の門が同じ false を返す (上の注記に実測)
   if (!Array.isArray(raw) || raw.length === 0) return false;
   const last: unknown = raw[raw.length - 1];
   if (last === null || typeof last !== 'object') return false;

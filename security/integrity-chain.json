@@ -69,6 +69,7 @@
     "src/shared/ai/credentials.ts",
     "src/shared/ai/providers.ts",
     "src/shared/aiEndpoint.ts",
+    "src/shared/assistantLimits.ts",
     "src/shared/atlassianSite.ts",
     "src/shared/constantTimeEquals.ts",
     "src/shared/controlChars.ts",
@@ -2225,6 +2226,14 @@
       "leafCount": 94,
       "note": "update integrity-chain.cjs",
       "hash": "67b63ab282a1337571710a09156b7094b5e9d7716af3e83e627c96765714e4d3"
+    },
+    {
+      "index": 266,
+      "prevHash": "67b63ab282a1337571710a09156b7094b5e9d7716af3e83e627c96765714e4d3",
+      "merkleRoot": "d3eaff764ba7bbca5ae3f2a652b8c44bbc0b6c44e0b60b361ca97945363d98d8",
+      "leafCount": 95,
+      "note": "update integrity-chain.cjs,assistantLimits.ts",
+      "hash": "c0785b5ed154c3177dec9363d4d5f27adeb25a9213a82cb8235aac8036d05a08"
     }
   ],
   "tipManifest": {
@@ -2245,7 +2254,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "8fa9def4b8f9dfdc91f16de5e0f689d203c78b58158018ee3a12c0c5351459e4",
+    "scripts/integrity-chain.cjs": "5d5dac0fb86fcba51beabf9b4c75c69bf6413752f588d7a3c1ee2319d917e613",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
     "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
@@ -2295,6 +2304,7 @@
     "src/shared/ai/credentials.ts": "2f0ff1a2f26ddd5aec1ab9beb682e53c898716e720bdcfb72a255945d2e12315",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
+    "src/shared/assistantLimits.ts": "5df97a39c2f9efc93ce067816de4eb3f3d8bd07cfe209e49660346ca7ba4f235",
     "src/shared/atlassianSite.ts": "fbbad4ce7a10f5731a44b0c3f902818285aadb6305aabd2a7522bac7aa3d8cf2",
     "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",

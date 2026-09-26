@@ -49,7 +49,17 @@ describe('latestTurnTooLong — 最新の発話だけを見る', () => {
   });
 
   it('★ 配列でない・空・末尾が発話でない・content が文字列でない物は「長すぎ」とは言わない (別の関門が断る)', () => {
-    for (const raw of [undefined, null, 'x', {}, [], [null], ['x'], [turn(123)], [turn(undefined)]]) {
+    /*
+     * ★ `[undefined]` と疎な配列 (`new Array(1)`) を入れるのは、`last === null ||
+     *   typeof last !== 'object'` の門を落とすと**投げる**入力だからである
+     *   (2026-09-26 · パス 477 に変異検査で測った —— この 2 つが無いと
+     *   その門の変異体が生き残る)。`[null]` や `['x']` では答えが変わらないので
+     *   区別できない。
+     */
+    for (const raw of [
+      undefined, null, 'x', {}, [], [null], ['x'], [turn(123)], [turn(undefined)],
+      [undefined], new Array(1),
+    ]) {
       expect(latestTurnTooLong(raw), JSON.stringify(raw)).toBe(false);
     }
   });
