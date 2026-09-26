@@ -178,3 +178,48 @@ describe('設定状況の読み方 — 失敗を空配列に丸めない', () =>
     expect(read.unknown, 'bridge 不在を「確認できない」にしている').toBe(false);
   });
 });
+
+/**
+ * **値を留める** (2026-09-26 · パス 482)。特別値の綴り・端末内の AI の一覧はモジュール直下の値で、
+ * 変異検査はそれを書き換えても先に読み込んだモジュールに届かない —— 読み直してから主張する
+ * (`callbackPaste.test.ts` と同じ形)。
+ */
+describe('特別値と端末内の一覧 (読み直して留める)', () => {
+  async function fresh() {
+    vi.resetModules();
+    return (await import('../assistantProviders')) as typeof import('../assistantProviders');
+  }
+
+  it('★ 特別値の綴り (画面の選択肢の value そのもの)', async () => {
+    const m = await fresh();
+    expect(m.ALL_AGENTS).toBe('__all__');
+    expect(m.BEST3_AGENTS).toBe('__best3__');
+  });
+
+  it('★ ベスト3 は合議と同じく設定済みの全部へ (Ollama は端末内として分ける)', async () => {
+    const m = await fresh();
+    const r = m.assistantEgressRecipients({
+      providers: [ANTHROPIC, OPENAI, GEMINI_OFF, OLLAMA],
+      providersUnknown: false,
+      selected: m.BEST3_AGENTS,
+    });
+    expect(r).toEqual({
+      remote: ['Anthropic (Claude)', 'OpenAI (ChatGPT)'],
+      local: ['Ollama (ローカル) — この端末、または本アプリと同じホスト'],
+    });
+  });
+
+  it('★ 読めなかったときの形は「確認できない」だけ (送り先を 1 つも名乗らない)', async () => {
+    const m = await fresh();
+    expect(m.assistantEgressRecipients({ providers: [ANTHROPIC], providersUnknown: true, selected: m.ALL_AGENTS })).toEqual({
+      remote: [],
+      unknown: true,
+    });
+  });
+
+  it('★ 例外のときも一覧は空 (読めた物を混ぜない)', async () => {
+    vi.stubGlobal('window', { serviceHub: { invoke: () => Promise.reject(new Error('boom')) } });
+    const m = await fresh();
+    expect(await m.readProviderStatuses()).toEqual({ providers: [], unknown: true });
+  });
+});

@@ -5,7 +5,7 @@
  *
  * ## なぜ要るか (実測して分かった)
  *
- * `stryker.config.json` の `mutate` は 298 ファイルで、`thresholds.break = 99.8` が掛かる。
+ * `stryker.config.json` の `mutate` は 298 ファイル (パス 479 の時点。パス 482 で 301) で、`thresholds.break = 99.8` が掛かる。
  * ところがその測定は**週次**で (`mutation.yml`)、per-PR の CI には入っていない
  * (1 ファイル 6 分半・全件は数時間なので、無料枠では毎 PR に載せられない)。
  *

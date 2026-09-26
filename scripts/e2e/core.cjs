@@ -3407,6 +3407,55 @@ async function aiCeilingSuite(browser) {
 }
 
 /**
+ * ベストアンサー 3 (2026-09-26 · パス 482)。
+ *
+ * 単体検査は送り手を注入して走らせ、jsdom で画面を描く。ここで見るのは**出荷物の中で**
+ * 繋がっていること —— 選択肢・送る前に回数を名乗る断り・**実物の shim の `assistant/chat` が
+ * 鍵の無いとき理由を言って断る** (投げない・待たせない —— 仕事が「作成中」のまま詰まると、
+ * 以後のベスト3 を全部断ることになる)・結果の見出しが 1 度だけ出てどの質問への答えかを言う・
+ * 終わったら進み具合も上部バーの印も消える。鍵は入れないので AI には 1 度も届かない
+ * (実機の e2e は AI を持たない)。
+ */
+async function best3Suite(browser) {
+  console.log('\n=== best3 (ベストアンサー 3: 選ぶ → 回数を名乗る → 送る → 見出しが 1 度だけ) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/assistant', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  const input = page.locator('input[aria-label="アシスタントへの入力"]');
+  await input.waitFor({ timeout: 30000 });
+
+  await page.locator('select[aria-label="AI エージェントを選択"]').selectOption('__best3__');
+  await page.waitForSelector('[data-best3-plan]', { timeout: 15000 });
+  const plan = (await page.locator('[data-best3-plan]').innerText()).replace(/\s+/g, ' ');
+  // 鍵を入れていないので「設定済みの AI がありません」の側 (上の断りの「外へは出ません」と揃う)。
+  ok(/回答者 \d+ 人/.test(plan) && plan.includes('設定済みの AI がありません') && plan.includes('外へは出ません'),
+    `best3: ★ 送る前に人数を名乗り、AI が未設定なら外へ出ないと言う — 実際 ${JSON.stringify(plan.slice(0, 80))}`);
+  const planBox = await page.locator('[data-best3-plan]').boundingBox();
+  const inputBox = await input.boundingBox();
+  ok(planBox !== null && inputBox !== null && planBox.y < inputBox.y,
+    'best3: ★ 回数の断りは入力欄より上 (押してから知る形にしない)');
+
+  const Q = 'インボイス制度の登録について教えて';
+  await input.fill(Q);
+  await input.press('Enter');
+  await page.waitForFunction(() => (document.body.textContent ?? '').includes('🏆 ベスト3 ——'), null, { timeout: 30000 });
+  const text = (await page.locator('body').textContent()) ?? '';
+  ok(text.split('🏆 ベスト3 ——').length - 1 === 1, 'best3: ★ 見出しは 1 度だけ');
+  ok(text.includes(`「${Q}」`), 'best3: ★ 見出しがどの質問への答えかを言う');
+  ok(text.includes('応答できなかった回答者') && text.includes('AI プロバイダが未設定です'),
+    'best3: ★ 鍵が無いとき、回答者ごとに理由を言って断る (投げない・待たせない)');
+  ok(text.includes('示せるのは 0 件'), 'best3: ★ 3 件に満たない理由を言う');
+  ok(await page.locator('[data-best3-progress]').count() === 0, 'best3: 終わったら進み具合は消える');
+  ok(await page.locator('[data-best3-indicator]').count() === 0, 'best3: 受け取った後は上部バーの印も消える');
+  ok(errs.length === 0, `best3: コンソールエラー 0 件 (${errs.slice(0, 2).join(' / ')})`);
+  await ctx.close();
+}
+
+/**
  * 水耕栽培の運転管理 (2026-09-13 · パス 194)。
  *
  * **測定を記録 → 判定 → 今日やること** が実ブラウザで繋がっていることを押して確かめる。
@@ -4025,6 +4074,7 @@ function installWaitMarginRecorder(browser) {
     ['parameters', parameterSuite, 11],
     ['writeCeiling', writeCeilingSuite, 9],
     ['aiCeiling', aiCeilingSuite, 10],
+    ['best3', best3Suite, 9],
     ['theme', themeSuite, 14],
     ['tablet', tabletSuite, 2],
     ['shell', shellSuite, 27],

@@ -17,6 +17,7 @@ import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
 import { PageErrorBoundary } from './components/PageErrorBoundary';
 import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
+import { BestAnswersIndicator } from './components/BestAnswersIndicator';
 import {
   PLAN_ORDER,
   PLANS,
@@ -588,6 +589,7 @@ export function App() {
           </span>
           <span className="description">{active.description}</span>
           <div className="topbar-right">
+            <BestAnswersIndicator />
             <button
               type="button"
               className={`topbar-fav ${activeFav ? 'on' : ''}`}

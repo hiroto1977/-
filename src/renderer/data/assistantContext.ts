@@ -210,7 +210,7 @@ export function extractContentRuns(query: string): string[] {
 }
 
 /** 文字列中に needle が現れる回数 (重なりは数えない)。 */
-function countOccurrences(haystack: string, needle: string): number {
+export function countOccurrences(haystack: string, needle: string): number {
   if (needle.length === 0) return 0;
   let count = 0;
   let from = 0;
@@ -399,6 +399,37 @@ export function formatServiceSection(services: readonly AssistantService[]): str
   ].join('\n');
 }
 
+/** 検索の結果 (注入するナレッジと関連サービス)。組み立てと分けて持つ。 */
+export interface RetrievedContext {
+  readonly docs: readonly KnowledgeDoc[];
+  readonly services: readonly AssistantService[];
+}
+
+/**
+ * 検索だけをする。**組み立てと分けた理由** (2026-09-26): ベストアンサー 3 は 1 つの質問で
+ * 観点ごとに 5 つの system を組むが、検索は 1 度でよく、しかも採点 (根拠の軸) が
+ * **実際に注入した項目**を知っている必要がある。
+ */
+export function retrieveContext(query: string, services: readonly AssistantService[]): RetrievedContext {
+  return { docs: retrieve(query), services: retrieveServices(query, services) };
+}
+
+/**
+ * system を組み立てる。**組み立て方はここ 1 つ** —— チャットもベストアンサー 3 も通る。
+ * `extraSections` は基本方針の直後に入る (観点やオントロジーの節)。空ならチャットと
+ * 1 字も違わない物を返す。
+ */
+export function composeSystemPrompt(context: RetrievedContext, extraSections: readonly string[] = []): string {
+  return [
+    ASSISTANT_BASE_INSTRUCTIONS,
+    ...extraSections,
+    formatKnowledgeSection(context.docs),
+    formatServiceSection(context.services),
+  ]
+    .filter((s) => s.length > 0)
+    .join('\n');
+}
+
 /**
  * 最終的な system プロンプトを組み立てる。
  * @param query    検索クエリ (直近のユーザー発話。追問に強くするため、呼び出し側で
@@ -406,15 +437,7 @@ export function formatServiceSection(services: readonly AssistantService[]): str
  * @param services サービスカタログ全件 (関連抽出に使う)
  */
 export function buildSystemPrompt(query: string, services: readonly AssistantService[]): string {
-  const docs = retrieve(query);
-  const relServices = retrieveServices(query, services);
-  return [
-    ASSISTANT_BASE_INSTRUCTIONS,
-    formatKnowledgeSection(docs),
-    formatServiceSection(relServices),
-  ]
-    .filter((s) => s.length > 0)
-    .join('\n');
+  return composeSystemPrompt(retrieveContext(query, services));
 }
 
 /** オフライン回答がナレッジ由来と言えるスコアの下限。 */

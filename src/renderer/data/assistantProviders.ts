@@ -37,6 +37,13 @@ export type ProviderStatus = AiProviderStatus;
 /** エージェント選択の特別値: 設定済みの全プロバイダへ同時に質問する合議モード。 */
 export const ALL_AGENTS = '__all__';
 
+/**
+ * エージェント選択の特別値: **ベストアンサー 3** (2026-09-26)。7 つのエンジニアリングが
+ * 裏で協調し、観点の違う回答者を設定済みの AI へ**割り振って**上位 3 件を示す
+ * (`data/bestAnswers.ts`)。送り先は合議と同じ集合 (設定済みの全 AI) である。
+ */
+export const BEST3_AGENTS = '__best3__';
+
 /** 端末内で完結するプロバイダ (宛先は `shared/ollama.ts` の絞りを通る)。 */
 const LOCAL_PROVIDER_IDS: readonly string[] = ['ollama'];
 
@@ -80,7 +87,7 @@ export function assistantEgressRecipients(input: {
   if (input.providersUnknown) return { remote: [], unknown: true };
   const configured = input.providers.filter((p) => p.configured);
   const targets =
-    input.selected === ALL_AGENTS
+    input.selected === ALL_AGENTS || input.selected === BEST3_AGENTS
       ? configured
       : configured.filter((p) => (input.selected ? p.id === input.selected : p.isDefault));
   return {

@@ -94,6 +94,15 @@ const LEDGER: readonly Row[] = [
     why: '効かない上書きを消すボタン (2026-09-24 · パス 447)。文は `manualData.ts` が組むが、押す所は同じ欄の同じ行に在る —— その行を見せる面はここだけなので、別の画面へ送ってはいけない。',
   },
   {
+    name: '取り消す',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/components/BestAnswersProgress.tsx',
+    why:
+      'ベスト3 の作成中に 2 つ目を頼まれたときの断り (2026-09-26)。文は `data/bestAnswersJob.ts` が組み、'
+      + 'AI アシスタントの画面のチャットへ出る。押す所は同じ画面の進み具合の枠 (入力欄のすぐ上) に在り、'
+      + '枠は仕事が走っている間だけ描かれる —— 断りが出るのも走っている間だけなので、名指しした時点で必ず在る。',
+  },
+  {
     name: 'Google でサインイン',
     kind: 'other-screen-control',
     renderedIn: 'src/renderer/components/GoogleConnectCard.tsx',

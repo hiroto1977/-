@@ -41,6 +41,7 @@ import { safeCssUrl } from '../../shared/imageUrlGate';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import {
   ALL_AGENTS,
+  BEST3_AGENTS,
   assistantEgressRecipients,
   readProviderStatuses,
   type ProviderStatus,
@@ -55,6 +56,20 @@ import {
   type AiCredentialFormValues,
 } from '../data/aiCredentialFields';
 import type { ActionData } from '../../shared/actionData';
+import {
+  BEST_ANSWERS_COUNT,
+  ENGINEERING_LENSES,
+  formatBestAnswers,
+  MAX_BEST_ANSWER_CALLS,
+  planCalls,
+  questionEcho,
+  type SendChat,
+} from '../data/bestAnswers';
+import { markBestJobDelivered, startBestJob } from '../data/bestAnswersJob';
+import { useBestJob } from '../data/useBestJob';
+import { BestAnswersProgress } from '../components/BestAnswersProgress';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
+import { lookup } from '../../shared/lookup';
 
 interface ChatMessage {
   readonly role: 'user' | 'assistant';
@@ -544,6 +559,31 @@ export function AssistantPage() {
       const ragQuery = prevUser && prevUser !== text ? `${prevUser}\n${text}` : text;
       const system = buildSystemPrompt(ragQuery, serviceCatalog);
 
+      // 🏆 ベスト3: 7 つのエンジニアリング (ENGINEERING_LENSES) が裏で協調する (data/bestAnswers.ts)。
+      // **送るのはこの画面** —— 仕事場へは送り手を渡すだけで、部品は送らない (断りの走査の内に置く)。
+      // 仕事場はモジュールの中に在るので、この画面を離れても走り続ける (= バックグラウンド)。
+      // 結果は下の effect が受け取り、チャットへ 1 度だけ渡す。
+      if (provider === BEST3_AGENTS) {
+        const ids = providers.filter((p) => p.configured).map((p) => p.id);
+        const sendChat: SendChat = async (req) => {
+          const r = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
+            system: req.system,
+            messages: req.messages,
+            ...(req.provider ? { provider: req.provider } : {}),
+          });
+          return r.ok
+            ? { ok: true, text: r.data.text, provider: r.data.provider, model: r.data.model }
+            : { ok: false, message: r.message };
+        };
+        const started = startBestJob(
+          { question: text, ragQuery, turns, catalog: serviceCatalog, providerIds: ids },
+          sendChat,
+          planCalls(ids).length,
+        );
+        if (!started.ok) append({ role: 'assistant', text: started.reason, offline: true });
+        return;
+      }
+
       // 🤝 全AI合議: 設定済みの全プロバイダへ同時に質問し、回答を並べて表示する。
       if (provider === ALL_AGENTS) {
         const resAll = await hub.invoke<ActionData<'assistant/chatAll'>>('assistant', 'chatAll', {
@@ -620,6 +660,37 @@ export function AssistantPage() {
     }
   };
 
+  /**
+   * ベスト3 の結果を**1 度だけ**チャットへ渡す。仕事場は画面の外に在るので、この画面が
+   * 外れている間に終わった仕事は、次にこの画面が付いたときにここで受け取る。
+   */
+  const bestJob = useBestJob();
+  useEffect(() => {
+    if (bestJob === null || bestJob.status === 'running') return;
+    // 渡すのは権利を取れたときだけ —— 描いた時点の `bestJob.delivered` で決めると、
+    // StrictMode の 2 度目の effect が同じ古い値を見て 2 度渡す (開発版で実際にそうなる)。
+    if (!markBestJobDelivered(bestJob.id)) return;
+    const q = questionEcho(bestJob.question);
+    if (bestJob.status === 'done' && bestJob.result !== null) {
+      // 表示名は**仕様の表から**引く (`AiProviderStatus.label` の出どころと同じ `AI_PROVIDERS`)。
+      // 設定状況 (`providers`) は付けた直後に非同期で読むので、画面を離れている間に終わった
+      // 仕事を戻った瞬間に渡すと、その読みより先にここへ来る —— 1 度目は `providers` から引いており、
+      // 同じ結果が「居たまま受け取ると Claude (Anthropic)・戻って受け取ると anthropic」と
+      // 渡る時機で 2 通りに書かれた。
+      const labelOf = (id: string): string => lookup(AI_PROVIDERS, id)?.label ?? (id || '既定の AI');
+      const [header, ...ranked] = formatBestAnswers(bestJob.result, labelOf);
+      if (header) append({ role: 'assistant', text: header.text });
+      for (const m of ranked) append({ role: 'assistant', text: m.text, provider: m.servedBy });
+      // 1 件も示せなければ、チャットと同じく端末内の簡易応答で答える (空にしない)。
+      if (ranked.length === 0) replyOffline(bestJob.question);
+    } else if (bestJob.status === 'cancelled') {
+      append({ role: 'assistant', text: `🏆 ベスト3 を取り消しました（「${q}」）。`, offline: true });
+    } else {
+      append({ role: 'assistant', text: `🏆 ベスト3 を作れませんでした（「${q}」）: ${bestJob.error ?? '理由不明'}`, offline: true });
+      replyOffline(bestJob.question);
+    }
+  }, [bestJob]);
+
   const clearChat = () => setMessages([]);
 
   const pageStyle: React.CSSProperties = {
@@ -667,6 +738,9 @@ export function AssistantPage() {
             <option value="">エージェント自動 (既定)</option>
             <option value={ALL_AGENTS}>
               🤝 全AI合議 (設定済み {providers.filter((p) => p.configured).length} 社へ同時質問)
+            </option>
+            <option value={BEST3_AGENTS}>
+              🏆 ベスト3 ({ENGINEERING_LENSES.length} つのエンジニアリングが裏で協調・観点 {MAX_BEST_ANSWER_CALLS} つから上位 {BEST_ANSWERS_COUNT} 件)
             </option>
             {providers.map((p) => (
               <option key={p.id} value={p.id}>
@@ -948,6 +1022,41 @@ export function AssistantPage() {
         }}
       />
 
+      {provider === BEST3_AGENTS ? (
+        /*
+         * **送り先の言い方は上の断りと同じ内訳から組む** (`egressRecipients`)。別々に判断すると、
+         * AI が 1 つも設定されていないとき断りは「端末の外へは出ません」と言い、ここは
+         * 「上の送り先へ計 5 回送ります」と言う —— 同じ画面が 2 通りに答える (1 度目はそうだった)。
+         */
+        <p data-best3-plan style={{ fontSize: 12, margin: '0 0 8px', lineHeight: 1.7 }}>
+          {(() => {
+            const calls = planCalls(providers.filter((p) => p.configured).map((p) => p.id)).length;
+            if (egressRecipients.unknown === true) {
+              return (
+                <>
+                  🏆 ベスト3: 観点の違う回答者 {calls} 人が、<strong>同じ内容を 1 回ずつ</strong>送ります（計 {calls} 回）。
+                  送り先は上の断りのとおり、今は確かめられません。
+                </>
+              );
+            }
+            if (egressRecipients.remote.length === 0 && (egressRecipients.local ?? []).length === 0) {
+              return (
+                <>
+                  🏆 ベスト3: いま設定済みの AI がありません。送ると回答者 {calls} 人がそれぞれ「未設定」で断られ（外へは出ません）、
+                  端末内の簡易応答で答えます。
+                </>
+              );
+            }
+            return (
+              <>
+                🏆 ベスト3: 観点の違う回答者 {calls} 人が、上の送り先へ<strong>同じ内容を 1 回ずつ</strong>送ります（計 {calls} 回・設定済みの AI へ順繰りに割り振り）。
+              </>
+            );
+          })()}
+          {' '}採点はこの端末内で行い、上位 {BEST_ANSWERS_COUNT} 件をチャットへ出します。作成中もこの画面を離れて構いません。
+        </p>
+      ) : null}
+      <BestAnswersProgress />
       <CeilingNotice label="入力" value={input} max={MAX_ASSISTANT_CONTENT_CHARS} />
       <form
         onSubmit={(e) => {

@@ -9,7 +9,7 @@
  * 「知らない suite 名で 0 件走って PASSED」の 1 段下の同じ穴。
  *
  * 床そのものは実機でしか効かない (ブラウザが要る)。ここで留めるのは**表の形**:
- * 32 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
+ * 33 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
  * 「必ず落ちる検査」になり、誰かが床を消す)・名前の一覧は表から導く・
  * 合計の床は suite の床の和を下回らない側に置かない (合計だけが緩い形にしない)。
  */
@@ -109,9 +109,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     expect(code).not.toMatch(staleFails);
   });
 
-  it('★ 32 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(32);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(32);
+  it('★ 33 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(33);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(33);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -146,7 +146,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     //   注記が「残した物を残した」と言う・下書きが在るのに「見本を表示しています」と言わない) = 452
     // + 2026-09-20 (パス 346) に paperAccount の注記 10 が**実物 13 と 3 件ずれていた**のを
     //   実測で直した = 455 (今日の `e2e` / `e2e:lite` の実測とも一致する)
-    expect(sumMeasured).toBe(455);
+    // + 2026-09-26 (パス 482) の best3 suite 9 (選ぶ → 回数を名乗る → 送る → 鍵が無いときの
+    //   断り・見出しが 1 度だけで質問を名乗る・進み具合と上部バーの印が消える) = 464
+    expect(sumMeasured).toBe(464);
   });
 });
 
