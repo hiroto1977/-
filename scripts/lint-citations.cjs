@@ -57,6 +57,13 @@
  */
 
 const fs = require('node:fs');
+/*
+ * 出典 URL の正規化は**共有モジュール 1 つ** (2026-09-26 · パス 478)。
+ * それまでここに在った実装と `src/renderer/data/sourceVerification.ts` の実装は
+ * **契約が違い**、実物のコーパス 1 件 (`infosoc-data-feminism`) で独立数が 3 / 2 に割れていた。
+ * 契約はこちら側 (パスの大小とポートを落とす) を採った —— 理由は共有モジュールの docblock に在る。
+ */
+const { normalizeSourceUrl } = require('./lib/source-url.cjs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -355,17 +362,7 @@ function checkAcademicHosts(entries) {
  * `#fragment` は同じ資料の表記ゆれとして畳む。クエリは資料を選ぶことがある (book_slug= など) ので残す。
  * URL として読めない文字列は小文字化だけして返す (落とさない —— スキーム検査が別に鳴らす)。
  */
-function normalizeSourceUrl(url) {
-  const trimmed = String(url).trim();
-  let parsed;
-  try {
-    parsed = new URL(trimmed);
-  } catch {
-    return trimmed.toLowerCase();
-  }
-  const pathname = parsed.pathname.replace(/\/+$/, '').toLowerCase();
-  return `https://${parsed.hostname.toLowerCase()}${pathname}${parsed.search}`;
-}
+
 
 /** コレクションの種別語彙。表に無いコレクション (fixture の collection 無しを含む) は学術側として扱う。 */
 function vocabularyOf(collection) {

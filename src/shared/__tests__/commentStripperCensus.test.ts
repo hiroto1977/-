@@ -187,7 +187,7 @@ function selfRolled(): string[] {
  * 共有の道具を読んでいる本。**この一覧は走査と両方向で一致する** (下の it) ——
  * 手書きの一覧のままだと、行を消したときにその行の主張が黙って消える
  * (パス 462 の対照 F。**分類を下げるのも退行の 1 手である**)。
- * 実測: パス 461 で 13 本・パス 462 で 56 本・パス 463 で **80 本**。
+ * 実測: パス 461 で 13 本・パス 462 で 56 本・パス 463 で 80 本・パス 478 で **81 本**。
  */
 const MIGRATED: readonly string[] = [
   'src/__tests__/actionSurface.ts',
@@ -226,6 +226,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/data/__tests__/csvExportGate.test.ts',
   'src/renderer/data/__tests__/emotionsLogMoodParity.test.ts',
   'src/renderer/data/__tests__/namedEscapeHatchReachable.test.ts',
+  'src/renderer/data/__tests__/sourceUrlParity.test.ts',
   'src/renderer/oauth/__tests__/pkceSession.test.ts',
   'src/renderer/pages/__tests__/aiEgressPairs.helpers.ts',
   'src/renderer/pages/__tests__/moneyNotationOneScreen.test.ts',

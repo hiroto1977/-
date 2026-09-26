@@ -91,6 +91,12 @@ const LEDGER: readonly LedgerRow[] = [
     reason: '(c) 同上 (NAT64 / 6to4 の埋め込み)',
   },
   {
+    file: 'src/renderer/data/sourceVerification.ts',
+    needle: '`https://${parsed.hostname.toLowerCase()}',
+    reason: '(b) 解析済み URL.hostname の再直列化。**この文字列は通信にも画面にも出ない** —— '
+      + '出典の独立性を数える Set の鍵で、パス 478 の実測で読み手は distinctSourceCount だけ',
+  },
+  {
     file: 'src/main/clients/slack.ts',
     needle: '`https://${label}.slack.com/archives/',
     reason: '(d) 第三者の応答 (team.info の domain) は slackWorkspaceDomainOrNull の返り値 label だけを置く',

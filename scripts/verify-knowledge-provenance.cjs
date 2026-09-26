@@ -86,6 +86,7 @@ const TAXONOMIES = {
 };
 
 const kc = require(path.join(REPO_ROOT, 'orchestration', 'knowledge-context.cjs'));
+const { distinctSourceCount } = require('./lib/source-url.cjs');
 /*
  * 目録の判定は `lint-citations.cjs` の台帳 1 つを読む (`METADATA_ONLY_HOSTS`)。
  * ホスト一覧を 2 か所に書くと片方が腐るので写さない —— `require` は
@@ -162,6 +163,13 @@ function taxonomyOf(collection) {
  * 出典の並び (`{ type, url }`) を評価して、満たしていない理由を返す。
  *
  * **URL も見る**のは目録の規則のため (2026-09-06 に種別だけの評価から変えた)。
+ * 2026-09-26 (パス 478) からは**独立性の判定**にも使う —— それまで件数は
+ * `types.length` を素で数えており、**同じ文書を指す 2 つの綴りが 2 件として通った**
+ * (実測: `bizlaw-equitable-set-off` の 2 出典は同じ Wikipedia の頁で、2 つ目は
+ * 節のアンカーだけが違った。隔離した写しに同じ URL を 2 度植てると 4 つの知識ゲート
+ * すべてが exit 0 で「4039 項目（出典 2+・権威 1+）… ✅」と刷った)。
+ * 正規化の規則は `scripts/lib/source-url.cjs` **1 つ**で、実行時側
+ * (`src/renderer/data/sourceVerification.ts`) の写しとはパリティ検査が縛る。
  * 図書館の目録・書店の商品頁・検索結果は「その出版物が存在する」ことしか示さないので、
  * 権威ある出典がそれだけの項目は**中身を誰も確かめていない**。実測では 0 件だったが、
  * 0 件のまま放置すると次に足す人が気づかないので規則にした (標本は自己検査に置いた)。
@@ -169,8 +177,14 @@ function taxonomyOf(collection) {
 function assess(sources, taxonomy) {
   const reasons = [];
   const types = sources.map((s) => s.type);
-  if (types.length < MIN_SOURCES) {
-    reasons.push(`出典 ${types.length} 件（${MIN_SOURCES} 件以上が必要）`);
+  const distinct = distinctSourceCount(sources);
+  if (distinct < MIN_SOURCES) {
+    reasons.push(
+      distinct === types.length
+        ? `出典 ${distinct} 件（${MIN_SOURCES} 件以上が必要）`
+        : `独立した出典 ${distinct} 件（出典 ${types.length} 件のうち同じ文書を指すものを 1 件に畳んだ結果。`
+          + `${MIN_SOURCES} 件以上が必要）`,
+    );
   }
   const set = TAXONOMIES[taxonomy].authoritative;
   const authoritativeSources = sources.filter((s) => set.has(s.type));
@@ -218,8 +232,12 @@ function selfTest() {
 
   let failed = 0;
   console.log('self-test:');
-  /** 表は種別だけを書く。URL 空文字は目録判定に当たらない (ホストが取れない)。 */
-  const asSources = (types) => types.map((t) => ({ type: t, url: '' }));
+  /*
+   * 表は種別だけを書く。**URL は項ごとに別物を渡す** (2026-09-26 · パス 478) ——
+   * 空文字のままだと独立性の判定がすべて「1 件」に畳まれ、上の表の期待値が
+   * 「独立が足りない」で埋まる。ホストが取れない綴りなので目録判定には当たらない。
+   */
+  const asSources = (types) => types.map((t, i) => ({ type: t, url: `about:sample-${i}` }));
   for (const [label, types, taxonomy, want] of cases) {
     const got = assess(asSources(types), taxonomy).length;
     const ok = got === want;
@@ -238,6 +256,26 @@ function selfTest() {
     ['権威 0 件のときは目録の理由を重ねない (理由は 1 つ)', S(['media', 'https://www.worldcat.org/oclc/1'], ['media', 'https://hbr.org/x']), 1],
   ];
   for (const [label, sources, want] of metaCases) {
+    const got = assess(sources, 'academic').length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: 理由 ${got} 件 (期待 ${want})`);
+  }
+
+  /*
+   * --- 独立性 (2026-09-26 · パス 478)。**件数ではなく独立した文書の数**を見る。
+   * 「同じ頁を 2 度」は実測でコーパスに 1 件在った形なので、標本は実物の綴りを使う。
+   */
+  const indepCases = [
+    ['★ 同じ URL を 2 度は独立 1 件', S(['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)'], ['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)']), 1],
+    ['★ 節のアンカーだけが違うのは同じ文書', S(['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)'], ['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)#Equitable_set-off']), 1],
+    ['★ scheme と末尾 / だけが違うのは同じ文書', S(['reference', 'http://example.org/a/'], ['reference', 'https://example.org/a']), 1],
+    ['★ ホストの大小だけが違うのは同じ文書', S(['reference', 'https://EN.wikipedia.org/wiki/X'], ['reference', 'https://en.wikipedia.org/wiki/X']), 1],
+    ['別の頁なら独立 2 件 (対照)', S(['reference', 'https://en.wikipedia.org/wiki/Set-off_(law)'], ['reference', 'https://en.wikipedia.org/wiki/Liquidated_damages']), 0],
+    ['クエリが違えば別の文書 (畳まない)', S(['reference', 'https://example.org/p?id=1'], ['reference', 'https://example.org/p?id=2']), 0],
+    ['www の有無は畳まない', S(['reference', 'https://example.org/a'], ['reference', 'https://www.example.org/a']), 0],
+  ];
+  for (const [label, sources, want] of indepCases) {
     const got = assess(sources, 'academic').length;
     const ok = got === want;
     if (!ok) failed += 1;
@@ -365,7 +403,7 @@ function main(argv) {
   }
 
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
-  console.log(`確証ゲート検証: ${total} 項目（出典 ${MIN_SOURCES}+・権威 ${MIN_AUTHORITATIVE}+）`);
+  console.log(`確証ゲート検証: ${total} 項目（独立 ${MIN_SOURCES}+・権威 ${MIN_AUTHORITATIVE}+）`);
   for (const [col, n] of Object.entries(counts)) {
     console.log(`  ・${col} ${n} 件 [${TAXONOMY_BY_COLLECTION[col]}]`);
   }

@@ -20,6 +20,7 @@
  */
 
 import type { AcademicSourceType } from './academicKnowledge';
+import { distinctSourceCount } from './sourceVerification';
 
 /** 情報を「発見」したモダリティ（リード源）。採用＝evidence とは別概念。 */
 export type DiscoveryModality =
@@ -95,13 +96,38 @@ export interface EvidenceAssessment {
  *   - 独立 2 出典以上
  *   - うち 1 件以上が権威ある出典（`popular` 以外）
  * 両方を満たせば ok=true。
+ *
+ * ## `独立` は件数ではない (2026-09-26 · パス 478)
+ *
+ * 2026-09-26 まで、この関数は `sources.length` を素で数えていた ——
+ * docblock は冒頭から「**独立** 2 出典以上」と繰り返していたのに、
+ * 独立性を 1 度も検めていなかった。隣の確証器
+ * ({@link ./sourceVerification} の `distinctSourceCount`) は最初から URL で
+ * 重複を落とし、`EvidenceSource.url` を「独立性の判定キー」と宣言している ——
+ * **同じ規律に実装が 2 つ在り、`独立` を持つのは片方だけだった。**
+ *
+ * 実測 (2026-09-26 · コーパス 4,039 項目): 素の文字列で重複する出典は 0 件
+ * だが、**同じ文書を指す綴り**が 1 件在った (`bizlaw-equitable-set-off` の
+ * 2 出典は同じ Wikipedia の頁で、2 つ目は節のアンカーだけが違う)。
+ * 隔離した写しに同じ URL を 2 度植えると、4 つの知識ゲートすべてが exit 0 で
+ * 「4039 項目（出典 2+・権威 1+）… ✅ すべての項目が確証ゲートを満たし」と刷った。
+ *
+ * だから数えるのは `distinctSourceCount` **1 つ**で、URL の正規化もそこに在る。
+ * `url` を必須にしてあるのは、**呼び出し側が渡し忘れたら型で落ちる**ようにする
+ * ため (渡し忘れを許すと独立性の判定が黙って空になる)。
  */
 export function assessEvidence(
-  sources: readonly { readonly type: AcademicSourceType }[],
+  sources: readonly { readonly type: AcademicSourceType; readonly url: string }[],
 ): EvidenceAssessment {
   const reasons: string[] = [];
-  if (sources.length < ADMISSION_RULE.minSources) {
-    reasons.push(`出典が ${sources.length} 件（${ADMISSION_RULE.minSources} 件以上が必要）`);
+  const distinct = distinctSourceCount(sources);
+  if (distinct < ADMISSION_RULE.minSources) {
+    reasons.push(
+      distinct === sources.length
+        ? `出典が ${distinct} 件（${ADMISSION_RULE.minSources} 件以上が必要）`
+        : `独立した出典が ${distinct} 件（出典 ${sources.length} 件のうち同じ文書を指すものを 1 件に畳んだ結果。`
+          + `${ADMISSION_RULE.minSources} 件以上が必要）`,
+    );
   }
   const authoritative = sources
     .map((s) => evidenceTier(s.type))

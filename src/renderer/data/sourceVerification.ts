@@ -57,10 +57,74 @@ export const DEFAULT_POLICY: VerificationPolicy = { minSources: 2, requireOffici
 /** 確証結果。 */
 export type VerificationStatus = 'confirmed' | 'unconfirmed';
 
-/** 独立した出典数を数える (URL の重複を除外)。 */
-export function distinctSourceCount(sources: readonly EvidenceSource[]): number {
+/**
+ * **独立性の判定キーを 1 つに正規化する。**
+ *
+ * ## なぜ生の文字列では足りないか (2026-09-26 · パス 478)
+ *
+ * 「独立 2 出典以上」の `独立` を数えるのは URL である ({@link EvidenceSource.url}
+ * の注記が最初からそう宣言している)。ところが生の文字列で比べると、**同じ文書を
+ * 指す 2 つの綴り**が 2 件として通る。実測でコーパスに 1 件在った:
+ *
+ * | `bizlaw-equitable-set-off` の出典 |
+ * | --- |
+ * | `https://en.wikipedia.org/wiki/Set-off_(law)` |
+ * | `https://en.wikipedia.org/wiki/Set-off_(law)#Equitable_set-off` |
+ *
+ * **フラグメントはサーバへ送られない**ので、この 2 つは 1 つの文書である。
+ * それでもラベルは `Wikipedia: Set-off (law)` と `Wikipedia: Equitable set-off` で、
+ * 読む側には 2 件に見えた。確証ゲートは「4039 項目（出典 2+・権威 1+）… ✅」と刷った。
+ *
+ * ## 何を同じ文書とみなすか (そしてどこで止めるか)
+ *
+ * 畳むのは 5 つ: **フラグメント** (サーバへ送られない) ・**scheme** (`http` / `https`) ・
+ * **ホストの大小** ・**パス末尾の `/`** ・**パスの大小**。**クエリは畳まない**
+ * (`?id=123` は別の文書を選ぶ)。**`www.` の有無も畳まない** (別のホスト)。
+ *
+ * ★ **パスの大小とポートを落とすのは、実測して 2026-09-26 に決めた** ——
+ * 最初の版はどちらも残したが、それは**過大に数える**側だった:
+ * `academic/infosoc-data-feminism` は `…/wiki/Data_Feminism` と `…/wiki/Data_feminism`
+ * の 2 件を持ち (実質同じ頁)、残す版は独立 3 件・落とす版は独立 2 件と数える。
+ * 過大は「偽の 2 件目を黙って受ける」(静かな誤り)、過小は「正当な項目を落とす」
+ * (騒がしい誤り) —— **静かな方を避ける。**
+ * ポートは `hostname` を使うので落ちる (コーパスに port つきの出典は実測 **0 件**)。
+ *
+ * 契約が 1 つになったのは同じ日で、それまで**同じ算法が 3 か所**に在った
+ * (ここ・`scripts/lib/source-url.cjs`・`scripts/lint-citations.cjs`) ——
+ * 見つけたのはパス 325 の `parsedUrlGateCensus`。今は `.cjs` 側が 1 つで、
+ * この写しと同じ標本をパリティ検査が通す。
+ *
+ * 解析できない綴りは前後の空白を落として小文字にしたものを返す ——
+ * 投げない (URL の形そのものは `lint:citations` のスキームの規則が別に見る)。
+ */
+export function normalizeSourceUrl(url: string): string {
+  const raw = String(url ?? '').trim();
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    return raw.toLowerCase();
+  }
+  const pathname = parsed.pathname.replace(/\/+$/, '').toLowerCase();
+  return `https://${parsed.hostname.toLowerCase()}${pathname}${parsed.search}`;
+}
+
+/**
+ * 独立した出典数を数える (同じ文書を指す綴りは 1 件に畳む)。
+ *
+ * **ここが `独立` の唯一の実装** —— 学術コーパスの採用ゲート
+ * ({@link ./knowledgeProvenance} の `assessEvidence`) と、それを鏡写しにする
+ * `scripts/verify-knowledge-provenance.cjs` も同じ規則を通る
+ * (`.cjs` は `.ts` を require できないので写しは `scripts/lib/source-url.cjs` に
+ * 在り、`__tests__/sourceUrlParity.test.ts` が同じ標本で両方を突き合わせる)。
+ *
+ * 引数は **`url` だけ**を要求する —— この関数は `type` も `label` も読まないので、
+ * {@link EvidenceSource} を丸ごと求めると呼び手が読まれない欄を捏造することになる
+ * (学術コーパスの出典は `label` の意味が別なので、そこが摩擦になっていた)。
+ */
+export function distinctSourceCount(sources: readonly { readonly url: string }[]): number {
   const urls = new Set<string>();
-  for (const s of sources) urls.add(s.url);
+  for (const s of sources) urls.add(normalizeSourceUrl(s.url));
   return urls.size;
 }
 

@@ -72,6 +72,49 @@ const T = {
 };
 
 export const LAWS: readonly Law[] = [
+  // ───────────────────────── 知識と出典 ─────────────────────────
+  {
+    id: 'independence-counted-not-listed',
+    family: 'numbers',
+    name: '「独立 N 出典」の独立は件数ではない',
+    statement:
+      '確証の規律が「**独立** N 出典以上」と述べるなら、数えるのは**独立した文書の数**であって出典の件数ではない。'
+      + '2026-09-26 まで、学術コーパスの採用ゲート (`knowledgeProvenance.assessEvidence`) と'
+      + 'CI のゲート (`scripts/verify-knowledge-provenance.cjs` の `assess`) は**どちらも `length` を素で数えていた** —— '
+      + '前者の docblock は冒頭から「独立 2 出典以上」と繰り返していたのに、独立性を 1 度も検めていなかった。'
+      + '**隣の確証器は最初から持っていた** (`sourceVerification.distinctSourceCount` は URL で重複を落とし、'
+      + '`EvidenceSource.url` の注記が「独立性の判定キー」と宣言している) —— '
+      + '同じ規律に実装が **3 つ**在り (もう 1 つは `lint-citations.cjs` の私有の写し・**契約まで違った**)、'
+      + '規則を持つのは 1 つだけだった。'
+      + '実測 (2026-09-26 · コーパス 4,039 項目): 素の文字列で重複する出典を持つ項目は **0 件**だが、'
+      + '**同じ文書を指す綴りの組を持つ項目が 2 件**在った。1 件目 —— `academic / bizlaw-equitable-set-off` の 2 出典は'
+      + '`…/wiki/Set-off_(law)` と `…/wiki/Set-off_(law)#Equitable_set-off` で、'
+      + '**フラグメントはサーバへ送られない**ので 1 つの文書である。'
+      + 'ラベルは `Wikipedia: Set-off (law)` と `Wikipedia: Equitable set-off` で、読む側には 2 件に見えた。'
+      + '隔離した写しに同じ URL を 2 度植えると、`verify:knowledge` / `lint:citations` / `lint:knowledge-refs` / '
+      + '`lint:doi-prefix` の **4 本すべてが exit 0** で、ゲートは「4039 項目（出典 2+・権威 1+）… ✅」と刷った。'
+      + '2 件目 —— `academic / infosoc-data-feminism` は `…/wiki/Data_Feminism` と `…/wiki/Data_feminism` で、'
+      + '**1 文字の大小だけが違う実質同じ頁**である (出典 3 件で独立 2 件)。'
+      + '★ **畳むのは 6 つ** (フラグメント・scheme・ホストの大小・パス末尾の `/`・**パスの大小**・**ポート**)。'
+      + 'クエリと `www.` の有無は畳まない。★ **パスの大小とポートは実測で決めた** —— '
+      + '残す版は 2 件目を独立 3 件と数える。**過大は「偽の 2 件目を黙って受ける」(静かな誤り)、'
+      + '過小は「正当な項目を落とす」(騒がしい誤り)** なので、静かな方を避けた。'
+      + '★ **成功行は検めた物を名乗る** —— 見出しが「出典 2+」なら読む人は件数の検査だと読む (実測どおり「独立 2+」へ直した)。'
+      + '★ **同じ主題の他の 6 項目はどれも独立 3 件だった** —— 1 件だけが出典 2 件 / 独立 1 件で、'
+      + 'その対比が欠陥を見えるようにした (`bizlaw-set-off` は e-gov / 国税庁 / 筑波大ロースクールの 3 ホスト)。'
+      + '**ホスト数では対比が出ない** —— 6 件のうち 2 件は 3 出典で 2 ホストである (実測)。'
+      + '★ **ホスト単位の規則そのものも実測で否定された** —— 1 ホストだけで下限を満たす項目は 169 件で、'
+      + '最大の群は `doi.org` 52 件 (resolver なので 2 DOI は 2 著作) と `www.nta.go.jp` 33 件 (同じ官庁の別文書)。'
+      + '★ **床だけでは足りない** —— 「独立が下限以上」は**3 件並べて実は 2 件**を通すので、'
+      + '**列挙した件数 = 独立した文書の数**を別に要求する (数え方を直しても名乗りは直らない)。',
+    provenance: ['パス 478'],
+    enforcedBy: [
+      gate('verify:knowledge'),
+      test('src/renderer/data/__tests__/sourceUrlParity.test.ts'),
+      test('src/renderer/data/__tests__/knowledgeProvenance.test.ts'),
+      test('src/renderer/data/__tests__/sourceVerification.test.ts'),
+    ],
+  },
   // ───────────────────────── ゲートそのものの規律 ─────────────────────────
   {
     id: 'manual-check-becomes-gate',

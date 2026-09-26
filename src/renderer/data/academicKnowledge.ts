@@ -17660,7 +17660,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/11805.001.0001', type: 'academic', label: 'D\'Ignazio & Klein (2020) Data Feminism — MIT Press（オープンアクセス全文）' },
       { url: 'https://en.wikipedia.org/wiki/Data_Feminism', type: 'reference', label: 'Data Feminism — Wikipedia（7原則・理論的基盤・影響の概要）' },
-      { url: 'https://en.wikipedia.org/wiki/Data_feminism', type: 'reference', label: 'Wikipedia: Data feminism — intersectionality, power, classification, critical data studies' },
     ],
   },
   {
@@ -32345,7 +32344,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-27',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Set-off_(law)', type: 'reference', label: 'Wikipedia: Set-off (law) — equitable set-off, close connection, substantive defence, cross-claim' },
-      { url: 'https://en.wikipedia.org/wiki/Set-off_(law)#Equitable_set-off', type: 'reference', label: 'Wikipedia: Equitable set-off — Hanak v Green, Geldof v Simon Carves, manifest injustice' },
+      { url: 'https://en.wikipedia.org/wiki/Liquidated_damages', type: 'reference', label: 'Wikipedia: Liquidated damages — Hanak v Green [1958] 2 QB 9 以降の判例が確定額債権と未確定額債権の相殺を認める衡平法上の原則を確立した' },
     ],
   },
   {

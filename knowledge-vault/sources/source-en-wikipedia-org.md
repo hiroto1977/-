@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2187
+cite_count: 2186
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2187 件**（リファレンス 2187）
+> [!info] 出典ドメイン索引 ・ 引用 **2186 件**（リファレンス 2186）
 
 ## このドメインを出典とする項目
 
@@ -145,7 +145,7 @@ tags:
 - [[bizlaw-environmental-law-regulation|環境法と持続可能性規制の法律体系——ESG義務化と企業責任]] — Wikipedia:Environmentallaw—NEPA,CBDR,CSRD,climatelitigation,Urgenda,E…
 - [[bizlaw-environmental-liability-directive-eu|EU環境責任指令——汚染者負担原則と環境損害の予防・修復義務]] — Wikipedia:EnvironmentalLiabilityDirective—EU環境責任指令の概説
 - [[bizlaw-environmental-liability-polluter-pays|環境責任と汚染者負担原則の法制度比較]] — Wikipedia:Polluterpaysprinciple—environmentalliabilitylaw
-- [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — Wikipedia:Equitableset-off—HanakvGreen,GeldofvSimonCarves,manifestinj…
+- [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — Wikipedia:Liquidateddamages—HanakvGreen[1958]2QB9以降の判例が確定額債権と未確定額債権の相…
 - [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — Wikipedia:Set-off(law)—equitableset-off,closeconnection,substantivede…
 - [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — Wikipedia:Equityofredemption—equitymitigatingcommonlaw,clogsandfetter…
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — Wikipedia:Estoppel—HighTrees,promissoryestoppel,reliance,goodfaith,ty…
@@ -1542,7 +1542,6 @@ tags:
 - [[infosoc-data-doubles|データ・ダブル]] — TheSurveillantAssemblage—Wikipedia
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — O'Neil2016WeaponsofMathDestruction:HowBigDataIncreasesInequalityandTh…
 - [[infosoc-data-feminism|データフェミニズム（Data Feminism）]] — DataFeminism—Wikipedia（7原則・理論的基盤・影響の概要）
-- [[infosoc-data-feminism|データフェミニズム（Data Feminism）]] — Wikipedia:Datafeminism—intersectionality,power,classification,critica…
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — Wikipedia:Datasovereignty—internationalgovernance
 - [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — Wikipedia:TheLanguageofNewMedia—Manovich,databasevsnarrative,symbolic…
 - [[infosoc-datafication-mayer-schoenberger|データ化（データフィケーション）——計量されてこなかった生活や行動を機械可読データへ変換し、分析・予測・資本化の対象にする過程]] — Wikipedia:Datafication—Mayer-Schönberger&Cukier、vanDijck、digitization…

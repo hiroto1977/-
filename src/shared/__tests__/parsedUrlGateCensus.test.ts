@@ -36,6 +36,7 @@ import { validateScanUrl } from '../scanTarget';
 import { externalUrlOrNull } from '../externalUrlGate';
 import { normalizeProxyEndpoint } from '../proxyEndpoint';
 import { normalizeAtlassianSiteResult } from '../atlassianSite';
+import { normalizeSourceUrl } from '../../renderer/data/sourceVerification';
 
 const REPO = join(__dirname, '..', '..', '..');
 const PARSE_CALL = /new URL\(/;
@@ -61,6 +62,8 @@ const LEDGER: readonly Row[] = [
     why: '*.salesforce.com に絞り、要求 URL は base.origin から組む' },
   { file: 'src/main/main.ts', needle: 'new URL(url).origin', kind: 'value-gate',
     why: '窓の遷移の判定に使う origin —— 解析後の値そのもの' },
+  { file: 'src/renderer/data/sourceVerification.ts', needle: 'parsed = new URL(raw);', kind: 'value-gate',
+    why: 'パス 478: 出典の「独立性の判定キー」を正規化する。返すのは解析後の値 (フラグメント / scheme / ホストの大小 / 末尾の / を畳む)' },
   { file: 'src/main/oauth.ts', needle: 'parsed = new URL(url)', kind: 'value-gate',
     why: 'パス 291: 端点の関門。shell へ渡すのは解析後の値' },
   { file: 'src/main/oauth.ts', needle: "new URL(reqUrl, 'http://127.0.0.1')", kind: 'internal',
@@ -190,6 +193,12 @@ const VALUE_GATE_BEHAVIOR: readonly {
     expected: 'https://acme.atlassian.net',
     run: (i) => { const r = normalizeAtlassianSiteResult(i); return r.ok ? r.site : null; },
   },
+  {
+    name: 'normalizeSourceUrl',
+    raw: 'HTTP://EN.wikipedia.org/wiki/Set-off_(law)/#Equitable_set-off',
+    expected: 'https://en.wikipedia.org/wiki/set-off_(law)',
+    run: (i) => normalizeSourceUrl(i),
+  },
 ];
 
 describe('value-gate は解析後の値を返す (振る舞いで確かめる)', () => {
@@ -204,7 +213,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 26 行が 27 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 27 行が 28 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -212,11 +221,11 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 10, predicate: 6, pin: 4, internal: 4, display: 2 });
-    expect(LEDGER).toHaveLength(26);
+    }).toEqual({ 'value-gate': 11, predicate: 6, pin: 4, internal: 4, display: 2 });
+    expect(LEDGER).toHaveLength(27);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(27);
-    expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(4);
+    expect(SITES).toHaveLength(28);
+    expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });
 
