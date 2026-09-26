@@ -28,6 +28,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const SOURCE = 'src/shared/taxSocialInsurance.ts';
@@ -169,6 +170,20 @@ function unledgeredDeadlines(files, ledger = DATED_MEASURES) {
   }
   return out;
 }
+
+/**
+ * **走査の条件** (`sharedSources()` が使う物そのもの · 2026-09-26 · パス 472)。
+ *
+ * 走査は再帰しないので「`src/shared/` の直下」を経路の条件で表す。
+ * 実測 (2026-09-26): 台帳に無い期限の定数を `src/shared` の 1 本に植えると
+ * 素の木は ❌ で鳴るが、**その 1 本を走査から落とすと ✅ exit 0** になった。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: [],
+  accept: (name) => name.endsWith('.ts') && !name.endsWith('.d.ts'),
+  acceptPath: (rel) => rel.startsWith('src/shared/') && rel.split('/').length === 3,
+};
 
 /** `src/shared` の実装ファイル (検査は除く) を読む。 */
 function sharedSources() {
@@ -346,6 +361,9 @@ function main(argv) {
  */
 function checkLedgerCoverage() {
   const files = sharedSources();
+  // 2 つ目の数え方: 追跡されている src/shared 直下の .ts は、どれも走査に出る (パス 472)。
+  const cross = reportTrackedCrossCheck(files.map((f) => f.file), CROSS_CHECK, REPO_ROOT, 'lint:rate-freshness');
+  if (cross.code !== 0) return 1;
   const found = files.flatMap((f) => deadlineConstsIn(f.text));
   if (found.length === 0) {
     console.error('❌ src/shared に期限の定数が 1 件も見つかりません (走査の不具合を疑ってください)');
@@ -353,7 +371,7 @@ function checkLedgerCoverage() {
   }
   const missing = unledgeredDeadlines(files);
   if (missing.length === 0) {
-    console.log(`  ✅ 期限の定数 ${found.length} 件はすべて台帳に在ります`);
+    console.log(`  ✅ 期限の定数 ${found.length} 件はすべて台帳に在ります (${crossCheckSuffix(cross.source)})`);
     return 0;
   }
   console.error(
@@ -405,7 +423,10 @@ function checkDatedMeasures(now) {
   return failed;
 }
 
-module.exports = { evaluate, fiscalYear, declaredFiscalYear, evaluateDated, declaredDate, DATED_MEASURES, deadlineConstsIn, unledgeredDeadlines };
+module.exports = {
+  evaluate, fiscalYear, declaredFiscalYear, evaluateDated, declaredDate, DATED_MEASURES,
+  deadlineConstsIn, unledgeredDeadlines, CROSS_CHECK,
+};
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

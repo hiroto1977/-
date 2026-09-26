@@ -32,6 +32,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const WF_DIR = path.join(REPO_ROOT, '.github', 'workflows');
@@ -82,6 +83,19 @@ const SAFE_CONTEXT = /\$\{\{\s*github\.(event_name|event\.before|event\.after|re
  * 「安全な文脈かどうか」を判断する必要が消え、規則は行の形だけで決まる。
  */
 const TEMPLATE_EXPR = /\$\{\{/;
+
+/**
+ * **走査の条件** (`workflows()` が使う物そのもの · 2026-09-26 · パス 472)。
+ *
+ * 走査は再帰しないので「`.github/workflows/` の直下」を経路の条件で表す ——
+ * 根 (`.github`) だけでは `ISSUE_TEMPLATE/` のような別の木まで要求してしまう。
+ */
+const CROSS_CHECK = {
+  roots: ['.github'],
+  skipDirs: [],
+  accept: (name) => /\.ya?ml$/.test(name),
+  acceptPath: (rel) => rel.startsWith('.github/workflows/') && rel.split('/').length === 3,
+};
 
 function workflows() {
   if (!fs.existsSync(WF_DIR)) return [];
@@ -371,11 +385,15 @@ function main() {
     console.error(`❌ .github/workflows/ の YAML を ${list.length} 本しか拾えませんでした (${MIN_WORKFLOWS} 本以上を期待)。走査が壊れています。`);
     process.exit(1);
   }
+  // 2 つ目の数え方: 追跡されている workflow は、どれも走査に出る (パス 472)。
+  const cross = reportTrackedCrossCheck(
+    list.map((w) => path.join('.github', 'workflows', w.name)), CROSS_CHECK, REPO_ROOT, 'lint:workflow-security');
+  if (cross.code !== 0) process.exit(1);
   const problems = check(list);
   const ledger = Object.keys(UNPINNED_ALLOW).length;
   console.log(
     `Checked ${list.length} workflow(s): permissions / 第三者 action の SHA 固定 / ` +
-      `pull_request_target / run: への ${'$'}{{ }} 展開 (台帳: ${ledger} 件)`,
+      `pull_request_target / run: への ${'$'}{{ }} 展開 (台帳: ${ledger} 件 · ${crossCheckSuffix(cross.source)})`,
   );
   if (problems.length === 0) {
     console.log('✅ ワークフローの守りは台帳どおりです');
@@ -389,6 +407,6 @@ function main() {
   return 1;
 }
 
-module.exports = { check, runBlockLines, workflows, UNPINNED_ALLOW };
+module.exports = { check, runBlockLines, workflows, UNPINNED_ALLOW, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

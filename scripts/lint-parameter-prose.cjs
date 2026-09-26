@@ -44,9 +44,20 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { stripComments } = require('./lib/strip-non-code.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const LEDGER = path.join(REPO_ROOT, 'src/shared/parameters.ts');
+/**
+ * **走査の条件** (下の `walk` が使う物そのもの · 2026-09-26 · パス 472)。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: ['__tests__'],
+  accept: (name) => /\.tsx?$/.test(name),
+  acceptPath: (rel) => rel.startsWith('src/renderer/'),
+};
+
 const SCAN_DIR = path.join(REPO_ROOT, 'src/renderer');
 
 /** 走査が死んで 0 件になったのを「違反なし」と読まないための床。 */
@@ -356,10 +367,13 @@ function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const names = ledgerNames(fs.readFileSync(LEDGER, 'utf8'));
   const files = readSources();
+  // 2 つ目の数え方: 追跡されている renderer のソースは、どれも走査に出る (パス 472)。
+  const cross = reportTrackedCrossCheck(files.map((f) => f.path), CROSS_CHECK, REPO_ROOT, 'lint:parameter-prose');
+  if (cross.code !== 0) return 1;
   const problems = evaluate({ files, names });
   console.log(
     `Scanned ${files.length} renderer file(s) for ${names.size} ledger-backed constant(s) — ` +
-      `台帳 (直接使用の許可) ${ALLOWED.length} 件`,
+      `台帳 (直接使用の許可) ${ALLOWED.length} 件 · ${crossCheckSuffix(cross.source)}`,
   );
   if (problems.length === 0) {
     console.log('✅ 画面が刷る数字は、計算に使う有効値と同じ出所です');
@@ -371,4 +385,6 @@ function main(argv) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { evaluate, scan, codeLines, ledgerNames, isDefaultUse, ALLOWED, MIN_NAMES, MIN_FILES };
+module.exports = {
+  evaluate, scan, codeLines, ledgerNames, isDefaultUse, ALLOWED, MIN_NAMES, MIN_FILES, CROSS_CHECK,
+};

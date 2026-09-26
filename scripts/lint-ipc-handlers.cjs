@@ -54,6 +54,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const MAIN_DIR = path.join(REPO_ROOT, 'src/main');
@@ -86,6 +87,22 @@ function handlerFiles() {
 /**
  * `src/main/clients` 配下の全 `.ts` を返す (action ハンドラの置き場)。
  */
+/**
+ * **走査の条件** (`clientFiles()` が使う物そのもの · 2026-09-26 · パス 472)。
+ *
+ * `handlerFiles()` の側は**中身** (`ipcMain.handle` を含むか) で絞るので照合できない ——
+ * 追跡ファイルの一覧からその条件は読めない。**照合できるのは `clientFiles()` の側**で、
+ * そこが「payload の書き出し先は関門を通す」を見る母集団である (実測 2026-09-26:
+ * 関門なしの書き込みを `kpi.ts` に植えると素の木は ❌ 1 件、その 1 本を走査から
+ * 落とすと ✅ exit 0 になった)。走査は再帰しないので経路の条件で直下に絞る。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: [],
+  accept: (name) => /\.ts$/.test(name),
+  acceptPath: (rel) => rel.startsWith('src/main/clients/') && rel.split('/').length === 4,
+};
+
 function clientFiles() {
   const dir = path.join(MAIN_DIR, 'clients');
   const out = [];
@@ -607,6 +624,9 @@ function main(argv) {
     for (const h of handlerBodies(f.text)) handlers.push({ ...h, file: f.file });
   }
   const clients = clientFiles();
+  // 2 つ目の数え方: 追跡されているクライアントは、どれも走査に出る (パス 472)。
+  const cross = reportTrackedCrossCheck(clients.map((f) => f.file), CROSS_CHECK, REPO_ROOT, 'lint:ipc-handlers');
+  if (cross.code !== 0) return 1;
   const guarded = clients.filter((f) => TAKES_PAYLOAD_PATH.some((re) => re.test(f.text)));
   const problems = [...evaluateHandlers(handlers), ...exportPathProblems(clients), ...preloadProblems()];
   console.log(
@@ -615,7 +635,8 @@ function main(argv) {
   );
   console.log(
     `書き出し先を payload で受けるクライアント ${guarded.length} 件`
-      + ` (${clients.length} 件中): ${guarded.map((f) => path.basename(f.file)).join(', ')}`,
+      + ` (${clients.length} 件中 · ${crossCheckSuffix(cross.source)}):`
+      + ` ${guarded.map((f) => path.basename(f.file)).join(', ')}`,
   );
 
   if (problems.length > 0) {
@@ -632,7 +653,9 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { evaluateHandlers, handlerBodies, exportPathProblems, preloadProblems };
+module.exports = {
+  evaluateHandlers, handlerBodies, exportPathProblems, preloadProblems, CROSS_CHECK,
+};
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

@@ -63,6 +63,8 @@ const tool = req('../../../scripts/audit-gate-floors.cjs') as {
   PARTIAL_GATES: readonly string[];
   ENFORCEMENT: Record<string, { by: readonly string[]; why: string }>;
   THINNING: Record<string, { expect: string; why: string }>;
+  MECHANISMS: readonly string[];
+  thinnableGates: () => string[];
   scriptOf: (cmd: string) => string;
   declaredGroups: (script: string) => { mode: string; arg: string }[];
   PREAMBLE_SRC: string;
@@ -192,13 +194,28 @@ describe('宣言と道具の台帳 (双方向)', () => {
     }
   });
 
-  it('★ 機構の台帳は PARTIAL_GATES と双方向で、理由が埋まっている', () => {
-    expect(Object.keys(tool.ENFORCEMENT).sort()).toEqual([...tool.PARTIAL_GATES].sort());
+  /*
+   * ★ **母集団は `THINNING` (= 間引ける全ゲート) へ広がった** (2026-09-26 · パス 472)。
+   *
+   * パス 469〜470 はこの関係を `PARTIAL_GATES` (群の床を宣言する 8 本) と結んでいたが、
+   * **実測すると間引けるのは 25 本**で、残り 17 本のうち 9 本が 1% の損失で黙っていた。
+   * **群の床を宣言するのは一部でよい** (弱くなっていない所に床を足さない · パス 469) が、
+   * **鳴らす機構を名乗るのは間引ける全ゲート**である。だから:
+   *   - `ENFORCEMENT` ↔ `THINNING` は双方向 (25 本)
+   *   - `PARTIAL_GATES` ⊆ `THINNING` (群の床を宣言する物は必ず間引きでも測る)
+   * 機構の語彙は道具が `MECHANISMS` として持つ (11 語目を黙って足せない)。
+   */
+  it('★ 機構の台帳は THINNING と双方向で、理由が埋まっている', () => {
+    expect(Object.keys(tool.ENFORCEMENT).sort()).toEqual(Object.keys(tool.THINNING).sort());
+    expect(
+      [...tool.PARTIAL_GATES].filter((g) => !Object.hasOwn(tool.THINNING, g)),
+      '群の床を宣言するのに間引きで測られていないゲート',
+    ).toEqual([]);
     for (const [gate, e] of Object.entries(tool.ENFORCEMENT)) {
       expect(Array.isArray(e.by), `${gate} の機構が配列でない`).toBe(true);
       expect(e.by.length, `${gate} が機構を 1 つも名乗っていない`).toBeGreaterThan(0);
       for (const by of e.by) {
-        expect(['shared-floor', 'cross-check', 'tracked-cross-check'], `${gate} の機構が未知`).toContain(by);
+        expect(tool.MECHANISMS, `${gate} の機構が未知`).toContain(by);
       }
       expect(e.why.length, `${gate} の理由が短すぎる`).toBeGreaterThanOrEqual(8);
     }
@@ -207,10 +224,13 @@ describe('宣言と道具の台帳 (双方向)', () => {
   /** 保留の決まり文句 (この針が当たる標本は下の `it` が持つ)。 */
   const STUB_REASON = /^(同上|未定|TBD|後で)/;
 
-  it('★ 一様な間引きの台帳も双方向で、決まり文句を置けない', () => {
-    expect(Object.keys(tool.THINNING).sort()).toEqual([...tool.PARTIAL_GATES].sort());
+  it('★ 一様な間引きの台帳は走査で導いた母集団と双方向で、決まり文句を置けない', () => {
+    // 母集団は道具が走査で導く (手書きの一覧を持たない —— 26 本目が生えた日に鳴る)。
+    expect(Object.keys(tool.THINNING).sort()).toEqual([...tool.thinnableGates()].sort());
+    expect(Object.keys(tool.THINNING).length, '母集団の走査が死んでいる').toBeGreaterThanOrEqual(20);
     for (const [gate, t] of Object.entries(tool.THINNING)) {
-      expect(['rings', 'silent'], `${gate} の期待が未知`).toContain(t.expect);
+      // `not-dropped` は「この道具では落とせない」= 機構ではなく報せ (パス 472)。
+      expect(['rings', 'silent', 'not-dropped'], `${gate} の期待が未知`).toContain(t.expect);
       // 「同上」「未定」のような保留は書けない (法則 no-weakness-as-spec)。
       expect(t.why, `${gate} の理由が省略形`).not.toMatch(STUB_REASON);
       expect(t.why.length, `${gate} の理由が短すぎる`).toBeGreaterThanOrEqual(20);

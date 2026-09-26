@@ -23,6 +23,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { trackedCrossCheck } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const DOCS = path.join(REPO_ROOT, 'docs');
@@ -858,6 +859,21 @@ function checkPerFileMutationScores(failures, qualityOverride, configOverride, l
  *
  * @param claimOverride / @param workflowsOverride self-test の差し込み口。
  */
+/**
+ * **走査の条件** (下の workflow の歩きが使う物そのもの · 2026-09-26 · パス 472)。
+ *
+ * 走査は再帰しないので「`.github/workflows/` の直下」を経路の条件で表す。
+ * `lint:workflow-security` が同じ条件を別に宣言しているのは、**別の script の
+ * 別の歩き**だからである —— 片方を import すると読み込みだけでその門が走る形に
+ * なりうるので写しにせず、外側の証人が「2 つの条件が同じ集合を選ぶ」ことを見る。
+ */
+const CROSS_CHECK = {
+  roots: ['.github'],
+  skipDirs: [],
+  accept: (name) => name.endsWith('.yml') || name.endsWith('.yaml'),
+  acceptPath: (rel) => rel.startsWith('.github/workflows/') && rel.split('/').length === 3,
+};
+
 function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
   const claudeMd =
     claimOverride === undefined ? read(path.join(REPO_ROOT, 'CLAUDE.md')) : claimOverride;
@@ -883,6 +899,24 @@ function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
           .filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'))
           .map((f) => ({ name: f, text: read(path.join(dir, f)) ?? '' }))
       : [];
+  }
+  if (workflowsOverride === undefined) {
+    // 2 つ目の数え方: 追跡されている workflow は、どれも歩きに出る (パス 472)。
+    // 実測 (2026-09-26): 「not in CI」と書いたゲートを workflow が実行する状態を
+    // 植てると素の木は ❌ で鳴るが、**その workflow を走査から落とすと ✅** になった ——
+    // この門の失敗の文そのもの (「無い」と信じさせて動く仕組みを隠している) が、
+    // 門自身に起きていた。
+    const cross = trackedCrossCheck(
+      workflows.map((w) => path.join('.github', 'workflows', w.name)), CROSS_CHECK, REPO_ROOT);
+    if (cross.disagreement !== null) {
+      failures.push({ fact: 'not-in-CI claims', reason: `追跡ファイルの一覧が信用できません: ${cross.disagreement}` });
+    }
+    for (const miss of cross.missing) {
+      failures.push({
+        fact: 'not-in-CI claims',
+        reason: `追跡されている ${miss} が workflow の走査に出ていません (走査が一部だけ死んでいます)`,
+      });
+    }
   }
   for (const name of claimed) {
     const re = new RegExp(`npm run ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z0-9:_-])`);
@@ -1518,4 +1552,13 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * ★ **読み込むだけで走らせない** (2026-09-26 · パス 472)。
+ *
+ * それまでは `process.exit(main())` が読み込みの時点で走っていたので、外から証人を
+ * 立てられなかった (require した瞬間に検査プロセスごと落ちる)。
+ * `lint-test-coverage.cjs` と `build-knowledge-vault.cjs` が同じ理由で同じ番を持つ。
+ */
+module.exports = { CROSS_CHECK };
+
+if (require.main === module) process.exit(main());

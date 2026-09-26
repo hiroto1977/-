@@ -50,8 +50,20 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
+/**
+ * **走査の条件** (下の `walk` が使う物そのもの · 2026-09-26 · パス 472)。
+ * 根は `src` だが歩くのは `src/renderer` の下だけなので、経路の条件で絞る。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: ['__tests__', 'node_modules'],
+  accept: (name) => /\.tsx?$/.test(name),
+  acceptPath: (rel) => rel.startsWith('src/renderer/'),
+};
+
 const SCAN_DIR = path.join(REPO_ROOT, 'src/renderer');
 
 /** 走査が死んで 0 件になったのを「違反なし」と読まないための床。 */
@@ -1102,6 +1114,9 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const files = readSources();
+  // 2 つ目の数え方: 追跡されている renderer のソースは、どれも走査に出る (パス 472)。
+  const cross = reportTrackedCrossCheck(files.map((f) => f.path), CROSS_CHECK, REPO_ROOT, 'lint:storage');
+  if (cross.code !== 0) return 1;
   const auditDoc = fs.readFileSync(path.join(REPO_ROOT, 'docs/DATA_PROTECTION.md'), 'utf8');
   const eraseSource = readEraseSource();
   const problems = evaluate({ files, auditDoc, eraseSource });
@@ -1115,7 +1130,8 @@ function main(argv) {
     'Scanned ' + files.length + ' renderer file(s), ' + siteCount + ' 保存箇所 — 台帳 ' +
       Object.keys(STORES).length + ' 件 (' +
       Object.entries(byMedium).map(([m, n]) => m + ' ' + n).join(' / ') + ')、' +
-      'バックアップが覆うのは ' + BACKED_UP_STORE + ' のみ、ハードリセットの在庫 ' + eraseCount + ' 件 (規則 11)',
+      'バックアップが覆うのは ' + BACKED_UP_STORE + ' のみ、ハードリセットの在庫 ' + eraseCount + ' 件 (規則 11) · ' +
+      crossCheckSuffix(cross.source),
   );
   if (problems.length === 0) {
     console.log('✅ 保存先は台帳どおりです');
@@ -1127,4 +1143,4 @@ function main(argv) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { evaluate, scan, STORES, INDIRECT_SITES, BACKED_UP_STORE, MEDIUM_LABELS };
+module.exports = { evaluate, scan, STORES, INDIRECT_SITES, BACKED_UP_STORE, MEDIUM_LABELS, CROSS_CHECK };

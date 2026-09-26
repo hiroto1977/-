@@ -52,7 +52,10 @@ const cc = req('../../../scripts/lib/tracked-cross-check.cjs') as {
 const tool = req('../../../scripts/audit-gate-floors.cjs') as {
   RECIPES: readonly { gate: string; cmd: string }[];
   PARTIAL_GATES: readonly string[];
+  THINNING: Record<string, { expect: string; why: string }>;
   ENFORCEMENT: Record<string, { by: readonly string[]; why: string }>;
+  MECHANISMS: readonly string[];
+  thinnableGates: () => string[];
   scriptOf: (cmd: string) => string;
 };
 
@@ -157,12 +160,15 @@ describe('照合を呼ぶゲートの母集団 (双方向)', () => {
    * 見る検査は黙る (パス 455 の対照 J と同じ形)。
    */
   it('★ 照合を呼ぶゲートは ENFORCEMENT で tracked-cross-check を名乗る', () => {
-    const callers = tool.PARTIAL_GATES.filter((g) => {
+    // ★ 母集団は `THINNING` (= 間引ける全ゲート · 実測 25 本)。パス 471 は
+    //   `PARTIAL_GATES` (手書きの 8 本) しか見ておらず、**残り 17 本のうち 9 本が
+    //   1% の損失で黙っていた** —— 証人の母集団が狭いと、直した所しか見えない。
+    const callers = Object.keys(tool.THINNING).filter((g) => {
       const code = codeOf(g);
       return code.includes('tracked-cross-check.cjs')
         && /reportTrackedCrossCheck\(|trackedCrossCheck\(/.test(code);
     });
-    expect(callers.length, '照合を呼ぶゲートが 1 本も無い').toBeGreaterThanOrEqual(6);
+    expect(callers.length, '照合を呼ぶゲートが 1 本も無い').toBeGreaterThanOrEqual(14);
     for (const g of callers) {
       expect(
         tool.ENFORCEMENT[g]?.by,
@@ -189,15 +195,116 @@ describe('照合を呼ぶゲートの母集団 (双方向)', () => {
       const mod = req(`../../../${script}`) as { CROSS_CHECK?: Criteria };
       expect(mod.CROSS_CHECK, `${g} が CROSS_CHECK を export していない`).toBeTruthy();
       const got = cc.matchingTracked(cc.gitLsFiles(REPO), mod.CROSS_CHECK!);
-      expect(got.size, `${g} の条件が 1 件も拾わない (条件が実物からずれている)`).toBeGreaterThan(100);
+      // 条件が拾う件数はゲートごとに桁が違う (workflow は 7 本・src の木は 1,000 超) ので、
+      // 床は「1 件も拾わない = 条件が実物からずれている」だけを見る。
+      expect(got.size, `${g} の条件が 1 件も拾わない (条件が実物からずれている)`).toBeGreaterThan(0);
     }
+  });
+
+  /*
+   * ★★ **呼ぶだけでは守りではない —— 結果を使っているかを見る** (2026-09-26 · パス 472)。
+   *
+   * 対照を回すと、照合の**呼び出しを残したまま門 (`if (cross.code !== 0)`) を消す**
+   * 3 方向 (vault:check の床 / vault:check の照合 / workflow-security の照合) が
+   * **1 つも鳴らなかった** —— 上の検査は `reportTrackedCrossCheck(` が原文に在ることしか
+   * 見ておらず、返り値を捨てても素通りしていた。
+   *
+   * **鳴らない対照は合格ではなく、その検査についての報せ**なので、結果を使う形そのものを
+   * 要求する。振る舞い (本当に鳴るか) は `npm run audit:gate-partial` が 25 ゲート ×
+   * 一様な間引きで測る (実測 2026-09-26: 73 組すべて台帳どおり) —— ここは
+   * **毎回の `npm test` で「門が消えていないこと」**を留める層である。
+   */
+  it('★ 照合を呼ぶゲートは、その結果で落ちる門を持つ', () => {
+    /*
+     * 門の形は 2 通り実在する (どちらも「結果で落ちる」):
+     *   - `if (cross.code !== 0) return 1;`  —— 共有の報告子が刷って終了コードを返す
+     *   - `cross.missing` / `cross.disagreement` を自分で読んで失敗へ積む
+     * **「呼んだ」だけでは満たされない**ことを、標本で両向きに示す。
+     */
+    const guard = /cross\.code !== 0|cross\.missing|cross\.disagreement/;
+    expect(guard.test('  if (cross.code !== 0) return 1;')).toBe(true);
+    expect(guard.test('  for (const f of cross.missing) failures.push(f);')).toBe(true);
+    expect(guard.test('  const cross = reportTrackedCrossCheck(files, C, R, "g");')).toBe(false);
+    expect(guard.test('  console.log(crossCheckSuffix(cross.source));')).toBe(false);
+
+    let checked = 0;
+    for (const [g, e] of Object.entries(tool.ENFORCEMENT)) {
+      if (!e.by.includes('tracked-cross-check')) continue;
+      expect(codeOf(g), `${g} は照合を呼ぶだけで、結果で落ちる門が無い`).toMatch(guard);
+      checked += 1;
+    }
+    expect(checked, '照合を宣言したゲートが 14 本未満').toBeGreaterThanOrEqual(14);
+  });
+
+  /*
+   * ★ `vault:check` の床も「呼んで、結果を積む」まで要求する —— 対照 A
+   * (床の 2 行を消す) はこれが無いと鳴らなかった。
+   */
+  it('★ vault:check は比べた件数の床を呼び、結果を積む', () => {
+    const code = stripComments(readOriginalSource(join(REPO, 'scripts/build-knowledge-vault.cjs')));
+    expect(code, '床を呼んでいない').toMatch(/comparedCountProblem\(want\.length/);
+    expect(code, '床の答えを捨てている').toMatch(/problems\.push\(short\)/);
+  });
+
+  /*
+   * ★ **間引ける母集団は道具の届く範囲で決まる** (2026-09-26 · パス 472)。
+   *
+   * パス 469〜471 の台帳は手書きの 8 本で、実測すると **25 本**が間引ける。
+   * 母集団は走査で導くので 26 本目が生えた日に鳴る —— この検査は**その導出が
+   * 死んでいないこと** (床) と**双方向**を、ゲートを 1 本も走らせずに留める。
+   */
+  it('★ 間引けるゲートの母集団と THINNING が双方向に一致する', () => {
+    const walking = tool.thinnableGates();
+    expect(walking.length, '母集団の走査が死んでいる').toBeGreaterThanOrEqual(20);
+    expect(
+      walking.filter((g) => !Object.hasOwn(tool.THINNING, g)),
+      '間引けるのに THINNING に無い',
+    ).toEqual([]);
+    expect(
+      Object.keys(tool.THINNING).filter((g) => !walking.includes(g)),
+      'THINNING に在るのに間引けない',
+    ).toEqual([]);
+  });
+
+  /*
+   * ★ **機構を名乗る語彙は閉じている** —— 11 語目を黙って足せない。
+   * `not-thinnable` は機構ではなく報せなので、それを名乗るゲートは 1 本だけ
+   * (`chain:verify`) であることも見る (増えたら「測っていない」が機構として通る)。
+   */
+  it('★ ENFORCEMENT の機構は閉じた語彙で、not-thinnable は 1 本だけ', () => {
+    const used = new Set(Object.values(tool.ENFORCEMENT).flatMap((e) => e.by));
+    for (const b of used) expect(tool.MECHANISMS, `未知の機構 ${b}`).toContain(b);
+    const notThin = Object.entries(tool.ENFORCEMENT)
+      .filter(([, e]) => e.by.includes('not-thinnable'))
+      .map(([g]) => g);
+    expect(notThin).toEqual(['chain:verify']);
+  });
+
+  /*
+   * ★ **`vault:check` の成功行は、比べた件数を名乗る** (2026-09-26 · パス 472)。
+   *
+   * 直す前は `.md` を全部落としても「✅ 同期しています（7402 ファイル）」で exit 0 —— 
+   * その 7402 はコーパスの件数で、比べた件数ではなかった。床は割合ではなく**同一性**。
+   */
+  it('★ vault:check は「比べた件数 == 刷る件数」を要求する', () => {
+    const vault = req('../../../scripts/build-knowledge-vault.cjs') as {
+      comparedCountProblem?: (walked: number, count: number) => string | null;
+    };
+    expect(vault.comparedCountProblem, 'comparedCountProblem を export していない').toBeTruthy();
+    expect(vault.comparedCountProblem!(7402, 7402)).toBeNull();
+    // 1 件でも足りなければ鳴り、文面が両方の数を名乗る (読んだ人がその場で分かる)
+    const msg = vault.comparedCountProblem!(7401, 7402);
+    expect(msg).toContain('7402');
+    expect(msg).toContain('7401');
+    // 0 件比べた形 (直す前の実測) も鳴る
+    expect(vault.comparedCountProblem!(0, 7402)).toBeTruthy();
   });
 
   /**
    * ★ **今日の食い違いは 0 件** —— この検査は「照合が今日通ること」を留める。
    * 実物のゲートを走らせずに同じ問いを訊けるので、ゲートが CI から外れても鳴る。
    */
-  it('★ 宣言した 6 本はどれも、今日の木では食い違い 0 件', () => {
+  it('★ 宣言したゲートはどれも、今日の木では食い違い 0 件', () => {
     const tracked = cc.gitLsFiles(REPO);
     let checked = 0;
     for (const [g, e] of Object.entries(tool.ENFORCEMENT)) {
@@ -208,6 +315,6 @@ describe('照合を呼ぶゲートの母集団 (双方向)', () => {
       expect(want.size, `${g} の条件が空`).toBeGreaterThan(0);
       checked += 1;
     }
-    expect(checked, '照合を宣言したゲートが 6 本未満').toBeGreaterThanOrEqual(6);
+    expect(checked, '照合を宣言したゲートが 14 本未満').toBeGreaterThanOrEqual(14);
   });
 });

@@ -85,6 +85,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 /** これを超える行数を一度に無効化したら、それは「説明」ではなく「目隠し」。 */
@@ -661,6 +662,19 @@ function decorativeDisables(mutateOverride, ledgerOverride, filesOverride, readO
   return problems;
 }
 
+/**
+ * **走査の条件** (`sourceFiles()` が使う物そのもの · 2026-09-26 · パス 472)。
+ *
+ * 実測 (2026-09-26): mutate の外のファイルに広い無効化を植てると素の木は ❌ 1 件、
+ * **その 1 本を走査から落とすと ✅ exit 0** になった —— 測っていない範囲が
+ * 「台帳どおり」として通る。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: ['__tests__'],
+  accept: (name) => /\.tsx?$/.test(name) && !/\.d\.ts$/.test(name),
+};
+
 /** 走査対象 — `src/` 配下の TypeScript (テストと型宣言は除く)。 */
 function sourceFiles(dir = path.join(REPO_ROOT, 'src'), out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -1011,7 +1025,15 @@ function main(argv) {
     `Stryker pragma: ${pragma.pragmas} 個 — うち理由の無いもの ${pragma.bare} 個 / ${pragma.files} ファイル` +
       ` (台帳: ${Object.keys(PRAGMA_BARE).length} ファイル)`,
   );
-  console.log(`mutate 外の src ファイル: ${sourceFiles().filter((f) => !mutateList().includes(f)).length} 件 — うち広い無効化を持つものは全て KNOWN_UNMEASURED に在ること`);
+  // 2 つ目の数え方: 追跡されている src の TypeScript は、どれも走査に出る (パス 472)。
+  const walked = sourceFiles();
+  const cross = reportTrackedCrossCheck(walked, CROSS_CHECK, REPO_ROOT, 'lint:mutation-scope');
+  if (cross.code !== 0) return 1;
+  console.log(
+    `mutate 外の src ファイル: ${walked.filter((f) => !mutateList().includes(f)).length} 件`
+      + ` — うち広い無効化を持つものは全て KNOWN_UNMEASURED に在ること`
+      + ` (${crossCheckSuffix(cross.source)})`,
+  );
 
   if (failures.length === 0) {
     console.log('✅ 測っていない範囲は台帳どおり (増えても減ってもいません)');
@@ -1106,6 +1128,7 @@ function checkWallsAreProtected(mustOverride, chainOverride) {
 }
 
 module.exports = {
+  CROSS_CHECK,
   scanSource,
   barePragmasOf,
   pragmaCountOf,

@@ -462,6 +462,34 @@ const NO_POPULATION = {
  * 2 つ目の台帳が静かに古びる (`gateFloorLedger.test.ts` が「宣言している 6 本」と
  * `PARTIAL_GATES` を双方向に突き合わせる)。
  */
+/**
+ * **「母集団を間引けるゲート」を走査で導く** (2026-09-26 · パス 472)。
+ *
+ * パス 469〜471 は `PARTIAL_GATES` (手書きの 8 本) だけを一様な間引きで測っていた。
+ * ★ **実測すると `verify:all` の 37 ゲートのうち間引けるのは 25 本**で、1% 死ぬと
+ * **9 本が黙った** —— 手書きの一覧は母集団の 3 分の 1 しか覆っていなかった。
+ *
+ * だから一覧は書かない。前置き (`partial-scan-preamble.cjs`) が包めるのは
+ * **2 通りの数え方**なので、母集団もその 2 つから導く:
+ *
+ *   - 木を歩く (`readdirSync` / `readOriginalDirEntries`) —— 実測 24 本
+ *   - 追跡ファイルの一覧 (`kind: 'git-ls-files'`) —— `lint:repo-size` はこちらだけ
+ *
+ * ★ **この定義は自分の双方向の検査が直させた** —— 最初は「木を歩く」だけで数え、
+ * `lint:repo-size` (パス 470 が実際に間引いて測ったゲート) が台帳から落ちた。
+ * **道具の届く範囲が母集団の境目**である。
+ */
+function thinnableGates() {
+  const walks = (cmd) => [...cmd.matchAll(/scripts\/[\w./-]+\.cjs/g)]
+    .map((m) => m[0])
+    .some((rel) => {
+      const abs = path.join(REPO_ROOT, rel);
+      if (!fs.existsSync(abs)) return false;
+      return /readdirSync|readOriginalDirEntries|readOriginalDir\b/.test(fs.readFileSync(abs, 'utf8'));
+    });
+  return RECIPES.filter((r) => walks(r.cmd) || r.kind === 'git-ls-files').map((r) => r.gate);
+}
+
 const PARTIAL_GATES = [
   'lint:network-targets',
   'lint:url-encoding',
@@ -508,6 +536,31 @@ const PARTIAL_GATES = [
  * `REQUIRED_GROUPS` は「**この群が消えたらこのゲートは鳴らなければならない**」という
  * 振る舞いの宣言で、機構の宣言ではない —— 道具はどう鳴るかを問わない。
  */
+/**
+ * **「一部が死んだときに鳴らす機構」の語彙** (2026-09-26 · パス 472 で 3 → 10)。
+ *
+ * パス 470 は 3 語だった (`shared-floor` / `cross-check` / `tracked-cross-check`) が、
+ * それは手書きの 8 本しか台帳に無かったからである。★ **母集団を 25 本へ広げると、
+ * 実際に鳴らしていた機構は 10 通りあった** —— `MIN_*` の床だけを数えると
+ * 取りこぼす (パス 468 が「床の効き方は 7 通り」と測ったのと同じ形)。
+ *
+ * `not-thinnable` は**機構ではなく報せ**である: 母集団が名指しの一覧なので
+ * この道具では 1 件も落とせない。「落とせなかった」を「床が在る」と読まないために
+ * 語彙に持つ。
+ */
+const MECHANISMS = [
+  'shared-floor',          // 宣言した群はどれも 1 件以上 (population-floor.cjs)
+  'cross-check',           // 権威 (git) に 2 度訊いて一致を要求する
+  'tracked-cross-check',   // 追跡ファイルの一覧と走査を突き合わせる
+  'compared-count',        // 比べた件数が、成功行が刷る件数と一致する
+  'doc-metrics',           // 文書の file:line 参照と live metric が実物とずれる
+  'named-scan',            // 名指しの走査 (在るはずの本が無い)
+  'side-effect-floor',     // 宣言が欠けると別の検査が全件で鳴る
+  'ledger-bidirectional',  // 台帳の双方向 (台帳に在るのに走査に無い)
+  'generated-artifact',    // 生成物の byte 一致
+  'not-thinnable',         // この道具では落とせない (機構ではなく報せ)
+];
+
 const ENFORCEMENT = {
   'lint:network-targets': {
     by: ['shared-floor', 'tracked-cross-check'],
@@ -541,6 +594,79 @@ const ENFORCEMENT = {
     why: '母集団は追跡ファイル全部。合計の床は実測の 11% に在るので一部の死に当たらない。'
       + 'git 自身の答えと件数を突き合わせるので、割合を問わず鳴る',
   },
+  'lint:workflow-security': {
+    by: ['tracked-cross-check'],
+    why: 'CI 自身を守る門。母集団は .github/workflows/ の直下で床は 3 本 (実測 7) なので、4 本消えても届かない。照合が 1'
+      + '本の欠落でも鳴らす',
+  },
+  'lint:docs': {
+    by: ['tracked-cross-check'],
+    why: '「CLAUDE.md が not in CI と書くゲートを workflow が実行していない」を見る歩き。1'
+      + '本消えるとその主張が空虚に真になるので照合を当てる',
+  },
+  'lint:test-coverage': {
+    by: ['tracked-cross-check'],
+    why: '「検査の形なのに vitest の include に一致しない」を見る歩き (includeTests なので __tests__ も入る)。1'
+      + '本消えると 1 度も走らない検査が見えなくなる',
+  },
+  'lint:storage': {
+    by: ['tracked-cross-check'],
+    why: '利用者の端末に何を残すかを見る歩き (src/renderer の木)。1 本消えると台帳に無い保存先が見えなくなる',
+  },
+  'lint:parameter-prose': {
+    by: ['tracked-cross-check'],
+    why: '同じ src/renderer の木。1 本消えると台帳の定数を直接使う行が見えなくなる',
+  },
+  'lint:ipc-handlers': {
+    by: ['tracked-cross-check'],
+    why: 'clientFiles() の側 (src/main/clients の直下) に照合を当てる。handlerFiles()'
+      + 'は中身で絞るので追跡ファイルの一覧からは条件が読めない',
+  },
+  'lint:mutation-scope': {
+    by: ['tracked-cross-check'],
+    why: 'src の木を歩いて「mutate の外の広い無効化」を見る。1 本消えると測っていない範囲が台帳どおりとして通る',
+  },
+  'lint:rate-freshness': {
+    by: ['tracked-cross-check'],
+    why: 'src/shared の直下を歩いて期限の定数を拾う。1 本消えると台帳に無い期限が見えなくなる',
+  },
+  'vault:check': {
+    by: ['compared-count', 'tracked-cross-check'],
+    why: '生成側と committed 側を 2 度歩いて突き合わせる。同じ間引きが両方に掛かると比較が打ち消し合うので、「比べた件数 =='
+      + '刷る件数」の床と照合の両方を置く',
+  },
+  'verify:arch': {
+    by: ['doc-metrics'],
+    why: '図の file:line 参照と live metric が実物とずれる。元から割合に依らず鳴るので照合は足していない',
+  },
+  'lint:forbidden': {
+    by: ['named-scan'],
+    why: 'MUST_SCAN が「在るはずの本が無い」で鳴る。名指しなので割合に依らない',
+  },
+  'lint:data-origin': {
+    by: ['side-effect-floor'],
+    why: '宣言が 1 件でも欠けると 76 サービスすべてが鳴る (副作用としての床)',
+  },
+  'lint:credential-use': {
+    by: ['side-effect-floor'],
+    why: '同じ副作用としての床',
+  },
+  'lint:collection-time': {
+    by: ['ledger-bidirectional'],
+    why: 'mutate 台帳の双方向が「台帳に在るのに走査に無い」で鳴る',
+  },
+  'lint:zero-fold': {
+    by: ['generated-artifact'],
+    why: '生成ブロックの byte 一致が鳴る (docs/REMAINING_WORK.md と突き合わせる)',
+  },
+  'lint:shared-judgement': {
+    by: ['generated-artifact'],
+    why: '同じ生成ブロックの一致',
+  },
+  'chain:verify': {
+    by: ['not-thinnable'],
+    why: '母集団が名指しの保護対象の一覧なので readdirSync の間引きでは 1 件も落とせない。「落とせなかった」を「床が在る」と読まない',
+  },
 };
 
 /*
@@ -564,44 +690,127 @@ const KEEP_PCT = 99;
  * **1 件でも落ちれば鳴る = 割合に依らない**。
  */
 const THINNING = {
+  'verify:arch': {
+    expect: 'rings',
+    why: '図の file:line 参照と live metric が実物とずれるので鳴る (実測 106 件落として exit 1)。照合は足していない'
+      + '—— 元から割合に依らず鳴る',
+  },
+  'lint:forbidden': {
+    expect: 'rings',
+    why: '名指しの走査 (MUST_SCAN) が「在るはずの本が無い」で鳴る (実測 11 件落として exit 1)。照合は足していない',
+  },
+  'lint:workflow-security': {
+    expect: 'rings',
+    why: '追跡ファイルとの照合 (パス 472 で足した)。★ 直す前は 1 本落としても ✅ exit 0 —— 床 MIN_WORKFLOWS は 3'
+      + 'で実測 7 なので 4 本消えても届かない。実測: 7 本それぞれに pull_request_target と未固定の第三者 action'
+      + 'を植えると素の木は ❌ 2 件、その 1 本を走査から落とすと 7 / 7 で植えた違反が消え 6 / 7 は exit 0 だった',
+  },
   'lint:network-targets': {
     expect: 'rings',
-    why: '追跡ファイルとの照合が 5 件の欠落を名指しする (実測 530 → 523)。'
-      + '直す前は 1% では黙り、半分まで落として初めて src の外の床 (60) が偶然鳴った',
+    why: '追跡ファイルとの照合が 5 件の欠落を名指しする (実測 530 → 523)。直す前は 1% では黙り、半分まで落として初めて src の外の床'
+      + '(60) が偶然鳴った',
   },
   'lint:url-encoding': {
     expect: 'rings',
-    why: '同じ照合 (実測 530 → 523)。直す前は 1% / 10% / 25% のどれでも ✅ exit 0 で、'
-      + '半分で合計の床 (300) が偶然鳴っただけだった',
+    why: '同じ照合 (実測 530 → 523)。直す前は 1% / 10% / 25% のどれでも ✅ exit 0 で、半分で合計の床 (300)'
+      + 'が偶然鳴っただけだった',
+  },
+  'lint:regex': {
+    expect: 'rings',
+    why: '同じ照合 (実測 1,582 → 1,560)。★ 直す前は半分落としても ✅ exit 0 だった —— 床 500 に対し 796'
+      + '件が残るので、合計の床には永久に届かない',
   },
   'lint:imports': {
     expect: 'rings',
     why: '同じ照合 (実測 530 → 523)。直す前の振る舞いも lint:url-encoding と同じ',
   },
-  'lint:regex': {
+  'lint:docs': {
     expect: 'rings',
-    why: '同じ照合 (実測 1,582 → 1,560)。**直す前は半分落としても ✅ exit 0** だった ——'
-      + '床 500 に対し 796 件が残るので、合計の床には永久に届かない',
+    why: '同じ照合 (パス 472 で足した)。★ 直す前は workflow 1 本を落とすと ✅ —— 「CLAUDE.md が not in CI'
+      + 'と書くゲートを workflow が実行していない」が空虚に真になる。この門の失敗の文そのもの (「無い」と信じさせて動く仕組みを隠している)'
+      + 'が門自身に起きていた',
   },
   'lint:charset': {
     expect: 'rings',
-    why: '同じ照合 (実測 1,672 → 1,647)。直す前は 25% までは ✅ で、'
-      + '半分で合計の床 (1000) が偶然鳴った',
+    why: '同じ照合 (実測 1,672 → 1,647)。直す前は 25% までは ✅ で、半分で合計の床 (1000) が偶然鳴った',
   },
   'lint:sample-data': {
     expect: 'rings',
-    why: '同じ照合 (実測 1,455 → 1,434)。**直す前は半分落としても ✅ exit 0** だった ——'
-      + 'ソース側の床 300 に対し 731 件が残る',
+    why: '同じ照合 (実測 1,455 → 1,434)。★ 直す前は半分落としても ✅ exit 0 だった —— ソース側の床 300 に対し 731'
+      + '件が残る',
   },
-  'lint:shell': {
+  'lint:test-coverage': {
     expect: 'rings',
-    why: 'crossCheckProblem が git 自身の答えと突き合わせるので、割合を問わず鳴る'
-      + ' (実測: 9,085 → 8,983 に間引くと「一覧が信用できない」と名指しする)',
+    why: '同じ照合 (パス 472 で足した)。★ 直す前は 55 件落としても ✅ —— 「検査の形なのに vitest の include に一致しない'
+      + '= 置いても走らない検査」が見えなくなる (実測: include の外に 1 本置くと素の木は ❌ 1 件、落とすと ✅)',
   },
   'lint:repo-size': {
     expect: 'rings',
-    why: 'crossCheckProblem が git 自身の件数と突き合わせるので、割合を問わず鳴る'
-      + ' (実測: 同じ間引きで「git 自身の答えと食い違い」と名指しする)',
+    why: '権威に 2 度訊く照合 (crossCheckProblem)。母集団が git の一覧なので割合に依らない。'
+      + '直す前は根 knowledge-vault (7,402 件) を落としても ✅ exit 0「追跡 1683 ファイル /'
+      + ' 合計 47.1 MB」と刷った —— 落ちた分は合計から引かれるので**より予算内に見える**',
+  },
+  'lint:shell': {
+    expect: 'rings',
+    why: '権威に 2 度訊く照合 (crossCheckProblem)。母集団が git の一覧なので割合に依らない。直す前は .sh を全部落としても'
+      + '✅ exit 0 で「Checked 9 (追跡ファイル全体から収集)」と刷った',
+  },
+  'lint:storage': {
+    expect: 'rings',
+    why: '同じ照合 (パス 472 で足した)。★ 直す前は 4 件落としても ✅ —— 台帳に無い localStorage の保存先を植てると素の木は'
+      + '❌、そのファイルを落とすと ✅ になる (利用者の端末に何を残すかを見る門)',
+  },
+  'lint:data-origin': {
+    expect: 'rings',
+    why: '宣言が 1 件でも欠けると 76 サービスすべてが鳴る「副作用としての床」(実測 1 件落として exit 1)。照合は足していない',
+  },
+  'lint:credential-use': {
+    expect: 'rings',
+    why: '同じ副作用としての床 (実測 2 件落として exit 1)。照合は足していない',
+  },
+  'lint:ipc-handlers': {
+    expect: 'rings',
+    why: '同じ照合 (パス 472 で足した)。★ 直す前は 2 件落としても ✅ —— payload'
+      + 'の書き出し先を関門なしで書くクライアントを植てると素の木は ❌ 1 件、その 1 本を落とすと ✅。handlerFiles()'
+      + 'の側は中身で絞るので照合できず、clientFiles() の側を照合する',
+  },
+  'lint:mutation-scope': {
+    expect: 'rings',
+    why: '同じ照合 (パス 472 で足した)。★ 直す前は 14 件落としても ✅ —— mutate の外に広い無効化を植てると素の木は ❌ 1'
+      + '件、その 1 本を落とすと ✅ になる (測っていない範囲が「台帳どおり」として通る)',
+  },
+  'lint:collection-time': {
+    expect: 'rings',
+    why: 'mutate 台帳の双方向が「台帳に在るのに走査に無い」で鳴る (実測 18 件落として exit 1)。照合は足していない',
+  },
+  'lint:parameter-prose': {
+    expect: 'rings',
+    why: '同じ照合 (パス 472 で足した)。★ 直す前は 4 件落としても ✅ —— 台帳の定数を直接使う行を植てると素の木は ❌ 1 件、その 1'
+      + '本を落とすと ✅',
+  },
+  'lint:zero-fold': {
+    expect: 'rings',
+    why: '生成ブロックの byte 一致が鳴る (実測 7 件落として exit 1)。照合は足していない',
+  },
+  'lint:shared-judgement': {
+    expect: 'rings',
+    why: '同じ生成ブロックの一致 (実測 7 件落として exit 1)。照合は足していない',
+  },
+  'lint:rate-freshness': {
+    expect: 'rings',
+    why: '同じ照合 (パス 472 で足した)。★ 直す前は 2 件落としても ✅ —— 台帳に無い期限の定数を植てると素の木は ❌、その 1 本を落とすと'
+      + '✅',
+  },
+  'vault:check': {
+    expect: 'rings',
+    why: '「比べた件数 == 刷る件数」の床と照合 (パス 472 で足した)。★ 直す前は .md を全部落としても ✅「同期しています（7402'
+      + 'ファイル）」exit 0 —— 0 件比べて 7402 件を名乗った。ノート 1 件を改ざんしてその名前を走査から落とすと、素の木の ❌'
+      + '内容差分が消えた',
+  },
+  'chain:verify': {
+    expect: 'not-dropped',
+    why: '母集団が名指しの保護対象の一覧なので readdirSync の間引きでは 1 件も落とせない。★ 「落とせなかった」を「床が在る」と読まない'
+      + '—— 道具が not-dropped として区別する',
   },
 };
 
@@ -649,7 +858,9 @@ function runPartial(argv) {
     const i = argv.indexOf('--worktree');
     return i >= 0 && argv[i + 1] ? path.resolve(argv[i + 1]) : null;
   })();
-  const gates = RECIPES.filter((r) => PARTIAL_GATES.includes(r.gate) && (!only || only.has(r.gate)));
+  // 一様な間引きは**木を歩く全ゲート** (台帳 = THINNING) を測る。群ごとの床は
+  // それを宣言している 8 本だけ —— 弱くなっていない所に床を足さない (パス 469)。
+  const gates = RECIPES.filter((r) => Object.hasOwn(THINNING, r.gate) && (!only || only.has(r.gate)));
   if (gates.length === 0) {
     console.error('❌ --only がどのゲートにも当たりません');
     return 1;
@@ -694,7 +905,7 @@ function runPartial(argv) {
     for (const r of gates) {
       const script = scriptOf(r.cmd);
       injectPreamble(wt, script);
-      for (const g of declaredGroups(script)) {
+      for (const g of (PARTIAL_GATES.includes(r.gate) ? declaredGroups(script) : [])) {
         const m = measure(r, g);
         rows.push({ gate: r.gate, group: `${g.mode} ${g.arg}`, want: 'rings', ...m });
         const mark = m.verdict === 'rings' ? '✓' : '✗';
@@ -732,8 +943,14 @@ function runPartial(argv) {
     if (b.verdict === 'not-dropped') {
       console.error(`  ${b.gate} — ${b.group} は母集団に 1 件もありません (宣言が実物からずれています)`);
       console.error('      ★ これは「床が在る」ではありません');
+    } else if (b.want === 'not-dropped') {
+      console.error(`  ${b.gate} — ${b.group}: 台帳は「落とせない」と書いていますが ${b.dropped} 件落ちました`);
+      console.error('      ★ 母集団の作り方が変わっています (台帳の理由を測り直してください)');
     } else if (b.verdict === 'no-report') {
       console.error(`  ${b.gate} — ${b.group}: 前置きが走っていません (差し込みに失敗しています)`);
+    } else if (b.want === 'rings' && b.group.startsWith('keep ')) {
+      console.error(`  ${b.gate} — 一様な間引きで ${b.dropped} 件落としても exit 0 でした`);
+      console.error('      ★ 割合に依らない 2 つ目の数え方 (追跡ファイルとの照合) が消えています');
     } else if (b.want === 'rings') {
       console.error(`  ${b.gate} — ${b.group} を ${b.dropped} 件落としても exit 0 でした (群ごとの床がありません)`);
     } else {
@@ -910,6 +1127,44 @@ function selfTest() {
     PARTIAL_GATES.every((g) => RECIPES.some((r) => r.gate === g)),
   );
   check('PARTIAL_GATES が空でない', PARTIAL_GATES.length >= 5);
+
+  // ★ **一様な間引きの台帳は「木を歩くゲート」と双方向に一致する** (2026-09-26 · パス 472)。
+  //   パス 469〜471 は手書きの 8 本しか測っておらず、実測 24 本のうち 9 本が
+  //   1% の損失で黙っていた。母集団は走査で導くので、25 本目が生えた日に鳴る。
+  const walking = thinnableGates();
+  const ledgered = Object.keys(THINNING);
+  const unledgered = walking.filter((g) => !Object.hasOwn(THINNING, g));
+  const notWalking = ledgered.filter((g) => !walking.includes(g));
+  check(
+    `★ 間引けるゲートはすべて THINNING に在る (実測 ${walking.length} 本${unledgered.length ? ': ' + unledgered.join(', ') : ''})`,
+    unledgered.length === 0,
+  );
+  check(
+    `★ THINNING の行はすべて間引ける${notWalking.length ? ': ' + notWalking.join(', ') : ''}`,
+    notWalking.length === 0,
+  );
+  check('★ 間引けるゲートの走査が死んでいない (床)', walking.length >= 20);
+  check(
+    '★ THINNING の expect は rings か not-dropped だけ',
+    ledgered.every((g) => ['rings', 'not-dropped'].includes(THINNING[g].expect)),
+  );
+  check(
+    '★ THINNING の理由は「同上」の決まり文句ではない',
+    ledgered.every((g) => typeof THINNING[g].why === 'string'
+      && THINNING[g].why.trim().length >= 15
+      && !/^同上[。)]?$/.test(THINNING[g].why.trim())),
+  );
+  check(
+    '★ 走査の条件 (CROSS_CHECK) を export するゲートは、その条件で照合を呼ぶ',
+    (() => {
+      const walks = ['lint-workflow-security', 'lint-storage-ledger', 'lint-parameter-prose',
+        'lint-ipc-handlers', 'lint-mutation-scope', 'lint-rate-freshness', 'lint-test-coverage'];
+      return walks.every((name) => {
+        const src = fs.readFileSync(path.join(REPO_ROOT, `scripts/${name}.cjs`), 'utf8');
+        return src.includes('const CROSS_CHECK') && src.includes('reportTrackedCrossCheck(');
+      });
+    })(),
+  );
   check(
     'scriptOf は cmd の引数を落とす',
     scriptOf('node scripts/x.cjs --check') === 'scripts/x.cjs',
@@ -950,27 +1205,20 @@ function selfTest() {
 
   // --- 一様な間引きの台帳 (パス 470) ------------------------------------
   check(
-    '★ THINNING と PARTIAL_GATES が双方向に一致する',
-    PARTIAL_GATES.every((g) => Object.hasOwn(THINNING, g))
-      && Object.keys(THINNING).every((g) => PARTIAL_GATES.includes(g)),
+    '★ PARTIAL_GATES は THINNING の部分集合 (群の床を宣言する物は一様な間引きでも測る)',
+    PARTIAL_GATES.every((g) => Object.hasOwn(THINNING, g)),
   );
   check(
-    '★ ENFORCEMENT と PARTIAL_GATES が双方向に一致する',
-    PARTIAL_GATES.every((g) => Object.hasOwn(ENFORCEMENT, g))
-      && Object.keys(ENFORCEMENT).every((g) => PARTIAL_GATES.includes(g)),
+    '★ ENFORCEMENT と THINNING が双方向に一致する (間引ける全ゲートが機構を名乗る)',
+    Object.keys(THINNING).every((g) => Object.hasOwn(ENFORCEMENT, g))
+      && Object.keys(ENFORCEMENT).every((g) => Object.hasOwn(THINNING, g)),
   );
   check(
-    '★ ENFORCEMENT の機構は既知の 3 つで、1 つ以上あり、理由が埋まっている',
+    '★ ENFORCEMENT の機構は既知の 10 語で、1 つ以上あり、理由が埋まっている',
     Object.values(ENFORCEMENT).every(
       (e) => Array.isArray(e.by) && e.by.length > 0
-        && e.by.every((b) => ['shared-floor', 'cross-check', 'tracked-cross-check'].includes(b))
+        && e.by.every((b) => MECHANISMS.includes(b))
         && typeof e.why === 'string' && e.why.length >= 8,
-    ),
-  );
-  check(
-    '★ THINNING の期待は rings / silent のどちらかで、理由が埋まっている',
-    Object.values(THINNING).every(
-      (t) => ['rings', 'silent'].includes(t.expect) && typeof t.why === 'string' && t.why.length >= 8,
     ),
   );
   check(
@@ -1064,6 +1312,8 @@ function selfTest() {
 }
 
 module.exports = {
+  MECHANISMS,
+  thinnableGates,
   RECIPES, NO_POPULATION, KINDS, applyRecipe, emptyObjectBody,
   PARTIAL_GATES, THINNING, ENFORCEMENT, KEEP_PCT, scriptOf, declaredGroups, injectPreamble,
   PREAMBLE_SRC, PREAMBLE_MARK,
