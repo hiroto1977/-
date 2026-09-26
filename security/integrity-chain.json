@@ -2201,6 +2201,14 @@
       "leafCount": 94,
       "note": "update integrity-chain.cjs,tracked-cross-check.cjs",
       "hash": "48a6f5b9c27762ea1a95524777014ff9140e108086eab8507e4ac27d2bdb2bd1"
+    },
+    {
+      "index": 263,
+      "prevHash": "48a6f5b9c27762ea1a95524777014ff9140e108086eab8507e4ac27d2bdb2bd1",
+      "merkleRoot": "3f1ddcc92f79b834633845326962c0e6be4cdae2023eb0659107c1d6bf28a730",
+      "leafCount": 94,
+      "note": "update integrity-chain.cjs",
+      "hash": "16e58b8e470d21c5e85e07fdfe91b52e21797357fe8bc1809224ffb2974918fd"
     }
   ],
   "tipManifest": {
@@ -2221,7 +2229,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "0fa7f0773881605efb645744cc293d43bc0ded107bae28ab3b6085a6189f2120",
+    "scripts/integrity-chain.cjs": "72d9c10a02e3bb45df2fc9d3e3b6f9b3163fbef581108e8c16512ce84e2fd370",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
     "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",

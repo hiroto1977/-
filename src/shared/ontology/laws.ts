@@ -1149,12 +1149,28 @@ export const LAWS: readonly Law[] = [
       + 'つまり 1 行足せば CI・`release.yml` の梱包ジョブ (署名鍵と `GH_TOKEN` を持つ)・全員の手元で走るのに、'
       + 'それを足しても **37 ゲートすべてが exit 0** だった (`.npmrc` を置いても同じ)。'
       + '**鎖に入れるかは変更頻度で決める** —— `package.json` は全履歴 12 コミットで「安定資産」の基準を満たさないので、'
-      + 'ここは門で形を見るのが正しい道具である。',
+      + 'ここは門で形を見るのが正しい道具である。'
+      + '★★ **5 件目は「守る対象を選ぶ一覧」だった** (2026-09-26 · パス 475) —— '
+      + '上の 4 件は「鎖へ入れれば守られる」で終わっていたが、**その鎖の名簿 (`PROTECTED`) 自身が無縛**だった。'
+      + '実測 (隔離した写しで `vite.config.ts` を 1 行消して `chain:append`): '
+      + '**`chain:verify` は exit 0「保護対象 93 ファイルが tip と一致」**・`lint:mutation-scope` も exit 0。'
+      + '検査 1〜4 はどれも「**今の**一覧が tip と合っているか」なので、append が新しい tip を 93 件で'
+      + '作り直した時点で全部満たされる —— つまり**パス 347 と 349 の修復は、1 行消して append するだけで'
+      + '静かに元へ戻せた**。母集団を測ると 94 のうち**29 件**は閉包 (50) でも壁の名簿 (34) でも鳴らず、'
+      + 'その 29 にはパス 347 / 349 / 363 / 370 / 372 が「無縛だから」と鎖へ入れた当のファイルが並ぶ。'
+      + '★ **証拠は鎖がもう持っていた** —— ブロックの `leafCount` と `note` はどちらも `blockHash` に入るので'
+      + '後から書き換えられない。読む物が無かっただけである。**合図は 2 つ要る**: 実測 263 ブロックで'
+      + '`leafCount` の減少は #89 だけだが、`note` の `-名前` は **#67 (delta 0)** も拾う —— '
+      + '同じ append で 1 件出て 1 件入った形は**数だけを見る門に盲目**である。'
+      + '★ **証拠の側も直す** —— note は変更と削除を混ぜて先頭 6 件で切っており、実測 9 ブロックが'
+      + '6 件に届いていた (7 件以上動いた append では削除が枠から押し出されうる)。切るのは変更の側だけにした。'
+      + '★ **`kind` は機械で検める** —— 理由の散文だけだと「移った」と書いて実は消えていても通る。',
     provenance: [
       'パス 347 (vite.config.ts)',
       'パス 349 (PROXY_EXAMPLE.md)',
       'パス 370 (.claude/settings.json の hooks)',
       'パス 371 (package.json の lifecycle script と .npmrc)',
+      'パス 475 (鎖の名簿 PROTECTED 自身が無縛 —— 1 行消して append すれば緑)',
     ],
     enforcedBy: [
       gate('lint:mcp-servers'),
@@ -1163,6 +1179,7 @@ export const LAWS: readonly Law[] = [
       gate('chain:verify'),
       test(T.shared('sessionStartCodeGuarded')),
       test(T.shared('installTimeCodeGuarded')),
+      test(T.shared('protectedListShrink')),
     ],
   },
   {

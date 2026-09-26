@@ -639,6 +639,142 @@ function dependencySpecs(text, kind) {
   return out;
 }
 
+/*
+ * **保護対象から外れた記録** (2026-09-26 · パス 475)。
+ *
+ * ここまでの検査はどれも「**今の** `PROTECTED` が tip と合っているか」を見る。
+ * だから名前を 1 つ消して `chain:append` を回すと、**新しい tip がその 93 件で
+ * 作り直され、`chain:verify` は exit 0 になる** (2026-09-26 実測:
+ * `vite.config.ts` を落として append → 「保護対象 93 ファイルが tip と一致」)。
+ * 閉包の検査も、その名前を**他の保護対象が読んでいなければ**何も言わない。
+ *
+ * ★ **証拠は鎖がもう持っている** —— ブロックは `leafCount` と `note` を持ち、
+ * どちらも `blockHash` に入るので**後から書き換えられない**。読む物が無かった
+ * だけである。実測 (263 ブロック · 2026-09-26):
+ *
+ * | 合図 | 見つかったブロック |
+ * | --- | --- |
+ * | `leafCount` が減った | #89 (50 → 49) |
+ * | `note` に `-名前` | #67 (**delta 0**) / #89 |
+ *
+ * ★★ **#67 は件数では見えない** —— 同じ append で 1 件出て 1 件入ったので
+ * `leafCount` は動かない。**数だけを見る門はこの形に盲目**で、だから合図は 2 つ要る。
+ *
+ * 今日の 2 件はどちらも正当だった (#67 は `renderer/security/` →
+ * `shared/` への移動・#89 は除外台帳への移動) が、**それを確かめた物は
+ * 何も無かった**。`kind` を機械で検めるのはそのため —— 理由の散文だけだと
+ * 「移った」と書いて実は消えていても通る。
+ */
+const DECLARED_REMOVALS = {
+  67: {
+    removed: ['externalUrlGate.ts'],
+    kind: 'moved',
+    why: '外部 URL の関門を src/renderer/security/ から src/shared/ へ移した回。'
+      + 'basename が同じなので note には「変更」と「削除」が並んで出ている (実測)。',
+  },
+  89: {
+    removed: ['updateCheck.ts'],
+    kind: 'to-exclusions',
+    why: '更新確認を保護対象から除外台帳へ移した回。理由つきで DEP_EXCLUSIONS に在る。',
+  },
+};
+
+/** 使える `kind` と、それが今日も本当かを確かめる述語。 */
+const REMOVAL_KINDS = {
+  // 別の道へ移った: 同じ basename が今も保護対象に在る。
+  moved: (name, prot) => prot.some((p) => path.basename(p) === name),
+  // 除外台帳へ移った: 理由つきで DEP_EXCLUSIONS に在る。
+  'to-exclusions': (name, _prot, exc) => Object.keys(exc).some((p) => path.basename(p) === name),
+};
+
+/**
+ * 鎖の履歴から「保護対象が外れたブロック」を拾う。
+ *
+ * 合図は 2 つ (上の docblock の表) —— `note` の `-名前` と `leafCount` の減少。
+ * 片方だけでは足りないことは実測済みで、#67 は前者だけ・件数が動かない形に在る。
+ *
+ * `note` は 2026-09-26 より前は basename、以後は完全な道を持つ (下の
+ * `block_note_changed` がそう変えた) ので、**どちらも basename へ正規化して**
+ * 比べる。
+ */
+function removalsInHistory(chain) {
+  const out = [];
+  let prev = null;
+  for (const b of (chain && chain.blocks) || []) {
+    const names = String((b && b.note) || '')
+      // ★ note は `update <差分>` の形なので、動詞を先に外す —— 外さないと
+      //   **先頭の項だけ** `update -x.ts` になって `-` で始まらず、合図を落とす。
+      //   2026-09-26 に実際に落とした: 削除を先頭へ移した当のパスで、私の標本は
+      //   削除を 2 番目に置いていた (= 旧い形) ので、作り出したばかりの新しい形を
+      //   1 度も通していなかった。**標本は、生産する側が実際に出す形にする。**
+      .replace(/^update\s+/, '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.startsWith('-') && s.length > 1)
+      .map((s) => path.basename(s.slice(1)));
+    const count = typeof b.leafCount === 'number' ? b.leafCount : null;
+    const shrank = prev !== null && count !== null && count < prev;
+    if (names.length > 0 || shrank) out.push({ index: b.index, names, shrank });
+    if (count !== null) prev = count;
+  }
+  return out;
+}
+
+/**
+ * 外れた記録が**理由つきで宣言されているか**を両方向に見る。
+ *
+ * 向きが 2 つあるのは、片方だけだと台帳が静かに古びるから ——
+ * 宣言の無い削除は「黙って壁が 1 枚減った」で、実物の無い宣言は
+ * 「もう起きていない事を根拠に残った免除」である。
+ */
+function collectRemovalProblems(chain, declared, protectedList, exclusions) {
+  const problems = [];
+  const seen = removalsInHistory(chain);
+  const decl = declared || {};
+  for (const ev of seen) {
+    const row = decl[ev.index];
+    if (row === undefined) {
+      const what = ev.names.length ? ev.names.join(',') : '(note に名前が無い)';
+      problems.push(
+        `ブロック #${ev.index} で保護対象が外れているのに DECLARED_REMOVALS に宣言がない (${what})`,
+      );
+      continue;
+    }
+    if (typeof row.why !== 'string' || row.why.trim().length < 15) {
+      problems.push(`ブロック #${ev.index} の宣言に理由が無い (why が空か短すぎる)`);
+    }
+    const check = REMOVAL_KINDS[row.kind];
+    if (check === undefined) {
+      problems.push(
+        `ブロック #${ev.index} の kind が不明: ${String(row.kind)} (使えるのは ${Object.keys(REMOVAL_KINDS).join(' / ')})`,
+      );
+      continue;
+    }
+    for (const name of ev.names) {
+      if (!(row.removed || []).includes(name)) {
+        problems.push(`ブロック #${ev.index} の宣言が ${name} を挙げていない`);
+      }
+    }
+    for (const name of row.removed || []) {
+      if (!check(name, protectedList, exclusions || {})) {
+        problems.push(
+          `ブロック #${ev.index} は ${name} を ${row.kind} と宣言しているが、今日それが成り立たない`
+            + ' (保護対象からも除外台帳からも消えている = 理由の無いまま壁が 1 枚減っている)',
+        );
+      }
+    }
+  }
+  const observed = new Set(seen.map((e) => String(e.index)));
+  for (const index of Object.keys(decl)) {
+    if (!observed.has(index)) {
+      problems.push(
+        `DECLARED_REMOVALS の #${index} は鎖の履歴に削除として現れない (古い宣言。消すこと)`,
+      );
+    }
+  }
+  return problems;
+}
+
 function collectClosureProblems(protectedList, exclusions) {
   const problems = [];
   const set = new Set(protectedList);
@@ -794,13 +930,30 @@ function cmdAppend() {
   console.log(`✅ ブロック #${block.index} を採掘しました（prev ${block.prevHash.slice(0, 16)}… → hash ${block.hash.slice(0, 16)}…）。`);
 }
 
-/** 直前 tip からの差分ファイルを短い note 文字列にする。 */
+/**
+ * 直前 tip からの差分ファイルを短い note 文字列にする。
+ *
+ * ★ **外れた物は全部・完全な道で残す** (2026-09-26 · パス 475)。理由が 2 つ:
+ *
+ * 1. **切り捨てで消えうる** —— 以前は変更と削除を混ぜて先頭 6 件で切っていた。
+ *    実測すると 263 ブロックのうち **9 本**が 6 件に届いており、7 件以上動いた
+ *    append では削除が枠から押し出されうる。削除は `collectRemovalProblems` が
+ *    読む唯一の証拠なので、押し出されると壁が 1 枚減ったことが**永久に残らない**。
+ * 2. **basename は曖昧** —— ブロック #67 の note は
+ *    `externalUrlGate.ts,-externalUrlGate.ts` で、同じ名前が「変更」と「削除」に
+ *    並んで出ている (道が違う 2 つのファイルが同じ basename を持つ移動だった)。
+ *    完全な道なら読んだ人がその場で移動と分かる。
+ *
+ * 過去のブロックの note は不変 (`blockHash` に入っている) ので、この変更は
+ * これから作るブロックにだけ効く。`removalsInHistory` は両方の形を読む。
+ */
 function block_note_changed(prevManifest, manifest) {
   const prev = prevManifest || {};
   const changed = [];
   for (const p of Object.keys(manifest)) if (prev[p] !== manifest[p]) changed.push(path.basename(p));
-  for (const p of Object.keys(prev)) if (!(p in manifest)) changed.push(`-${path.basename(p)}`);
-  return changed.length ? changed.slice(0, 6).join(',') : 'no-op';
+  const removed = Object.keys(prev).filter((p) => !(p in manifest)).map((p) => `-${p}`);
+  if (changed.length === 0 && removed.length === 0) return 'no-op';
+  return [...removed, ...changed.slice(0, 6)].join(',');
 }
 
 function writeChain(chain) {
@@ -844,6 +997,14 @@ function cmdVerify() {
   // 4. 閉包: 保護対象が読んでいる先も保護対象か、理由付きで除外されているか
   const closure = collectClosureProblems(PROTECTED, DEP_EXCLUSIONS);
   if (closure.length > 0) fail(`保護の閉包が破れています:\n  - ${closure.join('\n  - ')}`);
+
+  // 5. 履歴: 保護対象が外れたブロックは、理由つきで宣言されているか (両方向)
+  //
+  //    上の 1〜4 はどれも「**今の** 一覧が tip と合っているか」なので、名前を
+  //    1 つ消して append すれば全部緑になる (2026-09-26 実測)。ここだけが
+  //    「壁が 1 枚減った」を履歴から読む。
+  const removals = collectRemovalProblems(chain, DECLARED_REMOVALS, PROTECTED, DEP_EXCLUSIONS);
+  if (removals.length > 0) fail(`保護対象が外れた記録に宣言がありません:\n  - ${removals.join('\n  - ')}`);
 
   console.log(
     `✅ integrity-chain OK — ブロック ${chain.blocks.length} 連結・保護対象 ${chain.protected.length} ファイルが tip と一致`
@@ -1048,6 +1209,128 @@ function cmdSelfTest() {
   );
   check('除外の理由が空でない', Object.values(DEP_EXCLUSIONS).every((r) => r.trim().length > 0));
 
+  // --- 履歴から「壁が 1 枚減った」を読めるか (パス 475) ---
+  {
+    /*
+     * **実物の鎖で 0 件**であることと、**合図 2 つがそれぞれ独立に鳴る**ことを見る。
+     *
+     * 合成のブロックで試すのは、実物の履歴に在るのが 2 件 (#67 / #89) だけで、
+     * しかも**どちらも正当**だから —— 実物だけを見ていると「0 件だから通る」検査に
+     * なる (この本が何度も名指ししている形)。
+     */
+    const liveChain = (() => {
+      try {
+        return JSON.parse(fs.readFileSync(CHAIN_PATH, 'utf8'));
+      } catch {
+        return null;
+      }
+    })();
+    check(
+      '実物の鎖では外れた記録の問題が 0 件',
+      liveChain !== null &&
+        collectRemovalProblems(liveChain, DECLARED_REMOVALS, PROTECTED, DEP_EXCLUSIONS).length === 0,
+    );
+    // 合図 1: note の `-名前` (件数は動かない = #67 の形)
+    // ★ 実物が出す形 = 削除が**先頭**で `update ` が付く (block_note_changed が
+    //   削除を先に並べるため)。旧い形 (削除が 2 番目) は下で別に試す。
+    const noteOnly = { blocks: [
+      { index: 0, leafCount: 3, note: 'genesis' },
+      { index: 1, leafCount: 3, note: 'update -src/x/gone.ts,a.ts' },
+    ] };
+    check(
+      '★ note に - が在って宣言が無ければ鳴る (件数が動かない形)',
+      collectRemovalProblems(noteOnly, {}, [], {}).some((m) => m.includes('#1') && m.includes('gone.ts')),
+    );
+    // 合図 2: leafCount の減少だけ (note が切れて名前が残らなかった形)
+    const countOnly = { blocks: [
+      { index: 0, leafCount: 3, note: 'genesis' },
+      { index: 1, leafCount: 2, note: 'update a.ts,b.ts' },
+    ] };
+    check(
+      '★ 件数が減って宣言が無ければ鳴る (note に名前が無くても)',
+      collectRemovalProblems(countOnly, {}, [], {}).some((m) => m.includes('#1')),
+    );
+    check(
+      '増える側では鳴らない (足すのは自由)',
+      collectRemovalProblems({ blocks: [
+        { index: 0, leafCount: 3, note: 'genesis' },
+        { index: 1, leafCount: 5, note: 'update a.ts' },
+      ] }, {}, [], {}).length === 0,
+    );
+    // 宣言の中身を機械で検める
+    const declared = { 1: { removed: ['gone.ts'], kind: 'moved', why: 'これは十分に長い理由の文です。' } };
+    check(
+      '★ moved と宣言しても、同じ名前が保護対象に無ければ鳴る',
+      collectRemovalProblems(noteOnly, declared, [], {}).some((m) => m.includes('成り立たない')),
+    );
+    check(
+      'moved が今日も成り立てば通る',
+      collectRemovalProblems(noteOnly, declared, ['src/other/gone.ts'], {}).length === 0,
+    );
+    check(
+      'to-exclusions は除外台帳を見る',
+      collectRemovalProblems(noteOnly, { 1: { removed: ['gone.ts'], kind: 'to-exclusions', why: 'これは十分に長い理由の文です。' } },
+        [], { 'src/x/gone.ts': '理由' }).length === 0,
+    );
+    check(
+      '★ 知らない kind は鳴る (語彙を閉じている)',
+      collectRemovalProblems(noteOnly, { 1: { removed: ['gone.ts'], kind: 'vanished', why: 'これは十分に長い理由の文です。' } }, [], {})
+        .some((m) => m.includes('kind が不明')),
+    );
+    check(
+      '★ 理由が短ければ鳴る',
+      collectRemovalProblems(noteOnly, { 1: { removed: ['gone.ts'], kind: 'moved', why: '同上。' } }, ['src/other/gone.ts'], {})
+        .some((m) => m.includes('理由が無い')),
+    );
+    check(
+      '★ 宣言が名前を挙げていなければ鳴る',
+      collectRemovalProblems(noteOnly, { 1: { removed: [], kind: 'moved', why: 'これは十分に長い理由の文です。' } }, [], {})
+        .some((m) => m.includes('挙げていない')),
+    );
+    check(
+      '★ 逆向き: 履歴に無い宣言が残っていれば鳴る (古い免除)',
+      collectRemovalProblems(noteOnly, { ...declared, 99: { removed: ['x.ts'], kind: 'moved', why: 'これは十分に長い理由の文です。' } },
+        ['src/other/gone.ts'], {}).some((m) => m.includes('#99')),
+    );
+  }
+
+  // --- note の形: 外れた物は切り捨てられず、完全な道で残る (パス 475) ---
+  {
+    const prev = {};
+    for (let i = 0; i < 9; i += 1) prev[`src/c${i}.ts`] = sha256(`old${i}`);
+    prev['src/deep/removed.ts'] = sha256('R');
+    const next = {};
+    for (let i = 0; i < 9; i += 1) next[`src/c${i}.ts`] = sha256(`new${i}`);
+    const note = block_note_changed(prev, next);
+    check(
+      '★ 9 件変わっても外れた 1 件は note に残る (切り捨てで消えない)',
+      note.includes('-src/deep/removed.ts'),
+    );
+    check('外れた物は完全な道で載る (basename ではない)', !note.split(',').includes('-removed.ts'));
+    check('変更の側は 6 件で切る (note を短く保つ)', note.split(',').filter((s) => !s.startsWith('-')).length === 6);
+    check('何も動かなければ no-op', block_note_changed(prev, prev) === 'no-op');
+    // 両方の形 (旧: basename / 新: 完全な道) を読めるか
+    check(
+      '旧い note (basename・削除が 2 番目) も読める',
+      removalsInHistory({ blocks: [{ index: 1, leafCount: 1, note: 'update x.ts,-old.ts' }] })[0].names[0] === 'old.ts',
+    );
+    check(
+      '★ 削除が先頭でも読める (update という動詞が前に付く形)',
+      removalsInHistory({ blocks: [{ index: 1, leafCount: 1, note: 'update -src/a/old.ts,x.ts' }] })[0].names[0] === 'old.ts',
+    );
+    check(
+      '実物の block_note_changed が出す note をそのまま読める (往復)',
+      (() => {
+        const note = `update ${block_note_changed({ 'src/a/gone.ts': 'h' }, {})}`;
+        return removalsInHistory({ blocks: [{ index: 1, leafCount: 0, note }] })[0].names[0] === 'gone.ts';
+      })(),
+    );
+    check(
+      '新しい note (完全な道) も同じ名前へ正規化される',
+      removalsInHistory({ blocks: [{ index: 1, leafCount: 1, note: 'update x.ts,-src/a/old.ts' }] })[0].names[0] === 'old.ts',
+    );
+  }
+
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件 — 改竄検知が働いていない`);
     process.exit(1);
@@ -1066,7 +1349,18 @@ function cmdSelfTest() {
  * 併せて CLI の起動を `require.main` で守る —— export しても、require した
  * 瞬間にコマンドが走っては読めない。
  */
-module.exports = { PROTECTED, DEP_EXCLUSIONS, collectClosureProblems, dependencySpecs, resolveRelativeImport };
+module.exports = {
+  PROTECTED,
+  DEP_EXCLUSIONS,
+  DECLARED_REMOVALS,
+  REMOVAL_KINDS,
+  collectClosureProblems,
+  collectRemovalProblems,
+  removalsInHistory,
+  block_note_changed,
+  dependencySpecs,
+  resolveRelativeImport,
+};
 
 if (require.main === module) {
   const cmd = process.argv[2] || 'verify';
