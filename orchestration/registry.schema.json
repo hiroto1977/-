@@ -3,7 +3,7 @@
   "title": "AI Orchestration Registry",
   "description": "進化し続けるAIオーケストレーションの単一の真実源。チーム・ラウンド・バックログを機械可読に保持する。",
   "type": "object",
-  "required": ["version", "policy", "teams", "rounds", "teamFirstRound", "backlog"],
+  "required": ["version", "policy", "teams", "rounds", "teamFirstRound", "backlog", "org"],
   "additionalProperties": true,
   "properties": {
     "version": { "type": "integer", "minimum": 1 },
@@ -164,9 +164,20 @@
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
           "team": { "type": "string" },
-          "title": { "type": "string" },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F\\u00AD\\u200B\\u200E\\u200F\\u202A-\\u202E\\u2060-\\u2064\\u2066-\\u2069\\uFEFF]*$",
+            "description": "論点の名前 (文字で数える)。チャットボットの要望を取り込む口 (orchestrate.cjs import-requests) もこの上限を読む —— 要望は最大 32,768 字まで打てるので、長い要望は取り込む前に論点へ要約する。pattern は制御文字 (C0/DEL/C1・タブ・改行)・双方向制御・不可視文字を通さない —— 題名は端末へ刷られ Agent へ渡る。字の集合は lint:charset の INVISIBLE_RANGES + 改行・タブと同じで、BMP の全コードポイントでの一致を registrySchemaEnforced.test.ts が縛る。"
+          },
           "priority": { "type": "integer", "minimum": 1 },
           "status": { "type": "string", "enum": ["designed", "in-progress", "shipped", "dropped", "blocked"] },
+          "source": {
+            "type": "string",
+            "enum": ["chatbot"],
+            "description": "出どころ。chatbot = 利用者がチャットボットに打った文をそのまま題名にした項目 (import-requests が付ける)。dispatch はこの印を Agent への割当まで運び、題名を指示ではなくデータとして扱うよう明記する。"
+          },
           "note": { "type": "string" }
         }
       }

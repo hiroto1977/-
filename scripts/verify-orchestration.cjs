@@ -6,7 +6,7 @@
  *
  * 「進化し続ける仕組み」の中核。orchestration/registry.json を読み、次の不変条件を
  * 強制する:
- *   1. JSON は registry.schema.json の必須構造を満たす (簡易チェック)。
+ *   1. 最上位の必須キーが在る (一覧は registry.schema.json の `required` から読む —— 門に写さない)。
  *   2. rounds の teamCount は単調増加 (作業サイクルごとにチームが減らない)。
  *   3. 各 round は policy.minTeamsForRound の最低チーム数を満たす。
  *   4. rounds[].teams と backlog[].team は teams[].id に実在する。
@@ -15,6 +15,11 @@
  *  13. teamFirstRound (製品が読む派生索引「チーム → 初出 round」) は rounds から
  *      導いた物と両方向に一致する (2026-09-26 · パス 483。導出は
  *      scripts/lib/team-first-round.cjs の 1 つで、書き手 orchestrate.cjs record も同じ物を通る)。
+ *  14. registry は registry.schema.json の宣言を**すべて**満たす (2026-09-26 · パス 484)。
+ *      それまで宣言を読む物は 1 つも無く、宣言された制約 153 件のうち 67 件が素通りしていた
+ *      (チームの domain が無い / active が文字列 / backlog の status の綴り違い ——
+ *      どれも製品が読む欄)。検証器は scripts/lib/json-schema-subset.cjs で、知らない
+ *      キーワードは「未対応」として落とす (宣言に足した制約が門に届かないまま残らない)。
  *
  * さらに「次に何チームで・どの領域を細分化するか」を自動算出して出力する
  * (--plan)。これによりレジストリ自体が次サイクルの設計図になり、増やし続けても
@@ -28,13 +33,49 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { teamFirstRoundProblems } = require('./lib/team-first-round.cjs');
+const { validateAgainstSchema } = require('./lib/json-schema-subset.cjs');
+const { printableLines } = require('./lib/untrusted-text.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
+/**
+ * 台帳の形の宣言。**`--registry` で台帳を差し替えても、宣言は差し替えない** ——
+ * 検査が写しの上で門を走らせるとき、写しが自分の宣言を持ち込んで門を緩められない
+ * ようにする (門が読むのはリポジトリの宣言だけ)。
+ */
+const SCHEMA = path.join(REPO_ROOT, 'orchestration/registry.schema.json');
+
+/** 宣言を読む。読めなければ落とす —— 宣言が読めないことを「制約が 0 件」と読まない (パス 467)。 */
+function loadSchema() {
+  let schema;
+  try {
+    schema = JSON.parse(fs.readFileSync(SCHEMA, 'utf8'));
+  } catch (e) {
+    fail([`registry.schema.json を読めません: ${e.message}`]);
+  }
+  if (!schema || typeof schema !== 'object' || !Array.isArray(schema.required) || schema.required.length === 0) {
+    fail(['registry.schema.json の最上位に required (必須キーの一覧) がありません']);
+  }
+  return schema;
+}
+
+/*
+ * **端末へ刷る口はこの 2 つだけ** (2026-09-26 · パス 484)。
+ *
+ * この門は台帳の文字列を刷る —— 問題の文は台帳の値を引用し、`--plan` は組織図と
+ * 着手候補を刷る。台帳の題名は宣言の `pattern` がこの門で落とすが、他の欄
+ * (役員・管理職の `title`・チームの `domain` ほか) は開発側が書く欄で `pattern` を
+ * 持たず、しかも `lint:charset` はファイルの字を読むので `JSON.stringify` が `\u001b` へ
+ * 逃がした C0 を見ない。だから守るのは欄ではなく口である —— すべて `printableLines`
+ * (改行だけ残し、他の危ない字を見える形へ) を通す (`orchestrate.cjs` と同じ形)。
+ * **素の `console.*` はこの 2 行の外に置かない** (`importRequestsPath.test.ts` が数える)。
+ */
+function say(text = '') { console.log(printableLines(text)); }
+function sayErr(text = '') { console.error(printableLines(text)); }
 
 function fail(messages) {
-  console.error(`\n❌ orchestration registry: ${messages.length} 件の問題`);
-  for (const m of messages) console.error(`  - ${m}`);
+  sayErr(`\n❌ orchestration registry: ${messages.length} 件の問題`);
+  for (const m of messages) sayErr(`  - ${m}`);
   process.exit(1);
 }
 
@@ -107,7 +148,7 @@ function selfTest() {
     const got = strip(mut);
     const pass = got === want;
     if (!pass) bad += 1;
-    console.log(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
+    say(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
   }
 
   // 不変条件 13 —— 派生索引 teamFirstRound (パス 483)。
@@ -130,13 +171,45 @@ function selfTest() {
     const got = teamFirstRoundProblems(stored, rs).length;
     const pass = got === want;
     if (!pass) bad += 1;
-    console.log(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
+    say(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
+  }
+  // 不変条件 14 —— 宣言をすべて満たす (パス 484)。判定は共有の検証器 1 つ。
+  const miniSchema = {
+    type: 'object',
+    required: ['teams', 'backlog'],
+    properties: {
+      teams: { type: 'array', items: { type: 'object', required: ['id', 'domain', 'active'], properties: {
+        id: { type: 'string', pattern: '^[a-z][a-z0-9-]*$' }, domain: { type: 'string' }, active: { type: 'boolean' },
+      } } },
+      backlog: { type: 'array', items: { type: 'object', properties: {
+        status: { type: 'string', enum: ['designed', 'shipped'] }, title: { type: 'string', minLength: 1, maxLength: 3 },
+      } } },
+    },
+  };
+  const okReg = () => ({ teams: [{ id: 't', domain: 'd', active: true }], backlog: [{ status: 'designed', title: 'abc' }] });
+  const schemaCases = [
+    ['健全な台帳は 0 件', (r) => r, miniSchema, 0],
+    ['★ status の綴り違い (designd) は鳴る', (r) => { r.backlog[0].status = 'designd'; }, miniSchema, 1],
+    ['★ active が文字列 "false" は鳴る (真として数えられる形)', (r) => { r.teams[0].active = 'false'; }, miniSchema, 1],
+    ['★ domain が無いチームは鳴る (村とチャットの振り分けが投げる形)', (r) => { delete r.teams[0].domain; }, miniSchema, 1],
+    ['★ 空の題名は鳴る (minLength)', (r) => { r.backlog[0].title = ''; }, miniSchema, 1],
+    ['★ 題名は文字で数える (絵文字 3 字は 3 字 —— 通る)', (r) => { r.backlog[0].title = '😀😀😀'; }, miniSchema, 0],
+    ['★ 題名が長すぎれば鳴る (maxLength)', (r) => { r.backlog[0].title = 'abcd'; }, miniSchema, 1],
+    ['★ 知らないキーワードは宣言の側で鳴る (黙って読み飛ばさない)', (r) => r, { ...miniSchema, format: 'x' }, 1],
+  ];
+  for (const [name, mut, sch, want] of schemaCases) {
+    const reg = okReg();
+    mut(reg);
+    const got = validateAgainstSchema(sch, reg).length;
+    const pass = got === want;
+    if (!pass) bad += 1;
+    say(`  ${pass ? '✓' : '✗'} ${name}: ${got} 件 (期待 ${want})`);
   }
   if (bad > 0) {
-    console.error(`\n❌ self-test ${bad} 件が不一致`);
+    sayErr(`\n❌ self-test ${bad} 件が不一致`);
     process.exit(1);
   }
-  console.log('✅ self-test 全件一致');
+  say('✅ self-test 全件一致');
 }
 
 /**
@@ -183,9 +256,17 @@ function main() {
    * と exit 0 を返した。`org` を残したまま中身を空にした場合は 108 件鳴る
    * (検査自体は生きている) ので、穴は外側の条件 1 つだけだった。
    */
-  for (const key of ['version', 'policy', 'teams', 'rounds', 'teamFirstRound', 'backlog', 'org']) {
-    if (!(key in reg)) problems.push(`必須キー "${key}" がありません`);
+  // 一覧は宣言 (registry.schema.json の required) から読む —— 2026-09-26 まで門が
+  // 自分で並べており、宣言のほうは `org` を落としていた (門より弱い宣言)。
+  const schema = loadSchema();
+  for (const key of schema.required) {
+    if (!Object.hasOwn(reg, key)) problems.push(`必須キー "${key}" がありません`);
   }
+  if (problems.length) fail(problems);
+
+  // 14. 宣言をすべて満たす (パス 484)。下の不変条件は形が合っていることを前提に
+  //     書かれている (`team.domain` を文字列として読む等) ので、先に落とす。
+  problems.push(...validateAgainstSchema(schema, reg).map((p) => `宣言 (registry.schema.json) に合いません: ${p}`));
   if (problems.length) fail(problems);
 
   // 母集団の床 (空にすると下の不変条件が丸ごと空虚になる物)。
@@ -412,7 +493,7 @@ function main() {
    * のではなく、囲いだけがそれを読んでいなかった。
    */
   const secLabel = `秘書室 ${secList.length}室(計${secMembers}体) / `;
-  console.log(
+  say(
     `✅ orchestration registry OK — 組織: CEO 1 / COO ${cooCount} / 役員 ${execCount} / ${secLabel}管理職 ${mgrCount} / 一般職(teams) ${reg.teams.length} / ` +
     `rounds: ${reg.rounds.length} / 直近 round ${lastRound} は ${lastCount} チーム / backlog 未着手: ` +
     `${reg.backlog.filter((b) => b.status === 'designed').length} 件`,
@@ -423,23 +504,23 @@ function main() {
     const mgrById = (id) => managers.find((x) => x.id === id);
     const printManager = (mid, indent) => {
       const m = mgrById(mid);
-      if (m) console.log(`${indent}└ ${m.title} [${m.id}] — ${m.teams.length} チーム`);
+      if (m) say(`${indent}└ ${m.title} [${m.id}] — ${m.teams.length} チーム`);
     };
     const secOf = (execId) => (reg.org.secretaries || []).find((s) => s.supports === execId);
-    console.log('\n🏢 組織図 (CEO → COO → 役員層(+秘書室) → 管理職層 → 一般職層):');
-    console.log(`  CEO: ${reg.org.ceo.title}`);
+    say('\n🏢 組織図 (CEO → COO → 役員層(+秘書室) → 管理職層 → 一般職層):');
+    say(`  CEO: ${reg.org.ceo.title}`);
     const coo = reg.org.coo;
     if (coo) {
-      console.log(`   └ ${coo.title} [${coo.id}]`);
+      say(`   └ ${coo.title} [${coo.id}]`);
       // COO 直轄の管理職 (owns のうち管理職 id)。
       for (const oid of coo.owns || []) {
         if (mgrById(oid)) printManager(oid, '       ');
       }
       // COO 配下の役員 → 秘書室 + その配下の管理職。
       for (const e of reg.org.executives || []) {
-        console.log(`       └ ${e.title} [${e.id}]`);
+        say(`       └ ${e.title} [${e.id}]`);
         const sec = secOf(e.id);
-        if (sec) console.log(`           └ 🗂 ${sec.title} [${sec.id}] — ${sec.members}体 (常設サポート)`);
+        if (sec) say(`           └ 🗂 ${sec.title} [${sec.id}] — ${sec.members}体 (常設サポート)`);
         for (const mid of e.owns || []) printManager(mid, '           ');
       }
     }
@@ -452,15 +533,15 @@ function main() {
     const designed = reg.backlog
       .filter((b) => b.status === 'designed')
       .sort((a, b) => a.priority - b.priority);
-    console.log(`\n📋 次ラウンド計画 (round ${nextRound}):`);
-    console.log(`  - 推奨チーム数: ${nextMinTeams} 以上 (前ラウンド ${lastCount} から単調増加)`);
-    console.log(`  - 着手候補 (優先度順):`);
+    say(`\n📋 次ラウンド計画 (round ${nextRound}):`);
+    say(`  - 推奨チーム数: ${nextMinTeams} 以上 (前ラウンド ${lastCount} から単調増加)`);
+    say(`  - 着手候補 (優先度順):`);
     for (const b of designed) {
       const team = reg.teams.find((t) => t.id === b.team);
-      console.log(`      [P${b.priority}] ${b.title}  (担当: ${team ? team.domain : b.team})`);
+      say(`      [P${b.priority}] ${b.title}  (担当: ${team ? team.domain : b.team})`);
     }
     if (designed.length < nextMinTeams) {
-      console.log(
+      say(
         `  - ⚠ designed backlog (${designed.length}) が推奨チーム数 (${nextMinTeams}) 未満。` +
         `新領域の調査チームを追加して論点を補充すること。`,
       );

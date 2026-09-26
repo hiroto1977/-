@@ -190,6 +190,12 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
       + '読むのは `scripts/` の**一覧**で中身ではないし、この検査は前置きで `fs` を書き換えた状態を測るので'
       + '**この worker の中では走らせられない** (原文の道具へ移す先が無い)',
   },
+  'src/shared/__tests__/importRequestsPath.test.ts': {
+    count: 4,
+    why: '一時ディレクトリに置いた**台帳の写し**を、取り込み口と `record` を走らせる前後で読み比べる —— '
+      + '「断ったときは台帳が 1 byte も変わらない」を byte の一致で主張するため (パス 484)。'
+      + 'repo のファイルではなく検査自身が書いた物なので、原文の道具へ戻す物が無い',
+  },
   'src/main/__tests__/electronFuses.test.ts': {
     count: 1,
     why: 'ファイル局所の定数 CONFIG (electron-builder の設定) を読む。台帳の外のファイルで、書き換わらない',

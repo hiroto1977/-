@@ -900,6 +900,13 @@ const KNOWN_SUPPRESSIONS = [
   // `.stryker-incremental.json` と `reports/mutation` を消す (古い incremental は
   // **偽の生存**を作る —— config の `_commentEquivalentPragmas` が 2026-08 の実例を持つ)。
   'child_process exec/spawn :: scripts/audit-mutate-changed.cjs :: 1',
+  // オーケストレーションの書き手 (`record` / `import-requests`) が、書き上がる台帳を
+  // **書く前に門そのもの** (`verify-orchestration.cjs --registry <一時ファイル>`) で検める
+  // (パス 484)。門の中身を関数として写すと「書き手が正しいと思う台帳」と「CI の門が正しいと
+  // 思う台帳」が 2 つになるので、プロセスごと走らせる。引数は固定 (node 自身の実行ファイル・
+  // 門の道・一時ファイルの道) で、シェルを経由しない (`spawnSync` に配列で渡す)。
+  // 取り込む要望文は引数にも環境にも渡らない (一時ファイルの中身として門が読むだけ)。
+  'child_process exec/spawn :: scripts/orchestrate.cjs :: 1',
   // 走査を「一部だけ」殺す前置き (パス 470 で 2 つ目の数え方を包んだ)。
   // `git ls-files` の出力を母集団にするゲートは木を歩かないので、同期実行の
   // 戻り値を包む以外に間引く手が無い。**呼び出しは元の実装へそのまま委ね**、

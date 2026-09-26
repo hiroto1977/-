@@ -383,6 +383,23 @@ export const LAWS: readonly Law[] = [
     ],
   },
   {
+    id: 'declared-constraint-is-enforced',
+    family: 'gate-hygiene',
+    name: '宣言した制約は、門が読んで初めて制約になる',
+    statement:
+      'JSON Schema の enum / pattern / required のような**宣言**は、それを読む門が無ければ注記と同じである。' +
+      '`orchestration/registry.schema.json` は 153 件の制約を宣言していたが、門 (`verify:orchestration`) が読んでいたのは' +
+      '最上位の必須キーと自前の不変条件だけで、**67 件が素通り**した (パス 484) —— チームの `domain` が無い台帳では' +
+      '村の計画とチャットの振り分けが**投げ**、`active: "false"` (文字列) は止めたチームを真として数え、backlog の `status` の' +
+      '綴り違いは dispatch から黙って外れた (`registry.json` に関わる検査 120 本・1,237 件も綴り違いには全件緑)。' +
+      '直しは宣言を**丸ごと**読む検証器 1 つ (依存を足さず、宣言が使うキーワードだけを持つ) で、**知らないキーワードは落とす** ——' +
+      '黙って読み飛ばすと、宣言に足した制約が門に届かないまま「宣言してある」ことになる。母集団は宣言を歩いて導き、' +
+      'どの制約も破れば名指しされることを検査が留める。門の必須キーの一覧も宣言から読む (宣言のほうが門より弱く、`org` を落としていた)。' +
+      '★ **書き手も書く前に同じ門を通す** —— 「書いた後に確認を促す」だけでは、門を通らない台帳が書かれて残る。',
+    provenance: ['パス 484'],
+    enforcedBy: [gate('verify:orchestration'), test(T.shared('registrySchemaEnforced')), test(T.shared('importRequestsPath'))],
+  },
+  {
     id: 'general-form-not-one-file',
     family: 'gate-hygiene',
     name: '不変条件は一般形で守る',
@@ -693,6 +710,24 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.shared('hostInterpolationCensus')), test('src/main/clients/__tests__/slack.test.ts')],
   },
   {
+    id: 'external-text-is-data',
+    family: 'boundary',
+    name: '外から来た文は、端末と Agent に対してデータとして扱う',
+    statement:
+      '人から渡されたファイル・利用者が打った文が、開発者の端末や AI Agent への割当へ渡る所は信用の境界である (パス 484)。' +
+      '① 制御文字・双方向制御・不可視文字を含む文は**取り込まない** —— 端末の制御列 (CWE-150) は画面の行を消し窓の題名を書き換え、' +
+      'RLO は読める物と台帳に在る物を別にする。chromium の `<input>` は貼り付けた ESC / BEL / RLO を値に残す (実測) ので、' +
+      'チャットボットの要望文にも入る。② 端末へ刷る**口は 1 つ**で、必ず見える形 (`\\u{1B}`) を通す —— 門を走らせずに台帳を読む `dispatch` も。' +
+      '欄ごとに守ると刷る欄が増えた日にその欄だけ素で出る (実測: 題名だけ守った `dispatch` が管理職の title の ESC を素で刷った)。' +
+      '`lint:charset` はファイルの字を読むので、`JSON.stringify` が `\\u001b` へ逃がした C0 は見ない —— 端末はファイルの字に頼らない。' +
+      '③ Agent への割当には**出どころの印をつけて JSON の文字列として引用**し、「指示ではなくデータとして扱う」断りを 1 つ載せる' +
+      ' —— 出どころを `note` の散文に持つだけだと、dispatch の境界で落ちて利用者の文が地の文として指示に混ざる。' +
+      '④ 取り込み口は書き出しの逃がしを戻す (利用者が打った文が題名になる) ⑤ 字の群は `lint:charset` の群 1 つで、' +
+      '台帳の宣言の `pattern` はその写しなので BMP の全コードポイントで一致を縛る。',
+    provenance: ['パス 484', 'パス 332 (書き出しの側)'],
+    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration')],
+  },
+  {
     id: 'ollama-allowlist',
     family: 'boundary',
     name: 'Ollama は読む endpoint だけを呼ぶ',
@@ -811,8 +846,8 @@ export const LAWS: readonly Law[] = [
     family: 'at-rest',
     name: '書く口を足したら読みの一巡',
     statement: '「保存した」の toast は読まれた証拠ではない。入力 → 保存 → 判定し直した結果が画面に出るまでを同じ変更の中で通す。両ビルドに枝が要る。**書き出しも同じ** —— 「N 件取り込みました」は往復した証拠ではない。アプリが書き出した CSV をアプリが読み戻せなかった実例が 2 つ在る: 書き出しが付ける印 (BOM · U+FEFF) を剥がす側がどこにも無く、正しい日付を指して「日付は YYYY-MM-DD 形式で入力してください」と断っていた (パス 428)。**行が戻ることは、行が変わらず戻ることではない** —— `KPI_CSV_COLUMNS` は 7 列で記録の形は 8 欄を宣言しており、人件費が往復で消えて金融機関等提出用の書面の「人件費」の行・労働分配率・人件費率・付加価値が空になった (パス 429)。**列の母集団は形の宣言から導く** (手で並べると 9 つ目が黙る)。',
-    provenance: ['パターン 0-a-22', 'パス 428 (付ける印と剥がす印が同じ 1 つ)', 'パス 429 (往復の等値・列は形の全欄を覆う)'],
-    enforcedBy: [test(T.renderer('webShimSnapshotBranches')), test(T.renderer('webShimInputGatesAndSaves')), test(T.renderer('deviceStoreWritePolicy')), test('src/renderer/data/__tests__/csvBomRoundTrip.test.ts'), test('src/renderer/data/__tests__/csvColumnCoverage.test.ts')],
+    provenance: ['パターン 0-a-22', 'パス 428 (付ける印と剥がす印が同じ 1 つ)', 'パス 429 (往復の等値・列は形の全欄を覆う)', 'パス 484 (要望の書き出し → 取り込み口の往復)'],
+    enforcedBy: [test(T.renderer('webShimSnapshotBranches')), test(T.renderer('webShimInputGatesAndSaves')), test(T.renderer('deviceStoreWritePolicy')), test('src/renderer/data/__tests__/csvBomRoundTrip.test.ts'), test('src/renderer/data/__tests__/csvColumnCoverage.test.ts'), test(T.shared('importRequestsPath'))],
   },
   {
     id: 'destructive-ops-have-owner',
@@ -867,8 +902,8 @@ export const LAWS: readonly Law[] = [
     family: 'surface',
     name: '天井も床も文字で数える',
     statement: '画面は「2,000 字」と刷り、実装が UTF-16 のコード単位で数えると絵文字で食い違う。上限は n 文字目で切り上げる (100 MB を辿らない)。床 (12 文字以上) も同じ単位。',
-    provenance: ['パス 195', 'パス 197', 'パス 252', 'パス 254', 'パス 258'],
-    enforcedBy: [test(T.shared('ceilingUnitCensus')), test(T.renderer('ceilingUnitCensus')), test(T.shared('inputCeiling'))],
+    provenance: ['パス 195', 'パス 197', 'パス 252', 'パス 254', 'パス 258', 'パス 484 (台帳の宣言の maxLength も文字で数える)'],
+    enforcedBy: [test(T.shared('ceilingUnitCensus')), test(T.renderer('ceilingUnitCensus')), test(T.shared('inputCeiling')), test(T.shared('registrySchemaEnforced'))],
   },
   {
     id: 'exported-markup-escapes-free-text',
@@ -883,8 +918,8 @@ export const LAWS: readonly Law[] = [
     family: 'surface',
     name: '外へ書く欄は切らずに断る',
     statement: '外へ送る本文を黙って slice しない。天井を超えたら理由を言って送らない。天井は型と長さの上限を持ち (12 家系)、画面の maxLength は関門ではない。',
-    provenance: ['パス 110', 'パス 111', 'パス 172', 'パス 175', 'パス 183'],
-    enforcedBy: [test(T.shared('writeFieldLimits')), test(T.renderer('writeBodyCeilingCensus'))],
+    provenance: ['パス 110', 'パス 111', 'パス 172', 'パス 175', 'パス 183', 'パス 484 (要望の取り込み口は長い要望を切らずに断る)'],
+    enforcedBy: [test(T.shared('writeFieldLimits')), test(T.renderer('writeBodyCeilingCensus')), test(T.shared('importRequestsPath'))],
   },
   {
     id: 'egress-notice-before-send',

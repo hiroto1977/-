@@ -13,8 +13,8 @@
 | ファイル | 役割 |
 |---|---|
 | `registry.json` | 単一の真実源。組織・チーム・ラウンド履歴・バックログ・進化ポリシー・サイクル定義を機械可読に保持 |
-| `registry.schema.json` | registry.json の構造 (JSON Schema) |
-| `../scripts/verify-orchestration.cjs` | 整合検証 (org階層・単調増加・参照整合・cycles構造) + 次ラウンド計画の自動算出 |
+| `registry.schema.json` | registry.json の構造 (JSON Schema)。**門がこの宣言を丸ごと検める** (2026-09-26 · パス 484 —— それまで 153 件のうち 67 件を誰も読んでいなかった)。検証器は `scripts/lib/json-schema-subset.cjs` で、知らないキーワードは落とす |
+| `../scripts/verify-orchestration.cjs` | 整合検証 (宣言の全制約・org階層・単調増加・参照整合・cycles構造) + 次ラウンド計画の自動算出 |
 | `../scripts/orchestrate.cjs` | **実行ランタイム (v3)**。status / cycle / dispatch / record で組織を実際に動かす |
 
 ## 実行ランタイム (`orchestrate.cjs`)
@@ -32,15 +32,27 @@ node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priori
 
 - **import-requests** は AI コンシェルジュ (ChatbotWidget) の「📥 要望」ボタンで書き出した
   Markdown (`- [ ] <要望> _(受付: YYYY-MM-DD)_`) を読み、各行を **designed (着手可能)** の
-  backlog 候補として取込む。team は domain/focus の語一致で自動解決 (解決不能は `--team` 必須)、
-  同名 title はスキップ (重複防止)。これで「**ユーザー要望 → backlog → dispatch → 実装 →
-  record**」のループが機構として閉じる。
+  backlog 候補として取込む。team は domain/focus の語一致で**稼働中のチームから**自動解決
+  (解決不能は `--team` 必須)、同名 title と**同じファイルの中の重複**はスキップ。これで
+  「**ユーザー要望 → backlog → dispatch → 実装 → record**」のループが機構として閉じる。
+  ★ **このファイルは外から来た文である** (2026-09-26 · パス 484) —— 書き出しの逃がしを戻して
+  利用者が打った文を題名にし、**空・200 文字超・制御文字 / 双方向制御 / 不可視文字を含む行が
+  1 つでも在れば何も書かない** (端末へ素で刷らない)。取り込んだ項目は `source: "chatbot"` を持ち、
+  `dispatch` はそれを Agent まで運んで、題名を**指示ではなくデータとして** JSON の文字列で引用する。
+- **record / import-requests は書く前に門そのものを走らせる** (パス 484) —— 書き上がる台帳を
+  一時ファイルへ置いて `verify-orchestration.cjs` を通し、通ったときだけ書く。
+- **端末へ刷る口は 1 つ** (パス 484) —— `orchestrate.cjs` と `verify-orchestration.cjs` は台帳の
+  文字列をすべて `say` / `sayErr` (文は改行だけ残して危ない字を `\u{1B}` の形へ) と `sayJson`
+  (値を変えずに `\uXXXX` へ逃がした JSON) を通して刷る。台帳の題名以外の欄は開発側が書く欄で
+  宣言の `pattern` を持たず、`lint:charset` は `JSON.stringify` が `\u001b` へ逃がした C0 を見ない
+  ので、**守るのは欄ではなく口**である (素の `console.*` は口の定義の中にしか置かない ——
+  `importRequestsPath.test.ts` が数える)。
 
 - **dispatch** は read-only。各 team を指揮系統 (manager→executive→秘書室→COO→CEO) へ解決し、
   サイクルの **do(設計)** ステージにだけ並列 read-only Agent を割当てた計画を出力する。
   COO (Claude本体) はこの計画に沿って **do=並列Agent起動 → check=直列実装+全ゲート検証 → act=record** を実行する。
 - **record** は round を registry に追記する唯一の書込み口。連番・単調増加・team 実在を強制し、
-  書込み後に `verify:orchestration` で整合を再確認する。追記のたびに派生索引 `teamFirstRound`
+  書く前に `verify-orchestration` を通す (上記)。追記のたびに派生索引 `teamFirstRound`
   (チーム → 初出 round) も引き直す —— アプリの「AIの村」はこの索引だけを読み、`rounds` (履歴・160 KB)
   は出荷物に入れない (2026-09-26 · パス 483。導出は `scripts/lib/team-first-round.cjs` の 1 つ)。
 - サイクル定義は `registry.json` の `policy.cycles` (PDCA/OODA) に機械可読で持ち、`verify:orchestration` が

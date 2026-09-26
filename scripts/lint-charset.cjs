@@ -705,7 +705,12 @@ function context(text, index) {
  * 同じ番をつけている)。`audit:gate-floors --partial` は宣言を**このゲートから読む** ——
  * 群の一覧を道具の側にも書くと、2 つ目の台帳が静かに古びる。
  */
-module.exports = { SCAN_EXTS, SCAN_DIRS, OPTIONAL_EXTS, REQUIRED_GROUPS, CROSS_CHECK };
+/*
+ * `INVISIBLE_RANGES` も読めるようにする (2026-09-26 · パス 484) —— 外から来た 1 行の文を
+ * 端末と台帳へ渡す前に検める `scripts/lib/untrusted-text.cjs` が**同じ群**を使う。
+ * 写すと「このゲートが鳴らす字」と「取り込み口が断る字」が別々に古びる。
+ */
+module.exports = { SCAN_EXTS, SCAN_DIRS, OPTIONAL_EXTS, REQUIRED_GROUPS, CROSS_CHECK, INVISIBLE_RANGES };
 
 if (require.main === module) {
   if (process.argv.slice(2).includes('--self-test')) process.exit(selfTest());
