@@ -130,6 +130,15 @@ const EXEMPT: readonly { readonly file: string; readonly why: string }[] = [
     why: '**注記を落とす物ではなく、注記そのものを探す物**。`Stryker disable` / `restore` の pragma は定義上コメントの中に在るので、行頭アンカーの正規表現で `//` と `/*` を見るのは「注記か」を判じているのではなく**針そのもの**である (落としたら母集団が空になる · 2026-09-25 パス 463)',
   },
   {
+    file: 'scripts/audit-gate-floors.cjs',
+    why: '**注記を落とす物ではなく、directive prologue の切れ目を探す物** (`preambleInsertAt` · 2026-09-26 パス 473)。'
+      + '前置きを行 0 に差し込むと `"use strict";` が prologue の外へ出て**その本が sloppy mode で走る** —— '
+      + 'sloppy は許す側なので**偽の `silent`** を作る向きである。宣言の前に行注記 (ライセンス表記など) が在りうるので '
+      + '`//` を飛ばすが、飛ばすのは**宣言を見つけるまで**で、本文からは 1 文字も落とさない。'
+      + 'ブロック注記は**意図して跨がない** —— 複数行を数え始めるとそこが 2 つ目の字句解析器になる。'
+      + '振る舞いは populationGroupFloor.test.ts と self-test が標本つきで留める',
+  },
+  {
     file: 'src/shared/securityRange.ts',
     why: '出荷コードの検知前正規化 (WAF 風)。ソースの注記ではなく SQL インジェクションの comment 挿入を打ち消すためで、securityRange.test.ts が標本つきで留めている',
   },

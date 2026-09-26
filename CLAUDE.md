@@ -28,7 +28,16 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-26 パス 472 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 10 本と `__tests__/` 2 本・`ontology/`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**測った母集団が 8 本で、実際は 25 本だった —— 残り 17 本のうち 9 本が 1% の損失で黙り、`vault:check` は 0 件比べて「7402 ファイル同期」と刷っていた。** **見つけ方**: パス 471 が残した問い (「`acceptPath` を持つべきゲートが他に在るか」) を測りに行ったら、**答えより先に母集団の狭さが出た** —— パス 469〜471 の `PARTIAL_GATES` は**手書きの 8 本**で、`verify:all` の 37 ゲートのうち**間引けるのは 25 本**だった。実測 (2026-09-26 · 隔離した写しの上で `readdirSync` を一様に間引く · keep 99% = 1% 死):
+   file (実測 11.41 MiB full / 3.22 MiB `build:web:lite` mobile variant — ****2026-09-26 パス 473 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 1 本と `__tests__/` 2 本・`ontology/`・`package.json`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**測る道具そのものが測る対象に見えていた —— `chain:verify` は自分の原文をハッシュするので、前置きを差し込むことがその門が検出する違反そのものだった。** **見つけ方**: task #150 は当初「`readFileSync` を包んで、本文が一部だけ返る形を測る」だったが、**実測して捨てた**。25 ゲートの列挙の原始命令を**注記を落として**数えると `readdirSync` 24 / `execFileSync` 2 / `execSync` 2 / `spawnSync` 1 で、`globSync` は **0 件** (最初の grep は `verify-architecture.cjs:2024` の **docblock の引用**を拾っていた · `mention-vs-declaration`)。`lint-shell` の `spawnSync` は `bash -n` と `--self-test` で**列挙ではない**し、`readFileSync` に長さを渡すゲートは **0 件** —— **前置きの届く範囲は今日の母集団を覆っている**ので3 つ目の包みは要らない。★ **代わりに出たのが本物** —— `injectPreamble` は前置きを**行 0** (shebang があれば 1) に差し込むが、ゲートの本の 1 行目は `"use strict";` なので、その**前**に `require(...)` が入ると directive prologue が終わり**その本は sloppy mode で走る** (実測: 素は `ReferenceError`、`require` を前に置くと**黙って global を作る**)。**向きが重い** —— sloppy は許す側なので**偽の `silent`** を作る向きで、パス 469〜472 が報告した「黙ったゲート」の信用に直に関わる。実測 (2026-09-26 · 素の実行と「差し込んで 1 件も落とさない実行」を 25 ゲートで突き合わせる):
+
+| | |
+| --- | ---: |
+| 答えが同じ (透明) | **23** |
+| 出力だけが違う | 1 (`verify:arch`) |
+| **終了コードが違う** | **1 (`chain:verify`)** |
+| **strict mode の喪失が答えを変えた件数** | **0 / 25** |
+
+★ **`chain:verify` は原理的に測れない** —— `integrity-chain.cjs` は**それ自身が保護対象**なので、間引きを 1 件も掛けなくても exit 1「変更: integrity-chain.cjs」になる。`verify:arch` の差は**差し込んだ 1 行**が `tracked line count` に出るだけ (967617 → 967618) で、**床は 600000 なので判定は動かない**。★ **そして直す前の判定は見分けられなかった** —— `report.dropped === 0` が `status` より先に短絡するので exit 1 は見えず、台帳は `not-dropped` で通っていた。**今日は隠れているだけで、`integrity-chain.cjs` に走査が 1 つ入った日に `dropped > 0` になり、判定は `status !== 0` を見て `rings` と答える** = 「走査が一部死んでも chain:verify は鳴る」という**偽の結論**が出る形だった (パス 468 の `needle` と同じ形 ——「空にできなかった」を「床が在る」と読まない —— の、**終了コードについての現れ**)。**直し**: ① 差し込む位置を directive prologue の後ろへ (`preambleInsertAt`。行注記と空行は飛ばすが**ブロック注記は意図して跨がない** —— 複数行を数え始めるとそこが 2 つ目の字句解析器になる) ② 透明性の台帳 `TRANSPARENCY` は**見えている物だけ**を載せる (透明な 23 本の理由を並べると理由の欄が保留の置き場になる · パス 461 の判断)。双方向は `--baseline` が**実測で**持つ ③ 判定を純関数 `partialVerdict` へ出し、`dropped` より**前**に透明性を問って `instrument-rings` として区別する (語彙を 3 つ目へ) —— **純関数に出したのは対照が self-test の層で鳴るようにするため** (埋まっていると隔離した写しでゲートを走らせる高い道具でしか映らない · パス 472 の自戒と同じ形) ④ `npm run audit:gate-baseline` (新しいモード・CI では走らせない)。★ **対照 9 方向すべて鳴り、それぞれ狙った層に当たる** (A 差し込む位置を行 0 へ戻す self-test ✗4 / B 判定から透明性を外す `--partial` ❌1 / **B' 同 (純関数の後) self-test ✗1 —— 層が下りた** / C 台帳から `chain:verify` を消す ✗2 / D 透明なゲートを台帳へ足す `--baseline` ❌3 / E 知らない `visible` の語 ✗3 / F `expect` を `not-dropped` へ戻す ✗1 / G 判定の順序を戻す (証人) ❌1 / H 差し込む位置を行 0 へ (証人) ❌1)・復帰後 **21 / 21**。★ **ゲートが 2 つ捕まえた —— どちらも設計どおり**: ① `commentStripperCensus` が `preambleInsertAt` を「14 個目の自前の注記除去」として鳴らした (**注記を落とす物ではなく directive prologue の切れ目を探す物**なので理由つきで免除へ —— 本文からは 1 文字も落とさない) ② 既存の閉じた語彙の検査が 3 つ目の語をその場で捕まえた。★ **自戒 2 つ**: ① **`laws.ts` に `"use strict"` を単一引用符の文字列の中へ書いて構文を壊した** —— 3 つのオントロジー検査が**読み込みに失敗**し (`Tests no tests` / `Transform failed`)、`npm test` は 「4 files failed / 1 test failed」と出た。**「ファイルが落ちた」と「検査が落ちた」の差が読み込みの失敗である** (パス 412 と同じ形) ② **self-test の標本に予想を書いて外した** —— `integrity-chain.cjs` は shebang を持つので差し込む位置は 2 なのに 1 と書き、self-test が直させた。★ **測って何も無かった軸も記録する**: ① **strict mode の喪失は今日どのゲートの答えも変えていない** (25 / 25) —— **罠であって生きた欠陥ではない**が、次に strict に依るゲートが入った日に静かに誤測されるので直した ② **`verify:arch` の +1 行は床を脅かさない** (967618 vs 床 600000) ③ **`chain:verify` が一部の死に耐えるかは今も未測定** —— ただし今は「測っていない」ではなく**「この道具では測れない」**と理由つきで分かっている。`typecheck` 緑・`npm test` **907 / 19,192**・`verify:all` exit 0・`chain:verify` 緑 (保護対象は 1 つも触っていない)・`audit:gate-partial` **73 / 73 組**・`audit:gate-baseline` **25 / 25 (透明 23 / 見えている 2)**。**実機は回していない** —— 出荷物が 1 byte も動いておらず md5 も同じなので)・****2026-09-26 パス 472 後も 11,971,801 B / 3,384,320 B で byte 単位で不変 (md5 も同一)** (直したのは `scripts/` 10 本と `__tests__/` 2 本・`ontology/`・`docs/` だけ —— **出荷コードは 1 行も動いていない**。それでも**両方を組んで md5 まで見た** (`fef32c62…` / `5e00fcdf…`)。**測った母集団が 8 本で、実際は 25 本だった —— 残り 17 本のうち 9 本が 1% の損失で黙り、`vault:check` は 0 件比べて「7402 ファイル同期」と刷っていた。** **見つけ方**: パス 471 が残した問い (「`acceptPath` を持つべきゲートが他に在るか」) を測りに行ったら、**答えより先に母集団の狭さが出た** —— パス 469〜471 の `PARTIAL_GATES` は**手書きの 8 本**で、`verify:all` の 37 ゲートのうち**間引けるのは 25 本**だった。実測 (2026-09-26 · 隔離した写しの上で `readdirSync` を一様に間引く · keep 99% = 1% 死):
 
 | | |
 | --- | ---: |
@@ -1049,6 +1058,25 @@ npm run audit:gate-partial      # **走査が「一部だけ」死んだとき�
                          #   `tracked-cross-check` の**配列**で名乗り、名乗った機構の実在まで
                          #   見る。逆向き ——「呼んでいるのに名乗らない」—— は
                          #   `trackedCrossCheck.test.ts` が見る)
+npm run audit:gate-baseline      # **道具そのものが測る対象に見えていないか**を測る
+                         #   (`audit-gate-floors.cjs` の 3 つ目のモード —— 道具の数は 8 本のまま。
+                         #   CI では走らせない。**道具を変えた日に回す**)。
+                         #   比べるのは「素の実行」と「前置きを差し込んで **1 件も落とさない**
+                         #   実行」。間引きを掛けないので、差が出たらそれは**道具の副作用**
+                         #   (差し込んだ 1 行・strict mode の喪失・自分の原文のハッシュ) である。
+                         #   ★ **これは `--partial` の前提を測る検査** —— 透明でないゲートの
+                         #   間引きの答えは「ゲートが気付いた」の証拠にならない。
+                         #   実測 (2026-09-26 · パス 473 · 25 ゲート): **透明 23 / 見えている 2**。
+                         #   `chain:verify` は `integrity-chain.cjs` が**それ自身が保護対象**なので、
+                         #   前置きを差し込むことが**その門が検出する違反そのもの** ——
+                         #   間引きを 1 件も掛けなくても exit 1 で、**この門はこの道具では
+                         #   原理的に測れない**。`verify:arch` は差し込んだ 1 行が
+                         #   `tracked line count` に出るだけ (床 600000 に対し 967618 なので
+                         #   判定は動かない)。★ 台帳 (`TRANSPARENCY`) に載せるのは
+                         #   **見えている物だけ** (透明な 23 本の理由を並べると理由の欄が
+                         #   保留の置き場になる · パス 461 の判断) で、双方向はこのモードが
+                         #   **実測で**持つ。台帳の形と判定の順序は
+                         #   `populationGroupFloor.test.ts` が毎回の `npm test` で見る
 npm run audit:e2e-wait-margin   # e2e の待ちが**制限にどれだけ近いか** (実測 ÷ 制限) を測る
                          #   (定期点検の道具 5 本目。CI では走らせない —— 落とさない道具で、
                          #   薄い余裕は欠陥ではなく手がかりである)。記録子は

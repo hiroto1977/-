@@ -808,11 +808,76 @@ const THINNING = {
       + '内容差分が消えた',
   },
   'chain:verify': {
-    expect: 'not-dropped',
-    why: '母集団が名指しの保護対象の一覧なので readdirSync の間引きでは 1 件も落とせない。★ 「落とせなかった」を「床が在る」と読まない'
-      + '—— 道具が not-dropped として区別する',
+    expect: 'instrument-rings',
+    why: '母集団が名指しの保護対象の一覧なので readdirSync の間引きでは 1 件も落とせない。★★ そのうえ**この門はこの道具で'
+      + '測れない** —— `integrity-chain.cjs` はそれ自身が保護対象なので、前置きを差し込むことが検出される違反そのものである'
+      + ' (実測 2026-09-26: 間引きを 1 件も掛けなくても exit 1)。「落とせなかった」も「鳴った」も床の証拠にならないので、'
+      + '道具が instrument-rings として区別する',
   },
 };
+
+/**
+ * **道具そのものが見えているゲート** (2026-09-26 · パス 473)。
+ *
+ * この道具は前置きを 1 行差し込んでからゲートを走らせる。**その 1 行が見えるゲートが在る。**
+ * 見えていると、間引きの答え (`rings` / `silent`) を「ゲートが走査の損失に気付いた」と
+ * 読めなくなる —— 鳴らせたのは道具かもしれない。
+ *
+ * ★★ **今日いちばん重いのは `chain:verify`** —— `integrity-chain.cjs` は**それ自身が
+ * 保護対象**なので、前置きを差し込むことが**その門が検出する違反そのもの**である
+ * (実測 2026-09-26: 素 exit 0「保護対象 94 ファイルが tip と一致」/ 差し込むと exit 1
+ * 「変更: integrity-chain.cjs」)。**間引きを 1 件も掛けなくても鳴る。**
+ *
+ * ★ **そして直す前の判定は、それを見分けられなかった** —— `report.dropped === 0` が
+ * `status` より先に短絡するので exit 1 は見えず、台帳は `not-dropped` で通っていた。
+ * 今日は隠れているだけで、**`integrity-chain.cjs` に走査が 1 つ入った日に
+ * `dropped > 0` になり、判定は `status !== 0` を見て `rings` と答える** ——
+ * つまり「走査が一部死んだら chain:verify は鳴る」という**偽の結論**が出る。
+ * パス 468 の `needle` と同じ形 (「空にできなかった」を「床が在る」と読まない) の、
+ * **終了コードについての現れ**である。
+ *
+ * ★ **載せるのは見えている物だけ** —— 「透明」の行を 23 本並べると、どれも同じ理由に
+ * なって理由の欄が保留の置き場になる (パス 461 の判断)。**双方向**にするので、
+ * 台帳に無いゲートは `--baseline` で透明であることを要求され、
+ * 台帳に在るゲートは実際に見えていることを要求される。
+ *
+ * `visible`:
+ *   'exit-code' —— 終了コードが変わる。**間引きの答えは読めない** (verdict は `instrument-rings`)
+ *   'output'    —— 出力だけが変わる。終了コードは動かないので間引きの答えは読める
+ */
+const TRANSPARENCY = {
+  'verify:arch': {
+    visible: 'output',
+    why: '差し込んだ 1 行が `tracked line count` に出る (実測 967617 → 967618)。**床は 600000 なので判定は動かない**'
+      + ' —— 終了コードは素と同じ 0 で、間引きの答えはそのまま読める',
+  },
+  'chain:verify': {
+    visible: 'exit-code',
+    why: '`integrity-chain.cjs` はそれ自身が保護対象なので、前置きを差し込むことが**この門が検出する違反そのもの**'
+      + ' (実測: 素 exit 0 / 差し込むと exit 1「変更: integrity-chain.cjs」)。間引きを 1 件も掛けなくても鳴るので、'
+      + '終了コードからは「ゲートが走査の損失に気付いた」を読めない',
+  },
+};
+
+/**
+ * **間引きの答えを 1 語にする** (2026-09-26 · パス 473 で純関数へ出した)。
+ *
+ * ★ **順序が効く。** 道具そのものが終了コードに出るゲートでは `rings` は
+ * 「ゲートが走査の損失に気付いた」を意味しない —— 鳴らせたのは道具である。だから
+ * `dropped` より**前**に問う。直す前は `report.dropped === 0` が先に短絡していたので
+ * `chain:verify` の exit 1 が見えず、`integrity-chain.cjs` に走査が 1 つ入った日に
+ * **偽の `rings`** が出る形だった。
+ *
+ * ★ 純関数に出したのは、**対照が self-test の層で鳴るようにする**ため ——
+ * 順序を戻す対照は、判定が `runPartial` の中に埋まっていると
+ * 隔離した写しでゲートを走らせる高い道具でしか映らなかった (パス 472 の自戒と同じ形)。
+ */
+function partialVerdict({ gate, report, status }) {
+  if (TRANSPARENCY[gate]?.visible === 'exit-code') return 'instrument-rings';
+  if (report === null) return 'no-report';
+  if (report.dropped === 0) return 'not-dropped';
+  return status === 0 ? 'silent' : 'rings';
+}
 
 /** `cmd` から入口の script を読む (`node scripts/x.cjs --check` → `scripts/x.cjs`)。 */
 function scriptOf(cmd) {
@@ -837,14 +902,43 @@ function declaredGroups(script) {
 const PREAMBLE_SRC = 'scripts/lib/partial-scan-preamble.cjs';
 const PREAMBLE_MARK = "require('./lib/partial-scan-preamble.cjs');";
 
-/** 入口の script に前置きを 1 度だけ差し込む (shebang の後ろ)。 */
+/**
+ * 差し込む行の位置 —— **shebang と directive prologue の後ろ** (2026-09-26 · パス 473 で直した)。
+ *
+ * ★★ **行 0 に入れると `'use strict';` が無言の式文になる。** ECMAScript の directive
+ * prologue は本体の先頭にしか置けないので、`require(...)` を 1 行前に入れた時点で
+ * 宣言は効かなくなり、**その本は sloppy mode で走る**。実測 (2026-09-26):
+ * 素の本は宣言の無い代入で `ReferenceError`、`require` を前に置いた本は
+ * **黙って global を作る**。
+ *
+ * **向きが重い** —— sloppy は許す側なので、strict なら投げる (= ゲートが鳴る) 所が
+ * 投げなくなりうる。つまりこの位置の誤りは**偽の `silent`** を作る向きで、
+ * 「走査が死んでもゲートが黙った」という結論の信用に直に関わる。
+ *
+ * ★ **実測では今日どのゲートの答えも変えていなかった** (25 / 25 —— `--baseline` の
+ * `TRANSPARENCY` 台帳がその測定を持つ) ので、これは**罠であって生きた欠陥ではない**。
+ * それでも直すのは、次に strict に依るゲートが入った日に**静かに誤測される**からである。
+ */
+function preambleInsertAt(lines) {
+  let at = lines[0].startsWith('#!') ? 1 : 0;
+  // directive prologue: 空行・行注記と `'use strict';` の並びを飛ばす。
+  // ブロック注記は跨がない —— 複数行を数える必要が出ると、ここが 2 つ目の字句解析器になる。
+  for (; at < lines.length; at += 1) {
+    const t = lines[at].trim();
+    if (t === '' || t.startsWith('//')) continue;
+    if (/^(['"])use strict\1\s*;?$/.test(t)) { at += 1; break; }
+    break;
+  }
+  return at;
+}
+
+/** 入口の script に前置きを 1 度だけ差し込む (shebang と `'use strict';` の後ろ)。 */
 function injectPreamble(wt, script) {
   const full = path.join(wt, script);
   const src = fs.readFileSync(full, 'utf8');
   if (src.includes(PREAMBLE_MARK)) return false;
   const lines = src.split('\n');
-  const at = lines[0].startsWith('#!') ? 1 : 0;
-  lines.splice(at, 0, PREAMBLE_MARK);
+  lines.splice(preambleInsertAt(lines), 0, PREAMBLE_MARK);
   fs.writeFileSync(full, lines.join('\n'), 'utf8');
   return true;
 }
@@ -896,9 +990,7 @@ function runPartial(argv) {
       let report = null;
       try { report = JSON.parse(fs.readFileSync(out, 'utf8')); } catch { /* 読めなければ null */ }
       const status = res.status ?? -1;
-      const verdict = report === null ? 'no-report'
-        : report.dropped === 0 ? 'not-dropped'
-          : status === 0 ? 'silent' : 'rings';
+      const verdict = partialVerdict({ gate: r.gate, report, status });
       return { verdict, status, dropped: report?.dropped ?? null };
     };
 
@@ -1144,9 +1236,14 @@ function selfTest() {
     notWalking.length === 0,
   );
   check('★ 間引けるゲートの走査が死んでいない (床)', walking.length >= 20);
+  /*
+   * **閉じた語彙。** `instrument-rings` はパス 473 で足した 3 つ目 ——
+   * 「道具そのものが鳴らせたので、終了コードからは何も読めない」。
+   * `rings` と混ぜると「ゲートが走査の損失に気付いた」と読めてしまう。
+   */
   check(
-    '★ THINNING の expect は rings か not-dropped だけ',
-    ledgered.every((g) => ['rings', 'not-dropped'].includes(THINNING[g].expect)),
+    '★ THINNING の expect は rings / not-dropped / instrument-rings だけ',
+    ledgered.every((g) => ['rings', 'not-dropped', 'instrument-rings'].includes(THINNING[g].expect)),
   );
   check(
     '★ THINNING の理由は「同上」の決まり文句ではない',
@@ -1303,6 +1400,87 @@ function selfTest() {
   const dropped = emptyObjectBody('x.ts', 'X').edit(src);
   check('★ 本体を落とす手なら残らない', !dropped.includes("a: 'b'"));
 
+  /*
+   * **差し込む位置 —— `'use strict';` を殺さない** (2026-09-26 · パス 473)。
+   *
+   * 行 0 に入れると directive prologue が終わり、その本は sloppy mode で走る (実測)。
+   * sloppy は許す側なので、strict なら投げる (= ゲートが鳴る) 所が投げなくなりうる ——
+   * **偽の `silent`** を作る向きである。
+   */
+  const strictBody = ["'use strict';", '', 'const x = 1;'];
+  check('★ 差し込む位置は `use strict` の後ろ', preambleInsertAt(strictBody) === 1);
+  check(
+    '★ shebang と `use strict` の両方を飛ばす',
+    preambleInsertAt(['#!/usr/bin/env node', "'use strict';", 'const x = 1;']) === 2,
+  );
+  check('★ 宣言の前の行注記と空行は飛ばす', preambleInsertAt(['// なにか', '', '"use strict";', 'x()']) === 3);
+  check('★ 宣言が無い本は先頭へ', preambleInsertAt(['const x = 1;', "'use strict';"]) === 0);
+  check(
+    '★ 宣言に見える文字列は飛ばさない (`use strict` を含む式)',
+    preambleInsertAt(["const s = 'use strict';", 'x()']) === 0,
+  );
+  // 実物の本で効いていること (標本が的に当たる)。
+  const chainSrc = fs.readFileSync(path.join(REPO_ROOT, 'scripts/integrity-chain.cjs'), 'utf8').split('\n');
+  // 実測 (2026-09-26): 1 行目が shebang、2 行目が `'use strict';` なので 2。
+  // ★ ここは**予想を書いて外した** —— 宣言だけだと思って 1 と書き、self-test が直させた。
+  check('★ 実物の integrity-chain.cjs は shebang と宣言の後ろへ入る', preambleInsertAt(chainSrc) === 2);
+
+  /*
+   * **道具が見えているゲートの台帳** —— 見えていると間引きの答えを
+   * 「ゲートが気付いた」と読めない。形だけをここで見る (実測は `--baseline`)。
+   */
+  const VISIBLE_KINDS = new Set(['exit-code', 'output']);
+  check('★ TRANSPARENCY は空でない', Object.keys(TRANSPARENCY).length >= 1);
+  check(
+    '★ TRANSPARENCY の行はすべて THINNING に在る',
+    Object.keys(TRANSPARENCY).every((g) => Object.hasOwn(THINNING, g)),
+  );
+  check(
+    '★ visible は閉じた語彙',
+    Object.values(TRANSPARENCY).every((v) => VISIBLE_KINDS.has(v.visible)),
+  );
+  check(
+    '★ TRANSPARENCY の理由は空でない',
+    Object.values(TRANSPARENCY).every((v) => (v.why || '').trim().length >= 20),
+  );
+  check(
+    '★ 終了コードが見えるゲートの期待値は instrument-rings',
+    Object.entries(TRANSPARENCY)
+      .filter(([, v]) => v.visible === 'exit-code')
+      .every(([g]) => THINNING[g].expect === 'instrument-rings'),
+  );
+  check(
+    '★ 逆向き: instrument-rings を期待するゲートは TRANSPARENCY で名乗る',
+    Object.entries(THINNING)
+      .filter(([, v]) => v.expect === 'instrument-rings')
+      .every(([g]) => TRANSPARENCY[g]?.visible === 'exit-code'),
+  );
+  check('★ chain:verify は終了コードが見える (実測 2026-09-26)', TRANSPARENCY['chain:verify']?.visible === 'exit-code');
+
+  /*
+   * **判定の順序** —— 道具が終了コードに出るゲートでは、間引きの答えから
+   * 「ゲートが気付いた」を読めない。`dropped` より前に問うことを標本で留める。
+   */
+  const V = (gate, report, status) => partialVerdict({ gate, report, status });
+  check('★ 透明なゲート: 落として鳴れば rings', V('lint:charset', { dropped: 5 }, 1) === 'rings');
+  check('★ 透明なゲート: 落として鳴らなければ silent', V('lint:charset', { dropped: 5 }, 0) === 'silent');
+  check('★ 1 件も落ちなければ not-dropped', V('lint:charset', { dropped: 0 }, 1) === 'not-dropped');
+  check('★ 報告が無ければ no-report', V('lint:charset', null, 1) === 'no-report');
+  check(
+    '★ 道具が終了コードに出るゲートは instrument-rings (落とした件数に依らない)',
+    V('chain:verify', { dropped: 5 }, 1) === 'instrument-rings'
+      && V('chain:verify', { dropped: 0 }, 1) === 'instrument-rings'
+      && V('chain:verify', null, 1) === 'instrument-rings',
+  );
+  check(
+    '★ 決定的: 走査が生えても rings と読まない (dropped > 0 で exit 1 でも instrument-rings)',
+    V('chain:verify', { dropped: 150 }, 1) === 'instrument-rings',
+  );
+  check(
+    '★ 出力だけが見えるゲートは間引きの答えを読める (verify:arch は rings/silent)',
+    V('verify:arch', { dropped: 5 }, 1) === 'rings' && V('verify:arch', { dropped: 5 }, 0) === 'silent',
+  );
+
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗`);
     return 1;
@@ -1315,12 +1493,80 @@ module.exports = {
   MECHANISMS,
   thinnableGates,
   RECIPES, NO_POPULATION, KINDS, applyRecipe, emptyObjectBody,
-  PARTIAL_GATES, THINNING, ENFORCEMENT, KEEP_PCT, scriptOf, declaredGroups, injectPreamble,
+  PARTIAL_GATES, THINNING, ENFORCEMENT, TRANSPARENCY, KEEP_PCT, scriptOf, declaredGroups, injectPreamble,
+  preambleInsertAt, partialVerdict,
   PREAMBLE_SRC, PREAMBLE_MARK,
 };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
+/**
+ * **`--baseline`: 道具が透明かを測る** (2026-09-26 · パス 473)。
+ *
+ * 比べるのは「素の実行」と「前置きを差し込んで **1 件も落とさない** 実行」。間引きを掛けないので、
+ * 差が出たらそれは**道具の副作用**である (差し込んだ 1 行・strict mode の喪失・自分の原文のハッシュ)。
+ *
+ * ★ **これは `--partial` の前提を測る検査である** —— 透明でないゲートの間引きの答えは、
+ * 「ゲートが気付いた」の証拠にならない。だから台帳 (`TRANSPARENCY`) と**双方向**に突き合わせ、
+ * 台帳に無いゲートには透明であることを、在るゲートには実際に見えていることを要求する。
+ */
+function runBaseline(argv) {
+  const only = (() => {
+    const i = argv.indexOf('--only');
+    return i >= 0 && argv[i + 1] ? new Set(argv[i + 1].split(',')) : null;
+  })();
+  const gates = RECIPES.filter((r) => Object.hasOwn(THINNING, r.gate) && (!only || only.has(r.gate)));
+  const made = makeWorktree();
+  const wt = made.wt;
+  console.log(`道具が透明かを ${gates.length} ゲートで測ります (写し: ${wt})`);
+  const problems = [];
+  const measured = {};
+  try {
+    fs.mkdirSync(path.join(wt, 'scripts', 'lib'), { recursive: true });
+    fs.copyFileSync(path.join(REPO_ROOT, PREAMBLE_SRC), path.join(wt, PREAMBLE_SRC));
+    // 前置きは環境変数が無ければ即 return するので、ここでは 1 件も落ちない。
+    const run1 = (cmd) => {
+      const r = spawnSync('bash', ['-c', cmd], { cwd: wt, encoding: 'utf8', timeout: 900000 });
+      return { status: r.status ?? -1, out: `${r.stdout ?? ''}${r.stderr ?? ''}` };
+    };
+    for (const r of gates) {
+      const script = scriptOf(r.cmd);
+      const abs = path.join(wt, script);
+      const orig = fs.readFileSync(abs, 'utf8');
+      const bare = run1(r.cmd);
+      injectPreamble(wt, script);
+      const withP = run1(r.cmd);
+      fs.writeFileSync(abs, orig, 'utf8');
+      const seen = bare.status !== withP.status ? 'exit-code'
+        : bare.out !== withP.out ? 'output'
+          : null;
+      measured[r.gate] = seen;
+      const want = TRANSPARENCY[r.gate]?.visible ?? null;
+      const ok = seen === want;
+      if (!ok) {
+        problems.push(seen === null
+          ? `${r.gate}: 台帳は「${want} が見える」と言うのに、実測では素と一致した (台帳から消す)`
+          : `${r.gate}: 実測で道具が見えている (${seen})。台帳 TRANSPARENCY に理由つきで載せてください`
+            + ` —— 見えていると間引きの答えを「ゲートが気付いた」と読めません`);
+      }
+      console.log(`  ${ok ? '✓' : '✗'} ${r.gate.padEnd(22)} 実測=${(seen ?? '透明').padEnd(9)} 台帳=${want ?? '透明'}`);
+    }
+  } finally {
+    made.cleanup();
+  }
+  for (const gate of Object.keys(TRANSPARENCY)) {
+    if (!Object.hasOwn(measured, gate)) problems.push(`${gate}: 台帳に在りますが測っていません (--only で絞りましたか)`);
+  }
+  if (problems.length > 0) {
+    console.error(`\n❌ ${problems.length} 件:`);
+    for (const x of problems) console.error(`  - ${x}`);
+    return 1;
+  }
+  console.log(`\n✅ ${gates.length} ゲートすべて台帳どおり (見えているのは ${Object.keys(TRANSPARENCY).length} 本)`);
+  return 0;
+}
+
   if (argv.includes('--self-test')) process.exit(selfTest());
+  if (argv.includes('--baseline')) process.exit(runBaseline(argv));
   process.exit(argv.includes('--partial') ? runPartial(argv) : run(argv));
 }

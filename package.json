@@ -106,6 +106,7 @@
     "audit:tick-sensitivity": "node scripts/audit-tick-sensitivity.cjs && node scripts/audit-tick-sensitivity.cjs --self-test",
     "audit:gate-floors": "node scripts/audit-gate-floors.cjs --self-test && node scripts/audit-gate-floors.cjs",
     "audit:gate-partial": "node scripts/audit-gate-floors.cjs --self-test && node scripts/audit-gate-floors.cjs --partial",
+    "audit:gate-baseline": "node scripts/audit-gate-floors.cjs --self-test && node scripts/audit-gate-floors.cjs --baseline",
     "audit:comment-blind": "node scripts/audit-comment-blind.cjs --self-test && node scripts/audit-comment-blind.cjs",
     "audit:regex-poly": "node scripts/audit-regex-polynomial.cjs --n=200000 && node scripts/audit-regex-polynomial.cjs --self-test",
     "audit:e2e-wait-margin": "node scripts/audit-e2e-wait-margin.cjs --self-test && node scripts/audit-e2e-wait-margin.cjs",
