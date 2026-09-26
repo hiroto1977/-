@@ -187,7 +187,7 @@ function selfRolled(): string[] {
  * 共有の道具を読んでいる本。**この一覧は走査と両方向で一致する** (下の it) ——
  * 手書きの一覧のままだと、行を消したときにその行の主張が黙って消える
  * (パス 462 の対照 F。**分類を下げるのも退行の 1 手である**)。
- * 実測: パス 461 で 13 本・パス 462 で 56 本・パス 463 で 80 本・パス 488 で **91 本**。
+ * 実測: パス 461 で 13 本・パス 462 で 56 本・パス 463 で 80 本・パス 488 で 91 本・パス 489 で **92 本**。
  * ★ パス 478 はここに「81 本」と書いたが、その時点の一覧は **88 本**だった (数えずに書いた数)。
  * この一覧を守っているのは下の走査との両方向の一致で、この散文の数ではない。
  */
@@ -201,6 +201,7 @@ const MIGRATED: readonly string[] = [
   'src/main/clients/__tests__/exportPathGate.test.ts',
   'src/main/clients/__tests__/nullableSnapshotFieldWidth.test.ts',
   'src/main/clients/__tests__/responseRowGuards.test.ts',
+  'src/renderer/__tests__/appShellPartBoundary.test.ts',
   'src/renderer/__tests__/browserSendClaimCensus.test.ts',
   'src/renderer/__tests__/ceilingUnitCensus.test.ts',
   'src/renderer/__tests__/cloudSyncClaims.test.ts',

@@ -813,9 +813,9 @@ export const LAWS: readonly Law[] = [
     id: 'escape-hatch-stays-open',
     family: 'at-rest',
     name: '壊れた行があっても逃げ口は開く',
-    statement: '保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。**逃げ口が「壊れている」のではなく「最初から無い」形も在る** —— 配る単一 HTML 3 本は入力を `localStorage` へ自動保存しながら消す口を 1 つも持たず、利用者はブラウザのサイトデータ設定を知らないかぎり自分の氏名と住所を残したままにするほか無かった (パス 364)。書類を作る道具なので、残っている自覚が持ちにくい側である。',
-    provenance: ['パス 136', 'パス 225', 'パス 360', 'パス 364 (逃げ口が最初から無い)'],
-    enforcedBy: [test(T.renderer('malformedStoreRenders')), test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts'), test(T.shared('distributedArtifactStorage'))],
+    statement: '保管層は読みで落とさない —— 落とすと壊れた行が UI から触れなくなる (`library.ts` の「行そのものは落とさない」= パス 136)。代わりに入口 (`store.importAll`) で検め、既に入っている行は設定画面の点検パネルで消す。**その設計は「逃げ口が開いている」ことに全体重を掛けている** —— 逃げ口自身が壊れた行で投げたら利用者は自分のデータから永久に締め出され、全ゲートは緑のままである。だから逃げ口は壊れた行の下でも描けることを機械で留め、投げる画面は両方向の台帳で数える。実測 (2026-09-21): 形の合わない行を collection ごとに 1 件入れて 74 画面を描くと、**欄が無い行で 2 画面が投げ** (`sales` / `kpi` —— どちらも `.slice` on undefined)、**型が違う行では 0 画面**。**逃げ口が「壊れている」のではなく「最初から無い」形も在る** —— 配る単一 HTML 3 本は入力を `localStorage` へ自動保存しながら消す口を 1 つも持たず、利用者はブラウザのサイトデータ設定を知らないかぎり自分の氏名と住所を残したままにするほか無かった (パス 364)。書類を作る道具なので、残っている自覚が持ちにくい側である。**逃げ口が、落ちる物と同じ枠に居る形も在る** (パス 489) —— 会話履歴の読みが `role` / `text` しか検めず、追加の欄 (`provider` / `services` / `routedThrough`) を素で画面へ渡していた。1 件の欄が物なだけで AI アシスタントの画面が落ち、**会話履歴を消す唯一の口 (「🗑 消去」) もその画面ごと消えた**。浮いた部品 (AI コンシェルジュ) は画面の境界の外に居たので、開いた瞬間に**アプリ全体が白くなった** (実測: サイドバーのボタン 21 → 0)。しかもその部品の会話履歴には、台帳が sensitive と名乗るのに消す手が「すべてのデータを削除」しか無かった。読みは欄ごとに検め (読めない欄だけを落とし、行は残す)、画面の外の部品はどれも自分の境界に入れ、境界の知らせは部品が描く保存値を消す操作を持つ。',
+    provenance: ['パス 136', 'パス 225', 'パス 360', 'パス 364 (逃げ口が最初から無い)', 'パス 489 (逃げ口が落ちる物と同じ枠に居る)'],
+    enforcedBy: [test(T.renderer('malformedStoreRenders')), test('src/renderer/components/__tests__/recordShapeAuditPanel.test.ts'), test(T.shared('distributedArtifactStorage')), test('src/renderer/pages/__tests__/storedChatHistoryRenders.test.ts'), test(T.renderer('appShellPartBoundary'))],
   },
   {
     id: 'sample-never-written-back',

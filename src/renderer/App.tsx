@@ -14,8 +14,9 @@ import { startAutoLock } from './security/autoLock';
 import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
-import { ChatbotWidget } from './components/ChatbotWidget';
+import { ChatbotWidget, clearChatbotHistory } from './components/ChatbotWidget';
 import { PageErrorBoundary } from './components/PageErrorBoundary';
+import { ShellPartBoundary } from './components/ShellPartBoundary';
 import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import { BestAnswersIndicator } from './components/BestAnswersIndicator';
 import {
@@ -589,7 +590,9 @@ export function App() {
           </span>
           <span className="description">{active.description}</span>
           <div className="topbar-right">
-            <BestAnswersIndicator />
+            <ShellPartBoundary label="ベスト3 の進み具合">
+              <BestAnswersIndicator />
+            </ShellPartBoundary>
             <button
               type="button"
               className={`topbar-fav ${activeFav ? 'on' : ''}`}
@@ -600,7 +603,9 @@ export function App() {
             >
               {activeFav ? '♥' : '♡'}
             </button>
-            <VoiceCommandBar />
+            <ShellPartBoundary label="音声コマンド">
+              <VoiceCommandBar />
+            </ShellPartBoundary>
           </div>
         </header>
         <section className="content" ref={contentRef} onScroll={onContentScroll}>
@@ -609,7 +614,9 @@ export function App() {
             なるので 1 か所で出す。画面の境界の外に置く —— 中だと画面が落ちたときに
             報せも消える。
           */}
-          <DeviceStoreFailureBanner />
+          <ShellPartBoundary label="端末の保存の知らせ">
+            <DeviceStoreFailureBanner />
+          </ShellPartBoundary>
           {/* key で画面ごとに張り直す —— 切り替えのたびに `.page-enter` がふわっと現れる。 */}
           <div key={active.id} className="page-enter">
             {activeUnlocked ? (
@@ -625,10 +632,12 @@ export function App() {
                 <ManualDataSection scope={active.id} />
               </PageErrorBoundary>
             ) : (
-              <UpgradeNotice
-                requiredPlan={requiredPlan}
-                onUpgrade={(tier) => setPlan(tier)}
-              />
+              <ShellPartBoundary label="プランの案内">
+                <UpgradeNotice
+                  requiredPlan={requiredPlan}
+                  onUpgrade={(tier) => setPlan(tier)}
+                />
+              </ShellPartBoundary>
             )}
           </div>
         </section>
@@ -643,7 +652,18 @@ export function App() {
           ↑
         </button>
       </main>
-      <ChatbotWidget />
+      {/*
+        画面の外の部品は、どれも自分の境界に入れる (パス 489)。ここで投げると React はツリーごと外し、
+        サイドバーも画面も消える —— 保存した会話履歴の 1 件で、コンシェルジュを開いた瞬間に実際にそうなった。
+        復旧の操作は「会話履歴を消してやり直す」(この部品が描く保存値はそれだけ)。
+      */}
+      <ShellPartBoundary
+        label="AI コンシェルジュ"
+        floating
+        recover={{ label: '会話履歴を消去してやり直す', run: clearChatbotHistory }}
+      >
+        <ChatbotWidget />
+      </ShellPartBoundary>
     </div>
     </ShellContext.Provider>
   );

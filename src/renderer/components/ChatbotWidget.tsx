@@ -14,7 +14,7 @@
  */
 import { escapeMarkdownInline } from '../../shared/escape';
 import { navigateTo } from '../navigate';
-import { arrayOf, chatMessages, isRecord } from '../data/persistedShape';
+import { arrayOf, chatMessages, isRecord, storedLabel, type ChatFieldReaders } from '../data/persistedShape';
 import { classifyActionResult } from '../data/actionOutcome';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
@@ -65,14 +65,37 @@ interface FeatureRequest {
 }
 const isFeatureRequest = (v: unknown): v is FeatureRequest => isRecord(v) && typeof v.text === 'string' && typeof v.at === 'string';
 
+/**
+ * 保存した会話の、`role` / `text` 以外の欄の読み手 (パス 489) —— 型が全部の欄を要求する。
+ * `routedThrough` は「🪪 …」の札として素で描くので、物が 1 つ入るとこの部品が投げる。
+ * この部品は画面の境界の外に居るので、直す前はそれで**アプリ全体が白くなった**。
+ */
+const HISTORY_READERS: ChatFieldReaders<ChatMessage> = { routedThrough: storedLabel };
+
 function loadHistory(): ChatMessage[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    // 保存値は型が守らない —— role / text の形が合う要素だけ (null が 1 つ混じると描画で落ちる)。
-    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'bot'], HISTORY_MAX);
+    // 保存値は型が守らない —— role / text の形が合う要素だけ、追加の欄は読み手が読めた物だけ。
+    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'bot'], HISTORY_MAX, HISTORY_READERS);
   } catch {
     return [];
+  }
+}
+
+/**
+ * 保存した会話履歴を端末から消す。**成否を返す** (ストレージが拒むと投げうる)。
+ *
+ * 2 つの口が読む —— この部品の「🗑 履歴」と、部品が描画で落ちたときに App の境界が出す
+ * 「会話履歴を消去してやり直す」。台帳は会話の中身を `sensitive` と名乗るのに、2026-09-26
+ * (パス 489) まで**消す手が「すべてのデータを削除」しか無かった** (法則 `escape-hatch-stays-open`)。
+ */
+export function clearChatbotHistory(): boolean {
+  try {
+    localStorage.removeItem(HISTORY_KEY);
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -396,6 +419,18 @@ export function ChatbotWidget() {
                 aria-label="要望リストをエクスポート"
               >
                 📥 要望
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  clearChatbotHistory();
+                  setMessages([]);
+                }}
+                disabled={messages.length === 0}
+                title="この端末に残した会話履歴を消去"
+                aria-label="会話履歴を消去"
+              >
+                🗑 履歴
               </button>
               <button type="button" onClick={() => setOpen(false)} aria-label="チャットを閉じる">
                 ✕

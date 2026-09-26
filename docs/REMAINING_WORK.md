@@ -1,5 +1,28 @@
 # Service Hub — 残りの作業手順書
 
+## パス 489 (保存した会話履歴を欄ごとに読む・画面の外の部品を境界に入れる) が測って、次のパスへ残した物 (2026-09-26)
+
+1. **コンシェルジュの要望リスト (`chatbot-requests`) にも消す手が無い** —— 会話履歴と同じく台帳は会話の中身として数え
+   (`docs/DATA_PROTECTION.md` の「会話の中身」)、部品には書き出す口 (「📥 要望」) しか無い。消す道は設定の
+   「すべてのデータを削除」だけ。書き出した後に消したい利用者の逃げ口が無い
+2. **画面の中の復旧は「もう一度開く」と「ホームへ戻る」だけ** —— AI アシスタントの画面が保存値のせいで描けなくなったとき、
+   `PageErrorBoundary` は保存値を消す操作を持たない (画面の外の部品には `recover` を渡せるようにした)。今日は読みを欄ごとに
+   したので保存値から投げる道は測って 0 だが、将来の欄が描画で投げれば「🗑 消去」はまた画面ごと消える。直すなら画面ごとの
+   復旧 (どの保存値を消せば戻るか) を台帳に持たせる形になる
+3. **画面の外の 4 部品 (ベスト3 の進み具合・音声コマンド・端末の保存の知らせ・プランの案内) に保存値や第三者の値から投げる
+   道が在るかは測っていない** —— 境界は構造の守りとして入れた (投げる物に差し替えた検査が振る舞いを留める)。
+   投げる道そのものを探すなら、各部品が描く値の出どころを 1 つずつ辿る
+4. **`storedLabel` の天井は 256 字** (`displayField` の既定) —— 「via …」「🪪 …」の札には長いが、正当な値 (提供者の名前・
+   経路の名前) はどれも 30 字未満で、切ったことは `…` で述べる
+5. **公開中の `docs/QUALITY.md` の分母の文が、その頁の表と食い違う** (このパスで見つけた・次のパス) —— 頁の
+   「Overall: 100.00% / 0 survived」と表 (**246 行**) は 2026-09-01 の全掃引から刷られているのに、その下の
+   「分母の範囲: `mutate` が名指しする **296 本**」はパス 354 が後から手で挿した文で、**今の `mutate` は 302 本**。
+   census (`mutateScopeCensus`) は `\*\*\d+ 本\*\*` の**在ること**しか見ない。報告が測った集合と config が名指す集合の差を、
+   生成側と census の両方で名乗らせる
+6. **`arrayOf` は通った要素をそのまま返す** —— 型の述語 (`isFeatureRequest`) が全部の欄を検めている間だけ正しい。
+   今日 `FeatureRequest` は 2 欄で両方を検めているので生きた欠陥ではないが、欄を足して述語を直し忘れると
+   `chatMessages` と同じ形になる (`ChatFieldReaders` のような型の強制が無い)
+
 ## パス 488 (外から来た文をアプリの声の 1 行に置く) が測って、次のパスへ残した物 (2026-09-26)
 
 1. **直す前に保存された会話履歴は直らない (測って、画面では畳まないと決めた)** —— 会話は `localStorage` の
@@ -29909,7 +29932,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
-| `apiResponse` | 15 | 13 | 対称 (実測・2026-09-26 パス 482 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**両ビルドの食い違いは無い** —— ただし**2026-09-23 に書いた理由は 2 か所で古びていた**: 「renderer がこのモジュールから直接読むのは `parseJsonText` と `displayField` の 2 種類だけ」「`null` を返す読み手に両ビルドが届く道は `shared/api/*.ts` ただ 1 つ」と書いたが、パス 442 / 443 から renderer は **`finiteNumberOf` も直接読む** (保管した販売記録と KPI 実績の金額を読む漏斗)。**それでも割れないのは、問うている値が別だから**である —— renderer の `finiteNumberOf` が読むのは **renderer 自身の保管層** (IndexedDB の販売記録・KPI 実績。main はこの保管層を読まない) の値で、「no」のあとの動作 (行を落として件数を述べる) は renderer にしか無い。main 側の読み手は `src/main/clients/` の第三者の応答を読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。**同じ値を両ビルドが問う形**は `shared/api/*.ts` (cursor ほか) を通る物だけで、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。`parseJsonText` は `null` を返さず**投げる**・`displayField` は `null` を返さない (非文字列は空文字・長すぎる値は天井 + `…`) ので、この 2 つは「no」と言う枝そのものを持たない。★ **読み手はここに並べない —— 名前だけでなく種類も** —— 2026-09-23 の文は名前を並べるのをやめて「2 種類だけ」と**種類**を並べたが、種類が 1 つ増えた日に同じく偽になった。数は左の列が数え、この欄は**なぜ対称なのか** (誰の値を問うているか) だけを述べる。つまり非対称になりうる組が今日 0 件である |
+| `apiResponse` | 15 | 14 | 対称 (実測・2026-09-26 パス 482 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**両ビルドの食い違いは無い** —— ただし**2026-09-23 に書いた理由は 2 か所で古びていた**: 「renderer がこのモジュールから直接読むのは `parseJsonText` と `displayField` の 2 種類だけ」「`null` を返す読み手に両ビルドが届く道は `shared/api/*.ts` ただ 1 つ」と書いたが、パス 442 / 443 から renderer は **`finiteNumberOf` も直接読む** (保管した販売記録と KPI 実績の金額を読む漏斗)。**それでも割れないのは、問うている値が別だから**である —— renderer の `finiteNumberOf` が読むのは **renderer 自身の保管層** (IndexedDB の販売記録・KPI 実績。main はこの保管層を読まない) の値で、「no」のあとの動作 (行を落として件数を述べる) は renderer にしか無い。main 側の読み手は `src/main/clients/` の第三者の応答を読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。**同じ値を両ビルドが問う形**は `shared/api/*.ts` (cursor ほか) を通る物だけで、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。`parseJsonText` は `null` を返さず**投げる**・`displayField` は `null` を返さない (非文字列は空文字・長すぎる値は天井 + `…`) ので、この 2 つは「no」と言う枝そのものを持たない。★ **読み手はここに並べない —— 名前だけでなく種類も** —— 2026-09-23 の文は名前を並べるのをやめて「2 種類だけ」と**種類**を並べたが、種類が 1 つ増えた日に同じく偽になった。数は左の列が数え、この欄は**なぜ対称なのか** (誰の値を問うているか) だけを述べる。つまり非対称になりうる組が今日 0 件である |
 | `assistantLimits` | 3 | 5 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `buildDestinations` | 0 | 12 | 対称 —— というより **main はこのモジュールの問いを 1 度も発しない** (実測・2026-09-25 パス 455 / 457 で数え直した)。母集団に入ったのは `credentialSlotUnreadNote` (`string | null`) を足したためだが、**`src/main` / `src/preload` からの直の import は 0 件**で、走査に映ったのは*閉包*の 1 辺だけ —— `shared/paperAccount.ts:69` の `import type { BuildKind }` である。**型だけの辺**なのでビルドの時点で消え、`paperAccount` はこのモジュールの値を 1 つも読まない (export を 1 つずつ走査して 0 件)。しかも `paperAccount` を読む main 側の物は**検査 1 本だけ** (`main/clients/__tests__/paperAccountReality.test.ts`) で出荷コードではない。したがって「否定で答えたあとの動作」が両ビルドで割れる道は**原理的に無い** —— このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** (読み手の数は左の列が数える。`null` は「ブラウザ版には言うことが無い」という答えである)。その答えの正しさは `pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate,proxySectionBuildGate}.test.ts` と `components/__tests__/{googleConnectCardBuildGate,exportActionsBuildGate}.test.ts` が両方の実行形態を実際に描いて留める (パス 457 で足した `googleLiveScopeNote` / `googleSignInUnsupportedNote` はブラウザ版が**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける。パス 459 の `proxyRequiredNote` は**ブラウザ版でだけ言う**側で (main は各サービスへ直接つなぐので、そこで「Worker を建てろ」と言うと偽の前提になる)、実際に描くのは `components/ProxyRequiredNote.tsx` 1 つ・振る舞いは `pages/__tests__/proxyRequiredOnScreen.test.ts` が 3 つの実行形態で見る)。 **パス 460 でこのモジュールは 2 つ目の役目を持った** —— 実行形態の**身元**そのもの (`WEB_BUILD_SUFFIX` / `isWebBuildVersion`)。それまで身元は「橋が名乗った版と完全に一致するか」で決まり、綴りは `web-shim.ts` (作る側) と `runtimeMode.ts` (比べる側) に分かれていた —— 実測で、作る側だけを 1 つ上の版にすると **19,048 件すべて緑のままブラウザ版がデスクトップ版を名乗り、保管庫を解錠する唯一の入口 (ロック画面) が出なくなる**。判定はここに 1 つ置き、両側が読む。**main は今もこのモジュールを 1 行も import しない** (実測: `src/main` / `src/preload` から `buildDestinations` / `WEB_BUILD_SUFFIX` / `isWebBuildVersion` への参照は 0 件) ので、上の判定は変わらない。身元の安定は `renderer/__tests__/buildSentinelStability.test.ts` が振る舞いで、綴りが 1 つであることは `renderer/__tests__/versionNamingCensus.test.ts` が両方向で留める。 |

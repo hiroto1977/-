@@ -22,7 +22,7 @@ import {
   savedCredentialMessage,
   type StorageMechanism,
 } from '../data/credentialSaveMessage';
-import { chatMessages } from '../data/persistedShape';
+import { chatMessages, storedLabel, storedTrue, type ChatFieldReaders } from '../data/persistedShape';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
@@ -30,6 +30,7 @@ import {
   buildOfflineKnowledgeAnswer,
   buildSystemPrompt,
   retrieveServices,
+  storedServiceLinks,
   type AssistantService,
 } from '../data/assistantContext';
 import { externalTextOnOneLine, parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
@@ -121,12 +122,24 @@ const DEFAULT_THEME: Theme = { bg: '#ffffff', fg: '#000000', image: '' };
 // SERVICES を読むと初期化前で undefined になる (罠)。
 const ORG_INDEX = buildOrgIndex(registryOrg as RawOrg, registryTeams as readonly RawTeam[]);
 
+/**
+ * 保存した会話の、`role` / `text` 以外の欄の読み手 (パス 489) —— 型が全部の欄を要求する
+ * (`ChatFieldReaders`)。画面はこの 3 欄を素で描く (`via {provider}` / 簡易モードの札 /
+ * `m.services.map(…)`)。直す前は 1 つも検めておらず、1 件の欄が物・非配列なだけでこの画面が
+ * 丸ごと落ちた —— 落ちると、会話履歴を消す唯一の口 (「🗑 消去」) もこの画面ごと消える。
+ */
+const HISTORY_READERS: ChatFieldReaders<ChatMessage> = {
+  services: storedServiceLinks,
+  offline: storedTrue,
+  provider: storedLabel,
+};
+
 function loadHistory(): ChatMessage[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    // 保存値は型が守らない —— role / text の形が合う要素だけ (null が 1 つ混じると描画で落ちる)。
-    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'assistant'], HISTORY_MAX);
+    // 保存値は型が守らない —— role / text の形が合う要素だけ、追加の欄は読み手が読めた物だけ。
+    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'assistant'], HISTORY_MAX, HISTORY_READERS);
   } catch {
     return [];
   }
