@@ -22,6 +22,7 @@
     "scripts/integrity-chain.cjs",
     "scripts/lib/artifact-freshness.cjs",
     "scripts/lib/population-floor.cjs",
+    "scripts/lib/tracked-cross-check.cjs",
     "scripts/lint-artifact-csp.cjs",
     "scripts/lint-sample-data.cjs",
     "scripts/make-autoinstall.sh",
@@ -2184,6 +2185,22 @@
       "leafCount": 93,
       "note": "update integrity-chain.cjs,population-floor.cjs,lint-sample-data.cjs",
       "hash": "246874b2fdcd2f94e5ee2e9a28a874b528d2c5ad1368929eabeba86d8fc7b613"
+    },
+    {
+      "index": 261,
+      "prevHash": "246874b2fdcd2f94e5ee2e9a28a874b528d2c5ad1368929eabeba86d8fc7b613",
+      "merkleRoot": "f39e21e6bb61c860d14188a399fc77438b91bdcb1e5cf34dbb43c4dd9ef8397e",
+      "leafCount": 93,
+      "note": "update lint-sample-data.cjs",
+      "hash": "43a51da6e33dabfc4e429d08efe9d1a9c9073c7552ef69b3517a492370252cb2"
+    },
+    {
+      "index": 262,
+      "prevHash": "43a51da6e33dabfc4e429d08efe9d1a9c9073c7552ef69b3517a492370252cb2",
+      "merkleRoot": "fa27132a818584f9576bcd27d75b48c2a7407a9d25b427e96828fc47defe1d1b",
+      "leafCount": 94,
+      "note": "update integrity-chain.cjs,tracked-cross-check.cjs",
+      "hash": "48a6f5b9c27762ea1a95524777014ff9140e108086eab8507e4ac27d2bdb2bd1"
     }
   ],
   "tipManifest": {
@@ -2204,11 +2221,12 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "47f63f6e06d22cbe02d876b02107765840734c0ae8866960d425e344497f87cd",
+    "scripts/integrity-chain.cjs": "0fa7f0773881605efb645744cc293d43bc0ded107bae28ab3b6085a6189f2120",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
+    "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
-    "scripts/lint-sample-data.cjs": "a3fc867884b5abb19ab4e94625e71707fb7abf071c1f2f4f3c4fd89512040542",
+    "scripts/lint-sample-data.cjs": "55f548e97d05e03f409ccbb2f87c3ecceb1d66e4851d24f2100dedd7670f15ed",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
     "scripts/migrate.sh": "fe793636d6c87f42b663a42e300207346b40d6adbb057d0ba5696fd4604311ed",

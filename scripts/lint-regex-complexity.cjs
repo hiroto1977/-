@@ -129,6 +129,7 @@
 const fs = require('fs');
 const path = require('path');
 const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const { stripComments } = require('./lib/strip-non-code.cjs');
 
@@ -397,6 +398,22 @@ async function runProbesConfirmed(items, measure = runProbes) {
 // 走査
 // ---------------------------------------------------------------------------
 
+/**
+ * 走査の条件。**走査と `CROSS_CHECK` が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const acceptName = (name) => EXT.test(name);
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。
+ * このゲート自身は走査から外す (`--self-test` がわざと破滅的な式を標本として持つ)。
+ */
+const CROSS_CHECK = {
+  roots: [...ROOTS],
+  skipDirs: SKIP_DIRS,
+  accept: acceptName,
+  ignore: [path.relative(path.resolve(__dirname, '..'), __filename)],
+};
+
 function walk(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -404,7 +421,7 @@ function walk(dir, out = []) {
     const p = path.join(dir, e.name);
     if (e.isDirectory()) walk(p, out);
     // 自分自身は外す —— `--self-test` がわざと破滅的な式を標本として持つ。
-    else if (EXT.test(e.name) && path.resolve(p) !== __filename) out.push(p);
+    else if (acceptName(e.name) && path.resolve(p) !== __filename) out.push(p);
   }
   return out;
 }
@@ -560,6 +577,10 @@ async function main(argv) {
   //   (1,577 → 1,469 / 1,475 件)。`.js` / `.mjs` は今日 0 件なので**宣言しない**
   //   (正当に 0 になる群に床を置かない · パス 467)。
   if (reportGroupFloor(paths, REQUIRED_GROUPS, path.resolve(__dirname, '..'), 'lint:regex') !== 0) process.exit(1);
+  // ★ **群ごとの床も「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   このゲートは**半分落としても ✅ exit 0** だった (床 500 に対し 795 件)。
+  const cross = reportTrackedCrossCheck(paths, CROSS_CHECK, path.resolve(__dirname, '..'), 'lint:regex');
+  if (cross.code !== 0) process.exit(1);
   const MIN_FILES = 500;
   if (files < MIN_FILES) {
     console.error(`❌ ${files} ファイルしか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
@@ -596,7 +617,7 @@ async function main(argv) {
   }
 
   if (failed) return 1;
-  console.log('✅ 破滅的バックトラックを起こす正規表現はありません');
+  console.log(`✅ 破滅的バックトラックを起こす正規表現はありません (${crossCheckSuffix(cross.source)})`);
   return 0;
 }
 
@@ -611,6 +632,7 @@ module.exports = {
   N_EXP,
   BOOT_TIMEOUT_MS,
   REQUIRED_GROUPS,
+  CROSS_CHECK,
 };
 
 if (require.main === module && isMainThread) {

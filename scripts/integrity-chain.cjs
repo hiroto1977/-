@@ -250,6 +250,12 @@ const PROTECTED = [
   //                               黙らせられる物は、除外ではなく保護対象。
   'scripts/lint-sample-data.cjs',
   'scripts/lib/population-floor.cjs',
+  //   lib/tracked-cross-check.cjs  追跡ファイルの一覧と走査を突き合わせる判定
+  //                               (2026-09-25 · パス 471 · 木を歩く 6 ゲートが共有)。
+  //                               `lint-sample-data.cjs` (保護対象) が読むので
+  //                               **閉包に入る** —— ここが `missing: []` を返すように
+  //                               書き換わると、走査が一部だけ死んでも 6 ゲートが緑になる。
+  'scripts/lib/tracked-cross-check.cjs',
   'scripts/lint-artifact-csp.cjs',
   'scripts/verify-release-artifacts.cjs',
   'scripts/checksum-release.cjs',

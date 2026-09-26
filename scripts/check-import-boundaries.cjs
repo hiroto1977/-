@@ -36,6 +36,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 /** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
 const REQUIRED_GROUPS = { exts: ['.ts', '.tsx'], roots: ['src'] };
@@ -126,14 +127,31 @@ function detectZone(rel) {
   return null;
 }
 
+/**
+ * 走査の条件。**走査とこの下の照合が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const SKIP_DIRS = new Set(['__tests__', 'node_modules']);
+const acceptName = (name) => /\.(ts|tsx)$/.test(name);
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。
+ * ゾーンの外 (`src/` 直下の物など) は `main()` が `detectZone` で落とすので、同じ条件を渡す。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: SKIP_DIRS,
+  accept: acceptName,
+  acceptPath: (rel) => detectZone(rel) !== null,
+};
+
 function* walkSrc(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const e of entries) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (e.name === '__tests__' || e.name === 'node_modules') continue;
+      if (SKIP_DIRS.has(e.name)) continue;
       yield* walkSrc(full);
-    } else if (/\.(ts|tsx)$/.test(e.name)) {
+    } else if (acceptName(e.name)) {
       yield full;
     }
   }
@@ -452,13 +470,17 @@ function main() {
   //   境界の規則は renderer / main / preload の別を見る物なので、`.tsx` (= renderer の画面)
   //   が丸ごと消えた走査で「違反なし」と言うのは、0 件を「違反なし」と読むのと同じ形である。
   if (reportGroupFloor(scannedFiles, REQUIRED_GROUPS, REPO_ROOT, 'lint:imports') !== 0) return 1;
+  // ★ **群ごとの床は「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   1% 落としても 6 ゲートすべてが ✅ exit 0 だった。追跡ファイルの一覧と照合する。
+  const cross = reportTrackedCrossCheck(scannedFiles, CROSS_CHECK, REPO_ROOT, 'lint:imports');
+  if (cross.code !== 0) return 1;
   const MIN_FILES = 300;
   if (fileCount < MIN_FILES) {
     console.error(`❌ src/**/*.ts(x) を ${fileCount} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
     return 1;
   }
   if (violations.length === 0) {
-    console.log('✅ all imports respect process boundaries');
+    console.log(`✅ all imports respect process boundaries (${crossCheckSuffix(cross.source)})`);
     return 0;
   }
   console.error(`❌ ${violations.length} import-boundary violation(s):`);
@@ -472,6 +494,6 @@ function main() {
  * **外側の証人のために公開する。** `require.main` の番をつけないと、
  * require した瞬間に CLI が走って process ごと落ちる。
  */
-module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES, REQUIRED_GROUPS };
+module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES, REQUIRED_GROUPS, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

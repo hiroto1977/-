@@ -30,7 +30,8 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { spawnSync, execFileSync } = require('node:child_process');
+const { gitLsFilesOrNull } = require('./lib/tracked-cross-check.cjs');
+const { spawnSync } = require('node:child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -48,16 +49,14 @@ const REQUIRED_GROUPS = { exts: ['.sh'], roots: ['scripts'] };
  * 追跡ファイルの一覧を git に訊く。**git が使えなければ `null`** ——
  * 「git が居ない」と「git が 0 件と答えた」を混ぜない。
  */
+/**
+ * 追跡ファイルの一覧。**実装は共有の 1 つ** (2026-09-25 · パス 471 で寄せた) ——
+ * パス 470 はここと `lint-repo-size.cjs` に写しを 1 つずつ置いており、木を歩く 6 本が
+ * 3 人目の消費者になったので中心へ出した (法則 `center-then-count-callers`)。
+ * 読めなければ `null` —— このゲートはフォールバックを持つので握り潰す側が要る。
+ */
 function gitLsFiles(extraArgs) {
-  try {
-    const out = execFileSync('git', ['-C', REPO_ROOT, 'ls-files', '-z', ...extraArgs], {
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    });
-    return out.split('\0').filter((f) => f.length > 0);
-  } catch {
-    return null;
-  }
+  return gitLsFilesOrNull(REPO_ROOT, extraArgs);
 }
 
 /*

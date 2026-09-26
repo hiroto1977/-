@@ -61,7 +61,7 @@ const floor = req('../../../scripts/lib/population-floor.cjs') as {
 const tool = req('../../../scripts/audit-gate-floors.cjs') as {
   RECIPES: readonly { gate: string; cmd: string }[];
   PARTIAL_GATES: readonly string[];
-  ENFORCEMENT: Record<string, { by: string; why: string }>;
+  ENFORCEMENT: Record<string, { by: readonly string[]; why: string }>;
   THINNING: Record<string, { expect: string; why: string }>;
   scriptOf: (cmd: string) => string;
   declaredGroups: (script: string) => { mode: string; arg: string }[];
@@ -153,22 +153,41 @@ describe('宣言と道具の台帳 (双方向)', () => {
       const code = stripComments(readOriginalSource(join(REPO, script)));
       const how = tool.ENFORCEMENT[gate];
       expect(how, `${gate} が ENFORCEMENT にない`).toBeTruthy();
-      if (how!.by === 'shared-floor') {
-        expect(code, `${gate} が lib/population-floor を読んでいない`).toContain('population-floor.cjs');
-        expect(
-          /reportGroupFloor\(|groupFloorProblems\(/.test(code),
-          `${gate} が共有の判定を呼んでいない`,
-        ).toBe(true);
-      } else {
-        // cross-check: 権威に 2 度訊いて食い違いを見る。**呼んでいること**まで見る
-        // (定義だけ在って誰も呼ばない形は、このリポジトリが繰り返し踏んでいる罠)。
-        expect(code, `${gate} が crossCheckProblem を定義していない`).toContain('function crossCheckProblem');
-        expect(
-          /crossCheckProblem\((?!\s*\))/.test(code.replace('function crossCheckProblem', '')),
-          `${gate} が crossCheckProblem を呼んでいない`,
-        ).toBe(true);
-        // pathspec つきの 2 度目を投げていること (広い一覧をもう 1 度読むだけでは照合にならない)。
-        expect(code, `${gate} が pathspec つきの 2 度目を訊いていない`).toContain("'--'");
+      expect(how!.by.length, `${gate} が機構を 1 つも名乗っていない`).toBeGreaterThan(0);
+      for (const by of how!.by) {
+        if (by === 'shared-floor') {
+          expect(code, `${gate} が lib/population-floor を読んでいない`).toContain('population-floor.cjs');
+          expect(
+            /reportGroupFloor\(|groupFloorProblems\(/.test(code),
+            `${gate} が共有の判定を呼んでいない`,
+          ).toBe(true);
+        } else if (by === 'tracked-cross-check') {
+          /*
+           * **追跡ファイルの一覧との照合** (パス 471)。床は「0 件」か「1 群まるごと」に
+           * しか当たらないので、一様に間引かれた走査を見るにはこれが要る。
+           * 読んでいるだけでは足りない —— **呼んでいること**まで見る。
+           */
+          expect(code, `${gate} が lib/tracked-cross-check を読んでいない`).toContain('tracked-cross-check.cjs');
+          expect(
+            /reportTrackedCrossCheck\(|trackedCrossCheck\(/.test(code),
+            `${gate} が追跡ファイルとの照合を呼んでいない`,
+          ).toBe(true);
+          // 条件はゲート自身が宣言する (道具の側に条件を並べると 2 つ目の台帳が古びる)。
+          const mod = req(`../../../${script}`) as { CROSS_CHECK?: { roots?: unknown; accept?: unknown } };
+          expect(mod.CROSS_CHECK, `${gate} が CROSS_CHECK を export していない`).toBeTruthy();
+          expect(Array.isArray(mod.CROSS_CHECK!.roots), `${gate} の CROSS_CHECK に roots が無い`).toBe(true);
+          expect(typeof mod.CROSS_CHECK!.accept, `${gate} の CROSS_CHECK に accept が無い`).toBe('function');
+        } else {
+          // cross-check: 権威に 2 度訊いて食い違いを見る。**呼んでいること**まで見る
+          // (定義だけ在って誰も呼ばない形は、このリポジトリが繰り返し踏んでいる罠)。
+          expect(code, `${gate} が crossCheckProblem を定義していない`).toContain('function crossCheckProblem');
+          expect(
+            /crossCheckProblem\((?!\s*\))/.test(code.replace('function crossCheckProblem', '')),
+            `${gate} が crossCheckProblem を呼んでいない`,
+          ).toBe(true);
+          // pathspec つきの 2 度目を投げていること (広い一覧をもう 1 度読むだけでは照合にならない)。
+          expect(code, `${gate} が pathspec つきの 2 度目を訊いていない`).toContain("'--'");
+        }
       }
     }
   });
@@ -176,7 +195,11 @@ describe('宣言と道具の台帳 (双方向)', () => {
   it('★ 機構の台帳は PARTIAL_GATES と双方向で、理由が埋まっている', () => {
     expect(Object.keys(tool.ENFORCEMENT).sort()).toEqual([...tool.PARTIAL_GATES].sort());
     for (const [gate, e] of Object.entries(tool.ENFORCEMENT)) {
-      expect(['shared-floor', 'cross-check'], `${gate} の機構が未知`).toContain(e.by);
+      expect(Array.isArray(e.by), `${gate} の機構が配列でない`).toBe(true);
+      expect(e.by.length, `${gate} が機構を 1 つも名乗っていない`).toBeGreaterThan(0);
+      for (const by of e.by) {
+        expect(['shared-floor', 'cross-check', 'tracked-cross-check'], `${gate} の機構が未知`).toContain(by);
+      }
       expect(e.why.length, `${gate} の理由が短すぎる`).toBeGreaterThanOrEqual(8);
     }
   });

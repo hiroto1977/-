@@ -34,7 +34,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+const { gitLsFiles: sharedGitLsFiles } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const MB = 1024 * 1024;
@@ -73,13 +73,13 @@ const REQUIRED_GROUPS = {
 };
 
 /** 追跡ファイルの一覧を git に訊く。使えなければ投げる (「0 件」と混ぜない)。 */
+/**
+ * 追跡ファイルの一覧。**実装は共有の 1 つ** (2026-09-25 · パス 471 で寄せた)。
+ * **投げる側のまま** —— このゲートの母集団そのものが git なので、読めないなら
+ * 答えられない (fail closed。パス 470 より前からの振る舞い)。
+ */
 function gitLsFiles(extraArgs) {
-  const out = execFileSync('git', ['ls-files', '-z', ...extraArgs], {
-    cwd: REPO_ROOT,
-    encoding: 'utf8',
-    maxBuffer: 64 * MB,
-  });
-  return out.split('\0').filter((rel) => rel.length > 0);
+  return sharedGitLsFiles(REPO_ROOT, extraArgs);
 }
 
 /*

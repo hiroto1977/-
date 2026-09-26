@@ -509,62 +509,99 @@ const PARTIAL_GATES = [
  * 振る舞いの宣言で、機構の宣言ではない —— 道具はどう鳴るかを問わない。
  */
 const ENFORCEMENT = {
-  'lint:network-targets': { by: 'shared-floor', why: '木を歩く走査。群が丸ごと消える形は群ごとの床でしか見えない' },
-  'lint:url-encoding': { by: 'shared-floor', why: '同じ形 (src の木を歩く)' },
-  'lint:imports': { by: 'shared-floor', why: '同じ形 (src の木を歩く)' },
-  'lint:regex': { by: 'shared-floor', why: '同じ形 (src / scripts / orchestration の木を歩く)' },
-  'lint:charset': { by: 'shared-floor', why: '同じ形。要求する拡張子は宣言 (SCAN_EXTS) から導く' },
-  'lint:sample-data': { by: 'shared-floor', why: '同じ形 (母集団が 2 つあり、ソース側の木を歩く)' },
+  'lint:network-targets': {
+    by: ['shared-floor', 'tracked-cross-check'],
+    why: '木を歩く走査。群が丸ごと消える形は群ごとの床が、一様に間引かれる形は'
+      + '追跡ファイルの一覧との照合が見る (src の外の母集団は 2026-09-20 から既に git の一覧)',
+  },
+  'lint:url-encoding': { by: ['shared-floor', 'tracked-cross-check'], why: '同じ形 (src の木を歩く)' },
+  'lint:imports': {
+    by: ['shared-floor', 'tracked-cross-check'],
+    why: '同じ形 (src の木を歩く)。ゾーンの外は走査しないので、照合にも同じ条件を渡す',
+  },
+  'lint:regex': {
+    by: ['shared-floor', 'tracked-cross-check'],
+    why: '同じ形 (src / scripts / orchestration の木を歩く)。このゲート自身は照合から外す',
+  },
+  'lint:charset': {
+    by: ['shared-floor', 'tracked-cross-check'],
+    why: '同じ形。要求する拡張子は宣言 (SCAN_EXTS) から導き、照合の条件も同じ定数を読む',
+  },
+  'lint:sample-data': {
+    by: ['shared-floor', 'tracked-cross-check'],
+    why: '同じ形 (母集団が 2 つあり、ソース側の木を歩く)。照合はソース側に当てる',
+  },
   'lint:shell': {
-    by: 'cross-check',
+    by: ['cross-check'],
     why: '母集団は「追跡されている .sh 全部」。群ごとの床は合計の床と同じ所しか捕まえないので、'
       + 'git に 2 度訊いて食い違いを見る (crossCheckProblem) —— 1 本だけ落ちた形も鳴る',
   },
   'lint:repo-size': {
-    by: 'cross-check',
+    by: ['cross-check'],
     why: '母集団は追跡ファイル全部。合計の床は実測の 11% に在るので一部の死に当たらない。'
       + 'git 自身の答えと件数を突き合わせるので、割合を問わず鳴る',
   },
 };
 
-const KEEP_PCT = 50;
+/*
+ * **一様な間引きで残す割合** (2026-09-25 · パス 471 で 50 → 99 へ)。
+ *
+ * パス 470 は 50 (半分) で測った。**それは `keep` が逆数しか表せなかったから**で
+ * (`round(100/pct)` が 90 でも 99 でも 1 になり、全部残してしまう · 前置きの注記を参照)、
+ * 半分より小さい損失は 1 度も測れていなかった。前置きを直したので、いちばん尖った問いを訊く:
+ * **走査が 1% 死んだら鳴るか。**
+ */
+const KEEP_PCT = 99;
+/*
+ * **「任意の割合で死んだ走査」の期待値** (2026-09-25 · パス 470 で新設・471 で測り直した)。
+ *
+ * ★★ パス 470 の答えは「6 本のうち 4 本が鳴るが、理由はどれも合計の床が半分をまたいだから」
+ * だった。**パス 471 で 1% の損失を測ると、直す前は 8 本のうち 6 本 (木を歩く全部) が
+ * ✅ exit 0 だった** —— 床は位置の偶然でしか鳴らないので、1% では誰も届かない。
+ *
+ * 直した後は **8 / 8 が鳴る**。木を歩く 6 本は `lib/tracked-cross-check.cjs` が
+ * 「追跡されていて条件に合うファイルはどれも走査されている」を見るので、
+ * **1 件でも落ちれば鳴る = 割合に依らない**。
+ */
 const THINNING = {
   'lint:network-targets': {
     expect: 'rings',
-    why: 'src の外の母集団の床 (OUTSIDE_POPULATION_FLOOR 60) に当たる —— 実測 111 件が半分で 55 件。'
-      + '**床の位置が半分をまたいだから**で、この床は 2026-09 に別の理由で置かれた物である',
+    why: '追跡ファイルとの照合が 5 件の欠落を名指しする (実測 530 → 523)。'
+      + '直す前は 1% では黙り、半分まで落として初めて src の外の床 (60) が偶然鳴った',
   },
   'lint:url-encoding': {
     expect: 'rings',
-    why: '合計の床 (300) に当たる —— 実測 528 件が半分で 264 件。これも位置の偶然で、'
-      + '床が 260 なら黙る',
+    why: '同じ照合 (実測 530 → 523)。直す前は 1% / 10% / 25% のどれでも ✅ exit 0 で、'
+      + '半分で合計の床 (300) が偶然鳴っただけだった',
   },
   'lint:imports': {
     expect: 'rings',
-    why: '同じ床 (300) に当たる (実測 528 → 264)',
+    why: '同じ照合 (実測 530 → 523)。直す前の振る舞いも lint:url-encoding と同じ',
   },
   'lint:regex': {
-    expect: 'silent',
-    why: '786 件落としても exit 0 (実測)。式の総数の床 (MIN_PATTERNS) は残った半分でも越える',
+    expect: 'rings',
+    why: '同じ照合 (実測 1,582 → 1,560)。**直す前は半分落としても ✅ exit 0** だった ——'
+      + '床 500 に対し 796 件が残るので、合計の床には永久に届かない',
   },
   'lint:charset': {
     expect: 'rings',
-    why: '合計の床 (1000) に当たる (実測 1,663 → 844)。加えて ALLOWLIST の双方向も鳴る'
-      + ' (「台帳に載っているのに検出されない項目が 12 件」) —— 群ごとの床ではない',
+    why: '同じ照合 (実測 1,672 → 1,647)。直す前は 25% までは ✅ で、'
+      + '半分で合計の床 (1000) が偶然鳴った',
   },
   'lint:sample-data': {
-    expect: 'silent',
-    why: '724 件落としても exit 0 (実測)。見本の側とソースの側の床はどちらも合計なので半分では届かない',
+    expect: 'rings',
+    why: '同じ照合 (実測 1,455 → 1,434)。**直す前は半分落としても ✅ exit 0** だった ——'
+      + 'ソース側の床 300 に対し 731 件が残る',
   },
   'lint:shell': {
     expect: 'rings',
     why: 'crossCheckProblem が git 自身の答えと突き合わせるので、割合を問わず鳴る'
-      + ' (実測: .sh が 9 → 5 でも「一覧に無い」と名指しする)',
+      + ' (実測: 9,085 → 8,983 に間引くと「一覧が信用できない」と名指しする)',
   },
   'lint:repo-size': {
     expect: 'rings',
     why: 'crossCheckProblem が git 自身の件数と突き合わせるので、割合を問わず鳴る'
-      + ' (実測: 9,084 → 4,560 で「git は 9084 件」と名指しする)',
+      + ' (実測: 同じ間引きで「git 自身の答えと食い違い」と名指しする)',
   },
 };
 
@@ -923,9 +960,11 @@ function selfTest() {
       && Object.keys(ENFORCEMENT).every((g) => PARTIAL_GATES.includes(g)),
   );
   check(
-    '★ ENFORCEMENT の機構は 2 つのどちらかで、理由が埋まっている',
+    '★ ENFORCEMENT の機構は既知の 3 つで、1 つ以上あり、理由が埋まっている',
     Object.values(ENFORCEMENT).every(
-      (e) => ['shared-floor', 'cross-check'].includes(e.by) && typeof e.why === 'string' && e.why.length >= 8,
+      (e) => Array.isArray(e.by) && e.by.length > 0
+        && e.by.every((b) => ['shared-floor', 'cross-check', 'tracked-cross-check'].includes(b))
+        && typeof e.why === 'string' && e.why.length >= 8,
     ),
   );
   check(
@@ -944,27 +983,45 @@ function selfTest() {
    * 丸ごと消え、群ごとの床が*偶然*鳴る (パス 470 の実測で 6 本のうち 5 本がそうなった)。
    * 群ごとの計数器であることを、合成の 1 群 + 2 群で確かめる。
    */
-  const keepProbe = spawnSync(process.execPath, ['-e', `
-    process.env.AUDIT_PARTIAL_MODE = 'keep';
-    process.env.AUDIT_PARTIAL_ARG = '50';
-    const fs = require('node:fs');
-    const os = require('node:os');
-    const path = require('node:path');
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'keep-probe-'));
-    for (const n of ['a.x', 'b.y', 'c.y', 'd.y', 'e.y']) fs.writeFileSync(path.join(dir, n), '');
-    require(${JSON.stringify(path.join(REPO_ROOT, PREAMBLE_SRC))});
-    const got = fs.readdirSync(dir).sort();
-    fs.rmSync(dir, { recursive: true, force: true });
-    console.log(JSON.stringify(got));
-  `], { encoding: 'utf8', timeout: 60000 });
-  const kept = (() => {
-    try { return JSON.parse(String(keepProbe.stdout).trim()); } catch { return null; }
-  })();
+  const keepProbe = (pct, names) => {
+    const r = spawnSync(process.execPath, ['-e', `
+      process.env.AUDIT_PARTIAL_MODE = 'keep';
+      process.env.AUDIT_PARTIAL_ARG = ${JSON.stringify(String(pct))};
+      const fs = require('node:fs');
+      const os = require('node:os');
+      const path = require('node:path');
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'keep-probe-'));
+      for (const n of ${JSON.stringify(names)}) fs.writeFileSync(path.join(dir, n), '');
+      require(${JSON.stringify(path.join(REPO_ROOT, PREAMBLE_SRC))});
+      const got = fs.readdirSync(dir).sort();
+      fs.rmSync(dir, { recursive: true, force: true });
+      console.log(JSON.stringify(got));
+    `], { encoding: 'utf8', timeout: 60000 });
+    try { return JSON.parse(String(r.stdout).trim()); } catch { return null; }
+  };
+  const kept = keepProbe(50, ['a.x', 'b.y', 'c.y', 'd.y', 'e.y']);
   check('★ keep は 1 件しかない群を残す (.x)', Array.isArray(kept) && kept.includes('a.x'));
   check(
     '★ keep は 4 件の群を半分にする (.y が 2 件)',
     Array.isArray(kept) && kept.filter((n) => n.endsWith('.y')).length === 2,
   );
+
+  /*
+   * ★★ **逆数ではなく、任意の割合を表せること** (2026-09-25 · パス 471)。
+   *
+   * パス 470 の実装は `i % round(100 / pct) === 0` で、`pct` が 51〜99 だと
+   * `round(100 / pct)` が **1** になり**何も落とさない**。それでも報告は
+   * 「kept N/N」と刷るので、`KEEP_PCT = 90` と書けば「1 割落として鳴らなかった」と
+   * 読める記録が 1 件も落とさずに出る —— **鳴らない対照を合格と読む形**である。
+   * 100 件の群で 99% を要求したら 99 件残る (= 1 件落ちる) ことを錠にする。
+   */
+  const names99 = Array.from({ length: 100 }, (_, i) => `f${String(i).padStart(3, '0')}.y`);
+  const kept99 = keepProbe(99, ['a.x', ...names99]);
+  check(
+    '★ keep 99% は 100 件の群から 1 件だけ落とす (逆数では 0 件だった)',
+    Array.isArray(kept99) && kept99.filter((n) => n.endsWith('.y')).length === 99,
+  );
+  check('★ keep 99% でも 1 件しかない群は残る (.x)', Array.isArray(kept99) && kept99.includes('a.x'));
 
   /*
    * ★ **前置きは `git ls-files` の広い一覧だけを間引く。** pathspec つきの呼び出しを

@@ -900,7 +900,11 @@ const KNOWN_SUPPRESSIONS = [
   // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。
   'child_process exec/spawn :: scripts/dependency-audit-report.cjs :: 1',
   'child_process exec/spawn :: scripts/knowledge-autopilot.cjs :: 1',
-  'child_process exec/spawn :: scripts/lint-repo-size.cjs :: 1',
+  // 追跡ファイルの一覧 (`git ls-files -z`) を引く**共有の 1 つ** (2026-09-25 · パス 471)。
+  // パス 470 は `lint-repo-size.cjs` / `lint-shell.cjs` に写しを 1 つずつ置いていたが、
+  // 木を歩く 6 ゲートが 3 人目の消費者になったので中心へ出した
+  // (法則 `center-then-count-callers`)。引数は固定でシェルを経由しない (execFileSync)。
+  'child_process exec/spawn :: scripts/lib/tracked-cross-check.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-shell.cjs :: 1',
   'child_process exec/spawn :: scripts/mcp-check.cjs :: 1',
   'child_process exec/spawn :: scripts/mutate-changed.cjs :: 1',

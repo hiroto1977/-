@@ -34,6 +34,7 @@ const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -793,18 +794,37 @@ function collectOutsideSends() {
  */
 const SCAN_EXT = /\.tsx?$/;
 
+/**
+ * 走査の条件。**走査と `CROSS_CHECK` が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const SKIP_DIRS = new Set(['__tests__', 'node_modules']);
+const acceptName = (name) => SCAN_EXT.test(name);
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。
+ *
+ * ★ `src` の外の母集団 (`outsidePopulation`) は 2026-09-20 から既に git の一覧なので、
+ * この照合が足すのは **`src` の木の側** である。
+ */
+const CROSS_CHECK = { roots: [...ROOTS], skipDirs: SKIP_DIRS, accept: acceptName };
+
 function* walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (e.name === '__tests__' || e.name === 'node_modules') continue;
+    if (SKIP_DIRS.has(e.name)) continue;
     const full = path.join(dir, e.name);
     if (e.isDirectory()) yield* walk(full);
-    else if (SCAN_EXT.test(e.name)) yield full;
+    else if (acceptName(e.name)) yield full;
   }
 }
 
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
-  if (reportGroupFloor(srcPopulation(), REQUIRED_GROUPS, REPO_ROOT, 'lint:network-targets') !== 0) return 1;
+  const population = srcPopulation();
+  if (reportGroupFloor(population, REQUIRED_GROUPS, REPO_ROOT, 'lint:network-targets') !== 0) return 1;
+  // ★ **群ごとの床は「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   1% 落としても 6 ゲートすべてが ✅ exit 0 だった。追跡ファイルの一覧と照合する。
+  const cross = reportTrackedCrossCheck(population, CROSS_CHECK, REPO_ROOT, 'lint:network-targets');
+  if (cross.code !== 0) return 1;
   const found = collect();
   const problems = [];
 
@@ -904,7 +924,8 @@ function main() {
     console.log(
       `✅ 送り先が変数の通信 ${found.length} 件はすべて台帳にあり、ホスト名を絞っています ` +
         `(見ているのは fetch 一族 ${NETWORK_CALL_NAMES.length} 名。` +
-        `sendBeacon / WebSocket / EventSource / XMLHttpRequest / Image は lint:forbidden が 0 件で留める)`,
+        `sendBeacon / WebSocket / EventSource / XMLHttpRequest / Image は lint:forbidden が 0 件で留める。` +
+        `${crossCheckSuffix(cross.source)})`,
     );
     return 0;
   }
@@ -930,6 +951,7 @@ module.exports = {
   OUTSIDE_SEND_NAMES,
   OUTSIDE_POPULATION_FLOOR,
   srcPopulation,
+  CROSS_CHECK,
   REQUIRED_GROUPS,
 };
 

@@ -73,6 +73,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 /** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
 const REQUIRED_GROUPS = { exts: ['.ts', '.tsx', '.cjs'], roots: ['src', 'scripts', 'orchestration'] };
@@ -149,11 +150,28 @@ const VENDOR_ID_SHAPES = [
 ];
 
 
+/**
+ * 走査の条件。**走査と `CROSS_CHECK` が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const SKIP_DIRS = new Set(['node_modules', '__tests__']);
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。
+ * 見るのは**ソース側の母集団** (`SCANNED_DIRS` × `SRC_EXTS`) —— 見本側 (`DATA_DIR`) は
+ * その部分集合なので、こちらが生きていれば同じ歩きが生きている。
+ */
+const CROSS_CHECK = {
+  roots: ['src', 'scripts', 'orchestration'],
+  skipDirs: SKIP_DIRS,
+  accept: (name) => SRC_EXTS.test(name),
+  ignore: [path.relative(REPO_ROOT, __filename)],
+};
+
 function listFiles(dir, exts = /\.tsx?$/) {
   if (!fs.existsSync(dir)) return [];
   const out = [];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (e.name === 'node_modules' || e.name === '__tests__') continue;
+    if (SKIP_DIRS.has(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) out.push(...listFiles(p, exts));
     // この門自身は除く。自己検査は「鳴るべき形」を標本として抱えているので、
@@ -552,6 +570,10 @@ function main(argv) {
   //   分けたのと同じ理由が、1 つの母集団の「中」にも当てはまる。**
   //   `.js` / `.mjs` は今日 0 件なので宣言しない (正当に 0 になる群に床を置かない · パス 467)。
   if (reportGroupFloor(srcPaths, REQUIRED_GROUPS, REPO_ROOT, 'lint:sample-data') !== 0) return 1;
+  // ★ **群ごとの床も「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   このゲートは**半分落としても ✅ exit 0** だった (床 300 に対し 730 件)。
+  const cross = reportTrackedCrossCheck(srcPaths, CROSS_CHECK, REPO_ROOT, 'lint:sample-data');
+  if (cross.code !== 0) return 1;
   const FLOORS = [
     ['見本データ', dataFiles.length, 100],
     ['ソース・スクリプト', srcFiles.length, 300],
@@ -566,7 +588,7 @@ function main(argv) {
     }
   }
   if (problems.length === 0) {
-    console.log('✅ 見本データに実在の個人データは混ざっていません');
+    console.log(`✅ 見本データに実在の個人データは混ざっていません (${crossCheckSuffix(cross.source)})`);
     return 0;
   }
   console.error(`❌ ${problems.length} 件:`);
@@ -574,6 +596,6 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { check, checkArtifacts, ownerIdentifiers, bundledJsonImports, EMAIL_ALLOW, VENDOR_ID_SHAPES, BUNDLED_JSON, SRC_EXTS, DATA_EXTS, REQUIRED_GROUPS };
+module.exports = { check, checkArtifacts, ownerIdentifiers, bundledJsonImports, EMAIL_ALLOW, VENDOR_ID_SHAPES, BUNDLED_JSON, SRC_EXTS, DATA_EXTS, REQUIRED_GROUPS, CROSS_CHECK };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));

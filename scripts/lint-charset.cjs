@@ -48,6 +48,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { groupFloorProblems } = require('./lib/population-floor.cjs');
+const { trackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.join(__dirname, '..');
 
@@ -297,6 +298,20 @@ const SKIP_DIRS = new Set([
 
 /** このスクリプト自身は簡体字の対照表を持つので当然ヒットする。除外する。 */
 const SELF = path.relative(REPO_ROOT, __filename);
+
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る
+ * (2026-09-25 · パス 471 · 割合に依らない)。
+ *
+ * 条件は**走査が使っている定数そのもの** (`SCAN_DIRS` / `SKIP_DIRS` / `SCAN_EXTS`) ——
+ * 2 か所に書くと、片方だけを直した日に照合が静かに古びる。`'.'` は
+ * `SCAN_ROOT_FILES` が読むリポジトリ直下のファイルを指す (木ではない)。
+ */
+const CROSS_CHECK = {
+  roots: [...SCAN_DIRS, ...(SCAN_ROOT_FILES ? ['.'] : [])],
+  skipDirs: SKIP_DIRS,
+  accept: (name) => SCAN_EXTS.has(path.extname(name)),
+};
 
 function walk(dir, out) {
   let entries;
@@ -616,6 +631,24 @@ function main() {
     for (const g of groupProblems) console.error(`  ${g}`);
   }
 
+  /*
+   * ★ **群ごとの床も「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+   * 25% 落とすまでこのゲートは ✅ exit 0 だった (床 1000 に対し 1,258 件)。
+   * 追跡ファイルの一覧と照合する —— 1 件でも落ちれば鳴るので**割合に依らない**。
+   */
+  const cross = trackedCrossCheck(files, CROSS_CHECK, REPO_ROOT);
+  if (cross.disagreement !== null) {
+    failed = true;
+    console.error('\n❌ 追跡ファイルの一覧が信用できません:');
+    console.error(`  ${cross.disagreement}`);
+  } else if (cross.missing.length > 0) {
+    failed = true;
+    console.error(`\n❌ 追跡されているのに走査されていないファイルが ${cross.missing.length} 件あります:`);
+    for (const f of cross.missing.slice(0, 10)) console.error(`  ${f}`);
+    if (cross.missing.length > 10) console.error(`  … ほか ${cross.missing.length - 10} 件`);
+    console.error('  走査が「一部だけ」死んでいます —— SCAN_DIRS / SKIP_DIRS / 歩き方を疑ってください。');
+  }
+
   if (findings.length > 0) {
     failed = true;
     console.error(`\n❌ ${findings.length} 件の混入を検出しました\n`);
@@ -654,7 +687,10 @@ function main() {
   }
 
   if (failed) process.exit(1);
-  console.log(`✅ 他文字種・簡体字の混入はありません（既知 ${ALLOWLIST.size} 件は台帳のまま）`);
+  console.log(
+    `✅ 他文字種・簡体字の混入はありません（既知 ${ALLOWLIST.size} 件は台帳のまま・`
+    + `${crossCheckSuffix(cross.source)}）`,
+  );
 }
 
 function context(text, index) {
@@ -669,7 +705,7 @@ function context(text, index) {
  * 同じ番をつけている)。`audit:gate-floors --partial` は宣言を**このゲートから読む** ——
  * 群の一覧を道具の側にも書くと、2 つ目の台帳が静かに古びる。
  */
-module.exports = { SCAN_EXTS, SCAN_DIRS, OPTIONAL_EXTS, REQUIRED_GROUPS };
+module.exports = { SCAN_EXTS, SCAN_DIRS, OPTIONAL_EXTS, REQUIRED_GROUPS, CROSS_CHECK };
 
 if (require.main === module) {
   if (process.argv.slice(2).includes('--self-test')) process.exit(selfTest());

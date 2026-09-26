@@ -54,9 +54,20 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 /** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
 const REQUIRED_GROUPS = { exts: ['.ts', '.tsx'], roots: ['src'] };
+
+/**
+ * 走査の条件。**走査とこの下の照合が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const SCAN_ROOTS = ['src'];
+const SKIP_DIRS = new Set(['__tests__', 'node_modules']);
+const acceptName = (name) => /\.tsx?$/.test(name);
+/** 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。 */
+const CROSS_CHECK = { roots: SCAN_ROOTS, skipDirs: SKIP_DIRS, accept: acceptName };
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -94,8 +105,8 @@ function walk(dir, out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (e.name !== '__tests__' && e.name !== 'node_modules') walk(full, out);
-    } else if (/\.tsx?$/.test(e.name)) out.push(full);
+      if (!SKIP_DIRS.has(e.name)) walk(full, out);
+    } else if (acceptName(e.name)) out.push(full);
   }
   return out;
 }
@@ -155,7 +166,7 @@ function scanFile(rel, text) {
 }
 
 function analyze() {
-  const files = walk(path.join(REPO_ROOT, 'src'));
+  const files = SCAN_ROOTS.flatMap((r) => walk(path.join(REPO_ROOT, r)));
   const hits = [];
   for (const abs of files) {
     const rel = path.relative(REPO_ROOT, abs).split(path.sep).join('/');
@@ -255,6 +266,11 @@ function main(argv) {
   //   画面 (`.tsx`) はまさに URL を組み立てて見せる層なので、そこが丸ごと消えるのは
   //   「補間 0 件」と同じ形の見落としである。宣言した群はどれも 1 件以上を要求する。
   if (reportGroupFloor(files, REQUIRED_GROUPS, REPO_ROOT, 'lint:url-encoding') !== 0) return 1;
+  // ★ **群ごとの床は「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   1% 落としても 6 ゲートすべてが ✅ exit 0 だった。追跡ファイルの一覧と照合する。
+  const cross = reportTrackedCrossCheck(files, CROSS_CHECK, REPO_ROOT, 'lint:url-encoding');
+  if (cross.code !== 0) return 1;
+  const crossSource = cross.source;
   if (scanned < MIN_FILES) {
     console.error(
       `❌ src/**/*.ts(x) を ${scanned} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。`
@@ -286,11 +302,11 @@ function main(argv) {
   }
 
   if (failed) return 1;
-  console.log('✅ 通信 URL の動的部分はすべて符号化されているか、台帳にあります');
+  console.log(`✅ 通信 URL の動的部分はすべて符号化されているか、台帳にあります (${crossCheckSuffix(crossSource)})`);
   return 0;
 }
 
-module.exports = { scanFile, rawInterpolations, encodedBindings, REVIEWED, REQUIRED_GROUPS };
+module.exports = { scanFile, rawInterpolations, encodedBindings, REVIEWED, REQUIRED_GROUPS, CROSS_CHECK };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
