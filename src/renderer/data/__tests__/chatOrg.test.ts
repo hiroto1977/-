@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   buildOrgIndex,
   routeTopic,
@@ -280,6 +280,23 @@ describe('orgSummaryLine', () => {
     expect(orgSummaryLine(INDEX)).toBe(
       'CEO 1 / COO 1 / 役員 3 / 秘書室 5 室 / 管理職 2 / 一般職チーム 2',
     );
+  });
+});
+
+// --- 読み直して測る (覆われた static 変異体) --------------------------------
+
+describe('確信度の丸めはモジュール直下の関数を通る (読み直して測る · パス 487)', () => {
+  // `round2` はモジュール直下の定数 (関数) なので、変異検査が変異体を有効にするより前に
+  // モジュールが読み込まれていると当たらない (`stryker.config.json` の `_commentIgnoreStatic`)。
+  // 2026-09-26 の `npm run audit:mutate-changed` で `round2` を `() => undefined` に替えた変異体が
+  // 「生存」と報告された —— 手で当てると上の 2 件 (80 点は 0.8 / 100 点超は 1) が落ちるので
+  // **偽の生存**である。同じ主張を、モジュールを読み直す形でも持つ。
+  it('★ 読み直しても 80 点は 0.8、100 点を超えれば 1', async () => {
+    vi.resetModules();
+    const fresh = await import('../chatOrg');
+    expect(fresh.routeTopicScored(INDEX, '所得税').confidence).toBe(0.8);
+    const hi: RawTeam = { id: 'hi', domain: '特命', focus: '特命', manager: 'nope' };
+    expect(fresh.routeTopicScored(fresh.buildOrgIndex(ORG, [hi]), '特命').confidence).toBe(1);
   });
 });
 

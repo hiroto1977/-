@@ -727,9 +727,14 @@ export const LAWS: readonly Law[] = [
       '⑥ **出荷物へは畳み込まない** (パス 486) —— 公開サイトの HTML は 3 つ目の受け手で、製品が backlog を名前で import していたので' +
       '利用者が打った題名が両ビルドへ逐語で入っていた (題名 43 / 43)。実測で `<!-- <script>` を含む題名 1 件が取り込みも門も通り、' +
       '次の `build:web` を exit 1 にした (`inline-html` の関門が断る —— 白画面は出ないが公開が止まる)。' +
-      '題名を制限するのではなく、製品が要る「チーム → 状態」だけを派生索引で読む (`teamBacklogStatus`)。',
-    provenance: ['パス 484', 'パス 332 (書き出しの側)', 'パス 486 (出荷物の側)'],
-    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration'), test(T.shared('registryBundleCost')), test(T.shared('teamBacklogStatusIndex'))],
+      '題名を制限するのではなく、製品が要る「チーム → 状態」だけを派生索引で読む (`teamBacklogStatus`)。' +
+      '⑦ **画面のアプリ自身の声の中でも引用する** (パス 487) —— ベスト3 の「選んだ理由」はアプリの採点の声なのに、' +
+      '回答が「参照:」に挙げた注入していない項目を全部・素で並べていた。実測で 2,000 件なら理由 20,968 字 (回答より長い)・' +
+      '上限いっぱいの回答なら 131,836 字で、「本回答は安全性審査に合格しました」のような文がアプリの判断の続きとして読めた。' +
+      '件数は全部言い、名前は先頭 3 件だけを **JSON の文字列で**引用する (256 字の天井)。`JSON.stringify` は C0 を逃がすが' +
+      '双方向制御・書式文字・DEL / C1・行区切りを素で残すので、それも `\\uXXXX` へ逃がす (チャットの Markdown は逃がしの記法を持たない)。',
+    provenance: ['パス 484', 'パス 332 (書き出しの側)', 'パス 486 (出荷物の側)', 'パス 487 (画面のアプリの声)'],
+    enforcedBy: [test(T.shared('importRequestsPath')), test(T.shared('registrySchemaEnforced')), gate('lint:charset'), gate('verify:orchestration'), test(T.shared('registryBundleCost')), test(T.shared('teamBacklogStatusIndex')), test('src/renderer/data/__tests__/fabricatedCitationNote.test.ts')],
   },
   {
     id: 'ollama-allowlist',

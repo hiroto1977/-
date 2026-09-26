@@ -395,9 +395,9 @@ describe('ハーネス: 軸ごとの点と注記 (文面ごと)', () => {
   it('★ ナレッジが無い質問でも、捏造した参照は 1 件 10 点ずつ引く (0 で止まる)', async () => {
     const m = await fresh();
     const g = (answer: string) => axisOf(m.scoreAnswer(answer, { question: 'ですか', docs: [], ontology: NO_HITS, peers: [] }), 'grounding');
-    expect(g('参照: 架空の法令')).toEqual({ axis: 'grounding', label: '根拠', points: 5, max: 30, note: '注入していない項目を参照に挙げた: 架空の法令' });
+    expect(g('参照: 架空の法令')).toEqual({ axis: 'grounding', label: '根拠', points: 5, max: 30, note: '注入していない項目を参照に挙げた (1 件): "架空の法令"' });
     expect(g('参照: 架空の法令、別の架空').points).toBe(0);
-    expect(g('参照: 架空の法令、別の架空').note).toBe('注入していない項目を参照に挙げた: 架空の法令 / 別の架空');
+    expect(g('参照: 架空の法令、別の架空').note).toBe('注入していない項目を参照に挙げた (2 件): "架空の法令" / "別の架空"');
   });
 
   it('★ 根拠は触れた件数 ÷ min(注入, 3) の比で 30 点・捏造は引く', async () => {
@@ -421,7 +421,7 @@ describe('ハーネス: 軸ごとの点と注記 (文面ごと)', () => {
     // 触れた 2 件 (20) から捏造 1 件 (10) を引く。
     const lying = g('インボイス制度と IT導入補助金\n参照: 架空の法', DOCS);
     expect(lying.points).toBe(10);
-    expect(lying.note).toBe('注入していない項目を参照に挙げた: 架空の法');
+    expect(lying.note).toBe('注入していない項目を参照に挙げた (1 件): "架空の法"');
   });
 
   it('★ 網羅は質問の内容語のうち触れた割合 (四捨五入・英字は大小を問わない)', async () => {

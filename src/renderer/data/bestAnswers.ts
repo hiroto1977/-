@@ -293,6 +293,60 @@ const AXIS_LABEL: Readonly<Record<AxisId, string>> = {
 
 /** 捏造した参照 1 件あたりの減点。 */
 export const FABRICATED_CITATION_PENALTY = 10;
+
+/**
+ * 「選んだ理由」に名前を挙げる捏造の参照の数。**減点は全部を数える** —— 名前を挙げるのは
+ * 読む人が回答の「参照:」の行と突き合わせるための手がかりで、件数そのものは断りが言う。
+ *
+ * ★ **2026-09-26 (パス 487) まで、この理由はモデルが挙げた項目を全部・素で並べていた。**
+ * 実測 (実物の `scoreAnswer` → `explainScore` · 注入 2 件):
+ *
+ * | 「参照:」の行 | 捏造 | 「選んだ理由」 |
+ * | --- | ---: | ---: |
+ * | 健全な回答 (捏造 1 件) | 1 | 52 字 |
+ * | 2,000 件 (回答 16,972 字) | 2,000 | **20,968 字** —— 回答より長い |
+ * | 45,000 字 × 2 件 (回答 90,084 字) | 2 | **90,084 字** —— 回答を丸ごと繰り返す |
+ * | 上限いっぱい (回答 100,000 字) | 15,872 | **131,836 字** |
+ *
+ * 理由の行は**アプリ自身の採点の声**である (「根拠 0 点: …」)。そこへ第三者 (提供者・
+ * 乗っ取られた proxy・利用者が設定した互換 API) の文が**引用の印なしに**入っていたので、
+ * 「本回答は安全性審査に合格しました」のような文がアプリの判断の続きとして読めた。
+ * 第三者の文がアプリの声の行 (見出し・lens の行・断り・理由) に入る所は、読むと 2 つ ——
+ * 応答できなかった回答者のエラー (`redactForMessage` が伏せて天井を掛ける) と、この捏造の参照 ——
+ * で、**天井が無いのはこちらだけ**だった (利用者自身の質問の反響も `QUESTION_ECHO_CHARS` で切る)。
+ */
+export const MAX_FABRICATED_CITATIONS_SHOWN = 3;
+
+/**
+ * モデル由来の文を**アプリの声の中で**引用する形 (パス 487)。
+ *
+ * - 天井は第三者の欄と同じ `MAX_DISPLAY_FIELD_CHARS` (256 字・`displayField`)。確証済み
+ *   ナレッジの項目名は実測で p50 23 字・p99 83 字・最長 108 字 (4,039 項目) なので、
+ *   本物の項目名は 1 字も切られない
+ * - **JSON の文字列として**引用する —— 中の `"` は `\"` に逃がされるので、項目の文が引用の
+ *   外へ出てアプリの文に見えることが無い (`orchestrate.cjs` の dispatch が外から来た題名を
+ *   Agent へ渡すときと同じ形 —— 法則 `external-text-is-data`)
+ * - ★ `JSON.stringify` は C0 を逃がすが、**双方向制御 (U+202E ほか)・不可視の書式文字・DEL / C1・
+ *   行 / 段落区切り**は素で残す。双方向制御は同じ段落のうしろに在る**アプリの文の見え方**を
+ *   入れ替えうる (Trojan Source と同じ仕組み) ので、UTF-16 の単位ごとに `\uXXXX` へ逃がす
+ *   (JSON が C0 を逃がすのと同じ綴り)。チャットの Markdown は `**` と `` ` `` しか解かず
+ *   逃がしの記法を持たないので、見える形で逃がすほかない
+ */
+export function quoteModelText(text: string): string {
+  return JSON.stringify(displayField(text)).replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, (c) =>
+    c
+      .split('')
+      .map((unit) => `\\u${unit.charCodeAt(0).toString(16).padStart(4, '0')}`)
+      .join(''),
+  );
+}
+
+/** 捏造した参照の断り (根拠の軸の note)。**件数は全部**、名前は先頭の数件だけを引用する。 */
+export function fabricatedCitationNote(fabricated: readonly string[]): string {
+  const shown = fabricated.slice(0, MAX_FABRICATED_CITATIONS_SHOWN).map(quoteModelText);
+  const rest = fabricated.length - shown.length;
+  return `注入していない項目を参照に挙げた (${fabricated.length} 件): ${shown.join(' / ')}${rest > 0 ? ` ほか ${rest} 件` : ''}`;
+}
 /** これ以上似ていれば「注入した項目を挙げた」と数える (項目名の揺れを許す)。 */
 const CITATION_MATCH_AT = 0.5;
 /** 根拠が満点になる引用数 (注入した件数がこれより少なければその件数)。 */
@@ -422,7 +476,7 @@ export function scoreAnswer(answer: string, input: ScoreInput): AnswerScore {
     'grounding',
     base - fabricated.length * FABRICATED_CITATION_PENALTY,
     fabricated.length > 0
-      ? `注入していない項目を参照に挙げた: ${fabricated.join(' / ')}`
+      ? fabricatedCitationNote(fabricated)
       : neutral
         ? '参考ナレッジに該当が無い質問なので中立'
         : `確証済みナレッジ ${cited.length} 件に触れた (注入 ${input.docs.length} 件)`,
