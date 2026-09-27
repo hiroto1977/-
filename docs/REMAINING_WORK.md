@@ -6053,9 +6053,12 @@ gh release create v0.1.0 "release/Service Hub-0.1.0.AppImage" \
 
 ---
 
-## Phase 3: アイコン / ブランディング（30 分）
+## Phase 3: アイコン / ブランディング（30 分） ✅ 済み
 
-現状は Electron デフォルトアイコン (`default Electron icon is used` の警告)。
+★ **2026-09-27 (パス 493m) に実物で確かめた —— 下の「現状」は古かった。** `build/icon.png` (512×512 の
+RGBA PNG・`build/icon.svg` も在る) を `electron-builder.json` が mac / win / linux の 3 つとも `icon` に
+宣言し、`files` にも載せている。ここに在った「現状は Electron デフォルトアイコン (`default Electron icon
+is used` の警告)」は、アイコンを置く前の記録だった (手順は残す —— 差し替えるときに要る)。
 
 ### 手順
 
@@ -6342,7 +6345,13 @@ main 側で分岐する設計でも良い。
 
 ---
 
-## Phase 6: Mac / Windows 用インストーラ ✅ v0.1.0 で配布済み（Intel Mac のみ残）
+## Phase 6: Mac / Windows 用インストーラ ✅ v0.1.0 で配布済み
+
+★ **2026-09-27 (パス 493m) に実物で確かめた —— 見出しの「（Intel Mac のみ残）」は古かった。**
+`electron-builder.json` の mac は `dmg` を **`x64` と `arm64` の両方**で宣言し、`release.yml` は
+その宣言 (target × arch) から必要本数を出して成果物と突き合わせる (`-x64.dmg` / `-arm64.dmg` の 2 つ ——
+glob だけだと arm64 の 1 つで一致してしまうので本数で見る、と workflow 自身が書いている)。
+Intel Mac 向けは今は出る。
 
 `electron-builder` は **動作させる OS と同じターゲット** をネイティブビルドする
 のが安定運用。
