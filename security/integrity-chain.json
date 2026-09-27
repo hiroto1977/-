@@ -2293,6 +2293,14 @@
       "leafCount": 98,
       "note": "update integrity-chain.cjs,atomicWrite.ts,eraseAll.ts,secrets.ts,advisorQuestionLimits.ts",
       "hash": "b70615f4bd984f3ea829921be4116c26ea81f23d24e75f489b4202071b1efeb4"
+    },
+    {
+      "index": 274,
+      "prevHash": "b70615f4bd984f3ea829921be4116c26ea81f23d24e75f489b4202071b1efeb4",
+      "merkleRoot": "0576f5161b4aa5896e2a8a94030f3b0c31f41031344afaf528f08ff44b050c95",
+      "leafCount": 98,
+      "note": "update PROXY_EXAMPLE.md,public-host-guard.cjs,externalUrlGate.ts,privateTarget.ts",
+      "hash": "ca82f385b73b517e3f4867259806df133fd19542b14a6a9e7fe981f59f159b7c"
     }
   ],
   "tipManifest": {
@@ -2306,7 +2314,7 @@
     ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
     "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
-    "docs/PROXY_EXAMPLE.md": "02114bb2d044db44cda64244bb78fc6b54169714e6e90854c5b31d044b43c39b",
+    "docs/PROXY_EXAMPLE.md": "9971ffa50e821c7625480f9912433c1f031ee8ea22c2584410040f1758ca583a",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
@@ -2324,7 +2332,7 @@
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
     "scripts/migrate.sh": "fe793636d6c87f42b663a42e300207346b40d6adbb057d0ba5696fd4604311ed",
-    "scripts/public-host-guard.cjs": "7970ad1ccf8f9b2fa1e6c8d6a2bd7a01c2e148ad50ded827ca88fea4228d1175",
+    "scripts/public-host-guard.cjs": "f337ded4a43df8747063452e4a338d8f57a3bef2c14c3bfe4ccc2382749699f0",
     "scripts/safe-vault-write.cjs": "263ad4e8e52952769cda1be6e25b31025e0f023439e93f6eccdc996ec15215f3",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
@@ -2373,7 +2381,7 @@
     "src/shared/cryptoParams.ts": "e5c196eed641330430fb0725daf9dc28cfd38fc624ce5e46baca635ed9b8590e",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
-    "src/shared/externalUrlGate.ts": "75d54e0ec94c7568521e4fa31ad90596d18e59519434c42edb562d939806eb4b",
+    "src/shared/externalUrlGate.ts": "b103b6fdf04b058a0cae9be3bed2ad035758463dee7b1ed6cc9da778540475ce",
     "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
     "src/shared/httpLimits.ts": "0293ccc080492de207962376b6fc345bf194c568f5875586fbccee2b90db03a2",
     "src/shared/imageUrlGate.ts": "a1f2fad05923c97539971c4f2d5aba4e732d460f90d7d83657c391d5199aef68",
@@ -2381,7 +2389,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/ollama.ts": "b20c4a0d8983b39cd57da20aa3162d54225753df922190709c92967a908a6fd0",
-    "src/shared/privateTarget.ts": "c5429a2478187926ea84bc3f951bde96e7dde70122ffb7edb3525a67b1d489da",
+    "src/shared/privateTarget.ts": "2a7f4b178d82653c596b8cf92f5a18ccb5fc73b5c898dee3b66583be53ed47c1",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",

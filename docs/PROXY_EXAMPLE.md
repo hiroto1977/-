@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (397 行)
+## 2. Cloudflare Worker 実装 (400 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -387,6 +387,9 @@ function isBlockedIp(ip) {
   // 64:ff9b::/96 NAT64 well-known prefix (RFC 6052)。g[0..1] が prefix なので
   // ゼロ検査は g[2..5] に対して行う (g[0] から見ると当然ゼロではない)。
   if (g[0] === 0x64 && g[1] === 0xff9b && allZero(2, 6)) return isBlockedIp(embedded(g[6], g[7]));
+  // 64:ff9b:1::/48 local-use NAT64 (RFC 8215)。中のどこに v4 を埋めるかは運用者が選ぶので
+  // 復号はできないが、範囲そのものは固定で IANA は Globally Reachable: False —— 丸ごと塞ぐ。
+  if (g[0] === 0x64 && g[1] === 0xff9b && g[2] === 1) return true;
   // 2002::/16 6to4 (RFC 3056) — v4 は 2〜3 番目のグループ
   if (g[0] === 0x2002) return isBlockedIp(embedded(g[1], g[2]));
   // ::a.b.c.d IPv4-compatible (RFC 4291 §2.5.5.1, 非推奨)。`[::169.254.169.254]`
@@ -530,9 +533,11 @@ function json(obj, status) {
 - **IPv6 transition prefix の網羅は best-effort**: `isBlockedIp` は
   `::ffff:0:0/96` (IPv4-mapped)、`::/96` (IPv4-compatible)、
   `64:ff9b::/96` (RFC 6052 well-known NAT64)、`2002::/16` (RFC 3056 6to4)
-  を数値展開して内部 IPv4 に落として検証する。一方、**ネットワーク固有の
-  NAT64 prefix (RFC 6052 §2.2 の /32・/40・/48・/56・/64 や RFC 8215 の
-  `64:ff9b:1::/48`) は値が任意なため列挙できない**。ここは allowlist のみが砦
+  を数値展開して内部 IPv4 に落として検証し、RFC 8215 の local-use prefix
+  `64:ff9b:1::/48` は**範囲ごと**塞ぐ (中の埋め込み位置は運用者が選ぶので復号は
+  できないが、範囲そのものは固定で公開の宛先になりえない)。一方、**ネットワーク固有の
+  NAT64 prefix (RFC 6052 §2.2 —— 運用者が自分のアドレス空間から選ぶ /32・/40・/48・
+  /56・/64) は値が任意なため列挙できない**。ここは allowlist のみが砦
 - **許可リストのホストが https を話し続ける保証は無い**: 上流が恒久的に
   平文へ移行した場合、この Worker はその宛先を通さなくなる (可用性より
   資格情報の保護を採る)。許可リストは 10 の公開 SaaS で、いずれも https 専用である。

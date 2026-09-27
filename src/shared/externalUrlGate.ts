@@ -100,6 +100,25 @@
 export const EXTERNAL_URL_SCHEMES: ReadonlySet<string> = new Set(['http:', 'https:']);
 
 /**
+ * OS へ渡す URL の長さの天井 —— **8,000 オクテット** (2026-09-27 · パス 493e)。
+ *
+ * **根拠は RFC 9110 §4.1** ——「送り手と受け手は、少なくとも 8000 オクテットの URI を
+ * 扱えることを推奨する」。これを超える URL は相互運用の保証の外で、正当な行き先が
+ * そこに在ることはまず無い。アプリ自身が組む最長の URL は実測で **524 字** (Gmail の
+ * OAuth 同意画面・クライアント ID を 99 字で見積もって) で、同梱のデータの最長は
+ * 318 字なので、この天井は正当な URL を 1 つも落とさない (15 倍の余裕)。
+ *
+ * それまで長さの門は無く、第三者の応答 (Graph の `webLink`・Calendar の `htmlLink`・
+ * `DataList` の `href`) が 200,000 字の URL を返せば、それがそのまま OS のブラウザを
+ * 起動する引数になった (パス 414 が「画面に文字としては出ないので今日は膨らまない」と
+ * 測って残した物)。**切らない** —— 切った URL は別の頁を指すので、長すぎる物は落とす。
+ *
+ * 単位は**オクテット**で、`.length` で正しい —— `URL.toString()` は非 ASCII を
+ * パーセント符号化し、ホストは punycode にするので、返す文字列は必ず ASCII である。
+ */
+export const MAX_EXTERNAL_URL_LEN = 8000;
+
+/**
  * 開いてよいなら**正規化した URL 文字列**、駄目なら `null`。
  *
  * `shellTargetOrNull` と同じ形にしてある —— 「駄目」を例外ではなく値で返す。
@@ -111,6 +130,10 @@ export const EXTERNAL_URL_SCHEMES: ReadonlySet<string> = new Set(['http:', 'http
  */
 export function externalUrlOrNull(url: unknown): string | null {
   if (typeof url !== 'string') return null;
+  // 天井は解析の**前**にも掛ける —— 入力は IPC の境界を越えて来るので、何 MB でも
+  // 解析してから断るのでは費用を払い終えている。入力の長さ (UTF-16) が天井を超える物は
+  // 解析しない (空白や改行で水増しした長い入力も、ここで落ちる)。
+  if (url.length > MAX_EXTERNAL_URL_LEN) return null;
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -145,5 +168,9 @@ export function externalUrlOrNull(url: unknown): string | null {
    * `username` が空)。落とすのは**ホストの手前**に認証情報がある形だけ。
    */
   if (parsed.username !== '' || parsed.password !== '') return null;
-  return parsed.toString();
+  // 開く物の長さ (オクテット) —— 非 ASCII はパーセント符号化で膨らむので、
+  // 入力が天井の内でも出力が超えることがある。**開く物そのもの**を測る。
+  const href = parsed.toString();
+  if (href.length > MAX_EXTERNAL_URL_LEN) return null;
+  return href;
 }

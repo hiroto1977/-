@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { readOriginalSource } from './originalSource';
-import { EXTERNAL_URL_SCHEMES, externalUrlOrNull } from '../externalUrlGate';
+import { EXTERNAL_URL_SCHEMES, MAX_EXTERNAL_URL_LEN, externalUrlOrNull } from '../externalUrlGate';
 import { stripComments } from './stripNonCode';
 
 /*
@@ -242,5 +242,51 @@ describe('web-shim.ts の中で外へ開く扉も、全部この関門を通る'
     // `window.open(safe, ...)` の形。生の `url` を渡していれば落ちる。
     expect(code).toMatch(/window\.open\(\s*safe\s*,/);
     expect(code, '生の入力をそのまま開いている').not.toMatch(/window\.open\(\s*url\s*,/);
+  });
+});
+
+/*
+ * **長さの天井 (パス 493e)。** 根拠は RFC 9110 §4.1 (8000 オクテットの URI を扱えることを推奨)。
+ * 天井は入力にも出力にも掛かる —— 入力は解析の費用を払う前に、出力は**実際に開く物**を測る。
+ */
+describe('externalUrlOrNull — 長さの天井 (RFC 9110 §4.1 · パス 493e)', () => {
+  const base = 'https://a.example/';
+  const ascii = (total: number) => base + 'x'.repeat(total - base.length);
+
+  it('天井は 8000 オクテット (RFC 9110 §4.1 の推奨の下限)', () => {
+    expect(MAX_EXTERNAL_URL_LEN).toBe(8000);
+  });
+
+  it('★ ちょうど天井は開き、1 つ超えると開かない (切らずに落とす)', () => {
+    expect(externalUrlOrNull(ascii(MAX_EXTERNAL_URL_LEN))).toBe(ascii(MAX_EXTERNAL_URL_LEN));
+    expect(externalUrlOrNull(ascii(MAX_EXTERNAL_URL_LEN + 1))).toBeNull();
+  });
+
+  it('★ 第三者の応答が返しうる 200,000 字の URL は開かない (パス 414 が残した形)', () => {
+    expect(externalUrlOrNull(ascii(200_000))).toBeNull();
+  });
+
+  it('★ 入力は天井の内でも、パーセント符号化で開く物が天井を超えれば開かない (出力を測る)', () => {
+    const raw = base + '日'.repeat(1000); // 入力 1,018 字 → 出力 9,018 オクテット
+    expect(raw.length).toBeLessThan(MAX_EXTERNAL_URL_LEN);
+    expect(new URL(raw).toString().length).toBeGreaterThan(MAX_EXTERNAL_URL_LEN);
+    expect(externalUrlOrNull(raw)).toBeNull();
+    // 対照: 同じ字でも短ければ開く (符号化された形で)
+    expect(externalUrlOrNull(base + '日')).toBe(base + '%E6%97%A5');
+  });
+
+  it('★ 入力が天井を超えれば、解析すると短くなる形でも解析しない (入力を測る)', () => {
+    const raw = base + '\t'.repeat(MAX_EXTERNAL_URL_LEN);
+    expect(new URL(raw).toString()).toBe(base); // 解析はタブを落とす —— 素通しなら開けてしまう
+    expect(externalUrlOrNull(raw)).toBeNull();
+  });
+
+  it('開くと答えた物はどれも天井の内 (返す文字列は ASCII で、長さ = オクテット)', () => {
+    for (const u of [base, base + '日本語', 'https://例え.jp/パス?q=値', ascii(MAX_EXTERNAL_URL_LEN)]) {
+      const out = externalUrlOrNull(u);
+      expect(out, u.slice(0, 40)).not.toBeNull();
+      expect(out!.length).toBeLessThanOrEqual(MAX_EXTERNAL_URL_LEN);
+      expect(/^[\x21-\x7e]+$/.test(out!), `ASCII でない: ${out}`).toBe(true);
+    }
   });
 });

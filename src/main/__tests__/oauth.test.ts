@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { externalUrlOrNull } from '../../shared/externalUrlGate';
+import { MAX_EXTERNAL_URL_LEN, externalUrlOrNull } from '../../shared/externalUrlGate';
 import http from 'node:http';
 
 // electron must be mocked BEFORE the oauth module is imported because
@@ -2393,5 +2393,24 @@ describe('refresh — 転送に追随しない (パス 301)', () => {
     await expect(p).rejects.toThrow(/認可サーバ が別の場所 \(oauth2\.evil\.example\) へ転送しようとしました/);
     await expect(p).rejects.not.toThrow(/rt=rt/);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+/*
+ * **外へ開く関門の長さの天井 (8000 オクテット · パス 493e) は、アプリ自身が組む
+ * 同意画面の URL を 1 つも落とさない。** 落とせば `authorize` は
+ * 「OAuth authorization URL was rejected by the external-URL gate」で止まり、
+ * そのサービスはサインインできなくなる。長めのクライアント ID (Google 形式 99 字) で
+ * 全設定の URL を組み、関門を通ることと、天井に 10 倍の余裕が在ることを見る
+ * (実測の最長は gmail の 524 字 · 2026-09-27)。
+ */
+describe('★ 同意画面の URL は外へ開く関門の長さの天井に収まる (パス 493e)', () => {
+  const longClientId = `${'1'.repeat(12)}-${'a'.repeat(59)}.apps.googleusercontent.com`;
+  it.each(Object.keys(OAUTH_CONFIGS))('%s', (id) => {
+    const cfg = { ...OAUTH_CONFIGS[id as keyof typeof OAUTH_CONFIGS]!, clientId: longClientId };
+    const { challenge } = generatePkce();
+    const url = buildAuthorizeUrl(cfg, 'http://127.0.0.1:65535/oauth/callback', 's'.repeat(43), challenge);
+    expect(externalUrlOrNull(url), `${id} の同意画面の URL が関門に落とされる`).not.toBeNull();
+    expect(url.length * 10, `${id}: ${url.length} 字`).toBeLessThanOrEqual(MAX_EXTERNAL_URL_LEN);
   });
 });

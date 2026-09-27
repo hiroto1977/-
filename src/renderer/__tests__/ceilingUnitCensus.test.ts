@@ -142,6 +142,8 @@ const UNIT_LEDGER: Readonly<Record<string, string>> = {
   MAX_SHELL_PATH_LENGTH: 'パスの上限は OS 側が符号単位/バイトで持つ (shell へ渡す前の関門)',
   MAX_MEMBER_EMAIL_LEN: 'RFC 5321 §4.5.3.1.3 の経路 256 オクテット − 山括弧 2。上限はオクテットで、文字数ではない',
   MAX_CONTACT_EMAIL_LEN: '同上 (士業の連絡先。members.ts と同じ規格の同じ数)',
+  MAX_EXTERNAL_URL_LEN:
+    'RFC 9110 §4.1 の 8000 オクテット。測るのは URL.toString() の結果で、それは非 ASCII をパーセント符号化・ホストを punycode にした ASCII なので .length がそのままオクテット数になる (パス 493e)',
 };
 
 /**

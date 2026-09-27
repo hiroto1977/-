@@ -136,6 +136,7 @@ function isPrivateOrReservedHost(host) {
   if (allZero(0, 7) && g[7] === 1) return true;                // ::1 loopback
   if (allZero(0, 5) && g[5] === 0xffff) return isPrivateOrReservedHost(embedded(g[6], g[7])); // ::ffff:0:0/96
   if (g[0] === 0x64 && g[1] === 0xff9b && allZero(2, 6)) return isPrivateOrReservedHost(embedded(g[6], g[7])); // 64:ff9b::/96
+  if (g[0] === 0x64 && g[1] === 0xff9b && g[2] === 1) return true; // 64:ff9b:1::/48 local-use NAT64 (RFC 8215) —— 復号できないが範囲は固定で、IANA は Globally Reachable: False
   if (g[0] === 0x2002) return isPrivateOrReservedHost(embedded(g[1], g[2])); // 2002::/16 6to4
   if (allZero(0, 6)) return isPrivateOrReservedHost(embedded(g[6], g[7]));   // ::a.b.c.d
 
@@ -234,6 +235,8 @@ async function selfTest() {
     ['NAT64 (RFC 6052 の well-known prefix) で IMDS', '64:ff9b::a9fe:a9fe', true],
     ['6to4 (RFC 3056) で IMDS', '2002:a9fe:a9fe::1', true],
     ['NAT64 に公開 IPv4 を載せたものは通す', '64:ff9b::93.184.216.34', false],
+    ['NAT64 の local-use prefix (RFC 8215) は中身を問わず塞ぐ', '64:ff9b:1::808:808', true],
+    ['local-use prefix の隣 (2000::/3 の公開) は通す', '2064:ff9b:1::1', false],
     ['6to4 に公開 IPv4 を載せたものは通す', '2002:5db8:d822::1', false],
     // ---- IPv6 リテラル ----
     ['::1', '::1', true],

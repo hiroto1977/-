@@ -243,6 +243,19 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
       }
     }
     /* Stryker restore BlockStatement,BooleanLiteral */
+    /*
+     * **NAT64 の local-use prefix `64:ff9b:1::/48` (RFC 8215) は丸ごと塞ぐ** (2026-09-27 · パス 493e)。
+     *
+     * 上の復号は well-known の `64:ff9b::/96` だけを扱う —— こちらの /48 は運用者が中の
+     * どこに IPv4 を埋めるかを選ぶ (RFC 6052 §2.2 の /48〜/96) ので**復号はできない**。
+     * ところが IANA の特殊用途表はこの /48 を **Globally Reachable: False** と載せており、
+     * 公開の宛先になりえない。**復号できないことと、塞げないことは別**である —— 範囲そのものが
+     * 固定なので、中身を読まずに範囲で落とせる (fc00::/7 と同じ扱い)。
+     * それまでこの関門は `64:ff9b:1::a9fe:a9fe` (IMDS を指しうる) を公開として通しており、
+     * Worker の注記も「値が任意なため列挙できない」と、運用者ごとの任意の prefix と混ぜていた。
+     * `URL.hostname` は群の先頭の 0 を落とすので、正規化後の綴りだけを見れば足りる。
+     */
+    if (/^64:ff9b:1:/i.test(bare)) return true;
     // ULA fc00::/7 → first byte 0xfc or 0xfd.
     // Stryker disable next-line Regex
     if (/^f[cd][0-9a-f]{0,2}:/i.test(bare)) return true;
