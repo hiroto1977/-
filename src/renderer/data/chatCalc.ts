@@ -13,7 +13,7 @@
 
 import { monthlyCompensation, solveGrossForTakeHomeChecked } from '../../shared/welfareScheme';
 import type { MonthlyCompensation } from '../../shared/welfareScheme';
-import { jpy } from '../../shared/formatters';
+import { jpyWhole } from '../../shared/formatters';
 
 /** 解析された計算クエリ。 */
 export interface CalcQuery {
@@ -205,7 +205,7 @@ export function runCalcQuery(query: CalcQuery, taxYear = new Date().getFullYear(
  */
 export function formatCalcAnswer(answer: CalcAnswer): string {
   const { query, comp, reached } = answer;
-  const yen = (n: number) => jpy(Math.round(n));
+  const yen = jpyWhole;
   // **届かなかった逆算に額面を答えない。** 直す前は文が「必要な額面はおよそ
   // ¥3,000,000 です」と言い、**同じ答えの内訳が「手取り ¥1,724,127」**と言って
   // いた (目標 ¥1,800,000 で差 ¥75,873・目標 ¥5,000,000 なら差 ¥3,275,873 と

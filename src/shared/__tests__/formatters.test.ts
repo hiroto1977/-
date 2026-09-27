@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DASH, jpy, jpyOrDash, pct, pctOrDash } from '../formatters';
+import { DASH, jpy, jpyOrDash, jpyWhole, pct, pctOrDash } from '../formatters';
 import { ratioPctOrDash } from '../num';
 
 describe('jpy', () => {
@@ -30,6 +30,45 @@ describe('jpy', () => {
     expect(jpyOrDash(null)).toBe(DASH);
     expect(jpyOrDash(undefined)).toBe(DASH);
     expect(jpyOrDash(0)).toBe('¥0');
+  });
+
+  /**
+   * **負のゼロを「¥-0」と刷らない** (2026-09-27 · パス 493j)。`toLocaleString` は −0 も、
+   * 丸めて 0 になる小さな負の値も `-0` と綴る (実測)。`Math.round(-0.4)` / `Math.ceil(-0.5)` は
+   * −0 を返すので、円未満を丸める呼び手はここへ −0 を渡しうる。
+   */
+  it('★ 負のゼロと、丸めて 0 になる小さな負の値は「¥0」', () => {
+    expect((-0).toLocaleString('ja-JP')).toBe('-0'); // 標本: 素の toLocaleString は符号を付ける
+    expect(jpy(-0)).toBe('¥0');
+    expect(jpy(-0.0001)).toBe('¥0');
+    expect(jpy(Math.round(-0.4))).toBe('¥0');
+    // 対照: 本物の負の小数は符号を保つ (0 へ倒すのは「-0」と綴られる物だけ)。
+    expect(jpy(-0.4)).toBe('¥-0.4');
+    expect(jpy(-1)).toBe('¥-1');
+  });
+});
+
+/**
+ * **円未満を丸める版は共有の 1 つ** (2026-09-27 · パス 493j)。
+ *
+ * 写しが 3 通りに割れていた —— `FreeePage` は `−¥1,234` (U+2212 を ¥ の前)、
+ * `FundingPage` と経営レポートは `¥-1,234`。3 つとも床を持たず `¥NaN` / `¥∞` / `−¥∞` を刷り、
+ * `−0.4` を `−¥0` / `¥-0` と刷っていた。母集団は `yenTemplateCensus.test.ts` が数える。
+ */
+describe('jpyWhole', () => {
+  it('円未満を四捨五入して刷る', () => {
+    expect(jpyWhole(1234.5)).toBe('¥1,235');
+    expect(jpyWhole(26_512.345)).toBe('¥26,512');
+    expect(jpyWhole(-1234.5)).toBe('¥-1,234'); // Math.round は +∞ 側へ丸める (−1234.5 → −1234)
+    expect(jpyWhole(-1234.6)).toBe('¥-1,235');
+  });
+
+  it('★ 床と符号は jpy と同じ (非有限は「—」・−0.4 は「¥0」)', () => {
+    expect(jpyWhole(Number.NaN)).toBe(DASH);
+    expect(jpyWhole(Number.POSITIVE_INFINITY)).toBe(DASH);
+    expect(jpyWhole(Number.NEGATIVE_INFINITY)).toBe(DASH);
+    expect(jpyWhole(-0.4)).toBe('¥0');
+    expect(jpyWhole(-0)).toBe('¥0');
   });
 });
 

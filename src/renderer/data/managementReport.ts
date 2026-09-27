@@ -11,6 +11,7 @@ import { unreadableBalanceSheetSheetNote } from './balanceSheet';
 import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 import { verdictLabel, type ManagementScorecard } from '../../shared/managementScorecard';
+import { jpyWhole } from '../../shared/formatters';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
 import { duplicateActualsSheetNote, formatPeriodWindow, unreadableKpiRowsSheetNote, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
 import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
@@ -19,7 +20,8 @@ const SEVERITY_MARK: Record<Highlight['severity'], string> = {
   critical: '🔴', warning: '🟡', good: '🟢',
 };
 
-const yen = (n: number): string => `¥${Math.round(n).toLocaleString('ja-JP')}`;
+// 円未満を丸めて刷る。床 (非有限は「—」) と −0 の扱いは共有の `jpyWhole` が持つ (パス 493j —— ここは `¥NaN` を刷る写しだった)。
+const yen = jpyWhole;
 /**
  * 小数第 1 位の比率。**算定不能 (`null`) は「—」** —— 0.0% と書かない。
  * 0.0% は「その比率が 0 である」という主張であり、「割れない」とは別のこと

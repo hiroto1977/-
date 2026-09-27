@@ -37,7 +37,25 @@ export const DASH = '—';
  */
 export function jpy(n: number): string {
   if (!Number.isFinite(n)) return DASH;
-  return `¥${n.toLocaleString('ja-JP')}`;
+  const s = n.toLocaleString('ja-JP');
+  // **負のゼロを「¥-0」と刷らない** (2026-09-27 · パス 493j)。`toLocaleString` は −0 も、
+  // 丸めて 0 になる小さな負の値 (−0.0001) も `-0` と綴る —— `Math.round(-0.4)` や
+  // `Math.ceil(-0.5)` は −0 を返すので、円未満を丸める呼び手はここへ −0 を渡しうる。
+  // 画面に「¥-0」と出ると、0 円に符号の付いた別の額として読める。
+  return `¥${s === '-0' ? '0' : s}`;
+}
+
+/**
+ * 円未満を四捨五入してから {@link jpy} (2026-09-27 · パス 493j)。
+ *
+ * **1 行の写しが 3 通りに割れていた** —— `FreeePage` は `−¥1,234` (U+2212 を ¥ の前)、
+ * `FundingPage` と経営レポートは `¥-1,234`、`jpy` は `¥-1,234`。しかも 3 つとも床を持たず、
+ * 読めない値を `¥NaN` / `¥∞` / `−¥∞` と刷り、`−0.4` を `−¥0` / `¥-0` と刷っていた。
+ * 同じ額がページによって別の字で出る (パス 96 が測った「−∞ が 3 通りに刷られる」の残り)。
+ * 床と符号は `jpy` の 1 つに寄せ、ここは丸めだけを持つ。
+ */
+export function jpyWhole(n: number): string {
+  return jpy(Math.round(n));
 }
 
 /**

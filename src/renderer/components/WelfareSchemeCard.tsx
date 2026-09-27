@@ -3,7 +3,7 @@ import { Section } from './StatusBar';
 import { Stat } from './Stat';
 import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
-import { jpy } from '../../shared/formatters';
+import { jpyWhole } from '../../shared/formatters';
 import { externalUrlOrNull } from '../../shared/externalUrlGate';
 import {
   designWelfareScheme,
@@ -128,7 +128,7 @@ export function WelfareSchemeCard() {
   ]);
 
   const { normal, scheme, diff, deductions, mealSubsidy } = result;
-  const yen = (n: number) => jpy(Math.round(n));
+  const yen = jpyWhole;
   const hasExtraDeduction = deductions.total.incomeTax > 0 || deductions.total.residentTax > 0;
   // 目標手元残りに両筋書きが届いたか。届いていなければ**この表は「同じ手元残りでの
   // 比較」ではない** —— 額面の逆算が探索上限に張り付いた結果を並べているだけになる

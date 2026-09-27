@@ -595,9 +595,9 @@ export const LAWS: readonly Law[] = [
     id: 'center-then-count-callers',
     family: 'single-rule',
     name: '中心へ寄せたら呼び出し側から数え直す',
-    statement: '守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。**docblock が消費者を「4 つ」と数え上げていた例がもう 1 つある** —— `readNumeric` は「入力欄の文字列を数にする口は 4 つあり、全部ここを通す」と名乗っていたが、数値入力 (実測 13 ファイル / 119 欄) から辿ると通らない口が 3 つ / 呼び出し 7 か所残っており、`TaxPage` は**関門と計算で別の読み手**を使って「0 として計算されています」と断りながら ¥25,525 を出していた (パス 375)。**「同じことをしている場所」は同じ名前を名乗っていることがある** —— `compareVersions` は 2 つ在り、`updateCheck.ts` は semver §11.3 (プレリリースは正式版より前) を正しく持ち、`ollama.ts` は識別子を捨てていた。**弱い方が security の側に立っていた** —— 実測 (2026-09-22) で既知の脆弱性の台帳 8 件のうち `fixedIn` を持つ 7 件が `fixedIn + "-rc1"` を名乗るだけで黙り (CVE-2024-37032 critical の RCE を含む)、`isVersionSafe("0.31.2-rc1")` は true を返していた。**どちらが危ない側に立っているかは名前からは分からない** (パス 402)。',
-    provenance: ['パターン 0-a-18', 'パス 311', 'パス 359', 'パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた)', 'パス 375 (関門と計算が別の読み手)', 'パス 402 (同名の comparator 2 つ・弱い方が CVE 判定の側)'],
-    enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus')), test(T.renderer('numericInputReaderCensus')), test(T.shared('prereleaseVersionOrder')), test(T.shared('sessionGreetingNumbers'))],
+    statement: '守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。**docblock が消費者を「4 つ」と数え上げていた例がもう 1 つある** —— `readNumeric` は「入力欄の文字列を数にする口は 4 つあり、全部ここを通す」と名乗っていたが、数値入力 (実測 13 ファイル / 119 欄) から辿ると通らない口が 3 つ / 呼び出し 7 か所残っており、`TaxPage` は**関門と計算で別の読み手**を使って「0 として計算されています」と断りながら ¥25,525 を出していた (パス 375)。**「同じことをしている場所」は同じ名前を名乗っていることがある** —— `compareVersions` は 2 つ在り、`updateCheck.ts` は semver §11.3 (プレリリースは正式版より前) を正しく持ち、`ollama.ts` は識別子を捨てていた。**弱い方が security の側に立っていた** —— 実測 (2026-09-22) で既知の脆弱性の台帳 8 件のうち `fixedIn` を持つ 7 件が `fixedIn + "-rc1"` を名乗るだけで黙り (CVE-2024-37032 critical の RCE を含む)、`isVersionSafe("0.31.2-rc1")` は true を返していた。**どちらが危ない側に立っているかは名前からは分からない** (パス 402)。**寄せた先そのものも数え直す** —— 円の組み立ては共有の `jpy` に寄せた後も `FreeePage` / `FundingPage` / 経営レポートに私有の写しが残り、`¥NaN` / `−¥∞` / `¥-∞` と 3 通りに刷っていた。写しを消して測ると、**寄せた先の `jpy` 自身が `-0` を刷っていた** (パス 493j)。',
+    provenance: ['パターン 0-a-18', 'パス 311', 'パス 359', 'パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた)', 'パス 375 (関門と計算が別の読み手)', 'パス 402 (同名の comparator 2 つ・弱い方が CVE 判定の側)', 'パス 493j (円の組み立ての写し 3 つ・寄せた先の jpy 自身が -0 を刷っていた)'],
+    enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus')), test(T.renderer('numericInputReaderCensus')), test(T.shared('prereleaseVersionOrder')), test(T.shared('sessionGreetingNumbers')), test(T.shared('yenTemplateCensus'))],
   },
   {
     id: 'no-weakness-as-spec',
@@ -1244,9 +1244,18 @@ export const LAWS: readonly Law[] = [
     id: 'refused-values-make-no-judgement',
     family: 'numbers',
     name: '⛔ の値から判定を作らない',
-    statement: '画面が断っている値 (マイナス・率の天井超・非有限) を判定へ通すと「最も都合のよい答え」が出る。段ごとに断り、⛔ の欄が在れば保存しない。',
-    provenance: ['パス 206', 'パス 209', 'パス 210', 'パス 214', 'パス 216'],
-    enforcedBy: [test(T.renderer('guardedJudgements'))],
+    statement:
+      '画面が断っている値 (マイナス・率の天井超・非有限) を判定へ通すと「最も都合のよい答え」が出る。段ごとに断り、⛔ の欄が在れば保存しない。'
+      + '**帯の 2 つの端は同じ種類の規則とは限らない** —— 投資信託の年初来リターンは、下端 (−100%) が**事実**で、下回る値は集約と比較から外して件数を言う (パス 226)。'
+      + '上端 (1000%) は**打ち間違いの門**で、本物かもしれないので読む側では落とさない —— **落とさないなら、そう言う**。'
+      + 'パス 226 はその口を持たず、復元で入った `+99999%` は一覧に緑で出て標準偏差を 4.04% → 39995.79% にし、改善提案は「最高」と実在のリターンとして語っていた (パス 493j で 3 面に ⚠ と件数の断り)。'
+      + '入力の門と読む側の判定は同じ定数を読む —— 門を広げた日に注記だけが古い数を言わない。',
+    provenance: ['パス 206', 'パス 209', 'パス 210', 'パス 214', 'パス 216', 'パス 226 (帯の両端は別の規則)', 'パス 493j (落とさない端は、落とさないと言う)'],
+    enforcedBy: [
+      test(T.renderer('guardedJudgements')),
+      test(T.shared('mutualFundsMetrics')),
+      test('src/renderer/pages/__tests__/mutualFundsImpossibleReturn.test.ts'),
+    ],
   },
   {
     id: 'parameters-ledgered-and-wired',

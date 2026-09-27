@@ -3,6 +3,7 @@ import { summarizeAccounting } from '../data/accounting';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { dealIntakeNote } from '../../shared/freeeIntake';
+import { jpyWhole } from '../../shared/formatters';
 
 // freee 会計連携。取引 (deals) から月次の営業キャッシュフローを取得し、
 // 棒グラフで表示する。月次CFは資金調達レーダー (funding) の accountingCashflow
@@ -10,10 +11,6 @@ import { dealIntakeNote } from '../../shared/freeeIntake';
 
 type FreeeSnapshot = typeof SNAPSHOT.freee;
 
-function jpy(n: number): string {
-  const sign = n < 0 ? '−' : '';
-  return `${sign}¥${Math.abs(Math.round(n)).toLocaleString('ja-JP')}`;
-}
 
 function CashflowChart({ data }: { data: FreeeSnapshot }) {
   const W = 720, H = 240, P = 44;
@@ -123,7 +120,7 @@ export function FreeePage() {
           </div>
           <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
             <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>営業CF 合計</div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpy(totalNet)}</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpyWhole(totalNet)}</div>
           </div>
         </div>
       </Section>
@@ -157,9 +154,9 @@ export function FreeePage() {
                 >
                   <span style={{ color: 'var(--text)' }}>{m.month}</span>
                   <span style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-                    <span style={{ color: 'var(--success)', fontSize: 12 }}>収入 {jpy(m.income)}</span>
-                    <span style={{ color: '#e0568a', fontSize: 12 }}>支出 {jpy(m.expense)}</span>
-                    <span style={{ color: 'var(--text)', fontWeight: 600 }}>純 {jpy(m.net)}</span>
+                    <span style={{ color: 'var(--success)', fontSize: 12 }}>収入 {jpyWhole(m.income)}</span>
+                    <span style={{ color: '#e0568a', fontSize: 12 }}>支出 {jpyWhole(m.expense)}</span>
+                    <span style={{ color: 'var(--text)', fontWeight: 600 }}>純 {jpyWhole(m.net)}</span>
                   </span>
                 </div>
               ))}

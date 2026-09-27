@@ -133,15 +133,17 @@ describe('freee 会計連携の画面 (カバレッジ 33.33% だった側 · �
     }
   });
 
-  it('明細は収入・支出・純額を月ごとに刷る (純額は負なら「−」)', async () => {
+  it('明細は収入・支出・純額を月ごとに刷る (純額は負なら符号つき)', async () => {
     await mount();
     const text = container.textContent ?? '';
     expect(text).toContain('2026-03');
     expect(text).toContain('収入 ¥1,000,000');
     expect(text).toContain('支出 ¥700,000');
     expect(text).toContain('純 ¥300,000');
-    // 2026-04 は純額が負 —— 記号は `jpy()` の「−」(全角マイナス)。
-    expect(text).toContain('純 −¥300,000');
+    // 2026-04 は純額が負 —— 符号はアプリの他の金額と同じ共有の `jpy` の形 (`¥-`)。
+    // パス 493j まで、この画面だけが私有の写しで「−¥」(U+2212 を ¥ の前) と刷っていた。
+    expect(text).toContain('純 ¥-300,000');
+    expect(text).not.toContain('−¥');
   });
 
   it('★ 取り込みで落ちた取引を画面が述べる (件数と影響)', async () => {

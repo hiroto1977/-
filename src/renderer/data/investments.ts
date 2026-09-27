@@ -18,6 +18,7 @@
 import { readNumeric } from '../../shared/readNumeric';
 import type { NumSpec } from './inputGuards';
 import { moreThanChars } from '../../shared/inputCeiling';
+import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT } from '../../shared/mutualFundsMetrics';
 
 /**
  * **保管した自由文を画面へ出すときの天井。数は入口が既に宣言している物**
@@ -777,7 +778,11 @@ export function parseHoldingEntry(input: {
     // しても直後の Number.isFinite が非数値を弾くため同じエラーになる (等価変異)。
     // 文字列は画面と同じ読み取り (`readNumeric`) —— `1,5` を 15% にしない。
     const n = typeof ytdRaw === 'string' ? (readNumeric(ytdRaw) ?? Number.NaN) : typeof ytdRaw === 'number' ? ytdRaw : NaN;
-    if (!Number.isFinite(n) || n < -100 || n > 1000) throw new Error('YTD リターン (%) は −100〜1000 の数値で入力してください');
+    // 帯の両端は読む側と同じ定数 (パス 493j) —— 下端は事実 (`RETURN_FLOOR_PCT`)、上端は打ち間違いの門
+    // (`RETURN_ENTRY_CEILING_PCT`)。門と「範囲の外」の断りが別の数を持たないように。
+    if (!Number.isFinite(n) || n < RETURN_FLOOR_PCT || n > RETURN_ENTRY_CEILING_PCT) {
+      throw new Error(`YTD リターン (%) は −${-RETURN_FLOOR_PCT}〜${RETURN_ENTRY_CEILING_PCT} の数値で入力してください`);
+    }
     ytdReturnPct = n;
   }
 

@@ -34,7 +34,7 @@ import type { ServiceAdvisorResponse } from './advisorTypes';
 import type { RecordEntryServiceId } from './recordEntryLimits';
 import { jpy } from './formatters';
 import { round1 } from './num';
-import { RETURN_FLOOR_PCT, isImpossibleReturnPct } from './mutualFundsMetrics';
+import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT, isAboveEntryCeilingPct, isImpossibleReturnPct } from './mutualFundsMetrics';
 
 // --- しきい値 (既定。台帳 `parameters.ts` が同じ定数を参照する) ----------------
 
@@ -583,7 +583,10 @@ export function adviseMutualFunds(input: MutualFundsAdviceInput): ServiceAdvisor
   // 2. 年初来リターン —— 入力された銘柄だけで最高と最低を比べる。
   // **在り得ない値 (元本超の損失) は比較に入れない** (パス 226)。入れると「最低は X の -250.0% です。
   // マイナスの銘柄は保有目的を確認してください」と、存在しない損失について助言してしまう。
-  const impossibleYtd = rows.filter((h) => h.ytdReturnPct !== null && isImpossibleReturnPct(h.ytdReturnPct));
+  // 未入力 (null) は NaN として問う —— どちらの端の判定にも当たらない (NaN との比較は常に偽)。
+  // `!== null &&` で守る形は JS では冗長で (null は比較で 0 になり、−100 より下にも 1000 より上にもならない)、
+  // 変異検査に**等価で必ず生き残る変異** (`true && …`) を 1 つずつ作っていた (パス 493j で測って畳んだ)。
+  const impossibleYtd = rows.filter((h) => isImpossibleReturnPct(h.ytdReturnPct ?? Number.NaN));
   if (impossibleYtd.length > 0) {
     recommendations.push({
       title: `年初来リターンに在り得ない値: ${impossibleYtd.map((h) => h.name).join(' / ')}`,
@@ -591,6 +594,17 @@ export function adviseMutualFunds(input: MutualFundsAdviceInput): ServiceAdvisor
         `年初来リターンが ${RETURN_FLOOR_PCT}% より下の銘柄が ${impossibleYtd.length} 件あります` +
         '（買いのみの投資信託で元本を超えて失うことはありません）。入力を確認してください —— ' +
         'この銘柄は銘柄間の比較とリスク (標準偏差) から除いています。',
+    });
+  }
+  // **入力時の上端を超える値は比較に入れたまま、そう言う** (パス 493j)。本物かもしれないので除かないが、
+  // 黙っていると「+99999.0% で最高」を実在のリターンとして語ることになる。
+  const aboveCeilingYtd = rows.filter((h) => isAboveEntryCeilingPct(h.ytdReturnPct ?? Number.NaN));
+  if (aboveCeilingYtd.length > 0) {
+    recommendations.push({
+      title: `年初来リターンが入力時の範囲の外: ${aboveCeilingYtd.map((h) => h.name).join(' / ')}`,
+      rationale:
+        `年初来リターンが入力時の上端 (${RETURN_ENTRY_CEILING_PCT}%) を超える銘柄が ${aboveCeilingYtd.length} 件あります。` +
+        '本物の値かもしれないので銘柄間の比較とリスク (標準偏差) には入れていますが、打ち間違いなら下の比較の結論も変わります —— 入力を確認してください。',
     });
   }
   const withYtd = rows.filter((h) => h.ytdReturnPct !== null && !isImpossibleReturnPct(h.ytdReturnPct));

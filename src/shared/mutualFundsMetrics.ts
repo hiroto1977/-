@@ -338,6 +338,11 @@ export interface YtdReturnRisk {
    * **測った値が事実に反している** (下の {@link RETURN_FLOOR_PCT} を参照)。
    */
   readonly impossible: number;
+  /**
+   * **入力時の上端を超える値** (パス 493j)。`measured` に**含む** (本物かもしれないので落とさない) ——
+   * そのうち何件が範囲の外かを別に数え、画面が言う。
+   */
+  readonly aboveEntryCeiling: number;
 }
 
 /**
@@ -384,6 +389,42 @@ export function isImpossibleReturnPct(pct: number): boolean {
 }
 
 /**
+ * 年初来リターンの**入力時の上端** (%)。**打ち間違いの門であって事実ではない** (パス 226 の裁定) ——
+ * 集中投資の投信が 1 年で 10 倍を超えることは在りうるので、読む側では落とさない。
+ *
+ * ## 黙っているのが残りの穴だった (2026-09-27 · パス 493j)
+ *
+ * パス 226 は「捨てない」と正しく決めたが、**範囲の外であることを言う口が無かった** —— 復元や
+ * 古い版で入った `+99999%` は一覧に**緑**で出て、リスク (標準偏差) を 4.04% → 39995.79% にし、
+ * 改善提案は「年初来 +99999.0% で最高」と**実在のリターンとして語った**。どの面も、その値が
+ * 入力時の範囲の外だとは言わなかった。捨てずに、印を付けて件数を言う。
+ *
+ * 入力の関門 (`parseHoldingEntry`) も同じ数を読む —— 門と注記が別の数を持つと、
+ * 門を 2000 へ広げた日に注記だけが 1000 を言い続ける。
+ */
+export const RETURN_ENTRY_CEILING_PCT = 1000;
+
+/** 入力時の上端を超える値か (読む側では落とさない —— 印を付けて言うだけ)。 */
+export function isAboveEntryCeilingPct(pct: number): boolean {
+  return pct > RETURN_ENTRY_CEILING_PCT;
+}
+
+/**
+ * 入力時の上端を超える銘柄が在るときの断り (画面のリスクの節)。無ければ `null`。
+ *
+ * **除いていないことを言う** —— 在り得ない値 (下端) は除いて件数を言うが、こちらは本物かもしれないので
+ * 除かない。除かないなら、標準偏差がその値に引かれていることを読み手が知る必要がある。
+ */
+export function aboveEntryCeilingNote(count: number): string | null {
+  if (!(count > 0)) return null;
+  return (
+    `年初来リターンが入力時の上端 (${RETURN_ENTRY_CEILING_PCT}%) を超える銘柄が ${count} 件あります —— ` +
+    '本物の値かもしれないので除いていませんが、リスク (標準偏差) はその値に大きく引かれます。' +
+    '打ち間違いなら一覧の ⚠ の行を編集して直してください。'
+  );
+}
+
+/**
  * 未入力 (null) を 0% として入れない。パス 122 までは画面が `holdings.map((h) => h.ytdReturnPct)` を
  * そのまま {@link calcStdDev} へ渡していて、空欄で足した銘柄が **0% の銘柄としてばらつきを作って**いた
  * (見本 4 銘柄で 4.04% のところ、空欄 1 件で 5.25%)。
@@ -392,13 +433,16 @@ export function ytdReturnRisk(returns: readonly (number | null)[]): YtdReturnRis
   const measured: number[] = [];
   let unmeasured = 0;
   let impossible = 0;
+  let aboveEntryCeiling = 0;
   for (const r of returns) {
     if (r === null) { unmeasured += 1; continue; }
     // **在り得ない値は集約に入れない** (パス 226)。1 件で標準偏差が 4.04% → 103.87% になる。
     if (isImpossibleReturnPct(r)) { impossible += 1; continue; }
+    // 上端の外は**入れたまま数える** (パス 493j) —— 本物かもしれない値を捨てない。
+    if (isAboveEntryCeilingPct(r)) aboveEntryCeiling += 1;
     measured.push(r);
   }
-  return { stdDevPct: calcStdDev(measured), measured: measured.length, unmeasured, impossible };
+  return { stdDevPct: calcStdDev(measured), measured: measured.length, unmeasured, impossible, aboveEntryCeiling };
 }
 
 export interface DcaSimulation {

@@ -16,6 +16,12 @@ import {
   yieldScopeNote,
 } from '../investments';
 import { SNAPSHOT } from '../snapshot';
+import {
+  RETURN_ENTRY_CEILING_PCT,
+  RETURN_FLOOR_PCT,
+  isAboveEntryCeilingPct,
+  isImpossibleReturnPct,
+} from '../../../shared/mutualFundsMetrics';
 
 describe('parsePropertyEntry (不動産の任意追加)', () => {
   const valid = { name: '福岡市アパート', type: '一棟', monthlyRent: '250000', purchasePrice: '38,000,000' };
@@ -402,6 +408,23 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(parseHoldingEntry({ ...valid, ytdReturnPct: 12.5 }).ytdReturnPct).toBe(12.5);
     expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: '-101' })).toThrow('YTD');
     expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: 'abc' })).toThrow('YTD');
+  });
+
+  it('★ 入力の門と読む側の判定は同じ数を持つ (パス 493j) —— 門が受けた値を、読む側が「範囲の外」と言わない', () => {
+    // 門の両端は読む側の定数そのもの (写しを持たない)。門を広げた日に注記だけが古い数を言い続けない。
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: String(RETURN_FLOOR_PCT) }).ytdReturnPct).toBe(RETURN_FLOOR_PCT);
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: String(RETURN_ENTRY_CEILING_PCT) }).ytdReturnPct).toBe(RETURN_ENTRY_CEILING_PCT);
+    expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: String(RETURN_ENTRY_CEILING_PCT + 0.1) })).toThrow(
+      `YTD リターン (%) は −${-RETURN_FLOOR_PCT}〜${RETURN_ENTRY_CEILING_PCT} の数値で入力してください`,
+    );
+    for (const v of [RETURN_FLOOR_PCT, -50, 0, 12.5, RETURN_ENTRY_CEILING_PCT]) {
+      const got = parseHoldingEntry({ ...valid, ytdReturnPct: v }).ytdReturnPct as number;
+      expect(isAboveEntryCeilingPct(got), `${v}`).toBe(false);
+      expect(isImpossibleReturnPct(got), `${v}`).toBe(false);
+    }
+    // 対照: 門の外の 2 つは、それぞれ読む側の判定に当たる (上の false が空の主張でない)
+    expect(isAboveEntryCeilingPct(RETURN_ENTRY_CEILING_PCT + 0.1)).toBe(true);
+    expect(isImpossibleReturnPct(RETURN_FLOOR_PCT - 0.1)).toBe(true);
   });
 
   it('★ YTD も画面と同じ読み取り (1,5 を 15% にしない)', () => {

@@ -37,6 +37,9 @@ import {
   isMeasurableCostRate,
   isMeasurableHoldingYears,
   isImpossibleReturnPct,
+  isAboveEntryCeilingPct,
+  aboveEntryCeilingNote,
+  RETURN_ENTRY_CEILING_PCT,
   RETURN_FLOOR_PCT,
 } from '../../shared/mutualFundsMetrics';
 import {
@@ -484,6 +487,16 @@ export function MutualFundsPage() {
               <br />
             </>
           )}
+          {/* **入力時の上端を超える値は、除かずに言う** (パス 493j)。本物かもしれないので捨てないが、
+              黙っていると標準偏差 39995.79% の理由が画面から分からない。 */}
+          {risk.aboveEntryCeiling > 0 && (
+            <>
+              <strong data-above-entry-ceiling={risk.aboveEntryCeiling} style={{ color: 'var(--warning)' }}>
+                {aboveEntryCeilingNote(risk.aboveEntryCeiling)}
+              </strong>
+              <br />
+            </>
+          )}
           ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは年初来リターンが入力された {risk.measured} 銘柄の母標準偏差です{risk.unmeasured > 0 ? ` (未入力 ${risk.unmeasured} 銘柄は除外)` : ''}{risk.impossible > 0 ? ` (在り得ない値 ${risk.impossible} 銘柄は除外)` : ''}{risk.measured === 0 ? ' —— 入力された銘柄が無いので算定しません' : ''}。概算であり投資助言ではありません。
         </div>
       </Section>
@@ -664,19 +677,23 @@ export function MutualFundsPage() {
                     ...tdNum,
                     color: h.ytdReturnPct === null
                       ? 'var(--text-mute)'
-                      : isImpossibleReturnPct(h.ytdReturnPct)
+                      : isImpossibleReturnPct(h.ytdReturnPct) || isAboveEntryCeilingPct(h.ytdReturnPct)
                         ? 'var(--warning)'
                         : h.ytdReturnPct >= 0 ? 'var(--success)' : 'var(--danger)',
                   }}
+                  data-above-entry-ceiling-row={h.ytdReturnPct !== null && isAboveEntryCeilingPct(h.ytdReturnPct) ? '' : undefined}
                   title={h.ytdReturnPct === null
                     ? '年初来リターンは未入力です (0% ではありません)'
                     : isImpossibleReturnPct(h.ytdReturnPct)
                       ? `年初来リターンとして在り得ない値です (${RETURN_FLOOR_PCT}% より下)。買いのみの投資信託で元本を超えて失うことはありません —— リスク (標準偏差) と銘柄間の比較からは除いています。編集して入力を確認してください。`
-                      : undefined}
+                      : isAboveEntryCeilingPct(h.ytdReturnPct)
+                        ? `入力時の範囲 (上端 ${RETURN_ENTRY_CEILING_PCT}%) の外の値です。本物なら残してかまいませんが、1 年で 10 倍を超える値は打ち間違いのことが多いので、編集して確かめてください。リスク (標準偏差) には入れています。`
+                        : undefined}
                 >
+                  {/* 上端の外は緑の「+」ではなく ⚠ (パス 493j) —— 緑は「良い値を測った」と読めるが、ここは確かめる値。 */}
                   {h.ytdReturnPct === null
                     ? '—'
-                    : `${isImpossibleReturnPct(h.ytdReturnPct) ? '⛔ ' : h.ytdReturnPct >= 0 ? '+' : ''}${h.ytdReturnPct.toFixed(1)}%`}
+                    : `${isImpossibleReturnPct(h.ytdReturnPct) ? '⛔ ' : isAboveEntryCeilingPct(h.ytdReturnPct) ? '⚠ +' : h.ytdReturnPct >= 0 ? '+' : ''}${h.ytdReturnPct.toFixed(1)}%`}
                 </td>
                 <td style={tdStyle}>
                   {h.user && (

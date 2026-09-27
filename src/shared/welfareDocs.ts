@@ -1,4 +1,4 @@
-import { jpy } from './formatters';
+import { jpyWhole } from './formatters';
 import { localIsoDate } from './localDate';
 import { MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN } from './welfareScheme';
 import { employerBenefits, type BenefitMechanism, type BenefitSpec } from './employerBenefits';
@@ -19,7 +19,7 @@ import type { WelfareSchemeInput, WelfareSchemeResult } from './welfareScheme';
  * 文面に現れる」ことをテストで検証する。
  */
 
-const yen = (n: number) => jpy(Math.round(n));
+const yen = jpyWhole;
 const today = () => localIsoDate();
 
 /**

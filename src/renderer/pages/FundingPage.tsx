@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { EligibilityChecker } from '../components/EligibilityChecker';
 import { useServiceData } from '../hooks/useServiceData';
 import { accountingCfSeriesLabel, fundingLinkLabel } from '../../shared/funding';
+import { jpyWhole } from '../../shared/formatters';
 
 // 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/クラウドファンディングを
 // 会計ソフト・株式投資連携と合わせて 4 種チャート (レーダー/折れ線/円/棒) で
@@ -29,9 +30,6 @@ const KIND_COLORS = ['#4f9cf9', '#3ec98a', '#f5a623', '#e0568a', '#9b6cf0', '#46
 
 type FundingSnapshot = typeof SNAPSHOT.funding;
 
-function jpy(n: number): string {
-  return `¥${Math.round(n).toLocaleString('ja-JP')}`;
-}
 
 /**
  * DSCR (倍) を 2 桁で。**算定不能 (`null`) は「—」。**
@@ -371,13 +369,13 @@ export function FundingPage() {
 
   const statTiles = useMemo(
     () => [
-      { label: '確定総額', value: jpy(live.summary.totalSecured) },
-      { label: '返済不要 (補助金等)', value: jpy(live.summary.nonRepayableSecured) },
-      { label: '返済必要 (融資/公庫)', value: jpy(live.summary.repayableSecured) },
-      { label: 'パイプライン総額', value: jpy(live.summary.totalPipeline) },
-      { label: '当年度課税対象 (補助金等)', value: jpy(live.summary.taxableSecured) },
-      { label: '課税繰延 (圧縮記帳)', value: jpy(live.summary.deferredSecured) },
-      { label: '概算手残り (税引後)', value: jpy(live.summary.afterTaxSecured) },
+      { label: '確定総額', value: jpyWhole(live.summary.totalSecured) },
+      { label: '返済不要 (補助金等)', value: jpyWhole(live.summary.nonRepayableSecured) },
+      { label: '返済必要 (融資/公庫)', value: jpyWhole(live.summary.repayableSecured) },
+      { label: 'パイプライン総額', value: jpyWhole(live.summary.totalPipeline) },
+      { label: '当年度課税対象 (補助金等)', value: jpyWhole(live.summary.taxableSecured) },
+      { label: '課税繰延 (圧縮記帳)', value: jpyWhole(live.summary.deferredSecured) },
+      { label: '概算手残り (税引後)', value: jpyWhole(live.summary.afterTaxSecured) },
       // **算定できていなければ「— / 100」でなく「—」。**
       // `${null} / 100` は型検査を素通りして「null / 100」を刷る (テンプレート
       // リテラルは何でも文字列にする) —— 2026-09-09 まで、確定 0 のときの
@@ -397,7 +395,7 @@ export function FundingPage() {
         ? [{
             label: '長期借入比率',
             value: `${live.termStructure.longTermRatioPct ?? 0}%`,
-            sub: `長期 ${jpy(live.termStructure.longTermSecured)} / 短期 ${jpy(live.termStructure.shortTermSecured)}`,
+            sub: `長期 ${jpyWhole(live.termStructure.longTermSecured)} / 短期 ${jpyWhole(live.termStructure.shortTermSecured)}`,
           }]
         : []),
     ],
@@ -478,19 +476,19 @@ export function FundingPage() {
         {live.summary.consumptionTaxableSecured > 0 && (
           <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
             💡 消費税: 補助金・助成金・給付金は<strong>不課税</strong> (消費税は課されません) ですが、
-            購入型クラウドファンディング {jpy(live.summary.consumptionTaxableSecured)} は対価性のある<strong>課税売上</strong>です
-            (消費税相当 約{jpy(live.summary.consumptionTaxEstimate)} の申告納付義務が生じえます)。
+            購入型クラウドファンディング {jpyWhole(live.summary.consumptionTaxableSecured)} は対価性のある<strong>課税売上</strong>です
+            (消費税相当 約{jpyWhole(live.summary.consumptionTaxEstimate)} の申告納付義務が生じえます)。
           </div>
         )}
         {live.specifiedIncome.specifiedIncome > 0 && (
           <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-            💡 特定収入: 補助金・助成金・給付金 計 {jpy(live.specifiedIncome.specifiedIncome)} は消費税法上の
+            💡 特定収入: 補助金・助成金・給付金 計 {jpyWhole(live.specifiedIncome.specifiedIncome)} は消費税法上の
             <strong>特定収入</strong>です。特定収入割合 {(live.specifiedIncome.specifiedIncomeRatio * 100).toFixed(1)}%
             {live.specifiedIncome.simplified ? (
               <>（簡易課税のため仕入税額控除の調整は不要です）。</>
             ) : live.specifiedIncome.adjustmentRequired ? (
               <>が 5% を超えるため、本則課税では「特定収入に係る仕入税額控除の調整」が必要です
-                （控除できない仕入税額の概算 約{jpy(live.specifiedIncome.nonDeductibleInputTax)}）。</>
+                （控除できない仕入税額の概算 約{jpyWhole(live.specifiedIncome.nonDeductibleInputTax)}）。</>
             ) : (
               <>は 5% 以下のため、本則課税でも仕入税額控除の調整は不要の見込みです。</>
             )}
@@ -521,8 +519,8 @@ export function FundingPage() {
             <LineChart data={live} />
             {interestTotals.interest > 0 && (
               <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-                融資の支払利息 合計 {jpy(interestTotals.interest)}（損金算入）→ 概算の節税効果 約
-                {jpy(interestTotals.shield)}。純資金繰りにはこの利息の節税効果を加算しています。
+                融資の支払利息 合計 {jpyWhole(interestTotals.interest)}（損金算入）→ 概算の節税効果 約
+                {jpyWhole(interestTotals.shield)}。純資金繰りにはこの利息の節税効果を加算しています。
               </div>
             )}
           </Section>
@@ -539,15 +537,15 @@ export function FundingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 12 }}>
               <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
                 <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>確定済み</div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpy(live.scenario.securedTotal)}</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpyWhole(live.scenario.securedTotal)}</div>
               </div>
               <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
                 <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>楽観値 (確定+全採択)</div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpy(live.scenario.securedTotal + live.scenario.pipelineTotal)}</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpyWhole(live.scenario.securedTotal + live.scenario.pipelineTotal)}</div>
               </div>
               <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
                 <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>期待値 (確率加重)</div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpy(live.scenario.expectedTotal)}</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpyWhole(live.scenario.expectedTotal)}</div>
               </div>
             </div>
             <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
@@ -558,7 +556,7 @@ export function FundingPage() {
 
           <Section title="⑤ 累計キャッシュ残高 (ランウェイ)">
             <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
-              期首残高 {jpy(live.runway.openingBalance)} に各月の純資金繰りを積み上げた月末残高の推移です。
+              期首残高 {jpyWhole(live.runway.openingBalance)} に各月の純資金繰りを積み上げた月末残高の推移です。
               ゼロを下回る月は資金ショートの目安です。
               {/* 積み上げに使う営業CF は会計連携の実績月のみ。以降を 0 として積むのは
                   「保守側に置く」ための前提であって測定値ではない —— 比率 (DSCR) と違い
@@ -579,12 +577,12 @@ export function FundingPage() {
                   color: 'var(--text)',
                 }}
               >
-                ⚠️ {live.runway.shortfallMonth} に残高がマイナス ({jpy(live.runway.minBalance)} まで低下) になる見込みです。
+                ⚠️ {live.runway.shortfallMonth} に残高がマイナス ({jpyWhole(live.runway.minBalance)} まで低下) になる見込みです。
                 追加調達・支出抑制・返済条件の見直しを早めにご検討ください。
               </div>
             ) : (
               <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 10 }}>
-                ✅ 期間中は資金ショートしません (最低残高 {jpy(live.runway.minBalance)})。
+                ✅ 期間中は資金ショートしません (最低残高 {jpyWhole(live.runway.minBalance)})。
               </div>
             )}
             <RunwayChart data={live} />
@@ -594,8 +592,8 @@ export function FundingPage() {
                     どちらも「突合できた月」の合計で、全期間の返済額 (`totalRepayment`) は
                     下の別行で述べる —— 揃えないと「営業CF合計 ÷ 返済額合計 = DSCR」が
                     画面の上で成り立たなくなる (パス 53 / 81 と同じ規準)。 */}
-                <strong>返済余力 (DSCR)</strong>：営業CF合計 {jpy(live.debtService.coveredOperatingCashflow)} ÷ 返済額
-                {' '}{jpy(live.debtService.coveredRepayment)} = <strong>{dscrOrDash(live.debtService.overallDscr)}</strong>
+                <strong>返済余力 (DSCR)</strong>：営業CF合計 {jpyWhole(live.debtService.coveredOperatingCashflow)} ÷ 返済額
+                {' '}{jpyWhole(live.debtService.coveredRepayment)} = <strong>{dscrOrDash(live.debtService.overallDscr)}</strong>
                 （1.0 以上で返済余力あり）。最悪月のカバー率 {dscrOrDash(live.debtService.worstMonthDscr)}、
                 カバー率1.0未満の月 {live.debtService.shortfallMonths}／{live.debtService.coveredMonths} か月。
                 {/* **警告は値そのもので出す。** 節を出す関門 (`totalRepayment > 0`) は
@@ -612,7 +610,7 @@ export function FundingPage() {
                   {live.debtService.coveredMonths === 0 ? (
                     <>
                       ※ 返済予定 {live.debtService.unmatchedMonths} か月分 (返済額合計
-                      {' '}{jpy(live.debtService.totalRepayment)}) は、会計ソフト連携に同じ月の月次営業CF が
+                      {' '}{jpyWhole(live.debtService.totalRepayment)}) は、会計ソフト連携に同じ月の月次営業CF が
                       無いため突合できず、返済余力は算定できません
                       {live.accountingSource === 'linked'
                         ? '（連携済みですが、返済予定月と重なる月の実績CF がありません）。'
@@ -624,13 +622,13 @@ export function FundingPage() {
                     <>
                       ※ 上の返済余力は<strong>突合できた {live.debtService.coveredMonths} か月</strong>についての
                       数字です。返済予定はほかに {live.debtService.unmatchedMonths} か月分あり (返済額合計
-                      {' '}{jpy(live.debtService.totalRepayment)})、会計ソフト連携に実績の月次営業CF が無いため
+                      {' '}{jpyWhole(live.debtService.totalRepayment)})、会計ソフト連携に実績の月次営業CF が無いため
                       突合できていません。
                     </>
                   ) : (
                     <>
                       ※ 返済予定 {live.debtService.coveredMonths} か月すべてを実績の月次営業CF と突合しています
-                      (返済額合計 {jpy(live.debtService.totalRepayment)})。
+                      (返済額合計 {jpyWhole(live.debtService.totalRepayment)})。
                     </>
                   )}
                 </div>
@@ -638,8 +636,8 @@ export function FundingPage() {
             )}
             {live.costMetrics.totalLoanPrincipal > 0 && (
               <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-                <strong>実効調達コスト</strong>：借入額合計 {jpy(live.costMetrics.totalLoanPrincipal)} に対し総支払利息
-                {' '}{jpy(live.costMetrics.totalInterest)}（実効コスト率
+                <strong>実効調達コスト</strong>：借入額合計 {jpyWhole(live.costMetrics.totalLoanPrincipal)} に対し総支払利息
+                {' '}{jpyWhole(live.costMetrics.totalInterest)}（実効コスト率
                 {' '}{(live.costMetrics.weightedCostRate * 100).toFixed(2)}%）。
                 自己負担比率（返済必要 ÷ 確定総額）{(live.costMetrics.selfFundingRatio * 100).toFixed(0)}%。
               </div>
@@ -697,7 +695,7 @@ export function FundingPage() {
                     <span style={{ color: 'var(--text-mute)', fontSize: 11 }}>
                       {it.repayable ? '要返済' : '返済不要'}
                     </span>
-                    <span style={{ color: 'var(--text)', fontWeight: 600 }}>{jpy(it.amount)}</span>
+                    <span style={{ color: 'var(--text)', fontWeight: 600 }}>{jpyWhole(it.amount)}</span>
                   </span>
                 </div>
               ))}

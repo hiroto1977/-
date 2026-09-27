@@ -12,6 +12,9 @@ import {
   ytdReturnRisk,
   isImpossibleReturnPct,
   RETURN_FLOOR_PCT,
+  RETURN_ENTRY_CEILING_PCT,
+  isAboveEntryCeilingPct,
+  aboveEntryCeilingNote,
 } from '../mutualFundsMetrics';
 
 describe('calcCompoundingFutureValue', () => {
@@ -371,24 +374,24 @@ describe('calcDcaSimulation', () => {
 describe('ytdReturnRisk — 未入力 (null) を 0% として入れない (パス 122)', () => {
   it('★ null を除いた銘柄だけで標準偏差を取り、除外した数を言う', () => {
     const r = ytdReturnRisk([2, 4, 4, 4, 5, 5, 7, 9, null, null]);
-    expect(r).toEqual({ stdDevPct: 2, measured: 8, unmeasured: 2, impossible: 0 });
+    expect(r).toEqual({ stdDevPct: 2, measured: 8, unmeasured: 2, impossible: 0, aboveEntryCeiling: 0 });
     // 旧: null を 0 として入れると σ が変わる —— 同じ系列に 0 を 2 つ足した版は 2 ではない
     expect(calcStdDev([2, 4, 4, 4, 5, 5, 7, 9, 0, 0])).not.toBe(2);
   });
 
   it('画面の見本 4 銘柄 (14.2 / 11.8 / 3.4 / 8.7): 空欄 1 件を除けば 4.04%、0% として入れると 5.25%', () => {
-    expect(ytdReturnRisk([14.2, 11.8, 3.4, 8.7, null])).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1, impossible: 0 });
+    expect(ytdReturnRisk([14.2, 11.8, 3.4, 8.7, null])).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1, impossible: 0, aboveEntryCeiling: 0 });
     expect(calcStdDev([14.2, 11.8, 3.4, 8.7, 0])).toBe(5.25);
   });
 
   it('測った 0% は除外しない (未入力と 0% を混ぜない)', () => {
-    expect(ytdReturnRisk([0, 0])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0, impossible: 0 });
-    expect(ytdReturnRisk([5, 0, null])).toEqual({ stdDevPct: 2.5, measured: 2, unmeasured: 1, impossible: 0 });
+    expect(ytdReturnRisk([0, 0])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0, impossible: 0, aboveEntryCeiling: 0 });
+    expect(ytdReturnRisk([5, 0, null])).toEqual({ stdDevPct: 2.5, measured: 2, unmeasured: 1, impossible: 0, aboveEntryCeiling: 0 });
   });
 
   it('入力された銘柄が無ければ null で、数だけ言う', () => {
-    expect(ytdReturnRisk([null, null])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 2, impossible: 0 });
-    expect(ytdReturnRisk([])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0, impossible: 0 });
+    expect(ytdReturnRisk([null, null])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 2, impossible: 0, aboveEntryCeiling: 0 });
+    expect(ytdReturnRisk([])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0, impossible: 0, aboveEntryCeiling: 0 });
   });
 });
 
@@ -398,7 +401,7 @@ describe('ytdReturnRisk — 在り得ない値 (元本超の損失) を集約に
 
   it('★ −100% より下の銘柄を除き、除いた数を「未入力」と別に数える', () => {
     const r = ytdReturnRisk([...DEMO, -250]);
-    expect(r).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 0, impossible: 1 });
+    expect(r).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 0, impossible: 1, aboveEntryCeiling: 0 });
     // 対照: 除かないと 4.04% ではなく 103.87% —— 2 つが同じなら、この検査は何も見ていない
     expect(calcStdDev([...DEMO, -250])).toBe(103.87);
     expect(calcStdDev([...DEMO])).toBe(4.04);
@@ -406,23 +409,65 @@ describe('ytdReturnRisk — 在り得ない値 (元本超の損失) を集約に
 
   it('未入力と在り得ない値は別々に数える (どちらも measured には入らない)', () => {
     expect(ytdReturnRisk([...DEMO, null, -250, -100.5]))
-      .toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1, impossible: 2 });
+      .toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1, impossible: 2, aboveEntryCeiling: 0 });
   });
 
   it('在り得ない値だけなら stdDevPct は null で、measured 0 と言う', () => {
-    expect(ytdReturnRisk([-250, -1000])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0, impossible: 2 });
+    expect(ytdReturnRisk([-250, -1000])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0, impossible: 2, aboveEntryCeiling: 0 });
   });
 
   it('下限 −100% ちょうどは在りうる (全額失った) —— 境界は除かない', () => {
     expect(RETURN_FLOOR_PCT).toBe(-100);
     expect(isImpossibleReturnPct(-100)).toBe(false);
     expect(isImpossibleReturnPct(-100.000001)).toBe(true);
-    expect(ytdReturnRisk([-100, -100])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0, impossible: 0 });
+    expect(ytdReturnRisk([-100, -100])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0, impossible: 0, aboveEntryCeiling: 0 });
   });
 
   it('上端 (書き手の 1000%) は読む側では落とさない —— 打ち間違いの門と事実は別の規則', () => {
     // 1 年で 10 倍を超える投信は実在しうるので、読む側で捨てると**測った値を捨てる**。
     expect(isImpossibleReturnPct(1500)).toBe(false);
-    expect(ytdReturnRisk([...DEMO, 1500])).toEqual({ stdDevPct: 596.2, measured: 5, unmeasured: 0, impossible: 0 });
+    expect(ytdReturnRisk([...DEMO, 1500])).toEqual({ stdDevPct: 596.2, measured: 5, unmeasured: 0, impossible: 0, aboveEntryCeiling: 1 });
+  });
+});
+
+describe('ytdReturnRisk — 入力時の上端を超える値は落とさず、数えて言う (パス 493j)', () => {
+  /** 画面の見本 4 銘柄 (上の describe と同じ並び)。 */
+  const DEMO = [14.2, 11.8, 3.4, 8.7] as const;
+
+  it('★ 上端の外は measured に入れたまま、aboveEntryCeiling に別に数える', () => {
+    const r = ytdReturnRisk([...DEMO, 99_999]);
+    expect(r.measured).toBe(5); // 捨てていない (本物かもしれない —— パス 226 の裁定)
+    expect(r.aboveEntryCeiling).toBe(1);
+    expect(r.impossible).toBe(0);
+    // 対照: 数えた値は集約にちゃんと効いている —— 除いた 4 銘柄の値ではない
+    expect(r.stdDevPct).toBe(calcStdDev([...DEMO, 99_999]));
+    expect(r.stdDevPct).not.toBe(calcStdDev([...DEMO]));
+  });
+
+  it('上端ちょうど (書き手が受ける 1000%) は範囲の中 —— 門と同じ境目', () => {
+    expect(RETURN_ENTRY_CEILING_PCT).toBe(1000);
+    expect(isAboveEntryCeilingPct(RETURN_ENTRY_CEILING_PCT)).toBe(false);
+    expect(isAboveEntryCeilingPct(RETURN_ENTRY_CEILING_PCT + 0.000001)).toBe(true);
+    expect(ytdReturnRisk([1000, 1000]).aboveEntryCeiling).toBe(0);
+  });
+
+  it('下端の外 (在り得ない値) と上端の外は別々に数え、混ぜない', () => {
+    const r = ytdReturnRisk([...DEMO, -250, 1500, 2000, null]);
+    expect(r).toEqual({
+      stdDevPct: calcStdDev([...DEMO, 1500, 2000]),
+      measured: 6,
+      unmeasured: 1,
+      impossible: 1,
+      aboveEntryCeiling: 2,
+    });
+  });
+
+  it('断りの文は件数と上端を名乗り、除いていないことを言う (0 件・非数なら null)', () => {
+    const one = aboveEntryCeilingNote(1);
+    expect(one).toContain(`入力時の上端 (${RETURN_ENTRY_CEILING_PCT}%) を超える銘柄が 1 件あります`);
+    expect(one).toContain('除いていません');
+    expect(one).toContain('⚠ の行を編集して直してください');
+    expect(aboveEntryCeilingNote(3)).toContain('銘柄が 3 件あります');
+    for (const n of [0, -1, Number.NaN]) expect(aboveEntryCeilingNote(n), String(n)).toBeNull();
   });
 });

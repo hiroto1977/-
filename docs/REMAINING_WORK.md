@@ -4492,6 +4492,15 @@ blob ストア (`library/library.ts`)** を当たったら同じ形だった。�
 直すなら投資信託と同じ形 —— **行の値を先に円へ丸め、合計はその和で作る**
 (`computeRealEstatePortfolio` を触るので変異検査もやり直しになる)。
 
+★ **2026-09-27 (パス 493j) の実測で再現しない —— 前提が変わっていた。** この節の前提は
+「金額は `Intl` が円へ丸める」だったが、今の画面の 4 行は共有の `jpy` (`shared/formatters.ts`) を
+通り、**円へ丸めない** (`toLocaleString` の既定で千分の一円まで) —— 行ごとに丸めないので、
+`83,333.33` を入れても出た数のまま `家賃 − 経費 − 返済 = 手残り` が成り立つ。事実は
+`realEstateCashflowBreakdown.test.ts` (2 件) が実物の画面で留める —— 標本は**行ごとに丸めると
+合わなくなる端数** (.33 / .6 / .7) を選び、同じ `it` の中でそれを確かめる。対照: 4 行を
+`jpy(Math.round(…))` へ替えると ❌1。**直し方を「行を先に丸めて和を取る」へ替えても、この
+不変条件はそのまま通る** (投資信託の形)。
+
 ## 未解決 — 再現しない失敗が 1 回。**証拠を自分で捨てた** (2026-09-01)
 
 `npm test` が 1 回だけ `1 failed | 11618 passed (11619)` を返した。
@@ -21261,6 +21270,22 @@ self-test に 4 件 (★ 2 + 対照 2) を足した。
 丸めを決める」仕事で、**片手間で当てると記録済みの判断を壊す**。
 測った数字をここに置いて、次のセッションに**大きさの分かった仕事**として渡す。
 
+★ **2026-09-27 (パス 493j) で `¥` の家系を閉じた (`Intl` の家系は開いたまま)。** 3 つの判断はこう決めた:
+① `KpiPage` の `∞` は**パス 386 で既に消えていた** (`bepDisplay` が「—」+ 理由を出す) ——
+一律の床と衝突する記録済みの判断は、もう残っていない。
+② **丸めは呼び手が選ぶ** —— 床と符号は `jpy` 1 つ、円未満を丸める画面は `jpyWhole` (= `jpy(Math.round(n))`)
+を読む。6 か所 (`FreeePage` / `FundingPage` / `WelfareSchemeCard` / 経営レポート / `chatCalc` /
+`welfareDocs`) が `jpyWhole` へ移り、**局所の写しは 0 件**になった。
+③ **符号は `¥-1,234`** —— 共有の `jpy` の形に揃えた (`FreeePage` だけが `−¥1,234` だった)。
+**測ったら 4 つ目の欠陥が出た**: 共有の `jpy` 自身が `-0` と刷っていた (`(-0).toLocaleString()` は
+`'-0'`、`-0.4` も丸めると `-0`)。`jpy` の中で `'0'` へ畳んだ。
+母集団は `yenTemplateCensus.test.ts` が数える —— `¥` の直後にテンプレートの補間が来る所と
+`'¥' +` の連結が、`formatters.ts` の外では理由つきの免除 1 件 (`RealEstatePage` の百万円単位の
+軸 `jpyM`) だけ。対照: `FreeePage` に自前の円を 1 つ戻すと ❌1・`-0` の畳みを外すと ❌2・
+`jpyWhole` が丸めないと ❌2。
+**開いたまま**: `Intl.NumberFormat` の通貨の写し **7 ファイル** (全角の `￥` を刷る)。揃えると
+画面の字が変わり、その字を留める検査が多数あるので、別に測って直す。
+
 ## パス 97 (2026-09-08) — **いちばん読まれる台帳が、何も検査していない唯一の台帳だった**
 
 `CLAUDE.md` の冒頭は「新しい Claude Code セッションを開始した場合、**まず
@@ -29994,12 +30019,12 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
 | `inputCeiling` | 13 | 48 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
 | `isoDate` | 8 | 30 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
-| `mutualFundsMetrics` | 0 | 1 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**2 つだけ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` と述語 `isImpossibleReturnPct` (`pct < RETURN_FLOOR_PCT` の 1 行)。**その述語は確かに越境する** —— `adviseService` の中で真の枝 (:586 警告を組む) と偽の枝 (:596 測れる集合から外す) の両方が使われる。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
+| `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollama` | 1 | 5 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
 | `readNumeric` | 0 | 5 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `rfc2822` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本 |
-| `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは `RETURN_FLOOR_PCT` と `isImpossibleReturnPct` の 2 つだけで、**`isPlannableRate` / `isPlannableYears` はどちらの中からも呼ばれない** (`isImpossibleReturnPct` は 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |
+| `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは定数 2 つと述語 2 つ (`isImpossibleReturnPct` / `isAboveEntryCeilingPct` —— パス 493j で 2 → 4) だけで、**`isPlannableRate` / `isPlannableYears` はどの述語の中からも呼ばれない** (2 つの述語はどちらも 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |
 | `scanTarget` | 0 | 1 | 対称 (実測・パス 282 で辿り直した) —— パス 247 は「対称 (実測)」の 4 文字だけで、**根拠が書かれていなかった**。パス 247 は母集団を初めて数えた回で、しかも到達は 1 ホップで測っていた (閉包へ直したのはパス 268) ので、その「実測」が何を見たのかは今から確かめられない。 ★ 実測 (パス 282): 越境するのは `validateScanUrl` **1 つだけ** (`main/clients/security.ts` と `renderer/data/saasWriteWeb.ts` の両方が呼ぶ)。否定のあとの動作は**字まで同じ 1 行** —— `if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);`。`describeScanUrlRisk` (内部・社内ホストの警告) の読み手は `SecurityPage.tsx` だけ、`looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけなので越境しない。 ★ ただし `SCAN_URL_MESSAGES` (4 行) は**ビルドごとに 1 つずつ**在った —— 字は一致していたが一致を留めている物が何も無く、パス 167 / 250 / 252 / 269 / 273 が1 件ずつ閉じてきた家系。URL を第三者 (VirusTotal) へ渡す前の関門の断り文なので、`shared/scanTarget.ts` へ寄せて `scanTarget.test.ts` が「読む側は共有の表を読み、自分の写しを持たない」を両方向に留める。 ★ 設計として残る非対称ではない点: 内部ホスト・秘密らしきクエリ引数は**関門ではなく警告**である (`validateScanUrl` の失敗は empty / too-long / not-a-url / not-web の 4 つだけ)。警告を出す画面は両ビルドで同じ 1 本なので対称。 ★ パス 321: `validateScanUrl` / `validateBreachEmail` を呼ぶのは `shared/api/security.ts` の `checkScanUrl` / `checkBreachEmail` の 1 つずつになり、main と saasWriteWeb はそれを通る (直に import しない)。「字まで同じ 1 行」は 1 行になった |
 | `serviceAdvisor` | 4 | 4 | 対称 (実測・パス 268) —— 否定で答えるのは `adviseService` (`ok: false`) と、その中でだけ呼ばれる 4 つの `parse*AdviceInput` (**外部の消費者は 0 件**)。`adviseService` は main の 4 クライアント (real-estate / mutual-funds / uber-eats / demae-can) とブラウザ版の web-shim が呼び、**否定のあとの動作は同じ 1 行に畳まれる**: main は `throw new Error(r.message)` → action:invoke の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、ブラウザ版は `err('action_failed', r.message)`。`safeErrorMessage` の中身は `redactForMessage(msg, ERROR_MESSAGE_MAX_CHARS)` で、`err()` が掛けるものと**同じ関数・同じ天井**なので、code も文面も一致する。★ ただし**到達性**は 2026-09-15 まで非対称だった —— この 4 サービスは `LOCAL_SERVICES` なのに `action:invoke` が全サービスにトークンを要求しており、デスクトップ版では 4 つの advise が 1 度も呼ばれなかった (パス 267 で直した) |
 | `talent` | 1 | 3 | 対称 (実測・パス 260) —— 否定の枝を両側で読んだ: main は `loadTalentState` が `{ kind: 'unreadable', reason }` を返し (talent.ts:85 / :90)、ブラウザ版は `localStorage` が拒んでも同じ形を作る (web-shim.ts:1271)。そこから先は**両方が同じ 2 段**を通る —— `talentProvenance(stored)` → `buildTalentSnapshot(state, provenance)` (main/clients/talent.ts:143-144 / web-shim.ts:1273-1274)。画面は `snap.storedNote` を ⚠ つきで刷る (TalentPage.tsx:219-221)。`reviewLadder` は境界を越えない (唯一の呼び出しは shared/talent.ts:709 の `buildTalentSnapshot` の中) |
@@ -31935,6 +31960,20 @@ narrow を撤回し、理由を型の docblock に書いた。**型を狭める�
   標準偏差を 39995.79% にする。これは「測った値かもしれない」からだが、
   **測った値かどうかを画面が言う口は無い** —— 例えば「入力時の範囲 (−100〜1000%) の外の値
   です」と注記する道は在る。判断は「捨てない」で正しく、**黙っているのが残りの穴**。
+  ★ **2026-09-27 (パス 493j) で閉じた** —— 捨てずに言う。上端は `RETURN_ENTRY_CEILING_PCT` (1000) として
+  `mutualFundsMetrics.ts` に置き、入力の門 (`parseHoldingEntry`) も同じ定数を読む (門と注記が別の数を
+  持たない)。3 面すべてが言う: 一覧のセルは緑の `+` ではなく **`⚠ +1500.0%`** (警告色・理由の title)、
+  リスクの節は「上端を超える銘柄が N 件 —— 除いていませんが、標準偏差はその値に大きく引かれます」
+  (`ytdReturnRisk().aboveEntryCeiling` —— `measured` には入れたまま数える)、改善提案は
+  「年初来リターンが入力時の範囲の外: X」を比較の**前**に置き、比較には入れたまま語る。
+  検査: `mutualFundsMetrics.test.ts` +4・`serviceAdvisor.test.ts` +1・`investments.test.ts` +1 (門と読む側が
+  同じ境目)・`mutualFundsImpossibleReturn.test.ts` +4 (実物の画面)。対照 7 方向すべて鳴る
+  (セルの ⚠ / 節の断り / 数えない / 提案の断り / 門を 2000 へ / 境目を `>=` へ / 文から件数を落とす)。
+  ★ **改善提案の 2 つの選別 (下端・上端) は `?? Number.NaN` で問う** —— 旧い形 `h.ytdReturnPct !== null && is…(…)` は
+  JS では冗長で (null は比較で 0 になり、どちらの端にも当たらない)、変異検査に**等価で必ず生き残る変異**
+  (`true && …`) を 1 つずつ作っていた。手で当てると関連の検査 35 件がすべて通り (= 生存)、新しい形の唯一の変異
+  (`??` → `&&`) は 3 件 / 2 件が落ちる (2026-09-27 実測)。下端の行はパス 226 から在ったが、この枝の変更は
+  `main` へ push されていないので CI の変異検査は 1 度も測っていない。
 
 ## パス 225 (2026-09-14) — **同じ関数の中で、期間は選別して金額は選別していなかった**
 
@@ -32003,6 +32042,7 @@ narrow を撤回し、理由を型の docblock に書いた。**型を狭める�
 `mutualfund-holdings:ytdReturnPct`) は下流をまだ測っていない。`ytdReturnPct` は範囲
 (−100〜1000%) の外の値が一覧・リスク (標準偏差)・改善提案へ届くので、`period` と同じ形の
 可能性が高い (パス 122 の隣の欄)。
+★ `ytdReturnPct` は下端をパス 226、上端を **2026-09-27 (パス 493j)** で閉じた (上の節を参照)。
 
 ---
 

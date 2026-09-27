@@ -387,6 +387,57 @@ describe('投資信託の提案 — 画面の数字から組む', () => {
     });
     expect(single.recommendations[2]?.title).toBe('含み益 0.0%');
   });
+
+  it('★ 入力時の上端を超える値は比較に入れたまま、範囲の外だと言う (パス 493j)', () => {
+    // 直す前: 「年初来の牽引役: A —— A が年初来 99999.0% で最高…」だけで、その値が入力時の範囲
+    // (−100〜1000%) の外だとはどこも言わなかった。本物かもしれないので捨てはしない (パス 226 の裁定)。
+    const above = adviseMutualFunds({
+      holdings: [
+        { name: 'A', valuation: 600, ytdReturnPct: 99_999, demo: false },
+        { name: 'B', valuation: 400, ytdReturnPct: 4.0, demo: false },
+      ],
+      totalValuation: 1000,
+      unrealizedGainPct: 0,
+    });
+    expect(above.recommendations[1]).toEqual({
+      title: '年初来リターンが入力時の範囲の外: A',
+      rationale:
+        '年初来リターンが入力時の上端 (1000%) を超える銘柄が 1 件あります。本物の値かもしれないので銘柄間の比較とリスク (標準偏差) には入れていますが、'
+        + '打ち間違いなら下の比較の結論も変わります —— 入力を確認してください。',
+    });
+    // 比較には入れたまま (捨てていない) —— 断りは比較の**前**に来る
+    expect(above.recommendations[2]).toEqual({
+      title: '年初来の牽引役: A',
+      rationale: 'A が年初来 99999.0% で最高、最低は B の 4.0% です。すべてプラスです。',
+    });
+    // 下端の外と上端の外が混ざっても、別々に名指しする (下端は比較から除き、上端は残す)
+    const both = adviseMutualFunds({
+      holdings: [
+        { name: 'A', valuation: 300, ytdReturnPct: -250, demo: false },
+        { name: 'B', valuation: 300, ytdReturnPct: 1500, demo: false },
+        { name: 'C', valuation: 400, ytdReturnPct: 4.0, demo: false },
+      ],
+      totalValuation: 1000,
+      unrealizedGainPct: 0,
+    });
+    expect(both.recommendations.map((r) => r.title).slice(1, 4)).toEqual([
+      '年初来リターンに在り得ない値: A',
+      '年初来リターンが入力時の範囲の外: B',
+      '年初来の牽引役: B',
+    ]);
+    // 対照: 上端ちょうど (書き手が受ける 1000%) は範囲の中 —— 断りは出ない
+    const edge = adviseMutualFunds({
+      holdings: [
+        { name: 'A', valuation: 600, ytdReturnPct: 1000, demo: false },
+        { name: 'B', valuation: 400, ytdReturnPct: 4.0, demo: false },
+      ],
+      totalValuation: 1000,
+      unrealizedGainPct: 0,
+    });
+    expect(all(edge)).not.toContain('入力時の範囲の外');
+    expect(all(above)).toContain('入力時の範囲の外'); // 針が的に当たる (上の否定が空でない)
+    expect(edge.recommendations[1]?.title).toBe('年初来の牽引役: A');
+  });
 });
 
 describe('Uber Eats の提案 — 画面の数字から組む', () => {

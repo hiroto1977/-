@@ -38,6 +38,13 @@
  *
  * ★ **`why` は見た形であって測った原因ではない** —— パス 380・382 に続いて
  * **3 度目**に台帳の分類が実物と違っていた。
+ *
+ * ## 上端の外は「捨てずに言う」(2026-09-27 · パス 493j)
+ *
+ * 上端は打ち間違いの門なので読む側では落とさない —— それは正しかったが、**範囲の外であることを
+ * 言う口がどこにも無かった**。復元で入った `+99999%` は一覧に**緑**で出て、リスク (標準偏差) を
+ * 4.04% → 39995.79% にし、改善提案は「年初来 +99999.0% で最高」と実在のリターンとして語った。
+ * 末尾の describe が 3 面 (セル・リスクの節・改善提案) を実物で読む。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -48,7 +55,7 @@ import { SNAPSHOT } from '../../data/snapshot';
 import { getRecordStore, _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { HOLDINGS_COLLECTION } from '../../data/investments';
-import { calcStdDev } from '../../../shared/mutualFundsMetrics';
+import { RETURN_ENTRY_CEILING_PCT, calcStdDev } from '../../../shared/mutualFundsMetrics';
 import { adviseService } from '../../../shared/serviceAdvisor';
 import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
 import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
@@ -260,5 +267,59 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
     await waitForText(text, `入力された ${demoYtd().length} 銘柄の母標準偏差です。`);
     expect(text()).not.toContain('在り得ない値');
     expect(container.querySelector('[data-impossible-returns]')).toBeNull();
+  });
+});
+
+describe('投資信託 — 入力時の上端 (1000%) を超える年初来リターン (パス 493j)', () => {
+  it('★ 一覧のセルは緑の「+」ではなく ⚠ を付け、確かめる値だと言う (値そのものは刷り続ける)', async () => {
+    await seedHolding('急騰ファンド', 1500);
+    await mount('急騰ファンド');
+    const cell = ytdCell('急騰ファンド');
+    expect(cell.textContent?.trim()).toBe('⚠ +1500.0%');
+    expect(cell.hasAttribute('data-above-entry-ceiling-row')).toBe(true);
+    expect(cell.style.color).toBe('var(--warning)'); // 緑 (測った良い値) にしない
+    expect(cell.getAttribute('title')).toContain(`入力時の範囲 (上端 ${RETURN_ENTRY_CEILING_PCT}%) の外の値です`);
+    expect(cell.getAttribute('title')).toContain('リスク (標準偏差) には入れています');
+    // 対照: 見本の行は今までどおり緑の「+」・印なし
+    const demo = ytdCell('ひふみプラス');
+    expect(demo.textContent?.trim()).toBe('+8.7%');
+    expect(demo.hasAttribute('data-above-entry-ceiling-row')).toBe(false);
+    expect(demo.style.color).toBe('var(--success)');
+  });
+
+  it('★ リスク (標準偏差) はその値を入れたまま取り、範囲の外の件数を言う', async () => {
+    await seedHolding('急騰ファンド', 1500);
+    await mount('急騰ファンド');
+    const withAbove = calcStdDev([...demoYtd(), 1500]);
+    expect(withAbove).not.toBe(calcStdDev(demoYtd())); // 2 つが同じなら、この検査は何も見ていない
+    expect(stat('リスク (銘柄YTDの標準偏差)')).toContain(`${withAbove}%`); // 捨てていない
+    await waitForText(text, `年初来リターンが入力時の上端 (${RETURN_ENTRY_CEILING_PCT}%) を超える銘柄が 1 件あります`);
+    await waitForText(text, `入力された ${demoYtd().length + 1} 銘柄の母標準偏差です。`); // 除外の注記は付かない
+    const marked = container.querySelector('[data-above-entry-ceiling]');
+    expect(marked?.getAttribute('data-above-entry-ceiling')).toBe('1');
+    expect(text()).not.toContain('在り得ない値'); // 下端の断りと混ぜない
+  });
+
+  it('★ 改善提案は範囲の外だと名指しし、比較には入れたまま語る', async () => {
+    await seedHolding('急騰ファンド', 1500);
+    await mount('急騰ファンド');
+    await clickButton('改善提案');
+    await waitForText(text, '年初来リターンが入力時の範囲の外: 急騰ファンド');
+    const advice = adviceText();
+    expect(advice).toContain(`入力時の上端 (${RETURN_ENTRY_CEILING_PCT}%) を超える銘柄が 1 件あります`);
+    expect(advice).toContain('年初来の牽引役: 急騰ファンド'); // 捨てていない (本物かもしれない)
+    expect(text()).not.toContain('提案の取得に失敗');
+  });
+
+  it('対照: 上端ちょうど (書き手が受ける 1000%) は範囲の中 —— 緑の「+」・印も断りも出ない', async () => {
+    await seedHolding('十倍ファンド', RETURN_ENTRY_CEILING_PCT);
+    await mount('十倍ファンド');
+    const cell = ytdCell('十倍ファンド');
+    expect(cell.textContent?.trim()).toBe('+1000.0%');
+    expect(cell.style.color).toBe('var(--success)');
+    expect(cell.hasAttribute('data-above-entry-ceiling-row')).toBe(false);
+    await waitForText(text, `入力された ${demoYtd().length + 1} 銘柄の母標準偏差です。`);
+    expect(container.querySelector('[data-above-entry-ceiling]')).toBeNull();
+    expect(text()).not.toContain('入力時の上端');
   });
 });
