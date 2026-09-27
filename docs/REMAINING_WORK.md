@@ -68,7 +68,12 @@
      G1 投資信託・G2 不動産・G3 士業の連絡先が断りの枝を持たない ❌1 ずつ / census: K1 チームを式文へ ❌1 (`[discarded]` を
      名指し) / K2 投資信託の `saved` を読まない ❌1 (`[unread-variable]`) / K3 相談の状態を `void` へ ❌1 (`[not-awaited]`) /
      K4 針を殺す ❌5 (床と標本))。中身の md5 で元へ戻したことを確かめた。
-   - **変異検査** —— (測定の後に書く)
+   - **変異検査** (変更のうち `mutate` に載るのは `useCollection.ts` / `parameterOverrides.ts` の 2 本・93 変異体): **100.00%**
+     (Killed 82 / Timeout 1 / 生存 0 / 未到達 0 / Ignored 10・22 分 26 秒)。時間切れ 1 は `attempt += 1` を `-= 1` にした
+     変異体で、消え続ける検査 (`update` が常に `null`) の下で**本物の無限ループ**になる (検出として数える)。★ **1 度目の測定は
+     変異体の段の途中でコンテナが再起動して落ちた** (exit 137・原因は確かめていない)。Stryker の `finally` が走らないので
+     `.stryker-tmp/` が残る —— 消してから、並列を 4 → 2 に落として測り直した。`audit:mutate-changed` は並列を渡さないので
+     `npx stryker run --mutate <2 本> --concurrency 2` を直に呼び、後片付け (`.stryker-incremental.json` / `reports/mutation`) は手で行った。
 
 5. **残した物 (測った・直していない)**:
    - **`remove` と `add` の答え** —— `remove` は消す相手が無くても何も言わない (`Promise<void>`)。消す操作は「無い」状態へ

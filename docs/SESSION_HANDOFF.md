@@ -20,7 +20,11 @@
   使い切ったら新しい行)
 - **機械** —— `editResultCensus.test.ts` (束縛で `edit` を導き、答えを捨てる 8 形を名指し・実物 7 か所すべて `read`)・
   `editVanishedRecord.test.ts` (jsdom 8 件 —— 「読み直しの後・書く前」は**最初の `update` の直前に相手を消す門**で作る)・
-  `parameterOverrides.test.ts` +3・`useCollection.test.ts` +1・法則 112 本目 `write-answers-whether-it-landed`・対照 14 方向
+  `parameterOverrides.test.ts` +3・`useCollection.test.ts` +1・法則 112 本目 `write-answers-whether-it-landed`・対照 14 方向・
+  変異検査 **100.00%** (Killed 82 / Timeout 1 / 生存 0 —— 時間切れは `attempt -= 1` の本物の無限ループ)
+- ★ **既知の罠 (このパスで踏んだ)**: **変異検査の途中でコンテナが再起動すると、Stryker の後片付けが走らない** ——
+  `.stryker-tmp/` (と、在れば `.stryker-incremental.json` / `reports/mutation`) が残る。古い incremental は偽の生存を作るので
+  必ず消してから測り直す。今回は並列を 4 → 2 に落として (`npx stryker run --mutate <files> --concurrency 2`) 測り直した
 - ★ **既知の罠 (このパスで踏んだ)**: **断りの文が操作子を「」で名指しすると `namedControlExists` の台帳が要る** ——
   「＋ ${label}を追加」のように補間を含む名指しは、描画元に同じ補間の綴り (`＋ ${label}を追加`) が在れば
   `same-screen-control` で通る (補間ごと一致を確かめられるので `runtime-label` より強い)
