@@ -508,6 +508,24 @@ const PROTECTED = [
   // 残した項目である。閉包の検査は範囲の外について何も主張していない ——
   // だから閉包を責めずに、**中身の重さで**入れる。
   'src/shared/writeFieldLimits.ts',         // 第三者へ書く欄の判定 (天井・型・CR/LF・断りの文)
+  // 2026-09-27 (パス 493d) に足した。**パス 287 が同じ理由で `writeFieldLimits.ts` を
+  // 入れたとき、その隣の双子を残していた** —— パス 285 の記録が「`advisorQuestionLimits.ts`
+  // は保護対象にも除外台帳にも無い」と書き、パス 287 は前者だけを閉じた (鎖の JSON に 0 件)。
+  //
+  // 中身は**利用者の資格情報で有料 API (Anthropic) へ送る手前の判定**で、
+  // 質問の天井 (1000 字・`countChars` で数える)・CR/LF/NUL の拒否 (要求本文とログの行を
+  // 割らせない)・銘柄の母集団の天井 (25 件 / 1 件 16 字)・断りの文 3 つ・
+  // 鍵が無いときの断り を持つ。読み手は両ビルドに在る —— main の
+  // `clients/{business,stocks,emotions}.ts` (IPC の**信頼境界**)・ブラウザ版の
+  // `web-shim.ts`・`StocksPage` / `BusinessPage`・`watchlistState.ts`。
+  // `checkAdvisorQuestion` の先頭に `return null` を 1 行足すと、main の 2 経路は
+  // 乗っ取られたレンダラーが**利用者の鍵で任意の長さ・任意の改行の本文**を送れる形に戻る。
+  //
+  // ★ **閉包の費用は 0** —— import は `./inputCeiling` の `countChars` **1 本だけ**で、
+  // それは既に保護対象である (writeFieldLimits と同じ形・実測)。
+  // ★ 保護対象は変異検査に載せる (`lint:mutation-scope` の逆向き) —— 実測
+  // **100.00% (Killed 29 / 生存 0 / 未到達 0)** を確かめてから `mutate` へ足した (302 → 303)。
+  'src/shared/advisorQuestionLimits.ts',    // 有料 API へ送る質問の判定 (天井・CR/LF・母集団・断りの文)
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
   // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が

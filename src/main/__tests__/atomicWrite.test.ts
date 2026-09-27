@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { atomicWriteFile, readFileWithBackup } from '../atomicWrite';
+import { ATOMIC_TMP_INFIX, atomicTmpPathOf, atomicWriteFile, readFileWithBackup } from '../atomicWrite';
 
 let dir: string;
 
@@ -33,7 +33,8 @@ describe('atomicWriteFile', () => {
     const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
     const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000);
     try {
-      const tmp = `${target}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      // 作る側と同じ関数で名前を作る (写すと、綴りを変えた日にこの先客が別の名前になり O_EXCL を試さない)。
+      const tmp = atomicTmpPathOf(target);
       await fs.writeFile(tmp, 'せんきゃく');
       await expect(atomicWriteFile(target, 'あたらしい')).rejects.toThrow();
       // 先客はそのまま (切り詰められていない)。
@@ -57,7 +58,7 @@ describe('atomicWriteFile', () => {
     const target = path.join(dir, 'f.json');
     await atomicWriteFile(target, 'x');
     const entries = await fs.readdir(dir);
-    expect(entries.filter((e) => e.includes('.tmp-'))).toEqual([]);
+    expect(entries.filter((e) => e.includes(ATOMIC_TMP_INFIX))).toEqual([]);
   });
 
   it('★ 控えは最後に書けた内容 —— 直前の内容 (消した物) を控えに残さない (パス 134)', async () => {
@@ -81,7 +82,7 @@ describe('atomicWriteFile', () => {
     await expect(atomicWriteFile(target, 'x', { keepBackup: true })).rejects.toBeTruthy();
     // 本体は書けている (投げるのは控えの段で、本体を巻き戻さない)。tmp の残骸も無い。
     expect(await fs.readFile(target, 'utf8')).toBe('x');
-    expect((await fs.readdir(dir)).filter((e) => e.includes('.tmp-'))).toEqual([]);
+    expect((await fs.readdir(dir)).filter((e) => e.includes(ATOMIC_TMP_INFIX))).toEqual([]);
   });
 
   it('控えにも指定した mode が効く (POSIX)', async () => {
@@ -124,7 +125,7 @@ describe('atomicWriteFile', () => {
     const target = path.join(dir, 'collide');
     await fs.mkdir(target); // target を既存ディレクトリにする
     await expect(atomicWriteFile(target, 'x')).rejects.toBeTruthy();
-    const leftovers = (await fs.readdir(dir)).filter((e) => e.includes('.tmp-'));
+    const leftovers = (await fs.readdir(dir)).filter((e) => e.includes(ATOMIC_TMP_INFIX));
     expect(leftovers).toEqual([]);
   });
 });

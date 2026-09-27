@@ -147,7 +147,8 @@ describe('ディスクから読む所の母集団 (パス 326)', () => {
     expect(src).toContain('if (st === null || st.size > maxBytes) return null;');
     // 本体と控えの両方が同じ関数を通る
     expect(src).toContain('readIfWithinCap(target, maxBytes)');
-    expect(src).toContain('readIfWithinCap(`${target}.prev`, maxBytes)');
+    // 控えの名前は作る側と消す側で 1 つ (`backupPathOf` · パス 493d)
+    expect(src).toContain('readIfWithinCap(backupPathOf(target), maxBytes)');
     // 標本: 直す前は上限を取らない形だった (不在の主張に綴りを添える)
     expect(src).not.toContain('export async function readFileWithBackup(target: string): Promise');
     expect('export async function readFileWithBackup(target: string): Promise<string | null> {').toContain(

@@ -190,6 +190,7 @@
     "src/renderer/voice/speechAdapter.ts",
     "src/renderer/voice/ttsAdapter.ts",
     "src/renderer/web-templates.ts",
+    "src/shared/advisorQuestionLimits.ts",
     "src/shared/ai/chat.ts",
     "src/shared/ai/credentials.ts",
     "src/shared/ai/providers.ts",

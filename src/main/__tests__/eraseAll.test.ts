@@ -9,7 +9,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
-import { promises as fs } from 'node:fs';
+import { promises as fs, statSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -36,6 +36,16 @@ vi.mock('electron', () => ({
 }));
 
 import { desktopEraseTargets, eraseDesktopData, eraseFileAndLitter } from '../eraseAll';
+import {
+  ATOMIC_TMP_INFIX,
+  BACKUP_SUFFIX,
+  atomicTmpPathOf,
+  atomicWriteFile,
+  backupPathOf,
+  isAtomicLitterOf,
+} from '../atomicWrite';
+import { readOriginalDir } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 import { describeDesktopEraseReport } from '../../shared/eraseReport';
 
 let dir = '';
@@ -106,21 +116,23 @@ describe('eraseFileAndLitter — 本体・控え・残骸', () => {
   it('★ 本体と .prev と <名前>.tmp-* を消し、隣のファイルは残す', async () => {
     const target = path.join(dir, 'a.json');
     await fs.writeFile(target, '{}');
-    await fs.writeFile(`${target}.prev`, '{}');
-    await fs.writeFile(`${target}.tmp-1-2-3`, '{}');
+    const litter = atomicTmpPathOf(target);
+    await fs.writeFile(backupPathOf(target), '{}');
+    await fs.writeFile(litter, '{}');
     await fs.writeFile(path.join(dir, 'keep.txt'), 'x');
     expect(await eraseFileAndLitter(target)).toBe('deleted');
     expect(await exists(target)).toBe(false);
-    expect(await exists(`${target}.prev`)).toBe(false);
-    expect(await exists(`${target}.tmp-1-2-3`)).toBe(false);
+    expect(await exists(backupPathOf(target))).toBe(false);
+    expect(await exists(litter)).toBe(false);
     expect(await exists(path.join(dir, 'keep.txt'))).toBe(true);
   });
 
   it('本体が元から無ければ missing (残骸が在れば消す)', async () => {
     const target = path.join(dir, 'gone.json');
-    await fs.writeFile(`${target}.tmp-9`, '{}');
+    const litter = atomicTmpPathOf(target);
+    await fs.writeFile(litter, '{}');
     expect(await eraseFileAndLitter(target)).toBe('missing');
-    expect(await exists(`${target}.tmp-9`)).toBe(false);
+    expect(await exists(litter)).toBe(false);
   });
 
   it('★ 本体がディレクトリで消せなければ failed', async () => {
@@ -132,7 +144,7 @@ describe('eraseFileAndLitter — 本体・控え・残骸', () => {
   it('★ 本体は消えても控えが消せなければ failed (控えは本体と同じ中身 — パス 134)', async () => {
     const target = path.join(dir, 'b.json');
     await fs.writeFile(target, '{}');
-    await fs.mkdir(`${target}.prev`);
+    await fs.mkdir(backupPathOf(target));
     expect(await eraseFileAndLitter(target)).toBe('failed');
     expect(await exists(target)).toBe(false);
   });
@@ -140,7 +152,7 @@ describe('eraseFileAndLitter — 本体・控え・残骸', () => {
   it('★ 残骸が消せなくても failed', async () => {
     const target = path.join(dir, 'c.json');
     await fs.writeFile(target, '{}');
-    await fs.mkdir(`${target}.tmp-77`);
+    await fs.mkdir(atomicTmpPathOf(target));
     expect(await eraseFileAndLitter(target)).toBe('failed');
   });
 
@@ -154,7 +166,7 @@ describe('eraseDesktopData — ファイル + renderer の保存領域', () => {
     const a = path.join(dir, 'a.json');
     const b = path.join(dir, 'b.json');
     await fs.writeFile(a, '{}');
-    await fs.writeFile(`${a}.prev`, '{}');
+    await fs.writeFile(backupPathOf(a), '{}');
     await fs.writeFile(b, '{}');
     const report = await eraseDesktopData({ targets: [a, b, path.join(dir, 'missing.json')] });
     expect(report.kind).toBe('desktop');
@@ -209,5 +221,132 @@ describe('eraseDesktopData — ファイル + renderer の保存領域', () => {
     expect(mine).toBe(1);
     expect(clearCalls).toBe(0);
     expect(report.allDeleted).toBe(true);
+  });
+});
+
+/*
+ * **作る側と消す側は、同じ名前を使う** (2026-09-27 · パス 493d)。
+ *
+ * それまで `eraseFileAndLitter` は `.tmp-` と `.prev` を**自分で書き写して**探し、この検査も
+ * 同じ綴りを手で書いて残骸を作っていた。`atomicWrite.ts` の作業ファイルの綴りを変えた日
+ * (例えば `.part-`) は、消す側が 1 件も見つけられないのに**この検査は緑のまま** —— 手で書いた
+ * 残骸は消す側の綴りと一致しているので。トークンを含む書きかけの残骸が「すべてのデータを削除」の
+ * 後もディスクに残る形である。ここは**作る側が実際に作る名前**で残骸を作り、消す側がそれを
+ * 見つけることを見る。
+ */
+describe('★ 作る側 (atomicWrite) と消す側 (eraseAll) は同じ名前を使う (パス 493d)', () => {
+  it('★ atomicWriteFile が実際に開く作業ファイルを、消す側が見つけて消す', async () => {
+    const target = path.join(dir, 's.json');
+    const opened: string[] = [];
+    const realOpen = fs.open.bind(fs);
+    const spy = vi.spyOn(fs, 'open').mockImplementation(((p: Parameters<typeof fs.open>[0], ...rest: unknown[]) => {
+      opened.push(String(p));
+      return (realOpen as (...a: unknown[]) => ReturnType<typeof fs.open>)(p, ...rest);
+    }) as typeof fs.open);
+    try {
+      await atomicWriteFile(target, '{"token":"x"}');
+    } finally {
+      spy.mockRestore();
+    }
+    // ディレクトリの fsync で開く dir 自身と、本体は除く —— 残るのは作業ファイル 1 つ。
+    const tmps = opened.filter((p) => p !== dir && p !== target && path.dirname(p) === dir);
+    expect(tmps, `atomicWriteFile が開いた物: ${JSON.stringify(opened)}`).toHaveLength(1);
+    const tmp = tmps[0]!;
+    expect(isAtomicLitterOf(target, path.basename(tmp))).toBe(true);
+    // 書き込みの途中で落ちた = 作業ファイルが残った状態を、**同じ名前で**作る。
+    await fs.writeFile(tmp, '{"token":"x"}');
+    await fs.writeFile(path.join(dir, 'keep.txt'), 'x');
+    expect(await eraseFileAndLitter(target)).toBe('deleted');
+    expect(await exists(tmp)).toBe(false);
+    expect(await exists(path.join(dir, 'keep.txt'))).toBe(true);
+  });
+
+  it('★ keepBackup が実際に書く控えを、消す側が消す', async () => {
+    const target = path.join(dir, 'b.json');
+    await atomicWriteFile(target, '{"token":"y"}', { keepBackup: true });
+    const before = (await fs.readdir(dir)).sort();
+    expect(before, '控えが書かれていない (前提が崩れている)').toEqual(['b.json', path.basename(backupPathOf(target))].sort());
+    expect(await eraseFileAndLitter(target)).toBe('deleted');
+    expect(await fs.readdir(dir)).toEqual([]);
+  });
+
+  /*
+   * **綴りは値で留める。** 作る側と消す側を揃えて変えても、**旧い版が書いた残骸は旧い綴りのまま**
+   * ディスクに在る。変えるなら消す側は旧い綴りも探す必要が在る —— この値の主張は、その判断を
+   * 変える人に「旧い綴りをどうするか」を問わせるために在る。
+   */
+  it('★ 綴り (旧い版の残骸を見つけるため、黙って変えない)', () => {
+    expect(ATOMIC_TMP_INFIX).toBe('.tmp-');
+    expect(BACKUP_SUFFIX).toBe('.prev');
+    const t = path.join(dir, 'a.json');
+    // 旧い版 (2026-08) が実際に作っていた形。
+    expect(isAtomicLitterOf(t, 'a.json.tmp-4242-1700000000000-9f3a')).toBe(true);
+    expect(isAtomicLitterOf(t, 'a.json.prev')).toBe(false);
+    expect(isAtomicLitterOf(t, 'a.json')).toBe(false);
+    expect(isAtomicLitterOf(t, 'b.json.tmp-1')).toBe(false);
+    expect(isAtomicLitterOf(t, 'aa.json.tmp-1')).toBe(false);
+    expect(isAtomicLitterOf(t, 'a.json.tmpx')).toBe(false);
+    expect(backupPathOf(t)).toBe(`${t}.prev`);
+    expect(atomicTmpPathOf(t).startsWith(`${t}.tmp-${process.pid}-`)).toBe(true);
+  });
+});
+
+/*
+ * **綴りは `atomicWrite.ts` の 1 か所だけ** —— `src/main` の出荷コードを走査して数える。
+ * 4 か所目が生えた日 (新しい消す所・読む所が綴りを書き写した日) に落ちる。
+ * 注記は落として数える (この説明や docblock が綴りを引用しているので)。
+ */
+describe('★ 作業ファイルと控えの綴りを書くのは atomicWrite.ts だけ (パス 493d)', () => {
+  const MAIN = path.join(__dirname, '..');
+  const NEEDLES = {
+    tmp: /\.tmp-/g,
+    prev: /\.prev[`'"]/g,
+  } as const;
+  const ALLOWED: Readonly<Record<string, Readonly<Record<keyof typeof NEEDLES, number>>>> = {
+    'atomicWrite.ts': { tmp: 1, prev: 1 }, // ATOMIC_TMP_INFIX / BACKUP_SUFFIX の宣言
+  };
+
+  function walk(d: string, out: string[]): void {
+    for (const name of readOriginalDir(d)) {
+      const full = path.join(d, name);
+      if (statSync(full).isDirectory()) {
+        if (name !== '__tests__' && name !== 'node_modules') walk(full, out);
+        continue;
+      }
+      if (/\.ts$/.test(name)) out.push(full);
+    }
+  }
+
+  function count(code: string, re: RegExp): number {
+    return [...stripComments(code).matchAll(new RegExp(re.source, 'g'))].length;
+  }
+
+  it('標本: 直す前の消す側の 2 行に針が当たり、注記の中では当たらない', () => {
+    const before = [
+      'const prefix = `${path.basename(target)}.tmp-`;',
+      'await io.rm(`${target}.prev`);',
+      "const prev = await readFileWithBackup(`${secretsPath()}.prev`, MAX_STORE_SIZE);",
+    ].join('\n');
+    expect(count(before, NEEDLES.tmp)).toBe(1);
+    expect(count(before, NEEDLES.prev)).toBe(2);
+    const inComment = '// 残骸は `<名前>.tmp-*`、控えは `${target}.prev` に在る\n/* `.prev` */';
+    expect(count(inComment, NEEDLES.tmp)).toBe(0);
+    expect(count(inComment, NEEDLES.prev)).toBe(0);
+  });
+
+  it('★ src/main の出荷コードで綴りを書くのは atomicWrite.ts だけ', () => {
+    const files: string[] = [];
+    walk(MAIN, files);
+    expect(files.length, '走査が死んでいる').toBeGreaterThan(40);
+    const found: Record<string, Record<string, number>> = {};
+    for (const f of files) {
+      const code = readOriginalSource(f);
+      const rel = path.relative(MAIN, f).split(path.sep).join('/');
+      for (const [k, re] of Object.entries(NEEDLES)) {
+        const n = count(code, re);
+        if (n > 0) (found[rel] ??= {})[k] = n;
+      }
+    }
+    expect(found).toEqual(ALLOWED);
   });
 });

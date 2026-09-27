@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 273
+- ブロック数: 274
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `c801e78c3a7d1e0b188cb0435963bf69cc7f11d7f8f4828d6ccaca37e7e56c7e`
-- 保護対象: 97 ファイル
+- 末尾(tip)ハッシュ: `b70615f4bd984f3ea829921be4116c26ea81f23d24e75f489b4202071b1efeb4`
+- 保護対象: 98 ファイル
 
 ## ブロック
 
@@ -286,6 +286,7 @@
 | 270 | `83e0e4ed89540f57` | `cae61502ae7543fd` | `1ab05fdd576581ab` | update assistantMarkdown.ts |
 | 271 | `ac0fd99febe6197a` | `1ab05fdd576581ab` | `953be3f186c4f1b4` | update manifest.webmanifest,windowPrefs.ts |
 | 272 | `6998bda67d217b7c` | `953be3f186c4f1b4` | `c801e78c3a7d1e0b` | update isoDate.ts |
+| 273 | `5dd02f4e41b68a13` | `c801e78c3a7d1e0b` | `b70615f4bd984f3e` | update integrity-chain.cjs,atomicWrite.ts,eraseAll.ts,secrets.ts,advisorQuestionLimits.ts |
 
 ## 保護対象ファイル
 
@@ -354,6 +355,7 @@
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.ts`
+- `src/shared/advisorQuestionLimits.ts`
 - `src/shared/ai/chat.ts`
 - `src/shared/ai/credentials.ts`
 - `src/shared/ai/providers.ts`

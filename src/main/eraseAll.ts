@@ -19,6 +19,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { DesktopEraseReport, EraseFileOutcome } from '../shared/eraseReport';
 import { secretsPath } from './secrets';
+import { backupPathOf, isAtomicLitterOf } from './atomicWrite';
 import { storePath as emotionsStorePath } from './clients/emotions';
 import { defaultStatePath as talentStatePath } from './clients/talent';
 import { defaultStatePath as teamRadarStatePath } from './clients/teamradar';
@@ -91,12 +92,11 @@ export async function eraseFileAndLitter(target: string, io: FileIo = fs): Promi
     outcome = isMissing(e) ? 'missing' : 'failed';
   }
   try {
-    await io.rm(`${target}.prev`);
+    await io.rm(backupPathOf(target));
   } catch (e) {
     if (!isMissing(e)) outcome = 'failed';
   }
   const dir = path.dirname(target);
-  const prefix = `${path.basename(target)}.tmp-`;
   let names: string[] = [];
   try {
     names = await io.readdir(dir);
@@ -104,7 +104,7 @@ export async function eraseFileAndLitter(target: string, io: FileIo = fs): Promi
     if (!isMissing(e)) outcome = 'failed';
   }
   for (const name of names) {
-    if (!name.startsWith(prefix)) continue;
+    if (!isAtomicLitterOf(target, name)) continue;
     try {
       await io.rm(path.join(dir, name));
     } catch (e) {

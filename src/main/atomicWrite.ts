@@ -2,6 +2,42 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 /**
+ * 作業ファイルと控えの名前 —— **作る側 (ここ) と消す側 (`eraseAll.ts`) で 1 つだけ持つ** (パス 493d)。
+ *
+ * 書き込みの作業ファイルは `<target>.tmp-<pid>-<時刻>-<乱数>`、控えは `<target>.prev` で、
+ * ハードリセット (`eraseFileAndLitter`) は**この 2 つの綴りで探して消す**。2026-09-27 まで
+ * 消す側は同じ綴りを自分で書き写しており (`${path.basename(target)}.tmp-` と `${target}.prev`)、
+ * ここの綴りを変えた日 (例えば作業ファイルを `.part-` に) は消す側が 1 件も見つけられず、
+ * **トークンを含む書きかけの残骸が「すべてのデータを削除」の後もディスクに残る**形だった。
+ * 消す側の検査も同じ綴りを手で書いて残骸を作っていたので、両方が緑のまま食い違えた
+ * (綴りが 3 か所目として `secrets.ts` の控えの読みにも在った)。
+ *
+ * ★ **綴りそのものを変えてはいけない理由がもう 1 つ在る** —— 作る側と消す側を揃えて
+ * 変えても、**旧い版が書いた残骸は旧い綴りのまま**ディスクに残っている。変えるなら
+ * 消す側は旧い綴りも探す必要がある (検査が綴りを値で留めているのはそのため)。
+ */
+export const ATOMIC_TMP_INFIX = '.tmp-';
+export const BACKUP_SUFFIX = '.prev';
+
+/** 控えの置き場所。 */
+export function backupPathOf(target: string): string {
+  return `${target}${BACKUP_SUFFIX}`;
+}
+
+/** 作業ファイルの名前 —— `<target>.tmp-<pid>-<時刻>-<乱数>` (一意)。 */
+export function atomicTmpPathOf(target: string): string {
+  // tmp 名は rename 後に消える一意な作業ファイル名で、外部から観測されない (.slice の有無は
+  // 衝突確率にしか影響せず結果不変)。
+  // Stryker disable next-line MethodExpression
+  return `${target}${ATOMIC_TMP_INFIX}${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+/** ディレクトリの 1 項目 `name` が、`target` の書き込みの残骸 (作業ファイル) か。 */
+export function isAtomicLitterOf(target: string, name: string): boolean {
+  return name.startsWith(`${path.basename(target)}${ATOMIC_TMP_INFIX}`);
+}
+
+/**
  * Durable atomic file write. Stronger than plain `writeFile + rename`:
  *
  *   1. write to a unique temp sibling, **fsync** its contents to disk,
@@ -32,10 +68,7 @@ export async function atomicWriteFile(
   const dir = path.dirname(target);
   await fs.mkdir(dir, { recursive: true });
 
-  // tmp 名は rename 後に消える一意な作業ファイル名で、外部から観測されない (.slice の有無は
-  // 衝突確率にしか影響せず結果不変)。
-  // Stryker disable next-line MethodExpression
-  const tmp = `${target}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const tmp = atomicTmpPathOf(target);
   /*
    * `'wx'` (O_EXCL) —— **既に在るなら開かない**。`'w'` だと 2 つのことが起きうる:
    *
@@ -81,7 +114,7 @@ export async function atomicWriteFile(
   // 同じ経路なので mode は必ず効き (2026-08-23 の「控えが 644 のまま」の窓は経路ごと消えた)、古い控えは
   // 丸ごと置き換わる —— 直前の内容は 1 バイトも残らない。書けなければ**投げる**: 古い控えを黙って残すと、
   // 呼び出し側が「消した」と信じた物がまだディスクに在ることになる (本体は既に新しい内容で、投げても壊れない)。
-  if (opts.keepBackup) await atomicWriteFile(`${target}.prev`, data, { mode: opts.mode });
+  if (opts.keepBackup) await atomicWriteFile(backupPathOf(target), data, { mode: opts.mode });
 }
 
 /** fsync a directory entry so a preceding rename is persisted. Not supported
@@ -134,5 +167,5 @@ async function readIfWithinCap(path: string, maxBytes: number): Promise<string |
  * 次の候補へ倒れる (呼び出し側の「読めなかった」の扱いは変えない)。
  */
 export async function readFileWithBackup(target: string, maxBytes: number): Promise<string | null> {
-  return (await readIfWithinCap(target, maxBytes)) ?? (await readIfWithinCap(`${target}.prev`, maxBytes));
+  return (await readIfWithinCap(target, maxBytes)) ?? (await readIfWithinCap(backupPathOf(target), maxBytes));
 }

@@ -7,7 +7,7 @@ import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
 import {
   brokenStoredCredentialMessage, checkTokenSetForStorage, hasUsableAccessToken,
 } from '../shared/vaultToken';
-import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
+import { atomicWriteFile, backupPathOf, readFileWithBackup } from './atomicWrite';
 
 const FILE_NAME = 'service-hub-secrets.json';
 /*
@@ -133,7 +133,7 @@ async function readStore(): Promise<Record<string, string>> {
   if (store) return store;
 
   // Primary unparseable → try the backup explicitly before giving up.
-  const prev = await readFileWithBackup(`${secretsPath()}.prev`, MAX_STORE_SIZE); // reads `<path>.prev`
+  const prev = await readFileWithBackup(backupPathOf(secretsPath()), MAX_STORE_SIZE); // reads `<path>.prev`
   const recovered = parseStore(prev);
   if (recovered) {
 
