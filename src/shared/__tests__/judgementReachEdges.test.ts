@@ -107,6 +107,8 @@ const PINNED: readonly PinnedReach[] = [
         to: 'src/shared/depreciation.ts',
         values: [
           'SME_ANNUAL_CAP',
+          // パス 493 —— 法人の少額減価償却資産の特例の 1 行が従業員の上限を名乗るようにした。
+          'SME_EMPLOYEE_CAP',
           'SME_MEASURE_END',
           'SME_UNIT_LIMIT',
           'SME_UNIT_LIMIT_BEFORE_STEP',

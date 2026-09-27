@@ -511,6 +511,8 @@ const COMPARISON_GUARD_EXEMPT: Readonly<Record<string, string>> = {
   // 型が非有限を許さない
   'src/shared/taxConsumptionSchedule.ts::interimBandLabel': 'count の型が 0 | 1 | 3 | 11 のリテラル union。NaN は型が拒む',
   // 上流の漏斗が非有限を落としてから渡す
+  'src/renderer/components/ChatbotWidget.tsx::requestsClearedMessage':
+    'removed / kept は clearExportedRequests が配列の長さの差として数えた整数だけが入る (呼び手は部品の中の 1 か所)。非有限が届く道が無い',
   'src/renderer/data/kpiActuals.ts::computeLaborMetrics': 'members が非有限なら null を返す (実測)。集計側は summarizeFundamentals が消毒済み',
   'src/renderer/data/managementReport.ts::buildManagementReport': 'breakEvenDeltaPct は呼び出し側で `number | null` に落ちており、文面は null の枝を持つ',
   'src/shared/api/cursor.ts::isOverCounted': '戻り値が boolean。`total > 0 && …` は NaN で false (「過大計上ではない」= 追加の警告を出さない側)',
