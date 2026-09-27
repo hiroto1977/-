@@ -1,5 +1,94 @@
 # Service Hub — 残りの作業手順書
 
+## パス 495 (検査の中でモジュールを初めて評価しない) が測って、次のパスへ残した物 (2026-09-27)
+
+パス 494 が残した「全掃引の static な生存 1,150 件」の原因を**対照で確かめて**直した。パス 494 の見立て
+(「読み込みが検査の中で起きると、読み込み時の変異体がその検査の被覆に数えられる」・**対照では確かめていない**) は正しかった
+—— ただし 1,150 件の全部がその形ではなかった (下の 4)。
+
+1. **対照で確かめた** —— `src/main/clients/funding.ts` だけを Stryker で測る。パス 494 の塊の報告で、この 110 件の static な
+   生存を覆っていたのは **`webShimPayloadRedaction.test.ts` 1 本だけ**で、その検査は名前を数えるためだけに
+   `main/clients/index` を**検査の中で** (`vi.resetModules()` の後に) 読んでいた。
+   - 直す前: **21.43% (Killed 30 / static の生存 110)**・94 秒
+   - その読み込みを先頭の静的 import へ移した後: **100.00% (Killed 30 / Ignored 110)**・34 秒
+   - 仕組み: Stryker の vitest の足場は `beforeEach` で「いまどの検査か」を立てるので、**検査の中で**初めて評価した
+     モジュールの直下の値は、その検査が覆った static な変異体 (hybrid) になる。planner
+     (`mutant-test-planner.js` の `ignoreStatic && coveredBy.length`) は、`ignoreStatic: true` でも覆った検査だけで
+     走らせる —— 覆った検査はその値を主張していないので生き残る。**報告は測っていない物を「生存」として数えていた**
+2. **汚れの形は 2 つだった** (両方を直した)
+   - **意図した読み直し** (`vi.resetModules()` + 動的 `import()`) —— `vi.resetModules()` はモジュールの台帳を丸ごと
+     空にするので、読み直した対象の**依存先まで**検査の中で評価し直す。依存先の値はその検査が主張していないので、
+     そこに hybrid の生存が生まれる。直しは `src/shared/__tests__/rereadModule.ts` (**対象だけ**を読み直す ——
+     `import('<絶対パス>?reread=N')`。実測 (vitest 4.1.11): 呼ぶたびに対象は +1 回評価され、依存先は 1 回のまま・
+     同じインスタンスで、`vi.mock` / `vi.doMock` も依存先に効く)。コードとしての `vi.resetModules()` は
+     **167 か所 → 1 か所** (`rereadModule.test.ts` の対照 —— 標本しか読まない)・`rereadModule` を読む検査 **86 本**
+   - **偶発的な読み込み** (検査の中の動的 `import()`) —— 設定画面・App を検査の中で初めて読む 8 本は**それぞれ 916 件**を
+     覆っていた。先頭の静的 import か `beforeAll` へ移した
+3. **機械** —— `src/shared/__tests__/inTestModuleLoadCensus.test.ts` (**19 件**)。母集団は `src/**/__tests__/**` の `.ts`
+   全部、構文木は TypeScript の compiler API (依存は増えない)。規則 4 本: ① `vi.resetModules()` は台帳だけ (両方向)
+   ② 検査の中の相対の動的 `import()` は、対象が読み込みの時点で読まれている・工場つきの mock・製品を 1 行も読まない、の
+   どれか (でなければ台帳) ③ `rereadModule` の対象は同じファイルが読み込みの時点で読んでいる ④ `?reread=` を組み立てる
+   のは `rereadModule.ts` だけ。
+   - ★ **静的 import が「実際に残るか」は TypeScript 自身に訊く** (`transpileModule`) —— 型としてしか使わない import は
+     変換で消える (`isolatedModules` のもとで esbuild も同じ規則)。**機械が書いたその場で 3 件見つけた**:
+     `backupCoverage` / `bestAnswersPinned` / `deviceStoreFailure` は読み直す対象を先頭で import していたが、
+     **型としてしか使っていなかった**ので何も読んでおらず、最初の読み直しで依存先が検査の中で評価されていた
+     (綴りで数えていたら「読んでいる」と誤る形)
+   - ★ **もう 1 件: `prototypeKeyLookup.test.ts` は製品のモジュール 122 本を `it` の中で読んでいた** —— `beforeAll` へ移した。
+     ただしこの検査は**全掃引では 1 度も走っていない** (下の 5)
+   - **対照 13 方向すべて狙った層で鳴る** (census の検査 19 件 / helper の検査 5 件に当てる): C1 `vi.resetModules()` を足す →
+     規則 1 ❌1 / C2 `prototypeKeyLookup` の読み込みを `it` の中へ戻す → 規則 2 ❌1 / C3 読み直す対象の静的 import を外す →
+     規則 3 ❌1 / C4 型だけの import へ戻す (`backupCoverage`) → 規則 3 ❌1 / C5 設定画面の検査の読み込みを `beforeEach` へ →
+     規則 2 ❌1 / C6 別のファイルで `?reread=` を組む → 規則 4 ❌1 / C7 helper がクエリを落とす → helper ❌2 /
+     C8 helper の相対の門を外す → helper ❌1 / C9 解析が時点を常に「先頭」と答える → ❌5 / C10 変換を使わず綴りで数える → ❌2 /
+     C11 台帳から 1 行消す → 規則 1 ❌1 / C12 工場が本物を読むかを見ない → ❌2 / C13 製品を読む helper を見逃す → ❌3
+4. **効き目を測った** —— パス 494 の塊で static な生存が多かった 4 ファイル (`businessTriage.ts` / `collectionShapes.ts` /
+   `balanceSheet.ts` / `windowPrefs.ts` —— static な生存 **522 件**・変異体 1,100) を Stryker で測り直した (初回走行 3,956 件 11 分・
+   全体 32 分 54 秒)。
+   - `businessTriage.ts` **static の生存 397 → Ignored 397**・`collectionShapes.ts` **70 → Ignored 72** (直す前に「殺した」と
+     数えていた static 2 件も Ignored になった —— 少なくとも 1 件を殺していたのは設定画面を検査の中で読む
+     `settingsCredentialSave.test.ts` で、`ignoreStatic` の既定では測らない値を偶然の被覆が測っていた)・`windowPrefs.ts` **8 → Ignored 8**
+   - **非 static の数は 4 ファイルとも前後で 1 件も動いていない** (`windowPrefs.ts` 生存 5 + 未到達 2・`balanceSheet.ts` 21・
+     `collectionShapes.ts` 8・`businessTriage.ts` 0 —— パス 494 の塊の報告と突き合わせた)。直しが static な変異体にだけ効いたことの対照で、
+     この 34 件 (+ 未到達 2) はパス 494 の非 static の生存 149 件の一部である (本物の未主張か等価か、まだ仕分けていない ——
+     たとえば `collectionShapes.ts` の 8 件は `personalDataCollections` の重複よけの門 2 つで、**今日は重なる collection が
+     1 つも無い**ので等価の見込み。ただし検査が留めているのは台帳 2 つどうしの重なりだけで、**欄の名前の走査と台帳の重なりを
+     留める物は無い** —— 門を消すか検査を足すかは、その重なりを検査に書いてから決める)
+   - ★ **`balanceSheet.ts` の 47 件は残った** —— 覆っていたのは、その検査ファイル自身が**対象そのものを**意図して読み直す検査
+     (「読み直して測る — collection 名と比率ヘルパー」の 2 件)。読み直した検査は対象の直下の値を**全部**覆うのに、
+     主張していたのは collection 名と比率だけだった。45 件は表 (`BS_NUMERIC_FIELDS` 41・`NO_UNREADABLE_BS_FIELDS` 3・
+     `NET_DEBT_INPUTS` 1)、2 件は読み込み時にも検査の中でも走る関数の中身で**本物の未主張** (当座比率の境目 `>` → `>=`・
+     `balanceSheetChoiceNote` の `chosen === null` の門)。読み直す検査に表を値ごと留める 1 件と、境目の 1 件を足した
+     (対照: 境目を `>=` へ → 狙った 1 件が鳴る)。★ 規則は `rereadModule.ts` の注記と法則へ書いた
+     —— **読み直すなら、対象の直下の値を全部主張する**
+   - 同じ形 (対象が自分の読み直す検査に覆われる) は塊 1〜3 の 1,150 件のうち **52 件** (`balanceSheet.ts` 47・`bankSubmission.ts` 5)。
+     ただし `bankSubmission.ts` の 5 件は§2 と資金繰りの断りの組み立て (`parts.filter(…).join('')`) の関数の中身で、
+     29 本の検査が覆うのに誰も主張していない本物の未主張だった (うち 3 件は到達しない枝で等価の見込み —— 記録が 1 件以上あれば
+     部品は必ず 1 つ以上残る。`audit:survivors` で当て直してから pragma か検査かを決める)
+   - **足した後に `balanceSheet.ts` だけを測り直した** (初回走行 2,137 件 8 分 39 秒・全体 15 分 9 秒): **static の生存 47 → 1**・
+     非 static 21 → 19・総合 **84.04% → 95.31%**。★ **私の見立てが 1 つ外れていた** —— 門の検査として最初に足した
+     `balanceSheetChoiceNote([], a)` (控えが無いのに選んだ控えだけが渡る形) が殺したのは、47 件の外の**非 static な**生存
+     (`lastEntered === null` の側) だった。残った 1 件は**逆向き**の `chosen === null` の門で、`([a, b], null)` の検査を
+     足し、その変異を手で当てると狙った 1 件が `TypeError` で落ちることを確かめた (**Stryker では測り直していない**)。
+     残る非 static の 19 件 (基準日の比べ方 `newerAsOf` の境目・`currentBalanceSheet` の同順位・読めない欄の文面ほか) は
+     下の 5 の 149 件の側で仕分ける
+5. **閉じていない物 (測った)**
+   - **Stryker の vitest の足場は `related: true` が既定** (`@stryker-mutator/vitest-runner` の schema) —— 変異させた
+     ファイルを静的に import する検査しか走らない。`prototypeKeyLookup.test.ts` のように**文字列でない動的 import** で
+     製品を読む検査は、どの変異体にも走らない (パス 494 の塊 3 つの報告の `testFiles` に、この検査ファイルは 1 度も現れない ——
+     検査ファイルは 122 / 272 / 327 本並ぶ)。その検査の主張 (prototype の鍵を引いても値が出ない) は変異検査の分子に 1 度も入っていない
+   - **塊 1〜3 の残り 1,098 件**は、このパスで直した形 (Ignored になる) と、読み込み時にも検査の中でも走る関数の中身
+     (本物の未主張) の混ざりで、報告からは見分けられない —— **全掃引を取り直して**分ける
+   - **非 static の生存 149 件 (31 ファイル)** は仕分けていない (パス 494 のまま) —— 全掃引を取り直してから
+     `audit:survivors` で当て直す
+   - **全掃引・`docs/QUALITY.md` の作り直し・`checkMutationPageScope` の呼び出しと `mutateScopeCensus` の頁の主張を戻す・
+     README / TL;DR の点数の主張** はまだ (パス 494 の 5 の ③〜⑥)
+6. ★ **自戒: 途中の commit を全件の検証なしに push し、PR #790 の CI が eslint で落ちた** —— `vi.resetModules()` を
+   `rereadModule` へ替えた 2 本 (`shellOpenGate.test.ts` / `templates.test.ts`) に使わない `vi` の import が残っていた。
+   `verify:all` の最後のゲートが eslint なので、回していれば捕まった。パス 494 の既知の罠 (「マージの前には全部回す」) の
+   **push の前**での現れである。直した commit は `typecheck`・`verify:all` (37 ゲート exit 0)・`npm test`
+   (**955 ファイル / 19,873 件**) を回してから push した
+
 ## パス 494 (マージ前の片付け) が測って、次のパスへ残した物 (2026-09-27)
 
 PR #788 をマージする前に `npm test` と 37 ゲートを 1 本ずつ回し、赤かった物を実測で分けた。

@@ -651,6 +651,14 @@ describe('未入力の棚卸資産 — 当座比率と流動性段階', () => {
     expect(m.quickRatioPct).toBe(200);
   });
 
+  it('★ 境目: 棚卸資産が流動資産と等しいなら当座資産は 0 で、当座比率は 0% (null にしない)', () => {
+    // 在り得ないのは「内数が親項目を超える」形だけ (パス 224)。等しいのは流動資産が在庫だけの
+    // 正当な控えで、当座比率 0% は事実である。2026-09-27 の変異検査で `>` を `>=` にしても
+    // 誰も鳴らなかった (境目の標本が 1 つも無かった)。
+    const m = computeBalanceSheetMetrics({ ...CORE, inventory: 200 });
+    expect(m.quickRatioPct).toBe(0);
+  });
+
   it('棚卸資産が未入力なら strong は主張せず sound に留める', () => {
     expect(computeBalanceSheetInsights(CORE).liquidityStage).toBe('sound');
     // ★ 対照: 0 と実測すれば当座資産 = 流動資産なので strong。
@@ -697,6 +705,37 @@ describe('読み直して測る — collection 名と比率ヘルパー', () => 
       currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
     }).currentRatioPct).toBeNull();
   });
+
+  /*
+   * **読み直すなら、対象の直下の値を全部留める** (2026-09-27 · パス 495)。
+   *
+   * 読み直しは対象のモジュールを**検査の中で**評価し直すので、変異検査はその直下の値を
+   * **全部**「この検査が覆った」と数える (`rereadModule.ts` の docblock)。上の 2 件は
+   * collection 名と比率しか主張していなかったので、同じモジュールの表 (`BS_NUMERIC_FIELDS` ほか) の
+   * 変異体 45 件はこの 2 件だけで走って生き残った (パス 495 の実測 —— 同じファイルの他の定数は
+   * 普通の検査が主張しているが、その検査は読み込みの時点で評価した値を見るので変異体に届かない)。
+   */
+  it('★ 読み直しても、数の欄の表・空の報告・ネットデットの材料の名前が変わらない', async () => {
+    const m = await rereadModule<typeof import('../balanceSheet')>(import.meta.url, '../balanceSheet');
+    expect(m.BS_NUMERIC_FIELDS).toEqual([
+      { key: 'currentAssets', label: '流動資産', required: true },
+      { key: 'cash', label: '現預金', required: false },
+      { key: 'inventory', label: '棚卸資産', required: false },
+      { key: 'accountsReceivable', label: '売上債権', required: false },
+      { key: 'fixedAssets', label: '固定資産', required: true },
+      { key: 'currentLiabilities', label: '流動負債', required: true },
+      { key: 'accountsPayable', label: '仕入債務', required: false },
+      { key: 'fixedLiabilities', label: '固定負債', required: true },
+      { key: 'interestBearingDebt', label: '有利子負債', required: false },
+      { key: 'netIncome', label: '当期純利益', required: true },
+    ]);
+    expect(m.NO_UNREADABLE_BS_FIELDS).toEqual({ zeroed: [], missing: [] });
+    // ネットデットの材料 (`NET_DEBT_INPUTS`) は export されていないので、それを読む文で留める ——
+    // 2 欄の名前は表から引かれ、この順 (有利子負債 → 現預金) で並ぶ。
+    expect(m.netDebtUnavailableNote({ interestBearingDebtUnentered: true, cashUnentered: true }, undefined)).toBe(
+      '有利子負債と現預金が未入力のため、ネットデット・有利子負債比率・実質債務超過の判定は算定していません。借入が無いなら 0 と入力してください（0 と「未入力」は別の事実として扱います）。',
+    );
+  });
 });
 
 describe('どの貸借対照表を「現在」と呼ぶか (パス 127)', () => {
@@ -740,5 +779,13 @@ describe('どの貸借対照表を「現在」と呼ぶか (パス 127)', () => 
     expect(balanceSheetChoiceNote([b, a], currentBalanceSheet([b, a]))).not.toBeNull();
     expect(balanceSheetChoiceNote([rec('x', 100, '2025-03-31'), rec('y', 200, '2026-03-31')], rec('y', 200, '2026-03-31'))).toBeNull();
     expect(balanceSheetChoiceNote([], null)).toBeNull();
+    // 控えが無いのに「選んだ控え」だけが渡る形 (呼び手の 2 つの読みが食い違った瞬間) でも投げずに null ——
+    // 注記の「控えが無ければ null」。2026-09-27 の変異検査で `lastEntered === null` の枝を外しても
+    // 誰も鳴らなかった (この形の標本が無く、外すと `null.id` で投げる)。
+    expect(balanceSheetChoiceNote([], a)).toBeNull();
+    // 逆向き: 控えは在るのに「選んだ控え」が無い (null) —— 型が許す形で、やはり投げずに null。
+    // `chosen === null` の門を外すと `chosen.id` で投げる。測り直した変異検査 (パス 495) で
+    // これだけが残った (上の 1 行は `lastEntered === null` の側を殺した)。
+    expect(balanceSheetChoiceNote([a, b], null)).toBeNull();
   });
 });
