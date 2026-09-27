@@ -20,6 +20,9 @@
   README / TL;DR / `QUALITY_WORKFLOW.md` をそう名乗る形へ直した。実測と次の順序は `docs/REMAINING_WORK.md` の「パス 494」
 - ★ **既知の罠**: `[skip ci]` の wip を全件を回さずに積むと、census が後で落ちる (493i / 493j に続いて 493q も同じ形)。
   マージの前には `npm test && npm run verify:all && npm run chain:verify` を全部回す
+- ★ **既知の罠 (このパスで踏んだ)**: コミットの**本文**に CI を止める綴り (角括弧で囲んだ skip ci) を**説明として引用**しても、
+  GitHub はその push の workflow を 1 本も走らせない (題名だけでなく本文も見る)。`2831056e` の本文が wip の説明として
+  その綴りを引用しており、PR の head に check が 0 件のまま 4 分待った。**本文でその綴りに触れるときは綴りを崩す**
 
 ## 直近の作業 (2026-09-26) — UI を Claude 風の 3 列に (デザイン「すっきり」を既定に・「かわいい」は切替で残す)
 
