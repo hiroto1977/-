@@ -12,6 +12,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import {
   PROPERTIES_COLLECTION,
   normalizeProperty,
@@ -880,7 +881,7 @@ export function RealEstatePage() {
                       <button type="button" onClick={() => onStartEditProperty(p.rowId, p)} style={{ fontSize: 11 }}>
                         編集
                       </button>
-                      <button type="button" onClick={() => removeProperty(p.rowId)} style={{ fontSize: 11, color: 'var(--danger)' }}>
+                      <button type="button" onClick={() => fireReported(removeProperty(p.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>
                         削除
                       </button>
                     </span>

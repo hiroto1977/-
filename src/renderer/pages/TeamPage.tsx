@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import { usePlan } from '../plan/usePlan';
 import { getPlan, hasFeature, requiredPlanForFeature, PLANS } from '../../shared/plan';
 import {
@@ -304,7 +305,7 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <select
                       value={r.data.role}
-                      onChange={(e) => onChangeRole(r.id, r.data.role, e.target.value as Role)}
+                      onChange={(e) => fireReported(onChangeRole(r.id, r.data.role, e.target.value as Role))}
                       style={{ ...inputStyle, width: 110 }}
                     >
                       {ROLE_ORDER.map((role) => (
@@ -322,7 +323,7 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <button
                       type="button"
-                      onClick={() => void submit.run(() => onRemove(r.id, r.data.role))}
+                      onClick={() => fireReported(submit.run(() => onRemove(r.id, r.data.role)))}
                       disabled={submit.busy || !canRemoveMember(r.data.role, owners)}
                       aria-label="削除"
                     >

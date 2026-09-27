@@ -2,7 +2,8 @@ import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
+import { MAX_CSV_IMPORT_BYTES, importSaveFailedNote, readImportText } from '../data/importFile';
+import { fireReported } from '../data/deviceStoreFailure';
 import { localIsoDate } from '../../shared/localDate';
 import {
   SALES_COLLECTION,
@@ -200,7 +201,18 @@ export function SalesPage() {
       return;
     }
     // Atomic: all valid rows commit together or none (no partial import).
-    if (parsed.length > 0) await addMany(parsed);
+    if (parsed.length > 0) {
+      try {
+        await addMany(parsed);
+      } catch {
+        // 保存が断られた (理由と打ち手は画面上端の知らせが言う —— `useCollection` の入口が届けた)。
+        // ここで受け止めないと、この関数は**ファイルの欄を空にする前に**抜ける: 拒否は誰にも
+        // 受け取られず、同じファイルを選び直しても変更が起きないので**やり直せなかった** (パス 493o)。
+        setError(importSaveFailedNote(parsed.length));
+        if (fileRef.current) fileRef.current.value = '';
+        return;
+      }
+    }
     const ok = parsed.length;
     const ng = errors.length;
     if (ok === 0 && ng === 0) {
@@ -383,7 +395,7 @@ export function SalesPage() {
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{finiteNumberOf(r.data.orders) ?? DASH}</td>
                     <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.note, MAX_SALES_NOTE_CHARS)}</td>
                     <td style={{ padding: '4px 8px' }}>
-                      <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                      <button type="button" onClick={() => fireReported(remove(r.id))} aria-label="削除">×</button>
                     </td>
                   </tr>
                 ))}

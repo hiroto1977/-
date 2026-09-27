@@ -349,6 +349,44 @@ describe('数値パラメータの設定画面', () => {
       unsubscribe();
     }
   });
+
+  /**
+   * **保存の前の読みが断られても、知らせへ届く** (2026-09-27 · パス 493o)。
+   *
+   * `mutate` は保存の前に保管層を**直に**読む (最新の 1 件に重ねるため)。その読みは
+   * `useCollection` の入口を通らないので、断られても報されなかった —— パス 493k の行の `run` は
+   * 失敗を何でも落としたので、**画面に 1 文も出ずに消えた** (押せていないのと見分けが付かない)。
+   * 今は読みも報せ、行は `fireReported` (報せた失敗だけを落とす) で受け止める。
+   */
+  it('★ 保存の前の読みが断られても知らせへ届き、未処理の拒否にもならない', async () => {
+    const published: { op: string; where: string }[] = [];
+    const unsubscribe = subscribeDeviceStoreFailure((f) => {
+      if (f) published.push({ op: f.op, where: f.where });
+    });
+    const unhandled: unknown[] = [];
+    const onUnhandled = (r: unknown): void => {
+      unhandled.push(r);
+    };
+    process.on('unhandledRejection', onUnhandled);
+    const store = getRecordStore();
+    const failList = vi.spyOn(store, 'list').mockRejectedValue(new Error('QuotaExceededError (検査・読み)'));
+    try {
+      await type(DAYS, '300');
+      await click(q.button(`${DAYS} を保存`));
+      await settleUntil(
+        () => published.some((p) => p.op === 'save' && p.where === PARAMETER_OVERRIDES_COLLECTION),
+        '保存の前の読みの失敗が知らせへ届く',
+      );
+      await settleUntil(() => !q.button(`${DAYS} を保存`).disabled, `「${DAYS} を保存」がまた押せる (busy が解けた)`);
+      await new Promise<void>((r) => setTimeout(r, 0));
+      expect(unhandled).toEqual([]);
+      expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
+    } finally {
+      failList.mockRestore();
+      process.off('unhandledRejection', onUnhandled);
+      unsubscribe();
+    }
+  });
 });
 
 describe('matchesParameterQuery', () => {

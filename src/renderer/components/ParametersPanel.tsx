@@ -33,6 +33,7 @@ import {
 } from '../../shared/parameterConsistency';
 import { useParameters } from '../data/parameterOverrides';
 import { readNumber } from '../data/inputGuards';
+import { fireReported } from '../data/deviceStoreFailure';
 
 const inputStyle = {
   background: 'var(--bg)',
@@ -91,15 +92,19 @@ function ParameterRow({
   const unchanged = issue === null && candidate === value;
   const defaultShown = `${toDisplayValue(def, def.defaultValue)}${def.unit}`;
 
+  /**
+   * 押している間は押せなくする。**失敗はここで受け止めない** —— 受け止めるのは押した所の
+   * `fireReported` (パス 493o)。
+   *
+   * パス 493k はここで何でも落としていたが、それは報せていない失敗まで黙らせる形だった:
+   * 保存の前に保管層を直に読む `mutate` の読みは報せの経路を通っておらず、読めなかった保存は
+   * **画面に 1 文も出ずに**消えた (上書きの印が付かないだけで、利用者には押せていないのと
+   * 見分けが付かない)。今は読みも報せ、落とすのは `fireReported` が「報せた失敗」だけにする。
+   */
   async function run(fn: () => Promise<void>) {
     setBusy(true);
     try {
       await fn();
-    } catch {
-      // **失敗は受け止める** (2026-09-27 · パス 493k)。書き込みの失敗は `useCollection` の
-      // reporting が画面全体の「端末に保存できませんでした」の知らせへ既に届けている —— ここで
-      // 投げ直すと onClick の戻り値が**未処理の reject** になっていた (検査の題名「例外のまま上がらず」は
-      // 失敗を 1 度も起こしておらず、偽だった)。上書きの印は付かないまま残るので、保存されたとは読めない。
     } finally {
       setBusy(false);
     }
@@ -162,7 +167,7 @@ function ParameterRow({
           type="button"
           aria-label={`${def.label} を保存`}
           disabled={busy || unchanged || issue !== null}
-          onClick={() => run(() => onSave(candidate))}
+          onClick={() => fireReported(run(() => onSave(candidate)))}
           style={buttonStyle}
         >
           保存
@@ -171,7 +176,7 @@ function ParameterRow({
           type="button"
           aria-label={`${def.label} を既定に戻す`}
           disabled={busy || !overridden}
-          onClick={() => run(onReset)}
+          onClick={() => fireReported(run(onReset))}
           style={buttonStyle}
         >
           既定に戻す
@@ -244,7 +249,7 @@ export function ParametersPanel() {
         <button
           type="button"
           disabled={params.loading || overridden === 0}
-          onClick={() => void resetAll()}
+          onClick={() => fireReported(resetAll())}
           style={buttonStyle}
         >
           すべて既定に戻す

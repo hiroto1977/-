@@ -10,7 +10,9 @@
  * 届かない・消えない・古いままのどれが起きても画面が嘘をつく。
  */
 import { describe, expect, it, vi } from 'vitest';
+import path from 'node:path';
 import type { DeviceStoreOp } from '../deviceStoreFailure';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 /**
  * **毎回読み直してから測る。**
@@ -208,15 +210,80 @@ describe('fireReported — 押しただけの操作', () => {
     expect(attached).toEqual(['ok', 'err']);
   });
 
-  it('★ 拒否された約束を渡しても、呼んだ側へは投げ返さない', async () => {
+  it('★ 報せた失敗で拒否された約束を渡しても、呼んだ側へは投げ返さない', async () => {
     const m = await load();
-    expect(() => m.fireReported(Promise.reject(new Error('断られた')))).not.toThrow();
+    // 報せた失敗だけが落とされる (パス 493o)。報せていない失敗は下の settleReported の検査を見よ ——
+    // ここで報せていない拒否を渡すと、未処理の拒否として検査の走りごと落ちる (それが新しい契約)。
+    const e = new Error('断られた');
+    m.reportDeviceStoreFailure('records', 'delete', 'sales-entries', e);
+    expect(() => m.fireReported(Promise.reject(e))).not.toThrow();
     await new Promise<void>((r) => setTimeout(r, 0));
   });
 
   it('同期に済む呼び出し (void) を渡しても投げない', async () => {
     const m = await load();
     expect(() => m.fireReported(undefined)).not.toThrow();
+  });
+});
+
+/**
+ * **落としてよいのは、既に報せてあるからである** —— その規則を判定で守る (2026-09-27 · パス 493o)。
+ *
+ * それまで `fireReported` は何でも落としていた。報せていない失敗 (保管層を直に読んだ所の拒否・
+ * 画面の組み立ての誤り) がそこへ流れ込めば、**誰にも見えずに消えた** —— 実例: パス 493k が
+ * 設定画面の行で失敗を何でも落とした結果、保存の前に保管層を直に読む `mutate` の読みの失敗が
+ * 画面に 1 文も出なかった。今は `reportDeviceStoreFailure` が印を付け、印の無い失敗は投げ直す。
+ */
+describe('settleReported / wasReported — 報せた失敗だけを落とす', () => {
+  it('★ 報せた失敗は印を持ち、落とされて解決する', async () => {
+    const m = await load();
+    const e = new Error('容量が一杯');
+    expect(m.wasReported(e)).toBe(false);
+    m.reportDeviceStoreFailure('records', 'save', 'kpi-actuals', e);
+    expect(m.wasReported(e)).toBe(true);
+    await expect(m.settleReported(Promise.reject(e))).resolves.toBeUndefined();
+  });
+
+  it('★ 報せていない失敗は、同じ例外のまま拒否する (黙って消さない)', async () => {
+    const m = await load();
+    const e = new Error('組み立ての誤り');
+    const r = m.settleReported(Promise.reject(e));
+    await expect(r).rejects.toBe(e);
+  });
+
+  it('★ 印は例外ごと —— 別の例外は、同じ文面でも報せたことにならない', async () => {
+    const m = await load();
+    const reported = new Error('断られた');
+    m.reportDeviceStoreFailure('records', 'delete', 'members', reported);
+    const other = new Error('断られた');
+    expect(m.wasReported(other)).toBe(false);
+    await expect(m.settleReported(Promise.reject(other))).rejects.toBe(other);
+  });
+
+  it('物でない例外には印を付けられない —— 報せていない側へ倒れる (騒がしい側)', async () => {
+    const m = await load();
+    m.reportDeviceStoreFailure('records', 'save', 'x', '文字列の例外');
+    expect(m.wasReported('文字列の例外')).toBe(false);
+    await expect(m.settleReported(Promise.reject('文字列の例外'))).rejects.toBe('文字列の例外');
+    expect(m.wasReported(null)).toBe(false);
+    expect(m.wasReported(undefined)).toBe(false);
+  });
+
+  it('解決した約束と void は、そのまま解決する', async () => {
+    const m = await load();
+    await expect(m.settleReported(Promise.resolve(42))).resolves.toBeUndefined();
+    await expect(m.settleReported(undefined)).resolves.toBeUndefined();
+  });
+
+  it('★ fireReported は settleReported を通す (中身を持たない 1 行)', () => {
+    // 報せていない側は「未処理の拒否」としてしか観測できないので、振る舞いは settleReported で見て、
+    // fireReported はそれを通すだけであることを原文で留める。標本: 直す前の形 (何でも落とす) は当たらない。
+    const src = readOriginalSource(path.resolve(__dirname, '../deviceStoreFailure.ts'));
+    const body = /export function fireReported\([^)]*\): void \{([\s\S]*?)\n\}/.exec(src)?.[1] ?? '';
+    const ONE_LINE = /^\s*void settleReported\(p\);\s*$/;
+    expect(body.trim().length, 'fireReported の本体を読めていない').toBeGreaterThan(0);
+    expect(body).toMatch(ONE_LINE);
+    expect('\n  void Promise.resolve(p).catch(() => undefined);\n').not.toMatch(ONE_LINE);
   });
 });
 

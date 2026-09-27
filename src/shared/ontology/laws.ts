@@ -1123,6 +1123,32 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.renderer('themeTokens')), test(T.renderer('chatDock')), harness('e2e'), harness('e2e:lite')],
   },
   {
+    id: 'rethrown-failure-has-a-receiver',
+    family: 'surface',
+    name: '投げ直した失敗には受け手が要る・報せていない失敗は落とさない',
+    statement:
+      '保存の入口 (`useCollection`) は断られると画面上端へ報せてから**投げ直す** —— 自分の欄に理由を出す画面の契約のため。'
+      + 'だから呼び手は拒否を必ず受け取る (try/catch か、報せた失敗だけを落とす `fireReported`)。'
+      + '受け取らない拒否は宙に浮き、端末のコンソールにだけ出る —— 画面は何も言わず、利用者には「押せていない」と見分けが付かない。'
+      + '実測 (2026-09-27): 書き込みの呼び出し 45 か所のうち **10 か所**が未処理だった (イベントの戻り値に置いた削除・'
+      + '投げっぱなしの CSV 取り込み・`void` で捨てた `submit.run`)。売上の取り込みは失敗で関数を抜けるので**ファイルの欄が空にならず、'
+      + '同じファイルを選び直しても何も起きなかった** (やり直せない)。'
+      + '**落とす側にも規則が要る** —— パス 493k は設定画面の行で失敗を何でも落とし、報せの経路を通らない読み '
+      + '(保存の前に保管層を直に読む `mutate`) の失敗を**画面に 1 文も出さずに**消した。`fireReported` の注記は '
+      + '「落としてよいのは、既に報せてあるからである」と書いていたが、破っても何も鳴らなかった —— '
+      + '今は報せた例外に印を付け、**印の無い失敗は投げ直す** (黙らせるより騒がせるほうが直す人に届く)。'
+      + '数えるのは綴りではなく**拒否の行き先**である: 構文木で書き込みから辿り (await → 同じ関数の try/catch・return → 呼んだ所・'
+      + '`run(…)` は拒否を返す・小文字の要素のイベントは React が戻り値を捨てる・部品へ渡した関数は部品の中まで)、'
+      + '辿れない形は理由つきの台帳に載せる。呼び出し側の数は散文に書かない (注記の「13 か所」は 2026-09-06 の数で、実測は 45 だった)。',
+    provenance: ['パス 493o', 'パス 493k (逆向き —— 何でも落とした)', '2026-09-06 (deviceStoreFailure の実測)'],
+    enforcedBy: [
+      test(T.renderer('storeWriteRejectionCensus')),
+      test('src/renderer/pages/__tests__/storeWriteFailureOnScreen.test.ts'),
+      test('src/renderer/data/__tests__/deviceStoreFailure.test.ts'),
+      test('src/renderer/components/__tests__/ParametersPanel.render.test.ts'),
+    ],
+  },
+  {
     id: 'blank-states-its-reason',
     family: 'surface',
     name: '空欄は理由を連れて出る・未入力を 0 と刷らない',

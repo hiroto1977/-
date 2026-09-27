@@ -14,6 +14,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import {
   HOLDINGS_COLLECTION,
   normalizeHolding,
@@ -701,7 +702,7 @@ export function MutualFundsPage() {
                       <button type="button" onClick={() => onStartEditHolding(h.rowId, h)} style={{ fontSize: 11 }}>
                         編集
                       </button>
-                      <button type="button" onClick={() => removeHolding(h.rowId)} style={{ fontSize: 11, color: 'var(--danger)' }}>
+                      <button type="button" onClick={() => fireReported(removeHolding(h.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>
                         削除
                       </button>
                     </span>

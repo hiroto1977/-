@@ -32359,6 +32359,29 @@ vitest が `Unhandled Rejection` で exit 1 (検査そのものは 28 件とも�
 **同じ形 (`useCollection` の書き込みを onClick で `await` して受け止めない) が他の画面に在るかは
 まだ数えていない** —— 次に数える。
 
+★ **2026-09-27 (パス 493o) で数えた —— 10 か所。そしてパス 493k の直しは逆向きに誤っていた。**
+構文木 (TypeScript の compiler API) で書き込みの呼び出しから**拒否の行き先を辿る** census
+(`renderer/__tests__/storeWriteRejectionCensus.test.ts`) を置くと、書き込みは **45 か所**
+(+ 包む hook `useParameters` の関数を呼ぶ所 3 か所) で、**10 か所**が未処理だった:
+KPI の 3 つの一覧の × (`return remove(r.id)` —— React はイベントの戻り値を捨てる)・売上 / 保有銘柄 /
+物件の削除 (`onClick={() => remove(id)}`)・売上 / KPI の CSV 取り込み (`if (file) onImportFile(file);`)・
+メンバーの役割 (`onChange={(e) => onChangeRole(…)}`)・メンバーの削除 (`void submit.run(…)` ——
+`run` は拒否を握り潰さないと自分の docblock に書いてある)。
+**売上の取り込みはもう 1 段重かった** —— 失敗で関数を抜けるのでファイルの欄が空にならず、
+同じファイルを選び直しても変更が起きないので**やり直せなかった**。
+**パス 493k が行の `run()` に置いた `catch` は何でも落とした** —— 保存の前に保管層を直に読む
+`mutate` の読み (報せの経路を通らない) が断られると、**画面に 1 文も出ずに消えた**。
+`fireReported` の注記は「報せていない失敗をこの関数で消してはいけない」と書いていたが、破っても
+何も鳴らなかった。直し: ① `reportDeviceStoreFailure` が例外に印を付け、`fireReported` は印の無い
+失敗を投げ直す (`settleReported`) ② `mutate` の読みも `reporting` を通す ③ 10 か所を
+`fireReported` / try/catch へ (取り込みは `importSaveFailedNote` で「1 件も入っていない」と言い、
+ファイルの欄を空にする) ④ 行の `run()` の `catch` を外し、押した所で `fireReported`。
+実物の画面で断らせる検査 (`pages/__tests__/storeWriteFailureOnScreen.test.ts` 11 件) と、
+報せていない読みの失敗が知らせへ届く検査 (`ParametersPanel.render.test.ts` +1)。
+**対照 19 方向すべて狙った層で鳴る** (A〜N: 10 か所を 1 つずつ戻す → census + 画面の検査 /
+H+I = パス 493k の状態に戻す → 読みの失敗が知らせへ届かない検査が鳴る / 解析の規則 4 つを潰す →
+標本が鳴る / 印を付けない → 11 件 + 未処理の拒否)。
+
 ### 記録しておくこと
 
 **走査は散文より広い。** 順序が要る家系を手で数えて 6 と決めた後、母集団の検査が

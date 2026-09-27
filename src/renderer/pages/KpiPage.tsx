@@ -6,7 +6,8 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
+import { MAX_CSV_IMPORT_BYTES, importSaveFailedNote, readImportText } from '../data/importFile';
+import { fireReported } from '../data/deviceStoreFailure';
 import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import { localIsoDate } from '../../shared/localDate';
 import {
@@ -476,7 +477,16 @@ function ActualsPanel() {
     }
     const { entries, errors, duplicates } = kpiActualsFromCsv(text, stored);
     // Atomic: all valid rows commit together or none (no partial import).
-    if (entries.length > 0) await addMany(entries);
+    if (entries.length > 0) {
+      try {
+        await addMany(entries);
+      } catch {
+        // 保存が断られた (理由と打ち手は画面上端の知らせ)。受け止めないと拒否が宙に浮き、
+        // 取り込みの欄は何も言わなかった (パス 493o)。ファイルの欄は onChange が空にしている。
+        setError(importSaveFailedNote(entries.length));
+        return;
+      }
+    }
     setError(
       errors.length > 0
         ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})${duplicates > 0 ? `。うち ${duplicates} 件は同じ期・事業が既に在る重複行` : ''}`
@@ -635,7 +645,7 @@ function ActualsPanel() {
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{m === null ? DASH : safeYen(m.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px' }}>
-                      <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
+                      <button type="button" onClick={() => { setError(undefined); fireReported(remove(r.id)); }} aria-label="削除">×</button>
                     </td>
                   </tr>
                 );
@@ -771,7 +781,7 @@ function BudgetPanel() {
                 <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
                 <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
                 <td style={{ padding: '4px 8px' }}>
-                  <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
+                  <button type="button" onClick={() => { setError(undefined); fireReported(remove(r.id)); }} aria-label="削除">×</button>
                 </td>
               </tr>
             ))}
@@ -959,7 +969,7 @@ function BalanceSheetPanel() {
                 <td style={{ padding: '4px 8px', textAlign: 'right' }}>{safeYen(computeBalanceSheetMetrics(normalizeBalanceSheet(r.data)).netAssets)}</td>
                 <td style={{ padding: '4px 8px' }}>{r.id === latest?.id ? '使用中' : ''}</td>
                 <td style={{ padding: '4px 8px' }}>
-                  <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
+                  <button type="button" onClick={() => { setError(undefined); fireReported(remove(r.id)); }} aria-label="削除">×</button>
                 </td>
               </tr>
             ))}

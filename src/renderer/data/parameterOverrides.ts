@@ -16,7 +16,7 @@ import {
   type ParameterOverrides,
   type ParameterValues,
 } from '../../shared/parameters';
-import { useCollection } from './useCollection';
+import { reporting, useCollection } from './useCollection';
 import { latestRecord } from './latestRecord';
 import { getRecordStore } from './store';
 
@@ -66,7 +66,14 @@ export function useParameters(): UseParameters {
   const mutate = (change: (current: Record<string, number>) => Record<string, number>): Promise<void> => {
     const run = async () => {
       const store = getRecordStore();
-      const latest = latestRecord(await store.list<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION));
+      // 読みも報せる (パス 493o) —— ここだけが保管層を直に読むので、`useCollection` の
+      // 入口を通らない。通さないと、読めなかった保存は画面に 1 文も出ずに消えた
+      // (設定画面の行は失敗を受け止めて黙るので、報せが無いと何も起きないように見える)。
+      const latest = latestRecord(
+        await reporting('save', PARAMETER_OVERRIDES_COLLECTION, () =>
+          store.list<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION),
+        ),
+      );
       const current = sanitizeParameterOverrides(latest?.data.values) as Record<string, number>;
       const next = change({ ...current });
       if (latest) await col.edit(latest.id, { values: next });

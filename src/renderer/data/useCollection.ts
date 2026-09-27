@@ -30,13 +30,23 @@ export {
 /**
  * **断られたら、断られたと届けてから投げ直す。**
  *
- * ここが唯一の入口なので、ここで写せば呼び出し側 13 か所を回らずに済む
+ * ここが唯一の入口なので、ここで写せば呼び出し側を 1 つずつ回らずに済む
  * (回ると必ずどれか 1 つが漏れる)。投げ直すのは、既に `try/catch` で
  * 自分の欄に出している画面 (`ShigyoConsole` / 経営ハイライト) の契約を
  * 変えないため —— 二重に見えるが、片方は「この欄の保存」、もう片方は
  * 「この端末の保存領域」で、利用者の打ち手が違う。
+ *
+ * ★ **呼び出し側の数は散文に書かない** —— 2026-09-27 (パス 493o) まで、この注記は
+ * 「13 か所」と書いていた (2026-09-06 の数)。実測は **45 か所**で、そのうち
+ * **10 か所**が投げ直された拒否を誰も受け取らず、未処理の拒否になっていた。
+ * 数と、1 か所ずつの受け止め方は `renderer/__tests__/storeWriteRejectionCensus.test.ts`
+ * が構文木で辿って持つ。
+ *
+ * 書き込みの前に**保管層を直に読む**所 (`parameterOverrides.ts` の `mutate`) も、
+ * 読みをここへ通す —— 通さないと、その読みの失敗だけが報されずに消える
+ * (`fireReported` は報せた失敗しか落とさないので、今は騒がしく出る)。
  */
-async function reporting<R>(op: DeviceStoreOp, collection: string, run: () => Promise<R>): Promise<R> {
+export async function reporting<R>(op: DeviceStoreOp, collection: string, run: () => Promise<R>): Promise<R> {
   try {
     return await run();
   } catch (err) {

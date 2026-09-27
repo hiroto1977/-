@@ -23,6 +23,11 @@
  *   **拒否された Promise を誰も受け取らない。**
  * ```
  *
+ * ★ **この数はその日の実測で、今は census が持つ** —— 2026-09-27 (パス 493o) に数え直すと
+ * 書き込みの呼び出しは **45 か所**で、うち **10 か所**が投げ直された拒否を誰も受け取っていなかった
+ * (入口が投げ直すようにしたあとで増えた呼び出しが、受け止めを持たなかった)。1 か所ずつの
+ * 受け止め方は `renderer/__tests__/storeWriteRejectionCensus.test.ts` が構文木で辿って持つ。
+ *
  * 出方はどれも同じで、**何も起きない**:
  *
  *   追加 … 行は増えず、文言も出ない。打ち込んだ値は残るので「押せていない」に見える
@@ -149,9 +154,47 @@ export function deviceStoreFailureMessage(store: DeviceStore, op: DeviceStoreOp,
  *
  * ここで受け取って落とす。**落としてよいのは、既に報せてあるからである** ——
  * 報せていない失敗をこの関数で消してはいけない。
+ *
+ * ★ **その規則を、2026-09-27 (パス 493o) から散文ではなく判定で守る。** それまでは
+ * 何でも落としていたので、報せていない失敗 (store を直に読んだ所の拒否・
+ * 画面の組み立ての誤り) がここへ流れ込めば**誰にも見えずに消えた** —— 規則は
+ * 注記に書いてあるだけで、破っても何も鳴らなかった。今は `reportDeviceStoreFailure`
+ * が付けた印を見て、**印の無い失敗は投げ直す** (宙に浮いた拒否として端末の
+ * コンソールと検査の「未処理の拒否」に出る)。報せていない失敗は、黙らせるより
+ * 騒がせるほうが直す人に届く。
  */
 export function fireReported(p: Promise<unknown> | void): void {
-  void Promise.resolve(p).catch(() => undefined);
+  void settleReported(p);
+}
+
+/**
+ * `fireReported` の中身 —— **報せた失敗なら落として解決し、報せていない失敗なら同じ例外で拒否する。**
+ *
+ * 判定をここへ出してあるのは、検査が振る舞いで確かめられるようにするためである
+ * (`fireReported` は約束を返さないので、報せていない失敗の側は「未処理の拒否」としてしか
+ * 観測できず、検査の中で起こすとその検査の走りごと落ちる)。
+ */
+export function settleReported(p: Promise<unknown> | void): Promise<void> {
+  return Promise.resolve(p).then(
+    () => undefined,
+    (err: unknown) => {
+      if (!wasReported(err)) throw err;
+    },
+  );
+}
+
+/**
+ * 報せた失敗の印。`reportDeviceStoreFailure` が受け取った例外に付ける。
+ *
+ * WeakSet なので例外そのものを握り続けない (画面が捨てれば一緒に消える)。
+ * 物でない例外 (文字列を投げた等) には印を付けられない —— そのときは
+ * 「報せていない」側へ倒れ、`fireReported` は投げ直す (黙って消すより騒がしい側)。
+ */
+const reportedFailures = new WeakSet<object>();
+
+/** この例外は既に画面へ報せたか (`fireReported` と、失敗を受け止める画面が読む)。 */
+export function wasReported(err: unknown): boolean {
+  return typeof err === 'object' && err !== null && reportedFailures.has(err);
 }
 
 let latest: DeviceStoreFailure | null = null;
@@ -174,6 +217,7 @@ export function reportDeviceStoreFailure(
   where: string,
   err: unknown,
 ): void {
+  if (typeof err === 'object' && err !== null) reportedFailures.add(err);
   publish({ store, op, where, message: deviceStoreFailureMessage(store, op, err) });
 }
 
