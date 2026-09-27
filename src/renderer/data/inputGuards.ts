@@ -35,11 +35,36 @@ export { readNumeric as readNumber };
 /** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。 */
 export type GuardLevel = IssueLevel;
 
+/**
+ * **関門の文が述べた「結果」** (2026-09-27 · パス 493l)。
+ *
+ * それまで読めない値の 3 枝と空欄の枝は、欄を問わず「0 X として計算されています」と
+ * 述べていた。実測 (2026-09-27 · 全画面の関門つき 91 欄に `abc` / 空欄 / `0` を打って
+ * 画面を比べる): `abc` で**76 欄**、空欄で**38 欄**がその文と違うことをしていた ——
+ * 読む段ごと断る (不動産・水循環・敷地・給与・投資信託・貿易の 6 表と保存の 2 表)、
+ * 「無い」として読み「—」を出す (敷地の奥行・間口)、既定へ倒す (決算書の法人税の欄)。
+ * 関門は読む側を知らないので、**読む側の扱いは宣言が持ち** (`NumSpec.refusedBy` /
+ * `NumSpec.absent`)、関門はそれに従って結果を 1 つ選ぶ。選んだ結果は文と一緒に返し、
+ * 画面 (`GuardSummary`) と断りの表 (`refusedFields`) は**文ではなくこの値**を読む。
+ *
+ *   computedAsZero … 0 として計算に入る (「0 X として計算されています」)
+ *   savedAsZero    … 保存すると 0 として記録される (保存の欄の空欄)
+ *   refused        … この欄を読む判定・保存を出さない (段ごと断る)
+ *   notComputed    … この欄を使う値は算定しない (「—」を出す)
+ *   asIfEmpty      … 空欄と同じ扱いで計算する (「無い」なら既定へ倒す読み手)
+ */
+export type GuardOutcome = 'computedAsZero' | 'savedAsZero' | 'refused' | 'notComputed' | 'asIfEmpty';
+
 export interface GuardIssue {
   readonly level: GuardLevel;
   readonly label: string;
   readonly message: string;
+  /** 文が述べた結果。`null` は**結果を述べていない** (範囲の断り・桁の問い・整数の問い)。 */
+  readonly outcome: GuardOutcome | null;
 }
+
+/** ⛔ の間、読む側が何を断るか。語彙は `RefusedFieldsNote` の `kind` と同じ。 */
+export type RefusalKind = 'judgement' | 'save';
 
 /** 入力欄の性質。既定の範囲チェックがこれで決まる。 */
 export type NumKind =
@@ -87,6 +112,37 @@ export interface NumSpec {
   readonly max?: number;
   /** この値を超えたら「桁を間違えていないか」を尋ねる。 */
   readonly sane?: number;
+  /**
+   * **⛔ の間、この欄を読む側が断る物** (パス 493l)。`'judgement'` は段ごとの判定、
+   * `'save'` は保存。無ければ断らない (値は `absent` のとおりに読まれて計算に入る)。
+   * `refusedFields` に渡す表は型でこれを要求する (`refusingSpecs` で付ける) ——
+   * 断る表の欄が「0 として計算されています」と言うと、段の断りと食い違う。
+   */
+  readonly refusedBy?: RefusalKind;
+  /**
+   * 読めない値・空欄を読む側がどう読むか (パス 493l)。既定 `'zero'` (`readNumberOr0`)。
+   * `'null'` は `readNumberOrNull` —— 「無い」として読み、0 を計算に入れない。
+   * 読みが 0 でも、**計算がその 0 を「未入力」として扱い算定しない**なら `'null'` と宣言する
+   * (物件価格・RO 回収率 / 塩除去率) —— 述べた「算定していません」が真かは
+   * `guardClaimsOnScreen.test.ts` が画面で確かめる。
+   */
+  readonly absent?: 'zero' | 'null';
+}
+
+/** 断る表の欄。`refusedFields` / `refusalLabels` はこれしか受け取らない。 */
+export type RefusingSpec = NumSpec & { readonly refusedBy: RefusalKind };
+
+/**
+ * **表の欄すべてに「⛔ の間は断る」を付ける** (パス 493l)。断る表は宣言をこれで包む ——
+ * 欄ごとに書くと、表に 1 欄足したときに書き忘れた欄だけが「0 として計算されています」と言う。
+ */
+export function refusingSpecs<K extends string>(
+  by: RefusalKind,
+  specs: Readonly<Record<K, NumSpec>>,
+): Readonly<Record<K, RefusingSpec>> {
+  const out = {} as Record<K, RefusingSpec>;
+  for (const k of Object.keys(specs) as K[]) out[k] = { ...specs[k], refusedBy: by };
+  return out;
 }
 
 /**
@@ -177,56 +233,115 @@ export function unitOfKind(kind: NumKind): string {
 }
 
 /**
+ * 結果の句。**文面はここ 1 か所** —— 画面は `outcome` を読み、検査はこの関数で文を作る
+ * (綴りを写さない)。`until` は「直すまで」(読めない値・範囲外) と「入力するまで」(空欄)。
+ */
+export function outcomeSentence(
+  outcome: GuardOutcome,
+  unit: string,
+  refusedBy: RefusalKind | undefined,
+  until: '直すまで' | '入力するまで',
+): string {
+  switch (outcome) {
+    case 'computedAsZero':
+      return `0 ${unit} として計算されています。`;
+    case 'savedAsZero':
+      return `保存すると 0 ${unit} として記録されます。`;
+    case 'refused':
+      return refusedBy === 'save' ? `${until}保存できません。` : `${until}、この欄を使う判定は出していません。`;
+    case 'notComputed':
+      return 'この欄を使う値は算定していません。';
+    case 'asIfEmpty':
+      return '空欄と同じ扱いで計算しています。';
+  }
+}
+
+/**
+ * **0 をこの欄の値として受け付けるか** —— `0` と打ったときに ⛔ にならないか。
+ * 空欄を 0 として読む欄でこれが偽なら、空欄は「計算できない値で計算する」ことになる。
+ */
+function zeroAccepted(spec: NumSpec, rule: KindRule): boolean {
+  return (spec.allowZero ?? !rule.zeroIsFatal) && (spec.min === undefined || spec.min <= 0);
+}
+
+/**
  * 1 つの入力を検査する。問題がなければ null。
- * 「読めない＝0 で計算されている」ことを必ず本文に書く（黙って 0 にしない）。
+ *
+ * **読めない値・空欄をどう扱ったかを必ず本文に書く** (黙って 0 にしない)。ただし扱いを
+ * 決めるのは読む側で、関門ではない —— 宣言 (`refusedBy` / `absent`) のとおりの結果を 1 つ選び、
+ * 文と一緒に `outcome` として返す (パス 493l)。範囲の断り (マイナス・下限・上限・0) は
+ * 断る表の欄でだけ結果を述べる —— 断らない読み手 (`readNumberOr0` / `num()` ほか) が
+ * 範囲外の値をどう使うかは読み手ごとに違い、この関門は保証できない (パス 493p と同じ理由)。
  */
 export function guardNumber(raw: string | undefined | null, spec: NumSpec): GuardIssue | null {
   const rule = KIND[spec.kind];
   const text = raw == null ? '' : String(raw).trim();
+  const refusing = spec.refusedBy !== undefined;
+  const issue = (level: GuardLevel, message: string, outcome: GuardOutcome | null): GuardIssue => ({
+    level,
+    label: spec.label,
+    message,
+    outcome,
+  });
 
   if (text.length === 0) {
     if (spec.allowEmpty) return null;
-    return { level: 'warn', label: spec.label, message: `未入力です。0 ${rule.unit} として計算されています。` };
+    // 空欄の結果。**0 を受け付けない欄の空欄は、断る表では断る** —— 0 として計算すると、
+    // 同じ関門が `0` と打たれたら「では計算できません」と断る値で判定を作ることになる
+    // (実測: 積立年数を空にすると「将来評価額 ¥0」、物件価格を空にすると CCR を刷っていた)。
+    const outcome: GuardOutcome =
+      spec.absent === 'null'
+        ? 'notComputed'
+        : refusing && !zeroAccepted(spec, rule)
+          ? 'refused'
+          : spec.refusedBy === 'save'
+            ? 'savedAsZero'
+            : 'computedAsZero';
+    return issue('warn', `未入力です。${outcomeSentence(outcome, rule.unit, spec.refusedBy, '入力するまで')}`, outcome);
   }
 
   const value = readNumeric(text);
   if (value === null) {
+    const outcome: GuardOutcome = refusing ? 'refused' : spec.absent === 'null' ? 'asIfEmpty' : 'computedAsZero';
+    const sentence = outcomeSentence(outcome, rule.unit, spec.refusedBy, '直すまで');
     if (hasUnitWord(text)) {
-      return {
-        level: 'fatal',
-        label: spec.label,
-        message: `「${text}」は単位付きのため読み取れません。0 ${rule.unit} として計算されています。単位を付けず ${rule.unit} の数値だけを入力してください。`,
-      };
+      return issue(
+        'fatal',
+        `「${text}」は単位付きのため読み取れません。${sentence}単位を付けず ${rule.unit} の数値だけを入力してください。`,
+        outcome,
+      );
     }
     if (hasInteriorNoise(text)) {
-      return {
-        level: 'fatal',
-        label: spec.label,
-        message: `「${text}」は数字の間に単位や区切りが入っているため読み取れません。0 ${rule.unit} として計算されています。3 桁区切り以外の記号を外し、${rule.unit} の数値だけを入力してください。`,
-      };
+      return issue(
+        'fatal',
+        `「${text}」は数字の間に単位や区切りが入っているため読み取れません。${sentence}3 桁区切り以外の記号を外し、${rule.unit} の数値だけを入力してください。`,
+        outcome,
+      );
     }
-    return {
-      level: 'fatal',
-      label: spec.label,
-      message: `「${text}」を数値として読み取れません。0 ${rule.unit} として計算されています。`,
-    };
+    return issue('fatal', `「${text}」を数値として読み取れません。${sentence}`, outcome);
   }
 
+  /** 範囲の断り。断る表の欄でだけ結果を足す (断らない読み手の扱いは保証できない)。 */
+  const refuse = (message: string): GuardIssue =>
+    refusing
+      ? issue('fatal', `${message}${outcomeSentence('refused', rule.unit, spec.refusedBy, '直すまで')}`, 'refused')
+      : issue('fatal', message, null);
+
   if (value < 0 && (spec.min === undefined || spec.min >= 0) && rule.negativeIsFatal !== false) {
-    return { level: 'fatal', label: spec.label, message: `マイナスの値（${value}）は指定できません。` };
+    return refuse(`マイナスの値（${value}）は指定できません。`);
   }
   if (value === 0 && (spec.allowZero ?? !rule.zeroIsFatal) === false) {
-    return { level: 'fatal', label: spec.label, message: `0 ${rule.unit} では計算できません。` };
+    return refuse(`0 ${rule.unit} では計算できません。`);
   }
   // Stryker disable next-line ConditionalExpression: !== undefined を true 固定にしても
   // spec.min が undefined のとき `value < undefined` が常に false になるため結果は同じ（等価変異）。
   if (spec.min !== undefined && value < spec.min) {
-    return { level: 'fatal', label: spec.label, message: `${spec.min} ${rule.unit} 以上で入力してください（現在 ${value}）。` };
+    return refuse(`${spec.min} ${rule.unit} 以上で入力してください（現在 ${value}）。`);
   }
   const max = spec.max ?? rule.max;
   // Stryker disable next-line ConditionalExpression: 上と同じ理由（`value > undefined` は false）。
   if (max !== undefined && value > max) {
-    return { level: 'fatal', label: spec.label, message: `${max} ${rule.unit} 以下で入力してください（現在 ${value}）。` };
+    return refuse(`${max} ${rule.unit} 以下で入力してください（現在 ${value}）。`);
   }
   // ★ **小数をどう扱うかは言わない** (2026-09-27 · パス 493p)。それまでこの文は「小数は切り捨てられます」と
   // 続けていたが、**扱いを決めるのは欄を読む側**で、この関門ではない。実測すると切り捨てるのは
@@ -236,16 +351,16 @@ export function guardNumber(raw: string | undefined | null, spec: NumSpec): Guar
   // 棚の段数・切替 (収穫前)・交換周期はそのまま使い (5.5 団体はワンストップ特例の 5 団体を超える扱い)、
   // 水耕の運転設定の日数は保存で断る。**この関門が保証できない結果を、この関門の文で言わない。**
   if (rule.integer && !Number.isInteger(value)) {
-    return { level: 'warn', label: spec.label, message: `整数で入力してください（現在 ${value}）。` };
+    return issue('warn', `整数で入力してください（現在 ${value}）。`, null);
   }
   const sane = spec.sane ?? rule.sane;
   // Stryker disable next-line ConditionalExpression: 上と同じ理由（`value > undefined` は false）。
   if (sane !== undefined && value > sane) {
-    return {
-      level: 'warn',
-      label: spec.label,
-      message: `${value.toLocaleString('ja-JP')} ${rule.unit} は想定の範囲を超えています。桁を間違えていないか確認してください。`,
-    };
+    return issue(
+      'warn',
+      `${value.toLocaleString('ja-JP')} ${rule.unit} は想定の範囲を超えています。桁を間違えていないか確認してください。`,
+      null,
+    );
   }
   return null;
 }
@@ -263,31 +378,37 @@ export function guardAll(entries: readonly (readonly [string | undefined | null,
 }
 
 /**
- * **⛔ (`level: 'fatal'`) の欄を、宣言の集合から数える。** (パス 206 で敷地用に作り、
+ * **断る欄を、宣言の集合から数える。** (パス 206 で敷地用に作り、
  * パス 209 で試算の段・投資信託にも使うので guard の側へ移した)
  *
- * 空欄は `warn` なのでここには入らない —— 「未入力」と「範囲外」は打ち手が違う
- * (「未入力です。0 円 として計算されています」の家系を壊さない)。
+ * 数えるのは関門が**「断る」と述べた欄** (`outcome: 'refused'`) —— ⛔ の欄と、
+ * **0 を受け付けない欄の空欄** (パス 493l)。それまでは `level === 'fatal'` を数えており、
+ * 空欄は ⚠️ なので素通りして 0 で計算されていた (実測: 積立年数を空にすると「将来評価額 ¥0」・
+ * 床面積を空にすると `0 ㎡` で保存できた —— 同じ関門が `0` と打たれたら断る値である)。
+ * 0 を受け付ける欄の空欄は今までどおり 0 として計算し、断らない。
+ *
+ * **型が断る表を要求する** (`RefusingSpec`) —— 表を `refusingSpecs` で包まずに渡すと、
+ * 欄の文は「0 として計算されています」と言い、段の断りと食い違う。
  */
 export function refusedFields<K extends string>(
-  specs: Readonly<Record<K, NumSpec>>,
+  specs: Readonly<Record<K, RefusingSpec>>,
   values: Readonly<Record<K, string>>,
 ): readonly K[] {
   // `Object.keys` は `string[]` を返すので、総称の `K` へは 1 段挟まないと通らない
   // (`K` が `string` の部分型に具体化されうるため tsc が狭めを拒む)。鍵は `specs`
   // そのものから採っているので、この主張は宣言と同じ集合である。
   const keys = Object.keys(specs) as unknown as readonly K[];
-  return keys.filter((k) => guardNumber(values[k], specs[k])?.level === 'fatal');
+  return keys.filter((k) => guardNumber(values[k], specs[k])?.outcome === 'refused');
 }
 
 /**
- * その段が読んでいる欄のうち ⛔ の物の**表示名**。
+ * その段が読んでいる欄のうち断る物の**表示名**。
  *
  * 名前は**宣言から採る** —— 画面が文字列を写すと、欄の名前を直したときに断りの
  * 文面だけが古くなる (パス 101 で当たった形)。
  */
 export function refusalLabels<K extends string>(
-  specs: Readonly<Record<K, NumSpec>>,
+  specs: Readonly<Record<K, RefusingSpec>>,
   refused: readonly K[],
   reads: readonly K[],
 ): readonly string[] {
@@ -295,16 +416,21 @@ export function refusalLabels<K extends string>(
 }
 
 /**
- * ⛔ の欄が在るときに判定の代わりに出す文 (欄の名前を必ず名指しする)。
+ * 断る欄が在るときに判定の代わりに出す文 (欄の名前を必ず名指しする)。
  * 空なら `null` —— 呼び手が「出すかどうか」を分岐しなくていい。
+ *
+ * ★ **原因は言わない** (パス 493l)。それまでこの文は「…が入力できる範囲の外なので」
+ * 「赤い欄を範囲内に直すと」と言っていたが、断る原因は範囲外だけではない —— 読めない値
+ * (`abc`) は範囲の外ではなく、0 を受け付けない欄の空欄は ⚠️ (赤ではない) で断る。
+ * 原因と直し方は欄の下の文が 1 つずつ言うので、ここは結果だけを述べる。
  */
 export function refusalNote(labels: readonly string[]): string | null {
   if (labels.length === 0) return null;
-  return `${labels.join('・')}が入力できる範囲の外なので、この判定は算定していません（赤い欄を範囲内に直すと判定が出ます）。`;
+  return `${labels.join('・')}を直すまで、この判定は算定していません（欄の下の指摘どおりに直すと判定が出ます）。`;
 }
 
 /**
- * **⛔ の欄が在るときに「書かなかった」ことを述べる文** (パス 214)。
+ * **断る欄が在るときに「書かなかった」ことを述べる文** (パス 214)。
  *
  * `refusalNote` は**判定**を算定しなかったと述べる。保存はそれとは別の事柄で、
  * 同じ文面を流用すると嘘になる —— 判定は出し直せるが、**保存した値は残り、
@@ -312,10 +438,11 @@ export function refusalNote(labels: readonly string[]): string | null {
  * 水耕栽培は `床面積 = −9999` を ⛔ と表示したまま保存でき、画面は
  * 「保存しました。経営サマリーに反映されています。」と述べ、そのあと
  * 営業利益 −￥6,000,000 を出していた (金融機関等提出用の書面まで届く)。
+ * 原因を言わないのは `refusalNote` と同じ理由 (パス 493l)。
  */
 export function saveRefusalNote(labels: readonly string[]): string | null {
   if (labels.length === 0) return null;
-  return `${labels.join('・')}が入力できる範囲の外なので、保存していません（赤い欄を範囲内に直すと保存できます）。`;
+  return `${labels.join('・')}を直すまで、保存していません（欄の下の指摘どおりに直すと保存できます）。`;
 }
 
 /** 画面のバッジ表示用の件数。 */

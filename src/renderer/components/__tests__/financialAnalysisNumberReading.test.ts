@@ -191,6 +191,33 @@ describe('入力の読み取りはアプリで 1 つ (パス 374)', () => {
     }
   });
 
+  it('★ 読めない課税売上は「空欄と同じ扱い」—— 画面の答えは空欄のときと同じ (パス 493l)', async () => {
+    // 直す前の欄の文は「0 円 として計算されています」だったが、読む側は `readNumberOrNull(...) ?? undefined`
+    // で「無い」として読み、決算書の売上高へ倒していた。宣言が `absent: 'null'` を持ち、文が扱いどおりに言う。
+    await mount();
+    const answer = (): string => {
+      const copy = container.cloneNode(true) as HTMLElement;
+      for (const el of Array.from(copy.querySelectorAll('[data-ctax-issue]'))) el.remove();
+      return (copy.textContent ?? '').replace(/\s+/g, ' ');
+    };
+    await act(async () => {
+      typeInto('#ct-sales', '');
+    });
+    const empty = answer();
+    await act(async () => {
+      typeInto('#ct-sales', 'abc');
+    });
+    const issue = container.querySelector('[data-ctax-issue="課税売上"]')?.textContent ?? '';
+    expect(issue).toContain('「abc」を数値として読み取れません。空欄と同じ扱いで計算しています。');
+    expect(issue, '読む側がしていないことを述べている').not.toContain('として計算されています');
+    expect(answer(), '「空欄と同じ扱い」と言いながら、空欄と違う答えを出している').toBe(empty);
+    // 対照: 0 と打つと答えが変わる —— 直す前の文 (「0 円 として計算」) なら画面はこちらになるはずだった
+    await act(async () => {
+      typeInto('#ct-sales', '0');
+    });
+    expect(answer()).not.toBe(empty);
+  });
+
   it('★ 消費税の 2 欄も同じ読み取りを通る', async () => {
     await mount();
     await act(async () => {

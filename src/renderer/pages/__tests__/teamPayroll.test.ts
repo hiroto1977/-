@@ -105,17 +105,17 @@ describe('チームページ — 給与計算の入力欄は黙って 0 にし�
   it('読めない値は fatal の文言と aria-invalid で知らせ、税額は算定しない', async () => {
     await type('賞与額 (円)', '百');
     expect(q.input('賞与額 (円)').getAttribute('aria-invalid')).toBe('true');
-    expect(q.guardText('賞与額 (円)')).toContain('「百」を数値として読み取れません。0 円 として計算されています。');
+    // 欄の文は画面の扱いどおりに「判定を出さない」と言う (パス 493l)
+    expect(q.guardText('賞与額 (円)')).toContain('「百」を数値として読み取れません。直すまで、この欄を使う判定は出していません。');
+    expect(q.guardText('賞与額 (円)')).not.toContain('として計算されています');
     // **パス 213 で `¥0` から「算定していません」へ変えた。** それまでこの検査は
     // 「税額は 0 になる」を留めていた —— つまり**欠陥を仕様として固定していた**。
     // 読めない賞与額から源泉徴収税額 ¥0 を出すのは「源泉徴収しなくてよい」と
     // 読めるので、段ごと断る (`PAYROLL_READS.bonus`)。
     expect(() => q.stat('源泉徴収税額')).toThrow('not found');
     await waitForText(() => container.querySelector('[data-refused-fields]')?.textContent ?? '', '賞与額 (円)');
-    // ⚠️ **文言の「0 円 として計算されています」は、この欄については既に正しくない。**
-    // `guardNumber` は自分の値を読む段が断るかどうかを知らないので、読めない値の
-    // 3 枝が共通で「0 として計算されています」と述べている。断りの表で覆った欄が
-    // 増えたら、この節を落とす —— 残作業として `docs/REMAINING_WORK.md` に記録。
+    // パス 213 が残した「文言の 0 の句はこの欄について既に正しくない」はパス 493l で閉じた ——
+    // 表を `refusingSpecs('judgement')` で包み、関門がその宣言に従って結果を選ぶ。
   });
 
   it('単位語つき (50万) は単位を外すよう促す', async () => {
@@ -132,8 +132,11 @@ describe('チームページ — 給与計算の入力欄は黙って 0 にし�
   });
 
   it('マイカー片道は km の単位で言い、0 km (マイカー通勤なし) は通す', async () => {
+    // 単位語は桁の尋ねに出る。読めない値の文は単位ではなく結果 (判定を出さない) を言う (パス 493l)
+    await type('マイカー片道 (km)', '1500');
+    expect(q.guardText('マイカー片道 (km)')).toContain('1,500 km は想定の範囲を超えています。');
     await type('マイカー片道 (km)', 'abc');
-    expect(q.guardText('マイカー片道 (km)')).toContain('0 km として計算されています。');
+    expect(q.guardText('マイカー片道 (km)')).toContain('「abc」を数値として読み取れません。直すまで、この欄を使う判定は出していません。');
     await type('マイカー片道 (km)', '0');
     expect(q.input('マイカー片道 (km)').getAttribute('data-guard')).toBe('ok');
     expect(q.stat('マイカー: 非課税限度/月')).toBe(jpy(0));

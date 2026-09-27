@@ -117,15 +117,26 @@ describe('投資信託 — 生活費が未入力なら予備資金の充足率�
     });
     await settle();
 
-    expect(stat('予備資金 充足率')).toContain('—');
-    expect(stat('予備資金 充足率')).not.toContain('100%');
-    // 隣のタイルは元から「—」。**2 枚が同じ答え方をしている**ことを留める。
-    expect(stat('現預金でまかなえる月数')).toContain('—');
-    // 理由を画面に出している
+    // **空欄は段ごと断る** (パス 493l)。生活費は 0 を受け付けない欄なので、空欄を 0 として
+    // 計算すると「緊急予備資金 (生活費6か月) ¥0」—— 目標 0 円という答え —— を刷っていた
+    // (実測 2026-09-27: 充足率と月数は「—」でも、隣の目標額だけが ¥0 だった)。
+    // 今は断りの文が欄を名指しし、3 枚のタイルはどれも出ない。
     await waitForText(
-      () => (container.textContent ?? '').replace(/\s+/g, ' '),
-      '毎月の生活費を入力すると予備資金の充足率を算定します',
+      () => (container.querySelector('[data-refused-fields]')?.textContent ?? '').replace(/\s+/g, ' '),
+      '毎月の生活費 (円)を直すまで、この判定は算定していません',
     );
+    for (const label of ['予備資金 充足率', '現預金でまかなえる月数']) {
+      expect(() => stat(label), `${label} が出ている`).toThrow(/not found/);
+    }
+    const body = (container.textContent ?? '').replace(/\s+/g, ' ');
+    expect(body).not.toMatch(/緊急予備資金 \(生活費\d+か月\)/);
+    expect(body).not.toContain('100%');
+    // 断っている間は「—」を名乗る注記も出さない (タイルが無いので「—」は画面に無い)
+    expect(body).not.toContain('毎月の生活費を入力すると予備資金の充足率を算定します');
+    // 標本: 直す前の姿の綴りはこの形 —— 針は外れていない
+    expect('緊急予備資金 (生活費6か月)¥0').toMatch(/緊急予備資金 \(生活費\d+か月\)/);
+    // 欄そのものは「入力するまで判定を出さない」と述べる
+    expect(numInput('毎月の生活費 (円)').getAttribute('data-guard-outcome')).toBe('refused');
   });
 
   it('★ 対照: 月支出を入れれば充足率は % で出て、断り書きは消える', async () => {

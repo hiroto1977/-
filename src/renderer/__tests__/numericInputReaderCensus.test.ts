@@ -332,10 +332,17 @@ describe('入力欄の文字列を数にする口は 1 つ (パス 375)', () => 
     expect(parseAmountInput('1億'), '読めない入力が通っている').toEqual({ ok: false });
   });
 
+  /**
+   * まとめ表示の前置き。**0 として計算した欄が在るときだけ**出る (パス 493l —— それまでは
+   * 指摘の中身を問わず「読み取れなかった欄は 0 として計算されています」と出していた)。
+   * 下の 2 件はこの綴りが**無い**ことを主張するので、最初の `it` がそれが**出る**ことの標本を持つ。
+   */
+  const ZERO_LINE = '0 として計算した欄が 1 件あります';
+
   it('★ 関門が ⛔ と言ったら、計算も 0 で行う (TaxPage ①)', async () => {
     await mountTax();
     await typeIncome('5,000,00'); // 桁区切りの位置が違う —— readNumeric は読まない
-    await waitForText(text, '読み取れなかった欄は 0 として計算されています');
+    await waitForText(text, ZERO_LINE);
     expect(
       incomeTaxTile(),
       '⛔ を出しながら別の数 (parseAmountInput が読んだ 500000) で計算している',
@@ -345,7 +352,7 @@ describe('入力欄の文字列を数にする口は 1 つ (パス 375)', () => 
   it('★ 関門が黙ったら、計算もその数で行う (TaxPage ①)', async () => {
     await mountTax();
     await typeIncome('5,000,000円'); // 単位つき —— readNumeric は 5,000,000 と読む
-    expect(says('読み取れなかった欄は 0 として計算されています'), '読める欄に ⛔ が出ている').toBe(false);
+    expect(says(ZERO_LINE), '読める欄に ⛔ が出ている').toBe(false);
     expect(
       incomeTaxTile(),
       '関門が「問題なし」と言った欄を、計算が捨てて 0 にしている',
@@ -355,7 +362,7 @@ describe('入力欄の文字列を数にする口は 1 つ (パス 375)', () => 
   it('★ 対照: 素直な入力は今までどおり (門が広すぎない)', async () => {
     await mountTax();
     await typeIncome('5,000,000');
-    expect(says('読み取れなかった欄は 0 として計算されています'), '正当な入力に ⛔ が出ている').toBe(false);
+    expect(says(ZERO_LINE), '正当な入力に ⛔ が出ている').toBe(false);
     expect(incomeTaxTile()).not.toBe('¥0');
   });
 });

@@ -61,7 +61,7 @@ describe('運転設定の幅は 1 つで、書き側と読み側の両方が読�
     for (const k of KEYS) {
       expect(
         unitOfKind(HYDROPONICS_CONTROL_SPECS[k].kind),
-        `${k}: 近い種類を借りると「0 ${unitOfKind(HYDROPONICS_CONTROL_SPECS[k].kind)} として計算されています」と嘘の単位を言う`,
+        `${k}: 近い種類を借りると「N ${unitOfKind(HYDROPONICS_CONTROL_SPECS[k].kind)} 以下で入力してください」と嘘の単位を言う`,
       ).toBe(CONTROL_FIELD_BOUNDS[k].unit);
     }
   });

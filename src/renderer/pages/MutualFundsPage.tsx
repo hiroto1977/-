@@ -5,7 +5,7 @@ import {
   type ManualOverrideEntry,
 } from '../data/manualData';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { refusalLabels, refusedFields, readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { refusalLabels, refusedFields, refusingSpecs, readNumberOr0, type NumSpec } from '../data/inputGuards';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat, positiveIfKnown } from '../components/Stat';
@@ -102,7 +102,7 @@ const EMPTY_HOLDING_FORM = { code: '', name: '', units: '', navPerUnit: '', valu
  * 「負は無意味なので 0」なので defect ではない —— 実測で確かめた上で触っていない。
  * 上の 3 つは**負値がそのまま流れて判定を作る**ので、段ごとに断る。
  */
-const MF_REFUSAL_SPECS = {
+const MF_REFUSAL_SPECS = refusingSpecs('judgement', {
   goalTarget: { label: '目標額 (円)', kind: 'money', allowZero: false },
   goalYears: { label: '達成年数', kind: 'years', allowZero: false, max: MAX_PLAN_YEARS },
   currentMonthly: { label: '現在の積立額 (円)', kind: 'money', allowZero: true },
@@ -115,7 +115,7 @@ const MF_REFUSAL_SPECS = {
   fxAcqRate: { label: '取得時レート', kind: 'money', allowZero: false, sane: 10_000 },
   fxCurRate: { label: '現在レート', kind: 'money', allowZero: false, sane: 10_000 },
   fxFee: { label: '為替手数料 (片道・円)', kind: 'money', allowZero: true, sane: 1000 },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 /**
  * **どの段がどの欄を読むか** (パス 209 で目標額とレートに作り、パス 211 で残り 8 欄へ)。
@@ -511,7 +511,9 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="実質コスト率 (年率)" value={realCost.annualCostPct === null ? DASH : `${realCost.annualCostPct}%`} />
           <Stat label="年間コスト概算" value={jpyOrDash(realCost.annualCostYen)} />
-          <Stat label={`${holdYears}年累計の蝕み効果`} value={jpyOrDash(realCost.cumulativeCostYen)} />
+          {/* 年数は**計算に使った数**から書く (パス 493l)。打った文字列をそのまま載せると、
+              `abc` と打った欄が「0 年 として計算されています」と言う横で「abc年累計の蝕み効果 ¥0」と刷っていた。 */}
+          <Stat label={`${readNumberOr0(holdYears)}年累計の蝕み効果`} value={jpyOrDash(realCost.cumulativeCostYen)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           {/* **「—」の理由をその場で言う。** 欄の ⛔ は「何年以下か」を言うが、
@@ -850,7 +852,8 @@ export function MutualFundsPage() {
               <br />
             </>
           )}
-          {efCoverage.coveragePct === null && (
+          {/* 予備資金の段を断っている間は言わない —— 断りの文が欄を名指しし、「—」のタイルは出ていない。 */}
+          {mfRefusedBy.emergency.length === 0 && efCoverage.coveragePct === null && (
             <>
               毎月の生活費を入力すると予備資金の充足率を算定します（未入力のため「—」）。
               <br />

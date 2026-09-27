@@ -33,6 +33,21 @@
  * 私の対照の作り方の誤りで、コードの報せではない。`max: 100` にすると
  * `9999999999` と `１２３` の 2 件が漏れとして名指しされる。
  * **天井を足すときは、それが ⛔ か ⚠️ かで書き手との一致の要否が変わる。**
+ *
+ * ## 両方向になった (2026-09-27 · パス 493l)
+ *
+ * 関門は欄ごとに**結果を述べる**ようになった —— この表の欄は `refusingSpecs('save', …)` で
+ * 包まれているので、断るときは「直すまで保存できません」「入力するまで保存できません」、
+ * 空欄を 0 として書くときは「保存すると 0 円 として記録されます」と言う。述べた文が
+ * 真であるには、**書き手が同じ答えを出す**必要がある:
+ *
+ * - 関門が断る (`outcome: 'refused'`) ⇔ 書き手が投げる —— 「保存できません」と言って
+ *   保存されれば文が偽、黙って断られれば利用者は理由を読めない
+ * - 関門が「0 として記録されます」と言う ⇒ 書き手は受け取り、**その欄は 0** になる
+ *
+ * 直す前 (パス 493l より前) は ⛔ しか数えておらず、**取得価格の空欄**は ⚠️「未入力です。
+ * 0 円 として計算されています」を出しながら書き手が「取得価格は 1 円以上」で断っていた ——
+ * 片方向の検査はそれを「安全な向き」として通していた。
  */
 import { describe, expect, it } from 'vitest';
 import { guardNumber } from '../inputGuards';
@@ -62,11 +77,15 @@ type Field = keyof typeof PROPERTY_FORM_SPECS;
 const FIELDS = Object.keys(PROPERTY_FORM_SPECS) as Field[];
 
 function writerRejects(field: Field, value: string): boolean {
+  return writerValue(field, value) === 'rejected';
+}
+
+/** 書き手が受け取ったときの、その欄の保存値。断れば `'rejected'`。 */
+function writerValue(field: Field, value: string): number | 'rejected' {
   try {
-    parsePropertyEntry({ ...VALID, [field]: value });
-    return false;
+    return parsePropertyEntry({ ...VALID, [field]: value })[field];
   } catch {
-    return true;
+    return 'rejected';
   }
 }
 
@@ -77,12 +96,26 @@ describe('物件フォーム — 画面の ⛔ と保存の断りが一致する
     expect(PROBES.length).toBe(15);
   });
 
-  it('★ 標本が実際に ⛔ を作っている (空振りしていない)', () => {
-    // 肯定形の検査 —— 「食い違いが無い」だけだと、⛔ が 1 つも出ていなくても通る。
-    const fatals = FIELDS.flatMap((f) =>
-      PROBES.filter((v) => guardNumber(v, PROPERTY_FORM_SPECS[f])?.level === 'fatal'),
+  it('★ 標本が実際に「断る」を作っている (空振りしていない)', () => {
+    // 肯定形の検査 —— 「食い違いが無い」だけだと、断る欄が 1 つも出ていなくても通る。
+    const refused = FIELDS.flatMap((f) =>
+      PROBES.filter((v) => guardNumber(v, PROPERTY_FORM_SPECS[f])?.outcome === 'refused'),
     );
-    expect(fatals.length).toBeGreaterThanOrEqual(20);
+    expect(refused.length).toBeGreaterThanOrEqual(20);
+    // ⚠️ の段で断る形 (0 を受け付けない欄の空欄) も標本に在る —— 直す前はここが
+    // 「0 円 として計算されています」と言いながら書き手に断られていた (パス 493l)
+    const warnRefused = FIELDS.flatMap((f) =>
+      PROBES.filter((v) => {
+        const g = guardNumber(v, PROPERTY_FORM_SPECS[f]);
+        return g?.outcome === 'refused' && g.level === 'warn';
+      }).map((v) => `${f} = ${JSON.stringify(v)}`),
+    );
+    expect(warnRefused).toEqual(['purchasePrice = ""', 'purchasePrice = "  "']);
+    // 空欄を 0 として書く形も標本に在る (下の「0 として記録」の主張を空にしない)
+    const zeroSaved = FIELDS.flatMap((f) =>
+      PROBES.filter((v) => guardNumber(v, PROPERTY_FORM_SPECS[f])?.outcome === 'savedAsZero'),
+    );
+    expect(zeroSaved.length).toBeGreaterThanOrEqual(2);
   });
 
   it('★ ⛔ の値は 1 つも保存されない (危ない向き)', () => {
@@ -94,6 +127,45 @@ describe('物件フォーム — 画面の ⛔ と保存の断りが一致する
       }
     }
     expect(leaks, '画面が ⛔ で断っている値を parsePropertyEntry が受け取っている').toEqual([]);
+  });
+
+  it('★ 関門が「保存できません」と言う ⇔ 書き手が断る (両方向・パス 493l)', () => {
+    const mismatch: string[] = [];
+    for (const f of FIELDS) {
+      for (const v of PROBES) {
+        const says = guardNumber(v, PROPERTY_FORM_SPECS[f])?.outcome === 'refused';
+        if (says !== writerRejects(f, v)) {
+          mismatch.push(`${f} = ${JSON.stringify(v)}: 関門 ${says ? '断る' : '通す'} / 書き手 ${says ? '通す' : '断る'}`);
+        }
+      }
+    }
+    expect(mismatch).toEqual([]);
+  });
+
+  it('★ 関門が「保存すると 0 円 として記録されます」と言えば、書き手はその欄を 0 で書く', () => {
+    const wrong: string[] = [];
+    for (const f of FIELDS) {
+      for (const v of PROBES) {
+        const g = guardNumber(v, PROPERTY_FORM_SPECS[f]);
+        if (g?.outcome !== 'savedAsZero') continue;
+        expect(g.message).toContain('保存すると 0 円 として記録されます。');
+        const saved = writerValue(f, v);
+        if (saved !== 0) wrong.push(`${f} = ${JSON.stringify(v)}: 書き手は ${String(saved)}`);
+      }
+    }
+    expect(wrong).toEqual([]);
+  });
+
+  it('★ この表の欄の文は「0 円 として計算されています」と言わない (計算ではなく保存の欄)', () => {
+    const said = FIELDS.flatMap((f) =>
+      PROBES.filter((v) => (guardNumber(v, PROPERTY_FORM_SPECS[f])?.message ?? '').includes('として計算されています'))
+        .map((v) => `${f} = ${JSON.stringify(v)}`),
+    );
+    expect(said).toEqual([]);
+    // 標本: 同じ欄を断らない宣言で検めれば、その句は実際に出る (針は生きている)
+    const { refusedBy: _drop, ...plain } = PROPERTY_FORM_SPECS.monthlyRent;
+    void _drop;
+    expect(guardNumber('百', plain)?.message).toContain('0 円 として計算されています');
   });
 
   it('★ 正しい 1 件は通る (門が全部を落としていない)', () => {

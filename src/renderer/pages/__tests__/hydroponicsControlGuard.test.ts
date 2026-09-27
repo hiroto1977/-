@@ -116,6 +116,34 @@ describe('運転設定の入力は桁違いを断る (パス 373)', () => {
     expect(await savedCount(), '⛔ のまま保存されている').toBe(0);
   });
 
+  it('★ 読めない値は「直すまで保存できません」と述べ、そのとおり保存しない (パス 493l)', async () => {
+    // 直す前の欄の文は「0 L として計算されています」だったが、保存は ⛔ の欄を断る (パス 373) ——
+    // 欄は自分の値が保存されないことを言うべきだった。宣言が `refusedBy: 'save'` を持ち、文が選ばれる。
+    await mount();
+    const edit = await waitForElement(() => q<HTMLButtonElement>('[data-hydroponics-edit-control]'), '設定を編集');
+    await act(async () => {
+      edit.click();
+    });
+    const tank = await waitForElement(
+      () => q<HTMLInputElement>('[data-hydroponics-control-field="tankLiters"] input'),
+      'タンク容量の欄',
+    );
+    await act(async () => {
+      changeInput(tank, 'abc');
+    });
+    const field = q('[data-hydroponics-control-field="tankLiters"]')?.textContent ?? '';
+    expect(field).toContain('「abc」を数値として読み取れません。直すまで保存できません。');
+    expect(field, '保存しない欄が「計算されています」と言っている').not.toContain('として計算されています');
+    expect(tank.getAttribute('data-guard-outcome')).toBe('refused');
+    const save = await waitForElement(() => q<HTMLButtonElement>('[data-hydroponics-save="control"]'), '保存ボタン');
+    await act(async () => {
+      save.click();
+    });
+    const err = await waitForElement(() => q('[data-hydroponics-error="control"]'), '断りの文');
+    expect(err.textContent ?? '').toContain('養液タンクの容量');
+    expect(await savedCount(), '「保存できません」と言った値が保存されている').toBe(0);
+  });
+
   it('★ 対照: 幅の内なら保存される (門が広すぎ / 狭すぎでない)', async () => {
     await mount();
     const edit = await waitForElement(() => q<HTMLButtonElement>('[data-hydroponics-edit-control]'), '設定を編集');

@@ -405,13 +405,20 @@ function CorporateTaxCard({
   const capitalParsed = readNumberOrNull(capitalStr) ?? undefined;
   const employeesParsed = readNumberOrNull(employeesStr) ?? undefined;
   const carryforwardLossParsed = readNumberOrNull(carryforwardLossStr) ?? undefined;
-  /** 読めなかったときに画面へ出す指摘 (空欄は指摘しない)。 */
+  /**
+   * 読めなかったときに画面へ出す指摘 (空欄は指摘しない)。
+   *
+   * **読めない値は「無い」として読む** (`absent: 'null'` —— 上の `readNumberOrNull(...) ?? undefined`)。
+   * 資本金・従業者数・繰越欠損金は区分の既定へ、課税売上・課税仕入は決算書の売上高・仕入へ倒れる。
+   * パス 493l まで関門の文は「0 円 として計算されています」と言っていたが、実測すると 0 では
+   * なかった —— 課税売上に `abc` と打つと、消費税は**決算書の売上高**で計算されていた。
+   */
   const CTAX_SPECS = {
-    capital: { label: '資本金', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
-    employees: { label: '従業者数', kind: 'people', allowEmpty: true, allowZero: true, min: 0 },
-    carryforwardLoss: { label: '繰越欠損金', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
-    ctSales: { label: '課税売上', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
-    ctPurchases: { label: '課税仕入', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
+    capital: { label: '資本金', kind: 'money', allowEmpty: true, allowZero: true, min: 0, absent: 'null' },
+    employees: { label: '従業者数', kind: 'people', allowEmpty: true, allowZero: true, min: 0, absent: 'null' },
+    carryforwardLoss: { label: '繰越欠損金', kind: 'money', allowEmpty: true, allowZero: true, min: 0, absent: 'null' },
+    ctSales: { label: '課税売上', kind: 'money', allowEmpty: true, allowZero: true, min: 0, absent: 'null' },
+    ctPurchases: { label: '課税仕入', kind: 'money', allowEmpty: true, allowZero: true, min: 0, absent: 'null' },
   } as const satisfies Record<string, NumSpec>;
 
   // 全欄空なら profile 未指定 → 従来の呼び出しと完全同一

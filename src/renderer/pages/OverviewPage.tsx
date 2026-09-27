@@ -82,7 +82,7 @@ import {
 } from '../../shared/hydroponicCrops';
 import { cropIdText } from '../../shared/hydroponicsControl';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, readNumberOrNull, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, readNumberOrNull, refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { usePlan } from '../plan/usePlan';
 import { DASH, pctOrDash } from '../../shared/formatters';
@@ -280,7 +280,7 @@ function HighlightSettingsPanel({
  * 単価)。費用は 0 が実態のこともある (自己所有なら地代家賃 0)。実測値は
  * **0 = 未測定** が仕様なので、未入力も 0 も黙って通す。
  */
-const HYDRO_SPECS = {
+const HYDRO_SPECS = refusingSpecs('save', {
   floorAreaSqm: { label: '床面積 (m²)', kind: 'area' },
   tiers: { label: '棚の段数', kind: 'tiers', allowZero: false, sane: 30 },
   usableRatioPct: { label: '栽培に使える割合 (%)', kind: 'percent', allowZero: false, max: 100 },
@@ -295,10 +295,13 @@ const HYDRO_SPECS = {
   depreciationYenPerMonth: { label: '減価償却費 (円/月)', kind: 'money' },
   rentYenPerMonth: { label: '地代家賃 (円/月)', kind: 'money' },
   otherFixedYenPerMonth: { label: 'その他固定費 (円/月)', kind: 'money' },
-  switchDaysBeforeHarvest: { label: '切替 (収穫前・日)', kind: 'days', allowZero: false },
+  // 空欄は「未設定」(パス 67) —— 保存は 0 を書くが、`assessLowPotassium` は 0 以下を
+  // `null` として読み、タイルは「未設定」と言う。だから空欄は断らず「算定していない」と述べる
+  // (`absent: 'null'`・パス 493l)。読めない値と 0 は保存を断る (0 は範囲外なので)。
+  switchDaysBeforeHarvest: { label: '切替 (収穫前・日)', kind: 'days', allowZero: false, absent: 'null' },
   measuredPotassiumMgPer100g: { label: '実測カリウム (mg/100g)', kind: 'mgPer100g', allowEmpty: true },
   measuredSodiumMgPer100g: { label: '実測ナトリウム (mg/100g)', kind: 'mgPer100g', allowEmpty: true },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 /** 品目の入力欄の文字列 (品目名 + 数値の欄)。 */
 type CropDraftForm = Record<'label' | CropNumericField, string>;
@@ -454,7 +457,9 @@ function HydroponicsPanel({
     setSaved(true);
   };
 
-  // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
+  // ⛔ の欄が在れば保存を断るので (`refusingSpecs('save')`)、保存に届く値は読めたか空欄である。
+  // 空欄は 0 として書き、欄の文がそう述べる (「保存すると 0 X として記録されます」)。切替日の
+  // 空欄は 0 = 未設定、実測値の空欄は 0 = 未測定として読まれる (パス 493l)。
   const n = readNumberOr0;
 
   const field = (key: keyof typeof form) => (

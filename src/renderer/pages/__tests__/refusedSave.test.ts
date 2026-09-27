@@ -186,7 +186,7 @@ describe('水耕栽培の設備・費用 — ⛔ の欄が在るまま保存し�
     expect(await storedSetups()).toEqual([]);
     // **画面が赤で断っている値を、保存が受け取ってはいけない。**
     expect(says(SAVED_LINE)).toBe(false);
-    expect(refusals().join(' | ')).toContain('床面積 (m²)が入力できる範囲の外なので、保存していません');
+    expect(refusals().join(' | ')).toContain('床面積 (m²)を直すまで、保存していません');
     // ⛔ から作られていた経営サマリーの数字が出ていない。
     expect(says('-￥6,000,000')).toBe(false);
   });
@@ -196,7 +196,9 @@ describe('水耕栽培の設備・費用 — ⛔ の欄が在るまま保存し�
     await clickSave();
     const note = refusals().join(' | ');
     expect(note).toContain('保存していません');
-    expect(note).toContain('赤い欄を範囲内に直すと保存できます');
+    // 原因 (範囲の外) は言わない —— 断る原因は範囲外だけではなく、読めない値や
+    // 0 を受け付けない欄の空欄もある (パス 493l)。直し方は欄の下の文が言う
+    expect(note).toContain('欄の下の指摘どおりに直すと保存できます');
     // 判定用の文面 (パス 209) を流用していない —— 保存は出し直せない。
     expect(note).not.toContain('この判定は算定していません');
   });

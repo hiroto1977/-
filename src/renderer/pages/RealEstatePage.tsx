@@ -29,7 +29,7 @@ import {
 } from '../data/investments';
 import { DASH, jpy, pctOrDash } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { refusalLabels, refusalNote, refusedFields, readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
+import { refusalLabels, refusalNote, refusedFields, refusingSpecs, readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
 import { advisorThresholds, dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
 import type { RealEstateAdviceInput } from '../../shared/serviceAdvisor';
@@ -106,7 +106,7 @@ import {
  * **どれも「計算に使う法定値」ではない**ので `parameters.ts` の台帳には載せない
  * (CLAUDE.md: 安全上限は台帳に載せない)。置き場所はここ 1 か所。
  */
-const ZONING_SPECS = {
+const ZONING_SPECS = refusingSpecs('judgement', {
   site: { label: '敷地面積 (㎡)', kind: 'area' },
   coverage: { label: '建ぺい率 (%)', kind: 'percent', min: 1, max: 100 },
   // `sane` を天井に合わせて**桁の問い合わせを消している**。`percent` の既定は
@@ -120,8 +120,11 @@ const ZONING_SPECS = {
   height: { label: '計画する最高高さ (m)', kind: 'length', max: 300 },
   setback: { label: '道路境界からの後退 (m)', kind: 'length', allowZero: true, max: 100 },
   shadowThreshold: { label: '日影規制の対象高さ (m)', kind: 'length', max: 300 },
-  siteDepth: { label: '敷地の奥行 (m)', kind: 'length', max: 2000 },
-  siteWidth: { label: '敷地の間口 (m)', kind: 'length', max: 2000 },
+  // **空欄は「無い」として読む** (`reNumOrNull` —— パス 77)。0 に倒すと空欄が「建てられる面積 0 ㎡」
+  // という判定になるので、寸法を使う値だけを「—」にする。関門の文もそう言う (パス 493l —— それまでは
+  // 「未入力です。0 m として計算されています」と、読む側がしていないことを述べていた)。
+  siteDepth: { label: '敷地の奥行 (m)', kind: 'length', max: 2000, absent: 'null' },
+  siteWidth: { label: '敷地の間口 (m)', kind: 'length', max: 2000, absent: 'null' },
   rear: { label: '背面の後退 (m)', kind: 'length', allowZero: true, max: 100 },
   side: { label: '側面の後退 合計 (m)', kind: 'length', allowZero: true, max: 200 },
   // **工場プランの 2 欄** (パス 216 で表に足した)。パス 206 がこの表を手で書いたときに
@@ -133,7 +136,7 @@ const ZONING_SPECS = {
   // 0 にも意味が在る (作業場を建てられない用途地域 / 作業場を置かない) ので `allowZero`。
   workshopCap: { label: '作業場の法定上限 (㎡・空欄=制限なし)', kind: 'area', allowEmpty: true, allowZero: true },
   workshopDesired: { label: '希望する作業場面積 (㎡・空欄=上限まで)', kind: 'area', allowEmpty: true, allowZero: true },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 export type ZoningField = keyof typeof ZONING_SPECS;
 
@@ -206,9 +209,13 @@ export const ZONING_READS = {
  * `negativeIsFatal: false`（負の金利・負の入居率は ⛔ にならない）。上限超過だけが
  * この 3 欄の ⛔ で、それも同じ関門が受ける。
  */
-const RE_SPECS = {
+const RE_SPECS = refusingSpecs('judgement', {
   rent: { label: '月額賃料', kind: 'money' },
-  price: { label: '物件価格', kind: 'money', allowZero: false },
+  // **空欄は「算定しない」** (パス 493l)。読みは 0 だが、試算は物件価格 0 を「未入力」として扱い、
+  // 利回りの 3 タイルを「—」にして理由 (`missingPriceNote`) を出す —— 価格を読まない CCR と
+  // 返済後 CF は出し続ける。段ごと断ると、それらまで消える (`leverageScopeOnScreen.test.ts`)。
+  // `0` と打てば ⛔ (0 円 では計算できません) で、その段は断る —— 空欄と 0 は別。
+  price: { label: '物件価格', kind: 'money', allowZero: false, absent: 'null' },
   expense: { label: '年間経費', kind: 'money', allowZero: true },
   equity: { label: '自己資金', kind: 'money', allowZero: true },
   debt: { label: '年間返済額', kind: 'money', allowZero: true },
@@ -219,7 +226,7 @@ const RE_SPECS = {
   saleNet: { label: '売却ネット手取り', kind: 'money', allowZero: true },
   bldgCost: { label: '建物取得価額 (円)', kind: 'money', allowZero: false },
   bldgLife: { label: '耐用年数 (年)', kind: 'years', min: 1, max: 100 },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 export type ReField = keyof typeof RE_SPECS;
 
@@ -268,18 +275,21 @@ export const RE_READS = {
  * 100% が成立しないこと・`max: 24` は 1 日) ので `parameters.ts` には載せない
  * (CLAUDE.md の規約・パス 206 と同じ判断)。
  */
-const WC_SPECS = {
+const WC_SPECS = refusingSpecs('judgement', {
   vol: { label: '循環量 (L)', kind: 'liters', allowZero: false, sane: 1e6 },
   cycle: { label: '交換周期 (日)', kind: 'days', allowZero: false, max: 365 },
-  recovery: { label: 'RO 回収率 (%)', kind: 'percent', min: 1, max: 99 },
-  rejection: { label: 'RO 塩除去率 (%)', kind: 'percent', min: 1, max: 100 },
+  // **空欄は「算定しない」** (パス 493l)。読みは 0 だが、水収支と塩類蓄積は 0 を「未入力」として
+  // 扱い、タイルを「—」にして理由 (`data-recovery-unset` / `data-rejection-unset`) を出す ——
+  // 濃度だけで決まる地下水基準比は出し続ける (`waterCycleUnsetOnScreen.test.ts`)。
+  recovery: { label: 'RO 回収率 (%)', kind: 'percent', min: 1, max: 99, absent: 'null' },
+  rejection: { label: 'RO 塩除去率 (%)', kind: 'percent', min: 1, max: 100, absent: 'null' },
   window: { label: 'RO 処理目標 (h)', kind: 'hours', allowZero: false, max: 24 },
   roCap: { label: 'RO 機の日産 (L/日・空欄可)', kind: 'liters', allowEmpty: true, allowZero: true, sane: 1e6 },
   tank: { label: '曝気タンク容量 (L)', kind: 'liters', allowZero: false, sane: 1e6 },
   n: { label: '硝化する N 濃度 (mg/L)', kind: 'ppm', allowZero: true },
   concN: { label: '濃縮液の全窒素 (mg/L)', kind: 'ppm', allowZero: true },
   concP: { label: '濃縮液の全りん (mg/L)', kind: 'ppm', allowZero: true },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 type WcField = keyof typeof WC_SPECS;
 

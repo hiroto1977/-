@@ -212,7 +212,8 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     ]) {
       expect(t.get(label), label).toBeUndefined();
     }
-    await waitForText(text, '商品代金 (輸入・円)が入力できる範囲の外');
+    // 断りは原因を言わず結果を言う (パス 493l —— 原因は欄の下の文が 1 つずつ言う)
+    await waitForText(text, '商品代金 (輸入・円)を直すまで、この判定は算定していません');
     // **0 に倒れた課税価格 (¥35,000 = 運賃 30,000 + 保険料 5,000) が出ていない。**
     for (const v of t.values()) expect(v).not.toBe('¥35,000');
     // 輸出の節は別の欄なので残る。

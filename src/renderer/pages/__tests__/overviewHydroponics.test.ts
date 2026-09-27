@@ -348,7 +348,10 @@ describe('経営サマリー — 水耕栽培の設備入力の番人 (黙って
     await mountOverview();
     await act(async () => { changeInput(q.numInput('床面積 (m²)'), '百'); });
     expect(q.numInput('床面積 (m²)').getAttribute('aria-invalid')).toBe('true');
-    expect(guardMessage('床面積 (m²)')).toContain('「百」を数値として読み取れません。0 ㎡ として計算されています。');
+    // 欄の文は画面の扱いどおりに「保存できません」と言う (パス 493l)。直す前は
+    // 「0 ㎡ として計算されています」と言いながら、下の保存はこの値を断っていた
+    expect(guardMessage('床面積 (m²)')).toContain('「百」を数値として読み取れません。直すまで保存できません。');
+    expect(guardMessage('床面積 (m²)')).not.toContain('として計算されています');
     await click(q.button('保存して経営サマリーへ反映'));
     // **パス 214 で「保存すると 0 で入る」から「保存しない」へ変えた。** この検査は
     // 見出しにまで `(保存すると 0 で入る)` と書いて**欠陥を期待値として固定していた** ——
@@ -357,9 +360,8 @@ describe('経営サマリー — 水耕栽培の設備入力の番人 (黙って
     // **同じ形を 2 パス連続で踏んだ**。⛔ の欄が在れば書かない (`refusedSave.test.ts`)。
     const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
     expect(setups).toEqual([]);
-    // ⚠️ 文言の「0 ㎡ として計算されています」はこの欄については既に正しくない ——
-    // `guardNumber` は自分の値を読む段や保存が断るかを知らない。順序は
-    // 「残りの欄を断りで覆う → そのうえで文面から 0 の句を落とす」(REMAINING_WORK パス 214)。
+    // パス 214 が残した「文言の 0 の句はこの欄について既に正しくない」はパス 493l で閉じた ——
+    // 宣言が「⛔ の間は保存を断る」を持ち (`refusingSpecs('save')`)、関門がそれに従って文を選ぶ。
   });
 
   it('単位語つき (10万) は単位を外すよう促す', async () => {
@@ -376,6 +378,17 @@ describe('経営サマリー — 水耕栽培の設備入力の番人 (黙って
     await waitForText(screenText, '保存しました。経営サマリーに反映されています。');
     const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
     expect(setups[0]!.data.floorAreaSqm).toBe(100);
+  });
+
+  it('★ 費用の空欄は「保存すると 0 円 として記録されます」と述べ、そのとおり 0 で保存される (パス 493l)', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.numInput('地代家賃 (円/月)'), ''); });
+    expect(q.numInput('地代家賃 (円/月)').getAttribute('data-guard-outcome')).toBe('savedAsZero');
+    expect(guardMessage('地代家賃 (円/月)')).toContain('未入力です。保存すると 0 円 として記録されます。');
+    await click(q.button('保存して経営サマリーへ反映'));
+    await waitForText(screenText, '保存しました。経営サマリーに反映されています。');
+    const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+    expect(setups[0]!.data.rentYenPerMonth, '「0 として記録」と言った値が 0 で保存されていない').toBe(0);
   });
 
   it('試算が意味を失う欄は 0 を断り、費用の 0 は通す', async () => {
@@ -397,9 +410,14 @@ describe('経営サマリー — 水耕栽培の設備入力の番人 (黙って
 
   it('切替日数は日の単位で言う (kWh/kg や mg/L を借りない)', async () => {
     await mountOverview();
+    // 単位語は桁の尋ねに出る。読めない値の文は単位ではなく結果 (保存できない) を言う (パス 493l)
+    await act(async () => { changeInput(q.numInput('電力原単位 (kWh/kg)'), '150'); });
+    expect(guardMessage('電力原単位 (kWh/kg)')).toContain('150 kWh/kg は想定の範囲を超えています。');
     await act(async () => { changeInput(q.numInput('電力原単位 (kWh/kg)'), 'abc'); });
-    expect(guardMessage('電力原単位 (kWh/kg)')).toContain('0 kWh/kg として計算されています。');
+    expect(guardMessage('電力原単位 (kWh/kg)')).toContain('「abc」を数値として読み取れません。直すまで保存できません。');
     await enableLowK();
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '4000'); });
+    expect(guardMessage('切替 (収穫前・日)')).toContain('4,000 日 は想定の範囲を超えています。');
     await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '7.5'); });
     expect(guardMessage('切替 (収穫前・日)')).toContain('整数で入力してください（現在 7.5）');
   });
@@ -456,6 +474,11 @@ describe('経営サマリー 低カリウム — 切替日が未入力', () => {
     // でも警告が出ていた**ことを留めるため。
     await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '120'); });
     await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), ''); });
+    // 空欄は「未設定」—— 欄は保存を断らず、「算定していない」と述べる (パス 493l・`absent: 'null'`)。
+    // 0 を受け付けない欄の空欄は断るのが既定だが、ここは空欄が正当な状態 (パス 67) なので宣言が決める
+    const field = q.numInput('切替 (収穫前・日)');
+    expect(field.getAttribute('data-guard-outcome')).toBe('notComputed');
+    expect(field.parentElement?.textContent ?? '').toContain('未入力です。この欄を使う値は算定していません。');
     await click(q.button('保存して経営サマリーへ反映'));
     // 「切替 (収穫前)」タイルは**保存レコードが在るときだけ**出る —— それが錠。
     await waitForText(screenText, '切替 (収穫前)');

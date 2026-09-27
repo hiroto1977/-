@@ -28,7 +28,7 @@ import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax 
 import { useParameters } from '../data/parameterOverrides';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { displayField } from '../../shared/apiResponse';
 import { MAX_MEMBER_NAME_CHARS, MAX_MEMBER_EMAIL_LEN } from '../data/members';
@@ -39,13 +39,13 @@ import { MAX_MEMBER_NAME_CHARS, MAX_MEMBER_EMAIL_LEN } from '../data/members';
  * 打つと通勤手当 0・賞与 0 のまま「非課税 ¥0 / 源泉徴収税額 ¥0」と自信ありげに出た。
  * 税額の欄で黙って 0 になるのは、試算の欄より重い。
  */
-const PAYROLL_SPECS = {
+const PAYROLL_SPECS = refusingSpecs('judgement', {
   commute: { label: '公共交通機関の月額 (円)', kind: 'money', sane: 1_000_000 },
   km: { label: 'マイカー片道 (km)', kind: 'km' },
   bonus: { label: '賞与額 (円)', kind: 'money' },
   si: { label: '社会保険料 (円)', kind: 'money' },
   prevSalary: { label: '前月給与 (社保控除後・円)', kind: 'money' },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 /**
  * **どの数字がどの欄を読むか** (パス 213)。

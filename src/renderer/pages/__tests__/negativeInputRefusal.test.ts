@@ -40,6 +40,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -187,7 +188,7 @@ describe('不動産の試算 — ⛔ のマイナスから判定を作らない 
     const body = text();
     expect(body).not.toContain('4.80%');
     expect(body).not.toContain('1.28');
-    expect(refusals().join(' | ')).toContain('年間経費が入力できる範囲の外');
+    expect(refusals().join(' | ')).toContain('年間経費を直すまで、この判定は算定していません');
     // 減価償却は別の欄を読むので黙らせない。
     expect(t.get('年間減価償却費 (定額法)')).toBe('¥531,915');
   });
@@ -225,19 +226,24 @@ describe('不動産の試算 — ⛔ のマイナスから判定を作らない 
     expect(refusals().join(' | ')).toContain('月額賃料');
   });
 
-  it('★ 耐用年数が空欄なら「償却年数 —」(⚠️ の段は描くので、ここが案内文の出口だった)', async () => {
+  it('★ 耐用年数が空欄なら償却の段を断る (「年間減価償却費 ¥0」と答えない・パス 493l)', async () => {
     await mountPage('real-estate');
     const input = await typeField('耐用年数 (年)', '');
-    // **空欄は ⚠️ (fatal ではない)** ので段は描かれる —— 欄が「未入力です。0 年 として
-    // 計算されています」と既に述べているため。だから `DASH` の枝に届くのはこの道だけで、
-    // 直す前はここに **「1〜100 年で入力してください」が Stat の値として**入っていた。
+    // 空欄は ⚠️ のまま (赤ではない) だが、**この欄は 0 年を受け付けない** (下限 1 年) ——
+    // 直す前は「未入力です。0 年 として計算されています」と述べて段を描き、
+    // 「年間減価償却費 ¥0」「償却年数 —」を出していた (計算できない値で計算した答え)。
+    // 今は欄が「入力するまで判定を出さない」と述べ、段がそのとおり断る。
     expect(input.getAttribute('data-guard')).toBe('warn');
+    expect(input.getAttribute('data-guard-outcome')).toBe('refused');
+    await waitForText(
+      () => input.parentElement?.textContent ?? '',
+      '未入力です。入力するまで、この欄を使う判定は出していません。',
+    );
     const t = tiles();
-    expect(t.get('償却年数')).toBe('—');
+    expect(t.get('償却年数')).toBeUndefined();
+    expect(t.get('年間減価償却費 (定額法)')).toBeUndefined();
     expect(text()).not.toContain('年で入力してください');
-    // 段は断っていないので、隣のタイルは出る (0 年での償却費は 0 円)。
-    expect(t.get('年間減価償却費 (定額法)')).toBe('¥0');
-    expect(refusals()).toEqual([]);
+    expect(refusals().join(' | ')).toContain('耐用年数 (年)を直すまで、この判定は算定していません');
   });
 
   it('★ 耐用年数がマイナスなら、償却の段を断る (数の枠に案内文を入れない)', async () => {

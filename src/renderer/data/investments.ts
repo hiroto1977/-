@@ -16,7 +16,7 @@
  */
 
 import { readNumeric } from '../../shared/readNumeric';
-import type { NumSpec } from './inputGuards';
+import { refusingSpecs, type NumSpec } from './inputGuards';
 import { moreThanChars } from '../../shared/inputCeiling';
 import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT } from '../../shared/mutualFundsMetrics';
 
@@ -179,7 +179,7 @@ function unreadablePropertyFields(
 
 /**
  * 数値入力 (文字列可) を非負の有限数に。不正は null。空欄は 0
- * (入力欄の番人も「未入力です。0 円 として計算されています」と言う)。
+ * (入力欄の番人も「未入力です。保存すると 0 円 として記録されます」と言う —— パス 493l)。
  *
  * 文字列は**画面と同じ** `readNumeric` で読む。2026-09-06 まではここだけ
  * `Number(カンマと空白を外した文字列)` で、同じ欄について
@@ -212,7 +212,9 @@ function numberFrom(v: unknown): number {
 
 /**
  * 入力欄の文字列を数へ。**空欄は 0** —— 入力欄の番人も「未入力です。
- * 0 円 として計算されています」と言うので、保存も同じ読み方をする。
+ * 保存すると 0 円 として記録されます」と言うので、保存も同じ読み方をする
+ * (取得価格の空欄は 0 を受け付けないので、番人は「入力するまで保存できません」と言い、
+ * 下の `<= 0` が断る —— パス 493l)。
  * 読めなければ NaN (呼び出し側の `Number.isFinite` が 1 か所で断る)。
  */
 function readTypedAmount(text: string): number {
@@ -230,13 +232,18 @@ function readTypedAmount(text: string): number {
  * `guardNumber` が `fatal` を返す入力はすべて保存前に断られている。
  * この検査は**将来のずれ**のためにある (たとえば天井 `sane` を宣言に足すと、
  * 画面は ⛔ にするが `toAmount` は通してしまう)。
+ *
+ * ★ **保存の欄として包む** (`refusingSpecs('save', …)` · パス 493l)。欄の文は結果を述べる
+ * ので (「直すまで保存できません」「保存すると 0 円 として記録されます」)、書き手との一致は
+ * **両方向**になった —— 関門が断る ⇔ 書き手が投げる。直す前は取得価格の空欄が
+ * 「0 円 として計算されています」と言いながら書き手に断られていた。
  */
-export const PROPERTY_FORM_SPECS = {
+export const PROPERTY_FORM_SPECS = refusingSpecs('save', {
   monthlyRent: { label: '家賃 (月・円)', kind: 'money' },
   purchasePrice: { label: '取得価格 (円)', kind: 'money', allowZero: false },
   monthlyExpenses: { label: '月次経費 (任意)', kind: 'money', allowEmpty: true, allowZero: true },
   monthlyLoan: { label: '月次返済 (任意)', kind: 'money', allowEmpty: true, allowZero: true },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 export function parsePropertyEntry(input: {
   name?: unknown;

@@ -141,7 +141,9 @@ describe('敷地プランナー — ⛔ の欄から判定を作らない', () =
     expect(t).not.toContain('道路斜線の高さ限度');
     expect(t).not.toContain('この高さに必要な最小後退');
     expect(t).not.toContain('日影規制を避けられる上限');
-    expect(refusals().join(' | ')).toContain('計画する最高高さ (m)が入力できる範囲の外');
+    // 断りは原因を言わず結果を言う (パス 493l)。原因 (上限) は欄の下の ⛔ が言う
+    expect(refusals().join(' | ')).toContain('計画する最高高さ (m)を直すまで、この判定は算定していません');
+    expect(input.parentElement?.textContent ?? '').toContain('以下で入力してください（現在 400）。直すまで、この欄を使う判定は出していません。');
     // **読んでいない段は黙らせない** —— 敷地の段は高さを読まない。
     expect(t).toContain('適用建ぺい率');
   });

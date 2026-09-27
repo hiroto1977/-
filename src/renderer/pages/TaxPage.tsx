@@ -26,7 +26,7 @@ import {
   lookupVat,
   type CustomsBasis,
 } from '../../shared/tradeTax';
-import { dependentCountSpec, guardAll, readNumber, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { dependentCountSpec, guardAll, readNumber, refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { useParameters } from '../data/parameterOverrides';
 import {
@@ -191,7 +191,18 @@ const num = (s: string): number => {
   return v !== null && v > 0 ? v : 0;
 };
 
-const TRADE_SPECS = {
+/**
+ * **課税期間の 2 欄** (消費税の申告期限・中間納付の日程)。⛔ の間は期限の判定を出さない
+ * (`refusingSpecs('judgement')` · パス 493l) —— 期限を断るのは `isRepresentableFiscalPeriod` で、
+ * 範囲はその定数 (`MIN_FISCAL_YEAR` / `MAX_FISCAL_YEAR`) をそのまま読む (写すと、範囲を
+ * 変えた日に欄の文だけが古い範囲で「判定は出していません」と言う)。
+ */
+const CS_PERIOD_SPECS = refusingSpecs('judgement', {
+  endMonth: { label: '決算月 (1-12)', kind: 'calendarMonth', min: 1, max: 12 },
+  endYear: { label: '課税期間の終了年 (西暦)', kind: 'calendarYear', min: MIN_FISCAL_YEAR, max: MAX_FISCAL_YEAR },
+} as const satisfies Record<string, NumSpec>);
+
+const TRADE_SPECS = refusingSpecs('judgement', {
   imGoods: { label: '商品代金 (輸入・円)', kind: 'money', allowZero: false },
   imFreight: { label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true },
   imInsurance: { label: '保険料 (輸入・円)', kind: 'money', allowZero: true },
@@ -199,7 +210,7 @@ const TRADE_SPECS = {
   exGoods: { label: '商品代金 (輸出・円)', kind: 'money', allowZero: false },
   exFreight: { label: '国際運賃 (輸出・円)', kind: 'money', allowZero: true },
   exInsurance: { label: '保険料 (輸出・円)', kind: 'money', allowZero: true },
-} as const satisfies Record<string, NumSpec>;
+} as const satisfies Record<string, NumSpec>);
 
 /**
  * **どの段がどの欄を読むか。**
@@ -612,8 +623,12 @@ export function TaxPage() {
       // その結果 `1926-05-31` のような**もっともらしい誤った申告期限**が出ていた。
       // いまは打った値をそのまま渡し、`isRepresentableFiscalPeriod` が範囲外を
       // 断り、下の注記が理由を述べる。
-      fiscalEndMonth: csFiler === 'individual' ? 12 : Math.round(num(csEndMonth)),
-      fiscalEndYear: Math.round(num(csEndYear)),
+      // ★ **小数も丸めない** (パス 493l)。それまで `Math.round` を通しており、1999.6 年・12.4 月が
+      // 2000 年・12 月として期限を作っていた —— 欄の関門は同じ値を「2000 年 以上で入力してください。
+      // 直すまで、この欄を使う判定は出していません」と断るので、欄の文と画面が食い違った。
+      // 丸めなければ小数は `Number.isInteger` で断られ、関門が断る値と期限を出さない値が一致する。
+      fiscalEndMonth: csFiler === 'individual' ? 12 : num(csEndMonth),
+      fiscalEndYear: num(csEndYear),
       extendedDeadline: csFiler === 'corporate' && csExtended,
       method: csMethod,
       taxableSales: num(ctSalesStr) + num(ctReducedSalesStr),
@@ -1694,9 +1709,13 @@ export function TaxPage() {
             </select>
           </label>
           {csFiler === 'corporate' && (
-            <GuardedNumber spec={{ label: '決算月 (1-12)', kind: 'calendarMonth', min: 1, max: 12 }} value={csEndMonth} onChange={setCsEndMonth} width={110} />
+            <GuardedNumber spec={CS_PERIOD_SPECS.endMonth} value={csEndMonth} onChange={setCsEndMonth} width={110} />
           )}
-          <GuardedNumber spec={{ label: '課税期間の終了年 (西暦)', kind: 'calendarYear', min: 2000, max: 2100 }} value={csEndYear} onChange={setCsEndYear} width={150} />
+          {/* **⛔ の間は期限の判定を出さない** (`CS_PERIOD_SPECS` —— パス 493l)。読めない値・空欄は
+              `num()` で 0 になり、範囲外と小数は丸めずに渡すので、どれも `isRepresentableFiscalPeriod` が
+              期限を断る。欄の文は「0 年 として計算されています」ではなくその断りを述べる
+              (下の `data-cs-period-unrepresentable`)。 */}
+          <GuardedNumber spec={CS_PERIOD_SPECS.endYear} value={csEndYear} onChange={setCsEndYear} width={150} />
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             納付方式
             <select value={csMethod} onChange={(e) => setCsMethod(e.target.value as typeof csMethod)} style={{ ...inputStyle, width: 170 }}>
@@ -1748,6 +1767,9 @@ export function TaxPage() {
         {!isRepresentableFiscalPeriod(csInput) && (
           <div
             data-cs-period-unrepresentable
+            // 欄の文 (「直すまで、この欄を使う判定は出していません」) が指す断りはこれ (パス 493l) ——
+            // 断りの部品 (`RefusedFieldsNote`) と同じ印を持たせ、検査が同じ規則で見つけられるようにする。
+            data-refused-fields
             style={{ border: '1px solid #e5484d', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 12, color: '#e5484d', lineHeight: 1.6 }}
           >
             <strong>申告期限・中間納付の日程は算定していません</strong> —— 課税期間の終了年は{' '}

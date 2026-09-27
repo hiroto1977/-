@@ -14,7 +14,9 @@ import {
   normalizeProperty,
   occupiedWithoutRentNote,
   yieldScopeNote,
+  PROPERTY_FORM_SPECS,
 } from '../investments';
+import { guardNumber } from '../inputGuards';
 import { SNAPSHOT } from '../snapshot';
 import {
   RETURN_ENTRY_CEILING_PCT,
@@ -83,9 +85,11 @@ describe('parsePropertyEntry (不動産の任意追加)', () => {
       .toThrow('月次返済額は 0 以上の数値で入力してください');
   });
 
-  it('★ 家賃の空欄・空白だけは 0 円 (番人も「0 円 として計算されています」と言う)', () => {
+  it('★ 家賃の空欄・空白だけは 0 円 (番人も「保存すると 0 円 として記録されます」と言う)', () => {
     expect(parsePropertyEntry({ ...valid, monthlyRent: '' }).monthlyRent).toBe(0);
     expect(parsePropertyEntry({ ...valid, monthlyRent: '   ' }).monthlyRent).toBe(0);
+    // 番人の文が書き手のしていることを言う (パス 493l —— 「計算されています」ではなく「記録されます」)
+    expect(guardNumber('', PROPERTY_FORM_SPECS.monthlyRent)?.message).toBe('未入力です。保存すると 0 円 として記録されます。');
     // 対照: 読めない文字列は 0 に倒さず断る (空欄と「読めない」を混ぜない)
     expect(() => parsePropertyEntry({ ...valid, monthlyRent: 'abc' })).toThrow('家賃');
   });

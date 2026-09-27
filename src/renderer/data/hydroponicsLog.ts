@@ -38,7 +38,7 @@ import {
   type EnvironmentTargets,
   type HydroponicReading,
 } from '../../shared/hydroponicsControl';
-import type { NumKind, NumSpec } from './inputGuards';
+import type { NumKind, RefusingSpec } from './inputGuards';
 import { latestRecord } from './latestRecord';
 import { relationIssue } from './recordRelations';
 
@@ -202,8 +202,12 @@ const CONTROL_KINDS: Readonly<Record<ControlFieldKey, NumKind>> = {
  *
  * **空欄はどの欄でも許す** —— 必須の欄は `parseControlRecord` の `req` が
  * 既定へ倒すので、「0 ℃ として計算されています」は**その欄については嘘**になる。
+ *
+ * **⛔ の間は保存を断る** (`refusedBy: 'save'` —— パス 373 から画面の保存がそうしていた)。
+ * パス 493l までは宣言がそれを持たず、読めない値の欄は「0 ℃ として計算されています」と
+ * 言いながら保存を断っていた。
  */
-export const HYDROPONICS_CONTROL_SPECS: Readonly<Record<ControlFieldKey, NumSpec>> = Object.freeze(
+export const HYDROPONICS_CONTROL_SPECS: Readonly<Record<ControlFieldKey, RefusingSpec>> = Object.freeze(
   Object.fromEntries(
     (Object.keys(CONTROL_FIELD_BOUNDS) as readonly ControlFieldKey[]).map((k) => {
       const b = CONTROL_FIELD_BOUNDS[k];
@@ -217,11 +221,12 @@ export const HYDROPONICS_CONTROL_SPECS: Readonly<Record<ControlFieldKey, NumSpec
           min: b.min,
           max: b.max,
           sane: b.max,
-        } satisfies NumSpec,
+          refusedBy: 'save',
+        } satisfies RefusingSpec,
       ];
     }),
   ),
-) as Readonly<Record<ControlFieldKey, NumSpec>>;
+) as Readonly<Record<ControlFieldKey, RefusingSpec>>;
 
 /**
  * 運転の設定を読んだ結果。**幅の外だった欄も返す** ——

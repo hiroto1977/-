@@ -4,9 +4,11 @@ import { guardCounts, guardNumber, type GuardIssue, type NumSpec } from '../data
 /**
  * 数値入力欄 + その場の指摘。
  *
- * 試算画面の入力は読めなければ 0 に落ちる。0 に落ちたことを黙っていると、
- * 画面には自信のある間違った数字が出る。ここでは入力欄のすぐ下に
- * 「0 として計算されています」を出し、枠の色も変える。
+ * 読めない値・空欄を画面がどう扱ったかを、入力欄のすぐ下に出し、枠の色も変える ——
+ * 黙っていると、画面には自信のある間違った数字が出る。**何と言うかは宣言が決める**
+ * (パス 493l): 0 として計算する欄は「0 として計算されています」、段ごと断る欄は
+ * 「この欄を使う判定は出していません」、保存の欄は「保存できません」。関門が選んだ結果は
+ * `data-guard-outcome` にも載せる (検査が文ではなく値で読めるように)。
  */
 
 const FATAL = '#e5484d';
@@ -41,6 +43,7 @@ export function GuardedNumber({
         aria-label={spec.label}
         aria-invalid={issue?.level === 'fatal' || undefined}
         data-guard={issue ? issue.level : 'ok'}
+        data-guard-outcome={issue?.outcome ?? undefined}
         onChange={(e) => onChange(e.target.value)}
         style={{
           background: 'var(--bg-elev)',
@@ -66,10 +69,17 @@ export function GuardedNumber({
 /**
  * 入力欄が多い画面用のまとめ表示。欄ごとに出すと画面が壊れる場所で使う。
  * 指摘がなければ何も描かない（平常時に場所を取らない）。
+ *
+ * ★ **見出しと前置きは、指摘が述べた結果から組む** (パス 493l)。それまで見出しは ⛔ の件数を
+ * 「読み取れない入力 N 件」と呼び、前置きは指摘の中身を問わず「読み取れなかった欄は 0 として
+ * 計算されています」と出していた。実測: iDeCo の掛金が上限を超えただけ (読める値) で
+ * 「読み取れない入力 1 件」、扶養の人数が 20 人を超えただけ (計算は 20 人で行う) でも
+ * 「0 として計算されています」と言っていた。前置きは **0 として計算した欄が在るときだけ**、その数を言う。
  */
 export function GuardSummary({ issues, title = '入力の確認' }: { issues: readonly GuardIssue[]; title?: string }) {
   if (issues.length === 0) return null;
   const { fatal, warn } = guardCounts(issues);
+  const zeroed = issues.filter((i) => i.outcome === 'computedAsZero').length;
   return (
     <div
       data-guard-summary
@@ -86,11 +96,13 @@ export function GuardSummary({ issues, title = '入力の確認' }: { issues: re
       }}
     >
       <strong style={{ fontSize: 12 }}>
-        {fatal ? '⛔' : '⚠️'} {title} — 読み取れない入力 {fatal} 件 / 要確認 {warn} 件
+        {fatal ? '⛔' : '⚠️'} {title} — 直す必要のある入力 {fatal} 件 / 要確認 {warn} 件
       </strong>
-      <div style={{ color: 'var(--text-mute)' }}>
-        読み取れなかった欄は 0 として計算されています。下の数字はその前提の値です。
-      </div>
+      {zeroed > 0 && (
+        <div data-guard-summary-zeroed={zeroed} style={{ color: 'var(--text-mute)' }}>
+          0 として計算した欄が {zeroed} 件あります。下の数字はその前提の値です。
+        </div>
+      )}
       {issues.map((it, i) => (
         <div key={i} style={{ color: it.level === 'fatal' ? FATAL : WARN, marginTop: 4 }}>
           {it.level === 'fatal' ? '⛔' : '⚠️'} 「{it.label}」{it.message}
