@@ -138,6 +138,49 @@ describe('requiredRevenueForTarget', () => {
     const r = requiredRevenueForTarget(base, 500);
     expect(r.requiredRevenue).toBe(1500);
     expect(r.upliftPct).toBe(50);
+    expect(r.reachedWithoutSales).toBe(false);
+  });
+
+  /**
+   * **★ 必要売上は 0 を下回らない (2026-09-27 · パス 493q)。**
+   *
+   * 赤字を目標にして、その額が固定費より大きいと (固定費 + 目標) が負になる。直す前は
+   * それを限界利益率で割って「必要売上 −…」を刷っていた。売上 0 でも営業利益は −固定費
+   * なので、目標には売上 0 で届く。main の双子は最初から `Math.max(0, …)` だった。
+   */
+  it('★ 固定費より大きい赤字の目標は「売上 0 で届く」 —— 負の必要売上を刷らない', () => {
+    // base: 固定費 250 / 限界利益率 0.5。目標 −1000 → 直す前は (250 − 1000) / 0.5 = −1500
+    const r = requiredRevenueForTarget(base, -1000);
+    expect(r.requiredRevenue).toBe(0);
+    expect(r.upliftPct).toBe(-100);
+    expect(r.reachedWithoutSales).toBe(true);
+    expect(r.targetOperatingProfit).toBe(-1000);
+    // 標本: 直す前の式はこの入力で負になる (上の主張が空でない証拠)
+    expect(Math.round((250 + -1000) / 0.5)).toBe(-1500);
+  });
+
+  it('境目: 固定費と同じ赤字は売上 0 でちょうど届く / 1 円小さい赤字は売上が要る', () => {
+    const at = requiredRevenueForTarget(base, -250);
+    expect(at.requiredRevenue).toBe(0);
+    expect(at.reachedWithoutSales).toBe(true);
+    const inside = requiredRevenueForTarget(base, -249);
+    expect(inside.requiredRevenue).toBe(2); // (250 − 249) / 0.5
+    expect(inside.reachedWithoutSales).toBe(false);
+  });
+
+  it('固定費より小さい赤字の目標は、今までどおり正の必要売上 (赤字の目標そのものは断らない)', () => {
+    const r = requiredRevenueForTarget(base, -100);
+    expect(r.requiredRevenue).toBe(300); // (250 − 100) / 0.5
+    expect(r.reachedWithoutSales).toBe(false);
+  });
+
+  it('算定不能なら「売上 0 で届く」とも言わない', () => {
+    const zero = requiredRevenueForTarget({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 }, -1000);
+    expect(zero.requiredRevenue).toBeNull();
+    expect(zero.reachedWithoutSales).toBe(false);
+    const noContribution = requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 0, sga: 10, depreciation: 0 }, -1000);
+    expect(noContribution.requiredRevenue).toBeNull();
+    expect(noContribution.reachedWithoutSales).toBe(false);
   });
 });
 

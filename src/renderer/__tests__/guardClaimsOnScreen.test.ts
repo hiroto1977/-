@@ -292,6 +292,10 @@ function claims(): { key: string; which: 'abc' | 'empty'; outcome: string; probl
 describe('関門が述べた結果を画面がしている (パス 493l)', () => {
   it('★ 走査が痩せていない (欄の数と、結果ごとの主張の数)', () => {
     // 実測 (2026-09-27): 5 画面 91 欄・主張 177 (断る 110 / 0 として計算 52 / 保存で 0 10 / 算定しない 5)。
+    // パス 493q で関門の無い素の入力 4 欄を関門へ移し、**6 画面 95 欄・主張 181 (断る 114)** —— 増えたのは
+    // 経営サマリーの養液 EC / pH と、制度判定 (funding) の年齢 / 経営管理の従事年数 (空欄は許すので断る主張だけ)。
+    // 目標営業利益の欄は KPI 実績が在るときだけ描かれるので、この走査 (空の保管層) には映らない ——
+    // 断りは `sensitivityMarginOnScreen.test.ts` が画面で見る。
     // 床は実測に張り付けない (直した日に落ちる門にしない) —— 走査が死んでいないことだけを見る。
     expect(probes.length).toBeGreaterThanOrEqual(80);
     expect(new Set(probes.map((p) => p.page)).size).toBeGreaterThanOrEqual(5);

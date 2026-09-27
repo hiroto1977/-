@@ -245,3 +245,58 @@ describe('経営サマリー 損益感度分析 — 売上 0 の期', () => {
     expect(t).not.toContain('限界利益が非正のため算定できません');
   });
 });
+
+/**
+ * **目標利益の欄は読めない値を黙らず、負の必要売上を刷らない** (2026-09-27 · パス 493q)。
+ *
+ * それまで素の `<input>` で、`100万` (日本語で金額を打つ普通の形) は読めずに `null` —— 画面は
+ * **何も言わず**に逆算を出さなかった。赤字の目標が固定費より大きいと、(固定費 + 目標) ÷ 限界利益率
+ * が負になり「必要売上 −￥7,833,333（現状から −883.3%）」を刷っていた。
+ */
+describe('経営サマリー 目標利益から必要売上を逆算 — 関門と売上の床 (パス 493q)', () => {
+  const setGoal = async (value: string): Promise<void> => {
+    const input = await waitForElement(goalInput, '目標営業利益の欄');
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+    await act(async () => {
+      setter?.call(input, value);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  };
+  const refusedNote = (): string => container.querySelector('[data-refused-fields]')?.textContent ?? '';
+
+  it('★ 読めない値 (100万) は黙らず断り、欄を名指しする —— 逆算は出さない', async () => {
+    await seed(WITH_REVENUE);
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
+    await setGoal('100万');
+    await waitForText(refusedNote, '目標営業利益');
+    expect(refusedNote()).toContain('この判定は算定していません');
+    expect(text()).not.toMatch(/必要売上\s*￥/);
+    expect(goalInput()!.getAttribute('data-guard-outcome')).toBe('refused');
+  });
+
+  it('★ 固定費より大きい赤字の目標は「売上 0 で届く」と言い、負の必要売上を刷らない', async () => {
+    // 売上 100 万・変動費 40 万・固定費 30 万 → 限界利益率 0.6。
+    // 直す前: (300,000 − 5,000,000) ÷ 0.6 = −7,833,333 を「必要売上」として刷っていた
+    await seed(WITH_REVENUE);
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
+    await setGoal('-5000000');
+    await waitForText(text, '売上が無くても営業利益は');
+    const t = text();
+    expect(t).toMatch(/必要売上\s*￥0（/);
+    expect(container.querySelector('[data-target-reached-without-sales]')?.textContent).toContain('-￥300,000');
+    // 不在の主張の標本: 負の必要売上はこの形で刷られていた
+    expect(t).not.toMatch(/必要売上\s*-￥/);
+    expect('必要売上 -￥7,833,333（現状から -883.3%）').toMatch(/必要売上\s*-￥/);
+    expect(refusedNote()).toBe('');
+  });
+
+  it('対照: 固定費より小さい赤字の目標は、今までどおり正の必要売上 (赤字の目標は断らない)', async () => {
+    await seed(WITH_REVENUE);
+    await mountOverview(sensitivityReady, '損益感度分析の表に 5 行が出る');
+    await setGoal('-100000');
+    // (300,000 − 100,000) ÷ 0.6 = 333,333
+    await waitForText(text, '333,333');
+    expect(container.querySelector('[data-target-reached-without-sales]')).toBeNull();
+    expect(refusedNote()).toBe('');
+  });
+});

@@ -99,7 +99,11 @@ export type NumKind =
   | 'liters' // L
   | 'ppmAir' // ppm (空気中の CO₂ —— `ppm` は単位語が mg/L なので借りない)
   | 'normality' // N (規定度)
-  | 'ecRise'; // mS/cm (原液 1 mL/L あたりの EC 上昇)
+  | 'ecRise' // mS/cm (原液 1 mL/L あたりの EC 上昇)
+  // 経営サマリーの養液の点検と、受給判定の年齢が足した 3 種 (2026-09-27 · パス 493q)。
+  | 'ec' // mS/cm (養液そのものの EC —— 上の `ecRise` とは桁の尋ねが違う)
+  | 'ph' // pH (単位ではないが、断りの文に出る語として「pH」を置く)
+  | 'age'; // 歳（整数）
 
 export interface NumSpec {
   readonly label: string;
@@ -221,6 +225,13 @@ const KIND: Record<NumKind, KindRule> = {
   ppmAir: { unit: 'ppm', negativeIsFatal: true, sane: 50000 },
   normality: { unit: 'N', negativeIsFatal: true, sane: 40 },
   ecRise: { unit: 'mS/cm', negativeIsFatal: true, sane: 5 },
+  // パス 493q で足した 3 種。**上限は欄の spec が持つ** —— 養液の EC / pH は測定の妥当範囲
+  // (`READING_FIELD_SPECS` の `plausibleMin/Max`) をそのまま使うので、種類に桁の尋ね (sane) を
+  // 置くと、妥当範囲の内側の正当な測定値 (EC 6 mS/cm ほか) に「桁を間違えていないか」と問う。
+  // `ecRise` を借りない理由もそれ (単位語は同じ mS/cm だが、あちらは 5 を超えると尋ねる)。
+  ec: { unit: 'mS/cm', negativeIsFatal: true },
+  ph: { unit: 'pH', negativeIsFatal: true },
+  age: { unit: '歳', negativeIsFatal: true, integer: true, sane: 120 },
 };
 
 /**

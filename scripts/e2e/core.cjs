@@ -406,7 +406,8 @@ async function desktopSuite(browser) {
   // 制度判定: 入力 → 判定が実際に変わるところ。単体テストは純関数と初期描画しか見て
   // いないので、入力の state が判定へ繋がっているかは実ブラウザでしか分からない。
   await gotoService(page, '#funding', 'text=使える制度の判定');
-  const age = page.locator('input[aria-label="年齢"]');
+  // 欄の名前は関門の宣言のラベル (パス 493q —— 直す前は「年齢」)。
+  const age = page.locator('input[aria-label="年齢（就農時）"]');
   await age.fill('30');
   await page.waitForFunction(
     () => document.body.textContent.includes('年齢 30 歳は要件（18歳以上45歳未満）を満たす'),
@@ -442,6 +443,25 @@ async function desktopSuite(browser) {
     { timeout: 15000 },
   );
   ok(true, 'eligibility: 前提の認定を「いいえ」にすると対象外の理由が出る');
+  // ★ 読めない年齢を「未入力」と言わない (パス 493q)。直す前は `66歳` を打つと
+  // 年齢を要件にする 5 制度が「年齢が未入力」と言い、見出しは「入力が足りない 8 件」だった。
+  await age.fill('66歳');
+  await page.waitForFunction(
+    () => document.querySelector('[data-refused-fields]')?.textContent?.includes('年齢（就農時）') === true,
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(
+    !(await has('年齢が未入力')) && !(await has('要件を満たす 1 件')),
+    'eligibility: 読めない年齢 (66歳) は判定を断り、「年齢が未入力」とは言わない',
+  );
+  await age.fill('66');
+  await page.waitForFunction(
+    () => document.querySelector('[data-refused-fields]') === null && document.body.textContent.includes('年齢 66 歳は要件'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 年齢を直すと判定が戻る');
 
   // 株主名簿: 人数の増減。単体テストは差分計算だけを見ているので、
   // 「増やした行が書面に出るか」「削除で繰り上がるか」は実ブラウザで確かめる。
@@ -4269,7 +4289,8 @@ function installWaitMarginRecorder(browser) {
   /** 床 = 実測の 85% (切り捨て・最低 1)。**規則はここ 1 か所だけ。** */
   const floorOf = (measured) => Math.max(1, Math.floor(measured * 0.85));
   const SUITE_TABLE = [
-    ['desktop', desktopSuite, 60],
+    // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
+    ['desktop', desktopSuite, 62],
     ['manualData', manualDataSuite, 19],
     ['dataOrigin', dataOriginSuite, 9],
     ['credential', credentialSuite, 8],

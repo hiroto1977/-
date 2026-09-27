@@ -600,6 +600,8 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
     area: '㎡', length: 'm', ppm: 'mg/L', days: '日', energy: 'kWh/kg', mgPer100g: 'mg/100g', km: 'km',
     // ★ 水耕栽培の 5 種 (パス 373) は、型で縛るまでこの写しから**漏れていた** (パス 493k で捕まえた)
     celsius: '℃', liters: 'L', ppmAir: 'ppm', normality: 'N', ecRise: 'mS/cm',
+    // パス 493q: 経営サマリーの養液の点検と、受給判定の年齢
+    ec: 'mS/cm', ph: 'pH', age: '歳',
   } as const satisfies Record<NumSpec['kind'], string>;
   /** 桁を尋ねる既定。`null` は**種類としては尋ねない** —— 上限は欄の spec が持つ (暦の月・年・団体・戸)。 */
   const SANE = {
@@ -608,12 +610,14 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
     calendarMonth: null, calendarYear: null, currencyUnits: 1e13,
     area: 1e6, length: 1000, ppm: 100000, days: 3650, energy: 100, mgPer100g: 10000, km: 1000,
     celsius: 60, liters: 100000, ppmAir: 50000, normality: 40, ecRise: 5,
+    // 養液の EC / pH は上限を欄の spec (測定の妥当範囲) が持つので、種類としては尋ねない
+    ec: null, ph: null, age: 120,
   } as const satisfies Record<NumSpec['kind'], number | null>;
   type Kind = keyof typeof UNITS;
   const KINDS = Object.keys(UNITS) as Kind[];
   /** 整数を求める種類 (数えられる物)。 */
   const INTEGER: ReadonlySet<Kind> = new Set<Kind>([
-    'people', 'days', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear',
+    'people', 'days', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear', 'age',
   ]);
 
   it('kind ごとの単位・マイナス・0・整数・上限・桁ミスの既定が写しと一致する', async () => {

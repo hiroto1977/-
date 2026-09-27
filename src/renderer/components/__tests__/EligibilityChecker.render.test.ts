@@ -98,7 +98,8 @@ describe('EligibilityChecker — レンダー', () => {
   it('入力欄が揃っている', () => {
     const html = render();
     for (const label of [
-      '年齢',
+      // 関門つきの欄は宣言のラベルをそのまま aria-label にする (パス 493q —— 直す前は「年齢」)
+      '年齢（就農時）',
       '性別',
       '事業形態',
       '経営管理の従事年数',

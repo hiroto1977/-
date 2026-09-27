@@ -103,6 +103,12 @@ export interface TargetRevenue {
   readonly requiredRevenue: number | null;
   /** 現状売上からの必要変動率 (%)。基準 0 や算定不能なら null。 */
   readonly upliftPct: number | null;
+  /**
+   * **売上が無くても目標に届く** (固定費 + 目標利益 ≦ 0) —— 赤字を目標にして、その額が固定費より
+   * 大きいとき (パス 493q)。このとき必要売上は `0` で、画面はそれを言い分ける
+   * (「必要売上 ￥0」だけだと「売上が要らない事業」と読める)。
+   */
+  readonly reachedWithoutSales: boolean;
 }
 
 /**
@@ -116,17 +122,23 @@ export function requiredRevenueForTarget(
   targetOperatingProfit: number,
 ): TargetRevenue {
   if (f.revenue <= 0) {
-    return { targetOperatingProfit, requiredRevenue: null, upliftPct: null };
+    return { targetOperatingProfit, requiredRevenue: null, upliftPct: null, reachedWithoutSales: false };
   }
   const variableRate = (f.cogs + f.advertising) / f.revenue;
   const contributionRate = 1 - variableRate;
   const fixedCost = f.sga + f.depreciation;
   if (contributionRate <= 0) {
-    return { targetOperatingProfit, requiredRevenue: null, upliftPct: null };
+    return { targetOperatingProfit, requiredRevenue: null, upliftPct: null, reachedWithoutSales: false };
   }
-  const requiredRevenue = Math.round((fixedCost + targetOperatingProfit) / contributionRate);
+  // **売上は 0 を下回らない** (2026-09-27 · パス 493q)。赤字の目標が固定費より大きいと
+  // (固定費 + 目標) が負になり、それを割った「必要売上 −￥7,833,333（現状から −883.3%）」を
+  // 刷っていた。売上 0 でも営業利益は −固定費なので、目標には売上 0 で届く —— 答えは 0 である。
+  // main の双子 (`clients/kpi.ts` の `requiredRevenueForTargetProfit`) は最初から
+  // `Math.max(0, …)` を持っており、**画面が読むこちらだけが持っていなかった**。
+  const reachedWithoutSales = fixedCost + targetOperatingProfit <= 0;
+  const requiredRevenue = reachedWithoutSales ? 0 : Math.round((fixedCost + targetOperatingProfit) / contributionRate);
   const upliftPct = Math.round(((requiredRevenue - f.revenue) / f.revenue) * 1000) / 10;
-  return { targetOperatingProfit, requiredRevenue, upliftPct };
+  return { targetOperatingProfit, requiredRevenue, upliftPct, reachedWithoutSales };
 }
 
 /** 固定費を削減したときのインパクト試算結果。 */

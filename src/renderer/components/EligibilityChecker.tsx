@@ -25,6 +25,27 @@ import {
   type ProgramJudgement,
   type Verdict,
 } from '../data/eligibility';
+import { refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
+import { GuardedNumber } from './GuardedNumber';
+import { RefusedFieldsNote } from './RefusedFieldsNote';
+
+/**
+ * **年齢と経営管理の従事年数の欄** (2026-09-27 · パス 493q)。
+ *
+ * それまで 2 欄は素の `<input>` で、読めない値は `parseNumericInput` が `null` = **未入力**に
+ * していた。実測: 年齢に `66歳` と打つと、年齢を要件にする 5 制度がすべて「年齢が未入力」と
+ * 言い、見出しは「入力が足りない 8 件」—— **打った人に「入れていない」と言っていた**
+ * (同じ人が `66` と打てば「対象外 6 件」で、答えそのものが違う)。`-5` は年齢として通り
+ * 「年齢 -5 歳は要件（49歳以下）を満たす」と刷っていた。
+ *
+ * 読めない値・マイナスの欄は判定を断る (`refusedBy: 'judgement'`)。空欄は今までどおり
+ * 「未入力」として判定する —— そのとき「年齢が未入力」は真である。
+ */
+const ELIGIBILITY_SPECS = refusingSpecs('judgement', {
+  age: { label: '年齢（就農時）', kind: 'age', allowEmpty: true },
+  managementYears: { label: '経営管理の従事年数', kind: 'years', allowEmpty: true },
+} as const satisfies Record<string, NumSpec>);
+const ELIGIBILITY_READS = ['age', 'managementYears'] as const;
 
 const VERDICT_STYLE: Readonly<Record<Verdict, { label: string; color: string }>> = {
   eligible: { label: '要件を満たす', color: 'var(--success)' },
@@ -148,6 +169,9 @@ export function EligibilityChecker(): ReactElement {
     [age, gender, entity, mgmt, certFarmer, certNew],
   );
 
+  // **断った欄が在れば判定しない** (パス 493q) —— 読めない年齢を「未入力」として判定すると、
+  // 入れた人に「入力が足りない」と言う。
+  const refused = refusedFields(ELIGIBILITY_SPECS, { age, managementYears: mgmt });
   const report = useMemo(() => judgeEligibility(profile), [profile]);
   const ordered = [...report.eligible, ...report.needsCheck, ...report.ineligible];
 
@@ -168,17 +192,13 @@ export function EligibilityChecker(): ReactElement {
           marginBottom: 12,
         }}
       >
-        <label style={{ fontSize: 12 }}>
-          <span style={{ display: 'block', color: 'var(--text-mute)' }}>年齢（就農時）</span>
-          <input
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            inputMode="numeric"
-            placeholder="例: 66"
-            aria-label="年齢"
-            style={{ width: '100%' }}
-          />
-        </label>
+        <GuardedNumber
+          spec={ELIGIBILITY_SPECS.age}
+          value={age}
+          onChange={setAge}
+          placeholder="例: 66"
+          style={{ width: '100%' }}
+        />
         <label style={{ fontSize: 12 }}>
           <span style={{ display: 'block', color: 'var(--text-mute)' }}>性別</span>
           <select
@@ -206,17 +226,13 @@ export function EligibilityChecker(): ReactElement {
             <option value="corporation">法人</option>
           </select>
         </label>
-        <label style={{ fontSize: 12 }}>
-          <span style={{ display: 'block', color: 'var(--text-mute)' }}>経営管理の従事年数</span>
-          <input
-            value={mgmt}
-            onChange={(e) => setMgmt(e.target.value)}
-            inputMode="numeric"
-            placeholder="例: 8"
-            aria-label="経営管理の従事年数"
-            style={{ width: '100%' }}
-          />
-        </label>
+        <GuardedNumber
+          spec={ELIGIBILITY_SPECS.managementYears}
+          value={mgmt}
+          onChange={setMgmt}
+          placeholder="例: 8"
+          style={{ width: '100%' }}
+        />
         <label style={{ fontSize: 12 }}>
           <span style={{ display: 'block', color: 'var(--text-mute)' }}>認定農業者か</span>
           <select
@@ -249,24 +265,29 @@ export function EligibilityChecker(): ReactElement {
         </label>
       </div>
 
-      <p style={{ fontSize: 12, color: 'var(--text-mute)' }}>
-        要件を満たす {report.eligible.length} 件 ／ 入力が足りない {report.needsCheck.length} 件 ／
-        対象外 {report.ineligible.length} 件
-        {report.genderMattered
-          ? ''
-          : '　※ ここに収録した農業系の制度に、性別を要件にしているものはありません。'}
-      </p>
+      <RefusedFieldsNote labels={refusalLabels(ELIGIBILITY_SPECS, refused, ELIGIBILITY_READS)} />
+      {refused.length === 0 && (
+        <p style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+          要件を満たす {report.eligible.length} 件 ／ 入力が足りない {report.needsCheck.length} 件 ／
+          対象外 {report.ineligible.length} 件
+          {report.genderMattered
+            ? ''
+            : '　※ ここに収録した農業系の制度に、性別を要件にしているものはありません。'}
+        </p>
+      )}
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: -4 }}>
         ※ 事業形態（個人／法人）も判定には効いていません。法人で上限額が変わる制度はありますが、
         その金額は年度の要領によるため、確認していない要件を判定に入れていません（各制度の
         「審査で見られる要件」に出しています）。
       </p>
 
-      <ul style={{ display: 'grid', gap: 8, margin: 0, padding: 0 }}>
-        {ordered.map((j) => (
-          <Card key={j.id} j={j} />
-        ))}
-      </ul>
+      {refused.length === 0 && (
+        <ul style={{ display: 'grid', gap: 8, margin: 0, padding: 0 }}>
+          {ordered.map((j) => (
+            <Card key={j.id} j={j} />
+          ))}
+        </ul>
+      )}
 
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 0 }}>
         ※ 制度の要件・金額・締切は年度ごとに変わります。最終確認は各実施機関の一次情報で行ってください。

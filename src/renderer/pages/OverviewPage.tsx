@@ -80,7 +80,7 @@ import {
   type CropListChange,
   type CropNumericField,
 } from '../../shared/hydroponicCrops';
-import { cropIdText } from '../../shared/hydroponicsControl';
+import { cropIdText, READING_FIELD_SPECS } from '../../shared/hydroponicsControl';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, readNumberOrNull, refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
@@ -303,6 +303,50 @@ const HYDRO_SPECS = refusingSpecs('save', {
   measuredSodiumMgPer100g: { label: '実測ナトリウム (mg/100g)', kind: 'mgPer100g', allowEmpty: true },
 } as const satisfies Record<string, NumSpec>);
 
+/**
+ * **養液の点検の 2 欄** (2026-09-27 · パス 493q)。
+ *
+ * それまでここは素の `<input>` で、読めない値を `readNumberOr0` が黙って 0 にしていた。
+ * 実測: EC に `1,2` (小数の区切りをカンマで打つ) や `1.0mS` を入れると EC 0 として判定し、
+ * 「範囲外です — EC は 0.8〜1.2 mS/cm が目安」と**打っていない値について**言っていた。
+ * 読めない値の欄は判定を断る (`refusedBy: 'judgement'`) —— 0 で判定すると、利用者は
+ * 自分の養液が範囲外だと読む。
+ *
+ * 幅は**測定の妥当範囲をそのまま使う** (`READING_FIELD_SPECS` —— 水耕栽培の記録の画面と
+ * 同じ幅・数を写さない)。空欄は許す (2 つとも入れたときだけ判定する —— 今までどおり)。
+ */
+const NUTRIENT_SPECS = refusingSpecs('judgement', {
+  ec: {
+    label: '養液 EC (mS/cm)',
+    kind: 'ec',
+    allowEmpty: true,
+    allowZero: true,
+    min: READING_FIELD_SPECS.ec.plausibleMin,
+    max: READING_FIELD_SPECS.ec.plausibleMax,
+  },
+  ph: {
+    label: '養液 pH',
+    kind: 'ph',
+    allowEmpty: true,
+    allowZero: true,
+    min: READING_FIELD_SPECS.ph.plausibleMin,
+    max: READING_FIELD_SPECS.ph.plausibleMax,
+  },
+} as const satisfies Record<string, NumSpec>);
+const NUTRIENT_READS = ['ec', 'ph'] as const;
+
+/**
+ * **目標利益から必要売上を逆算する欄** (2026-09-27 · パス 493q)。
+ *
+ * それまで素の `<input>` で、読めない値 (`100万` —— 日本語で金額を打つ普通の形) は
+ * `readNumberOrNull` が `null` を返し、**画面は何も言わずに逆算を出さなかった**。
+ * 赤字の目標は正当 (「赤字を 300 万円までに抑える」) なので負を受ける —— 下限は桁の尋ね
+ * (`money` の `sane` = 1e13) と対にした。
+ */
+const TARGET_SPECS = refusingSpecs('judgement', {
+  target: { label: '目標営業利益 (円)', kind: 'money', allowEmpty: true, allowZero: true, min: -1e13 },
+} as const satisfies Record<string, NumSpec>);
+
 /** 品目の入力欄の文字列 (品目名 + 数値の欄)。 */
 type CropDraftForm = Record<'label' | CropNumericField, string>;
 
@@ -471,7 +515,10 @@ function HydroponicsPanel({
     />
   );
 
-  const nutrient = ec.trim() !== '' && ph.trim() !== ''
+  // **断った欄が在れば判定しない** (パス 493q)。読めない値を 0 として判定すると
+  // 「範囲外です」と、打っていない値について言う。
+  const refusedNutrient = refusedFields(NUTRIENT_SPECS, { ec, ph });
+  const nutrient = refusedNutrient.length === 0 && ec.trim() !== '' && ph.trim() !== ''
     ? checkNutrientSolution(crop, n(ec), n(ph))
     : null;
 
@@ -609,14 +656,9 @@ function HydroponicsPanel({
       </div>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-          養液 EC (mS/cm)
-          <input type="text" inputMode="decimal" value={ec} onChange={(e) => setEc(e.target.value)} style={settingsInput} />
-        </label>
-        <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-          養液 pH
-          <input type="text" inputMode="decimal" value={ph} onChange={(e) => setPh(e.target.value)} style={settingsInput} />
-        </label>
+        <GuardedNumber spec={NUTRIENT_SPECS.ec} value={ec} width={110} onChange={setEc} />
+        <GuardedNumber spec={NUTRIENT_SPECS.ph} value={ph} width={110} onChange={setPh} />
+        <RefusedFieldsNote labels={refusalLabels(NUTRIENT_SPECS, refusedNutrient, NUTRIENT_READS)} />
         {nutrient && (
           <div style={{ fontSize: 12, color: nutrient.ok ? 'var(--success)' : 'var(--warning)', lineHeight: 1.7 }}>
             {nutrient.ok
@@ -956,15 +998,18 @@ export function OverviewPage() {
   }, [overview.kpi.hasData, fundamentals]);
 
   const [targetProfit, setTargetProfit] = useState('');
+  const refusedTarget = useMemo(() => refusedFields(TARGET_SPECS, { target: targetProfit }), [targetProfit]);
   const targetRevenue = useMemo(() => {
     // 読み取りはアプリで 1 つ (`shared/readNumeric.ts`)。ここだけ `Number()` で読んでおり、
     // 同じ画面の他の欄 (`n` = `readNumberOr0`) と答えが割れていた (パス 375) ——
     // 実測: `'1,000,000'` は `Number` だと NaN で「—」になり (他の欄は読める)、
     // 逆に `'0x10'` / `'1e3'` は `Number` だけが受ける。
+    // **断った欄は逆算しない** (パス 493q) —— 断りの文 (`RefusedFieldsNote`) がその欄を名指しする。
+    if (refusedTarget.length > 0) return null;
     const t = readNumberOrNull(targetProfit);
     if (!overview.kpi.hasData || t === null) return null;
     return requiredRevenueForTarget(fundamentals, t);
-  }, [overview.kpi.hasData, fundamentals, targetProfit]);
+  }, [overview.kpi.hasData, fundamentals, targetProfit, refusedTarget]);
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
@@ -1169,14 +1214,14 @@ export function OverviewPage() {
           <div style={{ marginTop: 14 }}>
             <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 6 }}>目標利益から必要売上を逆算</div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-              <input
-                type="text"
-                inputMode="numeric"
+              <GuardedNumber
+                spec={TARGET_SPECS.target}
                 value={targetProfit}
                 placeholder="目標営業利益 (円)"
-                onChange={(e) => setTargetProfit(e.target.value)}
-                style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 160 }}
+                width={160}
+                onChange={setTargetProfit}
               />
+              <RefusedFieldsNote labels={refusalLabels(TARGET_SPECS, refusedTarget, ['target'])} />
               {targetRevenue && (
                 // **刷る値そのもので関門を張る。** 以前は `upliftPct` だけを見て
                 // `requiredRevenue` を刷っていた —— 別の量で規則を再導出する形
@@ -1188,6 +1233,12 @@ export function OverviewPage() {
                   <span style={{ fontSize: 13 }}>
                     必要売上 <strong>{yen.format(targetRevenue.requiredRevenue)}</strong>
                     （現状から <strong style={{ color: targetRevenue.upliftPct >= 0 ? 'var(--warning)' : 'var(--success)' }}>{targetRevenue.upliftPct > 0 ? '+' : ''}{targetRevenue.upliftPct}%</strong>）
+                    {targetRevenue.reachedWithoutSales && (
+                      // 「必要売上 ￥0」だけだと「売上の要らない事業」と読める (パス 493q)。
+                      <span data-target-reached-without-sales style={{ display: 'block', fontSize: 12, color: 'var(--text-mute)' }}>
+                        売上が無くても営業利益は {yen.format(0 - (fundamentals.sga + fundamentals.depreciation))} (固定費の分の赤字) で、目標 {yen.format(targetRevenue.targetOperatingProfit)} を下回りません。
+                      </span>
+                    )}
                   </span>
                 )
               )}
