@@ -149,6 +149,16 @@ export function scenarioRunways(
  * 指数の平均は 1 付近になる。系列が空・period が 1 未満・全体平均が 0 のときは
  * null (季節性を推定できない)。指数が非有限になる成分は 1 にフォールバック。
  *
+ * **`i` は元の系列での位置** (2026-09-27 · パス 493f)。それまでは読めない月 (NaN など) を
+ * **先に落としてから**位置を数えており、欠けた月が 1 つ在ると、それより後ろの月が全部
+ * 1 つずつ前の位相に入っていた。実測 (周期 2・`[300, NaN, 300, 100, 300, 100]`):
+ * 正しくは位相 0 が 300・位相 1 が 100 (指数 1.36 / 0.45) なのに、直す前は
+ * **0.76 / 1.36 と高い月と低い月が入れ替わっていた**。欠けた月は位相を持ったまま飛ばす ——
+ * `salesAnalytics.ts` の同名の関数が最初からこの形で、その docblock も「残った点の
+ * 元インデックスを使う」と理由を書いている。
+ * (今日この関数と `seasonalForecast` を読む出荷コードは無い —— 残すか消すかは
+ * docs/REMAINING_WORK.md の「本番の呼び手が無い export」の判断に従う。)
+ *
  * @param history 過去の月次純CF (古い順)。
  * @param period  季節周期 (既定 12 か月)。
  */
@@ -167,9 +177,11 @@ export function seasonalIndices(
   if (overallMean === 0) return null;
   const sums = new Array<number>(p).fill(0);
   const counts = new Array<number>(p).fill(0);
-  for (let i = 0; i < clean.length; i += 1) {
+  for (let i = 0; i < history.length; i += 1) {
+    const v = history[i];
+    if (!isFiniteNumber(v)) continue; // 欠けた月は飛ばすが、位相は数え続ける
     const slot = i % p;
-    sums[slot]! += clean[i]!;
+    sums[slot]! += v;
     counts[slot]! += 1;
   }
   return sums.map((sum, slot) => {
