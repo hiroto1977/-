@@ -4,6 +4,7 @@
  * `.map` で、`axes` が同じ長さの文字列だと配列として扱った所で、画面が落ちる。
  */
 import { isRecord } from './persistedShape';
+import { AXIS_COUNT, SCORE_MAX, SCORE_MIN } from '../../shared/teamRadarState';
 
 export interface TeamMember {
   id: string;
@@ -47,4 +48,17 @@ export function sanitizeRadarDraft(value: unknown): RadarDraft {
   if (Array.isArray(value.axes)) out.axes = value.axes.filter((a): a is string => typeof a === 'string');
   if (Array.isArray(value.members)) out.members = value.members.map(sanitizeTeamMember).filter((m): m is TeamMember => m !== null);
   return out;
+}
+
+/**
+ * 追加したメンバーの評点の初期値 —— **軸の数と範囲は保存の関門と同じ物から組む** (パス 493g)。
+ *
+ * 2026-09-27 まで画面は `scores: [3, 3, 3, 3, 3]` と**5 つを字面で**書いていた。保存の関門
+ * (`validateMembers`) は `scores.length === AXIS_COUNT` を要求するので、軸を 1 つ足した日に
+ * 画面で足したメンバーだけが「member scores must be an array of length 6」で保存を断られる形だった。
+ * 値は範囲の真ん中 (1〜5 なら 3)。「未評価」で始めるかは利用者の判断待ち (docs/REMAINING_WORK.md)。
+ */
+export function newMemberScores(): number[] {
+  const mid = Math.round((SCORE_MIN + SCORE_MAX) / 2);
+  return Array.from({ length: AXIS_COUNT }, () => mid);
 }

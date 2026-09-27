@@ -89,11 +89,15 @@ export interface CareMemberInput {
 const round1 = (n: number): number => Math.round(n * 10) / 10;
 
 /**
- * 評点の範囲。**この 1 か所が持つ** —— 画面 (`TeamRadarPage`) はここを読む
- * (同じ数を 2 か所に書くと、片方を広げたときに平均の判定だけが古いままになる)。
+ * 評点の範囲 —— **`shared/teamRadarState.ts` の 1 か所が持つ** (ここは再輸出するだけ)。
+ *
+ * 2026-09-27 (パス 493g) まで、ここにも `SCORE_MIN = 1` / `SCORE_MAX = 5` が別に書かれ、
+ * 注記は「この 1 か所が持つ」と名乗っていた。ところが評価済みの判定 (`isPlottableScore`) と
+ * 保存の関門 (`validateMembers` —— main と web-shim の両方が通る) は shared の側を読み、
+ * **画面の入力欄の min / max だけがここを読んでいた**。片方を広げると、画面は 6 を
+ * 受け付けるのに保存が「score must be integer 1-5」で断る (逆なら入力欄が打たせない) 形だった。
  */
-export const SCORE_MIN = 1;
-export const SCORE_MAX = 5;
+export { SCORE_MAX, SCORE_MIN } from '../../shared/teamRadarState';
 
 /**
  * その位置の評点が**評価済み**か。範囲外 (0 を含む) と欠測は「未評価」。

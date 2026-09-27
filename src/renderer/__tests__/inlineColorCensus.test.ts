@@ -78,7 +78,7 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/StoragePage.tsx': 1,
   'src/renderer/pages/TalentPage.tsx': 10,
   'src/renderer/pages/TaxPage.tsx': 13,
-  'src/renderer/pages/TeamRadarPage.tsx': 14,
+  'src/renderer/pages/TeamRadarPage.tsx': 6, // パス 493g: 8 色の写しを shared/teamRadarSvg の colorFor へ寄せた
   'src/renderer/pages/TemplatesPage.tsx': 10,
   'src/renderer/pages/VillagePage.tsx': 32,
 };

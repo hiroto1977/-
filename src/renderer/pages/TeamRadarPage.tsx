@@ -14,7 +14,7 @@ import {
   unevaluatedAxesNote,
   type CarePriority,
 } from '../data/memberCare';
-import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
+import { newMemberScores, sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
 import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteResult } from '../data/localWrite';
 import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
@@ -31,12 +31,13 @@ import {
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { omittedRadarNote, planRadarPlot } from '../../shared/radarPlot';
+import { axisPoint, colorFor } from '../../shared/teamRadarSvg';
 
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
 const TITLE_FALLBACK = '営業チーム強み・弱みシート';
-// 評点の上限は `data/memberCare.ts` の 1 か所が持つ (同じ数を写さない —— 写すと
-// 「平均が評価済みと見なす範囲」と「入力の上限」が別々に動く)。
+// 評点の範囲は `shared/teamRadarState.ts` の 1 か所が持つ (`data/memberCare.ts` は再輸出 ——
+// パス 493g まで memberCare が別の写しを持ち、入力欄の min / max だけがそちらを読んでいた)。
 const SCORE_MAX = MEMBER_SCORE_MAX;
 
 /** 名前編集の下書き (タイトル・軸名・メンバー等) を localStorage に保持する。
@@ -65,29 +66,9 @@ function loadDraft(): LocalReadResult<RadarDraft> {
 function saveDraft(draft: RadarDraft): LocalWriteResult {
   return writeLocalJson(DRAFT_KEY, draft);
 }
-const PALETTE = [
-  { stroke: '#5b8def', fill: 'rgba(91, 141, 239, 0.18)' },
-  { stroke: '#ec9a3d', fill: 'rgba(236, 154, 61, 0.18)' },
-  { stroke: '#5cb85c', fill: 'rgba(92, 184, 92, 0.18)' },
-  { stroke: '#e36b6b', fill: 'rgba(227, 107, 107, 0.18)' },
-  { stroke: '#a06bd2', fill: 'rgba(160, 107, 210, 0.18)' },
-  { stroke: '#d2b06b', fill: 'rgba(210, 176, 107, 0.18)' },
-  { stroke: '#43c3b8', fill: 'rgba(67, 195, 184, 0.18)' },
-  { stroke: '#888888', fill: 'rgba(136, 136, 136, 0.18)' },
-];
-
-function axisPoint(
-  cx: number,
-  cy: number,
-  radius: number,
-  axisIdx: number,
-  axisCount: number,
-  score: number,
-) {
-  const theta = -Math.PI / 2 + (axisIdx / axisCount) * 2 * Math.PI;
-  const r = (score / SCORE_MAX) * radius;
-  return { x: cx + Math.cos(theta) * r, y: cy + Math.sin(theta) * r };
-}
+// 色と頂点の位置は、書き出す SVG (`shared/teamRadarSvg.ts`) と同じ関数を読む (パス 493g)。
+// それまで画面は PALETTE と axisPoint の写しを持っており、片方の色や角度を変えると
+// 画面で見た図と書き出して人に渡す図が食い違う形だった。
 
 /**
  * レーダーに描けるメンバー。**軸の値は `null` を取りうる** (感情レーダーは
@@ -161,7 +142,7 @@ function RadarChart({
         );
       })}
       {planRadarPlot(axes, members).drawable.map((m, idx) => {
-        const c = PALETTE[idx % PALETTE.length]!;
+        const c = colorFor(idx);
         /*
          * **値の無い軸が 1 つでもあれば、その人の多角形は描かない。**
          * `?? 0` を当てると欠けた頂点が中心に落ち、「その軸が最低」という
@@ -427,7 +408,7 @@ export function TeamRadarPage() {
   function addMember() {
     const name = 'メンバー' + (members.length + 1);
     const id = uniqueId(name, members.map((m) => m.id));
-    setMembers((prev) => [...prev, { id, name, scores: [3, 3, 3, 3, 3], notes: {} }]);
+    setMembers((prev) => [...prev, { id, name, scores: newMemberScores(), notes: {} }]);
   }
 
   function removeMember(idx: number) {
@@ -704,7 +685,7 @@ export function TeamRadarPage() {
             )}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
               {skillPlan.drawable.map((m, idx) => {
-                const c = PALETTE[idx % PALETTE.length]!;
+                const c = colorFor(idx);
                 return (
                   <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text)' }}>
                     <span style={{ width: 10, height: 10, background: c.stroke, borderRadius: 5, display: 'inline-block' }} />
@@ -858,7 +839,7 @@ export function TeamRadarPage() {
         <Section title="メンバー編集" count={members.length}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {members.map((m, idx) => {
-              const c = PALETTE[idx % PALETTE.length]!;
+              const c = colorFor(idx);
               return (
                 <div
                   key={m.id}
