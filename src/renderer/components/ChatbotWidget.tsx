@@ -134,7 +134,10 @@ function recordRequest(text: string): LocalWriteResult {
 function loadRequests(): FeatureRequest[] {
   try {
     const raw = localStorage.getItem(REQUESTS_KEY);
-    return arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
+    // **検めた欄だけで組み直す** (REMAINING_WORK のパス 489 #6)。`arrayOf` は通った要素をそのまま返すので、
+    // 保存値の余分な欄 (手で直した JSON・別の版) まで持ち回り、書き戻しで残り続ける。欄を足すときは
+    // この 1 行が型で落ちる (`FeatureRequest` の欄を 1 つ足すと、ここで組めなくなる) —— 述語の直し忘れを型が捕まえる。
+    return arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest).map((r): FeatureRequest => ({ text: r.text, at: r.at }));
   } catch {
     return [];
   }

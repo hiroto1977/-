@@ -209,3 +209,13 @@ describe('clearExportedRequests —— 書き出した行だけを、同じ数�
     expect(stored()).toEqual([sameText]);
   });
 });
+
+describe('要望の読み —— 検めた欄だけで組み直す (パス 489 #6)', () => {
+  it('保存値の余分な欄は読みで落ち、書き戻しにも残らない', () => {
+    localStorage.setItem(REQUESTS_KEY, JSON.stringify([{ ...A, extra: { z: 1 } }, B]));
+    expect(clearExportedRequests([B])).toEqual({ removed: 1, kept: 1 });
+    expect(stored(), '余分な欄を持ち回っていない').toEqual([A]);
+    expect(JSON.stringify(stored())).not.toContain('extra');
+    expect(JSON.stringify([{ ...A, extra: { z: 1 } }]), '標本: 組み直さなければ余分な欄は残る').toContain('extra');
+  });
+});
