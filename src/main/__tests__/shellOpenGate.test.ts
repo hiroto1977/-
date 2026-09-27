@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -214,7 +214,7 @@ describe('許可拡張子の集合が空でないこと', () => {
  * `'.html'` から `''` に変わっても、変わった側を回るだけなので通り続ける。
  * 実測でこの 9 個 (集合そのもの + 8 個の文字列) が変異検査を生き延びていた。
  *
- * さらに `vi.resetModules()` + 動的 import が要る。集合はモジュール定数なので、
+ * さらに `rereadModule` (対象だけを読み直す —— パス 495) が要る。集合はモジュール定数なので、
  * 静的 import のままだとテストファイル読み込み時に評価が済んでしまう
  * (覆われた static 変異体)。`fsa.ts` の DB 名で踏んだのと同じ形。
  *

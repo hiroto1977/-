@@ -628,7 +628,7 @@ describe('食べられる量の上限表 (limits)', () => {
 
 /**
  * 参考値の表と前提の既定はモジュール読込時に確定する static な値で、通常の検査では
- * Stryker が測らずに無視する。ところが `hydroponicCrops.test.ts` が `vi.resetModules()`
+ * Stryker が測らずに無視する。ところが `hydroponicCrops.test.ts` が (パス 495 より前は) `vi.resetModules()`
  * で読み直すと、その import 連鎖でこのモジュールの表も**組み立て直され、測られる**
  * (2026-09-03 に生存 19 件として発見 — 品目の文字と数・CKD の上限・前提の既定)。
  * 測られる以上は殺す: 上の `toEqual` と同じ主張を、読み直した実体に対して置く。

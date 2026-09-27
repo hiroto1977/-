@@ -6,7 +6,7 @@
  * モジュールは変異体が有効になる前に読み込まれてしまう (SESSION_HANDOFF の罠・
  * `stryker.config.json` の `_commentIgnoreStatic`)。実測 (2026-09-06) でも
  * `NUMBER_SHAPE` の変異体 9 件が生存していた。ここは毎テストで
- * `vi.resetModules()` + 動的 import して**表そのもの**を測る。
+ * `rereadModule` (対象だけを読み直す —— パス 495) して**表そのもの**を測る。
  *
  * 何を守っているかは `readNumeric.ts` の注記のとおり —— 飾り (通貨記号・単位・
  * 桁区切り) を落とす**位置**を見ないと、数字の間の飾りで桁がつながって

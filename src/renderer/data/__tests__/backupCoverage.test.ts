@@ -107,7 +107,7 @@ describe('EVICTION_RECOVERY と BACKUP_EXCLUSIONS が同じことを言ってい
    *
    * ソースを直接書き換えれば下の検査は落ちる (実測で確かめた) ので、
    * 主張そのものは正しかった。見えていなかったのは**読み込みの時点**である。
-   * `vi.resetModules()` + 動的 `await import()` で読み直せば、表を書き換える
+   * `rereadModule` (対象だけを読み直す —— パス 495) で読み直せば、表を書き換える
    * 変異体が比較で落ちる (`oauth.test.ts` の `freshConfigs` と同じ形)。
    */
   async function freshTable(): Promise<readonly EvictionRecovery[]> {

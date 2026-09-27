@@ -211,7 +211,7 @@ describe('computeCashConversionCycle — 未入力の溜まりは算定不能 (0
  * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
  * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
  * (`stryker.config.json` の `_commentIgnoreStatic`)。殺し方は**テスト側で読み直す**
- * こと: `vi.resetModules()` + 動的 `import()` なら変異体が有効な状態で評価される。
+ * こと: `rereadModule` (対象だけを読み直す —— パス 495) なら変異体が有効な状態で評価される。
  *
  * ここで留めるのは、画面と**金融機関等へ出す書面**が刷る文字そのものである。
  */

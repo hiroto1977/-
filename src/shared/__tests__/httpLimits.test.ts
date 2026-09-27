@@ -227,7 +227,7 @@ describe('withTimeout — 打ち切り', () => {
 
 /*
  * 既定値は**モジュール定数**なので、静的 import のまま比べても変異体が
- * 届かない (覆われた static 変異体)。`vi.resetModules()` + 動的 import で
+ * 届かない (覆われた static 変異体)。`rereadModule` (対象だけを読み直す —— パス 495) で
  * 毎回読み直し、値そのものを字面で留める。
  */
 describe('既定値', () => {

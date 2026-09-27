@@ -154,7 +154,7 @@ describe('twentyPercentMeasureStatus (2割特例の適用期限)', () => {
  * module 読み込み**後**に有効化する static 変異体 (表を空にする / 日付を空文字に
  * する) を殺せない ——「覆われているのに生存」と報告される
  * (`stryker.config.json` の `_commentIgnoreStatic` に経緯がある。`oauth.test.ts` の
- * freshConfigs と同じ形で、`vi.resetModules()` + 動的 import で毎回評価し直す)。
+ * freshConfigs と同じ形で、`rereadModule` (対象だけを読み直す —— パス 495) で毎回評価し直す)。
  */
 describe('定数を読み直しても同じ (static 変異体の検査)', () => {
   it('★ みなし仕入率の表と 2割特例の期限は、読み直しても同じ値', async () => {

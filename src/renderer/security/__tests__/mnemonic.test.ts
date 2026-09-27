@@ -252,7 +252,7 @@ describe('generateEntropy', () => {
  * の 32 バイト検査は正しい主張なのに変異を観測できない
  * (実測: `/ 8` → `* 8` が生き残る)。
  *
- * `vi.resetModules()` + `await import()` で、変異が効いた状態のモジュールを
+ * `rereadModule` (対象だけを読み直す —— パス 495) で、変異が効いた状態のモジュールを
  * 読み直してから同じことを問う。
  */
 describe('ENTROPY_BYTES —— 静的定数を測れる形で問う', () => {

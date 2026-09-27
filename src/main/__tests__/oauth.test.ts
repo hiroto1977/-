@@ -2093,7 +2093,7 @@ describe('OAUTH_CONFIGS — 全サービス完全一致 (golden)', () => {
   // **モジュールを読み直してから比較する。** この表はモジュール読み込み時に
   // 一度だけ評価されるので、先頭で import した値を見ていると、表を書き換える
   // 変異体が「評価済みの古い値」と比較されて素通りする (Stryker の static
-  // mutant)。`vi.resetModules()` + 動的 import で毎回評価し直す。
+  // mutant)。`rereadModule` (対象だけを読み直す —— パス 495) で毎回評価し直す。
   async function freshConfigs(): Promise<Record<string, Record<string, unknown>>> {
     const mod = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as unknown as {
       OAUTH_CONFIGS: Record<string, Record<string, unknown>>;

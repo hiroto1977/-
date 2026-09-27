@@ -25,7 +25,7 @@ import '../deviceStoreFailure';
  * 静的初期化子の変異は「読み込み済みの写し」には当たらないので、
  * 静的 import のままだと**表の文字を空にしても検査が緑のまま通る**
  * (2026-09-06 実測で 16 件生存。`readNumeric.test.ts` と同じ形)。
- * `vi.resetModules()` → 動的 import で、変異した初期化子をテストの中で走らせる。
+ * `rereadModule` (対象だけを読み直す —— パス 495) で、変異した初期化子をテストの中で走らせる。
  */
 async function load(): Promise<typeof import('../deviceStoreFailure')> {
   return rereadModule<typeof import('../deviceStoreFailure')>(import.meta.url, '../deviceStoreFailure');

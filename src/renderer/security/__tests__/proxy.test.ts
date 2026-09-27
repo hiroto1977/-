@@ -983,8 +983,8 @@ describe('isPrivateOrReservedTarget', () => {
    * **どの検査も落ちなかった** (2026-08-30 実測: 8 件が生存)。
    *
    * 覆われた static 変異体で、同じ罠を本 PR で `MEMBER_ID_RE` と
-   * `preload.ts` の橋でも踏んでいる。`vi.resetModules()` + 動的 `import()`
-   * で読み直す。
+   * `preload.ts` の橋でも踏んでいる。`rereadModule` (対象だけを読み直す
+   * —— パス 495) で読み直す。
    *
    * ここは SSRF の遮断表そのものである —— 1 語落ちれば `*.corp` や `*.lan`
    * が利用者の Worker 経由で触れるようになる。

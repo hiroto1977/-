@@ -57,7 +57,7 @@ describe('registry invariant', () => {
  *   - `needsApiKey`    —— 鍵無しで送ってよいかの判断
  *   - `defaultModel`   —— 引退したモデルを既定にすると実行時 API エラーでしか出ない
  *
- * `vi.resetModules()` + 動的 import なのは、表がモジュール定数だから
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直すのは、表がモジュール定数だから
  * (静的 import のままだと読み込み時に評価が済み、変異体が畳み込まれる)。
  * `fsa.ts` の DB 名・`shellOpenGate.ts` の許可拡張子と同じ形。
  */

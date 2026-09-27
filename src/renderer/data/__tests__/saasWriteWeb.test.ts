@@ -985,7 +985,7 @@ describe('ensureOk error formatting', () => {
  * 空文字に変えても「throw する」ことしか確かめていなかったので通ってしまう。
  * 文言が消えると、site を貼り間違えた利用者に空のエラーが出る。
  *
- * `vi.resetModules()` + 動的 import なのは表がモジュール定数だから
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直すのは表がモジュール定数だから
  * (静的 import のままだと読み込み時に評価が済んで変異体が畳み込まれる)。
  */
 describe('Atlassian の site を弾いたときの文言', () => {

@@ -24,7 +24,7 @@ const REPO = join(__dirname, '..', '..', '..');
  * 同じ罠と同じ直し方が `stryker.config.json` に既に書いてある ——
  * 「beforeAll で 1 回だけ読んでいたのを beforeEach へ移しただけで
  * 78.96% → 85.55%」。それは `main/main.ts` に対して行われ (`mainWindow.test.ts`
- * が `vi.resetModules()` + 動的 `import()` を使い、342 件すべてを殺している)、
+ * が読み直し (今は `rereadModule`) を使い、342 件すべてを殺している)、
  * **同じ `beforeAll` に同居していた `preload.ts` には行われなかった**。
  *
  * ここは既存の契約検査を作り替えず、**読み直す形の検査を隣に足す**。

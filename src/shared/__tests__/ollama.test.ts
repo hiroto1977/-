@@ -1141,7 +1141,7 @@ describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
  *
  * 変異検査で 11 件が生存していた (2026-08-31 実測)。すべて static 変異体で、
  * 既存の検査は論理としては当たっているのに**静的 import なので届いて
- * いなかった**。`vi.resetModules()` + 動的 `import()` で読み直す。
+ * いなかった**。`rereadModule` (対象だけを読み直す —— パス 495) で読み直す。
  *
  * **旧 `UNPATCHED_OOB_NOTICE` (2026-09-09 に日付つきの台帳の注意へ置き換え) は輪をかけて悪かった** —— 既存の検査が
  * `expect(buildWarnings('0.5.0')).toEqual([UNPATCHED_OOB_NOTICE])` と

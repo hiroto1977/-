@@ -264,8 +264,8 @@ describe('状態全体の正規化 — 根の番人', () => {
  * 正規表現への変異は**どれも届かない** (実測: 5 件すべて生存)。
  *
  * `stryker.config.json` と SESSION_HANDOFF が言う「覆われた static 変異体」で、
- * 同じ形を `ORGAN_DISEASES` で既に踏んでいる。`vi.resetModules()` +
- * 動的 `import()` で毎回読み直す。
+ * 同じ形を `ORGAN_DISEASES` で既に踏んでいる。`rereadModule`
+ * (対象だけを読み直す —— パス 495) で毎回読み直す。
  */
 describe('MEMBER_ID_RE — 読み直して static 変異体を届かせる', () => {
   async function fresh() {

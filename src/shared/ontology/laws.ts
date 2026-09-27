@@ -335,7 +335,7 @@ export const LAWS: readonly Law[] = [
     id: 'table-pinned-by-literal',
     family: 'gate-hygiene',
     name: '表を留める検査は表を読まない',
-    statement: '留める対象を読んで回る検査は、対象が変われば一緒に変わる。何が入っているかと何が入っていないかを字面で書く。モジュール定数は vi.resetModules + 動的 import で留める。',
+    statement: '留める対象を読んで回る検査は、対象が変われば一緒に変わる。何が入っているかと何が入っていないかを字面で書く。モジュール定数は rereadModule (対象だけを読み直す —— パス 495) で留める。',
     provenance: ['パターン 0-a-9', 'パターン 0-a-5'],
     enforcedBy: [harness('mutate'), prose(HANDOFF, '「表を読んで回っている」形は変異検査 (Stryker) が生存として映すが、CI の毎回では走らない (週次)。字面かどうかを静的に数える網は無い')],
   },
@@ -1658,6 +1658,14 @@ export const LAWS: readonly Law[] = [
       + '名前付き import しか読まない census は緑だった · パス 486)。',
     provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483', 'パス 486'],
     enforcedBy: [gate('lint:repo-size'), ci('.github/workflows/ci.yml'), test(T.shared('registryBundleCost'))],
+  },
+  {
+    id: 'module-evaluated-at-file-load',
+    family: 'gate-hygiene',
+    name: '検査の中でモジュールを初めて評価しない',
+    statement: '変異検査の足場は「いまどの検査か」を beforeEach で立てるので、**検査の中で**初めて評価したモジュールの直下の値 (定数・表・既定の文) は、その検査が覆った static な変異体になる。`ignoreStatic` は覆われていない static しか外さないので、覆われた物は覆った検査だけで走り、その検査が値を主張していなければ生き残る —— 報告は**測っていない物を「生存」として数える**。2026-09-27 の全掃引の static な生存 **1,150 件はすべて**、このパスで直した検査ファイルが覆っていた —— 画面 (設定画面・App) を検査の中で初めて読み込む 8 本が**それぞれ 916 件**、`vi.resetModules()` の読み直しが依存先の表を、という形で。読み込みは先頭の静的 import か beforeAll で行い、読み直すときは**対象だけ**を評価し直す (`rereadModule`) —— `vi.resetModules()` は依存先まで検査の中で評価し直す。**型としてしか使わない import は変換で消える**ので、それでは先に読んだことにならない (数えるなら TypeScript 自身に訊く)。',
+    provenance: ['パス 495', 'パス 494 (全掃引の汚れを実測し、原因の見立てを残した)', '2026-09-03 (hydroponics / payroll の参考値表が読み直しの巻き添えで生存 47 件 —— 表を関数にして避けた)'],
+    enforcedBy: [test(T.shared('inTestModuleLoadCensus')), test(T.shared('rereadModule')), harness('mutate')],
   },
 ];
 

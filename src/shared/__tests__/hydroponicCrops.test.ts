@@ -476,7 +476,7 @@ describe('findCrop / resolveCropFrom', () => {
 /**
  * 表 (見出し・範囲・文言・id の形) はモジュール読み込み時に確定する static な
  * 値なので、通常の検査では Stryker が「static 変異体」として**測らずに無視する**。
- * `vi.resetModules()` の後に動的 import で読み直すと、その it の中で表が
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直すと、その it の中で表が
  * 組み立て直されるので変異体が覆われ、測られる (assistant.ts と同じ手)。
  * 上の `toEqual` と同じ主張を、測られる形でもう 1 度置く。
  */

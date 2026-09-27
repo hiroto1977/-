@@ -60,7 +60,8 @@ vi.mock('electron', () => ({
       handlers.set(name, fn);
     },
   },
-  // 配色の追随 (パス 318) が themeSource を書く。resetModules ごとに作り直されるので 'system' から始まる。
+  // 配色の追随 (パス 318) が themeSource を書く。この mock は検査ファイルの中で 1 つで、main を読み直しても
+  // 作り直されない —— 前の検査が書いた値は、読む検査の側が戻す (下の「形の合わない値」)。
   nativeTheme: { themeSource: 'system' },
   shell: {
     openExternal: async (url: string) => {
@@ -320,7 +321,7 @@ describe('app:setColorScheme — 窓の下地と配色の追随 (パス 318)', (
   it('★ 形の合わない値は何も変えずに断る (scheme も色も)', async () => {
     const w = fakeWindow();
     allWindows = [w];
-    // electron の mock は resetModules をまたいで同じ object なので、前の検査が書いた themeSource を戻す。
+    // electron の mock は main の読み直しをまたいで同じ object なので、前の検査が書いた themeSource を戻す。
     const electron = await import('electron');
     electron.nativeTheme.themeSource = 'system';
     const bad: [unknown, unknown][] = [

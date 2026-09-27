@@ -792,8 +792,8 @@ describe('同じ期・事業の重複 (パス 124)', () => {
  * (実測 2026-09-10: この 2 件がまさにそれで、手で書き換えて全件を回すと
  * 上の検査は落ちる —— つまり「テストが無い」のではなく「届いていない」)。
  *
- * `stryker.config.json` の `_commentIgnoreStatic` が指す形 (`vi.resetModules()`
- * + 毎回の動的 `import()`) で読み直して、同じ値を改めて留める。
+ * `stryker.config.json` の `_commentIgnoreStatic` が指す形 (毎回の `rereadModule`
+ * —— 対象だけを読み直す・パス 495) で読み直して、同じ値を改めて留める。
  * `oauth.test.ts` の `freshConfigs` / `autoLock.test.ts` と同じ形。
  */
 describe('モジュール直下の値 (読み直してから確かめる — 静的変異体)', () => {

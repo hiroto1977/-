@@ -2117,8 +2117,8 @@ describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', 
  * 1 度だけ評価される**。静的 import のままでは、Stryker が変異を有効に
  * する前に評価が済んでいる (覆われた static 変異体)。
  *
- * `stryker.config.json` の注記どおり `vi.resetModules()` + 動的 `import()`
- * で読み直す。本 PR で 6 度目の同じ手当て (`MEMBER_ID_RE` / 橋 /
+ * `stryker.config.json` の注記どおり `rereadModule` (対象だけを読み直す
+ * —— パス 495) で読み直す。本 PR で 6 度目の同じ手当て (`MEMBER_ID_RE` / 橋 /
  * `INTERNAL_TLDS` / `EMPTY_TALENT_STATE` / テンプレート表 / ここ)。
  *
  * ## 何を字面で留めるか

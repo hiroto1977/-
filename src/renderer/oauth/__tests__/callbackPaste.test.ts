@@ -226,7 +226,7 @@ describe('oauthFieldTooLong — 天井を持つのは画面の maxLength だけ�
  * その 16 件のうち **13 件がこの定数群**だった (残り 3 件は下の `join('')`)。
  *
  * 解析そのものは 72 件すべて Killed で、**穴は「値」と「文面」の側にだけ在った**。
- * `vi.resetModules()` + 動的 `await import()` で読み直せば、値を書き換える
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直せば、値を書き換える
  * 変異体が比較で落ちる (`oauth.test.ts` の `freshConfigs`・パス 353 の
  * `backupCoverage.test.ts` と同じ形)。
  *
