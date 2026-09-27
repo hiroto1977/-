@@ -880,6 +880,32 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.renderer('snapshotAdoptionCensus')), test('src/renderer/pages/__tests__/teamRadarSampleNeverOverwrites.test.ts'), harness('e2e')],
   },
   {
+    id: 'judgement-reads-the-store',
+    family: 'at-rest',
+    name: '判定と書き込みの相手は購読の写しではなく保管層',
+    statement:
+      '画面の `useCollection(c).records` は**購読の写し**で、「今そこに在る物」ではない —— 一覧が IndexedDB から届く**前**は空、'
+      + '読みが失敗しても空のまま、**別のタブ**の書き込みも知らない (書き込みの知らせ `collectionChange.ts` は同じタブの中にしか届かない)。'
+      + '表示にはそれで構わないが、「既に在るか」「何人いるか」「今の一覧に足して丸ごと保存する」を写しで決めると、答えは古い一覧についての答えになる。'
+      + 'パス 384 は CSV の取り込みと KPI 実績の追加を保管層の読み直し (`readCollectionNow`) へ寄せたが、その census は handler を `function on…` の綴りで、'
+      + '写しを `records` / `entries` の綴りで探しており、**別名・導いた値・矢印の handler・JSX に直書きの handler が 1 つも映らなかった**。'
+      + '束縛 (型検査器のシンボル) で数え直すと、4 画面に 8 本 (+ 写しの値を判定へ渡す JSX の handler 3 本) が残っていた。実測 (直す前): '
+      + 'KPI の予算は同じ期・事業の 2 件目が入って**合算**され、チームは同じメールの 2 人目・席数の上限の超過・**最後のオーナーの降格と削除** (オーナー 0 人) を通し、'
+      + '水耕の品目は別のタブで足した品目が次の追加で**消え** (一覧はまるごと 1 記録で最新を採用するので lost update)、'
+      + '手入力の置き換えは同じ欄に 2 件目が入って**保存した直後の札が「手入力 111 円」** (古いほう —— `list()` は新しい順で、適用も札も後から当てた古い値を勝たせる) を出した。'
+      + '直しは判定と書き込みの直前に保管層を読み直し (`readRecordsNow` —— 行と id と `createdAt` つき)、読めなければ「0 件」と混ぜずに断る '
+      + '(断りの文は**確かめられない物**を名指しし、重複の判定でない所で「同じ記録が在るか」と言わない)。欄ごとの置き換えは読み直した行で 1 件へ畳み、'
+      + '「自動に戻す」はその欄の行を全部消す。**表示は写しのままでよい** —— 押したときに決めるのは読み直した保管層である。'
+      + '状態の初期値 (`useState(() => 写しから作った下書き)`) は写しを運ばない (利用者が編集する下書き) —— 数えると下書きを保存する handler がすべて映る。',
+    provenance: ['パス 384', 'パス 497', 'パス 125 (同じメールは 1 人)', 'パス 124 (同じ期・事業は 1 件)'],
+    enforcedBy: [
+      test(T.renderer('snapshotJudgementCensus')),
+      test('src/renderer/pages/__tests__/judgementReadsStoreNow.test.ts'),
+      test('src/renderer/data/__tests__/overrideSavePlan.test.ts'),
+      test('src/renderer/data/__tests__/readCollectionNow.test.ts'),
+    ],
+  },
+  {
     id: 'size-gate-before-parse',
     family: 'at-rest',
     name: 'ディスクから読む所は読む前に大きさの門',

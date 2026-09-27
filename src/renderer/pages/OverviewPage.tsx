@@ -4,6 +4,7 @@ import { Section } from '../components/StatusBar';
 import { UNDETERMINED } from '../components/Stat';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { readRecordsNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
   BUSINESS_UNITS_COLLECTION,
@@ -357,6 +358,9 @@ function cropDraftFrom(c: HydroponicCrop): CropDraftForm {
   return draft;
 }
 
+/** 品目の一覧の変更の結果。**当てた一覧** (`before`) も返す —— 消した品目の名前はそこから引く。 */
+type CropChangeOutcome = CropListChange & { readonly before: readonly HydroponicCrop[] };
+
 const cropFieldLabel: React.CSSProperties = {
   fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2,
 };
@@ -367,7 +371,7 @@ const cropFieldLabel: React.CSSProperties = {
  * 初期値は参考値だが、**保存するまで経営サマリーには載らない**。参考値が
  * そのまま経営数値になると、サンプルと実データの区別がつかなくなる。
  *
- * 品目の一覧は利用者が増減できる (`crops` / `onCropsChange`)。一覧は設定とは
+ * 品目の一覧は利用者が増減できる (`crops` / `changeCrops`)。一覧は設定とは
  * 別のレコードに保存され、**設定を保存し直すまで試算の品目は変わらない**
  * (足しただけで数字が動くと、何を保存したのか分からなくなる)。
  */
@@ -386,14 +390,18 @@ function HydroponicsPanel({
   crops,
   lowKParams,
   onSave,
-  onCropsChange,
+  changeCrops,
 }: {
   current: HydroponicsSetup | null;
   crops: readonly HydroponicCrop[];
   /** 低カリウム評価の基準 (台帳の値。案内文の日数に使う)。 */
   lowKParams: LowPotassiumParams;
   onSave: (s: HydroponicsSetup) => Promise<void> | void;
-  onCropsChange: (crops: readonly HydroponicCrop[]) => Promise<void> | void;
+  /**
+   * 品目の一覧を変える —— `change` を**保管層から読み直した今の一覧**に当て、断られなければ
+   * 保存する (パス 497)。読めなければ `null`。表示に使う `crops` (購読の写し) には当てない。
+   */
+  changeCrops: (change: (current: readonly HydroponicCrop[]) => CropListChange) => Promise<CropChangeOutcome | null>;
 }) {
   const base = current ?? HYDROPONICS_DEFAULTS;
   const [cropId, setCropId] = useState<string>(base.cropId);
@@ -436,33 +444,48 @@ function HydroponicsPanel({
   const missingBuiltins = missingBuiltinCrops(crops);
   const savedCrop = current === null ? undefined : findCrop(crops, current.cropId);
 
-  /** 一覧の増減を保存し、新しい一覧を返す。断られたら文言を出して null (投げない)。 */
-  const applyCrops = async (r: CropListChange): Promise<readonly HydroponicCrop[] | null> => {
+  /**
+   * 一覧の増減を**今の一覧**に当てて保存し、当てる前と後の一覧を返す。断られたら文言を出して
+   * null (投げない)。
+   *
+   * ★ 今の一覧は保管層から読み直す (パス 497)。品目の一覧は**まるごと 1 記録**で、変更の
+   * たびに 1 件足して最新を採用する —— 購読の写し (`crops`) に当てていた頃は、別のタブで
+   * 足した品目を知らないまま一覧を丸ごと書き、**その品目が消えた** (lost update・実測)。
+   */
+  const applyCrops = async (
+    change: (current: readonly HydroponicCrop[]) => CropListChange,
+  ): Promise<CropChangeOutcome & { ok: true } | null> => {
+    const r = await changeCrops(change);
+    if (r === null) {
+      setCropNotice(unreadableForJudgementNote('品目の一覧', '今の品目の一覧'));
+      return null;
+    }
     if (!r.ok) {
       setCropNotice(r.issues.join('。'));
       return null;
     }
-    await onCropsChange(r.crops);
-    return r.crops;
+    return r;
   };
   const onAddCrop = async () => {
-    const next = await applyCrops(addCrop(crops, {
+    const done = await applyCrops((current) => addCrop(current, {
       ...draft,
       ...Object.fromEntries(CROP_NUMERIC_FIELDS.map((f) => [f, parseCropNumber(draft[f])])),
     }));
-    if (next === null) return;
-    const added = next[next.length - 1]!;
+    if (done === null) return;
+    const added = done.crops[done.crops.length - 1]!;
     setCropId(added.id);
     setSaved(false);
     setDraft((d) => ({ ...d, label: '' }));
     setCropNotice(`「${added.label}」を足して品目に選びました。試算に使うには設定を保存してください。`);
   };
-  const onRemoveCrop = async (target: HydroponicCrop) => {
-    if ((await applyCrops(removeCrop(crops, target.id))) === null) return;
-    setCropNotice(`「${target.label}」を消しました。`);
+  const onRemoveCrop = async (id: string) => {
+    const done = await applyCrops((current) => removeCrop(current, id));
+    if (done === null) return;
+    // 名前は**当てた一覧**から引く (画面の写しの行ではない —— 消したのはそちらの品目である)。
+    setCropNotice(`「${findCrop(done.before, id)?.label ?? id}」を消しました。`);
   };
   const onRestoreCrops = async () => {
-    if ((await applyCrops(restoreBuiltinCrops(crops))) === null) return;
+    if ((await applyCrops(restoreBuiltinCrops)) === null) return;
     setCropNotice('参考値の品目を戻しました。');
   };
 
@@ -577,7 +600,7 @@ function HydroponicsPanel({
                   type="button"
                   disabled={submit.busy || crops.length <= 1}
                   aria-label={`${c.label} を消す`}
-                  onClick={() => fireReported(submit.run(() => onRemoveCrop(c)))}
+                  onClick={() => fireReported(submit.run(() => onRemoveCrop(c.id)))}
                   style={{ fontSize: 11 }}
                 >
                   消す
@@ -778,6 +801,22 @@ export function OverviewPage() {
   const cropCol = useCollection<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
   const hydroSetup = latestRecord(hydroCol.records)?.data ?? null;
   const crops = useMemo(() => cropListFromRecords(cropCol.records), [cropCol.records]);
+  /*
+   * 品目の一覧の変更は**今の最新**に当てる (パス 497)。一覧は「最新の 1 件を採用する」ので、
+   * 写し (`crops`) に当てて丸ごと書くと、別のタブで足した品目を知らないまま上書きして消す。
+   * 断られたときは写しも読み直す (断った理由の品目が画面に見えるように)。
+   */
+  const changeCrops = async (
+    change: (current: readonly HydroponicCrop[]) => CropListChange,
+  ): Promise<CropChangeOutcome | null> => {
+    const rows = await readRecordsNow<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
+    if (rows === null) return null;
+    const before = cropListFromRecords(rows);
+    const r = change(before);
+    if (r.ok) await cropCol.add({ crops: r.crops });
+    else await cropCol.reload();
+    return { ...r, before };
+  };
   // 台帳の数値パラメータ (設定画面で上書きできる)。試算の関数へ引数で渡す —
   // 台帳を読む大域の状態は置かない (`shared/parameters.ts`)。
   const { values: paramValues } = useParameters();
@@ -1707,7 +1746,7 @@ export function OverviewPage() {
           crops={crops}
           lowKParams={lowKParams}
           onSave={(s) => hydroCol.add(s)}
-          onCropsChange={(c) => cropCol.add({ crops: c })}
+          changeCrops={changeCrops}
         />
         {overview.hydroponics && (
           <>

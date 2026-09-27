@@ -665,7 +665,7 @@ function ActualsPanel() {
 // --- Budget (予算) panel — drives 予算実績差異 (BVA) ----------------------
 
 function BudgetPanel() {
-  const { records: budgets, add, remove } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
+  const { records: budgets, add, remove, reload } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
   const { records: actuals } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string>();
@@ -686,8 +686,18 @@ function BudgetPanel() {
     try {
       const parsed = parseKpiActual(form);
       // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
-      if (hasSamePeriodUnit(budgets.map((r) => r.data), parsed)) {
+      // **判定の相手は保管層から読み直す** (パス 497) —— 実績の側 (上の `onAdd`) はパス 384 で
+      // 読み直しへ寄せたのに、予算の側だけ写し (`budgets`) に尋ねていた。写しは一覧が届く前は空で、
+      // 別のタブが入れた予算も知らないので、同じ期・事業の 2 件目が入り予算が**合算**された。
+      const stored = await readCollectionNow<KpiActual>(KPI_BUDGETS_COLLECTION);
+      if (stored === null) {
+        setError(unreadableForJudgementNote('KPI 予算の一覧'));
+        return;
+      }
+      if (hasSamePeriodUnit(stored, parsed)) {
         setError(duplicateActualMessage('予算', parsed));
+        // 断った理由の行を画面にも出す (写しが古いと、断られた行が一覧に見えない)。
+        await reload();
         return;
       }
       setError(undefined);

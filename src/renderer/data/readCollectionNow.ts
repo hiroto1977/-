@@ -28,20 +28,41 @@
  * 書き込んだ行は残り、以後すべての集計がそれを読む (パス 214 と同じ理由)。
  * 「読めなかった」を「無い」に畳まないのはパス 313 / 352 と同じ規則である。
  */
-import { getRecordStore } from './store';
+import { getRecordStore, type StoredRecord } from './store';
 
 export async function readCollectionNow<T extends Record<string, unknown>>(
   collection: string,
 ): Promise<readonly T[] | null> {
+  const rows = await readRecordsNow<T>(collection);
+  return rows === null ? null : rows.map((r) => r.data);
+}
+
+/**
+ * **行ごと** (id と `createdAt` つき) に読み直す (2026-09-27 · パス 497)。
+ *
+ * 判定が「どの行を書き換えるか」「最新の 1 件はどれか」を決めるときに要る ——
+ * `readCollectionNow` は中身だけを返すので、書き換える行の id も、
+ * 「最新の 1 件を採用する」collection (水耕の品目一覧) の最新も選べない。
+ * 読めなければ `null` (「0 件」ではない —— 上の docblock と同じ規則)。
+ */
+export async function readRecordsNow<T extends Record<string, unknown>>(
+  collection: string,
+): Promise<readonly StoredRecord<T>[] | null> {
   try {
-    const rows = await getRecordStore().list<T>(collection);
-    return rows.map((r) => r.data);
+    return await getRecordStore().list<T>(collection);
   } catch {
     return null;
   }
 }
 
-/** 読めなかったときに画面へ出す断り。**何を確かめられないか**を名指しする。 */
-export function unreadableForJudgementNote(what: string): string {
-  return `${what}を読めなかったため、処理を中止しました（既に同じ記録が在るかを確かめられません）。画面を開き直してから、もう一度お試しください。`;
+/**
+ * 読めなかったときに画面へ出す断り。**何を確かめられないか**を名指しする。
+ *
+ * `unchecked` は「読めないと何が決められないか」—— 既定は重複の判定 (パス 384) だが、
+ * パス 497 で寄せた判定には重複ではない物が在る (オーナーが何人か・今の品目の一覧)。
+ * 重複の判定でない所で「同じ記録が在るか」と言うと、**原因を取り違えた断り**になる
+ * (パス 388 の家系)。
+ */
+export function unreadableForJudgementNote(what: string, unchecked = '既に同じ記録が在るか'): string {
+  return `${what}を読めなかったため、処理を中止しました（${unchecked}を確かめられません）。画面を開き直してから、もう一度お試しください。`;
 }
