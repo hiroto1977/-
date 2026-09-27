@@ -126,6 +126,13 @@ const EXEMPT: readonly { readonly file: string; readonly why: string }[] = [
     why: '落とす相手が **CSS** (styles.css) で、共有の字句解析器は JS/TS のもの —— CSS に行注記も正規表現リテラルもテンプレート補間も無いので、当てても「今日たまたま同じ答え」にしかならない。実測 (2026-09-25 · パス 462): この CSS には注記の外の `//` が 0 件なので今日の答えは変わらないが、`url(//cdn…)` を 1 行書いた日に JS の行注記として行末まで食う。**言語が違う物に同じ道具を当てない**',
   },
   {
+    file: 'src/shared/__tests__/bundledAssetImports.test.ts',
+    why: '2 つの言語を読む census (2026-09-27)。**TS の側は共有の `stripComments` を通す**が、stylesheet の `url(…)` を探す側は '
+      + '**CSS のブロック注記だけ**を CSS 用の 1 行で落とす —— themeTokens.test.ts と同じ理由で、共有の字句解析器は JS/TS の物なので '
+      + '`url(//cdn…)` を 1 行書いた日に JS の行注記として行末まで食う。**言語が違う物に同じ道具を当てない**。'
+      + '注記の中の `url(…)` を数えないことは同じファイルの標本が留める',
+  },
+  {
     file: 'scripts/lint-mutation-scope.cjs',
     why: '**注記を落とす物ではなく、注記そのものを探す物**。`Stryker disable` / `restore` の pragma は定義上コメントの中に在るので、行頭アンカーの正規表現で `//` と `/*` を見るのは「注記か」を判じているのではなく**針そのもの**である (落としたら母集団が空になる · 2026-09-25 パス 463)',
   },
