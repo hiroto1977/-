@@ -11,6 +11,7 @@ import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgress
 import { GMAIL_DRAFT_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -56,6 +57,13 @@ export function GmailPage() {
     [threads],
   );
   const analyzeNote = analyzeBatchNote(analyzeBatch);
+  /*
+   * **押している間は 2 度目を送らない** (2026-09-27 · パス 493h)。この送信は有料の
+   * Anthropic API を呼び、結果を Emotions の履歴へ保存する —— 2 度押すと同じ本文で
+   * 2 回課金され、同じ分析が 2 件残る。隣の送信口は `submitting` で止めていたのに、
+   * ここだけ関門が無かった (`clickSendGuardCensus.test.ts` が母集団を数える)。
+   */
+  const analyzeGuard = useSubmitGuard();
 
   const create = async () => {
     if (!window.serviceHub) return;
@@ -123,16 +131,18 @@ export function GmailPage() {
         title="受信トーン分析"
         action={
           <button
-            onClick={async () => {
-              if (!window.serviceHub || analyzeBatch.included < 1) return;
-              const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
-                text: analyzeBatch.text,
-                source: 'Gmail Inbox',
-              });
-              if (!res.ok) alert('感情分析失敗: ' + res.message);
-              else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
-            }}
-            disabled={analyzeBatch.included < 1}
+            onClick={() =>
+              void analyzeGuard.run(async () => {
+                if (!window.serviceHub || analyzeBatch.included < 1) return;
+                const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
+                  text: analyzeBatch.text,
+                  source: 'Gmail Inbox',
+                });
+                if (!res.ok) alert('感情分析失敗: ' + res.message);
+                else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
+              })
+            }
+            disabled={analyzeGuard.busy || analyzeBatch.included < 1}
           >
             Emotions で分析
           </button>

@@ -23114,6 +23114,11 @@ collection へ書くので規則の外だが、同じ形なので同じ関門を
   ボタンに `disabled=` を持ち (大半は busy / loading)、**21 は持たない** —— チャットボットの送信 ×2 (2 度目は AI
   への 2 通目)・設定画面の OAuth 開始と保存先の選択・ライブラリの削除 ×4・書き出しの開く/コピー ×3 など。二重送信が
   **相手に 2 通届く**形が混じるので、同じ関門を通す次のパスの候補。
+  ★ **2026-09-27 (パス 493h) で外へ送る側を閉じた** —— `serviceHub.invoke` の呼び出し 42 か所を
+  `renderer/__tests__/clickSendGuardCensus.test.ts` が起こす属性ごとに数え、**関門を 1 つも持たない 2 か所**
+  (Slack / Gmail の「Emotions で分析」—— 有料の Anthropic API を呼び履歴へ保存する) を `useSubmitGuard` へ通した。
+  残る 3 か所は理由つきの台帳 (確認の窓が押した瞬間に閉じる / 1 発話 = 1 送信)。
+  ローカルの操作 (ライブラリの削除・開く/コピー) はこの線の外のまま。
 - CSV の取り込みは重複行を**スキップ**する (置き換えない)。訂正の道は画面の実績と同じ (× で消してから)。
 - 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま** —— 足した `duplicates += 1` / `count: g.count + 1` / `.filter(...).length` は規則 (`? … : 0` / `?? 0` / `|| 0`) の外。
 
@@ -29237,6 +29242,7 @@ census の注記自身が carve-out を持っており (「外へ書く入口は
   **Phase 6 で永続化を繋ぐ前に直す** (パス 189 の Sparkline と同じ「床」として記録)。
 - **外部サービスへ書く入口は今も census の外** (GitHub の issue / Slack / Gmail / DNS)。
   書かれる先が相手方で、二重投稿は相手側に見える。パス 124 の「残る物」のまま。
+  ★ **2026-09-27 (パス 493h) で閉じた** —— `clickSendGuardCensus.test.ts` が数え、2 か所を直した。
 - カバレッジの次の的: `LibraryPage.tsx` 53.47% / `ShigyoConsole.tsx` 55.00% /
   `CanvaPage.tsx` 55.56% / `HomePage.tsx` 60.00%。
 

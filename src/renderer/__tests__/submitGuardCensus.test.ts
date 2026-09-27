@@ -31,9 +31,13 @@ import { stripComments } from '../../shared/__tests__/stripNonCode';
  * 印は 2 つ: record store に触る (`useCollection` / `getRecordStore`) か、
  * `record-entry` を `invoke` する。
  *
- * 外部サービスへ書く入口 (GitHub の issue / Slack / Gmail / DNS …) は**今も規則の外**。
- * 書かれる先が相手方で、二重投稿は相手側に見える (多くが独自の busy を持つ)。
- * 母集団としてはまだ数えていない —— REMAINING_WORK パス 124「残る物」に置いたまま。
+ * 外部サービスへ書く入口 (GitHub の issue / Slack / Gmail / DNS …) と有料の AI 呼び出しは
+ * **この走査の外** —— `clickSendGuardCensus.test.ts` (2026-09-27 · パス 493h) が
+ * `serviceHub.invoke` の呼び出し 1 つ 1 つから、それを起こす属性と守りを数える。
+ * ★ 2026-09-27 まで、ここは「母集団としてはまだ数えていない」と書いて残していた ——
+ * 測ると 42 か所のうち **2 か所が関門を持たなかった** (Slack / Gmail の「Emotions で分析」)。
+ * どちらも `onClick={async () => …}` とその場に書いた handler で、**この走査の
+ * 「同じファイルで宣言された名前つきの handler」という線の外**に在った。
  *
  * **手で一覧を書かない** —— パス 106 / 107 で、手で書いた母集団は書いた分しか見つからなかった。
  */

@@ -1049,6 +1049,30 @@ export const LAWS: readonly Law[] = [
     ],
   },
   {
+    id: 'one-press-one-send',
+    family: 'surface',
+    name: '1 度の意図は 1 度だけ外へ送る',
+    statement:
+      '押して外へ送る操作 (外部サービスへの書き込み・**有料の AI 呼び出し**) は、押している間 2 度目を送らない。'
+      + '守りは `useSubmitGuard` の `.run(` (同じ tick に 2 度届く押下も ref で止める) か、'
+      + '**最初の `await` より前に**立てた状態をその要素の `disabled`・属性の `!状態`・入口の `if (状態) return` が読む形 '
+      + '(`await x; setBusy(true)` は関門に見えて関門ではない —— その待ちの間は押せる)。'
+      + '**母集団は「関門を持つ handler」からではなく `invoke` の呼び出しから導く** —— '
+      + 'パス 124 の census は record store に触るファイルの**名前つき** handler だけを数え、外へ送る入口を「規則の外」として残した。'
+      + '2026-09-27 に `invoke` の呼び出しから測ると 42 か所のうち **2 か所が関門を 1 つも持たず** '
+      + '(Slack / Gmail の「Emotions で分析」)、どちらも `onClick={async () => …}` と**その場に書いた** handler だったので、'
+      + '名前つき handler の走査には構造的に映らなかった。実測 (jsdom · 直す前): 人のダブルクリックでも同じ tick の 2 度押しでも '
+      + '`emotions/analyze-text` が 2 回飛び、**有料の Anthropic API を 2 回呼び、Emotions の履歴に同じ分析が 2 件残った**。'
+      + '守りの外に残す送信 (確認の窓が押した瞬間に閉じる・1 発話 = 1 送信) は理由つきの台帳に載せ、台帳は両方向に鳴る。',
+    provenance: ['パス 124', 'パス 192', 'パス 493h'],
+    enforcedBy: [
+      test(T.renderer('clickSendGuardCensus')),
+      test(T.renderer('submitGuardCensus')),
+      test('src/renderer/pages/__tests__/emotionsAnalyzeDoubleSubmit.test.ts'),
+      test('src/renderer/pages/__tests__/mutualFundsDoubleSubmit.test.ts'),
+    ],
+  },
+  {
     id: 'design-switch-leaves-nothing-behind',
     family: 'surface',
     name: '見た目を替えても、前の見た目の値は残らない',
