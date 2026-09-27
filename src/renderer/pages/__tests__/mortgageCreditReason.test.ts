@@ -39,11 +39,15 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 // **隔離は共有の 1 つを通す** —— `_resetRecordStoreForTests()` は singleton を
 // 捨てるだけで IndexedDB は残る (`recordStoreHarness.ts` の実測)。
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 import {
   DEFAULT_MORTGAGE_CREDIT_PARAMS,
   HOUSING_PERFORMANCE_LABELS,
+  MORTGAGE_RESIDENT_CAP_MAX_SPECIFIED,
+  MORTGAGE_RESIDENT_CAP_RATE_SPECIFIED,
   calcMortgageCredit,
+  mortgageCreditParamsFor,
+  mortgageUnusedNote,
   noMortgageCreditCause,
   noMortgageCreditNote,
   resolveMortgageParams,
@@ -89,7 +93,7 @@ const OK: MortgageCreditInput = {
   rate: 0.007,
   balanceCap: 40_000_000,
   incomeTaxBeforeCredit: 500_000,
-  taxableIncomeForResident: 4_000_000,
+  taxableIncomeForIncomeTax: 4_000_000,
   totalIncome: 6_000_000,
   outsidePeriod: false,
 };
@@ -108,7 +112,7 @@ describe('★ ¥0 の原因は 1 か所で選び、5 通りを言い分ける (�
     expect(causeOf({ outsidePeriod: true }), '控除期間外').toBe('outside-period');
     expect(causeOf({ balanceCap: 0 }), '2024+ 非適合').toBe('not-energy-compliant');
     expect(
-      causeOf({ incomeTaxBeforeCredit: 0, taxableIncomeForResident: 0 }),
+      causeOf({ incomeTaxBeforeCredit: 0, taxableIncomeForIncomeTax: 0 }),
       '差し引く税額が無い',
     ).toBe('no-tax-to-offset');
     // 健全な入力では原因が無い (上の 6 件が空の検査でないこと)。
@@ -140,7 +144,7 @@ describe('★ ¥0 の原因は 1 か所で選び、5 通りを言い分ける (�
   it('★ 「原因が無い」⟺「画面に出る 2 つの額の合計が 0 でない」(両方向)', () => {
     const cases: (Partial<MortgageCreditInput> | null)[] = [
       null, {}, { yearEndBalance: 0 }, { totalIncome: 25_000_000 }, { outsidePeriod: true },
-      { balanceCap: 0 }, { incomeTaxBeforeCredit: 0, taxableIncomeForResident: 0 },
+      { balanceCap: 0 }, { incomeTaxBeforeCredit: 0, taxableIncomeForIncomeTax: 0 },
       { yearEndBalance: 1_000 }, { incomeTaxBeforeCredit: 100 },
     ];
     let withCredit = 0;
@@ -236,5 +240,167 @@ describe('★ 所得の上限は台帳の値から文へ入る (数を写さな�
     });
     expect(note).toContain('3000');
     expect(note, '既定の 2,000 万を書き写している').not.toContain('2000 万円を超える');
+  });
+});
+
+/**
+ * **住民税側の上限は「所得税の」課税総所得金額等で決まる** (2026-09-27 · パス 493)。
+ *
+ * 地方税法附則第5条の4の2 —— 住民税から差し引ける上限は所得税の課税総所得金額等の
+ * 5% (最大 97,500 円)。平成26年4月〜令和3年12月の居住で特定取得なら 7% (最大 136,500 円)。
+ *
+ * ## 実測 (2026-09-27 · 直す前)
+ *
+ * 画面は `taxableIncomeForResident: result.taxableIncomeForResidentTax` —— **住民税の**
+ * 課税所得を渡していた。住民税の所得控除は所得税より小さいので課税所得は大きく、
+ * 上限が効く所得帯では住民税からの控除を**多く**見せる。基礎控除の差 (48 万 vs 43 万)
+ * だけを持つ額面 250〜400 万の 4 標本で、どれも **2,500 円**多かった。
+ * 居住年 2020 / 2021 (選べる 6 年のうち 2 年) は逆に 5% のままで**少なく**見せていた。
+ *
+ * ## 3 つ目: 一部しか引けなかった額を言わない
+ *
+ * 算定額 210,000 円のうち所得税と住民税の上限を超えた分は `unused` として捨てられるが、
+ * 画面は 2 つの額だけを刷っていた (額面 300 万で 10 万円余りが黙って消えていた)。
+ */
+describe('★ 住民税側の上限と、引ききれなかった額 (パス 493)', () => {
+  /**
+   * ③ の内訳の枠 (「所得控除合計:」を持つ div) の中だけを読む —— 同じ語 (「給与所得」
+   * 「/ 住民税」) は ② の簡易試算にも出るので、画面全体の最初の一致は別の節の値になる。
+   */
+  const breakdown = (): string => {
+    const el = Array.from(container.querySelectorAll('div')).find((d) =>
+      (d.textContent ?? '').startsWith('給与所得控除') && (d.textContent ?? '').includes('所得控除合計:'));
+    if (!el) throw new Error('③ の内訳の枠が無い');
+    return el.textContent ?? '';
+  };
+  const yenOf = (label: string): number => {
+    const m = new RegExp(`${label}\\s*¥([0-9,]+)`).exec(breakdown());
+    if (!m) throw new Error(`「${label} ¥…」が ③ の内訳に無い`);
+    return Number(m[1]!.replace(/,/g, ''));
+  };
+  /** 「住宅ローン (所得税 ¥F / 住民税 ¥R)」の 2 つ。 */
+  const mortgageShown = () => {
+    const m = /住宅ローン \(所得税 ¥([0-9,]+) \/ 住民税 ¥([0-9,]+)\)/.exec(breakdown());
+    if (!m) throw new Error('住宅ローンの額が ③ の内訳に無い');
+    return { fromIncomeTax: Number(m[1]!.replace(/,/g, '')), fromResident: Number(m[2]!.replace(/,/g, '')) };
+  };
+
+  function setNative(el: HTMLInputElement | HTMLSelectElement, value: string): void {
+    const proto = el instanceof HTMLSelectElement ? window.HTMLSelectElement.prototype : window.HTMLInputElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+    if (!setter) throw new Error('value setter not found');
+    setter.call(el, value);
+    el.dispatchEvent(new Event(el instanceof HTMLSelectElement ? 'change' : 'input', { bubbles: true }));
+  }
+
+  /** ③ の欄は `<label>` の本文でしか呼べない (先頭一致・taxDeductionCeilings と同じ引き方)。 */
+  async function typeLabelled(labelPrefix: string, value: string): Promise<void> {
+    const hit = Array.from(container.querySelectorAll('label')).find((l) => {
+      const own = Array.from(l.childNodes)
+        .filter((n) => n.nodeType === 3)
+        .map((n) => (n.textContent ?? '').trim())
+        .join('');
+      return own.startsWith(labelPrefix) && l.querySelector('input[type="text"]') !== null;
+    });
+    const input = hit?.querySelector<HTMLInputElement>('input[type="text"]');
+    if (!input) throw new Error(`field not found: ${labelPrefix}`);
+    await act(async () => { setNative(input, value); });
+  }
+
+  async function pick(optionValue: string, value: string): Promise<void> {
+    const sel = Array.from(container.querySelectorAll('select')).find((x) =>
+      Array.from(x.options).some((o) => o.value === optionValue));
+    if (!sel) throw new Error(`select with option ${optionValue} not found`);
+    await act(async () => { setNative(sel, value); });
+  }
+
+  /** 額面 300 万・社保 45 万・残高 3,000 万 (2024 年・一般の新築 = 算定額 210,000 円)。 */
+  async function mountWithMortgage(): Promise<void> {
+    root = createRoot(container);
+    await act(async () => { root!.render(createElement(TaxPage)); });
+    await waitForText(text, '税額控除');
+    await typeLabelled('額面年収 (円)', '3000000');
+    await typeLabelled('支払社会保険料', '450000');
+    await typeLabelled('住宅ローン年末残高', '30000000');
+    // 錠は**額そのもの** (新しい断りの文を錠にすると、断りを消す対照で無関係の検査まで倒れる)。
+    await settleUntil(() => {
+      try { return mortgageShown().fromIncomeTax > 0; } catch { return false; }
+    }, '住宅ローン控除の所得税分が 0 でなくなる');
+  }
+
+  /** 画面が刷る所得税ベース / 住民税ベースの課税所得 (給与所得 − 所得控除合計)。 */
+  const taxableBases = () => {
+    const employment = yenOf('給与所得');
+    return {
+      it: Math.max(0, employment - yenOf('所得税ベース')),
+      rt: Math.max(0, employment - yenOf('住民税ベース')),
+    };
+  };
+
+  it('★ 住民税からの控除は、所得税の課税総所得金額等の 5% で頭打ちになる', async () => {
+    await mountWithMortgage();
+    const { it: baseIt, rt: baseRt } = taxableBases();
+    const { fromIncomeTax, fromResident } = mortgageShown();
+    const lawful = Math.min(210_000 - fromIncomeTax, Math.round(baseIt * 0.05), 97_500);
+    const viaResidentBase = Math.min(210_000 - fromIncomeTax, Math.round(baseRt * 0.05), 97_500);
+    // 標本: この入力は 2 つの基準を見分けられる (同じ答えなら下の主張は空の検査)。
+    expect(viaResidentBase, '標本が 2 つの基準を見分けない').not.toBe(lawful);
+    expect(fromResident, '住民税の課税所得を基準にしている').toBe(lawful);
+  });
+
+  it('★ 一部しか引けなかった額を、上限の率と「繰り越せない」とともに言う', async () => {
+    await mountWithMortgage();
+    const { fromIncomeTax, fromResident } = mortgageShown();
+    const unused = 210_000 - fromIncomeTax - fromResident;
+    expect(unused, '前提: この標本では捨てられる額が在る').toBeGreaterThan(0);
+    const note = container.querySelector('[data-mortgage-credit-unused]');
+    expect(note, '引ききれなかった額の断りが無い').not.toBeNull();
+    expect(note?.textContent).toContain(`${unused.toLocaleString('ja-JP')} 円は控除できません`);
+    expect(note?.textContent).toContain('所得税の課税総所得金額等の 5%');
+    expect(note?.textContent).toContain('繰り越せません');
+    // 0 円の理由の断りとは重ならない (同じ事実を 2 つの文で言わない)。
+    expect(container.querySelector('[data-no-mortgage-credit]')).toBeNull();
+  });
+
+  it('★ 2021 年居住の新築は 7% (最大 136,500 円)・同じ年の中古は 5% に戻る', async () => {
+    await mountWithMortgage();
+    const { it: baseIt } = taxableBases();
+    await pick('2025', '2021');
+    await waitForText(text, '所得税の課税総所得金額等の 7%');
+    const { fromIncomeTax, fromResident: specified } = mortgageShown();
+    // 2021 年は控除率 1%・借入限度額 4,000 万なので算定額は 300,000 円。
+    expect(specified).toBe(Math.min(300_000 - fromIncomeTax, Math.round(baseIt * 0.07), 136_500));
+    expect(specified, '標本: 7% と 5% が見分けられる').not.toBe(Math.round(baseIt * 0.05));
+    await pick('used', 'used');
+    await waitForText(text, '所得税の課税総所得金額等の 5%');
+  });
+});
+
+describe('★ 上限の表と断りの文 (パス 493)', () => {
+  it('特定取得の上限は 2015〜2021 年の新築だけ・中古と 2022 年以降と 2014 年は標準', () => {
+    for (const y of [2015, 2020, 2021]) {
+      const p = mortgageCreditParamsFor(y, 'standard');
+      expect(p.residentCapRate, `${y}`).toBe(MORTGAGE_RESIDENT_CAP_RATE_SPECIFIED);
+      expect(p.residentCapMax, `${y}`).toBe(MORTGAGE_RESIDENT_CAP_MAX_SPECIFIED);
+    }
+    for (const [y, perf] of [[2021, 'used'], [2022, 'standard'], [2025, 'long-life'], [2014, 'standard']] as const) {
+      expect(mortgageCreditParamsFor(y, perf), `${y} ${perf}`).toEqual(DEFAULT_MORTGAGE_CREDIT_PARAMS);
+    }
+    // 台帳の所得上限は居住年に依らず運ばれる。
+    const base = { ...DEFAULT_MORTGAGE_CREDIT_PARAMS, incomeLimit: 30_000_000 };
+    expect(mortgageCreditParamsFor(2021, 'zeh', base).incomeLimit).toBe(30_000_000);
+  });
+
+  it('引ききれなかった額の文は、0 円のとき (理由は別の文) と全部効いたときは出ない', () => {
+    const r = (fromIncomeTax: number, fromResidentTax: number, unused: number) =>
+      ({ creditable: fromIncomeTax + fromResidentTax + unused, fromIncomeTax, fromResidentTax, unused });
+    expect(mortgageUnusedNote(r(100_000, 50_000, 0)), '全部効いた').toBeNull();
+    expect(mortgageUnusedNote(r(0, 0, 210_000)), '0 円 —— 理由は noMortgageCreditNote が言う').toBeNull();
+    const note = mortgageUnusedNote(r(53_500, 53_500, 103_000));
+    expect(note).toContain('210,000 円のうち 103,000 円は控除できません');
+    expect(note).toContain('5%（最大 97,500 円）');
+    // 上限の率と額は引数から入る (数を写さない)。
+    const specified = mortgageUnusedNote(r(53_500, 74_900, 171_600), mortgageCreditParamsFor(2021, 'standard'));
+    expect(specified).toContain('7%（最大 136,500 円）');
   });
 });

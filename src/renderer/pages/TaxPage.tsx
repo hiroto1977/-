@@ -80,6 +80,8 @@ import {
   resolveMortgageParams,
   mortgagePeriodStatus,
   calcMortgageCredit,
+  mortgageCreditParamsFor,
+  mortgageUnusedNote,
   noMortgageCreditCause,
   noMortgageCreditNote,
   HOUSING_PERFORMANCE_LABELS,
@@ -391,6 +393,12 @@ export function TaxPage() {
     // 控除期間 (新築13年/中古10年) の判定。現在年は試算基準年とする。
     const mortgagePeriod = mortgagePeriodStatus(mortgageYear, new Date().getFullYear(), mortgagePerf);
     /*
+     * **住民税側の上限は居住年と取得で決まる** (パス 493) —— 2020 / 2021 年の居住で
+     * 特定取得なら 7%・最大 136,500 円。台帳の値 (標準) に年の表を重ねた引数を、
+     * 計算・原因・文のすべてへ同じ 1 つとして渡す (別々に渡すと食い違う)。
+     */
+    const mortgageYearP = mortgageCreditParamsFor(mortgageYear, mortgagePerf, mortgageCreditP);
+    /*
      * **入力は 1 度だけ組む** (2026-09-22 · パス 401) —— 同じ器を
      * `calcAllTaxCredits` と `noMortgageCreditCause` の両方へ渡す。
      * 2 度組むと「計算が使った入力」と「原因を選んだ入力」が割れる。
@@ -401,7 +409,9 @@ export function TaxPage() {
           rate: mortgageParams.rate,
           balanceCap: mortgageParams.balanceCap,
           incomeTaxBeforeCredit: result.baseIncomeTax,
-          taxableIncomeForResident: result.taxableIncomeForResidentTax,
+          // 住民税からの控除上限は**所得税の**課税総所得金額等で決まる (パス 493 ——
+          // 住民税の課税所得を渡していたので、上限が効く所得帯で控除を多く見せていた)。
+          taxableIncomeForIncomeTax: result.taxableIncomeForIncomeTax,
           // 合計所得金額の近似 (給与所得)。2,000万超で住宅ローン控除は不適用。
           totalIncome: result.employmentIncome,
           outsidePeriod: !mortgagePeriod.withinPeriod,
@@ -409,24 +419,26 @@ export function TaxPage() {
       : null;
     const mortgageResult = mortgageInput === null
       ? null
-      : calcMortgageCredit(mortgageInput, mortgageCreditP);
+      : calcMortgageCredit(mortgageInput, mortgageYearP);
     /*
      * **¥0 の理由** —— 5 通りあり、意味も直す手も違う (経緯は `taxCredits.ts` の
      * `noMortgageCreditCause`)。判定は共有の 1 つで、画面は刷るだけ。
      */
-    const mortgageCause = noMortgageCreditCause(mortgageInput, mortgageResult, mortgageCreditP);
+    const mortgageCause = noMortgageCreditCause(mortgageInput, mortgageResult, mortgageYearP);
     const mortgageNote = mortgageCause === null
       ? null
       // `?? 0` は**この枝が読まない引数**の埋め (`mortgageResult` が null なのは
       // 残高未入力のときだけで、その原因の文は算定額を 1 字も使わない)。
       // 算定できない値を 0 に倒しているのではない (法則 `no-zero-fold`)。
-      : noMortgageCreditNote(mortgageCause, mortgageResult?.creditable ?? 0, mortgageCreditP);
+      : noMortgageCreditNote(mortgageCause, mortgageResult?.creditable ?? 0, mortgageYearP);
+    /** 一部しか引けなかった分 (0 円の理由は上の文が言うので、ここは 0 でないときだけ)。 */
+    const mortgageUnused = mortgageResult === null ? null : mortgageUnusedNote(mortgageResult, mortgageYearP);
     const credits = calcAllTaxCredits({
       mortgage: mortgageInput ?? undefined,
       dividend: dividendIncome > 0
         ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax, kind: dividendKind }
         : undefined,
-    }, mortgageCreditP);
+    }, mortgageYearP);
     const afterCredits = applyTaxCreditsWithSurtax(
       result.baseIncomeTax,
       result.residentTax,
@@ -435,7 +447,7 @@ export function TaxPage() {
     );
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
-    return { ded, result, credits, afterCredits, finalTakeHome, mortgageNote, mortgageParams };
+    return { ded, result, credits, afterCredits, finalTakeHome, mortgageNote, mortgageUnused, mortgageParams };
   }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind, salaryParams, surtaxRate, dedParams, mortgageCreditP]);
 
   // --- ④ 退職所得の試算 ---
@@ -1190,6 +1202,16 @@ export function TaxPage() {
             style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}
           >
             住宅ローン控除が 0 円の理由: {precise.mortgageNote}
+          </div>
+        )}
+        {/* **一部しか引けなかった分も言う** (パス 493) —— 2 つの額だけを刷ると、
+            算定額が全部効いたと読める。0 円の理由は上の文が言う (同じ事実を 2 度言わない)。 */}
+        {precise.mortgageUnused !== null && (
+          <div
+            data-mortgage-credit-unused
+            style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}
+          >
+            {precise.mortgageUnused}
           </div>
         )}
         <div style={{ fontSize: 11, color: 'var(--warning)', marginTop: 8, lineHeight: 1.6 }}>

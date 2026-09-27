@@ -125,8 +125,19 @@ export interface MortgageCreditInput {
   readonly balanceCap?: number;
   /** 所得税の算出税額 (この範囲までしか所得税からは引けない)。 */
   readonly incomeTaxBeforeCredit: number;
-  /** 課税総所得金額等 (住民税からの控除上限の算定に使う)。 */
-  readonly taxableIncomeForResident: number;
+  /**
+   * **所得税の**課税総所得金額等 (課税総所得金額 + 課税退職所得金額 + 課税山林所得金額)。
+   * 住民税からの控除上限はこの額の 5% (または 7%) で決まる (地方税法附則第5条の4の2)。
+   *
+   * ★ **住民税の課税所得ではない** (2026-09-27 · パス 493)。この欄は 2026-09 まで
+   * `taxableIncomeForResident` という名前で、画面はその名前どおり住民税の課税所得
+   * (`taxableIncomeForResidentTax`) を渡していた。住民税の所得控除は所得税より小さい
+   * (基礎 43 万 vs 48 万・配偶者 33 万 vs 38 万・生命保険 7 万 vs 12 万 ほか) ので、
+   * 住民税の課税所得は所得税より大きく、上限が効く所得帯では**住民税からの控除額を
+   * 多く見せていた** (実測: 基礎控除の差 5 万円だけでも 2,500 円)。名前を法の言葉へ
+   * 合わせ、渡す値が一目で分かるようにした。
+   */
+  readonly taxableIncomeForIncomeTax: number;
   /**
    * 合計所得金額 (円, 任意)。指定すると、2,000 万円を超える年は住宅ローン控除を
    * 適用しない (国税庁 No.1211 の所得要件)。未指定なら所得制限を判定しない。
@@ -154,9 +165,28 @@ export interface MortgageCreditResult {
   readonly unused: number;
 }
 
-/** 住民税からの住宅ローン控除上限 (令和の標準: 課税総所得×5%、最大 97,500 円)。 */
+/** 住民税からの住宅ローン控除上限 (令和の標準: 所得税の課税総所得金額等×5%、最大 97,500 円)。 */
 export const MORTGAGE_RESIDENT_CAP_RATE = 0.05;
 export const MORTGAGE_RESIDENT_CAP_MAX = 97_500;
+
+/**
+ * **特定取得の上限** —— 平成26年4月〜令和3年12月に居住を開始し、その取得が特定取得
+ * (消費税 8%・10% が掛かった取得) または特別特定取得である場合、住民税からの控除上限は
+ * 所得税の課税総所得金額等の **7%・最大 136,500 円** (地方税法附則第5条の4の2)。
+ *
+ * ★ 2026-09-27 (パス 493) まで、この画面は居住年 2020 / 2021 を選べるのに上限を
+ * 5% / 97,500 円のまま計算しており、その年の住民税からの控除額を**少なく見せていた**
+ * (実測: 課税総所得 200 万・所得税から引ききれない額 30 万で 97,500 円 → 法は 136,500 円)。
+ */
+export const MORTGAGE_RESIDENT_CAP_RATE_SPECIFIED = 0.07;
+export const MORTGAGE_RESIDENT_CAP_MAX_SPECIFIED = 136_500;
+/**
+ * 特定取得の上限が掛かる居住年 (年単位)。法は平成26年**4月**からなので、2014 年に
+ * 居住した人は 1〜3 月なら標準・4 月以降なら特定取得で、年だけでは決まらない ——
+ * **控除を多く見せない側**へ倒して 2015 年からにしている (画面が選ばせる年は 2020 年以降)。
+ */
+export const MORTGAGE_RESIDENT_CAP_SPECIFIED_FIRST_YEAR = 2015;
+export const MORTGAGE_RESIDENT_CAP_SPECIFIED_LAST_YEAR = 2021;
 
 /** 住宅ローン控除の所得要件と住民税側の上限。省略すると上の定数。台帳から上書きできる。 */
 export interface MortgageCreditParams {
@@ -170,6 +200,32 @@ export const DEFAULT_MORTGAGE_CREDIT_PARAMS: MortgageCreditParams = {
   residentCapRate: MORTGAGE_RESIDENT_CAP_RATE,
   residentCapMax: MORTGAGE_RESIDENT_CAP_MAX,
 };
+
+/**
+ * **その居住年・取得の住民税側の上限を乗せた引数** (2026-09-27 · パス 493)。
+ *
+ * 台帳 (`finance` の住宅ローン控除の 3 項目) が持つのは標準 (令和4年以降の居住) の値で、
+ * 特定取得の上限は居住年で決まる経過措置の表なので台帳の外に置く (`resolveMortgageParams`
+ * の控除率・借入限度額と同じ扱い)。所得の上限 (`incomeLimit`) は居住年に依らないので
+ * 台帳の値をそのまま運ぶ。
+ *
+ * **中古 (`used`) は標準の側へ倒す** —— 個人間の売買には消費税が掛からず特定取得に
+ * 当たらないのが既定である。事業者から買った中古 (買取再販) は特定取得なので 7% に
+ * なるが、この画面はその区別を持たないので、**控除を多く見せない側**を採る。
+ */
+export function mortgageCreditParamsFor(
+  residenceYear: number,
+  performance: HousingPerformance,
+  base: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): MortgageCreditParams {
+  const specified =
+    residenceYear >= MORTGAGE_RESIDENT_CAP_SPECIFIED_FIRST_YEAR &&
+    residenceYear <= MORTGAGE_RESIDENT_CAP_SPECIFIED_LAST_YEAR &&
+    performance !== 'used';
+  return specified
+    ? { ...base, residentCapRate: MORTGAGE_RESIDENT_CAP_RATE_SPECIFIED, residentCapMax: MORTGAGE_RESIDENT_CAP_MAX_SPECIFIED }
+    : base;
+}
 
 /**
  * 住宅ローン控除を計算する。
@@ -200,7 +256,7 @@ export function calcMortgageCredit(
 
   const residentCap = Math.min(
     p.residentCapMax,
-    yen(nonNeg(input.taxableIncomeForResident) * p.residentCapRate),
+    yen(nonNeg(input.taxableIncomeForIncomeTax) * p.residentCapRate),
   );
   const fromResidentTax = Math.min(remaining, residentCap);
   const unused = remaining - fromResidentTax;
@@ -294,6 +350,31 @@ export function noMortgageCreditNote(
     case 'no-tax-to-offset':
       return `住宅ローン控除の額は ${yen(creditable).toLocaleString('ja-JP')} 円と算定できていますが、差し引く所得税・住民税が無いため控除額は 0 円です（控除しきれない分は繰り越せません）。`;
   }
+}
+
+/**
+ * **一部しか引けなかったときの 1 文** (2026-09-27 · パス 493)。
+ *
+ * 画面に出る額が 0 でないのに、算定額の一部が `unused` として捨てられている場合がある
+ * (所得税から引ききれず、住民税の上限も超えた分)。直す前の画面は 2 つの額だけを刷り、
+ * 捨てた額を 1 文も言わなかった —— 利用者は「算定額が全部効いた」と読む。
+ * 実測 (残高 3,000 万・額面 300 万): 算定額 210,000 円のうち 101,000 円が捨てられていた。
+ *
+ * **0 円になる場合はここでは言わない** —— そちらは {@link noMortgageCreditNote} が
+ * 原因ごとに述べる (同じ事実を 2 つの文で言わない)。
+ */
+export function mortgageUnusedNote(
+  result: MortgageCreditResult,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): string | null {
+  if (!(result.unused > 0)) return null;
+  if (result.fromIncomeTax + result.fromResidentTax === 0) return null;
+  const pct = Math.round(p.residentCapRate * 1000) / 10;
+  return (
+    `住宅ローン控除の算定額 ${yen(result.creditable).toLocaleString('ja-JP')} 円のうち ` +
+    `${yen(result.unused).toLocaleString('ja-JP')} 円は控除できません。所得税から引ききれない分を住民税から差し引けるのは、` +
+    `所得税の課税総所得金額等の ${pct}%（最大 ${yen(p.residentCapMax).toLocaleString('ja-JP')} 円）までで、控除しきれない分は翌年へ繰り越せません。`
+  );
 }
 
 // --- 配当控除 -------------------------------------------------------------
