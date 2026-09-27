@@ -8,9 +8,13 @@
  *
  * これは検査の部品であって検査ではない (`it(` を持たない)。
  */
-import fs from 'node:fs';
 import path from 'node:path';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
+import {
+  readOriginalDir,
+  readOriginalDirEntries,
+  readOriginalSource,
+} from '../../../shared/__tests__/originalSource';
 
 export const PAGES = path.resolve(__dirname, '..');
 /**
@@ -165,10 +169,20 @@ export function actionEntries(src: string): ActionEntry[] | null {
   return null;
 }
 
+/**
+ * ★ **原文を読む** (2026-09-27 · パス 490)。ここは 2026-09-09 から `fs.readFileSync` で
+ * `main/clients/*.ts` を読んでいた。そのファイル群は変異検査の対象 (`stryker.config.json` の
+ * `mutate`) なので、Stryker の sandbox では**計装された本文** (変異体の切り替えを差し込んだ物) が
+ * 置かれており、`ACTIONS` の表が読めない形になって下の throw が走る —— **初回の検査で 1 件落ち、
+ * 全掃引 (`npm run mutate`) が 1 度も最後まで走れなかった** (2026-09-27 実測: 302 本・45,210 変異体の
+ * 掃引が 10 分 30 秒で `There were failed tests in the initial test run` で止まった)。
+ * 原文の道具 (`originalSource.ts`) を通す。`originalSourcePolicy.test.ts` の母集団は `*.test.ts`
+ * だけで、**この共有の helper は外に居た** —— 同じパスで母集団を `__tests__/` の helper へ広げた。
+ */
 export function aiActionHandlers(marks: readonly RegExp[] = AI_MARKS): AiActionHandler[] {
   const out: AiActionHandler[] = [];
-  for (const f of fs.readdirSync(CLIENTS).filter((n) => n.endsWith('.ts'))) {
-    const src = code(fs.readFileSync(path.join(CLIENTS, f), 'utf8'));
+  for (const f of readOriginalDir(CLIENTS).filter((n) => n.endsWith('.ts'))) {
+    const src = code(readOriginalSource(path.join(CLIENTS, f)));
     if (!marks.some((r) => r.test(src))) continue;
     const entries = actionEntries(src);
     // 読めない形を黙って 0 件にしない (パス 117 —— shopify の計算された ACTIONS がそうだった)。
@@ -191,7 +205,7 @@ export function aiActionPairs(): Array<readonly [string, string]> {
 export function pageFiles(): string[] {
   const out: string[] = [];
   const walk = (dir: string): void => {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    for (const e of readOriginalDirEntries(dir)) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) {
         if (e.name !== '__tests__' && e.name !== 'node_modules') walk(p);

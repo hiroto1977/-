@@ -1139,6 +1139,23 @@ const METRICS = [
     },
   },
   {
+    /*
+     * **README の「品質ゲート」が名乗るゲート数** (2026-09-27 · パス 490)。
+     *
+     * その節は 2026-09-27 まで 7 行の表で「すべて CI で実行」と書き、ユニットテスト 2,243 件・
+     * 禁止パターン 8 種・サービス 63・変異検査 30 modules と 2026-05 ごろの数を並べていた
+     * (実物は 19,522 件・38 種・76・全掃引 246 本 / `mutate` 302 本)。しかも変異検査は per-PR の CI に
+     * 無い。表を消して、残す数は機械が照合する物だけにした —— これはその 1 つ。
+     */
+    name: 'README: verify:all gate count',
+    docFile: 'README.md',
+    docPattern: /`npm run verify:all` の \*\*(\d+) ゲート\*\*/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
     name: 'CLAUDE.md: gate count named in the CI sentence',
     docFile: 'CLAUDE.md',
     docPattern: /all (\d+) `verify:all` gates/,

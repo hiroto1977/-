@@ -70,13 +70,27 @@ function mutateLedger(): Set<string> {
   return new Set(config.mutate ?? []);
 }
 
-/** `src/**\/__tests__/**\/*.test.ts` を全部集める。 */
-function testFiles(dir = path.join(REPO_ROOT, 'src')): string[] {
+/**
+ * `src/**\/__tests__/**\/*.test.ts` を全部集める —— **検査だけが読む helper も** (パス 490)。
+ *
+ * ## 2026-09-27 (パス 490): **母集団が `*.test.ts` だけだった**
+ *
+ * `__tests__/` の中には検査ではない `.ts` が 20 本在る (共有の helper・harness・stub)。
+ * どれも検査と同じ Stryker の sandbox で走るのに、この網の外に居た。実測でそのうち
+ * **1 本が台帳のファイルを素で読んでいた** —— `renderer/pages/__tests__/aiEgressPairs.helpers.ts`
+ * が `main/clients/*.ts` (台帳に在る) を `readFileSync` で読み、sandbox の中の**計装された本文**
+ * から `ACTIONS` の表を読めず throw した。それが初回の検査を 1 件落とし、
+ * **全掃引 (`npm run mutate`) を 2026-09-09 から 1 度も最後まで走らせなかった**
+ * (302 本・45,210 変異体の掃引が 10 分 30 秒で `There were failed tests in the initial test run`)。
+ * `*.test.ts` の中の読みなら 2026-09-07 から規則 1 が拾っていた —— **helper へ出した瞬間に網を抜けた**。
+ */
+function testFiles(dir = path.join(REPO_ROOT, 'src'), inTests = false): string[] {
   const out: string[] = [];
   for (const e of readOriginalDirEntries(dir)) {
     const p = path.join(dir, e.name);
-    if (e.isDirectory()) out.push(...testFiles(p));
+    if (e.isDirectory()) out.push(...testFiles(p, inTests || e.name === '__tests__'));
     else if (e.name.endsWith('.test.ts') || e.name.endsWith('.test.tsx')) out.push(p);
+    else if (inTests && /\.tsx?$/.test(e.name) && !e.name.endsWith('.d.ts')) out.push(p);
   }
   return out;
 }
@@ -179,6 +193,10 @@ const ALLOWED: Readonly<Record<string, string>> = {};
  * `count` は実測の件数で、**増えたら鳴る** (台帳が白紙委任にならないように)。
  */
 const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: string }>> = {
+  'src/shared/__tests__/originalSource.ts': {
+    count: 4,
+    why: '**原文の道具そのもの** —— sandbox の道を原文の道へ写してから読むのが仕事なので、生の読みはその写し先 (変数) を読む。この 4 件が在るから他のすべての検査が原文を読める。helper を母集団へ入れた日 (パス 490) に初めて数えられた',
+  },
   'src/main/__tests__/fileReadSizeGateCensus.test.ts': {
     count: 9,
     why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった',

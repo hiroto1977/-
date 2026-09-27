@@ -24,8 +24,10 @@
  *    「持っていそう」の機械的な定義は **同名の検査が在り、かつ 100 行以上** ——
  *    薄いスタブ (`main/clients/<id>.ts` の 11〜40 行) と、検査すら無い物を外す。
  *    実測 31 本 (パス 355 で `oauth/callbackPaste.ts` が分母へ入って 32 → 31)。
- * 3. 公開している頁が**分母の範囲を述べている**こと (`docs/QUALITY.md` と、
- *    それを作る `scripts/quality-report.cjs` の両方)。
+ * 3. 公開している頁が**報告の測った集合を分母として名乗る**こと (`docs/QUALITY.md` と、
+ *    それを作る `scripts/quality-report.cjs` の両方)。★ パス 490 まではここが「分母の範囲」の
+ *    **綴りが在ること**しか見ておらず、表 246 行の点数に「296 本」を名乗らせた頁を通していた ——
+ *    頁の自己一致は今 `npm run lint:docs` が見る。
  *
  * **台帳は「入れる / 入れない」の判断であって、機械が決めた物ではない。**
  * `kind` が `data` の行は「entry を書き換える変異体は**データ**を試すだけで
@@ -159,12 +161,27 @@ describe('変異検査の分母の外 (パス 354)', () => {
     expect(outside).toContain('src/shared/apiResponse.ts');
   });
 
-  it('★ 公開している頁が分母の範囲を述べている (生成物と、それを作る側の両方)', () => {
+  /**
+   * ★ **2026-09-27 (パス 490) まで、この検査は綴りしか見ていなかった** —— 「`mutate` が名指しする
+   * `**N 本**`」という文が在れば通ったので、公開中の頁が**表 246 行の点数に「296 本」という
+   * 分母を名乗らせて**いても緑だった (296 はパス 354 / 355 が手で書いた数で、生成時点の `mutate` は
+   * 302 本)。名乗る分母と表の突き合わせ・総計と列の和・日時・全掃引であることは
+   * `npm run lint:docs` (`checkMutationPageScope`) が頁そのもので見る。ここは**生成側がその規則で
+   * 書く**ことと、頁が報告から数えた分母を名乗っていることだけを留める。
+   */
+  it('★ 公開している頁が、報告が測った集合を分母として名乗る (生成物と、それを作る側の両方)', () => {
     const doc = readOriginalSource(join(REPO, 'docs/QUALITY.md'));
     expect(doc).toContain('分母の範囲');
-    expect(doc).toMatch(/`mutate` が名指しする \*\*\d+ 本\*\*/);
+    expect(doc).toMatch(/表の行は \*\*\d+ 本\*\*/);
+    expect(doc).toContain('この run はそのすべてを名指ししていた (全掃引)');
+    // 直す前の文面 (生成時点の設定の本数を分母として名乗る) は、もう頁に無い。
+    const OLD_CLAIM = /`mutate` が名指しする \*\*\d+ 本\*\*/;
+    expect(doc).not.toMatch(OLD_CLAIM);
+    // 標本: 針は直す前の文面に当たる (当たらなければ上の not は空の検査)。
+    expect('分母の範囲: `stryker.config.json` の `mutate` が名指しする **296 本**。').toMatch(OLD_CLAIM);
     const gen = readOriginalSource(join(REPO, 'scripts/quality-report.cjs'));
-    expect(gen).toContain('mutateScopeLine');
+    expect(gen).toContain('function judgeScope(');
+    expect(gen).toContain('function scopeStatement(');
     expect(gen).toContain('分母の範囲');
   });
 

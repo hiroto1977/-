@@ -128,9 +128,14 @@ export const LAWS: readonly Law[] = [
     id: 'scan-whole-tree',
     family: 'gate-hygiene',
     name: '走査範囲は木全体、例外は台帳',
-    statement: '「対象を絞る」と「対象を忘れる」はコードの上で見分けがつかない。走査は木全体にし、外す物を理由つきの台帳に書く。台帳を書いたら「どこまで歩いたか」「注記の規則を判定が実装しているか」「対照は判定関数そのものへ標本を通しているか」を問う。外した側をどう台帳にするかは `outside-scope-gets-its-own-census`。',
-    provenance: ['パターン 0-a', 'パターン 0-a-24'],
-    enforcedBy: [gate('lint:network-targets'), gate('lint:forbidden'), test(T.shared('bareFetchLedger'))],
+    statement: '「対象を絞る」と「対象を忘れる」はコードの上で見分けがつかない。走査は木全体にし、外す物を理由つきの台帳に書く。台帳を書いたら「どこまで歩いたか」「注記の規則を判定が実装しているか」「対照は判定関数そのものへ標本を通しているか」を問う。外した側をどう台帳にするかは `outside-scope-gets-its-own-census`。'
+      + '★ **「検査ファイル」は `*.test.ts` だけではない** (パス 490) —— `originalSourcePolicy` は `mutate` の原文を素で読む所を'
+      + '`*.test.ts` の中だけで数えており、検査が import する **helper** (`__tests__/` の `*.ts`) は母集団の外だった。'
+      + '2026-09-09 に足した helper が client を素で読んだので、**この枝で変異検査の全掃引を回すと初回の検査が落ちた** '
+      + '(Stryker は `mutate` のファイルを計装してから sandbox に置くので、素の読みは計装済みの本文を読む)。'
+      + '週次の CI は `main` (その helper を含まない) を測っていたので鳴らなかった —— **門が見ていない木は、門の緑に何も言わない**。',
+    provenance: ['パターン 0-a', 'パターン 0-a-24', 'パス 490 (検査の helper が原文の方針の母集団の外)'],
+    enforcedBy: [gate('lint:network-targets'), gate('lint:forbidden'), test(T.shared('bareFetchLedger')), test(T.shared('originalSourcePolicy'))],
   },
   {
     id: 'distributed-code-same-gates',
@@ -420,7 +425,8 @@ export const LAWS: readonly Law[] = [
     family: 'gate-hygiene',
     name: '数は機械が、判断は散文が持つ',
     statement: '散文に書いた件数は誰も検算せず腐る (母集団が 4 倍ずれていた実測)。数える物は生成ブロックか live metric にし、判断だけを散文に書く。**閉じた列挙 (「only …」「全 N 件」) も同じ** —— 成員を並べたら、その並びと実物を機械で結ぶ。CLAUDE.md は preload bridge を「it only calls」で 6 件挙げていたが実物は 15 件で、落ちていた 9 件に eraseAll (全データ削除) と openPath が在った (パス 338)。攻撃面の側では、過小申告が読み手を油断させる。**いちばん重いのは「エージェントへ注入される指示書」である** (パス 372) —— `.cursor/rules/20-gates.mdc` は `alwaysApply: true` で Cursor の全セッションに注入されるのに、`npm run verify:all` を **「13 ゲート全部」**と書いていた (実物 37)。**24 ゲート分古い前提を、次にこの repo を触るエージェントが読んでいた。** 皮肉なことに、その 3 行下で同じファイルが「ゲートを足したら ci.yml にも足すこと」と正しく述べている ——**規則は知っていたのに、自分の数は誰も見ていなかった。** 同じ木の中で `00-project.mdc` のサービス数だけは 2026-08 から機械に載っていた。',
-    provenance: ['パス 145', 'パス 220', 'パス 248', 'パス 338', 'パス 372 (エージェントの指示書)'],
+    provenance: ['パス 145', 'パス 220', 'パス 248', 'パス 338', 'パス 372 (エージェントの指示書)',
+      'パス 490 (README の品質ゲートが unit tests 2243 / 63 services / 30 modules のまま)'],
     enforcedBy: [
       gate('verify:arch'),
       gate('lint:zero-fold'),
@@ -485,9 +491,13 @@ export const LAWS: readonly Law[] = [
     id: 'records-carry-date',
     family: 'gate-hygiene',
     name: '記録は測った日を持つ',
-    statement: '日付の無い安全の主張・件数・余裕は黙って古くなる。脆弱性台帳には照合日と期限、出荷物の計測には「パス N 後」、導出値には測った日。',
-    provenance: ['パス 141', 'パス 290 (CLAUDE.md の LITE の余裕)'],
-    enforcedBy: [gate('lint:rate-freshness'), gate('lint:docs')],
+    statement: '日付の無い安全の主張・件数・余裕は黙って古くなる。脆弱性台帳には照合日と期限、出荷物の計測には「パス N 後」、導出値には測った日。'
+      + '★ **コミットする頁に相対の齢を書かない** (パス 490) —— `docs/QUALITY.md` は「Report age: 0.1h」と書いており、'
+      + 'コミットした瞬間から偽になる (その頁が読まれるのは生成の数日後である)。報告の日時は**絶対時刻**で名乗る。'
+      + '所要時間も同じで、`docs/QUALITY_WORKFLOW.md` の「`npm run mutate` ~2 分」「`npm test` ~2s」は日付も場所も持たず、'
+      + '実物は CI の全件で 1 時間 54 分〜2 時間 44 分 (2026-09-06 / 09-13 の週次) だった。**測った日と場所を名乗る数だけを書く。**',
+    provenance: ['パス 141', 'パス 290 (CLAUDE.md の LITE の余裕)', 'パス 490 (品質の頁の相対の齢と日付の無い所要)'],
+    enforcedBy: [gate('lint:rate-freshness'), gate('lint:docs'), test(T.shared('qualityReportScope'))],
   },
   {
     id: 'artifact-freshness',
@@ -1146,7 +1156,12 @@ export const LAWS: readonly Law[] = [
       + '「**形式の合わないレコード 2 件**を削除します。元に戻せません。」と述べ、'
       + '**復元したばかりの正しい 2 件が消えた**。'
       + '種別も件数も押した瞬間には偽で、消えるのは元に戻せない。'
-      + '**数え直しは訊く前 (確認文を本当にするため) と実行の中 (床) の両方に置く。**',
+      + '**数え直しは訊く前 (確認文を本当にするため) と実行の中 (床) の両方に置く。**'
+      + '★ **公開している点数と、それが名乗る分母も同じ集合から取る** (パス 490)。'
+      + '`docs/QUALITY.md` は変異検査の点数を**報告が測った 246 本**の表から出しながら、分母の文には'
+      + '`stryker.config.json` の `mutate` の**手書きの本数 (296 本)** を名乗っていた —— そのとき `mutate` は 302 本で、'
+      + '読んだ人は「302 本すべてで 100%」と受け取る。**点数も分母も報告から取り、報告が何を名指しして走ったか**'
+      + '(報告に残る `config.mutate`) を今の `mutate` と突き合わせる。部分の報告は頁を書かずに断る。',
     provenance: [
       'パス 225 (KPI 実績: 月数は選別後・分子は選別前)',
       'パス 392 (同じ画面が同じ売上高について 3 つの答えを出す)',
@@ -1154,8 +1169,11 @@ export const LAWS: readonly Law[] = [
       'パス 400 (書面 §2 が「2 か月分」と述べて 50.5 倍を刷る)',
       'パス 432 (置換復元の確認が「消える記録はありません」と述べて全部消す)',
       'パス 433 (点検パネルが古い一覧で消し、復元で直った記録を消す)',
+      'パス 490 (品質の頁が 246 本の点数に 296 本の分母を名乗る)',
     ],
     enforcedBy: [
+      test(T.shared('qualityReportScope')),
+      test(T.shared('mutateScopeCensus')),
       test('src/renderer/data/__tests__/salesSubsetParity.test.ts'),
       test('src/renderer/data/__tests__/blankReasonMatrix.test.ts'),
       test('src/renderer/data/__tests__/unreadablePeriods.test.ts'),

@@ -163,6 +163,63 @@ function canonicalMutationScore(which) {
   return which === 'covered' ? m[2] : m[1];
 }
 
+/**
+ * QUALITY.md の点数が**いつの・何本の**物か (2026-09-27 · パス 490)。
+ *
+ * TL;DR は「Mutation score 100.00% · 出典 docs/QUALITY.md」とだけ書いており、そのすぐ下の行は
+ * 「対象ファイル数と閾値の実数は §5.5」(= 生成時点の `mutate` の本数) を指していた —— 読んだ人は
+ * 「§5.5 の本数すべてで 100%」と受け取る。実物の点数は 2026-09-01 の 246 本の物だった。
+ * 点数と一緒に、報告の日付と表の行数を名乗らせる。
+ */
+function canonicalMutationDenominator() {
+  const src = read(path.join(DOCS, 'QUALITY.md'));
+  if (src == null) return null;
+  const rows = /表の行は \*\*(\d+) 本\*\*/.exec(src);
+  const at = /報告ファイルの日時 \*\*(\d{4}-\d{2}-\d{2}) \d{2}:\d{2} UTC\*\*/.exec(src);
+  if (rows == null || at == null) return null;
+  return `${at[1]} の全掃引・表 ${rows[1]} 本`;
+}
+
+/**
+ * 変異検査の閾値 (2026-09-27 · パス 490)。`docs/QUALITY_WORKFLOW.md` は 2026-08 から
+ * `{ "high": 90, "low": 60, "break": 50 }` と書き、「break: 50 — 50% を切ったら CI が失敗する」
+ * 「全体目標は 60-75% が現実的な落とし所」と述べていた —— 実物は high 100 / low 99.9 /
+ * break 99.8 である。品質の頁の末尾がこの文書を「詳しい運用ルール」として名指ししている。
+ */
+function canonicalStrykerThresholds() {
+  const raw = read(path.join(REPO_ROOT, 'stryker.config.json'));
+  if (raw == null) return null;
+  try {
+    const t = JSON.parse(raw).thresholds;
+    if (t == null) return null;
+    return `high ${t.high} / low ${t.low} / break ${t.break}`;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `mutation.yml` が `main` への push で測る対象パス (2026-09-27 · パス 490)。
+ *
+ * CLAUDE.md は「`mutation.yml` runs Stryker (weekly + on pushes to `main` that touch
+ * `stryker.config.json`, `vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`)」と、
+ * 2026-08 の書き換えより前の対象を名乗り続けていた (実物は `src/**` で、しかも変わったファイルだけを測る)。
+ * 同じパスで分かったとおり、「いつ測られるか」の読み違いは「赤はいつ出るか」の読み違いになる
+ * (パス 479 の「測定は週次だけ・赤は 6 日後」は、この push の測定を見落としていた)。
+ */
+function canonicalMutationPushPaths() {
+  const src = read(path.join(REPO_ROOT, '.github', 'workflows', 'mutation.yml'));
+  if (src == null) return null;
+  const m = /\n\s*push:\s*\n(?:\s+branches:[^\n]*\n)?\s+paths:\s*\n((?:[ \t]+-[ \t]*[^\n]+\n)+)/.exec(src);
+  if (m == null) return null;
+  return m[1]
+    .split('\n')
+    .map((l) => l.trim().replace(/^-\s*/, '').replace(/^['"]|['"]$/g, ''))
+    .filter((l) => l !== '')
+    .sort()
+    .join(' / ');
+}
+
 const FACTS = [
   {
     // ARCHITECTURE の TL;DR は出典欄に `docs/QUALITY.md` と書いてある。
@@ -176,6 +233,11 @@ const FACTS = [
         pattern: /\| Mutation score \(total\) \| \*\*([\d.]+)%\*\* \|/,
         parse: (m) => m[1],
       },
+      {
+        file: 'README.md',
+        pattern: /\*\*\d{4}-\d{2}-\d{2} の全掃引・表 \d+ 本\*\* で \*\*([\d.]+)%\*\*/,
+        parse: (m) => m[1],
+      },
     ],
   },
   {
@@ -186,6 +248,48 @@ const FACTS = [
         file: 'docs/ARCHITECTURE.md',
         pattern: /\| Mutation score \(covered\) \| \*\*([\d.]+)%\*\* \|/,
         parse: (m) => m[1],
+      },
+    ],
+  },
+  {
+    // 点数は「いつの・何本の」物かも一緒に名乗る (パス 490)。
+    name: 'mutation denominator (TL;DR)',
+    canonical: canonicalMutationDenominator(),
+    claims: [
+      {
+        file: 'docs/ARCHITECTURE.md',
+        pattern:
+          /\| Mutation score \(total\) \| \*\*[\d.]+%\*\* \| `docs\/QUALITY\.md` \((\d{4}-\d{2}-\d{2}) の全掃引・表 (\d+) 本\) \|/,
+        parse: (m) => `${m[1]} の全掃引・表 ${m[2]} 本`,
+      },
+      {
+        // README の「品質ゲート」は 2026-09-27 まで「mutation (Stryker) | 100.00% (30 modules)」と
+        // 書いていた (全掃引は 246 本・`mutate` は 302 本)。点数と一緒に、いつの・何本の物かを名乗らせる。
+        file: 'README.md',
+        pattern: /\*\*(\d{4}-\d{2}-\d{2}) の全掃引・表 (\d+) 本\*\* で \*\*[\d.]+%\*\*/,
+        parse: (m) => `${m[1]} の全掃引・表 ${m[2]} 本`,
+      },
+    ],
+  },
+  {
+    name: 'mutation.yml push paths',
+    canonical: canonicalMutationPushPaths(),
+    claims: [
+      {
+        file: 'CLAUDE.md',
+        pattern: /on pushes\s+to `main` that touch ((?:`[^`]+`\s*(?:\/\s*)?)+)it measures/,
+        parse: (m) => [...m[1].matchAll(/`([^`]+)`/g)].map((x) => x[1]).sort().join(' / '),
+      },
+    ],
+  },
+  {
+    name: 'stryker thresholds',
+    canonical: canonicalStrykerThresholds(),
+    claims: [
+      {
+        file: 'docs/QUALITY_WORKFLOW.md',
+        pattern: /"thresholds":\s*\{\s*"high":\s*([\d.]+),\s*"low":\s*([\d.]+),\s*"break":\s*([\d.]+)\s*\}/,
+        parse: (m) => `high ${m[1]} / low ${m[2]} / break ${m[3]}`,
       },
     ],
   },
@@ -790,9 +894,13 @@ function checkPerFileMutationScores(failures, qualityOverride, configOverride, l
   }
 
   // `| src/x.ts | 100.00 | 100.00 | 261 | 0 | 0 | 42 | 0 |`
-  const ROW = /^\|\s*(src\/[^|\s]+)\s*\|\s*([\d.]+)\s*\|/gm;
+  // ★ 率が「—」の行 (分母 0 = 測る変異体が無い) も読む (2026-09-27 · パス 490)。以前の生成側は
+  //   分母 0 を「0.00」と刷っていたので数として読めたが、「—」へ直した今、数だけを読む針のままだと
+  //   **その行が表から黙って消える** (測っていない行ほど見えなくなる)。「—」は NaN として持ち、
+  //   閾値の判定では「満たしていない」側に数える —— 「測っていない」は「緑」ではない。
+  const ROW = /^\|\s*(src\/[^|\s]+)\s*\|\s*([\d.]+|—)\s*\|/gm;
   const rows = new Map();
-  for (const m of quality.matchAll(ROW)) rows.set(m[1], Number(m[2]));
+  for (const m of quality.matchAll(ROW)) rows.set(m[1], m[2] === '—' ? Number.NaN : Number(m[2]));
 
   if (rows.size < MIN_QUALITY_ROWS) {
     failures.push({
@@ -811,9 +919,9 @@ function checkPerFileMutationScores(failures, qualityOverride, configOverride, l
       failures.push({
         fact: 'per-file mutation score',
         reason:
-          `docs/QUALITY.md の ${file} が ${total}% (閾値 ${breakAt}%) — ` +
-          'PER_FILE_BELOW_THRESHOLD に理由を書くこと。0.00 は「覆っていない」と ' +
-          '「モジュール直下の定数だけ」の両方に見えるので、どちらなのかを実測して残す',
+          `docs/QUALITY.md の ${file} が ${Number.isNaN(total) ? '— (分母 0 = 測る変異体が無い)' : `${total}%`} ` +
+          `(閾値 ${breakAt}%) — PER_FILE_BELOW_THRESHOLD に理由を書くこと。` +
+          '「覆っていない」のか「モジュール直下の定数だけ (静的変異体は Ignored)」なのかを実測して残す',
       });
     }
   }
@@ -839,6 +947,175 @@ function checkPerFileMutationScores(failures, qualityOverride, configOverride, l
     // しまう (self-test がそれを教えてくれた)。閾値以上の行は上で「直った」として
     // 鳴るので、そちらの理由の長さは問わない。
     void reason;
+  }
+  return 1;
+}
+
+/**
+ * **変異検査の分母を、頁そのものと突き合わせる** (2026-09-27 · パス 490)。
+ *
+ * ## 見つけた形 (2026-09-27 実測)
+ *
+ * 公開中の `docs/QUALITY.md` は「Overall: 100.00%」の下に「分母の範囲: `stryker.config.json` の
+ * `mutate` が名指しする **296 本**」と書いていた。ところが**表は 246 行** (2026-09-01 の全掃引) で、
+ * 生成時点の `mutate` は 302 本 —— **点数が数えた集合と、分母として名乗る集合が別だった**。
+ * 296 はパス 354 が手で挿し、パス 355 が手で 1 つ上げた数で、どの機械も表と突き合わせて
+ * いなかった (`mutateScopeCensus` が見ていたのは「`**N 本**` という綴りが在ること」だけ)。
+ * 同じ頁は「Report age: 0.1h」という**相対時間**を 26 日前の報告に付けたまま固めており、
+ * 変異体が 1 つも有効でない行を「0.00」と (「1 つも殺せていない」と同じ字で) 刷っていた。
+ *
+ * ## 見るもの —— どれも**頁の中だけで**確かめられる (報告は .gitignore 済みで CI に無い)
+ *
+ * 1. 分母の文が名乗る行数 (`表の行は **N 本**`) と要約の行 = 表の実際の行数
+ * 2. Overall と要約の総計 (killed / survived / no-cov / valid / ignored / invalid) = 表の列の和
+ * 3. 行ごとの率を数え直す —— 手で書き換えた率を通さず、**分母 0 を 0.00 と刷らない** (「—」)
+ * 4. 報告の日時は**絶対時刻**で、相対時間 (`Report age`) を固めていない
+ * 5. **全掃引であること** —— 部分の run (`--mutate` で絞った報告) の点数を品質の頁として
+ *    commit しない (生成側も既定で断る)
+ * 6. 被覆の行は範囲 (`src/main/**`) を名乗る
+ *
+ * 報告が古いこと自体は咎めない —— 日時を名乗っているので、それは読む人が判断できる。
+ * 咎めるのは**頁が自分の表と食い違うこと**と、**名乗る分母が測った集合と違うこと**である。
+ */
+const PAGE_ROW =
+  /^\|\s*(src\/[^|\s]+)\s*\|\s*([\d.]+|—)\s*\|\s*([\d.]+|—)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*$/gm;
+
+/** 頁の率の書き方 (生成側 `scripts/quality-report.cjs` の scorePct / pctCell と同じ規則)。 */
+function pageRate(num, denom) {
+  return denom > 0 ? ((100 * num) / denom).toFixed(2) : '—';
+}
+
+function checkMutationPageScope(failures, qualityOverride) {
+  const FACT = 'mutation denominator';
+  const page =
+    qualityOverride === undefined ? read(path.join(DOCS, 'QUALITY.md')) : qualityOverride;
+  if (page === null) {
+    failures.push({ fact: FACT, reason: 'docs/QUALITY.md を読めない' });
+    return 0;
+  }
+  const rows = [...page.matchAll(PAGE_ROW)].map((m) => ({
+    file: m[1],
+    pct: m[2],
+    covered: m[3],
+    killed: Number(m[4]),
+    survived: Number(m[5]),
+    noCov: Number(m[6]),
+    ignored: Number(m[7]),
+    invalid: Number(m[8]),
+  }));
+  if (rows.length === 0) {
+    failures.push({
+      fact: FACT,
+      reason: 'docs/QUALITY.md のファイル別の表が 1 行も読めない — 表の形が変わったか生成が壊れている',
+    });
+    return 1;
+  }
+
+  // 1. 名乗る行数 = 表の行数 (本文の文と要約の行の両方)。
+  const stated = /表の行は \*\*(\d+) 本\*\*/.exec(page);
+  if (stated === null) {
+    failures.push({ fact: FACT, reason: '分母の範囲の文 (`表の行は **N 本**`) が無い — 点数が何本についての物かを名乗っていない' });
+  } else if (Number(stated[1]) !== rows.length) {
+    failures.push({ fact: FACT, reason: `分母の範囲の文は ${stated[1]} 本と名乗るが、表は ${rows.length} 行` });
+  }
+  const summaryRows = /\| Mutation の表の行 \(報告が測った本\) \| (\d+) 本/.exec(page);
+  if (summaryRows === null) {
+    failures.push({ fact: FACT, reason: '要約に「Mutation の表の行 (報告が測った本)」の行が無い' });
+  } else if (Number(summaryRows[1]) !== rows.length) {
+    failures.push({ fact: FACT, reason: `要約は ${summaryRows[1]} 本と名乗るが、表は ${rows.length} 行` });
+  }
+
+  // 2. 総計 = 列の和。
+  const sum = rows.reduce(
+    (a, r) => ({
+      killed: a.killed + r.killed,
+      survived: a.survived + r.survived,
+      noCov: a.noCov + r.noCov,
+      ignored: a.ignored + r.ignored,
+      invalid: a.invalid + r.invalid,
+    }),
+    { killed: 0, survived: 0, noCov: 0, ignored: 0, invalid: 0 },
+  );
+  const valid = sum.killed + sum.survived + sum.noCov;
+  const overall = /\((\d+) killed \/ (\d+) survived \/ (\d+) no-cov \/ (\d+) valid\)/.exec(page);
+  if (overall === null) {
+    failures.push({ fact: FACT, reason: 'Overall の行 (killed / survived / no-cov / valid) が無い' });
+  } else {
+    const got = overall.slice(1, 5).map(Number).join(' / ');
+    const want = [sum.killed, sum.survived, sum.noCov, valid].join(' / ');
+    if (got !== want) failures.push({ fact: FACT, reason: `Overall は ${got} と書くが、表の列の和は ${want}` });
+  }
+  for (const [label, want] of [
+    ['Mutants killed', sum.killed],
+    ['Mutants survived', sum.survived],
+    ['Mutants 有効 (分母)', valid],
+    ['Mutants ignored (Stryker disable 宣言)', sum.ignored],
+    ['Mutants invalid (評価不成立)', sum.invalid],
+  ]) {
+    const m = new RegExp(`\\| ${label.replace(/[()]/g, '\\$&')} \\| (\\d+) \\|`).exec(page);
+    if (m === null) failures.push({ fact: FACT, reason: `要約に「${label}」の行が無い` });
+    else if (Number(m[1]) !== want) {
+      failures.push({ fact: FACT, reason: `要約の「${label}」は ${m[1]} だが、表の列の和は ${want}` });
+    }
+  }
+  const score = /\| Mutation score \(total \/ covered\) \| ([\d.]+%|—) \/ ([\d.]+%|—) \|/.exec(page);
+  const wantScore = [pageRate(sum.killed, valid), pageRate(sum.killed, sum.killed + sum.survived)].map((p) =>
+    p === '—' ? p : `${p}%`,
+  );
+  if (score === null) failures.push({ fact: FACT, reason: '要約に Mutation score の行が無い' });
+  else if (score[1] !== wantScore[0] || score[2] !== wantScore[1]) {
+    failures.push({
+      fact: FACT,
+      reason: `要約の Mutation score は ${score[1]} / ${score[2]} だが、表の列の和からは ${wantScore.join(' / ')}`,
+    });
+  }
+
+  // 3. 行ごとの率を数え直す (分母 0 は「—」—— 0.00 は「1 つも殺せていない」と読める)。
+  for (const r of rows) {
+    const v = r.killed + r.survived + r.noCov;
+    const wantPct = pageRate(r.killed, v);
+    const wantCovered = pageRate(r.killed, r.killed + r.survived);
+    if (r.pct !== wantPct || r.covered !== wantCovered) {
+      failures.push({
+        fact: FACT,
+        reason:
+          `${r.file} の率は ${r.pct} / ${r.covered} だが、同じ行の数からは ${wantPct} / ${wantCovered}` +
+          (v === 0 ? ' (分母 0 を 0.00 と刷らない —— 「測る変異体が無い」と「1 つも殺せていない」は別物)' : ''),
+      });
+    }
+  }
+
+  // 4. 報告の日時は絶対時刻。相対時間を頁に固めない。
+  if (!/報告ファイルの日時 \*\*\d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC\*\*/.test(page)) {
+    failures.push({ fact: FACT, reason: '報告ファイルの日時 (絶対時刻・UTC) が無い — 変異検査の点数がいつの物かを名乗っていない' });
+  }
+  if (/Report age/i.test(page)) {
+    failures.push({
+      fact: FACT,
+      reason: '「Report age」(相対時間) を頁に固めている —— commit した翌時間から偽になる。絶対時刻で書く',
+    });
+  }
+
+  // 5. 全掃引であること。
+  if (/部分の報告である/.test(page)) {
+    failures.push({
+      fact: FACT,
+      reason:
+        'docs/QUALITY.md は部分の報告 (--mutate で絞った run) から作られている —— その点数を ' +
+        '品質の頁として commit しない。全掃引 (`npm run mutate`) の報告から作り直す',
+    });
+  } else if (!/この run はそのすべてを名指ししていた \(全掃引\)/.test(page)) {
+    failures.push({
+      fact: FACT,
+      reason: 'docs/QUALITY.md が全掃引かどうかを名乗っていない —— 分母の範囲を `npm run quality:report` で作り直す',
+    });
+  }
+
+  // 6. 被覆の行は範囲を名乗る (被覆は --coverage.include=src/main/** で測っている)。
+  for (const m of page.matchAll(/^\| (Coverage[^|]*)\|/gm)) {
+    if (!m[1].includes('src/main/**')) {
+      failures.push({ fact: FACT, reason: `被覆の行「${m[1].trim()}」が範囲 (src/main/**) を名乗っていない` });
+    }
   }
   return 1;
 }
@@ -1422,6 +1699,10 @@ function selfTest() {
     const OK = cfg(99.8);
     for (const [label, quality, ledger, expected, config = OK] of [
       ['★ 実在した形 (1 行だけ 0.00%・台帳なし) で鳴る', table(dead), {}, 1],
+      // パス 490: 生成側は分母 0 を「—」と刷るようになった。**数だけを読む針だと、この行は表から
+      // 黙って消える** —— 同じ行を「—」の形でも鳴らす (台帳に理由があれば通す)。
+      ['★ 分母 0 の行 (「—」) も台帳なしで鳴る', table(dead.replace('| 0.00 | 0.00 |', '| — | — |')), {}, 1],
+      ['分母 0 の行 (「—」) も台帳に理由があれば鳴らない', table(dead.replace('| 0.00 | 0.00 |', '| — | — |')), { 'src/shared/taxConsumption.ts': REASON }, 0],
       ['台帳に理由があれば鳴らない', table(dead), { 'src/shared/taxConsumption.ts': REASON }, 0],
       ['理由が短ければ鳴る', table(dead), { 'src/shared/taxConsumption.ts': 'みじかい' }, 1],
       ['★ 直ったのに台帳に残っていれば鳴る (次の死を隠す)', table(healed), { 'src/shared/taxConsumption.ts': REASON }, 1],
@@ -1438,6 +1719,67 @@ function selfTest() {
       const ok = f.length === expected;
       if (!ok) bad++;
       console.log(`  ${ok ? '✓' : '✗'} 行ごとの点数: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+  /*
+   * 変異検査の分母を頁そのものと突き合わせる (パス 490)。**最初のケースは公開中だった形** ——
+   * 分母の文が表と違う本数を名乗る (実物は 296 と 246)。
+   */
+  {
+    const ROWS = [
+      '| src/a.ts | 100.00 | 100.00 | 10 | 0 | 0 | 2 | 0 |',
+      '| src/b.ts | — | — | 0 | 0 | 0 | 3 | 0 |',
+    ];
+    const SCOPE =
+      '分母の範囲: この報告 (報告ファイルの日時 **2026-09-27 01:00 UTC**) の表の行は **2 本**。' +
+      'run が名指ししたのは **2 本** (報告に残る `config.mutate`)。この頁を生成した時点の ' +
+      '`stryker.config.json` の `mutate` は **2 本**で、**この run はそのすべてを名指ししていた (全掃引)**。';
+    const page = (o = {}) =>
+      [
+        `| Mutation score (total / covered) | ${o.score ?? '100.00% / 100.00%'} |`,
+        `| Mutation の表の行 (報告が測った本) | ${o.summaryRows ?? '2'} 本 (報告ファイルの日時 2026-09-27 01:00 UTC) |`,
+        `| Mutants killed | ${o.killed ?? '10'} |`,
+        '| Mutants survived | 0 |',
+        '| Mutants 有効 (分母) | 10 |',
+        '| Mutants ignored (Stryker disable 宣言) | 5 |',
+        '| Mutants invalid (評価不成立) | 0 |',
+        o.coverage ?? '| Coverage (`src/main/**` のみ) — lines | 99.00% |',
+        '',
+        `**Overall (表の 2 本): 100.00% total / 100.00% covered** (${o.overall ?? '10 killed / 0 survived / 0 no-cov / 10 valid'})`,
+        '',
+        o.scope ?? SCOPE,
+        o.extra ?? '',
+        '| file | score | covered | killed | survived | no-cov | ignored | invalid |',
+        '|------|------:|--------:|-------:|---------:|-------:|--------:|--------:|',
+        ...(o.rows ?? ROWS),
+        '',
+      ].join('\n');
+    for (const [label, text, expected] of [
+      ['整った頁は通る', page(), 0],
+      ['★ 公開中だった形 —— 分母の文が表と違う本数を名乗る', page({ scope: SCOPE.replace('**2 本**。run', '**3 本**。run') }), 1],
+      ['★ 要約の行数が表と違う', page({ summaryRows: '3' }), 1],
+      ['★ Overall が表の列の和と違う', page({ overall: '11 killed / 0 survived / 0 no-cov / 11 valid' }), 1],
+      ['★ 要約の killed が表の列の和と違う', page({ killed: '9' }), 1],
+      ['★ 要約の点数が表の列の和と違う', page({ score: '99.00% / 100.00%' }), 1],
+      ['★ 分母 0 の行を 0.00 と刷る (「1 つも殺せていない」と読める)', page({ rows: [ROWS[0], '| src/b.ts | 0.00 | 0.00 | 0 | 0 | 0 | 3 | 0 |'] }), 1],
+      ['★ 率を手で書き換えた行', page({ rows: ['| src/a.ts | 90.00 | 100.00 | 10 | 0 | 0 | 2 | 0 |', ROWS[1]] }), 1],
+      ['★ 相対時間 (Report age) を固めている', page({ extra: '_Report age: 0.1h._' }), 1],
+      ['★ 報告の日時 (絶対時刻) が無い', page({ scope: SCOPE.replace('報告ファイルの日時 **2026-09-27 01:00 UTC**', '報告ファイルの日時 不明') }), 1],
+      [
+        '★ 部分の報告を品質の頁にしている',
+        page({ scope: SCOPE.replace('**この run はそのすべてを名指ししていた (全掃引)**', '**部分の報告である** —— **300 本はこの run に含まれない**') }),
+        1,
+      ],
+      ['★ 全掃引かどうかを名乗らない', page({ scope: SCOPE.replace('**この run はそのすべてを名指ししていた (全掃引)**', '') }), 1],
+      ['★ 被覆の行が範囲を名乗らない', page({ coverage: '| Coverage — lines | 99.00% |' }), 1],
+      ['★ 表が 1 行も読めない', page({ rows: [] }), 1],
+      ['頁が読めなければ鳴る', null, 1],
+    ]) {
+      const f = [];
+      checkMutationPageScope(f, text);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 変異検査の分母: ${label}: ${f.length} 件 (期待 ${expected})`);
     }
   }
   /*
@@ -1531,7 +1873,8 @@ function main() {
   const pubCount = checkPublishScanCoverage(failures);
   const orderCount = checkE2eBuildOrder(failures);
   const ledgerCount = checkSingleEgressLedger(failures);
-  const freshCount = checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures);
+  const freshCount =
+    checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures) + checkMutationPageScope(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
@@ -1559,6 +1902,6 @@ function main() {
  * 立てられなかった (require した瞬間に検査プロセスごと落ちる)。
  * `lint-test-coverage.cjs` と `build-knowledge-vault.cjs` が同じ理由で同じ番を持つ。
  */
-module.exports = { CROSS_CHECK };
+module.exports = { CROSS_CHECK, checkMutationPageScope };
 
 if (require.main === module) process.exit(main());

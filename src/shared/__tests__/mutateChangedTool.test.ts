@@ -4,8 +4,8 @@
  * ## 何が起きていたか
  *
  * `stryker.config.json` の `mutate` は 298 ファイルで `thresholds.break = 99.8` が掛かる。
- * その測定は**週次だけ** (`mutation.yml`) で、per-PR の CI には入っていない
- * (1 ファイル 6 分半・全件は数時間なので無料枠では毎 PR に載せられない)。
+ * CI の測定は **PR では 1 度も走らない** (`mutation.yml` は週次の全件と、`main` への push で
+ * 変わったファイルだけ。1 ファイル 6 分半・全件は数時間なので無料枠では毎 PR に載せられない)。
  *
  * パス 478 は `src/renderer/data/sourceVerification.ts` (`mutate` の 1 つ) に
  * `normalizeSourceUrl` を足した。実測 (2026-09-26):
@@ -16,7 +16,9 @@
  * | 未到達だった 1 件 | `String(url ?? '')` の `?? ''` (欠けた欄へ到達する検査が無かった) |
  * | 検査を 2 件足した後 | **100.00% (Killed 93 / 生存 0 / 未到達 0)** |
  *
- * **週次 CI はこれを 6 日後に赤くし、しかも次に push した人の変更に見える。**
+ * **CI はこれを merge して `main` へ push するまで測らない。** ★ パス 479 はここを
+ * 「週次 CI はこれを 6 日後に赤くし、しかも次に push した人の変更に見える」と書いたが、
+ * `main` への push でも変わったファイルを測るので偽だった (パス 490 で訂正)。
  *
  * ## per-PR の網がこれを見なかった理由も測った
  *
@@ -99,7 +101,7 @@ describe('per-PR の被覆測定の射程 (実測を記録する)', () => {
     expect(outside.length).toBeGreaterThan(100);
   });
 
-  it('★ 週次だけに頼らない道具が在る (package.json に載っている)', () => {
+  it('★ PR の段階で `mutate` のファイルを測る道具が在る (package.json に載っている)', () => {
     expect(pkg.scripts['audit:mutate-changed']).toContain('scripts/audit-mutate-changed.cjs');
     expect(pkg.scripts['audit:mutate-changed']).toContain('--self-test');
   });
