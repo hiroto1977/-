@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { resolve } from 'node:path';
+
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import {
   detectSpecialIntent,
   findService,
@@ -94,6 +97,30 @@ describe('replyTo', () => {
     expect(r.kind).toBe('org');
     expect(r.routedThrough).toBe('COO 直轄');
     expect(r.text).toContain(orgSummaryLine(ORG));
+  });
+
+  /**
+   * **★ 組織の案内が名乗る「出荷の関門」は、リリースが実際に走らせる物と同じ** (2026-09-27 · パス 494)。
+   *
+   * この文は「品質ゲート (verify:all / Stryker 100%) を通過したものだけが出荷されます」と言っていた。
+   * 変異検査はリリースの関門に無く (`release.yml` が build の前に走らせるのは型検査・`npm test`・
+   * `verify:all`)、PR でも走らない —— しかも今のコードを 100% と測った報告も無い (最後の報告は
+   * 2026-09-01・`docs/REMAINING_WORK.md`)。アプリが利用者に言う手順は、実物の workflow から検める。
+   */
+  it('★ 組織の案内が名乗る出荷の関門は、release.yml が build の前に走らせる物と同じ', () => {
+    const r = replyTo('いまの組織体制を教えて', CTX);
+    expect(r.text).toContain('品質ゲート (型検査・ユニットテスト・verify:all) を');
+    // 直す前の文は変異検査を出荷の関門として名乗っていた (標本: 針はその文に当たる)。
+    expect('品質ゲート (verify:all / Stryker 100%) を').toContain('Stryker');
+    expect(r.text).not.toContain('Stryker');
+    const wf = readOriginalSource(resolve(__dirname, '../../../../.github/workflows/release.yml'));
+    const buildAt = wf.indexOf('npm run build --');
+    expect(buildAt, 'release.yml の build の行').toBeGreaterThan(-1);
+    for (const cmd of ['npm run typecheck', 'npm test', 'npm run verify:all']) {
+      const at = wf.indexOf(cmd);
+      expect(at, `release.yml が ${cmd} を走らせる`).toBeGreaterThan(-1);
+      expect(at, `${cmd} は build より前`).toBeLessThan(buildAt);
+    }
   });
 
   it('answers help with the injected service count and sample labels', () => {

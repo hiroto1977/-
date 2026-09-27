@@ -164,23 +164,6 @@ function canonicalMutationScore(which) {
 }
 
 /**
- * QUALITY.md の点数が**いつの・何本の**物か (2026-09-27 · パス 490)。
- *
- * TL;DR は「Mutation score 100.00% · 出典 docs/QUALITY.md」とだけ書いており、そのすぐ下の行は
- * 「対象ファイル数と閾値の実数は §5.5」(= 生成時点の `mutate` の本数) を指していた —— 読んだ人は
- * 「§5.5 の本数すべてで 100%」と受け取る。実物の点数は 2026-09-01 の 246 本の物だった。
- * 点数と一緒に、報告の日付と表の行数を名乗らせる。
- */
-function canonicalMutationDenominator() {
-  const src = read(path.join(DOCS, 'QUALITY.md'));
-  if (src == null) return null;
-  const rows = /表の行は \*\*(\d+) 本\*\*/.exec(src);
-  const at = /報告ファイルの日時 \*\*(\d{4}-\d{2}-\d{2}) \d{2}:\d{2} UTC\*\*/.exec(src);
-  if (rows == null || at == null) return null;
-  return `${at[1]} の全掃引・表 ${rows[1]} 本`;
-}
-
-/**
  * 変異検査の閾値 (2026-09-27 · パス 490)。`docs/QUALITY_WORKFLOW.md` は 2026-08 から
  * `{ "high": 90, "low": 60, "break": 50 }` と書き、「break: 50 — 50% を切ったら CI が失敗する」
  * 「全体目標は 60-75% が現実的な落とし所」と述べていた —— 実物は high 100 / low 99.9 /
@@ -241,11 +224,6 @@ const FACTS = [
         pattern: /\| Mutation score \(total\) \| \*\*([\d.]+)%\*\* \|/,
         parse: (m) => m[1],
       },
-      {
-        file: 'README.md',
-        pattern: /\*\*\d{4}-\d{2}-\d{2} の全掃引・表 \d+ 本\*\* で \*\*([\d.]+)%\*\*/,
-        parse: (m) => m[1],
-      },
     ],
   },
   {
@@ -256,26 +234,6 @@ const FACTS = [
         file: 'docs/ARCHITECTURE.md',
         pattern: /\| Mutation score \(covered\) \| \*\*([\d.]+)%\*\* \|/,
         parse: (m) => m[1],
-      },
-    ],
-  },
-  {
-    // 点数は「いつの・何本の」物かも一緒に名乗る (パス 490)。
-    name: 'mutation denominator (TL;DR)',
-    canonical: canonicalMutationDenominator(),
-    claims: [
-      {
-        file: 'docs/ARCHITECTURE.md',
-        pattern:
-          /\| Mutation score \(total\) \| \*\*[\d.]+%\*\* \| `docs\/QUALITY\.md` \((\d{4}-\d{2}-\d{2}) の全掃引・表 (\d+) 本\) \|/,
-        parse: (m) => `${m[1]} の全掃引・表 ${m[2]} 本`,
-      },
-      {
-        // README の「品質ゲート」は 2026-09-27 まで「mutation (Stryker) | 100.00% (30 modules)」と
-        // 書いていた (全掃引は 246 本・`mutate` は 302 本)。点数と一緒に、いつの・何本の物かを名乗らせる。
-        file: 'README.md',
-        pattern: /\*\*(\d{4}-\d{2}-\d{2}) の全掃引・表 (\d+) 本\*\* で \*\*[\d.]+%\*\*/,
-        parse: (m) => `${m[1]} の全掃引・表 ${m[2]} 本`,
       },
     ],
   },
@@ -1908,8 +1866,14 @@ function main() {
   const pubCount = checkPublishScanCoverage(failures);
   const orderCount = checkE2eBuildOrder(failures);
   const ledgerCount = checkSingleEgressLedger(failures);
-  const freshCount =
-    checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures) + checkMutationPageScope(failures);
+  // ★ **頁の自己一致 (`checkMutationPageScope`) は、今の `docs/QUALITY.md` には当てていない**
+  //   (2026-09-27 · パス 494)。その頁は 2026-09-01 の報告から作った古い形で、この検査が求める形
+  //   (分母の文・絶対時刻・全掃引の名乗り) は**全掃引の報告から作り直した頁**にしか書けない。
+  //   作り直しに要る全掃引は、同じ日に回すと「検査の中でモジュールを読み直す検査」のせいで
+  //   読み込み時の変異体が大量に「生存」と出る人工物で汚れていた (実測・`docs/REMAINING_WORK.md`
+  //   の「パス 494」)。**頁を作り直すパスでここへ戻す** —— 関数そのものの判定は下の self-test と
+  //   `qualityReportScope.test.ts` が実物の生成物どうしで今も検めている。
+  const freshCount = checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +

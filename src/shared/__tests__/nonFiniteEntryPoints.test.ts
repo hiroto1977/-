@@ -127,6 +127,7 @@ import { computeRunwayMonths } from '../../renderer/data/accounting';
 import { restoreResultMessage, type RestorePlan } from '../../renderer/data/backup';
 import { computeBudgetVarianceFromFundamentals } from '../../renderer/data/budgetVariance';
 import { noBreakEvenNote, unreadablePeriodNote, unreadablePeriodSheetNote } from '../../renderer/data/kpiActuals';
+import { requiredRevenueForTarget } from '../../renderer/data/profitSensitivity';
 import { shigyoDemoMixNote } from '../../renderer/data/shigyoDirectory';
 import { villageSummary } from '../../renderer/data/villageData';
 import { acceptRateOf } from '../api/cursor';
@@ -296,6 +297,17 @@ const ENTRY_POINTS: readonly EntryPoint[] = [
   // **宣言された断り**: `@throws taxableShare が負値・非有限のとき` (`assertNonNegativeFinite`)。
   // 7 モジュール・24 か所で使われているリポジトリの方針で、0 や null を推測せず断る。
   { label: 'inheritanceTaxOnShare', args: [50_000_000], call: (a) => inheritanceTaxOnShare(a!), refusesByThrow: true },
+  // パス 494: パス 493q が「固定費 + 目標 ≦ 0」の比較を足して走査に載った。目標は戻り値に
+  // 利用者の打った値の控えとして残るので、読めない値は断る (0 にも null にも言い換えない)。
+  {
+    label: 'requiredRevenueForTarget',
+    args: [1_000_000],
+    call: (a) => requiredRevenueForTarget(
+      { revenue: 10_000_000, cogs: 4_000_000, advertising: 1_000_000, sga: 3_000_000, depreciation: 500_000 },
+      a!,
+    ),
+    refusesByThrow: true,
+  },
 ];
 
 /** 値の中に非有限な数、または "NaN" / "Infinity" を含む文が在れば、その説明を返す。 */

@@ -182,6 +182,25 @@ describe('requiredRevenueForTarget', () => {
     expect(noContribution.requiredRevenue).toBeNull();
     expect(noContribution.reachedWithoutSales).toBe(false);
   });
+
+  /**
+   * **★ 非有限の目標は断る (2026-09-27 · パス 494)。** パス 493q が足した比較
+   * (固定費 + 目標 ≦ 0) は `-Infinity` を「売上 0 で届く」と答え、`NaN` は比較を素通りして
+   * 必要売上 NaN を返していた —— `nonFiniteEntryPoints.test.ts` の走査がこの入口を拾い、
+   * 台帳にも免除にも無いと落ちて見つかった。断りの文は渡した値を名指しする
+   * (偶然の TypeError と区別するため —— 同じ台帳の `refusesByThrow` の約束)。
+   */
+  it('★ 非有限の目標は値を名指しして断る (0 や「届く」へ言い換えない)', () => {
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      expect(() => requiredRevenueForTarget(base, bad)).toThrow(String(bad));
+    }
+    // 算定不能な土台 (売上 0) でも、読めない目標を先に断る —— 「null で算定不能」と混ぜない。
+    expect(() =>
+      requiredRevenueForTarget({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 }, Number.NaN),
+    ).toThrow('NaN');
+    // 対照: 有限の目標は断らない (負の目標も正当)。
+    expect(() => requiredRevenueForTarget(base, -1_000_000)).not.toThrow();
+  });
 });
 
 describe('operatingLeverage (DOL)', () => {

@@ -121,6 +121,14 @@ export function requiredRevenueForTarget(
   f: KpiFundamentals,
   targetOperatingProfit: number,
 ): TargetRevenue {
+  // **非有限の目標は断る** (2026-09-27 · パス 494)。下の「売上が無くても届く」の比較は
+  // `-Infinity` を「届く」と答え (必要売上 0)、`NaN` は比較を素通りして必要売上 NaN になる。
+  // `targetOperatingProfit` は利用者が打ち込んだ値の控えとして戻り値に残るので (型の注記)、
+  // 読めない値を 0 や null へ言い換えて返すこともできない —— 断るのが 3 つ目の正しい答えである。
+  // 画面の呼び手は `readNumberOrNull` の有限値しか渡さない (読めない入力は関門が断る)。
+  if (!Number.isFinite(targetOperatingProfit)) {
+    throw new RangeError(`目標営業利益は有限の数で渡すこと (受け取った値: ${targetOperatingProfit})`);
+  }
   if (f.revenue <= 0) {
     return { targetOperatingProfit, requiredRevenue: null, upliftPct: null, reachedWithoutSales: false };
   }

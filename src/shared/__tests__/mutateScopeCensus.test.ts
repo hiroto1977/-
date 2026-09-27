@@ -166,23 +166,22 @@ describe('変異検査の分母の外 (パス 354)', () => {
    * `**N 本**`」という文が在れば通ったので、公開中の頁が**表 246 行の点数に「296 本」という
    * 分母を名乗らせて**いても緑だった (296 はパス 354 / 355 が手で書いた数で、生成時点の `mutate` は
    * 302 本)。名乗る分母と表の突き合わせ・総計と列の和・日時・全掃引であることは
-   * `npm run lint:docs` (`checkMutationPageScope`) が頁そのもので見る。ここは**生成側がその規則で
-   * 書く**ことと、頁が報告から数えた分母を名乗っていることだけを留める。
+   * `checkMutationPageScope` (`lint:docs`) が頁そのもので見る —— ここは**生成側がその規則で書く**ことを留める。
+   *
+   * ★ **頁そのものの主張は、全掃引で頁を作り直すまで外してある** (2026-09-27 · パス 494)。今の
+   * `docs/QUALITY.md` は 2026-09-01 の報告から作った古い形で、新しい規則の文 (分母・絶対時刻・全掃引の
+   * 名乗り) は報告からしか書けない。作り直しに要る全掃引は、検査の中でモジュールを読み直す検査のせいで
+   * 読み込み時の変異体が大量に「生存」と出る人工物で汚れていた (`docs/REMAINING_WORK.md` の「パス 494」)。
+   * 頁を作り直すパスで、頁の主張 (分母の文・全掃引の名乗り・直す前の文面が無いこと) をここへ戻し、
+   * `lint:docs` の `main()` で `checkMutationPageScope` を呼び直す。
    */
-  it('★ 公開している頁が、報告が測った集合を分母として名乗る (生成物と、それを作る側の両方)', () => {
-    const doc = readOriginalSource(join(REPO, 'docs/QUALITY.md'));
-    expect(doc).toContain('分母の範囲');
-    expect(doc).toMatch(/表の行は \*\*\d+ 本\*\*/);
-    expect(doc).toContain('この run はそのすべてを名指ししていた (全掃引)');
-    // 直す前の文面 (生成時点の設定の本数を分母として名乗る) は、もう頁に無い。
-    const OLD_CLAIM = /`mutate` が名指しする \*\*\d+ 本\*\*/;
-    expect(doc).not.toMatch(OLD_CLAIM);
-    // 標本: 針は直す前の文面に当たる (当たらなければ上の not は空の検査)。
-    expect('分母の範囲: `stryker.config.json` の `mutate` が名指しする **296 本**。').toMatch(OLD_CLAIM);
+  it('★ 生成側は、報告が測った集合を分母として名乗る頁を書く (頁は全掃引で作り直すまで古い形 —— パス 494)', () => {
     const gen = readOriginalSource(join(REPO, 'scripts/quality-report.cjs'));
     expect(gen).toContain('function judgeScope(');
     expect(gen).toContain('function scopeStatement(');
     expect(gen).toContain('分母の範囲');
+    // 生成側は「全掃引」を名乗る文を持つ (部分の報告からは頁を書かない)。
+    expect(gen).toContain('この run はそのすべてを名指ししていた (全掃引)');
   });
 
   /**

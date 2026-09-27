@@ -117,18 +117,20 @@ scripts/
 
 ## 品質ゲート
 
-すべて CI で実行:
+CI (`.github/workflows/ci.yml`) は PR と `main` への push のたびに、`npm run typecheck`・
+`npm test` (+ `src/main/**` のカバレッジ)・`npm run verify:all` の **37 ゲート**・
+`npm run build:web` を走らせる (ゲート数は `verify:arch` が `package.json` と突き合わせる)。
+件数 (検査の数・サービス数・参照の数) は [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の
+TL;DR が live metric として持つ —— ここに写すと必ず古びる。
+この節は少なくとも 2026-08-31 から 2026-09-27 まで
+「unit tests 2243」「63 services」「lint:forbidden 8 patterns」「mutation 100.00% (30 modules)」と
+書いたままで、どの数も誰も検算していなかった。
 
-| ゲート | 状態 |
-|---|---|
-| typecheck (`tsc -b`) | 100% pass |
-| unit tests (`vitest`) | 2243 / 2243 ✅ |
-| eslint | 0 errors |
-| lint:imports | 693 imports, 全境界 OK |
-| lint:forbidden | 8 patterns scanned, 全 clean |
-| lint:test-coverage | 63 services, 全 test 存在 |
-| verify:arch | 173 file:line refs + 6 metrics 一致 |
-| mutation (Stryker) | **100.00%** (30 modules) |
+変異検査 (Stryker) は **PR では走らない** —— `mutation.yml` が週次 (全件) と `main` への push
+(変わったファイルだけ) で走る。[docs/QUALITY.md](docs/QUALITY.md) に載っている点数は
+**2026-09-01 の報告**の物で、**今のコードを測った物ではない** —— 作り直しの状況は
+[docs/REMAINING_WORK.md](docs/REMAINING_WORK.md) の「パス 494」、運用は
+[docs/QUALITY_WORKFLOW.md](docs/QUALITY_WORKFLOW.md)。
 
 ## ドキュメント
 
