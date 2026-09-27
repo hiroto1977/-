@@ -63,6 +63,7 @@ import {
   redirectBlockedReason,
 } from '../oauth/callbackPaste';
 import { clearPkceSession, readPkceSession, savePkceSession } from '../oauth/pkceSession';
+import { isSubmitEnter } from '../keyIntent';
 
 /**
  * Settings — 22 番目のサービス。
@@ -388,7 +389,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
               value={value}
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !busy && valueOver === 0) save();
+                if (isSubmitEnter(e) && !busy && valueOver === 0) save();
               }}
               placeholder={slot.placeholder}
               autoFocus

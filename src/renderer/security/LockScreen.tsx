@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { describeWipeOutcome, getVault, type VaultStatus, MIN_PASSWORD_LENGTH, VAULT_UNREADABLE_TEXT } from './vault';
 import { announceLockToOtherTabs } from './lockWorkspace';
 import { looksLikeValidMnemonic } from './mnemonic';
+import { isSubmitEnter } from '../keyIntent';
 
 /**
  * 復元フレーズをクリップボードから消すまでの時間。
@@ -405,7 +406,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="new-password"
               onChange={(e) => setRecoveryNewPwConfirm(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !busy) submitRecovery();
+                if (isSubmitEnter(e) && !busy) submitRecovery();
               }}
               style={inputStyle}
             />
@@ -572,7 +573,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !busy) submitPassword();
+              if (isSubmitEnter(e) && !busy) submitPassword();
             }}
             style={inputStyle}
             placeholder={`${MIN_PASSWORD_LENGTH} 文字以上`}
@@ -588,7 +589,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="new-password"
               onChange={(e) => setConfirm(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !busy) submitPassword();
+                if (isSubmitEnter(e) && !busy) submitPassword();
               }}
               style={inputStyle}
             />

@@ -16,6 +16,7 @@ import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling'
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
+import { isSubmitEnter } from '../keyIntent';
 
 // 助言の戻り値の形は台帳 (`shared/actionData.ts` → `shared/businessAdvisor.ts`) を読む (パス 117)。
 // それまでここの写しは `categoryId: string` に広がっていた (本物は 10 個の合併型)。
@@ -1062,7 +1063,7 @@ export function BusinessPage() {
               fontSize: 13,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !advisorBusy) runAdvisor();
+              if (isSubmitEnter(e) && !advisorBusy) runAdvisor();
             }}
           />
           <button

@@ -1073,6 +1073,29 @@ export const LAWS: readonly Law[] = [
     ],
   },
   {
+    id: 'ime-composition-is-not-intent',
+    family: 'surface',
+    name: '変換の確定・取り消しは、画面への操作ではない',
+    statement:
+      '日本語の入力は IME を通る。変換を確定する Enter と変換を取り消す Escape は **IME への操作**であって画面への操作ではない。'
+      + '実 chromium (141) は変換中の keydown を **`key` のまま `isComposing: true` で**ページへ渡し '
+      + '(2026-09-27 実測 —— CDP で変換中の文字を置いてから Enter を届けた)、Safari は確定の**後**に `keyCode: 229` で届ける。'
+      + 'keydown を直に読む handler が `key` だけを見ると、**変換を確定した瞬間に**動く。'
+      + '2026-09-27 まで 12 か所すべてがその形で、アドバイザーへの質問を日本語で打つと**打ちかけの質問が有料の AI へ送られ**、'
+      + 'サイドバーは打ちかけの語の先頭ヒットへ移り、変換の取り消しで検索語とドロワーが消えた。'
+      + '`<form onSubmit>` の暗黙の送信はこの形にならない (同じ測定で確かめた —— 危ないのは keydown を直に読む所だけ)。'
+      + '判定は `renderer/keyIntent.ts` の 1 つ (`isSubmitEnter` / `isCancelEscape`) で、'
+      + 'React の合成イベントは `isComposing` を持たないので `nativeEvent` から読む。'
+      + 'Enter / Escape を素で比べる所がその外に 1 つも無いことを census が数える '
+      + '(注記は落とし、リテラルの中身は残す —— 探しているのがリテラルそのものなので、中身を落とす道具では空の検査になる)。',
+    provenance: ['パス 493i'],
+    enforcedBy: [
+      test(T.renderer('keyIntentCensus')),
+      test(T.renderer('sidebarSearchIme')),
+      test('src/renderer/pages/__tests__/imeEnterDoesNotSend.test.ts'),
+    ],
+  },
+  {
     id: 'design-switch-leaves-nothing-behind',
     family: 'surface',
     name: '見た目を替えても、前の見た目の値は残らない',

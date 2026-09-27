@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 275
+- ブロック数: 276
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `ca82f385b73b517e3f4867259806df133fd19542b14a6a9e7fe981f59f159b7c`
-- 保護対象: 98 ファイル
+- 末尾(tip)ハッシュ: `3ac3a67ca9df51ea14552f67ab2dca2ef6a36e0868fba9eb4d18ea78b90dc336`
+- 保護対象: 99 ファイル
 
 ## ブロック
 
@@ -288,6 +288,7 @@
 | 272 | `6998bda67d217b7c` | `953be3f186c4f1b4` | `c801e78c3a7d1e0b` | update isoDate.ts |
 | 273 | `5dd02f4e41b68a13` | `c801e78c3a7d1e0b` | `b70615f4bd984f3e` | update integrity-chain.cjs,atomicWrite.ts,eraseAll.ts,secrets.ts,advisorQuestionLimits.ts |
 | 274 | `0576f5161b4aa589` | `b70615f4bd984f3e` | `ca82f385b73b517e` | update PROXY_EXAMPLE.md,public-host-guard.cjs,externalUrlGate.ts,privateTarget.ts |
+| 275 | `7e282aad65b1065d` | `ca82f385b73b517e` | `3ac3a67ca9df51ea` | update integrity-chain.cjs,keyIntent.ts,LockScreen.tsx |
 
 ## 保護対象ファイル
 
@@ -342,6 +343,7 @@
 - `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
 - `src/renderer/fs/fsa.ts`
+- `src/renderer/keyIntent.ts`
 - `src/renderer/network/liveRead.ts`
 - `src/renderer/network/proxy.ts`
 - `src/renderer/oauth/pkce.ts`

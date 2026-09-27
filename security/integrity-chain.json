@@ -53,6 +53,7 @@
     "src/renderer/data/localWrite.ts",
     "src/renderer/data/recordCipher.ts",
     "src/renderer/fs/fsa.ts",
+    "src/renderer/keyIntent.ts",
     "src/renderer/network/liveRead.ts",
     "src/renderer/network/proxy.ts",
     "src/renderer/oauth/pkce.ts",
@@ -2301,6 +2302,14 @@
       "leafCount": 98,
       "note": "update PROXY_EXAMPLE.md,public-host-guard.cjs,externalUrlGate.ts,privateTarget.ts",
       "hash": "ca82f385b73b517e3f4867259806df133fd19542b14a6a9e7fe981f59f159b7c"
+    },
+    {
+      "index": 275,
+      "prevHash": "ca82f385b73b517e3f4867259806df133fd19542b14a6a9e7fe981f59f159b7c",
+      "merkleRoot": "7e282aad65b1065d34fc61499afde915aae19a0a66ba4df3dd707ca4747119ac",
+      "leafCount": 99,
+      "note": "update integrity-chain.cjs,keyIntent.ts,LockScreen.tsx",
+      "hash": "3ac3a67ca9df51ea14552f67ab2dca2ef6a36e0868fba9eb4d18ea78b90dc336"
     }
   ],
   "tipManifest": {
@@ -2322,7 +2331,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "1ab99ce1540e3d41e55cc7e125ba41bce0d70a48d69d1a55e5cfefe1998d7a2f",
+    "scripts/integrity-chain.cjs": "634a40df5a6365a93166cd1976641a37efb4214f3f1e0466c1dbe0bdb0031857",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
@@ -2355,11 +2364,12 @@
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
     "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",
     "src/renderer/fs/fsa.ts": "d38f695c737809da99791ab61051dca1718c8827277a293e197e2f3ff4271054",
+    "src/renderer/keyIntent.ts": "6b9cb4b2ba8b16de9a0a8d9113a54b154045f7abe895cda0914344131bf5caa7",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
     "src/renderer/network/proxy.ts": "5f94ffd57f2626df3a51466ff55fdd2f56166755f160043bf200f2662bff6e09",
     "src/renderer/oauth/pkce.ts": "3402979779496b753369150623558c774e6c8f5d525cde4d557e550693d37e24",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
-    "src/renderer/security/LockScreen.tsx": "2589465f17e1e1e769f795249a6da4e4595463b10facee11024072794072f841",
+    "src/renderer/security/LockScreen.tsx": "57c9b5800a201a5ea6924472a4f5873f29281a147f13aa8591222e123762317b",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "c47a7bbf2305b1687bf059cc9d40a43783fef755079b2fdf2a8e59afde9a4f14",

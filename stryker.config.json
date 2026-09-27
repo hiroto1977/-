@@ -166,6 +166,7 @@
     "src/renderer/fs/fsa.ts",
     "src/renderer/hashRoute.ts",
     "src/renderer/hooks/useServiceData.ts",
+    "src/renderer/keyIntent.ts",
     "src/renderer/library/library.ts",
     "src/renderer/library/preview.ts",
     "src/renderer/navigate.ts",

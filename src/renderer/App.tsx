@@ -28,6 +28,7 @@ import {
   requiredPlanForServiceIndex,
   type PlanTier,
 } from '../shared/plan';
+import { isCancelEscape, isSubmitEnter } from './keyIntent';
 
 // True when the renderer is loaded in a plain browser (no Electron preload).
 // The Electron preload sets serviceHub via contextBridge — the web shim adds the
@@ -252,7 +253,7 @@ export function App() {
         e.preventDefault();
         searchRef.current?.focus();
         searchRef.current?.select();
-      } else if (e.key === 'Escape') {
+      } else if (isCancelEscape(e)) {
         setNavOpen(false);
       }
     }
@@ -320,9 +321,9 @@ export function App() {
 
   /** 検索ボックスのキー操作: Enter=先頭ヒット選択、Escape=クリア。 */
   function onSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter' && filtered && filtered.length > 0) {
+    if (isSubmitEnter(e) && filtered && filtered.length > 0) {
       selectService(filtered[0]!.id);
-    } else if (e.key === 'Escape') {
+    } else if (isCancelEscape(e)) {
       setQuery('');
     }
   }
@@ -414,7 +415,7 @@ export function App() {
               toggleFav(service.id);
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+              if (isSubmitEnter(e) || e.key === ' ') {
                 e.stopPropagation();
                 e.preventDefault();
                 toggleFav(service.id);

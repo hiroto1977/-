@@ -2253,7 +2253,10 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **303 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **304 ファイル**。
+2026-09-27 (パス 493i) に `src/renderer/keyIntent.ts` (Enter / Escape を「意図」として読む口 —— 変換中の打鍵を送信・取り消しと読まない) を
+**整合性チェーンの保護対象へ入れる**のと同時に足した (保護対象の `src/renderer/security/LockScreen.tsx` が読むので閉包の規則で入る)。
+1 度目で **100.00% (生存 0 / 未到達 0)**。
 2026-09-27 (パス 493d) に `src/shared/advisorQuestionLimits.ts` (有料 API へ送る質問の判定 —— 天井・CR/LF・銘柄の母集団・
 断りの文) を**整合性チェーンの保護対象へ入れる**のと同時に足した (保護対象は変異検査に載せる —— `lint:mutation-scope` の逆向き)。
 1 度目で **100.00% (Killed 29 / 生存 0 / 未到達 0)**。

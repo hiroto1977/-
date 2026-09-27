@@ -53,6 +53,13 @@ const PROTECTED = [
   'src/renderer/security/mnemonic.ts',
   'src/renderer/security/webauthn.ts',
   'src/renderer/security/LockScreen.tsx',
+  // 2026-09-27 (パス 493i) に足した。**閉包が教えてくれた** —— `LockScreen.tsx` の
+  // パスワード欄の Enter を、IME の変換の確定と区別する判定 (`isSubmitEnter`) へ通したので、
+  // 保護対象がこのファイルを読むようになった。中身は「その keydown は送信の Enter か」の
+  // 判定 3 つだけ (`isComposing` / `keyCode 229` / 素の比較)。書き換えて常に真を返させると、
+  // どの画面でも**打鍵 1 つで送信・解錠の試行が走る**。★ 閉包の費用は 0 —— import を持たない。
+  // ★ 保護対象は変異検査に載せる (`lint:mutation-scope` の逆向き)。
+  'src/renderer/keyIntent.ts',
   'src/main/secrets.ts',
   'src/main/oauth.ts',
   // 2026-09-20 (パス 331) に足した。OAuth の `state` を比べる**定時間比較の実体**を

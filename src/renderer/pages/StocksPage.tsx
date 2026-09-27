@@ -29,6 +29,7 @@ import {
   tradeCountSubLabel,
   watchlistPrices,
 } from '../../shared/paperAccount';
+import { isSubmitEnter } from '../keyIntent';
 
 // 助言・戦略比較・登録の戻り値の形は台帳 (`shared/actionData.ts` → `shared/stocksTypes.ts`) を読む
 // (パス 117)。それまでここに `AdvisorResponse` の写しが在り、パス 105 まで `notForRealMoney` が
@@ -497,7 +498,7 @@ export function StocksPage() {
               fontSize: 13,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !registerBusy && registerOver === 0) registerOrUnregister('register-ticker');
+              if (isSubmitEnter(e) && !registerBusy && registerOver === 0) registerOrUnregister('register-ticker');
             }}
           />
           <button
@@ -749,7 +750,7 @@ export function StocksPage() {
               fontSize: 13,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !advisorBusy) runAdvisor();
+              if (isSubmitEnter(e) && !advisorBusy) runAdvisor();
             }}
           />
           <button
@@ -891,7 +892,7 @@ export function StocksPage() {
               fontSize: 13,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !compareBusy && compareOver === 0) runCompare();
+              if (isSubmitEnter(e) && !compareBusy && compareOver === 0) runCompare();
             }}
           />
           <button
