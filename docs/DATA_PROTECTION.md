@@ -210,6 +210,9 @@ API キー（Anthropic / OpenAI / Gemini / 互換）・サービストークン�
 利用者が書いた内容が入るもの（**秘密ではないが、漏れれば中身が読まれる**）:
 
 - `assistant-history` / `chatbot-history` / `chatbot-requests` — 会話の中身
+  **3 つとも画面から個別に消せる** —— AI アシスタントの「🗑 消去」・コンシェルジュの「🗑 履歴」(パス 489)・
+  要望は「📥 要望」で書き出した直後に会話の中で訊く「この端末から消す」(パス 492 —— 消すのは書き出した行だけで、
+  問いを出してから記録された要望は残す)。2026-09-27 まで要望には消す手が無く、道は「すべてのデータを削除」だけだった。
 - `servicehub.docstudio.v1` / `servicehub.teamradar.draft.v1` — 下書き
 - `emotions.store` — 気分の記録
 - `servicehub.talent.state.v1` — 人材育成の入力。**部署名と個人名が入る**

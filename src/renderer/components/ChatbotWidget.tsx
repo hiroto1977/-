@@ -122,16 +122,89 @@ function saveHistory(messages: ChatMessage[]): void {
  * 残しても取り出せず、残せば以後どの要望も記録できなくなる。
  */
 function recordRequest(text: string): LocalWriteResult {
-  let list: FeatureRequest[] = [];
-  try {
-    const raw = localStorage.getItem(REQUESTS_KEY);
-    list = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
-  } catch {
-    list = [];
-  }
+  const list = loadRequests();
   list.push({ text, at: new Date().toISOString() });
   return writeLocalJson(REQUESTS_KEY, list);
 }
+
+/**
+ * 保存した要望の一覧 —— 読みはこの 1 つ (記録・書き出しの両方が通る)。読めなければ空:
+ * その保存値はもう誰にも読めないので、残しても取り出せない (`recordRequest` の注記)。
+ */
+function loadRequests(): FeatureRequest[] {
+  try {
+    const raw = localStorage.getItem(REQUESTS_KEY);
+    return arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * **書き出した要望だけ**を端末から消す (パス 492)。消した数と残した数を返し、書けなければ `null`。
+ *
+ * 2026-09-27 まで、要望リストには書き出す口 (「📥 要望」) しか無く、消す道は設定の
+ * 「すべてのデータを削除」だけだった —— 台帳は中身を `sensitive` と名乗る (会話の中身) のに。
+ * 会話履歴 (「🗑 履歴」· パス 489) と同じ欠落の 2 件目である (法則 `escape-hatch-stays-open`)。
+ *
+ * **消すかは書き出した直後に訊く。** 要望は backlog 候補として書き出して人へ渡す物で、渡した後に
+ * 端末へ残す理由が無い。見出しに 4 つ目のボタンを置くと、列 (幅 360px) の見出しが 2 段に折れる
+ * (見積もり 387px) ので、訊く所は会話の中にする —— 書き込みの確認 (`pendingIntent`) と同じ形で、
+ * 書き出したファイルを確かめてから押せる (`window.confirm` は開いている間ダウンロードを確かめさせない)。
+ *
+ * **消す直前に読み直し、書き出した物だけを消す。** 問いを出してから押すまでの間に、この会話か
+ * 別のタブが新しい要望を記録しうる。まとめて `removeItem` すると**書き出していない要望まで消え**、
+ * 「N 件を消しました」も偽になる (パス 433 の「古い一覧で消す」と同じ形)。書き出した行を
+ * (受付日時, 本文) の多重集合で数え、一致した分だけ除く。
+ */
+export function clearExportedRequests(exported: readonly FeatureRequest[]): { removed: number; kept: number } | null {
+  const pending = new Map<string, number>();
+  for (const r of exported) {
+    const k = JSON.stringify([r.at, r.text]);
+    pending.set(k, (pending.get(k) ?? 0) + 1);
+  }
+  const current = loadRequests();
+  const kept = current.filter((r) => {
+    const k = JSON.stringify([r.at, r.text]);
+    const n = pending.get(k) ?? 0;
+    if (n === 0) return true;
+    pending.set(k, n - 1);
+    return false;
+  });
+  const removed = current.length - kept.length;
+  if (kept.length > 0) return writeLocalJson(REQUESTS_KEY, kept).ok ? { removed, kept: kept.length } : null;
+  try {
+    localStorage.removeItem(REQUESTS_KEY);
+    return { removed, kept: 0 };
+  } catch {
+    return null;
+  }
+}
+
+/** 書き出した直後に出す「端末からも消すか」の問い。数を名乗り、元に戻せないことと、ファイルは残ることを言う。 */
+export function requestsClearOffer(count: number): string {
+  return (
+    `書き出した要望 ${count} 件を、この端末からも消しますか？ ` +
+    '書き出したファイル (chatbot-requests.md) は残ります。この端末の要望リストからは元に戻せません。'
+  );
+}
+
+/**
+ * 消した後の返事 —— **実際に消した数**を名乗り、残した物があればそう言う。消す物が既に無かった
+ * (別のタブが先に消した) ときに「0 件を消しました」とは言わない —— 何も起きていないのに操作が
+ * 効いたと読める。
+ */
+export function requestsClearedMessage(removed: number, kept: number): string {
+  const head =
+    removed > 0
+      ? `要望 ${removed} 件をこの端末から消しました。`
+      : '書き出した要望は、この端末には既に残っていませんでした。';
+  return kept > 0 ? `${head}書き出した後に記録された要望 ${kept} 件は残しています。` : head;
+}
+
+/** 消せなかったときの返事。**消えたと言わない** —— 残っていることを言う。 */
+export const REQUESTS_CLEAR_FAILED =
+  '⚠ 要望リストをこの端末から消せませんでした (ブラウザが保存領域への書き込みを拒みました)。要望は残っています。';
 
 /**
  * 要望の一覧を Markdown の本文にする。**export しているのは検査のため** ——
@@ -149,15 +222,13 @@ export function requestsMarkdown(list: readonly FeatureRequest[]): string {
   ].join('\n');
 }
 
-/** 記録済み要望を Markdown でダウンロードする (オーケストレーション backlog 連携用)。 */
-function downloadRequests(): void {
-  let list: FeatureRequest[] = [];
-  try {
-    const raw = localStorage.getItem(REQUESTS_KEY);
-    list = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
-  } catch {
-    list = [];
-  }
+/**
+ * 記録済み要望を Markdown でダウンロードする (オーケストレーション backlog 連携用)。
+ * **書き出した行を返す** —— 呼び手は 1 件以上なら「端末からも消すか」を訊き、消すときは
+ * この行だけを消す (パス 492)。
+ */
+function downloadRequests(): FeatureRequest[] {
+  const list = loadRequests();
   /*
    * **書き出す Markdown に自由文を素で入れない** (2026-09-20 · パス 332)。
    *
@@ -191,6 +262,7 @@ function downloadRequests(): void {
   a.download = 'chatbot-requests.md';
   a.click();
   URL.revokeObjectURL(url);
+  return list;
 }
 
 /**
@@ -268,6 +340,8 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
   const inputOver = charsOverCeiling(input, MAX_OLLAMA_PROMPT_CHARS);
   const [busy, setBusy] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
+  /** 書き出した直後の「端末からも消すか」の問い (書き出した行)。`null` なら出さない。 */
+  const [clearOffer, setClearOffer] = useState<readonly FeatureRequest[] | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const suggestions = useMemo(
     () => ['何ができる？', '額面40万の手取りは？', '組織の体制を教えて'],
@@ -402,7 +476,10 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
           <button
             type="button"
             className="ghost"
-            onClick={downloadRequests}
+            onClick={() => {
+              const exported = downloadRequests();
+              setClearOffer(exported.length > 0 ? exported : null);
+            }}
             title="受け付けた機能要望を Markdown で書き出す (orchestration backlog 候補)"
             aria-label="要望リストをエクスポート"
           >
@@ -456,6 +533,30 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
           </div>
         ))}
         {busy ? <div className="concierge-busy">考え中…</div> : null}
+        {clearOffer !== null ? (
+          <div role="alertdialog" aria-label="要望リストの消去の確認" className="concierge-confirm" data-requests-clear-offer>
+            {requestsClearOffer(clearOffer.length)}
+            <div className="concierge-confirm-actions">
+              <button
+                type="button"
+                onClick={() => {
+                  const exported = clearOffer;
+                  setClearOffer(null);
+                  const done = clearExportedRequests(exported);
+                  append({
+                    role: 'bot',
+                    text: done === null ? REQUESTS_CLEAR_FAILED : requestsClearedMessage(done.removed, done.kept),
+                  });
+                }}
+              >
+                この端末から消す
+              </button>
+              <button type="button" onClick={() => setClearOffer(null)}>
+                残す
+              </button>
+            </div>
+          </div>
+        ) : null}
         {pendingIntent ? (
           <div role="alertdialog" aria-label="実行確認" className="concierge-confirm">
             <strong>確認:</strong> 書き込み操作を実行しますか？
