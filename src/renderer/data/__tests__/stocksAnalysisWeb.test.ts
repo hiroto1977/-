@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   sma,
   ema,
@@ -33,6 +33,7 @@ import {
 } from '../stocksAnalysisWeb';
 import { mockCandles, type WebCandle } from '../stocksWatchlistWeb';
 import { MAX_STOCK_ADVISOR_RATIONALE_CHARS, MAX_STOCK_ADVISOR_RISK_CHARS } from '../../../shared/advisorResponseLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /** close 配列から最小限の WebCandle 列を作る (戦略・指標は close のみ参照)。 */
 function mkCandles(closes: readonly number[]): WebCandle[] {
@@ -1157,8 +1158,7 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
  */
 describe('静的な定数 —— 読み直して問う', () => {
   const fresh = async (): Promise<typeof import('../stocksAnalysisWeb')> => {
-    vi.resetModules();
-    return import('../stocksAnalysisWeb');
+    return rereadModule<typeof import('../stocksAnalysisWeb')>(import.meta.url, '../stocksAnalysisWeb');
   };
 
   /*

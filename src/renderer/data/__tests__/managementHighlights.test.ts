@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   buildManagementHighlights,
   summarizeHighlights,
@@ -10,6 +10,7 @@ import {
 } from '../managementHighlights';
 import { buildBusinessOverview, type BusinessOverview } from '../overview';
 import type { KpiActual } from '../kpiActuals';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /**
  * Direct BusinessOverview builder exposing only the fields buildManagementHighlights reads,
@@ -715,30 +716,26 @@ describe('運転資金: 未入力の欄を名前で述べる', () => {
  */
 describe('読み直して測る — リスク帯のラベルと既定しきい値', () => {
   it('リスク帯のラベルは読み直しても 4 つとも同じ文字', async () => {
-    vi.resetModules();
-    const m = await import('../managementHighlights');
+    const m = await rereadModule<typeof import('../managementHighlights')>(import.meta.url, '../managementHighlights');
     expect(m.RISK_BAND_LABEL).toEqual({
       high: '要対応', medium: '注意', low: '良好', none: '所見なし',
     });
   });
 
   it('既定のしきい値は読み直しても 5 欄そろって同じ数', async () => {
-    vi.resetModules();
-    const m = await import('../managementHighlights');
+    const m = await rereadModule<typeof import('../managementHighlights')>(import.meta.url, '../managementHighlights');
     expect(m.DEFAULT_HIGHLIGHT_THRESHOLDS).toEqual({
       declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60, budgetShortfallWarnPct: 90,
     });
   });
 
   it('「達成」の達成率は読み直しても 100 (語の定義 —— しきい値ではない)', async () => {
-    vi.resetModules();
-    const m = await import('../managementHighlights');
+    const m = await rereadModule<typeof import('../managementHighlights')>(import.meta.url, '../managementHighlights');
     expect(m.BUDGET_ACHIEVED_PCT).toBe(100);
   });
 
   it('深刻さの並び順は読み直しても critical → warning → good', async () => {
-    vi.resetModules();
-    const m = await import('../managementHighlights');
+    const m = await rereadModule<typeof import('../managementHighlights')>(import.meta.url, '../managementHighlights');
     // 並べ替えの表は非公開なので、`buildManagementHighlights` の並びで測る。
     // 3 種すべてが出る形を 1 つ作る: 債務超過 (critical) / 流動比率 99% (warning) /
     // 営業利益率 12% (good)。

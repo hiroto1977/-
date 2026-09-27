@@ -5,7 +5,7 @@
  * 断るときに投げずに理由を返すこと。範囲の数字は表 (`BOUNDS`) に**写して**
  * 持つ —— 実装の表から導くと、表が `{}` に変異しても検査が一緒に変わって黙る。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { HYDROPONIC_CROPS, type HydroponicCrop } from '../hydroponics';
 import {
   MAX_CROP_LABEL_CHARS,
@@ -33,6 +33,7 @@ import {
   type CropDraft,
   type CropNumericField,
 } from '../hydroponicCrops';
+import { rereadModule } from './rereadModule';
 
 /** 形の通る品目。範囲の端に掛からない値を選んである。 */
 const VALID: HydroponicCrop = {
@@ -481,8 +482,7 @@ describe('findCrop / resolveCropFrom', () => {
  */
 describe('表の static 変異体を測る (動的 import で読み直す)', () => {
   it('見出し・範囲・文言・接頭辞・id の形が写しと一致する', async () => {
-    vi.resetModules();
-    const m = await import('../hydroponicCrops');
+    const m = await rereadModule<typeof import('../hydroponicCrops')>(import.meta.url, '../hydroponicCrops');
     expect(m.CROP_FIELD_LABELS).toEqual(LABELS);
     expect(m.HYDROPONIC_CROP_BOUNDS).toEqual(BOUNDS);
     expect(m.CROP_REFUSAL_MESSAGES).toEqual({

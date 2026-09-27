@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
 import path from 'node:path';
 import { externalUrlOrNull } from '../../shared/externalUrlGate';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
@@ -154,12 +155,24 @@ async function loadMain(opts: { packaged: boolean; devServerUrl?: string }): Pro
   isPackaged = opts.packaged;
   if (opts.devServerUrl === undefined) delete process.env.VITE_DEV_SERVER_URL;
   else process.env.VITE_DEV_SERVER_URL = opts.devServerUrl;
-  vi.resetModules();
-  await import('../main');
+  await rereadModule<typeof import('../main')>(import.meta.url, '../main');
   // `app.whenReady().then(createWindow)` が走るまでマイクロタスクを流す。
   await new Promise((r) => setTimeout(r, 0));
   return captured;
 }
+
+// 依存先は `beforeAll` で 1 度だけ読んでおく —— 検査ごとに読み直すのは `main.ts` の 1 本だけ
+// (`rereadModule`)。`vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで
+// 「その検査が覆った」と変異検査に数えられる (パス 495)。先頭の静的 import にしないのは、
+// `main.ts` が読み込んだ瞬間に 窓を作り、この検査の記録用の変数が
+// まだ初期化されていない (静的 import は本体より先に評価される) ため。
+beforeAll(async () => {
+  // 読み込むと `app.whenReady().then(createWindow)` が窓を作るので、記録の器を先に用意し、
+  // 窓が作られ終わるまで流してから検査へ入る (検査の記録に混ざらないように)。
+  captured = freshCapture();
+  await import('../main');
+  await new Promise((r) => setTimeout(r, 0));
+});
 
 beforeEach(() => {
   openedExternal = [];

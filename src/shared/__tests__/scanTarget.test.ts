@@ -1,7 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { join } from 'node:path';
 import { readOriginalSource } from './originalSource';
 import { MAX_SCAN_URL_CHARS, SCAN_URL_MESSAGES, SECRET_PARAM_NAMES, describeScanUrlRisk, looksInternalHostname, type ScanUrlFailure, validateScanUrl } from '../scanTarget';
+import { rereadModule } from './rereadModule';
 
 describe('validateScanUrl', () => {
   it('http / https を通す', () => {
@@ -267,8 +268,7 @@ describe('scanTarget — 生存していた変異を塞ぐ', () => {
    * 1 語でも空文字に潰れれば、その名前を持つ URL は**警告なしで投入される**。
    */
   it('★ 秘密のパラメータ名を、読み直して字面で留める', async () => {
-    vi.resetModules();
-    const m = await import('../scanTarget');
+    const m = await rereadModule<typeof import('../scanTarget')>(import.meta.url, '../scanTarget');
     expect([...m.SECRET_PARAM_NAMES]).toEqual([
       'token',
       'access_token',

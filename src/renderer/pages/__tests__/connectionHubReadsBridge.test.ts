@@ -31,13 +31,14 @@ import { act } from 'react';
 import React from 'react';
 import { settleUntil } from '../../__tests__/jsdomWait';
 import { SERVICES } from '../../services';
+import { ConnectionHub } from '../SettingsPage';
+import { getVault } from '../../security/vault';
 
 async function mount(listConfigured: () => Promise<string[]>) {
   (window as unknown as { serviceHub: unknown }).serviceHub = {
     getVersion: () => Promise.resolve('0.1.0'),
     listConfigured,
   };
-  const { ConnectionHub } = await import('../SettingsPage');
   const container = document.createElement('div');
   document.body.appendChild(container);
   const root = createRoot(container);
@@ -63,7 +64,6 @@ describe('接続ハブ: 読むのは橋 (パス 456)', () => {
   });
 
   it('★ 保管庫が空でも、橋が答えれば接続済みとして出る (直す前はここが 0 だった)', async () => {
-    const { getVault } = await import('../../security/vault');
     expect(await getVault().listConfigured(), '前提: 保管庫は空').toEqual([]);
     const { text } = await mount(() => Promise.resolve(['github']));
     expect(text()).toContain(`1 / ${SERVICES.length} サービスが接続済み`);

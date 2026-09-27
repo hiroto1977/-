@@ -49,6 +49,7 @@ vi.mock('../../../shared/securityRange', async (importOriginal) => {
 });
 
 import { SERVICES } from '../../services';
+import { runSecurityRange, DEFAULT_EVASIONS } from '../../../shared/securityRange';
 
 const LABEL = '誤検知 (無害を脅威と判定)';
 
@@ -152,7 +153,6 @@ describe('セキュリティ演習場 — 測っていない「誤検知 0」を
   it('★ 他 2 つのタイルは空でも安全な向きに倒れる (床が要らない理由)', async () => {
     // 検知率・適合率は 0 に倒れると「危ない報告」になるので、
     // **同じ床を置かない**ことを明示的に留める (揃えたくなる誘惑への歯止め)。
-    const { runSecurityRange, DEFAULT_EVASIONS } = await import('../../../shared/securityRange');
     const empty = runSecurityRange([], DEFAULT_EVASIONS);
     expect(empty.overallDetectionRate).toBe(0);
     expect(empty.precision).toBe(0);

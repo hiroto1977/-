@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   achievementGap,
   diagnoseOrg,
@@ -17,6 +17,7 @@ import {
   MAX_TALENT_UPDATED_AT_CHARS,
 } from '../talent';
 import { countChars } from '../inputCeiling';
+import { rereadModule } from './rereadModule';
 
 /**
  * **IPC 境界の検査を、`src/shared/` から直接 import して置く。**
@@ -206,8 +207,7 @@ describe('状態全体の正規化 — 根の番人', () => {
     // `EMPTY_TALENT_STATE` は**モジュール直下の定数**なので、静的 import の
     // ままでは変異が届かない (実測: 字面で比べる形に直しても 5 件生存した)。
     // 読み直す —— 本 PR で 4 度目の同じ手当てである。
-    vi.resetModules();
-    const m = await import('../talent');
+    const m = await rereadModule<typeof import('../talent')>(import.meta.url, '../talent');
     for (const v of [null, undefined, 'x', 42, true]) {
       expect(m.sanitizeTalentState(v)).toEqual({
         reports: [],
@@ -219,8 +219,7 @@ describe('状態全体の正規化 — 根の番人', () => {
   });
 
   it('★ EMPTY_TALENT_STATE 自体の中身も字面で留める', async () => {
-    vi.resetModules();
-    const m = await import('../talent');
+    const m = await rereadModule<typeof import('../talent')>(import.meta.url, '../talent');
     expect(m.EMPTY_TALENT_STATE).toEqual({
       reports: [],
       initiatives: [],
@@ -270,8 +269,7 @@ describe('状態全体の正規化 — 根の番人', () => {
  */
 describe('MEMBER_ID_RE — 読み直して static 変異体を届かせる', () => {
   async function fresh() {
-    vi.resetModules();
-    return await import('../talent');
+    return await rereadModule<typeof import('../talent')>(import.meta.url, '../talent');
   }
 
   const m = (id: string) => ({ id, name: '山田', step: 1, yearsInStep: 0 });
@@ -342,8 +340,7 @@ describe('talent —— 測れていなかった境界', () => {
    * 先頭の静的 import では変異が効く前に評価が済む。読み直して問う。
    */
   it('★ 病名の許可リストは中身を持つ (静的な集合を読み直して問う)', async () => {
-    vi.resetModules();
-    const m = await import('../talent');
+    const m = await rereadModule<typeof import('../talent')>(import.meta.url, '../talent');
     const known = m.ORGAN_DISEASES[0]!.id;
     const [r] = m.sanitizeReports([{ department: '営業', diseases: [known, 'no-such-disease'] }]);
     // 許可リストが空になっていれば known も落ちる。
@@ -351,8 +348,7 @@ describe('talent —— 測れていなかった境界', () => {
   });
 
   it('★ 失格条項の一覧は中身を持つ (静的な表を読み直して問う)', async () => {
-    vi.resetModules();
-    const m = await import('../talent');
+    const m = await rereadModule<typeof import('../talent')>(import.meta.url, '../talent');
     const id = m.LEADER_DISQUALIFIERS[0]!.id;
     const v = m.judgeLeaderFitness([id]);
     expect(v.eligible).toBe(false);

@@ -3,12 +3,13 @@
  * 事業年度で切り出すこと、内訳の無い額を「その他」に置いて注記すること、
  * 取り込んだ後の貸借対照表が**実際の集計関数で**貸借一致すること (差額 0) を固定する。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { buildKessanImport, fiscalYearWindow, type KessanImportInput } from '../kessanImport';
 import { amountOf, balanceTotals, incomeTotals } from '../statementAccounts';
 import { EMPTY_PROFILE, type SubmissionProfile } from '../bankSubmission';
 import type { KpiActual } from '../kpiActuals';
 import type { BalanceSheet } from '../balanceSheet';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const kpi = (period: string, revenue: number, extra: Partial<KpiActual> = {}): KpiActual => ({
   period, unit: '全社', revenue, cogs: revenue * 0.4, advertising: 100_000, sga: 2_000_000, depreciation: 50_000, laborCost: 1_200_000, ...extra,
@@ -317,8 +318,7 @@ describe('貸借対照表の内数が未入力のとき、0 で積んで注記�
  */
 describe('読み直して測る — 期の綴りと科目名', () => {
   it('期の綴りは読み直しても前後を固定した YYYY-MM だけを通す', async () => {
-    vi.resetModules();
-    const { PERIOD_RE } = await import('../kessanImport');
+    const { PERIOD_RE } = await rereadModule<typeof import('../kessanImport')>(import.meta.url, '../kessanImport');
     // 通る形
     for (const ok of ['2026-01', '2026-09', '2026-10', '2026-12', '0000-01']) {
       expect(PERIOD_RE.test(ok), ok).toBe(true);
@@ -339,8 +339,7 @@ describe('読み直して測る — 期の綴りと科目名', () => {
   });
 
   it('科目名は読み直しても表から引ける (取り込んだ行のラベルに乗る)', async () => {
-    vi.resetModules();
-    const m = await import('../kessanImport');
+    const m = await rereadModule<typeof import('../kessanImport')>(import.meta.url, '../kessanImport');
     const r = m.buildKessanImport({ kpiActuals: KPI, balanceSheet: BS, profile: PROFILE, existing: {} });
     // ラベルは `nameOf` が科目表から引いた名前を含む。空にすり替わると落ちる。
     const cash = r.rows.find((x) => x.k === 'cash');

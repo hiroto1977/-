@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   AI_PROVIDERS,
   AI_PROVIDER_IDS,
@@ -7,6 +7,7 @@ import {
   type AiChatRequest,
   type AiProviderId,
 } from '../providers';
+import { rereadModule } from '../../__tests__/rereadModule';
 
 const REQ: AiChatRequest = {
   system: 'あなたは有能なアシスタントです',
@@ -108,8 +109,7 @@ describe('提供元の表を字面で留める (鍵の送り先と直接続の�
   ];
 
   async function freshProviders(): Promise<typeof import('../providers')> {
-    vi.resetModules();
-    return (await import('../providers')) as typeof import('../providers');
+    return (await rereadModule<typeof import('../providers')>(import.meta.url, '../providers')) as typeof import('../providers');
   }
 
   it.each(EXPECTED)('%s の 5 欄が変わっていない', async (id, want) => {

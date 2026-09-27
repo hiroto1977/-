@@ -9,6 +9,7 @@ import {
   isPrivateOrReservedTarget,
   MAX_PROXY_RESPONSE_BYTES,
 } from '../../network/proxy';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 function clearIdb(): Promise<void> {
   return new Promise((resolve) => {
@@ -948,8 +949,7 @@ describe('isPrivateOrReservedTarget', () => {
      * 3 件が生存したまま動かなかった)。
      */
     async function freshSet(cfg: { url: string }): Promise<void> {
-      vi.resetModules();
-      const m = await import('../../network/proxy');
+      const m = await rereadModule<typeof import('../../network/proxy')>(import.meta.url, '../../network/proxy');
       await m.setProxyConfig(cfg);
     }
 
@@ -991,8 +991,7 @@ describe('isPrivateOrReservedTarget', () => {
    */
   describe('内部 TLD の一覧 — 読み直して static 変異体を届かせる', () => {
     async function fresh() {
-      vi.resetModules();
-      return await import('../../network/proxy');
+      return await rereadModule<typeof import('../../network/proxy')>(import.meta.url, '../../network/proxy');
     }
 
     const TLDS = ['local', 'lan', 'corp', 'intranet', 'home', 'private', 'internal'] as const;

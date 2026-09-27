@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   isOfficial,
   distinctSourceCount,
@@ -14,6 +14,7 @@ import {
 } from '../sourceVerification';
 import { VERIFIED_SUPPORT_RESOURCES } from '../counselorKnowledge';
 import { SUPPORT_RESOURCES } from '../counseling';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const gov: EvidenceSource = { url: 'https://gov.example/a', type: 'government', label: '国' };
 const muni: EvidenceSource = { url: 'https://city.example/b', type: 'municipality', label: '市' };
@@ -276,8 +277,7 @@ describe('unverifiedSupportResources — 出荷する窓口は確証済みか', 
  */
 describe('方針の定数を読み直しても同じ (static 変異体の検査)', () => {
   it('★ 既定方針は 独立 2 件以上 + 公的 1 件以上 で、公的種別は国と自治体', async () => {
-    vi.resetModules();
-    const fresh = await import('../sourceVerification');
+    const fresh = await rereadModule<typeof import('../sourceVerification')>(import.meta.url, '../sourceVerification');
     expect(fresh.DEFAULT_POLICY).toEqual({ minSources: 2, requireOfficial: true });
     expect(fresh.isOfficial('government')).toBe(true);
     expect(fresh.isOfficial('municipality')).toBe(true);

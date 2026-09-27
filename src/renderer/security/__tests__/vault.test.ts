@@ -7,6 +7,7 @@ import { decodeMnemonic, encodeMnemonic, looksLikeValidMnemonic } from '../mnemo
 
 // jsdom doesn't provide crypto.subtle. Pull it in from Node's webcrypto.
 import { webcrypto } from 'node:crypto';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
 }
@@ -538,8 +539,7 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
    * `stryker.config.json` の方針どおり、pragma で黙らせずに読み直して留める。
    */
   it('★ 読み直した実装でも v1 の PBKDF2 入力は接頭辞つき (接頭辞を落とすと復号できない)', async () => {
-    vi.resetModules();
-    const mod = (await import('../vault')) as unknown as {
+    const mod = (await rereadModule<typeof import('../vault')>(import.meta.url, '../vault')) as unknown as {
       getVault: typeof getVault;
       _resetVaultForTests: typeof _resetVaultForTests;
     };
@@ -577,8 +577,7 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
   });
 
   it('対照: 接頭辞**なし** (v0 の入力) では同じ blob を復号できない — 版の分離が効いている', async () => {
-    vi.resetModules();
-    const mod = (await import('../vault')) as unknown as {
+    const mod = (await rereadModule<typeof import('../vault')>(import.meta.url, '../vault')) as unknown as {
       getVault: typeof getVault;
       _resetVaultForTests: typeof _resetVaultForTests;
     };
@@ -982,8 +981,7 @@ describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
  */
 describe('VAULT_UNREADABLE_TEXT — 5 つの約束', () => {
   async function text(): Promise<string> {
-    vi.resetModules();
-    return (await import('../vault')).VAULT_UNREADABLE_TEXT;
+    return (await rereadModule<typeof import('../vault')>(import.meta.url, '../vault')).VAULT_UNREADABLE_TEXT;
   }
 
   it('★ 「確認できなかった」と言う (「無い」と言い切らない)', async () => {

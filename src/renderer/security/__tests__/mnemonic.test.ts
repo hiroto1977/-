@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { webcrypto } from 'node:crypto';
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -13,6 +13,7 @@ import {
   normalizeMnemonic,
 } from '../mnemonic';
 import { BIP39_ENGLISH } from '../bip39-wordlist';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 describe('BIP39 wordlist', () => {
   it('contains exactly 2048 words', () => {
@@ -256,14 +257,12 @@ describe('generateEntropy', () => {
  */
 describe('ENTROPY_BYTES —— 静的定数を測れる形で問う', () => {
   it('再読込したモジュールでも generateEntropy() は 32 バイト (= 256 bit)', async () => {
-    vi.resetModules();
-    const mod = await import('../mnemonic');
+    const mod = await rereadModule<typeof import('../mnemonic')>(import.meta.url, '../mnemonic');
     expect(mod.generateEntropy()).toHaveLength(32);
   });
 
   it('再読込したモジュールでも 32 バイト↔24 語を往復する', async () => {
-    vi.resetModules();
-    const mod = await import('../mnemonic');
+    const mod = await rereadModule<typeof import('../mnemonic')>(import.meta.url, '../mnemonic');
     const entropy = mod.generateEntropy();
     const mnemonic = await mod.encodeMnemonic(entropy);
     expect(mnemonic.split(' ')).toHaveLength(24);
@@ -271,8 +270,7 @@ describe('ENTROPY_BYTES —— 静的定数を測れる形で問う', () => {
   });
 
   it('再読込したモジュールでも 31 / 33 バイトは受け付けない', async () => {
-    vi.resetModules();
-    const mod = await import('../mnemonic');
+    const mod = await rereadModule<typeof import('../mnemonic')>(import.meta.url, '../mnemonic');
     await expect(mod.encodeMnemonic(new Uint8Array(31))).rejects.toThrow('entropy must be 32 bytes');
     await expect(mod.encodeMnemonic(new Uint8Array(33))).rejects.toThrow('entropy must be 32 bytes');
   });

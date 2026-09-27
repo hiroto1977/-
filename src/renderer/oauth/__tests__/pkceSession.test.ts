@@ -7,6 +7,7 @@ import {
   savePkceSession,
 } from '../pkceSession';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /*
  * **PKCE の一時秘密が、使い終わったら消えているか。**
@@ -390,8 +391,7 @@ describe('鍵の名前', () => {
    * **検査の中で**評価させる (`main/oauth.ts` の定数表と同じ形)。
    */
   async function fresh(): Promise<typeof import('../pkceSession')> {
-    vi.resetModules();
-    return import('../pkceSession');
+    return rereadModule<typeof import('../pkceSession')>(import.meta.url, '../pkceSession');
   }
 
   it('★ 4 つの鍵は pkce. 接頭辞つきの決まった名前である', async () => {

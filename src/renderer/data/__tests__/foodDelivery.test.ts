@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { summarizeFoodDelivery } from '../foodDelivery';
+import { SNAPSHOT } from '../snapshot';
 
 const UE = {
   weekOrders: 316,
@@ -92,7 +93,6 @@ describe('summarizeFoodDelivery', () => {
   });
 
   it('works with the real snapshot shapes', async () => {
-    const { SNAPSHOT } = await import('../snapshot');
     const s = summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan);
     expect(s.uberEats.storeCount).toBeGreaterThan(0);
     expect(s.combinedMonthlyEstimate.revenue).toBeGreaterThan(0);

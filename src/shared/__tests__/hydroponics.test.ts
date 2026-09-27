@@ -4,7 +4,7 @@
  * 数値は手計算で置いている。割り切れる値を選んだ固定具 (`CLEAN_CROP`) で
  * 算術そのものを固定し、参考値 (`HYDROPONIC_CROPS`) は「出典どおりか」を別に見る。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   HYDROPONIC_CROPS,
   PANEL_AREA_SQM,
@@ -28,6 +28,7 @@ import {
   type CostInput,
   type LowPotassiumParams,
 } from '../hydroponics';
+import { rereadModule } from './rereadModule';
 
 /** 割り切れる値だけで組んだ品目。株密度 27 / 0.54 = 50 株/m² ちょうど。 */
 const CLEAN_CROP: HydroponicCrop = {
@@ -634,8 +635,7 @@ describe('食べられる量の上限表 (limits)', () => {
  */
 describe('表の static 変異体を測る (動的 import で読み直す)', () => {
   it('品目の参考値・前提の既定・CKD の上限・低カリウムの基準が写しと一致する', async () => {
-    vi.resetModules();
-    const m = await import('../hydroponics');
+    const m = await rereadModule<typeof import('../hydroponics')>(import.meta.url, '../hydroponics');
     expect(m.HYDROPONIC_CROPS).toEqual({
       'leaf-lettuce': {
         id: 'leaf-lettuce', label: 'リーフレタス', nurseryDays: 24, growOutDays: 10, harvestWeightG: 85,

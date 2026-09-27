@@ -93,6 +93,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach } from 'vitest';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
  
 let tmpDir: string;
@@ -924,8 +925,7 @@ describe('emotions の入力上限 (両ビルドで同じ値)', () => {
  */
 describe('解析の指示文 —— 読み直して問う', () => {
   it('★ 指示文は JSON の形を名指しする', async () => {
-    vi.resetModules();
-    const m = await import('../emotions');
+    const m = await rereadModule<typeof import('../emotions')>(import.meta.url, '../emotions');
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
         JSON.stringify({ content: [{ type: 'text', text: '{"scores":{},"sentiment":"neutral","dominant":"joy"}' }] }),

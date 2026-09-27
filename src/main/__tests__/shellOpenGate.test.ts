@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { shellTargetOrNull, SHELL_OPEN_EXTS, MAX_SHELL_PATH_LENGTH } from '../shellOpenGate';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
 
 /*
  * 開く側の関門 (`app:openPath` / `app:revealInFolder`)。
@@ -224,8 +225,7 @@ describe('許可拡張子の中身 (表を読まずに字面で留める)', () =
   const ALLOWED = ['.html', '.md', '.svg', '.png', '.pdf', '.json', '.csv', '.txt'] as const;
 
   async function freshGate(): Promise<typeof import('../shellOpenGate')> {
-    vi.resetModules();
-    return (await import('../shellOpenGate')) as typeof import('../shellOpenGate');
+    return (await rereadModule<typeof import('../shellOpenGate')>(import.meta.url, '../shellOpenGate')) as typeof import('../shellOpenGate');
   }
 
   it.each(ALLOWED)('%s は開いてよい', async (ext) => {

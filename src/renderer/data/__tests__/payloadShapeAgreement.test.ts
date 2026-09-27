@@ -47,6 +47,7 @@ import type { KpiSnapshotUnit } from '../../../main/clients/kpi';
 import type { DebtServiceMetrics, FundingQualityScore } from '../../../shared/funding';
 // `import type` は実行時に消えるので、`node:os` を持つ main のモジュールでも安全。
 import type { SystemSnapshot } from '../../../main/clients/linux';
+import * as kpiPageModule from '../../pages/KpiPage';
 
 /**
  * `Actual` が `Expected` に代入できることを**型の位置**で主張する。
@@ -189,7 +190,7 @@ describe('同梱データ ⇄ live payload の形が一致する', () => {
   it('★ 画面は payload の形を写さずに導出している (写しを増やさない)', async () => {
     // `KpiPage` の `Unit` / `Kpi` / `Fund` は `typeof SNAPSHOT.kpi.units[number]`
     // から導出されている。**export されていること自体**が「写しではない」の印。
-    const mod = await import('../../pages/KpiPage');
+    const mod = kpiPageModule;
     expect(typeof mod.KpiPage).toBe('function');
   });
 });

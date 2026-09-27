@@ -13,6 +13,10 @@ import { describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
 import type { DeviceStoreOp } from '../deviceStoreFailure';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+// 読み直す対象を先頭で読み込んでおく (型だけの import は変換で消えるので、それでは読まない。
+// 読み直しの前に依存先を評価しておかないと、最初の読み直しで依存先が検査の中で評価される —— パス 495)。
+import '../deviceStoreFailure';
 
 /**
  * **毎回読み直してから測る。**
@@ -24,8 +28,7 @@ import { readOriginalSource } from '../../../shared/__tests__/originalSource';
  * `vi.resetModules()` → 動的 import で、変異した初期化子をテストの中で走らせる。
  */
 async function load(): Promise<typeof import('../deviceStoreFailure')> {
-  vi.resetModules();
-  return import('../deviceStoreFailure');
+  return rereadModule<typeof import('../deviceStoreFailure')>(import.meta.url, '../deviceStoreFailure');
 }
 
 /** `name` だけを変えた例外 (ブラウザが投げる形)。 */

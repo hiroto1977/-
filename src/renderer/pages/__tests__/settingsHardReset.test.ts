@@ -26,6 +26,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { LOCK_CHANNEL, LOCK_MESSAGE } from '../../security/lockWorkspace';
 import type { EraseOutcome, EraseReport } from '../../security/eraseAll';
+import { VaultControls } from '../SettingsPage';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -110,7 +111,6 @@ function waitFor(seen: string[], ms = 2000): Promise<void> {
 
 /** ハードリセットを「確定して削除」まで進める。 */
 async function runHardReset(): Promise<void> {
-  const { VaultControls } = await import('../SettingsPage');
   await act(async () => {
     root!.render(createElement(VaultControls));
   });
@@ -228,7 +228,6 @@ describe('設定画面のハードリセット — 消えた時だけ再読込�
   });
 
   it('★ 説明は消す物の在庫と消えない物を言う —— 保管庫だけの話にしない (パス 136)', async () => {
-    const { VaultControls } = await import('../SettingsPage');
     await act(async () => {
       root!.render(createElement(VaultControls));
     });

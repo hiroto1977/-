@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
   DEFAULT_CONSUMPTION_RATES,
@@ -23,6 +23,7 @@ import {
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
   type BusinessSegment,
 } from '../taxConsumptionBusiness';
+import { rereadModule } from './rereadModule';
 
 describe('constants', () => {
   it('exposes the statutory thresholds', () => {
@@ -720,8 +721,7 @@ describe('compareBusinessTaxMethods — 3割特例は言い切れるときだけ
  */
 describe('既定の束 (読み直して測る)', () => {
   it('★ 税率の束と事業者の消費税の台帳は、法定の定数から組む', async () => {
-    vi.resetModules();
-    const fresh = await import('../taxConsumptionBusiness');
+    const fresh = await rereadModule<typeof import('../taxConsumptionBusiness')>(import.meta.url, '../taxConsumptionBusiness');
     expect(fresh.DEFAULT_CONSUMPTION_RATES).toEqual({ standard: 0.1, reduced: 0.08 });
     expect(fresh.DEFAULT_BUSINESS_CONSUMPTION_PARAMS).toEqual({
       rates: { standard: 0.1, reduced: 0.08 },

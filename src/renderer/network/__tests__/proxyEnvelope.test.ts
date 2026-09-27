@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fetchViaProxy, parseProxyEnvelope } from '../proxy';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /*
  * プロキシ (利用者が用意した Cloudflare Worker) の応答封筒は**信じない**。
@@ -61,8 +62,7 @@ describe('parseProxyEnvelope', () => {
  */
 describe('読み込み直しても同じ規則 (定数の初期化子を測る)', () => {
   async function load(): Promise<typeof import('../proxy')> {
-    vi.resetModules();
-    return import('../proxy');
+    return rereadModule<typeof import('../proxy')>(import.meta.url, '../proxy');
   }
 
   it('★ ヘッダ名は token だけ (空白・記号は落ちる)', async () => {

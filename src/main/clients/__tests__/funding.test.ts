@@ -36,6 +36,8 @@ import {
   NO_SECURED_FUNDING_NOTE,
 } from '../../../shared/funding';
 import { buildFundingSnapshot, fetchFundingSnapshot } from '../funding';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+import { DEFAULT_PARAMETER_VALUES } from '../../../shared/parameters';
 
 const items: FundingItem[] = [
   { id: 'a', kind: 'subsidy', name: '補助金A', amount: 5_000_000, status: 'approved', month: '2026-06', repayable: false },
@@ -884,22 +886,22 @@ describe('summarize', () => {
 
     afterEach(() => {
       vi.doUnmock('../../../shared/taxCalc');
-      vi.resetModules();
     });
 
     it('taxCalc の定数を差し替えると消費税相当が追随する', async () => {
-      vi.resetModules();
       vi.doMock('../../../shared/taxCalc', async (importOriginal) => ({
         ...(await importOriginal<typeof import('../../../shared/taxCalc')>()),
         CONSUMPTION_TAX_STANDARD: 0.2,
       }));
-      const { summarize: fresh } = await import('../../../shared/funding');
+      // 読み直すのは `funding` の 1 本だけ —— 差し替えた `taxCalc` はその import を通して届く
+      // (`vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで「この検査が覆った」と
+      // 変異検査に数えられる。パス 495・`shared/__tests__/rereadModule.ts`)。
+      const { summarize: fresh } = await rereadModule<typeof import('../../../shared/funding')>(import.meta.url, '../../../shared/funding');
       // 内税ベース: 1,200,000 × 0.2 / 1.2 = 200,000
       expect(fresh(cf).consumptionTaxEstimate).toBe(200_000);
     });
 
     it('素の既定値は台帳 tax.consumptionStandardRate と同じ率になる', async () => {
-      const { DEFAULT_PARAMETER_VALUES } = await import('../../../shared/parameters');
       const r = DEFAULT_PARAMETER_VALUES['tax.consumptionStandardRate'];
       expect(summarize(cf).consumptionTaxEstimate).toBe(Math.round((1_200_000 * r) / (1 + r)));
     });

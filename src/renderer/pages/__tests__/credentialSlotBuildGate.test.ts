@@ -34,7 +34,7 @@
  * `` `「${screen}」の画面` `` と**補間**で組むので、綴りが原文に無く
  * `namedControlExists` (パス 426) の走査には構造的に映らない。
  */
-import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import { createRoot } from 'react-dom/client';
 import { act } from 'react';
@@ -45,6 +45,11 @@ import { settleUntil } from '../../__tests__/jsdomWait';
 import { credentialSlotUnreadNote } from '../../../shared/buildDestinations';
 import { SERVICES } from '../../services';
 import { stripNonCode } from '../../../shared/__tests__/stripNonCode';
+// 画面と保管庫は先頭で読む —— 検査の中で (`vi.resetModules()` の後に) 読むと、設定画面が
+// 引き連れてくる依存先の直下の値まで「その検査が覆った」と変異検査に数えられる (パス 495)。
+// 保管庫の状態は検査ごとに `_resetVaultForTests()` で戻す (読み直す理由は無い)。
+import { CredentialRow } from '../SettingsPage';
+import { _resetVaultForTests, getVault } from '../../security/vault';
 
 const ROOT = join(__dirname, '..', '..');
 // **原文の道具を通す** —— 変異検査の sandbox では書き換え後のソースが置かれるので、
@@ -92,7 +97,6 @@ function stubHub(version?: string) {
 }
 
 async function mountRow(slot: Record<string, unknown>) {
-  const { CredentialRow } = await import('../SettingsPage');
   const el = document.createElement('div');
   document.body.appendChild(el);
   const root = createRoot(el);
@@ -115,13 +119,11 @@ const SLOT = (over: Record<string, unknown> = {}) => ({
 
 describe('資格情報スロットの実行形態の門 (パス 455)', () => {
   beforeEach(() => {
-    vi.resetModules();
     document.body.innerHTML = '';
   });
 
   it('★ デスクトップ版は断りを出し、秘密を貼る欄も「設定する」も出さない', async () => {
     stubHub('1.4.0'); // 橋が在り web を名乗らない = デスクトップ版
-    const { _resetVaultForTests, getVault } = await import('../../security/vault');
     _resetVaultForTests();
     const el = await mountRow(SLOT());
     await settleUntil(() => el.querySelector('[data-credential-unread]') !== null, '断りが出る');
@@ -144,7 +146,6 @@ describe('資格情報スロットの実行形態の門 (パス 455)', () => {
 
   it('★ `anthropic` は 1 枚の画面を名乗らず、使う画面それぞれの欄を述べる', async () => {
     stubHub('1.4.0');
-    const { _resetVaultForTests } = await import('../../security/vault');
     _resetVaultForTests();
     const el = await mountRow(SLOT({ vaultKey: 'anthropic', desktopScreen: undefined }));
     await settleUntil(() => el.querySelector('[data-credential-unread]') !== null, '断りが出る');
@@ -159,7 +160,6 @@ describe('資格情報スロットの実行形態の門 (パス 455)', () => {
 
   it('★ ブラウザ版の答えは 1 文字も変わらない', async () => {
     stubHub('0.1.0-web');
-    const { _resetVaultForTests } = await import('../../security/vault');
     _resetVaultForTests();
     const el = await mountRow(SLOT());
     expect(el.querySelector('[data-credential-unread]')).toBeNull();

@@ -16,6 +16,11 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { shapeDiff } from '../../shared/__tests__/shapeDiff';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
+import { SNAPSHOT } from '../data/snapshot';
 
 const tokens = new Map<string, string>();
 
@@ -44,9 +49,8 @@ type Result = { ok: boolean; code?: string; message?: string; data?: Record<stri
 type Hub = { fetchSnapshot: (s?: string) => Promise<Result> };
 
 async function loadHub(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 
@@ -80,7 +84,6 @@ describe('ブラウザ版が合成した形 vs 同梱スナップショット', 
 
   it('★ 5 サービスすべてで、合成と同梱の欄が一致する', async () => {
     const hub = await loadHub();
-    const { SNAPSHOT } = await import('../data/snapshot');
     const snap = SNAPSHOT as unknown as Record<string, unknown>;
     const bad: string[] = [];
     for (const { id, snapshotKey } of SYNTHESIZED) {

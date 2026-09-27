@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   parseBalanceSheet,
   computeBalanceSheetMetrics,
@@ -12,6 +12,7 @@ import {
   currentBalanceSheet,
   balanceSheetChoiceNote,
 } from '../balanceSheet';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const VALID = { currentAssets: 100, currentLiabilities: 100, fixedAssets: 0, fixedLiabilities: 0, netIncome: 0 };
 
@@ -675,14 +676,12 @@ describe('未入力の棚卸資産 — 当座比率と流動性段階', () => {
  */
 describe('読み直して測る — collection 名と比率ヘルパー', () => {
   it('collection 名は読み直しても "balance-sheet"', async () => {
-    vi.resetModules();
-    const m = await import('../balanceSheet');
+    const m = await rereadModule<typeof import('../balanceSheet')>(import.meta.url, '../balanceSheet');
     expect(m.BALANCE_SHEET_COLLECTION).toBe('balance-sheet');
   });
 
   it('読み直しても比率が数で出る (module 直下の pct が空にすり替わっていない)', async () => {
-    vi.resetModules();
-    const m = await import('../balanceSheet');
+    const m = await rereadModule<typeof import('../balanceSheet')>(import.meta.url, '../balanceSheet');
     const metrics = m.computeBalanceSheetMetrics({
       asOf: '2026-03-31', currentAssets: 6000, inventory: 2000, accountsReceivable: 1500,
       fixedAssets: 4000, currentLiabilities: 3000, accountsPayable: 1000,

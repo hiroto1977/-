@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   STOCKS_WATCHLIST_KEY,
   isSafeSymbol,
@@ -11,6 +11,7 @@ import {
   mockCandles,
   readWatchlist,
 } from '../stocksWatchlistWeb';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 beforeEach(() => {
   localStorage.clear();
@@ -280,8 +281,7 @@ describe('buildStocksSnapshot', () => {
  */
 describe('保管の鍵 —— 読み直して問う', () => {
   it('★ 鍵は "stocks.watchlist" で、実際にその下へ書く', async () => {
-    vi.resetModules();
-    const m = await import('../stocksWatchlistWeb');
+    const m = await rereadModule<typeof import('../stocksWatchlistWeb')>(import.meta.url, '../stocksWatchlistWeb');
     expect(m.STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist');
     localStorage.clear();
     m.registerSymbol('AAPL');

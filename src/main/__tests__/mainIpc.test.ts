@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
 
 /*
  * main.ts の IPC 境界。
@@ -181,10 +182,19 @@ function invoke(name: string, ...args: unknown[]): unknown {
   return fn({}, ...args);
 }
 
+// 依存先は `beforeAll` で 1 度だけ読んでおく —— 検査ごとに読み直すのは `main.ts` の 1 本だけ
+// (`rereadModule`)。`vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで
+// 「その検査が覆った」と変異検査に数えられる (パス 495)。先頭の静的 import にしないのは、
+// `main.ts` が読み込んだ瞬間に `ipcMain.handle(...)` を呼び、この検査の `handlers` が
+// まだ初期化されていない (静的 import は本体より先に評価される) ため。
+beforeAll(async () => {
+  await import('../main');
+});
+
 // **毎テストで読み直す。** `beforeAll` で 1 回だけ読むと、モジュール直下で
 // 走る `ipcMain.handle(...)` は変異体が有効になる**前**に評価済みになり、
 // 検査が実際に殺していても Stryker は「生存」と報告する (static 変異体)。
-// `vi.resetModules()` を挟んで読み直せば、変異体の有効化後に評価される。
+// `rereadModule` で読み直せば、変異体の有効化後に評価される。
 beforeEach(async () => {
   handlers.clear();
   appListeners.clear();
@@ -210,8 +220,7 @@ beforeEach(async () => {
   writePrefsThrows = null;
   writtenPrefs.length = 0;
   allWindows = [];
-  vi.resetModules();
-  await import('../main');
+  await rereadModule<typeof import('../main')>(import.meta.url, '../main');
 });
 
 // ---------------------------------------------------------------------------

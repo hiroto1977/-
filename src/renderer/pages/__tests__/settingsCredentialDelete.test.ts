@@ -22,6 +22,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICE_IDS, type ServiceId } from '../../../shared/serviceId';
 import { unusedStoredCredentials } from '../../../shared/credentialUse';
 import { waitForText } from '../../__tests__/jsdomWait';
+import { UnusedCredentialSection, CredentialRow } from '../SettingsPage';
 
 /** 保管庫はモックする (施錠を再現するため)。 */
 const vaultClear = vi.fn<(key: string) => Promise<void>>();
@@ -121,7 +122,6 @@ describe('使われていない資格情報 — 数えられなかったら「0 
    * (実測 2026-09-06: `catch { setIds([]); }` で節ごと消えていた)。
    */
   it('★ 一覧が読めなければ、節を消さずに理由を出す', async () => {
-    const { UnusedCredentialSection } = await import('../SettingsPage');
     listRejection = new Error('保管ファイルを読めませんでした (too large)。');
     await mount(createElement(UnusedCredentialSection, { refreshKey: 0 }));
     const alert = container.querySelector('[data-unused-unreadable]');
@@ -132,7 +132,6 @@ describe('使われていない資格情報 — 数えられなかったら「0 
   });
 
   it('対照: 読めるときは理由を出さず、これまでどおり件数を出す', async () => {
-    const { UnusedCredentialSection } = await import('../SettingsPage');
     await mount(createElement(UnusedCredentialSection, { refreshKey: 0 }));
     expect(container.querySelector('[data-unused-unreadable]')).toBeNull();
     await waitForText(() => container.textContent ?? '', '使われていない資格情報 1 件');
@@ -141,7 +140,6 @@ describe('使われていない資格情報 — 数えられなかったら「0 
 
 describe('使われていない資格情報 — 削除できなかったら言う', () => {
   it('★ 削除が {ok:false} なら理由を出し、行は残る', async () => {
-    const { UnusedCredentialSection } = await import('../SettingsPage');
     clearResult = { ok: false, message: 'EACCES: permission denied' };
     await mount(createElement(UnusedCredentialSection, { refreshKey: 0 }));
     expect(container.querySelector(`[data-unused-credential="${UNUSED}"]`)).not.toBeNull();
@@ -157,7 +155,6 @@ describe('使われていない資格情報 — 削除できなかったら言�
   });
 
   it('★ 削除が投げても同じ扱い (画面が無反応にならない)', async () => {
-    const { UnusedCredentialSection } = await import('../SettingsPage');
     (globalThis as unknown as { serviceHub: { clearToken: () => Promise<never> } }).serviceHub = {
       listConfigured: () => Promise.resolve([UNUSED]),
       clearToken: () => Promise.reject(new Error('bridge gone')),
@@ -170,7 +167,6 @@ describe('使われていない資格情報 — 削除できなかったら言�
   });
 
   it('対照: 削除できたら理由は出ず、行も消える', async () => {
-    const { UnusedCredentialSection } = await import('../SettingsPage');
     await mount(createElement(UnusedCredentialSection, { refreshKey: 0 }));
 
     await click(button('削除'));
@@ -194,7 +190,6 @@ describe('保管庫スロット — 削除が投げたら画面に出す', () =>
   });
 
   it('★ 施錠された保管庫では「削除できませんでした」が出る', async () => {
-    const { CredentialRow } = await import('../SettingsPage');
     vaultClear.mockRejectedValue(new Error('Vault がロックされています'));
     await mount(createElement(CredentialRow, { slot: SLOT, onChange: () => {} }));
 
@@ -205,7 +200,6 @@ describe('保管庫スロット — 削除が投げたら画面に出す', () =>
   });
 
   it('対照: 削除できたら文面は出ない', async () => {
-    const { CredentialRow } = await import('../SettingsPage');
     await mount(createElement(CredentialRow, { slot: SLOT, onChange: () => {} }));
 
     await click(button('削除'));

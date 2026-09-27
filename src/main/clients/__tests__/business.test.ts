@@ -33,6 +33,7 @@ import {
 } from '../business';
 import { BUSINESS_CATEGORY_IDS } from '../../../shared/businessAdvisor';
 import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 // --- Category taxonomy ------------------------------------------------
 
@@ -2132,8 +2133,7 @@ describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', 
  */
 describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせる', () => {
   const fresh = async () => {
-    vi.resetModules();
-    return (await import('../business')).BUSINESS_CATEGORIES;
+    return (await rereadModule<typeof import('../business')>(import.meta.url, '../business')).BUSINESS_CATEGORIES;
   };
 
   it('★ id は 10 件、順序込みで固定', async () => {
@@ -2203,8 +2203,7 @@ describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせ�
    * **静的 import なので変異が届いていなかった**。読み直して当て直す。
    */
   it('★ 見本スナップショットの取得日時', async () => {
-    vi.resetModules();
-    const m = await import('../business');
+    const m = await rereadModule<typeof import('../business')>(import.meta.url, '../business');
     const snap = await m.fetchBusinessOpsSnapshot({ token: '' });
     expect(snap.fetchedAt).toBe('2026-05-14T00:00:00.000Z');
   });

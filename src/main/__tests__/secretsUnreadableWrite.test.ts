@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先は先頭で読み込んでおく。検査ごとに新しくするのは `../secrets` の 1 本だけ (`rereadModule`) ——
+// `vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで「その検査が覆った」と
+// 変異検査に数えられる (パス 495・`shared/__tests__/rereadModule.ts`)。
+import '../secrets';
 
 let userDataDir = '';
 vi.mock('electron', () => ({
@@ -38,9 +43,14 @@ vi.mock('../oauth', () => ({ OAUTH_CONFIGS: {}, refresh: async () => ({}) }));
 const FILE_NAME = 'service-hub-secrets.json';
 const storePath = (): string => path.join(userDataDir, FILE_NAME);
 
+/** この検査の `../secrets` (検査ごとに最初に使うとき 1 本だけ読み直す —— 以前の `vi.resetModules()` と同じ粒度)。 */
+let currentSecretsModule: Promise<typeof import('../secrets')> | null = null;
+const secretsModule = (): Promise<typeof import('../secrets')> =>
+  (currentSecretsModule ??= rereadModule<typeof import('../secrets')>(import.meta.url, '../secrets'));
+
 beforeEach(async () => {
   userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'sh-secrets-unreadable-'));
-  vi.resetModules();
+  currentSecretsModule = null;
 });
 
 /** 原因を問わず「読めない大きさ」にする。 */
@@ -52,7 +62,7 @@ async function growBeyondLimit(): Promise<void> {
 
 describe('読めなかった保管ファイルの上には書かない', () => {
   it('大きすぎて読めないとき、保存は既存を消さずに断る', async () => {
-    const { setToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, listConfiguredServices } = await secretsModule();
     await setToken('github', 'ghp_real');
     await setToken('slack', 'xoxb_real');
     expect(await listConfiguredServices()).toEqual(['github', 'slack']);
@@ -71,7 +81,7 @@ describe('読めなかった保管ファイルの上には書かない', () => {
   });
 
   it('解除 (clearToken) も同じく断る', async () => {
-    const { setToken, clearToken } = await import('../secrets');
+    const { setToken, clearToken } = await secretsModule();
     await setToken('github', 'ghp_real');
     await setToken('slack', 'xoxb_real');
     await growBeyondLimit();
@@ -81,7 +91,7 @@ describe('読めなかった保管ファイルの上には書かない', () => {
   });
 
   it('壊れた JSON で控えも無いとき、保存は断る', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_real');
     await fs.writeFile(storePath(), '{ this is not json', 'utf8');
     await fs.rm(`${storePath()}.prev`, { force: true });
@@ -89,13 +99,13 @@ describe('読めなかった保管ファイルの上には書かない', () => {
   });
 
   it('まだ 1 件も無いときは普通に保存できる (空と「読めない」を混同しない)', async () => {
-    const { setToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, listConfiguredServices } = await secretsModule();
     await expect(setToken('github', 'ghp_first')).resolves.toBeUndefined();
     expect(await listConfiguredServices()).toEqual(['github']);
   });
 
   it('読める状態に戻せば、また保存できる (行き止まりにしない)', async () => {
-    const { setToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, listConfiguredServices } = await secretsModule();
     await setToken('github', 'ghp_real');
     await growBeyondLimit();
     await expect(setToken('notion', 'x')).rejects.toThrow();
@@ -124,14 +134,14 @@ describe('読めなかった保管ファイルの上には書かない', () => {
    * (`useServiceData` / 接続一覧 / 預かりの節) が受けて理由を出す。
    */
   it('★ 一覧は投げる (空を「1 件も無い」と名乗らない)', async () => {
-    const { setToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, listConfiguredServices } = await secretsModule();
     await setToken('github', 'ghp_real');
     await growBeyondLimit();
     await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
   });
 
   it('★ 1 件ぶんの読み出しは投げず、「読めない」と名乗る (画面は止まらない)', async () => {
-    const { setToken, getToken, readStoredToken } = await import('../secrets');
+    const { setToken, getToken, readStoredToken } = await secretsModule();
     await setToken('github', 'ghp_real');
     await growBeyondLimit();
     expect(await getToken('github')).toBeNull();
@@ -142,7 +152,7 @@ describe('読めなかった保管ファイルの上には書かない', () => {
   });
 
   it('対照: 読める端末では一覧が普通に返る (投げるのは読めないときだけ)', async () => {
-    const { setToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, listConfiguredServices } = await secretsModule();
     await setToken('github', 'ghp_real');
     await expect(listConfiguredServices()).resolves.toEqual(['github']);
   });
@@ -165,7 +175,7 @@ describe('読めなかった保管ファイルの上には書かない', () => {
  */
 describe('断った理由を運ぶ', () => {
   it('★ 大きすぎるときは、実寸と上限を添える', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_real');
     await growBeyondLimit();
     await expect(setToken('notion', 'secret_notion')).rejects.toThrow(
@@ -174,7 +184,7 @@ describe('断った理由を運ぶ', () => {
   });
 
   it('★ JSON が壊れているときは、そう言う', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_real');
     await fs.writeFile(storePath(), '{ this is not json', 'utf8');
     await fs.rm(`${storePath()}.prev`, { force: true });
@@ -184,7 +194,7 @@ describe('断った理由を運ぶ', () => {
   });
 
   it('★ 文面の前半 (何が起きたか) も落ちていない', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_real');
     await growBeyondLimit();
     await expect(setToken('notion', 'secret_notion')).rejects.toThrow(
@@ -197,7 +207,7 @@ describe('断った理由を運ぶ', () => {
    * 文面は変わらないので、**名前そのものを当てないと気付けない**。
    */
   it('★ 例外の name で種別が分かる', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_real');
     await growBeyondLimit();
     const err = await setToken('notion', 'x').then(

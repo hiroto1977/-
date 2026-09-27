@@ -7,6 +7,7 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 import { canLiveRead, liveRead, type LiveReadDeps } from '../liveRead';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const NOW = Date.UTC(2026, 7, 19);
 
@@ -229,8 +230,7 @@ describe('プロキシを通さない経路が無いこと', () => {
  */
 describe('LIVE_READERS — 読み直して static 変異体を届かせる', () => {
   const fresh = async () => {
-    vi.resetModules();
-    return import('../liveRead');
+    return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
   it('★ 表に載っているのは cursor だけ (増減に気付く)', async () => {

@@ -13,18 +13,17 @@
  * **別の数**になる (`100m2` → 1002)。下の表はその 1 文字ずつが効いていることを
  * 見るためにある。
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { rereadModule } from './rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../readNumeric';
 
 type Mod = typeof import('../readNumeric');
 
 async function fresh(): Promise<Mod> {
-  vi.resetModules();
-  return import('../readNumeric');
+  return rereadModule<typeof import('../readNumeric')>(import.meta.url, '../readNumeric');
 }
-
-beforeEach(() => {
-  vi.resetModules();
-});
 
 /** 読める形 (飾りが正しい位置にある)。 */
 const READS: [string, number][] = [

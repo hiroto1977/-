@@ -20,6 +20,7 @@ import {
   type TemplateId,
   type TemplateParams,
 } from '../templates';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 // --- Catalog ----------------------------------------------------------
 
@@ -585,8 +586,7 @@ describe('exportTemplateImpl — path を渡さないとき', () => {
  */
 describe('静的な表 —— 読み直して問う', () => {
   const fresh = async (): Promise<typeof import('../templates')> => {
-    vi.resetModules();
-    return import('../templates');
+    return rereadModule<typeof import('../templates')>(import.meta.url, '../templates');
   };
 
   it('TEMPLATE_IDS は目録の id と 1 件ずつ一致する', async () => {

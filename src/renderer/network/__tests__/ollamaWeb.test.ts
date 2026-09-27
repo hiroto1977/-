@@ -26,6 +26,7 @@ import {
   MAX_ASSISTANT_REPLY_CHARS,
   inputTooLongMessage,
 } from '../../../shared/assistantLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /*
  * probeOllama の要点は **失敗理由の切り分け**。利用者から見ると「未起動」と
@@ -1961,8 +1962,7 @@ describe('readTextOrEmpty', () => {
  */
 describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
   const fresh = async () => {
-    vi.resetModules();
-    return import('../ollamaWeb');
+    return rereadModule<typeof import('../ollamaWeb')>(import.meta.url, '../ollamaWeb');
   };
 
   /*

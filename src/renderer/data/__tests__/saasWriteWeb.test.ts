@@ -26,6 +26,8 @@ import {
   MAX_ATLASSIAN_SITE,
   MAX_ATLASSIAN_TOKEN,
 } from '../../../shared/atlassianSite';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 function jsonResponse(status: number, body: unknown): Response {
   return {
@@ -988,8 +990,7 @@ describe('ensureOk error formatting', () => {
  */
 describe('Atlassian の site を弾いたときの文言', () => {
   async function freshParse(): Promise<typeof parseAtlassianToken> {
-    vi.resetModules();
-    const mod = (await import('../saasWriteWeb')) as typeof import('../saasWriteWeb');
+    const mod = (await rereadModule<typeof import('../saasWriteWeb')>(import.meta.url, '../saasWriteWeb')) as typeof import('../saasWriteWeb');
     return mod.parseAtlassianToken;
   }
 
@@ -1251,7 +1252,6 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
   it('★ 台帳 (ENTRIES) が実装の書き込み口を全部覆う', async () => {
     // **原文で読む** —— 生の読みでは Stryker の計器が書き換えた写しに当たり、
     // 綴りに当てる検査が空になる (`originalSourcePolicy` がそれをゲートにしている)。
-    const { readOriginalSource } = await import('../../../shared/__tests__/originalSource');
     const src = readOriginalSource(new URL('../saasWriteWeb.ts', import.meta.url).pathname);
     // `transport: Transport` を取る export された関数が「書き込み口」である。
     const declared = [...src.matchAll(/export async function (\w+)\([\s\S]{0,400}?transport: Transport,/g)].map(

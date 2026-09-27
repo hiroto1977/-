@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   formatPeriodWindow,
   periodWindow,
@@ -26,6 +26,7 @@ import {
   duplicateActualsNote,
   duplicateActualsSheetNote,
 } from '../kpiActuals';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const actual = (period: string, revenue: number, unit = '全社'): KpiActual => ({
   period,
@@ -797,8 +798,7 @@ describe('同じ期・事業の重複 (パス 124)', () => {
  */
 describe('モジュール直下の値 (読み直してから確かめる — 静的変異体)', () => {
   async function fresh(): Promise<typeof import('../kpiActuals')> {
-    vi.resetModules();
-    return (await import('../kpiActuals')) as typeof import('../kpiActuals');
+    return (await rereadModule<typeof import('../kpiActuals')>(import.meta.url, '../kpiActuals')) as typeof import('../kpiActuals');
   }
 
   it('★ 保存先の collection 名は読み直しても kpi-actuals', async () => {

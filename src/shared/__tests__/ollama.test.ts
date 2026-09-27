@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { localIsoDate } from '../localDate';
 import {
   DEFAULT_OLLAMA_PORT,
@@ -22,6 +22,7 @@ import {
   isVersionSafe,
   normalizeModels,
 } from '../ollama';
+import { rereadModule } from './rereadModule';
 
 /*
  * Ollama 連携の共有ロジック。main (Node fetch) と renderer (window fetch) の
@@ -1150,8 +1151,7 @@ describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
  */
 describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
   const fresh = async () => {
-    vi.resetModules();
-    return import('../ollama');
+    return rereadModule<typeof import('../ollama')>(import.meta.url, '../ollama');
   };
 
   /*

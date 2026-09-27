@@ -183,6 +183,7 @@ describe('writeBlobToFolder', () => {
 // 読み戻せなければ、利用者が選んだ場所とは違う場所に書きかねない。
 import 'fake-indexeddb/auto';
 import { clearFolderHandle, loadFolderHandle } from '../fsa';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 function clearPrefsDb(): Promise<void> {
   return new Promise((resolve) => {
@@ -257,8 +258,7 @@ describe('フォルダ handle の永続化', () => {
    * のではなく、読み直せば殺せる」。
    */
   it('保存先の DB 名 / ストア名 / キー名が変わっていない', async () => {
-    vi.resetModules();
-    const fresh = (await import('../fsa')) as typeof import('../fsa');
+    const fresh = (await rereadModule<typeof import('../fsa')>(import.meta.url, '../fsa')) as typeof import('../fsa');
 
     (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker = () =>
       Promise.resolve(plainHandle('named-folder'));

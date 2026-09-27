@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   BLOCKS_TRUNCATED_NOTICE,
   MAX_RENDER_BLOCKS,
@@ -7,6 +7,7 @@ import {
   type Block,
   type InlineToken,
 } from '../assistantMarkdown';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 describe('parseInline', () => {
   it('parses bold and inline code', () => {
@@ -470,8 +471,7 @@ describe('打ち切りの注記はモジュール直下の定数を通る (読�
    * (パス 487 の `chatOrg` の `round2` と同じ手)。
    */
   it('★ 読み直しても、打ち切りの注記は空でなく、打ち切ったことを名乗る', async () => {
-    vi.resetModules();
-    const fresh = await import('../assistantMarkdown');
+    const fresh = await rereadModule<typeof import('../assistantMarkdown')>(import.meta.url, '../assistantMarkdown');
     expect(fresh.BLOCKS_TRUNCATED_NOTICE).toBe('…（応答が長すぎたため、ここで表示を打ち切りました）');
     const over = Array.from({ length: fresh.MAX_RENDER_BLOCKS + 1 }, (_, i) => `# 見出し ${i}`).join('\n');
     const last = fresh.parseMarkdown(over).at(-1)!;

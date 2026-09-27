@@ -23,6 +23,7 @@ import {
   cursorHeaders,
   fetchCursorSnapshotWith,
 } from '../cursor';
+import { rereadModule } from '../../__tests__/rereadModule';
 
 describe('定数', () => {
   it('基底 URL と上限日数', () => {
@@ -350,8 +351,7 @@ describe('readNum —— 欠けた数値欄は null にする (0 と混ぜない
    * `() => undefined` へ変えても気付けない (実測 2026-08-31: 生存)。
    */
   const fresh = async (): Promise<typeof import('../cursor')> => {
-    vi.resetModules();
-    return import('../cursor');
+    return rereadModule<typeof import('../cursor')>(import.meta.url, '../cursor');
   };
 
   it('★ 欄が欠けていたら null になり、加算は NaN にならない', async () => {
@@ -422,8 +422,7 @@ describe('readNum —— 欠けた数値欄は null にする (0 と混ぜない
  */
 describe('送り先 —— 読み直して問う', () => {
   it('★ 送り先は https://api.cursor.com で、要求もそこへ出る', async () => {
-    vi.resetModules();
-    const m = await import('../cursor');
+    const m = await rereadModule<typeof import('../cursor')>(import.meta.url, '../cursor');
     expect(m.CURSOR_API_BASE).toBe('https://api.cursor.com');
     const seen: string[] = [];
     await m.fetchCursorSnapshotWith(

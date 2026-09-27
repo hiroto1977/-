@@ -12,6 +12,7 @@ import {
   redirectRefusal,
   REDIRECT_STATUSES,
 } from '../httpLimits';
+import { rereadModule } from './rereadModule';
 
 /*
  * 外部からの応答に置く 2 つの守り —— **打ち切り**と**応答サイズ**。
@@ -231,14 +232,12 @@ describe('withTimeout — 打ち切り', () => {
  */
 describe('既定値', () => {
   it('応答サイズの上限は 10MiB ちょうど', async () => {
-    vi.resetModules();
-    const m = await import('../httpLimits');
+    const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
     expect(m.MAX_HTTP_RESPONSE_BYTES).toBe(10485760);
   });
 
   it('待ち時間の既定は 30 秒 (ollama.ts に揃えた値)', async () => {
-    vi.resetModules();
-    const m = await import('../httpLimits');
+    const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
     expect(m.DEFAULT_HTTP_TIMEOUT_MS).toBe(30000);
   });
 

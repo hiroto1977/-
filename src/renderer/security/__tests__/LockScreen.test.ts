@@ -18,6 +18,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createElement, act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { LOCK_CHANNEL, LOCK_MESSAGE } from '../lockWorkspace';
+// 画面は先頭で読む —— 検査の中で (`vi.resetModules()` の後に) 読むと、画面と依存先の
+// 直下の値まで「その検査が覆った」と変異検査に数えられる (パス 495)。画面は
+// モジュール直下に状態を持たないので、検査ごとに読み直す理由も無い。
+import { LockScreen } from '../LockScreen';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -98,7 +102,6 @@ function typeInto(input: HTMLInputElement, value: string): void {
 }
 
 async function mount(): Promise<void> {
-  const { LockScreen } = await import('../LockScreen');
   await act(async () => {
     root.render(createElement(LockScreen, { onUnlocked: () => (unlocked += 1) }));
   });
@@ -129,7 +132,6 @@ beforeEach(() => {
   recoverImpl = async () => {};
   wipeImpl = async () => 'deleted';
   statusImpl = async () => vaultStatus;
-  vi.resetModules();
 });
 
 afterEach(async () => {

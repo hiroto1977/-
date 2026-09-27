@@ -35,6 +35,11 @@ import {
 } from '../advisorQuestionLimits';
 import { join } from 'node:path';
 import { readOriginalSource } from './originalSource';
+import * as mainGmail from '../../main/clients/gmail';
+import * as saasWriteWeb from '../../renderer/data/saasWriteWeb';
+import * as mainSecurity from '../../main/clients/security';
+import * as mainBusiness from '../../main/clients/business';
+import * as webShim from '../../renderer/web-shim';
 
 const SRC = join(__dirname, '..', '..');
 
@@ -56,8 +61,8 @@ const CRLF = String.fromCharCode(13) + String.fromCharCode(10);
 
 describe('★ RFC 2822 のヘッダの断りは両ビルドで同じ関数 (パス 321 から 1 つ)', () => {
   async function both(): Promise<{ main: typeof buildRfc2822; web: typeof buildRfc2822 }> {
-    const m = (await import('../../main/clients/gmail')) as { buildRfc2822: typeof buildRfc2822 };
-    const w = (await import('../../renderer/data/saasWriteWeb')) as { buildRfc2822: typeof buildRfc2822 };
+    const m = mainGmail as { buildRfc2822: typeof buildRfc2822 };
+    const w = saasWriteWeb as { buildRfc2822: typeof buildRfc2822 };
     return { main: m.buildRfc2822, web: w.buildRfc2822 };
   }
   const say = (f: typeof buildRfc2822, to: string): string => {
@@ -110,8 +115,8 @@ describe('★ HIBP の email は述語ごと共有した (1 度ずれて誤っ�
   });
 
   it('★ 両ビルドが同じ入力に同じ文を返す', async () => {
-    const m = (await import('../../main/clients/security')) as unknown as { ACTIONS: Record<string, (c: unknown) => Promise<unknown>> };
-    const w = (await import('../../renderer/data/saasWriteWeb')) as unknown as {
+    const m = mainSecurity as unknown as { ACTIONS: Record<string, (c: unknown) => Promise<unknown>> };
+    const w = saasWriteWeb as unknown as {
       checkEmailBreach: (i: { email?: unknown }, k: string, t: unknown) => Promise<unknown>;
     };
     const never = (): never => { throw new Error('fetch は呼ばれてはならない (断りは送信より前)'); };
@@ -162,10 +167,10 @@ describe('★ アドバイザーの質問: 4 か所が同じ理由に同じ文�
   });
 
   it('★ 両ビルドが同じ入力に同じ文を返す (main は throw・ブラウザ版は err で運ぶ)', async () => {
-    const mainBiz = (await import('../../main/clients/business')) as unknown as {
+    const mainBiz = mainBusiness as unknown as {
       askBusinessAdvisorImpl: (c: unknown) => Promise<unknown>;
     };
-    const shim = (await import('../../renderer/web-shim')) as unknown as Record<string, unknown>;
+    const shim = webShim as unknown as Record<string, unknown>;
     void shim; // web-shim は副作用で window に生えるので、ここでは文の同一性だけを見る
 
     const mainSay = await mainBiz

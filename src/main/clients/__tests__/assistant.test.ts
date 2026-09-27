@@ -12,6 +12,7 @@ import {
   MAX_ASSISTANT_SYSTEM_CHARS,
   inputTooLongMessage,
 } from '../../../shared/assistantLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /** Build a minimal fetch double returning a JSON Anthropic response. */
 function jsonResponse(body: unknown, ok = true, status = 200): Response {
@@ -666,8 +667,7 @@ describe('assistant — 公開している口', () => {
 describe('assistant — モジュール直下の定数 (static 変異体は読み直して殺す)', () => {
   /** 変異体を有効にしてから読む。beforeAll で 1 回だけ読むと static が殺せない。 */
   async function fresh() {
-    vi.resetModules();
-    return import('../assistant');
+    return rereadModule<typeof import('../assistant')>(import.meta.url, '../assistant');
   }
 
   it('capabilities は 4 件で、業務領域の語を持つ', async () => {

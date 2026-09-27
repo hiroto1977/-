@@ -2,7 +2,7 @@
  * 金融機関等提出用の書面 — 経営サマリーの値が書式を通って表に並ぶこと、
  * 出せない値は「―」で埋まり行は消えないこと、書式を変えると数字が変わること (対照)。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   BANK_SUBMISSION_COLLECTION,
   DEFAULT_SUBMISSION_SETTINGS,
@@ -24,6 +24,7 @@ import { combineCashflowDebtService } from '../cashflowDebtService';
 import { BANK_FORMAT_DEFAULT, BLANK, formatAmount } from '../../../shared/bankFormat';
 import type { KpiActual } from '../kpiActuals';
 import type { BalanceSheet } from '../balanceSheet';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const KPI: KpiActual[] = [
   { period: '2026-04', unit: '全社', revenue: 12_345_678, cogs: 5_000_000, advertising: 1_000_000, sga: 8_000_000, depreciation: 200_000, laborCost: 3_000_000 },
@@ -1175,30 +1176,26 @@ describe('§5 運転資本 — 未入力の欄を名前で述べる', () => {
  */
 describe('読み直して測る — 書面の定数表', () => {
   it('保存先の collection 名', async () => {
-    vi.resetModules();
-    const m = await import('../bankSubmission');
+    const m = await rereadModule<typeof import('../bankSubmission')>(import.meta.url, '../bankSubmission');
     expect(m.BANK_SUBMISSION_COLLECTION).toBe('bank-submission-settings');
   });
 
   it('空の提出者情報は 4 欄そろって空文字 (欄が消えない)', async () => {
-    vi.resetModules();
-    const m = await import('../bankSubmission');
+    const m = await rereadModule<typeof import('../bankSubmission')>(import.meta.url, '../bankSubmission');
     expect(m.EMPTY_PROFILE).toEqual({
       companyName: '', representative: '', address: '', fiscalYearEnd: '',
     });
   });
 
   it('既定の設定は「空の提出者情報 + 既定の書式」', async () => {
-    vi.resetModules();
-    const m = await import('../bankSubmission');
+    const m = await rereadModule<typeof import('../bankSubmission')>(import.meta.url, '../bankSubmission');
     const b = await import('../../../shared/bankFormat');
     expect(m.DEFAULT_SUBMISSION_SETTINGS).toEqual({ profile: m.EMPTY_PROFILE, format: b.BANK_FORMAT_DEFAULT });
   });
 
   it('読み直しても表の行が組め、売上トレンドの日本語が出る', async () => {
     // `row()` (module 直下の行の組み立て) と `TREND_LABEL` を同時に測る。
-    vi.resetModules();
-    const m = await import('../bankSubmission');
+    const m = await rereadModule<typeof import('../bankSubmission')>(import.meta.url, '../bankSubmission');
     const model = m.buildBankSubmissionSheet(inputWith(overviewWith()));
     const growth = model.sections.find((x) => x.title.startsWith('7.'));
     expect(growth).toBeDefined();
@@ -1211,8 +1208,7 @@ describe('読み直して測る — 書面の定数表', () => {
   });
 
   it('トレンドのラベルは 3 つとも日本語のまま (どの向きでも空にならない)', async () => {
-    vi.resetModules();
-    const m = await import('../bankSubmission');
+    const m = await rereadModule<typeof import('../bankSubmission')>(import.meta.url, '../bankSubmission');
     const base = overviewWith();
     for (const [trend, label] of [['up', '上昇'], ['down', '下降'], ['flat', '横ばい']] as const) {
       const o: BusinessOverview = { ...base, kpi: { ...base.kpi, revenueTrend: trend } };
@@ -1223,8 +1219,7 @@ describe('読み直して測る — 書面の定数表', () => {
   });
 
   it('提出者情報のラベルは 4 欄そろって日本語のまま (入力欄と検証の文面に出る)', async () => {
-    vi.resetModules();
-    const m = await import('../bankSubmission');
+    const m = await rereadModule<typeof import('../bankSubmission')>(import.meta.url, '../bankSubmission');
     // ラベルは非公開なので、断る文面で測る (欄ごとに名前が出る)。文字でない値は
     // 4 欄すべてで同じ経路を通るので、ラベルが空になったらここで落ちる。
     for (const [key, label] of [

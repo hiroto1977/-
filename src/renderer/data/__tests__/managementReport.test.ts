@@ -1,10 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { buildManagementReport } from '../managementReport';
 import { buildBusinessOverview } from '../overview';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { buildManagementHighlights, type Highlight } from '../managementHighlights';
 import { monthlyTrendSeries, type KpiActual } from '../kpiActuals';
 import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /** 手入力の上書きなし。**明示して渡す** (既定値を置かない — 経緯は `overviewOverrides.ts`)。 */
 const MANUAL = NO_MANUAL_OVERRIDES;
@@ -601,8 +602,7 @@ describe('読み直して測る — 深刻さの印と整形関数', () => {
     extra: Partial<Parameters<typeof buildBusinessOverview>[0]> = {},
     highlights: readonly Highlight[] = HIGHLIGHTS,
   ): Promise<string> {
-    vi.resetModules();
-    const m = await import('../managementReport');
+    const m = await rereadModule<typeof import('../managementReport')>(import.meta.url, '../managementReport');
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [], ...extra });
     const sc = buildManagementScorecard({
       operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,

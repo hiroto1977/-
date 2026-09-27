@@ -15,6 +15,7 @@
  * **門の識別子**として使う。
  */
 import { describe, expect, it, vi } from 'vitest';
+import * as webShim from '../web-shim';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -48,7 +49,7 @@ function rec(over: Record<string, unknown> = {}): Record<string, unknown> {
 const wrap = (r: unknown): unknown => ({ recommendations: [r] });
 
 async function loadValidator(): Promise<Validator> {
-  const mod = (await import('../web-shim')) as unknown as { validateAdvisorJson: Validator };
+  const mod = webShim as unknown as { validateAdvisorJson: Validator };
   return mod.validateAdvisorJson;
 }
 

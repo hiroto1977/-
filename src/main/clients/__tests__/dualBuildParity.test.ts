@@ -17,6 +17,7 @@ import { parseSecurityKeys as keysMain } from '../security';
 import { parseSecurityKeys as keysWeb } from '../../../renderer/data/saasWriteWeb';
 import { extractJson as jsonMain, normalizeAnalysis as normMain } from '../emotions';
 import { extractJson as jsonWeb, normalizeAnalysis as normWeb } from '../../../renderer/data/emotionsWeb';
+import * as sharedSecurity from '../../../shared/api/security';
 
 /*
  * **デスクトップ版とブラウザ版で「同じ判断」を 2 度書いている関数**の突き合わせ。
@@ -82,7 +83,7 @@ describe('isSafeSymbol — main とブラウザ版で一致する', () => {
 
 describe('parseSecurityKeys — 2026-09-19 (パス 321) から shared の 1 つ', () => {
   it('両ビルドが出す関数は shared の同じ 1 つ (写しが再び生えれば落ちる)', async () => {
-    const shared = await import('../../../shared/api/security');
+    const shared = sharedSecurity;
     expect(keysMain).toBe(shared.parseSecurityKeys);
     expect(keysWeb).toBe(shared.parseSecurityKeys);
   });

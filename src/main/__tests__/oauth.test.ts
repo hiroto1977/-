@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MAX_EXTERNAL_URL_LEN, externalUrlOrNull } from '../../shared/externalUrlGate';
 import http from 'node:http';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
 
 // electron must be mocked BEFORE the oauth module is imported because
 // authorize() uses shell.openExternal at top-level import time.
@@ -851,13 +852,11 @@ describe('isOAuthSupported', () => {
     const prev = process.env.NOTION_OAUTH_CLIENT_ID;
     process.env.NOTION_OAUTH_CLIENT_ID = 'notion-client-id-12345';
     try {
-      vi.resetModules();
-      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      const fresh = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as typeof import('../oauth');
       expect(fresh.isOAuthSupported('notion')).toBe(false);
     } finally {
       if (prev === undefined) delete process.env.NOTION_OAUTH_CLIENT_ID;
       else process.env.NOTION_OAUTH_CLIENT_ID = prev;
-      vi.resetModules();
     }
   });
 
@@ -867,8 +866,7 @@ describe('isOAuthSupported', () => {
     process.env.NOTION_OAUTH_CLIENT_ID = 'notion-client-id-12345';
     process.env.NOTION_OAUTH_CLIENT_SECRET = 'notion-client-secret-abcde';
     try {
-      vi.resetModules();
-      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      const fresh = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as typeof import('../oauth');
       expect(fresh.isOAuthSupported('notion')).toBe(true);
       // Sibling providers stay unsupported — the env var is per-provider.
       expect(fresh.isOAuthSupported('canva')).toBe(false);
@@ -877,7 +875,6 @@ describe('isOAuthSupported', () => {
       else process.env.NOTION_OAUTH_CLIENT_ID = prevId;
       if (prevSecret === undefined) delete process.env.NOTION_OAUTH_CLIENT_SECRET;
       else process.env.NOTION_OAUTH_CLIENT_SECRET = prevSecret;
-      vi.resetModules();
     }
   });
 
@@ -887,13 +884,11 @@ describe('isOAuthSupported', () => {
     const prev = process.env.SLACK_OAUTH_CLIENT_ID;
     process.env.SLACK_OAUTH_CLIENT_ID = '123456789012.987654321098';
     try {
-      vi.resetModules();
-      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      const fresh = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as typeof import('../oauth');
       expect(fresh.isOAuthSupported('slack')).toBe(true);
     } finally {
       if (prev === undefined) delete process.env.SLACK_OAUTH_CLIENT_ID;
       else process.env.SLACK_OAUTH_CLIENT_ID = prev;
-      vi.resetModules();
     }
   });
 
@@ -915,8 +910,7 @@ describe('isOAuthSupported', () => {
     const prev = process.env.GOOGLE_OAUTH_CLIENT_ID;
     process.env.GOOGLE_OAUTH_CLIENT_ID = 'test-client-id-12345.apps.googleusercontent.com';
     try {
-      vi.resetModules();
-      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      const fresh = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as typeof import('../oauth');
       expect(fresh.isOAuthSupported('drive')).toBe(true);
       expect(fresh.isOAuthSupported('calendar')).toBe(true);
       expect(fresh.isOAuthSupported('gmail')).toBe(true);
@@ -925,7 +919,6 @@ describe('isOAuthSupported', () => {
     } finally {
       if (prev === undefined) delete process.env.GOOGLE_OAUTH_CLIENT_ID;
       else process.env.GOOGLE_OAUTH_CLIENT_ID = prev;
-      vi.resetModules();
     }
   });
 });
@@ -1827,8 +1820,7 @@ describe('ループバックサーバの結び先と応答本文', () => {
   // これらはモジュール読み込み時に決まる値 / 定数なので、先頭で import した
   // ものを見ていると変異体が素通りする。読み直してから確かめる。
   async function freshListen(): Promise<typeof listenForCallback> {
-    vi.resetModules();
-    const mod = (await import('../oauth')) as unknown as { listenForCallback: typeof listenForCallback };
+    const mod = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as unknown as { listenForCallback: typeof listenForCallback };
     return mod.listenForCallback;
   }
 
@@ -2103,8 +2095,7 @@ describe('OAUTH_CONFIGS — 全サービス完全一致 (golden)', () => {
   // 変異体が「評価済みの古い値」と比較されて素通りする (Stryker の static
   // mutant)。`vi.resetModules()` + 動的 import で毎回評価し直す。
   async function freshConfigs(): Promise<Record<string, Record<string, unknown>>> {
-    vi.resetModules();
-    const mod = (await import('../oauth')) as unknown as {
+    const mod = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as unknown as {
       OAUTH_CONFIGS: Record<string, Record<string, unknown>>;
     };
     return mod.OAUTH_CONFIGS;

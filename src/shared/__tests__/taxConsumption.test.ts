@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   DEEMED_PURCHASE_RATES,
   THIRTY_PERCENT_MEASURE_END,
@@ -12,6 +12,7 @@ import {
   type SimplifiedBusinessType,
 } from '../taxConsumption';
 import { calcSimplifiedTax, calcTwentyPercentTax } from '../taxConsumptionBusiness';
+import { rereadModule } from './rereadModule';
 
 /**
  * 納付税額の算定そのものは `taxConsumptionBusiness.test.ts` が見る。
@@ -157,8 +158,7 @@ describe('twentyPercentMeasureStatus (2割特例の適用期限)', () => {
  */
 describe('定数を読み直しても同じ (static 変異体の検査)', () => {
   it('★ みなし仕入率の表と 2割特例の期限は、読み直しても同じ値', async () => {
-    vi.resetModules();
-    const fresh = await import('../taxConsumption');
+    const fresh = await rereadModule<typeof import('../taxConsumption')>(import.meta.url, '../taxConsumption');
     expect(fresh.DEEMED_PURCHASE_RATES).toEqual({
       wholesale: 0.9,
       retail: 0.8,
@@ -275,8 +275,7 @@ describe('thirtyPercentMeasureYearsLabel (対象年分の文面は定数から�
  */
 describe('3割特例の定数 (読み直して測る)', () => {
   it('★ 割合 30%・対象年分 2027-01-01 〜 2028-12-31 (令和 9 年分・令和 10 年分)・2割特例の期限の後', async () => {
-    vi.resetModules();
-    const fresh = await import('../taxConsumption');
+    const fresh = await rereadModule<typeof import('../taxConsumption')>(import.meta.url, '../taxConsumption');
     expect(fresh.THIRTY_PERCENT_RATE).toBe(0.3);
     expect(fresh.THIRTY_PERCENT_MEASURE_START).toBe('2027-01-01');
     expect(fresh.THIRTY_PERCENT_MEASURE_END).toBe('2028-12-31');

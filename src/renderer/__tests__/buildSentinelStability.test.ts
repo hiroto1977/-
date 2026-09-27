@@ -40,6 +40,11 @@ import { waitForText } from './jsdomWait';
 import { WEB_BUILD_SUFFIX, isWebBuildVersion } from '../../shared/buildDestinations';
 import { evaluateUpdate } from '../../shared/updateCheck';
 import { isBrowserBuild } from '../runtimeMode';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
+import { App } from '../App';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -64,9 +69,8 @@ function installHub(hub: Partial<Hub>): void {
 
 /** 実物の shim を据え付けて橋を掴む (`webShimBridge.test.ts` と同じ形)。 */
 async function loadShim(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 
@@ -168,7 +172,6 @@ describe('版が分かっていないときに数を名乗らない', () => {
       setToken: () => Promise.resolve(),
       clearToken: () => Promise.resolve(),
     } as never);
-    const { App } = await import('../App');
     const host = document.createElement('div');
     document.body.appendChild(host);
     const root = createRoot(host);

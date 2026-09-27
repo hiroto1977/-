@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   guardAll,
   guardCounts,
@@ -10,6 +10,7 @@ import {
   readNumberOrNull,
   type NumSpec,
 } from '../data/inputGuards';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
 
 const money = (over: Partial<NumSpec> = {}): NumSpec => ({ label: '金額', kind: 'money', ...over });
 
@@ -621,8 +622,7 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
   ]);
 
   it('kind ごとの単位・マイナス・0・整数・上限・桁ミスの既定が写しと一致する', async () => {
-    vi.resetModules();
-    const m = await import('../data/inputGuards');
+    const m = await rereadModule<typeof import('../data/inputGuards')>(import.meta.url, '../data/inputGuards');
     const at = (kind: Kind, raw: string) => m.guardNumber(raw, { label: 'X', kind });
     for (const k of KINDS) {
       expect(at(k, '')?.message, k).toBe(`未入力です。0 ${UNITS[k]} として計算されています。`);
@@ -646,8 +646,7 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
   });
 
   it('全角の半角化・単位語・飾りの正規表現が効く', async () => {
-    vi.resetModules();
-    const m = await import('../data/inputGuards');
+    const m = await rereadModule<typeof import('../data/inputGuards')>(import.meta.url, '../data/inputGuards');
     expect(m.readNumber('１，０００')).toBe(1000);
     expect(m.readNumber('¥1,000円')).toBe(1000);
     expect(m.readNumber('50％')).toBe(50);

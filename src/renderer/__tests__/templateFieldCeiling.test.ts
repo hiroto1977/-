@@ -27,6 +27,9 @@ import {
   tooLongTemplateFields,
   type TemplateSvgParams,
 } from '../../shared/templateSvg';
+// ブラウザ版の橋は先頭で据え付ける —— 検査の中で初めて読むと、橋と依存先の直下の値まで
+// 「その検査が覆った」と変異検査に数えられる (パス 495)。
+import '../web-shim';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -95,7 +98,6 @@ describe('tooLongTemplateFields — 超えた欄の名前を返す', () => {
 
 describe('ブラウザ版の書き出しが超過を断る (web-shim)', () => {
   it('★ 天井を超えた title では export-template が失敗し、欄の名前を言う', async () => {
-    await import('../web-shim');
     const res = await window.serviceHub.invoke('templates', 'export-template', {
       templateId: 'social-square',
       params: { title: 'a'.repeat(TEMPLATE_FIELD_LIMITS.title + 1) },
@@ -107,7 +109,6 @@ describe('ブラウザ版の書き出しが超過を断る (web-shim)', () => {
   });
 
   it('★ 対照: 天井内なら書き出せる (断りが常時出ているのではない)', async () => {
-    await import('../web-shim');
     const res = await window.serviceHub.invoke('templates', 'export-template', {
       templateId: 'social-square',
       params: { title: 'ちょうどいい長さ' },

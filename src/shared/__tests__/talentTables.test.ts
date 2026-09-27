@@ -1,4 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { rereadModule } from './rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../talent';
 
 /**
  * **定義表を字面で留める。**
@@ -19,8 +23,7 @@ import { describe, expect, it, vi } from 'vitest';
  */
 
 const fresh = async () => {
-  vi.resetModules();
-  return import('../talent');
+  return rereadModule<typeof import('../talent')>(import.meta.url, '../talent');
 };
 
 describe('定義表 — 文言そのものを留める', () => {
