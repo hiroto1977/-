@@ -68,6 +68,12 @@ const SCAN_DIR = path.join(REPO_ROOT, 'src/renderer');
 
 /** 走査が死んで 0 件になったのを「違反なし」と読まないための床。 */
 const MIN_SITES = 20;
+/**
+ * 規則 13 の床: 監査報告から拾えるべき件数の名乗りの数。**実測 (6) に張り付けない** ——
+ * 文書を書き直して名乗りを減らすのは正当で、そのたびに落ちる門は「直した日に落ちる門」になる。
+ * 守るのは「走査が 1 件も拾えなくなった」だけなので 1 にする (書き方ごとの当たりは self-test の合成標本が見る)。
+ */
+const MIN_STATED_COUNTS = 1;
 
 /** バックアップが覆う唯一の保存先 (`BackupPanel` が `exportAll()` する物)。 */
 const BACKED_UP_STORE = 'business-hub-data';
@@ -444,6 +450,25 @@ function parseEraseLists(text, indirect = INDIRECT_SITES) {
   return lists;
 }
 
+/**
+ * 規則 13 の走査: 監査報告の中で「媒体の表示名 + 数 + 数え方の語」が並ぶ所を全部拾う。
+ * 表示名は `MEDIUM_LABELS` から組む (媒体を足せば自動で拾う側に入る)。括弧は全角・半角の両方
+ * (見出しは「localStorage（22 キー・…）」の形で書かれている)。
+ */
+function statedStorageCounts(doc, labels = MEDIUM_LABELS) {
+  const byLabel = new Map(Object.entries(labels).map(([medium, label]) => [label, medium]));
+  const alternatives = [...byLabel.keys()]
+    .sort((a, b) => b.length - a.length)
+    .map((l) => l.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const re = new RegExp('(' + alternatives.join('|') + ')[ \\t\\u3000]*[（(]?[ \\t\\u3000]*(\\d+)[ \\t\\u3000]*(?:キー|鍵|件|つ|個)', 'g');
+  const out = [];
+  for (const m of doc.matchAll(re)) {
+    const line = doc.slice(0, m.index).split('\n').length;
+    out.push({ label: m[1], medium: byLabel.get(m[1]), count: Number(m[2]), line });
+  }
+  return out;
+}
+
 function evaluate(input) {
   const files = input.files;
   const stores = input.stores ?? STORES;
@@ -654,6 +679,42 @@ function evaluate(input) {
           );
         }
       }
+    }
+  }
+
+  /*
+   * 13. **監査報告が名乗る件数は、台帳の件数と一致する** (2026-09-27)。
+   *
+   * 規則 9 / 10 は「名前が載っているか」だけを見て、**数**は見ていなかった。
+   * 2026-09-26 (UI: すっきり × 3 列) で `servicehub.design` を台帳・在庫・ハードリセットへ
+   * 1 行ずつ足したとき、この文書の「localStorage 22 キー」は **3 か所とも据え置かれ**
+   * (実物は 23)、どのゲートも鳴らなかった。同じ数を CLAUDE.md は `verify:arch` の
+   * live metric として持つので、**同じ事実の 2 つの写しのうち片方だけが縛られていた**。
+   *
+   * 媒体の表示名の直後に来る「N キー / 鍵 / 件 / つ / 個」を全部拾い、その媒体の
+   * 台帳の行数と比べる。この文書は**今の在庫**を名乗る物なので、過去の件数を書くなら
+   * 媒体の名前と数を並べない (並べれば今の数として読まれる —— 読む人も、この規則も)。
+   * 拾えた数が床 (`minStatedCounts`) を割れば走査の故障として鳴る (0 件を「矛盾なし」と読まない)。
+   */
+  if (typeof auditDoc === 'string') {
+    const stated = statedStorageCounts(auditDoc, labels);
+    const counts = {};
+    for (const row of Object.values(stores)) counts[row.medium] = (counts[row.medium] ?? 0) + 1;
+    for (const s of stated) {
+      const actual = counts[s.medium] ?? 0;
+      if (s.count !== actual) {
+        problems.push(
+          '監査報告の件数が台帳と食い違う: ' + s.label + ' ' + s.count + ' (docs/DATA_PROTECTION.md:' + s.line +
+            ') — 台帳は ' + actual + ' 件。文書の数を直すこと (台帳が正しくないなら台帳を)',
+        );
+      }
+    }
+    const minStated = input.minStatedCounts ?? 0;
+    if (stated.length < minStated) {
+      problems.push(
+        '監査報告から件数の名乗りを ' + stated.length + ' 件しか拾えない (床 ' + minStated + ') — ' +
+          '走査が壊れたか、文書の書き方が変わった (拾えない数は縛られない)',
+      );
     }
   }
 
@@ -1049,6 +1110,49 @@ function selfTest() {
       },
       0,
     ],
+    /*
+     * 規則 13 — 監査報告が名乗る件数は台帳と一致する (2026-09-27)。合成の台帳は
+     * IndexedDB 1 行 / localStorage 1 行。見出しの形は実物の 3 通り (全角の括弧 +「キー」/
+     * 半角の空白 +「鍵」/「つ」) を全部使う —— 拾えない書き方が在れば、そこは縛られない。
+     */
+    [
+      '規則 13: 件数が台帳と合えば通る (全角の括弧・鍵・つ)',
+      {
+        files: BASE_FILES,
+        ...opts,
+        auditDoc: '### IndexedDB（1 つ）\nbusiness-hub-data\n### localStorage（1 キー・すべて平文）\nk.one\n' +
+          'IndexedDB 1 つ・localStorage 1 鍵・sessionStorage 0 鍵',
+      },
+      0,
+    ],
+    [
+      '規則 13: 見出しの件数が台帳より少なければ鳴る (2026-09-26 に 22 のまま残った形)',
+      {
+        files: BASE_FILES,
+        ...opts,
+        auditDoc: '### IndexedDB\nbusiness-hub-data\n### localStorage（0 キー・すべて平文）\nk.one',
+      },
+      1,
+    ],
+    [
+      '規則 13: 同じ媒体の数が 2 か所で食い違えば、ずれた方だけが鳴る',
+      {
+        files: BASE_FILES,
+        ...opts,
+        auditDoc: '### IndexedDB\nbusiness-hub-data\n### localStorage\nk.one\nlocalStorage 1 キー / localStorage 2 鍵 / IndexedDB 2 つ',
+      },
+      2,
+    ],
+    [
+      '規則 13: 拾えた名乗りが床を割れば鳴る (0 件を「矛盾なし」と読まない)',
+      {
+        files: BASE_FILES,
+        ...opts,
+        minStatedCounts: 1,
+        auditDoc: '### IndexedDB\nbusiness-hub-data\n### localStorage\nk.one',
+      },
+      1,
+    ],
   ];
 
   let bad = 0;
@@ -1116,6 +1220,30 @@ function selfTest() {
       '(実物 ' + eraseOk.length + ' 件 / 外したとき ' + eraseAblated.length + ' 件)',
   );
 
+  /*
+   * **規則 13 も実物で 1 度。** 実物の在庫から件数の名乗りが床以上に拾えて、どれも台帳と合い、
+   * 最初の名乗りを 1 つずらすとちょうど 1 件鳴る (合成の見出しだけでは、実物の書き方に当たることを示せない)。
+   */
+  const realStated = statedStorageCounts(realAudit);
+  const firstStated = realStated[0];
+  const shiftedDoc =
+    firstStated === undefined
+      ? realAudit
+      : realAudit.replace(
+          new RegExp('(' + firstStated.label + '[ \\t\\u3000]*[（(]?[ \\t\\u3000]*)' + firstStated.count),
+          '$1' + (firstStated.count + 1),
+        );
+  const countAblated = evaluate({ files: realFiles, auditDoc: shiftedDoc }).filter((m) => m.includes('件数が台帳と食い違う'));
+  const countRuleWorks =
+    realStated.length >= MIN_STATED_COUNTS &&
+    evaluate({ files: realFiles, auditDoc: realAudit, minStatedCounts: MIN_STATED_COUNTS }).length === 0 &&
+    countAblated.length === 1;
+  if (!countRuleWorks) bad += 1;
+  console.log(
+    '  ' + (countRuleWorks ? '✓' : '✗') + ' 実ファイル: 在庫の件数の名乗り ' + realStated.length + ' 件 (床 ' + MIN_STATED_COUNTS +
+      ') がどれも台帳と合い、1 つずらすと 1 件鳴る (' + countAblated.length + ' 件)',
+  );
+
   for (const [label, input, want] of cases) {
     const n = evaluate(input).length;
     const okCase = n === want;
@@ -1138,7 +1266,7 @@ function main(argv) {
   if (cross.code !== 0) return 1;
   const auditDoc = fs.readFileSync(path.join(REPO_ROOT, 'docs/DATA_PROTECTION.md'), 'utf8');
   const eraseSource = readEraseSource();
-  const problems = evaluate({ files, auditDoc, eraseSource });
+  const problems = evaluate({ files, auditDoc, eraseSource, minStatedCounts: MIN_STATED_COUNTS });
   const eraseCount = Object.values(parseEraseLists(eraseSource)).reduce((n, l) => n + l.length, 0);
   const siteCount = scan(files).siteCount;
   const byMedium = Object.values(STORES).reduce((acc, r) => {
