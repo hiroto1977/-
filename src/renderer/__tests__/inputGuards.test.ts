@@ -141,8 +141,8 @@ describe('guardNumber — 黙って 0 にしない', () => {
     expect(guardNumber('60', cov)).toBeNull();
   });
 
-  it('count は小数を warn（切り捨てられる旨を言う）', () => {
-    const issue = guardNumber('2.5', { label: '賞与の回数', kind: 'count', max: 12 });
+  it('回数は小数を warn（切り捨てられる旨を言う）', () => {
+    const issue = guardNumber('2.5', { label: '賞与の回数', kind: 'times', max: 12 });
     expect(issue?.level).toBe('warn');
     expect(issue?.message).toContain('切り捨て');
   });
@@ -155,7 +155,7 @@ describe('guardNumber — 黙って 0 にしない', () => {
   });
 
   it('sane を個別指定すると既定より優先される', () => {
-    const spec: NumSpec = { label: '循環量 (L)', kind: 'ratio', sane: 1e6 };
+    const spec: NumSpec = { label: '循環量 (L)', kind: 'liters', sane: 1e6 };
     expect(guardNumber('500000', spec)).toBeNull();
     expect(guardNumber('2000000', spec)?.level).toBe('warn');
   });
@@ -381,13 +381,20 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
     expect(at('percent', '')?.message).toBe('未入力です。0 % として計算されています。');
     expect(at('years', '')?.message).toBe('未入力です。0 年 として計算されています。');
     expect(at('months', '')?.message).toBe('未入力です。0 か月 として計算されています。');
-    expect(at('count', '')?.message).toBe('未入力です。0 件 として計算されています。');
-    // 人数 (パス 493k)。`count` を借りると扶養親族の欄で「20 件 以下で入力してください」と言う。
+    // 人数 (パス 493k)。総称の `count` (件) を借りると扶養親族の欄で「20 件 以下で入力してください」と言った。
     expect(at('people', '')?.message).toBe('未入力です。0 人 として計算されています。');
     expect(at('people', '21', { max: 20 })?.message).toBe('20 人 以下で入力してください（現在 21）。');
+    // パス 493n: `count` (件) と `ratio` (倍) を消し、欄の実物の単位語を持つ種類へ。
+    expect(at('hours', '25', { max: 24 })?.message).toBe('24 h 以下で入力してください（現在 25）。');
+    expect(at('tiers', '31', { sane: 30 })?.message).toBe('31 段 は想定の範囲を超えています。桁を間違えていないか確認してください。');
+    expect(at('times', '13', { max: 12 })?.message).toBe('12 回 以下で入力してください（現在 13）。');
+    expect(at('municipalities', '101', { max: 100 })?.message).toBe('100 団体 以下で入力してください（現在 101）。');
+    expect(at('dwellings', '1001', { max: 1000 })?.message).toBe('1000 戸 以下で入力してください（現在 1001）。');
+    expect(at('calendarMonth', '13', { min: 1, max: 12 })?.message).toBe('12 月 以下で入力してください（現在 13）。');
+    expect(at('calendarYear', '1999', { min: 2000, max: 2100 })?.message).toBe('2000 年 以上で入力してください（現在 1999）。');
+    expect(at('currencyUnits', '0', { allowZero: false })?.message).toBe('0 通貨 では計算できません。');
     expect(at('area', '')?.message).toBe('未入力です。0 ㎡ として計算されています。');
     expect(at('length', '')?.message).toBe('未入力です。0 m として計算されています。');
-    expect(at('ratio', '')?.message).toBe('未入力です。0 倍 として計算されています。');
     expect(at('ppm', '')?.message).toBe('未入力です。0 mg/L として計算されています。');
     // 水耕栽培の入力欄が足した 3 種。近い kind を借りると「0 倍」「0 mg/L」と嘘の単位を言う。
     expect(at('days', '')?.message).toBe('未入力です。0 日 として計算されています。');
@@ -408,7 +415,7 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
     // 温度 (パス 493k): 下限を持たない spec でも -5 ℃ を断らない。下限を持てばそちらで断る
     expect(at('celsius', '-5')).toBeNull();
     expect(at('celsius', '-25', { min: -20 })?.message).toBe('-20 ℃ 以上で入力してください（現在 -25）。');
-    for (const k of ['money', 'years', 'months', 'count', 'people', 'area', 'length', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g', 'km'] as const) {
+    for (const k of ['money', 'years', 'months', 'people', 'hours', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear', 'currencyUnits', 'area', 'length', 'ppm', 'days', 'energy', 'mgPer100g', 'km'] as const) {
       expect(at(k, '-5')?.level, k).toBe('fatal');
       expect(at(k, '-5')?.message, k).toBe('マイナスの値（-5）は指定できません。');
     }
@@ -417,16 +424,17 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
   it('0 を fatal にするのは area / length だけ', () => {
     expect(at('area', '0')?.message).toBe('0 ㎡ では計算できません。');
     expect(at('length', '0')?.message).toBe('0 m では計算できません。');
-    for (const k of ['money', 'percent', 'years', 'months', 'count', 'people', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g', 'km'] as const) {
+    for (const k of ['money', 'percent', 'years', 'months', 'people', 'hours', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear', 'currencyUnits', 'ppm', 'days', 'energy', 'mgPer100g', 'km'] as const) {
       expect(at(k, '0'), k).toBeNull();
     }
   });
 
-  it('整数を求めるのは count / people / days だけ', () => {
-    expect(at('count', '2.5')?.message).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
-    expect(at('people', '2.5')?.message).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
-    expect(at('days', '2.5')?.message).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
-    for (const k of ['money', 'percent', 'years', 'months', 'area', 'length', 'ratio', 'ppm', 'energy', 'mgPer100g', 'km'] as const) {
+  it('整数を求めるのは数えられる物の種類だけ (人・日・段・回・団体・戸・暦の月と年)', () => {
+    for (const k of ['people', 'days', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear'] as const) {
+      expect(at(k, '2.5')?.message, k).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
+    }
+    // 時間は小数を許す (RO 処理目標 8.5 h は正当)。外貨の額も同じ。
+    for (const k of ['money', 'percent', 'years', 'months', 'hours', 'currencyUnits', 'area', 'length', 'ppm', 'energy', 'mgPer100g', 'km'] as const) {
       expect(at(k, '2.5'), k).toBeNull();
     }
   });
@@ -441,9 +449,11 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
     expect(at('years', '100')).toBeNull();
     expect(at('months', '1201')?.level).toBe('warn');
     expect(at('months', '1200')).toBeNull();
-    expect(at('count', '100001')?.level).toBe('warn');
+    expect(at('tiers', '101')?.level).toBe('warn');
+    expect(at('tiers', '100')).toBeNull();
     expect(at('length', '1001')?.level).toBe('warn');
-    expect(at('ratio', '1001')?.level).toBe('warn');
+    expect(at('hours', '8761')?.level).toBe('warn');
+    expect(at('hours', '8760')).toBeNull();
     expect(at('ppm', '100001')?.level).toBe('warn');
     expect(at('days', '3651')?.level).toBe('warn');
     expect(at('days', '3650')).toBeNull();
@@ -578,18 +588,28 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
   // typecheck が落ちる (パス 493k で `people` を足したとき、この表は種類の一覧を
   // 型で縛っておらず、書き忘れても全件が緑のままだった)。
   const UNITS = {
-    money: '円', percent: '%', years: '年', months: 'か月', count: '件', people: '人', area: '㎡',
-    length: 'm', ratio: '倍', ppm: 'mg/L', days: '日', energy: 'kWh/kg', mgPer100g: 'mg/100g', km: 'km',
+    money: '円', percent: '%', years: '年', months: 'か月', people: '人',
+    // パス 493n: 総称の `count` (件) / `ratio` (倍) の代わりに、欄の実物の単位語を持つ 8 種
+    hours: 'h', tiers: '段', times: '回', municipalities: '団体', dwellings: '戸',
+    calendarMonth: '月', calendarYear: '年', currencyUnits: '通貨',
+    area: '㎡', length: 'm', ppm: 'mg/L', days: '日', energy: 'kWh/kg', mgPer100g: 'mg/100g', km: 'km',
     // ★ 水耕栽培の 5 種 (パス 373) は、型で縛るまでこの写しから**漏れていた** (パス 493k で捕まえた)
     celsius: '℃', liters: 'L', ppmAir: 'ppm', normality: 'N', ecRise: 'mS/cm',
   } as const satisfies Record<NumSpec['kind'], string>;
+  /** 桁を尋ねる既定。`null` は**種類としては尋ねない** —— 上限は欄の spec が持つ (暦の月・年・団体・戸)。 */
   const SANE = {
-    money: 1e13, percent: 100, years: 100, months: 1200, count: 100000, people: 100000, area: 1e6,
-    length: 1000, ratio: 1000, ppm: 100000, days: 3650, energy: 100, mgPer100g: 10000, km: 1000,
+    money: 1e13, percent: 100, years: 100, months: 1200, people: 100000,
+    hours: 8760, tiers: 100, times: 1000, municipalities: null, dwellings: null,
+    calendarMonth: null, calendarYear: null, currencyUnits: 1e13,
+    area: 1e6, length: 1000, ppm: 100000, days: 3650, energy: 100, mgPer100g: 10000, km: 1000,
     celsius: 60, liters: 100000, ppmAir: 50000, normality: 40, ecRise: 5,
-  } as const satisfies Record<NumSpec['kind'], number>;
+  } as const satisfies Record<NumSpec['kind'], number | null>;
   type Kind = keyof typeof UNITS;
   const KINDS = Object.keys(UNITS) as Kind[];
+  /** 整数を求める種類 (数えられる物)。 */
+  const INTEGER: ReadonlySet<Kind> = new Set<Kind>([
+    'people', 'days', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear',
+  ]);
 
   it('kind ごとの単位・マイナス・0・整数・上限・桁ミスの既定が写しと一致する', async () => {
     vi.resetModules();
@@ -599,10 +619,16 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
       expect(at(k, '')?.message, k).toBe(`未入力です。0 ${UNITS[k]} として計算されています。`);
       expect(at(k, '-5')?.level, k).toBe(k === 'percent' || k === 'celsius' ? undefined : 'fatal');
       expect(at(k, '0')?.message, k).toBe(k === 'area' || k === 'length' ? `0 ${UNITS[k]} では計算できません。` : undefined);
-      expect(at(k, '2.5')?.level, k).toBe(k === 'count' || k === 'people' || k === 'days' ? 'warn' : undefined);
-      expect(at(k, String(SANE[k])), k).toBeNull();
-      expect(at(k, String(SANE[k] + 1))?.message, k).toBe(
-        `${(SANE[k] + 1).toLocaleString('ja-JP')} ${UNITS[k]} は想定の範囲を超えています。桁を間違えていないか確認してください。`,
+      expect(at(k, '2.5')?.level, k).toBe(INTEGER.has(k) ? 'warn' : undefined);
+      const sane = SANE[k];
+      if (sane === null) {
+        // 桁を尋ねない種類 —— 大きな整数でも種類としては何も言わない (欄の spec の上限が断る)
+        expect(at(k, '1000000000000'), k).toBeNull();
+        continue;
+      }
+      expect(at(k, String(sane)), k).toBeNull();
+      expect(at(k, String(sane + 1))?.message, k).toBe(
+        `${(sane + 1).toLocaleString('ja-JP')} ${UNITS[k]} は想定の範囲を超えています。桁を間違えていないか確認してください。`,
       );
     }
     // 上限 (max) を持つのは percent だけ: 1001 は fatal、他の kind の 1001 は fatal にならない。

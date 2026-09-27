@@ -47,11 +47,23 @@ export type NumKind =
   | 'percent' // %
   | 'years' // 年
   | 'months' // か月
-  | 'count' // 個数・件数（整数）
-  | 'people' // 人数（整数）—— 単位語「人」(パス 493k。`count` の「件」を人数に借りない)
+  | 'people' // 人数（整数）—— 単位語「人」(パス 493k)
+  // ★ 2026-09-27 (パス 493n) まで、ここには `count` (件) と `ratio` (倍) が在った。実測すると
+  // **2 つとも使う欄が 1 つも正しくなかった** —— `count` の 9 欄は 日・h・段・回・団体・戸・月・年・人、
+  // `ratio` の 7 欄は L と外貨と円で、断りは「31 件 は想定の範囲を超えています」(棚の段数) や
+  // 「0 倍 では計算できません」(外貨額) と**嘘の単位**を言っていた。単位語が総称の種類は
+  // 「近い kind」として借りられる (パス 373 / 493k が 1 つずつ直した形) ので、種類ごと消した。
+  // 欄の単位は下の種類から選び、無ければ単位語つきの種類を足す。
+  | 'hours' // h（小数を許す —— 8.5 時間は正当）
+  | 'tiers' // 段（整数）
+  | 'times' // 回（整数）
+  | 'municipalities' // 団体（整数）—— ふるさと納税の寄附先の数え方 (ワンストップ特例は「5 団体以内」)
+  | 'dwellings' // 戸（整数）
+  | 'calendarMonth' // 月（整数）—— 暦の月。期間の「か月」(`months`) とは別
+  | 'calendarYear' // 年（整数）—— 暦の年 (西暦)。期間の「年」(`years`) は 100 を超えると桁を尋ねるので借りない
+  | 'currencyUnits' // 通貨 —— 外貨の額 (「1 万通貨」の数え方)
   | 'area' // ㎡
   | 'length' // m
-  | 'ratio' // 倍率
   | 'ppm' // mg/L・ppm など濃度
   | 'days' // 日数（整数）
   | 'energy' // kWh/kg（電力原単位）
@@ -69,7 +81,7 @@ export interface NumSpec {
   readonly kind: NumKind;
   /** 未入力を許す（省略時は「未入力＝0 として計算」を warn で知らせる）。 */
   readonly allowEmpty?: boolean;
-  /** 0 を許す（既定は kind ごと。area/length/count は 0 を fatal にする）。 */
+  /** 0 を許す（既定は kind ごと。area / length は 0 を fatal にする）。 */
   readonly allowZero?: boolean;
   readonly min?: number;
   readonly max?: number;
@@ -93,8 +105,8 @@ export function readNumberOr0(raw: string | undefined | null): number {
 /**
  * 読めなければ `null`。**「未入力」と「0 と入力された」を区別したい欄**で使う。
  *
- * `readNumberOr0` は空欄を 0 に倒すので、`allowZero` を持たない欄
- * (`area` / `length` / `count` — 0 は fatal) では**画面が受け付けない値**が
+ * `readNumberOr0` は空欄を 0 に倒すので、0 を断る欄
+ * (`allowZero: false` の欄と、既定で断る `area` / `length`) では**画面が受け付けない値**が
  * 計算に入り、算定できていない結果が「0 という測定値」として出る。
  * 0 が意味を持つ欄 (`allowZero: true`) は従来どおり `readNumberOr0` でよい。
  */
@@ -116,13 +128,22 @@ const KIND: Record<NumKind, KindRule> = {
   percent: { unit: '%', negativeIsFatal: false, max: 1000, sane: 100 },
   years: { unit: '年', negativeIsFatal: true, sane: 100 },
   months: { unit: 'か月', negativeIsFatal: true, sane: 1200 },
-  count: { unit: '件', negativeIsFatal: true, integer: true, sane: 100000 },
-  // 扶養親族の人数ほか (パス 493k)。`count` と同じ規則で、単位語だけが違う ——
+  // 扶養親族の人数・従業者数 (パス 493k / 493n)。単位語は「人」——
   // 「20 件 以下で入力してください」を人数の欄に出さない (下の days / energy と同じ理由)。
   people: { unit: '人', negativeIsFatal: true, integer: true, sane: 100000 },
+  // パス 493n で `count` / `ratio` の代わりに足した 8 種。**規則はどれも借りた種類と同じ**
+  // (マイナスは断る・整数の欄は整数を求める) で、単位語だけが欄の実物に合う。上限は欄の
+  // spec が持つ (決算月 1〜12・終了年 2000〜2100 ほか) ので、種類には桁の尋ね (sane) だけを置く。
+  hours: { unit: 'h', negativeIsFatal: true, sane: 8760 }, // 1 年ぶんの時間
+  tiers: { unit: '段', negativeIsFatal: true, integer: true, sane: 100 },
+  times: { unit: '回', negativeIsFatal: true, integer: true, sane: 1000 },
+  municipalities: { unit: '団体', negativeIsFatal: true, integer: true },
+  dwellings: { unit: '戸', negativeIsFatal: true, integer: true },
+  calendarMonth: { unit: '月', negativeIsFatal: true, integer: true },
+  calendarYear: { unit: '年', negativeIsFatal: true, integer: true },
+  currencyUnits: { unit: '通貨', negativeIsFatal: true, sane: 1e13 },
   area: { unit: '㎡', negativeIsFatal: true, zeroIsFatal: true, sane: 1e6 },
   length: { unit: 'm', negativeIsFatal: true, zeroIsFatal: true, sane: 1000 },
-  ratio: { unit: '倍', negativeIsFatal: true, sane: 1000 },
   ppm: { unit: 'mg/L', negativeIsFatal: true, sane: 100000 },
   // 水耕栽培の入力欄が足した 3 種。単位語は「0 X として計算されています」の
   // 文面にそのまま出るので、近い kind を借りると (倍・mg/L) 嘘の単位を言う。

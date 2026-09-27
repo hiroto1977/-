@@ -104,10 +104,13 @@ describe('給与デザイン — 読めない入力と扶養人数の天井 (パ
     await typeField('一般扶養親族の人数', '5000000000');
     await waitForText(summaryText, `「一般扶養親族の人数」${MAX_DEPENDENTS_PER_KIND} 人 以下で入力してください（現在 5000000000）。`);
     expect(summaryEl()?.getAttribute('data-fatal')).toBe('1');
-    // 単位は「人」—— `count` (件) を借りない。標本が的に当たる: 借りた形はこの文を出す
+    // 単位は「人」—— 総称の `count` (件) を借りない (パス 493n でその種類ごと消した)。
+    // 標本が的に当たる: 借りていた頃 (パス 493k より前) の画面はこの文を出していた
     expect(summaryText()).not.toContain('件 以下で入力してください');
-    expect(guardNumber('5000000000', { label: 'X', kind: 'count', max: MAX_DEPENDENTS_PER_KIND })?.message).toContain(
-      '件 以下で入力してください',
+    const borrowed = `「一般扶養親族の人数」${MAX_DEPENDENTS_PER_KIND} 件 以下で入力してください（現在 5000000000）。`;
+    expect(borrowed).toContain('件 以下で入力してください');
+    expect(guardNumber('5000000000', { label: 'X', kind: 'people', max: MAX_DEPENDENTS_PER_KIND })?.message).toBe(
+      `${MAX_DEPENDENTS_PER_KIND} 人 以下で入力してください（現在 5000000000）。`,
     );
     // 控除は天井の 20 人ぶん (税金ページの同じ欄と同じ答え)
     await waitForText(text, `扶養控除 所得税 ¥${(MAX_DEPENDENTS_PER_KIND * 380_000).toLocaleString('ja-JP')}`);

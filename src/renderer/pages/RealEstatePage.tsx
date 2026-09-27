@@ -269,13 +269,13 @@ export const RE_READS = {
  * (CLAUDE.md の規約・パス 206 と同じ判断)。
  */
 const WC_SPECS = {
-  vol: { label: '循環量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 },
-  cycle: { label: '交換周期 (日)', kind: 'count', allowZero: false, max: 365 },
+  vol: { label: '循環量 (L)', kind: 'liters', allowZero: false, sane: 1e6 },
+  cycle: { label: '交換周期 (日)', kind: 'days', allowZero: false, max: 365 },
   recovery: { label: 'RO 回収率 (%)', kind: 'percent', min: 1, max: 99 },
   rejection: { label: 'RO 塩除去率 (%)', kind: 'percent', min: 1, max: 100 },
-  window: { label: 'RO 処理目標 (h)', kind: 'count', allowZero: false, max: 24 },
-  roCap: { label: 'RO 機の日産 (L/日・空欄可)', kind: 'ratio', allowEmpty: true, allowZero: true, sane: 1e6 },
-  tank: { label: '曝気タンク容量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 },
+  window: { label: 'RO 処理目標 (h)', kind: 'hours', allowZero: false, max: 24 },
+  roCap: { label: 'RO 機の日産 (L/日・空欄可)', kind: 'liters', allowEmpty: true, allowZero: true, sane: 1e6 },
+  tank: { label: '曝気タンク容量 (L)', kind: 'liters', allowZero: false, sane: 1e6 },
   n: { label: '硝化する N 濃度 (mg/L)', kind: 'ppm', allowZero: true },
   concN: { label: '濃縮液の全窒素 (mg/L)', kind: 'ppm', allowZero: true },
   concP: { label: '濃縮液の全りん (mg/L)', kind: 'ppm', allowZero: true },

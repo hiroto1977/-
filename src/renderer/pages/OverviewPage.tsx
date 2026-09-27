@@ -282,7 +282,7 @@ function HighlightSettingsPanel({
  */
 const HYDRO_SPECS = {
   floorAreaSqm: { label: '床面積 (m²)', kind: 'area' },
-  tiers: { label: '棚の段数', kind: 'count', allowZero: false, sane: 30 },
+  tiers: { label: '棚の段数', kind: 'tiers', allowZero: false, sane: 30 },
   usableRatioPct: { label: '栽培に使える割合 (%)', kind: 'percent', allowZero: false, max: 100 },
   yieldRatePct: { label: '歩留まり (%)', kind: 'percent', allowZero: false, max: 100 },
   unitPriceYen: { label: '販売単価 (円/株)', kind: 'money', allowZero: false, sane: 10_000 },

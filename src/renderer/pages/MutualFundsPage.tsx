@@ -111,10 +111,10 @@ const MF_REFUSAL_SPECS = {
   dcaMonthly: { label: '毎月の積立額 (円)', kind: 'money', allowZero: false },
   simMonthly: { label: '毎月の積立額 (円)', kind: 'money', allowZero: false },
   simYears: { label: '積立年数', kind: 'years', allowZero: false, max: MAX_PLAN_YEARS },
-  fxAmount: { label: '外貨額', kind: 'ratio', allowZero: false, sane: 1e9 },
-  fxAcqRate: { label: '取得時レート', kind: 'ratio', allowZero: false, sane: 10_000 },
-  fxCurRate: { label: '現在レート', kind: 'ratio', allowZero: false, sane: 10_000 },
-  fxFee: { label: '為替手数料 (片道・円)', kind: 'ratio', allowZero: true, sane: 1000 },
+  fxAmount: { label: '外貨額', kind: 'currencyUnits', allowZero: false, sane: 1e9 },
+  fxAcqRate: { label: '取得時レート', kind: 'money', allowZero: false, sane: 10_000 },
+  fxCurRate: { label: '現在レート', kind: 'money', allowZero: false, sane: 10_000 },
+  fxFee: { label: '為替手数料 (片道・円)', kind: 'money', allowZero: true, sane: 1000 },
 } as const satisfies Record<string, NumSpec>;
 
 /**

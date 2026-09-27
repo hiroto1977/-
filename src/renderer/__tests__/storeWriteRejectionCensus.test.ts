@@ -501,7 +501,8 @@ const siteKey = (s: Site): string => `${s.file} :: ${s.text}`;
 const isWrapperSite = (s: Site): boolean => Object.hasOwn(WRAPPER_SITES, siteKey(s));
 
 describe('保存が断られたとき、その拒否を誰かが受け取る (パス 493o)', () => {
-  it('★ 走査が木を歩いた —— 書き込みの呼び出しは 40 か所以上 (実測 50)', () => {
+  it('★ 走査が木を歩いた —— 書き込みの呼び出しは 40 か所以上', () => {
+    // 実数は題名に書かない (2026-09-27 に「実測 50」と書いたが、測ると 48 だった —— 散文の数は古びる)。
     // 床は実測に張り付けない (減るのは正しい向きでありうる)。針が死んで 0 件で緑になる形だけを止める。
     expect(SITES.length).toBeGreaterThanOrEqual(40);
     // 3 つの受け止め方がどれも実物に現れている (規則が 1 つでも死ねば、その種類が 0 になる)

@@ -408,7 +408,7 @@ function CorporateTaxCard({
   /** 読めなかったときに画面へ出す指摘 (空欄は指摘しない)。 */
   const CTAX_SPECS = {
     capital: { label: '資本金', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
-    employees: { label: '従業者数', kind: 'count', allowEmpty: true, allowZero: true, min: 0 },
+    employees: { label: '従業者数', kind: 'people', allowEmpty: true, allowZero: true, min: 0 },
     carryforwardLoss: { label: '繰越欠損金', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
     ctSales: { label: '課税売上', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },
     ctPurchases: { label: '課税仕入', kind: 'money', allowEmpty: true, allowZero: true, min: 0 },

@@ -837,7 +837,7 @@ export function TaxPage() {
       [grossStr, { label: '額面年収 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [netStr, { label: '目標手取り (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [bonusPerStr, { label: '賞与1回あたり (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [bonusCountStr, { label: '賞与の回数', kind: 'count', allowEmpty: true, allowZero: true, max: 12 }],
+      [bonusCountStr, { label: '賞与の回数', kind: 'times', allowEmpty: true, allowZero: true, max: 12 }],
       [dGrossStr, { label: '給与収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       // **社会保険料控除には法定上限が無い** (実際に支払った額をそのまま引く)。
       // 実測: `支払社会保険料 = 9,999,999,999` で控除合計が `¥10,000,669,999` になり、
@@ -883,7 +883,7 @@ export function TaxPage() {
       [cgCostStr, { label: '取得費 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [cgFeeStr, { label: '譲渡費用 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [fsDonationStr, { label: 'ふるさと納税額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [fsMunicipalitiesStr, { label: '寄附先の自治体数', kind: 'count', allowEmpty: true, allowZero: true, max: 100 }],
+      [fsMunicipalitiesStr, { label: '寄附先の自治体数', kind: 'municipalities', allowEmpty: true, allowZero: true, max: 100 }],
       [divIncomeStr, { label: '配当収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [pensionIncomeStr, { label: '公的年金等の収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [ctSalesStr, { label: '課税売上 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
@@ -896,7 +896,7 @@ export function TaxPage() {
       [icCommonStr, { label: '共通対応の仕入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [faAssessedStr, { label: '固定資産税評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [faAreaStr, { label: '敷地面積 (㎡)', kind: 'area', allowEmpty: true, allowZero: true }],
-      [faDwellingsStr, { label: '住戸数', kind: 'count', allowEmpty: true, allowZero: true, max: 1000 }],
+      [faDwellingsStr, { label: '住戸数', kind: 'dwellings', allowEmpty: true, allowZero: true, max: 1000 }],
       [acqAssessedStr, { label: '不動産取得税の評価額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [regTaxableStr, { label: '登録免許税の課税標準 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [stampAmountStr, { label: '契約金額 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
@@ -1685,9 +1685,9 @@ export function TaxPage() {
             </select>
           </label>
           {csFiler === 'corporate' && (
-            <GuardedNumber spec={{ label: '決算月 (1-12)', kind: 'count', min: 1, max: 12 }} value={csEndMonth} onChange={setCsEndMonth} width={110} />
+            <GuardedNumber spec={{ label: '決算月 (1-12)', kind: 'calendarMonth', min: 1, max: 12 }} value={csEndMonth} onChange={setCsEndMonth} width={110} />
           )}
-          <GuardedNumber spec={{ label: '課税期間の終了年 (西暦)', kind: 'count', min: 2000, max: 2100 }} value={csEndYear} onChange={setCsEndYear} width={150} />
+          <GuardedNumber spec={{ label: '課税期間の終了年 (西暦)', kind: 'calendarYear', min: 2000, max: 2100 }} value={csEndYear} onChange={setCsEndYear} width={150} />
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             納付方式
             <select value={csMethod} onChange={(e) => setCsMethod(e.target.value as typeof csMethod)} style={{ ...inputStyle, width: 170 }}>
