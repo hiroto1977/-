@@ -6,7 +6,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { MAX_CSV_IMPORT_BYTES, importSaveFailedNote, readImportText } from '../data/importFile';
+import { MAX_CSV_IMPORT_BYTES, importSaveFailedNote, readImportText, skippedRowsDetail } from '../data/importFile';
 import { fireReported } from '../data/deviceStoreFailure';
 import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import { localIsoDate } from '../../shared/localDate';
@@ -489,7 +489,7 @@ function ActualsPanel() {
     }
     setError(
       errors.length > 0
-        ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})${duplicates > 0 ? `。うち ${duplicates} 件は同じ期・事業が既に在る重複行` : ''}`
+        ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (${skippedRowsDetail(errors)})${duplicates > 0 ? `。うち ${duplicates} 件は同じ期・事業が既に在る重複行` : ''}`
         : undefined,
     );
   }

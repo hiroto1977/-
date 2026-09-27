@@ -690,3 +690,37 @@ describe('normalizeProperty', () => {
     expect(normalizeProperty(null).name).toBe('');
   });
 });
+
+/**
+ * **銘柄フォームの空欄は、空白だけの欄も空欄** (2026-09-27 · パス 496)。
+ * `=== ''` だけを見ていた頃は、全角の空白 1 つ (日本語入力で空欄に打ちやすい) で
+ * 取得額が **0 円**になり、評価額がまるごと含み益に見えた (実測: 評価額 ¥1,500,000 の銘柄で
+ * 評価損益 ¥1,500,000・「取得額が未入力」の件数 0)。評価額と年初来リターンは
+ * 空に見える欄を「数値で入力してください」と断っていた。
+ */
+describe('parseHoldingEntry — 空白だけの欄も空欄 (パス 496)', () => {
+  const base = { code: 'X1', name: 'テストファンド', units: '1000000', navPerUnit: '15000' } as const;
+  it('★ 取得額: 空白だけは「未入力」(null) —— 0 円にしない', () => {
+    for (const raw of ['', '  ', '　', '\t']) {
+      const h = parseHoldingEntry({ ...base, acquisitionCost: raw });
+      expect(h.acquisitionCost, JSON.stringify(raw)).toBeNull();
+      const p = computeFundPortfolio([{ ...h, demo: false }], 0);
+      expect(p.userOnly.unrealizedGain, '評価額がまるごと含み益になっている').toBe(0);
+      expect(p.costUnmeasured.count, '「取得額が未入力」に数えていない').toBe(1);
+    }
+  });
+  it('★ 評価額: 空白だけは空欄 = 自動計算 (口数 × 基準価額)', () => {
+    const h = parseHoldingEntry({ ...base, valuation: '　' });
+    expect(h.valuationMode).toBe('auto');
+    expect(h.valuation).toBe(fundValuation(1_000_000, 15000));
+  });
+  it('★ 年初来リターン: 空白だけは「未入力」(null)', () => {
+    expect(parseHoldingEntry({ ...base, ytdReturnPct: '　' }).ytdReturnPct).toBeNull();
+  });
+  it('★ 評価額を入れたときの口数・基準価額: 欄が無くても空白だけでも 0', () => {
+    const h = parseHoldingEntry({ code: 'X1', name: 'テストファンド', valuation: '1000000' });
+    expect([h.units, h.navPerUnit]).toEqual([0, 0]);
+    const w = parseHoldingEntry({ ...base, valuation: '1000000', units: '　', navPerUnit: '  ' });
+    expect([w.units, w.navPerUnit]).toEqual([0, 0]);
+  });
+});

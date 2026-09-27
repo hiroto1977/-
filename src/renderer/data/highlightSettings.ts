@@ -7,6 +7,7 @@
  */
 import { DEFAULT_HIGHLIGHT_THRESHOLDS, type HighlightThresholds } from './managementHighlights';
 import { relationIssue } from './recordRelations';
+import { readEntryNumber } from '../../shared/readNumeric';
 
 export const HIGHLIGHT_SETTINGS_COLLECTION = 'highlight-settings';
 
@@ -42,17 +43,34 @@ export function parseHighlightSettings(input: {
   budgetShortfallWarnPct?: unknown;
 }): HighlightSettings {
   const d = DEFAULT_HIGHLIGHT_THRESHOLDS;
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+   * `Number()` で、全角の数字や `'60%'` を断り、`'1e1'` を 10 として黙って保存していた。
+   * 期数は `Math.floor` で**黙って切り捨てて**おり、`'2.9'` は「1 以上の整数で入力して
+   * ください」と言う欄に 2 として入った —— 整数の欄は、整数でなければ断る (パス 493p と同じ判断)。
+   * 空欄は `''` だけが既定へ倒れ、**空白だけ (`'  '`) は `Number` が 0 と読んで断られていた** ——
+   * 空欄の判定も共有の 1 つ (空白だけも空欄) にした。
+   */
   const intMin1 = (v: unknown, fallback: number, label: string): number => {
-    if (v == null || v === '') return fallback;
-    const n = Math.floor(Number(v));
-    if (!Number.isFinite(n) || n < 1) throw new Error(`${label}は 1 以上の整数で入力してください`);
-    return n;
+    const read = readEntryNumber(v);
+    if (read.kind === 'blank') return fallback;
+    const refuse = (): Error => new Error(`${label}は 1 以上の整数で入力してください`);
+    // 読めない入力の判定は**型の絞り込みのため**に要る (下の行で `read.value` を読む)。
+    // 実行時には等価 —— 読めない結果は `value` を持たず `Number.isInteger(undefined)` は
+    // false なので、消しても下の行が同じ文で断る (手で当てて related の 1,489 件が通る —— パス 496)。
+    // 判定を 1 行に分けたのは、pragma が同じ行の本物の判定 (整数か・1 以上か) まで隠さないため。
+    // Stryker disable next-line ConditionalExpression,StringLiteral: 等価 —— 消しても下の行が Number.isInteger(undefined) で同じ文を出す
+    if (read.kind === 'unreadable') throw refuse();
+    if (!Number.isInteger(read.value) || read.value < 1) throw refuse();
+    return read.value;
   };
   const pct = (v: unknown, fallback: number, label: string): number => {
-    if (v == null || v === '') return fallback;
-    const n = Number(v);
-    if (!Number.isFinite(n) || n < 0 || n > 100) throw new Error(`${label}は 0〜100 の数値で入力してください`);
-    return Math.round(n * 10) / 10;
+    const read = readEntryNumber(v);
+    if (read.kind === 'blank') return fallback;
+    if (read.kind === 'unreadable' || read.value < 0 || read.value > 100) {
+      throw new Error(`${label}は 0〜100 の数値で入力してください`);
+    }
+    return Math.round(read.value * 10) / 10;
   };
 
   const declineWarnStreak = intMin1(input.declineWarnStreak, d.declineWarnStreak, '連続下落(警告)期数');

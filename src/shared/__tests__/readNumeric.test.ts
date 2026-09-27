@@ -129,3 +129,52 @@ describe('hasUnitWord / hasInteriorNoise の切り分け', () => {
     expect(m.hasInteriorNoise(' -5 ')).toBe(false);
   });
 });
+
+/**
+ * **保存の口 `readEntryNumber` の 3 通り** (2026-09-27 · パス 496)。
+ *
+ * 書き手 (`parse*`) は空欄と「読めない」と数を分けて受け取る。読み直したモジュールに当てる
+ * —— 空欄と「読めない」の答えはモジュール直下の凍結値なので、静的 import では
+ * その値の変異体に届かない (上の `NUMBER_SHAPE` と同じ理由・パス 495 の規則)。
+ */
+describe('readEntryNumber — 空欄 / 読めない / 数 (読み直した表に当てる)', () => {
+  it('★ 空欄: 欄が無い・空文字・空白だけ (全角の空白・改行も)', async () => {
+    const m = await fresh();
+    for (const v of [null, undefined, '', '   ', '　', '\t\n']) {
+      expect(m.readEntryNumber(v), JSON.stringify(v) ?? 'undefined').toEqual({ kind: 'blank' });
+    }
+  });
+
+  it('★ 読めない: 画面が読めない文字列・非有限の数・数でも文字列でもない値', async () => {
+    const m = await fresh();
+    for (const v of ['abc', '1e3', '0x10', '.5', '1万', '1,23', Number.NaN, Infinity, -Infinity, true, false, {}, [], [5]]) {
+      expect(m.readEntryNumber(v), String(v)).toEqual({ kind: 'unreadable' });
+    }
+  });
+
+  it('★ 数: 文字列は画面と同じ読み方、数はそのまま (-0 は 0 に)', async () => {
+    const m = await fresh();
+    expect(m.readEntryNumber('1,000')).toEqual({ kind: 'number', value: 1000 });
+    expect(m.readEntryNumber('１０００')).toEqual({ kind: 'number', value: 1000 });
+    expect(m.readEntryNumber('¥1,000')).toEqual({ kind: 'number', value: 1000 });
+    expect(m.readEntryNumber(' -5 ')).toEqual({ kind: 'number', value: -5 });
+    expect(m.readEntryNumber(2.5)).toEqual({ kind: 'number', value: 2.5 });
+    expect(m.readEntryNumber(0)).toEqual({ kind: 'number', value: 0 });
+    // -0 は 0 として持つ (画面に「-0」を出さない・`Object.is` で比べる)。
+    const neg = m.readEntryNumber(-0);
+    expect(neg.kind === 'number' && Object.is(neg.value, 0), '数の -0 が 0 になっていない').toBe(true);
+    const negText = m.readEntryNumber('-0');
+    expect(negText.kind === 'number' && Object.is(negText.value, 0), '文字列の -0 が 0 になっていない').toBe(true);
+  });
+
+  it('★ 読めるかどうかは readNumeric と同じ答え (文字列の標本すべて)', async () => {
+    const m = await fresh();
+    for (const [raw] of READS) {
+      expect(m.readEntryNumber(raw), raw).toEqual({ kind: 'number', value: m.readNumeric(raw)! + 0 });
+    }
+    for (const [raw] of REFUSES) {
+      // 空欄の 2 つ ('' と空白だけ) は「読めない」ではなく空欄。
+      expect(m.readEntryNumber(raw).kind, raw).toBe(raw.trim() === '' ? 'blank' : 'unreadable');
+    }
+  });
+});

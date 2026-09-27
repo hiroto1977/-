@@ -823,3 +823,27 @@ describe('モジュール直下の値 (読み直してから確かめる — 静
     );
   });
 });
+
+/**
+ * **KPI の金額の読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。空欄を 0 円として記録すると、
+ * 売上原価を空けた期は「売上総利益率 100%」として金融機関等提出用の書面 §1 へ届いた。
+ */
+describe('parseKpiActual — 画面と同じ読み方と空欄 (パス 496)', () => {
+  const base = {
+    period: '2026-08', unit: '本業', revenue: '1000000', cogs: '0', advertising: '0', sga: '100000', depreciation: '0',
+  } as const;
+  it('★ 必須の金額の空欄は「未入力」と断る (0 に倒さない)', () => {
+    expect(() => parseKpiActual({ ...base, cogs: '' })).toThrow('売上原価が未入力です（無いなら 0 と入力してください）');
+    expect(() => parseKpiActual({ ...base, revenue: '　' })).toThrow('売上高が未入力です（無いなら 0 と入力してください）');
+  });
+  it('★ 任意の人件費は、空白だけの欄も「未入力」として欄ごと持たせない', () => {
+    for (const raw of ['', '  ', '　', undefined]) {
+      expect('laborCost' in parseKpiActual({ ...base, laborCost: raw }), JSON.stringify(raw) ?? 'undefined').toBe(false);
+    }
+  });
+  it('★ 桁区切り・全角を読み、指数表記は断る', () => {
+    expect(parseKpiActual({ ...base, revenue: '1,000,000' }).revenue).toBe(1_000_000);
+    expect(parseKpiActual({ ...base, revenue: '１０００' }).revenue).toBe(1000);
+    expect(() => parseKpiActual({ ...base, revenue: '1e6' })).toThrow('売上高は 0 以上の数値で入力してください');
+  });
+});

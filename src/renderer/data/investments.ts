@@ -15,7 +15,7 @@
  * **概算であり投資助言ではありません。**
  */
 
-import { readNumeric } from '../../shared/readNumeric';
+import { readEntryNumber, readNumeric } from '../../shared/readNumeric';
 import { refusingSpecs, type NumSpec } from './inputGuards';
 import { moreThanChars } from '../../shared/inputCeiling';
 import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT } from '../../shared/mutualFundsMetrics';
@@ -219,6 +219,26 @@ function numberFrom(v: unknown): number {
  */
 function readTypedAmount(text: string): number {
   return text.trim() === '' ? 0 : (readNumeric(text) ?? Number.NaN);
+}
+
+/**
+ * 欄が空欄か —— **判定は保存の口と同じ 1 つ** (`readEntryNumber`: 空文字・空白だけ・
+ * 全角の空白・欄が無い)。
+ *
+ * 2026-09-27 (パス 496) まで、銘柄フォームは `=== ''` だけを空欄とみなしていた。
+ * 全角の空白は日本語入力で空欄に打ちやすく、画面では空に見えるのに (実測):
+ *
+ * ```
+ *   欄              ''                    '\u3000' (全角の空白 1 つ)
+ *   評価額          自動計算 (口数 × 基準価額)   「評価額は 1 円以上 … (空欄にすると自動計算)」で断る
+ *   取得額          null (未入力)            **0 円** —— 評価額がまるごと含み益に見える
+ *   年初来リターン   null (未入力)            「−100〜1000 の数値で入力してください」で断る
+ * ```
+ *
+ * 評価額の断りは「空欄にすると自動計算」と言う —— **空に見える欄を空にしろと言っていた**。
+ */
+function isBlankEntry(v: unknown): boolean {
+  return readEntryNumber(v).kind === 'blank';
 }
 
 /**
@@ -721,7 +741,8 @@ export function parseHoldingEntry(input: {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   if (name.length === 0 || moreThanChars(name, MAX_FUND_NAME_CHARS)) throw new Error(`ファンド名は 1〜${MAX_FUND_NAME_CHARS} 文字で入力してください`);
 
-  const manual = input.valuation !== undefined && input.valuation !== '';
+  // 空欄の判定は保存の口と同じ 1 つ (`isBlankEntry` —— 空白だけ・全角の空白も空欄)。
+  const manual = !isBlankEntry(input.valuation);
 
   let units: number;
   let navPerUnit: number;
@@ -733,15 +754,9 @@ export function parseHoldingEntry(input: {
     // Stryker disable next-line ConditionalExpression: === null を false 固定にしても
     // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
     if (v === null || v <= 0) throw new Error('評価額は 1 円以上の数値で入力してください (空欄にすると自動計算)');
-    // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
-    // 意図を明示するために式は残す。
-    const u = input.units === undefined || input.units === '' ? 0 : toAmount(input.units);
+    const u = isBlankEntry(input.units) ? 0 : toAmount(input.units);
     if (u === null) throw new Error('口数は 0 以上の数値で入力してください');
-    // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
-    // 意図を明示するために式は残す。
-    const nav = input.navPerUnit === undefined || input.navPerUnit === '' ? 0 : toAmount(input.navPerUnit);
+    const nav = isBlankEntry(input.navPerUnit) ? 0 : toAmount(input.navPerUnit);
     if (nav === null) throw new Error('基準価額は 0 以上の数値で入力してください');
     units = u;
     navPerUnit = nav;
@@ -764,11 +779,11 @@ export function parseHoldingEntry(input: {
   }
 
   const acqRaw = input.acquisitionCost;
-  // Stryker disable next-line StringLiteral: '' を別文字列にしても、その値は toAmount で
-  // NaN → null になり同じ 取得額 エラーへ落ちる (等価変異)。
   // 空欄は null = 未入力 (パス 123 —— それまでは評価額と同額にして「損益 0」の銘柄を作っていた)。
+  // ★ 空白だけの欄も空欄 (パス 496) —— `=== ''` だけを見ていた頃は、全角の空白 1 つで
+  // **取得額 0 円**になり、評価額がまるごと含み益に見えた (欄は画面では空に見える)。
   let acquisitionCost: number | null = null;
-  if (acqRaw !== undefined && acqRaw !== '') {
+  if (!isBlankEntry(acqRaw)) {
     const cost = toAmount(acqRaw);
     if (cost === null) throw new Error('取得額は 0 以上の数値で入力してください');
     acquisitionCost = cost;
@@ -777,10 +792,10 @@ export function parseHoldingEntry(input: {
   const ytdRaw = input.ytdReturnPct;
   // 空欄は null (未入力)。0 にすると測った 0% と同じ顔になる (パス 122)。
   let ytdReturnPct: number | null = null;
-  // `!== ''` は**冗長ではない**: 読み取りが `readNumeric` になった 2026-09-06 から、
+  // この門は**冗長ではない**: 読み取りが `readNumeric` になった 2026-09-06 から、
   // 空文字は 0 ではなく「読めない」なので、この門を外すと空欄が YTD エラーになる
-  // (保存 → 入力欄 → 再保存 の往復の検査が落ちる)。
-  if (ytdRaw !== undefined && ytdRaw !== '') {
+  // (保存 → 入力欄 → 再保存 の往復の検査が落ちる)。空白だけの欄も空欄 (パス 496)。
+  if (!isBlankEntry(ytdRaw)) {
     // Stryker disable next-line ConditionalExpression: typeof ytdRaw === 'number' を true 固定に
     // しても直後の Number.isFinite が非数値を弾くため同じエラーになる (等価変異)。
     // 文字列は画面と同じ読み取り (`readNumeric`) —— `1,5` を 15% にしない。

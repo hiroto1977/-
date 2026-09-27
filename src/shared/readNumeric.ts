@@ -10,7 +10,15 @@
  *   renderer/data/businessUnits.ts        事業の売上・変動費・固定費
  *   components/serviceActionUtils.ts      金額入力 (返り値の形だけ持つ —— 未入力と読めないを分ける)
  *   renderer/data/eligibility.ts          補助金の適用判定の年齢・従事年数
+ *   (保存の入口 —— readEntryNumber)       売上・KPI・貸借対照表・経営ハイライト・水耕栽培 3 つ・
+ *                                          計算値の置き換え・Shopify の注文額 (下の readEntryNumber)
  * ```
+ *
+ * 最後の行は 2026-09-27 (パス 496) まで**この表に無かった** —— 保存の入口 9 本は
+ * `Number()` や独自の読みで数にしており、画面と同じ文字列に別の答えを出していた
+ * (実測は `readEntryNumber` の注記)。数えたのは `numericInputReaderCensus` の母集団
+ * (`inputMode` / `GuardedNumber` の欄) の**外**で、その欄は素の `<input>` か、
+ * 値を書き手へ丸ごと渡す形だった。
  *
  * ## ★ この一覧は 2026-09-21 まで**偽だった** (パス 375)
  *
@@ -110,6 +118,58 @@ export function readNumeric(raw: string | undefined | null): number | null {
   // 桁があふれて Infinity になる入力 (9 が 309 個) だけがここで落ちる。
   const n = Number(half.replace(DECORATION, ''));
   return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * **保存の入口 (書き手) が 1 つの値を読んだ結果** (2026-09-27 · パス 496)。
+ *
+ *   `number`     … 読めた (有限の数。`-0` は `0` にしておく —— 画面に「-0 円」と出さない)
+ *   `blank`      … 空欄 (空文字・空白だけ・欄が無い = `null` / `undefined`)
+ *   `unreadable` … 読めない (`readNumeric` が断る文字列・非有限の数・文字列でも数でもない値)
+ *
+ * **空欄と読めないを分ける** —— 空欄を何に倒すか (断る / 未入力として持つ / 既定へ) は
+ * 欄ごとに違い、決めるのは書き手である。読めないほうは どの欄でも断る。
+ */
+export type EntryNumber =
+  | { readonly kind: 'number'; readonly value: number }
+  | { readonly kind: 'blank' }
+  | { readonly kind: 'unreadable' };
+
+const BLANK_ENTRY: EntryNumber = Object.freeze({ kind: 'blank' });
+const UNREADABLE_ENTRY: EntryNumber = Object.freeze({ kind: 'unreadable' });
+
+/**
+ * **保存の入口が 1 つの値を数として読む —— 画面と同じ方針** (2026-09-27 · パス 496)。
+ *
+ * 画面の関門 (`guardNumber`) と計算は `readNumeric` で読むのに、保存の入口の 9 本は
+ * `Number()` や独自の読みで数にしていた。同じ文字列に別の答えを出す (実測・書き手 7 本 ×
+ * 14 標本):
+ *
+ * ```
+ *   入力        readNumeric   書き手 (直す前)
+ *   '1,000'     1000          断る「0 以上の数値で入力してください」 ← 偽の断り
+ *   '１０００'    1000          断る (日本語入力の既定は全角)
+ *   '¥1,000'    1000          断る
+ *   '1e3'       null          1000 として保存 (黙って)
+ *   '0x10'      null          16 として保存 (黙って)
+ *   '.5'        null          0.5 として保存 (黙って)
+ *   ''          null          0 として保存 —— 必須の欄が黙って 0 円になる
+ * ```
+ *
+ * Shopify の注文額 (`shopifyImport.parseAmount`) は数字と `.` 以外を**どこからでも**
+ * 落としていたので、`'1億'` が 1 円、`'-500'` が 500 円、`'1e3'` が 13 円として
+ * 売上集計に入った (2026-09-06 に `NUMBER_SHAPE` が閉じた形と同じ)。
+ *
+ * 数をそのまま受けるのは、同じ書き手が呼び手の組んだ数 (売上集計からの取り込み・
+ * Shopify の注文の数値・検査) からも呼ばれるため。**真偽値は読まない** —— `Number(true)` は 1 だった。
+ */
+export function readEntryNumber(v: unknown): EntryNumber {
+  if (v === null || v === undefined) return BLANK_ENTRY;
+  if (typeof v === 'number') return Number.isFinite(v) ? { kind: 'number', value: v + 0 } : UNREADABLE_ENTRY;
+  if (typeof v !== 'string') return UNREADABLE_ENTRY;
+  if (v.trim() === '') return BLANK_ENTRY;
+  const n = readNumeric(v);
+  return n === null ? UNREADABLE_ENTRY : { kind: 'number', value: n + 0 };
 }
 
 /**

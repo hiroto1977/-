@@ -1,5 +1,145 @@
 # Service Hub — 残りの作業手順書
 
+## パス 496 (保存する書き手は画面と同じ読み方で数を読む) が測って、次のパスへ残した物 (2026-09-27)
+
+**画面が読む数と、保存する書き手が読む数が、同じ文字列について別の答えを出していた。** 画面の関門と計算は数を
+`readNumeric` (`shared/readNumeric.ts` —— パス 375 で 1 つにした読み手) で読む。ところが**保存する書き手**
+(`parse*` —— 画面の欄を受け取って記録の形にする関数) の多くは `Number()` で読み直していた。
+
+1. **見つけ方** —— パス 493r の棚卸しで「書き手が入力欄の文字列を `Number()` で読む」形を数え、画面の読み手と
+   同じ標本を両方へ当てた。実測 (2026-09-27 · 直す前):
+
+   | 書き手 / 欄 | 打った物 | 直す前 | 画面 (`readNumeric`) |
+   | --- | --- | --- | --- |
+   | 売上 (`parseSalesEntry`) の売上金額 | `1,000` / `１０００` / `¥1,000` | 「0 以上の数値で入力してください」で断る (**偽の理由**) | 1000 |
+   | 同 | `1e3` / `0x10` / `.5` | 1000 / 16 / 0.5 として**黙って保存** | 読めない |
+   | 同 | 空欄・空白だけ | **0 円として保存** | 空欄 |
+   | KPI 実績・予算 (`parseKpiActual`) の売上原価 | 空欄 | **0 円** → 売上総利益率 100% が書面 §1 へ | 空欄 |
+   | 貸借対照表 (`parseBalanceSheet`) の流動資産 | 空欄 | **0 円** → 純資産が小さく出る | 空欄 |
+   | 上書き (`parseOverrideValue`) | `1,000,000` / `50%` | 「半角数字で入力してください」で断る | 1000000 / 50 |
+   | Shopify の取り込み (`parseAmount`) | `1億` / `12万` / `1e3` / `2024年12月31日` | **1 / 12 / 13 / 20,241,231 円**として記録 | 読めない |
+   | 同 | `-500` | **500 円**として記録 | −500 (記録しない) |
+   | 同 | `１２，０００` | 記録しない | 12000 |
+   | 投資信託の銘柄 (`parseHoldingEntry`) の取得額 | 全角の空白 1 つ | **0 円** → 評価額 150 万円の銘柄の評価損益が **¥1,500,000** (「未入力」0 件) | 空欄 |
+   | 同 評価額 | 全角の空白 1 つ | 「… (空欄にすると自動計算)」で断る —— **空に見える欄を空にしろと言う** | 空欄 |
+
+   ★ `parseOverrideValue` の注記は「全角・カンマ・単位語は受けない（`inputGuards` と同じ方針で…）」と述べていた ——
+   **後半は偽だった** (`inputGuards` = `readNumeric` は全角・桁区切り・通貨記号・`%` を読む)。
+   ★ Shopify の欄は利用者が打つ「金額 (¥12,000)」で、数字と `.` 以外を**どこからでも**落としてつないでいた ——
+   2026-09-06 に `readNumeric` の `NUMBER_SHAPE` が閉じた「飾りを位置を見ずに落とすと別の数になる」と同じ形が
+   この 1 か所に残っていた。
+
+2. **直し** —— 書き手の読みの口を 1 つ置いた: `readEntryNumber(v)` (`shared/readNumeric.ts`) →
+   `blank` (null / undefined / **空白だけ** —— 全角の空白・タブを含む) / `unreadable` / `number` (`-0` は 0 へ)。
+   書き手 **10 関数 (8 ファイル)** がそこを通る: 売上 / KPI 実績・予算 / 貸借対照表 / 経営ハイライトのしきい値 /
+   水耕栽培の記録・ロット・運転設定 / 上書き (手入力の数値 `parseManualMetric` も同じ口) / Shopify の金額 / 投資信託の銘柄。
+   ★ **空欄の扱いは欄ごとに宣言する** —— 金額の必須欄は**断る** (「売上原価が未入力です（無いなら 0 と入力してください）」)・
+   任意の欄は「未入力」として持つ (人件費・貸借対照表の内数・水耕の測定値)・既定を持つ欄は既定へ
+   (しきい値・運転設定の必須欄)。**0 として黙って入れない** —— 空欄と「実測した 0」は別の事実である。
+
+3. **答えが変わる入力 (正直に書く)**:
+   - `1,000` / 全角 / `¥` は**通るようになった** (売上・KPI・貸借対照表・上書き・手入力の数値)。
+   - `1e3` / `0x10` / `.5` / 単位語は**断るようになった** (黙って別の数にしない)。
+   - **金額の必須欄の空欄は断るようになった** —— KPI の画面で広告宣伝費・減価償却費を空けていた人は
+     「0 と入力してください」と言われる。**CSV の空のセルも同じ** (その行は飛ばし、理由を言う —— 下の 4)。
+   - e2e の貸借対照表の入力は当期純利益を空けていたので、`0` を打つ形へ直した (`scripts/e2e/core.cjs`)。
+   - 手入力の欄 (`manualDataSectionOnScreen`) の断る標本は `'４５００'` (全角数字) だった —— **全角数字は数字である**。
+     どちらの口でも読めない形 (`'450万'`) へ替え、全角と桁区切りを読むことを別の検査で留めた。
+     `manualData.test.ts` の「値の検証は上書きと同じ規則」も `'1,000'` を断ることを主張していたので、
+     **「上書きと同じ答えを出す」ことそのもの**を 5 単位 × 11 標本で主張する形へ直した。
+
+4. **取り込みの知らせが理由を言う** —— 直す前の知らせは `2 件はスキップ (行 3, 4)` と**行番号だけ**で、
+   書き手が返していた理由の文を画面が捨てていた。空のセルや `1万` は表計算ソフトで見ても読めてしまうので、
+   行番号だけでは原因が見つからない —— しかも 3 の変更で**以前は通った行が飛ばされうる**ようになった。
+   `skippedRowsDetail` (`data/importFile.ts`) が理由を 3 行まで並べ、残りを「ほか N 行」と言う。
+   売上と KPI 実績の画面がそれを読む。売上の「取り込める行がありませんでした (ヘッダ: …)」の見出しも
+   手で写した列名をやめ `SALES_CSV_COLUMNS` から導く。
+
+5. **機械**:
+   - `writerNumberReading.test.ts` (**12 件**) —— 母集団は**走査で導く** (画面が import して呼ぶ `parse*` /
+     `*FromCsv` / `*To…Entry` —— 実測 **33 件**) を台帳と**両方向**に。数を読む **18 件**は標本を持ち、
+     4 つの不変条件 (**言い直しても答えが変わらない**・読めない物は断る・空欄は宣言どおり・読めた数はそのまま) を
+     読める 17 / 読めない 13 / 空欄 4 の標本で当てる。加えて **`2b` 断るときは理由の文を持つ** (Error でない値・
+     空の文で断らない —— 下の 7 で見つけた道具の盲点のため・針の標本つき)。数を読まない **7 件**は構文木で本体を検める
+     (再 export も辿る)・型を持たない **8 件**は理由つき。
+   - `importSkipReasonsOnScreen.test.ts` (**3 件**・jsdom) —— 実物の 2 画面に実物の File を渡し、書き手の理由が
+     知らせに出ることを見る (期待値は同じ書き手を呼んで導く —— 文面を写すと書き手の文を直した日に古びる)。
+   - `numericInputReaderCensus.test.ts` —— 「読み手を持たない画面」の行が名指しする書き手は、その画面が実際に
+     呼ぶこと。★ **直す前の理由の 1 つは偽だった** —— 水耕の画面の理由は運転設定の読み `readControlRecord` を
+     挙げていたが、それは保存値を読む物で入力欄の読み手ではない (`parseCropNumber` も経営サマリーの物)。
+   - 単体 7 ファイル + `readNumeric.test.ts` (`readEntryNumber` の表と `readNumeric` との一致) + `importFile.test.ts`。
+   - 例外の文面の census (`errorMessageSurfaceCensus`) に `importFile.ts` を `ownThrow` で 1 行 ——
+     `skippedRowsDetail` は捕まえず、`salesCsv` / `kpiActualsCsv` が捕まえた文を運ぶだけ (向こうの 2 行が出どころ)。
+   - 法則 **110 本目** `writer-reads-like-the-screen`。
+
+6. **対照 12 方向すべて鳴り、それぞれ狙った検査に当たる** (単体の census 10 + 画面 2・復帰は中身の md5 で一致):
+
+   | 対照 | 鳴った検査 |
+   | --- | --- |
+   | A 売上の金額を `Number()` へ戻す (= 直す前の形) | ❌3 (言い直し・読めない・空欄) |
+   | B Shopify の `parseAmount` を「数字と `.` 以外を落としてつなぐ」へ戻す | ❌3 (言い直し・読めない・読めた数) |
+   | C 銘柄の取得額の空欄の判定を `=== ''` へ戻す | ❌2 (言い直し・空欄) |
+   | D しきい値の整数の欄を `Math.floor(Number(v))` へ戻す | ❌4 (4 つの不変条件すべて) |
+   | E 台帳から書き手を 1 行消す (`parseBatch`) | ❌2 (母集団の両方向・標本の台帳) |
+   | F 数を読まないと言う書き手が数を読む (`parseMember`) | ❌1 (構文木) |
+   | G 売上の CSV が金額を自分で `Number()` してから渡す | ❌3 |
+   | H 針を殺す | ❌2 (母集団・走査の標本) |
+   | I 貸借対照表の必須の欄の空欄を 0 へ | ❌1 (空欄) |
+   | J 売上の画面が行番号だけを言う (直す前の知らせ) | ❌1 (jsdom) |
+   | K KPI 実績の画面が行番号だけを言う | ❌1 (jsdom) |
+   | L 期数の断りの文を組む関数が `undefined` を返す (下の 7) | ❌3 (census `2b` + しきい値 2) |
+
+   ★ **G が鳴るのが census の母集団の要点** —— 取り込みの `*FromCsv` も書き手として数えるので、
+   CSV の層で `Number()` してから書き手へ渡す形 (= 書き手の口を迂回する形) も同じ不変条件で落ちる。
+
+7. **変異検査** (`npm run audit:mutate-changed` —— 変更 ∩ `mutate` = **9 ファイル / 2,653 変異体 / 77 分 4 秒**):
+   **97.21%** (Killed 2,127 / 生存 56 / 未到達 5) で break (99.8) を割る (exit 1)。**仕分けた**:
+
+   | 区分 | 件数 | 中身 |
+   | --- | ---: | --- |
+   | **触った行の生存** | **3** | しきい値の期数 (2) と売上の注文件数 (1) の「読めない」判定 —— **3 件とも等価** |
+   | 触っていない行の生存 | 58 | balanceSheet **19** (パス 495 が記録した「残る非 static の 19 件」と同じ) / investments 19 (生存 14 + 未到達 5) / sales 10 / kpiActuals 8 / importFile 1 / overviewOverrides 1 |
+
+   - **等価の理由** —— 読めない結果は `value` を持たず `Number.isInteger(undefined)` は false なので、判定を消しても
+     下の条件が**同じ文で**断る (手で当てて related の **143 ファイル / 1,489 件**・**252 ファイル / 3,479 件**が通る)。
+     判定は**型の絞り込み** (下で `read.value` を読む) のために要る。
+   - **直し** —— 等価な判定を**それだけの 1 行**に分け、理由つきの pragma を置いた。**行全体の pragma にはしない** ——
+     同じ行の本物の判定 (整数か・1 以上か) まで測られなくなる (パス 489 の `persistedShape` と同じ理由)。
+     `pct` の同じ形は**等価ではない** (範囲の比較は `undefined` で false になり素通りする) ので分けていない。
+   - **触っていない行の 58 件はこのパスが作った物ではない** —— 6 ファイルとも検査は**足しただけ**で 1 行も消していないので、
+     以前に殺された変異体がこのパスで生き返る道は無い。`readNumeric.ts` **100.00% (Killed 103)**・
+     `shopifyImport.ts` **100.00% (Killed 15)**。
+   - ★★ **分けた 2 ファイルを測り直すと、分けた行が新しい生存を 1 つ作り、それが検査の道具の盲点だった** ——
+     等価だった 3 件は Ignored になったが (421 変異体 / 21 分 1 秒)、断りの文を組む関数 `refuse` を `() => undefined` にする
+     変異体が**生き残った** —— 覆った検査は 20 件で、**文面を 1 字ずつ照合する検査を含む**。手で当てると
+     `highlightSettings.test.ts` の 25 件が**すべて通る**。原因: **Vitest の `toThrow('文面')` / `toThrow(/…/)` /
+     `toThrowError('文面')` は chai の `throws` に委ねられ、chai は投げた値が偽 (`undefined` / `null` / `0` / `''` /
+     `false`) だと文面の照合そのものを飛ばして合格にする** (vitest 4.1.11 / chai 6.2.2 で 5 形とも実測)。
+     `toThrow(new Error(…))` / `toThrow(Error)` / `toThrow(expect.objectContaining(…))` は Vitest 自身の道を通るので、
+     偽の値では**落ちる** (実測)。
+     - 直し: 書き手の census に **`2b` 「断るときは理由の文を持つ」** (Error でない値・空の文で断らない —— 画面は理由を
+       出せない・標本つき) を足し、しきい値の検査は期数の断りを `toThrow(new Error(…))` で照合する (読めない入力の
+       行も)。**対照 L** (`refuse` が `undefined` を返す) は **❌3** (census `2b` + しきい値 2)。判定の行を消す形は
+       今も等価 (**37 件緑**)。
+     - 測り直し: `highlightSettings.ts` は **100.00% (Killed 48 / 生存 0 · 68 変異体 / 9 分 10 秒)**・`sales.ts` は **97.10% (Killed 301 / 生存 9)** で**触った行の生存 0** —— 生存 9 件は
+       すべて触っていない行で、1 度目の 10 件のうち 1 件 (注文名の判定の `&&` → `||`) は今回 jsdom の画面の検査が
+       殺した (**触っていない行の測定の揺れ**として記録する —— 1 度目は同じ変異体を生存と報告した)。
+
+8. **閉じていない物 (測った)**:
+   - **針の死角** —— 書き手の母集団は 3 つの綴りで数えるので、そう名付けられていない書き手は映らない
+     (`functionBody` の注記と検査の docblock に書いた)。
+   - **売上・KPI・Shopify の入力欄は `inputMode` を持たない**ので `numericInputReaderCensus` の母集団の外 ——
+     保存の前に ⛔ は出ない (断りは保存したときに出る。読み方は今は画面と同じ)。
+   - **素の `type="number"` が 3 か所** (`TalentPage.tsx:361` / `:501` / `CloudSyncPanel.tsx:133`) —— ブラウザが
+     数字でない字を捨てるので、読めない値は「空欄」として届く (パス 374 の形)。
+   - **`toThrow('文面')` の盲点の母集団は数えていない** —— 製品のコードで断りの値を**関数で組んで** `throw` するのは
+     今は 2 か所 (このパスの `refuse()`) だけで、捕まえた値を**そのまま投げ直す**所が 16 か所在る (捕まえた値が Error で
+     なければ、その道の文面の検査は照合されない)。`toThrow(文字列 | 正規表現)` で断りを照合する検査は実測 **1,196 行**。
+     16 か所の投げ直しに偽の値が届く道が在るかは**測っていない**し、**機械も置いていない** —— 在るのは規約 (CLAUDE.md) と
+     書き手の census の `2b` だけ。
+   - **パス 497 候補** —— KPI 予算の重複判定が購読の写しを読む (パス 384 の census の針は `records` / `entries` の
+     綴りしか見ず、別名 `budgets` ほか 5 画面が映らない)。
+
 ## パス 495 (検査の中でモジュールを初めて評価しない) が測って、次のパスへ残した物 (2026-09-27)
 
 パス 494 が残した「全掃引の static な生存 1,150 件」の原因を**対照で確かめて**直した。パス 494 の見立て
@@ -17470,7 +17610,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **107 ファイル / 276 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 275 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -17521,7 +17661,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/hydroponicsSetup.ts` | 2 |
 | `src/renderer/data/kpiActuals.ts` | 2 |
 | `src/renderer/data/sales.ts` | 2 |
-| `src/renderer/data/shopifyImport.ts` | 2 |
 | `src/renderer/data/statementAccounts.ts` | 2 |
 | `src/renderer/data/statementEquity.ts` | 2 |
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
@@ -17559,6 +17698,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/portfolioAnnex.ts` | 1 |
 | `src/renderer/data/profitSensitivity.ts` | 1 |
 | `src/renderer/data/recordShapeAudit.ts` | 1 |
+| `src/renderer/data/shopifyImport.ts` | 1 |
 | `src/renderer/data/teamRadarDraft.ts` | 1 |
 | `src/renderer/data/trendAlerts.ts` | 1 |
 | `src/renderer/data/villageData.ts` | 1 |
@@ -30177,7 +30317,7 @@ shared **157** モジュール / 両ビルドが import **80** / うち否定で
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollama` | 1 | 5 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
-| `readNumeric` | 0 | 5 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
+| `readNumeric` | 0 | 12 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `rfc2822` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本 |
 | `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは定数 2 つと述語 2 つ (`isImpossibleReturnPct` / `isAboveEntryCeilingPct` —— パス 493j で 2 → 4) だけで、**`isPlannableRate` / `isPlannableYears` はどの述語の中からも呼ばれない** (2 つの述語はどちらも 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |
 | `scanTarget` | 0 | 1 | 対称 (実測・パス 282 で辿り直した) —— パス 247 は「対称 (実測)」の 4 文字だけで、**根拠が書かれていなかった**。パス 247 は母集団を初めて数えた回で、しかも到達は 1 ホップで測っていた (閉包へ直したのはパス 268) ので、その「実測」が何を見たのかは今から確かめられない。 ★ 実測 (パス 282): 越境するのは `validateScanUrl` **1 つだけ** (`main/clients/security.ts` と `renderer/data/saasWriteWeb.ts` の両方が呼ぶ)。否定のあとの動作は**字まで同じ 1 行** —— `if (!checked.ok) throw new Error(SCAN_URL_MESSAGES[checked.reason]);`。`describeScanUrlRisk` (内部・社内ホストの警告) の読み手は `SecurityPage.tsx` だけ、`looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけなので越境しない。 ★ ただし `SCAN_URL_MESSAGES` (4 行) は**ビルドごとに 1 つずつ**在った —— 字は一致していたが一致を留めている物が何も無く、パス 167 / 250 / 252 / 269 / 273 が1 件ずつ閉じてきた家系。URL を第三者 (VirusTotal) へ渡す前の関門の断り文なので、`shared/scanTarget.ts` へ寄せて `scanTarget.test.ts` が「読む側は共有の表を読み、自分の写しを持たない」を両方向に留める。 ★ 設計として残る非対称ではない点: 内部ホスト・秘密らしきクエリ引数は**関門ではなく警告**である (`validateScanUrl` の失敗は empty / too-long / not-a-url / not-web の 4 つだけ)。警告を出す画面は両ビルドで同じ 1 本なので対称。 ★ パス 321: `validateScanUrl` / `validateBreachEmail` を呼ぶのは `shared/api/security.ts` の `checkScanUrl` / `checkBreachEmail` の 1 つずつになり、main と saasWriteWeb はそれを通る (直に import しない)。「字まで同じ 1 行」は 1 行になった |

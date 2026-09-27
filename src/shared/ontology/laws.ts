@@ -606,6 +606,34 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus')), test(T.renderer('numericInputReaderCensus')), test(T.shared('prereleaseVersionOrder')), test(T.shared('sessionGreetingNumbers')), test(T.shared('yenTemplateCensus')), test(T.renderer('numericCeilingEnforced'))],
   },
   {
+    id: 'writer-reads-like-the-screen',
+    family: 'single-rule',
+    name: '保存する書き手は、画面と同じ読み方で数を読む',
+    statement:
+      '画面の関門と計算は数を `readNumeric` で読む。**保存する書き手** (`parse*` —— 画面の欄を受け取って記録の形にする関数) が'
+      + '別の読み方をすると、同じ文字列に 2 つの答えが出る。実測 (2026-09-27): 書き手 9 本が `Number()` で読み直しており、'
+      + '`1,000` / 全角の `１０００` / `¥1,000` を「0 以上の数値で入力してください」と**偽の理由で**断り、`1e3` / `0x10` / `.5` を'
+      + '別の数として黙って保存し、**必須の金額の空欄を 0 円として記録していた** —— 売上原価を空けた期は「売上総利益率 100%」、'
+      + '流動資産を空けた控えは純資産が小さく出て、どちらも金融機関等提出用の書面へ届く。Shopify の注文額は数字以外を'
+      + 'どこからでも落として `1億` を 1 円・`-500` を 500 円・`2024年12月31日` を 20,241,231 円にしていた。'
+      + '**読み手をそろえても空欄の判定が割れていた** —— 銘柄フォームは空文字だけを空欄とみなし、全角の空白 1 つで取得額が 0 円になり、'
+      + '評価額 ¥1,500,000 の銘柄が「評価損益 ¥1,500,000」「取得額が未入力 0 件」と出ていた (評価額の欄は、空に見える欄を'
+      + '「空欄にすると自動計算」と断っていた)。直しは口を 1 つ (`readEntryNumber` —— 空欄 / 読めない / 数) にし、空欄の扱いは'
+      + '欄ごとに宣言する (断る / 既定 / 「未入力」)。**振る舞いで留める** —— 欄に打った文字列を「画面が読んだ数を半角で打ち直した物」に'
+      + '言い直しても書き手の答えが変わらないこと (書き手 × 欄 × 標本の総当たり)。書き手の母集団は画面の import から導いて台帳と'
+      + '両方向に突き合わせ、「数を読まない」と名乗る行は構文木で本体を検める。'
+      + '**断るときは理由の文つきの Error で** —— Vitest の `toThrow(\'文面\')` は文面の照合を chai の `throws` に委ね、'
+      + 'chai は投げた値が偽 (`undefined` / `null` / `0` / `\'\'` / `false`) だと照合を飛ばして合格にする (実測)。'
+      + '断りの文を関数で組んだら、それが `undefined` を返す変異体が文面を 1 字ずつ照合する検査 20 件を素通りした —— '
+      + 'census は断りが Error であることを見る (`2b`)。',
+    provenance: ['パス 496', 'パス 375 (画面の読み手を 1 つに)', 'パス 493l (関門が結果を述べる)', 'パス 123 (取得額の空欄は未入力)'],
+    enforcedBy: [
+      test('src/renderer/data/__tests__/writerNumberReading.test.ts'),
+      test(T.shared('readNumeric')),
+      test(T.renderer('numericInputReaderCensus')),
+    ],
+  },
+  {
     id: 'no-weakness-as-spec',
     family: 'single-rule',
     name: '弱さを仕様として書き留めない',

@@ -55,9 +55,15 @@ describe('parseBalanceSheet — validation messages & boundaries', () => {
     expect(() => parseBalanceSheet({ ...VALID, netIncome: 'abc' })).toThrow('当期純利益は数値で入力してください');
   });
 
-  it('treats an omitted net income (undefined) as 0', () => {
+  /*
+   * ★ **欄が無い / 空欄の当期純利益は断る** (2026-09-27 · パス 496)。それまでは
+   * `Number(v == null ? 0 : v)` で 0 とし、打っていない欄が「当期純利益 0」として
+   * ROA / ROE の 0% になっていた —— この検査はその倒し込みを仕様として留めていた
+   * (題名 "treats an omitted net income (undefined) as 0")。0 と「未入力」は別の事実。
+   */
+  it('★ 欄の無い当期純利益は「未入力」として断る (0 に倒さない)', () => {
     const { netIncome: _omit, ...noNet } = VALID;
-    expect(parseBalanceSheet(noNet).netIncome).toBe(0);
+    expect(() => parseBalanceSheet(noNet)).toThrow('当期純利益が未入力です');
   });
 
   it('allows a component equal to its cap but rejects exceeding it (strict >)', () => {
@@ -103,15 +109,48 @@ describe('parseBalanceSheet', () => {
     expect(() => parseBalanceSheet({ ...REQUIRED, currentLiabilities: 100, accountsPayable: 200 })).toThrow(/仕入債務/);
   });
 
-  it('treats a blank net income as zero but leaves blank optional items undefined', () => {
-    // 当期純利益は**必須**の欄なので空欄 = 0 のまま (損失も 0 も意味が定まる)。
+  it('★ 空欄の当期純利益は断り、内数の任意欄の空欄は「未入力」(undefined) のまま', () => {
+    // 当期純利益は**必須**の欄。2026-09-27 (パス 496) までは空欄を 0 とし、この検査も
+    // 「必須の欄なので空欄 = 0 のまま」と留めていた —— 打っていない欄が ROA / ROE 0% になる。
+    // 必須なら空欄は断る (損益が無いなら 0 と打つ)。
+    expect(() => parseBalanceSheet({ ...REQUIRED, netIncome: '' })).toThrow('当期純利益が未入力です');
+    expect(() => parseBalanceSheet({ ...REQUIRED, netIncome: '   ' })).toThrow('当期純利益が未入力です');
+    // 対照: 0 と打てば 0 が残る (未入力と実測の 0 を取り違えない)。
+    expect(parseBalanceSheet({ ...REQUIRED, netIncome: '0' }).netIncome).toBe(0);
     // 内数の任意欄は「入れていない」を保つ —— 0 に倒すと CCC 0 日が出る (下の対照)。
-    const bs = parseBalanceSheet({ ...REQUIRED, netIncome: '' });
-    expect(bs.netIncome).toBe(0);
+    const bs = parseBalanceSheet({ ...REQUIRED });
     expect(bs.inventory).toBeUndefined();
     expect(bs.accountsReceivable).toBeUndefined();
     expect(bs.accountsPayable).toBeUndefined();
     expect(bs.cash).toBeUndefined();
+  });
+
+  it('★ 必須の欄の空欄は「未入力」として欄を名指しして断る (0 円に倒さない —— パス 496)', () => {
+    const cases: Array<[string, string]> = [
+      ['currentAssets', '流動資産'],
+      ['fixedAssets', '固定資産'],
+      ['currentLiabilities', '流動負債'],
+      ['fixedLiabilities', '固定負債'],
+    ];
+    for (const [key, label] of cases) {
+      for (const blank of ['', '  ', null, undefined]) {
+        expect(() => parseBalanceSheet({ ...REQUIRED, [key]: blank }), `${key}=${JSON.stringify(blank)}`).toThrow(
+          `${label}が未入力です（無いなら 0 と入力してください）`,
+        );
+      }
+    }
+  });
+
+  it('★ 読みは画面と同じ 1 つ —— 桁区切り・全角・通貨記号は読み、指数と 16 進は断る (パス 496)', () => {
+    const bs = parseBalanceSheet({ ...REQUIRED, currentAssets: '1,000,000', fixedAssets: '５００', currentLiabilities: '¥300,000', netIncome: '－5' });
+    expect(bs.currentAssets).toBe(1_000_000);
+    expect(bs.fixedAssets).toBe(500);
+    expect(bs.currentLiabilities).toBe(300_000);
+    expect(bs.netIncome).toBe(-5);
+    // 直す前は Number() が '1e3' を 1000、'0x10' を 16 として黙って保存していた。
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: '1e3' })).toThrow('流動資産は 0 以上の数値で入力してください');
+    expect(() => parseBalanceSheet({ ...REQUIRED, fixedAssets: '0x10' })).toThrow('固定資産は 0 以上の数値で入力してください');
+    expect(() => parseBalanceSheet({ ...REQUIRED, netIncome: '1e3' })).toThrow('当期純利益は数値で入力してください');
   });
 
   it('★ 対照: 0 と入力すれば 0 が残る (未入力と実測の 0 を取り違えない)', () => {

@@ -59,3 +59,24 @@ export async function readImportText(file: ImportSource, maxBytes: number, label
 export function importSaveFailedNote(rows: number): string {
   return `CSV の ${rows} 行を保存できなかったため、1 件も取り込んでいません。画面上端の知らせの理由を解消してから、同じファイルをもう一度選んでください。`;
 }
+
+/** 飛ばした行の理由を、いくつまで並べるか (残りは件数だけ言う)。 */
+export const MAX_SKIPPED_ROW_REASONS = 3;
+
+/**
+ * **取り込みで飛ばした行を、理由つきで言う** (2026-09-27 · パス 496)。
+ *
+ * それまでの知らせは「2 件スキップ (行 2, 5)」と**行番号しか言わず**、書き手が組んだ理由
+ * (「売上原価が未入力です（無いなら 0 と入力してください）」ほか) は捨てていた —— 利用者は
+ * ファイルのどこを直せばよいか分からない。パス 496 で必須の金額の空欄を断るようにしたので、
+ * 表計算ソフトで空けたセルの行が飛ぶことが増える。理由を言わない取り込みは、その変更を
+ * 黙った取りこぼしに変える。
+ *
+ * 並べるのは先頭 `MAX_SKIPPED_ROW_REASONS` 行まで (1,000 行のファイルで知らせが画面を
+ * 埋めないように)。残りは件数で言う。
+ */
+export function skippedRowsDetail(errors: readonly { readonly row: number; readonly message: string }[]): string {
+  const shown = errors.slice(0, MAX_SKIPPED_ROW_REASONS).map((e) => `行 ${e.row}: ${e.message}`);
+  const rest = errors.length - shown.length;
+  return rest > 0 ? `${shown.join(' / ')} / ほか ${rest} 行` : shown.join(' / ');
+}

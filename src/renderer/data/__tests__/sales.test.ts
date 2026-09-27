@@ -310,3 +310,39 @@ describe('同じ記録の 2 件目 (パス 126)', () => {
     expect(countStoredRows(existing, [])).toBe(0);
   });
 });
+
+/**
+ * **売上の読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。それまでは `Number()` で、
+ * `'1,000'` を偽の理由で断り、`'1e3'` を 1000 として黙って保存し、空欄を 0 円の売上にしていた。
+ * 書き手 × 欄 × 標本の総当たりは `writerNumberReading.test.ts` が持つ —— ここは文面を留める。
+ */
+describe('parseSalesEntry — 画面と同じ読み方 (パス 496)', () => {
+  const base = { date: '2026-09-01', channel: 'shopify', orders: '1' } as const;
+  it('★ 桁区切り・全角・通貨記号を読む', () => {
+    for (const raw of ['1,000', '１０００', '¥1,000', '1,000円']) {
+      expect(parseSalesEntry({ ...base, amount: raw }).amount, raw).toBe(1000);
+    }
+  });
+  it('★ 指数表記・16 進は別の数にせず断る', () => {
+    for (const raw of ['1e3', '0x10', '.5']) {
+      expect(() => parseSalesEntry({ ...base, amount: raw }), raw).toThrow('売上金額は 0 以上の数値で入力してください');
+    }
+  });
+  it('★ 空欄は 0 円にせず「未入力」と断る (0 円なら 0 と打つ)', () => {
+    for (const raw of ['', '  ', '　']) {
+      expect(() => parseSalesEntry({ ...base, amount: raw }), JSON.stringify(raw)).toThrow(
+        '売上金額が未入力です（0 円の売上なら 0 と入力してください）',
+      );
+    }
+    // 対照: 0 と打てば 0 円の売上として残る。
+    expect(parseSalesEntry({ ...base, amount: '0' }).amount).toBe(0);
+  });
+  it('★ 注文件数は整数でなければ断る (空欄も)', () => {
+    for (const raw of ['1.5', '', '1e1']) {
+      expect(() => parseSalesEntry({ ...base, amount: '1000', orders: raw }), JSON.stringify(raw)).toThrow(
+        '注文件数は 1 以上の整数で入力してください',
+      );
+    }
+    expect(parseSalesEntry({ ...base, amount: '1000', orders: '２' }).orders).toBe(2);
+  });
+});

@@ -242,6 +242,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/data/__tests__/emotionsLogMoodParity.test.ts',
   'src/renderer/data/__tests__/namedEscapeHatchReachable.test.ts',
   'src/renderer/data/__tests__/sourceUrlParity.test.ts',
+  'src/renderer/data/__tests__/writerNumberReading.test.ts',
   'src/renderer/oauth/__tests__/pkceSession.test.ts',
   'src/renderer/pages/__tests__/aiEgressPairs.helpers.ts',
   'src/renderer/pages/__tests__/assistantAppVoice.test.ts',

@@ -21,6 +21,7 @@
  * 「置ける数値の一覧」がそのまま画面の入力欄にもなる。
  */
 import { moreThanChars } from '../../shared/inputCeiling';
+import { readEntryNumber } from '../../shared/readNumeric';
 
 /** 数値の種類。入力の検証と表示単位に使う。 */
 export type MetricUnit = 'yen' | 'pct' | 'count' | 'days' | 'months';
@@ -154,18 +155,25 @@ const LIMITS: Record<MetricUnit, { min: number; max: number; integer: boolean }>
 
 export type OverrideValueResult = { ok: true; value: number } | { ok: false; reason: string };
 
+/** 読めない入力の断り。**読める形を名指しする** —— 全角・桁区切り・通貨記号は読む。 */
+export const OVERRIDE_UNREADABLE_REASON =
+  '数値として読めません（「万」「億」などの単位語や指数表記は使わず、数字で入力してください）。';
+
 /**
- * 入力文字列を数値にする。全角・カンマ・単位語は受けない
- * （`inputGuards` と同じ方針で、曖昧な入力は通さず言い直してもらう）。
+ * 入力文字列を数値にする —— **読みは画面と同じ 1 つ** (`readEntryNumber`)。
+ *
+ * ★ 2026-09-27 (パス 496) まで、ここは独自の正規表現 `^-?\d+(\.\d+)?$` で読み、この注記は
+ * 「全角・カンマ・単位語は受けない（`inputGuards` と同じ方針で…）」と述べていた。
+ * **後半は偽だった** —— `inputGuards` (= `readNumeric`) は全角・桁区切り・通貨記号・
+ * `%` を読む。同じアプリの 2 つの口が同じ文字列に別の答えを出していた:
+ * `'1,000,000'` (売上高) や `'50%'` (％ の欄) をここだけが「半角数字で入力してください」と断った。
+ * 読めない形 (単位語・指数表記・数字の間の記号) は、どちらの口でも断る。
  */
 export function parseOverrideValue(raw: string, unit: MetricUnit): OverrideValueResult {
-  const text = raw.trim();
-  if (text.length === 0) return { ok: false, reason: '数値を入力してください。' };
-  if (!/^-?\d+(\.\d+)?$/.test(text)) {
-    return { ok: false, reason: '半角数字で入力してください（カンマ・単位・記号は入れない）。' };
-  }
-  const value = Number(text);
-  if (!Number.isFinite(value)) return { ok: false, reason: '数値として読めません。' };
+  const read = readEntryNumber(raw);
+  if (read.kind === 'blank') return { ok: false, reason: '数値を入力してください。' };
+  if (read.kind === 'unreadable') return { ok: false, reason: OVERRIDE_UNREADABLE_REASON };
+  const value = read.value;
   const limit = LIMITS[unit];
   if (limit.integer && !Number.isInteger(value)) return { ok: false, reason: '整数で入力してください。' };
   if (value < limit.min) return { ok: false, reason: `${limit.min} 以上で入力してください。` };

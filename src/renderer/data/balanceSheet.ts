@@ -13,6 +13,7 @@
 import { isCalendarDateOrMonth } from '../../shared/isoDate';
 import { latestRecord } from './latestRecord';
 import { relationIssue } from './recordRelations';
+import { readEntryNumber, type EntryNumber } from '../../shared/readNumeric';
 
 export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
 
@@ -135,17 +136,32 @@ export function parseBalanceSheet(input: {
   interestBearingDebt?: unknown;
   netIncome?: unknown;
 }): BalanceSheet {
-  // Number(number)===number なので typeof 分岐は不要 (簡約して equivalent mutant を排除)。
-  const requireNonNegative = (v: unknown, label: string): number => {
-    const n = Number(v);
-    if (!Number.isFinite(n) || n < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
-    return n;
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+   * `Number()` で、`'1,000,000'` や全角の数字を「0 以上の数値で入力してください」と
+   * **偽の理由で**断り、`'1e3'` / `'0x10'` を黙って別の数として保存し、**必須の欄の空欄を
+   * 0 円**として記録していた —— 流動資産を空けた控えは純資産がその額だけ小さく出て、
+   * 負債より資産が多い会社でも書面 §4 が「自己資本比率 △…（債務超過）」を刷りうる
+   * (パス 444 と同じ出口へ、壊れた保存値ではなく**空欄から**届く道)。
+   * 必須の欄の空欄は断る (0 なら 0 と打つ)。内数の任意欄の空欄は
+   * 今までどおり「未入力」(`undefined`) として持つ。
+   */
+  const nonNegativeOf = (read: EntryNumber, label: string): number => {
+    if (read.kind === 'blank') throw new Error(`${label}が未入力です（無いなら 0 と入力してください）`);
+    if (read.kind === 'unreadable' || read.value < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
+    return read.value;
   };
-  // Number('')===0 なので '' の特別扱いは不要。null/undefined のみ 0 に寄せる。
+  const requireNonNegative = (v: unknown, label: string): number => nonNegativeOf(readEntryNumber(v), label);
+  /**
+   * 当期純利益 (損失はマイナスで打つ)。**空欄は断る** —— 2026-09-27 (パス 496) までは
+   * `Number('') === 0` に任せて 0 とし、打っていない欄が「当期純利益 0」として
+   * ROA / ROE の 0% になっていた (0 と「未入力」は別の事実)。
+   */
   const finite = (v: unknown, label: string): number => {
-    const n = Number(v == null ? 0 : v);
-    if (!Number.isFinite(n)) throw new Error(`${label}は数値で入力してください`);
-    return n;
+    const read = readEntryNumber(v);
+    if (read.kind === 'blank') throw new Error(`${label}が未入力です（損益が無いなら 0、損失ならマイナスで入力してください）`);
+    if (read.kind === 'unreadable') throw new Error(`${label}は数値で入力してください`);
+    return read.value;
   };
   const asOf = typeof input.asOf === 'string' ? input.asOf.trim() : '';
   // 基準日: 未入力 ('') は許す。書くなら暦に在る `YYYY-MM-DD` か `YYYY-MM` (パス 115 —— それまでは
@@ -155,15 +171,11 @@ export function parseBalanceSheet(input: {
   }
   /**
    * 内数の任意欄。**空欄は `undefined` のまま返す** (0 に倒さない。理由は型の説明)。
-   *
-   * `''` の判定はここで**要る** —— 画面の入力欄は未入力を `''` で渡してくるので、
-   * `Number('')===0` に任せると空欄が「0 円と実測した」に化ける。空白だけ (`'  '`)
-   * も同じ扱い (`Number('  ')` も 0 になるため trim してから見る)。
+   * 空欄 (空文字・空白だけ・欄が無い) の判定は `readEntryNumber` が持つ。
    */
   const optNonNeg = (v: unknown, label: string): number | undefined => {
-    if (v == null) return undefined;
-    if (typeof v === 'string' && v.trim() === '') return undefined;
-    return requireNonNegative(v, label);
+    const read = readEntryNumber(v);
+    return read.kind === 'blank' ? undefined : nonNegativeOf(read, label);
   };
   const currentAssets = requireNonNegative(input.currentAssets, '流動資産');
   const cash = optNonNeg(input.cash, '現預金');

@@ -12,6 +12,7 @@
 import { isCalendarDate } from '../../shared/isoDate';
 import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 import { moreThanChars } from '../../shared/inputCeiling';
+import { readEntryNumber } from '../../shared/readNumeric';
 
 export const SALES_COLLECTION = 'sales-entries';
 
@@ -110,12 +111,29 @@ export function parseSalesEntry(input: {
   if (!isValidDate(input.date)) throw new Error('日付は YYYY-MM-DD 形式で入力してください');
   if (!isSalesChannel(input.channel)) throw new Error('チャネルが不正です');
 
-  // Number(number)===number なので typeof 分岐は不要 (簡約して equivalent mutant を排除)。
-  const amount = Number(input.amount);
-  if (!Number.isFinite(amount) || amount < 0) throw new Error('売上金額は 0 以上の数値で入力してください');
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+   * `Number()` で、`'1,000'` / 全角の `'１０００'` / `'¥1,000'` を「0 以上の数値で入力して
+   * ください」と**偽の理由で**断り、`'1e3'` を 1000・`'0x10'` を 16 として黙って保存し、
+   * **空欄を 0 円の売上として**記録していた (`Number('') === 0`)。空欄は断る ——
+   * 0 円の売上を記録したいなら 0 と打てばよく、打っていない欄を 0 と読むと
+   * 平均受注単価と売上高が黙って下がる (0 と「未入力」は別の事実 —— パス 395)。
+   */
+  const amountRead = readEntryNumber(input.amount);
+  if (amountRead.kind === 'blank') throw new Error('売上金額が未入力です（0 円の売上なら 0 と入力してください）');
+  if (amountRead.kind === 'unreadable' || amountRead.value < 0) throw new Error('売上金額は 0 以上の数値で入力してください');
+  const amount = amountRead.value;
 
-  const orders = Number(input.orders);
-  if (!Number.isInteger(orders) || orders < 1) throw new Error('注文件数は 1 以上の整数で入力してください');
+  const ordersRead = readEntryNumber(input.orders);
+  const ordersRefusal = '注文件数は 1 以上の整数で入力してください';
+  // 空欄・読めない入力の判定は**型の絞り込みのため**に要る (下の行で `ordersRead.value` を読む)。
+  // 実行時には等価 —— その結果は `value` を持たず `Number.isInteger(undefined)` は false なので、
+  // 消しても下の行が同じ文で断る (手で当てて related の 3,479 件が通る —— パス 496)。
+  // 判定を 1 行に分けたのは、pragma が同じ行の本物の判定 (整数か・1 以上か) まで隠さないため。
+  // Stryker disable next-line ConditionalExpression: 等価 —— 消しても下の行が Number.isInteger(undefined) で同じ文を出す
+  if (ordersRead.kind !== 'number') throw new Error(ordersRefusal);
+  if (!Number.isInteger(ordersRead.value) || ordersRead.value < 1) throw new Error(ordersRefusal);
+  const orders = ordersRead.value;
 
   const entry: SalesEntry = { date: input.date, channel: input.channel, amount, orders };
   if (typeof input.note === 'string' && input.note.trim().length > 0) {

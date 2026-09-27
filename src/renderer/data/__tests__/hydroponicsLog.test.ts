@@ -315,3 +315,22 @@ describe('設定の読み込み', () => {
     expect(targetsFrom(saved).airTempHighC).toBe(30);
   });
 });
+
+/**
+ * **測定値の読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。`Number()` は全角の「６．２」を断り、
+ * `'.5'` / `'1e1'` を黙って読んでいた。
+ */
+describe('parseReading / parseBatch — 画面と同じ読み方 (パス 496)', () => {
+  it('★ 全角の測定値を読み、指数表記は断る', () => {
+    expect(parseReading({ at: '2026-09-01', values: { ph: '６．２' } }).values.ph).toBe(6.2);
+    expect(() => parseReading({ at: '2026-09-01', values: { ph: '6e0' } })).toThrow('は数値で入力してください');
+  });
+  it('★ 空白だけの欄は「未測定」(null)', () => {
+    const r = parseReading({ at: '2026-09-01', values: { ph: '6', ec: '　' } });
+    expect(r.values.ec).toBeNull();
+  });
+  it('★ パネル枚数の桁区切りを読む', () => {
+    const b = parseBatch({ id: 'L1', cropId: 'lettuce', sowDate: '2026-09-01', panels: '1,200', state: 'nursery' });
+    expect(b.panels).toBe(1200);
+  });
+});

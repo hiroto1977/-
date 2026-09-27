@@ -272,10 +272,11 @@ async function desktopSuite(browser) {
   const bsFill = async (rows) => {
     for (const [ph, v] of rows) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
   };
-  await bsFill([['基準日', '2026-03-31'], ['流動資産', '1000000'], ['固定資産', '500000'], ['流動負債', '300000'], ['固定負債', '200000']]);
+  // 当期純利益は必須の欄 —— 空欄は「未入力」として断る (0 に倒さない・パス 496)。
+  await bsFill([['基準日', '2026-03-31'], ['流動資産', '1000000'], ['固定資産', '500000'], ['流動負債', '300000'], ['固定負債', '200000'], ['当期純利益', '0']]);
   await page.getByRole('button', { name: 'BS を保存', exact: true }).click();
   await page.waitForSelector('[data-bs-row="current"]', { timeout: 15000 });
-  await bsFill([['基準日', '2025-03-31'], ['流動資産', '800000'], ['固定資産', '400000'], ['流動負債', '500000'], ['固定負債', '400000']]);
+  await bsFill([['基準日', '2025-03-31'], ['流動資産', '800000'], ['固定資産', '400000'], ['流動負債', '500000'], ['固定負債', '400000'], ['当期純利益', '0']]);
   await page.getByRole('button', { name: 'BS を保存', exact: true }).click();
   await page.waitForFunction(() => document.body.textContent.includes('より新しい基準日の控え'), undefined, { timeout: 15000 });
   const currentBs = ((await page.locator('[data-bs-row="current"]').first().textContent()) ?? '').trim();

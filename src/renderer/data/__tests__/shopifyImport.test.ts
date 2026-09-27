@@ -54,3 +54,23 @@ describe('orderToSalesEntry', () => {
     expect(entry?.note).toBe('Shopify');
   });
 });
+
+/**
+ * **注文額の読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。それまでは数字と `.` 以外を
+ * どこからでも落としてつないでいたので、打った文字列が**別の金額**として売上集計に入った (実測)。
+ */
+describe('parseAmount — 画面と同じ読み方 (パス 496)', () => {
+  it('★ 単位語・負・指数・日付を別の金額にしない (直す前の実測値を並べる)', () => {
+    // 直す前: '1億' → 1 / '12万' → 12 / '-500' → 500 / '1e3' → 13 / '2024年12月31日' → 20,241,231
+    for (const raw of ['1億', '12万', '-500', '1e3', '2024年12月31日']) {
+      expect(parseAmount(raw), raw).toBe(0);
+    }
+  });
+  it('★ 全角の数字と桁区切りを読む (直す前は記録しなかった)', () => {
+    expect(parseAmount('１２，０００')).toBe(12000);
+  });
+  it('対照: 0 は「取り込まない」(orderToSalesEntry が null)', () => {
+    expect(orderToSalesEntry({ name: '#1', total: '1億' })).toBeNull();
+    expect(orderToSalesEntry({ name: '#1', total: '¥12,000' }, { date: '2026-09-01' })?.amount).toBe(12000);
+  });
+});
