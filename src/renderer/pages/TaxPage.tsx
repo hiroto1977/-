@@ -26,7 +26,7 @@ import {
   lookupVat,
   type CustomsBasis,
 } from '../../shared/tradeTax';
-import { guardAll, readNumber, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { dependentCountSpec, guardAll, readNumber, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { useParameters } from '../data/parameterOverrides';
 import {
@@ -71,6 +71,7 @@ import {
   IDECO_ANNUAL_CAPS,
   IDECO_ANNUAL_CAP_MAX,
   type DependentKind,
+  dependentsFromCounts,
   type DeductionInput,
   type IdecoOccupation,
 } from '../../shared/taxDeductions';
@@ -351,10 +352,8 @@ export function TaxPage() {
   const precise = useMemo(() => {
     const dGross = num(dGrossStr);
     const employmentIncome = Math.max(0, dGross - calcSalaryIncomeDeduction(dGross));
-    const dependents: DependentKind[] = [
-      ...Array<DependentKind>(Math.min(20, Math.floor(num(generalDeps)))).fill('general'),
-      ...Array<DependentKind>(Math.min(20, Math.floor(num(specificDeps)))).fill('specific'),
-    ];
+    // 人数分の並びは共有の 1 つで作る (天井 20・福利厚生カードと同じ答え —— パス 493k)。
+    const dependents: DependentKind[] = dependentsFromCounts({ general: num(generalDeps), specific: num(specificDeps) });
     const donation = num(dDonationStr);
     const input: DeductionInput = {
       totalIncome: employmentIncome,
@@ -872,8 +871,8 @@ export function TaxPage() {
       [dSelfMedStr, { label: 'セルフメディケーション (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [dDonationStr, { label: '寄附金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [spouseIncomeStr, { label: '配偶者の合計所得 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [generalDeps, { label: '一般扶養親族の人数', kind: 'count', allowEmpty: true, allowZero: true, max: 20 }],
-      [specificDeps, { label: '特定扶養親族の人数', kind: 'count', allowEmpty: true, allowZero: true, max: 20 }],
+      [generalDeps, dependentCountSpec('一般扶養親族の人数')],
+      [specificDeps, dependentCountSpec('特定扶養親族の人数')],
       [mortgageBalanceStr, { label: '住宅ローン年末残高 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [dividendStr, { label: '配当所得 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [severanceStr, { label: '退職金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],

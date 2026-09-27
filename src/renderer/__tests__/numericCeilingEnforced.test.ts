@@ -46,7 +46,10 @@
  */
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
-import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
+import { MAX_DEPENDENTS_PER_KIND, dependentsFromCounts } from '../../shared/taxDeductions';
+import { dependentCountSpec, guardNumber } from '../data/inputGuards';
 import { DASH, jpy } from '../../shared/formatters';
 import { finiteOrNull } from '../../shared/num';
 import {
@@ -364,5 +367,85 @@ describe('課税期間の範囲は計算側が強制する (パス 199)', () => 
     expect(isRepresentableFiscalPeriod({ fiscalEndYear: MAX_FISCAL_YEAR + 1, fiscalEndMonth: 12 })).toBe(false);
     expect(isRepresentableFiscalPeriod({ fiscalEndYear: 2026, fiscalEndMonth: 13 })).toBe(false);
     expect(isRepresentableFiscalPeriod({ fiscalEndYear: 2026, fiscalEndMonth: 0 })).toBe(false);
+  });
+});
+
+/**
+ * **扶養親族の人数分の並びは、共有の 1 つでしか作らない** (2026-09-27 · パス 493k)。
+ *
+ * 画面は人数分の並び (`DependentKind[]`) を作ってから控除を数えるので、天井が無いと
+ * **打った数だけ配列が伸びる**。実測 (直す前・福利厚生カード): 1 億人で 1 回の描画が
+ * 28 秒・4,089 MB、50 億人で `RangeError: Invalid array length` (税金ページごと落ちる)。
+ * 税金ページは 20 で止めていたが、その 20 は画面の字面 4 か所だった ——
+ * **天井は並びを作る側 (`dependentsFromCounts`) と関門 (`dependentCountSpec`) の 2 つが同じ定数を読む**。
+ *
+ * 母集団は走査で導く: 並びを作る綴り (`Array<DependentKind>(` と区分の `.fill('…')`) が
+ * 共有の 1 か所の外に現れたら落ちる (3 つ目の画面が自前で作った日に鳴る)。
+ */
+describe('扶養親族の並びは共有の 1 つで作る (パス 493k)', () => {
+  const SRC = path.resolve(__dirname, '..', '..');
+  const HOME = 'shared/taxDeductions.ts';
+  const BUILD = /Array<DependentKind>\s*\(|\.fill\(\s*'(?:under16|general|specific|elderly-livein|elderly)'\s*\)/;
+
+  function sources(dir: string): string[] {
+    const out: string[] = [];
+    for (const e of readOriginalDirEntries(dir)) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        if (e.name === '__tests__' || e.name === '__audits__') continue;
+        out.push(...sources(full));
+      } else if (/\.tsx?$/.test(e.name) && !e.name.endsWith('.d.ts')) {
+        out.push(full);
+      }
+    }
+    return out;
+  }
+
+  it('★ 並びを作る綴りは共有の 1 か所にしか無い (注記の中の言及は数えない)', () => {
+    const files = sources(SRC);
+    expect(files.length, '走査が src の木を歩いていない').toBeGreaterThan(300);
+    // 注記を落とすのは綴りの候補が在る本だけ (落とすだけなので、元の本に無い綴りは落とした後にも無い) ——
+    // 全件を落とすと、全件実行の負荷の下で 1 本 18 秒かかった (対照の実測)。
+    const hits = files
+      .filter((f) => {
+        const raw = readOriginalSource(f);
+        return (raw.includes('DependentKind') || raw.includes('.fill(')) && BUILD.test(stripComments(raw));
+      })
+      .map((f) => path.relative(SRC, f).split(path.sep).join('/'));
+    expect(hits).toEqual([HOME]);
+    // 標本が的に当たる: 直す前の福利厚生カードの形は針に当たり、注記の中の言及は当たらない
+    expect(BUILD.test(`const d = [...Array<DependentKind>(g).fill('general')];`)).toBe(true);
+    expect(BUILD.test(`x.fill('specific')`)).toBe(true);
+    expect(BUILD.test(stripComments(`// 直す前は Array<DependentKind>(g).fill('general') だった\nconst y = 1;`))).toBe(false);
+  });
+
+  /** 扶養の人数の欄の spec を手で書いた形 (直す前の税金ページは `kind: 'count' … max: 20` の字面だった)。 */
+  const HAND_WRITTEN_DEPENDENT_SPEC = /label: '[^']*扶養親族の人数'[^}]*kind:/;
+
+  it('★ 両画面は共有の並びと共有の関門を読む (人数の欄の spec を手で書かない)', () => {
+    for (const rel of ['pages/TaxPage.tsx', 'components/WelfareSchemeCard.tsx']) {
+      const code = stripComments(readOriginalSource(path.join(RENDERER, rel)));
+      expect(code, `${rel} が dependentsFromCounts を呼んでいない`).toMatch(/dependentsFromCounts\(/);
+      expect(code, `${rel} が dependentCountSpec を呼んでいない`).toMatch(/dependentCountSpec\('/);
+      expect(code, `${rel} が扶養の人数の spec を手で書いている`).not.toMatch(HAND_WRITTEN_DEPENDENT_SPEC);
+    }
+    // 標本が的に当たる: 直す前の税金ページの 1 行は針に当たる
+    expect(
+      `[generalDeps, { label: '一般扶養親族の人数', kind: 'count', allowEmpty: true, allowZero: true, max: 20 }],`,
+    ).toMatch(HAND_WRITTEN_DEPENDENT_SPEC);
+  });
+
+  it('★ 関門と並びは同じ天井を読み、関門の単位は「人」', () => {
+    const spec = dependentCountSpec('X');
+    expect(spec.max).toBe(MAX_DEPENDENTS_PER_KIND);
+    expect(spec.kind).toBe('people');
+    expect(dependentsFromCounts({ general: spec.max! + 1 })).toHaveLength(spec.max!);
+    // 空欄と 0 は「扶養なし」で正当 —— 断らない (断ると既定の画面に確認欄が出る)
+    expect(guardNumber('', spec)).toBeNull();
+    expect(guardNumber('0', spec)).toBeNull();
+    expect(guardNumber(String(spec.max), spec)).toBeNull();
+    expect(guardNumber(String(spec.max! + 1), spec)?.message).toBe(
+      `${MAX_DEPENDENTS_PER_KIND} 人 以下で入力してください（現在 ${MAX_DEPENDENTS_PER_KIND + 1}）。`,
+    );
   });
 });

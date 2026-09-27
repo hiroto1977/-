@@ -60,7 +60,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
-import { IDECO_ANNUAL_CAPS, IDECO_ANNUAL_CAP_MAX } from '../../../shared/taxDeductions';
+import { IDECO_ANNUAL_CAPS, IDECO_ANNUAL_CAP_MAX, MAX_DEPENDENTS_PER_KIND } from '../../../shared/taxDeductions';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 import { maxEmployeeSocialInsurance } from '../../../shared/taxSocialInsurance';
 
 beforeAll(() => {
@@ -290,5 +291,34 @@ describe('社会保険料の桁の目安 (パス 218)', () => {
     expect(says('「社会保険料 (円)」')).toBe(false);
     await typeLabelled('支払社会保険料 (実額/年)', String(max + 1));
     expect(says('「社会保険料 (円)」')).toBe(true);
+  });
+});
+
+/**
+ * **扶養親族の人数の天井は共有の 1 つ** (2026-09-27 · パス 493k)。
+ *
+ * この画面は 2026-08 から 20 人で止めていたが、その 20 は画面の中の字面 4 か所 (計算 2・関門 2) で、
+ * 同じ問いを持つ福利厚生カードは天井なしで `Array(人数)` を作っていた (50 億人で `RangeError`)。
+ * 今は並びを `dependentsFromCounts`、関門を `dependentCountSpec` の 1 つずつが持つ。
+ * 断りの単位は「人」 —— 直す前は `count` を借りて「20 件 以下で入力してください」と言っていた。
+ */
+describe('扶養親族の人数の天井 (パス 493k)', () => {
+  const tile = (): string | undefined => preciseTiles().get('所得税 (税額控除後)');
+
+  it('★ 50 億人を打っても落ちず ⛔ (単位は「人」) で断り、計算は天井ちょうどと同じ答え', async () => {
+    await mountPage();
+    // 20 人ぶんの控除 (760 万) で税が 0 にならない額面にする (答えが人数に反応することを先に確かめる)
+    await typeLabelled('額面年収 (円)', '50000000');
+    await typeLabelled('一般扶養 (人)', String(MAX_DEPENDENTS_PER_KIND - 1));
+    await settleUntil(() => (tile() ?? '').startsWith('¥'), '所得税のタイル');
+    const below = tile();
+    await typeLabelled('一般扶養 (人)', String(MAX_DEPENDENTS_PER_KIND));
+    await settleUntil(() => tile() !== below, '天井ちょうどの答え (1 人少ない答えと違う)');
+    const atCeiling = tile();
+    expect(container.querySelector('[data-guard-summary]')).toBeNull(); // 天井ちょうどは断らない
+    await typeLabelled('一般扶養 (人)', '5000000000');
+    await waitForText(text, `「一般扶養親族の人数」${MAX_DEPENDENTS_PER_KIND} 人 以下で入力してください（現在 5000000000）。`);
+    expect(says('件 以下で入力してください')).toBe(false);
+    expect(tile()).toBe(atCeiling);
   });
 });

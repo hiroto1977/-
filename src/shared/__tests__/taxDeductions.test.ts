@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_DEDUCTION_PARAMS,
   BASIC_HUMAN_DEDUCTION_DIFF,
@@ -32,6 +32,8 @@ import {
   spouseIncomeLimitYen,
   SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
   dependentDeduction,
+  dependentsFromCounts,
+  MAX_DEPENDENTS_PER_KIND,
   disabilityDeduction,
   SINGLE_PARENT_DEDUCTION,
   WIDOW_DEDUCTION,
@@ -168,6 +170,73 @@ describe('dependentDeduction / calcDependentDeduction', () => {
   it('sums multiple dependents', () => {
     const d = calcDependentDeduction(['general', 'specific', 'under16']);
     expect(d).toEqual({ incomeTax: 380_000 + 630_000, residentTax: 330_000 + 450_000 });
+  });
+});
+
+/**
+ * **人数から扶養親族の並びを作る口は 1 つ** (2026-09-27 · パス 493k)。
+ *
+ * 福利厚生カードは天井なしで `Array(人数)` を作っていた —— 1 億と打つと 1 回の描画が
+ * 28 秒・4,089 MB、50 億で `RangeError: Invalid array length` (税金ページごと落ちる)。
+ * 税金ページは 20 で止めていたが、その数は画面の中の字面だった。
+ */
+describe('dependentsFromCounts / MAX_DEPENDENTS_PER_KIND', () => {
+  it('区分ごとの人数を、決まった順の並びにする', () => {
+    expect(dependentsFromCounts({ specific: 1, general: 2 })).toEqual(['general', 'general', 'specific']);
+    // 引数の鍵の順に依らない (控除の合計は順に依らないが、画面と検査が同じ並びを見る)
+    expect(dependentsFromCounts({ elderly: 1, under16: 1, 'elderly-livein': 1, specific: 1, general: 1 })).toEqual([
+      'under16',
+      'general',
+      'specific',
+      'elderly-livein',
+      'elderly',
+    ]);
+    expect(dependentsFromCounts({})).toEqual([]);
+  });
+
+  it('小数は切り捨て、負と読めない値は 0 人', () => {
+    expect(dependentsFromCounts({ general: 2.9 })).toEqual(['general', 'general']);
+    for (const bad of [-1, -0.5, Number.NaN, Number.NEGATIVE_INFINITY, undefined]) {
+      expect(dependentsFromCounts({ general: bad }), String(bad)).toEqual([]);
+    }
+  });
+
+  it('★ 天井で止める —— 1 億でも 50 億でも区分ごとに 20 人 (配列を天井より長く作らない)', () => {
+    expect(MAX_DEPENDENTS_PER_KIND).toBe(20);
+    const got = dependentsFromCounts({ general: 1e8, specific: 5e9, elderly: 1e308 });
+    expect(got).toHaveLength(3 * MAX_DEPENDENTS_PER_KIND);
+    expect(got.filter((k) => k === 'general')).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+    expect(got.filter((k) => k === 'specific')).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+    // 標本が的に当たる: 天井なしの形は 50 億で配列を作れずに投げる (この検査が空でない)
+    expect(() => Array<string>(Math.floor(5e9))).toThrow(RangeError);
+    // 境界: ちょうど天井は全部数え、1 人超えると天井で止める
+    expect(dependentsFromCounts({ general: MAX_DEPENDENTS_PER_KIND })).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+    expect(dependentsFromCounts({ general: MAX_DEPENDENTS_PER_KIND + 1 })).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+  });
+
+  it('+∞ は「読めない値」として 0 人 (画面の読み手 readNumeric は桁あふれを null にするので、画面からは届かない)', () => {
+    // 1e308 (有限) は天井で止まり、∞ (非有限) は 0 —— 非有限は数ではないので数えない。
+    expect(dependentsFromCounts({ general: Number.POSITIVE_INFINITY })).toEqual([]);
+    expect(dependentsFromCounts({ general: 1e308 })).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+  });
+
+  it('並びの順の表はモジュールを読み直しても同じ (static の表へ変異体を届かせる —— _commentIgnoreStatic)', async () => {
+    vi.resetModules();
+    const fresh = await import('../taxDeductions');
+    expect(fresh.dependentsFromCounts({ elderly: 1, 'elderly-livein': 1, specific: 1, general: 1, under16: 1 })).toEqual([
+      'under16',
+      'general',
+      'specific',
+      'elderly-livein',
+      'elderly',
+    ]);
+  });
+
+  it('控除の合計は天井で止まる (20 人 × 一般 38 万 / 33 万)', () => {
+    expect(calcDependentDeduction(dependentsFromCounts({ general: 1e8 }))).toEqual({
+      incomeTax: MAX_DEPENDENTS_PER_KIND * 380_000,
+      residentTax: MAX_DEPENDENTS_PER_KIND * 330_000,
+    });
   });
 });
 

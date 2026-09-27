@@ -173,9 +173,9 @@ export const LAWS: readonly Law[] = [
     id: 'negative-control',
     family: 'gate-hygiene',
     name: 'ゲートは守りを外して確かめる',
-    statement: '自作のゲートは --self-test (陽性・陰性の対照) を持ち、verify:all がそれを走らせる。--self-test の「鳴る側」は作った本人の想像なので、守るはずの実物を一度壊して鳴らす。',
-    provenance: ['パターン 0', 'パターン 0-a-15'],
-    enforcedBy: [test(T.shared('ontologyLaws'))],
+    statement: '自作のゲートは --self-test (陽性・陰性の対照) を持ち、verify:all がそれを走らせる。--self-test の「鳴る側」は作った本人の想像なので、守るはずの実物を一度壊して鳴らす。**検査の題名が名乗る状態を、検査そのものが起こしているかも確かめる** —— 設定画面の「保存の失敗は例外のまま上がらず…」は失敗を 1 度も起こしておらず、起こすと製品は未処理の reject を出していた (パス 493k)。',
+    provenance: ['パターン 0', 'パターン 0-a-15', 'パス 493k (題名の状態を起こしていない検査)'],
+    enforcedBy: [test(T.shared('ontologyLaws')), test('src/renderer/components/__tests__/ParametersPanel.render.test.ts')],
   },
   {
     id: 'wait-for-condition-not-ticks',
@@ -212,12 +212,17 @@ export const LAWS: readonly Law[] = [
       + '**実測 ÷ 制限** (`npm run audit:e2e-wait-margin`) で、'
       + '母集団は Locator の action まで含める —— `.click(` は 135 か所のうち **117 が '
       + '`page.` 以外**なので、page のメソッドだけ包むと半分以上が映らない (実測で'
-      + 'page だけの回では最大 13.5%・Locator を含めた回で 100.0% が出た)。',
+      + 'page だけの回では最大 13.5%・Locator を含めた回で 100.0% が出た)。'
+      + '**条件で待っていても、その条件が押した瞬間にもう真なら待っていない (パス 493k)** —— '
+      + '設定画面の検査は「保存ボタンが押せなくなる」で保存の終わりを待っていたが、ボタンは**押した瞬間に** '
+      + '`busy` で押せなくなる。負荷の下では保存が解決する前に次の手が走り、全件実行で 1 度だけ 2 つの値が入れ替わった。'
+      + '終わりの印は押した瞬間には偽の物 (「既定に戻す」が押せるようになる) にし、遅い書き込みを差し込む検査で決定的にした。',
     provenance: [
       'パス 169 (共有の待ち)',
       'パス 368 (3 件目と母集団)',
       'パス 369 (針の訂正と振る舞いでの測定)',
       'パス 397 (実機の待ちも余裕で測る・成り立ち得ない条件を 1 件)',
+      'パス 493k (押した瞬間にもう真の条件で待っていた)',
     ],
     enforcedBy: [
       test(T.renderer('fixedTickAssertionCensus')),
@@ -225,6 +230,7 @@ export const LAWS: readonly Law[] = [
       test(T.renderer('tickSensitivityLedger')),
       harness('audit:tick-sensitivity'),
       harness('audit:e2e-wait-margin'),
+      test('src/renderer/components/__tests__/ParametersPanel.render.test.ts'),
     ],
   },
   {
@@ -595,9 +601,9 @@ export const LAWS: readonly Law[] = [
     id: 'center-then-count-callers',
     family: 'single-rule',
     name: '中心へ寄せたら呼び出し側から数え直す',
-    statement: '守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。**docblock が消費者を「4 つ」と数え上げていた例がもう 1 つある** —— `readNumeric` は「入力欄の文字列を数にする口は 4 つあり、全部ここを通す」と名乗っていたが、数値入力 (実測 13 ファイル / 119 欄) から辿ると通らない口が 3 つ / 呼び出し 7 か所残っており、`TaxPage` は**関門と計算で別の読み手**を使って「0 として計算されています」と断りながら ¥25,525 を出していた (パス 375)。**「同じことをしている場所」は同じ名前を名乗っていることがある** —— `compareVersions` は 2 つ在り、`updateCheck.ts` は semver §11.3 (プレリリースは正式版より前) を正しく持ち、`ollama.ts` は識別子を捨てていた。**弱い方が security の側に立っていた** —— 実測 (2026-09-22) で既知の脆弱性の台帳 8 件のうち `fixedIn` を持つ 7 件が `fixedIn + "-rc1"` を名乗るだけで黙り (CVE-2024-37032 critical の RCE を含む)、`isVersionSafe("0.31.2-rc1")` は true を返していた。**どちらが危ない側に立っているかは名前からは分からない** (パス 402)。**寄せた先そのものも数え直す** —— 円の組み立ては共有の `jpy` に寄せた後も `FreeePage` / `FundingPage` / 経営レポートに私有の写しが残り、`¥NaN` / `−¥∞` / `¥-∞` と 3 通りに刷っていた。写しを消して測ると、**寄せた先の `jpy` 自身が `-0` を刷っていた** (パス 493j)。',
-    provenance: ['パターン 0-a-18', 'パス 311', 'パス 359', 'パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた)', 'パス 375 (関門と計算が別の読み手)', 'パス 402 (同名の comparator 2 つ・弱い方が CVE 判定の側)', 'パス 493j (円の組み立ての写し 3 つ・寄せた先の jpy 自身が -0 を刷っていた)'],
-    enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus')), test(T.renderer('numericInputReaderCensus')), test(T.shared('prereleaseVersionOrder')), test(T.shared('sessionGreetingNumbers')), test(T.shared('yenTemplateCensus'))],
+    statement: '守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。**docblock が消費者を「4 つ」と数え上げていた例がもう 1 つある** —— `readNumeric` は「入力欄の文字列を数にする口は 4 つあり、全部ここを通す」と名乗っていたが、数値入力 (実測 13 ファイル / 119 欄) から辿ると通らない口が 3 つ / 呼び出し 7 か所残っており、`TaxPage` は**関門と計算で別の読み手**を使って「0 として計算されています」と断りながら ¥25,525 を出していた (パス 375)。**「同じことをしている場所」は同じ名前を名乗っていることがある** —— `compareVersions` は 2 つ在り、`updateCheck.ts` は semver §11.3 (プレリリースは正式版より前) を正しく持ち、`ollama.ts` は識別子を捨てていた。**弱い方が security の側に立っていた** —— 実測 (2026-09-22) で既知の脆弱性の台帳 8 件のうち `fixedIn` を持つ 7 件が `fixedIn + "-rc1"` を名乗るだけで黙り (CVE-2024-37032 critical の RCE を含む)、`isVersionSafe("0.31.2-rc1")` は true を返していた。**どちらが危ない側に立っているかは名前からは分からない** (パス 402)。**寄せた先そのものも数え直す** —— 円の組み立ては共有の `jpy` に寄せた後も `FreeePage` / `FundingPage` / 経営レポートに私有の写しが残り、`¥NaN` / `−¥∞` / `¥-∞` と 3 通りに刷っていた。写しを消して測ると、**寄せた先の `jpy` 自身が `-0` を刷っていた** (パス 493j)。**同じ問いを持つ 2 つの画面の片方にだけ天井が在った** —— 扶養親族の人数から並びを作る所は税金ページと福利厚生カードの 2 か所で、税金ページは 20 で止め (その 20 は画面の字面 4 か所)、カードは天井なしで `Array(人数)` を作っていた (実測: 1 億人で 1 回の描画が 28 秒・4,089 MB、50 億人で `RangeError` —— ページごと落ちる)。並びは `dependentsFromCounts`、関門は `dependentCountSpec` の 1 つずつに寄せ、並びを作る綴りを src 全体から数える (パス 493k)。',
+    provenance: ['パターン 0-a-18', 'パス 311', 'パス 359', 'パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた)', 'パス 375 (関門と計算が別の読み手)', 'パス 402 (同名の comparator 2 つ・弱い方が CVE 判定の側)', 'パス 493j (円の組み立ての写し 3 つ・寄せた先の jpy 自身が -0 を刷っていた)', 'パス 493k (扶養の人数の並び —— 片方の画面にだけ天井)'],
+    enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus')), test(T.renderer('numericInputReaderCensus')), test(T.shared('prereleaseVersionOrder')), test(T.shared('sessionGreetingNumbers')), test(T.shared('yenTemplateCensus')), test(T.renderer('numericCeilingEnforced'))],
   },
   {
     id: 'no-weakness-as-spec',

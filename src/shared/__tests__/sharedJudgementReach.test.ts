@@ -83,13 +83,15 @@ describe('判定 census の前提 — 鎖の入口の狭さ (パス 272)', () =>
   /*
    * 鎖 B: main → 4 クライアント → serviceAdvisor → mutualFundsMetrics → savingsPlanning
    *
-   * `mutualFundsMetrics` は越境する (`isImpossibleReturnPct`) が対称。
+   * `mutualFundsMetrics` は越境する (`isImpossibleReturnPct` / `isAboveEntryCeilingPct`) が対称。
    * `savingsPlanning` は **call の辺が無い**ので問いが発されない。
    */
-  it('★ serviceAdvisor が mutualFundsMetrics から取るのは定数 1 + 述語 1 だけ', () => {
+  it('★ serviceAdvisor が mutualFundsMetrics から取るのは定数 2 + 述語 2 だけ (パス 493j で 1 + 1 から)', () => {
     const src = read('src/shared/serviceAdvisor.ts');
     expect(valueImportsFrom(src, 'mutualFundsMetrics')).toEqual([
+      'RETURN_ENTRY_CEILING_PCT',
       'RETURN_FLOOR_PCT',
+      'isAboveEntryCeilingPct',
       'isImpossibleReturnPct',
     ]);
   });
@@ -101,13 +103,18 @@ describe('判定 census の前提 — 鎖の入口の狭さ (パス 272)', () =>
     expect(src.includes('isPlannableYears(')).toBe(false);
   });
 
-  it('★ isImpossibleReturnPct は 1 行の比較 (下請けを呼ばない)', () => {
+  it('★ isImpossibleReturnPct / isAboveEntryCeilingPct はどちらも 1 行の比較 (下請けを呼ばない)', () => {
     const src = read('src/shared/mutualFundsMetrics.ts');
-    const start = src.indexOf('export function isImpossibleReturnPct');
-    expect(start).toBeGreaterThan(0);
-    const body = src.slice(start, src.indexOf('\n}', start) + 2);
-    expect(body).toContain('pct < RETURN_FLOOR_PCT');
-    expect(body.includes('isPlannable')).toBe(false);
+    for (const [fn, cmp] of [
+      ['isImpossibleReturnPct', 'pct < RETURN_FLOOR_PCT'],
+      ['isAboveEntryCeilingPct', 'pct > RETURN_ENTRY_CEILING_PCT'],
+    ] as const) {
+      const start = src.indexOf(`export function ${fn}`);
+      expect(start, fn).toBeGreaterThan(0);
+      const body = src.slice(start, src.indexOf('\n}', start) + 2);
+      expect(body, fn).toContain(cmp);
+      expect(body.includes('isPlannable'), fn).toBe(false);
+    }
   });
 
   it('★ taxCalc を import する main / preload のファイルは 0 件 (depreciation の根拠)', () => {

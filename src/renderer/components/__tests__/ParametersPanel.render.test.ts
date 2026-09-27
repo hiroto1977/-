@@ -13,6 +13,7 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETERS, PARAMETER_BY_ID, parameterFeatures } from '../../../shared/parameters';
 import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
+import { subscribeDeviceStoreFailure } from '../../data/deviceStoreFailure';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -87,11 +88,20 @@ async function waitForOverrides(n: number): Promise<void> {
  * 印は「同じ値になったので保存ボタンが押せなくなる」 —— 件数が変わらない保存
  * (既定と同じ値を置き直す等) でも効くので、見出しの件数より広く使える。
  */
+/**
+ * 押して、**書き込みが済むまで**待つ。
+ *
+ * ★ 2026-09-27 (パス 493k) まで印は「保存が押せなくなる」だけだった。ところが保存ボタンは
+ * `busy || unchanged || issue` で押せなくなる —— **押した瞬間の busy でも立つ**ので、書き込みが
+ * 終わる前に待ちが明ける。負荷の下で 1 度落ちた (365 を保存して 360 を読んだ)。書き込みを 150 ms
+ * 遅らせると毎回落ちる (下の ★ の検査がそれを留める)。印は「既定に戻す」が押せること ——
+ * `busy || !overridden` なので、busy が明け (= 書き込みを await し終え)、上書きが画面に届いた印である。
+ */
 async function save(label: string): Promise<void> {
   await click(q.button(`${label} を保存`));
   await settleUntil(
-    () => q.button(`${label} を保存`).disabled,
-    `「${label} を保存」が押せなくなる (保存が済んだ印)`,
+    () => q.button(`${label} を保存`).disabled && !q.button(`${label} を既定に戻す`).disabled,
+    `「${label} を保存」が押せなくなり、「既定に戻す」が押せる (書き込みが済んだ印)`,
   );
 }
 
@@ -235,6 +245,27 @@ describe('数値パラメータの設定画面', () => {
     expect(q.header()).toBe(`上書き 0 / ${PARAMETERS.length} 件`);
   });
 
+  it('★ 保存の待ちは書き込みの完了まで待つ (押した瞬間の busy で明けない —— 遅い書き込みで対照)', async () => {
+    await type(DAYS, '360');
+    await save(DAYS);
+    await waitForOverrides(1);
+    // 2 度目の書き込みを遅らせる。印が busy で立つ待ち方だと、ここで古い 360 を読む (毎回)。
+    const store = getRecordStore();
+    const realUpdate = store.update.bind(store);
+    const slow = vi.spyOn(store, 'update').mockImplementation(async (id, patch) => {
+      await new Promise<void>((resolve) => setTimeout(resolve, 150));
+      return realUpdate(id, patch);
+    });
+    try {
+      await type(DAYS, '365');
+      await save(DAYS);
+      expect(slow).toHaveBeenCalledTimes(1); // 遅らせた書き込みを本当に通った (この検査が空でない)
+      expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 365 } }]);
+    } finally {
+      slow.mockRestore();
+    }
+  });
+
   it('既定と同じ値を保存しても「上書き」として残る (既定が改正で動いても置いた値は動かない)', async () => {
     await type(DAYS, '360');
     await save(DAYS);
@@ -290,19 +321,33 @@ describe('数値パラメータの設定画面', () => {
     expect(q.rows().length).toBe(PARAMETERS.length);
   });
 
-  it('保存の失敗は例外のまま上がらず、ボタンが戻る (busy が解ける)', async () => {
-    // 保存中は両方のボタンが無効になり、終われば戻る。
-    await type(DAYS, '300');
-    const button = q.button(`${DAYS} を保存`);
-    await act(async () => {
-      button.click();
+  /**
+   * **題名どおり失敗を起こす** (2026-09-27 · パス 493k)。それまでのこの検査は書き込みを 1 度も
+   * 失敗させておらず、「例外のまま上がらず」を確かめていなかった —— 実際に失敗させると
+   * **未処理の reject** になった (vitest が Unhandled Rejection で run ごと落とす)。
+   */
+  it('★ 保存の失敗は例外のまま上がらず、知らせへ届き、ボタンが戻る (busy が解ける)', async () => {
+    const published: string[] = [];
+    const unsubscribe = subscribeDeviceStoreFailure((f) => {
+      if (f) published.push(f.message);
     });
-    // 保存が済んだ印を先に待つ —— 「戻すボタンが押せる」は主張の側。
-    await settleUntil(
-      () => q.button(`${DAYS} を保存`).disabled,
-      `「${DAYS} を保存」が押せなくなる (保存が済んだ印)`,
-    );
-    expect(q.button(`${DAYS} を既定に戻す`).disabled).toBe(false);
+    const store = getRecordStore();
+    const failInsert = vi.spyOn(store, 'insert').mockRejectedValue(new Error('QuotaExceededError (検査)'));
+    const failUpdate = vi.spyOn(store, 'update').mockRejectedValue(new Error('QuotaExceededError (検査)'));
+    try {
+      await type(DAYS, '300');
+      await click(q.button(`${DAYS} を保存`));
+      // busy が解けると「保存」はまた押せる (値は保存されていないので unchanged ではない)。
+      await settleUntil(() => !q.button(`${DAYS} を保存`).disabled, `「${DAYS} を保存」がまた押せる (busy が解けた)`);
+      expect(failInsert.mock.calls.length + failUpdate.mock.calls.length).toBeGreaterThan(0); // 本当に失敗を通った
+      expect(published.length).toBeGreaterThan(0); // 画面全体の知らせへ届いた
+      expect(q.button(`${DAYS} を既定に戻す`).disabled).toBe(true); // 上書きの印は付かない (保存されたと読めない)
+      expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
+    } finally {
+      failInsert.mockRestore();
+      failUpdate.mockRestore();
+      unsubscribe();
+    }
   });
 });
 

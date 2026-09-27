@@ -25,6 +25,7 @@
 
 import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
 import { hasInteriorNoise, hasUnitWord, readNumeric } from '../../shared/readNumeric';
+import { MAX_DEPENDENTS_PER_KIND } from '../../shared/taxDeductions';
 
 // 読み取り自体は `shared/readNumeric.ts` が 1 つだけ持つ (画面と共有検査で
 // 同じ文字列が別の数にならないように)。ここは「読めなかったときに何と言うか」。
@@ -46,7 +47,8 @@ export type NumKind =
   | 'percent' // %
   | 'years' // 年
   | 'months' // か月
-  | 'count' // 個数・人数（整数）
+  | 'count' // 個数・件数（整数）
+  | 'people' // 人数（整数）—— 単位語「人」(パス 493k。`count` の「件」を人数に借りない)
   | 'area' // ㎡
   | 'length' // m
   | 'ratio' // 倍率
@@ -73,6 +75,14 @@ export interface NumSpec {
   readonly max?: number;
   /** この値を超えたら「桁を間違えていないか」を尋ねる。 */
   readonly sane?: number;
+}
+
+/**
+ * **扶養親族の人数の欄の関門** —— 税金ページと福利厚生カードが同じ問いに同じ答えを返すための 1 つ
+ * (2026-09-27 · パス 493k)。天井は並びを作る側 (`dependentsFromCounts`) と同じ定数。
+ */
+export function dependentCountSpec(label: string): NumSpec {
+  return { label, kind: 'people', allowEmpty: true, allowZero: true, max: MAX_DEPENDENTS_PER_KIND };
 }
 
 /** 読めなければ 0。計算側はこれを使い、警告側は guardNumber を使う。 */
@@ -107,6 +117,9 @@ const KIND: Record<NumKind, KindRule> = {
   years: { unit: '年', negativeIsFatal: true, sane: 100 },
   months: { unit: 'か月', negativeIsFatal: true, sane: 1200 },
   count: { unit: '件', negativeIsFatal: true, integer: true, sane: 100000 },
+  // 扶養親族の人数ほか (パス 493k)。`count` と同じ規則で、単位語だけが違う ——
+  // 「20 件 以下で入力してください」を人数の欄に出さない (下の days / energy と同じ理由)。
+  people: { unit: '人', negativeIsFatal: true, integer: true, sane: 100000 },
   area: { unit: '㎡', negativeIsFatal: true, zeroIsFatal: true, sane: 1e6 },
   length: { unit: 'm', negativeIsFatal: true, zeroIsFatal: true, sane: 1000 },
   ratio: { unit: '倍', negativeIsFatal: true, sane: 1000 },
@@ -121,8 +134,12 @@ const KIND: Record<NumKind, KindRule> = {
   // 水耕栽培の運転設定が足した 5 種 (2026-09-21 · パス 373)。**近い kind を借りない** ——
   // 単位語は「0 X として計算されています」「X 以下で入力してください」の文面に
   // そのまま出るので、借りると嘘の単位を言う (上の days / energy / mgPer100g と同じ理由)。
-  // 温度だけ `negativeIsFatal` を立てない —— 氷点下の室温は正当な入力である。
-  celsius: { unit: '℃', sane: 60 },
+  // 温度だけ負を断らない —— 氷点下の室温は正当な入力である。
+  // ★ **`false` と書く** (パス 493k)。それまでここは「立てない」= 欄を書かないで表していたが、
+  // `guardNumber` の判定は `negativeIsFatal !== false` なので**書かないことは「断る」と同じ**だった
+  // (spec が `min` を持たない温度の欄では -5 ℃ が ⛔「マイナスの値は指定できません」になる)。
+  // 実物の温度の欄は下限 (-5 / -20) を必ず持つので画面の答えは変わらない —— 直したのは既定の意味。
+  celsius: { unit: '℃', negativeIsFatal: false, sane: 60 },
   liters: { unit: 'L', negativeIsFatal: true, sane: 100000 },
   ppmAir: { unit: 'ppm', negativeIsFatal: true, sane: 50000 },
   normality: { unit: 'N', negativeIsFatal: true, sane: 40 },

@@ -190,6 +190,37 @@ export function dependentDeduction(kind: DependentKind): DeductionPair {
   }
 }
 
+/**
+ * **扶養親族の人数の天井 (区分ごと)** —— 税金ページと福利厚生カードが読む 1 つ (2026-09-27 · パス 493k)。
+ *
+ * 画面は**人数分の並び**を作ってから控除を数えるので、天井が無いと打った数だけ配列が伸びる。
+ * 実測 (2026-09-27・node 22): 1 億人の並びで 1 回の描画が **28 秒・4,089 MB**、50 億人で
+ * `RangeError: Invalid array length` (税金ページごと落ちる)。福利厚生カードが天井なしでそれをしていた。
+ * 税金ページは 2026-08 から 20 で止めていたが、その数は画面の中の字面 4 か所 (計算 2・関門 2) だった ——
+ * 同じ問いに 2 つの画面が別の答えを出さないよう、数を 1 つにする。
+ */
+export const MAX_DEPENDENTS_PER_KIND = 20;
+
+/** 並びの順 (控除の合計は順に依らないが、画面と検査が同じ並びを見るように決めておく)。 */
+const DEPENDENT_KIND_ORDER: readonly DependentKind[] = ['under16', 'general', 'specific', 'elderly-livein', 'elderly'];
+
+/**
+ * 区分ごとの人数から扶養親族の並びを作る。**非有限・負は 0 人、小数は切り捨て、
+ * {@link MAX_DEPENDENTS_PER_KIND} で止める** —— 天井を超えた人数を黙って 0 にはしない
+ * (税金ページの以前の振る舞いと同じく天井で止め、画面の関門が ⛔ で断る)。
+ */
+export function dependentsFromCounts(counts: Readonly<Partial<Record<DependentKind, number>>>): DependentKind[] {
+  const out: DependentKind[] = [];
+  for (const kind of DEPENDENT_KIND_ORDER) {
+    const n = counts[kind];
+    // 読めない値は 0 人 = その区分を並べない (`? … : 0` と書くと 0 倒しの母集団に 1 件足す —— 意味は同じ)。
+    if (!Number.isFinite(n)) continue;
+    const k = Math.min(MAX_DEPENDENTS_PER_KIND, Math.max(0, Math.floor(n as number)));
+    out.push(...Array<DependentKind>(k).fill(kind));
+  }
+  return out;
+}
+
 /** 扶養親族の配列から合計の扶養控除額を計算する。 */
 export function calcDependentDeduction(kinds: readonly DependentKind[]): DeductionPair {
   return kinds.reduce<DeductionPair>(

@@ -269,11 +269,21 @@ const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
  * `onKeyDown` が Enter のときに呼ぶ関数の名 —— **`disabled` を見ない送信経路**を源から導く。
  * (`<button disabled>` は Enter の暗黙の submit を止めるが、`onKeyDown` の手書きは止まらない。)
  */
+/**
+ * Enter で送る印。**共有の判定 `isSubmitEnter(` も Enter の経路** (2026-09-27 · パス 493k)。
+ *
+ * パス 493i が 10 か所の `e.key === 'Enter'` を `isSubmitEnter(e)` (IME の変換確定を除く 1 つ) へ
+ * 寄せた日、この針 (`'Enter'` の綴り) は迂回経路を**見失った** —— 経路は今も在るのに導出が空になり、
+ * 台帳の `bypass: ['enter']` と食い違って落ちた (**鳴ったのは正しい**。黙る側に倒れていたら
+ * 「迂回経路は無い」と読めた)。綴りの針は、綴りでない物 (寄せた先の関数) に動かされる。
+ */
+const ENTER_MARK = /['"]Enter['"]|\bisSubmitEnter\s*\(/;
+
 function enterSubmitFns(src: string): ReadonlySet<string> {
   const out = new Set<string>();
   for (const m of src.matchAll(/onKeyDown=\{\([^)]*\)\s*=>\s*\{([\s\S]*?)\n\s*\}\}/g)) {
     const body = m[1] ?? '';
-    if (!/['"]Enter['"]/.test(body)) continue;
+    if (!ENTER_MARK.test(body)) continue;
     for (const c of body.matchAll(/\b([a-z][A-Za-z0-9_]*)\s*\(/g)) out.add(c[1]!);
   }
   return out;
@@ -461,6 +471,15 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
         }
       }
     }
+  });
+
+  it('★ Enter の印は素の綴りと共有の判定の両方に当たる (パス 493k —— 寄せた日に見失わない)', () => {
+    const bare = `onKeyDown={(e) => {\n  if (e.key === 'Enter' && !busy) runAdvisor();\n}}`;
+    const shared = `onKeyDown={(e) => {\n  if (isSubmitEnter(e) && !busy) runAdvisor();\n}}`;
+    const other = `onKeyDown={(e) => {\n  if (e.key === 'Escape') runAdvisor();\n}}`;
+    expect(enterSubmitFns(bare).has('runAdvisor')).toBe(true);
+    expect(enterSubmitFns(shared).has('runAdvisor')).toBe(true);
+    expect(enterSubmitFns(other).has('runAdvisor')).toBe(false);
   });
 
   it('★ 対照: 2 つの形の印は互いに取り違えない (どちらも空の検査になっていない)', () => {

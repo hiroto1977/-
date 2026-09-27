@@ -144,7 +144,7 @@ const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
     '針は検査自身が注入した見出し (`## 偽`) で、他所の綴りではない',
   'src/renderer/__tests__/chatCalcAmountAndFloor.test.ts:132':
     'パス 102 の「負の手取りを刷らない」。針は `手取り` + 負号で、画面のラベルは肯定側で主張されている',
-  'src/renderer/__tests__/numericCeilingEnforced.test.ts:221':
+  'src/renderer/__tests__/numericCeilingEnforced.test.ts:224':
     '針はソースの字面 (`label: \'積立年数\'` と `max: 80`) を当てに行く。標本未付',
   'src/renderer/components/__tests__/FinancialAnalysis.ctEligibility.test.ts:113':
     'パス 9 の「使えない方式を最有利にしない」。針は HTML の構造つきで、標本未付',

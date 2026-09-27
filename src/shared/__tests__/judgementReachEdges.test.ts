@@ -166,11 +166,12 @@ const PINNED: readonly PinnedReach[] = [
       {
         from: 'src/shared/serviceAdvisor.ts',
         to: 'src/shared/mutualFundsMetrics.ts',
-        values: ['RETURN_FLOOR_PCT', 'isImpossibleReturnPct'],
+        // パス 493j で 2 → 4 —— 上端 (入力時の 1000%) の外を「捨てずに言う」断りのため。
+        values: ['RETURN_ENTRY_CEILING_PCT', 'RETURN_FLOOR_PCT', 'isAboveEntryCeilingPct', 'isImpossibleReturnPct'],
         constantsOnly: false,
       },
     ],
-    quotes: ['RETURN_FLOOR_PCT', 'isImpossibleReturnPct'],
+    quotes: ['RETURN_FLOOR_PCT', 'isImpossibleReturnPct', 'RETURN_ENTRY_CEILING_PCT', 'isAboveEntryCeilingPct'],
   },
   {
     verdict: 'savingsPlanning',

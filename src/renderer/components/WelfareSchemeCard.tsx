@@ -15,7 +15,9 @@ import {
   employerBenefits,
   type BenefitMechanism,
 } from '../../shared/employerBenefits';
-import type { DependentKind } from '../../shared/taxDeductions';
+import { dependentsFromCounts, type DependentKind } from '../../shared/taxDeductions';
+import { dependentCountSpec, guardAll, type NumSpec } from '../data/inputGuards';
+import { GuardSummary } from './GuardedNumber';
 import {
   employeeExplanationMarkdown,
   consentFormMarkdown,
@@ -83,16 +85,14 @@ export function WelfareSchemeCard() {
   const [spouseIncomeStr, setSpouseIncomeStr] = useState('0');
   const [spouseElderly, setSpouseElderly] = useState(false);
 
-  const dependents = useMemo<DependentKind[]>(() => {
-    const g = Math.floor(num(generalStr, 0));
-    const s = Math.floor(num(specificStr, 0));
-    const e = Math.floor(num(elderlyStr, 0));
-    return [
-      ...Array<DependentKind>(g).fill('general'),
-      ...Array<DependentKind>(s).fill('specific'),
-      ...Array<DependentKind>(e).fill('elderly'),
-    ];
-  }, [generalStr, specificStr, elderlyStr]);
+  // **人数分の並びは共有の 1 つで作る** (パス 493k)。ここは天井なしで `Array(人数)` を作っていた ——
+  // 1 億と打つと 1 回の描画が 28 秒・4 GB、50 億で `RangeError` (税金ページごと落ちる)。天井 20 は
+  // 同じ問いを持つ税金ページの節と同じ数 (`MAX_DEPENDENTS_PER_KIND`)。
+  const dependents = useMemo<DependentKind[]>(
+    () => dependentsFromCounts({ general: num(generalStr, 0), specific: num(specificStr, 0), elderly: num(elderlyStr, 0) }),
+    [generalStr, specificStr, elderlyStr],
+  );
+
 
   const result = useMemo(() => {
     const input: WelfareSchemeInput = {
@@ -150,8 +150,8 @@ export function WelfareSchemeCard() {
     { label: '会社の総コスト (給与+社保+福利厚生)', a: normal.companyTotalCost, b: scheme.companyTotalCost, hi: true },
   ];
 
-  const fields: { label: string; v: string; set: (s: string) => void }[] = [
-    { label: '目標の手元残り', v: targetStr, set: setTargetStr },
+  const fields: { label: string; v: string; set: (s: string) => void; required?: boolean }[] = [
+    { label: '目標の手元残り', v: targetStr, set: setTargetStr, required: true },
     { label: '家賃 総額', v: rentStr, set: setRentStr },
     { label: '┗ 会社負担(社宅)', v: rentCoStr, set: setRentCoStr },
     { label: '食事 総額', v: mealStr, set: setMealStr },
@@ -159,6 +159,22 @@ export function WelfareSchemeCard() {
     { label: '育児補助(会社手配)', v: childcareStr, set: setChildcareStr },
     { label: 'EC ポイント(カフェテリア)', v: ecStr, set: setEcStr },
   ];
+
+  // **読めない入力を黙って 0 にしない** (パス 493k)。上の表は `num()` が読めない値・負の値を 0 として
+  // 組むのに、この節はそれを 1 文も言わなかった (同じ画面の税金の節は 2026-08 から ⛔ / ⚠ で言う)。
+  // 欄の名前は画面の欄と同じ字 (字下げの「┗ 」だけ外す)。目標の手元残りだけは空欄を「0 円として
+  // 計算」と知らせる —— 他の欄の空欄は「その制度を使わない」の意味で正当である。
+  const issues = guardAll([
+    ...fields.map(
+      (f) => [f.v, { label: f.label.replace(/^┗ /, ''), kind: 'money', allowEmpty: f.required !== true, allowZero: true }] as const,
+    ),
+    [generalStr, dependentCountSpec('一般扶養親族の人数')] as const,
+    [specificStr, dependentCountSpec('特定扶養親族の人数')] as const,
+    [elderlyStr, dependentCountSpec('老人扶養親族の人数')] as const,
+    ...(hasSpouse
+      ? [[spouseIncomeStr, { label: '配偶者の合計所得', kind: 'money', allowEmpty: true, allowZero: true }] as const]
+      : []),
+  ] satisfies readonly (readonly [string, NumSpec])[]);
 
   return (
     <Section title="給与デザイン / 福利厚生スキーム試算">
@@ -314,8 +330,11 @@ export function WelfareSchemeCard() {
           <>
             <label style={fieldRow}>
               <span>┗ 配偶者の合計所得 (年)</span>
+              {/* type="number" だと「100万」を打ったとき欄が空のまま黙る (パス 374) —— 他の欄と同じ形にし、
+                  読めない字は上の入力の確認が ⛔ で言う (パス 493k)。 */}
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={spouseIncomeStr}
                 onChange={(e) => setSpouseIncomeStr(e.target.value)}
                 style={inputStyle}
@@ -334,6 +353,8 @@ export function WelfareSchemeCard() {
           </>
         )}
       </div>
+
+      <GuardSummary issues={issues} title="給与デザインの入力の確認" />
 
       {hasExtraDeduction && (
         <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>

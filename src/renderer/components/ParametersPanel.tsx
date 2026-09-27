@@ -95,6 +95,11 @@ function ParameterRow({
     setBusy(true);
     try {
       await fn();
+    } catch {
+      // **失敗は受け止める** (2026-09-27 · パス 493k)。書き込みの失敗は `useCollection` の
+      // reporting が画面全体の「端末に保存できませんでした」の知らせへ既に届けている —— ここで
+      // 投げ直すと onClick の戻り値が**未処理の reject** になっていた (検査の題名「例外のまま上がらず」は
+      // 失敗を 1 度も起こしておらず、偽だった)。上書きの印は付かないまま残るので、保存されたとは読めない。
     } finally {
       setBusy(false);
     }
