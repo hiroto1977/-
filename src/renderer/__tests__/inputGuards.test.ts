@@ -141,10 +141,15 @@ describe('guardNumber — 黙って 0 にしない', () => {
     expect(guardNumber('60', cov)).toBeNull();
   });
 
-  it('回数は小数を warn（切り捨てられる旨を言う）', () => {
+  it('回数は小数を warn —— 小数をどう扱うかは言わない (扱いは欄を読む側が決める・パス 493p)', () => {
     const issue = guardNumber('2.5', { label: '賞与の回数', kind: 'times', max: 12 });
     expect(issue?.level).toBe('warn');
-    expect(issue?.message).toContain('切り捨て');
+    expect(issue?.message).toBe('整数で入力してください（現在 2.5）。');
+    // 直す前は「小数は切り捨てられます」と続けていた —— 従業者数・決算月・終了年は丸め、
+    // 自治体数・棚の段数はそのまま使い、水耕の日数は保存で断るので、どの欄でも真ではなかった。
+    // 標本が的に当たる: 直す前の文はこの綴りを持つ
+    expect('整数で入力してください（現在 2.5）。小数は切り捨てられます。').toContain('切り捨て');
+    expect(issue?.message).not.toContain('切り捨て');
   });
 
   it('桁を間違えていそうな大きさは warn で尋ねる', () => {
@@ -431,7 +436,7 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
 
   it('整数を求めるのは数えられる物の種類だけ (人・日・段・回・団体・戸・暦の月と年)', () => {
     for (const k of ['people', 'days', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear'] as const) {
-      expect(at(k, '2.5')?.message, k).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
+      expect(at(k, '2.5')?.message, k).toBe('整数で入力してください（現在 2.5）。');
     }
     // 時間は小数を許す (RO 処理目標 8.5 h は正当)。外貨の額も同じ。
     for (const k of ['money', 'percent', 'years', 'months', 'hours', 'currencyUnits', 'area', 'length', 'ppm', 'energy', 'mgPer100g', 'km'] as const) {

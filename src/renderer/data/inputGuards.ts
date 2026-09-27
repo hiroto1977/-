@@ -228,8 +228,15 @@ export function guardNumber(raw: string | undefined | null, spec: NumSpec): Guar
   if (max !== undefined && value > max) {
     return { level: 'fatal', label: spec.label, message: `${max} ${rule.unit} 以下で入力してください（現在 ${value}）。` };
   }
+  // ★ **小数をどう扱うかは言わない** (2026-09-27 · パス 493p)。それまでこの文は「小数は切り捨てられます」と
+  // 続けていたが、**扱いを決めるのは欄を読む側**で、この関門ではない。実測すると切り捨てるのは
+  // 住戸数・扶養の人数だけで (賞与の回数は社会保険料の側だけが切り捨て、年収から引く賞与総額は
+  // 小数のまま掛けていた —— 税金ページで 1 つの整数に揃えた)、従業者数・決算月・課税期間の終了年は `Math.round`
+  // (従業者数 50.5 は 51 = 均等割の区分が変わるのに、この文は 50 と言っていた)、寄附先の自治体数・
+  // 棚の段数・切替 (収穫前)・交換周期はそのまま使い (5.5 団体はワンストップ特例の 5 団体を超える扱い)、
+  // 水耕の運転設定の日数は保存で断る。**この関門が保証できない結果を、この関門の文で言わない。**
   if (rule.integer && !Number.isInteger(value)) {
-    return { level: 'warn', label: spec.label, message: `整数で入力してください（現在 ${value}）。小数は切り捨てられます。` };
+    return { level: 'warn', label: spec.label, message: `整数で入力してください（現在 ${value}）。` };
   }
   const sane = spec.sane ?? rule.sane;
   // Stryker disable next-line ConditionalExpression: 上と同じ理由（`value > undefined` は false）。

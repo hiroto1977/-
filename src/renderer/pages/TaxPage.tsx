@@ -281,17 +281,26 @@ export function TaxPage() {
   const [careInsurance, setCareInsurance] = useState(false);
   const [bonusPerStr, setBonusPerStr] = useState('0');
   const [bonusCountStr, setBonusCountStr] = useState('2');
+  /**
+   * 賞与の回数は**1 つの整数で**、計算と注記の両方がこれを読む (パス 493p)。
+   *
+   * 直す前は年収から引く賞与総額を小数のまま (2.5 回) 掛け、社会保険料の側
+   * (`calcSocialInsuranceWithBonus`) だけが 2 回に切り捨てていた —— 同じ入力が同じ計算の中で
+   * 2 つの回数を持っていた。注記 (「賞与を入力した場合は…」) も小数の回数で出すかを決めていたので、
+   * 0.5 回では**賞与を分けずに計算しながら**「分けて計算します」と述べていた。
+   */
+  const bonusPer = num(bonusPerStr);
+  const bonusCount = Math.trunc(num(bonusCountStr));
+  const bonusApplied = bonusPer > 0 && bonusCount > 0;
   const socialInsurancePrecise = useMemo(() => {
-    const bonusPer = num(bonusPerStr);
-    const bonusCount = num(bonusCountStr);
-    if (bonusPer > 0 && bonusCount > 0) {
+    if (bonusApplied) {
       // 賞与あり: 年収から賞与総額を引いた残りを月額報酬とみなす。
       const annualBonus = bonusPer * bonusCount;
       const monthly = Math.max(0, (grossAnnual - annualBonus) / 12);
       return calcSocialInsuranceWithBonus(monthly, bonusPer, bonusCount, careInsurance, siRates);
     }
     return calcSocialInsurance(grossAnnual, careInsurance, siRates);
-  }, [grossAnnual, careInsurance, bonusPerStr, bonusCountStr, siRates]);
+  }, [grossAnnual, careInsurance, bonusApplied, bonusPer, bonusCount, siRates]);
   // 消費税率も台帳の値。表示の % も同じ値から出す。
   const standardRate = params['tax.consumptionStandardRate'];
   const reducedRate = params['tax.consumptionReducedRate'];
@@ -1064,7 +1073,7 @@ export function TaxPage() {
           健康保険{careInsurance ? '+介護' : ''} {jpy(socialInsurancePrecise.health)} /
           雇用保険 {jpy(socialInsurancePrecise.employment)}）。
           厚生年金は標準報酬月額65万円、健康保険は139万円で頭打ちになるため、高年収では上の額面比例({siEstimatePct}%)より低くなります (料率は設定 › 数値パラメータ の値。既定は令和8年度・協会けんぽ全国平均ベース)。
-          {num(bonusPerStr) > 0 && num(bonusCountStr) > 0 && (
+          {bonusApplied && (
             <> 賞与を入力した場合は、標準賞与額の上限 (厚生年金 1回{jpy(siRates.pensionBonusCapPerPayment)} / 健康保険 年{jpy(siRates.healthBonusCapAnnual)}) を反映し、年収から賞与総額を引いた残りを月額報酬として計算します。</>
           )}
         </div>
