@@ -253,7 +253,7 @@ const RATIO_ROWS: { key: keyof FinancialRatios; label: string; unit: string; mon
   { key: 'roaPct', label: 'ROA', unit: '%' },
   { key: 'roePct', label: 'ROE', unit: '%' },
   // NOPAT / ROIC は round 68 から計算していたが表に無かった (計算しているのに出していない)。
-  // 実効税率 (台帳 `finance.effectiveTaxRate`) が効く唯一の見える場所なので、ここで出す。
+  // 実効税率 (台帳 `finance.effectiveTaxRate`) は NOPAT と当期純利益の両方に効く (パス 493 から)。
   { key: 'nopat', label: 'NOPAT (税引後営業利益)', unit: '', money: true },
   { key: 'roicPct', label: 'ROIC', unit: '%' },
 ];
@@ -909,7 +909,8 @@ export function FinancialAnalysis({
 
   const perUnit = useMemo(
     () => units.map((u) => {
-      const finInputs = deriveBusinessFinancials(u.current);
+      // 当期純利益も NOPAT と同じ率で出す (パス 493 —— 当期純利益だけが 30% を直書きしていた)
+      const finInputs = deriveBusinessFinancials(u.current, effectiveTaxRate);
       const ratioInputs = effectiveTaxRate === undefined ? finInputs : { ...finInputs, effectiveTaxRate };
       return { unit: u, fin: finInputs, ratios: computeFinancialRatios(ratioInputs) };
     }),
@@ -1035,7 +1036,7 @@ export function FinancialAnalysis({
       </div>
 
       {/* 全業務を 1 枚で見る 3 軸 + 構成比。事業を選ばずに全部を並べる。 */}
-      <AxonometricCharts units={units} />
+      <AxonometricCharts units={units} effectiveTaxRate={effectiveTaxRate} />
 
       <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>

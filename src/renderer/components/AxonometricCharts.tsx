@@ -270,12 +270,19 @@ function CompositionPie({
 
 const COMPOSITION_KEYS: readonly CompositionKey[] = ['revenue', 'netProfit', 'ebitda', 'laborCost'];
 
-export function AxonometricCharts({ units }: { units: readonly AxonometricUnitInput[] }) {
+export function AxonometricCharts({
+  units,
+  effectiveTaxRate,
+}: {
+  units: readonly AxonometricUnitInput[];
+  /** 当期純利益・NOPAT に掛ける実効税率。隣の指標の表と同じ値を渡す (パス 493)。 */
+  effectiveTaxRate?: number;
+}) {
   const [indicatorKey, setIndicatorKey] = useState(INDICATORS[0]!.key);
-  const chart = useMemo(() => buildAxonometric(units, indicatorKey), [units, indicatorKey]);
+  const chart = useMemo(() => buildAxonometric(units, indicatorKey, effectiveTaxRate), [units, indicatorKey, effectiveTaxRate]);
   const compositions = useMemo(
-    () => COMPOSITION_KEYS.map((k) => buildComposition(units, k)),
-    [units],
+    () => COMPOSITION_KEYS.map((k) => buildComposition(units, k, effectiveTaxRate)),
+    [units, effectiveTaxRate],
   );
   const colorById = useMemo(() => {
     const m = new Map<string, string>();

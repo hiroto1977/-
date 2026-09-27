@@ -184,6 +184,8 @@ function monthsOf(u: AxonometricUnitInput): readonly MonthlyBusinessKpi[] {
 export function buildAxonometric(
   units: readonly AxonometricUnitInput[],
   indicatorKey: string,
+  /** 当期純利益・NOPAT に掛ける実効税率 (台帳 `finance.effectiveTaxRate`)。省略時は既定 (パス 493)。 */
+  effectiveTaxRate?: number,
 ): AxonometricChart | null {
   const indicator = findIndicator(indicatorKey);
   if (indicator === undefined) return null;
@@ -197,7 +199,7 @@ export function buildAxonometric(
     const offset = periods - months.length;
     const points: SeriesPoint[] = months.map((m, i) => {
       const monthsAgo = months.length - 1 - i;
-      const ratios = computeFinancialRatios(deriveBusinessFinancials(m));
+      const ratios = computeFinancialRatios({ ...deriveBusinessFinancials(m, effectiveTaxRate), effectiveTaxRate });
       return {
         x: offset + i,
         monthsAgo,
@@ -258,11 +260,11 @@ export interface Composition {
 }
 
 /** 当期の 1 事業から、構成比に使う金額を取り出す。 */
-function amountOf(u: AxonometricUnitInput, key: CompositionKey): number {
-  const inputs = deriveBusinessFinancials(u.current);
+function amountOf(u: AxonometricUnitInput, key: CompositionKey, effectiveTaxRate: number | undefined): number {
+  const inputs = deriveBusinessFinancials(u.current, effectiveTaxRate);
   if (key === 'revenue') return inputs.revenue;
   if (key === 'laborCost') return inputs.laborCost;
-  const ratios = computeFinancialRatios(inputs);
+  const ratios = computeFinancialRatios({ ...inputs, effectiveTaxRate });
   return key === 'netProfit' ? ratios.netProfit : ratios.ebitda;
 }
 
@@ -275,12 +277,14 @@ function amountOf(u: AxonometricUnitInput, key: CompositionKey): number {
 export function buildComposition(
   units: readonly AxonometricUnitInput[],
   key: CompositionKey,
+  /** 当期純利益に掛ける実効税率 (台帳 `finance.effectiveTaxRate`)。省略時は既定 (パス 493)。 */
+  effectiveTaxRate?: number,
 ): Composition {
   const rows = units.map((u) => ({
     id: u.id,
     label: u.label,
     sample: u.sample === true,
-    value: amountOf(u, key),
+    value: amountOf(u, key, effectiveTaxRate),
   }));
   const negatives = rows.filter((r) => r.value < 0).map((r) => ({ id: r.id, label: r.label, value: r.value }));
   const positives = rows.filter((r) => r.value > 0).sort((a, b) => b.value - a.value);

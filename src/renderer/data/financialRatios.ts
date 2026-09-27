@@ -48,6 +48,18 @@ import { RADAR_AXIS_BANDS, RADAR_AXIS_KEYS, type AxisBand, type RadarAxisKey, ty
 /** NOPAT / ROIC / FCF 算定で参照する既定値 (概算)。法人実効税率は約 30% を仮置き。 */
 export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
 
+/**
+ * **実効税率を 0..1 へ収める規則は 1 つ** (2026-09-27 · パス 493)。NOPAT (営業利益ベース) と
+ * `businessFinancials` の当期純利益 (経常利益ベース) の**両方**がこれを読む —— それまで
+ * 当期純利益だけが 30% を直書きしており (`ordinaryProfit * 0.7`)、台帳 `finance.effectiveTaxRate`
+ * を 20% にすると、同じ財務分析の画面で NOPAT は 20%・当期純利益 / 当期純利益率 / ROE は 30% で
+ * 計算されていた。有限でなければ既定へ倒す (負税率・100% 超でも歪まないよう範囲へ収める)。
+ */
+export function effectiveTaxRateOf(rate: number | undefined): number {
+  const r = rate ?? DEFAULT_EFFECTIVE_TAX_RATE;
+  return Number.isFinite(r) ? Math.min(1, Math.max(0, r)) : DEFAULT_EFFECTIVE_TAX_RATE;
+}
+
 /** 算出された 15 指標。比率は %、回転率は 倍、CCC は 日、月商倍率は ヶ月、償還年数は 年。 */
 export interface FinancialRatios {
   readonly equityRatioPct: number | null; // 自己資本比率
@@ -128,7 +140,7 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
 
   // --- round 68: 精緻化指標 --------------------------------------------
   // 実効税率は 0-1 にクランプ (NOPAT が負税率/100%超で歪まないように)。
-  const taxRate = Math.min(1, Math.max(0, f.effectiveTaxRate ?? DEFAULT_EFFECTIVE_TAX_RATE));
+  const taxRate = effectiveTaxRateOf(f.effectiveTaxRate);
   // NOPAT = 営業利益 × (1 − 実効税率)。営業利益が負ならそのまま負の NOPAT。
   const nopat = f.operatingProfit * (1 - taxRate);
   // 投下資本 = 有利子負債 + 自己資本。0 以下は算定不能 (null)。

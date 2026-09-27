@@ -13,7 +13,7 @@
 
 import { finiteOr0, nonNeg } from '../../shared/num';
 
-import type { FinancialInputs } from './financialRatios';
+import { effectiveTaxRateOf, type FinancialInputs } from './financialRatios';
 
 /** deriveBusinessFinancials の入力 (月次)。 */
 export interface MonthlyBusinessKpi {
@@ -103,7 +103,12 @@ function saneMonthlyKpi(m: MonthlyBusinessKpi): MonthlyBusinessKpi {
   };
 }
 
-export function deriveBusinessFinancials(raw: MonthlyBusinessKpi): FinancialInputs {
+/**
+ * @param effectiveTaxRate 当期純利益 (経常利益 × (1 − 率)) に掛ける実効税率 (0..1)。台帳
+ *   `finance.effectiveTaxRate` を画面が渡す。省略時は `financialRatios` の既定 —— NOPAT と同じ規則
+ *   (`effectiveTaxRateOf`) で収める。2026-09-27 まで 30% を直書きしていた (パス 493)。
+ */
+export function deriveBusinessFinancials(raw: MonthlyBusinessKpi, effectiveTaxRate?: number): FinancialInputs {
   const m = saneMonthlyKpi(raw);
   // --- PL (年次) ---
   const revenue = r0(m.revenue * 12);
@@ -137,7 +142,7 @@ export function deriveBusinessFinancials(raw: MonthlyBusinessKpi): FinancialInpu
   // ordinaryProfit === 0 では `> 0` / `>= 0` どちらでも結果が 0 で一致するため、
   // EqualityOperator mutation (>0 ⇄ >=0) は equivalent。次行で無効化する。
   // Stryker disable next-line EqualityOperator
-  const netProfit = r0(ordinaryProfit > 0 ? ordinaryProfit * 0.7 : ordinaryProfit); // 実効税率約30%
+  const netProfit = r0(ordinaryProfit > 0 ? ordinaryProfit * (1 - effectiveTaxRateOf(effectiveTaxRate)) : ordinaryProfit);
 
   return {
     revenue,
