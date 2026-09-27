@@ -30,16 +30,16 @@ aliases:
 - [Wikipedia: Auction theory — affiliation, linkage principle, revenue ranking, winner's curse](https://en.wikipedia.org/wiki/Auction_theory) `リファレンス`
 
 ## 関連概念
-- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 語彙が近い
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
 - [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
+- [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
+- [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — 同じ思想家
 - [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]] — 同じ思想家
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
 - [[econ-vickrey-auction|ヴィックリー・オークション（第二価格入札）]] — 同じ思想家
 - [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
 - [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
 - [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
-- [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,6 +36,7 @@ aliases:
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
+- [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — 出典を共有
 - [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 出典を共有
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有

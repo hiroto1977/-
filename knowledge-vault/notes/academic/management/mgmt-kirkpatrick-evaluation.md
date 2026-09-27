@@ -31,8 +31,8 @@ Donald L. Kirkpatrick（1924-2014・4段階モデルの提唱者） ／ 4つの�
 
 ## 関連概念
 - [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 同じ思想家
-- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同分野の近傍
 - [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

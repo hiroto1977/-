@@ -35,11 +35,11 @@ aliases:
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — 同じ思想家
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
-- [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
-- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
+- [[econ-endogenous-growth-romer|内生的成長理論（ローマー／ルーカス）——アイデアの非競合性と知識の外部性が生む収穫逓増により、技術進歩を経済内部の投資の産物として説明する成長論]] — 同じ思想家
+- [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

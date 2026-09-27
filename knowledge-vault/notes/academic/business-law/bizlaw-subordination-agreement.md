@@ -39,7 +39,6 @@ aliases:
 - [[bizlaw-no-oral-modification-rock|口頭変更禁止条項——書面によらない契約変更を封じる約定]] — 同じ思想家
 - [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — 同じ思想家
 - [[bizlaw-rectification-equity|更正（レクティフィケーション）——合意と食い違う契約書を裁判所が訂正する]] — 同じ思想家
-- [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

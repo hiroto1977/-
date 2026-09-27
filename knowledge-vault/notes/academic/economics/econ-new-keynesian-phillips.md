@@ -31,16 +31,16 @@ aliases:
 - [Bentolila et al. (2006) NKPC and Inflation Expectations — Economic Theory (Springer)](https://link.springer.com/article/10.1007/s00199-006-0100-z) `学術`
 
 ## 関連概念
-- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 語彙が近い
 - [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 語彙が近い
-- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
-- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
+- [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]] — 同じ思想家
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — 同じ思想家
+- [[econ-credit-channel-bernanke|信用チャネル（バーナンキ＝ガートラー）——金融政策が銀行貸出と借り手のバランスシートを通じて金利経路を増幅しながら実体経済に波及する]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
-- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
-- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
-- [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke-gertler|金融加速度効果（バーナンキ＝ガートラー＝ギルクリスト）——借り手の純資産と外部資金プレミアムの相互作用が景気のショックを増幅する]] — 同じ思想家
+- [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

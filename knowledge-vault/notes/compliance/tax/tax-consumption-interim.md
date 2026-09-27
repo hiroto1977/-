@@ -36,8 +36,8 @@ aliases:
 - [[tax-retirement-income|退職所得の課税（退職金にかかる所得税）]] — 語彙が近い
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 出典を共有
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 同分野の近傍
-- [[tax-corp-interim-return|法人税の中間申告]] — 同分野の近傍
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]] — 同分野の近傍
+- [[tax-corp-interim-return|法人税の中間申告]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

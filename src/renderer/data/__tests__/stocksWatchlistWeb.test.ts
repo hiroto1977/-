@@ -9,6 +9,7 @@ import {
   buildWatchlistItem,
   buildStocksSnapshot,
   mockCandles,
+  readWatchlist,
 } from '../stocksWatchlistWeb';
 
 beforeEach(() => {
@@ -110,9 +111,15 @@ describe('loadWatchlistSymbols', () => {
   it('returns [] when nothing is stored', () => {
     expect(loadWatchlistSymbols()).toEqual([]);
   });
-  it('ignores corrupt JSON', () => {
+  it('★ 壊れた JSON: readWatchlist は理由つきで「読めなかった」、助言側の loadWatchlistSymbols だけが空に倒す (パス 309)', () => {
     localStorage.setItem(STOCKS_WATCHLIST_KEY, '{not json');
+    expect(readWatchlist()).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
     expect(loadWatchlistSymbols()).toEqual([]);
+  });
+  it('readWatchlist: 保存が無ければ「まだ無い」、保存した物は落とした件数つき', () => {
+    expect(readWatchlist()).toEqual({ kind: 'none' });
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(['AAPL', 42]));
+    expect(readWatchlist()).toEqual({ kind: 'saved', symbols: ['AAPL'], dropped: 1 });
   });
   it('filters out unsafe entries and dedupes (uppercased)', () => {
     localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(['aapl', 'AAPL', 'bad sym', 42]));
@@ -128,6 +135,45 @@ describe('loadWatchlistSymbols', () => {
     // mutant は 'AAPL' を ['A','P','L'] に展開する → ガードが効くことを確認して kill。
     localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify('AAPL'));
     expect(loadWatchlistSymbols()).toEqual([]);
+  });
+});
+
+describe('buildStocksSnapshot — 保存先から何が読めたか (パス 309)', () => {
+  it('保存が無い: 空の一覧・stored=none・注記なし', () => {
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist).toEqual([]);
+    expect(snap.stored).toBe('none');
+    expect(snap.storedNote).toBeNull();
+  });
+
+  it('★ 壊れた保存値: 空の一覧を返しつつ「読めなかった」と言う (パス 309 までは黙って空で続け、次の登録が上書きした)', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, '{壊れた');
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist).toEqual([]);
+    expect(snap.stored).toBe('unreadable');
+    expect(snap.storedNote).toBe(
+      '保存したウォッチリストを読めませんでした (JSON として読めません)。一覧は空です。'
+        + 'このまま銘柄を登録・解除すると空の一覧を基に上書きされ、元の保存値は戻りません。',
+    );
+  });
+
+  it('★ 読み込みで落とした要素が在れば件数を言う', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(['AAPL', 'bad sym', 42]));
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL']);
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toBe(
+      '保存したウォッチリストのうち 2 件は銘柄コードとして読めず、読み込みで落としました。このまま登録・解除すると、これらは失われます。',
+    );
+  });
+
+  it('登録すると保存され、注記は消える (往復)', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, '{壊れた');
+    registerSymbol('aapl');
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL']);
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toBeNull();
   });
 });
 

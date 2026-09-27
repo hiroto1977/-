@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 出典を共有
-- [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

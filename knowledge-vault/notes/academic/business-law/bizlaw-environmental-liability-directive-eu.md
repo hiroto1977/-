@@ -34,7 +34,6 @@ EU環境責任指令（2004/35/CE）は、汚染者負担原則（Polluter Pays 
 - [[bizlaw-commercial-agency-law-eu-directive|商事代理法——EU代理商指令と補償請求権の法的枠組み]] — 同分野の近傍
 - [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同分野の近傍
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同分野の近傍
-- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 同分野の近傍
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 同分野の近傍
 
 ## 関連

@@ -40,7 +40,6 @@ aliases:
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同じ思想家
-- [[mgmt-pest-analysis|PEST分析（PESTLE分析）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "Richard Cyert"
 type: thinker
 person_key: "cyert|r"
-concept_count: 6
+concept_count: 4
 tags:
   - person
   - index
@@ -10,15 +10,13 @@ tags:
 
 # Richard Cyert
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（6件）
+## 学術概念（4件）
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 行動戦略理論（BehavioralStrategy）は、認知心理学・社会心理学の知見を戦略経営研究に統合する研究領域で…
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 企業の行動理論（ABehavioralTheoryoftheFirm）とは、リチャード・M・サイアート（Richard…
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 企業行動理論の問題探索とは、組織がパフォーマンスが期待水準（アスピレーション・レベル）を下回ったときに初めて問題解決の…
-- [[mgmt-organizational-attention-theory|組織注意理論]] — Ocasioの注意ベース理論（ABV）は、企業の行動は意思決定者がどのように注意を配分・規制するかによって決まると主張…
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — NelsonandWinter（1982）は進化経済学の観点から、組織ルーティンを「企業の規則的・予測可能な行動パター…
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — Child（1972）は、組織構造・環境・業績の関係を論じた論文において、コンティンジェンシー理論が組織設計を環境や技…
 
 ## 関連
 - 索引: [[人物索引]]

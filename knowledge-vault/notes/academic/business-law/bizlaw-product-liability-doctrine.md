@@ -40,12 +40,12 @@ John W. Wade（リスク・ユーティリティ・テスト開発者） ／ Geo
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同じ思想家
 - [[econ-priest-klein-selection-hypothesis|プリースト＝クラインの紛争選択仮説（Priest-Klein selection hypothesis、訴訟選択効果と「勝訴率50%命題」）——裁判に至る紛争は無作為標本ではない]] — 同じ思想家
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
 - [[bizlaw-blue-pencil-doctrine|ブルーペンシル法理]] — 出典を共有
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 出典を共有
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 出典を共有
-- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
-- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

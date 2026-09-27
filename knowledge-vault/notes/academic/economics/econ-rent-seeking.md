@@ -30,7 +30,7 @@ aliases:
 - [The Concise Encyclopedia of Economics (Econlib / Liberty Fund) — “Rent Seeking”](https://www.econlib.org/library/Enc/RentSeeking.html) `リファレンス`
 - [Public Choice (Springer, 査読誌) — “Rent seeking at 52: an introduction to a special issue”](https://link.springer.com/article/10.1007/s11127-019-00646-y) `学術`
 - [Gordon Tullock (1967) “The Welfare Costs of Tariffs, Monopolies, and Theft”, Economic Inquiry / Western Economic Journal（原典）](https://onlinelibrary.wiley.com/doi/10.1111/j.1465-7295.1967.tb01923.x) `学術`
-- [Krueger, A.O. (1974) The Political Economy of the Rent-Seeking Society — AER](https://doi.org/10.1086/467455) `学術`
+- [Krueger, A.O. (1974) The Political Economy of the Rent-Seeking Society — American Economic Review 64(3), 291–303（誤った Chicago DOI 10.1086/467455 を IDEAS 記録へ差し替え）](https://ideas.repec.org/a/aea/aecrev/v64y1974i3p291-303.html) `学術`
 - [Wikipedia: Rent-seeking — political economy](https://en.wikipedia.org/wiki/Rent-seeking) `リファレンス`
 
 ## 関連概念

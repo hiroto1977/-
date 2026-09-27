@@ -7,16 +7,29 @@ import {
   type CloudTransport,
 } from '../cloudProviderAdapter';
 import { buildManifest, type FileInput } from '../../data/cloudBackup';
-import { deriveAesKey, randomSaltB64, openWithKey, type Sealed } from '../../security/dataCrypto';
+import { openWithKey, type Sealed } from '../../security/dataCrypto';
 import { encryptionEnvelope, type EncryptionEnvelope } from '../../data/cloudBackup';
 
 function file(over: Partial<FileInput> = {}): FileInput {
   return { path: 'a.txt', size: 10, sha256: 'aaa', mtime: 100, ...over };
 }
 
+/**
+ * この検査が要るのは **AES-GCM の鍵そのもの**で、PBKDF2 の導出ではない
+ * (見ているのは鍵の使い回しと封筒の組み立て)。だから直に生成する。
+ *
+ * 以前は `deriveAesKey('pw-1234', randomSaltB64(), 1000)` だった ——
+ * 反復回数 1000 は「検査を速くするため」の値である。2026-09-14 (パス 237) に
+ * `deriveAesKey` が `assertKdfIterations` を通すようになり、この 1000 が
+ * 床 (100,000) を割って断られた。**床を緩めるのではなく、検査が本当に要る物へ
+ * 寄せる** —— `generateKey` は導出を通さないので 600,000 回より速く、
+ * かつ「この検査は KDF を見ていない」ことが読んで分かる。
+ */
 async function makeKey(): Promise<CryptoKey> {
-  // Small iteration count to keep the test fast (key reuse is the point).
-  return deriveAesKey('pw-1234', randomSaltB64(), 1000);
+  return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, [
+    'encrypt',
+    'decrypt',
+  ]);
 }
 
 /** In-memory transport mock — captures puts, never hits the network. */

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalDir, readOriginalSource } from './originalSource';
 import {
   SOURCE_STRENGTH_ORDER,
   atLeastAsStrong,
@@ -24,7 +25,7 @@ const SRC = join(__dirname, '..', '..');
 
 /** `src/` 配下の .ts / .tsx を全部。 */
 function sourceFiles(dir: string, out: string[] = []): string[] {
-  for (const e of readdirSync(dir)) {
+  for (const e of readOriginalDir(dir)) {
     const p = join(dir, e);
     if (statSync(p).isDirectory()) sourceFiles(p, out);
     else if (/\.tsx?$/.test(e)) out.push(p);
@@ -50,7 +51,7 @@ const UNION = ["'confirmed'", "'secondary'", "'gloss'"].join(' | ');
 describe('出典の強さ — 語彙の定義は 1 つだけ', () => {
   it('★ union を宣言しているのは provenance.ts だけ', () => {
     const offenders = sourceFiles(SRC)
-      .filter((p) => DECLARES.test(readFileSync(p, 'utf8')))
+      .filter((p) => DECLARES.test(readOriginalSource(p)))
       .map((p) => p.slice(SRC.length + 1));
     expect(offenders).toEqual(['shared/provenance.ts']);
   });
@@ -71,7 +72,7 @@ describe('出典の強さ — 語彙の定義は 1 つだけ', () => {
   });
 
   it('provenance.ts が実際にその宣言を持っている (経路の確認)', () => {
-    expect(DECLARES.test(readFileSync(join(SRC, 'shared', 'provenance.ts'), 'utf8'))).toBe(true);
+    expect(DECLARES.test(readOriginalSource(join(SRC, 'shared', 'provenance.ts')))).toBe(true);
   });
 });
 

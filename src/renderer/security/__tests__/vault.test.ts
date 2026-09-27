@@ -2,7 +2,7 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 // `indexedDB.deleteDatabase` for cleanup between tests
-import { _resetVaultForTests, getVault, NoRecoveryBranchError } from '../vault';
+import { _resetVaultForTests, describeWipeOutcome, getVault, NoRecoveryBranchError } from '../vault';
 import { decodeMnemonic, encodeMnemonic, looksLikeValidMnemonic } from '../mnemonic';
 
 // jsdom doesn't provide crypto.subtle. Pull it in from Node's webcrypto.
@@ -523,6 +523,96 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
     });
   }
 
+  /**
+   * **接頭辞は module レベルの `const` なので、読み直さないと変異体が届かない。**
+   *
+   * `RECOVERY_DERIVATION_PREFIX_V1` を `""` にする StringLiteral 変異体は、
+   * ファイル冒頭で import した `getVault` を使う検査では**素通りする**
+   * (Stryker の切替は実行時、定数はもう評価済み)。上の `downgradeToLegacyV0` は
+   * 接頭辞を字面で書いているので規則としては正しいが、静的変異体には鳴らない。
+   * 実測 (2026-09-07): この 1 個が生存していた。
+   *
+   * 接頭辞が落ちると **v0 と v1 の PBKDF2 入力が同一になり、版の分離が消える**。
+   * 加えて、既にある利用者の recovery blob は接頭辞つきで包まれているので、
+   * 落とした版では**復元合言葉が通らなくなる** (取り出せないデータになる)。
+   * `stryker.config.json` の方針どおり、pragma で黙らせずに読み直して留める。
+   */
+  it('★ 読み直した実装でも v1 の PBKDF2 入力は接頭辞つき (接頭辞を落とすと復号できない)', async () => {
+    vi.resetModules();
+    const mod = (await import('../vault')) as unknown as {
+      getVault: typeof getVault;
+      _resetVaultForTests: typeof _resetVaultForTests;
+    };
+    mod._resetVaultForTests();
+    const { normalizeMnemonic } = await import('../mnemonic');
+
+    const v = mod.getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    const meta = await readPersistedMeta();
+    expect(meta.recoveryVersion).toBe(1);
+
+    // 接頭辞は**この検査が字面で持つ**。実装が落とせば復号が失敗する。
+    const baseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode('service-hub-bip39-recovery-v1:' + normalizeMnemonic(mnemonic)),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    );
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: meta.recoverySalt as BufferSource, iterations: 600_000, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt'],
+    );
+    const masterRaw = new Uint8Array(
+      await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: meta.recoveryWrapIv as BufferSource },
+        key,
+        meta.recoveryWrappedKey as BufferSource,
+      ),
+    );
+    expect(masterRaw.byteLength).toBe(32);
+  });
+
+  it('対照: 接頭辞**なし** (v0 の入力) では同じ blob を復号できない — 版の分離が効いている', async () => {
+    vi.resetModules();
+    const mod = (await import('../vault')) as unknown as {
+      getVault: typeof getVault;
+      _resetVaultForTests: typeof _resetVaultForTests;
+    };
+    mod._resetVaultForTests();
+    const { normalizeMnemonic } = await import('../mnemonic');
+
+    const v = mod.getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    const meta = await readPersistedMeta();
+
+    const v0BaseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(normalizeMnemonic(mnemonic)),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    );
+    const v0Key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: meta.recoverySalt as BufferSource, iterations: 600_000, hash: 'SHA-256' },
+      v0BaseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt'],
+    );
+    await expect(
+      crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: meta.recoveryWrapIv as BufferSource },
+        v0Key,
+        meta.recoveryWrappedKey as BufferSource,
+      ),
+    ).rejects.toThrow();
+  });
+
+
   it('legacy vault (recoveryVersion = undefined) still recovers via v0 derivation', async () => {
     // Initialize normally, then downgrade to the v0 (legacy) layout. This
     // simulates a vault created before PR#2 landed.
@@ -702,10 +792,128 @@ describe('Vault — wipeAndReset', () => {
     await v.wipeAndReset();
     expect(await v.status()).toBe('uninitialized');
   });
+
+  /*
+   * **消えたかどうかを返す** (2026-09-07)。
+   *
+   * 直す前は `onsuccess` / `onerror` / `onblocked` の**どれでも `resolve()`**
+   * しており、呼ぶ側 2 か所 (設定ページの「ハードリセット」・ロック画面の
+   * 「完全初期化」) は解決だけを見て無条件に `location.reload()` していた。
+   * 他のタブが保管庫を掴んでいれば削除できないので、**データが残ったまま**
+   * 「復旧不可な形で消去されます」と同じ画面になる。唯一の報せは
+   * `console.warn`、しかも 500ms 後の後追い確認は直後の reload で
+   * **タイマーごと消えていた**。
+   *
+   * `onblocked` / `onerror` は fake-indexeddb では起こせないので、
+   * `indexedDB.deleteDatabase` を差し替えて**その枝だけ**を通す。
+   */
+  function withDeleteRequest(fire: (req: IDBOpenDBRequest) => void): () => void {
+    const real = globalThis.indexedDB;
+    const stub = {
+      ...real,
+      deleteDatabase: (): IDBOpenDBRequest => {
+        const req = {} as IDBOpenDBRequest;
+        setTimeout(() => fire(req), 0);
+        return req;
+      },
+    };
+    Object.defineProperty(globalThis, 'indexedDB', { value: stub, configurable: true, writable: true });
+    return () => {
+      Object.defineProperty(globalThis, 'indexedDB', { value: real, configurable: true, writable: true });
+    };
+  }
+
+  it("★ 消えたら 'deleted' (標本 — 実物の削除でこの値が返る)", async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    expect(await v.wipeAndReset()).toBe('deleted');
+  });
+
+  it("★ 他のタブが掴んでいて消せなければ 'blocked'", async () => {
+    const restore = withDeleteRequest((req) => req.onblocked?.(new Event('blocked') as IDBVersionChangeEvent));
+    try {
+      expect(await getVault().wipeAndReset()).toBe('blocked');
+    } finally {
+      restore();
+    }
+  });
+
+  it("★ ブラウザが拒んだら 'failed'", async () => {
+    const restore = withDeleteRequest((req) => req.onerror?.(new Event('error')));
+    try {
+      expect(await getVault().wipeAndReset()).toBe('failed');
+    } finally {
+      restore();
+    }
+  });
+
+  it('★ 消せなかったら鍵は落とさない — 半分だけ適用しない', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    expect(v.isUnlocked()).toBe(true);
+    const restore = withDeleteRequest((req) => req.onblocked?.(new Event('blocked') as IDBVersionChangeEvent));
+    try {
+      expect(await v.wipeAndReset()).toBe('blocked');
+      // 何も消えていないので、状態も変えない。落としてしまうと呼ぶ側の画面は
+      // 「解錠のまま鍵は死んでいる」になり、2026-09-06 に直した食い違いを作る。
+      // 利用者は他のタブを閉じてもう一度押せる。
+      expect(v.isUnlocked()).toBe(true);
+    } finally {
+      restore();
+    }
+  });
+
+  it('対照: 消えたときは鍵を落とす (上の検査が「常に落とさない」ではない)', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    expect(v.isUnlocked()).toBe(true);
+    expect(await v.wipeAndReset()).toBe('deleted');
+    expect(v.isUnlocked()).toBe(false);
+  });
+});
+
+describe('describeWipeOutcome — 結果を利用者の 1 行にする', () => {
+  it("'deleted' は何も言わない (成功時に警告を出さない)", () => {
+    expect(describeWipeOutcome('deleted')).toBeNull();
+  });
+
+  it('★ 消えなかった 2 つは、結果・原因・打ち手・「データは残っています」を出す', () => {
+    const blocked = describeWipeOutcome('blocked');
+    const failed = describeWipeOutcome('failed');
+    // **4 つを全部見る。** 文面は 2 つの literal を繋いでいるので、片方だけを
+    // 見ていると**もう片方が消えても鳴らない** (実際、変異検査で前半を `""` に
+    // した変異体が生き残って気づいた —— 打ち手と「残っています」は後半に在り、
+    // 「削除できませんでした」と「使用中」は前半に在る)。
+    expect(blocked).toContain('削除できませんでした'); // 結果
+    expect(blocked).toContain('使用中'); // 原因
+    expect(blocked).toContain('他のタブをすべて閉じて'); // 打ち手
+    expect(blocked).toContain('データは残っています'); // 現状
+
+    expect(failed).toContain('削除できませんでした');
+    expect(failed).toContain('ブラウザに拒否されました');
+    expect(failed).toContain('ページを再読み込みして');
+    expect(failed).toContain('データは残っています');
+
+    // 原因が違えば打ち手も違う —— 同じ文面にしない。
+    expect(blocked).not.toBe(failed);
+  });
 });
 
 describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
-  it('idbGet が throw しても reject せず uninitialized を返す (ログイン画面に到達)', async () => {
+  /**
+   * **2026-09-06 に方針を 1 つだけ変えた。**
+   *
+   * ここは元々「読取失敗でも reject せず `uninitialized` を返す」だった。
+   * reject しないのは正しい —— 投げると App がハングしてロック画面に到達できない。
+   * だが `uninitialized` は「保管庫が無い」の意味なので、ロック画面は
+   * **「ようこそ — はじめてのご利用」**を出し、トークンを預けている本人に
+   * 初回起動の画面を見せていた。`initialize()` は書く前にもう一度読んで断るので
+   * アプリが上書きすることはないが、「消えた」と読んだ利用者は
+   * **サイトデータの削除**へ進みうる —— そちらは本当に消える。
+   *
+   * なので `unreadable` を返す。**投げないことは変えていない。**
+   */
+  it('★ idbGet が throw しても reject せず unreadable を返す (画面には到達する)', async () => {
     const v = getVault();
     // 先に初期化して meta を書き込んでおく (本来は locked が返る状態)。
     await v.initialize('robustness-pw-123456');
@@ -720,11 +928,90 @@ describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
       throw new Error('synthetic idb failure');
     };
     try {
-      // reject せず uninitialized に縮退すること (App はこれでロック画面を表示)。
-      await expect(v2.status()).resolves.toBe('uninitialized');
+      await expect(v2.status()).resolves.toBe('unreadable');
     } finally {
       proto.transaction = orig;
     }
+  });
+
+  it('★ DB そのものを開けない端末でも unreadable (「保管庫が無い」と混ぜない)', async () => {
+    const realIdb = globalThis.indexedDB;
+    const err = new Error('store unavailable');
+    err.name = 'InvalidStateError';
+    // `indexedDB.open` が必ず失敗する端末 (プライベートウィンドウ等)。
+    (globalThis as unknown as { indexedDB: unknown }).indexedDB = {
+      open: () => {
+        const req: Record<string, unknown> = { error: err };
+        setTimeout(() => {
+          (req.onerror as (() => void) | undefined)?.();
+        }, 0);
+        return req;
+      },
+    };
+    try {
+      _resetVaultForTests();
+      await expect(getVault().status()).resolves.toBe('unreadable');
+    } finally {
+      (globalThis as unknown as { indexedDB: unknown }).indexedDB = realIdb;
+      _resetVaultForTests();
+    }
+  });
+
+  it('対照: 読める端末では uninitialized / locked を返し分ける', async () => {
+    _resetVaultForTests();
+    const v = getVault();
+    expect(await v.status()).toBe('uninitialized'); // 本当に何も無い
+    await v.initialize('robustness-pw-123456');
+    expect(await v.status()).toBe('unlocked');
+    _resetVaultForTests();
+    expect(await getVault().status()).toBe('locked'); // meta は在るが鍵はメモリに無い
+  });
+});
+
+/*
+ * 文面そのものを留める。
+ *
+ * ロック画面側の検査は `VAULT_UNREADABLE_TEXT` を**本物から読んで**表示と突き合わせる
+ * ——「画面がこの定数を出しているか」を見るには正しいが、**定数の中身については
+ * 何も言っていない** (定数と表示が同時に変わるので、どちらを削っても通る)。
+ * 実際に変異検査が 5 本の生存として鳴らした (2026-09-06)。約束は 5 つあるので
+ * 5 つ検査する —— どれか 1 つを消したら鳴る。
+ *
+ * 定数の初期化は読み込み時に走るので、`resetModules` して**検査の中で**評価させる
+ * (静的なままだと変異が測れない。`network/proxy.ts` で同じ形を使っている)。
+ */
+describe('VAULT_UNREADABLE_TEXT — 5 つの約束', () => {
+  async function text(): Promise<string> {
+    vi.resetModules();
+    return (await import('../vault')).VAULT_UNREADABLE_TEXT;
+  }
+
+  it('★ 「確認できなかった」と言う (「無い」と言い切らない)', async () => {
+    expect(await text()).toContain('この端末の保管庫を確認できませんでした。');
+  });
+
+  it('★ 「はじめての利用」に見えることを先に訂正する', async () => {
+    expect(await text()).toContain('はじめての利用のように見えても、預けたトークンが消えたとは限りません。');
+  });
+
+  it('★ 直せる原因その 1 — プライベートウィンドウ', async () => {
+    expect(await text()).toContain('プライベートウィンドウで開いている場合は通常のウィンドウで開き直し、');
+  });
+
+  it('★ 直せる原因その 2 — 保存領域が一杯', async () => {
+    expect(await text()).toContain('保存領域が一杯の場合はライブラリの不要なファイルを削除してから、');
+  });
+
+  it('★ この画面の上に在るボタンを名前で指す', async () => {
+    // 「もう一度確認」は `LockScreen` が実際に出すボタンの文字 (別の検査が押している)。
+    expect(await text()).toContain('この画面の「もう一度確認」を押してください。');
+  });
+
+  it('対照: 5 つを繋いだ全体が文面である (順序も落とさない)', async () => {
+    const t = await text();
+    expect(t.indexOf('確認できませんでした')).toBeLessThan(t.indexOf('はじめての利用'));
+    expect(t.indexOf('プライベートウィンドウ')).toBeLessThan(t.indexOf('保存領域が一杯'));
+    expect(t.endsWith('を押してください。')).toBe(true);
   });
 });
 

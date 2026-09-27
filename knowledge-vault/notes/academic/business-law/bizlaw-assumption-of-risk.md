@@ -41,7 +41,7 @@ aliases:
 - [[bizlaw-attractive-nuisance|誘引的妨害物の法理（Attractive Nuisance Doctrine）]] — 同じ思想家
 - [[bizlaw-constructive-trust-remedy|擬制信託——不当利得防止のための衡平法上の救済手段]] — 同じ思想家
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同じ思想家
-- [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — 同じ思想家
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

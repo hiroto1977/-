@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-metaverse|メタバース]] — 出典を共有
 - [[mgmt-skunkworks|スカンクワークス]] — 出典を共有
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同分野の近傍
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同分野の近傍
 - [[infosoc-cultural-industry-adorno-horkheimer|文化産業論——標準化された大量生産文化による大衆欺瞞]] — 同分野の近傍
 
 ## 関連

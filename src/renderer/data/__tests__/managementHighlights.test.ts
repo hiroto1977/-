@@ -1,10 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   buildManagementHighlights,
   summarizeHighlights,
   RISK_BAND_LABEL,
   DEFAULT_HIGHLIGHT_THRESHOLDS,
+  BUDGET_ACHIEVED_PCT,
   type Highlight,
+  type HighlightThresholds,
 } from '../managementHighlights';
 import { buildBusinessOverview, type BusinessOverview } from '../overview';
 import type { KpiActual } from '../kpiActuals';
@@ -14,6 +16,9 @@ import type { KpiActual } from '../kpiActuals';
  * defaulted so that NO highlight fires; each test overrides to trigger exactly one branch at
  * its boundary. Cast through unknown since the unrelated overview fields are irrelevant here.
  */
+/** 期がすべて突合できている突合結果 (断り書きが出ない既定)。 */
+const ALIGNED = { comparedPeriods: ['2026-04'], budgetOnlyPeriods: [], actualOnlyPeriods: [] } as const;
+
 const mkOv = (p: any = {}): BusinessOverview => ({
   plan: { tier: 'pro', label: 'Pro', audience: '' },
   kpi: { hasData: true, operatingProfit: 100, operatingMarginPct: 5, revenue: 1000, safetyMargin: 50, revenueGrowthPct: null, ...p.kpi },
@@ -22,10 +27,22 @@ const mkOv = (p: any = {}): BusinessOverview => ({
     operatingProfit: { streak: 0, dropFromPeakPct: null, ...p.opStreak },
   },
   productivity: { labor: { laborSharePct: null, ...p.labor } },
-  budget: 'budget' in p ? p.budget : null,
+  // 予実の詰め物の既定は「期がすべて突合できている」= 断り書きの出ない状態。
+  // `budget` が非 null なら `budgetAlignment` も必ず非 null (実物の不変条件)。
+  budget: 'budget' in p && p.budget !== null ? { alignment: ALIGNED, ...p.budget } : null,
+  budgetAlignment:
+    'budgetAlignment' in p
+      ? p.budgetAlignment
+      : 'budget' in p && p.budget !== null
+        ? ALIGNED
+        : null,
   financialPosition: 'fp' in p ? p.fp : null,
-  workingCapital: 'wc' in p ? p.wc : null,
+  balanceSheetFreshness: 'fresh' in p ? p.fresh : null,
+  // 未入力の内数は既定で無し (この検査では CCC の帯だけを動かす)。名前を渡す検査は
+  // `missingStocks` を明示する。
+  workingCapital: 'wc' in p ? { missingStocks: [], ...p.wc } : null,
   accounting: 'accounting' in p ? p.accounting : null,
+  accountingRecency: 'recency' in p ? p.recency : null,
   runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
   sales: { concentration: 'concentration' in p ? p.concentration : null },
   flags: { seatsFull: p.seatsFull ?? false },
@@ -45,7 +62,7 @@ describe('buildManagementHighlights — empty / structural', () => {
 
   it('exposes the default thresholds', () => {
     expect(DEFAULT_HIGHLIGHT_THRESHOLDS).toEqual({
-      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60,
+      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60, budgetShortfallWarnPct: 90,
     });
   });
 
@@ -141,6 +158,128 @@ describe('buildManagementHighlights — 予実 (budget variance)', () => {
     const hit = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], kpiBudgets: [kpi({ revenue: 800_000 })], members: [] });
     expect(cat(buildManagementHighlights(hit), '予実')).toMatchObject({ severity: 'good', message: expect.stringContaining('達成') });
   });
+
+  // 2026-09-07: 達成率は**突合できた期だけ**で出す。対象外の月が在れば、それが
+  // 何か月分の比較なのかを所見自身が述べる (通年の未達に読まれないように)。
+  it('★ 対象外の期が在れば、何か月分の比較かを所見が述べる', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [],
+      // 予算は 12 か月・実績は 3 か月 (直す前は 12 か月の予算を 3 か月の実績で割っていた)
+      kpiBudgets: ['2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09'].map((period) => kpi({ period, revenue: 1_000_000 })),
+      kpiActuals: ['2026-04', '2026-05'].map((period) => kpi({ period, revenue: 1_000_000 })),
+    });
+    const h = cat(buildManagementHighlights(o), '予実')!;
+    expect(h.message).toContain('予算と実績の両方が在る 2 か月分の比較です (予算のみ 4 か月は対象外)。');
+  });
+
+  it('★ 対照: 全期が突合できていれば月数の断り書きは付かない', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [],
+      kpiBudgets: [kpi({ period: '2026-04', revenue: 2_000_000 })],
+      kpiActuals: [kpi({ period: '2026-04', revenue: 1_000_000 })],
+    });
+    const h = cat(buildManagementHighlights(o), '予実')!;
+    expect(h.message).toBe('売上が予算未達です (達成率 50%)。');
+  });
+
+  it('★ 期が 1 つも重ならなければ「算定できない」と月数を述べる (黙って消さない)', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [],
+      kpiBudgets: [kpi({ period: '2025-04' }), kpi({ period: '2025-05' })],
+      kpiActuals: [kpi({ period: '2026-04' })],
+    });
+    const h = cat(buildManagementHighlights(o), '予実')!;
+    expect(h.severity).toBe('warning');
+    expect(h.message).toBe(
+      '予算と実績で期が重なっていないため達成率を算定できません (予算 2 か月・実績 1 か月)。同じ月 (YYYY-MM) で予算と実績を入れてください。',
+    );
+  });
+
+  it('対照: 予算が未入力なら予実の所見は出ない', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], members: [] });
+    expect(cat(buildManagementHighlights(o), '予実')).toBeUndefined();
+  });
+});
+
+/*
+ * **しきい値はどれも判定を実際に動かす** (2026-09-27 · パス 493c)。
+ *
+ * 予算未達の 90 は判定の中の生の literal で、同じ関数の兄弟 4 つだけが調整できた。
+ * 表 `WIRING` は `Record<keyof HighlightThresholds, …>` なので、**しきい値を足して
+ * ここに行を書かないと型検査が落ちる**。行ごとに「既定では出ない / 調整すると出る」
+ * (または逆) を同じ概況で見る —— 設定できるのに判定が読まない欄を作らない。
+ */
+const WIRING: Record<keyof HighlightThresholds, {
+  /** 既定のしきい値で見る概況。 */
+  readonly overview: BusinessOverview;
+  /** 調整する値 (既定と違う)。 */
+  readonly adjusted: number;
+  /** 動く所見のカテゴリ。 */
+  readonly category: string;
+}> = {
+  // 2 期の下落は既定 (警告 2) で出る。警告を 3 期へ上げると出ない。
+  declineWarnStreak: { overview: mkOv({ revStreak: { streak: 2 } }), adjusted: 3, category: '売上トレンド' },
+  // 3 期の下落は既定 (危険 3) で critical。危険を 4 期へ上げると warning に下がる。
+  declineCriticalStreak: { overview: mkOv({ revStreak: { streak: 3 } }), adjusted: 4, category: '売上トレンド' },
+  // 55% は既定 (60) では出ない。50 へ下げると出る。
+  laborShareWarnPct: { overview: mkOv({ labor: { laborSharePct: 55 } }), adjusted: 50, category: '生産性' },
+  // 1 チャネル 55% は既定 (60) では出ない。50 へ下げると出る。
+  singleChannelWarnPct: {
+    overview: mkOv({ concentration: { topChannel: 'amazon', topSharePct: 55 } }),
+    adjusted: 50,
+    category: '売上集中',
+  },
+  // 達成率 92% は既定 (90) では出ない。95 へ上げると「予算未達」が出る。
+  budgetShortfallWarnPct: { overview: mkOv({ budget: { revenue: { achievementPct: 92 } } }), adjusted: 95, category: '予実' },
+};
+
+describe('★ しきい値はどれも判定を実際に動かす (設定できるのに効かない欄を作らない)', () => {
+  it('表は既定のしきい値と同じ鍵を持つ (両方向 —— 型が落とすが、実行時にも見る)', () => {
+    expect(Object.keys(WIRING).sort()).toEqual(Object.keys(DEFAULT_HIGHLIGHT_THRESHOLDS).sort());
+  });
+
+  it.each(Object.keys(WIRING) as (keyof HighlightThresholds)[])('%s を動かすと所見が変わる', (key) => {
+    const w = WIRING[key];
+    expect(w.adjusted, '調整する値が既定と同じ —— 何も測らない').not.toBe(DEFAULT_HIGHLIGHT_THRESHOLDS[key]);
+    const before = buildManagementHighlights(w.overview).filter((h) => h.category === w.category);
+    const after = buildManagementHighlights(w.overview, { thresholds: { [key]: w.adjusted } }).filter(
+      (h) => h.category === w.category,
+    );
+    expect(after, `${key} を ${w.adjusted} にしても「${w.category}」の所見が変わらない`).not.toEqual(before);
+  });
+});
+
+describe('予算未達のしきい値 (パス 493c)', () => {
+  const at = (pct: number, thresholds?: Partial<HighlightThresholds>) =>
+    cat(buildManagementHighlights(mkOv({ budget: { revenue: { achievementPct: pct } } }), { thresholds }), '予実');
+
+  it('★ 既定 (90) では 92% は黙り、95 へ上げると「予算未達」を言う', () => {
+    expect(at(92)).toBeUndefined();
+    expect(at(92, { budgetShortfallWarnPct: 95 })).toMatchObject({
+      severity: 'warning',
+      message: '売上が予算未達です (達成率 92%)。',
+    });
+  });
+
+  it('★ 80 へ下げると 85% は黙る (対照: 既定では警告)', () => {
+    expect(at(85)).toMatchObject({ severity: 'warning' });
+    expect(at(85, { budgetShortfallWarnPct: 80 })).toBeUndefined();
+  });
+
+  it('境界はしきい値ちょうどで警告しない (未満だけ)', () => {
+    expect(at(95, { budgetShortfallWarnPct: 95 })).toBeUndefined();
+    expect(at(94.9, { budgetShortfallWarnPct: 95 })).toMatchObject({ severity: 'warning' });
+  });
+
+  it('★ 「達成」は 100 のまま —— しきい値を 100 にしても 100% は達成、99.9% は未達', () => {
+    expect(BUDGET_ACHIEVED_PCT).toBe(100);
+    expect(at(100, { budgetShortfallWarnPct: 100 })).toMatchObject({ severity: 'good', message: '売上予算を達成しています (達成率 100%)。' });
+    expect(at(99.9, { budgetShortfallWarnPct: 100 })).toMatchObject({ severity: 'warning' });
+  });
+
+  it('しきい値を下げても 100 未満を「達成」とは言わない', () => {
+    expect(at(99, { budgetShortfallWarnPct: 0 })).toBeUndefined();
+  });
 });
 
 describe('buildManagementHighlights — 財政状態 (balance sheet)', () => {
@@ -211,11 +350,16 @@ describe('buildManagementHighlights — 利益トレンド / 生産性 / 運転�
   });
 
   it('warns on a long CCC (> 60 days) and praises a non-positive CCC (運転資金)', () => {
-    // 高い売上債権/棚卸・低い仕入債務 → CCC 長い
+    // 高い売上債権/棚卸・低い仕入債務 → CCC 長い。
+    // **2026-09-07 に見本を作り直した**: 旧見本 (売上債権 40 万・棚卸 30 万) は
+    // 実績 1 か月分を 365 日で割る欠陥のおかげでだけ 60 日を超えていた
+    // (実測の 1 か月では CCC 31.2 日)。期間を正しく数えると鳴らなくなったので、
+    // **本当に長い控え**へ差し替えた: DSO 60.8 + DIO 76 − DPO 3.8 = 133.0 日。
     const long = buildBusinessOverview({
       plan: 'pro', sales: [], kpiActuals: [kpi()], members: [],
-      balanceSheet: { asOf: '2026-05-31', currentAssets: 900_000, inventory: 300_000, accountsReceivable: 400_000, fixedAssets: 0, currentLiabilities: 100_000, accountsPayable: 50_000, fixedLiabilities: 0, netIncome: 0 },
+      balanceSheet: { asOf: '2026-05-31', currentAssets: 3_000_000, inventory: 1_000_000, accountsReceivable: 2_000_000, fixedAssets: 0, currentLiabilities: 100_000, accountsPayable: 50_000, fixedLiabilities: 0, netIncome: 0 },
     });
+    expect(long.workingCapital!.ccc).toBe(133);
     expect(cat(buildManagementHighlights(long), '運転資金')).toMatchObject({ severity: 'warning', message: expect.stringContaining('CCC') });
     // 低い債権/棚卸・高い仕入債務 → CCC <= 0
     const neg = buildBusinessOverview({
@@ -268,6 +412,131 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 0, safetyMargin: 5 } })), '安全性')).toBeUndefined();
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 10 } })), '安全性')).toBeUndefined();
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 9.9 } })), '安全性')).toMatchObject({ severity: 'warning' });
+  });
+
+  /**
+   * **損益分岐点を割っている会社に「売上減少に弱い」とは言わない。** (2026-09-07)
+   *
+   * 安全余裕率が 0 で止められていた頃は、損益分岐点を 200% 下回る会社にも
+   * 「安全余裕率が 0.0% と低く、**売上減少に弱い**状態です」(warning) が出ていた。
+   * 弱いのではなく既に割っている。所見の強さも文面も、状態に合っていなかった。
+   */
+  /**
+   * 貸借対照表の基準日は 2026-09-07 まで**どの計算にも入っていなかった** ——
+   * 7 年古い貸借対照表でも所見が 1 件も出なかった (経緯は `balanceSheetFreshness.ts`)。
+   */
+  it('★ 基準日が古ければ、どの比率が別の期を見ているかまで述べる', () => {
+    const f = c(
+      buildManagementHighlights(
+        mkOv({ fresh: { asOfMonth: '2019-03', latestPeriod: '2026-08', monthsBehind: 89, stale: true, ahead: false } }),
+      ),
+      '財政状態',
+    );
+    expect(f).toMatchObject({ severity: 'warning' });
+    expect(f?.message).toContain('2019年3月');
+    expect(f?.message).toContain('2026年8月');
+    expect(f?.message).toContain('89 か月');
+    expect(f?.message).toContain('総資産回転率');
+    expect(f?.message).toContain('現金化サイクル');
+    expect(f?.message).toContain('資金ランウェイ');
+  });
+
+  it('★ 対照: 古くなければ (stale=false) 何も言わない', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: '2026-08', latestPeriod: '2026-08', monthsBehind: 0, stale: false, ahead: false } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('★ 隔たりが測れない (monthsBehind=null) なら言わない —— 数字の無い文面を出さない', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: null, latestPeriod: '2026-08', monthsBehind: null, stale: true, ahead: false } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('対照: 貸借対照表が無ければ (fresh=null) 何も言わない', () => {
+    expect(c(buildManagementHighlights(mkOv({ fresh: null })), '財政状態')).toBeUndefined();
+  });
+
+  /**
+   * **隔たりは両側にある。** 2026-09-07 まで `stale` (古い側) しか見ておらず、
+   * 基準日が実績より**先**のときは隔たりが何年でも所見が 1 行も出なかった。
+   */
+  it('★ 基準日が実績より先なら「後です」と述べ、確かめる先も言う', () => {
+    const f = c(
+      buildManagementHighlights(
+        mkOv({ fresh: { asOfMonth: '2036-03', latestPeriod: '2026-08', monthsBehind: -115, stale: false, ahead: true } }),
+      ),
+      '財政状態',
+    );
+    expect(f).toMatchObject({ severity: 'warning' });
+    expect(f?.message).toContain('2036年3月');
+    expect(f?.message).toContain('2026年8月');
+    // 月数は符号を落として述べる (「-115 か月古い」とは言わない)。
+    expect(f?.message).toContain('115 か月');
+    expect(f?.message).not.toContain('-115');
+    expect(f?.message).toContain('後');
+    expect(f?.message).toContain('基準日か実績の期の入力を確かめて');
+    // 古い側の文面 (新しい控えを入れる) は出さない —— 次の手が違う。
+    expect(f?.message).not.toContain('新しい貸借対照表を入力してください');
+  });
+
+  it('★ 対照: 先でも古くもなければ (両方 false) 何も言わない', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: '2026-09', latestPeriod: '2026-08', monthsBehind: -1, stale: false, ahead: false } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('★ 先でも、隔たりが測れなければ言わない (数字の無い文面を出さない)', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: null, latestPeriod: '2026-08', monthsBehind: null, stale: false, ahead: true } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('★ 安全余裕率が負 = 損益分岐点を下回っている → warning ではなく critical、文面も変わる', () => {
+    const f = c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: -50 } })), '安全性');
+    expect(f).toMatchObject({ severity: 'critical' });
+    expect(f?.message).toContain('下回っています');
+    expect(f?.message).toContain('-50.0%');
+    // 直す前の文面 (「売上減少に弱い」) は出ない。
+    expect(f?.message).not.toContain('売上減少に弱い');
+  });
+
+  it('★ 安全余裕率が算定不能 (null) = 損益分岐点が存在しない → critical で理由を言う', () => {
+    const f = c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: null } })), '安全性');
+    expect(f).toMatchObject({ severity: 'critical' });
+    expect(f?.message).toContain('限界利益が 0 以下');
+    expect(f?.message).toContain('損益分岐点が存在しません');
+  });
+
+  it('★ 境界: 0 ちょうどは「割っている」ではなく従来どおり warning', () => {
+    const f = c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 0 } })), '安全性');
+    expect(f).toMatchObject({ severity: 'warning' });
+    expect(f?.message).toContain('売上減少に弱い');
+  });
+
+  it('対照: 売上が無ければ負でも算定不能でも所見は出ない (revenue > 0 の関門は残っている)', () => {
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 0, safetyMargin: -50 } })), '安全性')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 0, safetyMargin: null } })), '安全性')).toBeUndefined();
   });
   it('growth boundaries: 0 is neither, exactly 10 is good (< 0 / >= 10 strict)', () => {
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenueGrowthPct: 0 } })), '成長性')).toBeUndefined();
@@ -401,5 +670,129 @@ describe('summarizeHighlights — 件数 + 総合リスク帯', () => {
 
   it('exposes a Japanese label for every risk band', () => {
     expect(RISK_BAND_LABEL).toEqual({ high: '要対応', medium: '注意', low: '良好', none: '所見なし' });
+  });
+});
+
+/**
+ * **算定しなかった理由を、欄の名前で述べること。** (2026-09-07)
+ *
+ * 未入力の内数は 0 として積まないので運転資金の欄は「—」になる。黙って落とすと
+ * 利用者は「自社に運転資金の負担が無い」と読む —— それは以前の 0 に倒す実装が
+ * 実際に出していた答えである。
+ */
+describe('運転資金: 未入力の欄を名前で述べる', () => {
+  it('未入力の欄があれば warning を出し、欄の名前を並べる', () => {
+    const h = buildManagementHighlights(
+      mkOv({ wc: { ccc: null, missingStocks: ['売上債権', '仕入債務'] } }),
+    ).find((x) => x.message.includes('未入力'));
+    expect(h).toMatchObject({ severity: 'warning', category: '運転資金' });
+    expect(h!.message).toContain('売上債権・仕入債務');
+    expect(h!.message).toContain('現金化サイクル');
+  });
+
+  it('★ 対照: 埋まっていれば所見を出さない (毎回出る雑音にしない)', () => {
+    const hs = buildManagementHighlights(mkOv({ wc: { ccc: 30, missingStocks: [] } }));
+    expect(hs.some((x) => x.message.includes('未入力'))).toBe(false);
+  });
+
+  it('未入力の所見は CCC の帯の所見と併存する (どちらかが消えない)', () => {
+    // CCC が算定できていて、なお運転資本の 1 欄が欠けている形 (仕入債務だけ空欄では
+    // CCC は出ないので、ここは「名前を述べる」側だけが増えることを見る)。
+    const hs = buildManagementHighlights(mkOv({ wc: { ccc: 61, missingStocks: ['棚卸資産'] } }));
+    expect(hs.filter((x) => x.category === '運転資金')).toHaveLength(2);
+  });
+});
+
+/**
+ * **定数表そのものを変異検査の射程に入れる (読み直して測る)。** (2026-09-07)
+ *
+ * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
+ * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
+ * (`stryker.config.json` の `_commentIgnoreStatic`)。殺し方は**テスト側で読み直す**
+ * こと: `vi.resetModules()` + 動的 `import()` なら変異体が有効な状態で評価される。
+ *
+ * ここで留めるのは、画面と**金融機関等へ出す書面**が刷る文字そのものである。
+ */
+describe('読み直して測る — リスク帯のラベルと既定しきい値', () => {
+  it('リスク帯のラベルは読み直しても 4 つとも同じ文字', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    expect(m.RISK_BAND_LABEL).toEqual({
+      high: '要対応', medium: '注意', low: '良好', none: '所見なし',
+    });
+  });
+
+  it('既定のしきい値は読み直しても 5 欄そろって同じ数', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    expect(m.DEFAULT_HIGHLIGHT_THRESHOLDS).toEqual({
+      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60, budgetShortfallWarnPct: 90,
+    });
+  });
+
+  it('「達成」の達成率は読み直しても 100 (語の定義 —— しきい値ではない)', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    expect(m.BUDGET_ACHIEVED_PCT).toBe(100);
+  });
+
+  it('深刻さの並び順は読み直しても critical → warning → good', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    // 並べ替えの表は非公開なので、`buildManagementHighlights` の並びで測る。
+    // 3 種すべてが出る形を 1 つ作る: 債務超過 (critical) / 流動比率 99% (warning) /
+    // 営業利益率 12% (good)。
+    const hs = m.buildManagementHighlights(
+      mkOv({
+        kpi: { operatingMarginPct: 12 },
+        fp: { insolvent: true, equityRatioPct: -10, currentRatioPct: 99 },
+      }),
+    );
+    const order = hs.map((h) => h.severity);
+    expect(order).toContain('critical');
+    expect(order).toContain('warning');
+    expect(order).toContain('good');
+    // 昇順であること (critical 0 → warning 1 → good 2)。表を空にすると NaN 比較で
+    // 並びが入力順のままになる。
+    const rank = { critical: 0, warning: 1, good: 2 } as const;
+    for (let i = 1; i < order.length; i += 1) {
+      expect(rank[order[i]!] >= rank[order[i - 1]!], order.join(',')).toBe(true);
+    }
+  });
+});
+
+/**
+ * **ランウェイの両辺は別の出所・別の窓である。**
+ * 現預金は貸借対照表の基準日時点、月次平均営業CF は会計連携の窓。パス 35 の
+ * 基準日の検査は KPI 実績としか突き合わせないので、KPI を最新に保ったまま
+ * 会計連携が止まっていると何も鳴らず、「今年の現預金 ÷ 何年も前の資金流出」を
+ * critical の所見が断言していた (2026-09-07)。
+ */
+describe('会計連携の古さ (accountingRecency)', () => {
+  const stale = { latestAccountingMonth: '2024-06', cashAsOfMonth: '2026-08', monthsBehind: 26, stale: true, ahead: false };
+
+  it('★ 会計連携が基準日より古ければ、どの数字が別の時期かまで述べる', () => {
+    const h = buildManagementHighlights(mkOv({ recency: stale })).find((x) => x.message.includes('会計連携を同期'));
+    expect(h).toMatchObject({ severity: 'warning' });
+    expect(h?.message).toContain('2024年6月');
+    expect(h?.message).toContain('2026年8月');
+    expect(h?.message).toContain('26 か月古く');
+    expect(h?.message).toContain('資金ランウェイ');
+    expect(h?.message).toContain('会計連携を同期');
+  });
+
+  it('★ 対照: 古くなければ (stale=false) この所見は出ない', () => {
+    const fresh = { ...stale, monthsBehind: 0, stale: false };
+    const hs = buildManagementHighlights(mkOv({ recency: fresh }));
+    expect(hs.some((h) => h.message.includes('会計連携を同期'))).toBe(false);
+  });
+
+  it('★ 隔たりが測れなければ言わない (数字の無い文面を出さない)', () => {
+    const unknown = { latestAccountingMonth: null, cashAsOfMonth: '2026-08', monthsBehind: null, stale: true, ahead: false };
+    expect(buildManagementHighlights(mkOv({ recency: unknown })).some((h) => h.message.includes('会計連携を同期'))).toBe(false);
+  });
+
+  it('対照: 会計連携か貸借対照表が無ければ (recency=null) 何も言わない', () => {
+    expect(buildManagementHighlights(mkOv({ recency: null })).some((h) => h.message.includes('会計連携を同期'))).toBe(false);
   });
 });

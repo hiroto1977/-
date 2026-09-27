@@ -26,7 +26,7 @@ aliases:
 ローレンス・レッシグ ／ ジョエル・ライデンバーグ ／ ジョン・ペリー・バーロウ ／ ヨハイ・ベンクラー
 
 ## 出典
-- [Lessig, L. (1999) Code and Other Laws of Cyberspace — Basic Books (WorldCat)](https://www.worldcat.org/oclc/40340890) `学術`
+- [Lessig, L. (1999) Code and Other Laws of Cyberspace — Basic Books (WorldCat)](https://www.worldcat.org/oclc/40340890) `リファレンス`
 - [Wikipedia: Code is law — Lessig, four modalities of regulation, architecture/code, cyber-libertarianism critique](https://en.wikipedia.org/wiki/Lawrence_Lessig#Code_and_Other_Laws_of_Cyberspace) `リファレンス`
 
 ## 関連概念
@@ -35,11 +35,11 @@ aliases:
 - [[infosoc-cyberspace-barlow|サイバースペース独立宣言——国家主権から自律したネット空間という理想]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
 - [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
-- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

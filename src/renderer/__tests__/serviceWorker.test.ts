@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
 
 /*
@@ -37,7 +37,7 @@ interface FakeReq {
 const ORIGIN = 'https://hiroto1977.github.io';
 
 function load(): Harness {
-  const src = readFileSync(path.resolve(process.cwd(), 'assets/sw.js'), 'utf8');
+  const src = readOriginalSource(path.resolve(process.cwd(), 'assets/sw.js'));
   const listeners = new Map<string, Listener>();
   const cacheStore = new Map<string, Map<string, unknown>>();
   const putCalls: { cache: string; url: string }[] = [];
@@ -49,9 +49,13 @@ function load(): Harness {
     const m = cacheStore.get(name)!;
     return {
       addAll: async (urls: string[]) => urls.forEach((u) => m.set(u, { precached: true })),
-      put: async (req: FakeReq, res: unknown) => {
-        putCalls.push({ cache: name, url: req.url });
-        m.set(req.url, res);
+      // 鍵は要求そのものでも文字列でもよい (実物の Cache と同じ)。sw.js は
+      // パス 485 から**パスだけの文字列**を鍵にする —— 同じ鍵へ入れた物は上書きされる
+      // (Map の set と同じ)。
+      put: async (req: FakeReq | string, res: unknown) => {
+        const url = typeof req === 'string' ? req : req.url;
+        putCalls.push({ cache: name, url });
+        m.set(url, res);
       },
     };
   };
@@ -208,6 +212,81 @@ describe('オフラインの falling back', () => {
   });
 });
 
+/*
+ * **キャッシュの鍵はパスだけ** (2026-09-26 · パス 485)。
+ *
+ * 以前は要求の URL 全体 (クエリ込み) を鍵にしていた。配信は静的 (GitHub Pages) で
+ * どのクエリにも同じファイルを返すのに、鍵はクエリごとに別になる。実 chromium で
+ * 実測 (2026-09-26 · `pages.yml` と同じ形に組んだ `_site`):
+ *
+ *   app.html を開き ?fbclid=… を 5 通り付けて開く
+ *     → 同じ 11,831,187 B が 6 つ = Cache Storage 71,024,096 B
+ *   ?utm_source=x でしか来ていない利用者がオフラインになる
+ *     app.html / app.html?utm_source=y → ランディング (アプリは焼いてあるのに)
+ *
+ * 直した後の同じ測定は 11,864,027 B (写しは 1 つ) で、3 つの URL すべてでアプリが開く。
+ * この harness の Map は実物の Cache と同じく**同じ鍵へ入れた物を上書きする**ので、
+ * 「写しが 1 つ」を件数でそのまま主張できる。
+ */
+describe('キャッシュの鍵はパスだけ (パス 485)', () => {
+  /** cache.put は respondWith の外で走るので、主張の前に 1 巡流す。 */
+  const flush = () => new Promise((r) => setTimeout(r, 0));
+  const stored = () => [...h.cacheStore.values()].flatMap((m) => [...m.keys()]);
+
+  const VISITS = [
+    `${ORIGIN}/-/app.html`,
+    `${ORIGIN}/-/app.html?fbclid=IwAR1`,
+    `${ORIGIN}/-/app.html?fbclid=IwAR2`,
+    `${ORIGIN}/-/app.html?utm_source=x&utm_medium=social`,
+    `${ORIGIN}/-/app.html#home`,
+    `${ORIGIN}/-/app.html?gclid=abc#tax`,
+  ];
+
+  it('★ クエリ違いで何度開いても、焼く写しは 1 つ (追跡パラメタ 1 つにつき 11.8 MB を積まない)', async () => {
+    // 標本: 訪問の URL は本当に互いに違う (同じ URL を並べたなら 1 つは自明に通る)。
+    expect(new Set(VISITS).size).toBe(VISITS.length);
+    h.setFetch(async () => okRes('app'));
+    for (const url of VISITS) await runFetch(h, { url, method: 'GET', mode: 'navigate' });
+    await flush();
+    expect(stored()).toEqual([`${ORIGIN}/-/app.html`]);
+  });
+
+  it('★ 別のファイルは別の写し (畳みすぎない)', async () => {
+    h.setFetch(async () => okRes('x'));
+    for (const url of [
+      `${ORIGIN}/-/app.html?x=1`,
+      `${ORIGIN}/-/lite.html?x=1`,
+      `${ORIGIN}/-/index.html`,
+      `${ORIGIN}/-/`,
+    ]) {
+      await runFetch(h, { url, method: 'GET', mode: 'navigate' });
+    }
+    await flush();
+    expect(stored().sort()).toEqual(
+      [`${ORIGIN}/-/`, `${ORIGIN}/-/app.html`, `${ORIGIN}/-/index.html`, `${ORIGIN}/-/lite.html`].sort(),
+    );
+  });
+
+  it('★ クエリ付きでしか来ていない利用者も、オフラインでアプリが開く (ランディングへ落とさない)', async () => {
+    // ランディングを先読みしておく —— 直す前はここへ落ちていた。
+    await h.listeners.get('install')!({ waitUntil: async (p: Promise<unknown>) => await p });
+    h.setFetch(async () => okRes('app'));
+    await runFetch(h, { url: `${ORIGIN}/-/app.html?utm_source=x`, method: 'GET', mode: 'navigate' });
+    await flush();
+    h.setFetch(async () => {
+      throw new Error('offline');
+    });
+    for (const url of [
+      `${ORIGIN}/-/app.html`,
+      `${ORIGIN}/-/app.html?utm_source=y`,
+      `${ORIGIN}/-/app.html?utm_source=x`,
+    ]) {
+      const res = await runFetch(h, { url, method: 'GET', mode: 'navigate' });
+      expect(res, `${url} (precached: true はランディング)`).toEqual({ ok: true, tag: 'app' });
+    }
+  });
+});
+
 describe('キャッシュの世代交代', () => {
   it('activate で古い世代だけ消し、今の世代は残す', async () => {
     h.cacheStore.set('service-hub-v1', new Map([['old', {}]]));
@@ -220,11 +299,32 @@ describe('キャッシュの世代交代', () => {
     expect([...h.cacheStore.keys()]).toEqual([current]);
   });
 
-  it('install はアプリシェルを先読みする', async () => {
+  /*
+   * ★ **この検査は 2026-09-26 (パス 480) まで欠陥を仕様として留めていた。**
+   *
+   * 題名は「アプリ**シェル**を先読みする」なのに、主張していたのは
+   * `expect(all).toContain('./app.html')` —— **アプリ本体そのもの** (生 11.97 MB /
+   * gzip 4,056,514 B) だった。`install` は `inject-pwa` が登録を差し込んだ全頁で
+   * 走るので、公開サイトの根 (ランディング) を開いただけの訪問者が背景でそれを
+   * 取っていた —— precache 合計 4,066,084 B のうち **99.76% が 1 ファイル**。
+   *
+   * しかも `Cache.addAll` は原子的である (実 chromium で実測): 1 件でも失敗すると
+   * 9.6 KiB のシェルまで一緒に捨てられるので、細い回線ではその費用を払い終えて
+   * 効き目 0 になっていた。この検査が在るかぎり、直そうとした人は**まずこの
+   * 検査に落とされる** —— 法則 `no-weakness-as-spec` の形である。
+   *
+   * 主張は「先読みする」を保ったまま、**何を先読みするか**を直した。
+   */
+  it('install はアプリシェル (小さい 3 件) だけを先読みし、アプリ本体は取らない', async () => {
     await h.listeners.get('install')!({ waitUntil: async (p: Promise<unknown>) => await p });
     const all = [...h.cacheStore.values()].flatMap((m) => [...m.keys()]);
-    expect(all).toContain('./app.html');
+    expect(all).toContain('./index.html');
     expect(all).toContain('./manifest.webmanifest');
+    expect(all).toContain('./icon.svg');
+    expect(
+      all,
+      'アプリ本体を install で取ると、入口を開いただけの訪問者が gzip 3.87 MiB を払う',
+    ).not.toContain('./app.html');
   });
 });
 
@@ -245,7 +345,7 @@ describe('キャッシュの世代交代', () => {
  */
 describe('PWA manifest — 名乗る数が実物と合っている', () => {
   const MANIFEST = JSON.parse(
-    readFileSync(path.join(__dirname, '../../../assets/manifest.webmanifest'), 'utf8'),
+    readOriginalSource(path.join(__dirname, '../../../assets/manifest.webmanifest')),
   ) as { description: string; start_url: string; scope: string; icons: unknown[] };
 
   /*
@@ -264,7 +364,7 @@ describe('PWA manifest — 名乗る数が実物と合っている', () => {
    * **数を書くときは、その文が何を数えているかまで読む。**
    */
   const SERVICE_COUNT = (() => {
-    const src = readFileSync(path.join(__dirname, '../services.ts'), 'utf8');
+    const src = readOriginalSource(path.join(__dirname, '../services.ts'));
     return (src.match(/^\s*category:\s*'/gm) ?? []).length;
   })();
 

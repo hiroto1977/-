@@ -14,7 +14,7 @@
  *   税額 = 課税譲渡所得 × (所得税率 × 1.021 + 住民税率)
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 import { RECONSTRUCTION_SURTAX_RATE } from './taxCalc';
 
 /** 譲渡資産の区分。 */
@@ -108,7 +108,7 @@ export const DEFAULT_CAPITAL_GAINS_PARAMS: CapitalGainsParams = {
  * @param proceeds 譲渡収入金額 (円)
  */
 export function estimatedAcquisitionCost(proceeds: number, rate = ESTIMATED_ACQUISITION_COST_RATE): number {
-  return Math.round(Math.max(0, proceeds) * rate);
+  return Math.round(nonNeg(proceeds) * rate);
 }
 
 /**
@@ -125,7 +125,7 @@ export function resolveAcquisitionCost(
   useEstimate = true,
   rate = ESTIMATED_ACQUISITION_COST_RATE,
 ): number {
-  const actual = Math.max(0, actualAcquisitionCost);
+  const actual = nonNeg(actualAcquisitionCost);
   if (!useEstimate) return actual;
   return Math.max(actual, estimatedAcquisitionCost(proceeds, rate));
 }
@@ -137,7 +137,7 @@ export function calcCapitalGainsTax(
   kind: CapitalAssetKind,
   p: CapitalGainsParams = DEFAULT_CAPITAL_GAINS_PARAMS,
 ): CapitalGainsResult {
-  const gain = Math.max(0, Math.max(0, proceeds) - Math.max(0, acquisitionCost) - Math.max(0, transferCost));
+  const gain = Math.max(0, nonNeg(proceeds) - nonNeg(acquisitionCost) - nonNeg(transferCost));
   const specialDeduction = kind === 'residential' ? Math.min(p.residentialSpecialDeduction, gain) : 0;
   const taxableGain = Math.max(0, gain - specialDeduction);
 
@@ -163,7 +163,7 @@ export function calcCapitalGainsTax(
     incomeTax,
     residentTax,
     totalTax,
-    takeHome: Math.max(0, proceeds) - totalTax,
+    takeHome: nonNeg(proceeds) - totalTax,
   };
 }
 
@@ -261,10 +261,10 @@ export function inheritanceAcquisitionCostAddition(
   }
   // 期限超過 (3年10ヶ月超) は適用不可。
   if (monthsSinceInheritance > INHERITANCE_ADDITION_DEADLINE_MONTHS) return 0;
-  const tax = Math.max(0, inheritanceTaxPaid);
-  const soldValue = Math.max(0, soldAssetInheritanceValue);
-  const total = Math.max(0, totalInheritedTaxableValue);
-  const cap = Math.max(0, gainBeforeAddition);
+  const tax = nonNeg(inheritanceTaxPaid);
+  const soldValue = nonNeg(soldAssetInheritanceValue);
+  const total = nonNeg(totalInheritedTaxableValue);
+  const cap = nonNeg(gainBeforeAddition);
   // 分母0 は加算0 (ゼロ除算防止)。
   if (total <= 0) return 0;
   const raw = (tax * soldValue) / total;
@@ -306,9 +306,9 @@ export function replacementPropertyDeferral(
   transferCost: number,
   replacementCost: number,
 ): ReplacementDeferralResult {
-  const p = Math.max(0, proceeds);
-  const cost = Math.max(0, acquisitionCost) + Math.max(0, transferCost);
-  const replacement = Math.max(0, replacementCost);
+  const p = nonNeg(proceeds);
+  const cost = nonNeg(acquisitionCost) + nonNeg(transferCost);
+  const replacement = nonNeg(replacementCost);
   const gain = Math.max(0, p - cost);
   if (gain <= 0 || p <= 0) {
     return { gain, taxableGain: 0, deferredGain: 0 };

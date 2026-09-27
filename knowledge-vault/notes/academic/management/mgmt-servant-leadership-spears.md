@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 同じ思想家
-- [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同分野の近傍
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
+- [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

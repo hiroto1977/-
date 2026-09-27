@@ -35,12 +35,12 @@ aliases:
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同じ思想家
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
+- [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — 出典を共有
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

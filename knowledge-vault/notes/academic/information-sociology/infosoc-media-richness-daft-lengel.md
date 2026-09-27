@@ -33,8 +33,8 @@ aliases:
 - [IS Theories Wiki（情報システム理論コミュニティ）— Media richness theory](https://is.theorizeit.org/wiki/Media_richness_theory) `学術`
 
 ## 関連概念
-- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[infosoc-warranting-walther|ワランティング理論（ウォルサー）——オンラインの印象形成と「操作されにくい情報」]] — 同じ思想家
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ／ダフト＝ワイク）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — 同じ思想家
 - [[infosoc-social-presence|社会的存在感理論（ソーシャル・プレゼンス）]] — 出典を共有
 - [[infosoc-media-synchronicity-theory|メディア同期性理論（Media Synchronicity Theory／Dennis, Fuller & Valacich 2008）——伝達と収束という二過程からメディア適合を捉え直す]] — 出典を共有
 - [[infosoc-web2|Web 2.0]] — 同分野の近傍

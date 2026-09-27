@@ -26,7 +26,7 @@ aliases:
 ジャック・ブレーム ／ シャロン・ブレーム ／ ロバート・チャルディーニ ／ ジェームズ・ディラード
 
 ## 出典
-- [Brehm, J.W. (1966) A Theory of Psychological Reactance — Academic Press (WorldCat)](https://www.worldcat.org/oclc/255578) `学術`
+- [Brehm, J.W. (1966) A Theory of Psychological Reactance — Academic Press (WorldCat)](https://www.worldcat.org/oclc/255578) `リファレンス`
 - [Wikipedia: Reactance (psychology) — Brehm, threatened freedom, boomerang effect, forbidden fruit](https://en.wikipedia.org/wiki/Reactance_(psychology)) `リファレンス`
 
 ## 関連概念

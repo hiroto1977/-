@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-stockdale-paradox|ストックデールの逆説]] — 同じ思想家
 - [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]] — 同じ思想家
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同じ思想家
-- [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 同分野の近傍
 - [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同分野の近傍
 
 ## 関連

@@ -35,6 +35,7 @@ Karl Friston ／ Andy Clark ／ Jakob Hohwy
 - [[human-interoception-theory|内受容感覚理論]] — 同じ思想家
 - [[human-interoception-predictive-coding-seth|内受容予測符号化——身体信号の予測的処理と意識的自己]] — 同分野の近傍
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+- [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
 - [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同分野の近傍
 
 ## 関連

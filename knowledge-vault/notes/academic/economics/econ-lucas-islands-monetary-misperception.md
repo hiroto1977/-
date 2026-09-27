@@ -37,10 +37,10 @@ aliases:
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 - [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
 - [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 同じ思想家
-- [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同じ思想家
-- [[econ-endogenous-growth-romer-knowledge-spillovers|内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論]] — 同じ思想家
+- [[econ-endogenous-growth-romer|内生的成長理論（ローマー／ルーカス）——アイデアの非競合性と知識の外部性が生む収穫逓増により、技術進歩を経済内部の投資の産物として説明する成長論]] — 同じ思想家
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同じ思想家
+- [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

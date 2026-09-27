@@ -36,7 +36,7 @@ aliases:
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
-- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
 - [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
 - [[econ-home-bias-puzzle|ホームバイアス・パズル——投資家が自国資産に過度に偏る謎]] — 同じ思想家

@@ -77,7 +77,7 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 20_000_000,
       incomeTaxBeforeCredit: 300_000,
-      taxableIncomeForResident: 4_000_000,
+      taxableIncomeForIncomeTax: 4_000_000,
     });
     expect(r.creditable).toBe(140_000); // 20,000,000 × 0.7%
     expect(r.fromIncomeTax).toBe(140_000);
@@ -89,7 +89,7 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 20_000_000, // creditable 140,000
       incomeTaxBeforeCredit: 50_000,
-      taxableIncomeForResident: 4_000_000, // cap min(97,500, 4,000,000×5%=200,000)=97,500
+      taxableIncomeForIncomeTax: 4_000_000, // cap min(97,500, 4,000,000×5%=200,000)=97,500
     });
     expect(r.fromIncomeTax).toBe(50_000);
     // remaining 90,000 < cap 97,500 → all 90,000 from resident tax
@@ -101,7 +101,7 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 30_000_000, // creditable 210,000
       incomeTaxBeforeCredit: 50_000,
-      taxableIncomeForResident: 5_000_000, // cap 97,500
+      taxableIncomeForIncomeTax: 5_000_000, // cap 97,500
     });
     expect(r.fromIncomeTax).toBe(50_000);
     expect(r.fromResidentTax).toBe(MORTGAGE_RESIDENT_CAP_MAX); // 97,500
@@ -113,7 +113,7 @@ describe('calcMortgageCredit', () => {
       yearEndBalance: 50_000_000,
       balanceCap: 30_000_000,
       incomeTaxBeforeCredit: 1_000_000,
-      taxableIncomeForResident: 5_000_000,
+      taxableIncomeForIncomeTax: 5_000_000,
     });
     expect(r.creditable).toBe(210_000); // 30,000,000 × 0.7%
   });
@@ -122,7 +122,7 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 20_000_000, // creditable 140,000
       incomeTaxBeforeCredit: 0,
-      taxableIncomeForResident: 1_000_000, // cap min(97,500, 50,000)=50,000
+      taxableIncomeForIncomeTax: 1_000_000, // cap min(97,500, 50,000)=50,000
     });
     expect(r.fromResidentTax).toBe(50_000);
   });
@@ -131,7 +131,7 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 30_000_000,
       incomeTaxBeforeCredit: 500_000,
-      taxableIncomeForResident: 25_000_000,
+      taxableIncomeForIncomeTax: 25_000_000,
       totalIncome: 20_000_001, // just over the limit
     });
     expect(r.creditable).toBe(0);
@@ -144,7 +144,7 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 30_000_000,
       incomeTaxBeforeCredit: 500_000,
-      taxableIncomeForResident: 5_000_000,
+      taxableIncomeForIncomeTax: 5_000_000,
       totalIncome: 20_000_000, // exactly at the limit → still eligible
     });
     expect(r.creditable).toBe(210_000);
@@ -155,13 +155,13 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 30_000_000,
       incomeTaxBeforeCredit: 500_000,
-      taxableIncomeForResident: 5_000_000,
+      taxableIncomeForIncomeTax: 5_000_000,
     });
     expect(r.creditable).toBe(210_000);
   });
 
   it('the income-limit gate: over→0 vs eligible→credit (both directions in one test)', () => {
-    const base = { yearEndBalance: 30_000_000, incomeTaxBeforeCredit: 500_000, taxableIncomeForResident: 5_000_000 };
+    const base = { yearEndBalance: 30_000_000, incomeTaxBeforeCredit: 500_000, taxableIncomeForIncomeTax: 5_000_000 };
     expect(calcMortgageCredit({ ...base, totalIncome: 25_000_000 }).creditable).toBe(0); // 上限超
     expect(calcMortgageCredit({ ...base, totalIncome: 10_000_000 }).creditable).toBe(210_000); // 範囲内
   });
@@ -170,7 +170,7 @@ describe('calcMortgageCredit', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 30_000_000,
       incomeTaxBeforeCredit: 500_000,
-      taxableIncomeForResident: 5_000_000,
+      taxableIncomeForIncomeTax: 5_000_000,
       outsidePeriod: true,
     });
     expect(r.creditable).toBe(0);
@@ -219,7 +219,7 @@ describe('calcAllTaxCredits', () => {
       mortgage: {
         yearEndBalance: 20_000_000,
         incomeTaxBeforeCredit: 50_000,
-        taxableIncomeForResident: 4_000_000,
+        taxableIncomeForIncomeTax: 4_000_000,
       },
       dividend: { dividendIncome: 1_000_000, taxableTotalIncome: 5_000_000 },
       furusatoResidentCredit: 40_000,
@@ -282,14 +282,14 @@ describe('applyTaxCreditsWithSurtax (復興税の順序)', () => {
 
 describe('boundary coverage — mortgage / dividend edges', () => {
   it('zero balance yields no credit', () => {
-    const r = calcMortgageCredit({ yearEndBalance: 0, incomeTaxBeforeCredit: 300_000, taxableIncomeForResident: 4_000_000 });
+    const r = calcMortgageCredit({ yearEndBalance: 0, incomeTaxBeforeCredit: 300_000, taxableIncomeForIncomeTax: 4_000_000 });
     expect(r.creditable).toBe(0);
     expect(r.fromIncomeTax).toBe(0);
     expect(r.fromResidentTax).toBe(0);
   });
 
   it('all credit spills to resident tax when income tax is zero (up to cap)', () => {
-    const r = calcMortgageCredit({ yearEndBalance: 20_000_000, incomeTaxBeforeCredit: 0, taxableIncomeForResident: 5_000_000 });
+    const r = calcMortgageCredit({ yearEndBalance: 20_000_000, incomeTaxBeforeCredit: 0, taxableIncomeForIncomeTax: 5_000_000 });
     expect(r.fromIncomeTax).toBe(0);
     expect(r.fromResidentTax).toBe(MORTGAGE_RESIDENT_CAP_MAX); // 140,000 > 97,500 cap
     expect(r.unused).toBe(140_000 - MORTGAGE_RESIDENT_CAP_MAX);
@@ -393,7 +393,7 @@ describe('台帳から渡す住宅ローン控除の要件 (MortgageCreditParams
     rate: 0.007,
     balanceCap: 30_000_000,
     incomeTaxBeforeCredit: 50_000,
-    taxableIncomeForResident: 3_000_000,
+    taxableIncomeForIncomeTax: 3_000_000,
     totalIncome: 21_000_000,
   } as const;
 

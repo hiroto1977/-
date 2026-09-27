@@ -39,8 +39,8 @@ aliases:
 - [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
 - [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
 - [[subsidy-midori-food-system|みどりの食料システム戦略推進対策（みどりの食料システム法）]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

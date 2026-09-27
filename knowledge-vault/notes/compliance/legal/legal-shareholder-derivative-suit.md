@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-negotiable-instruments-act-boia|有価証券法——手形・小切手の流通と善意取得者保護]] — 出典を共有
 - [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 出典を共有
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 出典を共有
-- [[labor-collective-agreement|労働協約（労働組合法）]] — 出典を共有
+- [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

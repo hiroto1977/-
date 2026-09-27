@@ -33,7 +33,7 @@ import {
   type ConnectorCapability,
   type ConnectorRegistry,
 } from './connectorRegistry';
-import { requiredPermissionFor, type PluginRuntime } from './pluginRuntime';
+import { requiredPermissionFor, UNKNOWN_CAPABILITY_PERMISSION, type PluginRuntime } from './pluginRuntime';
 import type { ServiceId } from '../serviceId';
 
 // --- capability カバレッジ -----------------------------------------------
@@ -140,8 +140,12 @@ export function pluginPermissionGaps(runtime: PluginRuntime): PermissionGap[] {
   const gaps: PermissionGap[] = [];
   for (const plugin of runtime.all) {
     for (const connector of plugin.connectors) {
+      // 表に無い capability は `null` = どの権限でも動かせない (パス 235)。
+      // `isPermitted` に渡す物が無いので、判定を待たずに欠落として載せる。
       const requiredPermission = requiredPermissionFor(connector.capability);
-      if (!isPermitted(plugin, requiredPermission)) {
+      if (requiredPermission === null) {
+        gaps.push({ pluginId: plugin.id, connectorId: connector.id, requiredPermission: UNKNOWN_CAPABILITY_PERMISSION });
+      } else if (!isPermitted(plugin, requiredPermission)) {
         gaps.push({ pluginId: plugin.id, connectorId: connector.id, requiredPermission });
       }
     }

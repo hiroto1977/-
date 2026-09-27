@@ -35,12 +35,12 @@ aliases:
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
 - [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 同じ思想家
 - [[infosoc-technological-determinism|技術決定論]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同じ思想家
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

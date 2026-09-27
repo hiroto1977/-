@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { parseTimestamp } from '../../shared/isoDate';
 import { useRealtimeTick, DEFAULT_TICK_MS } from '../hooks/useRealtimeTick';
 import {
   accruedSoFar,
@@ -55,8 +56,18 @@ function safe(n: number): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/**
+ * 時刻の帯。読めない値は `--:--:--` (2026-09-12 · パス 188)。
+ *
+ * **今日ここへ来るのは自前の時計 (`Date.now()`) だけなので、到達はしない** ——
+ * 直したのは床であって欠陥ではない。ただし **同じ判定が 2 つ上の `safe()` に
+ * 既に在り、この関数だけが通っていなかった** (パス 91 / 98 / 187 と同じ形)。
+ * 素の `getHours()` は `NaN` を返し、`String(NaN).padStart(2, '0')` は詰めもしないので
+ * `NaN:NaN:NaN` になる。
+ */
 function clock(ms: number): string {
-  const d = new Date(ms);
+  const d = parseTimestamp(ms);
+  if (d === null) return '--:--:--';
   const p = (n: number) => String(n).padStart(2, '0');
   return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }
@@ -118,6 +129,12 @@ export function RealtimeTicker({
 
   return (
     <div
+      // **ここの数字は入力ではなく壁時計から来る** (パス 213)。刻むたびに
+      // 時刻・年初来の進捗・積み上がった額が変わるので、「⛔ の欄から別の数が
+      // 出ていないか」を測る走査 (`__tests__/guardedJudgements.test.ts`) は
+      // この印を見て中を除く —— 除かないと、どの欄を踏んでも必ず差が出る。
+      // 印を消したり綴りを変えたりすると、その走査の「印が実在する」検査が鳴る。
+      data-live-clock
       style={{
         border: '1px solid #2a3550',
         borderRadius: 10,
@@ -152,7 +169,7 @@ export function RealtimeTicker({
             >
               <div>
                 <div style={{ fontSize: 12, color: '#8fa3c8' }}>{r.label}</div>
-                <div style={{ fontSize: 11, color: '#6c7c9c' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
                   年額 {yen0.format(annual)} 円 / 秒あたり {rate.toFixed(4)} 円
                   {r.hint !== undefined ? ` — ${r.hint}` : ''}
                 </div>
@@ -174,7 +191,7 @@ export function RealtimeTicker({
         })}
       </div>
 
-      <p style={{ fontSize: 11, color: '#6c7c9c', marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>
+      <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>
         {note ??
           '年額を年内の経過で按分した「ここまでの発生見込み」です。実際の課税・入金の時点とは一致しません。'}
         {' '}

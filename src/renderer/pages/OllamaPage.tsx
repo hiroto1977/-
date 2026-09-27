@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
+import { dateText } from '../../shared/isoDate';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
-  CHAT_TIMEOUT_MS as WEB_CHAT_TIMEOUT_MS,
-  MAX_RESPONSE_BYTES as WEB_MAX_RESPONSE_BYTES,
   OLLAMA_ENDPOINT_KEY,
   REQUEST_TIMEOUT_MS as WEB_REQUEST_TIMEOUT_MS,
   desktopSetupCommands,
@@ -13,12 +12,28 @@ import {
   originsSetupSteps,
   setupCommands,
 } from '../network/ollamaWeb';
-import { DEFAULT_OLLAMA_PORT, isLoopbackHostname, parseOllamaEndpoint } from '../../shared/ollama';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_OLLAMA_RESPONSE_BYTES,
+  OLLAMA_CHAT_TIMEOUT_MS,
+} from '../../shared/httpLimits';
+import {
+  DEFAULT_OLLAMA_PORT,
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
+  isLoopbackHostname,
+  unsafeVersionCause,
+  unsafeVersionTexts,
+  parseOllamaEndpoint,
+} from '../../shared/ollama';
+import type { ActionData } from '../../shared/actionData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',
   fontSize: 13,
@@ -33,7 +48,14 @@ export function OllamaPage() {
     // (「つながっているのか」がこのページの主目的)。
     { autoFetch: true },
   );
-  const { running, version, versionSafe, versionMinRecommended, models, warnings } = data;
+  const { running, version, models, warnings } = data;
+  /**
+   * `versionSafe` が false である原因を **1 度だけ**導く (パス 402)。
+   * 面ごとに `version === '' ? … : …` と書き分けていた頃は、原因が 1 つ増えた日に
+   * **片方の面だけが古い分け方のまま**になる形だった (下の 2 か所がその写しだった)。
+   */
+  const versionCause = unsafeVersionCause(version);
+  const versionTexts = versionCause === null ? null : unsafeVersionTexts(versionCause);
 
   const modelOptions = useMemo(() => models.map((m) => m.name), [models]);
 
@@ -44,13 +66,22 @@ export function OllamaPage() {
   const [busy, setBusy] = useState(false);
   const [reply, setReply] = useState<{ text: string; durationMs: number } | null>(null);
   const [errMsg, setErrMsg] = useState<string>();
+  /*
+   * 貼り付けを黙って切らない (パス 175)。端末内のモデルでも同じ ——
+   * パス 114 が handler を「切らずに断る」に直したのに、画面の `maxLength` が
+   * その断りを 1 度も通していなかった (32,768 / 8,192 字は貼り付けでしか届かない)。
+   */
+  const promptOver = charsOverCeiling(prompt, MAX_OLLAMA_PROMPT_CHARS);
+  const systemOver = charsOverCeiling(systemPrompt, MAX_OLLAMA_SYSTEM_CHARS);
 
   const sendChat = async () => {
     if (!window.serviceHub) return;
     setBusy(true);
     setErrMsg(undefined);
     setReply(null);
-    const res = await window.serviceHub.invoke<{ reply: string; durationMs: number }>(
+    // 戻り値の型は台帳 (`ollama/chat` = 共有の `OllamaChatResult`) を読む (パス 114 / 117 ——
+    // チャットボットをパス 113 で直したのと同じ形。手で写した型は実物とずれても `tsc` が黙る)。
+    const res = await window.serviceHub.invoke<ActionData<'ollama/chat'>>(
       'ollama',
       'chat',
       { model: model.trim(), prompt: prompt.trim(), system: systemPrompt.trim() || undefined },
@@ -78,16 +109,25 @@ export function OllamaPage() {
             {running ? (
               <>
                 <span style={{ color: 'var(--success)' }}>● Running</span> v{version || '?'}
-                {!versionSafe ? (
+                {/*
+                  * **版が読めなかったことを「古い」と言わない** (パス 264)。
+                  * `isVersionSafe('')` は false を返す —— 安全の判定なので
+                  * 読めないときは危険側へ倒すのが正しい。**倒すこと自体は残す**
+                  * (バッジは出る) が、理由は事実に合わせる: 既知 CVE が在ると
+                  * 分かったのではなく、**版が分からない**のである。
+                  */}
+                {versionTexts !== null ? (
                   <span
                     className="badge warn"
                     style={{ marginLeft: 8 }}
-                    title={`既知 CVE。最低 ${versionMinRecommended} へ更新推奨`}
+                    title={versionTexts.note}
+                    data-version-badge
+                    data-version-cause={versionCause}
                   >
-                    Outdated — known CVEs
+                    {versionTexts.badge}
                   </span>
                 ) : (
-                  <span className="badge ok" style={{ marginLeft: 8 }}>
+                  <span className="badge ok" style={{ marginLeft: 8 }} data-version-badge>
                     Up to date
                   </span>
                 )}
@@ -141,7 +181,13 @@ export function OllamaPage() {
             items={models.map((m) => ({
               key: m.name,
               title: m.name,
-              meta: `${m.family || '?'} · ${m.parameterSize || '?'} · ${m.quantization || '?'} · ${m.sizeMb} MB · 更新 ${m.modifiedAt}`,
+              /*
+               * **空欄は理由を言う** (パス 408・法則 `blank-states-its-reason`) ——
+               * `modifiedAt` は読めない / 欠けているとき `null` で、パス 407 まで
+               * ここは空文字を素で挿していたので `更新 ` とだけ刷っていた。
+               * 「まだ取れていない」と「相手が読めない値を返した」が同じ見え方になる。
+               */
+              meta: `${m.family || '?'} · ${m.parameterSize || '?'} · ${m.quantization || '?'} · ${m.sizeMb} MB · 更新 ${dateText(m.modifiedAt)}`,
             }))}
           />
         )}
@@ -182,11 +228,13 @@ export function OllamaPage() {
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="システムプロンプト" value={systemPrompt} max={MAX_OLLAMA_SYSTEM_CHARS} />
+            <CeilingNotice label="プロンプト" value={prompt} max={MAX_OLLAMA_PROMPT_CHARS} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={sendChat}
-                disabled={busy || !model || !prompt.trim()}
+                disabled={busy || !model || !prompt.trim() || promptOver > 0 || systemOver > 0}
               >
                 {busy ? '生成中…' : '送信'}
               </button>
@@ -195,9 +243,12 @@ export function OllamaPage() {
                   {errMsg}
                 </span>
               ) : null}
-              {!versionSafe ? (
-                <span style={{ color: 'var(--warning)', fontSize: 12, alignSelf: 'center' }}>
-                  ⚠ 古いバージョンで実行中 — アップグレード推奨
+              {versionTexts !== null ? (
+                <span
+                  style={{ color: 'var(--warning)', fontSize: 12, alignSelf: 'center' }}
+                  title={versionTexts.note}
+                >
+                  {versionTexts.short}
                 </span>
               ) : null}
             </div>
@@ -255,12 +306,24 @@ export function OllamaPage() {
             * 数字はビルドで違う。1 行で「30 秒 / 10 MB」とだけ書いていた頃は
             * デスクトップ版の値で、ブラウザ版 (chat 120 秒 / 上限 2 MB) と
             * ずれていた (2026-08-23)。値は実物の定数から出す。
+            *
+            * **レスポンスの上限は 2026-09-20 (パス 336) から両ビルドで 1 つ** ——
+            * それまで「デスクトップ版 10 MB」だけが**画面に直書き**されており、
+            * 定数から出していたのはブラウザ版の数字だけだった。
+            *
+            * ★ **締切も 2026-09-23 (パス 424) に同じ所まで来た。** それまで
+            * 「デスクトップ版はリクエスト 30 秒」だけが**直書き**で、しかも
+            * その 30 秒は疎通確認の予算が生成にも掛かっていた実物の姿だった。
+            * 直書きが残っていた理由は構造的で、renderer は `src/main/` から
+            * import できない (`lint:imports`) —— だから先に `shared` へ
+            * 置いた (応答の上限がパス 336 で辿ったのと同じ道)。
+            * **今はこの欄に秒・MB の裸の数が 1 つも無い** (検査が両方向で見る)。
             */}
           <div>
-            🔒 デスクトップ版はリクエスト 30 秒・レスポンス 10 MB、
-            ブラウザ版は疎通確認 {WEB_REQUEST_TIMEOUT_MS / 1000} 秒 / チャット{' '}
-            {WEB_CHAT_TIMEOUT_MS / 1000} 秒・レスポンス {WEB_MAX_RESPONSE_BYTES / (1024 * 1024)} MB
-            で切り詰め
+            🔒 疎通確認はデスクトップ版 {DEFAULT_HTTP_TIMEOUT_MS / 1000} 秒 /{' '}
+            ブラウザ版 {WEB_REQUEST_TIMEOUT_MS / 1000} 秒、生成 (チャット) は
+            どちらも {OLLAMA_CHAT_TIMEOUT_MS / 1000} 秒。レスポンスはどちらも{' '}
+            {MAX_OLLAMA_RESPONSE_BYTES / (1024 * 1024)} MB で切り詰め
           </div>
           <div>🔒 Streaming レスポンス未対応 (有限長応答のみ受理)</div>
           <div>

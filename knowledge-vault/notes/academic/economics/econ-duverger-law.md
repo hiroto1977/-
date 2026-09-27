@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 出典を共有
-- [[econ-path-dependence-david|経路依存性——歴史的偶然が固定化し劣位の技術が存続する]] — 同分野の近傍
+- [[econ-rational-partisan-theory-alesina|合理的パルチザン理論——選挙の不確実性が政治的景気循環を生む]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連

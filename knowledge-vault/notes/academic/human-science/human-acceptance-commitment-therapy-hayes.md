@@ -36,6 +36,7 @@ aliases:
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同分野の近傍
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同分野の近傍
 - [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同分野の近傍
+- [[human-spiritual-wellbeing|スピリチュアル・ウェルビーイング尺度：宗教的ウェルビーイングと実存的ウェルビーイングの二因子モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

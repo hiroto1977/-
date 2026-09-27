@@ -2,7 +2,7 @@
 title: "simplypsychology.org"
 type: source-domain
 host: "simplypsychology.org"
-cite_count: 27
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # simplypsychology.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **27 件**（リファレンス 25 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（リファレンス 26）
 
 ## このドメインを出典とする項目
 
@@ -27,6 +27,7 @@ tags:
 - [[human-group-polarization|集団極性化]] — SimplyPsychology—GroupPolarization:Definition&Examples
 - [[human-hawthorne-effect|ホーソン効果]] — SimplyPsychology—HawthorneEffect(Landsberger1958命名,illuminationstudie…
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — SimplyPsychology—Herzberg’sTwo-FactorTheory
+- [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — SimplyPsychology—Maslow'sHierarchyofNeeds（査読済み教育心理学リファレンス）
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — ObjectPermanence—SimplyPsychology
 - [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — SimplyPsychology:OpponentProcessTheoryofEmotion
 - [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — SimplyPsychology:Piaget'sTheoryandStagesofCognitiveDevelopment
@@ -36,11 +37,9 @@ tags:
 - [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — SimplyPsychology:Self-verificationtheory—desireforself-confirmingfeed…
 - [[human-serial-position|系列位置効果（初頭効果・新近効果）]] — SimplyPsychology—SerialPositionEffect(Glanzer&Cunitz,1966;Atkinson&Sh…
 - [[human-social-facilitation|社会的促進と社会的抑制]] — SimplyPsychology—SocialFacilitationTheoryInPsychology
-- [[human-social-learning-theory|社会的学習理論]] — SimplyPsychology—Bandura'sSocialLearningTheory
 - [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]] — VisualCliffExperiment(Gibson&Walk,1960)—SimplyPsychology
 - [[human-zeigarnik|ツァイガルニク効果]] — SimplyPsychology—ZeigarnikEffectExamplesinPsychology
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — SimplyPsychology—ZoneofProximalDevelopment（MKO・足場かけ・学習が促進される領域）
-- [[maslow-hierarchy|マズローの欲求階層説]] — SimplyPsychology—Maslow'sHierarchyofNeeds（査読済み教育心理学リファレンス）
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

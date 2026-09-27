@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
-import { beforeEach, describe, expect, it } from 'vitest';
-import { logMood, recordAnalysis, clearHistory, loadStore, EMOTIONS_STORE_KEY } from '../emotionsWeb';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { assertStoreWritable, logMood, recordAnalysis, clearHistory, loadStore, EMOTIONS_STORE_KEY } from '../emotionsWeb';
 
 /*
  * **読めなかった保管値の上に書くと、読めなかっただけの記録が消える。**
@@ -80,5 +80,68 @@ describe('読めなかった保管値の上には書かない', () => {
     logMood({ date: '2026-01-01', score: 4, note: 'ok' });
     expect(() => logMood({ date: '2026-01-02', score: 5, note: 'ok2' })).not.toThrow();
     expect(loadStore().moods).toHaveLength(2);
+  });
+});
+
+
+/*
+ * ## 保管値ではなく**保存領域そのもの**を断られる端末 (2026-09-06)
+ *
+ * `localStorage` は触れるだけで投げる —— サイトデータをブロックしたオリジンで
+ * Chrome は `SecurityError` を返す。`loadStore()` は `getItem` を `try` の**上**で
+ * 呼んでいたので、その例外は degraded に数えられず**生で呼び出し側へ抜けていた**。
+ *
+ * つまりこの端末では、このファイルが留めている守り 2 つが**どちらも働かなかった**:
+ * 上書きを断る `loadStoreForWrite()` と、Anthropic へ送る前の門
+ * `assertStoreWritable()` —— どちらも `lastLoadDegraded` を見ているためである。
+ */
+describe('保存領域そのものへ触れられない端末', () => {
+  function refuseAccess(): void {
+    const boom = (): never => {
+      const e = new Error('Access is denied for this document.');
+      e.name = 'SecurityError';
+      throw e;
+    };
+    vi.stubGlobal('localStorage', {
+      getItem: boom,
+      setItem: boom,
+      removeItem: boom,
+      clear: boom,
+      key: boom,
+      get length(): number {
+        return boom();
+      },
+    });
+  }
+
+  /*
+   * **後片付けは `afterEach` に置く。** 各 it の末尾で `unstubAllGlobals()` して
+   * いた頃は、守りを外す対照を回すと ★ が投げて後片付けに届かず、断る
+   * `localStorage` が次の it へ漏れて**対照まで落ちた** —— 対照は独立していな
+   * ければ「守りを外すと ★ だけが落ちる」を示せない (2026-09-06 実測)。
+   */
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('★ loadStore() は投げない (空を返す)', () => {
+    refuseAccess();
+    expect(() => loadStore()).not.toThrow();
+    expect(loadStore()).toEqual({ moods: [], analyses: [] });
+  });
+
+  it('★ degraded に数える —— 送る前の門が断る', () => {
+    refuseAccess();
+    expect(() => assertStoreWritable()).toThrow(/読めませんでした/);
+  });
+
+  it('★ 記録もしない (空を土台に上書きしない)', () => {
+    refuseAccess();
+    expect(() => logMood({ date: '2026-03-03', score: 3 })).toThrow(/読めませんでした/);
+  });
+
+  it('対照: 触れる端末では門が通り、記録できる', () => {
+    expect(() => assertStoreWritable()).not.toThrow();
+    expect(logMood({ date: '2026-03-03', score: 3 }).date).toBe('2026-03-03');
   });
 });

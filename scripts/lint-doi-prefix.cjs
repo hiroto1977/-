@@ -215,6 +215,45 @@ const JOURNAL_RULES = [
   { pubs: ['annualreviews'], re: /\bAnnual Reviews? of \w/i },
   { pubs: ['pnas'], re: /\bPNAS\b|Proceedings of the National Academy of Sciences/i },
   { pubs: ['cup'], re: /\bBehavioral and Brain Sciences\b/i },
+  // ── 誌名の略称 (2026-09-05) ──
+  // ラベルの多くは掲載誌を略称で書く ("— AER" / "QJE 129(1)")。正式名しか見て
+  // いなかったため、Karabarbounis & Neiman 2014 (QJE) に AEA の DOI、Krueger 1974
+  // (AER) に Chicago の DOI、Matějka & McKay 2015 (AER) に RES の DOI が付いたまま
+  // 3 件が素通りしていた (実測、いずれも一次照合して差し替え済み)。
+  // 略称は他誌・他語と衝突しないものだけ採用する: JIE は Journal of International
+  // Economics / Journal of Industrial Economics で衝突、JEP は Journal of Economic
+  // Psychology と衝突、RES / ASQ / JAP は一般語や別団体と衝突するので採らない。
+  // DOI 文字列中の小文字 (10.1257/aer.…) に当たらないよう、略称は大文字小文字を区別する。
+  { pubs: ['aea'], re: /\bAER\b/ },
+  { pubs: ['oup', 'mitpress'], re: /\bQJE\b/ },
+  { pubs: ['uchicago'], re: /\bJPE\b/ },
+  { pubs: ['oup', 'wiley'], re: /\bREStud\b/ },
+  { pubs: ['mitpress'], re: /\bREStat\b/ },
+  { pubs: ['aom'], re: /\b(?:AMJ|AMR)\b/ },
+  { pubs: ['wiley'], re: /\bSMJ\b/ },
+  { pubs: ['springer'], re: /\bJIBS\b/ },
+  { pubs: ['apa'], re: /\bJPSP\b/ },
+  // ── 版元が動いていない主要誌の正式名 (2026-09-05) ──
+  // Elsevier は買収した Academic Press / North-Holland 時代の論文も 10.1016 (10.1006)
+  // で遡及採番しているので単一グループで足りる。JSTOR 経由の旧論文は中立扱い。
+  { pubs: ['mitpress'], re: /\bReview of Economics and Statistics\b/i },
+  { pubs: ['springer'], re: /\bJournal of International Business Studies\b/i },
+  {
+    pubs: ['elsevier'],
+    re: /\b(?:Journal of International Economics|Journal of Economic Theory|Journal of Monetary Economics|Journal of Financial Economics|Journal of Public Economics|Journal of Econometrics|Research Policy|Journal of Economic Behavior (?:&|and) Organization|Games and Economic Behavior)\b/i,
+  },
+  {
+    pubs: ['wiley'],
+    re: /\b(?:RAND Journal of Economics|Journal of Industrial Economics|International Economic Review|Personnel Psychology|Journal of Organizational Behavior|Child Development|Journal of Economic Surveys)\b/i,
+  },
+  { pubs: ['uchicago'], re: /\bJournal of La(?:bor|w and|w &) Economics\b/i },
+  { pubs: ['oup'], re: /\bReview of Financial Studies\b/i },
+  {
+    pubs: ['sage'],
+    re: /\b(?:Big Data & Society|New Media & Society|Media, Culture & Society|Theory, Culture & Society|Social Studies of Science|Journal of Management Inquiry|Group & Organization Management)\b/i,
+  },
+  // Organization Studies は 2001 年まで de Gruyter 刊、以降 SAGE。
+  { pubs: ['sage', 'degruyter'], re: /\bOrganization Studies\b/i },
 ];
 
 /**
@@ -311,10 +350,510 @@ const JOURNAL_CODES = [
  * 共通する事実: **DOI が別の誌を指している**。未確認なのは正しい DOI のほう。
  */
 const JOURNAL_ALLOWLIST = new Map([
-  // 2026-08-13: 12 件すべてを一次照合で確定し、DOI を差し替えたので空。
-  // 台帳は双方向なので、直したらここから消さないと
-  // 「載っているのに矛盾しなくなった」で落ちる。
+  // 2026-08-13: AOM / AEA の誌略号照合で見つかった 12 件は一次照合で確定し、DOI を差し替えて空になった。
+  // 2026-09-05: ISSN 照合 (APA / Elsevier PII / Wiley j. / SAGE、台帳 164 誌) を足した初回走査で
+  //   30 件が出た。どれも 1 回しか引かれていない DOI で、年照合にもラベル照合にも見えなかった。
+  //   この環境は doi.org / 出版社サイトへ出られない (403) ので**実体を確かめられない**。
+  //   推測で差し替えず、既知の負債としてここに置く —— 検索できる環境で DOI を開き、
+  //   誤っている側 (DOI かラベルか) を直したら、その行を消す (台帳は双方向)。
+  //   多くはラベルの書誌が正しく DOI が別誌を指している形 (例: Bonanno 2004 は American
+  //   Psychologist 59(1) の論文だが DOI は Psychological Bulletin 130(1) を指す)。
+  // 2026-09-05 (同日、2 回目): 誌略号の台帳 (INFORMS / Oxford / Wiley 現行 / Springer / Annual Reviews /
+  //   MIT / Emerald、153 誌) を足した初回走査で 10 件。同じく実体未確認のまま退避。
+  ['bizlaw-tag-along-drag-along::10.1093/rfs/hhm014', '誌略号の誌は Review of Financial Studies、ラベルの誌は Review of Economic Studies'],
+  ['econ-carry-trade-foreign-exchange::10.1093/qje/qjr014', '誌略号の誌は Quarterly Journal of Economics、ラベルの誌は Review of Financial Studies'],
+  ['econ-interest-rate-parity-covered::10.1146/annurev-financial-012820-012020', '誌略号の誌は Annual Review of Financial Economics、ラベルの誌は Annual Review of Economics'],
+  ['human-contact-hypothesis-allport::10.1111/j.1540-4560.2008.00552.x', '誌略号の誌は Journal of Social Issues、ラベルの誌は European Journal of Social Psychology'],
+  ['human-rumination-nolen-hoeksema::10.1037/0021-843X.112.4.558', '誌略号の誌は Journal of Abnormal Psychology、ラベルの誌は Cognitive Therapy and Research'],
+  ['human-status-characteristics::10.1177/0190272591004001002', '誌略号の誌は Social Psychology Quarterly、ラベルの誌は Social Forces'],
+  ['infosoc-algorithmic-governance-danaher::10.1007/s11948-016-9776-z', '誌略号の誌は Science and Engineering Ethics、ラベルの誌は Philosophy & Technology'],
+  ['infosoc-commons-based-peer-production::10.1287/mnsc.1120.1541', '誌略号の誌は Management Science、ラベルの誌は Journal of Communication'],
+  ['infosoc-techno-moral-change-verbeek::10.1007/s10676-006-9102-8', '誌略号の誌は Ethics and Information Technology、ラベルの誌は Science, Technology, & Human Values'],
+  ['mgmt-cognitive-map-strategic-decision::10.1002/smj.4250130606', '誌略号の誌は Strategic Management Journal、ラベルの誌は Journal of Management Studies'],
+  ['mgmt-cognitive-mapping-theory::10.1002/smj.4250130802', '誌略号の誌は Strategic Management Journal、ラベルの誌は Journal of Management Studies'],
+  ['mgmt-job-demands-resources-bakker::10.1037/0021-9010.89.1.55', '誌略号の誌は Journal of Applied Psychology、ラベルの誌は Journal of Organizational Behavior / Journal of Managerial Psychology'],
+  ['mgmt-learning-organization-senge::10.1177/1350507699301001', '誌略号の誌は Management Learning、ラベルの誌は The Learning Organization'],
+  ['mgmt-strategic-human-capital-theory::10.1002/smj.4250171109', '誌略号の誌は Strategic Management Journal、ラベルの誌は Human Resource Management'],
+  ['econ-auction-theory-vickrey-mechanism-design::10.1111/j.1540-5982.1961.tb00037.x', 'ISSN の誌は Canadian Journal of Economics、ラベルの誌は The Journal of Finance'],
+  ['econ-currency-crisis-models-krugman-obstfeld::10.1016/S0022-1996(96)01440-1', 'ISSN の誌は Journal of International Economics、ラベルの誌は European Economic Review'],
+  ['econ-labor-market-search-diamond::10.1111/j.1468-0297.1994.tb01130.x', 'ISSN の誌は The Economic Journal、ラベルの誌は Review of Economic Studies'],
+  ['econ-lerner-symmetry-theorem-trade::10.1016/S1573-4404(84)01009-X', 'ISSN の誌は Handbook of International Economics、ラベルの誌は Handbook of Public Economics'],
+  ['econ-secular-stagnation-hansen::10.1257/aer.20160148', 'ISSN の誌は American Economic Review、ラベルの誌は The Economic Journal'],
+  ['econ-tobin-tax-financial::10.1257/jep.9.4.153', 'ISSN の誌は Journal of Economic Perspectives、ラベルの誌は The Economic Journal'],
+  ['econ-uncovered-interest-parity-fama::10.1257/jel.52.1.159', 'ISSN の誌は Journal of Economic Literature、ラベルの誌は Handbook of International Economics'],
+  ['human-affective-forecasting-wilson-gilbert::10.1111/j.0963-7214.2004.01501003.x', 'ISSN の誌は Current Directions in Psychological Science、ラベルの誌は Psychological Science'],
+  ['human-cultural-dimensions-hofstede::10.1177/0170840602232155', 'ISSN の誌は Organization Studies、ラベルの誌は Human Relations'],
+  ['human-depressive-realism-alloy::10.1037/0021-843X.88.4.441', 'ISSN の誌は Journal of Abnormal Psychology、ラベルの誌は Journal of Experimental Psychology: General'],
+  ['human-developmental-regulation-brandtstadter::10.1037/0882-7974.5.1.58', 'ISSN の誌は Psychology and Aging、ラベルの誌は American Psychologist'],
+  ['human-emotional-granularity-barrett::10.1037/0033-2909.130.2.182', 'ISSN の誌は Psychological Bulletin、ラベルの誌は Journal of Personality and Social Psychology'],
+  ['human-emotional-granularity-barrett::10.1037/0033-295X.114.2.252', 'ISSN の誌は Psychological Review、ラベルの誌は Emotion Review'],
+  ['human-empathy-gap-loewenstein::10.1016/S0749-5978(03)00042-7', 'ISSN の誌は Organizational Behavior and Human Decision Processes、ラベルの誌は Personality and Social Psychology Bulletin'],
+  ['human-empathy-gap-loewenstein::10.1037/0033-2909.131.5.799', 'ISSN の誌は Psychological Bulletin、ラベルの誌は Health Psychology'],
+  ['human-mental-health-continuum-keyes::10.1177/0022022112465333', 'ISSN の誌は Journal of Cross-Cultural Psychology、ラベルの誌は Journal of Child Psychology and Psychiatry'],
+  ['human-own-race-bias-meissner::10.1037/0033-2909.127.6.806', 'ISSN の誌は Psychological Bulletin、ラベルの誌は Psychology, Public Policy, and Law'],
+  ['human-resilience-bonanno-adversity::10.1037/0033-2909.130.1.20', 'ISSN の誌は Psychological Bulletin、ラベルの誌は American Psychologist'],
+  ['human-rumination-nolen-hoeksema::10.1037/0033-295X.98.3.569', 'ISSN の誌は Psychological Review、ラベルの誌は Journal of Abnormal Psychology'],
+  ['human-temporal-discounting-ainslie::10.1037/0033-295X.82.6.463', 'ISSN の誌は Psychological Review、ラベルの誌は Psychological Bulletin'],
+  ['infosoc-mediatization-theory-hjarvard::10.1177/0267323114521426', 'ISSN の誌は European Journal of Communication、ラベルの誌は Communication Theory'],
+  ['infosoc-platform-temporality-helmond::10.1177/1461444815609313', 'ISSN の誌は New Media & Society、ラベルの誌は Social Media + Society'],
+  ['infosoc-prosumption-ritzer::10.1177/0038038514543299', 'ISSN の誌は Sociology、ラベルの誌は Journal of Consumer Culture'],
+  ['infosoc-prosumption-ritzer::10.1177/0276146710378876', 'ISSN の誌は Journal of Macromarketing、ラベルの誌は Journal of Consumer Culture'],
+  ['infosoc-quantified-self-lupton-nafus::10.1177/0162243916670029', 'ISSN の誌は Science, Technology, & Human Values、ラベルの誌は New Media & Society'],
+  ['infosoc-social-comparison-social-media::10.1177/0963721415605364', 'ISSN の誌は Current Directions in Psychological Science、ラベルの誌は Personality and Social Psychology Review'],
+  ['infosoc-visibility-digital-thompson::10.1177/0263276400017003005', 'ISSN の誌は Theory, Culture & Society、ラベルの誌は Theoretical Criminology'],
+  ['mgmt-entrepreneurial-orientation-miller::10.5465/amj.2009.44773175', 'ISSN の誌は Academy of Management Journal、ラベルの誌は Entrepreneurship Theory and Practice'],
+  ['mgmt-issue-selling-dutton::10.5465/amj.2001.4854099', 'ISSN の誌は Academy of Management Journal、ラベルの誌は Research in Organizational Behavior'],
+  ['mgmt-organizational-improvisation-theory::10.1177/014920639802400601', 'ISSN の誌は Journal of Management、ラベルの誌は Journal of Marketing'],
 ]);
+
+/*
+ * ## ISSN を接尾辞に埋め込む出版社の誌照合 (2026-09-05 追加)
+ *
+ * 上の JOURNAL_CODES は AOM / AEA のように**誌の略号**を接尾辞に持つ出版社しか
+ * 見ていなかった。ところが APA (10.1037/<ISSN>.巻.号.頁)、Elsevier の PII
+ * (10.1016/S<ISSN>(年)…)、Wiley の旧形式 (10.1111/j.<ISSN>.年…)、SAGE
+ * (10.1177/<ISSN 8 桁>…) は **ISSN そのものを接尾辞に埋め込む**。ISSN は誌を
+ * 一意に指すので、ラベルの誌名と突き合わせれば「1 回しか引かれていない DOI の誤り」
+ * (年照合にもラベル照合にも構造的に見えない) を機械で拾える。
+ *
+ * 2026-09-05 の実測 (統合パス 56 直前): この 4 形式の引用 615 件・ISSN 約 200 種。
+ * ラベルの誌名と ISSN の誌が食い違う例が数十件あった —
+ *   10.1037/0033-295X.98.3.569 (Psychological Review) に「Journal of Abnormal Psychology」、
+ *   10.1016/S1573-4404(84)01009-X (Handbook of International Economics) に「Handbook of Public Economics」、
+ *   10.1111/j.1540-6261.… (Journal of Finance) に「NBER Macroeconomics Annual」、
+ *   10.1177/1354068… (Party Politics) に「American Political Science Review」など。
+ *
+ * ## 台帳に載せる ISSN の選び方
+ *
+ * 記憶で書いた ISSN が誤っていると**正しい出典を落とす**ので、確信の持てる誌だけを
+ * 載せる (未知の ISSN は判定しない —— 件数は「誌コード」の Checked に含めて出す)。
+ * ISSN の検査数字は下の self-check で機械的に検算する (書き間違いをここで止める)。
+ * 誌名の正規表現は略号 (JPSP / ASQ / JMS …) も受け、他誌の名前を含む誌
+ * (Journal of Management ⊂ Journal of Management Studies) は否定先読みで分ける。
+ */
+const ISSN_FORMS = {
+  apa: (issn) => new RegExp(`^10\\.1037\\/${issn}\\.`, 'i'),
+  elsevier: (issn) => new RegExp(`^10\\.1016\\/s${issn}\\(`, 'i'),
+  wiley: (issn) => new RegExp(`^10\\.1111\\/j\\.${issn}\\.`, 'i'),
+  // SAGE の旧形式 (18 桁: ISSN 7 桁 + 年 2 + 巻 3 + 号 3 + 論文 3) は検査数字を含まないので、7 桁で当てる。
+  sage: (issn) => new RegExp(`^10\\.1177\\/${issn.replace('-', '').slice(0, 7)}\\d`, 'i'),
+};
+
+/** [形式, ISSN, 誌名, ラベルの正規表現] */
+const ISSN_JOURNALS = [
+  // --- APA (10.1037/<ISSN>.) ---
+  ['apa', '0003-066X', 'American Psychologist', /American Psychologist\b/i],
+  ['apa', '0021-843X', 'Journal of Abnormal Psychology', /J(?:ournal|\.)? (?:of )?Abnormal Psychology|\bJAbP\b/i],
+  ['apa', '0021-9010', 'Journal of Applied Psychology', /Journal of Applied Psychology|\bJAP\b/i],
+  ['apa', '0022-006X', 'Journal of Consulting and Clinical Psychology', /Journal of Consulting (?:and|&) Clinical Psychology|\bJCCP\b/i],
+  ['apa', '0022-3514', 'Journal of Personality and Social Psychology', /Journal of Personality (?:and|&) Social Psychology|\bJPSP\b/i],
+  ['apa', '0033-2909', 'Psychological Bulletin', /Psychological Bulletin/i],
+  ['apa', '0033-295X', 'Psychological Review', /Psychological Review/i],
+  ['apa', '0096-1523', 'Journal of Experimental Psychology: Human Perception and Performance', /Journal of Experimental Psychology: Human Perception|JEP:\s?HPP/i],
+  ['apa', '0096-3445', 'Journal of Experimental Psychology: General', /Journal of Experimental Psychology: General|JEP:\s?General/i],
+  ['apa', '0278-6133', 'Health Psychology', /(?<!Occupational )(?<!of )\bHealth Psychology(?! Review)/i],
+  ['apa', '0278-7393', 'Journal of Experimental Psychology: Learning, Memory, and Cognition', /Journal of Experimental Psychology: Learning|JEP:\s?LMC/i],
+  ['apa', '0882-7974', 'Psychology and Aging', /Psychology (?:and|&) Aging/i],
+  ['apa', '1076-8971', 'Psychology, Public Policy, and Law', /Psychology, Public Policy,? (?:and|&) Law/i],
+  ['apa', '1076-8998', 'Journal of Occupational Health Psychology', /Journal of Occupational Health Psychology/i],
+  ['apa', '1089-2680', 'Review of General Psychology', /Review of General Psychology/i],
+  // --- Elsevier PII (10.1016/S<ISSN>(年)…) ---
+  ['elsevier', '0005-7967', 'Behaviour Research and Therapy', /Behaviou?r Research (?:and|&) Therapy/i],
+  ['elsevier', '0006-3223', 'Biological Psychiatry', /Biological Psychiatry/i],
+  ['elsevier', '0014-2921', 'European Economic Review', /European Economic Review|\bEER\b/i],
+  ['elsevier', '0022-1996', 'Journal of International Economics', /Journal of International Economics|\bJIE\b/i],
+  ['elsevier', '0022-5371', 'Journal of Verbal Learning and Verbal Behavior', /Journal of Verbal Learning|\bJVLVB\b/i],
+  ['elsevier', '0024-6301', 'Long Range Planning', /Long Range Planning/i],
+  ['elsevier', '0048-7333', 'Research Policy', /Research Policy/i],
+  ['elsevier', '0065-2601', 'Advances in Experimental Social Psychology', /Advances in Experimental Social Psychology/i],
+  ['elsevier', '0079-6123', 'Progress in Brain Research', /Progress in Brain Research/i],
+  ['elsevier', '0079-7421', 'Psychology of Learning and Motivation', /Psychology of Learning (?:and|&) Motivation/i],
+  ['elsevier', '0140-6736', 'The Lancet', /\bLancet\b/i],
+  ['elsevier', '0149-2063', 'Journal of Management', /Journal of Management(?! Studies| Inquiry| Information| Education| Development| Accounting)/i],
+  ['elsevier', '0164-0704', 'Journal of Macroeconomics', /Journal of Macroeconomics/i],
+  ['elsevier', '0167-2231', 'Carnegie-Rochester Conference Series on Public Policy', /Carnegie[- ]Rochester/i],
+  ['elsevier', '0191-3085', 'Research in Organizational Behavior', /Research in Organizational Behavior/i],
+  ['elsevier', '0304-3932', 'Journal of Monetary Economics', /Journal of Monetary Economics|\bJME\b/i],
+  ['elsevier', '0304-405X', 'Journal of Financial Economics', /Journal of Financial Economics|\bJFE\b/i],
+  ['elsevier', '0306-4573', 'Information Processing & Management', /Information Processing (?:and|&) Management/i],
+  ['elsevier', '0361-3682', 'Accounting, Organizations and Society', /Accounting, Organizations (?:and|&) Society/i],
+  ['elsevier', '0378-7206', 'Information & Management', /(?<!Processing )Information (?:and|&) Management/i],
+  ['elsevier', '0742-7301', 'Research in Personnel and Human Resources Management', /Research in Personnel/i],
+  ['elsevier', '0749-5978', 'Organizational Behavior and Human Decision Processes', /Organizational Behavior (?:and|&) Human Decision|\bOBHDP\b/i],
+  ['elsevier', '0896-6273', 'Neuron', /\bNeuron\b/i],
+  ['elsevier', '0956-5221', 'Scandinavian Journal of Management', /Scandinavian Journal of Management/i],
+  ['elsevier', '0959-4752', 'Learning and Instruction', /Learning (?:and|&) Instruction/i],
+  ['elsevier', '1364-6613', 'Trends in Cognitive Sciences', /Trends in Cognitive Science/i],
+  ['elsevier', '1573-4382', 'Handbook of Mathematical Economics', /Handbook of Mathematical Economics/i],
+  ['elsevier', '1573-4404', 'Handbook of International Economics', /Handbook of International Economics/i],
+  ['elsevier', '1573-4420', 'Handbook of Public Economics', /Handbook of Public Economics/i],
+  ['elsevier', '1573-4463', 'Handbook of Labor Economics', /Handbook of Labou?r Economics/i],
+  ['elsevier', '1573-448X', 'Handbook of Industrial Organization', /Handbook of Industrial Organization/i],
+  ['elsevier', '1574-0048', 'Handbook of Macroeconomics', /Handbook of Macroeconomics/i],
+  ['elsevier', '1574-0102', 'Handbook of the Economics of Finance', /Handbook of (?:the Economics of )?Financ/i],
+  ['elsevier', '1746-9791', 'Research on Emotion in Organizations', /Research on Emotion in Organizations/i],
+  // --- Wiley 旧形式 (10.1111/j.<ISSN>.年…) ---
+  ['wiley', '0021-9916', 'Journal of Communication', /\bJournal of Communication\b/i],
+  ['wiley', '0963-7214', 'Current Directions in Psychological Science', /Current Directions in Psychological Science|\bCDPS\b/i],
+  ['wiley', '1083-6101', 'Journal of Computer-Mediated Communication', /Journal of Computer[- ]Mediated Communication|\bJCMC\b/i],
+  ['wiley', '1530-9134', 'Journal of Economics & Management Strategy', /Journal of Economics (?:and|&) Management Strategy|\bJEMS\b/i],
+  ['wiley', '1460-2466', 'Journal of Communication', /\bJournal of Communication\b/i],
+  ['wiley', '1465-7295', 'Economic Inquiry', /Economic Inquiry|Western Economic Journal/i],
+  ['wiley', '1467-6486', 'Journal of Management Studies', /Journal of Management Studies|\bJMS\b/i],
+  ['wiley', '1467-8543', 'British Journal of Industrial Relations', /British Journal of Industrial Relations|\bBJIR\b/i],
+  ['wiley', '1467-8624', 'Child Development', /\bChild Development\b/i],
+  ['wiley', '1467-8721', 'Current Directions in Psychological Science', /Current Directions in Psychological Science|\bCDPS\b/i],
+  ['wiley', '1467-9248', 'Political Studies', /\bPolitical Studies\b/i],
+  ['wiley', '1467-9280', 'Psychological Science', /(?<!Current Directions in )(?<!of )Psychological Science(?! in the Public Interest)/i],
+  ['wiley', '1467-937X', 'Review of Economic Studies', /Review of Economic Studies|\bReStud\b/i],
+  ['wiley', '1467-9507', 'Social Development', /^Social Development$|—\s*(?:The )?Social Development\b/i],
+  ['wiley', '1467-954X', 'The Sociological Review', /\bSociological Review\b/i],
+  ['wiley', '1467-9957', 'The Manchester School', /Manchester School/i],
+  ['wiley', '1468-0009', 'The Milbank Quarterly', /Milbank Quarterly/i],
+  ['wiley', '1468-0262', 'Econometrica', /\bEconometrica\b/i],
+  ['wiley', '1468-0297', 'The Economic Journal', /(?<!Western )(?<!Canadian )\bEconomic Journal\b/i],
+  ['wiley', '1468-0335', 'Economica', /\bEconomica\b/i],
+  ['wiley', '1468-2230', 'The Modern Law Review', /Modern Law Review|\bMLR\b/i],
+  ['wiley', '1468-2885', 'Communication Theory', /\bCommunication Theory\b/i],
+  ['wiley', '1468-2958', 'Human Communication Research', /Human Communication Research|\bHCR\b/i],
+  ['wiley', '1468-5876', 'Japanese Economic Review', /Japanese Economic Review/i],
+  ['wiley', '1468-5973', 'Journal of Contingencies and Crisis Management', /Journal of Contingencies/i],
+  ['wiley', '1469-7610', 'Journal of Child Psychology and Psychiatry', /Journal of Child Psychology (?:and|&) Psychiatry|\bJCPP\b/i],
+  ['wiley', '1475-4932', 'The Economic Record', /Economic Record/i],
+  ['wiley', '1529-1006', 'Psychological Science in the Public Interest', /Psychological Science in the Public Interest|\bPSPI\b/i],
+  ['wiley', '1536-7150', 'American Journal of Economics and Sociology', /American Journal of Economics (?:and|&) Sociology|\bAJES\b/i],
+  ['wiley', '1540-4560', 'Journal of Social Issues', /Journal of Social Issues/i],
+  ['wiley', '1540-5982', 'Canadian Journal of Economics', /Canadian Journal of Economics/i],
+  ['wiley', '1540-6261', 'The Journal of Finance', /\bJournal of Finance\b|\bJoF\b/i],
+  ['wiley', '1540-6520', 'Entrepreneurship Theory and Practice', /Entrepreneurship Theory (?:and|&) Practice|\bETP\b/i],
+  ['wiley', '1545-5300', 'Family Process', /\bFamily Process\b/i],
+  ['wiley', '1571-9979', 'Negotiation Journal', /Negotiation Journal/i],
+  ['wiley', '1600-0447', 'Acta Psychiatrica Scandinavica', /Acta Psychiatrica Scandinavica/i],
+  ['wiley', '1740-8784', 'Management and Organization Review', /Management (?:and|&) Organization Review/i],
+  ['wiley', '1741-3737', 'Journal of Marriage and Family', /Journal of Marriage (?:and|&) (?:the )?Family/i],
+  ['wiley', '1741-6248', 'Family Business Review', /Family Business Review/i],
+  ['wiley', '1744-6570', 'Personnel Psychology', /Personnel Psychology/i],
+  ['wiley', '1744-7941', 'Asia Pacific Journal of Human Resources', /Asia Pacific Journal of Human Resources/i],
+  ['wiley', '1745-6924', 'Perspectives on Psychological Science', /Perspectives on Psychological Science/i],
+  ['wiley', '1749-6632', 'Annals of the New York Academy of Sciences', /Annals of the New York Academy/i],
+  ['wiley', '1751-9004', 'Social and Personality Psychology Compass', /Social (?:and|&) Personality Psychology Compass/i],
+  ['wiley', '1756-2171', 'RAND Journal of Economics', /RAND Journal of Economics/i],
+  ['wiley', '1756-2589', 'Journal of Family Theory & Review', /Journal of Family Theory/i],
+  ['wiley', '2044-8279', 'British Journal of Educational Psychology', /British Journal of Educational Psychology/i],
+  ['wiley', '2044-8295', 'British Journal of Psychology', /British Journal of Psychology\b/i],
+  ['wiley', '2044-8309', 'British Journal of Social Psychology', /British Journal of Social Psychology|\bBJSP\b/i],
+  // --- SAGE (10.1177/<ISSN 8 桁>…) ---
+  ['sage', '0001-6993', 'Acta Sociologica', /Acta Sociologica/i],
+  ['sage', '0001-8392', 'Administrative Science Quarterly', /Administrative Science Quarterly|\bASQ\b/i],
+  ['sage', '0002-7162', 'The Annals of the American Academy of Political and Social Science', /Annals of the American Academy|\bAAPSS\b/i],
+  ['sage', '0002-7642', 'American Behavioral Scientist', /American Behavioral Scientist/i],
+  ['sage', '0003-1224', 'American Sociological Review', /American Sociological Review|\bASR\b/i],
+  ['sage', '0008-4174', 'Canadian Journal of Occupational Therapy', /Canadian Journal of Occupational Therapy|\bCJOT\b/i],
+  ['sage', '0013-9165', 'Environment and Behavior', /Environment (?:and|&) Behavior/i],
+  ['sage', '0018-7267', 'Human Relations', /\bHuman Relations\b/i],
+  ['sage', '0019-7939', 'ILR Review', /Industrial (?:and|&) Labor Relations Review|\bILR Review\b/i],
+  ['sage', '0020-8523', 'International Review of Administrative Sciences', /International Review of Administrative Sciences/i],
+  ['sage', '0022-0027', 'Journal of Conflict Resolution', /Journal of Conflict Resolution/i],
+  ['sage', '0022-0221', 'Journal of Cross-Cultural Psychology', /Journal of Cross[- ]Cultural Psychology|\bJCCP\b/i],
+  ['sage', '0022-2429', 'Journal of Marketing', /\bJournal of Marketing\b(?! Research| Management| Education)/i],
+  ['sage', '0022-2437', 'Journal of Marketing Research', /Journal of Marketing Research|\bJMR\b/i],
+  ['sage', '0022-3433', 'Journal of Peace Research', /Journal of Peace Research/i],
+  ['sage', '0023-8309', 'Language and Speech', /Language (?:and|&) Speech/i],
+  ['sage', '0032-3292', 'Politics & Society', /\bPolitics (?:and|&) Society\b/i],
+  ['sage', '0038-0385', 'Sociology', /^Sociology\b|—\s*Sociology\b|\bSociology\s*\d/i],
+  ['sage', '0042-0980', 'Urban Studies', /\bUrban Studies\b/i],
+  ['sage', '0091-6471', 'Criminal Justice and Behavior', /Criminal Justice (?:and|&) Behavior/i],
+  ['sage', '0093-6502', 'Communication Research', /\bCommunication Research\b/i],
+  ['sage', '0146-1672', 'Personality and Social Psychology Bulletin', /Personality (?:and|&) Social Psychology Bulletin|\bPSPB\b/i],
+  ['sage', '0149-2063', 'Journal of Management', /Journal of Management(?! Studies| Inquiry| Information| Education| Development| Accounting)/i],
+  ['sage', '0162-2439', 'Science, Technology, & Human Values', /Science, Technology,? (?:and|&) Human Values|\bST&HV\b/i],
+  ['sage', '0163-4437', 'Media, Culture & Society', /Media, Culture (?:and|&) Society/i],
+  ['sage', '0165-0254', 'International Journal of Behavioral Development', /International Journal of Behavioral Development/i],
+  ['sage', '0170-8406', 'Organization Studies', /(?<!Group and )(?<!Group & )\bOrganization Studies\b/i],
+  ['sage', '0190-2725', 'Social Psychology Quarterly', /Social Psychology Quarterly/i],
+  ['sage', '0192-5121', 'International Political Science Review', /International Political Science Review|\bIPSR\b/i],
+  ['sage', '0263-2764', 'Theory, Culture & Society', /Theory, Culture (?:and|&) Society|\bTCS\b/i],
+  ['sage', '0265-4075', 'Journal of Social and Personal Relationships', /Journal of Social (?:and|&) Personal Relationships/i],
+  ['sage', '0267-3231', 'European Journal of Communication', /European Journal of Communication/i],
+  ['sage', '0268-3962', 'Journal of Information Technology', /Journal of Information Technology/i],
+  ['sage', '0276-1467', 'Journal of Macromarketing', /Journal of Macromarketing/i],
+  ['sage', '0306-3127', 'Social Studies of Science', /Social Studies of Science/i],
+  ['sage', '0308-518X', 'Environment and Planning A', /Environment (?:and|&) Planning A\b/i],
+  ['sage', '0486-6134', 'Review of Radical Political Economics', /Review of Radical Political Economics/i],
+  ['sage', '0539-0184', 'Social Science Information', /Social Science Information/i],
+  ['sage', '0748-7304', 'Journal of Biological Rhythms', /J(?:ournal)? (?:of )?Biol(?:ogical)? Rhythms/i],
+  ['sage', '0894-4393', 'Social Science Computer Review', /Social Science Computer Review/i],
+  ['sage', '0956-7976', 'Psychological Science', /(?<!Current Directions in )(?<!of )Psychological Science(?! in the Public Interest)/i],
+  ['sage', '0963-7214', 'Current Directions in Psychological Science', /Current Directions in Psychological Science|\bCDPS\b/i],
+  ['sage', '1049-7323', 'Qualitative Health Research', /Qualitative Health Research/i],
+  ['sage', '1056-4926', 'Journal of Management Inquiry', /Journal of Management Inquiry/i],
+  ['sage', '1059-6011', 'Group & Organization Management', /Group (?:and|&) Organization (?:Management|Studies)/i],
+  ['sage', '1077-6990', 'Journalism & Mass Communication Quarterly', /Journalism (?:and|&) Mass Communication Quarterly|Journalism Quarterly/i],
+  ['sage', '1086-0266', 'Organization & Environment', /Organization (?:and|&) Environment/i],
+  ['sage', '1088-8683', 'Personality and Social Psychology Review', /Personality (?:and|&) Social Psychology Review|\bPSPR\b/i],
+  ['sage', '1090-1981', 'Health Education & Behavior', /Health Education (?:and|&) Behavior/i],
+  ['sage', '1094-6705', 'Journal of Service Research', /Journal of Service Research/i],
+  ['sage', '1350-5076', 'Management Learning', /\bManagement Learning\b/i],
+  ['sage', '1354-0688', 'Party Politics', /\bParty Politics\b/i],
+  ['sage', '1354-8565', 'Convergence: The International Journal of Research into New Media Technologies', /—\s*Convergence\b|\bConvergence: The International Journal/i],
+  ['sage', '1362-4806', 'Theoretical Criminology', /Theoretical Criminology/i],
+  ['sage', '1367-5494', 'European Journal of Cultural Studies', /European Journal of Cultural Studies/i],
+  ['sage', '1367-8779', 'International Journal of Cultural Studies', /International Journal of Cultural Studies/i],
+  ['sage', '1461-4448', 'New Media & Society', /New Media (?:and|&) Society/i],
+  ['sage', '1469-5405', 'Journal of Consumer Culture', /Journal of Consumer Culture/i],
+  ['sage', '1476-1270', 'Strategic Organization', /Strategic Organization\b/i],
+  ['sage', '1527-4764', 'Television & New Media', /Television (?:and|&) New Media/i],
+  ['sage', '1529-1006', 'Psychological Science in the Public Interest', /Psychological Science in the Public Interest|\bPSPI\b/i],
+  ['sage', '1548-0518', 'Journal of Leadership & Organizational Studies', /Journal of Leadership (?:and|&) Organizational Studies/i],
+  ['sage', '1745-6916', 'Perspectives on Psychological Science', /Perspectives on Psychological Science/i],
+  ['sage', '1754-0739', 'Emotion Review', /\bEmotion Review\b/i],
+  ['sage', '2053-9517', 'Big Data & Society', /Big Data (?:and|&) Society/i],
+  ['sage', '2056-3051', 'Social Media + Society', /Social Media \+ Society/i],
+];
+
+/** ISSN の検査数字 (ISO 3297): 上 7 桁に 8..2 を掛けて足し、11 の剰余から求める。 */
+function issnCheckDigitOk(issn) {
+  const m = /^(\d{4})-(\d{3})([\dX])$/.exec(issn);
+  if (!m) return false;
+  const digits = (m[1] + m[2]).split('').map(Number);
+  const sum = digits.reduce((acc, d, i) => acc + d * (8 - i), 0);
+  const check = (11 - (sum % 11)) % 11;
+  return (check === 10 ? 'X' : String(check)) === m[3];
+}
+
+for (const [form, issn, name, label] of ISSN_JOURNALS) {
+  if (!ISSN_FORMS[form]) throw new Error(`ISSN_JOURNALS: unknown form ${form}`);
+  if (!issnCheckDigitOk(issn)) throw new Error(`ISSN_JOURNALS: ISSN の検査数字が合いません ${issn} (${name}) — 書き間違い`);
+  if (!label.test(name)) throw new Error(`ISSN_JOURNALS: 誌名の正規表現が誌名自身に当たりません ${issn} ${name}`);
+  JOURNAL_CODES.push({ re: ISSN_FORMS[form](issn), name, label, issn, form });
+}
+
+/*
+ * ## 誌の略号を接尾辞に持つ出版社 (2026-09-05 追加、ISSN 台帳と同じ考え方)
+ *
+ * INFORMS (10.1287/<code>.)、Oxford (10.1093/<code>/)、Wiley 現行 (10.1002/<code>.)、
+ * Springer (10.1007/s<5 桁>-)、Annual Reviews (10.1146/annurev[.-]<field>)、MIT Press
+ * (10.1162/<code>)、Emerald (10.1108/<code>) は誌の略号や誌番号を接尾辞に持つ。
+ * 実測 (2026-09-05): orsc の DOI に「Harvard Business Review」「Free Press」、qje に
+ * 「Review of Financial Studies」、smj に「Journal of Management Studies」、s10551 に
+ * 「Business Ethics Quarterly」など。略号は記憶で確かめやすく、ISSN より誤記しにくい。
+ */
+const CODE_FORMS = {
+  informs: (c) => new RegExp(`^10\\.1287\\/${c}\\.`, 'i'),
+  oxford: (c) => new RegExp(`^10\\.1093\\/${c}\\/`, 'i'),
+  wiley: (c) => new RegExp(`^10\\.1002\\/${c}\\.`, 'i'),
+  springer: (c) => new RegExp(`^10\\.1007\\/s${c}-`, 'i'),
+  annualreviews: (c) => new RegExp(`^10\\.1146\\/annurev[.-]${c}[.-]`, 'i'),
+  mit: (c) => new RegExp(`^10\\.1162\\/${c}(?:[._]|$)`, 'i'),
+  emerald: (c) => new RegExp(`^10\\.1108\\/${c}(?:[-\\d]|$)`, 'i'),
+};
+
+/** [形式, 略号, 誌名, ラベルの正規表現] */
+const CODE_JOURNALS = [
+  // --- INFORMS ---
+  ['informs', 'orsc', 'Organization Science', /\bOrganization Science\b/i],
+  ['informs', 'mnsc', 'Management Science', /(?<!Journal of )(?<!Organization and )\bManagement Science\b(?! Quarterly)/i],
+  ['informs', 'isre', 'Information Systems Research', /Information Systems Research|\bISR\b/i],
+  ['informs', 'opre', 'Operations Research', /(?<!of )\bOperations Research\b(?! Letters)/i],
+  ['informs', 'mksc', 'Marketing Science', /(?<!of )\bMarketing Science\b/i],
+  ['informs', 'moor', 'Mathematics of Operations Research', /Mathematics of Operations Research/i],
+  ['informs', 'msom', 'Manufacturing & Service Operations Management', /Manufacturing (?:and|&) Service Operations Management|\bMSOM\b/i],
+  ['informs', 'stsc', 'Strategy Science', /\bStrategy Science\b/i],
+  ['informs', 'inte', 'Interfaces', /^Interfaces$|—\s*(?:The )?Interfaces\b/i],
+  ['informs', 'ijoc', 'INFORMS Journal on Computing', /INFORMS Journal on Computing/i],
+  // --- Oxford University Press journals ---
+  ['oxford', 'qje', 'Quarterly Journal of Economics', /Quarterly Journal of Economics|\bQJE\b/i],
+  ['oxford', 'restud', 'Review of Economic Studies', /Review of Economic Studies|\bReStud\b/i],
+  ['oxford', 'rfs', 'Review of Financial Studies', /Review of Financial Studies|\bRFS\b/i],
+  ['oxford', 'jeg', 'Journal of Economic Geography', /Journal of Economic Geography/i],
+  ['oxford', 'ser', 'Socio-Economic Review', /Socio-?Economic Review/i],
+  ['oxford', 'icc', 'Industrial and Corporate Change', /Industrial (?:and|&) Corporate Change|\bICC\b/i],
+  ['oxford', 'cje', 'Cambridge Journal of Economics', /Cambridge Journal of Economics/i],
+  ['oxford', 'oep', 'Oxford Economic Papers', /Oxford Economic Papers/i],
+  ['oxford', 'oxrep', 'Oxford Review of Economic Policy', /Oxford Review of Economic Policy/i],
+  ['oxford', 'jleo', 'Journal of Law, Economics, and Organization', /Journal of Law, Economics,? (?:and|&) Organization|\bJLEO\b/i],
+  ['oxford', 'jla', 'Journal of Legal Analysis', /Journal of Legal Analysis/i],
+  ['oxford', 'ojls', 'Oxford Journal of Legal Studies', /Oxford Journal of Legal Studies/i],
+  ['oxford', 'brain', 'Brain', /^Brain$|—\s*Brain\b|\bBrain\s*\d|\bBrain,\s/i],
+  ['oxford', 'cercor', 'Cerebral Cortex', /Cerebral Cortex/i],
+  ['oxford', 'scan', 'Social Cognitive and Affective Neuroscience', /Social Cognitive (?:and|&) Affective Neuroscience/i],
+  ['oxford', 'jcr', 'Journal of Consumer Research', /Journal of Consumer Research/i],
+  ['oxford', 'wber', 'World Bank Economic Review', /World Bank Economic Review/i],
+  ['oxford', 'wbro', 'World Bank Research Observer', /World Bank Research Observer/i],
+  ['oxford', 'poq', 'Public Opinion Quarterly', /Public Opinion Quarterly/i],
+  ['oxford', 'joc', 'Journal of Communication', /\bJournal of Communication\b/i],
+  ['oxford', 'hcr', 'Human Communication Research', /Human Communication Research/i],
+  ['oxford', 'ct', 'Communication Theory', /\bCommunication Theory\b/i],
+  ['oxford', 'jcmc', 'Journal of Computer-Mediated Communication', /Journal of Computer[- ]Mediated Communication|\bJCMC\b/i],
+  ['oxford', 'sf', 'Social Forces', /^Social Forces$|—\s*(?:The )?Social Forces\b/i],
+  ['oxford', 'socpro', 'Social Problems', /^Social Problems$|—\s*(?:The )?Social Problems\b/i],
+  ['oxford', 'ijpor', 'International Journal of Public Opinion Research', /International Journal of Public Opinion Research/i],
+  ['oxford', 'ectj', 'Econometrics Journal', /Econometrics Journal/i],
+  ['oxford', 'jeea', 'Journal of the European Economic Association', /Journal of the European Economic Association|\bJEEA\b/i],
+  // --- Wiley 現行 (10.1002/<code>.) ---
+  ['wiley', 'smj', 'Strategic Management Journal', /Strategic Management Journal|\bSMJ\b/i],
+  ['wiley', 'job', 'Journal of Organizational Behavior', /Journal of Organizational Behavio?r/i],
+  ['wiley', 'hrm', 'Human Resource Management', /(?<!International Journal of )(?<!Strategic )\bHuman Resource Management\b(?! Review| Journal)/i],
+  ['wiley', 'sej', 'Strategic Entrepreneurship Journal', /Strategic Entrepreneurship Journal/i],
+  ['wiley', 'gsj', 'Global Strategy Journal', /Global Strategy Journal/i],
+  ['wiley', 'jpim', 'Journal of Product Innovation Management', /Journal of Product Innovation Management|\bJPIM\b/i],
+  ['wiley', 'asi', 'Journal of the Association for Information Science and Technology', /Association for Information Science|American Society for Information Science|\bJASIST?\b/i],
+  ['wiley', 'bs', 'Behavioral Science', /\bBehavioral Science\b(?!s)/i],
+  ['wiley', 'pam', 'Journal of Policy Analysis and Management', /Journal of Policy Analysis (?:and|&) Management/i],
+  ['wiley', 'jid', 'Journal of International Development', /Journal of International Development/i],
+  ['wiley', 'ejsp', 'European Journal of Social Psychology', /European Journal of Social Psychology|\bEJSP\b/i],
+  ['wiley', 'per', 'European Journal of Personality', /European Journal of Personality/i],
+  ['wiley', 'jclp', 'Journal of Clinical Psychology', /Journal of Clinical Psychology/i],
+  ['wiley', 'bdm', 'Journal of Behavioral Decision Making', /Journal of Behavioral Decision Making/i],
+  ['wiley', 'mde', 'Managerial and Decision Economics', /Managerial (?:and|&) Decision Economics/i],
+  ['wiley', 'jae', 'Journal of Applied Econometrics', /Journal of Applied Econometrics/i],
+  ['wiley', 'mar', 'Psychology & Marketing', /Psychology (?:and|&) Marketing/i],
+  ['wiley', 'hbm', 'Human Brain Mapping', /Human Brain Mapping/i],
+  ['wiley', 'wcs', 'WIREs Cognitive Science', /WIREs Cognitive Science|Wiley Interdisciplinary Reviews: Cognitive Science/i],
+  ['wiley', 'jcpy', 'Journal of Consumer Psychology', /Journal of Consumer Psychology/i],
+  ['wiley', 'ijop', 'International Journal of Psychology', /International Journal of Psychology/i],
+  ['wiley', 'joom', 'Journal of Operations Management', /Journal of Operations Management/i],
+  // --- Springer (10.1007/s<code>-) ---
+  ['springer', '10551', 'Journal of Business Ethics', /Journal of Business Ethics|\bJBE\b/i],
+  ['springer', '11187', 'Small Business Economics', /Small Business Economics/i],
+  ['springer', '11747', 'Journal of the Academy of Marketing Science', /Journal of the Academy of Marketing Science|\bJAMS\b/i],
+  ['springer', '10490', 'Asia Pacific Journal of Management', /Asia Pacific Journal of Management/i],
+  ['springer', '11301', 'Management Review Quarterly', /Management Review Quarterly/i],
+  ['springer', '10648', 'Educational Psychology Review', /Educational Psychology Review/i],
+  ['springer', '10677', 'Ethical Theory and Moral Practice', /Ethical Theory (?:and|&) Moral Practice/i],
+  ['springer', '11245', 'Topoi', /\bTopoi\b/i],
+  ['springer', '11948', 'Science and Engineering Ethics', /Science (?:and|&) Engineering Ethics/i],
+  ['springer', '13347', 'Philosophy & Technology', /Philosophy (?:and|&) Technology/i],
+  ['springer', '10869', 'Journal of Business and Psychology', /Journal of Business (?:and|&) Psychology/i],
+  ['springer', '10902', 'Journal of Happiness Studies', /Journal of Happiness Studies/i],
+  ['springer', '11205', 'Social Indicators Research', /Social Indicators Research/i],
+  ['springer', '00191', 'Journal of Evolutionary Economics', /Journal of Evolutionary Economics/i],
+  ['springer', '10887', 'Journal of Economic Growth', /Journal of Economic Growth/i],
+  ['springer', '10683', 'Experimental Economics', /^Experimental Economics$|—\s*(?:The )?Experimental Economics\b/i],
+  ['springer', '11127', 'Public Choice', /^Public Choice$|—\s*(?:The )?Public Choice\b(?! III)/i],
+  ['springer', '11149', 'Journal of Regulatory Economics', /Journal of Regulatory Economics/i],
+  ['springer', '11238', 'Theory and Decision', /\bTheory (?:and|&) Decision\b/i],
+  ['springer', '11135', 'Quality & Quantity', /Quality (?:and|&) Quantity/i],
+  ['springer', '12144', 'Current Psychology', /^Current Psychology$|—\s*(?:The )?Current Psychology\b/i],
+  ['springer', '11031', 'Motivation and Emotion', /Motivation (?:and|&) Emotion/i],
+  ['springer', '11199', 'Sex Roles', /\bSex Roles\b/i],
+  ['springer', '10964', 'Journal of Youth and Adolescence', /Journal of Youth (?:and|&) Adolescence/i],
+  ['springer', '10865', 'Journal of Behavioral Medicine', /Journal of Behavioral Medicine/i],
+  ['springer', '12160', 'Annals of Behavioral Medicine', /Annals of Behavioral Medicine/i],
+  ['springer', '10608', 'Cognitive Therapy and Research', /Cognitive Therapy (?:and|&) Research/i],
+  ['springer', '11136', 'Quality of Life Research', /Quality of Life Research/i],
+  ['springer', '10508', 'Archives of Sexual Behavior', /Archives of Sexual Behavior/i],
+  ['springer', '11133', 'Journal of Cultural Economics', /Journal of Cultural Economics/i],
+  ['springer', '10657', 'Journal of Productivity Analysis', /Journal of Productivity Analysis/i],
+  ['springer', '11846', 'Review of Managerial Science', /Review of Managerial Science/i],
+  ['springer', '11365', 'International Entrepreneurship and Management Journal', /International Entrepreneurship (?:and|&) Management Journal/i],
+  ['springer', '10797', 'International Tax and Public Finance', /International Tax (?:and|&) Public Finance/i],
+  ['springer', '11166', 'Journal of Risk and Uncertainty', /Journal of Risk (?:and|&) Uncertainty/i],
+  ['springer', '10726', 'Group Decision and Negotiation', /Group Decision (?:and|&) Negotiation/i],
+  ['springer', '10796', 'Information Systems Frontiers', /Information Systems Frontiers/i],
+  ['springer', '11423', 'Educational Technology Research and Development', /Educational Technology Research (?:and|&) Development/i],
+  ['springer', '10639', 'Education and Information Technologies', /Education (?:and|&) Information Technologies/i],
+  ['springer', '10676', 'Ethics and Information Technology', /Ethics (?:and|&) Information Technology/i],
+  ['springer', '10506', 'Artificial Intelligence and Law', /Artificial Intelligence (?:and|&) Law/i],
+  ['springer', '11023', 'Minds and Machines', /Minds (?:and|&) Machines/i],
+  ['springer', '10462', 'Artificial Intelligence Review', /Artificial Intelligence Review/i],
+  ['springer', '00181', 'Empirical Economics', /\bEmpirical Economics\b/i],
+  ['springer', '00712', 'Journal of Economics', /^Journal of Economics$|—\s*Journal of Economics\b(?! and| &)/i],
+  ['springer', '00199', 'Economic Theory', /^Economic Theory$|—\s*(?:The )?Economic Theory\b(?! and| of)/i],
+  ['springer', '11150', 'Review of Economics of the Household', /Review of Economics of the Household/i],
+  ['springer', '11294', 'International Advances in Economic Research', /International Advances in Economic Research/i],
+  ['springer', '00148', 'Journal of Population Economics', /Journal of Population Economics/i],
+  // --- Annual Reviews (10.1146/annurev-<field>-… / 旧 annurev.<field>.…) ---
+  ['annualreviews', 'psych', 'Annual Review of Psychology', /Annual Review of Psychology|Annu\.? Rev\.? Psychol/i],
+  ['annualreviews', 'soc', 'Annual Review of Sociology', /Annual Review of Sociology|Annu\.? Rev\.? Sociol/i],
+  ['annualreviews', 'so', 'Annual Review of Sociology', /Annual Review of Sociology|Annu\.? Rev\.? Sociol/i],
+  ['annualreviews', 'economics', 'Annual Review of Economics', /Annual Review of Economics(?! and)|Annu\.? Rev\.? Econ\b/i],
+  ['annualreviews', 'financial', 'Annual Review of Financial Economics', /Annual Review of Financial Economics/i],
+  ['annualreviews', 'orgpsych', 'Annual Review of Organizational Psychology and Organizational Behavior', /Annual Review of Organizational Psychology/i],
+  ['annualreviews', 'neuro', 'Annual Review of Neuroscience', /Annual Review of Neuroscience|Annu\.? Rev\.? Neurosci/i],
+  ['annualreviews', 'ne', 'Annual Review of Neuroscience', /Annual Review of Neuroscience|Annu\.? Rev\.? Neurosci/i],
+  ['annualreviews', 'polisci', 'Annual Review of Political Science', /Annual Review of Political Science/i],
+  ['annualreviews', 'publhealth', 'Annual Review of Public Health', /Annual Review of Public Health/i],
+  ['annualreviews', 'clinpsy', 'Annual Review of Clinical Psychology', /Annual Review of Clinical Psychology/i],
+  ['annualreviews', 'anthro', 'Annual Review of Anthropology', /Annual Review of Anthropology/i],
+  ['annualreviews', 'lawsocsci', 'Annual Review of Law and Social Science', /Annual Review of Law (?:and|&) Social Science/i],
+  ['annualreviews', 'resource', 'Annual Review of Resource Economics', /Annual Review of Resource Economics/i],
+  ['annualreviews', 'statistics', 'Annual Review of Statistics and Its Application', /Annual Review of Statistics/i],
+  ['annualreviews', 'ps', 'Annual Review of Psychology', /Annual Review of Psychology|Annu\.? Rev\.? Psychol/i],
+  // --- MIT Press ---
+  ['mit', 'rest', 'Review of Economics and Statistics', /Review of Economics (?:and|&) Statistics|\bREStat\b/i],
+  ['mit', 'jocn', 'Journal of Cognitive Neuroscience', /Journal of Cognitive Neuroscience|\bJOCN\b|J\.? Cogn\.? Neurosci/i],
+  ['mit', 'daed', 'Daedalus', /\bDaedalus\b/i],
+  ['mit', 'isec', 'International Security', /^International Security$|—\s*(?:The )?International Security\b/i],
+  ['mit', 'neco', 'Neural Computation', /\bNeural Computation\b/i],
+  ['mit', 'jinh', 'Journal of Interdisciplinary History', /Journal of Interdisciplinary History/i],
+  // --- Emerald ---
+  ['emerald', 'tlo', 'The Learning Organization', /^The Learning Organization$|—\s*(?:The )?Learning Organization\b/i],
+  ['emerald', 'jd', 'Journal of Documentation', /Journal of Documentation/i],
+  ['emerald', 'ijlma', 'International Journal of Law and Management', /International Journal of Law (?:and|&) Management/i],
+  ['emerald', 'cemj', 'Central European Management Journal', /Central European Management Journal/i],
+  ['emerald', 'jkm', 'Journal of Knowledge Management', /Journal of Knowledge Management/i],
+  ['emerald', 'md', 'Management Decision', /^Management Decision$|—\s*(?:The )?Management Decision\b/i],
+  ['emerald', 'ijopm', 'International Journal of Operations & Production Management', /International Journal of Operations (?:and|&) Production Management|\bIJOPM\b/i],
+  ['emerald', 'jmp', 'Journal of Managerial Psychology', /Journal of Managerial Psychology/i],
+  ['emerald', 'lodj', 'Leadership & Organization Development Journal', /Leadership (?:and|&) Organization Development Journal/i],
+  ['emerald', 'ejm', 'European Journal of Marketing', /European Journal of Marketing/i],
+  ['emerald', 'jsm', 'Journal of Services Marketing', /Journal of Services Marketing/i],
+  ['emerald', 'pr', 'Personnel Review', /\bPersonnel Review\b/i],
+  ['emerald', 'jocm', 'Journal of Organizational Change Management', /Journal of Organizational Change Management/i],
+  ['emerald', 'imds', 'Industrial Management & Data Systems', /Industrial Management (?:and|&) Data Systems/i],
+  ['emerald', 'bpmj', 'Business Process Management Journal', /Business Process Management Journal/i],
+  ['emerald', 'oir', 'Online Information Review', /Online Information Review/i],
+  ['emerald', 'jic', 'Journal of Intellectual Capital', /Journal of Intellectual Capital/i],
+  ['emerald', 'jsbed', 'Journal of Small Business and Enterprise Development', /Journal of Small Business (?:and|&) Enterprise Development/i],
+  ['emerald', 'ijebr', 'International Journal of Entrepreneurial Behavior & Research', /International Journal of Entrepreneurial Behavio?u?r/i],
+  ['emerald', 'er', 'Employee Relations', /^Employee Relations$|—\s*(?:The )?Employee Relations\b/i],
+  ['emerald', 'ijm', 'International Journal of Manpower', /International Journal of Manpower/i],
+  ['emerald', 'jbim', 'Journal of Business & Industrial Marketing', /Journal of Business (?:and|&) Industrial Marketing/i],
+];
+
+for (const [form, code, name, label] of CODE_JOURNALS) {
+  if (!CODE_FORMS[form]) throw new Error(`CODE_JOURNALS: unknown form ${form}`);
+  if (!label.test(name)) throw new Error(`CODE_JOURNALS: 誌名の正規表現が誌名自身に当たりません ${form}/${code} ${name}`);
+  JOURNAL_CODES.push({ re: CODE_FORMS[form](code), name, label, code, form });
+}
+
+/** DOI の接尾辞に埋め込まれた ISSN (APA / Elsevier PII / Wiley 旧形式 / SAGE)。無ければ null。 */
+function embeddedIssn(doi) {
+  const m =
+    /^10\.1037\/(\d{4}-\d{3}[\dXx])\./.exec(doi) ||
+    /^10\.1016\/[Ss](\d{4}-\d{3}[\dXx])\(/.exec(doi) ||
+    /^10\.1111\/j\.(\d{4}-\d{3}[\dXx])\./.exec(doi);
+  if (m) return m[1].toUpperCase();
+  // SAGE は現行形式 (16 桁 = ISSN 8 桁 + 年 2 + 連番 6) だけが検査数字つきの ISSN を持つ。
+  // 旧形式 (18 桁) は ISSN の上 7 桁しか含まないので検査数字は見られない (誌の照合は 7 桁で行う)。
+  const sage = /^10\.1177\/(\d{4})(\d{3}[\dXx])\d{8}$/.exec(doi);
+  return sage ? `${sage[1]}-${sage[2].toUpperCase()}` : null;
+}
+
+/**
+ * 誌コード照合。戻り値: 台帳に無い DOI は null (判定対象外)、
+ * 判定したが矛盾なしは { own, named: null }、矛盾は { own, named: [ラベルが名乗る誌…] }。
+ */
+function journalConflict(doi, label) {
+  const own = JOURNAL_CODES.find((j) => j.re.test(doi));
+  if (own === undefined) return null;
+  const named = [...new Set(JOURNAL_CODES.filter((j) => j.label.test(label)).map((j) => j.name))];
+  if (named.length > 0 && !named.includes(own.name)) return { own: own.name, named };
+  return { own: own.name, named: null };
+}
+
+/**
+ * ISSN の検査数字が合わない (= その DOI は解決しない) と分かっている出典の台帳。**双方向**。
+ * 例: 10.1111/j.1430-9134.… — JEMS の ISSN は 1530-9134 なので転記ミス。正しい DOI を
+ * 推測で書かず、一次資料で確かめてから差し替える。
+ */
+const ISSN_ALLOWLIST = new Map([
+  // 2026-09-05 初回走査: 2 件。どちらも Journal of Economics & Management Strategy の Wiley 旧形式 DOI。
+  ['econ-blp-demand-estimation-berry-levinsohn-pakes::10.1111/j.1430-9134.2000.00513.x', '埋め込まれた ISSN 1430-9134 は検査数字が合わない (JEMS の ISSN は 1530-9134 — 1 桁の転記ミスと思われるが、推測で直さず一次資料で確かめてから差し替える)'],
+  ['econ-damaged-goods-deneckere-mcafee::10.1111/j.1430-9134.1996.00149.x', '埋め込まれた ISSN 1430-9134 は検査数字が合わない (JEMS の ISSN は 1530-9134 — 1 桁の転記ミスと思われるが、推測で直さず一次資料で確かめてから差し替える)'],
+]);
+
 
 /**
  * 同一文献が **別々の識別子** で引かれていないかを検査する。
@@ -416,6 +955,8 @@ function main() {
   const findings = [];
   const isbnFindings = [];
   const journalFindings = [];
+  const issnFindings = [];
+  let issnChecked = 0;
   const dupFindings = [];
   let checked = 0;
   let isbnChecked = 0;
@@ -461,17 +1002,25 @@ function main() {
       // ISBN 検算はプレフィックス照合とは独立。中立プレフィックスの除外より
       // 前に置く（JSTOR 等でも書籍 DOI は成立しないため）。
       // 誌コード照合 (同一出版社内の誌違い)。プレフィックス照合では見えない。
-      const own = JOURNAL_CODES.find((j) => j.re.test(parsed.doi));
-      if (own !== undefined) {
+      const lab = typeof source.label === 'string' ? source.label : '';
+      const jc = journalConflict(parsed.doi, lab);
+      if (jc !== null) {
         journalChecked += 1;
-        const lab = typeof source.label === 'string' ? source.label : '';
-        const named = JOURNAL_CODES.filter((j) => j.label.test(lab)).map((j) => j.name);
-        if (named.length > 0 && !named.includes(own.name)) {
+        if (jc.named !== null) {
           journalFindings.push({
             key: `${entry.id}::${parsed.doi}`,
-            id: entry.id, doi: parsed.doi, own: own.name, named,
+            id: entry.id, doi: parsed.doi, own: jc.own, named: jc.named,
             label: lab.trim(),
           });
+        }
+      }
+      // ISSN の検査数字。台帳に無い誌でも、DOI に埋め込まれた ISSN が ISSN として
+      // 成立しなければその DOI は解決しない (ISBN-13 の検算と同じ発想)。
+      const issn = embeddedIssn(parsed.doi);
+      if (issn !== null) {
+        issnChecked += 1;
+        if (!issnCheckDigitOk(issn)) {
+          issnFindings.push({ key: `${entry.id}::${parsed.doi}`, id: entry.id, doi: parsed.doi, issn, label: lab.trim() });
         }
       }
 
@@ -568,7 +1117,7 @@ function main() {
 
   if (jFresh.length > 0) {
     console.error(`\n❌ ${jFresh.length} 件の DOI が別の誌を指しています (新規)`);
-    console.error('   (AOM の amr/amj/amle/amp/ame、AEA の jep/jel/aer は DOI に誌が書かれています)');
+    console.error('   (AOM の amr/amj…、AEA の jep/jel/aer は DOI に誌の略号が、APA / Elsevier PII / Wiley j. / SAGE は ISSN が書かれています)');
     for (const f of jFresh) {
       console.error('');
       console.error(`  [${f.id}] ${f.doi}`);
@@ -585,6 +1134,41 @@ function main() {
   }
 
   const journalFailed = jFresh.length > 0 || jStale.length > 0;
+
+  issnFindings.sort((a, b) => a.key.localeCompare(b.key));
+  const iSeen = new Set(issnFindings.map((f) => f.key));
+  const iFresh = issnFindings.filter((f) => !ISSN_ALLOWLIST.has(f.key));
+  const iStale = [...ISSN_ALLOWLIST.keys()].filter((k) => !iSeen.has(k)).sort();
+  const MIN_ISSN_CHECKED = 300; // 実測 615 (2026-09-05)
+  if (issnChecked < MIN_ISSN_CHECKED) {
+    console.error(
+      `❌ ISSN を埋め込んだ DOI を ${issnChecked} 件しか拾えませんでした (${MIN_ISSN_CHECKED} 件以上を期待)。`
+        + ' 抽出が壊れている可能性があります。',
+    );
+    process.exit(1);
+  }
+  console.log(
+    `Checked ${issnChecked} DOI(s) の ISSN 検査数字（APA / Elsevier PII / Wiley j. / SAGE。` +
+      `既知 ${ISSN_ALLOWLIST.size} 件は台帳で除外）`,
+  );
+  if (iFresh.length > 0) {
+    console.error(`\n❌ ${iFresh.length} 件の DOI は埋め込まれた ISSN が成立しません (新規)`);
+    console.error('   (検査数字が合わない＝この DOI は解決しません。転記ミスか捏造です)');
+    for (const f of iFresh) {
+      console.error('');
+      console.error(`  [${f.id}] ${f.doi}`);
+      console.error(`    ISSN   : ${f.issn}`);
+      console.error(`    ラベル : ${f.label.slice(0, 110)}`);
+    }
+    console.error('');
+    console.error('直し方: 一次資料で正しい DOI を確認してください。1 桁直せば通る形でも推測で書き換えないこと。');
+  }
+  if (iStale.length > 0) {
+    console.error(`\n❌ ISSN 台帳に載っているのに不正でなくなった項目が ${iStale.length} 件あります`);
+    for (const k of iStale) console.error(`  ${k}`);
+    console.error('直ったなら ISSN_ALLOWLIST から削除してください（台帳は双方向です）。');
+  }
+  const issnFailed = iFresh.length > 0 || iStale.length > 0;
 
   dupFindings.sort((a, b) => a.key.localeCompare(b.key));
   const dSeen = new Set(dupFindings.map((f) => f.key));
@@ -646,7 +1230,7 @@ function main() {
     );
     // プレフィックス照合が綺麗でも **ISBN 検査は独立** なので、ここで
     // 素通りさせてはいけない。早期 return で握り潰していたのを修正した。
-    if (isbnFailed || journalFailed || dupFailed) process.exit(1);
+    if (isbnFailed || journalFailed || issnFailed || dupFailed) process.exit(1);
     return;
   }
 
@@ -675,4 +1259,6 @@ function main() {
   process.exit(1);
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { JOURNAL_CODES, ISSN_JOURNALS, ISSN_FORMS, CODE_JOURNALS, CODE_FORMS, ISSN_ALLOWLIST, JOURNAL_ALLOWLIST, issnCheckDigitOk, embeddedIssn, journalConflict, extractDoi };

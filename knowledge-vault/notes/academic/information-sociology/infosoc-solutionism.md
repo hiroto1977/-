@@ -37,8 +37,8 @@ aliases:
 - [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同じ思想家
 - [[infosoc-technopoly|テクノポリ（技術独占）]] — 同じ思想家
 - [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+- [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
 - [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 同分野の近傍
 
 ## 関連

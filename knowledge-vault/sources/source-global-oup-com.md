@@ -2,7 +2,7 @@
 title: "global.oup.com"
 type: source-domain
 host: "global.oup.com"
-cite_count: 31
+cite_count: 29
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # global.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **31 件**（学術 23 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **29 件**（学術 24 ・ リファレンス 5）
 
 ## このドメインを出典とする項目
 
@@ -35,11 +35,9 @@ tags:
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — vanDijck,Poell&deWaal(2018)ThePlatformSociety—OxfordUniversityPress
 - [[infosoc-speech-act-theory|言語行為論]] — Austin,J.L.(1962)HowtoDoThingswithWords,OxfordUniversityPress（原典）
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — Mayer,C.(2018)Prosperity:BetterBusinessMakestheGreaterGood—OxfordUniv…
-- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — Teece,DynamicCapabilitiesandStrategicManagement(OUP,2009)
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ（ティース）——急速に変化する環境で内外のコンピタンスを統合・構築・再配置する企業の能力を、感知・捕捉・変容の三つの活動とその微視的基盤で捉える]] — Teece,D.J.(2009)DynamicCapabilitiesandStrategicManagement—OxfordUnive…
 - [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — Thornton,Ocasio&Lounsbury2012—TheInstitutionalLogicsPerspective:ANewA…
 - [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — Thornton,P.H.,Ocasio,W.&Lounsbury,M.2012.TheInstitutionalLogicsPerspe…
-- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — Nonaka&Takeuchi(1995)TheKnowledge-CreatingCompany,OxfordUniversityPre…
-- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — Nonaka&Takeuchi1995—TheKnowledge-CreatingCompany,OxfordUniversityPres…
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — Nonaka,I.&Takeuchi,H.(1995)TheKnowledge-CreatingCompany—OxfordUnivers…
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — Nonaka&Takeuchi1995—TheKnowledge-CreatingCompany
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — Luthans,Youssef&Avolio(2007)PsychologicalCapital:DevelopingtheHumanCo…

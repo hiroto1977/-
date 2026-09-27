@@ -40,8 +40,8 @@ aliases:
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
 - [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
+- [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — 出典を共有
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
-- [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

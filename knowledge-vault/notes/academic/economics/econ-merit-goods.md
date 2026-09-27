@@ -33,8 +33,9 @@ aliases:
 ## 関連概念
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 語彙が近い
 - [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
-- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
+- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]] — 同じ思想家
 - [[econ-free-rider|フリーライダー問題]] — 同分野の近傍
 
 ## 関連

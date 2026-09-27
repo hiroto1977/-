@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-international-commercial-arbitration-born|国際商事仲裁——ニューヨーク条約体制と仲裁手続法]] — 同分野の近傍
-- [[bizlaw-arbitration-act|仲裁法]] — 同分野の近傍
+- [[bizlaw-assignment-security|譲渡担保]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

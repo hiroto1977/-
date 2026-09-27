@@ -31,16 +31,16 @@ aliases:
 - [Kahneman & Miller (1986) Norm Theory, Psychological Review](https://eric.ed.gov/?id=EJ333757) `学術`
 
 ## 関連概念
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
 - [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
-- [[human-moral-licensing|モラル・ライセンシング（道徳的自己許可）]] — 同じ思想家
-- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 同じ思想家
-- [[econ-public-goods-game|公共財ゲーム]] — 出典を共有
-- [[human-cognitive-appraisal|認知的評価理論（感情）]] — 出典を共有
-- [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
-- [[human-synesthesia|共感覚（シナスタジア）]] — 出典を共有
-- [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — 出典を共有
-- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
-- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

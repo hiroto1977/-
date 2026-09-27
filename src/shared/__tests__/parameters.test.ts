@@ -34,6 +34,7 @@ import {
   ckdPotassiumLimits,
   deductionParams,
   displayValue,
+  advisorThresholds,
   dscrThresholds,
   fromDisplayValue,
   hydroponicsProductionParams,
@@ -66,8 +67,10 @@ import {
   REFERENCE_LETTUCE_POTASSIUM_MG,
   SALT_EQUIVALENT_FACTOR,
 } from '../hydroponics';
+import { BALANCE_SHEET_STALE_AFTER_MONTHS } from '../balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from '../payroll';
 import { DEFAULT_DSCR_THRESHOLDS, DSCR_CAUTION_THRESHOLD, DSCR_DANGER_THRESHOLD } from '../realEstateMetrics';
+import { ADVISOR_CONCENTRATION_SHARE, ADVISOR_YIELD_GAP_PT, DEFAULT_ADVISOR_THRESHOLDS } from '../serviceAdvisor';
 import {
   CONSUMPTION_TAX_REDUCED,
   CONSUMPTION_TAX_STANDARD,
@@ -154,7 +157,7 @@ import {
   FULL_CREDIT_SALES_THRESHOLD,
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
 } from '../taxConsumptionBusiness';
-import { TWENTY_PERCENT_RATE } from '../taxConsumption';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from '../taxConsumption';
 import { DEFAULT_PENSION_DEDUCTION_PARAMS, PENSION_DEDUCTION_MIN_OVER65, PENSION_DEDUCTION_MIN_UNDER65 } from '../taxPublicPension';
 import { CASUAL_INCOME_SPECIAL_DEDUCTION } from '../taxCasual';
 import { DEFAULT_FURUSATO_PARAMS, FURUSATO_ONE_STOP_MAX_MUNICIPALITIES, FURUSATO_SELF_PAY } from '../taxFurusato';
@@ -169,6 +172,7 @@ import {
   PENSION_RATE,
 } from '../taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from '../funding';
+import { EMERGENCY_FUND_MONTHS_DEFAULT } from '../savingsPlanning';
 import {
   CORNER_LOT_COVERAGE_BONUS_PCT,
   DEFAULT_ZONING_RULES,
@@ -220,6 +224,7 @@ const DEFS: readonly ParameterDef[] = PARAMETERS;
 
 /** 既定値がモジュールの定数そのものであること (id → 定数)。 */
 const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
+  'overview.balanceSheetStaleAfterMonths': BALANCE_SHEET_STALE_AFTER_MONTHS,
   'hydroponics.panelAreaSqm': PANEL_AREA_SQM,
   'hydroponics.daysPerYear': DAYS_PER_YEAR,
   'hydroponics.referenceLettucePotassiumMg': REFERENCE_LETTUCE_POTASSIUM_MG,
@@ -232,6 +237,8 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'payroll.commutePublicTransportCap': COMMUTE_PUBLIC_TRANSPORT_CAP,
   'realEstate.dscrDangerThreshold': DSCR_DANGER_THRESHOLD,
   'realEstate.dscrCautionThreshold': DSCR_CAUTION_THRESHOLD,
+  'advisor.yieldGapPt': ADVISOR_YIELD_GAP_PT,
+  'advisor.concentrationShare': ADVISOR_CONCENTRATION_SHARE,
   'tax.consumptionStandardRate': CONSUMPTION_TAX_STANDARD,
   'tax.consumptionReducedRate': CONSUMPTION_TAX_REDUCED,
   'incomeTax.reconstructionSurtaxRate': RECONSTRUCTION_SURTAX_RATE,
@@ -288,6 +295,7 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'corporate.largeCorpCapitalThreshold': LARGE_CORP_CAPITAL_THRESHOLD,
   'corporate.largeCorpLossDeductionRatio': LARGE_CORP_LOSS_DEDUCTION_RATIO,
   'consumptionBusiness.twentyPercentRate': TWENTY_PERCENT_RATE,
+  'consumptionBusiness.thirtyPercentRate': THIRTY_PERCENT_RATE,
   'consumptionBusiness.exemptionThreshold': EXEMPTION_THRESHOLD,
   'consumptionBusiness.simplifiedEligibilityThreshold': SIMPLIFIED_ELIGIBILITY_THRESHOLD,
   'consumptionBusiness.fullCreditRatioThreshold': FULL_CREDIT_RATIO_THRESHOLD,
@@ -308,6 +316,7 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'socialInsurance.pensionBonusCapPerPayment': PENSION_BONUS_CAP_PER_PAYMENT,
   'socialInsurance.healthBonusCapAnnual': HEALTH_BONUS_CAP_ANNUAL,
   'finance.effectiveTaxRate': DEFAULT_EFFECTIVE_TAX_RATE,
+  'savings.emergencyFundMonths': EMERGENCY_FUND_MONTHS_DEFAULT,
   'zoning.roadFarWidthThresholdM': ROAD_FAR_WIDTH_THRESHOLD_M,
   'zoning.roadFarMultiplierResidential': ROAD_FAR_MULTIPLIER_RESIDENTIAL,
   'zoning.roadFarMultiplierOther': ROAD_FAR_MULTIPLIER_OTHER,
@@ -400,9 +409,10 @@ describe('台帳の形', () => {
 
   it('画面のまとまりは登場順で、重複しない', () => {
     expect(parameterFeatures()).toEqual([
-      '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
+      '水耕栽培', '給与', '不動産', '改善提案', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
       '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断', '消費税 (申告・納付)', '配当所得', '感情ログ',
+      '貯蓄・資産形成', '経営サマリー',
     ]);
   });
 
@@ -562,6 +572,8 @@ describe('機能ごとの取り出し口', () => {
     'hydroponics.ckdPotassiumLimitG5': 600,
     'realEstate.dscrDangerThreshold': 1.5,
     'realEstate.dscrCautionThreshold': 2,
+    'advisor.yieldGapPt': 2.5,
+    'advisor.concentrationShare': 0.3,
   });
 
   it('既定は各モジュールの既定引数と同じ物', () => {
@@ -569,6 +581,7 @@ describe('機能ごとの取り出し口', () => {
     expect(lowPotassiumParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_LOW_POTASSIUM_PARAMS);
     expect(ckdPotassiumLimits(DEFAULT_PARAMETER_VALUES)).toEqual(CKD_POTASSIUM_LIMIT_MG);
     expect(dscrThresholds(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_DSCR_THRESHOLDS);
+    expect(advisorThresholds(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_ADVISOR_THRESHOLDS);
   });
 
   it('上書きは正しい引数へ届く (id と引数の対応を 1 つずつ)', () => {
@@ -581,6 +594,7 @@ describe('機能ごとの取り出し口', () => {
     });
     expect(ckdPotassiumLimits(custom)).toEqual({ G1: null, G2: null, G3a: null, G3b: 1000, G4: 800, G5: 600 });
     expect(dscrThresholds(custom)).toEqual({ danger: 1.5, caution: 2 });
+    expect(advisorThresholds(custom)).toEqual({ yieldGapPt: 2.5, concentrationShare: 0.3 });
   });
 
   it('税・社会保険の取り出し口 — 既定は各モジュールの既定引数と同じ物', () => {
@@ -708,6 +722,7 @@ describe('機能ごとの取り出し口', () => {
       'corporate.largeCorpCapitalThreshold': 300_000_000,
       'corporate.largeCorpLossDeductionRatio': 0.6,
       'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.thirtyPercentRate': 0.45,
       'consumptionBusiness.exemptionThreshold': 20_000_000,
       'consumptionBusiness.simplifiedEligibilityThreshold': 60_000_000,
       'consumptionBusiness.fullCreditRatioThreshold': 0.9,
@@ -725,7 +740,7 @@ describe('機能ごとの取り出し口', () => {
     // 事業者の消費税の税率は「税」の消費税率を共有する。
     expect(businessConsumptionParams(v)).toEqual({
       rates: { standard: 0.12, reduced: 0.05 },
-      twentyPercentRate: 0.3, exemptionThreshold: 20_000_000, simplifiedEligibilityThreshold: 60_000_000,
+      twentyPercentRate: 0.3, thirtyPercentRate: 0.45, exemptionThreshold: 20_000_000, simplifiedEligibilityThreshold: 60_000_000,
       fullCreditRatioThreshold: 0.9, fullCreditSalesThreshold: 600_000_000,
     });
   });
@@ -848,6 +863,7 @@ describe('機能ごとの取り出し口', () => {
     const v = resolveParameters({
       'consumptionSchedule.nationalShare': 0.8,
       'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.thirtyPercentRate': 0.45,
       'consumptionSchedule.interimTier1': 600_000,
       'consumptionSchedule.interimTier2': 5_000_000,
       'consumptionSchedule.interimTier3': 50_000_000,
@@ -860,8 +876,8 @@ describe('機能ごとの取り出し口', () => {
       'emotion.lowScore': 1,
       'emotion.triggerMinCount': 5,
     });
-    // 2 割特例の割合は「消費税 (事業者)」の項を共有する。
-    expect(scheduleParams(v)).toEqual({ nationalShare: 0.8, twentyPercentRate: 0.3, interimTier1: 600_000, interimTier2: 5_000_000, interimTier3: 50_000_000 });
+    // 2 割特例・3 割特例の割合は「消費税 (事業者)」の項を共有する。
+    expect(scheduleParams(v)).toEqual({ nationalShare: 0.8, twentyPercentRate: 0.3, thirtyPercentRate: 0.45, interimTier1: 600_000, interimTier2: 5_000_000, interimTier3: 50_000_000 });
     // 付加率・配当割・住民税率は所得税・税額控除・住民税の項を共有する。
     expect(dividendParams(v)).toEqual({ withholdingIncomeRate: 0.2, surtaxRate: 0, withholdingResidentRate: 0.08, residentTaxRate: 0.2 });
     expect(emotionThresholds(v)).toEqual({ recentWindow: 3, triggerMinCount: 5, lowScore: 1, trendHysteresis: 4 });
@@ -898,6 +914,8 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['payroll.commutePublicTransportCap', '円', 1, 0, 1_000_000, true, 'law'],
       ['realEstate.dscrDangerThreshold', '倍', 1, 0.1, 10, false, 'threshold'],
       ['realEstate.dscrCautionThreshold', '倍', 1, 0.1, 10, false, 'threshold'],
+      ['advisor.yieldGapPt', 'pt', 1, 0.1, 20, false, 'threshold'],
+      ['advisor.concentrationShare', '%', 100, 0.05, 1, false, 'threshold'],
       ['tax.consumptionStandardRate', '%', 100, 0, 0.5, false, 'law'],
       ['tax.consumptionReducedRate', '%', 100, 0, 0.5, false, 'law'],
       ['incomeTax.reconstructionSurtaxRate', '%', 100, 0, 0.2, false, 'law'],
@@ -954,6 +972,7 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['corporate.largeCorpCapitalThreshold', '円', 1, 0, 100_000_000_000, true, 'law'],
       ['corporate.largeCorpLossDeductionRatio', '%', 100, 0, 1, false, 'law'],
       ['consumptionBusiness.twentyPercentRate', '%', 100, 0, 1, false, 'law'],
+      ['consumptionBusiness.thirtyPercentRate', '%', 100, 0, 1, false, 'law'],
       ['consumptionBusiness.exemptionThreshold', '円', 1, 0, 10_000_000_000, true, 'law'],
       ['consumptionBusiness.simplifiedEligibilityThreshold', '円', 1, 0, 10_000_000_000, true, 'law'],
       ['consumptionBusiness.fullCreditRatioThreshold', '%', 100, 0, 1, false, 'law'],
@@ -1031,6 +1050,8 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['emotion.trendHysteresis', '点', 1, 0, 4, false, 'threshold'],
       ['emotion.lowScore', '点', 1, 1, 5, true, 'threshold'],
       ['emotion.triggerMinCount', '回', 1, 1, 100, true, 'threshold'],
+      ['savings.emergencyFundMonths', 'か月', 1, 0, 24, true, 'reference'],
+      ['overview.balanceSheetStaleAfterMonths', 'か月', 1, 1, 120, true, 'assumption'],
     ]);
     expect(m.PARAMETER_KIND_LABEL).toEqual({ law: '法定値', reference: '参考値', threshold: 'しきい値', assumption: '前提' });
     // 出典と注記は空でない (法定値には出典が要る)。

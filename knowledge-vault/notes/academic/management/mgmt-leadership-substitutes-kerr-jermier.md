@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-substitutes-leadership|リーダーシップの代替要因理論]] — 同じ思想家
 - [[mgmt-organizational-citizenship-organ|組織市民行動——報酬制度に明示されない自発的貢献が組織を機能させる]] — 同じ思想家
-- [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同分野の近傍
+- [[mgmt-strategic-choice-child|戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる]] — 同分野の近傍
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同分野の近傍
 
 ## 関連

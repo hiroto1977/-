@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Essential facilities doctrine — bottleneck, access, leverage, Terminal Railroad, MCI, Trinko](https://en.wikipedia.org/wiki/Essential_facilities_doctrine) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 同じ思想家
+- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 語彙が近い
 - [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同じ思想家
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家

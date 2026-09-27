@@ -17,7 +17,7 @@
  * 公式ツール / 税理士で確認すること。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 import {
   calcBaseIncomeTax,
   marginalIncomeTaxRate,
@@ -105,7 +105,7 @@ function aggregateTax(
   kind: DividendKind,
   p: DividendParams,
 ): { incomeTax: number; residentTax: number } {
-  const base = Math.max(0, otherTaxableIncome);
+  const base = nonNeg(otherTaxableIncome);
   // 配当を上積みした基準所得税額の増分。
   const incomeTaxBefore = calcBaseIncomeTax(base);
   const incomeTaxAfter = calcBaseIncomeTax(base + dividend);
@@ -137,7 +137,7 @@ export function compareDividendMethods(
   kind: DividendKind = 'stock',
   p: DividendParams = DEFAULT_DIVIDEND_PARAMS,
 ): DividendComparison {
-  const d = Math.max(0, dividend);
+  const d = nonNeg(dividend);
   const wh = withholdingTax(d, p);
   const ag = aggregateTax(d, otherTaxableIncome, kind, p);
 
@@ -172,5 +172,5 @@ export function compareDividendMethods(
 
 /** 配当の限界税率 (総合課税で配当に適用される所得税の限界税率) を返す。 */
 export function dividendMarginalRate(otherTaxableIncome: number, dividend: number): number {
-  return marginalIncomeTaxRate(Math.max(0, otherTaxableIncome) + Math.max(0, dividend));
+  return marginalIncomeTaxRate(nonNeg(otherTaxableIncome) + nonNeg(dividend));
 }

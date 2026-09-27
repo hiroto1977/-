@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
+- [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — 同じ思想家
 - [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同じ思想家
 - [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同じ思想家
-- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル——企業の異質性と貿易による選別効果]] — 同じ思想家
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
 - [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同じ思想家
-- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同分野の近傍
+- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル（「新」新貿易理論）——企業の生産性の異質性を導入し、貿易自由化が企業の選別と資源再配分を通じて産業の生産性を高めることを示す]] — 同じ思想家
 - [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同分野の近傍
-- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同分野の近傍
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

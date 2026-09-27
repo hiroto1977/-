@@ -9,6 +9,9 @@ import {
   sealWithKey,
   openWithKey,
   assertSaltBytes,
+  saltBytesOk,
+  MIN_KDF_ITERATIONS,
+  MAX_KDF_ITERATIONS,
 } from '../dataCrypto';
 import { MIN_SALT_BYTES } from '../../../shared/cryptoParams';
 
@@ -186,5 +189,65 @@ describe('KDF 名 —— 静的定数を測れる形で問う', () => {
     const mod = await import('../dataCrypto');
     const bundle = await mod.encryptString('x', 'pw');
     expect(bundle.kdf).toBe('PBKDF2-SHA256');
+  });
+});
+
+/*
+ * **床は両方の入口に掛かる** (2026-09-14 · パス 237)。
+ *
+ * `assertSaltBytes` / `assertKdfIterations` は「保存側から読んだ値」を断る規則で、
+ * 散文はその理由に **「保管領域へ書ける相手 (拡張機能・同一生成元の別ページ) が
+ * salt を固定値へ差し替えれば、KCV に対する総当たりを使い回せる」** を挙げている。
+ *
+ * ところが 2026-09-14 まで、その規則を通していたのは `decryptString`
+ * (バックアップの道) だけで、**`deriveAesKey` (レコード封緘の道) は素通し**だった。
+ * 実測:
+ *
+ *   decryptString salt=0B  → 断る (「ソルトが短すぎます」)
+ *   deriveAesKey  salt=0B  → **通り、空 salt から鍵を導出していた**
+ *
+ * そして `deriveAesKey` の salt は `localStorage` の
+ * `servicehub.recordEncryption` から来る —— **KCV と同じ 1 件の中**に在る。
+ * 散文が書いていた攻撃の経路が、そのまま開いていた。
+ */
+describe('床は両方の入口に掛かる — deriveAesKey も保存値を断る (パス 237)', () => {
+  const zeros = (n: number) => btoa(String.fromCharCode(...new Uint8Array(n)));
+
+  it('★ 短い salt は deriveAesKey でも断る (decryptString と同じ文言)', async () => {
+    for (const n of [0, 1, 4, MIN_SALT_BYTES - 1]) {
+      await expect(deriveAesKey('passphrase-1234', zeros(n))).rejects.toThrow(
+        '暗号化データのソルトが短すぎます',
+      );
+    }
+  });
+
+  it('床ちょうどの salt は通る (関門が全部を落としていない)', async () => {
+    await expect(deriveAesKey('passphrase-1234', zeros(MIN_SALT_BYTES))).resolves.toBeDefined();
+  });
+
+  it('base64 として読めない salt は「壊れています」で断る', async () => {
+    await expect(deriveAesKey('passphrase-1234', '!!!not base64!!!')).rejects.toThrow(
+      '暗号化データが壊れています',
+    );
+  });
+
+  it('★ 範囲外の反復回数も deriveAesKey で断る', async () => {
+    const salt = zeros(MIN_SALT_BYTES);
+    for (const it of [0, 1, MIN_KDF_ITERATIONS - 1, MAX_KDF_ITERATIONS + 1, Number.NaN, Infinity]) {
+      await expect(deriveAesKey('passphrase-1234', salt, it)).rejects.toThrow(
+        '暗号化データの反復回数が許容範囲外です',
+      );
+    }
+  });
+
+  it('saltBytesOk は床で分かれ、読めない base64 は false', () => {
+    expect(saltBytesOk(zeros(MIN_SALT_BYTES))).toBe(true);
+    expect(saltBytesOk(zeros(MIN_SALT_BYTES - 1))).toBe(false);
+    expect(saltBytesOk(zeros(0))).toBe(false);
+    expect(saltBytesOk('!!!not base64!!!')).toBe(false);
+  });
+
+  it('生成側は必ず床を満たす (randomSaltB64 と saltBytesOk が同じ床を読む)', () => {
+    for (let i = 0; i < 8; i++) expect(saltBytesOk(randomSaltB64())).toBe(true);
   });
 });

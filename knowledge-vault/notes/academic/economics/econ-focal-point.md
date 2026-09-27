@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Wikipedia: Focal point (game theory) — 定義・シェリング・1960年・ニューヨークの例](https://en.wikipedia.org/wiki/Focal_point_(game_theory)) `リファレンス`
-- [NobelPrize.org: 2005年経済学賞（Schelling・Aumann共同受賞）](https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/) `公的`
+- [NobelPrize.org: 2005年経済学賞（Schelling・Aumann共同受賞）](https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/) `リファレンス`
 - [American Economic Association: Schellingの焦点と交渉に関する解説](https://www.aeaweb.org/research/can-schellings-focal-points-help-us-understand-high-stakes-negotiations) `学術`
 
 ## 関連概念

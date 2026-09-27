@@ -45,7 +45,7 @@ tags:
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — Encyclopedia.com—Activity-BasedManagement
 - [[mgmt-cannibalization|カニバリゼーション（市場共食い）]] — Encyclopedia.com—Cannibalization（定義と自社製品間限定の弁別）
 - [[mgmt-coopetition|コーペティション（協調的競争）]] — Co-Opetition—Encyclopedia.com
-- [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — Encyclopedia.com—"Knowledge-BasedViewoftheFirm"
+- [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — Encyclopedia.com:Knowledge-BasedViewoftheFirm（概説）
 - [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]] — Encyclopedia.com—PIMSの起源(GE→ハーバード→SPI)、SBUデータベース、ROIと戦略要因
 - [[mgmt-theory-z|セオリーZ]] — EncyclopediaofManagement(Encyclopedia.com)—TheoryZ
 

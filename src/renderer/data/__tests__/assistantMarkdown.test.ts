@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   BLOCKS_TRUNCATED_NOTICE,
   MAX_RENDER_BLOCKS,
@@ -458,5 +458,23 @@ describe('描く量の上限 — 量で画面を止めさせない', () => {
     const blocks = parseMarkdown('# 見出し\n\n本文です。\n\n- a\n- b\n');
     expect(blocks.length).toBeLessThan(10);
     expect(JSON.stringify(blocks)).not.toContain(BLOCKS_TRUNCATED_NOTICE);
+  });
+});
+
+describe('打ち切りの注記はモジュール直下の定数を通る (読み直して測る · パス 488)', () => {
+  /*
+   * Stryker は覆われた static 変異体 (モジュール直下の定数) を、モジュールが変異体の有効化より前に
+   * 読み込まれていると「生存」と数える (`stryker.config.json` の `_commentIgnoreStatic`)。
+   * パス 488 の単独の測定で `BLOCKS_TRUNCATED_NOTICE = ""` が生存と出たが、**手で当てると上の 2 件が落ちる**
+   * —— 偽の生存である。読み直す形の検査を 1 件置き、変異体の下でも答えが出るようにする
+   * (パス 487 の `chatOrg` の `round2` と同じ手)。
+   */
+  it('★ 読み直しても、打ち切りの注記は空でなく、打ち切ったことを名乗る', async () => {
+    vi.resetModules();
+    const fresh = await import('../assistantMarkdown');
+    expect(fresh.BLOCKS_TRUNCATED_NOTICE).toBe('…（応答が長すぎたため、ここで表示を打ち切りました）');
+    const over = Array.from({ length: fresh.MAX_RENDER_BLOCKS + 1 }, (_, i) => `# 見出し ${i}`).join('\n');
+    const last = fresh.parseMarkdown(over).at(-1)!;
+    expect(last).toEqual({ type: 'paragraph', spans: [{ text: '…（応答が長すぎたため、ここで表示を打ち切りました）' }] });
   });
 });

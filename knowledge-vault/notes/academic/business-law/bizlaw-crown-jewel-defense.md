@@ -31,16 +31,8 @@ Mills Acquisition Co. v. MacMillan, Inc., 559 A.2d 1261（1989年　デラウェ
 - [Justia — Revlon, Inc. v. MacAndrews & Forbes Holdings, 506 A.2d 173 (Del. 1986)](https://law.justia.com/cases/delaware/supreme-court/1986/506-a-2d-173-1.html) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
-- [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — 出典を共有
-- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
-- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
-- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 出典を共有
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

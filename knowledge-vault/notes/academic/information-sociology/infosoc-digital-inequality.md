@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
 - [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — 同分野の近傍
 - [[infosoc-mcdonaldization|マクドナルド化]] — 同分野の近傍
-- [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

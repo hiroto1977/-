@@ -32,7 +32,7 @@ aliases:
 - [総務省 電子署名を用いた電子契約サービスに関する整理](https://www.soumu.go.jp/main_content/000711458.pdf) `公的`
 
 ## 関連概念
-- [[bizlaw-e-signature|電子署名法]] — 語彙が近い
+- [[bizlaw-e-signature|電子署名法]] — 分野横断
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]] — 同分野の近傍
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
 

@@ -31,16 +31,16 @@ aliases:
 - [Haggerty & Ericson, “The surveillant assemblage”, British Journal of Sociology (2000, 査読論文)](https://onlinelibrary.wiley.com/doi/abs/10.1080/00071310020015280) `学術`
 
 ## 関連概念
-- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — 語彙が近い
-- [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 語彙が近い
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 同じ思想家
-- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
+- [[infosoc-data-double|データ・ダブルと監視アサンブラージュ（ハガティ＆エリクソン）——別々の監視システムが収束し、身体から切り離されたデータの流れから再構成された「情報上の分身」が判断と介入の対象になる]] — 同じ思想家
+- [[infosoc-dataveillance|データヴェイランス（クラーク）——個人データのシステムを体系的に用いて人々の行動や通信を監視する、安価で大規模な監視様式]] — 同じ思想家
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
+- [[econ-jovanovic-selection-firm-dynamics|ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論]] — 同じ思想家
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
 - [[infosoc-protocol-galloway|プロトコル——脱中心化したネットワークに内在する新たな統制の様式]] — 同じ思想家
 - [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 同じ思想家
+- [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

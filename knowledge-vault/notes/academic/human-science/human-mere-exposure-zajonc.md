@@ -31,9 +31,8 @@ aliases:
 - [Bornstein, R.F. (1989) Exposure and Affect: Overview and Meta-Analysis — Psychological Bulletin 106(2)](https://doi.org/10.1037/0033-2909.106.2.265) `学術`
 
 ## 関連概念
+- [[human-processing-fluency|処理流暢性（レーバー＝シュワルツ＝ヴィンキールマン）——情報を処理する主観的な容易さが快として誤帰属され、真実らしさ・好ましさ・親近感・美しさの判断を押し上げる]] — 同じ思想家
 - [[human-availability-heuristic-tversky|利用可能性ヒューリスティック——想起のしやすさで頻度や確率を判断する近道]] — 同じ思想家
-- [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]] — 同じ思想家
-- [[human-processing-fluency|処理流暢性]] — 同じ思想家
 - [[human-contact-hypothesis-allport|接触仮説：集団間接触による偏見低減理論]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 

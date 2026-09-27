@@ -33,9 +33,8 @@ A・パラスラマン／ヴァラリー・ツァイタムル／レナード・�
 ## 関連概念
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 出典を共有
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 出典を共有
-- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 出典を共有
-- [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — 同分野の近傍
-- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同分野の近傍
+- [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同分野の近傍
+- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

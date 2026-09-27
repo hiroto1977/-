@@ -39,8 +39,8 @@ aliases:
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
 - [[human-ultimate-attribution-error|究極的帰属錯誤]] — 出典を共有
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
+- [[infosoc-limited-effects|限定効果論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

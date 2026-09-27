@@ -180,4 +180,46 @@ describe('useRealtimeTick', () => {
     expect(read()).toBe(1_000_000);
     act(() => root.unmount());
   });
+
+  /*
+   * **文書が消えた後の 1 発で、全件実行が赤くなっていた** (パス 242)。
+   *
+   * CI の実測: jsdom のファイルが片付いた後に 1 秒タイマーが生き残り、
+   * React の `dispatchSetState` が `window` を読んで
+   * `ReferenceError: window is not defined`。素の Node のタイマーの中なので
+   * `uncaughtException` になり、**16,471 件すべて成功なのに Errors 1 で exit 1**。
+   *
+   * このモジュールは既に 2 か所で `typeof document === 'undefined'` を見ている
+   * (`defaultSubscribeVisibility` / `defaultIsHidden`) —— 刻みの本体だけが
+   * 見ていなかった。ここで留めるのはその 1 か所である。
+   */
+  it('★ 文書が無ければ刻みは進めない (環境が先に消えても投げない)', () => {
+    const h = harness();
+    const { root, read } = mount(1000, h.deps);
+    expect(read()).toBe(1_000_000);
+
+    const realDocument = globalThis.document;
+    try {
+      // 環境が片付いた後を再現する (jsdom の teardown は document を消す)。
+      Reflect.deleteProperty(globalThis, 'document');
+      expect(typeof document).toBe('undefined');
+      h.advance(1000);
+      act(() => h.fire()); // 投げないこと自体が主張の半分
+      expect(read(), '文書が無いのに刻みが進んでいる').toBe(1_000_000);
+    } finally {
+      Object.defineProperty(globalThis, 'document', {
+        value: realDocument,
+        configurable: true,
+        writable: true,
+      });
+    }
+
+    // **同じテストの中の対照**: 文書が戻れば進む (守りが「常に止める」に
+    // なっていないこと)。ここが動かないなら守りが広すぎる。
+    h.advance(1000);
+    act(() => h.fire());
+    expect(read(), '文書が戻ったのに刻みが止まったまま').toBe(1_002_000);
+
+    act(() => root.unmount());
+  });
 });

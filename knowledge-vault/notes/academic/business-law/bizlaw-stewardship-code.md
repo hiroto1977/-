@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-civil-execution|民事執行法]] — 同分野の近傍
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 同分野の近傍
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 同分野の近傍
+- [[bizlaw-worker-cooperative|労働者協同組合法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

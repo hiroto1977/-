@@ -38,9 +38,9 @@ aliases:
 - [[econ-bagehot-lender-last-resort|最後の貸し手とバジョットの原則——金融危機における中央銀行の役割]] — 同じ思想家
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同じ思想家
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
-- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
-- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
+- [[econ-credit-channel-bernanke|信用チャネル（バーナンキ＝ガートラー）——金融政策が銀行貸出と借り手のバランスシートを通じて金利経路を増幅しながら実体経済に波及する]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

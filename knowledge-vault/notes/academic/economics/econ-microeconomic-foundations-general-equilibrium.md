@@ -39,7 +39,7 @@ aliases:
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
-- [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

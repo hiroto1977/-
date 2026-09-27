@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同じ思想家
-- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同じ思想家
-- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同じ思想家
-- [[human-ego-depletion-baumeister|自我消耗理論（バウマイスター）]] — 同じ思想家
-- [[human-ego-depletion-baumeister-willpower|自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争]] — 同じ思想家
+- [[human-ego-depletion-baumeister|自我消耗（バウマイスター）——意志力は使うと一時的に枯渇する有限の資源だとする強さモデルと、その再現性論争]] — 同じ思想家
 - [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
+- [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

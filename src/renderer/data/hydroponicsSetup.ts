@@ -210,7 +210,16 @@ export function lowPotassiumFromSetup(
   const sodium = s.measuredSodiumMgPer100g ?? 0;
   return assessLowPotassium(
     {
-      switchDaysBeforeHarvest: s.switchDaysBeforeHarvest ?? 0,
+      // **未入力を 0 に倒さない。** 0 は「収穫当日に切り替える」という指示で、
+      // 「まだ決めていない」ではない (パス 67)。
+      //
+      // **この行だけを `?? 0` に戻しても検査は鳴らない** (対照 2 で実測)。
+      // `assessLowPotassium` 側が `days > 0` でないものを未設定として扱うので、
+      // ここの判定は**単独では観測できない**。それでも `null` で渡すのは、
+      // 境界で「未設定」を型として正しく表すためで、**振る舞いを守っているのは
+      // 呼ばれる側**である —— 後から「この行を検査で留めよう」として
+      // 落ちない検査を書かないよう、ここに書いておく。
+      switchDaysBeforeHarvest: s.switchDaysBeforeHarvest ?? null,
       measuredPotassiumMgPer100g: s.measuredPotassiumMgPer100g ?? 0,
       // 0 は「測っていない」と扱う (0 mg の野菜は無い)。
       ...(sodium > 0 ? { measuredSodiumMgPer100g: sodium } : {}),

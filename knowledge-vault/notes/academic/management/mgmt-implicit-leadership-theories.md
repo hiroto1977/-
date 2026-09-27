@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
 - [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — 同じ思想家
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同分野の近傍
-- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同分野の近傍
+- [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

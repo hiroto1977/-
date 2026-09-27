@@ -33,11 +33,10 @@ aliases:
 - [[infosoc-gift-economy|贈与経済（贈与論）]] — 語彙が近い
 - [[human-reciprocity|返報性の原理（reciprocity）]] — 同じ思想家
 - [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
 - [[human-norm-reciprocity-gouldner|返報性の規範（ゴールドナー）——「お返し」を求める普遍的な規範]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同じ思想家
 - [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — 同分野の近傍
+- [[infosoc-remediation-bolter-grusin|リメディエーション——新しいメディアが旧来のメディアを再媒介し作り変える]] — 同分野の近傍
 - [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 同分野の近傍
 
 ## 関連

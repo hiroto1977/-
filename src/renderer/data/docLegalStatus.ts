@@ -31,6 +31,8 @@
  * 年次有給休暇管理簿だけは根拠が施行規則24条の7で **3年**。ここは
  * 混同されやすいので個別に持たせている。
  */
+import { lookup } from '../../shared/lookup';
+
 
 export type LegalStatus = 'mandatory' | 'conditional' | 'optional' | 'unclassified';
 
@@ -199,6 +201,34 @@ export const DOC_LEGAL_STATUS: Readonly<Record<string, DocLegalInfo>> = {
     retention: LABOR_BOOK_RETENTION,
     caveat: '法定三帳簿の一つ。日雇労働者を除く全労働者が対象で、パート・アルバイトも含む。',
   },
+  /*
+   * 支払明細書 4 種 (2026-09-15)。**交付そのものが義務**である (所得税法231条1項)。
+   * 賃金台帳 (法定三帳簿) と違って備え付けるのではなく、支払を受ける者へ渡す。
+   */
+  'kyuyo-meisai': {
+    status: 'mandatory',
+    basis: '所得税法231条1項・健康保険法167条3項・厚生年金保険法84条3項',
+    retention: '所得税法上の保存義務は交付者側にはないが、賃金台帳 (労働基準法109条) と対応させるため同じ 5 年 (当面 3 年) を目安に控えを残す。',
+    caveat: '交付する通知であって、備え付ける賃金台帳とは別の書類。社会保険料を控除したときの通知義務も兼ねる。法定控除以外を控除するには労働協約または書面協定が必要 (労働基準法24条1項)。',
+  },
+  'shoyo-meisai': {
+    status: 'mandatory',
+    basis: '所得税法231条1項・同186条',
+    retention: '給与明細と同じ扱い。算定対象期間が分かる形で控えを残す。',
+    caveat: '住民税は賞与から特別徴収しない。社会保険料は標準賞与額 (1,000円未満切捨て) で計算し、健康保険は年度累計573万円・厚生年金は1回150万円が上限。源泉徴収税額は前月の社会保険料控除後の給与額から算出率の表で求める。',
+  },
+  'yakuin-hoshu-meisai': {
+    status: 'mandatory',
+    basis: '所得税法231条1項・法人税法34条1項1号・会社法361条1項',
+    retention: '給与明細と同じ扱い。定期同額給与であることの説明に使うため、決議日と決議額が分かる形で控えを残す。',
+    caveat: '役員は労働者ではないので雇用保険・労災の対象外 (使用人兼務役員の使用人分を除く)。健康保険・厚生年金はかかる。期中の増減は原則として損金不算入の部分を生じる。',
+  },
+  'yakuin-shoyo-meisai': {
+    status: 'mandatory',
+    basis: '所得税法231条1項・法人税法34条1項2号・同施行令69条4項',
+    retention: '事前確定届出給与の届出書の控えと対応させて残す。届出どおりの支給であったことの証跡になる。',
+    caveat: '届出どおりに支給しないと原則として賞与の全額 (差額ではなく全額) が損金不算入。雇用保険料・住民税の欄は無い。受け取る側では給与所得で、損金にならないのは支払う法人の側の扱い。',
+  },
   'chingin-daichou': {
     status: 'mandatory',
     basis: '労働基準法108条・同施行規則54条',
@@ -269,6 +299,31 @@ export const DOC_LEGAL_STATUS: Readonly<Record<string, DocLegalInfo>> = {
     retention: '10年',
     caveat: '各事業年度に係る計算書類（貸借対照表・損益計算書・株主資本等変動計算書・個別注記表）と事業報告の作成義務。',
   },
+  // 計算書類を 1 点ずつ扱うときの書類 id。義務・根拠・保存期間は 4 点で共通（会社計算規則59条1項が 4 点を列挙する）。
+  'kessan-pl': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '損益計算書は計算書類 4 点の 1 つ。当期純利益は貸借対照表・株主資本等変動計算書と一致していなければならない。',
+  },
+  'kessan-bs': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '貸借対照表は計算書類 4 点の 1 つ。定時株主総会の承認後は公告も要る（会社法440条1項。大会社は損益計算書も）。',
+  },
+  'kessan-equity': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '株主資本等変動計算書は計算書類 4 点の 1 つ。当期末残高は貸借対照表の純資産の部と一致していなければならない。',
+  },
+  'kessan-notes': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '個別注記表は計算書類 4 点の 1 つ。注記すべき範囲は会社の区分（公開会社か、会計監査人設置会社か）で変わる。',
+  },
 };
 
 const UNCLASSIFIED: DocLegalInfo = { status: 'unclassified' };
@@ -281,7 +336,7 @@ const UNCLASSIFIED: DocLegalInfo = { status: 'unclassified' };
  * 法定のものを見落とす側の誤りになる。
  */
 export function legalStatusOf(docId: string): DocLegalInfo {
-  return DOC_LEGAL_STATUS[docId] ?? UNCLASSIFIED;
+  return lookup(DOC_LEGAL_STATUS, docId) ?? UNCLASSIFIED;
 }
 
 export const STATUS_LABEL: Readonly<Record<LegalStatus, string>> = {

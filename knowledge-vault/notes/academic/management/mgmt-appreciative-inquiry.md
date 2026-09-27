@@ -33,11 +33,12 @@ aliases:
 - [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — 語彙が近い
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
 - [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
+- [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — 出典を共有
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
+- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同分野の近傍
-- [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
 - [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]] — 同じ思想家
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
-- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
+- [[human-self-efficacy-theory|自己効力感（バンデューラ）——課題を遂行できるという自分への信念が行動の開始・持続・努力量を規定し、四つの源泉から形成される]] — 同じ思想家
 - [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
 
 ## 関連

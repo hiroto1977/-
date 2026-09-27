@@ -31,30 +31,30 @@ function exists(rel) {
   return fs.existsSync(path.join(ROOT, rel));
 }
 
-/** Count regex matches across files under `rel` (relative to ROOT).
- *  Pure-Node implementation — earlier shell-based version had an
- *  injection surface for `re` (R1-#1).  Only counts .ts/.tsx files
- *  to mirror the original `grep -rE` behavior on src/. */
-function count(rel, re) {
+/**
+ * 静的な `it(` の数。**数え方はここに書かない** —— `verify:arch` の
+ * `countStaticIts` を呼ぶ。
+ *
+ * ★ **写しを持っていて、その写しが違う答えを出していた (2026-09-26 · パス 481)。**
+ * 以前ここには汎用の `count(rel, re)` が在り、`count('src', /^\s*it\(/gm)` と
+ * 呼んでいた。契約が **2 つの軸で**ゲートと違う —— 母集団が `.ts|.tsx`
+ * (`.test.ts` ではない) で、針が `\s*` (`\s+` ではない)。実測すると差は
+ * 母集団の軸の **1 件**だけ (`src/renderer/__audits__/…audit.ts` は
+ * `vitest.audit.config.ts` だけが拾うので `npm test` も CI も走らせない) で、
+ * greeting は **16065**・ゲートは **16064** と言っていた。greeting は新しい
+ * セッションが最初に読む物で `CLAUDE.md` がそこを指しているので、それを信じて
+ * `docs/ARCHITECTURE.md` の表を 16065 に直したセッションは `verify:arch` を壊す。
+ *
+ * 読めなければ **`?`** —— 推測した数を名乗らない (「読めなかった」と「N 件」は
+ * 別の主張で、後者を偽ることが上の欠陥そのものだった)。hook は silent な契約を
+ * 持つので、require が失敗してもセッションは止めない。
+ */
+function staticItCount() {
   try {
-    const root = path.join(ROOT, rel);
-    if (!fs.existsSync(root)) return '?';
-    let total = 0;
-    const walk = (dir) => {
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) {
-          if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
-          walk(full);
-        } else if (/\.(ts|tsx)$/.test(entry.name)) {
-          const text = fs.readFileSync(full, 'utf8');
-          const matches = text.match(re);
-          if (matches) total += matches.length;
-        }
-      }
-    };
-    walk(root);
-    return String(total);
+    const { countStaticIts } = require('./verify-architecture.cjs');
+    if (typeof countStaticIts !== 'function') return '?';
+    const n = countStaticIts();
+    return Number.isInteger(n) && n >= 0 ? String(n) : '?';
   } catch {
     return '?';
   }
@@ -75,7 +75,7 @@ try {
   /* ignore */
 }
 
-const testCount = count('src', /^\s*it\(/gm);
+const testCount = staticItCount();
 
 const lines = [
   '## Service Hub — セッション引継ぎ',

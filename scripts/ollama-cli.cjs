@@ -43,15 +43,29 @@ const MAX_RESPONSE_BYTES = 10 * 1024 * 1024;
  * `new Function` / `vm` は使わない — lint:forbidden の invariant #9 (任意コード実行の禁止)
  * を CLI にも同じく適用する。代わりに一時ファイルへ書き出して普通に require する。
  * 読み込むのは自リポジトリのソースだけで、外部入力は経路上に存在しない。
+ *
+ * **束ねて (bundle) 変換する** (2026-09-13 · パス 196)。ここは
+ * `transformSync` で 1 ファイルだけを変換していたので、`ollama.ts` が
+ * 相対 import を 1 つ持った瞬間に `Cannot find module './inputCeiling'` で
+ * **CLI 全体が起動しなくなった** (実測: 単体検査 17 本が同時に落ちた)。
+ * 「共有ロジックを 1 か所に置く」という設計なのに、共有側が更に共有を
+ * 呼べない形だった —— 束ねれば、次に import が増えても壊れない。
  */
 function loadShared() {
-  const file = path.join(ROOT, 'src/shared/ollama.ts');
-  const source = fs.readFileSync(file, 'utf8');
-  const { code } = esbuild.transformSync(source, { loader: 'ts', format: 'cjs' });
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'servicehub-ollama-'));
   const out = path.join(dir, 'ollama.cjs');
   try {
-    fs.writeFileSync(out, code, { mode: 0o600 });
+    esbuild.buildSync({
+      entryPoints: [path.join(ROOT, 'src/shared/ollama.ts')],
+      outfile: out,
+      bundle: true,
+      platform: 'node',
+      format: 'cjs',
+      // 依存は自リポジトリの .ts だけ。node_modules は引き込まない
+      // (引き込む物が在れば、それは共有ロジックの置き場所の間違いである)。
+      packages: 'external',
+    });
+    fs.chmodSync(out, 0o600);
     return require(out);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });

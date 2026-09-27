@@ -30,7 +30,6 @@ aliases:
 - [Investopedia — Gordon Growth Model（定義・数式・仮定・限界の参照）](https://www.investopedia.com/terms/g/gordongrowthmodel.asp) `リファレンス`
 
 ## 関連概念
-- [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]] — 同じ思想家
 - [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同じ思想家
 - [[infosoc-attention-economy-goldhaber-citton|アテンション・エコノミー——注意の希少性と経済的価値]] — 同じ思想家
 - [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 出典を共有
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同分野の近傍
 - [[econ-atkinson-inequality-index|アトキンソン不等式指数（不等式測定指数）]] — 同分野の近傍
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

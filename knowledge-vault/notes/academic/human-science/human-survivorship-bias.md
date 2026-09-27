@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

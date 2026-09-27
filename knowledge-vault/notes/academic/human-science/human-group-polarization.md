@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Oxford Reference — Group polarization（Moscovici & Zavalloni 1969 命名）](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095909939) `リファレンス`
-- [EBSCO Research Starters — Group Polarization（Stoner 1961 起源、2機構）](https://www.ebsco.com/research-starters/social-sciences-and-humanities/group-polarization) `学術`
+- [EBSCO Research Starters — Group Polarization（Stoner 1961 起源、2機構）](https://www.ebsco.com/research-starters/social-sciences-and-humanities/group-polarization) `リファレンス`
 - [SimplyPsychology — Group Polarization: Definition & Examples](https://www.simplypsychology.org/group-polarization.html) `リファレンス`
 - [PNAS / PMC — Echo Chambers: Emotional Contagion and Group Polarization on Facebook（査読論文）](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5131349/) `学術`
 

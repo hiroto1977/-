@@ -26,7 +26,7 @@ aliases:
 グラント・ギルモア ／ ジェームズ・ホワイト ／ ロバート・サマーズ
 
 ## 出典
-- [UCC Article 9: Secured Transactions — Legal Information Institute, Cornell Law School](https://www.law.cornell.edu/ucc/9) `公的`
+- [UCC Article 9: Secured Transactions — Legal Information Institute, Cornell Law School](https://www.law.cornell.edu/ucc/9) `リファレンス`
 - [Gilmore (1965) Security Interests in Personal Property — Little, Brown and Company](https://doi.org/10.2307/1340234) `学術`
 - [Wikipedia: Dragnet clause — 包括担保条項の定義と法的解釈の概説](https://en.wikipedia.org/wiki/Dragnet_clause) `リファレンス`
 

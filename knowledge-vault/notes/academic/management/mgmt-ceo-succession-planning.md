@@ -37,11 +37,11 @@ CEOサクセッション・プランニング（CEO succession planning）は、
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
 - [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
-- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同じ思想家
 - [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — 同じ思想家
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
 - [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

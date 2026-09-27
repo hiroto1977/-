@@ -45,6 +45,8 @@ describe('書き出しの封じ込め — symlink', () => {
     symlinkSync(victim, join(exportRoot(home), 'alias.svg'));
 
     await expect(writeExportFile(join(exportRoot(home), 'alias.svg'), '<svg/>', home)).rejects.toThrow();
+    // 読むのは**その場で作った一時ファイル**なので原文の助けは要らない
+    // (`readOriginalSource` は repo の原文を読む道具。一時の道に使うと的が外れる)。
     expect(require('node:fs').readFileSync(victim, 'utf8')).toBe('original');
   });
 

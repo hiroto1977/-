@@ -30,16 +30,15 @@ aliases:
 - [Wikipedia: Signalling (economics) — Leland–Pyle, retained equity, corporate finance](https://en.wikipedia.org/wiki/Signalling_(economics)) `リファレンス`
 
 ## 関連概念
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-precautionary-saving|予備的貯蓄]] — 同じ思想家
-- [[econ-signaling|シグナリング]] — 同じ思想家
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
 - [[econ-dividend-signaling-bhattacharya|配当のシグナリング理論——配当が企業の将来性を伝える信頼できる信号]] — 同じ思想家
 - [[econ-job-competition-thurow|仕事をめぐる競争モデル（サロー）——賃金競争への対抗と「労働の待ち行列」]] — 同じ思想家
-- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
-- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — 同じ思想家
-- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 同じ思想家
+- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同分野の近傍
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

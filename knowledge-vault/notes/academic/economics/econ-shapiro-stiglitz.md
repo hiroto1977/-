@@ -33,13 +33,13 @@ aliases:
 ## 関連概念
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 語彙が近い
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
-- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
 - [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 同じ思想家
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 同じ思想家
 - [[econ-diamond-delegated-monitoring|ダイアモンドの委任された監視——銀行はなぜ存在するのか]] — 同じ思想家
 
 ## 関連

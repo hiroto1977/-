@@ -32,14 +32,14 @@ aliases:
 ## 関連概念
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 語彙が近い
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
-- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
-- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
-- [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — 同じ思想家
-- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 同じ思想家
-- [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
+- [[econ-club-goods-buchanan|クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数]] — 同じ思想家
+- [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]] — 同じ思想家
+- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]] — 同じ思想家
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]] — 同じ思想家
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
+- [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

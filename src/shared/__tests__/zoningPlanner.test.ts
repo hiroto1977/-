@@ -320,7 +320,7 @@ describe('planSetbackTradeoff — 高さを下げると奥行が伸びる', () =
   it('高さを下げた分だけ建築面積が増える (案 A → 案 B で +8.4 ㎡)', () => {
     const a = planSetbackTradeoff({ ...site, plannedHeightM: 12.1 });
     const b = planSetbackTradeoff({ ...site, plannedHeightM: 10 });
-    expect(b.footprint - a.footprint).toBeCloseTo(8.4, 1);
+    expect(b.footprint! - a.footprint!).toBeCloseTo(8.4, 1);
     expect(b.requiredSetbackM).toBeLessThan(a.requiredSetbackM);
   });
 
@@ -448,5 +448,90 @@ describe('台帳から渡す規則 (ZoningRules)', () => {
     );
     expect(tradeoff.requiredSetbackM).toBe(0.03);
     expect(tradeoff.buildableDepthM).toBe(19.47); // 20 − 0.03 − 0.5 (既定の勾配 1.5 では 18.46)
+  });
+});
+
+/**
+ * **空欄の敷地寸法から「この敷地には 0 ㎡しか建てられない」を作らない。**
+ *
+ * `RealEstatePage.tsx` の `敷地の奥行 (m)` / `敷地の間口 (m)` は `kind: 'length'`
+ * (= `allowZero` 無し = **0 は fatal**) だが、読み取りが `readNumberOr0` だったので
+ * 空欄が 0 として `planSetbackTradeoff` に入っていた。**実測した表**:
+ *
+ * | 入力 | `buildableWidthM` | `footprint` | `limitedBy` |
+ * | --- | ---: | ---: | --- |
+ * | 間口・奥行を**空欄**に | 0 | **0 ㎡** | `geometry` |
+ * | 間口 3m・側面後退 3m (**実際に建てられない敷地**) | 0 | **0 ㎡** | `geometry` |
+ * | 間口 15m・奥行 20m | 12 | 234 ㎡ | `geometry` |
+ *
+ * —— **空欄の行と「本物の建てられない敷地」の行が完全に一致する。**
+ * 画面はこれを「建てられる間口 **0 m** / **建築面積 (寸法で決まる) 0 ㎡**」と刷り、
+ * タイルのラベルが**寸法が拘束条件だと明言する**。立体プレビューも
+ * 「間口 0 m × 奥行 0 m で…の概形」と述べた 0×0 の箱を描いていた。
+ *
+ * **床は「測っていない」だけに当てる** —— 寸法が入っていて結果が 0 なら、
+ * それは本物の判定なので 0 のまま返す (上の
+ * 「後退が敷地奥行を食い尽くすと 0 に丸める」がその対照として既に在る)。
+ */
+describe('planSetbackTradeoff — 未入力の敷地寸法から判定を作らない', () => {
+  const site = {
+    rearSetbackM: 0.5, sideSetbackTotalM: 3, maxFootprint: 240,
+    roadWidthM: 6, category: 'other' as const, plannedHeightM: 10,
+  };
+
+  it('★ 奥行・間口が未入力なら寸法に依る 4 欄と limitedBy を算定しない', () => {
+    const r = planSetbackTradeoff({ ...site, siteDepthM: null, siteWidthM: null });
+    expect(r.buildableDepthM).toBeNull();
+    expect(r.buildableWidthM).toBeNull();
+    expect(r.geometricFootprint).toBeNull();
+    expect(r.footprint).toBeNull();
+    // **ラベルも主張**: 「寸法で決まる」は寸法を知らないまま述べられない。
+    expect(r.limitedBy).toBeNull();
+    expect(r.limitedBy).not.toBe('geometry');
+  });
+
+  it('★ 寸法に依らない最小後退は未入力でも数で出る (全部を null にしない)', () => {
+    // 道路幅員・用途区分・計画高さだけで決まるので、寸法に依らず答えられる。
+    const r = planSetbackTradeoff({ ...site, siteDepthM: null, siteWidthM: null });
+    expect(r.requiredSetbackM).toBe(0.34);
+    expect(planSetbackTradeoff({ ...site, siteDepthM: null, siteWidthM: null, plannedHeightM: 12.1 }).requiredSetbackM).toBe(1.04);
+  });
+
+  it('★ 片方だけ未入力なら、その片方に依る欄だけを落とす', () => {
+    const noDepth = planSetbackTradeoff({ ...site, siteDepthM: null, siteWidthM: 15 });
+    expect(noDepth.buildableDepthM).toBeNull();
+    expect(noDepth.buildableWidthM).toBe(12); // 間口は分かっている
+    expect(noDepth.footprint).toBeNull(); // 面積は両方が要る
+
+    const noWidth = planSetbackTradeoff({ ...site, siteDepthM: 20, siteWidthM: null });
+    expect(noWidth.buildableWidthM).toBeNull();
+    expect(noWidth.buildableDepthM).toBe(19.16); // 20 − 0.34 − 0.5
+    expect(noWidth.footprint).toBeNull();
+  });
+
+  it('★ 0 以下も未入力として扱う (奥行 0 の敷地は存在しない)', () => {
+    for (const v of [0, -5, Number.NaN]) {
+      const r = planSetbackTradeoff({ ...site, siteDepthM: v, siteWidthM: v });
+      expect(r.footprint).toBeNull();
+      expect(r.limitedBy).toBeNull();
+    }
+  });
+
+  it('★ 対照: 寸法が在れば 4 欄と limitedBy すべて出る (床が邪魔をしない)', () => {
+    const r = planSetbackTradeoff({ ...site, siteDepthM: 20, siteWidthM: 15 });
+    expect(r.buildableDepthM).toBe(19.16);
+    expect(r.buildableWidthM).toBe(12);
+    expect(r.geometricFootprint).toBe(229.9);
+    expect(r.footprint).toBe(229.9);
+    expect(r.limitedBy).toBe('geometry');
+  });
+
+  it('★ 対照: 寸法が在って結果が 0 なら、0 を判定として返す (未入力と混ぜない)', () => {
+    // 間口 3m を側面後退 3m が食い尽くす —— **本物の「建てられない敷地」**。
+    const r = planSetbackTradeoff({ ...site, siteDepthM: 20, siteWidthM: 3 });
+    expect(r.buildableWidthM).toBe(0);
+    expect(r.footprint).toBe(0);
+    expect(r.footprint).not.toBeNull();
+    expect(r.limitedBy).toBe('geometry');
   });
 });

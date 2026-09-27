@@ -33,10 +33,10 @@ aliases:
 ## 関連概念
 - [[human-illusion-of-transparency|透明性の錯覚]] — 同じ思想家
 - [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同じ思想家
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同分野の近傍
 - [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同分野の近傍
-- [[human-executive-function|実行機能（遂行機能）]] — 同分野の近傍
-- [[human-effort-justification|努力の正当化]] — 同分野の近傍
+- [[human-affective-forecasting-wilson-gilbert|感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む]] — 同分野の近傍
+- [[human-anchoring-adjustment-tversky|アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック]] — 同分野の近傍
+- [[human-executive-function|実行機能（エグゼクティブ・ファンクション）——抑制制御・ワーキングメモリ・認知的柔軟性を中核に、目標に向けて思考と行動を制御する前頭前野の高次過程]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

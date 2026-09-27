@@ -4,6 +4,11 @@
  *
  * - 入力は文字列で持ち、`readNumber` で読む (全角・桁区切りを受け、読めない値は
  *   黙って 0 にしない)。範囲は `parameterIssue` が内部値で見る。
+ * - **隣の欄との関係は `parameterConsistencyIssueFor` が見る** (`parameterIssue` は
+ *   1 欄ずつしか見えないので、「良好の下限 40 / 注意の下限 60」(順序) や
+ *   「0 点の水準 = 100 点の水準」(相違) のような組は素通りしていた。後者は
+ *   `axisBand` が既定へ黙って倒すので、**上書きが 1 度も効かない**)。
+ *   すでに保存されている矛盾は、検索で絞っても消えない画面上部の断りで言う。
  * - 「保存」は値が変わっていて通るときだけ押せる。既定と同じ値を保存すると
  *   **上書きとして残る** (既定が改正で動いても、置いた値は動かない)。
  * - 行は `key` に有効値を含める — 既定へ戻したときに入力欄も既定の表示へ戻る
@@ -20,14 +25,20 @@ import {
   toDisplayValue,
   type ParameterDef,
   type ParameterId,
+  type ParameterValues,
 } from '../../shared/parameters';
+import {
+  parameterConsistencyIssueFor,
+  parameterConsistencyIssues,
+} from '../../shared/parameterConsistency';
 import { useParameters } from '../data/parameterOverrides';
 import { readNumber } from '../data/inputGuards';
+import { fireReported } from '../data/deviceStoreFailure';
 
 const inputStyle = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '5px 8px',
   fontSize: 13,
@@ -56,12 +67,15 @@ export function matchesParameterQuery(def: ParameterDef, query: string): boolean
 function ParameterRow({
   def,
   value,
+  values,
   overridden,
   onSave,
   onReset,
 }: {
   def: ParameterDef;
   value: number;
+  /** 全欄の有効値 — 隣の欄との関係 (順序・相違) を見るのに要る。 */
+  values: ParameterValues;
   overridden: boolean;
   onSave: (internal: number) => Promise<void>;
   onReset: () => Promise<void>;
@@ -70,10 +84,23 @@ function ParameterRow({
   const [busy, setBusy] = useState(false);
   const shown = readNumber(text);
   const candidate = shown === null ? Number.NaN : fromDisplayValue(def, shown);
-  const issue = parameterIssue(def, candidate);
+  const rangeIssue = parameterIssue(def, candidate);
+  // 範囲を通っても、隣の欄と矛盾する値は保存させない (1 欄ずつの検査では見えない)。
+  const orderIssue =
+    rangeIssue === null ? parameterConsistencyIssueFor(def.id as ParameterId, candidate, values) : null;
+  const issue = rangeIssue ?? orderIssue;
   const unchanged = issue === null && candidate === value;
   const defaultShown = `${toDisplayValue(def, def.defaultValue)}${def.unit}`;
 
+  /**
+   * 押している間は押せなくする。**失敗はここで受け止めない** —— 受け止めるのは押した所の
+   * `fireReported` (パス 493o)。
+   *
+   * パス 493k はここで何でも落としていたが、それは報せていない失敗まで黙らせる形だった:
+   * 保存の前に保管層を直に読む `mutate` の読みは報せの経路を通っておらず、読めなかった保存は
+   * **画面に 1 文も出ずに**消えた (上書きの印が付かないだけで、利用者には押せていないのと
+   * 見分けが付かない)。今は読みも報せ、落とすのは `fireReported` が「報せた失敗」だけにする。
+   */
   async function run(fn: () => Promise<void>) {
     setBusy(true);
     try {
@@ -112,7 +139,7 @@ function ParameterRow({
             {PARAMETER_KIND_LABEL[def.kind]}
           </span>
           {overridden && (
-            <span style={{ fontSize: 10, color: '#f59e0b', marginLeft: 6 }}>上書き中</span>
+            <span style={{ fontSize: 10, color: 'var(--warning)', marginLeft: 6 }}>上書き中</span>
           )}
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
@@ -121,7 +148,7 @@ function ParameterRow({
           {def.note ? ` · ${def.note}` : ''}
         </div>
         {issue !== null && (
-          <div role="alert" style={{ fontSize: 11, color: '#ef4444' }}>
+          <div role="alert" style={{ fontSize: 11, color: 'var(--danger)' }}>
             {issue}
           </div>
         )}
@@ -140,7 +167,7 @@ function ParameterRow({
           type="button"
           aria-label={`${def.label} を保存`}
           disabled={busy || unchanged || issue !== null}
-          onClick={() => run(() => onSave(candidate))}
+          onClick={() => fireReported(run(() => onSave(candidate)))}
           style={buttonStyle}
         >
           保存
@@ -149,7 +176,7 @@ function ParameterRow({
           type="button"
           aria-label={`${def.label} を既定に戻す`}
           disabled={busy || !overridden}
-          onClick={() => run(onReset)}
+          onClick={() => fireReported(run(onReset))}
           style={buttonStyle}
         >
           既定に戻す
@@ -164,6 +191,10 @@ export function ParametersPanel() {
   const [query, setQuery] = useState('');
   const overridden = overriddenCount(params.overrides);
   const visible = useMemo(() => PARAMETERS.filter((p) => matchesParameterQuery(p, query)), [query]);
+  // 古い版で置いた上書き・復元したバックアップは保存の関門を通っていないので、
+  // 現在の有効値に対しても同じ検査を出す (検索で絞っても消さない — 直す欄が
+  // 画面外に在るときこそ要る)。
+  const pairIssues = useMemo(() => parameterConsistencyIssues(params.values), [params.values]);
   const features = parameterFeatures().filter((f) => visible.some((p) => p.feature === f));
 
   async function resetAll() {
@@ -177,8 +208,33 @@ export function ParametersPanel() {
       <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.7, margin: '0 0 10px' }}>
         各機能が計算に使う法定値・参考値・しきい値・前提です。法改正や医師の指示、自分の実測に
         合わせて上書きできます。<strong>範囲は桁誤りを止める幅で、値が正しいかは見ません</strong>
-        — 出典を確かめてから変えてください。通信や保存の安全上限はここには出しません。
+        — 出典を確かめてから変えてください。ただし<strong>互いに矛盾する組み合わせは保存しません</strong>
+        (下限と上限が入れ替わると届かない段ができ、0 点と 100 点の水準が同じだと
+        点数が決まらず既定で採点されます)。通信や保存の
+        安全上限はここには出しません。
       </p>
+      {pairIssues.length > 0 && (
+        <div
+          role="alert"
+          data-parameter-order-issues={pairIssues.length}
+          style={{
+            border: '1px solid var(--danger)',
+            borderRadius: 6,
+            padding: '8px 10px',
+            marginBottom: 10,
+            fontSize: 12,
+            lineHeight: 1.7,
+            color: 'var(--danger)',
+          }}
+        >
+          <strong>⛔ 保存されている値が矛盾しています</strong>
+          <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+            {pairIssues.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
         <input
           aria-label="パラメータを検索"
@@ -193,7 +249,7 @@ export function ParametersPanel() {
         <button
           type="button"
           disabled={params.loading || overridden === 0}
-          onClick={() => void resetAll()}
+          onClick={() => fireReported(resetAll())}
           style={buttonStyle}
         >
           すべて既定に戻す
@@ -215,6 +271,7 @@ export function ParametersPanel() {
                   key={`${id}:${value}`}
                   def={def}
                   value={value}
+                  values={params.values}
                   overridden={params.overrides[id] !== undefined}
                   onSave={(v) => params.set(id, v)}
                   onReset={() => params.reset(id)}

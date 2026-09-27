@@ -31,8 +31,8 @@ E・アラン・ファーンズワース ／ グラント・ギルモア ／ チ
 - [Wikipedia: Assignment (law) — 契約上の権利の譲渡の法的要件と制限の概説](https://en.wikipedia.org/wiki/Assignment_(law)) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — 語彙が近い
 - [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — 語彙が近い
+- [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — 語彙が近い
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]] — 同じ思想家
 - [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同じ思想家
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同じ思想家

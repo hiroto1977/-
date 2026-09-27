@@ -37,7 +37,7 @@ aliases:
 - [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]] — 出典を共有
 - [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — 出典を共有
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 出典を共有
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 出典を共有
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 出典を共有
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 出典を共有
 - [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — 出典を共有
 - [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — 出典を共有

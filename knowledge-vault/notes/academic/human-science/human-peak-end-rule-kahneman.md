@@ -31,9 +31,16 @@ aliases:
 - [Wikipedia: Peak-end rule — ピーク・エンドの法則と持続時間無視の概説](https://en.wikipedia.org/wiki/Peak%E2%80%93end_rule) `リファレンス`
 
 ## 関連概念
-- [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同じ思想家
-- [[human-self-reference-effect|自己参照効果]] — 同分野の近傍
-- [[human-critical-period-plasticity|神経発達の臨界期：視覚野可塑性と経験依存的回路形成]] — 同分野の近傍
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

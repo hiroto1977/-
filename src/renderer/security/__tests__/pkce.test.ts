@@ -205,7 +205,10 @@ describe('exchangeGoogleCode', () => {
 
   it('throws when response missing access_token', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse({ expires_in: 3600 }));
-    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/missing access_token/);
+    // パス 260: 文面は shared/tokenResponse.ts に 1 つ (main 側と同じ物)。
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(
+      'トークン端点の応答に access_token (非空の文字列) がありません',
+    );
   });
 
   it('rejects state mismatch (CSRF guard) BEFORE hitting token endpoint', async () => {

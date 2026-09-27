@@ -42,15 +42,11 @@ const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
-/** 行コメント・ブロックコメント・文字列リテラルを潰す (誤検出を避ける)。 */
-function stripNonCode(src) {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .replace(/\/\/[^\n]*/g, (m) => ' '.repeat(m.length))
-    .replace(/`(?:[^`\\]|\\.)*`/g, (m) => m.replace(/[^\n]/g, ' '))
-    .replace(/'(?:[^'\\\n]|\\.)*'/g, (m) => ' '.repeat(m.length))
-    .replace(/"(?:[^"\\\n]|\\.)*"/g, (m) => ' '.repeat(m.length));
-}
+// 注記・文字列・正規表現のリテラルを落とす算法は **`.cjs` の側に 1 つだけ**
+// (2026-09-24 · パス 452 —— それまでゲートごとに 1 つずつ在り、3 人目の消費者
+// (`lint-credential-use.cjs`) が要ったとき、素直に写すと 4 つ目になりかけた)。
+// `.ts` 側の双子とのパリティは `src/shared/__tests__/stripNonCodeParity.test.ts`。
+const { stripNonCode } = require('./lib/strip-non-code.cjs');
 
 function walkTests(dir, out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -191,7 +187,22 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const bad = analyze();
-  console.log(`Scanned ${mutateList().length} mutate-listed file(s)`);
+  const listed = mutateList().length;
+  console.log(`Scanned ${listed} mutate-listed file(s)`);
+  // 走査が死んで 0 件になったのを「収集時だけの検査は無い」と読まない (実測 297、2026-09-25)。
+  // ★ 母集団は stryker.config.json の mutate —— パス 468 の実測では `mutate: []` にすると
+  //   「Scanned 0 mutate-listed file(s)」と刷ったうえで ✅ で通った。隣の lint:mutation-scope は
+  //   同じ空にすると台帳の双方向で鳴る (台帳の 127 行が mutate に無いと言う) ので、
+  //   同じ母集団について**片方だけが黙っていた**。
+  const MIN_LISTED = 150;
+  if (listed < MIN_LISTED) {
+    console.error(
+      `❌ mutate の一覧を ${listed} 件しか読めませんでした (${MIN_LISTED} 件以上を期待)。`
+      + ' stryker.config.json の読み込みか mutate の綴りが壊れています —— 0 件でも'
+      + '「収集時にしか呼んでいない検査はありません」になるため落とします。',
+    );
+    return 1;
+  }
   if (bad.length === 0) {
     console.log('✅ 対象を収集時にしか呼んでいない検査はありません');
     return 0;
@@ -213,3 +224,6 @@ module.exports = { analyze, scanTest, stripNonCode };
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
 }
+
+
+

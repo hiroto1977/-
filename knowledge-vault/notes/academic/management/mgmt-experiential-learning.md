@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 同分野の近傍
-- [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]] — 同分野の近傍
+- [[mgmt-dominant-design-utterback|支配的デザイン理論（Dominant Design）：アバナシー＆アターバックの技術進化モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

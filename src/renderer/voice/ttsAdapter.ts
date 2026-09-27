@@ -1,3 +1,4 @@
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 /**
  * ttsAdapter — 音声合成（Text-to-Speech）のアダプタ。`window.speechSynthesis`
  * （Web Speech API）をガード付きで包み、非対応環境では無音で degrade する。
@@ -217,6 +218,21 @@ function ensureVoice(synth: SpeechSynthesisLike): VoiceLike | null {
   return cachedVoice;
 }
 
+/**
+ * **読み上げる量の天井** (2026-09-09 · パス 113)。
+ *
+ * `speak()` は文単位に割って連続発話するが、**総量に天井が無かった**。アシスタントの応答は
+ * 10 万字まで来る (`MAX_ASSISTANT_REPLY_CHARS`) ので、村は 1 つの返事を何十分も読み続けうる
+ * (途中で止めるには利用者が次の発話をするしかない)。画面の吹き出しは全文を持ち、声は先頭だけを
+ * 読んで「続きは画面で」と言う —— 黙って切らない (`ASSISTANT_REPLY_TRUNCATED_NOTICE` と同じ方針)。
+ *
+ * 値は判断であって典拠のある数ではない: 日本語の合成音声はおよそ 5〜6 字/秒なので、1,000 字で
+ * 3 分ほど。安全上限なので `parameters.ts` の台帳には載せない。
+ */
+export const MAX_SPOKEN_CHARS = 1_000;
+/** 切ったことを声でも黙らせない。`。` で始めるのは直前の断片と文として切れるため。 */
+export const SPOKEN_TRUNCATED_NOTICE = '。続きは画面でご覧ください。';
+
 export interface SpeakOptions {
   readonly lang?: string;
   readonly rate?: number;
@@ -247,7 +263,10 @@ export function speak(text: string, opts: SpeakOptions = {}, win?: TtsWindow): b
     // `prepared` 自体が空になって上で弾かれている)。以前ここには
     // `chunks.length > 0 ? chunks : [prepared]` という予備があったが、
     // **予備側へ入る入力が存在しない**ので落とした。
-    const chunks = splitIntoUtterances(prepared);
+    // 総量の天井 (パス 113)。先頭 MAX_SPOKEN_CHARS 字 + 「続きは画面で」。
+    const bounded =
+      countChars(prepared) > MAX_SPOKEN_CHARS ? clampToCeiling(prepared, MAX_SPOKEN_CHARS) + SPOKEN_TRUNCATED_NOTICE : prepared;
+    const chunks = splitIntoUtterances(bounded);
     for (const chunk of chunks) {
       const u = new Utter(chunk);
       u.lang = lang;

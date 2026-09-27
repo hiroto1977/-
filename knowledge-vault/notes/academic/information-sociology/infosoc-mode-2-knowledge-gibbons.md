@@ -26,7 +26,7 @@ aliases:
 マイケル・ギボンズ ／ ヘルガ・ノヴォトニー ／ ピーター・スコット ／ マーティン・トロウ
 
 ## 出典
-- [Gibbons, M. et al. (1994) The New Production of Knowledge — Sage](https://www.worldcat.org/oclc/30894174) `学術`
+- [Gibbons, M. et al. (1994) The New Production of Knowledge — Sage](https://www.worldcat.org/oclc/30894174) `リファレンス`
 - [Wikipedia: Mode 2 — context of application, transdisciplinarity, knowledge production](https://en.wikipedia.org/wiki/Mode_2) `リファレンス`
 
 ## 関連概念

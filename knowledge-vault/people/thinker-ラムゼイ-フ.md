@@ -2,7 +2,7 @@
 title: "フランク・ラムゼイ"
 type: thinker
 person_key: "ラムゼイ|フ"
-concept_count: 7
+concept_count: 8
 tags:
   - person
   - index
@@ -10,11 +10,12 @@ tags:
 
 # フランク・ラムゼイ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **8 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（7件）
+## 学術概念（8件）
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — コーレット＝ヘイグの規則（Corlett–Haguerule）は、W・J・コーレットとD・C・ヘイグが1953年の論文…
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 黄金律（GoldenRule）は、エドマンド・フェルプスが1961年に提唱した、定常状態における一人当たり消費を最大化…
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — ジェームズ・マーリーズは1971年の論文『AnExplorationintheTheoryofOptimumIncom…
 - [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]] — ラムゼイ＝ボワトー価格（Ramsey-Boiteuxpricing）は、固定費を含む総費用を回収して収支を均衡させなけ…
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — ラムゼイの最適課税理論は、フランク・ラムゼイが1927年の論文で定式化した、政府が一定の税収を調達する際に経済的効率性…
 - [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — ラムゼイ価格（Ramsey–Boiteux価格）とは、規模の経済が大きく限界費用価格づけでは赤字になる自然独占企業や複…

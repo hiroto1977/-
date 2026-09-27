@@ -3,16 +3,16 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-## サービス一覧 (75)
+## サービス一覧 (76)
 
 | カテゴリ | サービス |
 |---|---|
 | **おすすめ** (常時表示, 12) | ホーム / 事業ダッシュボード / チームレーダー / テンプレート / ライブラリ / 設定 / 売上集計 / チーム管理 / 経営サマリー / AI アシスタント / AIの村 / 書類スタジオ |
 | **士業連携** (8) | 税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士 — 各ページに「担当領域 (事業仕分け)」ナビ |
-| **分析・ツール** (20) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 / 資金調達レーダー / コネクター / Linux / コンプライアンス / Obsidian / Docker / 可視化 / 人材育成 |
+| **分析・ツール** (21) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 / 資金調達レーダー / コネクター / Linux / コンプライアンス / Obsidian / Docker / 可視化 / 人材育成 / 水耕栽培 |
 | **外部サービス連携** (33) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / BASE / NETSEA / スーパーデリバリー / TopSeller / A8.net / AIブログくん / マネーフォワード / Amazon / Amazon アソシエイト / YouTube / ココナラ / TikTok / freee 会計 / Cursor |
 
-ほかに Uber Eats / 出前館 (サイドバー非表示 — 事業ダッシュボードのフードデリバリー欄へ統合) を含め全 75 サービス。
+ほかに Uber Eats / 出前館 (サイドバー非表示 — 事業ダッシュボードのフードデリバリー欄へ統合) を含め全 76 サービス。
 
 ## 2 通りの動かし方
 
@@ -117,18 +117,20 @@ scripts/
 
 ## 品質ゲート
 
-すべて CI で実行:
+CI (`.github/workflows/ci.yml`) は PR と `main` への push のたびに、`npm run typecheck`・
+`npm test` (+ `src/main/**` のカバレッジ)・`npm run verify:all` の **37 ゲート**・
+`npm run build:web` を走らせる (ゲート数は `verify:arch` が `package.json` と突き合わせる)。
+件数 (検査の数・サービス数・参照の数) は [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の
+TL;DR が live metric として持つ —— ここに写すと必ず古びる。
+この節は少なくとも 2026-08-31 から 2026-09-27 まで
+「unit tests 2243」「63 services」「lint:forbidden 8 patterns」「mutation 100.00% (30 modules)」と
+書いたままで、どの数も誰も検算していなかった。
 
-| ゲート | 状態 |
-|---|---|
-| typecheck (`tsc -b`) | 100% pass |
-| unit tests (`vitest`) | 2243 / 2243 ✅ |
-| eslint | 0 errors |
-| lint:imports | 693 imports, 全境界 OK |
-| lint:forbidden | 8 patterns scanned, 全 clean |
-| lint:test-coverage | 63 services, 全 test 存在 |
-| verify:arch | 173 file:line refs + 6 metrics 一致 |
-| mutation (Stryker) | **100.00%** (30 modules) |
+変異検査 (Stryker) は **PR では走らない** —— `mutation.yml` が週次 (全件) と `main` への push
+(変わったファイルだけ) で走る。[docs/QUALITY.md](docs/QUALITY.md) に載っている点数は
+**2026-09-01 の報告**の物で、**今のコードを測った物ではない** —— 作り直しの状況は
+[docs/REMAINING_WORK.md](docs/REMAINING_WORK.md) の「パス 494」、運用は
+[docs/QUALITY_WORKFLOW.md](docs/QUALITY_WORKFLOW.md)。
 
 ## ドキュメント
 

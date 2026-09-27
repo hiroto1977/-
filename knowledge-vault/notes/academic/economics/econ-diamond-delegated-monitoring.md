@@ -30,16 +30,16 @@ aliases:
 - [Wikipedia: Financial intermediary — delegated monitoring, banks, diversification](https://en.wikipedia.org/wiki/Financial_intermediary) `リファレンス`
 
 ## 関連概念
-- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同じ思想家
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
-- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 同じ思想家
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
+- [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 同じ思想家
+- [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

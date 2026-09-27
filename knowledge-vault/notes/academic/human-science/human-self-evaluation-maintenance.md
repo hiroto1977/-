@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-organizational-socialization|組織社会化]] — 出典を共有
 - [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
 - [[human-narrative-therapy-white-epston|ナラティブ療法——ホワイトとエプストンの「問題の外在化」とオルタナティブ・ストーリー]] — 同分野の近傍
-- [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]] — 同分野の近傍
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

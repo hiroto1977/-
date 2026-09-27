@@ -4,12 +4,17 @@ import { Section, StatusBar } from './StatusBar';
 import { Stat } from './Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
 import { docsForProfessional } from '../data/businessTriage';
+import { displayField } from '../../shared/apiResponse';
+import { MAX_CONSULTATION_TOPIC_CHARS, MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS, MAX_CONTACT_EMAIL_LEN } from '../data/shigyoDirectory';
 import {
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
@@ -19,7 +24,26 @@ import {
   contactToForm,
   type ShigyoContactEntry,
   type ShigyoConsultationEntry,
+  shigyoDemoMixNote,
 } from '../data/shigyoDirectory';
+
+/** 独占業務の説明を吹き出しの幅に収める文字数 (表示だけ。切った印を付ける)。 */
+const EXCLUSIVE_SUMMARY_CHARS = 26;
+
+/**
+ * **切るのは文字の境界で** (2026-09-14 · パス 252)。
+ *
+ * ここは `profile.exclusive.length > 26 ? profile.exclusive.slice(0, 26) : …` と
+ * **コード単位**で数え・切っていた。実測では台帳 8 件に BMP の外の文字は 0 件なので
+ * 今日の出力は変わらないが、士業の説明は `𠮟責` のような JIS2004 漢字を含みうる
+ * 語域で、混ざった日に末尾が `\ufffd` へ化ける。`PageErrorBoundary` が
+ * パス 196 で同じ形を直したのと同じ規準に寄せる。
+ */
+function exclusiveSummary(text: string): string {
+  return countChars(text) > EXCLUSIVE_SUMMARY_CHARS
+    ? `${clampToCeiling(text, EXCLUSIVE_SUMMARY_CHARS)}…`
+    : text;
+}
 
 const EMPTY_CONTACT_FORM = { name: '', firm: '', phone: '', email: '' };
 const EMPTY_CONSULTATION_FORM = { date: '', topic: '', status: '相談予約' as ShigyoConsultationStatus };
@@ -27,7 +51,7 @@ const EMPTY_CONSULTATION_FORM = { date: '', topic: '', status: '相談予約' as
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '6px 8px',
   fontSize: 13,
@@ -36,9 +60,9 @@ const inputStyle: React.CSSProperties = {
 
 const STATUS_COLOR: Record<ShigyoConsultationStatus, string> = {
   相談予約: '#94a3b8',
-  相談中: '#fbbf24',
+  相談中: 'var(--warning)',
   対応中: '#3b82f6',
-  完了: '#22c55e',
+  完了: 'var(--success)',
 };
 
 /** ステータスの意味を補足するツールチップ (NIT: 相談中 / 対応中 の区別)。 */
@@ -93,6 +117,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
   const [editingContactId, setEditingContactId] = useState<string | null>(null);
   const [consultForm, setConsultForm] = useState(EMPTY_CONSULTATION_FORM);
   const [consultError, setConsultError] = useState<string>();
+  const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合。 */
   const contacts = useMemo(
@@ -103,6 +128,14 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
         .map((r) => ({ ...r.data, rowId: r.id, user: true as const })),
     ],
     [data.contacts, contactsCol.records, serviceId],
+  );
+  /**
+   * 見出しの「連携 N 名 · 顧問料 ¥X/月」に見本が混ざっていることの断り
+   * (パス 187)。文面は `data/shigyoDirectory.ts` が 1 か所で持つ。
+   */
+  const mixNote = useMemo(
+    () => shigyoDemoMixNote(data.contacts.length, contacts.length - data.contacts.length, jpy(monthlyFee)),
+    [data.contacts.length, contacts.length, monthlyFee],
   );
 
   const recentConsultations = useMemo(() => {
@@ -161,6 +194,17 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
         who={<>{label} · 連携 {contacts.length} 名 · 顧問料 {jpy(monthlyFee)}/月</>}
       />
 
+      {/* **見出しの数と金額の出所**を最初に言う (一覧の行だけが「デモ」と印を持っていた · パス 187)。 */}
+      {mixNote !== null && (
+        <div
+          data-shigyo-demo-mix
+          role="alert"
+          style={{ margin: '0 0 12px', fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}
+        >
+          ⚠ {mixNote}
+        </div>
+      )}
+
       {disclaimer != null && (
         <div
           role="note"
@@ -168,10 +212,10 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             margin: '0 0 12px',
             padding: 10,
             background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             borderRadius: 6,
             fontSize: 11,
-            color: '#fbbf24',
+            color: 'var(--warning)',
             lineHeight: 1.5,
           }}
         >
@@ -207,7 +251,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                 cursor: 'help',
               }}
             >
-              独占業務: {profile.exclusive.length > 26 ? `${profile.exclusive.slice(0, 26)}…` : profile.exclusive}
+              独占業務: {exclusiveSummary(profile.exclusive)}
             </span>
           </div>
           <div
@@ -240,10 +284,10 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                     style={{
                       flex: 'none',
                       fontSize: 10,
-                      border: `1px solid ${duty.scope === 'exclusive' ? '#f87171' : 'var(--border)'}`,
+                      border: `1px solid ${duty.scope === 'exclusive' ? 'var(--danger)' : 'var(--border)'}`,
                       borderRadius: 999,
                       padding: '1px 8px',
-                      color: duty.scope === 'exclusive' ? '#f87171' : 'var(--text-mute)',
+                      color: duty.scope === 'exclusive' ? 'var(--danger)' : 'var(--text-mute)',
                       cursor: 'help',
                     }}
                   >
@@ -360,7 +404,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               />
             </label>
           ))}
-          <button type="button" onClick={onSaveContact}>
+          <button type="button" onClick={() => void submit.run(onSaveContact)} disabled={submit.busy}>
             {editingContactId !== null ? '保存' : `＋ ${label}を追加`}
           </button>
           {editingContactId !== null && (
@@ -377,7 +421,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             </button>
           )}
         </div>
-        {contactError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{contactError}</div>}
+        {contactError && <div style={{ color: 'var(--danger)', fontSize: 12, marginBottom: 8 }}>{contactError}</div>}
         {contacts.length === 0 ? (
           <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>
             連携先が未登録です — 上のフォームから実際の{label}を登録できます (端末内にのみ保存)
@@ -396,16 +440,16 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               {contacts.map((c) => (
                 <tr key={c.rowId}>
                   <td style={tdStyle}>
-                    {c.name}
+                    {displayField(c.name, MAX_CONTACT_NAME_CHARS)}
                     {!c.user && (
                       <span style={{ marginLeft: 6, padding: '1px 6px', background: 'var(--bg-elev)', color: 'var(--text-mute)', borderRadius: 3, fontSize: 10 }}>
                         デモ
                       </span>
                     )}
                   </td>
-                  <td style={tdStyle}>{c.firm}</td>
+                  <td style={tdStyle}>{displayField(c.firm, MAX_CONTACT_FIRM_CHARS)}</td>
                   <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)' }}>
-                    {c.email ?? ''}{c.phone ? ` · ${c.phone}` : ''}
+                    {displayField(c.email, MAX_CONTACT_EMAIL_LEN)}{c.phone ? ` · ${displayField(c.phone, MAX_CONTACT_PHONE_CHARS)}` : ''}
                   </td>
                   <td style={tdStyle}>
                     {c.user && (
@@ -413,7 +457,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                         <button type="button" onClick={() => onStartEditContact(c.rowId, c)} style={{ fontSize: 11 }}>
                           編集
                         </button>
-                        <button type="button" onClick={() => contactsCol.remove(c.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                        <button type="button" onClick={() => fireReported(contactsCol.remove(c.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>
                           削除
                         </button>
                       </span>
@@ -464,9 +508,9 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               {CONSULTATION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
-          <button type="button" onClick={onAddConsultation}>＋ 相談を記録</button>
+          <button type="button" onClick={() => void submit.run(onAddConsultation)} disabled={submit.busy}>＋ 相談を記録</button>
         </div>
-        {consultError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{consultError}</div>}
+        {consultError && <div style={{ color: 'var(--danger)', fontSize: 12, marginBottom: 8 }}>{consultError}</div>}
         {recentConsultations.length === 0 ? (
           <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>相談履歴はまだありません — 上のフォームから記録できます</div>
         ) : (
@@ -482,14 +526,19 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             <tbody>
               {recentConsultations.map((c) => (
                 <tr key={c.rowId}>
-                  <td style={tdStyle}>{c.date}</td>
-                  <td style={tdStyle}>{c.topic}</td>
+                  {/*
+                    一覧は保管層の行も描く (× で消せるように) ので、日付も**型から読む** ——
+                    物を素で置くと React が「Objects are not valid as a React child」で
+                    落とし、士業の画面ごと開けなくなる (パス 442 で実測)。
+                  */}
+                  <td style={tdStyle}>{displayField(c.date)}</td>
+                  <td style={tdStyle}>{displayField(c.topic, MAX_CONSULTATION_TOPIC_CHARS)}</td>
                   <td style={tdStyle}>
                     {c.user ? (
                       <select
                         value={c.status}
                         aria-label="相談ステータスを変更"
-                        onChange={(e) => consultationsCol.edit(c.rowId, { status: e.target.value as ShigyoConsultationStatus })}
+                        onChange={(e) => fireReported(consultationsCol.edit(c.rowId, { status: e.target.value as ShigyoConsultationStatus }))}
                         style={{ ...inputStyle, width: 110, color: STATUS_COLOR[c.status] ?? 'var(--text)', fontWeight: 600 }}
                       >
                         {CONSULTATION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -505,7 +554,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   </td>
                   <td style={tdStyle}>
                     {c.user && (
-                      <button type="button" onClick={() => consultationsCol.remove(c.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                      <button type="button" onClick={() => fireReported(consultationsCol.remove(c.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>
                         削除
                       </button>
                     )}

@@ -31,7 +31,7 @@ aliases:
 - [Wikibooks 民法第719条（条文）](https://ja.wikibooks.org/wiki/民法第719条) `リファレンス`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
 - [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有
@@ -40,7 +40,6 @@ aliases:
 - [[bizlaw-retention-of-title|所有権留保]] — 出典を共有
 - [[bizlaw-structure-liability|工作物責任（民法717条）]] — 出典を共有
 - [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 出典を共有
-- [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,7 +40,7 @@ D・F・シュロス（1891 労働塊の誤謬の命名）／セントルイス�
 - [[econ-opportunity-cost|機会費用（opportunity cost）]] — 出典を共有
 - [[econ-paradox-of-thrift|倹約のパラドックス]] — 出典を共有
 - [[econ-rotten-kid-theorem|腐った子定理]] — 出典を共有
-- [[econ-taylor-rule|テイラールール]] — 出典を共有
+- [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

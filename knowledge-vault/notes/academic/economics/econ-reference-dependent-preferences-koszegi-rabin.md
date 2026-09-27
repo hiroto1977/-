@@ -33,6 +33,7 @@ Botond Kőszegi（ボツォンド・コーセギ・2006年論文の共著者） 
 - [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
 - [[econ-revealed-preference|顕示選好]] — 同分野の近傍
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同分野の近傍
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

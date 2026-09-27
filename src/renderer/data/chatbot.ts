@@ -313,7 +313,7 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
         `🏢 AI オーケストレーション組織は現在稼働中です。\n` +
         `${orgSummaryLine(ctx.org)}\n` +
         `CEO (人間・オーナー) の方針のもと、COO (Claude) が 5 役員・8 部長・` +
-        `${ctx.org.counts.teams} チームを統括し、品質ゲート (verify:all / Stryker 100%) を` +
+        `${ctx.org.counts.teams} チームを統括し、品質ゲート (型検査・ユニットテスト・verify:all) を` +
         `通過したものだけが出荷されます。`,
         // Stryker restore StringLiteral
       routedThrough: 'COO 直轄',

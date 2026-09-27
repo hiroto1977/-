@@ -34,12 +34,22 @@ describe('demae-can ACTIONS', () => {
 
   describe('advise', () => {
     const action = ACTIONS['advise']!;
-    it('returns AdvisorResponse-compatible shape', async () => {
-      const r = await action({ token: '', payload: {} }) as {
+    const input = {
+      monthOrders: 40,
+      cancellationRate: 0.05,
+      topAreas: [
+        { area: '北区', orders: 10, revenue: 30_000 },
+        { area: '南区', orders: 10, revenue: 20_000 },
+      ],
+      deliveringOrders: 2,
+    };
+
+    it('画面が渡した集計から規則で組む (地域名・数字が payload の物である)', async () => {
+      const r = await action({ token: '', payload: input }) as {
         recommendations: { title: string; rationale: string }[];
-        disclaimer: string; notForRealMoney: true; phase: 'stub' | 'live';
+        disclaimer: string; notForRealMoney: true; basis: string; phase: 'stub' | 'rules' | 'live';
       };
-      expect(r.phase).toBe('stub');
+      expect(r.phase).toBe('rules');
       expect(r.notForRealMoney).toBe(true);
       // **`|` で繋がない。** `/助言ではありません|Phase 6/` は「どちらか一方」
       // でも通るので、前半を丸ごと空にしても後半の "Phase 6" で素通りする ——
@@ -48,7 +58,18 @@ describe('demae-can ACTIONS', () => {
       expect(r.disclaimer).toMatch(/店舗運営上の助言ではありません/);
       expect(r.disclaimer).toMatch(/実際の経営判断はオーナー・専門家の責任で/);
       expect(r.disclaimer).toMatch(/Phase 6/);
-      expect(r.recommendations.length).toBeGreaterThan(0);
+      expect(r.recommendations.map((x) => x.title)).toEqual([
+        'キャンセル率 5.0% の改善',
+        '客単価の地域格差: 北区 と 南区',
+        '配達中 2 件の監視',
+      ]);
+      expect(r.basis).toBe('月次 40 件・地域 2 か所・配達中 2 件');
+      const text = JSON.stringify(r);
+      for (const frozen of ['1.80%', '渋谷区', '世田谷区']) expect(text, frozen).not.toContain(frozen);
+    });
+
+    it('読めない payload は断る (文面は shared と同じ)', async () => {
+      await expect(action({ token: '', payload: {} })).rejects.toThrow('demae-can.advise: monthOrders は有限の数値で指定してください');
     });
   });
 });

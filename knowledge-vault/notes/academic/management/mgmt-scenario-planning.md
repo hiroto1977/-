@@ -27,15 +27,14 @@ aliases:
 
 ## 出典
 - [University of Michigan (GLISA) — Scenario Planning（定義・複数の未来・頑健性）](https://glisa.umich.edu/engagement/scenario-planning/) `学術`
-- [Pierre Wack, "Scenarios: Uncharted Waters Ahead," Harvard Business Review (1985) — 一次資料](https://hbr.org/1985/09/scenarios-uncharted-waters-ahead) `学術`
+- [Pierre Wack, "Scenarios: Uncharted Waters Ahead," Harvard Business Review (1985) — 一次資料](https://hbr.org/1985/09/scenarios-uncharted-waters-ahead) `メディア`
 - [Wikipedia — Pierre Wack（H.カーン／RAND起源、シェル応用、1985年HBR論文）](https://en.wikipedia.org/wiki/Pierre_Wack) `リファレンス`
 - [MIT Science Impact Collaborative — Scenario Planning（単一予測でなく複数の妥当な未来）](https://scienceimpact.mit.edu/node/1243) `学術`
 
 ## 関連概念
+- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同分野の近傍
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同分野の近傍
 - [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
-- [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 同分野の近傍
-- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

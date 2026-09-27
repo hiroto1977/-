@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同じ思想家
 - [[econ-zeuthen-bargaining|ツォイテンの交渉モデル——衝突を賭ける覚悟が譲歩を決める]] — 同じ思想家
+- [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]] — 出典を共有
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 

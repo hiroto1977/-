@@ -1,3 +1,4 @@
+import { nonNeg } from './num';
 import {
   calcSalaryIncomeDeduction,
   calcBasicDeduction,
@@ -71,6 +72,64 @@ export const NIGHT_MEAL_CASH_TAX_FREE_LIMIT_YEN = 650;
 /** 食事補助が非課税となるための本人負担の割合 (改正されていない)。 */
 export const MEAL_SUBSIDY_SELF_PAY_RATIO = 0.5;
 
+/** 食事補助の非課税要件の判定。`taxFree` が false なら `reasons` に外れた要件が入る。 */
+export interface MealSubsidyVerdict {
+  readonly taxFree: boolean;
+  readonly reasons: readonly string[];
+}
+
+/**
+ * **食事補助が非課税の要件を満たしているか**を、入力から機械的に判定する (パス 219)。
+ *
+ * `MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` と `MEAL_SUBSIDY_SELF_PAY_RATIO` は
+ * 2026-08-21 に出典つきで定数へ寄せられたが、**どの計算も読んでいなかった** ——
+ * 読んでいたのは規程ひな形と画面の免責文 (散文) だけで、`MEAL_SUBSIDY_SELF_PAY_RATIO`
+ * には消費者が 1 つも無かった。`designWelfareScheme` は会社負担の全額を
+ * 非課税の現物支給 (`inKindValue`) として扱うので、**要件を外れた設計でも
+ * 「非課税で税と社保が下がる」と表示できた** —— 実測: 食事 20,000 円で
+ * 会社負担 9,999,999,999 円 → `従業員の実質手元残り 200,000 → 10,000,269,999`、
+ * 断りは 0 件。免責文は「充足は税理士・社労士にご確認ください」と述べていた ——
+ * **機械で判定できることを人に投げていた** (パス 10 / 11 と同じ形)。
+ *
+ * 非課税の要件は**2 つとも**満たす必要がある (`MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` の
+ * docblock に出典)。片方だけでは足りないので、`reasons` は両方を独立に見る。
+ *
+ * **要件を外れた会社負担は `designWelfareScheme` が給与課税として計算に入れる**
+ * (2026-09-14 · パス 228)。パス 219 はここまでを判定だけにして
+ * 「そこまで反映するとスキーム側の逆算ごと組み替えになる」と積み残したが、
+ * 実際に組んでみると**逆算の目標を課税現物の分だけ持ち上げるだけ**で足りた ——
+ * 「大きく組み替わる」という見積りが外れていた。{@link designWelfareScheme} の
+ * `taxableInKind` を参照。
+ */
+export function mealSubsidyVerdict(
+  mealTotal: number,
+  mealCompanyShare: number,
+  limitYen: number = MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  selfPayRatio: number = MEAL_SUBSIDY_SELF_PAY_RATIO,
+): MealSubsidyVerdict {
+  const total = nonNeg(mealTotal);
+  const company = nonNeg(mealCompanyShare);
+  const limit = nonNeg(limitYen);
+  const ratio = nonNeg(selfPayRatio);
+  const self = total - company;
+  const reasons: string[] = [];
+  // 要件 1: 従業員から徴収する対価が食事の価額の 50% 以上。
+  if (self < total * ratio) {
+    reasons.push(
+      `本人負担が食事の価額の ${Math.round(ratio * 100)}% 未満です`
+      + `（価額 ${total.toLocaleString('ja-JP')} 円 / 本人負担 ${self.toLocaleString('ja-JP')} 円）`,
+    );
+  }
+  // 要件 2: 会社負担が月 `limit` 円以下。
+  if (company > limit) {
+    reasons.push(
+      `会社負担が月 ${limit.toLocaleString('ja-JP')} 円を超えています`
+      + `（${company.toLocaleString('ja-JP')} 円）`,
+    );
+  }
+  return { taxFree: reasons.length === 0, reasons };
+}
+
 const floorYen = (n: number) => Math.floor(n);
 
 /**
@@ -106,7 +165,7 @@ function calcSpouseDeductionFor(input: WelfareSchemeInput, withCare: boolean): D
   const selfIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross, taxYear));
   return calcSpouseDeduction(
     selfIncome,
-    Math.max(0, input.spouseIncome),
+    nonNeg(input.spouseIncome),
     input.spouseElderly ?? false,
     taxYear,
   );
@@ -144,7 +203,7 @@ export function monthlyCompensation(
   extraDeductions: DeductionPair = ZERO_DEDUCTION,
   taxYear = new Date().getFullYear(),
 ): MonthlyCompensation {
-  const gross = Math.max(0, grossMonthly);
+  const gross = nonNeg(grossMonthly);
   if (gross === 0) {
     return {
       gross: 0,
@@ -188,8 +247,110 @@ export function monthlyCompensation(
 }
 
 /**
+ * 二分探索の額面上限 (円/月)。**法定値ではなくモデルの探索境界**なので
+ * `parameters.ts` の台帳には載せない (CLAUDE.md: 安全上限は台帳に載せない)。
+ *
+ * この上限で表せる**最大の手取りは定数ではない** —— 実測 (2026 年分):
+ * 介護保険なし ¥1,724,127 / 介護保険あり ¥1,718,588 / 大きな追加控除つき
+ * ¥1,927,627。だから「届いたか」を手取りのしきい値で判定してはならない。
+ */
+const GROSS_SEARCH_CEILING_YEN = 3_000_000;
+
+/** 逆算 ({@link solveGrossForTakeHomeChecked}) の結果。**届いたかを値と一緒に運ぶ。** */
+export interface GrossForTakeHome {
+  /** 解いた額面月給 (円/月)。届かない場合は探索上限そのもの。 */
+  readonly gross: number;
+  /** その額面で実際に得られる手取り (円/月)。 */
+  readonly takeHome: number;
+  /**
+   * 目標手取りに**届いたか**。`false` = 探索上限に張り付いた
+   * (= この簡略モデルでは表現できない高さ)。`gross` は上限のままなので、
+   * **呼び出し側は false のとき「その額面なら目標が出る」と言ってはいけない。**
+   */
+  readonly reached: boolean;
+}
+
+/**
+ * 目標手取りに一致する額面月給を二分探索で求め、**届いたかどうかも返す**。1 円単位。
+ *
+ * ## 単調増加は「おおむね」でしかない (2026-09-09 実測)
+ *
+ * 手取りは額面に対しおおむね増えるが、**厳密には単調ではない** —— 額面を 1 円
+ * 上げると手取りが下がる点が 33,322 か所在り、最大の下がりは **¥6,695**
+ * (額面 ¥2,245,834 · 介護保険あり/なしとも同じ位置)。等級表や控除の段差が
+ * 原因で、なぜそこで段が立つかは別途の宿題 (`docs/REMAINING_WORK.md`)。
+ *
+ * だから二分探索は「解が在るのに見つけ損なう」ことがありうる。**その取りこぼしは
+ * `reached` が拾う** —— 解いた額面を検算するので、見つけ損なえば false になり、
+ * 誤った額面を「解けた」として返すことはない。しきい値で判定していたらここも
+ * 間違えていた: 介護保険つきで届く最大の目標は ¥1,718,608 で、上限額面
+ * (¥3,000,000) が出す手取り ¥1,718,588 より **¥20 高い** (段差の谷で
+ * 上限より低い額面のほうが手取りが多い)。
+ *
+ * ## なぜ「届いたか」を返すのか (2026-09-09 · パス 103 の実測)
+ *
+ * 2026-09-09 まで、この関数は目標が高すぎて解が無いときも**探索上限をそのまま
+ * 返していた**。関数自身の注記は「到達不能な高額もカンスト上限で打ち切る」と
+ * 書いてあったが、返り値は `number` 1 本で、打ち切ったことを呼び出し側が
+ * 知る術が無かった。下流の 4 面が**打ち切りは起きない前提**で書かれていた:
+ *
+ * | 面 | 目標 | 刷っていた物 |
+ * | --- | ---: | --- |
+ * | チャット「手取り180万に必要な額面は？」 | ¥1,800,000 | 文は「額面 ¥3,000,000 です」・**同じ答えの内訳は「手取り ¥1,724,127」** |
+ * | 福利厚生カード (実質価値の差) | ¥1,600,000 | 通常側だけが飽和し、差が ¥170,000 → **¥325,873** (1.92 倍) |
+ * | 従業員向け説明資料 (基本給引き下げの根拠) | ¥1,600,000 | 「手元残りは **同じ ¥1,600,000** をキープします」・2 行上の表は ¥1,444,127 と ¥1,600,000 |
+ * | {@link WelfareScenario.freeCash} の型注記 | — | 「両シナリオで targetFreeCash に一致」 |
+ *
+ * **規準は同じリポジトリの手の届く所に在った** —— `realEstateMetrics.ts` の
+ * `calcIrr` は同じ二分法で「区間端で符号が同じ (= 解が範囲外) なら **null**」を
+ * 返す。同じアルゴリズムに正反対の方針が 2 つ在った。
+ *
+ * ## 判定は上限を写さず、モデルに問い直す
+ *
+ * 解いた額面が**本当に目標手取りを出すか**を同じ `monthlyCompensation` に
+ * 訊く。上限で表せる最大手取りは介護保険や追加控除で動く定数ではないので
+ * ({@link GROSS_SEARCH_CEILING_YEN} の注記)、しきい値を写す形は 3 方向に間違う。
+ *
+ * 実測で残差は収束帯で**ちょうど 0**: 目標 1〜1,700,000 を 997 円刻みで
+ * 1,706 点 (介護保険あり/なし) すべて残差 0、届かない最初の点 (¥1,724,128) で
+ * −1。境目で誤って断ることも、1 円越えを見逃すことも無い。
+ */
+export function solveGrossForTakeHomeChecked(
+  targetTakeHome: number,
+  withCare = false,
+  extraDeductions: DeductionPair = ZERO_DEDUCTION,
+  taxYear = new Date().getFullYear(),
+): GrossForTakeHome {
+  let gross = 0;
+  if (targetTakeHome > 0) {
+    let lo = 0;
+    let hi = GROSS_SEARCH_CEILING_YEN;
+    // 50 回で 3,000,000 / 2^50 ≈ 1 円未満に収束。反復回数の境界 (i<50→i<=50) は
+    // 1 回多いだけで Math.round 後の結果が変わらず等価変異。
+    // Stryker disable next-line EqualityOperator
+    for (let i = 0; i < 50; i++) {
+      const mid = (lo + hi) / 2;
+      // 厳密一致 (< → <=) は連続値では測度0で到達せず結果不変の等価変異。
+      // Stryker disable next-line EqualityOperator
+      if (monthlyCompensation(mid, withCare, extraDeductions, taxYear).takeHome < targetTakeHome) lo = mid;
+      else hi = mid;
+    }
+    gross = Math.round(hi);
+  }
+  // 目標 0 以下は額面 0 (= 手取り 0) で足りる。上の枝と同じ規則で判定するので
+  // ここに「届いた」を書かない —— 規則が 1 つなら 2 か所が食い違えない。
+  const takeHome = monthlyCompensation(gross, withCare, extraDeductions, taxYear).takeHome;
+  // 画面と書面は丸めた円で刷るので、判定も丸めた円で行う (刷る値と同じ粒度)。
+  return { gross, takeHome, reached: Math.round(takeHome) >= Math.round(targetTakeHome) };
+}
+
+/**
  * 目標手取りに一致する額面月給を二分探索で求める (手取りは額面に対し単調増加)。
- * 1 円単位。到達不能な高額もカンスト上限で打ち切る。
+ * 1 円単位。
+ *
+ * **到達不能かどうかを知りたいなら {@link solveGrossForTakeHomeChecked} を使う。**
+ * こちらは額面だけを返すので、目標が高すぎたときは探索上限がそのまま返り、
+ * 「その額面なら目標が出る」は成り立たない。
  */
 export function solveGrossForTakeHome(
   targetTakeHome: number,
@@ -197,20 +358,7 @@ export function solveGrossForTakeHome(
   extraDeductions: DeductionPair = ZERO_DEDUCTION,
   taxYear = new Date().getFullYear(),
 ): number {
-  if (targetTakeHome <= 0) return 0;
-  let lo = 0;
-  let hi = 3_000_000; // 月額面の上限ガード
-  // 50 回で 3,000,000 / 2^50 ≈ 1 円未満に収束。反復回数の境界 (i<50→i<=50) は
-  // 1 回多いだけで Math.round 後の結果が変わらず等価変異。
-  // Stryker disable next-line EqualityOperator
-  for (let i = 0; i < 50; i++) {
-    const mid = (lo + hi) / 2;
-    // 厳密一致 (< → <=) は連続値では測度0で到達せず結果不変の等価変異。
-    // Stryker disable next-line EqualityOperator
-    if (monthlyCompensation(mid, withCare, extraDeductions, taxYear).takeHome < targetTakeHome) lo = mid;
-    else hi = mid;
-  }
-  return Math.round(hi);
+  return solveGrossForTakeHomeChecked(targetTakeHome, withCare, extraDeductions, taxYear).gross;
 }
 
 export interface WelfareSchemeInput {
@@ -271,14 +419,40 @@ export interface WelfareScenario {
   readonly payrollDeduction: number;
   /** 口座振込額 (= 額面 − 社保 − 税 − 天引き)。 */
   readonly netPaid: number;
-  /** 自由に使えるお金 (= 手元残り)。両シナリオで targetFreeCash に一致。 */
+  /**
+   * 自由に使えるお金 (= 手元残り)。**`reachedTarget` が true のときだけ**
+   * `targetFreeCash` に一致する。
+   *
+   * 2026-09-09 までこの注記は「両シナリオで targetFreeCash に一致」と
+   * 無条件に書いてあり、書面の散文はそれを信じて「同じ ¥X をキープします」と
+   * 刷っていた (パス 103)。逆算が探索上限に張り付くと一致しない。
+   */
   readonly freeCash: number;
-  /** 現物支給の福利厚生価値 (非課税)。 */
+  /** 現物支給の福利厚生価値 (**非課税の分だけ**)。 */
   readonly inKindValue: number;
-  /** 従業員の実質手元残り (= freeCash + inKindValue)。 */
+  /**
+   * **給与課税される現物給与** (2026-09-14 · パス 228)。
+   *
+   * 食事補助が非課税の要件 ({@link mealSubsidyVerdict}) を外れたときの会社負担。
+   * 課税標準に乗るので所得税・住民税・社会保険料の計算に入り、**現金では払われない**
+   * ので手取りからは差し引く。要件を満たしていれば 0 で、そのときの数字は
+   * パス 228 より前と**完全に一致する** (`welfareTaxableInKind.test.ts` の対照)。
+   *
+   * 概算の前提: 社会保険の現物給与の価額は都道府県ごとの告示額 (厚生労働大臣が定める
+   * 価額) で、会社負担額と一致するとは限らない。ここは**会社負担額をそのまま価額と
+   * みなす**簡略モデル。
+   */
+  readonly taxableInKind: number;
+  /** 従業員の実質手元残り (= freeCash + inKindValue + taxableInKind)。 */
   readonly employeeRealValue: number;
   /** 会社の総コスト (額面 + 会社負担社保 + 会社負担福利厚生)。 */
   readonly companyTotalCost: number;
+  /**
+   * この筋書きが**目標手元残りに届いたか**。`false` = 逆算が探索上限に
+   * 張り付いた (このモデルでは表せない高さ)。`freeCash` は目標より小さく、
+   * **両筋書きの比較はもう「同じ手元残りでの比較」ではない。**
+   */
+  readonly reachedTarget: boolean;
 }
 
 export interface WelfareSchemeResult {
@@ -292,6 +466,11 @@ export interface WelfareSchemeResult {
     readonly employeeRealValue: number;
     readonly companyTotalCost: number;
   };
+  /**
+   * 食事補助の非課税要件の判定 (パス 219)。`taxFree` が false のとき、
+   * `scheme` の数字は**成り立たない前提**で組まれている (会社負担が給与課税される)。
+   */
+  readonly mealSubsidy: MealSubsidyVerdict;
   /** 両シナリオに適用した追加所得控除の内訳 (扶養控除・青色申告特別控除)。 */
   readonly deductions: {
     /** 扶養控除 (所得税分 / 住民税分)。 */
@@ -338,13 +517,13 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
   // ① 通常: 従業員が家賃・育児・食事・EC を手取りから全額支払う。
   //    手元残り = 手取り − (家賃 + 育児 + 食事 + EC) → 目標達成に必要な手取りを逆算。
   const normalLivingCost = input.rentTotal + input.childcare + input.mealTotal + input.ecPoints;
-  const normalGross = solveGrossForTakeHome(
+  const normalSolved = solveGrossForTakeHomeChecked(
     input.targetFreeCash + normalLivingCost,
     withCare,
     extraDeductions,
     taxYear,
   );
-  const normalComp = monthlyCompensation(normalGross, withCare, extraDeductions, taxYear);
+  const normalComp = monthlyCompensation(normalSolved.gross, withCare, extraDeductions, taxYear);
   const normal: WelfareScenario = {
     gross: normalComp.gross,
     employeeSocialInsurance: normalComp.employeeSocialInsurance,
@@ -353,23 +532,39 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
     netPaid: normalComp.takeHome,
     freeCash: normalComp.takeHome - normalLivingCost,
     inKindValue: 0,
+    taxableInKind: 0,
     employeeRealValue: normalComp.takeHome - normalLivingCost,
     companyTotalCost: normalComp.gross + normalComp.employerSocialInsurance,
+    reachedTarget: normalSolved.reached,
   };
 
-  // ② スキーム: 会社が家賃(社宅)・食事・育児・EC を非課税で現物支給し基本給を下げる。
-  //    本人天引き = 社宅自己負担 + 食事自己負担。手元残り = 手取り − 天引き。
+  // ② スキーム: 会社が家賃(社宅)・食事・育児・EC を現物支給し基本給を下げる。
+  //    本人天引き = 社宅自己負担 + 食事自己負担。手元残り = 手取り − 課税現物 − 天引き。
+  //
+  // **食事補助が非課税の要件を外れていれば、会社負担は給与課税** (パス 228)。
+  // パス 219 は「そこまで反映するとスキーム側の逆算ごと組み替えになる」と積み残したが、
+  // 実際は**逆算の目標を課税現物の分だけ持ち上げるだけ**で足りる ——
+  //   手取り(課税標準 G) − 課税現物 T − 天引き = 目標
+  //   ⇔ 手取り(G) = 目標 + 天引き + T
+  // なので `solveGrossForTakeHomeChecked` の目標に T を足せばよい。T = 0 のとき
+  // (要件を満たすとき) 式は元のままなので、**満たす場合の数字は 1 円も動かない**。
+  const mealSubsidy = mealSubsidyVerdict(input.mealTotal, input.mealCompanyShare);
+  const taxableInKind = mealSubsidy.taxFree ? 0 : nonNeg(input.mealCompanyShare);
   const schemeDeduction = rentSelf + mealSelf;
-  const schemeGross = solveGrossForTakeHome(
-    input.targetFreeCash + schemeDeduction,
+  const schemeSolved = solveGrossForTakeHomeChecked(
+    input.targetFreeCash + schemeDeduction + taxableInKind,
     withCare,
     extraDeductions,
     taxYear,
   );
-  const schemeComp = monthlyCompensation(schemeGross, withCare, extraDeductions, taxYear);
+  const schemeComp = monthlyCompensation(schemeSolved.gross, withCare, extraDeductions, taxYear);
+  // 非課税の現物価値に、要件を外れた食事補助は**入れない** (入れると
+  // 「現物支給の福利厚生価値 (非課税)」が課税される分まで非課税として数える)。
   const inKindValue =
-    input.rentCompanyShare + input.mealCompanyShare + input.childcare + input.ecPoints;
-  const schemeFreeCash = schemeComp.takeHome - schemeDeduction;
+    input.rentCompanyShare
+    + (mealSubsidy.taxFree ? input.mealCompanyShare : 0)
+    + input.childcare + input.ecPoints;
+  const schemeFreeCash = schemeComp.takeHome - taxableInKind - schemeDeduction;
   const scheme: WelfareScenario = {
     gross: schemeComp.gross,
     employeeSocialInsurance: schemeComp.employeeSocialInsurance,
@@ -378,8 +573,13 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
     netPaid: schemeComp.takeHome - schemeDeduction,
     freeCash: schemeFreeCash,
     inKindValue,
-    employeeRealValue: schemeFreeCash + inKindValue,
+    taxableInKind,
+    // 食事の現物は課税されても**受け取っている**ので実質手元残りには入る。
+    employeeRealValue: schemeFreeCash + inKindValue + taxableInKind,
+    // 課税現物は `schemeComp.gross` (課税標準) の中に居るので、会社総コストの式は
+    // 形のまま —— 二重に足さない。
     companyTotalCost: schemeComp.gross + schemeComp.employerSocialInsurance + inKindValue,
+    reachedTarget: schemeSolved.reached,
   };
 
   return {
@@ -392,6 +592,7 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
       employeeRealValue: scheme.employeeRealValue - normal.employeeRealValue,
       companyTotalCost: scheme.companyTotalCost - normal.companyTotalCost,
     },
+    mealSubsidy,
     deductions: {
       dependent: dependentDeduction,
       blue: blueDeduction,

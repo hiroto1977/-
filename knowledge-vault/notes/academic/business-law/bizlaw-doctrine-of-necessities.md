@@ -41,7 +41,7 @@ aliases:
 - [[bizlaw-lien|リーエン——債務の弁済まで他人の財産に及ぶ担保的権利]] — 同じ思想家
 - [[bizlaw-preemption-doctrine-federal|連邦優先権原則（プリエンプション・ドクトリン）]] — 同じ思想家
 - [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 同じ思想家
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

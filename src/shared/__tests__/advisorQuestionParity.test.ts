@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../advisorQuestionLimits';
+import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **同じ判断を 4 度書いていた。**
@@ -53,9 +54,7 @@ describe('アドバイザーの質問の規則は 1 つだけ', () => {
    * `question.length > 1000` と書き直されたら元に戻る。
    */
   it.each(SRC)('%s に質問の上限が字面で書かれていない', (_label, path) => {
-    const code = readFileSync(path, 'utf8')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+    const code = stripComments(readOriginalSource(path));
     expect(code, '上限が字面へ戻っています (shared/advisorQuestionLimits.ts を使ってください)').not.toMatch(
       /question\.length\s*>\s*\d+/,
     );

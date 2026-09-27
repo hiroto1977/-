@@ -26,7 +26,7 @@ aliases:
 マリオ・ポンゾ ／ リチャード・グレゴリー ／ ヘルマン・フォン・ヘルムホルツ ／ アデルベルト・エイムズ
 
 ## 出典
-- [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（大きさの恒常性の誤適用）](https://www.worldcat.org/oclc/35780015) `学術`
+- [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（大きさの恒常性の誤適用）](https://www.worldcat.org/oclc/35780015) `リファレンス`
 - [Wikipedia: Ponzo illusion — linear perspective, size constancy, depth cues](https://en.wikipedia.org/wiki/Ponzo_illusion) `リファレンス`
 
 ## 関連概念

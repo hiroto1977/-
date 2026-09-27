@@ -35,6 +35,7 @@ aliases:
 - [[human-chronotype-theory|クロノタイプ理論（朝型・夜型の個人差）]] — 同じ思想家
 - [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同じ思想家
 - [[human-triarchic-intelligence-sternberg|知能の鼎立理論——分析的・創造的・実践的知能の三側面]] — 同じ思想家
+- [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

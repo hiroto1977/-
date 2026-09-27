@@ -39,7 +39,7 @@ aliases:
 - [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同じ思想家
 - [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
-- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同じ思想家
+- [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

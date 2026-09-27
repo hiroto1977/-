@@ -30,15 +30,15 @@ aliases:
 - [Wikipedia: Imagined audiences — Litt, context collapse, self-presentation, generalized other, social media](https://en.wikipedia.org/wiki/Imagined_audiences) `リファレンス`
 
 ## 関連概念
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 語彙が近い
 - [[infosoc-networked-publics|ネットワーク化された公衆]] — 同じ思想家
 - [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
 - [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — 同じ思想家
-- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同じ思想家
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同じ思想家
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
+- [[infosoc-medium-theory-meyrowitz|メディア論と場所感覚の喪失——電子メディアが社会的状況を再編する]] — 同じ思想家
 - [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同じ思想家
 
 ## 関連

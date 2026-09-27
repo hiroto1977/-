@@ -26,7 +26,7 @@ aliases:
 ダニエル・カッツ ／ ロバート・カーン ／ ルートヴィヒ・フォン・ベルタランフィ ／ フレッド・エメリー
 
 ## 出典
-- [Katz, D. & Kahn, R. L. (1966) The Social Psychology of Organizations — Wiley](https://www.worldcat.org/oclc/255184) `学術`
+- [Katz, D. & Kahn, R. L. (1966) The Social Psychology of Organizations — Wiley](https://www.worldcat.org/oclc/255184) `リファレンス`
 - [Wikipedia: Open system (systems theory) — negative entropy, equifinality, organizations](https://en.wikipedia.org/wiki/Open_system_(systems_theory)) `リファレンス`
 
 ## 関連概念
@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — 同じ思想家
 - [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同分野の近傍
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同分野の近傍
+- [[mgmt-organizational-resilience-weick|組織的レジリエンスと高信頼性組織の集合的センスメイキング（ワイク）]] — 同分野の近傍
 - [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — 同分野の近傍
 - [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 同分野の近傍
 

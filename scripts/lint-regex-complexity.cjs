@@ -69,18 +69,42 @@
  *   /\.+$/    src/renderer/network/proxy.ts   末尾のドットを削る
  * ```
  *
- * これらは確かに O(n²) だが **直しようがなく**、かつ危険でもない ——
- * このリポジトリの入力は上限が掛かっており (`MAX_ANALYZE_TEXT_CHARS` 5000、
- * `MAX_MOOD_NOTE_CHARS` 2000 等)、その長さでの O(n²) は 30ms 程度で
- * 画面は止まらない。台帳に 9 件の「これは普通の定型です」を並べても、
- * 読む人の目を滑らせるだけで何も守らない。
+ * これらは確かに O(n²) だが **直しようがなく**、かつ危険でもない。台帳に 9 件の
+ * 「これは普通の定型です」を並べても、読む人の目を滑らせるだけで何も守らない。
  *
  * 対して指数は入力の上限では防げない —— `(a+)+` は **26 文字**で数秒、
  * 40 文字で事実上永久に返らない。上限を掛けても止まる方が指数、
  * 上限が効く方が多項式。だから **指数だけを門にする**。
  *
- * これは「多項式は安全だ」という主張ではなく、「この入力上限のもとでは
- * 割に合わない」という判断である。上限を外す変更を入れるなら考え直すこと。
+ * ### 理由は「入力が短いから」ではない —— 訂正 (2026-09-20 · パス 337)
+ *
+ * ここは 2026-09-20 まで「このリポジトリの入力は上限が掛かっており
+ * (`MAX_ANALYZE_TEXT_CHARS` 5000、`MAX_MOOD_NOTE_CHARS` 2000 等)、その長さでの
+ * O(n²) は 30ms 程度」と書いていた。**5000 はこのリポジトリで最大の上限ではない。**
+ * 実測 (2026-09-20):
+ *
+ * ```
+ *   MAX_TEXT_PREVIEW_CHARS      200000   ← 最大。取り込んだファイルの本文
+ *   MAX_ASSISTANT_REPLY_CHARS   100000     モデルの応答
+ *   MAX_TOKEN_INPUT_CHARS        65536     資格情報の入口
+ *   MAX_ANALYZE_TEXT_CHARS        5000   ← 上の文が挙げていた数
+ * ```
+ *
+ * その最大の長さで測ると、O(n²) の式は **30ms ではなく 1 呼び出し 31 秒**かかる
+ * (`/\/+$/` に 200,000 個の `/` と外れる末尾)。**長さの議論としては premise が偽**
+ * だった。20 倍・40 倍の上限が隣に在るのに、小さい 2 つだけを挙げて
+ * 「その長さでは」と結論していた。
+ *
+ * **門の結論は生きている。ただし理由は到達可能性である。** 出荷 `src/` の式
+ * 588 本のうち n=200,000 で 250ms を超えるのは **4 本**で、どれも長い文字列が
+ * 届かない所に在る (ホスト名・利用者が打つ基底 URL・base64 のパディング・同梱の
+ * 静的データ)。守っているのは「入力が短いから」ではなく「**その式にはそもそも
+ * 長い入力が来ない**」である。理由が違えば、次に足す式の評価も違う ——
+ * 新しい式がプレビュー本文やモデル応答に当たるなら、上限の議論は効かない。
+ *
+ * 4 本の台帳と実測は `npm run audit:regex-poly` (定期点検・CI では走らせない。
+ * 判定が壁時計時間なので) が持ち、台帳の形と「引いている上限が実物の最大か」は
+ * `src/shared/__tests__/regexPolynomialLedger.test.ts` が毎回の `npm test` で見る。
  *
  * ## 対照 (--self-test)
  *
@@ -104,7 +128,10 @@
 
 const fs = require('fs');
 const path = require('path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 /** 指数の探り。 */
 const N_EXP = 26;
@@ -134,6 +161,9 @@ const BOOT_TIMEOUT_MS = 30000;
 const CONFIRM_PASSES = 1;
 
 const ROOTS = ['src', 'scripts', 'orchestration'];
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx', '.cjs'], roots: [...ROOTS] };
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'dist-electron', 'coverage']);
 const EXT = /\.(ts|tsx|cjs|js|mjs)$/;
 
@@ -159,16 +189,17 @@ const REVIEWED = [];
 const LITERAL =
   /(^|[=(,:[!&|?{;>\s]|return|=>)\/((?:[^/\\\n[]|\\.|\[(?:[^\]\\]|\\.)*\])+)\/([gimsuyd]*)/g;
 
-/** コメントだけの行か。 */
-function isCommentLine(line) {
-  return /^\s*(\/\/|\*|\/\*)/.test(line);
-}
-
-/** ファイル 1 本から `{ body, flags, file, line }` を集める。 */
+/**
+ * ファイル 1 本から `{ body, flags, file, line }` を集める。
+ *
+ * 注記は共有の字句解析器で落とす (行番号は保たれる)。行頭が `//` かで見ると
+ * `const r = /a/; // /b+c+/ は危ない` のような**行末の注記**の正規表現まで
+ * 母集団に入った (法則 `mention-vs-declaration` · パス 463)。
+ * `stripComments` は**正規表現リテラルの中身を残す**ので、探している物は消えない。
+ */
 function extractLiterals(text, file) {
   const out = [];
-  text.split('\n').forEach((line, i) => {
-    if (isCommentLine(line)) return;
+  stripComments(text).split('\n').forEach((line, i) => {
     let m;
     LITERAL.lastIndex = 0;
     while ((m = LITERAL.exec(line))) {
@@ -367,6 +398,22 @@ async function runProbesConfirmed(items, measure = runProbes) {
 // 走査
 // ---------------------------------------------------------------------------
 
+/**
+ * 走査の条件。**走査と `CROSS_CHECK` が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const acceptName = (name) => EXT.test(name);
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。
+ * このゲート自身は走査から外す (`--self-test` がわざと破滅的な式を標本として持つ)。
+ */
+const CROSS_CHECK = {
+  roots: [...ROOTS],
+  skipDirs: SKIP_DIRS,
+  accept: acceptName,
+  ignore: [path.relative(path.resolve(__dirname, '..'), __filename)],
+};
+
 function walk(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -374,7 +421,7 @@ function walk(dir, out = []) {
     const p = path.join(dir, e.name);
     if (e.isDirectory()) walk(p, out);
     // 自分自身は外す —— `--self-test` がわざと破滅的な式を標本として持つ。
-    else if (EXT.test(e.name) && path.resolve(p) !== __filename) out.push(p);
+    else if (acceptName(e.name) && path.resolve(p) !== __filename) out.push(p);
   }
   return out;
 }
@@ -382,10 +429,12 @@ function walk(dir, out = []) {
 /** 走査対象の式を集める (同じ式は 1 つにまとめ、出所は全部覚える)。 */
 function collect(roots) {
   const literals = [];
+  const paths = [];
   let files = 0;
   for (const root of roots) {
     for (const file of walk(root)) {
       files += 1;
+      paths.push(file);
       literals.push(...extractLiterals(fs.readFileSync(file, 'utf8'), file));
     }
   }
@@ -395,17 +444,17 @@ function collect(roots) {
     if (!byBody.has(key)) byBody.set(key, { body: lit.body, flags: lit.flags, sites: [] });
     byBody.get(key).sites.push(`${lit.file}:${lit.line}`);
   }
-  return { files, items: [...byBody.values()] };
+  return { files, paths, items: [...byBody.values()] };
 }
 
 async function scan(roots) {
-  const { files, items } = collect(roots);
+  const { files, paths, items } = collect(roots);
   const { verdicts, retracted } = await runProbesConfirmed(items);
   const hits = [];
   items.forEach((item, i) => {
     if (verdicts[i]) hits.push({ ...item, ...verdicts[i] });
   });
-  return { files, distinct: items.length, hits, retracted };
+  return { files, paths, distinct: items.length, hits, retracted };
 }
 
 // ---------------------------------------------------------------------------
@@ -445,9 +494,20 @@ async function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} /${c.body}/${c.flags} → ${shown} (期待 ${c.bad ? '破滅的' : '白'})`);
   });
 
-  // 抽出そのものの対照 —— コメント行の式を拾わないこと (0-a-17)。
+  // 抽出そのものの対照 —— 注記の中の式を拾わないこと (0-a-17)。
+  // **標本は走査に掛ける物と同じ形**で: 実物はファイル全体を渡すので、`*` の
+  // 続き行は必ずブロック注記の内側に在る (裸の `*` 行は掛け算の続きで、code として
+  // 残るのが正しい)。**行末の注記**も落ちる —— 行頭で見る述語ではそこが残っており、
+  // 実測で母集団が 3,653 → 3,505 種になった (2026-09-25 · パス 463)。
   const extracted = extractLiterals(
-    ['const ok = /^[-*]\\s+(.*)$/;', '// 説明: /^(a+)+$/ は破滅的', ' * また /(x|x)*y/ も'].join('\n'),
+    [
+      'const ok = /^[-*]\\s+(.*)$/;',
+      '// 説明: /^(a+)+$/ は破滅的',
+      '/**',
+      ' * また /(x|x)*y/ も',
+      ' */',
+      'const n = 1; // /^(b+)+$/ も危ない',
+    ].join('\n'),
     'inline',
   );
   const bodies = extracted.map((e) => e.body);
@@ -496,7 +556,7 @@ async function selfTest() {
 async function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
-  const { files, distinct, hits, retracted } = await scan(ROOTS);
+  const { files, paths, distinct, hits, retracted } = await scan(ROOTS);
 
   const seen = new Set();
   const problems = [];
@@ -511,6 +571,21 @@ async function main(argv) {
   const stale = REVIEWED.filter((r) => !seen.has(`${r.file}::${r.body}`));
 
   console.log(`Scanned ${files} file(s): 正規表現 ${distinct} 種を実測 (台帳 ${REVIEWED.length} 件)`);
+  // 走査が死んで 0 件になったのを「ReDoS なし」と読まない (実測 976 ファイル / 2,456 種、2026-09-05)。
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `.tsx` を落としても `scripts/` を丸ごと落としても、床 500 は素通りした
+  //   (1,577 → 1,469 / 1,475 件)。`.js` / `.mjs` は今日 0 件なので**宣言しない**
+  //   (正当に 0 になる群に床を置かない · パス 467)。
+  if (reportGroupFloor(paths, REQUIRED_GROUPS, path.resolve(__dirname, '..'), 'lint:regex') !== 0) process.exit(1);
+  // ★ **群ごとの床も「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   このゲートは**半分落としても ✅ exit 0** だった (床 500 に対し 795 件)。
+  const cross = reportTrackedCrossCheck(paths, CROSS_CHECK, path.resolve(__dirname, '..'), 'lint:regex');
+  if (cross.code !== 0) process.exit(1);
+  const MIN_FILES = 500;
+  if (files < MIN_FILES) {
+    console.error(`❌ ${files} ファイルしか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
+    process.exit(1);
+  }
   // 取り下げた指摘は黙って捨てない —— 実行機が遅いことに気づける唯一の手掛かり。
   for (const r of retracted) {
     console.log(`  (再測で再現せず取り下げ: /${r.item.body}/ — 1 度目は ${r.was.probe})`);
@@ -542,7 +617,7 @@ async function main(argv) {
   }
 
   if (failed) return 1;
-  console.log('✅ 破滅的バックトラックを起こす正規表現はありません');
+  console.log(`✅ 破滅的バックトラックを起こす正規表現はありません (${crossCheckSuffix(cross.source)})`);
   return 0;
 }
 
@@ -556,6 +631,8 @@ module.exports = {
   REVIEWED,
   N_EXP,
   BOOT_TIMEOUT_MS,
+  REQUIRED_GROUPS,
+  CROSS_CHECK,
 };
 
 if (require.main === module && isMainThread) {

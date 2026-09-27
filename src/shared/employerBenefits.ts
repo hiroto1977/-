@@ -28,6 +28,7 @@
  * 施行日をコードのどこにも書いていなかったからである。同じ形にしない。
  */
 import { monthlyCompensation } from './welfareScheme';
+import { nonNeg } from './num';
 import type { DeductionPair } from './taxDeductions';
 
 // ---------------------------------------------------------------------------
@@ -94,11 +95,15 @@ export function dcContributionCapYen(currentCap: number, asOf: Date): number {
     : currentCap;
 }
 
-/** はぐくみ基金の掛金の上限 — 基本給の割合と定額の**低い方**。 */
+/**
+ * はぐくみ基金の掛金の上限 — 基本給の割合と定額の**低い方**。
+ *
+ * 基本給が読めなければ上限は **0** (`nonNeg`)。`Math.max(0, NaN)` は NaN で、
+ * NaN の上限は `conversion > cap` を必ず false にする = **どんな振替額も通る**ので、
+ * 上限として機能しない (2026-09-08 · パス 87)。
+ */
 export function salaryConversionCapYen(baseSalaryMonthly: number): number {
-  const byRatio = Math.floor(
-    Math.max(0, baseSalaryMonthly) * SALARY_CONVERSION_MAX_BASE_SALARY_RATIO,
-  );
+  const byRatio = Math.floor(nonNeg(baseSalaryMonthly) * SALARY_CONVERSION_MAX_BASE_SALARY_RATIO);
   return Math.min(byRatio, SALARY_CONVERSION_MAX_YEN);
 }
 
@@ -353,8 +358,33 @@ export function checkBenefitPlan(input: BenefitPlanInput): readonly BenefitViola
   const asOf = input.asOf ?? new Date();
   const out: BenefitViolation[] = [];
 
-  const idecoEmployer = Math.max(0, input.idecoPlusEmployer ?? 0);
-  const idecoEmployee = Math.max(0, input.idecoPlusEmployee ?? 0);
+  // **読めない額を「適合」と答えない。** (2026-09-08 · パス 87)
+  //
+  // `Math.max(0, NaN)` は **NaN** なので、手書きの `Math.max(0, x ?? 0)` は
+  // 非有限を落とせていなかった。NaN は `> 0` が false になるため
+  // iDeCo+ / 企業型DC / 給与振替の上限判定が**丸ごと飛び**、違反 0 件 =
+  // 「適合」が返っていた —— この関数の doc が避けようとしている
+  // 「その額で通ったと読めてしまい、規程に書き出したあとで否認される」形そのもの。
+  // 読めない欄は**それ自体を違反として名指しする** (返り値が問題の一覧なので、
+  // 型を変えずに「算定できない」を表せる)。
+  for (const [benefitId, label, value] of [
+    ['ideco-plus', 'iDeCo+ 事業主掛金', input.idecoPlusEmployer],
+    ['ideco-plus', 'iDeCo+ 加入者掛金', input.idecoPlusEmployee],
+    ['ideco-plus', '従業員数', input.employeeCount],
+    ['corporate-dc', '企業型DC 事業主掛金', input.corporateDcEmployer],
+    ['corporate-dc', '他制度の掛金相当額', input.otherPensionEquivalent],
+    ['hagukumi', '給与振替額', input.salaryConversion],
+    ['hagukumi', '額面月給', input.gross],
+    ['hagukumi', '基本給', input.baseSalary],
+    ['commute', '通勤手当', input.commuteAllowance],
+  ] as const) {
+    if (value !== undefined && !Number.isFinite(value)) {
+      out.push({ benefitId, message: `${label}を数値として読み取れないため、上限の判定ができません` });
+    }
+  }
+
+  const idecoEmployer = nonNeg(input.idecoPlusEmployer);
+  const idecoEmployee = nonNeg(input.idecoPlusEmployee);
   if (idecoEmployer > 0) {
     const count = input.employeeCount;
     // Stryker disable next-line ConditionalExpression: 実際には殺せている。
@@ -392,9 +422,9 @@ export function checkBenefitPlan(input: BenefitPlanInput): readonly BenefitViola
     }
   }
 
-  const dcEmployer = Math.max(0, input.corporateDcEmployer ?? 0);
+  const dcEmployer = nonNeg(input.corporateDcEmployer);
   if (dcEmployer > 0) {
-    const other = Math.max(0, input.otherPensionEquivalent ?? 0);
+    const other = nonNeg(input.otherPensionEquivalent);
     const cap = dcContributionCapYen(CORPORATE_DC_EMPLOYER_MAX_YEN, asOf) - other;
     if (dcEmployer > cap) {
       out.push({
@@ -404,7 +434,7 @@ export function checkBenefitPlan(input: BenefitPlanInput): readonly BenefitViola
     }
   }
 
-  const conversion = Math.max(0, input.salaryConversion ?? 0);
+  const conversion = nonNeg(input.salaryConversion);
   if (conversion > 0) {
     const cap = salaryConversionCapYen(input.baseSalary);
     if (conversion > cap) {
@@ -427,7 +457,7 @@ export function checkBenefitPlan(input: BenefitPlanInput): readonly BenefitViola
     }
   }
 
-  const commute = Math.max(0, input.commuteAllowance ?? 0);
+  const commute = nonNeg(input.commuteAllowance);
   if (commute > COMMUTE_TRANSIT_TAX_FREE_LIMIT_YEN) {
     out.push({
       benefitId: 'commute',
@@ -447,13 +477,13 @@ export function checkBenefitPlan(input: BenefitPlanInput): readonly BenefitViola
  */
 export function summarizeBenefitPlan(input: BenefitPlanInput): BenefitPlanSummary {
   const withCare = input.withCare ?? false;
-  const gross = Math.max(0, input.gross);
-  const conversion = Math.min(Math.max(0, input.salaryConversion ?? 0), gross);
+  const gross = nonNeg(input.gross);
+  const conversion = Math.min(nonNeg(input.salaryConversion), gross);
   const employerPensionTotal =
-    Math.max(0, input.idecoPlusEmployer ?? 0) + Math.max(0, input.corporateDcEmployer ?? 0);
+    nonNeg(input.idecoPlusEmployer) + nonNeg(input.corporateDcEmployer);
   // 非課税の範囲を超える通勤手当は給与として課税されるので、ここでは
   // 「非課税で渡せた分」だけを数える。
-  const commute = Math.max(0, input.commuteAllowance ?? 0);
+  const commute = nonNeg(input.commuteAllowance);
   const taxFreeAllowanceTotal = Math.min(commute, COMMUTE_TRANSIT_TAX_FREE_LIMIT_YEN);
 
   // **通勤手当の社会保険への効き方は見ていない。** 所得税では非課税でも、

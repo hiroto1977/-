@@ -28,7 +28,7 @@ Magda Blondiau Arnold ／ Richard S. Lazarus ／ Klaus R. Scherer
 ## 出典
 - [Appraisal Theory — Wikipedia](https://en.wikipedia.org/wiki/Appraisal_theory) `リファレンス`
 - [Magda B. Arnold — Wikipedia](https://en.wikipedia.org/wiki/Magda_B._Arnold) `リファレンス`
-- [Lazarus & Folkman — Stress, Appraisal, and Coping (1984)](https://books.google.com/books/about/Stress_Appraisal_and_Coping.html?id=i-ySQQuUpr8C) `学術`
+- [Lazarus & Folkman — Stress, Appraisal, and Coping (1984)](https://books.google.com/books/about/Stress_Appraisal_and_Coping.html?id=i-ySQQuUpr8C) `リファレンス`
 - [Reflection on Lazarus — Emotion and Adaptation (Cambridge Core)](https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/reflection-on-richard-lazarus-emotion-and-adaptation/F665277BCE36BE80C6760A60E6543C71) `学術`
 - [Scherer, Schorr & Johnstone — Appraisal Processes in Emotion (Oxford Academic)](https://academic.oup.com/book/53557) `学術`
 
@@ -38,6 +38,7 @@ Magda Blondiau Arnold ／ Richard S. Lazarus ／ Klaus R. Scherer
 - [[mgmt-organizational-death-theory|組織死亡理論]] — 出典を共有
 - [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]] — 出典を共有
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同分野の近傍
+- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同分野の近傍
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同分野の近傍
 
 ## 関連

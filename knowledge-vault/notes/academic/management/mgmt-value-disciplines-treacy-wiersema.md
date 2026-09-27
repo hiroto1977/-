@@ -26,7 +26,7 @@ aliases:
 マイケル・トレーシー ／ フレッド・ウィアセーマ ／ マイケル・ポーター ／ ピーター・ドラッカー
 
 ## 出典
-- [Treacy, M. & Wiersema, F. (1993) Customer Intimacy and Other Value Disciplines — Harvard Business Review, 71(1), 84–93](https://hbr.org/1993/01/customer-intimacy-and-other-value-disciplines) `学術`
+- [Treacy, M. & Wiersema, F. (1993) Customer Intimacy and Other Value Disciplines — Harvard Business Review, 71(1), 84–93](https://hbr.org/1993/01/customer-intimacy-and-other-value-disciplines) `メディア`
 - [Toolshero: Value Disciplines Model (Treacy & Wiersema) — operational excellence, product leadership, customer intimacy; excel in one, threshold in others](https://www.toolshero.com/strategy/value-disciplines-treacy-wiersema/) `リファレンス`
 
 ## 関連概念
@@ -38,8 +38,8 @@ aliases:
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
 - [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同じ思想家
 - [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同じ思想家
-- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 同じ思想家
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,6 +35,12 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx'], roots: ['src'] };
+const { stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(REPO_ROOT, 'src');
@@ -121,14 +127,31 @@ function detectZone(rel) {
   return null;
 }
 
+/**
+ * 走査の条件。**走査とこの下の照合が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const SKIP_DIRS = new Set(['__tests__', 'node_modules']);
+const acceptName = (name) => /\.(ts|tsx)$/.test(name);
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。
+ * ゾーンの外 (`src/` 直下の物など) は `main()` が `detectZone` で落とすので、同じ条件を渡す。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: SKIP_DIRS,
+  accept: acceptName,
+  acceptPath: (rel) => detectZone(rel) !== null,
+};
+
 function* walkSrc(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const e of entries) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (e.name === '__tests__' || e.name === 'node_modules') continue;
+      if (SKIP_DIRS.has(e.name)) continue;
       yield* walkSrc(full);
-    } else if (/\.(ts|tsx)$/.test(e.name)) {
+    } else if (acceptName(e.name)) {
       yield full;
     }
   }
@@ -163,16 +186,13 @@ const IMPORT_RE = /^\s*import\s+(?<typeOnly>type\s+)?(?:[^'"]+\s+from\s+)?['"](?
  */
 const RELATIVE_REQUIRE_RE = /\brequire\s*\(\s*['"](\.[^'"]*)['"]\s*\)/g;
 
-function isCommentLineForRequire(line) {
-  const t = line.trim();
-  return t.startsWith('//') || t.startsWith('*') || t.startsWith('/*');
-}
-
 function relativeRequires(text) {
   const out = [];
-  const lines = String(text).split('\n');
+  // 注記は共有の字句解析器で落とす (行番号は保たれる)。行頭が `//` かで見ると
+  // `const x = 1; // require('./y')` のような**行末の注記**が code として残った
+  // (法則 `mention-vs-declaration` · パス 463)。
+  const lines = stripComments(String(text)).split('\n');
   for (let i = 0; i < lines.length; i += 1) {
-    if (isCommentLineForRequire(lines[i])) continue;
     RELATIVE_REQUIRE_RE.lastIndex = 0;
     let m;
     while ((m = RELATIVE_REQUIRE_RE.exec(lines[i])) !== null) out.push({ line: i + 1, spec: m[1] });
@@ -187,7 +207,12 @@ const RELATIVE_REQUIRE_CASES = [
   ['npm パッケージは見ない (バンドラが解決する)', "const { app } = require('electron');", 0],
   ['node: 組み込みも見ない', "const fs = require('node:fs');", 0],
   ['行コメントは見ない (説明に綴りが出るため)', "  // const x = require('../y');", 0],
-  ['ブロックコメントも見ない', "   * require('../y') と書くと残る", 0],
+  // **標本は走査に掛ける物と同じ形**で —— 実物はファイル全体を渡すので、`*` の
+  // 続き行は必ずブロック注記の内側に在る (裸の `*` 行は掛け算の続きで、code として
+  // 残るのが正しい · 2026-09-25 パス 463)。
+  ['ブロックコメントも見ない', "/**\n * require('../y') と書くと残る\n */\nconst a = 1;", 0],
+  // **行末の注記**も落ちる —— 行頭で見る述語ではここが code として残っていた。
+  ['行末のコメントも見ない', "const a = 1; // require('../y')", 0],
   ['import 文は対象外 (バンドラが書き換える)', "import { x } from '../../shared/serviceId';", 0],
 ];
 
@@ -420,6 +445,7 @@ function boundaryViolations(rel, text) {
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
   const violations = [];
+  const scannedFiles = [];
   let fileCount = 0;
   let importCount = 0;
 
@@ -427,6 +453,7 @@ function main() {
     const rel = path.relative(REPO_ROOT, full).replace(/\\/g, '/');
     if (!detectZone(rel)) continue;
     fileCount++;
+    scannedFiles.push(full);
     const text = fs.readFileSync(full, 'utf8');
     importCount += (text.match(IMPORT_RE) || []).length;
     violations.push(...boundaryViolations(rel, text));
@@ -435,8 +462,25 @@ function main() {
   console.log(
     `Scanned ${importCount} imports across ${fileCount} src/**/*.ts(x) files`,
   );
+  // 走査が死んで 0 件になったのを「違反なし」と読まない (2026-09-05、e2e の空振り合格を
+  // 塞いだ同じ日に、走査数を表示するだけで床の無いゲートをここと lint:regex に見つけた)。
+  // 実測 440 ファイル / 1,360 import。src/ の半分が消えるような変化は、境界検査の前に気づくべき事故。
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `.tsx` を落とすと 530 → 422 件になるが、床 300 は素通りする。
+  //   境界の規則は renderer / main / preload の別を見る物なので、`.tsx` (= renderer の画面)
+  //   が丸ごと消えた走査で「違反なし」と言うのは、0 件を「違反なし」と読むのと同じ形である。
+  if (reportGroupFloor(scannedFiles, REQUIRED_GROUPS, REPO_ROOT, 'lint:imports') !== 0) return 1;
+  // ★ **群ごとの床は「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   1% 落としても 6 ゲートすべてが ✅ exit 0 だった。追跡ファイルの一覧と照合する。
+  const cross = reportTrackedCrossCheck(scannedFiles, CROSS_CHECK, REPO_ROOT, 'lint:imports');
+  if (cross.code !== 0) return 1;
+  const MIN_FILES = 300;
+  if (fileCount < MIN_FILES) {
+    console.error(`❌ src/**/*.ts(x) を ${fileCount} 件しか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
+    return 1;
+  }
   if (violations.length === 0) {
-    console.log('✅ all imports respect process boundaries');
+    console.log(`✅ all imports respect process boundaries (${crossCheckSuffix(cross.source)})`);
     return 0;
   }
   console.error(`❌ ${violations.length} import-boundary violation(s):`);
@@ -450,6 +494,6 @@ function main() {
  * **外側の証人のために公開する。** `require.main` の番をつけないと、
  * require した瞬間に CLI が走って process ごと落ちる。
  */
-module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition };
+module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES, REQUIRED_GROUPS, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

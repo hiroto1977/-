@@ -43,6 +43,12 @@ async function run() {
     },
   });
 
+  // 成果物の鮮度 (判定は e2e / perf / smoke と同じ `lib/artifact-freshness.cjs`)。古い dist を測って
+  // 「見切れ 0」と言わない —— パス 305 で足した (exp:* 3 本は鮮度を見ていなかった)。
+  require('./lib/artifact-freshness.cjs').assertFreshArtifacts(
+    [path.join(__dirname, '..', 'dist', 'index.html')],
+    { srcDir: path.join(__dirname, '..', 'src'), repoRoot: path.join(__dirname, '..'), tool: 'exp:overflow', allowEnv: 'SERVICE_HUB_EXP_ALLOW_STALE' },
+  );
   await win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
   await new Promise((r) => setTimeout(r, 1200));
 

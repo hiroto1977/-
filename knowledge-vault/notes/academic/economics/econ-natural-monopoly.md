@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 出典を共有
 - [[human-self-serving-bias|自己奉仕バイアス]] — 出典を共有
-- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
+- [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

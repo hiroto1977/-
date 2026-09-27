@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import path from 'node:path';
+import { readOriginalSource } from './originalSource';
 import {
   convertToJpy,
   fxGainLoss,
@@ -241,10 +243,9 @@ describe('effectiveExchange', () => {
 });
 
 describe('disclaimer', () => {
-  it('keeps the 投資助言ではありません note in the module', async () => {
-    const src = await import('node:fs').then((fs) =>
-      fs.readFileSync(new URL('../fxCurrency.ts', import.meta.url), 'utf8'),
-    );
+  it('keeps the 投資助言ではありません note in the module', () => {
+    // 原文を読む (sandbox の中でも本来の仕事をする。`originalSource.ts` の冒頭に理由)。
+    const src = readOriginalSource(path.resolve(__dirname, '../fxCurrency.ts'));
     expect(src).toContain('投資助言ではありません');
   });
 });

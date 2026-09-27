@@ -94,7 +94,7 @@ export function CompliancePage() {
                         borderRadius: 999,
                         border: '1px solid var(--border)',
                         background: 'transparent',
-                        color: OFFICIAL.has(s.type) ? '#22c55e' : 'var(--text-mute)',
+                        color: OFFICIAL.has(s.type) ? 'var(--success)' : 'var(--text-mute)',
                         cursor: 'pointer',
                       }}
                     >

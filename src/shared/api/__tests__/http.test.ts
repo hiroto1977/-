@@ -86,7 +86,8 @@ describe('apiFetch', () => {
     const f = vi.fn<typeof fetch>().mockResolvedValue(res({ a: 1 }));
     await expect(apiFetch<{ a: number }>('https://x.test', {}, { fetch: f, serviceId: 's' })).resolves.toEqual({ a: 1 });
     // `signal` が乗る —— 締切は本文を読み終えるまで掛かる (下の専用の検査を見よ)。
-    expect(f).toHaveBeenCalledWith('https://x.test', { signal: expect.any(AbortSignal) });
+    // `redirect: 'manual'` も乗る —— 転送には追随しない (パス 301・規則は `httpLimits.ts` の `egressInit`)。
+    expect(f).toHaveBeenCalledWith('https://x.test', { signal: expect.any(AbortSignal), redirect: 'manual' });
   });
 
   it('fetch を渡さなければグローバルの fetch を使う', async () => {

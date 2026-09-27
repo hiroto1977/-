@@ -37,8 +37,8 @@ municipality
 - [新宿区 児童扶養手当（認定請求・現況届）](https://www.city.shinjuku.lg.jp/kodomo/file03_04_00006.html) `自治体`
 
 ## 関連概念
-- [[subsidy-child-allowance|児童手当]] — 語彙が近い
 - [[subsidy-special-child-allowance|特別児童扶養手当]] — 語彙が近い
+- [[subsidy-child-allowance|児童手当]] — 語彙が近い
 - [[subsidy-chiba-city|千葉市創業支援補助金]] — 同じ思想家
 - [[subsidy-childcare-support-grant|出産・子育て応援交付金（出産・子育て応援給付金）]] — 同じ思想家
 - [[subsidy-fukuoka-startup|福岡市 スタートアップ法人減税（国家戦略特区）]] — 同じ思想家

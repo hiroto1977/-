@@ -26,7 +26,7 @@ aliases:
 エドワード・ハーマン ／ ノーム・チョムスキー ／ ウォルター・リップマン ／ ロバート・マクチェスニー
 
 ## 出典
-- [Herman, E.S. & Chomsky, N. (1988) Manufacturing Consent: The Political Economy of the Mass Media — Pantheon (WorldCat)](https://www.worldcat.org/oclc/17441737) `学術`
+- [Herman, E.S. & Chomsky, N. (1988) Manufacturing Consent: The Political Economy of the Mass Media — Pantheon (WorldCat)](https://www.worldcat.org/oclc/17441737) `リファレンス`
 - [Wikipedia: Propaganda model — Herman & Chomsky, five filters, ownership/advertising/sourcing/flak/ideology](https://en.wikipedia.org/wiki/Propaganda_model) `リファレンス`
 
 ## 関連概念

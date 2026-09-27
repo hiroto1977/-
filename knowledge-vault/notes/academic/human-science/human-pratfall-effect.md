@@ -34,8 +34,8 @@ aliases:
 - [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 同じ思想家
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 同じ思想家
 - [[human-effort-justification|努力の正当化]] — 同じ思想家
+- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 同分野の近傍
-- [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -260,3 +260,143 @@ describe('同じ record への同時書き換えで、書いたものが消え�
     });
   });
 });
+
+/*
+ * **鎖はこの JS 文脈の中だけの物だった。**
+ *
+ * 上の実測は 1 つの文脈での話で、`perId` はメモリの Map なので、
+ * **タブを 2 枚開けば同じ失敗がそのまま戻る** (別タブは別の鎖を持つ)。
+ * ブラウザ版は 1 枚の HTML を開くだけなので、2 枚目は普通に開かれる。
+ *
+ * そこで Web Locks (`navigator.locks`) があればオリジン単位の錠で囲む。
+ * 実際のタブ 2 枚の挙動は**ここでは試せない** (jsdom に錠も窓も無い) ので、
+ * 確かめるのは (1) 錠があれば書き換えごとに正しい名前で取る、
+ * (2) 錠の中で操作が失敗しても**再実行しない** (2 回書かない)、
+ * (3) 錠が取れない環境では今までどおり鎖だけで進む、の 3 点。
+ *
+ * (2) が要点である。`locks.request(name, cb)` は cb の失敗もそのまま
+ * reject するので、素朴に catch して呼び直すと**錠の中で 1 回書いた後に
+ * もう 1 回走る**。取り違えると、データ損失を直す変更がデータ破損を作る。
+ */
+describe('タブをまたぐ直列化 (Web Locks)', () => {
+  type Req = { name: string };
+  const withLocks = async (
+    impl: (name: string, cb: () => Promise<unknown>) => Promise<unknown>,
+    body: (calls: Req[]) => Promise<void>,
+  ): Promise<void> => {
+    const calls: Req[] = [];
+    const nav = globalThis.navigator as unknown as { locks?: unknown };
+    const had = Object.prototype.hasOwnProperty.call(nav, 'locks');
+    const prev = nav.locks;
+    Object.defineProperty(nav, 'locks', {
+      configurable: true,
+      value: {
+        request: (name: string, cb: () => Promise<unknown>) => {
+          calls.push({ name });
+          return impl(name, cb);
+        },
+      },
+    });
+    try {
+      await body(calls);
+    } finally {
+      if (had) Object.defineProperty(nav, 'locks', { configurable: true, value: prev });
+      else delete (nav as { locks?: unknown }).locks;
+    }
+  };
+
+  it('★ 錠があれば、書き換えは record の id を名前にした錠の中で走る', async () => {
+    await withLocks(
+      (_name, cb) => cb(),
+      async (calls) => {
+        const store = getRecordStore();
+        const rec = await store.insert('sales-entries', { base: 1 });
+        await store.update(rec.id, { a: 2 });
+        await store.remove(rec.id);
+        // insert は id が決まる前なので鎖に載らない。update / remove の 2 回。
+        expect(calls.map((c) => c.name)).toEqual([
+          `servicehub.record.${rec.id}`,
+          `servicehub.record.${rec.id}`,
+        ]);
+      },
+    );
+  });
+
+  it('★ 錠の中で操作が失敗しても、もう一度走らせない (2 回書かない)', async () => {
+    await withLocks(
+      // 実装どおり cb の失敗をそのまま reject する錠。
+      (_name, cb) => cb(),
+      async () => {
+        const store = getRecordStore();
+        const rec = await store.insert('sales-entries', { base: 1 });
+        let encrypts = 0;
+        const cipher: RecordCipher = {
+          encrypt: async (d) => {
+            encrypts += 1;
+            if (encrypts === 1) throw new Error('封緘に失敗');
+            return { ...d };
+          },
+          decrypt: async (d) => ({ ...d }),
+        };
+        store.configureCipher(cipher);
+        await expect(store.update(rec.id, { a: 2 })).rejects.toThrow('封緘に失敗');
+        // 再実行していれば encrypt は 2 回呼ばれ、2 回目は成功して書き込まれてしまう。
+        expect(encrypts).toBe(1);
+        expect((await store.get(rec.id))?.data).toEqual({ base: 1 });
+      },
+    );
+  });
+
+  it('★ 錠が取れない環境では、鎖だけで直列化を保つ (壊れるより遅れるほうを選ぶ)', async () => {
+    await withLocks(
+      () => Promise.reject(new Error('この環境では錠が使えません')),
+      async () => {
+        const store = getRecordStore();
+        const rec = await store.insert('sales-entries', { base: 1 });
+        await Promise.all([store.update(rec.id, { a: 2 }), store.update(rec.id, { b: 3 })]);
+        // 錠なしでも鎖が効くので、両方の欄が残る (上の節と同じ保証)。
+        expect((await store.get(rec.id))?.data).toEqual({ base: 1, a: 2, b: 3 });
+      },
+    );
+  });
+
+  it('★ navigator そのものが無い実行環境でも書き換えできる (Node の古い版・worker)', async () => {
+    const had = Object.prototype.hasOwnProperty.call(globalThis, 'navigator');
+    const prev = (globalThis as { navigator?: unknown }).navigator;
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: undefined });
+    try {
+      const store = getRecordStore();
+      const rec = await store.insert('sales-entries', { base: 1 });
+      await store.update(rec.id, { a: 2 });
+      expect((await store.get(rec.id))?.data).toEqual({ base: 1, a: 2 });
+    } finally {
+      if (had) Object.defineProperty(globalThis, 'navigator', { configurable: true, value: prev });
+      else delete (globalThis as { navigator?: unknown }).navigator;
+    }
+  });
+
+  it('★ navigator.locks が在っても request が関数でなければ鎖だけで進む', async () => {
+    const nav = globalThis.navigator as unknown as { locks?: unknown };
+    const had = Object.prototype.hasOwnProperty.call(nav, 'locks');
+    const prev = nav.locks;
+    // 「錠の口はあるが呼べない」形 (別実装・polyfill の崩れ)。呼べば TypeError になる。
+    Object.defineProperty(nav, 'locks', { configurable: true, value: {} });
+    try {
+      const store = getRecordStore();
+      const rec = await store.insert('sales-entries', { base: 1 });
+      await store.update(rec.id, { a: 2 });
+      expect((await store.get(rec.id))?.data).toEqual({ base: 1, a: 2 });
+    } finally {
+      if (had) Object.defineProperty(nav, 'locks', { configurable: true, value: prev });
+      else delete (nav as { locks?: unknown }).locks;
+    }
+  });
+
+  it('対照: navigator.locks が無くても今までどおり動く (jsdom の既定)', async () => {
+    expect((globalThis.navigator as unknown as { locks?: unknown }).locks).toBeUndefined();
+    const store = getRecordStore();
+    const rec = await store.insert('sales-entries', { base: 1 });
+    await Promise.all([store.update(rec.id, { a: 2 }), store.update(rec.id, { b: 3 })]);
+    expect((await store.get(rec.id))?.data).toEqual({ base: 1, a: 2, b: 3 });
+  });
+});

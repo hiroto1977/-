@@ -31,6 +31,8 @@
  * ブラウザで開いてもらう。
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+
 export type PreviewKind = 'image' | 'text' | 'none';
 
 /**
@@ -105,8 +107,20 @@ export interface TruncatedText {
 }
 
 export function truncateForPreview(text: string, limit = MAX_TEXT_PREVIEW_CHARS): TruncatedText {
-  if (text.length <= limit) return { text, truncated: false };
-  return { text: text.slice(0, limit), truncated: true };
+  /*
+   * **文字で数え、文字で切る** (2026-09-13 · パス 196)。
+   *
+   * ここは `text.length` / `text.slice` だった —— 天井の名前は
+   * `MAX_TEXT_PREVIEW_CHARS` (字) なのに、数えていたのは UTF-16 のコード単位。
+   * パス 195 の census は**定数の名前**で拾うので、天井が引数 (`limit`) に
+   * 渡し替わったこの関数は走査の外に在った (census の頭に書いた死角の 3 例目)。
+   *
+   * しかもここが扱うのは**利用者が取り込んだ任意のテキスト**なので、
+   * 絵文字・非 BMP の漢字が来る確率はこのリポジトリで最も高い。境界で対が
+   * 割れると、プレビューの末尾に `\uFFFD` が出る。
+   */
+  if (countChars(text) <= limit) return { text, truncated: false };
+  return { text: clampToCeiling(text, limit), truncated: true };
 }
 
 /**

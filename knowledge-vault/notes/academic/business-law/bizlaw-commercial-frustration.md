@@ -27,7 +27,7 @@ Taylor v. Caldwell（1863）でBlackburn判事が定立した黙示条件理論�
 
 ## 出典
 - [Taylor v Caldwell (1863) 3 B & S 826 — BAILII judgment text](https://www.bailii.org/ew/cases/EWHC/QB/1863/J1.html) `学術`
-- [Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text](https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html) `学術`
+- [Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text](https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html) `公的`
 - [Davis Contractors Ltd v Fareham UDC [1956] AC 696 (HL) — Lord Radcliffe's radically different test](https://publications.parliament.uk/pa/ld199596/ldjudgmt/davis.htm) `リファレンス`
 - [Treitel, The Law of Contract (15th ed., Sweet & Maxwell 2023), Ch. 19 Frustration](https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677) `リファレンス`
 
@@ -39,9 +39,9 @@ Taylor v. Caldwell（1863）でBlackburn判事が定立した黙示条件理論�
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 出典を共有
 - [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 出典を共有
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 - [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
-- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

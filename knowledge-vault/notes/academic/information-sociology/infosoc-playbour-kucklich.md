@@ -30,15 +30,14 @@ aliases:
 - [Wikipedia: Playbour — Kücklich, modding, blurring play and labour, free labour, digital capitalism](https://en.wikipedia.org/wiki/Playbour) `リファレンス`
 
 ## 関連概念
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
-- [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — 同じ思想家
-- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同じ思想家
-- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同じ思想家
-- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同じ思想家
-- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同じ思想家
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同じ思想家
+- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同分野の近傍
+- [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同分野の近傍
+- [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 同分野の近傍
+- [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]] — 同分野の近傍
 - [[infosoc-moores-law|ムーアの法則]] — 同分野の近傍
 
 ## 関連

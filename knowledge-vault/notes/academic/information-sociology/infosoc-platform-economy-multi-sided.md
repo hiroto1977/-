@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — 語彙が近い
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]] — 同じ思想家
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
-- [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同じ思想家
+- [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）——人間の経験を無償の原材料として採取し、行動余剰を予測製品に加工して行動先物市場で売る資本主義の新しい論理]] — 同じ思想家
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 同じ思想家
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同じ思想家
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
-- [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
-- [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

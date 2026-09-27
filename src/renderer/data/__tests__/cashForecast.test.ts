@@ -174,13 +174,24 @@ describe('seasonalIndices', () => {
     expect(seasonalIndices(42 as unknown as number[], 12)).toBeNull();
   });
 
-  it('treats non-number history elements as non-finite and drops them', () => {
-    // exercises isFiniteNumber's typeof guard: 'x' is dropped, leaving [300, 100].
-    // If kept, the mean becomes NaN and every index collapses to 1 — so asserting the
-    // distinct 1.5 / 0.5 indices kills the "isFiniteNumber → true" mutant.
+  it('treats non-number history elements as non-finite and skips them (keeping their phase)', () => {
+    // 'x' は位置 1 (位相 1) を占めたまま飛ばされる。300 と 100 はどちらも位相 0 なので
+    // 位相 0 の平均 200 = 全体平均 → 1、位相 1 は観測が無いので 1。
     const idx = seasonalIndices([300, 'x' as unknown as number, 100], 2)!;
-    expect(idx[0]).toBeCloseTo(1.5); // 300 / mean(200)
-    expect(idx[1]).toBeCloseTo(0.5); // 100 / mean(200)
+    expect(idx).toEqual([1, 1]);
+  });
+
+  /*
+   * **欠けた月は位相を持ったまま飛ばす** (パス 493f)。直す前は読めない月を先に落としてから
+   * 位置を数えていたので、1 つの欠けで後ろの月が全部 1 つ前の位相に入り、高い月と低い月が
+   * 入れ替わった。同じ系列を位相ごとに手で分けた答えと突き合わせる。
+   */
+  it('★ 欠けた月が 1 つ在っても、後ろの月の位相はずれない', () => {
+    const idx = seasonalIndices([300, Number.NaN, 300, 100, 300, 100], 2)!;
+    const mean = (300 * 3 + 100 * 2) / 5; // 読めた 5 か月の平均 = 220
+    expect(idx[0]).toBeCloseTo(300 / mean); // 位相 0 (0, 2, 4 か月目) は 300
+    expect(idx[1]).toBeCloseTo(100 / mean); // 位相 1 (3, 5 か月目) は 100 —— 1 か月目の欠けは飛ばすだけ
+    expect(idx[0]!).toBeGreaterThan(idx[1]!); // 高い月と低い月が入れ替わっていない
   });
 
   it('returns a single index of 1 when period is exactly 1', () => {

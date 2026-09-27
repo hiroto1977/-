@@ -11,6 +11,7 @@ import {
   fundingQualityScore,
   monthlyFlow,
   radarScores,
+  fundingLinkSource,
   scenarioRunways,
   specifiedIncomeAdjustment,
   summarize,
@@ -26,6 +27,7 @@ import {
   type FundingBar,
   type FundingByKind,
   type FundingItem,
+  type FundingLinkSource,
   type FundingMonthly,
   type FundingSummary,
 } from '../../shared/funding';
@@ -106,10 +108,17 @@ export interface FundingSnapshot {
   readonly costMetrics: FundingCostMetrics;
   /** 消費税: 特定収入に係る仕入税額控除の調整 (概算)。 */
   readonly specifiedIncome: SpecifiedIncomeAdjustment;
-  /** 会計ソフト連携の有無 (任意連携)。 */
+  /** 会計ソフト連携の有無 (任意連携) —— **この控えが会計CF を持つか**だけを表す。 */
   readonly accountingLinked: boolean;
-  /** 株式投資連携の有無 (任意連携)。 */
+  /**
+   * その会計CF が**どこから来たか** (`shared/funding.ts` · パス 265)。
+   * `accountingLinked` は出どころを持たないので、見本を「連携中」と刷らないために要る。
+   */
+  readonly accountingSource: FundingLinkSource;
+  /** 株式投資連携の有無 (任意連携) —— 同上、持っているかだけ。 */
   readonly stocksLinked: boolean;
+  /** その株式評価額の出どころ。 */
+  readonly stocksSource: FundingLinkSource;
   readonly fetchedAt: string;
   readonly isMock: boolean;
 }
@@ -134,6 +143,9 @@ export function buildFundingSnapshot(
     readonly fetchedAt?: string;
   } = {},
 ): FundingSnapshot {
+  const hasAccounting = (options.accounting?.size ?? 0) > 0;
+  const hasPortfolio = (options.portfolio?.size ?? 0) > 0;
+  const isMock = options.isMock ?? true;
   const byKind = aggregateByKind(items);
   const monthly = monthlyFlow(items, {
     accountingCashflow: options.accounting,
@@ -164,10 +176,12 @@ export function buildFundingSnapshot(
       taxableInputTax: options.taxableInputTax,
       simplified: options.simplified,
     }),
-    accountingLinked: (options.accounting?.size ?? 0) > 0,
-    stocksLinked: (options.portfolio?.size ?? 0) > 0,
+    accountingLinked: hasAccounting,
+    accountingSource: fundingLinkSource(hasAccounting, isMock),
+    stocksLinked: hasPortfolio,
+    stocksSource: fundingLinkSource(hasPortfolio, isMock),
     fetchedAt: options.fetchedAt ?? new Date().toISOString(),
-    isMock: options.isMock ?? true,
+    isMock,
   };
 }
 

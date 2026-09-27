@@ -8,6 +8,30 @@
  *
  * **重要 — 概算であり財務助言ではありません。** 会計CF と返済予定の期間粒度が
  * 揃っている前提 (どちらも月次)。返済が無い月は DSCR の対象外 (分母にできない)。
+ *
+ * ## 分子が無い月も同じく対象外 (2026-09-07)
+ *
+ * 返済予定は**借入期間ぶん将来へ伸びる** —— `shared/funding.ts` の `monthlyFlow` は
+ * 「返済が入金月より後に伸びることがあるため、返済月も対象に含める」と明記している。
+ * ところが会計連携 (freee) の月次CF は**過去の月しか無い**。将来の各月を
+ * `cfByMonth.get(m) ?? 0` で「営業CF 0」として割ると、DSCR 0 = 返済不足月になる。
+ *
+ * 実測 (営業CF 30 万/月・返済 105,167 円/月 × 60 回・会計は 6 か月):
+ *
+ * | | 全月を対象にする (直す前) | 会計の在る月だけ |
+ * | --- | ---: | ---: |
+ * | 返済余力 (DSCR) | **0.24** | 2.85 |
+ * | 最悪月の返済余力 | **0** | 2.85 |
+ * | カバー率 1.0 未満の月 | **55 / 60** | 0 / 5 |
+ *
+ * **実測した月では 2.85 倍で返せている会社が、画面でも金融機関等提出用の書面でも
+ * 「返済余力 0.24・55 か月不足」と報告される。** 経営スコアカードの軸と経営ハイライトの
+ * 警告にも同じ値が流れる。
+ *
+ * 「返済が無い月は分母にできない」のと同じ理屈で、**会計連携に月次CF が無い月は
+ * 分子が無いので測れない**。測れない月は対象から外し、外した月数 (`unmatchedMonths`)
+ * を返して画面と書面がそれを述べる —— **黙って狭めると、5 か月の突合が
+ * 60 か月の借入についての主張に読める。**
  */
 import type { AccountingMonthly } from './accounting';
 
@@ -35,15 +59,25 @@ export interface CashflowDebtService {
   readonly worstMonthDscr: number | null;
   /** カバー率がしきい値 (既定 1.0) 未満の月数。 */
   readonly shortfallMonths: number;
-  /** 評価対象 (返済がある) 月数。 */
+  /** 評価対象 (返済があり、かつ会計連携に月次CFが在る) 月数。 */
   readonly coveredMonths: number;
+  /**
+   * 返済予定はあるが**会計連携に月次CFが無い**ため突合できなかった月数。
+   *
+   * 借入期間ぶん先まで伸びる返済予定に対し、実績CF は過去しか無いので、
+   * 通常この数は大きい。**0 でない限り、上の 3 つは「突合できた月について」の
+   * 数字である**ことを画面と書面が述べる。
+   */
+  readonly unmatchedMonths: number;
 }
 
 const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 /**
  * 会計CF (月→営業CF) と返済 (月→返済額) を月キーで突合し DSCR を算出する。
- * 返済のある月だけを評価対象とし、その月の営業CF (会計連携に無ければ 0) で割る。
+ * **返済があり、かつ会計連携に月次CFが在る月だけ**を評価対象とする
+ * (分子が無い月は測れない。上の「分子が無い月も同じく対象外」)。
+ * 突合できた月が 1 つも無ければ `null` —— 0 を並べた答えを作らない。
  *
  * @param accounting freee 等の月次CF
  * @param repayments 資金調達の月次返済額
@@ -68,12 +102,17 @@ export function combineCashflowDebtService(
     .filter((m) => (repayByMonth.get(m) ?? 0) > 0)
     .sort();
   if (repayMonths.length === 0) return null;
+  // **分子が在る月だけ**を突合する。`has` で見るので、実測して 0 だった月
+  // (会計連携に載っている net 0) は対象に残る —— 未取得と実測ゼロを混ぜない。
+  const matched = repayMonths.filter((m) => cfByMonth.has(m));
+  const unmatchedMonths = repayMonths.length - matched.length;
+  if (matched.length === 0) return null;
 
   let totalCf = 0;
   let totalRepay = 0;
   let worst = Infinity;
   let shortfall = 0;
-  const months: DscrMonth[] = repayMonths.map((month) => {
+  const months: DscrMonth[] = matched.map((month) => {
     const repayment = repayByMonth.get(month) ?? 0;
     const operatingCashflow = cfByMonth.get(month) ?? 0;
     const dscr = round2(operatingCashflow / repayment);
@@ -88,11 +127,12 @@ export function combineCashflowDebtService(
 
   return {
     months,
-    // repayMonths は返済>0 の月のみ → totalRepay は必ず正。null 側は到達不能な防御。
+    // matched は返済>0 の月のみ → totalRepay は必ず正。null 側は到達不能な防御。
     // Stryker disable next-line ConditionalExpression,EqualityOperator
     overallDscr: totalRepay > 0 ? round2(totalCf / totalRepay) : null,
     worstMonthDscr: Number.isFinite(worst) ? worst : null,
     shortfallMonths: shortfall,
     coveredMonths: months.length,
+    unmatchedMonths,
   };
 }

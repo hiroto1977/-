@@ -26,7 +26,7 @@ aliases:
 ガエタノ・カニッツァ ／ フリードリヒ・シューマン ／ マックス・ヴェルトハイマー ／ クルト・コフカ
 
 ## 出典
-- [Kanizsa, G. (1979) Organization in Vision: Essays on Gestalt Perception — Praeger（主観的輪郭の体系的考察）](https://www.worldcat.org/oclc/5727628) `学術`
+- [Kanizsa, G. (1979) Organization in Vision: Essays on Gestalt Perception — Praeger（主観的輪郭の体系的考察）](https://www.worldcat.org/oclc/5727628) `リファレンス`
 - [Wikipedia: Illusory contours — Kanizsa triangle, modal/amodal completion, Gestalt](https://en.wikipedia.org/wiki/Illusory_contours) `リファレンス`
 
 ## 関連概念

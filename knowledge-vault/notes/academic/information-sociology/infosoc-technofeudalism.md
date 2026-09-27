@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]] — 語彙が近い
 - [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有

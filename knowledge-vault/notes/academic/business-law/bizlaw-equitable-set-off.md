@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Wikipedia: Set-off (law) — equitable set-off, close connection, substantive defence, cross-claim](https://en.wikipedia.org/wiki/Set-off_(law)) `リファレンス`
-- [Wikipedia: Equitable set-off — Hanak v Green, Geldof v Simon Carves, manifest injustice](https://en.wikipedia.org/wiki/Set-off_(law)#Equitable_set-off) `リファレンス`
+- [Wikipedia: Liquidated damages — Hanak v Green [1958] 2 QB 9 以降の判例が確定額債権と未確定額債権の相殺を認める衡平法上の原則を確立した](https://en.wikipedia.org/wiki/Liquidated_damages) `リファレンス`
 
 ## 関連概念
 - [[bizlaw-negative-pledge|担保提供制限条項——他の債権者に担保を与えない約束]] — 同じ思想家

@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
 - [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同じ思想家
+- [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同分野の近傍
-- [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

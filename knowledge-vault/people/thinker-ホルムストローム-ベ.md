@@ -2,7 +2,7 @@
 title: "ベンクト・ホルムストローム"
 type: thinker
 person_key: "ホルムストローム|ベ"
-concept_count: 5
+concept_count: 6
 tags:
   - person
   - index
@@ -10,12 +10,13 @@ tags:
 
 # ベンクト・ホルムストローム
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（5件）
+## 学術概念（6件）
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 契約理論は、情報の非対称性下でのインセンティブ設計と契約の不完備性を分析する。
 - [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — キャリア・コンサーン（careerconcerns、経歴上の関心）の理論は、経済学者ベンクト・ホルムストロームが198…
 - [[econ-deferred-compensation-lazear|後払い報酬理論（ラジアー）——右上がり賃金プロファイルと定年制の論理]] — 後払い報酬理論（deferredcompensation）は、エドワード・ラジアーが1979年の論文「なぜ定年制が存在…
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 本モデルは、ベント・ホルムストローム（BengtHolmström）とジャン・ティロール（JeanTirole）が19…
 - [[econ-incomplete-contracts-hart-moore|不完備契約理論——残余コントロール権の配分としての所有権]] — 不完備契約理論（incompletecontractstheory）は、オリバー・ハート、サンフォード・グロスマン、ジ…
 - [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]] — 情報性原理（informativenessprinciple）は、経済学者ベンクト・ホルムストロームが1979年の論文…
 

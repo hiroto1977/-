@@ -22,11 +22,15 @@
  * `semver` を依存に足さないのは、必要なのが「x.y.z の大小」と
  * 「プレリリースは正式版より古い」の 2 点だけで、そこは 30 行で書けるうえ、
  * **更新経路に依存を足すこと自体がリスク**だからである。
+ *
+ * そのうち後者 (順序の規則) は `shared/versionOrder.ts` が 1 つだけ持つ ——
+ * 2026-09-22 (パス 402) まで `shared/ollama.ts` が同じ問いに**別の答え**を
+ * 出しており、そちらは既知の脆弱性の台帳と突き合わせる側だった。
  */
 
+import { prereleaseKey } from './versionOrder';
+
 /** 版の表記。`v` 接頭辞は許す (GitHub のタグは `v0.1.0` の形)。 */
-
-
 export interface ParsedVersion {
   readonly major: number;
   readonly minor: number;
@@ -68,16 +72,6 @@ function cmp3(a: number | string, b: number | string): number {
   return 0;
 }
 
-/**
- * プレリリース識別子の比較キー。
- *
- * 正式版 (prerelease なし) は**どのプレリリースより後**に来る (0.2.0-beta < 0.2.0)。
- * 版の正規表現は `[0-9A-Za-z.-]` しか通さないので、そこに現れない U+FFFF を
- * 正式版のキーにすれば、辞書順の比較 1 本で順序が付く。
- */
-function prereleaseKey(prerelease: string | null): string {
-  return prerelease === null ? '\uFFFF' : prerelease;
-}
 
 /**
  * 版の大小。`a` が新しければ 1、古ければ -1、同じなら 0。
@@ -116,8 +110,12 @@ export function parseLatestRelease(json: unknown): LatestRelease | null {
   // 型の確認は parseVersion / isGithubReleaseUrl が unknown を受けて行う。
   // ここで typeof を重ねると、下で必ず落ちる値をもう一度見るだけの
   // 分岐になり、テストで守れない。
-  if (parseVersion(tag) === null || !isGithubReleaseUrl(url)) return null;
-  return { version: tag as string, url: url as string };
+  // **調べた物をそのまま返す** (2026-09-22 · パス 406) —— 判定は `new URL()` の
+  // 解析結果に対して下すので、生の文字列を返すと「検めた物」と「使う物」が割れる
+  // (実測 8 形のうち 6 形: NUL / タブ / 改行 / 未正規化の `..` / `:443` / 全角 ｇ)。
+  const checked = githubReleaseUrlOrNull(url);
+  if (parseVersion(tag) === null || checked === null) return null;
+  return { version: tag as string, url: checked };
 }
 
 /**
@@ -128,21 +126,37 @@ export function parseLatestRelease(json: unknown): LatestRelease | null {
  * そのまま渡すと通ってしまう。JSON からはそんな値は来ないが、
  * 「unknown を安全に受ける」のがこの関数の役目なので入口で断つ。
  */
-export function isGithubReleaseUrl(raw: unknown): boolean {
-  if (typeof raw !== 'string') return false;
+export function githubReleaseUrlOrNull(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null;
   let parsed: URL;
   try {
     parsed = new URL(raw);
   } catch {
-    return false;
+    return null;
   }
-  if (parsed.protocol !== 'https:') return false;
+  if (parsed.protocol !== 'https:') return null;
   // 認証情報付き (`https://github.com@evil.example/`) は落とす。ホスト固定と
   // 二重になるが、ここは**案内先として画面に出す**値なので、字面の信用と
   // 実際の送り先を割らせない (同じ判断を `externalUrlGate.ts` も下している)。
-  if (parsed.username !== '' || parsed.password !== '') return false;
+  if (parsed.username !== '' || parsed.password !== '') return null;
   const host = parsed.hostname.toLowerCase();
-  return host === 'github.com' || host === 'www.github.com';
+  if (host !== 'github.com' && host !== 'www.github.com') return null;
+  /*
+   * **返すのは解析結果** —— `externalUrlOrNull` が `parsed.toString()` を返すのと
+   * 同じ理由 (パス 298 / 325)。生を返すと、この関数が「github.com だ」と認めた物と
+   * 呼び手が持つ文字列が別になる。今日の読み手は `openExternal` 1 つだけで、
+   * その先の `externalUrlOrNull` が再解析するので**生きた欠陥ではない** ——
+   * 罠を外すために揃える (パス 359 / 398 と同じ位置づけ)。
+   *
+   * ★ 全角 `ｇithub.com` は IDNA で `github.com` へ正規化される (下の検査が留める)。
+   *   **本物なのに偽物に見える文字列**を画面へ渡さないのは、この正規化の効き目である。
+   */
+  return parsed.toString();
+}
+
+/** 上の関門の真偽だけが要るとき。**判定は 1 つ**で、こちらはその薄い包み。 */
+export function isGithubReleaseUrl(raw: unknown): boolean {
+  return githubReleaseUrlOrNull(raw) !== null;
 }
 
 export type UpdateStatus =
@@ -153,12 +167,38 @@ export type UpdateStatus =
   /** どちらかの版が読めない。 */
   | 'unknown';
 
-export interface UpdateVerdict {
-  readonly status: UpdateStatus;
+/** 判定に共通の欄。`latest` だけが status によって有無が変わる。 */
+interface UpdateVerdictCommon {
+  /** 手元の版。読めなくても文字列は在る (利用者が見るのはこの字面)。 */
   readonly current: string;
-  readonly latest: string | null;
+  /** リリースページ。読めなければ null。 */
   readonly url: string | null;
 }
+
+/**
+ * 手元の版と公開版の比較結果。
+ *
+ * **判別可能合併にしてある。** 2026-09-08 まで平らな interface で
+ * `latest: string | null` を**全 status に**持っていたので、
+ * `case 'update-available'` の中でも `latest` は `string | null` のままだった ——
+ * `describeUpdate` は `` `新しい版 ${verdict.latest} があります` `` と**裸で補間する**ので、
+ * `latest` が null の判定を 1 つ作れば利用者は
+ * **「新しい版 null があります」**を読む (裸の `${}` は `tsc` を素通りする。パス 76・78 参照)。
+ * `evaluateUpdate` は今そういう値を作らないが、**それは型ではなく実装が守っていた**だけで、
+ * 「更新あり」なのに版が分からない、は**そもそも成り立たない状態**である。
+ * 合併にすると `tsc` が枝ごとに証明するので、文面の側に関門が要らない。
+ */
+export type UpdateVerdict =
+  | (UpdateVerdictCommon & {
+      /** 版の比較ができた 3 状態。**この 3 つでは `latest` は必ず在る。** */
+      readonly status: 'update-available' | 'up-to-date' | 'ahead';
+      readonly latest: string;
+    })
+  | (UpdateVerdictCommon & {
+      /** どちらかの版が読めなかった。**このときだけ `latest` が null になりうる。** */
+      readonly status: 'unknown';
+      readonly latest: string | null;
+    });
 
 /** 手元の版と公開されている最新版を比べる。 */
 export function evaluateUpdate(current: string, latest: LatestRelease | null): UpdateVerdict {

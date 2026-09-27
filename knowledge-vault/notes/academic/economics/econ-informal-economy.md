@@ -30,11 +30,11 @@ aliases:
 - [WIEGO — Informal Economy: History & Debates（学術研究機関による概念史）](https://www.wiego.org/informal-economy/history-debates/) `学術`
 
 ## 関連概念
-- [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 出典を共有
 - [[bizlaw-labor-employment-law|労働法・雇用法：集団的労使関係と個別的雇用保護の法理論]] — 出典を共有
+- [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 出典を共有
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
 - [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
-- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -283,3 +283,34 @@ describe('runAiChat の timeout', () => {
     expect(out.text).toBe('ok');
   });
 });
+
+/*
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * AI の宛先は利用者が決められる (`compat` の baseUrl / BYO プロキシ)。
+ * 転送の先まで辿ると、鍵 (`x-api-key` は Fetch 標準が落とす `Authorization`
+ * では**ない**ので、クロスオリジンでも剥がれない) が Location 先へ届く。
+ */
+describe('runAiChat — 転送に追随しない (パス 301)', () => {
+  it('★ fetch へ redirect: manual を渡す', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(jsonResponse({ content: [{ type: 'text', text: '答え' }] }));
+    await runAiChat({ provider: 'anthropic', cfg: { apiKey: 'sk-ant-x' }, request: REQ, fetchFn: fetchMock });
+    expect((fetchMock.mock.calls[0]![1] as RequestInit).redirect).toBe('manual');
+  });
+
+  it('★ 302 は理由を言って止まり、2 回目の fetch は起きない', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: false,
+      status: 302,
+      type: 'default',
+      headers: new Headers({ location: 'https://collector.example/?k=sk-ant-x' }),
+      text: () => Promise.resolve(''),
+    } as unknown as Response);
+    await expect(
+      runAiChat({ provider: 'anthropic', cfg: { apiKey: 'sk-ant-x' }, request: REQ, fetchFn: fetchMock }),
+    ).rejects.toThrow(/別の場所 \(collector\.example\) へ転送しようとしました/);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});

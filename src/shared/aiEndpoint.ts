@@ -35,10 +35,11 @@
  * 鍵が乗るかどうかを呼び出し側から受け取って判断する。
  */
 
+import { countChars } from './inputCeiling';
 import { hasControlChar } from './controlChars';
 
 /** ベース URL の長さ上限。到底これを超える正当な設定は無い。 */
-export const MAX_AI_BASE_URL_LENGTH = 2048;
+export const MAX_AI_BASE_URL_CHARS = 2048;
 
 export type AiEndpointFailure =
   | 'empty'
@@ -93,7 +94,7 @@ export function isLoopbackHostname(hostname: string): boolean {
 export function normalizeAiBaseUrl(raw: string, opts: AiEndpointOptions): AiEndpointResult {
   const text = raw.trim();
   if (text.length === 0) return { ok: false, reason: 'empty' };
-  if (text.length > MAX_AI_BASE_URL_LENGTH) return { ok: false, reason: 'too-long' };
+  if (countChars(text) > MAX_AI_BASE_URL_CHARS) return { ok: false, reason: 'too-long' };
   // 制御文字はヘッダ/URL の分断に使われうる。URL の解析前に落とす。
   if (hasControlChar(text)) return { ok: false, reason: 'control-char' };
 
@@ -143,7 +144,7 @@ export function describeAiEndpointFailure(reason: AiEndpointFailure): string {
     case 'empty':
       return 'ベース URL が空です。';
     case 'too-long':
-      return `ベース URL が長すぎます (${MAX_AI_BASE_URL_LENGTH} 文字まで)。`;
+      return `ベース URL が長すぎます (${MAX_AI_BASE_URL_CHARS} 文字まで)。`;
     case 'control-char':
       return 'ベース URL に制御文字が含まれています。';
     case 'not-a-url':

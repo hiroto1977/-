@@ -37,8 +37,8 @@ national
 - [ミラサポplus ものづくり補助金](https://mirasapo-plus.go.jp/subsidy/manufacturing/) `公的`
 
 ## 関連概念
-- [[subsidy-it-introduction|IT導入補助金（2026年度より「デジタル化・AI導入補助金」に名称変更）]] — 語彙が近い
 - [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
+- [[subsidy-it-introduction|IT導入補助金（2026年度より「デジタル化・AI導入補助金」に名称変更）]] — 語彙が近い
 - [[subsidy-business-succession|事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）]] — 語彙が近い
 - [[subsidy-gotech|Go-Tech事業（成長型中小企業等研究開発支援事業）]] — 出典を共有
 - [[subsidy-jizokuka|小規模事業者持続化補助金]] — 出典を共有

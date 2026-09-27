@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[econ-shadow-banking-fsb|シャドーバンキング（金融安定理事会定義）]] — FSB(2023)GlobalMonitoringReportonNon-BankFinancialIntermediation2023—…
+- [[econ-shadow-banking-fsb|シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること]] — FinancialStabilityBoard(2023)GlobalMonitoringReportonNon-BankFinancia…
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — FinancialStabilityBoard—EndingToo-Big-To-Fail（G-SIB・破綻処理改革）
 
 ## 関連

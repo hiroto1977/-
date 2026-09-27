@@ -33,8 +33,10 @@ import {
   type ProductionParams,
   type LowPotassiumParams,
 } from './hydroponics';
+import { BALANCE_SHEET_STALE_AFTER_MONTHS } from './balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from './payroll';
 import { DSCR_DANGER_THRESHOLD, DSCR_CAUTION_THRESHOLD, type DscrThresholds } from './realEstateMetrics';
+import { ADVISOR_CONCENTRATION_SHARE, ADVISOR_YIELD_GAP_PT, type AdvisorThresholds } from './serviceAdvisor';
 import {
   CONSUMPTION_TAX_STANDARD,
   CONSUMPTION_TAX_REDUCED,
@@ -122,7 +124,7 @@ import {
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
   type BusinessConsumptionParams,
 } from './taxConsumptionBusiness';
-import { TWENTY_PERCENT_RATE } from './taxConsumption';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from './taxConsumption';
 import { PENSION_DEDUCTION_MIN_OVER65, PENSION_DEDUCTION_MIN_UNDER65, type PensionDeductionParams } from './taxPublicPension';
 import { CASUAL_INCOME_SPECIAL_DEDUCTION } from './taxCasual';
 import { FURUSATO_ONE_STOP_MAX_MUNICIPALITIES, FURUSATO_SELF_PAY, type FurusatoParams } from './taxFurusato';
@@ -137,6 +139,7 @@ import {
   type SocialInsuranceRates,
 } from './taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from './funding';
+import { EMERGENCY_FUND_MONTHS_DEFAULT } from './savingsPlanning';
 import {
   CORNER_LOT_COVERAGE_BONUS_PCT,
   FIREPROOF_COVERAGE_BONUS_PCT,
@@ -170,6 +173,7 @@ import {
   INTERIM_TIER1,
   INTERIM_TIER2,
   INTERIM_TIER3,
+  MIN_NATIONAL_SHARE,
   NATIONAL_SHARE,
   type ScheduleParams,
 } from './taxConsumptionSchedule';
@@ -289,6 +293,17 @@ export function parameterDefinitions() {
     id: 'realEstate.dscrCautionThreshold', feature: '不動産', label: 'DSCR の注意水域 (未満)', unit: '倍',
     defaultValue: DSCR_CAUTION_THRESHOLD, min: 0.1, max: 10, kind: 'threshold',
     note: '金融機関が求めることの多い 1.2〜1.3 の下側',
+  },
+  // --- 改善提案 (業務操作パネル。不動産投資 / 投資信託の画面が payload に載せて渡す) -----
+  {
+    id: 'advisor.yieldGapPt', feature: '改善提案', label: '低利回りと呼ぶ差 (平均との差・以上)', unit: 'pt',
+    defaultValue: ADVISOR_YIELD_GAP_PT, min: 0.1, max: 20, kind: 'threshold',
+    note: '不動産の提案。表面利回りが平均をこの差以上下回る物件を名指しする',
+  },
+  {
+    id: 'advisor.concentrationShare', feature: '改善提案', label: '集中と呼ぶ 1 銘柄の評価額比率 (以上)', unit: '%', scale: 100,
+    defaultValue: ADVISOR_CONCENTRATION_SHARE, min: 0.05, max: 1, kind: 'threshold',
+    note: '投資信託の提案。最大の銘柄の評価額比率がこの値以上なら集中リスクとして名指しする',
   },
   // --- 税 -----------------------------------------------------------------
   {
@@ -530,6 +545,10 @@ export function parameterDefinitions() {
   {
     id: 'consumptionBusiness.twentyPercentRate', feature: '消費税 (事業者)', label: '2 割特例の納付割合 (売上税額に対して)', unit: '%', scale: 100,
     defaultValue: TWENTY_PERCENT_RATE, min: 0, max: 1, kind: 'law', source: '平成 28 年改正法附則 51 条の 2 (20%)',
+  },
+  {
+    id: 'consumptionBusiness.thirtyPercentRate', feature: '消費税 (事業者)', label: '3 割特例の納付割合 (売上税額に対して・個人事業者の令和 9 年分/10 年分)', unit: '%', scale: 100,
+    defaultValue: THIRTY_PERCENT_RATE, min: 0, max: 1, kind: 'law', source: '令和 8 年度税制改正 (2割特例の後継。個人事業者の令和 9 年分・令和 10 年分は納付税額 = 売上税額 × 30%。法人に後継なし)',
   },
   {
     id: 'consumptionBusiness.exemptionThreshold', feature: '消費税 (事業者)', label: '免税事業者となる基準期間の課税売上高の上限', unit: '円',
@@ -839,7 +858,7 @@ export function parameterDefinitions() {
   // --- 消費税 (申告・納付) --------------------------------------------------
   {
     id: 'consumptionSchedule.nationalShare', feature: '消費税 (申告・納付)', label: '消費税のうち国税分の割合', unit: '%', scale: 100,
-    defaultValue: NATIONAL_SHARE, min: 0.01, max: 1, kind: 'law', source: '消費税法 29 条・地方税法 72 条の83 (7.8 / 10 = 78%)',
+    defaultValue: NATIONAL_SHARE, min: MIN_NATIONAL_SHARE, max: 1, kind: 'law', source: '消費税法 29 条・地方税法 72 条の83 (7.8 / 10 = 78%)',
     note: '地方消費税は (100% − 割合) ÷ 割合 (既定 22/78) で組む。2 割特例の割合は「消費税 (事業者)」の項を共有',
   },
   {
@@ -876,6 +895,19 @@ export function parameterDefinitions() {
   {
     id: 'emotion.triggerMinCount', feature: '感情ログ', label: '「よく出る言葉」に拾う最小の出現回数', unit: '回',
     defaultValue: TRIGGER_MIN_COUNT, min: 1, max: 100, integer: true, kind: 'threshold',
+  },
+  // --- 貯蓄・資産形成 -----------------------------------------------------
+  {
+    id: 'savings.emergencyFundMonths', feature: '貯蓄・資産形成', label: '緊急予備資金の月数', unit: 'か月',
+    defaultValue: EMERGENCY_FUND_MONTHS_DEFAULT, min: 0, max: 24, integer: true, kind: 'reference',
+    source: '一般的な目安 (会社員 3〜6 か月 / 自営 6〜12 か月)',
+    note: '生活費の何か月分を現金で持つか。自営業・フリーランスは長めに取る',
+  },
+  // --- 経営サマリー -------------------------------------------------------
+  {
+    id: 'overview.balanceSheetStaleAfterMonths', feature: '経営サマリー', label: '貸借対照表を「別の期」と見なす古さ', unit: 'か月',
+    defaultValue: BALANCE_SHEET_STALE_AFTER_MONTHS, min: 1, max: 120, integer: true, kind: 'assumption',
+    note: '基準日が実績の最新期よりこれだけ古いと、総資産回転率・現金化サイクル・資金ランウェイが別の期の数字を割っている旨を所見と書面が述べる。既定 12 か月 = 1 事業年度',
   },
   ] as const satisfies readonly ParameterDef[];
 }
@@ -1002,6 +1034,11 @@ export function dscrThresholds(v: ParameterValues): DscrThresholds {
   return { danger: v['realEstate.dscrDangerThreshold'], caution: v['realEstate.dscrCautionThreshold'] };
 }
 
+/** 改善提案のしきい値 —— 画面が `adviseInput.thresholds` に載せ、`shared/serviceAdvisor.ts` が読む。 */
+export function advisorThresholds(v: ParameterValues): AdvisorThresholds {
+  return { yieldGapPt: v['advisor.yieldGapPt'], concentrationShare: v['advisor.concentrationShare'] };
+}
+
 export function deductionParams(v: ParameterValues): DeductionParams {
   return {
     spouseSpecialIncomeLimit: v['deduction.spouseSpecialIncomeLimit'],
@@ -1095,6 +1132,7 @@ export function businessConsumptionParams(v: ParameterValues): BusinessConsumpti
   return {
     rates: { standard: v['tax.consumptionStandardRate'], reduced: v['tax.consumptionReducedRate'] },
     twentyPercentRate: v['consumptionBusiness.twentyPercentRate'],
+    thirtyPercentRate: v['consumptionBusiness.thirtyPercentRate'],
     exemptionThreshold: v['consumptionBusiness.exemptionThreshold'],
     simplifiedEligibilityThreshold: v['consumptionBusiness.simplifiedEligibilityThreshold'],
     fullCreditRatioThreshold: v['consumptionBusiness.fullCreditRatioThreshold'],
@@ -1177,6 +1215,7 @@ export function scheduleParams(v: ParameterValues): ScheduleParams {
   return {
     nationalShare: v['consumptionSchedule.nationalShare'],
     twentyPercentRate: v['consumptionBusiness.twentyPercentRate'],
+    thirtyPercentRate: v['consumptionBusiness.thirtyPercentRate'],
     interimTier1: v['consumptionSchedule.interimTier1'],
     interimTier2: v['consumptionSchedule.interimTier2'],
     interimTier3: v['consumptionSchedule.interimTier3'],

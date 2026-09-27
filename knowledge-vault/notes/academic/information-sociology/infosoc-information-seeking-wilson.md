@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-information-search-process-kuhlthau|情報探索過程（ISP）——感情・思考・行動の六段階モデル]] — 同じ思想家
 - [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
-- [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]] — 同分野の近傍
+- [[infosoc-information-encountering-erdelez|情報との遭遇——探していない有用な情報に偶然出会う]] — 同分野の近傍
 - [[infosoc-information-horizons-sonnenwald|情報の地平——文脈のなかで認識される情報資源の広がり]] — 同分野の近傍
 
 ## 関連

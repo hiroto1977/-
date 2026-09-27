@@ -2,7 +2,7 @@
 title: "ミハイ・チクセントミハイ"
 type: thinker
 person_key: "チクセントミハイ|ミ"
-concept_count: 9
+concept_count: 8
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ミハイ・チクセントミハイ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **9 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **8 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（9件）
+## 学術概念（8件）
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — フロー（flow）とは、ミハイ・チクセントミハイが提唱した心理的状態で、課題の難易度とスキルのレベルが一致したとき生じ…
 - [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — フロー（Flow）とはミハイ・チクセントミハイが提唱した概念で、活動に完全に没入し、時間の感覚や自意識が消え、行為その…
 - [[human-flow-state|フロー状態（Flow State）]] — フロー状態（Flow）とは、個人がある活動に完全に没入し、時間経過の喪失感を伴いながら最適な心理状態を経験する現象であ…
@@ -21,7 +21,6 @@ tags:
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — ポジティブ心理学（positivepsychology）は、マーティン・セリグマンが1998年APA会長就任講演で提唱…
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — ポジティブ心理学（PositivePsychology）は、マーティン・セリグマンが1998年アメリカ心理学会会長就任…
 - [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — シリアスレジャー（seriousleisure、本格的余暇）は、社会学者ロバート・ステビンズが1982年以降に提唱し、…
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — バーバラ・フレドリクソンが提唱した拡張形成理論（broaden-and-buildtheory）は、ポジティブ感情がネ…
 
 ## 関連
 - 索引: [[人物索引]]

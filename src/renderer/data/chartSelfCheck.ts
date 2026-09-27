@@ -44,17 +44,29 @@ export function checkLine(
   const geo = lineChart(series, { width, height });
   const out: CheckResult[] = [];
 
+  /*
+   * 数えるのは**描ける値**である (パス 150)。`lineChart` は NaN / ±Infinity を
+   * 落とすので、生の `values.length` と比べると「正しく落とした」ことが
+   * 「点数がずれた」と報告されてしまう。描ける値が 1 つも無ければ
+   * geometry は空を返す契約なので、期待する系列数も 0 になる。
+   */
+  const drawable = (s: LineSeries): number => s.values.filter((v) => Number.isFinite(v)).length;
+  const anyDrawable = series.some((s) => drawable(s) > 0);
+  const expectedSeries = anyDrawable ? series.length : 0;
+
   out.push(
-    geo.series.length === series.length
+    geo.series.length === expectedSeries
       ? ok('折れ線: 系列数が入力と一致')
-      : ng('折れ線: 系列数が入力と一致', `入力 ${series.length} / 出力 ${geo.series.length}`),
+      : ng('折れ線: 系列数が入力と一致', `期待 ${expectedSeries} / 出力 ${geo.series.length}`),
   );
 
-  const countMismatch = geo.series.find((g, i) => g.points.length !== (series[i]?.values.length ?? -1));
+  const countMismatch = geo.series.find(
+    (g, i) => g.points.length !== (series[i] === undefined ? -1 : drawable(series[i])),
+  );
   out.push(
     countMismatch === undefined
-      ? ok('折れ線: 各系列の点数が入力と一致')
-      : ng('折れ線: 各系列の点数が入力と一致', `系列「${countMismatch.label}」でずれ`),
+      ? ok('折れ線: 各系列の点数が描ける値の数と一致')
+      : ng('折れ線: 各系列の点数が描ける値の数と一致', `系列「${countMismatch.label}」でずれ`),
   );
 
   const outside = geo.series
@@ -212,7 +224,25 @@ export interface SelfCheckReport {
   readonly datasets: readonly DatasetCheck[];
   readonly passed: number;
   readonly failed: number;
+  /**
+   * 全項目が通ったか。**1 件も検査していなければ `false`。**
+   *
+   * `failed === 0` だけで判定すると、データセットが空のとき
+   * `passed: 0 / failed: 0 / allPassed: true` になり、画面は緑の枠で
+   * **「✅ 全 0 データセット × 3 種すべて通過（0 項目）」**を出す ——
+   * **何も検査していないことを「すべて通過」と報告する**「空振り合格」。
+   *
+   * 同じ形は 2026-09-06 に `verify:all` の 4 ゲート
+   * (`lint:imports` / `lint:regex` / `lint:workflow-security` / `lint:shell`)
+   * へ床を置いて塞いだ。ここは**利用者に見える自己検査**なので、同じ規則を当てる。
+   *
+   * 到達可能性は正直に: 画面は既定の `CHART_DATASETS` (非空の const) を使うので
+   * **今日この経路では空にならない**。これは export された契約側の床である
+   * (引数で空配列を渡せる)。
+   */
   readonly allPassed: boolean;
+  /** 実際に検査したデータセット数 (0 なら何も検査していない)。 */
+  readonly checkedDatasets: number;
 }
 
 /** 全データセット × 3 種を検査する。画面とテストで同じ関数を使う。 */
@@ -222,5 +252,12 @@ export function runSelfCheck(
   const checked = datasets.map(checkDataset);
   const passed = checked.reduce((a, c) => a + c.passed, 0);
   const failed = checked.reduce((a, c) => a + c.failed, 0);
-  return { datasets: checked, passed, failed, allPassed: failed === 0 };
+  // **0 件は「合格」ではない。** 走った検査が 0 なら、通ったとは言えない。
+  return {
+    datasets: checked,
+    passed,
+    failed,
+    allPassed: checked.length > 0 && failed === 0,
+    checkedDatasets: checked.length,
+  };
 }

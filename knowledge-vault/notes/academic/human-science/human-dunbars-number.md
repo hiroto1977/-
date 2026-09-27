@@ -37,11 +37,11 @@ aliases:
 - [[human-capgras|カプグラ妄想（Capgras Delusion）]] — 出典を共有
 - [[human-context-dependent-memory|文脈依存記憶]] — 出典を共有
 - [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]] — 出典を共有
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — 出典を共有
 - [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
 - [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 出典を共有
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — 出典を共有
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 出典を共有
-- [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

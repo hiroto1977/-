@@ -31,15 +31,15 @@ aliases:
 - [GLOBIS学び放題×知見録「一時的競争優位」（ダベニ1994・ハイパーコンペティション解説）](https://globis.jp/article/5551/) `リファレンス`
 
 ## 関連概念
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同じ思想家
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
 - [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
-- [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
-- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 
 ## 関連

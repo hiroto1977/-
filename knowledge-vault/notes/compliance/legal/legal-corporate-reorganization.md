@@ -34,7 +34,7 @@ aliases:
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 語彙が近い
 - [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 分野横断
 - [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 同分野の近傍
-- [[legal-prescription-renewal|消滅時効の完成猶予・更新（改正民法）]] — 同分野の近傍
+- [[legal-shareholders-meeting|株式会社の株主総会（会社法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

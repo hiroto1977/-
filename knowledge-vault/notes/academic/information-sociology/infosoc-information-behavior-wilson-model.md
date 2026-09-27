@@ -36,7 +36,6 @@ aliases:
 - [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同分野の近傍
 - [[infosoc-imagined-communities-anderson-digital|想像の共同体とデジタル・ナショナリズム——アンダーソンのメディア論の情報社会への拡張]] — 同分野の近傍
 - [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
-- [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

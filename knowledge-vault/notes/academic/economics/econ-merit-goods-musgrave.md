@@ -34,12 +34,12 @@ aliases:
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同じ思想家
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同じ思想家
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
-- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
-- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
 - [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

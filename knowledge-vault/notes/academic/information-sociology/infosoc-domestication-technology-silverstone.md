@@ -26,7 +26,7 @@ aliases:
 ロジャー・シルバーストーン ／ エリック・ハーシュ ／ デヴィッド・モーレイ ／ レスリー・ハドン
 
 ## 出典
-- [Silverstone, R. & Hirsch, E. (eds.) (1992) Consuming Technologies: Media and Information in Domestic Spaces — Routledge (WorldCat)](https://www.worldcat.org/oclc/25008143) `学術`
+- [Silverstone, R. & Hirsch, E. (eds.) (1992) Consuming Technologies: Media and Information in Domestic Spaces — Routledge (WorldCat)](https://www.worldcat.org/oclc/25008143) `リファレンス`
 - [Wikipedia: Domestication of technology — Silverstone/Hirsch/Morley, appropriation/objectification/incorporation/conversion, moral economy](https://en.wikipedia.org/wiki/Domestication_(media)) `リファレンス`
 
 ## 関連概念

@@ -2,7 +2,7 @@
 title: "フランシスコ・ヴァレラ"
 type: thinker
 person_key: "ヴァレラ|フ"
-concept_count: 4
+concept_count: 3
 tags:
   - person
   - index
@@ -10,11 +10,10 @@ tags:
 
 # フランシスコ・ヴァレラ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
+## 学術概念（3件）
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 身体化認知（embodiedcognition）は、認知が身体的経験・感覚運動システムと切り離せないという理論的立場で…
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — ヴァレラ（FranciscoVarela），トンプソン（EvanThompson），ロッシュ（EleanorRosch…
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — ウンベルト・マトゥラーナとフランシスコ・ヴァレラは『オートポイエーシスと認知』（1980）で、生命システムを自らの構成…
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — モーリス・メルロ＝ポンティは主著『知覚の現象学』（1945年）において、身体を単なる物体（Körper）ではなく、世界…
 

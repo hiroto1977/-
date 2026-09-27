@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Benefit corporation — 法的構造と各州の採択状況](https://en.wikipedia.org/wiki/Benefit_corporation) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 語彙が近い
 - [[bizlaw-data-protection-gdpr|データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範]] — 同分野の近傍
 - [[bizlaw-business-purpose-doctrine-gregory-helvering|事業目的の法理——グレゴリー対ヘルベリング事件と租税回避取引の実質否認]] — 同分野の近傍
 - [[bizlaw-karoshi-prevention|過労死等防止対策推進法]] — 同分野の近傍

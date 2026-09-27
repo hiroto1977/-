@@ -27,12 +27,12 @@ Orit Gadiesh ／ James L. Gilbert ／ Harvard Business Review (1998) ／ Anheuse
 
 ## 出典
 - ["Profit pools", Wikipedia — concept introduced by Orit Gadiesh and James L. Gilbert (Bain & Company), Harvard Business Review, 1998; profit pool = total profits earned at all points along an industry's value chain.](https://en.wikipedia.org/wiki/Profit_pools) `リファレンス`
-- [Gadiesh, O. & Gilbert, J. L. (1998). "Profit Pools: A Fresh Look at Strategy." Harvard Business Review, 76(3), May–June 1998, pp. 139–147 (ISSN 0017-8012).](https://hbr.org/1998/05/profit-pools-a-fresh-look-at-strategy) `学術`
+- [Gadiesh, O. & Gilbert, J. L. (1998). "Profit Pools: A Fresh Look at Strategy." Harvard Business Review, 76(3), May–June 1998, pp. 139–147 (ISSN 0017-8012).](https://hbr.org/1998/05/profit-pools-a-fresh-look-at-strategy) `メディア`
 - [Gadiesh O, Gilbert JL. "Profit pools: a fresh look at strategy." Harv Bus Rev. 1998 May–Jun;76(3):139–147. PMID: 10179649.](https://pubmed.ncbi.nlm.nih.gov/10179649/) `学術`
 
 ## 関連概念
 - [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 同分野の近傍
-- [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
+- [[mgmt-organizational-forgetting|組織的忘却]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,11 +37,11 @@ William T. Allen ／ Leo E. Strine Jr.
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 同じ思想家
-- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
 - [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
+- [[bizlaw-entire-fairness|完全公正基準（Entire Fairness Doctrine）]] — 出典を共有
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

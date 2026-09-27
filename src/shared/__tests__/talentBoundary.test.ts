@@ -10,7 +10,13 @@ import {
   sanitizeInitiatives,
   sanitizeReports,
   sanitizeTalentState,
+  describeDroppedEntries,
+  MAX_DEPT_NAME_CHARS,
+  MAX_INITIATIVE_NAME_CHARS,
+  MAX_MEMBER_NAME_CHARS,
+  MAX_TALENT_UPDATED_AT_CHARS,
 } from '../talent';
+import { countChars } from '../inputCeiling';
 
 /**
  * **IPC 境界の検査を、`src/shared/` から直接 import して置く。**
@@ -530,5 +536,151 @@ describe('talent —— 不足は下限で切る', () => {
     expect(g.total).toBe(120);
     expect(g.shortfall).toBe(0);
     expect(g.ok).toBe(true);
+  });
+});
+
+
+/**
+ * **「保存しました」と言いながら一部を捨てない。** (2026-09-08 · パス 89)
+ *
+ * `sanitizeTalentState` は上限で切り (`slice`)、形の合わない要素を落とす
+ * (`filter`)。`saveTalentState` は書く前に同じ sanitizer を通すので、
+ * 不適合な項目は**保存時に消える**。画面は `ok` だけを見て「保存しました」と出し、
+ * 読み直しでその項目が一覧から消えていた。
+ *
+ * 到達する実例: 滞留年数の入力は `<input type="number" max={60}>` だが HTML の
+ * `max` は助言的で (form submit でもない) **61 と打てば state に入る**。
+ * `isValidLadderMember` が `years > 60` を弾くので、保存でその人が落ちる。
+ *
+ * パス 74 は「保存の失敗を黙って捨てる」を直した。こちらは**成功と言いながら
+ * 一部を捨てている**形。
+ */
+describe('describeDroppedEntries — 落ちた項目を言う', () => {
+  const none = { reports: 3, initiatives: 2, members: 5 };
+
+  it('落ちた物が無ければ null (余計な断りを出さない)', () => {
+    expect(describeDroppedEntries(none, none)).toBeNull();
+  });
+
+  /**
+   * ★ **件数上限を名指すのは、それが実際に切った分だけ** (2026-09-14 パス 258)。
+   *
+   * `none` は 5 人しか送っていないので `sent <= cap` (5 ≤ 500) が成り立つ ——
+   * つまり「上限を超えています」は**証明可能に偽**で、500 という数字は
+   * 原因と無関係である。以前はそれを刷っていた (パス 254 と同じ形)。
+   */
+  it('★ 件数上限に届いていないのに落ちたら、挙げるのは欄の条件だけ', () => {
+    const msg = describeDroppedEntries(none, { ...none, members: 4 });
+    expect(msg).not.toBeNull();
+    expect(msg).toContain('メンバー 1 件');
+    expect(msg).toContain('滞留年数は 0〜60');
+    // 対照: 同じ規則が「上限 N 件」を**出さない**ことを、数字そのもので確かめる。
+    expect(msg).not.toContain(`上限 ${MAX_LADDER_MEMBERS} 件`);
+    expect(msg).not.toContain('上限を超えています');
+  });
+
+  /** ★ 逆向きの标本 —— 本当に件数を超えたときは、上限を名指す。 */
+  it('★ 件数上限を超えた分は、上限を名指して言う', () => {
+    const sent = { reports: 0, initiatives: 0, members: MAX_LADDER_MEMBERS + 3 };
+    const msg = describeDroppedEntries(sent, { reports: 0, initiatives: 0, members: MAX_LADDER_MEMBERS });
+    expect(msg).toContain(`メンバー 3 件 (上限 ${MAX_LADDER_MEMBERS} 件を超えた分)`);
+    expect(msg).not.toContain('滞留年数は 0〜60');
+  });
+
+  /** ★ 両方が同時に働いたときは、**それぞれの件数で**両方言う。 */
+  it('★ 上限超と形の不適合が混じると、件数を分けて両方挙げる', () => {
+    // 2 件超過で送り、そのうえに形の合わない 2 件も落ちた (残ったのは cap - 2)。
+    const sent = { reports: 0, initiatives: 0, members: MAX_LADDER_MEMBERS + 2 };
+    const msg = describeDroppedEntries(sent, { reports: 0, initiatives: 0, members: MAX_LADDER_MEMBERS - 2 });
+    expect(msg).toContain(`メンバー 2 件 (上限 ${MAX_LADDER_MEMBERS} 件を超えた分)`);
+    expect(msg).toContain('メンバー 2 件 (氏名は');
+  });
+
+  /** ★ 呼び出し側が矛盾した件数を渡しても、負の件数を刷らない。 */
+  it('★ kept > sent でも負の件数にならない', () => {
+    expect(describeDroppedEntries({ reports: 1, initiatives: 0, members: 0 },
+      { reports: 3, initiatives: 0, members: 0 })).toBeNull();
+  });
+
+  it('★ 3 種類が同時に落ちたら 3 つとも言う (1 つで満足しない)', () => {
+    const msg = describeDroppedEntries(none, { reports: 1, initiatives: 0, members: 2 });
+    expect(msg).toContain('部署の申告 2 件');
+    expect(msg).toContain('施策 2 件');
+    expect(msg).toContain('メンバー 3 件');
+  });
+
+  it('★ 落ちていない種類は挙げない', () => {
+    const msg = describeDroppedEntries(none, { ...none, members: 4 });
+    expect(msg).not.toContain('部署の申告');
+    expect(msg).not.toContain('施策');
+  });
+
+  /** 保存の経路で本当に落ちることの標本 (不在の検査に標本を添える)。 */
+  it('★ 滞留年数 61 年のメンバーは sanitize で落ちる (画面から打てる値)', () => {
+    const ok = { id: 'm1', name: '甲', step: 1, yearsInStep: 60 };
+    const tooLong = { id: 'm2', name: '乙', step: 1, yearsInStep: 61 };
+    const kept = sanitizeTalentState({ members: [ok, tooLong], reports: [], initiatives: [], updatedAt: '' });
+    expect(kept.members).toHaveLength(1);
+    expect(kept.members[0]?.id).toBe('m1');
+    // その 1 件を画面が言えること
+    expect(describeDroppedEntries(
+      { reports: 0, initiatives: 0, members: 2 },
+      { reports: 0, initiatives: 0, members: kept.members.length },
+    )).toContain('メンバー 1 件');
+  });
+});
+
+
+/**
+ * **欄の長さの天井は「文字」で測る** (2026-09-14 パス 258)。
+ *
+ * 以前は `dept.length > 64` のような裸のリテラルで、`String.length`
+ * (コード単位) を数えていた。同じ `sanitizeTalentState` の中で
+ * `updatedAt` だけが `clampToCeiling` (文字) を通っていたので、
+ * **隣り合う欄が別の単位で測っていた**。
+ *
+ * 検査は**肯定形** —— 「天井ちょうどの値は通る」は、単位がコード単位へ
+ * 戻ると**必ず鳴る** (絵文字は 1 文字 = 2 コード単位なので、半分で断られる)。
+ */
+describe('欄の長さの天井 —— 文字で数える (コード単位ではない)', () => {
+  const emoji = (n: number) => '\u{1F600}'.repeat(n);
+
+  it('★ 天井と同じ**文字数**の部署名は通る (絵文字でも)', () => {
+    const dept = emoji(MAX_DEPT_NAME_CHARS);
+    // 标本が狙った形になっていることを、まず確かめる。
+    expect(countChars(dept)).toBe(MAX_DEPT_NAME_CHARS);
+    expect(dept.length).toBe(MAX_DEPT_NAME_CHARS * 2);  // コード単位なら 2 倍
+    expect(sanitizeReports([{ department: dept, diseases: [] }])).toHaveLength(1);
+  });
+
+  it('★ 1 文字超えた部署名は落ちる', () => {
+    expect(sanitizeReports([{ department: emoji(MAX_DEPT_NAME_CHARS + 1), diseases: [] }])).toHaveLength(0);
+  });
+
+  it('★ 施策名も文字で数える', () => {
+    const at = emoji(MAX_INITIATIVE_NAME_CHARS);
+    expect(sanitizeInitiatives([{ name: at, probability: 50 }])).toHaveLength(1);
+    expect(sanitizeInitiatives([{ name: emoji(MAX_INITIATIVE_NAME_CHARS + 1), probability: 50 }])).toHaveLength(0);
+  });
+
+  it('★ ロードマップの氏名も文字で数える', () => {
+    const m = (name: string) => ({ id: 'm1', name, step: 1, yearsInStep: 1 });
+    expect(isValidLadderMember(m(emoji(MAX_MEMBER_NAME_CHARS)))).toBe(true);
+    expect(isValidLadderMember(m(emoji(MAX_MEMBER_NAME_CHARS + 1)))).toBe(false);
+  });
+
+  it('★ `updatedAt` の切り位置も同じ単位 (隣り合う欄が揃っている)', () => {
+    const st = sanitizeTalentState({ reports: [], initiatives: [], members: [], updatedAt: emoji(40) });
+    expect(countChars(st.updatedAt)).toBe(MAX_TALENT_UPDATED_AT_CHARS);
+  });
+
+  it('★ 断る値と、文に書く天井が同じ数字である', () => {
+    // 天井を 1 文字超えた部署名 1 件 → 文はその天井を名指す。
+    const kept = sanitizeReports([{ department: emoji(MAX_DEPT_NAME_CHARS + 1), diseases: [] }]);
+    const msg = describeDroppedEntries(
+      { reports: 1, initiatives: 0, members: 0 },
+      { reports: kept.length, initiatives: 0, members: 0 },
+    );
+    expect(msg).toContain(`1〜${MAX_DEPT_NAME_CHARS} 文字`);
   });
 });

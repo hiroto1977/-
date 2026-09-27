@@ -35,8 +35,8 @@ aliases:
 - [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — 同じ思想家
 - [[bizlaw-doctrine-of-necessities|必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任]] — 同じ思想家
 - [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

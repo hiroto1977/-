@@ -33,8 +33,8 @@ Alvin Toffler ／ George Ritzer ／ Nathan Jurgenson
 ## 関連概念
 - [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
 - [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同分野の近傍
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同分野の近傍
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 同分野の近傍
+- [[infosoc-sociomateriality|ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

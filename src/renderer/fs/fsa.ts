@@ -53,6 +53,20 @@ function openDb(): Promise<IDBDatabase> {
   });
 }
 
+/**
+ * この保管層の DB を丸ごと消す (ハードリセット · 2026-09-09 · パス 136)。`vault.wipeAndReset` と同じ約束 ——
+ * **必ず解決し、何が起きたかを返す**。他のタブが接続を掴んでいれば `blocked` (消えていない)。
+ * 画面は保管庫の内部を触らない (`lint:forbidden`) ので、消すのもここ。呼ぶのは `security/eraseAll.ts`。
+ */
+export function deletePreferencesDatabase(): Promise<'deleted' | 'blocked' | 'failed'> {
+  return new Promise((resolve) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve('deleted');
+    req.onerror = () => resolve('failed');
+    req.onblocked = () => resolve('blocked');
+  });
+}
+
 /** ユーザーにフォルダ選択ダイアログを出し、選ばれた handle を永続化する。 */
 export async function pickFolder(): Promise<FileSystemDirectoryHandle | null> {
   // Stryker disable next-line ConditionalExpression: この番人を外しても picker が undefined で
@@ -77,22 +91,25 @@ export async function pickFolder(): Promise<FileSystemDirectoryHandle | null> {
   return handle;
 }
 
-/** 保管済み handle を取得 (再起動後)。permission の状態を併せて返す。 */
+/**
+ * 保管済み handle を取得 (再起動後)。permission の状態を併せて返す。
+ *
+ * **開けなければ投げる。**`null` は「フォルダを選んでいない」だけを意味する。
+ *
+ * 2026-09-06 まではここで `catch { return null; }` していた (「保存無しとして
+ * 扱う」)。その `null` は上まで通り、`fs/folderMirror.ts` が
+ * **「『設定していない』ではなく失敗として扱う」と決めて書いた分岐を素通り**して
+ * `off` になっていた —— `off` は警告を出さない側なので、フォルダ連携をしている
+ * 端末で書き込みが 1 バイトも行われないまま「書き出しました」と出る。
+ * 区別を消したのは 1 つ下の層で、上の層はその差を見ることができなかった。
+ * 設定画面も同じ `null` を見て「フォルダ未設定」の札を出していた。
+ */
 export async function loadFolderHandle(): Promise<{
   handle: FileSystemDirectoryHandle;
   permission: 'granted' | 'prompt' | 'denied' | 'unknown';
 } | null> {
   if (!isFsaSupported()) return null;
-  let db: IDBDatabase;
-  // DB を開けない環境 (プライベートモード等) では「保存無し」として扱う。
-  // fake-indexeddb では失敗させられず到達しない。
-  /* Stryker disable BlockStatement */
-  try {
-    db = await openDb();
-  } catch {
-    return null;
-  }
-  /* Stryker restore BlockStatement */
+  const db = await openDb();
   const handle = await new Promise<FileSystemDirectoryHandle | undefined>((resolve, reject) => {
     const tx = db.transaction(STORE, 'readonly');
     const req = tx.objectStore(STORE).get(HANDLE_KEY);
@@ -152,8 +169,33 @@ export async function clearFolderHandle(): Promise<void> {
  * ことで、入口 (library) が出口 (ここ) より緩い状態は「新しい書き出し経路が
  * 再検査を忘れた瞬間」に穴になる。厳しい側へ寄せて統合した。
  *
- * (渡ってくる名前はアプリが組み立てたもの (`service-hub-YYYYMMDD-HHMM.txt`
- *  など) で利用者入力ではないため、これは多層防御。)
+ * ## 「利用者入力ではない」は偽である (2026-08-23 実測 · 2026-09-21 パス 362 でここにも反映)
+ *
+ * ここには長らく「渡ってくる名前はアプリが組み立てたもの
+ * (`service-hub-YYYYMMDD-HHMM.txt` など) で利用者入力ではないため、これは
+ * 多層防御」と書いてあった。**2026-08-23 にその主張は偽と測られ、
+ * `shared/safeFilename.ts` では撤回されている** —— ところが**同じ文の写しが
+ * ここに残り、パス 362 まで誰も直さなかった**。撤回が 2 部のうち 1 部にしか
+ * 届いていなかった。
+ *
+ * 実物の経路 (実測):
+ *
+ * ```
+ *   teamradar の export-svg → filenameFromTitle(p.title, …)   ← p.title は画面で利用者が打つ
+ *     → saveToLibrary('teamradar', filename, …)
+ *       → mirrorToFolder(REAL_MIRROR, filename, blob)
+ *         → REAL_MIRROR.write === writeBlobToFolder            ← 実ディスクへ書く
+ * ```
+ *
+ * **今日この関門は破れない** —— `filenameFromTitle` が `[^\w.-]+` を `-` へ畳み、
+ * 時刻の接尾辞が付くので `.` / `..` にもならず、`writeBlobToFolder` は
+ * それでも `isSafeFilename` を先に通す。危ないのは**説明のほう**である:
+ * 「入力は安全だからここは飾り」と読んだ次の人が、この関門を緩める判断を
+ * **既に偽と分かっている前提**から下すことになる (`safeFilename.ts` が
+ * その危険を名指ししている)。
+ *
+ * 利用者の入力がここへ届くことは `folderMirrorUserInput.test.ts` が
+ * 振る舞いで留める (綴りではなく経路を測るので、この文が再び古びても鳴る)。
  */
 
 

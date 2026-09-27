@@ -37,6 +37,7 @@ national
 - [日本の人事部 雇用調整助成金の解説](https://jinjibu.jp/keyword/detl/220/) `メディア`
 
 ## 関連概念
+- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 語彙が近い
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 分野横断
 - [[bizlaw-geographical-indication|地理的表示法（GI法）]] — 出典を共有
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 出典を共有
@@ -46,7 +47,6 @@ national
 - [[subsidy-multifunctional-payment|多面的機能支払交付金]] — 出典を共有
 - [[subsidy-new-farmer|就農準備資金・経営開始資金（旧 農業次世代人材投資資金）]] — 出典を共有
 - [[subsidy-strong-agriculture|強い農業づくり総合支援交付金]] — 出典を共有
-- [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

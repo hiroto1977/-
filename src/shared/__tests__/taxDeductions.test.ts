@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_DEDUCTION_PARAMS,
   BASIC_HUMAN_DEDUCTION_DIFF,
@@ -24,6 +24,7 @@ import {
   clampIdecoContribution,
   clampSmallBizMutualAid,
   IDECO_ANNUAL_CAPS,
+  IDECO_ANNUAL_CAP_MAX,
   SMALL_BIZ_MUTUAL_ANNUAL_CAP,
   SELF_MEDICATION_THRESHOLD,
   SELF_MEDICATION_CAP,
@@ -31,6 +32,8 @@ import {
   spouseIncomeLimitYen,
   SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
   dependentDeduction,
+  dependentsFromCounts,
+  MAX_DEPENDENTS_PER_KIND,
   disabilityDeduction,
   SINGLE_PARENT_DEDUCTION,
   WIDOW_DEDUCTION,
@@ -167,6 +170,73 @@ describe('dependentDeduction / calcDependentDeduction', () => {
   it('sums multiple dependents', () => {
     const d = calcDependentDeduction(['general', 'specific', 'under16']);
     expect(d).toEqual({ incomeTax: 380_000 + 630_000, residentTax: 330_000 + 450_000 });
+  });
+});
+
+/**
+ * **人数から扶養親族の並びを作る口は 1 つ** (2026-09-27 · パス 493k)。
+ *
+ * 福利厚生カードは天井なしで `Array(人数)` を作っていた —— 1 億と打つと 1 回の描画が
+ * 28 秒・4,089 MB、50 億で `RangeError: Invalid array length` (税金ページごと落ちる)。
+ * 税金ページは 20 で止めていたが、その数は画面の中の字面だった。
+ */
+describe('dependentsFromCounts / MAX_DEPENDENTS_PER_KIND', () => {
+  it('区分ごとの人数を、決まった順の並びにする', () => {
+    expect(dependentsFromCounts({ specific: 1, general: 2 })).toEqual(['general', 'general', 'specific']);
+    // 引数の鍵の順に依らない (控除の合計は順に依らないが、画面と検査が同じ並びを見る)
+    expect(dependentsFromCounts({ elderly: 1, under16: 1, 'elderly-livein': 1, specific: 1, general: 1 })).toEqual([
+      'under16',
+      'general',
+      'specific',
+      'elderly-livein',
+      'elderly',
+    ]);
+    expect(dependentsFromCounts({})).toEqual([]);
+  });
+
+  it('小数は切り捨て、負と読めない値は 0 人', () => {
+    expect(dependentsFromCounts({ general: 2.9 })).toEqual(['general', 'general']);
+    for (const bad of [-1, -0.5, Number.NaN, Number.NEGATIVE_INFINITY, undefined]) {
+      expect(dependentsFromCounts({ general: bad }), String(bad)).toEqual([]);
+    }
+  });
+
+  it('★ 天井で止める —— 1 億でも 50 億でも区分ごとに 20 人 (配列を天井より長く作らない)', () => {
+    expect(MAX_DEPENDENTS_PER_KIND).toBe(20);
+    const got = dependentsFromCounts({ general: 1e8, specific: 5e9, elderly: 1e308 });
+    expect(got).toHaveLength(3 * MAX_DEPENDENTS_PER_KIND);
+    expect(got.filter((k) => k === 'general')).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+    expect(got.filter((k) => k === 'specific')).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+    // 標本が的に当たる: 天井なしの形は 50 億で配列を作れずに投げる (この検査が空でない)
+    expect(() => Array<string>(Math.floor(5e9))).toThrow(RangeError);
+    // 境界: ちょうど天井は全部数え、1 人超えると天井で止める
+    expect(dependentsFromCounts({ general: MAX_DEPENDENTS_PER_KIND })).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+    expect(dependentsFromCounts({ general: MAX_DEPENDENTS_PER_KIND + 1 })).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+  });
+
+  it('+∞ は「読めない値」として 0 人 (画面の読み手 readNumeric は桁あふれを null にするので、画面からは届かない)', () => {
+    // 1e308 (有限) は天井で止まり、∞ (非有限) は 0 —— 非有限は数ではないので数えない。
+    expect(dependentsFromCounts({ general: Number.POSITIVE_INFINITY })).toEqual([]);
+    expect(dependentsFromCounts({ general: 1e308 })).toHaveLength(MAX_DEPENDENTS_PER_KIND);
+  });
+
+  it('並びの順の表はモジュールを読み直しても同じ (static の表へ変異体を届かせる —— _commentIgnoreStatic)', async () => {
+    vi.resetModules();
+    const fresh = await import('../taxDeductions');
+    expect(fresh.dependentsFromCounts({ elderly: 1, 'elderly-livein': 1, specific: 1, general: 1, under16: 1 })).toEqual([
+      'under16',
+      'general',
+      'specific',
+      'elderly-livein',
+      'elderly',
+    ]);
+  });
+
+  it('控除の合計は天井で止まる (20 人 × 一般 38 万 / 33 万)', () => {
+    expect(calcDependentDeduction(dependentsFromCounts({ general: 1e8 }))).toEqual({
+      incomeTax: MAX_DEPENDENTS_PER_KIND * 380_000,
+      residentTax: MAX_DEPENDENTS_PER_KIND * 330_000,
+    });
   });
 });
 
@@ -419,9 +489,47 @@ describe('calcAllDeductions — iDeCo / 小規模企業共済の上限統合', (
     expect(d.smallBizMutualAid.incomeTax).toBe(816_000 + 840_000);
   });
 
-  it('does not cap iDeCo when the occupation is unspecified (backward compatible)', () => {
-    const d = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 300_000 });
-    expect(d.smallBizMutualAid.incomeTax).toBe(300_000);
+  it('区分が未選択でも、どの区分でも超えられない最大値で倒す (パス 217)', () => {
+    // **この検査の題は 2026-09-13 まで「does not cap iDeCo when the occupation is
+    // unspecified (backward compatible)」だった** —— 上限が無いことを仕様として
+    // 留めていた。標本 (30 万) が上限の内側だったので、直しても落ちない。
+    // 古い検査は仕様ではなく、その時点の記録である。
+    const under = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 300_000 });
+    expect(under.smallBizMutualAid.incomeTax).toBe(300_000);
+    const over = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 9_999_999_999 });
+    expect(over.smallBizMutualAid.incomeTax).toBe(IDECO_ANNUAL_CAP_MAX);
+    expect(IDECO_ANNUAL_CAP_MAX).toBe(816_000);
+  });
+
+  it('未選択の天井は区分の最大値であって最小値ではない (公務員 14.4 万に倒さない)', () => {
+    // **最小値に倒すのは「別の間違った答え」** —— 区分が分からないだけで
+    // 自営業の正当な 81.6 万を 14.4 万に削ることになる (パス 209 の教訓)。
+    expect(IDECO_ANNUAL_CAP_MAX).toBeGreaterThan(Math.min(...Object.values(IDECO_ANNUAL_CAPS)));
+    const d = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 816_000 });
+    expect(d.smallBizMutualAid.incomeTax).toBe(816_000);
+  });
+
+  it('未選択の天井は台帳の最大値と同じ値である (写しではない)', () => {
+    expect(IDECO_ANNUAL_CAP_MAX).toBe(Math.max(...Object.values(IDECO_ANNUAL_CAPS)));
+  });
+
+  it('区分ごとの上限を超える拠出は、その区分の上限で倒れる (未選択の天井まで伸びない)', () => {
+    for (const [occ, cap] of Object.entries(IDECO_ANNUAL_CAPS)) {
+      const d = calcAllDeductions({
+        totalIncome: 5_000_000,
+        idecoContribution: 9_999_999_999,
+        idecoOccupation: occ as keyof typeof IDECO_ANNUAL_CAPS,
+      });
+      expect(d.smallBizMutualAid.incomeTax).toBe(cap);
+    }
+  });
+
+  it('非有限の拠出は 0 に倒れる (上限を掛ける前に消毒する)', () => {
+    // `Math.min(NaN, cap)` は NaN (パス 202)。`nonNeg` を通していることを留める。
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const d = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: bad });
+      expect(d.smallBizMutualAid.incomeTax).toBe(0);
+    }
   });
 });
 
@@ -741,22 +849,48 @@ describe('calcCasualtyLossDeduction (雑損控除)', () => {
       .toBe(1);
   });
 
-  it('guards non-finite and negative inputs', () => {
+  /**
+   * **この検査は 2026-09-08 まで欠陥を仕様として固定していた。**
+   * 名前が `guards non-finite and negative inputs` で「守っている」と述べ、
+   * コメントが `non-finite totalIncome → income treated as 0 → method1 = netLoss` と
+   * **機構を説明したうえで 100 万を要求**していた。だが 0 に倒すのは
+   * ここでは**守り**ではない —— 総所得は方式(1) の**足切り**を決めるので、
+   * 0 に倒すと足切りが消えて**控除が増える** (下の対照で 70 万 → 100 万)。
+   * 補填額も同じで、0 に倒すと**補填が無かったことになる** (30 万 → 70 万)。
+   *
+   * すぐ上の寄附金の 2 関数では所得が**上限**を決めるので、同じ倒し方で
+   * 控除が 0 になる (あちらの「安全側に倒す」は正しい)。
+   * **所得が逆の役割を持つ 2 つの関数で同じ書き方を再利用した**のが元。
+   */
+  it('★ 読めない数が渡されたら控除を算定しない (0 に倒して控除を増やさない)', () => {
+    // 損害額が読めない → 算定しない
     expect(calcCasualtyLossDeduction({ lossAmount: Number.NaN, totalIncome: 3_000_000 }))
       .toEqual({ incomeTax: 0, residentTax: 0 });
+    // **総所得が読めない → 算定しない。** 直す前は 100 万 (足切り 30 万が消えていた)
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: Number.NaN }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+    // **補填額が読めない → 算定しない。** 直す前は 70 万 (補填 40 万が消えていた)
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: Number.NaN, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+    // 災害関連支出が読めない → 算定しない (向きは控えめ側だが規則は 1 つにする)
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, disasterRelatedSpending: Number.NaN, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+
+  it('★ 対照: 同じ入力が読めれば控除は出る (床が全部を飲み込んでいない)', () => {
+    // 読めない所得が 100 万を出していた、その同じ損害額での正しい答え
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: 3_000_000 }).incomeTax)
+      .toBe(700_000); // 100 万 − 300 万×10%
+    // 読めない補填が 70 万を出していた、その同じ補填額での正しい答え
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: 400_000, totalIncome: 3_000_000 }).incomeTax)
+      .toBe(300_000); // (100 万 − 40 万) − 30 万
+  });
+
+  it('負の値は今までどおり 0 へ丸める (読めるが範囲外 ≠ 読めない)', () => {
     expect(calcCasualtyLossDeduction({ lossAmount: -100, totalIncome: 3_000_000 }))
       .toEqual({ incomeTax: 0, residentTax: 0 });
-    // non-finite totalIncome → income treated as 0 → method1 = netLoss
-    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: Number.NaN }).incomeTax)
-      .toBe(1_000_000);
-    // negative reimbursed clamps to 0
+    // 負の補填は「補填なし」に丸める。最寄りの有効値が定まるので非有限とは別扱い。
     expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: -500_000, totalIncome: 0 }).incomeTax)
-      .toBe(1_000_000);
-    // non-finite disaster clamps to 0
-    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, disasterRelatedSpending: Number.NaN, totalIncome: 0 }).incomeTax)
-      .toBe(1_000_000);
-    // non-finite reimbursed clamps to 0
-    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: Number.NaN, totalIncome: 0 }).incomeTax)
       .toBe(1_000_000);
   });
 });

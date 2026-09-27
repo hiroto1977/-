@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalSource } from './originalSource';
 import {
   MAX_ADVISOR_ACTION_ITEMS,
   MAX_ADVISOR_ITEM_CHARS,
@@ -8,6 +8,7 @@ import {
   MAX_ADVISOR_RECOMMENDATIONS,
   MAX_ADVISOR_RISK_FACTORS,
 } from '../advisorResponseLimits';
+import { stripComments } from './stripNonCode';
 
 /*
  * **第三者が返してくる値の上限は、両ビルドで同じでなければならない。**
@@ -46,14 +47,12 @@ describe('アドバイザーの応答の上限は 1 つだけ', () => {
   });
 
   it.each(SRC)('%s が共有の定数を読んでいる', (_label, path) => {
-    const code = readFileSync(path, 'utf8');
+    const code = readOriginalSource(path);
     expect(code, 'advisorResponseLimits を読んでいない').toContain('advisorResponseLimits');
   });
 
   it.each(SRC)('%s に応答の上限が字面で書かれていない', (_label, path) => {
-    const code = readFileSync(path, 'utf8')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+    const code = stripComments(readOriginalSource(path));
     const back = LITERAL_BOUNDS.filter(([, re]) => re.test(code)).map(([name]) => name);
     expect(back, '上限が字面へ戻っています (shared/advisorResponseLimits.ts を使ってください)').toEqual([]);
   });

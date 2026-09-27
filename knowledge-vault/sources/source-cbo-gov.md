@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[econ-ces-production|CES生産関数]] — AnAssessmentofCESandCobb-DouglasProductionFunctions—U.S.Congressional…
+- [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]] — AnAssessmentofCESandCobb-DouglasProductionFunctions—U.S.Congressional…
 - [[econ-harberger-triangle-incidence|ハーバーガーの法人税帰着モデル（Harberger Tax Incidence Model）]] — CBO(2010)CorporateTaxIncidence:ReviewofGeneralEquilibriumEstimates
 - [[econ-tax-incidence-theory|租税帰着理論]] — CongressionalBudgetOffice—TaxIncidenceAnalysis
 

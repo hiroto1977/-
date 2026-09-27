@@ -41,6 +41,7 @@ aliases:
 - [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同じ思想家
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同じ思想家
 - [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
+- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 同じ思想家
-- [[human-social-facilitation|社会的促進と社会的抑制]] — 同分野の近傍
+- [[human-grit|グリット（やり抜く力）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

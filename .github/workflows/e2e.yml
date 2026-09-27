@@ -38,10 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
@@ -50,7 +50,24 @@ jobs:
         run: npm ci
 
       # scripts/e2e/core.cjs は playwright が無いと exit 2 で明示的に落ちる
-      # (スキップ扱いにしない設計)。ここで確実に入れる。
+      # (スキップ扱いにしない設計)。
+      #
+      # **`npx playwright install` はブラウザを入れるだけで、`require('playwright')` を
+      # 解決可能にはしない** —— npx は package を自分の一時キャッシュに置き、リポジトリの
+      # node_modules には入れない。playwright は devDependencies にも lockfile にも無く
+      # (グローバル導入前提 —— `scripts/perf/startup.cjs` の冒頭)、harness の解決先は
+      # プロジェクトと `/opt/node22/lib/node_modules` (開発環境の置き場) の 2 つだけなので、
+      # runner では下の E2E の段が「playwright が見つかりません」で exit 2 になる。
+      # 2026-09-17 (パス 305) の実測: この workflow は 1 度も runner で走ったことが無かった
+      # (workflow_dispatch 0 回・`run-e2e` ラベルは repo に存在せず・943 回すべて skipped) ——
+      # 「ここで確実に入れる」と書いた行を、誰も実行して確かめていなかった。
+      #
+      # 版は開発環境と同じ 1.56.1 に固定する (chromium 1194)。`--no-save` は package.json と
+      # lockfile を変えず、`--ignore-scripts` は package の install script (ブラウザの
+      # 自動取得) を走らせない —— ブラウザは次の段が明示的に入れる。
+      - name: Install Playwright module (pinned, not saved)
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1
+
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
@@ -97,6 +114,15 @@ jobs:
           github.event_name != 'workflow_dispatch' ||
           inputs.target == 'both' || inputs.target == 'lite'
         run: npm run e2e:lite
+
+      # Ollama 連携の実機 E2E (スタブ Ollama + 実 chromium・full の HTML)。CORS の意味論は
+      # Node (undici) に無いので、no-cors の到達確認が壊れても単体検査は緑のまま ——
+      # 実ブラウザでしか見えない (2026-09-17 パス 304 で実際に起きた。それまで CI の外だった)。
+      - name: E2E (ollama stub)
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          inputs.target == 'both' || inputs.target == 'full'
+        run: npm run e2e:ollama
 
       # 起動性能。巨大な JSON.parse が起動時に戻っていないかを見る。
       - name: Startup performance

@@ -35,6 +35,7 @@ John W. Pratt（1964「Risk Aversion in the Small and in the Large」）と Kenn
 - [[econ-price-discrimination|価格差別（price discrimination）]] — 出典を共有
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同分野の近傍
 - [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同分野の近傍
+- [[econ-epstein-zin|エプスタイン＝ジン再帰的効用（Epstein-Zin Recursive Utility）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

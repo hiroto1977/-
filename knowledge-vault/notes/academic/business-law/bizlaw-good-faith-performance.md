@@ -28,7 +28,7 @@ Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth
 ## 出典
 - [Summers, 'Good Faith' in General Contract Law and the Sales Provisions of the UCC, 54 Va. L. Rev. 195 (1968) — Cornell Law](https://scholarship.law.cornell.edu/facpub/1137/) `学術`
 - [Farnsworth, Good Faith Performance and Commercial Reasonableness under the UCC, 30 U. Chi. L. Rev. 666 (1963)](https://chicagounbound.uchicago.edu/uclrev/vol30/iss4/3/) `学術`
-- [UCC § 1-304 Obligation of Good Faith — Cornell LII](https://www.law.cornell.edu/ucc/1/1-304) `公的`
+- [UCC § 1-304 Obligation of Good Faith — Cornell LII](https://www.law.cornell.edu/ucc/1/1-304) `リファレンス`
 - [Kirke La Shelle Co. v. Paul Armstrong Co., 188 N.E. 163 (N.Y. 1933) — CourtListener](https://www.courtlistener.com/opinion/3612877/kirke-la-shelle-co-v-armstrong-co/) `リファレンス`
 
 ## 関連概念
@@ -38,9 +38,9 @@ Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 同じ思想家
 - [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同じ思想家
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 同じ思想家
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
 - [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
-- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 出典を共有
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
 
 ## 関連

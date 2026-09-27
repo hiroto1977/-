@@ -6,6 +6,7 @@
  * `styles.css` の `@media print` が `.bank-toolbar` を隠す。
  */
 import { useState } from 'react';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import {
   AMOUNT_UNITS,
   ERA_LABEL,
@@ -24,6 +25,7 @@ import {
   type SheetMeta,
 } from '../data/bankSubmission';
 import { printDocument } from '../data/printDocument';
+import { fireReported } from '../data/deviceStoreFailure';
 
 /** 提出者情報の表 (2 組 × 4 行)。 */
 function metaPairs(meta: readonly SheetMeta[]): SheetMeta[][] {
@@ -137,6 +139,7 @@ export function BankSubmissionPanel({
   const [form, setForm] = useState({ ...settings.profile });
   const [error, setError] = useState<string>();
   const [saved, setSaved] = useState(false);
+  const submit = useSubmitGuard();
 
   async function saveProfile(): Promise<void> {
     const r = parseSubmissionProfile(form);
@@ -152,7 +155,7 @@ export function BankSubmissionPanel({
 
   /** 書式は選んだ瞬間に保存する (書面がその場で変わる)。知らない値は既定へ倒れる。 */
   function changeFormat(patch: Record<string, string>): void {
-    void onSave({ profile: settings.profile, format: parseBankFormat({ ...settings.format, ...patch }) });
+    fireReported(onSave({ profile: settings.profile, format: parseBankFormat({ ...settings.format, ...patch }) }));
   }
 
   const field = (key: keyof typeof form, label: string, placeholder = '') => (
@@ -219,7 +222,7 @@ export function BankSubmissionPanel({
           {field('representative', '代表者', '代表取締役 〇〇 〇〇')}
           {field('address', '所在地', '東京都〇〇区…')}
           {field('fiscalYearEnd', '決算期', '2026-03')}
-          <button type="button" onClick={() => void saveProfile()}>提出者情報を保存</button>
+          <button type="button" onClick={() => fireReported(submit.run(saveProfile))} disabled={submit.busy}>提出者情報を保存</button>
           {error !== undefined && <span role="alert" className="bank-error">{error}</span>}
           {saved && error === undefined && <span role="status" className="bank-saved">保存しました。書面に反映されています。</span>}
         </div>

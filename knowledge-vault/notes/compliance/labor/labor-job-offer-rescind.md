@@ -31,6 +31,7 @@ aliases:
 - [大日本印刷事件（採用内定の取消）判例解説](https://www.roudoukeiyaku.net/dnp.html) `メディア`
 
 ## 関連概念
+- [[labor-trial-period|試用期間の労働法上の取扱い]] — 語彙が近い
 - [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — 出典を共有
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — 出典を共有
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[labor-dismissal-notice|解雇予告と適用除外・除外認定（労働基準法第20条・第21条）]] — 出典を共有
 - [[labor-fixed-overtime-pay|固定残業代（定額残業代）の有効要件]] — 出典を共有
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 出典を共有
-- [[labor-work-rules|就業規則の作成・届出義務]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

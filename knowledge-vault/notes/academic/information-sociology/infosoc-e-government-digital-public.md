@@ -33,6 +33,7 @@ aliases:
 - [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — 語彙が近い
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
 - [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — 同分野の近傍
+- [[infosoc-digital-health-medical-data|デジタルヘルスと医療データの権力・プライバシー・アルゴリズム的不平等]] — 同分野の近傍
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同分野の近傍
 
 ## 関連

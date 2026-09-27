@@ -31,8 +31,8 @@ aliases:
 - [The Affordances of Social Media Platforms — Anne Helmond](https://www.annehelmond.nl/2016/08/01/the-affordances-of-social-media-platforms/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 同分野の近傍
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同分野の近傍
+- [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

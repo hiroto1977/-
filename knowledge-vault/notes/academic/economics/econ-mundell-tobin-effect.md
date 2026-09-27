@@ -36,7 +36,7 @@ aliases:
 - [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — 同じ思想家
 - [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
-- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同じ思想家
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 同じ思想家
 - [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
 - [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家

@@ -36,14 +36,14 @@ aliases:
 ## 関連概念
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同じ思想家
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 出典を共有
+- [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 出典を共有
 - [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
-- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同分野の近傍
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

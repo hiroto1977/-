@@ -37,13 +37,13 @@ Michael C. Jensen / William H. Meckling / Eugene F. Fama / Andrei Shleifer / Rob
 - [[econ-fama-french-factor-model|ファーマ＝フレンチ・ファクターモデル]] — 同じ思想家
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — 同じ思想家
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 出典を共有
-- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
-- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
 - [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
-- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
-- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
-- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
+- [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
+- [[eh-1978|1978年（昭和53年）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

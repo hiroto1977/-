@@ -30,13 +30,13 @@ aliases:
 - [Wikipedia: Enlightened shareholder value — 啓発的株主価値論の概説](https://en.wikipedia.org/wiki/Enlightened_shareholder_value) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-benefit-corporation-legislation|ベネフィット・コーポレーション法——利益と公益の二重目的法人]] — 語彙が近い
 - [[bizlaw-capital-reduction-procedure|資本金減少（減資）手続と債権者保護]] — 同じ思想家
 - [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
 - [[bizlaw-nominee-director-liability|名義取締役の責任と法的地位]] — 同じ思想家
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
 - [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
-- [[bizlaw-benefit-corporation-legislation|ベネフィット・コーポレーション法——利益と公益の二重目的法人]] — 同じ思想家
 - [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
 - [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同じ思想家

@@ -81,7 +81,7 @@ beforeAll(async () => {
           return;
         }
         res.writeHead(200, { 'content-type': 'application/json' });
-        res.end(JSON.stringify({ version: '0.5.4' }));
+        res.end(JSON.stringify({ version: '0.33.3' }));
         return;
       }
       if (req.url === '/api/tags') {
@@ -141,7 +141,7 @@ describe('ollama CLI — 状態確認', () => {
     const r = await runCli(['--port', String(port)]);
     expect(r.code).toBe(0);
     expect(r.stdout).toContain('接続しました');
-    expect(r.stdout).toContain('0.5.4');
+    expect(r.stdout).toContain('0.33.3');
     expect(r.stdout).toContain('llama3.2:latest');
     expect(r.stdout).toContain('2048 MB');
   });
@@ -156,7 +156,7 @@ describe('ollama CLI — 状態確認', () => {
       models: { name: string }[];
     };
     expect(parsed.running).toBe(true);
-    expect(parsed.version).toBe('0.5.4');
+    expect(parsed.version).toBe('0.33.3');
     expect(parsed.versionSafe).toBe(true);
     expect(parsed.models.map((m) => m.name)).toEqual(['llama3.2:latest']);
   });

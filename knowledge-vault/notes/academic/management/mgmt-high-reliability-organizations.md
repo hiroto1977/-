@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 語彙が近い
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-heinrich-law|ハインリッヒの法則（1:29:300）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

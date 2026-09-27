@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { join } from 'node:path';
 
 /*
@@ -42,7 +43,6 @@ const KNOWN_CLEARTEXT: readonly string[] = [
   'http://bastiat.org/en/twisatwins.html',
   'http://coin.wne.uw.edu.pl/wincenciak/docs/makro_zaawansowana/lecture_3.pdf',
   'http://exploresel.gse.harvard.edu/frameworks/4/',
-  'http://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf',
   'http://henryjenkins.org/blog/2009/02/if_it_doesnt_spread_its_dead_p_1.html',
   'http://piketty.pse.ens.fr/files/Barro91.pdf',
   'http://piketty.pse.ens.fr/files/BarroSalaIMartin2004Chap1-2.pdf',
@@ -63,7 +63,7 @@ const KNOWN_CLEARTEXT: readonly string[] = [
 ];
 
 function dataFiles(dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const full = join(dir, name);
     if (statSync(full).isDirectory()) {
       if (name !== '__tests__' && name !== 'node_modules') dataFiles(full, out);
@@ -84,7 +84,7 @@ export function citationUrls(text: string): string[] {
 const allUrls = (): string[] => {
   const out: string[] = [];
   for (const f of [...dataFiles('src/renderer/data'), ...dataFiles('src/shared')]) {
-    out.push(...citationUrls(readFileSync(f, 'utf8')));
+    out.push(...citationUrls(readOriginalSource(f)));
   }
   return out;
 };

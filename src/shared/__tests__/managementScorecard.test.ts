@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  VERDICT_LABEL,
+  VERDICT_UNSCORED_LABEL,
   buildManagementScorecard,
+  verdictLabel,
   compareToIndustry,
   prioritizeWeaknesses,
   scoreTrend,
@@ -10,11 +13,54 @@ import {
 } from '../managementScorecard';
 
 describe('buildManagementScorecard', () => {
-  it('scores an empty input as 0 / poor with all categories null', () => {
+  /**
+   * **★ 何も測っていない入力を「0 点 · 要改善」と採点しない (2026-09-08)。**
+   *
+   * この検査は 2026-09-08 まで **`scores an empty input as 0 / poor with all
+   * categories null`** という**名前で**欠陥を仕様として固定していた ——
+   * そして**次の行で「全カテゴリが null」を主張していた。**
+   * 採点できた軸が 0 件だと分かっているのに、集約だけが 0 になっていた。
+   *
+   * 0 は `verdict` を通って「要改善」になり、
+   * `bankSubmission.ts` の**金融機関等提出用の書面**へ
+   * 「総合スコア 0／100 ／ 評価 要改善」として印字され、
+   * `managementReport.ts` の**役員会・銀行・税理士向けレポート**にも載っていた。
+   *
+   * 規準は**このファイルの下** (`weightedOverallScore`) に在った ——
+   * 同じ条件で `score: null` / `verdict: null` を返すと doc に明記してある。
+   */
+  it('★ 採点できる指標が無ければ未算定 (0 点・要改善と言わない)', () => {
     const r = buildManagementScorecard({});
+    // 直す前は 0 / 'poor' だった
+    expect(r.overallScore).toBeNull();
+    expect(r.verdict).toBeNull();
+    expect(r.categories.every((c) => c.score === null)).toBe(true);
+    // 警告は元から `scored` だけを回していたので 0 件 (ここは正しかった)。
+    expect(r.alerts).toEqual([]);
+  });
+
+  it('★ 対照: 1 つでも指標が在れば数と判定が出る (床が邪魔をしない)', () => {
+    const r = buildManagementScorecard({ operatingMarginPct: 8 });
+    expect(r.overallScore).toBe(80);
+    expect(r.verdict).toBe('excellent');
+  });
+
+  it('★ 未算定と「本当に 0 点」は別 (0 点は判定を出す)', () => {
+    // **床は「測っていない」だけに当てる。** 実測して 0 点なら要改善で正しい。
+    const r = buildManagementScorecard({ operatingMarginPct: 0, grossMarginPct: 0 });
     expect(r.overallScore).toBe(0);
     expect(r.verdict).toBe('poor');
-    expect(r.categories.every((c) => c.score === null)).toBe(true);
+    expect(r.alerts.length).toBeGreaterThan(0);
+  });
+
+  it('★ 表示語を決める場所は 1 つ (verdictLabel が null も扱う)', () => {
+    // 4 か所が `VERDICT_LABEL[scorecard.verdict]` を直に引いていたので、
+    // `null` の分岐を写せば言葉が揺れる。関数に寄せた。
+    expect(verdictLabel(null)).toBe(VERDICT_UNSCORED_LABEL);
+    expect(verdictLabel('poor')).toBe('要改善');
+    expect(verdictLabel('excellent')).toBe('優良');
+    // 4 段階すべてに表示語が在る (欄が増えたら型で落ちる)。
+    expect(Object.keys(VERDICT_LABEL).sort()).toEqual(['caution', 'excellent', 'good', 'poor']);
   });
 
   it('maps a strong business to a high overall score / excellent', () => {

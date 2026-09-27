@@ -36,10 +36,10 @@ aliases:
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同じ思想家
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — 同じ思想家
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同じ思想家
 - [[econ-coase-conjecture|コースの推測（耐久財独占）]] — 同じ思想家
-- [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

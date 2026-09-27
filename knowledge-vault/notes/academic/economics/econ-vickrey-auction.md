@@ -40,7 +40,7 @@ aliases:
 - [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
 - [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — 同じ思想家
 - [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
-- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
+- [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

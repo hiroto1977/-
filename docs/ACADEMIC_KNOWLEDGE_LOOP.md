@@ -97,15 +97,14 @@ done
 #### academicKnowledge.ts
 末尾の `];\n// Stryker restore all` 直前に 6 エントリを挿入。
 
-#### docs/ACADEMIC_KNOWLEDGE.md
-フッター行「出典 URL は…」の直前に 6 行の表データを挿入:
-```markdown
-| 分野 | 概念 | 提唱者・初出 |
-```
+#### docs/ACADEMIC_KNOWLEDGE.md（自動生成）
+`npm run knowledge:md` で表を本体から再生成する（2026-09-05 から手で追記しない。`vault:check` が
+「再生成した表 == committed」を検証する）。
 
 ### ステップ 6: 品質ゲート（全 green 必須）
 
 ```bash
+npm run knowledge:md         # 概念表を本体から再生成（vault:check が検証）
 npm run vault:build          # vault 生成（1回目）
 npm run vault:build          # vault 生成（2回目、ドリフト安定性確認）
 npm run typecheck            # tsc -b --noEmit --force
@@ -229,7 +228,7 @@ grep -c "キーワード" src/renderer/data/academicKnowledge.ts
 |---------|------|---------------|
 | `docs/ACADEMIC_KNOWLEDGE_LOOP.md` | 本書（運用仕様） | 手順変更時 |
 | `docs/BATCH_APPEND_SPECIFICATION.md` | 機械可読 AI エージェント向け詳細仕様 | 手順変更時 |
-| `docs/ACADEMIC_KNOWLEDGE.md` | 概念の要約表（各バッチ 6 行追記） | 毎バッチ |
+| `docs/ACADEMIC_KNOWLEDGE.md` | 概念の要約表（`npm run knowledge:md` で自動生成） | 毎バッチ（再生成） |
 | `docs/SESSION_HANDOFF.md` | セッション引継ぎ（進行中タスク状態） | 毎セッション終了時 |
 | `docs/KNOWLEDGE_VAULT.md` | Obsidian Vault の仕組み | Vault 仕様変更時 |
 | `src/renderer/data/academicKnowledge.ts` | データ本体（SSOT） | 毎バッチ |

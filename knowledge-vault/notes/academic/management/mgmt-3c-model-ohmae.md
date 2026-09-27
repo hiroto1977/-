@@ -26,7 +26,7 @@ aliases:
 大前研一 ／ マイケル・ポーター ／ セオドア・レビット ／ ヘンリー・ミンツバーグ
 
 ## 出典
-- [Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/8170169) `学術`
+- [Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/8170169) `リファレンス`
 - [Wikipedia: 3Cs model — Ohmae, customer/company/competition, strategic triangle](https://en.wikipedia.org/wiki/3C%27s_model) `リファレンス`
 - [MindTools — Ohmae's 3Cs Model](https://www.mindtools.com/avi3qka/ohmaes-3cs-model/) `リファレンス`
 - [一般社団法人日本経営心理士協会 — 3C分析](https://keiei-shinri.or.jp/word/3c/) `リファレンス`
@@ -40,8 +40,8 @@ aliases:
 - [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
 - [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
-- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 同じ思想家
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -15,6 +15,7 @@ import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { bonusWithholdingTax, publicTransportCommute } from '../../../shared/payroll';
 import { jpy } from '../../../shared/formatters';
+import { waitForText } from '../../__tests__/jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -101,11 +102,20 @@ describe('チームページ — 給与計算の入力欄は黙って 0 にし�
     expect(q.stat('公共交通: 非課税')).toBe(jpy(publicTransportCommute(160_000).nonTaxable));
   });
 
-  it('読めない値は fatal の文言と aria-invalid で知らせ、税額は 0 になる', async () => {
+  it('読めない値は fatal の文言と aria-invalid で知らせ、税額は算定しない', async () => {
     await type('賞与額 (円)', '百');
     expect(q.input('賞与額 (円)').getAttribute('aria-invalid')).toBe('true');
-    expect(q.guardText('賞与額 (円)')).toContain('「百」を数値として読み取れません。0 円 として計算されています。');
-    expect(q.stat('源泉徴収税額')).toBe(jpy(0));
+    // 欄の文は画面の扱いどおりに「判定を出さない」と言う (パス 493l)
+    expect(q.guardText('賞与額 (円)')).toContain('「百」を数値として読み取れません。直すまで、この欄を使う判定は出していません。');
+    expect(q.guardText('賞与額 (円)')).not.toContain('として計算されています');
+    // **パス 213 で `¥0` から「算定していません」へ変えた。** それまでこの検査は
+    // 「税額は 0 になる」を留めていた —— つまり**欠陥を仕様として固定していた**。
+    // 読めない賞与額から源泉徴収税額 ¥0 を出すのは「源泉徴収しなくてよい」と
+    // 読めるので、段ごと断る (`PAYROLL_READS.bonus`)。
+    expect(() => q.stat('源泉徴収税額')).toThrow('not found');
+    await waitForText(() => container.querySelector('[data-refused-fields]')?.textContent ?? '', '賞与額 (円)');
+    // パス 213 が残した「文言の 0 の句はこの欄について既に正しくない」はパス 493l で閉じた ——
+    // 表を `refusingSpecs('judgement')` で包み、関門がその宣言に従って結果を選ぶ。
   });
 
   it('単位語つき (50万) は単位を外すよう促す', async () => {
@@ -122,8 +132,11 @@ describe('チームページ — 給与計算の入力欄は黙って 0 にし�
   });
 
   it('マイカー片道は km の単位で言い、0 km (マイカー通勤なし) は通す', async () => {
+    // 単位語は桁の尋ねに出る。読めない値の文は単位ではなく結果 (判定を出さない) を言う (パス 493l)
+    await type('マイカー片道 (km)', '1500');
+    expect(q.guardText('マイカー片道 (km)')).toContain('1,500 km は想定の範囲を超えています。');
     await type('マイカー片道 (km)', 'abc');
-    expect(q.guardText('マイカー片道 (km)')).toContain('0 km として計算されています。');
+    expect(q.guardText('マイカー片道 (km)')).toContain('「abc」を数値として読み取れません。直すまで、この欄を使う判定は出していません。');
     await type('マイカー片道 (km)', '0');
     expect(q.input('マイカー片道 (km)').getAttribute('data-guard')).toBe('ok');
     expect(q.stat('マイカー: 非課税限度/月')).toBe(jpy(0));

@@ -31,9 +31,8 @@ C. Thi Nguyen／Cass R. Sunstein／Eli Pariser／Kathleen Hall Jamieson／Joseph
 - [Jamieson & Cappella (2008) Echo Chamber: Rush Limbaugh and the Conservative Media Establishment, Oxford UP](https://doi.org/10.1093/acprof:oso/9780195398601.001.0001) `学術`
 
 ## 関連概念
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
-- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同分野の近傍
 - [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]] — 同分野の近傍
+- [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -51,12 +51,12 @@ export function calcCasualIncome(
   expenses = 0,
   specialDeductionCap = CASUAL_INCOME_SPECIAL_DEDUCTION,
 ): CasualIncomeResult {
-  const gross = Math.max(0, grossIncome);
-  const cost = Math.max(0, expenses);
+  const gross = nonNeg(grossIncome);
+  const cost = nonNeg(expenses);
   // 特別控除前の利益 (収入 − 経費)。
   const profit = Math.max(0, gross - cost);
   // 特別控除は利益額が上限 (最高50万円)。
-  const specialDeduction = Math.min(Math.max(0, specialDeductionCap), profit);
+  const specialDeduction = Math.min(nonNeg(specialDeductionCap), profit);
   const casualIncome = Math.max(0, profit - specialDeduction);
   return {
     grossIncome: gross,

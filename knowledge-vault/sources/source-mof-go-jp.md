@@ -2,7 +2,7 @@
 title: "mof.go.jp"
 type: source-domain
 host: "mof.go.jp"
-cite_count: 24
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mof.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **24 件**（公的 24）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（公的 26）
 
 ## このドメインを出典とする項目
 
@@ -28,10 +28,12 @@ tags:
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 財務省令和7年度税制改正の大綱（軽減税率特例の延長）
 - [[tax-customs-duty|関税（輸入品に課される国税）]] — 財務省わが国の関税制度の概要
 - [[tax-defense-special-corporate|防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）]] — 財務省令和7年度税制改正防衛力強化に係る財源確保のための税制措置
+- [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 財務省令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]] — 財務省所得税の定額減税の意義と実施方法
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]] — 財務省令和5年度税制改正国際課税
 - [[tax-income-tax-progressive|所得税の超過累進税率]] — 財務省所得税の税率構造
 - [[tax-liquor-tax|酒税の概要]] — 財務省酒税に関する資料
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 財務省令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）
 - [[tax-platform-taxation-digital|国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）]] — 財務省国境を越えたデジタルサービスに対する消費税の課税のあり方
 - [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 財務省令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 財務省総額表示FAQ

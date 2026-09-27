@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同じ思想家
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同じ思想家
 - [[human-embodied-cognition-theory|身体化された認知]] — 同分野の近傍

@@ -31,6 +31,7 @@ P.コトラー／リーダー・チャレンジャー・フォロワー・ニッ
 - [野村総合研究所（NRI）用語解説「コトラーの競争地位戦略」](https://www.nri.com/jp/knowledge/glossary/kotlers_compe.html) `リファレンス`
 
 ## 関連概念
+- [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]] — 出典を共有
 - [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 同分野の近傍
 - [[mgmt-stp-marketing|STPマーケティング]] — 同分野の近傍
 

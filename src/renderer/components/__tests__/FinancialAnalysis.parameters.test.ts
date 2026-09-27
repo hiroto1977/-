@@ -29,11 +29,12 @@ describe('FinancialAnalysis — 法人税等の率と事業者の消費税 (台�
     const b = calcCorporateTax(fin.ordinaryProfit);
     expect(html).toContain(`法人税: ${yen.format(b.corporateIncomeTax)}`);
     expect(html).toContain('売上税額 × 20%');
+    expect(html).toContain('売上税額 × 30%（個人事業者・令和9年分・令和10年分）');
   });
 
   it('率を渡すと法人税カードの各項目が動き、2 割特例の割合の文言も動く', () => {
     const corporateTaxRates = { ...DEFAULT_CORPORATE_TAX_RATES, reducedRate: 0.1, standardRate: 0.3, localCorpTaxRate: 0.2 };
-    const businessConsumption = { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, twentyPercentRate: 0.3, simplifiedEligibilityThreshold: 10_000_000 };
+    const businessConsumption = { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, twentyPercentRate: 0.3, thirtyPercentRate: 0.45, simplifiedEligibilityThreshold: 10_000_000 };
     const html = renderToStaticMarkup(createElement(FinancialAnalysis, { units: [UNIT], corporateTaxRates, businessConsumption }));
     const fin = deriveBusinessFinancials(UNIT.current);
     const b = calcCorporateTax(fin.ordinaryProfit, {}, corporateTaxRates);
@@ -41,6 +42,10 @@ describe('FinancialAnalysis — 法人税等の率と事業者の消費税 (台�
     expect(html).toContain(`法人税: ${yen.format(b.corporateIncomeTax)}`);
     expect(html).toContain(`地方法人税: ${yen.format(b.localCorporateTax)}`);
     expect(html).toContain('売上税額 × 30%');
+    expect(html).not.toContain('売上税額 × 20%');
+    // 3 割特例の割合 (パス 141) は別の欄 —— 2 割特例の 30% と混ざらない。
+    expect(html).toContain('売上税額 × 45%（個人事業者・令和9年分・令和10年分）');
+    expect(html).not.toContain('売上税額 × 30%（個人事業者');
     // 簡易課税の境目を年商より下げると「選択不可」の注記がその額で出る。
     expect(html).toContain(`基準期間${yen.format(10_000_000)}超は選択不可`);
   });

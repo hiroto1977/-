@@ -21,6 +21,13 @@ export interface IndustryPreset {
   readonly thresholds: HighlightThresholds;
 }
 
+/*
+ * **業種で変える根拠の無い欄は既定値のまま** (2026-09-27 · パス 493c)。各プリセットは
+ * 既定を広げてから、業種の知見がある欄だけを書き換える —— 予算未達の許容幅
+ * (`budgetShortfallWarnPct`) は業種ではなく経営の方針なので、どの業種も既定 (90) を持つ。
+ * 欄を手で全部並べる形だと、しきい値を 1 つ足すたびに 4 つのプリセットへ根拠の無い数を
+ * 書くことになる (書き忘れれば型が落とすが、書けば「業種の目安」を名乗る根拠の無い数になる)。
+ */
 export const INDUSTRY_PRESETS: readonly IndustryPreset[] = [
   {
     id: 'default',
@@ -33,6 +40,7 @@ export const INDUSTRY_PRESETS: readonly IndustryPreset[] = [
     label: '小売・EC',
     note: '原価率が高く労働分配率は低め。季節変動があるため連続下落は長めに見る。',
     thresholds: {
+      ...DEFAULT_HIGHLIGHT_THRESHOLDS,
       declineWarnStreak: 3,
       declineCriticalStreak: 4,
       laborShareWarnPct: 45,
@@ -44,6 +52,7 @@ export const INDUSTRY_PRESETS: readonly IndustryPreset[] = [
     label: '製造',
     note: '設備・原価の比重が大きく、特定取引先への依存が起きやすい。',
     thresholds: {
+      ...DEFAULT_HIGHLIGHT_THRESHOLDS,
       declineWarnStreak: 2,
       declineCriticalStreak: 3,
       laborShareWarnPct: 50,
@@ -55,6 +64,7 @@ export const INDUSTRY_PRESETS: readonly IndustryPreset[] = [
     label: 'SaaS・IT',
     note: '人件費比率が高く、解約は早期に効くため連続下落を短く検知。',
     thresholds: {
+      ...DEFAULT_HIGHLIGHT_THRESHOLDS,
       declineWarnStreak: 2,
       declineCriticalStreak: 3,
       laborShareWarnPct: 70,
@@ -66,6 +76,7 @@ export const INDUSTRY_PRESETS: readonly IndustryPreset[] = [
     label: 'サービス・士業',
     note: '労働集約的で人件費比率が高い。少数顧客への依存に注意。',
     thresholds: {
+      ...DEFAULT_HIGHLIGHT_THRESHOLDS,
       declineWarnStreak: 2,
       declineCriticalStreak: 3,
       laborShareWarnPct: 75,

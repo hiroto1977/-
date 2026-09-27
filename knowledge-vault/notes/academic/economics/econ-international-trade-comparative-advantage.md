@@ -26,7 +26,7 @@ aliases:
 デイヴィッド・リカード ／ エリー・ヘクシャー ／ ベルティル・オリーン ／ ポール・クルーグマン
 
 ## 出典
-- [Ricardo, D. (1817) On the Principles of Political Economy and Taxation — Library of Economics and Liberty](https://www.econlib.org/library/Ricardo/ricP.html) `学術`
+- [Ricardo, D. (1817) On the Principles of Political Economy and Taxation — Library of Economics and Liberty](https://www.econlib.org/library/Ricardo/ricP.html) `リファレンス`
 - [WTO (2005) Comparative Advantage and the Pattern of Trade — WTO Research Paper](https://www.wto.org/english/res_e/reser_e/gtdw_e/wkshop05_e/kim05_e.pdf) `リファレンス`
 - [Wikipedia: 比較優位 — リカードとH-O定理の解説](https://ja.wikipedia.org/wiki/%E6%AF%94%E8%BC%83%E5%84%AA%E4%BD%8D) `リファレンス`
 

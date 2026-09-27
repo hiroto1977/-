@@ -72,6 +72,11 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { reportGroupFloor } = require('./lib/population-floor.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
+
+/** 走査の結果の側で「どれも 1 件以上」を要求する群 (`audit:gate-floors --partial` がここを読む)。 */
+const REQUIRED_GROUPS = { exts: ['.ts', '.tsx', '.cjs'], roots: ['src', 'scripts', 'orchestration'] };
 const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -145,11 +150,28 @@ const VENDOR_ID_SHAPES = [
 ];
 
 
+/**
+ * 走査の条件。**走査と `CROSS_CHECK` が同じ綴りを読む** (2026-09-25 · パス 471) ——
+ * 条件を 2 か所に書くと、片方だけを直した日に照合が静かに古びる。
+ */
+const SKIP_DIRS = new Set(['node_modules', '__tests__']);
+/**
+ * 「追跡されていてこの条件に合うファイルは、どれも走査されている」を見る (割合に依らない)。
+ * 見るのは**ソース側の母集団** (`SCANNED_DIRS` × `SRC_EXTS`) —— 見本側 (`DATA_DIR`) は
+ * その部分集合なので、こちらが生きていれば同じ歩きが生きている。
+ */
+const CROSS_CHECK = {
+  roots: ['src', 'scripts', 'orchestration'],
+  skipDirs: SKIP_DIRS,
+  accept: (name) => SRC_EXTS.test(name),
+  ignore: [path.relative(REPO_ROOT, __filename)],
+};
+
 function listFiles(dir, exts = /\.tsx?$/) {
   if (!fs.existsSync(dir)) return [];
   const out = [];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (e.name === 'node_modules' || e.name === '__tests__') continue;
+    if (SKIP_DIRS.has(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) out.push(...listFiles(p, exts));
     // この門自身は除く。自己検査は「鳴るべき形」を標本として抱えているので、
@@ -175,7 +197,10 @@ function ownerIdentifiers(pkgJson) {
  * 増えたときに黙る —— このリポジトリで何度も踏んだ形なので、
  * 一覧は必ず実物から数え直して突き合わせる。
  */
-function bundledJsonImports(srcDir = path.join(REPO_ROOT, 'src')) {
+function bundledJsonImports(srcDir = path.join(REPO_ROOT, 'src'), repoRoot = REPO_ROOT) {
+  // `repoRoot` は 2026-09-17 (パス 302) に足した —— 成果物の鮮度検査
+  // (`scripts/lib/artifact-freshness.cjs`) が「束に入る JSON のうち src/ の外に在る物」を
+  // 同じ走査で数えるため。検査は仮の repo で回すので、相対パスの基準を渡せる必要がある。
   const found = new Set();
   const FROM = /(?:from|require\()\s*['"]([^'"]+\.json)['"]/g;
   for (const file of listFiles(srcDir, /\.tsx?$/)) {
@@ -185,7 +210,7 @@ function bundledJsonImports(srcDir = path.join(REPO_ROOT, 'src')) {
     while ((m = FROM.exec(text)) !== null) {
       const spec = m[1];
       if (!spec.startsWith('.')) continue; // パッケージ内の JSON は対象外
-      found.add(path.relative(REPO_ROOT, path.resolve(path.dirname(file), spec)));
+      found.add(path.relative(repoRoot, path.resolve(path.dirname(file), spec)));
     }
   }
   return [...found].sort();
@@ -526,15 +551,44 @@ function main(argv) {
     ...listFiles(DATA_DIR, DATA_EXTS),
     ...ledgered.map((rel) => path.join(REPO_ROOT, rel)).filter((p) => fs.existsSync(p)),
   ].map(read);
-  const srcFiles = SCANNED_DIRS.flatMap((d) => listFiles(d, SRC_EXTS)).map(read);
+  const srcPaths = SCANNED_DIRS.flatMap((d) => listFiles(d, SRC_EXTS));
+  const srcFiles = srcPaths.map(read);
   problems.push(...check({ srcFiles, dataFiles, owner }));
   console.log(
     `見本データ ${dataFiles.length} ファイル (うち出荷 JSON ${ledgered.length}) / ` +
       `ソース・スクリプト ${srcFiles.length} ファイルを検査 ` +
       `(持ち主の識別子 / example 以外のメール / 到達しうる ID・台帳 ${Object.keys(EMAIL_ALLOW).length} 件)`,
   );
+  // 走査が死んで 0 件になったのを「混ざっていない」と読まない
+  // (実測 見本 279 / ソース 629 ファイル、2026-09-25)。
+  // ★ **2 つの母集団を別々に見る** —— パス 468 の実測では SCANNED_DIRS を空にすると
+  //   「ソース・スクリプト 0 ファイル」と刷ったうえで ✅ で通った。見本の側 (279) は
+  //   生きていたので、合計だけを床にすると片側が死んでも気づけない。
+  // ★ **合計の床は「一部だけ死んだ走査」を見ない** (2026-09-25 · パス 469 の実測) ——
+  //   `readdirSync` から `scripts/` (102 件) や `orchestration/` を丸ごと落としても
+  //   1,452 → 1,350 / 1,442 件で、床 300 は素通りした。**パス 468 で 2 つの母集団を
+  //   分けたのと同じ理由が、1 つの母集団の「中」にも当てはまる。**
+  //   `.js` / `.mjs` は今日 0 件なので宣言しない (正当に 0 になる群に床を置かない · パス 467)。
+  if (reportGroupFloor(srcPaths, REQUIRED_GROUPS, REPO_ROOT, 'lint:sample-data') !== 0) return 1;
+  // ★ **群ごとの床も「一様に間引かれた走査」を見ない** (2026-09-25 · パス 471 の実測) ——
+  //   このゲートは**半分落としても ✅ exit 0** だった (床 300 に対し 730 件)。
+  const cross = reportTrackedCrossCheck(srcPaths, CROSS_CHECK, REPO_ROOT, 'lint:sample-data');
+  if (cross.code !== 0) return 1;
+  const FLOORS = [
+    ['見本データ', dataFiles.length, 100],
+    ['ソース・スクリプト', srcFiles.length, 300],
+  ];
+  for (const [what, got, floor] of FLOORS) {
+    if (got < floor) {
+      console.error(
+        `❌ ${what}を ${got} ファイルしか走査できませんでした (${floor} 件以上を期待)。`
+        + ' 走査が壊れています —— 0 件でも「実在の個人データは混ざっていません」になるため落とします。',
+      );
+      return 1;
+    }
+  }
   if (problems.length === 0) {
-    console.log('✅ 見本データに実在の個人データは混ざっていません');
+    console.log(`✅ 見本データに実在の個人データは混ざっていません (${crossCheckSuffix(cross.source)})`);
     return 0;
   }
   console.error(`❌ ${problems.length} 件:`);
@@ -542,6 +596,6 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { check, checkArtifacts, ownerIdentifiers, bundledJsonImports, EMAIL_ALLOW, VENDOR_ID_SHAPES, BUNDLED_JSON, SRC_EXTS, DATA_EXTS };
+module.exports = { check, checkArtifacts, ownerIdentifiers, bundledJsonImports, EMAIL_ALLOW, VENDOR_ID_SHAPES, BUNDLED_JSON, SRC_EXTS, DATA_EXTS, REQUIRED_GROUPS, CROSS_CHECK };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));

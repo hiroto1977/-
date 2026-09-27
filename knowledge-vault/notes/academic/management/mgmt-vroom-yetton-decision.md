@@ -26,7 +26,7 @@ aliases:
 ヴィクター・ブルーム ／ フィリップ・イェットン ／ アーサー・ジャゴ ／ ロバート・タンネンバウム
 
 ## 出典
-- [Vroom, V.H. & Yetton, P.W. (1973) Leadership and Decision-Making — University of Pittsburgh Press (WorldCat)](https://www.worldcat.org/oclc/759939) `学術`
+- [Vroom, V.H. & Yetton, P.W. (1973) Leadership and Decision-Making — University of Pittsburgh Press (WorldCat)](https://www.worldcat.org/oclc/759939) `リファレンス`
 - [Wikipedia: Vroom–Yetton decision model — five decision styles, decision tree, participation, normative](https://en.wikipedia.org/wiki/Vroom%E2%80%93Yetton_decision_model) `リファレンス`
 
 ## 関連概念

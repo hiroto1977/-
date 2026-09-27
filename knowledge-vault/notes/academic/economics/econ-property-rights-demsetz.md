@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
-- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化（ノース）——制度は人間が考案した「ゲームのルール」であり、取引費用と経路依存性を通じて経済パフォーマンスの長期的な差を生む]] — 同じ思想家
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家

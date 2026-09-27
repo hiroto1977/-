@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Britannica Money — Dynamic Pricing & Surge Pricing: How Does It Work?](https://www.britannica.com/money/what-is-dynamic-pricing) `リファレンス`
-- [EBSCO Research Starters (Business and Management) — Dynamic pricing (surge pricing)](https://www.ebsco.com/research-starters/business-and-management/dynamic-pricing-surge-pricing) `学術`
+- [EBSCO Research Starters (Business and Management) — Dynamic pricing (surge pricing)](https://www.ebsco.com/research-starters/business-and-management/dynamic-pricing-surge-pricing) `リファレンス`
 - [Wikipedia — Dynamic pricing](https://en.wikipedia.org/wiki/Dynamic_pricing) `リファレンス`
 - [Rice University, Kinder Institute — Why Do Consumers Hate Uber’s Surge Pricing?（公平感の問題）](https://kinder.rice.edu/urbanedge/why-do-consumers-hate-ubers-surge-pricing) `学術`
 

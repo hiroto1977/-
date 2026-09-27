@@ -26,15 +26,14 @@ aliases:
 クレイグ・ピアース ／ ジェイ・コンガー ／ チャールズ・マンツ ／ ヘンリー・シムズ
 
 ## 出典
-- [Pearce, C.L. & Conger, J.A. (2003) Shared Leadership: Reframing the Hows and Whys of Leadership — Sage (WorldCat)](https://www.worldcat.org/oclc/49942939) `学術`
+- [Pearce, C.L. & Conger, J.A. (2003) Shared Leadership: Reframing the Hows and Whys of Leadership — Sage (WorldCat)](https://www.worldcat.org/oclc/49942939) `リファレンス`
 - [Wikipedia: Shared leadership — Pearce & Conger, distributed influence, rotating leadership, knowledge work](https://en.wikipedia.org/wiki/Shared_leadership) `リファレンス`
 
 ## 関連概念
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同じ思想家
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同じ思想家
-- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同分野の近傍
-- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]] — 同分野の近傍
 - [[mgmt-romance-of-leadership-meindl|リーダーシップの幻想——成果をリーダーに帰属させる認知的傾向]] — 同分野の近傍
+- [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

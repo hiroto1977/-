@@ -13,20 +13,20 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
+- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 31）
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 29）
-- [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 28）
-- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
-- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 24）
-- [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 24）
-- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 21）
-- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 20）
-- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 20）
-- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 19）
+- [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 25）
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 25）
+- [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 25）
+- [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 22）
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 22）
+- [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 21）
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]]（接続 20）
+- [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 19）
+- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 18）
 - [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 18）
-- [[tax-automobile-tax|自動車税（種別割）]]（接続 17）
-- [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 17）
-- [[tax-city-planning-tax|都市計画税]]（接続 16）
-- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 16）
+- [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 18）
+- [[tax-automobile-tax|自動車税（種別割）]]（接続 16）
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]（接続 16）
 
 ## 第 2 部 — 年代順の展開
@@ -45,6 +45,7 @@ tags:
 - [[tax-business-premise-tax|事業所税（地方税・目的税）]]
 - [[tax-business-succession|法人版事業承継税制（特例措置）]]
 - [[tax-cfc-taxation|外国子会社合算税制（タックスヘイブン対策税制／CFC税制）]]
+- [[tax-city-planning-tax|都市計画税]]
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]]
 - [[tax-consumption-final-return|消費税の確定申告・納付期限]]
 - [[tax-consumption-interim|消費税の中間申告・中間納付]]
@@ -97,7 +98,6 @@ tags:
 - [[tax-listed-securities|上場株式等の譲渡益・配当に対する課税]]
 - [[tax-loss-carryforward|青色申告法人の繰越欠損金]]
 - [[tax-loss-offsetting|所得税の損益通算]]
-- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]]
 - [[tax-medical-expense-deduction|医療費控除]]
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]]
 - [[tax-nisa|NISA（少額投資非課税制度）]]

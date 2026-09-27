@@ -7,6 +7,10 @@ import {
   readBodyWithCap,
   withBodyDeadline,
   withTimeout,
+  egressInit,
+  isRedirectResponse,
+  redirectRefusal,
+  REDIRECT_STATUSES,
 } from '../httpLimits';
 
 /*
@@ -428,5 +432,115 @@ describe('isOverCap — 上限超過とそれ以外を分ける', () => {
     expect(isOverCap('ollama response too large')).toBe(false);
     expect(isOverCap(null)).toBe(false);
     expect(isOverCap(undefined)).toBe(false);
+  });
+});
+
+/*
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * 送り先の関門 (`lint:network-targets` / §3.3 / 各 endpoint の検証) は
+ * **最初の 1 ホップ**しか見ない。`fetch` の既定 `redirect: 'follow'` だと、
+ * 相手の `302 Location:` 1 つで検査していない先へ取りに行く。規則は
+ * `httpLimits.ts` に 1 つ、呼び出し側 12 か所は `egressRedirectCensus.test.ts`。
+ */
+describe('egressInit / isRedirectResponse / redirectRefusal — 転送に追随しない (パス 301)', () => {
+  it('★ egressInit は redirect: manual を重ね、他の欄は変えない', () => {
+    const signal = new AbortController().signal;
+    const out = egressInit({ method: 'POST', headers: { a: 'b' }, signal });
+    expect(out.redirect).toBe('manual');
+    expect(out.method).toBe('POST');
+    expect(out.headers).toEqual({ a: 'b' });
+    expect(out.signal).toBe(signal);
+  });
+
+  it('★ egressInit は手書きの redirect を上書きする (follow を持ち込ませない)', () => {
+    expect(egressInit({ redirect: 'follow' } as RequestInit).redirect).toBe('manual');
+  });
+
+  /*
+   * パス 304: `mode: 'no-cors'` だけは 'follow' を明示する。Fetch 標準の main fetch は
+   * 「no-cors で redirect が follow でなければ network error」で、chromium の実測は
+   * `TypeError: Failed to fetch`。undici は CORS を実装しないので同じ呼び出しが 200 で
+   * 通る —— だから**ブラウザの規則を写した fetch** を標本にして、この検査が undici の
+   * 寛容さに乗って緑にならないようにする。
+   */
+  it('★ mode: no-cors だけは follow を明示する (no-cors + manual はブラウザで network error)', () => {
+    const out = egressInit({ mode: 'no-cors', cache: 'no-store' });
+    expect(out.redirect).toBe('follow');
+    expect(out.mode).toBe('no-cors');
+    expect(out.cache).toBe('no-store');
+  });
+
+  it.each(['cors', 'same-origin', undefined] as const)('★ mode=%s は manual のまま (例外は no-cors の 1 形だけ)', (mode) => {
+    expect(egressInit(mode === undefined ? {} : { mode }).redirect).toBe('manual');
+  });
+
+  it('★ 針の標本 — ブラウザの規則を写した fetch は no-cors + manual を落とし、egressInit の出力は通す', async () => {
+    const browserLike = async (_url: string, init: RequestInit): Promise<Response> => {
+      if (init.mode === 'no-cors' && (init.redirect ?? 'follow') !== 'follow') throw new TypeError('Failed to fetch');
+      return new Response(null, { status: 204 });
+    };
+    const url = 'http://127.0.0.1:11434/api/version';
+    // 標本: 写した規則は本当に落とす (これが無いと、この検査は寛容な fetch でも通る)
+    await expect(browserLike(url, { mode: 'no-cors', redirect: 'manual' })).rejects.toThrow('Failed to fetch');
+    await expect(browserLike(url, egressInit({ mode: 'no-cors' }))).resolves.toBeInstanceOf(Response);
+    await expect(browserLike(url, egressInit({}))).resolves.toBeInstanceOf(Response);
+  });
+
+  it.each([301, 302, 303, 307, 308])('★ %s は転送', (status) => {
+    expect(isRedirectResponse(new Response(null, { status, headers: { location: 'https://x.example/' } }))).toBe(true);
+    expect(REDIRECT_STATUSES.has(status)).toBe(true);
+  });
+
+  it.each([200, 201, 204, 300, 304, 400, 404, 500])('対照 — %s は転送ではない', (status) => {
+    // `new Response` は 2xx / 4xx / 5xx しか許さないので、3xx は同じ形の値で置く。
+    const res =
+      status >= 200 && status <= 599 && ![300, 304].includes(status)
+        ? new Response(null, { status })
+        : ({ status, type: 'default', headers: new Headers() } as unknown as Response);
+    expect(isRedirectResponse(res)).toBe(false);
+    expect(REDIRECT_STATUSES.has(status)).toBe(false);
+  });
+
+  it('★ ブラウザの opaqueredirect (status 0・ヘッダ無し) も転送', () => {
+    const opaque = { type: 'opaqueredirect', status: 0, headers: new Headers() } as unknown as Response;
+    expect(isRedirectResponse(opaque)).toBe(true);
+    // 行き先は見えないので、文は行き先を述べない
+    const msg = redirectRefusal(opaque, 'https://proxy.example/relay', 'proxy');
+    expect(msg).toContain('proxy が別の場所へ転送しようとしました');
+    expect(msg).not.toMatch(/別の場所 \(/);
+  });
+
+  it('★ 断り文は Location のホストだけを述べる (パス・クエリ・認証情報は載せない)', () => {
+    const res = {
+      type: 'default',
+      status: 302,
+      headers: new Headers({ location: 'https://user:pass@evil.example/steal?token=sk-abc' }),
+    } as unknown as Response;
+    const msg = redirectRefusal(res, 'https://api.example.com/v1/x', 'github');
+    expect(msg).toContain('github が別の場所 (evil.example) へ転送しようとしました');
+    expect(msg).not.toContain('sk-abc');
+    expect(msg).not.toContain('/steal');
+    expect(msg).not.toContain('user:pass');
+  });
+
+  it('★ 相対 Location は要求 URL で解く', () => {
+    const res = {
+      type: 'default',
+      status: 301,
+      headers: new Headers({ location: '/moved' }),
+    } as unknown as Response;
+    expect(redirectRefusal(res, 'https://api.github.com/repos/a/b/issues', 'github')).toContain(
+      '(api.github.com)',
+    );
+  });
+
+  it('Location が無い・解けない転送は行き先を述べない', () => {
+    const none = { type: 'default', status: 302, headers: new Headers() } as unknown as Response;
+    expect(redirectRefusal(none, 'https://a.example/', 'x')).toBe(
+      'x が別の場所へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)',
+    );
+    const broken = { type: 'default', status: 302, headers: new Headers({ location: 'http://[' }) } as unknown as Response;
+    expect(redirectRefusal(broken, 'not a url', 'x')).not.toMatch(/別の場所 \(/);
   });
 });

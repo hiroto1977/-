@@ -15,7 +15,20 @@ describe('parseAmountInput', () => {
 
   it('strips thousands separators', () => {
     expect(parseAmountInput('1,200,000')).toEqual({ ok: true, value: 1_200_000 });
-    expect(parseAmountInput('12 000')).toEqual({ ok: true, value: 12_000 });
+  });
+
+  /**
+   * **空白区切りの桁は読まない** (2026-09-21 · パス 375 で変更)。
+   *
+   * 2026-09-21 までこの機能を `{ ok: true, value: 12_000 }` として留めていたが、
+   * それは `shared/readNumeric.ts` が 2026-09-06 に**欠陥として実測した形**である:
+   * 「桁区切りの空白」と「2 つの数が続いている」を区別する手立てが無いので、
+   * `'1 2 3'` を 123 と読むことになる。**弱さを仕様として書き留めない**
+   * (法則 `no-weakness-as-spec`)。断る側に倒したので、断ることを留め直す。
+   */
+  it('refuses whitespace-separated digits (they may be two numbers)', () => {
+    expect(parseAmountInput('12 000')).toEqual({ ok: false });
+    expect(parseAmountInput('1 2 3')).toEqual({ ok: false });
   });
 
   it('normalizes full-width digits and punctuation', () => {
@@ -29,10 +42,15 @@ describe('parseAmountInput', () => {
     expect(parseAmountInput('+800')).toEqual({ ok: true, value: 800 });
   });
 
-  it('strips tab / newline / NBSP as whitespace', () => {
-    expect(parseAmountInput('1\t200')).toEqual({ ok: true, value: 1200 });
-    expect(parseAmountInput('1\n200')).toEqual({ ok: true, value: 1200 });
-    expect(parseAmountInput('1 200')).toEqual({ ok: true, value: 1200 });
+  /**
+   * 内部の空白類 (タブ / 改行 / NBSP) も同じ理由で断る。**前後の空白は
+   * 今までどおり落とす** (貼り付けで普通に混ざるし、桁を繋げない)。
+   */
+  it('refuses interior tab / newline / NBSP, but still trims the edges', () => {
+    expect(parseAmountInput('1\t200')).toEqual({ ok: false });
+    expect(parseAmountInput('1\n200')).toEqual({ ok: false });
+    expect(parseAmountInput('1\u00a0200')).toEqual({ ok: false });
+    expect(parseAmountInput('  1200  ')).toEqual({ ok: true, value: 1200 });
   });
 
   it('handles full/half-width mixed input', () => {
@@ -113,5 +131,27 @@ describe('sanitizeNote', () => {
     expect(sanitizeNote('abcdef', 3)).toBe('abc');
     expect(sanitizeNote('abc', 3)).toBe('abc');
     expect(sanitizeNote('abc', 0)).toBe('');
+  });
+
+  /*
+   * **★ 切る単位は「字」であり、サロゲート対を割らない** (2026-09-13 · パス 195)。
+   *
+   * 直す前は `.slice(0, maxLen)` (コード単位) で、絵文字を含むメモを天井の半分で
+   * 切り、境界に**孤立サロゲート**を残していた (UTF-8 を往復すると `�` に化ける)。
+   * 上の検査は ASCII だけだったので差が出なかった。
+   */
+  it('★ 絵文字は 1 字として数え、対を割らない', () => {
+    // 3 字ぶん = 絵文字 3 つ (コード単位なら 6)。
+    expect(sanitizeNote('😀😀😀😀😀', 3)).toBe('😀😀😀');
+    // 天井ちょうど。
+    expect(sanitizeNote('😀'.repeat(2000))).toBe('😀'.repeat(2000));
+    // 孤立サロゲートが残らない —— 上位半分が単独で末尾に来ていない。
+    const cut = sanitizeNote('a' + '😀'.repeat(2000));
+    const last = cut.charCodeAt(cut.length - 1);
+    expect(last >= 0xd800 && last <= 0xdbff, `末尾が孤立上位サロゲート: 0x${last.toString(16)}`).toBe(false);
+    // 対照 —— コード単位で切ると壊れる (直す前の振る舞い)。
+    const broken = ('a' + '😀'.repeat(2000)).slice(0, 2000);
+    const brokenLast = broken.charCodeAt(broken.length - 1);
+    expect(brokenLast >= 0xd800 && brokenLast <= 0xdbff).toBe(true);
   });
 });

@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
-import { getLibrary, _resetLibraryForTests } from '../library';
+import { getLibrary, _resetLibraryForTests, itemFromStored } from '../library';
 
 function clearIdb(): Promise<void> {
   return new Promise((resolve) => {
@@ -24,7 +24,7 @@ describe('Library — put + get + list', () => {
     expect(await lib.totalBytes()).toBe(0);
   });
 
-  it('put + get round-trips a Blob (metadata fidelity)', async () => {
+  it('put() が返すメタは入力のとおり', async () => {
     const lib = getLibrary();
     const blob = new Blob(['<svg/>'], { type: 'image/svg+xml' });
     const meta = await lib.put('templates', 'a.svg', 'image/svg+xml', blob);
@@ -32,10 +32,88 @@ describe('Library — put + get + list', () => {
     expect(meta.serviceId).toBe('templates');
     expect(meta.size).toBe(6);
     expect(meta.mime).toBe('image/svg+xml');
-    const full = await lib.get(meta.id);
-    expect(full).not.toBeNull();
-    expect(full!.filename).toBe('a.svg');
-    expect(full!.size).toBe(6);
+    // 中身が読めること (`get()` の 'found') は **ここでは確かめられない**。
+    // 下の「代役の限界」の注記と、`itemFromStored` の単体検査を見ること。
+  });
+
+  /*
+   * **代役の限界 —— `fake-indexeddb` は `Blob` を保てない** (2026-09-13 ・ パス 193 実測)。
+   *
+   * ```
+   *   書く前: instanceof Blob=true  size=6    type=image/svg+xml
+   *   読んだ後: instanceof Blob=false ctor=Object size=undefined type=undefined
+   *              arrayBuffer 関数か=false  text 関数か=false  keys=[]
+   * ```
+   *
+   * 格納した Blob は **空の素のオブジェクト**として戻る。だから vitest の中では
+   * `get()` はどの控えに対しても 'found' を返せない —— **中身が読める道を
+   * この層で検査できない**。これは実装の欠陥ではなく代役の欠陥で、
+   * 見分けないと「壊れている」の検査が**何を種しても通る空の検査**になる。
+   *
+   * だから分けている:
+   * - 見分け (found か corrupt か) は **`itemFromStored` の単体検査**が持つ
+   *   (jsdom の `new Blob` は本物なので、ここでは差が出る)。
+   * - 実際に IndexedDB から中身を取り出して画面に出す道は **e2e (実ブラウザ)**が持つ。
+   *
+   * この検査は**代役の限界そのものを留める引き線**である。`fake-indexeddb` が
+   * Blob を扱えるようになったらここが鳴る —— そのとき 'found' の道を
+   * この層でも検査できるようになる。
+   */
+  it('★ 代役の限界: 格納した Blob は Blob として戻ってこない', async () => {
+    const lib = getLibrary();
+    const meta = await lib.put('templates', 'a.svg', 'image/svg+xml', new Blob(['<svg/>']));
+    const stored = await new Promise<unknown>((resolve, reject) => {
+      const open = indexedDB.open('business-hub-library', 1);
+      open.onsuccess = () => {
+        const db = open.result;
+        const tx = db.transaction('items', 'readonly');
+        const req = tx.objectStore('items').get(meta.id);
+        req.onsuccess = () => { db.close(); resolve(req.result); };
+        req.onerror = () => reject(req.error);
+      };
+      open.onerror = () => reject(open.error);
+    });
+    const back = (stored as { blob?: unknown }).blob;
+    expect(
+      back instanceof Blob,
+      '代役が Blob を保てるようになった —— get() の found の道をこの層でも検査できる',
+    ).toBe(false);
+    // メタの側は通るので、壊れている控えでも行を名指せる。
+    expect((stored as { filename?: unknown }).filename).toBe('a.svg');
+  });
+
+  it('★ 中身が Blob でない控えは「壊れている」として返る (「無い」と混ぜない)', async () => {
+    const lib = getLibrary();
+    const blob = new Blob(['<svg/>'], { type: 'image/svg+xml' });
+    const meta = await lib.put('templates', 'broken.svg', 'image/svg+xml', blob);
+    // 保存済みの控えの blob だけを壊す (手で直された・移行に失敗した控えの形)。
+    // **代役の下ではこの種まきは余分である** (上の引き線のとおり、普通に書いた Blob も
+    // 読むと壊れている)。それでも明示しておく —— 代役が直ったときにこの検査が
+    // 意図した形 (中身が Blob でない控え) を測り続けるため。
+    // この層で確かに判るのは「**無い**と「**壊れている**」を混ぜないこと」だけで、
+    // found との見分けではない (そちらは `itemFromStored` の単体検査)。
+    await new Promise<void>((resolve, reject) => {
+      const open = indexedDB.open('business-hub-library', 1);
+      open.onsuccess = () => {
+        const db = open.result;
+        const tx = db.transaction('items', 'readwrite');
+        tx.objectStore('items').put({ ...meta, blob: { not: 'a blob' } });
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = () => reject(tx.error);
+      };
+      open.onerror = () => reject(open.error);
+    });
+    const r = await lib.get(meta.id);
+    expect(r.kind, '壊れた控えが found で返りました').toBe('corrupt');
+    if (r.kind !== 'corrupt') throw new Error('corrupt ではない');
+    // 行を消せるように、名前と id は返す (パス 136: 保存した物は必ず消せる)。
+    expect(r.meta.id).toBe(meta.id);
+    expect(r.meta.filename).toBe('broken.svg');
+  });
+
+  it('在らない id は「無い」として返る', async () => {
+    const r = await getLibrary().get('no-such-id');
+    expect(r.kind).toBe('missing');
   });
 
   it('list() sorts newest-first', async () => {
@@ -48,13 +126,13 @@ describe('Library — put + get + list', () => {
     expect(list[1]!.filename).toBe('first.svg');
   });
 
-  it('get() returns null for unknown id', async () => {
-    expect(await getLibrary().get('does-not-exist')).toBeNull();
+  it('get() は知らない id を「無い」と答える', async () => {
+    expect((await getLibrary().get('does-not-exist')).kind).toBe('missing');
   });
 
-  it('get() returns null for empty / non-string id', async () => {
-    expect(await getLibrary().get('')).toBeNull();
-    expect(await getLibrary().get(42 as unknown as string)).toBeNull();
+  it('get() は空・文字列でない id を「無い」と答える', async () => {
+    expect((await getLibrary().get('')).kind).toBe('missing');
+    expect((await getLibrary().get(42 as unknown as string)).kind).toBe('missing');
   });
 });
 
@@ -100,7 +178,7 @@ describe('Library — remove / clear', () => {
     const lib = getLibrary();
     const m = await lib.put('templates', 'a.svg', 'image/svg+xml', new Blob(['x']));
     await lib.remove(m.id);
-    expect(await lib.get(m.id)).toBeNull();
+    expect((await lib.get(m.id)).kind, '消した後なのに「無い」でない').toBe('missing');
     expect(await lib.list()).toHaveLength(0);
   });
 
@@ -253,7 +331,7 @@ describe('Library.get / remove — id の検査', () => {
   it('id が空・文字列でなければ、探しにも消しにも行かない', async () => {
     const lib = getLibrary();
     for (const bad of ['', 123, null, undefined]) {
-      await expect(lib.get(bad as unknown as string)).resolves.toBeNull();
+      expect((await lib.get(bad as unknown as string)).kind).toBe('missing');
       await expect(lib.remove(bad as unknown as string)).resolves.toBeUndefined();
     }
   });
@@ -462,5 +540,54 @@ describe('Library — 保存時刻', () => {
     for (let i = 1; i < stamps.length; i++) {
       expect(stamps[i]!).toBeGreaterThan(stamps[i - 1]!);
     }
+  });
+});
+
+// --- itemFromStored —— found と corrupt の見分け --------------------------
+//
+// `get()` の見分けは **ここで測る**。IndexedDB を通すと `fake-indexeddb` が
+// Blob を落とすので何を入れても corrupt になる (上の引き線の検査を見よ)。
+// この層には代役が入らない —— jsdom の `new Blob` は本物なので、
+// 「中身が読める」と「読めない」の**差が実際に出る**。
+describe('itemFromStored — 中身まで確かめる', () => {
+  const meta = {
+    id: 'i1',
+    filename: 'a.svg',
+    mime: 'image/svg+xml',
+    serviceId: 'templates',
+    createdAt: 1_757_000_000_000,
+    size: 6,
+  };
+
+  it('blob が Blob なら読める (中身つきで返る)', () => {
+    const blob = new Blob(['<svg/>'], { type: 'image/svg+xml' });
+    const item = itemFromStored({ ...meta, blob });
+    expect(item, '本物の Blob なのに null で戻りました').not.toBeNull();
+    expect(item!.blob).toBeInstanceOf(Blob);
+    expect(item!.filename).toBe('a.svg');
+  });
+
+  it('★ 大きさは控えの申告でなく blob から採る', () => {
+    // 控えの size は書いた時の申告で、中身とずれうる。
+    const blob = new Blob(['<svg/>'], { type: 'image/svg+xml' }); // 6 bytes
+    const item = itemFromStored({ ...meta, size: 999_999, blob });
+    expect(item!.size, '控えの申告をそのまま使っています').toBe(6);
+  });
+
+  it('★ blob が Blob でなければ読めない (null)', () => {
+    expect(itemFromStored({ ...meta, blob: { not: 'a blob' } })).toBeNull();
+    expect(itemFromStored({ ...meta, blob: 'data:...' })).toBeNull();
+    expect(itemFromStored({ ...meta, blob: null })).toBeNull();
+    expect(itemFromStored({ ...meta })).toBeNull(); // blob が無い
+    // 空の素のオブジェクト —— `fake-indexeddb` が実際に返す形。
+    expect(itemFromStored({ ...meta, blob: {} })).toBeNull();
+  });
+
+  it('id が読めなければ、Blob があっても読めない (名指せない)', () => {
+    const blob = new Blob(['<svg/>']);
+    expect(itemFromStored({ ...meta, id: '', blob })).toBeNull();
+    expect(itemFromStored({ ...meta, id: 42, blob })).toBeNull();
+    expect(itemFromStored(null)).toBeNull();
+    expect(itemFromStored('a string')).toBeNull();
   });
 });

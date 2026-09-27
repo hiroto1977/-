@@ -26,7 +26,7 @@ aliases:
 ブルーノ・ラトゥール ／ ミシェル・カロン ／ ジョン・ロー ／ スティーヴ・ウルガー
 
 ## 出典
-- [Latour, B. (1986) Visualisation and cognition: Drawing things together — Knowledge and Society](https://www.worldcat.org/oclc/15282467) `学術`
+- [Latour, B. (1986) Visualisation and cognition: Drawing things together — Knowledge and Society](https://www.worldcat.org/oclc/15282467) `リファレンス`
 - [Wikipedia: Actor–network theory — immutable mobiles, inscriptions, centres of calculation](https://en.wikipedia.org/wiki/Actor%E2%80%93network_theory) `リファレンス`
 
 ## 関連概念

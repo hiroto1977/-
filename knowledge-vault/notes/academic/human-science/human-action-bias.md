@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — 出典を共有
 - [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 出典を共有
-- [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
+- [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
 - [[human-motion-aftereffect-waterfall|運動残効（滝の錯視）——一方向の運動を見続けた後に逆向きの運動が見える]] — 同分野の近傍
 
 ## 関連

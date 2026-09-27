@@ -114,11 +114,12 @@ describe('橋の露出のしかた', () => {
     }
   });
 
-  it('橋のメソッドは 13 個 (増減に気付けるよう名前ごと固定する)', () => {
+  it('橋のメソッドは 15 個 (増減に気付けるよう名前ごと固定する)', () => {
     expect(Object.keys(exposed).sort()).toEqual([
       'authorize',
       'checkUpdate',
       'clearToken',
+      'eraseAll',
       'fetchSnapshot',
       'getVersion',
       'invoke',
@@ -127,6 +128,7 @@ describe('橋の露出のしかた', () => {
       'openExternal',
       'openPath',
       'revealInFolder',
+      'setColorScheme',
       'setToken',
       'storageProtection',
     ]);

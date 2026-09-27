@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同じ思想家
-- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
 - [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — 同じ思想家
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同じ思想家
 - [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍

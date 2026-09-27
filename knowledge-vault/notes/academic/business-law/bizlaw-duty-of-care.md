@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — 語彙が近い
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 語彙が近い
 - [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — 出典を共有
 - [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 出典を共有
 - [[bizlaw-public-order|公序良俗（民法90条）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — 出典を共有
 - [[bizlaw-statutory-lien|先取特権（民法303条）]] — 出典を共有
 - [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — 出典を共有
-- [[legal-set-off|相殺（民法505条等）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

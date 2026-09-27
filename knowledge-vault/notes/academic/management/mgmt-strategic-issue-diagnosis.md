@@ -36,11 +36,11 @@ aliases:
 - [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 同じ思想家
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同じ思想家
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
 - [[human-metacognition|メタ認知（Metacognition）]] — 出典を共有
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 出典を共有
-- [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

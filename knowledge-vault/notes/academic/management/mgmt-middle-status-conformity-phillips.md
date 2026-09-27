@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 同じ思想家
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同じ思想家
 - [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]] — 同じ思想家
+- [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]] — 同分野の近傍
 - [[mgmt-stockdale-paradox|ストックデールの逆説]] — 同分野の近傍
 
 ## 関連

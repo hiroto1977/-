@@ -35,7 +35,6 @@ Vilayanur S. Ramachandran（2001 交差活性化モデルを提唱）／Edward M
 
 ## 関連概念
 - [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同じ思想家
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同じ思想家
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]] — 出典を共有
 - [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — 出典を共有
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 出典を共有

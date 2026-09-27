@@ -168,7 +168,9 @@ describe('ACTIONS["create-draft"] — header injection defense', () => {
         fetch: fetchMock,
         payload: { to: 'a@b.com\r\nBcc: attacker@evil.com', subject: 'hi', body: 'hello' },
       }),
-    ).rejects.toThrow(/CR\/LF\/NUL/);
+      // 2026-09-09 (パス 111) から、共有の台帳が 1 行の欄として先に断る。
+      // `buildRfc2822` の CR/LF 検査は二重の備えとして残り、下の describe が直接に見る。
+    ).rejects.toThrow(/制御文字/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
@@ -185,7 +187,7 @@ describe('ACTIONS["create-draft"] mutation-killing tests', () => {
         fetch: fetchMock,
         payload: { to: 'x@y.com' /* no subject */ },
       }),
-    ).rejects.toThrow(/to and subject are required/);
+    ).rejects.toThrow(/^subject は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -197,7 +199,7 @@ describe('ACTIONS["create-draft"] mutation-killing tests', () => {
         fetch: fetchMock,
         payload: { subject: 'hi' /* no to */ },
       }),
-    ).rejects.toThrow(/to and subject are required/);
+    ).rejects.toThrow(/^to は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

@@ -34,12 +34,12 @@ CNN効果（CNN effect）は、メディア研究と国際関係論の理論で�
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
-- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
-- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
-- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 出典を共有
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
 - [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 出典を共有
 - [[mgmt-smed|シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法]] — 出典を共有
+- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 出典を共有
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

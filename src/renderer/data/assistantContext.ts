@@ -19,6 +19,9 @@
  *   5. 出典ラベルの注入 — 回答が出典に言及できるよう、本文へ第一出典を付す。
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+import { isServiceId } from '../../shared/serviceId';
+import { isRecord, storedLabel } from './persistedShape';
 import { VERIFIED_CONCEPTS } from './academicKnowledge';
 import { VERIFIED_COMPLIANCE } from './complianceKnowledge';
 import { VERIFIED_SUBSIDIES } from './subsidyKnowledge';
@@ -50,7 +53,8 @@ const META_CAP = 160;
 const SOURCE_LABEL_CAP = 80;
 
 function cap(text: string, n: number): string {
-  return text.length > n ? text.slice(0, n) + '…' : text;
+  // 文脈を縮めるのも**文字の境界で** (パス 196) —— この文字列は有料 API へ送る。
+  return countChars(text) > n ? clampToCeiling(text, n) + '…' : text;
 }
 
 /** すべての確証済みデータを共通スキーマへ写像する (モジュール読込時に 1 度)。 */
@@ -208,7 +212,7 @@ export function extractContentRuns(query: string): string[] {
 }
 
 /** 文字列中に needle が現れる回数 (重なりは数えない)。 */
-function countOccurrences(haystack: string, needle: string): number {
+export function countOccurrences(haystack: string, needle: string): number {
   if (needle.length === 0) return 0;
   let count = 0;
   let from = 0;
@@ -336,11 +340,17 @@ export function retrieve(
   return retrieveScored(query, k, corpus).map((s) => s.doc);
 }
 
+/**
+ * 1 つの回答に紐づける案内ボタン (「↗ 〇〇を開く」) の上限 —— `retrieveServices` の既定の件数。
+ * 保存した会話を読み戻すときも同じ数で切る (`storedServiceLinks`)。書く側と読む側で数を 2 度書かない。
+ */
+export const MAX_RELATED_SERVICES = 4;
+
 /** クエリに関連するサービスを上位 k 件返す (label/description を検索)。 */
 export function retrieveServices(
   query: string,
   services: readonly AssistantService[],
-  k = 4,
+  k = MAX_RELATED_SERVICES,
 ): AssistantService[] {
   const terms = extractWeightedTerms(query);
   if (terms.length === 0) return [];
@@ -385,6 +395,34 @@ export function formatKnowledgeSection(docs: readonly KnowledgeDoc[]): string {
   return ['', '## 参考ナレッジ（確証済み・出典あり）', ...lines].join('\n');
 }
 
+/**
+ * 保存した会話の「↗ 〇〇を開く」ボタンを読み戻す (2026-09-26 · パス 489)。
+ *
+ * 画面はこの欄を `m.services.map(…)` で描き、`s.label` を子として、`s.id` を遷移先として使う。
+ * 直す前は会話履歴の読みが `role` / `text` しか検めず、この欄は**素で届いていた** ——
+ * 実測: 配列でない値で `m.services.map is not a function`、要素が `null` で
+ * `Cannot read properties of null`、札が物で「Objects are not valid as a React child」
+ * となり、どれも AI アシスタントの画面を丸ごと落とした (その画面の「🗑 消去」ごと)。
+ *
+ * - 配列でなければ読めない (欄ごと落とす)
+ * - 要素は物で、`id` が**実在するサービス**のときだけ残す —— 押すと `navigateTo(id)` へ渡り、
+ *   App は未知の id を黙って捨てるので、実在しない id は**押しても何も起きないボタン**になる
+ * - 札が読めない要素も落とす (ボタンの文字が無くなる)。説明 (`title`) は読めなければ空
+ * - 件数は書く側と同じ `MAX_RELATED_SERVICES` で切る。1 件も残らなければ欄ごと落とす
+ */
+export function storedServiceLinks(value: unknown): readonly AssistantService[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const out: AssistantService[] = [];
+  for (const item of value) {
+    if (out.length >= MAX_RELATED_SERVICES) break;
+    if (!isRecord(item) || typeof item.id !== 'string' || !isServiceId(item.id)) continue;
+    const label = storedLabel(item.label);
+    if (label === undefined) continue;
+    out.push({ id: item.id, label, description: storedLabel(item.description) ?? '' });
+  }
+  return out.length > 0 ? out : undefined;
+}
+
 /** サービスカタログ節を組み立てる。 */
 export function formatServiceSection(services: readonly AssistantService[]): string {
   if (services.length === 0) return '';
@@ -397,6 +435,37 @@ export function formatServiceSection(services: readonly AssistantService[]): str
   ].join('\n');
 }
 
+/** 検索の結果 (注入するナレッジと関連サービス)。組み立てと分けて持つ。 */
+export interface RetrievedContext {
+  readonly docs: readonly KnowledgeDoc[];
+  readonly services: readonly AssistantService[];
+}
+
+/**
+ * 検索だけをする。**組み立てと分けた理由** (2026-09-26): ベストアンサー 3 は 1 つの質問で
+ * 観点ごとに 5 つの system を組むが、検索は 1 度でよく、しかも採点 (根拠の軸) が
+ * **実際に注入した項目**を知っている必要がある。
+ */
+export function retrieveContext(query: string, services: readonly AssistantService[]): RetrievedContext {
+  return { docs: retrieve(query), services: retrieveServices(query, services) };
+}
+
+/**
+ * system を組み立てる。**組み立て方はここ 1 つ** —— チャットもベストアンサー 3 も通る。
+ * `extraSections` は基本方針の直後に入る (観点やオントロジーの節)。空ならチャットと
+ * 1 字も違わない物を返す。
+ */
+export function composeSystemPrompt(context: RetrievedContext, extraSections: readonly string[] = []): string {
+  return [
+    ASSISTANT_BASE_INSTRUCTIONS,
+    ...extraSections,
+    formatKnowledgeSection(context.docs),
+    formatServiceSection(context.services),
+  ]
+    .filter((s) => s.length > 0)
+    .join('\n');
+}
+
 /**
  * 最終的な system プロンプトを組み立てる。
  * @param query    検索クエリ (直近のユーザー発話。追問に強くするため、呼び出し側で
@@ -404,15 +473,7 @@ export function formatServiceSection(services: readonly AssistantService[]): str
  * @param services サービスカタログ全件 (関連抽出に使う)
  */
 export function buildSystemPrompt(query: string, services: readonly AssistantService[]): string {
-  const docs = retrieve(query);
-  const relServices = retrieveServices(query, services);
-  return [
-    ASSISTANT_BASE_INSTRUCTIONS,
-    formatKnowledgeSection(docs),
-    formatServiceSection(relServices),
-  ]
-    .filter((s) => s.length > 0)
-    .join('\n');
+  return composeSystemPrompt(retrieveContext(query, services));
 }
 
 /** オフライン回答がナレッジ由来と言えるスコアの下限。 */

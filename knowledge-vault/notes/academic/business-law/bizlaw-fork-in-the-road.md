@@ -33,12 +33,13 @@ Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（
 ## 関連概念
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 同じ思想家
 - [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]] — 同じ思想家
+- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 出典を共有
-- [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 出典を共有
 - [[econ-flying-geese|雁行形態論]] — 出典を共有
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
+- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

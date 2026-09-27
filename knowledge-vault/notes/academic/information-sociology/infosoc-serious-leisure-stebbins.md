@@ -31,13 +31,12 @@ aliases:
 
 ## 関連概念
 - [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
-- [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
 - [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
+- [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
 - [[human-positive-psychology|ポジティブ心理学]] — 同じ思想家
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
 - [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同分野の近傍
 - [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同分野の近傍
 

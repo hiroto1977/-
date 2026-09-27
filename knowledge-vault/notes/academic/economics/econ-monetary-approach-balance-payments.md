@@ -26,7 +26,7 @@ aliases:
 ロバート・マンデル ／ ハリー・ジョンソン ／ ジェイコブ・フレンケル ／ デイヴィッド・ヒューム
 
 ## 出典
-- [Frenkel, J.A. & Johnson, H.G. (eds.) (1976) The Monetary Approach to the Balance of Payments — Allen & Unwin (WorldCat)](https://www.worldcat.org/oclc/2331668) `学術`
+- [Frenkel, J.A. & Johnson, H.G. (eds.) (1976) The Monetary Approach to the Balance of Payments — Allen & Unwin (WorldCat)](https://www.worldcat.org/oclc/2331668) `リファレンス`
 - [Wikipedia: Monetary approach to the balance of payments — Mundell, Johnson, money demand/supply, Hume specie-flow](https://en.wikipedia.org/wiki/Monetary_approach_to_the_balance_of_payments) `リファレンス`
 
 ## 関連概念

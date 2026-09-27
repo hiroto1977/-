@@ -34,13 +34,13 @@ aliases:
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — 同じ思想家
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
-- [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 同じ思想家
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同じ思想家
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家
-- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

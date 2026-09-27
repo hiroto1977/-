@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — 語彙が近い
 - [[legal-land-lease-right|借地借家法における借地権]] — 語彙が近い
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
 - [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — 出典を共有

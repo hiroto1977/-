@@ -33,7 +33,6 @@ Vilayanur S. Ramachandran ／ Ronald Melzack ／ Lorimer Moseley
 
 ## 関連概念
 - [[human-gate-control-theory|ゲートコントロール理論]] — 同じ思想家
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同じ思想家
 - [[human-synesthesia-neuroscience|共感覚の神経科学]] — 同じ思想家
 - [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
@@ -42,6 +41,7 @@ Vilayanur S. Ramachandran ／ Ronald Melzack ／ Lorimer Moseley
 - [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
 - [[human-erikson-psychosocial|エリクソンの心理社会的発達理論]] — 出典を共有
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 出典を共有
+- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

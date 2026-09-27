@@ -3,17 +3,21 @@ import { Section } from './StatusBar';
 import { Stat } from './Stat';
 import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
-import { jpy } from '../../shared/formatters';
+import { jpyWhole } from '../../shared/formatters';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
 import {
   designWelfareScheme,
   MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  MEAL_SUBSIDY_SELF_PAY_RATIO,
   type WelfareSchemeInput,
 } from '../../shared/welfareScheme';
 import {
   employerBenefits,
   type BenefitMechanism,
 } from '../../shared/employerBenefits';
-import type { DependentKind } from '../../shared/taxDeductions';
+import { dependentsFromCounts, type DependentKind } from '../../shared/taxDeductions';
+import { dependentCountSpec, guardAll, type NumSpec } from '../data/inputGuards';
+import { GuardSummary } from './GuardedNumber';
 import {
   employeeExplanationMarkdown,
   consentFormMarkdown,
@@ -48,7 +52,7 @@ const inputStyle: React.CSSProperties = {
   padding: '4px 6px',
   background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 4,
+  borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,
   textAlign: 'right',
@@ -81,16 +85,14 @@ export function WelfareSchemeCard() {
   const [spouseIncomeStr, setSpouseIncomeStr] = useState('0');
   const [spouseElderly, setSpouseElderly] = useState(false);
 
-  const dependents = useMemo<DependentKind[]>(() => {
-    const g = Math.floor(num(generalStr, 0));
-    const s = Math.floor(num(specificStr, 0));
-    const e = Math.floor(num(elderlyStr, 0));
-    return [
-      ...Array<DependentKind>(g).fill('general'),
-      ...Array<DependentKind>(s).fill('specific'),
-      ...Array<DependentKind>(e).fill('elderly'),
-    ];
-  }, [generalStr, specificStr, elderlyStr]);
+  // **人数分の並びは共有の 1 つで作る** (パス 493k)。ここは天井なしで `Array(人数)` を作っていた ——
+  // 1 億と打つと 1 回の描画が 28 秒・4 GB、50 億で `RangeError` (税金ページごと落ちる)。天井 20 は
+  // 同じ問いを持つ税金ページの節と同じ数 (`MAX_DEPENDENTS_PER_KIND`)。
+  const dependents = useMemo<DependentKind[]>(
+    () => dependentsFromCounts({ general: num(generalStr, 0), specific: num(specificStr, 0), elderly: num(elderlyStr, 0) }),
+    [generalStr, specificStr, elderlyStr],
+  );
+
 
   const result = useMemo(() => {
     const input: WelfareSchemeInput = {
@@ -125,9 +127,13 @@ export function WelfareSchemeCard() {
     spouseElderly,
   ]);
 
-  const { normal, scheme, diff, deductions } = result;
-  const yen = (n: number) => jpy(Math.round(n));
+  const { normal, scheme, diff, deductions, mealSubsidy } = result;
+  const yen = jpyWhole;
   const hasExtraDeduction = deductions.total.incomeTax > 0 || deductions.total.residentTax > 0;
+  // 目標手元残りに両筋書きが届いたか。届いていなければ**この表は「同じ手元残りでの
+  // 比較」ではない** —— 額面の逆算が探索上限に張り付いた結果を並べているだけになる
+  // (パス 103)。差額を制度の効果として読ませないために、表より前に出す。
+  const reachedTarget = normal.reachedTarget && scheme.reachedTarget;
 
   const rows: { label: string; a: number; b: number; hi?: boolean }[] = [
     { label: '額面基本給', a: normal.gross, b: scheme.gross },
@@ -137,12 +143,15 @@ export function WelfareSchemeCard() {
     { label: '口座振込額', a: normal.netPaid, b: scheme.netPaid },
     { label: '自由に使えるお金 (手元残り)', a: normal.freeCash, b: scheme.freeCash },
     { label: '現物支給の福利厚生価値 (非課税)', a: normal.inKindValue, b: scheme.inKindValue },
+    // **課税される現物給与の行** (パス 228)。0 のときも出す —— 「0 円」は
+    // 「要件を満たしている」という情報で、行が消えると読み手は区別できない。
+    { label: '給与課税される現物給与', a: normal.taxableInKind, b: scheme.taxableInKind },
     { label: '従業員の実質手元残り', a: normal.employeeRealValue, b: scheme.employeeRealValue, hi: true },
     { label: '会社の総コスト (給与+社保+福利厚生)', a: normal.companyTotalCost, b: scheme.companyTotalCost, hi: true },
   ];
 
-  const fields: { label: string; v: string; set: (s: string) => void }[] = [
-    { label: '目標の手元残り', v: targetStr, set: setTargetStr },
+  const fields: { label: string; v: string; set: (s: string) => void; required?: boolean }[] = [
+    { label: '目標の手元残り', v: targetStr, set: setTargetStr, required: true },
     { label: '家賃 総額', v: rentStr, set: setRentStr },
     { label: '┗ 会社負担(社宅)', v: rentCoStr, set: setRentCoStr },
     { label: '食事 総額', v: mealStr, set: setMealStr },
@@ -151,13 +160,84 @@ export function WelfareSchemeCard() {
     { label: 'EC ポイント(カフェテリア)', v: ecStr, set: setEcStr },
   ];
 
+  // **読めない入力を黙って 0 にしない** (パス 493k)。上の表は `num()` が読めない値・負の値を 0 として
+  // 組むのに、この節はそれを 1 文も言わなかった (同じ画面の税金の節は 2026-08 から ⛔ / ⚠ で言う)。
+  // 欄の名前は画面の欄と同じ字 (字下げの「┗ 」だけ外す)。目標の手元残りだけは空欄を「0 円として
+  // 計算」と知らせる —— 他の欄の空欄は「その制度を使わない」の意味で正当である。
+  const issues = guardAll([
+    ...fields.map(
+      (f) => [f.v, { label: f.label.replace(/^┗ /, ''), kind: 'money', allowEmpty: f.required !== true, allowZero: true }] as const,
+    ),
+    [generalStr, dependentCountSpec('一般扶養親族の人数')] as const,
+    [specificStr, dependentCountSpec('特定扶養親族の人数')] as const,
+    [elderlyStr, dependentCountSpec('老人扶養親族の人数')] as const,
+    ...(hasSpouse
+      ? [[spouseIncomeStr, { label: '配偶者の合計所得', kind: 'money', allowEmpty: true, allowZero: true }] as const]
+      : []),
+  ] satisfies readonly (readonly [string, NumSpec])[]);
+
   return (
     <Section title="給与デザイン / 福利厚生スキーム試算">
       <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>
         「生活費を払った後の手元残り」を同額に保ったまま、社宅・食事補助・育児補助・自社 EC
-        カフェテリアポイント（いずれも非課税の現物/役務支給）を詰めて基本給を下げる設計。本人・会社
-        双方の社会保険料と税が下がり、従業員は同じ手元残り + 現物価値、会社は総コスト減になります。
+        カフェテリアポイント（<strong>非課税の要件を満たす限りにおいて</strong>非課税の現物/役務
+        支給）を詰めて基本給を下げる設計。本人・会社双方の社会保険料と税が下がり、従業員は同じ
+        手元残り + 現物価値、会社は総コスト減になります。
       </p>
+
+      {!reachedTarget && (
+        <p
+          role="alert"
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            margin: '0 0 12px',
+            padding: '8px 10px',
+            borderRadius: 6,
+            border: '1px solid var(--warn)',
+            color: 'var(--warn)',
+          }}
+        >
+          ⚠ 目標の手元残りが本試算モデルの範囲を超えています（額面の上限に張り付きました）。
+          {normal.reachedTarget ? '' : `① これまで の手元残りは ${yen(normal.freeCash)} 止まりです。`}
+          {scheme.reachedTarget ? '' : `② 新制度 の手元残りは ${yen(scheme.freeCash)} 止まりです。`}
+          下表は「同じ手元残りでの比較」になっていないため、差額を制度の効果として読まないでください。
+          目標額を下げてお試しください。
+        </p>
+      )}
+
+      {/*
+        **食事補助の非課税要件は機械で判定できる** (パス 219)。定数は 2026-08-21 に
+        出典つきで置かれたが、読んでいたのは規程ひな形と下の免責文 (散文) だけで、
+        計算は会社負担の全額を非課税として扱っていた。要件を外れていれば、下表の
+        「税と社保が下がる」は成り立たない前提で組まれている。
+      */}
+      {!mealSubsidy.taxFree && (
+        <p
+          role="alert"
+          data-meal-subsidy-alert
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            margin: '0 0 12px',
+            padding: '8px 10px',
+            borderRadius: 6,
+            border: '1px solid var(--danger)',
+            color: 'var(--danger)',
+          }}
+        >
+          ⛔ 食事補助が<strong>非課税の要件を満たしていません</strong>。
+          {mealSubsidy.reasons.map((r) => `${r}。`).join('')}
+          {/* **断りと数字を一致させる** (パス 228)。パス 219 まではここで
+              「下表は会社負担の全額を非課税として計算している」と述べていた ——
+              断りは正しいが、それは「下表の数字が間違っている」と認めるだけだった。 */}
+          会社負担 <strong data-meal-taxable-yen={scheme.taxableInKind}>{yen(scheme.taxableInKind)}</strong> は
+          <strong>給与課税として下表の計算に入れています</strong>
+          （社会保険料・所得税・住民税が上がり、「現物支給の福利厚生価値 (非課税)」からは外しています）。
+          会社負担を月 {yen(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN)} 以下にし、本人負担を食事の価額の
+          {Math.round(MEAL_SUBSIDY_SELF_PAY_RATIO * 100)}% 以上にすると非課税になります。
+        </p>
+      )}
 
       {/* 入力 */}
       <div
@@ -250,8 +330,11 @@ export function WelfareSchemeCard() {
           <>
             <label style={fieldRow}>
               <span>┗ 配偶者の合計所得 (年)</span>
+              {/* type="number" だと「100万」を打ったとき欄が空のまま黙る (パス 374) —— 他の欄と同じ形にし、
+                  読めない字は上の入力の確認が ⛔ で言う (パス 493k)。 */}
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={spouseIncomeStr}
                 onChange={(e) => setSpouseIncomeStr(e.target.value)}
                 style={inputStyle}
@@ -270,6 +353,8 @@ export function WelfareSchemeCard() {
           </>
         )}
       </div>
+
+      <GuardSummary issues={issues} title="給与デザインの入力の確認" />
 
       {hasExtraDeduction && (
         <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>
@@ -291,7 +376,7 @@ export function WelfareSchemeCard() {
         </p>
       )}
       {deductions.blue > 0 && (
-        <p style={{ fontSize: 11, color: 'var(--warning, #d97706)', margin: '0 0 12px', lineHeight: 1.6 }}>
+        <p style={{ fontSize: 11, color: 'var(--warning)', margin: '0 0 12px', lineHeight: 1.6 }}>
           ⚠ 青色申告特別控除は本来「事業所得・不動産所得」に対する控除で、給与所得には適用できません。
           給与のほかに青色申告する事業所得（副業・個人事業）があり、その所得から控除できる場合の概算として
           課税所得から差し引いています。給与のみの方は「なし」を選んでください。
@@ -460,7 +545,7 @@ function BenefitCatalogue(): JSX.Element {
                     <div
                       style={{
                         fontSize: 11,
-                        color: 'var(--warning, #d97706)',
+                        color: 'var(--warning)',
                         marginTop: 6,
                         lineHeight: 1.6,
                       }}
@@ -470,21 +555,37 @@ function BenefitCatalogue(): JSX.Element {
                   )}
                   <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 6 }}>
                     出典:{' '}
-                    {b.sources.map((src, i) => (
-                      <span key={src.url}>
-                        {i > 0 && ' / '}
-                        <a
-                          href={src.url}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            void window.serviceHub.openExternal(src.url);
-                          }}
-                          style={{ color: 'inherit' }}
-                        >
-                          {src.label}
-                        </a>
-                      </span>
-                    ))}
+                    {b.sources.map((src, i) => {
+                      /*
+                       * **属性に入れるのは関門を通した文字列だけ** (パス 298)。
+                       * 理由は `EligibilityChecker.tsx` の `safeSourceUrl` に
+                       * 1 つだけ書いてある —— `onClick` の `preventDefault()` は
+                       * `click` しか止めないので、中クリック / 「新しいタブで
+                       * 開く」 / 「リンクをコピー」は素の属性を使う。
+                       */
+                      const safeUrl = externalUrlOrNull(src.url);
+                      return (
+                        <span key={src.url}>
+                          {i > 0 && ' / '}
+                          {safeUrl === null ? (
+                            <span style={{ color: 'var(--warning)' }}>
+                              ⚠ {src.label}（URL が http(s) ではないため開けません）
+                            </span>
+                          ) : (
+                            <a
+                              href={safeUrl}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                void window.serviceHub.openExternal(safeUrl);
+                              }}
+                              style={{ color: 'inherit' }}
+                            >
+                              {src.label}
+                            </a>
+                          )}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               ))}

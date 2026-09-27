@@ -38,6 +38,7 @@ aliases:
 - [[bizlaw-creditor-delay|受領遅滞（民法413条）]] — 出典を共有
 - [[bizlaw-default-damages|債務不履行と損害賠償（民法415条）]] — 出典を共有
 - [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 出典を共有
+- [[bizlaw-mistake|錯誤（民法95条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

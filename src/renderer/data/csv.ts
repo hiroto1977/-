@@ -106,9 +106,46 @@ export function recordsToCsv<T extends Record<string, unknown>>(
   return toCsv([columns, ...body]);
 }
 
+/**
+ * **書き出した CSV の先頭に付ける印 (BOM · U+FEFF)** —— これが無いと Excel が
+ * UTF-8 を読まず、日本語の列が文字化けする (`lint:charset` の台帳がその理由を
+ * 2026-08 から記録している)。
+ *
+ * ## なぜ定数にするか (2026-09-23 · パス 428 実測)
+ *
+ * 付ける側は 3 画面が**それぞれ生の不可視文字を書いて**おり、剥がす側は
+ * **どこにも無かった**。つまり**このアプリは自分が書き出した CSV を自分で
+ * 読み戻せなかった**:
+ *
+ * | 読ませる物 | 売上の取り込み | KPI の取り込み |
+ * | --- | --- | --- |
+ * | `salesToCsv(...)` (印なし) | 1 件 ✅ | 通る ✅ |
+ * | **画面が Blob へ入れる物そのもの** | **0 件・「日付は YYYY-MM-DD 形式で入力してください」** | **0 件・「期間は YYYY-MM 形式で入力してください」** |
+ *
+ * ★ **断りの文が、それを読む利用者に対して証明可能に偽である** —— 日付は
+ * `2026-08-01` で、まさにその形式である。BOM は**画面に 1 文字も見えない**ので、
+ * 利用者は正しい欄を直し続けることになる。しかも Excel の「CSV UTF-8」は
+ * 常にこの印を付けるので、**外部から来る CSV でも同じことが起きる**。
+ *
+ * ★ **規則はこのファイルが既に書いていた** —— `pushField` の注記が
+ * 「書き出し側で付けた数式打ち消しを外す。付けっぱなしだと export → import で
+ * 値が変わってしまう」と述べている。**印を 2 つ付けて、剥がすのは 1 つだけ**
+ * だった (法則 `center-then-count-callers`)。
+ *
+ * **エスケープで書く** —— 生の U+FEFF をソースに置くと目で見えず、
+ * `lint:charset` が (正しく) 理由つきの台帳を要求する。名前と escape なら
+ * どちらも要らない。
+ */
+export const CSV_BOM = '\uFEFF';
+
 /** Parse a CSV string into rows of string fields. Tolerates a trailing
  *  newline and both `\r\n` / `\n`. Returns `[]` for empty input. */
 export function parseCsv(text: string): string[][] {
+  // **書き出し側で付けた印を外す** (`CSV_BOM`)。剥がさないと最初の列名が
+  // `\uFEFFdate` になり、その列だけ空として読まれる —— 画面は「日付の形式が
+  // 違う」と、正しい日付を指して断る。**先頭の 1 つだけ**を外す: 途中の
+  // U+FEFF は利用者のデータの一部でありうる。
+  const body = text.startsWith(CSV_BOM) ? text.slice(CSV_BOM.length) : text;
   const rows: string[][] = [];
   let field = '';
   let row: string[] = [];
@@ -128,12 +165,12 @@ export function parseCsv(text: string): string[][] {
     started = false;
   };
 
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i]!;
+  for (let i = 0; i < body.length; i++) {
+    const ch = body[i]!;
     started = true;
     if (inQuotes) {
       if (ch === '"') {
-        if (text[i + 1] === '"') {
+        if (body[i + 1] === '"') {
           field += '"';
           i++; // skip the escaped quote
         } else {
@@ -153,7 +190,7 @@ export function parseCsv(text: string): string[][] {
     } else if (ch === '\r') {
       // swallow; the following \n (if any) triggers the row push. A lone \r
       // also ends a row.
-      if (text[i + 1] !== '\n') pushRow();
+      if (body[i + 1] !== '\n') pushRow();
     } else {
       field += ch;
     }

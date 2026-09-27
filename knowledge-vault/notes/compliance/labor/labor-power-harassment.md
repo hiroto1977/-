@@ -35,7 +35,7 @@ aliases:
 - [[bizlaw-power-harassment|パワーハラスメント防止（労働施策総合推進法）]] — 語彙が近い
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 出典を共有
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 同分野の近傍
-- [[labor-sexual-harassment|職場のセクシュアルハラスメント防止措置義務]] — 同分野の近傍
+- [[labor-commuting-injury|通勤災害（労災保険）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

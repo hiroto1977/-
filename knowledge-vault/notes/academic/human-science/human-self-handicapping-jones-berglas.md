@@ -26,7 +26,7 @@ aliases:
 エドワード・ジョーンズ ／ スティーブン・バーグラス ／ フレデリック・ローデワルト ／ C・R・スナイダー
 
 ## 出典
-- [Berglas, S. & Jones, E.E. (1978) Drug Choice as a Self-Handicapping Strategy — JPSP 36(4)](https://doi.org/10.1177/014616727800400215) `学術`
+- [Berglas, S. & Jones, E. E. (1978) Drug Choice as a Self-Handicapping Strategy in Response to Noncontingent Success — Journal of Personality and Social Psychology 36(4), 405–417（旧 DOI は同年の PSPB 論文 Jones & Berglas 1978 を指していたため PubMed 記録へ差し替え）](https://pubmed.ncbi.nlm.nih.gov/650387/) `学術`
 - [Wikipedia: Self-handicapping — Jones & Berglas, behavioral/claimed handicaps, self-esteem protection](https://en.wikipedia.org/wiki/Self-handicapping) `リファレンス`
 
 ## 関連概念

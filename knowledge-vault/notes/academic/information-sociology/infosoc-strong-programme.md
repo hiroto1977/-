@@ -32,6 +32,7 @@ David Bloor（1976・『Knowledge and Social Imagery』・ストロング・プ�
 ## 関連概念
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 同分野の近傍
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-post-truth-theory|ポスト真実論]] — 同分野の近傍
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — 同分野の近傍
 
 ## 関連

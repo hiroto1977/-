@@ -31,6 +31,7 @@ aliases:
 - [freee 防衛特別法人税とは 2026年から適用される新税制の概要](https://www.freee.co.jp/kb/kb-healthcare/corporate-tax2026/) `メディア`
 
 ## 関連概念
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
 - [[bizlaw-consumption-tax|消費税法]] — 出典を共有
 - [[bizlaw-toushiho|出資法]] — 出典を共有
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 出典を共有
-- [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

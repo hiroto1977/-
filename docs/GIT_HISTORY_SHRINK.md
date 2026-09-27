@@ -33,7 +33,7 @@ git clone --depth 50 https://github.com/hiroto1977/-.git service-hub
 # → .git は数十 MB。履歴を書き換えないので誰にも影響しない
 ```
 
-CI も同じで、`actions/checkout@v4` は既定で浅いクローンを作るため**すでに対策済み**。
+CI も同じで、`actions/checkout@v5` は既定で浅いクローンを作るため**すでに対策済み**。
 つまり「開発体験」と「CI 時間」の観点では、履歴書き換えの利得はほぼ無い。
 
 ---

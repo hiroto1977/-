@@ -38,9 +38,9 @@ aliases:
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
 - [[econ-balassa-index-revealed-comparative-advantage|顕示比較優位指数——バラッサ指数による貿易特化の測定]] — 同じ思想家
 - [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同じ思想家
-- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — 同じ思想家
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
+- [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

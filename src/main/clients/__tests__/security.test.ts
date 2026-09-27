@@ -11,6 +11,7 @@ import {
   parseSecurityKeys,
 } from '../security';
 import { FetchError } from '../types';
+import { BREACH_EMAIL_MESSAGES } from '../../../shared/scanTarget';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -261,6 +262,47 @@ describe('detectNorton', () => {
     expect(result.details).toMatch(/見つかりませんでした/);
   });
 
+  /**
+   * **「探して無かった」と「製品が無い OS」を分ける** (パス 165)。
+   *
+   * この 3 本は**対照が鳴らなかったから足した**: 画面側を直した後に
+   * `detection: candidates.length === 0 ? 'unsupported' : 'absent'` を
+   * `'absent'` 固定へ戻しても、main のどの検査も落ちなかった ——
+   * つまり分類そのものを誰も測っていなかった。
+   * **鳴らない対照は「合格」ではなく、その検査についての報せである。**
+   */
+  it('★ 候補パスが 1 本も無い OS は unsupported (探していないので absent ではない)', async () => {
+    const probe = vi.fn(async (_p: string) => ({ isDirectory: () => false }));
+    const result = await detectNorton('linux', probe);
+    expect(result.detection).toBe('unsupported');
+    // 探していないことを、probe が呼ばれていないことで裏から確かめる。
+    expect(probe).not.toHaveBeenCalled();
+  });
+
+  it('★ 候補パスが在って見つからなければ absent (探して無かった)', async () => {
+    const probe = vi.fn(async () => ({ isDirectory: () => false }));
+    for (const platform of ['win32', 'darwin'] as NodeJS.Platform[]) {
+      const result = await detectNorton(platform, probe);
+      expect(result.detection, platform).toBe('absent');
+    }
+    expect(probe).toHaveBeenCalled();
+  });
+
+  it('★ 見つかれば found', async () => {
+    const probe = vi.fn(async (p: string) => ({
+      isDirectory: () => p === '/Applications/Norton 360.app',
+    }));
+    const result = await detectNorton('darwin', probe);
+    expect(result.detection).toBe('found');
+  });
+
+  it('★ 未知の OS も unsupported (候補が空なので探していない)', async () => {
+    const probe = vi.fn(async (_p: string) => ({ isDirectory: () => false }));
+    const result = await detectNorton('aix' as NodeJS.Platform, probe);
+    expect(result.detection).toBe('unsupported');
+    expect(probe).not.toHaveBeenCalled();
+  });
+
   it('truncates HIBP error body to 200 chars (already-killed regression test)', async () => {
     // Pinned here for any future code shuffle that loses the slice.
     const longBody = 'X'.repeat(500);
@@ -415,7 +457,7 @@ describe('ACTIONS["check-email-breach"] — URL + header pinning (kills StringLi
         fetch: fetchMock,
         payload: { email: '   ' },
       }),
-    ).rejects.toThrow('email is required');
+    ).rejects.toThrow(BREACH_EMAIL_MESSAGES.empty);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -786,7 +828,7 @@ describe('ACTIONS["scan-url"]', () => {
   });
 
   it('swaps `+` to `-` in the VT id (kills `.replace(/\\+/g, "-")` → `""`)', async () => {
-    // URL 'https://example.com/?a=😾' base64-encodes to a string
+    // URL 'https://example.com/?q=~~~' base64-encodes to a string
     // containing '+'. The vtBase64 function must replace `+` with `-`
     // (URL-safe). The mutant `replace(/\+/g, "")` would silently drop
     // the +, producing a shorter id whose round-trip decode misses bytes.
@@ -806,7 +848,10 @@ describe('ACTIONS["scan-url"]', () => {
     await ACTIONS['scan-url']!({
       token: goodToken,
       fetch: fetchMock,
-      payload: { url: 'https://example.com/?a=\u{1F63E}' },
+      // 絵文字の入力は URL 標準の正規化で percent-encode され base64 に `+` が出なくなった
+      // (パス 325 で関門が解析後の href を返すようになったため)。`~~~` は正規化しても素通りし、
+      // 同じ位置に `+` を出すので、変異体を殺す意図はそのまま保てる。
+      payload: { url: 'https://example.com/?q=~~~' },
     });
     const reportUrl = fetchMock.mock.calls[1]![0] as string;
     // Standard base64 contains a '+' (verified offline); base64url must

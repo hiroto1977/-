@@ -34,6 +34,7 @@ aliases:
 - [[legal-standard-terms|定型約款（改正民法）]] — 同分野の近傍
 - [[legal-companies-act-2019-reform|令和元年改正会社法（社外取締役の設置義務化・株主総会資料の電子提供制度）]] — 同分野の近傍
 - [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 同分野の近傍
+- [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — 同分野の近傍
 - [[legal-shareholder-derivative-suit|株主代表訴訟（責任追及等の訴え・会社法847条）]] — 同分野の近傍
 
 ## 関連

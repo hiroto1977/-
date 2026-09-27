@@ -23,6 +23,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { trackedCrossCheck } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const DOCS = path.join(REPO_ROOT, 'docs');
@@ -114,7 +115,8 @@ function canonicalKnowledgeTotal() {
 function canonicalCitationLedgerCount() {
   const src = read(path.join(REPO_ROOT, 'scripts/lint-doi-prefix.cjs'));
   if (src == null) return null;
-  const names = ['ALLOWLIST', 'ISBN_ALLOWLIST', 'JOURNAL_ALLOWLIST', 'DUPLICATE_ID_ALLOWLIST'];
+  // 2026-09-05: ISSN_ALLOWLIST (埋め込み ISSN の検査数字) が 5 つ目の台帳として加わった。
+  const names = ['ALLOWLIST', 'ISBN_ALLOWLIST', 'JOURNAL_ALLOWLIST', 'DUPLICATE_ID_ALLOWLIST', 'ISSN_ALLOWLIST'];
   let total = 0;
   for (const name of names) {
     // `const NAME = new Map([` から対応する `]);` までを粗く切り出し、
@@ -141,12 +143,72 @@ function canonicalCitationLedgerCount() {
  * QUALITY.md 側は分母に `Ignored` を混ぜて 77.16% を出していた —— 同じ
  * 報告書から出た 2 つの数字が、互いを出典に名指ししたまま 23 ポイント違っていた。
  */
+/**
+ * `src/shared/ollama.ts` の `export const NAME = '…'` を読む (2026-09-09 · パス 139)。
+ * Ollama の安全の床 (MIN_SAFE_VERSION) と台帳の照合日は、2026-09-09 まで docs/OLLAMA_SECURITY.md に
+ * 手で 4 か所写されていて (0.1.46)、コードが動いても文書は動かなかった。
+ */
+function canonicalOllamaConst(name) {
+  const src = read(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
+  if (src === null) return null;
+  const m = new RegExp(`export const ${name}\\s*=\\s*'([^']+)'`).exec(src);
+  return m === null ? null : m[1];
+}
+
 function canonicalMutationScore(which) {
   const src = read(path.join(DOCS, 'QUALITY.md'));
   if (src == null) return null;
   const m = src.match(/\| Mutation score \(total \/ covered\) \| ([\d.]+)% \/ ([\d.]+)% \|/);
   if (m == null) return null;
   return which === 'covered' ? m[2] : m[1];
+}
+
+/**
+ * 変異検査の閾値 (2026-09-27 · パス 490)。`docs/QUALITY_WORKFLOW.md` は 2026-08 から
+ * `{ "high": 90, "low": 60, "break": 50 }` と書き、「break: 50 — 50% を切ったら CI が失敗する」
+ * 「全体目標は 60-75% が現実的な落とし所」と述べていた —— 実物は high 100 / low 99.9 /
+ * break 99.8 である。品質の頁の末尾がこの文書を「詳しい運用ルール」として名指ししている。
+ */
+function canonicalStrykerThresholds() {
+  const raw = read(path.join(REPO_ROOT, 'stryker.config.json'));
+  if (raw == null) return null;
+  try {
+    const t = JSON.parse(raw).thresholds;
+    if (t == null) return null;
+    return `high ${t.high} / low ${t.low} / break ${t.break}`;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `mutation.yml` が `main` への push で測る対象パス (2026-09-27 · パス 490)。
+ *
+ * CLAUDE.md は「`mutation.yml` runs Stryker (weekly + on pushes to `main` that touch
+ * `stryker.config.json`, `vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`)」と、
+ * 2026-08 の書き換えより前の対象を名乗り続けていた (実物は `src/**` で、しかも変わったファイルだけを測る)。
+ * 同じパスで分かったとおり、「いつ測られるか」の読み違いは「赤はいつ出るか」の読み違いになる
+ * (パス 479 の「測定は週次だけ・赤は 6 日後」は、この push の測定を見落としていた)。
+ *
+ * **読めない形は `null` を返し、`null` は FACTS の側で「計算できない」として落ちる** ——
+ * `push:` の下に `paths:` が無い (= どの push でも走る)・`pull_request` の `paths`・
+ * `paths-ignore` を、ここは読み違えて「空の集合」として返さない (self-test が標本で留める)。
+ *
+ * @param textOverride self-test の差し込み口。`undefined` なら実ファイルを読む
+ *   (`null` は「読めなかった」を表す —— 他の差し込み口と同じ約束)。
+ */
+function canonicalMutationPushPaths(textOverride) {
+  const src =
+    textOverride !== undefined ? textOverride : read(path.join(REPO_ROOT, '.github', 'workflows', 'mutation.yml'));
+  if (src == null) return null;
+  const m = /\n\s*push:\s*\n(?:\s+branches:[^\n]*\n)?\s+paths:\s*\n((?:[ \t]+-[ \t]*[^\n]+\n)+)/.exec(src);
+  if (m == null) return null;
+  return m[1]
+    .split('\n')
+    .map((l) => l.trim().replace(/^-\s*/, '').replace(/^['"]|['"]$/g, ''))
+    .filter((l) => l !== '')
+    .sort()
+    .join(' / ');
 }
 
 const FACTS = [
@@ -176,6 +238,28 @@ const FACTS = [
     ],
   },
   {
+    name: 'mutation.yml push paths',
+    canonical: canonicalMutationPushPaths(),
+    claims: [
+      {
+        file: 'CLAUDE.md',
+        pattern: /on pushes\s+to `main` that touch ((?:`[^`]+`\s*(?:\/\s*)?)+)it measures/,
+        parse: (m) => [...m[1].matchAll(/`([^`]+)`/g)].map((x) => x[1]).sort().join(' / '),
+      },
+    ],
+  },
+  {
+    name: 'stryker thresholds',
+    canonical: canonicalStrykerThresholds(),
+    claims: [
+      {
+        file: 'docs/QUALITY_WORKFLOW.md',
+        pattern: /"thresholds":\s*\{\s*"high":\s*([\d.]+),\s*"low":\s*([\d.]+),\s*"break":\s*([\d.]+)\s*\}/,
+        parse: (m) => `high ${m[1]} / low ${m[2]} / break ${m[3]}`,
+      },
+    ],
+  },
+  {
     name: 'citation ledger backlog',
     canonical: canonicalCitationLedgerCount(),
     claims: [
@@ -187,12 +271,66 @@ const FACTS = [
     ],
   },
   {
+    name: 'Ollama minimum safe version (台帳の修正版の最大)',
+    canonical: canonicalOllamaConst('MIN_SAFE_VERSION'),
+    claims: [
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /→ \*\*Ollama (\d+\.\d+\.\d+) 以降 \(推奨: 最新安定版\)\*\*/,
+        parse: (m) => m[1],
+      },
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /床は `(\d+\.\d+\.\d+)`\)/,
+        parse: (m) => m[1],
+      },
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /更新後 `ollama --version` で (\d+\.\d+\.\d+) 以上/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
+  {
+    name: 'Ollama advisories verified on (台帳の照合日)',
+    canonical: canonicalOllamaConst('OLLAMA_ADVISORIES_VERIFIED_ON'),
+    claims: [
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /台帳[^\n]*は \*\*(\d{4}-\d{2}-\d{2}) 時点\*\*/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
+  {
     name: 'academic concept count',
     canonical: canonicalAcademicCount(),
     claims: [
       {
         file: 'docs/KNOWLEDGE_AUTOPILOT.md',
         pattern: /知識ベース（学術 ([\d,]+) \//,
+        parse: (m) => Number(m[1].replace(/,/g, '')),
+      },
+      /*
+       * **新しいセッションが最初に読む文書も突き合わせる** (2026-09-08 · パス 97)。
+       *
+       * `docs/SESSION_HANDOFF.md` の進捗ダッシュボードは同じ概念総数を持ち、
+       * 見出しに「毎バッチ完了時に更新」と書いてある = **手で保つ数**である。
+       * ところがこのゲートは、ドリフトが見つかった 2 つの文書
+       * (KNOWLEDGE_AUTOPILOT / REMAINING_WORK) にしか向いていなかった。
+       *
+       * CLAUDE.md と SessionStart hook (`scripts/session-context.cjs`) は
+       * **この文書を最初に読め**と案内する。つまり**いちばん読まれる台帳が、
+       * 何も検査していない唯一の台帳**だった (実測: `scripts/` のうち
+       * SESSION_HANDOFF を読むのは hook・URL 符号化・整合性チェーンの 3 本だけで、
+       * どれも数を見ていない)。
+       *
+       * 2026-09-08 時点の値は**正しかった** (3,417 で本体と一致)。
+       * 欠陥ではなく**番人の不在**なので、番人だけを足す。
+       */
+      {
+        file: 'docs/SESSION_HANDOFF.md',
+        pattern: /\| \*\*現在の概念総数\*\* \| \*\*([\d,]+)\*\*/,
         parse: (m) => Number(m[1].replace(/,/g, '')),
       },
     ],
@@ -528,6 +666,61 @@ function checkE2eBuildOrder(failures, textOverride) {
 }
 
 /**
+ * **発信先の台帳は 1 つ** —— `docs/ARCHITECTURE.md` §3.3 だけ。
+ *
+ * `docs/SECURITY_AUDIT.md` の「ネットワーク発信先一覧」は 2026-09-09 まで §3.3 の手書きの
+ * 写し (12 行) を持ち、「その他のホストへの接続は **存在しない**」「Ollama は
+ * 127.0.0.1:11434 (ハードコード、変更不可)」と書いていた。実物の §3.3 は 29 ホストで、
+ * freee / Microsoft Graph / BASE / Stripe / LINE / Discord / Salesforce / OpenAI / Gemini が
+ * 写しに無く、ブラウザ版の Ollama と AI ハブは接続先を設定できる。§3.3 は `verify:arch`
+ * が実物と照合するが、写しは誰も見ない —— **写しを持つこと自体を禁じる** (節は §3.3 を
+ * 指し、表を持たず、絶対の否定を置かない)。
+ */
+function checkSingleEgressLedger(failures, auditOverride) {
+  const FACT = '発信先の台帳は 1 つ';
+  const text =
+    auditOverride === undefined ? read(path.join(REPO_ROOT, 'docs/SECURITY_AUDIT.md')) : auditOverride;
+  if (text === null) {
+    failures.push({ fact: FACT, reason: 'docs/SECURITY_AUDIT.md を読めない' });
+    return 0;
+  }
+  const lines = text.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('## ネットワーク発信先一覧'));
+  if (start < 0) {
+    failures.push({
+      fact: FACT,
+      reason: 'SECURITY_AUDIT.md に「## ネットワーク発信先一覧」の節が無い — §3.3 への案内が消えている',
+    });
+    return 0;
+  }
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith('## ')) end += 1;
+  const section = lines.slice(start + 1, end);
+  const body = section.join('\n');
+  if (!/ARCHITECTURE\.md[^\n]*§\s*3\.3|§\s*3\.3[^\n]*ARCHITECTURE\.md/.test(body)) {
+    failures.push({ fact: FACT, reason: 'SECURITY_AUDIT.md の発信先の節が docs/ARCHITECTURE.md §3.3 を指していない' });
+  }
+  const tableRows = section.filter((l) => /^\|/.test(l));
+  if (tableRows.length > 0) {
+    failures.push({
+      fact: FACT,
+      reason:
+        `SECURITY_AUDIT.md の発信先の節に表が ${tableRows.length} 行ある — 発信先の台帳は ARCHITECTURE.md §3.3 だけ` +
+        ' (verify:arch が実物と照合する)。写しは 2026-09-09 に 12 行 / 実物 29 ホストまでずれていた',
+    });
+  }
+  if (/接続は\s*\*{0,2}存在しない/.test(body)) {
+    failures.push({
+      fact: FACT,
+      reason:
+        'SECURITY_AUDIT.md の発信先の節が「接続は存在しない」と絶対の否定を置いている — ' +
+        'その主張を持てるのは verify:arch が照合する §3.3 だけ',
+    });
+  }
+  return 1;
+}
+
+/**
  * 変異スコアの**鮮度**。等値の照合 (FACTS) では捕まらない種類の腐り方を見る。
  *
  * `docs/QUALITY.md` は自動生成だが、生成し直さなければ古いまま committed で
@@ -593,6 +786,307 @@ function checkMutationScoreFresh(failures, qualityOverride, configOverride) {
 }
 
 /**
+ * **行ごとの点数も見る。総合だけでは、死んだ 1 ファイルが見えない。**
+ *
+ * ## 見つけた形 (2026-09-07 実測)
+ *
+ * `checkMutationScoreFresh` が読むのは「Mutation score (total / covered)」の
+ * **総合 1 行だけ**で、`thresholds.break` と比べている。ところが
+ * `docs/QUALITY.md` は**ファイルごとの表**も持ち、そこは誰も見ていなかった。
+ *
+ * 246 行のうち **1 行が 0.00%** だった (`src/shared/taxConsumption.ts`)。
+ * 246 ファイルの総合はこの 1 件では動かないので、**総合は緑のまま**である。
+ * 気付いたのは表を数値で並べ替えたからで、見た目 (245 行が 100.00) では隠れる。
+ *
+ * **危ないのは、この 0.00 が 2 つの別物を区別できないこと**:
+ *
+ *   - `mutate` に載せたが**どの検査も覆っていない**モジュール
+ *     (変異検査が存在する理由そのもの)
+ *   - モジュール直下の定数しか持たず、full run では静的変異体が「未到達」に
+ *     落ちるだけのファイル (`stryker.config.json` の注記にある既知の形)
+ *
+ * どちらも `0.00 | 0 殺 | 0 生存 | N 未到達` と出る。**前者を後者に見せかけて
+ * 出荷できる。** 実測した今日の 1 件は後者 (かつ既に古い) だったが、
+ * 「今日はたまたま無害」は仕組みではない。
+ *
+ * ## 規則
+ *
+ * 閾値を下回る行は**台帳に理由つきで載っていなければ落とす**。台帳は
+ * 逆向きにも照合する —— 載っているのに実際は閾値以上 (= 直った) 行、
+ * および表から消えた行も落とす。「直ったのに台帳に残る」は、次に本当に
+ * 死んだファイルが来たときの目隠しになる。
+ */
+const PER_FILE_BELOW_THRESHOLD = {
+  'src/shared/taxConsumption.ts':
+    '週次スナップショットの時点ではモジュール直下の定数だけを持つファイルで、full run では ' +
+    '静的変異体が未到達へ落ちるため 0.00 と記録された (変異体 2・殺 0・生存 0)。' +
+    '2026-09-07 に判定関数 twentyPercentMeasureStatus とその検査が入っており、' +
+    'subset 実行の実測は 100.00% (39 殺・生存 0・未到達 0)。次の週次実行で行が更新される。',
+};
+
+/** 表が生きていることの下限 (実測 246 行)。 */
+const MIN_QUALITY_ROWS = 200;
+
+/** 理由はこの字数以上 (「静的」だけでは次の人が判断できない)。 */
+const MIN_REASON_CHARS = 40;
+
+function checkPerFileMutationScores(failures, qualityOverride, configOverride, ledgerOverride) {
+  const quality =
+    qualityOverride === undefined ? read(path.join(DOCS, 'QUALITY.md')) : qualityOverride;
+  const rawCfg =
+    configOverride === undefined
+      ? read(path.join(REPO_ROOT, 'stryker.config.json'))
+      : configOverride;
+  const ledger = ledgerOverride === undefined ? PER_FILE_BELOW_THRESHOLD : ledgerOverride;
+  if (quality === null || rawCfg === null) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason: 'docs/QUALITY.md か stryker.config.json を読めない',
+    });
+    return 0;
+  }
+  let breakAt = null;
+  try {
+    breakAt = JSON.parse(rawCfg).thresholds?.break ?? null;
+  } catch {
+    breakAt = null;
+  }
+  if (breakAt === null) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason: 'stryker.config.json に thresholds.break が無い — 行ごとの点数を判定できない',
+    });
+    return 0;
+  }
+
+  // `| src/x.ts | 100.00 | 100.00 | 261 | 0 | 0 | 42 | 0 |`
+  // ★ 率が「—」の行 (分母 0 = 測る変異体が無い) も読む (2026-09-27 · パス 490)。以前の生成側は
+  //   分母 0 を「0.00」と刷っていたので数として読めたが、「—」へ直した今、数だけを読む針のままだと
+  //   **その行が表から黙って消える** (測っていない行ほど見えなくなる)。「—」は NaN として持ち、
+  //   閾値の判定では「満たしていない」側に数える —— 「測っていない」は「緑」ではない。
+  const ROW = /^\|\s*(src\/[^|\s]+)\s*\|\s*([\d.]+|—)\s*\|/gm;
+  const rows = new Map();
+  for (const m of quality.matchAll(ROW)) rows.set(m[1], m[2] === '—' ? Number.NaN : Number(m[2]));
+
+  if (rows.size < MIN_QUALITY_ROWS) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason:
+        `docs/QUALITY.md のファイル別の行が ${rows.size} 件しか読めない (下限 ${MIN_QUALITY_ROWS}) — ` +
+        '表の形が変わったか生成が壊れている。0 件を「問題なし」と読ませない',
+    });
+    return 1;
+  }
+
+  for (const [file, total] of rows) {
+    if (total >= breakAt) continue;
+    const reason = ledger[file];
+    if (typeof reason !== 'string' || reason.trim().length < MIN_REASON_CHARS) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason:
+          `docs/QUALITY.md の ${file} が ${Number.isNaN(total) ? '— (分母 0 = 測る変異体が無い)' : `${total}%`} ` +
+          `(閾値 ${breakAt}%) — PER_FILE_BELOW_THRESHOLD に理由を書くこと。` +
+          '「覆っていない」のか「モジュール直下の定数だけ (静的変異体は Ignored)」なのかを実測して残す',
+      });
+    }
+  }
+
+  // 逆向き: 台帳が古くなっていないか。
+  for (const [file, reason] of Object.entries(ledger)) {
+    if (!rows.has(file)) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason: `PER_FILE_BELOW_THRESHOLD の ${file} が docs/QUALITY.md の表に無い — 台帳から消すこと`,
+      });
+      continue;
+    }
+    if (rows.get(file) >= breakAt) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason:
+          `PER_FILE_BELOW_THRESHOLD の ${file} は ${rows.get(file)}% で閾値を満たしている — ` +
+          '直ったなら台帳から消すこと (残すと、次に本当に死んだファイルが来たときの目隠しになる)',
+      });
+    }
+    // 理由の字数は**前向きの側だけ**で見る。両方で見ると同じ問題を 2 件報告して
+    // しまう (self-test がそれを教えてくれた)。閾値以上の行は上で「直った」として
+    // 鳴るので、そちらの理由の長さは問わない。
+    void reason;
+  }
+  return 1;
+}
+
+/**
+ * **変異検査の分母を、頁そのものと突き合わせる** (2026-09-27 · パス 490)。
+ *
+ * ## 見つけた形 (2026-09-27 実測)
+ *
+ * 公開中の `docs/QUALITY.md` は「Overall: 100.00%」の下に「分母の範囲: `stryker.config.json` の
+ * `mutate` が名指しする **296 本**」と書いていた。ところが**表は 246 行** (2026-09-01 の全掃引) で、
+ * 生成時点の `mutate` は 302 本 —— **点数が数えた集合と、分母として名乗る集合が別だった**。
+ * 296 はパス 354 が手で挿し、パス 355 が手で 1 つ上げた数で、どの機械も表と突き合わせて
+ * いなかった (`mutateScopeCensus` が見ていたのは「`**N 本**` という綴りが在ること」だけ)。
+ * 同じ頁は「Report age: 0.1h」という**相対時間**を 26 日前の報告に付けたまま固めており、
+ * 変異体が 1 つも有効でない行を「0.00」と (「1 つも殺せていない」と同じ字で) 刷っていた。
+ *
+ * ## 見るもの —— どれも**頁の中だけで**確かめられる (報告は .gitignore 済みで CI に無い)
+ *
+ * 1. 分母の文が名乗る行数 (`表の行は **N 本**`) と要約の行 = 表の実際の行数
+ * 2. Overall と要約の総計 (killed / survived / no-cov / valid / ignored / invalid) = 表の列の和
+ * 3. 行ごとの率を数え直す —— 手で書き換えた率を通さず、**分母 0 を 0.00 と刷らない** (「—」)
+ * 4. 報告の日時は**絶対時刻**で、相対時間 (`Report age`) を固めていない
+ * 5. **全掃引であること** —— 部分の run (`--mutate` で絞った報告) の点数を品質の頁として
+ *    commit しない (生成側も既定で断る)
+ * 6. 被覆の行は範囲 (`src/main/**`) を名乗る
+ *
+ * 報告が古いこと自体は咎めない —— 日時を名乗っているので、それは読む人が判断できる。
+ * 咎めるのは**頁が自分の表と食い違うこと**と、**名乗る分母が測った集合と違うこと**である。
+ */
+const PAGE_ROW =
+  /^\|\s*(src\/[^|\s]+)\s*\|\s*([\d.]+|—)\s*\|\s*([\d.]+|—)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*$/gm;
+
+/** 頁の率の書き方 (生成側 `scripts/quality-report.cjs` の scorePct / pctCell と同じ規則)。 */
+function pageRate(num, denom) {
+  return denom > 0 ? ((100 * num) / denom).toFixed(2) : '—';
+}
+
+function checkMutationPageScope(failures, qualityOverride) {
+  const FACT = 'mutation denominator';
+  const page =
+    qualityOverride === undefined ? read(path.join(DOCS, 'QUALITY.md')) : qualityOverride;
+  if (page === null) {
+    failures.push({ fact: FACT, reason: 'docs/QUALITY.md を読めない' });
+    return 0;
+  }
+  const rows = [...page.matchAll(PAGE_ROW)].map((m) => ({
+    file: m[1],
+    pct: m[2],
+    covered: m[3],
+    killed: Number(m[4]),
+    survived: Number(m[5]),
+    noCov: Number(m[6]),
+    ignored: Number(m[7]),
+    invalid: Number(m[8]),
+  }));
+  if (rows.length === 0) {
+    failures.push({
+      fact: FACT,
+      reason: 'docs/QUALITY.md のファイル別の表が 1 行も読めない — 表の形が変わったか生成が壊れている',
+    });
+    return 1;
+  }
+
+  // 1. 名乗る行数 = 表の行数 (本文の文と要約の行の両方)。
+  const stated = /表の行は \*\*(\d+) 本\*\*/.exec(page);
+  if (stated === null) {
+    failures.push({ fact: FACT, reason: '分母の範囲の文 (`表の行は **N 本**`) が無い — 点数が何本についての物かを名乗っていない' });
+  } else if (Number(stated[1]) !== rows.length) {
+    failures.push({ fact: FACT, reason: `分母の範囲の文は ${stated[1]} 本と名乗るが、表は ${rows.length} 行` });
+  }
+  const summaryRows = /\| Mutation の表の行 \(報告が測った本\) \| (\d+) 本/.exec(page);
+  if (summaryRows === null) {
+    failures.push({ fact: FACT, reason: '要約に「Mutation の表の行 (報告が測った本)」の行が無い' });
+  } else if (Number(summaryRows[1]) !== rows.length) {
+    failures.push({ fact: FACT, reason: `要約は ${summaryRows[1]} 本と名乗るが、表は ${rows.length} 行` });
+  }
+
+  // 2. 総計 = 列の和。
+  const sum = rows.reduce(
+    (a, r) => ({
+      killed: a.killed + r.killed,
+      survived: a.survived + r.survived,
+      noCov: a.noCov + r.noCov,
+      ignored: a.ignored + r.ignored,
+      invalid: a.invalid + r.invalid,
+    }),
+    { killed: 0, survived: 0, noCov: 0, ignored: 0, invalid: 0 },
+  );
+  const valid = sum.killed + sum.survived + sum.noCov;
+  const overall = /\((\d+) killed \/ (\d+) survived \/ (\d+) no-cov \/ (\d+) valid\)/.exec(page);
+  if (overall === null) {
+    failures.push({ fact: FACT, reason: 'Overall の行 (killed / survived / no-cov / valid) が無い' });
+  } else {
+    const got = overall.slice(1, 5).map(Number).join(' / ');
+    const want = [sum.killed, sum.survived, sum.noCov, valid].join(' / ');
+    if (got !== want) failures.push({ fact: FACT, reason: `Overall は ${got} と書くが、表の列の和は ${want}` });
+  }
+  for (const [label, want] of [
+    ['Mutants killed', sum.killed],
+    ['Mutants survived', sum.survived],
+    ['Mutants 有効 (分母)', valid],
+    ['Mutants ignored (Stryker disable 宣言)', sum.ignored],
+    ['Mutants invalid (評価不成立)', sum.invalid],
+  ]) {
+    const m = new RegExp(`\\| ${label.replace(/[()]/g, '\\$&')} \\| (\\d+) \\|`).exec(page);
+    if (m === null) failures.push({ fact: FACT, reason: `要約に「${label}」の行が無い` });
+    else if (Number(m[1]) !== want) {
+      failures.push({ fact: FACT, reason: `要約の「${label}」は ${m[1]} だが、表の列の和は ${want}` });
+    }
+  }
+  const score = /\| Mutation score \(total \/ covered\) \| ([\d.]+%|—) \/ ([\d.]+%|—) \|/.exec(page);
+  const wantScore = [pageRate(sum.killed, valid), pageRate(sum.killed, sum.killed + sum.survived)].map((p) =>
+    p === '—' ? p : `${p}%`,
+  );
+  if (score === null) failures.push({ fact: FACT, reason: '要約に Mutation score の行が無い' });
+  else if (score[1] !== wantScore[0] || score[2] !== wantScore[1]) {
+    failures.push({
+      fact: FACT,
+      reason: `要約の Mutation score は ${score[1]} / ${score[2]} だが、表の列の和からは ${wantScore.join(' / ')}`,
+    });
+  }
+
+  // 3. 行ごとの率を数え直す (分母 0 は「—」—— 0.00 は「1 つも殺せていない」と読める)。
+  for (const r of rows) {
+    const v = r.killed + r.survived + r.noCov;
+    const wantPct = pageRate(r.killed, v);
+    const wantCovered = pageRate(r.killed, r.killed + r.survived);
+    if (r.pct !== wantPct || r.covered !== wantCovered) {
+      failures.push({
+        fact: FACT,
+        reason:
+          `${r.file} の率は ${r.pct} / ${r.covered} だが、同じ行の数からは ${wantPct} / ${wantCovered}` +
+          (v === 0 ? ' (分母 0 を 0.00 と刷らない —— 「測る変異体が無い」と「1 つも殺せていない」は別物)' : ''),
+      });
+    }
+  }
+
+  // 4. 報告の日時は絶対時刻。相対時間を頁に固めない。
+  if (!/報告ファイルの日時 \*\*\d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC\*\*/.test(page)) {
+    failures.push({ fact: FACT, reason: '報告ファイルの日時 (絶対時刻・UTC) が無い — 変異検査の点数がいつの物かを名乗っていない' });
+  }
+  if (/Report age/i.test(page)) {
+    failures.push({
+      fact: FACT,
+      reason: '「Report age」(相対時間) を頁に固めている —— commit した翌時間から偽になる。絶対時刻で書く',
+    });
+  }
+
+  // 5. 全掃引であること。
+  if (/部分の報告である/.test(page)) {
+    failures.push({
+      fact: FACT,
+      reason:
+        'docs/QUALITY.md は部分の報告 (--mutate で絞った run) から作られている —— その点数を ' +
+        '品質の頁として commit しない。全掃引 (`npm run mutate`) の報告から作り直す',
+    });
+  } else if (!/この run はそのすべてを名指ししていた \(全掃引\)/.test(page)) {
+    failures.push({
+      fact: FACT,
+      reason: 'docs/QUALITY.md が全掃引かどうかを名乗っていない —— 分母の範囲を `npm run quality:report` で作り直す',
+    });
+  }
+
+  // 6. 被覆の行は範囲を名乗る (被覆は --coverage.include=src/main/** で測っている)。
+  for (const m of page.matchAll(/^\| (Coverage[^|]*)\|/gm)) {
+    if (!m[1].includes('src/main/**')) {
+      failures.push({ fact: FACT, reason: `被覆の行「${m[1].trim()}」が範囲 (src/main/**) を名乗っていない` });
+    }
+  }
+  return 1;
+}
+
+/**
  * 逆向きの照合 — **「CI に無い」と書いてあるものが、本当に無いか。**
  *
  * `checkCiGateCoverage` は「ゲートを足したのに CI へ繋ぎ忘れた」を見る。
@@ -608,6 +1102,21 @@ function checkMutationScoreFresh(failures, qualityOverride, configOverride) {
  *
  * @param claimOverride / @param workflowsOverride self-test の差し込み口。
  */
+/**
+ * **走査の条件** (下の workflow の歩きが使う物そのもの · 2026-09-26 · パス 472)。
+ *
+ * 走査は再帰しないので「`.github/workflows/` の直下」を経路の条件で表す。
+ * `lint:workflow-security` が同じ条件を別に宣言しているのは、**別の script の
+ * 別の歩き**だからである —— 片方を import すると読み込みだけでその門が走る形に
+ * なりうるので写しにせず、外側の証人が「2 つの条件が同じ集合を選ぶ」ことを見る。
+ */
+const CROSS_CHECK = {
+  roots: ['.github'],
+  skipDirs: [],
+  accept: (name) => name.endsWith('.yml') || name.endsWith('.yaml'),
+  acceptPath: (rel) => rel.startsWith('.github/workflows/') && rel.split('/').length === 3,
+};
+
 function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
   const claudeMd =
     claimOverride === undefined ? read(path.join(REPO_ROOT, 'CLAUDE.md')) : claimOverride;
@@ -633,6 +1142,24 @@ function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
           .filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'))
           .map((f) => ({ name: f, text: read(path.join(dir, f)) ?? '' }))
       : [];
+  }
+  if (workflowsOverride === undefined) {
+    // 2 つ目の数え方: 追跡されている workflow は、どれも歩きに出る (パス 472)。
+    // 実測 (2026-09-26): 「not in CI」と書いたゲートを workflow が実行する状態を
+    // 植てると素の木は ❌ で鳴るが、**その workflow を走査から落とすと ✅** になった ——
+    // この門の失敗の文そのもの (「無い」と信じさせて動く仕組みを隠している) が、
+    // 門自身に起きていた。
+    const cross = trackedCrossCheck(
+      workflows.map((w) => path.join('.github', 'workflows', w.name)), CROSS_CHECK, REPO_ROOT);
+    if (cross.disagreement !== null) {
+      failures.push({ fact: 'not-in-CI claims', reason: `追跡ファイルの一覧が信用できません: ${cross.disagreement}` });
+    }
+    for (const miss of cross.missing) {
+      failures.push({
+        fact: 'not-in-CI claims',
+        reason: `追跡されている ${miss} が workflow の走査に出ていません (走査が一部だけ死んでいます)`,
+      });
+    }
   }
   for (const name of claimed) {
     const re = new RegExp(`npm run ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z0-9:_-])`);
@@ -1116,6 +1643,111 @@ function selfTest() {
       console.log(`  ${ok ? '✓' : '✗'} 変異スコア鮮度: ${label}: ${f.length} 件 (期待 ${expected})`);
     }
   }
+
+  /*
+   * 行ごとの点数。**総合が緑でも 1 ファイルが死んでいることは在る** ——
+   * 2026-09-07 の実測で `src/shared/taxConsumption.ts` が 0.00% のまま
+   * 246 行の総合に埋もれていた。台帳は両向きで照合する。
+   */
+  {
+    const cfg = (b) => JSON.stringify({ thresholds: { break: b } });
+    const REASON = 'x'.repeat(50);
+    /** 下限を満たす健全な表 + 追加の行。 */
+    const table = (extra) => {
+      const filler = Array.from(
+        { length: 210 },
+        (_, i) => `| src/filler/f${i}.ts | 100.00 | 100.00 | 5 | 0 | 0 | 0 | 0 |`,
+      ).join('\n');
+      return `${filler}\n${extra}\n`;
+    };
+    const dead = '| src/shared/taxConsumption.ts | 0.00 | 0.00 | 0 | 0 | 0 | 2 | 0 |';
+    const healed = '| src/shared/taxConsumption.ts | 100.00 | 100.00 | 39 | 0 | 0 | 0 | 0 |';
+    const OK = cfg(99.8);
+    for (const [label, quality, ledger, expected, config = OK] of [
+      ['★ 実在した形 (1 行だけ 0.00%・台帳なし) で鳴る', table(dead), {}, 1],
+      // パス 490: 生成側は分母 0 を「—」と刷るようになった。**数だけを読む針だと、この行は表から
+      // 黙って消える** —— 同じ行を「—」の形でも鳴らす (台帳に理由があれば通す)。
+      ['★ 分母 0 の行 (「—」) も台帳なしで鳴る', table(dead.replace('| 0.00 | 0.00 |', '| — | — |')), {}, 1],
+      ['分母 0 の行 (「—」) も台帳に理由があれば鳴らない', table(dead.replace('| 0.00 | 0.00 |', '| — | — |')), { 'src/shared/taxConsumption.ts': REASON }, 0],
+      ['台帳に理由があれば鳴らない', table(dead), { 'src/shared/taxConsumption.ts': REASON }, 0],
+      ['理由が短ければ鳴る', table(dead), { 'src/shared/taxConsumption.ts': 'みじかい' }, 1],
+      ['★ 直ったのに台帳に残っていれば鳴る (次の死を隠す)', table(healed), { 'src/shared/taxConsumption.ts': REASON }, 1],
+      ['★ 台帳の行が表から消えていれば鳴る', table(healed), { 'src/gone/x.ts': REASON }, 1],
+      ['全部 100 なら鳴らない', table('| src/a/b.ts | 100.00 | 100.00 | 3 | 0 | 0 | 0 | 0 |'), {}, 0],
+      ['★ 表が読めない (行が少ない) なら鳴る — 0 件を合格にしない', `${dead}\n`, {}, 1],
+      ['閾値が無ければ鳴る', table(dead), {}, 1, '{}'],
+      ['設定が壊れていれば鳴る', table(dead), {}, 1, '{ not json'],
+      ['doc が読めなければ鳴る', null, {}, 1],
+      ['設定が読めなければ鳴る', table(dead), {}, 1, null],
+    ]) {
+      const f = [];
+      checkPerFileMutationScores(f, quality, config, ledger);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 行ごとの点数: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+  /*
+   * 変異検査の分母を頁そのものと突き合わせる (パス 490)。**最初のケースは公開中だった形** ——
+   * 分母の文が表と違う本数を名乗る (実物は 296 と 246)。
+   */
+  {
+    const ROWS = [
+      '| src/a.ts | 100.00 | 100.00 | 10 | 0 | 0 | 2 | 0 |',
+      '| src/b.ts | — | — | 0 | 0 | 0 | 3 | 0 |',
+    ];
+    const SCOPE =
+      '分母の範囲: この報告 (報告ファイルの日時 **2026-09-27 01:00 UTC**) の表の行は **2 本**。' +
+      'run が名指ししたのは **2 本** (報告に残る `config.mutate`)。この頁を生成した時点の ' +
+      '`stryker.config.json` の `mutate` は **2 本**で、**この run はそのすべてを名指ししていた (全掃引)**。';
+    const page = (o = {}) =>
+      [
+        `| Mutation score (total / covered) | ${o.score ?? '100.00% / 100.00%'} |`,
+        `| Mutation の表の行 (報告が測った本) | ${o.summaryRows ?? '2'} 本 (報告ファイルの日時 2026-09-27 01:00 UTC) |`,
+        `| Mutants killed | ${o.killed ?? '10'} |`,
+        '| Mutants survived | 0 |',
+        '| Mutants 有効 (分母) | 10 |',
+        '| Mutants ignored (Stryker disable 宣言) | 5 |',
+        '| Mutants invalid (評価不成立) | 0 |',
+        o.coverage ?? '| Coverage (`src/main/**` のみ) — lines | 99.00% |',
+        '',
+        `**Overall (表の 2 本): 100.00% total / 100.00% covered** (${o.overall ?? '10 killed / 0 survived / 0 no-cov / 10 valid'})`,
+        '',
+        o.scope ?? SCOPE,
+        o.extra ?? '',
+        '| file | score | covered | killed | survived | no-cov | ignored | invalid |',
+        '|------|------:|--------:|-------:|---------:|-------:|--------:|--------:|',
+        ...(o.rows ?? ROWS),
+        '',
+      ].join('\n');
+    for (const [label, text, expected] of [
+      ['整った頁は通る', page(), 0],
+      ['★ 公開中だった形 —— 分母の文が表と違う本数を名乗る', page({ scope: SCOPE.replace('**2 本**。run', '**3 本**。run') }), 1],
+      ['★ 要約の行数が表と違う', page({ summaryRows: '3' }), 1],
+      ['★ Overall が表の列の和と違う', page({ overall: '11 killed / 0 survived / 0 no-cov / 11 valid' }), 1],
+      ['★ 要約の killed が表の列の和と違う', page({ killed: '9' }), 1],
+      ['★ 要約の点数が表の列の和と違う', page({ score: '99.00% / 100.00%' }), 1],
+      ['★ 分母 0 の行を 0.00 と刷る (「1 つも殺せていない」と読める)', page({ rows: [ROWS[0], '| src/b.ts | 0.00 | 0.00 | 0 | 0 | 0 | 3 | 0 |'] }), 1],
+      ['★ 率を手で書き換えた行', page({ rows: ['| src/a.ts | 90.00 | 100.00 | 10 | 0 | 0 | 2 | 0 |', ROWS[1]] }), 1],
+      ['★ 相対時間 (Report age) を固めている', page({ extra: '_Report age: 0.1h._' }), 1],
+      ['★ 報告の日時 (絶対時刻) が無い', page({ scope: SCOPE.replace('報告ファイルの日時 **2026-09-27 01:00 UTC**', '報告ファイルの日時 不明') }), 1],
+      [
+        '★ 部分の報告を品質の頁にしている',
+        page({ scope: SCOPE.replace('**この run はそのすべてを名指ししていた (全掃引)**', '**部分の報告である** —— **300 本はこの run に含まれない**') }),
+        1,
+      ],
+      ['★ 全掃引かどうかを名乗らない', page({ scope: SCOPE.replace('**この run はそのすべてを名指ししていた (全掃引)**', '') }), 1],
+      ['★ 被覆の行が範囲を名乗らない', page({ coverage: '| Coverage — lines | 99.00% |' }), 1],
+      ['★ 表が 1 行も読めない', page({ rows: [] }), 1],
+      ['頁が読めなければ鳴る', null, 1],
+    ]) {
+      const f = [];
+      checkMutationPageScope(f, text);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 変異検査の分母: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
   /*
    * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
    * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
@@ -1123,6 +1755,61 @@ function selfTest() {
    * 「✗」は画面に出るが、CI が見るのは終了コードだけである。
    * 対照を書いておきながら、その対照の結果を捨てていた。
    */
+  /*
+   * 発信先の台帳が 1 つであること。**2026-09-09 まで実在した形を最初のケースに置く** ——
+   * SECURITY_AUDIT の節が表 (12 行) と「その他のホストへの接続は存在しない」を持ち、
+   * §3.3 を指していなかった。「§3.3 を指していれば通る」も同じ強さで要る。
+   */
+  {
+    const head = '## ネットワーク発信先一覧（許可されている外部接続先）\n';
+    const pointer = '\n発信先の台帳は **`docs/ARCHITECTURE.md` §3.3** の 1 つだけ。\n';
+    const table = '\n| サービス | ホスト |\n|---|---|\n| GitHub | api.github.com |\n';
+    const denial = '\nその他のホストへの接続は **存在しない**。\n';
+    const next = '\n## 次の節\n';
+    for (const [label, text, expected] of [
+      ['★ 2026-09-09 まで実在した形 (表 + 絶対の否定・§3.3 を指さない) で鳴る', head + table + denial + next, 3],
+      ['§3.3 を指し、表も否定も無ければ鳴らない', head + pointer + next, 0],
+      ['★ §3.3 を指していても表が戻れば鳴る', head + pointer + table + next, 1],
+      ['絶対の否定だけでも鳴る', head + pointer + denial + next, 1],
+      ['節の外の表は見ない', head + pointer + next + table, 0],
+      ['節が無ければ鳴る', '# 監査\n' + next, 1],
+      ['読めなければ鳴る', null, 1],
+    ]) {
+      const f = [];
+      checkSingleEgressLedger(f, text);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 発信先の台帳: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
+  /*
+   * `mutation.yml` の push の対象パスを読む (2026-09-27 · パス 490)。
+   * 1 件目は実物の形 —— CLAUDE.md の主張と突き合わせる正典がここから来る。
+   * ★ の 3 件は「読み違えて空の集合を返す」形で、どれも `null` (= 計算できない = 落ちる) で
+   * なければならない。空の集合を返すと、主張の側も空なら一致して黙る。
+   */
+  {
+    for (const [label, text, expected] of [
+      [
+        '実物の形 (branches つき・単引用符)',
+        "on:\n  push:\n    branches: [main]\n    paths:\n      - 'src/**'\n      - 'stryker.config.json'\n\npermissions:\n  contents: read\n",
+        'src/** / stryker.config.json',
+      ],
+      ['branches が無く二重引用符・順序は並べ替える', 'on:\n  push:\n    paths:\n      - "vitest.config.ts"\n      - "src/**"\n', 'src/** / vitest.config.ts'],
+      ['paths が branches より前でも読む', "on:\n  push:\n    paths:\n      - 'src/**'\n    branches: [main]\n", 'src/**'],
+      ["★ push に paths が無ければ null (どの push でも走る —— 空の集合ではない)", "on:\n  push:\n    branches: [main]\n  schedule:\n    - cron: '0 18 * * 0'\n", null],
+      ["★ pull_request の paths を push の物として読まない", "on:\n  push:\n    branches: [main]\n  pull_request:\n    paths:\n      - 'src/**'\n", null],
+      ["★ paths-ignore を paths として読まない", "on:\n  push:\n    paths-ignore:\n      - 'docs/**'\n", null],
+      ['読めなければ null', null, null],
+    ]) {
+      const got = canonicalMutationPushPaths(text);
+      const ok = got === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} mutation.yml の push の対象: ${label}: ${JSON.stringify(got)} (期待 ${JSON.stringify(expected)})`);
+    }
+  }
+
   if (bad > 0 || selfTestFailed) {
     console.error(`❌ self-test 不一致 ${bad} 件 (+ 旗 ${selfTestFailed}) — ゲートのゲートが鳴っていない`);
     return 1;
@@ -1178,14 +1865,23 @@ function main() {
   const catCount = checkReadmeCategories(failures);
   const pubCount = checkPublishScanCoverage(failures);
   const orderCount = checkE2eBuildOrder(failures);
-  const freshCount = checkMutationScoreFresh(failures);
+  const ledgerCount = checkSingleEgressLedger(failures);
+  // ★ **頁の自己一致 (`checkMutationPageScope`) は、今の `docs/QUALITY.md` には当てていない**
+  //   (2026-09-27 · パス 494)。その頁は 2026-09-01 の報告から作った古い形で、この検査が求める形
+  //   (分母の文・絶対時刻・全掃引の名乗り) は**全掃引の報告から作り直した頁**にしか書けない。
+  //   作り直しに要る全掃引は、同じ日に回すと「検査の中でモジュールを読み直す検査」のせいで
+  //   読み込み時の変異体が大量に「生存」と出る人工物で汚れていた (実測・`docs/REMAINING_WORK.md`
+  //   の「パス 494」)。**頁を作り直すパスでここへ戻す** —— 関数そのものの判定は下の self-test と
+  //   `qualityReportScope.test.ts` が実物の生成物どうしで今も検めている。
+  const freshCount = checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
       ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
       ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合` +
       ` + e2e.yml のビルド順 ${orderCount} 件 (dist/ を掃除する側が後ろに来ていないこと)`,
-      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)`,
+      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)` +
+      ` + 発信先の台帳 ${ledgerCount} 件 (SECURITY_AUDIT に §3.3 の写しが無いこと)`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');
@@ -1198,4 +1894,13 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * ★ **読み込むだけで走らせない** (2026-09-26 · パス 472)。
+ *
+ * それまでは `process.exit(main())` が読み込みの時点で走っていたので、外から証人を
+ * 立てられなかった (require した瞬間に検査プロセスごと落ちる)。
+ * `lint-test-coverage.cjs` と `build-knowledge-vault.cjs` が同じ理由で同じ番を持つ。
+ */
+module.exports = { CROSS_CHECK, checkMutationPageScope };
+
+if (require.main === module) process.exit(main());

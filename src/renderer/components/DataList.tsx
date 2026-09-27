@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { safeImageSrc } from '../../shared/imageUrlGate';
+import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
 
 export interface DataListItem {
   key: string;
@@ -73,7 +73,9 @@ export function DataList({ items, empty }: Props) {
   return (
     <ul className="data-list">
       {shown.map((item) => {
-        const thumbSrc = safeImageSrc(item.thumbnailUrl);
+        // thumbnailUrl は第三者 API の応答 (Canva の thumbnail.url 等)。内側を向いた
+        // 送り先は取りに行かない —— 第三者の値なので `safeRemoteImageSrc` (パス 300)。
+        const thumbSrc = safeRemoteImageSrc(item.thumbnailUrl);
         return (
           <li key={item.key} className="data-list-item">
             {thumbSrc ? (

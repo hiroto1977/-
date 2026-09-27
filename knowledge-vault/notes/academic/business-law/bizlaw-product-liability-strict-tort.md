@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 語彙が近い
-- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同分野の近傍
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 語彙が近い
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[human-flashbulb-memory-brown-kulik|フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶]] — 同じ思想家
 - [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

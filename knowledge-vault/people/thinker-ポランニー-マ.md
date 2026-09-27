@@ -2,7 +2,7 @@
 title: "マイケル・ポランニー"
 type: thinker
 person_key: "ポランニー|マ"
-concept_count: 4
+concept_count: 3
 tags:
   - person
   - index
@@ -10,13 +10,12 @@ tags:
 
 # マイケル・ポランニー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 知識創造理論は、野中郁次郎と竹内弘高が1995年の著作『知識創造企業』で提唱した、組織が暗黙知と形式知の相互変換を通じ…
+## 学術概念（3件）
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論と SECI モデル（野中＝竹内）——暗黙知と形式知が共同化・表出化・連結化・内面化の四モードで相互変換され、「場」を基盤に個人から組織へ螺旋的に増幅する]] — 組織的知識創造理論は、野中郁次郎が1994年の論文（OrganizationScience5巻1号）で提唱し、野中と竹…
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 野中郁次郎と竹内弘高は1995年の著作『知識創造企業（TheKnowledge-CreatingCompany）』にお…
-- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 知識移転とは、組織内（部門間・拠点間・個人間）や組織間で、ノウハウやベストプラクティスを送り手から受け手へ伝達・共有し…
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — SECIモデルは、野中郁次郎＆竹内弘高（1995）が『知識創造企業（TheKnowledge-CreatingComp…
+- [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — 知識移転（knowledgetransfer）とは、組織内の部門・拠点・個人の間や組織間で、ノウハウやベストプラクティ…
 
 ## 関連
 - 索引: [[人物索引]]

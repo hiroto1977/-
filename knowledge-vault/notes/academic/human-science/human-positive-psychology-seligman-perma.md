@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[human-positive-psychology|ポジティブ心理学]] — 語彙が近い
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 語彙が近い
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — 同じ思想家
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
-- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
-- [[human-hedonic-treadmill|快楽の踏み車（快楽適応）]] — 同じ思想家
+- [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
+- [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

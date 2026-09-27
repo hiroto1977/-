@@ -1,0 +1,6 @@
+// storageReadLedger.test.ts の対照用の標本。**台帳に無い読み取り箇所**を 1 つ持つ。
+// 拡張子が .txt なのは、走査 (src/renderer/**/*.ts(x)) に自分で引っかからないため
+// —— 引っかかると本物の違反として鳴ってしまう。
+function loadSomething(): string {
+  return localStorage.getItem('servicehub.notInTheLedger') ?? '';
+}

@@ -31,7 +31,7 @@ Edwin Hutchins（エドウィン・ハッチンス・1995『Cognition in the Wil
 
 ## 関連概念
 - [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

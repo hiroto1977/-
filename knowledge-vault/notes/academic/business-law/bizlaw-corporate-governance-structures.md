@@ -33,7 +33,7 @@ Aguilera, Ruth V. （2010 Academy of Management Annals）／Jackson, Gregory ／
 ## 関連概念
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 語彙が近い
 - [[legal-corporate-governance|会社法における株式会社の機関設計]] — 語彙が近い
-- [[bizlaw-quantum-meruit|クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復]] — 同分野の近傍
+- [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

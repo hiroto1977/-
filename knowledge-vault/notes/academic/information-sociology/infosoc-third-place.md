@@ -35,12 +35,12 @@ aliases:
 - [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 出典を共有
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 出典を共有
 - [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 出典を共有
+- [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — 出典を共有
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
 - [[eh-1993|1993年（平成5年）]] — 出典を共有
-- [[econ-taylor-rule|テイラールール]] — 出典を共有
+- [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]] — 出典を共有
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
 - [[eh-2013|2013年（平成25年）]] — 出典を共有
-- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

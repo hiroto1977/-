@@ -26,7 +26,7 @@ aliases:
 J.ハーバーマス『コミュニケーション的行為の理論』(1981)／戦略的行為(成功志向・手段化)と区別したコミュニケーション的行為(了解志向)／妥当性請求(真理性・正当性・誠実性)とより良い論拠の力による合意(理想的発話状況)／生活世界のシステムによる植民地化／熟議民主主義・討議倫理の基盤
 
 ## 出典
-- [Jürgen Habermas — Stanford Encyclopedia of Philosophy（妥当性請求・生活世界・コミュニケーション的合理性）](https://plato.stanford.edu/entries/habermas/) `学術`
+- [Jürgen Habermas — Stanford Encyclopedia of Philosophy（妥当性請求・生活世界・コミュニケーション的合理性）](https://plato.stanford.edu/entries/habermas/) `リファレンス`
 - [Jürgen Habermas: Philosophy and social theory — Encyclopaedia Britannica](https://www.britannica.com/biography/Jurgen-Habermas/Philosophy-and-social-theory) `リファレンス`
 - [Communicative versus Strategic Rationality: Habermas' Theory of Communicative Action and the Social Brain — PLOS ONE（査読論文）](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0065111) `学術`
 - [Colonization of the Lifeworld — The Cambridge Habermas Lexicon (Cambridge University Press)](https://www.cambridge.org/core/books/cambridge-habermas-lexicon/colonization-of-the-lifeworld/36E8421628B4E1914F7E675B31977ADC) `学術`
@@ -36,8 +36,9 @@ J.ハーバーマス『コミュニケーション的行為の理論』(1981)／
 - [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 出典を共有
 - [[human-priming|プライミング効果]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
-- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同分野の近傍
+- [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 同分野の近傍
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同分野の近傍
+- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

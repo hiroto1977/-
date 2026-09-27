@@ -26,7 +26,7 @@ aliases:
 マーシャル・マクルーハン ／ ハロルド・イニス ／ レイモンド・ウィリアムズ ／ ラングドン・ウィナー
 
 ## 出典
-- [McLuhan, M. (1964) Understanding Media: The Extensions of Man — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/45198868) `学術`
+- [McLuhan, M. (1964) Understanding Media: The Extensions of Man — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/45198868) `リファレンス`
 - [Wikipedia: Technological determinism — McLuhan, Innis, medium is the message, global village, social construction critique](https://en.wikipedia.org/wiki/Technological_determinism) `リファレンス`
 
 ## 関連概念

@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Cannon–Bard theory — Cannon, Bard, thalamic theory, parallel emotion and arousal, James-Lange critique](https://en.wikipedia.org/wiki/Cannon%E2%80%93Bard_theory) `リファレンス`
 
 ## 関連概念
+- [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 語彙が近い
 - [[mgmt-heinrich-law|ハインリッヒの法則（1:29:300）]] — 同じ思想家
-- [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同じ思想家
 - [[human-two-factor-emotion|情動二要因理論]] — 同じ思想家
 - [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同じ思想家
 - [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同じ思想家

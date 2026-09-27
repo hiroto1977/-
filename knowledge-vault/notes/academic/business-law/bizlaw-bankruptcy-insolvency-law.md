@@ -36,12 +36,12 @@ aliases:
 - [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同じ思想家
 - [[bizlaw-consumer-credit-regulation|消費者信用規制と過剰貸付防止の比較法制]] — 同じ思想家
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同じ思想家
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
+- [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 出典を共有
+- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
+- [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 出典を共有
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

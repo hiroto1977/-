@@ -40,6 +40,7 @@ aliases:
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同分野の近傍
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 同分野の近傍
+- [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

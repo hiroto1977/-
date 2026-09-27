@@ -19,11 +19,12 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import {
+  MAX_PASSWORD_CHARS,
+  MIN_PASSWORD_LENGTH,
+  NoRecoveryBranchError,
   _resetVaultForTests,
   getVault,
   meetsPasswordPolicy,
-  MIN_PASSWORD_LENGTH,
-  NoRecoveryBranchError,
 } from '../vault';
 import { webcrypto } from 'node:crypto';
 if (!('subtle' in globalThis.crypto)) {
@@ -207,6 +208,52 @@ describe('token の長さ', () => {
     const vault = getVault();
     await vault.initialize(OK_PASSWORD);
     await expect(vault.setToken('svc', 1 as unknown as string)).rejects.toThrow('token が不正です');
+  });
+});
+
+/**
+ * **保管層の床 (2026-09-14 · パス 245)。**
+ *
+ * パス 244 は資格情報の入口を `checkTokenInput` へ通したが、保管庫を**直接**
+ * 叩く書き込みが残っていた —— `SettingsPage.tsx` の Google トークン 4 本
+ * (`v.setToken('drive', tok.accessToken)` ほか) は画面の関門を通らない。
+ * 中身は認可サーバの発行値なので制御文字は入りにくいが、**「入りにくい」は
+ * 関門ではない**。制御文字がヘッダに載ると `new Headers()` が値ごと文面に
+ * 載せて投げ、その文面は画面へ出る (`shared/__tests__/headerValueLeak.test.ts`)。
+ *
+ * 規則の綴りは `shared/tokenInput.ts` の `hasControlChars` だけが持つ。
+ */
+describe('token の制御文字 — 保管層の床', () => {
+  const NUL = String.fromCharCode(0);
+
+  it('★ 制御文字を含む token は断る (呼び出し側が関門を忘れても入らない)', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await expect(vault.setToken('svc', `ya29.${NUL}broken`)).rejects.toThrow('制御文字');
+    expect(await vault.getToken('svc'), '断ったのに書かれている').toBeNull();
+  });
+
+  it('★ 改行も同じく断る', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await expect(
+      vault.setToken('svc', `ya29.${String.fromCharCode(10)}x`),
+    ).rejects.toThrow('制御文字');
+  });
+
+  it('対照: 制御文字が無ければこれまでどおり保存する', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await vault.setToken('svc', 'ya29.a-normal_token');
+    expect(await vault.getToken('svc')).toBe('ya29.a-normal_token');
+  });
+
+  it('限界: JSON で包んだ値は床を通る (中は包む側の画面が断る)', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    const wrapped = JSON.stringify({ anthropic: `sk-ant-${NUL}broken` });
+    await vault.setToken('assistant', wrapped);
+    expect(await vault.getToken('assistant')).toBe(wrapped);
   });
 });
 
@@ -644,5 +691,61 @@ describe('パスワードを変えたら「短い」状態は解消する', () =
     await vault.recoverWithMnemonic(mnemonic, LONG_NEW);
     expect(vault.passwordMeetsPolicy()).toBe(true);
     expect(await vault.getToken('github')).toBe('ghp_y');
+  });
+});
+
+describe('★ パスワードの床と天井は文字で数える (パス 252)', () => {
+  /*
+   * **上のどの境界検査も `'a'.repeat(N)` だった。** ASCII では
+   * `password.length` と文字数が一致するので、**単位の食い違いは現れない** ——
+   * 2026-07 に下限を 8 → 12 へ上げてから 2026-09-14 まで、
+   * `'😀'.repeat(6)` (実文字数 **6**) が「12 文字以上」の関門を通っていた。
+   *
+   * 画面と例外は 9 か所で「文字」と述べる (LockScreen ×2 の placeholder・
+   * SettingsPage ×2・vault の例外 3 本・バックアップの断り 2 本)。
+   * 述べる単位で数える。
+   */
+  it('★ 絵文字 6 個 (実文字数 6 / コード単位 12) は下限を満たさない', () => {
+    const six = '😀'.repeat(6);
+    expect(six.length).toBe(MIN_PASSWORD_LENGTH); // コード単位では床ちょうど
+    expect(meetsPasswordPolicy(six)).toBe(false);
+  });
+
+  it('★ 対照: ひらがな 12 文字は通る (同じ 12 コード単位でも、こちらは 12 文字)', () => {
+    expect(meetsPasswordPolicy('あいうえおかきくけこさし')).toBe(true);
+  });
+
+  it('★ 絵文字 6 個で保管庫を作れない (関門は初期化で効く)', async () => {
+    await expect(getVault().initialize('😀'.repeat(6)))
+      .rejects.toThrow(`${MIN_PASSWORD_LENGTH} 文字以上`);
+  });
+
+  it('★ 絵文字 12 個 (実文字数 12) なら作れる', async () => {
+    await getVault().initialize('😀'.repeat(12));
+    expect(await getVault().status()).toBe('unlocked');
+  });
+
+  it('★ 混在 (絵文字 3 + ASCII 6 = 9 文字) は断る', async () => {
+    await expect(getVault().initialize(`${'😀'.repeat(3)}${'a'.repeat(6)}`))
+      .rejects.toThrow(`${MIN_PASSWORD_LENGTH} 文字以上`);
+  });
+
+  it('★ 上限は文字で数える — 200 文字の絵文字 (400 コード単位) は通る', async () => {
+    const long = '😀'.repeat(200);
+    expect(long.length).toBeGreaterThan(MAX_PASSWORD_CHARS); // コード単位では超えている
+    await getVault().initialize(long);
+    expect(await getVault().status()).toBe('unlocked');
+  });
+
+  it(`★ ${' '}上限ちょうど + 1 文字は断る (文字で数えた境界)`, async () => {
+    await expect(getVault().initialize('あ'.repeat(MAX_PASSWORD_CHARS + 1)))
+      .rejects.toThrow(`${MAX_PASSWORD_CHARS} 字以内`);
+  });
+
+  it('★ 断りの文面が持つ数は、関門が使う定数そのもの (写しでない)', async () => {
+    await expect(getVault().initialize('あ'))
+      .rejects.toThrow(`パスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
+    await expect(getVault().initialize('あ'.repeat(MAX_PASSWORD_CHARS + 1)))
+      .rejects.toThrow(`パスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
   });
 });

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-wage-increase-promotion-sme|中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）]] — 同分野の近傍
-- [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 同分野の近傍
+- [[tax-life-insurance-deduction|生命保険料控除]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

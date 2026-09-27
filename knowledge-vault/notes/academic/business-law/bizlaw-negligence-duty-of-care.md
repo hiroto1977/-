@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-caparo-v-dickman|カパロ対ディックマン——過失責任における「注意義務」の三段階テスト]] — 語彙が近い
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 同じ思想家
 - [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
 - [[bizlaw-constructive-trust-remedy|擬制信託——不当利得防止のための衡平法上の救済手段]] — 同じ思想家
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — 同じ思想家
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
-- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

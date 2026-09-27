@@ -35,7 +35,7 @@ aliases:
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-rational-inattention-sims|合理的不注意理論——情報処理コストに基づく意思決定と価格硬直性]] — 同じ思想家
-- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 同分野の近傍
+- [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

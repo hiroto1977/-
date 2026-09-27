@@ -73,6 +73,7 @@ import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistan
 import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudio';
 import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
 import { fetchTalentSnapshot, ACTIONS as TALENT_ACTIONS } from './talent';
+import { fetchHydroponicsSnapshot } from './hydroponics';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
@@ -155,6 +156,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   docstudio: fetchDocstudioSnapshot,
   cursor: fetchCursorSnapshot,
   talent: fetchTalentSnapshot,
+  hydroponics: fetchHydroponicsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -195,11 +197,19 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   }
 }
 
-/** Services whose snapshot fetcher reads local resources (filesystem,
- *  process state, etc.) and does not require any saved credentials. The
- *  IPC handler in main.ts still passes through any token the user has
- *  saved (security uses it for opt-in HIBP/VT calls), but a missing
- *  token is not an error here. */
+/**
+ * Services for which **a missing saved credential is not an error**.
+ *
+ * The name says "local", and most members do read local resources (filesystem,
+ * process state). But the set is wider than that: the IPC handlers in main.ts
+ * (`fetch:snapshot` and, since pass 267, `action:invoke`) consult it purely to
+ * decide whether an absent token should refuse the call. Measured 2026-09-24:
+ * **7 of 52 members do read `ctx.token`** (`skills` / `security` / `emotions` /
+ * `stocks` / `business` / `teamradar` / `assistant`) — for them a credential is
+ * *optional*, not absent. So read this set as "no **saved** credential is
+ * required", not as "no network" (pass 452 — the old wording was narrower than
+ * the membership, and that matters when deciding whether a service belongs).
+ */
 export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'home',
   // 書類スタジオ: テンプレートは renderer 内蔵。認証・ネットワーク不要。
@@ -224,6 +234,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'demae-can',
   'real-estate',
   'mutual-funds',
+  // 水耕栽培の運転管理: 台帳は shared に在り、記録は renderer の record store。認証・通信なし。
+  'hydroponics',
   'charts',
   'quality',
   'storage',
@@ -237,6 +249,24 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'patent-attorney',
   'cpa',
   // EC 仕入れ/卸/ASP/AI 執筆: 公開 API なし or パートナー限定で snapshot-only。
+  /*
+   * **`shopify` (2026-09-24 · パス 452)。**
+   *
+   * 資格情報の宣言を `action` → `none` へ直し、画面から入力欄を外した
+   * (7 つのコネクタは `ctx.payload` から**連携先**のトークンを取り、
+   * `fetchShopifySnapshotImpl(_ctx)` は引数を無視して STUB を返す ——
+   * Shopify 自身の `ctx.token` を読む出荷コードは 0 件)。
+   *
+   * ★ **ここへ足さないと、欄を外した瞬間に画面が使えなくなる** —— `fetch:snapshot`
+   * と `action:invoke` はこの集合に居ないサービスについて「トークン未設定」で
+   * 断るので、**読まれない資格情報が「門」として働いていた**。それは
+   * 「Shopify の Admin API トークンを預けないと静的な見本すら見せない」形で、
+   * しかも預けた鍵は誰も読まない。欄を外すだけだと**開ける手が無くなる**
+   * (法則 `escape-hatch-stays-open` の裏返し)。
+   * 気付いたのはオントロジーの公理 `actions-need-reader-or-local` で、
+   * 「action を持つのに読み手も local でもない書き込みは行き先が無い」と鳴った。
+   */
+  'shopify',
   'netsea',
   'super-delivery',
   'topseller',

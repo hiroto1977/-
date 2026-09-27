@@ -34,6 +34,7 @@ aliases:
 - [[bizlaw-franchise-law-regulation|フランチャイズ規制と情報開示義務の比較法制]] — 語彙が近い
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 語彙が近い
 - [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]] — 出典を共有
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — 出典を共有
 - [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]] — 同分野の近傍
 - [[bizlaw-labor-standards|労働基準法（労働時間・36協定）]] — 同分野の近傍
 

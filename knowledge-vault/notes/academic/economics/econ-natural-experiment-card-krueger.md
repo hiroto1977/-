@@ -39,7 +39,7 @@ aliases:
 - [[econ-rent-seeking|レントシーキング]] — 同じ思想家
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
-- [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

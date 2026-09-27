@@ -34,8 +34,7 @@ aliases:
 ## 関連概念
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 語彙が近い
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 語彙が近い
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同じ思想家
-- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同分野の近傍
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 同分野の近傍

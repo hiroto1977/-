@@ -22,6 +22,7 @@ const profile = (over: Partial<EmotionProfile> = {}): EmotionProfile => ({
   lowStreak: 0,
   dominantEmotion: null,
   sentimentBalance: 0,
+  analysisCount: 0,
   topTriggers: [],
   ...over,
 });

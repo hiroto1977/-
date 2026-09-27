@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  MAX_CONSULTATION_TOPIC_CHARS,
   parseShigyoContact,
   parseShigyoConsultation,
   contactToForm,
@@ -7,6 +8,7 @@ import {
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
 } from '../shigyoDirectory';
+import { calendarDateMessage } from '../../../shared/isoDate';
 
 describe('parseShigyoContact (専門家の任意登録)', () => {
   const valid = { serviceId: 'cpa' as const, name: '中村 六実', firm: '中村会計事務所', phone: '03-1234-5678', email: 'n@example.com' };
@@ -103,10 +105,14 @@ describe('parseShigyoConsultation (相談履歴の任意登録)', () => {
 
   it('rejects bad date / empty topic / unknown status', () => {
     expect(() => parseShigyoConsultation({ ...valid, date: '2026/07/25' })).toThrow('YYYY-MM-DD');
+    // 暦に無い日 (パス 115 までは正規表現だけで通していた)。
+    expect(() => parseShigyoConsultation({ ...valid, date: '2026-02-30' })).toThrow('暦に在る日付');
+    expect(() => parseShigyoConsultation({ ...valid, date: '2026-13-45' })).toThrow('相談日');
     expect(() => parseShigyoConsultation({ ...valid, date: '' })).toThrow('相談日');
     expect(() => parseShigyoConsultation({ ...valid, topic: '' })).toThrow('相談テーマ');
     expect(() => parseShigyoConsultation({ ...valid, status: '検討中' })).toThrow('ステータス');
   });
+
 
   it('date/topic も前後の空白を落として保存する', () => {
     const c = parseShigyoConsultation({ ...valid, date: ' 2026-07-25 ', topic: ' 決算前の節税相談 ' });
@@ -121,14 +127,32 @@ describe('parseShigyoConsultation (相談履歴の任意登録)', () => {
 
   it('date/topic が文字列でない場合もそれぞれのエラーになる', () => {
     expect(() => parseShigyoConsultation({ serviceId: 'tax-accountant', topic: '相談', status: '完了' }))
-      .toThrow('相談日は YYYY-MM-DD 形式で入力してください (例: 2026-07-25)');
+      .toThrow(`${calendarDateMessage('相談日')} (例: 2026-07-25)`);
     expect(() => parseShigyoConsultation({ ...valid, topic: undefined }))
       .toThrow('相談テーマは 1〜80 文字で入力してください');
   });
 
-  it('相談テーマ 80 文字は受理・81 文字は拒否 (境界)', () => {
-    expect(parseShigyoConsultation({ ...valid, topic: 'あ'.repeat(80) }).topic).toBe('あ'.repeat(80));
-    expect(() => parseShigyoConsultation({ ...valid, topic: 'あ'.repeat(81) })).toThrow('相談テーマ');
+  /*
+   * 2026-09-23 (パス 420) に 2 つ足した:
+   *
+   * 1. **数を字面で書かず定数を読む** —— それまで 80 は関門の式の中の裸の数で、
+   *    この検査も 80 を書き写していた。**表示側が同じ数を引けない**ので画面に天井が無く、
+   *    復元で入った 200,000 字の相談テーマが一覧にそのまま出ていた (実測 201,933 字)。
+   * 2. **単位が「文字」であることを測る** —— `moreThanChars` なので絵文字 80 個は通る
+   *    (`.length` で数えると 160 になって落ちる)。天井の単位はこの repo の定番の罠で、
+   *    `ceilingUnitCensus` が名前で見るが、**振る舞いはここでしか測れない**。
+   *
+   * ★ **自戒**: パス 420 の対照 F (入口の条件を潰す) は 1 度目に鳴らなかったが、
+   *   それは検査が無かったからではなく**この検査ファイルを走らせていなかった**からである。
+   *   「落ちなかった」と「当てていなかった」を混ぜない (パス 397 / 399 / 403 と同じ)。
+   */
+  it('相談テーマ 80 文字は受理・81 文字は拒否 (境界・単位は文字)', () => {
+    const cap = MAX_CONSULTATION_TOPIC_CHARS;
+    expect(parseShigyoConsultation({ ...valid, topic: 'あ'.repeat(cap) }).topic).toBe('あ'.repeat(cap));
+    expect(() => parseShigyoConsultation({ ...valid, topic: 'あ'.repeat(cap + 1) })).toThrow('相談テーマ');
+    // 絵文字は 1 字で 2 符号単位。**文字**で数えるので上限ちょうどは通る。
+    expect(parseShigyoConsultation({ ...valid, topic: '😀'.repeat(cap) }).topic.length).toBe(cap * 2);
+    expect(() => parseShigyoConsultation({ ...valid, topic: '😀'.repeat(cap + 1) })).toThrow('相談テーマ');
   });
 
   it('exposes stable collection names', () => {

@@ -34,7 +34,7 @@ aliases:
 - [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 同じ思想家
 - [[mgmt-service-blueprint|サービス・ブループリント]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同分野の近傍
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティング（ワイザー）——コンピュータが環境に溶け込み意識されずに使われる「消えるコンピュータ」の構想と、IoT・アンビエント環境への展開]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連

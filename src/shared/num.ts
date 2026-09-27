@@ -1,3 +1,5 @@
+import { DASH, pct } from './formatters';
+
 /**
  * 数値の共通処理 — 同じ 1 行が写経されていたものを 1 箇所に集める。
  *
@@ -43,6 +45,43 @@ export function nonNeg(n: number | undefined): number {
   return Number.isFinite(n) ? Math.max(0, n as number) : 0;
 }
 
+/**
+ * 有限なら その数、そうでなければ `null` —— 「算定不能」の綴りを 1 つに揃える。
+ *
+ * `nonNeg` (すぐ上) は非有限を **0 に倒す**。0 は多くの欄で**意味のある値**なので、
+ * 「測れなかった」を 0 で表すと最も安心させる向き・最も悲観的な向きのどちらにも
+ * 化ける (パス 52 / 85 / 91 が同じ形を 3 度直している)。こちらは
+ * **算定不能を算定不能として持ち回る**ためのもので、画面は `null` を「—」と刷る。
+ *
+ * 2026-09-13 (パス 198) に足した。`Infinity` / `NaN` が金額として画面へ届く経路が
+ * 3 本在り (`calcCompoundingFutureValue` / `goalProjection` / `calcRealCost`)、
+ * `jpy` が `¥∞` / `¥NaN` として刷っていた —— **∞ は「無限に豊か」と読め、
+ * 実際には「年数が範囲外で計算が成り立たない」という意味だった**。
+ */
+export function finiteOrNull(n: number): number | null {
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * **符号を残して**非有限だけを 0 に倒す (2026-09-13 · パス 204)。
+ *
+ * `nonNeg` は負値も 0 にするので、**負でありうる量**には使えない ——
+ * 経常利益 (欠損)・予実差異の営業利益・NOI は負が正しい答えである。
+ * パス 204 で私は `appendCorporateTaxSection` と `budgetVariance.line` に
+ * `nonNeg` を入れてしまい、**欠損 −200,000 円を 0 円として刷る**ようにした
+ * (既存の検査が落ちて教えてくれた)。消毒の選び方は「その量は負を取りうるか」で
+ * 決まる:
+ *
+ * | 量 | 使う物 |
+ * | --- | --- |
+ * | 金額・税額・年数・件数 (負は無意味) | `nonNeg` |
+ * | 利益・差異・収益 (負が正しい答え) | `finiteOr0` |
+ * | 「算定不能」の道が在る | `finiteOrNull` → `null` |
+ */
+export function finiteOr0(n: number): number {
+  return Number.isFinite(n) ? n : 0;
+}
+
 /** 100円未満を切り捨てる（国税の端数処理・自動車税の月割など）。 */
 export function floorHundred(n: number): number {
   return Math.floor(n / 100) * 100;
@@ -58,4 +97,23 @@ export function assertNonNegativeFinite(value: number, label: string): void {
   if (!Number.isFinite(value) || value < 0) {
     throw new Error(`${label} must be a finite number >= 0 (got ${value})`);
   }
+}
+
+/**
+ * 割合 (0..1) を「％」で刷る。**算定不能 (null / undefined) は「—」。**
+ *
+ * `0%` は「測った結果が 0」であり、「そもそも測っていない」とは別物である。
+ * 両方を `0` で表すと、画面と書き出しは**最悪値**として読める形になる ——
+ * 勝率 0% は「決済した取引が在り、どれも勝てなかった」という意味になる。
+ *
+ * デスクトップ (`main/clients/stocks.ts`) とブラウザ版
+ * (`renderer/data/stocksAnalysisWeb.ts`) の**両方**が同じ表を刷るので、
+ * 綴りをここに 1 つ置く (この本の冒頭が言うとおり、1 行の私的ヘルパは
+ * コピーの数だけ食い違う)。
+ */
+export function ratioPctOrDash(n: number | null | undefined, digits = 0): string {
+  // **非有限の床は `pct` が持つ** (パス 229)。ここに `toFixed` を直に書いていた
+  // あいだ、`NaN` は `'NaN%'`・`Infinity` は `'Infinity%'` として刷れた ——
+  // 金額側 (`jpy`) にはパス 198 で床が在ったのに、率側には funnel が無かった。
+  return n == null ? DASH : pct(n * 100, digits);
 }

@@ -16,18 +16,22 @@
  */
 
 import { round2 } from '../../shared/num';
+import { isoDateFromTimestamp, parseTimestamp } from '../../shared/isoDate';
+import type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
+import {
+  isSafeSymbol,
+  readStoredWatchlist,
+  symbolsOrEmpty,
+  watchlistStoredNote,
+  type StoredWatchlist,
+} from '../../shared/watchlistState';
+
+// 戻り値の形は shared/stocksTypes.ts が 1 つだけ持つ (パス 117)。
+export type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
+// 銘柄コードの規則も shared が 1 つだけ持つ (パス 309 まで Electron 版と「同じ規則」の写しがここに在った)。
+export { isSafeSymbol } from '../../shared/watchlistState';
 
 export const STOCKS_WATCHLIST_KEY = 'stocks.watchlist';
-
-/** Electron 版 `isSafeSymbol` と同じ規則。1-16 文字の [A-Za-z0-9.-^]。
- *  JP の TSE コード (`7203.T`)、US ティッカー (`AAPL`)、指数 (`^N225`) を許可。 */
-export function isSafeSymbol(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
-  // 空文字は下の regex (`+` で 1 文字以上を要求) が弾くため、length===0 の明示判定は
-  // 冗長 (equivalent mutant 排除のため上限のみ残す)。
-  if (value.length > 16) return false;
-  return /^[A-Za-z0-9.\-^]+$/.test(value);
-}
 
 // --- 型 (snapshot.ts / StocksPage の stocks 形状に一致) -------------------
 
@@ -68,57 +72,42 @@ export interface WebStocksSnapshot {
   };
   fetchedAt: string;
   isMock: boolean;
+  /** 保存先から何が読めたか (パス 309)。デスクトップ版の `StocksSnapshot` と同じ 2 欄。 */
+  stored: StoredWatchlist['kind'];
+  storedNote: string | null;
 }
 
 // --- localStorage 永続化 -------------------------------------------------
 
-/** 保存済みの登録シンボル一覧を読む。壊れていれば空配列。 */
-export function loadWatchlistSymbols(): string[] {
+/**
+ * 保存先を読む —— 「まだ無い」「読めなかった」「保存した (落とした件数つき)」を混ぜない (パス 309)。
+ *
+ * 2026-09-17 まで `catch { return [] }` で全部を空に畳んでいた: 壊れた保存値で一覧は空になり、
+ * 画面は「初期状態（登録なし）では一覧は空です」と言い、次の登録が `[新しい 1 件]` で上書きした。
+ * 判定は shared の同じ関数 (デスクトップ版の `state.json` と同じ 1 つ)。
+ */
+export function readWatchlist(): StoredWatchlist {
   try {
-    const raw = localStorage.getItem(STOCKS_WATCHLIST_KEY);
-    // raw が null/'' のいずれでも下の JSON.parse → Array.isArray / catch 経路が [] を
-    // 返すため、この早期 return の ConditionalExpression は equivalent。
-    // Stryker disable next-line ConditionalExpression
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    // 念のため再検証し、重複を除いて正規化する。
-    const seen = new Set<string>();
-    const out: string[] = [];
-    for (const v of parsed) {
-      if (isSafeSymbol(v)) {
-        const u = v.toUpperCase();
-        if (!seen.has(u)) {
-          seen.add(u);
-          out.push(u);
-        }
-      }
-    }
-    return out;
-  } catch {
-    return [];
+    return readStoredWatchlist(localStorage.getItem(STOCKS_WATCHLIST_KEY));
+  } catch (e) {
+    // Web Storage そのものが拒む環境 (パス 89) —— 「読めなかった」として理由を運ぶ。
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
+}
+
+/**
+ * 助言の対象を組む側の読み (web-shim の `callStocksAdvisor`)。画面が送る universe が優先で、
+ * 保存値は補助 (パス 105) —— 読めなければ空として既定の主要銘柄に倒す。倒す場所は shared の 1 つ。
+ */
+export function loadWatchlistSymbols(): string[] {
+  return [...symbolsOrEmpty(readWatchlist())];
 }
 
 function saveWatchlistSymbols(list: readonly string[]): void {
   localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(list));
 }
 
-// --- 登録 / 解除 (Electron 版アクションと同じ戻り値の形) ------------------
-
-export interface RegisterResult {
-  symbol: string;
-  added: boolean;
-  watchlist: readonly string[];
-  message: string;
-}
-
-export interface UnregisterResult {
-  symbol: string;
-  removed: boolean;
-  watchlist: readonly string[];
-  message: string;
-}
+// --- 登録 / 解除 (Electron 版アクションと同じ戻り値の形 —— 型は shared/stocksTypes.ts) ----
 
 /** 銘柄を登録する。無効なシンボルは throw (web-shim 側で action_failed に変換)。 */
 export function registerSymbol(symbol: unknown): RegisterResult {
@@ -126,7 +115,8 @@ export function registerSymbol(symbol: unknown): RegisterResult {
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  const current = loadWatchlistSymbols();
+  // 読めなかった保存値は空として扱う (明示の操作は警告のうえ通す —— shared の `symbolsOrEmpty` の注記)。
+  const current = symbolsOrEmpty(readWatchlist());
   const wasAlreadyThere = current.includes(upper);
   const next = wasAlreadyThere ? current : [...current, upper];
   // 既存登録時は next===current で保存しても localStorage 内容は不変のため、この
@@ -149,7 +139,7 @@ export function unregisterSymbol(symbol: unknown): UnregisterResult {
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  const current = loadWatchlistSymbols();
+  const current = symbolsOrEmpty(readWatchlist());
   const wasThere = current.includes(upper);
   const next = current.filter((s) => s !== upper);
   // 未登録時は next===current で保存しても localStorage 内容は不変のため、この
@@ -191,10 +181,14 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-/** `daysAgo` 日前の YYYY-MM-DD (UTC ベース、`now` を注入可能でテスト可能)。 */
+/**
+ * `daysAgo` 日前の YYYY-MM-DD (UTC ベース、`now` を注入可能でテスト可能)。
+ *
+ * **`toISOString()` は範囲外で投げる**ので共有の判定を通す (パス 188)。
+ * 今日 `now` に来るのは `Date.now()` だけなので到達はしない —— 床である。
+ */
 function isoDaysAgo(daysAgo: number, now: number): string {
-  const d = new Date(now - daysAgo * 24 * 60 * 60 * 1000);
-  return d.toISOString().slice(0, 10);
+  return isoDateFromTimestamp(now - daysAgo * 24 * 60 * 60 * 1000) ?? '';
 }
 
 /** シンボルに対する決定論的なモック・ローソク足 (ランダムウォーク)。
@@ -259,7 +253,9 @@ export function buildWatchlistItem(symbol: string, now: number = Date.now()): We
 /** Electron 版 `fetchSnapshot('stocks')` 相当のスナップショットを合成する。
  *  ウォッチリストは localStorage の登録銘柄から構築する。 */
 export function buildStocksSnapshot(now: number = Date.now()): WebStocksSnapshot {
-  const symbols = loadWatchlistSymbols();
+  // 読めなかったときも一覧は空だが、`storedNote` がそう言う (パス 309)。
+  const stored = readWatchlist();
+  const symbols = symbolsOrEmpty(stored);
   return {
     watchlist: symbols.map((s) => buildWatchlistItem(s, now)),
     portfolio: {
@@ -268,7 +264,9 @@ export function buildStocksSnapshot(now: number = Date.now()): WebStocksSnapshot
       positions: {},
       history: [],
     },
-    fetchedAt: new Date(now).toISOString(),
+    fetchedAt: parseTimestamp(now)?.toISOString() ?? '',
     isMock: true,
+    stored: stored.kind,
+    storedNote: watchlistStoredNote(stored, 'empty'),
   };
 }

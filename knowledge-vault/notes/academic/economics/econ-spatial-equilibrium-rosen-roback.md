@@ -34,10 +34,9 @@ aliases:
 - [[econ-superstar-economics|スーパースターの経済学]] — 同じ思想家
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
 - [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
-- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
 - [[econ-winner-take-all-frank|勝者総取り市場——わずかな能力差が報酬の巨大格差に転化する競争構造]] — 同じ思想家
 - [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
-- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論（レイザー＝ローゼン）——絶対成果ではなく相対順位で報酬を決める仕組みが努力を引き出し、昇進ごとの大きな報酬格差を説明する]] — 同じ思想家
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同分野の近傍
 - [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]] — 同分野の近傍

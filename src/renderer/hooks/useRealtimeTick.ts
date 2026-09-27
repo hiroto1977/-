@@ -71,7 +71,31 @@ export function useRealtimeTick(intervalMs: number = DEFAULT_TICK_MS, deps: Real
     };
     const start = (): void => {
       if (handle !== null) return; // 二重起動しない
-      handle = setIntervalFn(() => setAt(now()), period);
+      handle = setIntervalFn(() => {
+        /*
+         * **文書が無くなっていたら何もしない。**
+         *
+         * このモジュールは既に 2 か所で `typeof document === 'undefined'` を見て
+         * いる (`defaultSubscribeVisibility` / `defaultIsHidden`) —— つまり
+         * 「文書が無い所でも読み込まれうる」という立場を取っている。刻みの
+         * 本体だけがそれを見ていなかった。
+         *
+         * ブラウザでは起きない (解除は必ず走る)。効くのは**環境が先に消える**
+         * 場合で、実測したのは CI の全件実行である (2026-09-14 · パス 242):
+         * jsdom のファイルが片付いた後に 1 秒タイマーが 1 発だけ生き残り、
+         * React の `dispatchSetState` が `window` を読もうとして
+         * `ReferenceError: window is not defined` になり、**素の Node の
+         * タイマーの中**なので `uncaughtException` へ抜ける。
+         * 結果は「16,471 件すべて成功 + Errors 1」で **exit 1** ——
+         * 検査は 1 つも落ちていないのにビルドが赤くなる。
+         *
+         * 刻みは**画面を動かすためだけの物**なので、動かす画面が無いなら
+         * 進める意味も無い。止めるのではなく「進めない」に留めるのは、
+         * 文書が戻る場合 (`visibilitychange`) と同じ扱いにするため。
+         */
+        if (typeof document === 'undefined') return;
+        setAt(now());
+      }, period);
     };
 
     const sync = (): void => {

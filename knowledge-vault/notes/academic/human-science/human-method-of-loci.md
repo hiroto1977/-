@@ -26,7 +26,7 @@ aliases:
 ケオスのシモニデス ／ キケロ ／ クインティリアヌス ／ フランシス・イェイツ
 
 ## 出典
-- [Yates, F.A. (1966) The Art of Memory — University of Chicago Press (WorldCat)](https://www.worldcat.org/oclc/235660) `学術`
+- [Yates, F.A. (1966) The Art of Memory — University of Chicago Press (WorldCat)](https://www.worldcat.org/oclc/235660) `リファレンス`
 - [Wikipedia: Method of loci — Simonides, memory palace, spatial memory, Roman rhetoric, memory champions](https://en.wikipedia.org/wiki/Method_of_loci) `リファレンス`
 
 ## 関連概念

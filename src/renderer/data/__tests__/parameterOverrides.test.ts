@@ -19,6 +19,7 @@ import {
 import { _resetRecordStoreForTests, getRecordStore } from '../store';
 import { _resetCollectionSubscribersForTests } from '../useCollection';
 import { DEFAULT_PARAMETER_VALUES, PARAMETERS } from '../../../shared/parameters';
+import { settleUntil } from '../../__tests__/jsdomWait';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -60,20 +61,29 @@ describe('useParameters (hook)', () => {
     return null;
   }
 
-  async function settle(): Promise<void> {
-    for (let i = 0; i < 8; i += 1) {
-      await act(async () => {
-        await new Promise<void>((r) => setTimeout(r, 0));
-      });
-    }
-  }
-
+  /**
+   * 読み込みが終わるまで**条件で**待って描く (2026-09-21 · パス 381)。
+   *
+   * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+   * `loading` が true のままで 2 件落ちる (`npm run audit:tick-sensitivity` の実測)。
+   * **画面ではなく hook の戻りを見る**ので `waitForText` ではなく `settleUntil`。
+   */
   async function mount(): Promise<void> {
     root = createRoot(container);
     await act(async () => {
       root!.render(createElement(Harness));
     });
-    await settle();
+    await settleUntil(() => ref.current?.loading === false, '上書きの読み込みが終わる');
+  }
+
+  /**
+   * 上書きが `n` 件になるまで待つ。
+   *
+   * `set` / `reset` は `await` 済みなので保管層はもう書けている —— 待つのは
+   * 購読者から hook へ届く描き直しだけで、**増減の向きが決まっている**ので条件で待てる。
+   */
+  async function waitForOverrides(n: number): Promise<void> {
+    await settleUntil(() => Object.keys(ref.current.overrides).length === n, `上書きが ${n} 件になる`);
   }
 
   async function stored(): Promise<readonly ParameterOverrideRecord[]> {
@@ -121,7 +131,7 @@ describe('useParameters (hook)', () => {
     await act(async () => {
       await ref.current.set('hydroponics.daysPerYear', 300);
     });
-    await settle();
+    await waitForOverrides(1);
     expect(ref.current.values['hydroponics.daysPerYear']).toBe(300);
     expect(ref.current.overrides).toEqual({ 'hydroponics.daysPerYear': 300 });
     expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 300 } }]);
@@ -129,7 +139,7 @@ describe('useParameters (hook)', () => {
     await act(async () => {
       await ref.current.set('payroll.commutePublicTransportCap', 200_000);
     });
-    await settle();
+    await waitForOverrides(2);
     expect(await stored()).toEqual([
       { values: { 'hydroponics.daysPerYear': 300, 'payroll.commutePublicTransportCap': 200_000 } },
     ]);
@@ -144,11 +154,11 @@ describe('useParameters (hook)', () => {
       await ref.current.set('hydroponics.daysPerYear', 300);
       await ref.current.set('payroll.commutePublicTransportCap', 200_000);
     });
-    await settle();
+    await waitForOverrides(2);
     await act(async () => {
       await ref.current.reset('hydroponics.daysPerYear');
     });
-    await settle();
+    await waitForOverrides(1);
     expect(ref.current.overrides).toEqual({ 'payroll.commutePublicTransportCap': 200_000 });
     expect(ref.current.values['hydroponics.daysPerYear']).toBe(DEFAULT_PARAMETER_VALUES['hydroponics.daysPerYear']);
     expect(await stored()).toEqual([{ values: { 'payroll.commutePublicTransportCap': 200_000 } }]);
@@ -156,7 +166,7 @@ describe('useParameters (hook)', () => {
     await act(async () => {
       await ref.current.resetAll();
     });
-    await settle();
+    await waitForOverrides(0);
     expect(ref.current.overrides).toEqual({});
     expect(ref.current.values).toEqual(DEFAULT_PARAMETER_VALUES);
     expect(await stored()).toEqual([{ values: {} }]);
@@ -166,14 +176,13 @@ describe('useParameters (hook)', () => {
     await mount();
     await expect(ref.current.set('hydroponics.daysPerYear', 0)).rejects.toThrow('1日 以上');
     await expect(ref.current.set('hydroponics.daysPerYear', Number.NaN)).rejects.toThrow('数値');
-    await settle();
     expect(await stored()).toEqual([]);
     expect(ref.current.overrides).toEqual({});
     // 境界の値は通る。
     await act(async () => {
       await ref.current.set('hydroponics.daysPerYear', 1);
     });
-    await settle();
+    await waitForOverrides(1);
     expect(ref.current.values['hydroponics.daysPerYear']).toBe(1);
   });
 
@@ -188,7 +197,8 @@ describe('useParameters (hook)', () => {
     await act(async () => {
       await ref.current.set('hydroponics.daysPerYear', 260);
     });
-    await settle();
+    // 件数は 1 のままなので、待つのは**値の入れ替わり**のほう。
+    await settleUntil(() => ref.current.values['hydroponics.daysPerYear'] === 260, '上書きが 260 に入れ替わる');
     expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 260 } }]);
   });
 
@@ -200,7 +210,7 @@ describe('useParameters (hook)', () => {
         ref.current.set('payroll.commutePublicTransportCap', 200_000),
       ]);
     });
-    await settle();
+    await waitForOverrides(2);
     expect(await stored()).toEqual([
       { values: { 'hydroponics.daysPerYear': 300, 'payroll.commutePublicTransportCap': 200_000 } },
     ]);
@@ -217,7 +227,7 @@ describe('useParameters (hook)', () => {
         await ref.current.set(p.id, p.defaultValue);
       });
     }
-    await settle();
+    await waitForOverrides(PARAMETERS.length);
     expect(Object.keys(ref.current.overrides).length).toBe(PARAMETERS.length);
     expect((await stored()).length).toBe(1);
   });

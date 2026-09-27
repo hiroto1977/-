@@ -31,8 +31,8 @@ aliases:
 - [連合 RENGO ONLINE — 解雇権濫用法理の法制化（旧労基法18条の2の経緯）](https://www.jtuc-rengo.or.jp/rengo_online/2023/09/05/1776/) `メディア`
 
 ## 関連概念
-- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 語彙が近い
 - [[labor-dismissal-abuse|解雇権濫用法理（労働契約法16条）]] — 語彙が近い
+- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 語彙が近い
 - [[subsidy-jobseeker-training-benefit|求職者支援制度（職業訓練受講給付金）]] — 出典を共有
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 出典を共有
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 出典を共有

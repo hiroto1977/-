@@ -19,9 +19,11 @@
  * 2 か所に書くと必ずずれる (このリポジトリで何度も出た形)。
  */
 
+import { utcMsFromParts } from './isoDate';
+
 /** 1 年の長さ (ms)。うるう年があるので実測する。 */
 function yearSpanMs(year: number): number {
-  return Date.UTC(year + 1, 0, 1) - Date.UTC(year, 0, 1);
+  return utcMsFromParts(year + 1, 1, 1) - utcMsFromParts(year, 1, 1);
 }
 
 /** その年の 1 月 1 日 00:00:00 (ローカル) からの経過 (ms)。 */

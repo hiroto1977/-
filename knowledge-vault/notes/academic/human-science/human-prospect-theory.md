@@ -34,13 +34,13 @@ aliases:
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 同じ思想家
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同じ思想家
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
+- [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同じ思想家
 - [[econ-disposition-effect-shefrin-statman|ディスポジション効果——値上がり株を早く売り値下がり株を持ち続ける傾向]] — 同じ思想家
-- [[human-loss-aversion|損失回避]] — 同じ思想家
-- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

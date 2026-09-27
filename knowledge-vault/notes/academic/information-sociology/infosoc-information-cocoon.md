@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-cyber-cascade|サイバーカスケード]] — 語彙が近い
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 語彙が近い
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同じ思想家
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
+- [[infosoc-epistemic-bubbles-echo-chambers|認識論的バブルとエコーチェンバー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

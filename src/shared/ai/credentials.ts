@@ -38,7 +38,17 @@ export interface AiCredentials {
   compatModel?: string;
 }
 
-const STRING_KEYS = [
+/**
+ * 保存する文字列の欄。**読める欄は書けなければならない** (2026-09-24 · パス 450)。
+ *
+ * この一覧は `parseAiCredentials` が受理する欄であり、`configForProvider` が
+ * 要求へ載せる欄でもある。つまり**ここに在る欄はアプリの答えを変える**。
+ * 画面 (`AssistantPage` のエージェント設定パネル) はこの一覧から入力欄を組むので、
+ * 12 個目を足した日に「読むのに書けない欄」が静かに増えることが無い ——
+ * パス 450 まで画面は**手書きの 8 欄**で、`anthropicModel` / `openaiModel` /
+ * `geminiModel` は出荷コードに書き手が 1 件も無かった (実測)。
+ */
+export const AI_CREDENTIAL_STRING_KEYS = [
   'anthropic',
   'anthropicModel',
   'openai',
@@ -51,6 +61,11 @@ const STRING_KEYS = [
   'compatKey',
   'compatModel',
 ] as const;
+
+/** {@link AI_CREDENTIAL_STRING_KEYS} の 1 つ。 */
+export type AiCredentialStringKey = (typeof AI_CREDENTIAL_STRING_KEYS)[number];
+
+const STRING_KEYS = AI_CREDENTIAL_STRING_KEYS;
 
 /**
  * トークン文字列を資格情報へ解析する。

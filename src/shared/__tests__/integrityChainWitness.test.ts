@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { readOriginalSource } from './originalSource';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -16,7 +16,7 @@ import { describe, expect, it } from 'vitest';
  * ここは**ゲートを呼ばない**。`PROTECTED` の一覧だけを借りて、
  * ハッシュ・Merkle・ブロック連結を**この検査自身で計算し直す**。
  * リポジトリが既に持つパリティ検査 (`proxyWorkerParity` /
- * `rfc2822Parity` / `atlassianSiteParity`) と同じ形である。
+ * `atlassianSiteParity`、2026-09-19 まで `rfc2822Parity`) と同じ形である。
  *
  * **限界も書いておく (0-a-16)**: パリティは「両方に在る穴」を見つけられない。
  * 仕様 (葉 = `sha256(path\0filehash)` / 奇数は末尾複製 / ブロックは
@@ -27,7 +27,7 @@ const req = createRequire(import.meta.url);
 const REPO_ROOT = resolve(__dirname, '../../..');
 const chainModule = req('../../../scripts/integrity-chain.cjs') as { PROTECTED: string[] };
 const chain = JSON.parse(
-  readFileSync(join(REPO_ROOT, 'security/integrity-chain.json'), 'utf8'),
+  readOriginalSource(join(REPO_ROOT, 'security/integrity-chain.json')),
 ) as {
   genesisHash: string;
   protected: string[];
@@ -64,7 +64,7 @@ const hashOf = (b: { index: number; prevHash: string; merkleRoot: string; leafCo
 function manifestFromDisk(): Record<string, string> {
   const out: Record<string, string> = {};
   for (const rel of [...chainModule.PROTECTED].sort()) {
-    out[rel] = sha(readFileSync(join(REPO_ROOT, rel)));
+    out[rel] = sha(readOriginalSource(join(REPO_ROOT, rel)));
   }
   return out;
 }

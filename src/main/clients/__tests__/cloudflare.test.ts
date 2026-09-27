@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchCloudflareSnapshot, ACTIONS } from '../cloudflare';
 import { FetchError } from '../types';
+import { CLOUDFLARE_PURGE_NEEDS_TARGET } from '../../../shared/writeFieldLimits';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -314,9 +315,17 @@ describe('ACTIONS["create-dns-record"] — proxied の既定', () => {
     }
   });
 
-  it('種別が未知でも proxied は付けない', async () => {
-    const { body } = await createRecord({ zoneId: 'z', type: 'SRV', name: 'n', content: 'v' });
-    expect(body).not.toHaveProperty('proxied');
+  it('種別が一覧に無ければ送らない (画面の選択肢と同じ一覧を台帳が持つ — パス 111)', async () => {
+    // 2026-09-09 まで未知の種別 (SRV) はそのまま転送していた (proxied を付けないだけ)。
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-dns-record']!({
+        token: 'cf-secret',
+        fetch: fetchMock,
+        payload: { zoneId: 'z', type: 'SRV', name: 'n', content: 'v' },
+      }),
+    ).rejects.toThrow(/^type は A \/ AAAA \/ CNAME \/ TXT \/ MX のいずれかで指定してください$/);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 
@@ -345,7 +354,7 @@ describe('ACTIONS["create-dns-record"] — 送り方と入口の検査', () => {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['create-dns-record']!({ token: 't', fetch: fetchMock, payload }),
-      ).rejects.toThrow('zoneId, type, name, content are required');
+      ).rejects.toThrow(/^(zoneId|type|name|content) は必須です$/); // 欄の名前を言う (共有の台帳 — パス 111)
       expect(fetchMock).not.toHaveBeenCalled();
     }
   });
@@ -356,7 +365,7 @@ describe('ACTIONS["purge-cache"] — 入口の検査と送り方', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['purge-cache']!({ token: 't', fetch: fetchMock, payload: { purgeEverything: true } }),
-    ).rejects.toThrow('zoneId is required');
+    ).rejects.toThrow('zoneId は必須です');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -365,7 +374,7 @@ describe('ACTIONS["purge-cache"] — 入口の検査と送り方', () => {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['purge-cache']!({ token: 't', fetch: fetchMock, payload }),
-      ).rejects.toThrow('either purgeEverything=true or non-empty files[] is required');
+      ).rejects.toThrow(CLOUDFLARE_PURGE_NEEDS_TARGET);
       // 送ってから断るのでは遅い — キャッシュは消えてしまう。
       expect(fetchMock).not.toHaveBeenCalled();
     }
@@ -406,7 +415,7 @@ describe('ACTIONS["purge-cache"] — 入口の検査と送り方', () => {
 
 // --- 応答の読み方 ------------------------------------------------------
 
-describe('unwrap — Cloudflare の封筒', () => {
+describe('unwrap — Cloudflare の封筒 (判定は shared の readCloudflareEnvelope・文は CLOUDFLARE_UNKNOWN_ERROR)', () => {
   it('success=false で errors が空でも「不明なエラー」として伝える', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
@@ -417,7 +426,7 @@ describe('unwrap — Cloudflare の封筒', () => {
       (e: Error) => e,
     );
     expect(err).toBeInstanceOf(FetchError);
-    expect((err as Error).message).toBe('cloudflare unknown Cloudflare error');
+    expect((err as Error).message).toBe('cloudflare unknown error');
     expect((err as FetchError).serviceId).toBe('cloudflare');
   });
 
@@ -427,7 +436,7 @@ describe('unwrap — Cloudflare の封筒', () => {
       .mockResolvedValueOnce(jsonResponse({ result: null, success: false }))
       .mockResolvedValueOnce(jsonResponse(okWrap([])));
     await expect(fetchCloudflareSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(
-      'cloudflare unknown Cloudflare error',
+      'cloudflare unknown error',
     );
   });
 
@@ -439,7 +448,7 @@ describe('unwrap — Cloudflare の封筒', () => {
       )
       .mockResolvedValueOnce(jsonResponse(okWrap([])));
     await expect(fetchCloudflareSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(
-      'cloudflare unknown Cloudflare error',
+      'cloudflare unknown error',
     );
   });
 });

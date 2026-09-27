@@ -23,6 +23,7 @@
  * 扱われるため、https ページからでも mixed content ブロックはされない (CORS だけが壁)。
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   DEFAULT_OLLAMA_PORT,
   DEFAULT_SETUP_MODEL,
@@ -38,10 +39,22 @@ import {
   MAX_OLLAMA_SYSTEM_CHARS,
   normalizeModels,
   parseOllamaEndpoint,
+  type OllamaChatResult,
   type OllamaErrorAdvice,
   type OllamaSnapshot,
 } from '../../shared/ollama';
-import { isOverCap, readBodyWithCap, withBodyDeadline } from '../../shared/httpLimits';
+import {
+  MAX_OLLAMA_RESPONSE_BYTES,
+  OLLAMA_CHAT_TIMEOUT_MS,
+  egressInit,
+  isOverCap,
+  isRedirectResponse,
+  readBodyWithCap,
+  readFailureBody,
+  redirectRefusal,
+  withBodyDeadline,
+} from '../../shared/httpLimits';
+import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 
 /** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
  *  値は「ポート番号のみ」または `http(s)://host:port`。旧 `…ollama.port` の値も読む。 */
@@ -62,11 +75,13 @@ export function loadEndpointSetting(): string {
 
 /** 疎通確認 (probe) の待ち時間。チャットは `CHAT_TIMEOUT_MS`。 */
 export const REQUEST_TIMEOUT_MS = 5_000;
-/** 画面の「セキュリティポリシー」欄が読む。値と表示をずらさないため export する。 */
-// **main (`main/clients/ollama.ts`) は 10 MB で、こちらだけ 2 MB。**
-// 理由がどこにも書かれていないので明記した (2026-08-23)。値は動かして
-// いない —— この値は画面の「セキュリティポリシー」欄に出ている。
-export const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+/**
+ * 応答本文の上限は **`shared/httpLimits.ts` の 1 つ** (2026-09-20 · パス 336)。
+ * 2026-08-23 から 2026-09-20 まで、ここだけ 2 MB・main だけ 10 MB だった ——
+ * 実測して 2 MiB に揃えた (理由と数字は `MAX_OLLAMA_RESPONSE_BYTES` の docblock)。
+ * 画面の「セキュリティポリシー」欄は shared の定数を直接読む。
+ */
+const MAX_RESPONSE_BYTES = MAX_OLLAMA_RESPONSE_BYTES;
 
 /** 接続診断の結果種別。UI はこれを見て出す文言を変える。 */
 export type OllamaProbeStatus =
@@ -181,7 +196,12 @@ function fetchWithTimeout(
   init: RequestInit,
   timeoutMs: number = REQUEST_TIMEOUT_MS,
 ): Promise<Response> {
-  return withBodyDeadline(timeoutMs, undefined, (signal) => fetchFn(url, { ...init, signal }));
+  return withBodyDeadline(timeoutMs, undefined, async (signal) => {
+    const res = await fetchFn(url, egressInit({ ...init, signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, 'Ollama'));
+    return res;
+  });
 }
 
 /**
@@ -201,15 +221,22 @@ export function parseJsonOrNull(text: string): unknown {
 }
 
 /**
- * 本文を読む。読めなければ空文字。
+ * 失敗した応答の本文を読む。読めなければ (大きすぎたときも) 空文字。
  *
  * `parseJsonOrNull` と同じ理由で export してある。`.catch(() => '')` と書くと、
  * 失敗側が undefined を返すよう書き換わっても下流が同じ「詳細なし」に潰すので、
  * **空文字にしている意味を確かめられない**。ここだけを直接叩けるようにする。
+ *
+ * **上限は 2026-09-20 (パス 330) に入れた。** それまでは素の `res.text()` で、
+ * 同じファイルの成功側 (`readJsonCapped`) だけが `MAX_RESPONSE_BYTES` で
+ * 切っていた —— その docblock は「2GiB を返す相手には 2MiB の上限が在っても
+ * 2GiB を確保する」と書いているのに、**その相手が実際に通る枝**
+ * (`!res.ok`) には上限が無かった。接続先は利用者が入力する。
  */
 export async function readTextOrEmpty(res: Response): Promise<string> {
-  const [read] = await Promise.allSettled([res.text()]);
-  return read!.status === 'fulfilled' ? read!.value : '';
+  // `Promise.allSettled` の包みは外した —— `readFailureBody` は自分で投げないので、
+  // rejected の枝は**到達できない死んだ枝**になる (変異体が殺せない)。
+  return readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES);
 }
 
 /**
@@ -414,14 +441,21 @@ export async function probeOllama(
 
 /* ─────────────────────────────  チャット  ───────────────────────────── */
 
-/** 生成は診断より時間がかかる。5 秒で切ると実用にならないので別枠にする。 */
-/** 画面の「セキュリティポリシー」欄が読む。値と表示をずらさないため export する。 */
-export const CHAT_TIMEOUT_MS = 120_000;
+/**
+ * 生成は診断より時間がかかる。5 秒で切ると実用にならないので別枠にする。
+ *
+ * **値は `shared/httpLimits.ts` の 1 つ** (2026-09-23 · パス 424) ——
+ * それまでここに `120_000` の私有の写しが在り、デスクトップ版の同じ生成は
+ * **疎通確認の 30 秒**で切れていた。上の docblock が「同じ制約 (… タイムアウト)
+ * でここに実装する」と述べていたが、**タイムアウトだけは同じではなかった**。
+ * 名前は残す —— 画面と既存の検査がこの名前で読んでいる。
+ */
+export const CHAT_TIMEOUT_MS = OLLAMA_CHAT_TIMEOUT_MS;
 /** 送信サイズの上限 (main プロセス側の chat と同じ)。 */
 // 上限は `shared/ollama.ts` に 1 つだけ置く (main も同じものを読む)。
 
 export type OllamaChatOutcome =
-  | { ok: true; reply: string; durationMs: number }
+  | ({ ok: true } & OllamaChatResult)
   | { ok: false; kind: string; message: string };
 
 export interface OllamaChatInput {
@@ -437,7 +471,11 @@ export interface OllamaChatInput {
  * Electron 版は main プロセスの `clients/ollama.ts` が同じことをする。ブラウザ版に
  * これが無いと **画面にチャット欄はあるのに送信だけ動かない**ので、同じ制約
  * (接続先 3 通り・/api/chat のみ・モデル名検証・NUL 拒否・長さ上限・タイムアウト)
- * でここに実装する。失敗時は shared/ollama.ts の分類器を通して「次の一手」まで返す。
+ * でここに実装する。★ **この「同じ」は 2026-09-23 (パス 424) まで
+ * タイムアウトについては偽だった** —— こちらは 120 秒、main は疎通確認の
+ * 既定 30 秒で、実測で 4 倍違った。今は両方が `OLLAMA_CHAT_TIMEOUT_MS` を読む。
+ *
+ * 失敗時は shared/ollama.ts の分類器を通して「次の一手」まで返す。
  */
 export async function chatOllama(
   input: OllamaChatInput,
@@ -455,7 +493,8 @@ export async function chatOllama(
   if (!isSafeModelName(model)) {
     // isSafeModelName は unknown を受ける型ガードなので、否定側では never に
     // 狭まる。表示は明示的に文字列化する。
-    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${String(model).slice(0, 32)}` };
+    // 断りに載せる名前も文字の境界で切る (パス 196)。
+    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${clampToCeiling(String(model), 32)}` };
   }
   if (prompt === '') {
     return { ok: false, kind: 'empty-prompt', message: 'プロンプトを入力してください。' };
@@ -468,9 +507,17 @@ export async function chatOllama(
   // base は許可済み、パスは定数なので null にならない (probeOllama と同じ)。
   const url = buildOllamaUrl(base, '/api/chat', pageHostname)!;
 
+  // 天井超えは切らずに断る (main 版と同じ判断・同じ文面 —— パス 114)。
+  if (countChars(system) > MAX_OLLAMA_SYSTEM_CHARS) {
+    return { ok: false, kind: 'too-long', message: inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS) };
+  }
+  if (countChars(prompt) > MAX_OLLAMA_PROMPT_CHARS) {
+    return { ok: false, kind: 'too-long', message: inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS) };
+  }
+
   const messages: { role: string; content: string }[] = [];
-  if (system !== '') messages.push({ role: 'system', content: system.slice(0, MAX_OLLAMA_SYSTEM_CHARS) });
-  messages.push({ role: 'user', content: prompt.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
+  if (system !== '') messages.push({ role: 'system', content: system });
+  messages.push({ role: 'user', content: prompt });
 
   const started = now();
   let res: Response;
@@ -565,7 +612,9 @@ export async function chatOllama(
   const content = (parsed as { message?: { content?: unknown } } | null)?.message?.content;
   return {
     ok: true,
-    reply: typeof content === 'string' ? content.trim() : '',
+    // 応答の天井 (パス 113) —— main と同じ判断を読む。byte の天井 (2 MiB) は「画面に出す量」
+    // としては論外で、10 万字で打ち切って切ったことを本文に残す。
+    reply: capAssistantReply(typeof content === 'string' ? content.trim() : ''),
     durationMs: Math.max(0, Math.round(now() - started)),
   };
 }

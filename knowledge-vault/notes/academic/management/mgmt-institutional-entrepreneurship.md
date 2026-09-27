@@ -31,7 +31,7 @@ Paul J. DiMaggio（1988, Institutional Patterns and Organizations — 制度的�
 
 ## 関連概念
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同分野の近傍
-- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

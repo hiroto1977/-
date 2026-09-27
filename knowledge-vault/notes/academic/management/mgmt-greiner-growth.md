@@ -26,14 +26,13 @@ aliases:
 ラリー・グレイナー（Larry E. Greiner, 1972）
 
 ## 出典
-- [Larry E. Greiner, “Evolution and Revolution as Organizations Grow,” Harvard Business Review (1998年改訂版)](https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow) `学術`
+- [Larry E. Greiner, “Evolution and Revolution as Organizations Grow,” Harvard Business Review (1998年改訂版)](https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow) `メディア`
 - [Greiner (1972) 原論文 PDF（ノースカロライナ大学チャペルヒル校 配布）](https://ils.unc.edu/daniel/131/cco4/Greiner.pdf) `学術`
 - [Wikipedia — Larry E. Greiner（経歴・モデル6段階の解説）](https://en.wikipedia.org/wiki/Larry_E._Greiner) `リファレンス`
 
 ## 関連概念
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家
 - [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
-- [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

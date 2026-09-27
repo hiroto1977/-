@@ -19,8 +19,21 @@ export interface SensitivityRow {
   readonly revenue: number;
   /** そのシナリオの営業利益。 */
   readonly operatingProfit: number;
-  /** そのシナリオの営業利益率 (%)。売上 0 なら 0。 */
-  readonly operatingMarginPct: number;
+  /**
+   * そのシナリオの営業利益率 (%)。**売上 0 のときは `null` (割れない)。**
+   *
+   * 2026-09-08 まで `0` に倒していた。売上 0・固定費ありの控えでは
+   * 営業利益が `-固定費` になるので、画面の同じ行が
+   * **「営業利益 −300,000円 (赤) ／ 営業利益率 0.0%」**を並べた ——
+   * **同時に真であり得ない 2 つの数字**である (パス 33 と同じ形)。
+   *
+   * 規準は**すぐ上の表**に在った —— `OverviewPage` の月次推移も
+   * 同じ列名 (営業利益率) を同じ `pct1OrDash` で刷るが、
+   * `monthlyTrend` は「売上 0 → 割れない」で `null` を返す。
+   * `overview.ts` の `pctOfRevenue` の注記が列挙する 5 か所も同じ ——
+   * このモジュールが**6 か所目**として取り残されていた。
+   */
+  readonly operatingMarginPct: number | null;
 }
 
 /**
@@ -29,7 +42,8 @@ export interface SensitivityRow {
  * 変動費率 = (cogs + advertising) / revenue を基準売上から求め、各シナリオの
  * 売上に乗じる。固定費 (sga + depreciation) は据え置き。
  * 営業利益 = 売上 − 売上×変動費率 − 固定費。
- * 基準売上が 0 のときは比率を出せないため、全シナリオ基準値のまま返す。
+ * 基準売上が 0 のときは変動費率が定まらないので、どの deltaPct でも売上 0・
+ * 営業利益 −固定費 の同じ行になり、**営業利益率は `null` (算定不能)** になる。
  *
  * @param f 基準の Fundamentals
  * @param deltas 売上変動率 (%) の配列。既定 [-10, -5, 0, 5, 10]
@@ -47,7 +61,9 @@ export function profitSensitivity(
       deltaPct,
       revenue,
       operatingProfit,
-      operatingMarginPct: revenue > 0 ? Math.round((operatingProfit / revenue) * 1000) / 10 : 0,
+      // 売上 0 は「利益率 0%」ではなく**算定不能**。`0` に倒すと、同じ行の
+      // 営業利益 (= −固定費) と矛盾する数字が並ぶ。
+      operatingMarginPct: revenue > 0 ? Math.round((operatingProfit / revenue) * 1000) / 10 : null,
     };
   });
 }
@@ -71,33 +87,66 @@ export function breakEvenDeltaPct(f: KpiFundamentals): number | null {
 export interface TargetRevenue {
   /** 目標営業利益。 */
   readonly targetOperatingProfit: number;
-  /** 必要売上 = (固定費 + 目標利益) ÷ 限界利益率。 */
-  readonly requiredRevenue: number;
+  /**
+   * 必要売上 = (固定費 + 目標利益) ÷ 限界利益率。**算定不能なら `null`。**
+   *
+   * 2026-09-08 まで `0` に倒していた —— **同じ return の `upliftPct` は
+   * 最初から `null`** で、片方だけが倒れていた (パス 67 の `switchWindowOk` /
+   * パス 69 の `accumulationRisk` と同じ位置関係)。
+   * 「目標利益 100 万円を得るのに必要な売上は 0 円」は、算定不能に対して
+   * **最も安心させる嘘**である。
+   *
+   * オブジェクト全体を `null` にする形 (`revenueConcentration.ts`) は採らない ——
+   * `targetOperatingProfit` は**利用者が打ち込んだ値の控え**なので、
+   * 算定できなくてもこのオブジェクトには意味が残る。
+   */
+  readonly requiredRevenue: number | null;
   /** 現状売上からの必要変動率 (%)。基準 0 や算定不能なら null。 */
   readonly upliftPct: number | null;
+  /**
+   * **売上が無くても目標に届く** (固定費 + 目標利益 ≦ 0) —— 赤字を目標にして、その額が固定費より
+   * 大きいとき (パス 493q)。このとき必要売上は `0` で、画面はそれを言い分ける
+   * (「必要売上 ￥0」だけだと「売上が要らない事業」と読める)。
+   */
+  readonly reachedWithoutSales: boolean;
 }
 
 /**
  * 目標営業利益から必要売上を逆算する。
  * 必要売上 = (固定費 + 目標利益) ÷ 限界利益率。変動費率は基準売上から求める。
- * 限界利益率が非正、または基準売上が 0 のときは算定不能 (requiredRevenue=0/uplift=null)。
+ * 限界利益率が非正、または基準売上が 0 のときは算定不能
+ * (`requiredRevenue` も `upliftPct` も `null`)。
  */
 export function requiredRevenueForTarget(
   f: KpiFundamentals,
   targetOperatingProfit: number,
 ): TargetRevenue {
+  // **非有限の目標は断る** (2026-09-27 · パス 494)。下の「売上が無くても届く」の比較は
+  // `-Infinity` を「届く」と答え (必要売上 0)、`NaN` は比較を素通りして必要売上 NaN になる。
+  // `targetOperatingProfit` は利用者が打ち込んだ値の控えとして戻り値に残るので (型の注記)、
+  // 読めない値を 0 や null へ言い換えて返すこともできない —— 断るのが 3 つ目の正しい答えである。
+  // 画面の呼び手は `readNumberOrNull` の有限値しか渡さない (読めない入力は関門が断る)。
+  if (!Number.isFinite(targetOperatingProfit)) {
+    throw new RangeError(`目標営業利益は有限の数で渡すこと (受け取った値: ${targetOperatingProfit})`);
+  }
   if (f.revenue <= 0) {
-    return { targetOperatingProfit, requiredRevenue: 0, upliftPct: null };
+    return { targetOperatingProfit, requiredRevenue: null, upliftPct: null, reachedWithoutSales: false };
   }
   const variableRate = (f.cogs + f.advertising) / f.revenue;
   const contributionRate = 1 - variableRate;
   const fixedCost = f.sga + f.depreciation;
   if (contributionRate <= 0) {
-    return { targetOperatingProfit, requiredRevenue: 0, upliftPct: null };
+    return { targetOperatingProfit, requiredRevenue: null, upliftPct: null, reachedWithoutSales: false };
   }
-  const requiredRevenue = Math.round((fixedCost + targetOperatingProfit) / contributionRate);
+  // **売上は 0 を下回らない** (2026-09-27 · パス 493q)。赤字の目標が固定費より大きいと
+  // (固定費 + 目標) が負になり、それを割った「必要売上 −￥7,833,333（現状から −883.3%）」を
+  // 刷っていた。売上 0 でも営業利益は −固定費なので、目標には売上 0 で届く —— 答えは 0 である。
+  // main の双子 (`clients/kpi.ts` の `requiredRevenueForTargetProfit`) は最初から
+  // `Math.max(0, …)` を持っており、**画面が読むこちらだけが持っていなかった**。
+  const reachedWithoutSales = fixedCost + targetOperatingProfit <= 0;
+  const requiredRevenue = reachedWithoutSales ? 0 : Math.round((fixedCost + targetOperatingProfit) / contributionRate);
   const upliftPct = Math.round(((requiredRevenue - f.revenue) / f.revenue) * 1000) / 10;
-  return { targetOperatingProfit, requiredRevenue, upliftPct };
+  return { targetOperatingProfit, requiredRevenue, upliftPct, reachedWithoutSales };
 }
 
 /** 固定費を削減したときのインパクト試算結果。 */

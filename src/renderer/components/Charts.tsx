@@ -95,7 +95,7 @@ export function LineChartView({
   // 目盛りラベルの幅ぶん左に溝を空ける（指定が無ければ既定値を入れる）。
   const gutter = options?.gutter ?? 52;
   const geo = lineChart(series, { ...options, gutter });
-  if (geo.series.length === 0) return <EmptyChart reason="データがありません（系列が空）" />;
+  if (geo.series.length === 0) return <EmptyChart reason="データがありません（描ける値がありません）" />;
 
   return (
     <figure style={{ margin: 0 }}>

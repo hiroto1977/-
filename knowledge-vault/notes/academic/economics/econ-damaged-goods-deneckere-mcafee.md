@@ -38,6 +38,7 @@ aliases:
 - [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — 同じ思想家
 - [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
 - [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — 同じ思想家
 - [[econ-warm-glow-andreoni|温かな満足による寄付（アンドレオーニ）——不純な利他と公共財]] — 同じ思想家
 
 ## 関連

@@ -37,9 +37,9 @@ aliases:
 - [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — 同じ思想家
 - [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
 - [[bizlaw-crowdfunding-securities-regulation|クラウドファンディングと証券規制の再編（JOBSact）]] — 同じ思想家
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]] — 同じ思想家
-- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

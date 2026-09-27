@@ -16,6 +16,7 @@
  */
 
 import { useMemo, useState, type ReactElement } from 'react';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
 import {
   judgeEligibility,
   parseNumericInput,
@@ -24,9 +25,30 @@ import {
   type ProgramJudgement,
   type Verdict,
 } from '../data/eligibility';
+import { refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
+import { GuardedNumber } from './GuardedNumber';
+import { RefusedFieldsNote } from './RefusedFieldsNote';
+
+/**
+ * **年齢と経営管理の従事年数の欄** (2026-09-27 · パス 493q)。
+ *
+ * それまで 2 欄は素の `<input>` で、読めない値は `parseNumericInput` が `null` = **未入力**に
+ * していた。実測: 年齢に `66歳` と打つと、年齢を要件にする 5 制度がすべて「年齢が未入力」と
+ * 言い、見出しは「入力が足りない 8 件」—— **打った人に「入れていない」と言っていた**
+ * (同じ人が `66` と打てば「対象外 6 件」で、答えそのものが違う)。`-5` は年齢として通り
+ * 「年齢 -5 歳は要件（49歳以下）を満たす」と刷っていた。
+ *
+ * 読めない値・マイナスの欄は判定を断る (`refusedBy: 'judgement'`)。空欄は今までどおり
+ * 「未入力」として判定する —— そのとき「年齢が未入力」は真である。
+ */
+const ELIGIBILITY_SPECS = refusingSpecs('judgement', {
+  age: { label: '年齢（就農時）', kind: 'age', allowEmpty: true },
+  managementYears: { label: '経営管理の従事年数', kind: 'years', allowEmpty: true },
+} as const satisfies Record<string, NumSpec>);
+const ELIGIBILITY_READS = ['age', 'managementYears'] as const;
 
 const VERDICT_STYLE: Readonly<Record<Verdict, { label: string; color: string }>> = {
-  eligible: { label: '要件を満たす', color: '#3ec98a' },
+  eligible: { label: '要件を満たす', color: 'var(--success)' },
   needsCheck: { label: '入力が足りない', color: '#f5a623' },
   ineligible: { label: '対象外', color: '#e0568a' },
 };
@@ -53,6 +75,23 @@ function triToBool(v: string): boolean | null {
 
 function Card({ j }: { j: ProgramJudgement }): ReactElement {
   const s = VERDICT_STYLE[j.verdict];
+  /*
+   * **属性に入れるのは関門を通した文字列だけ** (パス 298)。
+   *
+   * ここは長らく台帳の生の値を `href` 属性へ渡し、`onClick` の
+   * `preventDefault()` + `openExternal` に頼っていた。`openExternal` は
+   * 両ビルドとも `externalUrlOrNull` を通すが、**属性そのものは関門を
+   * 通らない** —— React の `onClick` は `click` にしか着かないので、
+   * 中クリック (`auxclick`)・右クリックの「新しいタブで開く」
+   * 「リンクをコピー」・リンクのドラッグは `preventDefault` を 1 度も
+   * 呼ばず、素の属性が使われる。「調べた物」と「使われる物」が別になる形で、
+   * パス 291 (端点の前置き一致)・パス 295 / 296 (ヘッダ値) と同じ家系。
+   *
+   * 規準は手の届く所に在った —— `DataList` は同じ「payload 由来の URL」を
+   * `<button onClick={openExternal}>` で開き、属性を持たない。
+   * 母集団と両方向の規則は `shared/__tests__/followableUrlCensus.test.ts`。
+   */
+  const safeSourceUrl = externalUrlOrNull(j.sourceUrl);
   return (
     <li
       style={{
@@ -84,22 +123,28 @@ function Card({ j }: { j: ProgramJudgement }): ReactElement {
           </ul>
         </div>
       )}
-      <a
-        href={j.sourceUrl}
-        onClick={(e) => {
-          e.preventDefault();
-          void window.serviceHub?.openExternal(j.sourceUrl);
-        }}
-        style={{
-          display: 'inline-block',
-          marginTop: 6,
-          fontSize: 11,
-          color: 'var(--text-mute)',
-          textDecoration: 'underline',
-        }}
-      >
-        出典を開く（{j.authority}）
-      </a>
+      {safeSourceUrl === null ? (
+        <div style={{ marginTop: 6, fontSize: 11, color: 'var(--warning)' }}>
+          ⚠ 出典を開けません（{j.authority}）— 台帳の URL が http(s) ではありません
+        </div>
+      ) : (
+        <a
+          href={safeSourceUrl}
+          onClick={(e) => {
+            e.preventDefault();
+            void window.serviceHub?.openExternal(safeSourceUrl);
+          }}
+          style={{
+            display: 'inline-block',
+            marginTop: 6,
+            fontSize: 11,
+            color: 'var(--text-mute)',
+            textDecoration: 'underline',
+          }}
+        >
+          出典を開く（{j.authority}）
+        </a>
+      )}
     </li>
   );
 }
@@ -124,6 +169,9 @@ export function EligibilityChecker(): ReactElement {
     [age, gender, entity, mgmt, certFarmer, certNew],
   );
 
+  // **断った欄が在れば判定しない** (パス 493q) —— 読めない年齢を「未入力」として判定すると、
+  // 入れた人に「入力が足りない」と言う。
+  const refused = refusedFields(ELIGIBILITY_SPECS, { age, managementYears: mgmt });
   const report = useMemo(() => judgeEligibility(profile), [profile]);
   const ordered = [...report.eligible, ...report.needsCheck, ...report.ineligible];
 
@@ -144,17 +192,13 @@ export function EligibilityChecker(): ReactElement {
           marginBottom: 12,
         }}
       >
-        <label style={{ fontSize: 12 }}>
-          <span style={{ display: 'block', color: 'var(--text-mute)' }}>年齢（就農時）</span>
-          <input
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            inputMode="numeric"
-            placeholder="例: 66"
-            aria-label="年齢"
-            style={{ width: '100%' }}
-          />
-        </label>
+        <GuardedNumber
+          spec={ELIGIBILITY_SPECS.age}
+          value={age}
+          onChange={setAge}
+          placeholder="例: 66"
+          style={{ width: '100%' }}
+        />
         <label style={{ fontSize: 12 }}>
           <span style={{ display: 'block', color: 'var(--text-mute)' }}>性別</span>
           <select
@@ -182,17 +226,13 @@ export function EligibilityChecker(): ReactElement {
             <option value="corporation">法人</option>
           </select>
         </label>
-        <label style={{ fontSize: 12 }}>
-          <span style={{ display: 'block', color: 'var(--text-mute)' }}>経営管理の従事年数</span>
-          <input
-            value={mgmt}
-            onChange={(e) => setMgmt(e.target.value)}
-            inputMode="numeric"
-            placeholder="例: 8"
-            aria-label="経営管理の従事年数"
-            style={{ width: '100%' }}
-          />
-        </label>
+        <GuardedNumber
+          spec={ELIGIBILITY_SPECS.managementYears}
+          value={mgmt}
+          onChange={setMgmt}
+          placeholder="例: 8"
+          style={{ width: '100%' }}
+        />
         <label style={{ fontSize: 12 }}>
           <span style={{ display: 'block', color: 'var(--text-mute)' }}>認定農業者か</span>
           <select
@@ -225,24 +265,29 @@ export function EligibilityChecker(): ReactElement {
         </label>
       </div>
 
-      <p style={{ fontSize: 12, color: 'var(--text-mute)' }}>
-        要件を満たす {report.eligible.length} 件 ／ 入力が足りない {report.needsCheck.length} 件 ／
-        対象外 {report.ineligible.length} 件
-        {report.genderMattered
-          ? ''
-          : '　※ ここに収録した農業系の制度に、性別を要件にしているものはありません。'}
-      </p>
+      <RefusedFieldsNote labels={refusalLabels(ELIGIBILITY_SPECS, refused, ELIGIBILITY_READS)} />
+      {refused.length === 0 && (
+        <p style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+          要件を満たす {report.eligible.length} 件 ／ 入力が足りない {report.needsCheck.length} 件 ／
+          対象外 {report.ineligible.length} 件
+          {report.genderMattered
+            ? ''
+            : '　※ ここに収録した農業系の制度に、性別を要件にしているものはありません。'}
+        </p>
+      )}
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: -4 }}>
         ※ 事業形態（個人／法人）も判定には効いていません。法人で上限額が変わる制度はありますが、
         その金額は年度の要領によるため、確認していない要件を判定に入れていません（各制度の
         「審査で見られる要件」に出しています）。
       </p>
 
-      <ul style={{ display: 'grid', gap: 8, margin: 0, padding: 0 }}>
-        {ordered.map((j) => (
-          <Card key={j.id} j={j} />
-        ))}
-      </ul>
+      {refused.length === 0 && (
+        <ul style={{ display: 'grid', gap: 8, margin: 0, padding: 0 }}>
+          {ordered.map((j) => (
+            <Card key={j.id} j={j} />
+          ))}
+        </ul>
+      )}
 
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 0 }}>
         ※ 制度の要件・金額・締切は年度ごとに変わります。最終確認は各実施機関の一次情報で行ってください。

@@ -20,6 +20,7 @@
  * ときに困る（CSV 取り込みで実際に踏んだ形）。列挙にしておけば
  * 「置ける数値の一覧」がそのまま画面の入力欄にもなる。
  */
+import { moreThanChars } from '../../shared/inputCeiling';
 
 /** 数値の種類。入力の検証と表示単位に使う。 */
 export type MetricUnit = 'yen' | 'pct' | 'count' | 'days' | 'months';
@@ -184,11 +185,43 @@ export interface OverrideEntry extends Record<string, unknown> {
   readonly note?: string;
 }
 
+/**
+ * **画面に出す「手で置いた値」1 件。**
+ *
+ * `overridden` はパスの一覧でしかないので、それだけでは画面は
+ * 「どの欄を置いたか」しか言えない。**いくらで置いたか**を言うには
+ * 値と単位が要る —— そして値は `applyOverrides` が適用する瞬間に
+ * 手の中に在るので、ここで一緒に返す (画面が経路を歩き直すと
+ * `.tsx` に算術が入り、変異検査の外で 2 つ目の導出を持つことになる)。
+ */
+export interface PlacedOverride {
+  readonly path: string;
+  /** 台帳の表示名 (`OVERRIDABLE_FIELDS`)。 */
+  readonly label: string;
+  readonly value: number;
+  /** 整形は画面が `formatMetric` で行う —— 数の形を 2 か所で決めない。 */
+  readonly unit: MetricUnit;
+}
+
 export interface AppliedOverviewOverrides<T> {
   /** 上書き後の経営概況。 */
   readonly overview: T;
   /** 手入力に置き換わったパス。画面で「手入力」と示すために使う。 */
   readonly overridden: readonly string[];
+  /**
+   * 手入力に置き換わった値 —— **表示名と単位つき**。
+   *
+   * ★ **2026-09-21 (パス 382) まで、画面はこれを持っていなかった。** 実測: 経営
+   * サマリーで売上高を 1,200 万 → 5,000 万に置いても、画面の文字は
+   * **1 字も変わらなかった** (`overview.kpi.revenue` の描画は 0 件 —— KPI カードは
+   * 営業利益・粗利・EBITDA と比率だけを出し、売上高そのものは出さない)。
+   * 画面の断りは `staleDerived` = 「**どの指標が古いか**」しか言わず、
+   * 一方で書面は `manualOverrideNote` で「売上高は手で置いた数値です」と
+   * **置いた欄を名指ししていた** —— つまり**画面の断りが書面より弱かった**。
+   * 置いた本人が「私の 5,000 万は入ったか」を画面で確かめる手段が無く、
+   * 桁を 1 つ打ち間違えても気付けない。
+   */
+  readonly placed: readonly PlacedOverride[];
   /** 一覧に無い / 値が不正で無視したもの。 */
   readonly ignored: readonly string[];
   /**
@@ -243,6 +276,7 @@ export function applyOverrides<T>(
 ): AppliedOverviewOverrides<T> {
   let overview = base;
   const overridden: string[] = [];
+  const placed: PlacedOverride[] = [];
   const ignored: string[] = [];
 
   for (const o of overrides) {
@@ -263,6 +297,15 @@ export function applyOverrides<T>(
     }
     overview = next;
     if (!overridden.includes(field.path)) overridden.push(field.path);
+    // **同じパスを 2 度置いたら後の値が勝つ** —— 適用と同じ順序で上書きする
+    // (`setAtPath` は後から呼ばれた方で潰れるので、一覧が先勝ちだと画面の値が
+    // 実際に表示されている値とずれる)。
+    const already = placed.findIndex((x) => x.path === field.path);
+    const entry: PlacedOverride = {
+      path: field.path, label: field.label, value: o.value, unit: field.unit,
+    };
+    if (already >= 0) placed[already] = entry;
+    else placed.push(entry);
   }
 
   const staleDerived: { path: string; label: string; because: readonly string[] }[] = [];
@@ -273,7 +316,68 @@ export function applyOverrides<T>(
     if (because.length > 0) staleDerived.push({ path: f.path, label: f.label, because });
   }
 
-  return { overview, overridden, ignored, staleDerived };
+  return { overview, overridden, placed, ignored, staleDerived };
+}
+
+/**
+ * 断り書きを出すために必要な最小の形。`AppliedOverviewOverrides` はこれを
+ * 構造的に満たすので、画面は `applied` をそのまま渡せる。
+ *
+ * **書面・レポートがこれを受け取るのは必須**にしてある —— 既定値 (空) を
+ * 置くと、渡し忘れた面が黙って断り書きの無い書類を刷る (パス 48 で
+ * `days?: number = 365` が同じ形の欠陥を隠していた)。
+ */
+export interface ManualOverrideDisclosure {
+  readonly overridden: readonly string[];
+  readonly staleDerived: readonly { path: string; label: string; because: readonly string[] }[];
+}
+
+/** 上書きが 1 件も無いことを明示して渡すための値。 */
+export const NO_MANUAL_OVERRIDES: ManualOverrideDisclosure = { overridden: [], staleDerived: [] };
+
+/** パスから台帳の表示名へ。台帳に無ければパスをそのまま出す (黙って消さない)。 */
+function labelOfPath(path: string): string {
+  return OVERRIDABLE_FIELDS.find((f) => f.path === path)?.label ?? path;
+}
+
+/**
+ * **手で置いた数値が在ることの断り**。1 件も無ければ `null`。
+ *
+ * 上書きは「表示の置き換え」であって実績の再集計ではない。書面の注記は
+ * 「損益・販売・人員の数値は当社が入力した実績の累計」と断言するので、
+ * 手入力が混ざっているならそれを打ち消す文が要る。
+ */
+export function manualOverrideNote(d: ManualOverrideDisclosure): string | null {
+  if (d.overridden.length === 0) return null;
+  const names = d.overridden.map(labelOfPath).join('・');
+  return `${names}は手で置いた数値です（入力済みデータからの自動計算を表示上だけ置き換えたもので、実績の累計ではありません）。`;
+}
+
+/**
+ * **上書きを反映していない自動値の断り**。1 件も無ければ `null`。
+ *
+ * `applyOverrides` は派生値を再計算しない (「どの派生値をどう直したいかは
+ * 利用者にしか決められない」— このモジュールの冒頭)。その結果、
+ * **印刷した比率が同じ表の金額どおりにならない**。実測 (売上高を 1,200 万→
+ * 5,000 万に置いた書面 §1):
+ *
+ * | 行 | 刷った値 | 同じ表の金額から計算すると |
+ * | --- | ---: | ---: |
+ * | 売上総利益率 | 75.0% | 9,000 ÷ 50,000 = **18.0%** |
+ * | 営業利益率 | 37.5% | 4,500 ÷ 50,000 = **9.0%** |
+ * | 販売費及び一般管理費率 | 37.5% | **9.0%** |
+ * | 限界利益率 | 75.0% | **94.0%** |
+ * | 安全余裕率 | 50.0% | (50,000 − 6,000) ÷ 50,000 = **88.0%** |
+ *
+ * 画面は 2026-09-08 まで**画面だけ**でこれを警告していた (このモジュールの
+ * 冒頭が「**画面は**それを注意として出せる」と書いている)。書面は
+ * 「上記のとおり相違ありません。」で代表者名つきで終わるのに、
+ * 手入力の文字が 1 つも無かった。
+ */
+export function staleDerivedNote(d: ManualOverrideDisclosure): string | null {
+  if (d.staleDerived.length === 0) return null;
+  const names = d.staleDerived.map((x) => x.label).join('・');
+  return `${names}は自動計算のままで、上の手入力を反映していません。表示している比率は、同じ表に並ぶ金額どおりの値にならないことがあります。`;
 }
 
 /** 経営サマリーの一覧で上書きを適用する。 */
@@ -306,11 +410,12 @@ export type CustomMetricEntry = CustomMetricInput & Record<string, unknown>;
 
 export type CustomMetricResult = { ok: true; entry: CustomMetricInput } | { ok: false; reason: string };
 
-const UNITS: readonly MetricUnit[] = ['yen', 'pct', 'count', 'days', 'months'];
+/** 任意項目の単位。復元時の形の検査 (`collectionShapes.ts`) も同じ一覧を見る。 */
+export const METRIC_UNITS: readonly MetricUnit[] = ['yen', 'pct', 'count', 'days', 'months'];
 
 export function isMetricUnit(v: unknown): v is MetricUnit {
   // typeof の判定を足しても、非文字列は includes が false にするので差が出ない。
-  return (UNITS as readonly unknown[]).includes(v);
+  return (METRIC_UNITS as readonly unknown[]).includes(v);
 }
 
 /** 任意項目の入力を検証する。ラベルは必須・単位は既知のもののみ。 */
@@ -322,14 +427,14 @@ export function parseCustomMetric(input: {
 }): CustomMetricResult {
   const label = (input.label ?? '').trim();
   if (label.length === 0) return { ok: false, reason: '項目名を入力してください。' };
-  if (label.length > CUSTOM_METRIC_MAX_LABEL) {
+  if (moreThanChars(label, CUSTOM_METRIC_MAX_LABEL)) {
     return { ok: false, reason: `項目名は ${CUSTOM_METRIC_MAX_LABEL} 文字までです。` };
   }
   if (!isMetricUnit(input.unit)) return { ok: false, reason: '単位を選んでください。' };
   const parsed = parseOverrideValue(input.value ?? '', input.unit);
   if (!parsed.ok) return { ok: false, reason: parsed.reason };
   const note = (input.note ?? '').trim();
-  if (note.length > CUSTOM_METRIC_MAX_NOTE) {
+  if (moreThanChars(note, CUSTOM_METRIC_MAX_NOTE)) {
     return { ok: false, reason: `メモは ${CUSTOM_METRIC_MAX_NOTE} 文字までです。` };
   }
   const entry: CustomMetricInput = note.length > 0

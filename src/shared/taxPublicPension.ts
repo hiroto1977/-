@@ -11,7 +11,7 @@
  * 控除等を考慮しない簡易モデル。確定申告は公式ツール / 税理士で確認すること。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 
 /** 公的年金等控除の最低額 (65歳未満)。 */
 export const PENSION_DEDUCTION_MIN_UNDER65 = 600_000;
@@ -46,7 +46,7 @@ export function calcPublicPensionDeduction(
   isOver65: boolean,
   p: PensionDeductionParams = DEFAULT_PENSION_DEDUCTION_PARAMS,
 ): number {
-  const income = Math.max(0, pensionIncome);
+  const income = nonNeg(pensionIncome);
   if (income <= 0) return 0;
 
   // 公的年金等控除は連続関数: 各境界で隣接ブラケットの値が一致する
@@ -85,7 +85,7 @@ export function calcPublicPensionIncome(
   isOver65: boolean,
   p: PensionDeductionParams = DEFAULT_PENSION_DEDUCTION_PARAMS,
 ): PublicPensionResult {
-  const income = Math.max(0, pensionIncome);
+  const income = nonNeg(pensionIncome);
   const deduction = calcPublicPensionDeduction(income, isOver65, p);
   return { deduction, taxableIncome: Math.max(0, income - deduction) };
 }
@@ -173,7 +173,7 @@ export function calcPublicPensionIncomeWithOtherIncome(
   isOver65: boolean,
   otherIncome: number,
 ): PublicPensionResult {
-  const income = Math.max(0, pensionIncome);
+  const income = nonNeg(pensionIncome);
   const deduction = calcPublicPensionDeductionWithOtherIncome(income, isOver65, otherIncome);
   return { deduction, taxableIncome: Math.max(0, income - deduction) };
 }

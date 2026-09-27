@@ -7,6 +7,7 @@ import {
   oneOnOneFocus,
   buildMemberCareReport,
   buildTeamCare,
+  unevaluatedAxesNote,
   type CareMemberInput,
   type SkillEvaluation,
 } from '../memberCare';
@@ -24,6 +25,7 @@ const profile = (over: Partial<EmotionProfile> = {}): EmotionProfile => ({
   lowStreak: 0,
   dominantEmotion: null,
   sentimentBalance: 0,
+  analysisCount: 0,
   topTriggers: [],
   ...over,
 });
@@ -56,10 +58,14 @@ describe('skillEvaluation', () => {
     expect(e.growth).toEqual({ axis: '交渉力', score: 1 });
   });
 
-  it('returns empty axis/score 0 for empty axes', () => {
+  // 軸が 1 つも無いなら強みも伸びしろも**無い**。空文字の軸を返すと
+  // 1on1 の文面が「『』を活かし」になり、画面に空の鍵括弧が出る。
+  it('軸が無ければ強み・伸びしろは null (空の軸名を作らない)', () => {
     const e = skillEvaluation([], []);
-    expect(e.strength).toEqual({ axis: '', score: 0 });
-    expect(e.growth).toEqual({ axis: '', score: 0 });
+    expect(e.strength).toBeNull();
+    expect(e.growth).toBeNull();
+    expect(e.evaluatedCount).toBe(0);
+    expect(e.unevaluatedAxes).toEqual([]);
   });
 
   it('keeps the first axis on ties for both strength and growth', () => {
@@ -74,16 +80,102 @@ describe('skillEvaluation', () => {
     expect(skillEvaluation(AXES, [5, 5, 5, 4, 4]).average).toBe(4.6); // 23/5 = 4.6
   });
 
-  it('handles empty axes as average 0', () => {
+  // **軸が無いのに「要支援」と判定しない。** 2026-09-08 までこの見本が
+  // 「average 0 / level 要支援」を仕様として固定していた ——
+  // 評価が 1 つも無い人を「支援が要る」と断じるのは、データではなく主張である。
+  it('軸が無ければ平均もレベルも null (「要支援」と断じない)', () => {
     const e = skillEvaluation([], []);
-    expect(e.average).toBe(0);
-    expect(e.level).toBe('要支援');
+    expect(e.average).toBeNull();
+    expect(e.level).toBeNull();
+  });
+
+  /**
+   * **未評価の軸を 0 点として平均しない。** 評点は 1〜5 なので 0 は
+   * 「その軸が評価されていない」であって「0 点」ではない。
+   *
+   * | 控え | 直す前 | 直した後 |
+   * | --- | ---: | ---: |
+   * | 4,4,4,4,4 | 4.0 良好 | 4.0 良好 |
+   * | **4,4,4,4 (5 軸目が無い)** | **3.2 標準 / 伸びしろ 品質(0)** | 4.0 良好 / 伸びしろ 営業力(4) |
+   * | **3,3 (2 軸だけ)** | **1.2 要支援** | 3.0 標準 |
+   */
+  describe('未評価の軸を平均の分母に入れない', () => {
+    it('★ 5 軸目が無い控えでも、評価済み 4 軸の平均とレベルになる', () => {
+      const full = skillEvaluation(AXES, [4, 4, 4, 4, 4]);
+      expect(full.average).toBe(4);
+      expect(full.level).toBe('良好');
+      const short = skillEvaluation(AXES, [4, 4, 4, 4]);
+      expect(short.average).toBe(4); // 直す前は 3.2
+      expect(short.level).toBe('良好'); // 直す前は 標準
+      expect(short.evaluatedCount).toBe(4);
+      expect(short.unevaluatedAxes).toEqual([AXES[4]]);
+    });
+
+    it('★ 伸びしろは**評価済みの**軸の中の最小 (未評価の軸を名指ししない)', () => {
+      const short = skillEvaluation(AXES, [4, 4, 4, 4]);
+      expect(short.growth).not.toBeNull();
+      expect(short.unevaluatedAxes).toContain(AXES[4]!);
+      expect(short.growth!.axis).not.toBe(AXES[4]);
+      expect(short.growth!.score).toBe(4);
+    });
+
+    it('★ 先頭の軸が未評価でも、強み・伸びしろがそこに固定されない', () => {
+      // 旧実装は axes[0] をシードにしていたので、1 軸目が無いと強み・伸びしろが
+      // 「1 軸目・0 点」で始まり、伸びしろは必ず 1 軸目になった。
+      const e = skillEvaluation(AXES, [Number.NaN, 5, 2, 3, 4]);
+      expect(e.unevaluatedAxes).toEqual([AXES[0]]);
+      expect(e.strength).toEqual({ axis: AXES[1], score: 5 });
+      expect(e.growth).toEqual({ axis: AXES[2], score: 2 });
+    });
+
+    it('★ 範囲外の評点は未評価として扱う (0 も 6 も 1〜5 の外)', () => {
+      const e = skillEvaluation(AXES, [0, 6, 3, 3, 3]);
+      expect(e.unevaluatedAxes).toEqual([AXES[0], AXES[1]]);
+      expect(e.evaluatedCount).toBe(3);
+      expect(e.average).toBe(3);
+    });
+
+    it('★ 1 軸も評価されていなければ全部 null で、軸名は全部未評価に並ぶ', () => {
+      const e = skillEvaluation(AXES, []);
+      expect(e.average).toBeNull();
+      expect(e.level).toBeNull();
+      expect(e.strength).toBeNull();
+      expect(e.growth).toBeNull();
+      expect(e.unevaluatedAxes).toEqual([...AXES]);
+    });
+
+    it('★ 未評価の軸を断り書きが述べる / 対照: 全部そろえば null', () => {
+      const short = skillEvaluation(AXES, [4, 4, 4, 4]);
+      const note = unevaluatedAxesNote(short);
+      expect(note).toContain(AXES[4]!);
+      expect(note).toContain('評価済み 4 軸で出しています');
+      expect(unevaluatedAxesNote(skillEvaluation(AXES, [4, 4, 4, 4, 4]))).toBeNull();
+      // 1 軸も無いときは別の文
+      expect(unevaluatedAxesNote(skillEvaluation(AXES, []))).toContain('評価が 1 軸も入っていません');
+    });
+
+    it('★ 1on1 の文面が未評価の軸を育成テーマとして名指ししない', () => {
+      // 直す前: 4 軸だけの控えで「『品質』の伸ばし方を一緒に考えましょう」
+      const short = skillEvaluation(AXES, [4, 4, 4, 4]);
+      expect(oneOnOneFocus('none', short)).not.toContain(`「${AXES[4]}」`);
+      // 1 軸も無ければ軸を出さず、評価をそろえるよう促す
+      const none = skillEvaluation(AXES, []);
+      const text = oneOnOneFocus('none', none);
+      expect(text).toContain('まだ評価が入っていません');
+      expect(text).not.toContain('「」');
+    });
   });
 });
 
 describe('carePriority', () => {
-  it('is none for an empty (no-data) profile', () => {
-    expect(carePriority(profile({ count: 0, averageScore: 0 }))).toBe('none');
+  it('★ 記録ゼロは none ではなく unknown (「懸念なし」と混ぜない)', () => {
+    // **この検査は 2026-09-09 まで `'none'` を留めていた** ——
+    // `'none'` は「懸念なし = 安定」の意味なので、**記録が 1 件も無い人を
+    // 「安定している」と断言**していた。同じモジュールの `emotionNoteOf` は
+    // 正しく「気分データなし」と言っており、文面と優先度が食い違っていた。
+    expect(carePriority(profile({ count: 0, averageScore: 0 }))).toBe('unknown');
+    // 対照: 記録が在って安定していれば none
+    expect(carePriority(profile({ count: 3, averageScore: 4 }))).toBe('none');
   });
   it('is high for a low streak >= 3', () => {
     expect(carePriority(profile({ lowStreak: 3 }))).toBe('high');
@@ -129,6 +221,8 @@ describe('oneOnOneFocus', () => {
     level: '標準',
     strength: { axis: '営業力', score: 5 },
     growth: { axis: '交渉力', score: 2 },
+    evaluatedCount: 5,
+    unevaluatedAxes: [],
   };
   it('puts listening first for high priority (no skill talk)', () => {
     const text = oneOnOneFocus('high', skill);
@@ -161,7 +255,7 @@ describe('buildMemberCareReport', () => {
     };
     const r = buildMemberCareReport(m, AXES);
     expect(r.id).toBe('a');
-    expect(r.skill.strength.axis).toBe('営業力');
+    expect(r.skill.strength?.axis).toBe('営業力');
     expect(r.priority).toBe('high'); // 3連続で score<=2
     expect(r.oneOnOneFocus).toContain('まず気持ち');
     expect(r.emotionNote).toContain('連続低調');

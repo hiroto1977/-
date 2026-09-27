@@ -35,7 +35,7 @@ aliases:
 - [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]] — 同じ思想家
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]] — 同じ思想家
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同じ思想家
-- [[human-mental-rotation-shepard-metzler|心的回転——心的イメージのアナログ的変換を示す実験]] — 同分野の近傍
+- [[human-mental-rotation-shepard-metzler|心的回転（シェパード＝メッツラー）——反応時間が回転角度に比例することが心的イメージのアナログ的変換を示す]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連

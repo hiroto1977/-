@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { measured } from './measured';
 import { calcRealEstateYield, calcRealEstateLeverage } from '../realEstateMetrics';
 import { calcCompoundingFutureValue } from '../mutualFundsMetrics';
 import { requiredMonthlyContribution, yearsToDouble, emergencyFund } from '../savingsPlanning';
@@ -23,7 +24,11 @@ describe('investor portfolio end-to-end', () => {
     const lev = calcRealEstateLeverage(y.annualNetIncome, 10_000_000, 1_500_000, y.netYieldPct, 2.0);
     // 返済後CF = 年間純収益 − 返済額
     expect(lev.annualCashflow).toBe(y.annualNetIncome - 1_500_000);
-    // CCR・イールドギャップは有限の数値
+    // CCR・イールドギャップは**算定できている** (null でない有限の数値)。
+    // `Number.isFinite` だけだと null も false になるので、null と NaN を
+    // 区別できない —— 「算定できた」を先に言う。
+    expect(lev.cashOnCashReturnPct).not.toBeNull();
+    expect(lev.yieldGapPct).not.toBeNull();
     expect(Number.isFinite(lev.cashOnCashReturnPct)).toBe(true);
     expect(Number.isFinite(lev.yieldGapPct)).toBe(true);
   });
@@ -31,21 +36,23 @@ describe('investor portfolio end-to-end', () => {
   it('positive yield gap means leverage helps (CF after debt service stays positive at a modest rate)', () => {
     const y = calcRealEstateYield(200_000, 40_000_000, 1, 400_000); // higher net yield
     const lev = calcRealEstateLeverage(y.annualNetIncome, 8_000_000, 1_000_000, y.netYieldPct, 1.5);
-    if (lev.yieldGapPct > 0) {
+    if (lev.yieldGapPct !== null && lev.yieldGapPct > 0) {
       expect(lev.annualCashflow).toBeGreaterThan(0);
     }
   });
 
   it('compounding fund investment grows beyond contributions', () => {
     const sim = calcCompoundingFutureValue(30_000, 5, 20); // 月3万・年5%・20年
-    expect(sim.totalContributed).toBe(30_000 * 12 * 20);
-    expect(sim.futureValue).toBeGreaterThan(sim.totalContributed); // 運用益が乗る
-    expect(sim.totalGain).toBe(sim.futureValue - sim.totalContributed);
+    const contributed = measured(sim.totalContributed);
+    const future = measured(sim.futureValue);
+    expect(contributed).toBe(30_000 * 12 * 20);
+    expect(future).toBeGreaterThan(contributed); // 運用益が乗る
+    expect(measured(sim.totalGain)).toBe(future - contributed);
   });
 
   it('required monthly contribution is the inverse of the compounding calc', () => {
-    const pmt = requiredMonthlyContribution(10_000_000, 4, 15);
-    const fv = calcCompoundingFutureValue(pmt, 4, 15).futureValue;
+    const pmt = measured(requiredMonthlyContribution(10_000_000, 4, 15));
+    const fv = measured(calcCompoundingFutureValue(pmt, 4, 15).futureValue);
     expect(Math.abs(fv - 10_000_000)).toBeLessThan(2_000); // 丸め誤差内で目標到達
   });
 
@@ -73,7 +80,7 @@ describe('investor portfolio end-to-end', () => {
     const fund = calcCompoundingFutureValue(50_000, 4, 25);
     const fx = fxGainLoss({ amountForeign: 20_000, acquisitionRate: 135, currentRate: 150 });
     const reserve = emergencyFund(350_000, 6);
-    const netWorthProxy = lev.annualCashflow + fund.futureValue + fx.currentJpy + reserve;
+    const netWorthProxy = lev.annualCashflow + measured(fund.futureValue) + fx.currentJpy + reserve;
     expect(Number.isFinite(netWorthProxy)).toBe(true);
     expect(Number.isNaN(netWorthProxy)).toBe(false);
     expect(fund.futureValue).toBeGreaterThan(0);

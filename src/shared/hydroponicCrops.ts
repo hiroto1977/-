@@ -21,7 +21,9 @@
  * 値の正しさ (この品目は本当に 12 日で採れるか) はここでは見ない ——
  * 利用者の実測が最も正しい。見るのは**桁と形**だけ。
  */
+import { countChars } from './inputCeiling';
 import { hasControlChar } from './controlChars';
+import { readNumeric } from './readNumeric';
 import { HYDROPONIC_CROPS, type HydroponicCrop } from './hydroponics';
 
 /** 品目名の上限 (文字数)。select の 1 行に収まる長さ。 */
@@ -30,8 +32,21 @@ export const MAX_CROP_LABEL_CHARS = 40;
 /** 一覧の上限。壊れた保存や取り込みで select が何千行にもならないための砦。 */
 export const MAX_CROPS = 50;
 
-/** id の形。参考値の id (`leaf-lettuce`) も `custom-12` もこれに収まる。 */
-export const CROP_ID_RE = /^[a-z0-9][a-z0-9-]{0,39}$/;
+/**
+ * **品目 id の天井** (2026-09-23 · パス 420 で名前を付けた)。
+ *
+ * それまで長さは `CROP_ID_RE` の `{0,39}` の中にだけ在り、**名前を持たなかった**ので
+ * 他所から引けなかった。`hydroponics-batches.cropId` は**この id を指す参照**なのに、
+ * 入口 (`parseBatch`) はその形を 1 つも検めていなかった —— **参照が参照先より緩い**形で、
+ * 実測で 200,000 字の `cropId` が通り、画面に 2 か所で出て 401,346 字になった。
+ */
+export const MAX_CROP_ID_CHARS = 40;
+
+/**
+ * id の形。参考値の id (`leaf-lettuce`) も `custom-12` もこれに収まる。
+ * **長さは `MAX_CROP_ID_CHARS` から組む** —— 数を 2 か所に書くと、片方だけが動く。
+ */
+export const CROP_ID_RE = new RegExp(`^[a-z0-9][a-z0-9-]{0,${MAX_CROP_ID_CHARS - 1}}$`);
 
 /** 利用者が足した品目の id の接頭辞。 */
 export const CUSTOM_CROP_ID_PREFIX = 'custom-';
@@ -115,7 +130,7 @@ export function cropIssues(raw: unknown): string[] {
   if (typeof r.id !== 'string' || !CROP_ID_RE.test(r.id)) issues.push('品目の id が不正です');
   const label = typeof r.label === 'string' ? r.label.trim() : '';
   if (label === '') issues.push('品目名を入力してください');
-  else if (label.length > MAX_CROP_LABEL_CHARS) issues.push(`品目名は ${MAX_CROP_LABEL_CHARS} 文字までです`);
+  else if (countChars(label) > MAX_CROP_LABEL_CHARS) issues.push(`品目名は ${MAX_CROP_LABEL_CHARS} 文字までです`);
   // 改行やタブが select の 1 行に入ると崩れる。判定はアプリで 1 つの `hasControlChar`。
   else if (hasControlChar(label)) issues.push('品目名に改行や制御文字は使えません');
   const valid = new Set<CropNumericField>();
@@ -222,11 +237,25 @@ export type CropDraft = Readonly<Record<'label' | CropNumericField, unknown>>;
 
 /**
  * 入力欄の文字列を数へ。空欄は NaN —— 0 に落とすと EC 0 や pH 0 が
- * 「入力した値」として通ってしまう。桁区切りのカンマは外す。
+ * 「入力した値」として通ってしまう。
+ *
+ * 読み取りは画面と同じ `readNumeric` に任せる (2026-09-06)。それまでは
+ * ここだけ `Number(カンマを外した文字列)` で読んでいて、**同じ入力が
+ * 画面と別の数になった**:
+ *
+ * ```
+ *   '1,2'   → 12      (画面は「区切りの位置が違う」と断る)
+ *              pH 1.2 と打ったつもりの値が pH 12 として範囲を通る
+ *   '2,4'   → 24      整数の欄 (株数) では 2.4 の指摘が出ずに 24 になる
+ *   '0x10'  → 16
+ *   '1e3'   → 1000
+ * ```
+ *
+ * `readNumeric` は読めなければ null を返すので、ここは NaN に直して
+ * `cropIssues` の範囲検査に落とす (契約は変えない)。
  */
 export function parseCropNumber(raw: string): number {
-  const s = raw.replace(/,/g, '').trim();
-  return s === '' ? NaN : Number(s);
+  return readNumeric(raw) ?? NaN;
 }
 
 /** 品目を足す。id は機械が振り、入力の id は使わない。 */

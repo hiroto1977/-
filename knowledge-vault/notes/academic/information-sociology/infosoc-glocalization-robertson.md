@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同じ思想家
 - [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同じ思想家
 - [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — 同じ思想家
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-mediamorphosis-fidler|メディアモルフォーシス——古いメディアの変態として生まれる新メディア]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

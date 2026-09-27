@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-speech-act-theory|言語行為論]] — 同じ思想家
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — 同じ思想家
 - [[infosoc-communication-accommodation-theory|コミュニケーション適応理論（Communication Accommodation Theory, CAT）]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 

@@ -48,6 +48,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 (async () => {
   await app.whenReady();
   const win = new BrowserWindow({ width: 1280, height: 1000, show: false, backgroundColor: '#0f1117', webPreferences: { sandbox: false } });
+  // 成果物の鮮度 (判定は e2e / perf / smoke と同じ)。古い standalone.html で「不変条件は守られている」と
+  // 言わない —— パス 305 で足した。
+  require('./lib/artifact-freshness.cjs').assertFreshArtifacts([path.join(ROOT, 'dist', 'standalone.html')], {
+    srcDir: path.join(ROOT, 'src'), repoRoot: ROOT, tool: 'exp:runtime', allowEnv: 'SERVICE_HUB_EXP_ALLOW_STALE',
+  });
   await win.loadFile(path.join(ROOT, 'dist', 'standalone.html'));
   await sleep(2000);
   const e = (js) => win.webContents.executeJavaScript(js);

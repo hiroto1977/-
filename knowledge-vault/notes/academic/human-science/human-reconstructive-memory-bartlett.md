@@ -26,7 +26,7 @@ aliases:
 フレデリック・バートレット ／ エリザベス・ロフタス ／ ウルリック・ナイサー ／ ジャン・ピアジェ
 
 ## 出典
-- [Bartlett, F.C. (1932) Remembering: A Study in Experimental and Social Psychology — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/179702) `学術`
+- [Bartlett, F.C. (1932) Remembering: A Study in Experimental and Social Psychology — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/179702) `リファレンス`
 - [Wikipedia: Reconstructive memory — Bartlett, War of the Ghosts, schema, systematic distortion](https://en.wikipedia.org/wiki/Reconstructive_memory) `リファレンス`
 
 ## 関連概念

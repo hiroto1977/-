@@ -38,7 +38,7 @@ aliases:
 - [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
 - [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
 - [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-rational-partisan-theory-alesina|合理的パルチザン理論——選挙の不確実性が政治的景気循環を生む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

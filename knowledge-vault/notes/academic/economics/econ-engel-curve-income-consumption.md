@@ -36,7 +36,7 @@ aliases:
 - [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同じ思想家
 - [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同じ思想家
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
-- [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同分野の近傍
+- [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

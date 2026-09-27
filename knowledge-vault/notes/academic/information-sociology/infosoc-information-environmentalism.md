@@ -34,14 +34,14 @@ aliases:
 ## 関連概念
 - [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 同じ思想家
 - [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]] — 同じ思想家
-- [[infosoc-datafication|データ化（データ化現象）]] — 同じ思想家
+- [[infosoc-datafication-mayer-schoenberger|データ化（データフィケーション）——計量されてこなかった生活や行動を機械可読データへ変換し、分析・予測・資本化の対象にする過程]] — 同じ思想家
 - [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]] — 同じ思想家
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
 - [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
-- [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,8 +34,8 @@ aliases:
 - [[bizlaw-doctrine-of-equivalents|均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理]] — 出典を共有
 - [[bizlaw-intellectual-property|知的財産権と独占のバランス（IP の経済学）]] — 出典を共有
 - [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

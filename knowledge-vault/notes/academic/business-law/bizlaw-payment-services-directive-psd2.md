@@ -31,8 +31,8 @@ EU第2次決済サービス指令（PSD2, Directive 2015/2366）は、EU域内�
 - [Wikipedia: Payment Services Directive — EU決済サービス指令の概説](https://en.wikipedia.org/wiki/Payment_Services_Directive) `リファレンス`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

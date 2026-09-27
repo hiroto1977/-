@@ -41,7 +41,6 @@ prefecture
 - [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]] — 出典を共有
 - [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]] — 同分野の近傍
 - [[subsidy-nagasaki|長崎県地域産業雇用創出チャレンジ支援事業（長崎県創業支援事業補助金）（長崎県）]] — 同分野の近傍
-- [[subsidy-kyoto-city|京都市伝統産業設備改修等補助制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

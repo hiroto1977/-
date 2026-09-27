@@ -31,6 +31,7 @@ Harsanyi, John C.（1973 Games with Randomly Disturbed Payoffs: A New Rationale 
 - [Harsanyi, J. C. (1994) Games with Incomplete Information — Nobel Lecture, NobelPrize.org](https://www.nobelprize.org/uploads/2018/06/harsanyi-lecture.pdf) `公的`
 
 ## 関連概念
+- [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同分野の近傍
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同分野の近傍
 

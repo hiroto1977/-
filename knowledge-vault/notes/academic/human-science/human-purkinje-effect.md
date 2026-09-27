@@ -26,7 +26,7 @@ aliases:
 ヤン・プルキニェ ／ ヨハネス・フォン・クリース ／ ヘルマン・フォン・ヘルムホルツ ／ ジョージ・ウォルド
 
 ## 出典
-- [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（明所視・暗所視と視覚の二重説）](https://www.worldcat.org/oclc/35780015) `学術`
+- [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（明所視・暗所視と視覚の二重説）](https://www.worldcat.org/oclc/35780015) `リファレンス`
 - [Wikipedia: Purkinje effect — photopic/scotopic vision, rods and cones, spectral sensitivity](https://en.wikipedia.org/wiki/Purkinje_effect) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ダナ・ハラウェイ ／ キャサリン・ヘイルズ ／ サディ・プラント ／ ブルーノ・ラトゥール
 
 ## 出典
-- [Haraway, D. (1985/1991) A Cyborg Manifesto — in Simians, Cyborgs and Women (WorldCat)](https://www.worldcat.org/oclc/23656278) `学術`
+- [Haraway, D. (1985/1991) A Cyborg Manifesto — in Simians, Cyborgs and Women (WorldCat)](https://www.worldcat.org/oclc/23656278) `リファレンス`
 - [Wikipedia: A Cyborg Manifesto — Haraway, cyberfeminism, dualisms, informatics of domination, posthumanism](https://en.wikipedia.org/wiki/A_Cyborg_Manifesto) `リファレンス`
 
 ## 関連概念

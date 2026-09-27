@@ -36,7 +36,7 @@ George Gerbner ／ Larry Gross ／ Michael Morgan
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
 - [[infosoc-cyberbullying|ネットいじめ（サイバーバリング）]] — 出典を共有
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

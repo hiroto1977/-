@@ -35,12 +35,12 @@ aliases:
 - [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
 - [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
 - [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — 同じ思想家
 - [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同じ思想家
 - [[infosoc-time-space-distanciation-giddens|時空間の遠隔化——社会関係が局所的文脈から引き離され広域に伸張する]] — 同じ思想家
 - [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 出典を共有
 - [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — 出典を共有
 - [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 出典を共有
-- [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

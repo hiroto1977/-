@@ -2,7 +2,7 @@
 title: "hup.harvard.edu"
 type: source-domain
 host: "hup.harvard.edu"
-cite_count: 20
+cite_count: 23
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hup.harvard.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 18 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 21 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -27,12 +27,15 @@ tags:
 - [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — Piketty2014—CapitalintheTwenty-FirstCentury,HarvardUniversityPress
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — Nelson&Winter1982—AnEvolutionaryTheoryofEconomicChange,HarvardUnivers…
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — Helpman(2011)UnderstandingGlobalTrade—HarvardUniversityPress
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — Spence1974—MarketSignaling:InformationalTransferinHiringandRelatedScr…
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — Spence,M.(1974)MarketSignaling:InformationalTransferinHiringandRelate…
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — Bronfenbrenner,U.(1979)TheEcologyofHumanDevelopment—HarvardUniversity…
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — Bruner1986—ActualMinds,PossibleWorlds,HarvardUniversityPress
+- [[human-structural-family-therapy-minuchin|ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く]] — Minuchin,S.(1974).FamiliesandFamilyTherapy.Cambridge,MA:HarvardUniver…
+- [[human-structural-family-therapy-minuchin|ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く]] — Minuchin,S.,&Fishman,H.C.(1981).FamilyTherapyTechniques.Cambridge,MA:…
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — Zuboff—TheAgeofSurveillanceCapitalism(HarvardUniversityPress,2019)
 - [[infosoc-media-events|メディア・イベント]] — HarvardUniversityPress—MediaEvents（公式書誌・概要）
 - [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — Kuran,T.(1995)PrivateTruths,PublicLies:TheSocialConsequencesofPrefere…
+- [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]] — DanielJ.Solove(2008)UnderstandingPrivacy,HarvardUniversityPress—類型論を単…
 - [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — Heifetz,R.A.(1994).LeadershipWithoutEasyAnswers.HarvardUniversityPres…
 
 ## 関連

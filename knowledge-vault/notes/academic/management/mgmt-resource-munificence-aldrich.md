@@ -34,8 +34,8 @@ aliases:
 ## 関連概念
 - [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同じ思想家
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家
-- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同じ思想家
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同分野の近傍
+- [[mgmt-organizational-ecology|組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する]] — 同じ思想家
+- [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同分野の近傍
 - [[mgmt-planned-obsolescence|計画的陳腐化（planned obsolescence）]] — 同分野の近傍
 
 ## 関連

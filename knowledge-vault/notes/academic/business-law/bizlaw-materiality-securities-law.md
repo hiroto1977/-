@@ -34,6 +34,7 @@ James D. Cox／Donald C. Langevoort／Robert W. Hillman
 - [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 語彙が近い
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 出典を共有
 - [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — 同分野の近傍
+- [[bizlaw-cy-pres|サイプレ原則（近接原則／Cy-près doctrine）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

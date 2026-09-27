@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-resource-dependence|資源依存理論]] — 語彙が近い
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
+- [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同分野の近傍
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 同分野の近傍
 - [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍
 

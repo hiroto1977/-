@@ -61,7 +61,7 @@ describe('fetchWordPressSnapshot', () => {
     );
 
     const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
-    expect(snap.sites[0]).toMatchObject({ status: 'private', platform: 'jetpack', lastUpdated: '' });
+    expect(snap.sites[0]).toMatchObject({ status: 'private', platform: 'jetpack', lastUpdated: null });
   });
 
   it('returns empty list when the API returns no sites', async () => {
@@ -136,7 +136,8 @@ describe('ACTIONS["create-post-draft"]', () => {
 
   it('url-encodes site IDs containing slashes or unusual chars', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      jsonResponse({ ID: 1, URL: '', title: 'x', status: 'draft' }),
+      // URL は非空を要求する (shared/api/wordpress.ts の parseCreatedPost —— ブラウザ版が前から持っていた封筒の検査を main も通る · 2026-09-18)。
+      jsonResponse({ ID: 1, URL: 'https://blog/?p=1', title: 'x', status: 'draft' }),
     );
     await ACTIONS['create-post-draft']!({
       token: 't',
@@ -202,6 +203,27 @@ describe('有料プランの判定 — is_free と slug のどちらを信じる
   it('大文字の slug でも "free" を見落とさない', async () => {
     expect(await paidFlagFor({ product_slug: 'FREE_PLAN' })).toBe(false);
   });
+
+  /**
+   * **相手の slug が文字列でなくても、一覧ごと落とさない** (2026-09-27 · パス 493)。
+   * 直す前は `(plan.product_slug ?? '').toLowerCase()` が数・物・配列・真偽値で投げ、
+   * `fetchWordPressSnapshot` ごと失敗していた (画面には 1 サイトも出ない)。
+   */
+  it('★ slug が文字列でなければ投げず、有料とも読まない (隣の健全なサイトは残る)', async () => {
+    for (const slug of [42, { a: 1 }, ['business'], true, null]) {
+      expect(await paidFlagFor({ product_slug: slug }), JSON.stringify(slug)).toBe(false);
+    }
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({
+        sites: [
+          { ID: 1, name: 'good', description: '', URL: 'https://g.example', is_private: false, jetpack: false, plan: { product_slug: 'business-bundle' } },
+          { ID: 2, name: 'odd', description: '', URL: 'https://o.example', is_private: false, jetpack: false, plan: { product_slug: 42 } },
+        ],
+      }),
+    );
+    const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.sites.map((s) => [s.name, s.paidPlan])).toEqual([['good', true], ['odd', false]]);
+  });
 });
 
 // --- 送り先と資格情報 --------------------------------------------------
@@ -256,7 +278,18 @@ describe('fetchWordPressSnapshot — 送り先と表示の既定', () => {
     expect(snap.sites[0]).toMatchObject({ platform: 'simple', status: 'active' });
   });
 
-  it('last_updated が無いサイトは空文字にする（undefined を画面に出さない）', async () => {
+  /*
+   * **題名を実測へ直した** (2026-09-22 · パス 410)。
+   *
+   * 直す前の題名は「空文字にする（undefined を画面に出さない）」で、
+   * **弱さを仕様として留めていた** (法則 `no-weakness-as-spec`) ——
+   * `''` は画面に「更新 」とだけ刷らせ、**「まだ取れていない」と
+   * 「相手が日付を返さなかった」が同じ見え方**になる
+   * (法則 `blank-states-its-reason`)。今は `null` で、画面が
+   * `dateText` で理由を名乗る。**主張は変えていない** ——
+   * 見たいのは「生の `undefined` を画面に出さない」ことである。
+   */
+  it('last_updated が無いサイトは null (画面が理由を名乗る)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({
         sites: [
@@ -272,7 +305,7 @@ describe('fetchWordPressSnapshot — 送り先と表示の既定', () => {
       }),
     );
     const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
-    expect(snap.sites[0]!.lastUpdated).toBe('');
+    expect(snap.sites[0]!.lastUpdated).toBeNull();
   });
 });
 
@@ -335,7 +368,7 @@ describe('ACTIONS["create-post-draft"] — 送り方', () => {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['create-post-draft']!({ token: 't', fetch: fetchMock, payload }),
-      ).rejects.toThrow('siteId and title are required');
+      ).rejects.toThrow(/^(siteId|title) は必須です$/); // 欄の名前を言う (共有の台帳 — パス 111)
       expect(fetchMock).not.toHaveBeenCalled();
     }
   });

@@ -1,11 +1,11 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
-import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { webcrypto } from 'node:crypto';
 import { deriveAesKey, randomSaltB64, sealWithKey } from '../dataCrypto';
 import { _resetVaultForTests, getVault } from '../vault';
+import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 // jsdom は crypto.subtle を持たない (vault.test.ts と同じ差し込み)。
 if (!('subtle' in globalThis.crypto)) {
@@ -121,11 +121,11 @@ describe('マスター鍵で暗号化するトークン — 同じ値でも暗�
 describe('AES-GCM で暗号化する場所は、すべて毎回 IV を作り直す', () => {
   const files: { rel: string; text: string }[] = [];
   const walk = (dir: string, prefix: string): void => {
-    for (const e of readdirSync(dir, { withFileTypes: true })) {
+    for (const e of readOriginalDirEntries(dir)) {
       if (e.name === '__tests__') continue;
       const full = join(dir, e.name);
       if (e.isDirectory()) walk(full, `${prefix}${e.name}/`);
-      else if (/\.tsx?$/.test(e.name)) files.push({ rel: prefix + e.name, text: readFileSync(full, 'utf8') });
+      else if (/\.tsx?$/.test(e.name)) files.push({ rel: prefix + e.name, text: readOriginalSource(full) });
     }
   };
   walk(join(SECURITY_DIR, '..'), '');

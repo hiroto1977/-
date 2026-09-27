@@ -35,7 +35,7 @@ aliases:
 - [[econ-baumol-tobin|ボーモル＝トービンの貨幣需要モデル]] — 同じ思想家
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
 - [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
-- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同じ思想家
 - [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — 同じ思想家
 - [[econ-tobin-tax-financial|トービン税——国際金融取引への課税による投機的資本移動の抑制]] — 同じ思想家
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有

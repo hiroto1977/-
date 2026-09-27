@@ -6,6 +6,7 @@ import {
   readSystem,
   MEMORY_WARN_PCT,
   LOAD_WARN_PCT,
+  loadAvgSupported,
   type RawSystemReadings,
 } from '../linux';
 
@@ -139,7 +140,10 @@ describe('buildLinuxSnapshot', () => {
     expect(s.system.platformLabel).toBe('sunos');
   });
 
-  it('handles a host with no cpus and zero memory safely', () => {
+  it('handles a host with no cpus and zero memory safely (コアあたりは算定不能)', () => {
+    // **この検査は 2026-09-09 まで `perCorePct` を 0 に留めていた** ——
+    // 「safely」と名前に書いたうえで、割れないものを 0 として仕様に固定していた。
+    // コア数が読めなければコアあたり負荷は割れないので `null` が正しい。
     const s = buildLinuxSnapshot({
       ...base,
       cpus: [],
@@ -149,7 +153,11 @@ describe('buildLinuxSnapshot', () => {
     });
     expect(s.cpu).toEqual({ model: 'unknown', cores: 0, speedMhz: 0 });
     expect(s.memory.usagePct).toBe(0);
-    expect(s.load.perCorePct).toBe(0);
+    expect(s.load.perCorePct).toBeNull();
+    // ロードアベレージそのものは linux では実測値なので数で残る。
+    expect(s.load.avg1).toBe(0);
+    expect(s.load.unavailableNote).toContain('論理コア数を取得できなかった');
+    expect(s.notes).toContain(s.load.unavailableNote);
   });
 
   it('is deterministic (same input → same output)', () => {
@@ -173,5 +181,98 @@ describe('readSystem / fetchLinuxSnapshot (live host)', () => {
     expect(snap.cpu.cores).toBeGreaterThan(0);
     expect(typeof snap.uptimeLabel).toBe('string');
     expect(Array.isArray(snap.notes)).toBe(true);
+  });
+});
+
+/**
+ * **ロードアベレージを提供しない OS で、0 を測定値として出さない。**
+ *
+ * Node の `os.loadavg()` は **Windows では OS に問い合わせず常に `[0, 0, 0]`** を
+ * 返す (`@types/node/os.d.ts`: 「on Windows it always returns `[0, 0, 0]`」)。
+ * 本アプリは `release.yml` で Windows インストーラを出荷しているので、
+ * これは仮定ではなく **Windows 利用者の全員に起きる**。
+ *
+ * 2026-09-09 まで、その 0 は:
+ *
+ * | 面 | 出方 |
+ * | --- | --- |
+ * | 「ロード (1分)」タイル | `0.00` を **緑** (`positive={perCorePct < 100}`) |
+ * | ロードアベレージ表 コアあたり | `0%` を **緑・太字** |
+ * | 直近 5 分 / 15 分 | `0.00` |
+ * | 状況メモ | 「表示中の live 値は本アプリを実行している OS の値です」 |
+ *
+ * 最後の 1 行が効いている —— アプリは**自分が作った既定値を「あなたの OS の
+ * 実測値だ」と保証していた**。
+ */
+describe('ロードアベレージを提供しないプラットフォーム', () => {
+  it('★ loadAvgSupported は win32 だけを「提供しない」と答える', () => {
+    expect(loadAvgSupported('win32')).toBe(false);
+    // POSIX 系は getloadavg(3) を持つ
+    expect(loadAvgSupported('linux')).toBe(true);
+    expect(loadAvgSupported('darwin')).toBe(true);
+    expect(loadAvgSupported('freebsd')).toBe(true);
+    // 未知のプラットフォームは実測が通る側へ倒す (0 を刷るより安全)
+    expect(loadAvgSupported('sunos')).toBe(true);
+  });
+
+  it('★ Windows では 3 区間とコアあたりを算定不能にする (0 を出さない)', () => {
+    // Node が返す実際の値 —— 常に [0, 0, 0]
+    const s = buildLinuxSnapshot({ ...base, platform: 'win32', loadavg: [0, 0, 0] });
+    expect(s.load.avg1).toBeNull();
+    expect(s.load.avg5).toBeNull();
+    expect(s.load.avg15).toBeNull();
+    expect(s.load.perCorePct).toBeNull();
+  });
+
+  it('★ 理由を述べる (「負荷が無い」と読ませない)', () => {
+    const s = buildLinuxSnapshot({ ...base, platform: 'win32', loadavg: [0, 0, 0] });
+    expect(s.load.unavailableNote).not.toBeNull();
+    expect(s.load.unavailableNote).toContain('ロードアベレージを提供しない');
+    expect(s.load.unavailableNote).toContain('Node は常に 0 を返します');
+    // メモリ・CPU・稼働時間は Windows でも実測できるので、そこは実測と述べる
+    expect(s.load.unavailableNote).toContain('メモリ・CPU・稼働時間は実測値です');
+  });
+
+  it('★ 理由は 1 本しか無い (表の直下と状況メモが同じ文を読む)', () => {
+    const s = buildLinuxSnapshot({ ...base, platform: 'win32', loadavg: [0, 0, 0] });
+    // 同じ文が両方に出ること = 写しではないこと。文面を 2 か所に書けばここが落ちる。
+    expect(s.notes).toContain(s.load.unavailableNote);
+    expect(s.notes.filter((n) => n === s.load.unavailableNote)).toHaveLength(1);
+  });
+
+  it('★ 算定不能を「高負荷」警告に化けさせない (どちらの向きにも)', () => {
+    // Windows の loadavg が 0 でなく大きい値だったとしても (ありえないが)
+    // 提供されない以上、警告も出さない —— `?? 0` や `!== null` の抜けを留める。
+    const s = buildLinuxSnapshot({ ...base, platform: 'win32', loadavg: [99, 99, 99] });
+    expect(s.load.perCorePct).toBeNull();
+    expect(s.notes).not.toContain(
+      'CPU 負荷が論理コア数を上回っています。重い処理が走っている可能性があります。',
+    );
+  });
+
+  it('★ 対照: POSIX では 3 区間とも数で出て、断り書きは出ない', () => {
+    const s = buildLinuxSnapshot({ ...base, platform: 'darwin', loadavg: [2, 1.5, 1] });
+    expect(s.load.avg1).toBe(2);
+    expect(s.load.avg5).toBe(1.5);
+    expect(s.load.avg15).toBe(1);
+    expect(s.load.perCorePct).toBe(50); // 2 / 4 cores
+    expect(s.load.unavailableNote).toBeNull();
+  });
+
+  it('★ 対照: POSIX の高負荷は今も警告する (警告そのものが生きている)', () => {
+    const s = buildLinuxSnapshot({ ...base, loadavg: [4, 4, 4] }); // 4/4 = 100%
+    expect(s.load.perCorePct).toBe(LOAD_WARN_PCT);
+    expect(s.notes.some((n) => n.includes('論理コア数を上回っています'))).toBe(true);
+  });
+
+  it('★ 実行ホストで実際に整合する (この検査が走っている OS で)', () => {
+    const r = readSystem();
+    const s = buildLinuxSnapshot(r);
+    if (loadAvgSupported(r.platform)) {
+      expect(s.load.avg1).not.toBeNull();
+    } else {
+      expect(s.load.avg1).toBeNull();
+      expect(s.load.unavailableNote).not.toBeNull();
+    }
   });
 });

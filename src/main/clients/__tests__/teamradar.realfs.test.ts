@@ -15,6 +15,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as path from 'node:path';
 import { access, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { unsealForTest } from '../../__tests__/safeStorageMock';
 
 const state = vi.hoisted(() => ({ home: '' }));
 
@@ -23,6 +24,9 @@ vi.mock('node:os', async (importOriginal) => {
   const homedir = () => state.home;
   return { ...actual, homedir, default: { ...actual, homedir } };
 });
+
+// 保存は OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
+vi.mock('electron', async () => (await import('../../__tests__/safeStorageMock')).electronSafeStorageMock());
 
 const {
   ACTIONS,
@@ -57,7 +61,8 @@ describe('teamradar — 本物のファイルシステム', () => {
       members: [{ id: 'm1', name: '田中', scores: [3, 3, 3, 3, 3] }],
     });
 
-    const written = JSON.parse(await readFile(target, 'utf8'));
+    // 中身は封筒 (パス 133) —— 検査側で開いてから読む。
+    const written = JSON.parse(unsealForTest(await readFile(target, 'utf8')));
     expect(written).toMatchObject({ department: '開発部', evaluatedAt: '2026-05-01' });
     expect(written.members).toHaveLength(1);
 
@@ -68,8 +73,10 @@ describe('teamradar — 本物のファイルシステム', () => {
 
   it('書いた内容をそのまま読み戻せる', async () => {
     const back = await loadTeamRadarState();
-    expect(back.department).toBe('開発部');
-    expect(back.members[0]).toMatchObject({ id: 'm1', name: '田中' });
+    expect(back.kind).toBe('saved');
+    if (back.kind !== 'saved') return;
+    expect(back.state.department).toBe('開発部');
+    expect(back.state.members[0]).toMatchObject({ id: 'm1', name: '田中' });
   });
 
   it('SVG の書き出しも階層を掘り、bytes が実ファイルと一致する', async () => {
@@ -100,6 +107,7 @@ describe('teamradar — 本物のファイルシステム', () => {
       payload: { department: '品質保証部', evaluatedAt: '2026-06-01', members: [] },
     })) as { department: string };
     expect(saved.department).toBe('品質保証部');
-    expect((await loadTeamRadarState()).department).toBe('品質保証部');
+    const back = await loadTeamRadarState();
+    expect(back.kind === 'saved' && back.state.department).toBe('品質保証部');
   });
 });

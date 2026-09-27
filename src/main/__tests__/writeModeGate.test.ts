@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 /*
  * **主プロセスがディスクへ書くものは、すべて 0600 で閉じる。**
@@ -31,7 +33,7 @@ const EXEMPT: Readonly<Record<string, string>> = {
   'atomicWrite.ts':
     '書き先は `${target}.tmp-${pid}-${Date.now()}-${乱数}` で毎回一意な新規ファイルなので、' +
     '`fs.open(tmp, "w", mode)` の mode が必ず効く (既存の権限を継ぐ経路が無い)。' +
-    '控え (`.prev`) は copyFile が複製元の mode を継ぐため、別途 chmod している。',
+    '控え (`.prev`) も同じ経路 (一意な tmp → rename) で書くので、mode が必ず効く (パス 134 まで copyFile + chmod だった)。',
 };
 
 interface Source {
@@ -40,20 +42,20 @@ interface Source {
 }
 
 function sources(dir: string, prefix = '', out: Source[] = []): Source[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const full = join(dir, name);
     if (statSync(full).isDirectory()) {
       if (name !== '__tests__') sources(full, `${prefix}${name}/`, out);
       continue;
     }
-    if (/\.tsx?$/.test(name)) out.push({ rel: prefix + name, text: readFileSync(full, 'utf8') });
+    if (/\.tsx?$/.test(name)) out.push({ rel: prefix + name, text: readOriginalSource(full) });
   }
   return out;
 }
 
 /** 行コメント・ブロックコメントを落とす —— 注記に書いた字面を呼び出しと読み違えない。 */
 function code(text: string): string {
-  return text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  return stripComments(text);
 }
 
 const WRITE_CALL = /\bfs\.(writeFile|writeFileSync|appendFile|appendFileSync|createWriteStream)\s*\(\s*([A-Za-z_$][\w$.]*)/g;

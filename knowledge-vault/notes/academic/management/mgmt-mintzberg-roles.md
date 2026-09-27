@@ -26,7 +26,7 @@ aliases:
 ヘンリー・ミンツバーグ（Henry Mintzberg, 1973/1975）
 
 ## 出典
-- [Henry Mintzberg, "The Manager’s Job: Folklore and Fact," Harvard Business Review (1975/1990 reprint)](https://hbr.org/1990/03/the-managers-job-folklore-and-fact) `学術`
+- [Henry Mintzberg, "The Manager’s Job: Folklore and Fact," Harvard Business Review (1975/1990 reprint)](https://hbr.org/1990/03/the-managers-job-folklore-and-fact) `メディア`
 - [ERIC EJ122544 — The Manager’s Job: Folklore and Fact, Harvard Business Review, 1975](https://eric.ed.gov/?id=EJ122544) `学術`
 - [Study.com — Henry Mintzberg’s Managerial Roles（10役割・3カテゴリ・1973 The Nature of Managerial Work）](https://study.com/academy/lesson/henry-mintzbergs-managerial-roles.html) `リファレンス`
 

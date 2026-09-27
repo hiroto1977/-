@@ -333,8 +333,52 @@ describe('ACTIONS["create-page"] — 送り方', () => {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['create-page']!({ token: 't', fetch: fetchMock, payload }),
-      ).rejects.toThrow('parentPageId and title are required');
+      ).rejects.toThrow(/^(parentPageId|title) は必須です$/); // 欄の名前を言う (共有の台帳 — パス 111)
       expect(fetchMock).not.toHaveBeenCalled();
+    }
+  });
+});
+
+/**
+ * **利用者の Notion の設定についての診断を、読めなかった応答から作らない。**
+ * (2026-09-14 · パス 264)
+ *
+ * `note` は画面に出る 1 文で、`pages.length === 0` のとき
+ * 「インテグレーションに共有されたページなし」と述べる —— これは
+ * **相手側の設定についての主張**である。以前は `(search.results ?? [])` で
+ * 鍵の不在と空の配列を同じ `[]` に畳んでいたので、本文が `{}` でもその文が出て、
+ * 共有は正しいのに共有設定を直しに行かせることになっていた。
+ */
+describe('note は「0 件」と「読めなかった」を分ける (パス 264)', () => {
+  const noteFor = async (body: unknown): Promise<string> => {
+    const f = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse(body));
+    const snap = await fetchNotionSnapshot({ token: 'secret', fetch: f });
+    return snap.note;
+  };
+
+  it('★ results が無い応答では設定を診断しない (0 ではなく不明と述べる)', async () => {
+    const note = await noteFor({});
+    expect(note).toContain('読み取れませんでした');
+    expect(note).toContain('0 ではなく');
+    // **診断の文は出さない。**
+    expect(note).not.toContain('共有されたページなし');
+  });
+
+  it('★ 対照: results: [] は相手の答えなので、従来どおり診断する', async () => {
+    expect(await noteFor({ results: [] })).toBe('インテグレーションに共有されたページなし');
+  });
+
+  it('★ 対照: 読めた件数はそのまま述べる', async () => {
+    const note = await noteFor({
+      results: [{ id: 'p1', object: 'page', url: 'u', last_edited_time: 't', properties: {} }],
+    });
+    expect(note).toBe('1 件取得');
+  });
+
+  it('results が配列でない値でも落ちず、件数を言わない', async () => {
+    for (const bad of ['x', 42, null] as unknown[]) {
+      const note = await noteFor({ results: bad });
+      expect(note, JSON.stringify(bad)).toContain('読み取れませんでした');
     }
   });
 });

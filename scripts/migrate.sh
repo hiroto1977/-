@@ -322,12 +322,47 @@ do_self_test() {
   fi
   rm -rf "$sandbox"
 
-  # 4. --force 無しでは既存を壊さない (字面ではなく分岐の存在を見る)。
-  if printf '%s' "$code" | grep -q '\[ -e "\$dest" \] && \[ "\$force" = "0" \]'; then
+  # 4. --force 無しでは既存を壊さない。**振る舞いで見る** (2026-09-14 · パス 253)。
+  #
+  #    2026-09-14 まで、ここは自分のソースを grep して分岐の**字面**を探していた:
+  #      printf '%s' "$code" | grep -q '\[ -e "\$dest" \] && \[ "\$force" = "0" \]'
+  #    3 つの問題が在った。
+  #      (a) **綴りの検査である。** 守りが効いたままでも、`[[ ]]` へ書き換える・
+  #          空白を足す・条件の順を入れ替えるだけで鳴る。逆に、死んだ枝にその字面を
+  #          置けば通る。このリポジトリは同じ形をパス 224 と 252 で 2 度直している。
+  #      (b) **環境で答えが変わった。** BRE に `\[` と `\$` という「余分な逃がし」を
+  #          含むので、grep の版・実装によって当たり方が違う。実測: この砂箱
+  #          (GNU grep 3.11) では当たり、GitHub の runner では当たらず CI が赤くなった
+  #          (2026-09-14 16:46Z · c81587c8)。**根本原因は再現できていない** ——
+  #          分かっているのは「守りは実在し (216 行)、字面の検査だけが落ちた」こと。
+  #      (c) 自分のソースを読める必要があった (`$code`)。検査の前提が 1 つ多い。
+  #
+  #    振る舞いで見れば 3 つとも消える: 既存ファイルを置いてから復元し、中身が
+  #    残っていることを見る。**陰性対照つき** —— `--force` では上書きされる
+  #    (でなければ「守っている」のか「復元そのものが動いていない」のか分からない)。
+  local fsandbox fhome farc
+  fsandbox="$(mktemp -d)"
+  fhome="$fsandbox/home"
+  mkdir -p "$fhome/sub" "$fsandbox/src/sub"
+  printf 'ORIGINAL' > "$fhome/sub/conflict.txt"
+  printf 'FROM-ARCHIVE' > "$fsandbox/src/sub/conflict.txt"
+  farc="$fsandbox/plain.tar.gz"
+  tar -czf "$farc" -C "$fsandbox/src" sub
+
+  ( HOME="$fhome" bash "${BASH_SOURCE[0]}" restore "$farc" >/dev/null 2>&1 ) || true
+  if [ "$(cat "$fhome/sub/conflict.txt")" = "ORIGINAL" ]; then
     say_ok '--force 無しでは既存ファイルを上書きしない'
   else
-    say_bad '既存ファイルの保護が見当たらない'
+    say_bad '既存ファイルが上書きされた (--force を付けていない)'
   fi
+
+  ( HOME="$fhome" bash "${BASH_SOURCE[0]}" restore "$farc" --force >/dev/null 2>&1 ) || true
+  if [ "$(cat "$fhome/sub/conflict.txt")" = "FROM-ARCHIVE" ]; then
+    say_ok '陰性対照: --force なら上書きされる (守りが効いているだけで、復元は動く)'
+  else
+    say_bad '--force でも上書きされない — 復元そのものが動いていない (上の合格は無意味)'
+  fi
+  rm -rf "$fsandbox"
 
   [ "$bad" -eq 0 ] || die "self-test 不一致 $bad 件"
   ok "self-test 全件一致"

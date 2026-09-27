@@ -35,11 +35,12 @@ aliases:
 - [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 語彙が近い
 - [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
-- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]] — 同じ思想家
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 出典を共有
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
 - [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 出典を共有
+- [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]] — 同分野の近傍
+- [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

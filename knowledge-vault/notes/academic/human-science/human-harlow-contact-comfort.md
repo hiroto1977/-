@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Harry Harlow — rhesus monkey surrogate-mother experiments, contact comfort, attachment, The Nature of Love (1958)](https://en.wikipedia.org/wiki/Harry_Harlow) `リファレンス`
 
 ## 関連概念
-- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同じ思想家
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する]] — 同じ思想家
 - [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同じ思想家
 - [[human-still-face-tronick|スティルフェイス実験（トロニック）——無表情の母親と乳児の情動調整]] — 同じ思想家

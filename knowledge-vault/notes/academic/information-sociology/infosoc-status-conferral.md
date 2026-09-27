@@ -40,7 +40,6 @@ aliases:
 - [[infosoc-limited-effects|限定効果論]] — 同じ思想家
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
-- [[infosoc-agnotology-proctor|アグノトロジー——無知はいかに作り出されるか]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

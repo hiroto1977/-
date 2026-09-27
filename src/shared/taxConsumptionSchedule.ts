@@ -23,8 +23,9 @@
  *   提出期限 / No.6371 端数計算、国税通則法119条、e-Tax 還付金処理状況確認。
  */
 
-import { floorHundred } from './num';
-import { TWENTY_PERCENT_RATE } from './taxConsumption';
+import { floorHundred, nonNeg } from './num';
+import { utcMsFromParts } from './isoDate';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from './taxConsumption';
 
 /** 現行法における消費税（国税）の割合。標準10% = 国税7.8% + 地方2.2%。 */
 export const NATIONAL_SHARE = 0.78;
@@ -32,11 +33,30 @@ export const NATIONAL_SHARE = 0.78;
 export const LOCAL_RATIO = 22 / 78;
 
 /**
+ * 国税分の割合の下限。**この値で割るので 0 は許せない。**
+ *
+ * `localRatioOf` は地方消費税の比を `(1 − 割合) ÷ 割合` で作る。割合が 0 なら
+ * 商は Infinity になり、`calcAnnualTax` の `local` / `total` を通って
+ * 税ページに「¥Infinity」が出る (`jpy()` は非有限値を弾かない)。
+ * 台帳 `consumptionSchedule.nationalShare` の下限はこの定数を参照する ——
+ * 下限が 0 になった日に画面が壊れる、という関係をコードに残すため。
+ * 割合そのものは法律の区分 (7.8 / 10) で、下限は算術上の制約である。
+ */
+export const MIN_NATIONAL_SHARE = 0.01;
+
+/**
  * 国税分の割合から地方消費税の比 (既定 22/78) を作る。百万分率の整数比で割るので、
  * 既定の 0.78 では `22 / 78` と同じ double になる (1 − 0.78 の丸め誤差を持ち込まない)。
+ *
+ * 割合は `[MIN_NATIONAL_SHARE, 1]` に丸める (非有限値は下限扱い)。台帳の検査が
+ * 範囲外を落とすので通常は素通りするが、**割る値の守りを呼ばれる側にも置く** ——
+ * 台帳の下限を 1 行下げるだけで画面に ∞ が出る形にはしない。
  */
 export function localRatioOf(nationalShare: number): number {
-  const ppm = Math.round(nationalShare * 1_000_000);
+  const share = Number.isFinite(nationalShare)
+    ? Math.min(1, Math.max(MIN_NATIONAL_SHARE, nationalShare))
+    : MIN_NATIONAL_SHARE;
+  const ppm = Math.round(share * 1_000_000);
   return (1_000_000 - ppm) / ppm;
 }
 
@@ -51,6 +71,8 @@ export interface ScheduleParams {
   readonly nationalShare: number;
   /** 2 割特例で納める割合 (売上税額 × 20%)。 */
   readonly twentyPercentRate: number;
+  /** 3 割特例で納める割合 (売上税額 × 30%・個人事業者の令和 9 年分/10 年分)。 */
+  readonly thirtyPercentRate: number;
   /** これ以下なら中間申告なし。 */
   readonly interimTier1: number;
   /** これ以下なら年 1 回。 */
@@ -62,6 +84,7 @@ export interface ScheduleParams {
 export const DEFAULT_SCHEDULE_PARAMS: ScheduleParams = {
   nationalShare: NATIONAL_SHARE,
   twentyPercentRate: TWENTY_PERCENT_RATE,
+  thirtyPercentRate: THIRTY_PERCENT_RATE,
   interimTier1: INTERIM_TIER1,
   interimTier2: INTERIM_TIER2,
   interimTier3: INTERIM_TIER3,
@@ -71,14 +94,66 @@ export const DEFAULT_SCHEDULE_PARAMS: ScheduleParams = {
 export const MAX_RATE = 0.5;
 
 export type FilerKind = 'individual' | 'corporate';
-export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent';
+export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent' | 'thirty-percent';
 
 /** 還付額の端数処理: 1円未満切捨て。ただし 1円未満の正値は 1円とする。 */
-export function roundRefund(n: number): number {
+export function roundRefund(raw: number): number {
+  const n = nonNeg(raw);
   if (n <= 0) return 0;
   // 1円未満切捨て。ただし正の値が1円未満なら1円（Math.floor(1) === 1 なので
   // 「1未満なら1」の分岐は Math.max に畳める）。
   return Math.max(1, Math.floor(n));
+}
+
+/**
+ * 課税期間として扱える年の範囲。**画面の宣言 (`min` / `max`) と同じ数の唯一の出所。**
+ *
+ * 2026-09-13 (パス 199) まで、この範囲は `TaxPage` の `GuardedNumber` の
+ * `min: 2000, max: 2100` にしか無く、`csInput` は
+ * `Math.round(num(csEndYear)) || 2026` で**素通りさせていた**。`guardNumber` は
+ * ⛔ (fatal) を出すが、**期限の日付は作られて刷られる**。実測 (画面の式をそのまま写して):
+ *
+ * | 打った文字列 | 刷られた確定申告期限 |
+ * | --- | --- |
+ * | `26` (2026 の打ち間違い) | **`1926-05-31`** |
+ * | `1` | `1901-05-31` |
+ * | `50` | `1950-05-31` |
+ * | `99` | `1999-05-31` |
+ * | `275760` | **`+275760-05`** (`YYYY-MM-DD` ですらない) |
+ *
+ * **2 桁で打つのは自然な打ち間違い**で、出てくるのは「明らかに変な値」ではなく
+ * **もっともらしい日付**である。しかも申告期限は利用者が行動する日付で、
+ * 外すと加算税・延滞税が付く。`Date.UTC` は年 0〜99 を 1900 年代に写す
+ * (ECMA-262 の `MakeDay` 経由・実測) ので、この写し替えは黙って起きる。
+ *
+ * 下限 2000 / 上限 2100 は「この試算が扱う制度の範囲」——消費税の税率・経過措置・
+ * 2割特例 / 3割特例はいずれも 2000 年以降の制度で、2100 年より先の規定は無い。
+ */
+export const MIN_FISCAL_YEAR = 2000;
+/** 課税期間として扱える年の上限 ({@link MIN_FISCAL_YEAR} の対)。 */
+export const MAX_FISCAL_YEAR = 2100;
+
+/**
+ * その課税期間から日付を作れるか (年が {@link MIN_FISCAL_YEAR}〜{@link MAX_FISCAL_YEAR}・
+ * 月が 1〜12 の整数)。
+ *
+ * **黙って丸めない**のが要点 —— 丸めると「26 年 3 月決算の申告期限」を
+ * 「2026 年 3 月決算の申告期限」として答えることになり、合っているように見えて
+ * 根拠が違う。範囲外は日付を出さず、呼び出し側が理由を述べる
+ * (`depreciation.ts` の `isSchedulableLife` と同じ契約)。
+ */
+export function isRepresentableFiscalPeriod(input: {
+  readonly fiscalEndYear: number;
+  readonly fiscalEndMonth: number;
+}): boolean {
+  return (
+    Number.isInteger(input.fiscalEndYear)
+    && input.fiscalEndYear >= MIN_FISCAL_YEAR
+    && input.fiscalEndYear <= MAX_FISCAL_YEAR
+    && Number.isInteger(input.fiscalEndMonth)
+    && input.fiscalEndMonth >= 1
+    && input.fiscalEndMonth <= 12
+  );
 }
 
 export interface ScheduleInput {
@@ -153,8 +228,11 @@ export interface InterimPlan {
 
 /** 確定申告時に実際に動く金額。 */
 export interface FinalSettlement {
-  /** 確定申告・納付の期限。 */
-  readonly due: string;
+  /**
+   * 確定申告・納付の期限。**課税期間が範囲外なら `null`** (算定不能) ——
+   * もっともらしい誤った日付を刷らないため (2026-09-13 · パス 199)。
+   */
+  readonly due: string | null;
   /** 年税額（国税＋地方）。 */
   readonly annualTotal: number;
   /** 中間納付の合計。 */
@@ -169,8 +247,12 @@ export interface FinalSettlement {
 // --- 日付ユーティリティ（すべて UTC。表示は YYYY-MM-DD） -----------------
 
 function lastDayOfMonth(year: number, month1: number): Date {
-  // month1 は 1-12。翌月 0 日 = 当月末日。
-  return new Date(Date.UTC(year, month1, 0));
+  // month1 は 1-12。**翌月 1 日の 1 日前** = 当月末日。
+  // `utcMsFromParts(year, month1 + 1, 0)` と書いてはいけない —— 繰り下がりが
+  // 2000 年の暦で解決されるので、2 月の末日が閏年のずれで 3/1 になる
+  // (パス 200 でこの罠を踏んだ。経緯は `isoDate.ts` の `utcMsFromParts`)。
+  const firstOfNext = month1 === 12 ? utcMsFromParts(year + 1, 1, 1) : utcMsFromParts(year, month1 + 1, 1);
+  return new Date(firstOfNext - 86_400_000);
 }
 
 function iso(d: Date): string {
@@ -264,8 +346,8 @@ function periodStart(input: ScheduleInput): { year: number; month: number } {
  */
 export function calcAnnualTax(input: ScheduleInput, rate: number, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): AnnualTax {
   const r = Math.min(Math.max(rate, 0), MAX_RATE);
-  const sales = Math.max(0, input.taxableSales);
-  const purchases = Math.max(0, input.taxablePurchases);
+  const sales = nonNeg(input.taxableSales);
+  const purchases = nonNeg(input.taxablePurchases);
   const localRatio = localRatioOf(p.nationalShare);
 
   const salesTaxNational = sales * r * p.nationalShare;
@@ -274,6 +356,8 @@ export function calcAnnualTax(input: ScheduleInput, rate: number, p: SchedulePar
     deductibleNational = salesTaxNational * Math.min(Math.max(input.deemedPurchaseRate, 0), 1);
   } else if (input.method === 'twenty-percent') {
     deductibleNational = salesTaxNational * (1 - p.twentyPercentRate);
+  } else if (input.method === 'thirty-percent') {
+    deductibleNational = salesTaxNational * (1 - p.thirtyPercentRate);
   } else {
     deductibleNational = purchases * r * p.nationalShare;
   }
@@ -308,7 +392,7 @@ export function calcAnnualTax(input: ScheduleInput, rate: number, p: SchedulePar
 
 /** 前課税期間の確定消費税額（国税分）から中間申告の回数を判定する。境目は `p` (既定 48 万 / 400 万 / 4,800 万)。 */
 export function interimCount(priorNationalTax: number, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): 0 | 1 | 3 | 11 {
-  const t = Math.max(0, priorNationalTax);
+  const t = nonNeg(priorNationalTax);
   if (t <= p.interimTier1) return 0;
   if (t <= p.interimTier2) return 1;
   if (t <= p.interimTier3) return 3;
@@ -335,11 +419,18 @@ export function interimBandLabel(count: 0 | 1 | 3 | 11, p: ScheduleParams = DEFA
  * 100円未満切捨てしたもの。地方消費税はその 22/78。
  */
 export function planInterim(input: ScheduleInput, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): InterimPlan {
-  const prior = Math.max(0, input.priorNationalTax);
+  const prior = nonNeg(input.priorNationalTax);
   const count = interimCount(prior, p);
   const localRatio = localRatioOf(p.nationalShare);
   const start = periodStart(input);
   const payments: InterimPayment[] = [];
+
+  // **課税期間から日付を作れないなら 1 件も作らない。** 中間申告の回数は
+  // 前期の税額だけで決まる (だから `count` / `band` は返す) が、納付期限は
+  // 課税期間から数えるので、範囲外の年から作った日付はもっともらしい嘘になる。
+  if (!isRepresentableFiscalPeriod(input)) {
+    return { count, priorNationalTax: prior, band: interimBandLabel(count, p), payments: [], total: 0, totalNational: 0 };
+  }
 
   if (count === 1) {
     const national = floorHundred((prior * 6) / 12);
@@ -392,10 +483,14 @@ export function planInterim(input: ScheduleInput, p: ScheduleParams = DEFAULT_SC
 
 // --- 確定申告 -----------------------------------------------------------
 
-/** 確定申告・納付の期限。 */
-export function finalDueDate(input: ScheduleInput): string {
+/**
+ * 確定申告・納付の期限。**課税期間から日付を作れないときは `null`**
+ * (範囲は {@link isRepresentableFiscalPeriod})。
+ */
+export function finalDueDate(input: ScheduleInput): string | null {
+  if (!isRepresentableFiscalPeriod(input)) return null;
   if (input.filer === 'individual') {
-    return iso(nextBusinessDay(new Date(Date.UTC(input.fiscalEndYear + 1, 2, 31))));
+    return iso(nextBusinessDay(new Date(utcMsFromParts(input.fiscalEndYear + 1, 3, 31))));
   }
   return dueMonthEndAfter(input.fiscalEndYear, input.fiscalEndMonth, input.extendedDeadline ? 3 : 2);
 }
@@ -410,7 +505,10 @@ export function settle(input: ScheduleInput, annual: AnnualTax, interim: Interim
   const kind: FinalSettlement['kind'] = amount > 0 ? 'payment' : amount < 0 ? 'refund' : 'none';
 
   let refundWindow: FinalSettlement['refundWindow'];
-  if (kind === 'refund') {
+  // **期限が出ていなければ入金時期も出さない。** `due` は課税期間が範囲外だと
+  // `null` になる (パス 199)。`${due}` をそのまま日付にすると `"nullT00:00:00Z"`
+  // = Invalid Date になり、「入金は Invalid Date 頃」という文が出る。
+  if (kind === 'refund' && due !== null) {
     const base = new Date(`${due}T00:00:00Z`);
     refundWindow = input.eTax
       ? {
@@ -468,14 +566,16 @@ export function breakEvenRate(input: ScheduleInput, p: ScheduleParams = DEFAULT_
   const interim = planInterim(input, p);
   if (interim.total <= 0) return null;
 
-  const sales = Math.max(0, input.taxableSales);
+  const sales = nonNeg(input.taxableSales);
   let base: number;
   if (input.method === 'simplified') {
     base = sales * (1 - Math.min(Math.max(input.deemedPurchaseRate, 0), 1));
   } else if (input.method === 'twenty-percent') {
     base = sales * p.twentyPercentRate;
+  } else if (input.method === 'thirty-percent') {
+    base = sales * p.thirtyPercentRate;
   } else {
-    base = sales - Math.max(0, input.taxablePurchases);
+    base = sales - nonNeg(input.taxablePurchases);
   }
   // Stryker disable next-line EqualityOperator: <= を < にしても base===0 では
   // 除算が Infinity になり、直後の `r > MAX_RATE` で null になるため結果は同じ（等価変異）。

@@ -6,8 +6,17 @@
  * 行う (Vault のキーを使うため)。ここは純粋ロジック + localStorage のみ。
  */
 
-import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+import {
+  MAX_ANALYSES,
+  MAX_ANALYSIS_EXCERPT_CHARS,
+  MAX_MOODS,
+  MAX_MOOD_NOTE_CHARS,
+} from '../../shared/emotionsLimits';
+import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 import { localIsoDate } from '../../shared/localDate';
+import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
+import type { ActionData } from '../../shared/actionData';
 
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 export type EmotionKey = (typeof EMOTION_KEYS)[number];
@@ -65,17 +74,34 @@ export const EMOTIONS_STORE_KEY = 'emotions.store';
 // この変数を毎回 false へ戻す。true にしても差が出ない (等価変異)。
 let lastLoadDegraded = false;
 
+/** 要素の形は両ビルドで共有 (`shared/emotionsShape.ts`)。ここから再輸出するのはテストと web-shim のため。 */
+export { isAnalysisEntry, isMoodEntry };
+
 export function loadStore(): EmotionsStore {
   lastLoadDegraded = false;
-  const raw = localStorage.getItem(EMOTIONS_STORE_KEY);
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(EMOTIONS_STORE_KEY);
+  } catch {
+    // **保存領域そのものへ触れられない** (サイトデータのブロック /
+    // プライベートモード)。素で呼んでいた頃は生の `SecurityError` が
+    // 呼び出し側へ抜けており、**degraded に数えられていなかった** ——
+    // つまり `loadStoreForWrite()` の「読めないなら上書きしない」も
+    // `assertStoreWritable()` の送信前の門も、この端末では働かなかった。
+    lastLoadDegraded = true;
+    return { moods: [], analyses: [] };
+  }
   // 「無い」は degraded ではない —— 消える物が無い。
   if (!raw) return { moods: [], analyses: [] };
   try {
-    const parsed = JSON.parse(raw) as Partial<EmotionsStore>;
-    return {
-      moods: Array.isArray(parsed.moods) ? parsed.moods : [],
-      analyses: Array.isArray(parsed.analyses) ? parsed.analyses : [],
-    };
+    // 保存値は型が守らない。欄が無いのは古い形 (degraded ではない)。欄が在るのに配列でない・
+    // 形の違う要素が混じる = **在るのに読めない** —— 読み出しは残りを返し、書き込みは断る
+    // (上書きすると読めなかった分が消える。`loadStoreForWrite` 参照)。
+    const rec = asRecord(JSON.parse(raw));
+    const moods = readStoredList(rec.moods, isMoodEntry);
+    const analyses = readStoredList(rec.analyses, isAnalysisEntry);
+    if (moods.dropped > 0 || analyses.dropped > 0) lastLoadDegraded = true;
+    return { moods: moods.items as MoodEntry[], analyses: analyses.items as AnalysisEntry[] };
   } catch {
     lastLoadDegraded = true;
     return { moods: [], analyses: [] };
@@ -99,6 +125,15 @@ function loadStoreForWrite(): EmotionsStore {
   return store;
 }
 
+/**
+ * 「いま書けるか」だけを確かめる (書けなければ `loadStoreForWrite` と同じ理由で投げる)。
+ * web-shim が analyze-text で Anthropic へ**送る前に**呼ぶ —— 断るのが保存の直前だと、
+ * 本文は外へ渡り API 呼び出しも済んだ後で捨てることになる (main 側と同じ順)。
+ */
+export function assertStoreWritable(): void {
+  loadStoreForWrite();
+}
+
 function saveStore(store: EmotionsStore): void {
   localStorage.setItem(EMOTIONS_STORE_KEY, JSON.stringify(store));
 }
@@ -115,7 +150,7 @@ interface LogMoodPayload {
 }
 
 /** 気分を記録する (同日があれば置換)。Electron 版 logMood と同じ規則。 */
-export function logMood(payload: unknown, now: number = Date.now()): { date: string; score: number } {
+export function logMood(payload: unknown, now: number = Date.now()): ActionData<'emotions/log-mood'> {
   const { date, score, note } = (payload ?? {}) as LogMoodPayload;
   const finalScore = Number(score);
   if (!Number.isFinite(finalScore) || finalScore < 1 || finalScore > 5) {
@@ -134,11 +169,12 @@ export function logMood(payload: unknown, now: number = Date.now()): { date: str
   // 青天井だと保管庫のメタや proxy 設定など**別機能の書き込みが先に落ちる**。
   // `saveStore` は setItem を包んでいないので、溢れた時点で例外がそのまま出る。
   const noteStr = String(note ?? '');
-  if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
+  if (countChars(noteStr) > MAX_MOOD_NOTE_CHARS) {
     throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
   }
-  const finalDate =
-    (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null) ?? todayLocal(now);
+  // 日付: 省略 (undefined / null) は利用者の時計の今日。暦に無ければ断る (main 版と同じ判断 —— パス 115)。
+  const finalDate = date == null ? todayLocal(now) : date;
+  if (!isCalendarDate(finalDate)) throw new Error(calendarDateMessage('date'));
   const store = loadStoreForWrite();
   const idx = store.moods.findIndex((m) => m.date === finalDate);
   const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: noteStr };
@@ -154,7 +190,7 @@ export function logMood(payload: unknown, now: number = Date.now()): { date: str
 }
 
 /** 履歴をクリアする。戻り値はクリア前の件数。 */
-export function clearHistory(kind: 'moods' | 'analyses' | 'all' | undefined): { moods: number; analyses: number } {
+export function clearHistory(kind: 'moods' | 'analyses' | 'all' | undefined): ActionData<'emotions/clear-history'> {
   const store = loadStore();
   const before = { moods: store.moods.length, analyses: store.analyses.length };
   if (kind === 'moods' || kind === 'all' || kind === undefined) store.moods = [];
@@ -220,7 +256,7 @@ export function recordAnalysis(
     // Stryker disable next-line StringLiteral,MethodExpression
     id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: now,
-    excerpt: (source ? `[${source}] ` : '') + text.slice(0, 80),
+    excerpt: (source ? `[${source}] ` : '') + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS),
     ...normalized,
   };
   const store = loadStoreForWrite();

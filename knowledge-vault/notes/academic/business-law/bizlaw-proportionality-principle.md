@@ -37,7 +37,7 @@ aliases:
 - [[eh-2015|2015年（平成27年）]] — 出典を共有
 - [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

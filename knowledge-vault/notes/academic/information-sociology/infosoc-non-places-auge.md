@@ -26,7 +26,7 @@ aliases:
 マルク・オジェ ／ ミシェル・ド・セルトー ／ アンリ・ルフェーヴル ／ ジグムント・バウマン
 
 ## 出典
-- [Augé, M. (1995) Non-Places: Introduction to an Anthropology of Supermodernity — Verso](https://www.worldcat.org/oclc/32855043) `学術`
+- [Augé, M. (1995) Non-Places: Introduction to an Anthropology of Supermodernity — Verso](https://www.worldcat.org/oclc/32855043) `リファレンス`
 - [Wikipedia: Non-place — supermodernity, transience, anthropological place](https://en.wikipedia.org/wiki/Non-place) `リファレンス`
 
 ## 関連概念

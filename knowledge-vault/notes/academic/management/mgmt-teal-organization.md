@@ -31,7 +31,7 @@ F.ラルー『ティール組織（Reinventing Organizations）』2014／組織�
 - [Wikipedia — Teal organisation（定義・自主経営／全体性／存在目的）](https://en.wikipedia.org/wiki/Teal_organisation) `リファレンス`
 
 ## 関連概念
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連

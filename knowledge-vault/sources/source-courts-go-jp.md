@@ -2,7 +2,7 @@
 title: "courts.go.jp"
 type: source-domain
 host: "courts.go.jp"
-cite_count: 20
+cite_count: 21
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # courts.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **20 件**（公的 20）
+> [!info] 出典ドメイン索引 ・ 引用 **21 件**（公的 21）
 
 ## このドメインを出典とする項目
 
@@ -22,6 +22,7 @@ tags:
 - [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 裁判所（courts.go.jp）民事（通常）再生の手続
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 最高裁判所—法人格否認の法理に関する判例法の展開
 - [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 裁判所名誉毀損の真実性・真実相当性に関する判決（公開判例PDF）
+- [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]] — 最高裁判所第三小法廷判決平成15年4月22日（オリンパス光学工業事件）民集57巻4号477頁|裁判例検索（裁判所）—勤務規則上の対価が特許…
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 最高裁判所—取締役の善管注意義務・忠実義務に関する判例
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 最高裁判所判例集—最判昭和43年8月2日（背信的悪意者は民法177条の第三者に当たらない）
 - [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 最高裁判所判例検索—法定地上権の成立要件に関する判例

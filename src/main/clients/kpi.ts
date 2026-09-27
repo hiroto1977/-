@@ -1,3 +1,4 @@
+import { nonNeg } from '../../shared/num';
 import { seededNoise } from '../../shared/seededNoise';
 import type { FetchContext } from './types';
 
@@ -29,6 +30,32 @@ export interface Fundamentals {
   depreciation: number; // 減価償却
 }
 
+/**
+ * Fundamentals の 5 欄を境界で 1 度だけ消毒する (非有限・負値 → 0)。
+ *
+ * **なぜ欄ごとでなく入口でやるか。** この下の 4 関数は `f.revenue > 0` /
+ * `f.revenue <= 0` を「算定できるか」の判定に使っている。`NaN > 0` も
+ * `NaN <= 0` も **どちらも false** なので、NaN が来ると
+ * 「算定不能」の枝も「算定できる」の枝も通らず、**関門を素通りして
+ * NaN が結果に乗る** (パス 201 で実測)。欄ごとに `Math.max(0, …)` を
+ * 掛けても直らない —— `Math.max(0, NaN)` は NaN だからである。
+ *
+ * 入口で 0 に倒せば、既に書かれている `<= 0` の枝がそのまま正しく鳴る。
+ *
+ * 非負に倒すのは {@link computeKpi} の中の Stryker 注記が既に
+ * 「with non-negative costs, contribution > 0 implies revenue > 0」という
+ * 不変条件を**前提にしていた**ため —— ここで前提を事実にする。
+ */
+function saneFundamentals(f: Fundamentals): Fundamentals {
+  return {
+    revenue: nonNeg(f.revenue),
+    cogs: nonNeg(f.cogs),
+    advertising: nonNeg(f.advertising),
+    sga: nonNeg(f.sga),
+    depreciation: nonNeg(f.depreciation),
+  };
+}
+
 /** Per-business-unit metadata + current-period fundamentals + history. */
 export interface BusinessUnit {
   id: string;
@@ -49,20 +76,54 @@ export interface Kpi {
   fixedCost: number;
   /** 限界利益 — revenue − variableCost. */
   contribution: number;
-  /** 限界利益率 (%) — contribution / revenue. */
-  contributionRatio: number;
-  /** 変動費率 (%) — variableCost / revenue. */
-  variableRatio: number;
-  /** 固定費比率 (%) — fixedCost / revenue. */
-  fixedRatio: number;
+  /**
+   * 限界利益率 (%) — contribution / revenue。**売上が 0 なら `null` = 算定不能。**
+   *
+   * 2026-09-08 まで 0 に倒しており、**すぐ上の実装コメント自身が
+   * 「a zero-revenue unit has **no meaningful ratio**」と書いていた** ——
+   * 意味を持つ比率が無いと述べてから 0 を返していた
+   * (`taxCorporate.effectiveRate`・`mutualFundsMetrics.calcSharpeRatio`・
+   * `funding.debtServiceMetrics` と同じ形の 4 例目)。
+   *
+   * **規準は同じ画面に在った** —— `renderer/data/kpiActuals.ts` の
+   * `computeKpiMetrics` (パス 52 で `number | null` にした双子) が同じ量を
+   * 返し、KPI 画面はそれを `pctOrDash` で「—」と刷る。ところが**同じページの
+   * もう 1 つのタイル群**は live/snapshot の payload (= この値) を `pct` で刷り、
+   * 売上 0 で **「0.0%」**を出していた。
+   * **同じラベル「限界利益率」のタイルが 1 ページに 2 つ在り、答えが違った。**
+   */
+  contributionRatio: number | null;
+  /**
+   * 変動費率 (%) — variableCost / revenue。**売上が 0 なら `null`。**
+   * (画面に出る consumer は無い。`contributionRatio` と同じ関数で同じ形なので
+   * 規則を 1 つに揃える。)
+   */
+  variableRatio: number | null;
+  /**
+   * 固定費比率 (%) — fixedCost / revenue。**売上が 0 なら `null`。**
+   * (画面に出る consumer は無い。上と同じ理由。)
+   */
+  fixedRatio: number | null;
   /** 損益分岐点売上高 — fixedCost / contributionRatio (JPY).
    *  Special-cased to Infinity if contribution ≤ 0 (cannot break even). */
   bep: number;
   /** 損益分岐点比率 (%) — bep / revenue × 100. Lower = safer. */
   bepRatio: number;
-  /** 安全余裕率 (%) — 100 − bepRatio. Higher = safer.
-   *  Clamped to >= 0 so a loss-making unit reads 0 rather than negative. */
-  safetyMargin: number;
+  /**
+   * 安全余裕率 (%) — 100 − bepRatio. Higher = safer. **負の値も返す。**
+   *
+   * 損益分岐点を下回っている会社では真値が負になる。以前はここを
+   * `Math.max(0, …)` で 0 に丸めていたが、それだと「損益分岐点ちょうど」と
+   * 「損益分岐点を 200% 下回る」が**同じ 0.0%** になり、同じ画面に出る
+   * 損益分岐点比率 (150% / 300%) と足して 100 にならなかった。
+   * 金融機関等提出用の書面は算式「(売上高 − 損益分岐点売上高) ÷ 売上高」を
+   * 数字の隣に刷るので、**刷った算式が刷った数字を出さない**状態だった。
+   *
+   * `null` は**算定不能** —— 限界利益が 0 以下で、どれだけ売っても固定費を
+   * 回収できない (損益分岐点が存在しない) 場合。0 に倒すと「損益分岐点上に居る」
+   * という最も安全な読みになってしまうので、倒さない。
+   */
+  safetyMargin: number | null;
   /** 営業利益 — revenue − variableCost − fixedCost. */
   operatingProfit: number;
   /** 営業レバレッジ — contribution / operatingProfit.
@@ -73,14 +134,16 @@ export interface Kpi {
 
 /** Pure KPI computation. The 8-indicator formula is documented in
  *  docs/ARCHITECTURE.md §3 (BEP / KPI service). */
-export function computeKpi(f: Fundamentals): Kpi {
+export function computeKpi(raw: Fundamentals): Kpi {
+  const f = saneFundamentals(raw);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
-  // Avoid divide-by-zero: a zero-revenue unit has no meaningful ratio.
-  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : 0;
-  const variableRatio = f.revenue > 0 ? (variableCost / f.revenue) * 100 : 0;
-  const fixedRatio = f.revenue > 0 ? (fixedCost / f.revenue) * 100 : 0;
+  // A zero-revenue unit has no meaningful ratio → `null` (算定不能)。
+  // 0 を返すと「率は 0% である」という主張になる (欄の注記に経緯)。
+  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : null;
+  const variableRatio = f.revenue > 0 ? (variableCost / f.revenue) * 100 : null;
+  const fixedRatio = f.revenue > 0 ? (fixedCost / f.revenue) * 100 : null;
   // BEP only defined when contribution > 0; otherwise the unit can
   // never recover its fixed costs at any volume.
   const bep = contribution > 0 ? (fixedCost / contribution) * f.revenue : Infinity;
@@ -93,7 +156,7 @@ export function computeKpi(f: Fundamentals): Kpi {
   // fundamentals that don't occur in practice.
   // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
   const bepRatio = f.revenue > 0 && Number.isFinite(bep) ? (bep / f.revenue) * 100 : Infinity;
-  const safetyMargin = Number.isFinite(bepRatio) ? Math.max(0, 100 - bepRatio) : 0;
+  const safetyMargin = Number.isFinite(bepRatio) ? 100 - bepRatio : null;
   const operatingProfit = contribution - fixedCost;
   // Cap operating leverage to a finite number to avoid Infinity in the
   // UI when OP is near zero. The cap value is documented as a
@@ -125,7 +188,8 @@ export function computeKpi(f: Fundamentals): Kpi {
  * @param f 現状の fundamentals
  * @param targetOperatingProfit 目標営業利益 (円)
  */
-export function requiredRevenueForTargetProfit(f: Fundamentals, targetOperatingProfit: number): number {
+export function requiredRevenueForTargetProfit(raw: Fundamentals, targetOperatingProfit: number): number {
+  const f = saneFundamentals(raw);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
@@ -163,14 +227,15 @@ export interface BreakEvenQuantity {
  * @param f 現状の fundamentals
  * @param avgUnitPrice 平均販売単価 (円)。0 以下なら全 0。
  */
-export function breakEvenQuantity(f: Fundamentals, avgUnitPrice: number): BreakEvenQuantity {
-  const price = Math.max(0, avgUnitPrice);
+export function breakEvenQuantity(raw: Fundamentals, avgUnitPrice: number): BreakEvenQuantity {
+  const f = saneFundamentals(raw);
+  const price = nonNeg(avgUnitPrice);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   if (price <= 0) {
     return { unitContribution: 0, breakEvenQuantity: 0, currentQuantity: 0, safeQuantity: 0 };
   }
-  const currentQuantity = Math.round(Math.max(0, f.revenue) / price);
+  const currentQuantity = Math.round(f.revenue / price);
   const unitVariable = currentQuantity > 0 ? variableCost / currentQuantity : 0;
   const unitContribution = Math.max(0, price - unitVariable);
   // Equivalent mutants on `unitContribution > 0`:
@@ -209,11 +274,12 @@ export interface PriceSimulation {
  * @param f 現状の fundamentals
  * @param priceChangeRatio 価格変更率 (例: -0.1 = 10%値下げ)。-1 未満は -1 にクランプ。
  */
-export function simulatePriceChange(f: Fundamentals, priceChangeRatio: number): PriceSimulation {
+export function simulatePriceChange(raw: Fundamentals, priceChangeRatio: number): PriceSimulation {
+  const f = saneFundamentals(raw);
   const ratio = Math.max(-1, priceChangeRatio);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
-  const currentOp = Math.max(0, f.revenue) - variableCost - fixedCost;
+  const currentOp = f.revenue - variableCost - fixedCost;
 
   if (f.revenue <= 0) {
     return {

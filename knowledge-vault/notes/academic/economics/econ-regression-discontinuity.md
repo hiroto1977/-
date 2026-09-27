@@ -31,13 +31,12 @@ aliases:
 
 ## 関連概念
 - [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同じ思想家
-- [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]] — 同じ思想家
 - [[econ-agglomeration-economies|集積の経済]] — 出典を共有
 - [[econ-coase-conjecture|コースの推測（耐久財独占）]] — 出典を共有
 - [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 出典を共有
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
 - [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同分野の近傍
 - [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同分野の近傍
+- [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

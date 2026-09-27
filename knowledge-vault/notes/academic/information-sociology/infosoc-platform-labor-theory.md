@@ -32,7 +32,6 @@ Nick Srnicek ／ Trebor Scholz ／ Valerio De Stefano ／ Alex Rosenblat ／ Jam
 
 ## 関連概念
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 同じ思想家
-- [[infosoc-digital-labor-theory|デジタル労働理論]] — 同じ思想家
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]] — 出典を共有
 - [[human-defense-mechanisms|防衛機制]] — 出典を共有
@@ -41,6 +40,7 @@ Nick Srnicek ／ Trebor Scholz ／ Valerio De Stefano ／ Alex Rosenblat ／ Jam
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 出典を共有
 - [[human-mcgurk-effect|マガーク効果]] — 出典を共有
 - [[human-memory-consolidation|記憶の固定化（メモリ・コンソリデーション）]] — 出典を共有
+- [[human-neuroplasticity-theory|神経可塑性理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — 同分野の近傍
+- [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]] — 同分野の近傍
 - [[mgmt-skunkworks|スカンクワークス]] — 同分野の近傍
 
 ## 関連

@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル（「新」新貿易理論）——企業の生産性の異質性を導入し、貿易自由化が企業の選別と資源再配分を通じて産業の生産性を高めることを示す]] — 同じ思想家
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同じ思想家
 - [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
 - [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

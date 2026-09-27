@@ -35,8 +35,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]] — 同じ思想家
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

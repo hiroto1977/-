@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-assignment-security|譲渡担保]] — 語彙が近い
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
+- [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-banking-act|銀行法]] — 出典を共有
 - [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 出典を共有
 - [[bizlaw-insurance-business-act|保険業法]] — 出典を共有

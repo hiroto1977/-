@@ -31,16 +31,16 @@ aliases:
 - [Miller, D. (1992) The Icarus Paradox: How Exceptional Companies Bring About Their Own Downfall — Business Horizons 35(1)](https://doi.org/10.1002/smj.4250130307) `学術`
 
 ## 関連概念
+- [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — 同じ思想家
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
 - [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -1,11 +1,12 @@
 /**
  * 経営ハイライトのしきい値設定 — 永続化レイヤ。
  *
- * `managementHighlights` の判定しきい値 (連続下落・労働分配率・単一チャネル依存) を
+ * `managementHighlights` の判定しきい値 (連続下落・労働分配率・単一チャネル依存・予算未達) を
  * ユーザーが調整して保存するための型と検証。値はローカルの record store に
  * 単一レコードで保存する (最新の 1 件を採用)。本モジュールは IO を持たない。
  */
 import { DEFAULT_HIGHLIGHT_THRESHOLDS, type HighlightThresholds } from './managementHighlights';
+import { relationIssue } from './recordRelations';
 
 export const HIGHLIGHT_SETTINGS_COLLECTION = 'highlight-settings';
 
@@ -13,15 +14,32 @@ export const HIGHLIGHT_SETTINGS_COLLECTION = 'highlight-settings';
 export interface HighlightSettings extends Record<string, unknown>, HighlightThresholds {}
 
 /**
+ * 設定画面の入力欄 —— **しきい値 1 つにつき 1 行** (2026-09-27 · パス 493c)。
+ *
+ * 画面はこの表から欄を組む。それまで画面は 4 つの欄を手で並べ、業種プリセットを
+ * 当てる関数の引数の型も 4 つを手で書いていた —— 5 つ目のしきい値を足した日に、
+ * 判定は読むのに**画面からは設定できない**欄ができる (「設定できるのに効かない」の逆)。
+ * 表としきい値の型の鍵が一致することは検査が両方向に見る。
+ */
+export const HIGHLIGHT_THRESHOLD_FIELDS: readonly { readonly key: keyof HighlightThresholds; readonly label: string }[] = [
+  { key: 'declineWarnStreak', label: '連続下落 警告(期)' },
+  { key: 'declineCriticalStreak', label: '連続下落 危険(期)' },
+  { key: 'laborShareWarnPct', label: '労働分配率 警告(%)' },
+  { key: 'singleChannelWarnPct', label: '単一チャネル依存(%)' },
+  { key: 'budgetShortfallWarnPct', label: '予算未達 警告(達成率%)' },
+];
+
+/**
  * 入力を検証して clean な HighlightSettings に整える。未入力/空は既定値で補完。
  * - 連続下落の警告/危険期数は 1 以上の整数、危険 ≥ 警告。
- * - 各 % しきい値は 0..100。
+ * - 各 % しきい値は 0..100 (予算未達も —— 100 を越えると達成済みの売上に「未達」と言う)。
  */
 export function parseHighlightSettings(input: {
   declineWarnStreak?: unknown;
   declineCriticalStreak?: unknown;
   laborShareWarnPct?: unknown;
   singleChannelWarnPct?: unknown;
+  budgetShortfallWarnPct?: unknown;
 }): HighlightSettings {
   const d = DEFAULT_HIGHLIGHT_THRESHOLDS;
   const intMin1 = (v: unknown, fallback: number, label: string): number => {
@@ -39,13 +57,21 @@ export function parseHighlightSettings(input: {
 
   const declineWarnStreak = intMin1(input.declineWarnStreak, d.declineWarnStreak, '連続下落(警告)期数');
   const declineCriticalStreak = intMin1(input.declineCriticalStreak, d.declineCriticalStreak, '連続下落(危険)期数');
-  if (declineCriticalStreak < declineWarnStreak) {
-    throw new Error('連続下落(危険)期数は警告期数以上で入力してください');
-  }
-  return {
+  const out: HighlightSettings = {
     declineWarnStreak,
     declineCriticalStreak,
     laborShareWarnPct: pct(input.laborShareWarnPct, d.laborShareWarnPct, '労働分配率の警告しきい値'),
     singleChannelWarnPct: pct(input.singleChannelWarnPct, d.singleChannelWarnPct, '単一チャネル依存の警告しきい値'),
+    // 天井 100 は「達成率 102% に『予算未達です』と言わない」ため (型の docblock)。
+    budgetShortfallWarnPct: pct(input.budgetShortfallWarnPct, d.budgetShortfallWarnPct, '予算未達の警告しきい値'),
   };
+  /*
+   * 危険 ≧ 警告 は **台帳 1 つ** (`recordRelations.ts`) —— 復元の入口も同じ関係を見る
+   * (パス 224)。逆順の設定が復元で入ると `managementHighlights` の
+   * `streak >= criticalStreak ? 'critical' : 'warning'` が常に前者へ倒れ、
+   * **`warning` の枝が到達不能**になる (2 期の下落が「危険」として出る)。
+   */
+  const issue = relationIssue(HIGHLIGHT_SETTINGS_COLLECTION, out);
+  if (issue !== null) throw new Error(issue);
+  return out;
 }

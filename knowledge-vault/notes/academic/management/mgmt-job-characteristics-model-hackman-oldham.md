@@ -3,44 +3,45 @@ collection: academic
 id: mgmt-job-characteristics-model-hackman-oldham
 category: "management"
 category_ja: "経営学"
-title: "職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元"
-as_of: "2026-06-26"
-source_count: 3
+title: "職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する"
+as_of: "2026-09"
+source_count: 4
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元"
+  - "職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する"
 ---
 
-# 職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元
+# 職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-J・リチャード・ハックマンとグレッグ・オールダムが1976年に発展させた職務特性モデル（Job Characteristics Model: JCM）は、職務の内発的動機づけをいかに高めるかを五つのコア職務次元で説明する。①技能多様性・②課題完結性・③課題重要性・④自律性・⑤フィードバックの五次元のうち、特に①〜③の合計が「経験された有意味感」、④が「成果への責任感」、⑤が「実際の成果の知識」を生み出し、これら三つの「重要な心理状態」が内発的動機・高業績・低欠勤・高満足につながるとした。成長欲求強度（GNS: growth need strength）が個人差の調整変数として機能する。JCMは職務再設計（job redesign）・職務エンリッチメント（job enrichment）・自律的チーム設計の理論的根拠となり、リモートワークや就業柔軟性の効果研究にも応用されている。
+職務特性モデル（Job Characteristics Model）は、J・リチャード・ハックマンとグレッグ・オルダムが1976年の論文で提唱した職務設計の理論で、職務の内発的動機づけを五つのコア職務次元——技能多様性、課題完結性（課題の同一性）、課題重要性、自律性、職務からのフィードバック——で説明する。前三者の合計が「経験された有意味感」、自律性が「成果への責任感」、フィードバックが「実際の成果の知識」という三つの重要な心理状態を生み、それらが内発的動機・高い業績・低い欠勤・高い満足につながるとし、五特性を掛け合わせた動機づけポテンシャル・スコア（MPS）で職務を診断する。成長欲求強度（GNS）が高い従業員ほど予測が成り立つ調整効果も示され、測定には職務診断調査（JDS、1980）が広く使われる。スティーヴン・ハンフリーら（2007）のメタ分析は五特性と満足・コミットメント・離職意図の有意な関連を確認し、シャロン・パーカー（2014）は動機づけを超えて学習・健康・協働を含む職務設計研究へ拡張した。ハーズバーグの職務充実論を精緻化した理論として職務再設計や自律的チーム、リモートワーク研究の基礎であり、自律性とフィードバックの設計はバーチャルワークで特に重要になる。批判として、測定が自己報告に依存すること、MPS の乗法形の妥当性が弱いこと、社会的・文脈的特性（相互依存、感情労働）を扱わないことがある。中小企業には、賃金を上げなくても仕事の切り分け方（一つの仕事を最初から最後まで任せる、顧客の反応が直接届くようにする、判断を委ねる）で動機づけを高められること、逆に分業を進めすぎると有意味感が失われることが含意となる。
 
 ## 提唱者・初出
-J・リチャード・ハックマン ／ グレッグ・オールダム ／ フレデリック・ハーツバーグ ／ エドワード・デシ
+J・リチャード・ハックマン＆グレッグ・オルダム（1976 提唱／1980 職務診断調査）／スティーヴン・ハンフリーら（2007 メタ分析）／シャロン・パーカー（2014 職務設計研究の拡張）／源流: フレデリック・ハーズバーグ（職務充実）
 
 ## 出典
-- [Hackman & Oldham (1976) Motivation Through the Design of Work — Organizational Behavior & Human Performance](https://doi.org/10.1016/0030-5073(76)90016-7) `学術`
-- [Oldham & Hackman (2010) Not What It Was and Not What It Will Be — Journal of Organizational Behavior](https://doi.org/10.2307/2392331) `学術`
-- [Wikipedia: Job characteristic theory — 職務特性モデルと動機づけ](https://en.wikipedia.org/wiki/Job_characteristic_theory) `リファレンス`
+- [Hackman, J. R. & Oldham, G. R. (1976) Motivation Through the Design of Work: Test of a Theory — Organizational Behavior and Human Performance 16(2)（原典）](https://doi.org/10.1016/0030-5073(76)90016-7) `学術`
+- [Humphrey, S. E., Nahrgang, J. D. & Morgeson, F. P. (2007) Integrating Motivational, Social, and Contextual Work Design Features: A Meta-Analytic Summary — Journal of Applied Psychology 92(5)](https://doi.org/10.1037/0021-9010.92.5.1332) `学術`
+- [Parker, S. K. (2014) Beyond Motivation: Job and Work Design for Development, Health, Ambidexterity, and More — Annual Review of Psychology 65](https://doi.org/10.1146/annurev-psych-010213-115208) `学術`
+- [Wikipedia: Job characteristics model — Hackman & Oldham、五つの中核次元、MPS](https://en.wikipedia.org/wiki/Job_characteristics_model) `リファレンス`
 
 ## 関連概念
-- [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 語彙が近い
 - [[mgmt-work-design-growth-model|職務設計成長モデル]] — 語彙が近い
-- [[mgmt-job-enrichment|職務拡大と職務充実]] — 語彙が近い
-- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同じ思想家
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
-- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
-- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
-- [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
+- [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同じ思想家
+- [[mgmt-job-enrichment|職務拡大と職務充実]] — 同じ思想家
+- [[mgmt-team-effectiveness-hackman|チーム有効性モデル（ハックマン）——IPO／IMOI 枠組みの上に、真のチーム・魅力的な方向性・イネーブリング構造・支援的文脈・専門的コーチングの五条件を置く]] — 同じ思想家
+- [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — 同じ思想家
+- [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同じ思想家
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
-- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
+- [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同じ思想家
+- [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — 同じ思想家
+- [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

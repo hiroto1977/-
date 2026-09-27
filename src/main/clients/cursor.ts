@@ -1,5 +1,5 @@
 import {
-  jsonFetch,
+  jsonFetchAny,
   type ActionContext,
   type ActionMap,
   type FetchContext,
@@ -41,14 +41,20 @@ export type {
 /**
  * チーム集計を取得する。通信だけを担い、応答の解釈は shared 側で行う。
  *
- * `jsonFetch` は既存の共通ラッパ (タイムアウト・サイズ上限・エラー整形) を
+ * `jsonFetchAny` は既存の共通ラッパ (タイムアウト・サイズ上限・エラー整形) を
  * そのまま使う。ここを素の fetch に置き換えると、他のクライアントと
  * 失敗時の振る舞いがずれる。
+ *
+ * **`jsonFetch<T>` ではなく `Any` を使うのはここだけ** (パス 262)。
+ * 他の 13 クライアントは封筒がオブジェクトであることを漏斗で要求するが、
+ * `CursorJsonFetch` は `Promise<unknown>` を契約として宣言し、3 つの応答を
+ * shared 側で**自分で正規化する** (配列を直接返す形も包んだ形も読む)。
+ * ブラウザ版も素の JSON を渡すので、この口が両ビルドの対称を保つ。
  */
 export async function fetchCursorSnapshot(ctx: FetchContext): Promise<CursorSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'cursor' };
   return fetchCursorSnapshotWith(
-    (url, init) => jsonFetch<unknown>(url, init, fetchCtx),
+    (url, init) => jsonFetchAny(url, init, fetchCtx),
     ctx.token,
     Date.now(),
     DEFAULT_USAGE_DAYS,

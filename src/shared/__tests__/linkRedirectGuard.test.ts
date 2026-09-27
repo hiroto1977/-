@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
+import { stripComments } from './stripNonCode';
 
 const req = createRequire(import.meta.url);
 const { fetchWithCheckedRedirects, MAX_LINK_REDIRECTS, checkLinks } = req(
@@ -177,9 +178,7 @@ describe('出典の死活検査は、リダイレクトの各ホップを見直�
    * この 1 か所だけはここで留める。
    */
   it('★ 週次 CI の取得は素の fetch へ戻っていない', () => {
-    const code = readFileSync(AUTOPILOT, 'utf8')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/^\s*\/\/.*$/gm, '');
+    const code = stripComments(readFileSync(AUTOPILOT, 'utf8'));
     const BARE = /\bfetch\(\s*[A-Za-z_$][\w$]*\s*,/;
     const FOLLOW = /redirect:\s*'follow'/;
     expect(BARE.test(code), '素の fetch(変数, …) が戻っています').toBe(false);

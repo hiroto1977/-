@@ -49,9 +49,43 @@
  *
  * そこで `MUST_MEASURE` を足した。**「探して無かったことも記録する」**の
  * 逆方向 — 測ると決めた壁が黙って一覧から外れたら落ちる。
+ *
+ * ## 見つけた事故 その 3 — 契約は「理由を並記」なのに、誰も読んでいなかった (2026-09-07)
+ *
+ * すぐ上の「なぜ pragma を禁止しないのか」は、許す形を
+ * `Stryker disable next-line <Mutator>: <理由>` と**理由込みで**書いている。
+ * ところがこの検査が見ていたのは**範囲だけ**で、理由の有無は一度も見ていない。
+ *
+ * 実測 (2026-09-07) で `mutate` 270 ファイル中 **127 ファイルに 661 個**の pragma が
+ * 在り、**そのうち 93 個は理由がどこにも書かれていない** (27 個は `all` ——
+ * その行の変異体を全種類まとめて消す)。範囲の規則が見るのは 30 行超だけなので、
+ * 実際に在る広い無効化は 1 件、残り 660 個は**規則の外**だった。
+ *
+ * 対照を実際に回して確かめた: `src/shared/num.ts` (= `MUST_MEASURE` ではないが
+ * 変異検査 100% の共有モジュール) の `yen()` に `// Stryker disable next-line all`
+ * を 1 行入れて `lint:mutation-scope` / `lint:forbidden` / `verify:arch` /
+ * `lint:docs` を回すと、**4 つとも緑**だった。
+ *
+ * これは「赤い変異検査を緑にする最短手順が、無言の pragma を 1 行足すこと」を
+ * 意味する。変異検査は生存した変異体を数えるが、**消された変異体は数えない** ——
+ * `stryker.config.json` の注記が言う「広い範囲を黙らせると『測っていない』が
+ * 『100%』として報告されます」は、狭い範囲を 93 回黙らせても同じである。
+ *
+ * そこで**理由を機械が要求する**ことにした (`PRAGMA_BARE`)。判定するのは
+ * 「理由が良いか」ではなく「**黙って消していないか**」だけ:
+ *
+ *   - 同じ行に理由を並記してあれば可 (契約どおりの形)
+ *   - 直前の説明文 (コメント) でも可 —— 段落で説明してある既存の形を壊さない
+ *   - 同じ mutator の pragma が直前 6 行以内に在り、そちらに理由が有れば継ぐ
+ *     (`if (!store.contains(A)) …` / `if (!store.contains(B)) …` のような
+ *      並びで、同じ理由を 2 度書かせない)
+ *
+ * 残る 93 個は実測値を台帳に置き、**双方向**にした (増えても減っても落ちる)。
+ * 台帳に載っているのは「許した」ではなく「**理由が書かれていないと分かっている**」。
  */
 const fs = require('fs');
 const path = require('path');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 /** これを超える行数を一度に無効化したら、それは「説明」ではなく「目隠し」。 */
@@ -63,8 +97,95 @@ const MAX_SPAN = 30;
  * 0 になったらエントリごと消す。
  */
 const KNOWN_BROAD = {
-  'src/main/clients/templates.ts':               { regions: 1, lines:  139 },
+  // 2026-09-12 (パス 184): この帯は `src/main/clients/templates.ts` から移ってきた
+  // (テンプレートの組み立てを 3 写しから 1 つに畳んだ移設)。帯の中身は
+  // 「SVG の座標計算の算術だけ測らない」で、1 行も変えていない —— 実測が
+  // 139 → 138 行になったのは、移設前は `}` と restore の間に空行が 2 つ
+  // 在ったのを 1 つにしたためである (測る範囲は 1 行も減っていない)。
+  'src/shared/templateSvg.ts':                   { regions: 1, lines:  138 },
 };
+
+/** 同じ行に並記する理由は、これだけの字数が要る (「等価」の 3 字では説明にならない)。 */
+const MIN_REASON_CHARS = 4;
+/** 直前の説明文を探す行数 (空行は飛ばす)。 */
+const REASON_LOOKBACK = 3;
+/** 同じ mutator の pragma が理由を継げる距離。 */
+const REASON_INHERIT_SPAN = 6;
+/**
+ * 走査が生きていることの下限 (2026-09-07 実測 661 個)。
+ * 正規表現を 1 字直して 0 件になったら、台帳の「減った」で全ファイル鳴るが、
+ * **形を取り違えて減った**場合はそれも起きうるので、総数の床を別に持つ。
+ */
+const MIN_PRAGMAS_SEEN = 400;
+
+/**
+ * **理由が書かれていない `Stryker disable` の実測 (2026-09-07)。減らすのが目的の台帳。**
+ *
+ * 値は「そのファイルに理由の無い pragma が何個あるか」。`KNOWN_BROAD` と同じく
+ * 双方向 —— 増えたら落ち、**減っても落ちる** (直したのに台帳が古いままだと、
+ * 次に読む人が同じ場所を調べ直す)。
+ *
+ * 行ごとに理由を書かせていないのは、ここに要るのが**判断ではなく実測**だから。
+ * 個々の pragma になぜ理由が無いかは、その行を直す人が書く。台帳の役目は
+ * 「今日いくつ在るか」を固定して、**黙って増えないようにする**ことだけである。
+ *
+ * ## 消化するときに最初に試すこと —— 「静的だから殺せない」を疑う
+ *
+ * この台帳の pragma は module レベルの定数・表・レジストリの上に多い。そこでは
+ * 変異体が**届かない**ので、検査を足しても生存し続ける —— 「構造的に殺せない」と
+ * 読みたくなる形である。**それは違う。**`stryker.config.json` の
+ * `_commentIgnoreStatic` に測った結論が置いてある: Stryker の切替は実行時に効くが
+ * 定数は import の時点で評価済みなので、**テスト側でモジュールを読み直せば
+ * (`vi.resetModules()` + 動的 `await import()`) 変異体は届き、字面の検査で落ちる**。
+ * `oauth.test.ts` の `freshConfigs` / `freshListen` が実例で、70.05% → 92.13% に
+ * 上がった。
+ *
+ * 2026-09-07 に vault の派生接頭辞と autoLock の操作イベント表で同じことをした。
+ * どちらも**値は既に字面の検査が持っていた**のに、静的なので鳴らなかった。
+ * 読み直す検査を足したら 6 個とも落ち、pragma は 2 つ消えた (3→2 / 1→0)。
+ * つまり**「テストが無いから」ではなく「届いていないから」生きていた** ——
+ * 理由を書きに行く前に、まず読み直して測ること。
+ */
+const PRAGMA_BARE = {
+  'src/main/clients/business.ts':                6,
+  'src/main/clients/demae-can.ts':               4,
+  'src/main/clients/github.ts':                  2,
+  'src/main/clients/home.ts':                    2,
+  'src/main/clients/library.ts':                 2,
+  'src/main/clients/linux.ts':                   1,
+  'src/main/clients/mutual-funds.ts':            4,
+  'src/main/clients/ollama.ts':                  1,
+  'src/main/clients/quality.ts':                 2,
+  'src/main/clients/real-estate.ts':             4,
+  'src/main/clients/settings.ts':                2,
+  'src/main/clients/shigyo.ts':                  2,
+  'src/main/clients/shopify.ts':                 2,
+  'src/main/clients/skills.ts':                  3,
+  'src/main/clients/snapshotStub.ts':            1,
+  'src/main/clients/stocks.ts':                  8,
+  'src/main/clients/storage.ts':                 2,
+  'src/main/clients/uber-eats.ts':               4,
+  'src/main/oauth.ts':                           5,
+  'src/renderer/data/cloudBackup.ts':            1,
+  'src/renderer/data/emotionsWeb.ts':            1,
+  'src/renderer/data/managementHighlights.ts':   1,
+  'src/renderer/data/stocksAnalysisWeb.ts':      4,
+  'src/renderer/data/store.ts':                  2,
+  'src/renderer/hooks/useServiceData.ts':        2,
+  'src/renderer/library/library.ts':             1,
+  'src/renderer/plan/internalLicense.ts':        1,
+  'src/renderer/security/mnemonic.ts':           1,
+  'src/renderer/security/vault.ts':              2,
+  'src/shared/funding.ts':                       2,
+  'src/shared/httpLimits.ts':                    1,
+  'src/shared/ollama.ts':                        3,
+  // 2026-09-17 (パス 300): `renderer/network/proxy.ts` に在った 3 つ (v6 の ULA / link-local /
+  // 2001:db8 の正規表現) が遮断表ごと shared へ移った。理由の書き方は移した先の注記のとおり。
+  'src/shared/privateTarget.ts':                 3,
+};
+
+/** 台帳の合計。self-test の期待値をここから計算し、数字を 2 か所に置かない。 */
+const ledgerTotal = () => Object.values(PRAGMA_BARE).reduce((a, b) => a + b, 0);
 
 /**
  * **必ず変異検査に載せるファイル。**
@@ -73,9 +194,41 @@ const KNOWN_BROAD = {
  * 中の pragma も含めて何も測られていない状態が「緑」に見える。
  * 外すときは、なぜもう壁ではないのかを添えてこの表から消すこと。
  */
+/*
+ * 「必ず測る壁」のうち、改竄検知では**除外台帳の側**に在ることを認めた物。
+ *
+ * 2026-09-26 (パス 476) に足した。それまで `checkWallsAreProtected` は
+ * `PROTECTED` と `DEP_EXCLUSIONS` を **どちらでもよい**として受けていたが、
+ * 2 つの台帳は**逆のことを意味する** —— `PROTECTED` は「中身のハッシュを取る」、
+ * `DEP_EXCLUSIONS` は「取らないと決めた」である。だから壁の名前を
+ * 一方から他方へ移すだけで、壁はハッシュの外へ出られた。
+ *
+ * 実測 (2026-09-26 · 隔離した写しで `src/renderer/security/vault.ts` を
+ * `PROTECTED` から `DEP_EXCLUSIONS` へ移し、鎖に宣言つきで append する):
+ *   chain:verify           ✅ exit 0「保護対象 93 ファイルが tip と一致」
+ *   lint:mutation-scope    ✅ exit 0
+ *   その後に中身を 1 行書き換える → ✅ exit 0 (tipManifest に居ないので映らない)
+ * `vault.ts` はブラウザ版の保管庫 (AES-GCM-256 · PBKDF2 600k) で、
+ * この名簿にも「マスターパスワードから鍵を作る所」として載っている。
+ *
+ * 除外の道そのものは残す —— 実測で 35 の壁のうち **1 件**がそれで満たしており
+ * (`updateCheck.ts` · 鎖のブロック #89 で宣言つきに移った)、道を閉じると
+ * 今日の実物が落ちる。塞ぐのは「名指しされていない移動」のほうである。
+ */
+const WALLS_VIA_EXCLUSION = {
+  'src/shared/updateCheck.ts':
+    '版の比較と案内先 URL のホスト検証。ハッシュの外に置いてよいのは、OS に URL を開かせる可否を'
+    + '決めるのが externalUrlGate (保護対象) で、配布経路は release.yml (保護対象) が持つため。'
+    + '鎖のブロック #89 で宣言つきに移った (DECLARED_REMOVALS)。',
+};
+
 const MUST_MEASURE = {
   'src/main/clients/exportPaths.ts': '書き出し先の唯一の関門 (4 サービスが通る)',
   'src/renderer/network/proxy.ts':   'BYO プロキシの送り先判定 (SSRF の関門)',
+  // 2026-09-17 (パス 300) 追加。上の `proxy.ts` から**判定の本体**を移した先。
+  // `proxy.ts` は re-export だけになったので、ここを外すと SSRF の遮断表そのものが
+  // 測られない。読む側は BYO プロキシと `imageUrlGate.safeRemoteImageSrc` の 2 つ。
+  'src/shared/privateTarget.ts':     'プライベート帯 / 予約帯の送り先判定 (BYO プロキシと第三者由来の <img src> が同じ 1 つを読む)',
   'src/shared/ollama.ts':            'Ollama の接続先判定 (任意ホストへの http を許すと内部探索の踏み台になる)',
   'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
   'src/renderer/security/autoLock.ts': '離席時の施錠',
@@ -226,7 +379,29 @@ const KNOWN_UNMEASURED = {
     + ' **2026-09-02: 経路の表 (`webShimRouting.test.ts`、42 組の code / 文言 / 形) を足して'
     + ' 有効 1,497 / Killed 853 / 生存 368 / 未到達 276 = 総合 56.98% / 覆われた分 69.86%。**'
     + ' 経路の分岐 (ConditionalExpression) の生存は 241 → 95。残りの最大は画面の文言'
-    + ' (StringLiteral 148)。据え置く理由は同じ (生存 368 のまま載せると週次 CI が赤)。',
+    + ' (StringLiteral 148)。据え置く理由は同じ (生存 368 のまま載せると週次 CI が赤)。'
+    + ' **2026-09-06: LLM 応答の門 (`validateAdvisorJson`) を文面つきで留めて'
+    + ' 有効 1,497 / Killed 902 / 生存 329 / 未到達 266 = 総合 60.25% / 覆われた分 73.27%。**'
+    + ' この関数の未 kill は 91 → **0**。パリティ検査は通す/弾くしか見ないので、門を 1 つ'
+    + ' 消しても後ろの門か TypeError が代わりに弾いて緑のままだった —— 同じ入力に対して'
+    + ' **どの門が止めたか**を文面で確かめる形に変え、型の門と値の門も分けた'
+    + ' (束ねた形は等価変異になり、main 側は帯で disable している)。'
+    + ' **同日さらに、モデル応答の壊れ方 8 通り (通信失敗 / HTTP エラー / 宣言超過 / JSON でない /'
+    + ' テキストブロック無し / 中身が JSON でない / 検証で弾く / 通す) を 2 経路 (事業・銘柄) で留めて'
+    + ' 有効 1,497 / Killed 966 / 生存 298 / 未到達 233 = 総合 64.53% / 覆われた分 76.42%。**'
+    + ' 2 経路の未 kill は 100 件超 → 各 30 件 (残りは文言)。'
+    + ' **同日 3 本目、`fetchSnapshot` の分岐 (talent / security / emotions / stocks / ollama /'
+    + ' 既定) の往復を留めて 有効 1,497 / Killed 1,009 / 生存 303 / 未到達 185 ='
+    + ' 総合 67.40% / 覆われた分 76.91%。** 未到達が 233 → 185 (48 件が初めて触られた)。'
+    + ' 生存が 298 → 303 と増えるのは、未到達だった文言が「触られたが留められていない」へ'
+    + ' 移るため —— 数え方の都合で、悪化ではない。'
+    + ' **同日 4 本目、気分の解析 (`analyze-text`) の応答 8 通りと業務記録 (`record-entry`,'
+    + ' 4 サービス・`persisted: false` の契約) を留めて 有効 1,497 / Killed 1,041 / 生存 307 /'
+    + ' 未到達 149 = 総合 69.54% / 覆われた分 77.23%。**'
+    + ' **同日 5 本目、残る入口 (更新確認・戦略比較の門・save-state の保存失敗・登用判定の入力・'
+    + ' 書き出しの id と図の不在) を留めて 有効 1,497 / Killed 1,071 / 生存 330 / 未到達 96 ='
+    + ' 総合 71.54% / 覆われた分 76.45%。** 同日の起点は 58.69% / 未到達 266 で、'
+    + ' **未到達は 96 まで下がった**。残るのは主に画面の文言。',
 };
 
 /**
@@ -294,6 +469,150 @@ function scanSource(text) {
 /** 広いと見なす範囲だけを返す (restore 無し、または MAX_SPAN 超え)。 */
 function broadRegionsOf(text) {
   return scanSource(text).regions.filter((r) => !r.closed || r.span > MAX_SPAN);
+}
+
+/** `Stryker disable` の 2 つの形 (次の 1 行 / 範囲) をまとめて拾う。 */
+const PRAGMA_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(next-line\s+)?([A-Za-z][A-Za-z,]*)\s*(.*)$/;
+
+/**
+ * **理由がどこにも書かれていない pragma を返す。**
+ *
+ * 「理由がある」と見なすのは 4 つだけ:
+ *
+ *  1. 同じ行に `: <理由>` が並記されている (契約どおりの形)
+ *  2. 直前の非空行が説明文のコメントである (段落で説明してある既存の形)
+ *  3. **直後の行が説明文のコメントである** —— 長い理由は pragma の下に段落で
+ *     書く形が実在し (`network/proxy.ts` の正規表現の等価性は 5 行かけて説明して
+ *     いる)、同じ行に押し込むより読みやすい。2026-09-07 の実測では 93 件のうち
+ *     5 件がこの形で、**規則の側が見落としていた**
+ *  4. 同じ mutator の pragma が直前 `REASON_INHERIT_SPAN` 行以内に在り、
+ *     そちらに理由が有る (同じ理由を 2 度書かせない)
+ *
+ * 2 と 3 で「隣が Stryker 行なら理由にならない」ことに意味がある —— `restore` や
+ * 別の `disable` を理由と読んでしまうと、**規則が自分自身で満たされる**。
+ *
+ * @returns {{line:number, ops:string}[]} 理由の無い pragma
+ */
+function barePragmasOf(text) {
+  const lines = text.split('\n');
+  const bare = [];
+  let lastReasoned = null;
+  /** その行が「説明文のコメント」か (Stryker の指示文は理由にならない)。 */
+  const prose = (line) => {
+    const t = (line ?? '').trim();
+    if (t === '' || /Stryker\s+(?:disable|restore)/.test(t)) return false;
+    return /^(?:\/\/|\*|\/\*)/.test(t) && t.replace(/^(?:\/\/|\*|\/\*)+\s*/, '').length >= 8;
+  };
+  for (let i = 0; i < lines.length; i++) {
+    const m = PRAGMA_RE.exec(lines[i]);
+    if (m === null) continue;
+    const ops = m[2];
+    const tail = (m[3] ?? '').replace(/\*\/\s*$/, '').replace(/^[:：]\s*/, '').trim();
+    let reasoned = tail.length >= MIN_REASON_CHARS;
+    if (!reasoned) {
+      for (let k = 0, j = i - 1; k < REASON_LOOKBACK && j >= 0; k++, j--) {
+        const t = lines[j].trim();
+        if (t === '') continue;
+        if (/Stryker\s+(?:disable|restore)/.test(t)) break;
+        if (prose(lines[j])) reasoned = true;
+        break;
+      }
+    }
+    // 直後に段落で書く形。長い理由はこちらのほうが読みやすい (冒頭の 3)。
+    if (!reasoned && prose(lines[i + 1])) reasoned = true;
+    if (
+      !reasoned &&
+      lastReasoned !== null &&
+      lastReasoned.ops === ops &&
+      i - lastReasoned.line <= REASON_INHERIT_SPAN
+    ) {
+      reasoned = true;
+    }
+    if (reasoned) lastReasoned = { line: i, ops };
+    else bare.push({ line: i + 1, ops });
+  }
+  return bare;
+}
+
+/** そのファイルにある `Stryker disable` の総数 (走査の生存確認に使う)。 */
+function pragmaCountOf(text) {
+  return text.split('\n').filter((l) => PRAGMA_RE.test(l)).length;
+}
+
+/**
+ * **無言の pragma が黙って増えていないか。**
+ *
+ * `files` / `ledger` / `read` を差し替えられるのは自己検査のため
+ * (実物の木に依存すると、対照を回せない検査になる)。
+ *
+ * @returns {{failures:string[], bare:number, files:number, pragmas:number}}
+ */
+function checkBarePragmas(files, ledgerOverride, readOverride) {
+  const ledger = ledgerOverride ?? PRAGMA_BARE;
+  const read =
+    readOverride ??
+    ((rel) => {
+      const full = path.join(REPO_ROOT, rel);
+      return fs.existsSync(full) ? fs.readFileSync(full, 'utf8') : null;
+    });
+  const failures = [];
+  let bare = 0;
+  let pragmas = 0;
+  let withBare = 0;
+  for (const rel of files) {
+    const text = read(rel);
+    if (text === null) continue; // 不在は main() 側の規則が鳴らす
+    pragmas += pragmaCountOf(text);
+    const found = barePragmasOf(text);
+    const known = ledger[rel];
+    if (found.length === 0) {
+      if (known !== undefined) {
+        failures.push(
+          `${rel}: 理由の無い Stryker disable は無くなりましたが台帳に残っています (台帳 ${known} 個)。` +
+            ' PRAGMA_BARE からこの行を削除してください',
+        );
+      }
+      continue;
+    }
+    bare += found.length;
+    withBare += 1;
+    const where = found.map((f) => `L${f.line} ${f.ops}`).join(' / ');
+    if (known === undefined) {
+      failures.push(
+        `${rel}: 理由の無い Stryker disable が ${found.length} 個あります (台帳に無いファイル)。` +
+          ' `Stryker disable next-line <Mutator>: <理由>` の形で理由を並記してください' +
+          ' — 無言の pragma はその行の変異体を消すので、測っていない範囲が「100%」として報告されます' +
+          `\n      内訳: ${where}`,
+      );
+      continue;
+    }
+    if (found.length > known) {
+      failures.push(
+        `${rel}: 理由の無い Stryker disable が増えました (台帳 ${known} 個 → 実際 ${found.length} 個)。` +
+          `\n      内訳: ${where}`,
+      );
+    } else if (found.length < known) {
+      failures.push(
+        `${rel}: 理由の無い Stryker disable が減りました (台帳 ${known} 個 → 実際 ${found.length} 個)。` +
+          ' PRAGMA_BARE をこの実測値に更新してください — 直った分を「未着手」に見せると次の人が調べ直します',
+      );
+    }
+  }
+  const inMutate = new Set(files);
+  for (const rel of Object.keys(ledger)) {
+    if (!inMutate.has(rel)) {
+      failures.push(
+        `${rel}: PRAGMA_BARE に在りますが stryker.config.json の mutate に載っていません (行を削除してください)`,
+      );
+    }
+  }
+  if (pragmas < MIN_PRAGMAS_SEEN) {
+    failures.push(
+      `Stryker pragma の走査が ${pragmas} 個しか見つけていません (下限 ${MIN_PRAGMAS_SEEN})。` +
+        ' 形を取り違えると「理由の無い pragma は 0 件」で緑になるので、総数に床を置いています',
+    );
+  }
+  return { failures, bare, files: withBare, pragmas };
 }
 
 function scanFile(rel) {
@@ -371,6 +690,19 @@ function decorativeDisables(mutateOverride, ledgerOverride, filesOverride, readO
   return problems;
 }
 
+/**
+ * **走査の条件** (`sourceFiles()` が使う物そのもの · 2026-09-26 · パス 472)。
+ *
+ * 実測 (2026-09-26): mutate の外のファイルに広い無効化を植てると素の木は ❌ 1 件、
+ * **その 1 本を走査から落とすと ✅ exit 0** になった —— 測っていない範囲が
+ * 「台帳どおり」として通る。
+ */
+const CROSS_CHECK = {
+  roots: ['src'],
+  skipDirs: ['__tests__'],
+  accept: (name) => /\.tsx?$/.test(name) && !/\.d\.ts$/.test(name),
+};
+
 /** 走査対象 — `src/` 配下の TypeScript (テストと型宣言は除く)。 */
 function sourceFiles(dir = path.join(REPO_ROOT, 'src'), out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -406,20 +738,43 @@ function selfTest() {
   // ── 名簿どうしの突き合わせ ──
   {
     const chain = (prot, exc) => ({ PROTECTED: prot, DEP_EXCLUSIONS: exc });
+    const W = { 'a/w.ts': '理由の散文' };
     const cases = [
-      ['壁が保護対象なら通る', { 'a/w.ts': 'wall' }, chain(['a/w.ts'], {}), 0],
-      ['壁が除外台帳なら通る', { 'a/w.ts': 'wall' }, chain([], { 'a/w.ts': '理由' }), 0],
-      ['★ どちらにも無ければ鳴る', { 'a/w.ts': 'wall' }, chain([], {}), 1],
-      ['複数の壁それぞれで鳴る', { 'a/w.ts': 'w', 'b/x.ts': 'w' }, chain([], {}), 2],
-      ['名簿が読めなければ鳴る', { 'a/w.ts': 'w' }, null, 1],
-      ['PROTECTED が配列でなければ鳴る', { 'a/w.ts': 'w' }, { PROTECTED: 'x' }, 1],
+      ['壁が保護対象なら通る', { 'a/w.ts': 'wall' }, chain(['a/w.ts'], {}), 0, {}],
+      // ★ ここが パス 476 で変えた所 —— 除外の道は台帳に在るときだけ通る。
+      ['★ 壁が除外台帳だけなら鳴る (台帳に無い)', { 'a/w.ts': 'wall' }, chain([], { 'a/w.ts': '理由' }), 1, {}],
+      ['台帳に在れば除外の道も通る', { 'a/w.ts': 'wall' }, chain([], { 'a/w.ts': '理由' }), 0, W],
+      ['★ どちらにも無ければ鳴る', { 'a/w.ts': 'wall' }, chain([], {}), 1, {}],
+      ['複数の壁それぞれで鳴る', { 'a/w.ts': 'w', 'b/x.ts': 'w' }, chain([], {}), 2, {}],
+      ['名簿が読めなければ鳴る', { 'a/w.ts': 'w' }, null, 1, {}],
+      ['PROTECTED が配列でなければ鳴る', { 'a/w.ts': 'w' }, { PROTECTED: 'x' }, 1, {}],
+      // 逆向き (両方向) —— 台帳の行が指す先が変わったら「消せ」と鳴る。
+      ['★ 逆向き: 壁でない物が台帳に在れば鳴る', {}, chain([], { 'a/w.ts': '理由' }), 1, W],
+      ['★ 逆向き: 保護対象へ戻ったのに台帳に在れば鳴る', { 'a/w.ts': 'w' }, chain(['a/w.ts'], {}), 1, W],
+      ['★ 逆向き: 除外台帳から消えたのに台帳に在れば鳴る', { 'a/w.ts': 'w' }, chain(['a/w.ts'], {}), 1, W],
+      // ★ 決定的: 保護対象だった壁を除外台帳へ「移す」形 (パス 476 の実測そのもの)。
+      ['★ 壁を保護対象から除外台帳へ移すと鳴る', { 'a/w.ts': 'w' }, chain([], { 'a/w.ts': '呼び出し側が持つ' }), 1, {}],
     ];
-    for (const [label, must, chainData, expected] of cases) {
-      const n = checkWallsAreProtected(must, chainData).length;
+    for (const [label, must, chainData, expected, via] of cases) {
+      const n = checkWallsAreProtected(must, chainData, via).length;
       const ok = n === expected;
       if (!ok) failed += 1;
       console.log(`  ${ok ? '✓' : '✗'} 名簿: ${label}: ${n} 件 (期待 ${expected})`);
     }
+  }
+
+  // ── 実物: 除外で満たしている壁は台帳どおりか (双方向・実測 35 の壁のうち 1 件) ──
+  {
+    const live = checkWallsAreProtected();
+    const ok = live.length === 0;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 実物: 壁と 2 つの台帳が噛み合っている: ${live.length} 件 (期待 0)`);
+    const okLedger = Object.keys(WALLS_VIA_EXCLUSION).every((f) => Object.hasOwn(MUST_MEASURE, f));
+    if (!okLedger) failed += 1;
+    console.log(`  ${okLedger ? '✓' : '✗'} 実物: WALLS_VIA_EXCLUSION の行はどれも「必ず測る壁」`);
+    const okReason = Object.values(WALLS_VIA_EXCLUSION).every((r) => typeof r === 'string' && r.trim().length >= 15);
+    if (!okReason) failed += 1;
+    console.log(`  ${okReason ? '✓' : '✗'} 実物: WALLS_VIA_EXCLUSION の理由が省略形でない (15 字以上)`);
   }
 
   // ── 逆向き: 守る壁が測られているか ──
@@ -440,6 +795,77 @@ function selfTest() {
       console.log(`  ${ok ? '✓' : '✗'} 逆向き: ${label}: ${n} 件 (期待 ${expected})`);
     }
   }
+  // ── 無言の pragma を拾えるか (形の判定) ──
+  {
+    const cases = [
+      ['理由を同じ行に並記 → 拾わない', '// Stryker disable next-line StringLiteral: 既定値は観測できない\nconst a = 1;', 0],
+      ['直前の説明文でもよい', '// 既定値そのものは観測できない。\n// Stryker disable next-line StringLiteral\nconst a = 1;', 0],
+      ['★ 理由がどこにも無ければ拾う', '// Stryker disable next-line StringLiteral\nconst a = 1;', 1],
+      ['★ all も同じ扱い (最も広い)', '// Stryker disable next-line all\nconst a = 1;', 1],
+      ['★ 範囲指定の形でも拾う', '// Stryker disable StringLiteral\nconst a = 1;\n// Stryker restore StringLiteral', 1],
+      [
+        '同じ mutator の連続は直前の理由を継ぐ',
+        '// 版が上がらない限り到達しない。\n// Stryker disable next-line ConditionalExpression\nif (a) b();\n// Stryker disable next-line ConditionalExpression\nif (c) d();',
+        0,
+      ],
+      [
+        '★ 違う mutator は継がない',
+        '// 版が上がらない限り到達しない。\n// Stryker disable next-line ConditionalExpression\nif (a) b();\n// Stryker disable next-line StringLiteral\nconst s = "x";',
+        1,
+      ],
+      [
+        '★ 7 行離れたら継がない',
+        '// 版が上がらない限り到達しない。\n// Stryker disable next-line ConditionalExpression\nif (a) b();\n1;\n2;\n3;\n4;\n5;\n// Stryker disable next-line ConditionalExpression\nif (c) d();',
+        1,
+      ],
+      ['★ 短すぎる理由は理由と見なさない', '// Stryker disable next-line StringLiteral: 等\nconst a = 1;', 1],
+      ['★ 直前が Stryker 行なら理由にならない', '// Stryker restore all\n// Stryker disable next-line all\nconst a = 1;', 1],
+      ['pragma でないコメントは拾わない', '// Stryker の話をしている普通のコメント\nconst a = 1;', 0],
+      ['空行は飛ばして説明文を探す', '// 到達しない防御。\n\n// Stryker disable next-line all\nconst a = 1;', 0],
+      // 標本 (判定が実物に当たること)。**期待値は台帳から計算する** ——
+      // ここに数字を書くと `PRAGMA_BARE` と同じ数が 2 か所に在ることになり、
+      // 直すたびに片方が腐る (2026-09-07 に実際に腐らせた: 台帳を 86 にしたら
+      // ここだけ 93 のままで self-test が落ちた)。走査そのものの生存は
+      // `MIN_PRAGMAS_SEEN` が別に見ているので、ここは一致だけを見ればよい。
+      ['★ 実物と台帳が一致する (判定が実物に当たっている)', null, ledgerTotal()],
+    ];
+    for (const [label, text, expected] of cases) {
+      const n =
+        text === null
+          ? checkBarePragmas(mutateList()).bare
+          : barePragmasOf(text).length;
+      const ok = n === expected;
+      if (!ok) failed += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 無言 pragma: ${label}: ${n} 件 (期待 ${expected})`);
+    }
+  }
+
+  // ── 台帳の双方向 ──
+  {
+    const BARE = '// Stryker disable next-line all\nconst a = 1;\n';
+    const WITH = '// Stryker disable next-line all: 到達しない防御コード\nconst a = 1;\n';
+    // 生存下限を満たすための詰め物 (床そのものの検査は最後の 1 件で行う)。
+    const FILLER = WITH.repeat(MIN_PRAGMAS_SEEN);
+    const reader = (map) => (rel) => map[rel] ?? null;
+    const cases = [
+      ['台帳どおりなら通る', ['a.ts', 'f.ts'], { 'a.ts': 1 }, { 'a.ts': BARE, 'f.ts': FILLER }, 0],
+      ['★ 増えたら鳴る', ['a.ts', 'f.ts'], { 'a.ts': 1 }, { 'a.ts': BARE + BARE, 'f.ts': FILLER }, 1],
+      ['★ 減ったら鳴る', ['a.ts', 'f.ts'], { 'a.ts': 2 }, { 'a.ts': BARE, 'f.ts': FILLER }, 1],
+      ['★ 台帳に無いファイルで新たに増えたら鳴る', ['a.ts', 'f.ts'], {}, { 'a.ts': BARE, 'f.ts': FILLER }, 1],
+      ['★ 0 になったら行を消させる', ['a.ts', 'f.ts'], { 'a.ts': 1 }, { 'a.ts': WITH, 'f.ts': FILLER }, 1],
+      ['★ 台帳に在るが mutate に無い', ['f.ts'], { 'gone.ts': 1 }, { 'f.ts': FILLER }, 1],
+      ['読めないファイルは main() 側に任せる', ['a.ts', 'f.ts'], {}, { 'f.ts': FILLER }, 0],
+      // 詰め物を外すと総数が床を割る。台帳は一致しているので、鳴るのは床だけ。
+      ['★ 走査が死んだら鳴る (生存下限)', ['a.ts'], { 'a.ts': 1 }, { 'a.ts': BARE }, 1],
+    ];
+    for (const [label, files, ledger, map, expected] of cases) {
+      const n = checkBarePragmas(files, ledger, reader(map)).failures.length;
+      const ok = n === expected;
+      if (!ok) failed += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 無言 pragma 台帳: ${label}: ${n} 件 (期待 ${expected})`);
+    }
+  }
+
   console.log('self-test:');
   for (const [label, text, want] of cases) {
     const got = broadRegionsOf(text).length;
@@ -620,6 +1046,12 @@ function main(argv) {
   // 名指しの名簿 (MUST_MEASURE) と違い、**形から見つける**ので書き忘れが効かない。
   failures.push(...decorativeDisables());
 
+  // 無言の pragma —— 範囲の規則は 30 行超しか見ないので、狭い無効化は素通りする。
+  // 契約 (冒頭の「なぜ pragma を禁止しないのか」) は理由の並記を求めているのに、
+  // それを読む物が無かった (2026-09-07: 93 個が無言だった)。
+  const pragma = checkBarePragmas(files);
+  failures.push(...pragma.failures);
+
   // 台帳は「載せれば通る」ので、理由の欄が空なら鳴らす (両方の台帳)。
   failures.push(...ledgerEntriesWithoutReason({ MUST_MEASURE, KNOWN_UNMEASURED }));
 
@@ -640,7 +1072,19 @@ function main(argv) {
     `測っていないと分かっている壁: ${Object.keys(KNOWN_UNMEASURED).length} ファイル (mutate 外・理由つき)`,
   );
   console.log(`広い無効化: ${seen.size} ファイル / ${broadRegions} 箇所 / ${broadLines} 行 (台帳: ${Object.keys(KNOWN_BROAD).length} ファイル)`);
-  console.log(`mutate 外の src ファイル: ${sourceFiles().filter((f) => !mutateList().includes(f)).length} 件 — うち広い無効化を持つものは全て KNOWN_UNMEASURED に在ること`);
+  console.log(
+    `Stryker pragma: ${pragma.pragmas} 個 — うち理由の無いもの ${pragma.bare} 個 / ${pragma.files} ファイル` +
+      ` (台帳: ${Object.keys(PRAGMA_BARE).length} ファイル)`,
+  );
+  // 2 つ目の数え方: 追跡されている src の TypeScript は、どれも走査に出る (パス 472)。
+  const walked = sourceFiles();
+  const cross = reportTrackedCrossCheck(walked, CROSS_CHECK, REPO_ROOT, 'lint:mutation-scope');
+  if (cross.code !== 0) return 1;
+  console.log(
+    `mutate 外の src ファイル: ${walked.filter((f) => !mutateList().includes(f)).length} 件`
+      + ` — うち広い無効化を持つものは全て KNOWN_UNMEASURED に在ること`
+      + ` (${crossCheckSuffix(cross.source)})`,
+  );
 
   if (failures.length === 0) {
     console.log('✅ 測っていない範囲は台帳どおり (増えても減ってもいません)');
@@ -707,7 +1151,7 @@ function checkProtectedAreMeasured(protectedOverride, mutateOverride, ledgerOver
  *
  * @param mustOverride / @param chainOverride self-test の差し込み口。
  */
-function checkWallsAreProtected(mustOverride, chainOverride) {
+function checkWallsAreProtected(mustOverride, chainOverride, viaOverride) {
   const must = mustOverride ?? MUST_MEASURE;
   const chain =
     chainOverride ??
@@ -723,19 +1167,44 @@ function checkWallsAreProtected(mustOverride, chainOverride) {
   }
   const protectedSet = new Set(chain.PROTECTED);
   const excluded = new Set(Object.keys(chain.DEP_EXCLUSIONS ?? {}));
+  const viaExc = viaOverride ?? WALLS_VIA_EXCLUSION;
   const problems = [];
   for (const file of Object.keys(must)) {
-    if (protectedSet.has(file) || excluded.has(file)) continue;
+    if (protectedSet.has(file)) continue;
+    if (excluded.has(file)) {
+      // 除外の道は**名指しの台帳に在るときだけ**認める (上の注記の理由)。
+      if (Object.hasOwn(viaExc, file)) continue;
+      problems.push(
+        `${file} は「必ず測る壁」なのに、改竄検知では除外台帳 (= ハッシュを取らない側) に在る ` +
+          '(WALLS_VIA_EXCLUSION に理由つきで載せるか、PROTECTED へ戻すこと)',
+      );
+      continue;
+    }
     problems.push(
       `${file} は「必ず測る壁」なのに改竄検知の保護対象でも除外台帳でもない ` +
         '(integrity-chain.cjs の PROTECTED へ足すか、DEP_EXCLUSIONS に理由つきで載せること)',
     );
   }
+  // 逆向き: 台帳の行が、もう「除外で満たしている壁」を指していないなら消す。
+  for (const file of Object.keys(viaExc)) {
+    if (!Object.hasOwn(must, file)) {
+      problems.push(`WALLS_VIA_EXCLUSION の ${file} は「必ず測る壁」ではありません (台帳から消すこと)`);
+    } else if (protectedSet.has(file)) {
+      problems.push(`WALLS_VIA_EXCLUSION の ${file} は保護対象へ戻っています (台帳から消すこと)`);
+    } else if (!excluded.has(file)) {
+      problems.push(`WALLS_VIA_EXCLUSION の ${file} は除外台帳に在りません (台帳から消すこと)`);
+    }
+  }
   return problems;
 }
 
 module.exports = {
+  CROSS_CHECK,
   scanSource,
+  barePragmasOf,
+  pragmaCountOf,
+  checkBarePragmas,
+  PRAGMA_BARE,
   checkWallsAreProtected,
   checkProtectedAreMeasured,
   decorativeDisables,
@@ -747,6 +1216,7 @@ module.exports = {
   MAX_SPAN,
   MUST_MEASURE,
   KNOWN_UNMEASURED,
+  WALLS_VIA_EXCLUSION,
 };
 
 if (require.main === module) {

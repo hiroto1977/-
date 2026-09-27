@@ -31,7 +31,7 @@ tags:
 - [[infosoc-circuit-of-culture|カルチュラル・サーキット（文化の回路／circuit of culture）]] — OxfordReference—"Circuitofculture"
 - [[infosoc-critical-discourse-analysis|批判的談話分析（CDA）]] — OxfordReference—CriticalDiscourseAnalysis
 - [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — OxfordReference—"Cultureindustry"（ホルクハイマー&アドルノの用語定義）
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — OxfordReference—Dataveillance（data+surveillanceの合成語・クラークの定義）
+- [[infosoc-dataveillance|データヴェイランス（クラーク）——個人データのシステムを体系的に用いて人々の行動や通信を監視する、安価で大規模な監視様式]] — OxfordReference:Dataveillance—dataとsurveillanceの合成語・クラークの定義
 - [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]] — OxfordReference—"hegemonicreading"/Hallの解読位置
 - [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]] — OxfordReference(ADictionaryofMediaandCommunication,OUP)—Hotandcoolmed…
 - [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — OxfordReference—“Liquidmodernity”（グローバル資本主義下の現在的条件を指すバウマンの語）

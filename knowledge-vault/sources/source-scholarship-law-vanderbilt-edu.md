@@ -2,7 +2,7 @@
 title: "scholarship.law.vanderbilt.edu"
 type: source-domain
 host: "scholarship.law.vanderbilt.edu"
-cite_count: 11
+cite_count: 12
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # scholarship.law.vanderbilt.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **11 件**（学術 11）
+> [!info] 出典ドメイン索引 ・ 引用 **12 件**（学術 12）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,7 @@ tags:
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — TheBremenandtheModelChoiceofForumAct—VanderbiltJournalofTransnational…
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — Baird&Jackson(1985)FraudulentConveyanceLawandItsProperDomain—Vanderbi…
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — Freund(1989)—LenderLiability:ASurveyofCommon-LawTheories,Vand.L.Rev.
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — JohnC.P.Goldberg&BenjaminC.Zipursky,"TheRestatement(Third)andthePlace…
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — Owen,D.G.(1980).RethinkingthePoliciesofStrictProductsLiability.Vander…
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — Wade,J.W.(1980).OnProduct"DesignDefects"andTheirActionability.Vanderb…
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — Moll,D.K.2001.ShareholderOppression&"FairValue":OfDiscounts,Dates,and…

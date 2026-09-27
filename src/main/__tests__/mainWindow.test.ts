@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
-import { readFileSync } from 'node:fs';
 import { externalUrlOrNull } from '../../shared/externalUrlGate';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
  * BrowserWindow の作られ方と、窓に張った 3 つの番人。
@@ -111,6 +111,7 @@ vi.mock('electron', () => ({
     }
   },
   ipcMain: { handle: () => {} },
+  nativeTheme: { themeSource: 'system' },
   shell: {
     openExternal: async (url: string) => {
       openedExternal.push(url);
@@ -134,6 +135,13 @@ vi.mock('../secrets', () => ({
   setOAuthTokens: async () => {},
 }));
 vi.mock('../clients', () => ({ LIVE_FETCHERS: {}, LIVE_ACTIONS: {}, LOCAL_SERVICES: new Set() }));
+/** 起動時に読む窓の配色 (パス 318)。検査ごとに差し替える。 */
+let storedPrefs: { scheme: 'light' | 'dark'; background: string } = { scheme: 'light', background: '#fff7fa' };
+vi.mock('../windowPrefs', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../windowPrefs')>()),
+  readWindowPrefs: async () => storedPrefs,
+  writeWindowPrefs: async () => undefined,
+}));
 vi.mock('../oauth', () => ({
   authorize: async () => ({ accessToken: 'a' }),
   isOAuthSupported: () => false,
@@ -159,6 +167,7 @@ beforeEach(() => {
   allWindows = [];
   quitCalls = 0;
   appListeners.clear();
+  storedPrefs = { scheme: 'light', background: '#fff7fa' };
 });
 
 describe('BrowserWindow の設定 — 隔離の三点セット', () => {
@@ -190,6 +199,21 @@ describe('BrowserWindow の設定 — 隔離の三点セット', () => {
       Object.keys(wp).sort(),
       'webPreferences に欄が増減した — その欄がレンダラーへ何を許すのかを確かめてから、この一覧を更新すること',
     ).toEqual(['contextIsolation', 'nodeIntegration', 'preload', 'sandbox', 'spellcheck']);
+  });
+
+  it('窓の下地: 何も保存されていなければ styles.css の --bg (ライト)', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(c.opts.backgroundColor).toBe('#fff7fa');
+    const electron = await import('electron');
+    expect(electron.nativeTheme.themeSource).toBe('light');
+  });
+
+  it('★ 窓の下地: ダークを保存していれば最初の窓からその色で塗り、Electron の配色もダーク (パス 318)', async () => {
+    storedPrefs = { scheme: 'dark', background: '#1b1520' };
+    const c = await loadMain({ packaged: true });
+    expect(c.opts.backgroundColor).toBe('#1b1520');
+    const electron = await import('electron');
+    expect(electron.nativeTheme.themeSource).toBe('dark');
   });
 
   it('preload を必ず読ませる (bridge が無ければ何も呼べない)', async () => {
@@ -374,7 +398,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
   const ALLOWED = ['clipboard-read', 'clipboard-sanitized-write'];
 
   function electronPermissionNames(): string[] {
-    const dts = readFileSync(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'), 'utf8');
+    const dts = readOriginalSource(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'));
     const m = /setPermissionRequestHandler\(handler: \(\(webContents: WebContents, permission: ([^,]+),/.exec(dts);
     expect(m, 'electron.d.ts から権限の一覧を読めない — 走査が壊れている').not.toBeNull();
     return [...m![1]!.matchAll(/'([a-zA-Z-]+)'/g)].map((x) => x[1]!);
@@ -568,7 +592,7 @@ describe('窓の見た目とアイコン', () => {
   it('題名と背景色を決めて出す', async () => {
     const c = await loadMain({ packaged: true });
     expect(c.opts.title).toBe('Service Hub');
-    expect(c.opts.backgroundColor).toBe('#0f1117');
+    expect(c.opts.backgroundColor).toBe('#fff7fa');
   });
 
   it('同梱のアイコンを、束ねた場所からの相対で指す', async () => {

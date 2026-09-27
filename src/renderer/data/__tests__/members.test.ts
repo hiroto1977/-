@@ -7,6 +7,12 @@ import {
   roleComposition,
   seatUtilization,
   revenueNeededForHire,
+  memberKey,
+  sameEmailMember,
+  findDuplicateMembers,
+  duplicateMemberMessage,
+  duplicateMembersNote,
+  duplicateMembersSheetNote,
   type Member,
 } from '../members';
 
@@ -311,5 +317,56 @@ describe('revenueNeededForHire (1名増員に必要な売上の逆算)', () => {
     expect(revenueNeededForHire({ revenue: NaN, laborCost: 10, perHeadLaborCost: 5 })).toBeNull();
     expect(revenueNeededForHire({ revenue: 100, laborCost: Infinity, perHeadLaborCost: 5 })).toBeNull();
     expect(revenueNeededForHire({ revenue: 100, laborCost: 10, perHeadLaborCost: NaN })).toBeNull();
+  });
+});
+
+describe('同じメールアドレスの重複 (パス 125)', () => {
+  const m = (name: string, email: string, role: Member['role'] = 'member'): Member => ({ name, email, role });
+
+  it('memberKey は前後の空白を落として小文字にする (氏名・役割は関係ない)', () => {
+    expect(memberKey(m('A', ' Taro@Example.com '))).toBe('taro@example.com');
+    expect(memberKey(m('A', 'taro@example.com'))).toBe(memberKey(m('B', 'TARO@EXAMPLE.COM', 'owner')));
+    expect(memberKey(m('A', 'taro@example.com'))).not.toBe(memberKey(m('A', 'hanako@example.com')));
+  });
+
+  it('★ sameEmailMember は同じ鍵の既存メンバーを返し、無ければ null', () => {
+    const existing = [m('太郎', 'taro@example.com', 'owner'), m('花子', 'hanako@example.com')];
+    expect(sameEmailMember(existing, { email: ' TARO@example.com ' })).toEqual(existing[0]);
+    expect(sameEmailMember(existing, { email: 'jiro@example.com' })).toBeNull();
+    expect(sameEmailMember([], { email: 'taro@example.com' })).toBeNull();
+  });
+
+  it('★ findDuplicateMembers は件数 2 以上の組だけをメールの昇順で返し、メールの無い射影は数えない', () => {
+    const groups = findDuplicateMembers([
+      m('花子', 'hanako@example.com'), m('太郎', 'Taro@example.com', 'owner'), m('太郎 (再)', 'taro@example.com'),
+      m('花子 2', 'HANAKO@example.com'), m('花子 3', 'hanako@example.com'), m('次郎', 'jiro@example.com'),
+    ]);
+    expect(groups).toEqual([
+      { email: 'hanako@example.com', count: 3 },
+      { email: 'taro@example.com', count: 2 },
+    ]);
+    expect(findDuplicateMembers([m('太郎', 'taro@example.com'), m('花子', 'hanako@example.com')])).toEqual([]);
+    const roleOnly: { readonly role: string; readonly email?: string }[] = [{ role: 'owner' }, { role: 'owner' }];
+    expect(findDuplicateMembers(roleOnly)).toEqual([]);
+    expect(findDuplicateMembers([{ email: '  ' }, { email: '' }])).toEqual([]);
+    expect(findDuplicateMembers([])).toEqual([]);
+  });
+
+  it('文面: 断り・一覧の警告・書面の但し書きは、メールと氏名と件数を名指しする', () => {
+    expect(duplicateMemberMessage(m('太郎', 'taro@example.com', 'owner'))).toBe(
+      'taro@example.com は「太郎」として既に登録されています。氏名を直すときは一覧の × で消してから入れ直してください（役割は一覧で変えられます。同じ人を 2 度登録するとシートを 2 つ使い、一人当たりの金額が薄まります）。',
+    );
+    const groups = [
+      { email: 'hanako@example.com', count: 3 },
+      { email: 'taro@example.com', count: 2 },
+    ];
+    expect(duplicateMembersNote(groups)).toBe(
+      '同じメールアドレスのメンバーが 2 組重複しており、従業員数に 2 度数えられています（hanako@example.com ×3、taro@example.com ×2）。一覧の × で余分な行を消してください。',
+    );
+    expect(duplicateMembersSheetNote(groups.slice(1))).toBe(
+      '登録メンバーに同じメールアドレスの重複が 1 組あり（taro@example.com ×2）、従業員数と一人当たりの金額はその重複を含んだ値です。',
+    );
+    expect(duplicateMembersNote([])).toBeNull();
+    expect(duplicateMembersSheetNote([])).toBeNull();
   });
 });

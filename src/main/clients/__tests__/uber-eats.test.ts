@@ -47,14 +47,24 @@ describe('uber-eats ACTIONS', () => {
 
   describe('advise', () => {
     const action = ACTIONS['advise']!;
-    it('returns AdvisorResponse-compatible shape with disclaimer + notForRealMoney', async () => {
-      const r = await action({ token: '', payload: {} }) as {
+    const input = {
+      stores: [
+        { name: 'A店', orders: 10, revenue: 300_000, rating: 4.8 },
+        { name: 'B店', orders: 5, revenue: 100_000, rating: 4.1 },
+      ],
+      topItems: [{ name: '唐揚げ弁当', sold: 40, revenue: 32_000 }],
+      avgRating: 4.5,
+    };
+
+    it('画面が渡した集計から規則で組む (店舗名・数字が payload の物である)', async () => {
+      const r = await action({ token: '', payload: input }) as {
         recommendations: { title: string; rationale: string }[];
         disclaimer: string;
         notForRealMoney: true;
-        phase: 'stub' | 'live';
+        basis: string;
+        phase: 'stub' | 'rules' | 'live';
       };
-      expect(r.phase).toBe('stub');
+      expect(r.phase).toBe('rules');
       expect(r.notForRealMoney).toBe(true); // BLOCKING-1: 型レベル安全装置
       // **`|` で繋がない。** `/助言ではありません|Phase 6/` は「どちらか一方」
       // でも通るので、前半を丸ごと空にしても後半の "Phase 6" で素通りする ——
@@ -63,10 +73,20 @@ describe('uber-eats ACTIONS', () => {
       expect(r.disclaimer).toMatch(/店舗運営上の助言ではありません/);
       expect(r.disclaimer).toMatch(/実際の経営判断はオーナー・専門家の責任で/);
       expect(r.disclaimer).toMatch(/Phase 6/);
-      expect(Array.isArray(r.recommendations)).toBe(true);
-      expect(r.recommendations.length).toBeGreaterThan(0);
-      expect(r.recommendations[0]!.title).toBeTruthy();
-      expect(r.recommendations[0]!.rationale).toBeTruthy();
+      expect(r.recommendations.map((x) => x.title)).toEqual([
+        '店舗別売上の平準化',
+        '評価の底上げ: B店',
+        '人気メニューの横展開: 唐揚げ弁当',
+      ]);
+      expect(r.recommendations[0]!.rationale).toContain('A店 (¥300,000)');
+      expect(r.basis).toBe('2 店舗・メニュー 1 品・平均評価 4.5');
+      // 見本の数字を写した固定文は残っていない。
+      const text = JSON.stringify(r);
+      for (const frozen of ['Shibuya', 'Shinjuku', '4.60', '4.70']) expect(text, frozen).not.toContain(frozen);
+    });
+
+    it('読めない payload は断る (文面は shared と同じ —— ブラウザ版も同じ文で断る)', async () => {
+      await expect(action({ token: '', payload: {} })).rejects.toThrow('uber-eats.advise: stores は配列 (1〜500 件) で指定してください');
     });
   });
 });

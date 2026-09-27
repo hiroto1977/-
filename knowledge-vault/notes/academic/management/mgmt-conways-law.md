@@ -30,6 +30,7 @@ aliases:
 - [MacCormack, Baldwin & Rusnak (2012) "Exploring the Duality between Product and Organizational Architectures" — HBS実証研究](https://www.hbs.edu/ris/Publication%20Files/08-039_1861e507-1dc1-4602-85b8-90d71f07571e.pdf) `学術`
 
 ## 関連概念
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 出典を共有
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
 - [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
@@ -39,7 +40,6 @@ aliases:
 - [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
 - [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
 - [[mgmt-shared-value|共有価値の創造（CSV）]] — 出典を共有
-- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

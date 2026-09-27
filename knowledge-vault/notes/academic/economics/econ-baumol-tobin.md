@@ -36,7 +36,7 @@ aliases:
 - [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同じ思想家
 - [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 同じ思想家
 - [[econ-liquidity-preference-keynes|流動性選好——貨幣保有の三動機と利子率の決定]] — 同じ思想家
-- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同じ思想家
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
 - [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 同じ思想家
 - [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同じ思想家

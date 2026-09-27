@@ -36,7 +36,7 @@ aliases:
 - [[econ-menu-costs|メニューコスト]] — 出典を共有
 - [[econ-tax-incidence|租税の帰着]] — 出典を共有
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
-- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
+- [[mgmt-team-effectiveness-hackman|チーム有効性モデル（ハックマン）——IPO／IMOI 枠組みの上に、真のチーム・魅力的な方向性・イネーブリング構造・支援的文脈・専門的コーチングの五条件を置く]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
 - [[econ-weitzman-prices-vs-quantities|ワイツマンの「価格か数量か」（Prices vs. Quantities／Weitzman 1974）——不確実性下では限界費用と限界便益の傾きが規制手段の優劣を決める]] — 同分野の近傍
 - [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 同分野の近傍

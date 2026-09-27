@@ -30,7 +30,6 @@ Susan Leigh Star & James R. Griesemer（Social Studies of Science 19(3), 1989 �
 - [JSTOR: Star & Griesemer (1989) — stable URL](http://www.jstor.org/stable/285080) `学術`
 
 ## 関連概念
-- [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同じ思想家
 - [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同じ思想家
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍

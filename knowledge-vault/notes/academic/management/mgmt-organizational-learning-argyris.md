@@ -37,8 +37,7 @@ aliases:
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
-- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
-- [[mgmt-corporate-parenting|ペアレンティング戦略]] — 同分野の近傍
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

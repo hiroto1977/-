@@ -40,8 +40,8 @@ Grant Gilmore ／ E. Allan Farnsworth ／ Darlene M. Nowak
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 同じ思想家
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

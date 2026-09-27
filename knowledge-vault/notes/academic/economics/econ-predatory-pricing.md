@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 出典を共有
 - [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
 - [[bizlaw-appraisal-rights-remedy|株式買取請求権（反対株主の公正価値救済）]] — 出典を共有
-- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

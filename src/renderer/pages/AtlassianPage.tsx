@@ -3,11 +3,17 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import { ATLASSIAN_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
+import { jiraBrowseUrl } from '../../shared/atlassianLinks';
+import type { ActionData } from '../../shared/actionData';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',
   fontSize: 13,
@@ -27,6 +33,11 @@ export function AtlassianPage() {
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
   const [issueType, setIssueType] = useState('Task');
+  /* 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。 */
+  const projectKeyOver = charsOverCeiling(projectKey, ATLASSIAN_ISSUE_FIELDS.projectKey.max);
+  const issueTypeOver = charsOverCeiling(issueType, ATLASSIAN_ISSUE_FIELDS.issueType.max);
+  const summaryOver = charsOverCeiling(summary, ATLASSIAN_ISSUE_FIELDS.summary.max);
+  const descriptionOver = charsOverCeiling(description, ATLASSIAN_ISSUE_FIELDS.description.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
 
@@ -34,7 +45,7 @@ export function AtlassianPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ key: string; url: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'atlassian/create-issue'>>(
       'atlassian',
       'create-issue',
       {
@@ -91,7 +102,9 @@ export function AtlassianPage() {
             key: p.key,
             title: `${p.key} · ${p.name}`,
             meta: `${p.projectTypeKey} · ${p.style}`,
-            href: site ? `${site.url}/jira/projects/${p.key}` : undefined,
+            /* リンクの形は `shared/atlassianLinks.ts` が 1 つ持つ (パス 181)。
+               ここは `/jira/projects/...` という**他のどこにも無い形**を組んでいた。 */
+            href: site ? jiraBrowseUrl(site.url, p.key) : undefined,
           }))}
         />
       </Section>
@@ -106,6 +119,7 @@ export function AtlassianPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            <ProxyRequiredNote what="課題の作成" />
             <div style={{ display: 'flex', gap: 8 }}>
               <input
                 placeholder="プロジェクト Key (e.g. KAN)"
@@ -133,11 +147,15 @@ export function AtlassianPage() {
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="プロジェクト Key" value={projectKey} max={ATLASSIAN_ISSUE_FIELDS.projectKey.max} />
+            <CeilingNotice label="Issue Type" value={issueType} max={ATLASSIAN_ISSUE_FIELDS.issueType.max} />
+            <CeilingNotice label="Summary" value={summary} max={ATLASSIAN_ISSUE_FIELDS.summary.max} />
+            <CeilingNotice label="説明" value={description} max={ATLASSIAN_ISSUE_FIELDS.description.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !projectKey.trim() || !summary.trim()}
+                disabled={submitting || !projectKey.trim() || !summary.trim() || projectKeyOver > 0 || issueTypeOver > 0 || summaryOver > 0 || descriptionOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

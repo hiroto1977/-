@@ -31,6 +31,7 @@ aliases:
 - [衆議院 破産法の施行に伴う関係法律の整備等に関する法律](https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/15920040602076.htm) `公的`
 
 ## 関連概念
+- [[legal-insolvency-procedures|法的倒産処理手続（破産・民事再生・会社更生・特別清算）]] — 語彙が近い
 - [[bizlaw-administrative-procedure-act|行政手続法]] — 出典を共有
 - [[bizlaw-banking-act|銀行法]] — 出典を共有
 - [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
 - [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
-- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

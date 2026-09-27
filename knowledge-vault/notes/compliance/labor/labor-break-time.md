@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 同分野の近傍
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 同分野の近傍
+- [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

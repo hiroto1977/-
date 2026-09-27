@@ -32,10 +32,10 @@ aliases:
 ## 関連概念
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 語彙が近い
 - [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — 語彙が近い
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-fair-wage-effort|公正賃金・努力仮説]] — 同じ思想家
 - [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同じ思想家
 - [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
 - [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家

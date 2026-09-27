@@ -1,20 +1,19 @@
 ---
-title: "シェーカー・ザーラ"
+title: "シェイカー・ザーラ"
 type: thinker
 person_key: "ザーラ|シ"
-concept_count: 5
+concept_count: 4
 tags:
   - person
   - index
 ---
 
-# シェーカー・ザーラ
+# シェイカー・ザーラ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（5件）
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 吸収能力（absorptivecapacity）は、コーエン＆レヴィンソール（1990）が提唱した、組織が外部知識を認…
-- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — Cohen&Levinthal（1990）が提唱した吸収能力（absorptivecapacity）の概念を、Zahr…
+## 学術概念（4件）
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 吸収能力（absorptivecapacity）は、ウェズリー・コーエンとダニエル・レヴィンソールが1990年の論文（…
 - [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — コーポレート・アントレプレナーシップ（corporateentrepreneurship;CE）は、ザーハ（1991/…
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — コーポレート・ベンチャリング（corporateventuring/corporateentrepreneurship…
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 戦略的アントレプレナーシップ（StrategicEntrepreneurship,SE）は、アントレプレナーシップの機…

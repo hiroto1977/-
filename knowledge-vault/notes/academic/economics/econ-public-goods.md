@@ -32,9 +32,10 @@ aliases:
 
 ## 関連概念
 - [[econ-free-rider|フリーライダー問題]] — 語彙が近い
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 語彙が近い
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
+- [[econ-international-trade-gains-ricardo|比較優位と貿易利益（リカード）]] — 同分野の近傍
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同分野の近傍
+- [[econ-anticommons|アンチコモンズの悲劇]] — 同分野の近傍
 - [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同分野の近傍
 
 ## 関連

@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
 - [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 同分野の近傍
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
 - [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — 同分野の近傍
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

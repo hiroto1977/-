@@ -26,20 +26,20 @@ aliases:
 ロイ・ハロッド ／ ジョン・ヒックス ／ ロバート・ソロー ／ 宇沢弘文
 
 ## 出典
-- [Harrod, R. F. (1948) Towards a Dynamic Economics — Macmillan（技術進歩の中立性の定式化）](https://www.worldcat.org/oclc/1670459) `学術`
+- [Harrod, R. F. (1948) Towards a Dynamic Economics — Macmillan（技術進歩の中立性の定式化）](https://www.worldcat.org/oclc/1670459) `リファレンス`
 - [Wikipedia: Neutral technological change — Harrod-neutral, labor-augmenting, balanced growth](https://en.wikipedia.org/wiki/Neutral_technological_change) `リファレンス`
 
 ## 関連概念
-- [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 語彙が近い
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
 - [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同じ思想家
 - [[econ-multiplier-accelerator-samuelson|乗数＝加速度モデル——消費乗数と投資加速度の相互作用が景気循環を生む]] — 同じ思想家
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
+- [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
