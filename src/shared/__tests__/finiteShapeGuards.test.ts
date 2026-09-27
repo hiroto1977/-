@@ -47,6 +47,7 @@ import { stripComments } from './stripNonCode';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { isAnalysisEntry, isMoodEntry, readStoredList } from '../emotionsShape';
+import { MAX_TIMESTAMP_MS, isTimestampMs } from '../isoDate';
 import { isEncryptedBundle } from '../../renderer/security/dataCrypto';
 import { financialUnitsFromBusinessUnits } from '../../renderer/data/businessUnits';
 
@@ -97,6 +98,20 @@ describe('emotionsShape — 気分と分析が同じ答え方をする', () => {
     expect(isAnalysisEntry(analysis({}, 0))).toBe(true); // 点数が空でも形は形
   });
 
+  /**
+   * **有限でも時刻でない数は落とす** (2026-09-27 · パス 493)。`1e20` は有効な JSON で有限だが
+   * `Date` の範囲 (±MAX_TIMESTAMP_MS) の外で、表示の側は「時刻不明」と断る。感情の画面は
+   * 「最新の分析」を時刻の最大で選ぶので、通すとその 1 件が以後ずっと最新として応答の材料になった。
+   */
+  it('★ 有限でも Date の範囲の外の timestamp を持つ分析は落とす (境界ちょうどは通す)', () => {
+    expect(Number.isFinite(1e20), '標本: 有限である (直す前の Number.isFinite は通していた)').toBe(true);
+    expect(isAnalysisEntry(analysis({ joy: 3 }, 1e20))).toBe(false);
+    expect(isAnalysisEntry(analysis({ joy: 3 }, -1e20))).toBe(false);
+    expect(isAnalysisEntry(analysis({ joy: 3 }, MAX_TIMESTAMP_MS + 1))).toBe(false);
+    expect(isAnalysisEntry(analysis({ joy: 3 }, MAX_TIMESTAMP_MS))).toBe(true);
+    expect(isAnalysisEntry(analysis({ joy: 3 }, -MAX_TIMESTAMP_MS))).toBe(true);
+  });
+
   it('★ 実測の再現: 同じ保存先の同じ欠陥で、気分と分析が同じ数だけ落ちる', () => {
     const stored = JSON.parse(
       '{"moods":[{"date":"2026-09-08","score":1e999,"note":""}],' +
@@ -109,6 +124,19 @@ describe('emotionsShape — 気分と分析が同じ答え方をする', () => {
     const analyses = readStoredList(stored.analyses, isAnalysisEntry);
     expect(moods.dropped).toBe(1);
     expect(analyses.dropped).toBe(1); // 直す前は 0 だった
+  });
+});
+
+describe('isTimestampMs — 保存値の時刻と表示の時刻が同じ境界で断る (パス 493)', () => {
+  it('★ 有限で ±MAX_TIMESTAMP_MS の内だけを時刻と読む (数でない物・非有限は落とす)', () => {
+    for (const ok of [0, 1, 1_757_000_000_000, MAX_TIMESTAMP_MS, -MAX_TIMESTAMP_MS]) expect(isTimestampMs(ok), String(ok)).toBe(true);
+    for (const ng of [MAX_TIMESTAMP_MS + 1, -MAX_TIMESTAMP_MS - 1, 1e20, Number.POSITIVE_INFINITY, Number.NaN, '1757000000000', null, undefined, {}])
+      expect(isTimestampMs(ng), String(ng)).toBe(false);
+  });
+
+  it('★ 境界は表示の側 (Date) と一致する —— 通した数は必ず有効な Date になる', () => {
+    expect(Number.isNaN(new Date(MAX_TIMESTAMP_MS).getTime())).toBe(false);
+    expect(Number.isNaN(new Date(MAX_TIMESTAMP_MS + 1).getTime()), '標本: 1 超えると Invalid Date').toBe(true);
   });
 });
 
@@ -204,8 +232,11 @@ const LEDGER: readonly { file: string; code: string; why: string }[] = [
   },
 ];
 
-/** 同じ文の中に有限性・整数性・境目の判定が在るか。 */
-const NEARBY = /Number\.isFinite|Number\.isInteger|<=\s|>=\s|\.min\b|\.max\b/;
+/**
+ * 同じ文の中に有限性・整数性・境目の判定が在るか。`isTimestampMs` (パス 493) は
+ * `Number.isFinite` と ±MAX_TIMESTAMP_MS の境目を 1 つにまとめた関門なので、同じ扱い。
+ */
+const NEARBY = /Number\.isFinite|Number\.isInteger|\bisTimestampMs\(|<=\s|>=\s|\.min\b|\.max\b/;
 const HAS_TYPEOF_NUMBER = /typeof\s+[^;]*===\s*'number'/;
 /** 台帳の鍵に使う正規形 (空白の詰め方の違いで外れないように)。 */
 const norm = (s: string): string => s.trim().replace(/\s+/g, ' ');
@@ -258,6 +289,9 @@ describe("回帰の番人 — 裸の `typeof x === 'number'` を増やさない"
     expect(NEARBY.test(bare)).toBe(false); // → 捕まえる
     // 境目つきの比較も通す (hydroponicCrops.ts の形)
     expect(NEARBY.test("typeof v === 'number' && v >= bound.min && v <= bound.max")).toBe(true);
+    // 有限性と境目をまとめた関門も通す (parseTimestamp の形 · パス 493)
+    expect(NEARBY.test("const ms = typeof v === 'number' ? v : NaN;\n  if (!isTimestampMs(ms)) return null;")).toBe(true);
+    expect(NEARBY.test('const ok = isTimestampMsLike(ms);'), '標本: 似た名前の別物には当たらない').toBe(false);
     // **注記は落とす** —— 標本は走査に掛ける物と同じ形で (ファイル全体を渡すので、
     // `*` の続き行は必ずブロック注記の内側に在る)。
     expect(stripComments("  // `typeof n === 'number'` は NaN を通す").trim()).toBe('');

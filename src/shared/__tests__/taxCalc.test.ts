@@ -323,6 +323,31 @@ describe('schemesForEntity', () => {
     expect(ids).not.toContain('sp-blue'); // sole-proprietor only
   });
 
+  /**
+   * **少額減価償却資産の特例は、法人と個人の両方に出る** (2026-09-27 · パス 493)。
+   * 個人 (措法 28 の 2) と法人 (措法 67 の 5) の 2 つの規定で、上限・期限は同じ定数を読む。
+   * 2026-09-27 まで法人を選んだ利用者には 1 度も出なかった (個人の行しか無かった)。
+   */
+  it('★ 少額減価償却資産の特例は法人にも個人にも出て、数字と期限は同じ定数から (法人は損金・個人は経費)', () => {
+    const corp = schemesForEntity('corporation').find((s) => s.name === '少額減価償却資産の特例');
+    const sp = schemesForEntity('sole-proprietor').find((s) => s.name === '少額減価償却資産の特例');
+    expect(corp?.id).toBe('corp-small-depreciation');
+    expect(sp?.id).toBe('sp-small-depreciation');
+    for (const s of [corp, sp]) {
+      expect(s?.until).toBe(SME_MEASURE_END);
+      expect(s?.summary).toContain('40万円未満');
+      expect(s?.summary).toContain('30万円未満');
+      expect(s?.summary).toContain('2026-04-01');
+      expect(s?.summary).toContain('年 300万円まで');
+      expect(s?.summary).toContain('従業員 400 人以下');
+    }
+    // 法人は「損金算入」、個人は「経費化」—— 語を取り違えない (法人に「経費化」、個人に「損金」と言わない)
+    expect(corp?.summary).toContain('損金算入');
+    expect(corp?.summary).not.toContain('経費化');
+    expect(sp?.summary).toContain('経費化');
+    expect(sp?.summary).not.toContain('損金');
+  });
+
   it('includes both-entity schemes for sole proprietors', () => {
     const ids = schemesForEntity('sole-proprietor').map((s) => s.id);
     expect(ids).toContain('sp-blue'); // sp-only
@@ -934,6 +959,7 @@ describe('taxSchemeCatalog — needsAdvisor', () => {
       'corp-officer-salary': false,
       'corp-company-housing': true,
       'corp-investment-tax': false,
+      'corp-small-depreciation': false,
       'corp-bonus': false,
       'sp-blue': false,
       'sp-family-salary': true,

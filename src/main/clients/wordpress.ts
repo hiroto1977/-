@@ -40,7 +40,11 @@ function isPaidPlan(plan: WpSite['plan']): boolean {
   if (!plan) return false;
   if (plan.is_free === true) return false;
   if (plan.is_free === false) return true;
-  const slug = (plan.product_slug ?? '').toLowerCase();
+  // **型から読む** (2026-09-27 · パス 493)。`?? ''` は null / undefined しか受けないので、
+  // 相手が数や物を返すと `.toLowerCase` が無く投げ、`objectRows` を通った**全サイトの一覧ごと**
+  // 取得が失敗していた (パス 409 / 412 が drive・youtube ほかで閉じた形の残り 1 件)。
+  // 読めない slug は「slug が無い」と同じに扱う —— 有料とは読まない。
+  const slug = typeof plan.product_slug === 'string' ? plan.product_slug.toLowerCase() : '';
   // `free_plan` の判定は要らない — 'free' を含むかどうかで既に弾ける。
   // 残すと、どちらへ変異させても結果が変わらない検査不能な条件になる。
   return slug !== '' && !slug.includes('free');

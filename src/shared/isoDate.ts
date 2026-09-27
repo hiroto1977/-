@@ -166,6 +166,21 @@ export function calendarDateMessage(label: string): string {
 export const MAX_TIMESTAMP_MS = 8_640_000_000_000_000;
 
 /**
+ * **epoch ミリ秒として有効な数か** (有限で、`Date` が表せる範囲 ±{@link MAX_TIMESTAMP_MS})。
+ * 文字列は受けない —— 保存値の封筒・分析の時刻は数で持つ (2026-09-27 · パス 493)。
+ *
+ * 2026-09-27 まで、保存値を受ける側はここの境界を持たず `Number.isFinite` だけだった
+ * (復元の封筒の `createdAt` / `updatedAt` と、感情の分析の `timestamp`)。`1e20` は
+ * **有効な JSON で有限**なので通り、表示の側 (`parseTimestamp`) だけが「時刻不明」と断る。
+ * 断られた値は並べ替えでは最大の数として働く —— 感情の画面は「最新の分析」を時刻の最大で
+ * 選ぶので、`timestamp: 1e20` の 1 件が以後ずっと最新として応答の材料になった。
+ */
+export function isTimestampMs(v: unknown): v is number {
+  // `Number.isFinite` は数以外に false を返すので、型の検め (`typeof`) は重ねない (等価変異になる)
+  return Number.isFinite(v) && Math.abs(v as number) <= MAX_TIMESTAMP_MS;
+}
+
+/**
  * **刷る前に時刻を読む。読めなければ `null`** (2026-09-12 · パス 185)。
  *
  * ## なぜ要るか
@@ -192,8 +207,8 @@ export const MAX_TIMESTAMP_MS = 8_640_000_000_000_000;
  */
 export function parseTimestamp(v: unknown): Date | null {
   const ms = typeof v === 'number' ? v : typeof v === 'string' ? Date.parse(v) : NaN;
-  if (!Number.isFinite(ms)) return null;
-  if (Math.abs(ms) > MAX_TIMESTAMP_MS) return null;
+  // 境界は 1 つ —— 保存値を受ける側 (`isTimestampMs`) と表示の側が同じ規則で断る
+  if (!isTimestampMs(ms)) return null;
   return new Date(ms);
 }
 

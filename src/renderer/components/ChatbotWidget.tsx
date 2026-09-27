@@ -161,17 +161,14 @@ function loadRequests(): FeatureRequest[] {
  * (受付日時, 本文) の多重集合で数え、一致した分だけ除く。
  */
 export function clearExportedRequests(exported: readonly FeatureRequest[]): { removed: number; kept: number } | null {
-  const pending = new Map<string, number>();
-  for (const r of exported) {
-    const k = JSON.stringify([r.at, r.text]);
-    pending.set(k, (pending.get(k) ?? 0) + 1);
-  }
+  // 多重集合は「まだ消していない鍵の列」で持つ —— 一致した 1 つを抜けば、同じ要望が 3 件あって
+  // 2 件を書き出したときに 1 件が残る。要望リストは人が読む数しか積まれないので線形の探索で足りる。
+  const pending = exported.map((r) => JSON.stringify([r.at, r.text]));
   const current = loadRequests();
   const kept = current.filter((r) => {
-    const k = JSON.stringify([r.at, r.text]);
-    const n = pending.get(k) ?? 0;
-    if (n === 0) return true;
-    pending.set(k, n - 1);
+    const i = pending.indexOf(JSON.stringify([r.at, r.text]));
+    if (i < 0) return true;
+    pending.splice(i, 1);
     return false;
   });
   const removed = current.length - kept.length;

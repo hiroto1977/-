@@ -61,3 +61,30 @@ describe('importAll — 中身の形', () => {
     expect(await store.count(SALES_COLLECTION)).toBe(0);
   });
 });
+
+/**
+ * **封筒の時刻も「時刻として読める数」だけを受ける** (2026-09-27 · パス 493)。パス 98 は非有限
+ * (`1e999`) を落としたが、`1e20` は有限なので通っていた —— `Date` の範囲の外で、表示の側
+ * (`parseTimestamp`) は読めないと断る値である。境界は `isTimestampMs` の 1 つ。
+ */
+describe('importAll — 封筒の時刻', () => {
+  const at = (id: string, createdAt: number, updatedAt: number): StoredRecord => ({ ...rec(id, SALES_COLLECTION, GOOD), createdAt, updatedAt });
+
+  it('★ 有限でも時刻でない createdAt / updatedAt の記録は捨て、境界ちょうどは入れる', async () => {
+    const store = getRecordStore();
+    const n = await store.importAll([
+      at('far-created', 1e20, 1),
+      at('far-updated', 1, -1e20),
+      at('edge', 8_640_000_000_000_000, 8_640_000_000_000_000),
+      at('normal', 1_757_000_000_000, 1_757_000_000_000),
+    ]);
+    expect(n).toBe(2);
+    const ids = (await store.list<Record<string, unknown>>(SALES_COLLECTION)).map((r) => r.id).sort();
+    expect(ids).toEqual(['edge', 'normal']);
+  });
+
+  it('対照: 非有限 (パス 98 の形) も今までどおり捨てる', async () => {
+    const store = getRecordStore();
+    expect(await store.importAll([at('inf', Number.POSITIVE_INFINITY, 1)])).toBe(0);
+  });
+});

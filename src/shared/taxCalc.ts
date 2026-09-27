@@ -12,6 +12,7 @@
 import { yen, nonNeg } from './num';
 import {
   SME_ANNUAL_CAP,
+  SME_EMPLOYEE_CAP,
   SME_MEASURE_END,
   SME_UNIT_LIMIT,
   SME_UNIT_LIMIT_BEFORE_STEP,
@@ -766,6 +767,23 @@ export function taxSchemeCatalog(): readonly TaxScheme[] {
     { id: 'corp-officer-salary', name: '役員報酬の最適化', entity: 'corporation', summary: '定期同額給与等のルール内で個人/法人の税負担バランスを調整。', needsAdvisor: false },
     { id: 'corp-company-housing', name: '役員社宅制度', entity: 'corporation', summary: '会社契約の住居を役員へ社宅貸与。一定計算の家賃差額を法人経費化。', needsAdvisor: true },
     { id: 'corp-investment-tax', name: '中小企業投資促進税制', entity: 'corporation', summary: '一定の設備投資で 30% 特別償却 または 7% 税額控除を選択。', needsAdvisor: false, until: INVESTMENT_PROMOTION_MEASURE_END },
+    /*
+     * **法人の少額減価償却資産の特例** (措法 67 の 5 · 2026-09-27 · パス 493)。2026-09-27 まで、カタログは
+     * この特例を個人 (措法 28 の 2・`sp-small-depreciation`) にしか載せていなかった —— 同じ上限・同じ期限を
+     * 持つ法人の特例 (中小企業者等の青色申告法人) は、法人を選んだ利用者に 1 度も出なかった。判定を持つ
+     * `depreciation.ts` の docblock と確証済みの知識 (`tax-small-amount-depreciation`・国税庁 No.5408
+     * 法人税) が述べているのは、むしろ**こちら**である。数字は同じ定数から読む (2 度書かない)。
+     */
+    {
+      id: 'corp-small-depreciation',
+      name: '少額減価償却資産の特例',
+      entity: 'corporation',
+      summary:
+        `取得価額 ${man(SME_UNIT_LIMIT)}万円未満 (${SME_UNIT_LIMIT_STEP_DATE} 以後の取得。それ以前は ${man(SME_UNIT_LIMIT_BEFORE_STEP)}万円未満) の資産を` +
+        `取得した事業年度に全額損金算入 (青色申告の中小企業者等・従業員 ${SME_EMPLOYEE_CAP} 人以下・年 ${man(SME_ANNUAL_CAP)}万円まで)。`,
+      needsAdvisor: false,
+      until: SME_MEASURE_END,
+    },
     { id: 'corp-bonus', name: '決算賞与', entity: 'corporation', summary: '決算日までに支給通知し1か月以内に支払えば当期損金に計上可。', needsAdvisor: false },
     // --- 個人事業主 ---
     { id: 'sp-blue', name: '青色申告 (65万円特別控除)', entity: 'sole-proprietor', summary: '複式簿記+e-Tax 等で最大65万円の所得控除。基本かつ最大の節税。', needsAdvisor: false },
@@ -776,7 +794,7 @@ export function taxSchemeCatalog(): readonly TaxScheme[] {
       entity: 'sole-proprietor',
       summary:
         `取得価額 ${man(SME_UNIT_LIMIT)}万円未満 (${SME_UNIT_LIMIT_STEP_DATE} 以後の取得。それ以前は ${man(SME_UNIT_LIMIT_BEFORE_STEP)}万円未満) の資産を` +
-        `取得年に一括経費化 (青色限定・年 ${man(SME_ANNUAL_CAP)}万円まで)。`,
+        `取得年に一括経費化 (青色限定・従業員 ${SME_EMPLOYEE_CAP} 人以下・年 ${man(SME_ANNUAL_CAP)}万円まで)。`,
       needsAdvisor: false,
       until: SME_MEASURE_END,
     },

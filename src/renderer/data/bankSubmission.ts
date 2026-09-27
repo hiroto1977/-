@@ -45,7 +45,7 @@ import {
 import { verdictLabel, type ManagementScorecard } from '../../shared/managementScorecard';
 import { budgetUnmatchedNote, type BudgetPeriodAlignment } from './budgetVariance';
 import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
-import { monthsPerYear, periodDaysForMonths } from './workingCapital';
+import { monthsPerYear, periodDaysForMonths, type CashConversionCycle } from './workingCapital';
 import type { BusinessOverview } from './overview';
 import type { CashflowDebtService } from './cashflowDebtService';
 
@@ -527,8 +527,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    * **刷る式の中に実物の日数を入れる** —— 「× 365」と刷ったまま 3 か月分で割ると、
    * 読み手は式を検算できない (「刷った数字は刷った式を満たす」の規則)。
    */
-  const periodDayCount = (): number =>
-    wc === null ? 0 : Math.round(periodDaysForMonths(wc.periodMonths) * 10) / 10;
+  const periodDayCount = (w: CashConversionCycle): number => Math.round(periodDaysForMonths(w.periodMonths) * 10) / 10;
   const workingCapitalCaption = (): string | null => {
     if (wc === null) return '貸借対照表と売上高が揃っていないため算定していません。';
     const wcStocks = splitMissingStocks(wc.missingStocks, o.balanceSheetUnreadableFields);
@@ -538,7 +537,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
       // §1 の `periodScopeNote` と同じ規則。1 年分なら式の「× 365 日」が既に語っている)。
       wc.periodMonths === monthsPerYear()
         ? null
-        : `回転日数は実績の${periodSpan(o.kpi.periods, f)}分（${periodDayCount()} 日）で算定しています。1 年分の回転日数ではありません。`,
+        : `回転日数は実績の${periodSpan(o.kpi.periods, f)}分（${periodDayCount(wc)} 日）で算定しています。1 年分の回転日数ではありません。`,
       // **原因を言い分ける** —— 打ち込んだ値が読めないだけの利用者に「未入力のため」と
       // 言うと、その人は同じ欄を見に行く (直す手は入力ではなく点検パネルで消すこと)。
       // 名簿は `balanceSheet.ts` が 1 つ持ち、分けるのは `splitMissingStocks` (パス 444)。
@@ -552,7 +551,13 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     ].filter((n): n is string => n !== null);
     return notes.length === 0 ? null : notes.join(' ');
   };
-  const perDays = `× ${periodDayCount()} 日`;
+  /**
+   * 式の欄が名乗る日数。**算定していないときは日数を名乗らない** —— 期間が決まっていないので、
+   * 「× 0 日」と刷ると**どの売上債権でも回転日数が 0 日になる式**を金融機関へ出すことになる
+   * (値の欄が「―」でも、式の欄は検算に使われる)。2026-09-27 まで、何も入力していない書面の
+   * 見本 (`bankSubmissionText.test.ts`) がその 3 行を仕様として留めていた (法則 `no-weakness-as-spec`)。
+   */
+  const perDays = wc === null ? '× 期間の日数' : `× ${periodDayCount(wc)} 日`;
   sections.push({
     title: '5. 運転資本',
     caption: workingCapitalCaption(),

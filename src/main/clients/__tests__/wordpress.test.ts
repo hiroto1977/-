@@ -203,6 +203,27 @@ describe('有料プランの判定 — is_free と slug のどちらを信じる
   it('大文字の slug でも "free" を見落とさない', async () => {
     expect(await paidFlagFor({ product_slug: 'FREE_PLAN' })).toBe(false);
   });
+
+  /**
+   * **相手の slug が文字列でなくても、一覧ごと落とさない** (2026-09-27 · パス 493)。
+   * 直す前は `(plan.product_slug ?? '').toLowerCase()` が数・物・配列・真偽値で投げ、
+   * `fetchWordPressSnapshot` ごと失敗していた (画面には 1 サイトも出ない)。
+   */
+  it('★ slug が文字列でなければ投げず、有料とも読まない (隣の健全なサイトは残る)', async () => {
+    for (const slug of [42, { a: 1 }, ['business'], true, null]) {
+      expect(await paidFlagFor({ product_slug: slug }), JSON.stringify(slug)).toBe(false);
+    }
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({
+        sites: [
+          { ID: 1, name: 'good', description: '', URL: 'https://g.example', is_private: false, jetpack: false, plan: { product_slug: 'business-bundle' } },
+          { ID: 2, name: 'odd', description: '', URL: 'https://o.example', is_private: false, jetpack: false, plan: { product_slug: 42 } },
+        ],
+      }),
+    );
+    const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.sites.map((s) => [s.name, s.paidPlan])).toEqual([['good', true], ['odd', false]]);
+  });
 });
 
 // --- 送り先と資格情報 --------------------------------------------------

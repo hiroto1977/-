@@ -8,7 +8,7 @@
  * ずれる (`emotionsLimits.ts` と同じ理由でここに置く)。
  */
 
-import { isCalendarDate } from './isoDate';
+import { isCalendarDate, isTimestampMs } from './isoDate';
 
 export interface MoodEntryShape {
   date: string; // YYYY-MM-DD
@@ -56,7 +56,9 @@ export function isAnalysisEntry(value: unknown): value is AnalysisEntryShape {
     // 分析として読み込まれ、ウェルビーイングのレーダーと気配りレポートの
     // 平均に ∞ が入っていた (2026-09-08 · パス 98 の実測: 気分は dropped 1、
     // 分析は dropped 0 —— 同じ保存先で答えが逆だった)。
-    Number.isFinite(value.timestamp) &&
+    // **時刻として読める数** (2026-09-27 · パス 493)。`1e20` は有限だが時刻ではなく、
+    // 感情の画面は「最新の分析」を時刻の最大で選ぶので、その 1 件が以後ずっと最新になった。
+    isTimestampMs(value.timestamp) &&
     typeof value.excerpt === 'string' &&
     isRecord(value.scores) &&
     Object.values(value.scores).every((n) => Number.isFinite(n)) &&

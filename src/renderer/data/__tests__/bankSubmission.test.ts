@@ -1134,6 +1134,26 @@ describe('§5 運転資本 — 未入力の欄を名前で述べる', () => {
     expect(note(s, '仕入債務回転日数（DPO）')).toBe('仕入債務 ÷ 売上原価 × 91.3 日');
   });
 
+  /**
+   * **算定していないときは日数を名乗らない** (2026-09-27 · パス 493)。期間が決まっていないのに
+   * 「× 0 日」と刷ると、**どの売上債権でも回転日数が 0 日になる式**を金融機関へ出すことになる ——
+   * 値の欄が「―」でも、式の欄は検算に使われる。何も入力していない書面の見本がその 3 行を
+   * 仕様として留めていた (`bankSubmissionText.test.ts`)。
+   */
+  it('★ 算定していないときは「× 0 日」を刷らず、日数を名乗らない', () => {
+    const ZERO_DAYS = /×\s*0(?:\.0+)?\s*日/;
+    expect('売上債権 ÷ 売上高 × 0 日', '標本: 直す前の式に針が当たる').toMatch(ZERO_DAYS);
+    expect('売上債権 ÷ 売上高 × 30.4 日', '標本: 算定した日数には当たらない').not.toMatch(ZERO_DAYS);
+    for (const blank of [overviewWith({ balanceSheet: null }), overviewWith({ kpiActuals: [] })]) {
+      const s = section(buildBankSubmissionSheet(inputWith(blank)).sections, '5.');
+      expect(value(s, '売上債権回転日数（DSO）'), '算定していない状態を測っている').toBe(BLANK);
+      for (const label of ['売上債権回転日数（DSO）', '棚卸資産回転日数（DIO）', '仕入債務回転日数（DPO）']) {
+        expect(note(s, label)).not.toMatch(ZERO_DAYS);
+        expect(note(s, label)).toMatch(/× 期間の日数$/);
+      }
+    }
+  });
+
   it('★ 対照: 埋まった控え (BS) では未入力の但し書きが付かず CCC が出る', () => {
     // `BS` は 3 欄すべて埋まっている。上の 508 行の検査と同じ形をここでも押さえる。
     const s = section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '5.');

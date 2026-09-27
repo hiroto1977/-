@@ -19,6 +19,7 @@
 import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
 import { hasCollectionShape } from './collectionShapes';
 import { notifyRecordStoreChanged } from './collectionChange';
+import { isTimestampMs } from '../../shared/isoDate';
 
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -632,8 +633,10 @@ function isValidStoredRecord(v: unknown): v is StoredRecord {
     // `data` の中身を `Number.isFinite` で見るが、封筒の時刻は 2026-09-08 まで
     // `typeof` だけだった —— `1e999` は**有効な JSON** で `Infinity` に読めるので、
     // 検査数字の合ったバックアップが非有限の時刻を持ち込めた (パス 98)。
-    Number.isFinite(r.createdAt) &&
-    Number.isFinite(r.updatedAt) &&
+    // **有限でも時刻でない数は同じ扱い** (2026-09-27 · パス 493) —— `1e20` は有限だが
+    // `Date` の範囲の外で、表示の側 (`parseTimestamp`) は読めないと断る。境界は 1 つ。
+    isTimestampMs(r.createdAt) &&
+    isTimestampMs(r.updatedAt) &&
     isPlainJsonObject(r.data)
   );
 }

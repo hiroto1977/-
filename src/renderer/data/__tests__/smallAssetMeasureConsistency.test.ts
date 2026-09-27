@@ -89,13 +89,15 @@ describe('少額減価償却資産の特例 — 知識台帳は計算の定数�
 describe('節税制度カタログ — 期限つきの制度は期限を定数から持つ', () => {
   const byId = new Map(taxSchemeCatalog().map((s) => [s.id, s]));
 
-  it('★ 少額減価償却資産の特例: until = SME_MEASURE_END、概要は 40 万円・30 万円・段差の日・300 万円を刷る', () => {
-    const s = byId.get('sp-small-depreciation');
-    expect(s?.until).toBe(SME_MEASURE_END);
-    expect(s?.summary).toContain(`${man(SME_UNIT_LIMIT)}万円未満`);
-    expect(s?.summary).toContain(`${man(SME_UNIT_LIMIT_BEFORE_STEP)}万円未満`);
-    expect(s?.summary).toContain(SME_UNIT_LIMIT_STEP_DATE);
-    expect(s?.summary).toContain(`${man(SME_ANNUAL_CAP)}万円`);
+  it('★ 少額減価償却資産の特例: until = SME_MEASURE_END、概要は 40 万円・30 万円・段差の日・300 万円を刷る (法人・個人の両方)', () => {
+    for (const id of ['sp-small-depreciation', 'corp-small-depreciation']) {
+      const s = byId.get(id);
+      expect(s?.until, id).toBe(SME_MEASURE_END);
+      expect(s?.summary, id).toContain(`${man(SME_UNIT_LIMIT)}万円未満`);
+      expect(s?.summary, id).toContain(`${man(SME_UNIT_LIMIT_BEFORE_STEP)}万円未満`);
+      expect(s?.summary, id).toContain(SME_UNIT_LIMIT_STEP_DATE);
+      expect(s?.summary, id).toContain(`${man(SME_ANNUAL_CAP)}万円`);
+    }
   });
 
   it('★ 中小企業投資促進税制: until = INVESTMENT_PROMOTION_MEASURE_END (2027-03-31)', () => {
@@ -105,7 +107,7 @@ describe('節税制度カタログ — 期限つきの制度は期限を定数�
 
   it('until を持つ制度の期限は暦に在る日で、期限の台帳 (lint:rate-freshness) に載っている', () => {
     const dated = taxSchemeCatalog().filter((s) => s.until !== undefined);
-    expect(dated.map((s) => s.id).sort()).toEqual(['corp-investment-tax', 'sp-small-depreciation']);
+    expect(dated.map((s) => s.id).sort()).toEqual(['corp-investment-tax', 'corp-small-depreciation', 'sp-small-depreciation']);
     for (const s of dated) expect(isCalendarDate(s.until)).toBe(true);
     const ledgered = gate.DATED_MEASURES.map((m) => `${m.source}::${m.constName}`);
     expect(ledgered).toEqual(

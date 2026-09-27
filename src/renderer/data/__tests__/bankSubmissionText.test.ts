@@ -252,9 +252,9 @@ describe('金融機関等提出用の書面 — 全文', () => {
           { label: '自己資本利益率（ROE）', value: '―', note: '当期純利益 ÷ 純資産' },
         ] },
       { title: '5. 運転資本', caption: '貸借対照表と売上高が揃っていないため算定していません。', rows: [
-          { label: '売上債権回転日数（DSO）', value: '―', note: '売上債権 ÷ 売上高 × 0 日' },
-          { label: '棚卸資産回転日数（DIO）', value: '―', note: '棚卸資産 ÷ 売上原価 × 0 日' },
-          { label: '仕入債務回転日数（DPO）', value: '―', note: '仕入債務 ÷ 売上原価 × 0 日' },
+          { label: '売上債権回転日数（DSO）', value: '―', note: '売上債権 ÷ 売上高 × 期間の日数' },
+          { label: '棚卸資産回転日数（DIO）', value: '―', note: '棚卸資産 ÷ 売上原価 × 期間の日数' },
+          { label: '仕入債務回転日数（DPO）', value: '―', note: '仕入債務 ÷ 売上原価 × 期間の日数' },
           { label: '現金化サイクル（CCC）', value: '―', note: 'DSO + DIO − DPO' },
           { label: '運転資本', value: '―', note: '売上債権 + 棚卸資産 − 仕入債務' },
         ] },
