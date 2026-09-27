@@ -511,7 +511,12 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
               </button>
             ) : null
           ) : (
-            <button type="button" className="ghost" onClick={() => setOpen(false)} aria-label="チャットを閉じる">
+            /*
+              読み上げの名前は右下の 🤖 (開いているときは「チャットを閉じる」) と分ける —— 浮いた窓ではデスクトップで
+              2 つとも見えるので、同じ名前だと支援技術は同じボタンを 2 つ読み、名前で押す人 (と e2e の getByRole) は
+              どちらか決められない (2026-09-27)。
+            */
+            <button type="button" className="ghost" onClick={() => setOpen(false)} aria-label="コンシェルジュを閉じる">
               ✕
             </button>
           )}

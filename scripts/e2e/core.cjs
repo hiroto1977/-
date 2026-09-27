@@ -3994,7 +3994,8 @@ async function designSuite(browser) {
     `design: ★ スマホでは下から出るシート (幅いっぱい・下端に接する: ${JSON.stringify(sheet && [Math.round(sheet.x), Math.round(sheet.width), Math.round(sheet.y + sheet.height)])})`,
   );
   ok(!(await ppage.locator('.concierge-fab').isVisible()), 'design: シートを開いている間は 🤖 が隠れて送信ボタンと重ならない');
-  await ppage.getByRole('button', { name: 'チャットを閉じる' }).tap();
+  // 見出しの ✕ を押す (右下の 🤖 はシートを開いている間は隠れている)。名前は 🤖 の「チャットを閉じる」と分けてある。
+  await ppage.getByRole('button', { name: 'コンシェルジュを閉じる', exact: true }).tap();
   await ppage.waitForFunction(() => !document.querySelector('.concierge.floating'), undefined, { timeout: 5000 });
   ok(await ppage.locator('.concierge-fab').isVisible(), 'design: ✕ で閉じると 🤖 が戻る');
   ok(await noHScroll(ppage), 'design: スマホで横スクロールなし');
