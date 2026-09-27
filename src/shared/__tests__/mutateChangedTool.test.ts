@@ -37,7 +37,8 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { readOriginalSource } from './originalSource';
+import { readOriginalDir, readOriginalSource } from './originalSource';
+import { scriptSegments, segmentRunsTheTool } from '../ontology/laws';
 
 const REPO = path.resolve(__dirname, '../../..');
 const req = createRequire(__filename);
@@ -55,6 +56,31 @@ const pkg = JSON.parse(readOriginalSource(path.join(REPO, 'package.json'))) as {
 const CI_DRIVEN_AUDITS: readonly { readonly name: string; readonly workflow: string }[] = [
   { name: 'audit:report', workflow: '.github/workflows/dependency-audit.yml' },
 ];
+
+/*
+ * 命令の分け方と「本体を走らせる命令か」は法則の台帳 (`validateLawLedger` の実機) と
+ * 同じ 1 つを読む —— 規則を 2 か所に書くと、片方だけ直した日に食い違う。
+ */
+const segments = scriptSegments;
+const runsTheTool = segmentRunsTheTool;
+
+/**
+ * 道具の呼び方を書く所 —— 利用者と次のセッションが写して打つ文。
+ * `src/shared/__tests__` は検査の docblock が道具の呼び方を引く所 (パス 399 の記録がそこに在る)。
+ */
+function documentsNamingAudits(): string[] {
+  const texts = [readOriginalSource(path.join(REPO, 'CLAUDE.md'))];
+  for (const [dir, ext] of [
+    ['docs', '.md'],
+    ['scripts', '.cjs'],
+    ['src/shared/__tests__', '.ts'],
+  ] as const) {
+    for (const name of readOriginalDir(path.join(REPO, dir))) {
+      if (name.endsWith(ext)) texts.push(readOriginalSource(path.join(REPO, dir, name)));
+    }
+  }
+  return texts;
+}
 
 describe('変更 ∩ mutate の母集団 (パス 479)', () => {
   const SCOPE = ['src/a.ts', 'src/b.ts', 'src/renderer/data/sourceVerification.ts'];
@@ -146,5 +172,36 @@ describe('定期点検の道具の規律 (両方向)', () => {
       incrementalFile: string;
     };
     expect(src).toContain(cfg.incrementalFile);
+  });
+
+  /*
+   * ★ 2026-09-27 (パス 490) まで `audit:survivors` は `node scripts/verify-survivors.cjs --self-test`
+   * **だけ**で、本体は `--self-test` を見ると自己検査を返して終わる。文書の呼び方
+   * `npm run audit:survivors -- <file> --top=N` は **0.4 秒で「✅ self-test 全件一致」exit 0** ——
+   * 報告が 1 つも無い木でも同じだった (直接 `node scripts/verify-survivors.cjs <file>` と打てば
+   * exit 2 で「報告が見つかりません」と断る)。パス 356 で足したときからこの形で、
+   * 生存を当て直した記録はどれも node を直接打っていた —— **文書の呼び方では道具が 1 度も動かない**。
+   */
+  it('★ audit:* は道具の本体まで届く (自己検査だけで終わる命令を置かない · パス 490)', () => {
+    const STALE = 'node scripts/verify-survivors.cjs --self-test';
+    expect(segments(STALE).some(runsTheTool), '直す前の形は本体へ届かない (標本)').toBe(false);
+    expect(segments(pkg.scripts['audit:survivors'] ?? '').some(runsTheTool)).toBe(true);
+    const selfTestOnly = audits.filter((n) => !segments(pkg.scripts[n] ?? '').some(runsTheTool));
+    expect(selfTestOnly).toEqual([]);
+  });
+
+  it('★ 文書が引数つきで呼ぶ道具は、引数を本体へ渡す (末尾の命令が本体 · パス 490)', () => {
+    const called = new Set<string>();
+    for (const t of documentsNamingAudits()) {
+      for (const m of t.matchAll(/npm run (audit:[a-z0-9:-]+) -- /g)) called.add(m[1]!);
+    }
+    // 走査が生きている (2026-09-27 の実測: mutate-changed / survivors / gate-floors の 3 本)
+    expect([...called].sort()).toEqual(expect.arrayContaining(['audit:gate-floors', 'audit:mutate-changed', 'audit:survivors']));
+    const unknown = [...called].filter((n) => !(n in pkg.scripts));
+    expect(unknown, '文書が呼ぶ道具が package.json に無い').toEqual([]);
+    // 標本: 「本体 && 本体 --self-test」の形は、文書が渡した引数を自己検査へ渡す
+    expect(runsTheTool(segments('node x.cjs && node x.cjs --self-test').at(-1) ?? '')).toBe(false);
+    const argsToSelfTest = [...called].filter((n) => !runsTheTool(segments(pkg.scripts[n] ?? '').at(-1) ?? ''));
+    expect(argsToSelfTest).toEqual([]);
   });
 });

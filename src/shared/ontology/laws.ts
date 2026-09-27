@@ -368,7 +368,14 @@ export const LAWS: readonly Law[] = [
       '決定的な対照: main の Ollama クライアントの免除は 2 件ともただの注記で、' +
       'その綴りを消して**同じ数だけ本物の書き込み口への fetch** を入れると門は `no forbidden patterns found` と答えた ——' +
       'CVE-2024-37032 ほかが実装される当の口が CI を黙って通る。直しは 1 条件 (散文が食っている行だけ code の件数も名乗る) で、' +
-      '48 / 53 行は今までどおり。★ **注記の中でも鳴らすこと自体は正しい** (パス 370) —— 直すのは枠のほうである。',
+      '48 / 53 行は今までどおり。★ **注記の中でも鳴らすこと自体は正しい** (パス 370) —— 直すのは枠のほうである。' +
+      '★ **この台帳自身も名前を実物として数えていた** (パス 490) —— 実機 (`harness`) の執行者は「script の名前が package.json に' +
+      '在るか」しか問わず、`harness(\'audit:survivors\')` は `node scripts/verify-survivors.cjs --self-test` **だけ**の script で' +
+      '満たされていた。本体は `--self-test` を見ると自己検査を返して終わるので、文書の呼び方 `npm run audit:survivors -- <file>` は' +
+      '**報告が 1 つも無い木でも 0.4 秒で「✅ self-test 全件一致」exit 0** —— パス 356 から 2026-09-27 まで道具の本体へ 1 度も届いていない' +
+      '(当て直した記録はどれも node を直接打っていた)。今は実機に「本体へ届く命令」を要求し、引数つきで文書に載る道具には' +
+      '「末尾の命令が本体」を要求する (**npm は `--` のあとの引数を末尾の命令に足す**ので、`本体 && 本体 --self-test` の形は' +
+      '引数を自己検査へ流して捨てる)。',
     provenance: [
       'パス 292',
       'パス 289',
@@ -376,6 +383,7 @@ export const LAWS: readonly Law[] = [
       'パス 464 (言語を取り違えた走査器)',
       'パス 465 (散文が答えになっていた 2 件)',
       'パス 466 (免除の枠に散文が入っていた)',
+      'パス 490 (実機の名前が在ることを実機が走ることとして数えていた —— `audit:survivors` は自己検査しか走らせなかった)',
     ],
     enforcedBy: [
       gate('verify:arch'),
@@ -385,6 +393,8 @@ export const LAWS: readonly Law[] = [
       test(T.shared('forbiddenPatternWitness')),
       test(T.shared('commentBlindLedger')),
       test(T.main('shellOpenCallSites')),
+      test(T.shared('ontologyLaws')),
+      test(T.shared('mutateChangedTool')),
     ],
   },
   {
@@ -1473,10 +1483,42 @@ export interface LawLedgerProblem {
 export interface LawLedgerFacts {
   /** package.json の scripts の名前。 */
   readonly scripts: ReadonlySet<string>;
+  /** package.json の scripts の本文 (名前 → 命令)。無ければ undefined。 */
+  readonly scriptBody: (name: string) => string | undefined;
   /** verify:all に並ぶ script の名前。 */
   readonly verifyAll: ReadonlySet<string>;
   /** リポジトリ相対パスが実在するか。 */
   readonly exists: (repoRelative: string) => boolean;
+}
+
+/**
+ * npm script を `&&` の命令ごとに分ける。**npm は `--` のあとの引数を末尾の命令に足す** ——
+ * だから引数を取る道具は、末尾の命令が本体でなければ引数を自己検査へ流して捨てる。
+ */
+export function scriptSegments(body: string): string[] {
+  return body
+    .split('&&')
+    .map((s) => s.trim())
+    .filter((s) => s !== '');
+}
+
+/** その命令は道具の本体を走らせるか (自己検査だけの命令ではない)。 */
+export function segmentRunsTheTool(segment: string): boolean {
+  return !/(^|\s)--self-test(\s|$)/.test(segment);
+}
+
+/**
+ * **実機の名前が在ることと、実機が走ることは別である** (2026-09-27 · パス 490)。
+ *
+ * `harness('audit:survivors')` はパス 356 から法則 `measure-before-claim` の執行者に並んでいたが、
+ * その script は `node scripts/verify-survivors.cjs --self-test` **だけ**で、本体は `--self-test` を
+ * 見ると自己検査を返して終わる —— 文書の呼び方 `npm run audit:survivors -- <file>` は、
+ * 報告が 1 つも無い木でも 0.4 秒で「✅ self-test 全件一致」exit 0 だった。この台帳は
+ * 「script の名前が package.json に在るか」しか問わなかったので、**名前 (言及) を実機 (宣言) として
+ * 数えていた**。本体へ届く命令が 1 つも無い実機は、実機ではない。
+ */
+export function scriptReachesTheTool(body: string): boolean {
+  return scriptSegments(body).some(segmentRunsTheTool);
 }
 
 /**
@@ -1499,9 +1541,15 @@ export function validateLawLedger(laws: readonly Law[], facts: LawLedgerFacts): 
           if (!facts.scripts.has(e.script)) out.push({ law: law.id, problem: `ゲート ${e.script} が package.json に無い` });
           else if (!facts.verifyAll.has(e.script)) out.push({ law: law.id, problem: `ゲート ${e.script} が verify:all に並んでいない` });
           break;
-        case 'harness':
-          if (!facts.scripts.has(e.script)) out.push({ law: law.id, problem: `実機 ${e.script} が package.json に無い` });
+        case 'harness': {
+          const body = facts.scriptBody(e.script);
+          if (!facts.scripts.has(e.script) || body === undefined) {
+            out.push({ law: law.id, problem: `実機 ${e.script} が package.json に無い` });
+          } else if (!scriptReachesTheTool(body)) {
+            out.push({ law: law.id, problem: `実機 ${e.script} は自己検査しか走らせない (本体へ届く命令が無い)` });
+          }
           break;
+        }
         case 'test':
           if (!e.file.endsWith('.test.ts')) out.push({ law: law.id, problem: `検査の名前が .test.ts でない: ${e.file}` });
           else if (!facts.exists(e.file)) out.push({ law: law.id, problem: `検査が実在しない: ${e.file}` });

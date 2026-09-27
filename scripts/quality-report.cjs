@@ -342,8 +342,8 @@ npx stryker run --mutate src/shared/example.ts
 npm run mutate:triage
 npm run mutate:triage -- --file=src/main/clients/security.ts
 
-# 「生存」が本当に生存かを原文へ当て直して確かめる
-npm run audit:survivors
+# 「生存」が本当に生存かを原文へ当て直して確かめる (広いファイルは --top で絞る)
+npm run audit:survivors -- src/shared/example.ts --top=10
 
 # 被覆の HTML (この頁の被覆は src/main/** に絞っている)
 npx vitest run src/main --coverage --coverage.include=src/main/** --coverage.reporter=html

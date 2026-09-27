@@ -28,6 +28,7 @@ function facts(): LawLedgerFacts {
   const pkg = JSON.parse(readOriginalSource(join(REPO_ROOT, 'package.json'))) as { scripts: Record<string, string> };
   return {
     scripts: new Set(Object.keys(pkg.scripts)),
+    scriptBody: (name) => pkg.scripts[name],
     verifyAll: new Set(verifyAllGates()),
     exists,
   };
@@ -79,6 +80,28 @@ describe('法則の台帳は実物を指している', () => {
     expect(validateLawLedger([sample({})], f)).toEqual([]);
   });
 
+  it('★ 実機は名前が在るだけでは足りない —— 本体へ届く命令を持つ (パス 490)', () => {
+    // パス 356〜489 の `audit:survivors` の形そのもの: 自己検査しか走らせない
+    const selfTestOnly: LawLedgerFacts = {
+      ...f,
+      scripts: new Set([...f.scripts, 'audit:ghost']),
+      scriptBody: (name) => (name === 'audit:ghost' ? 'node scripts/verify-survivors.cjs --self-test' : f.scriptBody(name)),
+    };
+    const law = sample({ id: 'harness-self-test-only', enforcedBy: [{ kind: 'harness', script: 'audit:ghost' }] });
+    expect(validateLawLedger([law], selfTestOnly).map((p) => p.problem)).toEqual([
+      '実機 audit:ghost は自己検査しか走らせない (本体へ届く命令が無い)',
+    ]);
+    // 自己検査のあとに本体が続けば実機である (直した後の形)
+    const reaches: LawLedgerFacts = {
+      ...selfTestOnly,
+      scriptBody: (name) =>
+        name === 'audit:ghost' ? 'node scripts/verify-survivors.cjs --self-test && node scripts/verify-survivors.cjs' : f.scriptBody(name),
+    };
+    expect(validateLawLedger([law], reaches)).toEqual([]);
+    // 実物: 台帳が名指す実機はどれも本体へ届く (上の「実物を指している」の 1 面を名指しで留める)
+    expect(f.scriptBody('audit:survivors')).toMatch(/--self-test && node scripts\/verify-survivors\.cjs$/);
+  });
+
   it('機械の無い法則は、この台帳の分だけ (双方向)', () => {
     /*
      * 増やすときは理由 (`prose.why`) を書き、ここへ足す。減らすとき (機械を付けたとき) は
@@ -91,6 +114,9 @@ describe('法則の台帳は実物を指している', () => {
     // `measure-before-claim` は 2026-09-20 (パス 356) にここから外れた ——
     // 変異検査の報告の「生存」を 1 件ずつ原文へ当てて確かめる `npm run audit:survivors`
     // (と、その純粋な部分を留める `verifySurvivors.test.ts`) が付いたため。
+    // ★ パス 490 で訂正: その `npm run audit:survivors` は 2026-09-27 まで**自己検査しか走らせず**、
+    // 本体へ 1 度も届いていなかった (外れた根拠のうち実在したのは `verifySurvivors.test.ts` の側)。
+    // 今は台帳が「実機は本体へ届く命令を持つ」を問うので、同じ形は上の検査で鳴る。
     // 覆うのは「道具の報告を信じる前に測る」1 面だけだが、**機械が 1 つでも在れば
     // 「機械の無い法則」ではない**ので、ここには載せない。
     const PROSE_ONLY = [

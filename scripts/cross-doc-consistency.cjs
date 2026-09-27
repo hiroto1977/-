@@ -206,9 +206,17 @@ function canonicalStrykerThresholds() {
  * 2026-08 の書き換えより前の対象を名乗り続けていた (実物は `src/**` で、しかも変わったファイルだけを測る)。
  * 同じパスで分かったとおり、「いつ測られるか」の読み違いは「赤はいつ出るか」の読み違いになる
  * (パス 479 の「測定は週次だけ・赤は 6 日後」は、この push の測定を見落としていた)。
+ *
+ * **読めない形は `null` を返し、`null` は FACTS の側で「計算できない」として落ちる** ——
+ * `push:` の下に `paths:` が無い (= どの push でも走る)・`pull_request` の `paths`・
+ * `paths-ignore` を、ここは読み違えて「空の集合」として返さない (self-test が標本で留める)。
+ *
+ * @param textOverride self-test の差し込み口。`undefined` なら実ファイルを読む
+ *   (`null` は「読めなかった」を表す —— 他の差し込み口と同じ約束)。
  */
-function canonicalMutationPushPaths() {
-  const src = read(path.join(REPO_ROOT, '.github', 'workflows', 'mutation.yml'));
+function canonicalMutationPushPaths(textOverride) {
+  const src =
+    textOverride !== undefined ? textOverride : read(path.join(REPO_ROOT, '.github', 'workflows', 'mutation.yml'));
   if (src == null) return null;
   const m = /\n\s*push:\s*\n(?:\s+branches:[^\n]*\n)?\s+paths:\s*\n((?:[ \t]+-[ \t]*[^\n]+\n)+)/.exec(src);
   if (m == null) return null;
@@ -1814,6 +1822,33 @@ function selfTest() {
       const ok = f.length === expected;
       if (!ok) bad++;
       console.log(`  ${ok ? '✓' : '✗'} 発信先の台帳: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
+  /*
+   * `mutation.yml` の push の対象パスを読む (2026-09-27 · パス 490)。
+   * 1 件目は実物の形 —— CLAUDE.md の主張と突き合わせる正典がここから来る。
+   * ★ の 3 件は「読み違えて空の集合を返す」形で、どれも `null` (= 計算できない = 落ちる) で
+   * なければならない。空の集合を返すと、主張の側も空なら一致して黙る。
+   */
+  {
+    for (const [label, text, expected] of [
+      [
+        '実物の形 (branches つき・単引用符)',
+        "on:\n  push:\n    branches: [main]\n    paths:\n      - 'src/**'\n      - 'stryker.config.json'\n\npermissions:\n  contents: read\n",
+        'src/** / stryker.config.json',
+      ],
+      ['branches が無く二重引用符・順序は並べ替える', 'on:\n  push:\n    paths:\n      - "vitest.config.ts"\n      - "src/**"\n', 'src/** / vitest.config.ts'],
+      ['paths が branches より前でも読む', "on:\n  push:\n    paths:\n      - 'src/**'\n    branches: [main]\n", 'src/**'],
+      ["★ push に paths が無ければ null (どの push でも走る —— 空の集合ではない)", "on:\n  push:\n    branches: [main]\n  schedule:\n    - cron: '0 18 * * 0'\n", null],
+      ["★ pull_request の paths を push の物として読まない", "on:\n  push:\n    branches: [main]\n  pull_request:\n    paths:\n      - 'src/**'\n", null],
+      ["★ paths-ignore を paths として読まない", "on:\n  push:\n    paths-ignore:\n      - 'docs/**'\n", null],
+      ['読めなければ null', null, null],
+    ]) {
+      const got = canonicalMutationPushPaths(text);
+      const ok = got === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} mutation.yml の push の対象: ${label}: ${JSON.stringify(got)} (期待 ${JSON.stringify(expected)})`);
     }
   }
 
