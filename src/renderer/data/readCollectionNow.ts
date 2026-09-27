@@ -66,3 +66,17 @@ export async function readRecordsNow<T extends Record<string, unknown>>(
 export function unreadableForJudgementNote(what: string, unchecked = '既に同じ記録が在るか'): string {
   return `${what}を読めなかったため、処理を中止しました（${unchecked}を確かめられません）。画面を開き直してから、もう一度お試しください。`;
 }
+
+/**
+ * **編集の相手が保管層に無かった**ときの断り (2026-09-27 · パス 498)。
+ *
+ * `useCollection` の `edit` は、相手の行が無ければ何も書かずに `false` を返す。画面はそれを
+ * 黙って「保存した」形にしてはいけない —— 直す前は編集の欄を空にし、読み直した一覧から行も
+ * 消えたので、**打ち込んだ値は痕跡なく失われた** (別のタブで消された行を編集して保存した場合)。
+ *
+ * `what` は主語 (「編集していた銘柄」)、`then` は画面ごとの次の一手 (入力を残したか・一覧を
+ * 読み直したか)。**消された行を黙って作り直さない** —— 足すかどうかは利用者が決める。
+ */
+export function vanishedRecordNote(what: string, then: string): string {
+  return `${what}は既に一覧にありません（別の画面で削除された可能性があります）。${then}`;
+}

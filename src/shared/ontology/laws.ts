@@ -906,6 +906,29 @@ export const LAWS: readonly Law[] = [
     ],
   },
   {
+    id: 'write-answers-whether-it-landed',
+    family: 'at-rest',
+    name: '書き込みは「書けたか」を答え、呼び手はその答えを読む',
+    statement:
+      '`store.update` は相手の行が無いとき**投げずに `null` を返す** —— 何も書いていない。2026-09-27 まで `useCollection` の `edit` は `Promise<void>` で'
+      + 'その `null` を捨てており、呼び手はどれも「書けた」前提で次へ進んだ。**別のタブで消された行**を編集して保存すると、何も書かないまま「済んだ」形になる —— '
+      + '直す前の実測: 投資信託・不動産・士業の連絡先は編集の欄が**空になり**、読み直した一覧から行も消えて打ち込んだ値は痕跡なく失われ、断りは 0 文。'
+      + '士業の相談の状態は選んだ状態ごと行が一覧から消えた。判定を保管層の読み直しへ寄せたパス 497 の後も、**読み直しと書き込みの間**の窓は残る'
+      + '(チームの役割・手入力の置き換え・数値パラメータ) —— そこを閉じるのは読み直しではなく**書き込みの答え**である。'
+      + '直しは `edit` が `Promise<boolean>` (`false` = 相手が無く何も書いていない) を返し、呼び手が答えで分かれること: 実体を編集する画面は断りを出して'
+      + '**入力を残し、消された行を黙って作り直さない** (足すかどうかは利用者が決めるので、足す口を名指しする)。「この欄に今の値を置く」書き込み'
+      + '(手入力の置き換え) は今保存した値を足し直す。最新 1 件を採用する記録 (数値パラメータ) は読み直して重ね直し —— 置換復元が入れた行が在れば'
+      + 'それに重ねて復元した他の値を残す —— 相手が消え続けても回り続けないよう**回数に上限**を置き、使い切ったら新しい行として書く。'
+      + '答えを捨てる形 (式文・`void`・待たない・値として渡す・読まない変数) は構文木の census が束縛で数える (別名 `{ edit: editHolding }` と丸ごと `col.edit` の両方)。',
+    provenance: ['パス 498', 'パス 497 (判定は保管層を読む)', 'パス 433 (点検パネルが古い一覧で消した —— 同じ「間の窓」の家系)'],
+    enforcedBy: [
+      test(T.renderer('editResultCensus')),
+      test('src/renderer/pages/__tests__/editVanishedRecord.test.ts'),
+      test('src/renderer/data/__tests__/parameterOverrides.test.ts'),
+      test('src/renderer/data/__tests__/useCollection.test.ts'),
+    ],
+  },
+  {
     id: 'size-gate-before-parse',
     family: 'at-rest',
     name: 'ディスクから読む所は読む前に大きさの門',

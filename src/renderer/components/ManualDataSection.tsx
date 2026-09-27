@@ -175,7 +175,12 @@ export function ManualDataSection({ scope }: { scope: string }) {
                   await overrides.add({ scope, path, value } as ManualOverrideEntry);
                   return null;
                 }
-                await overrides.edit(plan.id, { value });
+                // 読み直してから書くまでの間に、その行が別のタブで消された (「自動に戻す」など) ときは
+                // `edit` が false を返す (パス 498)。利用者が今打った値をこの欄に置くのが保存の意味なので、
+                // 足し直す —— 作り直すのは消された古い値ではなく、今保存した値である。
+                if (!(await overrides.edit(plan.id, { value }))) {
+                  await overrides.add({ scope, path, value } as ManualOverrideEntry);
+                }
                 for (const id of plan.removeIds) await overrides.remove(id);
                 return null;
               }}

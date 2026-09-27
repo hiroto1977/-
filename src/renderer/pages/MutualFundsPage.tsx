@@ -14,6 +14,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
   HOLDINGS_COLLECTION,
@@ -213,8 +214,13 @@ export function MutualFundsPage() {
       const parsed = parseHoldingEntry(fundForm);
       setFundError(undefined);
       if (editingFundId !== null) {
-        await editHolding(editingFundId, parsed);
+        const saved = await editHolding(editingFundId, parsed);
         setEditingFundId(null);
+        if (!saved) {
+          // 編集の相手が消えていた (別のタブで削除) —— 入力は残し、消された行を黙って作り直さない (パス 498)。
+          setFundError(vanishedRecordNote('編集していた銘柄', '入力は残してあります。新しい銘柄として保存するなら「＋ 銘柄を追加」を押してください。'));
+          return;
+        }
       } else {
         await addHolding(parsed);
       }

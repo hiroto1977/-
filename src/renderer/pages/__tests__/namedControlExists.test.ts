@@ -113,6 +113,29 @@ const LEDGER: readonly Row[] = [
       + '更新トークンつきの TokenSet を書く。**別の画面**なので、下の ★ は綴りだけでなく'
       + '「その部品を載せている画面が在るか」も見る。',
   },
+  {
+    name: '＋ 銘柄を追加',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/MutualFundsPage.tsx',
+    why:
+      '編集していた銘柄が別のタブで消されていたときの断り (2026-09-27 · パス 498)。入力は残し、'
+      + '消された行を黙って作り直さない —— 足すかどうかは利用者が決めるので、足す口を名指しする。'
+      + '断りを出すと編集の相手は外れる (`setEditingFundId(null)`) ので、同じボタンの label はこの綴りに変わっている。',
+  },
+  {
+    name: '＋ 物件を追加',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/RealEstatePage.tsx',
+    why: '上の銘柄と同じ断りの不動産版 (パス 498)。編集の相手を外すので、同じボタンの label はこの綴りに変わっている。',
+  },
+  {
+    name: '＋ ${label}を追加',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/components/ShigyoConsole.tsx',
+    why:
+      '士業の連絡先の版 (パス 498)。断りの文とボタンの label が**同じ補間** (`label` = その画面の士業の名前 —— 部品の prop) を持つので、'
+      + '綴りの一致を補間ごと確かめられる (描画元のファイルに `＋ ${label}を追加` が在ること)。',
+  },
   { name: 'KPI / BEP', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
   {
     name: 'Ollama',

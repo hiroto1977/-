@@ -67,7 +67,16 @@ export interface UseCollection<T extends Record<string, unknown>> {
   add: (data: T) => Promise<void>;
   /** Atomic bulk insert (all rows commit together or none). For CSV import. */
   addMany: (rows: readonly T[]) => Promise<void>;
-  edit: (id: string, patch: Partial<T>) => Promise<void>;
+  /**
+   * 1 件を書き換える。**相手の行が保管層に無ければ `false`** (何も書いていない)。
+   *
+   * `store.update` は行が無いとき投げずに `null` を返す。2026-09-27 (パス 498) まではここが
+   * `Promise<void>` でその `null` を捨てており、**別のタブで消された行を編集した保存**は
+   * 何も書かないまま「済んだ」形になった —— 呼び手は編集の欄を空にし、読み直した一覧から行も
+   * 消えるので、打ち込んだ値は痕跡なく失われた。呼び手はこの答えを必ず読む
+   * (`renderer/__tests__/editResultCensus.test.ts` が構文木で数える)。
+   */
+  edit: (id: string, patch: Partial<T>) => Promise<boolean>;
   remove: (id: string) => Promise<void>;
   reload: () => Promise<void>;
 }
@@ -165,9 +174,10 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   );
 
   const edit = useCallback(
-    async (id: string, patch: Partial<T>) => {
-      await reporting('save', collection, () => getRecordStore().update<T>(id, patch));
+    async (id: string, patch: Partial<T>): Promise<boolean> => {
+      const updated = await reporting('save', collection, () => getRecordStore().update<T>(id, patch));
       await reload();
+      return updated !== null;
     },
     [collection, reload],
   );

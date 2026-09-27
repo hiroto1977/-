@@ -10,7 +10,7 @@ import {
   _resetCollectionSubscribersForTests,
   type UseCollection,
 } from '../useCollection';
-import { _resetRecordStoreForTests } from '../store';
+import { _resetRecordStoreForTests, getRecordStore } from '../store';
 
 // React 18 の act() が警告を出さないようにする。
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -68,7 +68,7 @@ function setup(initial: string) {
         });
       }
     },
-    async run(fn: () => Promise<void>) {
+    async run(fn: () => Promise<unknown>) {
       await act(async () => {
         await fn();
       });
@@ -128,6 +128,43 @@ describe('useCollection', () => {
     const target = h.ref.current.records.find((r) => r.data.name === 'B')!;
     await h.run(() => h.ref.current.edit(target.id, { name: 'B2' }));
     expect(h.ref.current.records.find((r) => r.id === target.id)!.data.name).toBe('B2');
+    h.unmount();
+  });
+
+  /**
+   * **`edit` は書けたかを答える** (2026-09-27 · パス 498)。`store.update` は相手の行が無ければ投げずに
+   * `null` を返す —— 直す前の `edit` はそれを捨てて `Promise<void>` を返し、別のタブで消された行を
+   * 編集した保存は**何も書かないまま済んだ形**になった。無いときも一覧は読み直す (消えた行を画面から落とす)。
+   */
+  it('edit は相手の行が在れば true、無ければ何も書かずに false を返し、どちらも一覧を読み直す (パス 498)', async () => {
+    const h = setup('sales');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'A' }));
+    const id = h.ref.current.records[0]!.id;
+    let answer: boolean | undefined;
+    await h.run(async () => {
+      answer = await h.ref.current.edit(id, { name: 'A2' });
+    });
+    expect(answer).toBe(true);
+    expect(h.ref.current.records.map((r) => r.data.name)).toEqual(['A2']);
+
+    // 実在しない id —— 何も書かない (行を作り直さない)。
+    await h.run(async () => {
+      answer = await h.ref.current.edit('no-such-id', { name: 'ghost' });
+    });
+    expect(answer).toBe(false);
+    expect(h.ref.current.records.map((r) => r.data.name)).toEqual(['A2']);
+
+    // 別のタブで消された行: 購読を外してから保管層で消すと、この画面の写しは消えたことを知らない。
+    _resetCollectionSubscribersForTests();
+    await getRecordStore().remove(id);
+    expect(h.ref.current.records, '前提: 写しはまだ消えたことを知らない').toHaveLength(1);
+    await h.run(async () => {
+      answer = await h.ref.current.edit(id, { name: 'A3' });
+    });
+    expect(answer).toBe(false);
+    expect(await getRecordStore().list('sales'), '消えた行を作り直していない').toEqual([]);
+    expect(h.ref.current.records, '答えが false でも一覧は読み直す').toEqual([]);
     h.unmount();
   });
 
@@ -195,7 +232,6 @@ describe('useCollection', () => {
   it('auto-loads on mount without a manual reload (mount effect body)', async () => {
     // 事前に store へ直接投入し、effect の自動 reload だけで反映されることを確認する。
     // effect 本体を {} に潰す変異だと loading が落ちず records も空のまま → 撃墜。
-    const { getRecordStore } = await import('../store');
     await getRecordStore().insert('auto', { name: 'seed' });
     const h = setup('auto');
     await h.render();
@@ -206,7 +242,6 @@ describe('useCollection', () => {
   });
 
   it('auto-reloads when the collection prop changes, without a manual reload (effect deps)', async () => {
-    const { getRecordStore } = await import('../store');
     await getRecordStore().insert('aa', { name: 'a-seed' });
     await getRecordStore().insert('bb', { name: 'b-seed' });
     const h = setup('aa');

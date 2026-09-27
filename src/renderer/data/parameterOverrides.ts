@@ -47,6 +47,12 @@ export interface UseParameters {
 
 const noop = (): void => {};
 
+/**
+ * 上書きの 1 レコードを書き換える試みの回数 (パス 498)。1 度目で相手が消えていても、
+ * 2 度目は読み直した最新 (置換復元が入れた行) に重ねる。それでも消えていれば新しい行として書く。
+ */
+export const MAX_WRITE_ATTEMPTS = 2;
+
 export function useParameters(): UseParameters {
   const col = useCollection<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION);
   const overrides = useMemo(() => overridesFromRecords(col.records), [col.records]);
@@ -66,18 +72,33 @@ export function useParameters(): UseParameters {
   const mutate = (change: (current: Record<string, number>) => Record<string, number>): Promise<void> => {
     const run = async () => {
       const store = getRecordStore();
-      // 読みも報せる (パス 493o) —— ここだけが保管層を直に読むので、`useCollection` の
-      // 入口を通らない。通さないと、読めなかった保存は画面に 1 文も出ずに消えた
-      // (設定画面の行は失敗を受け止めて黙るので、報せが無いと何も起きないように見える)。
-      const latest = latestRecord(
-        await reporting('save', PARAMETER_OVERRIDES_COLLECTION, () =>
-          store.list<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION),
-        ),
-      );
-      const current = sanitizeParameterOverrides(latest?.data.values) as Record<string, number>;
-      const next = change({ ...current });
-      if (latest) await col.edit(latest.id, { values: next });
-      else await col.add({ values: next });
+      /**
+       * **読んでから書くまでの間に、相手の行が消えることが在る** (2026-09-27 · パス 498)。
+       *
+       * 別のタブのバックアップの置換復元・「すべてのデータを削除」・点検パネルの削除がそれで、
+       * `col.edit` はそのとき何も書かずに `false` を返す。直す前はその答えを捨てており、
+       * **利用者が保存した値は保管層のどこにも入らないまま**「保存した」形になった
+       * (行の印も上書きの件数も変わらず、押せていないのと見分けが付かない)。
+       *
+       * 読み直して重ね直す —— 置換復元が入れた新しい行が在ればそれに (復元した他の値を残す)、
+       * 無ければ新しい行として。**回数に上限を置くのは、相手が消え続けても回り続けないため**で、
+       * 使い切ったら新しい行として書く (最新 1 件を読むので、利用者が今保存した値が効く)。
+       */
+      let next: Record<string, number> = {};
+      for (let attempt = 0; attempt < MAX_WRITE_ATTEMPTS; attempt += 1) {
+        // 読みも報せる (パス 493o) —— ここだけが保管層を直に読むので、`useCollection` の
+        // 入口を通らない。通さないと、読めなかった保存は画面に 1 文も出ずに消えた
+        // (設定画面の行は失敗を受け止めて黙るので、報せが無いと何も起きないように見える)。
+        const latest = latestRecord(
+          await reporting('save', PARAMETER_OVERRIDES_COLLECTION, () =>
+            store.list<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION),
+          ),
+        );
+        next = change({ ...(sanitizeParameterOverrides(latest?.data.values) as Record<string, number>) });
+        if (!latest) break;
+        if (await col.edit(latest.id, { values: next })) return;
+      }
+      await col.add({ values: next });
     };
     const p = queue.current.then(run, run);
     queue.current = p.then(noop, noop);

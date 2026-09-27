@@ -6,10 +6,11 @@
  * 壊れた保存は捨てる・通らない値は書かない。
  */
 import 'fake-indexeddb/auto';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import {
+  MAX_WRITE_ATTEMPTS,
   PARAMETER_OVERRIDES_COLLECTION,
   overridesFromRecords,
   useParameters,
@@ -105,6 +106,7 @@ describe('useParameters (hook)', () => {
   });
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     if (root) {
       await act(async () => {
         root!.unmount();
@@ -218,6 +220,73 @@ describe('useParameters (hook)', () => {
       'hydroponics.daysPerYear': 300,
       'payroll.commutePublicTransportCap': 200_000,
     });
+  });
+
+  /**
+   * **読んでから書くまでの間に、相手の行が入れ替わる** (2026-09-27 · パス 498)。別のタブのバックアップの
+   * 置換復元がちょうど間に入った形 —— 読んだ行は消え、控えの行が新しく入る。直す前は `edit` の `null` を
+   * 捨てており、**利用者が保存した値は保管層のどこにも入らなかった** (復元した行はそのまま・画面は保存済みの形)。
+   */
+  it('★ 書く直前に相手の行が入れ替わっても、読み直した行に重ねる (復元した他の値も残る)', async () => {
+    const store = getRecordStore();
+    await store.insert(PARAMETER_OVERRIDES_COLLECTION, { values: { 'hydroponics.daysPerYear': 250 } });
+    await mount();
+    const originalUpdate = store.update.bind(store);
+    let fired = false;
+    const update = vi.spyOn(store, 'update').mockImplementation((async (id: string, patch: Record<string, unknown>) => {
+      if (!fired) {
+        fired = true;
+        await store.remove(id);
+        await store.insert(PARAMETER_OVERRIDES_COLLECTION, { values: { 'payroll.commutePublicTransportCap': 150_000 } });
+      }
+      return originalUpdate(id, patch);
+    }) as typeof store.update);
+    await act(async () => {
+      await ref.current.set('hydroponics.daysPerYear', 300);
+    });
+    expect(await stored()).toEqual([
+      { values: { 'payroll.commutePublicTransportCap': 150_000, 'hydroponics.daysPerYear': 300 } },
+    ]);
+    // 1 度目は消えた行に当たり、2 度目は入れ替わった行を書き換えた。新しい行は足していない。
+    expect(update).toHaveBeenCalledTimes(2);
+    await settleUntil(() => ref.current.values['hydroponics.daysPerYear'] === 300, '画面の有効値が 300 になる');
+  });
+
+  it('★ 書く直前に相手の行が消え、入れ替わりも無ければ、新しい行として書く', async () => {
+    const store = getRecordStore();
+    await store.insert(PARAMETER_OVERRIDES_COLLECTION, { values: { 'hydroponics.daysPerYear': 250 } });
+    await mount();
+    const originalUpdate = store.update.bind(store);
+    let fired = false;
+    vi.spyOn(store, 'update').mockImplementation((async (id: string, patch: Record<string, unknown>) => {
+      if (!fired) {
+        fired = true;
+        await store.remove(id);
+      }
+      return originalUpdate(id, patch);
+    }) as typeof store.update);
+    await act(async () => {
+      await ref.current.set('payroll.commutePublicTransportCap', 200_000);
+    });
+    // 消えた行の値 (250) は作り直さない —— 重ねる相手が無いので、今保存した値だけの新しい行になる。
+    expect(await stored()).toEqual([{ values: { 'payroll.commutePublicTransportCap': 200_000 } }]);
+  });
+
+  it('★ 書くたびに相手が消え続けても回り続けず、上限の回数で新しい行として書く', async () => {
+    const store = getRecordStore();
+    await store.insert(PARAMETER_OVERRIDES_COLLECTION, { values: { 'hydroponics.daysPerYear': 250 } });
+    await mount();
+    // 何も書かずに「相手が無い」と答え続ける (消え続ける相手の最悪の形)。
+    const update = vi.spyOn(store, 'update').mockResolvedValue(null);
+    await act(async () => {
+      await ref.current.set('hydroponics.daysPerYear', 300);
+    });
+    expect(update).toHaveBeenCalledTimes(MAX_WRITE_ATTEMPTS);
+    const rows = await stored();
+    expect(rows).toHaveLength(2);
+    // 今保存した値は新しい行に入る (最新 1 件を読むので、これが効く)。元の行は書き換わっていない。
+    expect(rows).toContainEqual({ values: { 'hydroponics.daysPerYear': 300 } });
+    expect(rows).toContainEqual({ values: { 'hydroponics.daysPerYear': 250 } });
   });
 
   it('台帳の全 id を set → reset できる (id と引数の対応が崩れていない)', async () => {

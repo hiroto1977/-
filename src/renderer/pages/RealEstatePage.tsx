@@ -12,6 +12,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
   PROPERTIES_COLLECTION,
@@ -431,8 +432,13 @@ export function RealEstatePage() {
       const parsed = parsePropertyEntry(propForm);
       setPropError(undefined);
       if (editingPropId !== null) {
-        await editProperty(editingPropId, parsed);
+        const saved = await editProperty(editingPropId, parsed);
         setEditingPropId(null);
+        if (!saved) {
+          // 編集の相手が消えていた (別のタブで削除) —— 入力は残し、消された行を黙って作り直さない (パス 498)。
+          setPropError(vanishedRecordNote('編集していた物件', '入力は残してあります。新しい物件として保存するなら「＋ 物件を追加」を押してください。'));
+          return;
+        }
       } else {
         await addProperty(parsed);
       }

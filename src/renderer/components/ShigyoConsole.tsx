@@ -6,6 +6,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
@@ -154,8 +155,13 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
       const parsed = parseShigyoContact({ serviceId, ...contactForm });
       setContactError(undefined);
       if (editingContactId !== null) {
-        await contactsCol.edit(editingContactId, parsed);
+        const saved = await contactsCol.edit(editingContactId, parsed);
         setEditingContactId(null);
+        if (!saved) {
+          // 編集の相手が消えていた (別のタブで削除) —— 入力は残し、消された行を黙って作り直さない (パス 498)。
+          setContactError(vanishedRecordNote('編集していた連絡先', `入力は残してあります。新しい連絡先として保存するなら「＋ ${label}を追加」を押してください。`));
+          return;
+        }
       } else {
         await contactsCol.add(parsed);
       }
@@ -163,6 +169,16 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     } catch (e) {
       setContactError(e instanceof Error ? e.message : '入力エラー');
     }
+  }
+
+  /**
+   * 相談の状態を書き換える。相手が消えていれば (別のタブで削除) 黙らずに言う (パス 498) ——
+   * `edit` は一覧を読み直すので、その行は選んだ瞬間に一覧から消える。理由が無いと、
+   * 選んだ状態ごと行が消えたようにしか見えない。
+   */
+  async function onChangeConsultationStatus(rowId: string, status: ShigyoConsultationStatus) {
+    const saved = await consultationsCol.edit(rowId, { status });
+    if (!saved) setConsultError(vanishedRecordNote('この相談', '一覧を読み直しました。'));
   }
 
   function onStartEditContact(rowId: string, c: ShigyoContactEntry) {
@@ -538,7 +554,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                       <select
                         value={c.status}
                         aria-label="相談ステータスを変更"
-                        onChange={(e) => fireReported(consultationsCol.edit(c.rowId, { status: e.target.value as ShigyoConsultationStatus }))}
+                        onChange={(e) => fireReported(onChangeConsultationStatus(c.rowId, e.target.value as ShigyoConsultationStatus))}
                         style={{ ...inputStyle, width: 110, color: STATUS_COLOR[c.status] ?? 'var(--text)', fontWeight: 600 }}
                       >
                         {CONSULTATION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { readRecordsNow, unreadableForJudgementNote } from '../data/readCollectionNow';
+import { readRecordsNow, unreadableForJudgementNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import { usePlan } from '../plan/usePlan';
 import { getPlan, hasFeature, requiredPlanForFeature, PLANS } from '../../shared/plan';
@@ -225,7 +225,7 @@ export function TeamPage() {
     }
     const target = stored.find((r) => r.id === id);
     if (target === undefined) {
-      setError('このメンバーは既に一覧にありません（別の画面で削除された可能性があります）。一覧を読み直しました。');
+      setError(vanishedRecordNote('このメンバー', '一覧を読み直しました。'));
       await reload();
       return null;
     }
@@ -243,7 +243,8 @@ export function TeamPage() {
       return;
     }
     setError(undefined);
-    await edit(id, { role });
+    // 読み直してから書くまでの間に別のタブで消された (パス 498) —— `edit` は何も書かずに false を返す。
+    if (!(await edit(id, { role }))) setError(vanishedRecordNote('このメンバー', '一覧を読み直しました。'));
   }
 
   async function onRemove(id: string) {
