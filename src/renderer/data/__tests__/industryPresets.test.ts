@@ -22,13 +22,9 @@ describe('INDUSTRY_PRESETS', () => {
 
   it('every preset passes parseHighlightSettings validation', () => {
     for (const p of INDUSTRY_PRESETS) {
-      // round-trips through the same validator the UI uses
-      const parsed = parseHighlightSettings({
-        declineWarnStreak: p.thresholds.declineWarnStreak,
-        declineCriticalStreak: p.thresholds.declineCriticalStreak,
-        laborShareWarnPct: p.thresholds.laborShareWarnPct,
-        singleChannelWarnPct: p.thresholds.singleChannelWarnPct,
-      });
+      // round-trips through the same validator the UI uses.
+      // 欄を手で並べない (パス 493c) —— 並べると 5 つ目の欄が検証を通らないまま既定と一致して黙る。
+      const parsed = parseHighlightSettings({ ...p.thresholds });
       expect(parsed).toEqual(p.thresholds);
     }
   });
@@ -45,6 +41,14 @@ describe('INDUSTRY_PRESETS', () => {
       expect(p.thresholds.laborShareWarnPct).toBeLessThanOrEqual(100);
       expect(p.thresholds.singleChannelWarnPct).toBeGreaterThanOrEqual(0);
       expect(p.thresholds.singleChannelWarnPct).toBeLessThanOrEqual(100);
+      expect(p.thresholds.budgetShortfallWarnPct).toBeGreaterThanOrEqual(0);
+      expect(p.thresholds.budgetShortfallWarnPct).toBeLessThanOrEqual(100);
+    }
+  });
+
+  it('★ 予算未達の許容幅は業種ではなく方針なので、どの業種も既定を持つ (パス 493c)', () => {
+    for (const p of INDUSTRY_PRESETS) {
+      expect(p.thresholds.budgetShortfallWarnPct, p.id).toBe(DEFAULT_HIGHLIGHT_THRESHOLDS.budgetShortfallWarnPct);
     }
   });
 });

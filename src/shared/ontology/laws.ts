@@ -1252,9 +1252,20 @@ export const LAWS: readonly Law[] = [
     id: 'parameters-ledgered-and-wired',
     family: 'numbers',
     name: '計算の定数は台帳に登録し、配線し、画面は同じ出所を刷る',
-    statement: '法定値・参考値・しきい値は parameters.ts の台帳。登録した値は必ず配線し「上書きすると画面が動く」を対照つきで留める。欄と欄の順序・等しくてはならない組も台帳。',
-    provenance: ['CLAUDE.md Conventions', 'パス 220', 'パス 221', 'パス 222'],
-    enforcedBy: [gate('lint:parameter-prose'), test(T.shared('parameters')), test(T.shared('parameterConsistency')), test(T.shared('parameterReachability'))],
+    statement:
+      '法定値・参考値・しきい値は parameters.ts の台帳。登録した値は必ず配線し「上書きすると画面が動く」を対照つきで留める。欄と欄の順序・等しくてはならない組も台帳。'
+      + '**利用者が調整できるしきい値の群 (経営ハイライト) も同じ** —— 鍵の母集団を既定値から導き、判定・検証・保存の形・画面の欄の'
+      + 'すべてに在ることを両方向で見る (2026-09-27 まで予算未達の 90 だけが兄弟 4 つの外の literal で、画面は欄を手で並べていた)。'
+      + '**語の定義はしきい値にしない** —— 「達成」は 100% で、調整できる欄にすると「達成率 96% で達成しています」と言える設定が生まれる。',
+    provenance: ['CLAUDE.md Conventions', 'パス 220', 'パス 221', 'パス 222', 'パス 493c'],
+    enforcedBy: [
+      gate('lint:parameter-prose'),
+      test(T.shared('parameters')),
+      test(T.shared('parameterConsistency')),
+      test(T.shared('parameterReachability')),
+      test('src/renderer/data/__tests__/highlightSettings.test.ts'),
+      test('src/renderer/pages/__tests__/highlightThresholdsOnScreen.test.ts'),
+    ],
   },
   {
     id: 'safety-limits-not-parameters',

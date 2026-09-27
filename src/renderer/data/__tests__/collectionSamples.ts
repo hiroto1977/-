@@ -182,9 +182,9 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     optional: [],
   },
   'highlight-settings': {
-    good: { declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60 },
+    good: { declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60, budgetShortfallWarnPct: 90 },
     required: [],
-    optional: ['declineWarnStreak', 'declineCriticalStreak', 'laborShareWarnPct', 'singleChannelWarnPct'],
+    optional: ['declineWarnStreak', 'declineCriticalStreak', 'laborShareWarnPct', 'singleChannelWarnPct', 'budgetShortfallWarnPct'],
   },
   'overview-overrides': { good: { path: 'a', value: 1, note: 'n' }, required: ['path', 'value'], optional: ['note'] },
   'overview-custom-metrics': {

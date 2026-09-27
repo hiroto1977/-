@@ -13,10 +13,11 @@ import {
 } from '../data/businessUnits';
 import {
   HIGHLIGHT_SETTINGS_COLLECTION,
+  HIGHLIGHT_THRESHOLD_FIELDS,
   parseHighlightSettings,
   type HighlightSettings,
 } from '../data/highlightSettings';
-import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
+import { DEFAULT_HIGHLIGHT_THRESHOLDS, type HighlightThresholds } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, droppedSalesRowsNote, duplicateOrdersOverviewNote, noSalesRecordsNote, type SalesEntry } from '../data/sales';
 import {
@@ -193,6 +194,11 @@ const settingsInput: React.CSSProperties = {
   color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 90,
 };
 
+/** しきい値 → 入力欄の文字列 (欄は `HIGHLIGHT_THRESHOLD_FIELDS` の順)。 */
+function toThresholdForm(t: HighlightThresholds): Record<keyof HighlightThresholds, string> {
+  return Object.fromEntries(HIGHLIGHT_THRESHOLD_FIELDS.map((f) => [f.key, String(t[f.key])])) as Record<keyof HighlightThresholds, string>;
+}
+
 /** 経営ハイライトのしきい値を編集・保存するパネル。 */
 function HighlightSettingsPanel({
   current,
@@ -201,12 +207,9 @@ function HighlightSettingsPanel({
   current: HighlightSettings | typeof DEFAULT_HIGHLIGHT_THRESHOLDS;
   onSave: (s: HighlightSettings) => Promise<void> | void;
 }) {
-  const [form, setForm] = useState({
-    declineWarnStreak: String(current.declineWarnStreak),
-    declineCriticalStreak: String(current.declineCriticalStreak),
-    laborShareWarnPct: String(current.laborShareWarnPct),
-    singleChannelWarnPct: String(current.singleChannelWarnPct),
-  });
+  // 欄は `HIGHLIGHT_THRESHOLD_FIELDS` から組む (パス 493c) —— 手で並べると、しきい値を
+  // 足した日に「判定は読むのに画面からは設定できない」欄ができる。
+  const [form, setForm] = useState(() => toThresholdForm(current));
   const [error, setError] = useState<string>();
   const [saved, setSaved] = useState(false);
   const submit = useSubmitGuard();
@@ -223,12 +226,13 @@ function HighlightSettingsPanel({
     }
   }
 
-  const field = (key: keyof typeof form, label: string) => (
-    <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+  const field = (key: keyof HighlightThresholds, label: string) => (
+    <label key={key} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
       {label}
       <input
         type="text"
         inputMode="numeric"
+        data-threshold={key}
         value={form[key]}
         onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); setSaved(false); }}
         style={settingsInput}
@@ -236,13 +240,8 @@ function HighlightSettingsPanel({
     </label>
   );
 
-  function applyPreset(t: { declineWarnStreak: number; declineCriticalStreak: number; laborShareWarnPct: number; singleChannelWarnPct: number }) {
-    setForm({
-      declineWarnStreak: String(t.declineWarnStreak),
-      declineCriticalStreak: String(t.declineCriticalStreak),
-      laborShareWarnPct: String(t.laborShareWarnPct),
-      singleChannelWarnPct: String(t.singleChannelWarnPct),
-    });
+  function applyPreset(t: HighlightThresholds) {
+    setForm(toThresholdForm(t));
     setSaved(false);
     setError(undefined);
   }
@@ -261,10 +260,7 @@ function HighlightSettingsPanel({
         ))}
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        {field('declineWarnStreak', '連続下落 警告(期)')}
-        {field('declineCriticalStreak', '連続下落 危険(期)')}
-        {field('laborShareWarnPct', '労働分配率 警告(%)')}
-        {field('singleChannelWarnPct', '単一チャネル依存(%)')}
+        {HIGHLIGHT_THRESHOLD_FIELDS.map((f) => field(f.key, f.label))}
         <button type="button" onClick={() => void submit.run(save)} disabled={submit.busy}>保存</button>
       </div>
       {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}

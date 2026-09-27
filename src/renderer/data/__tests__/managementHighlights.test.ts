@@ -4,7 +4,9 @@ import {
   summarizeHighlights,
   RISK_BAND_LABEL,
   DEFAULT_HIGHLIGHT_THRESHOLDS,
+  BUDGET_ACHIEVED_PCT,
   type Highlight,
+  type HighlightThresholds,
 } from '../managementHighlights';
 import { buildBusinessOverview, type BusinessOverview } from '../overview';
 import type { KpiActual } from '../kpiActuals';
@@ -60,7 +62,7 @@ describe('buildManagementHighlights — empty / structural', () => {
 
   it('exposes the default thresholds', () => {
     expect(DEFAULT_HIGHLIGHT_THRESHOLDS).toEqual({
-      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60,
+      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60, budgetShortfallWarnPct: 90,
     });
   });
 
@@ -196,6 +198,87 @@ describe('buildManagementHighlights — 予実 (budget variance)', () => {
   it('対照: 予算が未入力なら予実の所見は出ない', () => {
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], members: [] });
     expect(cat(buildManagementHighlights(o), '予実')).toBeUndefined();
+  });
+});
+
+/*
+ * **しきい値はどれも判定を実際に動かす** (2026-09-27 · パス 493c)。
+ *
+ * 予算未達の 90 は判定の中の生の literal で、同じ関数の兄弟 4 つだけが調整できた。
+ * 表 `WIRING` は `Record<keyof HighlightThresholds, …>` なので、**しきい値を足して
+ * ここに行を書かないと型検査が落ちる**。行ごとに「既定では出ない / 調整すると出る」
+ * (または逆) を同じ概況で見る —— 設定できるのに判定が読まない欄を作らない。
+ */
+const WIRING: Record<keyof HighlightThresholds, {
+  /** 既定のしきい値で見る概況。 */
+  readonly overview: BusinessOverview;
+  /** 調整する値 (既定と違う)。 */
+  readonly adjusted: number;
+  /** 動く所見のカテゴリ。 */
+  readonly category: string;
+}> = {
+  // 2 期の下落は既定 (警告 2) で出る。警告を 3 期へ上げると出ない。
+  declineWarnStreak: { overview: mkOv({ revStreak: { streak: 2 } }), adjusted: 3, category: '売上トレンド' },
+  // 3 期の下落は既定 (危険 3) で critical。危険を 4 期へ上げると warning に下がる。
+  declineCriticalStreak: { overview: mkOv({ revStreak: { streak: 3 } }), adjusted: 4, category: '売上トレンド' },
+  // 55% は既定 (60) では出ない。50 へ下げると出る。
+  laborShareWarnPct: { overview: mkOv({ labor: { laborSharePct: 55 } }), adjusted: 50, category: '生産性' },
+  // 1 チャネル 55% は既定 (60) では出ない。50 へ下げると出る。
+  singleChannelWarnPct: {
+    overview: mkOv({ concentration: { topChannel: 'amazon', topSharePct: 55 } }),
+    adjusted: 50,
+    category: '売上集中',
+  },
+  // 達成率 92% は既定 (90) では出ない。95 へ上げると「予算未達」が出る。
+  budgetShortfallWarnPct: { overview: mkOv({ budget: { revenue: { achievementPct: 92 } } }), adjusted: 95, category: '予実' },
+};
+
+describe('★ しきい値はどれも判定を実際に動かす (設定できるのに効かない欄を作らない)', () => {
+  it('表は既定のしきい値と同じ鍵を持つ (両方向 —— 型が落とすが、実行時にも見る)', () => {
+    expect(Object.keys(WIRING).sort()).toEqual(Object.keys(DEFAULT_HIGHLIGHT_THRESHOLDS).sort());
+  });
+
+  it.each(Object.keys(WIRING) as (keyof HighlightThresholds)[])('%s を動かすと所見が変わる', (key) => {
+    const w = WIRING[key];
+    expect(w.adjusted, '調整する値が既定と同じ —— 何も測らない').not.toBe(DEFAULT_HIGHLIGHT_THRESHOLDS[key]);
+    const before = buildManagementHighlights(w.overview).filter((h) => h.category === w.category);
+    const after = buildManagementHighlights(w.overview, { thresholds: { [key]: w.adjusted } }).filter(
+      (h) => h.category === w.category,
+    );
+    expect(after, `${key} を ${w.adjusted} にしても「${w.category}」の所見が変わらない`).not.toEqual(before);
+  });
+});
+
+describe('予算未達のしきい値 (パス 493c)', () => {
+  const at = (pct: number, thresholds?: Partial<HighlightThresholds>) =>
+    cat(buildManagementHighlights(mkOv({ budget: { revenue: { achievementPct: pct } } }), { thresholds }), '予実');
+
+  it('★ 既定 (90) では 92% は黙り、95 へ上げると「予算未達」を言う', () => {
+    expect(at(92)).toBeUndefined();
+    expect(at(92, { budgetShortfallWarnPct: 95 })).toMatchObject({
+      severity: 'warning',
+      message: '売上が予算未達です (達成率 92%)。',
+    });
+  });
+
+  it('★ 80 へ下げると 85% は黙る (対照: 既定では警告)', () => {
+    expect(at(85)).toMatchObject({ severity: 'warning' });
+    expect(at(85, { budgetShortfallWarnPct: 80 })).toBeUndefined();
+  });
+
+  it('境界はしきい値ちょうどで警告しない (未満だけ)', () => {
+    expect(at(95, { budgetShortfallWarnPct: 95 })).toBeUndefined();
+    expect(at(94.9, { budgetShortfallWarnPct: 95 })).toMatchObject({ severity: 'warning' });
+  });
+
+  it('★ 「達成」は 100 のまま —— しきい値を 100 にしても 100% は達成、99.9% は未達', () => {
+    expect(BUDGET_ACHIEVED_PCT).toBe(100);
+    expect(at(100, { budgetShortfallWarnPct: 100 })).toMatchObject({ severity: 'good', message: '売上予算を達成しています (達成率 100%)。' });
+    expect(at(99.9, { budgetShortfallWarnPct: 100 })).toMatchObject({ severity: 'warning' });
+  });
+
+  it('しきい値を下げても 100 未満を「達成」とは言わない', () => {
+    expect(at(99, { budgetShortfallWarnPct: 0 })).toBeUndefined();
   });
 });
 
@@ -639,12 +722,18 @@ describe('読み直して測る — リスク帯のラベルと既定しきい�
     });
   });
 
-  it('既定のしきい値は読み直しても 4 欄そろって同じ数', async () => {
+  it('既定のしきい値は読み直しても 5 欄そろって同じ数', async () => {
     vi.resetModules();
     const m = await import('../managementHighlights');
     expect(m.DEFAULT_HIGHLIGHT_THRESHOLDS).toEqual({
-      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60,
+      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60, budgetShortfallWarnPct: 90,
     });
+  });
+
+  it('「達成」の達成率は読み直しても 100 (語の定義 —— しきい値ではない)', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    expect(m.BUDGET_ACHIEVED_PCT).toBe(100);
   });
 
   it('深刻さの並び順は読み直しても critical → warning → good', async () => {

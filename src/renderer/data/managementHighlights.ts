@@ -72,6 +72,16 @@ export interface HighlightThresholds {
   readonly laborShareWarnPct: number;
   /** 単一チャネル依存の警告しきい値 % (既定 60)。computeRevenueConcentration と整合。 */
   readonly singleChannelWarnPct: number;
+  /**
+   * 売上の予算達成率がこれ**未満**なら「予算未達」を警告する % (既定 90)。
+   *
+   * 2026-09-27 (パス 493c) まで、この 90 は判定の中の生の literal で、同じ関数の兄弟 4 つ
+   * (連続下落 2 つ・労働分配率・単一チャネル依存) だけが画面から調整できた —— 同じ所見の
+   * 群の中で、予実だけが方針を持てなかった (2026-09-07 に記録して残した観察)。
+   * **天井は 100** —— 越えると達成率 102% に「売上が予算未達です」と言うことになる
+   * (その文は達成率が 100 未満のときにしか真にならない)。
+   */
+  readonly budgetShortfallWarnPct: number;
 }
 
 export const DEFAULT_HIGHLIGHT_THRESHOLDS: HighlightThresholds = {
@@ -79,7 +89,17 @@ export const DEFAULT_HIGHLIGHT_THRESHOLDS: HighlightThresholds = {
   declineCriticalStreak: 3,
   laborShareWarnPct: 60,
   singleChannelWarnPct: 60,
+  budgetShortfallWarnPct: 90,
 };
+
+/**
+ * 「売上予算を達成しています」と言える達成率 (%)。
+ *
+ * **しきい値ではなく語の定義である** —— 90 (未達の警告) は方針なので `HighlightThresholds`
+ * に置くが、こちらを下げると達成率 96% に「達成しています」と言い、上げても言える範囲が
+ * 狭まるだけで文は変わらない。調整できる欄にすると、偽の文を出せる設定が 1 つ増える。
+ */
+export const BUDGET_ACHIEVED_PCT = 100;
 
 /** buildManagementHighlights の任意オプション。 */
 export interface HighlightOptions {
@@ -192,12 +212,12 @@ export function buildManagementHighlights(
     const a = overview.budget.revenue.achievementPct;
     const scope = budgetScopeSentence(overview.budget.alignment);
     const tail = scope === null ? '' : ` ${scope}`;
-    // null ガードを巻き上げて単一化。a が null のとき内側 `a < 90` が 0<90=true となり
+    // null ガードを巻き上げて単一化。a が null のとき内側 `a < しきい値` が 0<90=true となり
     // 達成率0%扱いで未達警告が出てしまうため、外側 `!== null` を true 固定する変異は撃墜可能。
     if (a !== null) {
-      if (a < 90) {
+      if (a < th.budgetShortfallWarnPct) {
         out.push({ severity: 'warning', category: '予実', message: `売上が予算未達です (達成率 ${a}%)。${tail}` });
-      } else if (a >= 100) {
+      } else if (a >= BUDGET_ACHIEVED_PCT) {
         out.push({ severity: 'good', category: '予実', message: `売上予算を達成しています (達成率 ${a}%)。${tail}` });
       }
     }

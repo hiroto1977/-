@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { parseHighlightSettings, HIGHLIGHT_SETTINGS_COLLECTION } from '../highlightSettings';
+import { parseHighlightSettings, HIGHLIGHT_SETTINGS_COLLECTION, HIGHLIGHT_THRESHOLD_FIELDS } from '../highlightSettings';
 import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../managementHighlights';
+import { COLLECTION_SHAPES } from '../collectionShapes';
 
 describe('parseHighlightSettings — keys, boundaries & labels', () => {
   it('exposes the highlight-settings collection key', () => {
@@ -27,6 +28,60 @@ describe('parseHighlightSettings — keys, boundaries & labels', () => {
     expect(() => parseHighlightSettings({ declineCriticalStreak: 0 })).toThrow('連続下落(危険)期数は 1 以上の整数で入力してください');
     expect(() => parseHighlightSettings({ laborShareWarnPct: -1 })).toThrow('労働分配率の警告しきい値は 0〜100 の数値で入力してください');
     expect(() => parseHighlightSettings({ singleChannelWarnPct: 200 })).toThrow('単一チャネル依存の警告しきい値は 0〜100 の数値で入力してください');
+    expect(() => parseHighlightSettings({ budgetShortfallWarnPct: 101 })).toThrow('予算未達の警告しきい値は 0〜100 の数値で入力してください');
+  });
+});
+
+/*
+ * **しきい値はどれも保存でき、画面から設定できる** (2026-09-27 · パス 493c)。
+ * 予算未達の 90 は判定の中の生の literal で、設定の型にも保存の形にも画面の欄にも居なかった。
+ * 鍵の母集団は `DEFAULT_HIGHLIGHT_THRESHOLDS` から導く —— 手で並べると 6 つ目で黙る。
+ */
+describe('★ しきい値の鍵は、検証・保存の形・画面の欄のすべてに在る (両方向)', () => {
+  const KEYS = Object.keys(DEFAULT_HIGHLIGHT_THRESHOLDS).sort();
+
+  it('画面の欄の表は、しきい値の鍵と同じ集合 (重複なし・名札は空でない)', () => {
+    const keys = HIGHLIGHT_THRESHOLD_FIELDS.map((f) => f.key);
+    expect([...keys].sort()).toEqual(KEYS);
+    expect(new Set(keys).size).toBe(keys.length);
+    const labels = HIGHLIGHT_THRESHOLD_FIELDS.map((f) => f.label);
+    expect(new Set(labels).size).toBe(labels.length);
+    for (const l of labels) expect(l.trim().length).toBeGreaterThan(0);
+  });
+
+  it('保存の形は、しきい値の鍵と同じ欄を持つ', () => {
+    expect([...COLLECTION_SHAPES[HIGHLIGHT_SETTINGS_COLLECTION]!.fields].sort()).toEqual(KEYS);
+  });
+
+  it.each(KEYS)('%s は検証を通って保存値に載る (既定と違う値で —— 黙って既定へ倒さない)', (key) => {
+    const d = DEFAULT_HIGHLIGHT_THRESHOLDS[key as keyof typeof DEFAULT_HIGHLIGHT_THRESHOLDS];
+    // 連続下落は危険 ≧ 警告の関係があるので、危険の側を上げても警告は既定のまま成り立つ。
+    const v = key === 'declineWarnStreak' ? 3 : d === 100 ? 99 : d + 1;
+    const input = key === 'declineWarnStreak' ? { declineWarnStreak: v, declineCriticalStreak: 3 } : { [key]: v };
+    expect(parseHighlightSettings(input)[key as keyof typeof DEFAULT_HIGHLIGHT_THRESHOLDS]).toBe(v);
+  });
+});
+
+describe('予算未達のしきい値の検証 (パス 493c)', () => {
+  it('★ 天井は 100 —— 越えると達成済みの売上に「予算未達」と言うことになる', () => {
+    expect(parseHighlightSettings({ budgetShortfallWarnPct: 100 }).budgetShortfallWarnPct).toBe(100);
+    expect(() => parseHighlightSettings({ budgetShortfallWarnPct: 100.1 })).toThrow('予算未達の警告しきい値は 0〜100 の数値で入力してください');
+  });
+
+  it('0 は通り、負は断る', () => {
+    expect(parseHighlightSettings({ budgetShortfallWarnPct: 0 }).budgetShortfallWarnPct).toBe(0);
+    expect(() => parseHighlightSettings({ budgetShortfallWarnPct: -1 })).toThrow(/0〜100/);
+  });
+
+  it('空欄は既定 (90) —— 0 ではない', () => {
+    expect(parseHighlightSettings({ budgetShortfallWarnPct: '' }).budgetShortfallWarnPct).toBe(90);
+    expect(parseHighlightSettings({}).budgetShortfallWarnPct).toBe(90);
+  });
+
+  it('★ この欄を持たない古い控え (パス 493c より前) も通り、既定へ倒れる', () => {
+    const old = { declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60 };
+    expect(COLLECTION_SHAPES[HIGHLIGHT_SETTINGS_COLLECTION]!(old)).toBe(true);
+    expect(parseHighlightSettings(old).budgetShortfallWarnPct).toBe(90);
   });
 });
 
@@ -42,7 +97,10 @@ describe('parseHighlightSettings', () => {
       laborShareWarnPct: '70',
       singleChannelWarnPct: '50',
     });
-    expect(s).toEqual({ declineWarnStreak: 2, declineCriticalStreak: 4, laborShareWarnPct: 70, singleChannelWarnPct: 50 });
+    expect(s).toEqual({
+      declineWarnStreak: 2, declineCriticalStreak: 4, laborShareWarnPct: 70, singleChannelWarnPct: 50,
+      budgetShortfallWarnPct: DEFAULT_HIGHLIGHT_THRESHOLDS.budgetShortfallWarnPct,
+    });
   });
 
   it('treats blank fields as the default for that field', () => {

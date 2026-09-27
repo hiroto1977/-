@@ -228,6 +228,8 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
     declineCriticalStreak: opt(num),
     laborShareWarnPct: opt(num),
     singleChannelWarnPct: opt(num),
+    // パス 493c で足した欄。それより前の控えには無いので、無ければ既定 (90) へ倒す。
+    budgetShortfallWarnPct: opt(num),
   }),
   'overview-overrides': shape({ path: str, value: num, note: opt(str) }),
   'overview-custom-metrics': shape({ label: str, value: num, unit: oneOf(() => METRIC_UNITS), note: opt(str) }),
