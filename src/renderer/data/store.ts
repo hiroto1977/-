@@ -52,6 +52,46 @@ export type ConditionalUpdate<T extends Record<string, unknown>> =
   | { readonly status: 'vanished' }
   | { readonly status: 'changed'; readonly current: StoredRecord<T> };
 
+/**
+ * 「最新の 1 件を採用する」collection で、**いま採用されている行**の目印 (パス 500)。
+ *
+ * 欄はこの行から開き、保存のときこの目印のままかを確かめる。id だけでなく `updatedAt` も見る ——
+ * 同じ行が書き換えられた (マージ復元が同じ id を新しい中身で上書きした) ときも、開いた時の中身では
+ * なくなっている。
+ */
+export interface LatestToken {
+  readonly id: string;
+  readonly updatedAt: number;
+}
+
+/** 行から目印を取る。行が無ければ `null` (= 「まだ何も保存されていない」を開いた)。 */
+export function latestTokenOf(rec: { readonly id: string; readonly updatedAt: number } | null): LatestToken | null {
+  return rec === null ? null : { id: rec.id, updatedAt: rec.updatedAt };
+}
+
+/**
+ * 2 つの目印 (行でもよい) が**同じ行の同じ版**を指すか (パス 500)。どちらも「無い」なら同じ。
+ * 保管層 (`insertIfLatest` の比較) と欄 (`useLatestForm` の「最新に付いていくか」) が同じ 1 つを読む。
+ */
+export function sameLatest(
+  a: { readonly id: string; readonly updatedAt: number } | null,
+  b: { readonly id: string; readonly updatedAt: number } | null,
+): boolean {
+  if (a === null || b === null) return a === b;
+  return a.id === b.id && a.updatedAt === b.updatedAt;
+}
+
+/**
+ * `insertIfLatest` の答え (パス 500):
+ *
+ *  - `saved`   … 最新が開いた時の行のままだったので 1 件足した。足した行が**必ず新しい最新**になる。
+ *  - `changed` … 欄を開いた後に別の保存が入っていた (または、何も無いと思って開いたら保存が在った)。
+ *                何も書いていない。`current` が今の最新 (何も無くなっていれば `null`)。
+ */
+export type LatestInsert<T extends Record<string, unknown>> =
+  | { readonly status: 'saved'; readonly record: StoredRecord<T> }
+  | { readonly status: 'changed'; readonly current: StoredRecord<T> | null };
+
 export interface RecordStore {
   /** Insert a new record into `collection`; returns the stored record. */
   insert<T extends Record<string, unknown>>(collection: string, data: T): Promise<StoredRecord<T>>;
@@ -78,6 +118,27 @@ export interface RecordStore {
     expected: T,
     patch: Partial<T>,
   ): Promise<ConditionalUpdate<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら** `collection` へ 1 件足す (パス 500)。最新を選ぶ規則は
+   * `latestRecord` (createdAt が最大・同点は一覧で先の行) と同じ。読んで比べて足すまでを
+   * **1 つの読み書きの取引**の中で行うので、別のタブの取引も間に挟まらない。
+   */
+  insertIfLatest<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken | null,
+    data: T,
+  ): Promise<LatestInsert<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら**、その行の中身を `data` で置き換える (パス 500)。
+   * 比べる規則と答えは `insertIfLatest` と同じで、行は増やさない (最新 1 件を書き換える記録 ——
+   * 数値パラメータの上書き —— のため)。読んで比べて書くまでを 1 つの読み書きの取引で行い、
+   * その行の id の鎖 (在れば Web Locks も) の中で走らせる。
+   */
+  replaceLatestIfUnchanged<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken,
+    data: T,
+  ): Promise<LatestInsert<T>>;
   get<T extends Record<string, unknown>>(id: string): Promise<StoredRecord<T> | null>;
   /** All records in a collection, newest-first. */
   list<T extends Record<string, unknown>>(collection: string): Promise<readonly StoredRecord<T>[]>;
@@ -383,6 +444,163 @@ class IndexedDBRecordStore implements RecordStore {
     // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
     notifyRecordStoreChanged();
     return built.map((b) => b.plain);
+  }
+
+  /**
+   * 最新の 1 件を採用する collection への保存 (パス 500)。
+   *
+   * ## なぜ要るか (実測)
+   *
+   * 経営サマリーの水耕栽培の欄は保存値の**最新の 1 件**から開き、保存のたびに**全部の欄**を
+   * 1 件の新しい行として足す。欄は保管層が答える前に既定値で開いており、答えが届いても開き直さな
+   * かった —— 実 chromium で 5 回開いて 5 回とも既定値、1 欄だけ直して保存すると**保存していた
+   * 4 欄が既定値へ黙って戻った** (実測の全体は `useLatestForm.ts` の docblock)。別のタブが保存した後に
+   * 開いたままの欄を保存しても同じことが起きる。欄の側 (`useLatestForm`) は保管層が答えてから開き、
+   * 保存はここを通る。
+   *
+   * ## なぜ 1 つの取引で足りるか
+   *
+   * 比べるのは**目印 (id と updatedAt)** だけで、中身の復号は要らない。だから読み・比較・追加を
+   * 同じ readwrite の取引に入れられる —— IndexedDB は範囲の重なる読み書きの取引を
+   * **オリジン全体で**順に走らせるので、別のタブの `insertIfLatest` も置換復元 (`importAll`) も
+   * 間に挟まらない (パス 499 の `updateIfUnchanged` は中身を復号して比べるので取引に入れられず、
+   * 行ごとの鎖と Web Locks を使った)。暗号化は取引の前に済ませる (取引の中で待つと取引が閉じる)。
+   * 決めて足すのは cursor の最後の callback の中 —— 同期の callback の中なので取引は開いたままである。
+   *
+   * ## 足した行は必ず最新になる
+   *
+   * 最新は `createdAt` で選ぶ。この端末の時計より新しい `createdAt` の行 (時計の進んだ別の端末の
+   * 控えを復元した) が最新だと、素の `insert` で足した行は**最新にならず**、保存は「済んだ」のに
+   * 画面は前の値のまま —— 保存が黙って効かない。取引の中で最新の `createdAt` を知っているので、
+   * それより後の時刻で足す。
+   *
+   * この端末の時計 (`monotonicNow` の `_lastTs`) は進めない —— 後の `insertIfLatest` は取引の中で
+   * 最新を読み直して同じ規則で追い越すので、ここで時計を進めても答えは 1 つも変わらない。
+   */
+  async insertIfLatest<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken | null,
+    data: T,
+  ): Promise<LatestInsert<T>> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
+    const id = uuid();
+    const now = monotonicNow();
+    const storedData = await this.cipher.encrypt(data);
+    type Decided = { readonly added: StoredRecord } | { readonly latest: StoredRecord | null };
+    const decided = await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const objects = tx.objectStore(STORE);
+      const done = txDone(tx);
+      let latest: StoredRecord | null = null;
+      let out: Decided | undefined;
+      const req = objects.index(COLLECTION_INDEX).openCursor(IDBKeyRange.only(collection));
+      // cursor の失敗は取引を中断させ、`txDone` が reject する (onerror を別に置かない)。
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (cur !== null) {
+          const row = cur.value as StoredRecord;
+          // 同点は先の行 —— `latestRecord(list(…))` と同じ行を選ぶ (list は索引の順に読み、
+          // 新しい順へ安定に並べ替える)。
+          if (latest === null || row.createdAt > latest.createdAt) latest = row;
+          cur.continue();
+          return;
+        }
+        if (!sameLatest(latest, expected)) {
+          out = { latest };
+          return; // 何も書かない —— 取引は読みだけで閉じる
+        }
+        const createdAt = latest !== null && latest.createdAt >= now ? latest.createdAt + 1 : now;
+        const row: StoredRecord = { id, collection, createdAt, updatedAt: createdAt, data: storedData };
+        objects.add(row);
+        out = { added: row };
+      };
+      await done;
+      return out as Decided;
+    });
+    if ('added' in decided) {
+      // 書けたら知らせる (`collectionChange.ts`)。書かなかった答えでは知らせない (中身が動いていない)。
+      notifyRecordStoreChanged();
+      return { status: 'saved', record: { ...decided.added, data } as StoredRecord<T> };
+    }
+    const current = decided.latest;
+    if (current === null) return { status: 'changed', current: null };
+    return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data)) as T } };
+  }
+
+  /**
+   * 最新の 1 件を**書き換える**記録への保存 (パス 500)。
+   *
+   * ## なぜ要るか (実測)
+   *
+   * 数値パラメータの上書きは、最新の 1 件を書き換える唯一の記録である (保存のたびに行を足さない)。
+   * パス 499 の直しは「読んだ最新の行が、読んだ時の中身のままなら書き換える」(`updateIfUnchanged`) で、
+   * 比べていたのは**その行**だった —— 読んだ後・書く前に**別の行が新しい最新として入る**と、書き換えは
+   * 古い行に成功し、画面は「保存しました」と言いながら、採用される最新 (新しい行) には値が入らない。
+   * 実測 (2026-09-28 · 読んだ後・書く前に新しい行を差し込む門): `set(日数, 300)` は断りなく済み、300 は
+   * 古い行にだけ入り、**有効値は 250 のまま**だった。新しい行は、別のタブの保存が重なり続けたときの最後の手
+   * (`insertIfLatest`) と復元が入れる。見つけたのは採用の census (`latestAdoptionCensus.test.ts`) で、採用する
+   * collection へ最新を比べない口で書く所として名指しした。
+   *
+   * ## なぜ 1 つの取引で足りるか
+   *
+   * `insertIfLatest` と同じ —— 比べるのは目印 (id と updatedAt) だけで、中身の復号は要らない。
+   * 置き換える中身は呼び手が組み (目印が同じなら、呼び手が読んだ中身は今もそのまま)、暗号化は取引の前に
+   * 済ませる。**その行の id の鎖の中で**走らせるので、同じ行を読み書きに分けて書き換える `update` /
+   * `updateIfUnchanged` も間に挟まらない。
+   *
+   * `updatedAt` は必ず進める (`sameLatest` が「同じ行の新しい版」を見分けられるように) —— この端末の
+   * 時計より新しい `updatedAt` の行 (時計の進んだ別の端末の控え) でも、その後ろの時刻にする。
+   */
+  async replaceLatestIfUnchanged<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken,
+    data: T,
+  ): Promise<LatestInsert<T>> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
+    return this.serialize(expected.id, async (): Promise<LatestInsert<T>> => {
+      const now = monotonicNow();
+      const storedData = await this.cipher.encrypt(data);
+      type Decided = { readonly replaced: StoredRecord } | { readonly latest: StoredRecord | null };
+      const decided = await withDb(async (db) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        const objects = tx.objectStore(STORE);
+        const done = txDone(tx);
+        let latest: StoredRecord | null = null;
+        let out: Decided | undefined;
+        const req = objects.index(COLLECTION_INDEX).openCursor(IDBKeyRange.only(collection));
+        // cursor の失敗は取引を中断させ、`txDone` が reject する (onerror を別に置かない)。
+        req.onsuccess = () => {
+          const cur = req.result;
+          if (cur !== null) {
+            const row = cur.value as StoredRecord;
+            // 同点は先の行 —— `insertIfLatest` と同じ (`latestRecord(list(…))` と同じ行を選ぶ)。
+            if (latest === null || row.createdAt > latest.createdAt) latest = row;
+            cur.continue();
+            return;
+          }
+          if (latest === null || !sameLatest(latest, expected)) {
+            out = { latest };
+            return; // 何も書かない —— 取引は読みだけで閉じる
+          }
+          const updatedAt = latest.updatedAt >= now ? latest.updatedAt + 1 : now;
+          const row: StoredRecord = { ...latest, updatedAt, data: storedData };
+          objects.put(row);
+          out = { replaced: row };
+        };
+        await done;
+        return out as Decided;
+      });
+      if ('replaced' in decided) {
+        // 書けたら知らせる (`collectionChange.ts`)。書かなかった答えでは知らせない (中身が動いていない)。
+        notifyRecordStoreChanged();
+        return { status: 'saved', record: { ...decided.replaced, data } as StoredRecord<T> };
+      }
+      const current = decided.latest;
+      if (current === null) return { status: 'changed', current: null };
+      return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data)) as T } };
+    });
   }
 
   async update<T extends Record<string, unknown>>(

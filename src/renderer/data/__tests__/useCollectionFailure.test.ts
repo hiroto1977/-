@@ -2,7 +2,7 @@
 /**
  * **端末が断ったら、入口が必ず報せる。**
  *
- * `useCollection` の書き込み (add / addMany / edit / remove) は拒否された
+ * `useCollection` の書き込み (add / addMany / edit / remove ほか) は拒否された
  * Promise を返すが、実測 (2026-09-06) では呼び出し 13 か所のうち 10 か所が
  * それを受け取っていなかった (`void add()` / `onClick={async () => { await onSave() }}`)。
  * 読みの側はもっと静かで、マウント effect の `reload()` は誰も受け取らない ——
@@ -65,6 +65,19 @@ vi.mock('../store', () => {
       const row = h.rows.find((r) => r.id === id);
       if (row === undefined) return { status: 'vanished' };
       Object.assign(row.data, patch);
+      return { status: 'saved', record: row };
+    },
+    async replaceLatestIfUnchanged(collection: string, expected: { id: string }, data: Record<string, unknown>) {
+      boom('replaceLatestIfUnchanged');
+      const row = h.rows.find((r) => r.collection === collection && r.id === expected.id);
+      if (row === undefined) return { status: 'changed', current: null };
+      row.data = data;
+      return { status: 'saved', record: row };
+    },
+    async insertIfLatest(collection: string, _expected: unknown, data: Record<string, unknown>) {
+      boom('insertIfLatest');
+      const row = { id: `r${h.rows.length + 1}`, collection, createdAt: 1, updatedAt: 1, data };
+      h.rows.push(row);
       return { status: 'saved', record: row };
     },
     async remove(id: string) {
@@ -173,6 +186,42 @@ describe('書き込みが断られたとき', () => {
     const f = currentDeviceStoreFailure();
     expect(f?.op).toBe('save');
     expect(f?.where).toBe('mutualfund-holdings');
+    expect(f?.message).toContain('打ち込んだ内容は画面に残っています');
+    t.unmount();
+  });
+
+  it('★ addIfLatest: 最新のままなら足す書き込みも save (パス 500)', async () => {
+    const t = setup('hydroponics-setup');
+    await t.mount();
+    h.failOn.add('insertIfLatest');
+    const thrown = await t.run(() => t.ref.current.addIfLatest(null, { name: 'a' }));
+    expect(thrown).toBeInstanceOf(Error);
+    const f = currentDeviceStoreFailure();
+    expect(f?.op).toBe('save');
+    expect(f?.where).toBe('hydroponics-setup');
+    t.unmount();
+  });
+
+  it('★ applyToLatest: 今の最新に当てて足す書き込みも save (パス 500)', async () => {
+    const t = setup('hydroponics-crops');
+    await t.mount();
+    h.failOn.add('insertIfLatest');
+    const thrown = await t.run(() => t.ref.current.applyToLatest(() => ({ name: 'a' })));
+    expect(thrown).toBeInstanceOf(Error);
+    expect(currentDeviceStoreFailure()?.op).toBe('save');
+    t.unmount();
+  });
+
+  it('★ replaceLatest: 最新がまだその版なら置き換える書き込みも save (パス 500)', async () => {
+    const t = setup('parameter-overrides');
+    await t.mount();
+    await t.run(() => t.ref.current.add({ name: 'a' }));
+    h.failOn.add('replaceLatestIfUnchanged');
+    const thrown = await t.run(() => t.ref.current.replaceLatest({ id: 'r1', updatedAt: 1 }, { name: 'b' }));
+    expect(thrown).toBeInstanceOf(Error);
+    const f = currentDeviceStoreFailure();
+    expect(f?.op).toBe('save');
+    expect(f?.where).toBe('parameter-overrides');
     expect(f?.message).toContain('打ち込んだ内容は画面に残っています');
     t.unmount();
   });

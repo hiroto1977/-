@@ -54,12 +54,18 @@
  *   直に渡す形は、その関数が `on…` でなければ映らない)。
  * - **状態の初期値** (`useState` / `useReducer` / `useRef`) は写しを運ばないものとして扱う
  *   (`STATE_HOOKS` の注記)。写しを丸ごと状態へ写して判定に使う形 (`useState(records)`) は
- *   映らない —— 写しより古い写しなので危ないが、今の母集団に在るかは下の標本でしか見ていない。
+ *   ここには映らない —— **そちらは `latestAdoptionCensus.test.ts` が数える** (パス 500。最初の
+ *   描画の写しは空なので、初期値は保存値を 1 度も見ない —— 経営サマリーの水耕栽培の欄が実際に
+ *   既定値のまま開いた)。
+ *
+ * 写しの束縛を追う算法は `snapshotModel.ts` に在り、その census と共有する (パス 500 で切り出した ——
+ * 同じ算法を 2 本の検査に 1 つずつ書くと片方だけが直る)。`useLatestForm` の `latest` も写しとして追う。
  */
 import { describe, expect, it } from 'vitest';
 import { join } from 'node:path';
 import ts from 'typescript';
 import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { bindOne, firstSnapshotRead, isFn, callName, snapshotModelOf } from './snapshotModel';
 
 const REPO = join(__dirname, '..', '..', '..');
 const DIRS = ['src/renderer/pages', 'src/renderer/components'] as const;
@@ -75,213 +81,6 @@ function screensWithCollections(): string[] {
     }
   }
   return out.sort();
-}
-
-/** 1 ファイルだけの program —— 束縛 (どの宣言を指すか) を型検査器に訊くため。 */
-function bindOne(file: string, src: string): { sf: ts.SourceFile; checker: ts.TypeChecker } {
-  const path = `/${file}`;
-  const sf = ts.createSourceFile(path, src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-  const host: ts.CompilerHost = {
-    getSourceFile: (name) => (name === path ? sf : undefined),
-    getDefaultLibFileName: () => '/lib.d.ts',
-    writeFile: () => {},
-    getCurrentDirectory: () => '/',
-    getCanonicalFileName: (f) => f,
-    useCaseSensitiveFileNames: () => true,
-    getNewLine: () => '\n',
-    fileExists: (f) => f === path,
-    readFile: () => undefined,
-  };
-  const program = ts.createProgram([path], { noResolve: true, noLib: true, jsx: ts.JsxEmit.Preserve, types: [] }, host);
-  return { sf, checker: program.getTypeChecker() };
-}
-
-const isFn = (e: ts.Node | undefined): e is ts.ArrowFunction | ts.FunctionExpression =>
-  e !== undefined && (ts.isArrowFunction(e) || ts.isFunctionExpression(e));
-
-const callName = (n: ts.Expression): string =>
-  ts.isIdentifier(n) ? n.text : ts.isPropertyAccessExpression(n) ? n.name.text : '';
-
-const isUseCollection = (n: ts.Node | undefined): n is ts.CallExpression =>
-  n !== undefined && ts.isCallExpression(n) && callName(n.expression) === 'useCollection';
-
-const ITERATE = new Set(['map', 'forEach', 'filter', 'find', 'findLast', 'findIndex', 'some', 'every', 'flatMap', 'reduce']);
-
-/**
- * 状態の初期値は写しを運ばない —— `useState(() => draftFrom(row))` は**利用者が編集する下書き**を
- * 写しから作る形で、その下書きを保存する handler は判定ではなく入力を書く。ここを追うと、
- * 下書きを保存する handler がすべて映る (実測: 品目を足す handler が、欄の初期値に使った
- * 品目の写しを理由に映った)。
- */
-const STATE_HOOKS = new Set(['useState', 'useReducer', 'useRef']);
-
-/** 名前の出現が**値として読む所**か (宣言の名前・`a.b` の `b`・`{ k: … }` の `k`・属性名は除く)。 */
-function isValuePosition(id: ts.Identifier): boolean {
-  const p = id.parent;
-  if (ts.isPropertyAccessExpression(p) && p.name === id) return false;
-  if (ts.isPropertyAssignment(p) && p.name === id) return false;
-  if (ts.isBindingElement(p) && (p.propertyName === id || p.name === id)) return false;
-  if ((ts.isVariableDeclaration(p) || ts.isParameter(p) || ts.isFunctionDeclaration(p)) && p.name === id) return false;
-  if (ts.isJsxAttribute(p)) return false;
-  if (ts.isImportSpecifier(p) || ts.isImportClause(p)) return false;
-  return true;
-}
-
-interface SnapshotModel {
-  /** 写し (と、写しから導いた値・写しの行) を束ねる宣言のシンボル。 */
-  readonly values: ReadonlySet<ts.Symbol>;
-  /** `useCollection(…)` の戻り値を丸ごと束ねたシンボル —— `x.records` が写し。 */
-  readonly collections: ReadonlySet<ts.Symbol>;
-  /** 部品の props を 1 つの名前で受けた所 —— `props.rows` が写し。 */
-  readonly members: ReadonlyMap<ts.Symbol, ReadonlySet<string>>;
-}
-
-function symbolAt(checker: ts.TypeChecker, id: ts.Identifier): ts.Symbol | undefined {
-  if (ts.isShorthandPropertyAssignment(id.parent) && id.parent.name === id) {
-    return checker.getShorthandAssignmentValueSymbol(id.parent);
-  }
-  return checker.getSymbolAtLocation(id);
-}
-
-/** 写しを読む最初の出現 (無ければ null)。報せ (`set…` / `console.…`) の引数と行の同一性は数えない。 */
-function firstSnapshotRead(node: ts.Node, checker: ts.TypeChecker, m: SnapshotModel, ignore = true): ts.Node | null {
-  let hit: ts.Node | null = null;
-  (function walk(x: ts.Node): void {
-    if (hit !== null) return;
-    if (ignore && ts.isCallExpression(x)) {
-      const callee = x.expression.getText();
-      if (/^set[A-Z]/.test(callee) || /^console\./.test(callee)) return;
-    }
-    let found: ts.Node | null = null;
-    if (ts.isIdentifier(x) && isValuePosition(x)) {
-      const s = symbolAt(checker, x);
-      if (s !== undefined && m.values.has(s)) found = x;
-    }
-    if (ts.isPropertyAccessExpression(x) && ts.isIdentifier(x.expression)) {
-      const s = symbolAt(checker, x.expression);
-      if (s !== undefined) {
-        if (x.name.text === 'records' && m.collections.has(s)) found = x;
-        if (m.members.get(s)?.has(x.name.text) === true) found = x;
-      }
-    }
-    if (found !== null) {
-      // 行の同一性 (`r.id` / `c.rowId`) は判定ではない —— 画面が見せた行を指す。
-      const p = found.parent;
-      const identityOnly = ignore && ts.isPropertyAccessExpression(p) && p.expression === found && (p.name.text === 'id' || p.name.text === 'rowId');
-      if (!identityOnly) hit = found;
-      return;
-    }
-    ts.forEachChild(x, walk);
-  })(node);
-  return hit;
-}
-
-/** 写しの束縛を `useCollection` から収束まで広げる。 */
-export function snapshotModelOf(sf: ts.SourceFile, checker: ts.TypeChecker): SnapshotModel {
-  const values = new Set<ts.Symbol>();
-  const collections = new Set<ts.Symbol>();
-  const members = new Map<ts.Symbol, Set<string>>();
-  const model: SnapshotModel = { values, collections, members };
-  const addName = (name: ts.BindingName): boolean => {
-    let grew = false;
-    const visit = (b: ts.BindingName): void => {
-      if (ts.isIdentifier(b)) {
-        const s = checker.getSymbolAtLocation(b);
-        if (s !== undefined && !values.has(s)) {
-          values.add(s);
-          grew = true;
-        }
-      } else {
-        for (const el of b.elements) if (ts.isBindingElement(el)) visit(el.name);
-      }
-    };
-    visit(name);
-    return grew;
-  };
-
-  // 種: `const { records: x } = useCollection(…)` と `const col = useCollection(…)`
-  (function seed(n: ts.Node): void {
-    if (ts.isVariableDeclaration(n) && isUseCollection(n.initializer)) {
-      if (ts.isObjectBindingPattern(n.name)) {
-        for (const el of n.name.elements) {
-          if ((el.propertyName ?? el.name).getText() === 'records') addName(el.name);
-        }
-      } else if (ts.isIdentifier(n.name)) {
-        const s = checker.getSymbolAtLocation(n.name);
-        if (s !== undefined) collections.add(s);
-      }
-    }
-    ts.forEachChild(n, seed);
-  })(sf);
-
-  let grew = true;
-  while (grew) {
-    grew = false;
-    (function walk(n: ts.Node): void {
-      // 導いた値: `const x = … 写し …` (関数そのもの・`useCallback` の handler は値ではない)。
-      if (
-        ts.isVariableDeclaration(n) && n.initializer !== undefined && !isUseCollection(n.initializer) &&
-        !isFn(n.initializer) &&
-        !(ts.isCallExpression(n.initializer) && callName(n.initializer.expression) === 'useCallback') &&
-        !(ts.isCallExpression(n.initializer) && STATE_HOOKS.has(callName(n.initializer.expression))) &&
-        firstSnapshotRead(n.initializer, checker, model, false) !== null
-      ) {
-        if (addName(n.name)) grew = true;
-      }
-      // 行: `写し.map((r) => …)` の `r` は写しの 1 行 (`reduce` は 2 番目の引数)。
-      if (
-        ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression) &&
-        ITERATE.has(n.expression.name.text) && firstSnapshotRead(n.expression.expression, checker, model, false) !== null
-      ) {
-        const cb = n.arguments[0];
-        if (isFn(cb)) {
-          const p = cb.parameters[n.expression.name.text === 'reduce' ? 1 : 0];
-          if (p !== undefined && addName(p.name)) grew = true;
-        }
-      }
-      // `for (const r of 写し)`
-      if (ts.isForOfStatement(n) && ts.isVariableDeclarationList(n.initializer) && firstSnapshotRead(n.expression, checker, model, false) !== null) {
-        for (const d of n.initializer.declarations) if (addName(d.name)) grew = true;
-      }
-      // 同じファイルの部品へ渡した prop: `<Panel rows={写し}>` → Panel の `rows`。
-      if (ts.isJsxAttribute(n) && n.initializer !== undefined && ts.isJsxExpression(n.initializer)) {
-        const e = n.initializer.expression;
-        const owner = n.parent.parent;
-        if (
-          e !== undefined && !isFn(e) && (ts.isJsxOpeningElement(owner) || ts.isJsxSelfClosingElement(owner)) &&
-          ts.isIdentifier(owner.tagName) && /^[A-Z]/.test(owner.tagName.text) &&
-          firstSnapshotRead(e, checker, model, false) !== null
-        ) {
-          const attr = n.name.getText();
-          const decl = checker.getSymbolAtLocation(owner.tagName)?.declarations?.[0];
-          const fn = decl === undefined ? undefined
-            : ts.isFunctionDeclaration(decl) ? decl
-            : ts.isVariableDeclaration(decl) && isFn(decl.initializer) ? decl.initializer
-            : undefined;
-          const param = fn?.parameters[0];
-          if (param !== undefined) {
-            if (ts.isObjectBindingPattern(param.name)) {
-              for (const el of param.name.elements) {
-                if ((el.propertyName ?? el.name).getText() === attr && addName(el.name)) grew = true;
-              }
-            } else if (ts.isIdentifier(param.name)) {
-              const s = checker.getSymbolAtLocation(param.name);
-              if (s !== undefined) {
-                const set = members.get(s) ?? new Set<string>();
-                if (!set.has(attr)) {
-                  set.add(attr);
-                  members.set(s, set);
-                  grew = true;
-                }
-              }
-            }
-          }
-        }
-      }
-      ts.forEachChild(n, walk);
-    })(sf);
-  }
-  return model;
 }
 
 export interface HandlerHit {

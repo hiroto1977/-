@@ -1842,6 +1842,145 @@ async function crossTabDataSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * **最新の 1 件を採用する設定の欄は、保存値で開き、1 欄の保存で他の欄を戻さない** (2026-09-28 · パス 500)。
+ *
+ * 直す前の実測 (同じ `file://` の HTML): 経営サマリーの水耕栽培の欄は `useState(保存値 ?? 既定値)` で開き、
+ * 保存値は IndexedDB から後で届くので **5 回開いて 5 回とも欄は既定値**だった。販売単価だけ直して保存すると
+ * **保存していた 4 欄 (床面積・段数・人件費・地代家賃) が既定値へ黙って戻った** (画面は「保存しました」)。
+ * 経営ハイライトのしきい値は読みの届く順で割れ、5 回のうち 2 回が既定値だった。
+ *
+ * 単体検査 (`latestFormOnScreen.test.ts`) は「保管層が答える前」を門で作る —— **実際の IndexedDB の答えが
+ * どれだけ遅れて届くか**と、2 つの文書の間で知らせが届いて触っていない欄が付いていくかは実物でしか
+ * 分からない。欄は**現れた瞬間に読む** (直す前は、現れた瞬間の値が既定値だった)。
+ */
+async function latestFormSuite(browser) {
+  console.log('--- 最新を採用する欄は保存値で開き、1 欄の保存で他の欄を戻さない (2 枚のタブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const errs = [];
+  const a = await ctx.newPage();
+  collectErrors(a, errs);
+  await a.goto(FILE + '#sales', { waitUntil: 'domcontentloaded' });
+  await setupVault(a);
+
+  const F = (label) => `input[aria-label="${label}"]`;
+  const SAVE = '保存して経営サマリーへ反映';
+  const SAVED_TEXT = '保存しました。経営サマリーに反映されています。';
+  const REFUSED = 'この欄を開いた後に別の画面で保存し直されています';
+  const SAVED = {
+    '床面積 (m²)': '555',
+    '棚の段数': '7',
+    '販売単価 (円/株)': '222',
+    '人件費 (円/月)': '1234567',
+    '地代家賃 (円/月)': '99999',
+  };
+  const LABELS = Object.keys(SAVED);
+  /** 5 欄の今の値 (欄が無ければ null)。 */
+  const valuesOf = (page) =>
+    page.evaluate(
+      (labels) => Object.fromEntries(labels.map((l) => [l, document.querySelector(`input[aria-label="${l}"]`)?.value ?? null])),
+      LABELS,
+    );
+  /** 画面の文にそれが現れるまで待つ (現れなければ false —— 落とすのは ok() の役目)。 */
+  const appears = (page, text, ms = 15000) =>
+    page
+      .waitForFunction((t) => (document.body.textContent ?? '').includes(t), text, { timeout: ms })
+      .then(() => true)
+      .catch(() => false);
+  /** その欄がその値になるまで待つ (なれなければ false)。 */
+  const becomes = (page, label, value, ms = 15000) =>
+    page
+      .waitForFunction(([l, v]) => document.querySelector(`input[aria-label="${l}"]`)?.value === v, [label, value], { timeout: ms })
+      .then(() => true)
+      .catch(() => false);
+  const saveIn = async (page) => {
+    await page.getByRole('button', { name: SAVE }).click();
+    return appears(page, SAVED_TEXT);
+  };
+
+  // しきい値の欄は記録が在るときだけ出る —— 売上を 1 件入れておく。
+  await a.waitForSelector('input[placeholder="YYYY-MM-DD"]', { timeout: 30000 });
+  await a.getByPlaceholder('YYYY-MM-DD').fill('2026-09-01');
+  await a.getByPlaceholder('売上金額').fill('500000');
+  await a.getByPlaceholder('注文件数').fill('2');
+  await a.getByRole('button', { name: '追加', exact: true }).click();
+  await a.waitForSelector('tbody tr:has-text("500,000")', { timeout: 15000 });
+
+  await gotoService(a, '#overview', F('床面積 (m²)'));
+  for (const [label, v] of Object.entries(SAVED)) await a.fill(F(label), v);
+  ok(await saveIn(a), '対照: 水耕栽培の 5 欄を直して保存できる');
+
+  // ── ① 開き直すたびに保存値で開く (欄が現れた瞬間に読む) ──
+  let savedOpens = 0;
+  const seen = [];
+  for (let i = 0; i < 3; i++) {
+    await gotoService(a, '#overview', F('床面積 (m²)'));
+    const v = await valuesOf(a);
+    seen.push(v['床面積 (m²)']);
+    if (LABELS.every((l) => v[l] === SAVED[l])) savedOpens++;
+  }
+  ok(
+    savedOpens === 3,
+    `★ 開く: 開き直すたびに保存した 5 欄で開く (3 回中 ${savedOpens} 回・床面積 ${seen.join(' / ')} —— 直す前は 5 回とも既定値)`,
+  );
+
+  // ── ② 1 欄だけ直して保存しても、他の 4 欄は保存値のまま ──
+  await a.fill(F('販売単価 (円/株)'), '300');
+  ok(await saveIn(a), '対照: 販売単価だけ直して保存できる');
+  await gotoService(a, '#overview', F('床面積 (m²)'));
+  const after = await valuesOf(a);
+  const expectedAfter = { ...SAVED, '販売単価 (円/株)': '300' };
+  ok(
+    LABELS.every((l) => after[l] === expectedAfter[l]),
+    '★ 保存: 販売単価だけ直して保存しても、他の 4 欄は保存値のまま (実際 ' + JSON.stringify(after) + ' —— 直す前は 4 欄が既定値へ戻った)',
+  );
+
+  // ── ③ しきい値の欄も保存値で開く (直す前は 5 回のうち 2 回既定値) ──
+  const LABOR = 'input[data-threshold="laborShareWarnPct"]';
+  await a.fill(LABOR, '61');
+  await a.locator('div:has(> label > input[data-threshold]) > button', { hasText: '保存' }).click();
+  ok(await appears(a, '保存しました。'), '対照: しきい値 (労働分配率 61%) を保存できる');
+  let thresholdOpens = 0;
+  const seenLabor = [];
+  for (let i = 0; i < 3; i++) {
+    await gotoService(a, '#overview', LABOR);
+    const v = await a.inputValue(LABOR);
+    seenLabor.push(v);
+    if (v === '61') thresholdOpens++;
+  }
+  ok(thresholdOpens === 3, `★ 開く: しきい値の欄も開き直すたびに保存値で開く (3 回中 ${thresholdOpens} 回・${seenLabor.join(' / ')})`);
+
+  // ── ④ 触っていない欄は、別のタブの保存に付いていく ──
+  const b = await ctx.newPage();
+  collectErrors(b, errs);
+  await gotoService(b, '#overview', F('床面積 (m²)'));
+  await gotoService(a, '#overview', F('床面積 (m²)'));
+  await a.fill(F('人件費 (円/月)'), '2000000');
+  ok(await saveIn(a), '対照: タブ A が人件費を保存できる');
+  ok(await becomes(b, '人件費 (円/月)', '2000000'), '★ 付いていく: 触っていないタブ B の欄が、タブ A の保存に付いていく (再読込しない)');
+
+  // ── ⑤ B が欄を触った後に A が保存 → B の古い欄の保存は書かずに断る ──
+  await b.fill(F('販売単価 (円/株)'), '444');
+  await a.fill(F('地代家賃 (円/月)'), '88888');
+  ok(await saveIn(a), '対照: タブ A が地代家賃を保存できる');
+  await b.getByRole('button', { name: SAVE }).click();
+  ok(await appears(b, REFUSED), '★ 断る: 欄を触った後に別のタブが保存していたら、古い欄の保存は書かずに断る');
+  ok((await b.inputValue(F('販売単価 (円/株)'))) === '444', '★ 断る: 断っても入力は残る');
+  await gotoService(a, '#overview', F('地代家賃 (円/月)'));
+  ok(
+    (await a.inputValue(F('地代家賃 (円/月)'))) === '88888',
+    '★ 断る: タブ A の保存 (地代家賃 88,888) は古い欄の値 (99,999) で覆われない',
+  );
+
+  // ── ⑥ 断りを読んだうえでもう一度押せば上書きでき、触っていないタブ A に届く ──
+  await b.getByRole('button', { name: SAVE }).click();
+  ok(await becomes(a, '販売単価 (円/株)', '444'), '★ 2 度目: もう一度押せば上書きでき、タブ A の欄に届く');
+
+  ok(errs.length === 0, 'latestForm: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
 /*
  * 保管領域が「消えうる」ことを、実機の画面が正しく名乗るか。
  *
@@ -4466,6 +4605,8 @@ function installWaitMarginRecorder(browser) {
     ['crossTabLock', crossTabLockSuite, 5],
     // パス 499: 別のタブの書き込みが開いたままの画面に届き、古い欄の保存は断る
     ['crossTabData', crossTabDataSuite, 11],
+    // パス 500: 最新を採用する欄は保存値で開き、1 欄の保存で他の欄を戻さない・古い欄の保存は断る
+    ['latestForm', latestFormSuite, 14],
     ['storageDurability', storageDurabilitySuite, 21],
     ['hardReset', hardResetSuite, 8],
     ['securityPosture', securityPostureSuite, 11],

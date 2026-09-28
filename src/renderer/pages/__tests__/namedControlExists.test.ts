@@ -166,10 +166,36 @@ const LEDGER: readonly Row[] = [
   {
     name: '保存',
     kind: 'same-screen-control',
-    renderedIn: ['src/renderer/components/ShigyoConsole.tsx'],
+    renderedIn: ['src/renderer/components/ShigyoConsole.tsx', 'src/renderer/pages/OverviewPage.tsx'],
     why:
       '同じ断りの士業の連絡先の版 (パス 499)。編集中のボタンの label は「保存」(追加のときは「＋ …を追加」) で、'
-      + '断りを出しても編集の相手は外れないので、断りが出た時点の label はこの綴りである。',
+      + '断りを出しても編集の相手は外れないので、断りが出た時点の label はこの綴りである。'
+      + '経営サマリーの経営ハイライトのしきい値の欄も「開いた後に別の画面で保存し直されていた」断り (パス 500) で'
+      + '同じ綴りを名指しする —— その欄の保存ボタンの label も「保存」で、断っても欄は閉じない。',
+  },
+  {
+    name: '保存して経営サマリーへ反映',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/OverviewPage.tsx',
+    why:
+      '経営サマリーの水耕栽培の欄の保存ボタン (パス 500)。開いた後に別の画面で保存し直されていた、の断りは'
+      + '入力を残して欄の元を今の最新へ移すので、もう 1 度この綴りのボタンを押せば知ったうえで上書きする。',
+  },
+  {
+    name: '提出者情報を保存',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/components/BankSubmissionSheet.tsx',
+    why:
+      '金融機関等提出用の書面の提出者情報の保存ボタン (パス 500)。断りも同じ部品が出し、入力を残すので、'
+      + '断りが出た時点でこの綴りのボタンは同じ欄のすぐ上に在る。',
+  },
+  {
+    name: '設定を保存',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/HydroponicsPage.tsx',
+    why:
+      '水耕栽培の画面の運転の設定の保存ボタン (パス 500)。断っても欄は閉じず入力も残るので、断りが出た時点で'
+      + 'この綴りのボタンは目の前に在る (押している間だけ「保存中…」に変わるが、断った後は戻っている)。',
   },
   {
     name: '編集',

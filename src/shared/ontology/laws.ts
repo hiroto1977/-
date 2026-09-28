@@ -963,6 +963,48 @@ export const LAWS: readonly Law[] = [
     ],
   },
   {
+    id: 'latest-adopted-form-compares-before-write',
+    family: 'at-rest',
+    name: '最新の 1 件を採用する欄は、保管層が答えてから開き、最新を比べてから書く',
+    statement:
+      '水耕栽培の設定・経営ハイライトのしきい値・提出者情報と書式・運転の設定・品目の一覧・数値パラメータは、保存のたびに行を足し'
+      + ' (数値パラメータは最新の行を書き換え)、読む側は**最新の 1 件**を使う。この形は、書く側が「今の最新」を知らないまま全部の欄を書くと、'
+      + '知らなかった保存を黙って覆う。直す前の実測 (実 chromium・同じ `file://` を開き直す): 経営サマリーの水耕栽培の欄は `useState(保存値 ?? 既定値)` で開き、'
+      + '保存値は IndexedDB から後で届くので **5 回とも既定値**で開いた。販売単価だけ直して保存すると**保存していた 4 欄が既定値へ黙って戻り**、画面は「保存しました」と言った。'
+      + 'しきい値の欄は読みの届く順で割れ、5 回のうち 2 回が既定値。書式の変更は描画した時の写しの提出者情報で記録を丸ごと書いた。'
+      + '**状態の初期値に写しを置く形**は、パス 497 の census が「写しを運ばない」として意図して数えていなかった所である。'
+      + '直しは 1 つの口 (`useLatestForm`) に寄せる: ① 保管層が答えるまで欄を出さない ② 触っていない欄は最新に付いていく (別のタブの保存にも) '
+      + '③ 保存は「開いた時の最新がまだ最新なら足す」を**1 つの取引**で (`store.insertIfLatest` —— 足した行は必ず最新になる) ④ 断ったら入力を残して基準を今の最新へ移し、'
+      + 'もう 1 度押せば知ったうえで上書きする (「保存した内容を読み込む」で入力を捨てて開き直せる) ⑤ 一覧に 1 件足すような変更は今の最新に当て直す '
+      + '(`applyToLatest` —— 挟まれるたびに当て直し、上限の回数で断る)。★ **比べるのは「その行の中身」ではなく「最新がまだその行か」**: 最新 1 件を書き換える記録 '
+      + '(数値パラメータ) の最初の直しは「読んだ行が読んだ時の中身のままなら書く」(`updateIfUnchanged`) で、読んだ後・書く前に**別の行が新しい最新として入る**と、'
+      + '書き換えは古い行に成功した —— 実測: `set(日数, 300)` は断りなく済み、300 は古い行にだけ入り、**有効値は 250 のまま**。'
+      + '採用の census が「採用する collection へ最新を比べない口で書く所」としてここを名指しして見つかった。直しは `store.replaceLatestIfUnchanged` '
+      + '(行の鎖の中の 1 つの取引で最新の目印 (id と updatedAt) を比べ、同じならその行を置き換え、版をその行の updatedAt より必ず後ろへ進める)。'
+      + '母集団は構文木の census が持つ: 採用の呼び口 (`latestRecord(` / `useLatestForm(`) の台帳と採用する collection の集合 (両方向)・採用する collection への書き込みは'
+      + '最新を比べる口だけ・`useLatestForm` 自身の書き込み口・状態の初期値に写しを置く所 (両方向・今日 0 件)。同じパスで、書き込みの答えと拒否を数える 2 つの census が'
+      + '**口の一覧を手で持っていた**ために新しい口を 1 つも見ていなかった (パス 499 / 500 の口を足しても鳴らない) —— 口は hook の定義から導き、props で渡った hook の結果'
+      + ' (`{...props}` の展開を含む) も追う形にした (実測: 数える呼び口 40 → 54 件、増えた 14 件はすべて受け止められていた)。'
+      + '**残る窓 (測った)**: Web Locks を使えない環境では行の鎖はタブの中だけ・知ったうえでの 2 度目の保存は最後に書いた物が勝つ・'
+      + '別のファイルの部品へ props で渡った写しが `useState` に置かれる形は census の針に映らない (今は欄ごと `useLatestForm` が持つので写しを受け取らない)。',
+    provenance: [
+      'パス 500',
+      'パス 497 (状態の初期値は写しを運ばないとして数えなかった —— その針の死角)',
+      'パス 499 (開いた欄は開いた時の中身と比べる —— こちらは「最新がまだそれか」)',
+    ],
+    enforcedBy: [
+      test(T.renderer('latestAdoptionCensus')),
+      test('src/renderer/data/__tests__/storeInsertIfLatest.test.ts'),
+      test('src/renderer/data/__tests__/storeReplaceLatestIfUnchanged.test.ts'),
+      test('src/renderer/data/__tests__/useLatestForm.test.ts'),
+      test('src/renderer/pages/__tests__/latestFormOnScreen.test.ts'),
+      test('src/renderer/data/__tests__/parameterOverrides.test.ts'),
+      test(T.renderer('storeWriteRejectionCensus')),
+      test(T.renderer('editResultCensus')),
+      harness('e2e'),
+    ],
+  },
+  {
     id: 'size-gate-before-parse',
     family: 'at-rest',
     name: 'ディスクから読む所は読む前に大きさの門',

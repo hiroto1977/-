@@ -969,7 +969,10 @@ const KNOWN_SUPPRESSIONS = [
   '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 16',
   // 2026-09-09 (パス 136): 各保管層が自分の DB を消す (deleteRecordDatabase / deleteLibraryDatabase /
   // deletePreferencesDatabase — ハードリセットの在庫 security/eraseAll.ts が呼ぶ)。27→28 / 7→8 / 11→12。
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 28',
+  // 2026-09-28 (パス 500): 28→32。最新の 1 件を比べてから書く 2 つの口 (`insertIfLatest` /
+  // `replaceLatestIfUnchanged`) が、比べてから書くまでを 1 つの readwrite 取引の中で行うために
+  // 取引と索引の cursor を自分で開く (各 2 か所)。保管層そのものの実装なので、ここが唯一の置き場である。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 32',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 8',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 14',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxy.ts :: 6',

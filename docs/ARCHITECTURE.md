@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 669 個の `file:line` 参照 + 43 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 672 個の `file:line` 参照 + 43 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **16750** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **16852** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 34 / 37 (残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 669 | 自己検証 |
+| `file:line` 参照数 | 672 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2253,7 +2253,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **307 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **308 ファイル**。
 2026-09-27 (パス 493i) に `src/renderer/keyIntent.ts` (Enter / Escape を「意図」として読む口 —— 変換中の打鍵を送信・取り消しと読まない) を
 **整合性チェーンの保護対象へ入れる**のと同時に足した (保護対象の `src/renderer/security/LockScreen.tsx` が読むので閉包の規則で入る)。
 1 度目で **100.00% (生存 0 / 未到達 0)**。
@@ -3404,6 +3404,37 @@ e2e の `crossTabData` suite がこれを留め、対照 2 方向 (錠を外し�
 置換復元が行を消す窓 (`updateIfUnchanged` の `vanished` の枝)・断られた書き込みの種別 (`save`)・collection を差し替えた後の依存配列。
 窓は時刻ではなく**暗号化の段を門にして**置換復元を挟んで作る (`storeConcurrency` の同じ窓の検査は時刻で作っている)。
 3 件足して 5 つとも手で当てて狙った 1 件ずつが落ちることを確かめ、保管層 (`store`) と `useCollection` の 2 本を測り直して **100.00%** (Killed 359 / 生存 0 / 未到達 0・40 分 4 秒 —— 残る 3 本は初回で 100.00%)。
+
+#### 最新の 1 件を採用する欄が、保管層より先に既定値で開いていた (2026-09-28 · パス 500)
+
+水耕栽培の設定・経営ハイライトのしきい値・提出者情報と書式・運転の設定・品目の一覧・数値パラメータは、保存のたびに
+行を足し (数値パラメータは最新の行を書き換え)、読む側は**最新の 1 件**を使う。上の 2 つ (錠・開いた時の中身との比較) は
+**同じ行を書き換える**形のためのもので、この形には届かない —— 書く側が「今の最新」を知らないまま全部の欄を 1 件の新しい
+行として足すと、その古い値が新しい最新になる。実測 (直す前 · 実 chromium · 同じ `file://` を開き直す):
+
+| 欄 | 直す前 |
+| --- | --- |
+| 経営サマリーの水耕栽培 | `useState(保存値 ?? 既定値)` で開き、保存値は IndexedDB から後で届く —— **5 回とも既定値**で開き、販売単価だけ直して保存すると**保存していた 4 欄が既定値へ黙って戻った** (画面は「保存しました」) |
+| 経営ハイライトのしきい値 | 読みの届く順で割れ、**5 回のうち 2 回**が既定値 |
+| 提出者情報と書式 | 書面を開いた状態で来ると空欄で開き、書式の変更は描画した時の写しの提出者情報で記録を丸ごと書いた |
+
+直しは 1 つの口 `src/renderer/data/useLatestForm.ts` に寄せた: 保管層が答えるまで欄を出さない・触っていない欄は最新に
+付いていく (別のタブの保存にも)・保存は「開いた時の最新がまだ最新なら足す」を **1 つの readwrite 取引**で
+(`store.insertIfLatest` —— 比べてから足すまでが 1 つの取引なので、錠に依らず IndexedDB の取引の直列化がタブをまたいで守る)・
+断ったら入力を残して元を今の最新へ移す・一覧に足すような変更は今の最新に当て直す (`applyToLatest`)。
+
+**数値パラメータ (最新 1 件を書き換える唯一の記録) は、最初の直しが古い行に書いていた。** 「読み直した行が読み直した時の
+中身のままなら書く」(`updateIfUnchanged`) は**その行**しか比べないので、読んだ後・書く前に別の行が新しい最新として入ると、
+書き換えは古い行に成功する —— 実測: `set(日数, 300)` は断りなく済み、300 は古い行にだけ入り、**有効値は 250 のまま**。
+見つけたのは採用の census (`src/renderer/__tests__/latestAdoptionCensus.test.ts` —— 採用する collection への書き込みは
+最新を比べる口だけ、を要求する) で、直しは `store.replaceLatestIfUnchanged` (1 つの取引の中で最新の目印 (id と updatedAt) を
+比べ、同じならその行を置き換え、版をその行の updatedAt より必ず後ろへ進める)。
+
+同じパスで、書き込みの答えと拒否を数える 2 つの census (`editResultCensus` / `storeWriteRejectionCensus`) が**口の一覧を
+手で持っていた**ために、パス 499 / 500 の口を 1 つも見ていなかったことが分かった。口は hook の定義から導き、props で渡った
+hook の結果 (`{...props}` の展開を含む) も追う形にした。e2e の `latestForm` suite が実 chromium の 2 タブで
+「開き直すたびに保存値で開く」「1 欄の保存で他を戻さない」「触っていない欄は付いていく」「古い欄の保存は書かずに断る」を留める。
+残る窓は `docs/REMAINING_WORK.md` の「パス 500」。
 
 #### 危機時に見せる窓口の照合が、片方向だった (2026-09-06)
 

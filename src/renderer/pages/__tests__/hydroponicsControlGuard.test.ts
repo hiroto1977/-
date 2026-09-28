@@ -55,6 +55,25 @@ async function mount(): Promise<void> {
 const text = (): string => container.textContent ?? '';
 const q = <T extends Element>(sel: string): T | null => container.querySelector<T>(sel);
 
+/**
+ * 「設定を変更」を押して運転の設定の欄を開く。
+ *
+ * **ボタンは保管層が答えるまで押せない** (パス 500 —— 欄は保存値から開くので、答える前に開くと
+ * 既定値の欄になる)。押せない間に押しても何も起きないので、**押せるようになるまで待ってから**押し、
+ * 欄 (タンク容量) が現れるまで待つ。直す前はボタンを見つけた瞬間に押しており、パス 500 の後は
+ * 欄が開かないまま次へ進んだ —— 1 本目の検査はそれでも通っていた (下の注記)。
+ */
+async function openControlForm(): Promise<void> {
+  const edit = await waitForElement(() => {
+    const b = q<HTMLButtonElement>('[data-hydroponics-edit-control]');
+    return b !== null && !b.disabled ? b : null;
+  }, '「設定を変更」が押せる');
+  await act(async () => {
+    edit.click();
+  });
+  await waitForElement(() => q('[data-hydroponics-control-field="tankLiters"] input'), 'タンク容量の欄');
+}
+
 async function savedCount(): Promise<number> {
   return (await getRecordStore().list(HYDROPONICS_CONTROL_COLLECTION)).length;
 }
@@ -85,20 +104,18 @@ afterEach(async () => {
 describe('運転設定の入力は桁違いを断る (パス 373)', () => {
   it('★ 欄は日本語のラベルで出る (生の鍵名ではない)', async () => {
     await mount();
-    const edit = await waitForElement(() => q<HTMLButtonElement>('[data-hydroponics-edit-control]'), '設定を編集');
-    await act(async () => {
-      edit.click();
-    });
-    await waitForText(text, '養液タンクの容量');
+    await openControlForm();
+    // ★ ラベルは**欄の中で**見る —— 「養液タンクの容量」は欄を開かなくても、閉じた状態の設定の一覧 (表) に
+    // 出るので、画面全体で探すと欄が開かなくても通る。パス 500 でボタンが保管層の答えを待つように
+    // なったとき、この検査は欄が 1 度も開かないまま緑だった (生の鍵名が無いことも、欄が無ければ自明に真)。
+    const field = q('[data-hydroponics-control-field="tankLiters"]');
+    expect(field?.textContent ?? '', '欄のラベルが日本語でない').toContain('養液タンクの容量');
     expect(text(), '生の鍵名がそのまま出ている').not.toContain('waterTempLowC');
   });
 
   it('★ 桁違いのタンク容量は ⛔ になり、保存されない', async () => {
     await mount();
-    const edit = await waitForElement(() => q<HTMLButtonElement>('[data-hydroponics-edit-control]'), '設定を編集');
-    await act(async () => {
-      edit.click();
-    });
+    await openControlForm();
     const tank = await waitForElement(
       () => q<HTMLInputElement>('[data-hydroponics-control-field="tankLiters"] input'),
       'タンク容量の欄',
@@ -120,10 +137,7 @@ describe('運転設定の入力は桁違いを断る (パス 373)', () => {
     // 直す前の欄の文は「0 L として計算されています」だったが、保存は ⛔ の欄を断る (パス 373) ——
     // 欄は自分の値が保存されないことを言うべきだった。宣言が `refusedBy: 'save'` を持ち、文が選ばれる。
     await mount();
-    const edit = await waitForElement(() => q<HTMLButtonElement>('[data-hydroponics-edit-control]'), '設定を編集');
-    await act(async () => {
-      edit.click();
-    });
+    await openControlForm();
     const tank = await waitForElement(
       () => q<HTMLInputElement>('[data-hydroponics-control-field="tankLiters"] input'),
       'タンク容量の欄',
@@ -146,10 +160,7 @@ describe('運転設定の入力は桁違いを断る (パス 373)', () => {
 
   it('★ 対照: 幅の内なら保存される (門が広すぎ / 狭すぎでない)', async () => {
     await mount();
-    const edit = await waitForElement(() => q<HTMLButtonElement>('[data-hydroponics-edit-control]'), '設定を編集');
-    await act(async () => {
-      edit.click();
-    });
+    await openControlForm();
     const tank = await waitForElement(
       () => q<HTMLInputElement>('[data-hydroponics-control-field="tankLiters"] input'),
       'タンク容量の欄',

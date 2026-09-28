@@ -19,13 +19,19 @@ import {
   parseBankFormat,
 } from '../../shared/bankFormat';
 import {
+  BANK_SUBMISSION_COLLECTION,
   parseSubmissionProfile,
+  settingsFromRecord,
   type BankSubmissionSettings,
   type BankSubmissionSheetModel,
   type SheetMeta,
+  type SubmissionProfile,
 } from '../data/bankSubmission';
 import { printDocument } from '../data/printDocument';
 import { fireReported } from '../data/deviceStoreFailure';
+import { busyLatestNote, unreadableForJudgementNote } from '../data/readCollectionNow';
+import type { LatestForm } from '../data/useLatestForm';
+import { ChangedLatestNote, LatestFormLoading } from './ChangedLatestNote';
 
 /** 提出者情報の表 (2 組 × 4 行)。 */
 function metaPairs(meta: readonly SheetMeta[]): SheetMeta[][] {
@@ -125,49 +131,68 @@ const inputStyle: React.CSSProperties = {
   minWidth: 160,
 };
 
+/**
+ * 書式の選択・提出者情報・印刷・戻る (書面の上に載る操作)。
+ *
+ * **提出者情報と書式は「最新の 1 件を採用する」1 つの記録** (パス 500)。欄の状態は `useLatestForm` が
+ * 持つ —— 直す前は `useState({ ...settings.profile })` で開き、士業の画面から「書面を開いた状態で」来ると
+ * 保存値が届く前の空欄で開いて、届いても開き直さなかった。1 欄を直して保存すると、保存していた
+ * 他の欄を空欄で覆った。書式の変更も `settings.profile` (描画した時の写し) で記録を丸ごと書いていた。
+ */
 export function BankSubmissionPanel({
   model,
-  settings,
-  onSave,
+  form,
   onClose,
 }: {
   model: BankSubmissionSheetModel;
-  settings: BankSubmissionSettings;
-  onSave: (s: BankSubmissionSettings) => Promise<void> | void;
+  /** 提出者情報の欄 (`OverviewPage` が持つ —— 書面の表示も同じ購読の最新を読む)。 */
+  form: LatestForm<BankSubmissionSettings, SubmissionProfile>;
   onClose: () => void;
 }) {
-  const [form, setForm] = useState({ ...settings.profile });
+  const settings = settingsFromRecord(form.latest?.data);
   const [error, setError] = useState<string>();
   const [saved, setSaved] = useState(false);
   const submit = useSubmitGuard();
 
   async function saveProfile(): Promise<void> {
-    const r = parseSubmissionProfile(form);
+    const r = parseSubmissionProfile(form.form);
     if (!r.ok) {
       setSaved(false);
       setError(r.reason);
       return;
     }
     setError(undefined);
-    await onSave({ profile: r.profile, format: settings.format });
-    setSaved(true);
+    // 書式は**欄の元** (開いた時の最新) から取る。同じ画面で選んだ書式は `applyToLatest` が元を進めて
+    // いるので含まれ、別の画面で選ばれた書式は元が古いので保存ごと断られる (覆わない)。
+    setSaved(await form.save({ profile: r.profile, format: settingsFromRecord(form.base?.data).format }));
   }
 
-  /** 書式は選んだ瞬間に保存する (書面がその場で変わる)。知らない値は既定へ倒れる。 */
-  function changeFormat(patch: Record<string, string>): void {
-    fireReported(onSave({ profile: settings.profile, format: parseBankFormat({ ...settings.format, ...patch }) }));
+  /**
+   * 書式は選んだ瞬間に保存する (書面がその場で変わる)。知らない値は既定へ倒れる。
+   *
+   * **今の最新に当てる** (パス 500) —— 描画した時の写しの提出者情報で記録を丸ごと書くと、保存値が届く前
+   * なら空欄で、別の画面の保存の後なら古い値で提出者情報を覆う。
+   */
+  async function changeFormat(patch: Record<string, string>): Promise<void> {
+    const r = await form.applyToLatest((current) => {
+      const now = settingsFromRecord(current?.data);
+      return { profile: now.profile, format: parseBankFormat({ ...now.format, ...patch }) };
+    });
+    if (r.status === 'busy') setError(busyLatestNote('書式'));
+    else if (r.status === 'unreadable') setError(unreadableForJudgementNote('書式', '今の提出者情報と書式'));
   }
 
-  const field = (key: keyof typeof form, label: string, placeholder = '') => (
+  const field = (key: keyof SubmissionProfile, label: string, placeholder = '') => (
     <label className="bank-field">
       {label}
       <input
         type="text"
         aria-label={label}
-        value={form[key]}
+        value={form.form[key]}
         placeholder={placeholder}
         onChange={(e) => {
-          setForm((prev) => ({ ...prev, [key]: e.target.value }));
+          const v = e.target.value;
+          form.update((prev) => ({ ...prev, [key]: v }));
           setSaved(false);
         }}
         style={inputStyle}
@@ -183,10 +208,14 @@ export function BankSubmissionPanel({
           <button type="button" className="bank-print" onClick={() => printDocument()}>印刷 / PDF に保存</button>
           <span className="bank-hint">A4 縦で書面だけを印刷します。PDF にするには印刷先で「PDF に保存」を選びます。</span>
         </div>
+        {!form.ready ? (
+          <LatestFormLoading collection={BANK_SUBMISSION_COLLECTION} what="書式と提出者情報" />
+        ) : (
+        <>
         <div className="bank-toolbar-row">
           <label className="bank-field">
             表示単位
-            <select aria-label="表示単位" value={settings.format.unit} onChange={(e) => changeFormat({ unit: e.target.value })}>
+            <select aria-label="表示単位" value={settings.format.unit} onChange={(e) => fireReported(changeFormat({ unit: e.target.value }))}>
               {AMOUNT_UNITS.map((u) => (
                 <option key={u} value={u}>{UNIT_LABEL[u]}</option>
               ))}
@@ -194,7 +223,7 @@ export function BankSubmissionPanel({
           </label>
           <label className="bank-field">
             負数の表記
-            <select aria-label="負数の表記" value={settings.format.negative} onChange={(e) => changeFormat({ negative: e.target.value })}>
+            <select aria-label="負数の表記" value={settings.format.negative} onChange={(e) => fireReported(changeFormat({ negative: e.target.value }))}>
               {NEGATIVE_STYLES.map((n) => (
                 <option key={n} value={n}>{NEGATIVE_LABEL[n]}</option>
               ))}
@@ -202,7 +231,7 @@ export function BankSubmissionPanel({
           </label>
           <label className="bank-field">
             端数処理
-            <select aria-label="端数処理" value={settings.format.rounding} onChange={(e) => changeFormat({ rounding: e.target.value })}>
+            <select aria-label="端数処理" value={settings.format.rounding} onChange={(e) => fireReported(changeFormat({ rounding: e.target.value }))}>
               {ROUNDING_MODES.map((r) => (
                 <option key={r} value={r}>{ROUNDING_LABEL[r]}</option>
               ))}
@@ -210,7 +239,7 @@ export function BankSubmissionPanel({
           </label>
           <label className="bank-field">
             年号
-            <select aria-label="年号" value={settings.format.era} onChange={(e) => changeFormat({ era: e.target.value })}>
+            <select aria-label="年号" value={settings.format.era} onChange={(e) => fireReported(changeFormat({ era: e.target.value }))}>
               {ERA_STYLES.map((era) => (
                 <option key={era} value={era}>{ERA_LABEL[era]}</option>
               ))}
@@ -226,6 +255,18 @@ export function BankSubmissionPanel({
           {error !== undefined && <span role="alert" className="bank-error">{error}</span>}
           {saved && error === undefined && <span role="status" className="bank-saved">保存しました。書面に反映されています。</span>}
         </div>
+        <ChangedLatestNote
+          changed={form.changed}
+          what="提出者情報"
+          then="もう一度「提出者情報を保存」を押すと、この欄の内容で上書きします。"
+          onLoadSaved={() => {
+            form.loadSaved();
+            setSaved(false);
+            setError(undefined);
+          }}
+        />
+        </>
+        )}
       </div>
       <BankSubmissionSheet model={model} />
     </div>

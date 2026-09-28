@@ -1,7 +1,7 @@
 /**
  * **保存が断られたとき、その拒否を誰かが受け取る。** (2026-09-27 · パス 493o)
  *
- * `useCollection` の書き込み (`add` / `addMany` / `edit` / `remove`) は、断られると
+ * `useCollection` の書き込み (`add` / `addMany` / `edit` / `remove` ほか —— 集合は定義から導く) は、断られると
  * 画面上端の知らせへ届けてから**投げ直す** (`useCollection.ts` の `reporting`)。
  * 投げ直すのは、自分の欄に理由を出す画面の契約を変えないためである。したがって
  * 呼び手は、その拒否を**必ずどこかで受け取らなければならない** —— try/catch か、
@@ -50,9 +50,22 @@
  * - `void` / 式文 (投げっぱなし) は受け取られない
  *
  * 辿れない形は `unresolved` として**理由つきの台帳**に載せる (両方向)。
- * 書き込みの**源**も台帳である —— `useCollection` の 4 つと、それを包んで返す hook
- * (`useParameters` の `set` / `reset` / `resetAll`)。包む側の中の呼び出しは
- * 「hook の外で辿る」ので `wrapper` として台帳に載る。
+ * 書き込みの**源**も台帳である —— `useCollection` の書き込みと、それを包んで返す hook
+ * (`useParameters` の `set` / `reset` / `resetAll`・`useLatestForm` の `save` / `applyToLatest`)。
+ * 包む側の中の呼び出しは「hook の外で辿る」ので `wrapper` として台帳に載る。
+ *
+ * ## パス 500 で広げた物 (実測)
+ *
+ * - **源の台帳が 2 パス分古びていた** —— `useCollection` の行は `add` / `addMany` / `edit` / `remove` の
+ *   ままで、パス 499 の `editIfUnchanged` とパス 500 の `addIfLatest` / `applyToLatest` の呼び出しは
+ *   **1 つも辿られていなかった** (実測: 同じ木を直す前の走査は 40 か所・直した後は 54 か所。増えた
+ *   14 か所のうち画面の側は 9 か所で、どれも受け取られていた —— 欠陥は無かったが、
+ *   `onClick={() => editIfUnchanged(…)}` と書いても鳴らない状態だった)。
+ *   今は hook の定義から「拒否しうる関数」を導き、台帳と両方向に突き合わせる。
+ * - **hook の結果が props で渡る** —— `useLatestForm` の結果は部品へ渡り、部品の中で `form.save(…)` が
+ *   呼ばれる。束ねた名前だけを見る走査には映らないので、props の型が結果の型の欄を源として辿る。
+ * - **`{...props}` で別の部品へ広げる** —— 名前で受けた props を広げた先まで辿る (広げる先を辿らないと、
+ *   品目の変更 (`cropCol.applyToLatest`) の拒否が「辿れない」になった)。
  *
  * ★ **辿る規則そのものに標本を添える** (CLAUDE.md の規約) —— 下の「標本」の describe が、
  * 規則ごとに**受け取られない形と受け取られる形の両方**を合成の原文で確かめる。
@@ -71,12 +84,50 @@ import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests
  * 書き込みの源。**hook を呼んだ結果の関数**を呼ぶと、断られたとき拒否が返る。
  *
  * `useParameters` は `useCollection` を包み、`set` / `reset` / `resetAll` で書く
- * (`data/parameterOverrides.ts`)。包む側の中の呼び出しは `WRAPPER_SITES` に載り、
+ * (`data/parameterOverrides.ts`)。`useLatestForm` も包み、`save` / `applyToLatest` で書く
+ * (`data/useLatestForm.ts` · パス 500)。包む側の中の呼び出しは `WRAPPER_SITES` に載り、
  * ここに挙げた関数の呼び出しが辿る対象になる。
+ *
+ * ★ **`methods` は手で並べるが、定義から導いた集合と両方向に突き合わせる** (パス 500) ——
+ * パス 499 は `useCollection` に `editIfUnchanged` を足し、パス 500 は `addIfLatest` /
+ * `applyToLatest` を足したのに、この行は `add` / `addMany` / `edit` / `remove` のまま
+ * だった。**足した口の呼び出しは 1 つも辿られていなかった** (実測: 直す前の走査は
+ * `parameterOverrides.ts` の中の書き込みを **0 件**と答えた —— そこは 2 本とも新しい口へ移っていた)。
+ * 導き方: hook が返す物のうち、**`async` で、握り潰す try の外に `await` を持つ関数** ——
+ * `reload` は失敗を報せに写して投げないので外れ、`records` / `loading` は関数でないので外れる。
+ *
+ * ★ **hook の結果は部品の props でも渡る** (`resultType`) —— 経営サマリーは `useLatestForm` の
+ * 結果を 3 つの部品へ渡し、部品の中で `form.save(…)` を呼ぶ。束ねた名前だけを見る走査には
+ * 部品の中の呼び出しが映らない。props の型にこの型の欄が在れば、その欄も源として辿る。
  */
-const WRITE_SOURCES: readonly { readonly hook: string; readonly methods: readonly string[] }[] = [
-  { hook: 'useCollection', methods: ['add', 'addMany', 'edit', 'remove'] },
-  { hook: 'useParameters', methods: ['set', 'reset', 'resetAll'] },
+interface WriteSource {
+  readonly hook: string;
+  /** hook の定義の在る道。返す関数のうち拒否しうる物をここから導き、`methods` と突き合わせる。 */
+  readonly definedIn: string;
+  /** hook が返す型の名前。部品の第 1 引数の型にこの型の欄が在れば、その欄も源になる。 */
+  readonly resultType: string;
+  readonly methods: readonly string[];
+}
+
+const WRITE_SOURCES: readonly WriteSource[] = [
+  {
+    hook: 'useCollection',
+    definedIn: 'src/renderer/data/useCollection.ts',
+    resultType: 'UseCollection',
+    methods: ['add', 'addIfLatest', 'addMany', 'applyToLatest', 'edit', 'editIfUnchanged', 'remove', 'replaceLatest'],
+  },
+  {
+    hook: 'useParameters',
+    definedIn: 'src/renderer/data/parameterOverrides.ts',
+    resultType: 'UseParameters',
+    methods: ['reset', 'resetAll', 'set'],
+  },
+  {
+    hook: 'useLatestForm',
+    definedIn: 'src/renderer/data/useLatestForm.ts',
+    resultType: 'LatestForm',
+    methods: ['applyToLatest', 'save'],
+  },
 ];
 
 /**
@@ -84,11 +135,18 @@ const WRITE_SOURCES: readonly { readonly hook: string; readonly methods: readonl
  * 鍵は `道 :: 呼び出しの字面`。両方向 —— 包む側の中の呼び出しが増えても減っても落ちる。
  */
 const WRAPPER_SITES: Readonly<Record<string, string>> = {
-  'src/renderer/data/parameterOverrides.ts :: col.edit(latest.id, { values: next })':
-    'useParameters の mutate が書く。拒否は mutate → set / reset / resetAll の約束へそのまま返るので、' +
-    'WRITE_SOURCES の useParameters の行が、それを呼ぶ所 (設定画面) を辿る。',
-  'src/renderer/data/parameterOverrides.ts :: col.add({ values: next })':
-    '同上の、まだ 1 件も無いときの枝。拒否の返り方は edit と同じ。',
+  'src/renderer/data/parameterOverrides.ts :: col.addIfLatest(null, { values: next })':
+    'useParameters の mutate が書く (まだ 1 件も無いときの枝 · パス 500)。拒否は mutate → set / reset / resetAll の' +
+    '約束へそのまま返るので、WRITE_SOURCES の useParameters の行が、それを呼ぶ所 (設定画面) を辿る。',
+  'src/renderer/data/parameterOverrides.ts :: col.replaceLatest({ id: latest.id, updatedAt: latest.updatedAt }, { values: next })':
+    '同じ mutate の、最新がまだ読んだ行のその版なら置き換える枝 (パス 500)。拒否の返り方は上と同じ。',
+  'src/renderer/data/parameterOverrides.ts :: col.addIfLatest(latestTokenOf(latest), { values: next })':
+    '同じ mutate の、試みを使い切った後に新しい行として書く枝 (パス 498 / 500)。拒否の返り方は上と同じ。',
+  'src/renderer/data/useLatestForm.ts :: col.addIfLatest(latestTokenOf(st.base), data)':
+    'useLatestForm の save が書く (パス 500)。拒否は save の約束へそのまま返るので、WRITE_SOURCES の ' +
+    'useLatestForm の行が、それを呼ぶ所 (経営サマリーの 3 つの欄・運転の設定) を辿る。',
+  'src/renderer/data/useLatestForm.ts :: col.applyToLatest(change)':
+    'useLatestForm の applyToLatest が書く (書式を選んだ瞬間の保存 · パス 500)。拒否の返り方は save と同じ。',
 };
 
 /**
@@ -180,13 +238,22 @@ class Analyzer {
       const sf = this.sourceFile(file)!;
       for (const call of this.writeCalls(sf)) {
         const { line } = sf.getLineAndCharacterOfPosition(call.getStart(sf));
-        out.push({ file, line: line + 1, text: call.getText(sf), verdicts: this.follow(call, new Set(), 0) });
+        out.push({ file, line: line + 1, text: call.getText(sf), verdicts: this.follow(call, new Set<unknown>(), 0) });
       }
     }
     return out;
   }
 
-  /** 源の hook の結果に束ねた名前を拾い、その名前の呼び出しを返す。 */
+  /**
+   * 書き込みの呼び出しを返す。源は 3 つの形で束ねられる:
+   *
+   * 1. `const x = hook(…)` / `const { m } = hook(…)` —— 束ねた名前の呼び出し (ファイルの中どこでも)
+   * 2. 部品の第 1 引数を分割代入し、その欄の型が hook の結果の型 (`{ form }: { form: LatestForm<…> }`)
+   *    —— **その部品の本体の中の** `form.m(…)` (パス 500)
+   * 3. 部品の第 1 引数を分割代入しない (`props: Props`) —— 本体の中の `props.form.m(…)` (パス 500)
+   *
+   * 引数そのものの型が結果の型 (`(form: LatestForm<…>) => …`) も 3 と同じ形で辿る。
+   */
   private writeCalls(sf: ts.SourceFile): ts.CallExpression[] {
     const fnNames = new Set<string>();
     const objNames = new Map<string, readonly string[]>();
@@ -219,6 +286,8 @@ class Analyzer {
           objNames.get(c.expression.text)?.includes(c.name.text)
         ) {
           calls.push(n);
+        } else if (ts.isPropertyAccessExpression(c) && propSourceMethods(c.expression, sf)?.includes(c.name.text)) {
+          calls.push(n);
         }
       }
       ts.forEachChild(n, visitCall);
@@ -234,7 +303,7 @@ class Analyzer {
   }
 
   /** `expr` の値 (断られると拒否される約束) の行き先。 */
-  follow(expr: ts.Node, seen: Set<ts.Node>, depth: number): Verdict[] {
+  follow(expr: ts.Node, seen: Set<unknown>, depth: number): Verdict[] {
     if (depth > 16) return [{ kind: 'unresolved', at: this.at(expr), why: '辿る段が深すぎる' }];
     const node = skipTransparentUp(expr);
     const parent = node.parent;
@@ -281,7 +350,7 @@ class Analyzer {
   }
 
   /** `await` がそこで投げる。同じ関数の try/catch の中なら受け取った (catch が投げ直さない限り)。 */
-  private throwAt(awaitExpr: ts.Node, seen: Set<ts.Node>, depth: number): Verdict[] {
+  private throwAt(awaitExpr: ts.Node, seen: Set<unknown>, depth: number): Verdict[] {
     let prev: ts.Node = awaitExpr;
     let p: ts.Node | undefined = awaitExpr.parent;
     while (p && !isFunctionLike(p)) {
@@ -302,7 +371,7 @@ class Analyzer {
   }
 
   /** 関数 `fn` の返す約束が拒否される —— その関数がどう使われるかを辿る。 */
-  private functionRejects(fn: FunctionLike, seen: Set<ts.Node>, depth: number): Verdict[] {
+  private functionRejects(fn: FunctionLike, seen: Set<unknown>, depth: number): Verdict[] {
     if (seen.has(fn)) return [];
     seen.add(fn);
     const holder = skipTransparentUp(fn);
@@ -326,7 +395,7 @@ class Analyzer {
   }
 
   /** 名前 `name` (関数・部品の prop) の参照を、宣言の範囲の中で全部辿る。 */
-  private references(name: ts.Identifier, seen: Set<ts.Node>, depth: number, scopeOverride?: ts.Node): Verdict[] {
+  private references(name: ts.Identifier, seen: Set<unknown>, depth: number, scopeOverride?: ts.Node): Verdict[] {
     const scope = scopeOverride ?? this.scopeOf(name);
     const refs: ts.Identifier[] = [];
     const visit = (n: ts.Node): void => {
@@ -347,7 +416,7 @@ class Analyzer {
     return p ?? name.getSourceFile();
   }
 
-  private reference(ref: ts.Identifier, seen: Set<ts.Node>, depth: number): Verdict[] {
+  private reference(ref: ts.Expression, seen: Set<unknown>, depth: number): Verdict[] {
     const node = skipTransparentUp(ref);
     const parent = node.parent;
     if (parent && ts.isCallExpression(parent) && parent.expression === node) return this.follow(parent, seen, depth + 1);
@@ -362,24 +431,74 @@ class Analyzer {
   }
 
   /** JSX の属性に置かれた関数。小文字の要素なら React が戻り値を捨てる。部品なら中で辿る。 */
-  private jsxAttribute(attr: ts.JsxAttribute, seen: Set<ts.Node>, depth: number): Verdict[] {
+  private jsxAttribute(attr: ts.JsxAttribute, seen: Set<unknown>, depth: number): Verdict[] {
     const element = attr.parent.parent; // JsxAttributes → JsxOpeningElement / JsxSelfClosingElement
     const tag = element.tagName.getText();
     const prop = attr.name.getText();
     if (/^[a-z]/.test(tag)) {
       return [{ kind: 'unhandled', at: this.at(attr), why: `<${tag} ${prop}> —— React はイベントの戻り値を捨てる` }];
     }
-    const comp = this.resolveComponent(tag, attr.getSourceFile());
-    if (!comp) return [{ kind: 'unresolved', at: this.at(attr), why: `部品 <${tag}> の定義が見つからない` }];
-    const binding = propBinding(comp, prop);
-    if (!binding) return [{ kind: 'unresolved', at: this.at(attr), why: `部品 <${tag}> が prop ${prop} を分割代入で受けていない` }];
-    if (seen.has(binding)) return [];
-    seen.add(binding);
+    return this.componentProp(tag, prop, attr, seen, depth);
+  }
+
+  /**
+   * 部品 `<tag>` が prop `prop` をどう使うかを辿る。受け方は 3 つ:
+   *
+   * - 第 1 引数の分割代入 (`{ onSave }`) —— 束ねた名前の参照を辿る
+   * - 第 1 引数の名前 (`props`) —— 本体の中の `props.onSave` を辿る
+   * - その名前をそのまま別の部品へ広げる (`<Inner {...props} />`) —— 同じ prop を `<Inner>` の中で辿る
+   *   (パス 500: 経営サマリーの水耕栽培の欄は、保管層が答えるまで待つ外側の部品が `{...props}` で
+   *   内側へ渡す。広げた先を辿らないと、品目の変更の拒否が「辿れない」になる)
+   */
+  private componentProp(tag: string, prop: string, from: ts.Node, seen: Set<unknown>, depth: number): Verdict[] {
+    if (depth > 16) return [{ kind: 'unresolved', at: this.at(from), why: '辿る段が深すぎる' }];
+    const comp = this.resolveComponent(tag, from.getSourceFile());
+    if (!comp) return [{ kind: 'unresolved', at: this.at(from), why: `部品 <${tag}> の定義が見つからない` }];
     const body = comp.body;
-    if (!body) return [{ kind: 'unresolved', at: this.at(attr), why: `部品 <${tag}> に本体が無い` }];
-    const verdicts = this.references(binding, seen, depth + 1, body);
+    if (!body) return [{ kind: 'unresolved', at: this.at(from), why: `部品 <${tag}> に本体が無い` }];
+    const visitKey = `${comp.getSourceFile().fileName}:${comp.pos}:${prop}`;
+    if (seen.has(visitKey)) return [];
+    seen.add(visitKey);
+    const first = comp.parameters[0];
+    let verdicts: Verdict[];
+    if (first && ts.isObjectBindingPattern(first.name)) {
+      const binding = propBinding(comp, prop);
+      if (!binding) {
+        return [{ kind: 'unresolved', at: this.at(from), why: `部品 <${tag}> が prop ${prop} を分割代入で受けていない` }];
+      }
+      verdicts = this.references(binding, seen, depth + 1, body);
+    } else if (first && ts.isIdentifier(first.name)) {
+      const propsName = first.name.text;
+      verdicts = [];
+      const visit = (n: ts.Node): void => {
+        if (
+          ts.isPropertyAccessExpression(n) &&
+          ts.isIdentifier(n.expression) &&
+          n.expression.text === propsName &&
+          n.name.text === prop
+        ) {
+          verdicts.push(...this.reference(n, seen, depth + 1));
+        } else if (ts.isJsxSpreadAttribute(n) && ts.isIdentifier(n.expression) && n.expression.text === propsName) {
+          const inner = n.parent.parent; // JsxAttributes → JsxOpeningElement / JsxSelfClosingElement
+          const innerTag = inner.tagName.getText();
+          if (/^[a-z]/.test(innerTag)) {
+            verdicts.push({
+              kind: 'unhandled',
+              at: this.at(n),
+              why: `<${innerTag} {...${propsName}}> —— React はイベントの戻り値を捨てる`,
+            });
+          } else {
+            verdicts.push(...this.componentProp(innerTag, prop, n, seen, depth + 1));
+          }
+        }
+        ts.forEachChild(n, visit);
+      };
+      visit(body);
+    } else {
+      return [{ kind: 'unresolved', at: this.at(from), why: `部品 <${tag}> の第 1 引数が分割代入でも名前でもない` }];
+    }
     if (verdicts.length === 0) {
-      return [{ kind: 'unresolved', at: this.at(attr), why: `部品 <${tag}> が prop ${prop} を 1 度も使わない` }];
+      return [{ kind: 'unresolved', at: this.at(from), why: `部品 <${tag}> が prop ${prop} を 1 度も使わない` }];
     }
     return verdicts;
   }
@@ -405,6 +524,82 @@ class Analyzer {
     }
     return null;
   }
+}
+
+/** 結果の型の名前 → その型の書き込みの関数。 */
+const RESULT_TYPE_METHODS: ReadonlyMap<string, readonly string[]> = new Map(
+  WRITE_SOURCES.map((w) => [w.resultType, w.methods] as const),
+);
+
+/** 型が hook の結果の型か (`LatestForm<…>` / `UseCollection<…>` / `UseParameters`)。 */
+function resultTypeOf(t: ts.TypeNode | undefined): string | null {
+  if (!t || !ts.isTypeReferenceNode(t) || !ts.isIdentifier(t.typeName)) return null;
+  return RESULT_TYPE_METHODS.has(t.typeName.text) ? t.typeName.text : null;
+}
+
+/** 型の欄 (型の字面、または同じファイルの interface / type)。 */
+function membersOfType(t: ts.TypeNode | undefined, sf: ts.SourceFile): readonly ts.TypeElement[] | null {
+  if (!t) return null;
+  if (ts.isTypeLiteralNode(t)) return t.members;
+  if (ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName)) {
+    const name = t.typeName.text;
+    for (const st of sf.statements) {
+      if (ts.isInterfaceDeclaration(st) && st.name.text === name) return st.members;
+      if (ts.isTypeAliasDeclaration(st) && st.name.text === name && ts.isTypeLiteralNode(st.type)) return st.type.members;
+    }
+  }
+  return null;
+}
+
+/** 欄 `key` の型が結果の型なら、その型の名前。 */
+function resultTypedMember(members: readonly ts.TypeElement[], key: string): string | null {
+  for (const m of members) {
+    if (ts.isPropertySignature(m) && m.name.getText() === key) return resultTypeOf(m.type);
+  }
+  return null;
+}
+
+/**
+ * 受け手 `recv` が、関数の引数として渡った hook の結果なら、その型の書き込みの関数。
+ *
+ * - `form` —— 囲む関数の第 1 引数が分割代入で `form` を束ね、その欄の型が結果の型
+ * - `form` —— 囲む関数の引数 `form` そのものの型が結果の型
+ * - `props.form` —— 囲む関数の第 1 引数 `props` の型の欄 `form` が結果の型
+ *
+ * 内側の関数から外へ向かって探し、**最初に名前を束ねた引数**で決める (影に入った名前を外の引数と取り違えない)。
+ */
+function propSourceMethods(recv: ts.Expression, sf: ts.SourceFile): readonly string[] | null {
+  const direct = ts.isIdentifier(recv) ? recv.text : null;
+  const viaProps =
+    ts.isPropertyAccessExpression(recv) && ts.isIdentifier(recv.expression)
+      ? { param: recv.expression.text, key: recv.name.text }
+      : null;
+  if (direct === null && viaProps === null) return null;
+  for (let p: ts.Node | undefined = recv.parent; p; p = p.parent) {
+    if (!isFunctionLike(p)) continue;
+    for (const param of p.parameters) {
+      if (direct !== null && ts.isObjectBindingPattern(param.name)) {
+        for (const el of param.name.elements) {
+          if (!ts.isIdentifier(el.name) || el.name.text !== direct) continue;
+          const members = membersOfType(param.type, sf);
+          const t = members ? resultTypedMember(members, (el.propertyName ?? el.name).getText(sf)) : null;
+          return t === null ? null : RESULT_TYPE_METHODS.get(t)!;
+        }
+      }
+      if (ts.isIdentifier(param.name)) {
+        if (direct !== null && param.name.text === direct) {
+          const t = resultTypeOf(param.type);
+          return t === null ? null : RESULT_TYPE_METHODS.get(t)!;
+        }
+        if (viaProps !== null && param.name.text === viaProps.param) {
+          const members = membersOfType(param.type, sf);
+          const t = members ? resultTypedMember(members, viaProps.key) : null;
+          return t === null ? null : RESULT_TYPE_METHODS.get(t)!;
+        }
+      }
+    }
+  }
+  return null;
 }
 
 /** catch の本体が (入れ子の関数の外で) 投げ直すか。 */
@@ -471,6 +666,117 @@ function propBinding(comp: FunctionLike, prop: string): ts.Identifier | null {
   return null;
 }
 
+/**
+ * hook が返す物のうち、**拒否しうる関数**の名前 (定義の原文から導く · パス 500)。
+ *
+ * 拒否しうる = `async` で、握り潰す try (catch が投げ直さない) の外に `await` か `throw` を持つ
+ * (入れ子の関数の中は数えない —— それはその関数の拒否である)。返す物は hook の本体の最後の
+ * `return { … }` の欄: 短縮形 (`add`) は本体の中の `const add = useCallback(fn, …)` /
+ * `const add = fn` / `function add` を、メソッドの形 (`async save() {…}`) はそれ自身を見る。
+ */
+function rejectingMembers(sf: ts.SourceFile, hook: string): string[] {
+  const decl = sf.statements.find(
+    (st): st is ts.FunctionDeclaration => ts.isFunctionDeclaration(st) && st.name?.text === hook,
+  );
+  if (!decl?.body) throw new Error(`${sf.fileName}: hook ${hook} の定義が見つからない`);
+  const locals = new Map<string, FunctionLike>();
+  for (const st of decl.body.statements) {
+    if (ts.isFunctionDeclaration(st) && st.name) locals.set(st.name.text, st);
+    if (!ts.isVariableStatement(st)) continue;
+    for (const d of st.declarationList.declarations) {
+      if (!ts.isIdentifier(d.name) || !d.initializer) continue;
+      let init = skipDownTransparent(d.initializer);
+      if (ts.isCallExpression(init) && init.expression.getText(sf) === 'useCallback' && init.arguments[0]) {
+        init = skipDownTransparent(init.arguments[0]);
+      }
+      if (ts.isArrowFunction(init) || ts.isFunctionExpression(init)) locals.set(d.name.text, init);
+    }
+  }
+  const ret = [...decl.body.statements].reverse().find(
+    (st): st is ts.ReturnStatement => ts.isReturnStatement(st) && st.expression !== undefined,
+  );
+  const obj = ret?.expression ? skipDownTransparent(ret.expression) : undefined;
+  if (!obj || !ts.isObjectLiteralExpression(obj)) throw new Error(`${sf.fileName}: hook ${hook} が物の字面を返していない`);
+  const out: string[] = [];
+  for (const prop of obj.properties) {
+    let fn: FunctionLike | undefined;
+    if (ts.isShorthandPropertyAssignment(prop)) fn = locals.get(prop.name.text);
+    else if (ts.isMethodDeclaration(prop)) fn = prop;
+    else if (ts.isPropertyAssignment(prop)) {
+      const init = skipDownTransparent(prop.initializer);
+      if (ts.isArrowFunction(init) || ts.isFunctionExpression(init)) fn = init;
+      else if (ts.isIdentifier(init)) fn = locals.get(init.text);
+    }
+    if (fn && canReject(fn)) out.push(prop.name!.getText(sf));
+  }
+  return out.sort();
+}
+
+/** 関数が拒否しうるか (上の定義)。 */
+function canReject(fn: FunctionLike): boolean {
+  if (!fn.modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword) || !fn.body) return false;
+  let found = false;
+  const visit = (n: ts.Node, guarded: boolean): void => {
+    if (found || isFunctionLike(n)) return;
+    if ((ts.isAwaitExpression(n) || ts.isThrowStatement(n)) && !guarded) {
+      found = true;
+      return;
+    }
+    if (ts.isTryStatement(n)) {
+      const swallows = n.catchClause !== undefined && !rethrows(n.catchClause.block);
+      visit(n.tryBlock, guarded || swallows);
+      if (n.catchClause) visit(n.catchClause.block, guarded);
+      if (n.finallyBlock) visit(n.finallyBlock, guarded);
+      return;
+    }
+    ts.forEachChild(n, (c) => visit(c, guarded));
+  };
+  ts.forEachChild(fn.body, (c) => visit(c, false));
+  return found;
+}
+
+/**
+ * hook の結果の型が書かれた所のうち、**走査が源として辿れない形**を返す (パス 500)。
+ *
+ * 辿れる形は 2 つ —— 部品の第 1 引数の型 (型の字面か、同じファイルの interface / type) の欄、
+ * または引数そのものの型。変数の注釈・戻り値・`typeof hook` などは、そこから呼ばれる書き込みを
+ * 走査が見ない。黙って見落とさず、形を足すまで落とす。
+ */
+function unrecognizedResultTypes(sf: ts.SourceFile): string[] {
+  const hooks = new Set(WRITE_SOURCES.map((w) => w.hook));
+  // 第 1 引数の型として使われている型 (字面はそのもの・名前は宣言へ)。
+  const paramTypes = new Set<ts.Node>();
+  const paramTypeNames = new Set<string>();
+  const collect = (n: ts.Node): void => {
+    if (isFunctionLike(n)) {
+      const t = n.parameters[0]?.type;
+      if (t && ts.isTypeLiteralNode(t)) paramTypes.add(t);
+      if (t && ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName)) paramTypeNames.add(t.typeName.text);
+    }
+    ts.forEachChild(n, collect);
+  };
+  collect(sf);
+  const bad: string[] = [];
+  const at = (n: ts.Node): string => `${sf.fileName}:${sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1}`;
+  const visit = (n: ts.Node): void => {
+    if (ts.isTypeQueryNode(n) && hooks.has(n.exprName.getText(sf))) bad.push(`${at(n)} typeof ${n.exprName.getText(sf)}`);
+    if (ts.isTypeReferenceNode(n) && resultTypeOf(n) !== null) {
+      const p = n.parent;
+      let ok = false;
+      if (ts.isParameter(p) && p.type === n) ok = true;
+      if (ts.isPropertySignature(p) && p.type === n) {
+        const holder = p.parent;
+        if (ts.isTypeLiteralNode(holder)) ok = paramTypes.has(holder) || (ts.isTypeAliasDeclaration(holder.parent) && paramTypeNames.has(holder.parent.name.text));
+        if (ts.isInterfaceDeclaration(holder)) ok = paramTypeNames.has(holder.name.text);
+      }
+      if (!ok) bad.push(`${at(n)} ${n.getText(sf)}`);
+    }
+    ts.forEachChild(n, visit);
+  };
+  visit(sf);
+  return bad;
+}
+
 // ---------------------------------------------------------------------------
 // 本物の木
 // ---------------------------------------------------------------------------
@@ -494,10 +800,14 @@ function rendererSources(): Map<string, string> {
   return out;
 }
 
-const REAL = new Analyzer({ sources: rendererSources() });
+const REAL_SOURCES = rendererSources();
+const REAL_FILES: readonly string[] = [...REAL_SOURCES.keys()];
+const REAL = new Analyzer({ sources: REAL_SOURCES });
 const SITES = REAL.sites();
 
 const siteKey = (s: Site): string => `${s.file} :: ${s.text}`;
+/** 源の hook を定義するファイル。その中の書き込みは包む側の書き込みで、包んだ関数の呼び出しを辿る。 */
+const WRAPPER_FILES: ReadonlySet<string> = new Set(WRITE_SOURCES.map((w) => w.definedIn));
 const isWrapperSite = (s: Site): boolean => Object.hasOwn(WRAPPER_SITES, siteKey(s));
 
 describe('保存が断られたとき、その拒否を誰かが受け取る (パス 493o)', () => {
@@ -539,9 +849,27 @@ describe('保存が断られたとき、その拒否を誰かが受け取る (�
   });
 
   it('★ 包む hook の中の書き込みは台帳のとおり (両方向)', () => {
-    const inWrapperFile = SITES.filter((s) => s.file === 'src/renderer/data/parameterOverrides.ts').map(siteKey).sort();
+    const inWrapperFile = SITES.filter((s) => WRAPPER_FILES.has(s.file)).map(siteKey).sort();
     expect(inWrapperFile).toEqual(Object.keys(WRAPPER_SITES).sort());
     for (const why of Object.values(WRAPPER_SITES)) expect(why.length).toBeGreaterThanOrEqual(15);
+  });
+
+  it('★ 源の関数は定義から導いた「拒否しうる関数」と一致する (両方向 · パス 500)', () => {
+    for (const w of WRITE_SOURCES) {
+      const sf = REAL.sourceFile(w.definedIn);
+      expect(sf, w.definedIn).not.toBeNull();
+      expect(rejectingMembers(sf!, w.hook), `${w.hook} の methods が定義とずれている`).toEqual([...w.methods].sort());
+    }
+  });
+
+  it('★ hook の結果が props で渡る所は、走査が辿れる形だけ (パス 500)', () => {
+    const bad = [...REAL_FILES]
+      .filter((f) => !WRAPPER_FILES.has(f))
+      .flatMap((f) => unrecognizedResultTypes(REAL.sourceFile(f)!));
+    expect(bad, `hook の結果の型が、走査が辿れない形で書かれている:\n${bad.join('\n')}`).toEqual([]);
+    // 床: 今日 props で渡る所 (しきい値・水耕栽培・提出者情報) が実際に源として辿られている
+    const viaProps = SITES.filter((s) => /^(form|setup)\.(save|applyToLatest)\(/.test(s.text)).map((s) => s.file);
+    expect(new Set(viaProps)).toEqual(new Set(['src/renderer/pages/OverviewPage.tsx', 'src/renderer/components/BankSubmissionSheet.tsx']));
   });
 
   it('★ 包む hook の関数も源として辿られている (設定画面の set / reset / resetAll)', () => {
@@ -628,5 +956,78 @@ describe('標本: 辿る規則はそれぞれ両向きに効く', () => {
       ["params.set('a', 1)", ['unhandled']],
       ['resetAll()', ['fire-reported']],
     ]);
+  });
+
+  it('props で渡った hook の結果も源になる (分割代入・名前のまま・引数そのもの · パス 500)', () => {
+    const head = `import type { LatestForm } from './useLatestForm';\nimport { fireReported } from './deviceStoreFailure';\n`;
+    const destructured = (use: string) =>
+      `${head}export function Panel({ form }: { form: LatestForm<A, B> }) {\n  return <button onClick={() => ${use}}>x</button>;\n}\n`;
+    const kinds = (files: Record<string, string>) => analyzeSample(files).map((s) => [s.text, s.verdicts.map((v) => v.kind)]);
+    expect(kinds({ 'x/Panel.tsx': destructured('form.save(d)') })).toEqual([['form.save(d)', ['unhandled']]]);
+    expect(kinds({ 'x/Panel.tsx': destructured('fireReported(form.save(d))') })).toEqual([['form.save(d)', ['fire-reported']]]);
+    // 名前のまま受ける (interface で型を書く)
+    const named = `${head}interface Props { setup: LatestForm<A, B>; label: string }\nexport function Panel(props: Props) {\n  return <button onClick={() => props.setup.applyToLatest(f)}>x</button>;\n}\n`;
+    expect(kinds({ 'x/Panel.tsx': named })).toEqual([['props.setup.applyToLatest(f)', ['unhandled']]]);
+    // 引数そのものの型が結果の型
+    const arg = `${head}export async function persist(form: LatestForm<A, B>) {\n  await form.save(d);\n}\nexport function Btn() {\n  return <button onClick={() => fireReported(persist(x))}>x</button>;\n}\n`;
+    expect(kinds({ 'x/Panel.tsx': arg })).toEqual([['form.save(d)', ['fire-reported']]]);
+    // ★ 結果の型ではない欄 (同じ名前 `form` でも) は源にしない —— 名前ではなく型で決めている
+    const notResult = `${head}export function Panel({ form }: { form: { save(d: unknown): Promise<void> } }) {\n  return <button onClick={() => form.save(d)}>x</button>;\n}\n`;
+    expect(kinds({ 'x/Panel.tsx': notResult })).toEqual([]);
+    // ★ 影に入った名前は、内側の引数で決める (外の props を取り違えない)
+    const shadow = `${head}export function Panel({ form }: { form: LatestForm<A, B> }) {\n  const inner = (form: { save(d: unknown): Promise<void> }) => form.save(d);\n  return <button onClick={() => fireReported(form.save(d))}>x</button>;\n}\n`;
+    expect(kinds({ 'x/Panel.tsx': shadow })).toEqual([['form.save(d)', ['fire-reported']]]);
+  });
+
+  it('名前で受けた props を {...props} で別の部品へ広げた先まで辿る (パス 500)', () => {
+    const page = `${HEAD}import { Outer } from './Outer';\nexport function Page() {\n  const { add } = useCollection('c');\n  return <Outer onSave={() => add({})} ready />;\n}\n`;
+    const outer = (inner: string) =>
+      `import { fireReported } from './deviceStoreFailure';\ninterface P { onSave: () => Promise<void>; ready: boolean }\n` +
+      `export function Outer(props: P) {\n  if (!props.ready) return null;\n  return <Inner {...props} />;\n}\n` +
+      `function Inner({ onSave }: P) {\n  return <button onClick={() => ${inner}}>x</button>;\n}\n`;
+    const kinds = (inner: string) =>
+      analyzeSample({ 'x/Page.tsx': page, 'x/Outer.tsx': outer(inner) }).flatMap((s) => s.verdicts.map((v) => v.kind));
+    expect(kinds('onSave()')).toEqual(['unhandled']);
+    expect(kinds('fireReported(onSave())')).toEqual(['fire-reported']);
+    // 小文字の要素へ広げた形は、React が戻り値を捨てる
+    const toDom = `interface P { onSave: () => Promise<void> }\nexport function Outer(props: P) {\n  return <button {...props} />;\n}\n`;
+    expect(analyzeSample({ 'x/Page.tsx': page, 'x/Outer.tsx': toDom }).flatMap((s) => s.verdicts.map((v) => v.kind))).toEqual(['unhandled']);
+    // 名前で受けて 1 度も使わない形は「辿れない」と言う
+    const unused = `interface P { onSave: () => Promise<void> }\nexport function Outer(props: P) {\n  return <div>{String(props)}</div>;\n}\n`;
+    expect(analyzeSample({ 'x/Page.tsx': page, 'x/Outer.tsx': unused }).flatMap((s) => s.verdicts.map((v) => v.kind))).toEqual(['unresolved']);
+  });
+
+  it('拒否しうる関数の導き方: await / throw が握り潰す try の外に在る async 関数だけ (パス 500)', () => {
+    const sf = ts.createSourceFile(
+      'x/useThing.ts',
+      [
+        'export function useThing() {',
+        '  const a = useCallback(async () => { await w(); }, []);',
+        '  const b = useCallback(async () => { try { await w(); } catch (e) { report(e); } }, []);',
+        '  const c = async () => { try { await w(); } catch (e) { throw e; } };',
+        '  const d = () => w();',
+        '  const e = async () => { if (x) throw new Error("x"); };',
+        '  const f = async () => { const g = async () => { await w(); }; void g; };',
+        '  const values = useMemo(() => 1, []);',
+        '  return { a, b, c, d, e, f, values, loading: col.loading, async h() { await w(); }, i() { return w(); } };',
+        '}',
+      ].join('\n'),
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS,
+    );
+    // b: 握り潰す try の中 / d・i: async でない / f: await は入れ子の関数の中 / values・loading: 関数でない
+    expect(rejectingMembers(sf, 'useThing')).toEqual(['a', 'c', 'e', 'h']);
+  });
+
+  it('hook の結果の型は、走査が辿れる形だけに書かれる (変数の注釈・typeof は落とす · パス 500)', () => {
+    const src = (body: string) =>
+      ts.createSourceFile('x/Page.tsx', `import type { LatestForm } from './useLatestForm';\n${body}\n`, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    expect(unrecognizedResultTypes(src('interface P { form: LatestForm<A, B> }\nexport function Q(props: P) { return null; }'))).toEqual([]);
+    expect(unrecognizedResultTypes(src('export function Q({ form }: { form: LatestForm<A, B> }) { return null; }'))).toEqual([]);
+    expect(unrecognizedResultTypes(src('export function Q(form: LatestForm<A, B>) { return null; }'))).toEqual([]);
+    expect(unrecognizedResultTypes(src('interface P { form: LatestForm<A, B> }\nexport const x = 1;'))).toEqual(['x/Page.tsx:2 LatestForm<A, B>']);
+    expect(unrecognizedResultTypes(src('export function Q() { const f: LatestForm<A, B> = g(); return f; }'))).toEqual(['x/Page.tsx:2 LatestForm<A, B>']);
+    expect(unrecognizedResultTypes(src('type R = ReturnType<typeof useLatestForm>;'))).toEqual(['x/Page.tsx:2 typeof useLatestForm']);
   });
 });

@@ -97,3 +97,25 @@ export function vanishedRecordNote(what: string, then: string): string {
 export function changedRecordNote(what: string, then: string): string {
   return `${what}は、編集を始めた後に別の画面で書き換えられています（一覧の行が今の内容です）。保存していません。${then}`;
 }
+
+/**
+ * **最新の 1 件を採用する設定の欄を開いた後に、別の画面で保存し直されていた**ときの断り (パス 500)。
+ *
+ * `useLatestForm` の保存は、欄を開いた時の最新がまだ最新のときだけ書く。違えば何も書かずに断る ——
+ * 直す前は欄の値で全部の欄を書き、別のタブの保存を黙って覆っていた (欄が保管層より先に開いていた頃は、
+ * 自分の保存値まで既定値で覆った —— 実測は `useLatestForm.ts` の docblock)。
+ *
+ * 次の一手は 2 つで、どちらも利用者が選ぶ: そのまま上書きする (もう一度押す) か、保存されている内容から
+ * 始め直す (「保存した内容を読み込む」—— `ChangedLatestNote` が並べる)。`then` はその画面の押す所を名指しする。
+ */
+export function changedLatestNote(what: string, then: string): string {
+  return `${what}は、この欄を開いた後に別の画面で保存し直されています。保存していません。${then}`;
+}
+
+/**
+ * 今の最新に当てて足すたびに別の保存が挟まった (上限 `MAX_LATEST_ATTEMPTS` まで) ときの断り (パス 500)。
+ * 何も書いていない —— 回り続けずに止め、もう一度押してもらう。
+ */
+export function busyLatestNote(what: string): string {
+  return `${what}を保存できませんでした（別の画面の保存と重なり続けました）。もう一度お試しください。`;
+}

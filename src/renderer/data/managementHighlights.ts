@@ -101,6 +101,17 @@ export const DEFAULT_HIGHLIGHT_THRESHOLDS: HighlightThresholds = {
  */
 export const BUDGET_ACHIEVED_PCT = 100;
 
+/**
+ * 判定が使うしきい値 —— **欠けた欄は既定値で補う** (パス 500 で、判定と入力欄が同じ 1 つを読むように出した)。
+ *
+ * パス 493c より前の控えには予算未達の欄が無い。判定はここで既定値 (90) を補って使うので、欄も同じ値を
+ * 見せなければならない —— 直す前の欄は `String(t[key])` で「undefined」と出し、そのまま保存すると
+ * 「0〜100 の数値で入力してください」で断られた (実測は `highlightSettings.ts` の `highlightFormFrom`)。
+ */
+export function effectiveThresholds(partial: Partial<HighlightThresholds> | null | undefined): HighlightThresholds {
+  return { ...DEFAULT_HIGHLIGHT_THRESHOLDS, ...partial };
+}
+
 /** buildManagementHighlights の任意オプション。 */
 export interface HighlightOptions {
   /** 会計CF×返済の全体DSCR (任意)。1.0 未満なら所見を出す。 */
@@ -138,7 +149,7 @@ export function buildManagementHighlights(
       ? { overallDscr: options ?? undefined }
       : options;
   const overallDscr = opts.overallDscr;
-  const th: HighlightThresholds = { ...DEFAULT_HIGHLIGHT_THRESHOLDS, ...opts.thresholds };
+  const th: HighlightThresholds = effectiveThresholds(opts.thresholds);
   const out: Highlight[] = [];
   const k = overview.kpi;
 

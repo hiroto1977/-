@@ -121,6 +121,14 @@ export function settingsFromRecord(data: unknown): BankSubmissionSettings {
   };
 }
 
+/**
+ * 保存値 → 提出者情報の入力欄 (パス 500)。**書面と同じ読み** (`settingsFromRecord`) を通す ——
+ * 欄は書面に刷られている値を見せる (読めない提出者情報は書面と同じく空欄)。
+ */
+export function submissionProfileForm(saved: BankSubmissionSettings | null): SubmissionProfile {
+  return settingsFromRecord(saved).profile;
+}
+
 export interface SheetRow {
   readonly label: string;
   readonly value: string;

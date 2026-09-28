@@ -1,16 +1,18 @@
 /** @vitest-environment jsdom */
 import 'fake-indexeddb/auto';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import {
+  MAX_LATEST_ATTEMPTS,
   useCollection,
   _collectionSubscriberCountForTests,
   _resetCollectionSubscribersForTests,
   type UseCollection,
 } from '../useCollection';
-import { _resetRecordStoreForTests, getRecordStore } from '../store';
+import { _resetRecordStoreForTests, getRecordStore, latestTokenOf } from '../store';
+import { latestRecord } from '../latestRecord';
 
 // React 18 の act() が警告を出さないようにする。
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -474,5 +476,185 @@ describe('useCollection — 同じ collection を見る別インスタンス', (
     await fresh.flush();
     expect(fresh.b.current.records).toHaveLength(1);
     fresh.unmount();
+  });
+});
+
+/**
+ * **最新の 1 件を採用する collection への書き込み** (パス 500)。`addIfLatest` は開いた時の最新のままなら
+ * 足し、`applyToLatest` は今の最新に変更を当てて足す (挟まれたら当て直す)。`replaceLatest` は最新 1 件を
+ * 書き換える記録 (数値パラメータ) のために、最新がまだ開いた時の版なら置き換える。仕組みの実測は
+ * `store.insertIfLatest` と `useLatestForm.ts` の docblock。
+ */
+describe('useCollection —— addIfLatest / applyToLatest / replaceLatest (パス 500)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('★ addIfLatest: 開いた時の最新のままなら足し、一覧を読み直す', async () => {
+    const h = setup('latest-a');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'first' }));
+    const opened = latestRecord(h.ref.current.records);
+    let status = '';
+    await h.run(async () => {
+      status = (await h.ref.current.addIfLatest(latestTokenOf(opened), { name: 'second' })).status;
+    });
+    expect(status).toBe('saved');
+    expect(latestRecord(h.ref.current.records)?.data.name).toBe('second');
+    h.unmount();
+  });
+
+  it('★ addIfLatest: 開いた後に別の保存が入っていたら書かずに今の最新を返し、一覧はその保存を映す', async () => {
+    const h = setup('latest-b');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'first' }));
+    const opened = latestRecord(h.ref.current.records);
+    await getRecordStore().insert('latest-b', { name: 'other-tab' });
+    let current: string | undefined;
+    await h.run(async () => {
+      const r = await h.ref.current.addIfLatest(latestTokenOf(opened), { name: 'mine' });
+      current = r.status === 'changed' ? r.current?.data.name : 'saved?';
+    });
+    expect(current).toBe('other-tab');
+    expect(h.ref.current.records.map((r) => r.data.name).sort()).toEqual(['first', 'other-tab']);
+    h.unmount();
+  });
+
+  it('★ applyToLatest: 今の最新に当てて足し、当てた行を basedOn で返す', async () => {
+    const h = setup('latest-c');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'a' }));
+    let basedOn: string | undefined;
+    await h.run(async () => {
+      const r = await h.ref.current.applyToLatest((cur) => ({ name: `${cur?.data.name ?? ''}+b` }));
+      basedOn = r.status === 'saved' ? r.basedOn?.data.name : r.status;
+    });
+    expect(basedOn).toBe('a');
+    expect(latestRecord(h.ref.current.records)?.data.name).toBe('a+b');
+    h.unmount();
+  });
+
+  it('★ applyToLatest: 当てて足す前に別の保存が挟まれば、挟まった最新に当て直す (その保存を消さない)', async () => {
+    const h = setup('latest-d');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'a' }));
+    const store = getRecordStore();
+    const original = store.insertIfLatest.bind(store);
+    let fired = false;
+    vi.spyOn(store, 'insertIfLatest').mockImplementation((async (...args: Parameters<typeof store.insertIfLatest>) => {
+      if (!fired) {
+        fired = true;
+        await store.insert('latest-d', { name: 'other' }); // 読みの後・書く前に、別のタブ
+      }
+      return original(...args);
+    }) as typeof store.insertIfLatest);
+    await h.run(async () => {
+      await h.ref.current.applyToLatest((cur) => ({ name: `${cur?.data.name ?? ''}+mine` }));
+    });
+    expect(latestRecord(h.ref.current.records)?.data.name, '挟まった保存に当て直していない').toBe('other+mine');
+    h.unmount();
+  });
+
+  it('★ applyToLatest: 当てるたびに挟まれたら、上限の回数で止めて busy (何も書かない)', async () => {
+    const h = setup('latest-e');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'a' }));
+    const store = getRecordStore();
+    const original = store.insertIfLatest.bind(store);
+    const spy = vi.spyOn(store, 'insertIfLatest').mockImplementation((async (...args: Parameters<typeof store.insertIfLatest>) => {
+      await store.insert('latest-e', { name: `other-${spy.mock.calls.length}` });
+      return original(...args);
+    }) as typeof store.insertIfLatest);
+    let status = '';
+    await h.run(async () => {
+      status = (await h.ref.current.applyToLatest(() => ({ name: 'mine' }))).status;
+    });
+    expect(status).toBe('busy');
+    expect(spy).toHaveBeenCalledTimes(MAX_LATEST_ATTEMPTS);
+    expect(MAX_LATEST_ATTEMPTS).toBe(2);
+    expect(h.ref.current.records.some((r) => r.data.name === 'mine')).toBe(false);
+    h.unmount();
+  });
+
+  it('★ applyToLatest: 保管層が読めなければ unreadable (何も書かない —— 「0 件」と混ぜない)', async () => {
+    const h = setup('latest-f');
+    await h.mount();
+    const store = getRecordStore();
+    vi.spyOn(store, 'list').mockRejectedValueOnce(new Error('unreadable'));
+    const insert = vi.spyOn(store, 'insertIfLatest');
+    let status = '';
+    await h.run(async () => {
+      status = (await h.ref.current.applyToLatest(() => ({ name: 'mine' }))).status;
+    });
+    expect(status).toBe('unreadable');
+    expect(insert).not.toHaveBeenCalled();
+    h.unmount();
+  });
+
+  it('★ applyToLatest: change が null なら書かずに declined、一覧は読み直す', async () => {
+    const h = setup('latest-g');
+    await h.mount();
+    await getRecordStore().insert('latest-g', { name: 'arrived' }); // 知らせの届く前に入った保存
+    let status = '';
+    await h.run(async () => {
+      status = (await h.ref.current.applyToLatest(() => null)).status;
+    });
+    expect(status).toBe('declined');
+    expect(h.ref.current.records.map((r) => r.data.name), '断ったのに一覧を読み直していない').toEqual(['arrived']);
+    h.unmount();
+  });
+
+  it('★ replaceLatest: 最新がまだ開いた時の版なら置き換え (行は増えない)、違えば書かずに今の最新を返す', async () => {
+    const h = setup('latest-r');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'a' }));
+    const opened = latestRecord(h.ref.current.records)!;
+    let first = '';
+    await h.run(async () => {
+      first = (await h.ref.current.replaceLatest(latestTokenOf(opened)!, { name: 'b' })).status;
+    });
+    expect(first).toBe('saved');
+    expect(h.ref.current.records.map((r) => r.data.name), '置き換えたのに一覧を読み直していない').toEqual(['b']);
+    // 開いた時の目印はもう古い (版が進んだ) —— 同じ目印で 2 度目は書かない。
+    let second: string | undefined;
+    await h.run(async () => {
+      const r = await h.ref.current.replaceLatest(latestTokenOf(opened)!, { name: 'c' });
+      second = r.status === 'changed' ? r.current?.data.name : 'saved?';
+    });
+    expect(second).toBe('b');
+    expect(h.ref.current.records.map((r) => r.data.name)).toEqual(['b']);
+    h.unmount();
+  });
+
+  it('addIfLatest / applyToLatest も差し替え後の collection へ書く (callback deps)', async () => {
+    const h = setup('latest-left');
+    await h.mount();
+    await h.rerender('latest-right');
+    await h.run(async () => {
+      await h.ref.current.addIfLatest(null, { name: 'R1' });
+    });
+    await h.run(async () => {
+      await h.ref.current.applyToLatest((cur) => ({ name: `${cur?.data.name ?? ''}+R2` }));
+    });
+    expect(h.ref.current.records.map((r) => r.data.name).sort()).toEqual(['R1', 'R1+R2']);
+    expect(await getRecordStore().count('latest-left')).toBe(0);
+    h.unmount();
+  });
+
+  it('replaceLatest も差し替え後の collection を読み直す (callback deps)', async () => {
+    const h = setup('latest-left-r');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'L' }));
+    await h.rerender('latest-right-r');
+    await h.run(() => h.ref.current.add({ name: 'R' }));
+    const r = latestRecord(h.ref.current.records)!;
+    let status = '';
+    await h.run(async () => {
+      status = (await h.ref.current.replaceLatest(latestTokenOf(r)!, { name: 'R2' })).status;
+    });
+    expect(status).toBe('saved');
+    // 依存配列が空だと、最初の描画の collection (left) へ書こうとして right の最新を見つけられない。
+    expect(h.ref.current.records.map((x) => x.data.name)).toEqual(['R2']);
+    h.unmount();
   });
 });

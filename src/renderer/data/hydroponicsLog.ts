@@ -566,3 +566,17 @@ export function parseControlRecord(input: Readonly<Record<string, unknown>>): Hy
   if (issue !== null) throw new Error(issue);
   return out;
 }
+
+/**
+ * 保存値 → 運転の設定の入力欄 (パス 500)。保存値は `readControlRecord` と**同じ読み**を通す —— 欠けた欄と
+ * 幅の外の欄は既定へ倒し、任意の欄 (`null`) は空欄。欄は計算が使う値を見せる。
+ *
+ * 画面の「設定を変更」が開く時に同じことをしていたが、そのときの「保存値」は購読の写しで、保管層が
+ * 答える前に押すと**既定値の欄**が開き、保存すると保存していた設定を既定値で覆った (パス 500)。
+ */
+export function controlFormFrom(saved: HydroponicsControlRecord | null): Record<string, string> {
+  const { record } = readControlRecord(saved === null ? [] : [{ createdAt: 0, data: saved }]);
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(record)) out[k] = v === null ? '' : String(v);
+  return out;
+}

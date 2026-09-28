@@ -5,7 +5,7 @@
  * ユーザーが調整して保存するための型と検証。値はローカルの record store に
  * 単一レコードで保存する (最新の 1 件を採用)。本モジュールは IO を持たない。
  */
-import { DEFAULT_HIGHLIGHT_THRESHOLDS, type HighlightThresholds } from './managementHighlights';
+import { DEFAULT_HIGHLIGHT_THRESHOLDS, effectiveThresholds, type HighlightThresholds } from './managementHighlights';
 import { relationIssue } from './recordRelations';
 import { readEntryNumber } from '../../shared/readNumeric';
 
@@ -29,6 +29,22 @@ export const HIGHLIGHT_THRESHOLD_FIELDS: readonly { readonly key: keyof Highligh
   { key: 'singleChannelWarnPct', label: '単一チャネル依存(%)' },
   { key: 'budgetShortfallWarnPct', label: '予算未達 警告(達成率%)' },
 ];
+
+/** しきい値の入力欄 (欄ごとの文字列・欄は `HIGHLIGHT_THRESHOLD_FIELDS` の順)。 */
+export type HighlightForm = Record<keyof HighlightThresholds, string>;
+
+/**
+ * 保存値 (または業種プリセット) → 入力欄 (パス 500)。
+ *
+ * **判定が使う値と同じ値を見せる** —— 欠けた欄は判定と同じ `effectiveThresholds` で既定値を補う。
+ * 直す前は画面の `toThresholdForm` が `String(t[key])` で、パス 493c より前の控え (予算未達の欄が無い) を
+ * 開くと欄に「undefined」と出た。判定は既定値 (90) で動いているのに欄はそれを言わず、そのまま保存すると
+ * 「予算未達の警告しきい値は 0〜100 の数値で入力してください」で断られた —— 打っていない値について。
+ */
+export function highlightFormFrom(saved: Partial<HighlightThresholds> | null): HighlightForm {
+  const t = effectiveThresholds(saved);
+  return Object.fromEntries(HIGHLIGHT_THRESHOLD_FIELDS.map((f) => [f.key, String(t[f.key])])) as HighlightForm;
+}
 
 /**
  * 入力を検証して clean な HighlightSettings に整える。未入力/空は既定値で補完。
