@@ -21,7 +21,7 @@
 - **機械** —— `collectionChangeRelay` 8 件・`storeUpdateIfUnchanged` 12 件・`sameRecordData` 25 件・`editChangedRecord`
   (jsdom) 7 件・`editResultCensus` +2 (**丸ごとの実体を `edit` で書く形は 0 件**)・`namedControlExists` (名前 × ファイルで
   数え直した —— 既存の 2 行の描画元の誤りが出た)・e2e **`crossTabData` suite (35 番目・11 件)**・法則 113 本目
-  `edit-compares-with-what-was-opened`・対照 19 方向
+  `edit-compares-with-what-was-opened`・対照 19 方向・変異検査 初回 98.91% → `store.ts` / `useCollection.ts` を測り直して **100.00%** (Killed 359 / 生存 0 / 未到達 0・40 分 4 秒 —— 残る 3 本は初回で 100.00%)
 - ★ **既知の罠 (このパスで踏んだ)**: **測る前に「無い」と書きかけた** —— 法則の「残る窓」に「`file://` では Web Locks が無い」と
   書きかけた。実測すると chromium の `file://` は錠を持ち、2 枚のタブで共有する (`ifAvailable` が `null`・`query()` に相手の錠)。
   e2e ⑥ がそれを留める。docs/ARCHITECTURE.md は 2026-09-06 から「実機のタブ 2 枚はここでは試していない」と書いていた

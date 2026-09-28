@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **16747** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **16750** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -3398,6 +3398,12 @@ e2e の `crossTabData` suite がこれを留め、対照 2 方向 (錠を外し�
 解析した実体を丸ごと `edit` へ渡す書き込みは `src/renderer/__tests__/editResultCensus.test.ts` が
 構文木で数え、`editIfUnchanged` を通ることを要求する (実物 0 件)。残る窓 (Web Locks を使えない環境・
 知ったうえでの 2 度目の保存・マージ復元) は `docs/REMAINING_WORK.md` の「パス 499」。
+
+変異検査 (`npm run audit:mutate-changed` —— 5 ファイル / 515 変異体 / 52 分 55 秒) の初回は **98.91%** で break (99.8) を割った。
+生存 3 + 未到達 2 はどれも**このパスで足した所**で、隣の `edit` / `add` には在る検査が新しい口に無かった —— 比べた後・書く前に
+置換復元が行を消す窓 (`updateIfUnchanged` の `vanished` の枝)・断られた書き込みの種別 (`save`)・collection を差し替えた後の依存配列。
+窓は時刻ではなく**暗号化の段を門にして**置換復元を挟んで作る (`storeConcurrency` の同じ窓の検査は時刻で作っている)。
+3 件足して 5 つとも手で当てて狙った 1 件ずつが落ちることを確かめ、保管層 (`store`) と `useCollection` の 2 本を測り直して **100.00%** (Killed 359 / 生存 0 / 未到達 0・40 分 4 秒 —— 残る 3 本は初回で 100.00%)。
 
 #### 危機時に見せる窓口の照合が、片方向だった (2026-09-06)
 
