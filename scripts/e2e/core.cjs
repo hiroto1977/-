@@ -3995,6 +3995,14 @@ async function parameterSuite(browser) {
 
   // 別画面 (リロード = 保存先から読み直し) に効く。
   await gotoService(page, '#team', NOTE);
+  // ★ 見出しが出た時点では、まだ保管層が答えていない (2026-09-28 · パス 500) —— 最初の描画は既定の限度
+  // (15 万円) で描かれ、上書きは IndexedDB の読みが返ってから届く。パス 500 の e2e:lite で、ここで読んだ
+  // 2 件が 15 万円を読んで落ちた (3 件目の「超過 6 万円」は届いた後に読んで通った —— 同じ画面が同じ
+  // 問いに 2 通り答える瞬間を読んでいた)。**上書きが届くのを待ってから読む**。届かなければ下の ok() が
+  // 実際の文言を刷って落ちる (待ちの時間切れは飲むが、直後に絶対の主張が在る —— パス 397)。
+  await page
+    .waitForFunction(() => /公共交通機関の非課税限度は月 [¥￥]100,000/.test(document.body.innerText), undefined, { timeout: 15000 })
+    .catch(() => {});
   const after = await page.locator(NOTE).first().innerText();
   ok(/[¥￥]100,000/.test(after), `team: ★ 上書きした限度 10 万円が文言に出る — 実際 ${JSON.stringify(after)}`);
   const stat = await page.locator('text=公共交通: 非課税').first().locator('xpath=..').innerText();
@@ -4002,16 +4010,26 @@ async function parameterSuite(browser) {
   const taxable = await page.locator('text=公共交通: 課税(超過)').first().locator('xpath=..').innerText();
   ok(/[¥￥]60,000/.test(taxable), `team: ★ 超過分が 6 万円になる — 実際 ${JSON.stringify(taxable)}`);
 
-  // 既定に戻す。
-  await gotoService(page, '#settings', '[data-parameters]');
+  // 既定に戻す —— **別のタブで**戻し、開いたままのこのタブの画面が 15 万円へ付いていくのを見る (パス 500)。
+  // 2026-09-28 まで、ここは同じタブで再読込してから読んでいた。再読込した画面は保管層が答える前に既定の
+  // 限度 (15 万円) で描かれるので、**「戻った 15 万円」と「まだ読めていない 15 万円」を見分けられず**、
+  // 画面が保管層の答え (戻した値) を映さなくても、答える前に読めば通った (上の 2 件が実際に答える前を
+  // 読んで落ちた —— 同じ窓はここにも在った。戻す保存そのものは、設定の行の `data-overridden` を待つ所が
+  // 見ている)。今は、上書き (10 万円) が届いた画面を開いたまま別のタブで戻す —— 画面が 15 万円に
+  // なるのは、戻す保存が保管層へ届き、その知らせ (パス 499) でこの画面が読み直したときだけである。
+  const other = await ctx.newPage();
+  collectErrors(other, errs);
+  await gotoService(other, '#settings', '[data-parameters]');
   // 描画直後は保存先 (IndexedDB) の読み込み前で「上書きなし」に見える瞬間がある — 読み込みを待つ。
-  await page.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'true', ID, { timeout: 15000 });
+  await other.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'true', ID, { timeout: 15000 });
   ok(true, '設定: 読み直しても上書きが残っている');
-  await page.getByRole('button', { name: `${LABEL} を既定に戻す` }).click();
-  await page.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'false', ID, { timeout: 15000 });
-  await gotoService(page, '#team', NOTE);
+  await other.getByRole('button', { name: `${LABEL} を既定に戻す` }).click();
+  await other.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'false', ID, { timeout: 15000 });
+  await page
+    .waitForFunction(() => /公共交通機関の非課税限度は月 [¥￥]150,000/.test(document.body.innerText), undefined, { timeout: 15000 })
+    .catch(() => {});
   const restored = await page.locator(NOTE).first().innerText();
-  ok(/[¥￥]150,000/.test(restored), `team: 既定に戻すと 15 万円に戻る — 実際 ${JSON.stringify(restored)}`);
+  ok(/[¥￥]150,000/.test(restored), `team: ★ 別のタブで既定に戻すと、開いたままの画面も 15 万円に戻る — 実際 ${JSON.stringify(restored)}`);
 
   ok(errs.length === 0, `parameters: ページエラー 0 (実際 ${errs.length})`);
   await ctx.close();
