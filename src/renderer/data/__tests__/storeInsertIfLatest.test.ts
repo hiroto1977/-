@@ -152,6 +152,27 @@ describe('insertIfLatest —— 最新の選び方は latestRecord と同じ', (
     const saved = await store.insertIfLatest(C, latestTokenOf(chosen), { ...A });
     expect(saved.status).toBe('saved');
   });
+
+  /*
+   * 索引は同じ collection の中を **id の順**に返す (最新の順ではない)。先に並ぶ行が古いとき、並びの
+   * 先頭を最新と取り違えると、古い行を開いた欄の保存が通って新しい保存を覆う。id が乱数 (uuid) だと
+   * 並びは偶然で決まるので、ここは id を選んで並びを固定する (変異検査で「最新を選ぶ比較を消す」が
+   * 生き残るかどうかが、uuid の引きで揺れていた)。
+   */
+  it('★ 索引 (id の順) で先に並ぶ行が古くても、createdAt の新しい行を最新として比べる', async () => {
+    const store = getRecordStore();
+    const t = 1_700_000_000_000;
+    await store.importAll([
+      { id: 'a-older', collection: C, createdAt: t, updatedAt: t, data: { ...A } },
+      { id: 'b-newer', collection: C, createdAt: t + 10, updatedAt: t + 10, data: { ...B } },
+    ]);
+    expect((await latestNow())?.id).toBe('b-newer');
+    const refused = await store.insertIfLatest(C, { id: 'a-older', updatedAt: t }, { ...A });
+    expect(refused.status, '索引で先に並ぶ古い行を最新として扱い、新しい保存を覆った').toBe('changed');
+    expect(refused.status === 'changed' && refused.current?.id).toBe('b-newer');
+    const saved = await store.insertIfLatest(C, { id: 'b-newer', updatedAt: t + 10 }, { ...A });
+    expect(saved.status).toBe('saved');
+  });
 });
 
 describe('insertIfLatest —— 足した行は必ず新しい最新', () => {
@@ -180,6 +201,26 @@ describe('insertIfLatest —— 足した行は必ず新しい最新', () => {
     expect(r.status).toBe('saved');
     expect(r.status === 'saved' && r.record.createdAt).toBeGreaterThan(future);
     expect((await latestNow())?.data, '足した行が最新にならず、画面は前の値のまま').toEqual(B);
+  });
+
+  /*
+   * 追い越す規則は**時計が遅れているときだけ**効く。時計が先の最新より進んでいれば、足した行の時刻は
+   * 足した時刻 —— 素の `insert` と同じ意味の `createdAt` / `updatedAt` (バックアップにも載る)。
+   * 常に「先の最新の 1 ms 後」にすると、3 日前の保存の直後に足したことになる (変異検査の生存 ——
+   * 並びは保たれるので、最新になるかだけを見る検査では見えなかった)。
+   */
+  it('★ 時計が先の最新より進んでいれば、足した行の時刻は足した時刻 (先の最新の 1 ms 後ではない)', async () => {
+    const store = getRecordStore();
+    // この端末の時計 (同じファイルの前の検査が 4e12 まで進めうる) より先に置く。
+    const t0 = 5_000_000_000_000;
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(t0);
+    const opened = await store.insert(C, { ...A });
+    expect(opened.createdAt).toBe(t0);
+    clock.mockReturnValue(t0 + 60_000);
+    const r = await store.insertIfLatest(C, latestTokenOf(opened), { ...B });
+    expect(r.status === 'saved' && r.record.createdAt, '足した行の時刻が、先の最新の 1 ms 後になった').toBe(t0 + 60_000);
+    expect(r.status === 'saved' && r.record.updatedAt).toBe(t0 + 60_000);
+    expect((await latestNow())?.createdAt).toBe(t0 + 60_000);
   });
 });
 

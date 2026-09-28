@@ -435,6 +435,9 @@ describe('useParameters (hook)', () => {
     expect(conditional).toHaveBeenCalledTimes(MAX_WRITE_ATTEMPTS);
     expect(insert).toHaveBeenCalledTimes(1);
     expect(thrown).toBeInstanceOf(ParameterBusyError);
+    // 名前でも名乗る —— `instanceof` の効かない所 (ログ・再送出・文字列化) で、何の断りかを読めるように。
+    expect((thrown as Error).name).toBe('ParameterBusyError');
+    expect(String(thrown)).toBe(`ParameterBusyError: ${PARAMETER_BUSY_MESSAGE}`);
     expect((thrown as Error).message).toBe(PARAMETER_BUSY_MESSAGE);
     expect(PARAMETER_BUSY_MESSAGE).toContain('重なり続けました');
     // **端末の保存の失敗ではない** —— 画面上端の「この端末に保存できませんでした」(再読込を勧める) へは

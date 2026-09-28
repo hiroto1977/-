@@ -53,12 +53,17 @@
      (`addIfLatest` / `applyToLatest` / `replaceLatest` / `remove`) と読みだけ —— **素の `editIfUnchanged` も許さない** (中身しか比べないから)
      ③ `useLatestForm` 自身の書き込み口 ④ 状態の初期値に写しを置く所 (両方向・**今日 0 件**)。写しの束縛は共有の `snapshotModel.ts`
      (パス 497 の census から出した)。
-   - `src/renderer/data/__tests__/storeInsertIfLatest.test.ts` (**15 件**) / `storeReplaceLatestIfUnchanged.test.ts` (**13 件**) ——
+   - `src/renderer/data/__tests__/storeInsertIfLatest.test.ts` (**17 件**) / `storeReplaceLatestIfUnchanged.test.ts` (**16 件**) ——
      答えの 2 通り・書かなかったら知らせない・**同じ目印で 2 つ投げたら書けるのは 1 つ**・最新の選び方は `latestRecord` と同じ (同点は一覧の順)・
-     未来の `updatedAt` でも版は進む・封緘した collection でも平文で返す・関門。
-   - `src/renderer/data/__tests__/useLatestForm.test.ts` (**15 件**) / `src/renderer/pages/__tests__/latestFormOnScreen.test.ts` (**14 件** · jsdom) ——
+     **索引 (id の順) の先頭を最新と取り違えない** (id を選んで並びを固定する —— uuid だと並びが偶然で決まる)・
+     未来の `updatedAt` でも**ちょうど同じ時刻でも**版は進む・**書いた行の時刻は書いた時刻** (時計が遅れているときだけ追い越す)・
+     封緘した collection でも平文で返す・関門。
+   - `src/renderer/data/__tests__/useLatestForm.test.ts` (**16 件**) / `src/renderer/pages/__tests__/latestFormOnScreen.test.ts` (**14 件** · jsdom) ——
      実物の 4 画面と品目の一覧で押す。「保管層が答える前」は時刻ではなく**その collection の最初の `list` を待たせる門**で作る。
    - `src/renderer/data/__tests__/parameterOverrides.test.ts` (+) —— ★ 読んだ後・書く前に別の行が新しい最新として入っても、値は採用される最新に入る。
+     重なり続けた断りは名前でも名乗る (`ParameterBusyError` —— `instanceof` の効かないログ・文字列化でも読める)。
+   - `src/renderer/data/__tests__/hydroponicsSetup.test.ts` (**+4 件**) —— 保存値から欄を開く `hydroponicsSetupForm` に検査が 1 件も無かった。
+     ★ 保存した「低カリウム栽培」を欄が落とさない (落とすと、別の欄だけ直して保存した時に選択が黙って外れる —— このパスの欠陥と同じ形)。
    - ★ **書き込みの 2 つの census が口の一覧を手で持っており、パス 499 / 500 の口を 1 つも見ていなかった** ——
      `storeWriteRejectionCensus` は `['add', 'addMany', 'edit', 'remove']` のままで、`onClick={() => editIfUnchanged(…)}` と書いても鳴らなかった。
      口は **hook の定義から導き** (両方向 —— 足した口を一覧に書き忘れると落ちる)、**props で渡った hook の結果** (`form: LatestForm<…>`・
@@ -97,8 +102,29 @@
      直す前の census の目では、props で受けた部品の中の捨てた拒否は見えない —— それがこの直しの理由である)。
    - `editResultCensus`: A 口を旧い 2 つへ ❌3 / B 運転の設定の答えを読まない ❌2 / C しきい値の保存で答えを捨てる ❌2 /
      D props の型を源にしない ❌2 / E 渡してよい props を空にする ❌2。
+   - **変異検査が教えた 10 方向** (下の 7 の生存を 1 つずつ手で当てた —— どれも足した検査のうち狙った 1 件が落ちる。
+     ② だけは既存の「同じ基準で 2 つ投げたら」も偶然一緒に落ちる): ① `insertIfLatest` の時刻の比較を常に真 ❌1 /
+     ② 走査で最新を選ぶ比較を消す ❌2 / ③ `replaceLatestIfUnchanged` の走査で同じ ❌1 / ④ 版の時刻の比較を常に真 ❌1 /
+     ⑤ `>=` を `>` へ ❌1 / ⑥ 保存を押した時の `dirty: true` を外す ❌1 (J の検査) / ⑦ 初期値の `dirty` を真 ❌1 /
+     ⑧ 初期値の `changed` を真 ❌1 / ⑨ `lowK` を常に偽 ❌1 / ⑩ 断りの名前を空に ❌1。
 
-7. **変異検査** —— (測定後に書く)
+7. **変異検査** (`npm run audit:mutate-changed -- --ref=HEAD` —— 9 ファイル / 2,041 変異体 (測ったのは 1,916)・84 分 49 秒):
+   初回 **97.60%** (Killed 1,868 / Timeout 2 / 生存 46) で break (99.8) を割った。
+   - **今回触った行の生存は 11 件**で、どれも「値を見ない検査」の報せだった:
+     - 保管層 5 件 —— 書いた行の時刻 (`createdAt` / `updatedAt`) が「先の最新の 1 ms 後」でも通る (並びは保たれるので、
+       最新になるかだけを見る検査では見えない)・版の時刻が**ちょうど同じ**ときに進むか (`>=` と `>` —— 未来の時刻の行だけを
+       見ていた)・`replaceLatestIfUnchanged` の走査で最新を選ぶ比較 (id が uuid なので並びが偶然で決まる —— 順序の効く
+       既存の検査は、測った回の uuid の引きでは落ちなかった。`insertIfLatest` の同じ比較は Killed だったが、落とした既存の
+       検査も順序の効く形で、決まった並びで見る検査はどちらにも無かった)・空の collection の判定 (**等価** —— 下の `sameLatest(null, 目印)` も偽を返し、同じ
+       `{ latest: null }` で断る。判定は型の絞り込みのために要るので、1 行に分けて**その行だけ**理由つきで測定から外した)
+     - `useLatestForm` 4 件 —— 押した時点で欄を決める `dirty: true` (測った sandbox は J の検査を足す前の物だった)・
+       答える前の器の `dirty` / `changed` (答えた時の合わせが両方を倒すので、答えた後の検査では見えない)・
+       回数の `+1` (**等価** —— 保存の前後を `!==` で比べるだけなので、減らしても答えは同じ。理由つきで測定から外した)
+     - `hydroponicsSetupForm` の `lowK` 1 件 (欄を開く関数に検査が 1 件も無かった)・`ParameterBusyError` の名前 1 件
+   - 検査を足し (上の 5・6)、4 ファイル (`store.ts` / `useLatestForm.ts` / `hydroponicsSetup.ts` / `parameterOverrides.ts`) を
+     測り直して MUT_RESULT_PLACEHOLDER
+   - **触っていない行の生存 35 件** (`bankSubmission.ts` 24 / `managementHighlights.ts` 11) は残した → 下の 8。
+     パス 496 と同じく、この道具は触ったファイルの**全体**を測るので、古い行の生存がそこで初めて出る。
 
 8. **残した物 (測った)**:
    - **採用する記録の 2 つの口は錠に依らない (構造から —— 実機で錠を外しては測っていない)** —— `insertIfLatest` と
@@ -110,6 +136,18 @@
    - **別のファイルの部品へ props で渡った写しが `useState` に置かれる形は census の針に映らない** —— 今は欄ごと `useLatestForm` が持つので
      写しを受け取らない (提出者情報の欄 `BankSubmissionSheet.tsx` は直す前その形だった)。
    - **読みが失敗したときの欄は既定値で開く** —— 保存は守られるが、欄は「保存値はこれです」とは言えない。画面の上端の報せが代わりに言う。
+   - **`bankSubmission.ts` と `managementHighlights.ts` の触っていない行の生存 35 件** (パス 501 の候補) —— 読んだ見立てで、
+     **当てて確かめてはいない**:
+     - 等価らしい物 —— 到達しない防御 (`staleBsNote` の早期 return は既に等価の pragma を持つが `OptionalChaining` だけで、
+       同じ行の `ConditionalExpression` / `LogicalOperator` 7 件は覆っていない)・文が必ず 1 つ以上ある `parts.length === 0` の枝・
+       `.filter(…).join('')` の `filter` (長さの判定が無ければ `join` が `null` を空文字にするので等価)・`null >= 10` と
+       `Number.isFinite(null)` がどちらも偽になる判定。
+     - 本物の穴らしい物 —— 文と文のつなぎ (`join('')` / `join(' ')` / `join('・')`) を 2 文以上で見ていない・§8 の
+       「予算と実績の期が重ならない」の行の注記 3 つ・販売記録と KPI 実績の期間が**片方の端だけ**一致する形・運転資金と
+       資金繰りの所見の `severity` / `category`。
+     - ★ **この PR を main へ入れると、`mutation.yml` の push 側がこの 2 本を測る** (push で変わったファイルは全部測る ——
+       `mutate-changed.cjs`)。break (99.8) を割るので、入れる前に閉じるか、赤を承知で入れるかを決めること
+       (パス 496 が記録した `sales.ts` / `balanceSheet.ts` の触っていない行の生存も同じ扱いになる)。
 
 ## パス 499 (開いた欄は、開いた時の中身と比べてから書く —— 知らせは別のタブへも届く) が測って、次のパスへ残した物 (2026-09-28)
 

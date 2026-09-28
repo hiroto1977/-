@@ -113,6 +113,9 @@ export function useLatestForm<T extends Record<string, unknown>, F>(
     dirty: st.dirty,
     changed: st.changed,
     update(fn) {
+      // 回数は「保存を押した後に変わったか」を `!==` で比べるためだけに在る —— 増やしても減らしても
+      // 答えは同じなので、変異検査はこの行の算術を測らない (`dirty: true` ほかの本物は測る)。
+      // Stryker disable next-line ArithmeticOperator: 等価 —— edits は保存の前後で !== を比べるだけなので、+1 を -1 にしても「変わった」の答えは同じ
       setSt((prev) => ({ ...prev, form: fn(prev.form), dirty: true, edits: prev.edits + 1 }));
     },
     async save(data) {

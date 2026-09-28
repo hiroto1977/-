@@ -21,7 +21,7 @@
   最新として入ると古い行に成功した (実測: `set(日数, 300)` は済み、300 は古い行にだけ・有効値は 250 のまま)。見つけたのは新しい
   採用の census。直しは `store.replaceLatestIfUnchanged` (1 つの取引で最新の目印を比べて置き換え、版を必ず進める)
 - **機械** —— `latestAdoptionCensus` 12 件 (採用の呼び口の台帳 13 行・採用する collection は 6 つ・書き込みは最新を比べる口だけ・
-  状態の初期値に写しを置く所 0 件)・`storeInsertIfLatest` 15 件・`storeReplaceLatestIfUnchanged` 13 件・`useLatestForm` 15 件・
+  状態の初期値に写しを置く所 0 件)・`storeInsertIfLatest` 17 件・`storeReplaceLatestIfUnchanged` 16 件・`useLatestForm` 16 件・
   `latestFormOnScreen` (jsdom) 14 件・`storeWriteRejectionCensus` / `editResultCensus` は**口を hook の定義から導き、props で渡った
   hook の結果も追う**形へ (数える呼び口 40 → 54 件・増えた 14 件はすべて受け止められていた)・e2e **`latestForm` suite (36 番目・14 件)**・
   法則 114 本目 `latest-adopted-form-compares-before-write`
@@ -38,6 +38,16 @@
   留める検査が無かった)。既存の「断った後は開き直さない」は知らせが届かない形で作っていたので窓を通らず、`act(async () => save())` の
   中で別の保存を届けると、届いた最新の描画が保存の答えの後ろへ回って開き直しそのものが起きない。**保存を門で止め、`act` の外で走らせ、
   その間に知らせを届ける**と鳴る
+- **変異検査** —— `audit:mutate-changed` (9 ファイル / 2,041 変異体 / 84 分 49 秒) の初回は **97.60% (生存 46)**。今回触った行の
+  生存 11 件は検査 9 件と理由つきの等価 2 件で閉じ、4 ファイルを測り直して MUT_RESULT_PLACEHOLDER。触っていない行の 35 件
+  (`bankSubmission.ts` 24 / `managementHighlights.ts` 11) はパス 501 の候補 —— ★ **この PR を main へ入れると `mutation.yml` の
+  push 側がこの 2 本を測り、break (99.8) を割る**
+- ★ **既知の罠 (このパスで踏んだ)**: **uuid の並びに依る検査は、変異体を殺すかどうかが引きで決まる** —— 索引は同じ collection の中を
+  id の順に返すので、「最新を選ぶ比較」を消す変異体は、既存の検査では 50% の引きで生き残った。**id を選んで並びを固定する**
+  (`importAll` で `a-older` / `b-newer`)
+- ★ **既知の罠 (このパスで踏んだ)**: **答えた時の合わせが倒す値は、答えた後の検査では見えない** —— `useLatestForm` の初期値の
+  `dirty` / `changed` を反転しても、覆っていた検査はすべて緑だった (変異検査の生存 —— 保管層が答えた瞬間に両方を倒すため)。答える前の器を見るのは、
+  最初の `list` を門で止めた検査だけ
 - **残した物** → `docs/REMAINING_WORK.md` の「パス 500」
 
 ## 直近の作業 (2026-09-28) — パス 499: 開いた欄は、開いた時の中身と比べてから書く (知らせは別のタブへも届く)

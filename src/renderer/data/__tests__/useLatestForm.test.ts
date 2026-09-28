@@ -101,6 +101,23 @@ describe('useLatestForm —— 保管層が答えるまで欄を出さない', (
     expect(ref.current.base?.data).toEqual({ declineWarnStreak: 5, laborShareWarnPct: 70 });
   });
 
+  /*
+   * 答える前の器は何も主張しない —— `dirty` と `changed` は画面が断り (「開いた後に保存し直されて
+   * いました」) を出すかを決めるのに読む値で、答える前に `changed` が立っていれば、何も保存していない
+   * 利用者に断りを見せる。答えた時の合わせが両方を倒すので**答えた後**の検査では見えない (変異検査の
+   * 生存 2 件 —— 初期値を反転しても 15 件すべて緑だった · パス 500)。
+   */
+  it('★ 答える前の器は、触った印も断った印も立っていない (答える前に断りを出させない)', async () => {
+    await getRecordStore().insert(C, { declineWarnStreak: 5, laborShareWarnPct: 70 });
+    holdFirstList();
+    await mount();
+    expect(ref.current.ready).toBe(false);
+    expect(ref.current.dirty, '答える前から「触った」ことになっている').toBe(false);
+    expect(ref.current.changed, '答える前から「保存し直されていた」と断ることになっている').toBe(false);
+    expect(ref.current.base).toBeNull();
+    expect(ref.current.latest).toBeNull();
+  });
+
   it('何も保存されていなければ、答えた時点で既定値から開き、元は null', async () => {
     await mount();
     await settleUntil(() => ref.current.ready, '保管層が答える');

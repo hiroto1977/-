@@ -169,6 +169,67 @@ describe('replaceLatestIfUnchanged —— 最新の選び方は latestRecord と
     const stale = await store.replaceLatestIfUnchanged(C, latestTokenOf(opened)!, { ...D });
     expect(stale.status).toBe('changed');
   });
+
+  /*
+   * 索引は同じ collection の中を **id の順**に返す (最新の順ではない)。先に並ぶ行が古いとき、並びの
+   * 先頭を最新と取り違えると、最新 (新しい行) を開いた書き換えは断られ、古い行を開いた書き換えが
+   * 古い行へ通る —— パス 500 が直した「古い行に書いて済んだと言う」そのもの。id を選んで並びを固定する
+   * (uuid だと並びが偶然で決まり、変異検査で「最新を選ぶ比較を消す」が生き残っていた)。
+   */
+  it('★ 索引 (id の順) で先に並ぶ行が古くても、createdAt の新しい行を最新として比べる', async () => {
+    const store = getRecordStore();
+    const t = 1_700_000_000_000;
+    await store.importAll([
+      { id: 'a-older', collection: C, createdAt: t, updatedAt: t, data: { ...A } },
+      { id: 'b-newer', collection: C, createdAt: t + 10, updatedAt: t + 10, data: { ...B } },
+    ]);
+    const refused = await store.replaceLatestIfUnchanged(C, { id: 'a-older', updatedAt: t }, { ...D });
+    expect(refused.status, '索引で先に並ぶ古い行を最新として扱い、古い行へ書いた').toBe('changed');
+    expect(refused.status === 'changed' && refused.current?.id).toBe('b-newer');
+    const saved = await store.replaceLatestIfUnchanged(C, { id: 'b-newer', updatedAt: t + 10 }, { ...D });
+    expect(saved.status, '最新 (新しい行) を開いた書き換えを断った').toBe('saved');
+    const byId = new Map((await rows()).map((x) => [x.id, x.data]));
+    expect(byId.get('a-older')).toEqual(A);
+    expect(byId.get('b-newer')).toEqual(D);
+  });
+
+  /*
+   * 版の時刻がこの端末の今と**ちょうど同じ**でも進める。「今のほうが新しいときだけ今にする」
+   * (`>`) だと、ちょうど同じときに版が進まず、置き換える前の目印がそのまま通る (変異検査の生存 ——
+   * 未来の時刻の行だけを見る検査では、`>` と `>=` の差が出なかった)。
+   */
+  it('★ 最新の updatedAt がこの端末の今とちょうど同じでも、版はその後ろへ進む', async () => {
+    const store = getRecordStore();
+    // この端末の時計より先 —— 置き換える時刻 (monotonicNow) はちょうどこの値になる。
+    const at = 9_000_000_000_000;
+    vi.spyOn(Date, 'now').mockReturnValue(at);
+    await store.importAll([{ id: 'same-clock', collection: C, createdAt: at, updatedAt: at, data: { ...A } }]);
+    const opened = latestRecord(await rows());
+    const r = await store.replaceLatestIfUnchanged(C, latestTokenOf(opened)!, { ...B });
+    expect(r.status === 'saved' && r.record.updatedAt, '版が進まず、置き換える前の目印と同じ版のまま').toBeGreaterThan(at);
+    const stale = await store.replaceLatestIfUnchanged(C, latestTokenOf(opened)!, { ...D });
+    expect(stale.status, '置き換える前の目印で、置き換えた行をもう 1 度書き換えられた').toBe('changed');
+    expect((await rows())[0]!.data).toEqual(B);
+  });
+
+  /*
+   * 追い越す規則は**時計が遅れているときだけ**効く。時計が先の版より進んでいれば、置き換えた版の時刻は
+   * 置き換えた時刻 —— `update` / `updateIfUnchanged` と同じ意味の `updatedAt` (バックアップにも載る)。
+   * 常に「先の版の 1 ms 後」にすると、3 日前の保存の直後に書き換えたことになる (変異検査の生存 ——
+   * 「版が進んだか」だけを見る検査では見えなかった)。
+   */
+  it('★ 時計が先の版より進んでいれば、置き換えた版の時刻は置き換えた時刻 (先の版の 1 ms 後ではない)', async () => {
+    const store = getRecordStore();
+    // この端末の時計 (前の検査が 9e12 まで進めうる) より先に置く。
+    const t0 = 9_100_000_000_000;
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(t0);
+    const opened = await store.insert(C, { ...A });
+    expect(opened.updatedAt).toBe(t0);
+    clock.mockReturnValue(t0 + 60_000);
+    const r = await store.replaceLatestIfUnchanged(C, latestTokenOf(opened)!, { ...B });
+    expect(r.status === 'saved' && r.record.updatedAt, '置き換えた版の時刻が、先の版の 1 ms 後になった').toBe(t0 + 60_000);
+    expect(r.status === 'saved' && r.record.createdAt, '作った時刻まで動かした').toBe(t0);
+  });
 });
 
 describe('replaceLatestIfUnchanged —— 封緘と関門', () => {

@@ -580,7 +580,15 @@ class IndexedDBRecordStore implements RecordStore {
             cur.continue();
             return;
           }
-          if (latest === null || !sameLatest(latest, expected)) {
+          // 最新が無い (collection が空になった) —— 置き換える行が無い。下の `sameLatest(null, 目印)` も
+          // 偽を返すので**実行時の答えは同じ**で、この判定は型の絞り込み (以下の `latest.updatedAt`) の
+          // ために在る。だから変異検査はこの 1 行を測らない (同じ行に本物の判定を置かない)。
+          // Stryker disable next-line ConditionalExpression,BlockStatement: 等価 —— 最新が無いとき下の sameLatest(null, 目印) も偽を返し、同じ { latest: null } で断る (判定は型の絞り込みのために要る)
+          if (latest === null) {
+            out = { latest };
+            return; // 何も書かない —— 取引は読みだけで閉じる
+          }
+          if (!sameLatest(latest, expected)) {
             out = { latest };
             return; // 何も書かない —— 取引は読みだけで閉じる
           }
