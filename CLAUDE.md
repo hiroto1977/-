@@ -1115,7 +1115,7 @@ npm run audit:mutate-changed    # **`mutate` に載っているファイルを�
                          #   (定期点検の道具 9 本目。CI では走らせない —— 1 ファイル 6 分半なので
                          #   毎 PR には載せられない。回すのは `mutate` のファイルを触ったパス自身)。
                          #   変更したファイル (既定は `HEAD~1` との差 + 作業ツリー) と
-                         #   `stryker.config.json` の `mutate` (実測 304 件・2026-09-27) の**積**を取り、
+                         #   `stryker.config.json` の `mutate` (実測 307 件・2026-09-28) の**積**を取り、
                          #   その集合だけに Stryker を当てる。0 件なら何もせず exit 0。
                          #   ★ **なぜ要るか (実測)** —— `mutate` には `thresholds.break = 99.8` が
                          #   掛かるが、CI の測定は **PR では 1 度も走らない** (`mutation.yml` は
