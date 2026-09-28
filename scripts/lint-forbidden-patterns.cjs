@@ -962,7 +962,11 @@ const KNOWN_SUPPRESSIONS = [
   // 実機 E2E の vaultOpacity suite。**預けた資格情報が保存された姿で読めないこと**を
   // 外から確かめる。アプリの層を通しては見えない (通せば復号された値が返る) ので、
   // 生のまま舐めるのがこの検査の目的そのものである。
-  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 13',
+  // 2026-09-28 (パス 499): 13 → 16。crossTabData suite が、アプリの行ごとの錠
+  // (`servicehub.record.<id>`) を**もう 1 枚のタブで持つ**ためにその行の id を読む
+  // (open / transaction / objectStore の 3 行)。アプリの層は行の id を画面に出さないので、
+  // 外から読むしかない。**読むだけで書かない** —— 錠が 2 枚のタブで同じ物かを実物で確かめる側である。
+  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 16',
   // 2026-09-09 (パス 136): 各保管層が自分の DB を消す (deleteRecordDatabase / deleteLibraryDatabase /
   // deletePreferencesDatabase — ハードリセットの在庫 security/eraseAll.ts が呼ぶ)。27→28 / 7→8 / 11→12。
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 28',

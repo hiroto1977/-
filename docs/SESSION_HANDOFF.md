@@ -7,6 +7,34 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-09-28) — パス 499: 開いた欄は、開いた時の中身と比べてから書く (知らせは別のタブへも届く)
+
+- **見つけた物** —— 実 chromium の 2 タブ (同じ `file://`) で測った。A が足した銘柄は B に 0 行・A が評価額を
+  300,000 → 500,000 に直した後、B が**開いていた編集の欄**で名前だけ直して保存すると**評価額が 300,000 へ黙って戻る**
+  (lost update・断り 0 文)・A の売上 7,777,777 円は B の経営サマリーに出ない。原因は 2 つ: 書き込みの知らせ
+  (`collectionChange.ts`) が**タブの中だけ**だったこと と、実体を丸ごと編集する欄が**開いた時の値で全部の欄を書く**こと
+- **直し** —— ① 知らせを `BroadcastChannel('servicehub.records')` で別のタブへも配る (合図だけ・中身は運ばない・受け口は
+  購読した時に開く・送り返さない) ② `store.updateIfUnchanged` / `useCollection.editIfUnchanged` —— 行ごとの鎖の中で
+  **開いた時の中身と比べてから書く** (答えは `saved` / `vanished` / `changed(今の行)`)。比べる判定は `sameRecordData`
+  (迷ったら「違う」・ただし保管層から読んだ物はその複製と必ず「同じ」)。投資信託・不動産・士業の連絡先は、書き換えられて
+  いれば断って (`changedRecordNote`) **入力を残し**、基準を今の行へ移す (もう 1 度押せば上書き)
+- **機械** —— `collectionChangeRelay` 8 件・`storeUpdateIfUnchanged` 11 件・`sameRecordData` 25 件・`editChangedRecord`
+  (jsdom) 7 件・`editResultCensus` +2 (**丸ごとの実体を `edit` で書く形は 0 件**)・`namedControlExists` (名前 × ファイルで
+  数え直した —— 既存の 2 行の描画元の誤りが出た)・e2e **`crossTabData` suite (35 番目・11 件)**・法則 113 本目
+  `edit-compares-with-what-was-opened`・対照 19 方向
+- ★ **既知の罠 (このパスで踏んだ)**: **測る前に「無い」と書きかけた** —— 法則の「残る窓」に「`file://` では Web Locks が無い」と
+  書きかけた。実測すると chromium の `file://` は錠を持ち、2 枚のタブで共有する (`ifAvailable` が `null`・`query()` に相手の錠)。
+  e2e ⑥ がそれを留める。docs/ARCHITECTURE.md は 2026-09-06 から「実機のタブ 2 枚はここでは試していない」と書いていた
+- ★ **既知の罠 (このパスで踏んだ)**: **e2e の `gotoService` は再読込する** —— 錠 (Web Locks) を持った後にそのタブを動かすと
+  錠ごと消える。錠を使う検査は、画面を先に動かしてから錠を持つ
+- ★ **既知の罠 (このパスで踏んだ)**: **対照が「組めなかった」を「鳴った」と数えない** —— `if (true || x === undefined) return;` の
+  形の対照は `tsc` が絞り込みの外れを捕まえて build ごと落ちる (`'locks' is possibly 'undefined'`)。
+  `const x = undefined as T | undefined` のように型の通る形で当てる
+- ★ **既知の罠 (このパスで踏んだ)**: **e2e のコードが保管領域を直接読むと `lint:forbidden` の台帳が鳴る** (設計どおり) ——
+  `indexedDB.` / `.transaction(` / `objectStore(` は 1 行ずつ数えられ、`scripts/e2e/core.cjs` は理由つきの件数で台帳に載る
+- **残した物** → `docs/REMAINING_WORK.md` の「パス 499」(Web Locks の無い環境の窓・知ったうえでの 2 度目・マージ復元・
+  欄を開いている間は何も言わない・知らせの費用)
+
 ## 直近の作業 (2026-09-27) — パス 498: 書き込みは「書けたか」を答え、呼び手はその答えを読む
 
 - **見つけた物** —— `store.update` は相手の行が無いとき**投げずに `null`** を返す (何も書いていない)。`useCollection.edit` は

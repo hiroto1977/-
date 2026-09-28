@@ -136,6 +136,7 @@
     "src/renderer/data/persistedShape.ts",
     "src/renderer/data/printDocument.ts",
     "src/renderer/data/profitSensitivity.ts",
+    "src/renderer/data/readCollectionNow.ts",
     "src/renderer/data/recordCipher.ts",
     "src/renderer/data/recordEncryption.ts",
     "src/renderer/data/recordShapeAudit.ts",

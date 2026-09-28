@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 666 個の `file:line` 参照 + 43 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 669 個の `file:line` 参照 + 43 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **16710** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **16747** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 34 / 37 (残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 666 | 自己検証 |
+| `file:line` 参照数 | 669 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2253,7 +2253,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **306 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **307 ファイル**。
 2026-09-27 (パス 493i) に `src/renderer/keyIntent.ts` (Enter / Escape を「意図」として読む口 —— 変換中の打鍵を送信・取り消しと読まない) を
 **整合性チェーンの保護対象へ入れる**のと同時に足した (保護対象の `src/renderer/security/LockScreen.tsx` が読むので閉包の規則で入る)。
 1 度目で **100.00% (生存 0 / 未到達 0)**。
@@ -3364,6 +3364,40 @@ reject する**ので、素朴に catch して `run()` を呼び直すと**書�
 錠の名前・二重実行しないこと・錠が無い/壊れている環境での退避の 3 点で、
 `src/renderer/data/store.ts` は変異検査 **99.65%** (残る 1 件は module 直下の
 `DB_NAME`。週次の全実行では未到達として扱われる既知の形)。
+
+**2026-09-28 (パス 499) に実機のタブ 2 枚で測った。** 実 chromium で `file://` の同じ HTML を
+2 枚開き、片方 (B) が `servicehub.record.<id>` を持つ間にもう片方 (A) で同じ行を保存すると、
+A の要求は **B から見た待ち行列 (`navigator.locks.query()` の `pending`) に同じ名前で現れ**、
+その間 A も B も新しい値を出さず、B が放すと A の保存が届く —— 錠は 2 枚のタブで同じ物である。
+e2e の `crossTabData` suite がこれを留め、対照 2 方向 (錠を外して鎖をこのタブの中だけにする /
+錠の名前を呼ぶたびに変える) でどちらも「待つ」の 1 件が鳴る。
+
+#### レコードストアの知らせと、開いた欄の保存が、タブをまたいでいなかった (2026-09-28 · パス 499)
+
+上の錠は**書き込み同士**を並べるが、**古い表示から組んだ書き込み**は並べても直らない —— 並んだ順に
+書けば、後から書く古い欄が先に書かれた新しい値を消す。実測 (直す前 · 実 chromium · `file://` の 2 枚):
+
+| 操作 (タブ A) | タブ B |
+| --- | --- |
+| 投資信託の銘柄を 1 件足す | 一覧は 0 件のまま (保管層は 1 件) —— 再読込まで |
+| その銘柄の評価額を 300,000 → 500,000 に書き換える | 一覧は 300,000 のまま。**B が開いていた編集の欄で名前だけ直して保存すると、評価額が 300,000 へ黙って戻る** (断り 0 文) |
+| 7,777,777 円の売上を記録する | 経営サマリー (と、そこで組む金融機関等提出用の書面) は、その売上を含まないまま |
+
+原因は 2 つで、**どちらか片方を直しても閉じない**:
+
+1. **知らせがタブの中にしか届かない** (`src/renderer/data/collectionChange.ts`) —— 保管層 (IndexedDB) は
+   オリジンで 1 つなのに、「変わった」の知らせは JS の Map だった。`BroadcastChannel` で別のタブへも配る
+   (合図だけを運び中身は運ばない —— 封緘した記録の平文を別の文脈へ流さず、受けた側が合図ではなく保管層を
+   信じるため。受け口は購読した時に開き、受けた合図は送り返さない)。
+2. **編集の欄が開いた時の値で全部の欄を書く** —— 表示が新しくなっても、開いている欄の中は開いた時のまま。
+   `store.updateIfUnchanged(id, 開いた時の中身, patch)` が**行ごとの鎖の中で**比べてから書き
+   (`sameRecordData` —— 違う物を「同じ」と言うと上書きするので、迷ったら「違う」へ倒す)、
+   書き換えられていれば何も書かずに今の行を返す。3 画面 (投資信託・不動産・士業の連絡先) は断って
+   **入力を残し**、比べる基準を今の行へ移す (もう 1 度押せば知ったうえで上書きする)。
+
+解析した実体を丸ごと `edit` へ渡す書き込みは `src/renderer/__tests__/editResultCensus.test.ts` が
+構文木で数え、`editIfUnchanged` を通ることを要求する (実物 0 件)。残る窓 (Web Locks を使えない環境・
+知ったうえでの 2 度目の保存・マージ復元) は `docs/REMAINING_WORK.md` の「パス 499」。
 
 #### 危機時に見せる窓口の照合が、片方向だった (2026-09-06)
 
