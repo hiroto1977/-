@@ -128,18 +128,33 @@ const READING_OPERATORS: ReadonlySet<ts.SyntaxKind> = new Set([
 /** 答えの扱い。`read` だけが正しい。 */
 export type EditUse = 'read' | 'discarded' | 'not-awaited' | 'passed-as-value' | 'unread-variable' | 'escaped';
 
+/** 数える書き込みの口 (パス 499 で `editIfUnchanged` が加わった)。 */
+export type EditMethod = 'edit' | 'editIfUnchanged';
+
+/**
+ * `edit` の patch の形 (パス 499)。`fields` = 欄を名指しするオブジェクトリテラル (spread なし)、
+ * `whole` = それ以外 (解析した実体を丸ごと渡す形)。丸ごとの実体を `edit` で書くと、欄を開いた後に
+ * 別のタブが直した欄まで開いた時の値へ戻す —— そういう書き込みは `editIfUnchanged` を通る。
+ * `editIfUnchanged` の行は常に `fields` と数える (比較が守るので形を問わない)。
+ */
+export type PatchShape = 'fields' | 'whole';
+
 export interface EditSite {
   readonly file: string;
   readonly line: number;
+  readonly method: EditMethod;
   readonly use: EditUse;
+  readonly patch: PatchShape;
   readonly text: string;
 }
+
+const METHODS: ReadonlySet<string> = new Set<EditMethod>(['edit', 'editIfUnchanged']);
 
 /** 1 ファイルの `edit` の出現を、答えの扱いつきで返す。 */
 export function editSites(file: string, src: string): EditSite[] {
   const { sf, checker } = bindOne(file, src);
   const whole = new Set<ts.Symbol>();
-  const editFns = new Set<ts.Symbol>();
+  const editFns = new Map<ts.Symbol, EditMethod>();
   const escapes: ts.Node[] = [];
 
   // ① 束縛を集める。
@@ -159,9 +174,9 @@ export function editSites(file: string, src: string): EditSite[] {
               continue;
             }
             const key = el.propertyName ?? el.name;
-            if (ts.isIdentifier(key) && key.text === 'edit' && ts.isIdentifier(el.name)) {
+            if (ts.isIdentifier(key) && METHODS.has(key.text) && ts.isIdentifier(el.name)) {
               const s = checker.getSymbolAtLocation(el.name);
-              if (s !== undefined) editFns.add(s);
+              if (s !== undefined) editFns.set(s, key.text as EditMethod);
             }
           }
         } else {
@@ -177,20 +192,22 @@ export function editSites(file: string, src: string): EditSite[] {
   })(sf);
 
   // ② `edit` の出現と、丸ごとの束縛の漏れを集める。
-  const refs: ts.Expression[] = [];
+  const refs: { node: ts.Expression; method: EditMethod }[] = [];
   (function walk(n: ts.Node): void {
-    if (ts.isPropertyAccessExpression(n) && n.name.text === 'edit') {
+    if (ts.isPropertyAccessExpression(n) && METHODS.has(n.name.text)) {
+      const method = n.name.text as EditMethod;
       const target = n.expression;
       if (ts.isIdentifier(target)) {
         const s = symbolAt(checker, target);
-        if (s !== undefined && whole.has(s)) refs.push(n);
+        if (s !== undefined && whole.has(s)) refs.push({ node: n, method });
       } else if (isUseCollectionCall(target)) {
-        refs.push(n);
+        refs.push({ node: n, method });
       }
     }
     if (ts.isIdentifier(n) && isValuePosition(n)) {
       const s = symbolAt(checker, n);
-      if (s !== undefined && editFns.has(s)) refs.push(n);
+      const method = s === undefined ? undefined : editFns.get(s);
+      if (method !== undefined) refs.push({ node: n, method });
       if (s !== undefined && whole.has(s)) {
         const p = n.parent;
         const memberAccess = ts.isPropertyAccessExpression(p) && p.expression === n;
@@ -203,11 +220,13 @@ export function editSites(file: string, src: string): EditSite[] {
   const lineOf = (n: ts.Node): number => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
   const out: EditSite[] = [];
 
-  for (const r of refs) {
+  for (const { node: r, method } of refs) {
     const call = outer(r);
     const text = (ts.isCallExpression(call) ? call : r).getText(sf).replace(/\s+/g, ' ').slice(0, 120);
+    const patch: PatchShape =
+      method === 'edit' && ts.isCallExpression(call) && call.expression === r ? patchShape(call.arguments[1]) : 'fields';
     const at = (use: EditUse): void => {
-      out.push({ file, line: lineOf(r), use, text });
+      out.push({ file, line: lineOf(r), method, use, patch, text });
     };
     if (!ts.isCallExpression(call) || call.expression !== r) {
       at('passed-as-value');
@@ -252,9 +271,17 @@ export function editSites(file: string, src: string): EditSite[] {
     at('discarded');
   }
   for (const e of escapes) {
-    out.push({ file, line: lineOf(e), use: 'escaped', text: e.getText(sf).replace(/\s+/g, ' ').slice(0, 120) });
+    out.push({ file, line: lineOf(e), method: 'edit', use: 'escaped', patch: 'fields', text: e.getText(sf).replace(/\s+/g, ' ').slice(0, 120) });
   }
   return out.sort((a, b) => a.line - b.line);
+}
+
+/** `edit` の第 2 引数が、欄を名指しするオブジェクトリテラル (spread なし) か。 */
+function patchShape(arg: ts.Expression | undefined): PatchShape {
+  let n: ts.Node | undefined = arg;
+  while (n !== undefined && ts.isParenthesizedExpression(n)) n = n.expression;
+  if (n === undefined || !ts.isObjectLiteralExpression(n)) return 'whole';
+  return n.properties.some((p) => ts.isSpreadAssignment(p)) ? 'whole' : 'fields';
 }
 
 /** 三項の**条件**として読んだか (結果の枝に置いただけでは読んでいない)。 */
@@ -277,11 +304,21 @@ describe('useCollection の edit の答え —— 実物 (パス 498)', () => {
     ).toEqual([]);
   });
 
+  it('★ edit は欄を名指しして書く —— 解析した実体を丸ごと渡す書き込みは editIfUnchanged を通る (パス 499)', () => {
+    const whole = realSites().filter((s) => s.method === 'edit' && s.patch === 'whole');
+    expect(
+      whole.map((s) => `${s.file}:${s.line} ${s.text}`),
+      '丸ごとの実体を edit で書くと、欄を開いた後に別のタブが直した欄まで開いた時の値へ黙って戻す (lost update・パス 499)',
+    ).toEqual([]);
+  });
+
   it('床: 実物の呼び出しが見つかる (走査が死んでいない)', () => {
     const files = filesCallingUseCollection();
     expect(files.length, 'useCollection を呼ぶファイルが見つからない').toBeGreaterThanOrEqual(10);
     const read = realSites().filter((s) => s.use === 'read');
-    expect(read.length, 'edit の呼び出しが見つからない (束縛を辿れていない)').toBeGreaterThanOrEqual(3);
+    expect(read.filter((s) => s.method === 'edit').length, 'edit の呼び出しが見つからない (束縛を辿れていない)').toBeGreaterThanOrEqual(3);
+    // 実体を編集する 3 画面 (投資信託・不動産・士業の連絡先)。
+    expect(read.filter((s) => s.method === 'editIfUnchanged').length, 'editIfUnchanged の呼び出しが見つからない').toBeGreaterThanOrEqual(3);
   });
 });
 
@@ -316,6 +353,29 @@ describe('useCollection の edit の答え —— 標本 (数える形 / 数え�
     expect(uses("export function A() { const { edit: saveRow } = useCollection('c'); async function f() { await saveRow('1', {}); } return f; }\n")).toEqual(['discarded']);
     // 三項の**結果の枝**に置いただけでは読んでいない。
     expect(uses("export function A() { const col = useCollection('c'); async function f(b: boolean) { return b ? await col.edit('1', {}) : null; } return f; }\n")).toEqual(['discarded']);
+  });
+
+  it('editIfUnchanged も同じく答えを読む形を要求する (束縛・別名・丸ごと)', () => {
+    expect(uses("export function A() { const { editIfUnchanged } = useCollection('c'); async function f() { await editIfUnchanged('1', {}, {}); } return f; }\n")).toEqual(['discarded']);
+    expect(uses("export function A() { const col = useCollection('c'); async function f() { const r = await col.editIfUnchanged('1', {}, {}); if (r.status === 'changed') g(); } return f; }\n")).toEqual(['read']);
+    expect(uses("export function A() { const { editIfUnchanged: save } = useCollection('c'); function f() { fireReported(save('1', {}, {})); } return f; }\n")).toEqual(['not-awaited']);
+  });
+
+  it('edit の patch の形 —— 欄のリテラルは fields、実体を丸ごと・spread・変数は whole', () => {
+    const shapes = (body: string): PatchShape[] => editSites('x/Sample.tsx', `${HEAD}${body}`).map((s) => s.patch);
+    const wrap = (arg: string): string =>
+      `export function A() { const col = useCollection('c'); async function f(parsed: object) { if (await col.edit('1', ${arg})) g(); } return f; }\n`;
+    expect(shapes(wrap('{ status }'))).toEqual(['fields']);
+    expect(shapes(wrap("{ role: 'admin', note: x }"))).toEqual(['fields']);
+    expect(shapes(wrap('({ values: next })'))).toEqual(['fields']);
+    expect(shapes(wrap('parsed'))).toEqual(['whole']);
+    expect(shapes(wrap('{ ...parsed }'))).toEqual(['whole']);
+    expect(shapes(wrap('{ ...parsed, name: x }'))).toEqual(['whole']);
+    expect(shapes(wrap('build(parsed)'))).toEqual(['whole']);
+    // editIfUnchanged は比較が守るので、実体を丸ごと渡してよい。
+    expect(
+      shapes("export function A() { const col = useCollection('c'); async function f(p: object) { const r = await col.editIfUnchanged('1', {}, p); if (r) g(); } return f; }\n"),
+    ).toEqual(['fields']);
   });
 
   it('丸ごとの束縛を外へ渡す・rest で受けると、その先を数えられないので名指しする', () => {

@@ -6,7 +6,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { vanishedRecordNote } from '../data/readCollectionNow';
+import { changedRecordNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
@@ -115,7 +115,12 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
   const consultationsCol = useCollection<ShigyoConsultationEntry>(SHIGYO_CONSULTATIONS_COLLECTION);
   const [contactForm, setContactForm] = useState(EMPTY_CONTACT_FORM);
   const [contactError, setContactError] = useState<string>();
-  const [editingContactId, setEditingContactId] = useState<string | null>(null);
+  /**
+   * 編集中の連絡先 (null = 新規追加モード)。`base` は**欄を開いた時の保管層の中身**で、
+   * 欄に入れた値と同じ描画から取る —— 保存はそれと今の中身が同じときだけ書く (パス 499)。
+   */
+  const [editingContact, setEditingContact] = useState<{ readonly id: string; readonly base: ShigyoContactEntry } | null>(null);
+  const editingContactId = editingContact === null ? null : editingContact.id;
   const [consultForm, setConsultForm] = useState(EMPTY_CONSULTATION_FORM);
   const [consultError, setConsultError] = useState<string>();
   const submit = useSubmitGuard();
@@ -126,7 +131,8 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
       ...data.contacts.map((c) => ({ ...c, rowId: c.id, user: false as const })),
       ...contactsCol.records
         .filter((r) => r.data.serviceId === serviceId)
-        .map((r) => ({ ...r.data, rowId: r.id, user: true as const })),
+        // `stored` は保管層の中身そのもの —— 「編集」が比較の基準にする (パス 499)。
+        .map((r) => ({ ...r.data, rowId: r.id, user: true as const, stored: r.data })),
     ],
     [data.contacts, contactsCol.records, serviceId],
   );
@@ -154,10 +160,17 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     try {
       const parsed = parseShigyoContact({ serviceId, ...contactForm });
       setContactError(undefined);
-      if (editingContactId !== null) {
-        const saved = await contactsCol.edit(editingContactId, parsed);
-        setEditingContactId(null);
-        if (!saved) {
+      if (editingContact !== null) {
+        const result = await contactsCol.editIfUnchanged(editingContact.id, editingContact.base, parsed);
+        if (result.status === 'changed') {
+          // 欄を開いた後に別の画面で書き換えられていた —— 書かずに言い、入力を残す。次の比較の
+          // 基準を今の行へ移す: もう一度押せば、知ったうえで上書きできる (パス 499)。
+          setEditingContact({ id: editingContact.id, base: result.current.data });
+          setContactError(changedRecordNote('編集していた連絡先', '入力は残してあります。このまま上書きするなら、もう一度「保存」を押してください。書き換えられた内容から始め直すなら、一覧の「編集」を押してください。'));
+          return;
+        }
+        setEditingContact(null);
+        if (result.status === 'vanished') {
           // 編集の相手が消えていた (別のタブで削除) —— 入力は残し、消された行を黙って作り直さない (パス 498)。
           setContactError(vanishedRecordNote('編集していた連絡先', `入力は残してあります。新しい連絡先として保存するなら「＋ ${label}を追加」を押してください。`));
           return;
@@ -181,9 +194,9 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     if (!saved) setConsultError(vanishedRecordNote('この相談', '一覧を読み直しました。'));
   }
 
-  function onStartEditContact(rowId: string, c: ShigyoContactEntry) {
+  function onStartEditContact(rowId: string, c: ShigyoContactEntry, stored: ShigyoContactEntry) {
     setContactForm(contactToForm(c));
-    setEditingContactId(rowId);
+    setEditingContact({ id: rowId, base: stored });
     setContactError(undefined);
   }
 
@@ -427,7 +440,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             <button
               type="button"
               onClick={() => {
-                setEditingContactId(null);
+                setEditingContact(null);
                 setContactForm(EMPTY_CONTACT_FORM);
                 setContactError(undefined);
               }}
@@ -470,7 +483,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   <td style={tdStyle}>
                     {c.user && (
                       <span style={{ display: 'inline-flex', gap: 6 }}>
-                        <button type="button" onClick={() => onStartEditContact(c.rowId, c)} style={{ fontSize: 11 }}>
+                        <button type="button" onClick={() => onStartEditContact(c.rowId, c, c.stored)} style={{ fontSize: 11 }}>
                           編集
                         </button>
                         <button type="button" onClick={() => fireReported(contactsCol.remove(c.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>

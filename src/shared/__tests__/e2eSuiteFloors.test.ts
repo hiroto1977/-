@@ -9,7 +9,7 @@
  * 「知らない suite 名で 0 件走って PASSED」の 1 段下の同じ穴。
  *
  * 床そのものは実機でしか効かない (ブラウザが要る)。ここで留めるのは**表の形**:
- * 34 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
+ * 35 suite が全部載っている・床は 1 以上で実測以下 (実測より大きい床は
  * 「必ず落ちる検査」になり、誰かが床を消す)・名前の一覧は表から導く・
  * 合計の床は suite の床の和を下回らない側に置かない (合計だけが緩い形にしない)。
  */
@@ -109,9 +109,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     expect(code).not.toMatch(staleFails);
   });
 
-  it('★ 34 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(34);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(34);
+  it('★ 35 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(35);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(35);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -153,7 +153,10 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     //   theme-color が変わり列が 🤖 に戻る・解錠の前から効く・4 枚の表の特異性と順序・スマホのシート) = 496
     // + 2026-09-27 (パス 493q) の desktop +2 (制度判定の年齢に「66歳」を打つと判定を断り
     //   「年齢が未入力」と言わない・直すと判定が戻る) = 498
-    expect(sumMeasured).toBe(498);
+    // + 2026-09-27 (パス 499) の crossTabData suite 11 (2 枚のタブ —— A が足した銘柄・直した評価額・
+    //   記録した売上が、開いたままの B に届く・B の古い欄の保存は書かずに断り入力を残す・もう一度押せば上書き・
+    //   B が同じ行の錠を持つ間は A の保存がその錠を待ち、放すと届く) = 509
+    expect(sumMeasured).toBe(509);
   });
 });
 

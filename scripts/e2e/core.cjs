@@ -1684,6 +1684,165 @@ async function crossTabLockSuite(browser) {
 }
 
 /*
+ * **別のタブの書き込みは、開いたままの画面に届き、古い欄の保存はそれを黙って消さない**
+ * (2026-09-27 · パス 499) —— 2 枚のタブを実機で開いて測る。
+ *
+ * 直す前の実測 (同じ `file://` の HTML を 2 枚):
+ *
+ *   - タブ A が足した銘柄は、開いたままのタブ B の一覧に **再読込まで出ない** (保管層には在る)
+ *   - タブ B が開いていた編集の欄で名前だけ直して保存すると、その間にタブ A が直した評価額
+ *     (300,000 → 500,000) が **300,000 に戻る**。どちらの画面も何も言わない (lost update)
+ *   - タブ A が記録した 7,777,777 円の売上を、開いたままのタブ B の経営サマリーと
+ *     金融機関等提出用の書面は **含まない**
+ *
+ * 単体検査は BroadcastChannel を線の上で見ているが、**2 つの文書の間で本当に届き、
+ * 画面が読み直すか**は実物でしか分からない (`file://` は不透明オリジン)。
+ */
+async function crossTabDataSuite(browser) {
+  console.log('--- 別のタブの書き込みが届き、古い欄の保存は断る (2 枚のタブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const errs = [];
+  const a = await ctx.newPage();
+  collectErrors(a, errs);
+  await a.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(a);
+  const b = await ctx.newPage();
+  collectErrors(b, errs);
+  await b.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await b.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await b.locator('input[type="password"]').first().fill(PASS);
+  await b.getByRole('button', { name: 'ロック解除' }).click();
+  await b.waitForSelector('.sidebar', { timeout: 30000 });
+
+  /** 画面の文にそれが現れるまで待つ (現れなければ false —— 落とすのは ok() の役目)。 */
+  const appears = (page, text, ms = 15000) =>
+    page
+      .waitForFunction((t) => (document.body.textContent ?? '').includes(t), text, { timeout: ms })
+      .then(() => true)
+      .catch(() => false);
+
+  // ── ① タブ A が足した銘柄が、開いたままのタブ B に届く ──
+  await gotoService(a, '#mutual-funds', 'text=銘柄を追加');
+  await gotoService(b, '#mutual-funds', 'text=銘柄を追加');
+  await a.getByPlaceholder('例: ニッセイ外国株式').fill('CT499ファンド');
+  await a.getByPlaceholder('空欄=自動計算').fill('300000');
+  await a.getByRole('button', { name: '＋ 銘柄を追加' }).click();
+  await a.waitForSelector('tbody tr:has-text("CT499ファンド")', { timeout: 15000 });
+  ok(await appears(b, 'CT499ファンド'), '★ 表示: タブ A が足した銘柄が、開いたままのタブ B の一覧に届く (再読込しない)');
+
+  // ── ② B が編集の欄を開いた後に、A が評価額を直す ──
+  const rowIn = (page) => page.locator('tbody tr', { hasText: 'CT499ファンド' }).first();
+  await rowIn(b).getByRole('button', { name: '編集', exact: true }).click();
+  await b.waitForSelector('text=銘柄を編集中', { timeout: 10000 });
+  await rowIn(a).getByRole('button', { name: '編集', exact: true }).click();
+  await a.waitForSelector('text=銘柄を編集中', { timeout: 10000 });
+  await a.getByPlaceholder('空欄=自動計算').fill('500000');
+  await a.getByRole('button', { name: '保存 (自動反映)' }).click();
+  ok(await appears(a, '500,000'), '対照: タブ A の保存は通る (評価額 500,000)');
+  ok(await appears(b, '500,000'), '★ 表示: タブ A の書き換えが、タブ B の一覧に届く');
+
+  // ── ③ B が (古い欄のまま) 名前だけ直して保存 → 書かずに断る ──
+  await b.getByPlaceholder('例: ニッセイ外国株式').fill('CT499ファンド改');
+  await b.getByRole('button', { name: '保存 (自動反映)' }).click();
+  ok(
+    await appears(b, '編集を始めた後に別の画面で書き換えられています'),
+    '★ 保存: 欄を開いた後に書き換えられた行へ、古い欄の保存は書かずに断る',
+  );
+  ok(
+    (await b.getByPlaceholder('例: ニッセイ外国株式').inputValue()) === 'CT499ファンド改',
+    '★ 保存: 断っても入力は残る',
+  );
+  // A の画面 (保管層の今の中身) は 500,000 のまま、名前も元のまま。
+  const aRow = ((await rowIn(a).textContent()) ?? '').replace(/\s+/g, ' ');
+  ok(aRow.includes('500,000') && !aRow.includes('CT499ファンド改'), '★ 保存: タブ A の 500,000 は古い欄の 300,000 に戻らない');
+
+  // ── ④ B がもう一度押す → 知ったうえで上書きする ──
+  await b.getByRole('button', { name: '保存 (自動反映)' }).click();
+  ok(await appears(a, 'CT499ファンド改'), '★ 2 度目: 断りを読んだうえでもう一度押せば上書きでき、タブ A に届く');
+
+  // ── ⑤ A が記録した売上が、開いたままの B の経営サマリーに届く ──
+  await gotoService(b, '#overview', 'text=金融機関等提出用の書式で表示');
+  await gotoService(a, '#sales', 'input[placeholder="YYYY-MM-DD"]');
+  await a.getByPlaceholder('YYYY-MM-DD').fill('2026-09-01');
+  await a.getByPlaceholder('売上金額').fill('7777777');
+  await a.getByPlaceholder('注文件数').fill('3');
+  await a.getByRole('button', { name: '追加', exact: true }).click();
+  await a.waitForSelector('tbody tr:has-text("7,777,777")', { timeout: 15000 });
+  ok(await appears(b, '7,777,777'), '★ 表示: タブ A の売上が、開いたままのタブ B の経営サマリーに届く');
+
+  // ── ⑥ 同じ行の錠はタブをまたぐ —— B が錠を持つ間、A の保存は同じ名前の錠を待つ ──
+  // `updateIfUnchanged` は比べてから書くまでを行ごとの鎖に入れ、鎖は Web Locks
+  // (`servicehub.record.<id>`) で囲まれる (store.ts の crossTabLocked)。その錠が本当に
+  // 2 枚のタブで同じ物かは jsdom では測れない (錠も窓も無い) —— docs/ARCHITECTURE.md が
+  // 2026-09-06 から「実機のタブ 2 枚はここでは試していない」と書いていた当のことである。
+  // 錠を外す (鎖をこのタブの中だけにする)・名前をタブごとに変える、のどちらでも
+  // A の要求は B の錠の待ち行列に現れないので、この 2 つの ok が鳴る。
+  // 2 枚とも先に一覧へ移しておく —— `gotoService` は再読込するので、錠を持った後に B を
+  // 動かすと錠ごと消える。
+  await gotoService(b, '#mutual-funds', 'text=銘柄を追加');
+  await gotoService(a, '#mutual-funds', 'text=銘柄を追加');
+  const fundId = await b.evaluate(
+    () =>
+      new Promise((resolve, reject) => {
+        const open = indexedDB.open('business-hub-data');
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result;
+          const req = db
+            .transaction('records', 'readonly')
+            .objectStore('records')
+            .index('collection')
+            .getAll('mutualfund-holdings');
+          req.onsuccess = () => {
+            db.close();
+            resolve(req.result.length === 1 ? req.result[0].id : null);
+          };
+          req.onerror = () => reject(req.error);
+        };
+      }),
+  );
+  const lockName = 'servicehub.record.' + fundId;
+  await b.evaluate((name) => {
+    window.__e2eHeld = new Promise((release) => {
+      window.__e2eRelease = release;
+    });
+    window.__e2eEntered = false;
+    void navigator.locks.request(name, async () => {
+      window.__e2eEntered = true;
+      await window.__e2eHeld;
+    });
+  }, lockName);
+  await b.waitForFunction(() => window.__e2eEntered === true, null, { timeout: 5000 });
+  const rowNow = a.locator('tbody tr', { hasText: 'CT499ファンド改' }).first();
+  await rowNow.getByRole('button', { name: '編集', exact: true }).click();
+  await a.waitForSelector('text=銘柄を編集中', { timeout: 10000 });
+  await a.getByPlaceholder('例: ニッセイ外国株式').fill('CT499ファンド錠');
+  await a.getByRole('button', { name: '保存 (自動反映)' }).click();
+  /** B から見た待ち行列に、A の要求 (同じ名前) が現れるまで。 */
+  let waitingFromA = false;
+  for (let i = 0; i < 100 && !waitingFromA; i++) {
+    const pending = await b.evaluate(async () => (await navigator.locks.query()).pending.map((l) => l.name));
+    waitingFromA = fundId !== null && pending.includes(lockName);
+    if (!waitingFromA) await b.waitForTimeout(100);
+  }
+  const aText = (await a.textContent('tbody')) ?? '';
+  const bText = (await b.textContent('tbody')) ?? '';
+  ok(
+    waitingFromA && !aText.includes('CT499ファンド錠') && !bText.includes('CT499ファンド錠'),
+    '★ 錠: タブ B が同じ行の錠を持つ間、タブ A の保存はその錠を待つ (錠は 2 枚のタブで同じ物・待つ間は書かない)',
+  );
+  await b.evaluate(() => window.__e2eRelease());
+  ok(
+    (await appears(a, 'CT499ファンド錠')) && (await appears(b, 'CT499ファンド錠')),
+    '★ 錠: 放すと、待っていたタブ A の保存が届く (タブ B の一覧にも出る)',
+  );
+
+  ok(errs.length === 0, 'crossTabData: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/*
  * 保管領域が「消えうる」ことを、実機の画面が正しく名乗るか。
  *
  * ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の領域になる
@@ -4305,6 +4464,8 @@ function installWaitMarginRecorder(browser) {
     ['cspEnforced', cspEnforcedSuite, 5],
     ['vaultOpacity', vaultOpacitySuite, 18],
     ['crossTabLock', crossTabLockSuite, 5],
+    // パス 499: 別のタブの書き込みが開いたままの画面に届き、古い欄の保存は断る
+    ['crossTabData', crossTabDataSuite, 11],
     ['storageDurability', storageDurabilitySuite, 21],
     ['hardReset', hardResetSuite, 8],
     ['securityPosture', securityPostureSuite, 11],

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getRecordStore, type StoredRecord } from './store';
+import { getRecordStore, type ConditionalUpdate, type StoredRecord } from './store';
 import { subscribeCollection } from './collectionChange';
 import { reportDeviceStoreFailure, type DeviceStoreOp } from './deviceStoreFailure';
 
@@ -77,6 +77,21 @@ export interface UseCollection<T extends Record<string, unknown>> {
    * (`renderer/__tests__/editResultCensus.test.ts` が構文木で数える)。
    */
   edit: (id: string, patch: Partial<T>) => Promise<boolean>;
+  /**
+   * **欄を開いた時の中身 (`expected`) のままなら**書く (パス 499)。
+   *
+   * 実体を丸ごと編集する欄 (投資信託の銘柄・不動産の物件・士業の連絡先) は、保存のとき
+   * **全部の欄**を書く。`edit` で書くと、欄を開いた後に別のタブが書き換えた欄まで
+   * 開いた時の値へ戻す —— 実測 (2026-09-27 · 直す前・実 chromium の 2 タブ): A が評価額を
+   * 300,000 → 500,000 に直した後、B が開いていた編集の欄で名前だけ直して保存すると、
+   * **評価額が 300,000 に戻り、どちらの画面も何も言わなかった** (lost update)。
+   *
+   * 答えは 3 つ (`ConditionalUpdate`) で、`changed` のときは**何も書かずに今の行を返す**。
+   * 画面はそれを言い、入力を残し、次の比較の基準を今の行へ移す (利用者がもう一度押せば、
+   * 知ったうえで上書きできる)。どの答えでも一覧は読み直す (消えた行を落とし、
+   * 書き換わった行を今の姿で出す)。
+   */
+  editIfUnchanged: (id: string, expected: T, patch: Partial<T>) => Promise<ConditionalUpdate<T>>;
   remove: (id: string) => Promise<void>;
   reload: () => Promise<void>;
 }
@@ -182,6 +197,17 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     [collection, reload],
   );
 
+  const editIfUnchanged = useCallback(
+    async (id: string, expected: T, patch: Partial<T>): Promise<ConditionalUpdate<T>> => {
+      const result = await reporting('save', collection, () =>
+        getRecordStore().updateIfUnchanged<T>(id, expected, patch),
+      );
+      await reload();
+      return result;
+    },
+    [collection, reload],
+  );
+
   const remove = useCallback(
     async (id: string) => {
       await reporting('delete', collection, () => getRecordStore().remove(id));
@@ -190,5 +216,5 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     [collection, reload],
   );
 
-  return { records, loading, add, addMany, edit, remove, reload };
+  return { records, loading, add, addMany, edit, editIfUnchanged, remove, reload };
 }

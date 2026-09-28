@@ -14,7 +14,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { vanishedRecordNote } from '../data/readCollectionNow';
+import { changedRecordNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
   HOLDINGS_COLLECTION,
@@ -153,11 +153,16 @@ export function MutualFundsPage() {
   const { recentDividends } = data;
 
   // ユーザー追加の保有銘柄 (record store 永続化・端末内)。
-  const { records: userHoldings, add: addHolding, edit: editHolding, remove: removeHolding } = useCollection<HoldingEntry>(HOLDINGS_COLLECTION);
+  const { records: userHoldings, add: addHolding, editIfUnchanged: editHoldingIfUnchanged, remove: removeHolding } = useCollection<HoldingEntry>(HOLDINGS_COLLECTION);
   const [fundForm, setFundForm] = useState(EMPTY_HOLDING_FORM);
   const [fundError, setFundError] = useState<string>();
-  /** 編集中のユーザー銘柄 id (null = 新規追加モード)。 */
-  const [editingFundId, setEditingFundId] = useState<string | null>(null);
+  /**
+   * 編集中のユーザー銘柄 (null = 新規追加モード)。`base` は**欄を開いた時の保管層の中身**で、
+   * 欄に入れた値と同じ描画から取る —— 保存はそれと今の中身が同じときだけ書く (パス 499)。
+   * 欄より新しい中身を基準にすると、古い欄の値で新しい中身を上書きしても「同じ」と判定される。
+   */
+  const [editingFund, setEditingFund] = useState<{ readonly id: string; readonly base: HoldingEntry } | null>(null);
+  const editingFundId = editingFund === null ? null : editingFund.id;
   const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト (追加行は「追加」チップ)。 */
@@ -178,6 +183,8 @@ export function MutualFundsPage() {
         userTag: '追加',
         rowId: r.id,
         user: true as const,
+        /** 保管層の中身そのもの —— 「編集」がこの行を欄に入れるとき、比較の基準にする (パス 499)。 */
+        stored: r.data,
       })),
     ],
     [data.holdings, userHoldings],
@@ -213,10 +220,17 @@ export function MutualFundsPage() {
     try {
       const parsed = parseHoldingEntry(fundForm);
       setFundError(undefined);
-      if (editingFundId !== null) {
-        const saved = await editHolding(editingFundId, parsed);
-        setEditingFundId(null);
-        if (!saved) {
+      if (editingFund !== null) {
+        const result = await editHoldingIfUnchanged(editingFund.id, editingFund.base, parsed);
+        if (result.status === 'changed') {
+          // 欄を開いた後に別の画面で書き換えられていた —— 書かずに言い、入力を残す。次の比較の
+          // 基準を今の行へ移す: もう一度押せば、知ったうえで上書きできる (パス 499)。
+          setEditingFund({ id: editingFund.id, base: result.current.data });
+          setFundError(changedRecordNote('編集していた銘柄', '入力は残してあります。このまま上書きするなら、もう一度「保存 (自動反映)」を押してください。書き換えられた内容から始め直すなら、一覧の「編集」を押してください。'));
+          return;
+        }
+        setEditingFund(null);
+        if (result.status === 'vanished') {
           // 編集の相手が消えていた (別のタブで削除) —— 入力は残し、消された行を黙って作り直さない (パス 498)。
           setFundError(vanishedRecordNote('編集していた銘柄', '入力は残してあります。新しい銘柄として保存するなら「＋ 銘柄を追加」を押してください。'));
           return;
@@ -231,14 +245,14 @@ export function MutualFundsPage() {
   }
 
   /** ユーザー行の「編集」— フォームへ読み込み (auto の評価額は空欄のまま)。 */
-  function onStartEditHolding(rowId: string, h: HoldingEntry) {
+  function onStartEditHolding(rowId: string, h: HoldingEntry, stored: HoldingEntry) {
     setFundForm(holdingToForm(h));
-    setEditingFundId(rowId);
+    setEditingFund({ id: rowId, base: stored });
     setFundError(undefined);
   }
 
   function onCancelEditHolding() {
-    setEditingFundId(null);
+    setEditingFund(null);
     setFundForm(EMPTY_HOLDING_FORM);
     setFundError(undefined);
   }
@@ -707,7 +721,7 @@ export function MutualFundsPage() {
                 <td style={tdStyle}>
                   {h.user && (
                     <span style={{ display: 'inline-flex', gap: 6 }}>
-                      <button type="button" onClick={() => onStartEditHolding(h.rowId, h)} style={{ fontSize: 11 }}>
+                      <button type="button" onClick={() => onStartEditHolding(h.rowId, h, h.stored)} style={{ fontSize: 11 }}>
                         編集
                       </button>
                       <button type="button" onClick={() => fireReported(removeHolding(h.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>

@@ -67,6 +67,18 @@ const LEDGER: readonly Row[] = [
     },
   },
   {
+    name: 'updateIfUnchanged',
+    kind: 'notifies',
+    why:
+      '欄を開いた時の中身のままなら書く (パス 499)。書いたときは中身が変わるので知らせる。'
+      + '書かなかったとき (`changed` / `vanished`) は中身が動かないので知らせない —— そちらは store の検査が留める。',
+    run: async (s) => {
+      const rec = await s.insert('sales-entries', { ...ROW });
+      resetCount();
+      return s.updateIfUnchanged<Record<string, unknown>>(rec.id, rec.data, { amount: 9000 });
+    },
+  },
+  {
     name: 'remove',
     kind: 'notifies',
     why: '1 件消える。点検パネルの削除 (`deleteRecords`) はここを直接叩く。',

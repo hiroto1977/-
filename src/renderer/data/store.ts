@@ -19,6 +19,7 @@
 import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
 import { hasCollectionShape } from './collectionShapes';
 import { notifyRecordStoreChanged } from './collectionChange';
+import { sameRecordData } from './sameRecordData';
 import { isTimestampMs } from '../../shared/isoDate';
 
 const DB_NAME = 'business-hub-data';
@@ -37,6 +38,20 @@ export interface StoredRecord<T = Record<string, unknown>> {
   readonly data: T;
 }
 
+/**
+ * `updateIfUnchanged` の答え (パス 499)。書けたかだけでなく、**書かなかった理由**を返す ——
+ * 理由によって画面が言うことも、利用者が取れる手も違う:
+ *
+ *  - `saved`    … 欄を開いた時の中身のままだったので書いた。
+ *  - `vanished` … 相手の行がもう無い (別の画面で削除された)。何も書いていない。
+ *  - `changed`  … 欄を開いた後に別の画面で書き換えられていた。何も書いていない。
+ *                 `current` が今の行 (画面はそれを次の比較の基準にする)。
+ */
+export type ConditionalUpdate<T extends Record<string, unknown>> =
+  | { readonly status: 'saved'; readonly record: StoredRecord<T> }
+  | { readonly status: 'vanished' }
+  | { readonly status: 'changed'; readonly current: StoredRecord<T> };
+
 export interface RecordStore {
   /** Insert a new record into `collection`; returns the stored record. */
   insert<T extends Record<string, unknown>>(collection: string, data: T): Promise<StoredRecord<T>>;
@@ -53,6 +68,16 @@ export interface RecordStore {
     id: string,
     patch: Partial<T>,
   ): Promise<StoredRecord<T> | null>;
+  /**
+   * `expected` (編集を始めた時に読んだ `data`) と今の `data` が同じときだけ `patch` を
+   * 重ねて書く (パス 499)。比べてから書くまでを `update` と同じ id ごとの鎖
+   * (在れば Web Locks も) の中で行うので、同じ id を書き換える他の操作は間に挟まらない。
+   */
+  updateIfUnchanged<T extends Record<string, unknown>>(
+    id: string,
+    expected: T,
+    patch: Partial<T>,
+  ): Promise<ConditionalUpdate<T>>;
   get<T extends Record<string, unknown>>(id: string): Promise<StoredRecord<T> | null>;
   /** All records in a collection, newest-first. */
   list<T extends Record<string, unknown>>(collection: string): Promise<readonly StoredRecord<T>[]>;
@@ -399,7 +424,46 @@ class IndexedDBRecordStore implements RecordStore {
      */
     const existing = await this.get<T>(id); // get() decrypts
     if (!existing) return null;
+    return this.writeMerged(existing, patch);
+  }
 
+  async updateIfUnchanged<T extends Record<string, unknown>>(
+    id: string,
+    expected: T,
+    patch: Partial<T>,
+  ): Promise<ConditionalUpdate<T>> {
+    /*
+     * **比べてから書くまでを 1 つの鎖の中で** (パス 499)。画面の側で `get` してから
+     * `update` を呼ぶ形にすると、比べた後・書く前に別の書き込みが挟まる。鎖は
+     * `update` / `remove` と同じ物なので、同じ id を書き換える操作はこの間に入れない
+     * —— 別のタブの操作も、Web Locks が使える環境なら同じ錠で待たされる
+     * (`crossTabLocked` の注記。使えない環境では鎖はこのタブの中だけの物である)。
+     * 実 chromium の `file://` で 2 枚のタブが同じ錠を共有することは e2e の
+     * `crossTabData` suite が留める (片方が錠を持つ間、もう片方の保存はその錠を待つ)。
+     *
+     * id の検査は置かない —— 空の id は `get` が `null` を返し、`vanished` になる
+     * (`update` の先頭の検査は等価変異として黙らせてある。同じ物を 2 度置かない)。
+     * `expected` の形も検めない —— 素のオブジェクトでない物は `sameRecordData` が
+     * 保管した行と「違う」と答えるので、書かずに `changed` へ倒れる (安全な向き)。
+     */
+    if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
+    return this.serialize(id, async (): Promise<ConditionalUpdate<T>> => {
+      const existing = await this.get<T>(id);
+      if (!existing) return { status: 'vanished' };
+      if (!sameRecordData(existing.data, expected)) return { status: 'changed', current: existing };
+      const record = await this.writeMerged(existing, patch);
+      return record === null ? { status: 'vanished' } : { status: 'saved', record };
+    });
+  }
+
+  /**
+   * 読んだ行に `patch` を重ねて書く (`update` と `updateIfUnchanged` が共有する)。
+   * 書く直前に行が消えていたら書かずに `null`。
+   */
+  private async writeMerged<T extends Record<string, unknown>>(
+    existing: StoredRecord<T>,
+    patch: Partial<T>,
+  ): Promise<StoredRecord<T> | null> {
     const mergedData = { ...existing.data, ...patch };
     const updatedAt = monotonicNow();
     const storedData = await this.cipher.encrypt(mergedData);
@@ -416,10 +480,10 @@ class IndexedDBRecordStore implements RecordStore {
     //
     // 消えていたら書かない。戻り値は `null` —— 「その id はもう無い」で
     // 既にある契約なので、呼んだ側の扱いは変わらない。
-    if (!(await this.readRawRow(id))) return null;
+    if (!(await this.readRawRow(existing.id))) return null;
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
-      tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
+      tx.objectStore(STORE).put({ id: existing.id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
       await txDone(tx);
     });
     // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない

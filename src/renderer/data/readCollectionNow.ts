@@ -80,3 +80,20 @@ export function unreadableForJudgementNote(what: string, unchecked = '既に同�
 export function vanishedRecordNote(what: string, then: string): string {
   return `${what}は既に一覧にありません（別の画面で削除された可能性があります）。${then}`;
 }
+
+/**
+ * **欄を開いた後に、同じ行が別の画面で書き換えられていた**ときの断り (2026-09-27 · パス 499)。
+ *
+ * `useCollection` の `editIfUnchanged` は、欄を開いた時の中身と今の中身が違えば何も書かずに
+ * `changed` を返す。直す前は `edit` で全部の欄を書いており、**別のタブが直した欄まで、
+ * 欄を開いた時の値へ黙って戻していた** (lost update —— 実測は `useCollection.ts` の
+ * `editIfUnchanged` の docblock)。
+ *
+ * 文は 3 つのことを言う: ① 何が起きたか (書き換えられていた・**保存していない**)
+ * ② 今の中身はどこで見えるか (一覧の行) ③ `then` —— 画面ごとの次の一手。
+ * 次の一手は 2 つで、**どちらも利用者が選ぶ**: そのまま上書きする (もう一度押す) か、
+ * 書き換えられた内容から始め直す (一覧の「編集」)。黙ってどちらかに決めない。
+ */
+export function changedRecordNote(what: string, then: string): string {
+  return `${what}は、編集を始めた後に別の画面で書き換えられています（一覧の行が今の内容です）。保存していません。${then}`;
+}

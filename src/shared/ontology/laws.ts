@@ -885,7 +885,8 @@ export const LAWS: readonly Law[] = [
     name: '判定と書き込みの相手は購読の写しではなく保管層',
     statement:
       '画面の `useCollection(c).records` は**購読の写し**で、「今そこに在る物」ではない —— 一覧が IndexedDB から届く**前**は空、'
-      + '読みが失敗しても空のまま、**別のタブ**の書き込みも知らない (書き込みの知らせ `collectionChange.ts` は同じタブの中にしか届かない)。'
+      + '読みが失敗しても空のまま、**別のタブ**の書き込みは知らせが届いて読み直すまで知らない (パス 499 までは知らせが同じタブの中にしか届かず、'
+      + '再読込まで知らなかった。届くようになった今も、届くのは書いた**後**で読み直しはさらに後なので、その間に押した判定は古い一覧に答える)。'
       + '表示にはそれで構わないが、「既に在るか」「何人いるか」「今の一覧に足して丸ごと保存する」を写しで決めると、答えは古い一覧についての答えになる。'
       + 'パス 384 は CSV の取り込みと KPI 実績の追加を保管層の読み直し (`readCollectionNow`) へ寄せたが、その census は handler を `function on…` の綴りで、'
       + '写しを `records` / `entries` の綴りで探しており、**別名・導いた値・矢印の handler・JSX に直書きの handler が 1 つも映らなかった**。'
@@ -926,6 +927,39 @@ export const LAWS: readonly Law[] = [
       test('src/renderer/pages/__tests__/editVanishedRecord.test.ts'),
       test('src/renderer/data/__tests__/parameterOverrides.test.ts'),
       test('src/renderer/data/__tests__/useCollection.test.ts'),
+    ],
+  },
+  {
+    id: 'edit-compares-with-what-was-opened',
+    family: 'at-rest',
+    name: '開いた欄は、開いた時の中身と比べてから書く (知らせは別のタブへも届く)',
+    statement:
+      '実体を丸ごと編集する欄 (投資信託の銘柄・不動産の物件・士業の連絡先) は、開いた時の記録から全部の欄を組み、保存で**全部の欄**を書く。'
+      + '2026-09-27 まで書き込みの知らせ (`collectionChange.ts`) は同じタブの中にしか届かず、別のタブの画面は再読込まで書く前の姿を出し続けた。'
+      + '実測 (直す前・実 chromium の 2 タブ): A が足した銘柄は B に 0 行・A が評価額を 300,000 → 500,000 に直した後に B が名前だけ直して保存すると'
+      + '**評価額が 300,000 へ黙って戻り**、断りは 0 文 (lost update)・A が記録した ¥7,777,777 の売上は B の経営サマリーに出ない。'
+      + '直しは 2 つで、どちらか片方では閉じない: ① 知らせを `BroadcastChannel` で別のタブへも配る (合図だけを運び、中身は運ばない —— '
+      + '受けた側は自分で保管層を読み直す。受け口は購読した時に開き、受けた合図は送り返さない) ② 欄は**開いた時の中身**を基準として持ち、'
+      + '保存は `store.updateIfUnchanged` で**同じ鎖の中で**比べてから書く —— 書き換えられていれば何も書かずに今の行を返し、画面は断って'
+      + '**入力を残し**、基準を今の行へ移す (もう 1 度押せば知ったうえで上書きし、一覧の「編集」は今の内容から始め直す)。'
+      + '① だけでは開いた欄の中の古い値は直らず (表示が新しくなっても欄は開いた時のまま)、② だけでは古い表示を見て編集を始める。'
+      + '比べる判定 (`sameRecordData`) は誤りの向きが非対称で、違う物を「同じ」と言うと上書きし、同じ物を「違う」と言うと 1 手余計に押させるだけなので、'
+      + '迷ったら「違う」へ倒す —— ただし保管層から読んだ物は、その複製と必ず「同じ」 (そうでなければ誰も触っていない行が永久に保存できない。'
+      + '`NaN` は `Object.is` で比べる)。基準は**欄を埋めた記録そのもの** (同じ描画の行の `stored`) で、別に読み直すと比べる相手がずれる。'
+      + '解析した実体を丸ごと渡す書き込みは構文木の census が束縛で数え、`editIfUnchanged` を通ることを要求する。'
+      + '比べてから書くまでは行ごとの鎖の中で、鎖は Web Locks (`servicehub.record.<id>`) で囲まれる —— 実 chromium の `file://` で 2 枚のタブが'
+      + '**同じ錠を共有する**ことを e2e が留める (B が錠を持つ間、A の保存はその錠の待ち行列に現れ、放すと届く。'
+      + 'docs/ARCHITECTURE.md は 2026-09-06 から「実機のタブ 2 枚はここでは試していない」と書いていた)。'
+      + '**残る窓 (測った)**: Web Locks を使えない環境では鎖はタブの中だけで、比べてから書くまでの数 ms に別のタブの書き込みが挟まりうる・'
+      + '知ったうえでの 2 度目の保存は最後に書いた物が勝つ・マージ復元 (`importAll`) は 1 つのトランザクションで行ごとの鎖に入らない。',
+    provenance: ['パス 499', 'パス 497 (「別のタブの書き込みを知らない」と書いた当のこと)', 'パス 498 (書き込みは「書けたか」を答える —— こちらは「何に対して書けたか」)'],
+    enforcedBy: [
+      test('src/renderer/pages/__tests__/editChangedRecord.test.ts'),
+      test('src/renderer/data/__tests__/storeUpdateIfUnchanged.test.ts'),
+      test('src/renderer/data/__tests__/sameRecordData.test.ts'),
+      test('src/renderer/data/__tests__/collectionChangeRelay.test.ts'),
+      test(T.renderer('editResultCensus')),
+      harness('e2e'),
     ],
   },
   {

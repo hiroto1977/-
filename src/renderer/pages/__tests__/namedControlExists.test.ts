@@ -63,8 +63,12 @@ type Kind =
 interface Row {
   readonly name: string;
   readonly kind: Kind;
-  /** `same-screen-control` / `other-screen-control` のとき、その綴りを描いているファイル。 */
-  readonly renderedIn?: string;
+  /**
+   * `same-screen-control` / `other-screen-control` のとき、その綴りを描いているファイル。
+   * **同じ名前を複数の画面が名指しする**ときは全部を並べる (2026-09-27 · パス 499 —— 「編集」「保存」は
+   * 3 つの画面の断りが名指しする。1 つだけ書くと、残りの画面が本当にその綴りを描くかを誰も見ない)。
+   */
+  readonly renderedIn?: string | readonly string[];
   readonly why: string;
 }
 
@@ -79,8 +83,23 @@ const LEDGER: readonly Row[] = [
     why: '設定の点検パネルの見出し。2026-09-23 まで文は「形式の合わない記録」と綴っており、その語は設定画面に 1 度も出なかった。',
   },
   { name: 'Canva で編集する', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/HomePage.tsx', why: '同じホーム画面の書き出しボタン (文も HomePage に在る)。' },
-  { name: 'ファイルを開く', kind: 'same-screen-control', renderedIn: 'src/renderer/components/ExportActions.tsx', why: 'ホームが載せる書き出し部品のボタン。文はホームに在り、部品はその画面の中に描かれる。' },
-  { name: '今すぐ作る', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/HomePage.tsx', why: 'ライブラリの空状態が名指しする —— 文は**画面名も一緒に**述べる (「ホーム」ページの…) ので迷わない。' },
+  {
+    name: 'ファイルを開く',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/HomePage.tsx',
+    why:
+      'ホームの出来上がりのカードのボタンで、**ホーム自身が描く** (2026-09-27 · パス 499 で訂正)。'
+      + 'それまでこの行は描画元を書き出し部品 `ExportActions.tsx` と書き「ホームが載せる部品」と理由を述べていたが、'
+      + 'ホームはその部品を 1 度も載せていない —— 名前で 1 件に畳んでいた走査では、どの画面が名指ししたかを誰も見なかった。',
+  },
+  {
+    name: '今すぐ作る',
+    kind: 'service-page-control',
+    why:
+      'ライブラリの空状態がホームの作成ボタンを名指しする —— 文は**画面名も一緒に**述べる (「ホーム」ページの…) ので迷わない。'
+      + '**別の画面**の操作子なので、2026-09-27 (パス 499) に同じ画面の種類から移した (名指しする画面が描いているかを問う ★ が、'
+      + 'ライブラリの画面にその綴りが無いことを見つけた)。',
+  },
   { name: 'SVG を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: 'チームレーダーの書き出しボタン (実物の label は「SVG を保存 (Canva 用)」で、名指しはその前方一致)。' },
   { name: 'チーム情報を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: '同じ画面の保存ボタン。文は shared の状態モジュールが組むが、出る先はこの画面である。' },
   { name: 'もう一度確認', kind: 'same-screen-control', renderedIn: 'src/renderer/security/LockScreen.tsx', why: '24 語の控えを確かめ直すボタン。文は保管庫が組み、押す所は施錠画面に在る。' },
@@ -120,7 +139,7 @@ const LEDGER: readonly Row[] = [
     why:
       '編集していた銘柄が別のタブで消されていたときの断り (2026-09-27 · パス 498)。入力は残し、'
       + '消された行を黙って作り直さない —— 足すかどうかは利用者が決めるので、足す口を名指しする。'
-      + '断りを出すと編集の相手は外れる (`setEditingFundId(null)`) ので、同じボタンの label はこの綴りに変わっている。',
+      + '断りを出すと編集の相手は外れる (`setEditingFund(null)`) ので、同じボタンの label はこの綴りに変わっている。',
   },
   {
     name: '＋ 物件を追加',
@@ -135,6 +154,34 @@ const LEDGER: readonly Row[] = [
     why:
       '士業の連絡先の版 (パス 498)。断りの文とボタンの label が**同じ補間** (`label` = その画面の士業の名前 —— 部品の prop) を持つので、'
       + '綴りの一致を補間ごと確かめられる (描画元のファイルに `＋ ${label}を追加` が在ること)。',
+  },
+  {
+    name: '保存 (自動反映)',
+    kind: 'same-screen-control',
+    renderedIn: ['src/renderer/pages/MutualFundsPage.tsx', 'src/renderer/pages/RealEstatePage.tsx'],
+    why:
+      '欄を開いた後に別の画面で書き換えられていた、の断り (2026-09-27 · パス 499)。入力を残し比較の基準を今の行へ移すので、'
+      + '**編集の相手は外れない** —— 断りが出た時点で、同じボタンの label は編集中の綴り「保存 (自動反映)」のままである (投資信託・不動産)。',
+  },
+  {
+    name: '保存',
+    kind: 'same-screen-control',
+    renderedIn: ['src/renderer/components/ShigyoConsole.tsx'],
+    why:
+      '同じ断りの士業の連絡先の版 (パス 499)。編集中のボタンの label は「保存」(追加のときは「＋ …を追加」) で、'
+      + '断りを出しても編集の相手は外れないので、断りが出た時点の label はこの綴りである。',
+  },
+  {
+    name: '編集',
+    kind: 'same-screen-control',
+    renderedIn: [
+      'src/renderer/components/ShigyoConsole.tsx',
+      'src/renderer/pages/MutualFundsPage.tsx',
+      'src/renderer/pages/RealEstatePage.tsx',
+    ],
+    why:
+      '同じ断りの「書き換えられた内容から始め直すなら」の側 (パス 499)。一覧の行 (利用者が足した行) ごとの「編集」ボタンで、'
+      + '押すと今の中身が欄に入り、比較の基準もその行へ移る。3 つの画面の断りが同じ名前を名指しするので 3 つとも並べる。',
   },
   { name: 'KPI / BEP', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
   {
@@ -187,13 +234,15 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-function scanNames(): { name: string; at: string }[] {
-  const hits: { name: string; at: string }[] = [];
+function scanNames(): { name: string; file: string; at: string }[] {
+  const hits: { name: string; file: string; at: string }[] = [];
   for (const dir of ['src/renderer', 'src/shared']) {
     for (const file of walk(dir)) {
       stripComments(readOriginalSource(file)).split('\n').forEach((line, i) => {
         for (const m of line.matchAll(new RegExp(NAMED.source, 'g'))) {
-          if (!hits.some((h) => h.name === m[1])) hits.push({ name: m[1]!, at: `${file}:${i + 1}` });
+          // **名前 × ファイルで 1 件** (パス 499)。名前だけで畳むと、同じ名前を名指しする
+          // 2 つ目以降の画面が走査から消え、その画面が本当に描くかを誰も見ない。
+          if (!hits.some((h) => h.name === m[1] && h.file === file)) hits.push({ name: m[1]!, file, at: `${file}:${i + 1}` });
         }
       });
     }
@@ -203,6 +252,10 @@ function scanNames(): { name: string; at: string }[] {
 
 /** `「…」` で囲まれた**言及**を落とす —— 描いている綴りだけを残す。 */
 const withoutMentions = (src: string): string => src.replace(/「[^」]*」/g, '');
+
+/** 行の描画元を配列で (1 つのときも)。 */
+const renderedFiles = (r: Row): readonly string[] =>
+  r.renderedIn === undefined ? [] : typeof r.renderedIn === 'string' ? [r.renderedIn] : r.renderedIn;
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -290,12 +343,36 @@ describe('名指しした操作子は、その綴りで実在する (パス 426)
     const rows = LEDGER.filter((r) => r.kind === 'same-screen-control');
     expect(rows.length).toBeGreaterThanOrEqual(9);
     for (const r of rows) {
-      expect(r.renderedIn, `「${r.name}」に描画元が書かれていない`).toBeDefined();
-      expect(
-        withoutMentions(readOriginalSource(r.renderedIn!)),
-        `「${r.name}」を名指しするが、${r.renderedIn} がその綴りを描いていない`,
-      ).toContain(r.name);
+      expect(renderedFiles(r).length, `「${r.name}」に描画元が書かれていない`).toBeGreaterThanOrEqual(1);
+      for (const f of renderedFiles(r)) {
+        expect(
+          withoutMentions(readOriginalSource(f)),
+          `「${r.name}」を名指しするが、${f} がその綴りを描いていない`,
+        ).toContain(r.name);
+      }
     }
+  });
+
+  it('★ same-screen-control を名指しする画面は、どれもその綴りを描くか、描く部品を載せる (パス 499)', () => {
+    /*
+     * 名前だけで台帳を引くと、同じ名前を名指しする 2 つ目以降の画面は**描いているかを誰も見ない**
+     * (2026-09-27 まで走査も名前で畳んでいた)。画面 (`.tsx`) の文が名指しするなら、その画面は
+     * 描画元に並んでいるか、描画元の部品を載せていなければならない。`.ts` の文 (データ層が組む文) は
+     * 出る画面を走査からは決められないので、描画元の側 (上の ★) が持つ。
+     */
+    const rows = LEDGER.filter((r) => r.kind === 'same-screen-control');
+    const uncovered: string[] = [];
+    for (const r of rows) {
+      const files = renderedFiles(r);
+      const tags = files.map((f) => `<${f.split('/').pop()!.replace(/\.tsx?$/, '')}`);
+      for (const h of hits.filter((x) => x.name === r.name && x.file.endsWith('.tsx'))) {
+        if (files.includes(h.file)) continue;
+        const src = stripComments(readOriginalSource(h.file));
+        if (tags.some((t) => src.includes(t))) continue;
+        uncovered.push(`${h.at} 「${r.name}」`);
+      }
+    }
+    expect(uncovered).toEqual([]);
   });
 
   it('★ service-page-control は、綴りを持つ画面が在り、そこへ利用者が行ける', () => {
@@ -322,17 +399,18 @@ describe('名指しした操作子は、その綴りで実在する (パス 426)
     const rows = LEDGER.filter((r) => r.kind === 'other-screen-control');
     expect(rows.length).toBeGreaterThanOrEqual(1);
     for (const r of rows) {
-      expect(r.renderedIn, `「${r.name}」に描画元が書かれていない`).toBeDefined();
-      const src = withoutMentions(readOriginalSource(r.renderedIn!));
-      expect(src, `「${r.name}」を名指しするが、${r.renderedIn} がその綴りを描いていない`).toContain(r.name);
+      expect(renderedFiles(r), `「${r.name}」の描画元は 1 つ`).toHaveLength(1);
+      const file = renderedFiles(r)[0]!;
+      const src = withoutMentions(readOriginalSource(file));
+      expect(src, `「${r.name}」を名指しするが、${file} がその綴りを描いていない`).toContain(r.name);
       /*
        * **載せている画面を数える。** 部品のファイルに綴りが在っても、誰も描いていなければ
        * 利用者はその操作子へ辿り着けない —— `same-screen-control` は文と同じ画面なので
        * この問いが自明に真だが、別の画面を指すときは自明ではない。
        */
-      const tag = `<${r.renderedIn!.split('/').pop()!.replace(/\.tsx?$/, '')}`;
+      const tag = `<${file.split('/').pop()!.replace(/\.tsx?$/, '')}`;
       const hosts = walk('src/renderer/pages').filter((f) => stripComments(readOriginalSource(f)).includes(tag));
-      expect(hosts.length, `${r.renderedIn} を載せている画面が 0 枚 (${tag} を描く画面が無い)`).toBeGreaterThanOrEqual(1);
+      expect(hosts.length, `${file} を載せている画面が 0 枚 (${tag} を描く画面が無い)`).toBeGreaterThanOrEqual(1);
     }
   });
 
