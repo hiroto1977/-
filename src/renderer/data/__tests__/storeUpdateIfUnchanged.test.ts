@@ -125,6 +125,37 @@ describe('updateIfUnchanged —— 比べてから書くまでが 1 つの鎖の
     expect((await store.get(rec.id))?.data.valuation).toBe(500000);
   });
 
+  it('★ 比べた後・書く前に復元 (置換) が行を消したら、書かずに vanished (消えた行を書き戻さない)', async () => {
+    /*
+     * 全件を入れ替える復元 (`importAll({ replace: true })`) は行ごとの鎖に載らない
+     * (`writeMerged` の注記)。比べ終えた後・書く前の窓に挟まると、比べた行はもう無い ——
+     * そこで `saved` と答えると、**書かなかった書き込みを成功と名乗り**、呼び手は入力を捨てる。
+     *
+     * 窓は時刻ではなく**門**で作る: 暗号化の段は比べた後・書く前に 1 度だけ呼ばれるので、
+     * そこで復元を走らせる (`storeConcurrency` の同じ窓の検査は時刻で作っている)。
+     */
+    const store = getRecordStore();
+    const rec = await store.insert('t', { n: 1 });
+    let restored = false;
+    store.configureCipher({
+      encrypt: async (d) => {
+        if (!restored && d.edited === true) {
+          restored = true;
+          await store.importAll(
+            [{ id: 'fresh', collection: 't', createdAt: 1, updatedAt: 1, data: { restored: true } }],
+            { replace: true },
+          );
+        }
+        return { ...d };
+      },
+      decrypt: async (d) => ({ ...(d as Record<string, unknown>) }),
+    });
+    const result = await store.updateIfUnchanged(rec.id, rec.data, { edited: true } as never);
+    expect(restored, '門が開いていない (窓を作れていない)').toBe(true);
+    expect(result).toEqual({ status: 'vanished' });
+    expect((await store.exportAll()).map((r) => r.id), '復元ファイルに無い行を書き戻した').toEqual(['fresh']);
+  });
+
   it('先に投げた remove の後なら vanished', async () => {
     const store = getRecordStore();
     const rec = await store.insert('mutualfund-holdings', { ...HOLDING });

@@ -18,7 +18,7 @@
   **開いた時の中身と比べてから書く** (答えは `saved` / `vanished` / `changed(今の行)`)。比べる判定は `sameRecordData`
   (迷ったら「違う」・ただし保管層から読んだ物はその複製と必ず「同じ」)。投資信託・不動産・士業の連絡先は、書き換えられて
   いれば断って (`changedRecordNote`) **入力を残し**、基準を今の行へ移す (もう 1 度押せば上書き)
-- **機械** —— `collectionChangeRelay` 8 件・`storeUpdateIfUnchanged` 11 件・`sameRecordData` 25 件・`editChangedRecord`
+- **機械** —— `collectionChangeRelay` 8 件・`storeUpdateIfUnchanged` 12 件・`sameRecordData` 25 件・`editChangedRecord`
   (jsdom) 7 件・`editResultCensus` +2 (**丸ごとの実体を `edit` で書く形は 0 件**)・`namedControlExists` (名前 × ファイルで
   数え直した —— 既存の 2 行の描画元の誤りが出た)・e2e **`crossTabData` suite (35 番目・11 件)**・法則 113 本目
   `edit-compares-with-what-was-opened`・対照 19 方向
@@ -30,6 +30,11 @@
 - ★ **既知の罠 (このパスで踏んだ)**: **対照が「組めなかった」を「鳴った」と数えない** —— `if (true || x === undefined) return;` の
   形の対照は `tsc` が絞り込みの外れを捕まえて build ごと落ちる (`'locks' is possibly 'undefined'`)。
   `const x = undefined as T | undefined` のように型の通る形で当てる
+- ★ **既知の罠 (このパスで踏んだ)**: **新しい口を足したら、隣の口の検査を 1 本ずつ写し直す** —— 変異検査の初回は
+  **98.91%** (5 ファイル / 515 変異体 / 52 分 55 秒) で break を割った。生存 3 + 未到達 2 はどれもこのパスで足した所で、
+  隣の `edit` / `add` には在る検査が `editIfUnchanged` / `updateIfUnchanged` に無かった (失敗は `save` として報せる・
+  collection を差し替えた後の依存配列・比べた後・書く前に行が消える窓)。窓は**暗号化の段を門にして置換復元を挟んで**作る
+  (時刻で作ると揺れる)
 - ★ **既知の罠 (このパスで踏んだ)**: **e2e のコードが保管領域を直接読むと `lint:forbidden` の台帳が鳴る** (設計どおり) ——
   `indexedDB.` / `.transaction(` / `objectStore(` は 1 行ずつ数えられ、`scripts/e2e/core.cjs` は理由つきの件数で台帳に載る
 - **残した物** → `docs/REMAINING_WORK.md` の「パス 499」(Web Locks の無い環境の窓・知ったうえでの 2 度目・マージ復元・

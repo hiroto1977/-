@@ -45,9 +45,12 @@
    - `src/renderer/data/__tests__/collectionChangeRelay.test.ts` (**8 件**) —— 線の上に合図を 1 つ流す・別のタブの合図で読み直す・
      受け口は購読した時に開く・送り返さない (**後から流した印が届いたこと**を錠にして取る)・知らない合図では読み直さない・
      1 本の道・リセットは閉じる・`BroadcastChannel` の無い環境。
-   - `src/renderer/data/__tests__/storeUpdateIfUnchanged.test.ts` (**11 件**) —— 3 通りの答え・書かなかった 2 つは知らせない・
+   - `src/renderer/data/__tests__/storeUpdateIfUnchanged.test.ts` (**12 件**) —— 3 通りの答え・書かなかった 2 つは知らせない・
      **同じ基準で 2 つ投げたら書けるのは 1 つだけ**・先に投げた `update` / `remove` は比較に入る・基準を移せば次は書ける・
-     封緘した記録は平文で比べる。
+     封緘した記録は平文で比べる・**比べた後・書く前に置換復元が行を消したら書かずに `vanished`** (窓は時刻ではなく
+     暗号化の段を門にして作る —— 変異検査が教えた枝。下の 6)。
+   - `src/renderer/data/__tests__/useCollection.test.ts` (+1 件) / `useCollectionFailure.test.ts` (+1 件) —— `editIfUnchanged` も
+     差し替え後の collection を読み直す (依存配列)・断られた書き込みは `save` として報せる (変異検査が教えた 2 件)。
    - `src/renderer/data/__tests__/sameRecordData.test.ts` (**25 件**) —— 全 collection の標本が structured clone と「同じ」
      (床 20)・`NaN`・鍵の順序・`Object.create(null)`・「違う」19 形 (0 と -0・日時の違う Date ほか)・素のオブジェクトでない物。
    - `src/renderer/pages/__tests__/editChangedRecord.test.ts` (**7 件** · jsdom) —— 実物の 3 画面で押す。「別のタブ」は 2 通りで作る:

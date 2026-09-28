@@ -229,6 +229,23 @@ describe('useCollection', () => {
     left.unmount();
   });
 
+  it('editIfUnchanged も差し替え後の collection を読み直す (callback deps・パス 499)', async () => {
+    const h = setup('left');
+    await h.mount();
+    await h.run(() => h.ref.current.add({ name: 'L' }));
+    await h.rerender('right');
+    await h.run(() => h.ref.current.add({ name: 'R' }));
+    const r = h.ref.current.records.find((x) => x.data.name === 'R')!;
+    let status: string | undefined;
+    await h.run(async () => {
+      status = (await h.ref.current.editIfUnchanged(r.id, r.data, { name: 'R2' })).status;
+    });
+    expect(status).toBe('saved');
+    // 依存配列が空だと、最初の描画の reload (left に束ねたまま) で読み直し、一覧が left の行になる。
+    expect(h.ref.current.records.map((x) => x.data.name)).toEqual(['R2']);
+    h.unmount();
+  });
+
   it('auto-loads on mount without a manual reload (mount effect body)', async () => {
     // 事前に store へ直接投入し、effect の自動 reload だけで反映されることを確認する。
     // effect 本体を {} に潰す変異だと loading が落ちず records も空のまま → 撃墜。

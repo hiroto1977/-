@@ -60,6 +60,13 @@ vi.mock('../store', () => {
       Object.assign(row.data, patch);
       return row;
     },
+    async updateIfUnchanged(id: string, _expected: Record<string, unknown>, patch: Record<string, unknown>) {
+      boom('updateIfUnchanged');
+      const row = h.rows.find((r) => r.id === id);
+      if (row === undefined) return { status: 'vanished' };
+      Object.assign(row.data, patch);
+      return { status: 'saved', record: row };
+    },
     async remove(id: string) {
       boom('remove');
       h.rows = h.rows.filter((r) => r.id !== id);
@@ -153,6 +160,20 @@ describe('書き込みが断られたとき', () => {
     const thrown = await t.run(() => t.ref.current.edit('r1', { name: 'b' }));
     expect(thrown).toBeInstanceOf(Error);
     expect(currentDeviceStoreFailure()?.op).toBe('save');
+    t.unmount();
+  });
+
+  it('★ editIfUnchanged: 開いた時の中身と比べる書き換えも save (パス 499)', async () => {
+    const t = setup('mutualfund-holdings');
+    await t.mount();
+    await t.run(() => t.ref.current.add({ name: 'a' }));
+    h.failOn.add('updateIfUnchanged');
+    const thrown = await t.run(() => t.ref.current.editIfUnchanged('r1', { name: 'a' }, { name: 'b' }));
+    expect(thrown).toBeInstanceOf(Error);
+    const f = currentDeviceStoreFailure();
+    expect(f?.op).toBe('save');
+    expect(f?.where).toBe('mutualfund-holdings');
+    expect(f?.message).toContain('打ち込んだ内容は画面に残っています');
     t.unmount();
   });
 
