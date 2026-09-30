@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { SERVICE_IDS } from '../serviceId';
@@ -25,6 +25,28 @@ const { selfTest } = req('../../../scripts/build-ontology-md.cjs') as { selfTest
 describe('docs/ONTOLOGY.md', () => {
   const committed = readOriginalSource(join(REPO_ROOT, 'docs', 'ONTOLOGY.md'));
   const generated = renderCurrent();
+
+  /*
+   * **生成 script の self-test は検査の「外」で走らせる** (2026-09-30 · パス 502)。
+   *
+   * `selfTest()` は実物の読み込み (esbuild で型を剥がして Node の require へ渡す) を通るので、
+   * `ontologyMain.ts` の閉包 (`dataOrigin` / `credentialUse` ほか) を **新しい写しとして評価し直す**。
+   * 検査の中で走らせると、その直下の表が「この検査が覆った」と数えられ、変異体は覆った検査
+   * (= この 1 件) だけで走る —— この検査は表の値を主張しないので、`dataOrigin.ts` の 77 件・
+   * `credentialUse.ts` の 77 件が生き残っていた (手元の Stryker で実測: 覆った検査はこの 1 件だけ)。
+   * `beforeAll` は Stryker の `beforeEach` (`currentTestId` を立てる) より前なので、ここで評価した
+   * 直下の値は static 側に落ち (`ignoreStatic`)、検査は結果を見るだけになる。
+   * 表の値そのものは `dataOrigin.test.ts` / `credentialUse.test.ts` が import の時点で主張する。
+   */
+  let selfTestExit = -1;
+  beforeAll(() => {
+    const silent = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      selfTestExit = selfTest();
+    } finally {
+      silent.mockRestore();
+    }
+  });
 
   it('committed は再生成と一致する (ずれたら npm run ontology:md)', () => {
     expect(committed).toBe(generated);
@@ -55,11 +77,6 @@ describe('docs/ONTOLOGY.md', () => {
   });
 
   it('生成 script の self-test が通る (checkAgainst の陰性対照)', () => {
-    const silent = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-    try {
-      expect(selfTest()).toBe(0);
-    } finally {
-      silent.mockRestore();
-    }
+    expect(selfTestExit).toBe(0);
   });
 });
