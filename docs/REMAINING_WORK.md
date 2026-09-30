@@ -1,6 +1,6 @@
 # Service Hub — 残りの作業手順書
 
-## パス 501 (push 側の変異検査 67 本を緑にする —— 生存 94 件の仕分けと、6 時間の上限) が測って、次のパスへ残した物 (2026-09-30)
+## パス 501 (push 側の変異検査 69 本を緑にする —— 生存 94 件の仕分け・6 時間の上限・GitHub だけ検査を 2 回やり直していたこと) が測って、次のパスへ残した物 (2026-09-30)
 
 - **8 本の生存 94 件 (パス 500 が残した 35 件 + パス 496 が記録した 57 件 = 92 件 —— investments の 19 件は未到達 5 を含む → 今の木で測り直すと生存 89 + 未到達 5 = 94 · bankSubmission と sales が 1 件ずつ増えた)** を 1 件ずつ仕分けた:
   - **本物の穴 → 検査 37 件 (11 ファイル)** —— 書面の但し書きの**繋ぎ目** (§1 / §2 / §4 / §5 / §6 / §8 / 水耕栽培の caption —— 断片ごとの `toContain` では通る)・
@@ -15,7 +15,7 @@
     `staleBsNote` の 3 判定 (どれを潰しても答えは変わらない)
   - 測り直し (測った変異体 3,032・計装 3,529・96 分): **99.90% (Killed 3,029 / 生存 3 / 未到達 0)** —— 残った 3 件が上の「見本の行」と「理由 2 文の字面」で、検査を足して
     4 本 (investments / kpiActuals + このパスで触った num / cashForecast) を測り直し **99.92%** (測った変異体 1,238・計装 1,332・56 分 54 秒・Killed 1,233 / Timeout 4 / 生存 1) —— investments / kpiActuals / num は **100.00%**、残る生存 1 件は `cashForecast.ts` の季節指数の添字ループの `i < length` → `i <= length` で、末尾の 1 つ先 (undefined) を読んで下の `isFiniteNumber` の門が飛ばすだけの**等価変異**だった。pragma ではなく `entries()` で回して比較そのものを消し (法則 115)、`cashForecast.ts` を単独で測り直して **100.00%** (Killed 196 / Timeout 3 / 生存 0・10 分 44 秒 —— 時間切れ 3 件は `i -= 1` の本物の無限ループ)。**8 本 + このパスで触った 2 本 = 10 本は、今の木ですべて 100.00%**
-- ★ **`main` へのマージで push 側が測る 67 本 (このパスで `num.ts` / `cashForecast.ts` を触ったので今は 69 本) は、1 job では 6 時間の上限に収まらない (501d)** —— GitHub の実行履歴で実測 (2026-09-30):
+- ★ **`main` へのマージで push 側が測る 67 本 (このパスで `num.ts` / `cashForecast.ts` を触ったので今は 69 本) を 1 job で測る形は、6 時間の上限に対して余裕が薄い (501d)** —— GitHub の実行履歴で実測 (2026-09-30):
 
   | run | 引き金 | cache | 所要 | 結末 |
   | --- | --- | --- | ---: | --- |
@@ -23,23 +23,60 @@
   | #171 (2026-09-20) | 週次 | 当たり (#170 の post が保存) | 3 分 | success (何も変わっていない) |
   | **#172 (2026-09-27)** | 週次・#788 のマージ後 | **落ち** | **5 時間 59 分 52 秒** | **cancelled** (`Run mutation testing (全件)` が 6 時間で切られ、`Post Restore` は skipped —— `actions/cache` の post は `success()` のときだけ保存) |
 
-  69 本 = 29,125 行 ≒ 16,000 変異体 (測った変異体 0.55 / 行)。この container の速さ (測った変異体 3,032 / 96 分) なら約 8.4 時間・初回 (3,161 / 148 分) の速さなら約 12.5 時間、#170 の速さ (29,397 / 163 分) でも約 1 時間 29 分 —— **どちらの速さでも保証が無い**ので、
+  69 本 = 29,177 行・**13,062 変異体** (全掃引 #173 の実測。測り直した 8 本の 0.55 / 行から見積もった ≒ 16,000 は 2 割ほど多かった)。**塊に分けて GitHub で測った実測 (#176 / #175) は、8 塊の所要の合計が 238 分 / 268 分 = 1 job に載せると約 4〜4.5 時間** (塊ごとの dry run の重複を除いていない値) ——
+  6 時間の上限には収まるが余裕は 26〜34% で、同じ 9 本の塊が 26 分 07 秒にも 42 分 26 秒にもなった (runner の速さは 1.6 倍揺れる) ので**保証は無い** (この container の速さ — 測った変異体 3,032 / 96 分・初回 3,161 / 148 分 — なら 13,062 変異体で約 6.9〜10.2 時間)。週次の全件 (#172: 45,547 変異体) は現に 6 時間で cancel された。
+  ★ **自戒: 最初に「1 job に収まらない」と書いたのは、この container の速さからの見積もり (約 8〜13 時間) で、GitHub の runner の実測ではなかった** —— 塊に分けた根拠は「収まらない」ではなく、余裕の薄さ・壁時計 (最長の塊 43 分)・週次の全件が現に cancel されたことである。だから
   `scripts/mutate-changed.cjs --chunks` が行数で塊に分け (1 塊 4,000 行まで・重い順にいちばん軽い塊へ・上限を超える塊が出たら塊を 1 つ増やして割り付け直す —— ★ 監査が「ceil で塊の数を決めるだけでは上限を保証しない (3,000 / 3,000 / 1,100 / 900 を 2 塊に分けると 4,100)」と指摘したので直した・self-test 7 件 + 実物の一覧で「過不足なく・上限内」の対照)、
-  `mutation.yml` を `scope` / `mutate-all` / `mutate-some` (matrix・`fail-fast: false`) の 3 job にした。69 本 → **8 塊 (3,600〜3,669 行)**。
+  `mutation.yml` の push 側を `scope` / `mutate-some` (matrix・`fail-fast: false`) に分けた (週次の全件は次の項の `mutate-full` / `merge-full`)。69 本 → **8 塊 (3,607〜3,676 行)**。
   **runner 時間の合計は変わらない** (分けるのは壁時計の上限に収めるため)。`thresholds.break` (99.8) は塊ごとに掛かる —— 塊が小さいほど厳しい (2,500 変異体の塊なら生存 6 件で落ちる —— 5 件はちょうど 99.80% で通る)。
-  ★ **CI での塊の所要は測っていない** (この commit が `main` へ入って初めて走る)。
-- ★ **週次の全掃引は今も毎週 cancel されうる (501e · 次のパスの候補)** —— `actions/cache` の鍵 `stryker-main` は不変なので、**当たった週は保存されず**、次の週は前回の
-  restore から 7 日 + 数分後 = **7 日未アクセスで evict** される。つまり「落ち → 全件 (数時間) → 保存」「当たり → 数分 → 保存しない」「落ち …」を繰り返し、
-  全掃引が cache 無しで 6 時間を越える今 (#172 が測ったのは 304 本・45,547 変異体・検査 17,894 件。今は 308 本・20,181 件でさらに重い) は**落ちの週が毎回 cancel** になる。直しは (a) 全件も塊の matrix にする
-  (塊ごとの報告を 1 つに統合する段と `quality:report` の読み手が要る) か (b) 鍵に `run_id` を入れて毎回保存し `restore-keys` で最新を取る + **完走しない run は
-  incremental を書かない** (Stryker は完走時にしか書かない) ので (b) だけでは 6 時間の壁は越えられない。**(a) が本筋**。
+  ★ **CI での塊の所要は GitHub で測った (`workflow_dispatch` の `files`)**: 8 塊が 17 分 29 秒〜42 分 26 秒で完走した (retry なしの #176・run 全体 43 分。retry ありの #175 は 23 分 02 秒〜55 分 04 秒・run 全体 56 分) (下の「測り直した結果」)。
+- ★ **週次の全掃引も塊の matrix にした (501e) —— 測った: 22 塊・58 分で完走** (旧: `stryker-main` の cache は 7 日未アクセスで evict されるので、落ちの週は 1 job で 6 時間を越えて cancel された) ——
+  `scripts/mutate-changed.cjs --all --chunks` が 308 本を 22 塊 (1 塊 4,000 行まで) に分け、`mutation.yml` の `mutate-full` が塊ごとに測り、`merge-full` が `scripts/merge-mutation-reports.cjs` で
+  塊の報告を 1 つへ併合する (**揃っていない併合は何も書かず落ちる** —— 欠けた塊を全体と名乗らせると、生存を含む塊ほど欠けやすいので点数が実物より良く出る。塊の job は塊ごとの break では落とさず、合否は併合した全体で決める)。
+  **run #173 (2026-09-30・この branch の `workflow_dispatch`・`7c9c2cb2`) で実測**: 12:39:17Z → 13:37:28Z = **58 分**・各塊 18 分 43 秒〜56 分 31 秒 (同時に走れる job の上限で最後の 6 塊 (塊 16〜21) は 13:01〜13:09 に始まった)・
+  `merge-full` は 18 秒で併合して 704 件の生存を数え、併合後の点数が break (99.8) を割ったので **`merge-full` だけが設計どおり failure** した (`mutate-full` の 22 塊はすべて success)。
+  併合後: **38,044 変異体 (killed 37,203 + timeout 92 / 生存 704 / 未到達 45) = 98.03%**。内訳は PR の 69 本 = 13,062 変異体・**99.32%**・非 killed 89 (13 本) /
+  外の 239 本 = 24,982 変異体・**97.36%**・非 killed 660 (92 ファイル)。
+- ★ **手で選んだ対象だけを GitHub の runner で測り直す口 (501f)** —— `scripts/mutate-changed.cjs --files a,b,c [--chunks]` と `workflow_dispatch` の入力 `files` (`mutate-some` の matrix へ渡る)。
+  `mutate` に無い名前・空の一覧は**黙って捨てず落ちる**。この container (4 コア) は 1 塊 4,000 行で 1 時間近くかかるので、直したファイルの測り直しは GitHub で回す。
+  run #174 (13 本・修正前・3 塊) は 3 塊とも break を割って failure (23 分 43 秒〜36 分 46 秒) —— 全掃引が見つけた 89 件がこの口でも見えることを確かめた。
+- ★ **全掃引 #173 が残した 89 件 (PR の 69 本のうち 13 本) を閉じた (501g)** —— 内訳 (非 killed): `ollama.ts` 42・`api/cursor.ts` 13・`scanTarget.ts` 7・`taxCalc.ts` 7・`httpLimits.ts` 4・`hydroponics.ts` 4・
+  `vault.ts` 2・`store.ts` 2・`workingCapital.ts` 2・`ollamaWeb.ts` 3 (生存 2 + 未到達 1)・`taxConsumptionBusiness.ts` 1・`depreciation.ts` 1・`oauth.ts` 1。上の 3 種の分類をそのまま当てた:
+  - **等価 → 形を消した (法則 115)** —— `taxCalc.ts` (`floorTaxableThousand` を `nonNeg` へ・`calcResidentAdjustmentCredit` の同じ答えを出す守りを消し・`calcConsumptionTax` は `yen(nonNeg(netAmount) * nonNeg(rate))`)・
+    `depreciation.ts` (`straightLineAnnual` の守り)・`taxConsumptionBusiness.ts` / `hydroponics.ts` の `clampRatio` (→ `Math.min(1, nonNeg(r))`)・`hydroponics.ts` の日数 (`isFiniteNumber(rawDays) && rawDays > 0 ? rawDays : null`)・
+    `workingCapital.ts` (`nonNeg(periodDaysForMonths(…))`)・`api/cursor.ts` (`isFiniteNumber` と `?? Number.NaN` へ寄せ、`null` が 0 に化ける等価を消した)・
+    `ollama.ts` (`prereleaseIsBelowFloor` の早期 return と `applicableAdvisories` の null 枝を型 `FixedAdvisory` で消した)
+  - **本物の穴 → 検査** —— `ollama.ts` の台帳の全行 (id・修正版・重大度・出典) を字面で当てる読み直しの検査・`advisoryLedgerNotice` の繋ぎ目・`prereleaseIsBelowFloor` の直接の表 (8 形と「1 つだけ真」の対照)・
+    `buildWarnings` の「1 つでも」・`api/cursor.ts` の節の名前 (読み直して全文で)・`ollamaWeb.ts` の転送 (3xx) に追随しない枝 (probe と chat)・`scanTarget` / `httpLimits` / `hydroponics` / `oauth` の境目の標本
+  - **到達しない防御 → 理由つき pragma** —— `vault.ts` 2 件・`ollamaWeb.ts` 2 件 (断りの文に入るラベルを読む呼び出しが無い / 失敗本文の読み)
+  - ★ **`ollama.ts` は `num.ts` を読めない** —— `shared/ollama.ts` は整合性チェーンの保護対象で、保護対象が保護外の `num.ts` を import すると閉包検査が「`src/shared/num.ts` は保護対象でも除外台帳でもありません」と落ちる。
+    `nonNeg` で書き直した最初の版はそこで止まり、`Number.isFinite(raw) ? Math.max(0, raw) : 0` へ戻した (変異体は `ollamaModelFieldCeilings.test.ts` の「負は読めない値として 0 に倒す」が殺す)。**保護対象かは場所で決めず、門に訊く**
+- ★ **GitHub の変異検査だけが、検査を「落ちたら最大 2 回やり直す」設定で走っていた** —— `vitest.config.ts` は `retry: process.env.CI ? 2 : 0` で、GitHub Actions が `CI=true` を渡すので、
+  **手元 (retry 0) と違い、変異検査の job だけ retry 2** だった。通常の CI では retry は回帰を隠さない (本物の不具合は決定的に落ち続ける) が、変異検査では偽になる —— 最初の 1 回でモジュール直下の状態を消費する検査は、
+  変異体の下でも 2 回目に通り、殺したはずの変異体が生存に見える。**実測 (#173)**: `store.ts` は手元 100.00% で GitHub は生存 2 (`_lastTs` の単調時計を最初の試行で進める 2 件の検査)。直しは 2 段:
+  ① 検査を 1 回で完結させる (時計は `clockAt()` の probe で相対化) ② **測る側が retry を切る** —— `mutation.yml` の Stryker を走らせる 2 つの step の env だけ `CI: ''` (他の step は CI のまま)。
+  `mergeMutationReports.test.ts` が配線 (Stryker の 2 step だけ・他の 10 step 以上には無い・`vitest.config.ts` の retry 行がまだ CI に依ること) を留め、法則 `gate-runs-in-ci` に「走る場所の設定が手元と違えば同じ検査でも答えが割れる」を足した。
+- ★ **`// Stryker disable next-line <Mutators>: 理由` は「次の 1 行」ではなく、コメントの直後の文 (AST のノードの開始行) に効く** —— directive の帳簿 (`directive-bookkeeper`) は `node.loc.start.line` で照合する。
+  複数行のコメントの塊を文の直前に置けば効き、**後ろの別の文には効かない**。最初は「間にコメントの行が挟まると外れる」と誤診したが、実際は `taxCalc.ts` の pragma が `const income = …` の上に在り、生き残っていた変異体は
+  次の文 `if (income <= 0)` に在っただけだった (pragma の置き場所が的の 1 つ手前)。Stryker には数値リテラルの mutator が無い (定数の値の変更は測れない)。
+- **測り直した結果 (GitHub · 69 本 · 8 塊)**: **8 塊すべて 100.00%・生存 0・未到達 0** —— 最終のコード (`d106a05a`。後の `a01db4be` は法則 115 の文と `docs/ONTOLOGY.md` だけ) を**検査の retry なし (`CI: ''`)** で測った run #176 (`workflow_dispatch`・14:49:34Z → 15:32:43Z = 43 分・conclusion = success)。
+  合計 **12,995 変異体 (killed 12,953 + timeout 42)**。塊ごと (変異体 / 所要): 0: 1,006 / 31:05 · 1: 1,281 / 28:27 · 2: 1,611 / 34:15 · 3: 1,372 / 26:25 · 4: 1,933 / 42:26 · 5: 2,223 / 19:11 · 6: 1,855 / 38:19 · 7: 1,714 / 17:29。
+  全掃引 #173 が PR の 69 本に数えた 13,062 変異体との差 −67 は 10 本の内訳で (`api/cursor.ts` −14・`ollama.ts` −14・`taxCalc.ts` −13・`hydroponics.ts` −8・`workingCapital.ts` −6・`vault.ts` −4・`taxConsumptionBusiness.ts` −3・`depreciation.ts` −2・`httpLimits.ts` −2・`ollamaWeb.ts` −1)、残る 59 本の変異体の数は #173 と 1 つも違わない —— **形を消した・pragma で外した分だけ変異体が減った**。#173 の非 killed 89 件 (13 本) とも一致する。
+  その 1 つ前の run #175 (`8c6c7351` = `ollama.ts` を `Math.max` へ直す前・Stryker の step に `CI: ''` を入れる前 = **検査の retry あり**・14:38:48Z → 15:34:38Z = 56 分) も **8 塊すべて 100.00%・success** だった (塊ごとの所要 23 分 02 秒〜55 分 04 秒)。
+  **retry ありでもなしでも 100.00%** —— 検査が最初の 1 回で完結していることの対照である。所要は塊の中身と runner の速さで揺れる (同じ対象の塊 4 は retry ありで 26 分 07 秒・なしで 42 分 26 秒) ので、retry の費用は読めない。
+  修正前の run #174 (13 本・3 塊) は 3 塊とも break を割って failure だった —— 全掃引 #173 が残した 89 件 (13 本) はすべて閉じ、13 本を含む 69 本が 100.00% になった。
+  (#176 の塊 4 は step 5 の status が最後まで `pending` と表示されたが、job は正常に完走した —— API の表示の遅れ。念のため同じ 9 本を `files` で run #177 に出したが、#176 が完走したので取り消した。)
 - **同じ判定の写しが残っている** (実測・監査で数え直した) —— 名前つきは 3 つ: `shared/bankFormat.ts` (`number | null | undefined` を受ける述語)・`shared/mutualFundsMetrics.ts` (`number` を受けて boolean)・
   **`shared/serviceAdvisor.ts` の `finiteNumber` (署名も本体も `num.ts` と同一)**。素の式 `typeof … === 'number' && Number.isFinite(…)` だけの物が `shared/waterCyclePlanner.ts:397` に 1 つ、条件や既定値を伴う形が他に 16 か所 (呼び手にできる)。**どれも `mutate` に在り 69 本の外なので、触ると測る対象が増える** —— 寄せるのは次のパスへ (法則 `center-then-count-callers`)。
-- **59 本 (69 − 測り直した 8 − このパスで測った 2) は、この記録の時点では未測定** —— 2 塊 (`p501/targets59a.txt` 30 本 / `targets59b.txt` 29 本) を、この記録の commit の直後に旗 (`go59`) を置いて背景で測り始める (この container で ~12 時間 —— Stryker と重い検証を並走させないため、記録の検証が終わるまで待たせた)。結果は測り終えてから同じ節に書き足す (「測っていない」と「測ったら 100%」は別)
 - 塊の重さは**行数**で、変異体の数の代わりである (Stryker を走らせないと変異体の数は分からない)。実測は 5,535 行 → 測った変異体 3,032 (計装 3,529・0.55 / 行) で、
   ファイルによる偏りは測っていない。
 - ★ **記録の監査が publish 前に 9 件の誤りを捕まえた** (一次資料と突き合わせる 6 次元の workflow・各指摘を 2 名が反証) —— #170 の変異体数 (27,447 → 29,397)・変異体の数の基準の混在・67 → 69 本・2,500 件の例・`joinSheetNotes` の等価の理由・typeof の写しの数・35 + 57 + 5 の二重計上・#172 の対象・59 本を「測っている」。**読んで書いた数は測った数ではない**。
-- **パス 500 の残作業「触っていない行の生存 35 件」と「今の木で測っていない 47 本」は、前者をこのパスで閉じ、後者は 59 本の測定で閉じる** (上の項)。
+- **パス 500 の残作業「触っていない行の生存 35 件」と「今の木で測っていない 47 本」は、どちらもこのパスで閉じた** (前者は検査 37 件ほか・後者は全掃引 #173 と 69 本の測り直し #175 / #176)。
+- **残した物 (次のパス)** —— ① **PR の外の 239 本のうち 92 ファイル・非 killed 660 件** (#173: 生存 616 + 未到達 44) —— 週次の全掃引は、閉じるまで**設計どおり赤のまま** (全体 98.03% < 99.8)。
+  上位: `dataOrigin.ts` 77・`credentialUse.ts` 77 (どちらも module 直下の表 = 法則 109 の形の疑い)・`docStudioChecks.ts` 72・`redact.ts` 27・`serviceAdvisor.ts` 27・`api/google.ts` 24・
+  `renderer/security/eraseAll.ts` 19・`main/clients/skills.ts` 16・`api/github.ts` 13 ほか。**#173 は検査の retry あり (CI=true) で測っている** ので、`CI: ''` の今は数が変わる
+  (retry が治していた物は増え、retry の下で偽の生存だった物は減る) —— 次に全掃引を回してから仕分ける。
+  ② **`docs/QUALITY.md` の再生成 (task #183)** —— 報告はアーティファクトにしか無く、この環境からは blob の host が塞がれていて取れない (ログの表からは per-file の点数までで、`quality:report` が読む JSON は作れない)。
 
 ## パス 500 (最新の 1 件を採用する欄は、保管層が答えてから開き、最新を比べてから書く) が測って、次のパスへ残した物 (2026-09-28)
 
