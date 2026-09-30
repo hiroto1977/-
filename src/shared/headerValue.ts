@@ -61,21 +61,27 @@ const HTTP_WHITESPACE = new Set([0x09, 0x0a, 0x0d, 0x20]);
 export function normalizeHeaderValue(value: string): string {
   let start = 0;
   let end = value.length;
-  while (start < end && HTTP_WHITESPACE.has(value.charCodeAt(start))) start += 1;
-  while (end > start && HTTP_WHITESPACE.has(value.charCodeAt(end - 1))) end -= 1;
+  // 端の見張り (`start < end` ほか) は書かない。範囲の外の `charCodeAt` は NaN で、NaN は集合に
+  // 無いのでループは必ず端で止まる。全部が空白なら start は長さ・end は 0 で終わり、
+  // `slice(長さ, 0)` は空文字になる。見張りを足すと、結果の変わらない比較が変異検査に
+  // 「等価で必ず生き残る変異」を 2 つ残す (パス 502 で測って畳んだ)。
+  while (HTTP_WHITESPACE.has(value.charCodeAt(start))) start += 1;
+  while (HTTP_WHITESPACE.has(value.charCodeAt(end - 1))) end -= 1;
   return value.slice(start, end);
 }
 
 /**
  * `Headers` がこの値を受理するか — Latin1 (0x00-0xff) で、NUL/CR/LF を含まないこと。
  *
- * コード単位で走査する: サロゲート対は 0xd800-0xdfff の 2 単位になり、どちらも
- * 0x100 以上なので絵文字は弾かれる (`Headers` も弾く)。`codePointAt` を使うと
- * 戻り値が `number | undefined` になり、到達しない分岐が 1 つ増える。
+ * 1 文字ずつ走査し、各文字の**先頭のコード単位**を見る: サロゲート対は 1 つの要素として
+ * 来るが、先頭は 0xd800-0xdfff で 0x100 以上なので絵文字は弾かれる (`Headers` も弾く)。
+ * `codePointAt` を使うと戻り値が `number | undefined` になり、到達しない分岐が 1 つ増える。
+ * 添字で回さない (`i < value.length`) のは、範囲の外の `charCodeAt` が NaN で何も弾かないため
+ * `<=` へ替えても答えが変わらず、等価変異が 1 つ残るから (パス 502)。
  */
 export function isHeaderValue(value: string): boolean {
-  for (let i = 0; i < value.length; i += 1) {
-    const c = value.charCodeAt(i);
+  for (const ch of value) {
+    const c = ch.charCodeAt(0);
     if (c > 0xff) return false;
     if (c === 0x00 || c === 0x0a || c === 0x0d) return false;
   }

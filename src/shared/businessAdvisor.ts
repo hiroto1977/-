@@ -34,7 +34,8 @@ export type BusinessCategoryId = (typeof BUSINESS_CATEGORY_IDS)[number];
  * 許した集合か) とは別に置く。`allowed` に一覧の外の文字列が紛れても、ここで止まる。
  */
 export function isBusinessCategoryId(value: unknown): value is BusinessCategoryId {
-  return typeof value === 'string' && (BUSINESS_CATEGORY_IDS as readonly string[]).includes(value);
+  // `includes` は SameValueZero なので、文字列でない値は必ず false (型を先に見る分岐は要らない)。
+  return (BUSINESS_CATEGORY_IDS as readonly unknown[]).includes(value);
 }
 
 export interface BusinessAdvisorRecommendation {
