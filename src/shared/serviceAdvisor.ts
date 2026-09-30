@@ -33,7 +33,7 @@ import { countChars } from './inputCeiling';
 import type { ServiceAdvisorResponse } from './advisorTypes';
 import type { RecordEntryServiceId } from './recordEntryLimits';
 import { jpy } from './formatters';
-import { round1 } from './num';
+import { isFiniteNumber, round1 } from './num';
 import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT, isAboveEntryCeilingPct, isImpossibleReturnPct } from './mutualFundsMetrics';
 
 // --- しきい値 (既定。台帳 `parameters.ts` が同じ定数を参照する) ----------------
@@ -184,10 +184,6 @@ function isObject(raw: unknown): raw is Record<string, unknown> {
   return typeof raw === 'object' && raw !== null && !Array.isArray(raw);
 }
 
-function finiteNumber(v: unknown): v is number {
-  return typeof v === 'number' && Number.isFinite(v);
-}
-
 /** 一覧。`min` 件以上・{@link MAX_ADVICE_ROWS} 件以下の配列だけ通す。 */
 function readRows(raw: unknown, tag: string, field: string, min: number): Parsed<readonly unknown[]> {
   if (!Array.isArray(raw) || raw.length < min || raw.length > MAX_ADVICE_ROWS) {
@@ -206,14 +202,14 @@ function readName(raw: unknown, tag: string, field: string): Parsed<string> {
 }
 
 function readFinite(raw: unknown, tag: string, field: string): Parsed<number> {
-  if (!finiteNumber(raw)) return fail(`${tag}: ${field} は有限の数値で指定してください`);
+  if (!isFiniteNumber(raw)) return fail(`${tag}: ${field} は有限の数値で指定してください`);
   return { ok: true, value: raw };
 }
 
 /** 有限の数値か、未計測 (null / 省略)。それ以外は断る。 */
 function readFiniteOrNull(raw: unknown, tag: string, field: string): Parsed<number | null> {
   if (raw === null || raw === undefined) return { ok: true, value: null };
-  if (!finiteNumber(raw)) return fail(`${tag}: ${field} は有限の数値か null で指定してください`);
+  if (!isFiniteNumber(raw)) return fail(`${tag}: ${field} は有限の数値か null で指定してください`);
   return { ok: true, value: raw };
 }
 
@@ -240,9 +236,9 @@ function readThresholds(raw: unknown, tag: string): Parsed<AdvisorThresholds> {
   if (raw === undefined) return { ok: true, value: DEFAULT_ADVISOR_THRESHOLDS };
   if (!isObject(raw)) return fail(`${tag}: thresholds はオブジェクトで指定してください`);
   const gap = raw['yieldGapPt'] === undefined ? ADVISOR_YIELD_GAP_PT : raw['yieldGapPt'];
-  if (!finiteNumber(gap) || gap <= 0) return fail(`${tag}: thresholds.yieldGapPt は正の有限の数値で指定してください`);
+  if (!isFiniteNumber(gap) || gap <= 0) return fail(`${tag}: thresholds.yieldGapPt は正の有限の数値で指定してください`);
   const share = raw['concentrationShare'] === undefined ? ADVISOR_CONCENTRATION_SHARE : raw['concentrationShare'];
-  if (!finiteNumber(share) || share <= 0 || share > 1) {
+  if (!isFiniteNumber(share) || share <= 0 || share > 1) {
     return fail(`${tag}: thresholds.concentrationShare は 0 より大きく 1 以下の数値で指定してください`);
   }
   return { ok: true, value: { yieldGapPt: gap, concentrationShare: share } };
@@ -493,8 +489,9 @@ export function adviseRealEstate(input: RealEstateAdviceInput): ServiceAdvisorRe
   } else {
     const occupied = props.filter((p) => p.occupied);
     const rentTotal = sum(occupied.map((p) => p.monthlyRent));
-    const top = maxBy(occupied, (p) => p.monthlyRent);
-    if (top !== null && rentTotal > 0) {
+    // 家賃の合計が正のときだけ主力を決める (合計が正なら入居中の行は必ず在る。空や全部 0 以下では名指ししない)。
+    const top = rentTotal > 0 ? maxBy(occupied, (p) => p.monthlyRent) : null;
+    if (top !== null) {
       recommendations.push({
         title: `キャッシュフローの主力: ${top.name}`,
         rationale:
@@ -513,8 +510,9 @@ export function adviseRealEstate(input: RealEstateAdviceInput): ServiceAdvisorRe
   const measured = props.filter((p) => p.grossYieldPct !== null);
   const unmeasured = props.length - measured.length;
   const unmeasuredNote = unmeasured > 0 ? `取得価格が読めない ${unmeasured} 件は比較から外しています。` : '';
-  const lowest = minBy(measured, (p) => p.grossYieldPct as number);
-  if (input.portfolioYieldPct === null || lowest === null || measured.length < 2) {
+  // 比較は 2 件以上測れたときだけ (1 件では「最低」が平均と同じ物件になる)。
+  const lowest = measured.length < 2 ? null : minBy(measured, (p) => p.grossYieldPct as number);
+  if (input.portfolioYieldPct === null || lowest === null) {
     recommendations.push({
       title: '利回りの比較は未算定',
       rationale: `表面利回りを測れた物件が ${measured.length} 件のため、平均との比較はしません。${unmeasuredNote}`,
@@ -610,7 +608,11 @@ export function adviseMutualFunds(input: MutualFundsAdviceInput): ServiceAdvisor
   const withYtd = rows.filter((h) => h.ytdReturnPct !== null && !isImpossibleReturnPct(h.ytdReturnPct));
   const best = maxBy(withYtd, (h) => h.ytdReturnPct as number);
   const worst = minBy(withYtd, (h) => h.ytdReturnPct as number);
-  if (best === null || worst === null) {
+  if (
+    worst === null ||
+    // Stryker disable next-line ConditionalExpression: best === null は withYtd が空か NaN だけのときに限り、そのとき worst も null (−∞ は上の isImpossibleReturnPct が先に除く) —— 左辺が先に同じ答えを返すので、ここは型の絞り込みのためだけに在る。
+    best === null
+  ) {
     // 在り得ない値だけが在るときは「未入力」ではない —— 入力はされていて、値が事実に反している。
     recommendations.push(impossibleYtd.length > 0
       ? {
