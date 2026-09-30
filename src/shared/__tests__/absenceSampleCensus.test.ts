@@ -150,9 +150,9 @@ const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
     'パス 9 の「使えない方式を最有利にしない」。針は HTML の構造つきで、標本未付',
   'src/renderer/components/__tests__/StatusBar.render.test.ts:249':
     '針は `\\d+ 件` (件数そのもの) で、綴りではなく形を見ている',
-  'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1124':
-    '針は検査自身が注入した見出し (`## 偽の見出し`)。main 側 business.test.ts:1988 の双子',
   'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1143':
+    '針は検査自身が注入した見出し (`## 偽の見出し`)。main 側 business.test.ts:1988 の双子',
+  'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1162':
     '針は検査自身が注入した見出し (`## 偽`)。main 側 stocks.test.ts:3696 の双子',
   'src/renderer/pages/__tests__/emotionRadarNoData.test.ts:162':
     'パス 65 の「記録が無い人を評価しない」。針は `活力 \\d` で、ラベルは肯定側で主張されている',
