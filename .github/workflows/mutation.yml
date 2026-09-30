@@ -55,6 +55,16 @@ name: mutation
 #     失敗・時間切れ) だけが赤くなり、その塊だけ Re-run failed jobs で回し直せる
 #   - **揃っていない併合は何も書かず落ちる** (欠けた塊を全体と名乗らせない)
 #
+# ## 手で選んだ対象だけを測り直す (2026-09-30 · パス 501)
+#
+# 直したファイルを**GitHub の runner で**測り直したいことがある (この session の container は
+# 4 コアで、1 塊 4,000 行を測るのに 1 時間近くかかる。runner は塊を並列に走らせられる)。
+# 手動実行 (`workflow_dispatch`) の `files` に、`stryker.config.json` の `mutate` にある名前を
+# カンマ区切りで渡すと、その対象だけを**今の塊の分け方のまま** (`--files … --chunks`) 測る。
+# 空なら今までどおり全件。**`mutate` に無い名前は黙って捨てずに落ちる** (script の側で —
+# 打ち間違いを「測ったつもり」にしない)。測るのは push と同じ `mutate-some` job なので、
+# 塊の artifact は `mutation-report-chunk-N`・合否は塊ごとの `thresholds.break`。
+#
 # `${{ }}` は run: の**シェル本文へ文字列として展開されてから**シェルが読む。
 # つまり値の中身がそのままシェル構文になる。env: へ束ねると値は環境変数として
 # 渡り、シェル構文としては一度も読まれない。ここの値は今どれも GitHub が
@@ -65,6 +75,12 @@ on:
   schedule:
     - cron: '0 18 * * 0'  # 03:00 JST every Monday
   workflow_dispatch:
+    inputs:
+      files:
+        description: '手で選んだ対象だけを測る (stryker.config.json の mutate にある名前をカンマ区切りで)。空なら全件。直したファイルの測り直し用。'
+        required: false
+        default: ''
+        type: string
   push:
     branches: [main]
     paths:
@@ -107,6 +123,7 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           BEFORE: ${{ github.event.before }}
+          INPUT_FILES: ${{ inputs.files }}
         run: |
           MODE=some
           if [ "$EVENT_NAME" = "push" ]; then
@@ -114,6 +131,9 @@ jobs:
             if [ "$CHUNKS" = "ALL" ]; then
               echo "::warning::push の差分が取れなかったので全件を塊に分けて測ります (fetch-depth: 2 に対して base が浅い clone に無い可能性)。"
             fi
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$INPUT_FILES" ]; then
+            # 手で選んだ対象だけ。mutate に無い名前・空の一覧は script が落とす (黙って捨てない)。
+            CHUNKS="$(node scripts/mutate-changed.cjs --files "$INPUT_FILES" --chunks)"
           else
             CHUNKS="ALL"
           fi
@@ -265,9 +285,13 @@ jobs:
   # survived が誤って残ることが実測されている (stryker.config.json の注記
   # 参照 — 2026-08 の監査で atlassian.ts が「生存 1」と誤報された)。
   mutate-some:
+    name: mutate-some (塊 ${{ strategy.job-index }})
     needs: scope
     if: needs.scope.outputs.mode == 'some'
     runs-on: ubuntu-latest
+    # 塊の重さは行数で均している (1 塊 4,000 行まで)。240 分に届く塊は割り付けの前提が
+    # 崩れている印なので、6 時間の cancel より先に落とす。
+    timeout-minutes: 240
     strategy:
       # 1 塊が落ちても残りの塊は測り切る (どこが落ちたかを 1 度で見るため)。
       fail-fast: false
@@ -295,7 +319,9 @@ jobs:
           fi
           echo "この塊の対象: $TARGETS"
           rm -f .stryker-incremental.json
-          npx stryker run --mutate "$TARGETS"
+          # --dryRunTimeoutMinutes / --reporters は mutate-full と同じ理由 (初回検査は検査の
+          # 増加とともに config の 20 分へ近づく・10 秒ごとの心拍で止まったのかを見分ける)。
+          npx stryker run --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only
 
       - name: Save Stryker JSON report
         uses: actions/upload-artifact@v5

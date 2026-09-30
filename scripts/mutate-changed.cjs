@@ -27,6 +27,7 @@
  *   node scripts/mutate-changed.cjs <base-ref> --chunks
  *   node scripts/mutate-changed.cjs --all
  *   node scripts/mutate-changed.cjs --all --chunks
+ *   node scripts/mutate-changed.cjs --files <a,b,c> [--chunks]
  *
  * 対象があれば `--mutate` に渡せる形 (カンマ区切り) を stdout へ出す。
  * 無ければ何も出さない (呼び出し側は空なら検査を飛ばす)。
@@ -40,6 +41,14 @@
  * 塊ごとの報告は `scripts/merge-mutation-reports.cjs` が 1 つへ併合する。
  * base-ref とは一緒に使わない (差分か全件かを曖昧にしない)。全件の一覧が
  * 空・重複・普通でない名前なら**黙って対象なしにせず**落とす (空を緑にしない)。
+ *
+ * `--files a,b,c` は**手で選んだ対象**を測る (`mutation.yml` の手動起動の
+ * `files` 入力)。差分でも全件でもない第 3 の道で、直したファイルだけを GitHub の
+ * runner で測り直すために在る (この session の container では 1 ファイル 6〜25 分・
+ * 13 ファイルで約 3 時間、GitHub なら塊ごとに並列で 30〜40 分)。
+ * **`mutate` の一覧に無い名前は落とす** —— 黙って捨てると「測ったつもり」の
+ * 緑になり、書き足された名前が引数として通るのも防ぐ。base-ref・`--all` とは
+ * 一緒に使わない。
  */
 
 const { execFileSync } = require('node:child_process');
@@ -241,6 +250,39 @@ function allTargets(list = mutateList()) {
 }
 
 /**
+ * 手で選んだ対象 (`--files a,b,c`) を、測ってよい形に直す。
+ *
+ * - 空 … 「測る物が無い」を緑にしない (落とす)
+ * - `mutate` の一覧に無い名前 … 綴りの誤りを黙って捨てると、選んだつもりの
+ *   ファイルが測られないまま「全部通った」になる。名前は JSON の文字列で出す
+ *   (改行を含む値がログの行の頭に `::` を作るのを防ぐ)
+ * - 重複は 1 つへ・並びは名前順 (入力の順序に依らない)
+ *
+ * 形の検査 (`assertPlainPaths`) は一覧に在る名前にも掛ける —— 一覧は設定
+ * ファイルの値で、ここから先は `$GITHUB_OUTPUT` と `--mutate` の引数になる。
+ */
+function filesTargets(csv, mutate = mutateList()) {
+  const names = String(csv)
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s !== '');
+  if (names.length === 0) {
+    throw new Error('--files の一覧が空です — 測る対象を 1 つ以上書いてください');
+  }
+  const known = new Set(mutate);
+  const unknown = [...new Set(names)].filter((n) => !known.has(n));
+  if (unknown.length > 0) {
+    throw new Error(
+      `--files に、stryker.config.json の mutate に無い名前が ${unknown.length} 件あります: ` +
+        unknown.map((n) => JSON.stringify(n)).join(' , '),
+    );
+  }
+  const targets = [...new Set(names)].sort();
+  assertPlainPaths(targets);
+  return targets;
+}
+
+/**
  * 塊に分けて JSON へ直す。上限を超えたら**読める言葉で**落とす。
  *
  * - 塊が matrix の上限を超えると、`mutation.yml` の `fromJson` の段で workflow が
@@ -352,6 +394,28 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} 全件: ${label}: ${got} (期待 ${JSON.stringify(want)})`);
   }
+  // 手で選んだ対象 (--files) の道: 並び・重複・空・一覧に無い名前・形。
+  const fm = ['src/a/foo.ts', 'src/b/bar.ts', 'src/c/baz.tsx'];
+  const filesCases = [
+    ['選んだ物を並べ替えて返す', () => filesTargets('src/b/bar.ts,src/a/foo.ts', fm), 'value', ['src/a/foo.ts', 'src/b/bar.ts']],
+    ['重複は 1 つへ', () => filesTargets('src/a/foo.ts,src/a/foo.ts', fm), 'value', ['src/a/foo.ts']],
+    ['前後の空白と空の項は落とす', () => filesTargets(' src/a/foo.ts , ,src/b/bar.ts,', fm), 'value', ['src/a/foo.ts', 'src/b/bar.ts']],
+    ['空なら落とす (測る物が無いのを緑にしない)', () => filesTargets(' , ', fm), 'throws', '空です'],
+    ['一覧に無い名前は落とす (綴りの誤りを測ったつもりにしない)', () => filesTargets('src/a/foo.ts,src/z/nope.ts', fm), 'throws', 'mutate に無い名前'],
+    ['一覧に無い名前は JSON の文字列で出す (改行でログの行を作らせない)', () => filesTargets('src/a\n::error::x.ts', fm), 'throws', '"src/a\\n::error::x.ts"'],
+    ['形の悪い名前は一覧に在っても落とす', () => filesTargets('src/a b.ts', ['src/a b.ts']), 'throws', 'パスとして普通でない'],
+  ];
+  for (const [label, fn, kind, want] of filesCases) {
+    let got;
+    try {
+      got = JSON.stringify(fn());
+    } catch (e) {
+      got = `例外: ${e.message}`;
+    }
+    const ok = kind === 'throws' ? got.startsWith('例外:') && got.includes(want) : got === JSON.stringify(want);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 手選び: ${label}: ${got} (期待 ${JSON.stringify(want)})`);
+  }
   // 規則が広すぎない対照 — 実在する `mutate` 一覧を 1 件も弾かないこと。
   // 合成ケースだけだと「全部落とす」規則でも緑になる。
   let real = [];
@@ -406,7 +470,32 @@ function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const chunks = argv.includes('--chunks');
   const all = argv.includes('--all');
-  const baseRef = argv.find((a) => !a.startsWith('--'));
+  // `--files` は次の 1 語を値として食う (値が base-ref と読まれないように、
+  // 値の位置を外してから base-ref を探す)。
+  const filesAt = argv.indexOf('--files');
+  const filesCsv = filesAt >= 0 ? argv[filesAt + 1] : undefined;
+  const baseRef = argv.find((a, i) => !a.startsWith('--') && !(filesAt >= 0 && i === filesAt + 1));
+  if (filesAt >= 0) {
+    // 差分か全件か手選びかを曖昧にしない。
+    if (all || (baseRef !== undefined && baseRef !== '')) {
+      process.stderr.write('--files は base-ref・--all と一緒には使えません\n');
+      return 2;
+    }
+    if (filesCsv === undefined || filesCsv.startsWith('--')) {
+      process.stderr.write('--files には対象の一覧 (カンマ区切り) が要ります\n');
+      return 2;
+    }
+    let targets;
+    try {
+      targets = filesTargets(filesCsv);
+    } catch (e) {
+      // 空・一覧に無い名前を「対象なし」にして緑にしない。読める形で落とす。
+      process.stderr.write(`${e.message}\n`);
+      return 1;
+    }
+    process.stderr.write(`手選び → 変異検査の対象 ${targets.length} ファイル\n`);
+    return emit(targets, chunks);
+  }
   if (all) {
     // 差分か全件かを曖昧にしない。base-ref を渡した呼び出しは意図が食い違っている。
     if (baseRef !== undefined && baseRef !== '') {
@@ -425,7 +514,7 @@ function main(argv) {
     return emit(targets, chunks);
   }
   if (baseRef === undefined || baseRef === '') {
-    process.stderr.write('usage: mutate-changed.cjs <base-ref> [--chunks] | --all [--chunks]\n');
+    process.stderr.write('usage: mutate-changed.cjs <base-ref> [--chunks] | --all [--chunks] | --files <a,b,c> [--chunks]\n');
     return 2;
   }
   const changed = changedFiles(baseRef);
@@ -476,6 +565,7 @@ module.exports = {
   changedFiles,
   mutateList,
   allTargets,
+  filesTargets,
   chunkTargets,
   chunksOutput,
   MAX_LINES_PER_CHUNK,

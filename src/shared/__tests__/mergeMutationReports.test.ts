@@ -20,6 +20,8 @@
  * 4. `scope` は全件を必ず塊にして出す (空を skip と読んで緑にしない)
  * 5. `run:` に `${{` を置かない (lint:workflow-security と二重に —— 新しい job も)
  * 6. `package.json` の `mutate:merge` は本体が末尾で、workflow が併合 script の自己検査を走らせる
+ * 7. **手で選んだ対象だけを測り直す口** (`workflow_dispatch` の `files` → `--files … --chunks`) が、
+ *    `push` の差分・全件と混ざらず、値を環境変数で受けて `run:` へ展開しない
  *
  * 不在の主張 (「actions/cache を持たない」「`${{` を置かない」) には、その針が実際に
  * 当たる標本を同じ `it` の中で添える (規約)。
@@ -60,6 +62,7 @@ const quality = req(path.join(REPO, 'scripts/quality-report.cjs')) as {
 const changed = req(path.join(REPO, 'scripts/mutate-changed.cjs')) as {
   allTargets: () => string[];
   chunksOutput: (t: string[]) => { parts: string[]; json: string };
+  filesTargets: (csv: string, mutate?: string[]) => string[];
   MAX_MATRIX_JOBS: number;
 };
 
@@ -250,6 +253,56 @@ describe('workflow の配線 (パス 501e)', () => {
     expect(has(scope, 'node scripts/mutate-changed.cjs --self-test')).toBe(true);
   });
 
+  it('★ 手で選んだ対象 (workflow_dispatch の files) は push・全件と混ざらず、環境変数で受ける', () => {
+    const on = withoutComments(YAML).slice(0, withoutComments(YAML).indexOf('\npermissions:'));
+    // 入力は文字列で、既定は空 (空なら全件へ倒れる)。
+    const dispatch = on.slice(on.indexOf('workflow_dispatch:'), on.indexOf('  push:'));
+    expect(dispatch).toContain('inputs:');
+    expect(dispatch).toContain('files:');
+    expect(dispatch).toContain('required: false');
+    expect(dispatch).toContain("default: ''");
+    expect(dispatch).toContain('type: string');
+
+    const runs = runBodies(YAML).filter((b) => b.includes('EVENT_NAME'));
+    expect(runs.length).toBe(1);
+    const body = runs[0]!;
+    // 値は環境変数で受け (`${{` を run へ展開しない)、`--files` は 1 か所だけ・引用符つき。
+    expect(has(jobs['scope'], 'INPUT_FILES: ${{ inputs.files }}')).toBe(true);
+    expect(body.split('--files "$INPUT_FILES" --chunks').length - 1).toBe(1);
+    expect(body.split('--files').length - 1).toBe(1);
+    // 手選びの枝は dispatch のときだけ・入力が空でないときだけ (空は全件へ)。
+    expect(body).toContain('elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$INPUT_FILES" ]; then');
+    // 枝の順序: push → 手選び → それ以外 (全件)。手選びが全件の後ろへ回ると効かない。
+    const iPush = body.indexOf('if [ "$EVENT_NAME" = "push" ]');
+    const iPick = body.indexOf('--files "$INPUT_FILES"');
+    const iAll = body.indexOf('CHUNKS="ALL"');
+    expect(iPush).toBeGreaterThanOrEqual(0);
+    expect(iPick).toBeGreaterThan(iPush);
+    expect(iAll).toBeGreaterThan(iPick);
+    // 手選びは全件ではないので mode は some のまま (MODE=all へ触るのは全件の枝だけ)。
+    expect(body.split('MODE=all').length - 1).toBe(1);
+    expect(body.indexOf('MODE=all')).toBeGreaterThan(iAll);
+    // 測るのは push と同じ mutate-some で、塊の artifact 名は週次と別 (混ざらない)。
+    expect(has(jobs['mutate-some'], "if: needs.scope.outputs.mode == 'some'")).toBe(true);
+    expect(has(jobs['mutate-some'], 'name: mutation-report-chunk-${{ strategy.job-index }}')).toBe(true);
+    // 針が実際に当たる標本: 手選びの枝を持たない旧い本文では鳴る。
+    const legacy = 'if [ "$EVENT_NAME" = "push" ]; then\n  X\nelse\n  CHUNKS="ALL"\nfi\n';
+    expect(legacy.includes('--files')).toBe(false);
+    expect(body.includes('--files')).toBe(true);
+  });
+
+  it('★ mutate-some も塊の上限時間・初回検査の待ち・心拍を持つ (mutate-full と同じ理由)', () => {
+    const some = jobs['mutate-some']!;
+    expect(has(some, 'timeout-minutes: 240')).toBe(true);
+    expect(has(some, '--dryRunTimeoutMinutes 40')).toBe(true);
+    expect(has(some, '--reporters clear-text,json,progress-append-only')).toBe(true);
+    // json は報告の artifact と triage が読むので外さない。
+    expect(has(some, 'reports/mutation/mutation.json')).toBe(true);
+    // incremental は使わない (古い結果が偽の生存を作る)。
+    expect(has(some, 'rm -f .stryker-incremental.json')).toBe(true);
+    expect(has(some, 'actions/cache')).toBe(false);
+  });
+
   it('★ 全ジョブの run: に ${{ を置かない (新しい job も lint:workflow-security と二重に)', () => {
     const bodies = runBodies(YAML);
     expect(bodies.length).toBeGreaterThanOrEqual(8);
@@ -259,6 +312,47 @@ describe('workflow の配線 (パス 501e)', () => {
     expect(found.length).toBe(2);
     expect(runBodies(sample).length).toBe(3);
     expect(bodies.filter((b) => b.includes('${{'))).toEqual([]);
+  });
+});
+
+describe('手で選んだ対象 (--files · パス 501)', () => {
+  it('★ mutate の名前だけを受け、並べ替え・重複除去して、塊に過不足なく分ける', () => {
+    const all = changed.allTargets();
+    const picked = [all[5]!, all[1]!, all[5]!, all[100]!, all[200]!];
+    const got = changed.filesTargets(` ${picked.join(' , ')} ,`);
+    expect(got).toEqual([...new Set(picked)].sort());
+    expect(got.length).toBe(4);
+    const parts = changed.chunksOutput(got).parts;
+    const seen = parts.flatMap((p) => p.split(','));
+    expect([...seen].sort()).toEqual(got);
+    expect(new Set(seen).size).toBe(seen.length);
+    // 全件を手選びしても、全件の塊と同じ分け方になる (手選びだけ別の分け方にならない)。
+    expect(changed.chunksOutput(changed.filesTargets(all.join(','))).parts).toEqual(changed.chunksOutput(all).parts);
+  });
+
+  it('★ mutate に無い名前と空の一覧は黙って捨てずに落ちる (打ち間違いを「測ったつもり」にしない)', () => {
+    const all = changed.allTargets();
+    expect(() => changed.filesTargets('src/not/on/the/list.ts')).toThrow(
+      new Error('--files に、stryker.config.json の mutate に無い名前が 1 件あります: "src/not/on/the/list.ts"'),
+    );
+    // 一部だけ誤っていても、全体を落とす (正しい分だけ測って誤りを飲まない)。
+    expect(() => changed.filesTargets(`${all[0]!},src/typo.ts`)).toThrow(
+      new Error('--files に、stryker.config.json の mutate に無い名前が 1 件あります: "src/typo.ts"'),
+    );
+    expect(() => changed.filesTargets(' , ')).toThrow(new Error('--files の一覧が空です — 測る対象を 1 つ以上書いてください'));
+    expect(() => changed.filesTargets('')).toThrow(new Error('--files の一覧が空です — 測る対象を 1 つ以上書いてください'));
+    // 針が生きている: 名前の照合は完全一致 (接頭辞・大小・前後の飾りでは通らない)。
+    const one = all[0]!;
+    expect(() => changed.filesTargets(one.toUpperCase())).toThrow();
+    expect(() => changed.filesTargets(one.slice(0, -1))).toThrow();
+    expect(changed.filesTargets(one)).toEqual([one]);
+  });
+
+  it('★ 注入用の合成 mutate でも同じ規則 (引数の mutate を読む・実物の設定に依らない)', () => {
+    expect(changed.filesTargets('src/b.ts,src/a.ts', ['src/a.ts', 'src/b.ts'])).toEqual(['src/a.ts', 'src/b.ts']);
+    expect(() => changed.filesTargets('src/c.ts', ['src/a.ts', 'src/b.ts'])).toThrow(
+      new Error('--files に、stryker.config.json の mutate に無い名前が 1 件あります: "src/c.ts"'),
+    );
   });
 });
 
