@@ -596,6 +596,8 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
 
   describe('日付・期の窓が測れない控え — 投げず、その行だけを出さない', () => {
     it('★ 損益の対象期間: 窓が null / 欄なしでも投げず、売上高の行は出る', () => {
+      // 対照: 窓が読めれば「対象期間」の行は出る (下の不在の検査が、実際にその綴りへ当たる証拠)。
+      expect(buildManagementReport(ov(), sc, [], '2026-05-31', MANUAL)).toContain('- 対象期間: 2026-04〜2026-05・2 か月');
       for (const kpi of [{ periodWindow: null }, { periodWindow: undefined }]) {
         const md = buildManagementReport(ov({ kpi }), sc, [], '2026-05-31', MANUAL);
         expect(md).toContain('- 売上高: ¥1,000,000');

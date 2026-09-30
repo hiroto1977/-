@@ -99,8 +99,13 @@ export function lastDayLabel(period: string): string {
   // (経緯は `shared/isoDate.ts` の `utcMsFromParts`)。
   const y = Number(m[1]);
   const mo = Number(m[2]);
-  const firstOfNext = mo === 12 ? utcMsFromParts(y + 1, 1, 1) : utcMsFromParts(y, mo + 1, 1);
-  const last = new Date(firstOfNext - 86_400_000).getUTCDate();
+  // 12 月は月に 13 を渡す。`Date.UTC` が翌年 1 月へ繰り上げ、`utcMsFromParts` が年を
+  // `y` へ差し替えるので**年は 1 年手前**になるが、求めるのは 1 月 1 日の前日の**日**で、
+  // それは年に依らず 12 月 31 日 = 31。だから 12 月だけ `y + 1` を渡す分岐は外から
+  // 見える答えを 1 つも変えない (全 4 桁の年 × 12 か月で旧い形と一致を実測。
+  // 変異検査でも、その分岐を外す / `y + 1` を `y - 1` にする変異体が 12 月の検査を
+  // 足しても殺せなかった)。年を渡し分ける形は、年が効いているように読めるので消した。
+  const last = new Date(utcMsFromParts(y, mo + 1, 1) - 86_400_000).getUTCDate();
   return `${monthLabel(period)}${last}日`;
 }
 

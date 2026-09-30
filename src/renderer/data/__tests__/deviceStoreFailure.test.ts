@@ -272,6 +272,27 @@ describe('settleReported / wasReported — 報せた失敗だけを落とす', (
     expect(m.wasReported(undefined)).toBe(false);
   });
 
+  it('★ null を投げられても報せは届く —— 印は付けられないだけで、報せる側が投げ返さない', async () => {
+    const m = await load();
+    // `WeakSet#add` は null に投げる。物でない例外に印を付けないための門が外れると、
+    // 「失敗を報せる」その関数自身が TypeError で落ち、画面に何も出ない。
+    expect(() => m.reportDeviceStoreFailure('records', 'save', 'x', null)).not.toThrow();
+    expect(m.currentDeviceStoreFailure()?.message).toContain('（null）');
+    expect(m.wasReported(null)).toBe(false);
+    await expect(m.settleReported(Promise.reject(null))).rejects.toBeNull();
+  });
+
+  it('★ 物でない例外 (文字列・数・undefined) でも報せは届き、印は付かない', async () => {
+    const m = await load();
+    for (const thrown of ['文字列', 42, undefined] as const) {
+      // `where` は周ごとに変える —— 同じ値だと、前の周が残した最後の 1 件で満たされてしまう。
+      const where = `x-${String(thrown)}`;
+      expect(() => m.reportDeviceStoreFailure('records', 'save', where, thrown)).not.toThrow();
+      expect(m.currentDeviceStoreFailure()?.where).toBe(where);
+      expect(m.wasReported(thrown)).toBe(false);
+    }
+  });
+
   it('解決した約束と void は、そのまま解決する', async () => {
     const m = await load();
     await expect(m.settleReported(Promise.resolve(42))).resolves.toBeUndefined();

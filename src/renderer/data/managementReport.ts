@@ -158,7 +158,7 @@ export function buildManagementReport(
       lines.push(
         fresh.stale
           ? `- ⚠ 基準日が実績の最新期 (${fresh.latestPeriod}) より ${fresh.monthsBehind} か月古く、溜まり ÷ 流れ の指標は別の期の数字を割っています。`
-          : `- ⚠ 基準日が実績の最新期 (${fresh.latestPeriod}) より ${+fresh.monthsBehind} か月先で、溜まり ÷ 流れ の指標は別の期の数字を割っています。`,
+          : `- ⚠ 基準日が実績の最新期 (${fresh.latestPeriod}) より ${-fresh.monthsBehind} か月先で、溜まり ÷ 流れ の指標は別の期の数字を割っています。`,
       );
     }
     // **倒した欄が在れば必ず述べる** —— 「自己資本比率 △100.0%」「債務超過です」を

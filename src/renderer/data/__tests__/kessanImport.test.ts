@@ -4,7 +4,7 @@
  * 取り込んだ後の貸借対照表が**実際の集計関数で**貸借一致すること (差額 0) を固定する。
  */
 import { describe, expect, it } from 'vitest';
-import { buildKessanImport, fiscalYearWindow, type KessanImportInput } from '../kessanImport';
+import { buildKessanImport, fiscalYearWindow, lastDayLabel, type KessanImportInput } from '../kessanImport';
 import { amountOf, balanceTotals, incomeTotals } from '../statementAccounts';
 import { EMPTY_PROFILE, type SubmissionProfile } from '../bankSubmission';
 import type { KpiActual } from '../kpiActuals';
@@ -51,6 +51,35 @@ describe('fiscalYearWindow', () => {
     expect(fiscalYearWindow('')).toBeNull();
     expect(fiscalYearWindow('2026-13')).toBeNull();
     expect(fiscalYearWindow('2026/03')).toBeNull();
+  });
+});
+
+/**
+ * **事業年度（至）の末日は、暦の月の長さそのもの。** 「翌月 1 日の 1 日前」で求める
+ * (`utcMsFromParts` の docblock) ので、月ごとの日数と閏年の 2 月、それに
+ * **12 月 (翌月が翌年になる月)** を年をまたいで確かめる。期待値は実装から導かず、
+ * 月ごとの日数と閏年の規則 (4 で割れ、100 で割れず、400 で割れる) をここに書く。
+ */
+describe('lastDayLabel — 事業年度（至）の末日', () => {
+  const isLeap = (y: number): boolean => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+  const daysIn = (y: number, m: number): number => [31, isLeap(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]!;
+  for (const year of [2027, 2028, 2100, 2000]) {
+    it(`${year} 年は 12 か月すべて、その月の末日を返す (2 月は ${daysIn(year, 2)} 日)`, () => {
+      for (let m = 1; m <= 12; m++) {
+        const period = `${year}-${String(m).padStart(2, '0')}`;
+        expect(lastDayLabel(period)).toBe(`${year}年${m}月${daysIn(year, m)}日`);
+      }
+    });
+  }
+  it('12 月決算: 事業年度は 1 月 1 日から 12 月 31 日まで (翌年の 1 月へ繰り上がっても年は動かない)', () => {
+    const r = build({
+      kpiActuals: [kpi('2024-12', 9_999_999), kpi('2025-01', 1_000_000), kpi('2025-12', 2_000_000), kpi('2026-01', 8_888_888)],
+      profile: { ...PROFILE, fiscalYearEnd: '2025-12' },
+    });
+    expect(r.window).toEqual({ from: '2025-01', to: '2025-12' });
+    expect(valueOf(r, 'fyStart')).toBe('2025年1月1日');
+    expect(valueOf(r, 'fyEnd')).toBe('2025年12月31日');
+    expect(valueOf(r, 'sales')).toBe('3000000');
   });
 });
 

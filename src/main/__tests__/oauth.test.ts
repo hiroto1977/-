@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MAX_EXTERNAL_URL_LEN, externalUrlOrNull } from '../../shared/externalUrlGate';
+import { MAX_HTTP_RESPONSE_BYTES } from '../../shared/httpLimits';
 import http from 'node:http';
 import { rereadModule } from '../../shared/__tests__/rereadModule';
 
@@ -1490,6 +1491,143 @@ describe('authorize (end-to-end flow with real loopback + mocked electron + mock
     expect(body.get('client_secret')).toBe('atlassian-secret');
     expect(body.has('code_verifier')).toBe(false);
   });
+
+  /*
+   * ## 組み立て後の同意画面 URL が外へ開く関門に落とされたら、ブラウザを開かずに止まる (パス 501)
+   *
+   * `assertHttpsEndpoint` が見るのは土台 (`config.authorizeUrl`) で、`shell` が受けるのは
+   * `extraAuthParams` を差し込んだ**組み立て後**の文字列である。関門 `externalUrlOrNull` の
+   * 長さの天井を超える値を `extraAuthParams` が運ぶと、土台は https で userinfo 無しのまま
+   * 組み立て後だけが落ちる。実物の設定はどれも天井に十分収まる (下の「同意画面の URL は
+   * 外へ開く関門の長さの天井に収まる」が全設定で留める) ので今日は届かないが、
+   * この枝が無いと `shell.openExternal(null)` を呼んで、来ないコールバックを待ち続ける。
+   * 落ちる側は「開かない・fetch しない・理由を言う」の 3 つを同時に守る。
+   */
+  it('★ 組み立て後の URL が外へ開く関門に落とされたら、ブラウザを開かず fetch もせず理由を言って止まる (パス 501)', async () => {
+    openExternalMock.mockClear();
+    const created = vi.spyOn(http, 'createServer');
+    const fetchMock = vi.fn<typeof fetch>();
+    const cfg: OAuthConfig = { ...CFG, extraAuthParams: { x: 'a'.repeat(MAX_EXTERNAL_URL_LEN) } };
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      // 標本: 土台は関門を通り、組み立て後だけが天井に落ちる (= この構成は問いに当たっている)。
+      expect(externalUrlOrNull(cfg.authorizeUrl)).not.toBeNull();
+      const built = buildAuthorizeUrl(cfg, 'http://127.0.0.1:65535/oauth/callback', 's', 'c');
+      expect(built.length).toBeGreaterThan(MAX_EXTERNAL_URL_LEN);
+      expect(externalUrlOrNull(built)).toBeNull();
+
+      const settled = authorize(cfg, fetchMock).then(
+        () => null,
+        (e: unknown) => e,
+      );
+      // 止まらなければ `authorize` は来ないコールバックを待つので、締切つきで見る。
+      const outcome = await Promise.race([
+        settled,
+        new Promise<'pending'>((resolve) => {
+          timer = setTimeout(() => resolve('pending'), 2000);
+        }),
+      ]);
+      expect(outcome, 'authorize が止まらず、ブラウザを開いてコールバック待ちに入っている').not.toBe('pending');
+      expect(outcome).toBeInstanceOf(Error);
+      expect((outcome as Error).message).toBe('OAuth authorization URL was rejected by the external-URL gate');
+      expect(openExternalMock).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      if (timer !== undefined) clearTimeout(timer);
+      // 待受は組み立ての前に立つので、落ちた道でも閉じておく (5 分の外側締切に任せない)。
+      for (const r of created.mock.results) {
+        if (r.type === 'return') (r.value as http.Server).close();
+      }
+      created.mockRestore();
+    }
+  });
+
+  it('関門を通る長さなら、同じ構成でブラウザは開く (上の断りは長さだけが原因)', async () => {
+    openExternalMock.mockClear();
+    const fetchMock = vi.fn<typeof fetch>();
+    const cfg: OAuthConfig = { ...CFG, extraAuthParams: { x: 'a'.repeat(100) } };
+    const settled = authorize(cfg, fetchMock).then(
+      () => null,
+      (e: unknown) => e,
+    );
+    const url = await waitForOpenExternalCall();
+    expect(new URL(url).searchParams.get('x')).toBe('a'.repeat(100));
+    // 後片付け: 待受を終わらせる (コールバックで拒否して止める)。
+    const parsed = new URL(url);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    await fireCallback(port, { error: 'access_denied', state: parsed.searchParams.get('state')! });
+    expect(await settled).toBeInstanceOf(Error);
+  });
+
+  /*
+   * ## token 交換の応答が転送 (3xx) なら、理由を言って止まる (authorize 側 · パス 501)
+   *
+   * `refresh` 側は『転送に追随しない (パス 301)』が留めている。`authorize` の交換は
+   * **認可コードと PKCE verifier** (種類によっては client_secret) を載せるので、
+   * 同じ規則を同じだけ掛ける。転送を見分ける枝が無ければ 307 は `!res.ok` に落ち、
+   * 「Token exchange failed (307): 」という**原因を言わない**文になる —— 直す手も分からない。
+   * 相手の名前 (`認可サーバ`) は文の先頭に載る。
+   */
+  it('★ 307 は認可サーバが別の場所へ転送しようとしたと言って止まり、code を別の場所へ再送しない (authorize 側・パス 501)', async () => {
+    openExternalMock.mockClear();
+    const location = 'https://oauth2.evil.example/token?code=LEAKED';
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(null, { status: 307, headers: { location } }),
+    );
+    const settled = authorize(CFG, fetchMock).then(
+      () => null,
+      (e: unknown) => e,
+    );
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    await fireCallback(port, { code: 'c', state: parsed.searchParams.get('state')! });
+
+    const err = await settled;
+    expect(err).toBeInstanceOf(Error);
+    const message = (err as Error).message;
+    // 先頭が相手の名前 —— 名前が空だと「 が別の場所…」で始まってしまう。
+    expect(message).toMatch(
+      /^認可サーバ が別の場所 \(oauth2\.evil\.example\) へ転送しようとしました —— 追随しません/,
+    );
+    // 標本: 転送先には値 (code=LEAKED) が在る。文が写すのはホストだけ。
+    expect(location).toContain('LEAKED');
+    expect(message).not.toContain('LEAKED');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  /*
+   * ## token 交換の応答が上限を超えて宣言されたら、`oauth` の名で断る (パス 501)
+   *
+   * 成功側の本文は `readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth')` で読む。
+   * 相手が Content-Length で上限超過を宣言していれば、本文を開ける前に落ちる。その文の先頭の
+   * 標識 (`oauth`) は、どの読み口が断ったかを画面の断りと記録に残す唯一の手がかりである
+   * (失敗側の標識は `readFailureBody` が中身を捨てるので観測できない —— 成功側だけが観測できる)。
+   */
+  it('★ 交換の成功応答が上限超過を宣言していたら「oauth response too large」で止まる (authorize 側・パス 501)', async () => {
+    openExternalMock.mockClear();
+    const declared = MAX_HTTP_RESPONSE_BYTES + 1;
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('{"access_token":"at"}', {
+        status: 200,
+        headers: { 'content-type': 'application/json', 'content-length': String(declared) },
+      }),
+    );
+    const settled = authorize(CFG, fetchMock).then(
+      () => null,
+      (e: unknown) => e,
+    );
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    await fireCallback(port, { code: 'c', state: parsed.searchParams.get('state')! });
+
+    const err = await settled;
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toBe(
+      `oauth response too large (${declared} > ${MAX_HTTP_RESPONSE_BYTES} bytes)`,
+    );
+  });
 });
 
 describe('refresh', () => {
@@ -1631,6 +1769,19 @@ describe('refresh', () => {
     // Confirm explicitly we didn't include the un-truncated rest.
     expect(caught!.message.length).toBeLessThan(longBody.length);
   });
+
+  it('★ 更新の成功応答が上限超過を宣言していたら「oauth response too large」で止まる (パス 501)', async () => {
+    const declared = MAX_HTTP_RESPONSE_BYTES + 1;
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('{"access_token":"at"}', {
+        status: 200,
+        headers: { 'content-type': 'application/json', 'content-length': String(declared) },
+      }),
+    );
+    await expect(refresh(CFG, { accessToken: 'a', refreshToken: 'r' }, fetchMock)).rejects.toThrow(
+      new Error(`oauth response too large (${declared} > ${MAX_HTTP_RESPONSE_BYTES} bytes)`),
+    );
+  });
 });
 
 describe('assertHttpsEndpoint (RFC 8252 §8.3 — 平文の宛先へ資格情報を出さない)', () => {
@@ -1728,6 +1879,34 @@ describe('assertHttpsEndpoint (RFC 8252 §8.3 — 平文の宛先へ資格情報
       'must not embed credentials in the URL',
     );
     expect(openExternalMock.mock.calls.length, 'ブラウザを開いてしまっている').toBe(before);
+  });
+
+  /*
+   * **password だけの userinfo (`https://:pw@host/`)。** username が空なので
+   * `username !== ''` の枝は当たらず、`password !== ''` の枝だけがこれを落とす。
+   * 上の 3 形はどれも username を持つので、片方の枝が潰れても通ってしまう。
+   * 文面は全体で照合する (`toThrow('…')` の部分一致では、別の端点の断りと取り違えない保証にならない)。
+   */
+  it('★ password だけの userinfo は断る (username が空でも host は evil.example)', async () => {
+    const pwOnly = 'https://:pw@evil.example/authorize';
+    // 標本: username 側の枝には当たらず、password 側だけが当たる形。
+    expect(new URL(pwOnly).username).toBe('');
+    expect(new URL(pwOnly).password).toBe('pw');
+    expect(new URL(pwOnly).host).toBe('evil.example');
+
+    // 認可 URL: ブラウザを開く前に、この端点の断りで止まる (関門の断りへ落ちない)。
+    const before = openExternalMock.mock.calls.length;
+    await expect(authorize({ ...CFG, authorizeUrl: pwOnly })).rejects.toThrow(
+      new Error('OAuth authorization endpoint must not embed credentials in the URL'),
+    );
+    expect(openExternalMock.mock.calls.length, 'ブラウザを開いてしまっている').toBe(before);
+
+    // token 端点: 秘密を載せた要求を 1 通も出さない。
+    const fetchSpy = vi.fn<typeof fetch>();
+    await expect(
+      refresh({ ...CFG, tokenUrl: 'https://:pw@evil.example/token' }, { accessToken: 'at', refreshToken: 'rt' }, fetchSpy),
+    ).rejects.toThrow(new Error('OAuth token endpoint must not embed credentials in the URL'));
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it('★ 標本: 字面検査ならこの 3 形は通っていた (規則が実際に効いていることの裏取り)', () => {

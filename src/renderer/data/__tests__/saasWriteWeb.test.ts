@@ -1024,7 +1024,7 @@ describe('Atlassian の site を弾いたときの文言', () => {
 /*
  * **読み直す検査は、モジュール直下の値を全部主張する** (パス 495 の規約)。
  *
- * このモジュールの直下の値は 2 つ —— `ATLASSIAN_SITE_MESSAGES` (上の describe が 4 文を留める) と
+ * このモジュールの直下の値は `ATLASSIAN_SITE_MESSAGES` (上の describe が各文を留める) と
  * `WEB_USER_AGENT`。上の describe は `rereadModule` で読み直すので、直下の値は
  * 「その検査が覆った」と数えられ、変異検査は**覆った検査だけ**でその変異体を走らせる。
  * 覆った検査が `WEB_USER_AGENT` を主張していなければ、空文字へ変えても生き残る
@@ -1289,11 +1289,11 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
 /*
  * **読む所・失敗を報せる所の label は、相手の名前で断りを始める。**
  *
- * 13 の書き込み口はどれも `readJson(res, '<相手> API')` / `ensureOk(res, '<相手>')` に
+ * 書き込み口はどれも `readJson(res, '<相手> API')` / `ensureOk(res, '<相手>')` に
  * 相手の名前を渡し、その名前が利用者に見える断りの先頭になる
  * (「<相手> の応答が JSON ではありません」「<相手> 403: …」)。
- * 名前が空でも「throw する」ことしか見ない検査は通るので、変異検査で 14 か所が生き残った
- * (2026-09-30 の全掃引)。文面を**口ごとに 1 字ずつ**留める。
+ * 名前が空でも「throw する」ことしか見ない検査は通るので、変異検査で label の変異体が
+ * 口ごとに生き残った (2026-09-30 の全掃引)。文面を**口ごとに 1 字ずつ**留める。
  *
  * 綴りは口ごとに違う —— `ensureOk` は「Calendar API」、読みは「Google Calendar API」。
  * 揃えると利用者に見える文面が変わるので、ここでは今の綴りを写す (揃えるなら別の変更)。
@@ -1315,7 +1315,7 @@ describe('★ 応答が読めない・失敗したときの断りは、相手の
 
   type Call = (t: Transport) => Promise<unknown>;
 
-  // 本文を返す 14 口 (2xx の本文が JSON でなければ、読む所の label で断る)。
+  // 2xx の本文を読む口 (本文が JSON でなければ、読む所の label で断る)。
   const READ: Array<[string, string, Call]> = [
     ['createGithubIssue', 'GitHub API', (t) => createGithubIssue({ owner: 'o', repo: 'r', title: 'T' }, 'tok', t)],
     ['createNotionPage', 'Notion API', (t) => createNotionPage({ parentPageId: 'p'.repeat(32), title: 'T', body: 'B' }, 'tok', t)],
@@ -1373,7 +1373,8 @@ describe('★ 応答が読めない・失敗したときの断りは、相手の
     expect(() => JSON.parse(NOT_JSON)).toThrow();
   });
 
-  // 本文を返さない sendMicrosoftMail (202) は 2xx では断れないので、失敗の側だけを見る口が 2 つ。
+  // 本文を返さない sendMicrosoftMail (202) は 2xx では断れないので失敗の側だけを見る。
+  // createMicrosoftEvent は読む側 (上) と失敗の側 (ここ) で label の呼び出しが別なので両方に載る。
   const FAIL: Array<[string, Call]> = [
     ['sendMicrosoftMail', (t) => sendMicrosoftMail({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
     [

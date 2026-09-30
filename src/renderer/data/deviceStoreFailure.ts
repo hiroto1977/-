@@ -194,7 +194,9 @@ const reportedFailures = new WeakSet<object>();
 
 /** この例外は既に画面へ報せたか (`fireReported` と、失敗を受け止める画面が読む)。 */
 export function wasReported(err: unknown): boolean {
-  return typeof err === 'object' && err !== null && reportedFailures.has(err);
+  // `WeakSet#has` は物でない値 (null / 文字列 / 数 …) に投げず偽を返す (仕様)。型の絞り込みは要らない。
+  // 投げるのは `add` の側だけなので、`reportDeviceStoreFailure` は物のときだけ印を付ける。
+  return reportedFailures.has(err as object);
 }
 
 let latest: DeviceStoreFailure | null = null;

@@ -477,4 +477,27 @@ describe('打ち切りの注記はモジュール直下の定数を通る (読�
     const last = fresh.parseMarkdown(over).at(-1)!;
     expect(last).toEqual({ type: 'paragraph', spans: [{ text: '…（応答が長すぎたため、ここで表示を打ち切りました）' }] });
   });
+
+  /*
+   * 読み直すなら、対象の直下の値を**全部**主張する (パス 495 · 法則 `module-evaluated-at-file-load`)。
+   * 上の読み直しは `INVISIBLE` (見えない字の一致式・モジュール直下) も評価し直すので、Stryker では
+   * その変異体 (文字クラスの否定) が「この検査が覆った」と数えられ、主張が無いので生き残る
+   * (`bestAnswersVoice.test.ts` は直に import しているので手で当てると落ちる —— 偽の生存)。
+   * 読み直した側の `externalTextOnOneLine` を値ごと当てる。標本は「見える字は素通し」
+   * (否定された文字クラスは見える字を逃がしてしまう) と「見えない字は逃がす」の両側。
+   */
+  it('★ 読み直した見えない字の一致式は、見える字を素通しし、見えない字だけを \\uXXXX へ逃がす', async () => {
+    const fresh = await rereadModule<typeof import('../assistantMarkdown')>(import.meta.url, '../assistantMarkdown');
+    expect(fresh.MAX_RENDER_BLOCKS).toBe(20_000);
+    // 見える字 (ASCII・かな・記号) は 1 字も動かない。
+    expect(fresh.externalTextOnOneLine('Abc 123 キーがありません (x)')).toBe('Abc 123 キーがありません (x)');
+    // 制御 (Cc)・書式 (Cf: 双方向制御・ゼロ幅)・補助面の書式 (Cf: タグ) は UTF-16 の単位ごとに逃がす。
+    expect(fresh.externalTextOnOneLine('esc\u001b[2K')).toBe('esc\\u001b[2K');
+    expect(fresh.externalTextOnOneLine('x\u202ey')).toBe('x\\u202ey');
+    expect(fresh.externalTextOnOneLine('zero\u200bwidth')).toBe('zero\\u200bwidth');
+    expect(fresh.externalTextOnOneLine('tag\u{E0001}')).toBe('tag\\udb40\\udc01');
+    // 改行・タブ・行 / 段落区切りは逃がすのではなく 1 つの空白へ畳む (逃がしより先に効く)。
+    expect(fresh.externalTextOnOneLine('a\n\n### b\tc\u2028d\u2029e')).toBe('a ### b c d e');
+    expect(fresh.escapeUnits('\u202e')).toBe('\\u202e');
+  });
 });
