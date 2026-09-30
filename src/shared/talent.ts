@@ -564,6 +564,11 @@ export function describeDroppedEntries(
  *
  * - `overflow = max(0, sent - cap)` —— `slice` が切った分。
  * - `rejected = dropped - overflow` —— 残りは必ず `filter` が落とした分。
+ *
+ * **落ちた欄だけには絞らない** —— 3 欄すべての行を返し、`overflow` / `rejected` がどちらも 0 の欄は
+ * 呼び手の {@link droppedParts} が句にしない (`> 0` を欄ごとに見る)。ここにも同じ判定の `filter` を
+ * 置いていた頃は `droppedParts` の判定と**二重**で、外しても答えが変わらない等価な変異体が 4 つ
+ * (`filter` ごと・`||`・`> 0` の 2 つ) 残っていた (パス 502)。
  */
 function droppedRows(
   sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
@@ -595,7 +600,7 @@ function droppedRows(
       label: r.label, cap: r.cap, requirement: r.requirement,
       overflow, rejected: dropped - overflow,
     };
-  }).filter((r) => r.overflow > 0 || r.rejected > 0);
+  });
 }
 
 /**

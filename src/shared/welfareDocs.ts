@@ -14,9 +14,11 @@ import type { WelfareSchemeInput, WelfareSchemeResult } from './welfareScheme';
  * の Markdown を出力する。**いずれもひな形であり、税務・法務の最終確認は
  * 税理士・社労士・弁護士へ。** 数値は概算。
  *
- * 文面 (StringLiteral content) は罠#2 に従い block-level `Stryker disable all`。
+ * 文面は変異検査の対象に載っており、**測定から外してはいない** (以前ここに「block-level で
+ * 全変異体を無効化」と書いていたが、その pragma はどこにも無く、注記だけが残っていた · パス 502)。
  * 数値の正しさは welfareScheme のテストで担保し、本モジュールは「数値・見出しが
- * 文面に現れる」ことをテストで検証する。
+ * 文面に現れる」ことと、文の**繋ぎ目** (届かなかった側の名指し・手元残りの句) を値ごとに
+ * テストで検証する (`welfareDocsOutOfRange.test.ts`)。
  */
 
 const yen = jpyWhole;
