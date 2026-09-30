@@ -18126,7 +18126,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **106 ファイル / 270 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **106 ファイル / 271 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -18154,6 +18154,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/VillagePage.tsx` | 4 |
 | `src/shared/depreciation.ts` | 4 |
 | `src/shared/hydroponics.ts` | 4 |
+| `src/shared/ollama.ts` | 4 |
 | `src/shared/taxSocialInsurance.ts` | 4 |
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
@@ -18163,7 +18164,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/StocksPage.tsx` | 3 |
 | `src/renderer/pages/TaxPage.tsx` | 3 |
 | `src/shared/invoiceTax.ts` | 3 |
-| `src/shared/ollama.ts` | 3 |
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
 | `src/shared/taxConsumptionBusiness.ts` | 3 |

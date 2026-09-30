@@ -173,8 +173,13 @@ export const LAWS: readonly Law[] = [
       + '塊の合計の runner 時間は変わらない —— 分けるのは壁時計の上限に収めるためである。'
       + ' **週次の全掃引も同じ塊で測る** (パス 501e · `scripts/mutate-changed.cjs --all --chunks`): 塊ごとの報告は `scripts/merge-mutation-reports.cjs` が 1 つへ併合し、'
       + '**揃っていない併合は何も書かず落ちる** (欠けた塊を全体と名乗らせると、生存を含む塊ほど欠けやすいので点数が実物より良く出る)。'
-      + '塊の job は塊ごとの break では落とさず、合否は併合した全体の点数で決める。',
-    provenance: ['パターン 0-a-11', 'パターン 0-c', 'パス 501 (週次の全掃引が 6 時間で cancel されていた · GitHub の実行履歴で実測)', 'パス 501e (週次も塊の matrix + 併合)'],
+      + '塊の job は塊ごとの break では落とさず、合否は併合した全体の点数で決める。'
+      + ' ★ **走る場所の設定が手元と違えば、同じ検査でも答えが割れる** (パス 501) —— `vitest.config.ts` の `retry: process.env.CI ? 2 : 0` は、'
+      + 'GitHub が `CI=true` を渡すので**変異検査の job だけを「落ちた検査を最大 2 回やり直す」設定で走らせていた**。'
+      + '通常の CI では retry は回帰を隠さない (本物の不具合は決定的に落ち続ける) が、変異検査では偽になる: 最初の 1 回でモジュール直下の状態 (`store.ts` の単調時計) を'
+      + '消費する検査は、変異体の下でも 2 回目に通り、殺したはずの変異体が生存に見える (実測 #173: 手元は 100.00%・GitHub は生存 2)。'
+      + '**測る側が retry を切る** (Stryker を走らせる step だけ `CI` を空にする) のが本筋で、検査の側も 1 回で完結する形へ直す (時計は probe で相対化)。',
+    provenance: ['パターン 0-a-11', 'パターン 0-c', 'パス 501 (週次の全掃引が 6 時間で cancel されていた · GitHub の実行履歴で実測)', 'パス 501e (週次も塊の matrix + 併合)', 'パス 501g (変異検査の job だけが retry 2 で走っていた · store の生存 2 件で実測)'],
     enforcedBy: [gate('lint:docs'), ci('.github/workflows/mutation.yml'), harness('mutate:merge'), test(T.shared('mergeMutationReports'))],
   },
   {

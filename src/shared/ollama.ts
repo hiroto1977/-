@@ -54,7 +54,6 @@
  */
 import { charsOverCeiling, clampToCeiling } from './inputCeiling';
 import { displayDateOf } from './isoDate';
-import { nonNeg } from './num';
 import { MAX_LOCAL_MODEL_ERROR_CHARS, redactForMessage } from './redact';
 import { prereleaseKey, splitVersionPrerelease } from './versionOrder';
 
@@ -630,13 +629,16 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
     // isSafeModelName が非文字列を弾くので typeof の前置きは要らない。
     if (!isSafeModelName(m.name)) continue;
     /*
-     * `nonNeg` は `Number.isFinite` で値を変換せずに判るので、文字列も Infinity も 0 になる。
+     * `Number.isFinite` は値を変換しないので、文字列も Infinity も 0 になる。
      * **負も 0 へ** (パス 408) —— ファイルの大きさに負は無いので壊れた応答であり、
      * 実測で `size: -1e300` は `-9.5367431640625e+293 MB` を画面に刷っていた。
-     * `raw >= 0` と書いていた頃は `raw > 0` と答えが同じ (0 は 0 のまま) 等価変異が残った
-     * ので、この形に寄せた (パス 501)。
+     * `raw >= 0 ? raw : 0` と書いていた頃は `raw > 0` と答えが同じ (0 は 0 のまま) 等価変異が
+     * 残ったので `Math.max(0, …)` に寄せた (パス 501)。`nonNeg` (num.ts) と同じ式だが読まない:
+     * この module は整合性チェーンの保護対象で、num.ts を読むと閉包が破れる (num.ts まで
+     * 保護対象へ入れるほどの判断ではない —— 表示のための 1 行)。
      */
-    const size = nonNeg(m.size as number);
+    const raw = m.size as number;
+    const size = Number.isFinite(raw) ? Math.max(0, raw) : 0;
     out.push({
       name: m.name,
       family: modelDetail(m.details?.family),

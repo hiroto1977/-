@@ -144,6 +144,22 @@ function chunk(label: string, files: string[]): Chunk {
   };
 }
 
+/** job の本文を step (6 字下げの `- name:`) ごとに割る。 */
+function stepBlocks(jobBody: string): string[] {
+  const out: string[] = [];
+  let cur: string[] | null = null;
+  for (const line of jobBody.split('\n')) {
+    if (/^ {6}- /.test(line)) {
+      if (cur !== null) out.push(cur.join('\n'));
+      cur = [line];
+    } else if (cur !== null) {
+      cur.push(line);
+    }
+  }
+  if (cur !== null) out.push(cur.join('\n'));
+  return out;
+}
+
 describe('併合 script (パス 501e)', () => {
   it('★ 併合 script の self-test が全件通る (実物の chunker との対照を含む)', () => {
     const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -301,6 +317,34 @@ describe('workflow の配線 (パス 501e)', () => {
     // incremental は使わない (古い結果が偽の生存を作る)。
     expect(has(some, 'rm -f .stryker-incremental.json')).toBe(true);
     expect(has(some, 'actions/cache')).toBe(false);
+  });
+
+  /*
+   * `vitest.config.ts` は `retry: process.env.CI ? 2 : 0` で、GitHub は `CI=true` を渡す。
+   * 変異検査の step が `CI` を空にしないと、**最初の 1 回で状態を消費する検査は変異体の下でも
+   * 2 回目に通り、殺したはずの変異体が生存に見える** (実測 #173: `store.ts` の 2 件)。
+   * 手元 (retry 0) と GitHub の答えを揃える。他の step は触らない (対照)。
+   */
+  it('★ Stryker を走らせる step だけが検査の retry を切る (CI を空にする · パス 501)', () => {
+    const cfg = readOriginalSource(path.join(REPO, 'vitest.config.ts'));
+    // 前提: retry は `CI` で決まる (この前提が変われば、この検査の理由も変わる)。
+    expect(cfg).toMatch(/retry:\s*process\.env\.CI\s*\?\s*2\s*:\s*0/);
+    const stryker = (['mutate-full', 'mutate-some'] as const).map((name) => {
+      const steps = stepBlocks(jobs[name]!).filter((b) => b.includes('npx stryker run'));
+      expect(steps.length, `${name} の Stryker step`).toBe(1);
+      return steps[0]!;
+    });
+    for (const step of stryker) expect(step).toMatch(/^ {10}CI: ''\s*$/m);
+    // 対照: それ以外の step は `CI` を触らない (job 全体の環境を変えない)。
+    const others = (['scope', 'mutate-full', 'mutate-some', 'merge-full'] as const)
+      .flatMap((name) => stepBlocks(jobs[name]!))
+      .filter((b) => !b.includes('npx stryker run'));
+    expect(others.length).toBeGreaterThanOrEqual(10);
+    expect(others.filter((b) => /^\s+CI:/m.test(b))).toEqual([]);
+    // 針が実際に当たる標本: 空の CI を持つ step と持たない step。
+    const sample = '      - name: a\n        env:\n          CI: \'\'\n      - name: b\n        run: echo\n';
+    expect(stepBlocks(sample).filter((b) => /^ {10}CI: ''\s*$/m.test(b))).toHaveLength(1);
+    expect(stepBlocks(sample)).toHaveLength(2);
   });
 
   it('★ 全ジョブの run: に ${{ を置かない (新しい job も lint:workflow-security と二重に)', () => {

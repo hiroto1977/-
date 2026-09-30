@@ -2310,6 +2310,22 @@
       "leafCount": 99,
       "note": "update integrity-chain.cjs,keyIntent.ts,LockScreen.tsx",
       "hash": "3ac3a67ca9df51ea14552f67ab2dca2ef6a36e0868fba9eb4d18ea78b90dc336"
+    },
+    {
+      "index": 276,
+      "prevHash": "3ac3a67ca9df51ea14552f67ab2dca2ef6a36e0868fba9eb4d18ea78b90dc336",
+      "merkleRoot": "f60908d7c7904acd5a3af953c02ee95b5c14358c204bcc2bc7e87c1f1bd2dc17",
+      "leafCount": 99,
+      "note": "update vault.ts,httpLimits.ts,ollama.ts",
+      "hash": "07d67638596f8f18b3949eff0b9445b1b35e005982d12990d7c652833a1fd6cd"
+    },
+    {
+      "index": 277,
+      "prevHash": "07d67638596f8f18b3949eff0b9445b1b35e005982d12990d7c652833a1fd6cd",
+      "merkleRoot": "7d5326e604434a1c58ade290154c0332280d0145fd43774f570313d9f1d0a340",
+      "leafCount": 99,
+      "note": "update ollama.ts",
+      "hash": "0dd206ac754b35c4c1733742007a4bbcec4ef63b69cf08c7433f7ccddbaa734f"
     }
   ],
   "tipManifest": {
@@ -2376,7 +2392,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "e33c5c05b8d22b3b91edf909d4d8547c37436d0282c5c49060f7f91a37f7adc9",
+    "src/renderer/security/vault.ts": "d493f51f0dbc74df4453da6391e63813f8a00df50e25f2f342ef4ec3e1848dc1",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",
@@ -2393,12 +2409,12 @@
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "b103b6fdf04b058a0cae9be3bed2ad035758463dee7b1ed6cc9da778540475ce",
     "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
-    "src/shared/httpLimits.ts": "0293ccc080492de207962376b6fc345bf194c568f5875586fbccee2b90db03a2",
+    "src/shared/httpLimits.ts": "a376deeac169463b4b2d781fd2174d4231ca566e9c31c78f47997a7bb8f073a4",
     "src/shared/imageUrlGate.ts": "a1f2fad05923c97539971c4f2d5aba4e732d460f90d7d83657c391d5199aef68",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
-    "src/shared/ollama.ts": "b20c4a0d8983b39cd57da20aa3162d54225753df922190709c92967a908a6fd0",
+    "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/privateTarget.ts": "2a7f4b178d82653c596b8cf92f5a18ccb5fc73b5c898dee3b66583be53ed47c1",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",

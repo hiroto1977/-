@@ -55,6 +55,23 @@ name: mutation
 #     失敗・時間切れ) だけが赤くなり、その塊だけ Re-run failed jobs で回し直せる
 #   - **揃っていない併合は何も書かず落ちる** (欠けた塊を全体と名乗らせない)
 #
+# ## Stryker を走らせる step だけ、検査の retry を切る (2026-09-30 · パス 501)
+#
+# `vitest.config.ts` は `retry: process.env.CI ? 2 : 0` で、GitHub は `CI=true` を渡す。
+# つまり**この workflow の変異検査だけが「落ちた検査を最大 2 回やり直す」設定で走り**、
+# 手元の container (`CI` が無く retry 0) と答えが割れうる。通常の CI では「本物の不具合は
+# 決定的に落ち続けるので、retry は回帰を隠さない」と言えるが、**変異検査では偽になる**:
+# 検査が最初の 1 回で消費するモジュール直下の状態 (`store.ts` の単調時計 `_lastTs` など) に
+# 頼っていると、変異体の下でも 2 回目は状態が進んで通り、殺したはずの変異体が生存に見える。
+# 実測 (#173・#174): `store.ts` の `>=` → `>` の 2 件がその形で、手元は 100.00%・GitHub は
+# 生存 2 だった。検査の側も 1 回で完結する形へ直した (時計は probe で相対化) が、
+# **測る側が retry を切る**のが手元と GitHub の答えを揃える本筋なので、Stryker を走らせる
+# 2 つの step (`mutate-full` / `mutate-some`) の `env` だけ `CI` を空にする (他の step と
+# job の環境は変えない)。代償: 揺れる検査が初回検査 (dry run) で落ちると塊の job が赤くなる
+# (Re-run failed jobs で回し直せる)。変異体の下で 1 度だけ揺れて落ちた検査は「殺した」に
+# 数えられる —— 生存を作らない向きの誤差である。`mergeMutationReports.test.ts` が 2 つの
+# step の配線を留める。
+#
 # ## 手で選んだ対象だけを測り直す (2026-09-30 · パス 501)
 #
 # 直したファイルを**GitHub の runner で**測り直したいことがある (この session の container は
@@ -199,6 +216,7 @@ jobs:
       - name: Run mutation testing (全件・この塊)
         env:
           TARGETS: ${{ matrix.chunk }}
+          CI: ''
         run: |
           if [ -z "$TARGETS" ] || [ "$TARGETS" = "none" ]; then
             echo "塊が空です (scope job の出力を確認してください)。"
@@ -312,6 +330,7 @@ jobs:
       - name: Run mutation testing (変わった対象のみ・この塊)
         env:
           TARGETS: ${{ matrix.chunk }}
+          CI: ''
         run: |
           if [ -z "$TARGETS" ] || [ "$TARGETS" = "none" ]; then
             echo "塊が空です (scope job の出力を確認してください)。"
