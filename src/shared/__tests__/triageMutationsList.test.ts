@@ -19,6 +19,8 @@
  * 2. 殺された物 (Killed / Timeout) と無視した物 (Ignored) を**出さない**こと
  * 3. 件数の見出しと、ファイルごとの見出しの件数が同じ母集団であること
  * 4. `mutation.yml` の merge-full が併合した報告へ `--list` を当てること (配線)
+ * 5. 生存の行の末尾に、その行を通した検査のファイルが付くこと (`coveredBy` → `testFiles`・
+ *    多い順に 3 つまで・残りは `+N`・未知の id は無視・未到達には付かない)
  */
 import { describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
@@ -38,10 +40,12 @@ interface Mut {
   replacement?: string;
   status: string;
   static?: boolean;
+  coveredBy?: string[];
   location: Loc;
 }
 interface Report {
   files: Record<string, { source?: string; mutants: Mut[] }>;
+  testFiles?: Record<string, { tests: { id: string }[] }>;
 }
 
 const triage = req(path.join(REPO, 'scripts/triage-mutations.cjs')) as {
@@ -106,17 +110,22 @@ function report(): Report {
         source: SOURCE,
         mutants: [
           // 位置順に並べ直されること (2 行目が先に書いてあるのに 1 行目が先に出る)。
-          mk('1', 'Survived', at(2, 5, 2, 14), { replacement: 'false' }),
+          mk('1', 'Survived', at(2, 5, 2, 14), { replacement: 'false', coveredBy: ['10', '11', '12'] }),
           mk('2', 'NoCoverage', at(1, 11, 1, 16), { mutatorName: 'StringLiteral', replacement: '""' }),
           mk('3', 'Killed', at(3, 3, 3, 8)),
           mk('4', 'Timeout', at(3, 3, 3, 8)),
           mk('5', 'Ignored', at(3, 3, 3, 8)),
-          mk('6', 'Survived', at(2, 16, 4, 2), { mutatorName: 'BlockStatement', replacement: '{}', static: true }),
+          mk('6', 'Survived', at(2, 16, 4, 2), { mutatorName: 'BlockStatement', replacement: '{}', static: true, coveredBy: ['10'] }),
           mk('7', 'CompileError', at(3, 3, 3, 8)),
         ],
       },
       'src/clean.ts': { source: 'x', mutants: [mk('9', 'Killed', at(1, 1, 1, 2))] },
       'src/nosrc.ts': { mutants: [mk('8', 'Survived', at(1, 1, 1, 2), { replacement: '' })] },
+    },
+    // id 10・11 は alpha の検査、12 は beta の検査 (ファイル名は `.test.ts` を落として短くして出す)。
+    testFiles: {
+      'src/x/__tests__/alpha.test.ts': { tests: [{ id: '10' }, { id: '11' }] },
+      'src/x/__tests__/beta.test.ts': { tests: [{ id: '12' }] },
     },
   };
 }
@@ -140,8 +149,8 @@ describe('listNonKilled — 殺されていない全件を 1 行ずつ', () => {
       '',
       '## src/b.ts (3)',
       'L1:11 N StringLiteral "abc" ⇒ ""',
-      'L2:5 S ConditionalExpression a === "x" ⇒ false',
-      'L2:16 S BlockStatement (static) { run(); } ⇒ {}',
+      'L2:5 S ConditionalExpression a === "x" ⇒ false ← alpha×2, beta',
+      'L2:16 S BlockStatement (static) { run(); } ⇒ {} ← alpha',
       '',
       '## src/nosrc.ts (1)',
       'L1:1 S ConditionalExpression ? ⇒ (空)',
@@ -156,6 +165,53 @@ describe('listNonKilled — 殺されていない全件を 1 行ずつ', () => {
   it('殺されていない物が 1 つも無い報告は、行を 1 つも出さない', () => {
     const none = triage.listNonKilled({ files: { 'src/clean.ts': report().files['src/clean.ts']! } });
     expect(none).toEqual({ lines: [], survived: 0, noCoverage: 0, files: 0 });
+  });
+});
+
+describe('listNonKilled — 行を通した検査のファイル (← a×3, b, c +N)', () => {
+  const one = (coveredBy: string[] | undefined, status = 'Survived'): string[] => {
+    const rep: Report = {
+      files: { 'src/a.ts': { source: 'x', mutants: [{ id: '1', mutatorName: 'M', replacement: 'y', status, coveredBy, location: at(1, 1, 1, 2) }] } },
+      testFiles: {
+        'a/__tests__/one.test.ts': { tests: [{ id: '1' }] },
+        'a/__tests__/two.test.ts': { tests: [{ id: '2' }, { id: '3' }] },
+        'a/__tests__/three.test.ts': { tests: [{ id: '4' }, { id: '5' }, { id: '6' }] },
+        'a/__tests__/four.test.tsx': { tests: [{ id: '7' }] },
+        'a/__tests__/tool.audit.ts': { tests: [{ id: '8' }] },
+      },
+    };
+    return triage.listNonKilled(rep).lines.filter((l) => l.startsWith('L1:1 '));
+  };
+
+  it('件数の多い順に 3 ファイルまで出し、残りは +N (同数は名前順・1 件は ×1 を付けない)', () => {
+    // three×3 / two×2 / 同数 1 件は four・one・tool の名前順 → four が先で 3 つ目、one と tool は +2
+    expect(one(['1', '2', '3', '4', '5', '6', '7', '8'])).toEqual(['L1:1 S M x ⇒ y ← three×3, two×2, four +2']);
+    // 3 ファイル以内なら +N は付かない
+    expect(one(['4', '5', '1'])).toEqual(['L1:1 S M x ⇒ y ← three×2, one']);
+  });
+
+  it('.test.ts / .test.tsx / .audit.ts の拡張子を落として短くする', () => {
+    expect(one(['7'])).toEqual(['L1:1 S M x ⇒ y ← four']);
+    expect(one(['8'])).toEqual(['L1:1 S M x ⇒ y ← tool']);
+  });
+
+  it('coveredBy が無い・空・どの検査にも当たらない id だけなら、何も付けない', () => {
+    expect(one(undefined)).toEqual(['L1:1 S M x ⇒ y']);
+    expect(one([])).toEqual(['L1:1 S M x ⇒ y']);
+    expect(one(['999'])).toEqual(['L1:1 S M x ⇒ y']);
+    // 知らない id は数えず、知っている id だけが残る
+    expect(one(['999', '1'])).toEqual(['L1:1 S M x ⇒ y ← one']);
+  });
+
+  it('未到達 (N) には付けない (どの検査も通っていない)', () => {
+    expect(one(['1'], 'NoCoverage')).toEqual(['L1:1 N M x ⇒ y']);
+  });
+
+  it('testFiles が無い報告でも落ちず、何も付けない', () => {
+    const rep: Report = {
+      files: { 'src/a.ts': { source: 'x', mutants: [{ id: '1', mutatorName: 'M', replacement: 'y', status: 'Survived', coveredBy: ['1'], location: at(1, 1, 1, 2) }] } },
+    };
+    expect(triage.listNonKilled(rep).lines.filter((l) => l.startsWith('L1:1 '))).toEqual(['L1:1 S M x ⇒ y']);
   });
 });
 
@@ -176,7 +232,7 @@ describe('--list の配線', () => {
       }
       const out = log.mock.calls.map((c) => String(c[0]));
       expect(out[0]).toBe('# 殺されていない変異体 — 生存 3 件 / 未到達 1 件 (2 ファイル)');
-      expect(out).toContain('L2:5 S ConditionalExpression a === "x" ⇒ false');
+      expect(out).toContain('L2:5 S ConditionalExpression a === "x" ⇒ false ← alpha×2, beta');
     } finally {
       log.mockRestore();
     }

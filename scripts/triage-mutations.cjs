@@ -28,6 +28,13 @@
  * 評価される形 —— 読み直して測る検査が無いと「生存」に見える・法則 109)。元の綴りは報告が
  * 持つ `source` から位置で切り出す (Stryker の位置は行も列も 1 始まり・end は排他)。
  * `mutation.yml` の merge-full が併合した報告へこれを当て、GitHub のログ 1 本で全件が読める。
+ *
+ * **生存の行の末尾に、その行を通した検査のファイルを付ける** (`← a×3, b +2`・多い順に 3 つまで・
+ * 残りは `+N`) —— 報告の `coveredBy` (検査の id) と `testFiles` (id → ファイル) を引く。
+ * 生存した変異体は「通したのに誰も主張していない」ので、**足すべき主張の置き場はその検査**であり、
+ * `(static)` の生存は**覆った検査がそのモジュールを検査の中で初めて評価した検査**そのもの
+ * (法則 109 の直し方を当てる先 —— ローカルで Stryker を回して `coveredBy` を読まなくて済む)。
+ * 未到達 (N) はどの検査も通っていないので付かない。
  */
 
 const fs = require('node:fs');
@@ -79,12 +86,37 @@ function sliceSource(source, loc) {
   return parts.join('\n');
 }
 
+/** 検査の id → 検査ファイルの短い名前 (`…/__tests__/foo.test.ts` → `foo`)。 */
+function testFileIndex(report) {
+  const byId = new Map();
+  for (const [p, tf] of Object.entries((report && report.testFiles) || {})) {
+    const short = path.basename(p).replace(/\.(test|audit)\.[cm]?[jt]sx?$/, '');
+    for (const t of (tf && tf.tests) || []) byId.set(String(t.id), short);
+  }
+  return byId;
+}
+
+/** その変異体を通した検査を、ファイルごとの件数で (多い順・3 ファイルまで・残りは `+N`)。 */
+function coveringFiles(m, byId) {
+  const count = new Map();
+  for (const id of m.coveredBy || []) {
+    const f = byId.get(String(id));
+    if (f !== undefined) count.set(f, (count.get(f) || 0) + 1);
+  }
+  if (count.size === 0) return '';
+  const top = [...count.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
+  const shown = top.slice(0, 3).map(([f, n]) => (n > 1 ? `${f}×${n}` : f));
+  const rest = top.length - shown.length;
+  return ` ← ${shown.join(', ')}${rest > 0 ? ` +${rest}` : ''}`;
+}
+
 /** 殺されていない変異体 (Survived / NoCoverage) を、ファイルごと・位置順に 1 行ずつ。 */
 function listNonKilled(report, fileFilter) {
   const lines = [];
   let survived = 0;
   let noCoverage = 0;
   let files = 0;
+  const byId = testFileIndex(report);
   for (const [file, info] of Object.entries((report && report.files) || {})) {
     if (fileFilter && !file.includes(fileFilter)) continue;
     const rows = ((info && info.mutants) || [])
@@ -100,7 +132,7 @@ function listNonKilled(report, fileFilter) {
       else survived += 1;
       const orig = compact(sliceSource(info.source, m.location)) || '?';
       const repl = compact(m.replacement || '') || '(空)';
-      lines.push(`L${line}:${col} ${isNone ? 'N' : 'S'} ${m.mutatorName || '?'}${m.static ? ' (static)' : ''} ${orig} ⇒ ${repl}`);
+      lines.push(`L${line}:${col} ${isNone ? 'N' : 'S'} ${m.mutatorName || '?'}${m.static ? ' (static)' : ''} ${orig} ⇒ ${repl}${isNone ? '' : coveringFiles(m, byId)}`);
     }
   }
   return { lines, survived, noCoverage, files };
