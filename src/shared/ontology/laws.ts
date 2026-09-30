@@ -168,7 +168,7 @@ export const LAWS: readonly Law[] = [
     statement: 'verify:all の全ゲートが ci.yml に在る。「これで強制される」と書いた検査は、CI のどのステップで走るかを確かめる。走らないなら vitest ゲートへ移す。'
       + ' ★ **走る場所に在っても、その場所の上限に収まらなければ走っていない** (パス 501) —— GitHub Actions の job は 6 時間で cancel される。'
       + '週次の変異検査の全掃引 #172 (2026-09-27・#788 のマージ後・cache 落ち) はちょうど 6 時間で cancel され、報告も cache も残さなかった'
-      + ' (`actions/cache` の post は success() のときだけ保存する)。`main` へのマージで 67 本 (約 16,000 変異体) を 1 job で測る形も同じ上限を越えうる。'
+      + ' (`actions/cache` の post は success() のときだけ保存する)。`main` へのマージで 69 本 (約 16,000 変異体) を 1 job で測る形も同じ上限を越えうる。'
       + '**所要は対象の重さから導けるので、1 job に載せる量に上限を置いて塊に分ける** (`scripts/mutate-changed.cjs --chunks` · 1 塊 4,000 行まで · self-test が実物の一覧で塊の上限を確かめる)。'
       + '塊の合計の runner 時間は変わらない —— 分けるのは壁時計の上限に収めるためである。',
     provenance: ['パターン 0-a-11', 'パターン 0-c', 'パス 501 (週次の全掃引が 6 時間で cancel されていた · GitHub の実行履歴で実測)'],
@@ -498,12 +498,12 @@ export const LAWS: readonly Law[] = [
     name: '等価変異は黙らせる前に形を消す',
     statement: '変異検査の生存は 3 種に分かれる —— 本物の穴 (検査を書く) / 偽の生存 (当て直すと殺されている · `audit:survivors`) / 等価 (どの入力でも答えが変わらない)。'
       + '等価は pragma で黙らせる前に**その形を消せないか**を先に疑う: 型の絞り込みのためだけの判定 (`typeof v === \'number\' && Number.isFinite(v)` —— `Number.isFinite` は非数を等しく false にする) は'
-      + '述語 `isFiniteNumber(v): v is number` 1 つへ寄せると変異体そのものが無くなる (パス 501 で 3 ファイル 6 か所)・`join` の前の `filter(x !== null)` は `join` が null を \'\' として繋ぐので長さを見ないなら等価 (共有の `joinSheetNotes` へ)・'
+      + '述語 `isFiniteNumber(v): v is number` 1 つへ寄せると変異体そのものが無くなる (パス 501 で 4 ファイル 6 か所 —— typeof の形は 3 ファイル 5 か所)・★ `join` の前の `filter(x !== null)` を「等価」と書きかけたが、監査が偽と示した (null が挟まると区切りが二重になる —— 生き残っていたのは断片ごとの `toContain` が区切りを見ていなかったためで、本物の穴の側。写し 6 か所は `joinSheetNotes` 1 つへ寄せ、繋ぎ目を留めた検査が落とす)・'
       + '`\'\'` より小さい文字列は無いので `newerAsOf` の空の判定は `a > b` に畳める・空の判定と `find` の重ね掛けは `find` だけで同じ答え。'
       + '**消せない等価 (到達しない防御・JS の `null >= 10` が false であること) にだけ pragma を置き、理由を書く。** '
       + '★ pragma を置く前に**その行の他の判定まで隠していないか**を見る —— 等価な判定だけの 1 行に分けてから置く (パス 496 / 500)。'
       + '2026-08 の `docStudioChecks` (NaN で受けて `x !== null &&` を全部消し、変異体 814 → 695 で生存 0) と `eligibility` (省略可の境界を ±Infinity で持って分岐ごと消した) が先例。',
-    provenance: ['stryker.config.json の _commentEquivalentPragmas (2026-07 / 2026-08)', 'パス 496 / 500 (等価な判定を 1 行に分けてから pragma)', 'パス 501 (8 本の生存 94 件の仕分け: 検査 35 件 / 形の除去 / pragma 5 件)'],
+    provenance: ['stryker.config.json の _commentEquivalentPragmas (2026-07 / 2026-08)', 'パス 496 / 500 (等価な判定を 1 行に分けてから pragma)', 'パス 501 (8 本の生存 94 件の仕分け: 検査 37 件 / 形の除去 / pragma 5 件 —— 記録の監査が「等価」の 1 件を偽と示した)'],
     enforcedBy: [gate('lint:mutation-scope'), harness('mutate'), harness('audit:survivors'), test(T.shared('num'))],
   },
   {

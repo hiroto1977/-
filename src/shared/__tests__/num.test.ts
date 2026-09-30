@@ -71,7 +71,7 @@ describe('assertNonNegativeFinite', () => {
  * `typeof v === 'number' && Number.isFinite(v)` と同じ答えを返す —— `typeof` の側は
  * 型の絞り込みのためだけに在り、`Number.isFinite` は非数を等しく false にするので、
  * 2 つを並べた形は変異検査で等価変異 (typeof を消しても答えが変わらない) を生む。
- * ここでは**非数 8 形が false・有限の数だけが true** を値ごと留める (`Number.isFinite` は
+ * ここでは**非数 11 値と非有限の数 3 値が false・有限の数だけが true** を値ごと留める (`Number.isFinite` は
  * 型強制をしないので、`'1'` も `new Number(1)` も false)。
  */
 describe('isFiniteNumber', () => {

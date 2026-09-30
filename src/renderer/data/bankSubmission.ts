@@ -208,10 +208,13 @@ export function periodRange(periods: readonly string[]): { from: string; to: str
  *
  * 各節の但し書きは「部品を集めて連結する」形で組む (§2 の `salesScopeCaption` が最初)。
  * 2026-09-30 (パス 501) まで同じ `filter` + `join` を 6 か所に書いており、変異検査は
- * その 1 つずつに「`filter` を外す」「区切りを変える」の等価変異を残していた
- * (`Array.prototype.join` は `null` を空文字として繋ぐので、必ず 1 文以上在る節では
- * `filter` を外しても答えが変わらない)。1 か所に寄せれば、`null` の側は
- * 述べることが無い節 (§4 / §6) が、区切りの側は 2 文並ぶ節がそれぞれ留める。
+ * その 1 つずつに「`filter` を外す」「区切りを変える」の変異体を残していた。
+ * ★ 最初は「`join` は `null` を空文字として繋ぐので等価」と書いたが、偽である ——
+ * `null` が文の間や端に在ると区切りが二重・先頭・末尾に出るので答えは変わる。
+ * 生き残っていたのは、断片ごとの `toContain` が区切りを見ていなかったためで、
+ * 繋ぎ目を丸ごと留めた検査 (§1 / §2 / §4 / §5 / §6 / §8 / 水耕栽培の caption) が落とす。
+ * 1 か所に寄せれば、`null` の側は述べることが無い節 (§4 / §6) が、区切りの側は
+ * 2 文並ぶ節がそれぞれ留める。
  */
 function joinSheetNotes(parts: readonly (string | null)[], sep: string): string | null {
   const said = parts.filter((x): x is string => x !== null);
