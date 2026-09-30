@@ -204,12 +204,30 @@ export function periodRange(periods: readonly string[]): { from: string; to: str
 }
 
 /**
+ * **出る文だけを繋ぐ。1 文も無ければ `null`** (空文字を刷らない)。
+ *
+ * 各節の但し書きは「部品を集めて連結する」形で組む (§2 の `salesScopeCaption` が最初)。
+ * 2026-09-30 (パス 501) まで同じ `filter` + `join` を 6 か所に書いており、変異検査は
+ * その 1 つずつに「`filter` を外す」「区切りを変える」の等価変異を残していた
+ * (`Array.prototype.join` は `null` を空文字として繋ぐので、必ず 1 文以上在る節では
+ * `filter` を外しても答えが変わらない)。1 か所に寄せれば、`null` の側は
+ * 述べることが無い節 (§4 / §6) が、区切りの側は 2 文並ぶ節がそれぞれ留める。
+ */
+function joinSheetNotes(parts: readonly (string | null)[], sep: string): string | null {
+  const said = parts.filter((x): x is string => x !== null);
+  return said.length === 0 ? null : said.join(sep);
+}
+
+/**
  * 期の一覧を「範囲・月数」の 1 語にする (`令和8年4月〜令和9年3月・12 か月`)。
  * 読める期が無ければ `BLANK`。範囲だけでは端の 2 か月しか無い控えを「1 年分」と
  * 読めてしまうので、**月数も必ず添える** (`periodScopeNote` と同じ規則)。
  */
 function periodSpan(periods: readonly string[], f: BankFormat): string {
   const range = periodRange(periods);
+  // 呼び手 7 つはどれも読める期しか渡さない (経営サマリーが `readableKpiRows` で選別した後の
+  // 期・予実の突合も同じ行から) ので、この枝には到達しない (等価変異 · パス 501)。
+  // Stryker disable next-line ConditionalExpression: 読める期しか渡らないので到達しない (等価変異)
   if (range === null) return BLANK;
   const months = new Set(validPeriods(periods)).size;
   return `${formatPeriodRange(range.from, range.to, f)}・${months} か月`;
@@ -299,7 +317,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     // `balanceSheetFreshness` は null にならず、`stale === true` なら
     // `monthsBehind` は必ず数である (不変条件は `shared/balanceSheetFreshness.ts`
     // 側の検査が留めている)。倒し込みを外すと型が通らないので残す (等価変異)。
-    // Stryker disable next-line OptionalChaining: 上の不変条件により到達しない (等価変異)
+    // Stryker disable next-line OptionalChaining,ConditionalExpression,LogicalOperator: 上の不変条件により到達しない (等価変異 —— 3 つの判定のどれを潰しても答えは変わらない)
     if (fr?.monthsBehind === null || fr === null || fr === undefined) return null;
     // **古い側と先の側の両方**。隔たりの害は符号ではなく大きさで決まるのに、
     // 2026-09-07 まで `stale` (古い側) しか見ておらず、基準日が実績より何年先でも
@@ -349,7 +367,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     // 経営レポートは critical の所見として述べ、画面は `bepDisplay` が `—` + 理由で
     // 述べるのに、**相手に渡るこの書面だけが黙っていた** (`noBepSheetNote` に実測)。
     // 売上 0 のときは `zeroRevenueRatioNote` のほうが情報量が多いので出さない。
-    const parts = [
+    return joinSheetNotes([
       periodScopeNote(p.fiscalYearEnd, o.kpi.periods, f),
       k.revenue > 0 ? null : zeroRevenueRatioNote(),
       k.revenue > 0 ? noBepSheetNote(k.bep) : null,
@@ -357,8 +375,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
       // 期が読めない行と、金額が数として読めない行は**別の原因**なので別の文で述べる
       // (パス 443)。どちらも起きていなければ `null`。
       unreadableKpiRowsSheetNote(k),
-    ].filter((s): s is string => s !== null);
-    return parts.length === 0 ? null : parts.join('');
+    ], '');
   };
   const sections: SheetSection[] = [];
 
@@ -404,7 +421,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     // **狭い理由より広い理由を先に述べる** —— 記録が 1 件も無ければこの節は
     // 丸ごと空欄なので、そちらを言う (§3 の `perCapitaBase` と同じ向き)。
     // そのとき期間も重複も在り得ないので、下の 2 つは必ず null になる。
-    const parts = [
+    return joinSheetNotes([
       noSalesRecordsSheetNote(o.sales),
       salesScopeBase(),
       // **落とした行を紙が述べる** (2026-09-22 · パス 400) —— 上の金額は日付の
@@ -412,8 +429,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
       // 合わない」を利用者が説明できない。期間の但し書きの直後に置く (同じ話)。
       droppedSalesRowsSheetNote(o.sales),
       duplicateOrdersSheetNote(o.sales.duplicateOrders),
-    ].filter((s): s is string => s !== null);
-    return parts.length === 0 ? null : parts.join('');
+    ], '');
   };
 
   const conc = o.sales.concentration;
@@ -494,11 +510,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    */
   const financialPositionCaption = (): string | null => {
     if (fp === null) return '貸借対照表が未入力のため算定していません。';
-    const notes = [
-      unreadableBalanceSheetSheetNote(o.balanceSheetUnreadableFields),
-      staleBsNote(),
-    ].filter((n): n is string => n !== null);
-    return notes.length === 0 ? null : notes.join(' ');
+    return joinSheetNotes([unreadableBalanceSheetSheetNote(o.balanceSheetUnreadableFields), staleBsNote()], ' ');
   };
   sections.push({
     title: '4. 財政状態（貸借対照表 基準日現在）',
@@ -539,7 +551,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   const workingCapitalCaption = (): string | null => {
     if (wc === null) return '貸借対照表と売上高が揃っていないため算定していません。';
     const wcStocks = splitMissingStocks(wc.missingStocks, o.balanceSheetUnreadableFields);
-    const notes = [
+    return joinSheetNotes([
       // **何か月分の実績で出した回転日数か。** 溜まり ÷ 流れ の答えは期間の長さで
       // 決まるので、1 年分でないなら必ず述べる (述べることが無ければ null にするのは
       // §1 の `periodScopeNote` と同じ規則。1 年分なら式の「× 365 日」が既に語っている)。
@@ -556,8 +568,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
         ? null
         : `貸借対照表の${wcStocks.unreadable.join('・')}が数として読めないため、該当する回転日数と運転資本は算定していません（0 円としては扱っていません）。`,
       staleBsNote(),
-    ].filter((n): n is string => n !== null);
-    return notes.length === 0 ? null : notes.join(' ');
+    ], ' ');
   };
   /**
    * 式の欄が名乗る日数。**算定していないときは日数を名乗らない** —— 期間が決まっていないので、
@@ -597,15 +608,14 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    * **部品を集めて連結する**形に揃える。
    */
   const cashScopeCaption = (): string | null => {
-    const parts = [
+    return joinSheetNotes([
       acc === null ? '会計ソフト連携（freee）の月次キャッシュフローが無いため算定していません。' : null,
       dealIntakeSheetNote(o.accountingIntake),
       debtService !== null && debtService.unmatchedMonths > 0
         ? `上記の返済余力は、会計キャッシュフローが在る ${debtService.coveredMonths} か月について算定したものです。`
           + `返済予定のある残り ${debtService.unmatchedMonths} か月は実績の営業キャッシュフローがまだ無いため対象外です。`
         : null,
-    ].filter((x): x is string => x !== null);
-    return parts.length === 0 ? null : parts.join('');
+    ], '');
   };
   sections.push({
     title: '6. 資金繰り・返済余力',
@@ -740,10 +750,10 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
       title: '参考：水耕栽培事業の試算（計画値・実績ではありません）',
       // この節も「損益分岐点売上高（月）」を持つので、**同じ書面の中で答え方を割らない**
       // (単価が株あたり変動費以下なら計画の損益分岐点も存在しない・パス 84 / 387)。
-      caption: [
+      caption: joinSheetNotes([
         '設備・品目・費用の入力から算出した計画値です。上の各節の実績とは混ぜていません。',
         noBepSheetNote(h.bep),
-      ].filter((x): x is string => x !== null).join(''),
+      ], ''),
       rows: [
         row('月商（計画）', amt(h.revenue)),
         row('営業利益（計画）', amt(h.operatingProfit)),

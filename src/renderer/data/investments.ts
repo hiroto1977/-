@@ -16,6 +16,7 @@
  */
 
 import { readEntryNumber, readNumeric } from '../../shared/readNumeric';
+import { isFiniteNumber, nonNeg } from '../../shared/num';
 import { refusingSpecs, type NumSpec } from './inputGuards';
 import { moreThanChars } from '../../shared/inputCeiling';
 import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT } from '../../shared/mutualFundsMetrics';
@@ -100,8 +101,8 @@ export const PROPERTY_NUMERIC_FIELDS: readonly { readonly key: string; readonly 
  */
 export function unreadablePropertyField(key: string, fields: readonly string[] | undefined): boolean {
   if (fields === undefined) return false;
-  const label = PROPERTY_NUMERIC_FIELDS.find((f) => f.key === key)?.label;
-  return label !== undefined && fields.includes(label);
+  const field = PROPERTY_NUMERIC_FIELDS.find((f) => f.key === key);
+  return field !== undefined && fields.includes(field.label);
 }
 
 /**
@@ -115,15 +116,8 @@ export function unreadablePropertyField(key: string, fields: readonly string[] |
  */
 export function normalizeProperty(raw: unknown): PropertyEntry {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
-  /**
-   * 有限の数か。**判定を 1 か所に置く** —— 倒す側と名簿を作る側が同じ述語を見る。
-   *
-   * `typeof v === 'number'` は実行時には冗長 (`Number.isFinite` は数値以外を型変換
-   * せずに false にする) が、`v is number` の絞り込みを型検査に伝えるために残す
-   * (`normalizeBalanceSheet` と同じ判断 · パス 444)。
-   */
-  // Stryker disable next-line ConditionalExpression: Number.isFinite が数値以外を false にするので実行時は等価 (型の絞り込みのために残す)
-  const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  // 有限の数か。**判定を 1 か所に置く** —— 倒す側と名簿を作る側が同じ述語
+  // (`shared/num.ts` の `isFiniteNumber`) を見る。
   const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
   return {
     name: typeof r.name === 'string' ? r.name : '',
@@ -696,15 +690,13 @@ export function fundValuation(units: number, navPerUnit: number): number {
 export function normalizeHolding(raw: unknown): HoldingEntry {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const str = (v: unknown): string => (typeof v === 'string' ? v : '');
-  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
   // 取得額と年初来リターンは「無い / 読めない = 未入力 (null)」。0 や評価額に倒すと、測った値と見分けが付かない (パス 122 / 123)。
   const numOrNull = (v: unknown): number | null => (Number.isFinite(v) ? (v as number) : null);
   const units = num(r.units);
   const navPerUnit = num(r.navPerUnit);
   // 評価額が無い控えは口数 × 基準価額 から導く (auto と同じ式)。
-  const valuation = typeof r.valuation === 'number' && Number.isFinite(r.valuation)
-    ? r.valuation
-    : fundValuation(units, navPerUnit);
+  const valuation = isFiniteNumber(r.valuation) ? r.valuation : fundValuation(units, navPerUnit);
   return {
     code: str(r.code),
     name: str(r.name),
@@ -913,7 +905,9 @@ export interface FundPortfolio {
  * と同じく、分からない物は分母にも分子にも入れず、**数だけ言う**。負の取得額・NaN は「読めない」= 未入力側。
  */
 export function computeFundPortfolio(holdings: readonly PortfolioHolding[], baseCostBasis: number): FundPortfolio {
-  const base = Number.isFinite(baseCostBasis) && baseCostBasis > 0 ? baseCostBasis : 0;
+  // 負・非有限の一括原価は 0 (= 見本ぜんぶが「取得額が分からない」側)。`nonNeg` は 0 を 0 のまま返すので
+  // 「0 より大きければその値」と同じ答えになる (パス 501 —— 境目 0 の判定は等価変異だった)。
+  const base = nonNeg(baseCostBasis);
   let totalValuation = 0;
   let demoValuation = 0;
   let demoCount = 0;
@@ -927,7 +921,7 @@ export function computeFundPortfolio(holdings: readonly PortfolioHolding[], base
     if (h.demo) {
       demoValuation += v;
       demoCount += 1;
-    } else if (h.acquisitionCost !== null && Number.isFinite(h.acquisitionCost) && h.acquisitionCost >= 0) {
+    } else if (isFiniteNumber(h.acquisitionCost) && h.acquisitionCost >= 0) {
       measuredValuation += v;
       userCost += h.acquisitionCost;
     } else {

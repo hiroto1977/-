@@ -26,7 +26,7 @@
 | **1. 合格テスト数** | 仕様への形式適合 | Vitest | CI: PR と `main` への push のたび |
 | **2. カバレッジ** | テストが触れた行・分岐 —— **`src/main/**` だけ** | `@vitest/coverage-v8` | CI: 同上 (**閾値は宣言していない** —— 刷るだけで、下がっても鳴らない) |
 | **3. Property-based fuzz** | 任意入力でクラッシュしないこと、不変条件保持 | `fast-check` | 通常テストに混在 |
-| **4. Mutation score** | テストが**実際にバグを検出できる**か | Stryker | `mutation.yml`: 週次 (全件) と `main` への push (変わったファイルだけ)・手動 (全件)。**PR では走らない** |
+| **4. Mutation score** | テストが**実際にバグを検出できる**か | Stryker | `mutation.yml`: 週次 (全件) と `main` への push (変わったファイルだけ・**1 塊 4,000 行までの matrix job に分けて** —— 2026-09-30 パス 501)・手動 (全件)。**PR では走らない** |
 
 カバレッジが高くても mutation score が低ければ「テストはコードを通って
 いるが assertion が弱い」という意味。両方測ることで真の精度が分かる。
@@ -123,7 +123,14 @@ npm run audit:survivors -- src/shared/example.ts --top=10   # 「生存」が本
 
 `.github/workflows/mutation.yml` が **毎週月曜 03:00 JST** (cron `0 18 * * 0` UTC) に全件を測る。
 incremental のキャッシュは `stryker-<ブランチ名>` (なければ `stryker-main`) から戻す。
-`main` への push では**変わったファイルだけ**を、キャッシュを使わずに測る。
+`main` への push では**変わったファイルだけ**を、キャッシュを使わずに測る —— `scripts/mutate-changed.cjs --chunks` が
+対象を行数で塊に分け (1 塊 4,000 行まで・重い順にいちばん軽い塊へ)、塊ごとに別の matrix job で測る
+(GitHub の job は 6 時間で cancel される。67 本を 1 度に対象にする PR は 1 job に収まらない —— 2026-09-30 パス 501)。
+`thresholds.break` は塊ごとに掛かる。
+
+★ **週次の全掃引は 2026-09-27 (#172・#788 のマージ後) にちょうど 6 時間で cancel された** (GitHub の実行履歴で実測)。
+`actions/cache` の鍵 `stryker-main` は不変なので、当たった週は保存されず次の週は 7 日ぶりのアクセスで evict される ——
+全掃引が cache 無しで 6 時間を越える今、週次は cache 落ちの週ごとに cancel される (`docs/REMAINING_WORK.md` の「パス 501」)。
 
 **週次が測るのは `main` の木である。** 作業ブランチの変更は merge されるまで週次に映らない ——
 ブランチで公開する品質の頁は、ブランチの木で回した全掃引から作る。

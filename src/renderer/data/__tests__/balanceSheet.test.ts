@@ -828,3 +828,25 @@ describe('どの貸借対照表を「現在」と呼ぶか (パス 127)', () => 
     expect(balanceSheetChoiceNote([a, b], null)).toBeNull();
   });
 });
+
+/**
+ * **「現在」の選び方の同点と空** (2026-09-30 · パス 501)。変異検査で `newerAsOf` の
+ * 判定 8 件が等価と分かり、比較を `a > b` 1 つに畳んだ。その上で、畳んだ後も
+ * 見分けの要る 2 つの境目を留める。
+ */
+describe('currentBalanceSheet — 同点と基準日なし (パス 501)', () => {
+  const rec = (id: string, createdAt: number, asOf: unknown) => ({ id, createdAt, data: { asOf } });
+
+  it('★ 基準日なしどうしは後に入力した方 —— 並びの順ではない', () => {
+    expect(currentBalanceSheet([rec('a', 300, ''), rec('b', 100, '')])?.id).toBe('a');
+    expect(currentBalanceSheet([rec('b', 100, ''), rec('a', 300, '')])?.id).toBe('a');
+  });
+
+  it('★ 基準日も入力時刻も同じ (完全な同点) なら先に在る方を採り、比較は 0 を返す', () => {
+    const a = rec('a', 100, '2026-03-31');
+    const b = rec('b', 100, '2026-03-31');
+    expect(compareBalanceSheetRecords(a, b)).toBe(0);
+    expect(currentBalanceSheet([a, b])?.id).toBe('a');
+    expect(currentBalanceSheet([b, a])?.id).toBe('b');
+  });
+});

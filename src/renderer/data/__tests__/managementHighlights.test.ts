@@ -42,6 +42,8 @@ const mkOv = (p: any = {}): BusinessOverview => ({
   // 未入力の内数は既定で無し (この検査では CCC の帯だけを動かす)。名前を渡す検査は
   // `missingStocks` を明示する。
   workingCapital: 'wc' in p ? { missingStocks: [], ...p.wc } : null,
+  // 貸借対照表の「読めない」欄の名簿 (パス 444)。`unreadable` を渡した検査だけが持つ。
+  balanceSheetUnreadableFields: 'unreadable' in p ? { zeroed: [], missing: p.unreadable } : undefined,
   accounting: 'accounting' in p ? p.accounting : null,
   accountingRecency: 'recency' in p ? p.recency : null,
   runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
@@ -791,5 +793,63 @@ describe('会計連携の古さ (accountingRecency)', () => {
 
   it('対照: 会計連携か貸借対照表が無ければ (recency=null) 何も言わない', () => {
     expect(buildManagementHighlights(mkOv({ recency: null })).some((h) => h.message.includes('会計連携を同期'))).toBe(false);
+  });
+});
+
+/**
+ * **変異検査が教えた所** (2026-09-30 · パス 501)。8 本の触っていない行の生存 89 件を
+ * 今の木で測り直したら、このファイルの 11 件は「値を見ない検査」の報せだった ——
+ * DSCR の非有限 (パス 98 の直しに検査が無かった)・読めない欄だけの所見の severity /
+ * category / 区切り・会計連携の所見の category。
+ */
+describe('buildManagementHighlights — 変異検査が教えた所 (パス 501)', () => {
+  const c = (hs: Highlight[], category: string) => hs.filter((h) => h.category === category);
+
+  it('★ DSCR が有限でなければ「返済余力は十分」と言わない (パス 98 の直しを留める)', () => {
+    expect(c(buildManagementHighlights(mkOv({}), Number.POSITIVE_INFINITY), '返済余力')).toEqual([]);
+    expect(c(buildManagementHighlights(mkOv({}), Number.NEGATIVE_INFINITY), '返済余力')).toEqual([]);
+    expect(c(buildManagementHighlights(mkOv({}), Number.NaN), '返済余力')).toEqual([]);
+    // 針が的に当たる標本 —— 有限なら言う。
+    expect(c(buildManagementHighlights(mkOv({}), 1.5), '返済余力')).toHaveLength(1);
+  });
+
+  it('★ 読めない欄だけなら「未入力」の所見を出さず、読めない側の所見 1 つを warning / 運転資金 で出す', () => {
+    const hs = buildManagementHighlights(
+      mkOv({ wc: { ccc: null, missingStocks: ['棚卸資産'] }, unreadable: ['棚卸資産'] }),
+    );
+    expect(c(hs, '運転資金')).toEqual([
+      {
+        severity: 'warning',
+        category: '運転資金',
+        message: '貸借対照表の棚卸資産が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
+      },
+    ]);
+  });
+
+  it('★ 読めない欄が 2 つなら「・」でつなぐ (順序は名簿の順)', () => {
+    const hs = buildManagementHighlights(
+      mkOv({ wc: { ccc: null, missingStocks: ['棚卸資産', '売上債権'] }, unreadable: ['棚卸資産', '売上債権'] }),
+    );
+    expect(c(hs, '運転資金').map((h) => h.message)).toEqual([
+      '貸借対照表の棚卸資産・売上債権が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
+    ]);
+  });
+
+  it('★ 未入力と読めないが混ざれば、原因ごとに 1 つずつ (順序は 未入力 → 読めない)', () => {
+    const hs = buildManagementHighlights(
+      mkOv({ wc: { ccc: null, missingStocks: ['売上債権', '棚卸資産'] }, unreadable: ['棚卸資産'] }),
+    );
+    expect(c(hs, '運転資金').map((h) => h.message)).toEqual([
+      '貸借対照表の売上債権が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。KPI ページの貸借対照表に入力してください。',
+      '貸借対照表の棚卸資産が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
+    ]);
+  });
+
+  it('★ 会計連携が古い所見は「資金繰り」の warning', () => {
+    const hs = buildManagementHighlights(
+      mkOv({ recency: { latestAccountingMonth: '2026-01', cashAsOfMonth: '2026-04', monthsBehind: 3, stale: true, ahead: false } }),
+    );
+    const h = hs.find((x) => x.message.includes('会計連携の最新月'));
+    expect(h).toMatchObject({ severity: 'warning', category: '資金繰り' });
   });
 });

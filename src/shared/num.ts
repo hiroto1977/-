@@ -82,6 +82,20 @@ export function finiteOr0(n: number): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/**
+ * **有限の数か** —— 型の絞り込みを伴う述語 (2026-09-30 · パス 501)。
+ *
+ * `typeof v === 'number' && Number.isFinite(v)` と書くと、`typeof` の側は実行時には
+ * 冗長である (`Number.isFinite` は数でない物を型変換せずに false にする)。変異検査は
+ * それを「`true && Number.isFinite(v)`」という**等価変異**として 4 か所に残し、
+ * 2 か所は理由つきの pragma で測定から外していた (`normalizeBalanceSheet` /
+ * `normalizeProperty`)。述語を 1 つ置けば、呼び手は冗長な判定も pragma も要らない ——
+ * TypeScript は述語の戻り値で `v` を `number` に絞る。
+ */
+export function isFiniteNumber(v: unknown): v is number {
+  return Number.isFinite(v);
+}
+
 /** 100円未満を切り捨てる（国税の端数処理・自動車税の月割など）。 */
 export function floorHundred(n: number): number {
   return Math.floor(n / 100) * 100;

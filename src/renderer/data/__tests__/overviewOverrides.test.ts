@@ -828,3 +828,11 @@ describe('placed — 手で置いた値を表示名と単位つきで返す', ()
     }
   });
 });
+
+describe('manualOverrideNote — 文を値ごと留める (パス 501)', () => {
+  it('★ 2 つ以上の欄は「・」で並べる', () => {
+    expect(manualOverrideNote({ overridden: ['kpi.revenue', 'team.members'], staleDerived: [] })).toBe(
+      '売上高・メンバー数は手で置いた数値です（入力済みデータからの自動計算を表示上だけ置き換えたもので、実績の累計ではありません）。',
+    );
+  });
+});

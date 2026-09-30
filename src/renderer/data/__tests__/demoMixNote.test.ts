@@ -14,6 +14,7 @@ import {
   computeFundPortfolio,
   computeRealEstatePortfolio,
   demoMixNote,
+  fundCostPrincipalNote,
   fundDemoMixNote,
   type PortfolioHolding,
   type PortfolioProperty,
@@ -167,5 +168,34 @@ describe('fundDemoMixNote — 投資信託', () => {
     // 対照: 取得額が在れば率を述べる (上の not.toMatch が空の検査でないこと)。
     const withCost = computeFundPortfolio([...demoHoldings, myHolding], baseCost);
     expect(fundDemoMixNote(withCost, jpy)).toMatch(/（-?\d+\.\d%）/);
+  });
+});
+
+/**
+ * **実質コストの元本の断り** (`fundCostPrincipalNote`)。2026-09-30 (パス 501) の変異検査で
+ * 「コスト率の欄が範囲外」の枝が 1 度も走っておらず (未到達 5 件)、見本 0 件の判定も
+ * 値で留まっていなかった。
+ */
+describe('fundCostPrincipalNote — 見本を除いた元本での負担 (パス 501)', () => {
+  const mixed = computeFundPortfolio([...demoHoldings, myHolding], baseCost);
+
+  it('見本が 0 件・自分の銘柄が 0 件のどちらでも null', () => {
+    expect(fundCostPrincipalNote(computeFundPortfolio([myHolding], 0), jpy, 5, 1_000, 5_000)).toBeNull();
+    expect(fundCostPrincipalNote(computeFundPortfolio(demoHoldings, baseCost), jpy, 5, 1_000, 5_000)).toBeNull();
+  });
+
+  it('★ コスト率の欄が範囲外なら、元本だけを述べて金額を 1 つも持たない', () => {
+    expect(fundCostPrincipalNote(mixed, jpy, 5, null, null)).toBe(
+      `この元本には同梱の見本 ${demoHoldings.length} 銘柄が含まれています。見本を除く元本は ${jpy(100_000)} です（コスト率の欄が範囲外のため、見本を除いた負担額は算定していません）。`,
+    );
+  });
+
+  it('★ 累計が出ていなければ年間コストだけを述べ、出ていれば累計も述べる', () => {
+    expect(fundCostPrincipalNote(mixed, jpy, 5, 1_234, null)).toBe(
+      `この元本には同梱の見本 ${demoHoldings.length} 銘柄が含まれています。見本を除く元本 ${jpy(100_000)} なら 年間コスト ${jpy(1_234)}・5年累計は保有年数または想定年率が範囲外のため算定していません。`,
+    );
+    expect(fundCostPrincipalNote(mixed, jpy, 5, 1_234, 6_170)).toBe(
+      `この元本には同梱の見本 ${demoHoldings.length} 銘柄が含まれています。見本を除く元本 ${jpy(100_000)} なら 年間コスト ${jpy(1_234)}・5年累計 ${jpy(6_170)} です。`,
+    );
   });
 });

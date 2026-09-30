@@ -24,9 +24,13 @@
  * ## 使い方
  *
  *   node scripts/mutate-changed.cjs <base-ref>
+ *   node scripts/mutate-changed.cjs <base-ref> --chunks
  *
  * 対象があれば `--mutate` に渡せる形 (カンマ区切り) を stdout へ出す。
  * 無ければ何も出さない (呼び出し側は空なら検査を飛ばす)。
+ * `--chunks` は同じ対象を **1 つの job に載せてよい量**の塊に分け、JSON の
+ * 配列 (要素はカンマ区切りの対象) で出す —— `mutation.yml` はこれを matrix に
+ * して塊ごとに別の job で測る (下の `chunkTargets` に理由)。
  */
 
 const { execFileSync } = require('node:child_process');
@@ -119,6 +123,70 @@ function assertPlainPaths(targets) {
 }
 
 /**
+ * 1 つの job に載せてよい重さ (行数)。
+ *
+ * ## なぜ塊に分けるか (2026-09-30 · パス 501)
+ *
+ * GitHub Actions の job は **6 時間**で cancel される。変異検査の所要は対象の
+ * 変異体の数にほぼ比例し、実測は:
+ *
+ * - 8 本 / 5,535 行 → 3,529 変異体 → **165 分** (この session の container・
+ *   concurrency 4)。行数 1,000 あたり約 640 変異体・約 30 分
+ * - 週次の全掃引 (cache が当たらなかった 2026-09-13 の #170) は 27,447 変異体を
+ *   2 時間 44 分で測った (GitHub の runner はこの container より速い)。
+ *   **2026-09-27 の #172 (#788 のマージ後・cache 落ち) はちょうど 6 時間で
+ *   cancel された** —— 対象の増加と検査の重さ (jsdom の画面検査) で
+ *   1 job には収まらなくなっている
+ * - `main` へのマージで 67 本 (28,630 行 ≒ 16,000 変異体以上) が対象になる
+ *   PR (#790) は、上の 2 つのどちらの速さでも 1 job に収まる保証が無い
+ *   (この container の速さなら約 13 時間)
+ *
+ * だから push 側は塊に分け、塊ごとに別の job で測る。1 塊の上限を 4,000 行に
+ * 置くと、この container の速さでも 1 塊 2 時間で 6 時間の上限まで 3 倍の余裕が
+ * 在る。塊の数は対象の重さから導く (67 本なら 8 塊)。**塊の合計の runner
+ * 時間は変わらない** —— 分けるのは壁時計の上限に収めるためであって、費用を
+ * 減らすためではない。
+ *
+ * ★ `thresholds.break` (99.8) は **1 回の実行の合計**に掛かるので、塊ごとに
+ * 掛かることになる。塊が小さいほど厳しい (2,500 変異体の塊なら生存 5 件で
+ * 落ちる)。目標は 100% なので許容の側は狭くて構わない。
+ *
+ * 重さは行数で測る (変異体の数は Stryker を走らせないと分からない)。
+ * 割り付けは重い順にいちばん軽い塊へ (LPT)。同じ入力からは必ず同じ塊が出る。
+ */
+const MAX_LINES_PER_CHUNK = 4000;
+
+/** ファイルの重さ = 行数。 */
+function weightOf(file) {
+  return fs.readFileSync(path.join(REPO_ROOT, file), 'utf8').split('\n').length;
+}
+
+/**
+ * 対象を塊に分ける。返すのはカンマ区切りの対象の配列 (`--mutate` の形)。
+ *
+ * - 塊の数 = ceil(重さの合計 / maxLines) (最低 1)
+ * - 1 本で上限を超えるファイルはそのまま 1 塊になる (分けようが無い)
+ * - 空の対象からは空の配列
+ *
+ * @param weight self-test の差し込み口 (実物は行数)
+ */
+function chunkTargets(targets, weight = weightOf, maxLines = MAX_LINES_PER_CHUNK) {
+  if (targets.length === 0) return [];
+  const rows = targets.map((t) => ({ t, w: weight(t) }));
+  const total = rows.reduce((acc, r) => acc + r.w, 0);
+  const n = Math.max(1, Math.ceil(total / maxLines));
+  const bins = Array.from({ length: n }, () => ({ w: 0, items: [] }));
+  rows.sort((a, b) => b.w - a.w || (a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
+  for (const r of rows) {
+    let lightest = bins[0];
+    for (const b of bins) if (b.w < lightest.w) lightest = b;
+    lightest.items.push(r.t);
+    lightest.w += r.w;
+  }
+  return bins.filter((b) => b.items.length > 0).map((b) => b.items.sort().join(','));
+}
+
+/**
  * 対照実験 — 「変更なし」と「対象なし」を取り違えていないか。
  *
  * ここが黙って空を返すと、CI は何も測らずに緑になる (常に緑を返すゲート)。
@@ -158,6 +226,23 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${JSON.stringify(want)})`);
   }
+  // 塊の分け方 (重さは差し込み・上限 10)。
+  const w = (file) => ({ a: 5, b: 4, c: 3, d: 3, big: 25 })[file];
+  const chunkCases = [
+    ['空の対象は空の配列', [], []],
+    ['上限に収まれば 1 塊 (中は名前順)', ['b', 'a'], ['a,b']],
+    ['上限を超えたら塊の数は重さから導く (5+4+3 = 12 → 2 塊)', ['a', 'b', 'c'], ['a', 'b,c']],
+    // 5 → 塊 1・4 → 塊 2 (軽い方)・3 → 塊 2 (4 < 5)・3 → 塊 1 (5 < 7)。
+    ['重い順にいちばん軽い塊へ (5,4,3,3 → [5,3] [4,3])', ['a', 'b', 'c', 'd'], ['a,d', 'b,c']],
+    ['1 本で上限を超えるファイルはそのまま 1 塊', ['big', 'a'], ['big', 'a']],
+    ['入力の順序に依らない', ['d', 'c', 'b', 'a'], ['a,d', 'b,c']],
+  ];
+  for (const [label, targets, want] of chunkCases) {
+    const got = JSON.stringify(chunkTargets(targets, w, 10));
+    const ok = got === JSON.stringify(want);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 塊: ${label}: ${got} (期待 ${JSON.stringify(want)})`);
+  }
   // 規則が広すぎない対照 — 実在する `mutate` 一覧を 1 件も弾かないこと。
   // 合成ケースだけだと「全部落とす」規則でも緑になる。
   const real = mutateList();
@@ -172,6 +257,26 @@ function selfTest() {
     failed += 1;
     console.log('  ✗ mutate 一覧が空 — 上の対照は何も測っていない');
   }
+  // 実在する `mutate` 一覧を実物の重さで塊に分けても、1 本も落とさず・1 本も
+  // 2 度数えず・(1 本の塊を除き) どの塊も上限に収まること。
+  if (real.length > 0) {
+    try {
+      const chunks = chunkTargets(real);
+      const seen = chunks.flatMap((c) => c.split(','));
+      const dup = seen.filter((f, i) => seen.indexOf(f) !== i);
+      const missing = real.filter((f) => !seen.includes(f));
+      const over = chunks.filter((c) => c.includes(',') && c.split(',').reduce((acc, f) => acc + weightOf(f), 0) > MAX_LINES_PER_CHUNK);
+      const ok = dup.length === 0 && missing.length === 0 && over.length === 0 && seen.length === real.length;
+      if (!ok) failed += 1;
+      console.log(
+        `  ${ok ? '✓' : '✗'} 実在する mutate ${real.length} 件は ${chunks.length} 塊に過不足なく分かれる` +
+          (ok ? '' : ` (重複 ${dup.length} / 欠落 ${missing.length} / 上限超え ${over.length})`),
+      );
+    } catch (e) {
+      failed += 1;
+      console.log(`  ✗ 実在する mutate を塊に分けられない: ${e.message}`);
+    }
+  }
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 対応付けが壊れています`);
     return 1;
@@ -182,9 +287,10 @@ function selfTest() {
 
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
-  const baseRef = argv[0];
+  const chunks = argv.includes('--chunks');
+  const baseRef = argv.find((a) => !a.startsWith('--'));
   if (baseRef === undefined || baseRef === '') {
-    process.stderr.write('usage: mutate-changed.cjs <base-ref>\n');
+    process.stderr.write('usage: mutate-changed.cjs <base-ref> [--chunks]\n');
     return 2;
   }
   const changed = changedFiles(baseRef);
@@ -205,11 +311,18 @@ function main(argv) {
   }
   process.stderr.write(`変更 ${changed.length} ファイル → 変異検査の対象 ${targets.length} ファイル\n`);
   for (const t of targets) process.stderr.write(`  ${t}\n`);
-  if (targets.length > 0) process.stdout.write(`${targets.join(',')}\n`);
+  if (targets.length === 0) return 0;
+  if (chunks) {
+    const parts = chunkTargets(targets);
+    process.stderr.write(`→ ${parts.length} 塊 (1 塊 ${MAX_LINES_PER_CHUNK} 行まで)\n`);
+    process.stdout.write(`${JSON.stringify(parts)}\n`);
+  } else {
+    process.stdout.write(`${targets.join(',')}\n`);
+  }
   return 0;
 }
 
-module.exports = { targetsFor, changedFiles, mutateList, selfTest };
+module.exports = { targetsFor, changedFiles, mutateList, chunkTargets, MAX_LINES_PER_CHUNK, selfTest };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

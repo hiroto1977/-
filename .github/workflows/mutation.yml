@@ -18,6 +18,30 @@ name: mutation
 #
 # テストだけを変えた場合もその対象を測る (`scripts/mutate-changed.cjs`) —
 # テストを緩めた変更こそ変異検査が捕まえるべきものなので。
+#
+# ## push 側は塊に分けて別々の job で測る (2026-09-30 · パス 501)
+#
+# GitHub Actions の job は **6 時間**で cancel される。「対象が少ないので毎回
+# まっさらから測っても数分で終わる」は、変わったファイルが数本の push には
+# 真だが、**大きな PR のマージでは偽**である —— #790 は `mutate` の 67 本
+# (28,630 行・約 16,000 変異体) を 1 度に対象にし、この session の container の
+# 速さなら約 13 時間、cache 落ちの週次 #170 の速さでも 1 時間 37 分で、
+# 1 job に収まる保証が無い。しかも **週次の全掃引 #172 (2026-09-27・#788 の
+# マージ後・cache 落ち) はちょうど 6 時間で cancel されている** —— 対象が
+# 308 本に増え検査も重くなったので、全件を 1 job で測り直す形はもう成り立たない
+# (週次の側の直しは別のパス —— `docs/REMAINING_WORK.md` の「パス 501」)。
+#
+# `scripts/mutate-changed.cjs --chunks` が対象を行数で塊に分け (1 塊 4,000 行
+# まで・重い順にいちばん軽い塊へ)、`scope` job がそれを JSON の配列で出し、
+# `mutate-some` job が matrix で塊ごとに測る。**runner 時間の合計は変わらない**
+# (分けるのは壁時計の上限に収めるため)。`thresholds.break` は塊ごとに掛かる
+# (塊が小さいほど厳しい —— 目標は 100% なのでそれでよい)。
+#
+# `${{ }}` は run: の**シェル本文へ文字列として展開されてから**シェルが読む。
+# つまり値の中身がそのままシェル構文になる。env: へ束ねると値は環境変数として
+# 渡り、シェル構文としては一度も読まれない。ここの値は今どれも GitHub が
+# 決める値か、リポジトリ内の設定由来だが、**仕組みとして注入できない形**へ
+# 寄せておく (lint:workflow-security が run: 内の `${{ }}` を一律で落とす)。
 
 on:
   schedule:
@@ -34,8 +58,12 @@ permissions:
   contents: read
 
 jobs:
-  mutate:
+  # 何を測るかを決める。npm ci は要らない (script は Node の組み込みしか読まない)。
+  scope:
     runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.scope.outputs.mode }}
+      chunks: ${{ steps.scope.outputs.chunks }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -46,19 +74,14 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '22'
-          cache: 'npm'
-
-      - name: Install
-        run: npm ci
 
       - name: 対象の割り出しが壊れていないか (対照実験)
         run: node scripts/mutate-changed.cjs --self-test
 
-      # `${{ }}` は run: の**シェル本文へ文字列として展開されてから**シェルが読む。
-      # つまり値の中身がそのままシェル構文になる。env: へ束ねると値は環境変数として
-      # 渡り、シェル構文としては一度も読まれない。ここの 3 つは今どれも GitHub が
-      # 決める値か、リポジトリ内の設定由来だが、**仕組みとして注入できない形**へ
-      # 寄せておく (lint:workflow-security が run: 内の `${{ }}` を一律で落とす)。
+      # 塊の一覧は JSON の配列 (要素はカンマ区切りの対象)。`$GITHUB_OUTPUT` は
+      # 1 行 1 値なので、改行・引用符を含む名前は script が先に落とす。
+      # 測らない mode でも matrix が読める形 (`["none"]`) を必ず置く ——
+      # `mutate-some` は `if:` で飛ばされるが、読めない値を残さない。
       - name: 測る対象を決める
         id: scope
         env:
@@ -66,22 +89,40 @@ jobs:
           BEFORE: ${{ github.event.before }}
         run: |
           if [ "$EVENT_NAME" = "push" ]; then
-            TARGETS="$(node scripts/mutate-changed.cjs "$BEFORE")"
+            CHUNKS="$(node scripts/mutate-changed.cjs "$BEFORE" --chunks)"
           else
-            TARGETS="ALL"
+            CHUNKS="ALL"
           fi
-          if [ -z "$TARGETS" ]; then
+          if [ -z "$CHUNKS" ]; then
             echo "変異検査の対象が変わっていません。飛ばします。"
             echo "mode=skip" >> "$GITHUB_OUTPUT"
-          elif [ "$TARGETS" = "ALL" ]; then
+            echo 'chunks=["none"]' >> "$GITHUB_OUTPUT"
+          elif [ "$CHUNKS" = "ALL" ]; then
             echo "mode=all" >> "$GITHUB_OUTPUT"
+            echo 'chunks=["none"]' >> "$GITHUB_OUTPUT"
           else
             echo "mode=some" >> "$GITHUB_OUTPUT"
-            echo "targets=$TARGETS" >> "$GITHUB_OUTPUT"
+            echo "chunks=$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
+  # 週次 / 手動: 全件。incremental キャッシュを使う。
+  mutate-all:
+    needs: scope
+    if: needs.scope.outputs.mode == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
       - name: Restore Stryker incremental cache
-        if: steps.scope.outputs.mode == 'all'
         uses: actions/cache@v4
         with:
           path: .stryker-incremental.json
@@ -90,29 +131,66 @@ jobs:
             stryker-main
 
       - name: Run mutation testing (全件)
-        if: steps.scope.outputs.mode == 'all'
         run: npm run mutate
-
-      # 差分測定では incremental キャッシュを使わない。古い結果が残ると
-      # survived が誤って残ることが実測されている (stryker.config.json の注記
-      # 参照 — 2026-08 の監査で atlassian.ts が「生存 1」と誤報された)。
-      # 対象が少ないので、毎回まっさらから測っても数分で終わる。
-      - name: Run mutation testing (変わった対象のみ)
-        if: steps.scope.outputs.mode == 'some'
-        env:
-          TARGETS: ${{ steps.scope.outputs.targets }}
-        run: |
-          rm -f .stryker-incremental.json
-          npx stryker run --mutate "$TARGETS"
 
       - name: Save Stryker JSON report
         uses: actions/upload-artifact@v5
-        if: always() && steps.scope.outputs.mode != 'skip'
+        if: always()
         with:
           name: mutation-report
           path: reports/mutation/mutation.json
           retention-days: 90
 
       - name: Triage top survivors
-        if: always() && steps.scope.outputs.mode != 'skip'
+        if: always()
+        run: npm run mutate:triage -- --top=30 --include-string-literals
+
+  # push: 変わった対象だけを、塊ごとに別の job で。
+  #
+  # 差分測定では incremental キャッシュを使わない。古い結果が残ると
+  # survived が誤って残ることが実測されている (stryker.config.json の注記
+  # 参照 — 2026-08 の監査で atlassian.ts が「生存 1」と誤報された)。
+  mutate-some:
+    needs: scope
+    if: needs.scope.outputs.mode == 'some'
+    runs-on: ubuntu-latest
+    strategy:
+      # 1 塊が落ちても残りの塊は測り切る (どこが落ちたかを 1 度で見るため)。
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(needs.scope.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Run mutation testing (変わった対象のみ・この塊)
+        env:
+          TARGETS: ${{ matrix.chunk }}
+        run: |
+          if [ -z "$TARGETS" ] || [ "$TARGETS" = "none" ]; then
+            echo "塊が空です (scope job の出力を確認してください)。"
+            exit 1
+          fi
+          echo "この塊の対象: $TARGETS"
+          rm -f .stryker-incremental.json
+          npx stryker run --mutate "$TARGETS"
+
+      - name: Save Stryker JSON report
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: mutation-report-chunk-${{ strategy.job-index }}
+          path: reports/mutation/mutation.json
+          retention-days: 90
+
+      - name: Triage top survivors
+        if: always()
         run: npm run mutate:triage -- --top=30 --include-string-literals

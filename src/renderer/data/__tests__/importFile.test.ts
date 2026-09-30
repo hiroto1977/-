@@ -9,6 +9,7 @@ import {
   MAX_BACKUP_IMPORT_BYTES,
   MAX_CSV_IMPORT_BYTES,
   MAX_SKIPPED_ROW_REASONS,
+  importSaveFailedNote,
   importSizeError,
   readImportText,
   skippedRowsDetail,
@@ -61,5 +62,13 @@ describe('skippedRowsDetail — 飛ばした行を理由つきで言う (パス 
   });
   it('対照: 飛ばした行が無ければ空', () => {
     expect(skippedRowsDetail([])).toBe('');
+  });
+});
+
+describe('importSaveFailedNote (パス 501 —— 文を値ごと留める)', () => {
+  it('★ 行数を名指しし、1 件も入っていないことと、やり直しの手を言う', () => {
+    expect(importSaveFailedNote(3)).toBe(
+      'CSV の 3 行を保存できなかったため、1 件も取り込んでいません。画面上端の知らせの理由を解消してから、同じファイルをもう一度選んでください。',
+    );
   });
 });

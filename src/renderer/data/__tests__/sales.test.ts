@@ -19,6 +19,8 @@ import {
   duplicateOrdersSheetNote,
   salesRowKey,
   countStoredRows,
+  unreadableSalesRowsNote,
+  unreadableSalesRowsSheetNote,
   type SalesEntry,
 } from '../sales';
 
@@ -344,5 +346,35 @@ describe('parseSalesEntry — 画面と同じ読み方 (パス 496)', () => {
       );
     }
     expect(parseSalesEntry({ ...base, amount: '1000', orders: '２' }).orders).toBe(2);
+  });
+});
+
+/**
+ * **変異検査が教えた所** (2026-09-30 · パス 501)。注文名の判定は 3 つの冗長な条件を
+ * 持っており (どれも等価変異)、畳んだ。残る境目と、2 文の繋ぎ目を値で留める。
+ */
+describe('sales — 変異検査が教えた所 (パス 501)', () => {
+  const e = (date: string, amount: number, note?: string, orders = 1): SalesEntry =>
+    note === undefined ? { date, channel: 'shopify', amount, orders } : { date, channel: 'shopify', amount, orders, note };
+
+  it('★ 接頭辞で始まらない長いメモは注文名ではない・注文名は前後の空白を落として引く', () => {
+    expect(salesOrderRef({ note: 'これは手で書いた長いメモです (Shopify の注文名ではない)' })).toBeNull();
+    const existing = [e('2026-04-01', 12000, 'Shopify #1001'), e('2026-04-02', 8000, 'セール')];
+    expect(findOrderEntry(existing, ' Shopify #1001 ')).toEqual(existing[0]);
+    expect(findOrderEntry(existing, '   ')).toBeNull();
+    expect(findShopifyOrder(existing, '   ')).toBeNull();
+  });
+
+  it('★ 注文名の無い控えを断る文は、メモそのものを名指しする', () => {
+    expect(duplicateOrderMessage(e('2026-04-02', 8000, 'セール'))).toMatch(/^セール は既に売上集計に記録されています/);
+  });
+
+  it('★ 日付と金額の 2 文は空白 1 つで繋ぐ (それぞれ単独の文と同じ)', () => {
+    const sheet = (unreadableDates: number, unreadableAmounts: number) =>
+      unreadableSalesRowsSheetNote({ unreadableDates, unreadableAmounts });
+    expect(sheet(1, 2)).toBe(`${sheet(1, 0)} ${sheet(0, 2)}`);
+    const screen = (unreadableDates: number, unreadableAmounts: number) =>
+      unreadableSalesRowsNote({ unreadableDates, unreadableAmounts });
+    expect(screen(1, 2)).toBe(`${screen(1, 0)} ${screen(0, 2)}`);
   });
 });

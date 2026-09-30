@@ -22,8 +22,8 @@ import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { combineCashflowDebtService } from '../cashflowDebtService';
 import { BANK_FORMAT_DEFAULT, BLANK, formatAmount } from '../../../shared/bankFormat';
-import type { KpiActual } from '../kpiActuals';
-import type { BalanceSheet } from '../balanceSheet';
+import { duplicateActualsSheetNote, noBepSheetNote, type KpiActual } from '../kpiActuals';
+import { normalizeBalanceSheet, unreadableBalanceSheetSheetNote, type BalanceSheet } from '../balanceSheet';
 import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const KPI: KpiActual[] = [
@@ -1482,5 +1482,130 @@ describe('§2 の但し書き — 同じ注文名の重複 (パス 126)', () => 
   it('対照: 重複が無ければ但し書きに「重複」は無い', () => {
     const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales: [dupSales[0]!, { ...dupSales[1]!, note: 'Shopify #1002' }] })));
     expect(section(m.sections, '2.').caption ?? '').not.toContain('重複');
+  });
+});
+
+/**
+ * **変異検査が教えた所** (2026-09-30 · パス 501)。8 本の触っていない行の生存を今の木で
+ * 測り直したら、この書面の 25 件は 4 家系だった: ① 販売記録と KPI の窓が**片端だけ**
+ * 一致する形 (`&&` を `||` にしても、片方を `true` にしても通っていた) ② 但し書きが
+ * 2 文並ぶときの**繋ぎ目** (空白の有無を `toContain` は見ない) ③ §8 の期が重ならない
+ * ときの 3 行の**注記** (値しか見ていなかった) ④ 到達しない防御 (理由つきで測定から外した)。
+ * 繋ぎ目は**単独の文を 2 つ取って足した物**と比べる (綴りを写さない)。
+ */
+describe('金融機関等提出用の書面 — 変異検査が教えた所 (パス 501)', () => {
+  it('★ §2: 始まりが同じで終わりが違えば「期間が異なります」を言う', () => {
+    const sales = [
+      { date: '2026-04-10', channel: 'base' as const, amount: 1_000_000, orders: 10 },
+      { date: '2026-06-20', channel: 'base' as const, amount: 2_000_000, orders: 20 },
+    ];
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales })));
+    expect(section(m.sections, '2.').caption).toBe(
+      '上の金額は販売記録の令和8年4月〜令和8年6月・2 か月分の累計です。'
+      + '§1 の売上高（KPI 実績）は令和8年4月・1 か月分の累計で、期間が異なります。',
+    );
+  });
+
+  it('★ §2: 終わりが同じで始まりが違えば「期間が異なります」を言う', () => {
+    const sales = [
+      { date: '2026-02-10', channel: 'base' as const, amount: 1_000_000, orders: 10 },
+      { date: '2026-04-20', channel: 'base' as const, amount: 2_000_000, orders: 20 },
+    ];
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales })));
+    expect(section(m.sections, '2.').caption).toBe(
+      '上の金額は販売記録の令和8年2月〜令和8年4月・2 か月分の累計です。'
+      + '§1 の売上高（KPI 実績）は令和8年4月・1 か月分の累計で、期間が異なります。',
+    );
+  });
+
+  it('★ §2: 期間の但し書きと重複の但し書きは地続きに繋ぐ', () => {
+    const sales = [
+      { date: '2024-01-15', channel: 'shopify' as const, amount: 1_000_000, orders: 10, note: 'Shopify #1001' },
+      { date: '2026-06-20', channel: 'shopify' as const, amount: 2_000_000, orders: 20, note: 'Shopify #1001' },
+    ];
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales })));
+    expect(section(m.sections, '2.').caption).toBe(
+      '上の金額は販売記録の令和6年1月〜令和8年6月・2 か月分の累計です。'
+      + '§1 の売上高（KPI 実績）は令和8年4月・1 か月分の累計で、期間が異なります。'
+      + '販売記録に同じ注文名の記録が 1 組あり（Shopify #1001 ×2）、売上高と受注件数はその重複を含んだ値です。',
+    );
+  });
+
+  it('★ §1: 対象期間の但し書きと重複の但し書きは地続きに繋ぐ', () => {
+    const o = overviewWith({ kpiActuals: [KPI[0]!, { ...KPI[0]! }] });
+    const scope = periodScopeNote(SETTINGS.profile.fiscalYearEnd, o.kpi.periods, BANK_FORMAT_DEFAULT);
+    const dup = duplicateActualsSheetNote(o.kpi.duplicateActuals);
+    expect(scope).not.toBeNull();
+    expect(dup).not.toBeNull();
+    expect(section(buildBankSubmissionSheet(inputWith(o)).sections, '1.').caption).toBe(`${scope}${dup}`);
+  });
+
+  it('★ §4: 読めない欄の但し書きと基準日のずれの但し書きは空白 1 つで繋ぐ', () => {
+    const asOf = '2024-03-31';
+    const staleOnly = section(
+      buildBankSubmissionSheet(inputWith(overviewWith({ balanceSheet: { ...BS, asOf } }), SETTINGS, { balanceSheetAsOf: asOf })).sections,
+      '4.',
+    ).caption;
+    expect(staleOnly).toContain('か月古く');
+    const o = overviewWith({ balanceSheet: normalizeBalanceSheet({ ...BS, asOf, fixedAssets: 'abc' }) });
+    const unreadable = unreadableBalanceSheetSheetNote(o.balanceSheetUnreadableFields);
+    expect(unreadable).toContain('固定資産');
+    const caption = section(buildBankSubmissionSheet(inputWith(o, SETTINGS, { balanceSheetAsOf: asOf })).sections, '4.').caption;
+    expect(caption).toBe(`${unreadable} ${staleOnly}`);
+  });
+
+  it('★ §5: 読めない欄が 2 つなら「・」で並べる', () => {
+    const o = overviewWith({ balanceSheet: normalizeBalanceSheet({ ...BS, inventory: '5', accountsReceivable: 'x' }) });
+    const caption = section(buildBankSubmissionSheet(inputWith(o)).sections, '5.').caption ?? '';
+    expect(caption).toContain('貸借対照表の売上債権・棚卸資産が数として読めないため、該当する回転日数と運転資本は算定していません');
+  });
+
+  it('★ §6: 落ちた取引の但し書きと突合できない月の但し書きは地続きに繋ぐ', () => {
+    const intake = { deals: 9, skippedNoDate: 1, skippedBadAmount: 0, clampedNegative: 0 };
+    const acc = [{ month: '2026-04', income: 900_000, expense: 600_000, net: 300_000 }];
+    const repay = ['2026-04', '2026-05'].map((month) => ({ month, repayment: 100_000 }));
+    const intakeOnly = section(buildBankSubmissionSheet(inputWith(overviewWith({ accountingIntake: intake }))).sections, '6.').caption;
+    const unmatchedOnly = section(
+      buildBankSubmissionSheet(inputWith(overviewWith({ accounting: acc }), SETTINGS, { debtService: combineCashflowDebtService(acc, repay) })).sections,
+      '6.',
+    ).caption;
+    expect(intakeOnly).toContain('取引日が読めない 1 件');
+    expect(unmatchedOnly).toContain('返済予定のある残り 1 か月');
+    const both = section(
+      buildBankSubmissionSheet(inputWith(
+        overviewWith({ accounting: acc, accountingIntake: intake }),
+        SETTINGS,
+        { debtService: combineCashflowDebtService(acc, repay) },
+      )).sections,
+      '6.',
+    ).caption;
+    expect(both).toBe(`${intakeOnly}${unmatchedOnly}`);
+  });
+
+  it('★ §8: 期が重ならないとき、3 行の注記がそれぞれの理由を言う', () => {
+    const budgets: KpiActual[] = ['2025-04', '2025-05'].map((period) => ({
+      period, unit: '全社', revenue: 10_000_000, cogs: 4_000_000, advertising: 1_000_000, sga: 4_000_000, depreciation: 0,
+    }));
+    const b = section(buildBankSubmissionSheet(inputWith(overviewWith({ kpiBudgets: budgets }))).sections, '8. 予算');
+    expect(note(b, '予算の対象期間')).toBe('実績と重なる期がありません');
+    expect(note(b, '実績の対象期間')).toBe('予算と重なる期がありません');
+    expect(note(b, '売上高 達成率')).toBe('突合できる期がないため算定不能');
+  });
+
+  it('★ 参考 (水耕栽培): 損益分岐点が無ければ、その理由を計画値の但し書きに地続きで足す', () => {
+    const noBep: BusinessOverview = {
+      ...overviewWith(),
+      hydroponics: {
+        shippedPlantsPerMonth: 12_000, shippedPlantsPerDay: 400, shippedKgPerYear: 14_400, revenue: 1_800_000,
+        operatingProfit: -250_000, operatingMarginPct: -13.9, contributionRatio: -5, bep: Number.POSITIVE_INFINITY,
+        breakEvenPlantsPerMonth: null, meetsBreakEven: false, costPerShippedPlantYen: 85.4, energyKwhPerYear: 30_000,
+        electricityYenPerYear: 900_000, electricityCostRatioPct: 22.1, lowPotassium: null,
+      },
+    };
+    const s = buildBankSubmissionSheet(inputWith(noBep)).sections.at(-1)!;
+    expect(noBepSheetNote(Number.POSITIVE_INFINITY)).not.toBeNull();
+    expect(s.caption).toBe(
+      `設備・品目・費用の入力から算出した計画値です。上の各節の実績とは混ぜていません。${noBepSheetNote(Number.POSITIVE_INFINITY)}`,
+    );
   });
 });

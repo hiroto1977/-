@@ -6,6 +6,7 @@
  * **重要 — 概算の経営診断であり財務・税務助言ではありません。**
  */
 import { splitMissingStocks } from './balanceSheet';
+import { isFiniteNumber } from '../../shared/num';
 import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 
@@ -159,7 +160,11 @@ export function buildManagementHighlights(
       out.push({ severity: 'critical', category: '収益性', message: `営業赤字です (営業利益 ${k.operatingProfit.toLocaleString()}円)。` });
     // 営業利益率は**売上 0 では定まらない** (`null`)。そのときは所見を出さない
     // —— 「良好です」も「不振です」も、比率が無ければ言えない。
-    } else if (k.operatingMarginPct !== null && k.operatingMarginPct >= 10) {
+    } else if (
+      // Stryker disable next-line ConditionalExpression: JS では `null >= 10` が false なので、非 null の判定は型の絞り込みのためだけに在る (等価変異)
+      k.operatingMarginPct !== null &&
+      k.operatingMarginPct >= 10
+    ) {
       out.push({ severity: 'good', category: '収益性', message: `営業利益率 ${k.operatingMarginPct.toFixed(1)}% と良好です。` });
     }
     // 安全性 (損益分岐点)。**負の安全余裕率を 0 に丸めない** ——
@@ -298,7 +303,9 @@ export function buildManagementHighlights(
   // **原因ごとに別の所見にする** (2026-09-24 · パス 444)。打ち込んだ値が数として
   // 読めないだけの利用者に「未入力のため…入力してください」と言うと、**直す手ごと
   // 誤らせる** (その欄は入力済みで、消す口は設定の点検パネルにある · パス 388)。
-  if (wc !== null && wc.missingStocks.length > 0) {
+  // 欄が 1 つも欠けていなければ `splitMissingStocks` はどちらの名簿も空にし、下の 2 つの
+  // `if` は入らない —— だから件数の判定はここに要らない (在ると等価変異が残る・パス 501)。
+  if (wc !== null) {
     const stocks = splitMissingStocks(wc.missingStocks, overview.balanceSheetUnreadableFields);
     if (stocks.blank.length > 0) {
       out.push({
@@ -356,7 +363,7 @@ export function buildManagementHighlights(
   // 返済余力 (会計CF × 資金調達の DSCR)。**有限の数のときだけ判定** (null /
   // undefined / 非有限は沈黙)。`typeof` だけだと `Infinity >= 1.5` が真になり、
   // 「DSCR ∞ と返済余力は十分です」を **good** の所見として出していた (パス 98)。
-  if (typeof overallDscr === 'number' && Number.isFinite(overallDscr)) {
+  if (isFiniteNumber(overallDscr)) {
     if (overallDscr < 1) {
       out.push({ severity: 'critical', category: '返済余力', message: `DSCR が ${overallDscr} と1.0未満で、営業CFが借入返済を賄えていません。` });
     } else if (overallDscr >= 1.5) {

@@ -1563,7 +1563,10 @@ existing but guarding nothing, which is exactly what happened to `lint:citations
 予定実行なので誰の PR も赤くしない;
 `mutation.yml` runs Stryker: a **full sweep weekly** (and on `workflow_dispatch`), and on pushes
 to `main` that touch `src/**` / `stryker.config.json` / `vitest.config.ts` it measures **only the
-changed files on Stryker's mutate list** (`scripts/mutate-changed.cjs`, no incremental cache). **It never runs on a
+changed files on Stryker's mutate list** (`scripts/mutate-changed.cjs`, no incremental cache) — **split into
+chunks of at most 4,000 lines, one matrix job per chunk** (`--chunks`; 2026-09-30 · パス 501 — a GitHub job is
+cancelled at 6 h, and the 67 files PR #790 puts on the list would take ~13 h at this container's speed in one job;
+`thresholds.break` therefore applies per chunk). **It never runs on a
 PR branch** — run `npm run audit:mutate-changed` yourself when you touch a file on that list. (Until
 2026-09-27 this sentence listed the trigger paths the workflow used before its 2026-08 rewrite —
 `src/main/clients/**` / `src/main/oauth.ts`.) `smoke` (Electron の全ページ撮影) is **not** in CI at all.

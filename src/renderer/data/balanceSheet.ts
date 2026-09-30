@@ -14,6 +14,7 @@ import { isCalendarDateOrMonth } from '../../shared/isoDate';
 import { latestRecord } from './latestRecord';
 import { relationIssue } from './recordRelations';
 import { readEntryNumber, type EntryNumber } from '../../shared/readNumeric';
+import { isFiniteNumber } from '../../shared/num';
 
 export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
 
@@ -259,16 +260,8 @@ export const BS_NUMERIC_FIELDS: readonly { readonly key: string; readonly label:
  */
 export function normalizeBalanceSheet(raw: unknown): BalanceSheet {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
-  /**
-   * 有限の数か。**判定を 1 か所に置く** (必須の欄は 0 へ、任意の欄は「無い」へ倒す)。
-   *
-   * `typeof v === 'number'` は実行時には冗長 —— `Number.isFinite` は数値以外を
-   * 型変換せずに false にするので、外しても振る舞いは変わらない (等価変異)。
-   * `v is number` の絞り込みを型検査に伝えるために残している。
-   * (`&&` を `||` に替える変異は別で、NaN がそのまま残るので検査が留めてある。)
-   */
-  // Stryker disable next-line ConditionalExpression: Number.isFinite が数値以外を false にするので実行時は等価 (型の絞り込みのために残す)
-  const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  // 有限の数か。**判定を 1 か所に置く** (必須の欄は 0 へ、任意の欄は「無い」へ倒す) ——
+  // 述語は `shared/num.ts` の `isFiniteNumber` (型の絞り込みを伴う。`typeof` の写しは要らない)。
   const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
   const opt = (v: unknown): number | undefined => (isFiniteNumber(v) ? v : undefined);
   return {
@@ -331,7 +324,9 @@ function unreadableOf(
 }
 
 /** 読めない欄が 1 つでも在るか。 */
-export function hasUnreadableBalanceSheetFields(u: UnreadableBalanceSheetFields | undefined): boolean {
+export function hasUnreadableBalanceSheetFields(
+  u: UnreadableBalanceSheetFields | undefined,
+): u is UnreadableBalanceSheetFields {
   return u !== undefined && (u.zeroed.length > 0 || u.missing.length > 0);
 }
 
@@ -361,7 +356,7 @@ export function unreadableBalanceSheetSheetNote(u: UnreadableBalanceSheetFields 
  * 利用者は「当座比率が変なのは 0 を入れたからだ」と読む (実際は算定していない)。
  */
 function unreadableBalanceSheetBody(u: UnreadableBalanceSheetFields | undefined): string | null {
-  if (!hasUnreadableBalanceSheetFields(u) || u === undefined) return null;
+  if (!hasUnreadableBalanceSheetFields(u)) return null;
   const said: string[] = [];
   if (u.zeroed.length > 0) {
     said.push(
@@ -388,7 +383,7 @@ export function splitMissingStocks(
   stocks: readonly string[],
   u: UnreadableBalanceSheetFields | undefined,
 ): { readonly blank: readonly string[]; readonly unreadable: readonly string[] } {
-  const bad = u === undefined ? [] : u.missing;
+  const bad = (u ?? NO_UNREADABLE_BS_FIELDS).missing;
   return {
     blank: stocks.filter((x) => !bad.includes(x)),
     unreadable: stocks.filter((x) => bad.includes(x)),
@@ -413,8 +408,8 @@ export function unreadableBalanceSheetField(
   u: UnreadableBalanceSheetFields | undefined,
 ): boolean {
   if (u === undefined) return false;
-  const label = BS_NUMERIC_FIELDS.find((f) => f.key === key)?.label;
-  return label !== undefined && u.missing.includes(label);
+  const field = BS_NUMERIC_FIELDS.find((f) => f.key === key);
+  return field !== undefined && u.missing.includes(field.label);
 }
 
 /**
@@ -725,22 +720,20 @@ export function balanceSheetAsOfKey(asOf: unknown): string {
   return typeof asOf === 'string' ? asOf.trim() : '';
 }
 
-/** a の基準日が b より新しいか (空は最下位。同じなら false)。 */
-function newerAsOf(a: string, b: string): boolean {
-  if (a === b || a === '') return false;
-  if (b === '') return true;
-  return a > b;
-}
-
 /**
  * 「現在」として使う順に並べる比較 (先頭が現在)。基準日の新しい方 → 同じなら後に入力した方。
  * `Array.prototype.sort` にそのまま渡せる (負なら a が先)。
+ *
+ * 基準日の鍵は `YYYY-MM-DD` / `YYYY-MM` / 空 (基準日なし) で、文字列の大小がそのまま
+ * 時系列である。**空はどの文字列より小さい**ので「基準日なしは最下位」も同じ比較で
+ * 出る —— 2026-09-30 (パス 501) までは空と同値を別に見る `newerAsOf` を挟んでいたが、
+ * その 3 つの判定はどれも `a > b` と同じ答えしか出さず (変異検査で 8 件の等価変異)、消した。
  */
 export function compareBalanceSheetRecords(a: BalanceSheetRecordLike, b: BalanceSheetRecordLike): number {
   const ka = balanceSheetAsOfKey(a.data.asOf);
   const kb = balanceSheetAsOfKey(b.data.asOf);
-  if (newerAsOf(ka, kb)) return -1;
-  if (newerAsOf(kb, ka)) return 1;
+  if (ka > kb) return -1;
+  if (kb > ka) return 1;
   return b.createdAt - a.createdAt;
 }
 

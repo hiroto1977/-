@@ -561,21 +561,24 @@ export function shopifyOrderNote(name: string | undefined): string {
  * 注文名は 1 注文に 1 つである。
  */
 export function salesOrderRef(e: Pick<SalesEntry, 'note'>): string | null {
+  // `salesNoteText` は前後の空白を落とすので、接頭辞 (末尾が空白) で始まる文字列は
+  // 必ずその先に注文名を持つ —— 「接頭辞だけ」は起こらず、長さの判定は要らない (パス 501)。
   const note = salesNoteText(e);
-  return note.startsWith(SHOPIFY_NOTE_PREFIX) && note.length > SHOPIFY_NOTE_PREFIX.length ? note : null;
+  return note.startsWith(SHOPIFY_NOTE_PREFIX) ? note : null;
 }
 
 /** 同じ注文名の控えが既に在ればそれを返す (無ければ null)。Shopify の画面が記録を断る判断。 */
 export function findOrderEntry(existing: readonly SalesEntry[], ref: string): SalesEntry | null {
+  // 空の注文名は `salesOrderRef` が 1 つも返さないので、空を先に断る判定は要らない (パス 501)。
   const key = ref.trim();
-  if (key.length === 0) return null;
   return existing.find((e) => salesOrderRef(e) === key) ?? null;
 }
 
 /** 注文名で引く (注文名が空なら null —— 注文名の無い記録は重複を判定しない)。 */
 export function findShopifyOrder(existing: readonly SalesEntry[], name: string | undefined): SalesEntry | null {
-  const n = (name ?? '').trim();
-  return n.length === 0 ? null : findOrderEntry(existing, shopifyOrderNote(n));
+  // 注文名が空なら `shopifyOrderNote` は接頭辞の無い `Shopify` を返し、`salesOrderRef` は
+  // それを注文名と読まないので、空の判定はこの 1 行で済む (パス 501 —— 前の判定は等価変異だった)。
+  return findOrderEntry(existing, shopifyOrderNote(name));
 }
 
 /** 同じ注文名が 2 件以上ある組。 */
@@ -793,6 +796,7 @@ export function countStoredRows(existing: readonly SalesEntry[], rows: readonly 
   for (const r of rows) {
     const key = salesRowKey(r);
     const left = pool.get(key);
+    // Stryker disable next-line ConditionalExpression: JS では `undefined > 0` が false なので、未定義の判定は型の絞り込みのためだけに在る (等価変異)
     if (left !== undefined && left > 0) {
       stored += 1;
       pool.set(key, left - 1);

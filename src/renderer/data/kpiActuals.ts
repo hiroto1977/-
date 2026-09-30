@@ -142,6 +142,7 @@ export function readablePeriodRows<T extends { readonly period: string }>(
  * 下の `kpiNumbersReadable` が黙らない (`function` 宣言は巻き上げられるので、
  * この定数がモジュール読み込み時に呼んでも未定義にはならない)。
  */
+// Stryker disable next-line ArrayDeclaration: 読むのは欄の名前だけで、要素が何であっても鍵は変わらない (等価変異)
 export const KPI_SUM_FIELDS: readonly string[] = Object.keys(summarizeFundamentals([]));
 
 /**
@@ -587,6 +588,7 @@ function yearEarlier(period: string): string | null {
   // 使われ、アンカー有無の差が出力に出ない (equivalent) ため Regex を無効化する。
   // Stryker disable next-line Regex
   const m = /^(\d{4})-(\d{2})$/.exec(period);
+  // Stryker disable next-line ConditionalExpression: series 由来の期は必ず YYYY-MM なので、読めない枝には到達しない (等価変異)
   if (!m) return null;
   const year = Number(m[1]) - 1;
   return `${year}-${m[2]}`;
