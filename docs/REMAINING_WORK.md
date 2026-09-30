@@ -2,14 +2,14 @@
 
 ## パス 501 (push 側の変異検査 69 本を緑にする —— 生存 94 件の仕分け・6 時間の上限・GitHub だけ検査を 2 回やり直していたこと) が測って、次のパスへ残した物 (2026-09-30)
 
-- **8 本の生存 94 件 (パス 500 が残した 35 件 + パス 496 が記録した 57 件 = 92 件 —— investments の 19 件は未到達 5 を含む → 今の木で測り直すと生存 89 + 未到達 5 = 94 · bankSubmission と sales が 1 件ずつ増えた)** を 1 件ずつ仕分けた:
-  - **本物の穴 → 検査 37 件 (11 ファイル)** —— 書面の但し書きの**繋ぎ目** (§1 / §2 / §4 / §5 / §6 / §8 / 水耕栽培の caption —— 断片ごとの `toContain` では通る)・
+- **8 本の生存 94 件 (パス 500 が残した 35 件 + パス 500 が挙げた 6 本の 57 件 = 92 件 —— 57 件はパス 496 が最初に数えた 58 件から `sales.ts` の 1 件が測り直しで落ちた数・investments の 19 件は未到達 5 を含む → 今の木で測り直すと生存 89 + 未到達 5 = 94 · パス 500 の記録から bankSubmission が 24 → 25・sales が 9 → 10 と 1 件ずつ増えた)** を 1 件ずつ仕分けた:
+  - **本物の穴 → 検査 37 件 (11 ファイル)** —— 書面の但し書きの**繋ぎ目** (§1 / §2 / §4 / §6 / 水耕栽培の caption の 5 か所 —— 断片ごとの `toContain` では通る。§5 の 1 文の中の `・` の並べ方と §8 の 3 行の注記も別に留めた)・
     DSCR が Infinity のとき・読めない欄だけの CCC の重さと種別・直近性の種別・非文字列の `type`・負 / NaN の取得額・`fundCostPrincipalNote` の枝・
     `growthBlankSheetNote` の yoy・`duplicateActualsOverviewNote` の空・`importSaveFailedNote`・`manualOverrideNote` の区切り・貸借対照表の未知の鍵・
     **見本の行の経費・返済が自分の分に混ざらない** (実物の見本は経費・返済を行ではなく base で持つので、`!isDemo` の門を外しても既存の混合の検査では答えが変わらなかった)・
     損益分岐点の理由 2 文の**字面** (他の検査は import した定数と比べるので、定数が `''` になると両辺が `''` で通る —— 読み直す検査に字面を留めた · 法則 `module-evaluated-at-file-load`)
   - **等価 → 形を消した** —— `typeof v === 'number' && Number.isFinite(v)` (typeof は型の絞り込みのためだけ) を `shared/num.ts` の述語 `isFiniteNumber(v): v is number` 1 つへ
-    (balanceSheet / investments / managementHighlights の 5 か所・cashForecast は typeof を持たない `Number.isFinite` だけの写し)・`join` の前の `filter(x !== null)` の写し 6 か所を共有の `joinSheetNotes` へ (★ 監査で訂正: 等価ではない —— null が挟まると区切りが二重になる。生き残っていたのは断片ごとの `toContain` が区切りを見ていなかったためで、繋ぎ目を留めた検査が落とす)・
+    (balanceSheet / investments / managementHighlights の 5 か所・cashForecast は typeof を持たない `Number.isFinite` だけの写し)・`join` の前の `filter(x !== null)` の写し 7 か所のうち 6 か所を共有の `joinSheetNotes` へ (§3 の `perCapitaCaption` は生存が無いので自前の `filter` + `join` のまま) (★ 監査で訂正: 等価ではない —— 区切りが空白の 2 か所 (§4 / §5) では null が挟まると区切りが二重になり、区切りが `''` の 4 か所でも 1 文も無いときの `null` が `''` に変わる。生き残っていたのは断片ごとの `toContain` が区切りを見ていなかったためで、繋ぎ目を留めた検査が落とす)・
     `newerAsOf` の空の判定 (`''` より小さい文字列は無い) を `a > b` へ・sales の注文名の helper の空判定と `find` の重ね掛けを 1 段へ・`nonNeg`・field で引く label
   - **到達しない防御 → 理由つき pragma 5 件 + 拡張 1 件** —— `null >= 10` / `undefined > 0` が false・series 由来の期は必ず YYYY-MM・読める期しか渡らない・`KPI_SUM_FIELDS` の要素・
     `staleBsNote` の 3 判定 (どれを潰しても答えは変わらない)
@@ -28,17 +28,17 @@
   ★ **自戒: 最初に「1 job に収まらない」と書いたのは、この container の速さからの見積もり (約 8〜13 時間) で、GitHub の runner の実測ではなかった** —— 塊に分けた根拠は「収まらない」ではなく、余裕の薄さ・壁時計 (最長の塊 42 分 26 秒・run 全体 43 分)・週次の全件が現に cancel されたことである。だから
   `scripts/mutate-changed.cjs --chunks` が行数で塊に分け (1 塊 4,000 行まで・重い順にいちばん軽い塊へ・上限を超える塊が出たら塊を 1 つ増やして割り付け直す —— ★ 監査が「ceil で塊の数を決めるだけでは上限を保証しない (3,000 / 3,000 / 1,100 / 900 を 2 塊に分けると 4,100)」と指摘したので直した・self-test 7 件 + 実物の一覧で「過不足なく・上限内」の対照)、
   `mutation.yml` の push 側を `scope` / `mutate-some` (matrix・`fail-fast: false`) に分けた (週次の全件は次の項の `mutate-full` / `merge-full`)。69 本 → **8 塊 (3,607〜3,676 行)**。
-  **runner 時間の合計は変わらない** (分けるのは壁時計の上限に収めるため)。`thresholds.break` (99.8) は塊ごとに掛かる —— 塊が小さいほど厳しい (2,500 変異体の塊なら生存 6 件で落ちる —— 5 件はちょうど 99.80% で通る)。
+  **変異体 1 つあたりの仕事は変わらないが、塊ごとに dry run (GitHub の実測で約 10〜12 分) が 1 回ずつ増える**ので、runner 時間の合計は 1 job より大きい (分けるのは壁時計の上限に収めるためで、費用を減らすためではない)。`thresholds.break` (99.8) は塊ごとに掛かる —— 塊が小さいほど厳しい (2,500 変異体の塊なら生存 6 件で落ちる —— 5 件はちょうど 99.80% で通る)。
   ★ **CI での塊の所要は GitHub で測った (`workflow_dispatch` の `files`)**: 8 塊が 17 分 29 秒〜42 分 26 秒で完走した (retry なしの #176・run 全体 43 分。retry ありの #175 は 23 分 02 秒〜55 分 04 秒・run 全体 56 分) (下の「測り直した結果」)。
 - ★ **週次の全掃引も塊の matrix にした (501e) —— 測った: 22 塊・58 分で完走** (旧: `stryker-main` の cache は 7 日未アクセスで evict されるので、落ちの週は全件を 1 job で測り直す —— #170 の落ちは 2 時間 43 分で完走したが、#172 は 6 時間で cancel された。#173 の 22 塊の所要の合計は 約 705 分 (11.8 時間・dry run の重複を含む。#172 の dry run 11 分 44 秒を 21 回分除いても約 460 分) で、1 job には載らない) ——
   `scripts/mutate-changed.cjs --all --chunks` が 308 本を 22 塊 (1 塊 4,000 行まで) に分け、`mutation.yml` の `mutate-full` が塊ごとに測り、`merge-full` が `scripts/merge-mutation-reports.cjs` で
   塊の報告を 1 つへ併合する (**揃っていない併合は何も書かず落ちる** —— 欠けた塊を全体と名乗らせると、生存を含む塊ほど欠けやすいので点数が実物より良く出る。塊の job は塊ごとの break では落とさず、合否は併合した全体で決める)。
-  **run #173 (2026-09-30・この branch の `workflow_dispatch`・`7c9c2cb2`) で実測**: 12:39:17Z → 13:37:28Z = **58 分**・各塊 18 分 43 秒〜56 分 31 秒 (同時に走れる job の上限で最後の 6 塊 (塊 16〜21) は 13:01〜13:09 に始まった)・
+  **run #173 (2026-09-30・この branch の `workflow_dispatch`・`7c9c2cb2`) で実測**: 12:39:17Z → 13:37:28Z = **58 分**・各塊 18 分 40 秒〜56 分 28 秒 (Stryker の「Done in」。job の step では 18 分 43 秒〜56 分 31 秒。同時に走れる job の上限で最後の 6 塊 (塊 16〜21) は 13:01〜13:09 に始まった)・
   `merge-full` は 18 秒で併合して 704 件の生存を数え、併合後の点数が break (99.8) を割ったので **`merge-full` だけが設計どおり failure** した (`mutate-full` の 22 塊はすべて success)。
   併合後: **測った変異体 38,044 (killed 37,203 + timeout 92 / 生存 704 / 未到達 45) = 98.03%** (併合の報告の見出しの 45,849 は Ignored も含む計装の数)。内訳は PR の 69 本 = 13,062 変異体・**99.32%**・非 killed 89 (13 本) /
   外の 239 本 = 24,982 変異体・**97.36%**・非 killed 660 (92 ファイル)。
 - ★ **手で選んだ対象だけを GitHub の runner で測り直す口 (501f)** —— `scripts/mutate-changed.cjs --files a,b,c [--chunks]` と `workflow_dispatch` の入力 `files` (`mutate-some` の matrix へ渡る)。
-  `mutate` に無い名前・空の一覧は**黙って捨てず落ちる**。この container (4 コア) は 1 塊 4,000 行で 1 時間近くかかるので、直したファイルの測り直しは GitHub で回す。
+  `mutate` に無い名前と、名前を 1 つも含まない入力 (`,` だけなど) は**黙って捨てず落ちる** (入力が空なら全件の掃引になる)。この container (4 コア) は 1 塊 4,000 行で 1〜2 時間 (実測 69〜107 分) かかるので、直したファイルの測り直しは GitHub で回す。
   run #174 (13 本・修正前・3 塊) は 3 塊とも break を割って failure (23 分 42 秒〜36 分 44 秒) —— 全掃引が見つけた 89 件のうち 88 件 (生存 87 + 未到達 1。`oauth.ts` の 1 件はこの run の塊の中では殺された) がこの口でも見えた。
 - ★ **全掃引 #173 が残した 89 件 (PR の 69 本のうち 13 本) を閉じた (501g)** —— 内訳 (非 killed): `ollama.ts` 42・`api/cursor.ts` 13・`scanTarget.ts` 7・`taxCalc.ts` 7・`httpLimits.ts` 4・`hydroponics.ts` 4・
   `vault.ts` 2・`store.ts` 2・`workingCapital.ts` 2・`ollamaWeb.ts` 3 (生存 2 + 未到達 1)・`taxConsumptionBusiness.ts` 1・`depreciation.ts` 1・`oauth.ts` 1。上の 3 種の分類をそのまま当てた:
@@ -67,10 +67,10 @@
   修正前の run #174 (13 本・3 塊) は 3 塊とも break を割って failure だった —— 全掃引 #173 が残した 89 件 (13 本) はすべて閉じ、13 本を含む 69 本が 100.00% になった。
   (#176 の塊 4 は step 5 の status が最後まで `pending` と表示されたが、job は正常に完走した —— API の表示の遅れ。念のため同じ 9 本を `files` で run #177 に出したが、#176 が完走したので取り消した。)
 - **同じ判定の写しが残っている** (実測・監査で数え直した) —— 名前つきは 3 つ: `shared/bankFormat.ts` (`number | null | undefined` を受ける述語)・`shared/mutualFundsMetrics.ts` (`number` を受けて boolean)・
-  **`shared/serviceAdvisor.ts` の `finiteNumber` (署名も本体も `num.ts` と同一)**。素の式 `typeof … === 'number' && Number.isFinite(…)` だけの物が `shared/waterCyclePlanner.ts:397` に 1 つ、条件や既定値を伴う形が他に 16 か所 (呼び手にできる)。**どれも `mutate` に在り 69 本の外なので、触ると測る対象が増える** —— 寄せるのは次のパスへ (法則 `center-then-count-callers`)。
-- 塊の重さは**行数**で、変異体の数の代わりである (Stryker を走らせないと変異体の数は分からない)。実測は 5,535 行 → 測った変異体 3,032 (計装 3,529・0.55 / 行) で、
-  ファイルによる偏りは測っていない。
-- ★ **記録の監査が publish 前に 9 件の誤りを捕まえた** (一次資料と突き合わせる 6 次元の workflow・各指摘を 2 名が反証) —— #170 の変異体数 (27,447 → 29,397)・変異体の数の基準の混在・67 → 69 本・2,500 件の例・`joinSheetNotes` の等価の理由・typeof の写しの数・35 + 57 + 5 の二重計上・#172 の対象・59 本を「測っている」。**読んで書いた数は測った数ではない**。
+  **`shared/serviceAdvisor.ts` の `finiteNumber` (署名は `num.ts` の `isFiniteNumber` と同じだが、本体は `typeof v === 'number' && Number.isFinite(v)` のままで名前も違う)**。素の式 `typeof … === 'number' && Number.isFinite(…)` だけの物が `shared/waterCyclePlanner.ts:397` に 1 つ、条件や既定値を伴う形が他に 16 か所 (呼び手にできる)。**名前つきの 3 つと素の式 1 つは `mutate` に在り 69 本の外なので、触ると測る対象が増える。16 か所のうち 6 か所 (`main/secrets.ts:526`・`businessUnits.ts:299` / `:300`・`library.ts:80`・`talent.ts:211`・`zoningPlanner.ts:449`) も同じで、残る 10 か所は `mutate` に無い 8 ファイル (`ManualDataSection.tsx` ×3・`portfolioAnnex.ts`・`teamRadarDraft.ts`・`villageData.ts`・`api/cloudflare.ts`・`apiResponse.ts`・`hydroponicsControl.ts`・`radarPlot.ts`) なので、触っても測る対象は増えない** —— 寄せるのは次のパスへ (法則 `center-then-count-callers`)。
+- 塊の重さは**行数**で、変異体の数の代わりである (Stryker を走らせないと変異体の数は分からない)。**行数は粗い代わりでしかない** (測った): 測り直した 8 本は 5,535 行 → 測った変異体 3,032 (計装 3,529・0.55 / 行) だが、
+  69 本全体では 29,177 行 → 13,062 変異体で 0.45 / 行で、行数の差が 2% 未満 (3,607〜3,676 行) の 8 塊でも #176 の変異体は 1,006〜2,223 (2.2 倍)・所要は 17 分 29 秒〜42 分 26 秒 (2.4 倍) と揺れた。
+- ★ **記録の監査が publish 前に 9 件の誤りを捕まえた** (一次資料と突き合わせる 6 次元の workflow・各指摘を 2 名が反証) —— #170 の変異体数 (27,447 → 29,397)・変異体の数の基準の混在・67 → 69 本・2,500 件の例・`joinSheetNotes` の等価の理由・typeof の写しの数・35 + 57 + 5 の二重計上・#172 の対象・59 本を「測っている」。**その後の最後の監査 (7 次元) も 31 件 (重複を含む) を出し、1 件ずつ一次資料で確かめて直した** (数の基準の混在・「runner 時間の合計は変わらない」(偽 —— 各塊が dry run を 1 回ずつ足す)・写しの数・件数・時間の見積もり)。**読んで書いた数は測った数ではない**。
 - **パス 500 の残作業「触っていない行の生存 35 件」と「今の木で測っていない 47 本」は、どちらもこのパスで閉じた** (前者は検査 37 件ほか・後者は全掃引 #173 と 69 本の測り直し #175 / #176)。
 - **残した物 (次のパス)** —— ① **PR の外の 239 本のうち 92 ファイル・非 killed 660 件** (#173: 生存 616 + 未到達 44) —— 週次の全掃引は、閉じるまで**設計どおり赤のまま** (全体 98.03% < 99.8)。
   上位: `dataOrigin.ts` 77・`credentialUse.ts` 77 (どちらも module 直下の表 = 法則 109 の形の疑い)・`docStudioChecks.ts` 72・`redact.ts` 27・`serviceAdvisor.ts` 27・`api/google.ts` 24・

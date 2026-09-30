@@ -87,9 +87,9 @@ export function finiteOr0(n: number): number {
  *
  * `typeof v === 'number' && Number.isFinite(v)` と書くと、`typeof` の側は実行時には
  * 冗長である (`Number.isFinite` は数でない物を型変換せずに false にする)。変異検査は
- * それを「`true && Number.isFinite(v)`」という**等価変異**として 4 か所に残し、
- * 2 か所は理由つきの pragma で測定から外していた (`normalizeBalanceSheet` /
- * `normalizeProperty`)。述語を 1 つ置けば、呼び手は冗長な判定も pragma も要らない ——
+ * それを「`true && Number.isFinite(v)`」という**等価変異**として 3 か所 (`investments.ts` に 2・
+ * `managementHighlights.ts` に 1) に残し、別の 2 か所は理由つきの pragma で測定から外していた
+ * (`normalizeBalanceSheet` / `normalizeProperty`)。述語を 1 つ置けば、呼び手は冗長な判定も pragma も要らない ——
  * TypeScript は述語の戻り値で `v` を `number` に絞る。
  */
 export function isFiniteNumber(v: unknown): v is number {

@@ -38,8 +38,10 @@ name: mutation
 #
 # `scripts/mutate-changed.cjs --chunks` が対象を行数で塊に分け (1 塊 4,000 行
 # まで・重い順にいちばん軽い塊へ)、`scope` job がそれを JSON の配列で出し、
-# `mutate-some` job が matrix で塊ごとに測る。**runner 時間の合計は変わらない**
-# (分けるのは壁時計の上限に収めるため)。`thresholds.break` は塊ごとに掛かる
+# `mutate-some` job が matrix で塊ごとに測る。**変異体 1 つあたりの仕事は変わらない
+# が、塊ごとに dry run (GitHub の実測で約 10〜12 分) が 1 回ずつ増える**ので、
+# runner 時間の合計は 1 job で測るより大きい (分けるのは壁時計の上限に収めるためで、
+# 費用を減らすためではない)。`thresholds.break` は塊ごとに掛かる
 # (塊が小さいほど厳しい —— 目標は 100% なのでそれでよい)。
 #
 # ## 週次も塊に分ける (2026-09-30 · パス 501e)
@@ -80,7 +82,7 @@ name: mutation
 # ## 手で選んだ対象だけを測り直す (2026-09-30 · パス 501)
 #
 # 直したファイルを**GitHub の runner で**測り直したいことがある (この session の container は
-# 4 コアで、1 塊 4,000 行を測るのに 1 時間近くかかる。runner は塊を並列に走らせられる)。
+# 4 コアで、1 塊 4,000 行を測るのに 1〜2 時間 (実測 69〜107 分) かかる。runner は塊を並列に走らせられる)。
 # 手動実行 (`workflow_dispatch`) の `files` に、`stryker.config.json` の `mutate` にある名前を
 # カンマ区切りで渡すと、その対象だけを**今の塊の分け方のまま** (`--files … --chunks`) 測る。
 # 空なら今までどおり全件。**`mutate` に無い名前は黙って捨てずに落ちる** (script の側で —
@@ -154,7 +156,7 @@ jobs:
               echo "::warning::push の差分が取れなかったので全件を塊に分けて測ります (fetch-depth: 2 に対して base が浅い clone に無い可能性)。"
             fi
           elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$INPUT_FILES" ]; then
-            # 手で選んだ対象だけ。mutate に無い名前・空の一覧は script が落とす (黙って捨てない)。
+            # 手で選んだ対象だけ。mutate に無い名前・名前を 1 つも含まない入力 (`,` だけなど) は script が落とす (黙って捨てない)。
             CHUNKS="$(node scripts/mutate-changed.cjs --files "$INPUT_FILES" --chunks)"
           else
             CHUNKS="ALL"
