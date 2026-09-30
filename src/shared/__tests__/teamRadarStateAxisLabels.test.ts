@@ -4,7 +4,7 @@
  * `validateTeamRadarState` は軸の見出しを「1〜`MAX_AXIS_LABEL_CHARS` 字の文字列」に限り、
  * 外れたら `axis label must be a 1-24 char string: <値>` で断る。全掃引 #179 の生存 3 件:
  *   - 文字列でない値 (`typeof a !== 'string'`) —— 数を渡すと `countChars` が**別の例外**
- *     (`42 is not iterable`) を投げるので、`toThrow()` だけの検査は通っていた。
+ *     (`TypeError: value is not iterable`) を投げるので、`toThrow()` だけの検査は通っていた。
  *     **断りの文面 (この関門が投げた `Error`) を値で見る**ことで、別の例外を区別できる。
  *   - 長さの上限 (`countChars(a) > MAX`) —— 上限を超える見出しを渡す標本が無かった。
  * 長さは**文字**で数える (絵文字 1 つは 1 文字・2 コード単位)。
