@@ -25,7 +25,7 @@
 
   69 本 = 29,177 行・**13,062 変異体** (全掃引 #173 の実測。測り直した 8 本の 0.55 / 行から見積もった ≒ 16,000 は 2 割ほど多かった)。**塊に分けて GitHub で測った実測 (#176 / #175) は、8 塊の所要の合計が 238 分 / 268 分 = 1 job に載せると約 4〜4.5 時間** (塊ごとの dry run の重複を除いていない値) ——
   6 時間の上限には収まるが余裕は 26〜34% で、同じ 9 本の塊が 26 分 07 秒にも 42 分 26 秒にもなった (runner の速さは 1.6 倍揺れる) ので**保証は無い** (この container の速さ — 測った変異体 3,032 / 96 分・初回 3,161 / 148 分 — なら 13,062 変異体で約 6.9〜10.2 時間)。週次の全件 (#172: 45,547 変異体) は現に 6 時間で cancel された。
-  ★ **自戒: 最初に「1 job に収まらない」と書いたのは、この container の速さからの見積もり (約 8〜13 時間) で、GitHub の runner の実測ではなかった** —— 塊に分けた根拠は「収まらない」ではなく、余裕の薄さ・壁時計 (最長の塊 43 分)・週次の全件が現に cancel されたことである。だから
+  ★ **自戒: 最初に「1 job に収まらない」と書いたのは、この container の速さからの見積もり (約 8〜13 時間) で、GitHub の runner の実測ではなかった** —— 塊に分けた根拠は「収まらない」ではなく、余裕の薄さ・壁時計 (最長の塊 42 分 26 秒・run 全体 43 分)・週次の全件が現に cancel されたことである。だから
   `scripts/mutate-changed.cjs --chunks` が行数で塊に分け (1 塊 4,000 行まで・重い順にいちばん軽い塊へ・上限を超える塊が出たら塊を 1 つ増やして割り付け直す —— ★ 監査が「ceil で塊の数を決めるだけでは上限を保証しない (3,000 / 3,000 / 1,100 / 900 を 2 塊に分けると 4,100)」と指摘したので直した・self-test 7 件 + 実物の一覧で「過不足なく・上限内」の対照)、
   `mutation.yml` の push 側を `scope` / `mutate-some` (matrix・`fail-fast: false`) に分けた (週次の全件は次の項の `mutate-full` / `merge-full`)。69 本 → **8 塊 (3,607〜3,676 行)**。
   **runner 時間の合計は変わらない** (分けるのは壁時計の上限に収めるため)。`thresholds.break` (99.8) は塊ごとに掛かる —— 塊が小さいほど厳しい (2,500 変異体の塊なら生存 6 件で落ちる —— 5 件はちょうど 99.80% で通る)。
@@ -39,7 +39,7 @@
   外の 239 本 = 24,982 変異体・**97.36%**・非 killed 660 (92 ファイル)。
 - ★ **手で選んだ対象だけを GitHub の runner で測り直す口 (501f)** —— `scripts/mutate-changed.cjs --files a,b,c [--chunks]` と `workflow_dispatch` の入力 `files` (`mutate-some` の matrix へ渡る)。
   `mutate` に無い名前・空の一覧は**黙って捨てず落ちる**。この container (4 コア) は 1 塊 4,000 行で 1 時間近くかかるので、直したファイルの測り直しは GitHub で回す。
-  run #174 (13 本・修正前・3 塊) は 3 塊とも break を割って failure (23 分 43 秒〜36 分 46 秒) —— 全掃引が見つけた 89 件がこの口でも見えることを確かめた。
+  run #174 (13 本・修正前・3 塊) は 3 塊とも break を割って failure (23 分 42 秒〜36 分 44 秒) —— 全掃引が見つけた 89 件のうち 88 件 (生存 87 + 未到達 1。`oauth.ts` の 1 件はこの run の塊の中では殺された) がこの口でも見えた。
 - ★ **全掃引 #173 が残した 89 件 (PR の 69 本のうち 13 本) を閉じた (501g)** —— 内訳 (非 killed): `ollama.ts` 42・`api/cursor.ts` 13・`scanTarget.ts` 7・`taxCalc.ts` 7・`httpLimits.ts` 4・`hydroponics.ts` 4・
   `vault.ts` 2・`store.ts` 2・`workingCapital.ts` 2・`ollamaWeb.ts` 3 (生存 2 + 未到達 1)・`taxConsumptionBusiness.ts` 1・`depreciation.ts` 1・`oauth.ts` 1。上の 3 種の分類をそのまま当てた:
   - **等価 → 形を消した (法則 115)** —— `taxCalc.ts` (`floorTaxableThousand` を `nonNeg` へ・`calcResidentAdjustmentCredit` の同じ答えを出す守りを消し・`calcConsumptionTax` は `yen(nonNeg(netAmount) * nonNeg(rate))`)・
