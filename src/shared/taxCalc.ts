@@ -28,11 +28,10 @@ import {
  * 例: 1,999,999 → 1,999,000 / 2,000,000 → 2,000,000。
  */
 export function floorTaxableThousand(taxableIncome: number): number {
-  // `<= 0` を `< 0` にしても 0 のとき `Math.floor(0/1000)*1000` = 0 で同じ。
-  // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
-  const income = nonNeg(taxableIncome);
-  if (income <= 0) return 0;
-  return Math.floor(income / 1_000) * 1_000;
+  // 負値・非有限は `nonNeg` が 0 に倒す。0 は `Math.floor(0 / 1_000) * 1_000` = 0 で
+  // 答えが同じなので、「0 以下なら 0」という早期 return は置かない
+  // (置くと `<= 0` → `< 0` が観測できない等価変異として残る —— パス 501 で形ごと消した)。
+  return Math.floor(nonNeg(taxableIncome) / 1_000) * 1_000;
 }
 
 // --- 所得税 (速算表ベース、2024 年度) -----------------------------------
@@ -76,18 +75,18 @@ export function calcIncomeTax(taxableIncome: number, surtaxRate = RECONSTRUCTION
  * (`floorTaxableThousand`)。国税庁の所得税額の計算手順に準拠。
  */
 export function calcBaseIncomeTax(taxableIncome: number): number {
-  // 0 のときは下の速算表でも 0 円になるので、この早期 return は結果を
-  // 変えない (読みやすさのために置いている)。
-  // Stryker disable next-line ConditionalExpression,EqualityOperator: 0 での結果が同じ (実測)
   // **非有限は速算表の `find` を全部すり抜け、`bracket!` が投げる。**
   // 下の「Infinity 上限ブラケットが必ず最後に在るので bracket は常に定義される」は
   // **有限な入力についてだけ成り立つ** —— `NaN <= Infinity` は false なので
   // `find` は undefined を返し、`!` が型検査器の異議を消していた (パス 203 で実測:
   // `calcBaseIncomeTax(NaN)` は TypeError で落ちていた。画面なら枠が文面になる)。
-  const income = nonNeg(taxableIncome);
-  if (income <= 0) return 0;
+  // 入口の `nonNeg` (下の `floorTaxableThousand` が持つ) が非有限と負値を 0 に倒す。
+  //
+  // 0 の早期 return は置かない —— 0 は速算表の第 1 段でも `max(0, 0 × 5% − 0)` = 0 で
+  // 答えが同じなので、置くと `<= 0` → `< 0` が観測できない等価変異として残る
+  // (パス 501 で形ごと消した)。
   // 課税される所得金額の 1,000 円未満を切り捨ててから速算表を適用する。
-  const floored = floorTaxableThousand(income);
+  const floored = floorTaxableThousand(taxableIncome);
   // 境界を `<` にしても税額は変わらない。速算表の控除額の列が
   // 「境界で前後の式が一致する」ように作られているためで、実装の緩さでは
   // ない (`__tests__/taxCalc.test.ts` の連続性の検査を参照)。定数を打ち
@@ -274,9 +273,14 @@ export function calcResidentAdjustmentCredit(
   const income = nonNeg(residentTaxableIncome);
   const diff = nonNeg(humanDeductionDiff);
   // 負の入力で「税額を増やす控除」を返さないための入口 (検査あり)。
-  // `<= 0` → `< 0` は 0 のとき下の式でも 0 になるので観測できない。
-  // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
-  if (income <= 0 || diff <= 0) return 0;
+  // **`diff <= 0` は要る** —— 人的控除差が 0 でも合計課税所得が 200 万を超えると、
+  // 下の式は `max(2,500, 負の額 × 5%)` = 2,500 円を返す (差が無いのに最低額が付く)。
+  // 検査は `(3_000_000, 0)` で留めている。以前はこの行に「0 のとき下の式でも 0 になる」
+  // という pragma が付き、**この本物の `<` の変異体まで測定から外していた**。
+  //
+  // `income <= 0` は置かない —— 所得 0 なら下の第 1 枝が `min(diff, 0) × 5%` = 0 で
+  // 答えが同じなので、置くと観測できない等価変異として残る (パス 501)。
+  if (diff <= 0) return 0;
   if (income > 25_000_000) return 0;
   if (income <= 2_000_000) {
     return yen(Math.min(diff, income) * 0.05);
@@ -321,11 +325,10 @@ export const CONSUMPTION_TAX_REDUCED = 0.08;
 
 /** 税抜金額と税率 (0.1 / 0.08) から消費税額を計算する。 */
 export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION_TAX_STANDARD): number {
-  // `<= 0` → `< 0` は等価: 税抜 0 のとき `yen(0 × rate)` = 0 でどちらも 0。
-  // Stryker disable next-line EqualityOperator: 0 では税額 0 で結果が同じ
-  const net = nonNeg(netAmount);
-  if (net <= 0) return 0;
-  return yen(net * nonNeg(rate));
+  // 負値・非有限は `nonNeg` が 0 に倒し、税抜 0 の税額は `yen(0 × rate)` = 0。
+  // 「0 以下なら 0」という早期 return は答えが同じなので置かない
+  // (置くと `<= 0` → `< 0` が観測できない等価変異として残る —— パス 501)。
+  return yen(nonNeg(netAmount) * nonNeg(rate));
 }
 
 // --- 給与所得控除 (正式テーブル, 令和2年分以降) -------------------------

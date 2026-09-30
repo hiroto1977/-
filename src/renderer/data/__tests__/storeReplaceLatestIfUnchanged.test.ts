@@ -15,7 +15,7 @@
  *     (進まないと、次の比較が「同じ版」と取り違える)。
  */
 import 'fake-indexeddb/auto';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { getRecordStore, latestTokenOf } from '../store';
 import type { RecordCipher } from '../recordCipher';
 import { latestRecord } from '../latestRecord';
@@ -45,6 +45,24 @@ afterEach(() => {
 
 async function rows() {
   return getRecordStore().list(C);
+}
+
+/**
+ * **この attempt の時計の状態から**、次の `monotonicNow()` がちょうど返す値を組む。
+ *
+ * 固定の値 (9e12 など) を置くと、CI の `retry: 2` (vitest.config.ts) の 2 回目は 1 回目が進めた
+ * 時計 (`_lastTs`) の後ろから始まり、期待した同点にならないまま通ってしまう —— 同点の判定を `>` へ
+ * 倒した変異体を retry が癒やし、変異検査が「生存」と報せる (GitHub の全掃引で実測)。
+ * 時計を 0 に固定して探りの行を 1 件足すと、その行の `createdAt` が今の `_lastTs + 1` になる。
+ * そこから十分先を `at` にして時計を固定すれば、以後の `monotonicNow()` はちょうど `at` を返す
+ * (`max(_lastTs + 1, at)` = `at`)。attempt ごとに組み直すので、何度目でも同じ同点になる。
+ */
+async function clockAt(): Promise<{ at: number; clock: MockInstance<() => number> }> {
+  const clock = vi.spyOn(Date, 'now').mockReturnValue(0);
+  const probe = await getRecordStore().insert('clock-probe', {});
+  const at = probe.createdAt + 1_000_000;
+  clock.mockReturnValue(at);
+  return { at, clock };
 }
 
 describe('replaceLatestIfUnchanged —— 答えの 2 通り', () => {
@@ -200,13 +218,13 @@ describe('replaceLatestIfUnchanged —— 最新の選び方は latestRecord と
    */
   it('★ 最新の updatedAt がこの端末の今とちょうど同じでも、版はその後ろへ進む', async () => {
     const store = getRecordStore();
-    // この端末の時計より先 —— 置き換える時刻 (monotonicNow) はちょうどこの値になる。
-    const at = 9_000_000_000_000;
-    vi.spyOn(Date, 'now').mockReturnValue(at);
+    // この端末の時計より先 —— 置き換える時刻 (monotonicNow) はちょうどこの値になる (attempt ごとに組む)。
+    const { at } = await clockAt();
     await store.importAll([{ id: 'same-clock', collection: C, createdAt: at, updatedAt: at, data: { ...A } }]);
     const opened = latestRecord(await rows());
     const r = await store.replaceLatestIfUnchanged(C, latestTokenOf(opened)!, { ...B });
-    expect(r.status === 'saved' && r.record.updatedAt, '版が進まず、置き換える前の目印と同じ版のまま').toBeGreaterThan(at);
+    // ちょうど 1 ms 後 (同点の判定を `>` へ倒すと版は `at` のまま進まない)
+    expect(r.status === 'saved' && r.record.updatedAt, '版が進まず、置き換える前の目印と同じ版のまま').toBe(at + 1);
     const stale = await store.replaceLatestIfUnchanged(C, latestTokenOf(opened)!, { ...D });
     expect(stale.status, '置き換える前の目印で、置き換えた行をもう 1 度書き換えられた').toBe('changed');
     expect((await rows())[0]!.data).toEqual(B);

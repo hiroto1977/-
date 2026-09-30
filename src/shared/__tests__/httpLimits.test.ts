@@ -241,6 +241,19 @@ describe('既定値', () => {
     expect(m.DEFAULT_HTTP_TIMEOUT_MS).toBe(30000);
   });
 
+  /*
+   * **読み直す検査は、対象の直下の値を全部主張する** (`rereadModule` の docblock · 法則 109)。
+   * 上の 2 件だけだと、同じモジュールの残りの 3 つ (Ollama の応答上限・生成の締切・転送の
+   * 状態の集合) の変異体は、この検査だけで走って生き残る —— 静的 import の側は読み込み時の値を
+   * 見るので変異体に届かない (GitHub の全掃引で 3 件: 上限の掛け算 2 通りと集合を空にする形)。
+   */
+  it('★ Ollama の応答上限は 2 MiB ちょうど・生成の締切は 120 秒・転送の状態は 5 つだけ', async () => {
+    const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
+    expect(m.MAX_OLLAMA_RESPONSE_BYTES).toBe(2097152);
+    expect(m.OLLAMA_CHAT_TIMEOUT_MS).toBe(120000);
+    expect([...m.REDIRECT_STATUSES].sort((a, b) => a - b)).toEqual([301, 302, 303, 307, 308]);
+  });
+
   it('静的 import 側とも一致している (2 つの読み方でずれない)', () => {
     expect(MAX_HTTP_RESPONSE_BYTES).toBe(10485760);
     expect(DEFAULT_HTTP_TIMEOUT_MS).toBe(30000);

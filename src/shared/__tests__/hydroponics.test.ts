@@ -473,6 +473,20 @@ describe('assessLowPotassium — 実測でしか評価しない', () => {
       expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: days }).switchWindowOk, `${days}`).toBe(ok);
     }
   });
+
+  // **未設定・0 以下・非有限は「入力されていない」で、範囲外 (false) とは別の答え (null)。**
+  // 偽の警告は本物の警告を薄める。フォームの `allowZero: false` と同じ判定で、
+  // 画面が受け付けない値を計算だけが受け取らない。Infinity は正で有限でないので
+  // `> 0` だけでは落ちない (`isFiniteNumber` の側だけが落とす)。0 は有限だが正でない
+  // (`> 0` の側だけが落とす)。
+  it('★ 切替期間が未設定・0・負・非有限なら switchWindowOk は null (範囲外の false ではない)', () => {
+    for (const days of [null, 0, -1, -10, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: days }).switchWindowOk, `${days}`).toBeNull();
+    }
+    // 対照: 正の有限値は (範囲外でも) null ではなく真偽で答える
+    expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: 1 }).switchWindowOk).toBe(false);
+    expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: 0.5 }).switchWindowOk).toBe(false);
+  });
 });
 
 describe('servingGramsWithinLimit — 何 g 食べられるか', () => {

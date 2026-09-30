@@ -35,7 +35,7 @@
  *   https://www.maff.go.jp/j/shokusan/fcp/torikumi_jirei/attach/pdf/torikumi_jirei_02-10.pdf
  */
 
-import { nonNeg, round1, round2, yen } from './num';
+import { isFiniteNumber, nonNeg, round1, round2, yen } from './num';
 
 // --- 1. 育てる条件 --------------------------------------------------------
 
@@ -244,9 +244,11 @@ export const DEFAULT_PRODUCTION_PARAMS: ProductionParams = {
   daysPerYear: DAYS_PER_YEAR,
 };
 
-/** 割合を 0..1 に収める。分岐で書くと 0 が両枝で同値になり観測できない。 */
+/**
+ * 割合を 0..1 に収める。分岐で書くと 0 が両枝で同値になり観測できない。
+ * 非有限と負値は `nonNeg` が 0 に倒す (別に見る早期 return は答えが同じなので置かない —— パス 501)。
+ */
 function clampRatio(r: number): number {
-  if (!Number.isFinite(r)) return 0;
   return Math.min(1, nonNeg(r));
 }
 
@@ -599,7 +601,9 @@ export function assessLowPotassium(
   const rawDays = input.switchDaysBeforeHarvest;
   // 未設定・非有限・0 以下は「入力されていない」。フォームの `allowZero: false`
   // と同じ判定にする (画面が受け付けない値を、計算だけが受け取らないように)。
-  const days = typeof rawDays === 'number' && Number.isFinite(rawDays) && rawDays > 0 ? rawDays : null;
+  // `isFiniteNumber` は `null` も非有限も落とし、型も `number` へ絞る —— `typeof` を別に
+  // 書くと実行時には冗長な等価変異になる (パス 501)。
+  const days = isFiniteNumber(rawDays) && rawDays > 0 ? rawDays : null;
   return {
     potassiumMgPer100g,
     referenceMgPer100g: reference,

@@ -19,7 +19,7 @@
  */
 
 import { displayField, finiteNumberOf } from '../apiResponse';
-import { finiteOrNull } from '../num';
+import { isFiniteNumber } from '../num';
 import { isoDateFromTimestamp } from '../isoDate';
 
 /** Cursor Admin API の基底 URL。 */
@@ -199,9 +199,10 @@ export function toIsoDate(epochMs: number | undefined): string {
 export function acceptRateOf(accepted: number | null, total: number | null): number | null {
   // 非有限は「率 0%」ではなく「算定不能」(既に `null` の道が在る)。
   // **`null` も同じ扱い** (パス 266) —— 読めなかった行数から率は作れない。
-  if (accepted === null || total === null) return null;
-  if (finiteOrNull(accepted) === null || finiteOrNull(total) === null) return null;
-  if (total <= 0) return null;
+  // `isFiniteNumber` は `null` と非有限を 1 つの判定で落とし、型も `number` へ狭める。
+  // `null` を先に `=== null` で弾く 2 段に分けていた頃は、後ろの判定が同じ答えを出すので
+  // 前の段を消しても変わらない等価変異が残った (パス 501)。
+  if (!isFiniteNumber(accepted) || !isFiniteNumber(total) || total <= 0) return null;
   return Math.round((accepted / total) * 1000) / 10;
 }
 
@@ -214,9 +215,13 @@ export function acceptRateOf(accepted: number | null, total: number | null): num
  */
 export function isOverCounted(accepted: number | null, total: number | null): boolean {
   // 読めなかった行数からは「Cursor 側の集計が噛み合っていない」とは言えない
-  // (パス 266)。`total > 0` の守りは既に在るが、`null` はそこを通らない。
-  if (accepted === null || total === null) return false;
-  return total > 0 && accepted > total;
+  // (パス 266)。`null` は `NaN` へ寄せる —— 大小の比較は `NaN` に対して必ず false なので、
+  // 読めなかった側が 1 つでもあれば「上回り」にならない。`=== null` の門を別に置くと、
+  // JS は `null` を 0 として比べるので下の比較が同じ答え (false) を出し、門を消しても
+  // 変わらない等価変異が残る (パス 501)。
+  const a = accepted ?? Number.NaN;
+  const t = total ?? Number.NaN;
+  return t > 0 && a > t;
 }
 
 /** 取り出した行と、**取り出せたのかどうか**。 */

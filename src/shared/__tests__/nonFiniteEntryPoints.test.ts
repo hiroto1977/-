@@ -527,7 +527,6 @@ const COMPARISON_GUARD_EXEMPT: Readonly<Record<string, string>> = {
     'removed / kept は clearExportedRequests が配列の長さの差として数えた整数だけが入る (呼び手は部品の中の 1 か所)。非有限が届く道が無い',
   'src/renderer/data/kpiActuals.ts::computeLaborMetrics': 'members が非有限なら null を返す (実測)。集計側は summarizeFundamentals が消毒済み',
   'src/renderer/data/managementReport.ts::buildManagementReport': 'breakEvenDeltaPct は呼び出し側で `number | null` に落ちており、文面は null の枝を持つ',
-  'src/shared/api/cursor.ts::isOverCounted': '戻り値が boolean。`total > 0 && …` は NaN で false (「過大計上ではない」= 追加の警告を出さない側)',
   'src/renderer/components/Stat.tsx::positiveIfKnown': '戻り値が boolean|undefined。Stat 自体が「—」に色を付けない (パス 91)',
   'src/renderer/data/chatOrg.ts::confidenceLabel': "NaN は '低' (最も控えめな側)。ラベルのみで金額に入らない",
 };

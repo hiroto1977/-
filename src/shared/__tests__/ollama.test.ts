@@ -1210,6 +1210,28 @@ describe('モジュール直下の値 — 読み直して static 変異体を届
     expect(m.OLLAMA_ADVISORIES.map((a) => a.id)).toContain('CVE-2026-7482');
   });
 
+  /*
+   * 台帳の全行を**字面で**当てる (パス 501)。読み直すなら「対象の直下の値を全部主張する」
+   * (法則 `module-evaluated-at-file-load`) —— これまでは `id` の 1 件が在ることしか見ておらず、
+   * 表の 7 行 × 4 欄の文字列 (id / 修正版 / 重大度 / 出典) を空にする変異体 28 件が生き残った。
+   * 要約 (`summary`) は事実の写しなので pragma で測定から外してあり、ここにも書かない。
+   */
+  it('★ 台帳の全行 (id・修正版・重大度・出典) を字面で当てる', async () => {
+    const m = await fresh();
+    expect(
+      m.OLLAMA_ADVISORIES.map(({ id, fixedIn, severity, source }) => ({ id, fixedIn, severity, source })),
+    ).toEqual([
+      { id: 'CVE-2024-37032', fixedIn: '0.1.34', severity: 'critical', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-37032' },
+      { id: 'CVE-2024-39719', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39719' },
+      { id: 'CVE-2024-39720', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39720' },
+      { id: 'CVE-2024-39721', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39721' },
+      { id: 'CVE-2024-39722', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39722' },
+      { id: 'CVE-2025-66960', fixedIn: null, severity: 'high', source: 'https://github.com/advisories/GHSA-jr3x-q8gx-4gw3' },
+      { id: 'CVE-2026-7482', fixedIn: '0.17.1', severity: 'high', source: 'https://github.com/advisories/GHSA-x8qc-fggm-mpqg' },
+      { id: 'CVE-2026-86289', fixedIn: '0.31.2', severity: 'low', source: 'https://github.com/advisories/GHSA-c2q9-58w2-gjg4' },
+    ]);
+  });
+
   it('★ 警告に載るのはその注意書きそのもの (経路の確認)', async () => {
     const m = await fresh();
     const now = new Date('2026-09-09T00:00:00Z');

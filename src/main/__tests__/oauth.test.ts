@@ -2003,6 +2003,26 @@ describe('ループバックサーバの結び先と応答本文', () => {
     return mod.listenForCallback;
   }
 
+  // **同意画面を人が操作する間、loopback を開けておく時間は 5 分ちょうど。** (パス 501)
+  // `OAUTH_CALLBACK_WINDOW_MS` はモジュール直下の定数で、`listenForCallback` の第 2 引数の
+  // 既定に使われる。静的 import した関数は読み込み時の値を見るので、読み直したモジュールの
+  // 関数を**第 2 引数を省いて**呼び、`setTimeout` に渡った待ち時間を直接見る (5 分待たない)。
+  // `5 * 60_000` を `5 / 60_000` へ倒すと締切がほぼ 0 ms になり、利用者が同意画面を読む前に
+  // コールバック口が閉じる。
+  it('★ 既定の待ち時間は 5 分ちょうど (第 2 引数を省くと 300,000 ms の締切を置く)', async () => {
+    const spy = vi.spyOn(globalThis, 'setTimeout');
+    try {
+      const listen = await freshListen();
+      const listener = listen('window-check-state-0123456789');
+      await listener.port();
+      expect(spy.mock.calls.map((c) => c[1])).toContain(300_000);
+      listener.cancel();
+      await listener.catch(() => undefined);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   // `listen(0, '127.0.0.1')` の第 2 引数が消えると全インタフェース (0.0.0.0) で
   // 待ち受けることになり、同一ネットワークの別ホストから OAuth コールバック口が
   // 見える。サーバを外へ出していないので、**渡した引数を直接見る**。

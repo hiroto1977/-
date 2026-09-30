@@ -45,6 +45,7 @@ import {
   prereleaseIsBelowFloor,
   unsafeVersionCause,
   unsafeVersionTexts,
+  type OllamaAdvisory,
   type UnsafeVersionCause,
 } from '../ollama';
 import {
@@ -152,6 +153,13 @@ describe('原因は 1 か所で選び、3 つの面が同じ判定から出る',
     expect(prereleaseIsBelowFloor('', MIN_SAFE_VERSION)).toBe(false);
   });
 
+  it('★ 文字列でない版は「読めない」(数・真偽値・物・配列。版は文字列だけ · パス 501)', () => {
+    for (const bad of [42, true, {}, [], ['0.1.0']]) {
+      expect(unsafeVersionCause(bad as unknown as string), JSON.stringify(bad)).toBe('unreadable');
+      expect(isVersionSafe(bad as unknown as string), JSON.stringify(bad)).toBe(false);
+    }
+  });
+
   it('★ プレリリースの文だけが「番号は足りて見える」ことを述べる', () => {
     const texts = unsafeVersionTexts('prerelease');
     expect(texts.note).toContain('プレリリース');
@@ -184,6 +192,58 @@ describe('原因は 1 か所で選び、3 つの面が同じ判定から出る',
     const old = buildWarnings('0.1.0').join('\n');
     expect(old).toContain('既知の脆弱性');
     expect(old).not.toContain('プレリリースは対応する正式版より前');
+  });
+});
+
+/**
+ * `prereleaseIsBelowFloor` を**直接**当てる (パス 501)。原因の選択 (`unsafeVersionCause`) は
+ * この関数の答えが `true` になる版でしか通らず、`false` を返す側 —— 番号そのものが床より古い
+ * プレリリース・床より上のプレリリース・床と同じ識別子・正式版 —— は誰も主張していなかった。
+ * 比較 2 つの `<` と `>=`、`&&` の両辺を 1 つずつ別の値にした変異体が、その隙間を通り抜けた。
+ */
+describe('prereleaseIsBelowFloor — 直接の表', () => {
+  const CASES: ReadonlyArray<readonly [version: string, floor: string, expected: boolean, why: string]> = [
+    ['0.31.2-rc1', '0.31.2', true, '番号は床と同じだが、プレリリースなので床の前 (唯一の true)'],
+    ['0.32.0-rc1', '0.31.2', false, '識別子を付けても床より上 —— 足りている'],
+    ['0.1.0-rc1', '0.31.2', false, '番号そのものが床より古い —— 単に古い (プレリリースが理由ではない)'],
+    ['0.31.2-rc1', '0.31.2-rc1', false, '床と同じ識別子 —— 前ではない'],
+    ['0.31.2', '0.31.2', false, '正式版が床ちょうど —— 足りている'],
+    ['0.40.0', '0.31.2', false, '正式版が床より上'],
+    ['0.1.30', '0.31.2', false, '正式版が床より古い —— 単に古い'],
+    ['0.31.2+build5', '0.31.2', false, 'ビルドメタデータだけの版は正式版と同じ'],
+  ];
+
+  it.each(CASES)('%s は %s の前か → %s (%s)', (version, floor, expected) => {
+    expect(prereleaseIsBelowFloor(version, floor)).toBe(expected);
+  });
+
+  it('★ true になるのは表の 1 行だけ (常に true / 常に false の実装でも落ちる)', () => {
+    expect(CASES.filter(([, , expected]) => expected)).toHaveLength(1);
+    expect(CASES.filter(([, , expected]) => !expected).length).toBeGreaterThanOrEqual(7);
+  });
+});
+
+describe('buildWarnings — プレリリースの一文は「1 つでも」で決まる (パス 501)', () => {
+  const NOW = new Date('2026-09-09T12:00:00Z');
+  const ledger: OllamaAdvisory[] = [
+    { id: 'CVE-2099-0001', summary: 'a', fixedIn: '1.2.3', severity: 'low', source: 'https://x.example/' },
+    { id: 'CVE-2099-0002', summary: 'b', fixedIn: '9.0.0', severity: 'low', source: 'https://x.example/' },
+  ];
+
+  it('★ 当てはまる 2 件のうち 1 件だけ「番号は同じ」なら言う (every ではなく some)', () => {
+    // '1.2.3-rc1' は 0001 の修正版と番号が同じ (プレリリースなので前) / 0002 には番号そのものが古い。
+    expect(applicableAdvisories('1.2.3-rc1', ledger).map((a) => a.id)).toEqual([
+      'CVE-2099-0001',
+      'CVE-2099-0002',
+    ]);
+    const w = buildWarnings('1.2.3-rc1', NOW, ledger)[0]!;
+    expect(w).toContain('プレリリースは対応する正式版より前なので、番号が同じでも修正が入っているとは限りません。');
+  });
+
+  it('★ どの項目も「番号は同じ」でなければ言わない (対照)', () => {
+    const w = buildWarnings('1.2.2-rc1', NOW, ledger)[0]!;
+    expect(w).toContain('CVE-2099-0001');
+    expect(w).not.toContain('プレリリースは対応する正式版より前');
   });
 });
 

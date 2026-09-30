@@ -11,7 +11,7 @@
  *  3. **足した行は必ず新しい最新** —— この端末の時計より新しい `createdAt` の行が最新でも、その後ろに足す。
  */
 import 'fake-indexeddb/auto';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { getRecordStore, latestTokenOf } from '../store';
 import type { RecordCipher } from '../recordCipher';
 import { latestRecord } from '../latestRecord';
@@ -40,6 +40,24 @@ afterEach(() => {
 
 async function latestNow() {
   return latestRecord(await getRecordStore().list(C));
+}
+
+/**
+ * **この attempt の時計の状態から**、次の `monotonicNow()` がちょうど返す値を組む。
+ *
+ * 固定の値 (4e12 など) を置くと、CI の `retry: 2` (vitest.config.ts) の 2 回目は 1 回目が進めた
+ * 時計 (`_lastTs`) の後ろから始まり、期待した同点にならないまま通ってしまう —— 同点の判定を `>` へ
+ * 倒した変異体を retry が癒やし、変異検査が「生存」と報せる (GitHub の全掃引で実測)。
+ * 時計を 0 に固定して探りの行を 1 件足すと、その行の `createdAt` が今の `_lastTs + 1` になる。
+ * そこから十分先を `at` にして時計を固定すれば、以後の `monotonicNow()` はちょうど `at` を返す
+ * (`max(_lastTs + 1, at)` = `at`)。attempt ごとに組み直すので、何度目でも同じ同点になる。
+ */
+async function clockAt(): Promise<{ at: number; clock: MockInstance<() => number> }> {
+  const clock = vi.spyOn(Date, 'now').mockReturnValue(0);
+  const probe = await getRecordStore().insert('clock-probe', {});
+  const at = probe.createdAt + 1_000_000;
+  clock.mockReturnValue(at);
+  return { at, clock };
 }
 
 describe('insertIfLatest —— 答えの 2 通り', () => {
@@ -178,15 +196,16 @@ describe('insertIfLatest —— 最新の選び方は latestRecord と同じ', (
 describe('insertIfLatest —— 足した行は必ず新しい最新', () => {
   it('★ 最新の createdAt がこの端末の今と同じでも、その後ろに足す', async () => {
     const store = getRecordStore();
-    const at = 4_000_000_000_000; // この端末の時計より先 —— 足す時刻 (monotonicNow) はちょうどこの値になる
-    vi.spyOn(Date, 'now').mockReturnValue(at);
+    // この端末の時計より先 —— 足す時刻 (monotonicNow) はちょうどこの値になる (attempt ごとに組む)
+    const { at } = await clockAt();
     // 同点になったとき一覧で先に来る id (新しい行の uuid より前に並ぶ) —— 「後ろに足す」が効いていないと、
     // 足した行は同点のまま後ろに並び、最新にならない。
     const first = '00000000-0000-4000-8000-000000000000';
     await store.importAll([{ id: first, collection: C, createdAt: at, updatedAt: at, data: { ...A } }]);
     const opened = await latestNow();
     const r = await store.insertIfLatest(C, latestTokenOf(opened), { ...B });
-    expect(r.status === 'saved' && r.record.createdAt).toBeGreaterThan(at);
+    // ちょうど 1 ms 後 (同点の判定を `>` へ倒すと同点 = `at` のままになる)
+    expect(r.status === 'saved' && r.record.createdAt).toBe(at + 1);
     expect((await latestNow())?.data, '足した行が同点のまま後ろに並び、最新にならなかった').toEqual(B);
   });
 

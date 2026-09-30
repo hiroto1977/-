@@ -60,6 +60,21 @@ describe('acceptRateOf', () => {
   it('全部受け入れなら 100', () => {
     expect(acceptRateOf(10, 10)).toBe(100);
   });
+
+  /*
+   * 読めなかった行数 (null) と非有限は、どちらの位置でも「算定不能」= null (パス 266 · 501)。
+   * `null` は JS では 0 として計算に入るので、門が落ちると「0%」や「Infinity」ではなく
+   * 気付きにくい別の数が出る —— どの位置・どの値でも値そのもので留める。
+   */
+  it('★ 読めなかった側が 1 つでもあれば null (null・NaN・±Infinity をどちらの位置にも)', () => {
+    for (const bad of [null, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      expect(acceptRateOf(bad, 10), `accepted=${String(bad)}`).toBeNull();
+      expect(acceptRateOf(5, bad), `total=${String(bad)}`).toBeNull();
+      expect(acceptRateOf(bad, bad), `both=${String(bad)}`).toBeNull();
+    }
+    // 対照: 0 は「読めた 0 行」で、率は 0% になる (null と混ぜない)。
+    expect(acceptRateOf(0, 10)).toBe(0);
+  });
 });
 
 describe('isOverCounted', () => {
@@ -72,6 +87,17 @@ describe('isOverCounted', () => {
   it('分母 0 では上回りと言わない', () => {
     expect(isOverCounted(5, 0)).toBe(false);
     expect(isOverCounted(0, 0)).toBe(false);
+  });
+
+  it('★ 読めなかった行数 (null・NaN) からは上回りと言わない (パス 266 · 501)', () => {
+    expect(isOverCounted(null, 10)).toBe(false);
+    expect(isOverCounted(5, null)).toBe(false);
+    expect(isOverCounted(null, null)).toBe(false);
+    expect(isOverCounted(Number.NaN, 10)).toBe(false);
+    expect(isOverCounted(5, Number.NaN)).toBe(false);
+    // 対照: 読めていて上回っていれば true (何でも false にしているのではない)。
+    expect(isOverCounted(11, 10)).toBe(true);
+    expect(isOverCounted(1, 0.5)).toBe(true);
   });
 });
 
@@ -471,6 +497,31 @@ describe('cursorIntakeNote — 読めなかった物を述べる 1 文 (パス 2
     const note = cursorIntakeNote({ ...ok, members: 'unreadable', spendAmountsUnreadable: 1 });
     expect(note).toContain('メンバー');
     expect(note).toContain('支出 1 行');
+  });
+
+  /*
+   * 文を**全文で**留める (パス 501)。断片ごとの `toContain` は、断片の**繋ぎ目**
+   * (2 つの文の間の句点) を見ないので、`join('。')` が空文字になっても通っていた。
+   */
+  it('★ 2 つの文は「。」で繋がり、最後に形の変化への注意が付く (全文)', () => {
+    expect(cursorIntakeNote({ ...ok, members: 'unreadable', spendAmountsUnreadable: 1 })).toBe(
+      'メンバーの応答を読めませんでした（件数・金額は 0 ではなく「分かりません」です）。' +
+        '支出 1 行の金額を読めませんでした（合計は出せません）。' +
+        'Cursor 側の応答の形が変わった可能性があります。',
+    );
+  });
+
+  /*
+   * 節の日本語名の表はモジュール直下の値なので、読み直さないと変異が届かない
+   * (静的 import では表が変異体の有効化より前に作られる —— 法則 `module-evaluated-at-file-load`)。
+   * 3 つの節を全部並べた 1 文で 3 つの語と並べ方 (中黒) を字面で留める。
+   */
+  it('★ 3 つの節の名前を読み直しても同じ語で並べる (static 変異体を届かせる)', async () => {
+    const m = await rereadModule<typeof import('../cursor')>(import.meta.url, '../cursor');
+    expect(m.cursorIntakeNote({ members: 'unreadable', usage: 'unreadable', spend: 'unreadable', spendAmountsUnreadable: 0 })).toBe(
+      'メンバー・日次の利用状況・今月の支出の応答を読めませんでした（件数・金額は 0 ではなく「分かりません」です）。' +
+        'Cursor 側の応答の形が変わった可能性があります。',
+    );
   });
 
   it('標本: 文面は「件数が 0」とは言わない (言えないことを言わないための文)', () => {
