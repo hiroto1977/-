@@ -7,6 +7,7 @@ import {
   savePkceSession,
 } from '../pkceSession';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /*
  * **PKCE の一時秘密が、使い終わったら消えているか。**
@@ -386,12 +387,11 @@ describe('鍵の名前', () => {
    * ままだと、変異体が有効になる前にモジュールが読まれてしまうので、字面を突き
    * 合わせる検査を書いても届かない —— 実測で `static: true` の生存 2 件として残り、
    * しかも**この検査ファイルではなく無関係な検査**が覆っている扱いになっていた。
-   * `stryker.config.json` の注記どおり `vi.resetModules()` + 動的 `import()` で
+   * `stryker.config.json` の注記どおり `rereadModule` (対象だけを読み直す —— パス 495) で
    * **検査の中で**評価させる (`main/oauth.ts` の定数表と同じ形)。
    */
   async function fresh(): Promise<typeof import('../pkceSession')> {
-    vi.resetModules();
-    return import('../pkceSession');
+    return rereadModule<typeof import('../pkceSession')>(import.meta.url, '../pkceSession');
   }
 
   it('★ 4 つの鍵は pkce. 接頭辞つきの決まった名前である', async () => {

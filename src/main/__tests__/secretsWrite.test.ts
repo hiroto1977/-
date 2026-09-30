@@ -2,6 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先は先頭で読み込んでおく。検査ごとに新しくするのは `../secrets` の 1 本だけ (`rereadModule`) ——
+// `vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで「その検査が覆った」と
+// 変異検査に数えられる (パス 495・`shared/__tests__/rereadModule.ts`)。
+import '../secrets';
+import { brokenStoredCredentialMessage } from '../../shared/vaultToken';
+import { hasControlChars } from '../../shared/tokenInput';
 
 /*
  * secrets.ts の**書き込み側**。
@@ -65,6 +72,14 @@ async function readRawStore(): Promise<Record<string, string>> {
   return JSON.parse(await fs.readFile(storePath(), 'utf8')) as Record<string, string>;
 }
 
+/** この検査の `../secrets` (検査ごとに最初に使うとき 1 本だけ読み直す —— 以前の `vi.resetModules()` と同じ粒度)。 */
+let currentSecretsModule: Promise<typeof import('../secrets')> | null = null;
+const secretsModule = (): Promise<typeof import('../secrets')> =>
+  (currentSecretsModule ??= rereadModule<typeof import('../secrets')>(import.meta.url, '../secrets'));
+/** 同じ検査の中で「読み直した後」を作る (再起動の代わり)。 */
+const restartSecretsModule = (): Promise<typeof import('../secrets')> =>
+  (currentSecretsModule = rereadModule<typeof import('../secrets')>(import.meta.url, '../secrets'));
+
 beforeEach(async () => {
   userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'sh-secrets-write-'));
   encryptionAvailable = true;
@@ -72,7 +87,7 @@ beforeEach(async () => {
   refreshImpl = async () => {
     throw new Error('refresh was not stubbed');
   };
-  vi.resetModules();
+  currentSecretsModule = null;
 });
 afterEach(async () => {
   await fs.rm(userDataDir, { recursive: true, force: true });
@@ -85,7 +100,7 @@ afterEach(async () => {
 
 describe('setToken — 保存時の暗号化', () => {
   it('キーチェーンがあれば暗号化して保存する (生のトークンがファイルに現れない)', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_super_secret_value');
 
     const raw = await readRawStore();
@@ -97,7 +112,7 @@ describe('setToken — 保存時の暗号化', () => {
   });
 
   it('保存した値は読み戻せる (往復)', async () => {
-    const { setToken, getToken } = await import('../secrets');
+    const { setToken, getToken } = await secretsModule();
     await setToken('slack', 'xoxb-1234');
     expect(await getToken('slack')).toBe('xoxb-1234');
   });
@@ -105,7 +120,7 @@ describe('setToken — 保存時の暗号化', () => {
   it('キーチェーンが無いときだけ plain: の難読化へ落ちる', async () => {
     encryptionAvailable = false;
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_x');
 
     expect((await readRawStore()).github).toBe(plain('ghp_x'));
@@ -114,7 +129,7 @@ describe('setToken — 保存時の暗号化', () => {
   it('plain: へ落ちるときは警告するが、繰り返しても一度だけ', async () => {
     encryptionAvailable = false;
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'a');
     await setToken('slack', 'b');
     await setToken('notion', 'c');
@@ -131,14 +146,14 @@ describe('setToken — 保存時の暗号化', () => {
 
   it('暗号化できるときは警告しない', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'a');
     expect(warn).not.toHaveBeenCalled();
   });
 
   it('既存のキーを上書きしても他のサービスを消さない', async () => {
     await writeRawStore({ github: encrypted('old'), slack: encrypted('keep') });
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'new');
 
     const raw = await readRawStore();
@@ -147,14 +162,14 @@ describe('setToken — 保存時の暗号化', () => {
   });
 
   it('秘密ファイルは所有者だけが読める権限 (0o600) で書かれる', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'ghp_x');
     const mode = (await fs.stat(storePath())).mode & 0o777;
     expect(mode).toBe(0o600);
   });
 
   it('★ 控えは最後に書けた内容 —— 入れ替えたトークンは控えに残らない (パス 134)', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('github', 'first');
     await setToken('github', 'second');
 
@@ -166,7 +181,7 @@ describe('setToken — 保存時の暗号化', () => {
 
   it('★ 消したトークンは控えにも残らず、本体が壊れても復活しない', async () => {
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const { setToken, clearToken, getToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, clearToken, getToken, listConfiguredServices } = await secretsModule();
     await setToken('github', 'ghp_gone');
     await setToken('slack', 'xoxb_keep');
     await clearToken('github');
@@ -182,7 +197,7 @@ describe('setToken — 保存時の暗号化', () => {
   });
 
   it('★ 本体を手で消しても、消したトークンは戻らない (残るのは最後に書けた内容)', async () => {
-    const { setToken, clearToken, getToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, clearToken, getToken, listConfiguredServices } = await secretsModule();
     await setToken('github', 'ghp_gone');
     await clearToken('github');
     await fs.rm(storePath());
@@ -197,7 +212,7 @@ describe('setToken — 保存時の暗号化', () => {
 
 describe('書き込みの直列化', () => {
   it('同時の setToken が互いを消さない (read-modify-write の競合)', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await Promise.all([
       setToken('github', 'a'),
       setToken('slack', 'b'),
@@ -211,7 +226,7 @@ describe('書き込みの直列化', () => {
   });
 
   it('前の書き込みが失敗しても後続が止まらない (鎖が例外を持ち越さない)', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     // userData を「ディレクトリではなくファイル」にすると ENOTDIR で失敗する。
     // (単に消すだけでは atomicWriteFile が mkdir -p で作り直してしまう。)
     await fs.rm(userDataDir, { recursive: true, force: true });
@@ -226,7 +241,7 @@ describe('書き込みの直列化', () => {
 
   it('同時の clearToken と setToken が両方反映される', async () => {
     await writeRawStore({ github: encrypted('gone'), slack: encrypted('keep') });
-    const { setToken, clearToken } = await import('../secrets');
+    const { setToken, clearToken } = await secretsModule();
     await Promise.all([clearToken('github'), setToken('notion', 'new')]);
 
     const raw = await readRawStore();
@@ -243,7 +258,7 @@ describe('書き込みの直列化', () => {
 describe('clearToken', () => {
   it('指定したサービスだけを消す', async () => {
     await writeRawStore({ github: encrypted('a'), slack: encrypted('b') });
-    const { clearToken } = await import('../secrets');
+    const { clearToken } = await secretsModule();
     await clearToken('github');
 
     expect(await readRawStore()).toEqual({ slack: encrypted('b') });
@@ -251,7 +266,7 @@ describe('clearToken', () => {
 
   it('保存されていないサービスを消しても落ちない', async () => {
     await writeRawStore({ slack: encrypted('b') });
-    const { clearToken } = await import('../secrets');
+    const { clearToken } = await secretsModule();
     await expect(clearToken('github')).resolves.toBeUndefined();
     expect(await readRawStore()).toEqual({ slack: encrypted('b') });
   });
@@ -260,12 +275,12 @@ describe('clearToken', () => {
 describe('listConfiguredServices', () => {
   it('保存済みのキーを返す', async () => {
     await writeRawStore({ github: encrypted('a'), slack: plain('b') });
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     expect((await listConfiguredServices()).sort()).toEqual(['github', 'slack']);
   });
 
   it('ファイルが無ければ空', async () => {
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     expect(await listConfiguredServices()).toEqual([]);
   });
 });
@@ -277,7 +292,7 @@ describe('listConfiguredServices', () => {
 describe('plain: 値の繰り上げ暗号化', () => {
   it('キーチェーンが使えるようになったら、次の書き込みで既存の plain: を暗号化し直す', async () => {
     await writeRawStore({ github: plain('ghp_old'), slack: plain('xoxb_old') });
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('notion', 'new');
 
     const raw = await readRawStore();
@@ -288,7 +303,7 @@ describe('plain: 値の繰り上げ暗号化', () => {
 
   it('clearToken でも繰り上げる (書き込む機会は等しく使う)', async () => {
     await writeRawStore({ github: plain('ghp_old'), slack: encrypted('keep') });
-    const { clearToken } = await import('../secrets');
+    const { clearToken } = await secretsModule();
     await clearToken('slack');
 
     expect((await readRawStore()).github).toBe(encrypted('ghp_old'));
@@ -296,7 +311,7 @@ describe('plain: 値の繰り上げ暗号化', () => {
 
   it('既に暗号化済みの値には触らない', async () => {
     await writeRawStore({ github: encrypted('a') });
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('slack', 'b');
     expect((await readRawStore()).github).toBe(encrypted('a'));
   });
@@ -305,7 +320,7 @@ describe('plain: 値の繰り上げ暗号化', () => {
     encryptionAvailable = false;
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     await writeRawStore({ github: plain('ghp_old') });
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await setToken('slack', 'b');
 
     expect((await readRawStore()).github).toBe(plain('ghp_old'));
@@ -324,7 +339,7 @@ describe('壊れた保存ファイルへの備え', () => {
     await writeRawStore(fat);
     expect((await fs.stat(storePath())).size).toBeGreaterThan(1024 * 1024);
 
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     // 読めなかったのだから「1 件も無い」とは言わない (2026-09-06 に方針を変えた。
     // 空を返すと画面が全サービスに「トークン未設定」を出し、利用者は鍵を打ち直す)。
     await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
@@ -338,7 +353,7 @@ describe('壊れた保存ファイルへの備え', () => {
     await fs.writeFile(storePath(), json, 'utf8');
     expect((await fs.stat(storePath())).size).toBe(1024 * 1024);
 
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     expect(await listConfiguredServices()).toEqual(['pad']);
   });
 
@@ -348,7 +363,7 @@ describe('壊れた保存ファイルへの備え', () => {
     expect(json.length).toBe(1024 * 1024 + 1);
     await fs.writeFile(storePath(), json, 'utf8');
 
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
   });
 
@@ -356,7 +371,7 @@ describe('壊れた保存ファイルへの備え', () => {
     // 初回起動でファイルが無いのは正常。ここで「壊れている」と記録すると、
     // 本物の破損が起きたときログの中で埋もれる。
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     expect(await listConfiguredServices()).toEqual([]);
     expect(err).not.toHaveBeenCalled();
   });
@@ -366,7 +381,7 @@ describe('壊れた保存ファイルへの備え', () => {
     await fs.writeFile(storePath(), '{ this is not json', 'utf8');
     await fs.writeFile(`${storePath()}.prev`, JSON.stringify({ github: encrypted('rescued') }), 'utf8');
 
-    const { getToken } = await import('../secrets');
+    const { getToken } = await secretsModule();
     expect(await getToken('github')).toBe('rescued');
     expect(String(err.mock.calls[0]![0])).toContain('.prev');
   });
@@ -376,7 +391,7 @@ describe('壊れた保存ファイルへの備え', () => {
     await fs.writeFile(storePath(), '{ broken', 'utf8');
     await fs.writeFile(`${storePath()}.prev`, 'also broken', 'utf8');
 
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
     expect(String(err.mock.calls[0]![0])).toContain('no usable backup');
   });
@@ -384,7 +399,7 @@ describe('壊れた保存ファイルへの備え', () => {
   it('JSON が配列なら読めないとして断る (キーが数字の store にしない)', async () => {
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
     await fs.writeFile(storePath(), JSON.stringify(['a', 'b']), 'utf8');
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
     expect(err).toHaveBeenCalled();
   });
@@ -393,7 +408,7 @@ describe('壊れた保存ファイルへの備え', () => {
     // `"hello"` を素通しすると `Object.entries` が一文字ずつのキーを作り、
     // `{0:'h',1:'e',…}` という架空の store が生まれる。`null` は投げる。
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     for (const body of ['null', '"hello"', '42', 'true']) {
       await fs.writeFile(storePath(), body, 'utf8');
       await expect(listConfiguredServices(), body).rejects.toThrow(/保管ファイルを読めませんでした/);
@@ -407,7 +422,7 @@ describe('壊れた保存ファイルへの備え', () => {
       JSON.stringify({ github: encrypted('a'), broken: 42, alsoBroken: null }),
       'utf8',
     );
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     expect(await listConfiguredServices()).toEqual(['github']);
   });
 
@@ -415,7 +430,7 @@ describe('壊れた保存ファイルへの備え', () => {
     // userData を「ディレクトリではなくファイル」にすると stat は ENOTDIR になる。
     await fs.rm(userDataDir, { recursive: true, force: true });
     await fs.writeFile(userDataDir, 'not a directory', 'utf8');
-    const { listConfiguredServices } = await import('../secrets');
+    const { listConfiguredServices } = await secretsModule();
     await expect(listConfiguredServices()).rejects.toThrow();
     await fs.rm(userDataDir, { force: true });
     await fs.mkdir(userDataDir, { recursive: true });
@@ -447,7 +462,7 @@ describe('壊れた保存ファイルへの備え', () => {
  */
 describe('getValidToken — 壊れた TokenSet', () => {
   it('★ accessToken を持たない JSON を Bearer として返さない', async () => {
-    const { setToken, getValidToken } = await import('../secrets');
+    const { setToken, getValidToken } = await secretsModule();
     await setToken('github', JSON.stringify({ refreshToken: 'rt_SECRET_VALUE' }));
 
     const read = await getValidToken('github');
@@ -457,7 +472,7 @@ describe('getValidToken — 壊れた TokenSet', () => {
   });
 
   it('★ 壊れているなら理由を返す (未設定と混ぜない)', async () => {
-    const { setToken, getValidToken } = await import('../secrets');
+    const { setToken, getValidToken } = await secretsModule();
     await setToken('github', JSON.stringify({ refreshToken: 'rt_x', expiresAt: 1 }));
 
     const read = await getValidToken('github');
@@ -466,22 +481,21 @@ describe('getValidToken — 壊れた TokenSet', () => {
   });
 
   it('対照: 使える TokenSet は accessToken を返す', async () => {
-    const { setOAuthTokens, getValidToken } = await import('../secrets');
+    const { setOAuthTokens, getValidToken } = await secretsModule();
     await setOAuthTokens('github', { accessToken: 'at_good' });
     const read = await getValidToken('github');
     expect(read.ok && read.token).toBe('at_good');
   });
 
   it('対照: 生の PAT はそのまま返す (JSON ではないので TokenSet 判定に入らない)', async () => {
-    const { setToken, getValidToken } = await import('../secrets');
+    const { setToken, getValidToken } = await secretsModule();
     await setToken('github', 'ghp_raw_pat_value');
     const read = await getValidToken('github');
     expect(read.ok && read.token).toBe('ghp_raw_pat_value');
   });
 
   it('★ 断りの文面は共有の 1 つから採る (ブラウザ版と食い違わない)', async () => {
-    const { setToken, getValidToken } = await import('../secrets');
-    const { brokenStoredCredentialMessage } = await import('../../shared/vaultToken');
+    const { setToken, getValidToken } = await secretsModule();
     await setToken('github', JSON.stringify({ refreshToken: 'rt_x' }));
     const read = await getValidToken('github');
     expect(read.ok).toBe(false);
@@ -491,14 +505,14 @@ describe('getValidToken — 壊れた TokenSet', () => {
   });
 
   it('対照: 配列も断る (資格情報ではない)', async () => {
-    const { setToken, getValidToken } = await import('../secrets');
+    const { setToken, getValidToken } = await secretsModule();
     await setToken('github', '[1,2,3]');
     const read = await getValidToken('github');
     expect(read.ok).toBe(false);
   });
 
   it('対照: 数字だけの API キー (JSON の数値として読める) もそのまま返す', async () => {
-    const { setToken, getValidToken } = await import('../secrets');
+    const { setToken, getValidToken } = await secretsModule();
     await setToken('github', '12345');
     const read = await getValidToken('github');
     expect(read.ok && read.token).toBe('12345');
@@ -523,18 +537,18 @@ describe('setToken の制御文字 — 保管層の床', () => {
   const NUL = String.fromCharCode(0);
 
   it('★ 制御文字を含む token は断り、ファイルに書かない', async () => {
-    const { setToken, listConfiguredServices } = await import('../secrets');
+    const { setToken, listConfiguredServices } = await secretsModule();
     await expect(setToken('github', `ghp_${NUL}broken`)).rejects.toThrow('制御文字');
     expect(await listConfiguredServices(), '断ったのに書かれている').toEqual([]);
   });
 
   it('★ 改行も同じく断る', async () => {
-    const { setToken } = await import('../secrets');
+    const { setToken } = await secretsModule();
     await expect(setToken('github', `ghp_${String.fromCharCode(10)}x`)).rejects.toThrow('制御文字');
   });
 
   it('対照: 制御文字が無ければこれまでどおり保存する', async () => {
-    const { setToken, getToken } = await import('../secrets');
+    const { setToken, getToken } = await secretsModule();
     await setToken('github', 'ghp_a_normal_token');
     expect(await getToken('github')).toBe('ghp_a_normal_token');
   });
@@ -547,8 +561,7 @@ describe('setToken の制御文字 — 保管層の床', () => {
    * 次に包む側を増やした人が「床があるから大丈夥」と読める。
    */
   it('★ 床には見えないが、包む側 (setOAuthTokens) が断る', async () => {
-    const { setOAuthTokens, listConfiguredServices } = await import('../secrets');
-    const { hasControlChars } = await import('../../shared/tokenInput');
+    const { setOAuthTokens, listConfiguredServices } = await secretsModule();
     // 床の限界そのものを标本で示す。
     expect(hasControlChars(`at${NUL}x`)).toBe(true);
     expect(hasControlChars(JSON.stringify({ accessToken: `at${NUL}x` }))).toBe(false);
@@ -564,32 +577,32 @@ describe('setToken の制御文字 — 保管層の床', () => {
 
 describe('setOAuthTokens / getOAuthTokens', () => {
   it('TokenSet を往復できる', async () => {
-    const { setOAuthTokens, getOAuthTokens } = await import('../secrets');
+    const { setOAuthTokens, getOAuthTokens } = await secretsModule();
     await setOAuthTokens('github', { accessToken: 'at', refreshToken: 'rt', expiresAt: 123 });
     expect(await getOAuthTokens('github')).toEqual({ accessToken: 'at', refreshToken: 'rt', expiresAt: 123 });
   });
 
   it('TokenSet も暗号化されて保存される', async () => {
-    const { setOAuthTokens } = await import('../secrets');
+    const { setOAuthTokens } = await secretsModule();
     await setOAuthTokens('github', { accessToken: 'at_secret' });
     const text = await fs.readFile(storePath(), 'utf8');
     expect(text).not.toContain('at_secret');
   });
 
   it('未設定なら null', async () => {
-    const { getOAuthTokens } = await import('../secrets');
+    const { getOAuthTokens } = await secretsModule();
     expect(await getOAuthTokens('github')).toBeNull();
   });
 
   it('JSON として読めない値なら null', async () => {
     await writeRawStore({ github: encrypted('ghp_raw_pat') });
-    const { getOAuthTokens } = await import('../secrets');
+    const { getOAuthTokens } = await secretsModule();
     expect(await getOAuthTokens('github')).toBeNull();
   });
 
   it('accessToken を持たない JSON なら null (壊れた TokenSet を通さない)', async () => {
     await writeRawStore({ github: encrypted(JSON.stringify({ refreshToken: 'rt' })) });
-    const { getOAuthTokens } = await import('../secrets');
+    const { getOAuthTokens } = await secretsModule();
     expect(await getOAuthTokens('github')).toBeNull();
   });
 });
@@ -609,7 +622,7 @@ describe('getValidToken — 更新経路', () => {
     refreshImpl = async () => ({ accessToken: 'fresh', refreshToken: 'rt2', expiresAt: Date.now() + 3_600_000 });
     await writeRawStore({ github: encrypted(JSON.stringify(expiring(1_000))) });
 
-    const { getValidToken, getOAuthTokens } = await import('../secrets');
+    const { getValidToken, getOAuthTokens } = await secretsModule();
     expect(await getValidToken('github')).toEqual({ ok: true, token: 'fresh' });
     expect(refreshCalls).toBe(1);
     expect((await getOAuthTokens('github'))?.accessToken).toBe('fresh');
@@ -617,14 +630,14 @@ describe('getValidToken — 更新経路', () => {
 
   it('期限に余裕があれば更新しない', async () => {
     await writeRawStore({ github: encrypted(JSON.stringify(expiring(3_600_000))) });
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     expect(await getValidToken('github')).toEqual({ ok: true, token: 'stale' });
     expect(refreshCalls).toBe(0);
   });
 
   it('期限が無ければ更新しない', async () => {
     await writeRawStore({ github: encrypted(JSON.stringify({ accessToken: 'at', refreshToken: 'rt' })) });
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     expect(await getValidToken('github')).toEqual({ ok: true, token: 'at' });
     expect(refreshCalls).toBe(0);
   });
@@ -633,14 +646,14 @@ describe('getValidToken — 更新経路', () => {
     await writeRawStore({
       github: encrypted(JSON.stringify({ accessToken: 'at', expiresAt: Date.now() + 1_000 })),
     });
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     expect(await getValidToken('github')).toEqual({ ok: true, token: 'at' });
     expect(refreshCalls).toBe(0);
   });
 
   it('OAuth 設定の無いサービスは更新しない', async () => {
     await writeRawStore({ slack: encrypted(JSON.stringify(expiring(1_000))) });
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     expect(await getValidToken('slack')).toEqual({ ok: true, token: 'stale' });
     expect(refreshCalls).toBe(0);
   });
@@ -656,7 +669,7 @@ describe('getValidToken — 更新経路', () => {
     };
     await writeRawStore({ github: encrypted(JSON.stringify(expiring(1_000))) });
 
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     const both = Promise.all([getValidToken('github'), getValidToken('github')]);
     release(undefined);
     expect(await both).toEqual([
@@ -670,7 +683,7 @@ describe('getValidToken — 更新経路', () => {
     refreshImpl = async () => ({ accessToken: 'fresh', refreshToken: 'rt2', expiresAt: Date.now() + 1_000 });
     await writeRawStore({ github: encrypted(JSON.stringify(expiring(1_000))) });
 
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     await getValidToken('github');
     await getValidToken('github');
     expect(refreshCalls).toBe(2);
@@ -682,7 +695,7 @@ describe('getValidToken — 更新経路', () => {
     };
     await writeRawStore({ github: encrypted(JSON.stringify(expiring(1_000))) });
 
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     expect(await getValidToken('github')).toEqual({ ok: true, token: 'stale' });
     expect(refreshCalls).toBe(1);
   });
@@ -696,7 +709,7 @@ describe('getValidToken — 更新経路', () => {
       await writeRawStore({
         github: encrypted(JSON.stringify({ accessToken: 'edge', refreshToken: 'rt', expiresAt: now + 60_000 })),
       });
-      const { getValidToken } = await import('../secrets');
+      const { getValidToken } = await secretsModule();
       expect(await getValidToken('github')).toEqual({ ok: true, token: 'edge' });
       expect(refreshCalls).toBe(0);
     } finally {
@@ -713,7 +726,7 @@ describe('getValidToken — 更新経路', () => {
       await writeRawStore({
         github: encrypted(JSON.stringify({ accessToken: 'edge', refreshToken: 'rt', expiresAt: now + 59_999 })),
       });
-      const { getValidToken } = await import('../secrets');
+      const { getValidToken } = await secretsModule();
       expect(await getValidToken('github')).toEqual({ ok: true, token: 'fresh' });
       expect(refreshCalls).toBe(1);
     } finally {
@@ -727,7 +740,7 @@ describe('getValidToken — 更新経路', () => {
     };
     await writeRawStore({ github: encrypted(JSON.stringify(expiring(1_000))) });
 
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     await getValidToken('github');
     await getValidToken('github');
     expect(refreshCalls).toBe(2);
@@ -757,7 +770,7 @@ describe('setOAuthTokens — 書く前に見る (ハンドラを経由しない�
   const LF = String.fromCharCode(10);
 
   it('★ 大きすぎる access_token を断り、他サービスの資格情報を殺さない', async () => {
-    const m = await import('../secrets');
+    const m = await secretsModule();
     await m.setToken('github', 'ghp_REAL_1');
     await m.setToken('stripe', 'sk_live_REAL_2');
 
@@ -770,8 +783,7 @@ describe('setOAuthTokens — 書く前に見る (ハンドラを経由しない�
     expect(stat.size).toBeLessThan(1024 * 1024);
 
     // ★ 他の資格情報は生きている (ここが欲しい不変条件)。
-    vi.resetModules();
-    const m2 = await import('../secrets');
+    const m2 = await restartSecretsModule();
     expect(await m2.getToken('github')).toBe('ghp_REAL_1');
     expect(await m2.getToken('stripe')).toBe('sk_live_REAL_2');
     expect(await m2.listConfiguredServices()).toEqual(['github', 'stripe']);
@@ -781,7 +793,7 @@ describe('setOAuthTokens — 書く前に見る (ハンドラを経由しない�
   });
 
   it('★ 制御文字入りの access_token を断る (包んでからでは床に見えない)', async () => {
-    const m = await import('../secrets');
+    const m = await secretsModule();
     await expect(
       m.setOAuthTokens('gmail', { accessToken: 'good' + CR + LF + 'X-Injected: 1' }),
     ).rejects.toThrow(/制御文字/);
@@ -790,7 +802,7 @@ describe('setOAuthTokens — 書く前に見る (ハンドラを経由しない�
   });
 
   it('★ 使えない access_token を断る (保存済みとして数えた上で全呼び出しが失敗する形を作らない)', async () => {
-    const m = await import('../secrets');
+    const m = await secretsModule();
     for (const tokens of [{ accessToken: '' }, { access_token: 'snake' }, {}]) {
       await expect(m.setOAuthTokens('gmail', tokens as never)).rejects.toThrow(
         /アクセストークン/,
@@ -799,7 +811,7 @@ describe('setOAuthTokens — 書く前に見る (ハンドラを経由しない�
   });
 
   it('普通の TokenSet はこれまでと同じように保存される (対照)', async () => {
-    const m = await import('../secrets');
+    const m = await secretsModule();
     const tokens = { accessToken: 'ya29.ok', refreshToken: '1//r', expiresAt: 42 };
     await m.setOAuthTokens('gmail', tokens);
     expect(await m.getOAuthTokens('gmail')).toEqual(tokens);

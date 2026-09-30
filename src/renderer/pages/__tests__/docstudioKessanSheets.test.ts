@@ -17,6 +17,7 @@ import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests, navigateTo } from '../../navigate';
 import { waitForText } from '../../__tests__/jsdomWait';
+import { STUDIO_TEMPLATES } from '../../data/docStudioData';
 
 const LS_KEY = 'servicehub.docstudio.v1';
 
@@ -223,7 +224,7 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     expect(container.textContent).not.toContain('最近使った書類');
     await unmount();
     // 標本: 配列なら (数値や null を飛ばして) 最近使った書類に並ぶ —— 上の not.toContain が本当にその見出しを見ている対照
-    const firstTemplate = (await import('../../data/docStudioData')).STUDIO_TEMPLATES[0]!;
+    const firstTemplate = STUDIO_TEMPLATES[0]!;
     localStorage.setItem(LS_KEY, JSON.stringify({ recent: [firstTemplate.id, 42, null] }));
     _resetNavigationIntentForTests();
     await mount();

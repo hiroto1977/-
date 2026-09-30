@@ -225,7 +225,7 @@ const G5 = CKD_POTASSIUM_LIMIT_MG.G5 as number;
 
 /**
  * 台帳の本体。関数にしてあるのは変異検査のため — モジュール読込時にだけ走る表は
- * `ignoreStatic` で測られず、`vi.resetModules()` で読み直すと**依存先の表まで**
+ * `ignoreStatic` で測られず、(パス 495 より前の) `vi.resetModules()` で読み直すと**依存先の表まで**
  * 測定対象に入ってしまう (2026-09-03 に踏んだ: hydroponics / payroll の参考値表が
  * 生存として 47 件出た)。関数なら検査が呼ぶだけで表の文字と数が測れる。
  */

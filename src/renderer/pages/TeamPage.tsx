@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { readRecordsNow, unreadableForJudgementNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import { usePlan } from '../plan/usePlan';
 import { getPlan, hasFeature, requiredPlanForFeature, PLANS } from '../../shared/plan';
@@ -160,7 +161,7 @@ function PayrollPanel() {
 
 export function TeamPage() {
   const { plan } = usePlan();
-  const { records, add, edit, remove } = useCollection<Member>(MEMBERS_COLLECTION);
+  const { records, add, edit, remove, reload } = useCollection<Member>(MEMBERS_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
   const submit = useSubmitGuard();
@@ -176,17 +177,33 @@ export function TeamPage() {
   const teamFeatureEnabled = hasFeature(plan, 'team-seats');
   const requiredPlan = requiredPlanForFeature('team-seats');
 
+  /*
+   * **判定の相手は保管層の読み直し** (2026-09-27 · パス 497)。上の `members` / `owners` / `usage` は
+   * 購読の写しで、一覧が届く**前**は空、**別のタブ**の書き込みは知らせが届いて読み直すまで知らない
+   * (パス 499 までは再読込まで知らなかった —— 届くようになっても、届くのは書いた後である)。写しに尋ねていた頃は
+   * (実測) 一覧が届く前の招待が同じメールの 2 人目を入れ、別のタブでオーナーが 1 人に減った後も
+   * 「オーナーは 2 人」と答えて**最後のオーナーを消せた** —— オーナーが 0 人になると削除の守り
+   * (`canRemoveMember(*, 0)`) ごと外れる。一覧の選択肢の無効化 (下の `disabled`) は見せるための
+   * 写しのままでよい —— 押したときに決めるのはここである。
+   */
   async function onAdd() {
     try {
       const parsed = parseMember(form);
-      // 同じメールアドレスは 1 人 —— 2 度招待するとシートを 2 つ使い、一人当たりの金額が薄まる (パス 125)。
-      const dup = sameEmailMember(members, parsed);
-      if (dup !== null) {
-        setError(duplicateMemberMessage(dup));
+      const stored = await readRecordsNow<Member>(MEMBERS_COLLECTION);
+      if (stored === null) {
+        setError(unreadableForJudgementNote('メンバーの一覧'));
         return;
       }
-      if (!canAddMember(usage)) {
+      // 同じメールアドレスは 1 人 —— 2 度招待するとシートを 2 つ使い、一人当たりの金額が薄まる (パス 125)。
+      const dup = sameEmailMember(stored.map((r) => r.data), parsed);
+      if (dup !== null) {
+        setError(duplicateMemberMessage(dup));
+        await reload();
+        return;
+      }
+      if (!canAddMember({ used: stored.length, limit: planDef.maxSeats })) {
         setError(`シート上限 (${planDef.maxSeats}) に達しています。プランをアップグレードしてください。`);
+        await reload();
         return;
       }
       setError(undefined);
@@ -197,20 +214,46 @@ export function TeamPage() {
     }
   }
 
-  async function onChangeRole(id: string, current: Role, role: Role) {
+  /**
+   * 役割を変える / 消すときに、**今の**メンバーとオーナーの人数を読む。
+   * 見つからなければ (別のタブで消された) 一覧を読み直して知らせ、`null`。
+   */
+  async function currentMember(id: string): Promise<{ role: Role; owners: number } | null> {
+    const stored = await readRecordsNow<Member>(MEMBERS_COLLECTION);
+    if (stored === null) {
+      setError(unreadableForJudgementNote('メンバーの一覧', 'オーナーが何人いるか'));
+      return null;
+    }
+    const target = stored.find((r) => r.id === id);
+    if (target === undefined) {
+      setError(vanishedRecordNote('このメンバー', '一覧を読み直しました。'));
+      await reload();
+      return null;
+    }
+    return { role: target.data.role, owners: countOwners(stored.map((r) => r.data)) };
+  }
+
+  async function onChangeRole(id: string, role: Role) {
+    const now = await currentMember(id);
+    if (now === null) return;
     // 最後のオーナーを降格させると、オーナーが 0 人になって削除の守りごと外れる
     // (`canRemoveMember(*, 0)` は誰でも削除できると答える)。削除と同じ強さで断る。
-    if (!canChangeRole(current, role, owners)) {
+    if (!canChangeRole(now.role, role, now.owners)) {
       setError('最後のオーナーは降格できません（オーナーが 0 人になります）。');
+      await reload();
       return;
     }
     setError(undefined);
-    await edit(id, { role });
+    // 読み直してから書くまでの間に別のタブで消された (パス 498) —— `edit` は何も書かずに false を返す。
+    if (!(await edit(id, { role }))) setError(vanishedRecordNote('このメンバー', '一覧を読み直しました。'));
   }
 
-  async function onRemove(id: string, role: Role) {
-    if (!canRemoveMember(role, owners)) {
+  async function onRemove(id: string) {
+    const now = await currentMember(id);
+    if (now === null) return;
+    if (!canRemoveMember(now.role, now.owners)) {
       setError('最後のオーナーは削除できません。');
+      await reload();
       return;
     }
     setError(undefined);
@@ -305,7 +348,7 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <select
                       value={r.data.role}
-                      onChange={(e) => fireReported(onChangeRole(r.id, r.data.role, e.target.value as Role))}
+                      onChange={(e) => fireReported(onChangeRole(r.id, e.target.value as Role))}
                       style={{ ...inputStyle, width: 110 }}
                     >
                       {ROLE_ORDER.map((role) => (
@@ -323,7 +366,7 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <button
                       type="button"
-                      onClick={() => fireReported(submit.run(() => onRemove(r.id, r.data.role)))}
+                      onClick={() => fireReported(submit.run(() => onRemove(r.id)))}
                       disabled={submit.busy || !canRemoveMember(r.data.role, owners)}
                       aria-label="削除"
                     >

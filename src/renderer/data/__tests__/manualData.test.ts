@@ -13,7 +13,7 @@ import {
   type ManualMetricEntry,
   type ManualOverrideEntry,
 } from '../manualData';
-import { OVERRIDABLE_FIELDS } from '../overviewOverrides';
+import { OVERRIDABLE_FIELDS, parseOverrideValue } from '../overviewOverrides';
 
 const ov = (scope: string, path: string, value: number): ManualOverrideEntry => ({
   scope,
@@ -350,8 +350,25 @@ describe('parseManualMetric', () => {
   });
 
   // 値の規則は上書きと同じ 1 本 (parseOverrideValue) を通る。
+  // ★ 2026-09-27 (パス 496) まで、ここは `'1,000'` を**断る**ことを主張していた —— 上書きの口が
+  // 画面の他の欄 (`readNumeric`) と違う読み方をしていた頃の形である。今は両方とも 1 つの読み方
+  // (`readEntryNumber`) を通るので、`'1,000'` は 1000 と読む。主張は「同じ規則」の側へ移した。
   it('値の検証は上書きと同じ規則', () => {
-    expect(parseManualMetric({ label: 'x', value: '1,000', unit: 'yen' }).ok).toBe(false);
+    const samples = ['1,000', '１０００', '¥1,000', '1.5', '-1', '1万', '1e3', '', '　', 'abc', '12'];
+    for (const unit of ['yen', 'pct', 'count', 'days', 'months'] as const) {
+      for (const value of samples) {
+        const m = parseManualMetric({ label: 'x', value, unit });
+        const o = parseOverrideValue(value, unit);
+        expect(m.ok, `${unit} / ${JSON.stringify(value)}`).toBe(o.ok);
+        if (m.ok && o.ok) expect(m.entry.value, `${unit} / ${JSON.stringify(value)}`).toBe(o.value);
+      }
+    }
+    // 走査が空虚でないこと: 両方の答えが出ている。
+    const oks = samples.map((v) => parseOverrideValue(v, 'yen').ok);
+    expect(oks).toContain(true);
+    expect(oks).toContain(false);
+    expect(parseManualMetric({ label: 'x', value: '1,000', unit: 'yen' })).toMatchObject({ ok: true, entry: { value: 1000 } });
+    expect(parseManualMetric({ label: 'x', value: '1万', unit: 'yen' }).ok).toBe(false);
     expect(parseManualMetric({ label: 'x', value: '1.5', unit: 'count' }).ok).toBe(false);
     expect(parseManualMetric({ label: 'x', value: '-1', unit: 'count' }).ok).toBe(false);
   });

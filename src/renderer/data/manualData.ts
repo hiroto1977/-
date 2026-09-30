@@ -307,6 +307,54 @@ export function inertOverrides(
 }
 
 /**
+ * その画面のその欄に**効いている**置き換えの行の id (渡した並びのまま)。
+ *
+ * 同じ欄の行が 2 件あっても、画面の札 (`byPath`) と適用 (`applyOverrides`) が見るのは
+ * 片方だけ —— `list()` は新しい順で、どちらも**後から当てた方 = 古いほう**を勝たせる。
+ * 欄の置き換えを保存する・自動に戻すときは、1 件ではなく**この集合**を相手にする。
+ */
+export function effectiveOverrideIds(
+  scope: ManualScope,
+  path: string,
+  records: readonly { readonly id: string; readonly data: ManualOverrideEntry }[],
+): readonly string[] {
+  const out: string[] = [];
+  for (const r of records) {
+    if (belongsToScope(scope, r.data) && r.data.path === path && overrideCause(scope, r.data) === null) out.push(r.id);
+  }
+  return out;
+}
+
+/** 置き換えを保存するときに書き換える行と消す行。 */
+export type OverrideSavePlan =
+  | { readonly kind: 'add' }
+  | { readonly kind: 'edit'; readonly id: string; readonly removeIds: readonly string[] };
+
+/**
+ * 置き換えを保存するとき、**どの行を書き換え、どの行を消すか** (2026-09-27 · パス 497)。
+ *
+ * `records` は**保管層から読み直した行**を渡す —— 購読の写しを渡すと、別のタブが置いた行を
+ * 知らずに 2 件目を足す。実測 (直す前): 別のタブが 111 を置いた欄に 222 を保存すると、
+ * 同じ欄の行が 2 件になり、**保存した直後の札が「手入力 111 円」**を出した (見出しは
+ * 「置き換え 2 件」) —— 上の `effectiveOverrideIds` の docblock のとおり古いほうが勝つので、
+ * 保存した値が効かない。
+ *
+ * - 効いている行が無い → 足す
+ * - 在る → 最初の 1 件を書き換え、**残りは消す** (欄ごとに 1 件へ畳む —— 直す前の欠陥が
+ *   残した重複も、その欄を保存し直せばここで直る)
+ */
+export function overrideSavePlan(
+  scope: ManualScope,
+  path: string,
+  records: readonly { readonly id: string; readonly data: ManualOverrideEntry }[],
+): OverrideSavePlan {
+  const ids = effectiveOverrideIds(scope, path, records);
+  const [first, ...rest] = ids;
+  if (first === undefined) return { kind: 'add' };
+  return { kind: 'edit', id: first, removeIds: rest };
+}
+
+/**
  * 効かない上書きについての断り。無ければ `null`。
  *
  * **原因ごとに別の文**にする —— 直す手が違うためで、片方の文で両方を述べると

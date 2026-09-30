@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   MAX_SCHEDULE_YEARS,
   isSchedulableLife,
@@ -21,6 +21,7 @@ import {
   SME_EMPLOYEE_CAP,
   SME_MEASURE_END,
 } from '../depreciation';
+import { rereadModule } from './rereadModule';
 
 describe('straightLineAnnual', () => {
   it('divides acquisition cost by useful life', () => {
@@ -694,8 +695,7 @@ describe('isSchedulableLife', () => {
 
 describe('★ module レベルの定数は読み直して測る (import 時に評価済みの const は、変異体の切替の前に読まれた値が残る)', () => {
   it('日付・上限・円未満の丸めは読み直しても同じ', async () => {
-    vi.resetModules();
-    const fresh = await import('../depreciation');
+    const fresh = await rereadModule<typeof import('../depreciation')>(import.meta.url, '../depreciation');
     expect(fresh.SME_UNIT_LIMIT_STEP_DATE).toBe('2026-04-01');
     expect(fresh.SME_MEASURE_END).toBe('2029-03-31');
     expect(fresh.SME_UNIT_LIMIT).toBe(400_000);

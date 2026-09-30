@@ -13,6 +13,8 @@
 import { isCalendarDateOrMonth } from '../../shared/isoDate';
 import { latestRecord } from './latestRecord';
 import { relationIssue } from './recordRelations';
+import { readEntryNumber, type EntryNumber } from '../../shared/readNumeric';
+import { isFiniteNumber } from '../../shared/num';
 
 export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
 
@@ -135,17 +137,32 @@ export function parseBalanceSheet(input: {
   interestBearingDebt?: unknown;
   netIncome?: unknown;
 }): BalanceSheet {
-  // Number(number)===number なので typeof 分岐は不要 (簡約して equivalent mutant を排除)。
-  const requireNonNegative = (v: unknown, label: string): number => {
-    const n = Number(v);
-    if (!Number.isFinite(n) || n < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
-    return n;
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+   * `Number()` で、`'1,000,000'` や全角の数字を「0 以上の数値で入力してください」と
+   * **偽の理由で**断り、`'1e3'` / `'0x10'` を黙って別の数として保存し、**必須の欄の空欄を
+   * 0 円**として記録していた —— 流動資産を空けた控えは純資産がその額だけ小さく出て、
+   * 負債より資産が多い会社でも書面 §4 が「自己資本比率 △…（債務超過）」を刷りうる
+   * (パス 444 と同じ出口へ、壊れた保存値ではなく**空欄から**届く道)。
+   * 必須の欄の空欄は断る (0 なら 0 と打つ)。内数の任意欄の空欄は
+   * 今までどおり「未入力」(`undefined`) として持つ。
+   */
+  const nonNegativeOf = (read: EntryNumber, label: string): number => {
+    if (read.kind === 'blank') throw new Error(`${label}が未入力です（無いなら 0 と入力してください）`);
+    if (read.kind === 'unreadable' || read.value < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
+    return read.value;
   };
-  // Number('')===0 なので '' の特別扱いは不要。null/undefined のみ 0 に寄せる。
+  const requireNonNegative = (v: unknown, label: string): number => nonNegativeOf(readEntryNumber(v), label);
+  /**
+   * 当期純利益 (損失はマイナスで打つ)。**空欄は断る** —— 2026-09-27 (パス 496) までは
+   * `Number('') === 0` に任せて 0 とし、打っていない欄が「当期純利益 0」として
+   * ROA / ROE の 0% になっていた (0 と「未入力」は別の事実)。
+   */
   const finite = (v: unknown, label: string): number => {
-    const n = Number(v == null ? 0 : v);
-    if (!Number.isFinite(n)) throw new Error(`${label}は数値で入力してください`);
-    return n;
+    const read = readEntryNumber(v);
+    if (read.kind === 'blank') throw new Error(`${label}が未入力です（損益が無いなら 0、損失ならマイナスで入力してください）`);
+    if (read.kind === 'unreadable') throw new Error(`${label}は数値で入力してください`);
+    return read.value;
   };
   const asOf = typeof input.asOf === 'string' ? input.asOf.trim() : '';
   // 基準日: 未入力 ('') は許す。書くなら暦に在る `YYYY-MM-DD` か `YYYY-MM` (パス 115 —— それまでは
@@ -155,15 +172,11 @@ export function parseBalanceSheet(input: {
   }
   /**
    * 内数の任意欄。**空欄は `undefined` のまま返す** (0 に倒さない。理由は型の説明)。
-   *
-   * `''` の判定はここで**要る** —— 画面の入力欄は未入力を `''` で渡してくるので、
-   * `Number('')===0` に任せると空欄が「0 円と実測した」に化ける。空白だけ (`'  '`)
-   * も同じ扱い (`Number('  ')` も 0 になるため trim してから見る)。
+   * 空欄 (空文字・空白だけ・欄が無い) の判定は `readEntryNumber` が持つ。
    */
   const optNonNeg = (v: unknown, label: string): number | undefined => {
-    if (v == null) return undefined;
-    if (typeof v === 'string' && v.trim() === '') return undefined;
-    return requireNonNegative(v, label);
+    const read = readEntryNumber(v);
+    return read.kind === 'blank' ? undefined : nonNegativeOf(read, label);
   };
   const currentAssets = requireNonNegative(input.currentAssets, '流動資産');
   const cash = optNonNeg(input.cash, '現預金');
@@ -247,16 +260,8 @@ export const BS_NUMERIC_FIELDS: readonly { readonly key: string; readonly label:
  */
 export function normalizeBalanceSheet(raw: unknown): BalanceSheet {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
-  /**
-   * 有限の数か。**判定を 1 か所に置く** (必須の欄は 0 へ、任意の欄は「無い」へ倒す)。
-   *
-   * `typeof v === 'number'` は実行時には冗長 —— `Number.isFinite` は数値以外を
-   * 型変換せずに false にするので、外しても振る舞いは変わらない (等価変異)。
-   * `v is number` の絞り込みを型検査に伝えるために残している。
-   * (`&&` を `||` に替える変異は別で、NaN がそのまま残るので検査が留めてある。)
-   */
-  // Stryker disable next-line ConditionalExpression: Number.isFinite が数値以外を false にするので実行時は等価 (型の絞り込みのために残す)
-  const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  // 有限の数か。**判定を 1 か所に置く** (必須の欄は 0 へ、任意の欄は「無い」へ倒す) ——
+  // 述語は `shared/num.ts` の `isFiniteNumber` (型の絞り込みを伴う。`typeof` の写しは要らない)。
   const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
   const opt = (v: unknown): number | undefined => (isFiniteNumber(v) ? v : undefined);
   return {
@@ -319,7 +324,9 @@ function unreadableOf(
 }
 
 /** 読めない欄が 1 つでも在るか。 */
-export function hasUnreadableBalanceSheetFields(u: UnreadableBalanceSheetFields | undefined): boolean {
+export function hasUnreadableBalanceSheetFields(
+  u: UnreadableBalanceSheetFields | undefined,
+): u is UnreadableBalanceSheetFields {
   return u !== undefined && (u.zeroed.length > 0 || u.missing.length > 0);
 }
 
@@ -349,7 +356,7 @@ export function unreadableBalanceSheetSheetNote(u: UnreadableBalanceSheetFields 
  * 利用者は「当座比率が変なのは 0 を入れたからだ」と読む (実際は算定していない)。
  */
 function unreadableBalanceSheetBody(u: UnreadableBalanceSheetFields | undefined): string | null {
-  if (!hasUnreadableBalanceSheetFields(u) || u === undefined) return null;
+  if (!hasUnreadableBalanceSheetFields(u)) return null;
   const said: string[] = [];
   if (u.zeroed.length > 0) {
     said.push(
@@ -376,7 +383,7 @@ export function splitMissingStocks(
   stocks: readonly string[],
   u: UnreadableBalanceSheetFields | undefined,
 ): { readonly blank: readonly string[]; readonly unreadable: readonly string[] } {
-  const bad = u === undefined ? [] : u.missing;
+  const bad = (u ?? NO_UNREADABLE_BS_FIELDS).missing;
   return {
     blank: stocks.filter((x) => !bad.includes(x)),
     unreadable: stocks.filter((x) => bad.includes(x)),
@@ -401,8 +408,8 @@ export function unreadableBalanceSheetField(
   u: UnreadableBalanceSheetFields | undefined,
 ): boolean {
   if (u === undefined) return false;
-  const label = BS_NUMERIC_FIELDS.find((f) => f.key === key)?.label;
-  return label !== undefined && u.missing.includes(label);
+  const field = BS_NUMERIC_FIELDS.find((f) => f.key === key);
+  return field !== undefined && u.missing.includes(field.label);
 }
 
 /**
@@ -713,22 +720,20 @@ export function balanceSheetAsOfKey(asOf: unknown): string {
   return typeof asOf === 'string' ? asOf.trim() : '';
 }
 
-/** a の基準日が b より新しいか (空は最下位。同じなら false)。 */
-function newerAsOf(a: string, b: string): boolean {
-  if (a === b || a === '') return false;
-  if (b === '') return true;
-  return a > b;
-}
-
 /**
  * 「現在」として使う順に並べる比較 (先頭が現在)。基準日の新しい方 → 同じなら後に入力した方。
  * `Array.prototype.sort` にそのまま渡せる (負なら a が先)。
+ *
+ * 基準日の鍵は `YYYY-MM-DD` / `YYYY-MM` / 空 (基準日なし) で、文字列の大小がそのまま
+ * 時系列である。**空はどの文字列より小さい**ので「基準日なしは最下位」も同じ比較で
+ * 出る —— 2026-09-30 (パス 501) までは空と同値を別に見る `newerAsOf` を挟んでいたが、
+ * その 3 つの判定はどれも `a > b` と同じ答えしか出さず (変異検査で 8 件の等価変異)、消した。
  */
 export function compareBalanceSheetRecords(a: BalanceSheetRecordLike, b: BalanceSheetRecordLike): number {
   const ka = balanceSheetAsOfKey(a.data.asOf);
   const kb = balanceSheetAsOfKey(b.data.asOf);
-  if (newerAsOf(ka, kb)) return -1;
-  if (newerAsOf(kb, ka)) return 1;
+  if (ka > kb) return -1;
+  if (kb > ka) return 1;
   return b.createdAt - a.createdAt;
 }
 

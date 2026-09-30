@@ -6,7 +6,7 @@
  * (`urn:ietf:wg:oauth:2.0:oob`) では state が持ち帰れないので、**既定値に
  * 従うかぎり完了できなかった**。ここはその判定と文面を留める。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   CALLBACK_PASTE_HINT,
   CALLBACK_PASTE_PLACEHOLDER,
@@ -20,6 +20,7 @@ import {
   oauthFieldTooLong,
 } from '../callbackPaste';
 import { MAX_AUTH_CODE_CHARS, parseGoogleCallback } from '../pkce';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 describe('redirectKind', () => {
   it('http(s) は callback (アドレスバーに state が出る)', () => {
@@ -225,7 +226,7 @@ describe('oauthFieldTooLong — 天井を持つのは画面の maxLength だけ�
  * その 16 件のうち **13 件がこの定数群**だった (残り 3 件は下の `join('')`)。
  *
  * 解析そのものは 72 件すべて Killed で、**穴は「値」と「文面」の側にだけ在った**。
- * `vi.resetModules()` + 動的 `await import()` で読み直せば、値を書き換える
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直せば、値を書き換える
  * 変異体が比較で落ちる (`oauth.test.ts` の `freshConfigs`・パス 353 の
  * `backupCoverage.test.ts` と同じ形)。
  *
@@ -238,8 +239,7 @@ describe('oauthFieldTooLong — 天井を持つのは画面の maxLength だけ�
  */
 describe('モジュール直下の定数 (読み直して見る・パス 355)', () => {
   async function fresh() {
-    vi.resetModules();
-    return (await import('../callbackPaste')) as typeof import('../callbackPaste');
+    return (await rereadModule<typeof import('../callbackPaste')>(import.meta.url, '../callbackPaste')) as typeof import('../callbackPaste');
   }
 
   it('★ リダイレクト URI の 2 値は綴りごと固定する', async () => {

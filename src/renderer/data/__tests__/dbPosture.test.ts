@@ -17,6 +17,8 @@ if (!('subtle' in globalThis.crypto)) {
 import { currentDbSecurityInputs } from '../dbPosture';
 import { _resetAutoLockActiveForTests, startAutoLock, type AutoLockHandle } from '../../security/autoLock';
 import { buildDbSecurityReport } from '../../../shared/dbSecurityPosture';
+import * as vaultModule from '../../security/vault';
+import * as autoLockModule from '../../security/autoLock';
 
 function stubDeps() {
   return {
@@ -97,7 +99,7 @@ describe('マスターパスワードは導出せず観測する', () => {
   // fake-indexeddb は同一プロセスで保持されるので、毎回まっさらにする
   // (singleton を戻すだけだと「既に初期化されています」で落ちる)。
   const freshVault = async () => {
-    const mod = await import('../../security/vault');
+    const mod = vaultModule;
     mod._resetVaultForTests();
     await new Promise<void>((resolve) => {
       const req = indexedDB.deleteDatabase('business-hub-vault');
@@ -140,7 +142,7 @@ describe('マスターパスワードは導出せず観測する', () => {
  */
 describe('自動ロックの変化が購読者へ伝わる', () => {
   it('開始と終了で通知が来る', async () => {
-    const { subscribeAutoLockActive, isAutoLockActive } = await import('../../security/autoLock');
+    const { subscribeAutoLockActive, isAutoLockActive } = autoLockModule;
     const seen: boolean[] = [];
     const unsubscribe = subscribeAutoLockActive(() => seen.push(isAutoLockActive()));
     const h = startAutoLock({ onLock: () => undefined }, stubDeps());
@@ -165,7 +167,7 @@ describe('自動ロックの変化が購読者へ伝わる', () => {
  */
 describe('マスターパスワードの長さも測る', () => {
   const freshVault2 = async () => {
-    const mod = await import('../../security/vault');
+    const mod = vaultModule;
     mod._resetVaultForTests();
     await new Promise<void>((resolve) => {
       const req = indexedDB.deleteDatabase('business-hub-vault');
@@ -258,7 +260,7 @@ describe('マスターパスワードの長さも測る', () => {
   });
 
   it('下限の定数が 12 である (診断の判定はこれに依る)', async () => {
-    const { MIN_PASSWORD_LENGTH } = await import('../../security/vault');
+    const { MIN_PASSWORD_LENGTH } = vaultModule;
     expect(MIN_PASSWORD_LENGTH).toBe(12);
     // 2026-07 に 8 から上げた。8 文字は今の下限を満たさない。
     expect('12345678'.length >= MIN_PASSWORD_LENGTH).toBe(false);

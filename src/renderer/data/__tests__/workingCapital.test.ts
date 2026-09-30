@@ -1,10 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   computeCashConversionCycle,
   monthsPerYear,
   periodDaysForMonths,
   yearDays,
 } from '../workingCapital';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 describe('computeCashConversionCycle', () => {
   it('computes DSO, DIO, DPO and CCC over a 365-day basis', () => {
@@ -210,14 +211,13 @@ describe('computeCashConversionCycle — 未入力の溜まりは算定不能 (0
  * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
  * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
  * (`stryker.config.json` の `_commentIgnoreStatic`)。殺し方は**テスト側で読み直す**
- * こと: `vi.resetModules()` + 動的 `import()` なら変異体が有効な状態で評価される。
+ * こと: `rereadModule` (対象だけを読み直す —— パス 495) なら変異体が有効な状態で評価される。
  *
  * ここで留めるのは、画面と**金融機関等へ出す書面**が刷る文字そのものである。
  */
 describe('読み直して測る — module 直下の回転日数ヘルパー', () => {
   it('読み直しても DSO / DIO / DPO が数を返す (ヘルパーが空にすり替わっていない)', async () => {
-    vi.resetModules();
-    const { computeCashConversionCycle: fresh } = await import('../workingCapital');
+    const { computeCashConversionCycle: fresh } = await rereadModule<typeof import('../workingCapital')>(import.meta.url, '../workingCapital');
     const c = fresh({
       accountsReceivable: 1_000_000, inventory: 1_200_000, accountsPayable: 730_000,
       revenue: 7_300_000, cogs: 3_650_000, periodMonths: 12,

@@ -12,6 +12,7 @@
 import { isCalendarDate } from '../../shared/isoDate';
 import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 import { moreThanChars } from '../../shared/inputCeiling';
+import { readEntryNumber } from '../../shared/readNumeric';
 
 export const SALES_COLLECTION = 'sales-entries';
 
@@ -110,12 +111,29 @@ export function parseSalesEntry(input: {
   if (!isValidDate(input.date)) throw new Error('日付は YYYY-MM-DD 形式で入力してください');
   if (!isSalesChannel(input.channel)) throw new Error('チャネルが不正です');
 
-  // Number(number)===number なので typeof 分岐は不要 (簡約して equivalent mutant を排除)。
-  const amount = Number(input.amount);
-  if (!Number.isFinite(amount) || amount < 0) throw new Error('売上金額は 0 以上の数値で入力してください');
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+   * `Number()` で、`'1,000'` / 全角の `'１０００'` / `'¥1,000'` を「0 以上の数値で入力して
+   * ください」と**偽の理由で**断り、`'1e3'` を 1000・`'0x10'` を 16 として黙って保存し、
+   * **空欄を 0 円の売上として**記録していた (`Number('') === 0`)。空欄は断る ——
+   * 0 円の売上を記録したいなら 0 と打てばよく、打っていない欄を 0 と読むと
+   * 平均受注単価と売上高が黙って下がる (0 と「未入力」は別の事実 —— パス 395)。
+   */
+  const amountRead = readEntryNumber(input.amount);
+  if (amountRead.kind === 'blank') throw new Error('売上金額が未入力です（0 円の売上なら 0 と入力してください）');
+  if (amountRead.kind === 'unreadable' || amountRead.value < 0) throw new Error('売上金額は 0 以上の数値で入力してください');
+  const amount = amountRead.value;
 
-  const orders = Number(input.orders);
-  if (!Number.isInteger(orders) || orders < 1) throw new Error('注文件数は 1 以上の整数で入力してください');
+  const ordersRead = readEntryNumber(input.orders);
+  const ordersRefusal = '注文件数は 1 以上の整数で入力してください';
+  // 空欄・読めない入力の判定は**型の絞り込みのため**に要る (下の行で `ordersRead.value` を読む)。
+  // 実行時には等価 —— その結果は `value` を持たず `Number.isInteger(undefined)` は false なので、
+  // 消しても下の行が同じ文で断る (手で当てて related の 3,479 件が通る —— パス 496)。
+  // 判定を 1 行に分けたのは、pragma が同じ行の本物の判定 (整数か・1 以上か) まで隠さないため。
+  // Stryker disable next-line ConditionalExpression: 等価 —— 消しても下の行が Number.isInteger(undefined) で同じ文を出す
+  if (ordersRead.kind !== 'number') throw new Error(ordersRefusal);
+  if (!Number.isInteger(ordersRead.value) || ordersRead.value < 1) throw new Error(ordersRefusal);
+  const orders = ordersRead.value;
 
   const entry: SalesEntry = { date: input.date, channel: input.channel, amount, orders };
   if (typeof input.note === 'string' && input.note.trim().length > 0) {
@@ -543,21 +561,24 @@ export function shopifyOrderNote(name: string | undefined): string {
  * 注文名は 1 注文に 1 つである。
  */
 export function salesOrderRef(e: Pick<SalesEntry, 'note'>): string | null {
+  // `salesNoteText` は前後の空白を落とすので、接頭辞 (末尾が空白) で始まる文字列は
+  // 必ずその先に注文名を持つ —— 「接頭辞だけ」は起こらず、長さの判定は要らない (パス 501)。
   const note = salesNoteText(e);
-  return note.startsWith(SHOPIFY_NOTE_PREFIX) && note.length > SHOPIFY_NOTE_PREFIX.length ? note : null;
+  return note.startsWith(SHOPIFY_NOTE_PREFIX) ? note : null;
 }
 
 /** 同じ注文名の控えが既に在ればそれを返す (無ければ null)。Shopify の画面が記録を断る判断。 */
 export function findOrderEntry(existing: readonly SalesEntry[], ref: string): SalesEntry | null {
+  // 空の注文名は `salesOrderRef` が 1 つも返さないので、空を先に断る判定は要らない (パス 501)。
   const key = ref.trim();
-  if (key.length === 0) return null;
   return existing.find((e) => salesOrderRef(e) === key) ?? null;
 }
 
 /** 注文名で引く (注文名が空なら null —— 注文名の無い記録は重複を判定しない)。 */
 export function findShopifyOrder(existing: readonly SalesEntry[], name: string | undefined): SalesEntry | null {
-  const n = (name ?? '').trim();
-  return n.length === 0 ? null : findOrderEntry(existing, shopifyOrderNote(n));
+  // 注文名が空なら `shopifyOrderNote` は接頭辞の無い `Shopify` を返し、`salesOrderRef` は
+  // それを注文名と読まないので、空の判定はこの 1 行で済む (パス 501 —— 前の判定は等価変異だった)。
+  return findOrderEntry(existing, shopifyOrderNote(name));
 }
 
 /** 同じ注文名が 2 件以上ある組。 */
@@ -775,6 +796,7 @@ export function countStoredRows(existing: readonly SalesEntry[], rows: readonly 
   for (const r of rows) {
     const key = salesRowKey(r);
     const left = pool.get(key);
+    // Stryker disable next-line ConditionalExpression: JS では `undefined > 0` が false なので、未定義の判定は型の絞り込みのためだけに在る (等価変異)
     if (left !== undefined && left > 0) {
       stored += 1;
       pool.set(key, left - 1);

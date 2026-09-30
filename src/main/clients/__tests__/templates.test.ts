@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {
@@ -20,6 +20,7 @@ import {
   type TemplateId,
   type TemplateParams,
 } from '../templates';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 // --- Catalog ----------------------------------------------------------
 
@@ -580,13 +581,12 @@ describe('exportTemplateImpl — path を渡さないとき', () => {
  * (実測 2026-08-31: 4 件が生き残っていた —— 一覧を `undefined` の配列にしても、
  *  描画関数の表と action の表を空にしても、取得時刻を空文字にしても鳴らない)。
  *
- * `vi.resetModules()` + `await import()` で、変異が効いた状態のモジュールを
+ * `rereadModule` (対象だけを読み直す —— パス 495) で、変異が効いた状態のモジュールを
  * 読み直してから同じことを問う。
  */
 describe('静的な表 —— 読み直して問う', () => {
   const fresh = async (): Promise<typeof import('../templates')> => {
-    vi.resetModules();
-    return import('../templates');
+    return rereadModule<typeof import('../templates')>(import.meta.url, '../templates');
   };
 
   it('TEMPLATE_IDS は目録の id と 1 件ずつ一致する', async () => {

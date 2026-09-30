@@ -34,7 +34,7 @@
  * 駆動する鍵に `'__proto__'` は入れる (入口としては本物) が、
  * **同一性の比較には入れない**。
  */
-import { describe, it, expect } from 'vitest';
+import { beforeAll, describe, it, expect } from 'vitest';
 import path from 'node:path';
 import { lookup, has } from '../lookup';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
@@ -97,15 +97,29 @@ const ROOTS = ['src/shared', 'src/renderer/data', 'src/renderer/network', 'src/r
 const TABLE_DECL = /Record<\s*\w/;
 
 describe('prototype の鍵で引いても prototype の値を返さない (パス 235)', () => {
-  it('文字列の鍵の表を持つモジュールの引き手を、総当たりで駆動する', async () => {
-    const files = ROOTS.flatMap((r) => walk(path.resolve(r)))
-      .filter((f) => TABLE_DECL.test(readOriginalSource(f)));
+  /*
+   * **読み込みは beforeAll で行う** (2026-09-27 · パス 495)。この走査は製品のモジュールを
+   * 120 本ほど読む。**検査の中で初めて読むと**、変異検査はその直下の値 (定数・表) を
+   * すべて「この検査が覆った」と数え、この検査がその値を主張していない所で変異体が
+   * 生き残る (`rereadModule.ts` の docblock)。beforeAll は「いまどの検査か」が立つ前に
+   * 走るので、読み込みは被覆に数えられない —— 駆動 (関数を呼ぶこと) は今までどおり
+   * 検査の中で行う。規則は `inTestModuleLoadCensus.test.ts` が機械で見る。
+   */
+  const files: string[] = [];
+  const loaded: { readonly f: string; readonly mod: Record<string, unknown> }[] = [];
+  beforeAll(async () => {
+    files.push(...ROOTS.flatMap((r) => walk(path.resolve(r)))
+      .filter((f) => TABLE_DECL.test(readOriginalSource(f))));
+    for (const f of files) {
+      try { loaded.push({ f, mod: (await import(f)) as Record<string, unknown> }); } catch { /* 読めない物は駆動しない */ }
+    }
+  });
+
+  it('文字列の鍵の表を持つモジュールの引き手を、総当たりで駆動する', () => {
     const offenders: string[] = [];
     let calls = 0;
     let modules = 0;
-    for (const f of files) {
-      let mod: Record<string, unknown>;
-      try { mod = (await import(f)) as Record<string, unknown>; } catch { continue; }
+    for (const { f, mod } of loaded) {
       modules++;
       for (const [name, fn] of Object.entries(mod)) {
         if (typeof fn !== 'function' || fn.length !== 1) continue;

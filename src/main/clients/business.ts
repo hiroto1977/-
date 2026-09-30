@@ -641,9 +641,6 @@ export async function askBusinessAdvisorImpl(
   if (problem !== null) {
     throw new Error(ADVISOR_QUESTION_MESSAGES[problem]);
   }
-  if (problem === 'control-chars') {
-    throw new Error('question contains control characters');
-  }
   // Stryker restore ConditionalExpression
 
   // Universe = either the caller's allowlist or all 10 mock IDs.

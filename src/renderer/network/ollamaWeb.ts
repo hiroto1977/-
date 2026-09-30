@@ -199,7 +199,12 @@ function fetchWithTimeout(
   return withBodyDeadline(timeoutMs, undefined, async (signal) => {
     const res = await fetchFn(url, egressInit({ ...init, signal }));
     // 転送には追随しない (規則は httpLimits.ts)。
-    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, 'Ollama'));
+    if (isRedirectResponse(res)) {
+      // Stryker disable next-line StringLiteral: 断りの文 (ラベル入り) を読む呼び出しが 1 つも無い —— この関数の
+      // 呼び手 6 か所はどれも失敗を握る (`catch {}` / `Promise.allSettled` / `.catch(() => null)`) ので、
+      // ラベルは外から観測できない (等価変異)。ラベルの入り方そのものは httpLimits.test.ts が留める。
+      throw new Error(redirectRefusal(res, url, 'Ollama'));
+    }
     return res;
   });
 }
@@ -236,6 +241,8 @@ export function parseJsonOrNull(text: string): unknown {
 export async function readTextOrEmpty(res: Response): Promise<string> {
   // `Promise.allSettled` の包みは外した —— `readFailureBody` は自分で投げないので、
   // rejected の枝は**到達できない死んだ枝**になる (変異体が殺せない)。
+  // Stryker disable next-line StringLiteral: ラベルは「<label> response too large」の文に入るだけで、その例外は
+  // `readFailureBody` の `.catch(() => '')` が握る —— 空文字を返す以外に外へ出る物が無く、観測できない (等価変異)。
   return readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES);
 }
 

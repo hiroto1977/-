@@ -1,5 +1,5 @@
 import { floorHundred } from '../num';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_RATE_POINTS,
   DEFAULT_SCHEDULE_PARAMS,
@@ -25,6 +25,8 @@ import {
   type ScheduleInput,
 } from '../taxConsumptionSchedule';
 import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from '../taxConsumption';
+import { rereadModule } from './rereadModule';
+import * as parametersModule from '../parameters';
 
 /** 個人事業者・暦年・本則課税の基本形。 */
 const individual = (over: Partial<ScheduleInput> = {}): ScheduleInput => ({
@@ -637,7 +639,7 @@ describe('台帳から渡す法定値 (ScheduleParams)', () => {
 // 下限を定数にして台帳が参照し、割る側にも丸めを置いた。
 describe('MIN_NATIONAL_SHARE — 割る値の下限', () => {
   it('台帳の下限がこの定数で、0 より大きい', async () => {
-    const { PARAMETER_BY_ID } = await import('../parameters');
+    const { PARAMETER_BY_ID } = parametersModule;
     const def = PARAMETER_BY_ID.get('consumptionSchedule.nationalShare')!;
     expect(def.min).toBe(MIN_NATIONAL_SHARE);
     expect(def.min).toBeGreaterThan(0);
@@ -661,7 +663,7 @@ describe('MIN_NATIONAL_SHARE — 割る値の下限', () => {
   });
 
   it('台帳の値を端に振っても年税額に非有限値が出ない', async () => {
-    const { PARAMETER_BY_ID, DEFAULT_PARAMETER_VALUES, scheduleParams } = await import('../parameters');
+    const { PARAMETER_BY_ID, DEFAULT_PARAMETER_VALUES, scheduleParams } = parametersModule;
     const ids = [
       'consumptionSchedule.nationalShare',
       'consumptionSchedule.interimTier1',
@@ -742,8 +744,7 @@ describe('3割特例 (thirty-percent) — 個人事業者の令和 9 年分・�
  */
 describe('既定の定数 (読み直して測る)', () => {
   it('★ 地方消費税の比 22/78・予定表の既定の束・掃引の既定の刻み', async () => {
-    vi.resetModules();
-    const fresh = await import('../taxConsumptionSchedule');
+    const fresh = await rereadModule<typeof import('../taxConsumptionSchedule')>(import.meta.url, '../taxConsumptionSchedule');
     expect(fresh.LOCAL_RATIO).toBeCloseTo(22 / 78, 15);
     expect(fresh.LOCAL_RATIO).toBeLessThan(1);
     expect(fresh.DEFAULT_SCHEDULE_PARAMS).toEqual({

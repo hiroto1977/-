@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import 'fake-indexeddb/auto';
 import { webcrypto } from 'node:crypto';
 import { _resetVaultForTests, getVault } from '../vault';
@@ -13,6 +13,7 @@ import {
   startLockRelay,
   subscribeWorkspaceLocked,
 } from '../lockWorkspace';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 // jsdom doesn't provide crypto.subtle. Pull it in from Node's webcrypto.
 if (!('subtle' in globalThis.crypto)) {
@@ -135,8 +136,7 @@ describe('lockWorkspace', () => {
     // `import` 越しに見た値はいつまでも元のまま = どんな検査を書いても
     // 殺せない生存になる (`stryker.config.json` の `_commentIgnoreStatic`、
     // および `oauth.test.ts` の freshConfigs と同じ扱い)。
-    vi.resetModules();
-    const fresh = await import('../lockWorkspace');
+    const fresh = await rereadModule<typeof import('../lockWorkspace')>(import.meta.url, '../lockWorkspace');
     expect(fresh.LOCK_CHANNEL).toBe('servicehub.lock');
     expect(fresh.LOCK_MESSAGE).toBe('lock');
   });

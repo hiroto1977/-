@@ -92,6 +92,7 @@ const gen = req('../../../scripts/quality-report.cjs') as {
   }) => { text: string; judgement: Judgement };
   parseVitestSummary: (out: string) => { files: VitestCounts | null; tests: VitestCounts | null };
   utcMinute: (ms: number) => string;
+  reportMeasuredMs: (report: unknown, mtimeMs: number) => number;
   renderPage: (a: {
     now: string;
     typecheck: { code: number };
@@ -348,6 +349,20 @@ describe('頁の組み立て', () => {
       scope: scopeOf(named, named),
       ...o,
     });
+
+  it('★ 併合報告は自分の時刻 (mergedAt) を名乗り、mtime に頼らない (パス 501e)', () => {
+    // `gh run download` はファイルの mtime を保たないので、最大 90 日前に併合した報告が
+    // 「取ってきた今日」の日時として頁に載る。併合 (`merge-mutation-reports.cjs`) は
+    // 自分の時刻を `mergedAt` に持つ。壊れた・型違い・無いときは mtime に戻る (Stryker が直接書いた報告)。
+    const merged = '2026-09-30T12:34:56.000Z';
+    expect(gen.reportMeasuredMs({ mergedAt: merged }, 0)).toBe(Date.parse(merged));
+    expect(gen.reportMeasuredMs({ mergedAt: 'not a date' }, 7)).toBe(7);
+    expect(gen.reportMeasuredMs({ mergedAt: 5 }, 8)).toBe(8);
+    expect(gen.reportMeasuredMs({}, 9)).toBe(9);
+    expect(gen.reportMeasuredMs(null, 10)).toBe(10);
+    // 頁に載る日時は mergedAt から (mtime が 0 = 1970 年でも 2026 年と書く)。
+    expect(gen.utcMinute(gen.reportMeasuredMs({ mergedAt: merged }, 0))).toBe('2026-09-30 12:34 UTC');
+  });
 
   it('絶対時刻で書き、相対時間を固めない', () => {
     const p = page();

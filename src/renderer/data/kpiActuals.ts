@@ -15,6 +15,7 @@ import { finiteOrNull } from '../../shared/num';
 import { isCalendarMonth } from '../../shared/isoDate';
 import { relationIssue } from './recordRelations';
 import { moreThanChars } from '../../shared/inputCeiling';
+import { readEntryNumber, type EntryNumber } from '../../shared/readNumeric';
 import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
@@ -141,6 +142,7 @@ export function readablePeriodRows<T extends { readonly period: string }>(
  * 下の `kpiNumbersReadable` が黙らない (`function` 宣言は巻き上げられるので、
  * この定数がモジュール読み込み時に呼んでも未定義にはならない)。
  */
+// Stryker disable next-line ArrayDeclaration: 読むのは欄の名前だけで、要素が何であっても鍵は変わらない (等価変異)
 export const KPI_SUM_FIELDS: readonly string[] = Object.keys(summarizeFundamentals([]));
 
 /**
@@ -414,12 +416,19 @@ export function parseKpiActual(input: {
     throw new Error(`事業名は 1〜${MAX_KPI_UNIT_CHARS} 文字で入力してください`);
   }
 
-  const num = (v: unknown, label: string): number => {
-    // Number(number)===number なので typeof 分岐は不要 (equivalent mutant 排除)。
-    const n = Number(v);
-    if (!Number.isFinite(n) || n < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
-    return n;
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+   * `Number()` で、`'1,000,000'` や全角の数字を「0 以上の数値で入力してください」と
+   * **偽の理由で**断り、`'1e3'` / `'0x10'` を黙って別の数として保存し、**空欄を 0 円**として
+   * 記録していた —— 売上原価を空けた期は「売上総利益率 100%」として金融機関等提出用の書面 §1 へ届く。
+   * 空欄は断る (0 なら 0 と打つ)。任意の人件費だけは空欄を「未入力」として欄ごと持たせない。
+   */
+  const amountOf = (read: EntryNumber, label: string): number => {
+    if (read.kind === 'blank') throw new Error(`${label}が未入力です（無いなら 0 と入力してください）`);
+    if (read.kind === 'unreadable' || read.value < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
+    return read.value;
   };
+  const num = (v: unknown, label: string): number => amountOf(readEntryNumber(v), label);
 
   const sga = num(input.sga, '販管費');
   const base: KpiActual = {
@@ -431,9 +440,10 @@ export function parseKpiActual(input: {
     sga,
     depreciation: num(input.depreciation, '減価償却費'),
   };
-  // 人件費は任意。未入力 ('' / null) のときはフィールド自体を持たせない。
-  if (input.laborCost != null && input.laborCost !== '') {
-    const laborCost = num(input.laborCost, '人件費');
+  // 人件費は任意。未入力 ('' / 空白だけ / null) のときはフィールド自体を持たせない。
+  const laborRead = readEntryNumber(input.laborCost);
+  if (laborRead.kind !== 'blank') {
+    const laborCost = amountOf(laborRead, '人件費');
     // 人件費 ≦ 販管費 は **台帳 1 つ** (`recordRelations.ts`) —— 復元の入口も同じ関係を
     // 見る (パス 224。それまでは復元が通し、計算書類の取り込みが「人件費以外の販管費は
     // 0 とした」と断りながら進んでいた)。実績と予算は同じ関係。
@@ -578,6 +588,7 @@ function yearEarlier(period: string): string | null {
   // 使われ、アンカー有無の差が出力に出ない (equivalent) ため Regex を無効化する。
   // Stryker disable next-line Regex
   const m = /^(\d{4})-(\d{2})$/.exec(period);
+  // Stryker disable next-line ConditionalExpression: series 由来の期は必ず YYYY-MM なので、読めない枝には到達しない (等価変異)
   if (!m) return null;
   const year = Number(m[1]) - 1;
   return `${year}-${m[2]}`;

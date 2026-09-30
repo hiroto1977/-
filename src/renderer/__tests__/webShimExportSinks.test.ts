@@ -9,6 +9,11 @@
  * `fs/__tests__/folderMirror.test.ts`、画面は `pages/__tests__/exportWarningVisible.test.ts`)。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
+import { TEMPLATE_CATALOG_FOR_WEB } from '../web-templates';
 
 /** テストごとに差し替える保存先の振る舞い。 */
 const state = {
@@ -55,16 +60,14 @@ type Result = { ok: boolean; data?: Record<string, unknown>; message?: string };
 type Hub = { invoke: (s: string, a: string, p: Record<string, unknown>) => Promise<Result> };
 
 async function loadHub(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 
 /** テンプレートの書き出しを 1 回。カタログの先頭 id を使う。 */
 async function exportTemplate(): Promise<Record<string, unknown>> {
   const hub = await loadHub();
-  const { TEMPLATE_CATALOG_FOR_WEB } = await import('../web-templates');
   const r = await hub.invoke('templates', 'export-template', {
     templateId: TEMPLATE_CATALOG_FOR_WEB[0]!.id,
     params: {},
@@ -161,10 +164,9 @@ describe('web-shim — OS 操作の断り (パス 458)', () => {
                  revealInFolder: (p: string) => Promise<{ ok: boolean; message?: string }> };
 
   async function osHub(): Promise<OsHub> {
-    vi.resetModules();
     delete (window as unknown as { serviceHub?: unknown }).serviceHub;
     (globalThis as unknown as { alert: (m: string) => void }).alert = () => {};
-    await import('../web-shim');
+    await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
     return (window as unknown as { serviceHub: OsHub }).serviceHub;
   }
 

@@ -250,12 +250,17 @@ describe('数値パラメータの設定画面', () => {
     await save(DAYS);
     await waitForOverrides(1);
     // 2 度目の書き込みを遅らせる。印が busy で立つ待ち方だと、ここで古い 360 を読む (毎回)。
+    // 行は既に在るので、2 度目は「最新がまだ読んだ行のその版なら置き換える」口を通る (パス 500)。
     const store = getRecordStore();
-    const realUpdate = store.update.bind(store);
-    const slow = vi.spyOn(store, 'update').mockImplementation(async (id, patch) => {
+    const realReplace = store.replaceLatestIfUnchanged.bind(store);
+    const slow = vi.spyOn(store, 'replaceLatestIfUnchanged').mockImplementation((async (
+      collection: string,
+      expected: unknown,
+      data: unknown,
+    ) => {
       await new Promise<void>((resolve) => setTimeout(resolve, 150));
-      return realUpdate(id, patch);
-    });
+      return realReplace(collection, expected as never, data as never);
+    }) as typeof store.replaceLatestIfUnchanged);
     try {
       await type(DAYS, '365');
       await save(DAYS);
@@ -332,8 +337,9 @@ describe('数値パラメータの設定画面', () => {
       if (f) published.push(f.message);
     });
     const store = getRecordStore();
-    const failInsert = vi.spyOn(store, 'insert').mockRejectedValue(new Error('QuotaExceededError (検査)'));
-    const failUpdate = vi.spyOn(store, 'update').mockRejectedValue(new Error('QuotaExceededError (検査)'));
+    // 書き込みの口はパス 500 から「比べて書く」2 つ (行が無ければ足す・在れば最新がまだその版なら置き換える)。
+    const failInsert = vi.spyOn(store, 'insertIfLatest').mockRejectedValue(new Error('QuotaExceededError (検査)'));
+    const failUpdate = vi.spyOn(store, 'replaceLatestIfUnchanged').mockRejectedValue(new Error('QuotaExceededError (検査)'));
     try {
       await type(DAYS, '300');
       await click(q.button(`${DAYS} を保存`));
@@ -385,6 +391,86 @@ describe('数値パラメータの設定画面', () => {
       failList.mockRestore();
       process.off('unhandledRejection', onUnhandled);
       unsubscribe();
+    }
+  });
+});
+
+/**
+ * **別の画面の保存と重なり続けて書かなかった** (2026-09-28 · パス 500)。
+ *
+ * 保存は「最新がまだ読んだ行のその版なら置き換える」ので、読んでから書くまでの間に別の画面が書き続けると
+ * (上限まで挟まれ続けると) 何も書かずに断る。**端末の保存の失敗ではない** —— 画面上端の知らせ
+ * (「この端末に保存できませんでした」と再読込を勧める) へは流さず、押した所のそばで言う。
+ */
+describe('重なり続けて書かなかったときの断り (パス 500)', () => {
+  function interleaveForever(): () => void {
+    const store = getRecordStore();
+    const insertSpy = vi.spyOn(store, 'insertIfLatest').mockImplementation((async (collection: string) => {
+      const [current] = await store.list(collection);
+      return { status: 'changed', current: current ?? null };
+    }) as typeof store.insertIfLatest);
+    const updateSpy = vi.spyOn(store, 'replaceLatestIfUnchanged').mockImplementation((async (collection: string) => {
+      const [current] = await store.list(collection);
+      return { status: 'changed', current: current ?? null };
+    }) as typeof store.replaceLatestIfUnchanged);
+    return () => {
+      insertSpy.mockRestore();
+      updateSpy.mockRestore();
+    };
+  }
+
+  it('★ 行の保存は、その行のそばで断り、上書きの印を付けず、画面上端の知らせは出さない', async () => {
+    const published: string[] = [];
+    const unsubscribe = subscribeDeviceStoreFailure((f) => {
+      if (f) published.push(f.message);
+    });
+    const restore = interleaveForever();
+    try {
+      await type(DAYS, '300');
+      await click(q.button(`${DAYS} を保存`));
+      await settleUntil(
+        () => container.querySelector('[data-parameter-busy="hydroponics.daysPerYear"]') !== null,
+        '行のそばに「重なり続けました」の断りが出る',
+      );
+      expect(q.alertIn('hydroponics.daysPerYear')).toContain('重なり続けました');
+      expect(published, '端末の保存の失敗として報せている').toEqual([]);
+      expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
+      expect(await stored()).toEqual([]);
+      // 入力は残る —— もう 1 度押せる。
+      expect(q.input(DAYS).value).toBe('300');
+      await settleUntil(() => !q.button(`${DAYS} を保存`).disabled, `「${DAYS} を保存」がまた押せる`);
+    } finally {
+      restore();
+      unsubscribe();
+    }
+  });
+
+  it('★ 「すべて既定に戻す」も、押した所のそばで断る (未処理の拒否にしない)', async () => {
+    await type(DAYS, '300');
+    await save(DAYS);
+    await waitForOverrides(1);
+    const unhandled: unknown[] = [];
+    const onUnhandled = (r: unknown): void => {
+      unhandled.push(r);
+    };
+    process.on('unhandledRejection', onUnhandled);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const restore = interleaveForever();
+    try {
+      await click(q.buttonByText('すべて既定に戻す'));
+      await settleUntil(
+        () => container.querySelector('[data-parameter-busy="all"]') !== null,
+        '「すべて既定に戻す」のそばに断りが出る',
+      );
+      expect(container.querySelector('[data-parameter-busy="all"]')?.textContent ?? '').toContain('重なり続けました');
+      await new Promise<void>((r) => setTimeout(r, 0));
+      expect(unhandled).toEqual([]);
+      // 何も消していない。
+      expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 300 } }]);
+    } finally {
+      restore();
+      confirmSpy.mockRestore();
+      process.off('unhandledRejection', onUnhandled);
     }
   });
 });

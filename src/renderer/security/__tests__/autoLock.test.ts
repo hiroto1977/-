@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, vi } from 'vitest';
 import { _resetAutoLockActiveForTests, isAutoLockActive, startAutoLock } from '../autoLock';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 interface ListenerEntry {
   target: EventTarget;
@@ -481,8 +482,7 @@ describe('操作イベントの一覧 (読み直してから確かめる — 静
     startAutoLock: typeof startAutoLock;
     _resetAutoLockActiveForTests: typeof _resetAutoLockActiveForTests;
   }> {
-    vi.resetModules();
-    const mod = (await import('../autoLock')) as unknown as {
+    const mod = (await rereadModule<typeof import('../autoLock')>(import.meta.url, '../autoLock')) as unknown as {
       startAutoLock: typeof startAutoLock;
       _resetAutoLockActiveForTests: typeof _resetAutoLockActiveForTests;
     };

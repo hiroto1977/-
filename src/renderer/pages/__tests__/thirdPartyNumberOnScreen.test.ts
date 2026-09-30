@@ -28,6 +28,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { YoutubePage } from '../YoutubePage';
 import { fetchYoutubeSnapshot } from '../../../main/clients/youtube';
 import { apiNumberOf } from '../../../shared/apiResponse';
+import { readNumeric } from '../../../shared/readNumeric';
 
 function replying(bodies: readonly unknown[]): typeof fetch {
   let i = 0;
@@ -121,7 +122,6 @@ describe('apiNumberOf (パス 416)', () => {
   });
 
   it('★ 利用者の入力欄の読み手とは受理集合が違う (母集団が違うので揃えない)', async () => {
-    const { readNumeric } = await import('../../../shared/readNumeric');
     // 全角は**利用者の欄**では読めて、API の数としては読めない。
     expect(readNumeric('１２３')).toBe(123);
     expect(apiNumberOf('１２３')).toBeNull();

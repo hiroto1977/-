@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fetchViaProxy, parseProxyEnvelope } from '../proxy';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /*
  * プロキシ (利用者が用意した Cloudflare Worker) の応答封筒は**信じない**。
@@ -57,12 +58,11 @@ describe('parseProxyEnvelope', () => {
  * 静的 import のままだと、その初期化子を変異させても既に組み終わった写しが使われ、
  * 上の検査は緑のまま通る (2026-09-06 実測で 14 件生存。`localWrite` の
  * `const OK` と `deviceStoreFailure` の文面表で踏んだのと同じ形)。
- * `vi.resetModules()` → 動的 import で、変異した定数をテストの中で組ませる。
+ * `rereadModule` (対象だけを読み直す —— パス 495) で、変異した定数をテストの中で組ませる。
  */
 describe('読み込み直しても同じ規則 (定数の初期化子を測る)', () => {
   async function load(): Promise<typeof import('../proxy')> {
-    vi.resetModules();
-    return import('../proxy');
+    return rereadModule<typeof import('../proxy')>(import.meta.url, '../proxy');
   }
 
   it('★ ヘッダ名は token だけ (空白・記号は落ちる)', async () => {

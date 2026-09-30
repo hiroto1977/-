@@ -26,6 +26,7 @@ import {
   MAX_ASSISTANT_REPLY_CHARS,
   inputTooLongMessage,
 } from '../../../shared/assistantLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /*
  * probeOllama の要点は **失敗理由の切り分け**。利用者から見ると「未起動」と
@@ -319,6 +320,18 @@ describe('chatOllama — 送信', () => {
     expect(r.ok).toBe(true);
     expect(r.ok && r.reply).toBe('echo:やあ');
     expect(r.ok && typeof r.durationMs).toBe('number');
+  });
+
+  it('★ 転送 (3xx) には追随せず、到達できなかったものとして断る (パス 501)', async () => {
+    const redirecting = vi.fn(async () =>
+      new Response(null, { status: 302, headers: { location: 'http://evil.example/steal' } }),
+    ) as unknown as typeof fetch;
+    const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'やあ' }, redirecting, '');
+    expect(r).toEqual({
+      ok: false,
+      kind: 'not-running',
+      message: 'http://127.0.0.1:11434 に接続できませんでした。Ollama が起動しているか確認してください。',
+    });
   });
 
   it('stream:false で送る (逐次応答は未対応 — 部分応答を確定扱いしないため)', async () => {
@@ -1073,6 +1086,24 @@ describe('通信の枠', () => {
     const r = await probeOllama(11434, f, '', () => ({ hit: () => false, stop: () => undefined }));
     expect(r.status).toBe('cors-blocked');
     expect(modes).toContain('no-cors');
+  });
+
+  /*
+   * 転送 (3xx) には追随しない (規則は httpLimits.ts の `egressInit` / `isRedirectResponse`)。
+   * 送り先の関門は**最初の 1 ホップ**にしか掛からないので、追随すると許可していない先
+   * (LAN・loopback) へ取りに行く。断った結果は「到達できなかった」と同じ扱いになる
+   * (通常 fetch も到達確認の no-cors も同じ 302 を受けて落ちる → 未起動と診断する)。
+   * 断る枝を外すと 302 が「HTTP エラー」の枝へ流れ、別の状態になる。
+   */
+  it('★ 転送 (3xx) には追随せず、到達できなかったものとして診断する (パス 501)', async () => {
+    const redirecting = vi.fn(async () =>
+      new Response(null, { status: 302, headers: { location: 'http://evil.example/steal' } }),
+    ) as unknown as typeof fetch;
+    const r = await probeOllama(11434, redirecting, '', () => ({ hit: () => false, stop: () => undefined }));
+    expect(r.status).toBe('not-running');
+    expect(r.snapshot.running).toBe(false);
+    expect(r.snapshot.version).toBe('');
+    expect(r.snapshot.models).toEqual([]);
   });
 
   it('大きすぎる応答は読み捨てる (診断が丸ごと落ちない)', async () => {
@@ -1956,13 +1987,12 @@ describe('readTextOrEmpty', () => {
  *
  * 保存キー・上限・空スナップショットは上の検査群が既に字面で見ているが、
  * **静的 import なので変異が届いていなかった** (2026-08-31 実測で 5 件生存)。
- * `vi.resetModules()` + 動的 `import()` で読み直す。
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直す。
  * 本 PR で 7 度目の同じ手当てである。
  */
 describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
   const fresh = async () => {
-    vi.resetModules();
-    return import('../ollamaWeb');
+    return rereadModule<typeof import('../ollamaWeb')>(import.meta.url, '../ollamaWeb');
   };
 
   /*

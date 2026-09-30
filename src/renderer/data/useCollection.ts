@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getRecordStore, type StoredRecord } from './store';
+import {
+  getRecordStore,
+  latestTokenOf,
+  type ConditionalUpdate,
+  type LatestInsert,
+  type LatestToken,
+  type StoredRecord,
+} from './store';
 import { subscribeCollection } from './collectionChange';
+import { latestRecord } from './latestRecord';
+import { readRecordsNow } from './readCollectionNow';
 import { reportDeviceStoreFailure, type DeviceStoreOp } from './deviceStoreFailure';
 
 /**
@@ -56,6 +65,26 @@ export async function reporting<R>(op: DeviceStoreOp, collection: string, run: (
 }
 
 /**
+ * 今の最新に当て直す回数の上限 (パス 500)。当てて足そうとした時に別の保存が挟まっていれば、
+ * 挟まった最新に当て直す。それでも挟まれば `busy` —— 回り続けない (パス 498 の
+ * `MAX_WRITE_ATTEMPTS` と同じ考え)。
+ */
+export const MAX_LATEST_ATTEMPTS = 2;
+
+/**
+ * `applyToLatest` の答え (パス 500):
+ *  - `saved`      … 今の最新に当てて足した。`basedOn` は当てた最新 (欄の元を進めるか決めるのに要る)。
+ *  - `declined`   … `change` が `null` を返した (当てた結果を書かないと決めた —— 理由は呼び手が持つ)。
+ *  - `busy`       … 当てるたびに別の保存が挟まった (上限まで)。何も書いていない。
+ *  - `unreadable` … 保管層を読めなかった。何も書いていない (「0 件」と混ぜない —— パス 384 と同じ規則)。
+ */
+export type LatestApply<T extends Record<string, unknown>> =
+  | { readonly status: 'saved'; readonly record: StoredRecord<T>; readonly basedOn: StoredRecord<T> | null }
+  | { readonly status: 'declined' }
+  | { readonly status: 'busy' }
+  | { readonly status: 'unreadable' };
+
+/**
  * React binding for a single record-store collection. Loads the collection
  * on mount and exposes add/edit/delete that keep local state in sync without
  * a full reload. Pages use this to read/write real persisted business data
@@ -67,7 +96,59 @@ export interface UseCollection<T extends Record<string, unknown>> {
   add: (data: T) => Promise<void>;
   /** Atomic bulk insert (all rows commit together or none). For CSV import. */
   addMany: (rows: readonly T[]) => Promise<void>;
-  edit: (id: string, patch: Partial<T>) => Promise<void>;
+  /**
+   * 1 件を書き換える。**相手の行が保管層に無ければ `false`** (何も書いていない)。
+   *
+   * `store.update` は行が無いとき投げずに `null` を返す。2026-09-27 (パス 498) まではここが
+   * `Promise<void>` でその `null` を捨てており、**別のタブで消された行を編集した保存**は
+   * 何も書かないまま「済んだ」形になった —— 呼び手は編集の欄を空にし、読み直した一覧から行も
+   * 消えるので、打ち込んだ値は痕跡なく失われた。呼び手はこの答えを必ず読む
+   * (`renderer/__tests__/editResultCensus.test.ts` が構文木で数える)。
+   */
+  edit: (id: string, patch: Partial<T>) => Promise<boolean>;
+  /**
+   * **欄を開いた時の中身 (`expected`) のままなら**書く (パス 499)。
+   *
+   * 実体を丸ごと編集する欄 (投資信託の銘柄・不動産の物件・士業の連絡先) は、保存のとき
+   * **全部の欄**を書く。`edit` で書くと、欄を開いた後に別のタブが書き換えた欄まで
+   * 開いた時の値へ戻す —— 実測 (2026-09-27 · 直す前・実 chromium の 2 タブ): A が評価額を
+   * 300,000 → 500,000 に直した後、B が開いていた編集の欄で名前だけ直して保存すると、
+   * **評価額が 300,000 に戻り、どちらの画面も何も言わなかった** (lost update)。
+   *
+   * 答えは 3 つ (`ConditionalUpdate`) で、`changed` のときは**何も書かずに今の行を返す**。
+   * 画面はそれを言い、入力を残し、次の比較の基準を今の行へ移す (利用者がもう一度押せば、
+   * 知ったうえで上書きできる)。どの答えでも一覧は読み直す (消えた行を落とし、
+   * 書き換わった行を今の姿で出す)。
+   */
+  editIfUnchanged: (id: string, expected: T, patch: Partial<T>) => Promise<ConditionalUpdate<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら** 1 件足す (パス 500)。「最新の 1 件を採用する」collection
+   * (水耕栽培の設定・しきい値・提出者情報・運転の設定・品目一覧) の書き込みはここか `applyToLatest` を
+   * 通る (`renderer/__tests__/latestAdoptionCensus.test.ts` が束縛で数える)。
+   *
+   * 素の `add` で全部の欄を書くと、欄を開いた後 (または保存値が届く前) に入った保存を、欄の古い値で
+   * 黙って覆う —— 実測は `useLatestForm.ts` の docblock。`changed` なら何も書かずに今の最新を返す。
+   * どちらの答えでも一覧は読み直す。
+   */
+  addIfLatest: (expected: LatestToken | null, data: T) => Promise<LatestInsert<T>>;
+  /**
+   * **保管層の今の最新に `change` を当てて** 1 件足す (パス 500)。当てて足すまでに別の保存が挟まれば、
+   * 挟まった最新に当て直す (上限 `MAX_LATEST_ATTEMPTS`)。`change` が `null` を返せば書かない。
+   * 品目一覧の増減・書式の変更のように「今の値に対する変更」を書く所が使う —— 写しに当てると、
+   * 別のタブが足した物を知らないまま丸ごと書いて消す。パス 497 は読み直してから素の `add` で書いて
+   * いたので、**読み直しと書き込みの間の窓**が残っていた (ここでは比べて足すまでが 1 つの取引)。
+   */
+  applyToLatest: (change: (current: StoredRecord<T> | null) => T | null) => Promise<LatestApply<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら、その行の中身を `data` で置き換える** (パス 500)。行を増やさない。
+   * 最新 1 件を書き換える記録 (数値パラメータの上書き) の書き込みはここを通る。
+   *
+   * `editIfUnchanged` は**その行**が開いた時の中身のままかを比べるので、読んだ後・書く前に別の行が
+   * 新しい最新として入ると、書き換えは古い行に成功し、採用される最新には値が入らない —— 実測は
+   * `store.replaceLatestIfUnchanged` の docblock。ここは「最新がまだその行のその版か」を比べる。
+   * `changed` なら何も書かずに今の最新を返す。どちらの答えでも一覧は読み直す。
+   */
+  replaceLatest: (expected: LatestToken, data: T) => Promise<LatestInsert<T>>;
   remove: (id: string) => Promise<void>;
   reload: () => Promise<void>;
 }
@@ -165,9 +246,70 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   );
 
   const edit = useCallback(
-    async (id: string, patch: Partial<T>) => {
-      await reporting('save', collection, () => getRecordStore().update<T>(id, patch));
+    async (id: string, patch: Partial<T>): Promise<boolean> => {
+      const updated = await reporting('save', collection, () => getRecordStore().update<T>(id, patch));
       await reload();
+      return updated !== null;
+    },
+    [collection, reload],
+  );
+
+  const editIfUnchanged = useCallback(
+    async (id: string, expected: T, patch: Partial<T>): Promise<ConditionalUpdate<T>> => {
+      const result = await reporting('save', collection, () =>
+        getRecordStore().updateIfUnchanged<T>(id, expected, patch),
+      );
+      await reload();
+      return result;
+    },
+    [collection, reload],
+  );
+
+  const addIfLatest = useCallback(
+    async (expected: LatestToken | null, data: T): Promise<LatestInsert<T>> => {
+      const result = await reporting('save', collection, () =>
+        getRecordStore().insertIfLatest<T>(collection, expected, data),
+      );
+      await reload();
+      return result;
+    },
+    [collection, reload],
+  );
+
+  const applyToLatest = useCallback(
+    async (change: (current: StoredRecord<T> | null) => T | null): Promise<LatestApply<T>> => {
+      const rows = await readRecordsNow<T>(collection);
+      if (rows === null) return { status: 'unreadable' };
+      let current = latestRecord(rows);
+      for (let attempt = 0; attempt < MAX_LATEST_ATTEMPTS; attempt += 1) {
+        const data = change(current);
+        if (data === null) {
+          await reload();
+          return { status: 'declined' };
+        }
+        const basedOn = current;
+        const r = await reporting('save', collection, () =>
+          getRecordStore().insertIfLatest<T>(collection, latestTokenOf(basedOn), data),
+        );
+        if (r.status === 'saved') {
+          await reload();
+          return { status: 'saved', record: r.record, basedOn };
+        }
+        current = r.current;
+      }
+      await reload();
+      return { status: 'busy' };
+    },
+    [collection, reload],
+  );
+
+  const replaceLatest = useCallback(
+    async (expected: LatestToken, data: T): Promise<LatestInsert<T>> => {
+      const result = await reporting('save', collection, () =>
+        getRecordStore().replaceLatestIfUnchanged<T>(collection, expected, data),
+      );
+      await reload();
+      return result;
     },
     [collection, reload],
   );
@@ -180,5 +322,5 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     [collection, reload],
   );
 
-  return { records, loading, add, addMany, edit, remove, reload };
+  return { records, loading, add, addMany, edit, editIfUnchanged, addIfLatest, applyToLatest, replaceLatest, remove, reload };
 }

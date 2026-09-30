@@ -9,6 +9,8 @@
  * 単純な外挿で、季節性・一時的な入出金・追加調達は考慮しない。
  */
 
+import { isFiniteNumber } from '../../shared/num';
+
 /** 予測 1 か月分。 */
 export interface CashForecastRow {
   /** 期首からの経過月 (1 始まり)。 */
@@ -75,8 +77,9 @@ export function cashForecastTrajectory(forecast: CashForecast): number[] {
 // 反映しない。
 // ───────────────────────────────────────────────────────────────────────────
 
-// Number.isFinite は非数値を強制変換せず常に false を返すため、typeof チェックは不要。
-const isFiniteNumber = (n: unknown): n is number => Number.isFinite(n);
+// 有限判定は `shared/num.ts` の `isFiniteNumber` (型の絞り込みを伴う 1 つの口・パス 501)。
+// ここに在った同じ形の写しは消した —— `Number.isFinite` は非数値を強制変換せず常に false を
+// 返すので typeof の判定は要らず、その判定を残すと変異検査で等価変異になる。
 
 /** 1 シナリオの予測結果。 */
 export interface CashScenario {
@@ -177,8 +180,10 @@ export function seasonalIndices(
   if (overallMean === 0) return null;
   const sums = new Array<number>(p).fill(0);
   const counts = new Array<number>(p).fill(0);
-  for (let i = 0; i < history.length; i += 1) {
-    const v = history[i];
+  // 添字の for ではなく entries() で回す —— `i < length` を `i <= length` にする変異体は
+  // 末尾の 1 つ先 (undefined) を読んで下の門で飛ばすだけなので等価で、比較そのものを
+  // 持たない形にすると測定から外す行が要らない (法則 equivalent-mutant-removes-the-shape・パス 501)。
+  for (const [i, v] of history.entries()) {
     if (!isFiniteNumber(v)) continue; // 欠けた月は飛ばすが、位相は数え続ける
     const slot = i % p;
     sums[slot]! += v;

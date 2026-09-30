@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertNonNegativeFinite, floorHundred, nonNeg, round1, round2, yen } from '../num';
+import { assertNonNegativeFinite, floorHundred, isFiniteNumber, nonNeg, round1, round2, yen } from '../num';
 
 describe('yen', () => {
   it('円未満を四捨五入する', () => {
@@ -63,5 +63,41 @@ describe('assertNonNegativeFinite', () => {
     expect(() => assertNonNegativeFinite(-1, 'sales')).toThrow(/sales must be a finite number >= 0 \(got -1\)/);
     expect(() => assertNonNegativeFinite(NaN, 'sales')).toThrow(/got NaN/);
     expect(() => assertNonNegativeFinite(Infinity, 'sales')).toThrow(/got Infinity/);
+  });
+});
+
+/*
+ * `isFiniteNumber` は「型の絞り込みを伴う有限判定」の 1 つの口 (パス 501)。
+ * `typeof v === 'number' && Number.isFinite(v)` と同じ答えを返す —— `typeof` の側は
+ * 型の絞り込みのためだけに在り、`Number.isFinite` は非数を等しく false にするので、
+ * 2 つを並べた形は変異検査で等価変異 (typeof を消しても答えが変わらない) を生む。
+ * ここでは**非数 11 値と非有限の数 3 値が false・有限の数だけが true** を値ごと留める (`Number.isFinite` は
+ * 型強制をしないので、`'1'` も `new Number(1)` も false)。
+ */
+describe('isFiniteNumber', () => {
+  it('有限の数だけを通す (0 / 負 / 小数 / 最大値)', () => {
+    for (const v of [0, -0, 1, -1, 1.5, Number.MAX_VALUE, -Number.MAX_VALUE, Number.MIN_VALUE]) {
+      expect(isFiniteNumber(v), String(v)).toBe(true);
+    }
+  });
+
+  it('非有限の数は落とす', () => {
+    expect(isFiniteNumber(NaN)).toBe(false);
+    expect(isFiniteNumber(Infinity)).toBe(false);
+    expect(isFiniteNumber(-Infinity)).toBe(false);
+  });
+
+  it('数でない値は型強制せずに落とす (文字列の "1" も boxed の Number も)', () => {
+    // label は `String(v)` —— `JSON.stringify(1n)` は投げる (BigInt は直列化できない)。
+    for (const v of ['1', '', null, undefined, true, {}, [], [1], new Number(1), () => 1, 1n]) {
+      expect(isFiniteNumber(v), `${typeof v}: ${String(v)}`).toBe(false);
+    }
+  });
+
+  it('typeof を並べた形と同じ答え (寄せる前の形との対照)', () => {
+    const before = (v: unknown): boolean => typeof v === 'number' && Number.isFinite(v);
+    for (const v of [1, NaN, Infinity, '1', null, undefined, {}, [], new Number(1)]) {
+      expect(isFiniteNumber(v)).toBe(before(v));
+    }
   });
 });

@@ -12,6 +12,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { changedRecordNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
   PROPERTIES_COLLECTION,
@@ -369,11 +370,15 @@ export function RealEstatePage() {
   const { monthlyCashflow } = data;
 
   // ユーザー追加の物件 (record store 永続化・端末内)。
-  const { records: userProps, add: addProperty, edit: editProperty, remove: removeProperty } = useCollection<PropertyEntry>(PROPERTIES_COLLECTION);
+  const { records: userProps, add: addProperty, editIfUnchanged: editPropertyIfUnchanged, remove: removeProperty } = useCollection<PropertyEntry>(PROPERTIES_COLLECTION);
   const [propForm, setPropForm] = useState(EMPTY_PROPERTY_FORM);
   const [propError, setPropError] = useState<string>();
-  /** 編集中のユーザー物件 id (null = 新規追加モード)。 */
-  const [editingPropId, setEditingPropId] = useState<string | null>(null);
+  /**
+   * 編集中のユーザー物件 (null = 新規追加モード)。`base` は**欄を開いた時の保管層の中身**で、
+   * 欄に入れた値と同じ描画から取る —— 保存はそれと今の中身が同じときだけ書く (パス 499)。
+   */
+  const [editingProp, setEditingProp] = useState<{ readonly id: string; readonly base: PropertyEntry } | null>(null);
+  const editingPropId = editingProp === null ? null : editingProp.id;
   const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト。 */
@@ -381,7 +386,8 @@ export function RealEstatePage() {
     () => [
       ...data.properties.map((p) => ({ ...p, rowId: p.id, user: false as const })),
       // 欄の無い控えも 0 と読んでから使う (`normalizeProperty` の 1 か所だけで補う)。
-      ...userProps.map((r) => ({ ...normalizeProperty(r.data), rowId: r.id, user: true as const })),
+      // `stored` は保管層の中身そのもの —— 「編集」が比較の基準にする (パス 499)。
+      ...userProps.map((r) => ({ ...normalizeProperty(r.data), rowId: r.id, user: true as const, stored: r.data })),
     ],
     [data.properties, userProps],
   );
@@ -430,9 +436,21 @@ export function RealEstatePage() {
     try {
       const parsed = parsePropertyEntry(propForm);
       setPropError(undefined);
-      if (editingPropId !== null) {
-        await editProperty(editingPropId, parsed);
-        setEditingPropId(null);
+      if (editingProp !== null) {
+        const result = await editPropertyIfUnchanged(editingProp.id, editingProp.base, parsed);
+        if (result.status === 'changed') {
+          // 欄を開いた後に別の画面で書き換えられていた —— 書かずに言い、入力を残す。次の比較の
+          // 基準を今の行へ移す: もう一度押せば、知ったうえで上書きできる (パス 499)。
+          setEditingProp({ id: editingProp.id, base: result.current.data });
+          setPropError(changedRecordNote('編集していた物件', '入力は残してあります。このまま上書きするなら、もう一度「保存 (自動反映)」を押してください。書き換えられた内容から始め直すなら、一覧の「編集」を押してください。'));
+          return;
+        }
+        setEditingProp(null);
+        if (result.status === 'vanished') {
+          // 編集の相手が消えていた (別のタブで削除) —— 入力は残し、消された行を黙って作り直さない (パス 498)。
+          setPropError(vanishedRecordNote('編集していた物件', '入力は残してあります。新しい物件として保存するなら「＋ 物件を追加」を押してください。'));
+          return;
+        }
       } else {
         await addProperty(parsed);
       }
@@ -443,14 +461,14 @@ export function RealEstatePage() {
   }
 
   /** ユーザー行の「編集」— フォームへ読み込み、保存で自動反映。 */
-  function onStartEditProperty(rowId: string, p: PropertyEntry) {
+  function onStartEditProperty(rowId: string, p: PropertyEntry, stored: PropertyEntry) {
     setPropForm(propertyToForm(p));
-    setEditingPropId(rowId);
+    setEditingProp({ id: rowId, base: stored });
     setPropError(undefined);
   }
 
   function onCancelEditProperty() {
-    setEditingPropId(null);
+    setEditingProp(null);
     setPropForm(EMPTY_PROPERTY_FORM);
     setPropError(undefined);
   }
@@ -888,7 +906,7 @@ export function RealEstatePage() {
                 <td style={tdStyle}>
                   {p.user && (
                     <span style={{ display: 'inline-flex', gap: 6 }}>
-                      <button type="button" onClick={() => onStartEditProperty(p.rowId, p)} style={{ fontSize: 11 }}>
+                      <button type="button" onClick={() => onStartEditProperty(p.rowId, p, p.stored)} style={{ fontSize: 11 }}>
                         編集
                       </button>
                       <button type="button" onClick={() => fireReported(removeProperty(p.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>

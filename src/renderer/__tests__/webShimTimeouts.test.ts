@@ -4,6 +4,10 @@ import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES } from '../../shared/h
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { proxyRoutedActions } from './webShimScan';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
 
 /*
  * **サービスごとに正しい形の資格情報を返す。** 1 つの文字列を全部に返すと、
@@ -81,9 +85,8 @@ type Hub = {
 };
 
 async function loadHub(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 

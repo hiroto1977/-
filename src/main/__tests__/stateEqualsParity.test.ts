@@ -12,6 +12,9 @@ vi.mock('electron', () => ({
 }));
 
 import { constantTimeEquals } from '../../shared/constantTimeEquals';
+import * as mainOauth from '../oauth';
+import * as webPkce from '../../renderer/oauth/pkce';
+import * as originalSource from '../../shared/__tests__/originalSource';
 
 /*
  * OAuth の `state` 比較は **2026-09-20 (パス 331) から 1 つ**になった。
@@ -54,8 +57,8 @@ import { constantTimeEquals } from '../../shared/constantTimeEquals';
  */
 describe('state の比較は両ビルドで同じ 1 つの関数', () => {
   it('★ main / renderer の export は shared の関数そのもの (パリティではなく同一性)', async () => {
-    const { safeStateEquals: main } = await import('../oauth');
-    const { safeStateEquals: web } = await import('../../renderer/oauth/pkce');
+    const { safeStateEquals: main } = mainOauth;
+    const { safeStateEquals: web } = webPkce;
     expect(main).toBe(constantTimeEquals);
     expect(web).toBe(constantTimeEquals);
   });
@@ -81,7 +84,7 @@ describe('state の比較は両ビルドで同じ 1 つの関数', () => {
   ];
 
   it.each(CASES)('%s — 答えは %s で、throw しない', async (_label, a, b, expected) => {
-    const { safeStateEquals } = await import('../oauth');
+    const { safeStateEquals } = mainOauth;
     let got: boolean | string;
     try {
       got = safeStateEquals(a as string, b as string);
@@ -121,7 +124,7 @@ describe('state の比較は両ビルドで同じ 1 つの関数', () => {
   });
 
   it('正しい state は true (空虚に「全部 false」で一致していない)', async () => {
-    const { safeStateEquals } = await import('../oauth');
+    const { safeStateEquals } = mainOauth;
     const s = 'x'.repeat(43);
     expect(safeStateEquals(s, s)).toBe(true);
   });
@@ -139,8 +142,8 @@ describe('state の比較は両ビルドで同じ 1 つの関数', () => {
    * (128 bit) の 1 段上の 32 octet に揃えた (理由は `cryptoParams.ts`)。
    */
   it('★ state と verifier の byte 数は、両ビルドが shared の 1 つを読む', async () => {
-    const oauth = await import('../oauth');
-    const src = (await import('../../shared/__tests__/originalSource')).readOriginalSource;
+    const oauth = mainOauth;
+    const src = originalSource.readOriginalSource;
     const mainSrc = src(new URL('../oauth.ts', import.meta.url).pathname);
     const webSrc = src(new URL('../../renderer/oauth/pkce.ts', import.meta.url).pathname);
     for (const [label, code] of [['main', mainSrc], ['renderer', webSrc]] as const) {
@@ -168,8 +171,8 @@ describe('state の比較は両ビルドで同じ 1 つの関数', () => {
    * 走らせた結果も突き合わせる (綴りだけ揃って実物が違う、を作らない)。
    */
   it('★ 実物の長さが両ビルドで一致する (verifier 43 字 / state 43 字)', async () => {
-    const { generatePkce: mainGen } = await import('../oauth');
-    const { generatePkce: webGen } = await import('../../renderer/oauth/pkce');
+    const { generatePkce: mainGen } = mainOauth;
+    const { generatePkce: webGen } = webPkce;
     const m = mainGen();
     const w = await webGen();
     expect(m.verifier).toMatch(/^[A-Za-z0-9_-]{43}$/);

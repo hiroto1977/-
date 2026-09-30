@@ -157,6 +157,22 @@ describe('advisoryLedgerNotice / advisoriesOverdue', () => {
     const text = advisoryLedgerNotice(NOW, ledger);
     expect(text).toContain('1 件の台帳');
     expect(text).not.toContain('修正版が未公表');
+    // 「言わない」は何も足さないこと: 照合日の文のすぐ後ろから本アプリの説明が続く
+    // (`toContain` の否定だけだと、空の枝が別の文字列に化けても通る · パス 501)。
+    expect(text).toContain(
+      `(再照合期限 ${OLLAMA_ADVISORIES_REVIEW_BY})。 本アプリは /api/pull・/api/create・/api/push を呼ばず`,
+    );
+  });
+
+  it('★ 修正版が未公表の項目が複数なら「, 」で並べ、件数を言う (合成の台帳 · パス 501)', () => {
+    const ledger: OllamaAdvisory[] = [
+      { id: 'CVE-2099-0001', summary: 'x', fixedIn: null, severity: 'low', source: 'https://x.example/' },
+      { id: 'CVE-2099-0002', summary: 'y', fixedIn: '1.2.3', severity: 'low', source: 'https://x.example/' },
+      { id: 'CVE-2099-0003', summary: 'z', fixedIn: null, severity: 'high', source: 'https://x.example/' },
+    ];
+    expect(advisoryLedgerNotice(NOW, ledger)).toContain(
+      `(再照合期限 ${OLLAMA_ADVISORIES_REVIEW_BY})。 修正版が未公表の項目 2 件 (CVE-2099-0001, CVE-2099-0003)。 本アプリは`,
+    );
   });
 });
 

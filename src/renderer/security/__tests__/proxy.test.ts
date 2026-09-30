@@ -9,6 +9,7 @@ import {
   isPrivateOrReservedTarget,
   MAX_PROXY_RESPONSE_BYTES,
 } from '../../network/proxy';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 function clearIdb(): Promise<void> {
   return new Promise((resolve) => {
@@ -948,8 +949,7 @@ describe('isPrivateOrReservedTarget', () => {
      * 3 件が生存したまま動かなかった)。
      */
     async function freshSet(cfg: { url: string }): Promise<void> {
-      vi.resetModules();
-      const m = await import('../../network/proxy');
+      const m = await rereadModule<typeof import('../../network/proxy')>(import.meta.url, '../../network/proxy');
       await m.setProxyConfig(cfg);
     }
 
@@ -983,16 +983,15 @@ describe('isPrivateOrReservedTarget', () => {
    * **どの検査も落ちなかった** (2026-08-30 実測: 8 件が生存)。
    *
    * 覆われた static 変異体で、同じ罠を本 PR で `MEMBER_ID_RE` と
-   * `preload.ts` の橋でも踏んでいる。`vi.resetModules()` + 動的 `import()`
-   * で読み直す。
+   * `preload.ts` の橋でも踏んでいる。`rereadModule` (対象だけを読み直す
+   * —— パス 495) で読み直す。
    *
    * ここは SSRF の遮断表そのものである —— 1 語落ちれば `*.corp` や `*.lan`
    * が利用者の Worker 経由で触れるようになる。
    */
   describe('内部 TLD の一覧 — 読み直して static 変異体を届かせる', () => {
     async function fresh() {
-      vi.resetModules();
-      return await import('../../network/proxy');
+      return await rereadModule<typeof import('../../network/proxy')>(import.meta.url, '../../network/proxy');
     }
 
     const TLDS = ['local', 'lan', 'corp', 'intranet', 'home', 'private', 'internal'] as const;

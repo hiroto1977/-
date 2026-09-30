@@ -19,6 +19,8 @@ import {
   duplicateOrdersSheetNote,
   salesRowKey,
   countStoredRows,
+  unreadableSalesRowsNote,
+  unreadableSalesRowsSheetNote,
   type SalesEntry,
 } from '../sales';
 
@@ -308,5 +310,71 @@ describe('同じ記録の 2 件目 (パス 126)', () => {
     expect(countStoredRows(existing, [e('2026-04-02', 200), e('2026-04-03', 300)])).toBe(1);
     expect(countStoredRows([], [e('2026-04-01', 100)])).toBe(0);
     expect(countStoredRows(existing, [])).toBe(0);
+  });
+});
+
+/**
+ * **売上の読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。それまでは `Number()` で、
+ * `'1,000'` を偽の理由で断り、`'1e3'` を 1000 として黙って保存し、空欄を 0 円の売上にしていた。
+ * 書き手 × 欄 × 標本の総当たりは `writerNumberReading.test.ts` が持つ —— ここは文面を留める。
+ */
+describe('parseSalesEntry — 画面と同じ読み方 (パス 496)', () => {
+  const base = { date: '2026-09-01', channel: 'shopify', orders: '1' } as const;
+  it('★ 桁区切り・全角・通貨記号を読む', () => {
+    for (const raw of ['1,000', '１０００', '¥1,000', '1,000円']) {
+      expect(parseSalesEntry({ ...base, amount: raw }).amount, raw).toBe(1000);
+    }
+  });
+  it('★ 指数表記・16 進は別の数にせず断る', () => {
+    for (const raw of ['1e3', '0x10', '.5']) {
+      expect(() => parseSalesEntry({ ...base, amount: raw }), raw).toThrow('売上金額は 0 以上の数値で入力してください');
+    }
+  });
+  it('★ 空欄は 0 円にせず「未入力」と断る (0 円なら 0 と打つ)', () => {
+    for (const raw of ['', '  ', '　']) {
+      expect(() => parseSalesEntry({ ...base, amount: raw }), JSON.stringify(raw)).toThrow(
+        '売上金額が未入力です（0 円の売上なら 0 と入力してください）',
+      );
+    }
+    // 対照: 0 と打てば 0 円の売上として残る。
+    expect(parseSalesEntry({ ...base, amount: '0' }).amount).toBe(0);
+  });
+  it('★ 注文件数は整数でなければ断る (空欄も)', () => {
+    for (const raw of ['1.5', '', '1e1']) {
+      expect(() => parseSalesEntry({ ...base, amount: '1000', orders: raw }), JSON.stringify(raw)).toThrow(
+        '注文件数は 1 以上の整数で入力してください',
+      );
+    }
+    expect(parseSalesEntry({ ...base, amount: '1000', orders: '２' }).orders).toBe(2);
+  });
+});
+
+/**
+ * **変異検査が教えた所** (2026-09-30 · パス 501)。注文名の判定は 3 つの冗長な条件を
+ * 持っており (どれも等価変異)、畳んだ。残る境目と、2 文の繋ぎ目を値で留める。
+ */
+describe('sales — 変異検査が教えた所 (パス 501)', () => {
+  const e = (date: string, amount: number, note?: string, orders = 1): SalesEntry =>
+    note === undefined ? { date, channel: 'shopify', amount, orders } : { date, channel: 'shopify', amount, orders, note };
+
+  it('★ 接頭辞で始まらない長いメモは注文名ではない・注文名は前後の空白を落として引く', () => {
+    expect(salesOrderRef({ note: 'これは手で書いた長いメモです (Shopify の注文名ではない)' })).toBeNull();
+    const existing = [e('2026-04-01', 12000, 'Shopify #1001'), e('2026-04-02', 8000, 'セール')];
+    expect(findOrderEntry(existing, ' Shopify #1001 ')).toEqual(existing[0]);
+    expect(findOrderEntry(existing, '   ')).toBeNull();
+    expect(findShopifyOrder(existing, '   ')).toBeNull();
+  });
+
+  it('★ 注文名の無い控えを断る文は、メモそのものを名指しする', () => {
+    expect(duplicateOrderMessage(e('2026-04-02', 8000, 'セール'))).toMatch(/^セール は既に売上集計に記録されています/);
+  });
+
+  it('★ 日付と金額の 2 文は空白 1 つで繋ぐ (それぞれ単独の文と同じ)', () => {
+    const sheet = (unreadableDates: number, unreadableAmounts: number) =>
+      unreadableSalesRowsSheetNote({ unreadableDates, unreadableAmounts });
+    expect(sheet(1, 2)).toBe(`${sheet(1, 0)} ${sheet(0, 2)}`);
+    const screen = (unreadableDates: number, unreadableAmounts: number) =>
+      unreadableSalesRowsNote({ unreadableDates, unreadableAmounts });
+    expect(screen(1, 2)).toBe(`${screen(1, 0)} ${screen(0, 2)}`);
   });
 });

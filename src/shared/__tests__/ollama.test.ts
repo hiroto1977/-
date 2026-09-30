@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { localIsoDate } from '../localDate';
 import {
   DEFAULT_OLLAMA_PORT,
@@ -22,6 +22,7 @@ import {
   isVersionSafe,
   normalizeModels,
 } from '../ollama';
+import { rereadModule } from './rereadModule';
 
 /*
  * Ollama 連携の共有ロジック。main (Node fetch) と renderer (window fetch) の
@@ -1140,7 +1141,7 @@ describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
  *
  * 変異検査で 11 件が生存していた (2026-08-31 実測)。すべて static 変異体で、
  * 既存の検査は論理としては当たっているのに**静的 import なので届いて
- * いなかった**。`vi.resetModules()` + 動的 `import()` で読み直す。
+ * いなかった**。`rereadModule` (対象だけを読み直す —— パス 495) で読み直す。
  *
  * **旧 `UNPATCHED_OOB_NOTICE` (2026-09-09 に日付つきの台帳の注意へ置き換え) は輪をかけて悪かった** —— 既存の検査が
  * `expect(buildWarnings('0.5.0')).toEqual([UNPATCHED_OOB_NOTICE])` と
@@ -1150,8 +1151,7 @@ describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
  */
 describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
   const fresh = async () => {
-    vi.resetModules();
-    return import('../ollama');
+    return rereadModule<typeof import('../ollama')>(import.meta.url, '../ollama');
   };
 
   /*
@@ -1208,6 +1208,28 @@ describe('モジュール直下の値 — 読み直して static 変異体を届
     expect(m.OLLAMA_ADVISORIES_REVIEW_BY).toBe('2027-03-09');
     expect(m.MIN_SAFE_VERSION).toBe('0.31.2');
     expect(m.OLLAMA_ADVISORIES.map((a) => a.id)).toContain('CVE-2026-7482');
+  });
+
+  /*
+   * 台帳の全行を**字面で**当てる (パス 501)。読み直すなら「対象の直下の値を全部主張する」
+   * (法則 `module-evaluated-at-file-load`) —— これまでは `id` の 1 件が在ることしか見ておらず、
+   * 表の 8 行の文字列 (id / 修正版 / 重大度 / 出典) を空にする変異体 30 件が生き残った (全掃引 #173)。
+   * 要約 (`summary`) は事実の写しなので pragma で測定から外してあり、ここにも書かない。
+   */
+  it('★ 台帳の全行 (id・修正版・重大度・出典) を字面で当てる', async () => {
+    const m = await fresh();
+    expect(
+      m.OLLAMA_ADVISORIES.map(({ id, fixedIn, severity, source }) => ({ id, fixedIn, severity, source })),
+    ).toEqual([
+      { id: 'CVE-2024-37032', fixedIn: '0.1.34', severity: 'critical', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-37032' },
+      { id: 'CVE-2024-39719', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39719' },
+      { id: 'CVE-2024-39720', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39720' },
+      { id: 'CVE-2024-39721', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39721' },
+      { id: 'CVE-2024-39722', fixedIn: '0.1.46', severity: 'medium', source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39722' },
+      { id: 'CVE-2025-66960', fixedIn: null, severity: 'high', source: 'https://github.com/advisories/GHSA-jr3x-q8gx-4gw3' },
+      { id: 'CVE-2026-7482', fixedIn: '0.17.1', severity: 'high', source: 'https://github.com/advisories/GHSA-x8qc-fggm-mpqg' },
+      { id: 'CVE-2026-86289', fixedIn: '0.31.2', severity: 'low', source: 'https://github.com/advisories/GHSA-c2q9-58w2-gjg4' },
+    ]);
   });
 
   it('★ 警告に載るのはその注意書きそのもの (経路の確認)', async () => {

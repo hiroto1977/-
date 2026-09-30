@@ -4,6 +4,9 @@ import { Section } from '../components/StatusBar';
 import { UNDETERMINED } from '../components/Stat';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { useLatestForm, type LatestForm } from '../data/useLatestForm';
+import { busyLatestNote, unreadableForJudgementNote } from '../data/readCollectionNow';
+import { ChangedLatestNote, LatestFormLoading } from '../components/ChangedLatestNote';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
   BUSINESS_UNITS_COLLECTION,
@@ -14,7 +17,9 @@ import {
 import {
   HIGHLIGHT_SETTINGS_COLLECTION,
   HIGHLIGHT_THRESHOLD_FIELDS,
+  highlightFormFrom,
   parseHighlightSettings,
+  type HighlightForm,
   type HighlightSettings,
 } from '../data/highlightSettings';
 import { DEFAULT_HIGHLIGHT_THRESHOLDS, type HighlightThresholds } from '../data/managementHighlights';
@@ -39,16 +44,17 @@ import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
   HYDROPONICS_COLLECTION,
   HYDROPONIC_CROPS_COLLECTION,
-  HYDROPONICS_DEFAULTS,
   cropListFromRecords,
   economicsFromSetup,
   hydroponicsBusinessUnit,
+  hydroponicsSetupForm,
   lowPotassiumFromSetup,
   resolveCrop,
+  type HydroSetupFieldKey,
   type HydroponicCropListRecord,
   type HydroponicsSetup,
+  type HydroponicsSetupForm,
 } from '../data/hydroponicsSetup';
-import { latestRecord } from '../data/latestRecord';
 import { useParameters } from '../data/parameterOverrides';
 import {
   businessConsumptionParams,
@@ -110,7 +116,9 @@ import {
   BANK_SUBMISSION_COLLECTION,
   buildBankSubmissionSheet,
   settingsFromRecord,
+  submissionProfileForm,
   type BankSubmissionSettings,
+  type SubmissionProfile,
 } from '../data/bankSubmission';
 import { SNAPSHOT } from '../data/snapshot';
 
@@ -194,37 +202,32 @@ const settingsInput: React.CSSProperties = {
   color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 90,
 };
 
-/** しきい値 → 入力欄の文字列 (欄は `HIGHLIGHT_THRESHOLD_FIELDS` の順)。 */
-function toThresholdForm(t: HighlightThresholds): Record<keyof HighlightThresholds, string> {
-  return Object.fromEntries(HIGHLIGHT_THRESHOLD_FIELDS.map((f) => [f.key, String(t[f.key])])) as Record<keyof HighlightThresholds, string>;
-}
-
-/** 経営ハイライトのしきい値を編集・保存するパネル。 */
-function HighlightSettingsPanel({
-  current,
-  onSave,
-}: {
-  current: HighlightSettings | typeof DEFAULT_HIGHLIGHT_THRESHOLDS;
-  onSave: (s: HighlightSettings) => Promise<void> | void;
-}) {
+/**
+ * 経営ハイライトのしきい値を編集・保存するパネル。
+ *
+ * 欄の状態は `useLatestForm` が持つ (パス 500)。直す前は `useState(() => toThresholdForm(current))` で
+ * 開いており、パネルが保存値より先に描かれると (読みの届く順で割れる —— 実 chromium で 5 回のうち
+ * 2 回) 既定値の欄が開き、届いても開き直さなかった。
+ */
+function HighlightSettingsPanel({ form }: { form: LatestForm<HighlightSettings, HighlightForm> }) {
   // 欄は `HIGHLIGHT_THRESHOLD_FIELDS` から組む (パス 493c) —— 手で並べると、しきい値を
   // 足した日に「判定は読むのに画面からは設定できない」欄ができる。
-  const [form, setForm] = useState(() => toThresholdForm(current));
   const [error, setError] = useState<string>();
   const [saved, setSaved] = useState(false);
   const submit = useSubmitGuard();
 
   async function save() {
     try {
-      const parsed = parseHighlightSettings(form);
+      const parsed = parseHighlightSettings(form.form);
       setError(undefined);
-      await onSave(parsed);
-      setSaved(true);
+      setSaved(await form.save(parsed));
     } catch (e) {
       setSaved(false);
       setError(e instanceof Error ? e.message : '入力エラー');
     }
   }
+
+  if (!form.ready) return <LatestFormLoading collection={HIGHLIGHT_SETTINGS_COLLECTION} what="しきい値" />;
 
   const field = (key: keyof HighlightThresholds, label: string) => (
     <label key={key} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -233,15 +236,19 @@ function HighlightSettingsPanel({
         type="text"
         inputMode="numeric"
         data-threshold={key}
-        value={form[key]}
-        onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); setSaved(false); }}
+        value={form.form[key]}
+        onChange={(e) => {
+          const v = e.target.value;
+          form.update((f) => ({ ...f, [key]: v }));
+          setSaved(false);
+        }}
         style={settingsInput}
       />
     </label>
   );
 
   function applyPreset(t: HighlightThresholds) {
-    setForm(toThresholdForm(t));
+    form.update(() => highlightFormFrom(t));
     setSaved(false);
     setError(undefined);
   }
@@ -264,6 +271,16 @@ function HighlightSettingsPanel({
         <button type="button" onClick={() => void submit.run(save)} disabled={submit.busy}>保存</button>
       </div>
       {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      <ChangedLatestNote
+        changed={form.changed}
+        what="経営ハイライトのしきい値"
+        then="もう一度「保存」を押すと、この欄の内容で上書きします。"
+        onLoadSaved={() => {
+          form.loadSaved();
+          setSaved(false);
+          setError(undefined);
+        }}
+      />
       {saved && !error && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>保存しました。</div>}
     </div>
   );
@@ -357,6 +374,9 @@ function cropDraftFrom(c: HydroponicCrop): CropDraftForm {
   return draft;
 }
 
+/** 品目の一覧の変更の結果。**当てた一覧** (`before`) も返す —— 消した品目の名前はそこから引く。 */
+type CropChangeOutcome = CropListChange & { readonly before: readonly HydroponicCrop[] };
+
 const cropFieldLabel: React.CSSProperties = {
   fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2,
 };
@@ -367,7 +387,7 @@ const cropFieldLabel: React.CSSProperties = {
  * 初期値は参考値だが、**保存するまで経営サマリーには載らない**。参考値が
  * そのまま経営数値になると、サンプルと実データの区別がつかなくなる。
  *
- * 品目の一覧は利用者が増減できる (`crops` / `onCropsChange`)。一覧は設定とは
+ * 品目の一覧は利用者が増減できる (`crops` / `changeCrops`)。一覧は設定とは
  * 別のレコードに保存され、**設定を保存し直すまで試算の品目は変わらない**
  * (足しただけで数字が動くと、何を保存したのか分からなくなる)。
  */
@@ -381,43 +401,48 @@ function ckdLimitsAreDefault(limits: ReturnType<typeof ckdPotassiumLimits>): boo
   return (['G3b', 'G4', 'G5'] as const).every((s) => limits[s] === CKD_POTASSIUM_LIMIT_MG[s]);
 }
 
-function HydroponicsPanel({
-  current,
-  crops,
-  lowKParams,
-  onSave,
-  onCropsChange,
-}: {
-  current: HydroponicsSetup | null;
+interface HydroponicsPanelProps {
+  /**
+   * 設備・費用の欄 (パス 500)。保管層が答えてから開き、保存は開いた時の最新のままなら書く。
+   * 直す前は `useState(保存値 ?? 既定値)` で開き、**実 chromium で 5 回とも既定値**で開いた
+   * (保存値は最初の描画でまだ届いていない)。1 欄だけ直して保存すると、保存していた 4 欄が既定値へ
+   * 黙って戻った (実測の全体は `useLatestForm.ts` の docblock)。
+   */
+  setup: LatestForm<HydroponicsSetup, HydroponicsSetupForm>;
   crops: readonly HydroponicCrop[];
+  /**
+   * 品目の一覧が保管層から届いたか。届く前の一覧は参考値の 5 品目で、そこで品目を解くと保存した
+   * 自分の品目が先頭の参考値へ化ける —— そのまま保存すると品目が黙って替わる。
+   */
+  cropsReady: boolean;
   /** 低カリウム評価の基準 (台帳の値。案内文の日数に使う)。 */
   lowKParams: LowPotassiumParams;
-  onSave: (s: HydroponicsSetup) => Promise<void> | void;
-  onCropsChange: (crops: readonly HydroponicCrop[]) => Promise<void> | void;
-}) {
-  const base = current ?? HYDROPONICS_DEFAULTS;
-  const [cropId, setCropId] = useState<string>(base.cropId);
-  const [form, setForm] = useState({
-    floorAreaSqm: String(base.floorAreaSqm),
-    tiers: String(base.tiers),
-    usableRatioPct: String(base.usableRatioPct),
-    yieldRatePct: String(base.yieldRatePct),
-    unitPriceYen: String(base.unitPriceYen),
-    switchDaysBeforeHarvest: String(base.switchDaysBeforeHarvest ?? 8),
-    measuredPotassiumMgPer100g: String(base.measuredPotassiumMgPer100g ?? 0),
-    measuredSodiumMgPer100g: String(base.measuredSodiumMgPer100g ?? 0),
-    electricityYenPerKwh: String(base.electricityYenPerKwh),
-    energyIntensityKwhPerKg: String(base.energyIntensityKwhPerKg),
-    seedYenPerPlant: String(base.seedYenPerPlant),
-    nutrientYenPerPlant: String(base.nutrientYenPerPlant),
-    packagingYenPerPlant: String(base.packagingYenPerPlant),
-    laborYenPerMonth: String(base.laborYenPerMonth),
-    depreciationYenPerMonth: String(base.depreciationYenPerMonth),
-    rentYenPerMonth: String(base.rentYenPerMonth),
-    otherFixedYenPerMonth: String(base.otherFixedYenPerMonth),
-  });
+  /**
+   * 品目の一覧を変える —— `change` を**保管層の今の最新**に当て、断られなければ保存する
+   * (パス 497 / 500)。読めなければ `null`・別の保存と重なり続けたら `'busy'`。表示に使う
+   * `crops` (購読の写し) には当てない。
+   */
+  changeCrops: (change: (current: readonly HydroponicCrop[]) => CropListChange) => Promise<CropChangeOutcome | 'busy' | null>;
+}
+
+function HydroponicsPanel(props: HydroponicsPanelProps) {
+  // **保管層が答えるまで欄を出さない** (パス 500) —— 既定値の欄は、出した時点で「保存値はこれです」と
+  // 主張する。品目の一覧も待つ (上の `cropsReady`)。欄の中身は内側の部品が持つので、
+  // 待った後に一度だけ正しい品目から下書き (品目を増やす欄) を作る。
+  if (!props.setup.ready || !props.cropsReady) {
+    return <LatestFormLoading collection={HYDROPONICS_COLLECTION} what="水耕栽培の設定" />;
+  }
+  return <HydroponicsPanelForm {...props} />;
+}
+
+function HydroponicsPanelForm({ setup, crops, lowKParams, changeCrops }: HydroponicsPanelProps) {
+  const current = setup.latest?.data ?? null;
+  const { cropId, fields: form, lowK } = setup.form;
+  const setForm = (fn: (f: Readonly<Record<HydroSetupFieldKey, string>>) => Readonly<Record<HydroSetupFieldKey, string>>) =>
+    setup.update((f) => ({ ...f, fields: fn(f.fields) }));
+  const setCropId = (id: string) => setup.update((f) => ({ ...f, cropId: id }));
+  const setLowK = (v: boolean) => setup.update((f) => ({ ...f, lowK: v }));
   const [saved, setSaved] = useState(false);
-  const [lowK, setLowK] = useState(base.lowPotassium === true);
   const submit = useSubmitGuard();
   /**
    * **保存を断る欄** (パス 214)。`form` の鍵は `HYDRO_SPECS` と同じ集合なので、
@@ -436,33 +461,52 @@ function HydroponicsPanel({
   const missingBuiltins = missingBuiltinCrops(crops);
   const savedCrop = current === null ? undefined : findCrop(crops, current.cropId);
 
-  /** 一覧の増減を保存し、新しい一覧を返す。断られたら文言を出して null (投げない)。 */
-  const applyCrops = async (r: CropListChange): Promise<readonly HydroponicCrop[] | null> => {
+  /**
+   * 一覧の増減を**今の一覧**に当てて保存し、当てる前と後の一覧を返す。断られたら文言を出して
+   * null (投げない)。
+   *
+   * ★ 今の一覧は保管層から読み直す (パス 497)。品目の一覧は**まるごと 1 記録**で、変更の
+   * たびに 1 件足して最新を採用する —— 購読の写し (`crops`) に当てていた頃は、別のタブで
+   * 足した品目を知らないまま一覧を丸ごと書き、**その品目が消えた** (lost update・実測)。
+   */
+  const applyCrops = async (
+    change: (current: readonly HydroponicCrop[]) => CropListChange,
+  ): Promise<CropChangeOutcome & { ok: true } | null> => {
+    const r = await changeCrops(change);
+    if (r === null) {
+      setCropNotice(unreadableForJudgementNote('品目の一覧', '今の品目の一覧'));
+      return null;
+    }
+    if (r === 'busy') {
+      setCropNotice(busyLatestNote('品目の一覧'));
+      return null;
+    }
     if (!r.ok) {
       setCropNotice(r.issues.join('。'));
       return null;
     }
-    await onCropsChange(r.crops);
-    return r.crops;
+    return r;
   };
   const onAddCrop = async () => {
-    const next = await applyCrops(addCrop(crops, {
+    const done = await applyCrops((current) => addCrop(current, {
       ...draft,
       ...Object.fromEntries(CROP_NUMERIC_FIELDS.map((f) => [f, parseCropNumber(draft[f])])),
     }));
-    if (next === null) return;
-    const added = next[next.length - 1]!;
+    if (done === null) return;
+    const added = done.crops[done.crops.length - 1]!;
     setCropId(added.id);
     setSaved(false);
     setDraft((d) => ({ ...d, label: '' }));
     setCropNotice(`「${added.label}」を足して品目に選びました。試算に使うには設定を保存してください。`);
   };
-  const onRemoveCrop = async (target: HydroponicCrop) => {
-    if ((await applyCrops(removeCrop(crops, target.id))) === null) return;
-    setCropNotice(`「${target.label}」を消しました。`);
+  const onRemoveCrop = async (id: string) => {
+    const done = await applyCrops((current) => removeCrop(current, id));
+    if (done === null) return;
+    // 名前は**当てた一覧**から引く (画面の写しの行ではない —— 消したのはそちらの品目である)。
+    setCropNotice(`「${findCrop(done.before, id)?.label ?? id}」を消しました。`);
   };
   const onRestoreCrops = async () => {
-    if ((await applyCrops(restoreBuiltinCrops(crops))) === null) return;
+    if ((await applyCrops(restoreBuiltinCrops)) === null) return;
     setCropNotice('参考値の品目を戻しました。');
   };
 
@@ -477,7 +521,9 @@ function HydroponicsPanel({
     // `床面積 = −9999` が保存でき、画面は「保存しました。経営サマリーに反映されて
     // います。」と述べたあと営業利益 −￥6,000,000 を出していた。
     if (refusedSetup.length > 0) { setSaved(false); return; }
-    await onSave({
+    // **欄の元がまだ最新のときだけ書く** (パス 500)。断られたら「保存しました」は出さず、
+    // 入力を残して断りを出す (`ChangedLatestNote`)。
+    setSaved(await setup.save({
       cropId: crop.id,
       floorAreaSqm: n(form.floorAreaSqm),
       tiers: n(form.tiers),
@@ -497,8 +543,7 @@ function HydroponicsPanel({
       switchDaysBeforeHarvest: n(form.switchDaysBeforeHarvest),
       measuredPotassiumMgPer100g: n(form.measuredPotassiumMgPer100g),
       measuredSodiumMgPer100g: n(form.measuredSodiumMgPer100g),
-    });
-    setSaved(true);
+    }));
   };
 
   // ⛔ の欄が在れば保存を断るので (`refusingSpecs('save')`)、保存に届く値は読めたか空欄である。
@@ -506,7 +551,7 @@ function HydroponicsPanel({
   // 空欄は 0 = 未設定、実測値の空欄は 0 = 未測定として読まれる (パス 493l)。
   const n = readNumberOr0;
 
-  const field = (key: keyof typeof form) => (
+  const field = (key: HydroSetupFieldKey) => (
     <GuardedNumber
       spec={HYDRO_SPECS[key]}
       value={form[key]}
@@ -577,7 +622,7 @@ function HydroponicsPanel({
                   type="button"
                   disabled={submit.busy || crops.length <= 1}
                   aria-label={`${c.label} を消す`}
-                  onClick={() => fireReported(submit.run(() => onRemoveCrop(c)))}
+                  onClick={() => fireReported(submit.run(() => onRemoveCrop(c.id)))}
                   style={{ fontSize: 11 }}
                 >
                   消す
@@ -654,6 +699,15 @@ function HydroponicsPanel({
             どこにも書かれない (⛔ は欄の側に在るが、離れた位置の欄だと見えない)。 */}
         <RefusedFieldsNote labels={refusedSetupLabels} kind="save" />
       </div>
+      <ChangedLatestNote
+        changed={setup.changed}
+        what="水耕栽培の設定"
+        then="もう一度「保存して経営サマリーへ反映」を押すと、この欄の内容で上書きします。"
+        onLoadSaved={() => {
+          setup.loadSaved();
+          setSaved(false);
+        }}
+      />
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <GuardedNumber spec={NUTRIENT_SPECS.ec} value={ec} width={110} onChange={setEc} />
@@ -739,9 +793,10 @@ export function OverviewPage() {
   const { records: budgetRecords } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
   const { records: bsRecords } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
   const { records: memberRecords } = useCollection<Member>(MEMBERS_COLLECTION);
-  const { records: settingsRecords, add: addSettings } = useCollection<HighlightSettings>(HIGHLIGHT_SETTINGS_COLLECTION);
+  // 最新の 1 件を採用する設定の欄 (パス 500)。表示 (判定のしきい値) も同じ購読の最新を読む。
+  const thresholdForm = useLatestForm<HighlightSettings, HighlightForm>(HIGHLIGHT_SETTINGS_COLLECTION, highlightFormFrom);
   // しきい値設定は最新の1レコードを採用 (未設定なら既定値)。
-  const thresholds = latestRecord(settingsRecords)?.data ?? DEFAULT_HIGHLIGHT_THRESHOLDS;
+  const thresholds = thresholdForm.latest?.data ?? DEFAULT_HIGHLIGHT_THRESHOLDS;
   // 会計連携 (freee): 連携済みなら月次CFが入る。未連携は空 (snapshot)。
   const { data: freeeData } = useServiceData('freee', SNAPSHOT.freee);
   const accountingMonthly = freeeData.monthly;
@@ -774,10 +829,32 @@ export function OverviewPage() {
 
   // 水耕栽培: 最新の 1 件を採用する (貸借対照表と同じ扱い)。品目の一覧は
   // 別 collection に持つ (増減のたびに設定の履歴を増やさない)。
-  const hydroCol = useCollection<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+  const hydroForm = useLatestForm<HydroponicsSetup, HydroponicsSetupForm>(HYDROPONICS_COLLECTION, hydroponicsSetupForm);
   const cropCol = useCollection<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
-  const hydroSetup = latestRecord(hydroCol.records)?.data ?? null;
+  const hydroSetup = hydroForm.latest?.data ?? null;
   const crops = useMemo(() => cropListFromRecords(cropCol.records), [cropCol.records]);
+  /*
+   * 品目の一覧の変更は**今の最新**に当てる (パス 497)。一覧は「最新の 1 件を採用する」ので、
+   * 写し (`crops`) に当てて丸ごと書くと、別のタブで足した品目を知らないまま上書きして消す。
+   * パス 497 は読み直してから素の `add` で書いており、**読み直しと書き込みの間**に入った変更は
+   * まだ消えた —— 今は比べて足すまでが 1 つの取引 (`applyToLatest`・パス 500)。挟まれたら当て直す。
+   * 断られたときは写しも読み直す (断った理由の品目が画面に見えるように —— `applyToLatest` が読み直す)。
+   */
+  const changeCrops = async (
+    change: (current: readonly HydroponicCrop[]) => CropListChange,
+  ): Promise<CropChangeOutcome | 'busy' | null> => {
+    // 当て直すと `change` は 2 度呼ばれうる —— 答えるのは最後に当てた一覧の結果。
+    const last: { outcome?: CropChangeOutcome } = {};
+    const r = await cropCol.applyToLatest((current) => {
+      const before = cropListFromRecords(current === null ? [] : [current]);
+      const res = change(before);
+      last.outcome = { ...res, before };
+      return res.ok ? { crops: res.crops } : null;
+    });
+    if (r.status === 'unreadable') return null;
+    if (r.status === 'busy') return 'busy';
+    return last.outcome!;
+  };
   // 台帳の数値パラメータ (設定画面で上書きできる)。試算の関数へ引数で渡す —
   // 台帳を読む大域の状態は置かない (`shared/parameters.ts`)。
   const { values: paramValues } = useParameters();
@@ -1022,10 +1099,10 @@ export function OverviewPage() {
   // 金融機関等提出用の書面。書式と提出者情報は 1 レコードに保存し、最新を採用する
   // (ハイライトのしきい値と同じ読み方)。数字は上の `overview` / `scorecard` /
   // `debtService` をそのまま書式に通す — 画面と書面で計算を分けない。
-  const submissionCol = useCollection<BankSubmissionSettings>(BANK_SUBMISSION_COLLECTION);
+  const submissionForm = useLatestForm<BankSubmissionSettings, SubmissionProfile>(BANK_SUBMISSION_COLLECTION, submissionProfileForm);
   const submissionSettings = useMemo(
-    () => settingsFromRecord(latestRecord(submissionCol.records)?.data),
-    [submissionCol.records],
+    () => settingsFromRecord(submissionForm.latest?.data),
+    [submissionForm.latest],
   );
   const [sheetOpen, setSheetOpen] = useState(false);
   // 士業のページなどから「提出用の書面を開いた状態で」と言われて来たとき。mount 時に 1 度だけ。
@@ -1075,8 +1152,7 @@ export function OverviewPage() {
     return (
       <BankSubmissionPanel
         model={sheetModel}
-        settings={submissionSettings}
-        onSave={(s) => submissionCol.add(s)}
+        form={submissionForm}
         onClose={() => setSheetOpen(false)}
       />
     );
@@ -1312,7 +1388,7 @@ export function OverviewPage() {
 
       {hasData && (
         <Section title="ハイライトのしきい値設定">
-          <HighlightSettingsPanel current={thresholds} onSave={(s) => addSettings(s)} />
+          <HighlightSettingsPanel form={thresholdForm} />
         </Section>
       )}
 
@@ -1703,11 +1779,11 @@ export function OverviewPage() {
 
       <Section title={`水耕栽培の試算${overview.hydroponics ? ` — 日産 ${num.format(overview.hydroponics.shippedPlantsPerDay)} 株` : ''}`}>
         <HydroponicsPanel
-          current={hydroSetup}
+          setup={hydroForm}
           crops={crops}
+          cropsReady={!cropCol.loading}
           lowKParams={lowKParams}
-          onSave={(s) => hydroCol.add(s)}
-          onCropsChange={(c) => cropCol.add({ crops: c })}
+          changeCrops={changeCrops}
         />
         {overview.hydroponics && (
           <>

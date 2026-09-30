@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   formatPeriodWindow,
   periodWindow,
@@ -26,6 +26,7 @@ import {
   duplicateActualsNote,
   duplicateActualsSheetNote,
 } from '../kpiActuals';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const actual = (period: string, revenue: number, unit = '全社'): KpiActual => ({
   period,
@@ -791,14 +792,13 @@ describe('同じ期・事業の重複 (パス 124)', () => {
  * (実測 2026-09-10: この 2 件がまさにそれで、手で書き換えて全件を回すと
  * 上の検査は落ちる —— つまり「テストが無い」のではなく「届いていない」)。
  *
- * `stryker.config.json` の `_commentIgnoreStatic` が指す形 (`vi.resetModules()`
- * + 毎回の動的 `import()`) で読み直して、同じ値を改めて留める。
+ * `stryker.config.json` の `_commentIgnoreStatic` が指す形 (毎回の `rereadModule`
+ * —— 対象だけを読み直す・パス 495) で読み直して、同じ値を改めて留める。
  * `oauth.test.ts` の `freshConfigs` / `autoLock.test.ts` と同じ形。
  */
 describe('モジュール直下の値 (読み直してから確かめる — 静的変異体)', () => {
   async function fresh(): Promise<typeof import('../kpiActuals')> {
-    vi.resetModules();
-    return (await import('../kpiActuals')) as typeof import('../kpiActuals');
+    return (await rereadModule<typeof import('../kpiActuals')>(import.meta.url, '../kpiActuals')) as typeof import('../kpiActuals');
   }
 
   it('★ 保存先の collection 名は読み直しても kpi-actuals', async () => {
@@ -821,5 +821,44 @@ describe('モジュール直下の値 (読み直してから確かめる — 静
     expect(mod.duplicateActualsSheetNote([{ period: '2026-04', unit: '全社', count: 2 }])).toContain(
       '2026-04 全社 ×2',
     );
+  });
+
+  /*
+   * 損益分岐点の理由 2 文も module 直下の値 (パス 501)。他の検査は import した定数と
+   * 比べるので、定数が '' に変わると両辺が '' になって通る —— 読み直した上で**字面**を留める
+   * (読み直す検査は対象の直下の値を全部覆うので、主張しない値はここでだけ走って生き残る ——
+   * 法則 module-evaluated-at-file-load)。
+   */
+  it('★ 損益分岐点の理由 2 文は、読み直しても同じ字面 (原因ごとに別の文)', async () => {
+    const mod = await fresh();
+    expect(mod.NO_BEP_REASON).toBe('限界利益が 0 以下です。どれだけ売っても固定費を回収できません。');
+    expect(mod.ZERO_REVENUE_BEP_REASON).toBe(
+      '対象期間の売上高が 0 のため、損益分岐点・限界利益率・安全余裕率は算定していません。',
+    );
+    expect(mod.NO_BEP_REASON).not.toBe(mod.ZERO_REVENUE_BEP_REASON);
+  });
+});
+
+/**
+ * **KPI の金額の読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。空欄を 0 円として記録すると、
+ * 売上原価を空けた期は「売上総利益率 100%」として金融機関等提出用の書面 §1 へ届いた。
+ */
+describe('parseKpiActual — 画面と同じ読み方と空欄 (パス 496)', () => {
+  const base = {
+    period: '2026-08', unit: '本業', revenue: '1000000', cogs: '0', advertising: '0', sga: '100000', depreciation: '0',
+  } as const;
+  it('★ 必須の金額の空欄は「未入力」と断る (0 に倒さない)', () => {
+    expect(() => parseKpiActual({ ...base, cogs: '' })).toThrow('売上原価が未入力です（無いなら 0 と入力してください）');
+    expect(() => parseKpiActual({ ...base, revenue: '　' })).toThrow('売上高が未入力です（無いなら 0 と入力してください）');
+  });
+  it('★ 任意の人件費は、空白だけの欄も「未入力」として欄ごと持たせない', () => {
+    for (const raw of ['', '  ', '　', undefined]) {
+      expect('laborCost' in parseKpiActual({ ...base, laborCost: raw }), JSON.stringify(raw) ?? 'undefined').toBe(false);
+    }
+  });
+  it('★ 桁区切り・全角を読み、指数表記は断る', () => {
+    expect(parseKpiActual({ ...base, revenue: '1,000,000' }).revenue).toBe(1_000_000);
+    expect(parseKpiActual({ ...base, revenue: '１０００' }).revenue).toBe(1000);
+    expect(() => parseKpiActual({ ...base, revenue: '1e6' })).toThrow('売上高は 0 以上の数値で入力してください');
   });
 });

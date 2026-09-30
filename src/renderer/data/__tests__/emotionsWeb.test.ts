@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   EMOTIONS_STORE_KEY,
   EMOTION_KEYS,
@@ -13,6 +13,7 @@ import {
   buildEmotionsSnapshot,
 } from '../emotionsWeb';
 import { calendarDateMessage } from '../../../shared/isoDate';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 beforeEach(() => localStorage.clear());
 
@@ -273,8 +274,7 @@ describe('recordAnalysis + buildEmotionsSnapshot', () => {
  */
 describe('静的な定数 —— 読み直して問う', () => {
   const fresh = async (): Promise<typeof import('../emotionsWeb')> => {
-    vi.resetModules();
-    return import('../emotionsWeb');
+    return rereadModule<typeof import('../emotionsWeb')>(import.meta.url, '../emotionsWeb');
   };
 
   it('★ 保管の鍵は "emotions.store"', async () => {

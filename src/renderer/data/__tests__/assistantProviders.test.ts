@@ -28,6 +28,7 @@ import {
 } from '../assistantProviders';
 import { aiEgressNoticeLines } from '../../../shared/aiEgressNotice';
 import type { AiProviderId } from '../../../shared/ai/providers';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const mk = (
   id: AiProviderId,
@@ -186,8 +187,7 @@ describe('設定状況の読み方 — 失敗を空配列に丸めない', () =>
  */
 describe('特別値と端末内の一覧 (読み直して留める)', () => {
   async function fresh() {
-    vi.resetModules();
-    return (await import('../assistantProviders')) as typeof import('../assistantProviders');
+    return (await rereadModule<typeof import('../assistantProviders')>(import.meta.url, '../assistantProviders')) as typeof import('../assistantProviders');
   }
 
   it('★ 特別値の綴り (画面の選択肢の value そのもの)', async () => {

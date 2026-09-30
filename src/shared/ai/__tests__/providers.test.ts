@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   AI_PROVIDERS,
   AI_PROVIDER_IDS,
@@ -7,6 +7,7 @@ import {
   type AiChatRequest,
   type AiProviderId,
 } from '../providers';
+import { rereadModule } from '../../__tests__/rereadModule';
 
 const REQ: AiChatRequest = {
   system: 'あなたは有能なアシスタントです',
@@ -56,7 +57,7 @@ describe('registry invariant', () => {
  *   - `needsApiKey`    —— 鍵無しで送ってよいかの判断
  *   - `defaultModel`   —— 引退したモデルを既定にすると実行時 API エラーでしか出ない
  *
- * `vi.resetModules()` + 動的 import なのは、表がモジュール定数だから
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直すのは、表がモジュール定数だから
  * (静的 import のままだと読み込み時に評価が済み、変異体が畳み込まれる)。
  * `fsa.ts` の DB 名・`shellOpenGate.ts` の許可拡張子と同じ形。
  */
@@ -108,8 +109,7 @@ describe('提供元の表を字面で留める (鍵の送り先と直接続の�
   ];
 
   async function freshProviders(): Promise<typeof import('../providers')> {
-    vi.resetModules();
-    return (await import('../providers')) as typeof import('../providers');
+    return (await rereadModule<typeof import('../providers')>(import.meta.url, '../providers')) as typeof import('../providers');
   }
 
   it.each(EXPECTED)('%s の 5 欄が変わっていない', async (id, want) => {

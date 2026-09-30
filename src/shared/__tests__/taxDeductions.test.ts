@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_DEDUCTION_PARAMS,
   BASIC_HUMAN_DEDUCTION_DIFF,
@@ -38,6 +38,7 @@ import {
   SINGLE_PARENT_DEDUCTION,
   WIDOW_DEDUCTION,
 } from '../taxDeductions';
+import { rereadModule } from './rereadModule';
 
 describe('calcSpouseDeduction', () => {
   it('gives full 38万/33万 when spouse income ≤48万 and self ≤900万', () => {
@@ -221,8 +222,7 @@ describe('dependentsFromCounts / MAX_DEPENDENTS_PER_KIND', () => {
   });
 
   it('並びの順の表はモジュールを読み直しても同じ (static の表へ変異体を届かせる —— _commentIgnoreStatic)', async () => {
-    vi.resetModules();
-    const fresh = await import('../taxDeductions');
+    const fresh = await rereadModule<typeof import('../taxDeductions')>(import.meta.url, '../taxDeductions');
     expect(fresh.dependentsFromCounts({ elderly: 1, 'elderly-livein': 1, specific: 1, general: 1, under16: 1 })).toEqual([
       'under16',
       'general',

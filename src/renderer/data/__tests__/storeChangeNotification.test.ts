@@ -67,6 +67,40 @@ const LEDGER: readonly Row[] = [
     },
   },
   {
+    name: 'updateIfUnchanged',
+    kind: 'notifies',
+    why:
+      '欄を開いた時の中身のままなら書く (パス 499)。書いたときは中身が変わるので知らせる。'
+      + '書かなかったとき (`changed` / `vanished`) は中身が動かないので知らせない —— そちらは store の検査が留める。',
+    run: async (s) => {
+      const rec = await s.insert('sales-entries', { ...ROW });
+      resetCount();
+      return s.updateIfUnchanged<Record<string, unknown>>(rec.id, rec.data, { amount: 9000 });
+    },
+  },
+  {
+    name: 'insertIfLatest',
+    kind: 'notifies',
+    why:
+      '最新の 1 件を採用する記録へ、欄を開いた時の最新がまだ最新なら 1 件足す (パス 500)。'
+      + '足したときは件数が増えるので知らせる。足さなかったとき (`changed`) は何も動かないので知らせない —— '
+      + 'そちらは store の検査が留める。',
+    run: (s) => s.insertIfLatest('sales-entries', null, { ...ROW }),
+  },
+  {
+    name: 'replaceLatestIfUnchanged',
+    kind: 'notifies',
+    why:
+      '最新 1 件を書き換える記録 (数値パラメータの上書き) の、最新がまだ開いた時の版なら置き換える口 (パス 500)。'
+      + '置き換えたときは中身が変わるので知らせる。置き換えなかったとき (`changed`) は何も動かないので知らせない —— '
+      + 'そちらは store の検査が留める。',
+    run: async (s) => {
+      const rec = await s.insert('sales-entries', { ...ROW });
+      resetCount();
+      return s.replaceLatestIfUnchanged('sales-entries', { id: rec.id, updatedAt: rec.updatedAt }, { ...ROW, amount: 9000 });
+    },
+  },
+  {
     name: 'remove',
     kind: 'notifies',
     why: '1 件消える。点検パネルの削除 (`deleteRecords`) はここを直接叩く。',

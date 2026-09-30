@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { MAX_CSV_IMPORT_BYTES, importSaveFailedNote, readImportText } from '../data/importFile';
+import { MAX_CSV_IMPORT_BYTES, importSaveFailedNote, readImportText, skippedRowsDetail } from '../data/importFile';
 import { fireReported } from '../data/deviceStoreFailure';
 import { localIsoDate } from '../../shared/localDate';
 import {
@@ -22,7 +22,7 @@ import {
 } from '../data/sales';
 import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 import { DASH } from '../../shared/formatters';
-import { salesToCsv, salesFromCsv } from '../data/salesCsv';
+import { SALES_CSV_COLUMNS, salesToCsv, salesFromCsv } from '../data/salesCsv';
 import { CSV_BOM } from '../data/csv';
 import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import {
@@ -216,10 +216,11 @@ export function SalesPage() {
     const ok = parsed.length;
     const ng = errors.length;
     if (ok === 0 && ng === 0) {
-      setError('取り込める行がありませんでした (ヘッダ: date,channel,amount,orders,note)');
+      // 見出しの案内は列の定義から導く (書き出しと取り込みが読む 1 つ —— 手で写すと列を足した日に古びる)。
+      setError(`取り込める行がありませんでした (ヘッダ: ${SALES_CSV_COLUMNS.join(',')})`);
     } else {
       setNotice(
-        `${ok} 件を取り込みました${ng > 0 ? ` / ${ng} 件はスキップ (行 ${errors.map((x) => x.row).join(', ')})` : ''}${stored > 0 ? `。うち ${stored} 件は既存の記録と同じ内容です（同じファイルを 2 度読んだのなら、一覧で該当行を消してください）` : ''}`,
+        `${ok} 件を取り込みました${ng > 0 ? ` / ${ng} 件はスキップ (${skippedRowsDetail(errors)})` : ''}${stored > 0 ? `。うち ${stored} 件は既存の記録と同じ内容です（同じファイルを 2 度読んだのなら、一覧で該当行を消してください）` : ''}`,
       );
     }
     if (fileRef.current) fileRef.current.value = '';

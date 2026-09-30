@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   STOCKS_WATCHLIST_KEY,
   isSafeSymbol,
@@ -11,6 +11,7 @@ import {
   mockCandles,
   readWatchlist,
 } from '../stocksWatchlistWeb';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 beforeEach(() => {
   localStorage.clear();
@@ -177,6 +178,40 @@ describe('buildStocksSnapshot — 保存先から何が読めたか (パス 309)
   });
 });
 
+describe('readWatchlist — Web Storage そのものが読みを拒む環境 (パス 89 / 309)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+  /** jsdom の `getItem` は実体ではなく `Storage.prototype` に在る。 */
+  function denyRead(thrown: unknown): void {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw thrown;
+    });
+  }
+
+  it('★ Error を投げる保存先: 「読めなかった」として例外の message を理由に運ぶ (「まだ無い」に畳まない)', () => {
+    denyRead(new Error('blocked by policy'));
+    expect(readWatchlist()).toEqual({ kind: 'unreadable', reason: 'blocked by policy' });
+  });
+
+  it('Error でない物を投げる保存先: 文字列にして理由へ運ぶ', () => {
+    denyRead('storage is gone');
+    expect(readWatchlist()).toEqual({ kind: 'unreadable', reason: 'storage is gone' });
+  });
+
+  it('★ 助言の側 (loadWatchlistSymbols) は空へ倒し、画面の側 (buildStocksSnapshot) は理由つきで「読めなかった」と言う', () => {
+    denyRead(new Error('blocked by policy'));
+    expect(loadWatchlistSymbols()).toEqual([]);
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist).toEqual([]);
+    expect(snap.stored).toBe('unreadable');
+    expect(snap.storedNote).toBe(
+      '保存したウォッチリストを読めませんでした (blocked by policy)。一覧は空です。'
+        + 'このまま銘柄を登録・解除すると空の一覧を基に上書きされ、元の保存値は戻りません。',
+    );
+  });
+});
+
 describe('mockCandles', () => {
   const NOW = Date.UTC(2026, 0, 31);
   it('is deterministic for the same symbol + now', () => {
@@ -209,6 +244,22 @@ describe('mockCandles', () => {
     expect(c30[29]!.date).toBe('2026-01-31');
     expect(mockCandles('AAPL', NOW, 0)).toHaveLength(1); // Math.max(1, …)
     expect(mockCandles('AAPL', NOW, 2.9)).toHaveLength(2); // Math.floor
+  });
+});
+
+describe('now が Date の範囲外・非有限のとき (isoDaysAgo の床 —— 投げずに日付だけが空になる)', () => {
+  const NOW = Date.UTC(2026, 0, 31);
+  it('★ mockCandles: 日付は全部空文字で、価格は now に依らない', () => {
+    const good = mockCandles('AAPL', NOW, 3).map((c) => c.close);
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, 1e20]) {
+      const candles = mockCandles('AAPL', bad, 3);
+      expect(candles.map((c) => c.date)).toEqual(['', '', '']);
+      expect(candles.map((c) => c.close)).toEqual(good);
+    }
+  });
+  it('buildWatchlistItem のシグナルの日付も空文字 (最後のローソク足の日付をそのまま運ぶ)', () => {
+    expect(buildWatchlistItem('AAPL', Number.NaN).signal.date).toBe('');
+    expect(buildWatchlistItem('AAPL', NOW).signal.date).toBe('2026-01-31');
   });
 });
 
@@ -264,6 +315,12 @@ describe('buildStocksSnapshot', () => {
     expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL', '7203.T']);
     expect(snap.watchlist[0]!.candles).toHaveLength(30);
   });
+  it('★ fetchedAt は now の ISO 文字列で、Date の範囲外・非有限の now なら空文字 (投げない)', () => {
+    expect(buildStocksSnapshot(Date.UTC(2026, 0, 31, 12, 34, 56, 789)).fetchedAt).toBe('2026-01-31T12:34:56.789Z');
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, 8_640_000_000_000_001]) {
+      expect(buildStocksSnapshot(bad).fetchedAt).toBe('');
+    }
+  });
   it('seeds the portfolio with an empty history array', () => {
     // history: [] を ["Stryker was here"] にする ArrayDeclaration mutant を kill。
     expect(buildStocksSnapshot(NOW).portfolio.history).toEqual([]);
@@ -280,8 +337,7 @@ describe('buildStocksSnapshot', () => {
  */
 describe('保管の鍵 —— 読み直して問う', () => {
   it('★ 鍵は "stocks.watchlist" で、実際にその下へ書く', async () => {
-    vi.resetModules();
-    const m = await import('../stocksWatchlistWeb');
+    const m = await rereadModule<typeof import('../stocksWatchlistWeb')>(import.meta.url, '../stocksWatchlistWeb');
     expect(m.STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist');
     localStorage.clear();
     m.registerSymbol('AAPL');

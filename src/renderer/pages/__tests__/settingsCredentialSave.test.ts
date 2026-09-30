@@ -42,6 +42,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { checkTokenInput } from '../../../shared/tokenInput';
 import { MAX_TOKEN_CHARS } from '../../security/vault';
 import { waitForText } from '../../__tests__/jsdomWait';
+import { CredentialRow } from '../SettingsPage';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -150,7 +151,6 @@ afterEach(async () => {
 });
 
 async function mountRow(): Promise<void> {
-  const { CredentialRow } = await import('../SettingsPage');
   await mount(createElement(CredentialRow, { slot: SLOT, onChange: () => {} }));
   await click(button('設定する'));
 }

@@ -9,6 +9,8 @@ import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { useLatestForm } from '../data/useLatestForm';
+import { ChangedLatestNote } from '../components/ChangedLatestNote';
 import { SNAPSHOT } from '../data/snapshot';
 import { localIsoDate } from '../../shared/localDate';
 import {
@@ -22,6 +24,7 @@ import {
 import { latestRecord } from '../data/latestRecord';
 import {
   batchesFromRecords,
+  controlFormFrom,
   dosingFrom,
   HYDROPONICS_BATCHES_COLLECTION,
   HYDROPONICS_CONTROL_COLLECTION,
@@ -161,7 +164,16 @@ export function HydroponicsPage() {
 
   const readingCol = useCollection<HydroponicReadingRecord>(HYDROPONICS_READINGS_COLLECTION);
   const batchCol = useCollection<CultivationBatchRecord>(HYDROPONICS_BATCHES_COLLECTION);
-  const controlCol = useCollection<HydroponicsControlRecord>(HYDROPONICS_CONTROL_COLLECTION);
+  /*
+   * 運転の設定は「最新の 1 件を採用する」記録 (パス 500)。欄の状態は `useLatestForm` が持ち、
+   * 表示 (今の設定の表と、調製の指示) も同じ購読の最新を読む。直す前は「設定を変更」が
+   * **購読の写し**から欄を開いていたので、保管層が答える前に押すと既定値の欄が開き、保存すると
+   * 保存していた設定を既定値で覆った。開いた後に別の画面が保存した設定も、黙って覆った。
+   */
+  const controlForm = useLatestForm<HydroponicsControlRecord, Record<string, string>>(
+    HYDROPONICS_CONTROL_COLLECTION,
+    controlFormFrom,
+  );
   const setupCol = useCollection<HydroponicsSetup>(HYDROPONICS_COLLECTION);
   const cropCol = useCollection<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
 
@@ -170,7 +182,10 @@ export function HydroponicsPage() {
     () => latestRecord(setupCol.records)?.data ?? HYDROPONICS_DEFAULTS,
     [setupCol.records],
   );
-  const controlRead = useMemo(() => readControlRecord(controlCol.records), [controlCol.records]);
+  const controlRead = useMemo(
+    () => readControlRecord(controlForm.latest === null ? [] : [controlForm.latest]),
+    [controlForm.latest],
+  );
   const control = controlRead.record;
   /** 幅の外だったので既定へ倒した欄 —— **黙って倒さない** (パス 373)。 */
   const controlOutOfRangeNote = outOfRangeControlNote(controlRead.outOfRange);
@@ -248,7 +263,8 @@ export function HydroponicsPage() {
   // --- ロット ------------------------------------------------------------
   const [batchForm, setBatchForm] = useState<BatchForm>({
     id: '',
-    cropId: crops[0]?.id ?? '',
+    // **選んでいない** (''). 品目は下の `batchCropId` が今の一覧から解く (パス 500)。
+    cropId: '',
     sowDate: today,
     panels: '',
     state: 'nursery',
@@ -260,13 +276,23 @@ export function HydroponicsPage() {
   const [batchError, setBatchError] = useState<string | null>(null);
   const [batchOk, setBatchOk] = useState<string | null>(null);
   const batchGuard = useSubmitGuard();
+  /**
+   * ロットの品目 —— **選んだ品目が今の一覧に在ればそれ、無ければ一覧の先頭** (パス 500)。
+   * select に見せる値と保存する値を必ず同じにする。
+   *
+   * 直す前は、最初の描画の一覧 (保管層が答える前の参考値の 5 品目) の先頭を `useState` の初期値に
+   * 焼き付けていた。自分の一覧から先頭の参考値 (リーフレタス) を消している利用者では、select は
+   * 一覧の先頭 (フリルレタス) を選んで見せるのに、保存されるのは焼き付けた `leaf-lettuce` で、
+   * 一覧に無い品目のロットができた (実測: 表は「(leaf-lettuce — 見つかりません)」)。
+   */
+  const batchCropId = crops.some((c) => c.id === batchForm.cropId) ? batchForm.cropId : (crops[0]?.id ?? '');
 
   async function saveBatch(): Promise<void> {
     setBatchError(null);
     setBatchOk(null);
     let record: CultivationBatchRecord;
     try {
-      record = parseBatch({ ...batchForm, cropId: batchForm.cropId || (crops[0]?.id ?? '') });
+      record = parseBatch({ ...batchForm, cropId: batchCropId });
     } catch (err) {
       setBatchError(err instanceof Error ? err.message : String(err));
       return;
@@ -310,27 +336,35 @@ export function HydroponicsPage() {
   }
 
   // --- 運転の設定 --------------------------------------------------------
-  const [controlForm, setControlForm] = useState<Record<string, string> | null>(null);
+  const [controlOpen, setControlOpen] = useState(false);
   const [controlError, setControlError] = useState<string | null>(null);
   const [controlOk, setControlOk] = useState<string | null>(null);
   const controlGuard = useSubmitGuard();
 
-  /** 入力欄を今の設定で開く (`null` = 閉じている)。 */
+  /**
+   * 入力欄を**保存されている今の設定**で開く。保管層が答えるまでは開けない (ボタンが押せない) ——
+   * 答える前に開くと既定値の欄になり、保存すると保存していた設定を既定値で覆う (パス 500)。
+   */
   function openControlForm(): void {
-    const out: Record<string, string> = {};
-    for (const [k, v] of Object.entries(control)) out[k] = v === null ? '' : String(v);
-    setControlForm(out);
+    controlForm.loadSaved();
+    setControlOpen(true);
     setControlError(null);
     setControlOk(null);
   }
 
+  /** 閉じる。打った値は捨て、次に開くときは保存されている設定から始める。 */
+  function closeControlForm(): void {
+    controlForm.loadSaved();
+    setControlOpen(false);
+  }
+
   async function saveControl(): Promise<void> {
-    if (controlForm === null) return;
+    if (!controlOpen) return;
     setControlError(null);
     setControlOk(null);
     // **⛔ の欄が在れば保存しない** (パス 214 と同じ形) —— 判定は出し直せるが、
     // 保存した値は残り、以後すべての調製の指示がそれを読む。
-    const refused = refusedFields(HYDROPONICS_CONTROL_SPECS, controlForm as Record<ControlFieldKey, string>);
+    const refused = refusedFields(HYDROPONICS_CONTROL_SPECS, controlForm.form as Record<ControlFieldKey, string>);
     const note = saveRefusalNote(
       refusalLabels(HYDROPONICS_CONTROL_SPECS, refused, Object.keys(HYDROPONICS_CONTROL_SPECS) as readonly ControlFieldKey[]),
     );
@@ -340,18 +374,22 @@ export function HydroponicsPage() {
     }
     let record: HydroponicsControlRecord;
     try {
-      record = parseControlRecord(controlForm);
+      record = parseControlRecord(controlForm.form);
     } catch (err) {
       setControlError(err instanceof Error ? err.message : String(err));
       return;
     }
+    let saved: boolean;
     try {
-      await controlCol.add(record);
+      // **欄の元がまだ最新のときだけ書く** (パス 500)。断られたら欄は開いたまま、入力を残して
+      // 断りを出す (`ChangedLatestNote`)。
+      saved = await controlForm.save(record);
     } catch {
       setControlError('保存できませんでした (端末の保存領域を確認してください)');
       return;
     }
-    setControlForm(null);
+    if (!saved) return;
+    setControlOpen(false);
     setControlOk('運転の設定を保存しました');
   }
 
@@ -664,7 +702,7 @@ export function HydroponicsPage() {
           <label style={{ fontSize: 12 }}>
             品目
             <select
-              value={batchForm.cropId}
+              value={batchCropId}
               onChange={(e) => setBatchForm((f) => ({ ...f, cropId: e.target.value }))}
               data-hydroponics-input="batch-crop"
               style={{ marginLeft: 6 }}
@@ -736,7 +774,9 @@ export function HydroponicsPage() {
         <button
           type="button"
           data-hydroponics-save="batch"
-          disabled={batchGuard.busy || charsOverCeiling(batchForm.id, MAX_BATCH_ID_CHARS) > 0}
+          // 品目の一覧が届くまで足さない —— 届く前の一覧 (参考値) の品目でロットを作ると、
+          // 自分の一覧に無い品目のロットになりうる (パス 500)。
+          disabled={batchGuard.busy || cropCol.loading || charsOverCeiling(batchForm.id, MAX_BATCH_ID_CHARS) > 0}
           onClick={() => void batchGuard.run(saveBatch)}
           style={{ marginTop: 10 }}
         >
@@ -804,8 +844,14 @@ export function HydroponicsPage() {
             ))}
           </tbody>
         </table>
-        {controlForm === null ? (
-          <button type="button" data-hydroponics-edit-control onClick={openControlForm} style={{ marginTop: 10 }}>
+        {!controlOpen ? (
+          <button
+            type="button"
+            data-hydroponics-edit-control
+            disabled={!controlForm.ready}
+            onClick={openControlForm}
+            style={{ marginTop: 10 }}
+          >
             設定を変更
           </button>
         ) : (
@@ -822,8 +868,8 @@ export function HydroponicsPage() {
                 <div key={k} data-hydroponics-control-field={k}>
                   <GuardedNumber
                     spec={HYDROPONICS_CONTROL_SPECS[k]}
-                    value={controlForm[k] ?? ''}
-                    onChange={(v) => setControlForm((prev) => (prev === null ? prev : { ...prev, [k]: v }))}
+                    value={controlForm.form[k] ?? ''}
+                    onChange={(v) => controlForm.update((prev) => ({ ...prev, [k]: v }))}
                   />
                 </div>
               ))}
@@ -837,9 +883,15 @@ export function HydroponicsPage() {
             >
               {controlGuard.busy ? '保存中…' : '設定を保存'}
             </button>
-            <button type="button" onClick={() => setControlForm(null)} style={{ marginLeft: 8 }}>
+            <button type="button" onClick={closeControlForm} style={{ marginLeft: 8 }}>
               取消
             </button>
+            <ChangedLatestNote
+              changed={controlForm.changed}
+              what="運転の設定"
+              then="もう一度「設定を保存」を押すと、この欄の内容で上書きします。"
+              onLoadSaved={() => controlForm.loadSaved()}
+            />
           </>
         )}
         {controlOutOfRangeNote !== null && (

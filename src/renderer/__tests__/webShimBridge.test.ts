@@ -1,5 +1,10 @@
 /** @vitest-environment jsdom */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
+import '../../preload/preload';
 
 /*
  * ブラウザ版の橋 (`web-shim.ts`) を**動かして**確かめる。
@@ -36,22 +41,20 @@ vi.mock('electron', () => ({
 type Surface = Record<string, unknown>;
 
 async function loadShim(): Promise<Surface> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Surface }).serviceHub;
 }
 
 /** preload 側が `exposeInMainWorld` へ渡すオブジェクトを掴む。 */
 async function loadPreload(): Promise<Surface> {
-  vi.resetModules();
   let api: Surface = {};
   const electron = await import('electron');
   (electron.contextBridge as unknown as { exposeInMainWorld: (k: string, a: Surface) => void })
     .exposeInMainWorld = (_k, a) => {
     api = a;
   };
-  await import('../../preload/preload');
+  await rereadModule<typeof import('../../preload/preload')>(import.meta.url, '../../preload/preload');
   return api;
 }
 
@@ -164,15 +167,13 @@ describe('据え付けは preload を上書きしない', () => {
     // OAuth も全部ブラウザ版の代用品へ静かに退化する。エラーは出ない。
     const preloadBridge = { iAmThePreloadBridge: true };
     (window as unknown as { serviceHub: unknown }).serviceHub = preloadBridge;
-    vi.resetModules();
-    await import('../web-shim');
+    await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
     expect((window as unknown as { serviceHub: unknown }).serviceHub).toBe(preloadBridge);
   });
 
   it('ブラウザ版 (誰も据え付けていない) では据え付ける', async () => {
     delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-    vi.resetModules();
-    await import('../web-shim');
+    await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
     const hub = (window as unknown as { serviceHub?: Surface }).serviceHub;
     expect(hub).toBeDefined();
     expect(typeof hub!.setToken).toBe('function');

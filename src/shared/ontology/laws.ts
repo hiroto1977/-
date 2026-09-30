@@ -165,9 +165,22 @@ export const LAWS: readonly Law[] = [
     id: 'gate-runs-in-ci',
     family: 'gate-hygiene',
     name: '検査が走る場所が CI に在る',
-    statement: 'verify:all の全ゲートが ci.yml に在る。「これで強制される」と書いた検査は、CI のどのステップで走るかを確かめる。走らないなら vitest ゲートへ移す。',
-    provenance: ['パターン 0-a-11', 'パターン 0-c'],
-    enforcedBy: [gate('lint:docs')],
+    statement: 'verify:all の全ゲートが ci.yml に在る。「これで強制される」と書いた検査は、CI のどのステップで走るかを確かめる。走らないなら vitest ゲートへ移す。'
+      + ' ★ **走る場所に在っても、その場所の上限に収まらなければ走っていない** (パス 501) —— GitHub Actions の job は 6 時間で cancel される。'
+      + '週次の変異検査の全掃引 #172 (2026-09-27・#788 のマージ後・cache 落ち) はちょうど 6 時間で cancel され、報告も cache も残さなかった'
+      + ' (`actions/cache` の post は success() のときだけ保存する)。`main` へのマージで 69 本 (13,062 変異体 —— 全掃引 #173 の実測) を 1 job で測る形は、塊に分けて測った所要の合計が 238〜268 分 (塊ごとの dry run の重複を含む) で 6 時間には収まるが、余裕は 26〜34% で保証は無い。'
+      + '**所要は対象の重さから導けるので、1 job に載せる量に上限を置いて塊に分ける** (`scripts/mutate-changed.cjs --chunks` · 1 塊 4,000 行まで · self-test が実物の一覧で塊の上限を確かめる)。'
+      + '塊ごとに dry run (GitHub の実測で約 10〜12 分) が 1 回ずつ増えるので、塊の合計の runner 時間は 1 job より大きい —— 分けるのは壁時計の上限に収めるためである。'
+      + ' **週次の全掃引も同じ塊で測る** (パス 501e · `scripts/mutate-changed.cjs --all --chunks`): 塊ごとの報告は `scripts/merge-mutation-reports.cjs` が 1 つへ併合し、'
+      + '**揃っていない併合は何も書かず落ちる** (欠けた塊を全体と名乗らせると、生存を含む塊ほど欠けやすいので点数が実物より良く出る)。'
+      + '塊の job は塊ごとの break では落とさず、合否は併合した全体の点数で決める。'
+      + ' ★ **走る場所の設定が手元と違えば、同じ検査でも答えが割れる** (パス 501) —— `vitest.config.ts` の `retry: process.env.CI ? 2 : 0` は、'
+      + 'GitHub が `CI=true` を渡すので**変異検査の job だけを「落ちた検査を最大 2 回やり直す」設定で走らせていた**。'
+      + '通常の CI では retry は回帰を隠さない (本物の不具合は決定的に落ち続ける) が、変異検査では偽になる: 最初の 1 回でモジュール直下の状態 (`store.ts` の単調時計) を'
+      + '消費する検査は、変異体の下でも 2 回目に通り、殺したはずの変異体が生存に見える (実測 #173: 手元は 100.00%・GitHub は生存 2)。'
+      + '**測る側が retry を切る** (Stryker を走らせる step だけ `CI` を空にする) のが本筋で、検査の側も 1 回で完結する形へ直す (時計は probe で相対化)。',
+    provenance: ['パターン 0-a-11', 'パターン 0-c', 'パス 501 (週次の全掃引が 6 時間で cancel されていた · GitHub の実行履歴で実測)', 'パス 501e (週次も塊の matrix + 併合)', 'パス 501g (変異検査の job だけが retry 2 で走っていた · store の生存 2 件で実測)'],
+    enforcedBy: [gate('lint:docs'), ci('.github/workflows/mutation.yml'), harness('mutate:merge'), test(T.shared('mergeMutationReports'))],
   },
   {
     id: 'negative-control',
@@ -335,7 +348,7 @@ export const LAWS: readonly Law[] = [
     id: 'table-pinned-by-literal',
     family: 'gate-hygiene',
     name: '表を留める検査は表を読まない',
-    statement: '留める対象を読んで回る検査は、対象が変われば一緒に変わる。何が入っているかと何が入っていないかを字面で書く。モジュール定数は vi.resetModules + 動的 import で留める。',
+    statement: '留める対象を読んで回る検査は、対象が変われば一緒に変わる。何が入っているかと何が入っていないかを字面で書く。モジュール定数は rereadModule (対象だけを読み直す —— パス 495) で留める。',
     provenance: ['パターン 0-a-9', 'パターン 0-a-5'],
     enforcedBy: [harness('mutate'), prose(HANDOFF, '「表を読んで回っている」形は変異検査 (Stryker) が生存として映すが、CI の毎回では走らない (週次)。字面かどうかを静的に数える網は無い')],
   },
@@ -488,6 +501,22 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [gate('lint:mutation-scope')],
   },
   {
+    id: 'equivalent-mutant-removes-the-shape',
+    family: 'gate-hygiene',
+    name: '等価変異は黙らせる前に形を消す',
+    statement: '変異検査の生存は 3 種に分かれる —— 本物の穴 (検査を書く) / 偽の生存 (当て直すと殺されている · `audit:survivors`) / 等価 (どの入力でも答えが変わらない)。'
+      + '等価は pragma で黙らせる前に**その形を消せないか**を先に疑う: 型の絞り込みのためだけの判定 (`typeof v === \'number\' && Number.isFinite(v)` —— `Number.isFinite` は非数を等しく false にする) は'
+      + '述語 `isFiniteNumber(v): v is number` 1 つへ寄せると変異体そのものが無くなる (パス 501 で 4 ファイル 6 か所 —— typeof の形は 3 ファイル 5 か所)・★ `join` の前の `filter(x !== null)` を「等価」と書きかけたが、監査が偽と示した (区切りが空白の 2 か所では null が挟まると区切りが二重になり、区切りが空文字の 4 か所でも 1 文も無いときの null が空文字に変わる —— 生き残っていたのは断片ごとの `toContain` が区切りを見ていなかったためで、本物の穴の側。写し 7 か所のうち 6 か所は `joinSheetNotes` 1 つへ寄せ、繋ぎ目を留めた検査が落とす。§3 の `perCapitaCaption` は生存が無いので自前のまま)・'
+      + '`\'\'` より小さい文字列は無いので `newerAsOf` の空の判定は `a > b` に畳める・空の判定と `find` の重ね掛けは `find` だけで同じ答え。'
+      + '**消せない等価 (到達しない防御・JS の `null >= 10` が false であること) にだけ pragma を置き、理由を書く。** '
+      + '★ pragma を置く前に**その行の他の判定まで隠していないか**を見る —— 等価な判定だけの 1 行に分けてから置く (パス 496 / 500)。'
+      + '★ **`// Stryker disable next-line` は次の 1 行ではなく、コメントの直後の文に効く** (`node.loc.start.line`) —— 的の 1 つ手前の文の上に置くと効かない (パス 501g の `taxCalc.ts`)。'
+      + '**同じ答えを出す守りが文ごと在るなら、pragma より先に文を消す** (`nonNeg` / `isFiniteNumber` / 型 `FixedAdvisory` で null 枝ごと消す —— 501g は 13 本の 89 件のうち等価の大半をこれで閉じた)。'
+      + '2026-08 の `docStudioChecks` (NaN で受けて `x !== null &&` を全部消し、変異体 814 → 695 で生存 0) と `eligibility` (省略可の境界を ±Infinity で持って分岐ごと消した) が先例。',
+    provenance: ['stryker.config.json の _commentEquivalentPragmas (2026-07 / 2026-08)', 'パス 496 / 500 (等価な判定を 1 行に分けてから pragma)', 'パス 501 (8 本の生存 94 件の仕分け: 検査 37 件 / 形の除去 / pragma 5 件 —— 記録の監査が「等価」の 1 件を偽と示した)', 'パス 501g (全掃引が残した 89 件 —— 等価は文ごと消す・pragma は的の文の直前に置く)'],
+    enforcedBy: [gate('lint:mutation-scope'), harness('mutate'), harness('audit:survivors'), test(T.shared('num'))],
+  },
+  {
     id: 'claim-unit-not-file',
     family: 'gate-hygiene',
     name: '主張の単位で見る',
@@ -604,6 +633,34 @@ export const LAWS: readonly Law[] = [
     statement: '守りを 1 か所へ寄せても、その口を使っていない経路は守られない。「その関数を使っている場所」ではなく「同じことをしている場所」を実測で数え、迂回してよいファイルを台帳で固定する。**関門の docblock が消費者を数え上げていても数え直す** —— `safeFilename` は自分を「アプリ全体で 1 つだけ持つ」と名乗り消費者 2 つ (`library.put` / `writeBlobToFolder`・どちらも保管層) を名指ししていたが、名前を決める出口は 3 種類目が在った (`a.download` 10 か所)。**書く側が検めた欄を読む側が検め直しているか**も同じ形で、`metaFromStored` は 3 欄を `typeof === string` だけで通し、`put()` が拒む 9 形が 9/9 素通りしていた (パス 359)。**docblock が消費者を「4 つ」と数え上げていた例がもう 1 つある** —— `readNumeric` は「入力欄の文字列を数にする口は 4 つあり、全部ここを通す」と名乗っていたが、数値入力 (実測 13 ファイル / 119 欄) から辿ると通らない口が 3 つ / 呼び出し 7 か所残っており、`TaxPage` は**関門と計算で別の読み手**を使って「0 として計算されています」と断りながら ¥25,525 を出していた (パス 375)。**「同じことをしている場所」は同じ名前を名乗っていることがある** —— `compareVersions` は 2 つ在り、`updateCheck.ts` は semver §11.3 (プレリリースは正式版より前) を正しく持ち、`ollama.ts` は識別子を捨てていた。**弱い方が security の側に立っていた** —— 実測 (2026-09-22) で既知の脆弱性の台帳 8 件のうち `fixedIn` を持つ 7 件が `fixedIn + "-rc1"` を名乗るだけで黙り (CVE-2024-37032 critical の RCE を含む)、`isVersionSafe("0.31.2-rc1")` は true を返していた。**どちらが危ない側に立っているかは名前からは分からない** (パス 402)。**寄せた先そのものも数え直す** —— 円の組み立ては共有の `jpy` に寄せた後も `FreeePage` / `FundingPage` / 経営レポートに私有の写しが残り、`¥NaN` / `−¥∞` / `¥-∞` と 3 通りに刷っていた。写しを消して測ると、**寄せた先の `jpy` 自身が `-0` を刷っていた** (パス 493j)。**同じ問いを持つ 2 つの画面の片方にだけ天井が在った** —— 扶養親族の人数から並びを作る所は税金ページと福利厚生カードの 2 か所で、税金ページは 20 で止め (その 20 は画面の字面 4 か所)、カードは天井なしで `Array(人数)` を作っていた (実測: 1 億人で 1 回の描画が 28 秒・4,089 MB、50 億人で `RangeError` —— ページごと落ちる)。並びは `dependentsFromCounts`、関門は `dependentCountSpec` の 1 つずつに寄せ、並びを作る綴りを src 全体から数える (パス 493k)。',
     provenance: ['パターン 0-a-18', 'パス 311', 'パス 359', 'パス 360 (同じファイルの 57 行差で同じ問いが 2 通りに答えられていた)', 'パス 375 (関門と計算が別の読み手)', 'パス 402 (同名の comparator 2 つ・弱い方が CVE 判定の側)', 'パス 493j (円の組み立ての写し 3 つ・寄せた先の jpy 自身が -0 を刷っていた)', 'パス 493k (扶養の人数の並び —— 片方の画面にだけ天井)'],
     enforcedBy: [test(T.shared('bareFetchLedger')), test(T.shared('egressRedirectCensus')), test(T.shared('jsonBodyCensus')), test(T.renderer('downloadFilenameCensus')), test(T.renderer('numericInputReaderCensus')), test(T.shared('prereleaseVersionOrder')), test(T.shared('sessionGreetingNumbers')), test(T.shared('yenTemplateCensus')), test(T.renderer('numericCeilingEnforced'))],
+  },
+  {
+    id: 'writer-reads-like-the-screen',
+    family: 'single-rule',
+    name: '保存する書き手は、画面と同じ読み方で数を読む',
+    statement:
+      '画面の関門と計算は数を `readNumeric` で読む。**保存する書き手** (`parse*` —— 画面の欄を受け取って記録の形にする関数) が'
+      + '別の読み方をすると、同じ文字列に 2 つの答えが出る。実測 (2026-09-27): 書き手 9 本が `Number()` で読み直しており、'
+      + '`1,000` / 全角の `１０００` / `¥1,000` を「0 以上の数値で入力してください」と**偽の理由で**断り、`1e3` / `0x10` / `.5` を'
+      + '別の数として黙って保存し、**必須の金額の空欄を 0 円として記録していた** —— 売上原価を空けた期は「売上総利益率 100%」、'
+      + '流動資産を空けた控えは純資産が小さく出て、どちらも金融機関等提出用の書面へ届く。Shopify の注文額は数字以外を'
+      + 'どこからでも落として `1億` を 1 円・`-500` を 500 円・`2024年12月31日` を 20,241,231 円にしていた。'
+      + '**読み手をそろえても空欄の判定が割れていた** —— 銘柄フォームは空文字だけを空欄とみなし、全角の空白 1 つで取得額が 0 円になり、'
+      + '評価額 ¥1,500,000 の銘柄が「評価損益 ¥1,500,000」「取得額が未入力 0 件」と出ていた (評価額の欄は、空に見える欄を'
+      + '「空欄にすると自動計算」と断っていた)。直しは口を 1 つ (`readEntryNumber` —— 空欄 / 読めない / 数) にし、空欄の扱いは'
+      + '欄ごとに宣言する (断る / 既定 / 「未入力」)。**振る舞いで留める** —— 欄に打った文字列を「画面が読んだ数を半角で打ち直した物」に'
+      + '言い直しても書き手の答えが変わらないこと (書き手 × 欄 × 標本の総当たり)。書き手の母集団は画面の import から導いて台帳と'
+      + '両方向に突き合わせ、「数を読まない」と名乗る行は構文木で本体を検める。'
+      + '**断るときは理由の文つきの Error で** —— Vitest の `toThrow(\'文面\')` は文面の照合を chai の `throws` に委ね、'
+      + 'chai は投げた値が偽 (`undefined` / `null` / `0` / `\'\'` / `false`) だと照合を飛ばして合格にする (実測)。'
+      + '断りの文を関数で組んだら、それが `undefined` を返す変異体が文面を 1 字ずつ照合する検査 20 件を素通りした —— '
+      + 'census は断りが Error であることを見る (`2b`)。',
+    provenance: ['パス 496', 'パス 375 (画面の読み手を 1 つに)', 'パス 493l (関門が結果を述べる)', 'パス 123 (取得額の空欄は未入力)'],
+    enforcedBy: [
+      test('src/renderer/data/__tests__/writerNumberReading.test.ts'),
+      test(T.shared('readNumeric')),
+      test(T.renderer('numericInputReaderCensus')),
+    ],
   },
   {
     id: 'no-weakness-as-spec',
@@ -850,6 +907,131 @@ export const LAWS: readonly Law[] = [
     statement: '「まだ無い」「読めなかった」ときに返る同梱の見本は飾りであって利用者の物ではない。それを画面の状態へ取り込むと自動保存がそのまま端末へ書き、利用者が何も押していないのに編集中の内容が消える。取り込むのは stored === "saved" のときだけ。「読めていない下書きを書き戻さない」(パス 160) と対になる、書く側の規則。',
     provenance: ['パス 160', 'パス 335'],
     enforcedBy: [test(T.renderer('snapshotAdoptionCensus')), test('src/renderer/pages/__tests__/teamRadarSampleNeverOverwrites.test.ts'), harness('e2e')],
+  },
+  {
+    id: 'judgement-reads-the-store',
+    family: 'at-rest',
+    name: '判定と書き込みの相手は購読の写しではなく保管層',
+    statement:
+      '画面の `useCollection(c).records` は**購読の写し**で、「今そこに在る物」ではない —— 一覧が IndexedDB から届く**前**は空、'
+      + '読みが失敗しても空のまま、**別のタブ**の書き込みは知らせが届いて読み直すまで知らない (パス 499 までは知らせが同じタブの中にしか届かず、'
+      + '再読込まで知らなかった。届くようになった今も、届くのは書いた**後**で読み直しはさらに後なので、その間に押した判定は古い一覧に答える)。'
+      + '表示にはそれで構わないが、「既に在るか」「何人いるか」「今の一覧に足して丸ごと保存する」を写しで決めると、答えは古い一覧についての答えになる。'
+      + 'パス 384 は CSV の取り込みと KPI 実績の追加を保管層の読み直し (`readCollectionNow`) へ寄せたが、その census は handler を `function on…` の綴りで、'
+      + '写しを `records` / `entries` の綴りで探しており、**別名・導いた値・矢印の handler・JSX に直書きの handler が 1 つも映らなかった**。'
+      + '束縛 (型検査器のシンボル) で数え直すと、4 画面に 8 本 (+ 写しの値を判定へ渡す JSX の handler 3 本) が残っていた。実測 (直す前): '
+      + 'KPI の予算は同じ期・事業の 2 件目が入って**合算**され、チームは同じメールの 2 人目・席数の上限の超過・**最後のオーナーの降格と削除** (オーナー 0 人) を通し、'
+      + '水耕の品目は別のタブで足した品目が次の追加で**消え** (一覧はまるごと 1 記録で最新を採用するので lost update)、'
+      + '手入力の置き換えは同じ欄に 2 件目が入って**保存した直後の札が「手入力 111 円」** (古いほう —— `list()` は新しい順で、適用も札も後から当てた古い値を勝たせる) を出した。'
+      + '直しは判定と書き込みの直前に保管層を読み直し (`readRecordsNow` —— 行と id と `createdAt` つき)、読めなければ「0 件」と混ぜずに断る '
+      + '(断りの文は**確かめられない物**を名指しし、重複の判定でない所で「同じ記録が在るか」と言わない)。欄ごとの置き換えは読み直した行で 1 件へ畳み、'
+      + '「自動に戻す」はその欄の行を全部消す。**表示は写しのままでよい** —— 押したときに決めるのは読み直した保管層である。'
+      + '状態の初期値 (`useState(() => 写しから作った下書き)`) は写しを運ばない (利用者が編集する下書き) —— 数えると下書きを保存する handler がすべて映る。',
+    provenance: ['パス 384', 'パス 497', 'パス 125 (同じメールは 1 人)', 'パス 124 (同じ期・事業は 1 件)'],
+    enforcedBy: [
+      test(T.renderer('snapshotJudgementCensus')),
+      test('src/renderer/pages/__tests__/judgementReadsStoreNow.test.ts'),
+      test('src/renderer/data/__tests__/overrideSavePlan.test.ts'),
+      test('src/renderer/data/__tests__/readCollectionNow.test.ts'),
+    ],
+  },
+  {
+    id: 'write-answers-whether-it-landed',
+    family: 'at-rest',
+    name: '書き込みは「書けたか」を答え、呼び手はその答えを読む',
+    statement:
+      '`store.update` は相手の行が無いとき**投げずに `null` を返す** —— 何も書いていない。2026-09-27 まで `useCollection` の `edit` は `Promise<void>` で'
+      + 'その `null` を捨てており、呼び手はどれも「書けた」前提で次へ進んだ。**別のタブで消された行**を編集して保存すると、何も書かないまま「済んだ」形になる —— '
+      + '直す前の実測: 投資信託・不動産・士業の連絡先は編集の欄が**空になり**、読み直した一覧から行も消えて打ち込んだ値は痕跡なく失われ、断りは 0 文。'
+      + '士業の相談の状態は選んだ状態ごと行が一覧から消えた。判定を保管層の読み直しへ寄せたパス 497 の後も、**読み直しと書き込みの間**の窓は残る'
+      + '(チームの役割・手入力の置き換え・数値パラメータ) —— そこを閉じるのは読み直しではなく**書き込みの答え**である。'
+      + '直しは `edit` が `Promise<boolean>` (`false` = 相手が無く何も書いていない) を返し、呼び手が答えで分かれること: 実体を編集する画面は断りを出して'
+      + '**入力を残し、消された行を黙って作り直さない** (足すかどうかは利用者が決めるので、足す口を名指しする)。「この欄に今の値を置く」書き込み'
+      + '(手入力の置き換え) は今保存した値を足し直す。最新 1 件を採用する記録 (数値パラメータ) は読み直して重ね直し —— 置換復元が入れた行が在れば'
+      + 'それに重ねて復元した他の値を残す —— 相手が消え続けても回り続けないよう**回数に上限**を置き、使い切ったら新しい行として書く。'
+      + '答えを捨てる形 (式文・`void`・待たない・値として渡す・読まない変数) は構文木の census が束縛で数える (別名 `{ edit: editHolding }` と丸ごと `col.edit` の両方)。',
+    provenance: ['パス 498', 'パス 497 (判定は保管層を読む)', 'パス 433 (点検パネルが古い一覧で消した —— 同じ「間の窓」の家系)'],
+    enforcedBy: [
+      test(T.renderer('editResultCensus')),
+      test('src/renderer/pages/__tests__/editVanishedRecord.test.ts'),
+      test('src/renderer/data/__tests__/parameterOverrides.test.ts'),
+      test('src/renderer/data/__tests__/useCollection.test.ts'),
+    ],
+  },
+  {
+    id: 'edit-compares-with-what-was-opened',
+    family: 'at-rest',
+    name: '開いた欄は、開いた時の中身と比べてから書く (知らせは別のタブへも届く)',
+    statement:
+      '実体を丸ごと編集する欄 (投資信託の銘柄・不動産の物件・士業の連絡先) は、開いた時の記録から全部の欄を組み、保存で**全部の欄**を書く。'
+      + '2026-09-27 まで書き込みの知らせ (`collectionChange.ts`) は同じタブの中にしか届かず、別のタブの画面は再読込まで書く前の姿を出し続けた。'
+      + '実測 (直す前・実 chromium の 2 タブ): A が足した銘柄は B に 0 行・A が評価額を 300,000 → 500,000 に直した後に B が名前だけ直して保存すると'
+      + '**評価額が 300,000 へ黙って戻り**、断りは 0 文 (lost update)・A が記録した ¥7,777,777 の売上は B の経営サマリーに出ない。'
+      + '直しは 2 つで、どちらか片方では閉じない: ① 知らせを `BroadcastChannel` で別のタブへも配る (合図だけを運び、中身は運ばない —— '
+      + '受けた側は自分で保管層を読み直す。受け口は購読した時に開き、受けた合図は送り返さない) ② 欄は**開いた時の中身**を基準として持ち、'
+      + '保存は `store.updateIfUnchanged` で**同じ鎖の中で**比べてから書く —— 書き換えられていれば何も書かずに今の行を返し、画面は断って'
+      + '**入力を残し**、基準を今の行へ移す (もう 1 度押せば知ったうえで上書きし、一覧の「編集」は今の内容から始め直す)。'
+      + '① だけでは開いた欄の中の古い値は直らず (表示が新しくなっても欄は開いた時のまま)、② だけでは古い表示を見て編集を始める。'
+      + '比べる判定 (`sameRecordData`) は誤りの向きが非対称で、違う物を「同じ」と言うと上書きし、同じ物を「違う」と言うと 1 手余計に押させるだけなので、'
+      + '迷ったら「違う」へ倒す —— ただし保管層から読んだ物は、その複製と必ず「同じ」 (そうでなければ誰も触っていない行が永久に保存できない。'
+      + '`NaN` は `Object.is` で比べる)。基準は**欄を埋めた記録そのもの** (同じ描画の行の `stored`) で、別に読み直すと比べる相手がずれる。'
+      + '解析した実体を丸ごと渡す書き込みは構文木の census が束縛で数え、`editIfUnchanged` を通ることを要求する。'
+      + '比べてから書くまでは行ごとの鎖の中で、鎖は Web Locks (`servicehub.record.<id>`) で囲まれる —— 実 chromium の `file://` で 2 枚のタブが'
+      + '**同じ錠を共有する**ことを e2e が留める (B が錠を持つ間、A の保存はその錠の待ち行列に現れ、放すと届く。'
+      + 'docs/ARCHITECTURE.md は 2026-09-06 から「実機のタブ 2 枚はここでは試していない」と書いていた)。'
+      + '**残る窓 (測った)**: Web Locks を使えない環境では鎖はタブの中だけで、比べてから書くまでの数 ms に別のタブの書き込みが挟まりうる・'
+      + '知ったうえでの 2 度目の保存は最後に書いた物が勝つ・マージ復元 (`importAll`) は 1 つのトランザクションで行ごとの鎖に入らない。',
+    provenance: ['パス 499', 'パス 497 (「別のタブの書き込みを知らない」と書いた当のこと)', 'パス 498 (書き込みは「書けたか」を答える —— こちらは「何に対して書けたか」)'],
+    enforcedBy: [
+      test('src/renderer/pages/__tests__/editChangedRecord.test.ts'),
+      test('src/renderer/data/__tests__/storeUpdateIfUnchanged.test.ts'),
+      test('src/renderer/data/__tests__/sameRecordData.test.ts'),
+      test('src/renderer/data/__tests__/collectionChangeRelay.test.ts'),
+      test(T.renderer('editResultCensus')),
+      harness('e2e'),
+    ],
+  },
+  {
+    id: 'latest-adopted-form-compares-before-write',
+    family: 'at-rest',
+    name: '最新の 1 件を採用する欄は、保管層が答えてから開き、最新を比べてから書く',
+    statement:
+      '水耕栽培の設定・経営ハイライトのしきい値・提出者情報と書式・運転の設定・品目の一覧・数値パラメータは、保存のたびに行を足し'
+      + ' (数値パラメータは最新の行を書き換え)、読む側は**最新の 1 件**を使う。この形は、書く側が「今の最新」を知らないまま全部の欄を書くと、'
+      + '知らなかった保存を黙って覆う。直す前の実測 (実 chromium・同じ `file://` を開き直す): 経営サマリーの水耕栽培の欄は `useState(保存値 ?? 既定値)` で開き、'
+      + '保存値は IndexedDB から後で届くので **5 回とも既定値**で開いた。販売単価だけ直して保存すると**保存していた 4 欄が既定値へ黙って戻り**、画面は「保存しました」と言った。'
+      + 'しきい値の欄は読みの届く順で割れ、5 回のうち 2 回が既定値。書式の変更は描画した時の写しの提出者情報で記録を丸ごと書いた。'
+      + '**状態の初期値に写しを置く形**は、パス 497 の census が「写しを運ばない」として意図して数えていなかった所である。'
+      + '直しは 1 つの口 (`useLatestForm`) に寄せる: ① 保管層が答えるまで欄を出さない ② 触っていない欄は最新に付いていく (別のタブの保存にも) '
+      + '③ 保存は「開いた時の最新がまだ最新なら足す」を**1 つの取引**で (`store.insertIfLatest` —— 足した行は必ず最新になる) ④ 断ったら入力を残して基準を今の最新へ移し、'
+      + 'もう 1 度押せば知ったうえで上書きする (「保存した内容を読み込む」で入力を捨てて開き直せる) ⑤ 一覧に 1 件足すような変更は今の最新に当て直す '
+      + '(`applyToLatest` —— 挟まれるたびに当て直し、上限の回数で断る)。★ **比べるのは「その行の中身」ではなく「最新がまだその行か」**: 最新 1 件を書き換える記録 '
+      + '(数値パラメータ) の最初の直しは「読んだ行が読んだ時の中身のままなら書く」(`updateIfUnchanged`) で、読んだ後・書く前に**別の行が新しい最新として入る**と、'
+      + '書き換えは古い行に成功した —— 実測: `set(日数, 300)` は断りなく済み、300 は古い行にだけ入り、**有効値は 250 のまま**。'
+      + '採用の census が「採用する collection へ最新を比べない口で書く所」としてここを名指しして見つかった。直しは `store.replaceLatestIfUnchanged` '
+      + '(行の鎖の中の 1 つの取引で最新の目印 (id と updatedAt) を比べ、同じならその行を置き換え、版をその行の updatedAt より必ず後ろへ進める)。'
+      + '母集団は構文木の census が持つ: 採用の呼び口 (`latestRecord(` / `useLatestForm(`) の台帳と採用する collection の集合 (両方向)・採用する collection への書き込みは'
+      + '最新を比べる口だけ・`useLatestForm` 自身の書き込み口・状態の初期値に写しを置く所 (両方向・今日 0 件)。同じパスで、書き込みの答えと拒否を数える 2 つの census が'
+      + '**口の一覧を手で持っていた**ために新しい口を 1 つも見ていなかった (パス 499 / 500 の口を足しても鳴らない) —— 口は hook の定義から導き、props で渡った hook の結果'
+      + ' (`{...props}` の展開を含む) も追う形にした (実測: 数える呼び口 40 → 54 件、増えた 14 件はすべて受け止められていた)。'
+      + '**残る窓 (測った)**: Web Locks を使えない環境では行の鎖はタブの中だけ・知ったうえでの 2 度目の保存は最後に書いた物が勝つ・'
+      + '別のファイルの部品へ props で渡った写しが `useState` に置かれる形は census の針に映らない (今は欄ごと `useLatestForm` が持つので写しを受け取らない)。',
+    provenance: [
+      'パス 500',
+      'パス 497 (状態の初期値は写しを運ばないとして数えなかった —— その針の死角)',
+      'パス 499 (開いた欄は開いた時の中身と比べる —— こちらは「最新がまだそれか」)',
+    ],
+    enforcedBy: [
+      test(T.renderer('latestAdoptionCensus')),
+      test('src/renderer/data/__tests__/storeInsertIfLatest.test.ts'),
+      test('src/renderer/data/__tests__/storeReplaceLatestIfUnchanged.test.ts'),
+      test('src/renderer/data/__tests__/useLatestForm.test.ts'),
+      test('src/renderer/pages/__tests__/latestFormOnScreen.test.ts'),
+      test('src/renderer/data/__tests__/parameterOverrides.test.ts'),
+      test(T.renderer('storeWriteRejectionCensus')),
+      test(T.renderer('editResultCensus')),
+      harness('e2e'),
+    ],
   },
   {
     id: 'size-gate-before-parse',
@@ -1658,6 +1840,14 @@ export const LAWS: readonly Law[] = [
       + '名前付き import しか読まない census は緑だった · パス 486)。',
     provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483', 'パス 486'],
     enforcedBy: [gate('lint:repo-size'), ci('.github/workflows/ci.yml'), test(T.shared('registryBundleCost'))],
+  },
+  {
+    id: 'module-evaluated-at-file-load',
+    family: 'gate-hygiene',
+    name: '検査の中でモジュールを初めて評価しない',
+    statement: '変異検査の足場は「いまどの検査か」を beforeEach で立てるので、**検査の中で**初めて評価したモジュールの直下の値 (定数・表・既定の文) は、その検査が覆った static な変異体になる。`ignoreStatic` は覆われていない static しか外さないので、覆われた物は覆った検査だけで走り、その検査が値を主張していなければ生き残る —— 報告は**測っていない物を「生存」として数える**。2026-09-27 の全掃引の static な生存 **1,150 件はすべて**、このパスで直した検査ファイルが覆っていた —— 画面 (設定画面・App) を検査の中で初めて読み込む 8 本が**それぞれ 916 件**、`vi.resetModules()` の読み直しが依存先の表を、という形で。読み込みは先頭の静的 import か beforeAll で行い、読み直すときは**対象だけ**を評価し直す (`rereadModule`) —— `vi.resetModules()` は依存先まで検査の中で評価し直す。**型としてしか使わない import は変換で消える**ので、それでは先に読んだことにならない (数えるなら TypeScript 自身に訊く)。 ★ **読み直すなら、対象の直下の値を全部主張する** —— 読み直した検査は対象の直下の値を (主張した物だけでなく) 全部覆うので、主張していない値はその検査だけで走って生き残る。直した後に 4 ファイル (static な生存 522 件) を測り直すと **475 件が Ignored** になり、残る 47 件は `balanceSheet.ts` の読み直す検査が主張していなかった表の 45 件と、読み込み時にも検査の中でも走る関数の中身 2 件 (本物の未主張) だった。',
+    provenance: ['パス 495', 'パス 494 (全掃引の汚れを実測し、原因の見立てを残した)', '2026-09-03 (hydroponics / payroll の参考値表が読み直しの巻き添えで生存 47 件 —— 表を関数にして避けた)'],
+    enforcedBy: [test(T.shared('inTestModuleLoadCensus')), test(T.shared('rereadModule')), harness('mutate')],
   },
 ];
 

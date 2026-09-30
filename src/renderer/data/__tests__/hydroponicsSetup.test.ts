@@ -17,6 +17,8 @@ import {
   hydroponicsBusinessUnit,
   HYDROPONICS_UNIT_ID,
   lowPotassiumFromSetup,
+  hydroponicsSetupForm,
+  HYDRO_SETUP_FIELD_KEYS,
   type HydroponicsSetup,
 } from '../hydroponicsSetup';
 import { buildAxonometric, buildComposition } from '../businessAxonometric';
@@ -106,6 +108,55 @@ describe('コレクション名と初期値', () => {
     const lowKKeys = ['lowPotassium', 'switchDaysBeforeHarvest', 'measuredPotassiumMgPer100g', 'measuredSodiumMgPer100g'];
     const counted = new Set<string>([...NUMERIC_SETUP_KEYS, 'cropId', ...lowKKeys]);
     expect(Object.keys(HYDROPONICS_DEFAULTS).filter((k) => !counted.has(k))).toEqual([]);
+  });
+});
+
+describe('hydroponicsSetupForm — 保存値から欄を開く (パス 500)', () => {
+  it('保存値が無ければ参考値で開き、低カリウム栽培は選んでいない', () => {
+    const f = hydroponicsSetupForm(null);
+    expect(f.cropId).toBe(HYDROPONICS_DEFAULTS.cropId);
+    expect(f.lowK).toBe(false);
+    for (const k of HYDRO_SETUP_FIELD_KEYS) expect(f.fields[k], k).toBe(String(HYDROPONICS_DEFAULTS[k]));
+  });
+
+  /*
+   * 欄は保存値から開き、保存は**全部の欄**を 1 件の新しい行として書く (最新の 1 件を採用する記録)。
+   * 保存した「低カリウム栽培」を欄が落とすと、別の欄だけ直して保存した時に選択が黙って外れ、
+   * 画面は「保存しました」と言う —— パス 500 が直した「保存すると他の欄を既定へ戻す」と同じ形
+   * (変異検査の生存 —— `lowK` を常に false にしても、どの検査も落ちなかった)。
+   */
+  it('★ 保存値で低カリウム栽培を選んでいれば、欄も選んだ状態で開く (保存し直すと選択が黙って外れない)', () => {
+    const saved: HydroponicsSetup = {
+      ...HYDROPONICS_DEFAULTS,
+      cropId: 'custom-1',
+      lowPotassium: true,
+      switchDaysBeforeHarvest: 9,
+      floorAreaSqm: 500,
+    };
+    const f = hydroponicsSetupForm(saved);
+    expect(f.lowK, '保存した「低カリウム栽培」を欄が落とした —— このまま保存すると選択が外れる').toBe(true);
+    expect(f.cropId).toBe('custom-1');
+    expect(f.fields.floorAreaSqm).toBe('500');
+    expect(f.fields.switchDaysBeforeHarvest).toBe('9');
+  });
+
+  it('低カリウム栽培は true のときだけ選んだ状態で開く (真に見える値では名乗らない —— lowPotassiumFromSetup と同じ規則)', () => {
+    for (const v of [false, undefined, 1, 'true']) {
+      const f = hydroponicsSetupForm({ ...HYDROPONICS_DEFAULTS, lowPotassium: v as unknown as boolean });
+      expect(f.lowK, String(v)).toBe(false);
+    }
+  });
+
+  it('任意の 3 欄が欠けた古い保存値は、切替日は参考値・実測値は 0 (= 未測定) で開く', () => {
+    const old: Record<string, unknown> = { ...HYDROPONICS_DEFAULTS, floorAreaSqm: 400 };
+    delete old.switchDaysBeforeHarvest;
+    delete old.measuredPotassiumMgPer100g;
+    delete old.measuredSodiumMgPer100g;
+    const f = hydroponicsSetupForm(old as unknown as HydroponicsSetup);
+    expect(f.fields.switchDaysBeforeHarvest).toBe(String(HYDROPONICS_DEFAULTS.switchDaysBeforeHarvest));
+    expect(f.fields.measuredPotassiumMgPer100g).toBe('0');
+    expect(f.fields.measuredSodiumMgPer100g).toBe('0');
+    expect(f.fields.floorAreaSqm).toBe('400');
   });
 });
 

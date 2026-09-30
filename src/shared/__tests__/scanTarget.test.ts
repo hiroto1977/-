@@ -1,7 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { join } from 'node:path';
 import { readOriginalSource } from './originalSource';
 import { MAX_SCAN_URL_CHARS, SCAN_URL_MESSAGES, SECRET_PARAM_NAMES, describeScanUrlRisk, looksInternalHostname, type ScanUrlFailure, validateScanUrl } from '../scanTarget';
+import { rereadModule } from './rereadModule';
 
 describe('validateScanUrl', () => {
   it('http / https を通す', () => {
@@ -267,8 +268,7 @@ describe('scanTarget — 生存していた変異を塞ぐ', () => {
    * 1 語でも空文字に潰れれば、その名前を持つ URL は**警告なしで投入される**。
    */
   it('★ 秘密のパラメータ名を、読み直して字面で留める', async () => {
-    vi.resetModules();
-    const m = await import('../scanTarget');
+    const m = await rereadModule<typeof import('../scanTarget')>(import.meta.url, '../scanTarget');
     expect([...m.SECRET_PARAM_NAMES]).toEqual([
       'token',
       'access_token',
@@ -290,6 +290,29 @@ describe('scanTarget — 生存していた変異を塞ぐ', () => {
       'code',
       'credential',
     ]);
+  });
+
+  /**
+   * **断りの文面の表と天井も、読み直して字面で留める。** (2026-09-30 · パス 501)
+   *
+   * 2 つの表はモジュール直下の値なので読み込み時に 1 度だけ評価され、静的 import した値を
+   * 見る検査には変異体が届かない。上の検査がこのモジュールを読み直すので、その検査が覆う
+   * 直下の値は**全部**主張する (`rereadModule` の docblock) —— そうしないと主張していない値の
+   * 変異体がその検査だけで走って生き残る (GitHub の全掃引で 7 件: 4 文面・1 文面・表そのもの 2 件)。
+   *
+   * 文面は利用者が読む断りで、空文字や欠落になれば「なぜ断られたか」が消える。
+   * ここは `toEqual` で全体を留めるので、表が `{}` へ潰れる形も 1 文字違う形も落ちる。
+   */
+  it('★ 断りの文面の表と天井を、読み直して字面で留める (空文字・欠落を通さない)', async () => {
+    const m = await rereadModule<typeof import('../scanTarget')>(import.meta.url, '../scanTarget');
+    expect(m.SCAN_URL_MESSAGES).toEqual({
+      empty: 'url は必須です',
+      'too-long': 'url が長すぎます',
+      'not-a-url': 'url を URL として解釈できません',
+      'not-web': 'url は http:// または https:// で始まる必要があります',
+    });
+    expect(m.BREACH_EMAIL_MESSAGES).toEqual({ empty: 'email は必須です' });
+    expect(m.MAX_SCAN_URL_CHARS).toBe(2048);
   });
 
   /*

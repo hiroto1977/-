@@ -110,6 +110,51 @@ export interface HydroponicsSetup extends Record<string, unknown> {
 }
 
 /**
+ * 設備・費用の入力欄の数の欄 (17)。鍵は画面の関門の表 (`HYDRO_SPECS`) と同じ集合 (型が見る)。
+ */
+export const HYDRO_SETUP_FIELD_KEYS = [
+  'floorAreaSqm',
+  'tiers',
+  'usableRatioPct',
+  'yieldRatePct',
+  'unitPriceYen',
+  'switchDaysBeforeHarvest',
+  'measuredPotassiumMgPer100g',
+  'measuredSodiumMgPer100g',
+  'electricityYenPerKwh',
+  'energyIntensityKwhPerKg',
+  'seedYenPerPlant',
+  'nutrientYenPerPlant',
+  'packagingYenPerPlant',
+  'laborYenPerMonth',
+  'depreciationYenPerMonth',
+  'rentYenPerMonth',
+  'otherFixedYenPerMonth',
+] as const;
+export type HydroSetupFieldKey = (typeof HYDRO_SETUP_FIELD_KEYS)[number];
+
+/** 設備・費用の入力欄 (パス 500 —— 画面の `useState` の初期値から出した)。 */
+export interface HydroponicsSetupForm {
+  readonly cropId: string;
+  readonly fields: Readonly<Record<HydroSetupFieldKey, string>>;
+  readonly lowK: boolean;
+}
+
+/**
+ * 保存値 → 入力欄 (パス 500)。保存値が無ければ参考値 (`HYDROPONICS_DEFAULTS`) から開く。
+ *
+ * 任意の 3 欄が欠けた古い保存値は、切替日は参考値・実測値は 0 (= 未測定) で開く —— 画面の `useState` の
+ * 初期値に在った対応をそのまま移した。移した理由は対応ではなく**開く時機**で、欄は保管層が答える前に
+ * この初期値で開き、答えが届いても開き直さなかった (実測は `useLatestForm.ts` の docblock)。
+ */
+export function hydroponicsSetupForm(saved: HydroponicsSetup | null): HydroponicsSetupForm {
+  const base = saved ?? HYDROPONICS_DEFAULTS;
+  const fields = {} as Record<HydroSetupFieldKey, string>;
+  for (const k of HYDRO_SETUP_FIELD_KEYS) fields[k] = String(base[k] ?? HYDROPONICS_DEFAULTS[k]);
+  return { cropId: base.cropId, fields, lowK: base.lowPotassium === true };
+}
+
+/**
  * 入力欄の初期値。**参考値であって実績ではない**ので、そのまま保存せず
  * 自分の数字に置き換えて使うこと。
  *

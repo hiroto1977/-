@@ -11,10 +11,10 @@
  * lens と観点の台帳・軸の上限と名前・構造と断定の正規表現・相談の語・メダルは
  * **モジュール直下の値**で、変異検査はそれを書き換えてから検査を走らせても、先に読み込んだ
  * モジュールには届かない (`stryker.config.json` の `_commentIgnoreStatic`)。どの検査も
- * `vi.resetModules()` + 動的 import で読み直してから主張する (`callbackPaste.test.ts`・
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直してから主張する (`callbackPaste.test.ts`・
  * パス 353 / 355 と同じ形。読み直しは 1 回 50 ms ほど —— 変換済みのコードを評価し直すだけ)。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type {
   AnswerScore,
   AnswerStrategy,
@@ -27,10 +27,13 @@ import type {
 } from '../bestAnswers';
 import { composeSystemPrompt, retrieveContext, type KnowledgeDoc } from '../assistantContext';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../../shared/redact';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+// 読み直す対象を先頭で読み込んでおく (型だけの import は変換で消えるので、それでは読まない。
+// 読み直しの前に依存先を評価しておかないと、最初の読み直しで依存先が検査の中で評価される —— パス 495)。
+import '../bestAnswers';
 
 async function fresh() {
-  vi.resetModules();
-  return (await import('../bestAnswers')) as typeof import('../bestAnswers');
+  return (await rereadModule<typeof import('../bestAnswers')>(import.meta.url, '../bestAnswers')) as typeof import('../bestAnswers');
 }
 
 const doc = (id: string, title: string): KnowledgeDoc => ({ id, kind: 'コンプライアンス', title, body: '…' });

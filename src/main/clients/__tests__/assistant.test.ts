@@ -12,6 +12,7 @@ import {
   MAX_ASSISTANT_SYSTEM_CHARS,
   inputTooLongMessage,
 } from '../../../shared/assistantLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /** Build a minimal fetch double returning a JSON Anthropic response. */
 function jsonResponse(body: unknown, ok = true, status = 200): Response {
@@ -658,16 +659,15 @@ describe('assistant — 公開している口', () => {
  *
  *  (a) モジュール直下の定数 (`CAPABILITIES` / `ACTIONS`) は **static 変異体**
  *      —— テストが静的 import していると、変異体が有効になる前にモジュールが
- *      読まれてしまい「生存」と報告される。`vi.resetModules()` +
- *      動的 `await import()` で読み直せば普通に殺せる。
+ *      読まれてしまい「生存」と報告される。`rereadModule` (対象だけを
+ *      読み直す —— パス 495) で読み直せば普通に殺せる。
  *  (b) 文言や既定値は、**観測できる差が出る標本**を選ぶ。`undefined` を
  *      `join('')` に混ぜても空文字に潰れるので、数値のように**残る値**を使う。
  */
 describe('assistant — モジュール直下の定数 (static 変異体は読み直して殺す)', () => {
   /** 変異体を有効にしてから読む。beforeAll で 1 回だけ読むと static が殺せない。 */
   async function fresh() {
-    vi.resetModules();
-    return import('../assistant');
+    return rereadModule<typeof import('../assistant')>(import.meta.url, '../assistant');
   }
 
   it('capabilities は 4 件で、業務領域の語を持つ', async () => {

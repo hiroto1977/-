@@ -6,6 +6,7 @@ import {
   OVERVIEW_CUSTOM_METRICS_COLLECTION,
   OVERVIEW_OVERRIDES_COLLECTION,
   NO_MANUAL_OVERRIDES,
+  OVERRIDE_UNREADABLE_REASON,
   applyOverviewOverrides,
   fieldsBySection,
   manualOverrideNote,
@@ -18,6 +19,7 @@ import {
   type MetricUnit,
   type OverrideEntry,
 } from '../overviewOverrides';
+import { readNumeric } from '../../../shared/readNumeric';
 
 const entry = (path: string, value: number): OverrideEntry => ({ path, value });
 
@@ -122,10 +124,27 @@ describe('parseOverrideValue', () => {
     expect(parseOverrideValue('3', 'count').ok).toBe(true);
   });
 
-  it('空・全角・カンマ・単位語は断る', () => {
-    for (const bad of ['', '   ', '１０００', '1,000', '1000円', '1e3', '--1', '.5', 'abc']) {
+  /*
+   * ★ **読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。それまでの検査の題名は
+   * 「空・全角・カンマ・単位語は断る」で、独自の正規表現が全角・桁区切りまで断ることを
+   * **仕様として留めていた** —— 同じアプリの `readNumeric` (画面の関門と計算) はそれらを読むので、
+   * `'1,000,000'` をこの欄だけが断っていた (法則 `no-weakness-as-spec`)。
+   */
+  it('★ 空・単位語・指数・位置の違う区切りは断る (読めない物は画面と同じく読めない)', () => {
+    for (const bad of ['', '   ', '1e3', '--1', '.5', 'abc', '1万', '1,23', '0x10']) {
       expect(parseOverrideValue(bad, 'yen').ok, bad).toBe(false);
+      expect(readNumeric(bad), `画面の読みと食い違う: ${bad}`).toBeNull();
     }
+  });
+
+  it('★ 全角・桁区切り・通貨記号・単位の飾りは画面と同じく読む (パス 496)', () => {
+    const cases: Array<[string, number]> = [['１０００', 1000], ['1,000', 1000], ['1000円', 1000], ['¥1,000,000', 1_000_000], ['+5', 5]];
+    for (const [raw, want] of cases) {
+      expect(parseOverrideValue(raw, 'yen'), raw).toEqual({ ok: true, value: want });
+      expect(readNumeric(raw), `画面の読みと食い違う: ${raw}`).toBe(want);
+    }
+    // ％ の欄に「50%」と打てる (直す前はこの欄だけが「半角数字で…記号は入れない」と断った)。
+    expect(parseOverrideValue('50%', 'pct')).toEqual({ ok: true, value: 50 });
   });
 
   it('範囲の境界', () => {
@@ -145,7 +164,7 @@ describe('parseOverrideValue', () => {
   it('数値として読めない桁数は、範囲ではなく「読めない」として断る', () => {
     const r = parseOverrideValue('9'.repeat(400), 'yen');
     expect(r.ok).toBe(false);
-    expect(r.ok ? '' : r.reason).toBe('数値として読めません。');
+    expect(r.ok ? '' : r.reason).toBe(OVERRIDE_UNREADABLE_REASON);
   });
 
   it('断るときは理由が付く', () => {
@@ -335,8 +354,11 @@ describe('parseCustomMetric', () => {
   });
 
   it('値の検証は上書きと同じ規則', () => {
-    expect(parseCustomMetric({ label: 'x', value: '1,000', unit: 'yen' }).ok).toBe(false);
+    expect(parseCustomMetric({ label: 'x', value: '1万', unit: 'yen' }).ok).toBe(false);
     expect(parseCustomMetric({ label: 'x', value: '-1', unit: 'count' }).ok).toBe(false);
+    // 読める形も同じ (桁区切りは読む —— パス 496)。
+    const r = parseCustomMetric({ label: 'x', value: '1,000', unit: 'yen' });
+    expect(r.ok && r.entry.value).toBe(1000);
   });
 
   it('項目名を省いたときは空文字と同じに扱う', () => {
@@ -663,7 +685,7 @@ describe('単位ごとの範囲が実際に効いていること', () => {
   it('断る理由は場合ごとに違う文言になる', () => {
     const reasons = [
       parseOverrideValue('', 'yen'),
-      parseOverrideValue('1,000', 'yen'),
+      parseOverrideValue('1万', 'yen'),
       parseOverrideValue('1.5', 'count'),
       parseOverrideValue('-1', 'count'),
       parseOverrideValue('9999999999999999999', 'yen'),
@@ -675,8 +697,8 @@ describe('単位ごとの範囲が実際に効いていること', () => {
   it('文言が何を直せばよいかを含む', () => {
     const empty = parseOverrideValue('', 'yen');
     expect(empty.ok ? '' : empty.reason).toContain('数値');
-    const comma = parseOverrideValue('1,000', 'yen');
-    expect(comma.ok ? '' : comma.reason).toContain('半角');
+    const unitWord = parseOverrideValue('1万', 'yen');
+    expect(unitWord.ok ? '' : unitWord.reason).toContain('単位語');
     const frac = parseOverrideValue('1.5', 'count');
     expect(frac.ok ? '' : frac.reason).toContain('整数');
     const low = parseOverrideValue('-1', 'count');
@@ -804,5 +826,13 @@ describe('placed — 手で置いた値を表示名と単位つきで返す', ()
       const r = applyOverviewOverrides(buildShell([f.path]), [entry(f.path, 7)]);
       expect(r.placed, f.path).toEqual([{ path: f.path, label: f.label, value: 7, unit: f.unit }]);
     }
+  });
+});
+
+describe('manualOverrideNote — 文を値ごと留める (パス 501)', () => {
+  it('★ 2 つ以上の欄は「・」で並べる', () => {
+    expect(manualOverrideNote({ overridden: ['kpi.revenue', 'team.members'], staleDerived: [] })).toBe(
+      '売上高・メンバー数は手で置いた数値です（入力済みデータからの自動計算を表示上だけ置き換えたもので、実績の累計ではありません）。',
+    );
   });
 });

@@ -4,6 +4,8 @@
  * node 環境でも import できる (`lint:test-coverage` が無駄な jsdom を落とす)。
  */
 import { describe, expect, it, vi } from 'vitest';
+import * as webShim from '../web-shim';
+import * as mainBusiness from '../../main/clients/business';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -106,8 +108,8 @@ const CASES: [string, unknown][] = [
 ];
 
 async function loadBoth(): Promise<{ web: Validator; main: Validator }> {
-  const webMod = (await import('../web-shim')) as unknown as { validateAdvisorJson: Validator };
-  const mainMod = (await import('../../main/clients/business')) as unknown as {
+  const webMod = webShim as unknown as { validateAdvisorJson: Validator };
+  const mainMod = mainBusiness as unknown as {
     validateBusinessAdvisorJson: Validator;
   };
   return { web: webMod.validateAdvisorJson, main: mainMod.validateBusinessAdvisorJson };

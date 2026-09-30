@@ -31,7 +31,7 @@ import {
   parameterConsistencyIssueFor,
   parameterConsistencyIssues,
 } from '../../shared/parameterConsistency';
-import { useParameters } from '../data/parameterOverrides';
+import { ParameterBusyError, PARAMETER_BUSY_MESSAGE, useParameters } from '../data/parameterOverrides';
 import { readNumber } from '../data/inputGuards';
 import { fireReported } from '../data/deviceStoreFailure';
 
@@ -82,6 +82,8 @@ function ParameterRow({
 }) {
   const [text, setText] = useState(String(toDisplayValue(def, value)));
   const [busy, setBusy] = useState(false);
+  /** 別の画面の保存と重なり続けて書かなかった、の断り (パス 500)。次に押すまで出す。 */
+  const [writeNote, setWriteNote] = useState<string | null>(null);
   const shown = readNumber(text);
   const candidate = shown === null ? Number.NaN : fromDisplayValue(def, shown);
   const rangeIssue = parameterIssue(def, candidate);
@@ -103,8 +105,18 @@ function ParameterRow({
    */
   async function run(fn: () => Promise<void>) {
     setBusy(true);
+    setWriteNote(null);
     try {
       await fn();
+    } catch (e) {
+      // 重なり続けて書かなかった (パス 500) —— 端末の保存の失敗ではないので、ここで言う
+      // (報せの経路へ流すと「この端末に保存できませんでした」と再読込を勧めてしまう)。
+      if (e instanceof ParameterBusyError) {
+        // 文はアプリ自身の定数 (例外の文面を画面へ流さない —— 例外の型だけを見る)。
+        setWriteNote(PARAMETER_BUSY_MESSAGE);
+        return;
+      }
+      throw e;
     } finally {
       setBusy(false);
     }
@@ -152,6 +164,11 @@ function ParameterRow({
             {issue}
           </div>
         )}
+        {writeNote !== null && (
+          <div role="alert" data-parameter-busy={def.id} style={{ fontSize: 11, color: 'var(--danger)' }}>
+            {writeNote}
+          </div>
+        )}
       </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
         <input
@@ -189,6 +206,8 @@ function ParameterRow({
 export function ParametersPanel() {
   const params = useParameters();
   const [query, setQuery] = useState('');
+  /** 「すべて既定に戻す」が重なり続けて書かなかった、の断り (パス 500)。 */
+  const [resetNote, setResetNote] = useState<string | null>(null);
   const overridden = overriddenCount(params.overrides);
   const visible = useMemo(() => PARAMETERS.filter((p) => matchesParameterQuery(p, query)), [query]);
   // 古い版で置いた上書き・復元したバックアップは保存の関門を通っていないので、
@@ -200,7 +219,17 @@ export function ParametersPanel() {
   async function resetAll() {
     // 上書きを全部捨てる — 元に戻す手段が無いので確認を挟む。
     if (!window.confirm(`上書きした ${overridden} 件をすべて既定に戻します。よろしいですか？`)) return;
-    await params.resetAll();
+    setResetNote(null);
+    try {
+      await params.resetAll();
+    } catch (e) {
+      // 重なり続けて書かなかった (パス 500) —— 行と同じく、押した所のそばで言う。
+      if (e instanceof ParameterBusyError) {
+        setResetNote(PARAMETER_BUSY_MESSAGE);
+        return;
+      }
+      throw e;
+    }
   }
 
   return (
@@ -255,6 +284,11 @@ export function ParametersPanel() {
           すべて既定に戻す
         </button>
       </div>
+      {resetNote !== null && (
+        <div role="alert" data-parameter-busy="all" style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>
+          {resetNote}
+        </div>
+      )}
       {features.length === 0 && (
         <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>該当するパラメータはありません</div>
       )}

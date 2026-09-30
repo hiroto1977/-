@@ -1,6 +1,11 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { redactForMessage } from '../../shared/redact';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
+import * as ollamaWebModule from '../network/ollamaWeb';
 
 /**
  * `fetchSnapshot` の床を叩くための注入口。`probeMode = 'throw'` のときだけ
@@ -109,9 +114,8 @@ type Hub = {
 };
 
 async function loadHub(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 
@@ -296,7 +300,7 @@ describe('★ 床 (パス 312): 枝の try の外で投げても reject しな�
     // `unguarded` は公開していないので、床が在ることは「投げる注入が resolve する」ことでしか
     // 見えない。注入そのものが投げることを、床を通らない実物で確かめる。
     probeMode = 'throw';
-    const mod = await import('../network/ollamaWeb');
+    const mod = ollamaWebModule;
     await expect(mod.probeOllama('http://127.0.0.1:11434')).rejects.toThrow('probe exploded');
   });
 

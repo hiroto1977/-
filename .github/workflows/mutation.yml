@@ -14,15 +14,97 @@ name: mutation
 #
 #   - **push (main)**: 変わったファイルだけを測る。対象パスの制限は外す
 #     (どのファイルを触っても、それが `mutate` にあれば当日測られる)
-#   - **週次 / 手動**: 従来どおり全件
+#   - **週次 / 手動**: 全件 (下の「週次も塊に分ける」)
 #
 # テストだけを変えた場合もその対象を測る (`scripts/mutate-changed.cjs`) —
 # テストを緩めた変更こそ変異検査が捕まえるべきものなので。
+#
+# ## push 側は塊に分けて別々の job で測る (2026-09-30 · パス 501)
+#
+# GitHub Actions の job は **6 時間**で cancel される。「対象が少ないので毎回
+# まっさらから測っても数分で終わる」は、変わったファイルが数本の push には
+# 真だが、**大きな PR のマージでは偽**である —— #790 は `mutate` の 69 本
+# (29,177 行・13,062 変異体) を 1 度に対象にする。塊に分けて GitHub で測った実測
+# (#175 / #176) は 8 塊の所要の合計が 238〜268 分で、1 job に載せると約 4〜4.5
+# 時間 (塊ごとの dry run の重複を除いていない値。6 時間には収まるが
+# 余裕は 26〜34% で、同じ 9 本の塊が 26 分にも 42 分にもなる —— runner の速さは
+# 揺れる)。しかも **週次の全掃引 #172 (2026-09-27・#788 のマージ後・cache 落ち) は
+# ちょうど 6 時間で cancel されている** —— #172 が計装したのは 304 本・45,547
+# 変異体 (検査 17,894 件) で、今の 308 本を塊に分けて測った #173 は 22 塊の所要の
+# 合計が約 705 分 (11.8 時間) だった。dry run の重複を含む上限だが、#172 の dry run
+# 11 分 44 秒を 21 回分除いても約 460 分で、6 時間を越える。全件を 1 job で
+# 測り直す形はもう成り立たない
+# (週次の側は下の「週次も塊に分ける」で直した)。
+#
+# `scripts/mutate-changed.cjs --chunks` が対象を行数で塊に分け (1 塊 4,000 行
+# まで・重い順にいちばん軽い塊へ)、`scope` job がそれを JSON の配列で出し、
+# `mutate-some` job が matrix で塊ごとに測る。**変異体 1 つあたりの仕事は変わらない
+# が、塊ごとに dry run (GitHub の実測で約 10〜12 分) が 1 回ずつ増える**ので、
+# runner 時間の合計は 1 job で測るより大きい (分けるのは壁時計の上限に収めるためで、
+# 費用を減らすためではない)。`thresholds.break` は塊ごとに掛かる
+# (塊が小さいほど厳しい —— 目標は 100% なのでそれでよい)。
+#
+# ## 週次も塊に分ける (2026-09-30 · パス 501e)
+#
+# 週次・手動の全件も同じ塊で測る。`scope` job が `scripts/mutate-changed.cjs
+# --all --chunks` で **`mutate` の全件**を塊にし、`mutate-full` job が matrix で
+# 塊ごとに測り、`merge-full` job が `scripts/merge-mutation-reports.cjs` で塊の報告を
+# 1 つの `mutation-report` へ併合する (下流の道具は 1 つのファイルを前提にするため)。
+#
+#   - **incremental cache は使わない。** 鍵 `stryker-main` が不変なので当たった週は
+#     保存されず、cancel された job は post で保存せず、古い incremental は偽の生存を
+#     作る (stryker.config.json の注記)。`main` の旧 `mutate` (1 job) はそれで cache
+#     落ちの週に全件を測り直し、#172 は 6 時間で cancel された (#170 の cache 落ちは
+#     2 時間 43 分で完走した —— その間に測った変異体が 29,397 → 38,044 へ増えた)
+#   - **`thresholds.break` は塊ごとに掛かるので、合否は併合した全体の点数で決める。**
+#     塊の job は Stryker の終了コードが非 0 でも報告が書けていれば警告にして通し、
+#     `merge-full` が全体の点数と各塊の結果を見て判定する。報告が無い塊 (初回検査の
+#     失敗・時間切れ) だけが赤くなり、その塊だけ Re-run failed jobs で回し直せる
+#   - **揃っていない併合は何も書かず落ちる** (欠けた塊を全体と名乗らせない)
+#
+# ## Stryker を走らせる step だけ、検査の retry を切る (2026-09-30 · パス 501)
+#
+# `vitest.config.ts` は `retry: process.env.CI ? 2 : 0` で、GitHub は `CI=true` を渡す。
+# つまり**この workflow の変異検査だけが「落ちた検査を最大 2 回やり直す」設定で走り**、
+# 手元の container (`CI` が無く retry 0) と答えが割れうる。通常の CI では「本物の不具合は
+# 決定的に落ち続けるので、retry は回帰を隠さない」と言えるが、**変異検査では偽になる**:
+# 検査が最初の 1 回で消費するモジュール直下の状態 (`store.ts` の単調時計 `_lastTs` など) に
+# 頼っていると、変異体の下でも 2 回目は状態が進んで通り、殺したはずの変異体が生存に見える。
+# 実測 (#173・#174): `store.ts` の `>=` → `>` の 2 件がその形で、手元は 100.00%・GitHub は
+# 生存 2 だった。検査の側も 1 回で完結する形へ直した (時計は probe で相対化) が、
+# **測る側が retry を切る**のが手元と GitHub の答えを揃える本筋なので、Stryker を走らせる
+# 2 つの step (`mutate-full` / `mutate-some`) の `env` だけ `CI` を空にする (他の step と
+# job の環境は変えない)。代償: 揺れる検査が初回検査 (dry run) で落ちると塊の job が赤くなる
+# (Re-run failed jobs で回し直せる)。変異体の下で 1 度だけ揺れて落ちた検査は「殺した」に
+# 数えられる —— 生存を作らない向きの誤差である。`mergeMutationReports.test.ts` が 2 つの
+# step の配線を留める。
+#
+# ## 手で選んだ対象だけを測り直す (2026-09-30 · パス 501)
+#
+# 直したファイルを**GitHub の runner で**測り直したいことがある (この session の container は
+# 4 コアで、1 塊 4,000 行を測るのに 1〜2 時間 (実測 69〜107 分) かかる。runner は塊を並列に走らせられる)。
+# 手動実行 (`workflow_dispatch`) の `files` に、`stryker.config.json` の `mutate` にある名前を
+# カンマ区切りで渡すと、その対象だけを**今の塊の分け方のまま** (`--files … --chunks`) 測る。
+# 空なら今までどおり全件。**`mutate` に無い名前は黙って捨てずに落ちる** (script の側で —
+# 打ち間違いを「測ったつもり」にしない)。測るのは push と同じ `mutate-some` job なので、
+# 塊の artifact は `mutation-report-chunk-N`・合否は塊ごとの `thresholds.break`。
+#
+# `${{ }}` は run: の**シェル本文へ文字列として展開されてから**シェルが読む。
+# つまり値の中身がそのままシェル構文になる。env: へ束ねると値は環境変数として
+# 渡り、シェル構文としては一度も読まれない。ここの値は今どれも GitHub が
+# 決める値か、リポジトリ内の設定由来だが、**仕組みとして注入できない形**へ
+# 寄せておく (lint:workflow-security が run: 内の `${{ }}` を一律で落とす)。
 
 on:
   schedule:
     - cron: '0 18 * * 0'  # 03:00 JST every Monday
   workflow_dispatch:
+    inputs:
+      files:
+        description: '手で選んだ対象だけを測る (stryker.config.json の mutate にある名前をカンマ区切りで)。空なら全件。直したファイルの測り直し用。'
+        required: false
+        default: ''
+        type: string
   push:
     branches: [main]
     paths:
@@ -34,8 +116,13 @@ permissions:
   contents: read
 
 jobs:
-  mutate:
+  # 何を測るかを決める。npm ci は要らない (script は Node の組み込みしか読まない)。
+  scope:
     runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.scope.outputs.mode }}
+      chunks: ${{ steps.scope.outputs.chunks }}
+      count: ${{ steps.scope.outputs.count }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -46,73 +133,230 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '22'
-          cache: 'npm'
-
-      - name: Install
-        run: npm ci
 
       - name: 対象の割り出しが壊れていないか (対照実験)
         run: node scripts/mutate-changed.cjs --self-test
 
-      # `${{ }}` は run: の**シェル本文へ文字列として展開されてから**シェルが読む。
-      # つまり値の中身がそのままシェル構文になる。env: へ束ねると値は環境変数として
-      # 渡り、シェル構文としては一度も読まれない。ここの 3 つは今どれも GitHub が
-      # 決める値か、リポジトリ内の設定由来だが、**仕組みとして注入できない形**へ
-      # 寄せておく (lint:workflow-security が run: 内の `${{ }}` を一律で落とす)。
+      # 塊の一覧は JSON の配列 (要素はカンマ区切りの対象)。`$GITHUB_OUTPUT` は
+      # 1 行 1 値なので、改行・引用符を含む名前は script が先に落とす。
+      # 週次・手動・差分が取れない push は全件を塊に分ける (`--all --chunks`)。
+      # 失敗したら step ごと落ちる (空を skip と読んで緑にしない)。
+      # skip のときだけ、matrix が読める形 (`["none"]`) を置く。
       - name: 測る対象を決める
         id: scope
         env:
           EVENT_NAME: ${{ github.event_name }}
           BEFORE: ${{ github.event.before }}
+          INPUT_FILES: ${{ inputs.files }}
         run: |
+          MODE=some
           if [ "$EVENT_NAME" = "push" ]; then
-            TARGETS="$(node scripts/mutate-changed.cjs "$BEFORE")"
+            CHUNKS="$(node scripts/mutate-changed.cjs "$BEFORE" --chunks)"
+            if [ "$CHUNKS" = "ALL" ]; then
+              echo "::warning::push の差分が取れなかったので全件を塊に分けて測ります (fetch-depth: 2 に対して base が浅い clone に無い可能性)。"
+            fi
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$INPUT_FILES" ]; then
+            # 手で選んだ対象だけ。mutate に無い名前・名前を 1 つも含まない入力 (`,` だけなど) は script が落とす (黙って捨てない)。
+            CHUNKS="$(node scripts/mutate-changed.cjs --files "$INPUT_FILES" --chunks)"
           else
-            TARGETS="ALL"
+            CHUNKS="ALL"
           fi
-          if [ -z "$TARGETS" ]; then
+          if [ "$CHUNKS" = "ALL" ]; then
+            CHUNKS="$(node scripts/mutate-changed.cjs --all --chunks)"
+            MODE=all
+          elif [ -z "$CHUNKS" ]; then
             echo "変異検査の対象が変わっていません。飛ばします。"
-            echo "mode=skip" >> "$GITHUB_OUTPUT"
-          elif [ "$TARGETS" = "ALL" ]; then
-            echo "mode=all" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=some" >> "$GITHUB_OUTPUT"
-            echo "targets=$TARGETS" >> "$GITHUB_OUTPUT"
+            {
+              echo "mode=skip"
+              echo 'chunks=["none"]'
+              echo "count=0"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          COUNT="$(CHUNKS_JSON="$CHUNKS" node -p 'JSON.parse(process.env.CHUNKS_JSON).length')"
+          {
+            echo "mode=$MODE"
+            echo "chunks=$CHUNKS"
+            echo "count=$COUNT"
+          } >> "$GITHUB_OUTPUT"
+
+  # 週次 / 手動 / 差分が取れない push: 全件を塊ごとに別の job で。
+  # `main` の旧 `mutate` (1 job・actions/cache) は #172 が 6 時間で cancel されたので廃止した。
+  #
+  # incremental は使わない: 鍵 stryker-main が不変で、当たった週は保存されず、
+  # cancel された job は post で保存せず、古い incremental は偽の生存を作る
+  # (stryker.config.json の注記)。塊の job は Stryker の終了コードが非 0 でも
+  # 報告が書けていれば警告にして通す —— `thresholds.break` は塊ごとに掛かるので、
+  # 全体で 1 回の意味 (旧週次と同じ) は merge-full が全体の点数で判定する。
+  # 報告が無い (初回検査の失敗・時間切れ) 塊だけが赤になり、その塊だけ
+  # Re-run failed jobs で回し直せる。
+  mutate-full:
+    name: mutate-full (塊 ${{ strategy.job-index }})
+    needs: scope
+    if: needs.scope.outputs.mode == 'all'
+    runs-on: ubuntu-latest
+    # 塊の重さは行数で均している。240 分に届く塊は割り付けの前提が崩れている印なので、
+    # 6 時間の cancel より先に落とす。最初の dispatch の実測 (塊ごとの所要) で詰め直す。
+    timeout-minutes: 240
+    strategy:
+      # 1 塊が落ちても残りは測り切る。max-parallel は他の workflow の job の枠を残すため。
+      fail-fast: false
+      max-parallel: 16
+      matrix:
+        chunk: ${{ fromJson(needs.scope.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      # --dryRunTimeoutMinutes は config の 20 分では #172 の初回検査 (11 分 44 秒・
+      # 検査は増加中) に余白が薄いので CLI で上書きする。--reporters は 10 秒ごとに
+      # 1 行の心拍 (N/M tested) を足す —— #172 は dry run の後 5 時間 47 分ログが
+      # 0 行で、遅いのか止まったのか分からなかった。
+      - name: Run mutation testing (全件・この塊)
+        env:
+          TARGETS: ${{ matrix.chunk }}
+          CI: ''
+        run: |
+          if [ -z "$TARGETS" ] || [ "$TARGETS" = "none" ]; then
+            echo "塊が空です (scope job の出力を確認してください)。"
+            exit 1
+          fi
+          echo "この塊の対象: $TARGETS"
+          rm -f .stryker-incremental.json reports/mutation/mutation.json
+          RC=0
+          npx stryker run --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only || RC=$?
+          if [ "$RC" -ne 0 ]; then
+            if [ -s reports/mutation/mutation.json ]; then
+              echo "::warning::Stryker が終了コード $RC で終わりました (塊の点数が break 未満のときもこうなります)。報告は書けているので、合否は merge-full の全体の点数で決めます。"
+            else
+              echo "::error::Stryker が報告を書かずに終了コード $RC で終わりました (初回検査の失敗・時間切れなど)。この塊だけ Re-run failed jobs で回し直せます。"
+              exit "$RC"
+            fi
           fi
 
-      - name: Restore Stryker incremental cache
-        if: steps.scope.outputs.mode == 'all'
-        uses: actions/cache@v4
-        with:
-          path: .stryker-incremental.json
-          key: stryker-${{ github.ref_name }}
-          restore-keys: |
-            stryker-main
-
-      - name: Run mutation testing (全件)
-        if: steps.scope.outputs.mode == 'all'
-        run: npm run mutate
-
-      # 差分測定では incremental キャッシュを使わない。古い結果が残ると
-      # survived が誤って残ることが実測されている (stryker.config.json の注記
-      # 参照 — 2026-08 の監査で atlassian.ts が「生存 1」と誤報された)。
-      # 対象が少ないので、毎回まっさらから測っても数分で終わる。
-      - name: Run mutation testing (変わった対象のみ)
-        if: steps.scope.outputs.mode == 'some'
-        env:
-          TARGETS: ${{ steps.scope.outputs.targets }}
-        run: |
-          rm -f .stryker-incremental.json
-          npx stryker run --mutate "$TARGETS"
-
-      - name: Save Stryker JSON report
+      - name: Save Stryker JSON report (この塊)
         uses: actions/upload-artifact@v5
-        if: always() && steps.scope.outputs.mode != 'skip'
+        if: always()
+        with:
+          name: mutation-report-full-chunk-${{ strategy.job-index }}
+          path: reports/mutation/mutation.json
+          retention-days: 14
+          # Re-run failed jobs で同名の artifact が既にあっても落ちない。
+          overwrite: true
+
+  # 塊の報告を 1 つへ併合する。揃っていなければ何も書かず落ちる (欠けた塊を
+  # 全体と名乗らせない)。npm ci は要らない (併合 script も triage も Node の
+  # 組み込みしか読まない)。
+  merge-full:
+    needs: [scope, mutate-full]
+    if: ${{ !cancelled() && needs.scope.outputs.mode == 'all' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: 併合の対照実験
+        run: node scripts/merge-mutation-reports.cjs --self-test
+
+      - name: 塊の報告を集める
+        uses: actions/download-artifact@v5
+        # 0 件でもここでは落とさず、併合 script が「塊の報告が 0 件」を名指しして落とす。
+        continue-on-error: true
+        with:
+          pattern: mutation-report-full-chunk-*
+          path: chunk-reports
+
+      - name: 塊の報告を 1 つへ併合する
+        env:
+          CHUNKS_RESULT: ${{ needs.mutate-full.result }}
+          EXPECTED_CHUNKS: ${{ needs.scope.outputs.count }}
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: |
+          node scripts/merge-mutation-reports.cjs \
+            --dir chunk-reports \
+            --out reports/mutation/mutation.json \
+            --expect-chunks "$EXPECTED_CHUNKS" \
+            --chunks-result "$CHUNKS_RESULT"
+
+      - name: Save merged Stryker JSON report
+        uses: actions/upload-artifact@v5
+        if: always() && hashFiles('reports/mutation/mutation.json') != ''
         with:
           name: mutation-report
           path: reports/mutation/mutation.json
           retention-days: 90
+          overwrite: true
 
       - name: Triage top survivors
-        if: always() && steps.scope.outputs.mode != 'skip'
+        if: always() && hashFiles('reports/mutation/mutation.json') != ''
+        run: node scripts/triage-mutations.cjs --top=30 --include-string-literals
+
+  # push: 変わった対象だけを、塊ごとに別の job で。
+  #
+  # 差分測定では incremental キャッシュを使わない。古い結果が残ると
+  # survived が誤って残ることが実測されている (stryker.config.json の注記
+  # 参照 — 2026-08 の監査で atlassian.ts が「生存 1」と誤報された)。
+  mutate-some:
+    name: mutate-some (塊 ${{ strategy.job-index }})
+    needs: scope
+    if: needs.scope.outputs.mode == 'some'
+    runs-on: ubuntu-latest
+    # 塊の重さは行数で均している (1 塊 4,000 行まで)。240 分に届く塊は割り付けの前提が
+    # 崩れている印なので、6 時間の cancel より先に落とす。
+    timeout-minutes: 240
+    strategy:
+      # 1 塊が落ちても残りの塊は測り切る (どこが落ちたかを 1 度で見るため)。
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(needs.scope.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Run mutation testing (変わった対象のみ・この塊)
+        env:
+          TARGETS: ${{ matrix.chunk }}
+          CI: ''
+        run: |
+          if [ -z "$TARGETS" ] || [ "$TARGETS" = "none" ]; then
+            echo "塊が空です (scope job の出力を確認してください)。"
+            exit 1
+          fi
+          echo "この塊の対象: $TARGETS"
+          rm -f .stryker-incremental.json
+          # --dryRunTimeoutMinutes / --reporters は mutate-full と同じ理由 (初回検査は検査の
+          # 増加とともに config の 20 分へ近づく・10 秒ごとの心拍で止まったのかを見分ける)。
+          npx stryker run --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only
+
+      - name: Save Stryker JSON report
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: mutation-report-chunk-${{ strategy.job-index }}
+          path: reports/mutation/mutation.json
+          retention-days: 90
+
+      - name: Triage top survivors
+        if: always()
         run: npm run mutate:triage -- --top=30 --include-string-literals

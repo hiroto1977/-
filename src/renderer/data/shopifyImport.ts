@@ -9,6 +9,7 @@
  */
 import { parseSalesEntry, shopifyOrderNote, type SalesEntry } from './sales';
 import { localIsoDate } from '../../shared/localDate';
+import { readEntryNumber } from '../../shared/readNumeric';
 
 /** Shopify 注文の最小入力。`total` は "¥12,000" のような表示文字列でも、
  *  数値でも受け付ける。 */
@@ -18,15 +19,30 @@ export interface ShopifyOrderInput {
   readonly orders?: number;
 }
 
-/** 表示用の金額文字列から数値を取り出す。"¥12,000" → 12000 / "1,234円" → 1234。
- *  数値ならそのまま。負・非有限は 0 に丸める。 */
+/**
+ * 表示用の金額文字列から数値を取り出す。"¥12,000" → 12000 / "1,234円" → 1234。
+ * 数値ならそのまま。**読めない・負・非有限は 0** (呼び手の `orderToSalesEntry` が
+ * 0 以下を「記録しない」として断る)。
+ *
+ * ★ **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+ * 数字と `.` 以外を**どこからでも**落としてつないでいたので、この欄 (利用者が打つ
+ * 「金額 (¥12,000)」) に打った文字列が**別の金額**として売上集計に入った (実測):
+ *
+ * ```
+ *   '1億'           1 円        '12万'     12 円
+ *   '-500'          500 円      '1e3'      13 円
+ *   '2024年12月31日'  20,241,231 円
+ *   '１２，０００'    記録しない (全角は読めていなかった)
+ * ```
+ *
+ * 2026-09-06 に `readNumeric` の `NUMBER_SHAPE` が閉じた「飾りを位置を見ずに落とすと
+ * 別の数になる」と同じ形が、この 1 か所に残っていた。
+ */
 export function parseAmount(total: string | number): number {
+  const read = readEntryNumber(total);
   // Math.max(0, x) は `x > 0 ? x : 0` と同値で、x===0 で値が一致する `>`↔`>=` の
   // equivalent mutant を構造的に排除する (負・0 は 0 に丸める)。
-  if (typeof total === 'number') return Number.isFinite(total) ? Math.max(0, total) : 0;
-  const digits = total.replace(/[^0-9.]/g, '');
-  const n = Number(digits);
-  return Number.isFinite(n) ? Math.max(0, n) : 0;
+  return read.kind === 'number' ? Math.max(0, read.value) : 0;
 }
 
 /**

@@ -33,6 +33,7 @@ import {
 } from '../business';
 import { BUSINESS_CATEGORY_IDS } from '../../../shared/businessAdvisor';
 import { ADVISOR_QUESTION_MESSAGES } from '../../../shared/advisorQuestionLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 // --- Category taxonomy ------------------------------------------------
 
@@ -2116,8 +2117,8 @@ describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', 
  * 1 度だけ評価される**。静的 import のままでは、Stryker が変異を有効に
  * する前に評価が済んでいる (覆われた static 変異体)。
  *
- * `stryker.config.json` の注記どおり `vi.resetModules()` + 動的 `import()`
- * で読み直す。本 PR で 6 度目の同じ手当て (`MEMBER_ID_RE` / 橋 /
+ * `stryker.config.json` の注記どおり `rereadModule` (対象だけを読み直す
+ * —— パス 495) で読み直す。本 PR で 6 度目の同じ手当て (`MEMBER_ID_RE` / 橋 /
  * `INTERNAL_TLDS` / `EMPTY_TALENT_STATE` / テンプレート表 / ここ)。
  *
  * ## 何を字面で留めるか
@@ -2132,8 +2133,7 @@ describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', 
  */
 describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせる', () => {
   const fresh = async () => {
-    vi.resetModules();
-    return (await import('../business')).BUSINESS_CATEGORIES;
+    return (await rereadModule<typeof import('../business')>(import.meta.url, '../business')).BUSINESS_CATEGORIES;
   };
 
   it('★ id は 10 件、順序込みで固定', async () => {
@@ -2203,8 +2203,7 @@ describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせ�
    * **静的 import なので変異が届いていなかった**。読み直して当て直す。
    */
   it('★ 見本スナップショットの取得日時', async () => {
-    vi.resetModules();
-    const m = await import('../business');
+    const m = await rereadModule<typeof import('../business')>(import.meta.url, '../business');
     const snap = await m.fetchBusinessOpsSnapshot({ token: '' });
     expect(snap.fetchedAt).toBe('2026-05-14T00:00:00.000Z');
   });

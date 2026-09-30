@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
 
 /*
  * main.ts の IPC 境界。
@@ -59,7 +60,8 @@ vi.mock('electron', () => ({
       handlers.set(name, fn);
     },
   },
-  // 配色の追随 (パス 318) が themeSource を書く。resetModules ごとに作り直されるので 'system' から始まる。
+  // 配色の追随 (パス 318) が themeSource を書く。この mock は検査ファイルの中で 1 つで、main を読み直しても
+  // 作り直されない —— 前の検査が書いた値は、読む検査の側が戻す (下の「形の合わない値」)。
   nativeTheme: { themeSource: 'system' },
   shell: {
     openExternal: async (url: string) => {
@@ -181,10 +183,19 @@ function invoke(name: string, ...args: unknown[]): unknown {
   return fn({}, ...args);
 }
 
+// 依存先は `beforeAll` で 1 度だけ読んでおく —— 検査ごとに読み直すのは `main.ts` の 1 本だけ
+// (`rereadModule`)。`vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで
+// 「その検査が覆った」と変異検査に数えられる (パス 495)。先頭の静的 import にしないのは、
+// `main.ts` が読み込んだ瞬間に `ipcMain.handle(...)` を呼び、この検査の `handlers` が
+// まだ初期化されていない (静的 import は本体より先に評価される) ため。
+beforeAll(async () => {
+  await import('../main');
+});
+
 // **毎テストで読み直す。** `beforeAll` で 1 回だけ読むと、モジュール直下で
 // 走る `ipcMain.handle(...)` は変異体が有効になる**前**に評価済みになり、
 // 検査が実際に殺していても Stryker は「生存」と報告する (static 変異体)。
-// `vi.resetModules()` を挟んで読み直せば、変異体の有効化後に評価される。
+// `rereadModule` で読み直せば、変異体の有効化後に評価される。
 beforeEach(async () => {
   handlers.clear();
   appListeners.clear();
@@ -210,8 +221,7 @@ beforeEach(async () => {
   writePrefsThrows = null;
   writtenPrefs.length = 0;
   allWindows = [];
-  vi.resetModules();
-  await import('../main');
+  await rereadModule<typeof import('../main')>(import.meta.url, '../main');
 });
 
 // ---------------------------------------------------------------------------
@@ -311,7 +321,7 @@ describe('app:setColorScheme — 窓の下地と配色の追随 (パス 318)', (
   it('★ 形の合わない値は何も変えずに断る (scheme も色も)', async () => {
     const w = fakeWindow();
     allWindows = [w];
-    // electron の mock は resetModules をまたいで同じ object なので、前の検査が書いた themeSource を戻す。
+    // electron の mock は main の読み直しをまたいで同じ object なので、前の検査が書いた themeSource を戻す。
     const electron = await import('electron');
     electron.nativeTheme.themeSource = 'system';
     const bad: [unknown, unknown][] = [

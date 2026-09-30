@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_NET_SALARY_PARAMS,
   DEFAULT_SALARY_TAX_PARAMS,
@@ -37,6 +37,7 @@ import {
 } from '../taxCalc';
 import { SME_MEASURE_END } from '../depreciation';
 import { isCalendarDate } from '../isoDate';
+import { rereadModule } from './rereadModule';
 
 describe('calcIncomeTax', () => {
   it('returns 0 for zero or negative taxable income', () => {
@@ -1101,8 +1102,7 @@ describe('台帳から渡す前提 (surtax / 社保概算率 / 住民税の自�
 
 describe('★ module レベルの定数は読み直して測る (import 時に評価済みの const は、変異体の切替の前に読まれた値が残る)', () => {
   it('期限・概要の万円・速算表 7 段・既定の前提・トピック一覧は読み直しても同じ', async () => {
-    vi.resetModules();
-    const fresh = await import('../taxCalc');
+    const fresh = await rereadModule<typeof import('../taxCalc')>(import.meta.url, '../taxCalc');
     expect(fresh.INVESTMENT_PROMOTION_MEASURE_END).toBe('2027-03-31');
     const small = fresh.taxSchemeCatalog().find((s) => s.id === 'sp-small-depreciation');
     expect(small?.summary).toContain('取得価額 40万円未満 (2026-04-01 以後の取得。それ以前は 30万円未満)');

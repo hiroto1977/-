@@ -5,8 +5,9 @@
  * ユーザーが調整して保存するための型と検証。値はローカルの record store に
  * 単一レコードで保存する (最新の 1 件を採用)。本モジュールは IO を持たない。
  */
-import { DEFAULT_HIGHLIGHT_THRESHOLDS, type HighlightThresholds } from './managementHighlights';
+import { DEFAULT_HIGHLIGHT_THRESHOLDS, effectiveThresholds, type HighlightThresholds } from './managementHighlights';
 import { relationIssue } from './recordRelations';
+import { readEntryNumber } from '../../shared/readNumeric';
 
 export const HIGHLIGHT_SETTINGS_COLLECTION = 'highlight-settings';
 
@@ -29,6 +30,22 @@ export const HIGHLIGHT_THRESHOLD_FIELDS: readonly { readonly key: keyof Highligh
   { key: 'budgetShortfallWarnPct', label: '予算未達 警告(達成率%)' },
 ];
 
+/** しきい値の入力欄 (欄ごとの文字列・欄は `HIGHLIGHT_THRESHOLD_FIELDS` の順)。 */
+export type HighlightForm = Record<keyof HighlightThresholds, string>;
+
+/**
+ * 保存値 (または業種プリセット) → 入力欄 (パス 500)。
+ *
+ * **判定が使う値と同じ値を見せる** —— 欠けた欄は判定と同じ `effectiveThresholds` で既定値を補う。
+ * 直す前は画面の `toThresholdForm` が `String(t[key])` で、パス 493c より前の控え (予算未達の欄が無い) を
+ * 開くと欄に「undefined」と出た。判定は既定値 (90) で動いているのに欄はそれを言わず、そのまま保存すると
+ * 「予算未達の警告しきい値は 0〜100 の数値で入力してください」で断られた —— 打っていない値について。
+ */
+export function highlightFormFrom(saved: Partial<HighlightThresholds> | null): HighlightForm {
+  const t = effectiveThresholds(saved);
+  return Object.fromEntries(HIGHLIGHT_THRESHOLD_FIELDS.map((f) => [f.key, String(t[f.key])])) as HighlightForm;
+}
+
 /**
  * 入力を検証して clean な HighlightSettings に整える。未入力/空は既定値で補完。
  * - 連続下落の警告/危険期数は 1 以上の整数、危険 ≥ 警告。
@@ -42,17 +59,34 @@ export function parseHighlightSettings(input: {
   budgetShortfallWarnPct?: unknown;
 }): HighlightSettings {
   const d = DEFAULT_HIGHLIGHT_THRESHOLDS;
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+   * `Number()` で、全角の数字や `'60%'` を断り、`'1e1'` を 10 として黙って保存していた。
+   * 期数は `Math.floor` で**黙って切り捨てて**おり、`'2.9'` は「1 以上の整数で入力して
+   * ください」と言う欄に 2 として入った —— 整数の欄は、整数でなければ断る (パス 493p と同じ判断)。
+   * 空欄は `''` だけが既定へ倒れ、**空白だけ (`'  '`) は `Number` が 0 と読んで断られていた** ——
+   * 空欄の判定も共有の 1 つ (空白だけも空欄) にした。
+   */
   const intMin1 = (v: unknown, fallback: number, label: string): number => {
-    if (v == null || v === '') return fallback;
-    const n = Math.floor(Number(v));
-    if (!Number.isFinite(n) || n < 1) throw new Error(`${label}は 1 以上の整数で入力してください`);
-    return n;
+    const read = readEntryNumber(v);
+    if (read.kind === 'blank') return fallback;
+    const refuse = (): Error => new Error(`${label}は 1 以上の整数で入力してください`);
+    // 読めない入力の判定は**型の絞り込みのため**に要る (下の行で `read.value` を読む)。
+    // 実行時には等価 —— 読めない結果は `value` を持たず `Number.isInteger(undefined)` は
+    // false なので、消しても下の行が同じ文で断る (手で当てて related の 1,489 件が通る —— パス 496)。
+    // 判定を 1 行に分けたのは、pragma が同じ行の本物の判定 (整数か・1 以上か) まで隠さないため。
+    // Stryker disable next-line ConditionalExpression,StringLiteral: 等価 —— 消しても下の行が Number.isInteger(undefined) で同じ文を出す
+    if (read.kind === 'unreadable') throw refuse();
+    if (!Number.isInteger(read.value) || read.value < 1) throw refuse();
+    return read.value;
   };
   const pct = (v: unknown, fallback: number, label: string): number => {
-    if (v == null || v === '') return fallback;
-    const n = Number(v);
-    if (!Number.isFinite(n) || n < 0 || n > 100) throw new Error(`${label}は 0〜100 の数値で入力してください`);
-    return Math.round(n * 10) / 10;
+    const read = readEntryNumber(v);
+    if (read.kind === 'blank') return fallback;
+    if (read.kind === 'unreadable' || read.value < 0 || read.value > 100) {
+      throw new Error(`${label}は 0〜100 の数値で入力してください`);
+    }
+    return Math.round(read.value * 10) / 10;
   };
 
   const declineWarnStreak = intMin1(input.declineWarnStreak, d.declineWarnStreak, '連続下落(警告)期数');

@@ -409,8 +409,11 @@ export function compareVersions(a: string, b: string): number {
  * 言わない」と分けたのと同じ形で、**4 つ目の状態**にあたる。
  */
 export function prereleaseIsBelowFloor(version: string, floor: string): boolean {
-  const { core, prerelease } = splitVersionPrerelease(version);
-  if (prerelease === null) return false;
+  // 「プレリリースでなければ false」の早期 return は置かない (パス 501)。識別子が無ければ
+  // `core` は `version` と同じ順序の位置なので、下の 2 つの比較は同じ値へ `< 0` と `>= 0` を
+  // 当てることになり必ず false になる —— 早期 return を外しても答えが同じで、変異させても
+  // 観測できない等価変異が残るだけの形だった。
+  const { core } = splitVersionPrerelease(version);
   return compareVersions(version, floor) < 0 && compareVersions(core, floor) >= 0;
 }
 
@@ -488,13 +491,24 @@ export function unsafeVersionTexts(cause: UnsafeVersionCause): UnsafeVersionText
   }
 }
 
-/** 台帳のうち、この版に当てはまる項目 (修正版が公表され、その版未満)。版が不明なら空。 */
+/** 修正版が公表されている項目 (`fixedIn` が文字列に狭まっている)。 */
+export type FixedAdvisory = OllamaAdvisory & { readonly fixedIn: string };
+
+/**
+ * 台帳のうち、この版に当てはまる項目 (修正版が公表され、その版未満)。版が不明なら空。
+ *
+ * 返す型は `fixedIn` が文字列に狭まっている (`FixedAdvisory`)。呼び手が `null` の枝を
+ * 書き直さずに済む —— 書くと**到達しない枝**になり、変異させても答えが変わらない
+ * 等価変異が残る (パス 501 · `buildWarnings` がその形だった)。
+ */
 export function applicableAdvisories(
   version: string,
   ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
-): OllamaAdvisory[] {
+): FixedAdvisory[] {
   if (!version || typeof version !== 'string') return [];
-  return ledger.filter((a) => a.fixedIn !== null && compareVersions(version, a.fixedIn) < 0);
+  return ledger.filter(
+    (a): a is FixedAdvisory => a.fixedIn !== null && compareVersions(version, a.fixedIn) < 0,
+  );
 }
 
 /** 修正版が公表されていない項目 (版に関係なく注意として出す)。 */
@@ -615,12 +629,16 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
     // isSafeModelName が非文字列を弾くので typeof の前置きは要らない。
     if (!isSafeModelName(m.name)) continue;
     /*
-     * Number.isFinite は値を変換しないので、文字列も Infinity も false になる。
-     * **負も落とす** (パス 408) —— ファイルの大きさに負は無いので壊れた応答であり、
+     * `Number.isFinite` は値を変換しないので、文字列も Infinity も 0 になる。
+     * **負も 0 へ** (パス 408) —— ファイルの大きさに負は無いので壊れた応答であり、
      * 実測で `size: -1e300` は `-9.5367431640625e+293 MB` を画面に刷っていた。
+     * `raw >= 0 ? raw : 0` と書いていた頃は `raw > 0` と答えが同じ (0 は 0 のまま) 等価変異が
+     * 残ったので `Math.max(0, …)` に寄せた (パス 501)。`nonNeg` (num.ts) と同じ式だが読まない:
+     * この module は整合性チェーンの保護対象で、num.ts を読むと閉包が破れる (num.ts まで
+     * 保護対象へ入れるほどの判断ではない —— 表示のための 1 行)。
      */
     const raw = m.size as number;
-    const size = Number.isFinite(raw) && raw >= 0 ? raw : 0;
+    const size = Number.isFinite(raw) ? Math.max(0, raw) : 0;
     out.push({
       name: m.name,
       family: modelDetail(m.details?.family),
@@ -865,9 +883,7 @@ export function buildWarnings(
     // **番号だけ読めば足りて見える版には、なぜ足りないかを言う** (パス 402)。
     // これを言わないと `0.31.2-rc1` の利用者は「0.31.2 で修正・0.31.2 以上へ」を
     // 読んで、自分は 0.31.2 だと思う —— 紙の上で矛盾した文になる。
-    const looksEnough = applicable.some(
-      (a) => a.fixedIn !== null && prereleaseIsBelowFloor(version, a.fixedIn),
-    );
+    const looksEnough = applicable.some((a) => prereleaseIsBelowFloor(version, a.fixedIn));
     warnings.unshift(
       `検出された Ollama ${version} には既知の脆弱性 ${applicable.length} 件が当てはまります: ` +
         applicable.map((a) => `${a.id} (${a.summary}・${a.fixedIn} で修正)`).join(' / ') +

@@ -1,10 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { buildManagementReport } from '../managementReport';
 import { buildBusinessOverview } from '../overview';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { buildManagementHighlights, type Highlight } from '../managementHighlights';
 import { monthlyTrendSeries, type KpiActual } from '../kpiActuals';
-import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
+import { NO_MANUAL_OVERRIDES, manualOverrideNote, staleDerivedNote } from '../overviewOverrides';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /** 手入力の上書きなし。**明示して渡す** (既定値を置かない — 経緯は `overviewOverrides.ts`)。 */
 const MANUAL = NO_MANUAL_OVERRIDES;
@@ -546,6 +547,172 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     });
   });
 
+  /**
+   * **組み立ての繋ぎ目を、値ごと留める。** (パス 501)
+   *
+   * 節の見出し・空行・1 行ずつの箇条書きは、断片ごとの `toContain` では**繋ぎ目の変異**
+   * (空行が別の文字列になる・片方の断りが無いのに `- null` を積む) を見逃す。
+   * 節の手前から次の節までを**そのまま**比べる。
+   */
+  describe('手入力の上書き — 節の組み立て', () => {
+    const staleDerived = [{ path: 'kpi.operatingMarginPct', label: '営業利益率', because: ['kpi.revenue'] }];
+    const both = { overridden: ['kpi.revenue'], staleDerived };
+    const onlyManual = { overridden: ['kpi.revenue'], staleDerived: [] };
+    const onlyStale = { overridden: [], staleDerived };
+
+    /** 「## 手入力の上書き」の見出しから、次の節「## 総合判定」の手前まで。 */
+    function overrideSection(d: Parameters<typeof buildManagementReport>[4]): string {
+      const md = buildManagementReport(ov(), sc, [], '2026-05-31', d);
+      const from = md.indexOf('## 手入力の上書き');
+      const to = md.indexOf('## 総合判定');
+      expect(from).toBeGreaterThanOrEqual(0);
+      expect(to).toBeGreaterThan(from);
+      return md.slice(from, to);
+    }
+
+    it('★ 両方在れば 見出し・空行・2 つの箇条書き・空行 で組む', () => {
+      const m = manualOverrideNote(both);
+      const s = staleDerivedNote(both);
+      // 文が `null` のとき `- ${null}` と一致してしまわないよう、両方が文であることを先に見る。
+      expect(typeof m).toBe('string');
+      expect(typeof s).toBe('string');
+      expect(overrideSection(both)).toBe(`## 手入力の上書き\n\n- ${m}\n- ⚠ ${s}\n\n`);
+    });
+
+    it('★ 手で置いた欄だけなら「⚠ 自動計算のまま」の行は積まない (null を刷らない)', () => {
+      const m = manualOverrideNote(onlyManual);
+      expect(typeof m).toBe('string');
+      expect(staleDerivedNote(onlyManual)).toBeNull();
+      expect(overrideSection(onlyManual)).toBe(`## 手入力の上書き\n\n- ${m}\n\n`);
+    });
+
+    it('★ 反映していない指標だけでも節は出て、手で置いた欄の行は積まない (null を刷らない)', () => {
+      const s = staleDerivedNote(onlyStale);
+      expect(typeof s).toBe('string');
+      expect(manualOverrideNote(onlyStale)).toBeNull();
+      expect(overrideSection(onlyStale)).toBe(`## 手入力の上書き\n\n- ⚠ ${s}\n\n`);
+    });
+  });
+
+  describe('日付・期の窓が測れない控え — 投げず、その行だけを出さない', () => {
+    it('★ 損益の対象期間: 窓が null / 欄なしでも投げず、売上高の行は出る', () => {
+      // 対照: 窓が読めれば「対象期間」の行は出る (下の不在の検査が、実際にその綴りへ当たる証拠)。
+      expect(buildManagementReport(ov(), sc, [], '2026-05-31', MANUAL)).toContain('- 対象期間: 2026-04〜2026-05・2 か月');
+      for (const kpi of [{ periodWindow: null }, { periodWindow: undefined }]) {
+        const md = buildManagementReport(ov({ kpi }), sc, [], '2026-05-31', MANUAL);
+        expect(md).toContain('- 売上高: ¥1,000,000');
+        expect(md).not.toContain('対象期間');
+      }
+    });
+
+    it('★ 資金繰りの対象期間: 月数が 0 の要約は行を出さない (undefined〜undefined を刷らない)', () => {
+      const zero = buildManagementReport(
+        ov({ accounting: { totalNet: 0, avgMonthlyNet: 0, months: 0, firstMonth: undefined, latestMonth: undefined } }),
+        sc, [], '2026-05-31', MANUAL,
+      );
+      expect(zero).toContain('## 資金繰り (CF)');
+      expect(zero).toContain('- 営業CF合計: ¥0 (月次平均 ¥0)');
+      expect(zero).not.toContain('会計連携の対象期間');
+      expect(zero).not.toContain('undefined');
+      // 対照: 1 か月の要約なら出る (境界。上の不在の検査が空でない証拠)。
+      const one = buildManagementReport(
+        ov({ accounting: { totalNet: 0, avgMonthlyNet: 0, months: 1, firstMonth: '2026-05', latestMonth: '2026-05' } }),
+        sc, [], '2026-05-31', MANUAL,
+      );
+      expect(one).toContain('- 会計連携の対象期間: 2026-05〜2026-05・1 か月分');
+    });
+  });
+
+  describe('貸借対照表の基準日と会計連携の隔たり — 警告の文と向き', () => {
+    const BS_AT = (asOf: string) => ({
+      asOf, currentAssets: 1000, inventory: 0, accountsReceivable: 0,
+      fixedAssets: 1000, currentLiabilities: 500, accountsPayable: 0, fixedLiabilities: 200, netIncome: 100,
+    });
+    const at = (period: string) => ({ month: period, income: 1_000_000, expense: 1_100_000, net: -100_000 });
+
+    it('★ 基準日が実績より先なら「か月先」と正の月数で書く (先の側の警告)', () => {
+      // 実績の最新期 2026-05・基準日 2036-03 → 118 か月先。
+      const md = report({ balanceSheet: BS_AT('2036-03-31') });
+      expect(md).toContain(
+        '- ⚠ 基準日が実績の最新期 (2026-05) より 118 か月先で、溜まり ÷ 流れ の指標は別の期の数字を割っています。',
+      );
+      expect(md).not.toContain('か月古く');
+    });
+
+    it('★ 対照: 先でもしきい値内 (3 か月先) なら警告は出ない', () => {
+      const md = report({ balanceSheet: BS_AT('2026-08-31') });
+      expect(md).toContain('- 基準日: 2026-08 時点の貸借対照表');
+      expect(md).not.toContain('⚠ 基準日が');
+    });
+
+    it('★ 隔たりが測れない (monthsBehind = null) なら、stale / ahead が立っていても警告の文にしない', () => {
+      // 実物の `balanceSheetFreshness` は測れないとき stale / ahead を必ず false にする —— この検査は
+      // 「型はそれを保証しない入力でも `null か月` を紙に刷らない」ことを留める。
+      const base = ov({ fp: { equityRatioPct: 50, currentRatioPct: 200, roaPct: 10, roePct: 20, insolvent: false } });
+      for (const flags of [{ stale: true, ahead: false }, { stale: false, ahead: true }]) {
+        const md = buildManagementReport(
+          {
+            ...base,
+            balanceSheetFreshness: { asOfMonth: '2026-03', latestPeriod: '2026-05', monthsBehind: null, ...flags },
+          },
+          sc, [], '2026-05-31', MANUAL,
+        );
+        expect(md).toContain('- 基準日: 2026-03 時点の貸借対照表');
+        expect(md).not.toContain('⚠ 基準日が');
+        expect(md).not.toContain('null');
+      }
+    });
+
+    it('★ 会計連携が基準日より古ければ、隔たりの月数を添えて警告する', () => {
+      // 会計の最新月 2024-01・基準日 2026-03 → 26 か月古い。
+      const md = report({ accounting: [at('2024-01')], balanceSheet: BS_AT('2026-03-31') });
+      expect(md).toContain(
+        '- ⚠ 会計連携の最新月 (2024-01) と貸借対照表の基準日 (2026-03) が 26 か月隔たっています。資金ランウェイは基準日の現預金を会計の窓の月次CFで割った値です。',
+      );
+    });
+
+    it('★ 会計連携のほうが基準日より新しくても、月数は正で書く (Math.abs)', () => {
+      // 会計の最新月 2029-03・基準日 2026-03 → 会計が 36 か月先。
+      const md = report({ accounting: [at('2029-03')], balanceSheet: BS_AT('2026-03-31') });
+      expect(md).toContain(
+        '- ⚠ 会計連携の最新月 (2029-03) と貸借対照表の基準日 (2026-03) が 36 か月隔たっています。',
+      );
+      expect(md).not.toContain('-36 か月');
+    });
+
+    it('★ 対照: 隔たりがしきい値内 (2 か月) なら会計の警告は出ない', () => {
+      const md = report({ accounting: [at('2026-01')], balanceSheet: BS_AT('2026-03-31') });
+      expect(md).toContain('## 資金繰り (CF)');
+      expect(md).not.toContain('⚠ 会計連携の最新月');
+    });
+
+    it('★ 会計との隔たりが測れない (monthsBehind = null) なら、stale / ahead が立っていても警告の文にしない', () => {
+      const base = ov({ accounting: { totalNet: 100, avgMonthlyNet: 50 } });
+      for (const flags of [{ stale: true, ahead: false }, { stale: false, ahead: true }]) {
+        const md = buildManagementReport(
+          {
+            ...base,
+            accountingRecency: { latestAccountingMonth: '2026-05', cashAsOfMonth: '2026-03', monthsBehind: null, ...flags },
+          },
+          sc, [], '2026-05-31', MANUAL,
+        );
+        expect(md).toContain('## 資金繰り (CF)');
+        expect(md).not.toContain('⚠ 会計連携の最新月');
+        expect(md).not.toContain('0 か月隔たって');
+      }
+    });
+  });
+
+  it('★ 予算と実績で期が重ならない節は 見出し・空行・1 行・空行 で組む', () => {
+    const md = buildManagementReport(
+      ov({ budgetAlignment: { comparedPeriods: [], budgetOnlyPeriods: ['2025-04'], actualOnlyPeriods: ['2026-04', '2026-05'] } }),
+      sc, [], '2026-05-31', MANUAL,
+    );
+    expect(md.slice(md.indexOf('## 予算実績差異 (BVA)'))).toBe(
+      '## 予算実績差異 (BVA)\n\n- 予算と実績で期が重なっていないため算定していません (予算 1 か月・実績 2 か月)\n',
+    );
+  });
+
   it('signs a negative growth row in the monthly-trend table and dashes a null one', () => {
     const rows = [
       { period: '2026-03', revenue: 1_000_000, operatingProfit: 100_000, operatingMarginPct: 10, revenueGrowthPct: null },
@@ -586,8 +753,8 @@ describe('同じ期・事業の重複 (パス 124)', () => {
  *
  * このレポートの前文は自ら「役員会・銀行・税理士への共有に」と書いてある ——
  * 深刻さの印が消えた・金額や比率が `undefined` になったことに気付けない状態で
- * 置いておけない。殺し方は**テスト側で読み直す**こと (`vi.resetModules()` +
- * 動的 `import()`) で、変異体が有効な状態でモジュール本体が評価される。
+ * 置いておけない。殺し方は**テスト側で読み直す**こと (`rereadModule` —— 対象だけを
+ * 読み直す・パス 495) で、変異体が有効な状態でモジュール本体が評価される。
  */
 describe('読み直して測る — 深刻さの印と整形関数', () => {
   const HIGHLIGHTS: readonly Highlight[] = [
@@ -601,8 +768,7 @@ describe('読み直して測る — 深刻さの印と整形関数', () => {
     extra: Partial<Parameters<typeof buildBusinessOverview>[0]> = {},
     highlights: readonly Highlight[] = HIGHLIGHTS,
   ): Promise<string> {
-    vi.resetModules();
-    const m = await import('../managementReport');
+    const m = await rereadModule<typeof import('../managementReport')>(import.meta.url, '../managementReport');
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [], ...extra });
     const sc = buildManagementScorecard({
       operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,

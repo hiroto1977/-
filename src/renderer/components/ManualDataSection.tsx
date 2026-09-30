@@ -17,6 +17,7 @@
 import { useState } from 'react';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { readRecordsNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import { displayField } from '../../shared/apiResponse';
 import {
@@ -34,9 +35,11 @@ import {
   MANUAL_METRICS_COLLECTION,
   MANUAL_OVERRIDES_COLLECTION,
   belongsToScope,
+  effectiveOverrideIds,
   inertOverrideNote,
   inertOverrides,
   overrideCause,
+  overrideSavePlan,
   parseManualMetric,
   sectionsFor,
   hasCatalog,
@@ -153,16 +156,42 @@ export function ManualDataSection({ scope }: { scope: string }) {
             onRemove={(id) => metrics.remove(id)}
           />
 
+          {/*
+            **保存と「自動に戻す」は保管層を読み直して決める** (2026-09-27 · パス 497)。
+            写し (`myOverrides`) で「この欄の置き換えは既に在るか」を尋ねていた頃は、別のタブが
+            置いた行を知らずに 2 件目を足し、**保存した直後の札が古いほうの値**を出した
+            (実測・`overrideSavePlan` の docblock)。欄ごとの行は `effectiveOverrideIds` が数え、
+            「自動に戻す」はその欄の行を**全部**消す —— 1 件だけ消すと残りが効いて戻らない。
+          */}
           {hasCatalog(scope) && (
             <Overrides
               scope={scope}
               rows={appliedOverrides}
               onSave={async (path, value) => {
-                const existing = myOverrides.find((r) => r.data.path === path);
-                if (existing !== undefined) await overrides.edit(existing.id, { value });
-                else await overrides.add({ scope, path, value } as ManualOverrideEntry);
+                const stored = await readRecordsNow<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+                if (stored === null) return unreadableForJudgementNote('置き換えの一覧', 'この欄の置き換えが既に在るか');
+                const plan = overrideSavePlan(scope, path, stored);
+                if (plan.kind === 'add') {
+                  await overrides.add({ scope, path, value } as ManualOverrideEntry);
+                  return null;
+                }
+                // 読み直してから書くまでの間に、その行が別のタブで消された (「自動に戻す」など) ときは
+                // `edit` が false を返す (パス 498)。利用者が今打った値をこの欄に置くのが保存の意味なので、
+                // 足し直す —— 作り直すのは消された古い値ではなく、今保存した値である。
+                if (!(await overrides.edit(plan.id, { value }))) {
+                  await overrides.add({ scope, path, value } as ManualOverrideEntry);
+                }
+                for (const id of plan.removeIds) await overrides.remove(id);
+                return null;
               }}
-              onClear={(id) => overrides.remove(id)}
+              onClear={async (path) => {
+                const stored = await readRecordsNow<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+                if (stored === null) return unreadableForJudgementNote('置き換えの一覧', 'この欄の置き換えがいくつ在るか');
+                for (const id of effectiveOverrideIds(scope, path, stored)) await overrides.remove(id);
+                // 1 件も無かった (別のタブで既に戻された) ときも、写しを読み直して札を消す。
+                await overrides.reload();
+                return null;
+              }}
             />
           )}
 
@@ -455,8 +484,10 @@ function Overrides({
 }: {
   scope: string;
   rows: readonly { id: string; data: ManualOverrideEntry }[];
-  onSave: (path: string, value: number) => Promise<void> | void;
-  onClear: (id: string) => Promise<void> | void;
+  /** 保存する。断ったら理由の文を返す (投げない)。 */
+  onSave: (path: string, value: number) => Promise<string | null>;
+  /** その欄の置き換えを消して自動の値へ戻す。断ったら理由の文を返す。 */
+  onClear: (path: string) => Promise<string | null>;
 }) {
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -470,8 +501,17 @@ function Overrides({
       return;
     }
     setErrors((e) => ({ ...e, [path]: '' }));
-    await onSave(path, parsed.value);
+    const refused = await onSave(path, parsed.value);
+    if (refused !== null) {
+      setErrors((e) => ({ ...e, [path]: refused }));
+      return;
+    }
     setDraft((d) => ({ ...d, [path]: '' }));
+  }
+
+  async function clear(path: string) {
+    const refused = await onClear(path);
+    setErrors((e) => ({ ...e, [path]: refused ?? '' }));
   }
 
   return (
@@ -527,7 +567,7 @@ function Overrides({
                   保存
                 </button>
                 {hit !== undefined && (
-                  <button type="button" onClick={() => fireReported(onClear(hit.id))} style={{ fontSize: 12 }}>
+                  <button type="button" onClick={() => fireReported(submit.run(() => clear(f.path)))} disabled={submit.busy} style={{ fontSize: 12 }}>
                     自動に戻す
                   </button>
                 )}

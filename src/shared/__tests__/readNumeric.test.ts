@@ -6,25 +6,24 @@
  * モジュールは変異体が有効になる前に読み込まれてしまう (SESSION_HANDOFF の罠・
  * `stryker.config.json` の `_commentIgnoreStatic`)。実測 (2026-09-06) でも
  * `NUMBER_SHAPE` の変異体 9 件が生存していた。ここは毎テストで
- * `vi.resetModules()` + 動的 import して**表そのもの**を測る。
+ * `rereadModule` (対象だけを読み直す —— パス 495) して**表そのもの**を測る。
  *
  * 何を守っているかは `readNumeric.ts` の注記のとおり —— 飾り (通貨記号・単位・
  * 桁区切り) を落とす**位置**を見ないと、数字の間の飾りで桁がつながって
  * **別の数**になる (`100m2` → 1002)。下の表はその 1 文字ずつが効いていることを
  * 見るためにある。
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { rereadModule } from './rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../readNumeric';
 
 type Mod = typeof import('../readNumeric');
 
 async function fresh(): Promise<Mod> {
-  vi.resetModules();
-  return import('../readNumeric');
+  return rereadModule<typeof import('../readNumeric')>(import.meta.url, '../readNumeric');
 }
-
-beforeEach(() => {
-  vi.resetModules();
-});
 
 /** 読める形 (飾りが正しい位置にある)。 */
 const READS: [string, number][] = [
@@ -128,5 +127,54 @@ describe('hasUnitWord / hasInteriorNoise の切り分け', () => {
     const m = await fresh();
     expect(m.readNumeric(' -5 ')).toBe(-5);
     expect(m.hasInteriorNoise(' -5 ')).toBe(false);
+  });
+});
+
+/**
+ * **保存の口 `readEntryNumber` の 3 通り** (2026-09-27 · パス 496)。
+ *
+ * 書き手 (`parse*`) は空欄と「読めない」と数を分けて受け取る。読み直したモジュールに当てる
+ * —— 空欄と「読めない」の答えはモジュール直下の凍結値なので、静的 import では
+ * その値の変異体に届かない (上の `NUMBER_SHAPE` と同じ理由・パス 495 の規則)。
+ */
+describe('readEntryNumber — 空欄 / 読めない / 数 (読み直した表に当てる)', () => {
+  it('★ 空欄: 欄が無い・空文字・空白だけ (全角の空白・改行も)', async () => {
+    const m = await fresh();
+    for (const v of [null, undefined, '', '   ', '　', '\t\n']) {
+      expect(m.readEntryNumber(v), JSON.stringify(v) ?? 'undefined').toEqual({ kind: 'blank' });
+    }
+  });
+
+  it('★ 読めない: 画面が読めない文字列・非有限の数・数でも文字列でもない値', async () => {
+    const m = await fresh();
+    for (const v of ['abc', '1e3', '0x10', '.5', '1万', '1,23', Number.NaN, Infinity, -Infinity, true, false, {}, [], [5]]) {
+      expect(m.readEntryNumber(v), String(v)).toEqual({ kind: 'unreadable' });
+    }
+  });
+
+  it('★ 数: 文字列は画面と同じ読み方、数はそのまま (-0 は 0 に)', async () => {
+    const m = await fresh();
+    expect(m.readEntryNumber('1,000')).toEqual({ kind: 'number', value: 1000 });
+    expect(m.readEntryNumber('１０００')).toEqual({ kind: 'number', value: 1000 });
+    expect(m.readEntryNumber('¥1,000')).toEqual({ kind: 'number', value: 1000 });
+    expect(m.readEntryNumber(' -5 ')).toEqual({ kind: 'number', value: -5 });
+    expect(m.readEntryNumber(2.5)).toEqual({ kind: 'number', value: 2.5 });
+    expect(m.readEntryNumber(0)).toEqual({ kind: 'number', value: 0 });
+    // -0 は 0 として持つ (画面に「-0」を出さない・`Object.is` で比べる)。
+    const neg = m.readEntryNumber(-0);
+    expect(neg.kind === 'number' && Object.is(neg.value, 0), '数の -0 が 0 になっていない').toBe(true);
+    const negText = m.readEntryNumber('-0');
+    expect(negText.kind === 'number' && Object.is(negText.value, 0), '文字列の -0 が 0 になっていない').toBe(true);
+  });
+
+  it('★ 読めるかどうかは readNumeric と同じ答え (文字列の標本すべて)', async () => {
+    const m = await fresh();
+    for (const [raw] of READS) {
+      expect(m.readEntryNumber(raw), raw).toEqual({ kind: 'number', value: m.readNumeric(raw)! + 0 });
+    }
+    for (const [raw] of REFUSES) {
+      // 空欄の 2 つ ('' と空白だけ) は「読めない」ではなく空欄。
+      expect(m.readEntryNumber(raw).kind, raw).toBe(raw.trim() === '' ? 'blank' : 'unreadable');
+    }
   });
 });

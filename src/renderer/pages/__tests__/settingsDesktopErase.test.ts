@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import type { DesktopEraseReport } from '../../../shared/eraseReport';
+import { VaultControls } from '../SettingsPage';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -68,7 +69,6 @@ async function settle(): Promise<void> {
 }
 
 async function renderControls(): Promise<void> {
-  const { VaultControls } = await import('../SettingsPage');
   await act(async () => {
     root!.render(createElement(VaultControls));
   });

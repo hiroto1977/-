@@ -14,6 +14,10 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../shared/advisorQuestionLimits';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
 
 /** 鍵ごとの保管庫 —— これが無いと「どちらのスロットを読んだか」を測れない。 */
 let slots: Record<string, string> = {};
@@ -52,9 +56,8 @@ beforeEach(() => {
 });
 
 async function invoke(service: string, payload: unknown): Promise<{ ok: boolean; message?: string }> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   const hub = (window as unknown as {
     serviceHub: { invoke: (s: string, a: string, p: unknown) => Promise<{ ok: boolean; message?: string }> };
   }).serviceHub;

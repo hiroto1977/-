@@ -10,6 +10,10 @@
  * jsdom は要らない (据え付けは `typeof window !== 'undefined'` で囲まれている)。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
 
 let storedToken: string | null = 'sk-ant-test-key';
 
@@ -33,9 +37,8 @@ vi.mock('../network/proxy', () => ({
 
 type Shim = Record<string, unknown>;
 async function loadShim(): Promise<Shim> {
-  vi.resetModules();
   delete (globalThis as { serviceHub?: unknown }).serviceHub;
-  const mod = (await import('../web-shim')) as unknown as Record<string, unknown>;
+  const mod = (await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim')) as unknown as Record<string, unknown>;
   return mod as Shim;
 }
 

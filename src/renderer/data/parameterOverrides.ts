@@ -18,7 +18,8 @@ import {
 } from '../../shared/parameters';
 import { reporting, useCollection } from './useCollection';
 import { latestRecord } from './latestRecord';
-import { getRecordStore } from './store';
+import { getRecordStore, latestTokenOf, type StoredRecord } from './store';
+import { busyLatestNote } from './readCollectionNow';
 
 export const PARAMETER_OVERRIDES_COLLECTION = 'parameter-overrides';
 
@@ -47,6 +48,28 @@ export interface UseParameters {
 
 const noop = (): void => {};
 
+/**
+ * 上書きの 1 レコードを書き換える試みの回数 (パス 498 / 500)。1 度目で相手が消えていても・書き換えられて
+ * いても、2 度目は読み直した最新に重ねる。それでも挟まれれば、最後に読んだ最新がまだ最新のときだけ
+ * 新しい行として書き、それも挟まれれば断る。
+ */
+export const MAX_WRITE_ATTEMPTS = 2;
+
+/** 上書きの保存が、別の画面の保存と重なり続けて書けなかったときの断り (パス 500)。 */
+export const PARAMETER_BUSY_MESSAGE = busyLatestNote('数値パラメータ');
+
+/**
+ * 重なり続けて書けなかった (パス 500)。**端末の保存の失敗ではない** —— 保管層は答えており、書かなかったのは
+ * こちらの判断である。だから画面上端の「この端末に保存できませんでした」(再読込とバックアップを勧める) へは
+ * 流さず、押した所 (設定の行) が自分の欄のそばで言う。
+ */
+export class ParameterBusyError extends Error {
+  constructor() {
+    super(PARAMETER_BUSY_MESSAGE);
+    this.name = 'ParameterBusyError';
+  }
+}
+
 export function useParameters(): UseParameters {
   const col = useCollection<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION);
   const overrides = useMemo(() => overridesFromRecords(col.records), [col.records]);
@@ -66,18 +89,62 @@ export function useParameters(): UseParameters {
   const mutate = (change: (current: Record<string, number>) => Record<string, number>): Promise<void> => {
     const run = async () => {
       const store = getRecordStore();
-      // 読みも報せる (パス 493o) —— ここだけが保管層を直に読むので、`useCollection` の
-      // 入口を通らない。通さないと、読めなかった保存は画面に 1 文も出ずに消えた
-      // (設定画面の行は失敗を受け止めて黙るので、報せが無いと何も起きないように見える)。
-      const latest = latestRecord(
-        await reporting('save', PARAMETER_OVERRIDES_COLLECTION, () =>
-          store.list<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION),
-        ),
-      );
-      const current = sanitizeParameterOverrides(latest?.data.values) as Record<string, number>;
-      const next = change({ ...current });
-      if (latest) await col.edit(latest.id, { values: next });
-      else await col.add({ values: next });
+      /**
+       * **読んでから書くまでの間に、相手の行が消えることが在る** (2026-09-27 · パス 498)。
+       *
+       * 別のタブのバックアップの置換復元・「すべてのデータを削除」・点検パネルの削除がそれで、
+       * `col.edit` はそのとき何も書かずに `false` を返す。直す前はその答えを捨てており、
+       * **利用者が保存した値は保管層のどこにも入らないまま**「保存した」形になった
+       * (行の印も上書きの件数も変わらず、押せていないのと見分けが付かない)。
+       *
+       * 読み直して重ね直す —— 置換復元が入れた新しい行が在ればそれに (復元した他の値を残す)、
+       * 無ければ新しい行として。**回数に上限を置くのは、相手が消え続けても回り続けないため**で、
+       * 使い切ったら新しい行として書く (最新 1 件を読むので、利用者が今保存した値が効く)。
+       */
+      /**
+       * **読み直してから書くまでの間に、別の画面が同じ行を書き換えることも在る** (2026-09-28 · パス 500)。
+       *
+       * パス 498 は「消えた」を読み直しで閉じたが、書き込みは素の `edit` のままだったので、読み直しの
+       * **後**・書く**前**に別のタブが同じ行へ別の数値パラメータを保存すると、ここはそれを知らずに
+       * 読んだ時の値で行を丸ごと書き直し、**別のタブの保存を黙って消した** (lost update)。今は
+       * 「最新がまだ読んだ行のその版なら置き換える」(`replaceLatest`) で書き、違えば読み直して
+       * 重ね直す。行がまだ無いときも「まだ無いままなら足す」(`addIfLatest`) —— 2 つのタブが同時に
+       * 最初の 1 件を足すと、後の 1 件だけが最新になり先の保存が効かなくなる。
+       *
+       * ★ **比べるのは「その行の中身」ではなく「最新がまだその行か」**。最初の直しは「読んだ行が
+       * 読んだ時の中身のままなら書く」(`editIfUnchanged`) で、読んだ後・書く前に**別の行が新しい最新として
+       * 入る**と、書き換えは古い行に成功した —— 実測 (2026-09-28 · 読んだ後・書く前に新しい行を差し込む門):
+       * `set(日数, 300)` は断りなく済み、300 は古い行にだけ入り、**有効値は 250 のまま**だった。
+       * 採用の census (`latestAdoptionCensus.test.ts`) が、採用する collection へ最新を比べない口で書く所として
+       * ここを名指しして見つかった。
+       */
+      let latest: StoredRecord<ParameterOverrideRecord> | null = null;
+      let next: Record<string, number> = {};
+      for (let attempt = 0; attempt < MAX_WRITE_ATTEMPTS; attempt += 1) {
+        // 読みも報せる (パス 493o) —— ここだけが保管層を直に読むので、`useCollection` の
+        // 入口を通らない。通さないと、読めなかった保存は画面に 1 文も出ずに消えた
+        // (設定画面の行は失敗を受け止めて黙るので、報せが無いと何も起きないように見える)。
+        latest = latestRecord(
+          await reporting('save', PARAMETER_OVERRIDES_COLLECTION, () =>
+            store.list<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION),
+          ),
+        );
+        next = change({ ...(sanitizeParameterOverrides(latest?.data.values) as Record<string, number>) });
+        if (latest === null) {
+          // まだ 1 件も無い —— 無いままなら足す。挟まれていれば (別の画面が先に足した) 読み直して重ねる。
+          if ((await col.addIfLatest(null, { values: next })).status === 'saved') return;
+          continue;
+        }
+        const r = await col.replaceLatest({ id: latest.id, updatedAt: latest.updatedAt }, { values: next });
+        if (r.status === 'saved') return;
+        // `changed` —— 最新が読んだ行のその版ではなくなった (別の画面が書き換えた・新しい行が入った・
+        // 置換復元などで消えた)。読み直して重ね直す。
+      }
+      // 使い切った —— 最後に読んだ最新がまだ最新なら新しい行として書く (パス 498: 相手が消え続けても、
+      // 利用者が今保存した値は失わない。最新 1 件を読むので、この行が効く)。それも挟まれれば断る
+      // (回り続けない —— 書かずに「書けなかった」と言う)。
+      const last = await col.addIfLatest(latestTokenOf(latest), { values: next });
+      if (last.status === 'changed') throw new ParameterBusyError();
     };
     const p = queue.current.then(run, run);
     queue.current = p.then(noop, noop);

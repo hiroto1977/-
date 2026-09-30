@@ -31,6 +31,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   KPI_SUM_FIELDS,
+  NO_BEP_REASON,
+  ZERO_REVENUE_BEP_REASON,
+  duplicateActualsOverviewNote,
+  growthBlankSheetNote,
   kpiNumbersReadable,
   readableKpiRows,
   summarizeFundamentals,
@@ -303,5 +307,40 @@ describe('相手に渡る紙が、除いたことを述べる (パス 443)', () 
     expect(rowValue(s1, '売上高')).toBe('2,000');
     expect(s1.caption ?? '').not.toContain('金額の欄');
     expect(s1.caption ?? '').not.toContain('期 (YYYY-MM)');
+  });
+});
+
+/**
+ * **値ごと留める** (2026-09-30 · パス 501) —— 2 文の繋ぎ目 (空白 1 つ)・理由の定数の綴り・
+ * 前年同月比だけが算定できない形・重複の断りの空。どれも変異検査が「値を見ない検査」と教えた。
+ */
+describe('KPI の断りの文 — 値ごと留める (パス 501)', () => {
+  it('★ 期と金額の 2 文は空白 1 つで繋ぐ (それぞれ単独の文と同じ)', () => {
+    const sheet = (unreadablePeriods: number, unreadableNumbers: number) =>
+      unreadableKpiRowsSheetNote({ unreadablePeriods, unreadableNumbers });
+    expect(sheet(2, 3)).toBe(`${sheet(2, 0)} ${sheet(0, 3)}`);
+    const overview = (unreadablePeriods: number, unreadableNumbers: number) =>
+      unreadableKpiRowsOverviewNote({ unreadablePeriods, unreadableNumbers });
+    expect(overview(2, 3)).toBe(`${overview(2, 0)} ${overview(0, 3)}`);
+  });
+
+  it('★ 損益分岐点が無い理由と売上 0 の理由は、この綴りである', () => {
+    expect(NO_BEP_REASON).toBe('限界利益が 0 以下です。どれだけ売っても固定費を回収できません。');
+    expect(ZERO_REVENUE_BEP_REASON).toBe('対象期間の売上高が 0 のため、損益分岐点・限界利益率・安全余裕率は算定していません。');
+  });
+
+  it('★ 前年同月の実績が 0 で前年同月比だけ算定できないときも、その 1 文を述べる', () => {
+    const base = { revenueGrowthPct: 5, revenueCagrPct: 5, revenueTrend: 'up' as const };
+    const yoyNoPct = { period: '2026-04', priorPeriod: '2025-04', revenue: 100, priorRevenue: 0, revenueYoYPct: null };
+    expect(growthBlankSheetNote({ ...base, yoy: yoyNoPct })).toBe('前年同月の実績が無いため、前年同月比は算定していません。');
+    // 針が的に当たる標本 —— 前年同月比が出ていれば何も言わない。
+    expect(growthBlankSheetNote({ ...base, yoy: { ...yoyNoPct, priorRevenue: 80, revenueYoYPct: 25 } })).toBeNull();
+  });
+
+  it('★ 経営サマリーの重複の断りは、重複が無ければ null・在れば組数と逃げ口を言う', () => {
+    expect(duplicateActualsOverviewNote([])).toBeNull();
+    const note = duplicateActualsOverviewNote([{ period: '2026-04', unit: '全社', count: 2 }]);
+    expect(note).toContain('1 組重複');
+    expect(note).toContain('「KPI / BEP」の画面');
   });
 });

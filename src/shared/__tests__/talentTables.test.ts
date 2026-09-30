@@ -1,11 +1,15 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { rereadModule } from './rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../talent';
 
 /**
  * **定義表を字面で留める。**
  *
  * `ORGAN_DISEASES` / `LEADER_DISQUALIFIERS` / `SKILL_STEPS` は
  * **モジュール直下の定数**なので、静的 import のまま比べても変異体が届かない
- * (覆われた static 変異体)。`vi.resetModules()` + 動的 `import()` で毎回
+ * (覆われた static 変異体)。`rereadModule` (対象だけを読み直す —— パス 495) で毎回
  * 読み直すと、表を書き換える変異体が比較で落ちる —— この手は
  * `oauth.ts` の `OAUTH_CONFIGS` で 70.05% → 92.13% を出した実績があり、
  * `stryker.config.json` の注記に手順が書いてある。
@@ -19,8 +23,7 @@ import { describe, expect, it, vi } from 'vitest';
  */
 
 const fresh = async () => {
-  vi.resetModules();
-  return import('../talent');
+  return rereadModule<typeof import('../talent')>(import.meta.url, '../talent');
 };
 
 describe('定義表 — 文言そのものを留める', () => {

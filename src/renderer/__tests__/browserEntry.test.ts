@@ -42,10 +42,18 @@
  * ## 実行時の注意
  *
  * `main.tsx` は**読み込んだ瞬間に走る**副作用モジュールなので、筋ごとに
- * `vi.resetModules()` してから動的 `import()` する。`frameGuard` と
+ * `rereadModule` で**入口の 1 本だけ**を読み直す (依存先は先頭で読み込んでおく ——
+ * `vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで「この検査が覆った」と
+ * 変異検査に数えられる。パス 495・`shared/__tests__/rereadModule.ts`)。`frameGuard` と
  * `react-dom/client` は差し替えて「何を呼んだか」を観測する。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { resolve } from 'node:path';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 入口 (`main.tsx`) は読み込んだ瞬間に走るので先頭では読まない。差し替えていない依存先
+// (`theme` と、それが読む `data/localWrite`) だけを先頭で読んでおく (パス 495)。
+import '../theme';
 
 /** 筋ごとに切り替える `isFramed` の答え。`vi.mock` は巻き上げられるので外に置く。 */
 let framed = false;
@@ -94,7 +102,6 @@ function reset(): void {
 
 beforeEach(() => {
   reset();
-  vi.resetModules();
   document.body.innerHTML = '<div id="root"></div>';
 });
 
@@ -105,7 +112,7 @@ afterEach(() => {
 describe('ブラウザ版の入口 — 既定の CI が 1 度も実行しない 18 行 (パス 230)', () => {
   it('★ 枠の外なら #root へ React を載せる', async () => {
     framed = false;
-    await import('../main');
+    await rereadModule<typeof import('../main')>(import.meta.url, '../main');
     // **入口が実際に判定を呼んでいる** (呼ばずに素通りしていないこと)。
     expect(isFramedCalls.length, 'isFramed が呼ばれていない').toBe(1);
     expect(createRootCalls, 'React が #root に載っていない').toEqual([{ id: 'root' }]);
@@ -116,7 +123,7 @@ describe('ブラウザ版の入口 — 既定の CI が 1 度も実行しない 
 
   it('★ 枠の中なら断りを描き、React を起動しない (順序がここでしか測れない)', async () => {
     framed = true;
-    await import('../main');
+    await rereadModule<typeof import('../main')>(import.meta.url, '../main');
     expect(isFramedCalls.length, 'isFramed が呼ばれていない').toBe(1);
     expect(refusalCalls.length, '断りを描いていない').toBe(1);
     expect(refusalCalls[0]?.href, '断りに今の URL を渡していない').toBe(window.location.href);
@@ -133,8 +140,6 @@ describe('ブラウザ版の入口 — 既定の CI が 1 度も実行しない 
     // **`readOriginalSource` を通す。** 生の `readFileSync` だと、計器が書き換えた
     // 写しを読んで「綴りが在る」と言いうる = 空の検査になる
     // (`originalSourcePolicy.test.ts` が生の読みを落とす。実際にこれで 1 度落ちた)。
-    const { readOriginalSource } = await import('../../shared/__tests__/originalSource');
-    const { resolve } = await import('node:path');
     const html = readOriginalSource(resolve('src/renderer/index.html'));
     expect(html, 'index.html に id="root" が無い —— 入口の `!` が起動時に投げる').toContain('id="root"');
   });

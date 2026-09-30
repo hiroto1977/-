@@ -589,6 +589,7 @@ async function deriveKeyFromMnemonic(
   // ここが最初に触る所になりうる —— 守り漏れが 1 つ在ると、その経路だけが
   // 素の TypeError を見せる (この形を何度も直してきた)。
   const missing = webCryptoUnavailableReason();
+  // Stryker disable next-line ConditionalExpression: 到達しない防御 —— 3 つの呼び手のどれでも、ここより先に別の所が断つ (initialize は generateMasterKey が先・recoverWithMnemonic は decodeMnemonic の digest が先・unlock の移行は deriveKey が先)。WebCrypto が在るとき missing は null なので、この判定を外しても外から見える答えは同じ。webCryptoGuardCensus が「鍵を作る関数は守る」を綴りで要求するので置いてある
   if (missing !== null) throw new Error(missing);
 
   const normalized = normalizeMnemonic(mnemonic);
@@ -645,6 +646,7 @@ async function importNonExtractable(raw: Uint8Array): Promise<CryptoKey> {
    * (`__tests__/webCryptoGuardCensus.test.ts`)。
    */
   const missing = webCryptoUnavailableReason();
+  // Stryker disable next-line ConditionalExpression: 到達しない防御 —— 上の注記のとおり deriveKey が先に断つので、この行に届く経路は無い (WebCrypto が在るとき missing は null で、外しても答えは同じ)。webCryptoGuardCensus が「鍵を作る関数は守る」を綴りで要求するので置いてある
   if (missing !== null) throw new Error(missing);
 
   return crypto.subtle.importKey(

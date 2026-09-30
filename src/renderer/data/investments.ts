@@ -15,7 +15,8 @@
  * **概算であり投資助言ではありません。**
  */
 
-import { readNumeric } from '../../shared/readNumeric';
+import { readEntryNumber, readNumeric } from '../../shared/readNumeric';
+import { isFiniteNumber, nonNeg } from '../../shared/num';
 import { refusingSpecs, type NumSpec } from './inputGuards';
 import { moreThanChars } from '../../shared/inputCeiling';
 import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT } from '../../shared/mutualFundsMetrics';
@@ -100,8 +101,8 @@ export const PROPERTY_NUMERIC_FIELDS: readonly { readonly key: string; readonly 
  */
 export function unreadablePropertyField(key: string, fields: readonly string[] | undefined): boolean {
   if (fields === undefined) return false;
-  const label = PROPERTY_NUMERIC_FIELDS.find((f) => f.key === key)?.label;
-  return label !== undefined && fields.includes(label);
+  const field = PROPERTY_NUMERIC_FIELDS.find((f) => f.key === key);
+  return field !== undefined && fields.includes(field.label);
 }
 
 /**
@@ -115,15 +116,8 @@ export function unreadablePropertyField(key: string, fields: readonly string[] |
  */
 export function normalizeProperty(raw: unknown): PropertyEntry {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
-  /**
-   * 有限の数か。**判定を 1 か所に置く** —— 倒す側と名簿を作る側が同じ述語を見る。
-   *
-   * `typeof v === 'number'` は実行時には冗長 (`Number.isFinite` は数値以外を型変換
-   * せずに false にする) が、`v is number` の絞り込みを型検査に伝えるために残す
-   * (`normalizeBalanceSheet` と同じ判断 · パス 444)。
-   */
-  // Stryker disable next-line ConditionalExpression: Number.isFinite が数値以外を false にするので実行時は等価 (型の絞り込みのために残す)
-  const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  // 有限の数か。**判定を 1 か所に置く** —— 倒す側と名簿を作る側が同じ述語
+  // (`shared/num.ts` の `isFiniteNumber`) を見る。
   const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
   return {
     name: typeof r.name === 'string' ? r.name : '',
@@ -219,6 +213,26 @@ function numberFrom(v: unknown): number {
  */
 function readTypedAmount(text: string): number {
   return text.trim() === '' ? 0 : (readNumeric(text) ?? Number.NaN);
+}
+
+/**
+ * 欄が空欄か —— **判定は保存の口と同じ 1 つ** (`readEntryNumber`: 空文字・空白だけ・
+ * 全角の空白・欄が無い)。
+ *
+ * 2026-09-27 (パス 496) まで、銘柄フォームは `=== ''` だけを空欄とみなしていた。
+ * 全角の空白は日本語入力で空欄に打ちやすく、画面では空に見えるのに (実測):
+ *
+ * ```
+ *   欄              ''                    '\u3000' (全角の空白 1 つ)
+ *   評価額          自動計算 (口数 × 基準価額)   「評価額は 1 円以上 … (空欄にすると自動計算)」で断る
+ *   取得額          null (未入力)            **0 円** —— 評価額がまるごと含み益に見える
+ *   年初来リターン   null (未入力)            「−100〜1000 の数値で入力してください」で断る
+ * ```
+ *
+ * 評価額の断りは「空欄にすると自動計算」と言う —— **空に見える欄を空にしろと言っていた**。
+ */
+function isBlankEntry(v: unknown): boolean {
+  return readEntryNumber(v).kind === 'blank';
 }
 
 /**
@@ -676,15 +690,13 @@ export function fundValuation(units: number, navPerUnit: number): number {
 export function normalizeHolding(raw: unknown): HoldingEntry {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const str = (v: unknown): string => (typeof v === 'string' ? v : '');
-  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
   // 取得額と年初来リターンは「無い / 読めない = 未入力 (null)」。0 や評価額に倒すと、測った値と見分けが付かない (パス 122 / 123)。
   const numOrNull = (v: unknown): number | null => (Number.isFinite(v) ? (v as number) : null);
   const units = num(r.units);
   const navPerUnit = num(r.navPerUnit);
   // 評価額が無い控えは口数 × 基準価額 から導く (auto と同じ式)。
-  const valuation = typeof r.valuation === 'number' && Number.isFinite(r.valuation)
-    ? r.valuation
-    : fundValuation(units, navPerUnit);
+  const valuation = isFiniteNumber(r.valuation) ? r.valuation : fundValuation(units, navPerUnit);
   return {
     code: str(r.code),
     name: str(r.name),
@@ -721,7 +733,8 @@ export function parseHoldingEntry(input: {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   if (name.length === 0 || moreThanChars(name, MAX_FUND_NAME_CHARS)) throw new Error(`ファンド名は 1〜${MAX_FUND_NAME_CHARS} 文字で入力してください`);
 
-  const manual = input.valuation !== undefined && input.valuation !== '';
+  // 空欄の判定は保存の口と同じ 1 つ (`isBlankEntry` —— 空白だけ・全角の空白も空欄)。
+  const manual = !isBlankEntry(input.valuation);
 
   let units: number;
   let navPerUnit: number;
@@ -733,15 +746,9 @@ export function parseHoldingEntry(input: {
     // Stryker disable next-line ConditionalExpression: === null を false 固定にしても
     // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
     if (v === null || v <= 0) throw new Error('評価額は 1 円以上の数値で入力してください (空欄にすると自動計算)');
-    // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
-    // 意図を明示するために式は残す。
-    const u = input.units === undefined || input.units === '' ? 0 : toAmount(input.units);
+    const u = isBlankEntry(input.units) ? 0 : toAmount(input.units);
     if (u === null) throw new Error('口数は 0 以上の数値で入力してください');
-    // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
-    // 意図を明示するために式は残す。
-    const nav = input.navPerUnit === undefined || input.navPerUnit === '' ? 0 : toAmount(input.navPerUnit);
+    const nav = isBlankEntry(input.navPerUnit) ? 0 : toAmount(input.navPerUnit);
     if (nav === null) throw new Error('基準価額は 0 以上の数値で入力してください');
     units = u;
     navPerUnit = nav;
@@ -764,11 +771,11 @@ export function parseHoldingEntry(input: {
   }
 
   const acqRaw = input.acquisitionCost;
-  // Stryker disable next-line StringLiteral: '' を別文字列にしても、その値は toAmount で
-  // NaN → null になり同じ 取得額 エラーへ落ちる (等価変異)。
   // 空欄は null = 未入力 (パス 123 —— それまでは評価額と同額にして「損益 0」の銘柄を作っていた)。
+  // ★ 空白だけの欄も空欄 (パス 496) —— `=== ''` だけを見ていた頃は、全角の空白 1 つで
+  // **取得額 0 円**になり、評価額がまるごと含み益に見えた (欄は画面では空に見える)。
   let acquisitionCost: number | null = null;
-  if (acqRaw !== undefined && acqRaw !== '') {
+  if (!isBlankEntry(acqRaw)) {
     const cost = toAmount(acqRaw);
     if (cost === null) throw new Error('取得額は 0 以上の数値で入力してください');
     acquisitionCost = cost;
@@ -777,10 +784,10 @@ export function parseHoldingEntry(input: {
   const ytdRaw = input.ytdReturnPct;
   // 空欄は null (未入力)。0 にすると測った 0% と同じ顔になる (パス 122)。
   let ytdReturnPct: number | null = null;
-  // `!== ''` は**冗長ではない**: 読み取りが `readNumeric` になった 2026-09-06 から、
+  // この門は**冗長ではない**: 読み取りが `readNumeric` になった 2026-09-06 から、
   // 空文字は 0 ではなく「読めない」なので、この門を外すと空欄が YTD エラーになる
-  // (保存 → 入力欄 → 再保存 の往復の検査が落ちる)。
-  if (ytdRaw !== undefined && ytdRaw !== '') {
+  // (保存 → 入力欄 → 再保存 の往復の検査が落ちる)。空白だけの欄も空欄 (パス 496)。
+  if (!isBlankEntry(ytdRaw)) {
     // Stryker disable next-line ConditionalExpression: typeof ytdRaw === 'number' を true 固定に
     // しても直後の Number.isFinite が非数値を弾くため同じエラーになる (等価変異)。
     // 文字列は画面と同じ読み取り (`readNumeric`) —— `1,5` を 15% にしない。
@@ -898,7 +905,9 @@ export interface FundPortfolio {
  * と同じく、分からない物は分母にも分子にも入れず、**数だけ言う**。負の取得額・NaN は「読めない」= 未入力側。
  */
 export function computeFundPortfolio(holdings: readonly PortfolioHolding[], baseCostBasis: number): FundPortfolio {
-  const base = Number.isFinite(baseCostBasis) && baseCostBasis > 0 ? baseCostBasis : 0;
+  // 負・非有限の一括原価は 0 (= 見本ぜんぶが「取得額が分からない」側)。`nonNeg` は 0 を 0 のまま返すので
+  // 「0 より大きければその値」と同じ答えになる (パス 501 —— 境目 0 の判定は等価変異だった)。
+  const base = nonNeg(baseCostBasis);
   let totalValuation = 0;
   let demoValuation = 0;
   let demoCount = 0;
@@ -912,7 +921,7 @@ export function computeFundPortfolio(holdings: readonly PortfolioHolding[], base
     if (h.demo) {
       demoValuation += v;
       demoCount += 1;
-    } else if (h.acquisitionCost !== null && Number.isFinite(h.acquisitionCost) && h.acquisitionCost >= 0) {
+    } else if (isFiniteNumber(h.acquisitionCost) && h.acquisitionCost >= 0) {
       measuredValuation += v;
       userCost += h.acquisitionCost;
     } else {

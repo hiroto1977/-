@@ -46,6 +46,8 @@
  * 区別するのは値ではなく**欄が埋まっているか**である。
  */
 
+import { nonNeg } from '../../shared/num';
+
 /** 未入力を名前で述べるための、溜まりの欄の名前。画面と書面がそのまま出す。 */
 export type WorkingCapitalStock = '売上債権' | '棚卸資産' | '仕入債務';
 
@@ -129,11 +131,13 @@ const day = (numer: number | undefined, denom: number, days: number): number | n
 
 /** 運転資金指標 (CCC) を計算する。 */
 export function computeCashConversionCycle(input: WorkingCapitalInput): CashConversionCycle {
-  // 期間が測れなければ回転日数は定まらない。`day()` の分母の守りとは別に
-  // **期間そのもの**を弾く (0 か月の合計を 365 日で割ると 12 倍膨らむ)。
-  const days = Number.isFinite(input.periodMonths) && input.periodMonths > 0
-    ? periodDaysForMonths(input.periodMonths)
-    : 0;
+  // 期間が測れなければ回転日数は定まらない。0 以下・非有限の月数は `nonNeg` が
+  // 0 日に倒し、`day()` の `days > 0` が算定不能 (null) にする。
+  // **期間そのものを別に弾く枝は置かない** —— 0 か月・負の月数は `periodDaysForMonths` が
+  // 0 以下を返すので `day()` の守りと答えが同じで、置くと `> 0` を `>= 0` や `true` へ
+  // 倒した変異体が観測できない等価変異として残る (パス 501)。非有限のうち Infinity は
+  // 正なので `> 0` だけでは落ちず、`nonNeg` が落とす (検査が留める)。
+  const days = nonNeg(periodDaysForMonths(input.periodMonths));
   const ar = input.accountsReceivable;
   const inv = input.inventory;
   const ap = input.accountsPayable;

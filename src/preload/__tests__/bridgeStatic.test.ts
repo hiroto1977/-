@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
 import { join } from 'node:path';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
@@ -23,7 +24,7 @@ const REPO = join(__dirname, '..', '..', '..');
  * 同じ罠と同じ直し方が `stryker.config.json` に既に書いてある ——
  * 「beforeAll で 1 回だけ読んでいたのを beforeEach へ移しただけで
  * 78.96% → 85.55%」。それは `main/main.ts` に対して行われ (`mainWindow.test.ts`
- * が `vi.resetModules()` + 動的 `import()` を使い、342 件すべてを殺している)、
+ * が読み直し (今は `rereadModule`) を使い、342 件すべてを殺している)、
  * **同じ `beforeAll` に同居していた `preload.ts` には行われなかった**。
  *
  * ここは既存の契約検査を作り替えず、**読み直す形の検査を隣に足す**。
@@ -65,10 +66,18 @@ vi.mock('electron', () => ({
 async function freshBridge(): Promise<Record<string, (...a: unknown[]) => unknown>> {
   exposedName = '';
   exposedApi = {};
-  vi.resetModules();
-  await import('../preload');
+  await rereadModule<typeof import('../preload')>(import.meta.url, '../preload');
   return exposedApi;
 }
+
+// 依存先は `beforeAll` で 1 度だけ読んでおく —— 検査ごとに読み直すのは `preload.ts` の 1 本だけ
+// (`rereadModule`)。`vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで
+// 「その検査が覆った」と変異検査に数えられる (パス 495)。先頭の静的 import にしないのは、
+// `preload.ts` が読み込んだ瞬間に `exposeInMainWorld` を呼び、この検査の `exposedName` が
+// まだ初期化されていない (静的 import は本体より先に評価される) ため。
+beforeAll(async () => {
+  await import('../preload');
+});
 
 beforeEach(() => {
   invocations.length = 0;

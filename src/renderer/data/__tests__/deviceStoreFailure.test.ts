@@ -13,6 +13,10 @@ import { describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
 import type { DeviceStoreOp } from '../deviceStoreFailure';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+// 読み直す対象を先頭で読み込んでおく (型だけの import は変換で消えるので、それでは読まない。
+// 読み直しの前に依存先を評価しておかないと、最初の読み直しで依存先が検査の中で評価される —— パス 495)。
+import '../deviceStoreFailure';
 
 /**
  * **毎回読み直してから測る。**
@@ -21,11 +25,10 @@ import { readOriginalSource } from '../../../shared/__tests__/originalSource';
  * 静的初期化子の変異は「読み込み済みの写し」には当たらないので、
  * 静的 import のままだと**表の文字を空にしても検査が緑のまま通る**
  * (2026-09-06 実測で 16 件生存。`readNumeric.test.ts` と同じ形)。
- * `vi.resetModules()` → 動的 import で、変異した初期化子をテストの中で走らせる。
+ * `rereadModule` (対象だけを読み直す —— パス 495) で、変異した初期化子をテストの中で走らせる。
  */
 async function load(): Promise<typeof import('../deviceStoreFailure')> {
-  vi.resetModules();
-  return import('../deviceStoreFailure');
+  return rereadModule<typeof import('../deviceStoreFailure')>(import.meta.url, '../deviceStoreFailure');
 }
 
 /** `name` だけを変えた例外 (ブラウザが投げる形)。 */
@@ -267,6 +270,27 @@ describe('settleReported / wasReported — 報せた失敗だけを落とす', (
     await expect(m.settleReported(Promise.reject('文字列の例外'))).rejects.toBe('文字列の例外');
     expect(m.wasReported(null)).toBe(false);
     expect(m.wasReported(undefined)).toBe(false);
+  });
+
+  it('★ null を投げられても報せは届く —— 印は付けられないだけで、報せる側が投げ返さない', async () => {
+    const m = await load();
+    // `WeakSet#add` は null に投げる。物でない例外に印を付けないための門が外れると、
+    // 「失敗を報せる」その関数自身が TypeError で落ち、画面に何も出ない。
+    expect(() => m.reportDeviceStoreFailure('records', 'save', 'x', null)).not.toThrow();
+    expect(m.currentDeviceStoreFailure()?.message).toContain('（null）');
+    expect(m.wasReported(null)).toBe(false);
+    await expect(m.settleReported(Promise.reject(null))).rejects.toBeNull();
+  });
+
+  it('★ 物でない例外 (文字列・数・undefined) でも報せは届き、印は付かない', async () => {
+    const m = await load();
+    for (const thrown of ['文字列', 42, undefined] as const) {
+      // `where` は周ごとに変える —— 同じ値だと、前の周が残した最後の 1 件で満たされてしまう。
+      const where = `x-${String(thrown)}`;
+      expect(() => m.reportDeviceStoreFailure('records', 'save', where, thrown)).not.toThrow();
+      expect(m.currentDeviceStoreFailure()?.where).toBe(where);
+      expect(m.wasReported(thrown)).toBe(false);
+    }
   });
 
   it('解決した約束と void は、そのまま解決する', async () => {

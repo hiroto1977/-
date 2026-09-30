@@ -1,4 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { rereadModule } from './rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../../renderer/web-templates';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../../main/clients/templates';
 
 /**
  * **テンプレート表は 2 つある。突き合わせる者が居なかった。**
@@ -61,14 +68,12 @@ interface TemplateLike {
 
 /** 表は**読み直して**取る。静的 import では変異が届かない。 */
 async function freshWeb(): Promise<readonly TemplateLike[]> {
-  vi.resetModules();
-  const m = await import('../../renderer/web-templates');
+  const m = await rereadModule<typeof import('../../renderer/web-templates')>(import.meta.url, '../../renderer/web-templates');
   return m.TEMPLATE_CATALOG_FOR_WEB as unknown as readonly TemplateLike[];
 }
 
 async function freshMain(): Promise<readonly TemplateLike[]> {
-  vi.resetModules();
-  const m = await import('../../main/clients/templates');
+  const m = await rereadModule<typeof import('../../main/clients/templates')>(import.meta.url, '../../main/clients/templates');
   return m.TEMPLATE_CATALOG as unknown as readonly TemplateLike[];
 }
 

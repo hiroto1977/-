@@ -5,7 +5,7 @@
  * 読めない時計の倒し方をここで留める。文面が台帳・画面・書類と一致することは
  * `renderer/data/__tests__/invoiceTransitionConsistency.test.ts` が見る。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   INVOICE_TRANSITION_ANNUAL_CAP,
   INVOICE_TRANSITION_END,
@@ -18,6 +18,7 @@ import {
   invoiceTransitionStageMonth,
   invoiceTransitionStageOn,
 } from '../invoiceTransition';
+import { rereadModule } from './rereadModule';
 
 /** 利用者の時計の正午 (時間帯で日付が動かない位置)。 */
 const noon = (iso: string): Date => {
@@ -116,8 +117,7 @@ describe('文面 (表から組む)', () => {
  */
 describe('段階の表 (読み直して測る)', () => {
   it('★ 4 段の from / to / rate をそのまま留める', async () => {
-    vi.resetModules();
-    const fresh = await import('../invoiceTransition');
+    const fresh = await rereadModule<typeof import('../invoiceTransition')>(import.meta.url, '../invoiceTransition');
     expect(fresh.INVOICE_TRANSITION_STAGES).toEqual([
       { from: '2023-10-01', to: '2026-09-30', rate: 0.8 },
       { from: '2026-10-01', to: '2028-09-30', rate: 0.7 },

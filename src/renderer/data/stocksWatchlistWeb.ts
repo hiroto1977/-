@@ -267,6 +267,7 @@ export function buildStocksSnapshot(now: number = Date.now()): WebStocksSnapshot
     fetchedAt: parseTimestamp(now)?.toISOString() ?? '',
     isMock: true,
     stored: stored.kind,
+    // Stryker disable next-line StringLiteral: shared の `unreadableWatchlistNote` は `shown === 'demo'` だけを分岐に使い、それ以外の値は全部「一覧は空です」を出す (実物を読んで確認)。'empty' を別の文字列にしても画面へ出る文は 1 字も変わらず、この引数は型 `WatchlistFallback` を満たすためだけに在る。
     storedNote: watchlistStoredNote(stored, 'empty'),
   };
 }

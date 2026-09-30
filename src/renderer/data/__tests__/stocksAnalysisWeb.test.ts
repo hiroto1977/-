@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   sma,
   ema,
@@ -32,7 +32,12 @@ import {
   type Strategy,
 } from '../stocksAnalysisWeb';
 import { mockCandles, type WebCandle } from '../stocksWatchlistWeb';
-import { MAX_STOCK_ADVISOR_RATIONALE_CHARS, MAX_STOCK_ADVISOR_RISK_CHARS } from '../../../shared/advisorResponseLimits';
+import {
+  MAX_ADVISOR_RISK_FACTORS,
+  MAX_STOCK_ADVISOR_RATIONALE_CHARS,
+  MAX_STOCK_ADVISOR_RISK_CHARS,
+} from '../../../shared/advisorResponseLimits';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 /** close 配列から最小限の WebCandle 列を作る (戦略・指標は close のみ参照)。 */
 function mkCandles(closes: readonly number[]): WebCandle[] {
@@ -534,6 +539,21 @@ describe('validateAdvisorJson (mutation hardening — every throw path + boundar
     expect(() => recs([rec({ riskFactors: ['x'.repeat(MAX_STOCK_ADVISOR_RISK_CHARS + 1)] })])).toThrow(cap);
     const ok = 'x'.repeat(MAX_STOCK_ADVISOR_RISK_CHARS);
     expect(recs([rec({ riskFactors: [ok, 'y'] })])[0]!.riskFactors).toEqual([ok, 'y']);
+  });
+  // ★ 上限を超えた riskFactors の断りは**文面ごと**留める (パス 501)。断りの文は画面へ出る
+  // 唯一の理由で、`toThrow()` だけだと文を空にする変異体を見分けられない。
+  // `toThrow('…')` は投げた値が偽だと照合を飛ばすので、Error の文面を直に読む。
+  it('riskFactors が上限を超えたら、上限の数を名乗る文で断る (上限ちょうどは通す)', () => {
+    const many = (n: number) => rec({ riskFactors: Array.from({ length: n }, () => 'r') });
+    expect(recs([many(MAX_ADVISOR_RISK_FACTORS)])[0]!.riskFactors).toHaveLength(MAX_ADVISOR_RISK_FACTORS);
+    let caught: unknown;
+    try {
+      recs([many(MAX_ADVISOR_RISK_FACTORS + 1)]);
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught).toBeInstanceOf(Error);
+    expect((caught as Error).message).toBe(`recommendation exceeds ${MAX_ADVISOR_RISK_FACTORS} riskFactors`);
   });
 });
 
@@ -1157,8 +1177,7 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
  */
 describe('静的な定数 —— 読み直して問う', () => {
   const fresh = async (): Promise<typeof import('../stocksAnalysisWeb')> => {
-    vi.resetModules();
-    return import('../stocksAnalysisWeb');
+    return rereadModule<typeof import('../stocksAnalysisWeb')>(import.meta.url, '../stocksAnalysisWeb');
   };
 
   /*

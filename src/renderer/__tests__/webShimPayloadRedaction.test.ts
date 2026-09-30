@@ -1,5 +1,14 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, vi } from 'vitest';
+// 名前を数えるためだけに読む —— 検査の中 (`vi.resetModules()` の後) で読み直さない (パス 495)。
+// 読み直すと main の全クライアントのモジュール直下の値が「この検査が覆った」と数えられ、変異検査が
+// それらをこの検査だけで走らせて「生存」と報告していた (funding.ts の 110 件ほか・実測は docs/REMAINING_WORK.md)。
+import { LIVE_ACTIONS } from '../../main/clients/index';
+import { SERVICE_IDS } from '../../shared/serviceId';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
 
 const SENTINEL = 'sk-ant-api03-SENTINELKEY0000';
 
@@ -38,9 +47,8 @@ vi.mock('electron', () => ({
 type Hub = { invoke: (s: string, a: string, p: unknown) => Promise<unknown> };
 
 async function loadHub(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 
@@ -141,8 +149,6 @@ describe('★ ブラウザ版の出口を台帳から総当たりする (パス 
       invoke: (s: string, a: string, p: unknown) => Promise<unknown>;
       fetchSnapshot: (s: string) => Promise<unknown>;
     };
-    const { LIVE_ACTIONS } = await import('../../main/clients/index');
-    const { SERVICE_IDS } = await import('../../shared/serviceId');
 
     const carried: string[] = [];
     let ran = 0;

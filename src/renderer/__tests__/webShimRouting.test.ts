@@ -18,6 +18,10 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ADVISOR_QUESTION_MESSAGES } from '../../shared/advisorQuestionLimits';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -47,9 +51,8 @@ type Result = { ok: boolean; code?: string; message?: string; data?: unknown };
 type Hub = { invoke: (s: string, a: string, p: Record<string, unknown>) => Promise<Result> };
 
 async function loadHub(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 

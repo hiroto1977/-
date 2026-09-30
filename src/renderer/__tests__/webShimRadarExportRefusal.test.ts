@@ -54,6 +54,10 @@ import {
   validateTeamRadarState,
   type TeamRadarSnapshot,
 } from '../../shared/teamRadarState';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
+// 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
+import '../web-shim';
 
 /** put された Blob をここに溜める (書き出しが保存する物そのもの)。 */
 const saved: { mime: string; text: string }[] = [];
@@ -92,9 +96,8 @@ type Result = { ok: boolean; data?: Record<string, unknown>; message?: string };
 type Hub = { invoke: (s: string, a: string, p: Record<string, unknown>) => Promise<Result> };
 
 async function loadHub(): Promise<Hub> {
-  vi.resetModules();
   delete (window as unknown as { serviceHub?: unknown }).serviceHub;
-  await import('../web-shim');
+  await rereadModule<typeof import('../web-shim')>(import.meta.url, '../web-shim');
   return (window as unknown as { serviceHub: Hub }).serviceHub;
 }
 

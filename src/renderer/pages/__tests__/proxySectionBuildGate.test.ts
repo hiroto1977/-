@@ -38,6 +38,8 @@ import { join } from 'node:path';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { settleUntil, waitForElement } from '../../__tests__/jsdomWait';
 import { proxyUnusedNote } from '../../../shared/buildDestinations';
+import { ProxySection } from '../SettingsPage';
+import { setProxyConfig, getProxyConfig } from '../../network/proxy';
 
 const ROOT = join(__dirname, '..', '..');
 // **原文の道具を通す** —— 変異検査の sandbox では書き換え後のソースが置かれる。
@@ -60,7 +62,6 @@ const BROWSER = { getVersion: () => Promise.resolve('0.1.0-web') };
 async function mount(bridge: unknown) {
   if (bridge === null) delete (window as unknown as { serviceHub?: unknown }).serviceHub;
   else (window as unknown as { serviceHub: unknown }).serviceHub = bridge;
-  const { ProxySection } = await import('../SettingsPage');
   const container = document.createElement('div');
   document.body.appendChild(container);
   const root = createRoot(container);
@@ -87,7 +88,6 @@ function typeInto(el: HTMLInputElement, value: string): void {
 describe('BYO プロキシ: 読まない実行形態では貼らせない (パス 456)', () => {
   beforeEach(async () => {
     document.body.innerHTML = '';
-    const { setProxyConfig } = await import('../../network/proxy');
     await setProxyConfig(null);
   });
 
@@ -102,8 +102,6 @@ describe('BYO プロキシ: 読まない実行形態では貼らせない (パ�
     expect(buttons(container).map((b) => b.textContent)).not.toContain('変更');
     expect(container.querySelector('input'), '打てる欄が出ている').toBeNull();
     expect(text()).toContain('未設定');
-
-    const { getProxyConfig } = await import('../../network/proxy');
     expect(await getProxyConfig(), '描いただけで保管層が動いた').toBeNull();
   });
 
@@ -143,8 +141,6 @@ describe('BYO プロキシ: 読まない実行形態では貼らせない (パ�
       save!.click();
     });
     await settleUntil(() => /保存しました/.test(text()), '保存の結果');
-
-    const { getProxyConfig } = await import('../../network/proxy');
     expect(await getProxyConfig()).toEqual({
       url: 'https://my-worker.example.com/proxy',
       sharedSecret: 'SUPER-SECRET-0123456789',
@@ -159,7 +155,6 @@ describe('BYO プロキシ: 読まない実行形態では貼らせない (パ�
   });
 
   it('★ 削除は実行形態で隠さない —— 条件は「値が在るか」だけ', async () => {
-    const { setProxyConfig } = await import('../../network/proxy');
     await setProxyConfig({ url: 'https://old-worker.example.com/proxy', sharedSecret: 'LEFTOVER-0123456789' });
     const { container, text } = await mount(DESKTOP);
     expect(text()).toContain('設定済み');

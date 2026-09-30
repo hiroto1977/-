@@ -35,6 +35,28 @@ import path from 'node:path';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { fetchAtlassianSnapshot } from '../../../main/clients/atlassian';
+import { AtlassianPage } from '../AtlassianPage';
+import { fetchBaseSnapshot } from '../../../main/clients/base';
+import { BasePage } from '../BasePage';
+import { fetchCalendarSnapshot } from '../../../main/clients/calendar';
+import { CalendarPage } from '../CalendarPage';
+import { fetchCanvaSnapshot } from '../../../main/clients/canva';
+import { CanvaPage } from '../CanvaPage';
+import { fetchCursorSnapshot } from '../../../main/clients/cursor';
+import { CursorPage } from '../CursorPage';
+import { fetchDriveSnapshot } from '../../../main/clients/drive';
+import { DrivePage } from '../DrivePage';
+import { fetchFreeeSnapshot } from '../../../main/clients/freee';
+import { FreeePage } from '../FreeePage';
+import { fetchGmailSnapshot } from '../../../main/clients/gmail';
+import { GmailPage } from '../GmailPage';
+import { fetchNotionSnapshot } from '../../../main/clients/notion';
+import { NotionPage } from '../NotionPage';
+import { fetchSlackSnapshot } from '../../../main/clients/slack';
+import { SlackPage } from '../SlackPage';
+import { fetchWordPressSnapshot } from '../../../main/clients/wordpress';
+import { WordPressPage } from '../WordPressPage';
 
 const BIG = 'x'.repeat(200_000);
 
@@ -109,16 +131,16 @@ const SWEEPS: readonly Sweep[] = [
     id: 'atlassian',
     token: JSON.stringify({ email: 'a@b.c', token: 't', site: 'https://ex.atlassian.net' }),
     bodies: [{ values: [{ key: BIG, name: BIG, projectTypeKey: BIG, style: BIG }] }],
-    load: async (c) => (await import('../../../main/clients/atlassian')).fetchAtlassianSnapshot(c as never),
-    page: async () => (await import('../AtlassianPage')).AtlassianPage,
+    load: async (c) => fetchAtlassianSnapshot(c as never),
+    page: async () => AtlassianPage,
     landed: 'xxxxxxxxxx',
   },
   {
     id: 'base',
     token: 't',
     bodies: [{ items: [{ item_id: 1, title: BIG, price: 100, stock: 2, visible: 1 }] }],
-    load: async (c) => (await import('../../../main/clients/base')).fetchBaseSnapshot(c as never),
-    page: async () => (await import('../BasePage')).BasePage,
+    load: async (c) => fetchBaseSnapshot(c as never),
+    page: async () => BasePage,
     landed: 'xxxxxxxxxx',
   },
   {
@@ -128,8 +150,8 @@ const SWEEPS: readonly Sweep[] = [
       { items: [{ id: 'c1', summary: BIG, primary: true, timeZone: BIG }] },
       { items: [{ id: 'e1', summary: BIG, start: { dateTime: '2026-01-01T10:00:00Z' }, end: { dateTime: '2026-01-01T11:00:00Z' } }] },
     ],
-    load: async (c) => (await import('../../../main/clients/calendar')).fetchCalendarSnapshot(c as never),
-    page: async () => (await import('../CalendarPage')).CalendarPage,
+    load: async (c) => fetchCalendarSnapshot(c as never),
+    page: async () => CalendarPage,
     landed: 'xxxxxxxxxx',
   },
   {
@@ -139,8 +161,8 @@ const SWEEPS: readonly Sweep[] = [
       { items: [{ design: { id: 'd1', title: BIG, page_count: 1, updated_at: 1767225600, urls: { view_url: 'https://x.example' } } }] },
       { items: [{ id: BIG }] },
     ],
-    load: async (c) => (await import('../../../main/clients/canva')).fetchCanvaSnapshot(c as never),
-    page: async () => (await import('../CanvaPage')).CanvaPage,
+    load: async (c) => fetchCanvaSnapshot(c as never),
+    page: async () => CanvaPage,
     landed: 'xxxxxxxxxx',
   },
   {
@@ -151,16 +173,16 @@ const SWEEPS: readonly Sweep[] = [
       { data: [{ date: 1767225600000, isActive: true, mostUsedModel: BIG }] },
       { teamMemberSpend: [{ name: BIG, email: BIG, role: BIG, spendCents: 100 }] },
     ],
-    load: async (c) => (await import('../../../main/clients/cursor')).fetchCursorSnapshot(c as never),
-    page: async () => (await import('../CursorPage')).CursorPage,
+    load: async (c) => fetchCursorSnapshot(c as never),
+    page: async () => CursorPage,
     landed: 'xxxxxxxxxx',
   },
   {
     id: 'drive',
     token: 't',
     bodies: [{ files: [{ id: 'f1', name: BIG, mimeType: BIG, modifiedTime: '2026-01-01T00:00:00Z' }] }],
-    load: async (c) => (await import('../../../main/clients/drive')).fetchDriveSnapshot(c as never),
-    page: async () => (await import('../DrivePage')).DrivePage,
+    load: async (c) => fetchDriveSnapshot(c as never),
+    page: async () => DrivePage,
     landed: 'xxxxxxxxxx',
   },
   {
@@ -170,8 +192,8 @@ const SWEEPS: readonly Sweep[] = [
       { companies: [{ id: 1, display_name: BIG, name: BIG }] },
       { deals: [{ id: 1, issue_date: '2026-01-01', amount: 100, type: 'income' }] },
     ],
-    load: async (c) => (await import('../../../main/clients/freee')).fetchFreeeSnapshot(c as never),
-    page: async () => (await import('../FreeePage')).FreeePage,
+    load: async (c) => fetchFreeeSnapshot(c as never),
+    page: async () => FreeePage,
     landed: 'xxxxxxxxxx',
   },
   {
@@ -181,16 +203,16 @@ const SWEEPS: readonly Sweep[] = [
       { messages: [{ id: 'm1', threadId: 't1' }] },
       { id: 'm1', threadId: 't1', labelIds: ['UNREAD'], payload: { headers: [{ name: 'Subject', value: BIG }, { name: 'From', value: BIG }] } },
     ],
-    load: async (c) => (await import('../../../main/clients/gmail')).fetchGmailSnapshot(c as never),
-    page: async () => (await import('../GmailPage')).GmailPage,
+    load: async (c) => fetchGmailSnapshot(c as never),
+    page: async () => GmailPage,
     landed: 'xxxxxxxxxx',
   },
   {
     id: 'notion',
     token: 't',
     bodies: [{ results: [{ id: 'p1', object: BIG, url: 'https://x.example', last_edited_time: '2026-01-01T00:00:00Z', properties: { Name: { type: 'title', title: [{ plain_text: BIG }] } } }] }],
-    load: async (c) => (await import('../../../main/clients/notion')).fetchNotionSnapshot(c as never),
-    page: async () => (await import('../NotionPage')).NotionPage,
+    load: async (c) => fetchNotionSnapshot(c as never),
+    page: async () => NotionPage,
     landed: 'xxxxxxxxxx',
   },
   {
@@ -200,16 +222,16 @@ const SWEEPS: readonly Sweep[] = [
       { ok: true, channels: [{ id: 'C1', name: BIG, num_members: 3, is_private: false, topic: { value: BIG }, purpose: { value: BIG } }] },
       { ok: true, team: { name: BIG, domain: 'ex' } },
     ],
-    load: async (c) => (await import('../../../main/clients/slack')).fetchSlackSnapshot(c as never),
-    page: async () => (await import('../SlackPage')).SlackPage,
+    load: async (c) => fetchSlackSnapshot(c as never),
+    page: async () => SlackPage,
     landed: 'xxxxxxxxxx',
   },
   {
     id: 'wordpress',
     token: 't',
     bodies: [{ sites: [{ ID: 1, name: BIG, description: BIG, URL: 'https://x.example', plan: { product_slug: 'free' }, is_private: false, last_updated: '2026-01-01T00:00:00Z' }] }],
-    load: async (c) => (await import('../../../main/clients/wordpress')).fetchWordPressSnapshot(c as never),
-    page: async () => (await import('../WordPressPage')).WordPressPage,
+    load: async (c) => fetchWordPressSnapshot(c as never),
+    page: async () => WordPressPage,
     landed: 'xxxxxxxxxx',
   },
 ];

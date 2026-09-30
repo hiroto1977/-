@@ -3,7 +3,7 @@ import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emo
 // 断りの文は 3 画面と両ビルドで 1 つ (パス 451) —— 字面で写すと片方だけ動かせる。
 import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../../shared/advisorQuestionLimits';
 import { calendarDateMessage } from '../../../shared/isoDate';
-import { extractJson, normalizeAnalysis } from '../emotions';
+import { EMOTIONS_UNREADABLE_CORRUPT, extractJson, normalizeAnalysis } from '../emotions';
 import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 
 describe('extractJson', () => {
@@ -93,6 +93,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach } from 'vitest';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
  
 let tmpDir: string;
@@ -787,6 +788,36 @@ describe('壊れた記録の扱い', () => {
     expect(await fs.readFile(storeFile(), 'utf8')).toBe('not json at all');
   });
 
+  it('★ 平文の壊れた JSON は JSON の読み違いのまま投げ、封緘の復号失敗とは言わない (原因を取り違えない)', async () => {
+    // 封緘していない (2026-09-09 までの平文) ファイルが JSON でないのは、封緘の鍵や復号の問題ではない。
+    // 「復号できません」と言うと、利用者は存在しない鍵の問題を探しに行く。
+    // 対になる封緘済みの側は、ちょうど封緘の文で断る (下の describe が別の壊し方で見ている)。
+    await fs.writeFile(storeFile(), 'not json at all');
+    let plain: unknown;
+    try {
+      await fetchEmotionsSnapshot({ token: '' });
+    } catch (e) {
+      plain = e;
+    }
+    expect(plain).toBeInstanceOf(SyntaxError);
+    expect((plain as Error).message).not.toContain('復号');
+
+    // 対照: 封緘済みで中身が JSON でなければ、封緘の文 (EMOTIONS_UNREADABLE_CORRUPT) ちょうどで断る。
+    await fs.writeFile(
+      storeFile(),
+      JSON.stringify({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') }),
+    );
+    let sealed: unknown;
+    try {
+      await fetchEmotionsSnapshot({ token: '' });
+    } catch (e) {
+      sealed = e;
+    }
+    expect(sealed).toBeInstanceOf(Error);
+    expect(sealed).not.toBeInstanceOf(SyntaxError);
+    expect((sealed as Error).message).toBe(EMOTIONS_UNREADABLE_CORRUPT);
+  });
+
   it('moods / analyses が配列でなければ空として読む', async () => {
     await fs.writeFile(storeFile(), JSON.stringify({ moods: 'nope', analyses: { a: 1 } }));
     const snap = await fetchEmotionsSnapshot({ token: '' });
@@ -924,8 +955,7 @@ describe('emotions の入力上限 (両ビルドで同じ値)', () => {
  */
 describe('解析の指示文 —— 読み直して問う', () => {
   it('★ 指示文は JSON の形を名指しする', async () => {
-    vi.resetModules();
-    const m = await import('../emotions');
+    const m = await rereadModule<typeof import('../emotions')>(import.meta.url, '../emotions');
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
         JSON.stringify({ content: [{ type: 'text', text: '{"scores":{},"sentiment":"neutral","dominant":"joy"}' }] }),

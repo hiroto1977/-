@@ -135,7 +135,7 @@ export function positiveNeedles(text: string): Set<string> {
  * 上から順に標本を付けて減らしていく。
  */
 const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
-  'src/main/clients/__tests__/business.test.ts:1987':
+  'src/main/clients/__tests__/business.test.ts:1988':
     '針は検査自身が注入した見出し (`## 偽の見出し`) で、他所の綴りではない —— 注入した字と探す字が同じ it の中に在る',
   'src/main/clients/__tests__/paperAccountReality.test.ts:127':
     '書面の表の行 (`| 損益 | +￥0`)。標本を付ける価値は在るが、同じ検査が肯定側で ￥0 でない値を主張している',
@@ -150,9 +150,9 @@ const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
     'パス 9 の「使えない方式を最有利にしない」。針は HTML の構造つきで、標本未付',
   'src/renderer/components/__tests__/StatusBar.render.test.ts:249':
     '針は `\\d+ 件` (件数そのもの) で、綴りではなく形を見ている',
-  'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1123':
-    '針は検査自身が注入した見出し (`## 偽の見出し`)。main 側 business.test.ts:1987 の双子',
-  'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1142':
+  'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1143':
+    '針は検査自身が注入した見出し (`## 偽の見出し`)。main 側 business.test.ts:1988 の双子',
+  'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1162':
     '針は検査自身が注入した見出し (`## 偽`)。main 側 stocks.test.ts:3696 の双子',
   'src/renderer/pages/__tests__/emotionRadarNoData.test.ts:162':
     'パス 65 の「記録が無い人を評価しない」。針は `活力 \\d` で、ラベルは肯定側で主張されている',

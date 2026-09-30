@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   buildOrgIndex,
   routeTopic,
@@ -14,6 +14,7 @@ import {
 } from '../chatOrg';
 import { org as realOrg, teams as realTeams } from '../../../../orchestration/registry.json';
 import type { RawOrg } from '../chatOrg';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 // --- フィクスチャ (registry の最小縮約) ------------------------------------
 
@@ -292,8 +293,7 @@ describe('確信度の丸めはモジュール直下の関数を通る (読み�
   // 「生存」と報告された —— 手で当てると上の 2 件 (80 点は 0.8 / 100 点超は 1) が落ちるので
   // **偽の生存**である。同じ主張を、モジュールを読み直す形でも持つ。
   it('★ 読み直しても 80 点は 0.8、100 点を超えれば 1', async () => {
-    vi.resetModules();
-    const fresh = await import('../chatOrg');
+    const fresh = await rereadModule<typeof import('../chatOrg')>(import.meta.url, '../chatOrg');
     expect(fresh.routeTopicScored(INDEX, '所得税').confidence).toBe(0.8);
     const hi: RawTeam = { id: 'hi', domain: '特命', focus: '特命', manager: 'nope' };
     expect(fresh.routeTopicScored(fresh.buildOrgIndex(ORG, [hi]), '特命').confidence).toBe(1);

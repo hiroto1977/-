@@ -157,10 +157,11 @@ function totalPurchaseTax(p: PurchaseByUse, rates: ConsumptionRates): number {
 /**
  * 割合を 0..1 に収める。呼び出し側が実績以外の値を渡しても壊れないように。
  * 分岐で書くと「0 のとき」がどちらの枝でも同じ値になり観測できない等価変異に
- * なるので、min/max で挟む形にしてある。
+ * なるので、min/max で挟む形にしてある。非有限 (NaN / ±Infinity) と負値は
+ * `nonNeg` が 0 に倒す —— 非有限を別に見る早期 return は、`Math.min(1, 0)` = 0 と
+ * 答えが同じなので置かない (置くと観測できない等価変異として残る —— パス 501)。
  */
 function clampRatio(r: number): number {
-  if (!Number.isFinite(r)) return 0;
   return Math.min(1, nonNeg(r));
 }
 

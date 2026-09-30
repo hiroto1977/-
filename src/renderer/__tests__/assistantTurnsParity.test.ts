@@ -25,6 +25,8 @@ import { resolve } from 'node:path';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import { ERROR_MESSAGE_MAX_CHARS } from '../../shared/redact';
 import { hasLoneSurrogate } from '../../shared/__tests__/loneSurrogate';
+import * as webShim from '../web-shim';
+import * as mainAssistant from '../../main/clients/assistant';
 
 /*
  * **名前が違うだけで、同じ判断を 2 度書いている。**
@@ -47,8 +49,8 @@ import { hasLoneSurrogate } from '../../shared/__tests__/loneSurrogate';
 type Sanitizer = (raw: unknown) => { role: string; content: string }[];
 
 async function loadBoth(): Promise<{ web: Sanitizer; main: Sanitizer }> {
-  const webMod = (await import('../web-shim')) as unknown as { sanitizeAssistantTurns: Sanitizer };
-  const mainMod = (await import('../../main/clients/assistant')) as unknown as {
+  const webMod = webShim as unknown as { sanitizeAssistantTurns: Sanitizer };
+  const mainMod = mainAssistant as unknown as {
     sanitizeMessages: Sanitizer;
   };
   return { web: webMod.sanitizeAssistantTurns, main: mainMod.sanitizeMessages };

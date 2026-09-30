@@ -690,3 +690,92 @@ describe('normalizeProperty', () => {
     expect(normalizeProperty(null).name).toBe('');
   });
 });
+
+/**
+ * **銘柄フォームの空欄は、空白だけの欄も空欄** (2026-09-27 · パス 496)。
+ * `=== ''` だけを見ていた頃は、全角の空白 1 つ (日本語入力で空欄に打ちやすい) で
+ * 取得額が **0 円**になり、評価額がまるごと含み益に見えた (実測: 評価額 ¥1,500,000 の銘柄で
+ * 評価損益 ¥1,500,000・「取得額が未入力」の件数 0)。評価額と年初来リターンは
+ * 空に見える欄を「数値で入力してください」と断っていた。
+ */
+describe('parseHoldingEntry — 空白だけの欄も空欄 (パス 496)', () => {
+  const base = { code: 'X1', name: 'テストファンド', units: '1000000', navPerUnit: '15000' } as const;
+  it('★ 取得額: 空白だけは「未入力」(null) —— 0 円にしない', () => {
+    for (const raw of ['', '  ', '　', '\t']) {
+      const h = parseHoldingEntry({ ...base, acquisitionCost: raw });
+      expect(h.acquisitionCost, JSON.stringify(raw)).toBeNull();
+      const p = computeFundPortfolio([{ ...h, demo: false }], 0);
+      expect(p.userOnly.unrealizedGain, '評価額がまるごと含み益になっている').toBe(0);
+      expect(p.costUnmeasured.count, '「取得額が未入力」に数えていない').toBe(1);
+    }
+  });
+  it('★ 評価額: 空白だけは空欄 = 自動計算 (口数 × 基準価額)', () => {
+    const h = parseHoldingEntry({ ...base, valuation: '　' });
+    expect(h.valuationMode).toBe('auto');
+    expect(h.valuation).toBe(fundValuation(1_000_000, 15000));
+  });
+  it('★ 年初来リターン: 空白だけは「未入力」(null)', () => {
+    expect(parseHoldingEntry({ ...base, ytdReturnPct: '　' }).ytdReturnPct).toBeNull();
+  });
+  it('★ 評価額を入れたときの口数・基準価額: 欄が無くても空白だけでも 0', () => {
+    const h = parseHoldingEntry({ code: 'X1', name: 'テストファンド', valuation: '1000000' });
+    expect([h.units, h.navPerUnit]).toEqual([0, 0]);
+    const w = parseHoldingEntry({ ...base, valuation: '1000000', units: '　', navPerUnit: '  ' });
+    expect([w.units, w.navPerUnit]).toEqual([0, 0]);
+  });
+});
+
+/**
+ * **変異検査が教えた所** (2026-09-30 · パス 501) —— 型が違う `type`・断りの 2 文の繋ぎ目・
+ * 負や NaN の取得額。どれも既存の検査が `toContain` か片方の枝だけで見ていた。
+ */
+describe('investments — 変異検査が教えた所 (パス 501)', () => {
+  it('★ 物件の種別が文字列でなければ空文字に倒す (欄が無くても同じ)', () => {
+    expect(normalizeProperty({ type: 42 }).type).toBe('');
+    expect(normalizeProperty({}).type).toBe('');
+    expect(normalizeProperty({ type: '一棟' }).type).toBe('一棟');
+  });
+
+  it('★ 利回りの断りは、取得価格の文と家賃の文を地続きに繋ぐ (それぞれ単独の文と同じ)', () => {
+    const three = [
+      { monthlyRent: 80_000, purchasePrice: 20_000_000, occupied: true },
+      { monthlyRent: 103_333, purchasePrice: 20_000_000, occupied: true },
+      { monthlyRent: 91_667, purchasePrice: 20_000_000, occupied: true },
+    ];
+    const noPrice = { monthlyRent: 90_000, purchasePrice: 0, occupied: true };
+    const badRent = normalizeProperty({ monthlyRent: 'x', purchasePrice: 20_000_000, occupied: true });
+    const priceOnly = yieldScopeNote(computeRealEstatePortfolio([...three, noPrice], 0, 0));
+    const rentOnly = yieldScopeNote(computeRealEstatePortfolio([...three, badRent], 0, 0));
+    expect(priceOnly).not.toBeNull();
+    expect(rentOnly).not.toBeNull();
+    expect(yieldScopeNote(computeRealEstatePortfolio([...three, noPrice, badRent], 0, 0))).toBe(`${priceOnly}${rentOnly}`);
+  });
+
+  it('★ 入居中で家賃の無い物件の断りも、0 円の文と読めない文を地続きに繋ぐ', () => {
+    const three = [
+      { monthlyRent: 80_000, purchasePrice: 20_000_000, occupied: true },
+      { monthlyRent: 103_333, purchasePrice: 20_000_000, occupied: true },
+      { monthlyRent: 91_667, purchasePrice: 20_000_000, occupied: true },
+    ];
+    const zeroRent = { monthlyRent: 0, purchasePrice: 20_000_000, occupied: true };
+    const badRent = normalizeProperty({ monthlyRent: 'x', purchasePrice: 20_000_000, occupied: true });
+    const zeroOnly = occupiedWithoutRentNote(computeRealEstatePortfolio([...three, zeroRent], 0, 0));
+    const badOnly = occupiedWithoutRentNote(computeRealEstatePortfolio([...three, badRent], 0, 0));
+    expect(zeroOnly).not.toBeNull();
+    expect(badOnly).not.toBeNull();
+    expect(occupiedWithoutRentNote(computeRealEstatePortfolio([...three, zeroRent, badRent], 0, 0))).toBe(`${zeroOnly}${badOnly}`);
+  });
+
+  it('★ 負の取得額・NaN の取得額は「読めない」= 未入力側 (原価にも損益にも入れない)', () => {
+    for (const cost of [-1, Number.NaN, Number.POSITIVE_INFINITY]) {
+      const p = computeFundPortfolio([{ valuation: 100_000, acquisitionCost: cost, demo: false }], 0);
+      expect(p.costUnmeasured).toEqual({ count: 1, valuation: 100_000 });
+      expect(p.totalCostBasis).toBe(0);
+      expect(p.unrealizedGainPct).toBeNull();
+    }
+    // 針が的に当たる標本 —— 0 円の取得額は「読めた」(全額が含み益)。
+    const zero = computeFundPortfolio([{ valuation: 100_000, acquisitionCost: 0, demo: false }], 0);
+    expect(zero.costUnmeasured).toEqual({ count: 0, valuation: 0 });
+    expect(zero.unrealizedGain).toBe(100_000);
+  });
+});

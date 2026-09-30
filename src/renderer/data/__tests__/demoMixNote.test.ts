@@ -14,6 +14,7 @@ import {
   computeFundPortfolio,
   computeRealEstatePortfolio,
   demoMixNote,
+  fundCostPrincipalNote,
   fundDemoMixNote,
   type PortfolioHolding,
   type PortfolioProperty,
@@ -55,6 +56,32 @@ describe('demoMixNote — 不動産', () => {
     expect(p.userOnly.operatingExpenses).toBe(p.operatingExpenses);
     expect(p.userOnly.mortgagePayment).toBe(p.mortgagePayment);
     expect(p.userOnly.netCashflow).toBe(p.netCashflow);
+  });
+
+  /*
+   * 見本の行が**行ごとの**経費・返済を持っていても、自分の分 (`userOnly`) には混ざらない (パス 501)。
+   * 実物の見本 (snapshot) は経費・返済を行ではなく `baseExpenses` / `baseLoan` で持つので、
+   * 上の混合の検査では `!isDemo` の門を外しても答えが変わらず、変異検査で生き残っていた
+   * —— 門が見ている当の形 (見本の行に行ごとの経費・返済) を標本にして留める。
+   */
+  it('★ 見本の行の経費・返済は自分の分に混ざらない (合計には入る)', () => {
+    const demoWithCosts: PortfolioProperty = {
+      monthlyRent: 200_000,
+      purchasePrice: 30_000_000,
+      occupied: true,
+      monthlyExpenses: 40_000,
+      monthlyLoan: 60_000,
+      demo: true,
+    };
+    const p = computeRealEstatePortfolio([demoWithCosts, mine], 0, 0);
+    // 合計は見本の分も足す。
+    expect(p.operatingExpenses).toBe(70_000);
+    expect(p.mortgagePayment).toBe(115_000);
+    // 自分の分は自分の行だけ。
+    expect(p.userOnly.grossRent).toBe(90_000);
+    expect(p.userOnly.operatingExpenses).toBe(30_000);
+    expect(p.userOnly.mortgagePayment).toBe(55_000);
+    expect(p.userOnly.netCashflow).toBe(5_000);
   });
 
   it('見本だけ (何も登録していない) なら「見本を表示している」と述べ、自分の数字は並べない', () => {
@@ -167,5 +194,34 @@ describe('fundDemoMixNote — 投資信託', () => {
     // 対照: 取得額が在れば率を述べる (上の not.toMatch が空の検査でないこと)。
     const withCost = computeFundPortfolio([...demoHoldings, myHolding], baseCost);
     expect(fundDemoMixNote(withCost, jpy)).toMatch(/（-?\d+\.\d%）/);
+  });
+});
+
+/**
+ * **実質コストの元本の断り** (`fundCostPrincipalNote`)。2026-09-30 (パス 501) の変異検査で
+ * 「コスト率の欄が範囲外」の枝が 1 度も走っておらず (未到達 5 件)、見本 0 件の判定も
+ * 値で留まっていなかった。
+ */
+describe('fundCostPrincipalNote — 見本を除いた元本での負担 (パス 501)', () => {
+  const mixed = computeFundPortfolio([...demoHoldings, myHolding], baseCost);
+
+  it('見本が 0 件・自分の銘柄が 0 件のどちらでも null', () => {
+    expect(fundCostPrincipalNote(computeFundPortfolio([myHolding], 0), jpy, 5, 1_000, 5_000)).toBeNull();
+    expect(fundCostPrincipalNote(computeFundPortfolio(demoHoldings, baseCost), jpy, 5, 1_000, 5_000)).toBeNull();
+  });
+
+  it('★ コスト率の欄が範囲外なら、元本だけを述べて金額を 1 つも持たない', () => {
+    expect(fundCostPrincipalNote(mixed, jpy, 5, null, null)).toBe(
+      `この元本には同梱の見本 ${demoHoldings.length} 銘柄が含まれています。見本を除く元本は ${jpy(100_000)} です（コスト率の欄が範囲外のため、見本を除いた負担額は算定していません）。`,
+    );
+  });
+
+  it('★ 累計が出ていなければ年間コストだけを述べ、出ていれば累計も述べる', () => {
+    expect(fundCostPrincipalNote(mixed, jpy, 5, 1_234, null)).toBe(
+      `この元本には同梱の見本 ${demoHoldings.length} 銘柄が含まれています。見本を除く元本 ${jpy(100_000)} なら 年間コスト ${jpy(1_234)}・5年累計は保有年数または想定年率が範囲外のため算定していません。`,
+    );
+    expect(fundCostPrincipalNote(mixed, jpy, 5, 1_234, 6_170)).toBe(
+      `この元本には同梱の見本 ${demoHoldings.length} 銘柄が含まれています。見本を除く元本 ${jpy(100_000)} なら 年間コスト ${jpy(1_234)}・5年累計 ${jpy(6_170)} です。`,
+    );
   });
 });

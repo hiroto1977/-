@@ -183,6 +183,7 @@ describe('writeBlobToFolder', () => {
 // 読み戻せなければ、利用者が選んだ場所とは違う場所に書きかねない。
 import 'fake-indexeddb/auto';
 import { clearFolderHandle, loadFolderHandle } from '../fsa';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 function clearPrefsDb(): Promise<void> {
   return new Promise((resolve) => {
@@ -249,7 +250,7 @@ describe('フォルダ handle の永続化', () => {
    * 見るので、3 つとも `""` に変えても一致し続ける。だから **生の indexedDB で
    * 名前を直書きして**取りに行く。
    *
-   * さらに `vi.resetModules()` + 動的 import が要る。この 3 つはモジュール
+   * さらに `rereadModule` (対象だけを読み直す —— パス 495) が要る。この 3 つはモジュール
    * 定数なので、静的 import のままだとファイル読み込み時に評価が済んでしまい、
    * 変異検査が変異体を有効にする頃には**もう畳み込まれている** (覆われた
    * static 変異体)。実測でここは 3 件生存していて、読み直しを入れて 0 件に
@@ -257,8 +258,7 @@ describe('フォルダ handle の永続化', () => {
    * のではなく、読み直せば殺せる」。
    */
   it('保存先の DB 名 / ストア名 / キー名が変わっていない', async () => {
-    vi.resetModules();
-    const fresh = (await import('../fsa')) as typeof import('../fsa');
+    const fresh = (await rereadModule<typeof import('../fsa')>(import.meta.url, '../fsa')) as typeof import('../fsa');
 
     (window as unknown as { showDirectoryPicker?: unknown }).showDirectoryPicker = () =>
       Promise.resolve(plainHandle('named-folder'));

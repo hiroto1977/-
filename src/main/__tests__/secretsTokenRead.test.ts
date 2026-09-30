@@ -2,6 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+// 依存先は先頭で読み込んでおく。検査ごとに新しくするのは `../secrets` の 1 本だけ (`rereadModule`) ——
+// `vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで「その検査が覆った」と
+// 変異検査に数えられる (パス 495・`shared/__tests__/rereadModule.ts`)。
+import '../secrets';
+import { brokenStoredCredentialMessage } from '../../shared/vaultToken';
 
 /*
  * 「保存されていない」と「保存されているが読めない」の区別 (2026-08 監査)。
@@ -43,11 +49,16 @@ async function writeRawStore(store: Record<string, string>): Promise<void> {
   await fs.writeFile(path.join(userDataDir, FILE_NAME), JSON.stringify(store), 'utf8');
 }
 
+/** この検査の `../secrets` (検査ごとに最初に使うとき 1 本だけ読み直す —— 以前の `vi.resetModules()` と同じ粒度)。 */
+let currentSecretsModule: Promise<typeof import('../secrets')> | null = null;
+const secretsModule = (): Promise<typeof import('../secrets')> =>
+  (currentSecretsModule ??= rereadModule<typeof import('../secrets')>(import.meta.url, '../secrets'));
+
 beforeEach(async () => {
   userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'sh-token-read-'));
   encryptionAvailable = true;
   decryptThrows = false;
-  vi.resetModules();
+  currentSecretsModule = null;
 });
 afterEach(async () => {
   await fs.rm(userDataDir, { recursive: true, force: true });
@@ -55,19 +66,19 @@ afterEach(async () => {
 
 describe('readStoredToken', () => {
   it('キーチェーンがあれば復号して返す', async () => {
-    const { readStoredToken } = await import('../secrets');
+    const { readStoredToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_x') });
     expect(await readStoredToken('github')).toEqual({ ok: true, token: 'ghp_x' });
   });
 
   it('保存されていなければ absent', async () => {
-    const { readStoredToken } = await import('../secrets');
+    const { readStoredToken } = await secretsModule();
     await writeRawStore({});
     expect(await readStoredToken('github')).toEqual({ ok: false, reason: 'absent' });
   });
 
   it('キーチェーンが無い時、暗号化済みの値は undecryptable (absent ではない)', async () => {
-    const { readStoredToken } = await import('../secrets');
+    const { readStoredToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_x') });
     encryptionAvailable = false;
     const r = await readStoredToken('github');
@@ -82,14 +93,14 @@ describe('readStoredToken', () => {
   });
 
   it('キーチェーンが無くても plain: の値は読める', async () => {
-    const { readStoredToken } = await import('../secrets');
+    const { readStoredToken } = await secretsModule();
     await writeRawStore({ github: plain('ghp_x') });
     encryptionAvailable = false;
     expect(await readStoredToken('github')).toEqual({ ok: true, token: 'ghp_x' });
   });
 
   it('復号が throw しても投げ返さず undecryptable として返す', async () => {
-    const { readStoredToken } = await import('../secrets');
+    const { readStoredToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_x') });
     decryptThrows = true;
     const r = await readStoredToken('github');
@@ -100,7 +111,7 @@ describe('readStoredToken', () => {
   });
 
   it('プロトタイプ由来のキーを保存値として読まない', async () => {
-    const { readStoredToken } = await import('../secrets');
+    const { readStoredToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_x') });
     for (const key of ['__proto__', 'constructor', 'toString']) {
       expect(await readStoredToken(key), key).toEqual({ ok: false, reason: 'absent' });
@@ -110,7 +121,7 @@ describe('readStoredToken', () => {
 
 describe('getToken (薄い読み口)', () => {
   it('読めた時は文字列、読めない時は null', async () => {
-    const { getToken } = await import('../secrets');
+    const { getToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_x') });
     expect(await getToken('github')).toBe('ghp_x');
     encryptionAvailable = false;
@@ -121,13 +132,13 @@ describe('getToken (薄い読み口)', () => {
 
 describe('getValidToken', () => {
   it('生トークンはそのまま返す', async () => {
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_x') });
     expect(await getValidToken('github')).toEqual({ ok: true, token: 'ghp_x' });
   });
 
   it('OAuth の TokenSet は accessToken を返す', async () => {
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     const tokens = { accessToken: 'ya29.a', refreshToken: 'r', expiresAt: Date.now() + 3_600_000 };
     await writeRawStore({ drive: encrypted(JSON.stringify(tokens)) });
     expect(await getValidToken('drive')).toEqual({ ok: true, token: 'ya29.a' });
@@ -160,8 +171,7 @@ describe('getValidToken', () => {
    * 資格情報そのものだから。
    */
   it('TokenSet でない JSON オブジェクトは断る (生の JSON を Bearer に載せない)', async () => {
-    const { getValidToken } = await import('../secrets');
-    const { brokenStoredCredentialMessage } = await import('../../shared/vaultToken');
+    const { getValidToken } = await secretsModule();
     await writeRawStore({ github: encrypted('{"unrelated":1}') });
     expect(await getValidToken('github')).toEqual({
       ok: false,
@@ -171,19 +181,19 @@ describe('getValidToken', () => {
   });
 
   it('対照: JSON ですらない生トークンは今までどおり返す (断る対象を広げていない)', async () => {
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_not_json_at_all') });
     expect(await getValidToken('github')).toEqual({ ok: true, token: 'ghp_not_json_at_all' });
   });
 
   it('未設定は absent を伝える (「読めない」と混同しない)', async () => {
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     await writeRawStore({});
     expect(await getValidToken('github')).toEqual({ ok: false, reason: 'absent' });
   });
 
   it('保存済みだが読めない場合は undecryptable を伝える', async () => {
-    const { getValidToken } = await import('../secrets');
+    const { getValidToken } = await secretsModule();
     await writeRawStore({ github: encrypted('ghp_x') });
     encryptionAvailable = false;
     const r = await getValidToken('github');

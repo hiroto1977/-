@@ -28,6 +28,8 @@ import {
   readAtlassianCredentials,
   type AtlassianCredsFailure,
 } from '../atlassianSite';
+import * as mainAtlassian from '../../main/clients/atlassian';
+import * as saasWriteWeb from '../../renderer/data/saasWriteWeb';
 
 vi.mock('electron', () => ({
   app: { getPath: () => '/tmp/x', getVersion: () => '1.0.0', isPackaged: false },
@@ -116,8 +118,8 @@ describe('readAtlassianCredentials — 記録でない値は欄が無い物と�
 describe('★ 両ビルドは同じ入力に同じ文を返す (文面の写しを持たない)', () => {
   /** main / ブラウザ版の `parseAtlassianToken` を叩き、投げた文だけを取る。 */
   async function both(raw: string): Promise<{ main: string; web: string }> {
-    const m = (await import('../../main/clients/atlassian')) as { parseAtlassianToken: (r: string) => unknown };
-    const w = (await import('../../renderer/data/saasWriteWeb')) as { parseAtlassianToken: (r: string) => unknown };
+    const m = mainAtlassian as { parseAtlassianToken: (r: string) => unknown };
+    const w = saasWriteWeb as { parseAtlassianToken: (r: string) => unknown };
     const say = (f: (r: string) => unknown): string => {
       try { f(raw); return 'OK'; } catch (e) { return e instanceof Error ? e.message : String(e); }
     };

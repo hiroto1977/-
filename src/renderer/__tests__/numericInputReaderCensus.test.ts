@@ -187,12 +187,25 @@ const READER_LEDGER: Readonly<Record<string, string>> = {
   reNumOrNull: 'RealEstatePage の別名 = readNumberOrNull → readNumeric',
 };
 
-/** 走査に出た欄のうち、読み手が 1 つも当たらないファイル (値を丸ごと下へ渡す形)。 */
-const NO_LOCAL_READER: Readonly<Record<string, string>> = {
-  'renderer/components/ManualDataSection.tsx':
-    'draft オブジェクトごと businessUnits.ts へ渡す (そちらが readNumeric を読む)',
-  'renderer/pages/HydroponicsPage.tsx':
-    '欄は HYDROPONICS_CONTROL_SPECS / 作物の下書きへ渡り、readControlRecord と parseCropNumber が読む',
+/**
+ * 走査に出た欄のうち、読み手が 1 つも当たらないファイル (値を丸ごと書き手へ渡す形)。
+ *
+ * **渡す先の書き手を名指しし、そのファイルが実際に呼んでいることを検める** (パス 496)。
+ * それまでの理由は散文だけで、HydroponicsPage の行は「readControlRecord と parseCropNumber が
+ * 読む」と書いていた —— `readControlRecord` は**保存した値**を読む口で入力欄は通らず、
+ * `parseCropNumber` を呼ぶのは経営サマリーの画面だった (この画面は 1 度も呼ばない)。
+ * 書き手の読み方そのもの (画面と同じ `readNumeric`) は `data/__tests__/writerNumberReading.test.ts`
+ * が書き手 × 欄 × 標本の総当たりで留める。
+ */
+const NO_LOCAL_READER: Readonly<Record<string, { readonly writers: readonly string[]; readonly why: string }>> = {
+  'renderer/components/ManualDataSection.tsx': {
+    writers: ['parseBusinessUnit', 'parseManualMetric', 'parseOverrideValue'],
+    why: '事業の登録・任意項目・計算値の置き換えの下書きを、そのまま書き手へ渡す',
+  },
+  'renderer/pages/HydroponicsPage.tsx': {
+    writers: ['parseReading', 'parseBatch', 'parseControlRecord'],
+    why: '測定・ロット・運転設定の下書きを、そのまま書き手へ渡す (運転設定は関門 HYDROPONICS_CONTROL_SPECS も通る)',
+  },
 };
 
 let container: HTMLDivElement;
@@ -302,6 +315,19 @@ describe('入力欄の文字列を数にする口は 1 つ (パス 375)', () => 
     const none = numericInputFiles().filter((f) => f.readers.length === 0).map((f) => f.file).sort();
     expect(none.filter((f) => !Object.hasOwn(NO_LOCAL_READER, f)), '台帳に無い「読み手なし」').toEqual([]);
     expect(Object.keys(NO_LOCAL_READER).filter((f) => !none.includes(f)).sort(), '台帳の古い行').toEqual([]);
+  });
+
+  it('★ 「読み手なし」の行が名指しする書き手は、そのファイルが実際に呼ぶ (パス 496)', () => {
+    const wrong: string[] = [];
+    for (const [file, row] of Object.entries(NO_LOCAL_READER)) {
+      expect(row.writers.length, `${file}: 書き手の名指しが無い`).toBeGreaterThan(0);
+      expect(row.why.length, `${file}: 理由が無い`).toBeGreaterThan(10);
+      const code = stripComments(readOriginalSource(join(SRC, file)));
+      for (const w of row.writers) {
+        if (!new RegExp(`\\b${w}\\s*\\(`).test(code)) wrong.push(`${file}: ${w} を呼んでいない`);
+      }
+    }
+    expect(wrong).toEqual([]);
   });
 
   it('★ どの読み手も readNumeric へ辿り着く (素の Number / parseFloat / parseInt で読まない)', () => {

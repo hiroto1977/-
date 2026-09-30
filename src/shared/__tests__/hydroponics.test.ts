@@ -4,7 +4,7 @@
  * 数値は手計算で置いている。割り切れる値を選んだ固定具 (`CLEAN_CROP`) で
  * 算術そのものを固定し、参考値 (`HYDROPONIC_CROPS`) は「出典どおりか」を別に見る。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   HYDROPONIC_CROPS,
   PANEL_AREA_SQM,
@@ -28,6 +28,7 @@ import {
   type CostInput,
   type LowPotassiumParams,
 } from '../hydroponics';
+import { rereadModule } from './rereadModule';
 
 /** 割り切れる値だけで組んだ品目。株密度 27 / 0.54 = 50 株/m² ちょうど。 */
 const CLEAN_CROP: HydroponicCrop = {
@@ -472,6 +473,20 @@ describe('assessLowPotassium — 実測でしか評価しない', () => {
       expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: days }).switchWindowOk, `${days}`).toBe(ok);
     }
   });
+
+  // **未設定・0 以下・非有限は「入力されていない」で、範囲外 (false) とは別の答え (null)。**
+  // 偽の警告は本物の警告を薄める。フォームの `allowZero: false` と同じ判定で、
+  // 画面が受け付けない値を計算だけが受け取らない。Infinity は正で有限でないので
+  // `> 0` だけでは落ちない (`isFiniteNumber` の側だけが落とす)。0 は有限だが正でない
+  // (`> 0` の側だけが落とす)。
+  it('★ 切替期間が未設定・0・負・非有限なら switchWindowOk は null (範囲外の false ではない)', () => {
+    for (const days of [null, 0, -1, -10, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: days }).switchWindowOk, `${days}`).toBeNull();
+    }
+    // 対照: 正の有限値は (範囲外でも) null ではなく真偽で答える
+    expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: 1 }).switchWindowOk).toBe(false);
+    expect(assessLowPotassium({ ...base, switchDaysBeforeHarvest: 0.5 }).switchWindowOk).toBe(false);
+  });
 });
 
 describe('servingGramsWithinLimit — 何 g 食べられるか', () => {
@@ -627,15 +642,14 @@ describe('食べられる量の上限表 (limits)', () => {
 
 /**
  * 参考値の表と前提の既定はモジュール読込時に確定する static な値で、通常の検査では
- * Stryker が測らずに無視する。ところが `hydroponicCrops.test.ts` が `vi.resetModules()`
+ * Stryker が測らずに無視する。ところが `hydroponicCrops.test.ts` が (パス 495 より前は) `vi.resetModules()`
  * で読み直すと、その import 連鎖でこのモジュールの表も**組み立て直され、測られる**
  * (2026-09-03 に生存 19 件として発見 — 品目の文字と数・CKD の上限・前提の既定)。
  * 測られる以上は殺す: 上の `toEqual` と同じ主張を、読み直した実体に対して置く。
  */
 describe('表の static 変異体を測る (動的 import で読み直す)', () => {
   it('品目の参考値・前提の既定・CKD の上限・低カリウムの基準が写しと一致する', async () => {
-    vi.resetModules();
-    const m = await import('../hydroponics');
+    const m = await rereadModule<typeof import('../hydroponics')>(import.meta.url, '../hydroponics');
     expect(m.HYDROPONIC_CROPS).toEqual({
       'leaf-lettuce': {
         id: 'leaf-lettuce', label: 'リーフレタス', nurseryDays: 24, growOutDays: 10, harvestWeightG: 85,

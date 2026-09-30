@@ -14,6 +14,7 @@ import {
   sanitizeReports,
   sanitizeTalentState,
 } from '../talent';
+import * as snapshotModule from '../../renderer/data/snapshot';
 
 /**
  * 人材育成の判定が、**デスクトップ版とブラウザ版で同じ答えを返す**こと。
@@ -77,14 +78,14 @@ describe('取得が失敗しても画面が使えること', () => {
     // smoke (Electron 実機) で取得を stub したところ、診断票も 10ヶ条も
     // STEP も**全部消えた**。定義表は定数であってデータではないので、
     // 取得の成否に関わらず読めなければならない。
-    const { SNAPSHOT } = await import('../../renderer/data/snapshot');
+    const { SNAPSHOT } = snapshotModule;
     expect(SNAPSHOT.talent.diseases).toHaveLength(5);
     expect(SNAPSHOT.talent.disqualifiers).toHaveLength(10);
     expect(SNAPSHOT.talent.steps).toHaveLength(4);
   });
 
   it('★ 写しではなく参照 — shared の実物と同一である', async () => {
-    const { SNAPSHOT } = await import('../../renderer/data/snapshot');
+    const { SNAPSHOT } = snapshotModule;
     expect(SNAPSHOT.talent.diseases).toBe(ORGAN_DISEASES);
     expect(SNAPSHOT.talent.disqualifiers).toBe(LEADER_DISQUALIFIERS);
     expect(SNAPSHOT.talent.steps).toBe(SKILL_STEPS);

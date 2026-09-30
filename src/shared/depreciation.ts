@@ -28,9 +28,9 @@ export function straightLineAnnual(rawCost: number, rawLife: number): number {
   // 倒してから比較する —— パス 203。
   const acquisitionCost = nonNeg(rawCost);
   const usefulLife = nonNeg(rawLife);
-  // acquisitionCost===0 は yen(0/life)=0 と計算経路も一致するため <=→< は equivalent。
-  // Stryker disable next-line EqualityOperator
-  if (acquisitionCost <= 0) return 0;
+  // 取得価額 0 の早期 return は置かない —— 耐用年数が正なら `yen(0 / life)` = 0、
+  // 0 以下なら下の関門が 0 を返すので、答えが同じ (置くと `false` へ倒した変異体が
+  // 観測できない等価変異として残る —— パス 501 で形ごと消した)。
   if (usefulLife <= 0) return 0;
   return yen(acquisitionCost / usefulLife);
 }

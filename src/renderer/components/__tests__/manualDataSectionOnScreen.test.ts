@@ -32,6 +32,7 @@ import { ManualDataSection } from '../ManualDataSection';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 import { hasCatalog, sectionsFor } from '../../data/manualData';
+import { OVERRIDE_UNREADABLE_REASON } from '../../data/overviewOverrides';
 import { settleUntil, waitForElement } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
@@ -238,14 +239,30 @@ describe('手入力の欄 — 開いて押す (パス 170)', () => {
     await settleUntil(() => container.querySelector('[data-overridden]') === null, 'バッジが消える');
   });
 
-  it('★ 置き換えに数字でない物を入れると断り、置き換えは生まれない', async () => {
+  it('★ 置き換えに数として読めない物を入れると断り、置き換えは生まれない', async () => {
+    // ★ 2026-09-27 (パス 496) まで、ここの標本は '４５００' (全角数字) で、断りの文は
+    // 「半角数字で入力してください」だった。**全角数字は数字である** —— 画面の他の欄
+    // (`readNumeric`) は同じ文字列を 4500 と読む。書き手だけが断っていたのを 1 つの読み方へ
+    // 寄せたので、標本は**どちらの口でも読めない形** (単位語) にした。
     const first = sectionsFor('sales')[0]!.fields[0]!;
     await mount('sales');
     await open();
-    await type(field(`${first.label} を手入力`) as HTMLInputElement, '４５００');
+    await type(field(`${first.label} を手入力`) as HTMLInputElement, '450万');
     await click(button('保存'));
-    await settleUntil(() => text().includes('半角数字'), '断りが出る');
+    await settleUntil(() => text().includes(OVERRIDE_UNREADABLE_REASON), '断りが出る');
     expect(container.querySelector('[data-overridden]'), '断ったのに置き換えが在る').toBeNull();
+  });
+
+  it('★ 全角数字と桁区切りは画面の他の欄と同じく読む (パス 496)', async () => {
+    const first = sectionsFor('sales')[0]!.fields[0]!;
+    await mount('sales');
+    await open();
+    await type(field(`${first.label} を手入力`) as HTMLInputElement, '４，５００，０００');
+    await click(button('保存'));
+    await waitForElement(() => container.querySelector('[data-overridden]'), '手入力のバッジ');
+    expect(container.querySelector('[data-overridden]')!.textContent).toContain('4,500,000');
+    // 針が生きていることは 1 つ上の `it` が肯定形で見ている (同じ定数で断りを待つ)。
+    expect(text(), '読める値を断っている').not.toContain(OVERRIDE_UNREADABLE_REASON);
   });
 
   it('対照: 走査が実物に当たっている (節の目印と scope が出ている)', async () => {

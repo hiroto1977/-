@@ -16,6 +16,9 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../advisorQuestionLimits';
+import * as mainStocks from '../../main/clients/stocks';
+import * as mainBusiness from '../../main/clients/business';
+import * as mainEmotions from '../../main/clients/emotions';
 
 vi.mock('electron', () => ({
   app: { getPath: () => '/tmp/service-hub-p451', getVersion: () => '0.0.0', isPackaged: false },
@@ -39,9 +42,9 @@ type ActionMod = { ACTIONS: Record<string, (ctx: unknown) => Promise<unknown>> }
 
 /** 実物の handler を読む口。**静的な import だけ**にする (上の注記の理由)。 */
 const LOADERS: Record<'stocks' | 'business' | 'emotions', () => Promise<ActionMod>> = {
-  stocks: () => import('../../main/clients/stocks') as unknown as Promise<ActionMod>,
-  business: () => import('../../main/clients/business') as unknown as Promise<ActionMod>,
-  emotions: () => import('../../main/clients/emotions') as unknown as Promise<ActionMod>,
+  stocks: () => Promise.resolve(mainStocks) as unknown as Promise<ActionMod>,
+  business: () => Promise.resolve(mainBusiness) as unknown as Promise<ActionMod>,
+  emotions: () => Promise.resolve(mainEmotions) as unknown as Promise<ActionMod>,
 };
 
 describe('main —— 空のトークンで Anthropic を呼ばない', () => {

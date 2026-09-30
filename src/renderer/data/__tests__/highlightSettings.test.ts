@@ -24,8 +24,11 @@ describe('parseHighlightSettings — keys, boundaries & labels', () => {
   });
 
   it('reports the exact field label in each validation error (StringLiteral golden)', () => {
-    expect(() => parseHighlightSettings({ declineWarnStreak: 0 })).toThrow('連続下落(警告)期数は 1 以上の整数で入力してください');
-    expect(() => parseHighlightSettings({ declineCriticalStreak: 0 })).toThrow('連続下落(危険)期数は 1 以上の整数で入力してください');
+    // ★ 期数の断りは Error そのもので照合する (2026-09-27 · パス 496) —— 断りの文を関数で組むので、
+    //   `toThrow('文面')` だとその関数が undefined を返す形を素通りする (chai は投げた値が偽だと
+    //   文面の照合を飛ばす —— 実測)。`toThrow(new Error(…))` は Error であることと文面の一致を両方見る。
+    expect(() => parseHighlightSettings({ declineWarnStreak: 0 })).toThrow(new Error('連続下落(警告)期数は 1 以上の整数で入力してください'));
+    expect(() => parseHighlightSettings({ declineCriticalStreak: 0 })).toThrow(new Error('連続下落(危険)期数は 1 以上の整数で入力してください'));
     expect(() => parseHighlightSettings({ laborShareWarnPct: -1 })).toThrow('労働分配率の警告しきい値は 0〜100 の数値で入力してください');
     expect(() => parseHighlightSettings({ singleChannelWarnPct: 200 })).toThrow('単一チャネル依存の警告しきい値は 0〜100 の数値で入力してください');
     expect(() => parseHighlightSettings({ budgetShortfallWarnPct: 101 })).toThrow('予算未達の警告しきい値は 0〜100 の数値で入力してください');
@@ -90,7 +93,7 @@ describe('parseHighlightSettings', () => {
     expect(parseHighlightSettings({})).toEqual(DEFAULT_HIGHLIGHT_THRESHOLDS);
   });
 
-  it('coerces string numbers and floors streaks to integers', () => {
+  it('coerces string numbers (streaks must already be integers — パス 496)', () => {
     const s = parseHighlightSettings({
       declineWarnStreak: '2',
       declineCriticalStreak: '4',
@@ -126,5 +129,27 @@ describe('parseHighlightSettings', () => {
     const s = parseHighlightSettings({ declineWarnStreak: '3', declineCriticalStreak: '3' });
     expect(s.declineWarnStreak).toBe(3);
     expect(s.declineCriticalStreak).toBe(3);
+  });
+});
+
+/**
+ * **しきい値の読みは画面と同じ 1 つ** (2026-09-27 · パス 496)。それまでは `Number()` で、
+ * 全角の数字や `'60%'` を断り、期数の `'2.9'` を黙って 2 に切り捨て、空白だけの欄を 0 と読んで断っていた。
+ */
+describe('parseHighlightSettings — 画面と同じ読み方 (パス 496)', () => {
+  it('★ 期数は整数でなければ断る (黙って切り捨てない)', () => {
+    expect(() => parseHighlightSettings({ declineWarnStreak: '2.9' })).toThrow(new Error('連続下落(警告)期数は 1 以上の整数で入力してください'));
+    // 読めない入力も同じ文で断る (判定を 2 行に分けたので、読めない側の行も Error で照合する)
+    expect(() => parseHighlightSettings({ declineWarnStreak: '2期' })).toThrow(new Error('連続下落(警告)期数は 1 以上の整数で入力してください'));
+  });
+  it('★ 空白だけの欄も空欄 (既定へ倒す)', () => {
+    for (const raw of ['  ', '　']) {
+      expect(parseHighlightSettings({ declineWarnStreak: raw }).declineWarnStreak).toBe(DEFAULT_HIGHLIGHT_THRESHOLDS.declineWarnStreak);
+    }
+  });
+  it('★ 全角の数字と % を読む', () => {
+    expect(parseHighlightSettings({ laborShareWarnPct: '６０' }).laborShareWarnPct).toBe(60);
+    expect(parseHighlightSettings({ laborShareWarnPct: '55%' }).laborShareWarnPct).toBe(55);
+    expect(() => parseHighlightSettings({ laborShareWarnPct: '1e1' })).toThrow('0〜100 の数値で入力してください');
   });
 });

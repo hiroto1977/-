@@ -7,6 +7,9 @@ import {
   toIsoDate,
   usageWindow,
 } from '../cursor';
+import * as snapshotModule from '../../../renderer/data/snapshot';
+import * as shapeDiffModule from '../../../shared/__tests__/shapeDiff';
+import * as sharedCursor from '../../../shared/api/cursor';
 
 const MEMBERS = {
   teamMembers: [
@@ -355,8 +358,8 @@ describe('スナップショットの取得', () => {
  */
 describe('同梱の見本と取得の形', () => {
   it('★ SNAPSHOT.cursor と取得した形の欄が一致する', async () => {
-    const { SNAPSHOT } = await import('../../../renderer/data/snapshot');
-    const { shapeDiff } = await import('../../../shared/__tests__/shapeDiff');
+    const { SNAPSHOT } = snapshotModule;
+    const { shapeDiff } = shapeDiffModule;
     const fetched = await fetchCursorSnapshot({ token: 'key', fetch: stub({}) });
     const d = shapeDiff(SNAPSHOT.cursor, fetched);
     expect(d, '見本だけ / 取得だけの欄が在ると、片方の道でだけ undefined を読む').toEqual({
@@ -366,8 +369,8 @@ describe('同梱の見本と取得の形', () => {
   });
 
   it('★ 見本は「3 つとも読めた」を宣言している (画面が注記を出さない)', async () => {
-    const { SNAPSHOT } = await import('../../../renderer/data/snapshot');
-    const { cursorIntakeNote } = await import('../../../shared/api/cursor');
+    const { SNAPSHOT } = snapshotModule;
+    const { cursorIntakeNote } = sharedCursor;
     expect(SNAPSHOT.cursor.intake).toEqual({
       members: 'read', usage: 'read', spend: 'read', spendAmountsUnreadable: 0,
     });

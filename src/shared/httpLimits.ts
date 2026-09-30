@@ -259,7 +259,9 @@ export function redirectRefusal(res: Response, requestUrl: string, label: string
     try {
       host = new URL(location, requestUrl).host;
     } catch {
-      host = '';
+      // 解けない Location は行き先を述べない —— `host` は '' のまま (下の文が `host === ''` で分かれる)。
+      // ここで '' を代入し直す形は置かない: 代入が成功しなかった時点で '' なので答えが同じで、
+      // 観測できない等価変異 (ブロックを空にする変異体) として残る (パス 501)。
     }
   }
   return host === ''

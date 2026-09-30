@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import { webcrypto } from 'node:crypto';
 
@@ -7,6 +7,10 @@ import { getRecordStore, _resetRecordStoreForTests } from '../store';
 import { BACKUP_EXCLUSIONS, serializeBackup } from '../backup';
 import type { EvictionRecovery } from '../../../shared/storageDurability';
 import { _resetVaultForTests, getVault } from '../../security/vault';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+// 読み直す対象を先頭で読み込んでおく (型だけの import は変換で消えるので、それでは読まない。
+// 読み直しの前に依存先を評価しておかないと、最初の読み直しで依存先が検査の中で評価される —— パス 495)。
+import '../../../shared/storageDurability';
 
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -103,12 +107,11 @@ describe('EVICTION_RECOVERY と BACKUP_EXCLUSIONS が同じことを言ってい
    *
    * ソースを直接書き換えれば下の検査は落ちる (実測で確かめた) ので、
    * 主張そのものは正しかった。見えていなかったのは**読み込みの時点**である。
-   * `vi.resetModules()` + 動的 `await import()` で読み直せば、表を書き換える
+   * `rereadModule` (対象だけを読み直す —— パス 495) で読み直せば、表を書き換える
    * 変異体が比較で落ちる (`oauth.test.ts` の `freshConfigs` と同じ形)。
    */
   async function freshTable(): Promise<readonly EvictionRecovery[]> {
-    vi.resetModules();
-    const mod = (await import('../../../shared/storageDurability')) as {
+    const mod = (await rereadModule<typeof import('../../../shared/storageDurability')>(import.meta.url, '../../../shared/storageDurability')) as {
       EVICTION_RECOVERY: readonly EvictionRecovery[];
     };
     return mod.EVICTION_RECOVERY;

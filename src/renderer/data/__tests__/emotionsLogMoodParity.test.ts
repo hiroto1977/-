@@ -21,6 +21,7 @@ import { MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
 import { logMood as logMoodWeb, loadStore, EMOTIONS_STORE_KEY } from '../emotionsWeb';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
+import * as mainEmotions from '../../../main/clients/emotions';
 
 /*
  * **`log-mood` の note の上限を、注記ではなく振る舞いで留める。**
@@ -82,7 +83,7 @@ describe('log-mood の note は、どちらの版でも同じ長さで断られ�
    * 全件が「判断が一致した」ことにされていた —— 空虚検査が鳴って気付いた。
    */
   it('main 側と同じ判断をする (通す / 断るの一致)', async () => {
-    const mainMod = (await import('../../../main/clients/emotions')) as unknown as {
+    const mainMod = mainEmotions as unknown as {
       ACTIONS: Record<string, (ctx: { payload: unknown }) => Promise<unknown>>;
     };
     const mainLogMood = mainMod.ACTIONS['log-mood'];

@@ -17,6 +17,7 @@
 
 import { charsOverCeiling, countChars, refusedCeilingNote } from '../../shared/inputCeiling';
 import { isCalendarDate } from '../../shared/isoDate';
+import { readEntryNumber } from '../../shared/readNumeric';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 import { CROP_ID_RE } from '../../shared/hydroponicCrops';
 import { MAX_BATCH_ID_CHARS } from '../../shared/hydroponicsControl';
@@ -408,15 +409,17 @@ export function parseReading(input: {
   let measured = 0;
   for (const f of READING_FIELDS) {
     const spec = READING_FIELD_SPECS[f];
-    const v = raw[f];
-    if (blank(v)) {
+    // **読みは画面と同じ 1 つ** (`readEntryNumber` —— パス 496)。`Number()` は全角の
+    // 「６．２」を断り、`'.5'` / `'1e1'` を黙って読んでいた。
+    const read = readEntryNumber(raw[f]);
+    if (read.kind === 'blank') {
       values[f] = null;
       continue;
     }
-    const n = Number(v);
-    if (!Number.isFinite(n)) {
+    if (read.kind === 'unreadable') {
       throw new Error(`${spec.label} は数値で入力してください (空欄にすると「未測定」として記録します)`);
     }
+    const n = read.value;
     if (n < spec.plausibleMin || n > spec.plausibleMax) {
       throw new Error(
         `${spec.label} は ${spec.plausibleMin}〜${spec.plausibleMax}${spec.unit} の範囲で入力してください (測定器の校正を確認)`,
@@ -466,8 +469,11 @@ export function parseBatch(input: {
   if (typeof input.cropId !== 'string' || input.cropId === '') throw new Error('品目を選んでください');
   if (!CROP_ID_RE.test(input.cropId)) throw new Error('品目の id が不正です (一覧から選び直してください)');
   if (!isCalendarDate(input.sowDate)) throw new Error('播種日は YYYY-MM-DD 形式の実在する日付で入力してください');
-  const panels = Number(input.panels);
-  if (!Number.isInteger(panels) || panels < 1) throw new Error('パネル枚数は 1 以上の整数で入力してください');
+  const panelsRead = readEntryNumber(input.panels);
+  if (panelsRead.kind !== 'number' || !Number.isInteger(panelsRead.value) || panelsRead.value < 1) {
+    throw new Error('パネル枚数は 1 以上の整数で入力してください');
+  }
+  const panels = panelsRead.value;
   if (panels > MAX_BATCH_PANELS) throw new Error(`パネル枚数は ${MAX_BATCH_PANELS} 枚までです`);
   if (!isBatchState(input.state)) throw new Error('ロットの状態が不正です');
   /** 未定なら null、在るなら暦に在る日。**読めない綴りは断る** (今日に倒さない)。 */
@@ -506,21 +512,25 @@ export function parseBatch(input: {
  */
 export function parseControlRecord(input: Readonly<Record<string, unknown>>): HydroponicsControlRecord {
   const d = HYDROPONICS_CONTROL_DEFAULTS;
+  /*
+   * **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。保存の前に
+   * 関門 (`refusedFields(HYDROPONICS_CONTROL_SPECS, …)` → `readNumeric`) が通した値を、
+   * ここは `Number()` で読み直していた —— `'1,000'` や全角の数字は関門が ⛔ を出さずに
+   * 通し、ここが「0 より大きい数値で入力してください」と**偽の理由で**断っていた。
+   */
   /** 必須の数値。空欄なら既定へ倒す (入力欄の初期値と同じ)。 */
   const req = (key: keyof HydroponicsControlRecord, label: string): number => {
-    const v = input[key];
-    if (blank(v)) return d[key] as number;
-    const n = Number(v);
-    if (!Number.isFinite(n)) throw new Error(`${label} は数値で入力してください`);
-    return n;
+    const read = readEntryNumber(input[key]);
+    if (read.kind === 'blank') return d[key] as number;
+    if (read.kind === 'unreadable') throw new Error(`${label} は数値で入力してください`);
+    return read.value;
   };
   /** 未入力を保つ数値。**空欄は null** (0 ではない)。 */
   const optNum = (key: keyof HydroponicsControlRecord, label: string): number | null => {
-    const v = input[key];
-    if (blank(v)) return null;
-    const n = Number(v);
-    if (!Number.isFinite(n) || n <= 0) throw new Error(`${label} は 0 より大きい数値で入力してください`);
-    return n;
+    const read = readEntryNumber(input[key]);
+    if (read.kind === 'blank') return null;
+    if (read.kind === 'unreadable' || read.value <= 0) throw new Error(`${label} は 0 より大きい数値で入力してください`);
+    return read.value;
   };
   /** 1 以上の整数。 */
   const days = (key: keyof HydroponicsControlRecord, label: string): number => {
@@ -554,5 +564,19 @@ export function parseControlRecord(input: Readonly<Record<string, unknown>>): Hy
   // 復元の入口 (`collectionShapes`) が同じ台帳を読むので、両方の門が同じ規則。
   const issue = relationIssue(HYDROPONICS_CONTROL_COLLECTION, out);
   if (issue !== null) throw new Error(issue);
+  return out;
+}
+
+/**
+ * 保存値 → 運転の設定の入力欄 (パス 500)。保存値は `readControlRecord` と**同じ読み**を通す —— 欠けた欄と
+ * 幅の外の欄は既定へ倒し、任意の欄 (`null`) は空欄。欄は計算が使う値を見せる。
+ *
+ * 画面の「設定を変更」が開く時に同じことをしていたが、そのときの「保存値」は購読の写しで、保管層が
+ * 答える前に押すと**既定値の欄**が開き、保存すると保存していた設定を既定値で覆った (パス 500)。
+ */
+export function controlFormFrom(saved: HydroponicsControlRecord | null): Record<string, string> {
+  const { record } = readControlRecord(saved === null ? [] : [{ createdAt: 0, data: saved }]);
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(record)) out[k] = v === null ? '' : String(v);
   return out;
 }

@@ -34,6 +34,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
+import { LicenseSection } from '../SettingsPage';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -47,7 +48,6 @@ async function settle(): Promise<void> {
 }
 
 async function mount(): Promise<void> {
-  const { LicenseSection } = await import('../SettingsPage');
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(LicenseSection));

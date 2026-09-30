@@ -26,6 +26,8 @@ import {
   MAX_ATLASSIAN_SITE,
   MAX_ATLASSIAN_TOKEN,
 } from '../../../shared/atlassianSite';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 function jsonResponse(status: number, body: unknown): Response {
   return {
@@ -983,13 +985,12 @@ describe('ensureOk error formatting', () => {
  * 空文字に変えても「throw する」ことしか確かめていなかったので通ってしまう。
  * 文言が消えると、site を貼り間違えた利用者に空のエラーが出る。
  *
- * `vi.resetModules()` + 動的 import なのは表がモジュール定数だから
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直すのは表がモジュール定数だから
  * (静的 import のままだと読み込み時に評価が済んで変異体が畳み込まれる)。
  */
 describe('Atlassian の site を弾いたときの文言', () => {
   async function freshParse(): Promise<typeof parseAtlassianToken> {
-    vi.resetModules();
-    const mod = (await import('../saasWriteWeb')) as typeof import('../saasWriteWeb');
+    const mod = (await rereadModule<typeof import('../saasWriteWeb')>(import.meta.url, '../saasWriteWeb')) as typeof import('../saasWriteWeb');
     return mod.parseAtlassianToken;
   }
 
@@ -1017,6 +1018,29 @@ describe('Atlassian の site を弾いたときの文言', () => {
     });
     expect(seen.filter((m) => m.length > 0)).toHaveLength(4);
     expect(new Set(seen).size).toBe(4);
+  });
+});
+
+/*
+ * **読み直す検査は、モジュール直下の値を全部主張する** (パス 495 の規約)。
+ *
+ * このモジュールの直下の値は `ATLASSIAN_SITE_MESSAGES` (上の describe が各文を留める) と
+ * `WEB_USER_AGENT`。上の describe は `rereadModule` で読み直すので、直下の値は
+ * 「その検査が覆った」と数えられ、変異検査は**覆った検査だけ**でその変異体を走らせる。
+ * 覆った検査が `WEB_USER_AGENT` を主張していなければ、空文字へ変えても生き残る
+ * (2026-09-30 の全掃引の実測)。普通の import から呼ぶ検査
+ * (`checkEmailBreach` の「exact endpoint/headers」) は読み込みの時点で評価した値を見るので、
+ * 読み直した側の変異体には届かない。
+ *
+ * この値は HIBP の要求の `User-Agent` として封筒に載る (HIBP は名乗りを必須とする)。
+ */
+describe('読み直したモジュールの直下の値 (WEB_USER_AGENT)', () => {
+  it('HIBP の要求は User-Agent に service-hub を名乗る', async () => {
+    const mod = await rereadModule<typeof import('../saasWriteWeb')>(import.meta.url, '../saasWriteWeb');
+    const transport = vi.fn().mockResolvedValue(jsonResponse(404, {}));
+    await mod.checkEmailBreach({ email: 'a@b.com' }, 'hibpkey', transport);
+    const [, init] = transport.mock.calls[0]!;
+    expect(headersOf(init)['User-Agent']).toBe('service-hub');
   });
 });
 
@@ -1251,7 +1275,6 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
   it('★ 台帳 (ENTRIES) が実装の書き込み口を全部覆う', async () => {
     // **原文で読む** —— 生の読みでは Stryker の計器が書き換えた写しに当たり、
     // 綴りに当てる検査が空になる (`originalSourcePolicy` がそれをゲートにしている)。
-    const { readOriginalSource } = await import('../../../shared/__tests__/originalSource');
     const src = readOriginalSource(new URL('../saasWriteWeb.ts', import.meta.url).pathname);
     // `transport: Transport` を取る export された関数が「書き込み口」である。
     const declared = [...src.matchAll(/export async function (\w+)\([\s\S]{0,400}?transport: Transport,/g)].map(
@@ -1260,5 +1283,120 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
     // 標本: 走査が**実際に当たる**ことを見る (0 件なら規則が死んでいる)。
     expect(declared.length).toBeGreaterThan(0);
     expect([...declared].sort()).toEqual(ENTRIES.map(([n]) => n).sort());
+  });
+});
+
+/*
+ * **読む所・失敗を報せる所の label は、相手の名前で断りを始める。**
+ *
+ * 書き込み口はどれも `readJson(res, '<相手> API')` / `ensureOk(res, '<相手>')` に
+ * 相手の名前を渡し、その名前が利用者に見える断りの先頭になる
+ * (「<相手> の応答が JSON ではありません」「<相手> 403: …」)。
+ * 名前が空でも「throw する」ことしか見ない検査は通るので、変異検査で label の変異体が
+ * 口ごとに生き残った (2026-09-30 の全掃引)。文面を**口ごとに 1 字ずつ**留める。
+ *
+ * 綴りは口ごとに違う —— `ensureOk` は「Calendar API」、読みは「Google Calendar API」。
+ * 揃えると利用者に見える文面が変わるので、ここでは今の綴りを写す (揃えるなら別の変更)。
+ */
+describe('★ 応答が読めない・失敗したときの断りは、相手の名前で始まる', () => {
+  const NOT_JSON = '<html>Worker error</html>';
+  const notJson = (label: string): string => `${label} の応答が JSON ではありません (処理したことを確認できません)`;
+
+  /** 断りを Error として受け取って文面を返す。断られなければ落ちる。 */
+  async function messageOf(p: Promise<unknown>): Promise<string> {
+    try {
+      await p;
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      return (e as Error).message;
+    }
+    throw new Error('断られなかった');
+  }
+
+  type Call = (t: Transport) => Promise<unknown>;
+
+  // 2xx の本文を読む口 (本文が JSON でなければ、読む所の label で断る)。
+  const READ: Array<[string, string, Call]> = [
+    ['createGithubIssue', 'GitHub API', (t) => createGithubIssue({ owner: 'o', repo: 'r', title: 'T' }, 'tok', t)],
+    ['createNotionPage', 'Notion API', (t) => createNotionPage({ parentPageId: 'p'.repeat(32), title: 'T', body: 'B' }, 'tok', t)],
+    ['sendSlackMessage', 'Slack API', (t) => sendSlackMessage({ channel: '#c', text: 'hi' }, 'tok', t)],
+    [
+      'createAtlassianIssue',
+      'Atlassian API',
+      (t) =>
+        createAtlassianIssue(
+          { projectKey: 'AB', summary: 'S', issueType: 'Task' },
+          JSON.stringify({ email: 'a@b.co', token: 't', site: 'https://x.atlassian.net' }),
+          t,
+        ),
+    ],
+    [
+      'createCalendarEvent',
+      'Google Calendar API',
+      (t) => createCalendarEvent({ summary: 'S', start: '2026-09-15T10:00:00Z', end: '2026-09-15T11:00:00Z' }, 'tok', t),
+    ],
+    ['createGmailDraft', 'Gmail API', (t) => createGmailDraft({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
+    ['createDriveFolder', 'Google Drive API', (t) => createDriveFolder({ name: 'N' }, 'tok', t)],
+    [
+      'createWordPressPostDraft',
+      'WordPress.com API',
+      (t) => createWordPressPostDraft({ siteId: 'x.wordpress.com', title: 'T', content: 'C' }, 'tok', t),
+    ],
+    ['createCanvaFolder', 'Canva API', (t) => createCanvaFolder({ name: 'N' }, 'tok', t)],
+    [
+      'createCloudflareDnsRecord',
+      'Cloudflare API',
+      (t) => createCloudflareDnsRecord({ zoneId: 'z'.repeat(32), type: 'A', name: 'a.b.co', content: '1.2.3.4' }, 'tok', t),
+    ],
+    [
+      'purgeCloudflareCache',
+      'Cloudflare API',
+      (t) => purgeCloudflareCache({ zoneId: 'z'.repeat(32), files: ['https://a.b.co/x'] }, 'tok', t),
+    ],
+    ['scanUrlVirusTotal', 'VirusTotal API', (t) => scanUrlVirusTotal({ url: 'https://a.b.co/' }, 'key', t)],
+    ['checkEmailBreach', 'HIBP API', (t) => checkEmailBreach({ email: 'a@b.co' }, 'key', t)],
+    [
+      'createMicrosoftEvent',
+      'Microsoft Graph',
+      (t) =>
+        createMicrosoftEvent({ subject: 'S', start: '2026-09-15T10:00:00', end: '2026-09-15T11:00:00' }, 'tok', t),
+    ],
+  ];
+
+  it.each(READ)('%s: 2xx で JSON でない本文は「%s の応答が…」と断る', async (_name, label, call) => {
+    // 呼ぶたびに新しい Response を返す (scanUrlVirusTotal は 2 回呼ぶ)。
+    const transport = vi.fn<Transport>().mockImplementation(async () => new Response(NOT_JSON, { status: 200 }));
+    expect(await messageOf(call(transport))).toBe(notJson(label));
+  });
+
+  it('標本: 使う本文は本当に JSON として読めない (上の断りが別の理由で出ていない)', () => {
+    expect(() => JSON.parse(NOT_JSON)).toThrow();
+  });
+
+  // 本文を返さない sendMicrosoftMail (202) は 2xx では断れないので失敗の側だけを見る。
+  // createMicrosoftEvent は読む側 (上) と失敗の側 (ここ) で label の呼び出しが別なので両方に載る。
+  const FAIL: Array<[string, Call]> = [
+    ['sendMicrosoftMail', (t) => sendMicrosoftMail({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
+    [
+      'createMicrosoftEvent',
+      (t) =>
+        createMicrosoftEvent({ subject: 'S', start: '2026-09-15T10:00:00', end: '2026-09-15T11:00:00' }, 'tok', t),
+    ],
+  ];
+
+  it.each(FAIL)('%s: 失敗は「Microsoft Graph <status>: <本文>」', async (_name, call) => {
+    const transport = vi.fn<Transport>().mockImplementation(async () => new Response('denied', { status: 403 }));
+    expect(await messageOf(call(transport))).toBe('Microsoft Graph 403: denied');
+  });
+
+  it('★ 表は書き込み口を全部覆う (新しい口を足して載せ忘れれば鳴る)', () => {
+    // 原文で読む —— 生の読みは Stryker の計器が書き換えた写しに当たる。
+    const src = readOriginalSource(new URL('../saasWriteWeb.ts', import.meta.url).pathname);
+    const declared = [...src.matchAll(/export async function (\w+)\([\s\S]{0,400}?transport: Transport,/g)].map(
+      (m) => m[1],
+    );
+    expect(declared.length).toBeGreaterThan(0);
+    const covered = new Set([...READ.map(([n]) => n), ...FAIL.map(([n]) => n)]);
+    expect([...covered].sort()).toEqual([...declared].sort());
   });
 });

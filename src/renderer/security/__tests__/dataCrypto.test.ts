@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   encryptString,
   decryptString,
@@ -14,6 +14,7 @@ import {
   MAX_KDF_ITERATIONS,
 } from '../dataCrypto';
 import { MIN_SALT_BYTES } from '../../../shared/cryptoParams';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 const VALID_BUNDLE = { v: 1, kdf: 'PBKDF2-SHA256', iterations: 210_000, salt: 'a', iv: 'b', ct: 'c' };
 
@@ -173,20 +174,18 @@ describe('assertSaltBytes — 保存側から読んだソルトの長さ', () =>
  *
  * KDF 名は**封緘データの外形そのもの**である —— 空文字になれば、既存の
  * 封緘データが一斉に「形が違う」と判定され、開けなくなる。
- * `vi.resetModules()` + `await import()` で読み直して問う。
+ * `rereadModule` (対象だけを読み直す —— パス 495) で読み直して問う。
  */
 describe('KDF 名 —— 静的定数を測れる形で問う', () => {
   it('再読込したモジュールでも kdf:"PBKDF2-SHA256" の封緘データを受け入れる', async () => {
-    vi.resetModules();
-    const mod = await import('../dataCrypto');
+    const mod = await rereadModule<typeof import('../dataCrypto')>(import.meta.url, '../dataCrypto');
     expect(mod.isEncryptedBundle({ ...VALID_BUNDLE })).toBe(true);
     expect(mod.isEncryptedBundle({ ...VALID_BUNDLE, kdf: 'OTHER' })).toBe(false);
     expect(mod.isEncryptedBundle({ ...VALID_BUNDLE, kdf: '' })).toBe(false);
   });
 
   it('再読込したモジュールが書き出す封緘データも "PBKDF2-SHA256" を名乗る', async () => {
-    vi.resetModules();
-    const mod = await import('../dataCrypto');
+    const mod = await rereadModule<typeof import('../dataCrypto')>(import.meta.url, '../dataCrypto');
     const bundle = await mod.encryptString('x', 'pw');
     expect(bundle.kdf).toBe('PBKDF2-SHA256');
   });
