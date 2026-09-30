@@ -304,6 +304,13 @@ jobs:
         if: always() && hashFiles('reports/mutation/mutation.json') != ''
         run: node scripts/triage-mutations.cjs --top=30 --include-string-literals
 
+      # 殺されていない変異体 (生存 + 未到達) を全件・位置つきで 1 行ずつ。上の表は
+      # 30 件で切り元の綴りも出さないので、閉じるべき生存が何百件も在るときは
+      # この 1 本のログだけで仕分けに入れる (artifact は環境によっては取れない)。
+      - name: List every non-killed mutant
+        if: always() && hashFiles('reports/mutation/mutation.json') != ''
+        run: node scripts/triage-mutations.cjs --list
+
   # push: 変わった対象だけを、塊ごとに別の job で。
   #
   # 差分測定では incremental キャッシュを使わない。古い結果が残ると
