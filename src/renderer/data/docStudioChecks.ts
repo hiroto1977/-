@@ -122,6 +122,8 @@ function matchWareki(half: string): RegExpMatchArray | null {
   const month = Number(m[3]);
   const day = Number(m[4]);
   const year = fromWareki(m[1]!, eraYear, month, day);
+  // 元号の外の日付 (令和元年4月30日 など) は、ここで「元号の外」として早く返す。
+  // Stryker disable next-line ConditionalExpression: 守りを false へ変える変異体は等価 —— year が null のまま進んでも String(null) = 'null' → parseJpDate の Number('null') = NaN → utcMsFromParts が NaN → 日の照合 (getUTCDate() !== d) が null を返し、答えは同じ (true へ変える変異体は和暦の検査が殺す)
   if (year === null) return null;
   // 西暦側と同じ形に揃える (以降の月・日の検査を 1 本で通す)。
   return [m[0], String(year), String(month), String(day)] as unknown as RegExpMatchArray;
@@ -339,14 +341,21 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
     // **`toNum` は読めるが `readNumber` は読めない帯** (`30 000` / `1,23` / `100m2`)
     // —— そこだけ計算が黙って 0 になる。両方が拒む入力 (`abc`) で 2 件出すと
     // 同じ欄に同じ趣旨の断りが並ぶ (2026-09-09 · パス 101 の実測で 2 件出ていた)。
-    if (filled && price !== '' && toNum(price) !== null && readNumber(price) === null) {
+    //
+    // **単価は `toNum` だけで足りる。** `toNum('')` は null なので、`toNum(price) !== null` は
+    // 「何か入っている」= 品名が空でも明細の行である、ことまで言う。`filled` や
+    // `price !== ''` を重ねても答えは同じで、外しても検査が 1 件も落ちなかった
+    // (2026-09-30 · パス 502 の変異検査。観測できる差が無い守りは置かない)。
+    if (toNum(price) !== null && readNumber(price) === null) {
       out.push({
         level: 'warn',
         field: `i${n}price`,
         message: `品目${n} の単価「${price}」を金額として読み取れません。金額 0 円として計算されます。`,
       });
     }
-    if (filled && qty !== '' && toNum(qty) !== null && readNumber(qty) === null) {
+    // 数量は違う。**数量だけが入った行は明細ではない** (品名か単価が無い) ので、
+    // `filled` を見て言わない。空欄は単価と同じく `toNum` が言う。
+    if (filled && toNum(qty) !== null && readNumber(qty) === null) {
       out.push({
         level: 'warn',
         field: `i${n}qty`,
