@@ -58,6 +58,32 @@ describe('demoMixNote — 不動産', () => {
     expect(p.userOnly.netCashflow).toBe(p.netCashflow);
   });
 
+  /*
+   * 見本の行が**行ごとの**経費・返済を持っていても、自分の分 (`userOnly`) には混ざらない (パス 501)。
+   * 実物の見本 (snapshot) は経費・返済を行ではなく `baseExpenses` / `baseLoan` で持つので、
+   * 上の混合の検査では `!isDemo` の門を外しても答えが変わらず、変異検査で生き残っていた
+   * —— 門が見ている当の形 (見本の行に行ごとの経費・返済) を標本にして留める。
+   */
+  it('★ 見本の行の経費・返済は自分の分に混ざらない (合計には入る)', () => {
+    const demoWithCosts: PortfolioProperty = {
+      monthlyRent: 200_000,
+      purchasePrice: 30_000_000,
+      occupied: true,
+      monthlyExpenses: 40_000,
+      monthlyLoan: 60_000,
+      demo: true,
+    };
+    const p = computeRealEstatePortfolio([demoWithCosts, mine], 0, 0);
+    // 合計は見本の分も足す。
+    expect(p.operatingExpenses).toBe(70_000);
+    expect(p.mortgagePayment).toBe(115_000);
+    // 自分の分は自分の行だけ。
+    expect(p.userOnly.grossRent).toBe(90_000);
+    expect(p.userOnly.operatingExpenses).toBe(30_000);
+    expect(p.userOnly.mortgagePayment).toBe(55_000);
+    expect(p.userOnly.netCashflow).toBe(5_000);
+  });
+
   it('見本だけ (何も登録していない) なら「見本を表示している」と述べ、自分の数字は並べない', () => {
     const p = computeRealEstatePortfolio(demoProps, baseExpenses, baseLoan);
     expect(p.demoCount).toBe(demoProps.length);

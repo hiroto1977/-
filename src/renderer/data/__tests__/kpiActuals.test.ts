@@ -822,6 +822,21 @@ describe('モジュール直下の値 (読み直してから確かめる — 静
       '2026-04 全社 ×2',
     );
   });
+
+  /*
+   * 損益分岐点の理由 2 文も module 直下の値 (パス 501)。他の検査は import した定数と
+   * 比べるので、定数が '' に変わると両辺が '' になって通る —— 読み直した上で**字面**を留める
+   * (読み直す検査は対象の直下の値を全部覆うので、主張しない値はここでだけ走って生き残る ——
+   * 法則 module-evaluated-at-file-load)。
+   */
+  it('★ 損益分岐点の理由 2 文は、読み直しても同じ字面 (原因ごとに別の文)', async () => {
+    const mod = await fresh();
+    expect(mod.NO_BEP_REASON).toBe('限界利益が 0 以下です。どれだけ売っても固定費を回収できません。');
+    expect(mod.ZERO_REVENUE_BEP_REASON).toBe(
+      '対象期間の売上高が 0 のため、損益分岐点・限界利益率・安全余裕率は算定していません。',
+    );
+    expect(mod.NO_BEP_REASON).not.toBe(mod.ZERO_REVENUE_BEP_REASON);
+  });
 });
 
 /**
