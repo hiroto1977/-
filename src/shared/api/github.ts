@@ -189,13 +189,17 @@ export function checkIssue(input: GithubIssueFields): CheckedIssue {
   if (badLabels !== null) {
     throw new Error(describeWriteFieldFailure({ field: 'labels', problem: badLabels, rule: GITHUB_LABELS }));
   }
-  const owner = typeof input.owner === 'string' ? input.owner.trim() : '';
-  const repo = typeof input.repo === 'string' ? input.repo.trim() : '';
-  const title = typeof input.title === 'string' ? input.title.trim() : '';
+  // owner / repo / title は必須の欄で、上の `checkWriteFields` が「空でない文字列」として通した
+  // 物だけがここへ来る。`typeof` で分けても偽の枝 (`''`) へは入れず、変異検査で生き残る —— `String`
+  // は型を文字列へ揃えるだけ (パス 502)。
+  const owner = String(input.owner).trim();
+  const repo = String(input.repo).trim();
+  const title = String(input.title).trim();
+  // 任意の欄は「文字列でなければ無い」(`null` も `undefined` に揃える —— JSON に `"body":null` を出さない)。
   const body = typeof input.body === 'string' ? input.body : undefined;
-  const labels = Array.isArray(input.labels)
-    ? input.labels.filter((l): l is string => typeof l === 'string')
-    : undefined;
+  // ラベルも `checkWriteLabels` が「1 件ずつ空でない文字列」として通した後なので、文字列だけを残す
+  // `filter` は何も落とさない。写し (新しい配列) を返して、呼び出し側の配列と別にする。
+  const labels = Array.isArray(input.labels) ? [...input.labels] : undefined;
   return { owner, repo, title, body, labels };
 }
 

@@ -250,8 +250,10 @@ export async function scanSkills(
       description: fm.description ?? '',
       source,
       path: skillFile,
-      // 実行できるかは下でまとめて決める (同じ鍵の重なりを見るため)。
-      runnable: false,
+      // 既定は「実行できる」。動かない物だけを、下で `markRunnable` が (同じ鍵の重なりを
+      // 見たうえで) 降ろす。降ろす側しか書かない —— 初期値を `false` にして最後に `true` へ
+      // 上書きする形だと、その初期値は**一度も観測されず**変異検査で生き残っていた (パス 502)。
+      runnable: true,
       unrunnableReason: '',
     });
   }
@@ -262,7 +264,7 @@ export async function scanSkills(
 }
 
 /**
- * **押して動く物だけを `runnable` にする。**
+ * **押して動かない物だけを `runnable: false` に降ろす** (既定は実行できる)。
  *
  * 2 つの理由で動かない:
  *
@@ -271,32 +273,33 @@ export async function scanSkills(
  *    先に見るので**フォルダ側が勝ち**、`<id>.md` 側を押すと別の定義が走る。
  *
  * どちらも走査した実物から決める (台帳を手で書かない)。
+ *
+ * 組は必ず 1 つ以上を持つので、型も空でない組 (`[SkillEntry, ...SkillEntry[]]`) で表す ——
+ * 勝者を `undefined` なしで取れ、`Map.get` の欠けを埋める守りが要らない (パス 502)。
  */
 function markRunnable(entries: SkillEntry[]): void {
-  const byId = new Map<string, SkillEntry[]>();
+  const byId = new Map<string, [SkillEntry, ...SkillEntry[]]>();
   for (const e of entries) {
     const group = byId.get(e.id);
     if (group) group.push(e);
     else byId.set(e.id, [e]);
   }
-  for (const e of entries) {
-    // 既に理由が付いている物 (長すぎる本文 · パス 308) はそのまま —— ここで上書きしない。
-    if (e.unrunnableReason !== '') continue;
-    if (!isSafeSkillName(e.id)) {
-      e.runnable = false;
-      e.unrunnableReason = unsafeSkillIdNote(e.id);
-      continue;
-    }
-    const group = byId.get(e.id) ?? [e];
+  for (const group of byId.values()) {
     // `readSkillBody` の候補順と同じ —— フォルダ形式が先。
     const winner = group.find((g) => g.path.endsWith(`${path.sep}SKILL.md`)) ?? group[0];
-    if (winner !== e) {
-      e.runnable = false;
-      e.unrunnableReason = shadowedSkillIdNote(e.id, winner?.path ?? e.path);
-      continue;
+    for (const e of group) {
+      // 既に理由が付いている物 (長すぎる本文 · パス 308) はそのまま —— ここで上書きしない。
+      if (e.unrunnableReason !== '') continue;
+      if (!isSafeSkillName(e.id)) {
+        e.runnable = false;
+        e.unrunnableReason = unsafeSkillIdNote(e.id);
+        continue;
+      }
+      if (winner !== e) {
+        e.runnable = false;
+        e.unrunnableReason = shadowedSkillIdNote(e.id, winner.path);
+      }
     }
-    e.runnable = true;
-    e.unrunnableReason = '';
   }
 }
 
