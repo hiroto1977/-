@@ -10,6 +10,7 @@
  *   npm run mutate:triage -- --file=src/main/clients/security.ts
  *   npm run mutate:triage -- --include-string-literals
  *   npm run mutate:triage -- --list    # 生存 + 未到達の全件を 1 行ずつ (下記)
+ *   npm run mutate:triage -- --summary # ファイルごとの件数 1 行 (docs/QUALITY.md をログから作り直す要約・下記)
  *   npm run mutate:triage -- --report=<path>   # 既定は reports/mutation/mutation.json
  *
  * Output is Markdown so it can be pasted straight into a PR description.
@@ -35,6 +36,20 @@
  * `(static)` の生存は**覆った検査がそのモジュールを検査の中で初めて評価した検査**そのもの
  * (法則 109 の直し方を当てる先 —— ローカルで Stryker を回して `coveredBy` を読まなくて済む)。
  * 未到達 (N) はどの検査も通っていないので付かない。
+ *
+ * ## --summary (2026-09-30 · パス 502)
+ *
+ * 全掃引の併合報告 (artifact) は、環境によっては取れない (blob の host が塞がれている)。
+ * `docs/QUALITY.md` は報告から作るので、取れなければ頁が古いままになる —— 頁に要るのは
+ * **ファイルごとの件数と run の `mutate`** だけなので、それを CI のログへ 1 行ずつ出す。
+ * `quality-report.cjs --from-summary` がこの形を読んで報告を組み直す (ログの貼り付けの
+ * 行頭のタイムスタンプは読み手が落とす)。行の種類:
+ *
+ *   RUN <run id> <sha>                 CI の実行 (GITHUB_RUN_ID / GITHUB_SHA・無ければ `-`)
+ *   MERGED_AT <iso>                    併合した時刻 (報告の `mergedAt`・無ければ `-`)
+ *   MUTATE a,b,c                       run の `config.mutate` (1 行 6 本)
+ *   F <path> K=12 S=1 N=0 I=3 E=0      K = Killed + Timeout・S = Survived・N = NoCoverage・
+ *                                      I = Ignored・E = RuntimeError + CompileError
  */
 
 const fs = require('node:fs');
@@ -138,6 +153,35 @@ function listNonKilled(report, fileFilter) {
   return { lines, survived, noCoverage, files };
 }
 
+const DETECTED = new Set(['Killed', 'Timeout']);
+const INVALID = new Set(['RuntimeError', 'CompileError']);
+const MUTATE_PER_LINE = 6;
+
+/** 併合した報告を、ファイルごとの件数 1 行へ畳む (`--summary`)。 */
+function summarizeFiles(report, env = process.env) {
+  const lines = [];
+  const mutate = report && report.config && Array.isArray(report.config.mutate) ? report.config.mutate.filter((m) => typeof m === 'string') : [];
+  lines.push(`RUN ${env.GITHUB_RUN_ID || '-'} ${env.GITHUB_SHA || '-'}`);
+  lines.push(`MERGED_AT ${report && typeof report.mergedAt === 'string' ? report.mergedAt : '-'}`);
+  for (let i = 0; i < mutate.length; i += MUTATE_PER_LINE) lines.push(`MUTATE ${mutate.slice(i, i + MUTATE_PER_LINE).join(',')}`);
+  let mutants = 0;
+  let files = 0;
+  for (const [file, info] of Object.entries((report && report.files) || {}).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+    const c = { K: 0, S: 0, N: 0, I: 0, E: 0 };
+    for (const m of (info && info.mutants) || []) {
+      if (DETECTED.has(m.status)) c.K += 1;
+      else if (m.status === 'Survived') c.S += 1;
+      else if (m.status === 'NoCoverage') c.N += 1;
+      else if (m.status === 'Ignored') c.I += 1;
+      else if (INVALID.has(m.status)) c.E += 1;
+    }
+    mutants += c.K + c.S + c.N + c.I + c.E;
+    files += 1;
+    lines.push(`F ${file.replace(`${process.cwd()}/`, '')} K=${c.K} S=${c.S} N=${c.N} I=${c.I} E=${c.E}`);
+  }
+  return { lines, files, mutants };
+}
+
 function fail(msg) {
   console.error(`triage-mutations: ${msg}`);
   process.exit(1);
@@ -148,6 +192,7 @@ function main(argv) {
   const FILE_FILTER = argv.find((a) => a.startsWith('--file='))?.slice('--file='.length);
   const INCLUDE_STRINGS = argv.includes('--include-string-literals');
   const LIST = argv.includes('--list');
+  const SUMMARY = argv.includes('--summary');
   const REPORT = argv.find((a) => a.startsWith('--report='))?.slice('--report='.length) ?? DEFAULT_REPORT;
 
   if (!fs.existsSync(REPORT)) {
@@ -155,6 +200,13 @@ function main(argv) {
   }
 
   const data = JSON.parse(fs.readFileSync(REPORT, 'utf8'));
+
+  if (SUMMARY) {
+    const r = summarizeFiles(data);
+    console.log(`# 変異検査の要約 — ファイル ${r.files} 本・変異体 ${r.mutants} 件 (Killed+Timeout / Survived / NoCoverage / Ignored / Error)`);
+    for (const l of r.lines) console.log(l);
+    return;
+  }
 
   if (LIST) {
     const r = listNonKilled(data, FILE_FILTER);
@@ -213,6 +265,6 @@ function main(argv) {
   for (const [m, n] of sorted) console.log(`- ${n.toString().padStart(4)} ${m}`);
 }
 
-module.exports = { compact, sliceSource, listNonKilled, main };
+module.exports = { compact, sliceSource, listNonKilled, summarizeFiles, main };
 
 if (require.main === module) main(process.argv.slice(2));

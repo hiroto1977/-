@@ -21,6 +21,9 @@
  * 4. `mutation.yml` の merge-full が併合した報告へ `--list` を当てること (配線)
  * 5. 生存の行の末尾に、その行を通した検査のファイルが付くこと (`coveredBy` → `testFiles`・
  *    多い順に 3 つまで・残りは `+N`・未知の id は無視・未到達には付かない)
+ * 6. `--summary` がファイルごとの件数 (K = Killed + Timeout / S / N / I / E) と run の `mutate`・
+ *    併合の時刻を 1 行ずつ出すこと (`docs/QUALITY.md` を artifact 無しで作り直す要約)。
+ *    `summarizeReport` (quality-report) と同じ数え方であること・merge-full がそれを出すこと
  */
 import { describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
@@ -55,6 +58,10 @@ const triage = req(path.join(REPO, 'scripts/triage-mutations.cjs')) as {
     report: Report,
     fileFilter?: string,
   ) => { lines: string[]; survived: number; noCoverage: number; files: number };
+  summarizeFiles: (
+    report: unknown,
+    env?: Record<string, string | undefined>,
+  ) => { lines: string[]; files: number; mutants: number };
 };
 
 // 1 行目: `const a = "abc";` ・ 2〜4 行目: 複数行の if ブロック。
@@ -215,6 +222,76 @@ describe('listNonKilled — 行を通した検査のファイル (← a×3, b, c
   });
 });
 
+describe('summarizeFiles — ファイルごとの件数 1 行 (docs/QUALITY.md をログから作り直す要約)', () => {
+  const mk = (statuses: string[]) => ({ mutants: statuses.map((status) => ({ status })) });
+  const rep = {
+    mergedAt: '2026-09-30T23:40:00.000Z',
+    config: { mutate: ['b.ts', 'a.ts', 'c.ts', 'd.ts', 'e.ts', 'f.ts', 'g.ts', 'h.ts'] },
+    files: {
+      'src/z.ts': mk(['Killed', 'Timeout', 'Survived', 'NoCoverage', 'Ignored', 'CompileError', 'RuntimeError', 'Pending']),
+      'src/a.ts': mk([]),
+      'src/m.ts': mk(['Killed', 'Killed', 'Killed']),
+    },
+  };
+
+  it('RUN・MERGED_AT・MUTATE (1 行 6 本)・F (ファイルの名前順) の順に出す', () => {
+    const r = triage.summarizeFiles(rep, { GITHUB_RUN_ID: '123', GITHUB_SHA: 'abc' });
+    expect(r.lines).toEqual([
+      'RUN 123 abc',
+      'MERGED_AT 2026-09-30T23:40:00.000Z',
+      'MUTATE b.ts,a.ts,c.ts,d.ts,e.ts,f.ts',
+      'MUTATE g.ts,h.ts',
+      'F src/a.ts K=0 S=0 N=0 I=0 E=0',
+      'F src/m.ts K=3 S=0 N=0 I=0 E=0',
+      'F src/z.ts K=2 S=1 N=1 I=1 E=2',
+    ]);
+    // 件数の見出し: ファイル 3 本・数える 5 種の変異体の合計 (Pending は数えない) = 3 + 7
+    expect({ files: r.files, mutants: r.mutants }).toEqual({ files: 3, mutants: 10 });
+  });
+
+  it('env も mergedAt も無ければ `-` と書く (推測した値を名乗らない)', () => {
+    const r = triage.summarizeFiles({ files: {} }, {});
+    expect(r.lines).toEqual(['RUN - -', 'MERGED_AT -']);
+    expect(triage.summarizeFiles(null, {}).lines).toEqual(['RUN - -', 'MERGED_AT -']);
+  });
+
+  it('K は Killed + Timeout・E は RuntimeError + CompileError (quality-report の summarizeReport と同じ数え方)', () => {
+    const qr = req(path.join(REPO, 'scripts/quality-report.cjs')) as {
+      summarizeReport: (r: unknown, root: string) => { rows: { file: string; killed: number; survived: number; noCov: number; ignored: number; invalid: number }[] };
+    };
+    const rows = qr.summarizeReport(rep, '/nowhere').rows;
+    const fromSummary = triage
+      .summarizeFiles(rep, {})
+      .lines.filter((l) => l.startsWith('F '))
+      .map((l) => {
+        const m = /^F (\S+) K=(\d+) S=(\d+) N=(\d+) I=(\d+) E=(\d+)$/.exec(l)!;
+        return { file: m[1]!, killed: +m[2]!, survived: +m[3]!, noCov: +m[4]!, ignored: +m[5]!, invalid: +m[6]! };
+      });
+    expect(fromSummary).toEqual(rows.map((r) => ({ file: r.file, killed: r.killed, survived: r.survived, noCov: r.noCov, ignored: r.ignored, invalid: r.invalid })));
+  });
+
+  it('CLI の --summary は見出しの次から全行を出す', () => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      const fs = req('node:fs') as typeof import('node:fs');
+      const exists = vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+      const read = vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(rep) as never);
+      try {
+        (req(path.join(REPO, 'scripts/triage-mutations.cjs')) as { main: (a: string[]) => void }).main(['--summary', '--report=/x.json']);
+      } finally {
+        exists.mockRestore();
+        read.mockRestore();
+      }
+      const out = log.mock.calls.map((c) => String(c[0]));
+      expect(out[0]).toBe('# 変異検査の要約 — ファイル 3 本・変異体 10 件 (Killed+Timeout / Survived / NoCoverage / Ignored / Error)');
+      expect(out).toContain('F src/z.ts K=2 S=1 N=1 I=1 E=2');
+      expect(out).toContain('MERGED_AT 2026-09-30T23:40:00.000Z');
+    } finally {
+      log.mockRestore();
+    }
+  });
+});
+
 describe('--list の配線', () => {
   it('CLI は --report の報告を読み、見出しの次から全件を出す', () => {
     const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -250,5 +327,17 @@ describe('--list の配線', () => {
     const body = step![1]!;
     expect(body).toContain("if: always() && hashFiles('reports/mutation/mutation.json') != ''");
     expect(body).toContain('run: node scripts/triage-mutations.cjs --list');
+  });
+
+  it('mutation.yml の merge-full は、ファイルごとの要約も出す (QUALITY.md をログから作り直すため)', () => {
+    const yml = readOriginalSource(path.join(REPO, '.github/workflows/mutation.yml'));
+    const start = yml.indexOf('\n  merge-full:');
+    const end = yml.indexOf('\n  mutate-some:');
+    const job = yml.slice(start, end);
+    const step = /- name: Per-file summary[^\n]*\n((?: {8}.*\n)+)/.exec(job);
+    expect(step, 'merge-full に「Per-file summary」の step が在る').not.toBeNull();
+    const body = step![1]!;
+    expect(body).toContain("if: always() && hashFiles('reports/mutation/mutation.json') != ''");
+    expect(body).toContain('run: node scripts/triage-mutations.cjs --summary');
   });
 });

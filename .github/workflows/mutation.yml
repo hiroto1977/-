@@ -311,6 +311,13 @@ jobs:
         if: always() && hashFiles('reports/mutation/mutation.json') != ''
         run: node scripts/triage-mutations.cjs --list
 
+      # ファイルごとの件数 (と run の mutate) を 1 行ずつ。併合した報告そのもの (artifact) が
+      # 取れない環境でも、docs/QUALITY.md をこのログの貼り付けから作り直せる
+      # (`node scripts/quality-report.cjs --from-summary=<貼り付けたファイル>`)。
+      - name: Per-file summary (docs/QUALITY.md をログから作り直す要約)
+        if: always() && hashFiles('reports/mutation/mutation.json') != ''
+        run: node scripts/triage-mutations.cjs --summary
+
   # push: 変わった対象だけを、塊ごとに別の job で。
   #
   # 差分測定では incremental キャッシュを使わない。古い結果が残ると
