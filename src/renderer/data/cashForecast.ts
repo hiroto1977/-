@@ -180,8 +180,10 @@ export function seasonalIndices(
   if (overallMean === 0) return null;
   const sums = new Array<number>(p).fill(0);
   const counts = new Array<number>(p).fill(0);
-  for (let i = 0; i < history.length; i += 1) {
-    const v = history[i];
+  // 添字の for ではなく entries() で回す —— `i < length` を `i <= length` にする変異体は
+  // 末尾の 1 つ先 (undefined) を読んで下の門で飛ばすだけなので等価で、比較そのものを
+  // 持たない形にすると測定から外す行が要らない (法則 equivalent-mutant-removes-the-shape・パス 501)。
+  for (const [i, v] of history.entries()) {
     if (!isFiniteNumber(v)) continue; // 欠けた月は飛ばすが、位相は数え続ける
     const slot = i % p;
     sums[slot]! += v;
