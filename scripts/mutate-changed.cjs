@@ -25,12 +25,21 @@
  *
  *   node scripts/mutate-changed.cjs <base-ref>
  *   node scripts/mutate-changed.cjs <base-ref> --chunks
+ *   node scripts/mutate-changed.cjs --all
+ *   node scripts/mutate-changed.cjs --all --chunks
  *
  * 対象があれば `--mutate` に渡せる形 (カンマ区切り) を stdout へ出す。
  * 無ければ何も出さない (呼び出し側は空なら検査を飛ばす)。
  * `--chunks` は同じ対象を **1 つの job に載せてよい量**の塊に分け、JSON の
  * 配列 (要素はカンマ区切りの対象) で出す —— `mutation.yml` はこれを matrix に
  * して塊ごとに別の job で測る (下の `chunkTargets` に理由)。
+ *
+ * `--all` は差分ではなく **`mutate` の全件**を対象にする (週次・手動の全掃引)。
+ * 全件を 1 つの job で測る形は、対象と検査が増えて **6 時間で cancel された**
+ * (2026-09-27 の #172) ので、週次も `--all --chunks` で同じ塊に分けて測り、
+ * 塊ごとの報告は `scripts/merge-mutation-reports.cjs` が 1 つへ併合する。
+ * base-ref とは一緒に使わない (差分か全件かを曖昧にしない)。全件の一覧が
+ * 空・重複・普通でない名前なら**黙って対象なしにせず**落とす (空を緑にしない)。
  */
 
 const { execFileSync } = require('node:child_process');
@@ -158,6 +167,18 @@ function assertPlainPaths(targets) {
  */
 const MAX_LINES_PER_CHUNK = 4000;
 
+/**
+ * matrix の 1 つの strategy が持てる job の数 (GitHub の上限)。塊がこれを超えたら
+ * `fromJson` の段で workflow ごと落ちるので、**先にこちらで読める言葉で落とす**。
+ */
+const MAX_MATRIX_JOBS = 256;
+
+/**
+ * `$GITHUB_OUTPUT` へ書く 1 つの値の上限に対する余裕つきの上限 (1 MiB まで)。
+ * 全件を塊にした JSON は今は 10 KB に届かない —— 桁違いに増えたときだけ鳴る。
+ */
+const MAX_OUTPUT_BYTES = 900000;
+
 /** ファイルの重さ = 行数。 */
 function weightOf(file) {
   return fs.readFileSync(path.join(REPO_ROOT, file), 'utf8').split('\n').length;
@@ -192,6 +213,59 @@ function chunkTargets(targets, weight = weightOf, maxLines = MAX_LINES_PER_CHUNK
     const fits = bins.every((b) => b.w <= maxLines || b.items.length <= 1);
     if (fits || n >= rows.length) return bins.filter((b) => b.items.length > 0).map((b) => b.items.sort().join(','));
   }
+}
+
+/**
+ * `mutate` の全件 (週次・手動の全掃引の対象)。
+ *
+ * `mutateList()` は形を確かめない (差分の側は `targetsFor` が確かめる) ので、
+ * **全件を測る道はここで明示的に確かめる**:
+ *
+ * - 空 … 全件が 0 本なら「測るものが無い」ではなく設定の誤り。空を緑にしない
+ * - 重複 … 2 つの塊が同じファイルを測ると、併合が「同じ鍵が 2 塊に在る」で落ちる
+ * - 普通でない名前 … 出力は `$GITHUB_OUTPUT` へ書かれ次の段の引数になる
+ *
+ * 並びは名前順で、入力の順序に依らない。
+ */
+function allTargets(list = mutateList()) {
+  const targets = [...list].sort();
+  if (targets.length === 0) {
+    throw new Error('stryker.config.json の mutate が空です — 全件を測れません');
+  }
+  const dup = targets.filter((t, i) => targets.indexOf(t) !== i);
+  if (dup.length > 0) {
+    throw new Error(`mutate に重複が ${dup.length} 件あります: ${[...new Set(dup)].join(' , ')}`);
+  }
+  assertPlainPaths(targets);
+  return targets;
+}
+
+/**
+ * 塊に分けて JSON へ直す。上限を超えたら**読める言葉で**落とす。
+ *
+ * - 塊が matrix の上限を超えると、`mutation.yml` の `fromJson` の段で workflow が
+ *   意味の分からない形で落ちる
+ * - 出力が `$GITHUB_OUTPUT` の 1 値の上限を超えると、値が切れて壊れた JSON が
+ *   matrix に渡る
+ *
+ * @param limits self-test の差し込み口 (実物は定数)
+ */
+function chunksOutput(
+  targets,
+  weight = weightOf,
+  maxLines = MAX_LINES_PER_CHUNK,
+  limits = { jobs: MAX_MATRIX_JOBS, bytes: MAX_OUTPUT_BYTES },
+) {
+  const parts = chunkTargets(targets, weight, maxLines);
+  if (parts.length > limits.jobs) {
+    throw new Error(`塊が ${parts.length} 個あり、matrix の上限 ${limits.jobs} を超えます`);
+  }
+  const json = JSON.stringify(parts);
+  const bytes = Buffer.byteLength(json);
+  if (bytes > limits.bytes) {
+    throw new Error(`塊の JSON が ${bytes} byte あり、出力の上限 ${limits.bytes} を超えます`);
+  }
+  return { parts, json };
 }
 
 /**
@@ -253,9 +327,40 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} 塊: ${label}: ${got} (期待 ${JSON.stringify(want)})`);
   }
+  // 全件 (--all) の道: 並び・空・重複・形・塊の上限。
+  // 種類 'throws' = その語を含む例外を期待 / 'value' = JSON.stringify が一致。
+  const wt = (file) => ({ a: 5, b: 4, c: 3 })[file];
+  const allCases = [
+    ['全件は並べ替えて返す', () => allTargets(['src/b.ts', 'src/a.ts']), 'value', ['src/a.ts', 'src/b.ts']],
+    ['全件が空なら落とす (空を「対象なし」で緑にしない)', () => allTargets([]), 'throws', '空です'],
+    ['全件の重複は落とす', () => allTargets(['src/a.ts', 'src/a.ts']), 'throws', '重複'],
+    ['全件に空白を含む名前があれば落とす', () => allTargets(['src/a b.ts']), 'throws', 'パスとして普通でない'],
+    ['全件にカンマを含む名前があれば落とす', () => allTargets(['src/a,b.ts']), 'throws', 'パスとして普通でない'],
+    ['塊が matrix の上限を超えたら落とす (5+4+3 が 2 塊・上限 1)', () => chunksOutput(['a', 'b', 'c'], wt, 10, { jobs: 1, bytes: 1000000 }), 'throws', 'matrix の上限'],
+    ['出力が上限 byte を超えたら落とす', () => chunksOutput(['a', 'b'], wt, 10, { jobs: 9, bytes: 5 }), 'throws', '出力の上限'],
+    ['上限内なら JSON を返す', () => chunksOutput(['a', 'b'], wt, 10, { jobs: 9, bytes: 1000000 }).json, 'value', '["a,b"]'],
+    ['上限ちょうどの job 数は通す', () => chunksOutput(['a', 'b', 'c'], wt, 10, { jobs: 2, bytes: 1000000 }).parts.length, 'value', 2],
+  ];
+  for (const [label, fn, kind, want] of allCases) {
+    let got;
+    try {
+      got = JSON.stringify(fn());
+    } catch (e) {
+      got = `例外: ${e.message}`;
+    }
+    const ok = kind === 'throws' ? got.startsWith('例外:') && got.includes(want) : got === JSON.stringify(want);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 全件: ${label}: ${got} (期待 ${JSON.stringify(want)})`);
+  }
   // 規則が広すぎない対照 — 実在する `mutate` 一覧を 1 件も弾かないこと。
   // 合成ケースだけだと「全部落とす」規則でも緑になる。
-  const real = mutateList();
+  let real = [];
+  try {
+    real = allTargets();
+  } catch (e) {
+    failed += 1;
+    console.log(`  ✗ 実在する mutate が全件の形を満たさない: ${e.message}`);
+  }
   try {
     assertPlainPaths(real);
     console.log(`  ✓ 実在する mutate ${real.length} 件はすべて通る (規則が広すぎない対照)`);
@@ -271,16 +376,18 @@ function selfTest() {
   // 2 度数えず・(1 本の塊を除き) どの塊も上限に収まること。
   if (real.length > 0) {
     try {
-      const chunks = chunkTargets(real);
+      const out = chunksOutput(real);
+      const chunks = out.parts;
       const seen = chunks.flatMap((c) => c.split(','));
       const dup = seen.filter((f, i) => seen.indexOf(f) !== i);
       const missing = real.filter((f) => !seen.includes(f));
       const over = chunks.filter((c) => c.includes(',') && c.split(',').reduce((acc, f) => acc + weightOf(f), 0) > MAX_LINES_PER_CHUNK);
-      const ok = dup.length === 0 && missing.length === 0 && over.length === 0 && seen.length === real.length;
+      const sameAsList = JSON.stringify(real) === JSON.stringify([...mutateList()].sort());
+      const ok = dup.length === 0 && missing.length === 0 && over.length === 0 && seen.length === real.length && sameAsList;
       if (!ok) failed += 1;
       console.log(
         `  ${ok ? '✓' : '✗'} 実在する mutate ${real.length} 件は ${chunks.length} 塊に過不足なく分かれる` +
-          (ok ? '' : ` (重複 ${dup.length} / 欠落 ${missing.length} / 上限超え ${over.length})`),
+          (ok ? '' : ` (重複 ${dup.length} / 欠落 ${missing.length} / 上限超え ${over.length} / 一覧との不一致 ${sameAsList ? 0 : 1})`),
       );
     } catch (e) {
       failed += 1;
@@ -298,9 +405,27 @@ function selfTest() {
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const chunks = argv.includes('--chunks');
+  const all = argv.includes('--all');
   const baseRef = argv.find((a) => !a.startsWith('--'));
+  if (all) {
+    // 差分か全件かを曖昧にしない。base-ref を渡した呼び出しは意図が食い違っている。
+    if (baseRef !== undefined && baseRef !== '') {
+      process.stderr.write('--all は base-ref と一緒には使えません\n');
+      return 2;
+    }
+    let targets;
+    try {
+      targets = allTargets();
+    } catch (e) {
+      // 空を「対象なし」として緑にしない。読める形で落とす。
+      process.stderr.write(`${e.message}\n`);
+      return 1;
+    }
+    process.stderr.write(`全件 → 変異検査の対象 ${targets.length} ファイル\n`);
+    return emit(targets, chunks);
+  }
   if (baseRef === undefined || baseRef === '') {
-    process.stderr.write('usage: mutate-changed.cjs <base-ref> [--chunks]\n');
+    process.stderr.write('usage: mutate-changed.cjs <base-ref> [--chunks] | --all [--chunks]\n');
     return 2;
   }
   const changed = changedFiles(baseRef);
@@ -322,17 +447,42 @@ function main(argv) {
   process.stderr.write(`変更 ${changed.length} ファイル → 変異検査の対象 ${targets.length} ファイル\n`);
   for (const t of targets) process.stderr.write(`  ${t}\n`);
   if (targets.length === 0) return 0;
+  return emit(targets, chunks);
+}
+
+/**
+ * 対象を stdout へ出す。`--chunks` は塊の JSON (上限を超えたら落とす)、
+ * それ以外はカンマ区切り。
+ */
+function emit(targets, chunks) {
   if (chunks) {
-    const parts = chunkTargets(targets);
-    process.stderr.write(`→ ${parts.length} 塊 (1 塊 ${MAX_LINES_PER_CHUNK} 行まで)\n`);
-    process.stdout.write(`${JSON.stringify(parts)}\n`);
+    let out;
+    try {
+      out = chunksOutput(targets);
+    } catch (e) {
+      process.stderr.write(`${e.message}\n`);
+      return 1;
+    }
+    process.stderr.write(`→ ${out.parts.length} 塊 (1 塊 ${MAX_LINES_PER_CHUNK} 行まで)\n`);
+    process.stdout.write(`${out.json}\n`);
   } else {
     process.stdout.write(`${targets.join(',')}\n`);
   }
   return 0;
 }
 
-module.exports = { targetsFor, changedFiles, mutateList, chunkTargets, MAX_LINES_PER_CHUNK, selfTest };
+module.exports = {
+  targetsFor,
+  changedFiles,
+  mutateList,
+  allTargets,
+  chunkTargets,
+  chunksOutput,
+  MAX_LINES_PER_CHUNK,
+  MAX_MATRIX_JOBS,
+  MAX_OUTPUT_BYTES,
+  selfTest,
+};
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

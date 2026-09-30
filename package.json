@@ -60,6 +60,7 @@
     "mutate": "stryker run",
     "mutate:next": "node scripts/suggest-next-kill.cjs",
     "mutate:triage": "node scripts/triage-mutations.cjs",
+    "mutate:merge": "node scripts/merge-mutation-reports.cjs --self-test && node scripts/merge-mutation-reports.cjs",
     "ollama": "node scripts/ollama-cli.cjs",
     "ollama:setup": "bash scripts/ollama-setup.sh",
     "orchestrate": "node scripts/orchestrate.cjs",

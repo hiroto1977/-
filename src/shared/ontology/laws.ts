@@ -170,9 +170,12 @@ export const LAWS: readonly Law[] = [
       + '週次の変異検査の全掃引 #172 (2026-09-27・#788 のマージ後・cache 落ち) はちょうど 6 時間で cancel され、報告も cache も残さなかった'
       + ' (`actions/cache` の post は success() のときだけ保存する)。`main` へのマージで 69 本 (約 16,000 変異体) を 1 job で測る形も同じ上限を越えうる。'
       + '**所要は対象の重さから導けるので、1 job に載せる量に上限を置いて塊に分ける** (`scripts/mutate-changed.cjs --chunks` · 1 塊 4,000 行まで · self-test が実物の一覧で塊の上限を確かめる)。'
-      + '塊の合計の runner 時間は変わらない —— 分けるのは壁時計の上限に収めるためである。',
-    provenance: ['パターン 0-a-11', 'パターン 0-c', 'パス 501 (週次の全掃引が 6 時間で cancel されていた · GitHub の実行履歴で実測)'],
-    enforcedBy: [gate('lint:docs'), ci('.github/workflows/mutation.yml')],
+      + '塊の合計の runner 時間は変わらない —— 分けるのは壁時計の上限に収めるためである。'
+      + ' **週次の全掃引も同じ塊で測る** (パス 501e · `scripts/mutate-changed.cjs --all --chunks`): 塊ごとの報告は `scripts/merge-mutation-reports.cjs` が 1 つへ併合し、'
+      + '**揃っていない併合は何も書かず落ちる** (欠けた塊を全体と名乗らせると、生存を含む塊ほど欠けやすいので点数が実物より良く出る)。'
+      + '塊の job は塊ごとの break では落とさず、合否は併合した全体の点数で決める。',
+    provenance: ['パターン 0-a-11', 'パターン 0-c', 'パス 501 (週次の全掃引が 6 時間で cancel されていた · GitHub の実行履歴で実測)', 'パス 501e (週次も塊の matrix + 併合)'],
+    enforcedBy: [gate('lint:docs'), ci('.github/workflows/mutation.yml'), harness('mutate:merge'), test(T.shared('mergeMutationReports'))],
   },
   {
     id: 'negative-control',

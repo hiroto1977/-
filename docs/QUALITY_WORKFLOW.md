@@ -121,19 +121,43 @@ npm run audit:survivors -- src/shared/example.ts --top=10   # 「生存」が本
 
 ### 定期的に（週次）
 
-`.github/workflows/mutation.yml` が **毎週月曜 03:00 JST** (cron `0 18 * * 0` UTC) に全件を測る。
-incremental のキャッシュは `stryker-<ブランチ名>` (なければ `stryker-main`) から戻す。
-`main` への push では**変わったファイルだけ**を、キャッシュを使わずに測る —— `scripts/mutate-changed.cjs --chunks` が
-対象を行数で塊に分け (1 塊 4,000 行まで・重い順にいちばん軽い塊へ)、塊ごとに別の matrix job で測る
-(GitHub の job は 6 時間で cancel される。67 本を 1 度に対象にする PR は 1 job に収まらない —— 2026-09-30 パス 501)。
-`thresholds.break` は塊ごとに掛かる。
+`.github/workflows/mutation.yml` が **毎週月曜 03:00 JST** (cron `0 18 * * 0` UTC) に全件を測る
+(手動の `workflow_dispatch` も同じ)。**全件を 1 つの job に載せない** —— GitHub の job は 6 時間で
+cancel され、2026-09-27 の週次 (#172) は全件を 1 job で測る形のままちょうど 6 時間で cancel された
+(GitHub の実行履歴で実測)。今は `mutate` の全件を `scripts/mutate-changed.cjs --all --chunks` が
+**行数で塊に分け** (1 塊 4,000 行まで・重い順にいちばん軽い塊へ)、`mutate-full` job が塊ごとに別の
+matrix job で測り、`merge-full` job が `scripts/merge-mutation-reports.cjs` で塊の報告を **1 つの
+`mutation-report` artifact へ併合する** (報告を読む道具 —— `quality-report` / `triage` /
+`suggest-next-kill` / `verify-survivors` —— は 1 つのファイルを前提にするため)。
 
-★ **週次の全掃引は 2026-09-27 (#172・#788 のマージ後) にちょうど 6 時間で cancel された** (GitHub の実行履歴で実測)。
-`actions/cache` の鍵 `stryker-main` は不変なので、当たった週は保存されず次の週は 7 日ぶりのアクセスで evict される ——
-全掃引が cache 無しで 6 時間を越える今、週次は cache 落ちの週ごとに cancel される (`docs/REMAINING_WORK.md` の「パス 501」)。
+- **incremental のキャッシュは使わない。** 鍵が不変だと当たった週は保存されず、cancel された job は
+  post で保存せず、古い incremental は偽の生存を作る (`stryker.config.json` の注記)
+- **`thresholds.break` は塊ごとに掛かるので、合否は併合した全体の点数で決める。** 塊の job は
+  Stryker が非 0 で終わっても報告が書けていれば警告にして通し、`merge-full` が全体の点数と各塊の
+  結果を見る。報告を書けなかった塊 (初回検査の失敗・時間切れ) だけが赤くなり、その塊だけを
+  *Re-run failed jobs* で回し直せる
+- **揃っていない併合は何も書かず落ちる** (欠けた塊を全体と名乗らせない —— 生存を含む塊ほど欠けやすいので、
+  点数が実物より良く出る)。手元で塊を順に測ったときの試しだけ `--allow-partial`
+- 塊ごとの所要は最初の `workflow_dispatch` の実測で詰め直す (`timeout-minutes` と `max-parallel`)
+
+併合した報告の取り方と頁の作り直し:
+
+```bash
+gh run download <run-id> --name mutation-report --dir reports/mutation   # 併合済みの報告
+npm run mutate:merge -- --dir <塊の報告を置いた dir> --out reports/mutation/mutation.json   # 手元で併合するとき
+npm run quality:report                                                    # docs/QUALITY.md を作り直す
+```
+
+併合した報告は `mergedAt` に併合した時刻を持つ (`gh run download` は mtime を保たないので、
+頁の「報告の日時」は mtime ではなくこちらを読む)。**併合した報告を `.stryker-incremental.json` として
+使わない** (差分検査は変異体の id でテストを引くが、併合は 1 回の実行ではない)。
+
+`main` への push では**変わったファイルだけ**を、キャッシュを使わずに測る —— 同じ chunker が
+対象を塊に分け (`--chunks`)、塊ごとに別の matrix job で測る (2026-09-30 パス 501 / 501d)。
 
 **週次が測るのは `main` の木である。** 作業ブランチの変更は merge されるまで週次に映らない ——
-ブランチで公開する品質の頁は、ブランチの木で回した全掃引から作る。
+ブランチで公開する品質の頁は、ブランチの木で回した全掃引から作る (ブランチで `workflow_dispatch` すれば
+`mutation.yml` がそのブランチの木を測る)。
 
 ## しきい値ポリシー
 

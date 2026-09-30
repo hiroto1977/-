@@ -31,7 +31,10 @@
  *    「測る変異体が無い」を「1 つも殺せていない」(最悪) と同じ字で出していた
  *    (法則 `no-zero-fold`。Stryker 自身はこの場合を N/A とする)。lint:docs はそれを台帳で
  *    免除し、理由に「次の週次実行で行が更新される」と書いていた —— **この頁を作り直す
- *    仕組みは週次にも CI にも無い** (mutation.yml は報告を artifact に置くだけ)。
+ *    仕組みは週次にも CI にも無い** (週次の全掃引は塊ごとの報告を `merge-full` が
+ *    1 つに併合して artifact `mutation-report` に置くだけ。頁の生成は CI では走らせず、
+ *    `gh run download <run-id> --name mutation-report --dir reports/mutation` で落として
+ *    手元で `npm run quality:report`)。
  *    → 分母が 0 の率は「—」と書く。
  * 4. **被覆の分母** —— 被覆は `--coverage.include=src/main/**` で測るのに、頁は
  *    「Coverage — lines 99.02%」とだけ書いていた。→ 範囲を名乗る。
@@ -236,6 +239,20 @@ function parseVitestSummary(out) {
   return { files: read('Test Files'), tests: read('Tests') };
 }
 
+/**
+ * 報告を測った時刻 (ms)。
+ *
+ * 併合した報告 (`scripts/merge-mutation-reports.cjs`) は自分の時刻を `mergedAt` に
+ * 持つので、それを優先する。`gh run download` はファイルの mtime を保たないので、
+ * 最大 90 日前に併合した報告が**取ってきた今日の日時**として頁に載ってしまう
+ * (パス 490 が直した「報告の日時」と同じ種類の偽)。`mergedAt` が無い・壊れているとき
+ * (Stryker が直接書いた報告) は mtime を返す。
+ */
+function reportMeasuredMs(report, mtimeMs) {
+  const at = report && typeof report.mergedAt === 'string' ? Date.parse(report.mergedAt) : Number.NaN;
+  return Number.isFinite(at) ? at : mtimeMs;
+}
+
 /** 絶対時刻 (UTC・分まで)。 */
 function utcMinute(ms) {
   return new Date(ms).toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
@@ -392,7 +409,7 @@ function main(argv) {
     return 1;
   }
   const report = JSON.parse(fs.readFileSync(REPORT_PATH, 'utf8'));
-  const reportAt = utcMinute(fs.statSync(REPORT_PATH).mtimeMs);
+  const reportAt = utcMinute(reportMeasuredMs(report, fs.statSync(REPORT_PATH).mtimeMs));
   const summary = summarizeReport(report, ROOT);
   const named = JSON.parse(fs.readFileSync(path.join(ROOT, 'stryker.config.json'), 'utf8')).mutate ?? [];
   const shipped = shippedTsFiles(path.join(ROOT, 'src'), []);
@@ -451,6 +468,7 @@ module.exports = {
   scopeStatement,
   parseVitestSummary,
   utcMinute,
+  reportMeasuredMs,
   mutationSection,
   coverageFrom,
   coverageRows,
