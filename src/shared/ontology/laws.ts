@@ -510,8 +510,10 @@ export const LAWS: readonly Law[] = [
       + '`\'\'` より小さい文字列は無いので `newerAsOf` の空の判定は `a > b` に畳める・空の判定と `find` の重ね掛けは `find` だけで同じ答え。'
       + '**消せない等価 (到達しない防御・JS の `null >= 10` が false であること) にだけ pragma を置き、理由を書く。** '
       + '★ pragma を置く前に**その行の他の判定まで隠していないか**を見る —— 等価な判定だけの 1 行に分けてから置く (パス 496 / 500)。'
+      + '★ **`// Stryker disable next-line` は次の 1 行ではなく、コメントの直後の文に効く** (`node.loc.start.line`) —— 的の 1 つ手前の文の上に置くと効かない (パス 501g の `taxCalc.ts`)。'
+      + '**同じ答えを出す守りが文ごと在るなら、pragma より先に文を消す** (`nonNeg` / `isFiniteNumber` / 型 `FixedAdvisory` で null 枝ごと消す —— 501g は 13 本の 89 件のうち等価の大半をこれで閉じた)。'
       + '2026-08 の `docStudioChecks` (NaN で受けて `x !== null &&` を全部消し、変異体 814 → 695 で生存 0) と `eligibility` (省略可の境界を ±Infinity で持って分岐ごと消した) が先例。',
-    provenance: ['stryker.config.json の _commentEquivalentPragmas (2026-07 / 2026-08)', 'パス 496 / 500 (等価な判定を 1 行に分けてから pragma)', 'パス 501 (8 本の生存 94 件の仕分け: 検査 37 件 / 形の除去 / pragma 5 件 —— 記録の監査が「等価」の 1 件を偽と示した)'],
+    provenance: ['stryker.config.json の _commentEquivalentPragmas (2026-07 / 2026-08)', 'パス 496 / 500 (等価な判定を 1 行に分けてから pragma)', 'パス 501 (8 本の生存 94 件の仕分け: 検査 37 件 / 形の除去 / pragma 5 件 —— 記録の監査が「等価」の 1 件を偽と示した)', 'パス 501g (全掃引が残した 89 件 —— 等価は文ごと消す・pragma は的の文の直前に置く)'],
     enforcedBy: [gate('lint:mutation-scope'), harness('mutate'), harness('audit:survivors'), test(T.shared('num'))],
   },
   {
