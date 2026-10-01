@@ -75,19 +75,21 @@ export function summarizeAccounting(monthly: readonly AccountingMonthly[]): Acco
     totalNet += m.net;
   }
   // 最新月は**綴りで**決める (`YYYY-MM` は辞書順 = 時系列順)。位置に頼らない。
+  // 同じ月が複数行在れば、先に在る行を最新月の行とする (`>` で比べるので後の行は置き換えない)。
   let latest = monthly[0]!;
-  let first = monthly[0]!;
   for (const m of monthly) {
     if (m.month > latest.month) latest = m;
-    if (m.month < first.month) first = m;
   }
+  // 最初の月は月の綴りだけが要るので、綴りを昇順に並べた先頭を採る
+  // (等しい月のどちらを採っても同じ綴りなので、行を選ぶ比較は持たない)。
+  const firstMonth = monthly.map((m) => m.month).sort()[0]!;
   return {
     months: monthly.length,
     totalIncome,
     totalExpense,
     totalNet,
     avgMonthlyNet: Math.round(totalNet / monthly.length),
-    firstMonth: first.month,
+    firstMonth,
     latestMonth: latest.month,
     latestNet: latest.net,
     cashflowPositive: totalNet >= 0,
