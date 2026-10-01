@@ -139,8 +139,10 @@ export function buildTeamEmotionRadar(members: readonly MemberEmotion[]): TeamEm
     radarMembers.push({ id: m.id, name: m.name, scores });
     const missingAxes: string[] = [];
     for (let i = 0; i < sums.length; i += 1) {
-      const v = scores[i];
-      if (v === null || v === undefined) {
+      // 添字の読みは `noUncheckedIndexedAccess` で `undefined` を含むので、`null` へ寄せて 1 つの判定にする
+      // (`scores` は軸と同じ長さなので、`undefined` を別に見る判定は同じ答えを返す写しになる)。
+      const v = scores[i] ?? null;
+      if (v === null) {
         missingAxes.push(EMOTION_AXES[i]!);
         continue;
       }
@@ -196,8 +198,8 @@ export function teamEmotionSummary(radar: TeamEmotionRadar): string {
   const support = radar.needsSupport.length;
   // **算定できていなければ数を出さない。** `?? 0` を当てると
   // 「活力 0/5」= 最低評価になり、記録が無いことが最悪の評価として出る。
-  const vitality = radar.teamAverage[0];
-  const vitalityKnown = vitality !== null && vitality !== undefined;
+  const vitality = radar.teamAverage[0] ?? null;
+  const vitalityKnown = vitality !== null;
   const head = vitalityKnown
     ? `チーム ${n} 名の感情ウェルビーイング: 活力 ${vitality}/5`
     : `チーム ${n} 名の感情ウェルビーイング: 活力は気分の記録がまだ無いため算定していません`;
