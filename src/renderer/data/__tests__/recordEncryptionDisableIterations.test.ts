@@ -82,12 +82,18 @@ describe('disableEncryption — 保存された反復回数を読む (パス 502
     await expect(disableEncryption(PW)).resolves.toBe(false);
   });
 
-  it('★ 回数が読めない値 (文字列・NaN) の meta は「無かったこと」にして凍結値で開こうとする (締め出さない)', async () => {
-    await enableEncryption(PW);
-    await getRecordStore().insert('sales', { amount: 3 });
-    // 文字列の回数は有限の数ではないので読まれず、凍結値 (封緘どおり) で開く。
-    localStorage.setItem(LS_KEY, JSON.stringify({ ...readMeta(), iterations: '150000' }));
-    await expect(disableEncryption(PW)).resolves.toBe(true);
-    expect(isEncryptionEnabled()).toBe(false);
-  });
+  // 読めない値は「無かったこと」にして凍結値 (封緘どおり) で開く —— 締め出さない。
+  // `NaN` は JSON に載せると `null` になるので、保存値として現れるのは文字列と `null` の 2 通り。
+  for (const [name, unreadable] of [
+    ['文字列', '150000'],
+    ['null (NaN を JSON に載せた形)', null],
+  ] as const) {
+    it(`★ 回数が読めない値 (${name}) の meta は「無かったこと」にして凍結値で開こうとする (締め出さない)`, async () => {
+      await enableEncryption(PW);
+      await getRecordStore().insert('sales', { amount: 3 });
+      localStorage.setItem(LS_KEY, JSON.stringify({ ...readMeta(), iterations: unreadable }));
+      await expect(disableEncryption(PW)).resolves.toBe(true);
+      expect(isEncryptionEnabled()).toBe(false);
+    });
+  }
 });
