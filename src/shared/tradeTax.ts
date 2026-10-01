@@ -198,10 +198,15 @@ export function calcJapanImport(input: ImportInput, p: ImportParams = DEFAULT_IM
     notes.push('個別消費税（酒税・たばこ税等）は消費税の課税標準にも含まれます。税額は品目ごとに異なるため、税関にご確認ください。');
   }
 
+  // 見る `null` は `duty` の 1 つだけ: 課税標準・国税・地方消費税は `duty` が `null` のときに
+  // **同時に** `null` (上の連鎖の定義) なので、3 つを別々に判定しても同じ答えを返す写しになる。
+  // 国税・地方消費税の `?? Number.NaN` は型を `number` に絞るためだけの届かない枝
+  // (届けば合計が NaN になって壊れていると分かる。0 には倒さない)。
+  // 「同時に `null`」は `tradeTaxRefusalNotesExact.test.ts` の格子が留める。
   const totalTax =
-    duty === null || nationalTax === null || localTax === null
+    duty === null
       ? null
-      : duty + otherExcise + nationalTax + localTax;
+      : duty + otherExcise + (nationalTax ?? Number.NaN) + (localTax ?? Number.NaN);
   return {
     customsValueRaw,
     customsValue,

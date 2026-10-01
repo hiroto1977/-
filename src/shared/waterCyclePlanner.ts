@@ -18,7 +18,7 @@
  * 膜仕様・自治体の排水規制・条例を含めて専門家と設備メーカーの設計で決まります。
  */
 
-import { nonNeg, round1 } from './num';
+import { isFiniteNumber, nonNeg, round1 } from './num';
 
 /* ─────────────────────────────  定数  ───────────────────────────── */
 
@@ -394,7 +394,8 @@ export function checkEffluent(input: EffluentInput, s: EffluentStandards = DEFAU
   // **排出量が不明なら量に依る 4 欄は算定しない。** 0 として受けると
   // 「規制の対象にならない」という判定が未入力から出る。
   const dischargeRaw = input.annualDischargeL;
-  const dischargeKnown = typeof dischargeRaw === 'number' && Number.isFinite(dischargeRaw);
+  // 有限な数かの判定は `isFiniteNumber` 1 つ (型も `number` へ絞る・`typeof` の写しは要らない)。
+  const dischargeKnown = isFiniteNumber(dischargeRaw);
   const annualL = dischargeKnown ? nonNeg(dischargeRaw) : 0;
   const toPublic = input.dischargeToPublicWater === true;
 

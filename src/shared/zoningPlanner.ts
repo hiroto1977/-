@@ -17,7 +17,7 @@
  * 斜線/日影/防火規制・条例を含めて自治体の建築指導課と建築確認で決まります。
  */
 
-import { nonNeg, round2 } from './num';
+import { isFiniteNumber, nonNeg, round2 } from './num';
 
 /** 前面道路幅員による容積率乗数の区分 (52条2項): 住居系 4/10・その他 6/10。 */
 export type RoadMultiplierCategory = 'residential' | 'other';
@@ -445,8 +445,9 @@ export function planSetbackTradeoff(input: SetbackTradeoffInput, rules: ZoningRu
   // と**完全に一致**していた (どちらも幅 0 / 面積 0 / `limitedBy: 'geometry'`)。
   // **床は「測っていない」だけに当てる** —— 寸法が入っていて結果が 0 なら、
   // それは本物の判定なので 0 のまま返す。
+  // 有限な数かの判定は `isFiniteNumber` 1 つ (型も `number` へ絞る・`typeof` の写しは要らない)。
   const known = (v: number | null): number | null =>
-    typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null;
+    isFiniteNumber(v) && v > 0 ? v : null;
   const depthIn = known(input.siteDepthM);
   const widthIn = known(input.siteWidthM);
 
