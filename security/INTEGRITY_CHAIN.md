@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 278
+- ブロック数: 279
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `0dd206ac754b35c4c1733742007a4bbcec4ef63b69cf08c7433f7ccddbaa734f`
+- 末尾(tip)ハッシュ: `d4f0b6ac3ccca680aee3983d8e140c2f335b2ee3fb8c639b7ccaa7726727fd36`
 - 保護対象: 99 ファイル
 
 ## ブロック
@@ -291,6 +291,7 @@
 | 275 | `7e282aad65b1065d` | `ca82f385b73b517e` | `3ac3a67ca9df51ea` | update integrity-chain.cjs,keyIntent.ts,LockScreen.tsx |
 | 276 | `f60908d7c7904acd` | `3ac3a67ca9df51ea` | `07d67638596f8f18` | update vault.ts,httpLimits.ts,ollama.ts |
 | 277 | `7d5326e604434a1c` | `07d67638596f8f18` | `0dd206ac754b35c4` | update ollama.ts |
+| 278 | `963c4d775f9a7afc` | `0dd206ac754b35c4` | `d4f0b6ac3ccca680` | update atlassianSite.ts,writeFieldLimits.ts |
 
 ## 保護対象ファイル
 

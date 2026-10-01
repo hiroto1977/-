@@ -2326,6 +2326,14 @@
       "leafCount": 99,
       "note": "update ollama.ts",
       "hash": "0dd206ac754b35c4c1733742007a4bbcec4ef63b69cf08c7433f7ccddbaa734f"
+    },
+    {
+      "index": 278,
+      "prevHash": "0dd206ac754b35c4c1733742007a4bbcec4ef63b69cf08c7433f7ccddbaa734f",
+      "merkleRoot": "963c4d775f9a7afc27b2caa8fae9692441cd086e8646d975c7935d42009c631f",
+      "leafCount": 99,
+      "note": "update atlassianSite.ts,writeFieldLimits.ts",
+      "hash": "d4f0b6ac3ccca680aee3983d8e140c2f335b2ee3fb8c639b7ccaa7726727fd36"
     }
   ],
   "tipManifest": {
@@ -2401,7 +2409,7 @@
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
     "src/shared/assistantLimits.ts": "5df97a39c2f9efc93ce067816de4eb3f3d8bd07cfe209e49660346ca7ba4f235",
-    "src/shared/atlassianSite.ts": "fbbad4ce7a10f5731a44b0c3f902818285aadb6305aabd2a7522bac7aa3d8cf2",
+    "src/shared/atlassianSite.ts": "e3898d643e76b22877cf0990090a61dc249bc3ccd2058ff3166e13bafea7b931",
     "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "e5c196eed641330430fb0725daf9dc28cfd38fc624ce5e46baca635ed9b8590e",
@@ -2424,7 +2432,7 @@
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",
     "src/shared/versionOrder.ts": "2a70283bc54f74023e9e4a6f002d2678440d9cfcffeb5ac60fc047ee8b604d37",
-    "src/shared/writeFieldLimits.ts": "067e11979cea363286f440df77ffdb6baf3ec5cb8a07188801730abf4648d4e3",
+    "src/shared/writeFieldLimits.ts": "321322d9817665544a8dac005c1ed9812d8305c110a0fbe7e331675b5a35c066",
     "vite.config.ts": "390b859eedad810d9e539adfd2c421fe37fc00a168f28e62d15a20fb7096dcd6",
     "vitest.audit.config.ts": "2461afaaddfa15b7a4520cca93807db66b7ebb3db25e46db4dac38b0002a7978",
     "vitest.config.ts": "082d5d607a48177918bdd841ca4592b861b2b1d0842005da0b8a6f0a4b42f900"
