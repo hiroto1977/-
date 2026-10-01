@@ -8,7 +8,13 @@
  * 文面ごと固定し、**分からないときに暗号化を名乗らない**ことを対照で見る。
  */
 import { describe, expect, it } from 'vitest';
-import { readMechanism, savedCredentialMessage, type StorageMechanism } from '../credentialSaveMessage';
+import {
+  deleteCredentialConfirm,
+  deletedCredentialMessage,
+  readMechanism,
+  savedCredentialMessage,
+  type StorageMechanism,
+} from '../credentialSaveMessage';
 
 describe('savedCredentialMessage — 守り方ごとの文面', () => {
   it('★ OS キーチェーン: 鍵の出どころを名乗る', () => {
@@ -81,5 +87,27 @@ describe('readMechanism — 橋の戻りから 1 欄だけ取る', () => {
     expect(readMechanism({ encrypted: false, plainCount: 3, mechanism: 'obfuscated', file: '/x' })).toBe(
       'obfuscated',
     );
+  });
+});
+
+/**
+ * **削除の確認文と結果の一言を、全文で留める** (パス 502)。
+ *
+ * 確認文は「まとめて消えること」「提供者ごとに残せないこと」「消えた後どうなるか」「元に戻せないこと」を
+ * **押す前に**述べる。画面側の検査は確認文を自分自身 (`deleteCredentialConfirm()`) と比べ、
+ * 断片 (`すべて消えます` / `元に戻せません`) を探すだけなので、文の**繋ぎ目** —— 「提供者ごとに残せない」
+ * 理由を述べる最初の一節が丸ごと消えても通っていた。
+ */
+describe('deleteCredentialConfirm / deletedCredentialMessage — 全文 (パス 502)', () => {
+  it('★ 確認文は、まとめて消える理由・消えた後の動作・元に戻せないことを繋いだ 1 文', () => {
+    expect(deleteCredentialConfirm()).toBe(
+      '保存した AI の API キーを削除しますか? キーは 1 つのスロットにまとめて保存されているため、' +
+        '提供者ごとに残すことはできません (すべて消えます)。削除すると AI への問い合わせは' +
+        '端末内のルールエンジンの答えに戻ります。元に戻せません。',
+    );
+  });
+
+  it('★ 結果の一言は、守り方を名乗らず「すべて消えた」と言う', () => {
+    expect(deletedCredentialMessage()).toBe('削除しました (保存していた API キーはすべて消えました)');
   });
 });
