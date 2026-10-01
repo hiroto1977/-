@@ -2334,6 +2334,14 @@
       "leafCount": 99,
       "note": "update atlassianSite.ts,writeFieldLimits.ts",
       "hash": "d4f0b6ac3ccca680aee3983d8e140c2f335b2ee3fb8c639b7ccaa7726727fd36"
+    },
+    {
+      "index": 279,
+      "prevHash": "d4f0b6ac3ccca680aee3983d8e140c2f335b2ee3fb8c639b7ccaa7726727fd36",
+      "merkleRoot": "08a44307ef662fb76e3357cde36c7570b0c072bcc408bae5164602fa1838eacb",
+      "leafCount": 99,
+      "note": "update headerValue.ts",
+      "hash": "fceff271cb78d0249f7594902cd6a390ce5e4e26b309376db5235d2923f19edd"
     }
   ],
   "tipManifest": {
@@ -2416,7 +2424,7 @@
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "b103b6fdf04b058a0cae9be3bed2ad035758463dee7b1ed6cc9da778540475ce",
-    "src/shared/headerValue.ts": "d31a719b5caa0476e7c04e333fe992ed151a5cdd14492b078ed1615da8a90893",
+    "src/shared/headerValue.ts": "e1b3156dde741ff415b769a6a40a7630e7da580f29737005cf2583bda4512b82",
     "src/shared/httpLimits.ts": "a376deeac169463b4b2d781fd2174d4231ca566e9c31c78f47997a7bb8f073a4",
     "src/shared/imageUrlGate.ts": "a1f2fad05923c97539971c4f2d5aba4e732d460f90d7d83657c391d5199aef68",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
