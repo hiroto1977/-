@@ -41,6 +41,23 @@
  * 法則 `no-weakness-as-spec` の、道具の側での現れ。今の自己テストは
  * 実物と同じ形の標本を持ち、**0 始まりで当てると壊れること**を対照で示す。
  *
+ * ## ★★ 訂正 2 —— **収集時に評価する検査には、偽の「実は殺されている」を出す** (2026-10-01 · パス 502)
+ *
+ * この道具は原文を書き換えて `vitest related` を走らせるので、変異体は**検査ファイルを読み込む時点
+ * (import の評価・`describe` の本体) でも有効**になる。Stryker は違う —— static かつ検査の被覆つきの
+ * 変異体 (hybrid) は `mutantActivation: 'runtime'` で走り (`@stryker-mutator/core` の
+ * `mutant-test-planner.js`)、`vitest-runner` の足場は変異体を**各検査ファイルの `beforeAll` で**
+ * 有効にする (`stryker-setup.js`)。import の時点と収集時に評価した値には変異体が届かない。
+ *
+ * だから、**関数の結果を `describe` の直下で取る検査** (`const notes = f()`) や、モジュール直下の値を
+ * 静的 import のまま主張する検査は、この道具では「殺されている」と出るのに Stryker では生存する
+ * (パス 502 の実測: `financialStatements.ts` の断り書きの 2 件・`funding.ts` の表と文)。
+ * **「偽の生存が N 件」と言うときは、活性化の違いで説明がつく分を引いて読むこと** (パス 356 / 357 / 399 の
+ * 件数もこの影響を受けうる —— 測り直していない)。活性化を `beforeAll` へ寄せる確かめは
+ * 的を `(globalThis.__MUT_ON__ ? 置換 : 原文)` に包み、setup で `beforeAll` に旗を立てる形で、
+ * 旧い検査だけだと SURVIVED・足した検査だと KILLED と Stryker の報告を再現した (rdata2 の `rtcheck`・
+ * 式の変異体だけ。リポジトリには入れていない —— `docs/REMAINING_WORK.md` のパス 502)。
+ *
  * ## なぜ要るのか —— 実測した偽の「生存」
  *
  * `npx stryker run --mutate <file>` を config の一覧に無いファイルへ当てると、
