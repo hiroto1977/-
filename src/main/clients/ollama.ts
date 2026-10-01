@@ -317,7 +317,10 @@ async function installedModelNames(fetchFn: typeof fetch): Promise<string[]> {
     return await withTimeout(fetchFn, `${OLLAMA_BASE}/api/tags`, {}, async (res) => {
       if (!res.ok) return [];
       const tags = parseJsonText(
+        // Stryker disable next-line StringLiteral: ラベルは「<label> response too large」の文に入るだけで、その例外は
+        // 下の `catch` が握って `[]` を返す —— 助言が名前を添えないだけで、ラベルは外へ出ない (等価変異)。
         await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'Ollama /api/tags'),
+        // Stryker disable next-line StringLiteral: 同上 (「<label> が JSON ではありません」の文も `catch` が握る)。
         'Ollama /api/tags',
       );
       return normalizeModels(tags).map((m) => m.name);
@@ -390,6 +393,8 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
     // 危険は、**壊れた相手が実際に通る枝**であるこちらにこそ掛かる。
     // 読めない経路 (接続断) も上限超過も「詳細なし」に畳んでよい ——
     // 畳んではいけないのは読む量のほうである。
+    // Stryker disable next-line StringLiteral: ラベルは「<label> response too large」の文に入るだけで、その例外は
+    // `readFailureBody` の `.catch(() => '')` が握る —— 空文字を返す以外に外へ出る物が無く、観測できない (等価変異)。
     const body = await readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES);
     // 生の英語エラーをそのまま投げると UI に内部メッセージが出るだけなので、
     // 共有ロジックで「何が起きて次に何をすればいいか」に翻訳してから投げる

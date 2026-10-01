@@ -269,3 +269,38 @@ describe('aggregateDeals の取り込み内訳 (パス 153)', () => {
     expect(snap.intake).toEqual(NO_DEAL_INTAKE);
   });
 });
+
+/*
+ * **境界と、呼ばない経路** (2026-09-30 · パス 502)。
+ *
+ *   - 金額が**ちょうど 0** の取引は「負の金額を 0 円にした」ではない —— 0 は 0 円のまま数え、
+ *     `clampedNegative` (画面と書面が「負の取引を 0 円として数えた件数」と述べる) に入れない。
+ *     `<` を `<=` にすると、0 円の取引が**負の取引として書面へ載る**。
+ *   - 事業所の欄が欠けた・null の応答では、取引 (`/deals`) を**取りに行かない** (宛先の company_id が無い)。
+ *     空配列の応答は見ているが、`{}` / `null` は「応答が同じ本文を返す」検査で通るだけで、
+ *     実際に呼んでいないことは誰も数えていなかった。
+ */
+describe('freee — 0 円の取引と、事業所が無い応答 (パス 502)', () => {
+  it('★ 金額 0 の取引は 0 円のまま数え、負の取引としては数えない', () => {
+    const out = aggregateDeals([
+      { id: 1, type: 'income', issue_date: '2026-05-10', amount: 0 },
+      { id: 2, type: 'expense', issue_date: '2026-05-11', amount: 0 },
+      { id: 3, type: 'income', issue_date: '2026-05-12', amount: -1 },
+    ]);
+    expect(out.monthly).toEqual([{ month: '2026-05', income: 0, expense: 0, net: 0 }]);
+    expect(out.intake).toEqual({ deals: 3, skippedNoDate: 0, skippedBadAmount: 0, clampedNegative: 1 });
+  });
+
+  it.each([
+    ['欄が無い ({})', {}],
+    ['null', { companies: null }],
+    ['空配列', { companies: [] }],
+  ])('★ 事業所が %s なら取引を取りに行かない (1 回だけ・/companies)', async (_name, body) => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(async () => jsonResponse(body));
+    const snap = await fetchFreeeSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(snap.companyName).toBe('');
+    expect(snap.monthly).toEqual([]);
+    expect(snap.intake).toEqual(NO_DEAL_INTAKE);
+    expect(fetchMock.mock.calls.map((c) => String(c[0]))).toEqual(['https://api.freee.co.jp/api/1/companies']);
+  });
+});

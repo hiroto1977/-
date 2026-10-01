@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   jsonFetch,
+  jsonFetchAny,
   limitedFetch,
   readCapped,
   FetchError,
@@ -686,6 +687,37 @@ describe('jsonFetch は limitedFetch の上限をそのまま受け継ぐ', () =
     await expect(
       jsonFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
     ).rejects.toThrow(/demo 500: $/);
+  });
+});
+
+describe('jsonFetchAny — 封筒は見ないが、上限は jsonFetch と同じく ctx.maxBytes を受け継ぐ', () => {
+  // 宣言された長さ (Content-Length) の先手の門は `limitedFetch` が持つ。ここが見るのは、
+  // `jsonFetchAny` 自身が本文を読む所へ渡す上限で、既定へ落ちると 10 byte の指定が 10 MiB になる。
+  it('ctx.maxBytes を超える本文は JSON になる前に落ちる (既定の上限へ落ちない)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ pad: 'a'.repeat(50) }), { status: 200 }));
+    await expect(
+      jsonFetchAny('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
+    ).rejects.toThrow(/demo response too large/);
+  });
+
+  it('失敗応答の本文も ctx.maxBytes で切る (切った本文は空になり、状態番号だけが残る)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('e'.repeat(50), { status: 500 }));
+    await expect(
+      jsonFetchAny('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
+    ).rejects.toThrow(/demo 500: $/);
+  });
+
+  it('上限以内なら、オブジェクトでない本文 (配列) もそのまま返す (封筒を要求しない)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify([1, 2]), { status: 200 }));
+    expect(
+      await jsonFetchAny('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo', maxBytes: 10 }),
+    ).toEqual([1, 2]);
   });
 });
 

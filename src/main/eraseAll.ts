@@ -97,11 +97,14 @@ export async function eraseFileAndLitter(target: string, io: FileIo = fs): Promi
     if (!isMissing(e)) outcome = 'failed';
   }
   const dir = path.dirname(target);
-  let names: string[] = [];
+  let names: string[];
   try {
     names = await io.readdir(dir);
   } catch (e) {
-    if (!isMissing(e)) outcome = 'failed';
+    // 一覧を引けなければ探す残骸も無い (ここで返すので、空の一覧を代わりに置かない)。
+    // 引けない理由が「無い」(ENOENT) 以外なら、残骸が残っていないことを確かめられなかった
+    // のだから failed —— 「消えた」と言うのは消えたと分かったときだけ (パス 20)。
+    return isMissing(e) ? outcome : 'failed';
   }
   for (const name of names) {
     if (!isAtomicLitterOf(target, name)) continue;

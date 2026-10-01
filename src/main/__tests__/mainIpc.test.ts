@@ -1,5 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { rereadModule } from '../../shared/__tests__/rereadModule';
+import { describeDesktopEraseReport } from '../../shared/eraseReport';
 
 /*
  * main.ts の IPC 境界。
@@ -279,6 +280,30 @@ describe('app:eraseAll — デスクトップ版の「すべてのデータを�
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  /*
+   * **手順が投げたときの報告は、どこまで消えたか分からない形** (2026-09-30 · パス 502)。
+   *
+   * 上の検査は `kind` と `allDeleted` と `error` しか見ない。`files` が空 (どのファイルが消えたか**分からない**)・
+   * `renderer` が `failed` (画面側の保存領域が消えたとは言えない) という残りの 2 欄は、
+   * 画面 (`describeDesktopEraseReport`) が「残っている可能性」の文を組む材料で、値が違えば文も違う。
+   */
+  it('★ 手順が投げた報告は、files が空・renderer は failed・allDeleted は偽 (消えたと言わない)', async () => {
+    eraseReportImpl = async () => {
+      throw new Error('disk on fire');
+    };
+    const report = (await invoke('app:eraseAll')) as import('../../shared/eraseReport').DesktopEraseReport;
+    expect(report).toEqual({
+      kind: 'desktop',
+      files: {},
+      renderer: 'failed',
+      allDeleted: false,
+      error: expect.stringContaining('disk on fire'),
+    });
+    // 画面の文 (共有の describeDesktopEraseReport) は「残っている可能性」と言い、画面側の保存領域を名指ししない
+    const text = describeDesktopEraseReport(report) ?? '';
+    expect(text).toContain('データは残っている可能性');
   });
 
   it('★ 残った物が在れば再起動しない — 報告を返し、画面が名指しする', async () => {

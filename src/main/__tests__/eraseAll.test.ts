@@ -350,3 +350,114 @@ describe('★ 作業ファイルと控えの綴りを書くのは atomicWrite.ts
     expect(found).toEqual(ALLOWED);
   });
 });
+
+/*
+ * **注入した `io` で、実ファイルでは作れない失敗を作る** (2026-09-30 · パス 502)。
+ *
+ * 変異検査の全掃引が `eraseAll.ts` に 10 件の生存を残していた。実ファイルの検査
+ * (上) は「ディレクトリが居座る」「控えが消せない」のような**権限や種類の失敗**は作れるが、
+ *
+ *   - 投げた物が **`null` / `undefined`** (`Promise.reject(null)` は書ける) —— 「投げた物が
+ *     `{ code: 'ENOENT' }` か」を見る `isMissing` が物でない値に `.code` を掛けると TypeError で、
+ *     ハードリセットの手順そのものが投げてしまう (戻り値の `failed` ではなく reject になる)。
+ *   - **一覧 (`readdir`) が ENOENT 以外で引けない** —— 実ファイルでは「ディレクトリが無い」か
+ *     「権限が無い」のどちらかで、前者は他の段も ENOENT になるので単独では作れない。
+ *   - **残骸を消す直前に消えていた** (競合) —— 一覧に在った名前の `rm` が ENOENT になる。
+ *
+ * は実ファイルでは再現できない。注入口 (`io`) は**このために在る**。
+ */
+describe('eraseFileAndLitter — 注入した io の失敗の種類 (パス 502)', () => {
+  const coded = (code: string): Error => Object.assign(new Error(code), { code });
+  type Io = Parameters<typeof eraseFileAndLitter>[1];
+  function ioWith(over: { rm?: (p: string) => Promise<void>; readdir?: (d: string) => Promise<string[]> }): Io {
+    return { rm: async () => {}, readdir: async () => [], ...over } as unknown as Io;
+  }
+
+  it.each([
+    ['null', null],
+    ['undefined', undefined],
+  ])('★ 投げた物が %s でも reject せず、「無い」とも言わず failed と報告する', async (_name, thrown) => {
+    // 4 か所 (本体・控え・一覧・残骸) のどこでも同じ —— どれも「無い」の判定 (`isMissing`) を通る。
+    const target = path.join(dir, 'n.json');
+    const litter = path.basename(atomicTmpPathOf(target));
+    const rejectWith = () => Promise.reject(thrown);
+    expect(await eraseFileAndLitter(target, ioWith({ rm: rejectWith }))).toBe('failed');
+    // 本体と控えは消え、一覧だけが null / undefined で失敗する (ここでも failed)
+    expect(await eraseFileAndLitter(target, ioWith({ readdir: rejectWith }))).toBe('failed');
+    // 本体と控えと一覧は通り、残骸の rm だけが失敗する
+    let n = 0;
+    const onlyLitterFails = async () => {
+      n += 1;
+      if (n >= 3) throw thrown; // 1: 本体 / 2: 控え / 3: 残骸
+    };
+    expect(await eraseFileAndLitter(target, ioWith({ rm: onlyLitterFails, readdir: async () => [litter] }))).toBe('failed');
+  });
+
+  it('★ 物でも null でもない値 (文字列) は「無い」ではない — failed', async () => {
+    const target = path.join(dir, 's.json');
+    expect(await eraseFileAndLitter(target, ioWith({ rm: () => Promise.reject('ENOENT') }))).toBe('failed');
+  });
+
+  it('★ 投げた物の code が ENOENT でなければ failed、ENOENT なら missing (本体)', async () => {
+    const target = path.join(dir, 'c.json');
+    expect(await eraseFileAndLitter(target, ioWith({ rm: () => Promise.reject(coded('ENOENT')) }))).toBe('missing');
+    expect(await eraseFileAndLitter(target, ioWith({ rm: () => Promise.reject(coded('EACCES')) }))).toBe('failed');
+  });
+
+  it('★ 一覧 (readdir) が ENOENT 以外で引けなければ failed — 残骸が無いと確かめられなかった', async () => {
+    const target = path.join(dir, 'l.json');
+    // 本体と控えは消えた (rm は通る) のに、置き場所の一覧が権限で引けない。
+    expect(await eraseFileAndLitter(target, ioWith({ readdir: () => Promise.reject(coded('EACCES')) }))).toBe('failed');
+  });
+
+  it('一覧が ENOENT (置き場所が無い) なら、本体が消えていれば deleted のまま', async () => {
+    const target = path.join(dir, 'l2.json');
+    expect(await eraseFileAndLitter(target, ioWith({ readdir: () => Promise.reject(coded('ENOENT')) }))).toBe('deleted');
+  });
+
+  it('★ 一覧に在った残骸が消す直前に消えていた (rm が ENOENT) なら failed にしない', async () => {
+    const target = path.join(dir, 'r.json');
+    const litter = path.basename(atomicTmpPathOf(target));
+    const removed: string[] = [];
+    const io = ioWith({
+      readdir: async () => [litter, 'keep.txt'],
+      rm: async (p) => {
+        removed.push(path.basename(p));
+        if (path.basename(p) === litter) throw coded('ENOENT'); // 別のプロセスが先に消した
+      },
+    });
+    expect(await eraseFileAndLitter(target, io)).toBe('deleted');
+    // 消しに行ったのは本体・控え・残骸の 3 つだけ (隣の keep.txt には触らない)
+    expect(removed).toEqual(['r.json', 'r.json.prev', litter]);
+  });
+
+  it('残骸が ENOENT 以外で消せなければ failed (対照 —— 上の「先に消えていた」だけが許される)', async () => {
+    const target = path.join(dir, 'r2.json');
+    const litter = path.basename(atomicTmpPathOf(target));
+    const io = ioWith({
+      readdir: async () => [litter],
+      rm: async (p) => {
+        if (path.basename(p) === litter) throw coded('EACCES');
+      },
+    });
+    expect(await eraseFileAndLitter(target, io)).toBe('failed');
+  });
+});
+
+describe('eraseDesktopData — 注入した io を使う (パス 502)', () => {
+  it('★ io を渡せば実ファイルには触れず、その io が消した結果を報告する', async () => {
+    // 実在しない場所を指す。実の `fs` が使われれば ENOENT で missing になり、注入の結果 (deleted) と食い違う。
+    const target = path.join(dir, 'no-such-dir', 'inj.json');
+    const removed: string[] = [];
+    const io = {
+      rm: async (p: string) => {
+        removed.push(p);
+      },
+      readdir: async () => [] as string[],
+    };
+    const report = await eraseDesktopData({ targets: [target], io: io as never, clearRenderer: async () => {} });
+    expect(report.files).toEqual({ [target]: 'deleted' });
+    expect(removed).toEqual([target, backupPathOf(target)]);
+    expect(report.allDeleted).toBe(true);
+  });
+});

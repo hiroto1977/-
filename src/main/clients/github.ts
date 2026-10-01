@@ -5,21 +5,10 @@ import {
   objectRows,
   optionalString,
   requireNumber,
-  requireObject,
   requireString,
 } from '../../shared/apiResponse';
 import { GITHUB_API, checkIssue, githubIssueInit, githubIssuesPath, parseCreatedIssue } from '../../shared/api/github';
 import type { ActionData } from '../../shared/actionData';
-
-interface GithubUser {
-  login: string;
-  name: string | null;
-  company: string | null;
-  avatar_url: string;
-  html_url: string;
-  public_repos: number;
-  followers: number;
-}
 
 interface SearchItem {
   number: number;
@@ -84,8 +73,12 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
   const init: RequestInit = { headers: headers(ctx.token) };
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'github' };
 
-  const [user, search] = await Promise.all([
-    jsonFetch<GithubUser>('https://api.github.com/user', init, fetchCtx),
+  const [u, search] = await Promise.all([
+    // `/user` は欄を 1 つずつ要求して読む (下の `requireString` / `requireNumber`) ので、型は「物である
+    // こと」だけを名乗る。封筒 (先頭が配列やスカラーでない) は `jsonFetch` が見る —— 2026-09-30 まで
+    // ここは `GithubUser` と名乗った後で `requireObject` をもう 1 度通していたが、`jsonFetch` が
+    // 先に断るので投げようが無く、その断りの文 (`GitHub API の応答が…`) は画面へ届かなかった。
+    jsonFetch<Record<string, unknown>>('https://api.github.com/user', init, fetchCtx),
     jsonFetch<SearchResponse>(
       'https://api.github.com/search/issues?q=is:pr+author:@me+is:open&per_page=10&sort=updated',
       init,
@@ -172,11 +165,11 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
    * 「エラー」ではなく「データ」として画面へ届くのはここだけだった (実測)。
    * 名前と会社は元から `null` を取り得る欄なので任意のままにする。
    */
-  const u = requireObject(user, 'GitHub API');
+  const login = requireString(u, 'login', 'GitHub API');
   return {
     user: {
-      login: displayField(requireString(u, 'login', 'GitHub API')),
-      name: displayField(optionalString(u, 'name') ?? requireString(u, 'login', 'GitHub API')),
+      login: displayField(login),
+      name: displayField(optionalString(u, 'name') ?? login),
       company: displayField(u['company']),
       avatarUrl: requireString(u, 'avatar_url', 'GitHub API'),
       profileUrl: requireString(u, 'html_url', 'GitHub API'),

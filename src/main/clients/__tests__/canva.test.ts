@@ -233,3 +233,42 @@ describe('ACTIONS["create-folder"] — 送り方', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+/*
+ * **サムネイルが null のデザインでも投げない** (2026-09-30 · パス 502)。
+ *
+ * `typeof null === 'object'` なので、物かを `typeof` だけで見ると null が通り、`null` の欄を読んで
+ * TypeError になる —— Canva の画面が丸ごと落ちる (パス 410)。欠けた (undefined) 側は見ているが、
+ * JSON が書ける `null` の側は 1 度も通っていなかった。
+ */
+describe('fetchCanvaSnapshot — thumbnail が null のデザイン (パス 502)', () => {
+  it('★ thumbnail: null は投げず、サムネイルの URL は空 (ほかのデザインは残る)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          items: [
+            { id: 'n1', title: 'null のサムネイル', thumbnail: null, urls: { view_url: 'https://canva/n1' } },
+            { id: 'ok', title: 'ある', thumbnail: { url: 'https://thumb/ok' }, urls: { view_url: 'https://canva/ok' } },
+          ],
+        }),
+      )
+      .mockResolvedValueOnce(jsonResponse({ items: [] }));
+    const snap = await fetchCanvaSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.designs.map((d) => [d.id, d.thumbnailUrl])).toEqual([
+      ['n1', ''],
+      ['ok', 'https://thumb/ok'],
+    ]);
+  });
+
+  it('thumbnail が文字列・数・配列でも投げず空 (物でない / 物だが url が文字列でない)', async () => {
+    for (const thumbnail of ['https://x', 42, ['https://x'], { url: 42 }]) {
+      const fetchMock = vi
+        .fn<typeof fetch>()
+        .mockResolvedValueOnce(jsonResponse({ items: [{ id: 'd', thumbnail }] }))
+        .mockResolvedValueOnce(jsonResponse({ items: [] }));
+      const snap = await fetchCanvaSnapshot({ token: 't', fetch: fetchMock });
+      expect(snap.designs[0]!.thumbnailUrl, JSON.stringify(thumbnail)).toBe('');
+    }
+  });
+});

@@ -6,6 +6,7 @@ import {
   parseToolVersions,
   parseGitHead,
   readDevEnv,
+  MAX_DEV_ENV_FILE_BYTES,
   type DevEnvInputs,
 } from '../devEnv';
 
@@ -279,6 +280,7 @@ describe('readDevEnv (live host)', () => {
 // 名前を 1 つ間違えても整形側は動くので、上の検査では捕まらない。
 // 一時ディレクトリを作って実際に読ませる。
 
+import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import * as os from 'node:os';
 import * as nodePath from 'node:path';
@@ -537,5 +539,26 @@ describe('readDevEnv — 実際のファイルから読む', () => {
     } finally {
       await fsp.rm(nodePath.dirname(linked), { recursive: true, force: true });
     }
+  });
+
+  /*
+   * **読む前の大きさの門は、上限ちょうどを読み、1 byte 超えた所から読まない** (パス 326 の門の境目)。
+   *
+   * `fs.statSync(p).size > maxBytes` の `>` は境目そのものである。`>=` にすると上限ちょうどの
+   * ファイルまで「無かった」扱いになり、`false` にすると上限の何倍のファイルでも主スレッドで
+   * 同期に読む (`readFileSync` は画面ごと止める)。中身は同じ JSON で、末尾の空白だけで
+   * 大きさを動かす (空白は JSON として有効なので、読めた / 読めないの差は**大きさだけ**から来る)。
+   */
+  it('★ 上限ちょうどの package.json は読み、1 byte 超えたら読まない (null)', async () => {
+    const body = JSON.stringify({ name: 'p', version: '1.0.0' });
+    const padded = (bytes: number): string => body + ' '.repeat(bytes - Buffer.byteLength(body));
+
+    await write('package.json', padded(MAX_DEV_ENV_FILE_BYTES));
+    expect(fs.statSync(nodePath.join(dir, 'package.json')).size).toBe(MAX_DEV_ENV_FILE_BYTES);
+    expect(readDevEnv(dir).project?.name).toBe('p');
+
+    await write('package.json', padded(MAX_DEV_ENV_FILE_BYTES + 1));
+    expect(fs.statSync(nodePath.join(dir, 'package.json')).size).toBe(MAX_DEV_ENV_FILE_BYTES + 1);
+    expect(readDevEnv(dir).project).toBeNull();
   });
 });

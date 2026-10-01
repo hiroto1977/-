@@ -642,6 +642,26 @@ describe('getValidToken — 更新経路', () => {
     expect(refreshCalls).toBe(0);
   });
 
+  /*
+   * **期限が数でも有限でなければ、「期限が記録されていない」と同じ扱い (更新しない)** (パス 502)。
+   *
+   * `JSON.stringify` は `-Infinity` を書けない (`null` になる) が、**読む側は** 手で直した・別の道具が書いた
+   * JSON の `-1e999` を `-Infinity` として受け取る。`-Infinity - Date.now() < 窓` は真なので、有限かの
+   * 判定が欠けると**毎回の取得で更新が走る** (更新トークンの二重使用・相手の制限) —— パス 98 が閉じた形。
+   * `+Infinity` (`1e999`) は元から更新しない側だが、対で留める (判定を `||` にしても `-Infinity` だけが漏れる)。
+   */
+  it.each([
+    ['-Infinity (-1e999)', '-1e999'],
+    ['+Infinity (1e999)', '1e999'],
+  ])('★ 期限が非有限の数 %s なら更新しない (期限が無いのと同じ)', async (_name, literal) => {
+    await writeRawStore({
+      github: encrypted(`{"accessToken":"at","refreshToken":"rt","expiresAt":${literal}}`),
+    });
+    const { getValidToken } = await secretsModule();
+    expect(await getValidToken('github')).toEqual({ ok: true, token: 'at' });
+    expect(refreshCalls).toBe(0);
+  });
+
   it('refreshToken が無ければ更新しない (期限が近くても)', async () => {
     await writeRawStore({
       github: encrypted(JSON.stringify({ accessToken: 'at', expiresAt: Date.now() + 1_000 })),

@@ -789,6 +789,9 @@ export function createMockStocksDataSource(): StocksDataSource {
         // (low ≤ open/close ≤ high) hold under any monotonic scaling.
         // Stryker disable ArithmeticOperator
         out.push({
+          // Stryker disable next-line StringLiteral: `startMs` は定数の日付 (`MOCK_START`) で、`i` は期間の添字 (Date の範囲に
+          // 届くのは 1 億日先) なので `isoDateFromTimestamp` は null を返さない。`?? ''` は型 (`string | null`) を満たすためだけに在り、
+          // 右辺へ入る入力が存在しない (等価変異)。
           date: isoDateFromTimestamp(startMs + i * DAY_MS) ?? '',
           open: Math.round(c.open * 100) / 100,
           high: Math.round(c.high * 100) / 100,
@@ -1273,9 +1276,6 @@ async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise
   const problem = checkAdvisorQuestion(question);
   if (problem !== null) {
     throw new Error(ADVISOR_QUESTION_MESSAGES[problem]);
-  }
-  if (problem === 'control-chars') {
-    throw new Error('question contains control characters');
   }
   // Stryker restore ConditionalExpression
 
