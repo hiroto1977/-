@@ -532,6 +532,12 @@ function main(argv) {
   const tc = run('npm run typecheck');
   console.error('quality: tests...');
   const testRun = run('npm test');
+  if (testRun.code !== 0) {
+    // 落ちた検査の名前を残す。頁に載るのは件数だけなので、これが無いと「1 FAILING」がどれかは run が終わった後に分からない
+    // (パス 502: 検査段の最中に git push を走らせた run で 1 件落ち、回し直すと全件緑で、どれが落ちたか取れなかった)。
+    const lines = testRun.out.split('\n');
+    console.error([...lines.filter((l) => /^\s*(FAIL|×|✗)\s/.test(l)), ...lines.slice(-15)].join('\n'));
+  }
   const tests = { code: testRun.code, summary: parseVitestSummary(testRun.out) };
 
   let coverage = null;

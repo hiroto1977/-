@@ -1,6 +1,6 @@
 # Quality dashboard
 
-最終更新: 2026-10-01 05:04:39 UTC
+最終更新: 2026-10-01 05:24:21 UTC
 
 > 自動生成: `npm run quality:report`。**全掃引の変異検査の報告からだけ作る** (部分の報告からは生成側が断る)。
 > 3 つの時点が載る —— 変異検査は「報告ファイルの日時」の時点、型検査・検査・被覆と「生成時点」の数は上の最終更新の時点。
@@ -12,7 +12,7 @@
 | 指標 | 値 |
 |---|---|
 | TypeScript 型検査 | ✅ pass |
-| ユニットテスト | ❌ 1 FAILING / 21065 passing (終了コード 1) |
+| ユニットテスト | 21066 passing (1036 files) |
 | Coverage (`src/main/**` のみ) — lines | 99.69% |
 | Coverage (`src/main/**` のみ) — statements | 99.21% |
 | Coverage (`src/main/**` のみ) — branches | 97.52% |
