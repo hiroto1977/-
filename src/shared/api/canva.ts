@@ -136,8 +136,10 @@ export interface CheckedFolder {
 export function checkFolder(input: CanvaFolderFields): CheckedFolder {
   const bad = checkWriteFields(input, CANVA_FOLDER_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 必須の `name` は `checkWriteFields` が「空でない文字列」として通した物だけが来る (偽の枝 `''` へは入れない)。
+  // 親は省く・空・文字列でないなら root へ揃える (パス 502)。
   return {
-    name: typeof input.name === 'string' ? input.name.trim() : '',
+    name: String(input.name).trim(),
     parentFolderId:
       typeof input.parentFolderId === 'string' && input.parentFolderId.length > 0 ? input.parentFolderId : 'root',
   };
