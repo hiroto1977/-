@@ -88,8 +88,8 @@ export function combineCashflowDebtService(
   repayments: readonly RepaymentMonthly[],
   threshold = 1,
 ): CashflowDebtService | null {
-  // repayments が空 (または全て返済0) の場合は下の repayMonths.length===0 で null に
-  // なるため、ここでは accounting のみ判定する (repayments の判定は冗長)。
+  // repayments が空 (または全て返済0) の場合は返済のある月が無く、突合できる月も無いので
+  // 下の matched.length===0 で null になる。ここでは accounting のみ判定する (repayments の判定は冗長)。
   if (accounting.length === 0) return null;
   const cfByMonth = new Map<string, number>();
   for (const a of accounting) cfByMonth.set(a.month, (cfByMonth.get(a.month) ?? 0) + a.net);
@@ -101,7 +101,6 @@ export function combineCashflowDebtService(
   const repayMonths = [...repayByMonth.keys()]
     .filter((m) => (repayByMonth.get(m) ?? 0) > 0)
     .sort();
-  if (repayMonths.length === 0) return null;
   // **分子が在る月だけ**を突合する。`has` で見るので、実測して 0 だった月
   // (会計連携に載っている net 0) は対象に残る —— 未取得と実測ゼロを混ぜない。
   const matched = repayMonths.filter((m) => cfByMonth.has(m));
