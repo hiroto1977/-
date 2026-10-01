@@ -7,6 +7,31 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-01) — パス 502: PR の外に残った変異検査の生存 660 件を閉じる —— 全件を 1 本のログへ・static な生存は「検査ファイルの beforeAll より前の評価には変異体が届かない」ことで説明がついた
+
+- **見つけた物** —— パス 501 が残した「PR の外の 92 ファイル・非 killed 660 件」(週次の全掃引 98.03% < break 99.8・次の予定は 2026-10-04 18:00Z) を閉じに行った。まず**全件を位置つきで GitHub の 1 本のログに出す**道具を足し
+  (`triage-mutations.cjs --list` ←「その行を検査の中でも通した検査」つき・`--summary`・`quality-report.cjs --from-summary` —— 報告が artifact にしか無く、この環境から取れないため)、#179 の 660 件・92 ファイルを
+  **11 担当 (worktree ごと・Stryker は走らせず手で当てた変異体で確かめた)** で 1 件ずつ仕分けて閉じた。#180 は **99.83% (break 99.8 を越えた)・生存 65 件 (全部 static)**、その 65 件を 4 担当で閉じて #181 で **100.00% (生存 0・未到達 0・22 塊すべて success・55 分)** —— #180 の 65 件は、殺した 24・Ignored 3・形消しで変異体そのものが消えた 38 に分かれた
+- **仕分け** —— 本物の穴 (A) → 検査 / 等価 (B) → **形を消す** / 到達しない防御 (C) → 理由つき pragma。製品コードを触ったのは形消しと pragma だけ (挙動は変えない・関係する既存の検査が全部通ることで確かめた)。
+  保護対象を触った物は `chain:append` (block #278〜#281)。担当ごとの内訳は `docs/REMAINING_WORK.md` の「パス 502」の表
+- ★ **static な生存の正体** —— Stryker は static かつ検査の被覆つき (hybrid) の変異体を `mutantActivation: 'runtime'` で走らせ、`vitest-runner` の足場は変異体を**各検査ファイルの `beforeAll` で**有効にする。
+  だから **import の時点と `describe` の本体 (収集時) で評価した値には変異体が届かない**: ① モジュール直下の値は**検査の中 (`it`) で `rereadModule`** して直下の値を全部主張する ② 関数の結果を `describe` の直下で取る検査は
+  **`it` の中で呼ぶ** (`financialStatements.test.ts:356` の `const notes = statementEstimateNotes()` が L53 / L54 の 2 件の生存の正体だった)。
+  ★ **手で当てる確かめ (`audit:survivors`・担当の `mutcheck`) は原文を書き換えるので収集時の評価にも変異体が届き、偽の KILLED を出す** —— 活性化を `beforeAll` へ寄せた確かめ (rdata2 の `rtcheck`・スクラッチ) では
+  旧い検査だけが SURVIVED・足した検査が KILLED と Stryker の報告を再現した。法則 `module-evaluated-at-file-load` に逆向きの形を足し、`verify-survivors.cjs` の docblock を訂正した
+- **直した欠陥** —— 不動産の `fullLeverageNote` が自己資金 0 のフルローンで「**-0 円**の持ち出し」と刷っていた (`Math.round(-0.3)` は −0)。**直さず残した疑い**: 空白だけの任意欄が外へ出る (Drive / Canva / WordPress / Atlassian ほか)・
+  `teamEmotionSummary` が `teamAverage[0]` を「活力」と読む (今日は届かない)・`redact.ts` の Bearer が消える形 (漏れではない)
+- **機械** —— `triageMutationsList.test.ts` ほか (道具)・`inTestModuleLoadCensus` の規則 5 (Node の require へ `.ts` を読ませる口を検査の中で呼ばない)・新しい検査 (11 担当ぶん・ユニットテスト数は **17,384**)
+- **検証** —— `npm test` 1,036 ファイル / **21,066 件**・`verify:all` exit 0 (37 ゲート)・`chain:verify` 緑 (block #281・保護対象 99)。**出荷物が動いたので実機も回した** (e2e.yml と同じ順序・最終のコード):
+  `smoke:app` OK・`e2e` **523 件 ❌ 0**・`e2e:lite` **523 件 ❌ 0**・`e2e:ollama` 全件 PASS・`perf` OK (LITE DCL 232 ms / heap 9.6 MB・FULL DCL 626 ms / heap 36.2 MB)。
+  組み直した byte: **11,862,379 B / 3,275,003 B** (パス 501 から両方 −1,059 B・形消しの分)・md5 `ed535fdb…` / `56c42440…`
+- **変異検査 (GitHub で測った)** —— #179 (660 件) → #180 (99.83%・生存 65・56 分) → #181 (**100.00%・生存 0・未到達 0**・22 塊すべて success・55 分)
+- ★ **既知の罠 (このパスで踏んだ)**: **GitHub の push 保護は本物の鍵の形をした連続リテラルを検査の標本の中でも止める** (GH013) —— 実行時に組み立てる・unblock URL は使わない / **`mutcheck` に検査 1 本だけを渡すと偽の SURVIVED・収集時に評価する検査には偽の KILLED** /
+  **`// Stryker disable next-line` はコメントの次の行で始まる変異体だけに効く** (同じ行の同種を全部巻き込む・複数行の条件で `||` を行頭に置くと左の項の後ろ側に付いて効かない) /
+  **Stryker は識別子・メンバー式だけの三項や呼び出し式の被演算子に ConditionalExpression を作らない** (判定を `const` へ切り出すと変異体が消えるが「閉じた」ではない)・`as const` の配列にも作らない /
+  `?? Number.NaN` へ寄せると `??` → `&&` の変異体が生まれる (`0 && NaN` は 0 —— 0 の標本だけでは見分けられない) / push のたびに `docs/ARCHITECTURE.md` 29 行目の件数が古びる (予想せず `verify:arch` に訊く)
+- **残した物** → `docs/REMAINING_WORK.md` の「パス 502」(**週次は `main` の木を測る** —— この PR のマージで `main` が #181 の木と一致する・確かめ方は同書の ②)
+
 ## 直近の作業 (2026-09-30) — パス 501: push 側の変異検査 69 本を緑にする —— 生存 94 件の仕分け・6 時間の上限・GitHub だけ検査を 2 回やり直していたこと
 
 - **見つけた物** —— パス 500 が残した「触っていない行の生存」を 8 本まとめて今の木で測り直した (測った変異体 3,161・計装 3,648・148 分・**97.03%**・生存 89 + 未到達 5)。

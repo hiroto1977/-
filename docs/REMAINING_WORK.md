@@ -1,5 +1,68 @@
 # Service Hub — 残りの作業手順書
 
+## パス 502 (PR の外に残った変異検査の生存 660 件を閉じる —— 全件を 1 本のログへ・static な生存は「検査ファイルの `beforeAll` より前の評価には変異体が届かない」ことで説明がついた) が測って、次のパスへ残した物 (2026-10-01)
+
+- **出発点と経過 (GitHub の全掃引 · 22 塊の matrix)** —— パス 501 が「週次の全掃引は閉じるまで設計どおり赤のまま」と残した PR の外の生存を、このパスで閉じた (全部 `workflow_dispatch` の `files` 空 = 全件・この branch):
+
+  | run | 引き金 / head | 測った結果 |
+  | --- | --- | --- |
+  | #173 (2026-09-30・検査の retry あり) | `7c9c2cb2` | 測った変異体 38,044・**98.03%**・非 killed 749 (生存 704 + 未到達 45)・PR の外の 92 ファイルに **660** |
+  | #179 (2026-09-30 22:18Z → 23:22Z = 64 分・retry なし) | `92703992f` | **660 件・92 ファイル**を位置つきで 1 本のログに出した (`triage --list` の初回) —— failure (break を割る) |
+  | #180 (2026-10-01 00:53Z → 01:49Z = 56 分) | `60f2bfb2a` (非 static の 7 担当を取り込んだ木) | 併合: 22 塊 / 308 ファイル / 計装 45,548 / 検査 18,898 / **99.83%** (break 99.8 を越えた)・**生存 65 件 (全部 static)** —— success |
+  | #181 (2026-10-01 03:56Z) | `97de20b9d` (static の 4 担当を取り込んだ木) | **100.00%** (break 99.8 を越えた) —— 併合: 22 塊 / 308 ファイル / 計装 45,510 / 検査 19,001・**殺した 37,532・生存 0・未到達 0**・Ignored 7,978・Error 0 (`triage --list` は「生存 0 件 / 未到達 0 件 (0 ファイル)」・22 塊すべて「survived 0」)・success (03:56:15Z → 04:51:49Z = 55 分 34 秒・`merge-full` は 18 秒)。#180 からの差は 殺した +24・生存 −65・Ignored +3・計装 −38 (形消しで変異体そのものが無くなった分) —— **65 = 24 + 3 + 38** |
+
+  #179 は `--list` の出力を足しただけの commit (製品も検査も動かしていない木) で測った —— #173 の「PR の外の 660 件」と同数だが、#173 は検査の retry あり (`CI=true`)・#179 以降は retry なし (`CI: ''`) で、**内訳が同じかは確かめていない** (数だけが同じ)。
+- **道具 (502a / 502c)** —— ① `scripts/triage-mutations.cjs --list` は殺されていない変異体 (Survived + NoCoverage) を**ファイルごと・位置順に 1 行ずつ**出す (`L45:12 S StringLiteral (static) 'local' ⇒ "" ← 通した検査×回数`)。元の綴りは報告の `source` から位置 (行も列も 1 始まり・end は排他) で切り出し、`(static)` の印と「その行を**検査の中でも**通した検査のファイル」(`←`) を付ける。
+  ② `--summary` は頁に要る物 (RUN / MERGED_AT / MUTATE / ファイルごとの件数) を 1 行ずつ出し、`scripts/quality-report.cjs --from-summary=<log>` がそれから `docs/QUALITY.md` を組み直す (報告が artifact にしか無く、この環境からは blob の host が塞がれて取れないため)。
+  ③ `mutation.yml` の `merge-full` が併合報告へ ①② を当てるので、**artifact が取れない環境でも GitHub のログ 1 本で全件が読める** (それまでは上位 30 件の表だけで、元の綴りも列も無かった)。検査は `triageMutationsList.test.ts` ほか。
+- **仕分けの結果 (502b / 502d)** —— 担当 11 人 (worktree ごと・Stryker は走らせず、手で当てた変異体で確かめた)。1 件ずつ **本物の穴 (A) → 検査 / 等価 (B) → 形を消す / 到達しない防御 (C) → 理由つき pragma** に分けた:
+
+  | 担当 | 対象 | 件数 | 内訳 |
+  | --- | --- | ---: | --- |
+  | (本線) | `dataOrigin.ts` 77 + `credentialUse.ts` 77 (どちらも module 直下の表) | 154 | 1 本の検査 (`ontologyDoc.test.ts` の self-test) が閉包を検査の中で評価し直していたのが原因 → `beforeAll` へ (`inTestModuleLoadCensus` の規則 5)。ローカルの Stryker で **154 件 Ignored・生存 0** |
+  | docstudio | `docStudioChecks.ts` | 72 | A 検査 29 件・B 形消し 2 か所 (`taxItemIssues` の price / qty の条件)・C pragma 1 |
+  | misc3 | `skills.ts` / `renderer/security/eraseAll.ts` / `api/github.ts` | 47 | 検査・形消し (`markRunnable`・`checkIssue`) |
+  | dom | `welfareDocs` / `talent` / `taxCredits` / `funding` ほか | 32 | 検査 10 本 (+49)・形消し 3 (`talent.ts` の `droppedRows`・`taxCredits.ts` の `noMortgageCreditCause`)・pragma 1 |
+  | api | `shared/api/*` の書き込み入口と応答の断り | 70 | A 45・B 25 (**保護対象 2 本** `writeFieldLimits.ts` / `atlassianSite.ts`) |
+  | core | `redact` / `serviceAdvisor` / `headerValue` ほか shared 14 ファイル | 81 | 検査・形消し (`isFiniteNumber`・`top` / `lowest` の組み直し)・pragma (保護対象 `headerValue.ts`) |
+  | main | `main/clients/*` / `main/*.ts` / `proxy.ts` / `pkce.ts` | 62 | 検査 40・形消し 13・pragma 9 (**保護対象 3 本** `main/eraseAll.ts` / `main/windowPrefs.ts` / `renderer/network/proxy.ts`) |
+  | rdata | `renderer/data` ほか 26 ファイル | 64 | A 45・B 17・C 2 |
+  | rdata2 | `renderer/data` の static 9 ファイル | 19 | A 16 + 呼び出しで観測 1 (`localWrite.ts`・保護対象は触らず)・B 2 (`cashflowDebtService.ts` の入口の `accounting.length === 0`・`overview.ts` の 2 度目の `filter(isValidPeriod)`) |
+  | tables2 | `funding` 8 / `talent` 2 / `templateSvg` 5 | 15 | A 15 (検査のみ・製品は 1 行も触らない) |
+  | trade2 | `tradeTax` 10 / `waterCyclePlanner` 2 / `zoningPlanner` 3 | 15 | A 7・B 8 (`isFiniteNumber` へ・税の合計の 3 つの null 判定を 1 つへ) |
+  | mixed2 | `main.ts` / `buildingIso` / `pluginRuntime` / `formatters` / `imageUrlGate` / `inputCeiling` / `managementScorecard` / `savingsPlanning` | 16 | A 7・B 7・C 2 (**保護対象 `imageUrlGate.ts`** → chain #281) |
+
+  段 2 (static 65 件) の内訳は A 45 + 呼び出しで観測 1 + B 17 + C 2。**製品コードを触ったのは形消し・pragma だけで、挙動は変えていない** (形消しは関係する既存の検査が全部通ることで確かめた —— 依存 158 ファイル 1,955 件・166 ファイル 2,050 件ほか)。
+  `npm test` 1,036 ファイル / **21,066 件**・`verify:all` exit 0 (37 ゲート)・`chain:verify` 緑 (block #281 まで・保護対象は 99 本)・ユニットテスト数 (静的な `it(`) は **17,384**。
+- ★ **static な生存の正体が分かった —— 「検査ファイルの `beforeAll` より前に評価した値には変異体が届かない」** (rdata2 が測った・ソースで確かめた)。`@stryker-mutator/core` の `mutant-test-planner.js` は、static かつ検査の被覆つき (hybrid) の変異体を `ignoreStatic` のもとで `testFilter: coveredBy` つきで走らせ、**`mutantActivation: testFilter ? 'runtime' : 'static'`** (148 行目) —— つまり `runtime`。`vitest-runner` の `stryker-setup.js` は `runtime` のとき **`beforeAll(() => { ns.activeMutant = inject('activeMutant') })`** でしか変異体を有効にしない。だから:
+  - **形 (ii) モジュール直下の値** (`export const X = …` / 表 / 文) は import の時点で評価されるので、変異体が有効になる前に値が決まる。殺せるのは**検査の中でそのモジュールを評価し直して** (`rereadModule` —— `it` の中・`beforeAll` 以降) **直下の値を全部主張する**検査だけ (パス 495 の手)。
+  - **形 (i) 関数の中の文**も、その関数の結果を**検査の外**で取る検査 (`describe` の本体で `const x = f()` と書く形 —— 収集時) は変異体に届かない。実例 (`financialStatements.test.ts:356` の `const notes = statementEstimateNotes()`): 検査は文を断片で `toContain` していたのに、`StringLiteral` の 2 件 (L53 / L54) は生き残った。**検査の中で呼べば殺せる**。関数が import の時にも呼ばれる (他のモジュールの `export const X = f(...)`) ので static の印が付く。
+  - ★ **手で当てる確かめ (`mutcheck` / `audit:survivors`) は偽の KILLED を出す** —— 原文を書き換えるので、収集時の評価にも変異体が届く。rdata2 が作った `rtcheck.cjs` は的を `(globalThis.__MUT_ON__ ? 置換 : 原文)` に包み、setup が `beforeAll` で `__MUT_ON__` を立てて Stryker の活性化を再現する。**実測の対照**: 旧い検査だけだと `funding.ts` の `'subsidy' ⇒ ""` は SURVIVED (Stryker の報告どおり)・新しい検査では 15 件すべて KILLED。**この道具はリポジトリに入れていない (スクラッチ)** —— 式の変異体にしか使えない (文の変異体は `if (…) {} else {…}` の形が要る)。→ 「残した物」。
+  - 法則 `module-evaluated-at-file-load` (パス 495) は「検査の中でモジュールを初めて評価すると、その直下の値が覆われて生存になる」を述べていた。**逆向きの形 (検査の外で評価した値は届かない) を足した** (パス 502)。
+- **見つけた欠陥・疑い** (検査が値を主張し始めたので見えた物。**直したのは 1 件だけ**で、残りは判断を残す):
+  - ★ **直した**: 不動産の `fullLeverageNote` が自己資金 0 のフルローンで「**-0 円**の持ち出し」と刷っていた (`Math.round(-0.3)` は −0・`cf < 0` は −0 に対して偽・`toLocaleString` は `-0` と綴る)。絶対値を先に取り符号で文を分けた (`b7b99cbb5`・`realEstateFullLeverageNote.test.ts`)。
+  - **空白だけの任意欄がそのまま外へ出る** (api 担当の疑い・未修正): Drive の `parents`・Canva の `parent_folder_id`・WordPress の `status`・Atlassian の `issueType` / `description` が `"   "` のまま転送される。同じ形が `github.ts:192-194` / `microsoft365.ts:77,164` / `cloudflare.ts:90` にも在る。
+  - `teamEmotionSummary` は `teamAverage[0]` を「活力」と読むが、`buildTeamEmotionRadar` は誰の点も無い軸を落とす → 気分の記録 0 件で本文解析だけだと `axes=['前向き']` なのに「活力 5/5」と書く (rdata・**今日は `TeamRadarPage` が `analyses: []` を渡すので届かない** · 直すなら `axes.indexOf('活力')`)。
+  - `redact.ts`: 単一行の `"Bearer <20 字>" is an invalid header value` は先の裸 Bearer 規則が 10 字へ伏せたあと、この規則の方式の群 (16 字) に足りず外れて Bearer が**消える** (漏れではない・core)。
+  - `main.ts` の `applyNativeTheme` の `if (nativeTheme)` は実 Electron では常に真の形骸の守りで、届くのは検査の代役だけ (保護対象・今回は検査で閉じた・次は (B) か (C))。`secrets.ts:124` / `skills.ts:125` は `(err as NodeJS.ErrnoException).code` を null の守りなしで読む (実害なし)。`writeFieldLimits.test.ts` の 653-660 行の注記が古い。`connectorHealth.pluginPermissionGaps` は `requiredPermissionFor(...) === null` の分岐を別に持つ (生存ではない・同じ番兵の形へ寄せられる)。
+- ★ **既知の罠 (このパスで踏んだ・11 担当 + 本線の実測)**:
+  - **GitHub の push 保護は、本物の鍵の形をした連続リテラルを検査の標本の中でも止める** (GH013 —— Asana の PAT `1/<数字>:<32 桁 16 進>` ほか)。止められると履歴を書き換えることになる (`reset` → `cherry-pick -n` → 標本を実行時に組み立てる形 (`'a'.repeat(n)` / `${A}:${B}`) へ直して再 commit → 残りを cherry-pick し直し)。**push 保護の unblock URL は使わない** (保護の迂回)。
+  - **`mutcheck` に検査 1 本だけを渡すと偽の SURVIVED**、**収集時に評価する検査では偽の KILLED** (上)。**その行を通る検査を全部渡す**・「検査の中で呼ぶ」を確かめる。
+  - **`// Stryker disable next-line` が効くのは、コメントの次の行で始まる変異体だけ** —— 同じ行の同種の変異体は**全部**巻き込み (行を分ける)、複数行の条件で `||` を次の行の先頭に置くとコメントは**左の項の後ろ**に付いて効かない (演算子を行末に置くと右の項の先頭コメントになる)。測定を走らせずに変異体だけ列挙する instrumenter 呼び出し (`instr.mjs`・スクラッチ) で `[IGNORED: …]` を印字して確かめた。
+  - **Stryker は識別子・メンバー式だけの三項の条件や、呼び出し式の被演算子には ConditionalExpression の変異体を作らない** (`mutation.json` に位置が無い)・`as const` の配列にも変異体を作らない。**判定を `const x = …` へ切り出すと変異体が消える (= 測らなくなる) が、それを「閉じた」とは数えない。**
+  - `?? Number.NaN` へ寄せると `??` → `&&` の新しい変異体が生まれ、`0 && NaN` は 0 なので**値が 0 の標本だけでは見分けられない** (非ゼロで値ごと主張する)。`num.ts` の `ratioPctOrDash` (`n == null ? DASH : pct(n * 100, digits)`) は `?? Number.NaN` へ寄せると等価でない (`null * 100` が 0)・真似しない。
+  - `vi.mock` のファクトリは、キーが無いと参照時に `No "X" export is defined on the mock` と投げる (「export が無いときの床」はキーを持たせて値だけ `undefined` にする)。`fake-indexeddb` は Blob を保てない。
+  - **変異体を当てる道具が製品ファイルを書き換えている間に `typecheck` / `vitest related` を走らせない** (偽の失敗)・書き換えたあとに `Edit` が「読んだ後に変わった」と断る (読み直す)。**`fixedTickAssertionCensus` は `src/renderer/__tests__/` にある** (担当への指示は `src/shared/__tests__/` と書いてしまった)。
+  - **push するたびに `docs/ARCHITECTURE.md` 29 行目のユニットテスト数が古びる** (`verify:arch` が「doc says X, source says Y」と鳴る) —— 予想せず門に訊いて直した (11 回)。
+- **残した物 (次のパス)** ——
+  ① **分母の外は測っていない** —— この 100.00% は `mutate` の 308 本についての値で、`src` の `.ts` (検査と `.d.ts` を除く 426 本) のうち **118 本が外**に居る (うち `mutateScopeCensus.test.ts` の台帳が名指しするのは `measure-next` 27 + `data` 5 = 32 本)。外の物を測るには、手元で `npx stryker run --mutate <file>` を回し (パス 353 / 355 の手)、100.00% にできてから `mutate` へ入れる (台帳の行は消す)。
+  ② ★ **週次の全掃引 (`mutation.yml` の `schedule: '0 18 * * 0'` = 日曜 18:00Z = 月曜 03:00 JST) は既定ブランチ (`main`) の木を測る** —— この branch の `workflow_dispatch` で測った #180 / #181 は `main` の cron の結果ではない。この PR を `main` へ入れると `main` の木が #181 の木と一致する (違うのは記録の `docs/` と `CLAUDE.md` だけ) ので、次の予定 (**2026-10-04 18:00Z**) は 100.00% になるはず —— **見込みであって、`main` の木ではまだ測っていない**。cron を待たずに確かめるには、マージ後に `main` で `workflow_dispatch` (files 空) を 1 回回す (22 塊・約 1 時間)。
+  ③ **同じ形の写しが残っている** (今日は生存ではない・形を消せる候補) —— `typeof x === 'number' && Number.isFinite(x)` が非テストの `src` に 11 か所 (`apiResponse.ts:259`・`api/cloudflare.ts:90`・`radarPlot.ts:66`・`talent.ts:211`・`hydroponicsControl.ts:696`・`ManualDataSection.tsx:276/279/280`・`villageData.ts:303`・`teamRadarDraft.ts:24`・`portfolioAnnex.ts:56` —— 保護対象は `num.ts` を import できないので `Math.max` など別の形)。`typeof v !== 'string' || v === ''` が他に 6 か所 (`apiResponse.ts:117`・`hydroponicsControl.ts:693/695`・`library.ts:130`・`hydroponicsLog.ts:469`・`main/clients/microsoft-365.ts:147` —— 読み切っていない。`''` の落ち先が違えば等価ではない)。
+  ④ **`describe` の本体 (収集時) で製品の関数を呼ぶ検査が `src/renderer/data/__tests__` に約 25 か所** (粗い正規表現での目安・未検証): `financialStatements.test.ts:24/37/356`・`financialCsv.test.ts:12-13/60/120-121`・`financialReport(ExactLines).test.ts`・`villageLayout.test.ts`・`demoMixNote.test.ts:206`・`overviewScorecard.test.ts:193` ほか。そこで取った値を `it` の中で主張しても、**その関数の変異体は Stryker に届かない** (上)。生存として報告されたら `it` の中で呼ぶ形へ移す (`financialStatements.test.ts:356` は担当が衝突を避けてそのまま残した —— 新しい全文の検査が覆っている)。
+  ⑤ **`audit:survivors` (`scripts/verify-survivors.cjs`) と手で当てる確かめは、収集時に評価する検査には偽の KILLED を出す** (上)。Stryker の活性化を再現する版は rdata2 の `rtcheck.cjs` (式の変異体だけ) で、**リポジトリには入れていない** (道具の置き場・自己テスト・census への登録が要る)。入れるなら `verify-survivors.cjs` の `--runtime` として、文の変異体 (`BlockStatement`) は INVALID と言う形で。この docblock の「偽の生存」の数も、その時に測り直す。
+  ⑥ **担当への指示書 (v3) と `mutcheck.cjs` はセッションのスクラッチにあり、リポジトリには入れていない** —— 次に同じ規模の仕分けをするなら、指示書の骨子 (§0 の `(static)` の 2 形・§2 の A / B / C と製品コードの規則・§3 の検証) は上の「static な生存の正体」と「既知の罠」に書いた。
+  ⑦ `main.ts` の `applyNativeTheme` の形骸の守り・`writeFieldLimits.test.ts` の古い注記・`connectorHealth` の番兵の形 (上の「見つけた欠陥・疑い」)。空白だけの任意欄が外へ出る件は**判断が要る** (空白だけの欄を未入力と見るか、利用者の入力として断るか)。
+
 ## パス 501 (push 側の変異検査 69 本を緑にする —— 生存 94 件の仕分け・6 時間の上限・GitHub だけ検査を 2 回やり直していたこと) が測って、次のパスへ残した物 (2026-09-30)
 
 - **8 本の生存 94 件 (パス 500 が残した 35 件 + パス 500 が挙げた 6 本の 57 件 = 92 件 —— 57 件はパス 496 が最初に数えた 58 件から `sales.ts` の 1 件が測り直しで落ちた数・investments の 19 件は未到達 5 を含む → 今の木で測り直すと生存 89 + 未到達 5 = 94 · パス 500 の記録から bankSubmission が 24 → 25・sales が 9 → 10 と 1 件ずつ増えた)** を 1 件ずつ仕分けた:
