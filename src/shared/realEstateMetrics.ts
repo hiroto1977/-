@@ -146,10 +146,13 @@ export function missingPriceNote(y: RealEstateYield): string | null {
 export function fullLeverageNote(lev: RealEstateLeverage): string | null {
   if (lev.cashOnCashReturnPct !== null) return null;
   const cf = lev.annualCashflow;
+  // 額は絶対値で刷る (持ち出しかどうかは `cf < 0` が言う)。`Math.round(-0.3)` は −0 を返し、`cf < 0` は偽だが
+  // `(-0).toLocaleString('ja-JP')` は「-0」と綴る —— 0 円に符号の付いた別の額として読める (パス 502 · 変異検査の調査で見つけた)。
+  const amount = Math.abs(cf).toLocaleString('ja-JP');
   const tail =
     cf < 0
-      ? `返済後の年間キャッシュフローは ${Math.abs(cf).toLocaleString('ja-JP')} 円の持ち出しです。`
-      : `返済後の年間キャッシュフローは ${cf.toLocaleString('ja-JP')} 円です。`;
+      ? `返済後の年間キャッシュフローは ${amount} 円の持ち出しです。`
+      : `返済後の年間キャッシュフローは ${amount} 円です。`;
   return `自己資金が 0 円のため、自己資金回収率（CCR）は算定していません（自己資金で割る指標です）。${tail}`;
 }
 
