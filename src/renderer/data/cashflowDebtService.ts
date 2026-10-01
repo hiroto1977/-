@@ -88,9 +88,9 @@ export function combineCashflowDebtService(
   repayments: readonly RepaymentMonthly[],
   threshold = 1,
 ): CashflowDebtService | null {
-  // repayments が空 (または全て返済0) の場合は返済のある月が無く、突合できる月も無いので
-  // 下の matched.length===0 で null になる。ここでは accounting のみ判定する (repayments の判定は冗長)。
-  if (accounting.length === 0) return null;
+  // accounting が空なら cfByMonth も空で突合できる月が無く、repayments が空 (または全て返済0) なら
+  // 返済のある月が無い。どちらも下の matched.length===0 で null になるので、入口で別に判定しない
+  // (入口の `accounting.length === 0` は同じ null を返す冗長な守りで、変異検査に等価として残っていた)。
   const cfByMonth = new Map<string, number>();
   for (const a of accounting) cfByMonth.set(a.month, (cfByMonth.get(a.month) ?? 0) + a.net);
   const repayByMonth = new Map<string, number>();
