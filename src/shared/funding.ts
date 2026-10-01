@@ -1256,6 +1256,9 @@ export function fundingCostMetrics(
     totalInterest += totalInterestOf(it);
   }
   const weightedCostRate = totalLoanPrincipal > 0 ? totalInterest / totalLoanPrincipal : 0;
+  // 守りの本体 (負の総額を 0 にする・`> 0` → `true` の変異体) は検査が値で留める
+  // (`fundingSelfFundingRatioGuard.test.ts`)。`>` → `>=` だけは 0 の境目で両側が 0 になる等価変異。
+  // Stryker disable next-line EqualityOperator: totalSecured === 0 のとき repayableSecured / 0 は NaN / ±Infinity で、clampRate (= nonNeg) が非有限を 0 へ落とすので分岐の 0 と同じ答えになる (等価)
   const selfFundingRatio = summary.totalSecured > 0
     ? clampRate(summary.repayableSecured / summary.totalSecured)
     : 0;

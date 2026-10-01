@@ -153,6 +153,19 @@ npm run quality:report                                                    # docs
 頁の「報告の日時」は mtime ではなくこちらを読む)。**併合した報告を `.stryker-incremental.json` として
 使わない** (差分検査は変異体の id でテストを引くが、併合は 1 回の実行ではない)。
 
+**artifact が取れない環境では、ログの要約から作る** (2026-09-30 · パス 502)。`merge-full` は
+`triage-mutations.cjs --summary` で**ファイルごとの件数**と run の `mutate`・併合の時刻を
+ログへ 1 行ずつ出す (`RUN` / `MERGED_AT` / `MUTATE` / `F <path> K= S= N= I= E=`)。その行を貼り付けた
+ファイルを渡すと、併合した報告の代わりに組み直して同じ頁を作る:
+
+```bash
+npm run quality:report -- --from-summary=<貼り付けたファイル>   # 行頭のタイムスタンプ・空行・# は読み飛ばす
+```
+
+**読めない行・F の重複・`MERGED_AT` / `MUTATE` の欠落・F が 1 行も無い要約は断る** (推測した報告から頁を書かない)。
+頁は「要約から組んだ」ことと run を名乗る。同じ run の生存は `npm run mutate:triage -- --list`
+(`merge-full` がログへ出す全件の一覧・`← 通した検査のファイル` つき) で読める。
+
 `main` への push では**変わったファイルだけ**を、キャッシュを使わずに測る —— 同じ chunker が
 対象を塊に分け (`--chunks`)、塊ごとに別の matrix job で測る (2026-09-30 パス 501 / 501d)。
 

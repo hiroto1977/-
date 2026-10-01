@@ -13,6 +13,7 @@
 // strings are not differentiable.
 import { isSafeFilename } from '../../shared/safeFilename';
 import { parseTimestamp } from '../../shared/isoDate';
+import { isFiniteNumber } from '../../shared/num';
 
 const DB_NAME = 'business-hub-library';
 const DB_VERSION = 1;
@@ -77,7 +78,7 @@ export interface LibraryItemMeta {
 
 /** 読めない数値 (NaN / ±Infinity / 負 / 数値でない) を `null` に落とす。 */
 function readableNonNeg(v: unknown): number | null {
-  return typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
+  return isFiniteNumber(v) && v >= 0 ? v : null;
 }
 
 /**
@@ -86,12 +87,12 @@ function readableNonNeg(v: unknown): number | null {
  * **数値だけを受ける** —— `parseTimestamp` は文字列も読むが、この欄は
  * `monotonicNow()` が書く数値で、型も `number | null` である
  * (文字列を通すと型と中身が食い違う。検査が最初にそれを捕まえた)。
- * `Number.isFinite` は `parseTimestamp` の中にも在るが**同じ文に書く** ——
- * 読む人にも `finiteShapeGuards` の走査にも、範囲を見ていることが見える
- * (パス 98 の規則)。範囲 (`MAX_TIMESTAMP_MS`) は `parseTimestamp` が持つ。
+ * 有限な数かの判定は `isFiniteNumber` (型も `number` へ絞る・`Number.isFinite` は数でない値に
+ * false を返す) 1 つで、`typeof` を別に書かない。範囲 (`MAX_TIMESTAMP_MS`) は
+ * `parseTimestamp` が持つ。
  */
 function readableTimestamp(v: unknown): number | null {
-  if (typeof v !== 'number' || !Number.isFinite(v)) return null;
+  if (!isFiniteNumber(v)) return null;
   return parseTimestamp(v) === null ? null : v;
 }
 

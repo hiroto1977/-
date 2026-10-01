@@ -257,7 +257,9 @@ export function checkShopifyLineItems(value: unknown): WriteFieldFailure | null 
     const item = raw as { title?: unknown; quantity?: unknown };
     const bad = checkWriteField(item.title, itemTitle);
     if (bad !== null) return { field: `${at}.title`, problem: bad, rule: itemTitle };
-    if (typeof item.quantity !== 'number' || !Number.isFinite(item.quantity)) {
+    // `Number.isFinite` は数でない値 (文字列・null・物) をすべて偽と答えるので、先に `typeof` で分けても
+    // 答えは同じだった (変異検査で生き残る等価の形 —— パス 502)。
+    if (!Number.isFinite(item.quantity)) {
       return { field: `${at}.quantity`, problem: 'not-integer', rule: integer(true, 0) };
     }
   }
@@ -436,7 +438,9 @@ export function checkWriteField(value: unknown, rule: WriteFieldRule): WriteFiel
 /** 整数の欄: 無くてよければ `undefined` を通し、在るなら `min` 以上の整数だけを通す。 */
 export function checkWriteInteger(value: unknown, rule: WriteIntegerRule): WriteFieldProblem | null {
   if (value === undefined || value === null) return rule.required ? 'missing' : null;
-  if (typeof value !== 'number' || !Number.isInteger(value) || value < rule.min) return 'not-integer';
+  // `Number.isInteger` は数でない値をすべて偽と答える (先に `typeof` で分けても答えは同じ —— 変異検査で
+  // 生き残る等価の形だった · パス 502)。`||` の右は整数と分かった後にだけ評価されるので `as number` は嘘ではない。
+  if (!Number.isInteger(value) || (value as number) < rule.min) return 'not-integer';
   return null;
 }
 

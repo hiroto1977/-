@@ -130,9 +130,11 @@ export interface CheckedMessage {
 export function checkMessage(input: SlackMessageFields): CheckedMessage {
   const bad = checkWriteFields(input, SLACK_MESSAGE_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 2 欄とも必須で、`checkWriteFields` が「空でない文字列」として通した物だけがここへ来る
+  // (偽の枝 `''` へは入れず変異検査で生き残る)。`String` は型を揃えるだけ (パス 502)。
   return {
-    channel: typeof input.channel === 'string' ? input.channel.trim() : '',
-    text: typeof input.text === 'string' ? input.text : '',
+    channel: String(input.channel).trim(),
+    text: String(input.text),
   };
 }
 

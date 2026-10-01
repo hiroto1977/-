@@ -227,8 +227,10 @@ export interface CheckedDriveFolder {
 export function checkDriveFolder(input: DriveFolderFields): CheckedDriveFolder {
   const bad = checkWriteFields(input, DRIVE_FOLDER_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 必須の欄 (`name`) は上の `checkWriteFields` が「空でない文字列」として通した物だけがここへ来る。
+  // `typeof` で分けても偽の枝 (`''`) へは入れず変異検査で生き残る —— `String` は型を揃えるだけ (パス 502)。
   return {
-    name: typeof input.name === 'string' ? input.name.trim() : '',
+    name: String(input.name).trim(),
     parentId: typeof input.parentId === 'string' && input.parentId.length > 0 ? input.parentId : undefined,
   };
 }
@@ -342,10 +344,12 @@ export interface CheckedCalendarEvent {
 export function checkCalendarEvent(input: CalendarEventFields): CheckedCalendarEvent {
   const bad = checkWriteFields(input, CALENDAR_EVENT_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 必須の欄 (summary / start / end) は `checkWriteFields` が「空でない文字列」として通した物だけが来る
+  // (偽の枝 `''` へは入れない)。任意の欄 (説明・場所) は文字列でなければ `undefined` へ揃える (パス 502)。
   return {
-    summary: typeof input.summary === 'string' ? input.summary.trim() : '',
-    start: typeof input.start === 'string' ? input.start : '',
-    end: typeof input.end === 'string' ? input.end : '',
+    summary: String(input.summary).trim(),
+    start: String(input.start),
+    end: String(input.end),
     description: typeof input.description === 'string' ? input.description : undefined,
     location: typeof input.location === 'string' ? input.location : undefined,
     timeZone: typeof input.timeZone === 'string' && input.timeZone.length > 0 ? input.timeZone : defaultTimeZone(),

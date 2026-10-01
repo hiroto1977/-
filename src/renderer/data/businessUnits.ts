@@ -17,6 +17,7 @@ import { readNumeric } from '../../shared/readNumeric';
 import { hasControlChar } from '../../shared/controlChars';
 import { isCalendarDateOrMonth } from '../../shared/isoDate';
 import { moreThanChars } from '../../shared/inputCeiling';
+import { isFiniteNumber } from '../../shared/num';
 
 export const BUSINESS_UNITS_COLLECTION = 'business-units';
 
@@ -295,9 +296,10 @@ export function financialUnitsFromBusinessUnits(
     // 非有限は「入っていない」と同じ扱い。`typeof x === 'number'` は NaN と
     // ±Infinity を通すので、ここを通ると `deriveBusinessFinancials` から
     // 財務分析・法人税/消費税カードの全部へ ∞ が広がる (パス 98)。
-    if (typeof revenue !== 'number' || !Number.isFinite(revenue)) continue;
-    const variableCost = typeof u.data.variableCost === 'number' && Number.isFinite(u.data.variableCost) ? u.data.variableCost : 0;
-    const fixedCost = typeof u.data.fixedCost === 'number' && Number.isFinite(u.data.fixedCost) ? u.data.fixedCost : 0;
+    // 有限な数かの判定は `isFiniteNumber` 1 つ (型も `number` へ絞る・`typeof` の写しは要らない)。
+    if (!isFiniteNumber(revenue)) continue;
+    const variableCost = isFiniteNumber(u.data.variableCost) ? u.data.variableCost : 0;
+    const fixedCost = isFiniteNumber(u.data.fixedCost) ? u.data.fixedCost : 0;
     const profit = revenue - variableCost - fixedCost;
     out.push({
       id: u.id,

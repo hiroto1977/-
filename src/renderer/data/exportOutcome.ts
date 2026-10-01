@@ -106,7 +106,7 @@ export const LIBRARY_HATCH_TEXT =
  */
 export function exportSavedNote(data: unknown): string | undefined {
   const rec: Record<string, unknown> = isRecord(data) ? data : {};
-  // 欄が無い = デスクトップ版 (または別の action)。言えることは無い。
-  if (rec.libraryCopy === undefined) return undefined;
+  // 言えるのはライブラリに**残せた**ときだけ。欄が無い (デスクトップ版・別の action) ときも、
+  // 残せなかった (`'failed'`) ときも、言えることは無い —— 欄の有無を別に見る判定は同じ答えを返す写しになる。
   return rec.libraryCopy === 'saved' ? LIBRARY_HATCH_TEXT : undefined;
 }

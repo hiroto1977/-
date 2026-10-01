@@ -287,3 +287,35 @@ describe('ACTIONS["create-event"]', () => {
     ).rejects.toMatchObject({ serviceId: 'calendar', status: 403 });
   });
 });
+
+/*
+ * **`start` が null の予定でも投げない** (2026-09-30 · パス 502)。
+ *
+ * `typeof null === 'object'` なので、「物か」を `typeof` だけで見ると null が通り、`null.date` で
+ * **カレンダー画面が丸ごと使えなくなる** (パス 409)。`start` が欠けた予定の検査は `undefined` を
+ * 見るだけで、JSON が書ける `null` の側は 1 度も通っていなかった。
+ */
+describe('fetchCalendarSnapshot — start が null の予定 (パス 502)', () => {
+  it('★ start: null は投げず、開始は空・終日ではない (ほかの予定は残る)', async () => {
+    const fetchMock = twoCalls(
+      { items: [] },
+      {
+        items: [
+          { id: 'n1', summary: 'null の開始', start: null },
+          { id: 'e2', summary: 'Meeting', start: { dateTime: '2026-05-15T10:00:00+09:00' } },
+        ],
+      },
+    );
+    const snap = await fetchCalendarSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.events).toEqual([
+      { id: 'n1', summary: 'null の開始', startDate: '', allDay: false },
+      { id: 'e2', summary: 'Meeting', startDate: '2026-05-15T10:00:00+09:00', allDay: false },
+    ]);
+  });
+
+  it('対照: start が欠けている (undefined) 予定も同じ形になる', async () => {
+    const fetchMock = twoCalls({ items: [] }, { items: [{ id: 'u1', summary: 'なし' }] });
+    const snap = await fetchCalendarSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.events).toEqual([{ id: 'u1', summary: 'なし', startDate: '', allDay: false }]);
+  });
+});

@@ -74,7 +74,13 @@ interface EncryptionMeta {
 // `lastLoadDegraded` と同じ形・同じ理由)。
 let lastMetaDegraded = false;
 
-function loadMeta(): EncryptionMeta | null {
+/**
+ * `loadMeta` が読んで返す物。`enabled` は保存された JSON の判別子で、**読めた後は誰も読まない**
+ * (消費側の解錠・解除は salt / kcv / iterations だけを使う) ので、返り値の形には入れない。
+ */
+type LoadedMeta = Omit<EncryptionMeta, 'enabled'>;
+
+function loadMeta(): LoadedMeta | null {
   lastMetaDegraded = false;
   let raw: string | null;
   try {
@@ -121,11 +127,7 @@ function loadMeta(): EncryptionMeta | null {
      * `enableEncryption` は「暗号化は既に有効です」で断る。
      */
     if (m.enabled === true && typeof m.salt === 'string' && isSealed(m.kcv)) {
-      // 返り値の enabled は常に true (検証済み)。消費側 (unlock/disable) は salt/kcv のみ
-      // 参照し enabled を読まないため、この BooleanLiteral mutation は equivalent。
-      // Stryker disable next-line BooleanLiteral
       return {
-        enabled: true,
         salt: m.salt,
         kcv: m.kcv,
         // **有限の数でないなら無かったことにする** (下の `??` が凍結値へ倒す)。

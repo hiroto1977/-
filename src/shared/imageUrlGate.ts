@@ -138,8 +138,11 @@ export function safeImageSrc(url: unknown): string | undefined {
    * 第三者の画像 URL が通る 1 つである (`jpy` の docblock と同じ理由)。
    * 境界 (client) 側の型の確かめはそれとして要るが、**次に 1 つ足された
    * 呼び手が確かめ忘れた日**に効くのはこちらである。
+   *
+   * 空文字は専用の分岐を持たない —— 下の 2 つのどちらにも当たらず `undefined` へ落ちる
+   * (`imageUrlGate.test.ts` が `safeImageSrc('')` を留める)。
    */
-  if (typeof url !== 'string' || url === '') return undefined;
+  if (typeof url !== 'string') return undefined;
   const normalized = url.replace(/[\t\n\r]/g, '').trim();
   if (/^https?:\/\//i.test(normalized)) {
     let parsed: URL;
@@ -175,8 +178,12 @@ export function safeImageSrc(url: unknown): string | undefined {
  */
 export function safeRemoteImageSrc(url: unknown): string | undefined {
   const src = safeImageSrc(url);
+  // Stryker disable next-line ConditionalExpression: `src` が undefined のとき、次の行の `/^https?:/i.test(src)` は
+  // 'undefined' と読んで一致せず `return src` (= undefined) へ落ちるので、この早期 return の有無で答えは変わらない
+  // (`new URL(src)` の型を string へ絞るためだけの判定)。
   if (src === undefined) return undefined;
   // `safeImageSrc` が http(s) を通すのは解析後の形だけなので、ここで再解析は失敗しない。
+  // data:image/* (取得が起きない) はここで返し、送り先の関門へ流さない (imageUrlGateRemoteDataUri.test.ts が留める)。
   if (!/^https?:/i.test(src)) return src;
   if (isPrivateOrReservedTarget(new URL(src))) return undefined;
   return src;

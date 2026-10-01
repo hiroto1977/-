@@ -65,12 +65,15 @@ export interface WindowPrefsDeps extends StateFileDeps {
 export async function readWindowPrefs(deps: WindowPrefsDeps = {}): Promise<WindowPrefs> {
   const p = (deps.statePath ?? defaultStatePath)();
   const file = await readStateFile(p, { readFile: deps.readFile, stat: deps.stat });
+  // Stryker disable next-line ConditionalExpression: `read` 以外の種類は `text` を持たない (`StateFileRead`)。判定を外しても
+  // `JSON.parse(undefined)` が投げて下の `catch` を通り、同じ既定へ倒れる —— この判定は `file.text` の型の絞り込みのために在る (等価変異)。
   if (file.kind !== 'read') return DEFAULT_WINDOW_PREFS;
   let parsed: unknown;
   try {
     parsed = JSON.parse(file.text);
   } catch {
-    return DEFAULT_WINDOW_PREFS;
+    // 壊れた JSON は `parsed` が undefined のまま — `sanitizeWindowPrefs` が null を返し、下の `?? DEFAULT_WINDOW_PREFS` の
+    // 1 か所で既定へ倒れる (ここでも返すと、同じ結果の出口が 2 つになる)。
   }
   return sanitizeWindowPrefs(parsed) ?? DEFAULT_WINDOW_PREFS;
 }
@@ -78,6 +81,9 @@ export async function readWindowPrefs(deps: WindowPrefsDeps = {}): Promise<Windo
 /** 原子的に書く (`secrets.json` / 状態ファイルと同じ約束 —— `stateWritePolicy.test.ts`)。 */
 export async function writeWindowPrefs(prefs: WindowPrefs, deps: WindowPrefsDeps = {}): Promise<void> {
   const p = (deps.statePath ?? defaultStatePath)();
+  // Stryker disable next-line ObjectLiteral: `atomicWriteFile` の既定が `opts.mode ?? 0o600` なので、落としても同じ 600 で
+  // 作られる (等価変異)。明示を残すのは意図の表明 —— 状態ファイルの権限を呼び出し側の既定値に委ねない
+  // (`talent.ts` / `emotions.ts` と同じ形。既定の書き手が実ファイルを原子的に書くことは windowPrefs.test.ts が見る)。
   const write = deps.writeFile ?? ((q: string, c: string) => atomicWriteFile(q, c, { mode: 0o600 }));
   await write(p, JSON.stringify(prefs));
 }

@@ -126,9 +126,11 @@ export interface CheckedPost {
 export function checkPost(input: WordPressPostFields): CheckedPost {
   const bad = checkWriteFields(input, WORDPRESS_POST_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 必須の欄 (siteId / title) は `checkWriteFields` が「空でない文字列」として通した物だけが来る
+  // (偽の枝 `''` へは入れない)。任意の欄 (本文・状態) は文字列でなければ既定へ揃える (パス 502)。
   return {
-    siteId: typeof input.siteId === 'string' ? input.siteId.trim() : '',
-    title: typeof input.title === 'string' ? input.title.trim() : '',
+    siteId: String(input.siteId).trim(),
+    title: String(input.title).trim(),
     content: typeof input.content === 'string' ? input.content : '',
     status: typeof input.status === 'string' && input.status.length > 0 ? input.status : 'draft',
   };

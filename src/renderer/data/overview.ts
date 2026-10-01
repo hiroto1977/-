@@ -14,7 +14,6 @@ import {
   computeRevenueLandingForecast,
   computeYoYGrowth,
   computeLaborMetrics,
-  isValidPeriod,
   readableKpiRows,
   periodWindow,
   type KpiActual,
@@ -369,8 +368,10 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const kpiActuals = readableActuals.rows;
   const hasKpi = kpiActuals.length > 0;
   const kpiBudgets = readableBudgets.rows;
-  // 実績の最新の期。**期の綴りは `isValidPeriod` が 1 か所で持つ** (写さない)。
-  const validKpiPeriods = kpiActuals.map((r) => r.period).filter(isValidPeriod).sort();
+  // 実績の最新の期。**期の綴りは `isValidPeriod` が 1 か所で持つ** (写さない) —— 上の漏斗
+  // (`readableKpiRows`) が同じ判定で読める期の行だけを通すので、ここで選別し直さない
+  // (2 度目の `filter(isValidPeriod)` は同じ答えを返す写しで、変異検査に等価として残っていた)。
+  const validKpiPeriods = kpiActuals.map((r) => r.period).sort();
   // 期が 1 つも無ければ `undefined`。**`length === 0` の分岐は書かない** ——
   // `balanceSheetFreshness` は読めない値 (null / undefined / 綴り違い) を同じく
   // 「測れない」として扱うので、ここで null に畳んでも観測できる差が無く、

@@ -19,7 +19,12 @@ export interface GmailSnapshot {
   threads: { id: string; sender: string; subject: string; date: string }[];
 }
 
-function headerValue(message: GmailMessage, name: string): string {
+/**
+ * 名前が一致する最初のヘッダの値。**値の型はここでは見ない** —— 画面へ出す所 (`fetchGmailSnapshot`) が
+ * どちらの呼び出しも `displayField` を通り、文字列でない値はそこで空にされる。ここでも文字列かを見ると、
+ * 同じ判定が 2 か所になり、どちらを外しても答えが変わらない (2026-09-30 · 変異検査が見つけた)。
+ */
+function headerValue(message: GmailMessage, name: string): unknown {
   /*
    * **`?? []` は配列であることも要素が物であることも保証しない** (2026-09-22 · パス 412)。
    *
@@ -39,7 +44,7 @@ function headerValue(message: GmailMessage, name: string): string {
   const target = name.toLowerCase();
   for (const h of objectRows<{ name?: unknown; value?: unknown }>(message.payload?.headers)) {
     if (typeof h.name !== 'string' || h.name.toLowerCase() !== target) continue;
-    return typeof h.value === 'string' ? h.value : '';
+    return h.value;
   }
   return '';
 }

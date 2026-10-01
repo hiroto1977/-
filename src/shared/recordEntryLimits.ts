@@ -49,7 +49,8 @@ export type RecordEntryServiceId = (typeof RECORD_ENTRY_SERVICE_IDS)[number];
 
 /** 4 サービスの id だけを通す型の門 (ブラウザ版の振り分けが読む)。 */
 export function isRecordEntryServiceId(value: unknown): value is RecordEntryServiceId {
-  return typeof value === 'string' && (RECORD_ENTRY_SERVICE_IDS as readonly string[]).includes(value);
+  // `includes` は SameValueZero なので、文字列でない値は必ず false (型を先に見る分岐は要らない)。
+  return (RECORD_ENTRY_SERVICE_IDS as readonly unknown[]).includes(value);
 }
 
 /**

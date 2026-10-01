@@ -167,6 +167,8 @@ export function buildLinuxSnapshot(r: RawSystemReadings): SystemSnapshot {
   const notes: string[] = [];
   if (usagePct >= MEMORY_WARN_PCT) notes.push(MEM_NOTE);
   // 算定不能を警告に化けさせない —— `?? 0` で書くと 0 が閾値比較に入る。
+  // Stryker disable next-line ConditionalExpression: `null >= LOAD_WARN_PCT` は偽 (null は 0 に変換され、閾値は 100)。`!== null` は
+  // `perCorePct` の型 (`number | null`) を絞るために在り、外しても算定不能 (null) は警告に化けない —— 閾値が正の定数のあいだ等価。
   if (perCorePct !== null && perCorePct >= LOAD_WARN_PCT) notes.push(LOAD_NOTE);
   if (unavailableNote !== null) notes.push(unavailableNote);
   if (!isLinux) notes.push(NON_LINUX_NOTE);

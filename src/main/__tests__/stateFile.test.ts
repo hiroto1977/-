@@ -40,6 +40,42 @@ describe('readStateFile — 3 状態を混ぜない', () => {
   });
 });
 
+/*
+ * **投げた物が null / undefined でも、読みは投げ返さない** (2026-09-30 · パス 502)。
+ *
+ * `Promise.reject(null)` / `Promise.reject(undefined)` は書ける。「ENOENT か」を見る判定が
+ * `e.code` を素で読むと TypeError で、呼び手 (起動時の読み) は「読めなかった」という戻り値ではなく
+ * reject を受ける —— 4 つの状態ファイルの読みは戻り値の 3 状態だけを前提にしている。
+ */
+describe('投げた物が null / undefined でも 3 状態のどれかで返す (パス 502)', () => {
+  it.each([
+    ['null', null, 'null'],
+    ['undefined', undefined, 'undefined'],
+  ])('readFile が %s を投げる → 読めなかった (理由はその文字列化)', async (_name, thrown, reason) => {
+    expect(await readStateFile('/x', { readFile: () => Promise.reject(thrown) })).toEqual({ kind: 'unreadable', reason });
+  });
+
+  it.each([
+    ['null', null, 'null'],
+    ['undefined', undefined, 'undefined'],
+  ])('stat が %s を投げる → 読めなかった (readFile は呼ばれない)', async (_name, thrown, reason) => {
+    let reads = 0;
+    const r = await readStateFile('/x', {
+      readFile: async () => {
+        reads += 1;
+        return 'x';
+      },
+      stat: () => Promise.reject(thrown),
+    });
+    expect(r).toEqual({ kind: 'unreadable', reason });
+    expect(reads).toBe(0);
+  });
+
+  it('対照: code が ENOENT の物は「まだ無い」のまま (null の扱いを足しても変わらない)', async () => {
+    expect(await readStateFile('/x', { readFile: () => Promise.reject(enoent()) })).toEqual({ kind: 'none' });
+  });
+});
+
 describe('★ 大きさの門 (規則は 1 つ: MAX_STATE_FILE_BYTES)', () => {
   it('前門: stat が天井を超えると、読まずに断る (readFile は 1 度も呼ばれない)', async () => {
     let reads = 0;

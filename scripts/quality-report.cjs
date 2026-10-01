@@ -5,6 +5,7 @@
  *   npm run quality:report
  *   npm run quality:report -- --no-coverage    # 被覆の計測 (検査をもう 1 周) を飛ばす
  *   npm run quality:report -- --allow-partial  # 部分の報告でも書く (試し見用。lint:docs は受け付けない)
+ *   npm run quality:report -- --from-summary=<path>  # 報告 (artifact) の代わりに、CI のログの要約から (下記)
  *
  * 型検査・検査・被覆はその場で走らせ、変異検査は**手元に在る報告**
  * (`reports/mutation/mutation.json` —— `npm run mutate` の生成物・.gitignore 済み) を集計する。
@@ -50,6 +51,16 @@
  *    `src/main` の検査だけを走らせる —— 同じ「被覆」の欄に、2 通りの母集団の数が載りうる。
  *    → 読む前に古い要約を消し、**CI と同じ `npm run test:cov`** を走らせ、終了コードが 0 で
  *    要約が書かれたときだけ数を載せる (落ちたら数を載せずにそう言う)。
+ *
+ * ## --from-summary (2026-09-30 · パス 502)
+ *
+ * 全掃引の併合報告は artifact にしか無く、環境によっては取れない (blob の host が塞がれている)。
+ * 頁に要るのは**ファイルごとの件数と run の `mutate` と併合の時刻**だけなので、`merge-full` が
+ * `triage-mutations.cjs --summary` でそれを CI のログへ 1 行ずつ出す (RUN / MERGED_AT / MUTATE / F)。
+ * そのログを貼り付けたファイルを `--from-summary` へ渡すと、併合報告の代わりに組み直して同じ頁を作る
+ * (`reportFromSummary`)。**読めない行・重複・時刻の欠落・`MUTATE` の欠落は断る** —— 推測した報告から
+ * 頁を書かない (併合の時刻を mtime で埋めると、パス 490 が直した「報告の日時」の偽が戻る)。
+ * 頁には「要約から組んだ」ことと run を名乗らせる。
  *
  * 純粋な部分 (集計・範囲の文・要約の読み・頁の組み立て) は関数として export し、
  * `src/shared/__tests__/qualityReportScope.test.ts` が標本と対照で留める。
@@ -179,6 +190,60 @@ function judgeScope({ rows, runNamed, named }) {
   return { noMutants, unexplained, notInRun, droppedSince, partial };
 }
 
+/** GitHub のログの行頭のタイムスタンプ (`2026-09-30T23:40:11.1234567Z `)。 */
+const LOG_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z ?/;
+
+/**
+ * CI のログへ出した要約 (`triage-mutations.cjs --summary`) から、併合した報告の代わりを組む。
+ * 頁が読むのは `files[].mutants[].status`・`config.mutate`・`mergedAt` だけなので、件数どおりに
+ * 状態だけを持つ変異体を並べる (位置も置き換えも持たない —— この報告から作れるのは頁の点数だけ)。
+ *
+ * **読めない行・重複した F・時刻 (`MERGED_AT`) と `MUTATE` の欠落・F が 1 行も無い要約は断る。**
+ * 返すのは `{ report, run }` (`run` は `RUN <id> <sha>` の行・無ければ null)。
+ */
+function reportFromSummary(text) {
+  const files = {};
+  const mutate = [];
+  let mergedAt = null;
+  let run = null;
+  const problems = [];
+  const fill = (status, n) => Array.from({ length: n }, () => ({ status }));
+  String(text).split('\n').forEach((raw, i) => {
+    const line = raw.replace(/\r$/, '').replace(LOG_TIMESTAMP, '').trim();
+    if (line === '' || line.startsWith('#')) return;
+    let m;
+    if ((m = /^RUN (\S+) (\S+)$/.exec(line)) !== null) {
+      run = m[1] === '-' ? null : { id: m[1], sha: m[2] };
+    } else if ((m = /^MERGED_AT (\S+)$/.exec(line)) !== null) {
+      mergedAt = m[1];
+    } else if ((m = /^MUTATE (\S+)$/.exec(line)) !== null) {
+      mutate.push(...m[1].split(','));
+    } else if ((m = /^F (\S+) K=(\d+) S=(\d+) N=(\d+) I=(\d+) E=(\d+)$/.exec(line)) !== null) {
+      if (Object.hasOwn(files, m[1])) problems.push(`行 ${i + 1}: ${m[1]} の F が 2 回ある`);
+      else {
+        files[m[1]] = {
+          mutants: [
+            ...fill('Killed', Number(m[2])),
+            ...fill('Survived', Number(m[3])),
+            ...fill('NoCoverage', Number(m[4])),
+            ...fill('Ignored', Number(m[5])),
+            ...fill('CompileError', Number(m[6])),
+          ],
+        };
+      }
+    } else {
+      problems.push(`行 ${i + 1}: 読めない行 ${JSON.stringify(line.slice(0, 80))}`);
+    }
+  });
+  if (mergedAt === null || !Number.isFinite(Date.parse(mergedAt))) {
+    problems.push('MERGED_AT が無い・時刻として読めない (報告の日時を mtime などで推測しない)');
+  }
+  if (mutate.length === 0) problems.push('MUTATE が 1 行も無い (run の `mutate` が分からないと、分母の範囲を名乗れない)');
+  if (Object.keys(files).length === 0) problems.push('F の行が 1 行も無い');
+  if (problems.length > 0) throw new Error(`変異検査の要約を読めません: ${problems.join(' / ')}`);
+  return { report: { files, config: { mutate }, mergedAt }, run };
+}
+
 /** 一覧を `<details>` に畳む (長い一覧で頁の本題を押し流さないため)。 */
 function detailsList(summary, files) {
   if (files.length === 0) return '';
@@ -303,8 +368,21 @@ function coverageRows(coverage) {
     .join('\n') + '\n';
 }
 
+/**
+ * 頁が「要約から組んだ」ことを名乗る行 (併合した報告そのものから作った頁には出さない)。
+ * `fromSummary` は `reportFromSummary` の `run` (無ければ null ——「要約から」とだけ言う)。
+ */
+function summaryNote(fromSummary) {
+  if (fromSummary === undefined) return '';
+  const runText = fromSummary === null ? '' : `全掃引 (run ${fromSummary.id}・${fromSummary.sha}) の`;
+  return (
+    `> 変異検査の数は、${runText}併合報告から \`triage-mutations.cjs --summary\` が CI のログへ出した` +
+    '**ファイルごとの件数**を貼り付けて組んだ (併合した報告そのもの = artifact はこの環境から取れなかった)。\n'
+  );
+}
+
 /** 頁全体を組む。 */
-function renderPage({ now, typecheck, tests, coverage, summary, scope }) {
+function renderPage({ now, typecheck, tests, coverage, summary, scope, fromSummary }) {
   const t = summary.totals;
   const testCell = (() => {
     if (tests.code !== 0 || tests.summary.tests === null) {
@@ -324,7 +402,7 @@ function renderPage({ now, typecheck, tests, coverage, summary, scope }) {
 > 自動生成: \`npm run quality:report\`。**全掃引の変異検査の報告からだけ作る** (部分の報告からは生成側が断る)。
 > 3 つの時点が載る —— 変異検査は「報告ファイルの日時」の時点、型検査・検査・被覆と「生成時点」の数は上の最終更新の時点。
 > 被覆は CI と同じ \`npm run test:cov\` の数 (\`src/main\` の検査を走らせ、\`src/main/**\` だけを数える)。
-
+${summaryNote(fromSummary)}
 ## Summary
 
 | 指標 | 値 |
@@ -400,16 +478,39 @@ function main(argv) {
   const skipCoverage = argv.includes('--no-coverage');
   const allowPartial = argv.includes('--allow-partial');
 
+  const fromSummaryPath = argv.find((a) => a.startsWith('--from-summary='))?.slice('--from-summary='.length);
+
   // 報告を先に確かめる —— 断るなら、検査に数分使う前に断る。
-  if (!fs.existsSync(REPORT_PATH)) {
-    console.error(
-      'quality: 変異検査の報告 (reports/mutation/mutation.json) が無い —— この頁は全掃引の報告から作る ' +
-        '(`npm run mutate`)。頁は書き換えていません。',
-    );
-    return 1;
+  let report;
+  let reportAt;
+  let fromSummary; // undefined = 併合した報告そのものから・null = 要約から (run は分からない)
+  if (fromSummaryPath !== undefined) {
+    if (!fs.existsSync(fromSummaryPath)) {
+      console.error(`quality: 要約のファイル ${fromSummaryPath} が無い。頁は書き換えていません。`);
+      return 1;
+    }
+    let parsed;
+    try {
+      parsed = reportFromSummary(fs.readFileSync(fromSummaryPath, 'utf8'));
+    } catch (e) {
+      console.error(`quality: ${e instanceof Error ? e.message : String(e)}。頁は書き換えていません。`);
+      return 1;
+    }
+    report = parsed.report;
+    fromSummary = parsed.run;
+    // 時刻は要約が持つ併合の時刻だけ (読めることは reportFromSummary が確かめた)。mtime は使わない。
+    reportAt = utcMinute(Date.parse(report.mergedAt));
+  } else {
+    if (!fs.existsSync(REPORT_PATH)) {
+      console.error(
+        'quality: 変異検査の報告 (reports/mutation/mutation.json) が無い —— この頁は全掃引の報告から作る ' +
+          '(`npm run mutate`)。頁は書き換えていません。',
+      );
+      return 1;
+    }
+    report = JSON.parse(fs.readFileSync(REPORT_PATH, 'utf8'));
+    reportAt = utcMinute(reportMeasuredMs(report, fs.statSync(REPORT_PATH).mtimeMs));
   }
-  const report = JSON.parse(fs.readFileSync(REPORT_PATH, 'utf8'));
-  const reportAt = utcMinute(reportMeasuredMs(report, fs.statSync(REPORT_PATH).mtimeMs));
   const summary = summarizeReport(report, ROOT);
   const named = JSON.parse(fs.readFileSync(path.join(ROOT, 'stryker.config.json'), 'utf8')).mutate ?? [];
   const shipped = shippedTsFiles(path.join(ROOT, 'src'), []);
@@ -431,6 +532,12 @@ function main(argv) {
   const tc = run('npm run typecheck');
   console.error('quality: tests...');
   const testRun = run('npm test');
+  if (testRun.code !== 0) {
+    // 落ちた検査の名前を残す。頁に載るのは件数だけなので、これが無いと「1 FAILING」がどれかは run が終わった後に分からない
+    // (パス 502: 検査段の最中に git push を走らせた run で 1 件落ち、回し直すと全件緑で、どれが落ちたか取れなかった)。
+    const lines = testRun.out.split('\n');
+    console.error([...lines.filter((l) => /^\s*(FAIL|×|✗)\s/.test(l)), ...lines.slice(-15)].join('\n'));
+  }
   const tests = { code: testRun.code, summary: parseVitestSummary(testRun.out) };
 
   let coverage = null;
@@ -449,6 +556,7 @@ function main(argv) {
     coverage,
     summary,
     scope,
+    fromSummary,
   });
   fs.mkdirSync(path.dirname(PAGE_PATH), { recursive: true });
   fs.writeFileSync(PAGE_PATH, md);
@@ -469,6 +577,8 @@ module.exports = {
   parseVitestSummary,
   utcMinute,
   reportMeasuredMs,
+  reportFromSummary,
+  summaryNote,
   mutationSection,
   coverageFrom,
   coverageRows,

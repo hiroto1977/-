@@ -403,7 +403,14 @@ export function goalProjection(
   // **算定できなかった物から判定を作らない。** 到達見込みが出ていないのに
   // 「達成」と答えるのがパス 198 で見つけた形なので、1 つでも `null` なら
   // この構造体は全欄 `null` を返す (値と理由を 1 つの判定から出す・パス 84)。
-  if (projected === null || requiredMonthly === null) {
+  if (
+    requiredMonthly === null ||
+    // Stryker disable next-line ConditionalExpression: `projected` が null になるのは年数・年率が計画の上限を超えたときだけで、
+    // そのとき `requiredMonthly` も同じ 2 つの関門 (isPlannableYears / isPlannableRate) で null になり、左の項が先に返す。
+    // この項は片方の関門だけが増えた日にも全欄 null を保つ多重防御で、型を number へ絞る役目も兼ねる (観測できる差は無い。
+    // 等価を支える「projected が null なら requiredMonthly も null」は savingsPlanningUnplannableInputs.test.ts が走査で留める)。
+    projected === null
+  ) {
     return { projected: null, onTrack: null, shortfall: null, requiredMonthly: null, additionalMonthly: null };
   }
 

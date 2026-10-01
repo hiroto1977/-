@@ -21,6 +21,13 @@
  * 標本と対照で。最後の節は**生成側が書いた頁を、門 (`lint:docs` の `checkMutationPageScope`) が
  * そのまま受け付けること**と、**部分の報告から書いた頁を門が断ること**を、実物どうしで結ぶ
  * (片方だけ直すと、生成し直した頁が CI で落ちるか、門が偽の頁を通す)。
+ *
+ * ## 要約から組み直す (2026-09-30 · パス 502)
+ *
+ * 全掃引の併合報告 (artifact) が取れない環境でも頁を作り直せるよう、`merge-full` が
+ * `triage-mutations.cjs --summary` でファイルごとの件数を CI のログへ出し、`--from-summary` が
+ * その貼り付けから報告を組み直す。**往復で同じ点数になること・読めない要約は断ること・
+ * 頁が「要約から組んだ」と名乗ること**を留める (`reportFromSummary` / `summaryNote`)。
  */
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
@@ -93,6 +100,11 @@ const gen = req('../../../scripts/quality-report.cjs') as {
   parseVitestSummary: (out: string) => { files: VitestCounts | null; tests: VitestCounts | null };
   utcMinute: (ms: number) => string;
   reportMeasuredMs: (report: unknown, mtimeMs: number) => number;
+  reportFromSummary: (text: string) => {
+    report: Report & { mergedAt: string };
+    run: { id: string; sha: string } | null;
+  };
+  summaryNote: (fromSummary: { id: string; sha: string } | null | undefined) => string;
   renderPage: (a: {
     now: string;
     typecheck: { code: number };
@@ -100,7 +112,12 @@ const gen = req('../../../scripts/quality-report.cjs') as {
     coverage: Coverage;
     summary: Summary;
     scope: { text: string; judgement: Judgement; reportAt: string };
+    fromSummary?: { id: string; sha: string } | null;
   }) => string;
+};
+
+const triage = req('../../../scripts/triage-mutations.cjs') as {
+  summarizeFiles: (report: unknown, env?: Record<string, string | undefined>) => { lines: string[] };
 };
 
 const gate = req('../../../scripts/cross-doc-consistency.cjs') as {
@@ -407,5 +424,124 @@ describe('頁の組み立て', () => {
     gate.checkMutationPageScope(failures, page().replace('| src/b.ts | — | — |', '| src/b.ts | 0.00 | 0.00 |'));
     expect(failures).toHaveLength(1);
     expect(failures[0]!.reason).toContain('src/b.ts');
+  });
+});
+
+describe('★ 要約から併合報告の代わりを組む (--from-summary)', () => {
+  const MERGED = '2026-09-30T23:40:00.000Z';
+  const source = (): Report & { mergedAt: string } => ({
+    mergedAt: MERGED,
+    config: { mutate: ['src/a.ts', 'src/b.ts', 'src/c.ts'] },
+    files: {
+      'src/a.ts': { mutants: mutants({ Killed: 9, Timeout: 1, Survived: 2, NoCoverage: 1, Ignored: 2 }) },
+      'src/b.ts': { mutants: mutants({ Ignored: 3 }) },
+      'src/c.ts': { mutants: mutants({ Killed: 4, RuntimeError: 1, CompileError: 2 }) },
+    },
+  });
+  /** 実物の `--summary` の出力へ、GitHub のログの行頭のタイムスタンプを付けた貼り付け。 */
+  const pasted = (r: unknown = source(), env: Record<string, string | undefined> = { GITHUB_RUN_ID: '36784826064', GITHUB_SHA: 'abc123' }): string =>
+    triage
+      .summarizeFiles(r, env)
+      .lines.map((l, i) => `2026-09-30T23:41:${String(i % 60).padStart(2, '0')}.1234567Z ${l}`)
+      .join('\n');
+
+  it('★ 往復: 要約から組んだ報告は、元の報告と同じ行と総計・同じ run・同じ時刻になる', () => {
+    const back = gen.reportFromSummary(pasted());
+    const a = gen.summarizeReport(source(), '/repo');
+    const b = gen.summarizeReport(back.report, '/repo');
+    expect(b.rows).toEqual(a.rows);
+    expect(b.totals).toEqual(a.totals);
+    expect(b.invalidFiles).toEqual(a.invalidFiles);
+    expect(back.report.config?.mutate).toEqual(['src/a.ts', 'src/b.ts', 'src/c.ts']);
+    expect(back.report.mergedAt).toBe(MERGED);
+    expect(back.run).toEqual({ id: '36784826064', sha: 'abc123' });
+    // 時刻は要約が持つ物そのもの (mtime で埋めない): 頁に載る日時は併合の時刻になる
+    expect(gen.utcMinute(gen.reportMeasuredMs(back.report, 0))).toBe('2026-09-30 23:40 UTC');
+  });
+
+  it('行頭のタイムスタンプ・空行・# の見出し・CRLF は読み飛ばす', () => {
+    const plain = triage.summarizeFiles(source(), { GITHUB_RUN_ID: '1', GITHUB_SHA: 's' }).lines;
+    const text = ['# 変異検査の要約 — ファイル 3 本', '', ...plain.map((l) => `${l}\r`)].join('\n');
+    expect(gen.summarizeReport(gen.reportFromSummary(text).report, '/repo').totals).toEqual(gen.summarizeReport(source(), '/repo').totals);
+  });
+
+  it('RUN が `-` (CI の外で出した要約) なら run は null —— 分からない run を名乗らない', () => {
+    expect(gen.reportFromSummary(pasted(source(), {})).run).toBeNull();
+  });
+
+  it('★ 読めない要約は断る (推測した報告から頁を書かない)', () => {
+    const good = pasted().split('\n');
+    const without = (prefix: string): string => good.filter((l) => !new RegExp(`Z ${prefix}`).test(l)).join('\n');
+    const cases: [string, string, string][] = [
+      ['読めない行', `${good.join('\n')}\n2026-09-30T23:41:59.0Z なんだかわからない行`, '読めない行'],
+      ['F の重複', `${good.join('\n')}\n2026-09-30T23:41:59.0Z F src/a.ts K=1 S=0 N=0 I=0 E=0`, 'src/a.ts の F が 2 回ある'],
+      ['MERGED_AT が無い', without('MERGED_AT'), 'MERGED_AT が無い'],
+      ['MERGED_AT が `-` (併合の時刻が分からない)', good.map((l) => l.replace(MERGED, '-')).join('\n'), 'MERGED_AT が無い'],
+      ['MERGED_AT が時刻ではない', good.map((l) => l.replace(MERGED, 'yesterday')).join('\n'), 'MERGED_AT が無い'],
+      ['MUTATE が無い', without('MUTATE'), 'MUTATE が 1 行も無い'],
+      ['F が 1 行も無い', without('F '), 'F の行が 1 行も無い'],
+    ];
+    for (const [label, text, phrase] of cases) {
+      expect(() => gen.reportFromSummary(text), label).toThrow(Error);
+      let message = '';
+      try {
+        gen.reportFromSummary(text);
+      } catch (e) {
+        message = e instanceof Error ? e.message : String(e);
+      }
+      expect(message, label).toContain('変異検査の要約を読めません: ');
+      expect(message, label).toContain(phrase);
+    }
+    // 標本: 無傷の貼り付けは読める (断る側の針が的に当たっていることの対)
+    expect(() => gen.reportFromSummary(good.join('\n'))).not.toThrow();
+  });
+
+  it('分母の範囲: MUTATE が生成時点の mutate を全部名指ししていれば全掃引 (部分ではない)', () => {
+    const back = gen.reportFromSummary(pasted());
+    const rows = gen.summarizeReport(back.report, '/repo').rows.map((r) => r.file);
+    const j = gen.judgeScope({ rows, runNamed: gen.runMutateOf(back.report), named: ['src/a.ts', 'src/b.ts', 'src/c.ts'] });
+    expect(j.partial).toBe(false);
+  });
+
+  it('頁は「要約から組んだ」と名乗り、run を書く (併合した報告そのものから作った頁には書かない)', () => {
+    const summary = gen.summarizeReport(source(), '/repo');
+    const scope = {
+      ...gen.scopeStatement({
+        rows: summary.rows.map((r) => r.file),
+        runNamed: ['src/a.ts', 'src/b.ts', 'src/c.ts'],
+        named: ['src/a.ts', 'src/b.ts', 'src/c.ts'],
+        shipped: SHIPPED,
+        reportAt: REPORT_AT,
+      }),
+      reportAt: REPORT_AT,
+    };
+    const page = (fromSummary?: { id: string; sha: string } | null): string =>
+      gen.renderPage({
+        now: '2026-09-30 23:59:00 UTC',
+        typecheck: { code: 0 },
+        tests: { code: 0, summary: gen.parseVitestSummary(' Test Files  3 passed (3)\n      Tests  30 passed (30)\n') },
+        coverage: null,
+        summary,
+        scope,
+        fromSummary,
+      });
+    const note = gen.summaryNote({ id: '36784826064', sha: 'abc123' });
+    expect(note).toBe(
+      '> 変異検査の数は、全掃引 (run 36784826064・abc123) の併合報告から `triage-mutations.cjs --summary` が CI のログへ出した' +
+        '**ファイルごとの件数**を貼り付けて組んだ (併合した報告そのもの = artifact はこの環境から取れなかった)。\n',
+    );
+    expect(page({ id: '36784826064', sha: 'abc123' })).toContain(note);
+    // run が分からない要約 (RUN -) は、run を名乗らずに「要約から」とだけ言う
+    const anon = gen.summaryNote(null);
+    expect(anon).toContain('併合報告から');
+    expect(anon).not.toContain('run ');
+    expect(page(null)).toContain(anon);
+    // 併合した報告そのもの (fromSummary 無し) から作った頁には、要約の断りを出さない
+    expect(gen.summaryNote(undefined)).toBe('');
+    expect(page()).not.toContain('triage-mutations.cjs --summary');
+    // 要約から組んだ頁も、門 (表の行数・日時・部分でないこと) はそのまま受け付ける
+    const failures: { fact: string; reason: string }[] = [];
+    gate.checkMutationPageScope(failures, page({ id: '36784826064', sha: 'abc123' }));
+    expect(failures).toEqual([]);
   });
 });

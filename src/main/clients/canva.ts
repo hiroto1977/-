@@ -22,7 +22,8 @@ interface CanvaBrandKit {
 }
 
 interface CanvaBrandKitsResponse {
-  items: CanvaBrandKit[];
+  // 欠けうる (scope の無い下の 403 / 404 では最初から無い)。読む側は `objectRows` が欠落を空にする。
+  items?: CanvaBrandKit[];
 }
 
 export interface CanvaSnapshot {
@@ -58,10 +59,10 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
       fetchCtx,
     ).catch((err: unknown): CanvaBrandKitsResponse => {
       if (err instanceof FetchError && (err.status === 403 || err.status === 404)) {
-        // 中身は下の `brandKitsRes.items ?? []` が吸うので、ここで空配列を
-        // 入れても入れなくても結果は変わらない (型を満たすために置いている)。
-        // Stryker disable next-line ObjectLiteral: 下流の `?? []` と重なる (単独では観測不能)
-        return { items: [] };
+        // 欄は無いまま返す。下の `objectRows(brandKitsRes.items)` が欠落を空にするので、
+        // 空配列を入れても入れなくても結果は変わらない (2026-09-30 まではここで `{ items: [] }` を作っており、
+        // その空配列は観測できない等価変異として pragma で外していた —— 作らなければ外す物も無い)。
+        return {};
       }
       throw err;
     }),

@@ -156,6 +156,23 @@ describe('定義表 — 文言そのものを留める', () => {
     ]);
   });
 
+  /*
+   * **「保存した物として扱う」由来も、モジュール直下の値である** (パス 502)。
+   *
+   * `SAVED_PROVENANCE` は状態を直に渡すとき (`buildTalentSnapshot` の既定の由来) に
+   * 画面へ渡る 2 欄 (どこから読めたか・注記) の組で、静的 import のままだと変異体が
+   * 届かない。読み直した側の値と、それを既定として読む関数の答えの両方を字面で留める
+   * (`stored` が `''` になれば画面は「保存した物」と「読めなかった物」を見分けられず、
+   * 組ごと空になれば `storedNote` が `undefined` として画面へ流れる)。
+   */
+  it('★ 状態を直に渡すときの由来は「保存した物」で注記は無い (既定の由来として読まれる)', async () => {
+    const m = await fresh();
+    expect(m.SAVED_PROVENANCE).toStrictEqual({ stored: 'saved', storedNote: null });
+    const snap = m.buildTalentSnapshot(m.EMPTY_TALENT_STATE);
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toBeNull();
+  });
+
   it('id は表の中で重複しない', async () => {
     const m = await fresh();
     for (const table of [m.ORGAN_DISEASES, m.LEADER_DISQUALIFIERS, m.SKILL_STEPS]) {

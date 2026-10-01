@@ -102,10 +102,11 @@ export function budgetComparedRangeLabel(a: BudgetPeriodAlignment): string {
   // 今の呼び手はどちらも `computeBudgetVariance` (空なら null) 経由なので届かないが、
   // `budgetPeriodAlignment` も export されており**直に組んだ突合を渡せる**
   // (`overview.ts` の `budgetAlignment` がまさにそれ)。**関門は関数の側に置く。**
-  const from = a.comparedPeriods[0];
-  const to = a.comparedPeriods[a.comparedPeriods.length - 1];
-  if (from === undefined || to === undefined) return '突合できた期なし';
-  return `${from}〜${to}・${a.comparedPeriods.length} か月`;
+  // 先頭と末尾は同時に在るか同時に無い (空のときだけ両方とも `undefined`) ので、
+  // 見るのは長さ 1 つ。添字の `undefined` を別々に判定しても同じ答えを返す写しになる。
+  const periods = a.comparedPeriods;
+  if (periods.length === 0) return '突合できた期なし';
+  return `${periods[0]}〜${periods[periods.length - 1]}・${periods.length} か月`;
 }
 
 /**

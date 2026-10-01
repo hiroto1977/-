@@ -293,14 +293,14 @@ export async function saveTeamRadarStateImpl(
   // 外側を外しても内側が同じ文言で弾くため観測できない分岐になる
   // (規則を決める場所は 1 つにする)。
   const validated = validateMembers(members ?? []);
-  // 軸名は `validateTeamRadarState` が判定を持つ (件数と 1 文字以上)。省略なら欄を作らない
-  // —— 既存の保存値と同じ形のままにする。
-  const next = validateTeamRadarState({
-    department,
-    evaluatedAt,
-    members: validated,
-    ...(axes === undefined ? {} : { axes }),
-  });
+  // 軸名は `validateTeamRadarState` が判定を持つ (件数と 1 文字以上)。省略 (undefined) なら欄を作らない
+  // —— 既存の保存値と同じ形のままにする。**省略の判定もそちらが持つ**: あちらは `o['axes']` だけを読み、
+  // undefined ならその欄を載せずに新しい物を返す (呼び手の物をそのまま返すのではない)。だから
+  // `...(axes === undefined ? {} : { axes })` と書いて欄ごと外しても、undefined の欄を渡しても、
+  // 返す物も保存する JSON も同じ (`JSON.stringify` は undefined の欄を書かない)。
+  // **同じ判定を呼び手と判定側の 2 か所に置かない** (2026-09-30 · 変異検査が、この呼び手の
+  // `axes === undefined` を「消しても同じ答え」と見つけた)。
+  const next = validateTeamRadarState({ department, evaluatedAt, members: validated, axes });
   await saveTeamRadarState(next, deps);
   return next;
 }

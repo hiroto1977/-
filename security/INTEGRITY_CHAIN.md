@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 278
+- ブロック数: 282
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `0dd206ac754b35c4c1733742007a4bbcec4ef63b69cf08c7433f7ccddbaa734f`
+- 末尾(tip)ハッシュ: `0aa0cf1cbfbf22ea75557d8a51f2ca31539d6a2c82652a73595c836af67054c6`
 - 保護対象: 99 ファイル
 
 ## ブロック
@@ -291,6 +291,10 @@
 | 275 | `7e282aad65b1065d` | `ca82f385b73b517e` | `3ac3a67ca9df51ea` | update integrity-chain.cjs,keyIntent.ts,LockScreen.tsx |
 | 276 | `f60908d7c7904acd` | `3ac3a67ca9df51ea` | `07d67638596f8f18` | update vault.ts,httpLimits.ts,ollama.ts |
 | 277 | `7d5326e604434a1c` | `07d67638596f8f18` | `0dd206ac754b35c4` | update ollama.ts |
+| 278 | `963c4d775f9a7afc` | `0dd206ac754b35c4` | `d4f0b6ac3ccca680` | update atlassianSite.ts,writeFieldLimits.ts |
+| 279 | `08a44307ef662fb7` | `d4f0b6ac3ccca680` | `fceff271cb78d024` | update headerValue.ts |
+| 280 | `7950b19aba88a53d` | `fceff271cb78d024` | `16047100ecc8c35f` | update eraseAll.ts,windowPrefs.ts,proxy.ts |
+| 281 | `02483f41c2081db5` | `16047100ecc8c35f` | `0aa0cf1cbfbf22ea` | update imageUrlGate.ts |
 
 ## 保護対象ファイル
 

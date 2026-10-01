@@ -37,7 +37,12 @@ export function sealAtRest(plaintext: string): string {
   if (safeStorage.isEncryptionAvailable()) {
     return safeStorage.encryptString(plaintext).toString('base64');
   }
-  return PLAIN_PREFIX + Buffer.from(plaintext, 'utf8').toString('base64');
+  // Stryker disable next-line StringLiteral: `'utf8'` を空にしても Node は utf8 へ落とすため同じ base64 になる
+  // (実測: Buffer.from('é','') は Buffer.from('é','utf8') と同じ・`oauth.ts` の Basic 認証と同じ理由)。
+  // 下の `'base64'` は別の行に置く —— 同じ行だと、等価ではない `toString('')` (utf8 の本文になる) の変異体まで
+  // 一緒に測定から外れる。
+  const bytes = Buffer.from(plaintext, 'utf8');
+  return PLAIN_PREFIX + bytes.toString('base64');
 }
 
 export type OpenAtRest =
@@ -88,7 +93,8 @@ export function unsealJsonDocument(raw: string): UnsealedDocument {
   try {
     parsed = JSON.parse(raw);
   } catch {
-    return { ok: true, json: raw, sealed: false };
+    // JSON でなければ封筒ではない。`parsed` は undefined のままなので、すぐ下の `isAtRestEnvelope` が必ず落とす —
+    // ここでも返すと、同じ結果の出口が 2 つになる (`secrets.ts` の `getValidToken` と同じ形)。
   }
   if (!isAtRestEnvelope(parsed)) return { ok: true, json: raw, sealed: false };
   const opened = openAtRest(parsed.sealed);

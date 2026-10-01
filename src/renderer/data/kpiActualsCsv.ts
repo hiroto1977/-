@@ -58,6 +58,7 @@ export interface KpiImportResult {
  * 中で先に出た組は取り込まず `errors` に数える —— 以前は同じファイルを 2 度読むと売上高が
  * 2 倍になった (`addMany` は既存と照合しない)。
  */
+// Stryker disable next-line ArrayDeclaration: 既定の空配列に要素 (記録でない文字列) を足しても答えは変わらない —— `actualKey` は `undefined|…` の鍵になり、検証済みの期 (YYYY-MM) を持つ行の鍵とは一致しえない (等価)
 export function kpiActualsFromCsv(text: string, existing: readonly KpiActual[] = []): KpiImportResult {
   const records = parseCsvRecords(text);
   const entries: KpiActual[] = [];

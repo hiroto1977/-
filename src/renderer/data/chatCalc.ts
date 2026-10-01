@@ -116,20 +116,21 @@ export function parseAmountJa(raw: string): number | null {
   const scalePattern = MONEY_SCALES.map(([ch]) => ch).join('');
   const re = new RegExp(`([0-9][0-9,]*(?:\\.[0-9]+)?)\\s*([${scalePattern}])?`, 'g');
   for (const m of text.matchAll(re)) {
-    const digits = m[1];
+    // 群 1 (数) は必須なので、一致したなら必ず文字列である。`!` は
+    // `noUncheckedIndexedAccess` の型の絞り込みだけのためで、実行時の判定は持たない。
+    const digits = m[1]!;
     const scaleChar = m[2];
-    if (digits === undefined) continue;
     // 数 (と位取り) の直後の 1 文字。金額でない単位ならこの数は金額ではない。
     const after = text.charAt(m.index + m[0].length);
     if (NON_MONEY_UNITS.includes(after)) continue;
     // 桁がまだ続いている (合成の位取り) なら、読み切れていないので捨てる。
     if (/[0-9]/.test(after) || INCOMPLETE_AFTER.includes(after)) continue;
     const base = Number.parseFloat(digits.replace(/,/g, ''));
-    // 桁が大きすぎて Infinity になる入力 (例: 1 のあとに 0 が 309 個) を拒否する。
-    if (!Number.isFinite(base)) continue;
     const scale = MONEY_SCALES.find(([ch]) => ch === scaleChar)?.[1] ?? 1;
     const rounded = Math.round(base * scale);
-    // 位取りで有限を外れる入力 (例: 1e300 兆) も弾く。
+    // 桁が大きすぎて Infinity になる入力 (例: 1 のあとに 0 が 309 個) も、位取りで有限を
+    // 外れる入力 (例: 1e300 兆) も、ここで 1 度に弾く —— `base` が Infinity なら掛けた
+    // `rounded` も Infinity なので、`base` だけを先に見る判定は同じ答えを返す写しだった。
     if (!Number.isFinite(rounded) || rounded <= 0) continue;
     return rounded;
   }

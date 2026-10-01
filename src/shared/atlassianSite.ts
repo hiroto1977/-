@@ -119,13 +119,12 @@ export function readAtlassianCredentials(raw: string): AtlassianCredsResult {
   }
   /*
    * **記録でなければ欄が無い物として扱う** (上の docblock の `null` の件)。
-   * `typeof parsed === 'object'` だけでは `null` と配列が通ってしまうので、
-   * 3 つ揃えて初めて記録と呼ぶ。
+   * 落とすのは `null` と配列でよい: 数・文字列・真偽は `email` / `token` / `site` を持たないので、
+   * 下の分割代入が 3 欄とも `undefined` を返して `fields` へ落ちる。`typeof parsed === 'object'` を
+   * 先に置いても答えは同じだった (変異検査で生き残る等価の判定 · パス 502)。
    */
   const obj: Record<string, unknown> =
-    typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
-      ? (parsed as Record<string, unknown>)
-      : {};
+    parsed !== null && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : {};
   const { email, token, site } = obj;
   if (
     typeof email !== 'string' || email.length === 0 || email.length > MAX_ATLASSIAN_EMAIL ||

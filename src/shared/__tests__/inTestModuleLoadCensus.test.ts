@@ -37,6 +37,12 @@
  *    最初の読み直しで依存先が検査の中で初めて評価される。第 1 引数は `import.meta.url`、
  *    第 2 引数は文字列の直書き。例外は台帳 (理由つき・両方向)。
  * 4. **`?reread=` を組み立てるのは `rereadModule.ts` だけ** —— 読み直しの道は 1 つに保つ。
+ * 5. **Node の require へ `.ts` を読ませる口 (`scripts/` の `.cjs` が `Module._extensions['.ts']` へ
+ *    esbuild の読み手を一時登録する形) を、検査の中で呼ばない** (2026-09-30 · パス 502)。vitest の
+ *    module graph の外で製品の `.ts` の閉包を**新しい写しとして**評価し直すので、`import()` でも
+ *    `vi.resetModules()` でもないのに、規則 1〜4 の外で同じ汚れを作る。実測: `ontologyDoc.test.ts` の
+ *    self-test がこの形で `dataOrigin.ts` と `credentialUse.ts` の表 154 件を覆い、その 1 件だけで走った
+ *    変異体が生き残っていた。呼ぶなら `beforeAll` か読み込みの時点で。
  *
  * ★ **静的 import が「実際に残るか」は TypeScript 自身に訊く** (`transpileModule`)。
  * 型としてしか使わない import は変換で消えるので、書いてあっても何も読まない
@@ -49,6 +55,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import ts from 'typescript';
 import { readOriginalDirEntries, readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 // ---------------------------------------------------------------------------
 // 台帳
@@ -100,6 +107,18 @@ const REREAD_QUERY_LEDGER: Readonly<Record<string, string>> = {
     'この検査の標本 —— 合成の原文の中の `?reread=` を解析が拾うことを確かめる (文字列の中であって、読み込みではない)。',
 };
 
+/**
+ * 規則 5 —— Node の require へ `.ts` を読ませる口。鍵は script の basename、値はその口を通る
+ * export の名前。**`scripts/` を歩いて `.ts` の読み手を登録する script を数え、この一覧と両方向に
+ * 突き合わせる** (新しい script が同じ口を作れば「台帳に足せ」と落ちる)。
+ */
+const TS_LOADER_SCRIPTS: Readonly<Record<string, readonly string[]>> = {
+  'build-ontology-md.cjs': ['render', 'loadRenderer', 'selfTest'],
+};
+
+/** 規則 5 の例外 —— 検査の中でその口を呼んでよい所。鍵は `ファイル → 関数`。**両方向**。 */
+const TS_LOADER_CALL_LEDGER: Readonly<Record<string, string>> = {};
+
 // ---------------------------------------------------------------------------
 // 解析
 // ---------------------------------------------------------------------------
@@ -135,7 +154,18 @@ interface FileFacts {
   readonly rereads: readonly Reread[];
   /** `?reread=` を含む文字列の行。 */
   readonly rereadQueryLines: readonly number[];
+  /** 規則 5 の口の名前の呼び出し (どの script の物かは census が、ファイルが script を名指すかで決める)。 */
+  readonly loaderCalls: readonly LoaderCall[];
 }
+
+interface LoaderCall {
+  readonly line: number;
+  readonly name: string;
+  readonly context: Context;
+}
+
+/** 規則 5 の口の名前 (全 script の和)。 */
+const TS_LOADER_NAMES: ReadonlySet<string> = new Set(Object.values(TS_LOADER_SCRIPTS).flat());
 
 const FUNCTION_KINDS = new Set<ts.SyntaxKind>([
   ts.SyntaxKind.ArrowFunction,
@@ -209,8 +239,13 @@ function analyze(fileName: string, text: string): FileFacts {
   const mocks: MockSite[] = [];
   const rereads: Reread[] = [];
   const rereadQueryLines: number[] = [];
+  const loaderCalls: LoaderCall[] = [];
   const visit = (n: ts.Node): void => {
     if (ts.isCallExpression(n)) {
+      const last = calleeName(n.expression)?.split('.').pop();
+      if (last !== undefined && TS_LOADER_NAMES.has(last)) {
+        loaderCalls.push({ line: lineOf(n), name: last, context: contextOf(n) });
+      }
       if (n.expression.kind === ts.SyntaxKind.ImportKeyword) {
         dynamicImports.push({ line: lineOf(n), spec: literalText(n.arguments[0]), context: contextOf(n) });
       } else {
@@ -249,7 +284,7 @@ function analyze(fileName: string, text: string): FileFacts {
     ts.forEachChild(n, visit);
   };
   visit(sf);
-  return { resets, dynamicImports, mocks, rereads, rereadQueryLines };
+  return { resets, dynamicImports, mocks, rereads, rereadQueryLines, loaderCalls };
 }
 
 /**
@@ -346,6 +381,7 @@ interface Census {
   readonly dynamicViolations: readonly Violation[];
   readonly rereadViolations: readonly Violation[];
   readonly rereadQueryFiles: readonly string[];
+  readonly loaderViolations: readonly Violation[];
 }
 
 /**
@@ -353,7 +389,12 @@ interface Census {
  * `vi.resetModules`・`?reread=`) はどれもこの綴りを含むので、篩で落ちたファイルには
  * 数える物が無い (型の位置の `import(` も通すが、構文木の側で落ちる)。
  */
-const NEEDS_PARSE = /\bimport\s*\(|resetModules|rereadModule|\?reread=/;
+const NEEDS_PARSE = new RegExp(
+  String.raw`\bimport\s*\(|resetModules|rereadModule|\?reread=|` +
+    Object.keys(TS_LOADER_SCRIPTS)
+      .map((name) => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|'),
+);
 
 function census(tree: Tree): Census {
   const facts = new Map<string, FileFacts>();
@@ -391,6 +432,7 @@ function census(tree: Tree): Census {
   const dynamicViolations: Violation[] = [];
   const rereadViolations: Violation[] = [];
   const rereadQueryFiles: string[] = [];
+  const loaderViolations: Violation[] = [];
   let dynamicImports = 0;
   let rereads = 0;
   for (const [rel, f] of facts) {
@@ -418,6 +460,18 @@ function census(tree: Tree): Census {
       if (r !== 'unresolved' && (loaded.has(r) || mocked.has(r) || !pullsProduct(r))) continue;
       dynamicViolations.push({ key: `${rel} → ${d.spec}`, where: `${rel}:${d.line}` });
     }
+    // 規則 5: ファイルが名指す script の口を、検査の中で呼んでいないか。
+    const text = tree.testSide.get(rel) ?? '';
+    const named = new Set(
+      Object.entries(TS_LOADER_SCRIPTS)
+        .filter(([script]) => text.includes(script))
+        .flatMap(([, names]) => names),
+    );
+    for (const c of f.loaderCalls) {
+      if (c.context === 'in-test' && named.has(c.name)) {
+        loaderViolations.push({ key: `${rel} → ${c.name}`, where: `${rel}:${c.line}` });
+      }
+    }
     for (const rr of f.rereads) {
       rereads += 1;
       const r = rr.spec === null ? 'unresolved' : resolveSpec(rel, rr.spec, tree.known);
@@ -434,6 +488,7 @@ function census(tree: Tree): Census {
     dynamicViolations,
     rereadViolations,
     rereadQueryFiles,
+    loaderViolations,
   };
 }
 
@@ -491,12 +546,44 @@ describe('検査の中でモジュールを初めて評価しない (母集団�
     ).toEqual(Object.keys(REREAD_QUERY_LEDGER).sort());
   });
 
+  it('★ 規則 5: Node の require へ .ts を読ませる口は、検査の中で呼ばない (台帳のほか・両方向)', () => {
+    expect(
+      keysOf(CENSUS.loaderViolations),
+      '生成 script の self-test などは製品の .ts の閉包を新しい写しとして評価し直す。' +
+        'その直下の値が「この検査が覆った」と数えられ、値を主張しない検査だけで変異体が走って生き残る。' +
+        `beforeAll か読み込みの時点で呼ぶこと (どうしても要るなら TS_LOADER_CALL_LEDGER に理由を書く): ${JSON.stringify(CENSUS.loaderViolations)}`,
+    ).toEqual(Object.keys(TS_LOADER_CALL_LEDGER).sort());
+  });
+
+  it('★ 規則 5 の前提: .ts の読み手を登録する script は台帳の物だけで、台帳の export は実在する (両方向)', () => {
+    const installers: string[] = [];
+    for (const dir of ['scripts', 'scripts/lib', 'orchestration']) {
+      for (const e of readOriginalDirEntries(path.join(REPO, dir))) {
+        if (!e.isFile() || !e.name.endsWith('.cjs')) continue;
+        const code = stripComments(readOriginalSource(path.join(REPO, dir, e.name)));
+        if (/_extensions\s*\[/.test(code)) installers.push(e.name);
+      }
+    }
+    expect(
+      installers.sort(),
+      'Module._extensions[...] へ読み手を登録する script が増えた/減った: TS_LOADER_SCRIPTS を直すこと',
+    ).toEqual(Object.keys(TS_LOADER_SCRIPTS).sort());
+    for (const [script, names] of Object.entries(TS_LOADER_SCRIPTS)) {
+      const code = stripComments(readOriginalSource(path.join(REPO, 'scripts', script)));
+      const exported = /module\.exports\s*=\s*\{([^}]*)\}/.exec(code)?.[1] ?? '';
+      for (const name of names) {
+        expect(new RegExp(`\\b${name}\\b`).test(exported), `${script} の module.exports に ${name} が在る`).toBe(true);
+      }
+    }
+  });
+
   it('台帳の理由は省略しない (同上・TBD を書かない)', () => {
     const whys = [
       ...Object.values(RESET_LEDGER).map((v) => v.why),
       ...Object.values(DYNAMIC_IMPORT_LEDGER),
       ...Object.values(REREAD_LEDGER),
       ...Object.values(REREAD_QUERY_LEDGER),
+      ...Object.values(TS_LOADER_CALL_LEDGER),
     ];
     for (const why of whys) expect(why.length, why).toBeGreaterThanOrEqual(10);
     // 「同上」だけの理由は書かない —— 次に読む人は何について同じなのかを確かめ直すことになる。
@@ -528,6 +615,18 @@ describe('標本: 解析の規則', () => {
 
   it('型の位置の import() は数えない (値の位置だけ)', () => {
     expect(contexts("type M = typeof import('./a'); let x: import('./a').T;")).toEqual([]);
+  });
+
+  it('★ 規則 5 の口の呼び出しは、時点つきで拾う (検査の中 / beforeAll / 先頭)', () => {
+    const calls = (src: string): LoaderCall[] => [...analyze('x.test.ts', src).loaderCalls];
+    expect(calls("it('x', () => { selfTest(); });")).toEqual([{ line: 1, name: 'selfTest', context: 'in-test' }]);
+    expect(calls('beforeAll(() => { exit = selfTest(); });')).toEqual([
+      { line: 1, name: 'selfTest', context: 'beforeAll' },
+    ]);
+    expect(calls('const r = loadRenderer();')).toEqual([{ line: 1, name: 'loadRenderer', context: 'top-level' }]);
+    // 経由した呼び出し (mod.render()) も名前の最後で拾う / 注記と文字列の中は拾わない
+    expect(calls("it('x', () => { mod.render(); });")[0]?.name).toBe('render');
+    expect(calls("// selfTest();\nconst s = 'selfTest()';")).toEqual([]);
   });
 
   it('vi.resetModules() は構文木で数える (注記と文字列の中は数えない)', () => {
@@ -601,6 +700,20 @@ describe('標本: 規則を合成の木に当てる', () => {
     for (const src of cases) {
       const c = census(tree({ 'src/p/__tests__/t.test.ts': src }));
       expect(keysOf(c.dynamicViolations), src).toEqual([]);
+    }
+  });
+
+  it('★ 規則 5: 生成 script の口を検査の中で呼ぶと違反 / beforeAll・先頭なら違反でない / script を名指さない検査は対象外', () => {
+    const named = "const { selfTest } = req('../../../scripts/build-ontology-md.cjs');\n";
+    const inTest = census(tree({ 'src/p/__tests__/t.test.ts': `${named}it('x', () => { selfTest(); });` }));
+    expect(keysOf(inTest.loaderViolations)).toEqual(['src/p/__tests__/t.test.ts → selfTest']);
+    for (const src of [
+      `${named}let e = -1;\nbeforeAll(() => { e = selfTest(); });\nit('x', () => { expect(e).toBe(0); });`,
+      `${named}const e = selfTest();\nit('x', () => { expect(e).toBe(0); });`,
+      // 同じ名前の別物: script を名指さないファイルは対象外
+      "it('x', () => { selfTest(); });",
+    ]) {
+      expect(keysOf(census(tree({ 'src/p/__tests__/t.test.ts': src })).loaderViolations), src).toEqual([]);
     }
   });
 

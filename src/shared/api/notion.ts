@@ -104,9 +104,11 @@ export interface CheckedPage {
 export function checkPage(input: NotionPageFields): CheckedPage {
   const bad = checkWriteFields(input, NOTION_PAGE_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  // 必須の欄 (parentPageId / title) は `checkWriteFields` が「空でない文字列」として通した物だけが来る
+  // (偽の枝 `''` へは入れない)。任意の `body` は文字列でなければ `undefined` へ揃える (パス 502)。
   return {
-    parentPageId: typeof input.parentPageId === 'string' ? input.parentPageId.trim() : '',
-    title: typeof input.title === 'string' ? input.title.trim() : '',
+    parentPageId: String(input.parentPageId).trim(),
+    title: String(input.title).trim(),
     body: typeof input.body === 'string' ? input.body : undefined,
   };
 }

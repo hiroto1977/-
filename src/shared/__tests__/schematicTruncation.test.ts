@@ -95,6 +95,31 @@ describe('機構 — 打ち切りは実在し、実在する容積率で起き�
   });
 });
 
+describe('buildSchematic — 載せた上階の床は 1F を数えない (1F は奥行を持たない)', () => {
+  // 載せた上階の床 = 間口 × (上階の奥行の和)。実装は全階を足して 1F を `depthM ?? 0` の 0 にする形なので、
+  // 「1F だけが奥行を持たず、上階は必ず持つ」がこの形の根拠 (1F が奥行を持てば、上階だけの和と食い違う)。
+  it('★ 1F だけが depthM を持たず、上階は全部が数で持つ', () => {
+    for (const far of [0, 200, 600, 800, 1300]) {
+      const floors = buildSchematicFloors({ ...base, upperFloorsSqm: upperFor(far) });
+      expect(floors[0]?.name, `${far}%`).toBe('1F');
+      expect(floors[0]?.depthM, `${far}%: 1F が奥行を持つと、載せた上階の床に 1F が混ざる`).toBeUndefined();
+      expect(Object.hasOwn(floors[0] ?? {}, 'depthM'), `${far}%`).toBe(false);
+      for (const upper of floors.slice(1)) {
+        expect(typeof upper.depthM, `${far}% ${upper.name}`).toBe('number');
+      }
+    }
+  });
+
+  it('★ 載せた上階の床の和 = 間口 × 上階の奥行の和 (1F を含めない)。残りは unplacedSqm にそのまま現れる', () => {
+    // 800%: 上階 3,600 ㎡ のうち 7 層 (2F〜8F) × 400 ㎡ = 2,800 ㎡ が載り、800 ㎡ が図に入らない。
+    const s = buildSchematic({ ...base, upperFloorsSqm: upperFor(800) });
+    const placed = s.floors.slice(1).reduce((sum, f) => sum + WIDTH_M * (f.depthM ?? Number.NaN), 0);
+    expect(placed).toBe(2_800);
+    expect(s.unplacedSqm).toBe(upperFor(800) - placed);
+    expect(s.unplacedSqm).toBe(800);
+  });
+});
+
 describe('buildSchematic — 打ち切りを値と一緒に返す', () => {
   it('★ 収まるときは floorsNeeded が図の階数と一致し、unplaced は 0', () => {
     for (const far of [200, 400, 600]) {

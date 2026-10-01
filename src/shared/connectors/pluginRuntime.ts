@@ -221,9 +221,9 @@ export function resolveHookPlan(
     if (!plugin.hooks.includes(eventName)) continue;
     const hook = eventName as PluginHook;
     for (const connector of plugin.connectors) {
-      // 表に無い capability は `null` = どの権限でも動かせない (パス 235)。
-      // 計画は「除外せず明示」する方針なので、手順は残して `permitted:false` にする。
-      const permission = requiredPermissionFor(connector.capability);
+      // 表に無い capability は `null` = どの権限でも動かせない (パス 235)。計画は「除外せず明示」する方針なので、
+      // 手順は残して `permitted:false` にする —— `null` は番兵の語で引き、`isPermitted` が必ず false を返す。
+      const permission = requiredPermissionFor(connector.capability) ?? UNKNOWN_CAPABILITY_PERMISSION;
       steps.push({
         pluginId: plugin.id,
         hook,
@@ -232,7 +232,7 @@ export function resolveHookPlan(
         targetService: connector.targetService,
         capability: connector.capability,
         requiresAuth: connector.requiresAuth,
-        permitted: permission !== null && isPermitted(plugin, permission),
+        permitted: isPermitted(plugin, permission),
       });
     }
   }

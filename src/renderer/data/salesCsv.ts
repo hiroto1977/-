@@ -40,6 +40,7 @@ export interface SalesImportResult {
  * doesn't abort the whole import — good rows are returned alongside a list of
  * row-level errors for the user to fix.
  */
+// Stryker disable next-line ArrayDeclaration: 既定の空配列に要素 (記録でない文字列) を足しても答えは変わらない —— `salesRowKey` は `undefined|…` の鍵になり、検証済みの日付を持つ行の鍵とは一致しえない (等価)
 export function salesFromCsv(text: string, existing: readonly SalesEntry[] = []): SalesImportResult {
   const records = parseCsvRecords(text);
   const entries: SalesEntry[] = [];

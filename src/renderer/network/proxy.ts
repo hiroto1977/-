@@ -376,6 +376,8 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
     // 名指しして切っているのに、**その相手が実際に通る枝**だけ素の `text()`
     // だった —— 中継は利用者が配る Worker なので、返す本文の大きさは
     // このアプリの側では何も保証できない。
+    // Stryker disable next-line StringLiteral: ラベルは「<label> response too large」の文に入るだけで、その例外は
+    // `readFailureBody` の `.catch(() => '')` が握る —— 空文字を返す以外に外へ出る物が無く、観測できない (等価変異)。
     const body = await readFailureBody(proxyRes, 'proxy', MAX_PROXY_RESPONSE_BYTES);
     // A misbehaving proxy may echo the forwarded request (incl. the
     // Authorization header) back in its error body. Redact before surfacing.

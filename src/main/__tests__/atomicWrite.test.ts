@@ -172,6 +172,27 @@ describe('readFileWithBackup', () => {
     expect(await readFileWithBackup(target, 1000)).toBe('y'.repeat(200));
   });
 
+  /*
+   * **本体も控えも「在るが読めない」ときは、`undefined` ではなく `null`** (パス 502)。
+   *
+   * 宣言は `Promise<string | null>` で、呼び手 (`secrets.ts`) は `=== null` で「どちらも無い」を見る。
+   * `stat` は通るが `readFile` が失敗する物 (ディレクトリ・権限) は、`??` の右へ倒れた先も同じ形で
+   * 失敗するので、両方が読めないときに**最後に返る値**が契約の値でなければならない。
+   */
+  it('★ 本体も控えも在るのに読めない (ディレクトリ) なら、undefined ではなく null', async () => {
+    const target = path.join(dir, 'dirs.json');
+    await fs.mkdir(target);
+    await fs.mkdir(`${target}.prev`);
+    expect(await readFileWithBackup(target, CAP)).toBeNull();
+  });
+
+  it('本体が読めなければ控えを読む (在るのに読めない本体は「無い」と同じに扱う)', async () => {
+    const target = path.join(dir, 'half.json');
+    await fs.mkdir(target);
+    await fs.writeFile(`${target}.prev`, 'backup');
+    expect(await readFileWithBackup(target, CAP)).toBe('backup');
+  });
+
   it('境界: ちょうど上限は読む / 1 バイト超は読まない', async () => {
     const target = path.join(dir, 'edge.json');
     await fs.writeFile(target, 'z'.repeat(64));

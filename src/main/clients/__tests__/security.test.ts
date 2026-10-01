@@ -525,6 +525,38 @@ describe('ACTIONS["check-email-breach"] — URL + header pinning (kills StringLi
     expect((caught as Error).message).not.toContain('proxy login');
   });
 
+  /*
+   * **形の合わない 200 応答は、「漏洩なし」でも「空の漏洩」でもなく、断りとして投げる** (パス 261)。
+   *
+   * `hibpBreaches` が投げた素の `Error` を `FetchError` に包み直す枝 (`catch (e)`) は
+   * 2026-09-30 の全掃引で **NoCoverage** だった —— 上の「JSON でない 2xx」は JSON.parse の枝で、
+   * 形の検査 (配列か・要素が物か・欄が揃うか) に届く検査が 1 件も無かった。枝を空にすると
+   * 戻り値は `undefined` になり、画面は `breaches` の無い結果を「漏洩なし」と読みうる。
+   * 包む側が名乗る相手 (`serviceId`) と応答の状態も値ごとに留める (相手が分からない断りにしない)。
+   */
+  it.each([
+    ['配列でない本文', '{"Name":"x"}', 'HIBP API の応答が JSON の配列ではありません (処理したことを確認できません)'],
+    ['要素が物でない配列', '["x"]', 'HIBP API の応答が JSON のオブジェクトではありません (処理したことを確認できません)'],
+  ])('★ 形の合わない 2xx 応答 (%s) は FetchError(security) で投げる', async (_label, body, message) => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response(body, { status: 200 }));
+    let caught: unknown;
+    let returned: unknown;
+    try {
+      returned = await ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: 'a@b.com' },
+      });
+    } catch (e) {
+      caught = e;
+    }
+    expect(returned, '返している = 形を確かめずに結果として渡している').toBeUndefined();
+    expect(caught).toBeInstanceOf(FetchError);
+    expect((caught as FetchError).message).toBe(message);
+    expect((caught as FetchError).serviceId).toBe('security');
+    expect((caught as FetchError).status).toBe(200);
+  });
+
   it('throws `HIBP <status>: <body>` on non-2xx (kills the "HIBP " literal)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()

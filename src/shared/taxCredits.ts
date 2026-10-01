@@ -318,9 +318,14 @@ export function noMortgageCreditCause(
   if (input === null || result === null) return 'no-balance';
   if (nonNeg(input.yearEndBalance) === 0) return 'no-balance';
   // 以下 3 つは calcMortgageCredit の早期 return と**同じ順序**。
-  if (input.totalIncome !== undefined && input.totalIncome > p.incomeLimit) return 'income-over-limit';
+  // 合計所得金額が無いとき (`undefined`) は所得制限を判定しない = 上限を超えない。
+  // 「無い側は −∞」で持つので `!== undefined` の枝が要らない (`undefined > n` も偽になるので、
+  // 枝を残すと「外しても答えが変わらない」等価な変異体が 1 つ増えるだけだった · パス 502)。
+  if ((input.totalIncome ?? Number.NEGATIVE_INFINITY) > p.incomeLimit) return 'income-over-limit';
   if (input.outsidePeriod === true) return 'outside-period';
-  if ((input.balanceCap ?? 30_000_000) === 0) return 'not-energy-compliant';
+  // 借入限度額が**ちょうど 0** のとき (2024 年以降の省エネ基準非適合の新築)。未指定は既定の額で 0 ではない。
+  // 以前は `(balanceCap ?? 30_000_000) === 0` と既定の額を写していたが、`=== 0` の答えは既定の額に依らない。
+  if (input.balanceCap === 0) return 'not-energy-compliant';
   // ここまで来て画面の額が 0 なら、引く先の税額が無い (creditable は在る)。
   if (result.fromIncomeTax + result.fromResidentTax === 0) return 'no-tax-to-offset';
   return null;
