@@ -34,6 +34,8 @@ interface Captured {
 }
 
 let captured: Captured;
+/** `nativeTheme` の代役。検査ごとに作り直し、`undefined` にすれば「nativeTheme を持たない環境」を作れる。 */
+let nativeThemeStub: { themeSource: string } | undefined = { themeSource: 'system' };
 let openedExternal: string[] = [];
 let isPackaged = true;
 let windowsMade = 0;
@@ -112,7 +114,9 @@ vi.mock('electron', () => ({
     }
   },
   ipcMain: { handle: () => {} },
-  nativeTheme: { themeSource: 'system' },
+  get nativeTheme() {
+    return nativeThemeStub;
+  },
   shell: {
     openExternal: async (url: string) => {
       openedExternal.push(url);
@@ -175,6 +179,7 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
+  nativeThemeStub = { themeSource: 'system' };
   openedExternal = [];
   windowsMade = 0;
   allWindows = [];
@@ -227,6 +232,23 @@ describe('BrowserWindow の設定 — 隔離の三点セット', () => {
     expect(c.opts.backgroundColor).toBe('#1b1520');
     const electron = await import('electron');
     expect(electron.nativeTheme.themeSource).toBe('dark');
+  });
+
+  it('★ nativeTheme を持たない環境でも窓は保存した下地で作られる (配色の追随だけを飛ばす・起動を止めない)', async () => {
+    // `applyNativeTheme` の `if (nativeTheme)` は、nativeTheme を持たない代役 (検査) のための床。外すと
+    // `app.whenReady().then(...)` の中で投げて窓が作られず、アプリが無言で起動しない。全部の代役が持つ今は届かない形なので、
+    // 持たない状態を作って留める。★ 代役の factory に**キーが無い**と vitest の mock は参照した時点で
+    // 「No "nativeTheme" export is defined on the "electron" mock」と投げる (床の手前) ので、キーは持たせて値を undefined にする。
+    nativeThemeStub = undefined;
+    storedPrefs = { scheme: 'dark', background: '#1b1520' };
+    const c = await loadMain({ packaged: true });
+    expect(windowsMade, '窓が作られていない — nativeTheme が無いだけで起動が止まった').toBe(1);
+    expect(c.opts.backgroundColor).toBe('#1b1520');
+    // 対照: 持っていれば同じ入力で Electron の配色まで追随する (床が「常に飛ばす」になっていない)。
+    nativeThemeStub = { themeSource: 'system' };
+    await loadMain({ packaged: true });
+    const electron = await import('electron');
+    expect(electron.nativeTheme?.themeSource).toBe('dark');
   });
 
   it('preload を必ず読ませる (bridge が無ければ何も呼べない)', async () => {

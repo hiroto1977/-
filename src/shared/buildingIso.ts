@@ -286,10 +286,10 @@ export function buildSchematic(input: SchematicInput): Schematic {
   const footprint = w * nonNeg(input.depthM);
   const upper = round1(nonNeg(input.upperFloorsSqm));
   // 図が実際に載せた上階の床 (端数階は奥行で表現しているので、そこから戻す)。
-  // `?? 0` は届かない —— `slice(1)` の上階は上のループが必ず `depthM` を入れる
-  // (奥行を持たないのは 1F だけで、それは落としている)。仮に届いたら載せた床を
+  // 奥行 `depthM` を持つのは上階だけ (上のループが必ず入れる。1F は持たない) なので、全階を足しても
+  // 1F は `?? 0` で 0 になり、上階だけの和と同じになる。上階が `depthM` を持たなければ載せた床を
   // 少なく見て**打ち切りを過大に報せる**側に倒れるので、黙って通す側ではない。
-  const placedUpper = round1(floors.slice(1).reduce((sum, f) => sum + w * (f.depthM ?? 0), 0));
+  const placedUpper = round1(floors.reduce((sum, f) => sum + w * (f.depthM ?? 0), 0));
   const floorsNeeded = footprint > 0 ? 1 + Math.ceil(upper / footprint) : floors.length;
   return { floors, floorsNeeded, unplacedSqm: Math.max(0, round1(upper - placedUpper)) };
 }

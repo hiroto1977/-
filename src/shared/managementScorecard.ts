@@ -69,7 +69,9 @@ export const VERDICT_UNSCORED_LABEL = '未算定';
  * を直に引いていた)。**言葉を決める場所は 1 つ。**
  */
 export function verdictLabel(v: ScorecardVerdict | null): string {
-  return v === null ? VERDICT_UNSCORED_LABEL : (lookup(VERDICT_LABEL, v) ?? VERDICT_UNSCORED_LABEL);
+  // `null` (未算定) は表に無い鍵 `'null'` になり、表に無い鍵と同じく `lookup` が undefined を返して既定の語へ落ちる
+  // (`null` 専用の分岐を持たない・prototype の鍵も同じ道を通る)。
+  return lookup(VERDICT_LABEL, String(v)) ?? VERDICT_UNSCORED_LABEL;
 }
 
 /** 総合スコアカード。 */

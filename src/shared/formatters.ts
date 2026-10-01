@@ -68,7 +68,8 @@ export function jpyWhole(n: number): string {
  * 理由は画面がその場で述べる責任を持つ (`jpy` の doc comment と同じ方針)。
  */
 export function jpyOrDash(n: number | null | undefined): string {
-  return n == null ? DASH : jpy(n);
+  // 算定不能 (`null` / `undefined`) は非有限の代表値 NaN に倒し、`jpy` の床に任せる (同じ「—」・分岐を持たない)。
+  return jpy(n ?? Number.NaN);
 }
 
 /**
@@ -113,5 +114,6 @@ export function pct(n: number, digits?: number): string {
 
 /** 算定不能 (`null` / `undefined`) なら `—`、そうでなければ {@link pct}。{@link jpyOrDash} の率版。 */
 export function pctOrDash(n: number | null | undefined, digits?: number): string {
-  return n == null ? DASH : pct(n, digits);
+  // 算定不能 (`null` / `undefined`) は非有限の代表値 NaN に倒し、`pct` の床に任せる (同じ「—」・分岐を持たない)。
+  return pct(n ?? Number.NaN, digits);
 }

@@ -32,6 +32,16 @@ describe('jpy', () => {
     expect(jpyOrDash(0)).toBe('¥0');
   });
 
+  it('★ jpyOrDash は有限の金額をそのまま整形し、畳むのは null / undefined / 非有限だけ (分岐を持たない形でも同じ答え)', () => {
+    // 算定不能は非有限の代表値へ倒して `jpy` の床に任せる形なので、有限の値が畳まれていないことを値ごと留める。
+    expect(jpyOrDash(1_234_567)).toBe('¥1,234,567');
+    expect(jpyOrDash(-5000)).toBe('¥-5,000');
+    expect(jpyOrDash(1)).toBe('¥1');
+    expect(jpyOrDash(Number.NaN)).toBe(DASH);
+    expect(jpyOrDash(Number.POSITIVE_INFINITY)).toBe(DASH);
+    expect(jpyOrDash(Number.NEGATIVE_INFINITY)).toBe(DASH);
+  });
+
   /**
    * **負のゼロを「¥-0」と刷らない** (2026-09-27 · パス 493j)。`toLocaleString` は −0 も、
    * 丸めて 0 になる小さな負の値も `-0` と綴る (実測)。`Math.round(-0.4)` / `Math.ceil(-0.5)` は
@@ -107,6 +117,16 @@ describe('pct — 率の非有限の床 (パス 229)', () => {
   it('pctOrDash は null / undefined を「—」', () => {
     expect(pctOrDash(null)).toBe(DASH);
     expect(pctOrDash(undefined, 1)).toBe(DASH);
+  });
+
+  it('★ pctOrDash は有限の率をそのまま整形し、畳むのは null / undefined / 非有限だけ (分岐を持たない形でも同じ答え)', () => {
+    expect(pctOrDash(12.3456, 1)).toBe('12.3%');
+    expect(pctOrDash(-12.34, 1)).toBe('-12.3%');
+    // `digits` 省略は丸めない (`pct` と同じ)。
+    expect(pctOrDash(12.3456)).toBe('12.3456%');
+    expect(pctOrDash(Number.NaN, 1)).toBe(DASH);
+    expect(pctOrDash(Number.POSITIVE_INFINITY)).toBe(DASH);
+    expect(pctOrDash(Number.NEGATIVE_INFINITY, 2)).toBe(DASH);
   });
 
   it('★ ratioPctOrDash も同じ床を通る (0..1 の割合を ％ にする側)', () => {
