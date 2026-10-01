@@ -1,0 +1,10 @@
+// storageReadLedger.test.ts の対照用の標本 (2026-09-24 · パス 449)。
+// **注記の中にだけ綴りが在る**形 —— 直した欠陥を docblock で正確に引用すると
+// これになる。走査はここを数えてはいけない (法則 `mention-vs-declaration`)。
+//
+// 直す前の式: localStorage.getItem('chatbot-ollama-model') ?? 'llama3.2'
+//
+/* ブロック注記でも同じ: sessionStorage.getItem('x') */
+function noReadHere(): string {
+  return 'これはただの文字列で、上の綴りは注記の中にしか無い';
+}

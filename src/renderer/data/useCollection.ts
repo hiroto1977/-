@@ -1,0 +1,326 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  getRecordStore,
+  latestTokenOf,
+  type ConditionalUpdate,
+  type LatestInsert,
+  type LatestToken,
+  type StoredRecord,
+} from './store';
+import { subscribeCollection } from './collectionChange';
+import { latestRecord } from './latestRecord';
+import { readRecordsNow } from './readCollectionNow';
+import { reportDeviceStoreFailure, type DeviceStoreOp } from './deviceStoreFailure';
+
+/**
+ * 同じ collection を見ている**別の** hook へ変更を知らせる仕組みは
+ * `data/collectionChange.ts` に在る。
+ *
+ * この hook は instance ごとに records を持つので、A と B が同じ collection を
+ * 見ているとき、A が書いても B は古いまま残る。2026-08 に実際に踏んだ形:
+ * 画面共通の手入力欄 (App) が値を保存しても、その値を使う側のページは
+ * 再読込まで古い数字を出し続けた。**入力欄には「手入力」と印が付くのに、
+ * 画面の数字が変わらない**という、いちばん分かりにくい壊れ方だった。
+ *
+ * ★ **2026-09-24 (パス 448) に、知らせる側をストアへ移した。** ここに置くと
+ * **hook を通らない書き込み** (コネクタ実行・点検パネルの削除・バックアップの復元)
+ * がどの画面にも届かない —— 実測と理由は `collectionChange.ts` の docblock に在る。
+ * hook は購読するだけで、`add` / `edit` / `remove` は**自分で知らせない**
+ * (ストアが必ず知らせるので、ここで重ねると 1 書き込みに 2 度飛ぶ)。
+ *
+ * 書いた instance は自分で `reload()` を await する (呼び出し側が
+ * `await add(...)` の直後に新しい records を読めるようにするため)。
+ */
+export {
+  _collectionSubscriberCountForTests,
+  _resetCollectionSubscribersForTests,
+} from './collectionChange';
+
+/**
+ * **断られたら、断られたと届けてから投げ直す。**
+ *
+ * ここが唯一の入口なので、ここで写せば呼び出し側を 1 つずつ回らずに済む
+ * (回ると必ずどれか 1 つが漏れる)。投げ直すのは、既に `try/catch` で
+ * 自分の欄に出している画面 (`ShigyoConsole` / 経営ハイライト) の契約を
+ * 変えないため —— 二重に見えるが、片方は「この欄の保存」、もう片方は
+ * 「この端末の保存領域」で、利用者の打ち手が違う。
+ *
+ * ★ **呼び出し側の数は散文に書かない** —— 2026-09-27 (パス 493o) まで、この注記は
+ * 「13 か所」と書いていた (2026-09-06 の数)。実測は **45 か所**で、そのうち
+ * **10 か所**が投げ直された拒否を誰も受け取らず、未処理の拒否になっていた。
+ * 数と、1 か所ずつの受け止め方は `renderer/__tests__/storeWriteRejectionCensus.test.ts`
+ * が構文木で辿って持つ。
+ *
+ * 書き込みの前に**保管層を直に読む**所 (`parameterOverrides.ts` の `mutate`) も、
+ * 読みをここへ通す —— 通さないと、その読みの失敗だけが報されずに消える
+ * (`fireReported` は報せた失敗しか落とさないので、今は騒がしく出る)。
+ */
+export async function reporting<R>(op: DeviceStoreOp, collection: string, run: () => Promise<R>): Promise<R> {
+  try {
+    return await run();
+  } catch (err) {
+    reportDeviceStoreFailure('records', op, collection, err);
+    throw err;
+  }
+}
+
+/**
+ * 今の最新に当て直す回数の上限 (パス 500)。当てて足そうとした時に別の保存が挟まっていれば、
+ * 挟まった最新に当て直す。それでも挟まれば `busy` —— 回り続けない (パス 498 の
+ * `MAX_WRITE_ATTEMPTS` と同じ考え)。
+ */
+export const MAX_LATEST_ATTEMPTS = 2;
+
+/**
+ * `applyToLatest` の答え (パス 500):
+ *  - `saved`      … 今の最新に当てて足した。`basedOn` は当てた最新 (欄の元を進めるか決めるのに要る)。
+ *  - `declined`   … `change` が `null` を返した (当てた結果を書かないと決めた —— 理由は呼び手が持つ)。
+ *  - `busy`       … 当てるたびに別の保存が挟まった (上限まで)。何も書いていない。
+ *  - `unreadable` … 保管層を読めなかった。何も書いていない (「0 件」と混ぜない —— パス 384 と同じ規則)。
+ */
+export type LatestApply<T extends Record<string, unknown>> =
+  | { readonly status: 'saved'; readonly record: StoredRecord<T>; readonly basedOn: StoredRecord<T> | null }
+  | { readonly status: 'declined' }
+  | { readonly status: 'busy' }
+  | { readonly status: 'unreadable' };
+
+/**
+ * React binding for a single record-store collection. Loads the collection
+ * on mount and exposes add/edit/delete that keep local state in sync without
+ * a full reload. Pages use this to read/write real persisted business data
+ * (sales entries, customers, …) instead of static snapshots.
+ */
+export interface UseCollection<T extends Record<string, unknown>> {
+  records: readonly StoredRecord<T>[];
+  loading: boolean;
+  add: (data: T) => Promise<void>;
+  /** Atomic bulk insert (all rows commit together or none). For CSV import. */
+  addMany: (rows: readonly T[]) => Promise<void>;
+  /**
+   * 1 件を書き換える。**相手の行が保管層に無ければ `false`** (何も書いていない)。
+   *
+   * `store.update` は行が無いとき投げずに `null` を返す。2026-09-27 (パス 498) まではここが
+   * `Promise<void>` でその `null` を捨てており、**別のタブで消された行を編集した保存**は
+   * 何も書かないまま「済んだ」形になった —— 呼び手は編集の欄を空にし、読み直した一覧から行も
+   * 消えるので、打ち込んだ値は痕跡なく失われた。呼び手はこの答えを必ず読む
+   * (`renderer/__tests__/editResultCensus.test.ts` が構文木で数える)。
+   */
+  edit: (id: string, patch: Partial<T>) => Promise<boolean>;
+  /**
+   * **欄を開いた時の中身 (`expected`) のままなら**書く (パス 499)。
+   *
+   * 実体を丸ごと編集する欄 (投資信託の銘柄・不動産の物件・士業の連絡先) は、保存のとき
+   * **全部の欄**を書く。`edit` で書くと、欄を開いた後に別のタブが書き換えた欄まで
+   * 開いた時の値へ戻す —— 実測 (2026-09-27 · 直す前・実 chromium の 2 タブ): A が評価額を
+   * 300,000 → 500,000 に直した後、B が開いていた編集の欄で名前だけ直して保存すると、
+   * **評価額が 300,000 に戻り、どちらの画面も何も言わなかった** (lost update)。
+   *
+   * 答えは 3 つ (`ConditionalUpdate`) で、`changed` のときは**何も書かずに今の行を返す**。
+   * 画面はそれを言い、入力を残し、次の比較の基準を今の行へ移す (利用者がもう一度押せば、
+   * 知ったうえで上書きできる)。どの答えでも一覧は読み直す (消えた行を落とし、
+   * 書き換わった行を今の姿で出す)。
+   */
+  editIfUnchanged: (id: string, expected: T, patch: Partial<T>) => Promise<ConditionalUpdate<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら** 1 件足す (パス 500)。「最新の 1 件を採用する」collection
+   * (水耕栽培の設定・しきい値・提出者情報・運転の設定・品目一覧) の書き込みはここか `applyToLatest` を
+   * 通る (`renderer/__tests__/latestAdoptionCensus.test.ts` が束縛で数える)。
+   *
+   * 素の `add` で全部の欄を書くと、欄を開いた後 (または保存値が届く前) に入った保存を、欄の古い値で
+   * 黙って覆う —— 実測は `useLatestForm.ts` の docblock。`changed` なら何も書かずに今の最新を返す。
+   * どちらの答えでも一覧は読み直す。
+   */
+  addIfLatest: (expected: LatestToken | null, data: T) => Promise<LatestInsert<T>>;
+  /**
+   * **保管層の今の最新に `change` を当てて** 1 件足す (パス 500)。当てて足すまでに別の保存が挟まれば、
+   * 挟まった最新に当て直す (上限 `MAX_LATEST_ATTEMPTS`)。`change` が `null` を返せば書かない。
+   * 品目一覧の増減・書式の変更のように「今の値に対する変更」を書く所が使う —— 写しに当てると、
+   * 別のタブが足した物を知らないまま丸ごと書いて消す。パス 497 は読み直してから素の `add` で書いて
+   * いたので、**読み直しと書き込みの間の窓**が残っていた (ここでは比べて足すまでが 1 つの取引)。
+   */
+  applyToLatest: (change: (current: StoredRecord<T> | null) => T | null) => Promise<LatestApply<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら、その行の中身を `data` で置き換える** (パス 500)。行を増やさない。
+   * 最新 1 件を書き換える記録 (数値パラメータの上書き) の書き込みはここを通る。
+   *
+   * `editIfUnchanged` は**その行**が開いた時の中身のままかを比べるので、読んだ後・書く前に別の行が
+   * 新しい最新として入ると、書き換えは古い行に成功し、採用される最新には値が入らない —— 実測は
+   * `store.replaceLatestIfUnchanged` の docblock。ここは「最新がまだその行のその版か」を比べる。
+   * `changed` なら何も書かずに今の最新を返す。どちらの答えでも一覧は読み直す。
+   */
+  replaceLatest: (expected: LatestToken, data: T) => Promise<LatestInsert<T>>;
+  remove: (id: string) => Promise<void>;
+  reload: () => Promise<void>;
+}
+
+export function useCollection<T extends Record<string, unknown>>(collection: string): UseCollection<T> {
+  const [records, setRecords] = useState<readonly StoredRecord<T>[]>([]);
+  // 初期 true はマウント effect の setLoading(true) で必ず上書きされるため、初期値変異は
+  // 観測差が無く equivalent。
+  // Stryker disable next-line BooleanLiteral
+  const [loading, setLoading] = useState(true);
+  // setState-after-unmount を避けるための防御 ref。React 18 の createRoot はアンマウント後の
+  // setState を既に no-op 化するため、この ref ガード (初期値・effect 本体・cleanup・判定) を
+  // 変異させても観測上の振る舞いは変わらない (equivalent)。防御の明示性のため残す。
+  /* Stryker disable all */
+  const alive = useRef(true);
+  /* Stryker restore all */
+  /** 最新の読みの札。古い読みの結果を捨てるために持つ (`reload` の冒頭を参照)。 */
+  const latestRead = useRef<object>({});
+  /* Stryker disable all */
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+  /* Stryker restore all */
+
+  /**
+   * 読み直す。**読めなかったときは投げずに届ける。**
+   *
+   * マウント effect (`useEffect(() => { setLoading(true); reload(); })`) と
+   * 他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない
+   * ——`indexedDB` が開けない端末では、**全コレクションが空**のまま
+   * 「まだ何も入力していない」画面になっていた (2026-09-06 実測)。
+   * 空の理由を画面が言えるように、失敗をここで写す。
+   *
+   * `loading` は落とす。落とさないと「読み込み中…」が永遠に出続ける。
+   */
+  const reload = useCallback(async () => {
+    // **後から返った古い読みで records を戻さない。**
+    //
+    // `reload()` は重なる: 書いた本人が await する分と、ストアの通知で
+    // 他 instance に飛ぶ分、マウント effect の分がある。`list()` は IndexedDB の
+    // 読みだけでは終わらず、**1 件ずつ復号してから**返る (`recordEncryption` を
+    // 有効にした端末)。読みの要求順は IndexedDB が守っても、**復号にかかる時間は
+    // 件数で変わる**ので、返る順は要求順とは限らない。先に始まった大きい読みが
+    // 後から返ると、書いた直後の一覧が書く前の姿に戻る。
+    // 番人は `useServiceData` と同じ形 (最新の札を持つ読みだけが書き換える)。
+    const mine = {};
+    latestRead.current = mine;
+    let list: readonly StoredRecord<T>[] | null = null;
+    try {
+      list = await getRecordStore().list<T>(collection);
+    } catch (err) {
+      reportDeviceStoreFailure('records', 'read', collection, err);
+    }
+    if (mine !== latestRead.current) return;
+    // Stryker disable next-line ConditionalExpression: 上記のとおり alive ガードは React 18 では equivalent。
+    if (alive.current) {
+      // 読めなかったときは**今持っている records を残す** —— 空に置き換えると
+      // 「入力した物が消えた」画面になり、失敗の報せより先に目に入る。
+      if (list !== null) setRecords(list);
+      setLoading(false);
+    }
+  }, [collection]);
+
+  useEffect(() => {
+    setLoading(true);
+    reload();
+  }, [reload]);
+
+  // 他の instance の書き込みを受け取る。identity を固定したいので ref に置く
+  // (毎レンダーで別の関数を購読すると、解除できずに溜まる)。
+  const reloadRef = useRef(reload);
+  reloadRef.current = reload;
+  const onExternalChange = useRef(() => {
+    void reloadRef.current();
+  });
+  useEffect(() => subscribeCollection(collection, onExternalChange.current), [collection]);
+
+  const add = useCallback(
+    async (data: T) => {
+      await reporting('save', collection, () => getRecordStore().insert<T>(collection, data));
+      await reload();
+    },
+    [collection, reload],
+  );
+
+  const addMany = useCallback(
+    async (rows: readonly T[]) => {
+      await reporting('save', collection, () => getRecordStore().insertMany<T>(collection, rows));
+      await reload();
+    },
+    [collection, reload],
+  );
+
+  const edit = useCallback(
+    async (id: string, patch: Partial<T>): Promise<boolean> => {
+      const updated = await reporting('save', collection, () => getRecordStore().update<T>(id, patch));
+      await reload();
+      return updated !== null;
+    },
+    [collection, reload],
+  );
+
+  const editIfUnchanged = useCallback(
+    async (id: string, expected: T, patch: Partial<T>): Promise<ConditionalUpdate<T>> => {
+      const result = await reporting('save', collection, () =>
+        getRecordStore().updateIfUnchanged<T>(id, expected, patch),
+      );
+      await reload();
+      return result;
+    },
+    [collection, reload],
+  );
+
+  const addIfLatest = useCallback(
+    async (expected: LatestToken | null, data: T): Promise<LatestInsert<T>> => {
+      const result = await reporting('save', collection, () =>
+        getRecordStore().insertIfLatest<T>(collection, expected, data),
+      );
+      await reload();
+      return result;
+    },
+    [collection, reload],
+  );
+
+  const applyToLatest = useCallback(
+    async (change: (current: StoredRecord<T> | null) => T | null): Promise<LatestApply<T>> => {
+      const rows = await readRecordsNow<T>(collection);
+      if (rows === null) return { status: 'unreadable' };
+      let current = latestRecord(rows);
+      for (let attempt = 0; attempt < MAX_LATEST_ATTEMPTS; attempt += 1) {
+        const data = change(current);
+        if (data === null) {
+          await reload();
+          return { status: 'declined' };
+        }
+        const basedOn = current;
+        const r = await reporting('save', collection, () =>
+          getRecordStore().insertIfLatest<T>(collection, latestTokenOf(basedOn), data),
+        );
+        if (r.status === 'saved') {
+          await reload();
+          return { status: 'saved', record: r.record, basedOn };
+        }
+        current = r.current;
+      }
+      await reload();
+      return { status: 'busy' };
+    },
+    [collection, reload],
+  );
+
+  const replaceLatest = useCallback(
+    async (expected: LatestToken, data: T): Promise<LatestInsert<T>> => {
+      const result = await reporting('save', collection, () =>
+        getRecordStore().replaceLatestIfUnchanged<T>(collection, expected, data),
+      );
+      await reload();
+      return result;
+    },
+    [collection, reload],
+  );
+
+  const remove = useCallback(
+    async (id: string) => {
+      await reporting('delete', collection, () => getRecordStore().remove(id));
+      await reload();
+    },
+    [collection, reload],
+  );
+
+  return { records, loading, add, addMany, edit, editIfUnchanged, addIfLatest, applyToLatest, replaceLatest, remove, reload };
+}

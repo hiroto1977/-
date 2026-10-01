@@ -1,0 +1,1753 @@
+#!/usr/bin/env node
+'use strict';
+
+/**
+ * Integrity Chain — リポジトリ向けの「ブロックチェーン型」改竄検知台帳。
+ *
+ * セキュリティ上重要なファイル群（保護対象 = PROTECTED）の内容を SHA-256 で
+ * ハッシュ化し、Merkle ルートに畳み込み、各ブロックが直前ブロックのハッシュを
+ * 参照する**追記専用のハッシュ連鎖**として security/integrity-chain.json に残す。
+ * Git（= それ自体が Merkle DAG）にコミットすることで、履歴は改竄不能な分散台帳と
+ * なり、CI（chain:verify）が連鎖の連続性と現状の一致を「合意検証」する。
+ *
+ * 7本の柱を束ねる防御ライヤ（詳細は docs/SECURITY_CHAIN.md）:
+ *   GitHub      … コミット＝Merkle DAG。台帳を追記コミットしてブロックを「採掘」
+ *   Linux       … ファイル内容ハッシュ＋POSIX権限を起点に決定論的に再計算
+ *   クラウド     … 台帳 JSON を外部ストレージへ複製（可用性・冗長）
+ *   Obsidian    … security/INTEGRITY_CHAIN.md として人間可読の台帳ノートを生成
+ *   Docker      … 再現可能なコンテナで chain:verify を実行＝検証の再現性
+ *   サンドボックス … Electron contextIsolation/sandbox・ブラウザ Vault 隔離
+ *   生体認証     … WebAuthn/パスキー（src/renderer/security/webauthn.ts）で解錠を門番
+ *
+ * 使い方:
+ *   node scripts/integrity-chain.cjs verify   連鎖と現状の整合を検証 (CI 用, 失敗で exit 1)
+ *   node scripts/integrity-chain.cjs append    保護対象が変化していれば新ブロックを追記
+ *   node scripts/integrity-chain.cjs show      台帳の要約を表示
+ */
+
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+
+const REPO_ROOT = path.resolve(__dirname, '..');
+const CHAIN_PATH = path.join(REPO_ROOT, 'security', 'integrity-chain.json');
+const NOTE_PATH = path.join(REPO_ROOT, 'security', 'INTEGRITY_CHAIN.md');
+const ZERO_HASH = '0'.repeat(64);
+const ALGORITHM = 'sha256';
+
+/**
+ * 保護対象ファイル（セキュリティ機構＋ガバナンスの安定資産）。
+ * 学術ループ等で頻繁に変わるデータは含めない — 変更は意図的な「採掘」を要する。
+ */
+const PROTECTED = [
+  'scripts/integrity-chain.cjs',
+  'src/renderer/security/vault.ts',
+  'src/renderer/security/dataCrypto.ts',
+  // 2026-09-12 (パス 171): `vault.ts` / `dataCrypto.ts` の鍵導出が最初に触る所を
+  // 守るために入れた。**実行時の判断を持つ** —— `crypto.subtle` が在るかを決め、
+  // 無いときに画面へ出す文を持つ。ここを書き換えて「在る」と答えさせると、
+  // 鍵導出は素の TypeError に戻り、利用者は内部 API の名前だけを見る。
+  // 除外の基準は「型だけに見えるか」ではなく「実行時に残るか」なので保護対象。
+  'src/renderer/security/webCrypto.ts',
+  'src/renderer/security/autoLock.ts',
+  'src/renderer/security/mnemonic.ts',
+  'src/renderer/security/webauthn.ts',
+  'src/renderer/security/LockScreen.tsx',
+  // 2026-09-27 (パス 493i) に足した。**閉包が教えてくれた** —— `LockScreen.tsx` の
+  // パスワード欄の Enter を、IME の変換の確定と区別する判定 (`isSubmitEnter`) へ通したので、
+  // 保護対象がこのファイルを読むようになった。中身は「その keydown は送信の Enter か」の
+  // 判定 3 つだけ (`isComposing` / `keyCode 229` / 素の比較)。書き換えて常に真を返させると、
+  // どの画面でも**打鍵 1 つで送信・解錠の試行が走る**。★ 閉包の費用は 0 —— import を持たない。
+  // ★ 保護対象は変異検査に載せる (`lint:mutation-scope` の逆向き)。
+  'src/renderer/keyIntent.ts',
+  'src/main/secrets.ts',
+  'src/main/oauth.ts',
+  // 2026-09-20 (パス 331) に足した。OAuth の `state` を比べる**定時間比較の実体**を
+  // ここへ移した (それまで main と renderer に 1 つずつ在り、UTF-8 変換が孤立
+  // サロゲートを U+FFFD へ潰すせいで実測 4,330,561 組のうち 4,192,256 組で
+  // 答えが割れていた)。`oauth.ts` と `pkce.ts` は別名を export するだけに
+  // なったので、**保護対象が呼び出し側のままでは比較の本体を書き換えても
+  // 鎖が鳴らない** —— `privateTarget.ts` を足したときと同じ形である。
+  'src/shared/constantTimeEquals.ts',
+  'src/preload/preload.ts',
+  // 2026-08-22 に足した。**関門だけ守って、関門を呼ぶ側が守られていなかった。**
+  // `shellOpenGate.ts` と `exportPaths.ts` は保護対象なのに、それらを呼び、
+  // かつ `contextIsolation` / `nodeIntegration` / `sandbox` を決め、
+  // `setWindowOpenHandler` で popup を全部拒否し、`will-navigate` の許可判定を
+  // 持ち、13 本の IPC ハンドラを登録している main.ts が入っていなかった。
+  // ここが 1 行変わるだけで、下流の関門は全部迂回できる。
+  'src/main/main.ts',
+  // 秘密を伏せる唯一の合流点 (17 箇所がここへ寄せてある)。ここが素通しに
+  // 変われば、失敗応答に混ざったトークンがそのまま画面と不具合報告に出る。
+  'src/shared/redact.ts',
+  // BYO プロキシの SSRF 関門。ブラウザ版では**全サービスのトークン**が
+  // ここを通って利用者指定の Worker へ出るので、絞りが緩むと宛先を選ばれる。
+  'src/renderer/network/proxy.ts',
+  // 2026-09-17 (パス 300) に足した。上の `proxy.ts` が持っていた**遮断表そのもの**
+  // (`isPrivateOrReservedTarget` と内部 TLD / loopback 名の一覧) を移した先。
+  // `imageUrlGate` も同じ判定を要るのに `shared → renderer` が境界で禁止されて
+  // いたため shared へ出した。`proxy.ts` は re-export だけになったので、
+  // 保護対象が `proxy.ts` のままでは**遮断表を書き換えても鎖が鳴らない**。
+  'src/shared/privateTarget.ts',
+  // 2026-09-12 (パス 191) に足した。上の `proxy.ts` の**三つ子の 3 人目** ——
+  // 週次 CI (`knowledge-auto.yml --links=400`) が出典 URL の生死を確かめるとき、
+  // 第三者の `302 Location:` で runner の網の内側へ向けられる経路を塞ぐ関門。
+  // `proxy.ts` は保護されているのにこちらは守られておらず、**冒頭が
+  // `--self-test` を名乗るのに実装が無く**、126 文のうち 18 文が一度も
+  // 実行されていなかった (名前の規則も `proxy.ts` とずれていた)。
+  // 同じ判断を持つ者のうち 1 人だけ鍵が無い、という形だった。
+  'scripts/public-host-guard.cjs',
+  // レンダラーが渡してくる書き出し先を検査する唯一の関門。business /
+  // stocks / templates / teamradar の書き出しは全部ここを通る。ここが
+  // ゆるむと、乗っ取られたレンダラーがホーム配下へ任意のファイルを
+  // 置けるようになる (2026-07 監査で 4 つの複製をここへ集約した)。
+  // 保護対象に漏れていたのに気付いたのは 2026-08-18 — 同じファイルが
+  // 変異検査の対象一覧からも漏れていた。
+  'src/main/clients/exportPaths.ts',
+  // AI 中継層。**課金される外部 API へ送る量の上限** (1 発話の長さ・件数・
+  // system の長さ) と、**どのプロバイダの資格情報を使うか**の解決がここ。
+  // ゆるむと、乗っ取られたレンダラーが利用者の鍵で好きなだけ送れる。
+  // 2026-09-01 まで 14 種の無効化を 205 行に掛けたまま変異検査の対象外で、
+  // 実測 70.73% (生存 38 / 未到達 10) だった。
+  'src/main/clients/assistant.ts',
+  // 2026-09-01: assistant.ts を保護対象へ入れたら閉包検査が 4 件出した。
+  // うち 3 件は**それ自体が壁**なので除外ではなく保護対象へ入れる ——
+  // 「どの資格情報を使うか」「どこへ送るか」「どんなヘッダで載せるか」を
+  // 決めているのはこの 3 つで、assistant.ts だけ守っても、下を書き換えれば
+  // 送り先も鍵の載せ方も変えられる。
+  'src/shared/ai/credentials.ts',
+  'src/shared/ai/providers.ts',
+  'src/shared/ai/chat.ts',
+  // 書き出し側 (exportPaths.ts) の対になる、**開く側**の唯一の関門。
+  // `shell.openPath` は OS の「開く」動詞をそのまま使うので、Windows では
+  // 拡張子の関連付け次第でそのまま実行される。ここがゆるむと、乗っ取られた
+  // レンダラーがホーム配下の任意のファイルを起動できる。
+  // 2026-08-22 まで main.ts の中の非公開関数で、テストも変異検査も無かった。
+  'src/main/shellOpenGate.ts',
+  // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
+  // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
+  // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、
+  // `setWindowOpenHandler` と `app:openExternal` の**両方の扉**が通る。
+  // 分離するまで同じ判断が main.ts に 2 つ手書きされており、片方だけしか
+  // 固定されていなかった (許可表を締めても窓側の扉は古い規則のまま開いた)。
+  'src/shared/externalUrlGate.ts',
+  // 2026-08-22 に足した。外部からの応答に置く**打ち切りと上限**の判定本体。
+  // 保護対象の `network/proxy.ts` がここへ委譲しており (それまで proxy 側に
+  // しか無かった)、`clients/types.ts` の `jsonFetch` —— SaaS 74 本が通る口 ——
+  // もここを通る。上限を 10MiB から 10GiB へ書き換えるだけで、実装を 1 行も
+  // 触らずに応答サイズの守りが消える。
+  'src/shared/httpLimits.ts',
+  // 2026-08-23 に**除外から昇格**した。それまで「型と ActionContext の形だけ。
+  // 実行時の判断を持たない」として除外していたが、**その説明は前日から嘘に
+  // なっていた** —— 打ち切り・`Content-Length` の先手の門・上限つき本文読みは
+  // すべてこのファイルの `limitedFetch` / `jsonFetch` が持つ。
+  // `httpLimits.ts` (定数) だけを守って**それを適用する側**を守らないのは、
+  // 金庫の鍵だけ固定して扉を固定しないのと同じ。`limitedFetch` から
+  // `declaredLengthExceeds` の 1 行を消すだけで上限が消える。
+  'src/main/clients/types.ts',
+  'scripts/setup-linux.sh',
+  'scripts/setup-obsidian-docker.sh',
+  'scripts/security-audit.sh',
+  /*
+   * --- 2026-08-26: 利用者の機械で強い権限で走る 3 本 ---
+   *
+   * 上の 3 本は「7 本の柱」の検証装置として保護されている (`SECURITY_CHAIN.md`
+   * の表)。以下の 3 本はそれとは別の理由 —— **`httpLimits.ts` を昇格させたときと
+   * 同じ試験**に掛かる。「1 行書き換えるだけで、実装を触らずに守りが消えるか」。
+   *
+   *   make-live-usb.sh    ブロックデバイスへ dd で焼く。システムディスク判定を
+   *                       `false` にするだけで、稼働中のディスクへ書ける
+   *   make-autoinstall.sh ログインパスワードを受け取り、**インストール時に root で
+   *                       走る** autoinstall 設定を生成する。ホスト名の検証を
+   *                       緩めるだけで early-commands を差し込める
+   *   migrate.sh          暗号化パスフレーズを受け取り、信用できない書庫を
+   *                       $HOME へ展開する。`-pass env:` を `pass:` へ戻すだけで
+   *                       平文が /proc/<pid>/cmdline (444) に載る
+   *
+   * **なぜ自己テストでは足りないか。** `src/` のファイルは検査が別ファイル
+   * (`__tests__/`) に在り、両方が変異検査に載っているので、守りだけを消せば
+   * 必ず鳴る。この 3 本の検査は**スクリプト自身の中**に在る ——
+   * 実測 (2026-08-26): ガードを `false` にし、自己テスト節を
+   * `ok "self-test 全件一致"; exit 0` へ差し替えたら、**self-test・lint:shell・
+   * chain:verify・lint:forbidden がすべて緑**になった。
+   * **証人が、証人の対象と同じ紙に書かれている。** 外側の錨は鎖しかない。
+   */
+  'scripts/make-live-usb.sh',
+  'scripts/make-autoinstall.sh',
+  'scripts/migrate.sh',
+  // 7,543 ファイルの書き込みが保管庫の外へ出ないことを決めている唯一の関門。
+  // 逃げ道 (symlink) を 2026-08-27 に塞いだ。書き出し先の封じ込めという意味で
+  // `src/main/clients/exportPaths.ts` と同じ役どころで、`vault:check` として
+  // CI でも走る。守る基準が同じなら、扱いも同じにする。
+  'scripts/safe-vault-write.cjs',
+  '.github/workflows/ci.yml',
+  // ci.yml (contents: read) は守られていたのに、**唯一 contents: write を持ち、
+  // 利用者がダウンロードするインストーラを公開する** release.yml が入って
+  // いなかった。守る順番が逆になっていた。
+  '.github/workflows/release.yml',
+  // 2026-08-22 に足した。**同じ順番の逆転がもう 1 つ残っていた。**
+  // `pages: write` + `id-token: write` を持ち、**利用者がブラウザで開いて
+  // 資格情報を入力する公開版そのものを配る** workflow。ここが 1 行変われば、
+  // 訪問者全員へ書き換えたアプリを配れる。`assets/sw.js` を「公開版のオリジンで
+  // 全てのページ読み込みに介入する」として守っているのに、**その sw.js を
+  // 置きに行く側**が守られていなかった。
+  //
+  // 残る 3 つは足していない: `e2e.yml` / `mutation.yml` は contents: read だけで
+  // 何も配らない。`knowledge-auto.yml` は issues: write を持つが、書けるのは
+  // 課題票で、配布物にも実行環境にも触れない。
+  '.github/workflows/pages.yml',
+  // 2026-08-26 に足した 3 つ。**同じ順番の逆転が、もう一段内側に残っていた。**
+  //
+  // `pages.yml` を足した理由はこう書いてある ——「sw.js を『公開版のオリジンで
+  // 全てのページ読み込みに介入する』として守っているのに、**その sw.js を
+  // 置きに行く側**が守られていなかった」。その基準をそのまま当てると、
+  // **公開する HTML そのものを作る側／書き換える側**が外に残っている。
+  //
+  //   inline-html.cjs  CSS/JS を畳んで dist/standalone.html を作る。
+  //                    全訪問者が読む単一ファイルの中身を決めるのはここ。
+  //                    ハッシュ固定した <script> 以外を弾く assertPinnedScripts も
+  //                    ここに在り、1 行外せば任意のスクリプトが載る
+  //   inject-pwa.cjs   公開直前 (pages.yml の upload 直前) に manifest /
+  //                    apple-touch-icon / SW 登録を注入する。書き換える側
+  //   manifest.webmanifest  公開オリジンへそのまま置かれる。start_url /
+  //                    scope を書き換えると、ホーム画面から開く先が変わる
+  //
+  // 出荷物への検査 (lint:sample-data --artifact / lint:artifact-csp) は
+  // **結果**を見る。鎖が見るのは「気付かぬ変更」で、役割が違う。
+  'scripts/inline-html.cjs',
+  'scripts/inject-pwa.cjs',
+  'assets/manifest.webmanifest',
+  //
+  // `vite.config.ts` は足していない。バンドルの作り方を決めるので配布経路では
+  // あるが、**通常の開発で動く**ファイルで、鎖に入れると日常の変更すべてに
+  // chain:append が要る。上の 3 つは「出す物を直接書く/置く」side で、
+  // かつ滅多に動かない —— そこが線引き。動かした結果は出荷物の検査が見る。
+  //
+  // 2026-08-28 に足した 5 本。**同じ順番の逆転が、もう一段外側に残っていた。**
+  //
+  // 保護対象の workflow が「公開してよいか」を決めるために `run:` で直接
+  // 起こす本が、1 つも守られていなかった。実測: 鎖を tip まで採掘したうえで
+  // `lint-sample-data.cjs` の `main()` 冒頭に `return 0;` を差しても
+  // **`chain:verify` は緑のまま**だった —— 出荷物に本人の個人データが
+  // 載るのを止める門を骨抜きにして、鎖が何も言わない状態である。
+  // (閉包が追うのが import / require の辺だけで、`run:` を数えていなかった。
+  //  #73 で広げたのは*言語*で、*辺の種類*ではなかった。)
+  //
+  //   lint-sample-data.cjs        出荷物に実データが載るのを止める門。
+  //                               この PR で最も重い発見 (§1) の恒久対策で、
+  //                               ci / release / pages の 3 本すべてが呼ぶ。
+  //   lint-artifact-csp.cjs       公開 HTML の CSP を**注入後の実物**に当てる。
+  //                               雛形側は shippedCsp.test.ts が留めるが、
+  //                               公開されるファイルを見るのはこちらだけ。
+  //   verify-release-artifacts.cjs 宣言した数のインストーラが出たか。
+  //                               `fail_on_unmatched_files: false` と
+  //                               `fail-fast: false` の組み合わせで
+  //                               「1 プラットフォーム欠けたリリース」が
+  //                               全ジョブ緑のまま出るのを、これだけが防ぐ。
+  //   checksum-release.cjs        公開する物の SHA-256 を同じランで書く。
+  //                               ここが黙れば「チェックサムはあります」が嘘になる。
+  //   smoke-app.cjs               梱包後に解決できない require を捕まえる
+  //                               (`--check-bundle`)。デスクトップ版が 2 週間
+  //                               起動しなかった事故の再発を止める唯一の検査。
+  //   lib/artifact-freshness.cjs  成果物が材料より古ければ止める判定 (8 つの道具が
+  //                               共有 · パス 305 で exp:* 3 本を足した)。2026-09-17 (パス 304) に smoke-app.cjs が
+  //                               読むようになって閉包に入った。ここが `process.exit(0)`
+  //                               に書き換わると smoke:app は**何も検査せずに緑**を
+  //                               返せる (run() の先頭で呼ぶ) —— 守っている検査を
+  //                               黙らせられる物は、除外ではなく保護対象。
+  'scripts/lint-sample-data.cjs',
+  'scripts/lib/population-floor.cjs',
+  //   lib/tracked-cross-check.cjs  追跡ファイルの一覧と走査を突き合わせる判定
+  //                               (2026-09-25 · パス 471 · 木を歩く 6 ゲートが共有)。
+  //                               `lint-sample-data.cjs` (保護対象) が読むので
+  //                               **閉包に入る** —— ここが `missing: []` を返すように
+  //                               書き換わると、走査が一部だけ死んでも 6 ゲートが緑になる。
+  'scripts/lib/tracked-cross-check.cjs',
+  'scripts/lint-artifact-csp.cjs',
+  'scripts/verify-release-artifacts.cjs',
+  'scripts/checksum-release.cjs',
+  'scripts/smoke-app.cjs',
+  'scripts/lib/artifact-freshness.cjs',
+  // electronFuses (runAsNode / NODE_OPTIONS / inspect / cookie 暗号化) の置き場。
+  // `runAsNode: true` に戻すだけで、署名済みの自分自身を Node として起動して
+  // アプリとして `safeStorage.decryptString` を呼べる状態に戻る。
+  'electron-builder.json',
+  /*
+   * **束ねる側の設定** (2026-09-20 · パス 347)。梱包設定 (`electron-builder.json`) は
+   * 2026-08 から守られていたのに、**出荷 HTML の中身を決める `vite.config.ts` は
+   * 走査も封緘もされていなかった** —— `lint:forbidden` の `SCAN_ROOTS` は
+   * ディレクトリの一覧で、リポジトリ直下のファイルはどの根にも入らないため。
+   * 対照 (同日実測): `vite.config.ts` へ任意コード実行 (invariant #9 の綴り) を植えると
+   * `lint:forbidden` / `lint:imports` / `lint:network-targets` / `chain:verify` が
+   * **すべて exit 0** だった。
+   *
+   * 3 本とも鎖の基準どおりの「安定したガバナンス資産」である (実測: 全履歴で
+   * `vite.config.ts` 2 / `vitest.config.ts` 2 / `eslint.config.js` 1 コミット)。
+   * 相対 import は 0 件なので閉包の費用も 0。
+   */
+  'vite.config.ts',
+  // 検査の走り方 (環境・除外・カバレッジ)。exclude を 1 行足すだけで、
+  // 落ちるはずの検査が黙って母集団から外れる。
+  'vitest.config.ts',
+  // 定期点検の道具だけを拾う config (パス 441)。`include` を書き換えれば
+  // 走査そのものが黙って別の物になる —— 「壊れた 1 行の下で 74 画面が投げるか」を
+  // 走らせるのはここが指す 1 ファイルだけなので、`vitest.config.ts` と同じ理由で守る。
+  'vitest.audit.config.ts',
+  // lint の規則。冒頭が自分で「型の誤りを捕まえる網は typecheck 1 つ」と
+  // 宣言しているとおり、ここが緩むと残りの網も同時に緩む。
+  'eslint.config.js',
+  'docs/SECURITY_CHAIN.md',
+  // Service Worker は公開版のオリジンで**全てのページ読み込みに介入**する。
+  // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
+  // 応答を返せる。保護対象として最も効く部類なのに漏れていた。
+  'assets/sw.js',
+  // 2026-09-26 (パス 480) に足した。**公開サイトの根を組み立てる script。**
+  // `pages.yml` は `dist/landing.html` を `_site/index.html` として publish するので、
+  // ここが出す HTML が **`https://<owner>.github.io/<repo>/` を開いた人が最初に見る物**
+  // である。どのビルドへ送るか・何を勧めるか・どの数を名乗るかを単独で決める。
+  //
+  // **守る順番が逆になっていた** —— 公開 HTML を*飾る* `scripts/inject-pwa.cjs` と
+  // `assets/manifest.webmanifest` は 2026-09-21 (パス 363) から保護対象なのに、
+  // **その HTML を作る側**が外に居た (パス 349 が `docs/PROXY_EXAMPLE.md` について
+  // 直したのと同じ非対称)。churn も同じで、実測 3 コミット ↔ inject-pwa も 3 コミット。
+  //
+  // パス 480 の実測がその重さを示している: この 1 ファイルの href が 81 件のうち
+  // 76 件を `app.html` へ向けており、スマホ向けに publish した `lite.html` は
+  // 言及 0 件だった。入口が何を勧めるかは、そこだけで決まっている。
+  'scripts/build-landing.cjs',
+  // 2026-09-26 (パス 480) に足した。**閉包の検査が見つけた 3 つ目** ——
+  // `scripts/build-landing.cjs` を保護対象へ入れた瞬間に鎖が
+  // 「保護対象が `scripts/lib/json-for-script.cjs` を読んでいるのに、そちらは
+  // 保護対象でも除外台帳でもない」と鳴った (パス 402 / 410 と同じ形で、
+  // **判定が保護の外へ出ていた**)。
+  //
+  // 中身は `</` + `script>` の閉じ込みを防ぐ関門である: `JSON.stringify` は `<` を
+  // escape しないので、埋め込む値がその並びを含むと inline script がそこで終わり、
+  // 残りが markup として DOM へ漏れて頁の JS が死ぬ (この repo が 2026-07 に
+  // inject-pwa 経由で実際に踏んだ「アプリの代わりにコードの壁が出る」失敗)。
+  // `replaceToken` は `String.replace` の `$&` 置換も止める。
+  //
+  // 読み手は実測 7 本 —— landing・デモ 3 本・配る maker 3 本で、
+  // **公開する HTML と配る HTML のほぼ全部**がここを通る。churn は 1 コミット。
+  'scripts/lib/json-for-script.cjs',
+  // 2026-09-20 (パス 349) に足した。**`assets/sw.js` と同じ基準が、もう 1 つに
+  // 当てはまったまま残っていた。** `docs/PROXY_EXAMPLE.md` は散文ではなく
+  // **利用者が自分の Cloudflare へ貼り付けて動かすプログラム**で、貼られた後は
+  // 利用者の `Authorization` を上流の SaaS へ中継する経路そのものに座る。
+  // ここが 1 行変われば、資格情報の前に立つ関門 (許可リスト / 平文 http の拒否 /
+  // 解決後 IP の判定 / 転送の再検査) を書き換えて配れる。
+  //
+  // アプリ側の双子 `src/renderer/network/proxy.ts` は 2026-09-20 (パス 345) から
+  // 保護対象なのに、**実際に要求を投げる側**が外に居た —— `proxyWorkerParity` の
+  // docblock 自身が「実際に要求を投げるのは Worker のほうで、client の検査は
+  // 先回りの親切にすぎない」と書いている。守る順番が逆になっていた
+  // (`release.yml` / `pages.yml` を足したときと同じ逆転)。
+  //
+  // 文書だが、中身はコードである。パリティ検査は md から関数を切り出して
+  // **実際に走らせて**おり (パス 349 で 8 本すべて)、扱いは既にコードと同じ。
+  'docs/PROXY_EXAMPLE.md',
+  // 2026-09-21 (パス 370) に足した。**セッション開始のたびに走るコマンドを決める設定。**
+  // `hooks.SessionStart` の `command` は Claude Code が起動のたびに実行し、
+  // `mcpServers` の 25 件は `npx -y` / `uvx` で**その時の最新**を取って走らせる。
+  // つまりこのファイルは「どのコードが手元で走るか」を単独で決める。
+  //
+  // 走る側 (`scripts/session-context.cjs`) は `lint:forbidden` が走査し
+  // 子プロセスを作る例外まで台帳に載っているのに、**どれを走らせるかを決める
+  // 設定**が鎖の外に居た —— パス 347 (`vite.config.ts`) / パス 349
+  // (`docs/PROXY_EXAMPLE.md`) と同じ「守る順番の逆転」である。
+  //
+  // 対照 (2026-09-21 実測): hook のコマンドを
+  // `node -e "require(process.env.HOME+'/.evil.js')"` に替えると
+  // **`verify:all` の 37 ゲートすべてが exit 0**・`chain:verify` も exit 0 だった。
+  // 門は同日 `lint:mcp-servers` をファイル全体へ広げて塞いだが、
+  // 門と鎖は別の仕事をする (門は形を見る・鎖は**変わったこと自体**を見る)。
+  //
+  // 安定資産の基準も満たす: 全履歴で **1 コミット** (パス 347 と同じ測り方)。
+  '.claude/settings.json',
+  // 2026-09-21 (パス 372) に足した。**エージェントへ常時注入される指示書。**
+  // `alwaysApply: true` の 2 本 (`00-project` / `20-gates`) は Cursor を使う人の
+  // **すべてのセッションに注入**され、残り 2 本も `globs` に合う編集で注入される。
+  // 走るコードを選ぶわけではないが、**コードを書く側を steering する** ——
+  // 「この禁止は緩めてよい」「このゲートは回さなくてよい」と 1 行足すだけで、
+  // 次にこの repo を触るエージェントはその前提から判断する。
+  //
+  // 実測 (2026-09-21): `20-gates.mdc` は `verify:all` を **「13 ゲート全部」**と
+  // 書いていた (実物 37)。**24 ゲート分古い前提が、毎セッション注入されていた。**
+  // 皮肉なことに、その 3 行下で同じファイルが「ゲートを足したら ci.yml にも足すこと」と
+  // 正しく述べている —— 規則は知っていたのに、自分の数は誰も見ていなかった。
+  // `00-project.mdc` のサービス数だけは `lint:docs` が 2026-08 から見ており、
+  // **同じ木の中で片方の数字だけが機械に載っていた**。
+  //
+  // 数の古びは `verify:arch` のライブメトリクスで塞いだ (パス 372)。鎖が見るのは
+  // **散文そのものが変わったこと** —— 機械には判断できない「指示の中身」の側である。
+  // 安定資産の基準も満たす: 全履歴で 2 / 1 / 1 / 1 コミット。
+  '.cursor/rules/00-project.mdc',
+  '.cursor/rules/10-boundaries.mdc',
+  '.cursor/rules/20-gates.mdc',
+  '.cursor/rules/30-conventions.mdc',
+
+  // --- 2026-08-22: 保護対象が import している側 (下の checkProtectedClosure) ---
+  //
+  // 保護しているファイルが**判断の材料をよそから読んでいる**なら、材料の方も
+  // 守らないと意味が無い。main.ts を足したときと同じ形 (関門だけ守って、
+  // 関門を呼ぶ側が守られていなかった) が、今度は逆向きに残っていた。
+  //
+  // 保管庫の強度そのもの。`PBKDF2_ITERATIONS` を 600k から 1000 に落とすだけで
+  // vault.ts / dataCrypto.ts は**そのまま**弱くなる (どちらも保護対象なのに、
+  // 読んでいる数字が保護対象でなかった)。IV 長・ハッシュも同じ。
+  'src/shared/cryptoParams.ts',
+  // 復元フレーズの語彙。mnemonic.ts は保護対象だが、語彙を差し替えられれば
+  // エントロピーの空間ごと縮む (2048 語を 16 語にすれば総当たりで開く)。
+  'src/renderer/security/bip39-wordlist.ts',
+  // BYO プロキシ URL の検証。proxy.ts を「全サービスのトークンが通る口」
+  // として守っているのに、その URL を「https か loopback だけ」に絞る判断が
+  // ここに在って守られていなかった。緩めれば平文 http で任意のホストへ出せる。
+  'src/shared/proxyEndpoint.ts',
+  // 保存済み資格情報から Authorization に載せる値を決める唯一の場所。
+  // 壊れた TokenSet を raw に落とすと **refresh token が相手に出る**
+  // (2026-08-20 に実際に踏んだ形)。secrets.ts が読む先。
+  'src/shared/vaultToken.ts',
+  // 暗号化された資格情報ファイルがディスクに載る経路 (secrets.ts の書き込み)。
+  // 一時ファイルの置き場と `.prev` の扱いを決めるので、ここが変われば
+  // 平文や旧世代が予期しない場所に残りうる。
+  'src/main/atomicWrite.ts',
+  // ハードリセット (2026-09-09 · パス 137): main のファイル (トークン・状態ファイル・控え・残骸) を消す手順と、
+  // 両ビルドの報告の型・文面。消す先が黙って変わらないこと。
+  'src/main/eraseAll.ts',
+  'src/main/windowPrefs.ts', // 窓の下地色の関門 (#rrggbb だけを setBackgroundColor へ) と配色の保存。eraseAll が在庫として読む (パス 318)
+  'src/main/stateFile.ts',   // 状態ファイルの読みの門 (stat の前門 + 16 MiB の後門・パス 313)。windowPrefs (保護対象) が読む
+  'src/shared/eraseReport.ts',
+  // IPC 境界で資格情報の文字列を検査する唯一の場所 (main.ts が読む)。
+  // 制御文字・長さ・空を落としているので、緩めば折り返しごと保存される。
+  'src/shared/tokenInput.ts',
+  // 認可サーバのトークン端点の応答を検証する唯一の場所 (2026-09-14 · パス 260)。
+  // `oauth.ts` / `pkce.ts` (どちらも保護対象) が読む先で、閉包の検査が
+  // 足した当日に浮かせた。ここが全部通すようになれば、`access_token` の
+  // 検査も `refresh_token` の型も消える —— **働いている更新トークンが
+  // 応答 1 つで置き換わり、以後そのサービスは 401 のままになる** (実測)。
+  'src/shared/tokenResponse.ts',
+  // ↓ この 2 つは閉包の検査が**最初の実行で見つけた**もの。
+  //   proxyEndpoint.ts を保護対象にした途端、それが読んでいる側が浮いた。
+  //
+  // 「平文 http を許すのは loopback だけ」の判定そのもの (isLoopbackHostname)。
+  // proxyEndpoint.ts / aiEndpoint.ts の両方がこれを唯一の出典にしているので、
+  // ここが全部 true を返すようになれば **資格情報が平文で任意のホストへ出る**。
+  // AI 提供元の endpoint 検証 (API キーの送り先) 本体でもある。
+  'src/shared/aiEndpoint.ts',
+  // 制御文字の判定。URL / ヘッダの分断を止める共通の一段目で、
+  // proxy / AI endpoint / Atlassian site / 資格情報入力が全部ここを通る。
+  'src/shared/controlChars.ts',
+  // 「`Headers` がこの名前 / この値を受理するか」の唯一の出典 (2026-09-16 · パス 296)。
+  // ここも閉包の検査が足した当日に浮かせた —— `tokenInput.ts` / `proxyEndpoint.ts` /
+  // `network/proxy.ts` (いずれも保護対象) が読む先である。
+  //
+  // 全部 true を返すようになれば、**資格情報と共有秘密の入口が丸ごと開く**:
+  // 途中に CRLF を含む値が保存でき、要求の組み立てで throw し、その例外文には
+  // 秘密が平文で載る (実測: `Headers.append: "sk-…\r\nX-Injected: 1" is an
+  // invalid header value.`)。正規化の側が恒等関数になれば、保存した秘密と
+  // 送る秘密が食い違い、認証は必ず落ちるのに画面は「保存した」と言う。
+  'src/shared/headerValue.ts',
+  // レコードを封緘するか素通しするかを決める唯一の場所。`dataCrypto.ts` を
+  // 守っても、**呼ぶ側が黙って `IDENTITY_CIPHER` を返せば平文で保存される** ——
+  // 画面は「暗号化は有効」と言い続けるので、外からは見分けが付かない。
+  // 逆向きの閉包 (保護対象を import している側) を測って見つけた。
+  // 54 行・半年で 1 回しか変わっておらず、これ自身の依存も全部保護済み。
+  'src/renderer/data/recordCipher.ts',
+  // 2026-08-25 追加。**2 つの台帳が食い違っていた。**
+  // `lint:mutation-scope` の `MUST_MEASURE` (必ず変異検査に載せる壁) と
+  // この `PROTECTED` は、どちらも「これは壁だ」と言う名簿なのに 15 件ずれていた。
+  // 変更頻度を測ると (60 日): web-shim だけが 23 回・1518 行で、残りは
+  // 1〜6 回・51〜528 行の安定資産だった。**採掘の手間は「頻繁に変わるもの」を
+  // 避けるためのもので、安定した壁を外す理由にはならない。**
+  'src/renderer/security/frameGuard.ts',    // 枠の中では描画しない (CSP で代替できない)
+  'src/renderer/security/lockWorkspace.ts', // 施錠で鍵をメモリから落とす本体
+  'src/shared/imageUrlGate.ts',             // 第三者画像 URL のスキーム関門
+  'src/shared/safeFilename.ts',             // ファイル名の唯一の関門
+  'src/shared/atlassianSite.ts',            // テナント名の検証 (送り先が変わる)
+  'src/shared/scanTarget.ts',               // 走査先の検証
+  'src/shared/escape.ts',                   // 出口のエスケープ
+  // 2026-09-13 (パス 195) に足した。**ここも保護の閉包が教えてくれた。**
+  // 入力の天井を「文字」で数え・文字境界で切る唯一の場所にしたので、
+  // `vault.ts` (トークンの天井)・`pkce.ts` (認可コードの天井)・`localWrite.ts`
+  // (保存失敗の理由の切り詰め) が読むようになり、`chain:verify` が
+  // 「保護対象が保護されていない物を読んでいる」と鳴らした。黙って
+  // `countChars` を `length` へ戻されると、**述べる数と守る数がずれ**、
+  // 天井の半分で断る / 孤立サロゲートを保存側へ渡す状態に戻る。
+  'src/shared/inputCeiling.ts',             // 天井を数える・切る唯一の場所 (単位は「字」)
+  /*
+   * 2026-09-26 (パス 477) に**除外台帳から移した**。除外の理由は「AI へ送る量の上限の
+   * 定数のみ (判断は呼び出し側が持つ)」で、注記は「ここを書き換えたときの最悪は
+   * 『上限の値が変わる』——それは値の変更であって、関門の迂回ではない」と述べていた。
+   * **どちらも偽だった。** 実行時に残る export は定数 6 に加えて関数 3 つ ——
+   * `latestTurnTooLong` (断るかを決める述語) / `inputTooLongMessage` (断りの文) /
+   * `capAssistantReply` (返答の天井)。前者は 3 つの enforcement 点が読む**唯一の**述語で
+   * (`main/clients/assistant.ts` の throw と `web-shim.ts` の 2 つの err)、実測で
+   * `return false` を先頭に足すと 5 万字の入力が 3 点とも通る = **関門の迂回そのもの**。
+   * `capAssistantReply` は `httpLimits.ts` が「10 万字で切るので、それを超えて読んだ分は
+   * 必ず捨てる」と明示的に依存している。
+   * ★ これは台帳自身が記録している過去の誤り (`clients/types.ts` は「型だけ」と
+   *   書いてあったが実行時の判断を持っていた · 2026-08-23) の **2 件目**である。
+   */
+  'src/shared/assistantLimits.ts',     // AI へ送る量の関門 (述語 latestTurnTooLong と返答の天井)
+
+  // 2026-09-15 (パス 287) に足した。**数える助けは封緘されているのに、
+  // 何を数えるかの表が封緘されていなかった。**
+  //
+  // 実測: `writeFieldLimits.ts` は実行時に残る export を **37 件**持ち
+  // (型だけではない)、**両ビルドの実装 14 ファイル**が読む ——
+  // main の client 11 本 (slack / github / calendar / gmail / drive / canva /
+  // notion / atlassian / wordpress / cloudflare / shopify)・ブラウザ版の
+  // `data/saasWriteWeb.ts`・`shared/api/microsoft365.ts`・
+  // `shared/voiceWriteRequirements.ts`。中身は**利用者の資格情報で第三者へ
+  // 書き込む手前の欄の判定**で、欄ごとの天井・型・CR/LF/NUL の拒否・
+  // 断りの文面を持つ (パス 110/111/183/283/285 が積み上げた)。
+  //
+  // ここを緩めると、`inputCeiling.ts` (保護対象) が字を正しく数え続けても
+  // **数える対象の上限が消える** —— 2026-08-22 の注記が言う
+  // 「関門だけ守って、関門を呼ぶ側が守られていなかった」の**裏返し**で、
+  // こちらは関門そのものが外に在った。
+  //
+  // ★ **閉包の費用は 0** —— このファイルの import は `./inputCeiling` の
+  // `countChars` **1 本だけ**で、それは既に保護対象である (実測)。
+  // 除外台帳に 1 行も足す必要が無い。
+  //
+  // なお、これはパス 286 が「閉包の穴ではなく独立した merit の問い」として
+  // 残した項目である。閉包の検査は範囲の外について何も主張していない ——
+  // だから閉包を責めずに、**中身の重さで**入れる。
+  'src/shared/writeFieldLimits.ts',         // 第三者へ書く欄の判定 (天井・型・CR/LF・断りの文)
+  // 2026-09-27 (パス 493d) に足した。**パス 287 が同じ理由で `writeFieldLimits.ts` を
+  // 入れたとき、その隣の双子を残していた** —— パス 285 の記録が「`advisorQuestionLimits.ts`
+  // は保護対象にも除外台帳にも無い」と書き、パス 287 は前者だけを閉じた (鎖の JSON に 0 件)。
+  //
+  // 中身は**利用者の資格情報で有料 API (Anthropic) へ送る手前の判定**で、
+  // 質問の天井 (1000 字・`countChars` で数える)・CR/LF/NUL の拒否 (要求本文とログの行を
+  // 割らせない)・銘柄の母集団の天井 (25 件 / 1 件 16 字)・断りの文 3 つ・
+  // 鍵が無いときの断り を持つ。読み手は両ビルドに在る —— main の
+  // `clients/{business,stocks,emotions}.ts` (IPC の**信頼境界**)・ブラウザ版の
+  // `web-shim.ts`・`StocksPage` / `BusinessPage`・`watchlistState.ts`。
+  // `checkAdvisorQuestion` の先頭に `return null` を 1 行足すと、main の 2 経路は
+  // 乗っ取られたレンダラーが**利用者の鍵で任意の長さ・任意の改行の本文**を送れる形に戻る。
+  //
+  // ★ **閉包の費用は 0** —— import は `./inputCeiling` の `countChars` **1 本だけ**で、
+  // それは既に保護対象である (writeFieldLimits と同じ形・実測)。
+  // ★ 保護対象は変異検査に載せる (`lint:mutation-scope` の逆向き) —— 実測
+  // **100.00% (Killed 29 / 生存 0 / 未到達 0)** を確かめてから `mutate` へ足した (302 → 303)。
+  'src/shared/advisorQuestionLimits.ts',    // 有料 API へ送る質問の判定 (天井・CR/LF・母集団・断りの文)
+  'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
+  'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
+  // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が
+  // 保存の失敗の種別を文面へ写すため `localWrite.ts` を読むようにしたところ、
+  // `chain:verify` が「保護対象が保護されていない物を読んでいる」と鳴らした。
+  // ここは localStorage 書き込みの**唯一の入口**で、容量超過 / 保存禁止 /
+  // その他の切り分けと利用者へ出す文面を持つ —— 黙って書き換えられると、
+  // 端末が保存を断っていることが**画面から消える** (2026-09-06 のパスで直した
+  // 「押しても何も出ない」がそのまま戻る)。import は 0 件なので閉包は閉じる。
+  'src/renderer/data/localWrite.ts',        // localStorage 書き込みの唯一の入口と失敗の文面
+  'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
+  'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
+  'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
+  'src/shared/ollama.ts',                   // Ollama の接続先判定
+  'src/shared/versionOrder.ts',             // 版の順序 (プレリリース) — ollama.ts の CVE 判定が読む
+  // 2026-09-22 (パス 408) に足した。**ここも保護の閉包が教えてくれた** (パス 402 と同じ形)。
+  //
+  // `shared/ollama.ts` の `normalizeModels` が、モデル一覧の**更新日**を
+  // 「読めるか」で判定するようになった —— 相手 (利用者が設定した Ollama ホスト) が
+  // 名乗る文字列を画面へ生で通さないための関門で、その判定の本体はこの 2 本に在る:
+  //   `isoDate.ts`   … `parseTimestamp` (読めない / 桁外れは null・MAX_TIMESTAMP_MS)
+  //   `localDate.ts` … `localIsoDate`   (UTC で切ると JST の 0〜9 時が前日になる)
+  //
+  // 黙って `parseTimestamp` を `new Date(v)` へ戻されると `Invalid Date` が
+  // 素通りし、`localIsoDate` の NaN の床を外されると `NaN-NaN-NaN` が日付欄に出る
+  // —— **どちらも「読めなかった」を「読めた」として画面へ出す**側の変更である。
+  // どちらも安定資産 (全履歴 6 / 2 コミット・パス 347 の基準)。
+  // ★ 閉包の費用は 0 —— この 2 本の import は 0 件 (実測)。
+  'src/shared/isoDate.ts',                  // 日付・時刻を読む唯一の場所 (読めなければ null)
+  'src/shared/localDate.ts',                // 瞬間 → 利用者の時計の YYYY-MM-DD (UTC で切らない)
+];
+
+/**
+ * **保護対象が import しているのに保護しない**と決めたものの台帳。
+ *
+ * 空欄にできない形にしてある — 除外するなら理由を書く。理由の書けない
+ * 除外は、単に見落としと区別がつかない。
+ *
+ * 台帳は**双方向**: ここに載っているのに実際は依存されていない (または既に
+ * 保護対象になった) 項目も鳴らす。片方向だと、依存が消えた後も除外だけが
+ * 残り続ける。
+ */
+const DEP_EXCLUSIONS = {
+  // ハードリセット (main/eraseAll.ts · パス 137) が読むのは**置き場所の関数**だけ (storePath / defaultStatePath /
+  // defaultDashboardPath)。置き場所が変われば消す先も同じに変わる (在庫は綴りを写さない)。中身の変更で消す対象は
+  // 変わらない。名前は `main/__tests__/eraseAll.test.ts` (6 つ) と封緘の台帳 `atRestPolicy.test.ts` が留める。
+  'src/main/clients/emotions.ts': 'ハードリセットが読むのは置き場所の関数 storePath だけ (上の注記)。',
+  'src/main/clients/talent.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/teamradar.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/stocks.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath / defaultDashboardPath だけ (上の注記)。',
+  'src/shared/serviceId.ts':
+    'サービスを 1 つ足すたびに変わる (件数は書かない —— 上の注記に経緯)。'
+    + 'かつ、この一覧自体は関門ではない — '
+    + '未知の id を弾いているのは SERVICE_ID_SET を使う isServiceId で、'
+    + 'id を足しただけでは LIVE_FETCHERS の起動時不変条件が throw する。',
+  'src/main/clients/index.ts':
+    'サービス追加のたびに変わる登録簿 (件数は書かない —— 上の注記に経緯)。'
+    + '中身は各 client への振り分けで、'
+    + '判断は各 client と main.ts 側の検証が持つ。',
+  // **本当に型だけ**のファイル。`export` は `interface` が 1 つで、
+  // 実行時には何も残らない (TypeScript が消す)。ここを書き換えても
+  // 生成される JS は 1 バイトも変わらないので、鎖で守る意味が無い。
+  //
+  // `clients/types.ts` の除外を 2026-08-23 に外したのと同じ基準で判断した ——
+  // あちらは「型だけ」と書いてあったが**実行時の判断を持っていた**。
+  // 除外の理由は「型だけに見えるか」ではなく「実行時に残るか」で決める。
+  'src/shared/advisorTypes.ts':
+    '実行時に残らない型定義のみ (interface 1 つ)。書き換えても生成 JS が変わらない。',
+  // 2026-09-09 (パス 116): assistant.ts の閉包で出てきた。action の戻り値の形の台帳 —— 
+  // interface と type だけで、`import type` でしか読まれない。advisorTypes.ts と同じ基準 (実行時に残らない)。
+  'src/shared/actionData.ts':
+    '実行時に残らない型定義のみ (action の戻り値の形の台帳)。書き換えても生成 JS が変わらない。',
+  // 2026-08-25: 保護対象へ入れようとして、**ここに既に在ることに気付いた**
+  // (閉包検査が「二重管理」で鳴った)。過去の判断を尊重して除外のままにするが、
+  // 理由の書きぶりは実態に寄せる —— このファイルは版の比較だけでなく、
+  // **案内先 URL のホスト検証**も持つ (`parseLatestRelease`)。
+  // それでも除外でよいのは、OS に URL を開かせる可否を決めるのは
+  // `externalUrlGate.ts` (保護対象) であって、ここはその手前の一段だから。
+  'src/shared/updateCheck.ts':
+    '版の比較と案内先 URL のホスト検証。書き換えの最悪は「更新があるのに気付かせない」で、'
+    + '実際に開いてよいかは externalUrlGate (保護対象) が決め、配布経路は release.yml (保護対象) が持つ。',
+  // 2026-08-25: `liveRead.ts` を保護対象へ入れたら閉包で出てきた。
+  // サービス API のアダプタ (エンドポイントと応答の正規化) で、`clients/index.ts`
+  // を除外したのと同じ class である。送り先が変数で決まる通信は
+  // `lint:network-targets` の台帳が見ており、上限と打ち切りは `httpLimits`
+  // (保護対象) が持つ。
+  'src/shared/api/cursor.ts':
+    'サービス API のアダプタ。送り先は定数で lint:network-targets の台帳が見ており、'
+    + '上限・打ち切りは httpLimits (保護対象) が持つ。',
+};
+
+/** 相対 import を実ファイルへ解決する (拡張子省略に対応)。解決できなければ null。 */
+function resolveRelativeImport(fromRel, spec) {
+  if (!spec.startsWith('.')) return null;
+  const base = path.join(path.dirname(fromRel), spec);
+  // 末尾の `''` は「綴りが既に拡張子を持っている」場合 (`require('./x.cjs')`)。
+  // ディレクトリに当たらないよう、ファイルであることまで確かめる —— これが
+  // 無かったため `inject-pwa.cjs` の require は解決できず、黙って飛ばされていた。
+  for (const ext of ['.ts', '.tsx', '/index.ts', '.js', '.cjs', '']) {
+    const abs = path.join(REPO_ROOT, base + ext);
+    if (fs.existsSync(abs) && fs.statSync(abs).isFile()) return (base + ext).split(path.sep).join('/');
+  }
+  return null;
+}
+
+/**
+ * 保護対象の **閉包** を確かめる。
+ *
+ * 守っているファイルが判断の材料をよそから読んでいるなら、材料の方も守らないと
+ * 保護は素通しになる。2026-08-22 の走査で 10 件見つかり、うち 6 件は
+ * **保管庫の反復回数 (600k)・BIP-39 の語彙・プロキシ URL の検証**のように
+ * 「そこが変わればこちらの保護が意味を失う」ものだった。
+ *
+ * 一覧が手書きである以上、増えたときに気付ける形が要る。判定は
+ * 「保護対象が直接 import している相対パスは、保護対象か除外台帳のどちらかに
+ * 載っていること」。除外台帳は双方向 (使われていない除外も鳴らす)。
+ *
+ * 直接の import だけを見る (推移閉包は追わない) —— 深追いすると
+ * 「型だけの import」まで巻き込んで台帳が実用にならないため。
+ * 段を 1 つ増やしたければ、増えた先が次の verify で鳴る。
+ *
+ * @returns 問題の説明の配列 (空なら健全)
+ */
+/**
+ * 1 ファイルが読んでいる相対パスの列。**言語ごとに綴りが違う**。
+ *
+ * 2026-08-27 まで、閉包検査は `.ts|.tsx` 以外を丸ごと飛ばしていた。保護対象
+ * 55 件のうち 16 件 —— `.cjs` 3 件・`.sh` 6 件・ワークフロー 3 件・`sw.js`
+ * ほか —— が「中身は守るが、何を読んでいるかは見ない」状態だった。上の注記が
+ * 約束していること (材料の方も守らないと保護は素通し) が、29% に効いていない。
+ *
+ * 実害は今のところ無い —— 走査したところ、飛ばされていた 16 件が読んでいる
+ * リポジトリ内のファイルは `inject-pwa.cjs → inline-html.cjs` の 1 本だけで、
+ * それは既に保護対象だった。**偶然そうだっただけ**なので、次に誰かが助けを
+ * 別ファイルへ切り出したときに鳴る形にしておく。
+ */
+function dependencySpecs(text, kind) {
+  const out = [];
+  if (kind === 'esm') {
+    for (const m of text.matchAll(/^\s*(?:import|export)[\s\S]*?from\s+'([^']+)'/gm)) out.push(m[1]);
+    return out;
+  }
+  if (kind === 'workflow') {
+    /*
+     * **workflow が `run:` で直接起こす本**を辺として数える。
+     *
+     * 2026-08-28 に測って分かったこと: `release.yml` は保護対象なのに、
+     * それが「公開してよいか」を決めるために呼ぶ本は 1 つも守られておらず、
+     * `lint-sample-data.cjs` (個人データが出荷物に載るのを止める門) の
+     * `main()` 冒頭に `return 0;` を差しても **`chain:verify` は緑のまま**
+     * だった。閉包が追っていたのは import / require の辺だけで、
+     * **辺の種類**が足りていなかった (#73 で広げたのは*言語*のほうだった)。
+     *
+     * `npm run X` は辿らない。package.json 越しの間接なので追えなくはないが、
+     * `verify:all` から 34 本が芋づるで入り、鎖が「編集のたびに採掘し直す」
+     * だけの装置になる。そして**直接呼びを `npm run` へ書き換える**には
+     * 保護対象の workflow 自身を触ることになり、そちらが鳴る ——
+     * つまり逃げ道にはならない。追わない理由はそこに在る。
+     */
+    for (const m of text.matchAll(
+      /(?:^|[\s;&|(])(?:node|bash|sh|python3?)\s+((?:scripts|orchestration)\/[A-Za-z0-9_./-]+)/g,
+    )) {
+      out.push(m[1]);
+    }
+    return out;
+  }
+  for (const m of text.matchAll(/\brequire\(\s*['"]([^'"]+)['"]\s*\)/g)) out.push(m[1]);
+  for (const m of text.matchAll(/\bimportScripts\(\s*['"]([^'"]+)['"]\s*\)/g)) out.push(m[1]);
+  return out;
+}
+
+/*
+ * **保護対象から外れた記録** (2026-09-26 · パス 475)。
+ *
+ * ここまでの検査はどれも「**今の** `PROTECTED` が tip と合っているか」を見る。
+ * だから名前を 1 つ消して `chain:append` を回すと、**新しい tip がその 93 件で
+ * 作り直され、`chain:verify` は exit 0 になる** (2026-09-26 実測:
+ * `vite.config.ts` を落として append → 「保護対象 93 ファイルが tip と一致」)。
+ * 閉包の検査も、その名前を**他の保護対象が読んでいなければ**何も言わない。
+ *
+ * ★ **証拠は鎖がもう持っている** —— ブロックは `leafCount` と `note` を持ち、
+ * どちらも `blockHash` に入るので**後から書き換えられない**。読む物が無かった
+ * だけである。実測 (263 ブロック · 2026-09-26):
+ *
+ * | 合図 | 見つかったブロック |
+ * | --- | --- |
+ * | `leafCount` が減った | #89 (50 → 49) |
+ * | `note` に `-名前` | #67 (**delta 0**) / #89 |
+ *
+ * ★★ **#67 は件数では見えない** —— 同じ append で 1 件出て 1 件入ったので
+ * `leafCount` は動かない。**数だけを見る門はこの形に盲目**で、だから合図は 2 つ要る。
+ *
+ * 今日の 2 件はどちらも正当だった (#67 は `renderer/security/` →
+ * `shared/` への移動・#89 は除外台帳への移動) が、**それを確かめた物は
+ * 何も無かった**。`kind` を機械で検めるのはそのため —— 理由の散文だけだと
+ * 「移った」と書いて実は消えていても通る。
+ */
+const DECLARED_REMOVALS = {
+  67: {
+    removed: ['externalUrlGate.ts'],
+    kind: 'moved',
+    why: '外部 URL の関門を src/renderer/security/ から src/shared/ へ移した回。'
+      + 'basename が同じなので note には「変更」と「削除」が並んで出ている (実測)。',
+  },
+  89: {
+    removed: ['updateCheck.ts'],
+    kind: 'to-exclusions',
+    // ★ `to-exclusions` は **それ自身では何も証明しない** —— 述語が見るのは
+    //   「その名前が DEP_EXCLUSIONS に在るか」で、それは移した本人がやったことである。
+    //   だから `heldBy` (判断を今持っている保護対象) を名乗らせ、機械で
+    //   「それが保護対象であること」と「本当にこのファイルを読んでいること」を確かめる。
+    heldBy: 'src/main/main.ts',
+    why: '更新確認を保護対象から除外台帳へ移した回。理由つきで DEP_EXCLUSIONS に在り、'
+      + '読んでいるのは main.ts (保護対象) ただ 1 つ。実際に開いてよいかを決めるのは'
+      + ' externalUrlGate (保護対象)、配布経路は release.yml (保護対象) が持つ。',
+  },
+};
+
+/*
+ * 除外の**理由を機械で検める**ための分類 (2026-09-26 · パス 477)。
+ *
+ * それまで `DEP_EXCLUSIONS` の値は散文だけで、誰も検算していなかった。実測すると
+ * **3 件が偽**だった:
+ *   ① `assistantLimits.ts` の「上限の定数のみ」—— 実行時に残る export は定数 6 に加えて
+ *      関数 3 つで、`latestTurnTooLong` は 3 つの enforcement 点が読む**唯一の述語**。
+ *      `return false` を足すと 5 万字が 3 点とも通る (= 関門の迂回)。→ 保護対象へ移した。
+ *   ②③ `serviceId.ts` / `clients/index.ts` の「74」—— 実測は **76** (SERVICE_IDS と
+ *      LIVE_FETCHERS のキー数)。**件数はサービスを足すたびに変わる**ので散文に書かない。
+ *
+ * ★ 同じ台帳の注記が「`clients/types.ts` の除外は『型だけ』と書いてあったが**実行時の
+ *   判断を持っていた**」(2026-08-23) と過去の誤りを記録し、基準も「型だけに見えるか」
+ *   ではなく「**実行時に残るか**」と述べていた —— 機械だけが無かった。
+ *
+ * 分類は閉じた語彙で、`kind` ごとに述語を当てる (`REMOVAL_KINDS` と同じ形)。
+ * 述語は**安い構文の検査だけ**をここで持ち、振る舞い (esbuild の出力が 0 byte・
+ * import 名の包含) は `src/shared/__tests__/exclusionReasonKinds.test.ts` が持つ ——
+ * `chain:verify` は CI で毎回走るので、子プロセスをここに増やさない。
+ * ★ ②③ の実測 (2026-09-26): 散文は「現在 74」「74 エントリ」と書いていたが、
+ *   `SERVICE_IDS.length` と `LIVE_FETCHERS` のキー数はどちらも **76** だった。
+ *   だから `registry` の述語は「理由に件数を書かない」を要求する —— 数はサービスを
+ *   足すたびに変わるので、散文に写した瞬間から古びる側に立つ。
+ */
+const EXCLUSION_KINDS = {
+  'src/main/clients/emotions.ts': { kind: 'paths-only', reads: ['storePath'] },
+  'src/main/clients/talent.ts': { kind: 'paths-only', reads: ['defaultStatePath'] },
+  'src/main/clients/teamradar.ts': { kind: 'paths-only', reads: ['defaultStatePath'] },
+  'src/main/clients/stocks.ts': { kind: 'paths-only', reads: ['defaultDashboardPath', 'defaultStatePath'] },
+  'src/shared/serviceId.ts': { kind: 'registry' },
+  'src/main/clients/index.ts': { kind: 'registry' },
+  'src/shared/advisorTypes.ts': { kind: 'type-only' },
+  'src/shared/actionData.ts': { kind: 'type-only' },
+  'src/shared/updateCheck.ts': { kind: 'guarded-by', guardedBy: ['src/shared/externalUrlGate.ts', '.github/workflows/release.yml'] },
+  'src/shared/api/cursor.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
+};
+
+/**
+ * `rel` が `target` から import している名前 (`import type` は runtime に残らないので除く)。
+ * 相対 import だけを見る —— 除外台帳の相手は必ずリポジトリ内である。
+ */
+function importedNamesFrom(rel, target) {
+  const text = readIfPossible(path.join(REPO_ROOT, rel));
+  if (text === null) return [];
+  const out = [];
+  for (const m of text.matchAll(/^\s*import\s+(type\s+)?\{([^}]*)\}\s+from\s+'([^']+)'/gm)) {
+    if (m[1]) continue; // `import type` は消える
+    if (resolveRelativeImport(rel, m[3]) !== target) continue;
+    for (const part of m[2].split(',')) {
+      const name = part.trim().split(/\s+as\s+/)[0]?.trim();
+      if (name) out.push(name);
+    }
+  }
+  return out;
+}
+
+/** 使える `kind` と、それが今日も本当かを確かめる述語 (安い構文の検査だけ)。 */
+const EXCLUSION_CHECKS = {
+  // 実行時に残らない: `export` はすべて `interface` / `type` である。
+  'type-only': (rel) => {
+    const text = readIfPossible(path.join(REPO_ROOT, rel));
+    if (text === null) return 'ファイルが読めない';
+    const bad = [...text.matchAll(/^export\s+(\w+)/gm)].map((m) => m[1]).filter((w) => w !== 'interface' && w !== 'type');
+    return bad.length === 0 ? null : `実行時に残る export が在る (${[...new Set(bad)].join(' / ')})`;
+  },
+  // 置き場所だけを読む: 保護対象の読み手が宣言した名前だけを import している。
+  'paths-only': (rel, row, prot) => {
+    const declared = new Set(row.reads || []);
+    if (declared.size === 0) return 'reads (読んでよい名前) を名乗っていない';
+    const readers = protectedReadersOf(rel, prot);
+    if (readers.length === 0) return '保護対象の読み手が居ない (古い除外)';
+    for (const reader of readers) {
+      const used = importedNamesFrom(reader, rel);
+      if (used.length === 0) return `${reader} の import 名が読めない`;
+      const extra = used.filter((n) => !declared.has(n));
+      if (extra.length > 0) return `${reader} が宣言の外の名前を読んでいる (${extra.join(' / ')})`;
+    }
+    return null;
+  },
+  // 判断は別の保護対象が持つ: 名乗った相手が全部保護対象である。
+  'guarded-by': (rel, row, prot) => {
+    const named = row.guardedBy || [];
+    if (named.length === 0) return 'guardedBy (判断を持つ保護対象) を名乗っていない';
+    const missing = named.filter((p) => !prot.includes(p));
+    return missing.length === 0 ? null : `guardedBy が保護対象でない (${missing.join(' / ')})`;
+  },
+  /*
+   * 足すたびに変わる登録簿: **理由に件数を書かない。**
+   *
+   * 針は「数 + 数え上げの語」と「現在 N」だけを見る —— 素の数字をすべて禁じると
+   * 日付や条文番号まで拾い、理由の書きぶりを不必要に縛る (実測: 最初に書いた広い針は
+   * 自分の説明文の日付を 3 件拾った)。
+   */
+  registry: (rel, _row, _prot, why) => {
+    const claims = [
+      ...String(why).matchAll(/[0-9０-９]{1,}\s*(?:件|エントリ|個|entries)/g),
+      ...String(why).matchAll(/現在\s*[0-9０-９]+/g),
+    ].map((m) => m[0]);
+    return claims.length === 0 ? null : `理由が件数を名乗っている (${claims.join(' / ')}) —— 足すたびに変わるので書かない`;
+  },
+};
+
+/** 除外の理由と分類を突き合わせる (両方向)。 */
+function collectExclusionKindProblems(exclusions, kinds, checks, protectedList) {
+  const problems = [];
+  for (const [rel, why] of Object.entries(exclusions)) {
+    const row = kinds[rel];
+    if (row === undefined) {
+      problems.push(`除外 ${rel} に分類 (EXCLUSION_KINDS) が無い`);
+      continue;
+    }
+    const check = checks[row.kind];
+    if (check === undefined) {
+      problems.push(`除外 ${rel} の kind が不明: ${String(row.kind)} (使えるのは ${Object.keys(checks).join(' / ')})`);
+      continue;
+    }
+    const bad = check(rel, row, protectedList, why);
+    if (bad !== null) problems.push(`除外 ${rel} の理由 (${row.kind}) が今日は成り立たない: ${bad}`);
+  }
+  for (const rel of Object.keys(kinds)) {
+    if (!Object.hasOwn(exclusions, rel)) {
+      problems.push(`EXCLUSION_KINDS の ${rel} は除外台帳に無い (古い分類。消すこと)`);
+    }
+  }
+  return problems;
+}
+
+/** 読めれば本文、読めなければ null (飾りの初期値を置かないため)。 */
+function readIfPossible(abs) {
+  try {
+    return fs.readFileSync(abs, 'utf8');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `target` を読んでいる保護対象を全部返す (閉包の検査とまったく同じ辺の作り方)。
+ *
+ * 2026-09-26 (パス 476): `to-exclusions` の宣言が名乗る `heldBy` を機械で
+ * 検めるために要った。**綴りで「読んでいそう」を判定しない** —— 辺は
+ * `dependencySpecs` + `resolveRelativeImport` で、閉包が使うのと同じ 1 つである。
+ */
+function protectedReadersOf(target, protectedList) {
+  const out = [];
+  for (const rel of protectedList) {
+    const kind = /\.(ts|tsx)$/.test(rel)
+      ? 'esm'
+      : /\.(cjs|js)$/.test(rel)
+        ? 'cjs'
+        : /^\.github\/workflows\/.*\.ya?ml$/.test(rel)
+          ? 'workflow'
+          : null;
+    if (kind === null) continue;
+    const abs = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(abs)) continue;
+    // 読めなければ飛ばす。**飾りの初期値を置かない** (eslint の no-useless-assignment
+    // が正しく鳴る —— 使われない初期値は「読めたとき」の枝と見分けが付かない)。
+    const text = readIfPossible(abs);
+    if (text === null) continue;
+    for (const spec of dependencySpecs(text, kind)) {
+      const t =
+        kind === 'workflow'
+          ? (fs.existsSync(path.join(REPO_ROOT, spec)) ? spec : null)
+          : resolveRelativeImport(rel, spec);
+      if (t === target) {
+        out.push(rel);
+        break;
+      }
+    }
+  }
+  return out;
+}
+
+/** 使える `kind` と、それが今日も本当かを確かめる述語。 */
+const REMOVAL_KINDS = {
+  // 別の道へ移った: 同じ basename が今も保護対象に在る。
+  //   これは**移した本人には作れない事実**なので、それ自身が証明になる。
+  moved: (name, prot) => (prot.some((p) => path.basename(p) === name) ? null : '同じ名前の保護対象が無い'),
+  /*
+   * 除外台帳へ移った。
+   *
+   * ★ 「DEP_EXCLUSIONS に在るか」だけを見ると**自己証明**になる —— 移した本人が
+   *   その行を書いたのだから、必ず真になる。2026-09-26 (パス 476) に実測した:
+   *   `src/renderer/security/vault.ts` を PROTECTED から DEP_EXCLUSIONS へ移して
+   *   `to-exclusions` として宣言すると `chain:verify` は **exit 0** で、
+   *   以後その中身を書き換えても鎖に映らなかった。
+   *
+   *   だから宣言に `heldBy` (判断を今持っている保護対象) を書かせ、
+   *   ① それが保護対象であること ② **本当にこのファイルを読んでいること** を
+   *   機械で確かめる。②は移した本人には作れない (辺を足すには読み手の側を
+   *   編集することになり、そちらは保護対象なので鎖に出る)。
+   *
+   *   これで「壁がハッシュの外へ出る」ことは止まらない —— 止めるのは
+   *   `lint:mutation-scope` の `WALLS_VIA_EXCLUSION` (名指しの台帳) の側である。
+   *   ここが止めるのは「誰が代わりに持つのかを言わないまま出ること」である。
+   */
+  'to-exclusions': (name, prot, exc, row) => {
+    const target = Object.keys(exc).find((p) => path.basename(p) === name);
+    if (target === undefined) return '除外台帳に無い';
+    const heldBy = row && row.heldBy;
+    if (typeof heldBy !== 'string' || heldBy.trim() === '') return 'heldBy (判断を持つ保護対象) を名乗っていない';
+    if (!prot.includes(heldBy)) return `heldBy の ${heldBy} が保護対象ではない`;
+    if (!protectedReadersOf(target, prot).includes(heldBy)) {
+      return `heldBy の ${heldBy} は ${target} を読んでいない`;
+    }
+    return null;
+  },
+};
+
+/**
+ * 鎖の履歴から「保護対象が外れたブロック」を拾う。
+ *
+ * 合図は 2 つ (上の docblock の表) —— `note` の `-名前` と `leafCount` の減少。
+ * 片方だけでは足りないことは実測済みで、#67 は前者だけ・件数が動かない形に在る。
+ *
+ * `note` は 2026-09-26 より前は basename、以後は完全な道を持つ (下の
+ * `block_note_changed` がそう変えた) ので、**どちらも basename へ正規化して**
+ * 比べる。
+ */
+function removalsInHistory(chain) {
+  const out = [];
+  let prev = null;
+  for (const b of (chain && chain.blocks) || []) {
+    const names = String((b && b.note) || '')
+      // ★ note は `update <差分>` の形なので、動詞を先に外す —— 外さないと
+      //   **先頭の項だけ** `update -x.ts` になって `-` で始まらず、合図を落とす。
+      //   2026-09-26 に実際に落とした: 削除を先頭へ移した当のパスで、私の標本は
+      //   削除を 2 番目に置いていた (= 旧い形) ので、作り出したばかりの新しい形を
+      //   1 度も通していなかった。**標本は、生産する側が実際に出す形にする。**
+      .replace(/^update\s+/, '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.startsWith('-') && s.length > 1)
+      .map((s) => path.basename(s.slice(1)));
+    const count = typeof b.leafCount === 'number' ? b.leafCount : null;
+    const shrank = prev !== null && count !== null && count < prev;
+    if (names.length > 0 || shrank) out.push({ index: b.index, names, shrank });
+    if (count !== null) prev = count;
+  }
+  return out;
+}
+
+/**
+ * 外れた記録が**理由つきで宣言されているか**を両方向に見る。
+ *
+ * 向きが 2 つあるのは、片方だけだと台帳が静かに古びるから ——
+ * 宣言の無い削除は「黙って壁が 1 枚減った」で、実物の無い宣言は
+ * 「もう起きていない事を根拠に残った免除」である。
+ */
+function collectRemovalProblems(chain, declared, protectedList, exclusions) {
+  const problems = [];
+  const seen = removalsInHistory(chain);
+  const decl = declared || {};
+  for (const ev of seen) {
+    const row = decl[ev.index];
+    if (row === undefined) {
+      const what = ev.names.length ? ev.names.join(',') : '(note に名前が無い)';
+      problems.push(
+        `ブロック #${ev.index} で保護対象が外れているのに DECLARED_REMOVALS に宣言がない (${what})`,
+      );
+      continue;
+    }
+    if (typeof row.why !== 'string' || row.why.trim().length < 15) {
+      problems.push(`ブロック #${ev.index} の宣言に理由が無い (why が空か短すぎる)`);
+    }
+    const check = REMOVAL_KINDS[row.kind];
+    if (check === undefined) {
+      problems.push(
+        `ブロック #${ev.index} の kind が不明: ${String(row.kind)} (使えるのは ${Object.keys(REMOVAL_KINDS).join(' / ')})`,
+      );
+      continue;
+    }
+    for (const name of ev.names) {
+      if (!(row.removed || []).includes(name)) {
+        problems.push(`ブロック #${ev.index} の宣言が ${name} を挙げていない`);
+      }
+    }
+    for (const name of row.removed || []) {
+      const why = check(name, protectedList, exclusions || {}, row);
+      if (why !== null) {
+        problems.push(
+          `ブロック #${ev.index} は ${name} を ${row.kind} と宣言しているが、今日それが成り立たない`
+            + ` (${why})`,
+        );
+      }
+    }
+  }
+  const observed = new Set(seen.map((e) => String(e.index)));
+  for (const index of Object.keys(decl)) {
+    if (!observed.has(index)) {
+      problems.push(
+        `DECLARED_REMOVALS の #${index} は鎖の履歴に削除として現れない (古い宣言。消すこと)`,
+      );
+    }
+  }
+  return problems;
+}
+
+function collectClosureProblems(protectedList, exclusions) {
+  const problems = [];
+  const set = new Set(protectedList);
+  const used = new Set();
+
+  for (const rel of protectedList) {
+    const kind = /\.(ts|tsx)$/.test(rel)
+      ? 'esm'
+      : /\.(cjs|js)$/.test(rel)
+        ? 'cjs'
+        : /^\.github\/workflows\/.*\.ya?ml$/.test(rel)
+          ? 'workflow'
+          : null;
+    if (kind === null) continue;
+    const abs = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(abs)) continue;
+    const text = fs.readFileSync(abs, 'utf8');
+    for (const spec of dependencySpecs(text, kind)) {
+      // workflow の `run:` はリポジトリ直下からの相対で書く (`node scripts/x.cjs`)。
+      // ファイル位置からの相対解決を通すと `.github/workflows/scripts/...` を
+      // 探しに行って必ず null になる ——**辺を足したのに何も増えない**形。
+      const target =
+        kind === 'workflow'
+          ? (fs.existsSync(path.join(REPO_ROOT, spec)) ? spec : null)
+          : resolveRelativeImport(rel, spec);
+      if (target === null || set.has(target)) continue;
+      if (Object.hasOwn(exclusions, target)) {
+        used.add(target);
+        continue;
+      }
+      problems.push(`保護対象 ${rel} が ${target} を読んでいますが、${target} は保護対象でも除外台帳でもありません`);
+    }
+  }
+
+  for (const rel of Object.keys(exclusions)) {
+    if (set.has(rel)) {
+      problems.push(`除外台帳の ${rel} は既に保護対象です (二重管理)`);
+    } else if (!used.has(rel)) {
+      problems.push(`除外台帳の ${rel} は、もうどの保護対象からも読まれていません (古い除外)`);
+    }
+  }
+  return problems;
+}
+
+const sha256 = (buf) => crypto.createHash(ALGORITHM).update(buf).digest('hex');
+
+/** 保護対象を読み、{ path: sha256 } のマニフェストを決定論的（path 昇順）に返す。 */
+function buildManifest() {
+  const manifest = {};
+  const missing = [];
+  for (const rel of [...PROTECTED].sort()) {
+    const abs = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(abs)) {
+      missing.push(rel);
+      continue;
+    }
+    manifest[rel] = sha256(fs.readFileSync(abs));
+  }
+  if (missing.length) {
+    throw new Error(`保護対象ファイルが見つかりません:\n  - ${missing.join('\n  - ')}`);
+  }
+  return manifest;
+}
+
+/** マニフェストから二分 Merkle ルートを計算（葉=sha256(path\0filehash)、奇数は末尾を複製）。 */
+function merkleRoot(manifest) {
+  let level = Object.keys(manifest)
+    .sort()
+    .map((p) => sha256(`${p}\0${manifest[p]}`));
+  if (level.length === 0) return sha256('');
+  while (level.length > 1) {
+    const next = [];
+    for (let i = 0; i < level.length; i += 2) {
+      const left = level[i];
+      const right = i + 1 < level.length ? level[i + 1] : left;
+      next.push(sha256(left + right));
+    }
+    level = next;
+  }
+  return level[0];
+}
+
+/** ブロックのハッシュ（index・prevHash・merkleRoot・leafCount・note を連結）。 */
+function blockHash(b) {
+  return sha256(`${b.index}\n${b.prevHash}\n${b.merkleRoot}\n${b.leafCount}\n${b.note}`);
+}
+
+function loadChain() {
+  if (!fs.existsSync(CHAIN_PATH)) return null;
+  return JSON.parse(fs.readFileSync(CHAIN_PATH, 'utf8'));
+}
+
+/** 人間可読の Obsidian ノート本文を台帳から決定論的に生成。 */
+function renderNote(chain) {
+  const tip = chain.blocks[chain.blocks.length - 1];
+  const lines = [
+    '# 完全性チェーン（Integrity Chain）',
+    '',
+    '> 自動生成物。直接編集しない（`npm run chain:append` で再生成）。',
+    '> 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。',
+    '',
+    `- アルゴリズム: \`${chain.algorithm}\``,
+    `- ブロック数: ${chain.blocks.length}`,
+    `- 先頭(genesis)ハッシュ: \`${chain.genesisHash}\``,
+    `- 末尾(tip)ハッシュ: \`${tip.hash}\``,
+    `- 保護対象: ${chain.protected.length} ファイル`,
+    '',
+    '## ブロック',
+    '',
+    '| # | merkleRoot (先頭16) | prevHash (先頭16) | hash (先頭16) | note |',
+    '| --- | --- | --- | --- | --- |',
+  ];
+  for (const b of chain.blocks) {
+    lines.push(
+      `| ${b.index} | \`${b.merkleRoot.slice(0, 16)}\` | \`${b.prevHash.slice(0, 16)}\` | \`${b.hash.slice(0, 16)}\` | ${b.note} |`,
+    );
+  }
+  lines.push('', '## 保護対象ファイル', '');
+  for (const p of [...chain.protected].sort()) lines.push(`- \`${p}\``);
+  lines.push('');
+  return lines.join('\n');
+}
+
+function cmdAppend() {
+  const manifest = buildManifest();
+  const root = merkleRoot(manifest);
+  let chain = loadChain();
+
+  if (!chain) {
+    const genesis = { index: 0, prevHash: ZERO_HASH, merkleRoot: root, leafCount: Object.keys(manifest).length, note: 'genesis' };
+    genesis.hash = blockHash(genesis);
+    chain = { algorithm: ALGORITHM, genesisHash: genesis.hash, protected: [...PROTECTED].sort(), blocks: [genesis], tipManifest: manifest };
+    writeChain(chain);
+    console.log(`✅ genesis ブロックを作成しました（${genesis.leafCount} ファイル, hash ${genesis.hash.slice(0, 16)}…）。`);
+    return;
+  }
+
+  const tip = chain.blocks[chain.blocks.length - 1];
+  if (tip.merkleRoot === root) {
+    console.log('ℹ️  保護対象に変化はありません（追記不要）。');
+    // ノート/manifest だけ再生成して同期（古い形式の取り込み）
+    chain.protected = [...PROTECTED].sort();
+    chain.tipManifest = manifest;
+    writeChain(chain);
+    return;
+  }
+  const block = { index: tip.index + 1, prevHash: tip.hash, merkleRoot: root, leafCount: Object.keys(manifest).length, note: `update ${block_note_changed(chain.tipManifest, manifest)}` };
+  block.hash = blockHash(block);
+  chain.blocks.push(block);
+  chain.protected = [...PROTECTED].sort();
+  chain.tipManifest = manifest;
+  writeChain(chain);
+  console.log(`✅ ブロック #${block.index} を採掘しました（prev ${block.prevHash.slice(0, 16)}… → hash ${block.hash.slice(0, 16)}…）。`);
+}
+
+/**
+ * 直前 tip からの差分ファイルを短い note 文字列にする。
+ *
+ * ★ **外れた物は全部・完全な道で残す** (2026-09-26 · パス 475)。理由が 2 つ:
+ *
+ * 1. **切り捨てで消えうる** —— 以前は変更と削除を混ぜて先頭 6 件で切っていた。
+ *    実測すると 263 ブロックのうち **9 本**が 6 件に届いており、7 件以上動いた
+ *    append では削除が枠から押し出されうる。削除は `collectRemovalProblems` が
+ *    読む唯一の証拠なので、押し出されると壁が 1 枚減ったことが**永久に残らない**。
+ * 2. **basename は曖昧** —— ブロック #67 の note は
+ *    `externalUrlGate.ts,-externalUrlGate.ts` で、同じ名前が「変更」と「削除」に
+ *    並んで出ている (道が違う 2 つのファイルが同じ basename を持つ移動だった)。
+ *    完全な道なら読んだ人がその場で移動と分かる。
+ *
+ * 過去のブロックの note は不変 (`blockHash` に入っている) ので、この変更は
+ * これから作るブロックにだけ効く。`removalsInHistory` は両方の形を読む。
+ */
+function block_note_changed(prevManifest, manifest) {
+  const prev = prevManifest || {};
+  const changed = [];
+  for (const p of Object.keys(manifest)) if (prev[p] !== manifest[p]) changed.push(path.basename(p));
+  const removed = Object.keys(prev).filter((p) => !(p in manifest)).map((p) => `-${p}`);
+  if (changed.length === 0 && removed.length === 0) return 'no-op';
+  return [...removed, ...changed.slice(0, 6)].join(',');
+}
+
+function writeChain(chain) {
+  fs.mkdirSync(path.dirname(CHAIN_PATH), { recursive: true });
+  fs.writeFileSync(CHAIN_PATH, JSON.stringify(chain, null, 2) + '\n');
+  fs.writeFileSync(NOTE_PATH, renderNote(chain));
+}
+
+function cmdVerify() {
+  const chain = loadChain();
+  const fail = (msg) => {
+    console.error(`❌ integrity-chain 検証失敗: ${msg}`);
+    process.exit(1);
+  };
+  if (!chain) fail(`台帳がありません（${path.relative(REPO_ROOT, CHAIN_PATH)}）。'npm run chain:append' で作成してください。`);
+  if (!Array.isArray(chain.blocks) || chain.blocks.length === 0) fail('ブロックが空です。');
+
+  // 1. 連鎖の内部整合: 各ブロックのハッシュ再計算＋直前ハッシュの連結
+  for (let i = 0; i < chain.blocks.length; i += 1) {
+    const b = chain.blocks[i];
+    if (blockHash(b) !== b.hash) fail(`ブロック #${b.index} のハッシュが一致しません（改竄の疑い）。`);
+    const expectedPrev = i === 0 ? ZERO_HASH : chain.blocks[i - 1].hash;
+    if (b.prevHash !== expectedPrev) fail(`ブロック #${b.index} の prevHash が連鎖していません（履歴の改竄）。`);
+  }
+  if (chain.genesisHash !== chain.blocks[0].hash) fail('genesisHash が先頭ブロックと一致しません。');
+
+  // 2. 現状の一致: ディスク上の保護対象から Merkle ルートを再計算 → tip と突合
+  const manifest = buildManifest();
+  const root = merkleRoot(manifest);
+  const tip = chain.blocks[chain.blocks.length - 1];
+  if (root !== tip.merkleRoot) {
+    const changed = block_note_changed(chain.tipManifest, manifest);
+    fail(`保護対象が tip ブロックと一致しません（変更: ${changed}）。意図的変更なら 'npm run chain:append' で新ブロックを採掘してください。`);
+  }
+
+  // 3. 派生ノート（Obsidian）の同期
+  if (!fs.existsSync(NOTE_PATH) || fs.readFileSync(NOTE_PATH, 'utf8') !== renderNote(chain)) {
+    fail(`${path.relative(REPO_ROOT, NOTE_PATH)} が台帳と同期していません。'npm run chain:append' で再生成してください。`);
+  }
+
+  // 4. 閉包: 保護対象が読んでいる先も保護対象か、理由付きで除外されているか
+  const closure = collectClosureProblems(PROTECTED, DEP_EXCLUSIONS);
+  if (closure.length > 0) fail(`保護の閉包が破れています:\n  - ${closure.join('\n  - ')}`);
+
+  // 5. 履歴: 保護対象が外れたブロックは、理由つきで宣言されているか (両方向)
+  //
+  //    上の 1〜4 はどれも「**今の** 一覧が tip と合っているか」なので、名前を
+  //    1 つ消して append すれば全部緑になる (2026-09-26 実測)。ここだけが
+  //    「壁が 1 枚減った」を履歴から読む。
+  const removals = collectRemovalProblems(chain, DECLARED_REMOVALS, PROTECTED, DEP_EXCLUSIONS);
+  if (removals.length > 0) fail(`保護対象が外れた記録に宣言がありません:\n  - ${removals.join('\n  - ')}`);
+
+  // 6. 除外の理由は、分類ごとに今日も成り立つか (両方向)
+  const kinds = collectExclusionKindProblems(DEP_EXCLUSIONS, EXCLUSION_KINDS, EXCLUSION_CHECKS, PROTECTED);
+  if (kinds.length > 0) fail(`除外台帳の理由が実物と合いません:\n  - ${kinds.join('\n  - ')}`);
+
+  console.log(
+    `✅ integrity-chain OK — ブロック ${chain.blocks.length} 連結・保護対象 ${chain.protected.length} ファイルが tip と一致`
+    + `（閉包 OK: 除外 ${Object.keys(DEP_EXCLUSIONS).length} 件は台帳どおり / tip ${tip.hash.slice(0, 16)}…）。`,
+  );
+}
+
+function cmdShow() {
+  const chain = loadChain();
+  if (!chain) {
+    console.log('台帳は未作成です。');
+    return;
+  }
+  const tip = chain.blocks[chain.blocks.length - 1];
+  console.log(`integrity-chain: ${chain.blocks.length} ブロック / ${chain.protected.length} 保護対象 / tip #${tip.index} ${tip.hash.slice(0, 16)}…`);
+  for (const b of chain.blocks) console.log(`  #${b.index}  ${b.hash.slice(0, 12)}…  prev ${b.prevHash.slice(0, 12)}…  ${b.note}`);
+}
+
+/**
+ * 陰性対照 — **この台帳が本当に改竄を見つけるか**を毎回確かめる。
+ *
+ * 2026-08-22 に verify:all の全ゲートを手で壊して回したところ、陰性対照を
+ * 持たない 13 件のうち 2 件は本当に鳴らなかった。ここは鳴ることを手で
+ * 確かめた (保護対象の書き換え / ブロックのハッシュ偽造の両方で落ちた) が、
+ * **手で確かめただけでは今日しか効かない**ので固定する。
+ *
+ * 実ファイルには触らず、純粋関数 (merkleRoot / blockHash) の性質だけを見る。
+ */
+function cmdSelfTest() {
+  const base = { 'a.ts': sha256('A'), 'b.ts': sha256('B'), 'c.ts': sha256('C') };
+  let bad = 0;
+  const check = (label, cond) => {
+    if (!cond) bad++;
+    console.log(`  ${cond ? '✓' : '✗'} ${label}`);
+  };
+
+  // --- merkleRoot: 中身が 1 ビットでも変われば根が変わる ---
+  const root = merkleRoot(base);
+  check('同じ manifest なら同じ根 (決定論)', merkleRoot({ ...base }) === root);
+  check(
+    '並び順を変えても同じ根 (キーで整列している)',
+    merkleRoot({ 'c.ts': base['c.ts'], 'a.ts': base['a.ts'], 'b.ts': base['b.ts'] }) === root,
+  );
+  check(
+    '1 ファイルの中身が変われば根が変わる',
+    merkleRoot({ ...base, 'b.ts': sha256('B-tampered') }) !== root,
+  );
+  check('ファイルが増えれば根が変わる', merkleRoot({ ...base, 'd.ts': sha256('D') }) !== root);
+  const without = { 'a.ts': base['a.ts'], 'b.ts': base['b.ts'] };
+  check('ファイルが減れば根が変わる', merkleRoot(without) !== root);
+  // **並び順が変わらない改名**でなければ、パスを綴じ込んでいるかを試せない。
+  // 最初は a.ts と b.ts の中身を入れ替える案を書いたが、それだと葉の**順序**が
+  // 変わるので、パスを綴じ込んでいなくても根が変わってしまい、何も試せて
+  // いなかった (対照実験で発覚)。`a.ts` → `a2.ts` は整列位置が動かないので、
+  // パスを外すと根が完全に一致する = 改名を見逃す。
+  const renamed = { 'a2.ts': base['a.ts'], 'b.ts': base['b.ts'], 'c.ts': base['c.ts'] };
+  check('整列位置の変わらない改名でも根が変わる (パスも綴じ込んでいる)', merkleRoot(renamed) !== root);
+
+  // --- blockHash: 連結のどの要素を変えても hash が変わる ---
+  const b = { index: 3, prevHash: sha256('prev'), merkleRoot: root, leafCount: 3, note: 'x' };
+  const h = blockHash(b);
+  check('同じブロックなら同じハッシュ', blockHash({ ...b }) === h);
+  for (const [field, value] of [
+    ['index', 4],
+    ['prevHash', sha256('other')],
+    ['merkleRoot', sha256('other-root')],
+    ['leafCount', 4],
+    ['note', 'y'],
+  ]) {
+    check(`${field} を変えるとハッシュが変わる`, blockHash({ ...b, [field]: value }) !== h);
+  }
+
+  // --- 保護対象の一覧そのもの ---
+  check('保護対象が空になっていない', PROTECTED.length > 0);
+  check(
+    '保護対象は実在するファイルだけ',
+    PROTECTED.every((rel) => fs.existsSync(path.join(REPO_ROOT, rel))),
+  );
+
+  // --- 閉包の検査そのものが鳴るか (陰性対照) ---
+  //
+  // 「0 件だから通る」検査は、**壊れていても 0 件を返す**ので区別がつかない。
+  // 実物の一覧から 1 つ外して鳴ることを毎回確かめる。
+  check('実物の一覧では閉包の問題が 0 件', collectClosureProblems(PROTECTED, DEP_EXCLUSIONS).length === 0);
+  {
+    // cryptoParams.ts (保管庫の反復回数) を保護から外すと、それを読む
+    // vault.ts / dataCrypto.ts の 2 件が鳴るはず。
+    const weakened = PROTECTED.filter((rel) => rel !== 'src/shared/cryptoParams.ts');
+    const found = collectClosureProblems(weakened, DEP_EXCLUSIONS);
+    check(
+      '保護を 1 つ外すと、それを読んでいる側から鳴る',
+      found.length > 0 && found.every((m) => m.includes('cryptoParams.ts')),
+    );
+  }
+  {
+    /*
+     * **「段を 1 つ増やしたければ、増えた先が次の verify で鳴る」の検算 (パス 286)。**
+     *
+     * 上の閉包の docblock は、推移閉包を追わない理由をこう書いている ——
+     * 「深追いすると『型だけの import』まで巻き込んで台帳が実用にならない。
+     * 段を 1 つ増やしたければ、増えた先が次の verify で鳴る」。
+     *
+     * この 2 文目が**設計の支え**である。追わないでよいのは、追う代わりに
+     * 「1 段ずつ増える」から。ところが self-test 20 件のうち閉包を見る物は
+     * **外す向きしか無かった** (`cryptoParams.ts` を PROTECTED から外すと
+     * 読んでいる側が鳴る)。**足す向き** —— 昇格した物が自分の読んでいる先で
+     * 鳴るか —— は 1 件も測られていなかった (2026-09-15 実測)。
+     *
+     * ★ **足す向きだけを黙らせる変更は実在する** (2026-09-15 に対照で実測)。
+     * `collectClosureProblems` の頭で「もともと `PROTECTED` に在った物からの
+     * 辺だけ見る」——昇格したばかりの物を免除する最適化を装った 2 行——を
+     * 入れると、**self-test 20 件のうち鳴るのはこの 1 本だけ**で、外す向き
+     * (`cryptoParams.ts`)・実物の一覧・workflow の辺はすべて緑のまま通る。
+     * だからこの検査は「同じ実装を 2 度測る重複」ではない。
+     *
+     * ★ 併せて**外した対照も記録する** —— 最初は「`set.has(target)` を
+     * 広い集合に変えれば足す向きだけが黙る」と書いたが、当てて測ると
+     * `src/shared/` を丸ごと飛ばす形になり**外す向きも一緒に落ちた** (4 件鳴った。
+     * 外す向きの標本 `cryptoParams.ts` が `src/shared/` に在るため)。
+     * 予想した対照が外れたら、**書いた予想のほうを直す**。
+     *
+     * ★ 標本は**探す** (綴りで固定しない)。固定すると、その 1 ファイルの
+     * import が変わった日に「どの入力でも通る空の検査」になる —— この本が
+     * 何度も名指ししている形である。だから走査が候補を見つけられなければ
+     * **それ自体を落とす** (下の 1 本目)。
+     */
+    const known = new Set([...PROTECTED, ...Object.keys(DEP_EXCLUSIONS)]);
+    const sharedDir = path.join(REPO_ROOT, 'src', 'shared');
+    const pool = fs.existsSync(sharedDir)
+      ? fs
+          .readdirSync(sharedDir)
+          .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'))
+          .map((f) => `src/shared/${f}`)
+          .filter((rel) => !known.has(rel))
+      : [];
+    let candidate = null;
+    let wouldRing = null;
+    for (const rel of pool) {
+      const text = fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+      const unknown = dependencySpecs(text, 'esm')
+        .map((spec) => resolveRelativeImport(rel, spec))
+        .filter((t) => t !== null && !known.has(t));
+      if (unknown.length > 0) {
+        candidate = rel;
+        wouldRing = unknown[0];
+        break;
+      }
+    }
+    check(
+      '★ 昇格の標本が実在する (走査が死んで「合格」にならない)',
+      candidate !== null && wouldRing !== null,
+    );
+    const promoted =
+      candidate === null ? [] : collectClosureProblems([...PROTECTED, candidate], DEP_EXCLUSIONS);
+    check(
+      '★ 保護対象へ 1 つ足すと、その先が鳴る (推移閉包を追わない理由の検算)',
+      candidate !== null &&
+        promoted.some((m) => m.includes(candidate) && m.includes(wouldRing)),
+    );
+  }
+  {
+    /*
+     * **workflow の `run:` を辺として数えているか。**
+     *
+     * ここが無かったせいで、`release.yml` は保護対象なのに、それが
+     * 「公開してよいか」を決めるために呼ぶ本が 1 つも守られていなかった。
+     * 骨抜きにしても `chain:verify` は緑のまま —— 2026-08-28 に実測。
+     */
+    const weakened = PROTECTED.filter((rel) => rel !== 'scripts/lint-sample-data.cjs');
+    const found = collectClosureProblems(weakened, DEP_EXCLUSIONS);
+    check(
+      '★ workflow が run: で呼ぶ本を外すと鳴る (辺の種類が足りているか)',
+      found.length > 0 && found.every((m) => m.includes('lint-sample-data.cjs')),
+    );
+  }
+  {
+    // 辺そのものが取れていること。**「0 件だから通る」を避ける標本。**
+    const wfPath = path.join(REPO_ROOT, '.github/workflows/release.yml');
+    const wf = fs.existsSync(wfPath) ? fs.readFileSync(wfPath, 'utf8') : '';
+    const edges = dependencySpecs(wf, 'workflow');
+    check(
+      '★ release.yml から run: の辺が実際に取れる',
+      edges.includes('scripts/verify-release-artifacts.cjs') && edges.includes('scripts/lint-sample-data.cjs'),
+    );
+    // 種別の判定が効いていること (cjs として読めば require しか見ないので 0 件)
+    check('workflow を cjs として読めば辺は取れない (種別が効いている)', dependencySpecs(wf, 'cjs').length === 0);
+    // `npm run` は辿らない —— 追わない判断を、字面ではなく**挙動**で留める。
+    check(
+      'npm run は辺にしない (verify:all から 34 本が芋づるにならない)',
+      !dependencySpecs('        run: npm run verify:all\n', 'workflow').some((e) => e.includes('scripts/')),
+    );
+  }
+  check(
+    '除外台帳に実在しない項目があれば鳴る (古い除外)',
+    collectClosureProblems(PROTECTED, { ...DEP_EXCLUSIONS, 'src/nowhere.ts': '理由' })
+      .some((m) => m.includes('src/nowhere.ts')),
+  );
+  check(
+    '除外台帳に保護済みのものが載っていれば鳴る (二重管理)',
+    collectClosureProblems(PROTECTED, { ...DEP_EXCLUSIONS, 'src/main/main.ts': '理由' })
+      .some((m) => m.includes('二重管理')),
+  );
+  check('除外の理由が空でない', Object.values(DEP_EXCLUSIONS).every((r) => r.trim().length > 0));
+
+  // ── 除外の理由を分類ごとに検める (パス 477) ──
+  {
+    const K = EXCLUSION_CHECKS;
+    check('実物の除外はどれも分類どおり', collectExclusionKindProblems(DEP_EXCLUSIONS, EXCLUSION_KINDS, EXCLUSION_CHECKS, PROTECTED).length === 0);
+    check(
+      '★ 分類の無い除外は鳴る',
+      collectExclusionKindProblems({ 'src/x/new.ts': '理由' }, {}, EXCLUSION_CHECKS, PROTECTED)
+        .some((m) => m.includes('分類 (EXCLUSION_KINDS) が無い')),
+    );
+    check(
+      '★ 逆向き: 除外台帳に無い分類が残っていれば鳴る',
+      collectExclusionKindProblems({}, { 'src/x/gone.ts': { kind: 'type-only' } }, EXCLUSION_CHECKS, PROTECTED)
+        .some((m) => m.includes('古い分類')),
+    );
+    check(
+      '★ 知らない kind は鳴る (語彙を閉じている)',
+      collectExclusionKindProblems({ 'src/x/n.ts': '理由' }, { 'src/x/n.ts': { kind: 'vanished' } }, EXCLUSION_CHECKS, PROTECTED)
+        .some((m) => m.includes('kind が不明')),
+    );
+    // type-only —— 実行時に残る export が在れば鳴る
+    check('type-only: 実物の 2 件は通る',
+      K['type-only']('src/shared/advisorTypes.ts') === null && K['type-only']('src/shared/actionData.ts') === null);
+    check('★ type-only: 定数を持つ本は鳴る', typeof K['type-only']('src/shared/inputCeiling.ts') === 'string');
+    check('★ type-only: 読めない本は鳴る', typeof K['type-only']('src/x/実在しない.ts') === 'string');
+    // paths-only —— 宣言の外の名前を読んでいれば鳴る
+    check('paths-only: 実物の 4 件は通る',
+      ['src/main/clients/emotions.ts', 'src/main/clients/talent.ts', 'src/main/clients/teamradar.ts', 'src/main/clients/stocks.ts']
+        .every((f) => K['paths-only'](f, EXCLUSION_KINDS[f], PROTECTED) === null));
+    check('★ paths-only: reads を名乗らなければ鳴る',
+      K['paths-only']('src/main/clients/emotions.ts', {}, PROTECTED) === 'reads (読んでよい名前) を名乗っていない');
+    check('★ paths-only: 宣言の外の名前を読んでいれば鳴る',
+      String(K['paths-only']('src/main/clients/emotions.ts', { reads: ['別の名前'] }, PROTECTED)).includes('宣言の外の名前'));
+    check('★ paths-only: 保護対象の読み手が居なければ鳴る',
+      K['paths-only']('src/main/clients/emotions.ts', { reads: ['storePath'] }, []) === '保護対象の読み手が居ない (古い除外)');
+    // guarded-by —— 名乗った相手が保護対象でなければ鳴る
+    check('guarded-by: 実物の 2 件は通る',
+      ['src/shared/updateCheck.ts', 'src/shared/api/cursor.ts']
+        .every((f) => K['guarded-by'](f, EXCLUSION_KINDS[f], PROTECTED) === null));
+    check('★ guarded-by: 名乗らなければ鳴る',
+      K['guarded-by']('src/shared/updateCheck.ts', {}, PROTECTED) === 'guardedBy (判断を持つ保護対象) を名乗っていない');
+    check('★ guarded-by: 名乗った相手が保護対象でなければ鳴る',
+      String(K['guarded-by']('src/shared/updateCheck.ts', { guardedBy: ['src/x/none.ts'] }, PROTECTED)).includes('保護対象でない'));
+    // registry —— 件数を名乗れば鳴る / 日付は拾わない
+    check('registry: 実物の 2 件は通る',
+      K.registry('src/shared/serviceId.ts', {}, PROTECTED, DEP_EXCLUSIONS['src/shared/serviceId.ts']) === null
+      && K.registry('src/main/clients/index.ts', {}, PROTECTED, DEP_EXCLUSIONS['src/main/clients/index.ts']) === null);
+    check('★ registry: 「74 エントリ」は鳴る', String(K.registry('x', {}, PROTECTED, '登録簿 (74 エントリ)。')).includes('件数を名乗っている'));
+    check('★ registry: 「現在 74」も鳴る', String(K.registry('x', {}, PROTECTED, '一覧 (現在 74)。')).includes('件数を名乗っている'));
+    check('★ registry: 全角の数も鳴る', String(K.registry('x', {}, PROTECTED, '一覧 (７６件)。')).includes('件数を名乗っている'));
+    check('registry: 日付は件数ではない (針が広すぎない)', K.registry('x', {}, PROTECTED, '2026-09-26 に測った登録簿。') === null);
+    // import 名の読み取り
+    check('★ import 名は `as` を外して読む',
+      importedNamesFrom('src/main/eraseAll.ts', 'src/main/clients/stocks.ts').sort().join(',') === 'defaultDashboardPath,defaultStatePath');
+    check('★ 相手が違えば 0 件', importedNamesFrom('src/main/eraseAll.ts', 'src/x/実在しない.ts').length === 0);
+    check('★ assistantLimits は保護対象 (除外ではない)',
+      PROTECTED.includes('src/shared/assistantLimits.ts') && !Object.hasOwn(DEP_EXCLUSIONS, 'src/shared/assistantLimits.ts'));
+  }
+
+  // --- 履歴から「壁が 1 枚減った」を読めるか (パス 475) ---
+  {
+    /*
+     * **実物の鎖で 0 件**であることと、**合図 2 つがそれぞれ独立に鳴る**ことを見る。
+     *
+     * 合成のブロックで試すのは、実物の履歴に在るのが 2 件 (#67 / #89) だけで、
+     * しかも**どちらも正当**だから —— 実物だけを見ていると「0 件だから通る」検査に
+     * なる (この本が何度も名指ししている形)。
+     */
+    const liveChain = (() => {
+      try {
+        return JSON.parse(fs.readFileSync(CHAIN_PATH, 'utf8'));
+      } catch {
+        return null;
+      }
+    })();
+    check(
+      '実物の鎖では外れた記録の問題が 0 件',
+      liveChain !== null &&
+        collectRemovalProblems(liveChain, DECLARED_REMOVALS, PROTECTED, DEP_EXCLUSIONS).length === 0,
+    );
+    // 合図 1: note の `-名前` (件数は動かない = #67 の形)
+    // ★ 実物が出す形 = 削除が**先頭**で `update ` が付く (block_note_changed が
+    //   削除を先に並べるため)。旧い形 (削除が 2 番目) は下で別に試す。
+    const noteOnly = { blocks: [
+      { index: 0, leafCount: 3, note: 'genesis' },
+      { index: 1, leafCount: 3, note: 'update -src/x/gone.ts,a.ts' },
+    ] };
+    check(
+      '★ note に - が在って宣言が無ければ鳴る (件数が動かない形)',
+      collectRemovalProblems(noteOnly, {}, [], {}).some((m) => m.includes('#1') && m.includes('gone.ts')),
+    );
+    // 合図 2: leafCount の減少だけ (note が切れて名前が残らなかった形)
+    const countOnly = { blocks: [
+      { index: 0, leafCount: 3, note: 'genesis' },
+      { index: 1, leafCount: 2, note: 'update a.ts,b.ts' },
+    ] };
+    check(
+      '★ 件数が減って宣言が無ければ鳴る (note に名前が無くても)',
+      collectRemovalProblems(countOnly, {}, [], {}).some((m) => m.includes('#1')),
+    );
+    check(
+      '増える側では鳴らない (足すのは自由)',
+      collectRemovalProblems({ blocks: [
+        { index: 0, leafCount: 3, note: 'genesis' },
+        { index: 1, leafCount: 5, note: 'update a.ts' },
+      ] }, {}, [], {}).length === 0,
+    );
+    // 宣言の中身を機械で検める
+    const declared = { 1: { removed: ['gone.ts'], kind: 'moved', why: 'これは十分に長い理由の文です。' } };
+    check(
+      '★ moved と宣言しても、同じ名前が保護対象に無ければ鳴る',
+      collectRemovalProblems(noteOnly, declared, [], {}).some((m) => m.includes('成り立たない')),
+    );
+    check(
+      'moved が今日も成り立てば通る',
+      collectRemovalProblems(noteOnly, declared, ['src/other/gone.ts'], {}).length === 0,
+    );
+    /*
+     * ★★ パス 476 の決定的な self-test —— **除外台帳に足しただけでは通らない。**
+     *
+     * 直す前の述語は「その名前が DEP_EXCLUSIONS に在るか」だけを見ていた。それは
+     * 移した本人が書いた行なので必ず真になる = 自己証明である。実測では
+     * `src/renderer/security/vault.ts` を移して宣言するだけで exit 0 だった。
+     */
+    check(
+      '★ to-exclusions: 除外台帳に足しただけでは通らない (heldBy が無い)',
+      collectRemovalProblems(noteOnly, { 1: { removed: ['gone.ts'], kind: 'to-exclusions', why: 'これは十分に長い理由の文です。' } },
+        [], { 'src/x/gone.ts': '理由' }).some((m) => m.includes('heldBy')),
+    );
+    check(
+      '★ to-exclusions: heldBy が保護対象でなければ鳴る',
+      collectRemovalProblems(noteOnly,
+        { 1: { removed: ['gone.ts'], kind: 'to-exclusions', heldBy: 'src/z/reader.ts', why: 'これは十分に長い理由の文です。' } },
+        [], { 'src/x/gone.ts': '理由' }).some((m) => m.includes('保護対象ではない')),
+    );
+    check(
+      '★ to-exclusions: heldBy が保護対象でも、そのファイルを読んでいなければ鳴る',
+      collectRemovalProblems(noteOnly,
+        { 1: { removed: ['gone.ts'], kind: 'to-exclusions', heldBy: 'src/main/main.ts', why: 'これは十分に長い理由の文です。' } },
+        ['src/main/main.ts'], { 'src/x/gone.ts': '理由' }).some((m) => m.includes('読んでいない')),
+    );
+    check(
+      'to-exclusions: 実物の組 (updateCheck.ts ← main.ts) なら通る',
+      collectRemovalProblems(
+        { blocks: [
+          { index: 0, leafCount: 3, note: 'genesis' },
+          { index: 1, leafCount: 3, note: 'update -src/shared/updateCheck.ts,a.ts' },
+        ] },
+        { 1: { removed: ['updateCheck.ts'], kind: 'to-exclusions', heldBy: 'src/main/main.ts', why: 'これは十分に長い理由の文です。' } },
+        PROTECTED, DEP_EXCLUSIONS,
+      ).length === 0,
+    );
+    check(
+      '★ 読み手を数えるのは閉包と同じ辺 (綴りで「読んでいそう」を判定しない)',
+      protectedReadersOf('src/shared/updateCheck.ts', PROTECTED).length === 1
+        && protectedReadersOf('src/shared/updateCheck.ts', PROTECTED)[0] === 'src/main/main.ts'
+        && protectedReadersOf('src/shared/updateCheck.ts', []).length === 0,
+    );
+    check(
+      '★ 知らない kind は鳴る (語彙を閉じている)',
+      collectRemovalProblems(noteOnly, { 1: { removed: ['gone.ts'], kind: 'vanished', why: 'これは十分に長い理由の文です。' } }, [], {})
+        .some((m) => m.includes('kind が不明')),
+    );
+    check(
+      '★ 理由が短ければ鳴る',
+      collectRemovalProblems(noteOnly, { 1: { removed: ['gone.ts'], kind: 'moved', why: '同上。' } }, ['src/other/gone.ts'], {})
+        .some((m) => m.includes('理由が無い')),
+    );
+    check(
+      '★ 宣言が名前を挙げていなければ鳴る',
+      collectRemovalProblems(noteOnly, { 1: { removed: [], kind: 'moved', why: 'これは十分に長い理由の文です。' } }, [], {})
+        .some((m) => m.includes('挙げていない')),
+    );
+    check(
+      '★ 逆向き: 履歴に無い宣言が残っていれば鳴る (古い免除)',
+      collectRemovalProblems(noteOnly, { ...declared, 99: { removed: ['x.ts'], kind: 'moved', why: 'これは十分に長い理由の文です。' } },
+        ['src/other/gone.ts'], {}).some((m) => m.includes('#99')),
+    );
+  }
+
+  // --- note の形: 外れた物は切り捨てられず、完全な道で残る (パス 475) ---
+  {
+    const prev = {};
+    for (let i = 0; i < 9; i += 1) prev[`src/c${i}.ts`] = sha256(`old${i}`);
+    prev['src/deep/removed.ts'] = sha256('R');
+    const next = {};
+    for (let i = 0; i < 9; i += 1) next[`src/c${i}.ts`] = sha256(`new${i}`);
+    const note = block_note_changed(prev, next);
+    check(
+      '★ 9 件変わっても外れた 1 件は note に残る (切り捨てで消えない)',
+      note.includes('-src/deep/removed.ts'),
+    );
+    check('外れた物は完全な道で載る (basename ではない)', !note.split(',').includes('-removed.ts'));
+    check('変更の側は 6 件で切る (note を短く保つ)', note.split(',').filter((s) => !s.startsWith('-')).length === 6);
+    check('何も動かなければ no-op', block_note_changed(prev, prev) === 'no-op');
+    // 両方の形 (旧: basename / 新: 完全な道) を読めるか
+    check(
+      '旧い note (basename・削除が 2 番目) も読める',
+      removalsInHistory({ blocks: [{ index: 1, leafCount: 1, note: 'update x.ts,-old.ts' }] })[0].names[0] === 'old.ts',
+    );
+    check(
+      '★ 削除が先頭でも読める (update という動詞が前に付く形)',
+      removalsInHistory({ blocks: [{ index: 1, leafCount: 1, note: 'update -src/a/old.ts,x.ts' }] })[0].names[0] === 'old.ts',
+    );
+    check(
+      '実物の block_note_changed が出す note をそのまま読める (往復)',
+      (() => {
+        const note = `update ${block_note_changed({ 'src/a/gone.ts': 'h' }, {})}`;
+        return removalsInHistory({ blocks: [{ index: 1, leafCount: 0, note }] })[0].names[0] === 'gone.ts';
+      })(),
+    );
+    check(
+      '新しい note (完全な道) も同じ名前へ正規化される',
+      removalsInHistory({ blocks: [{ index: 1, leafCount: 1, note: 'update x.ts,-src/a/old.ts' }] })[0].names[0] === 'old.ts',
+    );
+  }
+
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件 — 改竄検知が働いていない`);
+    process.exit(1);
+  }
+  console.log('✅ self-test 全件一致');
+}
+
+/*
+ * **台帳を機械で突き合わせられるようにする** (2026-08-25)。
+ *
+ * `lint:mutation-scope` の `MUST_MEASURE` (必ず変異検査に載せる壁) と
+ * この `PROTECTED` は、どちらも「これは壁だ」と言う名簿なのに **15 件
+ * ずれていた**。片方だけ見ていても気付けないので、突き合わせられるよう
+ * 名簿を export する。
+ *
+ * 併せて CLI の起動を `require.main` で守る —— export しても、require した
+ * 瞬間にコマンドが走っては読めない。
+ */
+module.exports = {
+  PROTECTED,
+  DEP_EXCLUSIONS,
+  DECLARED_REMOVALS,
+  REMOVAL_KINDS,
+  collectClosureProblems,
+  collectRemovalProblems,
+  removalsInHistory,
+  block_note_changed,
+  dependencySpecs,
+  resolveRelativeImport,
+  protectedReadersOf,
+  importedNamesFrom,
+  EXCLUSION_KINDS,
+  EXCLUSION_CHECKS,
+  collectExclusionKindProblems,
+};
+
+if (require.main === module) {
+  const cmd = process.argv[2] || 'verify';
+  if (cmd === 'verify') cmdVerify();
+  else if (cmd === 'append') cmdAppend();
+  else if (cmd === 'show') cmdShow();
+  else if (cmd === 'self-test') cmdSelfTest();
+  else {
+    console.error(`不明なコマンド: ${cmd}（verify | append | show | self-test）`);
+    process.exit(2);
+  }
+}

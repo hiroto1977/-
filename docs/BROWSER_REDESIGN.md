@@ -341,7 +341,7 @@ form-action 'none';
 - [ ] Library の zip 一括ダウンロード動作 (未実装、Phase E 候補)
 
 ### Phase B 完了
-- [x] standalone HTML 単体で Vault + Library 動作 (`dist/standalone.html` 403 KB、Electron smoke test で確認済、Phase E BIP-39 リカバリーキー含む)
+- [x] standalone HTML 単体で Vault + Library 動作 (`dist/standalone.html` 約 510 KB、Electron smoke test で確認済、Phase E BIP-39 リカバリーキー含む)
 - [x] エクスポート → Library に保存 → 「ライブラリで見る」 ボタンで遷移 (`web-shim.ts:saveToLibrary`)
 
 ### Phase C 完了
@@ -438,7 +438,8 @@ proxy → client: 200 OK with envelope
    関連: ロック画面の「パスワードを忘れた場合」リンクから
    `recoverWithMnemonic(mnemonic, newPassword)` を呼ぶフロー。
 2. **Proxy デプロイの責務** — Cloudflare Worker サンプル提供で十分。
-   `docs/PROXY_EXAMPLE.md` に 30 行リファレンスを掲載済。
+   `docs/PROXY_EXAMPLE.md` にリファレンス実装を掲載済 (ホスト名アローリストに加え、
+   DoH で解決した IP を private/reserved 判定し、リダイレクト各ホップも再検査する)。
 3. **Library の保存上限** — 50 MB / 100 件で固定 (現状)。
    `navigator.storage.estimate` による動的拡張は将来課題。
 4. **Anthropic キーの警告強度** — 初回設定時のみ免責バナーを表示

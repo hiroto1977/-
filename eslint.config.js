@@ -62,8 +62,8 @@ export default tseslint.config(
     },
   },
   {
-    // Scripts (CommonJS) — relax rules.
-    files: ['scripts/**/*.cjs', '*.config.{js,cjs,mjs}'],
+    // Scripts / オーケストレーション (CommonJS) — relax rules.
+    files: ['scripts/**/*.cjs', 'orchestration/**/*.cjs', '*.config.{js,cjs,mjs}'],
     languageOptions: {
       globals: {
         require: 'readonly',
@@ -78,6 +78,22 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-var-requires': 'off',
+      'no-undef': 'off',
+    },
+  },
+  {
+    // Service Worker (PWA) — static asset served as-is. ServiceWorkerGlobalScope の
+    // グローバル (self / caches / fetch / clients) を許可する。
+    files: ['assets/sw.js'],
+    languageOptions: {
+      globals: {
+        self: 'readonly',
+        caches: 'readonly',
+        fetch: 'readonly',
+        clients: 'readonly',
+      },
+    },
+    rules: {
       'no-undef': 'off',
     },
   },

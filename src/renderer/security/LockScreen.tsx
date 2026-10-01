@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { getVault, type VaultStatus } from './vault';
+import { describeWipeOutcome, getVault, type VaultStatus, MIN_PASSWORD_LENGTH, VAULT_UNREADABLE_TEXT } from './vault';
+import { announceLockToOtherTabs } from './lockWorkspace';
 import { looksLikeValidMnemonic } from './mnemonic';
+import { isSubmitEnter } from '../keyIntent';
+
+/**
+ * 復元フレーズをクリップボードから消すまでの時間。
+ *
+ * **画面の文言もここから出す。** 以前は本文に「30 秒後に自動消去」と書き、
+ * `setTimeout` にも `30_000` を直書きしていた —— 片方だけ変えれば嘘になる。
+ * 消去そのものは「まだ自分がコピーした値のままか」を確かめてから行う
+ * (利用者が別のものをコピーしていたら触らない)。
+ */
+const CLIPBOARD_WIPE_MS = 30_000;
 
 /**
  * Modal-style lock screen. Shown when the Vault is locked or uninitialized.
@@ -15,7 +27,7 @@ import { looksLikeValidMnemonic } from './mnemonic';
  * Skipped when the host environment provides a non-web serviceHub (Electron)
  * — the parent App component decides whether to mount this.
  */
-type View = 'password' | 'mnemonic' | 'recovery';
+type View = 'password' | 'mnemonic' | 'recovery' | 'reset';
 
 export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   const [status, setStatus] = useState<VaultStatus | 'loading'>('loading');
@@ -27,11 +39,14 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   const [recoveryNewPw, setRecoveryNewPw] = useState('');
   const [recoveryNewPwConfirm, setRecoveryNewPwConfirm] = useState('');
   const [mnemonicAcknowledged, setMnemonicAcknowledged] = useState(false);
+  const [resetAcknowledged, setResetAcknowledged] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   // Ephemeral feedback for clipboard / download actions in the mnemonic view.
   // Tuple of (message, kind). `kind` controls the color.
-  const [feedback, setFeedback] = useState<{ msg: string; kind: 'info' | 'error' } | null>(null);
+  const [feedback, setFeedback] = useState<{ msg: string; kind: 'info' | 'warn' | 'error' } | null>(
+    null,
+  );
   // Holds the pending clipboard-wipe timer. Allows us to (a) reset the
   // 30-second countdown if the user presses "copy" again, and (b) clear
   // the timer on unmount so we don't try to write to a navigator object
@@ -47,23 +62,43 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
         if (!cancelled) setStatus(s);
       })
       .catch(() => {
-        if (!cancelled) setStatus('uninitialized');
+        // **`uninitialized` へ倒さない。** 確かめられなかっただけで初回起動の
+        // 画面を出すと、トークンを預けている本人に「はじめての利用」と告げる。
+        if (!cancelled) setStatus('unreadable');
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  // Unmount cleanup: cancel any pending clipboard wipe so it doesn't
-  // overwrite the user's clipboard after the lock screen has gone away.
-  useEffect(() => {
-    return () => {
-      if (clipboardTimerRef.current !== null) {
-        clearTimeout(clipboardTimerRef.current);
-        clipboardTimerRef.current = null;
-      }
-    };
-  }, []);
+  /** 「もう一度確認」— 原因 (私用ウィンドウ・容量) は直せることが多い。 */
+  async function recheckStatus(): Promise<void> {
+    setStatus('loading');
+    try {
+      setStatus(await getVault().status());
+    } catch {
+      setStatus('unreadable');
+    }
+  }
+
+  // **ここで予約を取り消さない。**
+  //
+  // 以前はアンマウント時に消去予約を clearTimeout していた。理由は 2 つ書いて
+  // あった — (a) 消えた navigator へ書きに行かないため、(b) 利用者が後から
+  // コピーした内容を巻き添えにしないため。ところが 2026-08-22 の点検で、
+  // その取り消しが**画面の約束を反故にしていた**ことが分かった。
+  //
+  // コピー時に出す案内は「30 秒後にクリップボードを自動消去」である。しかし
+  // 利用者はコピーしたらすぐ「記録完了」を押して先へ進む — つまり **ほぼ必ず**
+  // 30 秒を待たずにこの画面を離れる。離れた瞬間に予約が消えるので、実際には
+  // 24 語のリカバリーキーがクリップボードに残り続けていた。
+  //
+  // 2 つの理由は、どちらも今は別の場所で満たされている:
+  //   (a) 消去の本体は try/catch で囲ってあり、失敗は黙って捨てる
+  //   (b) 「コピーした時のまま**なら**消す」の番人 (`current === copied`) が
+  //       あとから入った。この番人があるので、巻き添えは起きない
+  //
+  // 予約は React の状態に触れないので、アンマウント後に走っても害が無い。
 
   async function submitPassword() {
     setErr(null);
@@ -99,6 +134,39 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     onUnlocked();
   }
 
+  /**
+   * 完全初期化: パスワードもリカバリーキーも失った場合の最終手段。
+   * 保存済みトークン等を全消去して初回設定に戻す (vault.wipeAndReset)。
+   *
+   * **消えた時だけ再読込する。** 設定ページ側と同じ直し (2026-09-07 実測) ——
+   * `wipeAndReset` は他のタブが保管庫を掴んでいると削除できず、それでも
+   * 解決していた。ここは**閉じ出された本人**が押す最後の手段なので、
+   * 何も消えずに同じロック画面へ戻ると「ボタンが壊れている」としか見えない。
+   * 理由を出す価値がいちばん高い場所である。
+   *
+   * 他のタブへは施錠を**配るだけ** —— 書き込みを止めさせて `onblocked` を
+   * 踏みにくくするのが目的で、このタブの鍵は `wipeAndReset` が成功時に落とす。
+   */
+  async function submitReset() {
+    setErr(null);
+    setBusy(true);
+    try {
+      announceLockToOtherTabs();
+      const outcome = await getVault().wipeAndReset();
+      const problem = describeWipeOutcome(outcome);
+      if (problem !== null) {
+        setErr(problem);
+        setBusy(false);
+        return;
+      }
+      // 状態を確実に作り直すためリロードして初回設定フローへ。
+      window.location.reload();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+      setBusy(false);
+    }
+  }
+
   async function submitRecovery() {
     setErr(null);
     if (!looksLikeValidMnemonic(recoveryMnemonic)) {
@@ -127,7 +195,10 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   async function copyMnemonic() {
     try {
       await navigator.clipboard.writeText(mnemonic);
-      setFeedback({ msg: '📋 コピーしました (30 秒後にクリップボードを自動消去 — 貼り付けはお早めに)', kind: 'info' });
+      setFeedback({
+        msg: `📋 コピーしました (${CLIPBOARD_WIPE_MS / 1000} 秒後にクリップボードを自動消去 — 貼り付けはお早めに)`,
+        kind: 'info',
+      });
       // Reset any in-flight wipe so a re-press restarts the 30s countdown
       // instead of stacking up duplicate timers that fight over the clipboard.
       if (clipboardTimerRef.current !== null) {
@@ -151,7 +222,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             /* silent: permission denied / unsupported */
           }
         })();
-      }, 30_000);
+      }, CLIPBOARD_WIPE_MS);
     } catch {
       setFeedback({ msg: '⚠ コピーに失敗 — 24 単語を手動で選択・コピーしてください', kind: 'error' });
     }
@@ -176,9 +247,15 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    // 平文であることを明示する。このファイル 1 つでマスターキーが復元できる
+    // (パスワードは不要) ため、Downloads に置いたままにするリスクは
+    // 「パスワードを書いたメモを置き忘れる」より大きい (2026-07 監査)。
     setFeedback({
-      msg: '💾 ダウンロードしました — Downloads から速やかにパスワード保管庫または紙へ移してください',
-      kind: 'info',
+      msg:
+        '💾 ダウンロードしました — このファイルは暗号化されていない平文です。' +
+        'これ 1 つで Vault を復元できるため、パスワード保管庫か紙へ移して、' +
+        'Downloads からは削除してください',
+      kind: 'warn',
     });
   }
 
@@ -186,6 +263,101 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     return (
       <div style={overlayStyle}>
         <div style={{ color: 'var(--text-mute)' }}>読み込み中…</div>
+      </div>
+    );
+  }
+
+  /*
+   * --- View: unreadable (保管庫を確認できない) -----------------------
+   *
+   * **パスワード欄を出さない。** 出しても「作る」側は
+   * `initialize()` が「既に初期化されています」で断り、「開ける」側は
+   * meta が読めないので開けない —— どちらも利用者を行き止まりへ連れて行く。
+   * ここでは何が起きたかと、直せる 2 つの原因だけを出す。
+   */
+  if (status === 'unreadable') {
+    return (
+      <div style={overlayStyle}>
+        <div style={cardStyle}>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>保管庫を確認できません</div>
+          <div
+            role="alert"
+            data-vault-unreadable
+            style={{ fontSize: 13, lineHeight: 1.8, marginBottom: 16 }}
+          >
+            {VAULT_UNREADABLE_TEXT}
+          </div>
+          <button type="button" onClick={() => void recheckStatus()} style={buttonStyle}>
+            もう一度確認
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- View: reset (lost both password and recovery key) -------------
+  if (view === 'reset') {
+    return (
+      <div style={overlayStyle}>
+        <div style={cardStyle}>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: 'var(--danger)' }}>
+            ⚠ 完全初期化 — 最初からやり直す
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7, marginBottom: 14 }}>
+            マスターパスワードもリカバリーキー (24 語) も失った場合の最終手段です。
+            このブラウザに保存された暗号化ボールト
+            <strong style={{ color: 'var(--text)' }}>
+              （各サービスの API キー・トークン・エージェント設定）を全て消去
+            </strong>
+            し、初回設定に戻します。
+            <br />
+            消去されるのは接続用の鍵だけで、アプリ本体・知識ベース・外部サービス側のデータには影響しません。
+            この操作は<strong style={{ color: 'var(--danger)' }}>取り消せません</strong>。
+          </div>
+
+          {err && <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 12 }}>{err}</div>}
+
+          <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--text)', marginBottom: 14, lineHeight: 1.5 }}>
+            <input
+              type="checkbox"
+              checked={resetAcknowledged}
+              onChange={(e) => setResetAcknowledged(e.target.checked)}
+              style={{ marginTop: 3 }}
+            />
+            <span>
+              保存済みの API キー・トークンが全て消去され、復元できないことを理解しました。
+            </span>
+          </label>
+
+          <button
+            type="button"
+            onClick={() => void submitReset()}
+            disabled={!resetAcknowledged || busy}
+            style={{
+              ...buttonStyle,
+              width: '100%',
+              background: resetAcknowledged && !busy ? 'var(--danger)' : 'var(--bg-elev)',
+              cursor: resetAcknowledged && !busy ? 'pointer' : 'not-allowed',
+              opacity: resetAcknowledged && !busy ? 1 : 0.5,
+            }}
+          >
+            {busy ? '初期化中…' : '全て消去して初回設定に戻る'}
+          </button>
+
+          <div style={{ marginTop: 12, textAlign: 'center' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setView('password');
+                setResetAcknowledged(false);
+                setErr(null);
+              }}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', fontSize: 11, textDecoration: 'underline' }}
+            >
+              ← 戻る（初期化しない）
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -222,7 +394,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="new-password"
               onChange={(e) => setRecoveryNewPw(e.target.value)}
               style={inputStyle}
-              placeholder="8 文字以上"
+              placeholder={`${MIN_PASSWORD_LENGTH} 文字以上`}
             />
           </label>
 
@@ -234,13 +406,13 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="new-password"
               onChange={(e) => setRecoveryNewPwConfirm(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !busy) submitRecovery();
+                if (isSubmitEnter(e) && !busy) submitRecovery();
               }}
               style={inputStyle}
             />
           </label>
 
-          {err && <div style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{err}</div>}
+          {err && <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 12 }}>{err}</div>}
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button
@@ -250,7 +422,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               style={{
                 ...buttonStyle,
                 flex: 1,
-                background: busy ? 'var(--bg-elev)' : 'var(--accent)',
+                background: busy ? 'var(--bg-elev)' : 'var(--gradient)',
                 cursor: busy ? 'wait' : 'pointer',
               }}
             >
@@ -285,10 +457,10 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             style={{
               padding: '10px 12px',
               background: 'rgba(251, 191, 36, 0.12)',
-              border: '1px solid #fbbf24',
+              border: '1px solid var(--warning)',
               borderRadius: 6,
               fontSize: 11,
-              color: '#fbbf24',
+              color: 'var(--warning)',
               lineHeight: 1.6,
               marginBottom: 16,
             }}
@@ -332,7 +504,12 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             <div
               style={{
                 fontSize: 11,
-                color: feedback.kind === 'error' ? '#ef4444' : '#22c55e',
+                color:
+                  feedback.kind === 'error'
+                    ? 'var(--danger)'
+                    : feedback.kind === 'warn'
+                      ? 'var(--warning)'
+                      : 'var(--success)',
                 marginBottom: 12,
                 lineHeight: 1.5,
               }}
@@ -361,7 +538,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             style={{
               ...buttonStyle,
               width: '100%',
-              background: mnemonicAcknowledged ? 'var(--accent)' : 'var(--bg-elev)',
+              background: mnemonicAcknowledged ? 'var(--gradient)' : 'var(--bg-elev)',
               cursor: mnemonicAcknowledged ? 'pointer' : 'not-allowed',
               opacity: mnemonicAcknowledged ? 1 : 0.5,
             }}
@@ -396,10 +573,10 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !busy) submitPassword();
+              if (isSubmitEnter(e) && !busy) submitPassword();
             }}
             style={inputStyle}
-            placeholder="8 文字以上"
+            placeholder={`${MIN_PASSWORD_LENGTH} 文字以上`}
           />
         </label>
 
@@ -412,14 +589,14 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="new-password"
               onChange={(e) => setConfirm(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !busy) submitPassword();
+                if (isSubmitEnter(e) && !busy) submitPassword();
               }}
               style={inputStyle}
             />
           </label>
         )}
 
-        {err && <div style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{err}</div>}
+        {err && <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 12 }}>{err}</div>}
 
         <button
           type="button"
@@ -427,7 +604,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
           disabled={busy || password.length === 0}
           style={{
             ...buttonStyle,
-            background: busy ? 'var(--bg-elev)' : 'var(--accent)',
+            background: busy ? 'var(--bg-elev)' : 'var(--gradient)',
             cursor: busy ? 'wait' : 'pointer',
           }}
         >
@@ -445,13 +622,33 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               style={{
                 background: 'none',
                 border: 'none',
-                color: 'var(--accent)',
+                color: 'var(--accent-strong)',
                 cursor: 'pointer',
                 fontSize: 11,
                 textDecoration: 'underline',
               }}
             >
               パスワードを忘れた場合 — リカバリーキーで復元
+            </button>
+            <br />
+            <button
+              type="button"
+              onClick={() => {
+                setView('reset');
+                setResetAcknowledged(false);
+                setErr(null);
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--danger)',
+                cursor: 'pointer',
+                fontSize: 11,
+                textDecoration: 'underline',
+                marginTop: 6,
+              }}
+            >
+              リカバリーキーも無い場合 — 初期化して最初からやり直す
             </button>
           </div>
         )}
@@ -463,7 +660,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
           {initial && (
             <>
               <br />
-              <strong style={{ color: '#22c55e' }}>✓ 復旧可能:</strong>{' '}
+              <strong style={{ color: 'var(--success)' }}>✓ 復旧可能:</strong>{' '}
               次画面で表示される 24 語のリカバリーキーを保管しておけば、パスワードを忘れても復元できます。
             </>
           )}
@@ -476,7 +673,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
 const overlayStyle: React.CSSProperties = {
   position: 'fixed',
   inset: 0,
-  background: 'rgba(15, 17, 23, 0.92)',
+  background: 'var(--lock-overlay)',
   backdropFilter: 'blur(6px)',
   display: 'flex',
   alignItems: 'center',
@@ -486,13 +683,13 @@ const overlayStyle: React.CSSProperties = {
 };
 
 const cardStyle: React.CSSProperties = {
-  background: 'var(--bg)',
+  background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 12,
-  padding: 28,
+  borderRadius: 22,
+  padding: 32,
   width: '100%',
-  maxWidth: 420,
-  boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+  maxWidth: 440,
+  boxShadow: 'var(--shadow, 0 20px 50px rgba(120,90,150,0.18))',
 };
 
 const labelStyle: React.CSSProperties = {
@@ -505,19 +702,19 @@ const labelStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  padding: '8px 12px',
+  padding: '10px 14px',
   background: 'var(--bg-elev)',
-  border: '1px solid var(--border)',
-  borderRadius: 6,
+  border: '1px solid var(--border-strong, var(--border))',
+  borderRadius: 12,
   color: 'var(--text)',
   fontSize: 14,
 };
 
 const buttonStyle: React.CSSProperties = {
   width: '100%',
-  padding: '10px 14px',
+  padding: '11px 16px',
   border: '1px solid var(--border)',
-  borderRadius: 6,
+  borderRadius: 999,
   color: 'var(--text)',
   fontSize: 14,
   fontWeight: 600,

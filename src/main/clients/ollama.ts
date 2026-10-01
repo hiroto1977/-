@@ -6,9 +6,12 @@
  *   - URL pinned to http://127.0.0.1:11434 — cannot be reconfigured at
  *     runtime even via a compromised renderer, so the IPC channel can
  *     never trick main into hitting a different host.
- *   - Only the read endpoints we need: /api/version, /api/tags, /api/chat.
- *     The dangerous ones (/api/pull, /api/create, /api/push) are
- *     deliberately NEVER called from this client.
+ *   - Only the read endpoints the shared ledger permits
+ *     (`OLLAMA_READ_PATHS` in src/shared/ollama.ts — the same ledger the
+ *     browser build gates on). The CVE-prone write endpoints are not in it,
+ *     so they are refused at the fetch boundary. They are enumerated once,
+ *     at `ALLOWED_ENDPOINTS` below — listing them twice adds forbidden
+ *     spellings for lint:forbidden to suppress without adding any defence.
  *   - Strict model-name validation (no path traversal in `model:` field).
  *   - Hard request timeout (30s) via AbortController.
  *   - Response body truncated to MAX_RESPONSE_BYTES.
@@ -16,114 +19,96 @@
  *     local Ollama is older than MIN_SAFE_VERSION.
  */
 
+import { parseJsonText } from '../../shared/apiResponse';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   FetchError,
+  redactForMessage,
+  MAX_WARNING_BODY_CHARS,
   type ActionContext,
   type ActionMap,
   type FetchContext,
 } from './types';
+// 判定ロジックは main / renderer 共通 (src/shared/ollama.ts) に 1 つだけ置く。
+// ブラウザ版 (renderer/network/ollamaWeb.ts) が同じ制約で動くための単一の真実。
+import {
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
+  MIN_SAFE_VERSION,
+  OLLAMA_READ_PATHS,
+  adviseFromBody,
+  buildWarnings,
+  compareVersions,
+  isSafeModelName,
+  normalizeModels,
+  isVersionSafe,
+  type OllamaSnapshot,
+} from '../../shared/ollama';
+import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
+import type { ActionData } from '../../shared/actionData';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_OLLAMA_RESPONSE_BYTES,
+  OLLAMA_CHAT_TIMEOUT_MS,
+  egressInit,
+  isOverCap,
+  isRedirectResponse,
+  readBodyWithCap,
+  readFailureBody,
+  redirectRefusal,
+} from '../../shared/httpLimits';
+
+// 既存の import 元 (このモジュール) を維持するため再 export する。
+export { MIN_SAFE_VERSION, compareVersions, isSafeModelName, isVersionSafe };
+export type { OllamaSnapshot };
 
 const OLLAMA_BASE = 'http://127.0.0.1:11434';
-export const MIN_SAFE_VERSION = '0.1.46';
-const REQUEST_TIMEOUT_MS = 30_000;
-const MAX_RESPONSE_BYTES = 10 * 1024 * 1024; // 10 MB
+/**
+ * **疎通確認 (`/api/version` / `/api/tags`) の締切。** 生成はこれではなく
+ * `OLLAMA_CHAT_TIMEOUT_MS` (2 分) を使う —— 別の要求なので別の数である。
+ *
+ * 2026-09-23 (パス 424) まで、ここは `30_000` という**私有の写し**で、
+ * しかも `withTimeout` の既定引数だったので**生成にも掛かっていた**。
+ * 画面の「セキュリティポリシー」欄はこの数を直書きしており、renderer は
+ * `src/main/` から import できない (`lint:imports`) ので定数から出せなかった。
+ * `shared` の同じ値を読むことで、画面もそこから出せるようになった。
+ */
+const REQUEST_TIMEOUT_MS = DEFAULT_HTTP_TIMEOUT_MS;
+// 応答本文の上限は **`shared/httpLimits.ts` の 1 つ** (2026-09-20 · パス 336)。
+// 2026-08-23 から 2026-09-20 まで、ここだけ 10 MB・ブラウザ版だけ 2 MB だった ——
+// 実測して 2 MiB に揃えた (理由と数字は `MAX_OLLAMA_RESPONSE_BYTES` の docblock)。
+const MAX_RESPONSE_BYTES = MAX_OLLAMA_RESPONSE_BYTES;
 
-/** Hard allowlist of Ollama endpoints this client is permitted to touch.
- *  Enforced at the fetch boundary so that even an accidental future
- *  call to /api/pull, /api/create, /api/push, /api/copy, /api/delete,
- *  /api/blobs, or /api/upload is refused at runtime — these are the
- *  endpoints implicated in CVE-2024-37032 (Probllama) and the
- *  CVE-2024-39719/20/21/22 quartet, and they are also the attack
- *  vector for the currently UNPATCHED out-of-bounds-read in Ollama's
- *  model / engine file parser. We never need them for snapshot+chat. */
-const ALLOWED_ENDPOINTS = new Set<string>([
-  `${OLLAMA_BASE}/api/version`,
-  `${OLLAMA_BASE}/api/tags`,
-  `${OLLAMA_BASE}/api/chat`,
-]);
+/**
+ * Hard allowlist of Ollama endpoints this client is permitted to touch.
+ * Enforced at the fetch boundary so that even an accidental future call to
+ * /api/pull, /api/create, /api/push, /api/copy, /api/delete, /api/blobs or
+ * /api/upload is refused at runtime — those are the endpoints implicated in
+ * CVE-2024-37032 (Probllama), the CVE-2024-39719/20/21/22 quartet and the
+ * model / engine file-parser bugs listed in `OLLAMA_ADVISORIES`
+ * (`src/shared/ollama.ts`). Snapshot + chat never need them.
+ *
+ * **どの経路を許すかは `OLLAMA_READ_PATHS` (shared) が 1 つだけ持つ。**
+ * 2026-09-14 まで、ここは同じ 3 本を**手で書き写して**いた —— ブラウザ版は
+ * `parseOllamaEndpoint` を通して台帳を読み、こちらは読んでいなかったので、
+ * 台帳に 1 本足せば片方の門だけが広がり (逆も同じ)、**どちらの検査も鳴らない**。
+ * 綴りを写すのをやめて台帳から組み立てる。ここは base が固定なので、
+ * 台帳の相対パスを 1 つの base に付けるだけでよい。
+ *
+ * (`OLLAMA_ADVISORIES` の版は台帳が持つ。ここに「未修正」と書くと、
+ * 修正版が出た日にこのコメントだけが古びる —— 実際に 1 度そうなった。)
+ */
+const ALLOWED_ENDPOINTS = new Set<string>(
+  OLLAMA_READ_PATHS.map((apiPath) => `${OLLAMA_BASE}${apiPath}`),
+);
 
 export function isAllowedEndpoint(url: string): boolean {
   return ALLOWED_ENDPOINTS.has(url);
 }
 
-/** Warning emitted on every snapshot until Ollama publishes a patch for
- *  the model/engine file parser OOB read. Surfaces the operational
- *  mitigations the user must apply outside the app. */
-export const UNPATCHED_OOB_NOTICE =
-  'Ollama 本体に未パッチの out-of-bounds read (モデル/エンジンファイルパーサ) ' +
-  'が公表されています。本アプリは /api/pull・/api/create・/api/push を呼ばない ' +
-  '設計でこの攻撃ベクトルを遮断していますが、CLI からモデルを取得する場合は ' +
-  '必ず Ollama 公式 library など検証済みソースのみを使用してください。詳細は ' +
-  'docs/OLLAMA_SECURITY.md を参照。';
 
-/** Allow model identifiers like "llama3.2", "qwen2.5-coder:7b",
- *  "library/mistral:latest". Reject anything with whitespace, `..`,
- *  backslash, scheme markers, or other shell-meaningful characters. */
-const MODEL_NAME_RE = /^[a-z0-9][a-z0-9._:/-]{0,127}$/i;
 
-export function isSafeModelName(name: string): boolean {
-  if (typeof name !== 'string') return false;
-  if (name.includes('..')) return false;
-  return MODEL_NAME_RE.test(name);
-}
 
-/** Strict semver-ish compare. Returns -1 / 0 / +1 like Array.sort.
- *  Handles "0.1.46", "0.5.0", "0.1.46-rc1" (trailing tag ignored).
- *
- *  The inner `?.split('+')[0]` chain has equivalent mutants — empty
- *  string input handles all bogus inputs uniformly; the `i < len`
- *  vs `i <= len` mutant just adds one extra zero-iteration. */
-export function compareVersions(a: string, b: string): number {
-  const parse = (v: string): number[] => {
-    // String.prototype.split always returns ≥1 element, so [0] is always
-    // defined; the optional-chain and the `?? ''` fallback exist purely
-    // for type-narrowing and are unreachable at runtime.
-    // Stryker disable next-line OptionalChaining,StringLiteral
-    const clean = v.split('-')[0]?.split('+')[0] ?? '';
-    return clean.split('.').map((x) => {
-      const n = Number(x);
-      return Number.isFinite(n) ? n : 0;
-    });
-  };
-  const pa = parse(a);
-  const pb = parse(b);
-  const len = Math.max(pa.length, pb.length);
-  // Stryker disable next-line EqualityOperator
-  for (let i = 0; i < len; i++) {
-    const ai = pa[i] ?? 0;
-    const bi = pb[i] ?? 0;
-    if (ai > bi) return 1;
-    if (ai < bi) return -1;
-  }
-  return 0;
-}
-
-/** True iff the given version is at or above MIN_SAFE_VERSION. An
- *  empty or malformed string is treated as "unsafe" — better safe than
- *  silently waving an unknown version through.
- *
- *  The guard `!version || typeof version !== 'string'` is defense in
- *  depth: even when mutated (|| → &&, or either side flipped), the
- *  fall-through path either returns -1 from compareVersions on bogus
- *  parses or hits the catch → returns false. So all 3 mutants on this
- *  line produce the same `false` result for every input we care about. */
-// Stryker disable next-line LogicalOperator,ConditionalExpression
-export function isVersionSafe(version: string): boolean {
-  // Stryker disable next-line LogicalOperator,ConditionalExpression
-  if (!version || typeof version !== 'string') return false;
-  // Defense-in-depth: the top-level type-guard blocks non-string inputs,
-  // and compareVersions never throws on a string (split/map are total
-  // over String). The catch is unreachable; both the body's
-  // BlockStatement (`{}`) and BooleanLiteral (`true`) mutants survive
-  // as equivalent.
-  // Stryker disable BlockStatement,BooleanLiteral
-  try {
-    return compareVersions(version, MIN_SAFE_VERSION) >= 0;
-  } catch {
-    return false;
-  }
-  // Stryker restore BlockStatement,BooleanLiteral
-}
 
 interface OllamaModelTag {
   name: string;
@@ -145,30 +130,16 @@ interface OllamaVersionResponse {
   version: string;
 }
 
-export interface OllamaSnapshot {
-  running: boolean;
-  version: string;
-  versionSafe: boolean;
-  versionMinRecommended: string;
-  models: {
-    name: string;
-    family: string;
-    parameterSize: string;
-    quantization: string;
-    sizeMb: number;
-    modifiedAt: string;
-  }[];
-  warnings: string[];
-}
 
 /** Wraps fetch in a per-request timeout. Returns the response, throws
  *  if the timeout fires or the server is unreachable. */
-async function withTimeout(
+async function withTimeout<T>(
   fetchFn: typeof fetch,
   url: string,
-  init: RequestInit = {},
+  init: RequestInit,
+  consume: (res: Response) => Promise<T>,
   timeoutMs: number = REQUEST_TIMEOUT_MS,
-): Promise<Response> {
+): Promise<T> {
   // Stryker disable next-line ConditionalExpression: belt-and-braces.
   // The only callers feed URLs from `${OLLAMA_BASE}/api/...` constants
   // that are all in ALLOWED_ENDPOINTS by construction. The runtime check
@@ -193,14 +164,22 @@ async function withTimeout(
   // hanging connection, which only an integration test could supply.
   // Stryker disable next-line ArrowFunction
   const timer = setTimeout(() => controller.abort(), timeoutMs);
-  // Equivalent mutant on the finally body: emptying `{ clearTimeout }`
-  // to `{}` leaves the 5-second abort timer pending. By the time it
-  // fires the await has already resolved, so no consumer of
-  // controller.signal observes the abort. Vitest's afterEach cleanup
-  // mops up the pending timer.
+  /*
+   * **本文を使い終えるところまでを締切の中に入れる。**
+   *
+   * ここは 2026-08-28 まで `Promise<Response>` を返しており、`res.json()` /
+   * `res.text()` は呼び出し側 —— つまり `clearTimeout` の**後**で走っていた。
+   * その時点のコメントは「timer が発火する頃には await は解決済みなので、
+   * controller.signal を見ている者は居ない」と書いていたが、**居た**。
+   * 本文を読んでいる最中の reader がそれである。相手が loopback でも、
+   * ヘッダだけ返して本文を垂れ流さないモデルには当たりうる。
+   */
   // Stryker disable BlockStatement
   try {
-    return await fetchFn(url, { ...init, signal: controller.signal });
+    const res = await fetchFn(url, egressInit({ ...init, signal: controller.signal }));
+    // 転送には追随しない (規則は httpLimits.ts)。
+    if (isRedirectResponse(res)) throw new Error(redirectRefusal(res, url, 'Ollama'));
+    return await consume(res);
   } finally {
     clearTimeout(timer);
   }
@@ -214,55 +193,87 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
   let running = false;
 
   try {
-    const res = await withTimeout(f, `${OLLAMA_BASE}/api/version`);
-    if (res.ok) {
-      const body = (await res.json()) as OllamaVersionResponse;
-      version = body.version ?? '';
-      running = true;
-    } else {
-      warnings.push(`Ollama /api/version returned HTTP ${res.status}`);
-    }
+    await withTimeout(f, `${OLLAMA_BASE}/api/version`, {}, async (res) => {
+      if (res.ok) {
+        // 成功側の本文にも上限を掛ける (パス 330) —— `withTimeout` は締切と
+        // endpoint の allowlist しか見ず、`parseJsonBody` は `res.json()` を
+        // 素で呼ぶ。ブラウザ版の同じ読み (`readJsonCapped`) は切っていた。
+        const body = parseJsonText(
+          await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'Ollama /api/version'),
+          'Ollama /api/version',
+        ) as OllamaVersionResponse;
+        version = body.version ?? '';
+        running = true;
+      } else {
+        warnings.push(`Ollama /api/version returned HTTP ${res.status}`);
+      }
+    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    warnings.push(`Ollama unreachable at ${OLLAMA_BASE}: ${msg.slice(0, 100)}`);
+    // `warnings[]` も renderer へ届く文言なので**伏字の合流点を通す**。
+    // 相手が loopback でも、例外の文言は fetch の実装や下位ライブラリ由来で
+    // 何が入るか決められない (2026-08-23 に実測で漏れを確認)。
+    warnings.push(`Ollama unreachable at ${OLLAMA_BASE}: ${redactForMessage(msg, MAX_WARNING_BODY_CHARS)}`);
   }
 
   const versionSafe = isVersionSafe(version);
-  if (running && !versionSafe) {
-    warnings.push(
-      `Ollama ${version} is older than the minimum safe version ${MIN_SAFE_VERSION}. Known CVEs apply. See docs/OLLAMA_SECURITY.md.`,
-    );
-  }
   if (running) {
-    // Persistent until upstream ships a patch — see UNPATCHED_OOB_NOTICE.
-    warnings.push(UNPATCHED_OOB_NOTICE);
+    // 文面は両ビルドで 1 つ (shared の buildWarnings): 当てはまる CVE の名指し + 日付つきの台帳の注意。
+    // 2026-09-09 までここは独自の英文と「未パッチ」の固定文だった (パス 139)。
+    warnings.push(...buildWarnings(version));
   }
 
   const models: OllamaSnapshot['models'] = [];
   if (running) {
     try {
-      const tagsRes = await withTimeout(f, `${OLLAMA_BASE}/api/tags`);
-      if (!tagsRes.ok) {
-        // Equivalent mutant on the third arg ('ollama' → ''): this
-        // FetchError is caught by the surrounding try/catch on the very
-        // next lines and only `.message` propagates into warnings, so
-        // the serviceId is never observable from outside the function.
-        // Stryker disable next-line StringLiteral
-        throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
-      }
-      const tags = (await tagsRes.json()) as OllamaTagsResponse;
-      for (const m of tags.models ?? []) {
-        models.push({
-          name: m.name,
-          family: m.details?.family ?? '',
-          parameterSize: m.details?.parameter_size ?? '',
-          quantization: m.details?.quantization_level ?? '',
-          sizeMb: Math.round((m.size ?? 0) / (1024 * 1024)),
-          modifiedAt: (m.modified_at ?? '').slice(0, 10),
-        });
-      }
+      await withTimeout(f, `${OLLAMA_BASE}/api/tags`, {}, async (tagsRes) => {
+        if (!tagsRes.ok) {
+          // Equivalent mutant on the third arg ('ollama' → ''): this
+          // FetchError is caught by the surrounding try/catch on the very
+          // next lines and only `.message` propagates into warnings, so
+          // the serviceId is never observable from outside the function.
+          // Stryker disable next-line StringLiteral
+          throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
+        }
+        const tags = parseJsonText(
+          await readBodyWithCap(tagsRes, MAX_RESPONSE_BYTES, 'Ollama /api/tags'),
+          'Ollama /api/tags',
+        ) as OllamaTagsResponse;
+        /*
+         * **モデル一覧の読みは `shared/ollama.ts` の `normalizeModels` ただ 1 つ**
+         * (2026-09-22 · パス 407)。
+         *
+         * 直す前、ここは 6 欄を素で読む**もう 1 つの読み手**だった —— ブラウザ版が
+         * 通る `normalizeModels` は ① 物でない項目を飛ばし ② **`isSafeModelName` で
+         * 名前を検め** ③ `Number.isFinite` で大きさを ④ 残り 4 欄を `typeof` で
+         * 検めるのに、main は `??` だけで読んでいた。`??` は **null / undefined しか
+         * 受けない**ので、第三者 (利用者が設定した Ollama ホスト) が非文字列を返すと:
+         *
+         *   modified_at: 20260922 → `(… ?? '').slice` が **TypeError**
+         *   size: '1MB'          → `Math.round(NaN)` = **NaN MB** を画面に刷る
+         *   name: 非文字列        → **`isSafeModelName` を通らないまま**画面へ
+         *
+         * 実測 (直す前・3 件中 2 件目が非文字列): **2 件 push した所で投げ**、
+         * 外側の catch が warning にするので、利用者は**黙って短くなった一覧**を見る
+         * (「Listing models failed」は出るが、何件落ちたかは分からない)。
+         *
+         * パス 402 と同じ形 —— **同じアプリが同じ問いに 2 通り答え、弱い方が main に
+         * 立っていた**。`isSafeModelName` は main も import しているのに、
+         * 使っていたのは chat の model 引数 (279 行) だけだった。
+         *
+         * ★ **パス 407 はここに `.slice(0, 10)` を残していた** (「整形は呼び手が
+         *   持つ」) —— その結果**同じ `OllamaPage` が build によって `2026-09-22` と
+         *   `2026-09-22T10:00:00.277302595-07:00` を出して**いた。パス 408 で
+         *   `normalizeModels` が `YYYY-MM-DD` か `null` を返すようにしたので、
+         *   ここは**素通し**になる。日付にするのは**正規化**であって画面の都合ではない
+         *   (`isoDate.ts` の `isoDateFromTimestamp` が「呼び出し側 3 か所が同じ
+         *   `slice(0, 10)` を写していた」と書いている当の 4 つ目の写しだった)。
+         */
+        for (const m of normalizeModels(tags)) models.push(m);
+      });
     } catch (err) {
-      warnings.push(`Listing models failed: ${(err as Error).message.slice(0, 100)}`);
+      const msg = err instanceof Error ? err.message : String(err);
+      warnings.push(`Listing models failed: ${redactForMessage(msg, MAX_WARNING_BODY_CHARS)}`);
     }
   }
 
@@ -296,11 +307,37 @@ interface OllamaChatResponse {
   total_duration?: number;
 }
 
-async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: number }> {
+/**
+ * 失敗の助言に添える**導入済みモデル名**。取れなければ空 —— 助言が名前を
+ * 挙げないだけで、失敗ではない (ブラウザ版の `listInstalledModels` と同じ判断)。
+ * 呼ぶのは失敗の枝だけなので、正常な生成に往復は増えない。
+ */
+async function installedModelNames(fetchFn: typeof fetch): Promise<string[]> {
+  try {
+    return await withTimeout(fetchFn, `${OLLAMA_BASE}/api/tags`, {}, async (res) => {
+      if (!res.ok) return [];
+      const tags = parseJsonText(
+        // Stryker disable next-line StringLiteral: ラベルは「<label> response too large」の文に入るだけで、その例外は
+        // 下の `catch` が握って `[]` を返す —— 助言が名前を添えないだけで、ラベルは外へ出ない (等価変異)。
+        await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'Ollama /api/tags'),
+        // Stryker disable next-line StringLiteral: 同上 (「<label> が JSON ではありません」の文も `catch` が握る)。
+        'Ollama /api/tags',
+      );
+      return normalizeModels(tags).map((m) => m.name);
+    });
+  } catch {
+    // 一覧が引けない理由 (接続断・締切・壊れた本文) は**この経路の結論を
+    // 変えない** —— 助言は既に組めており、名前を添えられないだけである。
+    return [];
+  }
+}
+
+async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
   if (!isSafeModelName(model)) {
-    throw new FetchError(`unsafe model name: ${model.slice(0, 32)}`, 0, 'ollama');
+    // 断りに載せる名前も文字の境界で切る (パス 196)。
+    throw new FetchError(`unsafe model name: ${clampToCeiling(String(model), 32)}`, 0, 'ollama');
   }
   // Reject null bytes in user-controlled strings — classic foothold for
   // upstream parser bugs (including the unpatched engine-file OOB read).
@@ -319,12 +356,23 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
     throw new FetchError('null byte in chat input rejected', 0, 'ollama');
   }
 
+  // 天井超えは**切らずに断る** (パス 114)。それまで `slice(0, MAX_…)` で黙って切っており、
+  // 貼った長文の末尾 (質問はたいてい末尾に在る) が届かないまま答えが返っていた。
+  // アシスタント (`assistant.ts`) はパス 112 で同じ形を断つと決めている —— 端末内の
+  // モデルでも形は同じで、文面は同じ関数 (`inputTooLongMessage`) が持つ。
+  if (countChars(systemStr) > MAX_OLLAMA_SYSTEM_CHARS) {
+    throw new Error(inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS));
+  }
+  if (countChars(promptStr) > MAX_OLLAMA_PROMPT_CHARS) {
+    throw new Error(inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS));
+  }
+
   const messages: OllamaChatMessage[] = [];
-  if (system) messages.push({ role: 'system', content: systemStr.slice(0, 8192) });
-  messages.push({ role: 'user', content: promptStr.slice(0, 32768) });
+  if (system) messages.push({ role: 'system', content: systemStr });
+  messages.push({ role: 'user', content: promptStr });
 
   const f = ctx.fetch ?? fetch;
-  const res = await withTimeout(
+  return withTimeout(
     f,
     `${OLLAMA_BASE}/api/chat`,
     {
@@ -336,21 +384,85 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
         stream: false, // streaming intentionally not supported — see OLLAMA_SECURITY.md
       }),
     },
-  );
-
+    async (res) => {
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new FetchError(`ollama ${res.status}: ${body.slice(0, 200)}`, res.status, 'ollama');
-  }
-
-  // Defense against an unbounded response: read as text up to a cap.
-  const text = await res.text();
-  if (text.length > MAX_RESPONSE_BYTES) {
+    // **失敗の本文にも上限を掛ける** (2026-09-20 · パス 330)。ここは素の
+    // `res.text()` で、すぐ下の成功側だけが `readBodyWithCap` を通していた ——
+    // その注記が「10MB の上限が在っても 2GiB は確保される。ここは main
+    // プロセスなので、落ちればタブではなく**アプリ全体**が落ちる」と述べる
+    // 危険は、**壊れた相手が実際に通る枝**であるこちらにこそ掛かる。
+    // 読めない経路 (接続断) も上限超過も「詳細なし」に畳んでよい ——
+    // 畳んではいけないのは読む量のほうである。
+    // Stryker disable next-line StringLiteral: ラベルは「<label> response too large」の文に入るだけで、その例外は
+    // `readFailureBody` の `.catch(() => '')` が握る —— 空文字を返す以外に外へ出る物が無く、観測できない (等価変異)。
+    const body = await readFailureBody(res, 'ollama', MAX_RESPONSE_BYTES);
+    // 生の英語エラーをそのまま投げると UI に内部メッセージが出るだけなので、
+    // 共有ロジックで「何が起きて次に何をすればいいか」に翻訳してから投げる
+    // (長さ上限も adviseFromBody 側で掛かる)。
+    // **導入済みの一覧を添える** (2026-09-24 · パス 449)。ブラウザ版
+    // (`network/ollamaWeb.ts:576`) は失敗の枝で `/api/tags` を引いて
+    // `installed` を渡すのに、**ここだけが渡していなかった** —— 同じ
+    // `describeOllamaError` が両ビルドで別の答えを出していた。実測
+    // (2026-09-24 · `llama3.2:1b` が入っている端末で `llama3.2` を要求):
+    //
+    //   ブラウザ版 … 「モデル「llama3.2」がまだ取得されていません。
+    //                  (インストール済みの「llama3.2:1b」を指定すると動きます。)」
+    //   デスクトップ版 …「… (取得する: ollama pull llama3.2)」
+    //                  —— 目の前に在るモデルの名前を 1 度も言わない。
+    //                  2 つ目の hint は「まだ 1 つもモデルがありません」で、
+    //                  **入っている利用者に対して偽**だった (画面には
+    //                  `hints[0]` しか出さないので今日そこは見えていない)。
+    // **形はブラウザ版に合わせる** —— まず分類し、未取得モデルのときだけ
+    // `/api/tags` を引いて名前を添える。接続断・403・500 で一覧を引きに行くと、
+    // 既に失敗している相手へ往復を 1 つ増やすだけで、助言は 1 字も変わらない。
+    const first = adviseFromBody(res.status, body, { model });
+    const advice =
+      first.kind === 'model-not-found'
+        ? adviseFromBody(res.status, body, { model, installed: await installedModelNames(f) })
+        : first;
     throw new FetchError(
-      `ollama response exceeded ${MAX_RESPONSE_BYTES} bytes`,
-      0,
+      advice.hints.length > 0 ? `${advice.message} (${advice.hints[0]})` : advice.message,
+      res.status,
       'ollama',
     );
+  }
+
+  /*
+   * **上限は「読む前」に、byte で効かせる** (2026-08-29)。
+   *
+   * ここは `res.text()` で**全部読んでから** `text.length` を見ていた。
+   * 二重に名前負けしていた:
+   *
+   *  1. コメントは "read as text up to a cap" と言うが、上限まで読むのではなく
+   *     **全部読んでから捨てる**。10MB の上限が在っても 2GiB は確保される ——
+   *     ここは main プロセスなので、落ちればタブではなく**アプリ全体**が落ちる。
+   *  2. `.length` は UTF-16 の符号単位の数で **byte ではない**。文言は
+   *     "exceeded ... bytes" と言っているのに、日本語では名乗った上限の
+   *     約 3 倍が通っていた。
+   *
+   * `readBodyWithCap` は塊ごとに数えて超えた時点で reader を止める。
+   * 文言は既存の検査が留めているので変えない。
+   * ブラウザ版 (`renderer/network/ollamaWeb.ts`) の同じ 2 か所も同日に直した。
+   */
+  let text: string;
+  try {
+    // Stryker disable next-line StringLiteral: ラベルを空にしても `isOverCap` は
+    // `' response too large'` (先頭の空白込み) で当たるので分岐が変わらない。
+    // ブラウザ版の同じ箇所と揃えてある (2026-08-31 に実測して等価と確認)。
+    text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama');
+  } catch (e) {
+    // **上限超過だけを既存の文言へ翻訳し、他はそのまま通す。** 打ち切りや
+    // 接続断を「大きすぎます」と報せると、利用者は的外れな対処をする
+    // (`catch {}` で一括りにして 1 度そう書いた)。文言の結び付きは
+    // `isOverCap` を通して 1 か所にし、検査で留める。
+    if (isOverCap(e)) {
+      throw new FetchError(
+        `ollama response exceeded ${MAX_RESPONSE_BYTES} bytes`,
+        0,
+        'ollama',
+      );
+    }
+    throw e;
   }
 
   let parsed: OllamaChatResponse;
@@ -361,9 +473,18 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   }
 
   return {
-    reply: parsed.message?.content ?? '',
+    // 応答の天井 (パス 113)。byte の天井 (10 MiB) は「画面に出す量」としては論外 ——
+    // アシスタントと同じ 10 万字で打ち切り、切ったことを本文に残す。
+    reply: capAssistantReply(parsed.message?.content ?? ''),
     durationMs: Math.round((parsed.total_duration ?? 0) / 1_000_000),
   };
+    },
+    // **生成には生成の予算を渡す** (2026-09-23 · パス 424)。ここは第 5 引数を
+    // 省いており、`withTimeout` の既定 —— 疎通確認の 30 秒 —— が掛かっていた。
+    // ブラウザ版の同じ生成は 120 秒で、その注記が理由を述べている
+    // (「生成は診断より時間がかかる」)。理由はこちらにも等しく当てはまる。
+    OLLAMA_CHAT_TIMEOUT_MS,
+  );
 }
 
 export const ACTIONS: ActionMap = {

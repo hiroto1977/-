@@ -1,59 +1,61 @@
-import { useMemo, useState } from 'react';
+import { nonNeg } from '../../shared/num';
+import { useMemo, useState, type CSSProperties } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
+import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
+import { summarizeFoodDelivery } from '../data/foodDelivery';
+import { exportSavedNote, exportWarning } from '../data/exportOutcome';
+import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
+import type { ActionData } from '../../shared/actionData';
+import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
+import { isSubmitEnter } from '../keyIntent';
 
-interface BusinessAdvisorRecommendation {
-  categoryId: string;
-  rank: number;
-  rationale: string;
-  actionItems: string[];
-  riskFactors: string[];
-}
-
-interface BusinessAdvisorResponse {
-  recommendations: BusinessAdvisorRecommendation[];
-  disclaimer: string;
-  notForRealMoney: true;
-}
+// 助言の戻り値の形は台帳 (`shared/actionData.ts` → `shared/businessAdvisor.ts`) を読む (パス 117)。
+// それまでここの写しは `categoryId: string` に広がっていた (本物は 10 個の合併型)。
 
 interface CategoryKpi {
-  revenue: number;
-  variableCost: number;
-  fixedCost: number;
-  totalCost: number;
-  profit: number;
-  profitMargin: number;
-  traffic: number;
-  conversion: number;
-  conversionRatePct: number;
-  aov: number;
-  roas: number;
-  contentOutput: number;
+  readonly revenue: number;
+  readonly variableCost: number;
+  readonly fixedCost: number;
+  readonly totalCost: number;
+  readonly profit: number;
+  readonly profitMargin: number;
+  readonly traffic: number;
+  readonly conversion: number;
+  readonly conversionRatePct: number;
+  readonly aov: number;
+  readonly roas: number;
+  readonly contentOutput: number;
 }
 
 interface BusinessUnit {
-  id: string;
-  label: string;
-  description: string;
-  trafficKind: 'session' | 'view' | 'impression' | 'order' | 'project';
-  current: CategoryKpi;
-  history: CategoryKpi[];
+  readonly id: string;
+  readonly label: string;
+  readonly description: string;
+  readonly trafficKind: 'session' | 'view' | 'impression' | 'order' | 'project';
+  readonly current: CategoryKpi;
+  readonly history: readonly CategoryKpi[];
 }
 
 interface BusinessSnapshot {
-  units: BusinessUnit[];
-  aggregate: {
-    revenue: number;
-    totalCost: number;
-    profit: number;
-    profitMargin: number;
-    contentOutput: number;
+  readonly units: readonly BusinessUnit[];
+  readonly aggregate: {
+    readonly revenue: number;
+    readonly totalCost: number;
+    readonly profit: number;
+    readonly profitMargin: number;
+    readonly contentOutput: number;
   };
-  fetchedAt: string;
-  isMock: boolean;
+  readonly fetchedAt: string;
+  readonly isMock: boolean;
 }
 
 const yen = new Intl.NumberFormat('ja-JP', {
@@ -94,7 +96,7 @@ function Sparkline({
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(' ');
-  const color = positive === false ? '#ef4444' : '#22c55e';
+  const color = positive === false ? 'var(--danger)' : 'var(--success)';
   return (
     <svg width={width} height={height} aria-hidden="true">
       <polyline fill="none" stroke={color} strokeWidth={1.5} points={pts} />
@@ -168,7 +170,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
         <div
           style={{
             padding: '2px 8px',
-            background: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             color: '#fff',
             fontSize: 11,
             fontWeight: 600,
@@ -192,7 +194,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
             style={{
               fontSize: 14,
               fontWeight: 600,
-              color: c.profit >= 0 ? '#22c55e' : '#ef4444',
+              color: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             }}
           >
             {yen.format(c.profit)}
@@ -246,12 +248,16 @@ function Sideboard({
   selected,
   onSelect,
   aggregateRevenue,
+  foodDeliveryRevenue,
 }: {
-  units: BusinessUnit[];
+  units: readonly BusinessUnit[];
   selected: string | 'all';
   onSelect: (id: string | 'all') => void;
   aggregateRevenue: number;
+  /** フードデリバリーの月次推計売上 (カテゴリ一覧 + 全カテゴリ合計に算入)。 */
+  foodDeliveryRevenue: number;
 }) {
+  const grandTotal = aggregateRevenue + foodDeliveryRevenue;
   return (
     <aside
       style={{
@@ -278,7 +284,7 @@ function Sideboard({
           padding: '8px 10px',
           background: selected === 'all' ? 'var(--accent)' : 'var(--bg-elev)',
           border: '1px solid var(--border)',
-          borderRadius: 6,
+          borderRadius: 14,
           color: 'var(--text)',
           cursor: 'pointer',
           fontSize: 12,
@@ -287,12 +293,15 @@ function Sideboard({
       >
         <div style={{ fontWeight: 600 }}>全カテゴリ</div>
         <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
-          {yen.format(aggregateRevenue)} / 月
+          {yen.format(grandTotal)} / 月
+        </div>
+        <div style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 1 }}>
+          事業 {yen.format(aggregateRevenue)} + デリバリー {yen.format(foodDeliveryRevenue)}
         </div>
       </button>
       {units.map((u) => {
         const isSel = selected === u.id;
-        const profitColor = u.current.profit >= 0 ? '#22c55e' : '#ef4444';
+        const profitColor = u.current.profit >= 0 ? 'var(--success)' : 'var(--danger)';
         return (
           <button
             key={u.id}
@@ -303,7 +312,7 @@ function Sideboard({
               padding: '6px 10px',
               background: isSel ? 'var(--accent)' : 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 14,
               color: 'var(--text)',
               cursor: 'pointer',
               fontSize: 12,
@@ -325,6 +334,32 @@ function Sideboard({
           </button>
         );
       })}
+      {/* フードデリバリーは事業ダッシュボードに統合したカテゴリ。詳細は下部の
+          フードデリバリーセクション参照のため、ここは情報表示 (フィルタ対象外)。 */}
+      <div
+        style={{
+          textAlign: 'left',
+          padding: '6px 10px',
+          background: 'var(--bg-elev)',
+          border: '1px dashed var(--border)',
+          borderRadius: 6,
+          color: 'var(--text)',
+          fontSize: 12,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          marginTop: 4,
+        }}
+        title="Uber Eats / 出前館 を統合したカテゴリ (詳細は下部のフードデリバリーセクション)"
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <span style={{ fontWeight: 600 }}>🍔 フードデリバリー</span>
+          <span style={{ fontSize: 9, color: 'var(--text-mute)' }}>統合</span>
+        </div>
+        <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+          {yen.format(foodDeliveryRevenue)} / 月（推計）
+        </div>
+      </div>
     </aside>
   );
 }
@@ -355,7 +390,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
         <div
           style={{
             padding: '4px 10px',
-            background: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             color: '#fff',
             fontSize: 12,
             fontWeight: 600,
@@ -379,7 +414,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
             style={{
               fontSize: 20,
               fontWeight: 700,
-              color: c.profit >= 0 ? '#22c55e' : '#ef4444',
+              color: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
             }}
           >
             {yen.format(c.profit)}
@@ -465,7 +500,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
                     style={{
                       padding: '4px 8px',
                       textAlign: 'right',
-                      color: h.profit >= 0 ? '#22c55e' : '#ef4444',
+                      color: h.profit >= 0 ? 'var(--success)' : 'var(--danger)',
                     }}
                   >
                     {yen.format(h.profit)}
@@ -474,7 +509,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
                     style={{
                       padding: '4px 8px',
                       textAlign: 'right',
-                      color: h.profitMargin >= 0 ? '#22c55e' : '#ef4444',
+                      color: h.profitMargin >= 0 ? 'var(--success)' : 'var(--danger)',
                     }}
                   >
                     {h.profitMargin.toFixed(1)}%
@@ -490,23 +525,178 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
   );
 }
 
+// --- フードデリバリー統合セクション (旧 Uber Eats / 出前館 ページを統合) -----
+
+function FoodDeliverySection() {
+  const fd = summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan);
+  const ue = SNAPSHOT.uberEats;
+  const dc = SNAPSHOT.demaeCan;
+  const pct = (v: number) => (v * 100).toFixed(1) + '%';
+  const cell: CSSProperties = { padding: '4px 8px', borderBottom: '1px solid var(--border)', fontSize: 12 };
+  const cellNum: CSSProperties = { ...cell, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
+  const summaryStyle: CSSProperties = { cursor: 'pointer', fontSize: 12, color: 'var(--accent)', marginTop: 10 };
+  return (
+    <Section title="フードデリバリー (Uber Eats / 出前館)" count={2}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
+        <Tile
+          label="今月換算 GMV (総注文額)"
+          value={yen.format(fd.combinedMonthlyEstimate.revenue)}
+          sub="Uber Eats 週次×52/12 + 出前館 月次"
+        />
+        <Tile
+          label="今月換算 純売上 (手数料控除後)"
+          value={yen.format(fd.combinedMonthlyEstimate.netRevenue)}
+          sub={`手数料 Uber Eats ${(fd.commission.uberEats * 100).toFixed(0)}% / 出前館 ${(fd.commission.demaeCan * 100).toFixed(0)}% を控除`}
+          accent="var(--accent)"
+        />
+        <Tile
+          label="今月換算 注文数 (概算)"
+          value={num.format(fd.combinedMonthlyEstimate.orders) + ' 件'}
+        />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: 12 }}>
+        <div
+          style={{
+            background: 'var(--bg-elev)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: 14,
+          }}
+        >
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🍔 Uber Eats（今週）</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="GMV (週)" value={yen.format(fd.uberEats.weekRevenue)} />
+            <Tile label="純売上 (週・控除後)" value={yen.format(fd.uberEats.weekNetRevenue)} />
+            <Tile label="注文数 (週)" value={num.format(fd.uberEats.weekOrders) + ' 件'} />
+            <Tile label="平均評価" value={`★ ${fd.uberEats.avgRating.toFixed(2)}`} />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8 }}>
+            店舗数 {fd.uberEats.storeCount}
+            {fd.uberEats.topStore ? ` ／ 売上トップ: ${fd.uberEats.topStore.name} (${yen.format(fd.uberEats.topStore.revenue)})` : ''}
+          </div>
+        </div>
+        <div
+          style={{
+            background: 'var(--bg-elev)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: 14,
+          }}
+        >
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🛵 出前館（今月）</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="GMV (月)" value={yen.format(fd.demaeCan.monthRevenue)} />
+            <Tile label="純売上 (月・控除後)" value={yen.format(fd.demaeCan.monthNetRevenue)} />
+            <Tile label="注文数 (月)" value={num.format(fd.demaeCan.monthOrders) + ' 件'} />
+            <Tile label="平均単価" value={yen.format(fd.demaeCan.avgOrderValue)} />
+            <Tile label="キャンセル率" value={pct(fd.demaeCan.cancellationRate)} />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8 }}>
+            {fd.demaeCan.topArea ? `売上トップエリア: ${fd.demaeCan.topArea.area} (${yen.format(fd.demaeCan.topArea.revenue)})` : ''}
+          </div>
+        </div>
+      </div>
+      <details>
+        <summary style={summaryStyle}>🍔 Uber Eats 明細（店舗別 / 人気商品）</summary>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 12, marginTop: 8 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>店舗</th><th style={cellNum}>注文</th><th style={cellNum}>売上</th><th style={cellNum}>評価</th><th style={cellNum}>稼働率</th></tr>
+            </thead>
+            <tbody>
+              {ue.stores.map((s) => (
+                <tr key={s.id}>
+                  <td style={cell}>{s.name}</td>
+                  <td style={cellNum}>{s.orders}</td>
+                  <td style={cellNum}>{yen.format(s.revenue)}</td>
+                  <td style={cellNum}>★{s.rating.toFixed(1)}</td>
+                  <td style={cellNum}>{pct(s.openRate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>人気商品</th><th style={cellNum}>販売数</th><th style={cellNum}>売上</th></tr>
+            </thead>
+            <tbody>
+              {ue.topItems.map((t) => (
+                <tr key={t.name}>
+                  <td style={cell}>{t.name}</td>
+                  <td style={cellNum}>{t.sold}</td>
+                  <td style={cellNum}>{yen.format(t.revenue)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details>
+        <summary style={summaryStyle}>🛵 出前館 明細（エリア別 / 直近の受注）</summary>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 12, marginTop: 8 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>エリア</th><th style={cellNum}>注文</th><th style={cellNum}>売上</th></tr>
+            </thead>
+            <tbody>
+              {dc.topAreas.map((a) => (
+                <tr key={a.area}>
+                  <td style={cell}>{a.area}</td>
+                  <td style={cellNum}>{a.orders}</td>
+                  <td style={cellNum}>{yen.format(a.revenue)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>受注</th><th style={cell}>状態</th><th style={cellNum}>金額</th></tr>
+            </thead>
+            <tbody>
+              {dc.orders.map((o) => (
+                <tr key={o.id}>
+                  <td style={cell}>{o.customer}（{o.area}）</td>
+                  <td style={cell}>{o.status}</td>
+                  <td style={cellNum}>{yen.format(o.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
+        ※ 模擬データ。Uber Eats は週次・出前館は月次の集計のため、合算は「今月換算」の概算です。
+        純売上は GMV からプラットフォーム手数料（概算 約30%）を控除した手取り推計で、
+        食材原価・人件費等は含みません（財務助言ではありません）。
+      </div>
+    </Section>
+  );
+}
+
 // --- Page -----------------------------------------------------------
 
 export function BusinessPage() {
-  const { data, source, status, errorMessage, refresh } = useServiceData<BusinessSnapshot>(
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData<BusinessSnapshot>(
     'business',
-    SNAPSHOT.business as unknown as BusinessSnapshot,
+    SNAPSHOT.business,
   );
 
   const [sortKey, setSortKey] = useState<'revenue' | 'profit' | 'margin'>('revenue');
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; saved?: string; warning?: string } | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。1,000 字は打って届く量ではない —— `maxLength` が
+     発火するのは貼り付けのときだけで、そのとき超過分は黙って消える。 */
+  const advisorQuestionOver = charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS);
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
-  const [advisorResult, setAdvisorResult] = useState<BusinessAdvisorResponse | null>(null);
+  const [advisorResult, setAdvisorResult] = useState<ActionData<'business/advise'> | null>(null);
 
   const labelById = useMemo(() => {
     const m: Record<string, string> = {};
@@ -520,15 +710,12 @@ export function BusinessPage() {
     setLastExport(null);
     try {
       const action = format === 'html' ? 'export-dashboard' : 'export-dashboard-md';
-      const payload: { advisorResult?: BusinessAdvisorResponse } = {};
+      const payload: { advisorResult?: ActionData<'business/advise'> } = {};
       if (advisorResult) payload.advisorResult = advisorResult;
-      const r = await window.serviceHub.invoke<{
-        path: string;
-        bytes: number;
-        generatedAt: string;
-      }>('business', action, payload);
+      // html / md は同じ形 (台帳の ExportFileResult)。型は台帳から読む (パス 116)。
+      const r = await window.serviceHub.invoke<ActionData<'business/export-dashboard'>>('business', action, payload);
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -545,10 +732,20 @@ export function BusinessPage() {
       setAdvisorError('質問を入力してください');
       return;
     }
+    /*
+     * **Enter は `disabled` を見ない** (パス 175)。欄は超過を述べて押せなくなるが、
+     * 下の `onKeyDown` は `advisorBusy` だけを見てここへ来るので、押せない状態のまま
+     * 送れてしまう —— main / ブラウザ版の `checkAdvisorQuestion` が断る道
+     * (`'too-long'`) は `maxLength` のせいで 1 度も通っていなかった。ここが最後の砦。
+     */
+    if (charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS) > 0) {
+      setAdvisorError(refusedCeilingNote('質問', advisorQuestion, MAX_ADVISOR_QUESTION_CHARS));
+      return;
+    }
     setAdvisorBusy(true);
     setAdvisorError(null);
     try {
-      const r = await window.serviceHub.invoke<BusinessAdvisorResponse>(
+      const r = await window.serviceHub.invoke<ActionData<'business/advise'>>(
         'business',
         'advise',
         { question: q },
@@ -593,25 +790,43 @@ export function BusinessPage() {
   );
 
   const agg = data.aggregate;
+  // フードデリバリー (Uber Eats / 出前館) の月次推計売上。事業カテゴリ一覧と
+  // 全社合算に算入する。CrossServiceKpis と同一の summarizeFoodDelivery を使い
+  // 算定方法 (週次×52/12 + 月次) を統一する。
+  const foodEstimate = useMemo(
+    () => summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan).combinedMonthlyEstimate,
+    [],
+  );
+  const foodRevenue = foodEstimate.revenue; // GMV (月次換算)
+  const foodNet = foodEstimate.netRevenue; // 手数料控除後の純売上 (手取り)
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/*
+        * **読む口が在るなら、書く口も在る** (2026-09-24 · パス 451)。
+        * この画面の「AI 経営アドバイザー」は Anthropic を呼ぶので main / ブラウザ版とも
+        * この資格情報を読む。ところが 2026-09-24 まで**書く口がどの画面にも無く**、
+        * main は空の鍵をそのまま送って相手の「鍵が不正」という文を画面に出していた (実測)。
+        * 兄弟の感情ログは最初からこの欄を持つ —— 同じラベル・同じ placeholder。
+        * 断りの文 (`MISSING_ANTHROPIC_KEY_MESSAGE`) が名乗る逃げ口はこの欄である。
+        */}
       <StatusBar
         who="事業ダッシュボード · 模擬データ"
         serviceId="business"
         source={source}
         status={status}
         errorMessage={errorMessage}
-        isConfigured
+        isConfigured={isConfigured}
         onRefresh={refresh}
+        tokenSetup={{ label: 'Anthropic API キー', placeholder: 'sk-ant-…' }}
       />
 
       {data.isMock && (
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
@@ -630,17 +845,29 @@ export function BusinessPage() {
           selected={selectedCategory}
           onSelect={setSelectedCategory}
           aggregateRevenue={agg.revenue}
+          foodDeliveryRevenue={foodRevenue}
         />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
       <Section title="全社合算" count={data.units.length}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Tile label="月次売上 (8 事業合計)" value={yen.format(agg.revenue)} />
+          <Tile label="月次売上 (事業合計)" value={yen.format(agg.revenue)} />
+          <Tile
+            label="＋ フードデリバリー GMV (月次推計)"
+            value={yen.format(foodRevenue)}
+            sub={`手数料控除後の純額 ${yen.format(foodNet)}`}
+          />
+          <Tile
+            label="総売上 (事業 + デリバリーGMV)"
+            value={yen.format(agg.revenue + foodRevenue)}
+            sub={`純額ベース ${yen.format(agg.revenue + foodNet)}`}
+            accent="var(--accent)"
+          />
           <Tile label="月次費用" value={yen.format(agg.totalCost)} />
           <Tile
             label="月次利益"
             value={(agg.profit >= 0 ? '+' : '') + yen.format(agg.profit)}
             sub={(agg.profitMargin >= 0 ? '+' : '') + agg.profitMargin.toFixed(1) + '%'}
-            accent={agg.profit >= 0 ? '#22c55e' : '#ef4444'}
+            accent={agg.profit >= 0 ? 'var(--success)' : 'var(--danger)'}
           />
           <Tile
             label="月次コンテンツ出力"
@@ -649,6 +876,8 @@ export function BusinessPage() {
           />
         </div>
       </Section>
+
+      <FoodDeliverySection />
 
       {focusedUnit && (
         <Section title="詳細ビュー" count={1}>
@@ -670,7 +899,7 @@ export function BusinessPage() {
                 padding: '4px 12px',
                 background: sortKey === k ? 'var(--accent)' : 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text)',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -686,7 +915,7 @@ export function BusinessPage() {
                 padding: '4px 12px',
                 background: 'var(--bg-elev)',
                 border: '1px solid var(--border)',
-                borderRadius: 6,
+                borderRadius: 999,
                 color: 'var(--text-mute)',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -700,7 +929,7 @@ export function BusinessPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(360px, 100%), 1fr))',
             gap: 12,
           }}
         >
@@ -723,7 +952,7 @@ export function BusinessPage() {
               padding: '6px 14px',
               background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,
@@ -739,7 +968,7 @@ export function BusinessPage() {
               padding: '6px 14px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,
@@ -747,9 +976,12 @@ export function BusinessPage() {
           >
             Markdown を保存
           </button>
-          <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-            保存先: ~/.local/business-hub/data/business-dashboard.{`{html,md}`}
-          </span>
+          {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
+          {buildKind !== null && (
+            <span data-export-destination style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              {exportDestinationNote(buildKind, DESKTOP_PATHS.businessDashboard)}
+            </span>
+          )}
         </div>
         {lastExport && (
           <div
@@ -761,7 +993,7 @@ export function BusinessPage() {
               borderRadius: 6,
             }}
           >
-            <ExportActions path={lastExport.path} bytes={lastExport.bytes} />
+            <ExportActions path={lastExport.path} bytes={lastExport.bytes} saved={lastExport.saved} warning={lastExport.warning} />
           </div>
         )}
         {exportMsg && (
@@ -787,9 +1019,9 @@ export function BusinessPage() {
       >
         <div
           style={{
-            border: '1px solid #fbbf24',
+            border: '1px solid var(--warning)',
             background: 'rgba(251, 191, 36, 0.08)',
-            color: '#fbbf24',
+            color: 'var(--warning)',
             padding: '8px 12px',
             borderRadius: 6,
             fontSize: 12,
@@ -802,34 +1034,46 @@ export function BusinessPage() {
           AI 出力は誤った推論を含む可能性があるため、実際の経営判断は別途裏取りが必要です。
           回答は登録されている 10 事業カテゴリに限定されます。
         </div>
+        {/* **何が外へ出るかを書く。** 質問文だけでなく、各事業カテゴリの
+            現在 KPI と売上トレンドが JSON で system / user 両方のプロンプトに
+            載って Anthropic へ送られる (`web-shim.ts` の `callBusinessAdvisor` /
+            `business.ts` の `askAdvisor` がどちらも `JSON.stringify(analyses)` を
+            userPrompt に積む)。売上は利用者が入れた情報である。
+            2026-09-09 (パス 106) まで、この画面には免責はあっても
+            **外へ出ることに触れる文が 1 つも無かった**。 */}
+        <AiEgressNotice
+          subject={{
+            what: '質問文と、各事業カテゴリの現在 KPI・売上トレンド (JSON) ',
+            recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
+          }}
+        />
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <input
             type="text"
             value={advisorQuestion}
             onChange={(e) => setAdvisorQuestion(e.target.value)}
             placeholder="例: 来期に最も注力すべき事業を 3 つ"
-            maxLength={1000}
             style={{
               flex: 1,
               padding: '8px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !advisorBusy) runAdvisor();
+              if (isSubmitEnter(e) && !advisorBusy) runAdvisor();
             }}
           />
           <button
             onClick={runAdvisor}
-            disabled={advisorBusy}
+            disabled={advisorBusy || advisorQuestionOver > 0}
             style={{
               padding: '8px 16px',
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
-              borderRadius: 6,
+              borderRadius: 999,
               color: 'var(--text)',
               fontSize: 13,
               cursor: advisorBusy ? 'wait' : 'pointer',
@@ -838,12 +1082,17 @@ export function BusinessPage() {
             {advisorBusy ? '分析中…' : 'AI に聞く'}
           </button>
         </div>
+        <CeilingNotice label="質問" value={advisorQuestion} max={MAX_ADVISOR_QUESTION_CHARS} />
         {advisorError && (
           <div
+            /* 断りの出所を言い分けられるようにする (パス 175 —— 欄の注記と、
+               Enter の砦が出す文は別物で、どちらが出ているかを検査が見る)。 */
+            data-advisor-error
+            role="alert"
             style={{
-              border: '1px solid #ef4444',
+              border: '1px solid var(--danger)',
               background: 'rgba(239, 68, 68, 0.08)',
-              color: '#ef4444',
+              color: 'var(--danger)',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 12,
@@ -878,7 +1127,7 @@ export function BusinessPage() {
                       width: 28,
                       height: 28,
                       borderRadius: 14,
-                      background: 'var(--accent)',
+                      background: 'var(--gradient)',
                       color: '#fff',
                       display: 'flex',
                       alignItems: 'center',
@@ -912,7 +1161,7 @@ export function BusinessPage() {
                 <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, marginBottom: 4 }}>
                   リスク要因:
                 </div>
-                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#fbbf24' }}>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: 'var(--warning)' }}>
                   {r.riskFactors.map((rf, i) => (
                     <li key={i} style={{ marginBottom: 2 }}>
                       {rf}
@@ -943,42 +1192,80 @@ export function BusinessPage() {
 }
 
 /** 横断 KPI ウィジェット — フードデリバリー 2 + 投資 3 サービスの
- *  snapshot から事業全体の総収入・総資産・月次キャッシュフローを 1
- *  画面で把握する。事業ダッシュボードに「業務操作 全体像」セクション
- *  として埋め込む。各サービスの詳細は個別ページで深掘り。 */
+ *  データから事業全体の総収入・総資産・月次キャッシュフローを 1 画面で
+ *  把握する。事業ダッシュボードに「業務操作 全体像」セクションとして
+ *  埋め込む。各サービスの詳細は個別ページで深掘り。
+ *
+ *  各値は `useServiceData` 経由で取得するため、ユーザーが個別ページで
+ *  live 更新した内容にも追従する (PR #4 R2-1。SNAPSHOT 直読みだと live
+ *  モードで古い値が残る問題を解消)。 */
 function CrossServiceKpis() {
-  const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
-  const ue = SNAPSHOT.uberEats;
-  const dc = SNAPSHOT.demaeCan;
-  const re = SNAPSHOT.realEstate;
-  const mf = SNAPSHOT.mutualFunds;
-  const st = SNAPSHOT.stocks;
+  const { data: ue } = useServiceData('uber-eats', SNAPSHOT.uberEats);
+  const { data: dc } = useServiceData('demae-can', SNAPSHOT.demaeCan);
+  const { data: re } = useServiceData('real-estate', SNAPSHOT.realEstate);
+  const { data: mf } = useServiceData('mutual-funds', SNAPSHOT.mutualFunds);
+  const { data: st } = useServiceData('stocks', SNAPSHOT.stocks);
 
-  // フードデリバリー: Uber Eats 週次 × 4 + 出前館 月次 ≈ 月次売上の推計。
-  const monthlyFoodDelivery = ue.weekRevenue * 4 + dc.monthSummary.revenue;
-  // 月次キャッシュフロー (不動産のみ実 CF が算出済)。
+  // 士業 7 種の月次顧問料合計 (横断 KPI に固定費として表示)。
+  const shigyoSnapshots = [
+    SNAPSHOT.taxAccountant,
+    SNAPSHOT.laborConsultant,
+    SNAPSHOT.lawyer,
+    SNAPSHOT.judicialScrivener,
+    SNAPSHOT.adminScrivener,
+    SNAPSHOT.smeConsultant,
+    SNAPSHOT.patentAttorney,
+  ];
+  const shigyoMonthlyFeeTotal = sumShigyoMonthlyFees(shigyoSnapshots);
+
+  // フードデリバリー: summarizeFoodDelivery と算定方法を統一 (週次×52/12 + 月次)。
+  // 売上は非負のはず。異常データ (負の revenue) でも KPI が負に振れないよう
+  // 0 でクランプする (防御的; live データ不整合への耐性)。
+  const monthlyFoodDelivery = Math.max(0, summarizeFoodDelivery(ue, dc).combinedMonthlyEstimate.revenue);
+  // 月次キャッシュフロー (不動産のみ実 CF が算出済)。赤字 CF を表現するため
+  // ここは負値を許容する。
   const monthlyCashflow = re.monthlyCashflow.netCashflow;
   // 投資ポートフォリオ評価額 (株式 cash + 投信)。
   // stocks は backtest 後にしか positions が埋まらないので、cash を保守的に
   // 投資元本としてカウント。実運用では positions[].shares × 最新終値で
   // 評価額を算出する。
   const stocksCash = st?.portfolio?.cash ?? 0;
-  const investmentValuation = stocksCash + mf.portfolio.totalValuation;
-  // 不動産取得価格合計 = 取得原価ベースの資産。
-  const realEstateAssets = re.properties.reduce((sum, p) => sum + p.purchasePrice, 0);
+  const investmentValuation = Math.max(0, stocksCash + mf.portfolio.totalValuation);
+  // 不動産取得価格合計 = 取得原価ベースの資産 (非負)。
+  // `Math.max(0, NaN)` は NaN なので、1 件でも読めない取得価格が在ると
+  // 総資産のタイルが NaN になる。取得価格は負を取らない量 (パス 205)。
+  const realEstateAssets = re.properties.reduce((sum, p) => sum + nonNeg(p.purchasePrice), 0);
   const totalAssets = investmentValuation + realEstateAssets;
 
   return (
-    <Section title="業務操作 横断 KPI (フードデリバリー × 投資)" count={4}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 12 }}>
-        <Stat label="月次売上推計 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
-        <Stat label="月次 CF (不動産)" value={jpy(monthlyCashflow)} positive={monthlyCashflow >= 0} />
-        <Stat label="投資元本 (株式cash + 投信評価額)" value={jpy(investmentValuation)} />
-        <Stat label="総資産 (取得原価ベース)" value={jpy(totalAssets)} />
+    <Section title="業務操作 横断 KPI (フードデリバリー × 投資 × 士業)" count={5}>
+      {/*
+        金額は**この画面で 1 つの流儀**にする (2026-09-08 · パス 99)。
+
+        ここは `shared/formatters` の `jpy` を使っていたが、同じ画面の他の 11 か所は
+        上の `Intl.NumberFormat` (`yen`) を使っており、**実測で 3 つずれていた** ——
+        円記号の文字 (半角 / 全角)・負の符号の位置・小数を出すか円単位に丸めるか。
+        「月次 CF (不動産)」は赤字になりうるので (パス 58 の逆レバレッジ分析はそこが主題)、
+        **同じ画面で負の額が 2 通りに刷られていた**。
+
+        多数側 (11 対 5) に寄せる —— 見える変化がいちばん小さく、符号を記号の前に置く
+        `Intl` の形は日本語の慣行に沿う。実測の表と、リポジトリ全体に 4 つの綴りが
+        在ること (うち 2 つは相手に渡る書面の書式) は
+        `pages/__tests__/moneyNotationOneScreen.test.ts` の冒頭に置いた。
+        **この画面には円記号を字面で書かない** —— 同じテストがそれを留めている。
+      */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 12 }}>
+        <Stat label="月次売上推計 (フードデリバリー)" value={yen.format(monthlyFoodDelivery)} />
+        <Stat label="月次 CF (不動産)" value={yen.format(monthlyCashflow)} positive={monthlyCashflow >= 0} />
+        <Stat label="投資元本 (株式cash + 投信評価額)" value={yen.format(investmentValuation)} />
+        <Stat label="総資産 (取得原価ベース)" value={yen.format(totalAssets)} />
+        <Stat label="士業 月次顧問料 (7 種合計)" value={yen.format(shigyoMonthlyFeeTotal)} />
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
         ※ 各値は snapshot データの集計。フードデリバリーは
-        Uber Eats 週次 ×4 + 出前館 月次の推計。詳細は各サービスページで確認できます。
+        Uber Eats 週次 ×4 + 出前館 月次の推計。士業顧問料は税理士・社労士・弁護士・
+        司法書士・行政書士・中小企業診断士・弁理士の月額固定費の合計。
+        詳細は各サービスページで確認できます。
       </div>
     </Section>
   );

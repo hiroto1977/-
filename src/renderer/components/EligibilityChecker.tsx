@@ -1,0 +1,298 @@
+/**
+ * 年齢・事業形態などを入れると、使える就農・農業支援制度を判定して並べる。
+ *
+ * 判定ロジックは `data/eligibility.ts` の純関数。ここは入力と表示だけを持つ。
+ *
+ * 表示で気をつけている点:
+ * - **「要件を満たす」と「審査に通る」を混ぜない。** 判定は入力から決まる
+ *   要件についてのもので、採否ではない。審査で見られる要件は判定を下げず、
+ *   カードの中に別立てで並べる
+ * - 前提となる認定は**はい / いいえ / 未回答**の 3 択にする。既定を「いいえ」に
+ *   すると、答えていない人まで対象外に落としてしまう
+ * - **判定に効かない入力は、効かないと画面に書く。** 性別・事業形態は受け取るが
+ *   収録範囲では判定を変えない。黙って受け取ると「考慮されている」と読まれる
+ * - 対象外は**理由を必ず添える**（年齢のどこで外れたかが分かるように）
+ * - 各制度に出典リンクを付け、最終確認を一次資料でできるようにする
+ */
+
+import { useMemo, useState, type ReactElement } from 'react';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
+import {
+  judgeEligibility,
+  parseNumericInput,
+  type ApplicantProfile,
+  type Gender,
+  type ProgramJudgement,
+  type Verdict,
+} from '../data/eligibility';
+import { refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
+import { GuardedNumber } from './GuardedNumber';
+import { RefusedFieldsNote } from './RefusedFieldsNote';
+
+/**
+ * **年齢と経営管理の従事年数の欄** (2026-09-27 · パス 493q)。
+ *
+ * それまで 2 欄は素の `<input>` で、読めない値は `parseNumericInput` が `null` = **未入力**に
+ * していた。実測: 年齢に `66歳` と打つと、年齢を要件にする 5 制度がすべて「年齢が未入力」と
+ * 言い、見出しは「入力が足りない 8 件」—— **打った人に「入れていない」と言っていた**
+ * (同じ人が `66` と打てば「対象外 6 件」で、答えそのものが違う)。`-5` は年齢として通り
+ * 「年齢 -5 歳は要件（49歳以下）を満たす」と刷っていた。
+ *
+ * 読めない値・マイナスの欄は判定を断る (`refusedBy: 'judgement'`)。空欄は今までどおり
+ * 「未入力」として判定する —— そのとき「年齢が未入力」は真である。
+ */
+const ELIGIBILITY_SPECS = refusingSpecs('judgement', {
+  age: { label: '年齢（就農時）', kind: 'age', allowEmpty: true },
+  managementYears: { label: '経営管理の従事年数', kind: 'years', allowEmpty: true },
+} as const satisfies Record<string, NumSpec>);
+const ELIGIBILITY_READS = ['age', 'managementYears'] as const;
+
+const VERDICT_STYLE: Readonly<Record<Verdict, { label: string; color: string }>> = {
+  eligible: { label: '要件を満たす', color: 'var(--success)' },
+  needsCheck: { label: '入力が足りない', color: '#f5a623' },
+  ineligible: { label: '対象外', color: '#e0568a' },
+};
+
+const GENDERS: readonly { value: Gender; label: string }[] = [
+  { value: 'unspecified', label: '回答しない' },
+  { value: 'female', label: '女性' },
+  { value: 'male', label: '男性' },
+  { value: 'other', label: 'その他' },
+];
+
+/** はい / いいえ / 未回答 の 3 択。未回答を既定にする。 */
+const TRI: readonly { value: string; label: string }[] = [
+  { value: 'unknown', label: '未回答' },
+  { value: 'yes', label: 'はい' },
+  { value: 'no', label: 'いいえ' },
+];
+
+function triToBool(v: string): boolean | null {
+  if (v === 'yes') return true;
+  if (v === 'no') return false;
+  return null;
+}
+
+function Card({ j }: { j: ProgramJudgement }): ReactElement {
+  const s = VERDICT_STYLE[j.verdict];
+  /*
+   * **属性に入れるのは関門を通した文字列だけ** (パス 298)。
+   *
+   * ここは長らく台帳の生の値を `href` 属性へ渡し、`onClick` の
+   * `preventDefault()` + `openExternal` に頼っていた。`openExternal` は
+   * 両ビルドとも `externalUrlOrNull` を通すが、**属性そのものは関門を
+   * 通らない** —— React の `onClick` は `click` にしか着かないので、
+   * 中クリック (`auxclick`)・右クリックの「新しいタブで開く」
+   * 「リンクをコピー」・リンクのドラッグは `preventDefault` を 1 度も
+   * 呼ばず、素の属性が使われる。「調べた物」と「使われる物」が別になる形で、
+   * パス 291 (端点の前置き一致)・パス 295 / 296 (ヘッダ値) と同じ家系。
+   *
+   * 規準は手の届く所に在った —— `DataList` は同じ「payload 由来の URL」を
+   * `<button onClick={openExternal}>` で開き、属性を持たない。
+   * 母集団と両方向の規則は `shared/__tests__/followableUrlCensus.test.ts`。
+   */
+  const safeSourceUrl = externalUrlOrNull(j.sourceUrl);
+  return (
+    <li
+      style={{
+        border: '1px solid var(--border)',
+        borderLeft: `4px solid ${s.color}`,
+        borderRadius: 8,
+        padding: 12,
+        listStyle: 'none',
+      }}
+    >
+      <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
+        <span style={{ color: s.color, fontWeight: 700, fontSize: 12 }}>{s.label}</span>
+        <strong style={{ fontSize: 13 }}>{j.name}</strong>
+        <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{j.authority}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>／ {j.ageRequirement}</span>
+      </div>
+      <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
+        {j.reasons.map((r) => (
+          <li key={r}>{r}</li>
+        ))}
+      </ul>
+      {j.reviewChecks.length > 0 && (
+        <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
+          審査で見られる要件（判定には含めていません）:
+          <ul style={{ margin: '2px 0 0', paddingLeft: 18 }}>
+            {j.reviewChecks.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {safeSourceUrl === null ? (
+        <div style={{ marginTop: 6, fontSize: 11, color: 'var(--warning)' }}>
+          ⚠ 出典を開けません（{j.authority}）— 台帳の URL が http(s) ではありません
+        </div>
+      ) : (
+        <a
+          href={safeSourceUrl}
+          onClick={(e) => {
+            e.preventDefault();
+            void window.serviceHub?.openExternal(safeSourceUrl);
+          }}
+          style={{
+            display: 'inline-block',
+            marginTop: 6,
+            fontSize: 11,
+            color: 'var(--text-mute)',
+            textDecoration: 'underline',
+          }}
+        >
+          出典を開く（{j.authority}）
+        </a>
+      )}
+    </li>
+  );
+}
+
+export function EligibilityChecker(): ReactElement {
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState<Gender>('unspecified');
+  const [entity, setEntity] = useState<'individual' | 'corporation'>('individual');
+  const [mgmt, setMgmt] = useState('');
+  const [certFarmer, setCertFarmer] = useState('unknown');
+  const [certNew, setCertNew] = useState('unknown');
+
+  const profile: ApplicantProfile = useMemo(
+    () => ({
+      age: parseNumericInput(age),
+      gender,
+      entity,
+      managementYears: parseNumericInput(mgmt),
+      certifiedFarmer: triToBool(certFarmer),
+      certifiedNewFarmer: triToBool(certNew),
+    }),
+    [age, gender, entity, mgmt, certFarmer, certNew],
+  );
+
+  // **断った欄が在れば判定しない** (パス 493q) —— 読めない年齢を「未入力」として判定すると、
+  // 入れた人に「入力が足りない」と言う。
+  const refused = refusedFields(ELIGIBILITY_SPECS, { age, managementYears: mgmt });
+  const report = useMemo(() => judgeEligibility(profile), [profile]);
+  const ordered = [...report.eligible, ...report.needsCheck, ...report.ineligible];
+
+  return (
+    <div>
+      <p style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7, marginTop: 0 }}>
+        年齢などを入れると、就農・農業の支援制度のうち使えるものを判定します。
+        <strong>判定は「要件を満たす」「入力が足りない」「対象外」の 3 段階</strong>です。
+        「要件を満たす」は<strong>申請できるという意味であって、採択・審査の結果ではありません</strong>。
+        審査で見られる要件は判定に含めず、各制度のカードに並べています。
+      </p>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))',
+          gap: 12,
+          marginBottom: 12,
+        }}
+      >
+        <GuardedNumber
+          spec={ELIGIBILITY_SPECS.age}
+          value={age}
+          onChange={setAge}
+          placeholder="例: 66"
+          style={{ width: '100%' }}
+        />
+        <label style={{ fontSize: 12 }}>
+          <span style={{ display: 'block', color: 'var(--text-mute)' }}>性別</span>
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value as Gender)}
+            aria-label="性別"
+            style={{ width: '100%' }}
+          >
+            {GENDERS.map((g) => (
+              <option key={g.value} value={g.value}>
+                {g.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label style={{ fontSize: 12 }}>
+          <span style={{ display: 'block', color: 'var(--text-mute)' }}>事業形態</span>
+          <select
+            value={entity}
+            onChange={(e) => setEntity(e.target.value as 'individual' | 'corporation')}
+            aria-label="事業形態"
+            style={{ width: '100%' }}
+          >
+            <option value="individual">個人</option>
+            <option value="corporation">法人</option>
+          </select>
+        </label>
+        <GuardedNumber
+          spec={ELIGIBILITY_SPECS.managementYears}
+          value={mgmt}
+          onChange={setMgmt}
+          placeholder="例: 8"
+          style={{ width: '100%' }}
+        />
+        <label style={{ fontSize: 12 }}>
+          <span style={{ display: 'block', color: 'var(--text-mute)' }}>認定農業者か</span>
+          <select
+            value={certFarmer}
+            onChange={(e) => setCertFarmer(e.target.value)}
+            aria-label="認定農業者か"
+            style={{ width: '100%' }}
+          >
+            {TRI.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label style={{ fontSize: 12 }}>
+          <span style={{ display: 'block', color: 'var(--text-mute)' }}>認定新規就農者か</span>
+          <select
+            value={certNew}
+            onChange={(e) => setCertNew(e.target.value)}
+            aria-label="認定新規就農者か"
+            style={{ width: '100%' }}
+          >
+            {TRI.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <RefusedFieldsNote labels={refusalLabels(ELIGIBILITY_SPECS, refused, ELIGIBILITY_READS)} />
+      {refused.length === 0 && (
+        <p style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+          要件を満たす {report.eligible.length} 件 ／ 入力が足りない {report.needsCheck.length} 件 ／
+          対象外 {report.ineligible.length} 件
+          {report.genderMattered
+            ? ''
+            : '　※ ここに収録した農業系の制度に、性別を要件にしているものはありません。'}
+        </p>
+      )}
+      <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: -4 }}>
+        ※ 事業形態（個人／法人）も判定には効いていません。法人で上限額が変わる制度はありますが、
+        その金額は年度の要領によるため、確認していない要件を判定に入れていません（各制度の
+        「審査で見られる要件」に出しています）。
+      </p>
+
+      {refused.length === 0 && (
+        <ul style={{ display: 'grid', gap: 8, margin: 0, padding: 0 }}>
+          {ordered.map((j) => (
+            <Card key={j.id} j={j} />
+          ))}
+        </ul>
+      )}
+
+      <p style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 0 }}>
+        ※ 制度の要件・金額・締切は年度ごとに変わります。最終確認は各実施機関の一次情報で行ってください。
+        本判定は申請の採否を保証するものではありません。
+      </p>
+    </div>
+  );
+}

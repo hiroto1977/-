@@ -1,0 +1,274 @@
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { promises as fs } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { ATOMIC_TMP_INFIX, atomicTmpPathOf, atomicWriteFile, readFileWithBackup } from '../atomicWrite';
+
+let dir: string;
+
+beforeEach(async () => {
+  dir = await fs.mkdtemp(path.join(os.tmpdir(), 'atomicwrite-'));
+});
+afterEach(async () => {
+  await fs.rm(dir, { recursive: true, force: true });
+});
+
+describe('atomicWriteFile', () => {
+  it('writes the file and creates missing parent directories', async () => {
+    const target = path.join(dir, 'nested', 'deep', 'secrets.json');
+    await atomicWriteFile(target, '{"a":1}');
+    expect(await fs.readFile(target, 'utf8')).toBe('{"a":1}');
+  });
+
+  /*
+   * 作業ファイルは `O_EXCL` で開く —— **既に在るなら開かない**。
+   *
+   * tmp 名は `pid + Date.now() + Math.random()` なので、普通は同じ名前が
+   * 先に在ることは無い。だから**両方を固定して、在る状態を作って**確かめる。
+   * `'w'` のままだと先客を黙って切り詰めて成功してしまう (= 片方の書き込みが
+   * 消える・シンボリックリンクなら辿る)。
+   */
+  it('作業ファイルが既に在るなら開かず失敗する (O_EXCL)', async () => {
+    const target = path.join(dir, 'excl.json');
+    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000);
+    try {
+      // 作る側と同じ関数で名前を作る (写すと、綴りを変えた日にこの先客が別の名前になり O_EXCL を試さない)。
+      const tmp = atomicTmpPathOf(target);
+      await fs.writeFile(tmp, 'せんきゃく');
+      await expect(atomicWriteFile(target, 'あたらしい')).rejects.toThrow();
+      // 先客はそのまま (切り詰められていない)。
+      expect(await fs.readFile(tmp, 'utf8')).toBe('せんきゃく');
+      // 本体は作られていない。
+      await expect(fs.stat(target)).rejects.toThrow();
+    } finally {
+      randomSpy.mockRestore();
+      nowSpy.mockRestore();
+    }
+  });
+
+  it('overwrites an existing file atomically', async () => {
+    const target = path.join(dir, 'f.json');
+    await atomicWriteFile(target, 'first');
+    await atomicWriteFile(target, 'second');
+    expect(await fs.readFile(target, 'utf8')).toBe('second');
+  });
+
+  it('leaves no leftover .tmp- files after success', async () => {
+    const target = path.join(dir, 'f.json');
+    await atomicWriteFile(target, 'x');
+    const entries = await fs.readdir(dir);
+    expect(entries.filter((e) => e.includes(ATOMIC_TMP_INFIX))).toEqual([]);
+  });
+
+  it('★ 控えは最後に書けた内容 —— 直前の内容 (消した物) を控えに残さない (パス 134)', async () => {
+    const target = path.join(dir, 'f.json');
+    await atomicWriteFile(target, '{"github":"secret-1"}', { keepBackup: true });
+    await atomicWriteFile(target, '{}', { keepBackup: true });
+    expect(await fs.readFile(target, 'utf8')).toBe('{}');
+    // 2026-09-09 まで控えは '{"github":"secret-1"}' だった —— 消した資格情報が控えに残り、本体が消えると戻ってきた。
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{}');
+  });
+
+  it('初回の書き込みでも控えを置く (本体を後から失ったときの復旧のため)', async () => {
+    const target = path.join(dir, 'fresh.json');
+    await expect(atomicWriteFile(target, 'v1', { keepBackup: true })).resolves.toBeUndefined();
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('v1');
+  });
+
+  it('控えを書けなければ投げる (古い控えを黙って残さない)', async () => {
+    const target = path.join(dir, 'blocked.json');
+    await fs.mkdir(`${target}.prev`); // 控えの置き場を塞ぐ (rename が失敗する)
+    await expect(atomicWriteFile(target, 'x', { keepBackup: true })).rejects.toBeTruthy();
+    // 本体は書けている (投げるのは控えの段で、本体を巻き戻さない)。tmp の残骸も無い。
+    expect(await fs.readFile(target, 'utf8')).toBe('x');
+    expect((await fs.readdir(dir)).filter((e) => e.includes(ATOMIC_TMP_INFIX))).toEqual([]);
+  });
+
+  it('控えにも指定した mode が効く (POSIX)', async () => {
+    if (process.platform === 'win32') return;
+    const target = path.join(dir, 'mode640.json');
+    await atomicWriteFile(target, 'x', { mode: 0o640, keepBackup: true });
+    expect((await fs.stat(`${target}.prev`)).mode & 0o777).toBe(0o640);
+  });
+
+  it('applies the requested file mode (POSIX)', async () => {
+    if (process.platform === 'win32') return; // mode bits are a no-op on Windows
+    const target = path.join(dir, 'm.json');
+    await atomicWriteFile(target, 'x', { mode: 0o600 });
+    const st = await fs.stat(target);
+    expect(st.mode & 0o777).toBe(0o600);
+  });
+
+  it('defaults the file mode to 0o600 when none is given (POSIX)', async () => {
+    if (process.platform === 'win32') return;
+    // `opts.mode ?? 0o600` の既定値。?? を && にする mutant は undefined を渡し既定 umask
+    // モード (≠0o600) になるため、既定 0o600 を確認して撃墜。
+    const target = path.join(dir, 'd.json');
+    await atomicWriteFile(target, 'x');
+    expect((await fs.stat(target)).mode & 0o777).toBe(0o600);
+  });
+
+  it('does not create a .prev backup when keepBackup is not set', async () => {
+    // `if (opts.keepBackup)` を true 固定する mutant は常に .prev を作るため、未指定時に
+    // .prev が無いことを確認して撃墜。
+    const target = path.join(dir, 'nb.json');
+    await atomicWriteFile(target, 'v1');
+    await atomicWriteFile(target, 'v2'); // 既存ありで上書き (keepBackup 無し)
+    await expect(fs.access(`${target}.prev`)).rejects.toBeTruthy();
+  });
+
+  it('rejects and cleans up the temp file when the rename fails', async () => {
+    // target が既存ディレクトリだと rename(tmp, dir) が失敗 → catch で tmp 削除 + 再 throw。
+    // catch ブロックを空にする mutant は throw を消して resolve してしまうため、reject を
+    // 確認して撃墜。後始末で .tmp- が残らないことも確認。
+    const target = path.join(dir, 'collide');
+    await fs.mkdir(target); // target を既存ディレクトリにする
+    await expect(atomicWriteFile(target, 'x')).rejects.toBeTruthy();
+    const leftovers = (await fs.readdir(dir)).filter((e) => e.includes(ATOMIC_TMP_INFIX));
+    expect(leftovers).toEqual([]);
+  });
+});
+
+describe('readFileWithBackup', () => {
+  const CAP = 1024 * 1024;
+
+  it('reads the primary file when present', async () => {
+    const target = path.join(dir, 'f.json');
+    await atomicWriteFile(target, 'primary');
+    expect(await readFileWithBackup(target, CAP)).toBe('primary');
+  });
+
+  it('falls back to .prev when the primary is missing', async () => {
+    const target = path.join(dir, 'f.json');
+    await fs.writeFile(`${target}.prev`, 'backup');
+    expect(await readFileWithBackup(target, CAP)).toBe('backup');
+  });
+
+  it('returns null when neither exists', async () => {
+    expect(await readFileWithBackup(path.join(dir, 'nope.json'), CAP)).toBeNull();
+  });
+
+  /*
+   * **読む前の大きさの門は、控え (`.prev`) にも掛かる** (パス 326)。
+   *
+   * それまで `readFileWithBackup` は上限を持たず、`secrets.ts` は**本体にだけ**
+   * `fs.stat` の門を掛けていた —— 本体が消えていれば門は ENOENT で素通りし、
+   * 控えが何バイトでも丸ごと読まれて `JSON.parse` まで進んだ。
+   */
+  it('★ 上限を超える本体は読まず、控えへ倒れる', async () => {
+    const target = path.join(dir, 'big.json');
+    await fs.writeFile(target, 'x'.repeat(200));
+    await fs.writeFile(`${target}.prev`, 'small');
+    expect(await readFileWithBackup(target, 100)).toBe('small');
+    // 対照: 上限を上げれば本体が読める (門が効いていることの裏取り)
+    expect(await readFileWithBackup(target, 1000)).toBe('x'.repeat(200));
+  });
+
+  it('★ 本体が無く控えが上限を超えるとき、控えも読まない (null)', async () => {
+    const target = path.join(dir, 'onlybig.json');
+    await fs.writeFile(`${target}.prev`, 'y'.repeat(200));
+    expect(await readFileWithBackup(target, 100)).toBeNull();
+    expect(await readFileWithBackup(target, 1000)).toBe('y'.repeat(200));
+  });
+
+  /*
+   * **本体も控えも「在るが読めない」ときは、`undefined` ではなく `null`** (パス 502)。
+   *
+   * 宣言は `Promise<string | null>` で、呼び手 (`secrets.ts`) は `=== null` で「どちらも無い」を見る。
+   * `stat` は通るが `readFile` が失敗する物 (ディレクトリ・権限) は、`??` の右へ倒れた先も同じ形で
+   * 失敗するので、両方が読めないときに**最後に返る値**が契約の値でなければならない。
+   */
+  it('★ 本体も控えも在るのに読めない (ディレクトリ) なら、undefined ではなく null', async () => {
+    const target = path.join(dir, 'dirs.json');
+    await fs.mkdir(target);
+    await fs.mkdir(`${target}.prev`);
+    expect(await readFileWithBackup(target, CAP)).toBeNull();
+  });
+
+  it('本体が読めなければ控えを読む (在るのに読めない本体は「無い」と同じに扱う)', async () => {
+    const target = path.join(dir, 'half.json');
+    await fs.mkdir(target);
+    await fs.writeFile(`${target}.prev`, 'backup');
+    expect(await readFileWithBackup(target, CAP)).toBe('backup');
+  });
+
+  it('境界: ちょうど上限は読む / 1 バイト超は読まない', async () => {
+    const target = path.join(dir, 'edge.json');
+    await fs.writeFile(target, 'z'.repeat(64));
+    expect(await readFileWithBackup(target, 64)).toBe('z'.repeat(64));
+    expect(await readFileWithBackup(target, 63)).toBeNull();
+  });
+});
+
+/*
+ * **権限は「作るとき」だけの話ではない。**
+ *
+ * `fs.writeFile(..., { mode })` は**新規作成のときしか効かない** ——
+ * 既にあるファイルの権限は変わらない。実際 `main/clients/emotions.ts` は
+ * 2026-08-13 に `{ mode: 0o600 }` を足したが、それ以前に作られたファイルは
+ * 644 のまま残り、以後どれだけ書いても直らなかった (実測)。
+ *
+ * `atomicWriteFile` は 0600 で作った一時ファイルを `rename` で被せるので、
+ * **次の書き込みで既存の緩い権限も直る**。控えを取るときは控えも揃える ——
+ * 本体だけ直して控えを緩いまま残すのは、鍵を掛けた扉の横に窓を開けておくのと同じ。
+ */
+describe('atomicWriteFile と権限', () => {
+  const modeOf = async (p: string) => ((await fs.stat(p)).mode & 0o777).toString(8);
+
+  it('新しいファイルは指定した権限で作られる', async () => {
+    const target = path.join(dir, 'new.json');
+    await atomicWriteFile(target, '{}', { mode: 0o600 });
+    expect(await modeOf(target)).toBe('600');
+  });
+
+  it('既にある緩いファイルも、次の書き込みで締まる', async () => {
+    const target = path.join(dir, 'legacy.json');
+    // mode を付ける前のバージョンが作った状態
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+    expect(await modeOf(target)).toBe('644');
+
+    await atomicWriteFile(target, '{"new":1}', { mode: 0o600 });
+
+    // ★ ここが本体。writeFile では直らない。
+    expect(await modeOf(target)).toBe('600');
+    expect(await fs.readFile(target, 'utf8')).toBe('{"new":1}');
+  });
+
+  it('控えを本体より緩いまま残さない', async () => {
+    const target = path.join(dir, 'withprev.json');
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+    // 古い版が残した緩い控え (644) も、置き換えで締まる。
+    await fs.writeFile(`${target}.prev`, '{"older":1}');
+    await fs.chmod(`${target}.prev`, 0o644);
+
+    await atomicWriteFile(target, '{"new":1}', { mode: 0o600, keepBackup: true });
+
+    // 控えは本体と同じ経路 (一意な tmp → rename) で作るので、複製元の権限を継ぐ道が無い。
+    expect(await modeOf(`${target}.prev`)).toBe('600');
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{"new":1}');
+  });
+
+  /*
+   * mode **無指定**のときも同じ窓が開いていた (2026-08-31)。
+   *
+   * 一時ファイルは `opts.mode ?? 0o600` で作られるので、mode を渡さなくても
+   * 本体は rename 後に 600 になる。ところが控えを揃える側だけが
+   * `if (opts.mode !== undefined)` で守られていて、**まさにその無指定の場合に**
+   * 本体 600 / 控え 644 が残った。控えも同じ既定値へ揃える。
+   */
+  it('mode 無指定でも、控えは本体と同じ 600 に揃う', async () => {
+    const target = path.join(dir, 'withprev-nomode.json');
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+
+    await atomicWriteFile(target, '{"new":1}', { keepBackup: true });
+
+    expect(await modeOf(target)).toBe('600');
+    // ★ ここが本体 —— 以前はここが 644 のまま残っていた。
+    expect(await modeOf(`${target}.prev`)).toBe('600');
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{"new":1}');
+  });
+});

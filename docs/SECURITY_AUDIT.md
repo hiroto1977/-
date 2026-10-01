@@ -1,9 +1,87 @@
 # セキュリティ監査レポート
 
-最終監査日: 2026-05-12  
-監査対象 commit: 8b0a0ca
+最終監査日: 2026-07-25 (第2ラウンド・5並列エージェント + 手動)  
+監査対象 commit: 149adaea (第1ラウンド: 2026-05-12 / 8b0a0ca)
 
 ## サマリ
+
+### 第2ラウンド (2026-07-25) — 全件修正済み
+
+Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS・ビルド時
+インジェクション の5面を並列監査し、**実在が確認できた指摘のみ**修正した (エージェント
+の主張は全件こちらで再現・検証してから着手。再現できなかったものは修正していない)。
+
+| # | 重大度 | 対象 | 内容 | 状態 |
+|---|---|---|---|---|
+| R2-1 | 中 (Windows では影響大) | `main.ts` `app:openPath` / `app:revealInFolder` | `$HOME` 配下の**任意ファイル**を OS 既定アプリで開けた (Windows では `.exe` 実行プリミティブ) | 修正 |
+| R2-2 | 中 | `business/stocks/templates/teamradar` の `customPath` | `$HOME` 配下の任意 `.html/.md/.svg` を作成・上書きできた (R2-1 の材料設置に直結) | 修正 |
+| R2-3 | 中 | `dataCrypto.ts` | PBKDF2-SHA256 の反復が **210,000** (OWASP SHA-256 基準は 600,000。210k は SHA-512 の行を誤記) → バックアップの総当り耐性が意図の 1/3 | 修正 |
+| R2-4 | 中 | `vault.ts` | マスターパスワード最低 **8 文字** — `kcv`/`master-wrap` によりオフライン検証が可能なため、プロファイル窃取時の総当りに耐えない | 修正 (12 文字) |
+| R2-5 | 中 | `proxy.ts` SSRF ガード | **末尾ドット** (`localhost.` / `metadata.google.internal.` / `x.internal.`) で名前ベースの全規則を回避できた (実測再現済み) | 修正 |
+| R2-6 | 中 | `proxy.ts` | 検証したのは `parsed` なのに転送は**生文字列** — プロキシ側パーサ差分で SSRF (`https://public.com\@169.254.169.254/`) | 修正 (`parsed.href` 転送) |
+| R2-7 | 低 | `assets/sw.js` | 全 GET を Cache Storage に平文保存 — CORS 対応第三者 API のレスポンス (業務データ) が Vault の暗号化・自動ロックを迂回して端末に残りうる | 修正 (同一オリジン限定) |
+| R2-8 | 低 | `inline-html.cjs` CSP | `worker-src` 未指定 → `script-src` へフォールバックし **SW が一切登録できていなかった** (PWA オフライン/インストールが無効) | 修正 |
+| R2-9 | 低 | `oauth.ts` | `state` 不一致もサーバ自己終了カウンタに算入 → ローカルプロセスが偽コールバック 50 発で正規フローを DoS 可能 (この分岐が防ぐはずの攻撃を再導入していた) | 修正 |
+| R2-10 | 低 | `oauth.ts` | `tokenUrl` の https 未検証 / トークン交換エラー本文の redaction 漏れ | 修正 (多層防御) |
+| R2-11 | 低 | `dataCrypto.ts` | 自己記述の `iterations` に上限なし → 悪意ある bundle で CPU-DoS | 修正 (10万〜400万にクランプ) |
+| R2-12 | 低 | `vault.ts` | `clearToken` がロック中でも動作・`serviceId` 未検証 / `unlock()` の例外時に生マスター鍵を zero 化しない | 修正 |
+| R2-13 | 低 | 書類メーカー3種 + landing | `JSON.stringify` を inline `<script>` に埋め込み `<` 未エスケープ → データに `</script>` が入るとページ崩壊 (2026-07-24 の Pages 事故と同型)。`replace(str,str)` の `$&` 解釈も同時に是正 | 修正 |
+
+**修正しなかった (受容 / 上流責務)** — ※ 第3ラウンド (下記) でほぼ全て解消済み:
+- ~~SSRF ガードはホスト名文字列のみ~~ → **R3 で上流実装**。`docs/PROXY_EXAMPLE.md` の Worker が DoH で解決後 IP を再検査し、リダイレクト各ホップも再検査する。client 側の限界は変わらないが、文書上の防御線が実在するようになった。
+- リカバリー 24 語のクリップボード / 平文 `.txt` 保存は「書き留める」UX と不可分 → **警告文を明確化** (平文であり単体で Vault を復元できる旨をダウンロード時に表示)。
+- `webauthn.ts` は未配線のまま。`verifyBiometric` は署名検証をしていなかったため **fail-closed 化済み** (認証器を呼ぶ前に throw し、誤って解錠ゲートに配線されても通らない)。将来実装する場合の不変条件 — マスターパスワード/派生鍵を生体解錠のために保存しないこと — をモジュール冒頭と `docs/SECURITY_CHAIN.md` §3 に明記した。
+- `secrets.ts` の `plain:` フォールバック (keychain 不在 Linux) は暗号化の代替が無いため受容継続。ただし **R3 で利用者に可視化** (`secrets:protection` IPC + 設定画面に暗号化可否/未暗号化件数/keyring 導入手順)。従来は `console.warn` だけで GUI 利用者に届いていなかった。
+
+### 第3ラウンド (2026-07-25) — 未対処項目の総ざらい
+
+| ID | 対象 | 内容 | 状態 |
+|---|---|---|---|
+| R3-1 | `docs/PROXY_EXAMPLE.md` | リファレンス Worker が文書化済みの「解決後 IP 再検査」を実装していなかった → DoH (A/AAAA) で全アドレスを private/reserved 判定・`redirect:'manual'` + ホップ上限 3 で各 `Location` を再検査・非 http(s) 拒否・ホスト跨ぎで `Authorization`/`Cookie`/`x-proxy-auth` 破棄・301/302/303 は POST→GET 降格・DoH 失敗/NXDOMAIN/回答ゼロは fail-closed | 修正 |
+| R3-2 | 同上 | 共有シークレット比較が `!==` (先頭一致文字数が応答時間から漏れる) → XOR 累積の定数時間比較 | 修正 |
+| R3-3 | `scripts/inline-html.cjs`, `inject-pwa.cjs` | `script-src 'unsafe-inline'` = 注入された任意の inline `<script>` も実行可 → バンドルの sha256 ハッシュに固定し、SW スニペットのハッシュを冪等追記。仕上がり文書から再導出して未ピン留めならビルド失敗。実 chromium で 10MB/2.2MB の正常描画と注入 script の遮断を確認 | 修正 |
+| R3-4 | `security/webauthn.ts` | `rawId.byteLength > 0` だけで所持証明 true (署名未検証・チャレンジ使い捨て) → 認証器呼び出し前に throw する fail-closed 化。誤配線事故を構造的に防ぐ | 修正 |
+| R3-5 | `main/secrets.ts` + 設定画面 | `plain:` フォールバックの警告が `console.warn` のみで GUI 利用者に不可視 → `secrets:protection` IPC (秘密を返さず encrypted/plainCount/path のみ) + 設定画面表示 | 修正 |
+| R3-6 | `components/DataList.tsx`, `StatusBar.tsx` | 第三者由来 `thumbnailUrl`/`avatarUrl` のスキーム未検証 (現状 `<img>` なので実害なし。`href`/CSS `url()`/SVG `use` へ移した瞬間に危険) → https?/data:image のみ許可し、それ以外は `src` 属性自体を出さない。tab/CR/LF を除去してから判定 | 修正 |
+| R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認。2026-09-05 に 43 系の最新 **43.6.0** へ（patch 4 つぶんの Chromium / Node の security backport。`npm audit` は patch release を勧告として出さないので `npm outdated` の `wanted` で見る。実物の起動は `smoke:app` で確認） | 修正 |
+
+npm audit: **prod / dev とも 0 件** (2026-09-10 実測)。
+
+> **この段落は 2026-09-10 まで実物とずれていた。** 「dev 依存の残りは brace-expansion / minimatch /
+> ejs / temp / glob と vite/vitest 系」と名指ししていたが、その日の勧告集合は **1 件も重なっていなかった**
+> —— 実際に在ったのは `@vitest/mocker` の**パストラバーサル / 任意ファイル読み出し**
+> (GHSA-82fw-gwwq-j7x9) と `js-yaml` の DoS (GHSA-2883-xcg3-v3hh · **high**) で、どちらもここに理由が
+> 書かれていなかった。読んだ人は「残りは梱包道具の DoS だけ」と受け取る。
+> **散文で在庫を持つのをやめた** —— 受け入れではなく「自分で押さえた床」を台帳にして機械に持たせた。
+
+- **勧告 4 件は宣言の範囲内で解消**した (2026-09-10): `vitest` / `@vitest/coverage-v8` 4.1.10 → **4.1.11**
+  (`^4.1.10` の内側)、`js-yaml` 4.3.1 → **4.3.2** (electron-builder の `^4.1.0` の内側)。
+  追加・削除されたパッケージは 0 件で、動いたのは 10 件の patch だけ。
+- **押さえた版は `scripts/lint-dependencies.cjs` の `SECURITY_FLOORS` (床 4 件) が持つ** (`lint:deps` / 規則 7)。
+  床は道 (`overrides` / `devDependencies` の範囲) を問わず 1 つの台帳に載り、
+  **宣言の消失・指定の緩み・lockfile の解決版 (入れ子の複製も) の下回り**で落ちる。
+  `js-yaml` は解決結果としてしか存在しなかったので `overrides` で宣言し直した ——
+  宣言の無い床は lockfile の衝突ひとつで黙って戻る。
+- **既にあった床も古びていた。** `qs` の `^6.15.2` (2026-08-17 に据えた) は 24 日後には低すぎで、
+  後から出た GHSA-x5fp-wj9c-mxmx (<=6.15.3) と GHSA-4mjr-xmp4-gh2g (<6.16.0) が床の許す版を覆っていた。
+  lockfile がたまたま 6.16.0 に解決されていたので `npm audit` は緑のままだった。**`^6.16.0` へ据え直した。**
+  床は据えた日の勧告に対してしか正しくないので、各行に `checkedOn` を持たせ、
+  180 日を超えると `lint:deps` が警告する。
+- **定期点検 (自動・週次)**: `.github/workflows/dependency-audit.yml` が毎週月曜 07:00 JST に
+  `npm run audit:report` を回す —— `npm audit` の全体と `--omit=dev` を突き合わせて
+  **dev だけの勧告**を切り出し、`npm run audit:floors` と同じ測定 (`probeFloors`) で
+  **床がまだ十分か**を測り直し、要対応を**常設 Issue 1 つ**に集める (0 件になれば自動で閉じる)。
+  手で回すなら `npm run audit:report` / `npm run audit:floors`。網が要るので
+  `verify:all` にも `ci.yml` にも入れない。
+  **2026-09-10 の当初の判断を訂正した** —— パス 143 では「無関係な PR が赤くなると門が門でなくなる」
+  を理由に週次も置かなかったが、その懸念は **PR / push の門についてのもの**で、
+  **予定実行は誰の PR も赤くしない**。`knowledge-auto.yml` が既に採っている型
+  (結果は Issue・片付いたら閉じる) に揃えたので懸念は当たらない (パス 144)。
+- dev 依存の勧告そのものを CI で落とさない方針は変えていない (`ci.yml` の注記)。
+  出荷物に入らず、moderate 以下は推移依存で頻繁に出るため。**狭くする代わり、落ちたら本物として扱う。**
+  電子署名まわりで npm が提案する electron-builder 25 系への降格は、Electron 43 を扱えなくなるため採らない。
+
+### 第1ラウンド (2026-05-12)
 
 | 重大度 | 件数 | 状態 |
 |---|---|---|
@@ -12,8 +90,6 @@
 | P2 (中) | 4 | 修正済み 2 / 受容可能なリスク 2 |
 | P3 (低) | 3 | 文書化済み |
 | Info | 6 | 既存防御で対応済み (本ファイルに記載) |
-
-production npm audit: **0 脆弱性**（最終確認時点）。
 
 ## P1: 高優先度（すべて修正済み）
 
@@ -86,9 +162,16 @@ main プロセス OOM。
 作る → 理論上タイミング攻撃で state 推測可能。実用上は OAuth 5 分タイムアウト
 + 1 attempt しか無いため exploit 困難だが、防御深層原則として `timingSafeEqual` 推奨。
 
-**修正方針 (低リスクと判断、未実装)**:
-- 現状の 16 バイト randomBytes + 5 分制限で実害なし → 文書化で済ます
-- 状況: **受容**（後述 P2 と同様の判断）
+**状況: 修正済み** (この文書が古かった — 2026-08-24 に実装を確認して更新)
+
+当初は「16 バイト randomBytes + 5 分制限で実害なし」として**受容**と書いたが、
+その後 `safeStateEquals` として実装されている (`src/main/oauth.ts` — `timingSafeEqual`
+にバイト長を揃えてから渡す)。検査も在る: `oauth.test.ts` と、main の
+`timingSafeEqual` とブラウザ版の手書き XOR ループが同じ答えを返すことを見る
+`stateEqualsParity.test.ts`。
+
+**文書が「受容」のままなのは危ない** —— 次に触る人が「監査が許容と判断した」
+と読んで `!==` へ戻せてしまう。実装のほうが先に進んでいた。
 
 ## P2: 中優先度
 
@@ -118,6 +201,15 @@ main プロセス OOM。
 ### P3-1: OAuth callback HTML はテンプレートリテラル
 `CALLBACK_HTML` 定数として直接記述、変数挿入なし。XSS リスク無し。文書化のみ。
 
+**追記 (2026-08-24)**: 成功応答は確かに何も映さないが、**同じサーバの
+`oauth-error` 応答だけは要求の値を映して返す** (`error` はクエリ由来)。
+到達には state 一致が要るので任意の相手からは叩けない。ただし
+「映して返す唯一の口」が「何も映さない成功応答」より頭書きが弱い
+(成功側は `charset` を明示していて、理由も『ブラウザに中身を推測させない』と
+書いてある) のは筋が通らないので、`charset=utf-8` と
+`X-Content-Type-Options: nosniff` を揃えた。検査は
+`oauth.test.ts`（頭書きを戻すと落ちる対照つき）。
+
 ### P3-2: secrets.json の `mode 0o600`
 read+write owner only. 既存実装で対応。
 
@@ -145,7 +237,7 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 | GitHub `owner/repo` | `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/...` | ✅ url-encode 済 |
 | GitHub PR detail URL | `item.pull_request.url` | ✅ host pin (api.github.com), https 必須 |
 | Ollama `model` | `/api/chat { model }` | ✅ regex sanitize `^[a-z0-9][a-z0-9._:/-]+$` |
-| Skills `name` | `~/.claude/skills/<name>/SKILL.md` | ⚠️ ファイル名は user input 経由のみ、パス traversal リスクなし (fs.readFile に直接 join しない、findSkillFile が候補リストを enumerate) |
+| Skills `name` | `~/.claude/skills/<name>/SKILL.md` | ⚠️ ファイル名は user input 経由のみ、パス traversal リスクなし (fs.readFile に直接 join しない、findSkillFile が候補リストを enumerate)。本文は system として有料 API へ送られるので天井 `MAX_ASSISTANT_SYSTEM_CHARS` (60,000 字・assistant と同じ 1 つ) —— 4 × 天井 byte を超えるファイルは読まずに断り、一覧は `runnable: false` + 理由で載せる (パス 308) |
 | OAuth callback `state` | `state !== expectedState` | ✅ 16 byte random + early compare |
 | Security `url` (VirusTotal) | VT API `url=...` body | ✅ VT 側が受け取って scan するため our SSRF にあらず |
 | Emotions `text` | Claude API `messages` | ✅ 32KB clamp |
@@ -158,25 +250,38 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 - `innerHTML` / `eval` / `new Function`: **0 件**
 - 外部画像表示は `<img src={...}>` のみ、CSP で `img-src 'self' data: https:` 制限
 - 外部リンクは `window.serviceHub.openExternal(url)` 経由 → main で http(s) のみ許可
+- 第三者 API の応答から来る画像 URL (`avatar_url` / `thumbnail.url`) は `safeRemoteImageSrc` を通す (2026-09-17・パス 300):
+  スキーム + 認証情報つき authority の拒否に加え、**送り先がプライベート帯 / loopback なら取りに行かない**
+  (`<img>` はスクリプトを走らせないが GET は利用者の網の内側へ飛ぶ)。判定は BYO プロキシの SSRF 関門と同じ
+  `src/shared/privateTarget.ts` の 1 つ。利用者自身が打つ背景画像 (`safeCssUrl`) には掛けない (NAS の LAN URL は正当)。
 
 ## ネットワーク発信先一覧（許可されている外部接続先）
 
-| サービス | ホスト |
-|---|---|
-| GitHub | api.github.com |
-| WordPress.com | public-api.wordpress.com |
-| Atlassian | `{site}.atlassian.net` (https 必須) |
-| Notion | api.notion.com |
-| Google (Drive/Calendar/Gmail) | www.googleapis.com, gmail.googleapis.com, accounts.google.com, oauth2.googleapis.com |
-| Slack | slack.com |
-| Canva | api.canva.com |
-| Cloudflare | api.cloudflare.com |
-| Anthropic (Skills, Emotions) | api.anthropic.com |
-| HIBP | haveibeenpwned.com |
-| VirusTotal | www.virustotal.com |
-| Ollama (ローカルのみ) | 127.0.0.1:11434 (ハードコード、変更不可) |
+発信先の台帳は **`docs/ARCHITECTURE.md` §3.3 (ネットワーク egress マトリクス) の 1 つだけ**。`verify:arch` が `src` の字面
+(main は全部、shared / renderer は送信文脈のもの) と照合し、増えた宛先は表に載るまで CI が落ちる。ここには写しを置かない
+(`lint:docs` がこの節に表と絶対の否定が戻らないことを見る)。
 
-その他のホストへの接続は **存在しない**。
+2026-09-09 までここに在った表は **12 行**で、§3.3 の 29 ホストに対し freee / Microsoft Graph / BASE / Stripe / LINE /
+Discord / Salesforce / OpenAI / Gemini が無く、それでも「他のホストは無い」と書いていた。同じ日に §3.3 側でも、
+ブラウザ版から直接送る `src/shared` / `src/renderer` が走査の外で、`api.cursor.com` (Admin API キーを Bearer で載せる) が
+台帳に無いまま両ビルドから送っていた —— 写しが古いだけでなく、正典も片方の木しか見ていなかった (パス 138)。
+
+送り先が**利用者の設定で決まる**通信 (AI 互換 API・Ollama の接続先・BYO プロキシ・Atlassian サイト・Salesforce・
+Discord webhook) は `lint:network-targets` の台帳 (`scripts/lint-network-targets.cjs` の `REVIEWED`) が、どう絞っているかを
+1 件ずつ持つ。Ollama について正確には: Electron 版の Ollama ページのクライアント (`src/main/clients/ollama.ts` の
+`OLLAMA_BASE`) だけが `127.0.0.1:11434` 固定で、ブラウザ版は 3 経路 (ループバック / ページと同じホスト / 任意の https ——
+`docs/OLLAMA_SECURITY.md`)、AI ハブの Ollama プロバイダは両ビルドで接続先を上書きできる (§3.3 の行のとおり)。
+
+上の台帳はすべて**最初の 1 ホップ**の話である。2026-09-17 (パス 301) から、アプリ自身の fetch は転送 (3xx) に追随しない ——
+規則は `src/shared/httpLimits.ts` の `egressInit` / `isRedirectResponse` / `redirectRefusal` に 1 つで、網の fetch 12 か所が
+全部それを通ることを `src/shared/__tests__/egressRedirectCensus.test.ts` が両方向に留める。それまでは `fetch` の既定
+`redirect: 'follow'` で、台帳のホストが返す `302 Location:` 1 つで台帳に無い先 (LAN・loopback) へ取りに行っていた。
+利用者が配る Worker (`docs/PROXY_EXAMPLE.md` §(c)) は各ホップを再検査して進むが、アプリは止まって理由 (Location のホストだけ) を言う。
+例外は `mode: 'no-cors'` の 1 形だけ (2026-09-17 パス 304): Fetch 標準は no-cors + `redirect ≠ 'follow'` を network error と定める
+(chromium 実測 `TypeError: Failed to fetch`。undici は CORS を実装しないので通す)。no-cors の要求はヘッダの guard が `Authorization` を
+落とし、応答は opaque で読めないので、追随しても台帳の外へ運ぶ物が無い —— `egressInit` の中でその 1 形だけ 'follow' を明示する。
+パス 301 はこの重ねを一律に掛けて Ollama の到達確認 (`ollamaWeb.ts`) を壊しており、CI の外だった `e2e:ollama` だけが捕まえた
+(同日から `.github/workflows/e2e.yml` で走る)。
 
 ## レビューチェックリスト（PR 用）
 
@@ -207,7 +312,14 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 
 **実装位置**: `src/main/clients/skills.ts` `readSkillBody()` + `isSafeSkillName()`
 
-- `isSafeSkillName(name)`: `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` 限定 + length ≤ 128 + `..`
+**この allowlist が当たるのは `SkillEntry.id` (フォルダ名・ファイル名) である** (2026-09-12 · パス 179)。
+それまで `run-skill` の payload は**画面に出ている題** (frontmatter の `name:`) を受け取っており、
+題と実体が違うスキルは実行できず、題が他のスキパスのフォルダ名と一致すると**別の定義が
+Anthropic へ送られた**。鍵と題を分けたので、この規則は「実行に使う名前」だけを縛る ——
+日本語の `name:` は題として通り、フォルダ名が英数字でなければ**画面が押させない**
+(理由は `src/shared/skillIdentity.ts` の文面)。
+
+- `isSafeSkillName(id)`: `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` 限定 + length ≤ 128 + `..`
   reject + 先頭ドット reject。`/`, `\`, NUL, 空白, `:`, `;`, `|`, `` ` ``, `$` 全部禁止。
 - `path.resolve(candidate).startsWith(path.resolve(base) + path.sep)` で belt-and-braces。
   Windows alternate separators / 短名 / シンボリックリンク等の platform quirk に対する保険。
@@ -243,3 +355,9 @@ shell metachars が必ず reject されることを確認)。
 - **property-based fuzz** (`src/main/__tests__/property.test.ts`):
   - 300 ランダム URL で write-side path / non-loopback host が allowlist 通らないことを検証
   - 200 ランダム model name で whitespace / shell metachars / null byte / 制御文字 / `..` を reject することを検証
+
+**2026-09-09 追記 (パス 139)**: 上の「未パッチ」は **CVE-2026-7482** として 2026-05-04 に公表され、修正 (PR #14406) は
+この節を書く前の 2026-02-25 に merge されて 0.17.1 に入っていた。`UNPATCHED_OOB_NOTICE` (日付の無い固定文) は
+廃し、`src/shared/ollama.ts` の日付つきの台帳 (`OLLAMA_ADVISORIES`・照合日 / 再照合期限) と、当てはまる CVE を
+名指しする `buildWarnings` に置き換えた。安全の床は台帳の修正版の最大 (0.31.2) で、期限は `lint:rate-freshness`、
+文書の床と日付は `lint:docs` が見る。多層防御 (`ALLOWED_ENDPOINTS` / `\0` reject / fuzz) はそのまま。
