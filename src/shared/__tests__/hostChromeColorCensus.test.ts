@@ -158,7 +158,11 @@ const HOST_CHROME: Readonly<Record<string, Row>> = {
     kind: 'no-op',
     why: 'ブラウザ版に窓は無く setColorScheme は何もしない。このファイルの色の字面は書き出す文書 (事業ダッシュボード) 自身の配色で、母体の色ではない',
   },
-  'scripts/e2e/core.cjs': { kind: 'observes', why: 'theme suite が meta と --bg の一致を実ブラウザで見る' },
+  'scripts/e2e/core.cjs': { kind: 'observes', why: 'theme / design suite が meta と --bg の一致を・contrast suite が配色ごとの描画済みの文字色の対比を、実ブラウザで見る' },
+  'scripts/lib/contrast.cjs': {
+    kind: 'observes',
+    why: '描画済みの文字色と地の色の対比を測る道具 (トークン表の検査と実機の suite contrast が読む)。color-scheme を読んでブラウザの既定の地を決めるだけで、公開物の色は決めない',
+  },
   'scripts/screenshot.cjs': { kind: 'observes', why: '全画面を撮る道具。背景色を指定して撮るだけで、公開物の色は決めない' },
   'scripts/screenshot-dashboard.cjs': { kind: 'observes', why: '全画面を撮る道具。背景色を指定して撮るだけで、公開物の色は決めない' },
   'scripts/overflow-check.cjs': { kind: 'observes', why: '横はみ出しを測る道具。測るために背景を置くだけで、公開物の色は決めない' },

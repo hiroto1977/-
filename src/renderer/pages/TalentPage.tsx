@@ -53,9 +53,9 @@ interface Initiative {
  * 確認した」が「当方の読み解き」と同じ札になっていて、区別が落ちていた。
  */
 const BADGE: Readonly<Record<SourceStrength, { label: string; color: string }>> = {
-  confirmed: { label: '定義確認済み', color: '#0E5C6B' },
-  secondary: { label: '第三者の解説で確認', color: '#7A6320' },
-  gloss: { label: '語釈は読み解き', color: '#9C4A3C' },
+  confirmed: { label: '定義確認済み', color: 'var(--success)' },
+  secondary: { label: '第三者の解説で確認', color: 'var(--warning)' },
+  gloss: { label: '語釈は読み解き', color: 'var(--danger)' },
 };
 
 function SourceBadge({ source }: { source: SourceStrength }): React.JSX.Element {
@@ -245,7 +245,7 @@ export function TalentPage(): React.JSX.Element {
                   <strong>{d.name}</strong>
                   <SourceBadge source={d.source} />
                   {tally?.systemic === true && (
-                    <span style={{ marginLeft: 8, color: '#9C4A3C', fontSize: 12 }}>
+                    <span style={{ marginLeft: 8, color: 'var(--danger)', fontSize: 12 }}>
                       仕組みの問題（{tally.departments.length} 部署）
                     </span>
                   )}
@@ -332,7 +332,7 @@ export function TalentPage(): React.JSX.Element {
               style={{
                 fontSize: 28,
                 fontWeight: 600,
-                color: snap.achievement.ok ? '#0E5C6B' : '#9C4A3C',
+                color: snap.achievement.ok ? 'var(--success)' : 'var(--danger)',
               }}
             >
               {snap.achievement.shortfall}%
@@ -420,13 +420,13 @@ export function TalentPage(): React.JSX.Element {
           <p
             data-judge-error
             role="alert"
-            style={{ marginTop: 12, fontSize: 13, color: '#9C4A3C' }}
+            style={{ marginTop: 12, fontSize: 13, color: 'var(--danger)' }}
           >
             ⚠ 判定できませんでした: {judgeError}
           </p>
         )}
         {verdict !== null && (
-          <p style={{ marginTop: 12, fontSize: 14, color: verdict.eligible ? '#0E5C6B' : '#9C4A3C' }}>
+          <p style={{ marginTop: 12, fontSize: 14, color: verdict.eligible ? 'var(--success)' : 'var(--danger)' }}>
             {verdict.eligible
               ? '該当なし — リーダーとして登用できます。'
               : `${verdict.hits.length} 件該当 — リーダーには据えず、プレイヤーとして評価してください。`}
@@ -452,7 +452,7 @@ export function TalentPage(): React.JSX.Element {
           ))}
         </ol>
         {snap.ladder.stalled.length > 0 && (
-          <p style={{ color: '#9C4A3C', fontSize: 13 }}>
+          <p style={{ color: 'var(--danger)', fontSize: 13 }}>
             STEP1 に習得目安を超えて滞留：
             {snap.ladder.stalled.map((m) => `${m.name}（${m.yearsInStep}年）`).join('、')}
           </p>

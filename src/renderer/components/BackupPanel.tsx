@@ -198,7 +198,7 @@ export function BackupPanel() {
           </p>
         )}
         <button type="button" onClick={() => void submit.run(onBackup)} disabled={submit.busy}>バックアップを書き出す</button>
-        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
+        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent-strong)' }}>
           バックアップから復元
           <input
             ref={fileRef}

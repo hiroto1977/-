@@ -32,7 +32,7 @@ const GRADE_COLOR: Record<string, string> = {
 const SEVERITY_COLOR: Record<string, string> = {
   critical: 'var(--danger)',
   high: 'var(--warning)',
-  medium: '#94a3b8',
+  medium: 'var(--text-muted)',
 };
 
 const VERDICT_COLOR: Record<string, string> = {

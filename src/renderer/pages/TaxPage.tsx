@@ -335,7 +335,7 @@ export function TaxPage() {
     () => [
       { label: '所得税 (課税所得ベース)', annual: incomeTax, color: '#f7768e' },
       { label: '住民税 (課税所得ベース)', annual: residentTax, color: '#e0af68' },
-      { label: '手取り (額面年収ベース)', annual: netSalary.takeHome, color: 'var(--success)' },
+      { label: '手取り (額面年収ベース)', annual: netSalary.takeHome, color: '#9ece6a' },
       {
         label: '消費税 (預かり)',
         annual: consumptionTax * 12,
@@ -1537,7 +1537,7 @@ export function TaxPage() {
                 borderRadius: 999,
                 border: '1px solid var(--border)',
                 background: entity === e ? 'var(--accent)' : 'var(--bg-elev)',
-                color: entity === e ? '#fff' : 'var(--text)',
+                color: entity === e ? 'var(--on-accent)' : 'var(--text)',
                 fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -1770,7 +1770,7 @@ export function TaxPage() {
             // 欄の文 (「直すまで、この欄を使う判定は出していません」) が指す断りはこれ (パス 493l) ——
             // 断りの部品 (`RefusedFieldsNote`) と同じ印を持たせ、検査が同じ規則で見つけられるようにする。
             data-refused-fields
-            style={{ border: '1px solid #e5484d', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 12, color: '#e5484d', lineHeight: 1.6 }}
+            style={{ border: '1px solid var(--danger)', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 12, color: 'var(--danger)', lineHeight: 1.6 }}
           >
             <strong>申告期限・中間納付の日程は算定していません</strong> —— 課税期間の終了年は{' '}
             {MIN_FISCAL_YEAR}〜{MAX_FISCAL_YEAR} の西暦 4 桁、決算月は 1〜12 で入力してください
@@ -2307,7 +2307,7 @@ export function TaxPage() {
                 borderRadius: 999,
                 border: '1px solid var(--border)',
                 background: entity === e ? 'var(--accent)' : 'var(--bg-elev)',
-                color: entity === e ? '#fff' : 'var(--text)',
+                color: entity === e ? 'var(--on-accent)' : 'var(--text)',
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -2367,7 +2367,7 @@ export function TaxPage() {
             border: '1px solid var(--danger)',
             borderRadius: 6,
             fontSize: 11,
-            color: '#fca5a5',
+            color: 'var(--text)',
             lineHeight: 1.6,
           }}
         >
@@ -2388,7 +2388,7 @@ export function TaxPage() {
                 borderRadius: 999,
                 border: '1px solid var(--border)',
                 background: topic === t ? 'var(--accent)' : 'var(--bg-elev)',
-                color: topic === t ? '#fff' : 'var(--text)',
+                color: topic === t ? 'var(--on-accent)' : 'var(--text)',
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',

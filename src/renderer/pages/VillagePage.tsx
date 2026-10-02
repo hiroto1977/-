@@ -429,7 +429,7 @@ export function VillagePage() {
         {/* 作業広場（全体表示のみ） */}
         {!focusedExec ? (
           <div style={plazaStyle}>
-            <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#4a5a3a', fontWeight: 800 }}>
+            <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#1f2b17', fontWeight: 800 }}>
               作業広場
             </div>
           </div>
@@ -561,7 +561,7 @@ function BuildingCard({
         <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {emoji} {label}
         </span>
-        <span style={{ opacity: 0.8, fontWeight: 700, flexShrink: 0, marginLeft: 6 }}>{sub}</span>
+        <span style={{ fontWeight: 700, flexShrink: 0, marginLeft: 6 }}>{sub}</span>
       </div>
     </div>
   );
@@ -654,7 +654,10 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
             fontSize: v.kind === 'team' || v.kind === 'secretary' ? 9 : 10,
             fontWeight: 700,
             color: '#fff',
-            background: ring ? `${ring}cc` : 'rgba(40,50,30,0.72)',
+            // 地は常に濃い緑の板 (白い字が 4.5:1 を割らない)。チームの色は左の帯で伝える —— 以前は
+            // 色つきの板 (`${ring}cc`) に白い字を載せ、明るい色のチームで 3.5:1 だった (パス 503)。
+            background: 'rgba(40,50,30,0.82)',
+            borderLeft: ring ? `4px solid ${ring}` : undefined,
             padding: '0px 5px',
             borderRadius: 6,
             whiteSpace: 'nowrap',

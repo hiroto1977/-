@@ -97,7 +97,7 @@ interface StocksSnapshot {
 const ACTION_COLORS: Record<Signal['action'], string> = {
   buy: 'var(--success)',
   sell: 'var(--danger)',
-  hold: '#94a3b8',
+  hold: 'var(--text-muted)',
 };
 
 const ACTION_LABELS: Record<Signal['action'], string> = {
@@ -509,7 +509,7 @@ export function StocksPage() {
               background: registerBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: registerBusy ? 'var(--text)' : 'var(--on-accent)',
               fontSize: 13,
               cursor: registerBusy ? 'wait' : 'pointer',
             }}
@@ -576,7 +576,7 @@ export function StocksPage() {
                 background: filterAction === opt ? 'var(--accent)' : 'var(--bg-elev)',
                 border: '1px solid var(--border)',
                 borderRadius: 999,
-                color: 'var(--text)',
+                color: filterAction === opt ? 'var(--on-accent)' : 'var(--text)',
                 cursor: 'pointer',
               }}
             >
@@ -623,7 +623,7 @@ export function StocksPage() {
                     fontSize: 12,
                     fontWeight: 600,
                     background: ACTION_COLORS[w.signal.action],
-                    color: '#fff',
+                    color: 'var(--on-status)',
                   }}
                 >
                   {ACTION_LABELS[w.signal.action]}
@@ -761,7 +761,7 @@ export function StocksPage() {
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: advisorBusy ? 'var(--text)' : 'var(--on-accent)',
               fontSize: 13,
               cursor: advisorBusy ? 'wait' : 'pointer',
             }}
@@ -815,7 +815,7 @@ export function StocksPage() {
                       height: 28,
                       borderRadius: 14,
                       background: 'var(--gradient)',
-                      color: '#fff',
+                      color: 'var(--on-gradient)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -903,7 +903,7 @@ export function StocksPage() {
               background: compareBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: compareBusy ? 'var(--text)' : 'var(--on-accent)',
               fontSize: 13,
               cursor: compareBusy ? 'wait' : 'pointer',
             }}
@@ -965,7 +965,7 @@ export function StocksPage() {
                             padding: '1px 6px',
                             borderRadius: 3,
                             background: 'var(--success)',
-                            color: '#fff',
+                            color: 'var(--on-status)',
                             fontSize: 10,
                           }}
                         >
@@ -1021,7 +1021,7 @@ export function StocksPage() {
               background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: exportBusy ? 'var(--text)' : 'var(--on-accent)',
               fontSize: 13,
               cursor: exportBusy ? 'wait' : 'pointer',
             }}

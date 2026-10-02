@@ -9,8 +9,8 @@
 import type { IssueLevel } from '../../shared/issueLevel';
 
 export const LEVEL_COLOR: Record<IssueLevel, string> = {
-  fatal: '#e5484d',
-  warn: '#e08c1a',
+  fatal: 'var(--danger)',
+  warn: 'var(--warning)',
   info: 'var(--text-mute)',
 };
 

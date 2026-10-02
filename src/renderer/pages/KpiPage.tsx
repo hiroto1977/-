@@ -116,10 +116,10 @@ const pctOrDash = (n: number | null) => (n === null ? DASH : pct(n));
 const COLORS = {
   revenue: 'var(--success)',
   bep: 'var(--danger)',
-  op: '#60a5fa',
+  op: 'var(--info)',
   variable: 'var(--warning)',
   fixed: '#a78bfa',
-  axis: '#475569',
+  axis: 'var(--text-muted)',
 };
 
 // --- KPI tile ---------------------------------------------------------
@@ -566,7 +566,7 @@ function ActualsPanel() {
       </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
         <button type="button" onClick={onExportCsv} disabled={records.length === 0}>CSV エクスポート</button>
-        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
+        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent-strong)' }}>
           CSV インポート
           <input
             type="file"

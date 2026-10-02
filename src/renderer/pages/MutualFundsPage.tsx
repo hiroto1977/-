@@ -672,7 +672,7 @@ export function MutualFundsPage() {
                 <td style={tdStyle}>
                   {displayField(h.name, MAX_FUND_NAME_CHARS)}
                   {h.userTag && (
-                    <span style={{ marginLeft: 6, padding: '1px 6px', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', borderRadius: 3, fontSize: 10 }}>
+                    <span style={{ marginLeft: 6, padding: '1px 6px', background: 'rgba(59, 130, 246, 0.15)', color: 'var(--info)', borderRadius: 3, fontSize: 10 }}>
                       {h.userTag}
                     </span>
                   )}

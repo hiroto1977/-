@@ -258,7 +258,7 @@ const inputStyle: React.CSSProperties = {
 const buttonStyle: React.CSSProperties = {
   padding: '6px 14px',
   background: 'var(--gradient)',
-  color: '#fff',
+  color: 'var(--on-gradient)',
   border: 'none',
   borderRadius: 999,
   boxShadow: '0 4px 12px rgba(238,111,168,0.25)',

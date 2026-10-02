@@ -190,16 +190,16 @@ export function TemplatesPage() {
                   background: sel ? 'var(--accent)' : 'var(--bg-elev)',
                   border: '1px solid var(--border)',
                   borderRadius: 14,
-                  color: 'var(--text)',
+                  color: sel ? 'var(--on-accent)' : 'var(--text)',
                   cursor: 'pointer',
                   fontSize: 12,
                 }}
               >
                 <div style={{ fontWeight: 700 }}>{t.label}</div>
-                <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
+                <div style={{ fontSize: 10, color: sel ? 'var(--on-accent)' : 'var(--text-mute)', marginTop: 2 }}>
                   {t.width}×{t.height}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4 }}>
+                <div style={{ fontSize: 10, color: sel ? 'var(--on-accent)' : 'var(--text-mute)', marginTop: 4 }}>
                   {t.description}
                 </div>
               </button>
@@ -373,7 +373,7 @@ export function TemplatesPage() {
               background: busy || fieldsOver ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: busy || fieldsOver ? 'var(--text)' : 'var(--on-accent)',
               cursor: busy ? 'wait' : fieldsOver ? 'not-allowed' : 'pointer',
               fontSize: 12,
             }}

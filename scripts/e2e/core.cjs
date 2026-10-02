@@ -4341,6 +4341,213 @@ async function designSuite(browser) {
   await pctx.close();
 }
 
+/**
+ * **文字色 × 地の色の対比** (2026-10-02 · パス 503)。実機 (Chromium) で**描画済みの色**を、
+ * 4 配色 (すっきり / かわいい × ライト / ダーク) × サイドバーの全画面 (+ 初回の設定画面 + ロック画面) で測り、
+ * WCAG 2.x AA (通常の字 4.5:1・大きい字 3:1) を割る文字が 0 件であることを見る。
+ *
+ * ## 2 層のうち、ここは「描く側が実際に作った対」を見る
+ *
+ * トークン表の対は `themeContrast.test.ts` が Node で見る (「そう描けば読める」)。ところが実測 (パス 503・約 8.9 万の文字要素) では、
+ * **表の対は合っていても、画面が別の対を作っていた**: 塗り (`--accent` / `--gradient`) の上に地の字 (`--text`) を載せる・
+ * 意味色の塗りの上に固定の白を載せる・配色に追随しない面 (濃紺の盤・白い板・村の景色) の上にトークンの字を載せる・
+ * 不透明度で薄めた字・ライトでしか合わない固定色。**どれも表を見ても出てこない**ので、描画済みの色を測る。
+ *
+ * 測定器は `scripts/lib/contrast.cjs` の 1 つ (写しを作らない)。SVG の字は**下に描かれた図形の塗り**で測る
+ * (円グラフの扇・濃紺の下地の `<rect>` —— 先祖の `background` は図形を知らない)。
+ *
+ * ## 測っていない物 (正直に)
+ *
+ * 無効化された部品 (WCAG が対象外とする)・地が画像の字 (`unknown` として数えるだけ)・ホバー / フォーカスなど操作の途中の状態・
+ * モーダルや開く前の折りたたみの中・canvas に描いた字・**字ではない物の 3:1 (図形・枠線・アイコン —— WCAG 1.4.11)**・
+ * プランで鍵のかかった表示 (この製品のビルドでは社内ライセンスで常に開く)。
+ */
+async function contrastSuite(browser) {
+  console.log('--- 文字色の対比 (4 配色 × 全画面 · WCAG 2.x AA) ---');
+  const { sweepExpression, violationsOf, groupViolations } = require('../lib/contrast.cjs');
+  const expr = sweepExpression();
+  const CONFIGS = [
+    { name: 'すっきり × ライト', design: 'clean', theme: 'light' },
+    { name: 'すっきり × ダーク', design: 'clean', theme: 'dark' },
+    { name: 'かわいい × ライト', design: 'cute', theme: 'light' },
+    { name: 'かわいい × ダーク', design: 'cute', theme: 'dark' },
+  ];
+  /** 描き終わるまで待つ: DOM の要素数が 3 回続けて同じ (最大 3 秒)。固定の待ちではなく状態で待つ。 */
+  const settled = (page) =>
+    page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          let last = -1;
+          let same = 0;
+          const t0 = performance.now();
+          const tick = () => {
+            const n = document.body.querySelectorAll('*').length;
+            same = n === last ? same + 1 : 0;
+            last = n;
+            if (same >= 2 || performance.now() - t0 > 3000) resolve(n);
+            else setTimeout(tick, 60);
+          };
+          tick();
+        }),
+    );
+  const tag = (rows, label) => rows.map((r) => ({ ...r, page: label }));
+  const bgs = [];
+  let controlsDone = false;
+
+  for (const cfg of CONFIGS) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    await page.addInitScript(
+      ([theme, design]) => {
+        localStorage.setItem('servicehub.plan', 'enterprise');
+        localStorage.setItem('servicehub.theme', theme);
+        localStorage.setItem('servicehub.design', design);
+      },
+      [cfg.theme, cfg.design],
+    );
+    // 動きは測定の邪魔 (アニメーションの途中の色を測らない)
+    const still = () => page.addStyleTag({ content: '*{animation:none!important;transition:none!important;caret-color:transparent!important}' });
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+    await still();
+    const rows = tag(await page.evaluate(expr), '(初回の設定画面)');
+    await setupVault(page);
+    await still();
+
+    // 配色が本当に切り替わっている (さもないと同じ配色を 4 回測って「4 配色とも緑」になる)
+    const applied = await page.evaluate(() => ({
+      design: document.documentElement.getAttribute('data-design'),
+      theme: document.documentElement.getAttribute('data-theme') ?? 'light',
+      scheme: getComputedStyle(document.documentElement).colorScheme,
+      bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+    }));
+    bgs.push(applied.bg);
+    ok(
+      applied.design === cfg.design && applied.theme === cfg.theme && applied.scheme.includes('dark') === (cfg.theme === 'dark'),
+      `contrast[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(applied)})`,
+    );
+
+    // 測定器そのものの対照 (1 度だけ): 割る字を割ると測り、読める字は割らず、SVG の字は下の図形で測る
+    if (!controlsDone) {
+      controlsDone = true;
+      await page.evaluate(() => {
+        const host = document.createElement('div');
+        host.id = '__contrast_probe';
+        host.style.position = 'fixed';
+        host.style.left = '0';
+        host.style.top = '0';
+        host.style.zIndex = '2147483647';
+        host.style.background = '#ffffff';
+        host.style.padding = '8px';
+        const mk = (text, fg, bg) => {
+          const e = document.createElement('span');
+          e.textContent = text;
+          e.style.display = 'block';
+          e.style.fontSize = '14px';
+          e.style.color = fg;
+          e.style.background = bg;
+          host.appendChild(e);
+        };
+        mk('PROBE-low', '#777777', '#808080');
+        mk('PROBE-high', '#000000', '#ffffff');
+        mk('PROBE-grad', '#808080', 'linear-gradient(90deg, #ffffff, #000000)');
+        const NS = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('viewBox', '0 0 200 60');
+        svg.setAttribute('width', '400');
+        svg.setAttribute('height', '120');
+        const rect = document.createElementNS(NS, 'rect');
+        rect.setAttribute('width', '200');
+        rect.setAttribute('height', '60');
+        rect.setAttribute('fill', '#0f1117');
+        svg.appendChild(rect);
+        const t = (y, fill, text) => {
+          const e = document.createElementNS(NS, 'text');
+          e.setAttribute('x', '8');
+          e.setAttribute('y', String(y));
+          e.setAttribute('font-size', '8');
+          e.setAttribute('fill', fill);
+          e.textContent = text;
+          svg.appendChild(e);
+        };
+        t(20, '#e6e8ec', 'PROBE-svg-light');
+        t(45, '#0f1117', 'PROBE-svg-dark');
+        host.appendChild(svg);
+        document.body.appendChild(host);
+      });
+      const probe = await page.evaluate(expr);
+      await page.evaluate(() => document.getElementById('__contrast_probe')?.remove());
+      const get = (t) => probe.find((r) => r.text === t);
+      const low = get('PROBE-low');
+      const high = get('PROBE-high');
+      const grad = get('PROBE-grad');
+      const svgLight = get('PROBE-svg-light');
+      const svgDark = get('PROBE-svg-dark');
+      ok(
+        low !== undefined && low.ratio < 2 && violationsOf([low]).length === 1,
+        `contrast: 対照 ★ 灰の字 (#777 × #808080) は基準を割ったと測る (実際 ${low?.ratio})`,
+      );
+      ok(
+        high !== undefined && high.ratio > 20 && violationsOf([high]).length === 0,
+        `contrast: 対照 黒い字 × 白は割らない (実際 ${high?.ratio})`,
+      );
+      // グラデーションの地は**全部の停止点**で測って最悪を取る (灰 #808080 は白の端で 3.95:1・黒の端では 5.32:1 —— 片方しか見ないと通る)
+      ok(
+        grad !== undefined && grad.ratio < 4.5 && grad.bg === '#ffffff' && violationsOf([grad]).length === 1,
+        `contrast: 対照 ★ グラデーションの地は最悪の停止点で測る (白の端 3.95:1 と黒の端 5.32:1 のうち ${grad?.ratio} / 地 ${grad?.bg})`,
+      );
+      ok(
+        svgLight !== undefined &&
+          svgDark !== undefined &&
+          svgLight.ratio > 10 &&
+          violationsOf([svgLight]).length === 0 &&
+          svgDark.ratio < 1.5 &&
+          violationsOf([svgDark]).length === 1,
+        `contrast: 対照 ★ SVG の字は下の図形の塗りで測る (濃紺の下地の明るい字 ${svgLight?.ratio} は読め・同じ色の字 ${svgDark?.ratio} は割る。先祖の背景だけ見ると前者を ${svgLight?.bg} と誤る)`,
+      );
+    }
+
+    // サイドバーの全画面。既定で畳まれている分類 (士業連携・分析・外部連携) も、実際の見出しを押して全部開く
+    // (開いていない分類の画面は DOM に無く、一覧が 20 件で止まる —— 初回の実行で実際にそうなった)。重複は落とす。
+    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
+      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
+    }
+    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
+    for (const id of ids) {
+      await page.locator(`.sidebar-item[data-service-id="${id}"]`).first().click();
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      rows.push(...tag(await page.evaluate(expr), id));
+    }
+
+    // ロック画面 (再読込 — 保管庫は作ってあるので解錠の画面が出る)
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+    await still();
+    rows.push(...tag(await page.evaluate(expr), '(ロック画面)'));
+    await ctx.close();
+
+    const perPage = new Map();
+    for (const r of rows) perPage.set(r.page, (perPage.get(r.page) ?? 0) + 1);
+    const empty = ids.filter((id) => (perPage.get(id) ?? 0) === 0);
+    ok(
+      ids.length >= 60 && empty.length === 0 && rows.length >= ids.length * 50,
+      `contrast[${cfg.name}]: 全 ${ids.length} 画面 + 初回 + ロック画面で文字を測れた (${rows.length} 要素${empty.length ? ` · 文字が 0 の画面: ${empty.join(',')}` : ''})`,
+    );
+    const flagged = violationsOf(rows);
+    const unknown = rows.filter((r) => r.unknown).length;
+    const summary = groupViolations(rows)
+      .slice(0, 8)
+      .map((g) => `${g.ratio}:1 ${g.k} 「${g.sample}」×${g.pages.size}画面`)
+      .join(' / ');
+    ok(
+      flagged.length === 0,
+      `contrast[${cfg.name}]: ★ 描画済みの文字は WCAG 2.x AA (通常 4.5:1・大きい字 3:1) を割らない (測った ${rows.length} 要素${unknown ? ` · 地が画像で測れない ${unknown}` : ''}${flagged.length ? ` · 割った ${flagged.length} 要素: ${summary}` : ''})`,
+    );
+  }
+  ok(new Set(bgs).size === 4, `contrast: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
+}
+
 async function hardResetSuite(browser) {
   console.log('--- ハードリセットは保管庫だけでなく全媒体を消す (パス 136) ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -4643,6 +4850,8 @@ function installWaitMarginRecorder(browser) {
     ['best3', best3Suite, 9],
     ['theme', themeSuite, 14],
     ['design', designSuite, 32],
+    // パス 503: 文字色の対比 (WCAG 2.x AA) を実機で 4 配色 × 全画面。実測値は初回の実行で確かめる
+    ['contrast', contrastSuite, 17],
     ['tablet', tabletSuite, 2],
     ['shell', shellSuite, 27],
   ];

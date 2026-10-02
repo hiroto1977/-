@@ -112,7 +112,7 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
           <g key={a.key}>
             <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#e8d5e2" />
             {/* 未評価の軸はラベルを暗くし、末尾に印を付ける (頂点が無い理由を図の中で示す)。 */}
-            <text x={lp.x} y={lp.y} fontSize={9} fill={unscoredKeys.has(a.key) ? '#64748b' : '#94a3b8'} textAnchor={anchor} dominantBaseline="middle">
+            <text x={lp.x} y={lp.y} fontSize={9} fill={unscoredKeys.has(a.key) ? 'var(--text-muted)' : 'var(--text)'} textAnchor={anchor} dominantBaseline="middle">
               {unscoredKeys.has(a.key) ? `${a.label}（未評価）` : a.label}
             </text>
           </g>
@@ -139,7 +139,7 @@ function LineChart({ values }: { values: number[] }) {
       <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke="#e8d5e2" strokeDasharray="2,3" />
       <polyline fill="none" stroke="#5cb85c" strokeWidth={2} points={pts} />
       {values.map((v, i) => <circle key={i} cx={x(i)} cy={y(v)} r={2.5} fill="#5cb85c" />)}
-      <text x={P} y={12} fontSize={9} fill="#94a3b8">営業利益率の推移 (%)</text>
+      <text x={P} y={12} fontSize={9} fill="var(--text-muted)">営業利益率の推移 (%)</text>
     </svg>
   );
 }
@@ -433,7 +433,7 @@ function CorporateTaxCard({
 
   const breakdown = calcCorporateTax(ordinaryProfit, profile ?? {}, corporateTaxRates);
   const isLoss = ordinaryProfit <= 0;
-  const afterTaxColor = breakdown.afterTaxProfit >= 0 ? '#5cb85c' : '#e36b6b';
+  const afterTaxColor = breakdown.afterTaxProfit >= 0 ? 'var(--success)' : 'var(--danger)';
 
   // --- 消費税 (本則 / 簡易 / 2割特例) ---
   const [ctSalesStr, setCtSalesStr] = useState('');
@@ -685,7 +685,7 @@ function CorporateTaxCard({
         </div>
 
         {ctExempt && (
-          <div style={{ fontSize: 12, color: '#43c3b8', marginBottom: 10 }}>
+          <div style={{ fontSize: 12, color: 'var(--success)', marginBottom: 10 }}>
             課税売上高が {yen.format(exemptionLimit)} 以下 — 基準期間（前々事業年度）も同水準なら<strong>免税事業者（納付不要）の見込み</strong>です。
             インボイス（適格請求書発行事業者）登録済みの場合は課税事業者として納付が必要で、2割特例の対象になりえます。
           </div>
@@ -714,7 +714,7 @@ function CorporateTaxCard({
                 background: 'var(--bg)',
                 borderRadius: 8,
                 padding: '10px 14px',
-                border: ct.best === method ? '1px solid #5cb85c' : '1px solid transparent',
+                border: ct.best === method ? '1px solid var(--success)' : '1px solid transparent',
               }}
             >
               <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>
@@ -751,8 +751,10 @@ function CorporateTaxCard({
 }
 
 // --- 総合診断 -----------------------------------------------------------
-const GRADE_COLOR: Record<HealthGrade, string> = { S: '#43c3b8', A: '#5cb85c', B: '#5b8def', C: '#ec9a3d', D: '#e36b6b' };
-const LEVEL_COLOR: Record<HealthLevel, string> = { good: '#5cb85c', warn: '#ec9a3d', bad: '#e36b6b' };
+// 色は配色のトークン —— 文字として置く物 (格付けの文字・強み / 要改善の見出し) が 4.5:1 / 3:1 を割らないため
+// (パス 503・実機の測定で、直書きの #43c3b8 / #5cb85c / #e36b6b は白地で 2.2〜3.2:1 だった)。
+const GRADE_COLOR: Record<HealthGrade, string> = { S: 'var(--success)', A: 'var(--success)', B: 'var(--info)', C: 'var(--warning)', D: 'var(--danger)' };
+const LEVEL_COLOR: Record<HealthLevel, string> = { good: 'var(--success)', warn: 'var(--warning)', bad: 'var(--danger)' };
 
 const TREND_META: Record<MarginTrend['direction'], { icon: string; text: string; color: string }> = {
   up: { icon: '▲', text: '改善傾向', color: 'var(--success)' },
@@ -1090,7 +1092,7 @@ export function FinancialAnalysis({
             <button
               key={k}
               onClick={() => setStmtTab(k)}
-              style={{ padding: '4px 10px', background: stmtTab === k ? 'var(--accent)' : 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}
+              style={{ padding: '4px 10px', background: stmtTab === k ? 'var(--accent)' : 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: stmtTab === k ? 'var(--on-accent)' : 'var(--text)', cursor: 'pointer', fontSize: 12 }}
             >
               {label}
             </button>

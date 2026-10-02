@@ -54,6 +54,12 @@
   --text-mute: var(--text-muted);
   /* 主役の塗りの上に載せる文字 */
   --on-gradient: #ffffff;
+  /* 塗り (--accent) の上に載せる文字。--on-gradient とは別に持つ —— 塗りが単色か 2 色のグラデーションかで、載せられる文字色が変わる。
+     どの表でも --accent との対比は 4.5:1 (AA) 以上 (themeContrast.test.ts)。 */
+  --on-accent: #ffffff;
+  /* 意味色の塗り (--success / --danger / --warning / --text-muted) の上に載せる文字。**意味色は「文字として地に置いても読める濃さ」で定めている**ので、
+     その塗りの上は地 (--bg) の色が読める (ダークでは意味色が明るく --bg が暗いので自動で反転する)。別名なのでダークの表では上書きしない。 */
+  --on-status: var(--bg);
   /* 主役の色 (橙 1 色)。`--gradient` はかわいいでは 2 色のグラデーション、ここでは単色の塗り
      (読み手は全部 `background:` なので単色でも同じ所に効く)。塗りは白い字を載せるので、
      白との対比 4.82:1 (AA) の濃さにした —— 明るい #c96442 だと 3.9:1 で小さい字が AA に届かない。 */
@@ -68,6 +74,8 @@
   --warning: #9a5c0f;
   --warn: var(--warning);
   --danger: #b93a35;
+  /* 情報の青 (文字として置いても読める濃さ)。直書きの #3b82f6 は白地で 3.68:1 だった。 */
+  --info: #0a5add;
   /* 黄の札の地色 (黒い字を載せる)。文字色の --warning とは別に持つ。 */
   --warning-bg: #f4dba8;
   /* 影 (薄い 1 段) */
@@ -82,7 +90,7 @@
   /* 部品の地 (ボタン・入力欄・検索欄) とその細部 */
   --control-bg: #ffffff;
   --control-hover-bg: #f3f1ea;
-  --placeholder: #9d9a90;
+  --placeholder: #6f6c62;
   --range-track: #e7e4da;
   --thumb-border: #ffffff;
   --selection-bg: #f2d3c5;
@@ -211,7 +219,8 @@
   --text: #f3f1ea;
   --text-muted: #aba89e;
   --on-gradient: #ffffff;
-  --accent: #d97757;
+  --on-accent: #1f1e1c;
+  --accent: #dc8163;
   --accent-strong: #eba081;
   --accent-2: #8fb3d9;
   --accent-soft: #3d2c24;
@@ -220,6 +229,7 @@
   --success: #7cc28e;
   --warning: #e3a85c;
   --danger: #f0877b;
+  --info: #649cf8;
   /* 黒い字 ('#000' 固定) を載せる札の地なので、ダークでも明るいままにする */
   --warning-bg: #e9c27a;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.35);
@@ -232,7 +242,7 @@
   --focus-ring: rgba(217, 119, 87, 0.45);
   --control-bg: #30302d;
   --control-hover-bg: #3a3a36;
-  --placeholder: #7f7c73;
+  --placeholder: #9c9991;
   --range-track: #45443f;
   --thumb-border: #262624;
   --selection-bg: #5c3a2d;
@@ -282,22 +292,26 @@
   --border-strong: #ecc6d8;
   /* 文字 */
   --text: #4b3f57;
-  --text-muted: #836f8e;
+  --text-muted: #655370; /* 旧 #72607b は、ホームの見出しの地 (--hero-bg を最悪の光輪に重ねた所) の上で 4.0:1 だった (パス 503) */
   --text-mute: var(--text-muted);
-  /* グラデーションの上に載せる文字 (両配色とも白) */
-  --on-gradient: #ffffff;
+  /* グラデーションの上に載せる文字。かわいいのライトは淡いグラデーションなので**濃いインク**にした —— 白は
+     2.1:1 で AA (4.5:1) に届かなかった (パス 503・実機で 4 配色 × 全画面の描画済みの色を測った)。どの段でも 4.5:1 以上 (themeContrast.test.ts)。 */
+  --on-gradient: #2b1f33;
+  --on-accent: #2b1f33;
+  --on-status: var(--bg);
   /* 主役の色 */
   --accent: #ee6fa8;
-  --accent-strong: #cf3a7f;
+  --accent-strong: #b82d6e;
   --accent-2: #a98cf5;
   --accent-soft: #ffe3ef;
   --accent-soft-2: #ece4ff;
   --gradient: linear-gradient(135deg, #ff8fc0 0%, #b79cff 100%);
   /* 意味色 (文字として白地に置いても読める濃さ) */
-  --success: #22a06b;
-  --warning: #c4741a;
+  --success: #1b7e54;
+  --warning: #9e5d15;
   --warn: var(--warning);
-  --danger: #e8496f;
+  --danger: #db1c49;
+  --info: #0a5de4;
   /* 黄の札の地色 (黒い字を載せる)。文字色の --warning とは別に持つ。 */
   --warning-bg: #ffe3ad;
   /* 影と角 */
@@ -312,7 +326,7 @@
   /* 部品の地 (ボタン・入力欄・検索欄) とその細部 */
   --control-bg: #ffffff;
   --control-hover-bg: #fff5f9;
-  --placeholder: #b9aac2;
+  --placeholder: #806790;
   --range-track: #f1d6e3;
   --thumb-border: #ffffff;
   --selection-bg: #ffd4e6;
@@ -323,28 +337,28 @@
   --glow-3: #dcf5ec;
   --heart: #ff5c9a;
   --kbd-bg: #fff0f6;
-  --kbd-fg: #b23a78;
+  --kbd-fg: #a1346c;
   --kbd-border: #f4c6da;
   --chip-bg: #fff0f6;
-  --chip-fg: #b23a78;
+  --chip-fg: #a1346c;
   --hero-bg: linear-gradient(135deg, rgba(255, 143, 192, 0.22) 0%, rgba(183, 156, 255, 0.16) 60%, rgba(140, 225, 190, 0.18) 100%);
   --sidebar-hover-bg: rgba(238, 111, 168, 0.08);
   --sidebar-press-bg: rgba(238, 111, 168, 0.14);
   --sidebar-active-bg: linear-gradient(135deg, #ffe0ee 0%, #ebe3ff 100%);
   --icon-bg: linear-gradient(135deg, #ffd3e6 0%, #dfd3ff 100%);
-  --icon-fg: #b23a78;
+  --icon-fg: #a1346c;
   --backdrop: rgba(80, 50, 90, 0.35);
   --drawer-bg: rgba(255, 255, 255, 0.94);
-  --heading-accent: #8a6bd6;
+  --heading-accent: #724dce;
   --empty-bg: rgba(255, 255, 255, 0.5);
   --list-hover-border: #f5b8d2;
   --badge-fg: #6d4fd1;
   --badge-border: #ddd2ff;
   --badge-warn-bg: #ffe8d1;
-  --badge-warn-fg: #b8661a;
+  --badge-warn-fg: #9d5716;
   --badge-warn-border: #ffd3a8;
   --badge-ok-bg: #dcf7ea;
-  --badge-ok-fg: #1b8a5d;
+  --badge-ok-fg: #187b53;
   --badge-ok-border: #b9ecd3;
   --badge-muted-bg: #f1edf3;
   --badge-muted-border: #e3dbe8;
@@ -430,8 +444,9 @@
   --border: #3a2f45;
   --border-strong: #4c3f59;
   --text: #f3e9f5;
-  --text-muted: #b6a3c2;
-  --on-gradient: #ffffff;
+  --text-muted: #cebcd8; /* 旧 #b6a3c2 は、ホームの見出しの地 (--hero-bg を最悪の光輪に重ねた所) の上で 3.7:1 だった (パス 503・themeContrast.test.ts) */
+  --on-gradient: #1b1320;
+  --on-accent: #1b1320;
   --accent: #ff8fc0;
   --accent-strong: #ffb3d3;
   --accent-2: #c3adff;
@@ -441,6 +456,7 @@
   --success: #5fd39a;
   --warning: #f2b45c;
   --danger: #ff7a98;
+  --info: #5693f7;
   /* 黒い字 ('#000' 固定) を載せる札の地なので、ダークでも明るいままにする */
   --warning-bg: #f6c86b;
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -453,7 +469,7 @@
   --focus-ring: rgba(255, 143, 192, 0.45);
   --control-bg: #2b2335;
   --control-hover-bg: #352a40;
-  --placeholder: #7f6f8c;
+  --placeholder: #978aa2;
   --range-track: #3d3049;
   --thumb-border: #1b1520;
   --selection-bg: #5a2f4a;
@@ -1746,7 +1762,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .ds-li { margin: 2px 0 2px 1.5em; }
 .ds-right { text-align: right; margin: 7px 0; }
 .ds-fill { font-weight: 700; border-bottom: 1px solid #999; padding: 0 2px; }
-.ds-fill.ds-empty { color: #b06060; font-weight: 400; }
+.ds-fill.ds-empty { color: #a35656; font-weight: 400; } /* 白い紙の上で 5.2:1 (旧 #b06060 は 4.48:1 で AA に僅かに届かなかった) */
 .ds-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px;
             font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
 .ds-table th, .ds-table td { border: 1px solid #8892a0; padding: 6px 10px; }

@@ -340,7 +340,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{slot.label}</div>
             {configured === true && (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: '#fff', borderRadius: 4 }}>
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: 'var(--on-status)', borderRadius: 4 }}>
                 設定済み
               </span>
             )}
@@ -370,7 +370,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
                     e.preventDefault();
                     window.serviceHub.openExternal(slot.helpUrl!);
                   }}
-                  style={{ color: 'var(--accent)' }}
+                  style={{ color: 'var(--accent-strong)' }}
                 >
                   発行ページを開く →
                 </a>
@@ -764,7 +764,8 @@ export function VaultControls() {
                 style={{
                   ...btn(),
                   background: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 'var(--danger)' : 'var(--bg)',
-                  color: '#fff',
+                  // 押せない間は地 (--bg) の上に赤い字 —— 塗りの上の字 (--on-status) を地に置くと見えなくなる。
+                  color: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 'var(--on-status)' : 'var(--danger)',
                   border: '1px solid var(--danger)',
                   opacity: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 1 : 0.5,
                   cursor: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 'pointer' : 'not-allowed',
@@ -1147,7 +1148,7 @@ export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) 
         <div
           role="alert"
           data-forget-error
-          style={{ fontSize: 12, color: '#e5484d', marginBottom: 8, lineHeight: 1.6 }}
+          style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8, lineHeight: 1.6 }}
         >
           ⛔ {forgetError}（預かりは減っていません）
         </div>
@@ -1627,7 +1628,7 @@ export function ProxySection() {
             {unreadable !== null ? (
               <span data-proxy-unreadable style={{ fontSize: 10, padding: '2px 6px', background: 'var(--warning-bg)', color: '#000', borderRadius: 4 }}>確認できません</span>
             ) : cfg ? (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: '#fff', borderRadius: 4 }}>設定済み</span>
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: 'var(--on-status)', borderRadius: 4 }}>設定済み</span>
             ) : (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
             )}
@@ -1877,7 +1878,7 @@ export function FsaSection() {
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>非対応ブラウザ</span>
             )}
             {supported && unreadable === null && hasHandle && permission === 'granted' && (
-              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: '#fff', borderRadius: 4 }}>有効</span>
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--success)', color: 'var(--on-status)', borderRadius: 4 }}>有効</span>
             )}
             {supported && unreadable === null && hasHandle && permission !== 'granted' && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--warning-bg)', color: '#000', borderRadius: 4 }}>権限再要求</span>
@@ -2296,7 +2297,8 @@ function btn(kind?: 'accent', disabled?: boolean): React.CSSProperties {
     background: disabled ? 'var(--bg-elev)' : kind === 'accent' ? 'var(--accent)' : 'var(--bg-elev)',
     border: '1px solid var(--border)',
     borderRadius: 4,
-    color: 'var(--text)',
+    // 塗り (--accent) の上には --on-accent (--text は 4 配色のどれでも対比が足りない)。
+    color: !disabled && kind === 'accent' ? 'var(--on-accent)' : 'var(--text)',
     cursor: disabled ? 'wait' : 'pointer',
     fontSize: 12,
   };

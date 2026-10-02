@@ -314,7 +314,7 @@ export function EmotionsPage() {
                 onClick={() => setMoodScore(s)}
                 style={{
                   background: moodScore === s ? 'var(--accent)' : 'transparent',
-                  color: moodScore === s ? 'white' : 'var(--text)',
+                  color: moodScore === s ? 'var(--on-accent)' : 'var(--text)',
                   borderColor: moodScore === s ? 'var(--accent)' : 'var(--border)',
                   minWidth: 36,
                 }}

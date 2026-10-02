@@ -86,7 +86,7 @@ import { findCrop } from '../../shared/hydroponicCrops';
 const SEVERITY_COLOR: Readonly<Record<TaskSeverity, string>> = {
   alert: 'var(--danger)',
   warn: 'var(--warning)',
-  info: '#60a5fa',
+  info: 'var(--info)',
 };
 const SEVERITY_LABEL: Readonly<Record<TaskSeverity, string>> = {
   alert: '要対応',

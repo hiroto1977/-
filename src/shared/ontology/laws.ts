@@ -1853,6 +1853,37 @@ export const LAWS: readonly Law[] = [
     provenance: ['パス 495', 'パス 494 (全掃引の汚れを実測し、原因の見立てを残した)', '2026-09-03 (hydroponics / payroll の参考値表が読み直しの巻き添えで生存 47 件 —— 表を関数にして避けた)', 'パス 502 (Node の require へ .ts を読ませる口の形・census 規則 5)', 'パス 502 (static の 65 件を 4 担当で閉じた・活性化が beforeAll であること)'],
     enforcedBy: [test(T.shared('inTestModuleLoadCensus')), test(T.shared('rereadModule')), harness('mutate')],
   },
+  {
+    id: 'text-contrast-measured-where-drawn',
+    family: 'surface',
+    name: '文字は、描かれた地の上で読める (WCAG 2.x AA) —— 表の対ではなく、描画済みの色で測る',
+    statement:
+      '文字色と地の色の対比は、通常の字で 4.5:1・大きい字 (24px 以上、太字なら 18.66px 以上) で 3:1 (WCAG 2.x 1.4.3 AA・JIS X 8341-3)。'
+      + '4 配色 (すっきり / かわいい × ライト / ダーク) のどれでも。'
+      + '**トークン表の対が合っていても、描く側が別の対を作る** (実測 2026-10-02: 4 配色 × 全 75 画面・約 8.9 万の文字要素で、'
+      + '割った要素は 468 / 455 / 10,343 / 577)。原因は 5 つ: ① 塗り (`--accent` / `--gradient` / 意味色) の上に地の字 (`--text`) や固定の白 '
+      + '② 配色に追随しない面 (濃紺の盤・白い板・村の景色) の上にトークンの字 ③ 不透明度で薄めた字 ④ ライトでしか合わない固定色 '
+      + '⑤ SVG の字 (塗りの上の円グラフの割合・凡例)。'
+      + '**塗りごとに字のトークンがある** —— `--on-accent` / `--on-gradient` / `--on-status` (`--accent` は字に使わない・字の側は `--accent-strong`)。'
+      + '系列の色そのものの上 (円グラフの扇) は配色のトークンでは決まらないので、塗りから白か黒を選ぶ `readableInk` '
+      + '(白と黒の対比の積は 21 で、どちらかは必ず √21 ≈ 4.58 以上 —— ほぼ黒の `#141414` では 4.29 まで落ちるので純黒)。'
+      + '**3 層で留める**: ① トークン表の対 (`themeContrast` —— 半透明は下の地に重ね、グラデーションは全停止点の最悪) '
+      + '② 描く側の塗りと字の対を構文木で全 style から (`fillInkCensus`) ③ **実機で描画済みの色** (e2e の `contrast` suite)。'
+      + '③ の測定器 (`scripts/lib/contrast.cjs`) は SVG の字を**下に描かれた図形の塗り**で測る —— 先祖の背景だけ見ると、'
+      + '円グラフの扇の上の白い字を「白い頁の上の白 (1:1)」と、濃紺の下地の上の明るい字を「白い頁の上の明るい字 (1.2:1)」と誤る '
+      + '(実測: SVG の字で割った 23 行のうち 22 行がこの誤検出)。'
+      + '**測っていない物**: 字ではない物の 3:1 (枠線・アイコン・チャートの線 —— WCAG 1.4.11)・ホバー / フォーカスなど操作途中の状態・'
+      + '開く前の折りたたみやモーダル・無効化された部品 (WCAG が対象外)・canvas・実効サイズの小さい字。',
+    provenance: ['2026-10-02 (パス 503)'],
+    enforcedBy: [
+      test(T.renderer('themeContrast')),
+      test(T.renderer('fillInkCensus')),
+      test(T.shared('contrastLib')),
+      test(T.shared('readableInk')),
+      harness('e2e'),
+      harness('e2e:lite'),
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

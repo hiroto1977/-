@@ -146,7 +146,7 @@ export function CloudSyncPanel() {
         {state.integrityOk === true && <div style={{ color: 'var(--success)' }}>整合性: OK ✓</div>}
         {state.integrityOk === false && <div style={{ color: 'var(--danger)' }}>整合性: 不一致 (再同期が必要)</div>}
         {state.retriable && <div style={{ color: 'var(--warning)' }}>一部失敗あり — 再試行できます</div>}
-        {enabled && due && <div style={{ color: 'var(--accent)' }}>次回同期のタイミングです</div>}
+        {enabled && due && <div style={{ color: 'var(--accent-strong)' }}>次回同期のタイミングです</div>}
       </div>
 
       <div style={{ display: 'flex', gap: 6, marginTop: 10, alignItems: 'center' }}>

@@ -109,9 +109,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     expect(code).not.toMatch(staleFails);
   });
 
-  it('★ 36 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(36);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(36);
+  it('★ 37 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(37);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(37);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -159,7 +159,10 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     // + 2026-09-28 (パス 500) の latestForm suite 14 (最新の 1 件を採用する欄 —— 開き直すたびに保存値で開く
     //   (欄が現れた瞬間に読む)・1 欄の保存で他の 4 欄を戻さない・しきい値も保存値で開く・触っていない欄は別のタブの
     //   保存に付いていく・触った後に別のタブが保存していたら書かずに断り入力を残す・もう一度押せば上書きが届く) = 523
-    expect(sumMeasured).toBe(523);
+    // + 2026-10-02 (パス 503) の contrast suite 17 (4 配色 × サイドバーの全 74 画面 + 初回の設定画面 + ロック画面で、描画済みの
+    //   文字色と地の色の対比が WCAG 2.x AA を割らない・配色が実際に切り替わっている・測定器の対照 4 (灰の字は割る・黒い字は割らない・
+    //   グラデーションの地は最悪の停止点・SVG の字は下の図形の塗りで測る)・4 配色の地の色が別) = 540
+    expect(sumMeasured).toBe(540);
   });
 });
 

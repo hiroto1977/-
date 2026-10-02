@@ -22,43 +22,21 @@
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import {
+  CSS,
+  CLEAN_LIGHT,
+  CLEAN_DARK,
+  CUTE_LIGHT,
+  CUTE_DARK,
+  TABLES,
+  escapeRe,
+  block,
+  tokens,
+  isColourToken,
+} from './themeCss';
 
-/**
- * 母集団は stylesheet の**全部の名前** —— 4 枚の表を列挙し、部品の規則の直書きの色を全件拾う。
- * 名前を 1 つ足せば下の照合がすべてその名前に掛かる (例を並べる検査ではない)。原文の道具で読む
- * (`originalSourcePolicy` の規則 1 と同じ —— 変異検査の sandbox でも本物の綴りを読む)。
- */
-const CSS = readOriginalSource(join(__dirname, '..', 'styles.css'));
-const CLEAN_LIGHT = ':root';
-const CLEAN_DARK = ':root[data-theme="dark"]';
-const CUTE_LIGHT = ':root[data-design="cute"]';
-const CUTE_DARK = ':root[data-design="cute"][data-theme="dark"]';
-const TABLES = [CLEAN_LIGHT, CLEAN_DARK, CUTE_LIGHT, CUTE_DARK] as const;
 /** ここから後ろは紙 (書類スタジオ / 銀行提出書式 / 印刷)。 */
 const PAPER_MARKER = '/* --- 書類スタジオ (DocstudioPage)';
-
-function escapeRe(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/** `selector {` の中身 (入れ子は無い前提 —— :root ブロックは宣言だけ)。行頭に在る物だけ。 */
-export function block(css: string, selector: string): string {
-  const re = new RegExp(`^${escapeRe(selector)}\\s*\\{([^}]*)\\}`, 'm');
-  const m = re.exec(css);
-  if (!m) throw new Error(`block not found: ${selector}`);
-  return m[1] ?? '';
-}
-
-export function tokens(body: string): Map<string, string> {
-  const out = new Map<string, string>();
-  for (const m of body.matchAll(/^\s*(--[\w-]+)\s*:\s*([^;]+);/gm)) out.set(m[1]!, m[2]!.trim().replace(/\s+/g, ' '));
-  return out;
-}
-
-/** 色として配色ごとの上書きが要るトークン: 値に色の字面を持つ物。 */
-export function isColourToken(value: string): boolean {
-  return /#[0-9a-fA-F]{3,8}\b|rgba?\(|gradient\(/.test(value);
-}
 
 /** 画面の部品の規則に残る直書きの色 (紙の節と 4 枚の :root は外す)。 */
 export function uiColourLiterals(css: string): string[] {
@@ -90,6 +68,14 @@ const DESIGNS = [
 const REMAINING_UI_LITERALS: string[] = [].sort();
 
 describe('トークン表 (4 枚) —— 形', () => {
+  it('標本: 4 枚の表は実物の styles.css から読めている (読めなければ以下は空の検査になる)', () => {
+    // 照合の相手 (`themeCss.ts` が読む `CSS`) とは別に、この検査自身が原文を読んで突き合わせる。
+    // 検査は走査 (原文を読む) を自分で持つ —— 法則 `design-switch-leaves-nothing-behind` の執行者が母集団を見ている根拠。
+    const css = readOriginalSource(join(__dirname, '..', 'styles.css'));
+    expect(css).toBe(CSS);
+    for (const sel of TABLES) expect(block(css, sel), sel).not.toBe('');
+  });
+
   it('★ 4 枚とも color-scheme を宣言し、明るさが表の名前と合う', () => {
     expect(block(CSS, CLEAN_LIGHT)).toMatch(/^\s*color-scheme:\s*light;/m);
     expect(block(CSS, CLEAN_DARK)).toMatch(/^\s*color-scheme:\s*dark;/m);
