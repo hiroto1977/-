@@ -48,6 +48,10 @@
   --panel: #ffffff;
   --border: #e7e4da;
   --border-strong: #d7d3c6;
+  /* 入力欄・選択・複数行の**境界**。`--border` / `--border-strong` は区切り線・カードの縁 (飾り) で、地に 1.2〜1.5:1 しか無い。
+     入力欄は「ここに打てる」を伝える部品なので、境界が下の地に **3:1 以上** (WCAG 2.x 1.4.11 · パス 504 の実測では 758 欄中 752 が 1.2〜1.5:1)。
+     全部の面 (--bg / --bg-elevated / --panel / --bg-sidebar / --drawer-bg / --accent-soft) の上で測る (themeContrast.test.ts)。 */
+  --control-border: #827d6d;
   /* 文字 */
   --text: #1f1e1c;
   --text-muted: #67655e;
@@ -87,12 +91,14 @@
   --primary-shadow: rgba(181, 86, 58, 0.2);
   --thumb-shadow: rgba(31, 30, 28, 0.25);
   --focus-ring: rgba(181, 86, 58, 0.32);
+  /* キーボードの焦点の**輪**。--focus-ring は半透明の光彩 (飾り) で、下の地に 1.4〜2.6:1 しか無かった (パス 504 の実測では全 4 配色・標本 874〜948 件がすべて 3:1 未満)。
+     輪そのものは不透明で、強調の字の色 (--accent-strong = どの面の上でも 4.5:1 以上) をそのまま使う。 */
+  --focus-outline: var(--accent-strong);
   /* 部品の地 (ボタン・入力欄・検索欄) とその細部 */
   --control-bg: #ffffff;
   --control-hover-bg: #f3f1ea;
   --placeholder: #6f6c62;
   --range-track: #e7e4da;
-  --thumb-border: #ffffff;
   --selection-bg: #f2d3c5;
   --scrollbar-thumb: #dcd8cc;
   --scrollbar-thumb-hover: #c9c4b5;
@@ -216,6 +222,7 @@
   --panel: #2b2a27;
   --border: #3d3c38;
   --border-strong: #4d4b46;
+  --control-border: #88837a;
   --text: #f3f1ea;
   --text-muted: #aba89e;
   --on-gradient: #ffffff;
@@ -244,7 +251,6 @@
   --control-hover-bg: #3a3a36;
   --placeholder: #9c9991;
   --range-track: #45443f;
-  --thumb-border: #262624;
   --selection-bg: #5c3a2d;
   --scrollbar-thumb: #4a4944;
   --scrollbar-thumb-hover: #5c5a54;
@@ -290,6 +296,7 @@
   --panel: rgba(255, 255, 255, 0.72);
   --border: #f4dbe6;
   --border-strong: #ecc6d8;
+  --control-border: #946b88;
   /* 文字 */
   --text: #4b3f57;
   --text-muted: #655370; /* 旧 #72607b は、ホームの見出しの地 (--hero-bg を最悪の光輪に重ねた所) の上で 4.0:1 だった (パス 503) */
@@ -323,12 +330,12 @@
   --primary-shadow: rgba(238, 111, 168, 0.28);
   --thumb-shadow: rgba(238, 111, 168, 0.4);
   --focus-ring: rgba(238, 111, 168, 0.35);
+  --focus-outline: var(--accent-strong);
   /* 部品の地 (ボタン・入力欄・検索欄) とその細部 */
   --control-bg: #ffffff;
   --control-hover-bg: #fff5f9;
   --placeholder: #806790;
   --range-track: #f1d6e3;
-  --thumb-border: #ffffff;
   --selection-bg: #ffd4e6;
   --scrollbar-thumb: #efd0df;
   --scrollbar-thumb-hover: #e6b9cf;
@@ -443,6 +450,7 @@
   --panel: rgba(38, 30, 46, 0.72);
   --border: #3a2f45;
   --border-strong: #4c3f59;
+  --control-border: #9580a2;
   --text: #f3e9f5;
   --text-muted: #cebcd8; /* 旧 #b6a3c2 は、ホームの見出しの地 (--hero-bg を最悪の光輪に重ねた所) の上で 3.7:1 だった (パス 503・themeContrast.test.ts) */
   --on-gradient: #1b1320;
@@ -471,7 +479,6 @@
   --control-hover-bg: #352a40;
   --placeholder: #978aa2;
   --range-track: #3d3049;
-  --thumb-border: #1b1520;
   --selection-bg: #5a2f4a;
   --scrollbar-thumb: #4a3b56;
   --scrollbar-thumb-hover: #5c4a6b;
@@ -531,9 +538,11 @@ html, body, #root {
 *::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
 
 /* 見えるフォーカス: キーボードで辿ったときだけ輪を出す (マウスのクリックでは出さない)。
-   入力欄は自分のリング (下) を持つので二重にしない。 */
-:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
-input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+   輪は**不透明**で下の地に 3:1 以上 (`--focus-outline` = 強調の字の色)。半透明の光彩 (`--focus-ring`) は飾りで、
+   輪の代わりにはならない (パス 504 の実測: 全 4 配色で 1.4〜2.6:1)。入力欄は枠の外へ 1px 空けた 2px の輪にし、
+   枠の色替えと光彩 (下) が内側に重なる。 */
+:focus-visible { outline: 3px solid var(--focus-outline); outline-offset: 2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline-width: 2px; outline-offset: 1px; }
 
 /* 動きを減らす設定の人には、画面切替のフェードと浮遊ボタンの滑りを止める。 */
 @media (prefers-reduced-motion: reduce) {
@@ -581,40 +590,55 @@ textarea {
   font-size: 13px;
   color: var(--text);
   background: var(--control-bg);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius-control);
   padding: 7px 11px;
-  outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-input:hover, select:hover, textarea:hover { border-color: var(--list-hover-border); }
+/* ポインタを載せたときは枠を**濃くする** (薄い --list-hover-border へ替えると、既定の枠 (--control-border・3:1 以上) より
+   弱くなり、載せた瞬間に入力欄の輪郭が地へ溶ける — WCAG 1.4.11・パス 504 の実測で 1.5〜2.3:1)。 */
+input:hover, select:hover, textarea:hover { border-color: var(--text-muted); }
 input:focus, select:focus, textarea:focus {
-  border-color: var(--accent);
+  border-color: var(--focus-outline);
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 input::placeholder, textarea::placeholder { color: var(--placeholder); }
-input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--accent); }
+/* 選んだ状態の塗りは非テキストの部品の一部なので、下の地に 3:1 以上の色 (--accent は かわいい × ライトで白の上 2.8:1) */
+input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--accent-strong); }
 
-/* スライダー: 淡い溝に主役の色のつまみ (既定の暗い溝は明るい配色に合わない)。 */
+/* スライダー: 淡い溝に主役の色のつまみ (既定の暗い溝は明るい配色に合わない)。
+   **要素そのものの高さは 24px** (WCAG 2.5.8 の目標の大きさ。以前は溝と同じ 6px で、押せる所は見た目の 6px しか無かった)。
+   溝の細さは疑似要素が持つので、見た目は変わらない。つまみの縁は強調の色 (--accent-strong) —— 白い縁だと、淡い溝・淡い地の上で
+   つまみ (淡いグラデーション) の輪郭が 3:1 に届かない (WCAG 1.4.11・かわいい × ライトで 2.1:1)。 */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--range-track);
+  height: 24px;
+  background: transparent;
   padding: 0;
   border: none;
   box-shadow: none;
   cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--range-track);
+}
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--range-track);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 18px;
   height: 18px;
+  margin-top: -6px; /* 溝 (6px) の中心へ: (6 − 18) / 2 */
   border-radius: 50%;
   background: var(--gradient);
-  border: 2px solid var(--thumb-border);
+  border: 2px solid var(--accent-strong);
   box-shadow: 0 2px 6px var(--thumb-shadow);
 }
 input[type="range"]::-moz-range-thumb {
@@ -622,12 +646,14 @@ input[type="range"]::-moz-range-thumb {
   height: 16px;
   border-radius: 50%;
   background: var(--accent);
-  border: 2px solid var(--thumb-border);
+  border: 2px solid var(--accent-strong);
 }
 input[type="range"]:focus { box-shadow: 0 0 0 3px var(--focus-ring); }
 
 a { color: var(--accent-strong); text-decoration: none; }
 a:hover { text-decoration: underline; }
+/* 折りたたみの見出しは押せる大きさ (WCAG 2.5.8: 24px 以上)。字の高さのままだと 17〜18px しか無かった。 */
+summary { min-height: 24px; padding-block: 3px; box-sizing: border-box; }
 
 /* キーの札 (⌘K など) と、押せる小さな札 (お気に入り / 最近使ったへの近道) */
 kbd.kbd {
@@ -756,7 +782,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   width: 100%;
   padding: 9px 62px 9px 34px;
   background: var(--control-bg);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius-button);
   color: var(--text);
   font-size: 13px;
@@ -765,8 +791,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 /* ブラウザ組み込みの消すボタン (type="search") は隠す —— 自前の ✕ と 2 つ並んでいた (パス 322 実測)。 */
 .sidebar-search-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 .sidebar-search-input:focus {
-  outline: none;
-  border-color: var(--accent);
+  border-color: var(--focus-outline);
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 .sidebar-search-kbd {
@@ -849,6 +874,13 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   gap: 6px;
 }
 .fav-toggle {
+  /* 当たり判定は 24×24px (WCAG 2.5.8)。見た目の大きさと並びは変えない (負の余白で打ち消す)。 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  min-height: 24px;
+  margin: -5px;
   font-size: 14px;
   line-height: 1;
   color: var(--text-muted);
@@ -857,9 +889,11 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   border-radius: 6px;
   transition: opacity 0.15s, transform 0.15s;
 }
-.sidebar-item:hover .fav-toggle { opacity: 0.6; }
+/* ホバーでだけ現れる物は、**キーボードの焦点でも現れる** (opacity: 0 のままだと、焦点を取っても輪ごと見えない — WCAG 2.4.7) */
+.sidebar-item:hover .fav-toggle, .sidebar-item:focus-visible .fav-toggle { opacity: 0.6; }
 .fav-toggle.on { opacity: 1; color: var(--heart); }
-.fav-toggle:hover { opacity: 1 !important; transform: scale(1.2); }
+.fav-toggle:hover, .fav-toggle:focus-visible { opacity: 1 !important; }
+.fav-toggle:hover { transform: scale(1.2); }
 
 .sidebar-nav {
   flex: 1;
@@ -1233,7 +1267,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   min-width: 0;
   padding: 8px 10px;
   background: var(--composer-bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius-control);
   font-size: 13px;
 }
@@ -1241,14 +1275,17 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .concierge.docked .concierge-form {
   margin: 4px 14px 14px;
   padding: 6px 6px 6px 14px;
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--control-border);
   border-radius: calc(var(--radius) + 4px);
   background: var(--composer-bg);
   box-shadow: var(--shadow);
 }
-.concierge.docked .concierge-form:focus-within { border-color: var(--accent); }
+.concierge.docked .concierge-form:focus-within { border-color: var(--focus-outline); outline: 2px solid var(--focus-outline); outline-offset: 1px; }
 .concierge.docked .concierge-input { border: none; background: transparent; padding: 8px 0; box-shadow: none; }
 .concierge.docked .concierge-input:focus { box-shadow: none; }
+/* 列のチャット欄は、焦点の輪を**欄ではなく外の箱**が持つ (上の `:focus-within`)。欄にも輪を出すと、箱の内側にもう 1 本重なって
+   3 重になる。箱の輪は欄に焦点がある間ずっと出る (箱の中で焦点を取れるのは欄と送信ボタンだけ) ので、焦点の可視は失われない。 */
+.concierge.docked .concierge-input:focus-visible { outline: none; }
 /* 右下の丸いボタン (浮いた窓を開け閉めする) */
 .concierge-fab {
   position: fixed;

@@ -66,7 +66,7 @@ import { MAX_FUND_CODE_CHARS, MAX_FUND_NAME_CHARS } from '../data/investments';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 6,
   color: 'var(--text)',
   padding: '6px 8px',

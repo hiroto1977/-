@@ -78,7 +78,7 @@ function SourceBadge({ source }: { source: SourceStrength }): React.JSX.Element 
 }
 
 /** 入力欄の見た目。画面の配色に合わせる (他ページと同じ値)。 */
-const INPUT = { fontSize: 13, padding: '4px 6px', background: 'var(--bg-elev)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 10 };
+const INPUT = { fontSize: 13, padding: '4px 6px', background: 'var(--bg-elev)', color: 'var(--text)', border: '1px solid var(--control-border)', borderRadius: 10 };
 
 export function TalentPage(): React.JSX.Element {
   // 資格情報が要らないので、マウント時に 1 度取る。取得できなくても定義表

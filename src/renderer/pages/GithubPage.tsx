@@ -163,7 +163,7 @@ export function GithubPage() {
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',

@@ -1057,7 +1057,7 @@ export function BusinessPage() {
               flex: 1,
               padding: '8px 12px',
               background: 'var(--bg-elev)',
-              border: '1px solid var(--border)',
+              border: '1px solid var(--control-border)',
               borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,

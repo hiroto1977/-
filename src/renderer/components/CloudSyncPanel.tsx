@@ -134,7 +134,7 @@ export function CloudSyncPanel() {
             min={1}
             value={intervalMin}
             onChange={(e) => setIntervalMin(Math.max(1, Number(e.target.value) || 1))}
-            style={{ width: 70, padding: '4px 6px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 12 }}
+            style={{ width: 70, padding: '4px 6px', background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', fontSize: 12 }}
           />
         </label>
       )}

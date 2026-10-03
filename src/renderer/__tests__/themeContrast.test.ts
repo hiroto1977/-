@@ -26,60 +26,12 @@
  * 表の対が合っていても、**描く側が別の対を作る**ことがある: 塗りの上に地の字 (`--text`) を載せる・意味色の塗りの上に固定の白を載せる・
  * 配色に追随しない面 (濃紺の盤・白い板) の上にトークンの字を載せる。これらはトークン表を見ても出てこない。
  */
-import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { effectiveTables, type ThemeName } from './themeCss';
-
-interface Rgba {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-}
-interface Math3 {
-  parse: (s: string) => Rgba | null;
-  over: (top: Rgba, bottom: Rgba, extra?: number) => Rgba;
-  ratio: (a: Rgba, b: Rgba) => number;
-  hex: (c: Rgba) => string;
-}
-const { contrastMath } = createRequire(import.meta.url)('../../../scripts/lib/contrast.cjs') as { contrastMath: () => Math3 };
-const M = contrastMath();
+import { baseGrounds, candidates, literal, M, worstRatio } from './themeMath';
 
 const TABLES = effectiveTables();
 const THEMES = Object.keys(TABLES) as ThemeName[];
-
-/** `var(--x)` の連鎖をたどって、その名前が持つ**字面の値**を返す。たどれなければ null。 */
-function literal(t: Map<string, string>, name: string, depth = 0): string | null {
-  if (depth > 8) return null;
-  const v = t.get(name);
-  if (v === undefined) return null;
-  const m = /^var\((--[\w-]+)\)$/.exec(v);
-  return m ? literal(t, m[1]!, depth + 1) : v;
-}
-
-/** 色の字面 → 不透明な候補の列。グラデーションは停止点ごと・半透明は各 `bases` に重ねる。 */
-function candidates(value: string, bases: readonly Rgba[]): Rgba[] {
-  if (value === 'transparent') return [...bases];
-  const stops = /gradient\(/.test(value)
-    ? [...value.matchAll(/rgba?\([^)]*\)|#[0-9a-fA-F]{3,8}\b/g)].map((m) => M.parse(m[0])).filter((c): c is Rgba => c !== null)
-    : [M.parse(value)].filter((c): c is Rgba => c !== null);
-  if (stops.length === 0) throw new Error(`色として読めない: ${value}`);
-  const out: Rgba[] = [];
-  for (const s of stops) for (const b of bases) out.push(M.over(s, b, 1));
-  return out;
-}
-
-/** 面の地 (`--bg`) と、かわいいの光輪 (`--glow-*` が不透明な色のとき) —— 半透明の面が重なる下地の候補。 */
-function baseGrounds(t: Map<string, string>): Rgba[] {
-  const bg = M.parse(literal(t, '--bg') ?? '');
-  if (bg === null) throw new Error('--bg が色として読めない');
-  const bases: Rgba[] = [bg];
-  for (const name of ['--glow-1', '--glow-2', '--glow-3']) {
-    const g = M.parse(literal(t, name) ?? '');
-    if (g !== null && g.a >= 1) bases.push(M.over(g, bg, 1));
-  }
-  return bases;
-}
 
 interface Pair {
   /** 字の色のトークン。 */
@@ -131,21 +83,7 @@ const INK_NAME = /^--(?:on-[\w-]+|[\w-]+-fg|text|text-muted|placeholder|accent-s
 
 function measure(theme: ThemeName, pair: Pair): { ground: string; ratio: number }[] {
   const t = TABLES[theme];
-  const bases = baseGrounds(t);
-  const out: { ground: string; ratio: number }[] = [];
-  const inkLit = literal(t, pair.ink);
-  if (inkLit === null) throw new Error(`${theme}: ${pair.ink} が定義されていない / たどれない`);
-  for (const g of pair.grounds) {
-    const gLit = literal(t, g);
-    if (gLit === null) throw new Error(`${theme}: 地 ${g} が定義されていない / たどれない`);
-    // 字の色は、その地の上に重ねて (半透明の字は地に溶ける) 測る。地の候補ごとの最悪を取る。
-    let worst = Infinity;
-    for (const ground of candidates(gLit, bases)) {
-      for (const ink of candidates(inkLit, [ground])) worst = Math.min(worst, M.ratio(ink, ground));
-    }
-    out.push({ ground: g, ratio: worst });
-  }
-  return out;
+  return pair.grounds.map((g) => ({ ground: g, ratio: worstRatio(theme, t, pair.ink, g) }));
 }
 
 describe.each(THEMES)('トークン表の対比 —— %s', (theme) => {

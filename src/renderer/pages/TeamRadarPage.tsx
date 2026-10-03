@@ -563,7 +563,7 @@ export function TeamRadarPage() {
               style={{
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--control-border)',
                 borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
@@ -587,7 +587,7 @@ export function TeamRadarPage() {
               style={{
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--control-border)',
                 borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
@@ -606,7 +606,7 @@ export function TeamRadarPage() {
               style={{
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--control-border)',
                 borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
@@ -631,7 +631,7 @@ export function TeamRadarPage() {
                 style={{
                   padding: '6px 10px',
                   background: 'var(--bg-elev)',
-                  border: '1px solid var(--border)',
+                  border: '1px solid var(--control-border)',
                   borderRadius: 10,
                   color: 'var(--text)',
                   fontSize: 13,
@@ -855,12 +855,13 @@ export function TeamRadarPage() {
                     <input
                       type="text"
                       value={m.name}
+                      aria-label={`メンバー ${idx + 1} の名前`}
                       onChange={(e) => updateName(idx, e.target.value)}
                       style={{
                         flex: 1,
                         padding: '4px 8px',
                         background: 'var(--bg)',
-                        border: '1px solid var(--border)',
+                        border: '1px solid var(--control-border)',
                         borderRadius: 10,
                         color: 'var(--text)',
                         fontSize: 13,
@@ -889,6 +890,7 @@ export function TeamRadarPage() {
                         <input
                           key={`s-${ai}`}
                           type="range"
+                          aria-label={`${m.name.trim() === '' ? `メンバー ${idx + 1}` : m.name} · ${axis}の評価`}
                           min={MEMBER_SCORE_MIN}
                           max={SCORE_MAX}
                           step={1}
@@ -916,13 +918,14 @@ export function TeamRadarPage() {
                           <input
                             type="text"
                             value={m.notes?.[ai] ?? ''}
+                            aria-label={`${m.name.trim() === '' ? `メンバー ${idx + 1}` : m.name} · ${axis}の付箋コメント`}
                             onChange={(e) => updateNote(idx, ai, e.target.value)}
                             placeholder={`特徴・課題を ${MAX_MEMBER_NOTE_CHARS} 字以内`}
                             style={{
                               flex: 1,
-                              padding: '3px 6px',
+                              padding: '5px 6px',
                               background: 'var(--bg)',
-                              border: '1px solid var(--border)',
+                              border: '1px solid var(--control-border)',
                               borderRadius: 3,
                               color: 'var(--text)',
                               fontSize: 11,

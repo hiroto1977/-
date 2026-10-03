@@ -74,7 +74,7 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/TaxPage.tsx': 8, // パス 503: 13 → 8
   'src/renderer/pages/TeamRadarPage.tsx': 2, // パス 493g: 8 色の写しを shared/teamRadarSvg の colorFor へ寄せた / パス 503: 6 → 2
   'src/renderer/pages/TemplatesPage.tsx': 10,
-  'src/renderer/pages/VillagePage.tsx': 32,
+  'src/renderer/pages/VillagePage.tsx': 33, // パス 504: 32 → 33 (配色に追随しない景色の上の焦点の輪 `--focus-outline: #1b2f14` —— 配色の輪は草地の上で 2.3:1)
 };
 
 const SOURCES = uiSources();

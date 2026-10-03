@@ -1128,7 +1128,7 @@ export function AssistantPage() {
           style={{
             flex: 1,
             padding: '10px 12px',
-            border: '1px solid rgba(127,127,127,0.4)',
+            border: '1px solid var(--control-border)',
             borderRadius: 10,
             background: 'var(--control-bg)',
             color: 'var(--text)',

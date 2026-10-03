@@ -37,7 +37,7 @@ import { fireReported } from '../data/deviceStoreFailure';
 
 const inputStyle = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 10,
   color: 'var(--text)',
   padding: '5px 8px',

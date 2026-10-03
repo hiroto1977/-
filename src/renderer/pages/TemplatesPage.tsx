@@ -296,7 +296,7 @@ export function TemplatesPage() {
                     style={{
                       padding: '6px 10px',
                       background: 'var(--bg-elev)',
-                      border: '1px solid var(--border)',
+                      border: '1px solid var(--control-border)',
                       borderRadius: 10,
                       color: 'var(--text)',
                       fontSize: 13,
@@ -312,7 +312,7 @@ export function TemplatesPage() {
                     style={{
                       padding: '6px 10px',
                       background: 'var(--bg-elev)',
-                      border: '1px solid var(--border)',
+                      border: '1px solid var(--control-border)',
                       borderRadius: 10,
                       color: 'var(--text)',
                       fontSize: 13,
@@ -332,18 +332,19 @@ export function TemplatesPage() {
                       type="color"
                       value={params[key]}
                       onChange={(e) => update(key, e.target.value)}
-                      style={{ width: 36, height: 30, padding: 0, border: '1px solid var(--border)', borderRadius: 10 }}
+                      style={{ width: 36, height: 30, padding: 0, border: '1px solid var(--control-border)', borderRadius: 10 }}
                     />
                     <input
                       type="text"
                       value={params[key]}
                       maxLength={7}
+                      aria-label={`${key === 'accentColor' ? 'メインカラー' : 'サブカラー'}の色コード (#rrggbb)`}
                       onChange={(e) => update(key, e.target.value)}
                       style={{
                         flex: 1,
                         padding: '4px 8px',
                         background: 'var(--bg-elev)',
-                        border: '1px solid var(--border)',
+                        border: '1px solid var(--control-border)',
                         borderRadius: 10,
                         color: 'var(--text)',
                         fontSize: 12,

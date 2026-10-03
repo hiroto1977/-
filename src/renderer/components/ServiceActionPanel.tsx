@@ -249,7 +249,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
 const inputStyle: React.CSSProperties = {
   padding: '6px 10px',
   background: 'var(--bg-elev)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,

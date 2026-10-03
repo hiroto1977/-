@@ -198,7 +198,7 @@ const scoreHeading = (sc: ManagementScorecard): string =>
 const yenOrDash = (n: number | null) => (n === null ? '—' : yen.format(n));
 
 const settingsInput: React.CSSProperties = {
-  background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+  background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 6,
   color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 90,
 };
 
@@ -722,7 +722,7 @@ function HydroponicsPanelForm({ setup, crops, lowKParams, changeCrops }: Hydropo
         )}
       </div>
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 14, paddingTop: 12 }}>
-        <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, minHeight: 24 }}>
           <input
             type="checkbox"
             checked={lowK}

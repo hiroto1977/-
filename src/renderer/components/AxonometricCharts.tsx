@@ -303,9 +303,10 @@ export function AxonometricCharts({
           </div>
           <select
             data-axonometric-indicator
+            aria-label="3 軸推移に表示する指標"
             value={indicatorKey}
             onChange={(e) => setIndicatorKey(e.target.value)}
-            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}
+            style={{ background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}
           >
             {INDICATORS.map((i) => (
               <option key={i.key} value={i.key}>

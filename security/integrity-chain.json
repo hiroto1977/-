@@ -2358,6 +2358,14 @@
       "leafCount": 99,
       "note": "update imageUrlGate.ts",
       "hash": "0aa0cf1cbfbf22ea75557d8a51f2ca31539d6a2c82652a73595c836af67054c6"
+    },
+    {
+      "index": 282,
+      "prevHash": "0aa0cf1cbfbf22ea75557d8a51f2ca31539d6a2c82652a73595c836af67054c6",
+      "merkleRoot": "a280c65785bb8da9a7b56f2245a9a7f788635ab3936648135ae0413c7180c2d8",
+      "leafCount": 99,
+      "note": "update LockScreen.tsx",
+      "hash": "ac3fc45beec2049e47bc9da827319fd8211bb06b48713c1e5ac2bd75df8110ed"
     }
   ],
   "tipManifest": {
@@ -2417,7 +2425,7 @@
     "src/renderer/network/proxy.ts": "38d31eedb3afe7e8480e6b7f535798ab502fdd010e6821ed1d575add309834ab",
     "src/renderer/oauth/pkce.ts": "3402979779496b753369150623558c774e6c8f5d525cde4d557e550693d37e24",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
-    "src/renderer/security/LockScreen.tsx": "57c9b5800a201a5ea6924472a4f5873f29281a147f13aa8591222e123762317b",
+    "src/renderer/security/LockScreen.tsx": "4f3a02693303a44619b1c8a857ada3f634b316e77ac7b74791a62f9c5b84874d",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "c47a7bbf2305b1687bf059cc9d40a43783fef755079b2fdf2a8e59afde9a4f14",

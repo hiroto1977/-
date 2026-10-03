@@ -506,7 +506,7 @@ function CorporateTaxCard({
 
   const inputStyle: CSSProperties = {
     background: 'var(--bg-elev)',
-    border: '1px solid var(--border)',
+    border: '1px solid var(--control-border)',
     borderRadius: 10,
     color: 'var(--text)',
     padding: '4px 8px',
@@ -1023,7 +1023,7 @@ export function FinancialAnalysis({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <label style={{ fontSize: 12, color: 'var(--text-mute)' }}>対象事業:</label>
-        <select data-financial-unit-select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '4px 8px', fontSize: 13 }}>
+        <select data-financial-unit-select aria-label="対象事業" value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ background: 'var(--bg-elev)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', padding: '4px 8px', fontSize: 13 }}>
           {units.map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
         </select>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
@@ -1050,7 +1050,7 @@ export function FinancialAnalysis({
       <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ fontSize: 13, fontWeight: 700 }}>📊 事業間比較（棒グラフ）</div>
-          <select value={barKey} onChange={(e) => setBarKey(e.target.value as keyof FinancialRatios)} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}>
+          <select aria-label="事業間で比べる指標" value={barKey} onChange={(e) => setBarKey(e.target.value as keyof FinancialRatios)} style={{ background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}>
             {BAR_OPTIONS.map((b) => <option key={String(b.key)} value={String(b.key)}>{b.label}</option>)}
           </select>
         </div>

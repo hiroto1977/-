@@ -4548,6 +4548,353 @@ async function contrastSuite(browser) {
   ok(new Set(bgs).size === 4, `contrast: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
 }
 
+/**
+ * **操作子の見え方と届き方** (2026-10-03 · パス 504)。実機 (Chromium) で**描画済みの状態**を、
+ * 4 配色 (すっきり / かわいい × ライト / ダーク) × サイドバーの全画面 (+ 初回の設定画面 + ロック画面) と、スマホ幅 2 配色で測り、
+ * WCAG 2.x AA の次の 5 つを割る操作子が 0 件であることを見る:
+ *
+ *   入力欄の輪郭 3:1 (1.4.11) / キーボードの焦点の輪 (2px 以上・3:1・焦点で見えること — 1.4.11・2.4.7) /
+ *   押せる大きさ 24×24px (間隔の例外つき — 2.5.8) / キーボードで届く (2.1.1) / 名前 (4.1.2・ブラウザの AX 木)
+ *
+ * ## 2 層のうち、ここは「描く側が実際に作った枠と輪」を見る
+ *
+ * トークン表の対は `themeNonTextContrast.test.ts`・TSX の枠の色は `controlsCensus.test.ts` (構文木) が見る。
+ * ところが実測 (パス 504) では、**入力欄の枠は 758 欄のうち 752 欄が 3:1 に届かず、枠を決めていたのは CSS ではなく
+ * 画面の style の直書き 64 か所**だった。表を直しても 1 欄も変わらないので、描いた結果を測る。
+ *
+ * 測定器は `scripts/lib/controls.cjs` の 1 つ (写しを作らない)。**測定器そのものの対照**は `about:blank` へ置いた
+ * 探り用の要素で確かめる (薄い枠・輪の無いボタン・ホバーでだけ現れる物・孤立した 10px の目標・ポインタでしか押せない div・名前の無いボタン)。
+ *
+ * ## 測っていない物 (正直に)
+ *
+ * ポインタを載せた入力欄の枠 (サイドバーの検索 1 欄・CSS の `input:hover` を代表させる) だけは測る。それ以外の
+ * ホバー / 押している最中の状態・開く前の折りたたみとモーダルの中・canvas・チャートの線や記号の 3:1 (図形そのものの対比)・
+ * 状態を色だけで伝える物 (1.4.1)・無効化された部品・`<button>` の枠 (字が部品だと示す)は測っていない。
+ */
+async function controlsSuite(browser) {
+  console.log('--- 操作子の見え方と届き方 (4 配色 × 全画面 + スマホ · WCAG 2.x AA) ---');
+  const L = require('../lib/controls.cjs');
+  const expr = L.controlsExpression({ focusSample: 40 });
+  const C = L.controlMath();
+  const CONFIGS = [
+    { name: 'すっきり × ライト', design: 'clean', theme: 'light', ax: true },
+    { name: 'すっきり × ダーク', design: 'clean', theme: 'dark' },
+    { name: 'かわいい × ライト', design: 'cute', theme: 'light' },
+    { name: 'かわいい × ダーク', design: 'cute', theme: 'dark' },
+  ];
+  /** 描き終わるまで待つ: DOM の要素数が 3 回続けて同じ (最大 3 秒)。固定の待ちではなく状態で待つ。 */
+  const settled = (page) =>
+    page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          let last = -1;
+          let same = 0;
+          const t0 = performance.now();
+          const tick = () => {
+            const n = document.body.querySelectorAll('*').length;
+            same = n === last ? same + 1 : 0;
+            last = n;
+            if (same >= 2 || performance.now() - t0 > 3000) resolve(n);
+            else setTimeout(tick, 60);
+          };
+          tick();
+        }),
+    );
+  const STILL = '*{animation:none!important;transition:none!important;caret-color:transparent!important}';
+  /** 1 画面を測る。キーボードの様式にしてから (Tab → Shift+Tab) 測る —— さもないと `:focus-visible` が一致せず、輪の規則が掛からない。 */
+  const measure = async (page, label, withAx) => {
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Shift+Tab');
+    const r = await page.evaluate(expr);
+    const tagAll = (rows) => rows.map((x) => ({ ...x, page: label }));
+    const out = {
+      fields: tagAll(r.fields),
+      focus: tagAll(r.focus),
+      targets: tagAll(r.targets),
+      mouseOnly: tagAll(r.mouseOnly),
+      sliders: tagAll(r.sliders),
+      ax: null,
+    };
+    if (withAx) out.ax = await L.axUnnamedControls(page);
+    return out;
+  };
+  const merge = (acc, part) => {
+    for (const k of ['fields', 'focus', 'targets', 'mouseOnly', 'sliders']) acc[k].push(...part[k]);
+    if (part.ax) {
+      acc.ax.total += part.ax.total;
+      acc.ax.rows.push(...part.ax.rows.map((x) => ({ ...x, page: part.fields[0]?.page ?? '' })));
+    }
+  };
+  const emptyAcc = () => ({ fields: [], focus: [], targets: [], mouseOnly: [], sliders: [], ax: { total: 0, rows: [] } });
+
+  /** 画面の一覧 (サイドバーの項目)。畳まれた分類は実際の見出しを押して全部開く。スマホではドロワーを開いて読み、Esc で閉じる。 */
+  const screenIds = async (page, phone) => {
+    if (phone) {
+      const t = page.locator('button.menu-btn').first();
+      if ((await t.count()) > 0) await t.click();
+    }
+    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
+      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
+    }
+    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
+    if (phone) await page.keyboard.press('Escape');
+    return ids;
+  };
+
+  /** 全画面を測る。 */
+  const sweep = async (cfg, viewport, phone) => {
+    const ctx = await browser.newContext(phone ? { viewport, hasTouch: true } : { viewport });
+    const page = await ctx.newPage();
+    await page.addInitScript(
+      ([theme, design]) => {
+        localStorage.setItem('servicehub.plan', 'enterprise');
+        localStorage.setItem('servicehub.theme', theme);
+        localStorage.setItem('servicehub.design', design);
+      },
+      [cfg.theme, cfg.design],
+    );
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+    await page.addStyleTag({ content: STILL });
+    const acc = emptyAcc();
+    merge(acc, await measure(page, '(初回の設定画面)', cfg.ax === true));
+    await setupVault(page);
+    await page.addStyleTag({ content: STILL });
+    const applied = await page.evaluate(() => ({
+      design: document.documentElement.getAttribute('data-design'),
+      theme: document.documentElement.getAttribute('data-theme') ?? 'light',
+      bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+    }));
+    // ポインタを載せた入力欄の枠 (CSS の `input:hover`)。載せた瞬間に輪郭が地へ溶けない (WCAG 1.4.11)。
+    // パス 504 の最初の直しは、既定の枠を 3:1 以上にしたまま、ホバーの枠を薄い `--list-hover-border` (1.5〜2.3:1) に残し、
+    // 載せた瞬間に既定より**弱く**なった (手で気付いた) —— 状態の規則は静止画を測っても出てこない。
+    let hovered = null;
+    if (!phone) {
+      const search = page.locator('.sidebar-search-input').first();
+      if ((await search.count()) > 0) {
+        await search.hover();
+        const r = await page.evaluate(expr);
+        hovered = r.fields.find((f) => f.sig.includes('sidebar-search-input')) ?? null;
+        await page.mouse.move(0, 0);
+      }
+    }
+    const ids = await screenIds(page, phone);
+    for (const id of ids) {
+      await page.evaluate((i) => {
+        location.hash = i;
+      }, id);
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      merge(acc, await measure(page, id, cfg.ax === true));
+    }
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+    await page.addStyleTag({ content: STILL });
+    merge(acc, await measure(page, '(ロック画面)', cfg.ax === true));
+    await ctx.close();
+    return { acc, ids, applied, hovered };
+  };
+
+  /** 「何が・どの値で」を畳んだ要約 (落ちたとき、同じ原因の行を 1 つにして先頭 6 件を読めるように)。 */
+  const summarize = (rows, keyOf, show) =>
+    L.groupBy(rows, keyOf)
+      .slice(0, 6)
+      .map((g) => `${show(g.sample)} ${g.sample.sig}×${g.n}行/${g.pages.size}画面`)
+      .join(' / ');
+
+  const assertSweep = (label, { acc, ids, hovered }, opts) => {
+    const fieldV = L.fieldViolations(acc.fields, C);
+    const sliderV = L.sliderViolations(acc.sliders, C);
+    const focusV = L.focusViolations(acc.focus);
+    const targetV = L.targetViolations(acc.targets);
+    const focused = acc.focus.filter((r) => r.focused);
+    ok(
+      ids.length >= 60 && acc.fields.length >= opts.minFields && focused.length >= opts.minFocus,
+      `controls[${label}]: 全 ${ids.length} 画面 + 初回 + ロック画面で測れた (入力欄 ${acc.fields.length}・焦点を取った操作子 ${focused.length}/${acc.focus.length}・押せる大きさの対象 ${acc.targets.length}・スライダー ${acc.sliders.length})`,
+    );
+    ok(
+      fieldV.length === 0,
+      `controls[${label}]: ★ 描画済みの入力欄の輪郭は 3:1 以上 (WCAG 1.4.11) (測った ${acc.fields.length} 欄${fieldV.length ? ` · 割った ${fieldV.length} 欄: ${summarize(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''})`,
+    );
+    if (opts.hover) {
+      ok(
+        hovered !== null && L.fieldViolations([hovered], C).length === 0,
+        `controls[${label}]: ★ ポインタを載せた入力欄 (サイドバーの検索) の枠も 3:1 以上 —— 載せて既定より薄くならない (載せた枠 ${hovered ? `${hovered.border}:1` : '欄が見つからない'})`,
+      );
+    }
+    ok(
+      sliderV.length === 0 && acc.sliders.every((r) => r.readable),
+      `controls[${label}]: ★ スライダーのつまみは下の地と溝に 3:1 以上 (測った ${acc.sliders.length} 本${sliderV.length ? ` · 割った ${sliderV.length}: ${summarize(sliderV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${acc.sliders.some((r) => !r.readable) ? ' · つまみの規則を読めなかった行あり' : ''})`,
+    );
+    ok(
+      focusV.length === 0,
+      `controls[${label}]: ★ キーボードの焦点の輪は幅 2px 以上・下の地に 3:1 以上で、焦点を取って見える (WCAG 2.4.7・1.4.11) (測った ${focused.length} 件${focusV.length ? ` · 割った ${focusV.length}: ${summarize(focusV, (r) => `${r.sig}|${r.best}|${r.reveals}`, (r) => `${r.best}:1${r.reveals === false ? ' (焦点で現れない)' : ''}`)}` : ''})`,
+    );
+    ok(
+      targetV.length === 0,
+      `controls[${label}]: ★ 押せる大きさ 24×24px (間隔の例外つき・WCAG 2.5.8) を割る目標が無い (24px 未満の目標 ${acc.targets.length} 件${targetV.length ? ` · 割った ${targetV.length}: ${summarize(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
+    );
+    ok(
+      acc.mouseOnly.length === 0,
+      `controls[${label}]: ★ ポインタでしか押せない操作子が無い (WCAG 2.1.1)${acc.mouseOnly.length ? ` · ${acc.mouseOnly.length} 件: ${summarize(acc.mouseOnly, (r) => `${r.sig}|${r.why}`, (r) => r.why)}` : ''}`,
+    );
+    if (opts.ax) {
+      ok(
+        acc.ax.total >= opts.minNamed && acc.ax.rows.length === 0,
+        `controls[${label}]: ★ 操作子はすべて名前を持つ (ブラウザの AX 木・WCAG 4.1.2) (測った ${acc.ax.total} 件${acc.ax.rows.length ? ` · 名前が空 ${acc.ax.rows.length} 件: ${summarize(acc.ax.rows, (r) => `${r.role}|${r.html.slice(0, 60)}`, (r) => `${r.role} ${r.html.slice(0, 70)}`)}` : ''})`,
+      );
+    }
+  };
+
+  const bgs = [];
+  for (const cfg of CONFIGS) {
+    const r = await sweep(cfg, { width: 1280, height: 900 }, false);
+    bgs.push(r.applied.bg);
+    ok(
+      r.applied.design === cfg.design && r.applied.theme === cfg.theme,
+      `controls[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(r.applied)})`,
+    );
+    assertSweep(cfg.name, r, { minFields: 450, minFocus: 800, ax: cfg.ax === true, minNamed: 10000, hover: true });
+  }
+  ok(new Set(bgs).size === 4, `controls: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
+
+  // スマホ幅 (ドロワー・縦積み・先頭へ戻る・media 規則で変わる目標の大きさ)。明るい配色と暗い配色を 1 つずつ
+  for (const cfg of [CONFIGS[0], CONFIGS[3]]) {
+    const r = await sweep({ ...cfg, ax: cfg === CONFIGS[0] }, { width: 412, height: 915 }, true);
+    assertSweep(`スマホ · ${cfg.name}`, r, { minFields: 450, minFocus: 800, ax: cfg === CONFIGS[0], minNamed: 10000 });
+  }
+
+  // ---- 測定器そのものの対照 (about:blank の探り) ----
+  const pctx = await browser.newContext({ viewport: { width: 800, height: 600 } });
+  const pp = await pctx.newPage();
+  await pp.goto('about:blank');
+  await pp.addStyleTag({
+    content: [
+      'body{margin:0;background:#ffffff;font:14px sans-serif}',
+      '[data-probe="focus-ring"]:focus-visible{outline:3px solid #000000;outline-offset:2px}',
+      '[data-probe="focus-thin"]:focus-visible{outline:1px solid #000000;outline-offset:2px}',
+      '[data-probe="focus-pale"]:focus-visible{outline:3px solid #cccccc;outline-offset:2px}',
+      '[data-probe="focus-none"]:focus-visible{outline:none}',
+      '[data-probe="focus-hover-only"]{opacity:0}',
+      '[data-probe="focus-hover-only"]:hover{opacity:1}',
+      '[data-probe="focus-hover-only"]:focus-visible{outline:3px solid #000000;outline-offset:2px}',
+      '[data-probe="focus-reveal"]{opacity:0}',
+      '[data-probe="focus-reveal"]:hover,[data-probe="focus-reveal"]:focus-visible{opacity:1;outline:3px solid #000000;outline-offset:2px}',
+    ].join('\n'),
+  });
+  await pp.evaluate(() => {
+    const host = document.createElement('div');
+    host.style.cssText = 'position:relative;width:780px;height:560px';
+    const add = (tag, probe, attrs = {}, style = '', text = '') => {
+      const e = document.createElement(tag);
+      e.setAttribute('data-probe', probe);
+      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+      if (style) e.style.cssText = style;
+      if (text) e.textContent = text;
+      host.appendChild(e);
+      return e;
+    };
+    const row = (y) => `position:absolute;left:10px;top:${y}px;`;
+    // 入力欄の輪郭
+    add('input', 'field-pale', { type: 'text', 'aria-label': 'a' }, row(10) + 'width:120px;border:1px solid #e5e5e5;background:#fff');
+    add('input', 'field-ok', { type: 'text', 'aria-label': 'b' }, row(44) + 'width:120px;border:1px solid #767676;background:#fff');
+    add('input', 'field-fill', { type: 'text', 'aria-label': 'c' }, row(78) + 'width:120px;border:0;background:#767676');
+    add('input', 'field-borderless', { type: 'text', 'aria-label': 'd' }, row(112) + 'width:120px;border:0;background:#ffffff');
+    const w = add('div', 'wrap', {}, row(146) + 'width:160px;height:30px;border:1px solid #767676');
+    const inner = document.createElement('input');
+    inner.setAttribute('data-probe', 'field-in-wrapper');
+    inner.setAttribute('aria-label', 'e');
+    inner.style.cssText = 'position:absolute;left:4px;top:3px;width:100px;height:22px;border:0;background:#ffffff';
+    w.appendChild(inner);
+    // 焦点の輪
+    add('button', 'focus-ring', {}, row(10) + 'left:220px', 'ring');
+    add('button', 'focus-thin', {}, row(44) + 'left:220px', 'thin');
+    add('button', 'focus-pale', {}, row(78) + 'left:220px', 'pale');
+    add('button', 'focus-none', {}, row(112) + 'left:220px', 'none');
+    add('button', 'focus-hover-only', {}, row(146) + 'left:220px', 'hov');
+    add('button', 'focus-reveal', {}, row(180) + 'left:220px', 'rev');
+    // 押せる大きさ: 10px の目標が隣り合う (間隔の例外を満たさない)・孤立した 10px (満たす)・24px (小さくない)
+    add('button', 'tiny-a', { 'aria-label': 'ta' }, row(300) + 'left:420px;width:10px;height:10px;padding:0');
+    add('button', 'tiny-b', { 'aria-label': 'tb' }, row(300) + 'left:432px;width:10px;height:10px;padding:0');
+    add('button', 'tiny-alone', { 'aria-label': 'tc' }, row(450) + 'left:600px;width:10px;height:10px;padding:0');
+    add('button', 'target-24', { 'aria-label': 'td' }, row(300) + 'left:520px;width:24px;height:24px;padding:0');
+    // ポインタでしか押せない物
+    add('div', 'mouse-only', {}, row(380) + 'left:220px;cursor:pointer', 'click me');
+    add('div', 'role-no-tabindex', { role: 'button' }, row(410) + 'left:220px', 'role');
+    add('div', 'keyboard-ok', { role: 'button', tabindex: '0' }, row(440) + 'left:220px;cursor:pointer', 'ok');
+    // 名前
+    add('button', 'unnamed', {}, row(520) + 'left:420px;width:20px;height:20px');
+    add('button', 'named', { 'aria-label': 'named' }, row(520) + 'left:480px;width:20px;height:20px');
+    document.body.appendChild(host);
+  });
+  await pp.keyboard.press('Tab');
+  await pp.keyboard.press('Shift+Tab');
+  const probe = await pp.evaluate(L.controlsExpression({ focusSample: 500 }));
+  const ax = await L.axUnnamedControls(pp);
+  const rowOf = (rows, name) => rows.find((r) => r.html.includes(`data-probe="${name}"`));
+  const fld = (n) => rowOf(probe.fields, n);
+  ok(
+    fld('field-pale') !== undefined && L.fieldViolations([fld('field-pale')], C).length === 1,
+    `controls: 対照 ★ 薄い枠 (#e5e5e5 × 白) の入力欄は 3:1 を割ったと測る (実際 ${fld('field-pale')?.best}:1)`,
+  );
+  ok(
+    fld('field-ok') !== undefined && L.fieldViolations([fld('field-ok')], C).length === 0 && fld('field-ok').best > 4,
+    `controls: 対照 濃い枠 (#767676 × 白 = 4.54:1) は割らない (実際 ${fld('field-ok')?.best}:1)`,
+  );
+  ok(
+    fld('field-fill') !== undefined && L.fieldViolations([fld('field-fill')], C).length === 0,
+    `controls: 対照 枠が無くても、地との塗りの差が 3:1 以上なら輪郭は見える (実際 塗り ${fld('field-fill')?.fill}:1)`,
+  );
+  ok(
+    fld('field-borderless') !== undefined && L.fieldViolations([fld('field-borderless')], C).length === 1,
+    `controls: 対照 ★ 枠も塗りの差も無い入力欄は割ったと測る (実際 ${fld('field-borderless')?.best}:1)`,
+  );
+  ok(
+    fld('field-in-wrapper') !== undefined && fld('field-in-wrapper').via === 'wrapper' && L.fieldViolations([fld('field-in-wrapper')], C).length === 0,
+    `controls: 対照 欄に枠が無くても、ぴったり囲む箱が 3:1 の枠を持てば箱の輪郭で見える (via ${fld('field-in-wrapper')?.via} · ${fld('field-in-wrapper')?.best}:1)`,
+  );
+  const foc = (n) => rowOf(probe.focus, n);
+  ok(
+    foc('focus-ring')?.focused === true && foc('focus-ring').ok === true && foc('focus-ring').best > 15,
+    `controls: 対照 幅 3px・黒の輪は適合 (焦点 ${foc('focus-ring')?.focused} · 輪 ${foc('focus-ring')?.best}:1)`,
+  );
+  ok(
+    ['focus-none', 'focus-thin', 'focus-pale'].every((n) => foc(n)?.focused === true && foc(n).ok === false && L.focusViolations([foc(n)]).length === 1),
+    `controls: 対照 ★ 輪を消した物・幅 1px の輪・薄い輪 (#ccc = 1.6:1) は割ったと測る (消した ${foc('focus-none')?.ok} · 1px ${foc('focus-thin')?.ok} ${foc('focus-thin')?.bestAny}:1 · 薄い ${foc('focus-pale')?.ok} ${foc('focus-pale')?.best}:1)`,
+  );
+  ok(
+    foc('focus-hover-only')?.focused === true &&
+      foc('focus-hover-only').ringOk === true &&
+      foc('focus-hover-only').reveals === false &&
+      foc('focus-hover-only').ok === false,
+    `controls: 対照 ★ ホバーでだけ現れる物は、輪が在っても焦点で見えなければ割ったと測る (輪 ${foc('focus-hover-only')?.ringOk} · 焦点後の不透明度 ${foc('focus-hover-only')?.opacityAfter})`,
+  );
+  ok(
+    foc('focus-reveal')?.focused === true && foc('focus-reveal').reveals === true && foc('focus-reveal').ok === true,
+    `controls: 対照 焦点でも現れる (opacity が戻る) 物は適合 (焦点後の不透明度 ${foc('focus-reveal')?.opacityAfter})`,
+  );
+  const tgt = (n) => rowOf(probe.targets, n);
+  ok(
+    tgt('tiny-a') !== undefined && tgt('tiny-b') !== undefined && L.targetViolations([tgt('tiny-a'), tgt('tiny-b')]).length === 2,
+    `controls: 対照 ★ 10px の目標が 2px 隔てて並ぶと、間隔の例外を満たさず割ったと測る (${tgt('tiny-a')?.w}×${tgt('tiny-a')?.h}・隣と近い)`,
+  );
+  ok(
+    tgt('tiny-alone') !== undefined && tgt('tiny-alone').spacingOk === true && L.targetViolations([tgt('tiny-alone')]).length === 0,
+    `controls: 対照 孤立した 10px の目標は間隔の例外で適合 (周りに目標が無い)`,
+  );
+  ok(tgt('target-24') === undefined, `controls: 対照 24×24px の目標は「小さい」に数えない`);
+  const mo = (n) => rowOf(probe.mouseOnly, n);
+  ok(
+    mo('mouse-only')?.why === 'pointer-without-focus' && mo('role-no-tabindex')?.why === 'role-without-tabindex' && mo('keyboard-ok') === undefined,
+    `controls: 対照 ★ ポインタでしか押せない div・tabindex の無い role=button は割ったと測り、role=button + tabindex=0 は割らない (${mo('mouse-only')?.why} / ${mo('role-no-tabindex')?.why} / ${mo('keyboard-ok')?.why ?? '適合'})`,
+  );
+  ok(
+    ax.rows.some((r) => r.html.includes('data-probe="unnamed"')) && !ax.rows.some((r) => r.html.includes('data-probe="named"')),
+    `controls: 対照 ★ ブラウザの AX 木で名前が空のボタンを拾い、aria-label のあるボタンは拾わない (名前が空 ${ax.rows.length} 件)`,
+  );
+  await pctx.close();
+}
+
 async function hardResetSuite(browser) {
   console.log('--- ハードリセットは保管庫だけでなく全媒体を消す (パス 136) ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -4852,6 +5199,8 @@ function installWaitMarginRecorder(browser) {
     ['design', designSuite, 32],
     // パス 503: 文字色の対比 (WCAG 2.x AA) を実機で 4 配色 × 全画面。実測値は初回の実行で確かめる
     ['contrast', contrastSuite, 17],
+    // パス 504: 操作子の輪郭・焦点の輪・押せる大きさ・キーボード・名前を実機で 4 配色 × 全画面 + スマホ。実測値は初回の実行で確かめる
+    ['controls', controlsSuite, 61],
     ['tablet', tabletSuite, 2],
     ['shell', shellSuite, 27],
   ];

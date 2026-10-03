@@ -148,12 +148,14 @@ describe('色の読み書き (実機の computed style が返す形)', () => {
 });
 
 describe('ページへ送る式 (sweepExpression)', () => {
-  it('2 つの関数のソースを 1 つの式へ束ねる (関数を値として渡さない —— ページの CSP の外で文字列として評価するため)', () => {
+  it('3 つの関数のソースを 1 つの式へ束ねる (関数を値として渡さない —— ページの CSP の外で文字列として評価するため)', () => {
     const e = lib.sweepExpression();
     expect(typeof e).toBe('string');
     expect(e.startsWith('(() => {')).toBe(true);
     expect(e).toContain('function contrastMath()');
-    expect(e).toContain('function measureDocument(M)');
+    // 地の求め方 (groundTools) は操作子の測定 (controls.cjs) も読むので contrast.cjs が持つ (写しを作らない・パス 504)
+    expect(e).toContain('function groundTools(M)');
+    expect(e).toContain('function measureDocument(M, G)');
     // 標本: 式として構文が通る (評価はしない —— DOM が要る)
     expect(() => new Function(`return ${e}`)).not.toThrow();
   });

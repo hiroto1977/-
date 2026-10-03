@@ -523,7 +523,7 @@ function ActualsPanel() {
       onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
       style={{
         background: 'var(--bg)',
-        border: '1px solid var(--border)',
+        border: '1px solid var(--control-border)',
         borderRadius: 10,
         color: 'var(--text)',
         padding: '6px 8px',
@@ -540,8 +540,9 @@ function ActualsPanel() {
           <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>売上集計から取り込む:</span>
           <select
             value={importMonth}
+            aria-label="売上集計から取り込む月"
             onChange={(e) => setImportMonth(e.target.value)}
-            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
+            style={{ background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
           >
             <option value="">月を選択</option>
             {monthOptions.map((m) => (
@@ -714,7 +715,7 @@ function BudgetPanel() {
       placeholder={placeholder}
       onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
       style={{
-        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
+        background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10,
         color: 'var(--text)', padding: '6px 8px', fontSize: 13,
         width: key === 'period' || key === 'unit' ? 110 : 100,
       }}
@@ -853,7 +854,7 @@ function BalanceSheetPanel() {
       placeholder={placeholder}
       onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
       style={{
-        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
+        background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10,
         color: 'var(--text)', padding: '6px 8px', fontSize: 13,
         width: key === 'asOf' ? 120 : 110,
       }}
@@ -1049,10 +1050,11 @@ export function KpiPage() {
         <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>事業 (模擬データ):</span>
         <select
           value={selectedId}
+          aria-label="表示する事業 (模擬データ)"
           onChange={(e) => setSelectedId(e.target.value)}
           style={{
             background: 'var(--bg)',
-            border: '1px solid var(--border)',
+            border: '1px solid var(--control-border)',
             borderRadius: 10,
             color: 'var(--text)',
             padding: '6px 10px',

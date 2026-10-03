@@ -397,7 +397,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
                 flex: 1,
                 padding: '6px 10px',
                 background: 'var(--bg)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--control-border)',
                 borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 12,
@@ -827,7 +827,7 @@ export function LicenseSection() {
   }
 
   const inputStyle: React.CSSProperties = {
-    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10,
+    background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10,
     color: 'var(--text)', padding: '8px 10px', fontSize: 13, width: 220,
   };
 
@@ -2307,7 +2307,7 @@ function btn(kind?: 'accent', disabled?: boolean): React.CSSProperties {
 const pwInput: React.CSSProperties = {
   padding: '6px 10px',
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 4,
   color: 'var(--text)',
   fontSize: 13,

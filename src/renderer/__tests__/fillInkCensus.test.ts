@@ -32,13 +32,9 @@
  *
  * 規則 1 は**直す前の 20 か所**で鳴った (標本が直す前の字面を持つ)。
  */
-import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { globSync } from 'tinyglobby';
 import ts from 'typescript';
-import { readOriginalSource } from '../../shared/__tests__/originalSource';
-
-const REPO = join(__dirname, '..', '..', '..');
+import { parseSource, propName, stringsOf, tokensIn, uiSources } from './astStyle';
 
 /** 塗りのトークン → その上の字のトークン。 */
 export const FILL_INK: Readonly<Record<string, string>> = {
@@ -56,37 +52,6 @@ const FIXED_INK = /^(?:#fff(?:fff)?|#000(?:000)?|white|black)$/i;
 /** 例外: 明るいままの札の地 (黒い字を載せる)。 */
 const FIXED_INK_OK_ON = new Set(['--warning-bg']);
 
-/** 式が取りうる**字面の文字列**。条件・`||` / `??` / `&&` は両辺、括弧・`as`・`!` は中身。式で決まる物は読まない。 */
-function stringsOf(e: ts.Expression | undefined): string[] {
-  if (e === undefined) return [];
-  if (ts.isStringLiteral(e) || ts.isNoSubstitutionTemplateLiteral(e)) return [e.text];
-  if (ts.isTemplateExpression(e)) return [e.head.text, ...e.templateSpans.map((s) => s.literal.text)];
-  if (ts.isConditionalExpression(e)) return [...stringsOf(e.whenTrue), ...stringsOf(e.whenFalse)];
-  if (ts.isBinaryExpression(e)) {
-    const k = e.operatorToken.kind;
-    if (k === ts.SyntaxKind.BarBarToken || k === ts.SyntaxKind.QuestionQuestionToken || k === ts.SyntaxKind.AmpersandAmpersandToken) {
-      return [...stringsOf(e.left), ...stringsOf(e.right)];
-    }
-    return [];
-  }
-  if (ts.isParenthesizedExpression(e) || ts.isAsExpression(e) || ts.isNonNullExpression(e) || ts.isSatisfiesExpression(e)) return stringsOf(e.expression);
-  return [];
-}
-
-function propName(p: ts.ObjectLiteralElementLike): string | null {
-  if (!ts.isPropertyAssignment(p)) return null;
-  const n = p.name;
-  if (ts.isIdentifier(n) || ts.isStringLiteral(n)) return n.text;
-  return null;
-}
-
-/** 文字列の中の `var(--名前` の名前。 */
-function tokensIn(strings: readonly string[]): string[] {
-  const out: string[] = [];
-  for (const s of strings) for (const m of s.matchAll(/var\((--[\w-]+)/g)) out.push(m[1]!);
-  return out;
-}
-
 export interface Violation {
   readonly file: string;
   readonly line: number;
@@ -102,7 +67,7 @@ export interface Scan {
 
 /** 1 つのソースを走査する。 */
 export function scanFillInk(fileName: string, text: string): Scan {
-  const sf = ts.createSourceFile(fileName, text, ts.ScriptTarget.Latest, true, fileName.endsWith('x') ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+  const sf = parseSource(fileName, text);
   const violations: Violation[] = [];
   let pairs = 0;
   const visit = (n: ts.Node): void => {
@@ -143,13 +108,6 @@ export function scanFillInk(fileName: string, text: string): Scan {
   };
   visit(sf);
   return { pairs, violations };
-}
-
-function uiSources(): { file: string; text: string }[] {
-  return globSync(
-    ['src/renderer/pages/*.tsx', 'src/renderer/components/*.tsx', 'src/renderer/components/*.ts', 'src/renderer/App.tsx', 'src/renderer/security/*.tsx'],
-    { cwd: REPO, absolute: true, ignore: ['**/__tests__/**'] },
-  ).map((abs) => ({ file: relative(REPO, abs).split('\\').join('/'), text: readOriginalSource(abs) }));
 }
 
 const SOURCES = uiSources();

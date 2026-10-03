@@ -22,9 +22,11 @@
  * - 地が**半透明**なら下の地に重ねて合成する。**地がグラデーション**なら全部の停止点で測って最悪を取る。
  *   **地が画像**のときは測れないので `unknown` として数える (見つからなかったとは言わない)。
  *
- * `contrastMath()` と `measureDocument()` は**自由変数を持たない** —— 実機のページへ関数の**ソース文字列**として
+ * `contrastMath()` / `groundTools()` / `measureDocument()` は**自由変数を持たない** —— 実機のページへ関数の**ソース文字列**として
  * 送るため (`page.evaluate(関数)` はページの CSP の外で走るので送れるが、`new Function` / `eval` はページの CSP が拒む)。
- * そのため Node 側の検査も同じ関数を呼べる (`contrastMath()`)。
+ * そのため Node 側の検査も同じ関数を呼べる (`contrastMath()`)。`groundTools()` (「その要素の下の地」を求める道具) は
+ * 2026-10-03 (パス 504) に `measureDocument` の中から出した —— 枠線・フォーカスの輪も「下の地」で測るので、
+ * 操作子の測定 (`scripts/lib/controls.cjs`) が**同じ 1 つ**を読む (地の求め方の写しを作らない)。
  */
 
 /** @returns {{parse: (s: string) => ({r:number,g:number,b:number,a:number}|null), over: Function, lum: Function, ratio: Function, hex: Function}} */
@@ -92,15 +94,17 @@ function requiredRatio(sizePx, weight) {
 }
 
 /**
- * **実機のページの中で走る測定。** 文字を持つ可視の要素 (と placeholder) ごとに、描画済みの文字色と
- * 重なった地の色の対比の最悪値を返す。自由変数を持たない (`M` = `contrastMath()` の結果だけ受け取る)。
+ * **地の色の道具** (自由変数なし・`M` = `contrastMath()` の結果だけ受け取る)。要素の**下に重なっている物**を数える
+ * —— 先祖の `background` を上から順に重ね、グラデーションは停止点ごとに分け、画像は `unknown` にする。
  *
- * 返す行: { key, text, fg, bg, ratio, size, weight, large, unknown, textAlpha, inInput, svg?, placeholder?, style?, parent?, pstyle? }
+ * 文字の測定 (`measureDocument`) と、操作子の測定 (`scripts/lib/controls.cjs` の `measureControls`) が**同じ 1 つ**を読む
+ * (2026-10-03 · パス 504 で `measureDocument` の中から出した —— 枠線・フォーカスの輪も「その下の地」で測るので、
+ * 地の数え方を 2 つ持たない)。ページへは `sweepExpression()` / `controlsExpression()` が**ソース文字列**として束ねて送る。
  *
  * @param {ReturnType<typeof contrastMath>} M
  */
-function measureDocument(M) {
-  const { parse, over, ratio, hex } = M;
+function groundTools(M) {
+  const { parse, over } = M;
   const stopsOf = (img) => {
     if (!img || img === 'none') return null;
     if (!/gradient/.test(img)) return 'image';
@@ -137,6 +141,31 @@ function measureDocument(M) {
     for (let n = el; n; n = n.parentElement) o *= Number(getComputedStyle(n).opacity);
     return o;
   };
+  const visible = (el) => {
+    for (let n = el; n; n = n.parentElement) {
+      const cs = getComputedStyle(n);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+    }
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  };
+  const classOf = (el) =>
+    el && typeof el.className === 'string' && el.className.trim() ? '.' + el.className.trim().split(/\s+/).slice(0, 3).join('.') : '';
+  return { bgCandidates, opacityOf, visible, classOf };
+}
+
+/**
+ * **実機のページの中で走る測定。** 文字を持つ可視の要素 (と placeholder) ごとに、描画済みの文字色と
+ * 重なった地の色の対比の最悪値を返す。自由変数を持たない (`M` = `contrastMath()` の結果と、`G` = `groundTools(M)` の結果だけ受け取る)。
+ *
+ * 返す行: { key, text, fg, bg, ratio, size, weight, large, unknown, textAlpha, inInput, svg?, placeholder?, style?, parent?, pstyle? }
+ *
+ * @param {ReturnType<typeof contrastMath>} M
+ * @param {ReturnType<typeof groundTools>} G
+ */
+function measureDocument(M, G) {
+  const { parse, over, ratio, hex } = M;
+  const { bgCandidates, opacityOf, visible, classOf } = G;
   /**
    * **SVG の文字の地** —— 先祖の `background` は SVG の中の図形を知らない。円グラフの扇・濃紺の下地の `<rect>`・
    * 凡例の枠の上に置いた字は、**その図形の塗り**の上に載る (見ないと、扇の上の白い字を「白い頁の上の白」と測って
@@ -197,16 +226,6 @@ function measureDocument(M) {
     }
     return { shapes, unknown };
   };
-  const visible = (el) => {
-    for (let n = el; n; n = n.parentElement) {
-      const cs = getComputedStyle(n);
-      if (cs.display === 'none' || cs.visibility === 'hidden') return false;
-    }
-    const r = el.getBoundingClientRect();
-    return r.width > 0 && r.height > 0;
-  };
-  const classOf = (el) =>
-    el && typeof el.className === 'string' && el.className.trim() ? '.' + el.className.trim().split(/\s+/).slice(0, 3).join('.') : '';
   const out = [];
   const seen = new Set();
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -325,7 +344,7 @@ function measureDocument(M) {
  * ページの CSP (`unsafe-eval` なし) に拒まれない)。
  */
 function sweepExpression() {
-  return `(() => { const M = (${contrastMath.toString()})(); return (${measureDocument.toString()})(M); })()`;
+  return `(() => { const M = (${contrastMath.toString()})(); const G = (${groundTools.toString()})(M); return (${measureDocument.toString()})(M, G); })()`;
 }
 
 /** 測った行 → 基準を割った行 (測れなかった行 `unknown` は割ったとは数えない)。 */
@@ -348,4 +367,4 @@ function groupViolations(rows) {
     .sort((a, b) => b.pages.size - a.pages.size || b.n - a.n);
 }
 
-module.exports = { contrastMath, measureDocument, sweepExpression, isLargeText, requiredRatio, violationsOf, groupViolations };
+module.exports = { contrastMath, groundTools, measureDocument, sweepExpression, isLargeText, requiredRatio, violationsOf, groupViolations };

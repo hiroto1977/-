@@ -571,7 +571,7 @@ function FieldInputs({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {fields.map((f) => {
         const level = flagged[f.k];
-        const border = fieldBorder(level, '1px solid var(--border)');
+        const border = fieldBorder(level, '1px solid var(--control-border)');
         return (
           <label key={f.k} style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 11, color: 'var(--text-mute)' }}>
             <span>
@@ -1246,7 +1246,7 @@ function ShareholderInputs({
                       placeholder={c.ph}
                       onChange={(e) => onChange(k, e.target.value)}
                       data-field={k}
-                      style={{ width: '100%', border: fieldBorder(flagged[k], '1px solid var(--border-strong)') }}
+                      style={{ width: '100%', border: fieldBorder(flagged[k], '1px solid var(--control-border)') }}
                     />
                   </label>
                 );
@@ -1990,7 +1990,7 @@ export function DocstudioPage() {
                 placeholder="書式名・場面で検索（例: 残業 / 退職 / 未払 / 登記）"
                 aria-label="書式を検索"
                 data-doc-search
-                style={{ width: '100%', padding: '9px 11px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13 }}
+                style={{ width: '100%', padding: '9px 11px', background: 'var(--bg-elev)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', fontSize: 13 }}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 8 }}>
                 {['すべて', ...cats].map((c) => (
