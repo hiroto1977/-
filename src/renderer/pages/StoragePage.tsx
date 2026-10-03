@@ -12,7 +12,7 @@ const DIFFICULTY_LABEL: Record<string, string> = {
 const DIFFICULTY_COLOR: Record<string, string> = {
   safe: 'var(--success)',
   caution: 'var(--warning)',
-  manual: '#94a3b8',
+  manual: 'var(--text-muted)',
 };
 const CATEGORY_LABEL: Record<string, string> = {
   system: '🖥 システム',

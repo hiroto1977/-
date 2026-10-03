@@ -51,7 +51,7 @@ const EMPTY_CONSULTATION_FORM = { date: '', topic: '', status: '相談予約' as
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 10,
   color: 'var(--text)',
   padding: '6px 8px',
@@ -60,9 +60,9 @@ const inputStyle: React.CSSProperties = {
 };
 
 const STATUS_COLOR: Record<ShigyoConsultationStatus, string> = {
-  相談予約: '#94a3b8',
+  相談予約: 'var(--text-muted)',
   相談中: 'var(--warning)',
-  対応中: '#3b82f6',
+  対応中: 'var(--info)',
   完了: 'var(--success)',
 };
 
@@ -273,10 +273,10 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               title={profile.exclusive}
               style={{
                 fontSize: 11,
-                border: '1px solid #3b82f6',
+                border: '1px solid var(--info)',
                 borderRadius: 999,
                 padding: '2px 10px',
-                color: '#3b82f6',
+                color: 'var(--info)',
                 cursor: 'help',
               }}
             >

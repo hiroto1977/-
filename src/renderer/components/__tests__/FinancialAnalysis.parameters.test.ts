@@ -66,13 +66,13 @@ describe('FinancialAnalysis — 財務診断の下限とレーダーの水準 (�
     const hundred = { goodMin: 100, warnMin: 100, gradeSMin: 100, gradeAMin: 100, gradeBMin: 100, gradeCMin: 100 };
     const html = renderToStaticMarkup(createElement(FinancialAnalysis, { units: [UNIT], healthBands: hundred }));
     expect(html).toContain('>D</span>');
-    expect(bars(html, '#e36b6b')).toBe(3);
-    expect(bars(html, '#5cb85c')).toBe(0);
+    expect(bars(html, 'var(--danger)')).toBe(3);
+    expect(bars(html, 'var(--success)')).toBe(0);
     const zero = { goodMin: 0, warnMin: 0, gradeSMin: 0, gradeAMin: 0, gradeBMin: 0, gradeCMin: 0 };
     const html0 = renderToStaticMarkup(createElement(FinancialAnalysis, { units: [UNIT], healthBands: zero }));
     expect(html0).toContain('>S</span>');
-    expect(bars(html0, '#5cb85c')).toBe(3);
-    expect(bars(html0, '#e36b6b')).toBe(0);
+    expect(bars(html0, 'var(--success)')).toBe(3);
+    expect(bars(html0, 'var(--danger)')).toBe(0);
   });
 
   it('レーダーの水準を渡すと総合スコアが動く', () => {

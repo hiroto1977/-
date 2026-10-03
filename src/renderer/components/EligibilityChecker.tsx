@@ -49,8 +49,8 @@ const ELIGIBILITY_READS = ['age', 'managementYears'] as const;
 
 const VERDICT_STYLE: Readonly<Record<Verdict, { label: string; color: string }>> = {
   eligible: { label: '要件を満たす', color: 'var(--success)' },
-  needsCheck: { label: '入力が足りない', color: '#f5a623' },
-  ineligible: { label: '対象外', color: '#e0568a' },
+  needsCheck: { label: '入力が足りない', color: 'var(--warning)' },
+  ineligible: { label: '対象外', color: 'var(--danger)' },
 };
 
 const GENDERS: readonly { value: Gender; label: string }[] = [

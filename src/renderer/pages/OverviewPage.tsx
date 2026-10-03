@@ -198,7 +198,7 @@ const scoreHeading = (sc: ManagementScorecard): string =>
 const yenOrDash = (n: number | null) => (n === null ? '—' : yen.format(n));
 
 const settingsInput: React.CSSProperties = {
-  background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+  background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 6,
   color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 90,
 };
 
@@ -722,7 +722,7 @@ function HydroponicsPanelForm({ setup, crops, lowKParams, changeCrops }: Hydropo
         )}
       </div>
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 14, paddingTop: 12 }}>
-        <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, minHeight: 24 }}>
           <input
             type="checkbox"
             checked={lowK}
@@ -1056,7 +1056,7 @@ export function OverviewPage() {
       rows.push({
         label: '売上 (年換算ペース)',
         annual: salesPace,
-        color: 'var(--success)',
+        color: '#9ece6a', // 帯 (濃紺) の上で読める緑 —— トークンは配色の地に対する物なので帯では使えない
         hint: '年初来の実績を経過で割り戻した年換算',
       });
     }
@@ -1188,7 +1188,7 @@ export function OverviewPage() {
             <span
               style={{
                 fontWeight: 700, fontSize: 12, padding: '2px 10px', borderRadius: 999,
-                color: '#fff', background: RISK_BAND_COLOR[highlightSummary.riskBand],
+                color: 'var(--on-status)', background: RISK_BAND_COLOR[highlightSummary.riskBand],
               }}
             >
               総合リスク: {RISK_BAND_LABEL[highlightSummary.riskBand]}

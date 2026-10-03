@@ -121,7 +121,7 @@ function RadarChart({
         return (
           <g key={lvl}>
             <polygon points={pts.join(' ')} fill="none" stroke="#e8d5e2" strokeDasharray="3,3" />
-            <text x={lp.x + 8} y={lp.y} fontSize={10} fill="#94a3b8" textAnchor="start">
+            <text x={lp.x + 8} y={lp.y} fontSize={10} fill="var(--text-muted)" textAnchor="start">
               {lvl}
             </text>
           </g>
@@ -135,7 +135,7 @@ function RadarChart({
         return (
           <g key={i}>
             <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#e8d5e2" />
-            <text x={lp.x} y={lp.y} fontSize={13} fill="#e6e8ec" textAnchor={anchor} dominantBaseline="middle">
+            <text x={lp.x} y={lp.y} fontSize={13} fill="var(--text)" textAnchor={anchor} dominantBaseline="middle">
               {label}
             </text>
           </g>
@@ -563,7 +563,7 @@ export function TeamRadarPage() {
               style={{
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--control-border)',
                 borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
@@ -587,7 +587,7 @@ export function TeamRadarPage() {
               style={{
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--control-border)',
                 borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
@@ -606,7 +606,7 @@ export function TeamRadarPage() {
               style={{
                 padding: '6px 10px',
                 background: 'var(--bg-elev)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--control-border)',
                 borderRadius: 10,
                 color: 'var(--text)',
                 fontSize: 13,
@@ -631,7 +631,7 @@ export function TeamRadarPage() {
                 style={{
                   padding: '6px 10px',
                   background: 'var(--bg-elev)',
-                  border: '1px solid var(--border)',
+                  border: '1px solid var(--control-border)',
                   borderRadius: 10,
                   color: 'var(--text)',
                   fontSize: 13,
@@ -749,7 +749,7 @@ export function TeamRadarPage() {
                         // 光っていた —— 読み手は「3 が選ばれている」と思って通り過ぎ、
                         // **記録が無いこと自体が画面から消えていた**。
                         background: moods[m.id] === s ? 'var(--accent)' : 'transparent',
-                        color: moods[m.id] === s ? '#fff' : 'var(--text)',
+                        color: moods[m.id] === s ? 'var(--on-accent)' : 'var(--text)',
                         borderColor: moods[m.id] === s ? 'var(--accent)' : 'var(--border)',
                       }}
                     >
@@ -803,7 +803,7 @@ export function TeamRadarPage() {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                       <strong style={{ fontSize: 14 }}>{r.name}</strong>
-                      <span style={{ fontSize: 11, color: '#fff', background: b.color, borderRadius: 999, padding: '1px 8px' }}>
+                      <span style={{ fontSize: 11, color: 'var(--on-status)', background: b.color, borderRadius: 999, padding: '1px 8px' }}>
                         {b.label}
                       </span>
                       <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
@@ -855,12 +855,13 @@ export function TeamRadarPage() {
                     <input
                       type="text"
                       value={m.name}
+                      aria-label={`メンバー ${idx + 1} の名前`}
                       onChange={(e) => updateName(idx, e.target.value)}
                       style={{
                         flex: 1,
                         padding: '4px 8px',
                         background: 'var(--bg)',
-                        border: '1px solid var(--border)',
+                        border: '1px solid var(--control-border)',
                         borderRadius: 10,
                         color: 'var(--text)',
                         fontSize: 13,
@@ -889,6 +890,7 @@ export function TeamRadarPage() {
                         <input
                           key={`s-${ai}`}
                           type="range"
+                          aria-label={`${m.name.trim() === '' ? `メンバー ${idx + 1}` : m.name} · ${axis}の評価`}
                           min={MEMBER_SCORE_MIN}
                           max={SCORE_MAX}
                           step={1}
@@ -916,13 +918,14 @@ export function TeamRadarPage() {
                           <input
                             type="text"
                             value={m.notes?.[ai] ?? ''}
+                            aria-label={`${m.name.trim() === '' ? `メンバー ${idx + 1}` : m.name} · ${axis}の付箋コメント`}
                             onChange={(e) => updateNote(idx, ai, e.target.value)}
                             placeholder={`特徴・課題を ${MAX_MEMBER_NOTE_CHARS} 字以内`}
                             style={{
                               flex: 1,
-                              padding: '3px 6px',
+                              padding: '5px 6px',
                               background: 'var(--bg)',
-                              border: '1px solid var(--border)',
+                              border: '1px solid var(--control-border)',
                               borderRadius: 3,
                               color: 'var(--text)',
                               fontSize: 11,
@@ -970,7 +973,7 @@ export function TeamRadarPage() {
               background: saveBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: saveBusy ? 'var(--text)' : 'var(--on-accent)',
               cursor: saveBusy ? 'wait' : 'pointer',
               fontSize: 12,
             }}

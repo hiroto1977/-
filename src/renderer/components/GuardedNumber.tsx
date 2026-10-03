@@ -11,8 +11,8 @@ import { guardCounts, guardNumber, type GuardIssue, type NumSpec } from '../data
  * `data-guard-outcome` にも載せる (検査が文ではなく値で読めるように)。
  */
 
-const FATAL = '#e5484d';
-const WARN = '#e08c1a';
+const FATAL = 'var(--danger)';
+const WARN = 'var(--warning)';
 
 export function GuardedNumber({
   spec,
@@ -47,7 +47,7 @@ export function GuardedNumber({
         onChange={(e) => onChange(e.target.value)}
         style={{
           background: 'var(--bg-elev)',
-          border: `1px solid ${color ?? 'var(--border)'}`,
+          border: `1px solid ${color ?? 'var(--control-border)'}`,
           borderRadius: 10,
           color: 'var(--text)',
           padding: '6px 8px',

@@ -32,7 +32,7 @@ const GRADE_COLOR: Record<string, string> = {
 const SEVERITY_COLOR: Record<string, string> = {
   critical: 'var(--danger)',
   high: 'var(--warning)',
-  medium: '#94a3b8',
+  medium: 'var(--text-muted)',
 };
 
 const VERDICT_COLOR: Record<string, string> = {
@@ -50,7 +50,7 @@ const VERDICT_LABEL: Record<string, string> = {
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',
@@ -417,7 +417,7 @@ export function SecurityPage() {
           onChange={(e) => setPwInput(e.target.value)}
           style={{
             background: 'var(--bg)',
-            border: '1px solid var(--border)',
+            border: '1px solid var(--control-border)',
             borderRadius: 10,
             color: 'var(--text)',
             padding: '8px 10px',

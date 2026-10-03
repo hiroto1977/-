@@ -32,6 +32,7 @@ export interface RealtimeRow {
   readonly label: string;
   /** 年額 (円)。0 や NaN でも落ちないこと。 */
   readonly annual: number;
+  /** 額と折れ線の色。**盤 (濃紺) の上で 4.5:1 以上に読める色を渡す** —— 配色のトークンは盤では使えない。省略時は `#4f9cf9`。 */
   readonly color?: string;
   readonly hint?: string;
 }
@@ -47,6 +48,18 @@ export interface RealtimeTickerProps {
   /** 「経過」の起点。省略時はこの帯が現れた時刻。 */
   readonly since?: number;
 }
+
+/**
+ * 帯の字の色。**帯は配色に追随しない濃紺の盤** (ライトでもダークでも同じ地) なので、その上の字は盤の側で決める。
+ *
+ * 以前は一部がトークン (`--text` / `--text-muted`) のままで、**ライトでは濃い字が濃紺に載っていた** —— 実機で描画済みの色を
+ * 測ると、時計 1.04:1・補足の行 2.97:1・手取りの額 3.3:1 (パス 503)。トークンはその配色の地に対して定めてあるので、
+ * 配色に追随しない面へ置いてはいけない。盤の地 (上 `#131a2b` / 下 `#101626`) に対して、以下はどれも 4.5:1 以上。
+ * 行の色 (`RealtimeRow.color`) も同じ —— 呼び手は盤の上で読める色を渡す。
+ */
+const BOARD_INK = '#e8eef9';
+const BOARD_LABEL = '#8fa3c8';
+const BOARD_MUTED = '#a3b4d3';
 
 const yen2 = new Intl.NumberFormat('ja-JP', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const yen0 = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 0 });
@@ -143,9 +156,9 @@ export function RealtimeTicker({
       }}
     >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 12, color: '#8fa3c8' }}>リアルタイム</span>
-        <strong style={{ fontVariantNumeric: 'tabular-nums', fontSize: 18 }}>{clock(at)}</strong>
-        <span style={{ fontSize: 12, color: '#8fa3c8', fontVariantNumeric: 'tabular-nums' }}>
+        <span style={{ fontSize: 12, color: BOARD_LABEL }}>リアルタイム</span>
+        <strong style={{ fontVariantNumeric: 'tabular-nums', fontSize: 18, color: BOARD_INK }}>{clock(at)}</strong>
+        <span style={{ fontSize: 12, color: BOARD_LABEL, fontVariantNumeric: 'tabular-nums' }}>
           年初来 {(progress * 100).toFixed(6)}% / 残り {remainingDays(now)} 日 / 表示から{' '}
           {formatElapsed(at - startRef.current)}
         </span>
@@ -168,8 +181,8 @@ export function RealtimeTicker({
               }}
             >
               <div>
-                <div style={{ fontSize: 12, color: '#8fa3c8' }}>{r.label}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: 12, color: BOARD_LABEL }}>{r.label}</div>
+                <div style={{ fontSize: 11, color: BOARD_MUTED }}>
                   年額 {yen0.format(annual)} 円 / 秒あたり {rate.toFixed(4)} 円
                   {r.hint !== undefined ? ` — ${r.hint}` : ''}
                 </div>
@@ -191,7 +204,7 @@ export function RealtimeTicker({
         })}
       </div>
 
-      <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>
+      <p style={{ fontSize: 11, color: BOARD_MUTED, marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>
         {note ??
           '年額を年内の経過で按分した「ここまでの発生見込み」です。実際の課税・入金の時点とは一致しません。'}
         {' '}

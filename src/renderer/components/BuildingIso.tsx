@@ -94,7 +94,9 @@ export function BuildingIso({ widthM, depthM, floors, height = 320, caption }: B
                   <text x={r.label.x} y={r.label.y - 2} textAnchor="middle" fontSize={8} fill="var(--text)">
                     {r.name}
                   </text>
-                  <text x={r.label.x} y={r.label.y + 8} textAnchor="middle" fontSize={7} fill="var(--text-mute)">
+                  {/* 室の面積は**色のついた塗りの上**に載る。弱い字 (--text-mute) だと塗りと合わせて 3.7〜4.5:1 になる (すっきり × ダーク・ライト。
+                      パス 503 の実測) ので、室の名前と同じ地の字にする。階の外形 (--panel の上) の面積は弱い字のままで足りる。 */}
+                  <text x={r.label.x} y={r.label.y + 8} textAnchor="middle" fontSize={7} fill="var(--text)">
                     {r.areaSqm.toLocaleString()} ㎡
                   </text>
                 </g>

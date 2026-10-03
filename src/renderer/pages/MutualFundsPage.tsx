@@ -66,7 +66,7 @@ import { MAX_FUND_CODE_CHARS, MAX_FUND_NAME_CHARS } from '../data/investments';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 6,
   color: 'var(--text)',
   padding: '6px 8px',
@@ -672,7 +672,7 @@ export function MutualFundsPage() {
                 <td style={tdStyle}>
                   {displayField(h.name, MAX_FUND_NAME_CHARS)}
                   {h.userTag && (
-                    <span style={{ marginLeft: 6, padding: '1px 6px', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', borderRadius: 3, fontSize: 10 }}>
+                    <span style={{ marginLeft: 6, padding: '1px 6px', background: 'rgba(59, 130, 246, 0.15)', color: 'var(--info)', borderRadius: 3, fontSize: 10 }}>
                       {h.userTag}
                     </span>
                   )}

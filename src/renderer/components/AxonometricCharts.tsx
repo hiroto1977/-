@@ -114,7 +114,7 @@ function AxonometricLineChart({
         return (
           <g key={`ty${t}`}>
             <line x1={PAD.left - 4} y1={p.y} x2={PAD.left} y2={p.y} stroke="#cfbfd0" />
-            <text x={PAD.left - 6} y={p.y} fontSize={9} fill="#94a3b8" textAnchor="end" dominantBaseline="middle">
+            <text x={PAD.left - 6} y={p.y} fontSize={9} fill="var(--text-muted)" textAnchor="end" dominantBaseline="middle">
               {formatTick(t, indicator)}
             </text>
           </g>
@@ -122,11 +122,11 @@ function AxonometricLineChart({
       })}
       {/* 軸の名前は左上にまとめる。斜め軸の先端に置くと図の真ん中に来て
           折れ線と重なる (実際に重なった)。 */}
-      <text x={2} y={PAD.top - 14} fontSize={9} fill="#94a3b8">
+      <text x={2} y={PAD.top - 14} fontSize={9} fill="var(--text-muted)">
         縦軸 {indicator.unit}
       </text>
       {depth > 0 && (
-        <text x={2} y={PAD.top - 4} fontSize={9} fill="#94a3b8">
+        <text x={2} y={PAD.top - 4} fontSize={9} fill="var(--text-muted)">
           斜め軸 業務（{series.length}）
         </text>
       )}
@@ -142,12 +142,12 @@ function AxonometricLineChart({
       {series[0]?.points.map((p) => {
         const q = at(p.x, Math.max(min, Math.min(max, 0)), 0);
         return (
-          <text key={`tx${p.x}`} x={q.x} y={H - PAD.bottom + 12} fontSize={9} fill="#94a3b8" textAnchor="middle">
+          <text key={`tx${p.x}`} x={q.x} y={H - PAD.bottom + 12} fontSize={9} fill="var(--text-muted)" textAnchor="middle">
             {p.monthsAgo === 0 ? '当月' : `-${p.monthsAgo}`}
           </text>
         );
       })}
-      <text x={PAD.left} y={H - 6} fontSize={9} fill="#94a3b8">
+      <text x={PAD.left} y={H - 6} fontSize={9} fill="var(--text-muted)">
         横軸 期間（ヶ月前）
       </text>
 
@@ -303,9 +303,10 @@ export function AxonometricCharts({
           </div>
           <select
             data-axonometric-indicator
+            aria-label="3 軸推移に表示する指標"
             value={indicatorKey}
             onChange={(e) => setIndicatorKey(e.target.value)}
-            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}
+            style={{ background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', padding: '3px 8px', fontSize: 12 }}
           >
             {INDICATORS.map((i) => (
               <option key={i.key} value={i.key}>

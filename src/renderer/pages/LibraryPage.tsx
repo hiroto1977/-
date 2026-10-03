@@ -502,7 +502,7 @@ function filterBtn(active: boolean): React.CSSProperties {
     background: active ? 'var(--accent)' : 'var(--bg-elev)',
     border: '1px solid var(--border)',
     borderRadius: 6,
-    color: 'var(--text)',
+    color: active ? 'var(--on-accent)' : 'var(--text)',
     cursor: 'pointer',
     fontSize: 11,
   };
@@ -514,7 +514,7 @@ function actionBtn(kind?: 'accent'): React.CSSProperties {
     background: kind === 'accent' ? 'var(--accent)' : 'var(--bg)',
     border: '1px solid var(--border)',
     borderRadius: 4,
-    color: 'var(--text)',
+    color: kind === 'accent' ? 'var(--on-accent)' : 'var(--text)',
     cursor: 'pointer',
     fontSize: 11,
   };

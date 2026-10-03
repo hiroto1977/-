@@ -171,7 +171,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
           style={{
             padding: '2px 8px',
             background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
-            color: '#fff',
+            color: 'var(--on-status)',
             fontSize: 11,
             fontWeight: 600,
             borderRadius: 4,
@@ -285,17 +285,17 @@ function Sideboard({
           background: selected === 'all' ? 'var(--accent)' : 'var(--bg-elev)',
           border: '1px solid var(--border)',
           borderRadius: 14,
-          color: 'var(--text)',
+          color: selected === 'all' ? 'var(--on-accent)' : 'var(--text)',
           cursor: 'pointer',
           fontSize: 12,
           marginBottom: 4,
         }}
       >
         <div style={{ fontWeight: 600 }}>全カテゴリ</div>
-        <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
+        <div style={{ fontSize: 10, color: selected === 'all' ? 'var(--on-accent)' : 'var(--text-mute)', marginTop: 2 }}>
           {yen.format(grandTotal)} / 月
         </div>
-        <div style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 1 }}>
+        <div style={{ fontSize: 9, color: selected === 'all' ? 'var(--on-accent)' : 'var(--text-mute)', marginTop: 1 }}>
           事業 {yen.format(aggregateRevenue)} + デリバリー {yen.format(foodDeliveryRevenue)}
         </div>
       </button>
@@ -313,7 +313,7 @@ function Sideboard({
               background: isSel ? 'var(--accent)' : 'var(--bg-elev)',
               border: '1px solid var(--border)',
               borderRadius: 14,
-              color: 'var(--text)',
+              color: isSel ? 'var(--on-accent)' : 'var(--text)',
               cursor: 'pointer',
               fontSize: 12,
               display: 'flex',
@@ -323,12 +323,12 @@ function Sideboard({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontWeight: 600 }}>{u.label}</span>
-              <span style={{ fontSize: 10, color: profitColor }}>
+              <span style={{ fontSize: 10, color: isSel ? 'var(--on-accent)' : profitColor }}>
                 {u.current.profitMargin >= 0 ? '+' : ''}
                 {u.current.profitMargin.toFixed(1)}%
               </span>
             </div>
-            <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+            <div style={{ fontSize: 10, color: isSel ? 'var(--on-accent)' : 'var(--text-mute)' }}>
               {yen.format(u.current.revenue)}
             </div>
           </button>
@@ -391,7 +391,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
           style={{
             padding: '4px 10px',
             background: c.profit >= 0 ? 'var(--success)' : 'var(--danger)',
-            color: '#fff',
+            color: 'var(--on-status)',
             fontSize: 12,
             fontWeight: 600,
             borderRadius: 4,
@@ -534,7 +534,7 @@ function FoodDeliverySection() {
   const pct = (v: number) => (v * 100).toFixed(1) + '%';
   const cell: CSSProperties = { padding: '4px 8px', borderBottom: '1px solid var(--border)', fontSize: 12 };
   const cellNum: CSSProperties = { ...cell, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
-  const summaryStyle: CSSProperties = { cursor: 'pointer', fontSize: 12, color: 'var(--accent)', marginTop: 10 };
+  const summaryStyle: CSSProperties = { cursor: 'pointer', fontSize: 12, color: 'var(--accent-strong)', marginTop: 10 };
   return (
     <Section title="フードデリバリー (Uber Eats / 出前館)" count={2}>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
@@ -547,7 +547,7 @@ function FoodDeliverySection() {
           label="今月換算 純売上 (手数料控除後)"
           value={yen.format(fd.combinedMonthlyEstimate.netRevenue)}
           sub={`手数料 Uber Eats ${(fd.commission.uberEats * 100).toFixed(0)}% / 出前館 ${(fd.commission.demaeCan * 100).toFixed(0)}% を控除`}
-          accent="var(--accent)"
+          accent="var(--accent-strong)"
         />
         <Tile
           label="今月換算 注文数 (概算)"
@@ -860,7 +860,7 @@ export function BusinessPage() {
             label="総売上 (事業 + デリバリーGMV)"
             value={yen.format(agg.revenue + foodRevenue)}
             sub={`純額ベース ${yen.format(agg.revenue + foodNet)}`}
-            accent="var(--accent)"
+            accent="var(--accent-strong)"
           />
           <Tile label="月次費用" value={yen.format(agg.totalCost)} />
           <Tile
@@ -900,7 +900,7 @@ export function BusinessPage() {
                 background: sortKey === k ? 'var(--accent)' : 'var(--bg-elev)',
                 border: '1px solid var(--border)',
                 borderRadius: 999,
-                color: 'var(--text)',
+                color: sortKey === k ? 'var(--on-accent)' : 'var(--text)',
                 cursor: 'pointer',
                 fontSize: 12,
               }}
@@ -953,7 +953,7 @@ export function BusinessPage() {
               background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: exportBusy ? 'var(--text)' : 'var(--on-accent)',
               cursor: exportBusy ? 'wait' : 'pointer',
               fontSize: 12,
             }}
@@ -1057,7 +1057,7 @@ export function BusinessPage() {
               flex: 1,
               padding: '8px 12px',
               background: 'var(--bg-elev)',
-              border: '1px solid var(--border)',
+              border: '1px solid var(--control-border)',
               borderRadius: 10,
               color: 'var(--text)',
               fontSize: 13,
@@ -1074,7 +1074,7 @@ export function BusinessPage() {
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 999,
-              color: 'var(--text)',
+              color: advisorBusy ? 'var(--text)' : 'var(--on-accent)',
               fontSize: 13,
               cursor: advisorBusy ? 'wait' : 'pointer',
             }}
@@ -1128,7 +1128,7 @@ export function BusinessPage() {
                       height: 28,
                       borderRadius: 14,
                       background: 'var(--gradient)',
-                      color: '#fff',
+                      color: 'var(--on-gradient)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',

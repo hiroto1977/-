@@ -571,7 +571,7 @@ function FieldInputs({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {fields.map((f) => {
         const level = flagged[f.k];
-        const border = fieldBorder(level, '1px solid var(--border)');
+        const border = fieldBorder(level, '1px solid var(--control-border)');
         return (
           <label key={f.k} style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 11, color: 'var(--text-mute)' }}>
             <span>
@@ -1045,16 +1045,17 @@ function CashPlanTable({ values }: { values: Values }) {
  * 埋もれさせない** — 任意の書式も普通に使うものなので、区別が付けば十分。
  */
 const LEGAL_COLOR: Readonly<Record<LegalStatus, string>> = {
-  mandatory: '#e5484d',
-  conditional: '#f5a623',
-  optional: '#8b95a5',
-  unclassified: '#c026d3',
+  mandatory: 'var(--danger)',
+  conditional: 'var(--warning)',
+  optional: 'var(--text-muted)',
+  unclassified: 'var(--accent-strong)',
 };
 
 /** 書式名の横に出す小さな区分バッジ。 */
-function LegalBadge({ docId, size = 10 }: { docId: string; size?: number }) {
+function LegalBadge({ docId, size = 10, onFill = false }: { docId: string; size?: number; onFill?: boolean }) {
   const info = legalStatusOf(docId);
-  const color = LEGAL_COLOR[info.status];
+  // 塗り (選択中のボタン) の上では区分の色が読めない —— 文字と枠は親の文字色に任せ、区分は札の字 (法定 / 条件付き / 任意) が伝える。
+  const color = onFill ? 'currentColor' : LEGAL_COLOR[info.status];
   const title = [STATUS_DESCRIPTION[info.status], info.basis && `根拠: ${info.basis}`, info.when]
     .filter(Boolean)
     .join(' / ');
@@ -1245,7 +1246,7 @@ function ShareholderInputs({
                       placeholder={c.ph}
                       onChange={(e) => onChange(k, e.target.value)}
                       data-field={k}
-                      style={{ width: '100%', border: fieldBorder(flagged[k], '1px solid var(--border-strong)') }}
+                      style={{ width: '100%', border: fieldBorder(flagged[k], '1px solid var(--control-border)') }}
                     />
                   </label>
                 );
@@ -1989,7 +1990,7 @@ export function DocstudioPage() {
                 placeholder="書式名・場面で検索（例: 残業 / 退職 / 未払 / 登記）"
                 aria-label="書式を検索"
                 data-doc-search
-                style={{ width: '100%', padding: '9px 11px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13 }}
+                style={{ width: '100%', padding: '9px 11px', background: 'var(--bg-elev)', border: '1px solid var(--control-border)', borderRadius: 10, color: 'var(--text)', fontSize: 13 }}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 8 }}>
                 {['すべて', ...cats].map((c) => (
@@ -2002,7 +2003,7 @@ export function DocstudioPage() {
                     style={{ fontSize: 11, padding: '5px 9px' }}
                   >
                     {c}
-                    <span style={{ opacity: 0.65, marginLeft: 4 }}>
+                    <span style={{ marginLeft: 4, fontWeight: 400 }}>
                       {c === 'すべて' ? STUDIO_TEMPLATES.length : STUDIO_TEMPLATES.filter((d) => d.cat === c).length}
                     </span>
                   </button>
@@ -2052,7 +2053,7 @@ export function DocstudioPage() {
                         style={{ fontSize: 12, padding: '7px 10px' }}
                       >
                         {d.icon} {d.label}
-                        <LegalBadge docId={d.id} />
+                        <LegalBadge docId={d.id} onFill={d.id === studioDoc.id} />
                       </button>
                     ))}
                   </div>
@@ -2082,7 +2083,7 @@ export function DocstudioPage() {
                             style={{ fontSize: 12, padding: '7px 10px' }}
                           >
                             {d.icon} {d.label}
-                            <LegalBadge docId={d.id} />
+                            <LegalBadge docId={d.id} onFill={d.id === studioDoc.id} />
                           </button>
                         ))}
                       </div>

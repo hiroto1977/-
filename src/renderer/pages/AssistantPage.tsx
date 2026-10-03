@@ -39,6 +39,7 @@ import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 import { safeCssUrl } from '../../shared/imageUrlGate';
+import { isHexColor } from '../../shared/escape';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import {
   ALL_AGENTS,
@@ -115,7 +116,32 @@ const HISTORY_MAX = 50;
 export const ASSISTANT_TURN_WINDOW = 16;
 const TURN_WINDOW = ASSISTANT_TURN_WINDOW;
 
-const DEFAULT_THEME: Theme = { bg: '#ffffff', fg: '#000000', image: '' };
+/**
+ * 既定 = **まだ色を選んでいない** (空文字) —— そのときはアプリの配色に追随する (`FOLLOW_BG` / `FOLLOW_FG`)。
+ *
+ * 以前の既定は白地 + 黒文字の**固定**で、ダークでは白い板にトークンの明るい字 (断り・補足) が載った。実機で描画済みの
+ * 色を測ると、AI へ何を送るかの断りが **1.13:1** (パス 503) —— 外へ出る物の断りが読めなくなっていた。
+ * 利用者が選んだ色は今までどおりそのまま使う (背景画像も)。
+ */
+const DEFAULT_THEME: Theme = { bg: '', fg: '', image: '' };
+const FOLLOW_BG = 'var(--bg-elev)';
+const FOLLOW_FG = 'var(--text)';
+/** 以前の既定。この画面は開くたびに保存していたので、色に触れていない人の保存値はこれになっている。 */
+const LEGACY_DEFAULT_BG = '#ffffff';
+const LEGACY_DEFAULT_FG = '#000000';
+
+/**
+ * 色の入力欄 (`<input type="color">`) は `#rrggbb` しか持てない。選んでいない (= 追随) ときは、いま効いているトークンの色を見せる。
+ * 読めなければ `fallback` (jsdom のようにスタイルシートが無い環境・`#rrggbb` でない値)。
+ */
+function tokenHex(name: string, fallback: string): string {
+  try {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return isHexColor(v) ? v.toLowerCase() : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 // 注: `SERVICES` への依存はモジュール評価時ではなくコンポーネント内 (useMemo) で
 // 解決する。services.ts → AssistantPage の循環 import があるため、トップレベルで
@@ -158,10 +184,14 @@ function loadTheme(): Theme {
     const raw = localStorage.getItem(THEME_KEY);
     if (!raw) return DEFAULT_THEME;
     const p = JSON.parse(raw) as Partial<Theme>;
+    const image = typeof p.image === 'string' ? p.image : '';
+    // 以前の既定 (白 + 黒) のままなら「選んでいない」へ戻す —— 画面が開くたびに保存していたので、色に触れていない人は全員これを持つ。
+    // 利用者が同じ 2 色を選び直した場合も同じに見えるが、その 2 色は配色が明るければ追随の結果と同じである。
+    if (p.bg === LEGACY_DEFAULT_BG && p.fg === LEGACY_DEFAULT_FG) return { ...DEFAULT_THEME, image };
     return {
       bg: typeof p.bg === 'string' ? p.bg : DEFAULT_THEME.bg,
       fg: typeof p.fg === 'string' ? p.fg : DEFAULT_THEME.fg,
-      image: typeof p.image === 'string' ? p.image : '',
+      image,
     };
   } catch {
     return DEFAULT_THEME;
@@ -706,14 +736,22 @@ export function AssistantPage() {
 
   const clearChat = () => setMessages([]);
 
+  const fg = theme.fg || FOLLOW_FG;
+  // 文字色を選んだときは、この面の中でだけ文字のトークンを選んだ色へ言い直す。トークンは**配色の地**に対して定めてあるので、
+  // 選んだ地の上に置く部品 (AI へ何を送るかの断り・補足) がそのまま読めるとは限らない。`--text-mute` は `:root` で `--text-muted`
+  // を写した別名で、子孫には解決済みの値が渡るため、別名も自分で言い直す。
+  const inkScope = theme.fg
+    ? ({ '--text': theme.fg, '--text-muted': theme.fg, '--text-mute': theme.fg } as React.CSSProperties)
+    : undefined;
   const pageStyle: React.CSSProperties = {
-    background: theme.bg,
+    ...inkScope,
+    background: theme.bg || FOLLOW_BG,
     // 生の文字列を url() へ差し込まない。スキーム検証と引用は safeCssUrl に 1 つだけ置く
     // (safeImageSrc の冒頭が「CSS url() へ流れた瞬間に危険」と書いていた当の経路)。
     backgroundImage: safeCssUrl(theme.image),
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    color: theme.fg,
+    color: fg,
     borderRadius: 12,
     padding: 16,
     minHeight: 'calc(100vh - 120px)',
@@ -739,7 +777,7 @@ export function AssistantPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
         <div style={{ minWidth: 0, flex: '1 1 260px' }}>
           <strong style={{ fontSize: 18 }}>🤖 AI アシスタント</strong>
-          <div style={{ fontSize: 12, opacity: 0.7 }}>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
             選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、
             確証済みナレッジと {SERVICES.length} サービスを統合して回答します
           </div>
@@ -793,7 +831,7 @@ export function AssistantPage() {
                 borderRadius: 999,
                 padding: '2px 10px',
                 border: '1px solid rgba(127,127,127,0.35)',
-                opacity: p.configured ? 1 : 0.5,
+                color: p.configured ? undefined : 'var(--text-muted)', // 未設定は薄く見せる —— 不透明度ではなく文字色で (⚪ と title も未設定を伝える)
               }}
             >
               {p.configured ? '🟢' : '⚪'} {p.label}
@@ -818,7 +856,7 @@ export function AssistantPage() {
         >
           <div style={{ gridColumn: '1 / -1', fontWeight: 700 }}>
             🔌 AI エージェント接続設定
-            <span style={{ fontWeight: 400, opacity: 0.7, marginLeft: 8 }}>
+            <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: 8 }}>
               入力したキーは暗号化スロットに JSON でまとめて保存されます (空欄は未変更ではなく「未設定」として保存)。
             </span>
           </div>
@@ -889,9 +927,9 @@ export function AssistantPage() {
                 API キーを削除
               </button>
             )}
-            <span style={{ fontSize: 12, opacity: 0.75 }}>{credsMessage}</span>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{credsMessage}</span>
           </div>
-          <div style={{ gridColumn: '1 / -1', fontSize: 11, opacity: 0.65, lineHeight: 1.6 }}>
+          <div style={{ gridColumn: '1 / -1', fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6 }}>
             ブラウザ版: ChatGPT / 互換 API は CORS のため「設定」ページのプロキシ (Cloudflare Worker)
             経由で呼び出します。Ollama は <code>OLLAMA_ORIGINS</code> の設定が必要な場合があります。
             既存の Anthropic 単独キー (生文字列) もそのまま利用できます (後方互換)。
@@ -917,7 +955,7 @@ export function AssistantPage() {
             背景色
             <input
               type="color"
-              value={theme.bg}
+              value={theme.bg || tokenHex('--bg-elev', LEGACY_DEFAULT_BG)}
               aria-label="背景色"
               onChange={(e) => setTheme((t) => ({ ...t, bg: e.target.value }))}
             />
@@ -926,7 +964,7 @@ export function AssistantPage() {
             文字色
             <input
               type="color"
-              value={theme.fg}
+              value={theme.fg || tokenHex('--text', LEGACY_DEFAULT_FG)}
               aria-label="文字色"
               onChange={(e) => setTheme((t) => ({ ...t, fg: e.target.value }))}
             />
@@ -953,7 +991,7 @@ export function AssistantPage() {
         style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, padding: '4px 2px' }}
       >
         {messages.length === 0 ? (
-          <div style={{ fontSize: 13, opacity: 0.75, lineHeight: 1.8 }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.8 }}>
             ご質問・ご相談をどうぞ。経営・税務・労務・法務のアドバイス、表や計画などの成果物作成、
             アプリ内サービスへの案内ができます。確証済みナレッジ（出典つき）を根拠に回答します。
           </div>
@@ -966,18 +1004,18 @@ export function AssistantPage() {
               <div
                 style={{
                   ...bubbleBase,
-                  background: isUser ? 'var(--accent, #4f7cff)' : 'rgba(127,127,127,0.10)',
-                  color: isUser ? '#fff' : theme.fg,
+                  background: isUser ? 'var(--accent)' : 'rgba(127,127,127,0.10)',
+                  color: isUser ? 'var(--on-accent)' : fg,
                   border: isUser ? 'none' : '1px solid rgba(127,127,127,0.28)',
                   whiteSpace: isUser ? 'pre-wrap' : 'normal',
                 }}
               >
-                {isUser ? m.text : <MarkdownView blocks={parseMarkdown(m.text)} fg={theme.fg} />}
+                {isUser ? m.text : <MarkdownView blocks={parseMarkdown(m.text)} fg={fg} />}
                 {m.offline ? (
-                  <div style={{ fontSize: 10, opacity: 0.6, marginTop: 4 }}>簡易モード（オフライン）</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>簡易モード（オフライン）</div>
                 ) : null}
                 {!isUser && !m.offline && m.provider ? (
-                  <div style={{ fontSize: 10, opacity: 0.55, marginTop: 4 }}>via {m.provider}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>via {m.provider}</div>
                 ) : null}
               </div>
               {!isUser && m.services && m.services.length > 0 ? (
@@ -998,7 +1036,7 @@ export function AssistantPage() {
             </div>
           );
         })}
-        {busy ? <div style={{ fontSize: 12, opacity: 0.7 }}>考え中…</div> : null}
+        {busy ? <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>考え中…</div> : null}
       </div>
 
       <div style={{ display: 'flex', gap: 6, padding: '8px 0 6px', flexWrap: 'wrap' }}>
@@ -1090,10 +1128,10 @@ export function AssistantPage() {
           style={{
             flex: 1,
             padding: '10px 12px',
-            border: '1px solid rgba(127,127,127,0.4)',
+            border: '1px solid var(--control-border)',
             borderRadius: 10,
-            background: 'rgba(255,255,255,0.6)',
-            color: '#111',
+            background: 'var(--control-bg)',
+            color: 'var(--text)',
             fontSize: 14,
           }}
         />

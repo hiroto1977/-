@@ -17,7 +17,7 @@ import { isCancelEscape, isImeComposing, isSubmitEnter } from '../keyIntent';
  * 規則: `src/renderer` と `src/shared` のコード (検査を除く) に、Enter / Escape を表す
  * 文字列リテラル (`'Enter'` / `'Escape'` / `'Esc'` / `'NumpadEnter'`)・`case 'Enter':`・
  * `keyCode` / `which` の 13 / 27 との比較が、`keyIntent.ts` の外に 1 つも無いこと。
- * 13 か所目を素で書いた日に、その 1 か所だけが変換の確定で動く —— 判定が 1 つなら起きない。
+ * 素で書く読み手が 1 か所でも在る日に、その 1 か所だけが変換の確定で動く —— 判定が 1 つなら起きない。
  *
  * **注記は落として数える** (説明文の中の `'Enter'` は判定ではない)。リテラルの中身は残す
  * (探しているのがリテラルそのものなので、`stripNonCode` では空の検査になる)。
@@ -79,7 +79,7 @@ describe('Enter / Escape を読む口は 1 つ (母集団は実装から)', () =
     expect(rawKeyLines(readOriginalSource(path.join(REPO, HOME))).length).toBeGreaterThanOrEqual(2);
   });
 
-  it('keydown を読む画面が判定を通っている (12 か所の読み手)', () => {
+  it('keydown を読む画面が判定を通っている (13 か所の読み手)', () => {
     const readers = files.filter((f) =>
       /import \{[^}]*\b(?:isSubmitEnter|isCancelEscape)\b[^}]*\} from '[^']*keyIntent';/.test(
         stripComments(readOriginalSource(path.join(REPO, f))),
@@ -91,13 +91,14 @@ describe('Enter / Escape を読む口は 1 つ (母集団は実装から)', () =
         'src/renderer/pages/BusinessPage.tsx',
         'src/renderer/pages/SettingsPage.tsx',
         'src/renderer/pages/StocksPage.tsx',
+        'src/renderer/pages/VillagePage.tsx', // パス 504: 村の街区のカード (role=button の div) の Enter / Space
         'src/renderer/security/LockScreen.tsx',
       ].sort(),
     );
     const calls = readers
       .map((f) => stripComments(readOriginalSource(path.join(REPO, f))))
       .reduce((n, src) => n + (src.match(/\b(?:isSubmitEnter|isCancelEscape)\(e\)/g) ?? []).length, 0);
-    expect(calls).toBe(12);
+    expect(calls).toBe(13);
   });
 
   it('免除の台帳は両方向 (今日 0 件 —— 行を足すなら、そのファイルが実際に素で比べていること)', () => {
