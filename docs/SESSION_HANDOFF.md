@@ -14,7 +14,8 @@
 - **機械 (3 層)** —— ① `themeNonTextContrast.test.ts` (22 件・台帳 × 地 + CSS の規則) ② `controlsCensus.test.ts` (13 件・TSX の構文木) ③ 実機の `controls` suite (e2e の **38 番目**・61 件・4 配色 × 全 74 画面 + スマホ 2 配色・先頭に測定器の対照 14 件)。測定器の純関数は `controlsLib.test.ts` (22 件)。法則 **117 本目** `operable-controls-measured-where-drawn`。対照は成果物の複製を書き換えて回し、**狙った軸だけが鳴る**ことを確かめた (P1〜P9・つまみ・修正前の成果物 = 32 ❌)。
 - **検証** —— `controls` suite は全軸で**割った物 0**。`npm test` **1,044 ファイル / 21,164 件**・`verify:all` exit 0・`chain:verify` 緑 (block #282)。実機: `e2e` **601 件 ❌ 0** / `e2e:lite` **601 件 ❌ 0** / `perf` OK (LITE DCL 264 ms / heap 9.5 MB・FULL DCL 813 ms / heap 36.2 MB)。`smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama も触っていない)。組み直した byte: **11,867,210 B / 3,279,834 B** (パス 503 から両方 +2,112 B)・md5 `6079e605…` / `4a939dda…`
 - ★ **既知の罠 (このパスで踏んだ)**: **測定器の誤検出を直してから気付いた** (`.scroll-top` は隠れている間 `aria-hidden` + `tabIndex=-1` で、欠陥ではなかった・対照 P3 が鳴らなかったので分かった) / **状態の規則は静止画面に映らない** (`input:hover` が薄い枠のまま残って既定より弱くなった・CSS を読み返して見つけた) / **ぴったり囲む箱が輪を持つ形は欄にも輪を出すと 3 重** / **JS を書き換える実機の対照は CSP の sha256 を引き直す** (引き直さないと頁が真っ白・`exit=1` で ❌ 0 件 = 走っていない) / スクリプトを `require` して確かめない / `pkill -f` は自分の shell を殺す / 新しいファイルは `git add` するまで `verify:arch` が「git 管理外」と落ちる。
-- **残した物** → `docs/REMAINING_WORK.md` の「パス 504」(`--accent` を UI の色として使う所 2.67〜2.81:1・操作途中の状態・開く前のもの・canvas / チャートの線・テキスト間隔・♡ の入れ子の操作子・`controls.cjs` は `mutate` の外)。**ブランチ `claude/eager-brown-7cev3c` はドラフトの PR #792 に積んである —— マージはユーザーの指示があるまでしない**
+- **残した物** → `docs/REMAINING_WORK.md` の「パス 504」(`--accent` を UI の色として使う所 2.67〜2.81:1・操作途中の状態・開く前のもの・canvas / チャートの線・テキスト間隔・♡ の入れ子の操作子・`controls.cjs` は `mutate` の外)。**PR #792 (パス 503・504) は 2026-10-06 に `main` へマージ済み** (次の「マージ後」)
+- **マージ後 (`main` の `3fa4ff119` = PR #792 の merge commit・2026-10-06)** —— 「マージして」の依頼で draft を外し、PR #790 / #791 と同じ merge commit でマージした。マージ前に確かめた物: head `d61c2aa5b` = `origin/claude/eager-brown-7cev3c`・`main` は `f5be45113` から動いていない・マージ後の木は head と同一 (差分 0)。`ci` (run 4020・約 14 分)・`pages` (run 772・約 2 分) は success。変異検査の push 側 (#185) は success だが**測った物は 0 件** —— 手元で同じ範囲に `node scripts/mutate-changed.cjs f5be45113` を当てると「変更 90 ファイル → 変異検査の対象 0 ファイル」で、この PR が触れた `src` の `.ts` は `issueLevelUi.ts` / `laws.ts` / `readableInk.ts` の 3 本だけ (どれも `mutate` の外)。GitHub では `scope` のあとの測定 job (`mutate-some` / `mutate-full` / `merge-full`) が 3 つとも skipped。**週次の cron (全掃引) も確かめた** —— run #184 (event `schedule`・`main` の `f5be45113` の木・名目 18:00Z のところ実際は 2026-10-04 20:44Z に始まり 21:46Z に完了 = 約 61 分)・22 塊と `merge-full` がすべて success・要約は「ファイル 308 本・変異体 45,510 件」で**生存 0 / 未到達 0** (パス 502 が残した「cron の実行そのものだけが未確認」はこれで閉じた)。ブランチ `claude/eager-brown-7cev3c` は `main` の先頭 (merge commit) へ張り直し、fast-forward で push してある (差分なし・新しい作業はここから)
 
 ## 直近の作業 (2026-10-02) — パス 503: 文字色と地の色の対比 —— 実機で測り、4 枚のトークン表のどれでも WCAG 2.x AA を満たし、3 層で留める
 
@@ -33,7 +34,7 @@
   **測っている最中に `dist/` を作り直さない** (FULL と LITE が混ざる) / **既定で畳まれたサイドバーの分類は DOM に無い** (実 UI の click で開いてから列挙) /
   **ページの中では `eval` / `new Function` が CSP で塞がれる** (自由変数なしの関数 + `sweepExpression()` の文字列を CDP で評価) / `lint:forbidden` は `#RRGGBB` の判定の写しを断る (`isHexColor`)
 - **残した物** → `docs/REMAINING_WORK.md` の「パス 503」(字ではない物の 3:1・操作途中の状態・開く前のもの・canvas・実効サイズの小さい字 (12px 未満が約 10,500 要素)・`readableInk.ts` は `mutate` の外 —— 手元で測ると初回 77.36% (3 桁の `#rgb`・正規表現の先頭と空白・暗い側の線形の枝が未検証) → 検査 3 件を足して 96.23%・残る 2 件は等価 (白黒の対比が一致する 8 bit の色が無い・しきい値ちょうどの整数の段が無い))。
-  **ブランチ `claude/eager-brown-7cev3c` はドラフトの PR #792 に積んである —— マージはユーザーの指示があるまでしない**
+  **PR #792 (パス 503・504) は 2026-10-06 に `main` へマージ済み** (パス 504 の「マージ後」)
 
 ## 直近の作業 (2026-10-01) — パス 502: PR の外に残った変異検査の生存 660 件を閉じる —— 全件を 1 本のログへ・static な生存は「検査ファイルの beforeAll より前の評価には変異体が届かない」ことで説明がついた
 
