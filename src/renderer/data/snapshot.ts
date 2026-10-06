@@ -1080,6 +1080,30 @@ export const SNAPSHOT = {
     isMock: true,
   },
 
+  // 自動販売機事業 / 自販機を使った無人販売店舗事業 (事業ダッシュボードに統合表示)。
+  // Snapshot-only の模擬データ。summarizeVending() で集計する。
+  vending: {
+    machines: [
+      { id: 'vm-office-01', name: 'オフィスA 1F', placement: 'office', monthlyRevenue: 84_000, monthlySales: 1_240, slots: 45, stockedSlots: 43, operational: true },
+      { id: 'vm-office-02', name: 'オフィスA 3F', placement: 'office', monthlyRevenue: 61_500, monthlySales: 910, slots: 45, stockedSlots: 38, operational: true },
+      { id: 'vm-street-01', name: '環七通り 路面', placement: 'street', monthlyRevenue: 128_400, monthlySales: 1_880, slots: 50, stockedSlots: 11, operational: true },
+      { id: 'vm-station-01', name: '東口駅前', placement: 'station', monthlyRevenue: 152_300, monthlySales: 2_260, slots: 60, stockedSlots: 55, operational: true },
+      { id: 'vm-factory-01', name: '第2工場 休憩所', placement: 'factory', monthlyRevenue: 47_800, monthlySales: 720, slots: 40, stockedSlots: 30, operational: false },
+      { id: 'vm-store-01', name: '無人店舗A 併設', placement: 'store', monthlyRevenue: 73_600, monthlySales: 1_050, slots: 48, stockedSlots: 46, operational: true },
+    ] as {
+      id: string; name: string; placement: 'office' | 'street' | 'station' | 'factory' | 'store';
+      monthlyRevenue: number; monthlySales: number; slots: number; stockedSlots: number; operational: boolean;
+    }[],
+    unmannedStores: [
+      { id: 'us-01', name: '無人販売店舗A (住宅街)', monthlyRevenue: 412_000, monthlyCustomers: 3_180, itemsSold: 7_420, machines: 4, shrinkageRate: 0.021 },
+      { id: 'us-02', name: '無人販売店舗B (オフィス街)', monthlyRevenue: 528_500, monthlyCustomers: 4_050, itemsSold: 9_630, machines: 6, shrinkageRate: 0.014 },
+    ] as {
+      id: string; name: string; monthlyRevenue: number; monthlyCustomers: number; itemsSold: number; machines: number; shrinkageRate: number;
+    }[],
+    fetchedAt: '',
+    isMock: true,
+  },
+
   business: {
       units: [
         {

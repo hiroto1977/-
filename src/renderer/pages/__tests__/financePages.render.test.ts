@@ -53,4 +53,11 @@ describe('finance pages render without crashing (no TDZ / NaN throw)', () => {
       expect(html.length).toBeGreaterThan(0);
     });
   }
+
+  it('business page wires in the vending-machine / unmanned-store section', () => {
+    const def = SERVICES.find((s) => s.id === 'business');
+    const html = renderToStaticMarkup(createElement(def!.page));
+    expect(html).toContain('自動販売機 / 無人販売店舗');
+    expect(html).toContain('フードデリバリー');
+  });
 });

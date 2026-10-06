@@ -7,6 +7,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
+import { summarizeVending, LOW_STOCK_THRESHOLD } from '../data/vending';
 
 interface BusinessAdvisorRecommendation {
   categoryId: string;
@@ -676,6 +677,134 @@ function FoodDeliverySection() {
   );
 }
 
+// --- 自動販売機 / 無人販売店舗 統合セクション -------------------------
+
+function VendingMachineSection() {
+  const v = summarizeVending(SNAPSHOT.vending);
+  const pct = (n: number) => (n * 100).toFixed(1) + '%';
+  const cell: CSSProperties = { padding: '4px 8px', borderBottom: '1px solid var(--border)', fontSize: 12 };
+  const cellNum: CSSProperties = { ...cell, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
+  const summaryStyle: CSSProperties = { cursor: 'pointer', fontSize: 12, color: 'var(--accent)', marginTop: 10 };
+  const cardStyle: CSSProperties = {
+    background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14,
+  };
+  return (
+    <Section title="自動販売機 / 無人販売店舗" count={v.machineCount + v.unmannedStoreCount}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
+        <Tile
+          label="月間売上 合算"
+          value={yen.format(v.combinedMonthlyRevenue)}
+          sub="自販機 + 無人販売店舗"
+          accent="var(--accent)"
+        />
+        <Tile
+          label="自販機 台数 / 稼働率"
+          value={`${num.format(v.machineCount)} 台`}
+          sub={`稼働 ${v.activeMachines} 台 (${pct(v.operatingRate)})`}
+        />
+        <Tile
+          label="無人販売店舗"
+          value={`${num.format(v.unmannedStoreCount)} 店`}
+          sub={`月間売上 ${yen.format(v.unmannedMonthlyRevenue)}`}
+        />
+        {v.lowStockCount > 0 ? (
+          <Tile
+            label="補充アラート"
+            value={`${num.format(v.lowStockCount)} 台`}
+            sub={`在庫率 ${pct(LOW_STOCK_THRESHOLD)} 未満`}
+            accent="var(--danger, #d14343)"
+          />
+        ) : null}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: 12 }}>
+        <div style={cardStyle}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🥤 自動販売機（今月）</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="売上 (月)" value={yen.format(v.machineMonthlyRevenue)} />
+            <Tile label="1 台平均 (月)" value={yen.format(v.avgRevenuePerMachine)} />
+            <Tile label="販売本数 (月)" value={num.format(v.machineMonthlySales) + ' 本'} />
+            <Tile label="平均在庫率" value={pct(v.avgStockRate)} />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8 }}>
+            {v.topMachine ? `売上トップ: ${v.topMachine.name} (${yen.format(v.topMachine.monthlyRevenue)})` : '設置台数なし'}
+          </div>
+        </div>
+        <div style={cardStyle}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🏪 無人販売店舗（今月）</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="売上 (月)" value={yen.format(v.unmannedMonthlyRevenue)} />
+            <Tile label="来店客数 (月)" value={num.format(v.unmannedCustomers) + ' 人'} />
+            <Tile label="客単価" value={yen.format(v.avgSpendPerCustomer)} />
+            <Tile label="平均ロス率" value={pct(v.avgShrinkageRate)} />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8 }}>
+            {v.topUnmannedStore ? `売上トップ: ${v.topUnmannedStore.name} (${yen.format(v.topUnmannedStore.monthlyRevenue)})` : '店舗なし'}
+          </div>
+        </div>
+      </div>
+      <details>
+        <summary style={summaryStyle}>🥤 自販機 明細（設置形態別 / 台別）</summary>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 12, marginTop: 8 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>設置形態</th><th style={cellNum}>台数</th><th style={cellNum}>売上</th><th style={cellNum}>販売本数</th></tr>
+            </thead>
+            <tbody>
+              {v.placementBreakdown.map((p) => (
+                <tr key={p.placement}>
+                  <td style={cell}>{p.label}</td>
+                  <td style={cellNum}>{p.count}</td>
+                  <td style={cellNum}>{yen.format(p.revenue)}</td>
+                  <td style={cellNum}>{num.format(p.sales)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>自販機</th><th style={cellNum}>売上</th><th style={cellNum}>在庫率</th><th style={cell}>状態</th></tr>
+            </thead>
+            <tbody>
+              {SNAPSHOT.vending.machines.map((m) => (
+                <tr key={m.id}>
+                  <td style={cell}>{m.name}</td>
+                  <td style={cellNum}>{yen.format(m.monthlyRevenue)}</td>
+                  <td style={cellNum}>{m.slots > 0 ? ((m.stockedSlots / m.slots) * 100).toFixed(0) + '%' : '—'}</td>
+                  <td style={cell}>{m.operational ? '稼働' : '停止'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <details>
+        <summary style={summaryStyle}>🏪 無人販売店舗 明細</summary>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 8 }}>
+          <thead>
+            <tr><th style={cell}>店舗</th><th style={cellNum}>売上</th><th style={cellNum}>来店客数</th><th style={cellNum}>販売点数</th><th style={cellNum}>併設自販機</th><th style={cellNum}>ロス率</th></tr>
+          </thead>
+          <tbody>
+            {SNAPSHOT.vending.unmannedStores.map((s) => (
+              <tr key={s.id}>
+                <td style={cell}>{s.name}</td>
+                <td style={cellNum}>{yen.format(s.monthlyRevenue)}</td>
+                <td style={cellNum}>{num.format(s.monthlyCustomers)}</td>
+                <td style={cellNum}>{num.format(s.itemsSold)}</td>
+                <td style={cellNum}>{s.machines}</td>
+                <td style={cellNum}>{(s.shrinkageRate * 100).toFixed(1)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </details>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
+        ※ 模擬データ。売上は GMV ベースの月次概算で、商品原価・設置手数料・電気代・補充人件費等は
+        含みません（財務助言ではありません）。在庫率が低い自販機は補充要としてアラート表示します。
+      </div>
+    </Section>
+  );
+}
+
 // --- Page -----------------------------------------------------------
 
 export function BusinessPage() {
@@ -858,6 +987,8 @@ export function BusinessPage() {
       </Section>
 
       <FoodDeliverySection />
+
+      <VendingMachineSection />
 
       {focusedUnit && (
         <Section title="詳細ビュー" count={1}>
