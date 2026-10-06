@@ -4,12 +4,16 @@
  * UI 再設計 (2026-09-17) で、画面側が読む色は `styles.css` のトークン (`--success` / `--danger` / `--warning` /
  * `--text-muted` / `--border` …) に寄せた。意味色 (緑 / 赤 / 黄) の直書き `#22c55e` / `#ef4444` / `#f87171` /
  * `#4ade80` / `#f59e0b` / `#d97706` / `#fbbf24` は inline の style から **0 件**になった (パス 315)。
- * 残る直書き (実測 275 件) はチャートのパレット・書式の既定色・SVG の塗りなど、トークンで表す意味を
- * 持たない物で、これは**分母であって欠陥の一覧ではない** (`lint:zero-fold` と同じ立場)。
+ * 残る直書き (実測 275 件 → パス 503 で 171 件) はチャートのパレット・書式の既定色・SVG の塗りなど、
+ * トークンで表す意味を持たない物で、これは**分母であって欠陥の一覧ではない** (`lint:zero-fold` と同じ立場)。
+ *
+ * パス 503 (文字色の対比) は、**配色で見え方が変わる色** (意味色・字の色・ダークで読めない固定色) をさらに 104 件、
+ * トークン (`--danger` / `--warning` / `--success` / `--info` / `--text-muted` / `--on-accent` ほか) へ寄せた。
+ * 台帳の件数が減るのは正しい向きで、床は件数に張り付けない (下の「走査が生きている」)。
  *
  * ## 規則 (双方向)
  *
- * 1. 意味色 7 つの hex は、画面の出荷 code (pages / components / App / security) の inline に現れてはならない
+ * 1. 意味色 11 の hex は、画面の出荷 code (pages / components / App / security) の inline に現れてはならない
  *    (書き出す書面・データ (`data/` / `web-templates.ts` / `web-shim.ts` の書き出し HTML) は対象外 —— 書き出した
  *    ファイルにトークンは無い)。
  * 2. ファイルごとの直書き hex の件数は台帳と一致する。増えたら「トークンで表せないか」を考えてから台帳を
@@ -24,7 +28,9 @@ import { stripComments } from '../../shared/__tests__/stripNonCode';
 const REPO = join(__dirname, '..', '..', '..');
 const HEX = /#[0-9a-fA-F]{3,8}\b/g;
 /** 意味を持つ色 —— トークンで表す。 */
-export const SEMANTIC_HEX: readonly string[] = ['#22c55e', '#4ade80', '#ef4444', '#f87171', '#f59e0b', '#d97706', '#fbbf24'];
+// パス 503: 状態の札・警告の印・情報の青に使っていた 4 つ (`#e5484d` 危険の赤 / `#e08c1a` 要確認の橙 / `#3b82f6` 情報の青 / `#fca5a5` 淡い赤) も
+// トークンへ寄せたので、同じ理由で戻さない (ダークで読めない・ライトでしか合わない固定色)。
+export const SEMANTIC_HEX: readonly string[] = ['#22c55e', '#4ade80', '#ef4444', '#f87171', '#f59e0b', '#d97706', '#fbbf24', '#e5484d', '#e08c1a', '#3b82f6', '#fca5a5'];
 
 export function hexLiterals(text: string): string[] {
   const out: string[] = [];
@@ -45,54 +51,45 @@ function uiSources(): { file: string; text: string }[] {
 
 /** ファイルごとの直書き hex の件数 (分母)。 */
 const LEDGER: Readonly<Record<string, number>> = {
-  'src/renderer/components/AxonometricCharts.tsx': 21,
+  'src/renderer/components/AxonometricCharts.tsx': 16, // パス 503: 21 → 16 (状態の札・凡例の色をトークンへ)
   'src/renderer/components/BuildingIso.tsx': 5,
-  'src/renderer/components/Charts.tsx': 11,
+  'src/renderer/components/Charts.tsx': 10, // パス 503: 11 → 10 (円グラフの割合の字は系列の色から選ぶ `readableInk`)
   'src/renderer/components/CloudSyncPanel.tsx': 1,
-  'src/renderer/components/EligibilityChecker.tsx': 2,
-  'src/renderer/components/FinancialAnalysis.tsx': 31,
-  'src/renderer/components/GuardedNumber.tsx': 2,
+  'src/renderer/components/FinancialAnalysis.tsx': 16, // パス 503: 31 → 16
   'src/renderer/components/RealtimeTicker.tsx': 7,
-  'src/renderer/components/ServiceActionPanel.tsx': 1,
-  'src/renderer/components/ShigyoConsole.tsx': 4,
   'src/renderer/components/VoiceCommandBar.tsx': 1,
   'src/renderer/components/WelfareSchemeCard.tsx': 1,
-  'src/renderer/components/issueLevelUi.ts': 2,
-  'src/renderer/pages/AssistantPage.tsx': 5,
-  'src/renderer/pages/BusinessPage.tsx': 3,
+  'src/renderer/pages/AssistantPage.tsx': 2, // パス 503: 5 → 2 (既定は画面の配色に追随・保存した色は触らない)
   'src/renderer/pages/ChartsPage.tsx': 9,
-  'src/renderer/pages/DocstudioPage.tsx': 4, // パス 436: ＊ の印の #e5484d を LEVEL_COLOR.warn の参照へ
   'src/renderer/pages/EmotionsPage.tsx': 3,
   'src/renderer/pages/FreeePage.tsx': 10,
   'src/renderer/pages/FundingPage.tsx': 16,
-  'src/renderer/pages/HydroponicsPage.tsx': 1,
-  'src/renderer/pages/KpiPage.tsx': 3,
+  'src/renderer/pages/KpiPage.tsx': 1, // パス 503: 3 → 1 (系列の色は --success / --danger / --info / --warning / --text-muted)
   'src/renderer/pages/LibraryPage.tsx': 1,
-  'src/renderer/pages/MutualFundsPage.tsx': 1,
   'src/renderer/pages/OverviewPage.tsx': 7,
   'src/renderer/pages/SalesPage.tsx': 6,
-  'src/renderer/pages/SecurityPage.tsx': 3,
-  'src/renderer/pages/SettingsPage.tsx': 9,
+  'src/renderer/pages/SecurityPage.tsx': 2, // パス 503: 3 → 2
+  'src/renderer/pages/SettingsPage.tsx': 4, // パス 503: 9 → 4
   'src/renderer/pages/ShopifyPage.tsx': 1,
-  'src/renderer/pages/StocksPage.tsx': 4,
-  'src/renderer/pages/StoragePage.tsx': 1,
-  'src/renderer/pages/TalentPage.tsx': 10,
-  'src/renderer/pages/TaxPage.tsx': 13,
-  'src/renderer/pages/TeamRadarPage.tsx': 6, // パス 493g: 8 色の写しを shared/teamRadarSvg の colorFor へ寄せた
+  'src/renderer/pages/TaxPage.tsx': 8, // パス 503: 13 → 8
+  'src/renderer/pages/TeamRadarPage.tsx': 2, // パス 493g: 8 色の写しを shared/teamRadarSvg の colorFor へ寄せた / パス 503: 6 → 2
   'src/renderer/pages/TemplatesPage.tsx': 10,
-  'src/renderer/pages/VillagePage.tsx': 32,
+  'src/renderer/pages/VillagePage.tsx': 33, // パス 504: 32 → 33 (配色に追随しない景色の上の焦点の輪 `--focus-outline: #1b2f14` —— 配色の輪は草地の上で 2.3:1)
 };
 
 const SOURCES = uiSources();
 
 describe('画面の直書き色 (パス 315)', () => {
-  it('走査が生きている (床: 合計 200 件以上・ファイル 30 以上)', () => {
+  it('走査が生きている (床: 画面のファイル 60 以上・直書きの合計 100 以上・台帳 15 ファイル以上)', () => {
+    // 床は**測った件数に張り付けない** (パス 378): 直書きを減らすのは正しい向きで、直した日に落ちる門にしない。
+    // 見るのは「走査が画面のファイルを読めていること」と「パレット・SVG の塗りなど残る直書きを数えられていること」だけ。
     const total = SOURCES.reduce((n, s) => n + hexLiterals(s.text).length, 0);
-    expect(total).toBeGreaterThanOrEqual(200);
-    expect(Object.keys(LEDGER).length).toBeGreaterThanOrEqual(30);
+    expect(SOURCES.length).toBeGreaterThanOrEqual(60);
+    expect(total).toBeGreaterThanOrEqual(100);
+    expect(Object.keys(LEDGER).length).toBeGreaterThanOrEqual(15);
   });
 
-  it('★ 意味色 7 つの hex は画面の inline に現れない (0 件)', () => {
+  it('★ 意味色 11 の hex は画面の inline に現れない (0 件)', () => {
     const hits: string[] = [];
     for (const s of SOURCES) for (const h of hexLiterals(s.text)) if (SEMANTIC_HEX.includes(h)) hits.push(`${s.file}: ${h}`);
     expect(hits, '意味色はトークン (var(--success) / var(--danger) / var(--warning)) で表す').toEqual([]);
@@ -127,5 +124,7 @@ describe('画面の直書き色 (パス 315)', () => {
     expect(hexLiterals("  color: '#22c55e',\n  // color: '#ef4444'\n  background: 'var(--success)'\n")).toEqual(['#22c55e']);
     expect(hexLiterals('const PALETTE = ["#5b8def", "#E0568A"];')).toEqual(['#5b8def', '#e0568a']);
     expect(SEMANTIC_HEX).toContain('#22c55e');
+    // パス 503 で足した 4 つも、字面が走査に当たる (針が当たらなければ「現れない」は空の主張になる)
+    expect(hexLiterals("color: '#E5484D', background: '#e08c1a', fill: '#3b82f6', stroke: '#fca5a5'").filter((h) => SEMANTIC_HEX.includes(h))).toEqual(['#e5484d', '#e08c1a', '#3b82f6', '#fca5a5']);
   });
 });

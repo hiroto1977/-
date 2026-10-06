@@ -141,7 +141,7 @@ export function BackupPanel() {
           onChange={(e) => setPassphrase(e.target.value)}
           style={{
             background: 'var(--bg)',
-            border: '1px solid var(--border)',
+            border: '1px solid var(--control-border)',
             borderRadius: 10,
             color: 'var(--text)',
             padding: '6px 8px',
@@ -198,7 +198,7 @@ export function BackupPanel() {
           </p>
         )}
         <button type="button" onClick={() => void submit.run(onBackup)} disabled={submit.busy}>バックアップを書き出す</button>
-        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
+        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent-strong)' }}>
           バックアップから復元
           <input
             ref={fileRef}
@@ -212,7 +212,7 @@ export function BackupPanel() {
             }}
           />
         </label>
-        <label style={{ fontSize: 12, color: 'var(--text-mute)', display: 'flex', alignItems: 'center', gap: 4 }}>
+        <label style={{ fontSize: 12, color: 'var(--text-mute)', display: 'flex', alignItems: 'center', gap: 4, minHeight: 24 }}>
           <input type="checkbox" data-backup-replace checked={replace} onChange={(e) => setReplace(e.target.checked)} />
           既存データを置換（チェック無しはマージ = id ごとに新しい方を残す）
         </label>

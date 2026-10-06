@@ -228,7 +228,7 @@ export function SalesPage() {
 
   const inputStyle = {
     background: 'var(--bg)',
-    border: '1px solid var(--border)',
+    border: '1px solid var(--control-border)',
     borderRadius: 10,
     color: 'var(--text)',
     padding: '6px 8px',
@@ -247,6 +247,7 @@ export function SalesPage() {
           />
           <select
             value={form.channel}
+            aria-label="販売チャネル"
             onChange={(e) => setForm((f) => ({ ...f, channel: e.target.value as SalesChannel }))}
             style={{ ...inputStyle, width: 110 }}
           >

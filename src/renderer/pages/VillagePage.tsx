@@ -37,6 +37,7 @@ import { buildOrgIndex, routeTopicScored, type RawOrg, type RawTeam, type OrgInd
 import { replyTo, type ChatContext } from '../data/chatbot';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { SERVICES } from '../services';
+import { isSubmitEnter } from '../keyIntent';
 import type { ServiceId } from '../../shared/serviceId';
 import { startSpeechRecognition, isSpeechRecognitionSupported } from '../voice/speechAdapter';
 import { AiEgressNotice } from '../components/AiEgressNotice';
@@ -429,7 +430,7 @@ export function VillagePage() {
         {/* 作業広場（全体表示のみ） */}
         {!focusedExec ? (
           <div style={plazaStyle}>
-            <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#4a5a3a', fontWeight: 800 }}>
+            <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#1f2b17', fontWeight: 800 }}>
               作業広場
             </div>
           </div>
@@ -527,9 +528,25 @@ function BuildingCard({
   sub: string;
   onClick?: () => void;
 }) {
+  // 押せる街区は**キーボードでも**開ける (WCAG 2.1.1)。押せない街区 (onClick なし) は飾りなので役割も焦点も持たない。
+  // 属性は展開 (`{...}`) で足さず 1 つずつ書く —— 構文木の census (`controlsCensus.test.ts`) が「押せる要素は
+  // role と tabIndex と キー操作を持つ」を属性の有無で読むため。
+  const onKey = onClick
+    ? (e: React.KeyboardEvent) => {
+        if (e.target !== e.currentTarget) return;
+        if (isSubmitEnter(e) || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }
+    : undefined;
   return (
     <div
       onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `${label} の街区を拡大` : undefined}
+      onKeyDown={onKey}
       title={onClick ? `${label} の街区を拡大` : label}
       style={{
         position: 'absolute',
@@ -561,7 +578,7 @@ function BuildingCard({
         <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {emoji} {label}
         </span>
-        <span style={{ opacity: 0.8, fontWeight: 700, flexShrink: 0, marginLeft: 6 }}>{sub}</span>
+        <span style={{ fontWeight: 700, flexShrink: 0, marginLeft: 6 }}>{sub}</span>
       </div>
     </div>
   );
@@ -654,7 +671,10 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
             fontSize: v.kind === 'team' || v.kind === 'secretary' ? 9 : 10,
             fontWeight: 700,
             color: '#fff',
-            background: ring ? `${ring}cc` : 'rgba(40,50,30,0.72)',
+            // 地は常に濃い緑の板 (白い字が 4.5:1 を割らない)。チームの色は左の帯で伝える —— 以前は
+            // 色つきの板 (`${ring}cc`) に白い字を載せ、明るい色のチームで 3.5:1 だった (パス 503)。
+            background: 'rgba(40,50,30,0.82)',
+            borderLeft: ring ? `4px solid ${ring}` : undefined,
             padding: '0px 5px',
             borderRadius: 6,
             whiteSpace: 'nowrap',
@@ -697,7 +717,7 @@ function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (
           onChange={(e) => setText(e.target.value)}
           placeholder="文字でも話しかけられます"
           aria-label="村への入力"
-          style={{ padding: '7px 10px', borderRadius: 10, border: '1px solid rgba(127,127,127,0.4)', minWidth: 200 }}
+          style={{ padding: '7px 10px', borderRadius: 10, border: '1px solid var(--control-border)', minWidth: 200 }}
         />
         <button type="submit" className="primary" disabled={!text.trim() || over > 0}>
           伝える
@@ -733,6 +753,9 @@ const sceneStyle: React.CSSProperties = {
   background: 'linear-gradient(180deg, #aee0ff 0%, #cdeecb 24%, #9ad07f 33%, #7cbf6a 70%, #6bb35f 100%)',
   boxShadow: 'inset 0 0 70px rgba(0,0,0,0.14)',
   border: '1px solid rgba(0,0,0,0.14)',
+  // この景色は配色に追随しない (昼の空と草地・ダークでも同じ) ので、焦点の輪も配色の色 (--accent-strong) ではなく、
+  // **この地の上で 3:1 以上**の濃い緑黒にする。配色の輪は草地の上で 2.3:1 だった (パス 504 の実測・街区の ring)。
+  ['--focus-outline' as string]: '#1b2f14',
 };
 const sceneryStyle: React.CSSProperties = {
   position: 'absolute',

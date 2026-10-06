@@ -798,7 +798,7 @@ const PAGE_CSS = `
   .doc-p { margin: 6px 0; text-align: justify; }
   .doc-right { text-align: right; margin: 8px 0; }
   .fill { font-weight: 700; border-bottom: 1px solid #999; padding: 0 2px; }
-  .fill.empty { color: #b06060; font-weight: 400; }
+  .fill.empty { color: #a35656; font-weight: 400; }
   .doc-table { width: 100%; border-collapse: collapse; margin: 14px 0;
          font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; font-size: 13px; }
   .doc-table th, .doc-table td { border: 1px solid #8892a0; padding: 7px 10px; }

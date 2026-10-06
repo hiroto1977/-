@@ -431,7 +431,7 @@ const PAGE_CSS = `
   .doc-p.closing { margin-top: 22px; }
   .doc-right { text-align: right; margin: 8px 0; }
   .fill { font-weight: 700; border-bottom: 1px solid #999; padding: 0 2px; }
-  .fill.empty { color: #b06060; font-weight: 400; }
+  .fill.empty { color: #a35656; font-weight: 400; }
   .doc-disclaimer { margin-top: 30px; padding-top: 10px; border-top: 1px solid var(--line);
          color: var(--sub); font-size: 10.5px;
          font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }

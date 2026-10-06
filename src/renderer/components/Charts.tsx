@@ -19,6 +19,7 @@ import {
   type RadarSeries,
 } from '../data/charts';
 import { seriesColor } from '../data/chartFixtures';
+import { readableInk } from '../../shared/readableInk';
 
 /** データが無いときの共通表示。「空の図」を出さずに理由を書く。 */
 function EmptyChart({ reason }: { reason: string }): ReactElement {
@@ -209,9 +210,10 @@ export function PieChartView({ slices, options, title }: PieChartViewProps): Rea
             <title>{`${s.label}: ${s.value}（${Math.round(s.ratio * 1000) / 10}%）`}</title>
           </path>
         ))}
-        {geo.slices
-          .filter((s) => s.ratio >= 0.06)
-          .map((s) => (
+        {/* 割合の字は**その切れの色**から白か黒を選ぶ (`readableInk` —— どちらかは必ず 4.5:1 以上)。
+            固定の白は、パレット 6 色の上で 2.0〜3.9:1 だった (パス 503・実機で描画済みの色を測った)。 */}
+        {geo.slices.map((s, i) =>
+          s.ratio >= 0.06 ? (
             <text
               key={`l-${s.label}`}
               x={s.labelAt.x}
@@ -219,11 +221,12 @@ export function PieChartView({ slices, options, title }: PieChartViewProps): Rea
               fontSize={9}
               textAnchor="middle"
               dominantBaseline="middle"
-              fill="#fff"
+              fill={readableInk(seriesColor(i)) ?? 'var(--text)'}
             >
               {Math.round(s.ratio * 100)}%
             </text>
-          ))}
+          ) : null,
+        )}
       </svg>
       <Legend labels={geo.slices.map((s) => s.label)} />
     </figure>

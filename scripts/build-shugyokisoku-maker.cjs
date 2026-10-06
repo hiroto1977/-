@@ -316,7 +316,7 @@ const PAGE_CSS = `
   .doc-p { margin: 4px 0; text-align: justify; }
   .doc-li { margin: 2px 0 2px 1.5em; }
   .fill { font-weight: 700; border-bottom: 1px solid #999; padding: 0 2px; }
-  .fill.empty { color: #b06060; font-weight: 400; }
+  .fill.empty { color: #a35656; font-weight: 400; }
   .doc-disclaimer { margin-top: 30px; padding-top: 10px; border-top: 1px solid var(--line);
          color: var(--sub); font-size: 10.5px;
          font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }

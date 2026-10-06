@@ -262,7 +262,7 @@ export function TeamPage() {
 
   const inputStyle = {
     background: 'var(--bg)',
-    border: '1px solid var(--border)',
+    border: '1px solid var(--control-border)',
     borderRadius: 10,
     color: 'var(--text)',
     padding: '6px 8px',
@@ -303,6 +303,7 @@ export function TeamPage() {
           />
           <select
             value={form.role}
+            aria-label="追加するメンバーの役割"
             onChange={(e) => setForm((f) => ({ ...f, role: e.target.value as Role }))}
             style={{ ...inputStyle, width: 110 }}
           >
@@ -348,6 +349,7 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <select
                       value={r.data.role}
+                      aria-label={`${displayField(r.data.name, MAX_MEMBER_NAME_CHARS)} の役割`}
                       onChange={(e) => fireReported(onChangeRole(r.id, e.target.value as Role))}
                       style={{ ...inputStyle, width: 110 }}
                     >

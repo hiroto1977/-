@@ -258,8 +258,9 @@ describe('交付前チェックが指した欄 — 実物の画面', () => {
     await openShareholderRegister();
     await settleUntil(() => panelText().includes('株主が 1 名も記載されていません'), '0 名の指摘が出る');
     // 住所・取得日・2 行目以降はどの指摘も指していないので、既定の枠のまま。
+    // 既定の枠は入力欄の輪郭を示す 3:1 のトークン `--control-border` (パス 504 まではスタイルシートの薄い `--border-strong` だった)。
     for (const k of ['s1addr', 's1date', 's2name', 's3shares']) {
-      expect(markOf(k), k).toBe(normalizeBorder('1px solid var(--border-strong)'));
+      expect(markOf(k), k).toBe(normalizeBorder('1px solid var(--control-border)'));
     }
   });
 

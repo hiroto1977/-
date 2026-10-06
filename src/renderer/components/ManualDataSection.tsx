@@ -57,7 +57,7 @@ import {
 
 const input: React.CSSProperties = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 10,
   color: 'var(--text)',
   padding: '6px 8px',

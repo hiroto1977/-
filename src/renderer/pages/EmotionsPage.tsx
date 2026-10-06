@@ -18,7 +18,7 @@ import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--control-border)',
   borderRadius: 10,
   color: 'var(--text)',
   padding: '8px 10px',
@@ -314,7 +314,7 @@ export function EmotionsPage() {
                 onClick={() => setMoodScore(s)}
                 style={{
                   background: moodScore === s ? 'var(--accent)' : 'transparent',
-                  color: moodScore === s ? 'white' : 'var(--text)',
+                  color: moodScore === s ? 'var(--on-accent)' : 'var(--text)',
                   borderColor: moodScore === s ? 'var(--accent)' : 'var(--border)',
                   minWidth: 36,
                 }}
