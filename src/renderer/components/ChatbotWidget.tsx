@@ -37,6 +37,7 @@ import {
   ollamaRefusalNote,
 } from '../data/chatbotOllama';
 import { CeilingNotice } from './CeilingNotice';
+import { useDialogFocus } from './useDialogFocus';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 
@@ -343,6 +344,20 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
   /** 書き出した直後の「端末からも消すか」の問い (書き出した行)。`null` なら出さない。 */
   const [clearOffer, setClearOffer] = useState<readonly FeatureRequest[] | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
+  /*
+   * 開いた窓の焦点 (パス 506): 浮いた窓は開いたら入力欄へ・Esc で閉じる・閉じたら 🤖 へ戻す。確認の alertdialog 2 つも
+   * 同じ hook で、焦点は**取り消す側**の操作子へ (印 `data-dialog-initial`)・Esc = 取り消し・消えたら押した物へ戻す。
+   * 列 (docked) は窓ではないので運ばない (`open` は列では立たない)。
+   */
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const fabRef = useRef<HTMLButtonElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const exportBtnRef = useRef<HTMLButtonElement | null>(null);
+  const clearOfferRef = useRef<HTMLDivElement | null>(null);
+  const pendingRef = useRef<HTMLDivElement | null>(null);
+  const windowKeys = useDialogFocus(panelRef, { open: open && !docked, onClose: () => setOpen(false), returnTo: fabRef });
+  const clearOfferKeys = useDialogFocus(clearOfferRef, { open: clearOffer !== null, onClose: () => setClearOffer(null), returnTo: exportBtnRef });
+  const pendingKeys = useDialogFocus(pendingRef, { open: pendingIntent !== null, onClose: () => setPendingIntent(null), returnTo: inputRef });
   const suggestions = useMemo(
     () => ['何ができる？', '額面40万の手取りは？', '組織の体制を教えて'],
     [],
@@ -469,6 +484,8 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       // 浮いた窓は他の画面の上に開く「窓」なので dialog。列は画面の一部 (見出しの付いた欄は App の <aside> が持つ)。
       role={docked ? undefined : 'dialog'}
       aria-label={docked ? undefined : 'AI コンシェルジュ'}
+      ref={panelRef}
+      onKeyDown={docked ? undefined : windowKeys.onKeyDown}
     >
       <div className="concierge-head">
         <strong className="concierge-title">🤖 AI コンシェルジュ</strong>
@@ -482,6 +499,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
             }}
             title="受け付けた機能要望を Markdown で書き出す (orchestration backlog 候補)"
             aria-label="要望リストをエクスポート"
+            ref={exportBtnRef}
           >
             📥 要望
           </button>
@@ -539,7 +557,14 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
         ))}
         {busy ? <div className="concierge-busy">考え中…</div> : null}
         {clearOffer !== null ? (
-          <div role="alertdialog" aria-label="要望リストの消去の確認" className="concierge-confirm" data-requests-clear-offer>
+          <div
+            role="alertdialog"
+            aria-label="要望リストの消去の確認"
+            className="concierge-confirm"
+            data-requests-clear-offer
+            ref={clearOfferRef}
+            onKeyDown={clearOfferKeys.onKeyDown}
+          >
             {requestsClearOffer(clearOffer.length)}
             <div className="concierge-confirm-actions">
               <button
@@ -556,14 +581,14 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
               >
                 この端末から消す
               </button>
-              <button type="button" onClick={() => setClearOffer(null)}>
+              <button type="button" onClick={() => setClearOffer(null)} data-dialog-initial>
                 残す
               </button>
             </div>
           </div>
         ) : null}
         {pendingIntent ? (
-          <div role="alertdialog" aria-label="実行確認" className="concierge-confirm">
+          <div role="alertdialog" aria-label="実行確認" className="concierge-confirm" ref={pendingRef} onKeyDown={pendingKeys.onKeyDown}>
             <strong>確認:</strong> 書き込み操作を実行しますか？
             <div className="concierge-confirm-actions">
               <button
@@ -576,7 +601,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
               >
                 実行
               </button>
-              <button type="button" onClick={() => setPendingIntent(null)}>
+              <button type="button" onClick={() => setPendingIntent(null)} data-dialog-initial>
                 やめる
               </button>
             </div>
@@ -602,6 +627,8 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       >
         <input
           className="concierge-input"
+          ref={inputRef}
+          data-dialog-initial
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="例: 税務試算を開いて / 福利厚生の機能が欲しい"
@@ -625,11 +652,12 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
 
   if (docked) return panel;
 
+  // 🤖 を窓より**前**に描く —— 開いた直後の Tab が窓の中へ入る (DOM の順 = 焦点の順)。見た目は position: fixed なので変わらない (パス 506)。
   return (
     <>
-      {open ? panel : null}
       <button
         type="button"
+        ref={fabRef}
         className={open ? 'chatbot-widget concierge-fab open' : 'chatbot-widget concierge-fab'}
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'チャットを閉じる' : 'AI コンシェルジュを開く'}
@@ -637,6 +665,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       >
         {open ? '✕' : '🤖'}
       </button>
+      {open ? panel : null}
     </>
   );
 }

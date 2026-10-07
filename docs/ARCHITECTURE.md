@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 682 個の `file:line` 参照 + 43 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 691 個の `file:line` 参照 + 43 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **17487** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **17523** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 34 / 37 (残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 682 | 自己検証 |
+| `file:line` 参照数 | 691 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2253,7 +2253,10 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **308 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **309 ファイル**。
+2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
+消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
+名指ししたので、`audit:mutate-changed` で 62 変異体を測り (1 度目は **90.00% / 生存 6** —— `aria-disabled` を無効と読む 4 件・操作子の無い窓の `?.focus()`・省いた `returnTo` —— どれも「宣言した契約に標本が無い」だったので標本を 6 件足し、2 度目は **100.00% (Killed 60 / 生存 0 / 未到達 0・計装 62 のうち表に載らない 2 件は `ignoreStatic` が外した static 変異体と見ている)**) 載せた。
 2026-09-27 (パス 493i) に `src/renderer/keyIntent.ts` (Enter / Escape を「意図」として読む口 —— 変換中の打鍵を送信・取り消しと読まない) を
 **整合性チェーンの保護対象へ入れる**のと同時に足した (保護対象の `src/renderer/security/LockScreen.tsx` が読むので閉包の規則で入る)。
 1 度目で **100.00% (生存 0 / 未到達 0)**。
@@ -2511,7 +2514,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
 | `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
-| `scripts/lint-repo-size.cjs` | `lint:repo-size` | 追跡ファイルの大きさに**天井**を置く (1 ファイル 12MB / 追跡合計 80MB・85% で警告のみ)。`verify:arch` の追跡行数は**下限**なので膨張を捕まえない。履歴に入った blob は後から追跡を外しても消えず、消すには全 SHA の書き換えと GitHub Support の gc 依頼が要る (`docs/GIT_HISTORY_SHRINK.md`) ため、入れる前に止める |
+| `scripts/lint-repo-size.cjs` | `lint:repo-size` | 追跡ファイルの大きさに**天井**を置く (1 ファイル 12MB / 追跡合計 120MB —— 2026-10-07 までは 80MB で、生成物ではなく記録 3 本と検査の増え方で当たった・85% で警告のみ)。`verify:arch` の追跡行数は**下限**なので膨張を捕まえない。履歴に入った blob は後から追跡を外しても消えず、消すには全 SHA の書き換えと GitHub Support の gc 依頼が要る (`docs/GIT_HISTORY_SHRINK.md`) ため、入れる前に止める |
 
 #### verify:arch (`scripts/verify-architecture.cjs`)
 
@@ -2752,6 +2755,33 @@ TSX を構文木で (入力欄の `border` は台帳の色・押せる非ネイ�
 **測っていない物**: 検索欄のホバー 1 つの外の操作途中の状態・開く前の折りたたみとモーダルとポップオーバー・canvas・
 チャートの線や図形・アイコン (1.4.11 のグラフィック)・テキスト間隔 (1.4.12)・`--accent` を UI の色として使う所 (かわいい × ライトで
 2.67〜2.81:1)・`button` の中に入れた `span[role=button]` (お気に入りの ♡ —— 入れ子の操作子)。
+
+**開いた窓とスマホ幅** (2026-10-07 · パス 506) —— パス 503 / 504 の実機の測定は**閉じた・静止した・1280px** の画面しか
+測っていない。「開く前の物」を開いて測った: `<details>` と手入力パネルを開いた全画面 (4 配色 × 1,408 行) は割る物 0 (閉じたときから
+増えない —— 対照として残す)。本物は 3 つ。① 浮いたコンシェルジュ (`role="dialog"`) とその中の確認 (`role="alertdialog"`) は
+WAI-ARIA APG の dialog の約束を 1 つも持たなかった —— 開いても焦点は 🤖 のまま・窓は DOM で 🤖 より**前**なので Tab が窓を飛ばす・
+Esc で閉じない・✕ で閉じると焦点は body。提案チップは 23px (WCAG 2.5.8)。② スマホのドロワーは閉じている間も焦点を取れ (☰ から
+Shift+Tab で画面の外の 74 項目へ入る)、開いている間は暗幕の後ろの本文へ Tab で逃げた。③ **スマホ幅 (≤768px) の全画面の字が、
+かわいい × ライトで 30 画面 212 要素 (3.84〜4.48:1)・かわいい × ダークで 10 画面 16 要素割った** —— 原因は
+`@media (max-width: 768px)` の `.main { background: transparent }` で、本文の字が殻の光輪 (`--glow-*`) の上に直に載っていた
+(字の台帳 `src/renderer/__tests__/themeContrast.test.ts` が測る地は `--panel` まで)。**表の対が合っていても、媒体規則が地を剥がす**。直し:
+`src/renderer/components/useDialogFocus.ts` の hook 1 つ (開いたら印 `data-dialog-initial` の操作子へ焦点 —— 窓は入力欄・確認は
+**取り消す側**・Esc = 閉じる / 取り消す (IME の変換確定の Esc は `keyIntent` の `isCancelEscape` で除く)・消えたら押した物へ戻す) を
+3 つの dialog が読み、🤖 を窓より前に描く。App は `DRAWER_QUERY` (= CSS の `@media (max-width: 768px)` —— 2 か所の一致は検査が見る)
+の幅でドロワーの開閉に合わせて `.main` / `.sidebar` を `inert` にし (React 18 は `inert` を属性として知らないので ref で付ける・
+依存配列を持たない効果 —— 最初の commit は「読み込み中…」で ref が無い)、開いたら ✕ へ・閉じたら ☰ へ焦点を運ぶ。CSS はスマホの
+`.main` の地を残し、チップを `min-height: 24px` にする。測定器 `scripts/lib/controls.cjs` の `present()` は `inert` の下を「無い」と
+数える。**3 層で留める**: ① jsdom で実物を描いて押す (`src/renderer/components/__tests__/conciergeDialogFocus.test.ts` 7 件・
+`src/renderer/__tests__/drawerKeyboard.test.ts` 4 件・`src/renderer/components/__tests__/useDialogFocus.test.ts` 9 件) ② 構文木と CSS の規則
+(`src/renderer/__tests__/dialogSitesCensus.test.ts` —— `role` が dialog / alertdialog の JSX は名前・`ref`・`onKeyDown` を持ち、
+そのファイルは hook を呼ぶ・両方向の台帳 4 行 / `src/renderer/__tests__/openedStateCss.test.ts` —— スマホの `.main` は `background` を上書きせず、チップは
+24px 以上) ③ 実機の `opened` suite (e2e の 39 番目・131 件 —— 4 配色 × 開いた全画面の字と操作子・浮いた窓のキーボードの道
+(開いたら入力欄・🤖 の後ろ・Shift+Tab は窓の中・チップ 24px・1 往復した画面・alertdialog の焦点は「残す」・Esc で 📥 へ戻る・
+Esc で閉じて 🤖 へ)・スマホ 412×915 × 4 配色 (閉じたドロワーは inert・☰ から Shift+Tab で入らない・開いたら ✕ と本文の inert・
+Tab は本文へ出ない・Esc で ☰ へ・シート・全画面の字)・測定器の対照 2)。**測って何も無かった物**: 書き込みの確認
+(`pendingIntent` / 音声の確認) は同じ hook で配線したが**今日その状態へ届く道は無い** (7 つの書き込みはどれも必須欄を持ち、
+解析器は `params` を設定しない)。**測っていない物**: ポップオーバー (今日 0 件)・タブレット幅 (769〜1199px)・開いた後の操作途中の状態・
+`--accent` のグラフィック・テキスト間隔。
 
 **シェルの操作性** (2026-09-19 · パス 322) —— 2026-09-17 の見た目の再設計は色と形だけを変え、構造と文言と
 `data-*` は触らなかった。パス 322 はサイドバー・トップバー・ホームの**操作**を変える: 検索欄の ✕ と件数と

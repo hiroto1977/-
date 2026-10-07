@@ -54,7 +54,14 @@ const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
  * いつか崩れるので、関数側で封じ込める —— データ由来のパスが渡された時点で
  * 例外にする。ここを緩めることは「任意のファイルを実行できる」に等しい。
  */
-function loadModuleExports(file) {
+/**
+ * `root` は**検査のための継ぎ目** (既定は DATA —— 本物の呼び手は渡さない)。
+ * 2026-10-07 の実測: 閉じ込めの検査が探りの symlink を本物の `src/renderer/data/` に
+ * 置いていたので、同時に `src/**` を歩いて読む別の検査 (`kdfParamsCensus`) が一覧に
+ * 拾い、読む前に消されて ENOENT で落ちた (CI の 1 回)。探りは追跡された木の外に置き、
+ * 閉じ込めの算法 (realpath → 根の下か) は根を渡して確かめる。
+ */
+function loadModuleExports(file, root = DATA) {
   let resolved = path.resolve(file);
   if (resolved !== path.normalize(file) && !path.isAbsolute(file)) {
     // 相対指定は呼び出し口の作業ディレクトリに依存する。受け付けない。
@@ -89,9 +96,9 @@ function loadModuleExports(file) {
   } catch {
     /* 実体が無い — 下の readFileSync が落ちる。閉じ込めは字面で見る。 */
   }
-  if (resolved !== DATA && !resolved.startsWith(DATA + path.sep)) {
+  if (resolved !== root && !resolved.startsWith(root + path.sep)) {
     throw new Error(
-      `loadModuleExports: ${DATA} の外は評価しません (${resolved})。`
+      `loadModuleExports: ${root} の外は評価しません (${resolved})。`
       + ' この関数は型を落として実行するので、外を許すと任意コード実行になります。',
     );
   }

@@ -61,6 +61,7 @@
     "src/preload/preload.ts",
     "src/renderer/components/serviceActionMachine.ts",
     "src/renderer/components/serviceActionUtils.ts",
+    "src/renderer/components/useDialogFocus.ts",
     "src/renderer/data/accounting.ts",
     "src/renderer/data/actionOutcome.ts",
     "src/renderer/data/assistantMarkdown.ts",

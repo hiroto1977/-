@@ -13,6 +13,7 @@
  */
 import { navigateTo } from '../navigate';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useDialogFocus } from './useDialogFocus';
 import {
   INITIAL_VOICE_SESSION,
   reduceVoiceSession,
@@ -116,6 +117,8 @@ export function VoiceCommandBar() {
   );
   const sessionRef = useRef<SpeechSessionHandle | null>(null);
   const [open, setOpen] = useState(false);
+  const micRef = useRef<HTMLButtonElement | null>(null);
+  const confirmRef = useRef<HTMLSpanElement | null>(null);
 
   const dispatch = useCallback((e: VoiceSessionEvent) => rawDispatch(e), []);
 
@@ -222,6 +225,14 @@ export function VoiceCommandBar() {
   // アンマウント時に認識を確実に止める。
   useEffect(() => () => stopSession(), []);
 
+  // 確認 (alertdialog) が出たら「取消」へ焦点を運び、Esc = 取消、消えたら 🎙️ へ戻す (パス 506・`useDialogFocus`)。
+  // hook は `if (!supported)` の早期 return より前に呼ぶ (呼ぶ順を変えない)。
+  const confirmKeys = useDialogFocus(confirmRef, {
+    open: state.phase === 'awaiting-confirmation' && refusal === null,
+    onClose: handleCancel,
+    returnTo: micRef,
+  });
+
   if (!supported) {
     return (
       <span
@@ -240,6 +251,7 @@ export function VoiceCommandBar() {
       <button
         type="button"
         className={`voice-mic ${state.phase === 'listening' ? 'listening' : ''}`}
+        ref={micRef}
         onClick={handleMicClick}
         aria-label="音声コマンドを開始"
         aria-pressed={state.phase === 'listening'}
@@ -317,12 +329,12 @@ export function VoiceCommandBar() {
           )}
 
           {state.phase === 'awaiting-confirmation' && refusal === null && (
-            <span className="voice-confirm" role="alertdialog" aria-label="実行確認">
+            <span className="voice-confirm" role="alertdialog" aria-label="実行確認" ref={confirmRef} onKeyDown={confirmKeys.onKeyDown}>
               <strong style={{ color: 'var(--danger)' }}>確認:</strong> 実行しますか？
               <button type="button" onClick={handleConfirm} aria-label="実行を承認" style={{ marginLeft: 6 }}>
                 実行
               </button>
-              <button type="button" onClick={handleCancel} aria-label="実行を取り消し" style={{ marginLeft: 4 }}>
+              <button type="button" onClick={handleCancel} aria-label="実行を取り消し" style={{ marginLeft: 4 }} data-dialog-initial>
                 取消
               </button>
             </span>

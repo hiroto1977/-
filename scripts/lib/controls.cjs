@@ -146,7 +146,8 @@ function measureControls(M, G, C, opts) {
   const present = (el) => {
     if (!visible(el)) return false;
     if (inClosedDetails(el)) return false;
-    for (let n = el; n; n = n.parentElement) if (n.getAttribute && n.getAttribute('aria-hidden') === 'true') return false;
+    // `inert` の中は押せず・焦点も取れず・読み上げにも出ない (閉じたドロワーの中身・開いたドロワーの後ろの本文 —— パス 506)
+    for (let n = el; n; n = n.parentElement) if (n.getAttribute && (n.getAttribute('aria-hidden') === 'true' || n.hasAttribute('inert'))) return false;
     return true;
   };
   /** `present` かつ、見える濃さ (実効の不透明度 0.1 以上)。 */
