@@ -4687,12 +4687,29 @@ async function controlsSuite(browser) {
       await settled(page);
       merge(acc, await measure(page, id, cfg.ax === true));
     }
+    let drawer = null;
+    if (phone) {
+      // **開いたドロワーも 1 度測る** (2026-10-07 · パス 506 の直後に測って足した)。パス 506 で閉じたドロワーは `inert` になり、
+      // 測定器の `present()` も inert の下を「無い」と数えるので、上の画面ごとの測定にはドロワーの 74 項目が入らない ——
+      // 閉じている間は焦点を取れないのが正しい (`opened` suite が留める)。だが開けば描かれる物なので、開いた状態で測る
+      // (法則 119 `opened-state-measured-where-drawn`)。項目は画面を跨いで同じなので 1 回でよい。
+      // 実測 (2026-10-07・この段が無い形): スマホの焦点の母集団は 681・AX の名前の母集団は 2,940 で、desktop と同じ床
+      // (800 / 10,000) が**正しく鳴った** —— 床を下げるのではなく、測る物を戻してから床を分けた (下の assertSweep の opts)。
+      const menu = page.locator('button.menu-btn').first();
+      await menu.click();
+      await page.waitForSelector('.app.nav-open', { timeout: 10000 });
+      await settled(page);
+      drawer = await measure(page, '(開いたドロワー)', cfg.ax === true);
+      merge(acc, drawer);
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+    }
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForSelector('text=ロック解除', { timeout: 30000 });
     await page.addStyleTag({ content: STILL });
     merge(acc, await measure(page, '(ロック画面)', cfg.ax === true));
     await ctx.close();
-    return { acc, ids, applied, hovered };
+    return { acc, ids, applied, hovered, drawer };
   };
 
   /** 「何が・どの値で」を畳んだ要約 (落ちたとき、同じ原因の行を 1 つにして先頭 6 件を読めるように)。 */
@@ -4702,7 +4719,7 @@ async function controlsSuite(browser) {
       .map((g) => `${show(g.sample)} ${g.sample.sig}×${g.n}行/${g.pages.size}画面`)
       .join(' / ');
 
-  const assertSweep = (label, { acc, ids, hovered }, opts) => {
+  const assertSweep = (label, { acc, ids, hovered, drawer }, opts) => {
     const fieldV = L.fieldViolations(acc.fields, C);
     const sliderV = L.sliderViolations(acc.sliders, C);
     const focusV = L.focusViolations(acc.focus);
@@ -4712,6 +4729,14 @@ async function controlsSuite(browser) {
       ids.length >= 60 && acc.fields.length >= opts.minFields && focused.length >= opts.minFocus,
       `controls[${label}]: 全 ${ids.length} 画面 + 初回 + ロック画面で測れた (入力欄 ${acc.fields.length}・焦点を取った操作子 ${focused.length}/${acc.focus.length}・押せる大きさの対象 ${acc.targets.length}・スライダー ${acc.sliders.length})`,
     );
+    if (opts.drawer) {
+      // 開いたドロワーの項目が母集団に入っていること (閉じたドロワーは inert なので、この段が消えると 74 項目が黙って測定から外れる)。
+      const dFocus = drawer === null ? 0 : drawer.focus.filter((r) => r.focused).length;
+      ok(
+        drawer !== null && dFocus >= opts.minDrawerFocus,
+        `controls[${label}]: ★ 開いたドロワー (inert が外れた 74 項目) も測った (焦点を取った操作子 ${dFocus} (sig 単位)・24px 未満の目標 ${drawer === null ? 0 : drawer.targets.length}・入力欄 ${drawer === null ? 0 : drawer.fields.length})`,
+      );
+    }
     ok(
       fieldV.length === 0,
       `controls[${label}]: ★ 描画済みの入力欄の輪郭は 3:1 以上 (WCAG 1.4.11) (測った ${acc.fields.length} 欄${fieldV.length ? ` · 割った ${fieldV.length} 欄: ${summarize(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''})`,
@@ -4761,7 +4786,11 @@ async function controlsSuite(browser) {
   // スマホ幅 (ドロワー・縦積み・先頭へ戻る・media 規則で変わる目標の大きさ)。明るい配色と暗い配色を 1 つずつ
   for (const cfg of [CONFIGS[0], CONFIGS[3]]) {
     const r = await sweep({ ...cfg, ax: cfg === CONFIGS[0] }, { width: 412, height: 915 }, true);
-    assertSweep(`スマホ · ${cfg.name}`, r, { minFields: 450, minFocus: 800, ax: cfg === CONFIGS[0], minNamed: 10000 });
+    // 床はスマホ幅の実測から別に置く (desktop の床を写すと、閉じたドロワーが inert になった日に鳴る —— 2026-10-07 に実際に鳴った)。
+    // 実測 (2026-10-07 · 開いたドロワーを測る段を足した後): すっきり × ライト = 入力欄 515・焦点 689 (sig 単位)・24px 未満の目標 896・
+    // AX の名前 3,106・開いたドロワー = 焦点 8 (74 項目は同じ sig なので 1 つに畳まれる) / 入力欄 2 / 24px 未満 0 —— かわいい × ダーク = 515・689・878・
+    // ドロワー 8 / 2 / 0。段が無い形は焦点 681・名前 2,940 で、desktop の床 (800 / 10,000) を割った。床は実測の 63〜80%。
+    assertSweep(`スマホ · ${cfg.name}`, r, { minFields: 450, minFocus: 500, ax: cfg === CONFIGS[0], minNamed: 2500, drawer: true, minDrawerFocus: 5 });
   }
 
   // ---- 測定器そのものの対照 (about:blank の探り) ----
@@ -5598,7 +5627,8 @@ function installWaitMarginRecorder(browser) {
     // パス 503: 文字色の対比 (WCAG 2.x AA) を実機で 4 配色 × 全画面。実測値は初回の実行で確かめる
     ['contrast', contrastSuite, 17],
     // パス 504: 操作子の輪郭・焦点の輪・押せる大きさ・キーボード・名前を実機で 4 配色 × 全画面 + スマホ。実測値は初回の実行で確かめる
-    ['controls', controlsSuite, 61],
+    // 2026-10-07 (パス 506 の直後): スマホ 2 配色に「開いたドロワーも測った」の床を足して 61 → 63
+    ['controls', controlsSuite, 63],
     // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
     ['opened', openedSuite, 131],
     ['tablet', tabletSuite, 2],

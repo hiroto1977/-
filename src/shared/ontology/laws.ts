@@ -1830,7 +1830,9 @@ export const LAWS: readonly Law[] = [
     id: 'repo-size-ceiling',
     family: 'supply-chain',
     name: '追跡ファイルの大きさに天井',
-    statement: '履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 80 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。'
+    statement: '履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 120 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。'
+      + ' ★ **落とさない警告は読まれない** —— 80 MB の天井には 2026-10-07 に生成物ではなく記録 3 本と検査の増え方 (0.41 MB/日・コーパスは +0.1 MB) で当たり、'
+      + '85% の警告は 2026-09-11 ごろから毎回刷られて誰も動かなかった (実測はゲートの docblock · パス 506)。'
       + ' 出荷物へ畳み込む JSON は製品が読む鍵だけ —— 名前付き import は鍵の単位でしか落ちないので、'
       + '読まない開発側の履歴 (registry の `rounds` 160,558 B) と着手候補 (`backlog` 7,323 B —— 外から来た文を含む) は'
       + '派生索引へ置き換え、import してはいけない鍵として理由つきで名指しする。'
@@ -1838,7 +1840,7 @@ export const LAWS: readonly Law[] = [
       + 'プロパティを落とすので全体が入るわけではないが、どの鍵が入るかを字面から読めず台帳が見えなくなる'
       + ' (実測: default import のまま `registry.backlog` を読むと外から来た題名 43 / 43 が出荷物へ入るのに、'
       + '名前付き import しか読まない census は緑だった · パス 486)。',
-    provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483', 'パス 486'],
+    provenance: ['CLAUDE.md lint:repo-size', 'ci.yml の出荷物の天井', 'パス 396', 'パス 483', 'パス 486', 'パス 506'],
     enforcedBy: [gate('lint:repo-size'), ci('.github/workflows/ci.yml'), test(T.shared('registryBundleCost'))],
   },
   {
