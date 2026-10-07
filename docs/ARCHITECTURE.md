@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 680 個の `file:line` 参照 + 43 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 682 個の `file:line` 参照 + 43 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **17473** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **17487** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 34 / 37 (残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 680 | 自己検証 |
+| `file:line` 参照数 | 682 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -4376,4 +4376,5 @@ export interface TokenSet {
 | `docs/ADDING_A_SERVICE.md` | 新サービス追加チェックリスト |
 | `docs/REMAINING_WORK.md` | Phase 4-7 ロードマップ |
 | `docs/ONTOLOGY.md` | (生成物 · `npm run ontology:md`) 層とビルド・実体クラス・サービスの facet 行列と公理・法則と執行者 (§8.3) |
+| `docs/MODEL_EFFORT_POLICY.md` | 指示のティア (light / standard / deep) で effort と任せる agent を決める方針 (`scripts/task-tier.cjs` の `UserPromptSubmit` hook・`.claude/agents/`) |
 | `CLAUDE.md` | Claude Code 向けプロジェクトガイド |

@@ -1,5 +1,12 @@
 # Service Hub — 残りの作業手順書
 
+## パス 505 (運用: 指示のティアで effort と任せる手を決める) が残した物 (2026-10-07)
+
+- **主セッションのモデル / effort は自動では変わらない** (`/model` / `/effort` は利用者の口)。hook は推奨を 1 行で見せるだけ。
+- **印は綴りの一致** (`scripts/task-tier.cjs` の `DEEP_MARKS` / `LIGHT_MARKS` / `THOROUGH_MARKS`)。短い指示の裏の大きな仕事は standard に落ちるので、アシスタントが読んで上げる。印を足すときは `--self-test` の標本と `docs/MODEL_EFFORT_POLICY.md` の §3 を揃える。
+- **hook は本物の Claude Code で文脈へ届いた** (2026-10-07・直後の「続けて」で `[task-tier] deep` の 1 行が冒頭に入った)。見えなくなったら `.claude/settings.json` の `UserPromptSubmit` の形を疑う。
+- agent 定義の `effort` が Claude Code の版で読まれないときは無視されるだけ (model は読まれる)。
+
 ## パス 504 (操作子の見え方と届き方 —— 字ではない物を実機で測り、入力欄の輪郭・焦点の輪・押す目標・キーボード・名前を 3 層で留める) が測って、次のパスへ残した物 (2026-10-03)
 
 - **出発点 (実測)** —— 「続けて」を受け、パス 503 が「残した物」の ① (字ではない物の 3:1 —— 枠線・フォーカスリング) と ② (操作途中の状態) のうち、**入力欄とキーボードの面**を測った。字の対比と同じく、トークン表の対だけで済ませず**描画済みの形**を Chromium で操作子ごとに測る道具 `scripts/lib/controls.cjs` を作り (パス 503 の `contrast.cjs` から地の算出 `groundTools` を出して共有・純関数は `controlsLib.test.ts` が 22 件で留める・**焦点は実際に Tab で取り**、名前は CDP の `Accessibility.getFullAXTree` に訊く)、4 配色 × サイドバーの全 74 画面 + 初回の設定画面 + ロック画面 + スマホ幅 2 配色で走らせた。WCAG 2.x の 5 軸。修正前の成果物 (パス 503 の HEAD `ac5da79b9` から git の worktree で組んだ 11,865,098 B に、新しい suite をそのまま当てた) では **`controls` suite の 61 件のうち 32 件が落ちた** (残る 29 件は配色の確認・測れた件数・測定器の対照 14 件ほか):

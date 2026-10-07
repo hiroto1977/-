@@ -1917,6 +1917,32 @@ export const LAWS: readonly Law[] = [
       harness('e2e:lite'),
     ],
   },
+  {
+    id: 'instruction-tier-picks-effort-and-hands',
+    family: 'single-rule',
+    name: '指示のティアが effort と任せる手を決める —— 基準は表 1 つで、hook・agent 定義・文書はそれに従う',
+    statement:
+      '利用者の 1 つの指示から「どれだけ深く・長く・何に任せて」働くかを、指示ごとに同じ基準で決める。'
+      + '基準は `scripts/task-tier.cjs` の表 `TIERS` **ただ 1 つ** (light / standard / deep —— 主セッションへ推奨する effort・'
+      + '任せる agent とその model / effort・Workflow を提案するか)。指示のたびに走る `UserPromptSubmit` hook が指示の文から'
+      + 'ティアを決めて**根拠 (一致した印) つきの 1 行**を文脈へ足し、`.claude/agents/<agent>.md` の frontmatter と '
+      + '`docs/MODEL_EFFORT_POLICY.md` の表はその `TIERS` と検査で突き合わせる (名前と値を 2 度書かない)。'
+      + '**主セッションのモデルと effort は利用者が `/model` / `/effort` で決める物**で、hook にもアシスタントにも変える口は無い —— '
+      + 'だから hook は推奨を見せる所までを受け持ち、アシスタントは推奨と違えば応答の冒頭 1 行で案内する (作業は止めない)。'
+      + 'hook は stdin の JSON を読むだけで、子プロセスを作らず・網へ出ず・ファイルを書かず・**必ず exit 0** '
+      + '(UserPromptSubmit の hook が exit 2 で終わると指示そのものが止まるので、指示を止める判断を 1 つも持たない)。'
+      + '**なぜ要るか**: 基準が散文にしか無いと、軽い指示に重い検証を掛け、重い指示を軽い手で片付ける形が繰り返される。'
+      + '「続けて」はこのリポジトリでは「次のパスを回す」の合図なので deep に置く。'
+      + '**閉じていない物**: 印は綴りの一致なので、綴りに現れない重さ (短い指示の裏にある大きな仕事) は standard に落ちる —— '
+      + 'そのときはアシスタントが読んで上げる (hook はそれを止めない)。',
+    provenance: ['2026-10-07 (パス 505)'],
+    enforcedBy: [
+      test(T.shared('taskTierPolicy')),
+      test(T.shared('sessionStartCodeGuarded')),
+      gate('lint:mcp-servers'),
+      chain,
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

@@ -2366,10 +2366,18 @@
       "leafCount": 99,
       "note": "update LockScreen.tsx",
       "hash": "ac3fc45beec2049e47bc9da827319fd8211bb06b48713c1e5ac2bd75df8110ed"
+    },
+    {
+      "index": 283,
+      "prevHash": "ac3fc45beec2049e47bc9da827319fd8211bb06b48713c1e5ac2bd75df8110ed",
+      "merkleRoot": "0fa78a55c06d42df6ef2eacf6f0c99a7d383dae5d93d18e23e8dbcb8ddca5e72",
+      "leafCount": 99,
+      "note": "update settings.json",
+      "hash": "2e6fb38e53186448cd707191eaaf263c5ece8d61e1f79d3be6866f9f5013ff4f"
     }
   ],
   "tipManifest": {
-    ".claude/settings.json": "863e3324b3891fc0501306890ebfa18c7dba50fb3ec50906e87ce386d7ceb102",
+    ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
     ".cursor/rules/00-project.mdc": "44a587314329017bbc7f83033ca3c9bcafbfc1fbdcac0776f9ba66685bc49092",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
     ".cursor/rules/20-gates.mdc": "c0c04c750d8127a87b40e9dd8630a281fa929ae5075573810386e33772cac36a",
