@@ -211,6 +211,14 @@ const HOOK_LEDGER = {
     command: 'node scripts/session-context.cjs',
     why: '引継ぎ文書の存在を案内する。リポジトリ内の script なので lint:forbidden が走査し、子プロセスを作る例外も台帳に載っている',
   },
+  // 2026-10-07 (パス 505): 指示のたびに走り、指示のティア (light / standard / deep) と
+  // 推奨する effort・任せる agent を 1 行で文脈へ足す。stdin の JSON を読むだけで、
+  // 子プロセスを作らず・網へ出ず・ファイルを書かない。何があっても exit 0
+  // (UserPromptSubmit の hook が exit 2 で終わると指示そのものが止まる)。
+  'UserPromptSubmit:': {
+    command: 'node scripts/task-tier.cjs',
+    why: '指示のティアを決めて 1 行で案内する (docs/MODEL_EFFORT_POLICY.md)。読むのは stdin だけで、子プロセス・網・書き込みを持たない。必ず exit 0',
+  },
 };
 
 /** 設定から hook を `{key, event, matcher, type, command}` の平らな一覧にする。 */
@@ -263,7 +271,7 @@ function checkHooks(hooks, ledger = HOOK_LEDGER, exists = (rel) => fs.existsSync
     if (m === null) {
       problems.push(
         `${h.key}: コマンド ${JSON.stringify(h.command)} は認めていません —— ` +
-          'セッション開始のたびに手元で走るので、形は `node scripts/<name>.cjs` だけです ' +
+          'セッション開始や指示のたびに手元で走るので、形は `node scripts/<name>.cjs` だけです ' +
           '(シェルの一行・curl・npx はここに置けません)',
       );
       continue;
@@ -473,7 +481,7 @@ function main(argv) {
       `うち資格情報を受け取るもの ${risky} / 台帳 ${CREDENTIALED_UNSCOPED.length}・版は全件が起動時取得)`,
   );
   console.log(
-    `セッション開始時の hook ${hooks.length} 件を台帳と照合 ` +
+    `セッション開始時・指示時の hook ${hooks.length} 件を台帳と照合 ` +
       `(最上位の鍵 ${Object.keys(json).length} / 既知 ${KNOWN_TOP_LEVEL.size})`,
   );
   if (problems.length === 0) {

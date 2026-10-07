@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > まず [`docs/SESSION_HANDOFF.md`](docs/SESSION_HANDOFF.md) を読んでください。
 > 進行中タスク・確立されたパターン・既知の罠・残作業を簡潔にまとめています。
 > `.claude/settings.json` の SessionStart hook (`scripts/session-context.cjs`)
-> が自動でこのファイルの存在を案内します。
+> が自動でこのファイルの存在を案内します。指示のたびに走る `UserPromptSubmit` hook
+> (`scripts/task-tier.cjs`) は指示のティアを 1 行で案内します (`docs/MODEL_EFFORT_POLICY.md`)。
 
 ## Project
 
@@ -1731,6 +1732,14 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   `exceptions` へ —— 双方向)。外部サービスへの書き込みを足すときは `shared/api/<service>.ts` に
   `checkX` → `xInit` → `parseCreatedX` を置き、main と `saasWriteWeb.ts` はそれを通す
   (`writeFieldLimits.test.ts` の LEDGERS に `via` 行)。**両ビルドに同じ判定を 2 度書かない。**
+- **指示のティアで、effort と任せる手を決める** (2026-10-07 · パス 505)。指示のたびに
+  `UserPromptSubmit` hook (`scripts/task-tier.cjs`) が `[task-tier] light / standard / deep` の 1 行を
+  文脈へ足す。主セッションのモデルと effort は利用者が `/model` / `/effort` で決める物なので、
+  推奨と違えば**応答の冒頭 1 行**で案内する (作業は止めない)。手を分ける仕事はティアの agent
+  (`scout` = haiku / low・`mechanic` = sonnet / medium・`auditor` = inherit / high —— `.claude/agents/`)
+  へ任せ、deep は Workflow を 1 行で提案する。deep / standard は測る → 直す → 留める → 記録 →
+  全件の門 → 実機 → push まで止めない。正は `scripts/task-tier.cjs` の `TIERS` で、方針は
+  `docs/MODEL_EFFORT_POLICY.md` (`taskTierPolicy.test.ts` が表・agent 定義・文書を双方向に留める)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
