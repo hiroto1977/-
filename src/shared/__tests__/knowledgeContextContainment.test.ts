@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -10,7 +10,7 @@ const DATA = path.join(REPO_ROOT, 'src/renderer/data');
 
 const { loadModuleExports } = require_(
   path.join(REPO_ROOT, 'orchestration/knowledge-context.cjs'),
-) as { loadModuleExports: (file: string) => Record<string, unknown> };
+) as { loadModuleExports: (file: string, root?: string) => Record<string, unknown> };
 
 /*
  * **`new Function` の封じ込めを、注記ではなく動かして確かめる。**
@@ -86,40 +86,64 @@ describe('knowledge-context の new Function は data/ の外を実行しない'
    * **字面の閉じ込めは symlink を見ない。**
    */
   describe('symlink', () => {
-    const linkPath = path.join(DATA, '__containmentProbe.ts');
-    const outsideTs = path.join(REPO_ROOT, '__containmentProbeTarget.ts');
-    afterEach(() => {
-      for (const f of [linkPath, outsideTs]) {
-        try {
-          fs.unlinkSync(f);
-        } catch {
-          /* 無ければよい */
-        }
-      }
+    /*
+     * **探り (link と標的) は追跡された木の外に置く。**
+     *
+     * 2026-10-07 の CI の実測: 探りの link を本物の `src/renderer/data/` に置いていたので、
+     * 同時に走っていた別の検査 (`kdfParamsCensus` —— `src/**` を glob してから読む) が
+     * 一覧に拾い、読む前に `afterEach` が消していて `readOriginalSource` が ENOENT で
+     * 落ちた (1,050 ファイルのうちこの 1 組だけ・手元の 1 回では出ず CI の 1 回で出た)。
+     * 木を歩く census は 10 本以上在り、どれも「一覧に見えた物は読める」を前提にする ——
+     * **検査が追跡された木の中に一時の物を置くと、その前提が破れる窓ができる。**
+     * 根は `loadModuleExports(file, root)` の継ぎ目で渡す (本物の呼び手は渡さない)。
+     * 閉じ込めの算法 (realpath で実体まで辿ってから根の下かを見る) は根に依らない。
+     * 兄弟の `exportSymlinkContainment.test.ts` も最初から `os.tmpdir()` に置いている。
+     */
+    let base: string;
+    let root: string;
+    let outsideDir: string;
+    let linkPath: string;
+    beforeEach(() => {
+      // realpath を通す —— macOS の tmpdir は symlink (/var → /private/var) で、
+      // 根を字面のまま持つと「中を指す link」の陰性が外れて見える。
+      base = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'containment-')));
+      root = path.join(base, 'data');
+      outsideDir = path.join(base, 'outside');
+      fs.mkdirSync(root);
+      fs.mkdirSync(outsideDir);
+      linkPath = path.join(root, '__containmentProbe.ts');
+    });
+    afterEach(() => fs.rmSync(base, { recursive: true, force: true }));
+
+    it('★ 探りは追跡された木の外に在る (木を歩く別の検査が拾わない)', () => {
+      expect(path.resolve(root).startsWith(REPO_ROOT + path.sep)).toBe(false);
+      // 字面では根の中に見える (でなければ下の検査が空になる)。
+      expect(path.resolve(linkPath).startsWith(root + path.sep)).toBe(true);
     });
 
-    it('★ data/ の中から外を指す symlink は評価しない', () => {
+    it('★ 根の中から外を指す symlink (相対) は評価しない', () => {
+      const outsideTs = path.join(outsideDir, '__containmentProbeTarget.ts');
       fs.writeFileSync(outsideTs, "export const PWNED = 'x';\n", 'utf8');
-      fs.symlinkSync(path.relative(DATA, outsideTs), linkPath);
-      // 前提の確認: 字面では data/ の中に見える (でなければ検査が空になる)。
-      expect(path.resolve(linkPath).startsWith(DATA + path.sep)).toBe(true);
-      expect(() => loadModuleExports(linkPath)).toThrow(/外は評価しません/);
+      fs.symlinkSync(path.relative(root, outsideTs), linkPath);
+      expect(() => loadModuleExports(linkPath, root)).toThrow(/外は評価しません/);
     });
 
-    it('★ リポジトリの外を指す symlink も評価しない', () => {
-      const outside = path.join(os.tmpdir(), `containment-probe-${process.pid}.ts`);
-      fs.writeFileSync(outside, "export const PWNED = 'x';\n", 'utf8');
-      fs.symlinkSync(outside, linkPath);
-      try {
-        expect(() => loadModuleExports(linkPath)).toThrow(/外は評価しません/);
-      } finally {
-        fs.unlinkSync(outside);
-      }
+    it('★ 根の外を指す symlink (絶対) も評価しない', () => {
+      const outsideTs = path.join(outsideDir, `containment-probe-${process.pid}.ts`);
+      fs.writeFileSync(outsideTs, "export const PWNED = 'x';\n", 'utf8');
+      fs.symlinkSync(outsideTs, linkPath);
+      expect(() => loadModuleExports(linkPath, root)).toThrow(/外は評価しません/);
     });
 
-    it('陰性: data/ の中を指す symlink は読める (締めすぎていない)', () => {
-      fs.symlinkSync('academicKnowledge.ts', linkPath);
-      expect(() => loadModuleExports(linkPath)).not.toThrow();
+    it('陰性: 根の中を指す symlink は読める (締めすぎていない)', () => {
+      fs.writeFileSync(path.join(root, 'inside.ts'), "export const OK = 1;\n", 'utf8');
+      fs.symlinkSync('inside.ts', linkPath);
+      expect(loadModuleExports(linkPath, root)).toEqual({ OK: 1 });
+    });
+
+    it('対照: 根を渡さなければ本物の data/ が根で、仮の根の中の実物でも断る', () => {
+      fs.writeFileSync(path.join(root, 'inside.ts'), "export const OK = 1;\n", 'utf8');
+      expect(() => loadModuleExports(path.join(root, 'inside.ts'))).toThrow(/外は評価しません/);
     });
   });
 });
