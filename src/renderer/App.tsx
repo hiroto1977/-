@@ -19,7 +19,7 @@ import { PageErrorBoundary } from './components/PageErrorBoundary';
 import { ShellPartBoundary } from './components/ShellPartBoundary';
 import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import { BestAnswersIndicator } from './components/BestAnswersIndicator';
-import { useChatDocked } from './chatDock';
+import { useChatDocked, useMediaQuery } from './chatDock';
 import {
   PLAN_ORDER,
   PLANS,
@@ -29,6 +29,9 @@ import {
   type PlanTier,
 } from '../shared/plan';
 import { isCancelEscape, isSubmitEnter } from './keyIntent';
+
+/** サイドバーをドロワーにする幅 (`styles.css` の `@media (max-width: 768px)` と同じ数 —— 2 か所の一致は `drawerKeyboard.test.ts` が見る)。 */
+export const DRAWER_QUERY = '(max-width: 768px)';
 
 // True when the renderer is loaded in a plain browser (no Electron preload).
 // The Electron preload sets serviceHub via contextBridge — the web shim adds the
@@ -147,6 +150,12 @@ export function App() {
   const [chatCollapsed, setChatCollapsed] = useState(false);
   const showChatColumn = chatDocked && !chatCollapsed;
   const contentRef = useRef<HTMLElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+  const drawerCloseRef = useRef<HTMLButtonElement>(null);
+  /** サイドバーがドロワーになる幅 (`DRAWER_QUERY` —— CSS の media 規則と同じ数であることは `drawerKeyboard.test.ts` が見る)。 */
+  const drawerLayout = useMediaQuery(DRAWER_QUERY);
   const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
     featured: false,
@@ -260,6 +269,26 @@ export function App() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  /*
+   * ドロワーのキーボードの道 (パス 506 · 実機で測った): 閉じている間、画面の外へ滑らせただけのサイドバーは**まだ焦点を取れた**
+   * (Shift+Tab で見えない 74 項目へ入る)。開いている間は暗幕の後ろの本文へ Tab で逃げられた。どちらも `inert` で閉じる
+   * (押せず・焦点を取れず・読み上げにも出ない)。React 18 は `inert` を属性として知らないので ref で付ける。
+   * 開いたら ✕ へ焦点を運び、閉じたら ☰ へ戻す (WCAG 2.4.3)。デスクトップ (ドロワーでない幅) では何もしない。
+   */
+  // 依存配列を持たない —— 最初の commit は「読み込み中…」の仮の画面で ref が無く、殻が描かれた
+  // commit では幅も開閉も動かないので、依存で縛ると殻の `inert` が 1 度も付かない (jsdom で実測)。
+  // `toggleAttribute` は冪等で安い。焦点を運ぶのは開閉の**遷移**だけ (前の組を ref で覚える)。
+  const drawerPrev = useRef<{ layout: boolean; open: boolean } | null>(null);
+  useEffect(() => {
+    sidebarRef.current?.toggleAttribute('inert', drawerLayout && !navOpen);
+    mainRef.current?.toggleAttribute('inert', drawerLayout && navOpen);
+    const prev = drawerPrev.current;
+    drawerPrev.current = { layout: drawerLayout, open: navOpen };
+    if (!drawerLayout || prev === null || (prev.layout === drawerLayout && prev.open === navOpen)) return;
+    if (navOpen) drawerCloseRef.current?.focus();
+    else if (prev.open) menuBtnRef.current?.focus();
+  });
 
   // activeId → URL ハッシュ同期 + 「最近使った」へ記録。
   useEffect(() => {
@@ -446,12 +475,13 @@ export function App() {
   return (
     <ShellContext.Provider value={shell}>
     <div className={appClass}>
-      <aside className="sidebar">
+      <aside className="sidebar" ref={sidebarRef}>
         <div className="sidebar-top">
           <div className="sidebar-header">サービスハブ</div>
           <button
             type="button"
             className="drawer-close"
+            ref={drawerCloseRef}
             aria-label="メニューを閉じる"
             onClick={() => setNavOpen(false)}
           >
@@ -597,11 +627,12 @@ export function App() {
           {concierge(true)}
         </aside>
       ) : null}
-      <main className="main">
+      <main className="main" ref={mainRef}>
         <header className="topbar">
           <button
             type="button"
             className="menu-btn"
+            ref={menuBtnRef}
             aria-label={navOpen ? 'メニューを閉じる' : 'メニューを開く'}
             aria-expanded={navOpen}
             onClick={() => setNavOpen((o) => !o)}

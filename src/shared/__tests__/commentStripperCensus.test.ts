@@ -226,6 +226,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/__tests__/desktopPathClaims.test.ts',
   'src/renderer/__tests__/deviceStoreWritePolicy.test.ts',
   'src/renderer/__tests__/disclaimerRendered.test.ts',
+  'src/renderer/__tests__/drawerKeyboard.test.ts',
   'src/renderer/__tests__/errorMessageSurfaceCensus.test.ts',
   'src/renderer/__tests__/fixedTickAssertionCensus.test.ts',
   'src/renderer/__tests__/inlineColorCensus.test.ts',

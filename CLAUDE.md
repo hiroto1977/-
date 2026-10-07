@@ -1040,9 +1040,9 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **38 suite / 実測 601 件** (FULL・LITE とも・2026-10-03 パス 504 の実測)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 732 件** (FULL・LITE とも・2026-10-07 パス 506 の実測)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
-                         #   合計の床は実測合計の 85% = **510**)。2026-09-20 (パス 346) まで表は
+                         #   合計の床は実測合計の 85% = **622**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
                          #   `paperAccount` は注記 10 に対し実物 13 で、**その床 8 は実測の 62%** (5 件減っても鳴らない)、
                          #   `theme` の床 10 は 71%、runner の docblock は「実測 (合計 395 件) の 85%」と
@@ -1726,6 +1726,7 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   文面の一致の両方を見る) で照合する。
 - **塗りの上に字を載せるときは、その塗りの字のトークンを使う** (2026-10-02 · パス 503)。`--accent` の上は `--on-accent`・`--gradient` の上は `--on-gradient`・意味色 (`--success` / `--danger` / `--warning` / `--info` / `--text-muted`) の塗りの上は `--on-status`。`--accent` そのものは字に使わない (字の側は `--accent-strong`)。系列の色の上は `src/shared/readableInk.ts` が白か純黒を選ぶ。配色に追随しない面 (白い紙・濃紺の盤) 以外で、塗りの上へ固定の白・黒を直書きしない (`fillInkCensus.test.ts` が構文木で見る)。字のトークンを足したら `themeContrast.test.ts` の台帳 `PAIRS` に載せる地を書く。**トークンの対が合っていても、描く側が別の対を作る** —— 描いた色は実機の `contrast` suite (e2e) が 4 配色 × 全画面で測る。
 - **入力欄の枠と焦点の輪は、台帳の色を使う** (2026-10-03 · パス 504)。入力欄 (`input` / `select` / `textarea` / `GuardedNumber`) の枠は `--control-border`・焦点の輪は `--focus-outline` (= `--accent-strong`)・ポインタを載せた入力欄は `--text-muted`。薄い `--border` / `--border-strong` / `--list-hover-border` を入力欄の枠に使わない (中身が空の欄の輪郭を示す唯一の物なので 3:1 が要る)。`style` に `outline` を書かない (輪は `:focus-visible` の規則が持つ・箱が輪を持つ形は台帳 `OUTLINE_REPLACED_BY_WRAPPER`)。押せる要素を `div` / `span` で作るなら **role=button + tabIndex + Enter / Space** (Enter は `keyIntent` の `isSubmitEnter`) と名前 (`aria-label`) を、展開 `{...}` ではなく属性で 1 つずつ書く (census が読める形)。押す目標は 24×24px (小さくするなら周りに別の目標を置かない)。色を足したいときは、まず `nonTextMarks.ts` の台帳へ (載る地を書いて) —— 測りが先、使うのが後。描いた形は実機の `controls` suite (e2e) が 4 配色 × 全画面で測る。
+- **窓 (`role="dialog"` / `role="alertdialog"`) は `useDialogFocus` を通す** (2026-10-07 · パス 506)。開いたら印 `data-dialog-initial` の操作子へ焦点 (窓は入力欄・確認は**取り消す側**のボタン)・Esc で閉じる / 取り消す (IME の変換確定の Esc は除く)・消えたら押した物へ戻す (`returnTo`)。JSX には `aria-label`・`ref`・`onKeyDown={keys.onKeyDown}` を属性として書く (`dialogSitesCensus.test.ts` が構文木で見る・台帳 `DIALOG_SITES` は両方向)。入口 (🤖) は窓より**前**に描く (DOM の順 = Tab の順)。暗幕で覆う物 (スマホのドロワー) は、開いている間は後ろを・閉じている間は自分を `inert` にする (React 18 は `inert` を知らないので ref で付ける)。スマホ幅の `.main` の地 (`--panel`) は剥がさない (`openedStateCss.test.ts`)。**開く前の物と開いた幅は、開いて・その幅で測る** —— 閉じた 1280px の測定はそれを 1 つも測っていない (実機の `opened` suite)。
 - **規則は散文ではなく `src/shared/ontology/` に置く** (2026-09-19 · パス 321)。新しい法則を学んだら
   `laws.ts` に「何を守るか・出典・執行者」を足す (執行者が prose だけなら文書の「機械の無い法則」に集まる)。
   サービスの facet に新しい関係が見えたら `serviceFacets.ts` の公理に (成り立たないサービスは理由つきの

@@ -1,5 +1,40 @@
 # Service Hub — 残りの作業手順書
 
+## パス 506 (開いた窓とスマホ幅 —— 閉じた静止画面の測定が 1 つも測っていなかった「開く前の物」を開いて測り、dialog のキーボードの道・ドロワーの inert・スマホ幅の地を 3 層で留める) が測って、次のパスへ残した物 (2026-10-07)
+
+- **出発点 (実測)** —— 「続けて」を受け、パス 504 が「残した物」の ③ (開く前のもの —— 折りたたみ・モーダル・ポップオーバー) と、503 / 504 が**閉じた・静止した・1280px** でしか測っていなかったことを測った。既存の測定器 (`contrast.cjs` / `controls.cjs`) をそのまま使い、10-03 の出荷物 (`dist/standalone.html`) に対して 4 配色で: ① 全画面の `<details>` と手入力パネルを開いて、開く前との**多重集合の差**だけを測る ② 浮いたコンシェルジュを開き、1 往復して測る ③ スマホ幅 (390×844) でドロワーとシートを開いて測る ④ 窓・ドロワーの焦点の行き先と Esc と戻り先を Tab で測る ⑤ スマホ幅の全画面の字を 4 配色で測る。結果:
+
+  | 軸 | 直す前 (10-03 の出荷物) | 直した後 |
+  | --- | --- | --- |
+  | details / 手入力パネルを開いた所の字・欄・焦点・目標 | 4 配色 × 1,408 行で**割る物 0** (閉じたときから何も増えない) | 0 (対照として suite に残す) |
+  | 浮いた窓の提案チップ (2.5.8) | **23px** × 4 配色 (6px の間隔では例外も満たさない) | `min-height: 24px` |
+  | 浮いた窓 (`role="dialog"`) のキーボードの道 (APG dialog) | 開いても焦点は 🤖 のまま・窓は DOM で 🤖 より**前**なので Tab が窓を飛ばす・Esc で閉じない・✕ で閉じると焦点は body | 開いたら入力欄・🤖 の後ろ・Esc で閉じて 🤖 へ戻る |
+  | 要望の消去の確認 (`role="alertdialog"`) | 焦点は運ばれず・Esc も効かない | 焦点は「残す」・Esc = 残す・消えたら「📥 要望」へ |
+  | スマホのドロワー | 閉じている間も焦点を取れる (☰ から Shift+Tab で画面の外の 74 項目へ)・開いている間は暗幕の後ろの本文へ Tab で逃げる (1 回目で ♡) | 閉じている間はドロワーが `inert`・開いている間は本文が `inert`・開いたら ✕ へ・閉じたら ☰ へ |
+  | スマホ幅 (≤768px) の全画面の字 (1.4.3) | **かわいい × ライトで 30 画面 212 要素** (3.84〜4.48:1・意味色と節の見出し)・**かわいい × ダークで 10 画面 16 要素**・すっきりは 0 | 0 |
+
+- **原因** —— ① 窓: `ChatbotWidget` は `role="dialog"` と名乗りながら APG の約束 (焦点を中へ・Esc・戻り先) を 1 つも持たず、窓を 🤖 より前に描いていた。② ドロワー: CSS で画面の外へ滑らせるだけで、焦点の母集団からは外していなかった (`inert` も `aria-hidden` も無い)。③ 字: `@media (max-width: 768px)` の `.main { background: transparent }` が本文の地 (`--panel`) を剥がし、字が殻の光輪 (`--glow-2` = かわいい × ライトで `#e8dfff`) の上に直に載っていた。字の台帳 (`themeContrast.test.ts` の `PAIRS`) が測る地は `--panel` までで、**光輪だけの地はどの台帳も持たない** —— **表の対が合っていても、媒体規則が地を剥がす** (パス 503 / 504 の「描く側が別の対を作る」の、幅についての現れ)。
+- **直し** —— ① `src/renderer/components/useDialogFocus.ts` (hook 1 つ): 開いたら印 `data-dialog-initial` の操作子へ焦点 (窓は入力欄・確認は**取り消す側**のボタン —— 「残す」「やめる」「取消」)・Esc = 閉じる / 取り消す (`keyIntent` の `isCancelEscape` —— IME の変換確定の Esc は除く・`stopPropagation` で確認の Esc が窓まで閉じない)・消えたら `returnTo` (押した物) へ戻す (無ければ開いた時の `activeElement`・body には戻さない)。`ChatbotWidget` の 3 つ (窓・要望の消去・実行確認) と `VoiceCommandBar` の確認が読む。🤖 は窓より前に描く (`position: fixed` なので見た目は変わらない)。② `App.tsx`: `DRAWER_QUERY` (= CSS の `@media (max-width: 768px)` —— 2 か所の一致は検査が見る) の幅で、`.sidebar` / `.main` の `inert` を開閉に合わせて付け外し (React 18 は `inert` を属性として知らないので ref の `toggleAttribute`)、開いたら ✕・閉じたら ☰ へ焦点。**依存配列を持たない効果** —— 最初の commit は「読み込み中…」の仮の画面で ref が無く、殻が描かれた commit では幅も開閉も動かないので、依存で縛ると殻の `inert` が 1 度も付かない (jsdom で実測して直した)。③ `styles.css`: スマホの `.main` の `background: transparent` を外し (地は `--panel` のまま)、`.concierge-chips button { min-height: 24px }`。④ `scripts/lib/controls.cjs` の `present()` は `inert` の下を「無い」と数える (閉じたドロワーの 74 項目を焦点の母集団に入れない)。
+- **機械 (3 層)** —— ① jsdom で実物を描いて押す: `conciergeDialogFocus.test.ts` (7 件 —— 開いたら入力欄・窓は 🤖 の後ろ・Esc で閉じて 🤖 へ・IME の Esc では閉じない・✕ でも 🤖 へ・列は窓ではない・alertdialog は「残す」へ / Esc で 📥 へ戻り窓は残る)・`drawerKeyboard.test.ts` (4 件 —— 閉じて inert / 開いて本文 inert + ✕ / Esc で ☰・項目を選んでも戻る・デスクトップでは何もしない・`DRAWER_QUERY` == CSS の media 規則 + コードに 768px は定数の 1 か所)・`useDialogFocus.test.ts` (9 件 —— 焦点の先と戻り先の純関数)。② 構文木と CSS の規則: `dialogSitesCensus.test.ts` (5 件 —— `role` が dialog / alertdialog になり得る JSX (字面・条件式の枝・const) を走査し、台帳 `DIALOG_SITES` 4 行と**両方向**・名前と `ref` と `onKeyDown`・そのファイルは hook を import して呼ぶ・hook を呼ぶのに dialog が無いファイルは無い)・`openedStateCss.test.ts` (3 件 —— スマホの `.main` は `background` を上書きしない・チップは 24px 以上・直す前の形を落とす標本)。③ 実機の **`opened` suite (e2e の 39 番目・131 件)** —— 4 配色 × details / 手入力パネルを開いた全画面 (字・欄・つまみ・焦点・目標・ポインタ専用) + 浮いた窓のキーボードの道 9 項目 + スマホ 412×915 × 4 配色 (ドロワー 5 項目・シート 9 項目・全画面の字) + 測定器の対照 2 (inert の下は無い・外の 10px は割る)。法則 **119 本目** `opened-state-measured-where-drawn`。
+- **対照 (回して鳴ったことを確かめた)** —— jsdom / 単体の層 (`controls.sh`・必ず元へ戻し md5 で確かめる): **8 方向すべて鳴り、それぞれ狙った検査に当たる** —— A 入力欄の印 `data-dialog-initial` を外す ❌1 (開いたら入力欄) / B 窓を 🤖 より前に描く ❌1 (DOM の順) / C 確認の alertdialog から `onKeyDown` を外す ❌2 (census「名前・ref・onKeyDown」+ jsdom の Esc) / D `restoreTarget` が常に null ❌5 (hook 1 + 窓 2 + 確認 2) / E ドロワーの `inert` を外す ❌2 / F1 チップを 23px へ ❌1 / F2 スマホの `.main` を `transparent` へ ❌1 / H 台帳から 1 行消す ❌1 —— 復帰は md5 で一致・28 / 28。測定器: `controls.cjs` の `present()` から `inert` の判定を外した写しを about:blank の探りに当てると「inert の下は無い」が ❌ になり、「外の 10px は割る」は ✅ のまま (針は生きている)。実機の `opened` suite は直す前の出荷物に対しても回していない (直す前の形は上の表 = 探りの実測で持つ)。
+- **測って何も無かった物** —— **書き込みの確認 (`pendingIntent` / 音声の確認) へ届く道は今日無い**: `VOICE_WRITE_REQUIREMENTS` の 7 行はどれも必須欄を持ち、解析器は `params` を 1 つも設定しないので `voiceWriteRefusal` が常に断る (部品の注記が 2026-09-09 から述べている当のこと)。確認の alertdialog は同じ hook で配線したが、振る舞いでは jsdom からも実機からも押せない —— 配線は census (構文木) と hook の単体が持つ。ポップオーバーは今日 0 件。
+- **実測 (最終のコード)** —— <!-- 506-MEASURED -->
+- ★ **既知の罠 (このパスで踏んだ)**:
+  - **依存配列が「殻が描かれる前」を見ない** —— `useEffect(…, [drawerLayout, navOpen])` は仮の画面 (読み込み中) で 1 度走って ref が無く、殻が来ても再実行されない。jsdom の検査が 5 秒待って落ちて分かった (`DRAWER-EFFECT true false false undefined` と刷らせて確かめた)。
+  - **検査は緑なのに `typecheck` だけが捕まえた (パス 373 以来 14 度目)** —— `find()` の `undefined` を `Element | null` へ渡した形・`createElement(Component, props)` に all-optional の props の型を渡すと `Attributes` と重なりが無いと鳴る (`{ key, ...props }` で重ねる)・`waitForElement(() => q(sel))` は `q` の既定の型引数が文脈で `Element` に落ちる (`q<HTMLElement>` と書く)。vitest は型を剥がすので 3 つとも検査は通った。
+  - **`useDialogFocus(` の綴りを数える census は、hook 自身の定義を「呼んでいる」と数えた** (`export function useDialogFocus(`) —— import している物だけを呼び手と数える形へ。
+  - **新しい読み手・検査は既存の台帳 3 本に当たる (設計どおり)** —— `keyIntentCensus` (Esc を読む口が 1 つ増えた → 13 → 14 か所)・`commentStripperCensus` (`stripComments` を読む本 +1)・`e2eSuiteFloors` (38 → 39 suite・合計 601 → 732)。
+  - **`present()` の対照は `module._compile` で写しを読むと `require('./contrast.cjs')` が解決しない** —— `m.filename` を置く (置かないと相対の require の基点が無い)。
+  - **background の `( … ) &` は親の shell へ即座に exit 0 で戻る** —— 「完了」の通知は包みの物で、中身はまだ走っている。結果はログの `exit=` を待って読む。
+- **残した物 (次のパス)** ——
+  ① **書き込みの確認は届かない状態のまま** (上) —— 解析器が `params` を設定しない限り、chat の「実行確認」と音声の確認 (`refusal === null` の枝) は死んだ UI である。直すなら解析器に欄を読ませる (必須欄の台帳は `writeFieldLimits.ts`)。
+  ② **タブレット幅 (769〜1199px)** は測っていない (ドロワーでも列でもない幅)。
+  ③ **開いた後に続く操作途中の状態** (打っている最中・選択・無効) と **ポップオーバー** (今日 0 件)。
+  ④ **`--accent` のグラフィック (1.4.11)・テキスト間隔 (1.4.12)・canvas・チャートの線** はパス 504 の ①④ のまま。
+  ⑤ **♡ の入れ子の操作子**はパス 504 の ⑤ のまま。
+  ⑥ **`useDialogFocus.ts` / `controls.cjs` / `readableInk.ts` は変異検査の `mutate` の外** (hook は単体 9 件 + jsdom 7 + 4 件で留めている)。
+  ⑦ **modal にはしていない** —— 浮いた窓も確認も Tab を中に閉じ込めない (`aria-modal` 無し)。窓は画面と並んで使う物なので閉じ込めないのは意図だが、確認 (alertdialog) は閉じ込める形が APG の既定。閉じ込めるなら 1 つの hook に足す。
+
 ## パス 505 (運用: 指示のティアで effort と任せる手を決める) が残した物 (2026-10-07)
 
 - **主セッションのモデル / effort は自動では変わらない** (`/model` / `/effort` は利用者の口)。hook は推奨を 1 行で見せるだけ。

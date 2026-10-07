@@ -4895,6 +4895,404 @@ async function controlsSuite(browser) {
   await pctx.close();
 }
 
+/**
+ * **開いた窓とスマホ幅** (2026-10-07 · パス 506)。パス 503 / 504 は**閉じた・静止した・1280px** の画面しか測っていない。
+ * ここは「開く前の物」を開いて測る —— `<details>` と手入力パネルを開いた全画面 (4 配色)・浮いたコンシェルジュ
+ * (窓・提案チップ・確認の alertdialog・キーボードの道)・スマホ (412×915) のドロワーとシート・スマホ幅の全画面の字 (4 配色)。
+ *
+ * 直す前の実測 (2026-10-07 · 10-03 の出荷物):
+ * - details / 手入力パネルを開いた所: 4 配色 × 1,408 行 → 割る字 0・欄 0 (閉じたときから何も増えない —— 対照として残す)。
+ * - 浮いた窓の提案チップ: **23px** (WCAG 2.5.8 を割る) が 4 配色すべて。
+ * - 浮いた窓: 開いても焦点は 🤖 のまま・窓は DOM で 🤖 より**前**なので Tab が窓を飛ばす・Esc で閉じない・✕ で閉じると焦点は body。
+ *   要望の消去の alertdialog も同じ (焦点は運ばれず・Esc は効かない)。
+ * - スマホのドロワー: 閉じている間も焦点を取れ (☰ から Shift+Tab で見えない 74 項目へ入る)・開いている間は暗幕の後ろの本文へ Tab で逃げる。
+ * - スマホ幅の字: かわいい × ライトで **30 画面 212 要素** (3.84〜4.48:1)・かわいい × ダークで 10 画面 16 要素 —— 原因は
+ *   `@media (max-width: 768px)` の `.main { background: transparent }` (本文の字が殻の光輪の上に直に載る)。
+ *
+ * 測定器: 字は `contrast.cjs`・操作子は `controls.cjs` (パス 503 / 504 と同じ 1 つ)。`controls.cjs` の `present()` は `inert` の下を
+ * 「無い」と数える (閉じたドロワーの 74 項目を焦点の母集団に入れない) —— その対照は末尾の about:blank の探り。
+ * 待ちは状態で取る (描き終わり・`.app.nav-open`・窓の有無)。固定の待ちは持たない。
+ */
+async function openedSuite(browser) {
+  console.log('--- 開いた窓とスマホ幅 (details / 手入力 / 浮いた窓 / ドロワー / 412px · 4 配色 · WCAG 2.x AA + APG dialog) ---');
+  const { sweepExpression, violationsOf } = require('../lib/contrast.cjs');
+  const L = require('../lib/controls.cjs');
+  const C = L.controlMath();
+  const textExpr = sweepExpression();
+  const ctlExpr = L.controlsExpression({ focusSample: 24 });
+  const CONFIGS = [
+    { name: 'すっきり × ライト', design: 'clean', theme: 'light' },
+    { name: 'すっきり × ダーク', design: 'clean', theme: 'dark' },
+    { name: 'かわいい × ライト', design: 'cute', theme: 'light' },
+    { name: 'かわいい × ダーク', design: 'cute', theme: 'dark' },
+  ];
+  const STILL = '*{animation:none!important;transition:none!important;caret-color:transparent!important}';
+  /** 描き終わるまで待つ: DOM の要素数が 3 回続けて同じ (最大 3 秒)。 */
+  const settled = (page) =>
+    page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          let last = -1;
+          let same = 0;
+          const t0 = performance.now();
+          const tick = () => {
+            const n = document.body.querySelectorAll('*').length;
+            same = n === last ? same + 1 : 0;
+            last = n;
+            if (same >= 2 || performance.now() - t0 > 3000) resolve(n);
+            else setTimeout(tick, 60);
+          };
+          tick();
+        }),
+    );
+  /** 要望を 1 件置いておく (「📥 要望」で alertdialog が出る条件)。 */
+  const REQUEST = { text: '経費精算の機能を作ってほしい', at: '2026-10-07T00:00:00.000Z' };
+  const init = (page, cfg) =>
+    page.addInitScript(
+      ([theme, design, req]) => {
+        localStorage.setItem('servicehub.plan', 'enterprise');
+        localStorage.setItem('servicehub.theme', theme);
+        localStorage.setItem('servicehub.design', design);
+        localStorage.setItem('chatbot-requests', JSON.stringify([req]));
+      },
+      [cfg.theme, cfg.design, REQUEST],
+    );
+  /** キーボードの様式にする (Tab → Shift+Tab) —— さもないと `:focus-visible` が一致せず、輪の規則が掛からない。 */
+  const modality = async (page) => {
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Shift+Tab');
+  };
+  const screenIds = async (page, phone) => {
+    if (phone) {
+      const t = page.locator('button.menu-btn').first();
+      if ((await t.count()) > 0) await t.click();
+    }
+    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
+      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
+    }
+    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
+    if (phone) await page.keyboard.press('Escape');
+    return ids;
+  };
+  const tag = (rows, label) => rows.map((r) => ({ ...r, page: label }));
+  const textSummary = (rows) => {
+    const g = new Map();
+    for (const r of rows) {
+      const k = `${r.key}|${r.fg}|${r.bg}|${r.ratio}`;
+      const e = g.get(k) || { r, n: 0, pages: new Set() };
+      e.n += 1;
+      e.pages.add(r.page);
+      g.set(k, e);
+    }
+    return [...g.values()]
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 6)
+      .map((e) => `${e.r.key} ${e.r.fg}/${e.r.bg} ${e.r.ratio}:1×${e.n}行/${e.pages.size}画面`)
+      .join(' / ');
+  };
+  const ctlSummary = (rows, keyOf, show) =>
+    L.groupBy(rows, keyOf)
+      .slice(0, 6)
+      .map((g) => `${show(g.sample)} ${g.sample.sig}×${g.n}行/${g.pages.size}画面`)
+      .join(' / ');
+  /** いま焦点を持つ物 (何が・どこの中か)。 */
+  const active = (page) =>
+    page.evaluate(() => {
+      const a = document.activeElement;
+      if (!a || a === document.body) return { body: true };
+      return {
+        body: false,
+        tag: a.tagName.toLowerCase(),
+        cls: String(a.className || ''),
+        label: a.getAttribute('aria-label'),
+        text: (a.textContent || '').trim().slice(0, 20),
+        inDialog: !!a.closest('[role="dialog"]'),
+        inAlert: !!a.closest('[role="alertdialog"]'),
+        inSidebar: !!a.closest('.sidebar'),
+        inMain: !!a.closest('.main'),
+      };
+    });
+  const inertOf = (page) =>
+    page.evaluate(() => ({
+      sidebar: document.querySelector('.sidebar')?.hasAttribute('inert') ?? null,
+      main: document.querySelector('.main')?.hasAttribute('inert') ?? null,
+    }));
+  /** その画面の「開く前の物」を全部開く: `<details>` と手入力パネル (aria-expanded=false のボタン)。 */
+  const openAll = (page) =>
+    page.evaluate(() => {
+      const o = { details: 0, manual: 0 };
+      for (const d of document.querySelectorAll('details:not([open])')) {
+        d.open = true;
+        o.details += 1;
+      }
+      for (const b of document.querySelectorAll('[data-manual-data] button[aria-expanded="false"]')) {
+        b.click();
+        o.manual += 1;
+      }
+      return o;
+    });
+  const emptyAcc = () => ({ screens: 0, opened: { details: 0, manual: 0 }, text: [], fields: [], focus: [], targets: [], mouseOnly: [], sliders: [] });
+  const measureInto = async (acc, page, label) => {
+    await modality(page);
+    acc.text.push(...tag(await page.evaluate(textExpr), label));
+    const r = await page.evaluate(ctlExpr);
+    for (const k of ['fields', 'focus', 'targets', 'mouseOnly', 'sliders']) acc[k].push(...tag(r[k], label));
+  };
+  /** 字と操作子の 6 つの主張 (1 つの溜まりに対して)。 */
+  const assertAcc = (label, acc, minScreens, minText) => {
+    const textV = violationsOf(acc.text);
+    const fieldV = L.fieldViolations(acc.fields, C);
+    const sliderV = L.sliderViolations(acc.sliders, C);
+    const focusV = L.focusViolations(acc.focus);
+    const targetV = L.targetViolations(acc.targets);
+    const focused = acc.focus.filter((r) => r.focused).length;
+    ok(
+      acc.screens >= minScreens && acc.text.length >= minText,
+      `opened[${label}]: 測れた (画面 ${acc.screens}・開いた details ${acc.opened.details} + 手入力パネル ${acc.opened.manual}・字 ${acc.text.length} 行・欄 ${acc.fields.length}・焦点を取った ${focused}・目標 ${acc.targets.length})`,
+    );
+    ok(
+      textV.length === 0,
+      `opened[${label}]: ★ 字は 4.5:1 (大きい字 3:1) 以上 (WCAG 1.4.3)${textV.length ? ` · 割った ${textV.length} 行: ${textSummary(textV)}` : ''}`,
+    );
+    ok(
+      fieldV.length === 0 && sliderV.length === 0,
+      `opened[${label}]: ★ 入力欄の輪郭とつまみは 3:1 以上 (1.4.11) (欄 ${acc.fields.length}・つまみ ${acc.sliders.length}${fieldV.length + sliderV.length ? ` · 割った ${fieldV.length + sliderV.length}: ${ctlSummary([...fieldV, ...sliderV], (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''})`,
+    );
+    ok(
+      focusV.length === 0,
+      `opened[${label}]: ★ 焦点の輪は幅 2px 以上・3:1 以上で、焦点を取って見える (2.4.7・1.4.11) (測った ${focused}${focusV.length ? ` · 割った ${focusV.length}: ${ctlSummary(focusV, (r) => `${r.sig}|${r.best}|${r.reveals}`, (r) => `${r.best}:1${r.reveals === false ? ' (焦点で現れない)' : ''}`)}` : ''})`,
+    );
+    ok(
+      targetV.length === 0,
+      `opened[${label}]: ★ 押せる大きさ 24×24px (間隔の例外つき・2.5.8) を割る目標が無い (24px 未満 ${acc.targets.length}${targetV.length ? ` · 割った ${targetV.length}: ${ctlSummary(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
+    );
+    ok(
+      acc.mouseOnly.length === 0,
+      `opened[${label}]: ★ ポインタでしか押せない操作子が無い (2.1.1)${acc.mouseOnly.length ? ` · ${acc.mouseOnly.length}: ${ctlSummary(acc.mouseOnly, (r) => `${r.sig}|${r.why}`, (r) => r.why)}` : ''}`,
+    );
+  };
+
+  /**
+   * 浮いた窓 (スマホではシート) のキーボードの道と、開いた画面の字・操作子。9 つの主張。
+   * 入口 (🤖) → 開く → 焦点は入力欄 → 窓は 🤖 の後ろ → Shift+Tab は窓の中 → 1 往復の吹き出し → 字と操作子 →
+   * 「📥 要望」→ alertdialog の焦点は「残す」→ Esc で戻る (窓は残る) → Esc で窓が閉じて焦点は 🤖。
+   */
+  const floatingChecks = async (page, label) => {
+    const fab = page.locator('.concierge-fab').first();
+    ok((await fab.count()) === 1 && (await fab.isVisible()), `opened[${label}]: 🤖 (浮いた窓の入口) が見える`);
+    await fab.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[data-concierge="floating"]', { timeout: 10000 });
+    await settled(page);
+    const a1 = await active(page);
+    ok(a1.cls.includes('concierge-input'), `opened[${label}]: ★ 開いたら焦点は入力欄へ (APG dialog) (${JSON.stringify(a1)})`);
+    const info = await page.evaluate(() => {
+      const d = document.querySelector('[role="dialog"]');
+      const f = document.querySelector('.concierge-fab');
+      return {
+        role: d ? d.getAttribute('role') : null,
+        label: d ? d.getAttribute('aria-label') : null,
+        fabBefore: !!(d && f && f.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING),
+      };
+    });
+    ok(
+      info.role === 'dialog' && !!info.label && info.fabBefore,
+      `opened[${label}]: ★ 窓は role=dialog で名前を持ち、🤖 の後ろに描かれる (Tab の順が窓の中へ入る) (${JSON.stringify(info)})`,
+    );
+    await page.keyboard.press('Shift+Tab');
+    const a2 = await active(page);
+    ok(a2.inDialog === true, `opened[${label}]: ★ 入力欄から Shift+Tab しても窓の中 (${JSON.stringify(a2)})`);
+    // 提案チップは開いた直後 (挨拶の提案) に測る —— 返事の後はその返事の提案に入れ替わる (無いこともある)
+    const chips = await page.evaluate(() => [...document.querySelectorAll('.concierge-chips button')].map((b) => Math.round(b.getBoundingClientRect().height)));
+    ok(chips.length >= 2 && chips.every((h) => h >= 24), `opened[${label}]: ★ 提案チップは高さ 24px 以上 (WCAG 2.5.8) (実測 ${JSON.stringify(chips)})`);
+    // 1 往復 (利用者の吹き出しと bot の吹き出しも字の母集団に入れる)
+    await page.locator('.concierge-input').first().fill('売上集計を開いて');
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[data-concierge-role="bot"]', { timeout: 10000 });
+    await settled(page);
+    const acc = emptyAcc();
+    acc.screens = 1;
+    await measureInto(acc, page, `${label} · 窓`);
+    const textV = violationsOf(acc.text);
+    const fieldV = L.fieldViolations(acc.fields, C);
+    const focusV = L.focusViolations(acc.focus);
+    const targetV = L.targetViolations(acc.targets);
+    ok(
+      textV.length === 0 && fieldV.length === 0 && focusV.length === 0 && targetV.length === 0,
+      `opened[${label}]: ★ 窓を開いて 1 往復した画面の字・欄・焦点・目標が基準を割らない (字 ${acc.text.length} 行・欄 ${acc.fields.length}・目標 ${acc.targets.length}${textV.length ? ` · 字 ${textSummary(textV)}` : ''}${fieldV.length ? ` · 欄 ${ctlSummary(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${focusV.length ? ` · 焦点 ${ctlSummary(focusV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${targetV.length ? ` · 目標 ${ctlSummary(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
+    );
+    // 確認 (alertdialog): 📥 要望 → 焦点は取り消す側「残す」→ Esc = 残す → 焦点は 📥 へ・窓は残る
+    const exportBtn = page.getByRole('button', { name: '要望リストをエクスポート' });
+    await exportBtn.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[role="alertdialog"]', { timeout: 10000 });
+    const a3 = await active(page);
+    ok(a3.inAlert === true && a3.text === '残す', `opened[${label}]: ★ 確認 (alertdialog) が出たら焦点は取り消す側「残す」へ (${JSON.stringify(a3)})`);
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('[role="alertdialog"]'), undefined, { timeout: 5000 });
+    const a4 = await active(page);
+    const stillOpen = (await page.locator('[data-concierge="floating"]').count()) === 1;
+    ok(
+      stillOpen && a4.label === '要望リストをエクスポート',
+      `opened[${label}]: ★ 確認の Esc は取り消しで、焦点は押した「📥 要望」へ戻り、窓は閉じない (${JSON.stringify(a4)} 窓 ${stillOpen})`,
+    );
+    await page.locator('.concierge-input').first().focus();
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('[data-concierge="floating"]'), undefined, { timeout: 5000 });
+    const a5 = await active(page);
+    ok(a5.cls.includes('concierge-fab'), `opened[${label}]: ★ Esc で窓が閉じ、焦点は 🤖 へ戻る (${JSON.stringify(a5)})`);
+  };
+
+  // ---- 1. デスクトップ 1280: details / 手入力パネルを開いた全画面 + 浮いた窓 (4 配色) ----
+  const bgs = [];
+  for (const cfg of CONFIGS) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    page.on('download', (d) => d.cancel().catch(() => {}));
+    await init(page, cfg);
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await setupVault(page);
+    await page.addStyleTag({ content: STILL });
+    const applied = await page.evaluate(() => ({
+      design: document.documentElement.getAttribute('data-design'),
+      theme: document.documentElement.getAttribute('data-theme') ?? 'light',
+      bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+    }));
+    bgs.push(applied.bg);
+    ok(applied.design === cfg.design && applied.theme === cfg.theme, `opened[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(applied)})`);
+    const acc = emptyAcc();
+    const ids = await screenIds(page, false);
+    for (const id of ids) {
+      await page.evaluate((i) => {
+        location.hash = i;
+      }, id);
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      const o = await openAll(page);
+      if (o.details + o.manual === 0) continue;
+      await settled(page);
+      acc.screens += 1;
+      acc.opened.details += o.details;
+      acc.opened.manual += o.manual;
+      await measureInto(acc, page, id);
+    }
+    assertAcc(`${cfg.name} · 開いた画面`, acc, 40, 10000);
+    // 浮いた窓 (すっきりは 1280 で列になるので 1100 にして浮かせる)
+    await page.evaluate(() => {
+      location.hash = 'home';
+    });
+    await page.waitForSelector('.sidebar-item[data-service-id="home"][aria-current="page"]', { timeout: 15000 });
+    if (cfg.design === 'clean') await page.setViewportSize({ width: 1100, height: 900 });
+    await settled(page);
+    await floatingChecks(page, cfg.name);
+    await ctx.close();
+  }
+  ok(new Set(bgs).size === 4, `opened: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
+
+  // ---- 2. スマホ 412×915: ドロワーのキーボードの道・シート・全画面の字 (4 配色) ----
+  for (const cfg of CONFIGS) {
+    const label = `スマホ · ${cfg.name}`;
+    const ctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+    const page = await ctx.newPage();
+    page.on('download', (d) => d.cancel().catch(() => {}));
+    await init(page, cfg);
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await setupVault(page);
+    await page.addStyleTag({ content: STILL });
+    await settled(page);
+    const closed = await inertOf(page);
+    ok(closed.sidebar === true && closed.main === false, `opened[${label}]: ★ 閉じたドロワーは inert (画面の外へ滑らせた 74 項目が焦点を取らない) (${JSON.stringify(closed)})`);
+    const menu = page.locator('button.menu-btn').first();
+    await menu.focus();
+    await page.keyboard.press('Shift+Tab');
+    const back = await active(page);
+    ok(back.inSidebar !== true, `opened[${label}]: ★ ☰ から Shift+Tab しても閉じたドロワーへ入らない (${JSON.stringify(back)})`);
+    await menu.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('.app.nav-open', { timeout: 10000 });
+    await settled(page);
+    const a1 = await active(page);
+    const opened = await inertOf(page);
+    ok(
+      a1.cls.includes('drawer-close') && opened.main === true && opened.sidebar === false,
+      `opened[${label}]: ★ 開いたら焦点は ✕ へ・暗幕の後ろの本文は inert (${JSON.stringify(a1)} ${JSON.stringify(opened)})`,
+    );
+    let behind = null;
+    for (let i = 0; i < 90 && behind === null; i++) {
+      await page.keyboard.press('Tab');
+      const a = await active(page);
+      if (a.inMain === true) behind = { step: i + 1, a };
+    }
+    ok(behind === null, `opened[${label}]: ★ 開いている間、Tab は暗幕の後ろの本文へ出ない (90 回)${behind ? ` · ${behind.step} 回目で ${JSON.stringify(behind.a)}` : ''}`);
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+    const a2 = await active(page);
+    const after = await inertOf(page);
+    ok(
+      a2.cls.includes('menu-btn') && after.sidebar === true && after.main === false,
+      `opened[${label}]: ★ Esc で閉じると焦点は ☰ へ戻り、本文の inert は外れてドロワーが inert に戻る (${JSON.stringify(a2)} ${JSON.stringify(after)})`,
+    );
+    await floatingChecks(page, label);
+    // 全画面の字 (スマホ幅の地は `.main` の `--panel` —— `transparent` だと光輪の上に字が載る)
+    const acc = { screens: 0, text: [] };
+    const ids = await screenIds(page, true);
+    for (const id of ids) {
+      await page.evaluate((i) => {
+        location.hash = i;
+      }, id);
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      acc.screens += 1;
+      acc.text.push(...tag(await page.evaluate(textExpr), id));
+    }
+    const textV = violationsOf(acc.text);
+    ok(acc.screens >= 60 && acc.text.length >= 8000, `opened[${label}]: 全画面の字を測れた (画面 ${acc.screens}・字 ${acc.text.length} 行)`);
+    ok(
+      textV.length === 0,
+      `opened[${label}]: ★ スマホ幅の全画面の字は 4.5:1 (大きい字 3:1) 以上 (WCAG 1.4.3)${textV.length ? ` · 割った ${textV.length} 行 / ${new Set(textV.map((r) => r.page)).size} 画面: ${textSummary(textV)}` : ''}`,
+    );
+    await ctx.close();
+  }
+
+  // ---- 3. 測定器そのものの対照 (about:blank): inert の下は「無い」と数える ----
+  const pctx = await browser.newContext({ viewport: { width: 800, height: 600 } });
+  const pp = await pctx.newPage();
+  await pp.goto('about:blank');
+  await pp.addStyleTag({ content: 'body{margin:0;background:#ffffff;font:14px sans-serif}' });
+  await pp.evaluate(() => {
+    const host = document.createElement('div');
+    host.style.cssText = 'position:relative;width:780px;height:560px';
+    const add = (parent, probe, style) => {
+      const b = document.createElement('button');
+      b.setAttribute('data-probe', probe);
+      b.setAttribute('aria-label', probe);
+      b.style.cssText = style;
+      b.textContent = '·';
+      parent.appendChild(b);
+    };
+    const box = document.createElement('div');
+    box.setAttribute('inert', '');
+    box.style.cssText = 'position:absolute;left:10px;top:10px';
+    add(box, 'inside-inert', 'width:10px;height:10px;padding:0');
+    host.appendChild(box);
+    add(host, 'outside-a', 'position:absolute;left:10px;top:200px;width:10px;height:10px;padding:0');
+    add(host, 'outside-b', 'position:absolute;left:22px;top:200px;width:10px;height:10px;padding:0');
+    document.body.appendChild(host);
+  });
+  await modality(pp);
+  const probe = await pp.evaluate(L.controlsExpression({ focusSample: 50 }));
+  const has = (rows, name) => rows.some((r) => r.html.includes(`data-probe="${name}"`));
+  ok(
+    !has(probe.targets, 'inside-inert') && !has(probe.focus, 'inside-inert'),
+    `opened: 対照 ★ inert の下の操作子は「無い」と数える (閉じたドロワーの項目を母集団に入れない) (目標 ${probe.targets.length}・焦点 ${probe.focus.length})`,
+  );
+  ok(
+    has(probe.targets, 'outside-a') && has(probe.focus, 'outside-a') && L.targetViolations(probe.targets.filter((r) => r.html.includes('data-probe="outside-'))).length === 2,
+    'opened: 対照 inert の外の 10px の目標 2 つは数えて、間隔の例外を満たさず割ったと測る (針は生きている)',
+  );
+  await pctx.close();
+}
+
 async function hardResetSuite(browser) {
   console.log('--- ハードリセットは保管庫だけでなく全媒体を消す (パス 136) ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -5201,6 +5599,8 @@ function installWaitMarginRecorder(browser) {
     ['contrast', contrastSuite, 17],
     // パス 504: 操作子の輪郭・焦点の輪・押せる大きさ・キーボード・名前を実機で 4 配色 × 全画面 + スマホ。実測値は初回の実行で確かめる
     ['controls', controlsSuite, 61],
+    // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
+    ['opened', openedSuite, 131],
     ['tablet', tabletSuite, 2],
     ['shell', shellSuite, 27],
   ];

@@ -109,9 +109,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     expect(code).not.toMatch(staleFails);
   });
 
-  it('★ 38 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(38);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(38);
+  it('★ 39 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(39);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(39);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -168,7 +168,12 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     //   配色が実際に切り替わっている・4 配色の地の色が別・測定器の対照 14 —— 薄い枠 / 濃い枠 / 塗りの差 / 枠も塗りも無い欄 /
     //   囲む箱の枠 / 輪 3px / 輪を消した・1px・薄い輪 / ホバーでだけ現れる物 / 焦点でも現れる物 / 隣り合う 10px / 孤立した 10px /
     //   24px / ポインタだけの div と tabindex の無い role / 名前の空のボタン) + ポインタを載せたサイドバーの検索の枠 3:1 (4 配色) = 601
-    expect(sumMeasured).toBe(601);
+    // + 2026-10-07 (パス 506) の opened suite 131 (4 配色 × details / 手入力パネルを開いた全画面の字・欄・焦点・目標・ポインタだけの
+    //   操作子 (6 × 4) + 配色の確認 (4) + 浮いた窓のキーボードの道 (開いたら入力欄・🤖 の後ろ・Shift+Tab は窓の中・提案チップ 24px・
+    //   1 往復した画面の字と操作子・alertdialog の焦点は「残す」・Esc で 📥 へ戻る・Esc で閉じて 🤖 へ戻る: 9 × 4) + 4 配色の地が別 (1)
+    //   + スマホ 412×915 × 4 配色 (閉じたドロワーは inert・☰ から Shift+Tab で入らない・開いたら ✕ へ焦点と本文の inert・Tab は本文へ
+    //   出ない・Esc で ☰ へ戻る: 5 + シートの 9 + 全画面の字 2 = 16 × 4) + 測定器の対照 2 (inert の下は無い・外の 10px は割る) = 732
+    expect(sumMeasured).toBe(732);
   });
 });
 

@@ -1254,7 +1254,8 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .concierge-confirm-actions { display: flex; gap: 6px; margin-top: 6px; }
 .concierge-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px 4px; }
 .concierge.docked .concierge-chips { padding: 4px 16px 6px; }
-.concierge-chips button { font-size: 11.5px; border-radius: 999px; padding: 3px 10px; }
+/* 提案のチップは押せる大きさ (WCAG 2.5.8: 24px 以上)。字の高さのままだと 23px で、6px の間隔では例外も満たさない (パス 506)。 */
+.concierge-chips button { font-size: 11.5px; border-radius: 999px; padding: 3px 10px; min-height: 24px; }
 .concierge-form {
   display: flex;
   align-items: center;
@@ -1381,7 +1382,10 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   }
   .app.nav-open .sidebar { transform: translateX(0); }
   .app.nav-open .sidebar-backdrop { display: block; }
-  .main { margin: 0; border: none; border-radius: 0; box-shadow: none; background: transparent; }
+  /* 地 (`--panel`) は残す —— `transparent` にすると本文の字が光輪 (`--glow-*`) の上に直に載り、意味色 (成功 / 注意 / 危険 / 情報) と
+     節の見出しが 4.5:1 を割る (2026-10-07 パス 506 の実測: かわいい × ライトで 30 画面 212 要素・3.84〜4.48:1)。字の台帳
+     (`themeContrast.test.ts`) が測る地は `--panel` までで、光輪だけの地は持たない。 */
+  .main { margin: 0; border: none; border-radius: 0; box-shadow: none; }
   .content { padding: 16px 16px calc(96px + env(safe-area-inset-bottom)); }
   .topbar { padding: 0 12px; gap: 10px; }
   .scroll-top { right: 72px; bottom: 16px; }

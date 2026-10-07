@@ -7,6 +7,16 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-07) — パス 506: 開いた窓とスマホ幅 —— 閉じた静止画面の測定が 1 つも測っていなかった「開く前の物」を開いて測り、dialog のキーボードの道・ドロワーの `inert`・スマホ幅の地を 3 層で留める
+
+- **見つけた物** —— パス 503 / 504 の実機の測定は**閉じた・静止した・1280px** の画面だけだった。同じ測定器で「開く前の物」を開いて測ると: `<details>` と手入力パネルを開いた所は 4 配色 × 1,408 行で**割る物 0** (閉じたときから増えない)。本物は 3 つ —— ① 浮いたコンシェルジュ (`role="dialog"`) とその確認 (`role="alertdialog"`) が APG の dialog の約束を 1 つも持たず (開いても焦点は 🤖・窓は DOM で 🤖 より**前**なので Tab が窓を飛ばす・Esc で閉じない・✕ で閉じると焦点は body)、提案チップは **23px** (2.5.8)。② スマホのドロワーは閉じている間も焦点を取れ (☰ から Shift+Tab で画面の外の 74 項目へ)、開いている間は暗幕の後ろの本文へ Tab で逃げる。③ **スマホ幅 (≤768px) の全画面の字が、かわいい × ライトで 30 画面 212 要素 (3.84〜4.48:1)・かわいい × ダークで 10 画面 16 要素**割った —— 原因は `@media (max-width: 768px)` の `.main { background: transparent }` (本文の字が殻の光輪の上に直に載る。字の台帳が測る地は `--panel` まで)。**表の対が合っていても、媒体規則が地を剥がす。**
+- **直し** —— `src/renderer/components/useDialogFocus.ts` (hook 1 つ: 開いたら印 `data-dialog-initial` の操作子へ —— 窓は入力欄・確認は**取り消す側**・Esc = 閉じる / 取り消す (IME の変換確定は除く)・消えたら押した物へ戻す) を `ChatbotWidget` の 3 つと `VoiceCommandBar` の確認が読み、🤖 を窓より前に描く。`App.tsx` は `DRAWER_QUERY` (= CSS の `@media (max-width: 768px)`) の幅で `.sidebar` / `.main` の `inert` を開閉に合わせて付け外し (ref の `toggleAttribute`・**依存配列を持たない効果** —— 最初の commit は「読み込み中…」で ref が無い)、開いたら ✕・閉じたら ☰ へ焦点。CSS はスマホの `.main` の地を残し、チップを `min-height: 24px`。測定器 `controls.cjs` の `present()` は `inert` の下を「無い」と数える。
+- **機械 (3 層)** —— ① jsdom で実物を描いて押す: `conciergeDialogFocus.test.ts` (7 件)・`drawerKeyboard.test.ts` (4 件)・`useDialogFocus.test.ts` (9 件) ② 構文木と CSS: `dialogSitesCensus.test.ts` (5 件・`role` が dialog の JSX は名前・`ref`・`onKeyDown` を持ち hook を呼ぶ・台帳 `DIALOG_SITES` 4 行は両方向)・`openedStateCss.test.ts` (3 件) ③ 実機の **`opened` suite (e2e の 39 番目・131 件)** —— 4 配色 × 開いた全画面の字と操作子・浮いた窓のキーボードの道 9 項目・スマホ 412×915 × 4 配色 (ドロワー 5・シート 9・全画面の字 2)・測定器の対照 2。法則 **119 本目** `opened-state-measured-where-drawn`。**対照 8 方向すべて鳴り、それぞれ狙った検査に当たる** (A 入力欄の印を外す ❌1 / B 窓を 🤖 より前に ❌1 / C 確認の `onKeyDown` を外す ❌2 / D `restoreTarget` が常に null ❌5 / E ドロワーの `inert` を外す ❌2 / F1 チップ 23px ❌1 / F2 スマホの `.main` を `transparent` へ ❌1 / H 台帳から 1 行消す ❌1・復帰は md5 で一致)。測定器の対照: `present()` から `inert` を外した写しは「inert の下は無い」が ❌・「外の 10px は割る」は ✅ のまま。
+- **測って何も無かった物** —— 書き込みの確認 (`pendingIntent` / 音声の確認) は同じ hook で配線したが、**今日その状態へ届く道は無い** (7 つの書き込みはどれも必須欄を持ち、解析器は `params` を設定しない)。ポップオーバーは今日 0 件。
+- **検証** —— <!-- 506-H-MEASURED -->
+- ★ **既知の罠 (このパスで踏んだ)**: 依存配列が「殻が描かれる前」を見ない (仮の画面で 1 度走って ref が無く、殻が来ても再実行されない) / 検査は緑なのに `typecheck` だけが 3 つ捕まえた (`find()` の `undefined`・all-optional の props と `Attributes`・`q()` の既定の型引数が文脈で `Element` に落ちる) / `useDialogFocus(` の綴りの census は hook 自身の定義を「呼んでいる」と数えた / 新しい読み手と検査は既存の台帳 3 本に当たる (`keyIntentCensus` 13 → 14・`commentStripperCensus` +1・`e2eSuiteFloors` 38 → 39 / 601 → 732) / `module._compile` の写しは `m.filename` が無いと相対の `require` が解決しない / background の `( … ) &` の完了通知は包みの物で、中身はまだ走っている。
+- **残した物** → `docs/REMAINING_WORK.md` の「パス 506」(書き込みの確認は届かない状態のまま・タブレット幅・操作途中の状態・ポップオーバー・`--accent` のグラフィック・♡ の入れ子・`useDialogFocus.ts` / `controls.cjs` は `mutate` の外・modal にはしていない)
+
 ## 直近の作業 (2026-10-07) — パス 505 (運用): 指示のティアで effort と任せる手を決める規則
 
 - **依頼** —— 「こちらが出した指示に対して適切なモデルとエフォートを自動で選択し、より長く正確な作業を実行できるようにルール化して」。

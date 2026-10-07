@@ -1943,6 +1943,46 @@ export const LAWS: readonly Law[] = [
       chain,
     ],
   },
+  {
+    id: 'opened-state-measured-where-drawn',
+    family: 'surface',
+    name: '開いた物と開いた幅も、描かれた形で測る —— 閉じた静止画面の測定は、開く前の物を 1 つも測っていない',
+    statement:
+      '字の対比 (法則 `text-contrast-measured-where-drawn`) と操作子 (法則 `operable-controls-measured-where-drawn`) の実機の測定は、'
+      + '**閉じた・静止した・1280px** の画面しか測っていなかった。開く前の物 —— `<details>`・手入力パネル・浮いた窓 (dialog) と'
+      + 'その中の確認 (alertdialog)・スマホのドロワー —— と、スマホ幅 (≤768px) の全画面は、開いて・その幅で測る。'
+      + '窓は WAI-ARIA APG の dialog の約束を持つ: 開いたら焦点を中へ (入力欄か、確認なら**取り消す側**の操作子)・Esc で閉じる / 取り消す '
+      + '(IME の変換確定の Esc は除く)・消えたら押した物へ戻す・入口 (🤖) は窓より**前**に描く (DOM の順 = Tab の順)。'
+      + 'ドロワーは開いている間は暗幕の後ろ (`.main`) を `inert` に、閉じている間はドロワー自身を `inert` にする '
+      + '(画面の外へ滑らせただけでは焦点を取れる)。'
+      + '**実測 2026-10-07 (10-03 の出荷物)**: details / 手入力パネルを開いた所は 4 配色 × 1,408 行で割る物 0 (閉じたときから増えない)。'
+      + '浮いた窓の提案チップは **23px** (2.5.8) が 4 配色すべて。窓は開いても焦点が 🤖 に残り・DOM で 🤖 より前なので Tab が窓を飛ばし・'
+      + 'Esc で閉じず・✕ で閉じると焦点は body (alertdialog も同じ)。ドロワーは閉じている間も ☰ から Shift+Tab で見えない 74 項目へ入り、'
+      + '開いている間は暗幕の後ろの本文へ Tab で逃げた。**スマホ幅の字はかわいい × ライトで 30 画面 212 要素 (3.84〜4.48:1)・'
+      + 'かわいい × ダークで 10 画面 16 要素が割った** —— 原因は `@media (max-width: 768px)` の `.main { background: transparent }` で、'
+      + '本文の字が殻の光輪 (`--glow-*`) の上に直に載っていた (字の台帳 `themeContrast.test.ts` が測る地は `--panel` までで、光輪だけの地は無い)。'
+      + '**表の対が合っていても、媒体規則が地を剥がす** (2 つ前の法則と同じ形の、幅についての現れ)。'
+      + '直しは 1 つの hook (`useDialogFocus` —— 印 `data-dialog-initial` へ焦点・Esc・戻り先) を 3 つの dialog が読み、App がドロワーの `inert` と'
+      + '焦点を 1 つの効果で持ち、CSS は地を残しチップを 24px にする。**3 層で留める**: ① jsdom で実物を描いて押す '
+      + '(`conciergeDialogFocus` / `drawerKeyboard` / `useDialogFocus`) ② 構文木と CSS の規則 (`dialogSitesCensus` —— `role` が dialog の JSX は'
+      + '名前・ref・onKeyDown を持ち hook を呼ぶ・両方向の台帳 / `openedStateCss` —— スマホの `.main` は地を剥がさず、チップは 24px 以上) '
+      + '③ 実機の `opened` suite (e2e の 39 番目・131 件 —— 4 配色 × 開いた全画面・浮いた窓のキーボードの道・スマホ 4 配色のドロワーとシートと'
+      + '全画面の字・測定器の対照 2: `inert` の下は「無い」と数える)。'
+      + '**測って何も無かった物も書く**: 書き込みの確認 (`pendingIntent`・音声の確認) は同じ hook で配線したが、**今日その状態へ届く道は無い** '
+      + '(7 つの書き込みはどれも必須欄を持ち、解析器は `params` を設定しない)。'
+      + '**測っていない物**: ポップオーバー (今日 0 件)・開いた後に続く操作途中の状態・タブレット幅 (769〜1199px)・'
+      + '`--accent` のグラフィック・テキスト間隔。',
+    provenance: ['2026-10-07 (パス 506)'],
+    enforcedBy: [
+      test('src/renderer/components/__tests__/conciergeDialogFocus.test.ts'),
+      test('src/renderer/components/__tests__/useDialogFocus.test.ts'),
+      test(T.renderer('drawerKeyboard')),
+      test(T.renderer('dialogSitesCensus')),
+      test(T.renderer('openedStateCss')),
+      harness('e2e'),
+      harness('e2e:lite'),
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {
