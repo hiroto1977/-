@@ -5165,6 +5165,31 @@ async function openedSuite(browser) {
       stillOpen && a4.label === '要望リストをエクスポート',
       `opened[${label}]: ★ 確認の Esc は取り消しで、焦点は押した「📥 要望」へ戻り、窓は閉じない (${JSON.stringify(a4)} 窓 ${stillOpen})`,
     );
+    // 書き込みの確認 (パス 507): 引用と #channel を持つ発話は実物の経路で実行確認 (alertdialog) に届き、
+    // 送る欄と値を操作子より前に並べる。Esc は取り消しで、焦点は入力欄へ戻る (押していないので外へは何も出ない)
+    await page.locator('.concierge-input').first().fill('Slack の #general に「テスト」を送って');
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[role="alertdialog"][aria-label="実行確認"]', { timeout: 10000 });
+    const a6 = await active(page);
+    ok(a6.inAlert === true && a6.text === 'やめる', `opened[${label}]: ★ 引用と #channel を持つ書き込みの発話は実行確認に届き、焦点は取り消す側「やめる」へ (${JSON.stringify(a6)})`);
+    const preview = await page.evaluate(() => {
+      const d = document.querySelector('[role="alertdialog"][aria-label="実行確認"]');
+      const ul = d ? d.querySelector('[data-write-preview]') : null;
+      const btn = d ? d.querySelector('button') : null;
+      return {
+        rows: ul ? [...ul.querySelectorAll('li')].map((li) => (li.textContent || '').trim()) : null,
+        beforeButtons: !!(ul && btn && ul.compareDocumentPosition(btn) & Node.DOCUMENT_POSITION_FOLLOWING),
+      };
+    });
+    ok(
+      !!preview.rows && preview.rows.length === 2 && preview.rows[0].includes('channel') && preview.rows[0].includes('#general')
+        && preview.rows[1].includes('text') && preview.rows[1].includes('テスト') && preview.beforeButtons,
+      `opened[${label}]: ★ 確認は送る欄と値 (channel / text) を操作子より前に並べる (${JSON.stringify(preview)})`,
+    );
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('[role="alertdialog"]'), undefined, { timeout: 5000 });
+    const a7 = await active(page);
+    ok(a7.cls.includes('concierge-input'), `opened[${label}]: ★ 書き込みの確認の Esc は取り消しで、焦点は入力欄へ戻る (${JSON.stringify(a7)})`);
     await page.locator('.concierge-input').first().focus();
     await page.keyboard.press('Escape');
     await page.waitForFunction(() => !document.querySelector('[data-concierge="floating"]'), undefined, { timeout: 5000 });
@@ -5630,7 +5655,7 @@ function installWaitMarginRecorder(browser) {
     // 2026-10-07 (パス 506 の直後): スマホ 2 配色に「開いたドロワーも測った」の床を足して 61 → 63
     ['controls', controlsSuite, 63],
     // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
-    ['opened', openedSuite, 131],
+    ['opened', openedSuite, 155],
     ['tablet', tabletSuite, 2],
     ['shell', shellSuite, 27],
   ];

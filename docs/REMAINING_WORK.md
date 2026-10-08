@@ -1,5 +1,38 @@
 # Service Hub — 残りの作業手順書
 
+## パス 507 (書き込みの確認へ届く道を開き、確認が「何を送るか」を操作子より前に見せる —— パス 506 が「今日届く道は無い」と記録した死んだ UI) が測って、次のパスへ残した物 (2026-10-08)
+
+- **出発点 (実測)** —— 「続けて」を受け、パス 506 の残した物 ① を測った。実物の解析器 → 経路 → 関門に標本 9 発話 (引用あり / なし・`#channel`・`owner/repo`・日付つきの予定・記録) を通すと、確認へ届く物は **0 / 9** —— `parseVoiceCommand` が `params` を 1 つも設定せず、`VOICE_WRITE_REQUIREMENTS` の 7 行はどれも必須欄を持つので、`voiceWriteRefusal` が常に `missing-fields` で断る。2 つの確認 (`VoiceCommandBar` の実行確認・`ChatbotWidget` の `pendingIntent`) は 2026-09-09 (パス 109) から**実物の経路では 1 度も描かれていなかった** (パス 506 が同じ hook で配線したが押せなかった当の物)。パス 109 の検査は `voiceWriteRefusal` を `vi.mock` で黙らせて測っていたので、死んだ UI であることは検査からは見えなかった。確認の文は「「X」で「action」を実行しますか？」だけで、**何を送るかを見せていなかった**。
+
+  | 標本 (発話) | 直す前 | 直した後 |
+  | --- | --- | --- |
+  | `Slack の #general に「こんにちは」を送って` | 断る (channel / text) | **確認** (channel: #general / text: こんにちは) |
+  | `Slack にメッセージを送って` | 断る | 断る (引用も #channel も無い —— 画面へ誘導) |
+  | `github.com/acme/app にイシュー「ログインできない」を作って` | 断る | **確認** (owner / repo / title) |
+  | `GitHub にイシューを作って` | 断る | 断る |
+  | `不動産に「物件Aの内見」を記録して` | 断る | **確認** (note) |
+  | `投資信託に「分配金」を記録して` / `Uber Eats に「…」を記録して` | 断る | **確認** |
+  | `カレンダーに明日の打ち合わせを入れて` | 断る | 断る (日付は取り出さない —— 設計) |
+
+- **直し** —— ① 解析器は**生の発話**から欄を取り出す (`extractWriteParams` —— 引用の中身・`#channel`・`owner/repo`。正規化は引用符と `#` と `/` を落とすので正規化の前に読む。推測で埋めない)。② 関門は必須だけでなく**同じ台帳の天井** (`writeFieldLimits.ts` / `MAX_RECORD_NOTE_CHARS`) を確認の前に見る (`invalid-field`)。③ 確認は送る欄と値を `[data-write-preview]` に操作子より前に並べる (`voiceWritePreview` の 1 つ・`displayField` で 256 字・切ったことを名乗る)。
+- **機械** —— 単体 +18・jsdom `writeConfirmReachable.test.ts` 7 件 (mock なし)・実機 `opened` +24 (3 × デスクトップ 4 配色 + スマホのシート 4 配色・131 → 155・全 suite 758)・法則 120。古い docblock 2 本を実測へ。
+- **対照** —— 7 方向すべて鳴る (A 直す前の形 ❌8 / B 天井を見ない ❌3 / C ❌1 / D ❌1 / E 操作子の後ろへ ❌1 / F preview 空 ❌4 / G intent に載せない ❌7)。
+- **変異検査** —— `npx stryker run --mutate voiceCommand.ts,voiceWriteRequirements.ts` (1,054 変異体・16 分 11 秒): 1 度目は **voiceCommand.ts 99.44% / 生存 2・voiceWriteRequirements.ts 91.25% / 生存 7** (合計 97.95%)。生存 9 件を仕分けると **等価 3 / 本物の穴 3 / 等価の門が隠していた 3**: `quotedSpan` の `i < raw.length` (`raw[length]` は undefined でどの対にも当たらない) と `end < 0` (`indexOf(…, i + 1)` は 0 を返さない) は等価なので**形ごと消し** (`raw.split('').entries()` で比較を持たない・`end === -1` で見つからない値そのものを比べる · 法則 115)、`voiceWriteRequirement` の `undefined` の門 (`if (serviceId === undefined || action === undefined) return null`) は `find` が何にも当たらないので等価 —— 門を消すと、その下の `find` の `&&` を `||` / `true &&` / `&& true` にする 3 変異体が**本物の穴**として残った (slack の `record-entry` を slack の行で受ける・real-estate の `send-message` を slack の行で受ける・4 行並ぶ `record-entry` を先頭の real-estate の行で受けて `screenInput` を取り違える)。標本 3 件を足して手で当てると 3 件とも狙った検査で落ち、2 度目は **両方 100.00% (voiceCommand.ts Killed 350 / Timeout 5・voiceWriteRequirements.ts Killed 73・生存 0・未到達 0・15 分 41 秒)**。`voiceWriteRequirements.ts` を `mutate` へ (309 → **310**・`mutateScopeCensus` の `measure-next` から外した)
+- **実測 (最終のコード)** —— `typecheck` 緑・`npm test` **1051 ファイル / 21239 件**・`verify:all` exit 0 (`verify:arch` のユニットテスト数を 17523 → **17548** へ・`file:line` 参照数を 691 → **697** へ・`mutate` を 309 → **310** へ —— **今回も予想せず門に訊いた**。★ 1 度目は新しい検査ファイルが git 管理外で `L2793` が落ちた —— 門は CI の fresh checkout を代弁する。`git add` してから回し直した)・`chain:verify` 緑 (block #284・保護対象は触っていない)。**出荷物が動いたので実機も回した (最終コード)**: `perf` OK (LITE DCL 325 ms / heap 9.5 MB・FULL DCL 773 ms / heap 36.4 MB)・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**。★ **1 度目の実機は `SUITE_TABLE` の注意を刷った** (`opened: 表 143 → 実物 155`) —— `floatingChecks` はデスクトップ 4 配色のほかスマホのシート 4 配色でも走るので、足した 3 件は **+12 ではなく +24** だった (床は緩む側へずれただけで落ちない —— 注意は設計どおり)。表と床の合計を実測 (155 / 758) へ直した。`smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama の経路も触っていない)
+- ★ **既知の罠 (このパスで踏んだ)**:
+  - **`( … ) &` の背景は、包みが戻った時に中身が消えることがある** —— typecheck のログが見出しの 1 行で止まり、related のログは作られもしなかった。パス 506 の「中身はまだ走っている」は今回は偽で、背景は `run_in_background` の 1 本の命令で回す。
+  - **`vitest run --related` は無い** (`CACError: Unknown option`) —— `vitest related <files>` の副命令。
+  - **検査は緑なのに `typecheck` だけが 1 つ捕まえた (パス 373 以来 15 度目)** —— `{ ...r!, screenInput: false } as typeof r` (`null` を含む union へ spread)。`kind` で絞ってから spread する。
+  - **「操作子より前」は文の有無では鳴らない** —— 対照 E (一覧を操作子の後ろへ動かす) は `toContain` では通る。DOM の順 (`compareDocumentPosition`) を主張して初めて鳴る。
+- **残した物 (次のパス)** ——
+  ① **引用の無い本文は取り出さない** (「こんにちはと送って」—— 境目が曖昧なので断る側に倒した)。取り出すなら「と送って / と書いて」の前を本文にする形だが、「Slack にメッセージを送って」の「メッセージ」を本文にしないための判定が要る。
+  ② **日付は取り出さない** (`calendar/create-event` の `summary` / `start` / `end`) —— 「明日 15 時」の解決は暦と時間帯を要し、誤った日時の予定を作るより断る方が軽い。取り出すなら `localDate.ts` の規則で解き、確認に ISO の日時を**見せてから**にする (この pass で見せる形は置いた)。
+  ③ **複数の引用** —— 最初の 1 つだけを本文にする (2 つ目は捨てる)。`send-message` で `#channel` と引用が両方在る形は測ったが、引用 2 つ (title と body) の形は設計していない。
+  ④ **Slack の宛先は `#channel` だけ** —— DM (`@user`) やチャンネル id は取り出さない (main の `send-message` は `channel` 1 欄なので、画面と同じ形に揃えた)。
+  ⑤ **`voiceWriteRequirements.ts` の `mutate`** —— **閉じた** —— 2 度目の測定で 100.00% (Killed 73 / 生存 0 / 未到達 0) になったので `mutate` へ入れた (309 → 310)。`mutateScopeCensus` の `measure-next` の行は外した。
+  ⑥ **実行した後の結果の文** (`actionOutcome.ts`・「実行しました」) は触っていない —— 確認に見せた値と、結果の文が指す物が同じかは測っていない。
+  ⑦ パス 506 の ②〜⑧ (タブレット幅・操作途中・ポップオーバー・`--accent`・♡・`controls.cjs` / `readableInk.ts` の `mutate`・modal・`lint:repo-size` の 1 ファイル上限) はそのまま。
+
 ## パス 506 (開いた窓とスマホ幅 —— 閉じた静止画面の測定が 1 つも測っていなかった「開く前の物」を開いて測り、dialog のキーボードの道・ドロワーの inert・スマホ幅の地を 3 層で留める) が測って、次のパスへ残した物 (2026-10-07)
 
 - **出発点 (実測)** —— 「続けて」を受け、パス 504 が「残した物」の ③ (開く前のもの —— 折りたたみ・モーダル・ポップオーバー) と、503 / 504 が**閉じた・静止した・1280px** でしか測っていなかったことを測った。既存の測定器 (`contrast.cjs` / `controls.cjs`) をそのまま使い、10-03 の出荷物 (`dist/standalone.html`) に対して 4 配色で: ① 全画面の `<details>` と手入力パネルを開いて、開く前との**多重集合の差**だけを測る ② 浮いたコンシェルジュを開き、1 往復して測る ③ スマホ幅 (390×844) でドロワーとシートを開いて測る ④ 窓・ドロワーの焦点の行き先と Esc と戻り先を Tab で測る ⑤ スマホ幅の全画面の字を 4 配色で測る。結果:
@@ -31,7 +64,7 @@
   - **実機の 1 度目 (`e2e` FULL) は `controls` のスマホ 2 配色で 3 件落ちた** —— 焦点の床 800 に対し実測 681・AX の名前の床 10,000 に対し 2,940。欠陥ではなく、このパスで閉じたドロワーを `inert` にし測定器も inert の下を「無い」と数えるようにしたので、スマホ幅の母集団からドロワーの 74 項目が消えた (desktop の床を写していたスマホの床が、それを正しく捕まえた —— **床は黙って縮んだ物を捕まえるために在る**)。前のセッションは `opened` suite だけを回して全件を回していなかった。直し: スマホの sweep はドロワーを 1 度開いて測る (法則 119・項目は画面を跨いで同じ)・その測定の床 `★ 開いたドロワーも測った` (2 配色・`controls` 61 → 63 件・全 suite 732 → 734 件)・スマホの床を実測から別に置く (焦点 689・名前 3106・開いたドロワーの焦点 8)。
   - **記録を足した 21 KB で `lint:repo-size` の天井 (80 MB) に当たった** —— 最終検証の `verify:all` が落ちて分かった。HEAD (`42c77de01`) の追跡合計は 79.997 MB で天井まで 3,592 B。追跡合計は 2026-08-13 の 57.25 MB から平均 0.41 MB/日で増え、増えたのは生成物ではなく記録 3 本 (`CLAUDE.md` / `SESSION_HANDOFF.md` / `REMAINING_WORK.md` · 0.16 → 6.52 MB) と `src/` の検査・コード (+13.4 MB)・`scripts/` (+2.1 MB) で、コーパスと保管庫は +0.1 MB。**85% の警告は 2026-09-11 ごろから毎回刷られ、この文書もパス 470 の節で「95%・生成物 1 つで天井に当たる位置」と記録していた —— 落とさない警告は 26 日間、誰も動かさなかった。** 天井を 120 MB へ (当たった日の実測の 1.5 倍・同じ増え方で約 98 日・警告帯まで約 54 日)。法則 `repo-size-ceiling` の statement・`docs/ARCHITECTURE.md` の行・`docs/GIT_HISTORY_SHRINK.md` の表・`docs/ONTOLOGY.md` (再生成) を実測へ。
 - **残した物 (次のパス)** ——
-  ① **書き込みの確認は届かない状態のまま** (上) —— 解析器が `params` を設定しない限り、chat の「実行確認」と音声の確認 (`refusal === null` の枝) は死んだ UI である。直すなら解析器に欄を読ませる (必須欄の台帳は `writeFieldLimits.ts`)。
+  ① **[パス 507 で開いた]** **書き込みの確認は届かない状態のまま** (上) —— 解析器が `params` を設定しない限り、chat の「実行確認」と音声の確認 (`refusal === null` の枝) は死んだ UI である。直すなら解析器に欄を読ませる (必須欄の台帳は `writeFieldLimits.ts`)。
   ② **タブレット幅 (769〜1199px)** は測っていない (ドロワーでも列でもない幅)。
   ③ **開いた後に続く操作途中の状態** (打っている最中・選択・無効) と **ポップオーバー** (今日 0 件)。
   ④ **`--accent` のグラフィック (1.4.11)・テキスト間隔 (1.4.12)・canvas・チャートの線** はパス 504 の ①④ のまま。

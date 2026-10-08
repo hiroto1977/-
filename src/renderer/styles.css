@@ -1252,6 +1252,10 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .concierge-confirm { font-size: 12px; border: 1px solid var(--danger); border-radius: var(--radius-sm); padding: 8px; }
 .concierge-confirm strong { color: var(--danger); }
 .concierge-confirm-actions { display: flex; gap: 6px; margin-top: 6px; }
+/* 確認が見せる「送る内容」(パス 507): 操作子より前に欄と値を並べる。音声の確認 (.voice-confirm-preview) と同じ形。 */
+.concierge-confirm-preview, .voice-confirm-preview { margin: 6px 0 0; padding-left: 18px; }
+.concierge-confirm-preview li, .voice-confirm-preview li { overflow-wrap: anywhere; }
+.concierge-confirm-truncated, .voice-confirm-truncated { color: var(--text-muted); margin-left: 4px; }
 .concierge-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px 4px; }
 .concierge.docked .concierge-chips { padding: 4px 16px 6px; }
 /* 提案のチップは押せる大きさ (WCAG 2.5.8: 24px 以上)。字の高さのままだと 23px で、6px の間隔では例外も満たさない (パス 506)。 */

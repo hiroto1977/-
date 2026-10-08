@@ -27,6 +27,8 @@ import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
 import {
+  MAX_VOICE_PREVIEW_CHARS,
+  voiceWritePreview,
   voiceWriteRefusal,
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
@@ -589,7 +591,21 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
         ) : null}
         {pendingIntent ? (
           <div role="alertdialog" aria-label="実行確認" className="concierge-confirm" ref={pendingRef} onKeyDown={pendingKeys.onKeyDown}>
-            <strong>確認:</strong> 書き込み操作を実行しますか？
+            <strong>確認:</strong>{' '}
+            「{SERVICES.find((sv) => sv.id === pendingIntent.serviceId)?.label ?? pendingIntent.serviceId ?? '（サービス未特定）'}」で
+            「{pendingIntent.action ?? ''}」を実行しますか？
+            {/*
+              何を送るかは操作子より前に見せる (パス 507・法則 egress-notice-before-send)。
+              欄の順と値の切り方は shared の 1 つ (`voiceWritePreview`) が決める —— 音声の確認と同じ物。
+            */}
+            <ul className="concierge-confirm-preview" aria-label="送る内容" data-write-preview>
+              {voiceWritePreview(pendingIntent.serviceId, pendingIntent.action, pendingIntent.params).map((row) => (
+                <li key={row.field}>
+                  <code>{row.field}</code>: {row.value}
+                  {row.truncated && <span className="concierge-confirm-truncated">（先頭 {MAX_VOICE_PREVIEW_CHARS} 字・全文を送ります）</span>}
+                </li>
+              ))}
+            </ul>
             <div className="concierge-confirm-actions">
               <button
                 type="button"

@@ -35,19 +35,49 @@
  *
  * **ラベルはここに書かない。** サービス名は `services.ts` が持つので、画面が
  * 引いて渡す (パス 101 で「断りがラベルを写して実物とずれる」を直した)。
+ *
+ * ## 届く道が開いた (2026-10-08 · パス 507)
+ *
+ * パス 109 からこの判断は常に断っていた —— 解析器が `params` を 1 度も設定しない
+ * ので、音声の確認 (alertdialog) とチャットの `pendingIntent` は**どの発話からも届かない
+ * 死んだ UI**だった (パス 506 の実測: 標本 9 発話で届く物 0)。パス 507 で解析器が
+ * 生の発話から欄を取り出す (`extractWriteParams` —— 引用の中身・`#channel`・`owner/repo`)
+ * ようになり、同じ標本で 5 発話が届く。届くようになったので、ここは 2 つを足した:
+ *
+ * 1. **必須だけでなく天井も見る** —— 必須欄が揃っても、天井 (`writeFieldLimits.ts` の
+ *    台帳・`record-entry` は `MAX_RECORD_NOTE_CHARS`) を超える値や制御文字を含む値は
+ *    main / web-shim が断る。確認を取ってから落ちる形へ戻さないため、確認の前に同じ
+ *    台帳 (`checkWriteFields`) で見る (`invalid-field`)。
+ * 2. **確認は何を送るかを見せる** (`voiceWritePreview`) —— 台帳の docblock が名指しした
+ *    非対称 (端末内の書き込みは全部見せてから行い、外への送信は何も見せずに承認を
+ *    求めていた) を閉じる。法則 `egress-notice-before-send` と同じ向きで、欄と値は
+ *    操作子より前に在る。
  */
 
+import { displayField } from './apiResponse';
+import { countChars } from './inputCeiling';
+import { MAX_RECORD_NOTE_CHARS } from './recordEntryLimits';
 import {
   CALENDAR_EVENT_FIELDS,
   GITHUB_ISSUE_FIELDS,
   SLACK_MESSAGE_FIELDS,
+  checkWriteFields,
+  describeWriteFieldFailure,
   requiredWriteFields,
+  type WriteFieldFailure,
+  type WriteFieldRule,
 } from './writeFieldLimits';
 
 export interface VoiceWriteRequirement {
   readonly serviceId: string;
   readonly action: string;
-  /** main / web-shim の実装が無いと落とす項目 (実装の検査から導いて突き合わせる)。 */
+  /**
+   * 欄の台帳 (必須・天井・改行・選択肢)。外へ書く 3 つは `writeFieldLimits.ts` の台帳
+   * そのもの (main の中継が読む物と同じ 1 つ)、`record-entry` は `note` の 1 欄。
+   * 確認の前の判定 (`voiceWriteRefusal`) と確認に見せる欄 (`voiceWritePreview`) が読む。
+   */
+  readonly fields: Readonly<Record<string, WriteFieldRule>>;
+  /** main / web-shim の実装が無いと落とす項目 (`fields` から導く —— 手で写さない)。 */
   readonly required: readonly string[];
   /**
    * その操作を**画面から**行えるか (実測)。
@@ -59,24 +89,41 @@ export interface VoiceWriteRequirement {
   readonly screenInput: boolean;
 }
 
-export const VOICE_WRITE_REQUIREMENTS: readonly VoiceWriteRequirement[] = [
-  // 必須欄は**書く欄の台帳** (`writeFieldLimits.ts`) から導く —— 写すと片方だけ動く
+/**
+ * `record-entry` の欄 (4 サービス共通)。天井は `recordEntryLimits.ts` の 1 つ (main の 4 つの
+ * handler と web-shim が「note は 1-2000 文字」と断る当の数) で、本文なので改行を許す。
+ */
+export const RECORD_ENTRY_NOTE_FIELDS: Readonly<Record<string, WriteFieldRule>> = {
+  note: { required: true, max: MAX_RECORD_NOTE_CHARS, multiline: true },
+};
+
+function requirement(
+  serviceId: string,
+  action: string,
+  fields: Readonly<Record<string, WriteFieldRule>>,
+  screenInput: boolean,
+): VoiceWriteRequirement {
+  // 必須欄は**書く欄の台帳**から導く —— 写すと片方だけ動く
   // (パス 110 で台帳を作った時に、ここの手書きを導出へ替えた)。
-  { serviceId: 'slack', action: 'send-message', required: requiredWriteFields(SLACK_MESSAGE_FIELDS), screenInput: true },
-  { serviceId: 'github', action: 'create-issue', required: requiredWriteFields(GITHUB_ISSUE_FIELDS), screenInput: true },
-  { serviceId: 'calendar', action: 'create-event', required: requiredWriteFields(CALENDAR_EVENT_FIELDS), screenInput: true },
-  // `record-entry` の note は `recordEntryLimits.ts` が上限を持つ (4 サービス共通)。
-  { serviceId: 'real-estate', action: 'record-entry', required: ['note'], screenInput: true },
-  { serviceId: 'mutual-funds', action: 'record-entry', required: ['note'], screenInput: true },
-  { serviceId: 'uber-eats', action: 'record-entry', required: ['note'], screenInput: false },
-  { serviceId: 'demae-can', action: 'record-entry', required: ['note'], screenInput: false },
+  return { serviceId, action, fields, required: requiredWriteFields(fields), screenInput };
+}
+
+export const VOICE_WRITE_REQUIREMENTS: readonly VoiceWriteRequirement[] = [
+  requirement('slack', 'send-message', SLACK_MESSAGE_FIELDS, true),
+  requirement('github', 'create-issue', GITHUB_ISSUE_FIELDS, true),
+  requirement('calendar', 'create-event', CALENDAR_EVENT_FIELDS, true),
+  requirement('real-estate', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, true),
+  requirement('mutual-funds', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, true),
+  requirement('uber-eats', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, false),
+  requirement('demae-can', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, false),
 ];
 
 export function voiceWriteRequirement(
   serviceId: string | undefined,
   action: string | undefined,
 ): VoiceWriteRequirement | null {
-  if (serviceId === undefined || action === undefined) return null;
+  // `undefined` の門は置かない —— 台帳の行は両方の欄を文字列で持つので、どちらかが `undefined` なら
+  // `find` は何にも当たらず `null` になる (門は等価変異で、形ごと消した · 法則 115)。
   return VOICE_WRITE_REQUIREMENTS.find((r) => r.serviceId === serviceId && r.action === action) ?? null;
 }
 
@@ -85,6 +132,12 @@ export type VoiceWriteRefusal =
   | {
       readonly kind: 'missing-fields';
       readonly missing: readonly string[];
+      readonly screenInput: boolean;
+    }
+  | {
+      /** 欄は揃っているが、台帳の天井・改行・選択肢を外れている (main / web-shim が断る値)。 */
+      readonly kind: 'invalid-field';
+      readonly failure: WriteFieldFailure;
       readonly screenInput: boolean;
     }
   | { readonly kind: 'unknown-action' };
@@ -107,8 +160,47 @@ export function voiceWriteRefusal(
     const v = params?.[k];
     return v === undefined || v.trim() === '';
   });
-  if (missing.length === 0) return null;
-  return { kind: 'missing-fields', missing, screenInput: req.screenInput };
+  if (missing.length > 0) return { kind: 'missing-fields', missing, screenInput: req.screenInput };
+  // 揃っていても、天井・改行・選択肢を外れた値は実行側が断る —— 承認を取ってから落ちる形へ
+  // 戻さないため、同じ台帳で先に見る (`checkWriteFields` は台帳の順で最初の問題を返す)。
+  const failure = checkWriteFields(params ?? {}, req.fields);
+  if (failure !== null) return { kind: 'invalid-field', failure, screenInput: req.screenInput };
+  return null;
+}
+
+/** 確認に見せる 1 行。`value` は天井 (`MAX_VOICE_PREVIEW_CHARS`) で切り、切ったら `truncated`。 */
+export interface VoiceWritePreviewRow {
+  readonly field: string;
+  readonly value: string;
+  readonly truncated: boolean;
+}
+
+/**
+ * 確認に見せる値の天井。本文の台帳は 20,000 字まで受けるが、確認の窓にその全文は載らない。
+ * 切ったことは行が `truncated` で名乗り、画面が「先頭 N 字」と述べる (切ったことを黙らない)。
+ */
+export const MAX_VOICE_PREVIEW_CHARS = 256;
+
+/**
+ * **確認が見せる物** —— 台帳の欄の順に、intent が持つ値を並べる (持たない欄は出さない)。
+ * 値は利用者自身の発話だが、確認の窓は 1 画面なので天井で切って `…` を付ける
+ * (`displayField` —— 第三者の文字列に使う物と同じ切り方)。
+ * 台帳に無い操作は空 (そのとき確認は出ない —— `voiceWriteRefusal` が `unknown-action` で断る)。
+ */
+export function voiceWritePreview(
+  serviceId: string | undefined,
+  action: string | undefined,
+  params: Readonly<Record<string, string>> | undefined,
+): readonly VoiceWritePreviewRow[] {
+  const req = voiceWriteRequirement(serviceId, action);
+  if (req === null) return [];
+  const rows: VoiceWritePreviewRow[] = [];
+  for (const field of Object.keys(req.fields)) {
+    const v = params?.[field];
+    if (v === undefined) continue;
+    rows.push({ field, value: displayField(v, MAX_VOICE_PREVIEW_CHARS), truncated: countChars(v) > MAX_VOICE_PREVIEW_CHARS });
+  }
+  return rows;
 }
 
 /**
@@ -126,8 +218,12 @@ export function voiceWriteRefusalMessage(
     return `「${label}」の「${action}」に必要な項目が分からないため実行しません。`;
   }
   const head =
-    `「${label}」の「${action}」には ${refusal.missing.join(' / ')} が必要ですが、` +
-    '音声・チャットの指示からは取り出せないため実行しません。';
+    refusal.kind === 'invalid-field'
+      ? // 台帳の断りの文 (「note は 2000 文字以内で指定してください」) をそのまま使う ——
+        // 実行側が返す文と同じ物なので、確認の前と後で言い分けが割れない。
+        `「${label}」の「${action}」は ${describeWriteFieldFailure(refusal.failure)}。この指示では実行しません。`
+      : `「${label}」の「${action}」には ${refusal.missing.join(' / ')} が必要ですが、` +
+        '音声・チャットの指示からは取り出せないため実行しません。';
   return refusal.screenInput
     ? `${head} 画面を開いて入力してください。`
     : `${head} この操作は画面にも入力欄がありません。`;

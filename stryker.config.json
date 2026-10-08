@@ -310,6 +310,7 @@
     "src/shared/updateCheck.ts",
     "src/shared/vaultToken.ts",
     "src/shared/versionOrder.ts",
+    "src/shared/voiceWriteRequirements.ts",
     "src/shared/watchlistState.ts",
     "src/shared/waterCyclePlanner.ts",
     "src/shared/welfareDocs.ts",

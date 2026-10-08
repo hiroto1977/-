@@ -30,6 +30,8 @@ import {
 } from '../voice/speechAdapter';
 import { VoiceEgressNotice } from './VoiceEgressNotice';
 import {
+  MAX_VOICE_PREVIEW_CHARS,
+  voiceWritePreview,
   voiceWriteRefusal,
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
@@ -330,7 +332,20 @@ export function VoiceCommandBar() {
 
           {state.phase === 'awaiting-confirmation' && refusal === null && (
             <span className="voice-confirm" role="alertdialog" aria-label="実行確認" ref={confirmRef} onKeyDown={confirmKeys.onKeyDown}>
-              <strong style={{ color: 'var(--danger)' }}>確認:</strong> 実行しますか？
+              <strong style={{ color: 'var(--danger)' }}>確認:</strong>{' '}
+              「{serviceLabel(state.intent?.serviceId)}」で「{state.intent?.action ?? ''}」を実行しますか？
+              {/*
+                何を送るかは操作子より前に見せる (パス 507・法則 egress-notice-before-send)。
+                欄の順と値の切り方は shared の 1 つ (`voiceWritePreview`) が決める。
+              */}
+              <ul className="voice-confirm-preview" aria-label="送る内容" data-write-preview>
+                {voiceWritePreview(state.intent?.serviceId, state.intent?.action, state.intent?.params).map((row) => (
+                  <li key={row.field}>
+                    <code>{row.field}</code>: {row.value}
+                    {row.truncated && <span className="voice-confirm-truncated">（先頭 {MAX_VOICE_PREVIEW_CHARS} 字・全文を送ります）</span>}
+                  </li>
+                ))}
+              </ul>
               <button type="button" onClick={handleConfirm} aria-label="実行を承認" style={{ marginLeft: 6 }}>
                 実行
               </button>

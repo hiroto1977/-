@@ -12,6 +12,10 @@ import {
   isQuestion,
   type AvailableCapabilities,
   type VoiceIntent,
+  quotedSpan,
+  channelToken,
+  ownerRepoToken,
+  extractWriteParams,
 } from '../voiceCommand';
 import { SERVICE_IDS } from '../../../shared/serviceId';
 
@@ -845,5 +849,78 @@ describe('end-to-end pipeline', () => {
     expect(routed.kind).toBe('navigate');
     expect(routed.serviceId).toBe('overview');
     expect(requiresConfirmation(routed)).toBe(false);
+  });
+});
+
+/**
+ * **必須欄は生の発話から取る** (2026-10-08 · パス 507)。
+ *
+ * 2026-10-08 まで `parseVoiceCommand` は `params` を 1 度も設定せず、音声とチャットの
+ * 確認はどの発話からも届かなかった (パス 506 の実測: 標本 9 発話で届く物 0)。
+ * `normalizeUtterance` は引用符・`#`・`/` を落とすので、欄は正規化の**前**の文から取る。
+ */
+describe('extractWriteParams — 必須欄を生の発話から取り出す (パス 507)', () => {
+  it('★ 引用の中身が本文になる (「」『』“” " の 4 組・前後の空白は落とす)', () => {
+    expect(quotedSpan('不動産に「物件 A を内見」を記録して')).toBe('物件 A を内見');
+    expect(quotedSpan('『積立 3 万円』と記録')).toBe('積立 3 万円');
+    expect(quotedSpan('“hello” を送って')).toBe('hello');
+    expect(quotedSpan('"abc" を送って')).toBe('abc');
+    expect(quotedSpan('「 x 」')).toBe('x');
+  });
+
+  it('★ 閉じていない引用と空の引用は飛ばし、次の引用を取る (無ければ null)', () => {
+    expect(quotedSpan('「」と「x」を記録')).toBe('x');
+    expect(quotedSpan('「閉じていない と『こちら』')).toBe('こちら');
+    expect(quotedSpan('引用の無い発話')).toBeNull();
+    expect(quotedSpan('「　」だけ')).toBeNull();
+  });
+
+  it('★ #channel は Slack が受ける形 (# 付き) で取り、全角 ＃ も読む', () => {
+    expect(channelToken('slack の #general に送って')).toBe('#general');
+    expect(channelToken('＃一般 に送って')).toBe('#一般');
+    expect(channelToken('#dev-ops_2 へ')).toBe('#dev-ops_2');
+    expect(channelToken('チャンネル名を言っていない')).toBeNull();
+  });
+
+  it('★ owner/repo は github.com の URL を先に見て、素の形は owner に字を含む物だけ', () => {
+    expect(ownerRepoToken('github の hiroto1977/- に')).toEqual({ owner: 'hiroto1977', repo: '-' });
+    expect(ownerRepoToken('https://github.com/octo-org/my.repo/issues に')).toEqual({ owner: 'octo-org', repo: 'my.repo' });
+    // 日付の 10/08 は組として取らない (owner が数字だけ)。
+    expect(ownerRepoToken('10/08 の件で')).toBeNull();
+    expect(ownerRepoToken('10/08 の件を a1/b2 に')).toEqual({ owner: 'a1', repo: 'b2' });
+    expect(ownerRepoToken('組の無い発話')).toBeNull();
+  });
+
+  it('★ action ごとに取れた欄だけを持ち、1 つも無ければ欄ごと無い', () => {
+    expect(extractWriteParams('slack の #general に「おはよう」を送って', 'send-message')).toEqual({ channel: '#general', text: 'おはよう' });
+    expect(extractWriteParams('slack の #general に送って', 'send-message')).toEqual({ channel: '#general' });
+    expect(extractWriteParams('github の o/r に「落ちる」を issue にして', 'create-issue')).toEqual({ owner: 'o', repo: 'r', title: '落ちる' });
+    expect(extractWriteParams('github に「落ちる」を issue にして', 'create-issue')).toEqual({ title: '落ちる' });
+    expect(extractWriteParams('不動産に「内見」を記録', 'record-entry')).toEqual({ note: '内見' });
+    expect(extractWriteParams('不動産に記録', 'record-entry')).toBeUndefined();
+    // 日時は取り出さない (誤った日時で予定を作るより断る) —— 引用が在っても欄を持たない。
+    expect(extractWriteParams('カレンダーに「打合せ」の予定を作って', 'create-event')).toBeUndefined();
+    expect(extractWriteParams('バックアップして', 'backup')).toBeUndefined();
+  });
+
+  it('★ parseVoiceCommand は action の intent にだけ欄を載せ、無ければ欄を持たない', () => {
+    const withParams = parseVoiceCommand('不動産に「物件 A を内見」を記録して');
+    expect(withParams.kind).toBe('action');
+    expect(withParams.params).toEqual({ note: '物件 A を内見' });
+    const without = parseVoiceCommand('不動産に記録して');
+    expect(without.kind).toBe('action');
+    expect('params' in without).toBe(false);
+    // navigate / query には欄が無い (引用が在っても)。
+    expect('params' in parseVoiceCommand('「不動産」を開いて')).toBe(false);
+  });
+
+  it('★ routeCommand は欄を運び、action が無い降格では欄を落とす', () => {
+    const intent = parseVoiceCommand('slack の #general に「やあ」を送って');
+    const routed = routeCommand(intent, AVAILABLE);
+    expect(routed.params).toEqual({ channel: '#general', text: 'やあ' });
+    // slack に send-message が無い能力表では navigate へ降格し、欄は持たない。
+    const degraded = routeCommand(intent, { serviceIds: AVAILABLE.serviceIds, actions: {} });
+    expect(degraded.kind).toBe('navigate');
+    expect('params' in degraded).toBe(false);
   });
 });
