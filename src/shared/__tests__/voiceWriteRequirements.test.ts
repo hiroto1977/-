@@ -255,6 +255,48 @@ describe('断りの文面', () => {
     expect(FIELD_PHRASES.owner?.how).toContain('/');
   });
 
+  it('★ 断りの文面は全文を一致で留める (欄の並び・句読点・空白・台帳に無い欄の扱い)', () => {
+    // 部分一致では、句読点や空白を 1 つ変えても、欄の名前や作法が出ていれば通ってしまう。
+    expect(voiceWriteRefusalMessage('Slack', 'send-message', {
+      kind: 'missing-fields',
+      missing: ['channel', 'text'],
+      screenInput: true,
+    })).toBe(
+      '「Slack」の「send-message」には チャンネル / 本文 が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' チャンネルは「#general」のように # で始まる名前で言ってください。' +
+        ' 本文は「こんにちは」のように「」で囲んで言ってください。' +
+        ' 画面を開いて入力してください。',
+    );
+    // 作法の無い欄 (日時) だけなら作法の文を出さず、入力欄の案内も無い側を言う。
+    expect(voiceWriteRefusalMessage('Google カレンダー', 'create-event', {
+      kind: 'missing-fields',
+      missing: ['start'],
+      screenInput: false,
+    })).toBe(
+      '「Google カレンダー」の「create-event」には 開始日時 が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' この操作は画面にも入力欄がありません。',
+    );
+    // 同じ作法は 1 度だけ述べる (owner と repo は同じ言い方)。
+    expect(voiceWriteRefusalMessage('GitHub', 'create-issue', {
+      kind: 'missing-fields',
+      missing: ['owner', 'repo'],
+      screenInput: true,
+    })).toBe(
+      '「GitHub」の「create-issue」には リポジトリの所有者 / リポジトリ が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' リポジトリは「a/b」のように 所有者/名前 の形で言ってください。' +
+        ' 画面を開いて入力してください。',
+    );
+    // 台帳に無い欄は、欄名をそのまま名指しする (黙って落とさない・作法は空のまま出さない)。
+    expect(voiceWriteRefusalMessage('L', 'A', {
+      kind: 'missing-fields',
+      missing: ['zzz'],
+      screenInput: true,
+    })).toBe(
+      '「L」の「A」には zzz が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' 画面を開いて入力してください。',
+    );
+  });
+
   it('★ 言い直しの作法を断りの文面に実際に載せる (表だけでなく出力に出る)', () => {
     const say = (missing: string[]) =>
       voiceWriteRefusalMessage('Slack', 'send-message', { kind: 'missing-fields', missing, screenInput: true });

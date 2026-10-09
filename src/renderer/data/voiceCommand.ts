@@ -395,7 +395,8 @@ export function channelToken(raw: string): string | null {
     const at = name.indexOf(b, 1);
     if (at !== -1) name = name.slice(0, at);
   }
-  return name === '' ? null : `#${name}`;
+  // 名前は必ず 1 字以上残る (境界は先頭の字より後ろでしか切らない) —— 空の名前は作られない。
+  return `#${name}`;
 }
 
 /**
