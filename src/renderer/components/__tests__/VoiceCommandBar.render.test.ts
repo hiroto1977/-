@@ -200,7 +200,7 @@ describe('VoiceCommandBar — インタラクション', () => {
       });
       expect(container.querySelector('[aria-label="実行を承認"]'), '実行できないのに承認ボタンが出ている').toBeNull();
       expect(container.textContent).toContain('実行しません');
-      expect(container.textContent).toContain('owner / repo / title');
+      expect(container.textContent).toContain('リポジトリの所有者 / リポジトリ / 件名');
       expect(invoke).not.toHaveBeenCalled();
     });
 

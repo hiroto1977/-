@@ -204,6 +204,28 @@ export function voiceWritePreview(
 }
 
 /**
+ * 欄ごとに利用者へ見せる名前と、その欄を音声で言うときの作法。
+ *
+ * 欄名 (`channel` / `text`) は台帳の英語の名前で、日本語の利用者に見せると読めない
+ * (パス 508 の実測: 「channel / text が必要です」)。作法は**実際に通る言い方**だけを書く —— 本文は
+ * 引用の中身を取るので「」で囲めば通り、チャンネルは `#名前`、リポジトリは `所有者/名前` で通る
+ * (`extractWriteParams`)。引用の無い本文は取らない (推測で埋めない)。
+ * 台帳の欄と 1 対 1 で結ぶ検査が `voiceWriteRequirements.test.ts` に在る。
+ */
+export const FIELD_PHRASES: Readonly<Record<string, { readonly name: string; readonly how: string }>> = {
+  channel: { name: 'チャンネル', how: 'チャンネルは「#general」のように # で始まる名前で言ってください' },
+  text: { name: '本文', how: '本文は「こんにちは」のように「」で囲んで言ってください' },
+  owner: { name: 'リポジトリの所有者', how: 'リポジトリは「a/b」のように 所有者/名前 の形で言ってください' },
+  repo: { name: 'リポジトリ', how: 'リポジトリは「a/b」のように 所有者/名前 の形で言ってください' },
+  title: { name: '件名', how: '件名は「落ちる」のように「」で囲んで言ってください' },
+  summary: { name: '件名', how: '件名は「打合せ」のように「」で囲んで言ってください' },
+  note: { name: '記録する内容', how: '記録する内容は「内見の結果」のように「」で囲んで言ってください' },
+  // 予定の開始・終了は音声では取らない (日付を推測しない) —— 作法は無く、画面で入力する。
+  start: { name: '開始日時', how: '' },
+  end: { name: '終了日時', how: '' },
+};
+
+/**
  * 断りの文面。**ラベルは呼び出し側が `services.ts` から引いて渡す。**
  *
  * 行に割らないのは、音声パネルもチャットも 1 つの但し書き欄に収めるため
@@ -217,14 +239,21 @@ export function voiceWriteRefusalMessage(
   if (refusal.kind === 'unknown-action') {
     return `「${label}」の「${action}」に必要な項目が分からないため実行しません。`;
   }
+  if (refusal.kind === 'invalid-field') {
+    // 台帳の断りの文 (「note は 2000 文字以内で指定してください」) をそのまま使う ——
+    // 実行側が返す文と同じ物なので、確認の前と後で言い分けが割れない。
+    const head = `「${label}」の「${action}」は ${describeWriteFieldFailure(refusal.failure)}。この指示では実行しません。`;
+    return refusal.screenInput ? `${head} 画面を開いて入力してください。` : `${head} この操作は画面にも入力欄がありません。`;
+  }
+  const names = refusal.missing.map((k) => FIELD_PHRASES[k]?.name ?? k);
+  const hows = [...new Set(refusal.missing.map((k) => FIELD_PHRASES[k]?.how ?? '').filter((h) => h !== ''))];
+  // 「取り出せない」は、この指示から取れなかったことだけを言う —— 引用で言えば通る道を
+  // 「音声・チャットからは取れない」と書くと、読んだ人は道が無いと思う (パス 508)。
   const head =
-    refusal.kind === 'invalid-field'
-      ? // 台帳の断りの文 (「note は 2000 文字以内で指定してください」) をそのまま使う ——
-        // 実行側が返す文と同じ物なので、確認の前と後で言い分けが割れない。
-        `「${label}」の「${action}」は ${describeWriteFieldFailure(refusal.failure)}。この指示では実行しません。`
-      : `「${label}」の「${action}」には ${refusal.missing.join(' / ')} が必要ですが、` +
-        '音声・チャットの指示からは取り出せないため実行しません。';
+    `「${label}」の「${action}」には ${names.join(' / ')} が必要ですが、` +
+    'この指示からは取り出せなかったため実行しません。';
+  const hint = hows.length > 0 ? ` ${hows.join('。 ')}。` : '';
   return refusal.screenInput
-    ? `${head} 画面を開いて入力してください。`
-    : `${head} この操作は画面にも入力欄がありません。`;
+    ? `${head}${hint} 画面を開いて入力してください。`
+    : `${head}${hint} この操作は画面にも入力欄がありません。`;
 }

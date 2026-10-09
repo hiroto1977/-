@@ -882,6 +882,27 @@ describe('extractWriteParams — 必須欄を生の発話から取り出す (パ
     expect(channelToken('チャンネル名を言っていない')).toBeNull();
   });
 
+  it('★ #channel は助詞・送る動詞の手前で切る (ひらがなが続いても名前に含めない)', () => {
+    // 名前は \p{L} で続くので、助詞がくっついた発話は境界で切らないと残りを飲む (パス 508 の実測)。
+    expect(channelToken('#generalに送って')).toBe('#general');
+    expect(channelToken('#にほんごで送って')).toBe('#にほんご');
+    expect(channelToken('#もくもくへ投稿')).toBe('#もくもく');
+    expect(channelToken('#dev-opsと言って')).toBe('#dev-ops');
+    expect(channelToken('#一般を送って')).toBe('#一般');
+    // 先頭の字は境界として数えない (名前そのものが境界の字で始まることがある)。
+    expect(channelToken('#とうきょう に送って')).toBe('#とうきょう');
+    // 名前の途中の「も」「の」「は」「や」は境界に入れていない (切ると別の名前になる)。
+    expect(channelToken('#ももの話 に')).toBe('#ももの話');
+  });
+
+  it('★ 引用の無い本文は取らない (言い換えの文を本文に推測しない)', () => {
+    // 本文を「」で囲んでいない発話からは text を作らない —— 推測すると誤った文を送る。
+    expect(extractWriteParams('slack の #general に こんにちは と送って', 'send-message')).toEqual({ channel: '#general' });
+    expect(extractWriteParams('slack の #general に送って', 'send-message')).toEqual({ channel: '#general' });
+    // 引用が在れば本文は取る (作法どおりの言い方)。
+    expect(extractWriteParams('slack に「こんにちは」と送って', 'send-message')).toEqual({ text: 'こんにちは' });
+  });
+
   it('★ owner/repo は github.com の URL を先に見て、素の形は owner に字を含む物だけ', () => {
     expect(ownerRepoToken('github の hiroto1977/- に')).toEqual({ owner: 'hiroto1977', repo: '-' });
     expect(ownerRepoToken('https://github.com/octo-org/my.repo/issues に')).toEqual({ owner: 'octo-org', repo: 'my.repo' });

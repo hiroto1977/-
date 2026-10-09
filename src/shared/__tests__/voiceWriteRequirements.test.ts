@@ -30,6 +30,7 @@ import { describe, expect, it } from 'vitest';
 import { readOriginalDir, readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
+  FIELD_PHRASES,
   MAX_VOICE_PREVIEW_CHARS,
   RECORD_ENTRY_NOTE_FIELDS,
   VOICE_WRITE_REQUIREMENTS,
@@ -208,9 +209,92 @@ describe('断りの文面', () => {
       missing: ['channel', 'text'],
       screenInput: true,
     });
-    expect(msg).toContain('channel / text');
+    expect(msg).toContain('チャンネル / 本文');
     expect(msg).toContain('実行しません');
     expect(msg).toContain('画面を開いて入力してください');
+  });
+
+  it('★ 足りない欄を英語の欄名で名指ししない (利用者が読むのは日本語)', () => {
+    for (const req of VOICE_WRITE_REQUIREMENTS) {
+      const msg = voiceWriteRefusalMessage(req.serviceId, req.action, {
+        kind: 'missing-fields',
+        missing: [...req.required],
+        screenInput: req.screenInput,
+      });
+      // サービス ID と操作名は英字を含むので、欄名だけを探す (語の境界で)。
+      for (const key of req.required) {
+        expect(msg, `${req.serviceId}/${req.action} が英語の欄名「${key}」を出している`).not.toMatch(
+          new RegExp(`(^|[^A-Za-z])${key}([^A-Za-z]|$)`),
+        );
+      }
+    }
+  });
+
+  it('★ FIELD_PHRASES は台帳の欄と両方向に一致する (欄の無い行も、台帳に無い行も無い)', () => {
+    // 必須の欄だけが「足りない」と名指しされうる (任意の欄 —— GitHub の body など —— は名前が要らない)。
+    const required = new Set(VOICE_WRITE_REQUIREMENTS.flatMap((r) => r.required));
+    const ledger = new Set(VOICE_WRITE_REQUIREMENTS.flatMap((r) => Object.keys(r.fields)));
+    for (const key of required) {
+      expect(FIELD_PHRASES[key], `必須の欄「${key}」に日本語の名前が無い`).toBeDefined();
+    }
+    for (const key of Object.keys(FIELD_PHRASES)) {
+      expect(ledger.has(key), `FIELD_PHRASES の「${key}」は台帳のどの欄にも無い`).toBe(true);
+    }
+    // 名前は空でなく、英字だけの名前 (欄名をそのまま写したもの) ではない。
+    for (const [key, p] of Object.entries(FIELD_PHRASES)) {
+      expect(p.name, `「${key}」の名前が空`).not.toBe('');
+      expect(p.name, `「${key}」の名前が英字だけ`).not.toMatch(/^[A-Za-z ]+$/);
+    }
+  });
+
+  it('★ 本文・件名・記録の内容は「」で囲んで言う作法を述べる (言えば通る道を示す)', () => {
+    for (const key of ['text', 'title', 'summary', 'note']) {
+      expect(FIELD_PHRASES[key]?.how, `${key} の作法が無い`).toContain('「');
+    }
+    expect(FIELD_PHRASES.channel?.how).toContain('#');
+    expect(FIELD_PHRASES.owner?.how).toContain('/');
+  });
+
+  it('★ 言い直しの作法を断りの文面に実際に載せる (表だけでなく出力に出る)', () => {
+    const say = (missing: string[]) =>
+      voiceWriteRefusalMessage('Slack', 'send-message', { kind: 'missing-fields', missing, screenInput: true });
+    expect(say(['text'])).toContain('「こんにちは」のように「」で囲んで');
+    expect(say(['channel'])).toContain('「#general」');
+    expect(say(['channel', 'text'])).toContain('「#general」');
+    expect(voiceWriteRefusalMessage('GitHub', 'create-issue', {
+      kind: 'missing-fields',
+      missing: ['owner', 'repo', 'title'],
+      screenInput: true,
+    })).toContain('「a/b」');
+  });
+
+  it('★ 「取り出せない」と言うが、音声・チャットからは取れないとは言わない', () => {
+    const msg = voiceWriteRefusalMessage('Slack', 'send-message', {
+      kind: 'missing-fields',
+      missing: ['text'],
+      screenInput: true,
+    });
+    expect(msg).toContain('取り出せなかった');
+    expect(msg, '引用で言えば通るのに道が無いと言っている').not.toContain('音声・チャットからは');
+  });
+
+  it('★ 作法の文が続いても句点が二重にならない (日時のように作法の無い欄を混ぜても)', () => {
+    for (const req of VOICE_WRITE_REQUIREMENTS) {
+      const msg = voiceWriteRefusalMessage(req.serviceId, req.action, {
+        kind: 'missing-fields',
+        missing: [...req.required],
+        screenInput: req.screenInput,
+      });
+      expect(msg, `${req.serviceId}/${req.action} で句点が二重`).not.toMatch(/。\s*。/);
+    }
+    // 作法の無い欄 (日時) だけでも崩れない。
+    const dates = voiceWriteRefusalMessage('Google カレンダー', 'create-event', {
+      kind: 'missing-fields',
+      missing: ['start', 'end'],
+      screenInput: true,
+    });
+    expect(dates).toContain('開始日時 / 終了日時');
+    expect(dates).not.toMatch(/。\s*。/);
   });
 
   it('★ 画面に入力欄が無いときは「開いて入力」と言わない (無い物を案内しない)', () => {

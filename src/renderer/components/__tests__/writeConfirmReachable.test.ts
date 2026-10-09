@@ -195,7 +195,7 @@ describe('コンシェルジュ — 引用と #channel を持つ発話は確認�
     const dialog = await openWidget();
     await ask(dialog, SLACK_BARE);
     await waitForText(() => dialog.textContent ?? '', '実行しません');
-    expect(dialog.textContent ?? '').toContain('channel / text');
+    expect(dialog.textContent ?? '').toContain('チャンネル / 本文');
     expect(confirmOf(dialog)).toBeNull();
     expect(invoked).toEqual([]);
   });

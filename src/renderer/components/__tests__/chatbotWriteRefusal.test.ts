@@ -126,7 +126,7 @@ describe('チャット — 渡せない書き込みは承認を求めずに断�
     await ask(dialog, WRITE_TEXT);
     const text = dialog.textContent ?? '';
     expect(text, '断りが出ていない').toContain('実行しません');
-    expect(text, '足りない項目を名指ししていない').toContain('channel / text');
+    expect(text, '足りない項目を名指ししていない').toContain('チャンネル / 本文');
   });
 
   it('★ 確認ダイアログを出さない (起こり得ないことに承認を求めない)', async () => {

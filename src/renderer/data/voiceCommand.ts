@@ -377,10 +377,25 @@ export function quotedSpan(raw: string): string | null {
   return null;
 }
 
+/**
+ * チャンネル名の後ろに続く助詞・動詞。`\p{L}` は仮名も数えるので、これが無いと日本語は
+ * 名前と続けて書かれた文の残りを飲み込む (パス 508 の実測: `#generalにこんにちはと送って`
+ * → `#generalにこんにちはと送って`、引用つきでも `#generalに`)。確認はその値を見せるが、
+ * 見せる物が誤っていれば確認の意味が無い。名前の**先頭**では切らない (`#にほん` の `に` で空に
+ * なるのを防ぐ)。`も` `の` `は` は名前の中にも現れるので入れない (`#もくもく` を切らない)。
+ */
+const CHANNEL_BOUNDARIES = ['に', 'へ', 'で', 'と', 'を', '送', '投稿'] as const;
+
 /** `#general` / `＃一般` → `#general` / `#一般` (Slack は名前に `#` を付けた形を受ける)。 */
 export function channelToken(raw: string): string | null {
   const m = /#([\p{L}\p{N}_-]+)/u.exec(raw.normalize('NFKC'));
-  return m === null ? null : `#${m[1]!}`;
+  if (m === null) return null;
+  let name = m[1]!;
+  for (const b of CHANNEL_BOUNDARIES) {
+    const at = name.indexOf(b, 1);
+    if (at !== -1) name = name.slice(0, at);
+  }
+  return name === '' ? null : `#${name}`;
 }
 
 /**
