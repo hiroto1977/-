@@ -114,7 +114,6 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/shared/radarPlot.ts': { kind: 'measure-next', why: 'レーダー図に何を描き何を描かないか (パス 190)。画面と書き出しが同じ 1 つを読む。' },
   'src/shared/realtimeProjection.ts': { kind: 'measure-next', why: '時刻から決まる値。毎秒動く物だけをここに置くという切り分けそのもの。' },
   'src/shared/securityResponse.ts': { kind: 'measure-next', why: '**安全の判定を作る応答を読む** (パス 261)。空の「漏洩」をでっち上げない関門。' },
-  'src/shared/voiceWriteRequirements.ts': { kind: 'measure-next', why: '音声・チャットから呼べる書き込みの必須項目と、実行してよいかの判断。' },
 };
 
 describe('変異検査の分母の外 (パス 354)', () => {

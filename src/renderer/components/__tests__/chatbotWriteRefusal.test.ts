@@ -2,8 +2,11 @@
 /**
  * **チャットが「必ず失敗する書き込み」の承認を求めない。** (2026-09-09 · パス 109)
  *
- * `slack/send-message` は `channel` と `text` を必須にするが、`parseVoiceCommand` は
- * `params` を一度も設定しない。2026-09-09 まで、チャットは
+ * `slack/send-message` は `channel` と `text` を必須にするが、パス 506 まで
+ * `parseVoiceCommand` は `params` を一度も設定しなかった (2026-10-08 · パス 507 から、
+ * 引用の中身と `#channel` を持つ発話は欄が揃って確認へ届く —— そちらは
+ * `writeConfirmReachable.test.ts` が持つ。ここの標本は引用の無い発話で、今も断られる)。
+ * 2026-09-09 まで、チャットは
  * 「🛠 Slack で「send-message」を実行します」「⚠ 書き込み操作のため、実行前に
  * 確認してください」と述べて確認ダイアログを出し、押せば
  * 「channel and text are required」で落ちていた。
@@ -123,7 +126,7 @@ describe('チャット — 渡せない書き込みは承認を求めずに断�
     await ask(dialog, WRITE_TEXT);
     const text = dialog.textContent ?? '';
     expect(text, '断りが出ていない').toContain('実行しません');
-    expect(text, '足りない項目を名指ししていない').toContain('channel / text');
+    expect(text, '足りない項目を名指ししていない').toContain('チャンネル / 本文');
   });
 
   it('★ 確認ダイアログを出さない (起こり得ないことに承認を求めない)', async () => {

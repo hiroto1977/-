@@ -16,12 +16,18 @@ import { VoiceCommandBar } from '../VoiceCommandBar';
 /**
  * **確認 → invoke の配線は「必要な項目が揃った未来」で測る** (2026-09-09 · パス 109)。
  *
- * `parseVoiceCommand` は `VoiceIntent.params` を一度も設定しないので、いまの実物では
- * どの書き込みも `voiceWriteRefusal` に断られ、**確認ボタンは出ない** (それがパス 109
- * で直した欠陥 —— 起こり得ないことに承認を求めていた)。だがここで測っている
+ * パス 506 まで `parseVoiceCommand` は `VoiceIntent.params` を一度も設定しなかったので、
+ * どの書き込みも `voiceWriteRefusal` に断られ、**確認ボタンは出なかった** (パス 109 で
+ * 直した欠陥 —— 起こり得ないことに承認を求めていた)。ここで測っている
  * 「確認前は invoke しない / 実行を押すと invoke する / 取消すと invoke しない」は
- * **項目が揃った日に効く不変条件**なので、検査を捨てずに `ready` の旗で
- * 「揃っている」状態を作って測る (旗を倒すと実物どおり断られる —— 下の節で測る)。
+ * 項目が揃ったときに効く不変条件なので、`ready` の旗で「揃っている」状態を作って測る
+ * (旗を倒すと断られる —— 下の節で測る)。
+ *
+ * **2026-10-08 (パス 507) から、その道は実物にも在る** —— 解析器が引用の中身・`#channel`・
+ * `owner/repo` を欄として取り出すので、「githubにイシューを作って」のような引用の無い
+ * 発話は今も断られるが、引用を持つ発話は mock なしで確認へ届く。mock なしの経路は
+ * `writeConfirmReachable.test.ts` が持つ (確認が送る内容を操作子より前に見せることも)。
+ * この旗は「欄の有無に依らず配線だけを測る」ために残す。
  */
 const gate = vi.hoisted(() => ({ ready: true }));
 vi.mock('../../../shared/voiceWriteRequirements', async (importOriginal) => {
@@ -194,7 +200,7 @@ describe('VoiceCommandBar — インタラクション', () => {
       });
       expect(container.querySelector('[aria-label="実行を承認"]'), '実行できないのに承認ボタンが出ている').toBeNull();
       expect(container.textContent).toContain('実行しません');
-      expect(container.textContent).toContain('owner / repo / title');
+      expect(container.textContent).toContain('リポジトリの所有者 / リポジトリ / 件名');
       expect(invoke).not.toHaveBeenCalled();
     });
 

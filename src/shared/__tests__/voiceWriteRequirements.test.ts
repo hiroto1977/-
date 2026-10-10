@@ -30,11 +30,19 @@ import { describe, expect, it } from 'vitest';
 import { readOriginalDir, readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
+  FIELD_PHRASES,
+  MAX_VOICE_PREVIEW_CHARS,
+  RECORD_ENTRY_NOTE_FIELDS,
   VOICE_WRITE_REQUIREMENTS,
+  voiceWritePreview,
   voiceWriteRefusal,
   voiceWriteRefusalMessage,
   voiceWriteRequirement,
 } from '../voiceWriteRequirements';
+import { MAX_RECORD_NOTE_CHARS } from '../recordEntryLimits';
+import { SLACK_MESSAGE_FIELDS, requiredWriteFields } from '../writeFieldLimits';
+
+const SLACK_MESSAGE_FIELDS_REF = () => SLACK_MESSAGE_FIELDS;
 
 const SRC = path.resolve(__dirname, '../..');
 const read = (rel: string): string => readOriginalSource(path.join(SRC, rel));
@@ -167,7 +175,7 @@ describe('台帳の必須項目が実装と一致する', () => {
 });
 
 describe('実行してよいかの判断', () => {
-  it('★ 項目が無ければ断る (今の解析器は必ずここへ来る)', () => {
+  it('★ 項目が無ければ断る (引用も #channel も無い発話はここへ来る)', () => {
     const r = voiceWriteRefusal('slack', 'send-message', undefined);
     expect(r).not.toBeNull();
     expect(r).toEqual({ kind: 'missing-fields', missing: ['channel', 'text'], screenInput: true });
@@ -201,9 +209,134 @@ describe('断りの文面', () => {
       missing: ['channel', 'text'],
       screenInput: true,
     });
-    expect(msg).toContain('channel / text');
+    expect(msg).toContain('チャンネル / 本文');
     expect(msg).toContain('実行しません');
     expect(msg).toContain('画面を開いて入力してください');
+  });
+
+  it('★ 足りない欄を英語の欄名で名指ししない (利用者が読むのは日本語)', () => {
+    for (const req of VOICE_WRITE_REQUIREMENTS) {
+      const msg = voiceWriteRefusalMessage(req.serviceId, req.action, {
+        kind: 'missing-fields',
+        missing: [...req.required],
+        screenInput: req.screenInput,
+      });
+      // サービス ID と操作名は英字を含むので、欄名だけを探す (語の境界で)。
+      for (const key of req.required) {
+        expect(msg, `${req.serviceId}/${req.action} が英語の欄名「${key}」を出している`).not.toMatch(
+          new RegExp(`(^|[^A-Za-z])${key}([^A-Za-z]|$)`),
+        );
+      }
+    }
+  });
+
+  it('★ FIELD_PHRASES は台帳の欄と両方向に一致する (欄の無い行も、台帳に無い行も無い)', () => {
+    // 必須の欄だけが「足りない」と名指しされうる (任意の欄 —— GitHub の body など —— は名前が要らない)。
+    const required = new Set(VOICE_WRITE_REQUIREMENTS.flatMap((r) => r.required));
+    const ledger = new Set(VOICE_WRITE_REQUIREMENTS.flatMap((r) => Object.keys(r.fields)));
+    for (const key of required) {
+      expect(FIELD_PHRASES[key], `必須の欄「${key}」に日本語の名前が無い`).toBeDefined();
+    }
+    for (const key of Object.keys(FIELD_PHRASES)) {
+      expect(ledger.has(key), `FIELD_PHRASES の「${key}」は台帳のどの欄にも無い`).toBe(true);
+    }
+    // 名前は空でなく、英字だけの名前 (欄名をそのまま写したもの) ではない。
+    for (const [key, p] of Object.entries(FIELD_PHRASES)) {
+      expect(p.name, `「${key}」の名前が空`).not.toBe('');
+      expect(p.name, `「${key}」の名前が英字だけ`).not.toMatch(/^[A-Za-z ]+$/);
+    }
+  });
+
+  it('★ 本文・件名・記録の内容は「」で囲んで言う作法を述べる (言えば通る道を示す)', () => {
+    for (const key of ['text', 'title', 'summary', 'note']) {
+      expect(FIELD_PHRASES[key]?.how, `${key} の作法が無い`).toContain('「');
+    }
+    expect(FIELD_PHRASES.channel?.how).toContain('#');
+    expect(FIELD_PHRASES.owner?.how).toContain('/');
+  });
+
+  it('★ 断りの文面は全文を一致で留める (欄の並び・句読点・空白・台帳に無い欄の扱い)', () => {
+    // 部分一致では、句読点や空白を 1 つ変えても、欄の名前や作法が出ていれば通ってしまう。
+    expect(voiceWriteRefusalMessage('Slack', 'send-message', {
+      kind: 'missing-fields',
+      missing: ['channel', 'text'],
+      screenInput: true,
+    })).toBe(
+      '「Slack」の「send-message」には チャンネル / 本文 が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' チャンネルは「#general」のように # で始まる名前で言ってください。' +
+        ' 本文は「こんにちは」のように「」で囲んで言ってください。' +
+        ' 画面を開いて入力してください。',
+    );
+    // 作法の無い欄 (日時) だけなら作法の文を出さず、入力欄の案内も無い側を言う。
+    expect(voiceWriteRefusalMessage('Google カレンダー', 'create-event', {
+      kind: 'missing-fields',
+      missing: ['start'],
+      screenInput: false,
+    })).toBe(
+      '「Google カレンダー」の「create-event」には 開始日時 が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' この操作は画面にも入力欄がありません。',
+    );
+    // 同じ作法は 1 度だけ述べる (owner と repo は同じ言い方)。
+    expect(voiceWriteRefusalMessage('GitHub', 'create-issue', {
+      kind: 'missing-fields',
+      missing: ['owner', 'repo'],
+      screenInput: true,
+    })).toBe(
+      '「GitHub」の「create-issue」には リポジトリの所有者 / リポジトリ が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' リポジトリは「a/b」のように 所有者/名前 の形で言ってください。' +
+        ' 画面を開いて入力してください。',
+    );
+    // 台帳に無い欄は、欄名をそのまま名指しする (黙って落とさない・作法は空のまま出さない)。
+    expect(voiceWriteRefusalMessage('L', 'A', {
+      kind: 'missing-fields',
+      missing: ['zzz'],
+      screenInput: true,
+    })).toBe(
+      '「L」の「A」には zzz が必要ですが、この指示からは取り出せなかったため実行しません。' +
+        ' 画面を開いて入力してください。',
+    );
+  });
+
+  it('★ 言い直しの作法を断りの文面に実際に載せる (表だけでなく出力に出る)', () => {
+    const say = (missing: string[]) =>
+      voiceWriteRefusalMessage('Slack', 'send-message', { kind: 'missing-fields', missing, screenInput: true });
+    expect(say(['text'])).toContain('「こんにちは」のように「」で囲んで');
+    expect(say(['channel'])).toContain('「#general」');
+    expect(say(['channel', 'text'])).toContain('「#general」');
+    expect(voiceWriteRefusalMessage('GitHub', 'create-issue', {
+      kind: 'missing-fields',
+      missing: ['owner', 'repo', 'title'],
+      screenInput: true,
+    })).toContain('「a/b」');
+  });
+
+  it('★ 「取り出せない」と言うが、音声・チャットからは取れないとは言わない', () => {
+    const msg = voiceWriteRefusalMessage('Slack', 'send-message', {
+      kind: 'missing-fields',
+      missing: ['text'],
+      screenInput: true,
+    });
+    expect(msg).toContain('取り出せなかった');
+    expect(msg, '引用で言えば通るのに道が無いと言っている').not.toContain('音声・チャットからは');
+  });
+
+  it('★ 作法の文が続いても句点が二重にならない (日時のように作法の無い欄を混ぜても)', () => {
+    for (const req of VOICE_WRITE_REQUIREMENTS) {
+      const msg = voiceWriteRefusalMessage(req.serviceId, req.action, {
+        kind: 'missing-fields',
+        missing: [...req.required],
+        screenInput: req.screenInput,
+      });
+      expect(msg, `${req.serviceId}/${req.action} で句点が二重`).not.toMatch(/。\s*。/);
+    }
+    // 作法の無い欄 (日時) だけでも崩れない。
+    const dates = voiceWriteRefusalMessage('Google カレンダー', 'create-event', {
+      kind: 'missing-fields',
+      missing: ['start', 'end'],
+      screenInput: true,
+    });
+    expect(dates).toContain('開始日時 / 終了日時');
+    expect(dates).not.toMatch(/。\s*。/);
   });
 
   it('★ 画面に入力欄が無いときは「開いて入力」と言わない (無い物を案内しない)', () => {
@@ -263,5 +396,105 @@ describe('画面が同じ判断を読む (2 度書かない)', () => {
     // 断りの枝が `setPendingIntent` より前に return している。
     expect(after).toContain('return;');
     expect(after.indexOf('return;')).toBeLessThan(after.indexOf('setPendingIntent'));
+  });
+});
+
+/**
+ * **届く道が開いたので、台帳は天井も見る** (2026-10-08 · パス 507)。
+ *
+ * 解析器が欄を取り出すようになった (`extractWriteParams`) ので、必須が揃った値が
+ * ここへ来る。揃っていても天井・改行・選択肢を外れた値は main / web-shim が断る ——
+ * 確認を取ってから落ちる形へ戻さないため、確認の前に同じ台帳で見る。
+ */
+describe('台帳の行は serviceId と action の両方で引く (変異検査が教えた標本・パス 507)', () => {
+  it('★ 知っているサービスの知らない action は unknown-action (slack の record-entry を slack の行で受けない)', () => {
+    const r = voiceWriteRefusal('slack', 'record-entry', { note: 'x' });
+    expect(r).toEqual({ kind: 'unknown-action' });
+  });
+
+  it('★ 同じ action を持つ別のサービスの行で受けない (real-estate の send-message を slack の行で受けない)', () => {
+    expect(voiceWriteRefusal('real-estate', 'send-message', { channel: '#a', text: 'b' })).toEqual({ kind: 'unknown-action' });
+  });
+
+  it('★ 同じ action の行が 4 つ並ぶ record-entry は、その serviceId の行を返す (先頭の行ではない)', () => {
+    // real-estate (画面の入力欄あり) が先頭、uber-eats (入力欄なし) は 3 行目。`r.action === action` だけで引くと先頭に当たる。
+    const r = voiceWriteRefusal('uber-eats', 'record-entry', {});
+    expect(r).not.toBeNull();
+    if (r === null || r.kind !== 'missing-fields') throw new Error('note の欠けが断られていない');
+    expect(r.screenInput).toBe(false);
+    expect(voiceWriteRequirement('uber-eats', 'record-entry')?.serviceId).toBe('uber-eats');
+    expect(voiceWriteRequirement(undefined, 'record-entry')).toBeNull();
+    expect(voiceWriteRequirement('uber-eats', undefined)).toBeNull();
+  });
+});
+
+describe('揃っていても、台帳の天井を外れた値は確認の前に断る (パス 507)', () => {
+  it('★ 欄の台帳は必須欄の出どころで、外へ書く 3 つは writeFieldLimits の台帳そのもの', () => {
+    for (const r of VOICE_WRITE_REQUIREMENTS) {
+      expect(r.required, `${r.serviceId}/${r.action}: required が fields から導かれていない`).toEqual(requiredWriteFields(r.fields));
+    }
+    expect(voiceWriteRequirement('slack', 'send-message')?.fields).toBe(SLACK_MESSAGE_FIELDS_REF());
+    expect(voiceWriteRequirement('real-estate', 'record-entry')?.fields).toBe(RECORD_ENTRY_NOTE_FIELDS);
+    // record-entry の天井は recordEntryLimits の 1 つ (main の 4 つの handler と web-shim が断る数)。
+    expect(RECORD_ENTRY_NOTE_FIELDS.note).toEqual({ required: true, max: MAX_RECORD_NOTE_CHARS, multiline: true });
+  });
+
+  it('★ 天井ちょうどは通し、1 字超えたら invalid-field で断る (文字で数える)', () => {
+    const exact = '😀'.repeat(MAX_RECORD_NOTE_CHARS);
+    expect(voiceWriteRefusal('real-estate', 'record-entry', { note: exact })).toBeNull();
+    const over = exact + 'x';
+    const r = voiceWriteRefusal('real-estate', 'record-entry', { note: over });
+    expect(r?.kind).toBe('invalid-field');
+    expect(r?.kind === 'invalid-field' && r.failure.field).toBe('note');
+    expect(r?.kind === 'invalid-field' && r.failure.problem).toBe('too-long');
+  });
+
+  it('★ 1 行の欄 (channel / title) の改行は断り、本文 (text / note) の改行は通す', () => {
+    const ch = voiceWriteRefusal('slack', 'send-message', { channel: '#a\nb', text: 'やあ' });
+    expect(ch?.kind === 'invalid-field' && ch.failure.field).toBe('channel');
+    expect(ch?.kind === 'invalid-field' && ch.failure.problem).toBe('control-chars');
+    expect(voiceWriteRefusal('slack', 'send-message', { channel: '#a', text: '1 行目\n2 行目' })).toBeNull();
+    expect(voiceWriteRefusal('real-estate', 'record-entry', { note: '1 行目\n2 行目' })).toBeNull();
+  });
+
+  it('★ 足りない欄が在れば、天井より先に missing-fields で断る (全部を名指しする)', () => {
+    const r = voiceWriteRefusal('github', 'create-issue', { title: 'x'.repeat(10_000) });
+    expect(r).toEqual({ kind: 'missing-fields', missing: ['owner', 'repo'], screenInput: true });
+  });
+
+  it('★ 断りの文面は台帳の文 (実行側が返す物と同じ) を使い、「実行しません」を述べる', () => {
+    const r = voiceWriteRefusal('real-estate', 'record-entry', { note: 'x'.repeat(MAX_RECORD_NOTE_CHARS + 1) });
+    const msg = voiceWriteRefusalMessage('不動産投資', 'record-entry', r!);
+    expect(msg).toContain(`note は ${MAX_RECORD_NOTE_CHARS} 文字以内で指定してください`);
+    expect(msg).toContain('実行しません');
+    expect(msg).toContain('画面を開いて入力してください');
+    if (r === null || r.kind !== 'invalid-field') throw new Error('天井を超えた note が断られていない');
+    const noScreen = voiceWriteRefusalMessage('Uber Eats', 'record-entry', { ...r, screenInput: false });
+    expect(noScreen).toContain('画面にも入力欄がありません');
+    expect(noScreen).not.toContain('画面を開いて');
+  });
+});
+
+describe('確認が見せる物 (voiceWritePreview・パス 507)', () => {
+  it('★ 台帳の欄の順に、intent が持つ値だけを並べる', () => {
+    expect(voiceWritePreview('slack', 'send-message', { text: 'やあ', channel: '#general' })).toEqual([
+      { field: 'channel', value: '#general', truncated: false },
+      { field: 'text', value: 'やあ', truncated: false },
+    ]);
+    expect(voiceWritePreview('github', 'create-issue', { title: 'x' })).toEqual([{ field: 'title', value: 'x', truncated: false }]);
+    expect(voiceWritePreview('slack', 'send-message', undefined)).toEqual([]);
+  });
+
+  it('★ 台帳に無い操作は空 (そのとき確認は出ない)', () => {
+    expect(voiceWritePreview('stocks', 'advise', { q: 'x' })).toEqual([]);
+    expect(voiceWritePreview(undefined, undefined, { q: 'x' })).toEqual([]);
+  });
+
+  it('★ 天井を超える値は切って「…」を付け、切ったことを名乗る (ちょうどは切らない)', () => {
+    const exact = 'あ'.repeat(MAX_VOICE_PREVIEW_CHARS);
+    expect(voiceWritePreview('real-estate', 'record-entry', { note: exact })).toEqual([{ field: 'note', value: exact, truncated: false }]);
+    const [row] = voiceWritePreview('real-estate', 'record-entry', { note: exact + 'い' });
+    expect(row?.truncated).toBe(true);
+    expect(row?.value).toBe(exact + '…');
   });
 });

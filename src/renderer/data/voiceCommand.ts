@@ -32,7 +32,12 @@ export interface VoiceIntent {
   readonly serviceId?: ServiceId;
   /** action 種別 (kind==='action' のとき)。例: 'create-issue'。 */
   readonly action?: string;
-  /** 抽出された付随パラメータ (将来拡張用; 現状は最小限)。 */
+  /**
+   * 発話から取り出した欄 (`extractWriteParams`・パス 507)。書き込みの必須欄
+   * (`shared/voiceWriteRequirements.ts` の台帳) はここから来る。取れた欄だけを持ち、
+   * 1 つも無ければ欄ごと無い。2026-10-08 まで「将来拡張用; 現状は最小限」と書かれたまま
+   * 1 度も設定されず、確認の窓は死んだ UI だった。
+   */
   readonly params?: Readonly<Record<string, string>>;
   /** 0..1。マッチの確からしさ。unknown は 0。 */
   readonly confidence: number;
@@ -322,6 +327,115 @@ export function isQuestion(rawText: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// 必須欄の取り出し (生の発話から)
+// ---------------------------------------------------------------------------
+
+/**
+ * **書き込みの必須欄を、生の発話から取り出す** (2026-10-08 · パス 507)。
+ *
+ * `normalizeUtterance` は引用符・`#`・`/` を落とすので、欄の値は**正規化の前**の文から取る
+ * (`isQuestion` が生の文を受けるのと同じ理由)。取り出す形は 3 つだけで、どれも口で言える物:
+ *
+ * | 形 | 欄 | 例 |
+ * | --- | --- | --- |
+ * | 引用 「…」『…』“…” "…" の中身 (最初の 1 つ) | 本文 (`text` / `title` / `note`) | 不動産に「物件 A を内見」を記録して |
+ * | `#channel` (全角 ＃ は NFKC で #) | Slack の `channel` | slack の #general に「おはよう」を送って |
+ * | `owner/repo` (`github.com/owner/repo` でも) | GitHub の `owner` / `repo` | github の hiroto1977/- に「落ちる」を issue にして |
+ *
+ * 日時 (`calendar/create-event` の `start` / `end`) は取り出さない —— 「明日 10 時」の解釈は
+ * 曖昧で、**誤った日時で予定を作るほうが、断るより悪い**。その action は今までどおり
+ * `voiceWriteRefusal` が断り、画面で入力するよう案内する。
+ *
+ * 取れた欄だけを返す (部分でもよい —— 足りない物は `voiceWriteRefusal` が名指しする)。
+ * 1 つも取れなければ `undefined` で、欄を持たない intent は今までと同じ形になる。
+ * **2026-10-08 まで `VoiceIntent.params` は 1 度も設定されず**、音声とチャットの確認
+ * (alertdialog) はどの発話からも届かない死んだ UI だった (パス 506 の実測)。
+ */
+const QUOTE_PAIRS: readonly (readonly [string, string])[] = [
+  ['「', '」'],
+  ['『', '』'],
+  ['“', '”'],
+  ['"', '"'],
+];
+
+/**
+ * 最初に**閉じている**引用の中身 (前後の空白は落とす)。閉じていない引用と空の引用は飛ばして
+ * 次を探す —— `「」と「x」` は `x`。無ければ `null`。
+ */
+export function quotedSpan(raw: string): string | null {
+  // 符号単位で歩く (`indexOf` / `slice` と同じ座標)。`i < raw.length` の添字ループは `i <= raw.length` が
+  // 等価変異 (`raw[length]` は undefined でどの対にも当たらない) になるので比較そのものを持たない形で書く (法則 115)。
+  for (const [i, ch] of raw.split('').entries()) {
+    const pair = QUOTE_PAIRS.find(([open]) => open === ch);
+    if (pair === undefined) continue;
+    const end = raw.indexOf(pair[1], i + 1);
+    // `end < 0` は `end <= 0` が等価変異 (`i + 1 >= 1` なので 0 は返らない) —— 見つからない値そのものを比べる。
+    if (end === -1) continue;
+    const value = raw.slice(i + 1, end).trim();
+    if (value !== '') return value;
+  }
+  return null;
+}
+
+/**
+ * チャンネル名の後ろに続く助詞・動詞。`\p{L}` は仮名も数えるので、これが無いと日本語は
+ * 名前と続けて書かれた文の残りを飲み込む (パス 508 の実測: `#generalにこんにちはと送って`
+ * → `#generalにこんにちはと送って`、引用つきでも `#generalに`)。確認はその値を見せるが、
+ * 見せる物が誤っていれば確認の意味が無い。名前の**先頭**では切らない (`#にほん` の `に` で空に
+ * なるのを防ぐ)。`も` `の` `は` は名前の中にも現れるので入れない (`#もくもく` を切らない)。
+ */
+const CHANNEL_BOUNDARIES = ['に', 'へ', 'で', 'と', 'を', '送', '投稿'] as const;
+
+/** `#general` / `＃一般` → `#general` / `#一般` (Slack は名前に `#` を付けた形を受ける)。 */
+export function channelToken(raw: string): string | null {
+  const m = /#([\p{L}\p{N}_-]+)/u.exec(raw.normalize('NFKC'));
+  if (m === null) return null;
+  let name = m[1]!;
+  for (const b of CHANNEL_BOUNDARIES) {
+    const at = name.indexOf(b, 1);
+    if (at !== -1) name = name.slice(0, at);
+  }
+  // 名前は必ず 1 字以上残る (境界は先頭の字より後ろでしか切らない) —— 空の名前は作られない。
+  return `#${name}`;
+}
+
+/**
+ * `owner/repo`。`github.com/owner/repo` の形を先に見る (そうしないと `github.com` が owner に
+ * なる)。素の `owner/repo` は、owner が字を 1 つは含む物だけ —— `10/08` のような日付を
+ * 組として取らないため。
+ */
+export function ownerRepoToken(raw: string): { readonly owner: string; readonly repo: string } | null {
+  const s = raw.normalize('NFKC');
+  const url = /github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)/.exec(s);
+  if (url !== null) return { owner: url[1]!, repo: url[2]! };
+  for (const m of s.matchAll(/(?<![A-Za-z0-9_./-])([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)/g)) {
+    if (/[A-Za-z]/.test(m[1]!)) return { owner: m[1]!, repo: m[2]! };
+  }
+  return null;
+}
+
+/** action ごとに、取り出せる欄を集める。取れた物だけを持つ (1 つも無ければ `undefined`)。 */
+export function extractWriteParams(raw: string, action: string): Readonly<Record<string, string>> | undefined {
+  const out: Record<string, string> = {};
+  const quoted = quotedSpan(raw);
+  if (action === 'send-message') {
+    const channel = channelToken(raw);
+    if (channel !== null) out.channel = channel;
+    if (quoted !== null) out.text = quoted;
+  } else if (action === 'create-issue') {
+    const or = ownerRepoToken(raw);
+    if (or !== null) {
+      out.owner = or.owner;
+      out.repo = or.repo;
+    }
+    if (quoted !== null) out.title = quoted;
+  } else if (action === 'record-entry') {
+    if (quoted !== null) out.note = quoted;
+  }
+  return Object.keys(out).length === 0 ? undefined : out;
+}
+
+// ---------------------------------------------------------------------------
 // 意図解析
 // ---------------------------------------------------------------------------
 
@@ -355,14 +469,16 @@ export function parseVoiceCommand(text: string): VoiceIntent {
     return UNKNOWN;
   }
 
-  // action 意図 (動詞 + サービス)
+  // action 意図 (動詞 + サービス)。必須欄は生の発話から取る (正規化は引用符を落とす)。
   if (action !== null) {
     const conf = ambiguous ? 0.5 : action === 'backup' ? 0.8 : 0.9;
+    const params = extractWriteParams(text, action);
     return {
       kind: 'action',
       serviceId: primary,
       action,
       confidence: conf,
+      ...(params === undefined ? {} : { params }),
       ...(ambiguous ? { candidates: services } : {}),
     };
   }

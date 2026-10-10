@@ -1970,8 +1970,8 @@ export const LAWS: readonly Law[] = [
       + '名前・ref・onKeyDown を持ち hook を呼ぶ・両方向の台帳 / `openedStateCss` —— スマホの `.main` は地を剥がさず、チップは 24px 以上) '
       + '③ 実機の `opened` suite (e2e の 39 番目・131 件 —— 4 配色 × 開いた全画面・浮いた窓のキーボードの道・スマホ 4 配色のドロワーとシートと'
       + '全画面の字・測定器の対照 2: `inert` の下は「無い」と数える)。'
-      + '**測って何も無かった物も書く**: 書き込みの確認 (`pendingIntent`・音声の確認) は同じ hook で配線したが、**今日その状態へ届く道は無い** '
-      + '(7 つの書き込みはどれも必須欄を持ち、解析器は `params` を設定しない)。'
+      + '**測って何も無かった物も書く**: 書き込みの確認 (`pendingIntent`・音声の確認) は同じ hook で配線したが、**その日その状態へ届く道は無かった** '
+      + '(7 つの書き込みはどれも必須欄を持ち、解析器は `params` を設定しなかった —— 翌日のパス 507 (次の法則) が道を開き、`opened` suite が確認の中まで測る)。'
       + '**測っていない物**: ポップオーバー (今日 0 件)・開いた後に続く操作途中の状態・タブレット幅 (769〜1199px)・'
       + '`--accent` のグラフィック・テキスト間隔。',
     provenance: ['2026-10-07 (パス 506)'],
@@ -1981,6 +1981,37 @@ export const LAWS: readonly Law[] = [
       test(T.renderer('drawerKeyboard')),
       test(T.renderer('dialogSitesCensus')),
       test(T.renderer('openedStateCss')),
+      harness('e2e'),
+      harness('e2e:lite'),
+    ],
+  },
+  {
+    id: 'write-confirmation-reachable-and-shows-payload',
+    family: 'surface',
+    name: '書き込みの確認は、実物の経路から届き、何を送るかを操作子より前に見せる —— 届かない確認は死んだ UI で、見せない確認は白紙の承認である',
+    statement:
+      '音声・チャットの書き込み (`VOICE_WRITE_REQUIREMENTS` の 7 行) は確認 (alertdialog) を経て `invoke` へ渡る形を持ち、'
+      + 'パス 109 は「渡せない書き込みは確認の前に断る」を置いた。ところがその関門に渡る `params` を解析器が 1 度も作らなかったので、'
+      + '**どの発話も断られ、2 つの確認 (`VoiceCommandBar` の実行確認・`ChatbotWidget` の `pendingIntent`) は実物の経路から 1 度も描かれなかった** '
+      + '(実測 2026-10-07: 標本 9 発話で届く物 0。パス 109 の検査は `voiceWriteRefusal` を `vi.mock` で黙らせて「揃った未来」を測っており、'
+      + '届く道が無いことは検査からは見えなかった)。しかも確認の文は「「X」で「action」を実行しますか？」だけで、**何を送るかを 1 字も見せていなかった** '
+      + '(台帳の docblock 自身が名指ししていた非対称 —— 端末内の書き込みは全部見せてから行い、外への送信は何も見せずに承認を求める)。'
+      + '規則は 3 つ: ① 解析器は**生の発話**から欄を取り出す (`extractWriteParams` —— 引用「…」『…』“…” "…" の中身・`#channel`・`owner/repo`。'
+      + '正規化 (`normalizeUtterance`) は引用符と `#` と `/` を落とすので正規化の前に読む)。推測で埋めない —— 日付 (`calendar/create-event`) は'
+      + '誤った日時の予定を作るより断る方が軽いので取り出さない (引用の無い発話は今までどおり断られ、画面へ誘導される)。'
+      + '② 関門は必須だけでなく**同じ台帳の天井** (`writeFieldLimits.ts` / `MAX_RECORD_NOTE_CHARS`) も確認の前に見る (`invalid-field`) —— 揃っていても'
+      + 'main / web-shim が断る値で確認を取ると「確認してから落ちる」形へ戻る。③ 確認は送る欄と値を `[data-write-preview]` に**操作子より前**に並べる '
+      + '(法則 `egress-notice-before-send` の向き・値は `displayField` で 256 字に切り、切ったことを言う・欄の順と切り方は `voiceWritePreview` の 1 つ)。'
+      + '**実測 (直した後)**: 同じ標本 9 発話のうち 5 が確認へ届き、確認は欄と値を並べ、実行を押すと見せた値がそのまま `invoke` へ届く。'
+      + '**3 層で留める**: ① 単体 (解析器の取り出し・台帳の天井と preview) ② jsdom で実物の 2 部品を mock なしで描いて打つ (`writeConfirmReachable`) '
+      + '③ 実機の `opened` suite (デスクトップ 4 配色の浮いた窓とスマホ 4 配色のシートで、引用と `#channel` を持つ発話が実行確認に届き・欄と値が操作子より前・Esc は取り消し —— +24 件)。'
+      + '**測っていない物**: 引用の無い本文の取り出し (「こんにちはと送って」—— 境目が曖昧なので断る側に倒した)・日付の取り出し・複数の引用。',
+    provenance: ['2026-10-08 (パス 507)'],
+    enforcedBy: [
+      test('src/renderer/data/__tests__/voiceCommand.test.ts'),
+      test(T.shared('voiceWriteRequirements')),
+      test('src/renderer/components/__tests__/writeConfirmReachable.test.ts'),
+      test('src/renderer/components/__tests__/chatbotWriteRefusal.test.ts'),
       harness('e2e'),
       harness('e2e:lite'),
     ],

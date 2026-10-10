@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 691 個の `file:line` 参照 + 43 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 697 個の `file:line` 参照 + 43 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **17523** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **17557** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 34 / 37 (残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 691 | 自己検証 |
+| `file:line` 参照数 | 697 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2253,7 +2253,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **309 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **310 ファイル**。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
 名指ししたので、`audit:mutate-changed` で 62 変異体を測り (1 度目は **90.00% / 生存 6** —— `aria-disabled` を無効と読む 4 件・操作子の無い窓の `?.focus()`・省いた `returnTo` —— どれも「宣言した契約に標本が無い」だったので標本を 6 件足し、2 度目は **100.00% (Killed 60 / 生存 0 / 未到達 0・計装 62 のうち表に載らない 2 件は `ignoreStatic` が外した static 変異体と見ている)**) 載せた。
@@ -2779,9 +2779,19 @@ Shift+Tab で画面の外の 74 項目へ入る)、開いている間は暗幕�
 (開いたら入力欄・🤖 の後ろ・Shift+Tab は窓の中・チップ 24px・1 往復した画面・alertdialog の焦点は「残す」・Esc で 📥 へ戻る・
 Esc で閉じて 🤖 へ)・スマホ 412×915 × 4 配色 (閉じたドロワーは inert・☰ から Shift+Tab で入らない・開いたら ✕ と本文の inert・
 Tab は本文へ出ない・Esc で ☰ へ・シート・全画面の字)・測定器の対照 2)。**測って何も無かった物**: 書き込みの確認
-(`pendingIntent` / 音声の確認) は同じ hook で配線したが**今日その状態へ届く道は無い** (7 つの書き込みはどれも必須欄を持ち、
-解析器は `params` を設定しない)。**測っていない物**: ポップオーバー (今日 0 件)・タブレット幅 (769〜1199px)・開いた後の操作途中の状態・
+(`pendingIntent` / 音声の確認) は同じ hook で配線したが**その日その状態へ届く道は無かった** (7 つの書き込みはどれも必須欄を持ち、
+解析器は `params` を設定しなかった —— 翌日のパス 507 が開いた・次の段落)。**測っていない物**: ポップオーバー (今日 0 件)・タブレット幅 (769〜1199px)・開いた後の操作途中の状態・
 `--accent` のグラフィック・テキスト間隔。
+
+**書き込みの確認へ届く道と、確認が見せる物** (2026-10-08 · パス 507) —— 音声・チャットの書き込み (`src/shared/voiceWriteRequirements.ts` の
+台帳 7 行) は確認 (alertdialog) を経て `invoke` へ渡る形を持つが、`src/renderer/data/voiceCommand.ts` の解析器が `params` を 1 度も作らなかったので、
+パス 109 の関門 (`voiceWriteRefusal`) が**どの発話も**断り、2 つの確認は実物の経路から 1 度も描かれなかった (実測: 標本 9 発話で 0)。
+直しは 3 つ: ① 解析器は**生の発話**から欄を取り出す (`extractWriteParams` —— 引用「…」『…』“…” "…" の中身・`#channel`・`owner/repo`。正規化は
+引用符と `#` と `/` を落とすので正規化の前に読む。日付は取り出さない —— 誤った予定より断る方が軽い) ② 関門は必須だけでなく同じ台帳の天井
+(`src/shared/writeFieldLimits.ts` / `MAX_RECORD_NOTE_CHARS`) を確認の前に見る (`invalid-field`) ③ 確認は送る欄と値 (`voiceWritePreview` —— 台帳の
+欄の順・`displayField` で 256 字) を `[data-write-preview]` に**操作子より前**に並べる。**3 層で留める**: ① 単体 (`src/renderer/data/__tests__/voiceCommand.test.ts`・
+`src/shared/__tests__/voiceWriteRequirements.test.ts`) ② jsdom で実物の 2 部品を mock なしで描いて打つ (`src/renderer/components/__tests__/writeConfirmReachable.test.ts`
+7 件) ③ 実機の `opened` suite +24 (デスクトップ 4 配色の浮いた窓とスマホ 4 配色のシート × 引用と `#channel` を持つ発話が実行確認に届き・欄と値が操作子より前・Esc は取り消し —— 131 → 155 件)。
 
 **シェルの操作性** (2026-09-19 · パス 322) —— 2026-09-17 の見た目の再設計は色と形だけを変え、構造と文言と
 `data-*` は触らなかった。パス 322 はサイドバー・トップバー・ホームの**操作**を変える: 検索欄の ✕ と件数と
