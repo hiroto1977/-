@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { extractJson, normalizeAnalysis } from '../emotions';
+import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
+// 断りの文は 3 画面と両ビルドで 1 つ (パス 451) —— 字面で写すと片方だけ動かせる。
+import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../../shared/advisorQuestionLimits';
+import { calendarDateMessage } from '../../../shared/isoDate';
+import { EMOTIONS_UNREADABLE_CORRUPT, extractJson, normalizeAnalysis } from '../emotions';
+import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 
 describe('extractJson', () => {
   it('returns the raw text when no fences are present', () => {
@@ -88,18 +93,65 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach } from 'vitest';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
  
 let tmpDir: string;
+/** OS のキーチェーンの有無・復号の失敗を検査ごとに切り替える (secretsProtection.test と同じ形)。 */
+let encryptionAvailable = true;
+let decryptThrows = false;
 vi.mock('electron', () => ({
+  safeStorage: {
+    isEncryptionAvailable: () => encryptionAvailable,
+    // 可逆な代役: `plain:` の枝を通っていないことを証明できれば足りる。
+    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptString: (b: Buffer) => {
+      if (decryptThrows) throw new Error('Error while decrypting the ciphertext provided to safeStorage');
+      return b.toString('utf8').replace(/^enc:/, '');
+    },
+  },
   app: {
     // tmpDir is mutated per test, so read it lazily.
-    getPath: (_: string) => tmpDir,
+    // 記録は userData に置く約束なので、別の名前を訊かれたら別の場所を
+    // 返す。引数を無視すると「どの Electron パスへ置くか」を測れない
+    // (temp や downloads は寿命も権限も違う)。
+    getPath: (name: string) => (name === 'userData' ? tmpDir : path.join(tmpDir, `not-${name}`)),
   },
 }));
 
 // Imported after vi.mock so the mocked electron is in scope.
-const { ACTIONS } = await import('../emotions');
+const { ACTIONS, fetchEmotionsSnapshot } = await import('../emotions');
+
+const STORE_FILE = 'service-hub-emotions.json';
+const storeFile = (): string => path.join(tmpDir, STORE_FILE);
+/** 保存要素の形は両ビルドで検査される (`shared/emotionsShape.ts`) ので、詰め物も本物の形で作る。 */
+function analysisFixture(id: string) {
+  return {
+    id,
+    timestamp: 1_700_000_000_000,
+    excerpt: 'x',
+    scores: { joy: 0, sadness: 0, anger: 0, fear: 0, surprise: 0, disgust: 0 },
+    sentiment: 'neutral' as const,
+    dominant: 'joy',
+  };
+}
+
+/** 封緘したファイルを検査側で開く (代役の形: base64 の中が `enc:` + 平文、または `plain:` + base64)。 */
+function decodeStored(raw: string): { moods: unknown[]; analyses: unknown[] } {
+  const envelope = JSON.parse(raw) as { v?: unknown; sealed?: unknown };
+  // 2026-09-09 までの平文 (封筒でない) はそのまま返す —— 移行前の標本を読む検査のため。
+  // ★「書いたファイルに平文が残らない」は raw を直に見るので、ここで緩めても弱まらない。
+  if (typeof envelope.sealed !== 'string') return envelope as unknown as { moods: unknown[]; analyses: unknown[] };
+  const inner = envelope.sealed.startsWith('plain:')
+    ? Buffer.from(envelope.sealed.slice('plain:'.length), 'base64').toString('utf8')
+    : Buffer.from(envelope.sealed, 'base64').toString('utf8').replace(/^enc:/, '');
+  return JSON.parse(inner) as { moods: unknown[]; analyses: unknown[] };
+}
+const readStored = async (): Promise<{ moods: unknown[]; analyses: unknown[] }> => decodeStored(await fs.readFile(storeFile(), 'utf8'));
+const seed = async (store: unknown): Promise<void> => {
+  await fs.writeFile(storeFile(), JSON.stringify(store));
+};
+const noFetch = (): ReturnType<typeof vi.fn<typeof fetch>> => vi.fn<typeof fetch>();
 
 describe('ACTIONS["log-mood"]', () => {
   beforeEach(async () => {
@@ -118,7 +170,7 @@ describe('ACTIONS["log-mood"]', () => {
 
     expect(result).toEqual({ date: '2026-05-01', score: 4 });
     const raw = await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8');
-    const stored = JSON.parse(raw);
+    const stored = decodeStored(raw);
     expect(stored.moods).toHaveLength(1);
     expect(stored.moods[0]).toMatchObject({ date: '2026-05-01', score: 4, note: 'ok' });
   });
@@ -136,9 +188,9 @@ describe('ACTIONS["log-mood"]', () => {
   it('replaces same-date entry rather than appending', async () => {
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 5 } });
-    const stored = JSON.parse(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
+    const stored = decodeStored(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
     expect(stored.moods).toHaveLength(1);
-    expect(stored.moods[0].score).toBe(5);
+    expect((stored.moods[0] as { score: number }).score).toBe(5);
   });
 });
 
@@ -190,6 +242,8 @@ describe('ACTIONS["analyze-text"]', () => {
     ).rejects.toThrow(/text is required/);
   });
 
+  // 2026-09-24 (パス 451) まで文は英語で、**日本語の画面にだけ英語が出ていた** ——
+  // `ADVISOR_QUESTION_MESSAGES` の docblock が 2026-09-15 に同じ形を直した当のこと。
   it('rejects when API key (ctx.token) is empty', async () => {
     await expect(
       ACTIONS['analyze-text']!({
@@ -197,7 +251,7 @@ describe('ACTIONS["analyze-text"]', () => {
         fetch: vi.fn<typeof fetch>(),
         payload: { text: 'hello' },
       }),
-    ).rejects.toThrow(/Anthropic API key required/);
+    ).rejects.toThrow(MISSING_ANTHROPIC_KEY_MESSAGE);
   });
 });
 
@@ -217,7 +271,7 @@ describe('ACTIONS["clear-history"]', () => {
       payload: {},
     })) as { moods: number; analyses: number };
     expect(before.moods).toBe(1);
-    const stored = JSON.parse(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
+    const stored = decodeStored(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
     expect(stored.moods).toEqual([]);
   });
 
@@ -228,7 +282,888 @@ describe('ACTIONS["clear-history"]', () => {
       fetch: vi.fn<typeof fetch>(),
       payload: { kind: 'analyses' },
     });
-    const stored = JSON.parse(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
+    const stored = decodeStored(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
     expect(stored.moods).toHaveLength(1); // moods untouched
+  });
+});
+
+// --- 保存そのもの ------------------------------------------------------
+//
+// 気分の日記と感情解析は、その人の私的な記録そのものである。
+// userData 配下に平文の JSON で置くので、せめて本人以外が読めない
+// 権限で書く。ここは今まで 1 度も確かめられていなかった。
+
+describe('保存ファイルの権限と読み出しの頑健さ', () => {
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-store-'));
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it.skipIf(process.platform === 'win32')(
+    '日記は本人だけが読み書きできる権限 (0600) で保存する',
+    async () => {
+      await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 3 } });
+      const st = await fs.stat(storeFile());
+      // 既定 (0644) に戻ると、同じ端末の別ユーザーから日記が読める。
+      expect(st.mode & 0o777).toBe(0o600);
+    },
+  );
+
+  it('保存先がまだ無いときは空の記録として始める', async () => {
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 3 } });
+    const stored = await readStored();
+    expect(stored.moods).toHaveLength(1);
+    // 解析側にゴミが入っていないこと (空配列で始まっている根拠)
+    expect(stored.analyses).toEqual([]);
+  });
+
+  it('読めない記録を「まだ無い」と誤解して上書きしない', async () => {
+    // 同名のディレクトリを置くと readFile は EISDIR で失敗する。
+    // ENOENT 以外を握り潰すと、壊れた記録を空で上書きしてしまう。
+    await fs.mkdir(storeFile());
+    await expect(
+      ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 3 } }),
+    ).rejects.toThrow();
+  });
+});
+
+// --- 画面へ返す量 ------------------------------------------------------
+
+describe('fetchEmotionsSnapshot', () => {
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-snap-'));
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('気分は直近 30 日ぶん、解析は新しい 10 件だけ返す', async () => {
+    // 40 日ぶんの**暦に在る**日付 (1 月 32 日以降は 2026-09-09 (パス 115) から読めない)。
+    const moods = Array.from({ length: 40 }, (_, i) => ({
+      date: new Date(Date.UTC(2026, 0, 1 + i)).toISOString().slice(0, 10),
+      score: 3,
+      note: `m${i}`,
+    }));
+    const analyses = Array.from({ length: 15 }, (_, i) => analysisFixture(`a${i}`));
+    await seed({ moods, analyses });
+
+    const snap = await fetchEmotionsSnapshot({ token: '' });
+
+    expect(snap.moods).toHaveLength(30);
+    // 末尾 30 件 = 新しいほう。先頭から取ると古い順になり中身が変わる。
+    expect(snap.moods[0]!.note).toBe('m10');
+    expect(snap.moods[29]!.note).toBe('m39');
+
+    expect(snap.analyses).toHaveLength(10);
+    expect(snap.analyses[0]!.id).toBe('a0');
+    expect(snap.analyses[9]!.id).toBe('a9');
+  });
+
+  it('鍵の有無をそのまま伝える', async () => {
+    await seed({ moods: [], analyses: [] });
+    expect((await fetchEmotionsSnapshot({ token: '' })).keyConfigured).toBe(false);
+    expect((await fetchEmotionsSnapshot({ token: 'sk-ant-xxx' })).keyConfigured).toBe(true);
+  });
+});
+
+// --- 日付と点数 --------------------------------------------------------
+
+describe('ACTIONS["log-mood"] — 日付と点数', () => {
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-date-'));
+  });
+  afterEach(async () => {
+    vi.useRealTimers();
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('日付を渡さなければ端末の今日 (ローカル) を使う', async () => {
+    // 1 桁の月日を選んでいるのは、0 詰めが効いていることまで見るため。
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 3, 12, 0, 0));
+
+    const result = (await ACTIONS['log-mood']!({
+      token: '',
+      fetch: noFetch(),
+      payload: { score: 4 },
+    })) as { date: string };
+
+    expect(result.date).toBe('2026-05-03');
+  });
+
+  it('★ 日付の形が違えば断る —— 今日に倒さない (パス 115。それまでは黙って今日の記録に化けていた)', async () => {
+    for (const bad of ['not-a-date', 'xx2026-05-01', '2026-05-01junk', '2026-5-1', '2026-02-30', '2026-13-01', 20260501]) {
+      await expect(
+        ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: bad, score: 4 } }),
+        String(bad),
+      ).rejects.toThrow(calendarDateMessage('date'));
+    }
+  });
+
+  it('null の日付は省略と同じ (今日)', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 3, 12, 0, 0));
+    const r = (await ACTIONS['log-mood']!({
+      token: '',
+      fetch: noFetch(),
+      payload: { date: null, score: 4 },
+    })) as { date: string };
+    expect(r.date).toBe('2026-05-03');
+  });
+
+  it('点数の境界 — 1 と 5 は通し、0 と 6 と数値でないものは拒む', async () => {
+    for (const ok of [1, 5]) {
+      const r = (await ACTIONS['log-mood']!({
+        token: '',
+        fetch: noFetch(),
+        payload: { date: '2026-05-01', score: ok },
+      })) as { score: number };
+      expect(r.score).toBe(ok);
+    }
+    for (const bad of [0, 6, 'abc', NaN, Infinity]) {
+      await expect(
+        ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: bad } }),
+      ).rejects.toThrow(/between 1 and 5/);
+    }
+  });
+
+  it('日付ごとに 1 件 — 別の日を足しても既存を置き換えない', async () => {
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 1 } });
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-02', score: 2 } });
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-03', score: 3 } });
+    const stored = await readStored();
+    expect(stored.moods).toHaveLength(3);
+  });
+
+  it('入れた順に関わらず日付順に並べて保存する', async () => {
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-03', score: 3 } });
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 1 } });
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-02', score: 2 } });
+    const stored = (await readStored()).moods as { date: string }[];
+    expect(stored.map((m) => m.date)).toEqual(['2026-05-01', '2026-05-02', '2026-05-03']);
+  });
+
+  it('メモを渡さなければ空文字にする（undefined を保存しない）', async () => {
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 3 } });
+    const stored = (await readStored()).moods as { note: string }[];
+    expect(stored[0]!.note).toBe('');
+  });
+
+  it('365 日を超えたら古いほうから捨てる', async () => {
+    // 366 日ぶんの暦に在る日付 (2025-01-01 〜 2026-01-01)。辞書順 = 時系列順。
+    const moods = Array.from({ length: 366 }, (_, i) => ({
+      date: new Date(Date.UTC(2025, 0, 1 + i)).toISOString().slice(0, 10),
+      score: 3,
+      note: `old${i}`,
+    }));
+    await seed({ moods, analyses: [] });
+
+    await ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 5 } });
+
+    const stored = (await readStored()).moods as { note?: string; date: string }[];
+    expect(stored).toHaveLength(365);
+    // 新しいほう (今入れた分) が残り、いちばん古い 2 件が落ちる。
+    expect(stored[stored.length - 1]!.date).toBe('2026-05-01');
+    expect(stored.some((m) => m.note === 'old0')).toBe(false);
+    expect(stored.some((m) => m.note === 'old1')).toBe(false);
+    expect(stored.some((m) => m.note === 'old2')).toBe(true);
+  });
+});
+
+// --- Anthropic への送り方 ----------------------------------------------
+//
+// この動作だけが外部へ本文を送る。何を・どこへ・どの鍵で送るかが
+// 変わったら落ちるようにしておく。
+
+function anthropicOk(json: unknown) {
+  return new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(json) }] }), {
+    status: 200,
+    headers: { 'content-type': 'application/json' },
+  });
+}
+
+describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-send-'));
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  const okBody = { scores: { joy: 0.9 }, sentiment: 'positive', dominant: 'joy' };
+
+  it('Anthropic の messages へ POST し、鍵は x-api-key だけに載せる', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicOk(okBody));
+    await ACTIONS['analyze-text']!({
+      token: 'sk-ant-secret',
+      fetch: fetchMock,
+      payload: { text: '今日はいい日だった' },
+    });
+
+    const [url, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
+    expect(url).toBe('https://api.anthropic.com/v1/messages');
+    expect(url).not.toContain('sk-ant-secret');
+    expect(init.method).toBe('POST');
+
+    const headers = init.headers as Record<string, string>;
+    expect(headers['x-api-key']).toBe('sk-ant-secret');
+    // 版を名乗らないと Anthropic は 400 を返す。
+    expect(headers['anthropic-version']).toBe('2023-06-01');
+    expect(headers['content-type']).toBe('application/json');
+
+    const body = JSON.parse(init.body as string);
+    expect(body.model).toBe('claude-haiku-4-5-20251001');
+    expect(body.max_tokens).toBe(512);
+    expect(typeof body.system).toBe('string');
+    expect(body.system.length).toBeGreaterThan(0);
+    // **中身も見る。** `length > 0` は空文字だけしか捕まえない —— 実測
+    // 2026-08-31 でこの指示文を丸ごと空にする変異が生き残った (静的な
+    // テンプレート文字列なので、下の「読み直して問う」も併せて要る)。
+    // 指示文が消えると、モデルは JSON を返さなくなり `extractJson` が失敗する。
+    expect(body.system).toContain('valid JSON');
+    expect(body.system).toContain('"sentiment"');
+    expect(body.system).toContain('"dominant"');
+    expect(body.messages).toEqual([{ role: 'user', content: '今日はいい日だった' }]);
+  });
+
+  it('失敗したときどのサービスが落ちたか分かる', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('over quota', { status: 429 }));
+    await expect(
+      ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: 'あ' } }),
+    ).rejects.toMatchObject({ serviceId: 'emotions', status: 429 });
+  });
+
+  it('本文が空・空白だけ・文字列でなければ送らない', async () => {
+    for (const bad of ['', '   ', '\n\t ', 123, null]) {
+      const fetchMock = vi.fn<typeof fetch>();
+      await expect(
+        ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: bad } }),
+      ).rejects.toThrow('text is required');
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+  });
+
+  it('鍵が無ければ送らない', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['analyze-text']!({ token: '', fetch: fetchMock, payload: { text: 'あ' } }),
+    ).rejects.toThrow(MISSING_ANTHROPIC_KEY_MESSAGE);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('text 以外のブロックが混ざっていても text を選ぶ', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          content: [
+            { type: 'thinking', text: 'これは JSON ではない' },
+            { type: 'text', text: JSON.stringify(okBody) },
+          ],
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const entry = (await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: 'あ' },
+    })) as { sentiment: string };
+    expect(entry.sentiment).toBe('positive');
+  });
+
+  it('content ごと無い応答でも落ちずに「JSON ではない」と言う', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({}), { status: 200, headers: { 'content-type': 'application/json' } }),
+    );
+    // toThrow は部分一致なので、末尾に何か付いていても通る。
+    // 本文が空だったことまで見るには全文で比べる。
+    const err = await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: 'あ' },
+    }).then(
+      () => null,
+      (e: Error) => e,
+    );
+    expect((err as Error).message).toBe('Anthropic returned a non-JSON response: ');
+  });
+
+  it('text ブロックが 1 つも無い応答でも落ちない', async () => {
+    // content はあるが text 型が無い。ここで空文字へ落とせないと
+    // `undefined.text` を読んで別の例外になり、原因が分からなくなる。
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'thinking', text: 'x' }, { type: 'image' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    // toThrow は部分一致なので、末尾に何か付いていても通る。
+    // 本文が空だったことまで見るには全文で比べる。
+    const err = await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: 'あ' },
+    }).then(
+      () => null,
+      (e: Error) => e,
+    );
+    expect((err as Error).message).toBe('Anthropic returned a non-JSON response: ');
+  });
+
+  it('JSON でない応答は 80 文字までに切り、鍵らしき文字列は伏せる', async () => {
+    // モデルが鍵を復唱して返してくることが実際にある。そのまま例外
+    // メッセージへ入れるとログや画面へ流れる。
+    const leak = 'sorry, your key sk-ant-abcdefghijklmnop is invalid. ';
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ content: [{ type: 'text', text: leak + 'x'.repeat(200) }] }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+
+    const err = await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: 'あ' },
+    }).then(
+      () => null,
+      (e: Error) => e,
+    );
+
+    expect(err).toBeInstanceOf(Error);
+    const msg = (err as Error).message;
+    expect(msg).toContain('non-JSON response');
+    expect(msg).toContain('sk-ant-[REDACTED]');
+    expect(msg).not.toContain('sk-ant-abcdefghijklmnop');
+    // 200 文字の 'x' がそのまま入っていない = 80 文字で切れている
+    expect(msg).not.toContain('x'.repeat(100));
+  });
+
+  it('記録の id は毎回変わり、小数点を含まない', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(anthropicOk(okBody))
+      .mockResolvedValueOnce(anthropicOk(okBody));
+    const first = (await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: 'あ' },
+    })) as { id: string };
+    const second = (await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: 'い' },
+    })) as { id: string };
+
+    expect(first.id).not.toBe(second.id);
+    expect(first.id.length).toBeGreaterThan(0);
+    // `Math.random().toString(36)` をそのまま使うと "0.xxxx" が入る
+    expect(first.id).not.toContain('.');
+    expect(first.id).toMatch(/^[0-9a-z]+-[0-9a-z]+$/);
+  });
+
+  it('抜粋は 80 文字まで。source があれば頭に付ける', async () => {
+    const long = 'あ'.repeat(200);
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(anthropicOk(okBody))
+      .mockResolvedValueOnce(anthropicOk(okBody));
+
+    const plain = (await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: long },
+    })) as { excerpt: string };
+    expect(plain.excerpt).toBe('あ'.repeat(80));
+
+    const tagged = (await ACTIONS['analyze-text']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { text: long, source: 'Slack #general' },
+    })) as { excerpt: string };
+    expect(tagged.excerpt).toBe(`[Slack #general] ${'あ'.repeat(80)}`);
+  });
+
+  it('50 件を超えたら古い解析から捨てる', async () => {
+    const analyses = Array.from({ length: 50 }, (_, i) => analysisFixture(`old${i}`));
+    await seed({ moods: [], analyses });
+
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicOk(okBody));
+    await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: 'あ' } });
+
+    const stored = (await readStored()).analyses as { id: string }[];
+    expect(stored).toHaveLength(50);
+    // 新しいものが先頭、いちばん古い old49 が落ちる
+    expect(stored[0]!.id).not.toBe('old0');
+    expect(stored[1]!.id).toBe('old0');
+    expect(stored.some((a) => a.id === 'old49')).toBe(false);
+  });
+});
+
+// --- 消去 --------------------------------------------------------------
+//
+// 消す動作は取り返しがつかない。「頼んでいないほうまで消える」は
+// 画面には出ないので、ここは 1 通りずつ確かめる。
+
+describe('ACTIONS["clear-history"] — 何が消えて何が残るか', () => {
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-clear-'));
+    await seed({
+      moods: [{ date: '2026-05-01', score: 3, note: 'm' }],
+      analyses: [analysisFixture('a1'), analysisFixture('a2')],
+    });
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  const clear = async (payload: Record<string, unknown>) =>
+    (await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload })) as {
+      moods: number;
+      analyses: number;
+    };
+
+  it('kind="moods" — 気分だけ消し、解析は残す', async () => {
+    const before = await clear({ kind: 'moods' });
+    expect(before).toEqual({ moods: 1, analyses: 2 });
+    const stored = await readStored();
+    expect(stored.moods).toEqual([]);
+    expect(stored.analyses).toHaveLength(2);
+  });
+
+  it('kind="analyses" — 解析だけ消し、気分は残す', async () => {
+    await clear({ kind: 'analyses' });
+    const stored = await readStored();
+    expect(stored.moods).toHaveLength(1);
+    expect(stored.analyses).toEqual([]);
+  });
+
+  it('kind="all" — 両方消す', async () => {
+    await clear({ kind: 'all' });
+    const stored = await readStored();
+    expect(stored.moods).toEqual([]);
+    expect(stored.analyses).toEqual([]);
+  });
+
+  it('kind 未指定 — 気分だけ消す (解析は巻き添えにしない)', async () => {
+    await clear({});
+    const stored = await readStored();
+    expect(stored.moods).toEqual([]);
+    expect(stored.analyses).toHaveLength(2);
+  });
+
+  it('知らない kind なら何も消さない', async () => {
+    const before = await clear({ kind: 'everything' });
+    expect(before).toEqual({ moods: 1, analyses: 2 });
+    const stored = await readStored();
+    expect(stored.moods).toHaveLength(1);
+    expect(stored.analyses).toHaveLength(2);
+  });
+});
+
+// --- 壊れた記録を握り潰さない ------------------------------------------
+
+describe('壊れた記録の扱い', () => {
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-broken-'));
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('JSON として読めない記録を空で上書きしない', async () => {
+    // ENOENT (まだ無い) 以外の失敗を「まだ無い」と同じ扱いにすると、
+    // 読めなかった日記が次の書き込みで空に置き換わる。
+    await fs.writeFile(storeFile(), 'not json at all');
+
+    await expect(
+      ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: '2026-05-01', score: 3 } }),
+    ).rejects.toThrow();
+
+    // 壊れたままのほうがまし — 消えていないことを確かめる
+    expect(await fs.readFile(storeFile(), 'utf8')).toBe('not json at all');
+  });
+
+  it('★ 平文の壊れた JSON は JSON の読み違いのまま投げ、封緘の復号失敗とは言わない (原因を取り違えない)', async () => {
+    // 封緘していない (2026-09-09 までの平文) ファイルが JSON でないのは、封緘の鍵や復号の問題ではない。
+    // 「復号できません」と言うと、利用者は存在しない鍵の問題を探しに行く。
+    // 対になる封緘済みの側は、ちょうど封緘の文で断る (下の describe が別の壊し方で見ている)。
+    await fs.writeFile(storeFile(), 'not json at all');
+    let plain: unknown;
+    try {
+      await fetchEmotionsSnapshot({ token: '' });
+    } catch (e) {
+      plain = e;
+    }
+    expect(plain).toBeInstanceOf(SyntaxError);
+    expect((plain as Error).message).not.toContain('復号');
+
+    // 対照: 封緘済みで中身が JSON でなければ、封緘の文 (EMOTIONS_UNREADABLE_CORRUPT) ちょうどで断る。
+    await fs.writeFile(
+      storeFile(),
+      JSON.stringify({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') }),
+    );
+    let sealed: unknown;
+    try {
+      await fetchEmotionsSnapshot({ token: '' });
+    } catch (e) {
+      sealed = e;
+    }
+    expect(sealed).toBeInstanceOf(Error);
+    expect(sealed).not.toBeInstanceOf(SyntaxError);
+    expect((sealed as Error).message).toBe(EMOTIONS_UNREADABLE_CORRUPT);
+  });
+
+  it('moods / analyses が配列でなければ空として読む', async () => {
+    await fs.writeFile(storeFile(), JSON.stringify({ moods: 'nope', analyses: { a: 1 } }));
+    const snap = await fetchEmotionsSnapshot({ token: '' });
+    expect(snap.moods).toEqual([]);
+    expect(snap.analyses).toEqual([]);
+  });
+
+  it('日付が文字列に化ける値は断る (今日に倒さない —— パス 115)', async () => {
+    // `toString` が正しい形を返すオブジェクトは、`String()` を通す判定なら通るが
+    // 文字列ではない。型を見る行が効いていること。
+    await expect(
+      ACTIONS['log-mood']!({
+        token: '',
+        fetch: noFetch(),
+        payload: { date: { toString: () => '2026-05-01' }, score: 3 },
+      }),
+    ).rejects.toThrow(calendarDateMessage('date'));
+  });
+});
+
+// --- コードフェンスの剥がし方 ------------------------------------------
+
+describe('extractJson — フェンスの形', () => {
+  it('言語タグの後ろに空白があっても剥がす', () => {
+    expect(extractJson('```json   \n{"x":1}\n```')).toBe('{"x":1}');
+  });
+
+  it('複数行の JSON も丸ごと取り出す', () => {
+    expect(extractJson('```json\n{\n  "x": 1\n}\n```')).toBe('{\n  "x": 1\n}');
+  });
+
+  it('フェンスの中身の前後の空白は落とす', () => {
+    expect(extractJson('```json\n   {"x":1}   \n```')).toBe('{"x":1}');
+  });
+});
+
+// --- どの感情を代表にするか --------------------------------------------
+
+describe('normalizeAnalysis — dominant の決め方', () => {
+  it('モデルの申告が妥当ならスコア最大と違っていても尊重する', () => {
+    const n = normalizeAnalysis({ scores: { joy: 0.9, anger: 0.1 }, dominant: 'anger' });
+    expect(n.dominant).toBe('anger');
+  });
+
+  it('"mixed" も妥当な申告として扱う', () => {
+    const n = normalizeAnalysis({ scores: { joy: 0.9 }, dominant: 'mixed' });
+    expect(n.dominant).toBe('mixed');
+  });
+
+  it('申告が文字列でなければスコアから決め直す', () => {
+    expect(normalizeAnalysis({ scores: { joy: 0.9 }, dominant: 123 }).dominant).toBe('joy');
+    expect(normalizeAnalysis({ scores: { anger: 0.9 }, dominant: ['joy'] }).dominant).toBe('anger');
+  });
+
+  it('同点なら先に並んでいるほうを採る', () => {
+    // joy / sadness / anger / fear / surprise / disgust の順。
+    const n = normalizeAnalysis({ scores: { sadness: 0.5, anger: 0.5 } });
+    expect(n.dominant).toBe('sadness');
+  });
+});
+
+/*
+ * **入力の上限は、IPC の信頼境界にも在ること。**
+ *
+ * 2026-08-23 まで、上限を持っていたのは**ブラウザ版だけ**だった:
+ *
+ *              analyze-text の text     log-mood の note
+ *   ブラウザ   5000 字で断る             2000 字で断る
+ *   main       空でなければ通す          検査なし
+ *
+ * **向きが逆である。** `main` はレンダラーから来た payload を最初に受ける
+ * 側なのに、そこだけ上限が無かった。`text` は Anthropic の要求本文へ
+ * そのまま載り、`note` は保存される。
+ */
+describe('emotions の入力上限 (両ビルドで同じ値)', () => {
+  it('analyze-text: 上限ちょうどは通す (境界)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: '{"scores":{"joy":1}}' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await expect(
+      ACTIONS['analyze-text']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { text: 'a'.repeat(MAX_ANALYZE_TEXT_CHARS) },
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('analyze-text: 上限 +1 は断る (境界)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['analyze-text']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { text: 'a'.repeat(MAX_ANALYZE_TEXT_CHARS + 1) },
+      }),
+    ).rejects.toThrow(/exceeds/);
+    expect(fetchMock, '断る前に API を呼んでいる').not.toHaveBeenCalled();
+  });
+
+  it('log-mood: 上限ちょうどは通す (境界)', async () => {
+    await expect(
+      ACTIONS['log-mood']!({
+        token: '',
+        payload: { score: 3, note: 'n'.repeat(MAX_MOOD_NOTE_CHARS) },
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('log-mood: 上限 +1 は断る (境界)', async () => {
+    await expect(
+      ACTIONS['log-mood']!({
+        token: '',
+        payload: { score: 3, note: 'n'.repeat(MAX_MOOD_NOTE_CHARS + 1) },
+      }),
+    ).rejects.toThrow(/exceeds/);
+  });
+
+  it('上限は共有の定数から来ている (2 か所に数字を持たない)', () => {
+    expect(MAX_ANALYZE_TEXT_CHARS).toBe(5000);
+    expect(MAX_MOOD_NOTE_CHARS).toBe(2000);
+  });
+});
+
+/*
+ * **静的なテンプレート文字列は、読み直さないと測れない。**
+ *
+ * `ANALYZE_SYSTEM` はモジュール本体で一度だけ評価されるので、ファイル先頭の
+ * 静的 import では変異が効く前に評価が済む (実測 2026-08-31: 生存)。
+ * ここが空になると Anthropic への指示が消え、モデルは自由文で返し、
+ * `extractJson` → `normalizeAnalysis` が黙って既定値に倒れる。
+ */
+describe('解析の指示文 —— 読み直して問う', () => {
+  it('★ 指示文は JSON の形を名指しする', async () => {
+    const m = await rereadModule<typeof import('../emotions')>(import.meta.url, '../emotions');
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ content: [{ type: 'text', text: '{"scores":{},"sentiment":"neutral","dominant":"joy"}' }] }),
+        { status: 200 },
+      ),
+    );
+    await m.ACTIONS['analyze-text']!({
+      token: 'sk-ant-secret',
+      fetch: fetchMock,
+      payload: { text: 'hello' },
+    });
+    const [, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as { system: string };
+    expect(body.system).toContain('valid JSON');
+    expect(body.system).toContain('"sentiment"');
+    expect(body.system.length).toBeGreaterThan(100);
+  });
+});
+
+/*
+ * 要素の形はブラウザ版と同じ規則で確かめる (`shared/emotionsShape.ts`)。2026-09-05 まで
+ * `as Partial<EmotionsStore>` で要素を信じていて、null が 1 つ混じると `m.date` で落ちた。
+ * 方針もブラウザ版と同じ: 読み出しは残りを返し、書き込みは断り (上書きで消えるため)、「履歴を消去」は通す。
+ */
+describe('保存要素の形 (ブラウザ版と同じ規則)', () => {
+  const GOOD = { date: '2026-01-01', score: 4, note: '大事なメモ' };
+  // 前の describe が消した tmpDir に `seed` が書けていたのは、直前のテストの書き込み
+  // (`atomicWriteFile` が mkdir する) が偶然ディレクトリを作り直していたから。順序に頼らない。
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-shape-'));
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+  const anthropicOk = () =>
+    new Response(
+      JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }) }] }),
+      { status: 200, headers: { 'content-type': 'application/json' } },
+    );
+  const analyze = (fetchMock: ReturnType<typeof vi.fn<typeof fetch>>) =>
+    ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: '今日は最高だった', source: 'journal' } });
+
+  it('★ 形の違う要素が混じった保存先: 読み出しは残りを返す', async () => {
+    await seed({ moods: [GOOD, null, { date: 5 }, { date: '2026-01-02', score: '3', note: '' }], analyses: [analysisFixture('a1'), 'junk'] });
+    const snap = await fetchEmotionsSnapshot({ token: '' });
+    expect(snap.moods).toEqual([GOOD]);
+    expect(snap.analyses.map((a) => a.id)).toEqual(['a1']);
+  });
+
+  it('★ そのとき log-mood は断り、保存先は書き換えない', async () => {
+    await seed({ moods: [GOOD, null], analyses: [] });
+    const before = await readStored();
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ 欄が在るのに配列でない (moods: "x") も同じ扱い', async () => {
+    await seed({ moods: 'x', analyses: [] });
+    expect((await fetchEmotionsSnapshot({ token: '' })).moods).toEqual([]);
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+  });
+
+  it('対照: 欄が無いだけの古い形は読めた扱いで、普通に書ける', async () => {
+    await seed({ moods: [GOOD] });
+    expect(await fetchEmotionsSnapshot({ token: '' })).toMatchObject({ moods: [GOOD], analyses: [] });
+    await ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } });
+    expect((await readStored()).moods).toHaveLength(2);
+  });
+
+  it('対照: 「履歴を消去」は壊れていても通る (抜け出す道)', async () => {
+    await seed({ moods: [null], analyses: ['junk'] });
+    await expect(ACTIONS['clear-history']!({ token: '', payload: { kind: 'all' } })).resolves.toEqual({ moods: 0, analyses: 0 });
+    expect(await readStored()).toEqual({ moods: [], analyses: [] });
+  });
+
+  it('★ 解析側だけが壊れていても log-mood は断る (両方の欄を見る)', async () => {
+    await seed({ moods: [GOOD], analyses: ['junk'] });
+    const before = await readStored();
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ analyze-text: 保存できない保存先なら**送る前に**断る (本文も API 呼び出しも外へ出ない)', async () => {
+    await seed({ moods: [null], analyses: [] });
+    const before = await readStored();
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(anthropicOk());
+    await expect(analyze(fetchMock)).rejects.toThrow(/記録を中止/);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ analyze-text: 送っている間に保存先が壊れたら、返事は捨てて保存先は書き換えない', async () => {
+    await seed({ moods: [GOOD], analyses: [] });
+    const brokenMidFlight = { moods: [GOOD, null], analyses: [] };
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(async () => {
+      await seed(brokenMidFlight); // 応答が返る前に別の書き手が壊した
+      return anthropicOk();
+    });
+    await expect(analyze(fetchMock)).rejects.toThrow(/記録を中止/);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(await readStored()).toEqual(brokenMidFlight);
+  });
+
+  it('対照: 合う保存先なら analyze-text は 1 回送って保存する (上 2 本が「何をしても通る」ものでない根拠)', async () => {
+    await seed({ moods: [GOOD], analyses: [] });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(anthropicOk());
+    const entry = (await analyze(fetchMock)) as { dominant: string };
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(entry.dominant).toBe('joy');
+    const stored = await readStored();
+    expect(stored.moods).toEqual([GOOD]);
+    expect(stored.analyses).toHaveLength(1);
+  });
+
+  it.each([
+    ['null', 'null'],
+    ['配列', '[]'],
+    ['数値', '42'],
+  ])('オブジェクトでない JSON (%s) は欄が無い古い形と同じ: 空として読み、普通に書ける', async (_label, raw) => {
+    await fs.writeFile(storeFile(), raw);
+    expect(await fetchEmotionsSnapshot({ token: '' })).toMatchObject({ moods: [], analyses: [] });
+    await ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } });
+    expect((await readStored()).moods).toHaveLength(1);
+  });
+
+  it('★ 読み出しでも ENOENT 以外の失敗 (EISDIR) を「まだ無い」にしない', async () => {
+    // 同名のディレクトリを置くと readFile は EISDIR で失敗する。log-mood 側の同じ検査は
+    // 書き込み (rename がディレクトリに当たる) でも落ちるので、読み出しの握り潰しを測れない。
+    await fs.mkdir(storeFile());
+    await expect(fetchEmotionsSnapshot({ token: '' })).rejects.toThrow(/EISDIR/);
+  });
+
+  it('★ 天井を超える保存ファイルは読まずに断る (パス 313 · 規則は main/stateFile.ts の 1 つ)', async () => {
+    // 疎ファイル: 中身を書かずに大きさだけ作る。読めば 0x00 の塊なので、読んでいれば別の文で落ちる。
+    const fh = await fs.open(storeFile(), 'w');
+    await fh.truncate(MAX_STATE_FILE_BYTES + 3);
+    await fh.close();
+    await expect(fetchEmotionsSnapshot({ token: '' })).rejects.toThrow(stateFileTooLargeReason(MAX_STATE_FILE_BYTES + 3));
+  });
+});
+
+describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で書く (パス 132)', () => {
+  const mood = (note: string) => ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 4, note } });
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-seal-'));
+    encryptionAvailable = true;
+    decryptThrows = false;
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('★ 書いたファイルに平文が残らない (メモも欄名も) —— 封筒 { v: 2, sealed } で置く', async () => {
+    await mood('secret-note-9f2a');
+    const raw = await fs.readFile(storeFile(), 'utf8');
+    expect(raw).not.toContain('secret-note-9f2a');
+    expect(raw).not.toContain('"moods"');
+    const envelope = JSON.parse(raw) as { v: unknown; sealed: unknown };
+    expect(envelope.v).toBe(2);
+    expect(typeof envelope.sealed).toBe('string');
+    expect((envelope.sealed as string).startsWith('plain:')).toBe(false);
+    expect((await readStored()).moods).toHaveLength(1);
+  });
+
+  it('2026-09-09 までの平文ファイルはそのまま読め、次の書き込みで封緘される (移行)', async () => {
+    await seed({ moods: [{ date: '2026-04-01', score: 2, note: 'legacy' }], analyses: [] });
+    const snap = await fetchEmotionsSnapshot({ token: '', fetch: noFetch() });
+    expect(snap.moods).toEqual([{ date: '2026-04-01', score: 2, note: 'legacy' }]);
+    await mood('after');
+    const raw = await fs.readFile(storeFile(), 'utf8');
+    expect(raw).not.toContain('legacy');
+    expect((await readStored()).moods).toHaveLength(2);
+  });
+
+  it('対照: キーチェーンが無い環境は plain: (難読化) で往復する —— 封緘は名乗らない', async () => {
+    encryptionAvailable = false;
+    await mood('no-keychain');
+    const raw = await fs.readFile(storeFile(), 'utf8');
+    const envelope = JSON.parse(raw) as { sealed: string };
+    expect(envelope.sealed.startsWith('plain:')).toBe(true);
+    expect(raw).not.toContain('no-keychain');
+    const snap = await fetchEmotionsSnapshot({ token: '', fetch: noFetch() });
+    expect(snap.moods[0]).toMatchObject({ note: 'no-keychain' });
+  });
+
+  it('壊れた封緘 (復号が投げる / 中身が JSON でない) は理由つきで断り、記録は上書きしない', async () => {
+    await seed({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') });
+    await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('復号できません');
+    await expect(mood('x')).rejects.toThrow('復号できません');
+    expect(JSON.parse(await fs.readFile(storeFile(), 'utf8'))).toMatchObject({ v: 2 });
+    decryptThrows = true;
+    await seed({ v: 2, sealed: Buffer.from('enc:{"moods":[],"analyses":[]}', 'utf8').toString('base64') });
+    await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('復号できません');
+  });
+
+  it('封緘済みのファイルをキーチェーンの無い環境で開くと、その理由を言う', async () => {
+    await mood('sealed-with-keychain');
+    encryptionAvailable = false;
+    await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('キーチェーンが使えないため読めません');
+  });
+
+  it('「履歴を消去」は読めないファイルでも通り、空の封緘に置き換える (唯一の出口を塞がない)', async () => {
+    await seed({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') });
+    const before = await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'all' } });
+    expect(before).toEqual({ moods: 0, analyses: 0 });
+    expect(await readStored()).toEqual({ moods: [], analyses: [] });
+    const snap = await fetchEmotionsSnapshot({ token: '', fetch: noFetch() });
+    expect(snap.moods).toEqual([]);
   });
 });

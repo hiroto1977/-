@@ -1,0 +1,806 @@
+/**
+ * 人材育成 — 判定と定義表。**main とブラウザ版の両方がここを読む。**
+ *
+ * 最初この一式を `src/main/clients/talent.ts` に置いたが、それだと
+ * ブラウザ版 (`web-shim.ts`) から呼べない —— renderer は `src/main` を
+ * import できない (`lint:imports` の境界)。teamradar の `save-state` が
+ * まさにその形で、main 側は検証するのにブラウザ版だけ素通しになっており、
+ * 「揃えるなら src/shared へ出す必要がある」と注記が残っている。
+ * 同じ穴を新しく掘らないよう、最初から共有側へ置く。
+ *
+ * ここに I/O は無い。ファイルも通信も持たないので、両方の実行環境で
+ * **同じ関数が同じ答えを返す**。
+ *
+ * 出典は木下勝寿氏 (株式会社北の達人コーポレーション代表取締役社長) が
+ * 著書『チームX』『時間最短化、成果最大化の法則』および YouTube
+ * 「北の達人チャンネル」で公開している枠組み。各定義は出典の強さを
+ * `source` で持ち、著者側の解説を確認できたもの (`confirmed`) と、
+ * 名称のみ確認で語釈が当方の読み解きであるもの (`gloss`) を区別する。
+ */
+
+// --- 5つの企業組織病 ---------------------------------------------------
+
+/**
+ * 出典の強さ。**3 段**にしてある。
+ *
+ * 最初は `confirmed | gloss` の 2 段だったが、それだと「第三者の解説で
+ * 具体例まで取れているが、著者の原文は見ていない」という状態を表せず、
+ * 自分の読み解きと同じ箱に入ってしまう。**精度の違う物を同じ札で配ると、
+ * 受け取った側が区別できない。**
+ *
+ * - `confirmed` … 著者側 (本人の連載・記事) の解説を確認した
+ * - `secondary` … 第三者の解説で内容を確認した (著者の原文は未確認)
+ * - `gloss`     … 名称のみ確認、語釈は当方の読み解き
+ */
+// 出典の強さは `provenance.ts` が唯一の定義を持つ (2026-08-29 に切り出した)。
+// ここは既存の利用者のために再エクスポートするだけ —— **同じ union を
+// 2 か所に書かない**。
+export type { SourceStrength } from './provenance';
+export { SOURCE_STRENGTH_ORDER, atLeastAsStrong, isSourceStrength } from './provenance';
+import { clampToCeiling, moreThanChars } from './inputCeiling';
+import type { SourceStrength } from './provenance';
+
+export interface OrganDisease {
+  readonly id: string;
+  readonly name: string;
+  readonly summary: string;
+  readonly source: SourceStrength;
+}
+
+/**
+ * 5つの企業組織病。
+ *
+ * 2026-08-28 に 03〜05 を当たり直した。**それまでの語釈は 3 つとも外していた** ——
+ * 名称の字面から推測して書いていたためで、実際の意味とはずれていた。
+ * 何をどう間違えていたかは各項に残してある。同じやり方で語釈を足さないための記録。
+ */
+export const ORGAN_DISEASES: readonly OrganDisease[] = [
+  {
+    id: 'imprint',
+    name: '職務定義の刷り込み誤認',
+    summary:
+      '職務の定義を実際より「狭い範囲」で認識し、刷り込まれてしまう。鳥のひなが最初に見たものを親と認識し一生変わらないのと同じで、新任時の説明がそのまま効き続ける。',
+    source: 'confirmed',
+  },
+  {
+    id: 'model-dependence',
+    name: 'お手本依存症',
+    summary:
+      '失敗を恐れてお手本に依存し、連鎖的な失敗が起きる。最も危険なのは目的のすり替えで、「集客できる広告をつくる」が「上司がOKを出す広告をつくる」に置き換わる。',
+    source: 'confirmed',
+  },
+  {
+    // 旧語釈「職務の範囲が、本人の中で少しずつ小さくなっていく」は外していた。
+    // 範囲が縮むことより、**成果が落ちた理由を外部要因に帰す**ほうが本体である。
+    id: 'shrinking',
+    name: '職務の矮小化現象',
+    summary:
+      '職務の範囲を自分で狭く捉え直し、成果が落ちた理由を外部要因に帰してしまう。例：あるメディアの広告が効かなくなったとき、担当者が「集客が減ったのはそのメディアのユーザーが減ったからで、自分の責任ではない」と考える。',
+    source: 'secondary',
+  },
+  {
+    // 旧語釈「数字さえ追えばよいとなり、数字の背後にある意味が失われる」は外していた。
+    // 数字を否定する話ではない —— 有能さを認めたうえで**守備範囲を 7 割に限る**という置き方。
+    //
+    // 2026-08-28 に 2 度直している。1 度目は「測れないものを判断から落とす」まで
+    // 詰めたが、**7 割 / 3 割という肝心の構造が抜けていた**。裏取りをもう一度
+    // 回して著者の連載記事に当たり、そこで初めて出てきた。
+    // 一度直したから正しい、とは限らない。
+    id: 'number-worship',
+    name: '数字万能病',
+    summary:
+      '数字は「有能」だが「万能」ではない。デジタル化が進んだ結果、本来は7割の段階までの裏づけを取るサポート的存在であるべき数字が、10割まで判断できる万能な判断基準であるかのように扱われてしまう。克服は、7割までは必ず数値で裏づけを取り、残りの3割は感性・感覚で判断できるようになること。',
+    source: 'confirmed',
+  },
+  {
+    // 旧語釈「フォーマットを埋めること自体が目的化する」は別の話だった。
+    // 帳票を埋める話ではなく、**勝ちパターンの過度な一般化**である。
+    id: 'format-trust',
+    name: 'フォーマット過信病',
+    summary:
+      '成功したテクニックや勝ちパターンを自分のフォーマットとして持つのはよいが、万能の解決策として扱ってしまう。目の前の顧客と商品に効くものだけを使うべきで、プレゼンもテクニックを当てる場ではなく顧客の課題に応える場である。',
+    source: 'secondary',
+  },
+];
+
+const DISEASE_IDS: ReadonlySet<string> = new Set(ORGAN_DISEASES.map((d) => d.id));
+
+/** 1 部署の申告。`diseases` は `ORGAN_DISEASES` の id。 */
+export interface DeptReport {
+  readonly department: string;
+  readonly diseases: readonly string[];
+}
+
+export interface DiseaseTally {
+  readonly id: string;
+  readonly name: string;
+  readonly departments: readonly string[];
+  /** 2 部署以上で挙がった = 個人ではなく仕組みの問題。 */
+  readonly systemic: boolean;
+}
+
+export interface OrgDiagnosis {
+  readonly tallies: readonly DiseaseTally[];
+  /** 仕組みの問題と判定された病。ここが今期の対象になる。 */
+  readonly systemic: readonly string[];
+  readonly reportedDepartments: number;
+}
+
+/**
+ * 部署ごとの申告を集計する。
+ *
+ * **2 部署以上で同じ病が挙がったら `systemic`。** マニュアル 02 章の
+ * 「複数の管理職が同じ病に印をつけたなら、それは個人の問題ではなく
+ * 仕組みの問題」をそのまま判定にしている。
+ *
+ * 未知の病 id は集計に現れない —— `tallies` を `ORGAN_DISEASES` から作るので、
+ * 知らない id は構造的に読まれない。同一部署内の重複も Set で落ちる。
+ * どちらも画面から来る値なので、落とすほうが安全である。
+ */
+export function diagnoseOrg(reports: readonly DeptReport[]): OrgDiagnosis {
+  const byDisease = new Map<string, Set<string>>();
+  const departments = new Set<string>();
+
+  for (const r of reports) {
+    // `typeof r.department !== 'string'` の項に当たる変異体は等価になる ——
+    // 型が保証しているので実行時に非文字列は来ず、仮に来ても `.length === 0` が
+    // `undefined === 0` で false になるだけで、下流は空の部署名を 1 つ数えない
+    // (`sanitizeReports` が入口で長さも見る)。空文字の側は下の検査が留めている。
+    // Stryker disable next-line ConditionalExpression
+    if (typeof r.department !== 'string' || r.department.length === 0) continue;
+    departments.add(r.department);
+    for (const d of r.diseases) {
+      // 未知の id を here で弾く必要は無い —— 下の `tallies` は
+      // **`ORGAN_DISEASES` を回して作る**ので、知らない id は `byDisease` に
+      // 入っても二度と読まれない。かつて `if (!DISEASE_IDS.has(d)) continue;`
+      // を置いていたが、変異検査で**外しても何も変わらない**ことが分かった
+      // (2026-08-29)。効いていない防御は、pragma で黙らせるより消すほうが正しい。
+      // 許可リストは構造そのもの (`ORGAN_DISEASES.map`) が持っている。
+      const set = byDisease.get(d) ?? new Set<string>();
+      set.add(r.department);
+      byDisease.set(d, set);
+    }
+  }
+
+  const tallies = ORGAN_DISEASES.map((disease) => {
+    const depts = [...(byDisease.get(disease.id) ?? [])].sort();
+    return {
+      id: disease.id,
+      name: disease.name,
+      departments: depts,
+      systemic: depts.length >= 2,
+    };
+  });
+
+  return {
+    tallies,
+    systemic: tallies.filter((t) => t.systemic).map((t) => t.id),
+    reportedDepartments: departments.size,
+  };
+}
+
+// --- 達成確率100%キープの法則 ------------------------------------------
+
+export interface Initiative {
+  readonly name: string;
+  /** 達成確率 (%)。0–100。 */
+  readonly probability: number;
+}
+
+export interface AchievementStatus {
+  readonly total: number;
+  /** 100% に足りない分。満たしていれば 0。 */
+  readonly shortfall: number;
+  readonly ok: boolean;
+  readonly counted: number;
+}
+
+/**
+ * 達成確率として受け付ける値か (有限の 0–100)。
+ *
+ * `typeof n === 'number'` は**実行時には冗長**である —— `Number.isFinite(x)` は
+ * `typeof x === 'number'` を含意する (実測 2026-08-31: `'50'` / `new Number(50)` /
+ * `true` / `[50]` / `{valueOf:()=>50}` のいずれも `false`)。残しているのは
+ * **TypeScript の絞り込みのため**で、これが無いと `unknown` に `>=` を書けない。
+ * したがってこの項に当たる変異体は等価になる。
+ */
+export function isValidProbability(n: unknown): n is number {
+  // (`next-line` は**次の 1 行**にしか掛からない。関数宣言の上に置くと
+  //  中の `return` には届かないので、判定の直前に置く。)
+  // Stryker disable next-line ConditionalExpression,LogicalOperator
+  return typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 100;
+}
+
+/**
+ * 施策の達成確率を合計し、100% に足りない分を返す。
+ *
+ * 木下氏の「達成確率100%キープの法則」——**目標を達成し続ける人は、施策の
+ * 達成確率の合計が常に 100% になるように設定している**。30% と見込んだ施策が
+ * 10% しか出なかったら、足りない 20% 分の施策を足して 100% に戻す。
+ *
+ * 合計が 100 を超えるのは構わない (超過は不足ではない)。不正な確率の項は
+ * 数えない —— `counted` で「何件を数えたか」を返すので、黙って減ったことが
+ * 呼び出し側から見える。
+ */
+export function achievementGap(initiatives: readonly Initiative[]): AchievementStatus {
+  let total = 0;
+  let counted = 0;
+  for (const i of initiatives) {
+    if (!isValidProbability(i.probability)) continue;
+    total += i.probability;
+    counted += 1;
+  }
+  // 浮動小数の誤差で 99.999… を不足と呼ばないように丸める。
+  const rounded = Math.round(total * 100) / 100;
+  // **`rounded >= 100 ? 0 : …` と書かない。** 境界ちょうど (100) では else 側も
+  // 0 を返すので、`>=` と `>` に**観測できる差が無かった** (2026-08-31 に対照が
+  // 鳴らず判明)。等価変異を pragma で黙らせるより、比較そのものを消す。
+  // 超過 (100 超) は負の不足になるので、下限で切れば同じ結果になる。
+  const shortfall = Math.max(0, Math.round((100 - rounded) * 100) / 100);
+  return { total: rounded, shortfall, ok: shortfall === 0, counted };
+}
+
+// --- 登用判定 (絶対にリーダーにしてはいけない人・10ヶ条) ----------------
+
+export interface Disqualifier {
+  readonly id: string;
+  readonly text: string;
+}
+
+/**
+ * 10ヶ条の出典。**表ごとに出典の強さを持たせる。**
+ *
+ * 病だけが `source` を持ち、10ヶ条と STEP は何も持っていなかった。
+ * 読む側からは「病は出典が管理されていて、他は不明」に見える —— 実際は
+ * どちらも出典があるのに、**在ることを示していない**だけだった。
+ * 精度の表示が表ごとにまちまちだと、無印を「弱い」と読むか「強い」と読むかが
+ * 人によって割れる。全部の表で同じ札を出す。
+ */
+export const LEADER_DISQUALIFIERS_SOURCE: SourceStrength = 'confirmed';
+
+/** 4 段階の出典。ダイヤモンド・オンラインの連載 (著者側) で確認。 */
+export const SKILL_STEPS_SOURCE: SourceStrength = 'confirmed';
+
+/**
+ * 木下氏が挙げる「絶対にリーダーにしてはいけない人10ヶ条」。
+ *
+ * **能力に関する項目が 1 つも無い。** すべて姿勢と誠実さで、
+ * だからこそ実績だけで登用している組織に効く。
+ */
+export const LEADER_DISQUALIFIERS: readonly Disqualifier[] = [
+  { id: 'gives-up', text: 'すぐに諦める' },
+  { id: 'excuses', text: 'できない言い訳をする' },
+  { id: 'no-urgency', text: '危機感がない' },
+  { id: 'blames-external', text: '成果が出ない理由を外部要因にする' },
+  { id: 'avoids-duty', text: 'やるべきことを「自分がやらなくていい理由」を見つけてやらない' },
+  { id: 'no-apology', text: 'ミスをしても謝らない' },
+  { id: 'hides-mistakes', text: 'ミスをしても、バレないようにごまかす' },
+  { id: 'slacks-unseen', text: '人が見ていないところでサボる' },
+  { id: 'lies', text: 'うそをついてごまかす' },
+  { id: 'flees-trouble', text: 'トラブルから逃げる' },
+];
+
+
+export interface LeaderFitness {
+  readonly eligible: boolean;
+  readonly hits: readonly Disqualifier[];
+  readonly checked: number;
+}
+
+/** `talent/judge-leader` の答え —— main・ブラウザ版・画面が同じ型を読む (パス 117)。 */
+export interface JudgeResult {
+  readonly fitness: LeaderFitness;
+  readonly candidate: string;
+}
+
+/**
+ * 登用の可否。**1 つでも該当したら不可**。
+ *
+ * 「何個までなら許容」という閾値は置かない。マニュアル 08 章の運用
+ * ——「1つでも該当するなら、その人はプレイヤーとして評価し、リーダーには
+ * 据えない」——をそのまま実装している。能力の高い該当者ほど組織への
+ * マイナスは大きくなるので、閾値を設けると制度の意味が消える。
+ */
+/**
+ * 登用判定に添える候補者名の天井 (2026-09-12 · パス 174)。
+ *
+ * **両ビルドが 64 を別々に写していた** —— `main/clients/talent.ts` の
+ * `name.slice(0, 64)` と `web-shim.ts` の `p.candidate.slice(0, 64)`。
+ * 片方だけ動かすと、同じ操作がデスクトップとブラウザで別の長さを返す
+ * (パス 62 / 116 で直した「2 つの実装が同じ判断を別々に持つ」形)。
+ */
+export const MAX_LEADER_CANDIDATE_CHARS = 64;
+
+export function judgeLeaderFitness(flagged: readonly string[]): LeaderFitness {
+  // 未知の id を here で弾く必要は無い —— `hits` は **`LEADER_DISQUALIFIERS` を
+  // 回して作る**ので、知らない id が `seen` に入っても二度と読まれない。
+  // かつて `if (DISQUALIFIER_IDS.has(f))` を置いていたが、変異検査で
+  // **外しても何も変わらない**ことが分かった (2026-08-31)。効いていない防御は
+  // pragma で黙らせるより消すほうが正しい —— 許可リストは構造そのもの
+  // (`LEADER_DISQUALIFIERS.filter`) が持っている。
+  // `diagnoseOrg` が 2026-08-29 に同じ理由で同じ形を消している。
+  const seen = new Set<string>(flagged);
+  const hits = LEADER_DISQUALIFIERS.filter((d) => seen.has(d.id));
+  return { eligible: hits.length === 0, hits, checked: LEADER_DISQUALIFIERS.length };
+}
+
+// --- 育成ロードマップ (年代ごとの4つのスキル) ---------------------------
+
+export interface SkillStep {
+  readonly step: 1 | 2 | 3 | 4;
+  readonly name: string;
+  readonly detail: string;
+}
+
+export const SKILL_STEPS: readonly SkillStep[] = [
+  { step: 1, name: '業務スキル', detail: '実業務を行うスキル。通常 3〜5 年でマスターできる領域。' },
+  { step: 2, name: 'チームマネジメントのスキル', detail: '自分ではなく組織・チームを動かして成果を出す。' },
+  { step: 3, name: '未知問題の解決スキル', detail: '前例もお手本もない問題を解く。お手本依存症の克服が前提。' },
+  { step: 4, name: 'しくみをつくるスキル', detail: '個別の問題解決ではなく、問題が起きない構造をつくる。' },
+];
+
+/**
+ * 業務スキルの習得目安の上限 (年)。木下氏は「大半の職種のほとんどの業務は
+ * 通常 3〜5 年でマスターできる」としている。
+ *
+ * **境界は「超過」であって「以上」ではない。** 5 年ちょうどは目安の内なので
+ * 滞留に数えない。日本語で書くと「5 年以上」と書きたくなるが、それだと
+ * 5 年ちょうどを含んでしまい判定が変わる —— 実際、手引き側の文面が一度
+ * 「5 年以上」になっていて、実装と食い違っていた (2026-08-28 に気付いて直した)。
+ * 文章へ写すときは **「5 年を超えて」** と書くこと。
+ */
+export const STEP1_MASTERY_YEARS = 5;
+
+export interface LadderMember {
+  readonly id: string;
+  readonly name: string;
+  readonly step: number;
+  /** 現在の STEP に留まっている年数。 */
+  readonly yearsInStep: number;
+}
+
+export interface LadderReview {
+  readonly members: readonly LadderMember[];
+  /** STEP1 に習得目安を超えて留まっている人。本人ではなく配置と任せ方を疑う。 */
+  readonly stalled: readonly LadderMember[];
+  readonly byStep: Readonly<Record<number, number>>;
+}
+
+const MEMBER_ID_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
+
+/** ロードマップに載せられるメンバーか。 */
+export function isValidLadderMember(m: unknown): m is LadderMember {
+  if (m === null || typeof m !== 'object') return false;
+  const o = m as Record<string, unknown>;
+  if (typeof o['id'] !== 'string' || !MEMBER_ID_RE.test(o['id'])) return false;
+  if (typeof o['name'] !== 'string' || o['name'].length === 0 || moreThanChars(o['name'], MAX_MEMBER_NAME_CHARS)) return false;
+  const step = o['step'];
+  // `typeof step !== 'number'` は実行時には冗長 —— `Number.isInteger(x)` は
+  // `typeof x === 'number'` を含意する (実測)。残すのは TS の絞り込みのため。
+  // Stryker disable next-line ConditionalExpression
+  if (typeof step !== 'number' || !Number.isInteger(step) || step < 1 || step > 4) return false;
+  const years = o['yearsInStep'];
+  // 同上 (`Number.isFinite`)。
+  // Stryker disable next-line ConditionalExpression
+  if (typeof years !== 'number' || !Number.isFinite(years) || years < 0 || years > 60) return false;
+  return true;
+}
+
+/**
+ * ロードマップの点検。**STEP1 に習得目安 (5年) を超えて留まっている人**を挙げる。
+ *
+ * 挙げる目的は評価ではない。木下氏は業務スキルを 3〜5 年でマスターできる
+ * 領域としているので、それを大きく超えているなら**本人ではなく配置と
+ * 任せ方を疑う**——というのがマニュアル 05 章の読み替えである。
+ */
+export function reviewLadder(raw: readonly unknown[]): LadderReview {
+  const members = raw.filter(isValidLadderMember);
+  const byStep: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  for (const m of members) byStep[m.step] = (byStep[m.step] ?? 0) + 1;
+  return {
+    members,
+    stalled: members.filter((m) => m.step === 1 && m.yearsInStep > STEP1_MASTERY_YEARS),
+    byStep,
+  };
+}
+
+// --- 入力の正規化 (画面から来た値を判定へ渡す前に通す) ---------------
+//
+// **件数にも上限を置く。** 文字列長だけ切って件数を野放しにすると、
+// `talent.save-state` は IPC 境界で無制限の書き込み口になる ——
+// 乗っ取られた renderer が 200 万件の配列を渡せば、`saveTalentState` が
+// それを丸ごと JSON にしてディスクへ書く (2026-08-28 のレビューで検出)。
+// この PR が触った他の境界はすべて明示的な上限を得ている
+// (MAX_MOOD_NOTE_CHARS / MAX_ANALYZE_TEXT_CHARS / MAX_RECORD_NOTE_CHARS /
+//  MAX_ASSISTANT_MESSAGES) ので、ここだけ例外にしない。
+//
+// 値は「人間が運用で入れうる数」から採る。部署も施策も、1 期に 200 を
+// 超えるなら道具立てのほうが間違っている。
+
+/** 部署の申告の上限。 */
+export const MAX_DEPT_REPORTS = 200;
+/** 施策の上限。 */
+export const MAX_INITIATIVES = 200;
+/** 育成ロードマップに載せるメンバーの上限。 */
+export const MAX_LADDER_MEMBERS = 500;
+
+/*
+ * 欄ごとの長さの天井 (2026-09-14 パス 258)。
+ *
+ * **単位は文字**。これらは元々 `dept.length > 64` のような裸のリテラルで、
+ * `String.length` (コード単位) を数えていた。同じ `sanitizeTalentState` の中で
+ * `updatedAt` だけが `clampToCeiling` (文字) を通っていたので、
+ * **隣り合う欄が別の単位で測っていた** ことになる。
+ * 実測 (2026-09-14): 絵文字 33 個の部署名は **33 文字 / 66 コード単位**で、
+ * コード単位の天井だと 33 文字で断られていた。
+ *
+ * パス 195 の規則 (述べる数と、守る数と、切る位置は同じ単位) と、
+ * パス 252 の規則 (天井は*拒むために*在るので数え切らない) に従い、
+ * 判定は `moreThanChars` で **n+1 文字目で打ち切る**。
+ */
+
+/** 部署名の天井 (文字)。 */
+export const MAX_DEPT_NAME_CHARS = 64;
+/** 施策名の天井 (文字)。 */
+export const MAX_INITIATIVE_NAME_CHARS = 128;
+/** ロードマップの氏名の天井 (文字)。 */
+export const MAX_MEMBER_NAME_CHARS = 64;
+/** 保存時刻の文字列の天井 (文字)。 */
+export const MAX_TALENT_UPDATED_AT_CHARS = 32;
+
+
+/** 部署の申告として受け付けられる形か。 */
+export function sanitizeReports(raw: unknown): readonly DeptReport[] {
+  if (!Array.isArray(raw)) return [];
+  const out: DeptReport[] = [];
+  for (const r of raw.slice(0, MAX_DEPT_REPORTS)) {
+    // `typeof r !== 'object'` の項は実行時には冗長 —— 非オブジェクト (数値・
+    // 文字列・関数) への添字は例外にならず `undefined` を返すので、次の行の
+    // `typeof dept !== 'string'` が同じように弾く (実測)。`r === null` のほうは
+    // **必要** (null への添字は TypeError) で、そちらは検査が留めている。
+    // Stryker disable next-line ConditionalExpression
+    if (r === null || typeof r !== 'object') continue;
+    const o = r as Record<string, unknown>;
+    const dept = o['department'];
+    if (typeof dept !== 'string' || dept.length === 0 || moreThanChars(dept, MAX_DEPT_NAME_CHARS)) continue;
+    // 既定の `[]` を別の配列に変えても、中身が病名の許可リストに載らない限り
+    // 下の filter が全部落とすので等価。
+    // Stryker disable next-line ArrayDeclaration
+    const list = Array.isArray(o['diseases']) ? o['diseases'] : [];
+    out.push({
+      department: dept,
+      // `typeof d === 'string'` は実行時には冗長 —— `Set.has` は非文字列に
+      // 対して常に false を返す (実測)。残すのは型述語のため。
+      // Stryker disable next-line ConditionalExpression
+      diseases: list.filter((d): d is string => typeof d === 'string' && DISEASE_IDS.has(d)),
+    });
+  }
+  return out;
+}
+
+/** 施策として受け付けられる形か。 */
+export function sanitizeInitiatives(raw: unknown): readonly Initiative[] {
+  if (!Array.isArray(raw)) return [];
+  const out: Initiative[] = [];
+  for (const i of raw.slice(0, MAX_INITIATIVES)) {
+    // `typeof i !== 'object'` の項は上の `sanitizeReports` と同じ理由で等価。
+    // `i === null` のほうは必要。
+    // Stryker disable next-line ConditionalExpression
+    if (i === null || typeof i !== 'object') continue;
+    const o = i as Record<string, unknown>;
+    const name = o['name'];
+    if (typeof name !== 'string' || name.length === 0 || moreThanChars(name, MAX_INITIATIVE_NAME_CHARS)) continue;
+    if (!isValidProbability(o['probability'])) continue;
+    out.push({ name, probability: o['probability'] });
+  }
+  return out;
+}
+
+// --- 状態とスナップショット (両方の実行形態が同じ物を組む) --------------
+//
+// 保存先だけが違う。デスクトップ版は `~/.local/business-hub/talent.json`、
+// ブラウザ版は `localStorage['servicehub.talent.state.v1']`。
+// **読んだ後に何を計算するかは、ここ 1 か所しかない。**
+// 2026-08-28 に e2e が捕まえた: ブラウザ版は `fetchSnapshot` に talent の
+// 枝が無く `not_implemented` へ落ちていたので、保存はできるのに画面は
+// 同梱の空スナップショットのままだった —— 保存した申告が一度も判定に
+// 通らない、という「口はあるが繋がっていない」状態。
+
+export interface TalentState {
+  readonly reports: readonly DeptReport[];
+  readonly initiatives: readonly Initiative[];
+  readonly members: readonly LadderMember[];
+  readonly updatedAt: string;
+}
+
+export const EMPTY_TALENT_STATE: TalentState = {
+  reports: [],
+  initiatives: [],
+  members: [],
+  updatedAt: '',
+};
+
+/** ブラウザ版の保存先。台帳 (`lint:storage`) に載る鍵はこれ 1 つ。 */
+export const TALENT_STORAGE_KEY = 'servicehub.talent.state.v1';
+
+/** どこから来た値でも、判定へ渡す前にこれを通す。 */
+/**
+ * **保存で落ちた項目を利用者に言うための文面。** (2026-09-08 · パス 89)
+ *
+ * `sanitizeTalentState` は上限で切り (`slice`)、形の合わない要素を落とす
+ * (`filter`)。`saveTalentState` は書く前に同じ sanitizer を通すので、
+ * **不適合な項目は保存時に黙って消えていた** —— 画面は `ok` を見て
+ * 「保存しました」と出し、読み直しでその項目が一覧から消える。
+ *
+ * 到達する経路の実例: 滞留年数の入力は `<input type="number" max={60}>` だが
+ * HTML の `max` は助言的で (form submit でもない) **61 と打てば state に入る**。
+ * `isValidLadderMember` は `years > 60` を弾くので、保存するとその人が落ちる。
+ *
+ * パス 74 で「保存の失敗を黙って捨てる」を直したが、こちらは
+ * **成功と言いながら一部を捨てている**形だった。`save-state` は sanitize 後の
+ * 状態を返すので、送った件数と返った件数を比べれば言える —— **channel は既に在った。**
+ *
+ * 落ちた理由は件数だけでは 2 通り (形が合わない / 上限超過) を見分けられないので、
+ * **両方を挙げて上限の実数を添える**。数を丸めて黙るより、利用者が確かめられる形にする。
+ *
+ * @param sent 画面が送った件数
+ * @param kept 保存後に返ってきた件数
+ * @returns 落ちた物が無ければ `null`
+ */
+export function describeDroppedEntries(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): string | null {
+  const parts = droppedParts(sent, kept);
+  if (parts.length === 0) return null;
+  return `${parts.join(' / ')} は保存されませんでした。`;
+}
+
+/**
+ * 送った件数と残った件数の差を、**落とした仕組みごとに分ける**。
+ *
+ * `sanitizeTalentState` は 2 段で落とす —— `slice(0, cap)` (件数上限) と
+ * `filter` (欄の形)。この 2 つは**件数だけから分けられる**:
+ *
+ * - `overflow = max(0, sent - cap)` —— `slice` が切った分。
+ * - `rejected = dropped - overflow` —— 残りは必ず `filter` が落とした分。
+ *
+ * **落ちた欄だけには絞らない** —— 3 欄すべての行を返し、`overflow` / `rejected` がどちらも 0 の欄は
+ * 呼び手の {@link droppedParts} が句にしない (`> 0` を欄ごとに見る)。ここにも同じ判定の `filter` を
+ * 置いていた頃は `droppedParts` の判定と**二重**で、外しても答えが変わらない等価な変異体が 4 つ
+ * (`filter` ごと・`||`・`> 0` の 2 つ) 残っていた (パス 502)。
+ */
+function droppedRows(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): readonly {
+  readonly label: string; readonly overflow: number; readonly rejected: number;
+  readonly cap: number; readonly requirement: string;
+}[] {
+  return [
+    {
+      label: '部署の申告', sent: sent.reports, kept: kept.reports, cap: MAX_DEPT_REPORTS,
+      // 病名は `filter` で選り分けるだけで申告ごと落としはしないので、
+      // 申告が落ちる理由は部署名だけである。
+      requirement: `部署名は 1〜${MAX_DEPT_NAME_CHARS} 文字`,
+    },
+    {
+      label: '施策', sent: sent.initiatives, kept: kept.initiatives, cap: MAX_INITIATIVES,
+      requirement: `施策名は 1〜${MAX_INITIATIVE_NAME_CHARS} 文字・達成確率は 0〜100`,
+    },
+    {
+      label: 'メンバー', sent: sent.members, kept: kept.members, cap: MAX_LADDER_MEMBERS,
+      requirement: `氏名は 1〜${MAX_MEMBER_NAME_CHARS} 文字・STEP は 1〜4・滞留年数は 0〜60`,
+    },
+  ].map((r) => {
+    // 件数は呼び出し側が数えて渡すので、**どんな組み合わせでも負の件数を作らない**ように経らす。
+    const dropped = Math.max(0, r.sent - r.kept);
+    const overflow = Math.min(dropped, Math.max(0, r.sent - r.cap));
+    return {
+      label: r.label, cap: r.cap, requirement: r.requirement,
+      overflow, rejected: dropped - overflow,
+    };
+  });
+}
+
+/**
+ * 落ちた分を、**名指せる理由ごとに** 1 句ずつ。保存側と読み込み側が共有する。
+ *
+ * **件数上限を名指すのは、それが実際に切った分だけ** (2026-09-14 パス 258)。
+ * 以前は落ちた全件に「上限 N 件」を添えていたが、上限は 200 / 200 / 500 なので
+ * 実測 (2026-09-14) ではこうなっていた:
+ *
+ * | 入力 | 刺っていた理由 |
+ * | --- | --- |
+ * | 部署名 65 字・申告 **1 件** | 「部署の申告 1 件 (上限 **200** 件)」 |
+ * | 施策名 129 字・施策 **1 件** | 「施策 1 件 (上限 **200** 件)」 |
+ * | 滞留 61 年・メンバー **1 人** (パス 89 の実例) | 「メンバー 1 件 (上限 **500** 件)」 |
+ *
+ * いずれも 1 件しか送っていないので、`sent <= cap` が成り立つ
+ * —— つまり「上限を超えています」は**証明可能に偽**で、
+ * 添えた 200 / 500 は原因と無関係の数字である。パス 254 と同じ形
+ * (**成り立たない理由を刷る**)。いまは `overflow` と `rejected` を分けて
+ * 数え、それぞれの原因をそれぞれの件数と一緒に述べる。
+ */
+function droppedParts(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): readonly string[] {
+  const parts: string[] = [];
+  for (const r of droppedRows(sent, kept)) {
+    if (r.overflow > 0) parts.push(`${r.label} ${r.overflow} 件 (上限 ${r.cap} 件を超えた分)`);
+    if (r.rejected > 0) parts.push(`${r.label} ${r.rejected} 件 (${r.requirement})`);
+  }
+  return parts;
+}
+
+export function sanitizeTalentState(raw: unknown): TalentState {
+  if (raw === null || typeof raw !== 'object') return EMPTY_TALENT_STATE;
+  const o = raw as Record<string, unknown>;
+  const updatedAt = o['updatedAt'];
+  return {
+    reports: sanitizeReports(o['reports']),
+    initiatives: sanitizeInitiatives(o['initiatives']),
+    members: Array.isArray(o['members'])
+      ? o['members'].slice(0, MAX_LADDER_MEMBERS).filter(isValidLadderMember)
+      : [],
+    // 保存値は何でも入りうる (古い版・手で直した JSON)。文字の境界で切る (パス 196)。
+    updatedAt: typeof updatedAt === 'string' ? clampToCeiling(updatedAt, MAX_TALENT_UPDATED_AT_CHARS) : '',
+  };
+}
+
+export interface TalentSnapshot {
+  readonly diseases: readonly OrganDisease[];
+  readonly steps: readonly SkillStep[];
+  readonly disqualifiers: readonly Disqualifier[];
+  readonly diagnosis: OrgDiagnosis;
+  readonly achievement: AchievementStatus;
+  readonly ladder: LadderReview;
+  readonly initiatives: readonly Initiative[];
+  /**
+   * 保存されている申告そのもの。`diagnosis.tallies` は病→部署の集計なので、
+   * **画面が編集し直すには元の形が要る**。集計から復元すると、病を 1 つも
+   * 挙げていない部署が消えるなど情報が落ちる。
+   */
+  readonly reports: readonly DeptReport[];
+  readonly updatedAt: string;
+  readonly disqualifiersSource: SourceStrength;
+  readonly stepsSource: SourceStrength;
+  /** 保存先から何が読めたか (パス 121)。画面の注記が読む。 */
+  readonly stored: 'saved' | 'none' | 'unreadable';
+  /** 読めなかった / 読み込みで落とした項目の 1 行 (無ければ null)。 */
+  readonly storedNote: string | null;
+}
+
+/**
+ * 保存先から読んだ結果 —— **「保存した」「まだ無い」「読めなかった」を混ぜない** (2026-09-09 · パス 121。
+ * チームレーダーのパス 120 と同じ形)。
+ *
+ * main の `loadTalentState` は「初回起動と壊れたファイルを区別しても画面ですることが同じなので、分けない」と
+ * 注記して空を返していた。**同じではない** —— 壊れたファイルのときは利用者の申告・施策・メンバーが消えており、
+ * 次に「保存」を押せば空で上書きされる。何も言わなければ、消えたことに気付けない。
+ * `saved` でも、形の合わない項目を読むときに落としていれば `dropped` に件数の文が入る
+ * (パス 89 は保存側だけ言っていた —— 古い版や手で直した JSON を**読む**ときは黙って落ちていた)。
+ */
+export type StoredTalent =
+  | { readonly kind: 'saved'; readonly state: TalentState; readonly dropped: string | null }
+  | { readonly kind: 'none' }
+  | { readonly kind: 'unreadable'; readonly reason: string };
+
+/** 読み込みで落とした項目の文面 (保存側の {@link describeDroppedEntries} と対)。 */
+export function describeUnreadEntries(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): string | null {
+  const parts = droppedParts(sent, kept);
+  if (parts.length === 0) return null;
+  return `${parts.join(' / ')} は読み込みで落としました。このまま保存すると、これらは失われます。`;
+}
+
+const LIST_FIELDS = ['reports', 'initiatives', 'members'] as const;
+
+/**
+ * 保存された文字列 (無ければ null) を読む —— **両ビルドの読み込みが同じ 1 つを通す。**
+ *
+ * JSON でない・オブジェクトでない・一覧の欄が在るのに配列でない物は理由つきで「読めなかった」
+ * (欄が**無い**のは古い版なので空として読む)。読めた物は `sanitizeTalentState` を通し、
+ * 落ちた件数を {@link describeUnreadEntries} で言う。
+ */
+export function readStoredTalent(raw: string | null): StoredTalent {
+  if (raw === null) return { kind: 'none' };
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw) as unknown;
+  } catch {
+    /*
+     * **`e` を捨てるのは意図である** (2026-09-14 · パス 234 で理由を記録)。
+     *
+     * V8 の `JSON.parse` の文言は**入力を 30 字ほど引用する**。実測:
+     *
+     * ```
+     *   JSON.parse('{"name":"山田太郎","email":"taro@example.com","eval":oops}')
+     *     → Unexpected token 'o', ..."m","eval":oops}" is not valid JSON
+     *   JSON.parse('not json at all: 山田太郎 taro@example.com')
+     *     → Unexpected token 'o', "not json at"... is not valid JSON
+     * ```
+     *
+     * ここが読むのは**利用者の氏名・メールアドレス・評価**が入った保管値なので、
+     * `e.message` をそのまま `reason` に載せると、壊れた保管値の断片が画面の
+     * 注記として刷られる。位置だけの文言 (末尾のごみ) なら無害だが、
+     * **早い位置で失敗すると先頭 30 字が引用される** —— どちらになるかは
+     * 壊れ方で決まるので、**文言は定数に固定する**。
+     *
+     * この定数は検査が**等値で**留めてある (`e.message` に変えると必ず落ちる)。
+     */
+    return { kind: 'unreadable', reason: 'JSON として読めません' };
+  }
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return { kind: 'unreadable', reason: 'オブジェクトではありません' };
+  }
+  const o = parsed as Record<string, unknown>;
+  for (const field of LIST_FIELDS) {
+    if (o[field] !== undefined && !Array.isArray(o[field])) {
+      return { kind: 'unreadable', reason: `${field} が配列ではありません` };
+    }
+  }
+  const state = sanitizeTalentState(o);
+  const count = (field: (typeof LIST_FIELDS)[number]): number => {
+    const v = o[field];
+    return Array.isArray(v) ? v.length : 0;
+  };
+  const dropped = describeUnreadEntries(
+    { reports: count('reports'), initiatives: count('initiatives'), members: count('members') },
+    { reports: state.reports.length, initiatives: state.initiatives.length, members: state.members.length },
+  );
+  return { kind: 'saved', state, dropped };
+}
+
+/** 読めなかったときに画面が刷る 1 行 (両ビルドで同じ文)。 */
+export function unreadableTalentNote(reason: string): string {
+  return `保存した人材育成の状態を読めませんでした (${reason})。空の状態を表示しています。このまま保存すると空で上書きされ、元の保存値は戻りません。`;
+}
+
+/** 画面に渡す由来 (どこから読めたか + 注記)。 */
+export interface TalentProvenance {
+  readonly stored: 'saved' | 'none' | 'unreadable';
+  readonly storedNote: string | null;
+}
+
+/** 状態を直に渡すときの由来 (保存した物として扱う)。 */
+export const SAVED_PROVENANCE: TalentProvenance = { stored: 'saved', storedNote: null };
+
+/** 読んだ結果を、判定に渡す状態と画面に渡す由来に分ける —— main の fetcher とブラウザ版の枝が同じ物を通す。 */
+export function talentProvenance(stored: StoredTalent): { readonly state: TalentState; readonly provenance: TalentProvenance } {
+  switch (stored.kind) {
+    case 'saved':
+      return { state: stored.state, provenance: { stored: 'saved', storedNote: stored.dropped } };
+    case 'none':
+      return { state: EMPTY_TALENT_STATE, provenance: { stored: 'none', storedNote: null } };
+    case 'unreadable':
+      return { state: EMPTY_TALENT_STATE, provenance: { stored: 'unreadable', storedNote: unreadableTalentNote(stored.reason) } };
+    // Stryker disable next-line all: 網羅性検査の到達不能 default (型で 3 つを処理済み)。
+    default: {
+      const exhaustive: never = stored;
+      return exhaustive;
+    }
+  }
+}
+
+/** 保存された状態から画面が出す物を組む。**判定はここでしか走らない。** */
+export function buildTalentSnapshot(state: TalentState, provenance: TalentProvenance = SAVED_PROVENANCE): TalentSnapshot {
+  return {
+    diseases: ORGAN_DISEASES,
+    steps: SKILL_STEPS,
+    disqualifiers: LEADER_DISQUALIFIERS,
+    diagnosis: diagnoseOrg(state.reports),
+    achievement: achievementGap(state.initiatives),
+    ladder: reviewLadder(state.members),
+    initiatives: state.initiatives,
+    reports: state.reports,
+    updatedAt: state.updatedAt,
+    disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
+    stepsSource: SKILL_STEPS_SOURCE,
+    stored: provenance.stored,
+    storedNote: provenance.storedNote,
+  };
+}

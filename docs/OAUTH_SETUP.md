@@ -7,13 +7,23 @@ access / refresh token を保存します。期限切れ前に refresh も自動
 
 ## 設定済みプロバイダ
 
-| サービス | プロバイダ | 認可スコープ |
-|---|---|---|
-| Drive | Google | `drive` |
-| Calendar | Google | `calendar`, `calendar.events` |
-| Gmail | Google | `gmail.modify`, `gmail.compose` |
+| サービス | プロバイダ | 認可スコープ | PKCE | client_secret |
+|---|---|---|---|---|
+| Drive | Google | `drive` | ✅ | 不要 |
+| Calendar | Google | `calendar`, `calendar.events` | ✅ | 不要 |
+| Gmail | Google | `gmail.modify`, `gmail.compose` | ✅ | 不要 |
+| freee | freee | `read` | ✅ | 不要 |
+| Microsoft 365 | Microsoft | `User.Read`, `Mail.Read`, `Mail.Send`, `Calendars.Read`, `Calendars.ReadWrite` | ✅ | 不要 |
+| Slack | Slack | `channels:read`, `groups:read`, `team:read`, `chat:write` | ✅ | 不要 |
+| Notion | Notion | (スコープ概念なし) | ✕ | **必要** (Basic 認証) |
+| Canva | Canva | `design:meta:read`, `folder:write` | ✅ | **必要** (Basic 認証) |
+| WordPress.com | WordPress.com | `global` | ✕ | **必要** (body) |
+| Atlassian | Atlassian | `read:jira-work`, `offline_access` | ✕ | **必要** (body) |
 
-3 サービスは **共通の 1 つの Google OAuth クライアント** を使います。
+Google の 3 サービスは **共通の 1 つの Google OAuth クライアント** を使います。
+それ以外は各プロバイダの `*_OAUTH_CLIENT_ID` (機密クライアントは `*_OAUTH_CLIENT_SECRET` も)
+を環境変数で渡します。secret が要るのに未設定なら `isOAuthSupported()` が false を返し、
+押しても 401 にしかならないボタンは出ません。
 
 ## Google: クライアント ID を発行する手順（5 分）
 
@@ -89,10 +99,14 @@ notion: {
 ```
 
 注意点:
-- Notion / WordPress.com / Atlassian / Slack は **client_secret も必要** な OAuth 設計。
+- Notion / WordPress.com / Atlassian / Canva は **client_secret も必要** な機密クライアント。
   デスクトップアプリだと完全に隠せないが、難読化 + 環境変数渡しでよくある妥協が可能。
-- Slack は PKCE 非対応（v2 install flow）。
-- Canva は PKCE 対応、Notion は対応していない（authorization code with secret）。
+- Slack は **PKCE 対応**（S256 のみ）。PKCE を有効にするとアプリは公開クライアント扱いになり、
+  `oauth.v2.access` に client_secret を **含めてはいけない**。ただしこれは一方通行の設定変更で、
+  戻すには Slack サポートへの連絡が要る。また発行される refresh token の寿命が 30 日になる。
+  <https://docs.slack.dev/authentication/using-pkce/>
+- Canva は PKCE 必須だが token 交換に secret も要る（PKCE と機密クライアントは排他ではない）。
+  Notion / WordPress.com / Atlassian は PKCE 非対応。
 
 ## 制約
 

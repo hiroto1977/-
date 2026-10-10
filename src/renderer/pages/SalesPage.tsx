@@ -1,0 +1,411 @@
+import { useMemo, useRef, useState } from 'react';
+import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
+import { useCollection } from '../data/useCollection';
+import { MAX_CSV_IMPORT_BYTES, importSaveFailedNote, readImportText, skippedRowsDetail } from '../data/importFile';
+import { fireReported } from '../data/deviceStoreFailure';
+import { localIsoDate } from '../../shared/localDate';
+import {
+  SALES_COLLECTION,
+  SALES_CHANNELS,
+  CHANNEL_LABEL,
+  parseSalesEntry,
+  summarizeSales,
+  monthlyTotals,
+  type SalesEntry,
+  type SalesChannel,
+  duplicateOrdersNote,
+  findDuplicateOrders,
+  readableSalesRows,
+  unreadableSalesRowsNote,
+  MAX_SALES_NOTE_CHARS,
+} from '../data/sales';
+import { displayField, finiteNumberOf } from '../../shared/apiResponse';
+import { DASH } from '../../shared/formatters';
+import { SALES_CSV_COLUMNS, salesToCsv, salesFromCsv } from '../data/salesCsv';
+import { CSV_BOM } from '../data/csv';
+import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
+import {
+  MANUAL_OVERRIDES_COLLECTION,
+  applyManualOverrides,
+  type ManualOverrideEntry,
+} from '../data/manualData';
+
+const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
+
+/**
+ * 保管した金額を刷る。数として読めなければ `—` (パス 442)。
+ *
+ * `shared/formatters.ts` の `jpyOrDash` は使わない —— あちらは `¥` (U+00A5)、
+ * この一覧は `Intl` の `￥` (U+FFE5) で、揃えると**正しい行の見た目まで変わる**。
+ * 床の意味は同じなので、ここは綴りではなく判定を借りる。
+ */
+function salesAmountText(v: unknown): string {
+  const n = finiteNumberOf(v);
+  return n === null ? DASH : yen.format(n);
+}
+
+const CHANNEL_COLOR: Record<SalesChannel, string> = {
+  amazon: '#ff9900',
+  shopify: '#95bf47',
+  base: '#2c6ef2',
+  rakuten: '#bf0000',
+  mercari: '#ff0211',
+  other: '#94a3b8',
+};
+
+const EMPTY = { date: '', channel: 'amazon' as SalesChannel, amount: '', orders: '', note: '' };
+
+function Tile({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div style={{
+      background: 'var(--bg-elev)',
+      border: '1px solid var(--border)',
+      borderRadius: 8,
+      padding: '12px 16px',
+      flex: 1,
+      minWidth: 150,
+    }}>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 20, fontWeight: 600 }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>{sub}</div>}
+    </div>
+  );
+}
+
+/** Horizontal stacked bar of channel shares. */
+function ChannelBar({ parts }: { parts: readonly { channel: SalesChannel; share: number }[] }) {
+  if (parts.length === 0) return null;
+  return (
+    <div style={{ display: 'flex', height: 18, borderRadius: 4, overflow: 'hidden', margin: '8px 0' }}>
+      {parts.map((p) => (
+        <div
+          key={p.channel}
+          title={`${CHANNEL_LABEL[p.channel]} ${p.share.toFixed(1)}%`}
+          style={{ width: `${p.share}%`, background: CHANNEL_COLOR[p.channel] }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function SalesPage() {
+  const { records, add, addMany, remove } = useCollection<SalesEntry>(SALES_COLLECTION);
+  const [form, setForm] = useState(EMPTY);
+  const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
+  const [notice, setNotice] = useState<string>();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const entries = useMemo(() => records.map((r) => r.data), [records]);
+  const computedSummary = useMemo(() => summarizeSales(entries), [entries]);
+  // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、
+  // ここは読んで適用するだけ。上書きが無ければ計算値がそのまま出る。
+  const overridesCol = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+  const overrideRecords = overridesCol.records;
+  const applied = useMemo(
+    () => applyManualOverrides('sales', computedSummary, overrideRecords.map((r) => r.data)),
+    [computedSummary, overrideRecords],
+  );
+  const summary = applied.overview;
+  const months = useMemo(() => monthlyTotals(entries), [entries]);
+  // 日付が読める行だけの部分集合 (パス 360 の漏斗)。**1 度だけ組んで両方の断りが読む** ——
+  // 分子と分母を同じ部分集合から取る (法則 `one-subset-per-answer`)。
+  const readable = useMemo(() => readableSalesRows(entries), [entries]);
+  // 日付が読めない行は月次推移から落ちる (パス 360)。**落としたことを言う** ——
+  // 黙って除くと売上高が小さく出て、利用者は気づけない。
+  // 日付と「金額・受注件数」は**別の原因**なので、出る文だけを並べる (パス 442)。
+  const unreadableDateNote = useMemo(() => unreadableSalesRowsNote(readable), [readable]);
+  // 同じ注文名の重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 126)。
+  // **合計と同じ部分集合から数える** —— 素の購読から数えると、日付が読めなくて合計に
+  // 入っていない行の重複を「売上高と受注件数に 2 度数えられています」と述べることになり、
+  // その文が偽になる (`overview.ts` は 2026-09-22 からそう書いていて、この画面だけが
+  // 素のままだった。実測: 総売上 1,000,000 のまま「2 度数えられています」と言っていた)。
+  const duplicateNote = useMemo(() => duplicateOrdersNote(findDuplicateOrders(readable.rows)), [readable]);
+  /**
+   * **読める行が 1 件も無いときの集計は「—」** (2026-09-24 · パス 442)。
+   *
+   * 空集合の和は算術としては 0 だが、画面の「総売上 ￥0」は*売れていない*という
+   * **事実の主張**として読める。実際は*記録が読めていない*で、その理由は
+   * すぐ上の断り (`data-unreadable-sales-dates`) が述べている ——
+   * パス 395 が書面 §2 と経営サマリーについて下した判断と同じで、
+   * **この画面のタイルだけが残っていた** (実測: 日付が読めない行 1 件だけの控えで
+   * 総売上 ￥0 / 総注文件数 0 / チャネル数 0)。
+   *
+   * ★ **手で置いた値は消さない** —— 上書きした欄は利用者自身の主張なので、
+   *   読める行が 0 でもその値を出す (パス 382 の `overridden` を読む)。
+   * ★ **一覧そのものは畳まない** —— × で消せる逃げ口を閉じない (パス 425)。
+   */
+  const overridden = useMemo(() => new Set(applied.overridden), [applied]);
+  const aggregateText = (path: string, text: string): string =>
+    readable.rows.length > 0 || overridden.has(path) ? text : DASH;
+
+  async function onAdd() {
+    try {
+      const parsed = parseSalesEntry(form);
+      setError(undefined);
+      await add(parsed);
+      setForm((f) => ({ ...EMPTY, channel: f.channel, date: f.date }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  function onExport() {
+    // Prepend a UTF-8 BOM so Excel opens Japanese text correctly.
+    const blob = new Blob([CSV_BOM + salesToCsv(entries)], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sales-${localIsoDate()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function onImportFile(file: File) {
+    setError(undefined);
+    setNotice(undefined);
+    // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
+    let text: string;
+    try {
+      text = await readImportText(file, MAX_CSV_IMPORT_BYTES, 'CSV ファイル');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+    /*
+     * **重複の判定は保管層から読み直した一覧で行う** (パス 384)。
+     *
+     * ここで画面の `entries` (= `useCollection` の購読の写し) を渡すと、一覧が
+     * IndexedDB から届く前に CSV を選んだときだけ空と比べることになり、
+     * `stored = 0` / `allStored = false` で**重複の検出が丸ごと働かない** ——
+     * 実測では「2 件を取り込みました」だけが出て、重複を含んだ総売上が並んだ。
+     * 「比べられなかった」を「重複が無い」と混ぜない (`readSalesForImport` は
+     * 読めなければ `null`)。
+     */
+    const existing = await readCollectionNow<SalesEntry>(SALES_COLLECTION);
+    if (existing === null) {
+      setError(unreadableForJudgementNote('売上の一覧'));
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+    const { entries: parsed, errors, stored, allStored } = salesFromCsv(text, existing);
+    // 読めた行が**すべて**既存の記録と同じ内容なら、同じファイルを 2 度読んだと判断して断る (パス 126)。
+    // 同じ内容の別の売上はありうるので、一部が同じだけなら取り込んで件数を言う (下)。
+    if (allStored) {
+      setError(
+        `この CSV の ${parsed.length} 行はすべて既に取り込まれている記録と同じ内容（日付・チャネル・金額・件数・メモ）です。同じファイルを 2 度読んだと判断し、取り込みませんでした。本当に同じ売上が 2 度あったのなら、その行だけ上のフォームから追加してください。`,
+      );
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+    // Atomic: all valid rows commit together or none (no partial import).
+    if (parsed.length > 0) {
+      try {
+        await addMany(parsed);
+      } catch {
+        // 保存が断られた (理由と打ち手は画面上端の知らせが言う —— `useCollection` の入口が届けた)。
+        // ここで受け止めないと、この関数は**ファイルの欄を空にする前に**抜ける: 拒否は誰にも
+        // 受け取られず、同じファイルを選び直しても変更が起きないので**やり直せなかった** (パス 493o)。
+        setError(importSaveFailedNote(parsed.length));
+        if (fileRef.current) fileRef.current.value = '';
+        return;
+      }
+    }
+    const ok = parsed.length;
+    const ng = errors.length;
+    if (ok === 0 && ng === 0) {
+      // 見出しの案内は列の定義から導く (書き出しと取り込みが読む 1 つ —— 手で写すと列を足した日に古びる)。
+      setError(`取り込める行がありませんでした (ヘッダ: ${SALES_CSV_COLUMNS.join(',')})`);
+    } else {
+      setNotice(
+        `${ok} 件を取り込みました${ng > 0 ? ` / ${ng} 件はスキップ (${skippedRowsDetail(errors)})` : ''}${stored > 0 ? `。うち ${stored} 件は既存の記録と同じ内容です（同じファイルを 2 度読んだのなら、一覧で該当行を消してください）` : ''}`,
+      );
+    }
+    if (fileRef.current) fileRef.current.value = '';
+  }
+
+  const inputStyle = {
+    background: 'var(--bg)',
+    border: '1px solid var(--control-border)',
+    borderRadius: 10,
+    color: 'var(--text)',
+    padding: '6px 8px',
+    fontSize: 13,
+  } as const;
+
+  return (
+    <div>
+      <Section title="売上を記録 — チャネル横断 (ローカル保存)">
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+          <input
+            value={form.date}
+            placeholder="YYYY-MM-DD"
+            onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+            style={{ ...inputStyle, width: 120 }}
+          />
+          <select
+            value={form.channel}
+            aria-label="販売チャネル"
+            onChange={(e) => setForm((f) => ({ ...f, channel: e.target.value as SalesChannel }))}
+            style={{ ...inputStyle, width: 110 }}
+          >
+            {SALES_CHANNELS.map((c) => (
+              <option key={c} value={c}>{CHANNEL_LABEL[c]}</option>
+            ))}
+          </select>
+          <input
+            value={form.amount}
+            placeholder="売上金額"
+            onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
+            style={{ ...inputStyle, width: 110 }}
+          />
+          <input
+            value={form.orders}
+            placeholder="注文件数"
+            onChange={(e) => setForm((f) => ({ ...f, orders: e.target.value }))}
+            style={{ ...inputStyle, width: 90 }}
+          />
+          <input
+            value={form.note}
+            placeholder="メモ (任意)"
+            onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
+            style={{ ...inputStyle, width: 140 }}
+          />
+          <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>追加</button>
+        </div>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
+          <button type="button" onClick={onExport} disabled={entries.length === 0}>
+            CSV エクスポート
+          </button>
+          <button type="button" onClick={() => fileRef.current?.click()}>CSV インポート</button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv,text/csv"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onImportFile(file);
+            }}
+          />
+          <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+            列: date, channel, amount, orders, note
+          </span>
+        </div>
+        {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
+        {notice && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{notice}</div>}
+        {duplicateNote !== null && (
+          <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+            {duplicateNote}
+          </p>
+        )}
+        {unreadableDateNote !== null && (
+          <p role="alert" data-unreadable-sales-dates style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+            {unreadableDateNote}
+          </p>
+        )}
+      </Section>
+
+      {entries.length === 0 ? (
+        <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>
+          各 EC チャネルの売上を入力すると、横断で合計・チャネル別構成・月次推移を集計します。
+          データはこの端末のローカル (IndexedDB) に保存されます。
+        </p>
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+            <Tile label="総売上" value={aggregateText('totalAmount', yen.format(summary.totalAmount))} />
+            <Tile label="総注文件数" value={aggregateText('totalOrders', summary.totalOrders.toLocaleString('ja-JP'))} />
+            {/* 注文が 0 件なら「—」。`¥0` は「平均単価が 0 円」という主張になる
+                (経緯は `data/sales.ts` の `SalesSummary.aov`)。 */}
+            <Tile label="平均注文単価 (AOV)" value={summary.aov === null ? DASH : yen.format(Math.round(summary.aov))} />
+            {/* チャネル数は上書きの対象ではない (一覧の異なり数なので置き換える欄が無い)。 */}
+            <Tile label="チャネル数" value={aggregateText('', `${summary.byChannel.length}`)} />
+          </div>
+
+          <Section title="チャネル別構成">
+            <ChannelBar parts={summary.byChannel} />
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+                  <th style={{ padding: '4px 8px' }}>チャネル</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>売上</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>構成比</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>注文</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>AOV</th>
+                </tr>
+              </thead>
+              <tbody>
+                {summary.byChannel.map((c) => (
+                  <tr key={c.channel} style={{ borderTop: '1px solid var(--border)' }}>
+                    <td style={{ padding: '4px 8px' }}>
+                      <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: CHANNEL_COLOR[c.channel], marginRight: 6 }} />
+                      {c.label}
+                    </td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(c.amount)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.share.toFixed(1)}%</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.orders.toLocaleString('ja-JP')}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.aov === null ? '—' : yen.format(Math.round(c.aov))}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Section>
+
+          {months.length > 0 && (
+            <Section title="月次推移">
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <tbody>
+                  {months.map((m) => (
+                    <tr key={m.month} style={{ borderTop: '1px solid var(--border)' }}>
+                      <td style={{ padding: '4px 8px' }}>{m.month}</td>
+                      <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(m.amount)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Section>
+          )}
+
+          <Section title="明細" count={records.length}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+                  <th style={{ padding: '4px 8px' }}>日付</th>
+                  <th style={{ padding: '4px 8px' }}>チャネル</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>売上</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>注文</th>
+                  <th style={{ padding: '4px 8px' }}>メモ</th>
+                  <th style={{ padding: '4px 8px' }} />
+                </tr>
+              </thead>
+              <tbody>
+                {records.map((r) => (
+                  <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
+                    {/*
+                      一覧は**素の購読**を描く (日付が読めない行もここに出るから × で消せる・パス 425)。
+                      だから値は**画面の側で型から読む** —— 物を素で置くと React が
+                      「Objects are not valid as a React child」で落とし、その画面ごと開けなくなる。
+                      数は `finiteNumberOf` を通す: `Intl` の `format` は投げないが**嘘を刷る**
+                      (実測 パス 442: `null` → `￥0` / `[1]` → `￥1` / `true` → `￥1`)。
+                    */}
+                    <td style={{ padding: '4px 8px' }}>{displayField(r.data.date)}</td>
+                    <td style={{ padding: '4px 8px' }}>{CHANNEL_LABEL[r.data.channel]}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{salesAmountText(r.data.amount)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{finiteNumberOf(r.data.orders) ?? DASH}</td>
+                    <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.note, MAX_SALES_NOTE_CHARS)}</td>
+                    <td style={{ padding: '4px 8px' }}>
+                      <button type="button" onClick={() => fireReported(remove(r.id))} aria-label="削除">×</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Section>
+        </>
+      )}
+    </div>
+  );
+}

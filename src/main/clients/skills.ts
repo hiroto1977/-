@@ -1,18 +1,42 @@
 import { promises as fs } from 'node:fs';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import os from 'node:os';
 import path from 'node:path';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
+import {
+  MAX_ASSISTANT_CONTENT_CHARS,
+  MAX_ASSISTANT_SYSTEM_CHARS,
+  capAssistantReply,
+  inputTooLongMessage,
+} from '../../shared/assistantLimits';
+import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../shared/skillIdentity';
 import {
   jsonFetch,
   type ActionContext,
   type ActionMap,
   type FetchContext,
 } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
+import type { ActionData } from '../../shared/actionData';
 
 export interface SkillEntry {
-  name: string;
+  /**
+   * **実行するときの鍵** —— フォルダ名 (`<id>/SKILL.md`) かファイル名 (`<id>.md`)。
+   *
+   * パス 179 までこれと `label` が 1 つの欄 (`name`) を兼ねており、frontmatter の
+   * `name:` がフォルダ名と違うスキルは**実行できない・別の物が走る**という
+   * 3 通りの壊れ方をした (`shared/skillIdentity.ts` の冒頭に実測の表)。
+   */
+  id: string;
+  /** 画面に出す題 (frontmatter の `name:`、無ければ `id`)。**鍵には使わない。** */
+  label: string;
   description: string;
   source: 'user' | 'project' | 'plugin';
   path: string;
+  /** `id` で実行できるか。false のときだけ `unrunnableReason` に理由が入る。 */
+  runnable: boolean;
+  /** 実行できない理由 (実行できるときは空文字)。文面は `shared/skillIdentity.ts`。 */
+  unrunnableReason: string;
 }
 
 export interface SkillsSnapshot {
@@ -102,6 +126,37 @@ export async function scanSkills(
     throw err;
   }
 
+  /*
+   * **読む前に、根の中かどうかを実体で見る。**
+   *
+   * `readSkillContent` は 2026-08-23 に同じ手当てを入れている
+   * (symlink を辿ると根の外が読め、その中身が Anthropic API へ送られた)。
+   * **ところが列挙側には入っていなかった。** 同じ根を扱う 2 つの関数で、
+   * 片方だけが守られている —— 今日何度も見た形である。
+   *
+   * 列挙側の穴は `entry.isDirectory()` が **symlink では false** になること。
+   * そこで下の `.md` 判定 (**名前しか見ない**) に落ち、`fs.readFile` が
+   * symlink を辿って外を読む。実測 (2026-08-25、`scanSkills` 直接呼び出し):
+   *
+   * ```
+   *   skills/evil.md -> /tmp/…/OUTSIDE-SECRET.md
+   *   → {"name":"LEAKED-NAME","description":"TOP-SECRET-DESCRIPTION", …}
+   * ```
+   *
+   * 送られるのは frontmatter の 2 欄だけなので `readSkillContent` ほど重くない。
+   * だが**前提条件は同じ** (細工した symlink を含む配布物) で、
+   * あちらを塞いだ理由がそのままこちらにも当てはまる。
+   *
+   * 根の側も実体に直す —— ホームや `.claude` が symlink 越しにあると
+   * (実体だけ直したのでは) **正当なスキルまで弾く**ため。
+   */
+  // Stryker disable next-line ArrowFunction: この `.catch` へは到達しない ——
+  // 直前の `readdir(dir)` が成功しているので `dir` は実在し、`realpath` は
+  // 失敗しない (読み取りの合間に消された場合だけで、検査から作れない)。
+  // 退避を残すのはその競合で落とさないため。
+  const baseReal = await fs.realpath(dir).catch(() => path.resolve(dir));
+  const baseResolved = baseReal + path.sep;
+
   const results: SkillEntry[] = [];
   for (const entry of entries) {
     const entryPath = path.join(dir, entry.name);
@@ -136,23 +191,116 @@ export async function scanSkills(
     // readFile or skipped by `continue` in the catch — the initial '' is
     // never observable.
     // Stryker disable next-line StringLiteral
-    let content = '';
+    // 実体に直せない = 壊れた symlink 等。読まない。
+    const realFile = await fs.realpath(skillFile).catch(() => null);
+    if (realFile === null || !realFile.startsWith(baseResolved)) continue;
+
+    // 初期値を置かない —— `catch` が `continue` するので、ここから先へ進む道は
+    // 「代入が成功した」場合しかない (TS の確定代入解析もそれを認める)。
+    // 初期値 `''` は**一度も観測されず**、変異検査で生き残っていた
+    // (実測 2026-08-31)。読まれない値を置かない。
+    // 読む前に大きさで断る (パス 308)。天井を超えるファイルを丸ごと読んでから捨てない。
+    // 一覧からは消さない —— 消すと「無い」に見える。runnable: false と理由で見せる。
+    const st = await fs.stat(realFile).catch(() => null);
+    if (st === null) continue;
+    if (st.size > MAX_SKILL_FILE_BYTES) {
+      results.push({
+        id: fallbackName,
+        label: fallbackName,
+        description: '',
+        source,
+        path: skillFile,
+        runnable: false,
+        unrunnableReason: skillTooLongNote(),
+      });
+      continue;
+    }
+    let content: string;
     try {
-      content = await fs.readFile(skillFile, 'utf8');
+      content = await fs.readFile(realFile, 'utf8');
     } catch {
       continue;
     }
     const fm = parseFrontmatter(content);
+    // byte の門は「確実に超える物」しか止めない (ASCII なら byte = 字)。字で数え直す。
+    if (countChars(content) > MAX_ASSISTANT_SYSTEM_CHARS) {
+      results.push({
+        id: fallbackName,
+        label: fm.name || fallbackName,
+        description: fm.description ?? '',
+        source,
+        path: skillFile,
+        runnable: false,
+        unrunnableReason: skillTooLongNote(),
+      });
+      continue;
+    }
+    /*
+     * **鍵は実体 (フォルダ名・ファイル名) から、題は frontmatter から。**
+     * `fallbackName` がそのまま鍵 —— `readSkillBody` が組む候補
+     * (`<id>/SKILL.md` / `<id>.md`) と同じ字を持つのはこちらだけである。
+     */
     results.push({
-      name: fm.name ?? fallbackName,
+      id: fallbackName,
+      /*
+       * `??` ではなく `||` —— `name: ""` は `''` を返し、`''` は nullish ではないので
+       * `??` だと**題が空の行**が一覧に出る (選択肢も空欄になり、どれを選んだか読めない)。
+       */
+      label: fm.name || fallbackName,
       description: fm.description ?? '',
       source,
       path: skillFile,
+      // 既定は「実行できる」。動かない物だけを、下で `markRunnable` が (同じ鍵の重なりを
+      // 見たうえで) 降ろす。降ろす側しか書かない —— 初期値を `false` にして最後に `true` へ
+      // 上書きする形だと、その初期値は**一度も観測されず**変異検査で生き残っていた (パス 502)。
+      runnable: true,
+      unrunnableReason: '',
     });
   }
 
-  results.sort((a, b) => a.name.localeCompare(b.name));
+  markRunnable(results);
+  results.sort((a, b) => a.label.localeCompare(b.label));
   return results;
+}
+
+/**
+ * **押して動かない物だけを `runnable: false` に降ろす** (既定は実行できる)。
+ *
+ * 2 つの理由で動かない:
+ *
+ * 1. 鍵に `isSafeSkillName` が通さない字が入っている (日本語のフォルダ名など)。
+ * 2. 同じ鍵を 2 つの項目が持っている —— `readSkillBody` は `<id>/SKILL.md` を
+ *    先に見るので**フォルダ側が勝ち**、`<id>.md` 側を押すと別の定義が走る。
+ *
+ * どちらも走査した実物から決める (台帳を手で書かない)。
+ *
+ * 組は必ず 1 つ以上を持つので、型も空でない組 (`[SkillEntry, ...SkillEntry[]]`) で表す ——
+ * 勝者を `undefined` なしで取れ、`Map.get` の欠けを埋める守りが要らない (パス 502)。
+ */
+function markRunnable(entries: SkillEntry[]): void {
+  const byId = new Map<string, [SkillEntry, ...SkillEntry[]]>();
+  for (const e of entries) {
+    const group = byId.get(e.id);
+    if (group) group.push(e);
+    else byId.set(e.id, [e]);
+  }
+  for (const group of byId.values()) {
+    // `readSkillBody` の候補順と同じ —— フォルダ形式が先。
+    const winner = group.find((g) => g.path.endsWith(`${path.sep}SKILL.md`)) ?? group[0];
+    for (const e of group) {
+      // 既に理由が付いている物 (長すぎる本文 · パス 308) はそのまま —— ここで上書きしない。
+      if (e.unrunnableReason !== '') continue;
+      if (!isSafeSkillName(e.id)) {
+        e.runnable = false;
+        e.unrunnableReason = unsafeSkillIdNote(e.id);
+        continue;
+      }
+      if (winner !== e) {
+        e.runnable = false;
+        e.unrunnableReason = shadowedSkillIdNote(e.id, winner.path);
+      }
+    }
+  }
 }
 
 export async function fetchSkillsSnapshot(_ctx: FetchContext): Promise<SkillsSnapshot> {
@@ -168,43 +316,118 @@ export async function fetchSkillsSnapshot(_ctx: FetchContext): Promise<SkillsSna
 // mechanism as the other service tokens).
 
 interface RunSkillPayload {
-  name: string;
+  /**
+   * **一覧が出した `SkillEntry.id`** (フォルダ名・ファイル名) —— 画面に出ている題
+   * (`label`) ではない。パス 179 まで題を受け取っており、frontmatter の `name:` が
+   * フォルダ名と違うスキルは実行できなかった / 別の物が走った。
+   */
+  id: string;
   prompt: string;
-  model?: string;
-  maxTokens?: number;
 }
+
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない。**
+ *
+ * 2026-08-22 まで payload の `maxTokens` をそのまま送っていた
+ * (`maxTokens ?? 2048` —— 型検査も有限性検査も無し)。同じ判断が 4 か所に
+ * あって、厳しさが 3 段階に割れていた:
+ *
+ *     assistant.ts  定数 (レンダラーは触れない)          ← いちばん安全
+ *     business.ts   typeof number && isFinite && > 0
+ *     stocks.ts     typeof number && isFinite && > 0
+ *     skills.ts     `?? 2048` のみ                        ← 何でも通る
+ *
+ * 実測すると、**UI はこの値を一度も渡していない** (`invoke` の payload に
+ * `maxTokens` を入れている画面コードは 0 件)。使われていない受け口が、
+ * 有料 API のパラメータをレンダラーに握らせているだけだった。
+ * `assistant.ts` と同じ形 —— 定数 —— に寄せる。
+ *
+ * `model` も同じ理由で payload から外した。モデルの選択は保存済みの
+ * プロバイダ設定 (`providers.ts` の `cfg.model`) 側の口である。
+ */
+/**
+ * スキル本文 (SKILL.md) は **system プロンプトとして丸ごと有料 API へ送られる**。
+ * 発話は `MAX_ASSISTANT_CONTENT_CHARS` (パス 112) で、アシスタントの system は
+ * `MAX_ASSISTANT_SYSTEM_CHARS` (`assistant.ts`) で天井を持つのに、こちらの system だけが
+ * 2026-09-17 (パス 308) まで**天井を持たず**、ファイルは大きさを見ずに丸ごと読んでいた
+ * (パス 112 が「貼り付けた物が丸ごと有料 API へ出ていた」と塞いだ形の、隣の欄)。
+ *
+ * 天井は system と同じ 1 つ (`MAX_ASSISTANT_SYSTEM_CHARS`)。**切らずに断る** —— 切ると指示の
+ * 後半が黙って消える (パス 172–175 の規則)。一覧では `runnable: false` と理由で見せ、
+ * run-skill では同じ文で投げる。
+ *
+ * 読む前の門は byte で持つ: UTF-8 は 1 字 4 byte までなので、`4 × 天井` byte を超える
+ * ファイルは読まなくても天井を超えていると分かる (逆は成り立たない —— ASCII だけなら
+ * byte = 字 —— ので、読んだ後に字で数える)。
+ */
+export const MAX_SKILL_FILE_BYTES = MAX_ASSISTANT_SYSTEM_CHARS * 4;
+
+/** 長すぎるスキル本文の断り (一覧の `unrunnableReason` と run-skill の例外で同じ文)。 */
+export function skillTooLongNote(): string {
+  return inputTooLongMessage('スキル本文', MAX_ASSISTANT_SYSTEM_CHARS);
+}
+
+export const SKILLS_MAX_TOKENS = 2048;
 
 interface AnthropicMessagesResponse {
   content: Array<{ type: string; text?: string }>;
   stop_reason?: string;
 }
 
-async function readSkillBody(name: string): Promise<string> {
-  if (!isSafeSkillName(name)) {
-    const safe = String(name as unknown).slice(0, 32);
+async function readSkillBody(id: string): Promise<string> {
+  if (!isSafeSkillName(id)) {
+    // 断りに載せる id も文字の境界で切る (パス 196)。
+    const safe = clampToCeiling(String(id as unknown), 32);
     throw new Error(`skill "${safe}" has an unsafe name`);
   }
   const base = path.join(os.homedir(), '.claude', 'skills');
-  const candidates = [path.join(base, name, 'SKILL.md'), path.join(base, `${name}.md`)];
-  const baseResolved = path.resolve(base) + path.sep;
+  const candidates = [path.join(base, id, 'SKILL.md'), path.join(base, `${id}.md`)];
+  /*
+   * **閉じ込めを見る前に symlink を実体まで辿る。**
+   *
+   * `isSafeSkillName` は `/` も `\` も `..` も弾くので、**字面では**外へ出られない。
+   * だが `path.resolve` は symlink を辿らないので、`~/.claude/skills/evil.md` を
+   * 外へ向けた symlink にすると素通りする。実測 (2026-08-23):
+   *
+   * ```
+   *   isSafeSkillName : true
+   *   封じ込めの判定  : true      ← 通る
+   *   読めた中身      : "TOP-SECRET-FILE-CONTENTS"   ← 根の外
+   * ```
+   *
+   * **ここで読んだ中身は Anthropic API へ system として送られる。** つまり
+   * 任意ファイルの中身が第三者のサービスへ出ていく。スキルは利用者が
+   * **配布物として入れる**もので、細工した symlink を同梱するのは現実的な経路。
+   *
+   * 根の側も実体に直す —— ホームや `.claude` が symlink 越しにあると
+   * (実体だけ直したのでは) **正当なスキルまで弾く**ため。
+   * 同じ手当ては `shellOpenGate.ts` が先に入れている (あちらの注記参照)。
+   */
+  // Stryker disable next-line ArrowFunction: `base` が実体に直せないのは
+  // `~/.claude/skills` 自体が無いときで、そのとき**候補も 1 つも実在しない**
+  // ので、退避の値が何であっても全候補が `realpath` で落ちて「見つからない」に
+  // なる —— 観測できる差が無い (等価変異)。
+  const baseReal = await fs.realpath(base).catch(() => path.resolve(base));
+  const baseResolved = baseReal + path.sep;
   for (const c of candidates) {
-    // Belt-and-braces: even with isSafeSkillName, confirm the joined
-    // path stays inside ~/.claude/skills. Protects against future
-    // platform-specific path quirks (e.g. Windows alternate separators
-    // or 8.3 short names). Provoking this from a unit test would
-    // require a path that passes isSafeSkillName but escapes ~/.claude
-    // after path.join — currently impossible because isSafeSkillName
-    // rejects '/', '\', '..', etc. We keep the check anyway for forward
-    // safety, and pragma the resulting "always-true" condition mutant.
-    // Stryker disable next-line ConditionalExpression
-    if (!path.resolve(c).startsWith(baseResolved)) continue;
+    // 実体に直せない = その候補は存在しない。次の候補へ。
+    const real = await fs.realpath(c).catch(() => null);
+    if (real === null) continue;
+    if (!real.startsWith(baseResolved)) continue;
+    // 読む前に大きさで断る (パス 308)。候補の順は一覧の勝者と同じなので、ここで断るのは正しい。
+    const st = await fs.stat(real).catch(() => null);
+    if (st === null) continue;
+    if (st.size > MAX_SKILL_FILE_BYTES) throw new Error(skillTooLongNote());
+    let body: string;
     try {
-      return await fs.readFile(c, 'utf8');
+      body = await fs.readFile(real, 'utf8');
     } catch {
-      // try next
+      continue; // try next
     }
+    if (countChars(body) > MAX_ASSISTANT_SYSTEM_CHARS) throw new Error(skillTooLongNote());
+    return body;
   }
-  throw new Error(`skill "${name}" not found in ~/.claude/skills`);
+  throw new Error(`skill "${id}" not found in ~/.claude/skills`);
 }
 
 /** A skill name is a single path segment used to locate
@@ -227,11 +450,16 @@ export function isSafeSkillName(name: unknown): name is string {
   return /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/.test(name);
 }
 
-async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason: string }> {
-  const { name, prompt, model, maxTokens } = ctx.payload as unknown as RunSkillPayload;
-  if (!name || !prompt) throw new Error('name and prompt are required');
+async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skill'>> {
+  const { id, prompt } = ctx.payload as unknown as Partial<RunSkillPayload>;
+  if (typeof id !== 'string' || id.length === 0 || typeof prompt !== 'string' || prompt.length === 0) {
+    throw new Error('id and prompt are required');
+  }
+  // 指示文の天井 (パス 112)。それまで prompt に天井が無く、貼り付けた物が丸ごと有料 API へ
+  // 出ていた。1 発話の天井はアシスタントと同じ 1 つ (`MAX_ASSISTANT_CONTENT_CHARS`)。
+  if (countChars(prompt) > MAX_ASSISTANT_CONTENT_CHARS) throw new Error(inputTooLongMessage('プロンプト'));
 
-  const body = await readSkillBody(name);
+  const body = await readSkillBody(id);
 
   const res = await jsonFetch<AnthropicMessagesResponse>(
     'https://api.anthropic.com/v1/messages',
@@ -243,17 +471,25 @@ async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason:
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: model ?? 'claude-sonnet-4-6',
-        max_tokens: maxTokens ?? 2048,
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: SKILLS_MAX_TOKENS,
         system: body,
         messages: [{ role: 'user', content: prompt }],
       }),
     },
-    { fetch: ctx.fetch, serviceId: 'skills' },
+    // **LLM の補完には LLM の予算を渡す** (2026-09-23 · パス 424)。ここは
+    // `timeoutMs` を渡しておらず、`limitedFetch` の既定 (`DEFAULT_HTTP_TIMEOUT_MS`
+    // = 通常の HTTP の 30 秒) で切れていた —— 実測で 31 秒に
+    // 「skills が時間内に応答しませんでした」。`max_tokens` は 2048 で、
+    // system にはスキール本文がまるごと載るので、30 秒はしばしば足りない。
+    // 兄弟 (`stocks` / `business`) は最初から同じ定数を渡している。
+    { fetch: ctx.fetch, serviceId: 'skills', timeoutMs: AI_CHAT_TIMEOUT_MS },
   );
 
   const text = res.content?.find((c) => c.type === 'text')?.text ?? '';
-  return { text, stopReason: res.stop_reason ?? '' };
+  // 応答の天井 (パス 113)。`runAiChat` を通らないので、同じ判断をここで読む ——
+  // それまで 10 MiB (byte の天井) までの本文がそのまま画面の <pre> へ出ていた。
+  return { text: capAssistantReply(text), stopReason: res.stop_reason ?? '' };
 }
 
 export const ACTIONS: ActionMap = {

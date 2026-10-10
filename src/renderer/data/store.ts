@@ -1,0 +1,959 @@
+/**
+ * Local record store — IndexedDB-backed persistence for structured business
+ * data (sales entries, customers, tasks, …). This is the foundation layer
+ * the dashboard reads from instead of static snapshots.
+ *
+ * Design:
+ *   - One IndexedDB object store keyed by a synthetic `id`.
+ *   - Every record carries a `collection` discriminator + `createdAt` /
+ *     `updatedAt`, so many logical tables live in one physical store and an
+ *     index on `collection` keeps per-collection scans cheap.
+ *   - Values are plain JSON (structured-clonable); no Blobs here — binary
+ *     artifacts belong in `library/library.ts`.
+ *
+ * Mirrors the conventions of `library/library.ts` (singleton accessor,
+ * `_resetForTests`, monotonic timestamps, Stryker-disabled boilerplate) so
+ * the two persistence modules stay consistent.
+ */
+
+import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
+import { hasCollectionShape } from './collectionShapes';
+import { notifyRecordStoreChanged } from './collectionChange';
+import { sameRecordData } from './sameRecordData';
+import { isTimestampMs } from '../../shared/isoDate';
+
+const DB_NAME = 'business-hub-data';
+const DB_VERSION = 1;
+// Stryker disable next-line StringLiteral: 定義と参照が同じ定数を通るため、値を変えても create↔access が往復して観測差が出ない（等価変異）。
+const STORE = 'records';
+// Stryker disable next-line StringLiteral: 同上。索引名は作成時と参照時の両方がこの定数を通る。
+const COLLECTION_INDEX = 'collection';
+
+/** A stored record. `T` is the caller's payload shape. */
+export interface StoredRecord<T = Record<string, unknown>> {
+  readonly id: string;
+  readonly collection: string;
+  readonly createdAt: number;
+  readonly updatedAt: number;
+  readonly data: T;
+}
+
+/**
+ * `updateIfUnchanged` の答え (パス 499)。書けたかだけでなく、**書かなかった理由**を返す ——
+ * 理由によって画面が言うことも、利用者が取れる手も違う:
+ *
+ *  - `saved`    … 欄を開いた時の中身のままだったので書いた。
+ *  - `vanished` … 相手の行がもう無い (別の画面で削除された)。何も書いていない。
+ *  - `changed`  … 欄を開いた後に別の画面で書き換えられていた。何も書いていない。
+ *                 `current` が今の行 (画面はそれを次の比較の基準にする)。
+ */
+export type ConditionalUpdate<T extends Record<string, unknown>> =
+  | { readonly status: 'saved'; readonly record: StoredRecord<T> }
+  | { readonly status: 'vanished' }
+  | { readonly status: 'changed'; readonly current: StoredRecord<T> };
+
+/**
+ * 「最新の 1 件を採用する」collection で、**いま採用されている行**の目印 (パス 500)。
+ *
+ * 欄はこの行から開き、保存のときこの目印のままかを確かめる。id だけでなく `updatedAt` も見る ——
+ * 同じ行が書き換えられた (マージ復元が同じ id を新しい中身で上書きした) ときも、開いた時の中身では
+ * なくなっている。
+ */
+export interface LatestToken {
+  readonly id: string;
+  readonly updatedAt: number;
+}
+
+/** 行から目印を取る。行が無ければ `null` (= 「まだ何も保存されていない」を開いた)。 */
+export function latestTokenOf(rec: { readonly id: string; readonly updatedAt: number } | null): LatestToken | null {
+  return rec === null ? null : { id: rec.id, updatedAt: rec.updatedAt };
+}
+
+/**
+ * 2 つの目印 (行でもよい) が**同じ行の同じ版**を指すか (パス 500)。どちらも「無い」なら同じ。
+ * 保管層 (`insertIfLatest` の比較) と欄 (`useLatestForm` の「最新に付いていくか」) が同じ 1 つを読む。
+ */
+export function sameLatest(
+  a: { readonly id: string; readonly updatedAt: number } | null,
+  b: { readonly id: string; readonly updatedAt: number } | null,
+): boolean {
+  if (a === null || b === null) return a === b;
+  return a.id === b.id && a.updatedAt === b.updatedAt;
+}
+
+/**
+ * `insertIfLatest` の答え (パス 500):
+ *
+ *  - `saved`   … 最新が開いた時の行のままだったので 1 件足した。足した行が**必ず新しい最新**になる。
+ *  - `changed` … 欄を開いた後に別の保存が入っていた (または、何も無いと思って開いたら保存が在った)。
+ *                何も書いていない。`current` が今の最新 (何も無くなっていれば `null`)。
+ */
+export type LatestInsert<T extends Record<string, unknown>> =
+  | { readonly status: 'saved'; readonly record: StoredRecord<T> }
+  | { readonly status: 'changed'; readonly current: StoredRecord<T> | null };
+
+export interface RecordStore {
+  /** Insert a new record into `collection`; returns the stored record. */
+  insert<T extends Record<string, unknown>>(collection: string, data: T): Promise<StoredRecord<T>>;
+  /** Insert many records into `collection` in a **single transaction** —
+   *  all rows commit together or none do (atomic bulk import; no partial
+   *  writes on failure). Validates every row up front. */
+  insertMany<T extends Record<string, unknown>>(
+    collection: string,
+    rows: readonly T[],
+  ): Promise<readonly StoredRecord<T>[]>;
+  /** Shallow-merge `patch` into an existing record's `data`. Returns the
+   *  updated record, or null if `id` doesn't exist. */
+  update<T extends Record<string, unknown>>(
+    id: string,
+    patch: Partial<T>,
+  ): Promise<StoredRecord<T> | null>;
+  /**
+   * `expected` (編集を始めた時に読んだ `data`) と今の `data` が同じときだけ `patch` を
+   * 重ねて書く (パス 499)。比べてから書くまでを `update` と同じ id ごとの鎖
+   * (在れば Web Locks も) の中で行うので、同じ id を書き換える他の操作は間に挟まらない。
+   */
+  updateIfUnchanged<T extends Record<string, unknown>>(
+    id: string,
+    expected: T,
+    patch: Partial<T>,
+  ): Promise<ConditionalUpdate<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら** `collection` へ 1 件足す (パス 500)。最新を選ぶ規則は
+   * `latestRecord` (createdAt が最大・同点は一覧で先の行) と同じ。読んで比べて足すまでを
+   * **1 つの読み書きの取引**の中で行うので、別のタブの取引も間に挟まらない。
+   */
+  insertIfLatest<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken | null,
+    data: T,
+  ): Promise<LatestInsert<T>>;
+  /**
+   * **最新の 1 件が `expected` のままなら**、その行の中身を `data` で置き換える (パス 500)。
+   * 比べる規則と答えは `insertIfLatest` と同じで、行は増やさない (最新 1 件を書き換える記録 ——
+   * 数値パラメータの上書き —— のため)。読んで比べて書くまでを 1 つの読み書きの取引で行い、
+   * その行の id の鎖 (在れば Web Locks も) の中で走らせる。
+   */
+  replaceLatestIfUnchanged<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken,
+    data: T,
+  ): Promise<LatestInsert<T>>;
+  get<T extends Record<string, unknown>>(id: string): Promise<StoredRecord<T> | null>;
+  /** All records in a collection, newest-first. */
+  list<T extends Record<string, unknown>>(collection: string): Promise<readonly StoredRecord<T>[]>;
+  remove(id: string): Promise<void>;
+  /** Delete every record in a collection; returns how many were removed. */
+  clearCollection(collection: string): Promise<number>;
+  count(collection: string): Promise<number>;
+  /** Dump every record across all collections (newest-first). For backup.
+   *  Returns records **as stored** (encrypted payloads stay encrypted). */
+  exportAll(): Promise<readonly StoredRecord[]>;
+  /** Restore records from a backup. `replace` clears the store first; the
+   *  default merges (existing ids are overwritten). Returns the count
+   *  imported. */
+  importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number>;
+  /** Install a save-time encryption layer for record `data`. Default is the
+   *  identity cipher (plaintext). After switching to an encrypting cipher,
+   *  call `reencryptAll()` to convert existing plaintext records. */
+  configureCipher(cipher: RecordCipher): void;
+  /** Re-write every record so its payload is sealed under the **current**
+   *  cipher. `from` is the cipher used to read existing payloads (defaults to
+   *  the current cipher); pass the old cipher when switching keys or turning
+   *  encryption off (decrypt with `from`, re-store under the current cipher).
+   *  Returns the count migrated. */
+  reencryptAll(from?: RecordCipher): Promise<number>;
+}
+
+// --- validation ----------------------------------------------------------
+
+function isSafeCollection(s: unknown): s is string {
+  return typeof s === 'string' && /^[a-z][a-z0-9-]{0,63}$/.test(s);
+}
+
+/** Reject anything that won't survive IndexedDB's structured clone, and
+ *  guard against accidental class instances / functions sneaking in. */
+function isPlainJsonObject(v: unknown): v is Record<string, unknown> {
+  if (typeof v !== 'object' || v === null || Array.isArray(v)) return false;
+  const proto = Object.getPrototypeOf(v);
+  return proto === Object.prototype || proto === null;
+}
+
+// --- IndexedDB helpers ----------------------------------------------------
+
+function openDb(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      // Stryker disable next-line ConditionalExpression: DB_VERSION が 1 のあいだ onupgradeneeded は新規作成時にしか走らず contains は常に false。将来のバージョン上げに備えた防御なので残す（等価変異）。
+      if (!db.objectStoreNames.contains(STORE)) {
+        const store = db.createObjectStore(STORE, { keyPath: 'id' });
+        // Stryker disable next-line ObjectLiteral: unique の既定値が false なので `{}` との差が無い（等価変異）。明示のため書いている。
+        store.createIndex(COLLECTION_INDEX, 'collection', { unique: false });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
+    req.onerror = () => reject(req.error ?? new Error('data store open failed'));
+  });
+}
+
+/**
+ * この保管層の DB を丸ごと消す (ハードリセット · 2026-09-09 · パス 136)。`vault.wipeAndReset` と同じ約束 ——
+ * **必ず解決し、何が起きたかを返す**。他のタブが接続を掴んでいれば `blocked` (消えていない)。
+ * 画面は保管庫の内部を触らない (`lint:forbidden`) ので、消すのもここ。呼ぶのは `security/eraseAll.ts`。
+ */
+export function deleteRecordDatabase(): Promise<'deleted' | 'blocked' | 'failed'> {
+  return new Promise((resolve) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve('deleted');
+    req.onerror = () => resolve('failed');
+    req.onblocked = () => resolve('blocked');
+  });
+}
+
+/**
+ * 接続を開き、処理が失敗しても**必ず閉じる**。
+ *
+ * 元は各メソッドが `const db = await openDb(); ... await txDone(tx); db.close();`
+ * と書いており、`txDone` が reject すると `db.close()` に到達しなかった。
+ * 書き込みが失敗するたびに IndexedDB の接続が残り、溜まると以後の
+ * バージョン変更や削除が blocked になる。11 箇所すべて同じ形だったので、
+ * 覚えておく規約ではなく構造で閉じる。
+ */
+async function withDb<T>(fn: (db: IDBDatabase) => Promise<T>): Promise<T> {
+  const db = await openDb();
+  try {
+    return await fn(db);
+  } finally {
+    db.close();
+  }
+}
+
+function txDone(tx: IDBTransaction): Promise<void> {
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: onerror と onabort は中断時に両方発火するため、片方だけを潰しても他方が reject して観測差が出ない。用途は異なる（明示 abort では onabort のみ）ので両方要る。
+    tx.onerror = () => reject(tx.error ?? new Error('data store tx failed'));
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上（onerror と対）。
+    tx.onabort = () => reject(tx.error ?? new Error('data store tx aborted'));
+  });
+}
+
+let _lastTs = 0;
+function monotonicNow(): number {
+  const now = Date.now();
+  _lastTs = Math.max(_lastTs + 1, now);
+  return _lastTs;
+}
+
+function uuid(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  // フォールバック (randomUUID の無い古い WebView)。version/variant のビットは
+  // 走査中に立てる — 添字で取り出すと `noUncheckedIndexedAccess` のために
+  // 到達しない `?? 0` が要り、それが測れない分岐として残るため。
+  const hex = Array.from(crypto.getRandomValues(new Uint8Array(16)), (n, i) => {
+    const v = i === 6 ? (n & 0x0f) | 0x40 : i === 8 ? (n & 0x3f) | 0x80 : n;
+    return v.toString(16).padStart(2, '0');
+  }).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+/**
+ * Web Locks の最小の形 (`lib.dom` の `LockManager` に依存しない)。
+ * 実行環境に無いこともあるので、**存在を確かめてから使う**。
+ */
+interface LockManagerLike {
+  request<R>(name: string, callback: () => Promise<R>): Promise<R>;
+}
+
+class IndexedDBRecordStore implements RecordStore {
+  /** Save-time encryption layer. Default = plaintext (identity). */
+  private cipher: RecordCipher = IDENTITY_CIPHER;
+
+  /**
+   * **同じ id への書き換えを直列化する鎖。**
+   *
+   * `update` は「読む → 復号 → 混ぜる → 暗号化 → 書く」で、読みと書きが
+   * **別のトランザクション**になる (暗号化が非同期なので 1 つの IndexedDB
+   * トランザクションの中に収まらない —— await を挟むとトランザクションが
+   * 勝手に閉じる)。その隙に別の書き換えが挟まると、後から書いた側が
+   * **古い写しの上に**混ぜた結果を書く。
+   *
+   * 実測 (2026-08-23):
+   *
+   * ```
+   *   await Promise.all([update(id, {a:2}), update(id, {b:3})]);
+   *   → {base:1, b:3}        ← a:2 が消える。両方 resolve する
+   *
+   *   await Promise.all([update(id, {a:2}), remove(id)]);
+   *   → 消したはずの record が {base:1, a:2} で復活する
+   * ```
+   *
+   * どちらも**呼んだ側には成功として返る**ので、失われたことに気付けない。
+   *
+   * id ごとに鎖を持ち、前の処理が終わってから次を始める。別の id は
+   * 待たせない。`remove` も同じ鎖に載せる —— 載せないと「消す」と
+   * 「書き換える」の間で復活が起きる。
+   */
+  private readonly perId = new Map<string, Promise<unknown>>();
+
+  /** 保存されている行をそのまま読む (復号しない)。`reencryptAll` 用。 */
+  private async readRawRow(id: string): Promise<StoredRecord | undefined> {
+    return withDb((db) => new Promise<StoredRecord | undefined>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(id);
+      req.onsuccess = () => resolve(req.result as StoredRecord | undefined);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず到達しない防御。
+      req.onerror = () => reject(req.error ?? new Error('readRawRow failed'));
+    }));
+  }
+
+  /**
+   * **鎖はこの JS 文脈の中だけの物である。** タブを 2 枚開けば、上の実測
+   * (lost update / 消したはずの復活) が**そのまま再現する** —— `perId` は
+   * メモリの Map なので、別タブは別の鎖を持つ。ブラウザ版は 1 枚の HTML を
+   * 開くだけなので、2 枚目を開くのは普通に起きる。
+   *
+   * そこで **Web Locks (`navigator.locks`) があれば、オリジン単位の錠で
+   * 同じ id の書き換えを囲む** (2026-09-06)。無い環境 (jsdom の検査・
+   * 不透明オリジンで拒まれる場合) では鎖だけで進む —— 単一タブでの保証は
+   * 変わらないので、**壊れるより遅れるほうを選ぶ**。
+   *
+   * ## 失敗の切り分けが要る
+   *
+   * `locks.request(name, cb)` は **cb の失敗もそのまま reject する**。
+   * 素朴に catch して `run()` を呼び直すと、**書き換えが 2 回走る**
+   * (1 回目は錠の中で実際に書いている)。`entered` の旗で
+   * 「錠が取れたか」と「操作が失敗したか」を分け、**後者は再実行しない**。
+   */
+  private crossTabLocked<R>(id: string, run: () => Promise<R>): () => Promise<R> {
+    return async () => {
+      const locks = (globalThis.navigator as { locks?: LockManagerLike } | undefined)?.locks;
+      /*
+       * 下の try/catch が「錠が取れなかった」を既に救うので、**この番人は
+       * 観測できる差を作らない** —— 実測 (2026-09-06): `locks = {}` にして
+       * この行を消しても、`locks.request(...)` の TypeError が catch に落ちて
+       * `run()` へ回り、書き換えは同じに成功する。番人が省くのは
+       * 「投げると分かっている呼び出しを組むこと」だけである。
+       * 例外を通常の流れに使わないために残す (等価変異として黙らせる)。
+       */
+      // Stryker disable next-line ConditionalExpression,LogicalOperator: try/catch が同じ結果へ落とすので等価 (上の注記に実測)
+      if (locks === undefined || typeof locks.request !== 'function') return run();
+      let entered = false;
+      try {
+        return await locks.request(`servicehub.record.${id}`, async () => {
+          entered = true;
+          return run();
+        });
+      } catch (e) {
+        if (entered) throw e; // 操作そのものの失敗。錠の中で走り切っているので再実行しない
+        return run(); // 錠が取れなかっただけ (未対応・不透明オリジン等) → 鎖だけで進む
+      }
+    };
+  }
+
+  /** `id` の鎖の最後尾に `run` を繋いで、その結果を返す。 */
+  private serialize<R>(id: string, run: () => Promise<R>): Promise<R> {
+    const guarded = this.crossTabLocked(id, run);
+    const prev = this.perId.get(id) ?? Promise.resolve();
+    // 前が失敗しても後続は動かす (失敗は呼んだ側が受け取っている)。
+    const started = prev.then(guarded, guarded);
+    const settled = started.then(
+      () => undefined,
+      () => undefined,
+    );
+    this.perId.set(id, settled);
+    /*
+     * 自分が最後尾のままなら地図から外す (無制限に育てない)。
+     *
+     * **「最後尾なら」の判定は効いている** —— 無条件に消すと、決着した操作の
+     * 掃除が**まだ走っている後続の記録まで消し**、次の操作が鎖に載らずに
+     * 同時実行される (lost update)。`storeConcurrency.test.ts` の
+     * 「★ 決着した操作の掃除が、後続の鎖を切らない」が留めている。
+     *
+     * 一方**掃除そのものを止める**変異 (ブロックを空にする / 判定を false に
+     * 固定する) は、地図が育つだけで**観測できる差が無い** —— `perId` は
+     * private で、順序にも結果にも影響しない。等価変異として黙らせる。
+     */
+    // Stryker disable next-line BlockStatement
+    void settled.then(() => {
+      // Stryker disable next-line ConditionalExpression
+      if (this.perId.get(id) === settled) this.perId.delete(id);
+    });
+    return started;
+  }
+
+  configureCipher(cipher: RecordCipher): void {
+    this.cipher = cipher;
+  }
+
+  async insert<T extends Record<string, unknown>>(collection: string, data: T): Promise<StoredRecord<T>> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
+
+    const ts = monotonicNow();
+    const id = uuid();
+    // Store the (possibly encrypted) payload; return the plaintext to the caller.
+    const storedData = await this.cipher.encrypt(data);
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).add({ id, collection, createdAt: ts, updatedAt: ts, data: storedData });
+      await txDone(tx);
+    });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+    return { id, collection, createdAt: ts, updatedAt: ts, data };
+  }
+
+  async insertMany<T extends Record<string, unknown>>(
+    collection: string,
+    rows: readonly T[],
+  ): Promise<readonly StoredRecord<T>[]> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    // Validate ALL rows before touching the DB — reject the whole batch on a
+    // single bad row rather than importing a partial set.
+    for (const r of rows) {
+      if (!isPlainJsonObject(r)) throw new Error('data はプレーンなオブジェクトである必要があります');
+    }
+    if (rows.length === 0) return [];
+
+    // Build + encrypt every record before opening the transaction (IndexedDB
+    // transactions auto-close across awaits, so all async work happens first).
+    const built = await Promise.all(
+      rows.map(async (data) => {
+        const ts = monotonicNow();
+        const id = uuid();
+        const stored = { id, collection, createdAt: ts, updatedAt: ts, data: await this.cipher.encrypt(data) };
+        const plain: StoredRecord<T> = { id, collection, createdAt: ts, updatedAt: ts, data };
+        return { stored, plain };
+      }),
+    );
+
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const objStore = tx.objectStore(STORE);
+      for (const b of built) objStore.add(b.stored);
+      // One transaction: if any add fails the tx aborts and txDone rejects —
+      // nothing is committed (all-or-nothing).
+      await txDone(tx);
+    });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+    return built.map((b) => b.plain);
+  }
+
+  /**
+   * 最新の 1 件を採用する collection への保存 (パス 500)。
+   *
+   * ## なぜ要るか (実測)
+   *
+   * 経営サマリーの水耕栽培の欄は保存値の**最新の 1 件**から開き、保存のたびに**全部の欄**を
+   * 1 件の新しい行として足す。欄は保管層が答える前に既定値で開いており、答えが届いても開き直さな
+   * かった —— 実 chromium で 5 回開いて 5 回とも既定値、1 欄だけ直して保存すると**保存していた
+   * 4 欄が既定値へ黙って戻った** (実測の全体は `useLatestForm.ts` の docblock)。別のタブが保存した後に
+   * 開いたままの欄を保存しても同じことが起きる。欄の側 (`useLatestForm`) は保管層が答えてから開き、
+   * 保存はここを通る。
+   *
+   * ## なぜ 1 つの取引で足りるか
+   *
+   * 比べるのは**目印 (id と updatedAt)** だけで、中身の復号は要らない。だから読み・比較・追加を
+   * 同じ readwrite の取引に入れられる —— IndexedDB は範囲の重なる読み書きの取引を
+   * **オリジン全体で**順に走らせるので、別のタブの `insertIfLatest` も置換復元 (`importAll`) も
+   * 間に挟まらない (パス 499 の `updateIfUnchanged` は中身を復号して比べるので取引に入れられず、
+   * 行ごとの鎖と Web Locks を使った)。暗号化は取引の前に済ませる (取引の中で待つと取引が閉じる)。
+   * 決めて足すのは cursor の最後の callback の中 —— 同期の callback の中なので取引は開いたままである。
+   *
+   * ## 足した行は必ず最新になる
+   *
+   * 最新は `createdAt` で選ぶ。この端末の時計より新しい `createdAt` の行 (時計の進んだ別の端末の
+   * 控えを復元した) が最新だと、素の `insert` で足した行は**最新にならず**、保存は「済んだ」のに
+   * 画面は前の値のまま —— 保存が黙って効かない。取引の中で最新の `createdAt` を知っているので、
+   * それより後の時刻で足す。
+   *
+   * この端末の時計 (`monotonicNow` の `_lastTs`) は進めない —— 後の `insertIfLatest` は取引の中で
+   * 最新を読み直して同じ規則で追い越すので、ここで時計を進めても答えは 1 つも変わらない。
+   */
+  async insertIfLatest<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken | null,
+    data: T,
+  ): Promise<LatestInsert<T>> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
+    const id = uuid();
+    const now = monotonicNow();
+    const storedData = await this.cipher.encrypt(data);
+    type Decided = { readonly added: StoredRecord } | { readonly latest: StoredRecord | null };
+    const decided = await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const objects = tx.objectStore(STORE);
+      const done = txDone(tx);
+      let latest: StoredRecord | null = null;
+      let out: Decided | undefined;
+      const req = objects.index(COLLECTION_INDEX).openCursor(IDBKeyRange.only(collection));
+      // cursor の失敗は取引を中断させ、`txDone` が reject する (onerror を別に置かない)。
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (cur !== null) {
+          const row = cur.value as StoredRecord;
+          // 同点は先の行 —— `latestRecord(list(…))` と同じ行を選ぶ (list は索引の順に読み、
+          // 新しい順へ安定に並べ替える)。
+          if (latest === null || row.createdAt > latest.createdAt) latest = row;
+          cur.continue();
+          return;
+        }
+        if (!sameLatest(latest, expected)) {
+          out = { latest };
+          return; // 何も書かない —— 取引は読みだけで閉じる
+        }
+        const createdAt = latest !== null && latest.createdAt >= now ? latest.createdAt + 1 : now;
+        const row: StoredRecord = { id, collection, createdAt, updatedAt: createdAt, data: storedData };
+        objects.add(row);
+        out = { added: row };
+      };
+      await done;
+      return out as Decided;
+    });
+    if ('added' in decided) {
+      // 書けたら知らせる (`collectionChange.ts`)。書かなかった答えでは知らせない (中身が動いていない)。
+      notifyRecordStoreChanged();
+      return { status: 'saved', record: { ...decided.added, data } as StoredRecord<T> };
+    }
+    const current = decided.latest;
+    if (current === null) return { status: 'changed', current: null };
+    return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data)) as T } };
+  }
+
+  /**
+   * 最新の 1 件を**書き換える**記録への保存 (パス 500)。
+   *
+   * ## なぜ要るか (実測)
+   *
+   * 数値パラメータの上書きは、最新の 1 件を書き換える唯一の記録である (保存のたびに行を足さない)。
+   * パス 499 の直しは「読んだ最新の行が、読んだ時の中身のままなら書き換える」(`updateIfUnchanged`) で、
+   * 比べていたのは**その行**だった —— 読んだ後・書く前に**別の行が新しい最新として入る**と、書き換えは
+   * 古い行に成功し、画面は「保存しました」と言いながら、採用される最新 (新しい行) には値が入らない。
+   * 実測 (2026-09-28 · 読んだ後・書く前に新しい行を差し込む門): `set(日数, 300)` は断りなく済み、300 は
+   * 古い行にだけ入り、**有効値は 250 のまま**だった。新しい行は、別のタブの保存が重なり続けたときの最後の手
+   * (`insertIfLatest`) と復元が入れる。見つけたのは採用の census (`latestAdoptionCensus.test.ts`) で、採用する
+   * collection へ最新を比べない口で書く所として名指しした。
+   *
+   * ## なぜ 1 つの取引で足りるか
+   *
+   * `insertIfLatest` と同じ —— 比べるのは目印 (id と updatedAt) だけで、中身の復号は要らない。
+   * 置き換える中身は呼び手が組み (目印が同じなら、呼び手が読んだ中身は今もそのまま)、暗号化は取引の前に
+   * 済ませる。**その行の id の鎖の中で**走らせるので、同じ行を読み書きに分けて書き換える `update` /
+   * `updateIfUnchanged` も間に挟まらない。
+   *
+   * `updatedAt` は必ず進める (`sameLatest` が「同じ行の新しい版」を見分けられるように) —— この端末の
+   * 時計より新しい `updatedAt` の行 (時計の進んだ別の端末の控え) でも、その後ろの時刻にする。
+   */
+  async replaceLatestIfUnchanged<T extends Record<string, unknown>>(
+    collection: string,
+    expected: LatestToken,
+    data: T,
+  ): Promise<LatestInsert<T>> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
+    return this.serialize(expected.id, async (): Promise<LatestInsert<T>> => {
+      const now = monotonicNow();
+      const storedData = await this.cipher.encrypt(data);
+      type Decided = { readonly replaced: StoredRecord } | { readonly latest: StoredRecord | null };
+      const decided = await withDb(async (db) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        const objects = tx.objectStore(STORE);
+        const done = txDone(tx);
+        let latest: StoredRecord | null = null;
+        let out: Decided | undefined;
+        const req = objects.index(COLLECTION_INDEX).openCursor(IDBKeyRange.only(collection));
+        // cursor の失敗は取引を中断させ、`txDone` が reject する (onerror を別に置かない)。
+        req.onsuccess = () => {
+          const cur = req.result;
+          if (cur !== null) {
+            const row = cur.value as StoredRecord;
+            // 同点は先の行 —— `insertIfLatest` と同じ (`latestRecord(list(…))` と同じ行を選ぶ)。
+            if (latest === null || row.createdAt > latest.createdAt) latest = row;
+            cur.continue();
+            return;
+          }
+          // 最新が無い (collection が空になった) —— 置き換える行が無い。下の `sameLatest(null, 目印)` も
+          // 偽を返すので**実行時の答えは同じ**で、この判定は型の絞り込み (以下の `latest.updatedAt`) の
+          // ために在る。だから変異検査はこの 1 行を測らない (同じ行に本物の判定を置かない)。
+          // Stryker disable next-line ConditionalExpression,BlockStatement: 等価 —— 最新が無いとき下の sameLatest(null, 目印) も偽を返し、同じ { latest: null } で断る (判定は型の絞り込みのために要る)
+          if (latest === null) {
+            out = { latest };
+            return; // 何も書かない —— 取引は読みだけで閉じる
+          }
+          if (!sameLatest(latest, expected)) {
+            out = { latest };
+            return; // 何も書かない —— 取引は読みだけで閉じる
+          }
+          const updatedAt = latest.updatedAt >= now ? latest.updatedAt + 1 : now;
+          const row: StoredRecord = { ...latest, updatedAt, data: storedData };
+          objects.put(row);
+          out = { replaced: row };
+        };
+        await done;
+        return out as Decided;
+      });
+      if ('replaced' in decided) {
+        // 書けたら知らせる (`collectionChange.ts`)。書かなかった答えでは知らせない (中身が動いていない)。
+        notifyRecordStoreChanged();
+        return { status: 'saved', record: { ...decided.replaced, data } as StoredRecord<T> };
+      }
+      const current = decided.latest;
+      if (current === null) return { status: 'changed', current: null };
+      return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data)) as T } };
+    });
+  }
+
+  async update<T extends Record<string, unknown>>(
+    id: string,
+    patch: Partial<T>,
+  ): Promise<StoredRecord<T> | null> {
+    // 検証は鎖に載せる前に。不正な引数は待たずに落とす (従来どおり)。
+    //
+    // Stryker disable next-line ConditionalExpression: **id 側だけは等価変異**。
+    // この先の `get()` が同じガードを持ち (L321)、そちらは独立した公開の
+    // 入口なので消せない。外しても戻り値は null のままで観測差が出ない。
+    // 鎖 (`serialize`) に載せずに落とす意味はあるので残す。
+    // patch 側 (下の行) は等価ではなく、検査が留めている。
+    if (typeof id !== 'string' || id.length === 0) return null;
+    if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
+    return this.serialize(id, () => this.updateUnserialized<T>(id, patch));
+  }
+
+  private async updateUnserialized<T extends Record<string, unknown>>(
+    id: string,
+    patch: Partial<T>,
+  ): Promise<StoredRecord<T> | null> {
+    /*
+     * **ここに在った重複ガードは消した** (2026-08-31)。
+     *
+     * `updateUnserialized` の呼び出し元は `update()` **1 つだけ**で、
+     * あちらが同じ検証を先に済ませている。変異検査はそれを
+     * `NoCoverage` (どの検査も到達しない) として報告していた。
+     *
+     * 消す理由は「死んでいるから」だけではない。**重複が公開側の
+     * ガードを測れなくしていた** —— 片方を潰しても、もう片方が同じ結果を
+     * 返すので検査が鳴らない。実測した対照:
+     *
+     *   重複が在るまま公開側の patch 検証を潰す → 鳴らない
+     *   重複を消してから同じ変異を当てる       → 鳴る (1 件)
+     *
+     * 効いていない防御は pragma で黙らせるより消すほうが正しい
+     * (本セッションの `diagnoseOrg` / `exportPaths` と同じ判断)。
+     */
+    const existing = await this.get<T>(id); // get() decrypts
+    if (!existing) return null;
+    return this.writeMerged(existing, patch);
+  }
+
+  async updateIfUnchanged<T extends Record<string, unknown>>(
+    id: string,
+    expected: T,
+    patch: Partial<T>,
+  ): Promise<ConditionalUpdate<T>> {
+    /*
+     * **比べてから書くまでを 1 つの鎖の中で** (パス 499)。画面の側で `get` してから
+     * `update` を呼ぶ形にすると、比べた後・書く前に別の書き込みが挟まる。鎖は
+     * `update` / `remove` と同じ物なので、同じ id を書き換える操作はこの間に入れない
+     * —— 別のタブの操作も、Web Locks が使える環境なら同じ錠で待たされる
+     * (`crossTabLocked` の注記。使えない環境では鎖はこのタブの中だけの物である)。
+     * 実 chromium の `file://` で 2 枚のタブが同じ錠を共有することは e2e の
+     * `crossTabData` suite が留める (片方が錠を持つ間、もう片方の保存はその錠を待つ)。
+     *
+     * id の検査は置かない —— 空の id は `get` が `null` を返し、`vanished` になる
+     * (`update` の先頭の検査は等価変異として黙らせてある。同じ物を 2 度置かない)。
+     * `expected` の形も検めない —— 素のオブジェクトでない物は `sameRecordData` が
+     * 保管した行と「違う」と答えるので、書かずに `changed` へ倒れる (安全な向き)。
+     */
+    if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
+    return this.serialize(id, async (): Promise<ConditionalUpdate<T>> => {
+      const existing = await this.get<T>(id);
+      if (!existing) return { status: 'vanished' };
+      if (!sameRecordData(existing.data, expected)) return { status: 'changed', current: existing };
+      const record = await this.writeMerged(existing, patch);
+      return record === null ? { status: 'vanished' } : { status: 'saved', record };
+    });
+  }
+
+  /**
+   * 読んだ行に `patch` を重ねて書く (`update` と `updateIfUnchanged` が共有する)。
+   * 書く直前に行が消えていたら書かずに `null`。
+   */
+  private async writeMerged<T extends Record<string, unknown>>(
+    existing: StoredRecord<T>,
+    patch: Partial<T>,
+  ): Promise<StoredRecord<T> | null> {
+    const mergedData = { ...existing.data, ...patch };
+    const updatedAt = monotonicNow();
+    const storedData = await this.cipher.encrypt(mergedData);
+    // **書く直前にもう一度だけ在ることを確かめる。**
+    //
+    // id ごとの鎖は `update` と `remove` を並べるが、**全件を入れ替える
+    // 操作は鎖に載らない**。`importAll({ replace: true })` (バックアップの
+    // 復元) は 1 つのトランザクションで全消し + 書き直しをするので、
+    // 「読んだ後・書く前」に挟まると、復元で消えたはずの record を
+    // こちらが書き戻してしまう。実測 (2026-08-23):
+    //
+    //   update を投げっぱなしにして importAll({replace:true}) を挟む
+    //   → 復元後の一覧に、復元ファイルに無い古い record が残る
+    //
+    // 消えていたら書かない。戻り値は `null` —— 「その id はもう無い」で
+    // 既にある契約なので、呼んだ側の扱いは変わらない。
+    if (!(await this.readRawRow(existing.id))) return null;
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put({ id: existing.id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
+      await txDone(tx);
+    });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+    return { ...existing, updatedAt, data: mergedData };
+  }
+
+  async get<T extends Record<string, unknown>>(id: string): Promise<StoredRecord<T> | null> {
+    if (typeof id !== 'string' || id.length === 0) return null;
+    const rec = await withDb((db) => new Promise<StoredRecord<T> | undefined>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(id);
+      req.onsuccess = () => resolve(req.result as StoredRecord<T> | undefined);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
+      req.onerror = () => reject(req.error ?? new Error('get failed'));
+    }));
+    if (!rec) return null;
+    const data = (await this.cipher.decrypt(rec.data)) as T;
+    return { ...rec, data };
+  }
+
+  async list<T extends Record<string, unknown>>(collection: string): Promise<readonly StoredRecord<T>[]> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    const out: StoredRecord<T>[] = [];
+    await withDb((db) => new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const range = IDBKeyRange.only(collection);
+      const req = tx.objectStore(STORE).index(COLLECTION_INDEX).openCursor(range);
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (cur) {
+          out.push(cur.value as StoredRecord<T>);
+          cur.continue();
+        } else {
+          resolve();
+        }
+      };
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
+      req.onerror = () => reject(req.error ?? new Error('cursor failed'));
+    }));
+    // Newest-first. The collection index isn't ordered by time, so sort here.
+    out.sort((a, b) => b.createdAt - a.createdAt);
+    // Decrypt each payload through the active cipher.
+    for (const rec of out) {
+      (rec as { data: unknown }).data = await this.cipher.decrypt(rec.data);
+    }
+    return out;
+  }
+
+  async remove(id: string): Promise<void> {
+    if (typeof id !== 'string' || id.length === 0) return;
+    // `update` と同じ鎖に載せる。載せないと「読む → 書く」の隙に削除が
+    // 入り、消したはずの record が書き戻される (実測)。
+    await this.serialize(id, async () => {
+      await withDb(async (db) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).delete(id);
+        await txDone(tx);
+      });
+    });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+
+  }
+
+  async clearCollection(collection: string): Promise<number> {
+    const all = await this.list(collection);
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const store = tx.objectStore(STORE);
+      for (const rec of all) store.delete(rec.id);
+      await txDone(tx);
+    });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+    return all.length;
+  }
+
+  async count(collection: string): Promise<number> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    return withDb((db) => new Promise<number>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).index(COLLECTION_INDEX).count(IDBKeyRange.only(collection));
+      req.onsuccess = () => resolve(req.result);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
+      req.onerror = () => reject(req.error ?? new Error('count failed'));
+    }));
+  }
+
+  async exportAll(): Promise<readonly StoredRecord[]> {
+    const all = await withDb((db) => new Promise<StoredRecord[]>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      // Stryker disable next-line ArrayDeclaration: getAll() の result は仕様上必ず配列を返すため `?? []` は到達不能な防御フォールバック。`["..."]` への変異は観測できない（等価変異）。
+      req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
+      req.onerror = () => reject(req.error ?? new Error('exportAll failed'));
+    }));
+    all.sort((a, b) => b.createdAt - a.createdAt);
+    return all;
+  }
+
+  /**
+   * 復元。**平文で入ってきたレコードは現在の cipher で封緘してから入れる。**
+   *
+   * 以前は受け取った物をそのまま `put` していた。他の書き込み口
+   * (`insert` / `insertMany` / `update`) は全部 `cipher.encrypt` を通るのに、
+   * **ここだけ素通しだった**。実測 (2026-08-23) —— 暗号化を有効にした状態で
+   * 平文時代のバックアップを復元し、IndexedDB の生の中身を見ると:
+   *
+   * ```
+   *   通常書き込み : 封緘=true   {"__enc":{"iv":"…","ct":"…"}}
+   *   復元レコード : 封緘=false  {"amount":999,"memo":"RESTORED-SECRET"}
+   * ```
+   *
+   * 読み出しは cipher の平文素通しで成功するので**画面上は何も起きない**が、
+   * ディスクには平文が残る。利用者は診断画面が「暗号化されています」と
+   * 言うのを見ており、災害復旧のつもりで**保護を外していた**ことになる。
+   *
+   * **封緘済みはそのまま入れる。** 二重封緘は開けなくなるし、別のパスフレーズで
+   * 封緘された物 (鍵が違うので開けない) も、そのまま置いておけば正しい
+   * パスフレーズでやり直せる。
+   *
+   * 封緘は**トランザクションを開ける前に**全部済ませる —— IndexedDB の
+   * トランザクションは待っている間に自動で閉じるため。
+   */
+  async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
+    // 関門は `isImportableRecord` **ただ 1 つ** —— 復元の計画 (`planRestore`) が
+    // 「何件入るか」を数えるのに同じ判定を要るため (パス 432)。捨てた件数は呼び出し側が利用者に言う。
+    const valid = records.filter(isImportableRecord);
+    const prepared = await Promise.all(
+      valid.map(async (rec) =>
+        isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
+      ),
+    );
+    await withDb(async (db) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const store = tx.objectStore(STORE);
+      if (opts?.replace) store.clear();
+      for (const rec of prepared) store.put(rec); // put = upsert by id
+      await txDone(tx);
+    });
+    // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
+    // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
+    notifyRecordStoreChanged();
+    return prepared.length;
+  }
+
+  async reencryptAll(from?: RecordCipher): Promise<number> {
+    // Read every record through `from` (defaults to the current cipher), then
+    // re-write its payload sealed under the current cipher. A distinct `from`
+    // lets callers switch keys or turn encryption off (decrypt with the old
+    // cipher, store under the new one).
+    const reader = from ?? this.cipher;
+    const raw = await withDb((db) => new Promise<StoredRecord[]>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      // Stryker disable next-line ArrayDeclaration: getAll() の result は仕様上必ず配列を返すため `?? []` は到達不能な防御フォールバック。`["..."]` への変異は観測できない（等価変異）。
+      req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず、`?? new Error(...)` は req.error が必ず入るため到達しない防御。文言も観測されない。
+      req.onerror = () => reject(req.error ?? new Error('reencryptAll read failed'));
+    }));
+
+    // **一覧は写しでよいが、中身は書く直前に読み直す。**
+    //
+    // 上の `getAll()` は移行開始時点の写しである。この写しをそのまま書き
+    // 戻すと、移行中に入った書き換えを**古い中身で上書きする**。実測
+    // (2026-08-23、20 件を遅い cipher で移行しながら 19 番目を触る):
+    //
+    //   移行中の update → `edited: true` が消える (update は成功を返す)
+    //   移行中の remove → 消したはずの record が写しから復活する
+    //
+    // どちらも `store.update` で直したのと同じ形 —— 読みと書きの間に
+    // 隙がある。ここは隙が「移行の全体」なので、もっと広い。
+    //
+    // 直し方も同じ: id ごとの鎖に載せ、**その中で現在の行を読み直す**。
+    // 読み直して無ければ、その間に消されたということなので書き戻さない。
+    let migrated = 0;
+    for (const rec of raw) {
+      await this.serialize(rec.id, async () => {
+        const current = await this.readRawRow(rec.id);
+        if (!current) return; // 移行中に消された → 復活させない
+        const plain = await reader.decrypt(current.data);
+        const sealed = await this.cipher.encrypt(plain);
+        await withDb(async (db2) => {
+          const tx = db2.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).put({ ...current, data: sealed });
+          await txDone(tx);
+        });
+        migrated++;
+      });
+    }
+    return migrated;
+  }
+}
+
+/** Validate a record coming from an untrusted backup file before it's
+ *  written back into IndexedDB. Drops anything malformed rather than throwing
+ *  so a partly-corrupt backup still restores its good records. */
+function isValidStoredRecord(v: unknown): v is StoredRecord {
+  if (!isPlainJsonObject(v)) return false;
+  const r = v as Record<string, unknown>;
+  return (
+    typeof r.id === 'string' &&
+    r.id.length > 0 &&
+    isSafeCollection(r.collection) &&
+    // **封筒の数字も有限でなければならない。** `collectionShapes.ts` は
+    // `data` の中身を `Number.isFinite` で見るが、封筒の時刻は 2026-09-08 まで
+    // `typeof` だけだった —— `1e999` は**有効な JSON** で `Infinity` に読めるので、
+    // 検査数字の合ったバックアップが非有限の時刻を持ち込めた (パス 98)。
+    // **有限でも時刻でない数は同じ扱い** (2026-09-27 · パス 493) —— `1e20` は有限だが
+    // `Date` の範囲の外で、表示の側 (`parseTimestamp`) は読めないと断る。境界は 1 つ。
+    isTimestampMs(r.createdAt) &&
+    isTimestampMs(r.updatedAt) &&
+    isPlainJsonObject(r.data)
+  );
+}
+
+/**
+ * **復元が受け取る記録か —— 関門はこの 1 つ** (2026-09-23 · パス 432)。
+ *
+ * `importAll` の filter をそのまま関数にした物で、中身は 1 字も変えていない。
+ * 外へ出したのは、**訊く前に「何件入るか」を数える側** (`backup.ts` の `planRestore`)
+ * が同じ判定を要るからである。2 つ書くと必ず割れ、割れた側は
+ * 「入る」と数えて「入らない」を実行する —— 実測 (2026-09-23 · 直す前):
+ * 置換復元の確認が「**消える記録はありません**」と述べ、押すとストアが空になった。
+ *
+ * 封緘済み (`__enc`) は中身を見られないので封筒だけで通す —— ここを落とすと
+ * 暗号化バックアップが丸ごと復元できなくなる。
+ */
+export function isImportableRecord(v: unknown): v is StoredRecord {
+  if (!isValidStoredRecord(v)) return false;
+  return isSealedData(v.data) || hasCollectionShape(v.collection, v.data);
+}
+
+let singleton: RecordStore | null = null;
+export function getRecordStore(): RecordStore {
+  if (!singleton) singleton = new IndexedDBRecordStore();
+  return singleton;
+}
+
+export function _resetRecordStoreForTests(): void {
+  singleton = null;
+}

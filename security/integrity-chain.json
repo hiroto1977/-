@@ -1,0 +1,2480 @@
+{
+  "algorithm": "sha256",
+  "genesisHash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9",
+  "protected": [
+    ".claude/settings.json",
+    ".cursor/rules/00-project.mdc",
+    ".cursor/rules/10-boundaries.mdc",
+    ".cursor/rules/20-gates.mdc",
+    ".cursor/rules/30-conventions.mdc",
+    ".github/workflows/ci.yml",
+    ".github/workflows/pages.yml",
+    ".github/workflows/release.yml",
+    "assets/manifest.webmanifest",
+    "assets/sw.js",
+    "docs/PROXY_EXAMPLE.md",
+    "docs/SECURITY_CHAIN.md",
+    "electron-builder.json",
+    "eslint.config.js",
+    "scripts/build-landing.cjs",
+    "scripts/checksum-release.cjs",
+    "scripts/inject-pwa.cjs",
+    "scripts/inline-html.cjs",
+    "scripts/integrity-chain.cjs",
+    "scripts/lib/artifact-freshness.cjs",
+    "scripts/lib/json-for-script.cjs",
+    "scripts/lib/population-floor.cjs",
+    "scripts/lib/tracked-cross-check.cjs",
+    "scripts/lint-artifact-csp.cjs",
+    "scripts/lint-sample-data.cjs",
+    "scripts/make-autoinstall.sh",
+    "scripts/make-live-usb.sh",
+    "scripts/migrate.sh",
+    "scripts/public-host-guard.cjs",
+    "scripts/safe-vault-write.cjs",
+    "scripts/security-audit.sh",
+    "scripts/setup-linux.sh",
+    "scripts/setup-obsidian-docker.sh",
+    "scripts/smoke-app.cjs",
+    "scripts/verify-release-artifacts.cjs",
+    "src/main/atomicWrite.ts",
+    "src/main/clients/assistant.ts",
+    "src/main/clients/exportPaths.ts",
+    "src/main/clients/types.ts",
+    "src/main/eraseAll.ts",
+    "src/main/main.ts",
+    "src/main/oauth.ts",
+    "src/main/secrets.ts",
+    "src/main/shellOpenGate.ts",
+    "src/main/stateFile.ts",
+    "src/main/windowPrefs.ts",
+    "src/preload/preload.ts",
+    "src/renderer/data/assistantMarkdown.ts",
+    "src/renderer/data/localWrite.ts",
+    "src/renderer/data/recordCipher.ts",
+    "src/renderer/fs/fsa.ts",
+    "src/renderer/keyIntent.ts",
+    "src/renderer/network/liveRead.ts",
+    "src/renderer/network/proxy.ts",
+    "src/renderer/oauth/pkce.ts",
+    "src/renderer/oauth/pkceSession.ts",
+    "src/renderer/security/LockScreen.tsx",
+    "src/renderer/security/autoLock.ts",
+    "src/renderer/security/bip39-wordlist.ts",
+    "src/renderer/security/dataCrypto.ts",
+    "src/renderer/security/frameGuard.ts",
+    "src/renderer/security/lockWorkspace.ts",
+    "src/renderer/security/mnemonic.ts",
+    "src/renderer/security/vault.ts",
+    "src/renderer/security/webCrypto.ts",
+    "src/renderer/security/webauthn.ts",
+    "src/shared/advisorQuestionLimits.ts",
+    "src/shared/ai/chat.ts",
+    "src/shared/ai/credentials.ts",
+    "src/shared/ai/providers.ts",
+    "src/shared/aiEndpoint.ts",
+    "src/shared/assistantLimits.ts",
+    "src/shared/atlassianSite.ts",
+    "src/shared/constantTimeEquals.ts",
+    "src/shared/controlChars.ts",
+    "src/shared/cryptoParams.ts",
+    "src/shared/eraseReport.ts",
+    "src/shared/escape.ts",
+    "src/shared/externalUrlGate.ts",
+    "src/shared/headerValue.ts",
+    "src/shared/httpLimits.ts",
+    "src/shared/imageUrlGate.ts",
+    "src/shared/inputCeiling.ts",
+    "src/shared/isoDate.ts",
+    "src/shared/localDate.ts",
+    "src/shared/ollama.ts",
+    "src/shared/privateTarget.ts",
+    "src/shared/proxyEndpoint.ts",
+    "src/shared/redact.ts",
+    "src/shared/safeFilename.ts",
+    "src/shared/scanTarget.ts",
+    "src/shared/tokenInput.ts",
+    "src/shared/tokenResponse.ts",
+    "src/shared/vaultToken.ts",
+    "src/shared/versionOrder.ts",
+    "src/shared/writeFieldLimits.ts",
+    "vite.config.ts",
+    "vitest.audit.config.ts",
+    "vitest.config.ts"
+  ],
+  "blocks": [
+    {
+      "index": 0,
+      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "merkleRoot": "6c2cc5354cb080c4cf5d39bdb2236c9bdc65e952014143d038515f001c2d4e31",
+      "leafCount": 15,
+      "note": "genesis",
+      "hash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9"
+    },
+    {
+      "index": 1,
+      "prevHash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9",
+      "merkleRoot": "139a9c7c85736a5a5163532b07a72f58a8421c483dad1d1b915ac445c82bb09b",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "5872f6c23c534bf0df1c4d51478e67dc3c8b3c0f7afc30c17186a796f74bec5e"
+    },
+    {
+      "index": 2,
+      "prevHash": "5872f6c23c534bf0df1c4d51478e67dc3c8b3c0f7afc30c17186a796f74bec5e",
+      "merkleRoot": "42703eb4c2162b182a2e6f970df61b9cb7ab054db29ea32a338b9a137b5b963e",
+      "leafCount": 15,
+      "note": "update LockScreen.tsx",
+      "hash": "39cef8f4fd753a7ead472590c44ec00bcf27650ab9e1213e1b8047c00971fc45"
+    },
+    {
+      "index": 3,
+      "prevHash": "39cef8f4fd753a7ead472590c44ec00bcf27650ab9e1213e1b8047c00971fc45",
+      "merkleRoot": "8562ab8da46fbc1dce9d1ec994be22d6b3c8a157da5e1394111fa78bf651a1ae",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "f5b5925a555d09a8baf1146b6cae4de9a265f77e1f36d28f1a2824f9e5e777c7"
+    },
+    {
+      "index": 4,
+      "prevHash": "f5b5925a555d09a8baf1146b6cae4de9a265f77e1f36d28f1a2824f9e5e777c7",
+      "merkleRoot": "ceada09c34c616c1c6ab0db413dd93b0a8b5612085da2cc63382a9a9def170b1",
+      "leafCount": 15,
+      "note": "update oauth.ts,LockScreen.tsx,dataCrypto.ts,vault.ts",
+      "hash": "b5aa9b099a70bc82cf48c48e6591f9a1ed5cf5aef997c095ef7ee13d75380756"
+    },
+    {
+      "index": 5,
+      "prevHash": "b5aa9b099a70bc82cf48c48e6591f9a1ed5cf5aef997c095ef7ee13d75380756",
+      "merkleRoot": "7b26b4fed70912f54ea9c5d3f1780f8808ce0fb833781e608a05a6455a610d4e",
+      "leafCount": 15,
+      "note": "update SECURITY_CHAIN.md,secrets.ts,preload.ts,LockScreen.tsx,webauthn.ts",
+      "hash": "7ad1f5e36ee1dc8683020f91cf8267450c9482cf5e58bd2b4bd8218297ce6933"
+    },
+    {
+      "index": 6,
+      "prevHash": "7ad1f5e36ee1dc8683020f91cf8267450c9482cf5e58bd2b4bd8218297ce6933",
+      "merkleRoot": "81eab83220a747f8ea1bcc879cc45c6af1249eb0c7be81e7ed920749c9ce067f",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "8e44b1433fa4c9b11dff65f59565cb0ceaa70f519870018e4345f7f3c71390a4"
+    },
+    {
+      "index": 7,
+      "prevHash": "8e44b1433fa4c9b11dff65f59565cb0ceaa70f519870018e4345f7f3c71390a4",
+      "merkleRoot": "7ced0e0cf1093e164f45aea538adff6f1878bd7ce8fe68324ff90e126b3d89e8",
+      "leafCount": 15,
+      "note": "update ci.yml,oauth.ts",
+      "hash": "780b337043df5bbeb7d768aa3750fbf74e9ad20ad3779265c89caab9c1b1e153"
+    },
+    {
+      "index": 8,
+      "prevHash": "780b337043df5bbeb7d768aa3750fbf74e9ad20ad3779265c89caab9c1b1e153",
+      "merkleRoot": "fbbaa6ae22b707759c1acf5b2e939277c8614aef7a1aa13449ca4c61102d299b",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "050c3396099b4a7f36d95db1487dbfa6a02db9e4c136c43e778c4494554dde5e"
+    },
+    {
+      "index": 9,
+      "prevHash": "050c3396099b4a7f36d95db1487dbfa6a02db9e4c136c43e778c4494554dde5e",
+      "merkleRoot": "7b28671af35624fc1677d259ced8952c1f74a28db9717c48a59bc18d7765835c",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "1af7a1bdf6d2f3e2ff95b51a70fcc49e75bc108be8d505b17bc05e1da7891eb2"
+    },
+    {
+      "index": 10,
+      "prevHash": "1af7a1bdf6d2f3e2ff95b51a70fcc49e75bc108be8d505b17bc05e1da7891eb2",
+      "merkleRoot": "113a5991e5d1c5e8e51edbd849192ec6ff7b53fc7f9784c15cad005d3a37c43c",
+      "leafCount": 15,
+      "note": "update ci.yml",
+      "hash": "1375df2b085cb15f5fbf84207bf47396911311e887960ce44d06abe04c7b43fa"
+    },
+    {
+      "index": 11,
+      "prevHash": "1375df2b085cb15f5fbf84207bf47396911311e887960ce44d06abe04c7b43fa",
+      "merkleRoot": "4f974e0ced822a3d213ef032e111fc1d622b4c323081436709a8112fe46f6973",
+      "leafCount": 16,
+      "note": "update sw.js,SECURITY_CHAIN.md,integrity-chain.cjs,dataCrypto.ts,vault.ts",
+      "hash": "90a68b497432af2024489d6c63e4567d1303ad5c1b1f65882c7ef5ede7b4b631"
+    },
+    {
+      "index": 12,
+      "prevHash": "90a68b497432af2024489d6c63e4567d1303ad5c1b1f65882c7ef5ede7b4b631",
+      "merkleRoot": "25d80566e373924de4c42da2c8dbaace373da838adbd3293111a61b145176826",
+      "leafCount": 16,
+      "note": "update ci.yml",
+      "hash": "968b3a29474e976a4e228390f52b98db4fb4d981fc0f1686c1ab2609dbb9511c"
+    },
+    {
+      "index": 13,
+      "prevHash": "968b3a29474e976a4e228390f52b98db4fb4d981fc0f1686c1ab2609dbb9511c",
+      "merkleRoot": "5411858768d05b50e563d5b623fbe8e9972f07dd3d055a5f49dd0586d7c2ca44",
+      "leafCount": 16,
+      "note": "update dataCrypto.ts,vault.ts",
+      "hash": "52d733dfc8650102dbf3ec03ac05f4b969563878673eb12efccbfa56d017e332"
+    },
+    {
+      "index": 14,
+      "prevHash": "52d733dfc8650102dbf3ec03ac05f4b969563878673eb12efccbfa56d017e332",
+      "merkleRoot": "15140f816e52b1a6e68758df41b96a1ce067c60220db1dbf5b32593bb109d24d",
+      "leafCount": 16,
+      "note": "update preload.ts",
+      "hash": "6d26505e456c051e5e89ddd6c43525d725cdb49f4aaf39ed5974f116db9570dc"
+    },
+    {
+      "index": 15,
+      "prevHash": "6d26505e456c051e5e89ddd6c43525d725cdb49f4aaf39ed5974f116db9570dc",
+      "merkleRoot": "cd7f3d0bd82b0867a39984271aea34f177185ff59889f3d454a04cf5b531c043",
+      "leafCount": 16,
+      "note": "update ci.yml",
+      "hash": "91cc0100bee1934445ed7225f0e6c0e2bc011dc8af689d0b96d35de42bc4acab"
+    },
+    {
+      "index": 16,
+      "prevHash": "91cc0100bee1934445ed7225f0e6c0e2bc011dc8af689d0b96d35de42bc4acab",
+      "merkleRoot": "bd60cea0ba1f06bf02541ae1b5de4c94edcdb8fc33c8baee46bba8c5cb899994",
+      "leafCount": 16,
+      "note": "update ci.yml",
+      "hash": "ec879526770ae31aa953be1104bb41fd74f78c140e0c1f5d48256c063c0e565b"
+    },
+    {
+      "index": 17,
+      "prevHash": "ec879526770ae31aa953be1104bb41fd74f78c140e0c1f5d48256c063c0e565b",
+      "merkleRoot": "53bf9a0942d531efd4916525faf04df56b2a57410f2d95108e06df8224ec2816",
+      "leafCount": 16,
+      "note": "update ci.yml",
+      "hash": "961417e1d21df8fc6239aa29e1df06fc28738434371dabdaebcb3bd441218011"
+    },
+    {
+      "index": 18,
+      "prevHash": "961417e1d21df8fc6239aa29e1df06fc28738434371dabdaebcb3bd441218011",
+      "merkleRoot": "5a0e4a9bb021daea5a8f80b6140ca84a3dcd6766a7f13cc007861074d710099a",
+      "leafCount": 16,
+      "note": "update preload.ts",
+      "hash": "9be78117743ad616b18416cf67d59127c5d50955d8a8072d6c59ec22c804806c"
+    },
+    {
+      "index": 19,
+      "prevHash": "9be78117743ad616b18416cf67d59127c5d50955d8a8072d6c59ec22c804806c",
+      "merkleRoot": "288a96658cd46118c6c9890d7b966259bf4a7ed7f0142b987268d4827cc51ae3",
+      "leafCount": 16,
+      "note": "update secrets.ts",
+      "hash": "bcdfc5b3865dfb7563e28bf814866a2f680ba3b3d1f975e42eb99228f942315d"
+    },
+    {
+      "index": 20,
+      "prevHash": "bcdfc5b3865dfb7563e28bf814866a2f680ba3b3d1f975e42eb99228f942315d",
+      "merkleRoot": "140373ce2f88f82e69a03b4288c7c06bdf87673bd2463160a1433f704174cab0",
+      "leafCount": 16,
+      "note": "update ci.yml,preload.ts",
+      "hash": "cc30608787e41e983e760f82e077a50ae9fa91c771c08c243691fca37c7b332f"
+    },
+    {
+      "index": 21,
+      "prevHash": "cc30608787e41e983e760f82e077a50ae9fa91c771c08c243691fca37c7b332f",
+      "merkleRoot": "09700e1b234e5483b0b4475defcf271c1fc4137b1a405c2e454482b3735c8c32",
+      "leafCount": 16,
+      "note": "update autoLock.ts",
+      "hash": "731e8d6bc43ab0df65beb60e5ef1ce3284d34c79c051a019d1be9c61c96d86e2"
+    },
+    {
+      "index": 22,
+      "prevHash": "731e8d6bc43ab0df65beb60e5ef1ce3284d34c79c051a019d1be9c61c96d86e2",
+      "merkleRoot": "15be43b27c91a525f61973e5184dc08cfda12d373c7c012c08db126bdc143ccc",
+      "leafCount": 16,
+      "note": "update ci.yml",
+      "hash": "928eb6b845dc7dbf2989b68700add609378212f22a6a2f3bcde1809208771f48"
+    },
+    {
+      "index": 23,
+      "prevHash": "928eb6b845dc7dbf2989b68700add609378212f22a6a2f3bcde1809208771f48",
+      "merkleRoot": "777484db066f49cac7b6b4d0a2de467edec3f8639b9159bc58e391af255ec64f",
+      "leafCount": 16,
+      "note": "update vault.ts",
+      "hash": "4598c80adc8d1d600e565699c2cc9544fd958442667e08da46c5be2fc83f727f"
+    },
+    {
+      "index": 24,
+      "prevHash": "4598c80adc8d1d600e565699c2cc9544fd958442667e08da46c5be2fc83f727f",
+      "merkleRoot": "52efefec055e0f0e904713d8398584f87c3d1d3098b0bb1416cc46322a2eb730",
+      "leafCount": 16,
+      "note": "update autoLock.ts",
+      "hash": "aba70d13aa2578f4bff5934adea40237402d9caabbf24a6def7461869183c4ee"
+    },
+    {
+      "index": 25,
+      "prevHash": "aba70d13aa2578f4bff5934adea40237402d9caabbf24a6def7461869183c4ee",
+      "merkleRoot": "515585da476b85ca860b829c2c810e94f046436386a85965eb8c92efe09593a4",
+      "leafCount": 16,
+      "note": "update oauth.ts",
+      "hash": "06beca0c2fb5e9d8a448cdd29d9c2fbad8b8719d8198b8050b61c54f221439ff"
+    },
+    {
+      "index": 26,
+      "prevHash": "06beca0c2fb5e9d8a448cdd29d9c2fbad8b8719d8198b8050b61c54f221439ff",
+      "merkleRoot": "5d75a0005ce4ca85421439ce8209fe7d6ae0d77b0b47e7df238671f98c9e269b",
+      "leafCount": 17,
+      "note": "update integrity-chain.cjs,exportPaths.ts",
+      "hash": "2c1decf2e2cd64c332c4dfc914e95710de74d1d099e08e2636a56e73c2ec044b"
+    },
+    {
+      "index": 27,
+      "prevHash": "2c1decf2e2cd64c332c4dfc914e95710de74d1d099e08e2636a56e73c2ec044b",
+      "merkleRoot": "b57bf84f924d641f830dc233de933bedda4616ed4af722f428c1119696a85951",
+      "leafCount": 17,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "a44212309d7e404f72853cee93c444f308ceef5ced2fdbfa46f89d939047bb7d"
+    },
+    {
+      "index": 28,
+      "prevHash": "a44212309d7e404f72853cee93c444f308ceef5ced2fdbfa46f89d939047bb7d",
+      "merkleRoot": "1f14c7774cb560edfa9ca029de175fa3ef1e1dfe0e69035cbb79ab62e7f3000e",
+      "leafCount": 17,
+      "note": "update webauthn.ts",
+      "hash": "6b0fa2be7d99c4dc3cee3e6a4b383a7dc6c3e455d201d3f7457696e192b7a11a"
+    },
+    {
+      "index": 29,
+      "prevHash": "6b0fa2be7d99c4dc3cee3e6a4b383a7dc6c3e455d201d3f7457696e192b7a11a",
+      "merkleRoot": "ed9be8bb49cef58a861034d37e98d94d5927f6f0adde562a33a81f3ff53adcf4",
+      "leafCount": 17,
+      "note": "update secrets.ts",
+      "hash": "03386b67540506aac824e6337a7cf08545a79e4367003248e6dfe0c182df71be"
+    },
+    {
+      "index": 30,
+      "prevHash": "03386b67540506aac824e6337a7cf08545a79e4367003248e6dfe0c182df71be",
+      "merkleRoot": "205d9e9bde0c760cd62bccd66d04e184c6869f71a393a531496c24122758f356",
+      "leafCount": 17,
+      "note": "update dataCrypto.ts",
+      "hash": "2966bf3530b54e8b4beb24ee437c4861f3d55bb66abeaf60dddc7c5873d4a744"
+    },
+    {
+      "index": 31,
+      "prevHash": "2966bf3530b54e8b4beb24ee437c4861f3d55bb66abeaf60dddc7c5873d4a744",
+      "merkleRoot": "8e4745ba195034908d4e3219e323022a9340021aa80ad2d2bb6247f0e03c03e5",
+      "leafCount": 17,
+      "note": "update oauth.ts",
+      "hash": "7a725e72993ad0cf8d53cfe8ef6c4a64b85a0f259e185d46af9031c33996ca66"
+    },
+    {
+      "index": 32,
+      "prevHash": "7a725e72993ad0cf8d53cfe8ef6c4a64b85a0f259e185d46af9031c33996ca66",
+      "merkleRoot": "ceb0799db6e8f70eb6d2c22be3a482004c85b078dd5e8eb8beeed868fd6886d4",
+      "leafCount": 17,
+      "note": "update ci.yml",
+      "hash": "7eaa2e78100f46cd645ea28cc18d940bde164c709ea1d48661672ba9b5f501f5"
+    },
+    {
+      "index": 33,
+      "prevHash": "7eaa2e78100f46cd645ea28cc18d940bde164c709ea1d48661672ba9b5f501f5",
+      "merkleRoot": "2a2cf1d61abda165f9882ecbb69d4411dabbb98abd4cfe8ce5bd56bd5a762136",
+      "leafCount": 17,
+      "note": "update ci.yml",
+      "hash": "d46240e2bd50fb94c1e5f9484fa65015515245d12006aa26ed9818747d4439ef"
+    },
+    {
+      "index": 34,
+      "prevHash": "d46240e2bd50fb94c1e5f9484fa65015515245d12006aa26ed9818747d4439ef",
+      "merkleRoot": "ee23eb5407d80b3bedfb83699aa7ae5573188c2aa4fddce632a90a786e3d5f77",
+      "leafCount": 17,
+      "note": "update secrets.ts",
+      "hash": "1eb9072d4f475921159113c4e1de9f84328cad23a991d204802274b057a08496"
+    },
+    {
+      "index": 35,
+      "prevHash": "1eb9072d4f475921159113c4e1de9f84328cad23a991d204802274b057a08496",
+      "merkleRoot": "b4420d6031d3bd33c199db109086f873f076593bcbee7ec1a47f8a6ed1c29f93",
+      "leafCount": 18,
+      "note": "update integrity-chain.cjs,shellOpenGate.ts",
+      "hash": "e97c30f8c6151afd718968a610c7abfb7ba96b950a4ce38f544d0f7716922428"
+    },
+    {
+      "index": 36,
+      "prevHash": "e97c30f8c6151afd718968a610c7abfb7ba96b950a4ce38f544d0f7716922428",
+      "merkleRoot": "035c94da7e80d563f9e092a8b762f143e84fe7a5469700f317992b0880825990",
+      "leafCount": 18,
+      "note": "update LockScreen.tsx",
+      "hash": "4c4364bc649c05ad9b487ace4d6392d715ebdda34c2ffee01ea4f7d70ecff36e"
+    },
+    {
+      "index": 37,
+      "prevHash": "4c4364bc649c05ad9b487ace4d6392d715ebdda34c2ffee01ea4f7d70ecff36e",
+      "merkleRoot": "7a567cd02f12ed6f0fb238800b5a21a3717f6ad773a5004be9ca722a90776c35",
+      "leafCount": 18,
+      "note": "update ci.yml",
+      "hash": "4413dfe237c2450a825e6a57c24c6d09c96de59597bfdf50466e9d3479bd93f4"
+    },
+    {
+      "index": 38,
+      "prevHash": "4413dfe237c2450a825e6a57c24c6d09c96de59597bfdf50466e9d3479bd93f4",
+      "merkleRoot": "eb41559121ed811e7959e34a87f4163a17e1892fc95347831177122dc2c183fd",
+      "leafCount": 18,
+      "note": "update integrity-chain.cjs",
+      "hash": "37c33e6ffdd3d3a9d19f8ce489cb0fa9aeeea5403589d331902cdd09b069f9fe"
+    },
+    {
+      "index": 39,
+      "prevHash": "37c33e6ffdd3d3a9d19f8ce489cb0fa9aeeea5403589d331902cdd09b069f9fe",
+      "merkleRoot": "51081cda6da0d927c9db15aaa37aab1c375a87e053222d3b837f3b941e8b2da7",
+      "leafCount": 18,
+      "note": "update integrity-chain.cjs",
+      "hash": "843f298c2066b991a0c04d2caf56037d41e02157053e9709fcf9bb30f84dbe27"
+    },
+    {
+      "index": 40,
+      "prevHash": "843f298c2066b991a0c04d2caf56037d41e02157053e9709fcf9bb30f84dbe27",
+      "merkleRoot": "0d18f2dc0579e0688f2d33a308a8596417d27b0ae4615cae37551d5750e7969e",
+      "leafCount": 18,
+      "note": "update integrity-chain.cjs",
+      "hash": "9369eedc569a22e62ef9e519f54a819eae3840d0fc990259fed05be47c2116db"
+    },
+    {
+      "index": 41,
+      "prevHash": "9369eedc569a22e62ef9e519f54a819eae3840d0fc990259fed05be47c2116db",
+      "merkleRoot": "0d9c1bf0c240e70fbfe8bcf10a4b7f00d67a704c3ca26c963d8e8cfad7e4d461",
+      "leafCount": 23,
+      "note": "update release.yml,electron-builder.json,integrity-chain.cjs,main.ts,proxy.ts,redact.ts",
+      "hash": "d2d21bf8d3f18fcbbc5ef7897d619428fab1c5176ab096dfd9245170927d8f3d"
+    },
+    {
+      "index": 42,
+      "prevHash": "d2d21bf8d3f18fcbbc5ef7897d619428fab1c5176ab096dfd9245170927d8f3d",
+      "merkleRoot": "66b23fe88ac7709925e23d175ea602f52ba856d15be051673c24a2f363ef55eb",
+      "leafCount": 23,
+      "note": "update ci.yml",
+      "hash": "1c8edeabe6b441a0fb358c834a856024cdabd93750d6b81312e17cbe23203b30"
+    },
+    {
+      "index": 43,
+      "prevHash": "1c8edeabe6b441a0fb358c834a856024cdabd93750d6b81312e17cbe23203b30",
+      "merkleRoot": "2f0d929bbc594e96e15f0beb9445b6223dc54c3bc66ac1d55154af2e51345950",
+      "leafCount": 23,
+      "note": "update main.ts",
+      "hash": "388b30e642f963d0c190b153902ac214a5e7809c20a357a9daa266901843311b"
+    },
+    {
+      "index": 44,
+      "prevHash": "388b30e642f963d0c190b153902ac214a5e7809c20a357a9daa266901843311b",
+      "merkleRoot": "f30d6f340b5851f7893f1c8c968cae0901b88817aaed19340ef06199ec397675",
+      "leafCount": 31,
+      "note": "update integrity-chain.cjs,atomicWrite.ts,bip39-wordlist.ts,aiEndpoint.ts,controlChars.ts,cryptoParams.ts",
+      "hash": "39932a8323ed5495fb0f07acc93292aa804efcfbeb66151bc902ef167dd37d97"
+    },
+    {
+      "index": 45,
+      "prevHash": "39932a8323ed5495fb0f07acc93292aa804efcfbeb66151bc902ef167dd37d97",
+      "merkleRoot": "d70cf531745613cc553f4cdc05eba1221528992a2b6009d1f123cc2f5df279bb",
+      "leafCount": 31,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "a53b396703fa92305f78344be7816cb9df5c8b8ca92ef98f0d26f7074e655d5b"
+    },
+    {
+      "index": 46,
+      "prevHash": "a53b396703fa92305f78344be7816cb9df5c8b8ca92ef98f0d26f7074e655d5b",
+      "merkleRoot": "7fa3a0097abeb8b62c6e1a6d11e13b9b38165f6e8afb87076ea3923df3cd64c9",
+      "leafCount": 31,
+      "note": "update oauth.ts",
+      "hash": "008b4bc1e5d502c500d861a439a14fc70dfee24dc17773cc3a071d86da00243a"
+    },
+    {
+      "index": 47,
+      "prevHash": "008b4bc1e5d502c500d861a439a14fc70dfee24dc17773cc3a071d86da00243a",
+      "merkleRoot": "20258601ec2a1f91349f099dfec9c9518c825646e75c559516514269dafc37d0",
+      "leafCount": 31,
+      "note": "update oauth.ts,dataCrypto.ts",
+      "hash": "dc1c1367e23c51391542d5666f8b492700c77cc9c377db3f4cad72dfae0fcac5"
+    },
+    {
+      "index": 48,
+      "prevHash": "dc1c1367e23c51391542d5666f8b492700c77cc9c377db3f4cad72dfae0fcac5",
+      "merkleRoot": "b29befda45b0a68780b24585f4f9cc98cdcb1380afdfd69eb43bed549da0810f",
+      "leafCount": 31,
+      "note": "update oauth.ts",
+      "hash": "d8a3e40df752f5b0e53f31c03c11af3c3abaf943d8b6099fa0cdc0920fb51a8d"
+    },
+    {
+      "index": 49,
+      "prevHash": "d8a3e40df752f5b0e53f31c03c11af3c3abaf943d8b6099fa0cdc0920fb51a8d",
+      "merkleRoot": "8da42131c8c4976c20379aad0abe1fe915f9c36c7cb65c7e6be46312a66e9e57",
+      "leafCount": 31,
+      "note": "update oauth.ts",
+      "hash": "60782af95933e736e44df3b1b886465a3d3f8d03b2fe37cd52f5811e49fa517b"
+    },
+    {
+      "index": 50,
+      "prevHash": "60782af95933e736e44df3b1b886465a3d3f8d03b2fe37cd52f5811e49fa517b",
+      "merkleRoot": "c92679acc5f65b4ea781e6ef5adcd904dd345879f5b264a584ecd15442bc3a8c",
+      "leafCount": 32,
+      "note": "update integrity-chain.cjs,recordCipher.ts",
+      "hash": "3e29ce7919dadd4e16490b4cfe88e6b2ff6eae476eed94c510873fd2c2df5de3"
+    },
+    {
+      "index": 51,
+      "prevHash": "3e29ce7919dadd4e16490b4cfe88e6b2ff6eae476eed94c510873fd2c2df5de3",
+      "merkleRoot": "676ee12ca34cc3b5af95e668b4ff3922909d9c4007b34f99c82cb1d2c95ca039",
+      "leafCount": 32,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "bcce6ca2fa84f57e154f136609591af06498bfb0a1410abecb5b3c10ca6e6678"
+    },
+    {
+      "index": 52,
+      "prevHash": "bcce6ca2fa84f57e154f136609591af06498bfb0a1410abecb5b3c10ca6e6678",
+      "merkleRoot": "084101963c5bf41435f7bb640dd546983f8def57530b57c189c32de123626adf",
+      "leafCount": 32,
+      "note": "update main.ts",
+      "hash": "53c73eba8603751d00ddc889a53778f6194b3c7a4ce0ed602485c6c14dcfe360"
+    },
+    {
+      "index": 53,
+      "prevHash": "53c73eba8603751d00ddc889a53778f6194b3c7a4ce0ed602485c6c14dcfe360",
+      "merkleRoot": "612892c46ca5394e10700bde894ded6eac07e6bd875457f2a3c570ce1c899014",
+      "leafCount": 33,
+      "note": "update pages.yml,integrity-chain.cjs",
+      "hash": "c72af1f29ec6f57c90a1500d160d46340655518a88b685c4578daa8f447199c9"
+    },
+    {
+      "index": 54,
+      "prevHash": "c72af1f29ec6f57c90a1500d160d46340655518a88b685c4578daa8f447199c9",
+      "merkleRoot": "3820b9dd47c25323caf937f72d7d53d966733575807b486e3113a5b643d33127",
+      "leafCount": 33,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "d0e7741ca50713f0b946589e5afb7ce4cfda29a60f68a43ca29b54cab5592e94"
+    },
+    {
+      "index": 55,
+      "prevHash": "d0e7741ca50713f0b946589e5afb7ce4cfda29a60f68a43ca29b54cab5592e94",
+      "merkleRoot": "0d62ec64e07e12b81eba14da25f6b0a18aa5c9e5f0546ef929038bb035bc79b2",
+      "leafCount": 33,
+      "note": "update oauth.ts",
+      "hash": "8a05d8af1f72a0a5b62caee2a1c1545d951fdfb39d2317b5a142805a22a07446"
+    },
+    {
+      "index": 56,
+      "prevHash": "8a05d8af1f72a0a5b62caee2a1c1545d951fdfb39d2317b5a142805a22a07446",
+      "merkleRoot": "e2c25fcd3b41b6edd97b4bc205feed8e74f2d11562422ad0c1350e369b3d1464",
+      "leafCount": 34,
+      "note": "update integrity-chain.cjs,externalUrlGate.ts,main.ts",
+      "hash": "7006abcdf2cef47c9cc4c978560394176f260cf07f708723184046e251f67c82"
+    },
+    {
+      "index": 57,
+      "prevHash": "7006abcdf2cef47c9cc4c978560394176f260cf07f708723184046e251f67c82",
+      "merkleRoot": "28c732be57a18770b0ad90e2de4778bf0e3aeda322a47cf992ba6ad85c3c48da",
+      "leafCount": 34,
+      "note": "update main.ts",
+      "hash": "470fa2f23af089ce89bc793c28c1f21075ca77cf0f07b0592b0c9ad384e97947"
+    },
+    {
+      "index": 58,
+      "prevHash": "470fa2f23af089ce89bc793c28c1f21075ca77cf0f07b0592b0c9ad384e97947",
+      "merkleRoot": "30a17058c1a7dce6c061da15d6e967f962d34dff527b03b191900ffcc187a415",
+      "leafCount": 34,
+      "note": "update oauth.ts",
+      "hash": "ae8d54d40a2be34009e19e2a9b826b000cd3ae8e2353f15d8960de41b303bdb8"
+    },
+    {
+      "index": 59,
+      "prevHash": "ae8d54d40a2be34009e19e2a9b826b000cd3ae8e2353f15d8960de41b303bdb8",
+      "merkleRoot": "75ffb28c877bdca71fef998d63acb925cb1cf2e2c86f5eb98d89e9364854b625",
+      "leafCount": 34,
+      "note": "update proxy.ts",
+      "hash": "dcad7f795f03c5e2e6722dc590af743f1d43133da3bb538fe7e8f90dac7f72f7"
+    },
+    {
+      "index": 60,
+      "prevHash": "dcad7f795f03c5e2e6722dc590af743f1d43133da3bb538fe7e8f90dac7f72f7",
+      "merkleRoot": "e4126e4eac6d8fdcc4b0daba74b6d7e2ab4e64a263690f8feec0b73d13a005f3",
+      "leafCount": 35,
+      "note": "update integrity-chain.cjs,proxy.ts,httpLimits.ts",
+      "hash": "eeac0f5276dd3c49230ff660a7d22ba529b54c18828a387cda64b3024679a112"
+    },
+    {
+      "index": 61,
+      "prevHash": "eeac0f5276dd3c49230ff660a7d22ba529b54c18828a387cda64b3024679a112",
+      "merkleRoot": "2372625cdbcd27fd59d1b8547b6b8388d713fc2aeb60d834be003ec87d0f3562",
+      "leafCount": 35,
+      "note": "update aiEndpoint.ts",
+      "hash": "f51ba095062ecda5379d0a153a5f7a74fbd29a9a2d536e3d8870174115532f98"
+    },
+    {
+      "index": 62,
+      "prevHash": "f51ba095062ecda5379d0a153a5f7a74fbd29a9a2d536e3d8870174115532f98",
+      "merkleRoot": "927cf69ec924f7a3bd83c0480f12e6a8d632055b457383430034d57b7a1f620b",
+      "leafCount": 35,
+      "note": "update LockScreen.tsx",
+      "hash": "cd8f66d63230cc1b9904bdf5004366788e0ff1b4b93523b71030ec03baa489f2"
+    },
+    {
+      "index": 63,
+      "prevHash": "cd8f66d63230cc1b9904bdf5004366788e0ff1b4b93523b71030ec03baa489f2",
+      "merkleRoot": "dd5ef6ac3d3652bc405a632b8bc461019c6a5312b454007a9ad8a1e8d4eeaec8",
+      "leafCount": 35,
+      "note": "update oauth.ts,httpLimits.ts",
+      "hash": "1972d6f2f55469fdc9bc673fa49ff8dfad95ecc67e028515fb0a263a38587fdc"
+    },
+    {
+      "index": 64,
+      "prevHash": "1972d6f2f55469fdc9bc673fa49ff8dfad95ecc67e028515fb0a263a38587fdc",
+      "merkleRoot": "b15b3fdcd5f333e8764e6007bf6c04a0248c6c793e562fe2141d815b76130b78",
+      "leafCount": 36,
+      "note": "update integrity-chain.cjs,types.ts",
+      "hash": "8bc5c0003c47e2926cddf45ab79e102b5e17d309201e8fdb665f30ea704de54d"
+    },
+    {
+      "index": 65,
+      "prevHash": "8bc5c0003c47e2926cddf45ab79e102b5e17d309201e8fdb665f30ea704de54d",
+      "merkleRoot": "46767fc14a000f1d70c924dce1bc6d9380d4b8937a2202d9b55cf74f192b342e",
+      "leafCount": 36,
+      "note": "update integrity-chain.cjs",
+      "hash": "dfda63e2c72a718afaa43fbcd3e347fe2e68d83e6242cc672d9f7b84b4a9a846"
+    },
+    {
+      "index": 66,
+      "prevHash": "dfda63e2c72a718afaa43fbcd3e347fe2e68d83e6242cc672d9f7b84b4a9a846",
+      "merkleRoot": "09d4b6567698d5ad35be1b87d9ca7f3e786374f129bb7fa9a5c8676b62e48cbf",
+      "leafCount": 36,
+      "note": "update main.ts",
+      "hash": "b51a09ec99d231b894d09bf873fb88464eefc0f714e20342918649f5ceda5472"
+    },
+    {
+      "index": 67,
+      "prevHash": "b51a09ec99d231b894d09bf873fb88464eefc0f714e20342918649f5ceda5472",
+      "merkleRoot": "e40912bd16556ec0685ab77cc1eecbb0e3a773da1ff9f97776ed7fdc171ac685",
+      "leafCount": 36,
+      "note": "update integrity-chain.cjs,main.ts,externalUrlGate.ts,-externalUrlGate.ts",
+      "hash": "06da6bae65e13f54c84a6161a6061e60402a7ba9a4bc4debd6436128968718dd"
+    },
+    {
+      "index": 68,
+      "prevHash": "06da6bae65e13f54c84a6161a6061e60402a7ba9a4bc4debd6436128968718dd",
+      "merkleRoot": "7c8b38e31228fa97cd3df32caa0f78252de799099c419d824c33a5d39077bfd7",
+      "leafCount": 36,
+      "note": "update secrets.ts,preload.ts",
+      "hash": "a11023d976807870d13945d179aeccfec9f315df9eab139ec049885bc38c7499"
+    },
+    {
+      "index": 69,
+      "prevHash": "a11023d976807870d13945d179aeccfec9f315df9eab139ec049885bc38c7499",
+      "merkleRoot": "e38060290c21a34dec8d378e76f33d74b1d240d54d834ea4eee37f5ec31a7168",
+      "leafCount": 36,
+      "note": "update vault.ts",
+      "hash": "59cfb89aa0519ee480e5f004abaac68e831d4b7b81d8b7178dc5c9b9ff5c6e92"
+    },
+    {
+      "index": 70,
+      "prevHash": "59cfb89aa0519ee480e5f004abaac68e831d4b7b81d8b7178dc5c9b9ff5c6e92",
+      "merkleRoot": "7c7426079d9b6739ef5b46c61a815442fc093ed092c27f232f95047d3b915d4d",
+      "leafCount": 36,
+      "note": "update redact.ts",
+      "hash": "4b5501fa2e49d813f179965bd9b13b81f57526088403664059f399d499fe0f07"
+    },
+    {
+      "index": 71,
+      "prevHash": "4b5501fa2e49d813f179965bd9b13b81f57526088403664059f399d499fe0f07",
+      "merkleRoot": "9322d2fff937e707b793c09324f0349fead0698a04bc9352f0289287b0176251",
+      "leafCount": 36,
+      "note": "update secrets.ts",
+      "hash": "579596b82b618d4d981620be42e7fa9ddba8b0bb2474e1899a104e5ec59bb27f"
+    },
+    {
+      "index": 72,
+      "prevHash": "579596b82b618d4d981620be42e7fa9ddba8b0bb2474e1899a104e5ec59bb27f",
+      "merkleRoot": "000c279d4bdfdc3df2718630bd45432381fe04cb9fd9340ef19c65def3b06518",
+      "leafCount": 36,
+      "note": "update ci.yml",
+      "hash": "33518fb27b28f4271b04800c3984ba3b5e3ae5e1c8f99185e3eb87fa77c8aac5"
+    },
+    {
+      "index": 73,
+      "prevHash": "33518fb27b28f4271b04800c3984ba3b5e3ae5e1c8f99185e3eb87fa77c8aac5",
+      "merkleRoot": "68b50be3716f9a64ef570fa8b8467c184ec79eb904ada5a7be52b95053a26db3",
+      "leafCount": 36,
+      "note": "update proxy.ts",
+      "hash": "708ab4c3cd1e87d1397c5e890e59acb22a46e2da63881c5d5e2a13b61445139b"
+    },
+    {
+      "index": 74,
+      "prevHash": "708ab4c3cd1e87d1397c5e890e59acb22a46e2da63881c5d5e2a13b61445139b",
+      "merkleRoot": "1e8ca825cf6ca6fabb5071592efcc4b7bd793b81c7504057150f63ab25f9edc8",
+      "leafCount": 36,
+      "note": "update atomicWrite.ts",
+      "hash": "e596c96059156a1ff24072800f618a21b1ae8dac4c2d95c9df9b8a31d74f3777"
+    },
+    {
+      "index": 75,
+      "prevHash": "e596c96059156a1ff24072800f618a21b1ae8dac4c2d95c9df9b8a31d74f3777",
+      "merkleRoot": "c66a242529446c633a028ac7633736b07255cab157bccba14a89f9e9a53dc15e",
+      "leafCount": 36,
+      "note": "update exportPaths.ts",
+      "hash": "29d74128a50ebacd6a2339d2b2e309619dc05fda905e6202f6595b00087f7322"
+    },
+    {
+      "index": 76,
+      "prevHash": "29d74128a50ebacd6a2339d2b2e309619dc05fda905e6202f6595b00087f7322",
+      "merkleRoot": "5ce3b7beacc9b34c6ccb5a3dbbe4a11964f646ef9c05b4fca96a7e5f886add60",
+      "leafCount": 36,
+      "note": "update redact.ts",
+      "hash": "fbf4cef13d97cacd3f6b37d2f07dfd0170364a0c2a0dac423430a13a012fd0a9"
+    },
+    {
+      "index": 77,
+      "prevHash": "fbf4cef13d97cacd3f6b37d2f07dfd0170364a0c2a0dac423430a13a012fd0a9",
+      "merkleRoot": "fb92b028496dec7a01bb7b953ef4728c2026627a5f68757df297ea78e68ff2d9",
+      "leafCount": 36,
+      "note": "update ci.yml",
+      "hash": "d7313537088d8825610404745676a304ad8b02ac6069c4fd65c7348c0d6f2abe"
+    },
+    {
+      "index": 78,
+      "prevHash": "d7313537088d8825610404745676a304ad8b02ac6069c4fd65c7348c0d6f2abe",
+      "merkleRoot": "52ea2bdc47a0cadc7fed1db953e049df84581110244aa8c0a6def74bc9361ec1",
+      "leafCount": 36,
+      "note": "update ci.yml",
+      "hash": "04847bd2791be2972d65f7a58624d4f81cb55fd0f12630ed090f8d92358753a1"
+    },
+    {
+      "index": 79,
+      "prevHash": "04847bd2791be2972d65f7a58624d4f81cb55fd0f12630ed090f8d92358753a1",
+      "merkleRoot": "41f17ed817811e3cabce849077d5e85c21982b2e6e06ecb0b61c57af91403a11",
+      "leafCount": 36,
+      "note": "update ci.yml",
+      "hash": "5252080b2bcfac7f93f03132c96741e8e1401449d71047b98267fe951b9396ba"
+    },
+    {
+      "index": 80,
+      "prevHash": "5252080b2bcfac7f93f03132c96741e8e1401449d71047b98267fe951b9396ba",
+      "merkleRoot": "7db33c5fdd34817786015a3cf5b56688d6eb19accfc871a80998f735b99b4d6b",
+      "leafCount": 36,
+      "note": "update redact.ts",
+      "hash": "3f9ae19a3e1039066bbaaf45c5531f82247aae6e95ed2228c3278f0565725f0c"
+    },
+    {
+      "index": 81,
+      "prevHash": "3f9ae19a3e1039066bbaaf45c5531f82247aae6e95ed2228c3278f0565725f0c",
+      "merkleRoot": "de16c7fa5a4e445104ee1be2f1a0c22a3e0c9c210de81cb5079e00c2888c471e",
+      "leafCount": 36,
+      "note": "update oauth.ts",
+      "hash": "2f5bb0b889447408167415d3ff8a6362ddce44a0f23765670fe34a1d5cea3f24"
+    },
+    {
+      "index": 82,
+      "prevHash": "2f5bb0b889447408167415d3ff8a6362ddce44a0f23765670fe34a1d5cea3f24",
+      "merkleRoot": "947d1c7838134fea5be22a960e96c6cfaa8af846545126a0cb3881fb6a0b1762",
+      "leafCount": 36,
+      "note": "update ci.yml",
+      "hash": "9de3831aaca25dd367e1b65699aa2a616d97e0309d42faddd03436ad87d9b4dc"
+    },
+    {
+      "index": 83,
+      "prevHash": "9de3831aaca25dd367e1b65699aa2a616d97e0309d42faddd03436ad87d9b4dc",
+      "merkleRoot": "a545ef603c75b43bd5539668acd53b81de9357dcfb58b75e9c675638761fdb7b",
+      "leafCount": 36,
+      "note": "update ci.yml,release.yml",
+      "hash": "e1f899cbe558eef9cbcc028060acd1c3bdf98924210cb1e36a1af69e9e1d2689"
+    },
+    {
+      "index": 84,
+      "prevHash": "e1f899cbe558eef9cbcc028060acd1c3bdf98924210cb1e36a1af69e9e1d2689",
+      "merkleRoot": "bd08f3e0cc53084d4526dcbc86e9468468397126b3f4e25bd859b80177fca06c",
+      "leafCount": 36,
+      "note": "update vault.ts",
+      "hash": "bee8216b40c71916e588d8c12d0779ada5542e41674d2484ae6b7e71b6a0ece9"
+    },
+    {
+      "index": 85,
+      "prevHash": "bee8216b40c71916e588d8c12d0779ada5542e41674d2484ae6b7e71b6a0ece9",
+      "merkleRoot": "ef73f4bf2cb5f1c1e151230f4bb603d46f2c78d5d40738245c7a02c6bcf56ce4",
+      "leafCount": 36,
+      "note": "update ci.yml",
+      "hash": "7c85292a20963e2d83bc6a1be75f259daea7c406158dc7277b398d7e7ffa6e13"
+    },
+    {
+      "index": 86,
+      "prevHash": "7c85292a20963e2d83bc6a1be75f259daea7c406158dc7277b398d7e7ffa6e13",
+      "merkleRoot": "32f5de0c68fcd8b39e4dfe145bdc793b07339f6ca6730b0199d5626dfbf99ea3",
+      "leafCount": 36,
+      "note": "update vault.ts",
+      "hash": "4321f481d6b2f89e49a5cbca34a40f887690182a9ae1ae7fc5f7c805de953d76"
+    },
+    {
+      "index": 87,
+      "prevHash": "4321f481d6b2f89e49a5cbca34a40f887690182a9ae1ae7fc5f7c805de953d76",
+      "merkleRoot": "9ec3ea8e3f255317b192362056b6c453e1af56c43db3e2ae17a2aa76c56fe8f5",
+      "leafCount": 36,
+      "note": "update vault.ts",
+      "hash": "ca03bf32fd5e2880d72f9e542cc3489ad0b9e284c446b6a94cd6fee0d29bd982"
+    },
+    {
+      "index": 88,
+      "prevHash": "ca03bf32fd5e2880d72f9e542cc3489ad0b9e284c446b6a94cd6fee0d29bd982",
+      "merkleRoot": "1cc3c7c819033fa4406d83253a2d58f6fefe9667e298308d56304781b5e4c307",
+      "leafCount": 50,
+      "note": "update integrity-chain.cjs,assistantMarkdown.ts,fsa.ts,liveRead.ts,pkce.ts,pkceSession.ts",
+      "hash": "204b8b0708d794834607b4b041a39fe5356ec11202c9a2f23a0a046143ee5809"
+    },
+    {
+      "index": 89,
+      "prevHash": "204b8b0708d794834607b4b041a39fe5356ec11202c9a2f23a0a046143ee5809",
+      "merkleRoot": "49377d27b19a6e56527c446e359d73060e64eb529d00762d52e18fd051f3a56c",
+      "leafCount": 49,
+      "note": "update integrity-chain.cjs,-updateCheck.ts",
+      "hash": "5b544e6e0ef11c95dc75453baf72ca81e628ed78094030b454b21049da17b3fc"
+    },
+    {
+      "index": 90,
+      "prevHash": "5b544e6e0ef11c95dc75453baf72ca81e628ed78094030b454b21049da17b3fc",
+      "merkleRoot": "b8417be6fe754814ab8154760c13c626455275153ade180c931e87dec67ef7bc",
+      "leafCount": 49,
+      "note": "update integrity-chain.cjs",
+      "hash": "fe3e27013cc3bde7d54a3db418bafca560386f1cc4ad392ec9bc21b22c45f4cd"
+    },
+    {
+      "index": 91,
+      "prevHash": "fe3e27013cc3bde7d54a3db418bafca560386f1cc4ad392ec9bc21b22c45f4cd",
+      "merkleRoot": "89d8c0bb54c872537224858c235df98b4bd36915e3d27bbd0001553222cbd2ac",
+      "leafCount": 49,
+      "note": "update ci.yml",
+      "hash": "97de5be0cc01b5b31011e7f8d0b9172012e8c09a78e65e2dedae449b066d77e9"
+    },
+    {
+      "index": 92,
+      "prevHash": "97de5be0cc01b5b31011e7f8d0b9172012e8c09a78e65e2dedae449b066d77e9",
+      "merkleRoot": "4d24ac82d6358f122bf7cd0d4134f5b3d6e6e781b4fdf1c7d624ee706b6199d6",
+      "leafCount": 49,
+      "note": "update ci.yml",
+      "hash": "ca4756441f02053dcb7b05dc76630d9edd16c69b498981d3d6dc1641a41a2dee"
+    },
+    {
+      "index": 93,
+      "prevHash": "ca4756441f02053dcb7b05dc76630d9edd16c69b498981d3d6dc1641a41a2dee",
+      "merkleRoot": "20e2afaa33167f2e6acc1c6164fcc915d8b45859908ca944e8f1ed08c45147b1",
+      "leafCount": 49,
+      "note": "update scanTarget.ts",
+      "hash": "33fa48c202b886fea79aa55c9aafae8a10cf677a657d11d6af1eb49baba38b2a"
+    },
+    {
+      "index": 94,
+      "prevHash": "33fa48c202b886fea79aa55c9aafae8a10cf677a657d11d6af1eb49baba38b2a",
+      "merkleRoot": "417a7b5e911dd8234c3aa45b8692650a7da63d98a7fb7553cd08d29ac388093f",
+      "leafCount": 49,
+      "note": "update main.ts",
+      "hash": "3b41426a860662ffdfb2680e6d70559a2fc810cc2c95be72cd245561cdf67321"
+    },
+    {
+      "index": 95,
+      "prevHash": "3b41426a860662ffdfb2680e6d70559a2fc810cc2c95be72cd245561cdf67321",
+      "merkleRoot": "605adcfbeefa6f128b785b508a223da483c69e3920052d6948b1cad1cd089090",
+      "leafCount": 49,
+      "note": "update secrets.ts,preload.ts",
+      "hash": "acec7c30251a4fac96f51bd1db7fbd446d59c0bf1e4187e6596e2379feee6f0b"
+    },
+    {
+      "index": 96,
+      "prevHash": "acec7c30251a4fac96f51bd1db7fbd446d59c0bf1e4187e6596e2379feee6f0b",
+      "merkleRoot": "79ec40aad4a635f323c760f2417d24ce9d24eff31f358f2e77a0e83fa2741393",
+      "leafCount": 49,
+      "note": "update ci.yml",
+      "hash": "d26a31b3b1ca426fbb461cbd891999510d70af0c5b920974cf9bb5a0a7a1d88c"
+    },
+    {
+      "index": 97,
+      "prevHash": "d26a31b3b1ca426fbb461cbd891999510d70af0c5b920974cf9bb5a0a7a1d88c",
+      "merkleRoot": "fc77a8407d70d0a9565659a6a921150e5a68a46471457aca7fd2b554546da616",
+      "leafCount": 49,
+      "note": "update autoLock.ts",
+      "hash": "c0bad63f953a758bb189c357b9f06882b6d7c599cbd406b08837f2f1df5fbf34"
+    },
+    {
+      "index": 98,
+      "prevHash": "c0bad63f953a758bb189c357b9f06882b6d7c599cbd406b08837f2f1df5fbf34",
+      "merkleRoot": "0bc6dee62fd2f9d4d888d456364e34a7d647c44a4b7afe807e5380f880613713",
+      "leafCount": 49,
+      "note": "update exportPaths.ts",
+      "hash": "27840c689469a04b0ba7f75e043d51a7584571f84d02356d0732cf71bda67854"
+    },
+    {
+      "index": 99,
+      "prevHash": "27840c689469a04b0ba7f75e043d51a7584571f84d02356d0732cf71bda67854",
+      "merkleRoot": "56e9e52cb3f2b26de25d6c7e8db9a303488a6d15c624e3fd1237d03a01472f8a",
+      "leafCount": 49,
+      "note": "update exportPaths.ts,main.ts",
+      "hash": "aade7370faad4223e65deba759f33bf9667285e5fd45d1fd1afc9e219421417f"
+    },
+    {
+      "index": 100,
+      "prevHash": "aade7370faad4223e65deba759f33bf9667285e5fd45d1fd1afc9e219421417f",
+      "merkleRoot": "c460739fd7400dfeb42de531578a3d86365a6df34c608e70efe48740bee10614",
+      "leafCount": 49,
+      "note": "update vault.ts",
+      "hash": "48b810e266ab12e4964997740b828c445b0463817ba93216ccb999f6bafd26c7"
+    },
+    {
+      "index": 101,
+      "prevHash": "48b810e266ab12e4964997740b828c445b0463817ba93216ccb999f6bafd26c7",
+      "merkleRoot": "9bc6c9a2ae44fe6f815eeb9baeaf89e4cdfeff1cc7b889560af53cf5e3d90489",
+      "leafCount": 49,
+      "note": "update externalUrlGate.ts",
+      "hash": "d8249fc2178adce8cf7ea4f95e36f1029210479b1c54092be9bd990caeeeaf9e"
+    },
+    {
+      "index": 102,
+      "prevHash": "d8249fc2178adce8cf7ea4f95e36f1029210479b1c54092be9bd990caeeeaf9e",
+      "merkleRoot": "52148ae69d9efc0207741daca06c6b76a7948549e9d309e248bf6f8a0041ad94",
+      "leafCount": 49,
+      "note": "update proxy.ts",
+      "hash": "b94cdfba77228b9c45b0aad93dcf66551f80f7eae11e550752e6017591f4c7b9"
+    },
+    {
+      "index": 103,
+      "prevHash": "b94cdfba77228b9c45b0aad93dcf66551f80f7eae11e550752e6017591f4c7b9",
+      "merkleRoot": "b36b57246cb84db1621f17a93f5881c4037eb446d52e42ed49941317c7702024",
+      "leafCount": 49,
+      "note": "update ci.yml",
+      "hash": "fe9ffd71a59311ff47c39f6f7732db396ce5523d2fd211cbed5d8125be1d923a"
+    },
+    {
+      "index": 104,
+      "prevHash": "fe9ffd71a59311ff47c39f6f7732db396ce5523d2fd211cbed5d8125be1d923a",
+      "merkleRoot": "24c7d7c92056d026d5ca2c9a1b4743301b404080fbb7e7aad67c59a7d46e254a",
+      "leafCount": 49,
+      "note": "update proxy.ts",
+      "hash": "799bb36e1c1beaaef7d8eded22fa4ec2c18412b39da990b5ab8c6034f9d38b61"
+    },
+    {
+      "index": 105,
+      "prevHash": "799bb36e1c1beaaef7d8eded22fa4ec2c18412b39da990b5ab8c6034f9d38b61",
+      "merkleRoot": "553015cbe05446f0e43ba3f9b00302725a974980f52dd9520531782e7899bdf2",
+      "leafCount": 49,
+      "note": "update pages.yml",
+      "hash": "b8506ca1e4e8eea7ba11d7c1a421a72fd7dd958c6783aa3dd964a7445115684a"
+    },
+    {
+      "index": 106,
+      "prevHash": "b8506ca1e4e8eea7ba11d7c1a421a72fd7dd958c6783aa3dd964a7445115684a",
+      "merkleRoot": "7c2d93a93f04cada3f6d2de4fe5dacd552e5a3cd67e528599487aef5d4779edc",
+      "leafCount": 49,
+      "note": "update release.yml",
+      "hash": "2a2548b94c15b3ced5e7882da3c58e55065aaa39c03b10b5b16dbca0baba4dcf"
+    },
+    {
+      "index": 107,
+      "prevHash": "2a2548b94c15b3ced5e7882da3c58e55065aaa39c03b10b5b16dbca0baba4dcf",
+      "merkleRoot": "89f05c9e3292912e31810e8c10f400e5e1d0c4c249bb9938119a23f5b72319f8",
+      "leafCount": 49,
+      "note": "update ci.yml",
+      "hash": "22de0027a1373b636522f11b97a30d309049fd51b146a9c62a71503097b3b9a0"
+    },
+    {
+      "index": 108,
+      "prevHash": "22de0027a1373b636522f11b97a30d309049fd51b146a9c62a71503097b3b9a0",
+      "merkleRoot": "99a8724e19507999c17bfba200e5819c6acbb33e36b3d87be2dac37860815f71",
+      "leafCount": 52,
+      "note": "update manifest.webmanifest,inject-pwa.cjs,inline-html.cjs,integrity-chain.cjs",
+      "hash": "981d7c69db7aa3a37550b01ee3ed159204cbccd363ba24913fc6acb5191ed370"
+    },
+    {
+      "index": 109,
+      "prevHash": "981d7c69db7aa3a37550b01ee3ed159204cbccd363ba24913fc6acb5191ed370",
+      "merkleRoot": "e63ba4b38732a2cd047c567fba127fb4310e5bc8d8c976cf3994c6c7245369b1",
+      "leafCount": 52,
+      "note": "update release.yml",
+      "hash": "97f5c79e5f3ffca8aa82732af3b077e39c211fd848fc824ceeeab0247ecf6987"
+    },
+    {
+      "index": 110,
+      "prevHash": "97f5c79e5f3ffca8aa82732af3b077e39c211fd848fc824ceeeab0247ecf6987",
+      "merkleRoot": "f03d68a5406a31889e17f6201ef41ca88744b427809d21ad103a4fdb42367438",
+      "leafCount": 55,
+      "note": "update integrity-chain.cjs,make-autoinstall.sh,make-live-usb.sh,migrate.sh",
+      "hash": "f6565ab1a87350db3c061353a1876d73d7707c7861cecdb9fe90dc9cb3fa364a"
+    },
+    {
+      "index": 111,
+      "prevHash": "f6565ab1a87350db3c061353a1876d73d7707c7861cecdb9fe90dc9cb3fa364a",
+      "merkleRoot": "f44413e6c060daae360fdedd6f6cb7173ddd886cf4cceb5fb41633176ec95ffa",
+      "leafCount": 55,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "ee534ceb03de590a09aa7a07f83a236e8bcd8650d01ef34398ded284c5847e45"
+    },
+    {
+      "index": 112,
+      "prevHash": "ee534ceb03de590a09aa7a07f83a236e8bcd8650d01ef34398ded284c5847e45",
+      "merkleRoot": "0c62d527ce4e905ad4d17ba1c375534d227c27f2137f899b20b666ce9036af7d",
+      "leafCount": 55,
+      "note": "update exportPaths.ts",
+      "hash": "854dbbbc470a41149819ec6489047a55c35aa74918e85497b9cbd9e913be6b51"
+    },
+    {
+      "index": 113,
+      "prevHash": "854dbbbc470a41149819ec6489047a55c35aa74918e85497b9cbd9e913be6b51",
+      "merkleRoot": "f5ca43b4a203083a2abc2e1110d7d1ce17ad7ef0fd916357fdb1c105b97ad456",
+      "leafCount": 55,
+      "note": "update dataCrypto.ts,vault.ts",
+      "hash": "08670d9986839cddc0266eff090e6d79dd169b03b6c3c4b10107a8353f79fa0d"
+    },
+    {
+      "index": 114,
+      "prevHash": "08670d9986839cddc0266eff090e6d79dd169b03b6c3c4b10107a8353f79fa0d",
+      "merkleRoot": "ec4cf0ebe755a0530076070677a99fb0b56598b8704a1fb2438df82472c6ad05",
+      "leafCount": 55,
+      "note": "update proxy.ts",
+      "hash": "a3c506b433488138b740e6c2fac4db386c2df90f0743a7ab46e109929c290da5"
+    },
+    {
+      "index": 115,
+      "prevHash": "a3c506b433488138b740e6c2fac4db386c2df90f0743a7ab46e109929c290da5",
+      "merkleRoot": "cf1fe661aac6b08f638fe3c5f4357ab43f2f1b9841deae3770fc120b44de550e",
+      "leafCount": 55,
+      "note": "update inject-pwa.cjs,inline-html.cjs",
+      "hash": "ac11ce83296ebf172501cb43a05b5e2f53209991d2ba7b89ec2879314eb0e8c5"
+    },
+    {
+      "index": 116,
+      "prevHash": "ac11ce83296ebf172501cb43a05b5e2f53209991d2ba7b89ec2879314eb0e8c5",
+      "merkleRoot": "1278d07bf02bb85bcf983d0e53b4d683bac80693c19a79e93c06511625f985e9",
+      "leafCount": 56,
+      "note": "update integrity-chain.cjs,safe-vault-write.cjs",
+      "hash": "7128afd9d23124e069001efba7da5d51eaf40681bc20ccb70d5355fa8d5dc0d7"
+    },
+    {
+      "index": 117,
+      "prevHash": "7128afd9d23124e069001efba7da5d51eaf40681bc20ccb70d5355fa8d5dc0d7",
+      "merkleRoot": "fce93a383e3a5521dae10f3a434c81e87cccab507cedef2d055ae01adb29cca3",
+      "leafCount": 56,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "f5a376e5e8c1651872ab054280d3b76687bc54101750fa0b7a3a17dcb9f7a7f9"
+    },
+    {
+      "index": 118,
+      "prevHash": "f5a376e5e8c1651872ab054280d3b76687bc54101750fa0b7a3a17dcb9f7a7f9",
+      "merkleRoot": "85bb93031d8ad922f1cc9df44b3e72ef02488d875d8c7cdfd228c1c582631e8f",
+      "leafCount": 56,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "1e845491ca358c0837dff004c1ac71b5e7388eab512a5a3feaacd3f3f6d12811"
+    },
+    {
+      "index": 119,
+      "prevHash": "1e845491ca358c0837dff004c1ac71b5e7388eab512a5a3feaacd3f3f6d12811",
+      "merkleRoot": "4f8c4d777803e6647d4f83ce32ad9006a0df5f71b7e2064d8682c6fcd920b576",
+      "leafCount": 56,
+      "note": "update manifest.webmanifest",
+      "hash": "f2210321e55a68388264cf27b5757d227a22a5b5b81150d0a51757d098dee645"
+    },
+    {
+      "index": 120,
+      "prevHash": "f2210321e55a68388264cf27b5757d227a22a5b5b81150d0a51757d098dee645",
+      "merkleRoot": "eda1181974cfa51c06e258173f9013569afc735c3b1ad25a27779056c2a7c17d",
+      "leafCount": 56,
+      "note": "update release.yml",
+      "hash": "0aee7468bb3a0750f39e7e626b11d62bb40ddc84979d43d85ca46dde78e76b58"
+    },
+    {
+      "index": 121,
+      "prevHash": "0aee7468bb3a0750f39e7e626b11d62bb40ddc84979d43d85ca46dde78e76b58",
+      "merkleRoot": "4f4f4818cebddc6e58ed5d8f404f03220a222f1abe20a169e131e6448ac87409",
+      "leafCount": 56,
+      "note": "update release.yml,types.ts,oauth.ts,pkce.ts,vault.ts,httpLimits.ts",
+      "hash": "e72a3eedfc053c484a00dd525ea0bd82f2013e38a1e039d9ce59cce2e21c6eff"
+    },
+    {
+      "index": 122,
+      "prevHash": "e72a3eedfc053c484a00dd525ea0bd82f2013e38a1e039d9ce59cce2e21c6eff",
+      "merkleRoot": "1ebdc946a82a5d0c767c1bd33523a1badf16bee47d117fd75e0176ce696c6257",
+      "leafCount": 56,
+      "note": "update types.ts",
+      "hash": "f93a4f1b4f28a2c20a82295f27defd4ec1d17f96653171b536a19fc1cf6a9a6c"
+    },
+    {
+      "index": 123,
+      "prevHash": "f93a4f1b4f28a2c20a82295f27defd4ec1d17f96653171b536a19fc1cf6a9a6c",
+      "merkleRoot": "c0c67fa03bc8b0a110ae4c567af608cd9abde6ca235ca7a78fddff3b5a5effdd",
+      "leafCount": 56,
+      "note": "update integrity-chain.cjs",
+      "hash": "0eca7aa51e1d115685ab8da85e8d7a44eaf6c6d7e0f03831d322492863c1c47a"
+    },
+    {
+      "index": 124,
+      "prevHash": "0eca7aa51e1d115685ab8da85e8d7a44eaf6c6d7e0f03831d322492863c1c47a",
+      "merkleRoot": "0e00cb7c4c616f075d3f12d452c9f5fd66715760fb6c4f377a793254c8eb7865",
+      "leafCount": 61,
+      "note": "update checksum-release.cjs,integrity-chain.cjs,lint-artifact-csp.cjs,lint-sample-data.cjs,smoke-app.cjs,verify-release-artifacts.cjs",
+      "hash": "0cf58b147a316eea731037f6513c619d2ddad067992ebf6eb99f72c5f2f5b2cf"
+    },
+    {
+      "index": 125,
+      "prevHash": "0cf58b147a316eea731037f6513c619d2ddad067992ebf6eb99f72c5f2f5b2cf",
+      "merkleRoot": "1f3273938b4f1a1f4251e31dd1de8ad1f1315aef5bfacc325478b24e3d638734",
+      "leafCount": 61,
+      "note": "update integrity-chain.cjs",
+      "hash": "477bcacac053e5273631a655c1c5a58921363dd86c341ab8fb9a9047e6878087"
+    },
+    {
+      "index": 126,
+      "prevHash": "477bcacac053e5273631a655c1c5a58921363dd86c341ab8fb9a9047e6878087",
+      "merkleRoot": "f575eab48833ed494e6d9f819320b84454da776838e4c477d11e9eb3022f7fcb",
+      "leafCount": 61,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "70868e145be8be655fcee085eb40b45612f8710f937d80b46ae40d8addd747b6"
+    },
+    {
+      "index": 127,
+      "prevHash": "70868e145be8be655fcee085eb40b45612f8710f937d80b46ae40d8addd747b6",
+      "merkleRoot": "79e35118e89838544d14420faae8a752933b2239056d5029d010b45ab673e814",
+      "leafCount": 61,
+      "note": "update types.ts,httpLimits.ts",
+      "hash": "72f858d415bcb6d3e0136750e069559def4ca68943e1b85bdd3c58c08e4a6613"
+    },
+    {
+      "index": 128,
+      "prevHash": "72f858d415bcb6d3e0136750e069559def4ca68943e1b85bdd3c58c08e4a6613",
+      "merkleRoot": "7515ebbac8ea1d18dea797630506f9e2eb41f03590edb84695c822ce0699b753",
+      "leafCount": 61,
+      "note": "update httpLimits.ts",
+      "hash": "93a92f590da7623874d727da7bee4f0cdc87cee1cd12f1d2e6eb6b9d63991a4d"
+    },
+    {
+      "index": 129,
+      "prevHash": "93a92f590da7623874d727da7bee4f0cdc87cee1cd12f1d2e6eb6b9d63991a4d",
+      "merkleRoot": "e1390ffa2f146ddfa3fd45bc5a4b19c6ec1e8cbcd9cca227e195a42f56b8d16a",
+      "leafCount": 61,
+      "note": "update assistantMarkdown.ts",
+      "hash": "24b8addc0d5b5f1d456e6c6afd02dbc9f755efd20f778f587c73bd9b02457409"
+    },
+    {
+      "index": 130,
+      "prevHash": "24b8addc0d5b5f1d456e6c6afd02dbc9f755efd20f778f587c73bd9b02457409",
+      "merkleRoot": "53dda0437603aaf5c4c981244a929fd021e71b466a0c4feb7d0e8d9fc0cb12a4",
+      "leafCount": 61,
+      "note": "update redact.ts",
+      "hash": "bd88542958788ad268b66b548b370592cfc35881dfbc3090c745eb871b741fd4"
+    },
+    {
+      "index": 131,
+      "prevHash": "bd88542958788ad268b66b548b370592cfc35881dfbc3090c745eb871b741fd4",
+      "merkleRoot": "ba33405371f29494b94a294792ada4f0f5d8cace6857f0ec9ba4105e2e3c76fa",
+      "leafCount": 61,
+      "note": "update exportPaths.ts",
+      "hash": "05b2f8fffdd9e9bd904056a8ec2d275753da4b78fc52c7a6dd6458fd4da61db2"
+    },
+    {
+      "index": 132,
+      "prevHash": "05b2f8fffdd9e9bd904056a8ec2d275753da4b78fc52c7a6dd6458fd4da61db2",
+      "merkleRoot": "ea5c5619f8309e3f7a95244cb460ec4588c1a726e519731a7b8fe2d1d6c0f6a6",
+      "leafCount": 61,
+      "note": "update pkce.ts",
+      "hash": "9654bc014293813db4f00b4645fd352caa05d5901936e8e7ba8722c9c1a69966"
+    },
+    {
+      "index": 133,
+      "prevHash": "9654bc014293813db4f00b4645fd352caa05d5901936e8e7ba8722c9c1a69966",
+      "merkleRoot": "bcd1eee5c221c0b562797efbfc08d07505560d56325baf478eb4f0010eaa1676",
+      "leafCount": 61,
+      "note": "update atomicWrite.ts,oauth.ts",
+      "hash": "905d40c2ce690ddb171526beb3b15641f781625eadea6b8e0b935814382d3c54"
+    },
+    {
+      "index": 134,
+      "prevHash": "905d40c2ce690ddb171526beb3b15641f781625eadea6b8e0b935814382d3c54",
+      "merkleRoot": "d8f041bfce652fac9e87d5c707cfa709ac69b92435e7727dc09d7396f00fd2f8",
+      "leafCount": 61,
+      "note": "update proxy.ts,httpLimits.ts",
+      "hash": "84063d8cdda12e5adc8242da77e1a4a2e484f791fc7fcff2709a2262a23e907d"
+    },
+    {
+      "index": 135,
+      "prevHash": "84063d8cdda12e5adc8242da77e1a4a2e484f791fc7fcff2709a2262a23e907d",
+      "merkleRoot": "043a76d9af502aee3ae09d59722aa5bbd8036f894e62faf4d7a4bd378ca4d704",
+      "leafCount": 61,
+      "note": "update vault.ts",
+      "hash": "3c2d0c9785f177881030288c48cbb3719f9eb54a43865b513b4af5ceced79747"
+    },
+    {
+      "index": 136,
+      "prevHash": "3c2d0c9785f177881030288c48cbb3719f9eb54a43865b513b4af5ceced79747",
+      "merkleRoot": "c3152c18ec46ead4f733206d4b8a4b9040070d1a802a49c6d806091b591a6747",
+      "leafCount": 61,
+      "note": "update vault.ts",
+      "hash": "9f3b1eedd3df38b392b43880385853560665559ec1ed14cbc8008b0e9a81d6d8"
+    },
+    {
+      "index": 137,
+      "prevHash": "9f3b1eedd3df38b392b43880385853560665559ec1ed14cbc8008b0e9a81d6d8",
+      "merkleRoot": "9cf1555905826674d98842e5ba32167eb81664ee3bb15d60a3f05ac74d68bfb6",
+      "leafCount": 61,
+      "note": "update main.ts",
+      "hash": "900649295e813ac456ad31cade811f8ce945b09a8ca62d90ae64936eb99bd335"
+    },
+    {
+      "index": 138,
+      "prevHash": "900649295e813ac456ad31cade811f8ce945b09a8ca62d90ae64936eb99bd335",
+      "merkleRoot": "e8bc6ccc0afcddabc57f77441556cfd436394f615e1c938a878a48d2e8188705",
+      "leafCount": 61,
+      "note": "update main.ts",
+      "hash": "ce9a7e0bd30a6c36b2ef448b9baa4d1e7e1056c2b2a40fdaec44ff85b80e65b8"
+    },
+    {
+      "index": 139,
+      "prevHash": "ce9a7e0bd30a6c36b2ef448b9baa4d1e7e1056c2b2a40fdaec44ff85b80e65b8",
+      "merkleRoot": "a3308a39c2c2895434d96a3b80795b12375f864ca942107566755765a95e5bd1",
+      "leafCount": 61,
+      "note": "update atomicWrite.ts",
+      "hash": "fafa5a0c3110cea91d89fc66e9b2c8487c295f495e576aa39fdcd992cd38096b"
+    },
+    {
+      "index": 140,
+      "prevHash": "fafa5a0c3110cea91d89fc66e9b2c8487c295f495e576aa39fdcd992cd38096b",
+      "merkleRoot": "c776e99e54a7f9bce859c1fae0e31a695afb2c45c3f9e90d426a1ced4ebb7b56",
+      "leafCount": 62,
+      "note": "update integrity-chain.cjs,assistant.ts",
+      "hash": "2601e7c68364cc6bc68aa30faa2279bb33e8cfa4a44060d0f6855fd69ae5ad2c"
+    },
+    {
+      "index": 141,
+      "prevHash": "2601e7c68364cc6bc68aa30faa2279bb33e8cfa4a44060d0f6855fd69ae5ad2c",
+      "merkleRoot": "db33e6606dcb0ff73aaf53536621fdc8b58134dd4d4dc162c2551f374a088bff",
+      "leafCount": 65,
+      "note": "update integrity-chain.cjs,chat.ts,credentials.ts,providers.ts",
+      "hash": "a608dedaf93d15f663b652f90037f18d5b4761a8fd2bd9bcd04d84fdaeb12a36"
+    },
+    {
+      "index": 142,
+      "prevHash": "a608dedaf93d15f663b652f90037f18d5b4761a8fd2bd9bcd04d84fdaeb12a36",
+      "merkleRoot": "4809c27beb714f9919fba78a3d48c38bfddd81c95843037a0568d95e09c7f99e",
+      "leafCount": 65,
+      "note": "update ci.yml",
+      "hash": "69589af155d3ae5d4aecabb3480e3076e00df8077d77e4063a7614d32668405c"
+    },
+    {
+      "index": 143,
+      "prevHash": "69589af155d3ae5d4aecabb3480e3076e00df8077d77e4063a7614d32668405c",
+      "merkleRoot": "8aea0c2f52f8138b0a83ede077fd7185df8860d354be7dff06a7ab2367ba44a7",
+      "leafCount": 65,
+      "note": "update ci.yml",
+      "hash": "400e4edecfbd6f11ba0d6ad20fab2e15d63d9348bd189ce6ea70d2fe81f53c1d"
+    },
+    {
+      "index": 144,
+      "prevHash": "400e4edecfbd6f11ba0d6ad20fab2e15d63d9348bd189ce6ea70d2fe81f53c1d",
+      "merkleRoot": "81a3ce85f9924fbe46cb32bfcee969834721281e22207f3b27256fd5a7cec3d6",
+      "leafCount": 65,
+      "note": "update proxy.ts",
+      "hash": "038f7e0885f100bb0893407c8c4ef59d3f9e844103696fab5386577200762bfa"
+    },
+    {
+      "index": 145,
+      "prevHash": "038f7e0885f100bb0893407c8c4ef59d3f9e844103696fab5386577200762bfa",
+      "merkleRoot": "f57c861f3614642ed1ab77f4ae4b70cc36b72d13d780821b47d55913d6d40e57",
+      "leafCount": 65,
+      "note": "update fsa.ts,proxy.ts",
+      "hash": "d164f7802730003f9e0e82bb6b4729a67e26d7d096caf3536e26be82e2010eac"
+    },
+    {
+      "index": 146,
+      "prevHash": "d164f7802730003f9e0e82bb6b4729a67e26d7d096caf3536e26be82e2010eac",
+      "merkleRoot": "91f3f1436e940d0351e452f74c6fbc14be1a0b4991511538733b1a2aa0770dfb",
+      "leafCount": 65,
+      "note": "update proxy.ts",
+      "hash": "df69a8f51b94e6db293b218d00b620f2785485febab8111185d59a68decac755"
+    },
+    {
+      "index": 147,
+      "prevHash": "df69a8f51b94e6db293b218d00b620f2785485febab8111185d59a68decac755",
+      "merkleRoot": "06327687108ab3e1fe074aa4a0d9457bd4dc7e3b136487f84f614f3da9247113",
+      "leafCount": 65,
+      "note": "update proxy.ts",
+      "hash": "fd31b6ddfc92568ad9869039e8fa12bc65ad33d736e9e746579f53a12194a377"
+    },
+    {
+      "index": 148,
+      "prevHash": "fd31b6ddfc92568ad9869039e8fa12bc65ad33d736e9e746579f53a12194a377",
+      "merkleRoot": "92e0b65f731bfab2b71ac0846381e1cea22596cdf95e6847e4ab66ed8461d63d",
+      "leafCount": 65,
+      "note": "update proxy.ts",
+      "hash": "ad0ff862e661ea852f1d4edd20ba3ac06cc23005750b5c0d5245d0b1b34385b1"
+    },
+    {
+      "index": 149,
+      "prevHash": "ad0ff862e661ea852f1d4edd20ba3ac06cc23005750b5c0d5245d0b1b34385b1",
+      "merkleRoot": "be167b4609dfb65ce5806cc2384454500af89f07dfcda526c4355b9c7d448f3a",
+      "leafCount": 65,
+      "note": "update proxy.ts",
+      "hash": "6eb22f58157533eb616fbdb27d51829ba54c299e86db6f203f70cc215058391a"
+    },
+    {
+      "index": 150,
+      "prevHash": "6eb22f58157533eb616fbdb27d51829ba54c299e86db6f203f70cc215058391a",
+      "merkleRoot": "f332d6a8a37247dc28eb05429fe9929b2c12852113b1205349949a58ee7211a2",
+      "leafCount": 65,
+      "note": "update main.ts,secrets.ts",
+      "hash": "98bae01596737bac4950f3331a9ec75f1fb116f39d485e5b37cf44cca8b38997"
+    },
+    {
+      "index": 151,
+      "prevHash": "98bae01596737bac4950f3331a9ec75f1fb116f39d485e5b37cf44cca8b38997",
+      "merkleRoot": "fdd11550ff27c3e42932f5f7df0016299fadfc345ab48b6c6a9ca9801b694245",
+      "leafCount": 65,
+      "note": "update LockScreen.tsx,vault.ts",
+      "hash": "89246daa726d738bc71225c6e995e1e64cb3c884b982b4d4e878a835113cf2c8"
+    },
+    {
+      "index": 152,
+      "prevHash": "89246daa726d738bc71225c6e995e1e64cb3c884b982b4d4e878a835113cf2c8",
+      "merkleRoot": "f606793c30cff64afe08d33da97519daa7d994eb93c21b80585b04b65cdf7589",
+      "leafCount": 65,
+      "note": "update pkceSession.ts",
+      "hash": "efc501487f020d4700fe6ca517c3e344bd0c918752ded7767e913ef11dbcc127"
+    },
+    {
+      "index": 153,
+      "prevHash": "efc501487f020d4700fe6ca517c3e344bd0c918752ded7767e913ef11dbcc127",
+      "merkleRoot": "f22f939447993c7a85e8d2d34a315d9e78995a8761a3a110967401e8b140be1e",
+      "leafCount": 65,
+      "note": "update pkceSession.ts",
+      "hash": "93584bb44ebbd8bdd41e2a8736e0760835f829f7a3497b7aaec46ef90135b60b"
+    },
+    {
+      "index": 154,
+      "prevHash": "93584bb44ebbd8bdd41e2a8736e0760835f829f7a3497b7aaec46ef90135b60b",
+      "merkleRoot": "e9cecef70974c4fc53927d89eae817811f144b3136f40b372bfc30bde88db756",
+      "leafCount": 66,
+      "note": "update integrity-chain.cjs,localWrite.ts",
+      "hash": "372531b5494570e1097b5d1c1cbac993556b1086c4c2670f0d1b19f684223ae2"
+    },
+    {
+      "index": 155,
+      "prevHash": "372531b5494570e1097b5d1c1cbac993556b1086c4c2670f0d1b19f684223ae2",
+      "merkleRoot": "6cefc543f6675d950963a92799d8e2a817f4dbc79d4736829126b94936ec2cfe",
+      "leafCount": 66,
+      "note": "update ci.yml",
+      "hash": "e7983061ca3ecf071614949365aba2c060ba07720bca4565fa6f9a26f6d8bb85"
+    },
+    {
+      "index": 156,
+      "prevHash": "e7983061ca3ecf071614949365aba2c060ba07720bca4565fa6f9a26f6d8bb85",
+      "merkleRoot": "50ac0c3c641e6c0a3bf04ebadb09e87efa79ea29fbdd3cc20ffb563d3725841c",
+      "leafCount": 66,
+      "note": "update lockWorkspace.ts",
+      "hash": "e84bab6459b71da0bf436111d1ab869919a7657aeeb5f4ee89bb45e6ed3ed419"
+    },
+    {
+      "index": 157,
+      "prevHash": "e84bab6459b71da0bf436111d1ab869919a7657aeeb5f4ee89bb45e6ed3ed419",
+      "merkleRoot": "28202b616742428d104029571b90c0ea8b21288aa8aa0a7cebeeb1f33bb66569",
+      "leafCount": 66,
+      "note": "update LockScreen.tsx,vault.ts",
+      "hash": "a1917593c3509668ac7b6d401b0a06c04ef9b895d1646c1f9396612e9897147d"
+    },
+    {
+      "index": 158,
+      "prevHash": "a1917593c3509668ac7b6d401b0a06c04ef9b895d1646c1f9396612e9897147d",
+      "merkleRoot": "9e58c4998b7853e9b9a993c2454dcaa1fe544c650790c9023247afd00ba9d1ba",
+      "leafCount": 66,
+      "note": "update LockScreen.tsx,lockWorkspace.ts,vault.ts",
+      "hash": "807afadb0f0a2c8ea118e3c0384a96efd08b8b63b31ce48769a1942e267d2dc2"
+    },
+    {
+      "index": 159,
+      "prevHash": "807afadb0f0a2c8ea118e3c0384a96efd08b8b63b31ce48769a1942e267d2dc2",
+      "merkleRoot": "fe83631956352e68b9e3898df14ec4a053822fd1ebb79d1b1a678512d71921bd",
+      "leafCount": 66,
+      "note": "update lockWorkspace.ts",
+      "hash": "4fe9956bf0ba2aa0c5ce6289513a7f6328bc2b273b378e5e1370100b031e3c49"
+    },
+    {
+      "index": 160,
+      "prevHash": "4fe9956bf0ba2aa0c5ce6289513a7f6328bc2b273b378e5e1370100b031e3c49",
+      "merkleRoot": "0a37c64b7de8a45a14c1f9a3e35965d13d4a5822c0b5b3d1672a96dc794d5b9b",
+      "leafCount": 66,
+      "note": "update autoLock.ts,vault.ts",
+      "hash": "ae1c8f4d8e2dc52675c682a2f94579d6472f74afe6d8ccf24d22ca5b8c619520"
+    },
+    {
+      "index": 161,
+      "prevHash": "ae1c8f4d8e2dc52675c682a2f94579d6472f74afe6d8ccf24d22ca5b8c619520",
+      "merkleRoot": "b353d35eee04621934bea1b3ff3a546835a1b8391cb92cdb9a2f153d9c9a8a9a",
+      "leafCount": 66,
+      "note": "update ci.yml",
+      "hash": "042c87f96d9711cf4d1d4463805e8139acb682794e1a084fc03b147146c77539"
+    },
+    {
+      "index": 162,
+      "prevHash": "042c87f96d9711cf4d1d4463805e8139acb682794e1a084fc03b147146c77539",
+      "merkleRoot": "27c309c5a2d868ea1db98fdc9df42be6843c28d0a15c087458c277086d9aeb22",
+      "leafCount": 66,
+      "note": "update secrets.ts,dataCrypto.ts",
+      "hash": "42c788b02cbc8242b691df5394d56e90e2f7e78b9f7cb080da0d862900243a86"
+    },
+    {
+      "index": 163,
+      "prevHash": "42c788b02cbc8242b691df5394d56e90e2f7e78b9f7cb080da0d862900243a86",
+      "merkleRoot": "4922e693b9c74d3dd5a1e8527d18c08f86348b1cdaf1f4f4f1b52324f2017e79",
+      "leafCount": 66,
+      "note": "update assistant.ts",
+      "hash": "a187e057e798613cb351826f4559cb4aa019b278733e65a00c3d7de0d5f1830e"
+    },
+    {
+      "index": 164,
+      "prevHash": "a187e057e798613cb351826f4559cb4aa019b278733e65a00c3d7de0d5f1830e",
+      "merkleRoot": "476aae4a503b3eb14d491d89845b63dfdac608dbde0cde62efbb7fe685f7d6ad",
+      "leafCount": 66,
+      "note": "update chat.ts,ollama.ts",
+      "hash": "4672ca44bb47bf572cbbc5123c70e3c01d3a2dd4740680ec2cf2c9a1427b8014"
+    },
+    {
+      "index": 165,
+      "prevHash": "4672ca44bb47bf572cbbc5123c70e3c01d3a2dd4740680ec2cf2c9a1427b8014",
+      "merkleRoot": "9d1cf881f3a4f986fb02bfb8907fd89f7f99dafa5164e8bd06ef814547585954",
+      "leafCount": 66,
+      "note": "update integrity-chain.cjs,assistant.ts",
+      "hash": "1702b111a531873e52100098c7267afd60a9022c0d644541884416d326079cdf"
+    },
+    {
+      "index": 166,
+      "prevHash": "1702b111a531873e52100098c7267afd60a9022c0d644541884416d326079cdf",
+      "merkleRoot": "4c31dcb1167e631de0dfb43aaad7c41ccd13bfa8024751bb5d132fefc9db4e31",
+      "leafCount": 66,
+      "note": "update atomicWrite.ts,secrets.ts",
+      "hash": "e6256ca397a19d88858dcbaf2a6a8790323d47533fc90418d61d2126cdb42ac9"
+    },
+    {
+      "index": 167,
+      "prevHash": "e6256ca397a19d88858dcbaf2a6a8790323d47533fc90418d61d2126cdb42ac9",
+      "merkleRoot": "0afc115ab54105d10f237499eddb91a006f6fab9222b712db9e6b63ecf99cdda",
+      "leafCount": 66,
+      "note": "update fsa.ts",
+      "hash": "e86b31d3468802d885d8ea92455f1e74e94687d18bc99f016ef0754b4753d3ed"
+    },
+    {
+      "index": 168,
+      "prevHash": "e86b31d3468802d885d8ea92455f1e74e94687d18bc99f016ef0754b4753d3ed",
+      "merkleRoot": "bb46d1384b5e1fae1a615e5b543514fbf9230104bd0cff4286c6362432b75e73",
+      "leafCount": 68,
+      "note": "update integrity-chain.cjs,eraseAll.ts,main.ts,secrets.ts,preload.ts,eraseReport.ts",
+      "hash": "57c7cf667a7ee4175fe26ccabbb1a3331896028e6ea6fcfc08fa0374d73ab031"
+    },
+    {
+      "index": 169,
+      "prevHash": "57c7cf667a7ee4175fe26ccabbb1a3331896028e6ea6fcfc08fa0374d73ab031",
+      "merkleRoot": "1d2446226be4c549459305f508a5223055206003660b69d917240a77d6bbbee1",
+      "leafCount": 68,
+      "note": "update main.ts,eraseReport.ts",
+      "hash": "1d24807548cffbf3b003e75ac4acfa9bab85000cd20428b2aad364adcf3821f7"
+    },
+    {
+      "index": 170,
+      "prevHash": "1d24807548cffbf3b003e75ac4acfa9bab85000cd20428b2aad364adcf3821f7",
+      "merkleRoot": "a5322af408e4591251609856796df5ae3b8eae43ca80a06f0aea8469e2d46d9e",
+      "leafCount": 68,
+      "note": "update ollama.ts",
+      "hash": "1b4d7633b405a714a96da06e56e279a9b7d1130e6d6759c9c1aeff0f68f4558e"
+    },
+    {
+      "index": 171,
+      "prevHash": "1b4d7633b405a714a96da06e56e279a9b7d1130e6d6759c9c1aeff0f68f4558e",
+      "merkleRoot": "be4bcb1f36477b8f6241c11d6c4558068ea6136c74bee3faaecb61ff90de2fd8",
+      "leafCount": 68,
+      "note": "update main.ts",
+      "hash": "62ea193ca4394f07ed4602f9f2c5fd5c674162589c4be4a84e85358397fa76c2"
+    },
+    {
+      "index": 172,
+      "prevHash": "62ea193ca4394f07ed4602f9f2c5fd5c674162589c4be4a84e85358397fa76c2",
+      "merkleRoot": "9a697517fefa6d027ed6fe8ccbdb62fb35725b4140efe820dab6b2ffabe5089c",
+      "leafCount": 68,
+      "note": "update pkce.ts",
+      "hash": "720192b295ce1200debf312b12c7511a47494d2ba983803d92d71479bb59d4ea"
+    },
+    {
+      "index": 173,
+      "prevHash": "720192b295ce1200debf312b12c7511a47494d2ba983803d92d71479bb59d4ea",
+      "merkleRoot": "3fe75a462c025e45ce64cecea266937e83d3533d006e66c5c6ed27bca76863f4",
+      "leafCount": 68,
+      "note": "update localWrite.ts",
+      "hash": "b17be4721c89ceaf8ca60b1b3006e6daf28f4c2dd53cc636f91c0b47e46fc3ed"
+    },
+    {
+      "index": 174,
+      "prevHash": "b17be4721c89ceaf8ca60b1b3006e6daf28f4c2dd53cc636f91c0b47e46fc3ed",
+      "merkleRoot": "f81458429b0e5a9b3e55c9ab0093c62428abc44594a262c8b472ff9739a644a7",
+      "leafCount": 68,
+      "note": "update pkce.ts,vault.ts",
+      "hash": "13893b909040ef22845de9093b56edbdc793a3df9956712dfaa06ff00d1b6530"
+    },
+    {
+      "index": 175,
+      "prevHash": "13893b909040ef22845de9093b56edbdc793a3df9956712dfaa06ff00d1b6530",
+      "merkleRoot": "ad1c9a552a1fffdc9f8570fcb2e1776c33a9a1a7dd0ca549cbe561377599aff2",
+      "leafCount": 69,
+      "note": "update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts",
+      "hash": "e2f7eacb42e3cb68f6d98b32e3bde9b2476346b11adb82591bc6eb606799ab4f"
+    },
+    {
+      "index": 176,
+      "prevHash": "e2f7eacb42e3cb68f6d98b32e3bde9b2476346b11adb82591bc6eb606799ab4f",
+      "merkleRoot": "20dfa75dd8e55ea18a9c69b32c4f43fef7436207632cb53b2fd842381db8c960",
+      "leafCount": 70,
+      "note": "update integrity-chain.cjs,public-host-guard.cjs,proxy.ts",
+      "hash": "f8b634ca5650570478bcc0bb1ad4a3eb17473df28ec54d26cad8eb3618e7d67d"
+    },
+    {
+      "index": 177,
+      "prevHash": "f8b634ca5650570478bcc0bb1ad4a3eb17473df28ec54d26cad8eb3618e7d67d",
+      "merkleRoot": "32a23823dfb8765f138624522f3edcd6d7ea0287f3f4eb17ae985dc3b56d7fd4",
+      "leafCount": 70,
+      "note": "update manifest.webmanifest",
+      "hash": "781a89c3713f97df70f5b10448fe93f35b6a9264f44523a173b4b1d6f2007532"
+    },
+    {
+      "index": 178,
+      "prevHash": "781a89c3713f97df70f5b10448fe93f35b6a9264f44523a173b4b1d6f2007532",
+      "merkleRoot": "bf6d7facedc77e05336c8aa8f6615f18da907255179ed59e319c9c2a39605361",
+      "leafCount": 70,
+      "note": "update localWrite.ts,pkce.ts,vault.ts",
+      "hash": "bdf2a0cbc9bd7e206381d7227af962e23fb525c9b8b8216b8aa72e040a42abb7"
+    },
+    {
+      "index": 179,
+      "prevHash": "bdf2a0cbc9bd7e206381d7227af962e23fb525c9b8b8216b8aa72e040a42abb7",
+      "merkleRoot": "61652a96ff1a5874c9f7d3ac9eb54bbf459ea09629af0577c67193828be55bc1",
+      "leafCount": 71,
+      "note": "update integrity-chain.cjs,inputCeiling.ts",
+      "hash": "67f759ceadfc90e469810522492f851b6c437add6f4b8d0364d46050f149b3d8"
+    },
+    {
+      "index": 180,
+      "prevHash": "67f759ceadfc90e469810522492f851b6c437add6f4b8d0364d46050f149b3d8",
+      "merkleRoot": "54e2597aafc6db7bd6e8f32ad838ea3bebb27a134cd7b581480d0913f30d7890",
+      "leafCount": 71,
+      "note": "update inputCeiling.ts",
+      "hash": "df0135fbbcecf63056df967ecc0d3f1066a1ec7e896143dc981ed490909f60c2"
+    },
+    {
+      "index": 181,
+      "prevHash": "df0135fbbcecf63056df967ecc0d3f1066a1ec7e896143dc981ed490909f60c2",
+      "merkleRoot": "9df0a01dbedd16f2703f42b9136dc56885e4b2b221a01aa5e63cea69b321fa2e",
+      "leafCount": 71,
+      "note": "update assistant.ts,aiEndpoint.ts,ollama.ts,proxyEndpoint.ts,redact.ts,scanTarget.ts",
+      "hash": "593ba511b74d9924ada139e000ddd32e83649735ac9868d6a57b0fdd545daa47"
+    },
+    {
+      "index": 182,
+      "prevHash": "593ba511b74d9924ada139e000ddd32e83649735ac9868d6a57b0fdd545daa47",
+      "merkleRoot": "9456dfd5cd8cbffa65b5fbada36159f5148c93f9f6af9eb3a3d91b867304a2e9",
+      "leafCount": 71,
+      "note": "update inputCeiling.ts",
+      "hash": "e5449b2f42356f95e845a351d9d3939180d3482ec7a22473a4dfdb29ded37936"
+    },
+    {
+      "index": 183,
+      "prevHash": "e5449b2f42356f95e845a351d9d3939180d3482ec7a22473a4dfdb29ded37936",
+      "merkleRoot": "b687da381815bb234efbe32fbc5f1636c9f7519ab08c05c079eed8e40d0eebf9",
+      "leafCount": 71,
+      "note": "update redact.ts",
+      "hash": "8865af8a70c980f1cd1b1b18997cbb6923eb60c05de61e1dce51633dfd58e3e7"
+    },
+    {
+      "index": 184,
+      "prevHash": "8865af8a70c980f1cd1b1b18997cbb6923eb60c05de61e1dce51633dfd58e3e7",
+      "merkleRoot": "05e1629c029f0bc49bdbfcb1b1cb1edb358942bb473c67a7d51f04a93ddc81d7",
+      "leafCount": 71,
+      "note": "update dataCrypto.ts",
+      "hash": "28f4a4dc3013f77b771b049399a5ba1a9783f1dcf0e692e90b2c082c5c0d161d"
+    },
+    {
+      "index": 185,
+      "prevHash": "28f4a4dc3013f77b771b049399a5ba1a9783f1dcf0e692e90b2c082c5c0d161d",
+      "merkleRoot": "c3d3cf83929d972ce0c1b70a91e46c2cb00b75aab64b51a5365730abb3e17144",
+      "leafCount": 71,
+      "note": "update vault.ts",
+      "hash": "c22afe999a4dcb5206f5ea808ca0763cbfc713c27e0886f23b798cca7de024dd"
+    },
+    {
+      "index": 186,
+      "prevHash": "c22afe999a4dcb5206f5ea808ca0763cbfc713c27e0886f23b798cca7de024dd",
+      "merkleRoot": "1d211e3379972955ecafd5876049c50b8286105b5a5d6a169ad74505bfba8a16",
+      "leafCount": 71,
+      "note": "update recordCipher.ts,vault.ts,cryptoParams.ts",
+      "hash": "540801a9343cac0d55288c76e2ee38595d7ce6986d8a15f8ac0949ddefee0dd0"
+    },
+    {
+      "index": 187,
+      "prevHash": "540801a9343cac0d55288c76e2ee38595d7ce6986d8a15f8ac0949ddefee0dd0",
+      "merkleRoot": "18cc4589d4c75ad6881cfa42300c176d9f24c866220ad44cb6a33b8b8a5f6c80",
+      "leafCount": 71,
+      "note": "update dataCrypto.ts,cryptoParams.ts",
+      "hash": "7f73963a4badea7f69413ae92541bea933822705304c8544d0f761295dbfa2a7"
+    },
+    {
+      "index": 188,
+      "prevHash": "7f73963a4badea7f69413ae92541bea933822705304c8544d0f761295dbfa2a7",
+      "merkleRoot": "aefb1eeded50b9d816520079cf97cf0d91e3ff5ef9a01790379f6246f38c8e80",
+      "leafCount": 71,
+      "note": "update redact.ts",
+      "hash": "50fb909a763fa7134c3a40fb4ab6038a3808efa4bf6ecad5523767474aad5913"
+    },
+    {
+      "index": 189,
+      "prevHash": "50fb909a763fa7134c3a40fb4ab6038a3808efa4bf6ecad5523767474aad5913",
+      "merkleRoot": "16493095e76909bbc2517571cd309b8943dd6dc2d3262b5fe9fa54bfae2fb65c",
+      "leafCount": 71,
+      "note": "update secrets.ts,vault.ts,tokenInput.ts",
+      "hash": "99603a884ce00f2998e4dcefbb12d14fd1b59379a142a447736b90b239439334"
+    },
+    {
+      "index": 190,
+      "prevHash": "99603a884ce00f2998e4dcefbb12d14fd1b59379a142a447736b90b239439334",
+      "merkleRoot": "b1355dbc7c0c258e42ecb566da1e80feba895934c71effb437ecd57b57fa9b43",
+      "leafCount": 71,
+      "note": "update secrets.ts,vaultToken.ts",
+      "hash": "a4581b8db1377e1b9cbb4008a92fdc1b16c26737557a7d3a6cefd34a51594252"
+    },
+    {
+      "index": 191,
+      "prevHash": "a4581b8db1377e1b9cbb4008a92fdc1b16c26737557a7d3a6cefd34a51594252",
+      "merkleRoot": "b8a80c2a515f4d131c9f6c85ed78b5a7609e56704d3c8dcc5b9d4d5089d64733",
+      "leafCount": 71,
+      "note": "update ci.yml,atlassianSite.ts",
+      "hash": "7e915fc8f9d06c05e8f8c4ac5984d1ac1728f052987d614cdf3d139b99bc36fb"
+    },
+    {
+      "index": 192,
+      "prevHash": "7e915fc8f9d06c05e8f8c4ac5984d1ac1728f052987d614cdf3d139b99bc36fb",
+      "merkleRoot": "8cd4d58c6b655672b079d2d9712e069514b1ef21526b2cf687e5bff1919761e8",
+      "leafCount": 71,
+      "note": "update assistant.ts,vault.ts,inputCeiling.ts",
+      "hash": "fc5b41cfc997832054ebe27c4bc8ba9f08135666770c4b9fe0c7257e6f93a4af"
+    },
+    {
+      "index": 193,
+      "prevHash": "fc5b41cfc997832054ebe27c4bc8ba9f08135666770c4b9fe0c7257e6f93a4af",
+      "merkleRoot": "9115266c561a5b6dec69d950bf111c5104c2b1b54f795984127f49b0ae631f3d",
+      "leafCount": 71,
+      "note": "update vault.ts",
+      "hash": "daad1efc40fe40a2dad9c97d66a82d72f7bf16a517f1ad560b6ef1cb372967a2"
+    },
+    {
+      "index": 194,
+      "prevHash": "daad1efc40fe40a2dad9c97d66a82d72f7bf16a517f1ad560b6ef1cb372967a2",
+      "merkleRoot": "d259d7978fe91ebd4ca0e411b2f5bbab9a3311e770937abcb6a89694022bfbcb",
+      "leafCount": 71,
+      "note": "update eraseAll.ts",
+      "hash": "7ef3df28e9c7c61290f7d0c5fbf9e21dc5c027a56fa50e88b93742dfd8736712"
+    },
+    {
+      "index": 195,
+      "prevHash": "7ef3df28e9c7c61290f7d0c5fbf9e21dc5c027a56fa50e88b93742dfd8736712",
+      "merkleRoot": "032d93072d4e0d995e09bc872c1509c1b7a82ec5975cd778d3759cb8ff2a2523",
+      "leafCount": 71,
+      "note": "update migrate.sh",
+      "hash": "9da7169a68d4522e0146dfb91f887f190fbbd9d29e13e8f557982ed464ad29ed"
+    },
+    {
+      "index": 196,
+      "prevHash": "9da7169a68d4522e0146dfb91f887f190fbbd9d29e13e8f557982ed464ad29ed",
+      "merkleRoot": "18f586e7be21a7e162c4cf5ded892256d3ba27172cbcfa35670524e1fd25c63d",
+      "leafCount": 71,
+      "note": "update secrets.ts,vaultToken.ts",
+      "hash": "366767004bfcda84e2e0dbeb8f0d46b8b854bebdd1359c83706ebec7bcb6955d"
+    },
+    {
+      "index": 197,
+      "prevHash": "366767004bfcda84e2e0dbeb8f0d46b8b854bebdd1359c83706ebec7bcb6955d",
+      "merkleRoot": "cde076c101d629d502e72bc024753ad9cc8bf7e76c83053460f825a6f4212678",
+      "leafCount": 72,
+      "note": "update integrity-chain.cjs,oauth.ts,pkce.ts,tokenResponse.ts",
+      "hash": "e455dcde10bef15285883fd5d923b7159f947e7ef22e0996cf6638e3b2499825"
+    },
+    {
+      "index": 198,
+      "prevHash": "e455dcde10bef15285883fd5d923b7159f947e7ef22e0996cf6638e3b2499825",
+      "merkleRoot": "0d6b93e73d8f0a33ddb349cd69e6b4250f4e54312d80e16dac7682ddc6d50da6",
+      "leafCount": 72,
+      "note": "update types.ts",
+      "hash": "d28a33840d12b6a8cc2154cce42bbd79029a12f3bc16448022ae63afe36fcdf8"
+    },
+    {
+      "index": 199,
+      "prevHash": "d28a33840d12b6a8cc2154cce42bbd79029a12f3bc16448022ae63afe36fcdf8",
+      "merkleRoot": "f87f4e628848e70e8c268e9d877bf969c9f7d26dab8fbc867988b81ced3aec87",
+      "leafCount": 72,
+      "note": "update main.ts",
+      "hash": "a74ff7db3b620e023c648f4b65986d22d61e0cf5b3f4e1f3f2cf82e0f6a77cec"
+    },
+    {
+      "index": 200,
+      "prevHash": "a74ff7db3b620e023c648f4b65986d22d61e0cf5b3f4e1f3f2cf82e0f6a77cec",
+      "merkleRoot": "ed046f9a62fdfff2a3023eaed46c2cabd082be88916e7bc735f47b674e67e4b1",
+      "leafCount": 72,
+      "note": "update assistant.ts",
+      "hash": "57415ae713904a6521734068c38598f178ace28ff623d7f14436b8733f4b8f4a"
+    },
+    {
+      "index": 201,
+      "prevHash": "57415ae713904a6521734068c38598f178ace28ff623d7f14436b8733f4b8f4a",
+      "merkleRoot": "54478df571f93fd50b793fe64ca5294f380acf921fe62e6b60ddf1143f336cc9",
+      "leafCount": 72,
+      "note": "update redact.ts",
+      "hash": "5794484979a09ef7c19738ac0df39b74d87e11844ee58f02b4413034fe45b70a"
+    },
+    {
+      "index": 202,
+      "prevHash": "5794484979a09ef7c19738ac0df39b74d87e11844ee58f02b4413034fe45b70a",
+      "merkleRoot": "94818d10d81b4eca14a0ff2dd12439442ea51753866f5bf3ac42fa80b622f529",
+      "leafCount": 72,
+      "note": "update types.ts,oauth.ts,proxy.ts,pkce.ts,chat.ts,redact.ts",
+      "hash": "1da3835fa97a4169816439e85e42139accd84237c8cf8ac88290d7a82b604329"
+    },
+    {
+      "index": 203,
+      "prevHash": "1da3835fa97a4169816439e85e42139accd84237c8cf8ac88290d7a82b604329",
+      "merkleRoot": "ffd387afc1a8dfc35b7754d66df2ec054776752c39f1c26bf44cf8dddf7e4370",
+      "leafCount": 72,
+      "note": "update tokenInput.ts",
+      "hash": "5974986ecab81edf9ba5d56a12ab0e6f2d45f463eef7cb38ec959a2c391729fa"
+    },
+    {
+      "index": 204,
+      "prevHash": "5974986ecab81edf9ba5d56a12ab0e6f2d45f463eef7cb38ec959a2c391729fa",
+      "merkleRoot": "8ef84f2f2871a2f7c5e7d1bfd9964d19b7b8c82ff0e7618a47b8c3a0fdc13511",
+      "leafCount": 72,
+      "note": "update main.ts,oauth.ts,scanTarget.ts",
+      "hash": "b9a1bfd8ee0fbae5884bbf1a5fe2a33ee4916c43b0410333c0e5aa155c46c1e8"
+    },
+    {
+      "index": 205,
+      "prevHash": "b9a1bfd8ee0fbae5884bbf1a5fe2a33ee4916c43b0410333c0e5aa155c46c1e8",
+      "merkleRoot": "8425f5134a7245a9fd3facdeb9fcff953344216090ecaec4f93110b45e514212",
+      "leafCount": 72,
+      "note": "update atlassianSite.ts",
+      "hash": "0c1052919fac85f200faadf7c378634707c0475caa1f7bb5248476e7d4a04cae"
+    },
+    {
+      "index": 206,
+      "prevHash": "0c1052919fac85f200faadf7c378634707c0475caa1f7bb5248476e7d4a04cae",
+      "merkleRoot": "17f73bba666c801a17f118625fd3c9c773317071df6653f82c94cc57fc6b475f",
+      "leafCount": 72,
+      "note": "update scanTarget.ts",
+      "hash": "7dc897572ce9e709ddc9a405b41239f7511b9d6a83612eec5606ad947b0cc35b"
+    },
+    {
+      "index": 207,
+      "prevHash": "7dc897572ce9e709ddc9a405b41239f7511b9d6a83612eec5606ad947b0cc35b",
+      "merkleRoot": "bea2854f8d1ba41fde896f754627d7c07ac96846d0afc0f4f31b32257164957d",
+      "leafCount": 72,
+      "note": "update integrity-chain.cjs",
+      "hash": "64f02826d03bc6a960c0e1ffdc965738ed99a18e5f997c4b109a06cd027f7571"
+    },
+    {
+      "index": 208,
+      "prevHash": "64f02826d03bc6a960c0e1ffdc965738ed99a18e5f997c4b109a06cd027f7571",
+      "merkleRoot": "4829002d97eb6601037a420f7c928ff3b641d7d54c69813afc70ce5b29d0e63b",
+      "leafCount": 73,
+      "note": "update integrity-chain.cjs,writeFieldLimits.ts",
+      "hash": "1259de2343e18a25e70a874be947d260aa4a6fdfd0de0460d59985c2ea84fb48"
+    },
+    {
+      "index": 209,
+      "prevHash": "1259de2343e18a25e70a874be947d260aa4a6fdfd0de0460d59985c2ea84fb48",
+      "merkleRoot": "f0b4a3c3337eb2e81feaaebe96bfa66ab27e0486c6eea2014a864d98a2da1aa4",
+      "leafCount": 73,
+      "note": "update writeFieldLimits.ts",
+      "hash": "4d705ae7f96457a3feadf1ab9a6f6863b15c280a8136b47d0282cce887fbc495"
+    },
+    {
+      "index": 210,
+      "prevHash": "4d705ae7f96457a3feadf1ab9a6f6863b15c280a8136b47d0282cce887fbc495",
+      "merkleRoot": "2932bf3681e2eea928b4155a3537fb2a2540e78e8927b859c5771add87cc8977",
+      "leafCount": 73,
+      "note": "update redact.ts",
+      "hash": "bfc1d71cf6a4a3822ad2c9219cd8d8c7d9dab563c43a3215adacefb8f2ea6382"
+    },
+    {
+      "index": 211,
+      "prevHash": "bfc1d71cf6a4a3822ad2c9219cd8d8c7d9dab563c43a3215adacefb8f2ea6382",
+      "merkleRoot": "fcc875b846a2d30708e69fafeb227ae476bd7c92961691a4bdaef700f1e43f04",
+      "leafCount": 73,
+      "note": "update ollama.ts,redact.ts",
+      "hash": "c40edecfac623e070a517fbbb643bfcb149b519ad9d4671ef8de53e29383b1c4"
+    },
+    {
+      "index": 212,
+      "prevHash": "c40edecfac623e070a517fbbb643bfcb149b519ad9d4671ef8de53e29383b1c4",
+      "merkleRoot": "3e4b3cc70e3c63c1b4adf48924f1e7c10b9211df21b5ca5dd3830eb82cd38b15",
+      "leafCount": 73,
+      "note": "update oauth.ts",
+      "hash": "f15a9c1268c00628c1c98aa7b1c6bf5b5cf22894f30a8bde5a6c4341209634e9"
+    },
+    {
+      "index": 213,
+      "prevHash": "f15a9c1268c00628c1c98aa7b1c6bf5b5cf22894f30a8bde5a6c4341209634e9",
+      "merkleRoot": "97d738e849b8c4b30abbcd6eea8a5d96213268cbf49d2594e965631fa4820eb8",
+      "leafCount": 73,
+      "note": "update oauth.ts",
+      "hash": "b2360eeb1c6a1345c7813daf709adf085ee97ceeb88522a3121906046e560f09"
+    },
+    {
+      "index": 214,
+      "prevHash": "b2360eeb1c6a1345c7813daf709adf085ee97ceeb88522a3121906046e560f09",
+      "merkleRoot": "8d31f43402ce6c9b744e7da71726a67c048f9beba740b2f7f770e69444558522",
+      "leafCount": 73,
+      "note": "update proxy.ts",
+      "hash": "2f148e8ad881657a1bbe29af5ab2310ee6a26467731115623dfa97328a0ceb0b"
+    },
+    {
+      "index": 215,
+      "prevHash": "2f148e8ad881657a1bbe29af5ab2310ee6a26467731115623dfa97328a0ceb0b",
+      "merkleRoot": "f0b70d7ce3910b83762997105e1ff668e0cac7f76ec91b0d35e6de346676b05b",
+      "leafCount": 73,
+      "note": "update proxy.ts",
+      "hash": "a6fbb3d158dd386509f7a5336244d19fe5f8640051d892865e3b5c1639ac2b6f"
+    },
+    {
+      "index": 216,
+      "prevHash": "a6fbb3d158dd386509f7a5336244d19fe5f8640051d892865e3b5c1639ac2b6f",
+      "merkleRoot": "778a52b4c2cafedb22c6e22a1e08b15d1fbd64d4ee42dae9e60a6d372f94854f",
+      "leafCount": 74,
+      "note": "update integrity-chain.cjs,proxy.ts,headerValue.ts,proxyEndpoint.ts,tokenInput.ts",
+      "hash": "3291d13bf175cf8445bfd50df87c5a5a32db10a99a10298bdbf0822edc542fee"
+    },
+    {
+      "index": 217,
+      "prevHash": "3291d13bf175cf8445bfd50df87c5a5a32db10a99a10298bdbf0822edc542fee",
+      "merkleRoot": "f1d91fad0e60d9767b82987eb3a8ffc4d41932dae81c51026742eaa2d874a479",
+      "leafCount": 74,
+      "note": "update externalUrlGate.ts",
+      "hash": "21426058e225738841688dab50d41f7d893e39f9b21b34e46e2d5e229cef7819"
+    },
+    {
+      "index": 218,
+      "prevHash": "21426058e225738841688dab50d41f7d893e39f9b21b34e46e2d5e229cef7819",
+      "merkleRoot": "c7e80990ace3e9698b21555fa3f98a2fa7902304df58d167918f4ef64d12278a",
+      "leafCount": 74,
+      "note": "update imageUrlGate.ts",
+      "hash": "94dab87df56f68a7b0275ac22ecedf699f6081c7a545ea24031ddacda53c3a83"
+    },
+    {
+      "index": 219,
+      "prevHash": "94dab87df56f68a7b0275ac22ecedf699f6081c7a545ea24031ddacda53c3a83",
+      "merkleRoot": "d8280db5b33036f7a526be09111a92bed4442ec148b43e2a17297d88176db7be",
+      "leafCount": 74,
+      "note": "update imageUrlGate.ts",
+      "hash": "584ff738f2e54656667675cdba440968967c82adbc9cd25b51f82c821fe148bc"
+    },
+    {
+      "index": 220,
+      "prevHash": "584ff738f2e54656667675cdba440968967c82adbc9cd25b51f82c821fe148bc",
+      "merkleRoot": "e4c14e4db43effcd2480988b58a8d0117744f8d9040a36bf46a951d7a9f467e9",
+      "leafCount": 75,
+      "note": "update integrity-chain.cjs,proxy.ts,imageUrlGate.ts,privateTarget.ts",
+      "hash": "9081829e86e19cd9aa577c27972f83c07eb1341eb6e477d5c4fb6701ec801fa7"
+    },
+    {
+      "index": 221,
+      "prevHash": "9081829e86e19cd9aa577c27972f83c07eb1341eb6e477d5c4fb6701ec801fa7",
+      "merkleRoot": "3867dd78d005fa8eb144cf607359e2e45cd5bc420f9daacca513cd5c840cda83",
+      "leafCount": 75,
+      "note": "update types.ts,main.ts,oauth.ts,proxy.ts,pkce.ts,chat.ts",
+      "hash": "010833de8c0136f500fa603172e8252c93ff4ea26898adde21c813fa0d18dac7"
+    },
+    {
+      "index": 222,
+      "prevHash": "010833de8c0136f500fa603172e8252c93ff4ea26898adde21c813fa0d18dac7",
+      "merkleRoot": "9a221dc8a7b884862a488b33c18c22126206bcf952e7861969408a78923f717e",
+      "leafCount": 75,
+      "note": "update main.ts",
+      "hash": "ba43bcaff2f37520db9bb52a0fea5fe107f2b5740fe2ea62459a5b39781e4a6b"
+    },
+    {
+      "index": 223,
+      "prevHash": "ba43bcaff2f37520db9bb52a0fea5fe107f2b5740fe2ea62459a5b39781e4a6b",
+      "merkleRoot": "3bad11657753ff7db5cd4cc3d5c2cf55dea632f1a51a38e3581a0d8128e78549",
+      "leafCount": 75,
+      "note": "update lint-sample-data.cjs",
+      "hash": "dbef2f67700de4b3b59844dc01df9d862378ecae69bd653fd34b63484fccbeba"
+    },
+    {
+      "index": 224,
+      "prevHash": "dbef2f67700de4b3b59844dc01df9d862378ecae69bd653fd34b63484fccbeba",
+      "merkleRoot": "41cc4592e2328e61b615257a99e431430d4a7981136e78e0965cd2f0bf11ea11",
+      "leafCount": 75,
+      "note": "update smoke-app.cjs,httpLimits.ts",
+      "hash": "07ff99037694769049eee26c4cc86b66da79dfd1d5269049a7202ea614b690b9"
+    },
+    {
+      "index": 225,
+      "prevHash": "07ff99037694769049eee26c4cc86b66da79dfd1d5269049a7202ea614b690b9",
+      "merkleRoot": "938ba9be71b39e5439007c85e21a0c8ccce0aeb83acf0581a0634124b88ea31f",
+      "leafCount": 76,
+      "note": "update integrity-chain.cjs,artifact-freshness.cjs",
+      "hash": "6a49e8e08b5ff4c25f640e45875098e5d0ef5c50c0c508629a066a8844269fb7"
+    },
+    {
+      "index": 226,
+      "prevHash": "6a49e8e08b5ff4c25f640e45875098e5d0ef5c50c0c508629a066a8844269fb7",
+      "merkleRoot": "da67b59058ce8567879ccc6ec72ad55a5fc9b2df79bd197a2cfa6f01a02e2af2",
+      "leafCount": 76,
+      "note": "update integrity-chain.cjs,artifact-freshness.cjs",
+      "hash": "6fee5d6ed429511f2729148297816a3825f98d0e5598f9f3ac74452302120f36"
+    },
+    {
+      "index": 227,
+      "prevHash": "6fee5d6ed429511f2729148297816a3825f98d0e5598f9f3ac74452302120f36",
+      "merkleRoot": "bd20f5455715e55838d3eacfaa7f2ae1678f8bef8ab01b63c7eb719a284f40a0",
+      "leafCount": 76,
+      "note": "update localWrite.ts",
+      "hash": "cc12d4379bb34aaa581e3ee327d66b64b5a1825e5665f4dc139ca9b3da14abc8"
+    },
+    {
+      "index": 228,
+      "prevHash": "cc12d4379bb34aaa581e3ee327d66b64b5a1825e5665f4dc139ca9b3da14abc8",
+      "merkleRoot": "b2f88a11db36b8e474247c694ac6cd03cbaacf64f4253e8af54862ac4cf5a9af",
+      "leafCount": 76,
+      "note": "update inject-pwa.cjs,main.ts,LockScreen.tsx",
+      "hash": "4622ed7f0c87d56a1371386a88d53893baabf29c8931512dfdc538445b0b325d"
+    },
+    {
+      "index": 229,
+      "prevHash": "4622ed7f0c87d56a1371386a88d53893baabf29c8931512dfdc538445b0b325d",
+      "merkleRoot": "6e0ef03411cb14e9e9a47a6e3b403355cb82984757736fab029d1386efe9d79d",
+      "leafCount": 76,
+      "note": "update LockScreen.tsx",
+      "hash": "fe61d314102bf9a80944cba98f73270ab715060ce92577f68a46b296574ad356"
+    },
+    {
+      "index": 230,
+      "prevHash": "fe61d314102bf9a80944cba98f73270ab715060ce92577f68a46b296574ad356",
+      "merkleRoot": "19cbcb46e8a814b51e7d42db3bdf44a63b848b55f26ab12891533d964798e7ba",
+      "leafCount": 76,
+      "note": "update ci.yml,pages.yml,release.yml",
+      "hash": "1bb6f54ad8b44fa2ca43d282e90b49152426deccc3b86ced151478c5a362e198"
+    },
+    {
+      "index": 231,
+      "prevHash": "1bb6f54ad8b44fa2ca43d282e90b49152426deccc3b86ced151478c5a362e198",
+      "merkleRoot": "ff0d24df824d74da665c10312bf25952df7476dee861d9f306c99fd6de7cf227",
+      "leafCount": 76,
+      "note": "update LockScreen.tsx",
+      "hash": "1c5bc4d25c104fa56829787ef338ec621d2dea92cbc8a2b8237dfa40e02f344e"
+    },
+    {
+      "index": 232,
+      "prevHash": "1c5bc4d25c104fa56829787ef338ec621d2dea92cbc8a2b8237dfa40e02f344e",
+      "merkleRoot": "b9c5cd1a1e1e1b526ea7bfea1dc8c8eed03d8a271847f8a77b92c7de3bccd4fa",
+      "leafCount": 76,
+      "note": "update eraseAll.ts,main.ts,preload.ts",
+      "hash": "026e19752fd23417dbfac4853273b90dfc0235ae46b16c985461e89080f45598"
+    },
+    {
+      "index": 233,
+      "prevHash": "026e19752fd23417dbfac4853273b90dfc0235ae46b16c985461e89080f45598",
+      "merkleRoot": "4e6ba7f326282c1f0151d962b787538ace3b88ab0ba05ea76fb2489b484e7eb7",
+      "leafCount": 77,
+      "note": "update integrity-chain.cjs,windowPrefs.ts",
+      "hash": "356612b929b814c6a2db1647ef71a9b238e7ed4a379b63f6b46df71ea13567e8"
+    },
+    {
+      "index": 234,
+      "prevHash": "356612b929b814c6a2db1647ef71a9b238e7ed4a379b63f6b46df71ea13567e8",
+      "merkleRoot": "74dea58ee7310355444181b027196030c38af1ced028705b4f0b567f42d86db2",
+      "leafCount": 78,
+      "note": "update integrity-chain.cjs,stateFile.ts",
+      "hash": "1bb13503b433342cd1e036078894834a9cccc9aea901b1af9d6bda84b2b50ca8"
+    },
+    {
+      "index": 235,
+      "prevHash": "1bb13503b433342cd1e036078894834a9cccc9aea901b1af9d6bda84b2b50ca8",
+      "merkleRoot": "f7c1d88e72bafbdec337f3d2a9eae686b9274c8e56ba4998ffb9fa1a6671f15f",
+      "leafCount": 78,
+      "note": "update redact.ts",
+      "hash": "9d5cf2972655164e9fde2a8574b27f0d98f8d2ef391e42f9244ab16916363d6d"
+    },
+    {
+      "index": 236,
+      "prevHash": "9d5cf2972655164e9fde2a8574b27f0d98f8d2ef391e42f9244ab16916363d6d",
+      "merkleRoot": "771ba090924652e0fc8a8e4a421428b58069345a5d1d0ce5238cbbafea81c83d",
+      "leafCount": 78,
+      "note": "update scanTarget.ts",
+      "hash": "e40f7cb370ef3d37f3e43647aa854a51dafb7d66149b564de8431533f09ed272"
+    },
+    {
+      "index": 237,
+      "prevHash": "e40f7cb370ef3d37f3e43647aa854a51dafb7d66149b564de8431533f09ed272",
+      "merkleRoot": "5fbf5ce3610df6c024e8e14484553271e0f5adbe2ae090a36ff7b990cd3de4f9",
+      "leafCount": 78,
+      "note": "update atomicWrite.ts,secrets.ts",
+      "hash": "73dadc5f8e9a2da5e15dfe11c20e0b8bad68e766f9437eea3979ed243cb14424"
+    },
+    {
+      "index": 238,
+      "prevHash": "73dadc5f8e9a2da5e15dfe11c20e0b8bad68e766f9437eea3979ed243cb14424",
+      "merkleRoot": "7844589184c9bc41ca3373c05725491a1488c50465a535d07b17c9e8e179fab5",
+      "leafCount": 78,
+      "note": "update dataCrypto.ts,vault.ts",
+      "hash": "c533a547beb0ad9c920cbb5e95d7f1e1e592eac6b36f4e0de3b21e5544f2792d"
+    },
+    {
+      "index": 239,
+      "prevHash": "c533a547beb0ad9c920cbb5e95d7f1e1e592eac6b36f4e0de3b21e5544f2792d",
+      "merkleRoot": "b3b796d83f7eb1ea9a20d24a1513a4ea9bed8d3a6382f5a699a37890bf21e2ea",
+      "leafCount": 78,
+      "note": "update types.ts,oauth.ts,proxy.ts,pkce.ts,httpLimits.ts",
+      "hash": "0328ccd0ab45e8651829634612c4e9bdb31f0fc4f23b35e85020499bfc1e663d"
+    },
+    {
+      "index": 240,
+      "prevHash": "0328ccd0ab45e8651829634612c4e9bdb31f0fc4f23b35e85020499bfc1e663d",
+      "merkleRoot": "c46b55f220c9611bd16f4d826dfe8f636e78a7ba4cc5d98ae15cf6f7d7cc2da9",
+      "leafCount": 79,
+      "note": "update integrity-chain.cjs,oauth.ts,pkce.ts,constantTimeEquals.ts",
+      "hash": "ddca16c3dfb3c0b59744206dd618d9e5b5ef959ff960ddb62335c90cac009a30"
+    },
+    {
+      "index": 241,
+      "prevHash": "ddca16c3dfb3c0b59744206dd618d9e5b5ef959ff960ddb62335c90cac009a30",
+      "merkleRoot": "6406fd3ccaf97f320069d80269257b7c2cbddb1ea00b8b4d1b4cfb66a3ac6d92",
+      "leafCount": 79,
+      "note": "update oauth.ts,pkce.ts,constantTimeEquals.ts,cryptoParams.ts,httpLimits.ts",
+      "hash": "84bb7ee1fff35671c5e2452780f99d91a786cecc295d9b2e9a4b8b19ee7a9f11"
+    },
+    {
+      "index": 242,
+      "prevHash": "84bb7ee1fff35671c5e2452780f99d91a786cecc295d9b2e9a4b8b19ee7a9f11",
+      "merkleRoot": "6260a8cd77642a9155040b21c19f023e1165079995429112fee3906749ba8d6e",
+      "leafCount": 79,
+      "note": "update proxy.ts",
+      "hash": "eceb073a154f3b015742d66d7011b3d3456fce0e9ffaebd922b54b87aede182b"
+    },
+    {
+      "index": 243,
+      "prevHash": "eceb073a154f3b015742d66d7011b3d3456fce0e9ffaebd922b54b87aede182b",
+      "merkleRoot": "5531cfe750bcdc507458607d37eae0f19023270241b47bea8ee7522ab17ebeaf",
+      "leafCount": 82,
+      "note": "update eslint.config.js,integrity-chain.cjs,vite.config.ts,vitest.config.ts",
+      "hash": "6b3c13c99ea27ac22b410babc4d0929accfdfa057297df196c0987e2fb09a60e"
+    },
+    {
+      "index": 244,
+      "prevHash": "6b3c13c99ea27ac22b410babc4d0929accfdfa057297df196c0987e2fb09a60e",
+      "merkleRoot": "034c9619164aba7bd9d4a5fa78ea2646028212a946703d0440bf13c66cb06034",
+      "leafCount": 82,
+      "note": "update integrity-chain.cjs",
+      "hash": "7a9ec8b816efb086f2de49e06f4f6520bf5b56ee99ae5e4192e3e1d440f9e570"
+    },
+    {
+      "index": 245,
+      "prevHash": "7a9ec8b816efb086f2de49e06f4f6520bf5b56ee99ae5e4192e3e1d440f9e570",
+      "merkleRoot": "3e42e4291c23c54b6e9697aad066502b9a3f75b9ed4e3adf9cb998d4a5efa3bb",
+      "leafCount": 83,
+      "note": "update PROXY_EXAMPLE.md,integrity-chain.cjs",
+      "hash": "6215ffe67e69c32006f3881c43ad33a143423fc1f40a2efa9713208fc4dba72e"
+    },
+    {
+      "index": 246,
+      "prevHash": "6215ffe67e69c32006f3881c43ad33a143423fc1f40a2efa9713208fc4dba72e",
+      "merkleRoot": "2003a5888b38d5c8a2d24ec22048d863d74759088cb7b99917496d3d7e99921b",
+      "leafCount": 83,
+      "note": "update vault.ts",
+      "hash": "dcb6a255432239062235966e974114b9e1be7b151a533b8e6c888ffb31c5e021"
+    },
+    {
+      "index": 247,
+      "prevHash": "dcb6a255432239062235966e974114b9e1be7b151a533b8e6c888ffb31c5e021",
+      "merkleRoot": "22b008549f16ae14599167709f2634a05cc2ca9b538ee16a5c515a779579fc16",
+      "leafCount": 83,
+      "note": "update fsa.ts",
+      "hash": "a37dbe4dd22650c9d4b3261c086be975c0bff355c5114334f1c9773443179f3b"
+    },
+    {
+      "index": 248,
+      "prevHash": "a37dbe4dd22650c9d4b3261c086be975c0bff355c5114334f1c9773443179f3b",
+      "merkleRoot": "6ac210dcc75635efe15e98c5acf732af83e9e843992302d0874fe82067419a8e",
+      "leafCount": 83,
+      "note": "update manifest.webmanifest,inject-pwa.cjs",
+      "hash": "f1b6f5d32bf203ff157665d35177c2e3ffdc1f2509402c6f0d035e56c170e11c"
+    },
+    {
+      "index": 249,
+      "prevHash": "f1b6f5d32bf203ff157665d35177c2e3ffdc1f2509402c6f0d035e56c170e11c",
+      "merkleRoot": "2271b65879a4c026218bc24b41ef09b64c4b4bf3f6f29c9cf240590d8f77dc50",
+      "leafCount": 84,
+      "note": "update settings.json,integrity-chain.cjs",
+      "hash": "5b4b35d23c050a514e7ed93cb2619b72fbd247451a81b3b2cff5b933799b1c30"
+    },
+    {
+      "index": 250,
+      "prevHash": "5b4b35d23c050a514e7ed93cb2619b72fbd247451a81b3b2cff5b933799b1c30",
+      "merkleRoot": "4214f066246f7aa32da94825ea6e453c3966dd19b5f16cd5952c95577fa17ea1",
+      "leafCount": 84,
+      "note": "update integrity-chain.cjs",
+      "hash": "f02b2ea3944ebd26ef846d36620337ab6b65b28ec93b9ce6acf6f1eebcd5378c"
+    },
+    {
+      "index": 251,
+      "prevHash": "f02b2ea3944ebd26ef846d36620337ab6b65b28ec93b9ce6acf6f1eebcd5378c",
+      "merkleRoot": "c8100c9a08e215596f754d0ea41ca62f35196c824952fee2b0b7418ea743492c",
+      "leafCount": 88,
+      "note": "update 00-project.mdc,10-boundaries.mdc,20-gates.mdc,30-conventions.mdc,integrity-chain.cjs",
+      "hash": "17aa34be3fdcc87fb4689cc853a2e351ef8aaab7b0e8a8bf3a238bfc1a333d16"
+    },
+    {
+      "index": 252,
+      "prevHash": "17aa34be3fdcc87fb4689cc853a2e351ef8aaab7b0e8a8bf3a238bfc1a333d16",
+      "merkleRoot": "ff9eea1aa2624c708acc492090b03fd3afd9c4dc9fc0b16929343242d1993bef",
+      "leafCount": 88,
+      "note": "update ollama.ts",
+      "hash": "601c33c1e8dc731b52e87f03ece820a472edb3cfbf2a68e5f59b89e4b3e92cc7"
+    },
+    {
+      "index": 253,
+      "prevHash": "601c33c1e8dc731b52e87f03ece820a472edb3cfbf2a68e5f59b89e4b3e92cc7",
+      "merkleRoot": "6f5a37a33b4ffa5e5575453f87fbd80f540344ffd098b4459e8a74d38145e68b",
+      "leafCount": 89,
+      "note": "update integrity-chain.cjs,versionOrder.ts",
+      "hash": "fab34a09f75da08044bc362eb0ccad1d9b105092df2e0ab14c128acd8213dd6f"
+    },
+    {
+      "index": 254,
+      "prevHash": "fab34a09f75da08044bc362eb0ccad1d9b105092df2e0ab14c128acd8213dd6f",
+      "merkleRoot": "6fbacb7e8851b4792fa93d6e8e85a08504e073795f7219edc5c002cd59f903e3",
+      "leafCount": 91,
+      "note": "update integrity-chain.cjs,isoDate.ts,localDate.ts,ollama.ts",
+      "hash": "ae26e30e071e2e5cd6528063f3b15c1ec9839f395167ea05d063650cc8f5e78a"
+    },
+    {
+      "index": 255,
+      "prevHash": "ae26e30e071e2e5cd6528063f3b15c1ec9839f395167ea05d063650cc8f5e78a",
+      "merkleRoot": "1171c2ce896e57a40a18759032dcf5c0ca14c7bf69193875cf39abc4af79d778",
+      "leafCount": 91,
+      "note": "update imageUrlGate.ts,isoDate.ts,ollama.ts",
+      "hash": "3b9a268d86588536eb146366cf44bc600e028ead220f85975c85cd178ab9c0c7"
+    },
+    {
+      "index": 256,
+      "prevHash": "3b9a268d86588536eb146366cf44bc600e028ead220f85975c85cd178ab9c0c7",
+      "merkleRoot": "5cf97c4467c18e21760e675bac08bee79b019a92b515c959f46698c64e7b57a6",
+      "leafCount": 91,
+      "note": "update chat.ts,httpLimits.ts",
+      "hash": "85a96af8da4f54677911c9f02814f61d30513debc5efa14a2808fa67ea5eb488"
+    },
+    {
+      "index": 257,
+      "prevHash": "85a96af8da4f54677911c9f02814f61d30513debc5efa14a2808fa67ea5eb488",
+      "merkleRoot": "a6b3405fa277402b1cfc7c523aaa43454fe06dad1bf79af5d248738a38c7e19c",
+      "leafCount": 92,
+      "note": "update integrity-chain.cjs,vitest.audit.config.ts",
+      "hash": "5b6a4a278dbef7821f1d05bc93578c644ce25d4eae75ca19a4b10bb18b7310e7"
+    },
+    {
+      "index": 258,
+      "prevHash": "5b6a4a278dbef7821f1d05bc93578c644ce25d4eae75ca19a4b10bb18b7310e7",
+      "merkleRoot": "2b107539c6239f539315e10afc5ab6ecd1fe0a0f30f412f1ebb76cc673a71e0c",
+      "leafCount": 92,
+      "note": "update credentials.ts",
+      "hash": "911557dfbce3c75cacf12150deded2540c39d787230b816cb9b4b968b26ad8e2"
+    },
+    {
+      "index": 259,
+      "prevHash": "911557dfbce3c75cacf12150deded2540c39d787230b816cb9b4b968b26ad8e2",
+      "merkleRoot": "b124d43d54b1d0d24d6487bf2c66ecf2df45c0b972dc8148bd17182fe6327cf8",
+      "leafCount": 92,
+      "note": "update lint-sample-data.cjs",
+      "hash": "6f25fc10019165160117eec5608f015111cbc9c527d0d3a234fa6d53c0670e8e"
+    },
+    {
+      "index": 260,
+      "prevHash": "6f25fc10019165160117eec5608f015111cbc9c527d0d3a234fa6d53c0670e8e",
+      "merkleRoot": "ea639cce61f4dcafa3a41aed2da8395226b24f3eb6c8ea7c7aa22c37278593eb",
+      "leafCount": 93,
+      "note": "update integrity-chain.cjs,population-floor.cjs,lint-sample-data.cjs",
+      "hash": "246874b2fdcd2f94e5ee2e9a28a874b528d2c5ad1368929eabeba86d8fc7b613"
+    },
+    {
+      "index": 261,
+      "prevHash": "246874b2fdcd2f94e5ee2e9a28a874b528d2c5ad1368929eabeba86d8fc7b613",
+      "merkleRoot": "f39e21e6bb61c860d14188a399fc77438b91bdcb1e5cf34dbb43c4dd9ef8397e",
+      "leafCount": 93,
+      "note": "update lint-sample-data.cjs",
+      "hash": "43a51da6e33dabfc4e429d08efe9d1a9c9073c7552ef69b3517a492370252cb2"
+    },
+    {
+      "index": 262,
+      "prevHash": "43a51da6e33dabfc4e429d08efe9d1a9c9073c7552ef69b3517a492370252cb2",
+      "merkleRoot": "fa27132a818584f9576bcd27d75b48c2a7407a9d25b427e96828fc47defe1d1b",
+      "leafCount": 94,
+      "note": "update integrity-chain.cjs,tracked-cross-check.cjs",
+      "hash": "48a6f5b9c27762ea1a95524777014ff9140e108086eab8507e4ac27d2bdb2bd1"
+    },
+    {
+      "index": 263,
+      "prevHash": "48a6f5b9c27762ea1a95524777014ff9140e108086eab8507e4ac27d2bdb2bd1",
+      "merkleRoot": "3f1ddcc92f79b834633845326962c0e6be4cdae2023eb0659107c1d6bf28a730",
+      "leafCount": 94,
+      "note": "update integrity-chain.cjs",
+      "hash": "16e58b8e470d21c5e85e07fdfe91b52e21797357fe8bc1809224ffb2974918fd"
+    },
+    {
+      "index": 264,
+      "prevHash": "16e58b8e470d21c5e85e07fdfe91b52e21797357fe8bc1809224ffb2974918fd",
+      "merkleRoot": "d0ca7f9b2d5fd979c4b9c2f4dadb76524a5436747d0ae19e59bbb718c62350bf",
+      "leafCount": 94,
+      "note": "update integrity-chain.cjs",
+      "hash": "d2c435999dee6dce74f8bdca24d92fbe563807a0a1b2ec96d4954fcaddb9142c"
+    },
+    {
+      "index": 265,
+      "prevHash": "d2c435999dee6dce74f8bdca24d92fbe563807a0a1b2ec96d4954fcaddb9142c",
+      "merkleRoot": "ceaa5c527f45669b30f2fe9bd96b20e4295bad91a0ee1fddbe294d305e15a239",
+      "leafCount": 94,
+      "note": "update integrity-chain.cjs",
+      "hash": "67b63ab282a1337571710a09156b7094b5e9d7716af3e83e627c96765714e4d3"
+    },
+    {
+      "index": 266,
+      "prevHash": "67b63ab282a1337571710a09156b7094b5e9d7716af3e83e627c96765714e4d3",
+      "merkleRoot": "d3eaff764ba7bbca5ae3f2a652b8c44bbc0b6c44e0b60b361ca97945363d98d8",
+      "leafCount": 95,
+      "note": "update integrity-chain.cjs,assistantLimits.ts",
+      "hash": "c0785b5ed154c3177dec9363d4d5f27adeb25a9213a82cb8235aac8036d05a08"
+    },
+    {
+      "index": 267,
+      "prevHash": "c0785b5ed154c3177dec9363d4d5f27adeb25a9213a82cb8235aac8036d05a08",
+      "merkleRoot": "14898f4d30d06ab5bbae83fc4939d2f2583aee1f204a657be6cea81b43909705",
+      "leafCount": 96,
+      "note": "update sw.js,build-landing.cjs,integrity-chain.cjs",
+      "hash": "1c895191a6d9d57ad55d1e3ea49bc13dc123c463c7165ac3dafa136df72ed8b9"
+    },
+    {
+      "index": 268,
+      "prevHash": "1c895191a6d9d57ad55d1e3ea49bc13dc123c463c7165ac3dafa136df72ed8b9",
+      "merkleRoot": "787d2ad147d24654f7a6c849137ae19cd39f76def76f7c523bb06f66236e0100",
+      "leafCount": 97,
+      "note": "update integrity-chain.cjs,json-for-script.cjs",
+      "hash": "1006db0ed44424c6376fee9c993d9d67360b19ffe7f814e5c521bc011bc904bc"
+    },
+    {
+      "index": 269,
+      "prevHash": "1006db0ed44424c6376fee9c993d9d67360b19ffe7f814e5c521bc011bc904bc",
+      "merkleRoot": "21ff816f2822f6482e5b1d47c25a5c5900f1aceb628ea76a5c268643fb0201c4",
+      "leafCount": 97,
+      "note": "update sw.js",
+      "hash": "cae61502ae7543fdca29cd6ee54120991366bf9bf4b387073bc82c24ec9079b6"
+    },
+    {
+      "index": 270,
+      "prevHash": "cae61502ae7543fdca29cd6ee54120991366bf9bf4b387073bc82c24ec9079b6",
+      "merkleRoot": "83e0e4ed89540f57e79c4866d4b9676c4c940edbfb8bf33a9ccbe30593e870ba",
+      "leafCount": 97,
+      "note": "update assistantMarkdown.ts",
+      "hash": "1ab05fdd576581abefb0271d760a15aae70cde28a97faeb208087f5704888095"
+    },
+    {
+      "index": 271,
+      "prevHash": "1ab05fdd576581abefb0271d760a15aae70cde28a97faeb208087f5704888095",
+      "merkleRoot": "ac0fd99febe6197a0a42b7e0d42b68629233892c3dee1ba488d6f3a84a531980",
+      "leafCount": 97,
+      "note": "update manifest.webmanifest,windowPrefs.ts",
+      "hash": "953be3f186c4f1b45d6628ec07a3efb5cba5cff66186311d437dd64bd6cb1760"
+    },
+    {
+      "index": 272,
+      "prevHash": "953be3f186c4f1b45d6628ec07a3efb5cba5cff66186311d437dd64bd6cb1760",
+      "merkleRoot": "6998bda67d217b7cb3c1b3a767c7af85e76fd78ba76f5792dcecdc7fd65506b5",
+      "leafCount": 97,
+      "note": "update isoDate.ts",
+      "hash": "c801e78c3a7d1e0b188cb0435963bf69cc7f11d7f8f4828d6ccaca37e7e56c7e"
+    },
+    {
+      "index": 273,
+      "prevHash": "c801e78c3a7d1e0b188cb0435963bf69cc7f11d7f8f4828d6ccaca37e7e56c7e",
+      "merkleRoot": "5dd02f4e41b68a13971cdfa1f0043b4050a94646e98ca1bf05f68c059b73e2f4",
+      "leafCount": 98,
+      "note": "update integrity-chain.cjs,atomicWrite.ts,eraseAll.ts,secrets.ts,advisorQuestionLimits.ts",
+      "hash": "b70615f4bd984f3ea829921be4116c26ea81f23d24e75f489b4202071b1efeb4"
+    },
+    {
+      "index": 274,
+      "prevHash": "b70615f4bd984f3ea829921be4116c26ea81f23d24e75f489b4202071b1efeb4",
+      "merkleRoot": "0576f5161b4aa5896e2a8a94030f3b0c31f41031344afaf528f08ff44b050c95",
+      "leafCount": 98,
+      "note": "update PROXY_EXAMPLE.md,public-host-guard.cjs,externalUrlGate.ts,privateTarget.ts",
+      "hash": "ca82f385b73b517e3f4867259806df133fd19542b14a6a9e7fe981f59f159b7c"
+    },
+    {
+      "index": 275,
+      "prevHash": "ca82f385b73b517e3f4867259806df133fd19542b14a6a9e7fe981f59f159b7c",
+      "merkleRoot": "7e282aad65b1065d34fc61499afde915aae19a0a66ba4df3dd707ca4747119ac",
+      "leafCount": 99,
+      "note": "update integrity-chain.cjs,keyIntent.ts,LockScreen.tsx",
+      "hash": "3ac3a67ca9df51ea14552f67ab2dca2ef6a36e0868fba9eb4d18ea78b90dc336"
+    },
+    {
+      "index": 276,
+      "prevHash": "3ac3a67ca9df51ea14552f67ab2dca2ef6a36e0868fba9eb4d18ea78b90dc336",
+      "merkleRoot": "f60908d7c7904acd5a3af953c02ee95b5c14358c204bcc2bc7e87c1f1bd2dc17",
+      "leafCount": 99,
+      "note": "update vault.ts,httpLimits.ts,ollama.ts",
+      "hash": "07d67638596f8f18b3949eff0b9445b1b35e005982d12990d7c652833a1fd6cd"
+    },
+    {
+      "index": 277,
+      "prevHash": "07d67638596f8f18b3949eff0b9445b1b35e005982d12990d7c652833a1fd6cd",
+      "merkleRoot": "7d5326e604434a1c58ade290154c0332280d0145fd43774f570313d9f1d0a340",
+      "leafCount": 99,
+      "note": "update ollama.ts",
+      "hash": "0dd206ac754b35c4c1733742007a4bbcec4ef63b69cf08c7433f7ccddbaa734f"
+    },
+    {
+      "index": 278,
+      "prevHash": "0dd206ac754b35c4c1733742007a4bbcec4ef63b69cf08c7433f7ccddbaa734f",
+      "merkleRoot": "963c4d775f9a7afc27b2caa8fae9692441cd086e8646d975c7935d42009c631f",
+      "leafCount": 99,
+      "note": "update atlassianSite.ts,writeFieldLimits.ts",
+      "hash": "d4f0b6ac3ccca680aee3983d8e140c2f335b2ee3fb8c639b7ccaa7726727fd36"
+    },
+    {
+      "index": 279,
+      "prevHash": "d4f0b6ac3ccca680aee3983d8e140c2f335b2ee3fb8c639b7ccaa7726727fd36",
+      "merkleRoot": "08a44307ef662fb76e3357cde36c7570b0c072bcc408bae5164602fa1838eacb",
+      "leafCount": 99,
+      "note": "update headerValue.ts",
+      "hash": "fceff271cb78d0249f7594902cd6a390ce5e4e26b309376db5235d2923f19edd"
+    },
+    {
+      "index": 280,
+      "prevHash": "fceff271cb78d0249f7594902cd6a390ce5e4e26b309376db5235d2923f19edd",
+      "merkleRoot": "7950b19aba88a53dd31fd8b16756601e0f4970bb20848a24dc7136736203948e",
+      "leafCount": 99,
+      "note": "update eraseAll.ts,windowPrefs.ts,proxy.ts",
+      "hash": "16047100ecc8c35f3a0b3c06034f598ddd051d141706b184d3e6e2d23716c59e"
+    },
+    {
+      "index": 281,
+      "prevHash": "16047100ecc8c35f3a0b3c06034f598ddd051d141706b184d3e6e2d23716c59e",
+      "merkleRoot": "02483f41c2081db54d8a0ffe4b173e2e3d3cd6c77038a6de6bfa9fcd56b7226f",
+      "leafCount": 99,
+      "note": "update imageUrlGate.ts",
+      "hash": "0aa0cf1cbfbf22ea75557d8a51f2ca31539d6a2c82652a73595c836af67054c6"
+    },
+    {
+      "index": 282,
+      "prevHash": "0aa0cf1cbfbf22ea75557d8a51f2ca31539d6a2c82652a73595c836af67054c6",
+      "merkleRoot": "a280c65785bb8da9a7b56f2245a9a7f788635ab3936648135ae0413c7180c2d8",
+      "leafCount": 99,
+      "note": "update LockScreen.tsx",
+      "hash": "ac3fc45beec2049e47bc9da827319fd8211bb06b48713c1e5ac2bd75df8110ed"
+    },
+    {
+      "index": 283,
+      "prevHash": "ac3fc45beec2049e47bc9da827319fd8211bb06b48713c1e5ac2bd75df8110ed",
+      "merkleRoot": "0fa78a55c06d42df6ef2eacf6f0c99a7d383dae5d93d18e23e8dbcb8ddca5e72",
+      "leafCount": 99,
+      "note": "update settings.json",
+      "hash": "2e6fb38e53186448cd707191eaaf263c5ece8d61e1f79d3be6866f9f5013ff4f"
+    }
+  ],
+  "tipManifest": {
+    ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
+    ".cursor/rules/00-project.mdc": "44a587314329017bbc7f83033ca3c9bcafbfc1fbdcac0776f9ba66685bc49092",
+    ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
+    ".cursor/rules/20-gates.mdc": "c0c04c750d8127a87b40e9dd8630a281fa929ae5075573810386e33772cac36a",
+    ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
+    ".github/workflows/ci.yml": "2294afce5d44eb97c7f1ad4cab1e9586564799850f9c5ba4934cece56a180d00",
+    ".github/workflows/pages.yml": "02c826156e8b095f0fdf3d8774263bf0c4d778cc9543f9d5de954b9a14b7d85a",
+    ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
+    "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
+    "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
+    "docs/PROXY_EXAMPLE.md": "9971ffa50e821c7625480f9912433c1f031ee8ea22c2584410040f1758ca583a",
+    "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
+    "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
+    "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
+    "scripts/build-landing.cjs": "e711ee615dc7322011470de0cdc5f5241014808d665c7e3b35232db71ae65e19",
+    "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
+    "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
+    "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
+    "scripts/integrity-chain.cjs": "634a40df5a6365a93166cd1976641a37efb4214f3f1e0466c1dbe0bdb0031857",
+    "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
+    "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
+    "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
+    "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
+    "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
+    "scripts/lint-sample-data.cjs": "55f548e97d05e03f409ccbb2f87c3ecceb1d66e4851d24f2100dedd7670f15ed",
+    "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
+    "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
+    "scripts/migrate.sh": "fe793636d6c87f42b663a42e300207346b40d6adbb057d0ba5696fd4604311ed",
+    "scripts/public-host-guard.cjs": "f337ded4a43df8747063452e4a338d8f57a3bef2c14c3bfe4ccc2382749699f0",
+    "scripts/safe-vault-write.cjs": "263ad4e8e52952769cda1be6e25b31025e0f023439e93f6eccdc996ec15215f3",
+    "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
+    "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
+    "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
+    "scripts/smoke-app.cjs": "e0ec8dd631cbdbcd075663b99bdc33b380dc5d61ea049df7a626e300fb544095",
+    "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
+    "src/main/atomicWrite.ts": "67cdcd22a997861524bba6d591e3770169f341f59dd3947379f5a55348cb7a02",
+    "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
+    "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
+    "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
+    "src/main/eraseAll.ts": "77ff225a6871efbaddbfd00c7488120f882e9ddfd37d8a751664254985de8bb2",
+    "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
+    "src/main/oauth.ts": "9c54fb2625d6fcac9a63f6e86728cd3dc9b873007d00b283ed6e5bf0b51d1c53",
+    "src/main/secrets.ts": "5d0cee28734cd431264cf61e2636ffb0762a782bf1a211b37f113e80d9651b83",
+    "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
+    "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
+    "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
+    "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
+    "src/renderer/data/assistantMarkdown.ts": "2daf8c0c846e4bb6adb387c386b30c964e3d1e42a33bf6d3f6bdbff19681c998",
+    "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
+    "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",
+    "src/renderer/fs/fsa.ts": "d38f695c737809da99791ab61051dca1718c8827277a293e197e2f3ff4271054",
+    "src/renderer/keyIntent.ts": "6b9cb4b2ba8b16de9a0a8d9113a54b154045f7abe895cda0914344131bf5caa7",
+    "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
+    "src/renderer/network/proxy.ts": "38d31eedb3afe7e8480e6b7f535798ab502fdd010e6821ed1d575add309834ab",
+    "src/renderer/oauth/pkce.ts": "3402979779496b753369150623558c774e6c8f5d525cde4d557e550693d37e24",
+    "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
+    "src/renderer/security/LockScreen.tsx": "4f3a02693303a44619b1c8a857ada3f634b316e77ac7b74791a62f9c5b84874d",
+    "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
+    "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
+    "src/renderer/security/dataCrypto.ts": "c47a7bbf2305b1687bf059cc9d40a43783fef755079b2fdf2a8e59afde9a4f14",
+    "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
+    "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
+    "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
+    "src/renderer/security/vault.ts": "d493f51f0dbc74df4453da6391e63813f8a00df50e25f2f342ef4ec3e1848dc1",
+    "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
+    "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
+    "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",
+    "src/shared/ai/chat.ts": "9f226eb4ab625c9445b5e13c8ec6fab8b109048fd0776b041f9016088d3f7cf8",
+    "src/shared/ai/credentials.ts": "2f0ff1a2f26ddd5aec1ab9beb682e53c898716e720bdcfb72a255945d2e12315",
+    "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
+    "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
+    "src/shared/assistantLimits.ts": "5df97a39c2f9efc93ce067816de4eb3f3d8bd07cfe209e49660346ca7ba4f235",
+    "src/shared/atlassianSite.ts": "e3898d643e76b22877cf0990090a61dc249bc3ccd2058ff3166e13bafea7b931",
+    "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",
+    "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
+    "src/shared/cryptoParams.ts": "e5c196eed641330430fb0725daf9dc28cfd38fc624ce5e46baca635ed9b8590e",
+    "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
+    "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
+    "src/shared/externalUrlGate.ts": "b103b6fdf04b058a0cae9be3bed2ad035758463dee7b1ed6cc9da778540475ce",
+    "src/shared/headerValue.ts": "e1b3156dde741ff415b769a6a40a7630e7da580f29737005cf2583bda4512b82",
+    "src/shared/httpLimits.ts": "a376deeac169463b4b2d781fd2174d4231ca566e9c31c78f47997a7bb8f073a4",
+    "src/shared/imageUrlGate.ts": "55114f020aac1b0474cbab511f48b02bb8a9768ec499bf137a2db5e0186c8c45",
+    "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
+    "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
+    "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
+    "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
+    "src/shared/privateTarget.ts": "2a7f4b178d82653c596b8cf92f5a18ccb5fc73b5c898dee3b66583be53ed47c1",
+    "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
+    "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",
+    "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
+    "src/shared/scanTarget.ts": "069eaceb80e1d0a87e45d6fb61eb18bcf7acd9558ae58be49793c2f025500b69",
+    "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
+    "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
+    "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",
+    "src/shared/versionOrder.ts": "2a70283bc54f74023e9e4a6f002d2678440d9cfcffeb5ac60fc047ee8b604d37",
+    "src/shared/writeFieldLimits.ts": "321322d9817665544a8dac005c1ed9812d8305c110a0fbe7e331675b5a35c066",
+    "vite.config.ts": "390b859eedad810d9e539adfd2c421fe37fc00a168f28e62d15a20fb7096dcd6",
+    "vitest.audit.config.ts": "2461afaaddfa15b7a4520cca93807db66b7ebb3db25e46db4dac38b0002a7978",
+    "vitest.config.ts": "082d5d607a48177918bdd841ca4592b861b2b1d0842005da0b8a6f0a4b42f900"
+  }
+}

@@ -1,0 +1,5725 @@
+#!/usr/bin/env node
+/**
+ * ブラウザ実機 E2E — ビルド済み standalone HTML を Chromium で開き、
+ * 主要フロー (Vault 初期化 / 投資の追加・編集 / 士業 CRM / 敷地プランナー /
+ * モバイル表示) を desktop・phone・tablet の 3 プロファイルで検証する。
+ *
+ * 使い方:
+ *   npm run build:web && npm run e2e            # フル版を検証
+ *   npm run build:web:lite && npm run e2e:lite  # ライト版を検証
+ *   SERVICE_HUB_E2E_FILE=dist/foo.html node scripts/e2e/core.cjs
+ *
+ * 前提: Playwright と Chromium が実行環境にあること。
+ *   - ローカル/サンドボックス: PLAYWRIGHT 実体が npm い無くても
+ *     /opt/node22 のグローバル導入と /opt/pw-browsers/chromium を自動検出。
+ *   - 見つからない場合は exit 2 (スキップ扱いにせず明示的に失敗させる)。
+ * CI (GitHub Actions) では実行しない — 手動/開発時の検証ツール。
+ */
+'use strict';
+
+const path = require('node:path');
+const fs = require('node:fs');
+const { createHash, webcrypto } = require('node:crypto');
+
+function resolvePlaywright() {
+  const candidates = [undefined, { paths: ['/opt/node22/lib/node_modules'] }];
+  for (const opt of candidates) {
+    try {
+      return require(opt ? require.resolve('playwright', opt) : 'playwright');
+    } catch {
+      /* try next */
+    }
+  }
+  return null;
+}
+
+const pw = resolvePlaywright();
+if (!pw) {
+  console.error('E2E: playwright が見つかりません (npm i -D playwright するか、グローバル導入環境で実行してください)');
+  process.exit(2);
+}
+
+const repoRoot = path.resolve(__dirname, '..', '..');
+const target = process.env.SERVICE_HUB_E2E_FILE || 'dist/standalone.html';
+const targetAbs = path.isAbsolute(target) ? target : path.join(repoRoot, target);
+if (!fs.existsSync(targetAbs)) {
+  console.error(`E2E: 対象ファイルがありません: ${targetAbs} — 先に npm run build:web (または build:web:lite) を実行してください`);
+  process.exit(2);
+}
+// 古い成果物で検証していないか (判定は scripts/lib/artifact-freshness.cjs に 1 つだけ)。
+// build:web は tsc -b で落ちると成果物を作らないまま止まるので、気づかず回すと
+// 「壊す前の HTML」を相手に全項目が通る。2026-08-24 に 2 回踏んだ。
+require('../lib/artifact-freshness.cjs').assertFreshArtifacts([targetAbs], {
+  srcDir: path.join(repoRoot, 'src'),
+  repoRoot,
+  tool: 'E2E',
+  allowEnv: 'SERVICE_HUB_E2E_ALLOW_STALE',
+});
+
+const FILE = 'file://' + targetAbs;
+const EXEC = fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined;
+const PASS = 'e2e-pass-12345';
+
+const failures = [];
+/** 走った検査の数。0 のまま終わったら「合格」ではなく「何も見ていない」(下の最終判定で落とす)。 */
+let checks = 0;
+function ok(cond, label) {
+  checks += 1;
+  console.log((cond ? '  ✅ ' : '  ❌ ') + label);
+  if (!cond) failures.push(label);
+}
+
+async function setupVault(page) {
+  await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+  const inputs = page.locator('input[type="password"]');
+  await inputs.nth(0).fill(PASS);
+  await inputs.nth(1).fill(PASS);
+  await page.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+  await page.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+  await page.locator('input[type="checkbox"]').check();
+  await page.getByRole('button', { name: /記録完了/ }).click();
+  await page.waitForSelector('.sidebar', { timeout: 30000 });
+}
+
+/** 同一コンテキストで別サービスへ: hash 遷移はリロード必須 (SPA は hashchange を拾わない)。 */
+async function gotoService(page, hash, readySelector) {
+  await page.goto(FILE + hash, { waitUntil: 'domcontentloaded' });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector(readySelector, { timeout: 30000 });
+}
+
+function collectErrors(page, sink) {
+  page.on('pageerror', (e) => sink.push('pageerror: ' + e.message));
+  page.on('console', (m) => {
+    if (m.type() === 'error') sink.push('console.error: ' + m.text());
+  });
+}
+
+const noHScroll = (page) =>
+  page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
+
+async function desktopSuite(browser) {
+  console.log('--- desktop 1280x900 ---');
+  const ctx = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+    // ライブラリの「ダウンロード」を押す (パス 193)。既定値に頼らず明示する。
+    acceptDownloads: true,
+  });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  // 不動産: 追加 → KPI 反映 → 編集 → 自動反映 → 削除で復帰
+  await page.goto(FILE + '#real-estate', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
+  const has = async (s) => (await page.locator('body').textContent()).includes(s);
+  ok((await has('￥243,000')) || (await has('¥243,000')), 'real-estate: 基準 月次CF ¥243,000 (snapshot 再現)');
+  await page.getByPlaceholder('例: 福岡市アパート').fill('E2E物件');
+  await page.getByPlaceholder('100000').first().fill('100000');
+  await page.getByPlaceholder('12000000').fill('12000000');
+  await page.getByRole('button', { name: '＋ 物件を追加' }).click();
+  await page.waitForSelector('text=E2E物件', { timeout: 15000 });
+  ok((await has('￥343,000')) || (await has('¥343,000')), 'real-estate: 追加で月次CF ¥343,000');
+  await page.locator('button', { hasText: '編集' }).first().click();
+  await page.waitForSelector('text=物件を編集中', { timeout: 10000 });
+  await page.getByPlaceholder('100000').first().fill('150000');
+  await page.getByRole('button', { name: '保存 (自動反映)' }).click();
+  await page.waitForFunction(
+    () => document.body.textContent.includes('393,000'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'real-estate: 編集の保存が KPI へ自動反映 (¥393,000)');
+  await page.locator('button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(() => !document.body.textContent.includes('E2E物件'), undefined, { timeout: 15000 });
+
+  // 敷地プランナー: ライブ再計算と道路制限
+  await page.locator('label', { hasText: '前面道路幅員' }).locator('input').fill('3');
+  await page.waitForFunction(() => document.body.textContent.includes('180%'), undefined, { timeout: 15000 });
+  ok(true, 'zoning: 道路3m → 実効容積率180% (幅員×6/10)');
+
+  // 投信: 手動評価額 → auto 切替
+  await gotoService(page, '#mutual-funds', 'text=銘柄を追加');
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('E2Eファンド');
+  await page.getByPlaceholder('空欄=自動計算').fill('300000');
+  await page.getByRole('button', { name: '＋ 銘柄を追加' }).click();
+  await page.waitForSelector('text=E2Eファンド', { timeout: 15000 });
+  ok((await has('￥8,540,140')) || (await has('¥8,540,140')), 'funds: 手動評価額30万で合計 ¥8,540,140');
+  // パス 122: YTD を空欄のまま足した行は「+0.0%」(緑) ではなく「—」。リスクの注記が除外を言う。
+  // (パス 121 までの版はここで「+0.0%」を刷り、注記は「保有銘柄のYTDリターンの母標準偏差です」だけだった)
+  const ytdCell = ((await page.locator('tbody tr', { hasText: 'E2Eファンド' }).locator('td').nth(5).textContent()) ?? '').trim();
+  ok(ytdCell === '—', `funds: ★ 空欄の YTD は「—」で刷る (実際 "${ytdCell}")`);
+  await page.waitForFunction(() => document.body.textContent.includes('未入力 1 銘柄は除外'), undefined, { timeout: 15000 });
+  ok(true, 'funds: ★ リスクの注記が「未入力 1 銘柄は除外」と言う');
+  // パス 123: 取得額を空欄のまま足しても、取得原価のタイルは動かない (旧: ¥7,180,000 → ¥7,480,000)。注記が除外を言う。
+  ok((await has('7,180,000')) && !(await has('7,480,000')), 'funds: ★ 取得額未入力の銘柄は取得原価に入らない (¥7,180,000 のまま)');
+  await page.waitForFunction(() => document.body.textContent.includes('取得額未入力 1 銘柄'), undefined, { timeout: 15000 });
+  ok(true, 'funds: ★ 注記が「取得額未入力 1 銘柄」を言う');
+  await page.locator('button', { hasText: '編集' }).first().click();
+  await page.getByPlaceholder('空欄=自動計算').fill('');
+  await page.getByPlaceholder('500000').fill('200000');
+  await page.getByPlaceholder('32000').fill('20000');
+  await page.getByRole('button', { name: '保存 (自動反映)' }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('8,640,140'), undefined, { timeout: 15000 });
+  ok(true, 'funds: 評価額空欄で auto 切替 (口数×基準価額 → ¥8,640,140)');
+  await page.locator('button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(() => !document.body.textContent.includes('E2Eファンド'), undefined, { timeout: 15000 });
+
+  // パス 124: 追加ボタンのダブルクリックで銘柄が 2 件にならない (旧: 同じ入力から 2 件が保存された)
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('E2E二度押し');
+  await page.getByPlaceholder('空欄=自動計算').fill('300000');
+  await page.getByRole('button', { name: '＋ 銘柄を追加' }).dblclick();
+  await page.waitForSelector('tbody tr:has-text("E2E二度押し")', { timeout: 15000 });
+  // 保存が終わるとフォームが空になる。旧版の 2 件目もその直後に終わるので、もう 2 往復してから数える。
+  await page.waitForFunction(() => document.querySelector('input[placeholder="例: ニッセイ外国株式"]').value === '', undefined, { timeout: 15000 });
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('x');
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('');
+  const dblRows = page.locator('tbody tr', { hasText: 'E2E二度押し' });
+  // **数えるのは 1 度だけ。** 判定と文面で別々に数えると、その間に行が増減した
+  // とき**❌ の隣に期待どおりの値が刷られる** —— 読んだ人は製品を疑わず
+  // ゲートを疑う (「誤った理由で落ちる関門は、無いより悪い」)。実測でそれが起きた。
+  const dblRowCount = await dblRows.count();
+  ok(dblRowCount === 1, `funds: ★ 追加ボタンのダブルクリックでも銘柄は 1 件 (実際 ${dblRowCount} 件)`);
+  while ((await dblRows.count()) > 0) {
+    const before = await page.locator('tbody tr').count();
+    await dblRows.first().locator('button', { hasText: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
+  }
+
+  // パス 124: 同じ (期間, 事業) の KPI 実績は断られて件数が増えない。追加ボタンのダブルクリックでも 1 件。
+  // (パス 123 までの版はダブルクリックで 2 行になり、2 件目も黙って通って売上高が合算されていた)
+  await gotoService(page, '#kpi', 'input[placeholder="YYYY-MM"]');
+  const dupFormBox = page.locator('input[placeholder="YYYY-MM"]').first().locator('xpath=ancestor::div[1]');
+  const dupForm = [
+    ['YYYY-MM', '2026-02'],
+    ['事業名', 'E2E重複'],
+    ['売上高', '1000000'],
+    ['売上原価', '0'],
+    ['広告費', '0'],
+    ['販管費', '0'],
+    ['減価償却費', '0'],
+  ];
+  for (const [ph, v] of dupForm) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  await dupFormBox.getByRole('button', { name: '追加' }).first().dblclick();
+  await page.waitForSelector('tbody tr:has-text("E2E重複")', { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('input[placeholder="YYYY-MM"]').value === '', undefined, { timeout: 15000 });
+  // 2 度目の入力 (7 欄を埋める間に、旧版の 2 件目の保存が在れば終わっている)
+  for (const [ph, v] of dupForm) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  const dupRows = page.locator('tbody tr', { hasText: 'E2E重複' });
+  const dupRowCount = await dupRows.count();
+  ok(dupRowCount === 1, `KPI: ★ 追加ボタンのダブルクリックでも実績は 1 件 (実際 ${dupRowCount} 件)`);
+  await dupFormBox.getByRole('button', { name: '追加' }).first().click();
+  await page.waitForFunction(() => document.body.textContent.includes('既に入力されています'), undefined, { timeout: 15000 });
+  ok((await dupRows.count()) === 1, 'KPI: ★ 同じ期・事業の 2 件目は断られ、1 件のまま (訂正の案内つき)');
+  await dupRows.first().getByRole('button', { name: '削除' }).click();
+  await page.waitForFunction(() => !Array.from(document.querySelectorAll('tbody tr')).some((tr) => tr.textContent.includes('E2E重複')), undefined, { timeout: 15000 });
+
+  // パス 125: 同じメールアドレスのメンバーは 2 度招待できない (旧: 2 行になりシートを 2 つ使い、一人当たりが薄まった)
+  await gotoService(page, '#team', 'input[placeholder="メールアドレス"]');
+  await page.getByPlaceholder('氏名').fill('E2E太郎');
+  await page.getByPlaceholder('メールアドレス').fill('e2e-dup@example.com');
+  await page.getByRole('button', { name: '招待', exact: true }).click();
+  await page.waitForSelector('tbody tr:has-text("e2e-dup@example.com")', { timeout: 15000 });
+  await page.getByPlaceholder('氏名').fill('E2E太郎 (再)');
+  await page.getByPlaceholder('メールアドレス').fill('e2e-dup@example.com');
+  await page.getByRole('button', { name: '招待', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('既に登録されています'), undefined, { timeout: 15000 });
+  const dupMembers = page.locator('tbody tr', { hasText: 'e2e-dup@example.com' });
+  const dupMemberRows = await dupMembers.count();
+  ok(dupMemberRows === 1, `team: ★ 同じメールアドレスの 2 度目は断られ、1 行のまま (実際 ${dupMemberRows} 行)`);
+  while ((await dupMembers.count()) > 0) {
+    const before = await page.locator('tbody tr').count();
+    await dupMembers.first().getByRole('button', { name: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
+  }
+
+  // パス 126: 同じ注文名の Shopify 注文は 2 度記録できない (旧: 売上集計に 2 件入り、売上高が 2 度数えられた)
+  await gotoService(page, '#shopify', 'input[placeholder="注文名 (#1001)"]');
+  await page.getByPlaceholder('注文名 (#1001)').fill('#E2E-DUP');
+  await page.getByPlaceholder('金額 (¥12,000)').fill('12000');
+  await page.getByRole('button', { name: '売上集計に記録', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('売上集計に記録しました'), undefined, { timeout: 15000 });
+  await page.getByPlaceholder('注文名 (#1001)').fill('#E2E-DUP');
+  await page.getByPlaceholder('金額 (¥12,000)').fill('12000');
+  await page.getByRole('button', { name: '売上集計に記録', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('既に売上集計に記録されています'), undefined, { timeout: 15000 });
+  await gotoService(page, '#sales', 'input[placeholder="YYYY-MM-DD"]');
+  // **行が出るのを待ってから数える** (2026-09-21 · パス 382)。`gotoService` は
+  // 入力欄が在ることしか待たないが、記録した行が一覧に載るには保管層
+  // (IndexedDB) の往復が要る —— 待たずに数えると**まだ 0 行**を見る。
+  // 実測: このゲートはここで ❌ を出しながら文面には「実際 1 行」と刷っていた。
+  // 隣の funds / KPI は最初から `waitForSelector` で行を待っており、
+  // **画面をまたぐこの 1 本だけが待っていなかった** (母集団のうち 1 か所)。
+  // ★ 待つのは「1 行になること」ではなく「**1 行目が出ること**」 —— 2 行に
+  //   なる欠陥のとき「1 行になるまで待つ」と、2 行目が来る前に通ってしまう。
+  await page.waitForSelector('tbody tr:has-text("Shopify #E2E-DUP")', { timeout: 15000 });
+  const dupOrders = page.locator('tbody tr', { hasText: 'Shopify #E2E-DUP' });
+  const dupOrderRows = await dupOrders.count();
+  ok(dupOrderRows === 1, `sales: ★ 同じ注文名の 2 度目は断られ、売上集計は 1 行のまま (実際 ${dupOrderRows} 行)`);
+  while ((await dupOrders.count()) > 0) {
+    const before = await page.locator('tbody tr').count();
+    await dupOrders.first().getByRole('button', { name: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
+  }
+
+  // パス 127: 貸借対照表は基準日で「現在」を選ぶ (旧: 最後に入力した控え —— 古い基準日を後から入れると、そちらを現在として使い、一覧も無かった)
+  await gotoService(page, '#kpi', 'input[placeholder="基準日"]');
+  const bsFill = async (rows) => {
+    for (const [ph, v] of rows) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  };
+  // 当期純利益は必須の欄 —— 空欄は「未入力」として断る (0 に倒さない・パス 496)。
+  await bsFill([['基準日', '2026-03-31'], ['流動資産', '1000000'], ['固定資産', '500000'], ['流動負債', '300000'], ['固定負債', '200000'], ['当期純利益', '0']]);
+  await page.getByRole('button', { name: 'BS を保存', exact: true }).click();
+  await page.waitForSelector('[data-bs-row="current"]', { timeout: 15000 });
+  await bsFill([['基準日', '2025-03-31'], ['流動資産', '800000'], ['固定資産', '400000'], ['流動負債', '500000'], ['固定負債', '400000'], ['当期純利益', '0']]);
+  await page.getByRole('button', { name: 'BS を保存', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('より新しい基準日の控え'), undefined, { timeout: 15000 });
+  const currentBs = ((await page.locator('[data-bs-row="current"]').first().textContent()) ?? '').trim();
+  ok(currentBs.includes('2026-03-31'), `KPI: ★ 「現在」の貸借対照表は基準日の新しい 2026-03-31 (実際 "${currentBs.slice(0, 40)}")`);
+  ok((await page.locator('[data-bs-row]').count()) === 2, 'KPI: 貸借対照表の一覧に 2 件が並ぶ (どれを使っているかが見える)');
+  while ((await page.locator('[data-bs-row]').count()) > 0) {
+    const before = await page.locator('[data-bs-row]').count();
+    await page.locator('[data-bs-row]').first().getByRole('button', { name: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('[data-bs-row]').length < n, before, { timeout: 15000 });
+  }
+
+  // パス 128: 暗号化バックアップの合言葉は保管庫のパスワードと同じ下限 (12 文字) —— 短い合言葉で「暗号化済み」を作らない
+  await gotoService(page, '#settings', '[data-backup-passphrase]');
+  await page.locator('[data-backup-passphrase]').fill('abc');
+  await page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('12 文字以上で設定してください'), undefined, { timeout: 15000 });
+  ok(!(await has('件のレコードをバックアップしました')), 'settings: ★ 3 文字の合言葉では暗号化バックアップを書き出さない (下限は保管庫と同じ 12 文字)');
+  await page.locator('[data-backup-passphrase]').fill('');
+
+  // パス 129: 復元は「何が足され・残り・消えるか」を言う —— マージは id ごとに新しい方を残し、
+  // 置換の確認は消える件数を言う (一文だけの確認は何も言っていないのと同じ)。ファイルは Node 側で組む。
+  const restoreBackup = async (name, records, exportedAt) => {
+    const checksum = createHash('sha256').update(JSON.stringify(records)).digest('hex');
+    const body = JSON.stringify({ app: 'service-hub', version: 1, exportedAt, checksum, records });
+    await page.locator('[data-backup-restore]').setInputFiles({ name, mimeType: 'application/json', buffer: Buffer.from(body) });
+  };
+  const restoreRow = (updatedAt, amount) => ({
+    id: 'e2e-restore-1',
+    collection: 'sales-entries',
+    createdAt: 1_700_000_000_000,
+    updatedAt,
+    data: { date: '2026-04-01', channel: 'amazon', amount, orders: 1, note: 'e2e-restore' },
+  });
+  await restoreBackup('older.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('追加 1・更新 0'), undefined, { timeout: 15000 });
+  await restoreBackup('newer.json', [restoreRow(1_760_000_000_000, 2000)], '2026-06-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('追加 0・更新 1'), undefined, { timeout: 15000 });
+  await restoreBackup('older-again.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('この端末の方が新しい 1 件はそのまま'), undefined, { timeout: 15000 });
+  ok(await has('0 件のレコードを復元しました（マージ: 追加 0・更新 0・この端末の方が新しい 1 件はそのまま）'), 'settings: ★ マージは id ごとに新しい方を残す (古いバックアップは後から直した記録を上書きしない)');
+  await page.locator('[data-backup-replace]').check();
+  const replaceDialog = page.waitForEvent('dialog', { timeout: 15000 });
+  // 確認 (window.confirm) が開くと画面の main thread は止まる。先に dialog を受けて閉じてから、開かせた操作を待つ ——
+  // 操作を先に await すると、確認が開いた瞬間に操作側 (クリック / ファイル選択) が完了できず 30 秒で落ちる (pipeline132 で実測)。
+  const replaceTrigger = restoreBackup('older-replace.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
+  const dialog = await replaceDialog;
+  const dialogText = dialog.message();
+  await dialog.dismiss();
+  await replaceTrigger;
+  ok(dialogText.includes('この端末の方が新しい 1 件') && dialogText.includes('元に戻せません') && dialogText.includes('2026/1/1'), `settings: ★ 置換の確認は書き出し時刻と消える件数を言う (実際 ${JSON.stringify(dialogText)})`);
+  await page.waitForFunction(() => !document.body.textContent.includes('レコードを復元しました'), undefined, { timeout: 15000 });
+  ok(true, 'settings: 置換をやめれば何も書かない (直前の結果の文も消えている)');
+  await page.locator('[data-backup-replace]').uncheck();
+
+  // パス 130: 平文バックアップは、個人情報の件数を言ってから書く (合言葉が空で、個人情報の記録が在るとき)
+  await restoreBackup('contact.json', [{
+    id: 'e2e-contact-1',
+    collection: 'shigyo-contacts',
+    createdAt: 1_700_000_000_000,
+    updatedAt: 1_700_000_000_000,
+    data: { serviceId: 'tax-accountant', name: 'E2E 税理士', phone: '090-0000-0000' },
+  }], '2026-01-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('追加 1・更新 0'), undefined, { timeout: 15000 });
+  const plainDialog = page.waitForEvent('dialog', { timeout: 15000 });
+  const plainClick = page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click(); // 同上: dialog を先に受ける
+  const plain = await plainDialog;
+  const plainText = plain.message();
+  await plain.dismiss();
+  await plainClick;
+  ok(plainText.includes('士業の連絡先 (電話番号・メールアドレス) 1 件') && plainText.includes('平文 (暗号化なし)'), `settings: ★ 合言葉が空の書き出しは、個人情報の件数を言ってから確認する (実際 ${JSON.stringify(plainText)})`);
+  await page.waitForFunction(() => document.body.textContent.includes('書き出しをやめました'), undefined, { timeout: 15000 });
+  ok(!(await has('件のレコードをバックアップしました')), 'settings: やめれば書き出さない');
+  page.once('dialog', (d) => void d.accept());
+  await page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('件のレコードをバックアップしました（平文）'), undefined, { timeout: 15000 });
+  ok(true, 'settings: 対照 — 確認で OK すれば平文で書き出し、結果の文が「平文」と言う');
+
+  // パス 131: 暗号化バックアップの合言葉は、マスクされた欄でしか受けない (prompt は平文で映り、Electron には無い)。
+  // ファイルは Node 側の WebCrypto で dataCrypto と同じ形 (PBKDF2-SHA256 60 万回 → AES-GCM-256) に封緘する。
+  const encryptedBackup = async (records, exportedAt, pw) => {
+    const inner = JSON.stringify({ app: 'service-hub', version: 1, exportedAt, checksum: createHash('sha256').update(JSON.stringify(records)).digest('hex'), records });
+    const enc = new TextEncoder();
+    const salt = webcrypto.getRandomValues(new Uint8Array(16));
+    const iv = webcrypto.getRandomValues(new Uint8Array(12));
+    const base = await webcrypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
+    const key = await webcrypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 600_000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+    const ct = new Uint8Array(await webcrypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(inner)));
+    const b64 = (u8) => Buffer.from(u8).toString('base64');
+    return JSON.stringify({ app: 'service-hub', encrypted: true, payload: { v: 1, kdf: 'PBKDF2-SHA256', iterations: 600_000, salt: b64(salt), iv: b64(iv), ct: b64(ct) } });
+  };
+  const encBackup = await encryptedBackup([{ ...restoreRow(1_700_000_000_000, 3000), id: 'e2e-restore-enc' }], '2026-02-01T12:00:00Z', 'correct-horse-battery');
+  await page.locator('[data-backup-passphrase]').fill('');
+  await page.locator('[data-backup-restore]').setInputFiles({ name: 'enc.json', mimeType: 'application/json', buffer: Buffer.from(encBackup) });
+  await page.waitForFunction(() => document.body.textContent.includes('上の「暗号化パスワード」欄に合言葉を入力してから'), undefined, { timeout: 15000 });
+  ok(!(await has('レコードを復元しました')), 'settings: ★ 合言葉の欄が空なら暗号化バックアップは復元せず、マスクされた欄を使うよう言う (平文の問い合わせで訊かない)');
+  await page.locator('[data-backup-passphrase]').fill('correct-horse-battery');
+  await page.locator('[data-backup-restore]').setInputFiles({ name: 'enc.json', mimeType: 'application/json', buffer: Buffer.from(encBackup) });
+  await page.waitForFunction(() => document.body.textContent.includes('レコードを復元しました'), undefined, { timeout: 30000 });
+  ok(await has('追加 1・更新 0'), 'settings: 対照 — 欄に合言葉を入れれば暗号化バックアップを復元できる');
+  await page.locator('[data-backup-passphrase]').fill('');
+
+  // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
+  await gotoService(page, '#cpa', 'text=連携先一覧');
+  await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');
+  await page.getByRole('button', { name: /を追加/ }).click();
+  await page.waitForSelector('text=E2E会計士', { timeout: 15000 });
+  ok(await has('連携 2 名'), 'shigyo: 追加でヘッダ連携数が 2 名');
+  await page.locator('input[type="date"]').fill('2026-07-25');
+  await page.getByPlaceholder('例: 決算前の節税相談').fill('E2E相談');
+  await page.getByRole('button', { name: '＋ 相談を記録' }).click();
+  await page.waitForSelector('select[aria-label="相談ステータスを変更"]', { timeout: 15000 });
+  await page.locator('select[aria-label="相談ステータスを変更"]').first().selectOption('完了');
+  // `ok(true)` だった —— selectOption が通ったことと「変わった」ことは別 (パス 303)。
+  // select は制御コンポーネントで、保存 (IndexedDB) が返るまで DOM の値は元に戻る。
+  // だから**保存が反映されるまで待ってから**読む (直後に読むと旧値で、実機で 1 度落ちた)。
+  await page.waitForFunction(
+    () => document.querySelector('select[aria-label="相談ステータスを変更"]')?.value === '完了',
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(
+    (await page.locator('select[aria-label="相談ステータスを変更"]').first().inputValue()) === '完了',
+    'shigyo: 相談記録 + ステータスのインライン変更 (保存後の select の値が 完了)',
+  );
+  await gotoService(page, '#lawyer', 'text=根拠法: 弁護士法');
+  ok(!(await has('E2E会計士')), 'shigyo: 他士業ページへは非漏出 (serviceId 分離)');
+
+  // 制度判定: 入力 → 判定が実際に変わるところ。単体テストは純関数と初期描画しか見て
+  // いないので、入力の state が判定へ繋がっているかは実ブラウザでしか分からない。
+  await gotoService(page, '#funding', 'text=使える制度の判定');
+  // 欄の名前は関門の宣言のラベル (パス 493q —— 直す前は「年齢」)。
+  const age = page.locator('input[aria-label="年齢（就農時）"]');
+  await age.fill('30');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('年齢 30 歳は要件（18歳以上45歳未満）を満たす'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 30歳で青年枠が「要件を満たす」に変わる');
+  await age.fill('66');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('年齢 66 歳は要件（18歳以上45歳未満）を満たさない'),
+    undefined,
+    { timeout: 15000 },
+  );
+  // 前提の認定が年齢で取れないことまで伝わるか (青年等就農資金は年齢要件を持たない)。
+  ok(
+    await has('前提の認定新規就農者は18歳以上65歳未満が要件のため、66 歳では取得できない'),
+    'eligibility: 前提の認定の年齢まで辿って対象外にする',
+  );
+  // IME の全角数字。ここで弾くと「入れたのに判定が動かない」ように見える。
+  await age.fill('７０');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('年齢 70 歳は要件（18歳以上45歳未満）を満たさない'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 全角数字の年齢でも判定が動く');
+  // 認定農業者は年齢要件が無いので、70歳でも落ちない。
+  ok(await has('年齢の要件はない（上限なし）'), 'eligibility: 認定農業者は年齢で落ちない');
+  await page.locator('select[aria-label="認定農業者か"]').selectOption('no');
+  await page.waitForFunction(
+    () => document.body.textContent.includes('認定農業者でない（先に農業経営改善計画の認定が要る）'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 前提の認定を「いいえ」にすると対象外の理由が出る');
+  // ★ 読めない年齢を「未入力」と言わない (パス 493q)。直す前は `66歳` を打つと
+  // 年齢を要件にする 5 制度が「年齢が未入力」と言い、見出しは「入力が足りない 8 件」だった。
+  await age.fill('66歳');
+  await page.waitForFunction(
+    () => document.querySelector('[data-refused-fields]')?.textContent?.includes('年齢（就農時）') === true,
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(
+    !(await has('年齢が未入力')) && !(await has('要件を満たす 1 件')),
+    'eligibility: 読めない年齢 (66歳) は判定を断り、「年齢が未入力」とは言わない',
+  );
+  await age.fill('66');
+  await page.waitForFunction(
+    () => document.querySelector('[data-refused-fields]') === null && document.body.textContent.includes('年齢 66 歳は要件'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'eligibility: 年齢を直すと判定が戻る');
+
+  // 株主名簿: 人数の増減。単体テストは差分計算だけを見ているので、
+  // 「増やした行が書面に出るか」「削除で繰り上がるか」は実ブラウザで確かめる。
+  await gotoService(page, '#docstudio', '[data-doc-id="kabunushi-meibo"]');
+  await page.locator('[data-doc-id="kabunushi-meibo"]').click();
+  await page.waitForSelector('[data-shareholder-inputs]', { timeout: 15000 });
+  const shCount = () =>
+    page.locator('[data-shareholder-inputs]').getAttribute('data-shareholder-inputs');
+  ok((await shCount()) === '3', 'shareholders: 既定は 3 行（従来の書式と同じ）');
+  for (let i = 1; i <= 3; i++) {
+    await page.getByLabel(`株主${i} 氏名・名称`).fill(`E2E株主${i}`);
+    await page.getByLabel(`株主${i} 株式数`).fill(String(i * 10));
+  }
+  await page.getByRole('button', { name: '＋ 株主を追加' }).click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '4',
+    undefined,
+    { timeout: 15000 },
+  );
+  await page.getByLabel('株主4 氏名・名称').fill('E2E株主4');
+  await page.getByLabel('株主4 株式数').fill('40');
+  await page.waitForFunction(
+    () => document.querySelector('.ds-paper')?.textContent?.includes('E2E株主4') === true,
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'shareholders: 追加した 4 人目が書面に出る');
+  ok(
+    (await page.locator('[data-shareholders]').getAttribute('data-shareholders')) === '4',
+    'shareholders: 書面の行数が入力に追従する',
+  );
+  ok(await has('100'), 'shareholders: 書面の合計が 10+20+30+40 = 100');
+
+  await page.getByLabel('株主2 を削除').click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '3',
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(
+    (await page.getByLabel('株主2 氏名・名称').inputValue()) === 'E2E株主3',
+    'shareholders: 削除で以降の行が繰り上がる（途中に空行を残さない）',
+  );
+  ok(!(await has('E2E株主2')), 'shareholders: 消した株主は書面からも消える');
+
+  await page.getByLabel('株主3 を削除').click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '2',
+    undefined,
+    { timeout: 15000 },
+  );
+  await page.getByLabel('株主2 を削除').click();
+  await page.waitForFunction(
+    () => document.querySelector('[data-shareholder-inputs]')?.getAttribute('data-shareholder-inputs') === '1',
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(await page.getByLabel('株主1 を削除').isDisabled(), 'shareholders: 残り 1 行では削除できない');
+
+  // 法定 / 条件付き / 任意 の仕分け。単体は表と関数しか見ていないので、
+  // 「バッジが全書式に付くか」「絞り込みが効くか」は実ブラウザで確かめる。
+  await gotoService(page, '#docstudio', '[data-legal-filter="mandatory"]');
+  const badgeCount = await page.locator('[data-doc-id] [data-legal]').count();
+  const docCount = await page.locator('[data-doc-id]').count();
+  ok(badgeCount === docCount && docCount > 0, `legal: 全書式にバッジが付く (${badgeCount}/${docCount})`);
+  ok((await page.locator('[data-legal="unclassified"]').count()) === 0, 'legal: 未分類の書式が無い');
+  await page.locator('[data-legal-filter="mandatory"]').click();
+  await page.waitForFunction(
+    () => {
+      const b = [...document.querySelectorAll('[data-doc-id]')];
+      return b.length > 0 && b.every((x) => x.querySelector('[data-legal="mandatory"]'));
+    },
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'legal: 「法定」で絞ると法定の書式だけになる');
+  ok(
+    (await page.locator('[data-doc-id]').count()) < docCount,
+    'legal: 絞り込みで件数が減る（絞れていない絞り込みを通さない）',
+  );
+  await page.locator('[data-doc-id="roudousha-meibo"]').click();
+  await page.waitForSelector('[data-legal-panel="mandatory"]', { timeout: 15000 });
+  const panel = await page.locator('[data-legal-panel]').innerText();
+  ok(panel.includes('労働基準法107条'), 'legal: 選んだ書式に根拠条文が出る');
+  ok(panel.includes('当分の間3年'), 'legal: 法定帳簿に保存期間が出る');
+  await page.locator('[data-legal-filter="all"]').click();
+  await page.waitForFunction(
+    () => document.querySelectorAll('[data-doc-id]').length > 9,
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'legal: 「すべて」で絞り込みが解除される');
+
+  // ライブラリの「開く」。ここは `window.open(blob:)` をやめてアプリ内表示に
+  // 変えた箇所で、**デスクトップ版では元から無反応**だった (setWindowOpenHandler
+  // が blob: を落とすため)。単体は mime の振り分けしか見ていないので、
+  // 「書き出し → 保存 → 開くと実際に絵が出る」までを実ブラウザで通す。
+  await gotoService(page, '#templates', 'button');
+  // `invoke` は失敗しても throw せず `{ok:false}` を返す。戻り値を見ないと
+  // 書き出しが黙って失敗し、あとの待機がただのタイムアウトになって
+  // 「なぜ落ちたか」が分からなくなる（実際に一度そうなった）。
+  const exported = await page.evaluate(async () => {
+    const res = await window.serviceHub.invoke('templates', 'export-template', {
+      templateId: 'invoice-header',
+      params: {},
+    });
+    return res.ok === true;
+  });
+  ok(exported, 'library: テンプレートの書き出しが成功する');
+  await gotoService(page, '#library', '[data-library-item]');
+  ok(
+    (await page.locator('[data-library-item="image/svg+xml"]').count()) > 0,
+    'library: 書き出した SVG がライブラリに入る',
+  );
+  // 開く前はプレビュー枠が存在しない（負のコントロール: 常に出ている枠を
+  // 「表示できた」と数えないため）。
+  ok((await page.locator('[data-preview-panel]').count()) === 0, 'library: 開く前はプレビューが無い');
+  await page.locator('[data-library-open]').first().click();
+  await page.waitForSelector('[data-preview-panel="image"]', { timeout: 15000 });
+  ok(true, 'library: 「開く」でアプリ内にプレビューが出る（無反応でない）');
+  // data: URL の <img> であること。blob: や新規タブに戻っていたら落ちる。
+  const previewSrc = await page.locator('[data-preview="image"]').getAttribute('src');
+  ok(
+    typeof previewSrc === 'string' && previewSrc.startsWith('data:image/svg+xml'),
+    'library: SVG は data: URL の <img> で描画される（同一オリジン文書にしない）',
+  );
+  // 新しいタブが開いていないこと。window.open へ戻したらここが落ちる。
+  ok(ctx.pages().length === 1, 'library: 新しいタブを開かない');
+
+  // 「ダウンロード」を押す (2026-09-13 ・ パス 193)。
+  //
+  // このボタンは **どのハーネスでも 1 度も押されていなかった**。隣の「開く」は
+  // 上で実ブラウザを通しているのに、ダウンロードは jsdom にも実機にも無かった。
+  // jsdom では `fake-indexeddb` が Blob を保てないので **中身が読める道は
+  // ここしか通せない** —— 保存した Blob が本物の Blob として戻るのを
+  // 確かめる唯一の検査である。
+  const dl = page.waitForEvent('download', { timeout: 15000 });
+  await page.locator('[data-library-download]').first().click();
+  const download = await dl;
+  // `ok(true)` だった —— 待てたことを条件として書く (パス 303)。
+  ok(Boolean(download) && typeof download.suggestedFilename === 'function', 'library: 「ダウンロード」で実際に保存が始まる（無反応でない）');
+  // 保存名は控えの名前。ブラウザが付ける乱数の名になっていたらここが落ちる。
+  const suggested = download.suggestedFilename();
+  ok(
+    typeof suggested === 'string' && suggested.endsWith('.svg'),
+    `library: 保存名が控えの名前になる (${String(suggested)})`,
+  );
+  // 中身が取り出せていること。`get()` が corrupt を返していたら
+  // 上の click は download イベントを出さずここまで来ない。
+  const dlPath = await download.path();
+  ok(typeof dlPath === 'string' && dlPath.length > 0, 'library: 保存されたファイルが存在する');
+  const dlBytes = require('node:fs').statSync(dlPath).size;
+  ok(dlBytes > 0, `library: 保存された中身が空でない (${dlBytes} B)`);
+  // 壊れていると言わない (読めているのだから)。
+  ok(
+    (await page.locator('text=中身が取り出せません').count()) === 0,
+    'library: 読める控えを「壊れている」と言わない',
+  );
+
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(realErrs.length === 0, `desktop: console エラーゼロ (${realErrs.length})`);
+  if (realErrs.length) console.log(realErrs.join('\n'));
+  await ctx.close();
+}
+
+/**
+ * 秒単位の帯が**実機で本当に動く**か。
+ *
+ * 単体検査は純粋関数と刻みをそれぞれ留めているが、「1 秒ごとに再描画される」
+ * ことは **React が実際に描き直しているか**に依るので、組み上げないと分からない。
+ * 「毎秒更新」と言いながら止まっていても、単体検査は全部緑で通る。
+ *
+ * 併せて、止まるべき時に止まることも見る —— タブを隠している間も 1 秒
+ * タイマーを回し続けるのは電池を削るだけで、このアプリは非表示で自動施錠する
+ * 設計なので筋も通らない。
+ */
+async function realtimeSuite(browser) {
+  console.log('--- realtime (#tax の秒単位更新) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#tax', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=いま この瞬間', { timeout: 30000 });
+  ok(true, 'realtime: 帯が出る');
+
+  /** 帯の文字列 (折れ線を持つ「リアルタイム」で始まる箱)。 */
+  const band = () =>
+    page.evaluate(() => {
+      const all = Array.from(document.querySelectorAll('div'));
+      const b = all.find((d) => d.textContent?.startsWith('リアルタイム') === true && d.querySelector('svg') !== null);
+      return b?.textContent ?? null;
+    });
+  const points = () =>
+    page.evaluate(() => {
+      const p = document.querySelector('polyline');
+      return p === null ? 0 : (p.getAttribute('points') ?? '').trim().split(/\s+/).length;
+    });
+
+  const t0 = await band();
+  await page.waitForTimeout(3200);
+  const t1 = await band();
+  ok(t0 !== null && t1 !== null && t0 !== t1, '★ realtime: 3 秒で表示が変わる (止まっていたら鳴る)');
+
+  const p1 = await points();
+  await page.waitForTimeout(3200);
+  const p2 = await points();
+  ok(p2 > p1, `★ realtime: 折れ線が伸びる (${p1} → ${p2})`);
+
+  // 隠したら止まる。
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  const h0 = await band();
+  await page.waitForTimeout(3200);
+  const h1 = await band();
+  ok(h0 === h1, '★ realtime: タブを隠している間は止まる (電池を削らない)');
+
+  // 戻したら、待たずに追いつく。
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.waitForTimeout(300);
+  const h2 = await band();
+  ok(h2 !== h1, '★ realtime: 戻すと 1 周期を待たずに追いつく');
+
+  // 帯は取りに行かないと明示していること (毎秒 API を叩かないのが仕様)。
+  const text = (await band()) ?? '';
+  ok(text.includes('取り直し') || text.includes('刻み'), 'realtime: 刻みと取得の違いを画面で説明している');
+
+  ok(errs.length === 0, `realtime: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+async function phoneSuite(browser) {
+  console.log('--- phone 412x915 (touch) ---');
+  const ctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await page.goto(FILE + '#real-estate', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
+  ok(await noHScroll(page), 'phone: real-estate 横スクロールなし');
+  const fontPx = await page
+    .locator('.field-grid input')
+    .first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  ok(fontPx >= 16, `phone: 入力欄フォント ${fontPx}px ≥ 16px (自動ズーム防止)`);
+  const cols = await page
+    .locator('.stat-grid')
+    .first()
+    .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
+  ok(cols === 2, `phone: KPI グリッド ${cols} 列に折返し`);
+  await page.getByPlaceholder('例: 福岡市アパート').tap();
+  await page.getByPlaceholder('例: 福岡市アパート').fill('スマホ物件');
+  await page.getByPlaceholder('100000').first().fill('90000');
+  await page.getByPlaceholder('12000000').fill('9000000');
+  await page.getByRole('button', { name: '＋ 物件を追加' }).tap();
+  await page.waitForSelector('text=スマホ物件', { timeout: 15000 });
+  ok(true, 'phone: タップ操作で物件追加');
+  // ドロワー
+  await page.locator('.menu-btn').tap();
+  await page.waitForSelector('.app.nav-open', { timeout: 10000 });
+  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().tap();
+  await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+  ok(true, 'phone: ドロワー遷移 + 自動クローズ');
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  // 手入力欄はスマホでも使う。入力が横に並ぶので、開いた状態で
+  // 横スクロールが出ないこと・タップで事業を足せることまで見る。
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  ok(await noHScroll(page), 'phone: 手入力欄を開いても横スクロールなし');
+  const manualFontPx = await page
+    .locator('input[aria-label="事業名"]')
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  ok(
+    manualFontPx >= 16,
+    `phone: 手入力欄のフォント ${manualFontPx}px ≥ 16px (自動ズーム防止)`,
+  );
+  await page.locator('input[aria-label="事業名"]').fill('スマホ事業');
+  await page.getByRole('button', { name: '事業を追加' }).tap();
+  await page.waitForSelector('[data-business-unit]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-business-unit]').innerText()).includes('スマホ事業'),
+    'phone: タップ操作で事業を追加できる',
+  );
+  ok(await noHScroll(page), 'phone: 事業を足した後も横スクロールなし');
+
+  ok(realErrs.length === 0, `phone: console エラーゼロ (${realErrs.length})`);
+  await ctx.close();
+}
+
+async function tabletSuite(browser) {
+  console.log('--- tablet 834x1194 (touch) ---');
+  const ctx = await browser.newContext({ viewport: { width: 834, height: 1194 }, hasTouch: true });
+  const page = await ctx.newPage();
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await page.goto(FILE + '#real-estate', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=敷地プランナー', { timeout: 30000 });
+  ok(await noHScroll(page), 'tablet: 横スクロールなし (サイドバー併存)');
+  const cols = await page
+    .locator('.stat-grid')
+    .first()
+    .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
+  ok(cols >= 3, `tablet: KPI グリッド ${cols} 列で広幅活用`);
+  await ctx.close();
+}
+
+/**
+ * シェルの操作性 (パス 322): サイドバー (検索の ✕ と件数・分類の開閉) / トップバーの ♡ /
+ * ホームの「お気に入り・最近使った」のジャンプ列 / 「先頭へ戻る」 / スマホのドロワーの閉じ方。
+ *
+ * 見るのは**1 つの状態を 3 つの場所が映すこと** —— トップバーの ♡・サイドバーの節・ホームの列は
+ * どれも App の 1 つの並び (`shellContext.ts`) から描かれる。jsdom (`appShell.test.ts`) は同じ配線を
+ * 見るが、スクロールの量と `position: fixed` の可視性は実ブラウザでしか測れない。
+ */
+async function shellSuite(browser) {
+  console.log('--- shell: サイドバー / トップバー / ホームのジャンプ列 / 先頭へ戻る (パス 322) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-home-favorites]', { timeout: 30000 });
+
+  // 1. お気に入りが無いホームは案内文 (何も押していない利用者が最初に見る物)
+  ok((await page.locator('[data-home-favorites]').innerText()).includes('ここに並びます'), 'shell: ★ お気に入りが無いホームは案内文を出す');
+
+  // 2. トップバーの ♡ → サイドバーの節と項目の ♥ が同じ状態を映す
+  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
+  await page.locator('.topbar-fav').click();
+  await page.waitForSelector('.topbar-fav.on', { timeout: 5000 });
+  ok((await page.locator('.topbar-fav').getAttribute('aria-pressed')) === 'true', 'shell: ★ トップバーの ♡ を押すと押された状態 (aria-pressed) になる');
+  await page.waitForSelector('[data-section="favorites"] .sidebar-item[data-service-id="docstudio"]', { timeout: 5000 });
+  ok(true, 'shell: ★ サイドバーの「お気に入り」の節に同じサービスが現れる');
+  ok((await page.locator('.sidebar-item[data-service-id="docstudio"] .fav-toggle.on').count()) >= 1, 'shell: 項目の ♥ も点く (押し場所は 2 つ・状態は 1 つ)');
+  const favStored = JSON.parse((await page.evaluate(() => localStorage.getItem('servicehub.favorites'))) || '[]');
+  ok(Array.isArray(favStored) && favStored.includes('docstudio'), 'shell: お気に入りは servicehub.favorites に残る');
+
+  // 3. ホームのジャンプ列: お気に入り / 最近使った (自分は出さない) → 押すとそこへ移る
+  await page.locator('.sidebar-item[data-service-id="home"]').first().click();
+  await page.waitForSelector('[data-home-favorites] button.chip[data-jump-to="docstudio"]', { timeout: 10000 });
+  ok(true, 'shell: ★ ホームのお気に入り列にサイドバーと同じサービスが並ぶ');
+  ok((await page.locator('[data-home-recents] button.chip[data-jump-to="docstudio"]').count()) === 1, 'shell: 最近使った列に直前に開いた画面が並ぶ');
+  ok((await page.locator('[data-home-recents] button.chip[data-jump-to="home"]').count()) === 0, 'shell: 最近使った列にホーム自身は出ない (今ここに居る)');
+  await page.locator('[data-home-favorites] button.chip[data-jump-to="docstudio"]').click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
+  ok((await page.evaluate(() => location.hash)) === '#docstudio', 'shell: ★ ジャンプ列を押すとその画面へ移る (hash も同期)');
+
+  // 4. 検索: 件数 / ✕ で消す / ショートカットの札 / フォーカスは残る
+  await page.locator('.sidebar-search-input').fill('株');
+  await page.waitForSelector('.sidebar-search-clear', { timeout: 5000 });
+  const label = (await page.locator('.sidebar-nav [role="status"]').innerText()).trim();
+  const counted = /検索結果 (\d+) 件/.exec(label);
+  ok(counted !== null, `shell: ★ 検索結果の件数を出す (${label})`);
+  ok(counted !== null && (await page.locator('.sidebar-nav .sidebar-item').count()) === Number(counted[1]), 'shell: 件数と並ぶ項目の数が一致する');
+  await page.locator('.sidebar-search-clear').click();
+  await page.waitForFunction(() => document.querySelector('.sidebar-search-input').value === '', undefined, { timeout: 5000 });
+  ok(true, 'shell: ★ ✕ で検索が消える');
+  ok(await page.locator('.sidebar-search-kbd').isVisible(), 'shell: 空の検索欄にはショートカットの札が見える');
+  ok(await page.locator('.sidebar-search-input').evaluate((el) => document.activeElement === el), 'shell: ✕ の後もフォーカスは検索欄に残る (続けて打てる)');
+
+  // 5. 分類の開閉 (aria-expanded が実物と一致する)
+  const head = page.locator('.sidebar-group[data-category="tools"] .sidebar-group-head');
+  ok((await head.getAttribute('aria-expanded')) === 'false', 'shell: 「分析・ツール」は既定で畳まれている');
+  await head.click();
+  await page.waitForSelector('.sidebar-group[data-category="tools"] .sidebar-item', { timeout: 5000 });
+  ok((await head.getAttribute('aria-expanded')) === 'true', 'shell: ★ 見出しを押すと開く (aria-expanded=true・項目が出る)');
+  await head.click();
+  await page.waitForFunction(() => document.querySelectorAll('.sidebar-group[data-category="tools"] .sidebar-item').length === 0, undefined, { timeout: 5000 });
+  ok(true, 'shell: もう 1 度押すと畳まれる');
+
+  // 6. 先頭へ戻る + 画面を切り替えたらスクロール位置を引き継がない
+  await page.locator('.sidebar-item[data-service-id="business"]').first().click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="business"]', { timeout: 10000 });
+  const scrollTop = () => page.evaluate(() => document.querySelector('.content').scrollTop);
+  await page.evaluate(() => document.querySelector('.content').scrollTo({ top: 900, behavior: 'auto' }));
+  await page.waitForSelector('.scroll-top.show', { timeout: 5000 });
+  ok(true, 'shell: ★ 本文を下へ送ると「先頭へ戻る」が現れる');
+  ok((await scrollTop()) > 320, `shell: スクロール量 ${await scrollTop()}px > 320px (現れる閾値)`);
+  await page.locator('.scroll-top').click();
+  await page.waitForFunction(() => document.querySelector('.content').scrollTop === 0, undefined, { timeout: 5000 });
+  ok(true, 'shell: ★ 押すと先頭へ戻る');
+  await page.waitForFunction(() => !document.querySelector('.scroll-top.show'), undefined, { timeout: 5000 });
+  ok(true, 'shell: 戻ったらボタンは隠れる');
+  await page.evaluate(() => document.querySelector('.content').scrollTo({ top: 900, behavior: 'auto' }));
+  await page.waitForSelector('.scroll-top.show', { timeout: 5000 });
+  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().click();
+  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
+  await page.waitForFunction(() => document.querySelector('.content').scrollTop === 0 && !document.querySelector('.scroll-top.show'), undefined, { timeout: 5000 });
+  ok(true, 'shell: ★ 画面を切り替えると先頭から始まる (前の画面のスクロール位置を引き継がない)');
+  await ctx.close();
+
+  // 7. スマホ: ドロワーは ✕ でも Esc でも閉じる
+  const pctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+  const ppage = await pctx.newPage();
+  collectErrors(ppage, errs);
+  await ppage.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await ppage.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(ppage);
+  await ppage.locator('.menu-btn').tap();
+  await ppage.waitForSelector('.app.nav-open', { timeout: 10000 });
+  ok(await ppage.locator('.drawer-close').isVisible(), 'shell: ★ スマホのドロワーに閉じるボタンが見える');
+  await ppage.locator('.drawer-close').tap();
+  await ppage.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+  ok(true, 'shell: ★ ✕ でドロワーが閉じる');
+  await ppage.locator('.menu-btn').tap();
+  await ppage.waitForSelector('.app.nav-open', { timeout: 10000 });
+  await ppage.keyboard.press('Escape');
+  await ppage.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+  ok(true, 'shell: Esc でもドロワーが閉じる');
+  ok(await noHScroll(ppage), 'shell: スマホのホームに横スクロールなし');
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(realErrs.length === 0, `shell: console エラーゼロ (${realErrs.length})`);
+  await pctx.close();
+}
+
+/**
+ * 事業・数値の手入力 — 全画面共通の欄。
+ *
+ * この欄は App が 1 か所で描くので、画面ごとに貼り忘れる余地は無い。
+ * ここで確かめるのは「一覧を持つ画面では置き換え欄が出て、持たない画面では
+ * 出ないこと」「事業は画面をまたいで共有され、数値は画面ごとに分かれること」
+ * の 2 点である。単体テストでは module の境界までしか見えない。
+ */
+/**
+ * 手入力欄を**除いた**ページ本文。
+ *
+ * 入力欄は自分で「手入力 7,654,321 円」と出すので、body 全体で数字を探すと
+ * 入力欄を読んで通ってしまい、「欄には印が付くがページの数字は変わらない」
+ * 配線ミスを捕まえられない (2026-08 に実際に踏んだ)。通貨記号は Node と
+ * Chromium の ICU で `\uFFE5` / `\u00A5` が揺れるので、記号は照合に使わない。
+ */
+async function textOutsideManualPanel(page) {
+  return page.evaluate(() => {
+    const clone = document.body.cloneNode(true);
+    for (const el of clone.querySelectorAll('[data-manual-data]')) el.remove();
+    return clone.textContent ?? '';
+  });
+}
+
+async function manualDataSuite(browser) {
+  console.log('--- 事業・数値の手入力 (全画面共通) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  await page.goto(FILE + '#overview', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-manual-data]', { timeout: 30000 });
+  ok(
+    (await page.getAttribute('[data-manual-data]', 'data-scope')) === 'overview',
+    '手入力欄が現在の画面 id を持つ',
+  );
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+
+  // 事業を足す
+  await page.fill('input[aria-label="事業名"]', '物販事業');
+  await page.fill('input[aria-label="開始時期"]', '2024-04');
+  await page.click('button:has-text("事業を追加")');
+  await page.waitForSelector('[data-business-unit]', { timeout: 30000 });
+  ok((await page.locator('[data-business-unit]').count()) === 1, '事業を任意に追加できる');
+
+  // 任意の数値を、その事業に紐づけて足す
+  await page.fill('input[aria-label="項目名"]', '想定客単価');
+  await page.fill('input[aria-label="値"]', '4800');
+  await page.selectOption('select[aria-label="紐づける事業"]', { label: '物販事業' });
+  await page.click('button:has-text("数値を追加")');
+  await page.waitForSelector('[data-manual-metric]', { timeout: 30000 });
+  const metricText = await page.locator('[data-manual-metric]').first().innerText();
+  ok(metricText.includes('想定客単価'), '任意の数値を追加できる');
+  ok(metricText.includes('4,800 円'), '追加した数値が単位付きで出る');
+  ok(metricText.includes('物販事業'), '数値を事業に紐づけられる');
+
+  // 計算値の置き換え（一覧を持つ画面）
+  ok((await page.locator('[data-manual-overrides]').count()) > 0, '一覧を持つ画面には置き換え欄が出る');
+  await page.fill('[data-override-row="kpi.revenue"] input', '12345678');
+  await page.click('[data-override-row="kpi.revenue"] button:has-text("保存")');
+  await page.waitForSelector('[data-override-row="kpi.revenue"] [data-overridden]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row="kpi.revenue"] [data-overridden]').innerText()).includes(
+      '12,345,678 円',
+    ),
+    '計算値を手入力で置き換えられる',
+  );
+
+  // KPI も一覧を持つ。置き換えた値が画面の数字に出るところまで見る
+  // （欄に印が付くだけで、実際の表示に反映されない配線ミスを捕まえる）。
+  //
+  // KPI の集計タイルは実績が 1 件も無いと描画されないので、先に 1 行入れる。
+  // 照合は**ページ側の通貨表記 (￥付き)** で行う。入力欄自身も
+  // 「手入力 7,654,321 円」と出すため、素の数字で照合すると入力欄を読んで
+  // 通ってしまい、配線ミスを捕まえられない (2026-08 に実際に踏んだ)。
+  await gotoService(page, '#kpi', 'input[placeholder="YYYY-MM"]');
+  const kpiForm = [
+    ['YYYY-MM', '2026-01'],
+    ['事業名', 'E2E'],
+    ['売上高', '10000000'],
+    ['売上原価', '4000000'],
+    ['広告費', '500000'],
+    ['販管費', '2000000'],
+    ['減価償却費', '300000'],
+  ];
+  for (const [ph, v] of kpiForm) {
+    await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  }
+  // 「追加」ボタンはページ内に 40 個以上ある。first() だと別のパネルの
+  // ボタンを押してしまい、実績が入らないまま素通りする (2026-08 に実際に踏んだ)。
+  // 入力欄の親要素に絞ってから押す。
+  const kpiFormBox = page
+    .locator('input[placeholder="YYYY-MM"]')
+    .first()
+    .locator('xpath=ancestor::div[1]');
+  ok(
+    (await kpiFormBox.getByRole('button', { name: '追加' }).count()) === 1,
+    'KPI: 実績フォームの「追加」ボタンを一意に絞れている',
+  );
+  await kpiFormBox.getByRole('button', { name: '追加' }).first().click();
+  await page.waitForSelector('table', { timeout: 30000 });
+
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-overrides]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row]').count()) === 8,
+    `KPI の置き換え欄が 8 項目 (実際 ${await page.locator('[data-override-row]').count()})`,
+  );
+  await page.fill('[data-override-row="operatingProfit"] input', '7654321');
+  await page.click('[data-override-row="operatingProfit"] button:has-text("保存")');
+  await page.waitForSelector('[data-override-row="operatingProfit"] [data-overridden]', {
+    timeout: 30000,
+  });
+  ok(
+    (await textOutsideManualPanel(page)).includes('7,654,321'),
+    'KPI: 置き換えた値が画面の数字に反映される (入力欄を除いた本文で照合)',
+  );
+
+  // 投資 2 画面も一覧を持つ。置き換えた値が画面の数字に出るところまで見る。
+  await gotoService(page, '#real-estate', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-overrides]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row]').count()) === 5,
+    `不動産の置き換え欄が 5 項目 (実際 ${await page.locator('[data-override-row]').count()})`,
+  );
+  ok(
+    (await page.locator('[data-override-row="occupancyRate"]').count()) === 0,
+    '入居率は置き換え欄に出ない (保存と表示で尺度が違うため)',
+  );
+  await page.fill('[data-override-row="portfolioYield"] input', '9.9');
+  await page.click('[data-override-row="portfolioYield"] button:has-text("保存")');
+  await page.waitForSelector('[data-override-row="portfolioYield"] [data-overridden]', {
+    timeout: 30000,
+  });
+  ok(
+    (await textOutsideManualPanel(page)).includes('9.9%'),
+    '不動産: 置き換えた利回りが画面の数字に反映される (入力欄を除いた本文で照合)',
+  );
+
+  await gotoService(page, '#mutual-funds', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-overrides]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-override-row]').count()) === 4,
+    `投資信託の置き換え欄が 4 項目 (実際 ${await page.locator('[data-override-row]').count()})`,
+  );
+
+  // 一覧を持たない画面: 足す側だけが出る／事業は共有・数値は画面ごと
+  await gotoService(page, '#github', '[data-manual-data]');
+  ok(
+    (await page.getAttribute('[data-manual-data]', 'data-scope')) === 'github',
+    '別の画面でも手入力欄が出る',
+  );
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-manual-metrics]', { timeout: 30000 });
+  ok(
+    (await page.locator('[data-manual-overrides]').count()) === 0,
+    '一覧を持たない画面には置き換え欄を出さない',
+  );
+  ok((await page.locator('[data-business-unit]').count()) === 1, '事業は画面をまたいで共有される');
+  ok(
+    (await page.locator('[data-manual-metric]').count()) === 0,
+    '数値は画面ごとに分かれる (別画面のものは出ない)',
+  );
+
+  ok(errs.length === 0, `手入力欄: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+/**
+ * 取得元の表示 (`shared/dataOrigin.ts`)。
+ *
+ * 2026-08 監査の回帰: 公式 API 未配線のサービスは stub が空データを「成功」で
+ * 返すため、「更新」を押すと画面が空になり緑の「ライブ」バッジが付いていた。
+ * 実ブラウザで (1) 更新ボタンが出ていないこと (2) バッジが「内蔵サンプル」で
+ * あること (3) 士業ページの数字が残っていることを見る。単体テストは hook を
+ * 見るだけなので、ページに配線されていることはここでしか確かめられない。
+ */
+async function dataOriginSuite(browser) {
+  console.log('--- 取得元の表示 (内蔵サンプル / ライブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  // sample: 税理士。士業 CRM の数字が残り、更新ボタンが無いこと。
+  await page.goto(FILE + '#tax-accountant', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('.status-bar', { timeout: 30000 });
+  const badge = (await page.textContent('.status-bar .badge')) ?? '';
+  ok(badge.trim() === '内蔵サンプル', `税理士: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
+  ok(
+    (await page.locator('.status-bar .badge.ok').count()) === 0,
+    '税理士: 緑 (ライブ) バッジを出さない',
+  );
+  ok(
+    (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 0,
+    '税理士: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
+  );
+  ok(
+    (await page.locator('[data-sample-note]').count()) === 1,
+    '税理士: 「外部連携なし」の断り書きを出す',
+  );
+
+  // local: KPI。更新ボタンは出る (取得先が手元にある)。
+  await gotoService(page, '#kpi', '.status-bar');
+  ok(
+    (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 1,
+    'KPI: 更新ボタンを出す (local は取得できる)',
+  );
+  ok(
+    (await page.locator('[data-sample-note]').count()) === 0,
+    'KPI: 「外部連携なし」は出さない',
+  );
+
+  // remote: GitHub。更新ボタンが出て、未取得なら「サンプル（未連携）」。
+  //
+  // **「スナップショット」ではない。** 2026-08-19 (#783) に言葉を変えた ——
+  // 「スナップショット」は *実データをある時点で写したもの* と読めるが、
+  // 実際に出ているのは同梱の作り物 (架空の氏名とメール) で、実在の同僚と
+  // 受け取られる余地があった。判定は `shared/dataOrigin.ts` の
+  // `describeOrigin` に 1 つだけ在る。
+  //
+  // ここは **e2e が CI に無いあいだに 4 日ぶん古いまま**になっていた
+  // (2026-08-23 に走らせて発覚)。正しいアプリに対して赤を出す検査は、
+  // 検査が無いより悪い —— 赤を無視する習慣がつく。
+  await gotoService(page, '#github', '.status-bar');
+  ok(
+    (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 1,
+    'GitHub: 更新ボタンを出す',
+  );
+  const ghBadge = (await page.textContent('.status-bar .badge')) ?? '';
+  ok(
+    ghBadge.trim() === 'サンプル（未連携）',
+    `GitHub: 未取得は「サンプル（未連携）」(実際 "${ghBadge.trim()}")`,
+  );
+
+  ok(errs.length === 0, `取得元の表示: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+/**
+ * 読み手のいない資格情報 (`shared/credentialUse.ts`)。
+ *
+ * 2026-08 監査の回帰: asana / discord / dropbox / line / linear / salesforce /
+ * sentry / stripe は通信もアクションもしないのにトークン入力欄を出し、入力すれば
+ * 暗号化保存していた。実ブラウザで (1) 入力欄が消えていること (2) 使うサービスでは
+ * 残っていること (3) 過去に保存された分を設定画面から消せることを見る。
+ * (3) は単体テストでは確かめられない — 保存の実体 (Vault) と画面の結線だから。
+ */
+async function credentialSuite(browser) {
+  console.log('--- 使われない資格情報を求めない / 掃除できる ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  await page.goto(FILE + '#dropbox', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('.status-bar', { timeout: 30000 });
+  // ラベルは画面ごとに違う (GitHub は「PAT を設定」) ので、文字列ではなく
+  // **押した結果**で見る。dropbox は sample かつ none なので、更新もトークンも
+  // 出ないボタン 0 個が正しい姿。
+  ok(
+    (await page.locator('.status-bar button').count()) === 0,
+    `Dropbox: 状態バーにボタンを出さない (更新もトークンも無い) — 実際 ${JSON.stringify(
+      await page.locator('.status-bar button').allTextContents(),
+    )}`,
+  );
+
+  await gotoService(page, '#github', '.status-bar');
+  const ghLabels = await page.locator('.status-bar button').allTextContents();
+  const ghEdit = ghLabels.filter((b) => !b.includes('更新'));
+  ok(ghEdit.length === 1, `GitHub: 資格情報の設定ボタンが 1 つある — 実際 ${JSON.stringify(ghLabels)}`);
+  await page.locator('.status-bar button', { hasText: ghEdit[0] }).first().click();
+  ok(
+    (await page.locator('.status-bar input[type=password]').count()) === 1,
+    'GitHub: 押すと資格情報の入力欄が出る (取得に要るので残す)',
+  );
+
+  // 過去に保存された分を作ってから設定画面へ。
+  const stored = await page.evaluate(async () => {
+    await window.serviceHub.setToken('dropbox', 'stale-token-from-before-the-audit');
+    return (await window.serviceHub.listConfigured()).includes('dropbox');
+  });
+  ok(stored === true, '設定前提: dropbox のトークンを保存できた');
+
+  await gotoService(page, '#settings', '[data-unused-credentials]');
+  ok(
+    (await page.locator('[data-unused-credential="dropbox"]').count()) === 1,
+    '設定: 使われていない資格情報として dropbox が挙がる',
+  );
+  await page.locator('[data-unused-credentials] button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(
+    () => document.querySelectorAll('[data-unused-credential="dropbox"]').length === 0,
+    { timeout: 15000 },
+  );
+  const gone = await page.evaluate(async () => (await window.serviceHub.listConfigured()).includes('dropbox'));
+  ok(gone === false, '設定: 削除すると保存先からも消える');
+  ok(
+    (await page.locator('[data-unused-credentials]').count()) === 0,
+    '設定: 0 件になったら節そのものを描かない',
+  );
+
+  ok(errs.length === 0, `資格情報の掃除: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+/**
+ * 登録した事業が事業間比較グラフに出ること (2026-08 の要望)。
+ *
+ * 比較グラフは同梱の模擬データ 10 件に固定されており、利用者が登録した事業は
+ * 金額を持てないため出られなかった。売上を入れた事業が自分の名前で並び、
+ * 同梱分が「(サンプル)」と明示されることを実ブラウザで見る。
+ */
+/**
+ * 計算書類の消費税科目 — **区分を間違えると貸借が合わなくなる**ので実機で見る。
+ *
+ * 単体テストは `ACCOUNTS` の区分と区分合計を固定しているが、そこから
+ * 「入力欄として画面に出るか」「入れた額が貸借対照表の行に出るか」までは
+ * 見ていない。フォームは `ACCOUNTS.map` で組み立てているので、その配線が
+ * 切れたら単体は通ったまま画面だけ空になる。
+ *
+ * 決算書は書類スタジオの**別コレクション** (`data-collection="kessan"`) で、
+ * 雛形書類の `data-doc-id` とは別系統。ここを取り違えると「タブが無い」と
+ * 誤診する (2026-08-24 に実際に踏んだ)。
+ */
+async function kessanTaxSuite(browser) {
+  console.log('--- 計算書類: 消費税の科目 ---');
+  // 各 suite は自前の context で保管庫を作る (SERVICE_HUB_E2E_ONLY で
+  // 単独実行できるようにするため)。他の suite に相乗りしない。
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errors = [];
+  collectErrors(page, errors);
+  await page.goto(FILE + '#docstudio', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-collection]', { timeout: 30000 });
+  await page.locator('[data-collection="kessan"]').click();
+  await page.waitForSelector('[data-kessan-sheets]', { timeout: 15000 });
+  /** 紙の並び (書面ごとの `data-kessan-page`)。 */
+  const pageIds = () => page.locator('[data-kessan-sheets] [data-kessan-page]').evaluateAll((els) => els.map((e) => e.getAttribute('data-kessan-page')));
+
+  // 税抜経理: 支払った税は資産、預かった税は負債。精算は片側だけに立つ。
+  const ACCOUNTS = [
+    ['仮払消費税等', '資産'],
+    ['未収還付消費税等', '資産'],
+    ['仮受消費税等', '負債'],
+    ['未払消費税等', '負債'],
+  ];
+  for (const [name] of ACCOUNTS) {
+    ok((await page.getByLabel(name, { exact: false }).count()) > 0, `kessan: 「${name}」の入力欄が在る`);
+  }
+
+  await page.getByLabel('仮払消費税等', { exact: false }).first().fill('80');
+  await page.getByLabel('仮受消費税等', { exact: false }).first().fill('80');
+  await page.waitForFunction(
+    () => (document.querySelector('[data-kessan-sheets]')?.textContent ?? '').includes('仮払消費税等'),
+    undefined,
+    { timeout: 15000 },
+  );
+  const sheets = (await page.locator('[data-kessan-sheets]').innerText()).replace(/,/g, '');
+  ok(/仮払消費税等[\s\S]{0,40}80/.test(sheets), 'kessan: 仮払が貸借対照表の行に出る');
+  ok(/仮受消費税等[\s\S]{0,40}80/.test(sheets), 'kessan: 仮受が貸借対照表の行に出る');
+
+  // 資産・負債を同額入れたので貸借は崩れない = 不一致の指摘が出ない。
+  const check = await page.locator('[data-kessan-check]').innerText().catch(() => '');
+  ok(!check.includes('貸借が一致していません'), 'kessan: 両建てしても貸借は崩れない');
+
+  // 納付と還付は同時に立たない — 入力者が気づけない誤りなので検算で拾う。
+  await page.getByLabel('未払消費税等', { exact: false }).first().fill('30');
+  await page.getByLabel('未収還付消費税等', { exact: false }).first().fill('30');
+  await page.waitForFunction(
+    () => (document.querySelector('[data-kessan-check]')?.textContent ?? '').includes('どちらか一方'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'kessan: 納付と還付の両建てを検算が指摘する');
+
+  // 書面タブ (2026-09-05、依頼「計算書類4点を個別に記載出来る仕様にして」): 1 点ずつ開くと
+  // 入力欄と書面がその書面の分だけになり、「まとめて」に戻すと全部出る。値の入れ物は 1 つ。
+  const sheetAttr = async () => page.locator('[data-kessan-sheets]').getAttribute('data-kessan-sheets');
+  ok((await sheetAttr()) === 'all', 'kessan: 既定は「4点まとめて」');
+  await page.locator('button[data-kessan-sheet="bs"]').click();
+  await page.waitForSelector('[data-kessan-sheets="bs"]', { timeout: 15000 });
+  ok((await page.getByLabel('現金及び預金', { exact: false }).count()) > 0, 'kessan[bs]: 貸借対照表の科目は入力欄に在る');
+  ok((await page.getByLabel('売上高', { exact: true }).count()) === 0, 'kessan[bs]: 損益計算書の科目は入力欄に出ない');
+  ok((await page.locator('table[data-statement="損益計算書"]').count()) === 0, 'kessan[bs]: 損益計算書の書面は出ない');
+  ok((await page.locator('table[data-statement="資産の部"]').count()) > 0, 'kessan[bs]: 貸借対照表の書面は出る');
+  const bsSheet = (await page.locator('[data-kessan-sheets]').innerText()).replace(/,/g, '');
+  ok(/仮払消費税等[\s\S]{0,40}80/.test(bsSheet), 'kessan[bs]: まとめてで入れた値が 1 点ずつの書面にも出る (入れ物は 1 つ)');
+  ok(((await page.locator('[data-legal-panel]').innerText().catch(() => '')) || '').includes('貸借対照表'), 'kessan[bs]: 法的地位パネルが貸借対照表の物になる');
+  ok((await pageIds()).join(',') === 'bs,notice', `kessan[bs]: 貸借対照表と決算公告の要旨は別の紙 2 枚 (実際 ${(await pageIds()).join(',')})`);
+  await page.locator('button[data-kessan-sheet="pl"]').click();
+  await page.waitForSelector('[data-kessan-sheets="pl"]', { timeout: 15000 });
+  ok((await page.getByLabel('売上高', { exact: true }).count()) > 0, 'kessan[pl]: 損益計算書の科目は入力欄に在る');
+  ok((await page.getByLabel('現金及び預金', { exact: false }).count()) === 0, 'kessan[pl]: 貸借対照表の科目は入力欄に出ない');
+  ok((await page.locator('table[data-statement="資産の部"]').count()) === 0, 'kessan[pl]: 貸借対照表の書面は出ない');
+  await page.locator('button[data-kessan-sheet="all"]').click();
+  await page.waitForSelector('[data-kessan-sheets="all"]', { timeout: 15000 });
+  ok((await page.getByLabel('売上高', { exact: true }).count()) > 0 && (await page.getByLabel('現金及び預金', { exact: false }).count()) > 0, 'kessan[all]: まとめてに戻すと全科目が入力欄に戻る');
+  ok((await page.locator('table[data-statement="損益計算書"]').count()) > 0 && (await page.locator('table[data-statement="資産の部"]').count()) > 0, 'kessan[all]: 4 点の書面が全部出る');
+
+  // 1 点 1 枚 (2026-09-19・パス 323、依頼「計算書類（4点）が一枚に集約されているので１枚ずつになる様に最適化して」):
+  // まとめて表示でも書面ごとに別の紙で、印刷は書面ごとに改ページ。改ページは実 chromium でしか測れない
+  // (jsdom は紙の数と順序と規則の原文まで)。ページ数は PDF の /Pages の /Count から読む。
+  //
+  // **名乗りどおり 4 枚ちょうど** (パス 328・依頼「これらを４つに分けて」)。パス 323 は決算公告の要旨を
+  // 5 枚目として同じ束に入れており、タブが「4点」と名乗るのに 5 枚出ていた。要旨は会社法 440 条の
+  // 公告で 435 条 2 項の計算書類ではないので束から外し、貸借対照表を選んだときだけ組で出す
+  // (上の `kessan[bs]: bs,notice` がそれを留めている —— 外しても失われない)。
+  //
+  // **投資ポートフォリオは参考の別紙として併記する** (パス 329・依頼「計算書類4点にポートフォリオも併記する様にして」)。
+  // 法定の紙は 4 枚のままで、参考は `data-kessan-kind="reference"` として数えない。
+  const statutoryIds = () => page.locator('[data-kessan-sheets] [data-kessan-kind="statutory"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-kessan-page')));
+  const referenceIds = () => page.locator('[data-kessan-sheets] [data-kessan-kind="reference"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-kessan-page')));
+  ok((await statutoryIds()).join(',') === 'pl,bs,equity,notes', `kessan[all]: ★ 法定の書面は 1 点 1 枚で 4 枚ちょうど (実際 ${(await statutoryIds()).join(',')})`);
+  ok((await referenceIds()).join(',') === 'portfolio', `kessan[all]: ★ 参考の別紙は投資ポートフォリオ 1 枚 (実際 ${(await referenceIds()).join(',')})`);
+  ok((await page.locator('[data-kessan-sheets]').getAttribute('data-kessan-pages')) === '4', 'kessan[all]: 数えるのは法定の紙だけ (data-kessan-pages=4)');
+  ok((await page.locator('[data-kessan-sheets] .ds-paper').count()) === 5, 'kessan[all]: 法定 4 枚 + 参考 1 枚がそれぞれ紙 (.ds-paper) で、免責の脚注も紙ごと');
+  ok((await page.locator('[data-kessan-sheets]').innerText()).includes('決算公告') === false, 'kessan[all]: ★ まとめてに決算公告の要旨は入らない (440 条の公告は計算書類ではない)');
+  const annexText = await page.locator('[data-kessan-page="portfolio"]').innerText();
+  ok(annexText.includes('会社法435条2項の計算書類') && annexText.includes('含まれません'), 'kessan[all]: ★ 参考の紙が「計算書類ではない」と自分で言う');
+  ok((await page.locator('[data-kessan-page="portfolio"] [data-annex-origin]').getAttribute('data-annex-origin')) === 'sample', 'kessan[all]: ★ 保有明細の出所が見本であることを紙が言う');
+  ok(annexText.includes('貸借対照表 投資有価証券（簿価）'), 'kessan[all]: 参考の紙は貸借対照表の簿価と並べて突き合わせできる');
+  // 規則が実ブラウザの cascade で紙に届くこと (2 枚目以降だけ)。stylesheet の順序で負けて 1 行も効かない形は
+  // 原文の検査では見えない (パス 322 の hero がそれだった)。
+  await page.emulateMedia({ media: 'print' });
+  await page.evaluate(() => document.body.classList.add('ds-printing'));
+  const breaks = await page.locator('[data-kessan-sheets] .ds-sheet-block').evaluateAll((els) => els.map((el) => getComputedStyle(el).breakBefore));
+  await page.evaluate(() => document.body.classList.remove('ds-printing'));
+  await page.emulateMedia({ media: null });
+  ok(breaks.join(',') === 'auto,page,page,page,page', `kessan[all]: ★ 印刷の cascade で 2 枚目以降の紙に break-before: page が届く (実際 ${breaks.join(',')})`);
+  const pdfPageCount = async () => {
+    await page.evaluate(() => document.body.classList.add('ds-printing'));
+    const buf = await page.pdf({ format: 'A4', preferCSSPageSize: true });
+    await page.evaluate(() => document.body.classList.remove('ds-printing'));
+    const text = buf.toString('latin1');
+    const m = /\/Type\s*\/Pages\b[^>]*?\/Count\s+(\d+)/.exec(text);
+    return m ? Number(m[1]) : (text.match(/\/Type\s*\/Page\b(?!s)/g) ?? []).length;
+  };
+  ok((await pdfPageCount()) >= 5, `kessan[all]: ★ 印刷は書面ごとに改ページ (PDF ${await pdfPageCount()} ページ ≥ 法定 4 枚 + 参考 1 枚)`);
+  // 対照は中身を縮めて測る —— 実物の紙はほぼ 1 ページずつ埋まるので、規則を外しても自然な流れで
+  // 同じページ数になりうる (パス 323 の実測: 消費税の 4 科目を入れた状態で 5 / 5 で鳴らなかった)。
+  // 表の 4 行目以降と注記の 3 節目以降を CSSOM で隠して紙を短くすると、規則が効いていれば 4 ページ・
+  // 効いていなければ流れて減る (法定 4 枚 + 参考 1 枚 = 5)。
+  const shrink = (on) => page.evaluate((hide) => {
+    const rows = document.querySelectorAll('[data-kessan-page] .ds-table tbody tr:nth-child(n+4), [data-statement="個別注記表"] > div:nth-child(n+3)');
+    rows.forEach((el) => { el.style.display = hide ? 'none' : ''; });
+  }, on);
+  await shrink(true);
+  const shrunkWithRule = await pdfPageCount();
+  await page.evaluate(() => document.querySelectorAll('.ds-sheet-block').forEach((el) => el.classList.replace('ds-sheet-block', 'e2e-no-break')));
+  const shrunkWithoutRule = await pdfPageCount();
+  await page.evaluate(() => document.querySelectorAll('.e2e-no-break').forEach((el) => el.classList.replace('e2e-no-break', 'ds-sheet-block')));
+  await shrink(false);
+  ok(shrunkWithRule === 5, `kessan[all]: ★ 中身を縮めても 1 点 1 枚 (PDF ${shrunkWithRule} ページ = 法定 4 + 参考 1)`);
+  ok(shrunkWithoutRule < 5, `kessan[all]: 対照 — 改ページの規則を外すと縮めた 5 枚は流れて減る (${shrunkWithoutRule} < 5)`);
+
+  ok(errors.length === 0, `kessan: ページエラー 0 (実際 ${errors.length})`);
+  if (errors.length > 0) errors.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/**
+ * クリックジャッキング拒否 — **枠に入れられたら動かない**ことを実機で見る。
+ *
+ * `security/frameGuard.ts` の単体検査は `isFramed()` の判定と
+ * `renderFrameRefusal()` の DOM を別々に固定しているが、
+ * **「枠の中でアプリが本当に立ち上がらないか」は別の問い**である
+ * (判定が正しくても `main.tsx` の分岐が壊れれば React は mount する)。
+ *
+ * `frame-ancestors` は `<meta>` の CSP では効かない (実測済み) ので、
+ * GitHub Pages / `file://` ではこの JS 側の拒否だけが防御線になる。
+ * だからこそ実物で確かめる価値がある。
+ *
+ * **空撃ち対策**: 「アプリが描画されない」は *iframe が読み込まれなかった*
+ * ときにも成立してしまう。枠の中に拒否の文言が出ていることを併せて見る。
+ */
+async function frameGuardSuite(browser) {
+  console.log('--- 枠 (iframe) に入れられたら動かない ---');
+  const attackPath = path.join(path.dirname(targetAbs), '__e2e-frame-attack.html');
+  fs.writeFileSync(
+    attackPath,
+    '<!doctype html><meta charset="utf-8"><title>attack</title>' +
+      `<h1>攻撃者のページ</h1><iframe src="./${path.basename(targetAbs)}" width="1000" height="700"></iframe>`,
+  );
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  try {
+    await page.goto('file://' + attackPath, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(3000);
+    const frame = page.frames().find((f) => f.url().includes(path.basename(targetAbs)));
+    ok(!!frame, 'frame: iframe が読み込まれた (これが偽なら以降は空撃ち)');
+    if (frame) {
+      const text = await frame.locator('body').innerText().catch(() => '');
+      ok(text.length > 0, 'frame: 枠の中は真っ白ではない');
+      ok(text.includes('枠の中では開けません'), 'frame: 拒否の見出しが出る');
+      ok((await frame.locator('.sidebar').count().catch(() => 0)) === 0, 'frame: アプリ本体 (サイドバー) が無い');
+      ok(
+        !/はじめてのご利用|ロック解除/.test(text),
+        'frame: 保管庫の画面も出さない (操作させる面を一切与えない)',
+      );
+    }
+    // 対照 — 枠でなければ普通に立ち上がる。これが無いと「常に拒否」でも通る。
+    const solo = await ctx.newPage();
+    await solo.goto('file://' + targetAbs, { waitUntil: 'domcontentloaded' });
+    await solo.waitForTimeout(3000);
+    const soloText = await solo.locator('body').innerText();
+    ok(/はじめてのご利用|ロック解除/.test(soloText), 'frame: 対照 — 枠なしなら普通に動く');
+    ok(!soloText.includes('枠の中では開けません'), 'frame: 対照 — 枠なしでは拒否を出さない');
+    await solo.close();
+  } finally {
+    await ctx.close();
+    fs.rmSync(attackPath, { force: true });
+  }
+}
+
+/**
+ * **開いただけで外へ出ていかない** — 同梱の見本データが第三者に信号を送らないこと。
+ *
+ * 2026-08-24 に実測して見つけた: 見本の画像 URL がホストだけ本物のままで、
+ * 資格情報を 1 つも設定していないのにページを開くだけで
+ *
+ *   Canva のページ  → design.canva.ai へ 12 件
+ *   GitHub のページ → avatars.githubusercontent.com へ 2 件
+ *
+ * が飛んでいた。「この IP がこの時刻にこのアプリを開いた」が相手に渡る。
+ * 見本を取りに行く機能上の理由は無く、オフラインでは壊れるだけである。
+ *
+ * **文字列で禁じるのではなく挙動で見る** —— `<img>` だけでなく CSS の
+ * `url()`・`fetch`・`<link>` など経路は複数あり、字面の規則は次の経路で抜ける。
+ * ここでは「実際に何本出て行ったか」だけを数える。
+ *
+ * 連携を設定していない状態が前提なので、期待値は **0 件**。
+ */
+async function noBeaconSuite(browser) {
+  console.log('--- 開いただけで外へ出ていかない ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const outbound = new Map();
+  page.on('request', (r) => {
+    const u = r.url();
+    if (!/^https?:/.test(u)) return;
+    const host = new URL(u).host;
+    outbound.set(host, (outbound.get(host) ?? 0) + 1);
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  ok(outbound.size === 0, `beacon: 起動〜保管庫作成で外部通信 0 (実際 ${describeOutbound(outbound)})`);
+
+  // 見本に画像を持つ SaaS 面を回る。ここが漏れていた 2 つを必ず含める。
+  for (const id of ['canva', 'github', 'wordpress', 'gdrive', 'slack']) {
+    outbound.clear();
+    await page.goto(FILE + '#' + id, { waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+    await page.locator('input[type="password"]').first().fill(PASS);
+    await page.getByRole('button', { name: 'ロック解除' }).click();
+    await page.waitForTimeout(2500);
+    ok(outbound.size === 0, `beacon: ${id} を開いて外部通信 0 (実際 ${describeOutbound(outbound)})`);
+
+    // **「通信が起きない」だけでは足りない。** 見本画像を `data:` に差し替えた
+    // ので、SVG の符号化を壊しても通信は起きず、この節は通ってしまう ——
+    // 画面には壊れた画像が出る。**絵として描けているか**まで見る。
+    const imgs = await page.$$eval('img', (els) =>
+      els
+        .filter((e) => (e.getAttribute('src') ?? '').startsWith('data:image'))
+        .map((e) => ({ w: e.naturalWidth, h: e.naturalHeight, done: e.complete })),
+    );
+    const broken = imgs.filter((i) => !(i.done && i.w > 0 && i.h > 0));
+    ok(
+      broken.length === 0,
+      `beacon: ${id} の data: 画像が描けている (${imgs.length} 件中 壊れ ${broken.length})`,
+    );
+  }
+  await ctx.close();
+}
+
+/** 失敗時に「どこへ何本」まで出す。件数だけだと直す手がかりにならない。 */
+function describeOutbound(map) {
+  if (map.size === 0) return '0 件';
+  return [...map].map(([h, n]) => `${h}:${n}`).join(' ');
+}
+
+/**
+ * パスワード変更と、控えた 24 語での復旧 — **実 IndexedDB で通ること**。
+ *
+ * 2026-08-24 に 2 つ直した経路である。
+ *
+ *  - `changePassword` を新設 (以前は画面が保管庫を消して作り直しており、
+ *    失窓で資格情報が消え、**控えた 24 語も通らなくなっていた**)
+ *  - meta と `master-wrap` の書き込みを 1 トランザクションに寄せた
+ *    (以前は `idbPut` 2 回。片方だけ書けると新旧どちらでも開けない)
+ *
+ * 単体検査は fake-indexeddb で通っているが、**トランザクションの意味論は
+ * 実物で確かめる価値がある**。
+ */
+async function vaultPasswordSuite(browser) {
+  console.log('--- パスワード変更と 24 語での復旧 ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const PW2 = 'changed-pass-67890';
+  const PW3 = 'recovered-pass-2468';
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+  const pw = page.locator('input[type="password"]');
+  await pw.nth(0).fill(PASS);
+  await pw.nth(1).fill(PASS);
+  await page.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+  await page.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+
+  // 24 語を控える。画面は「1. word」の形で並べているので、そこから拾う。
+  const shown = await page.locator('body').innerText();
+  const WORD_RE = new RegExp('(\\d{1,2})\\.\\s*([a-z]+)', 'g');
+  const words = [...shown.matchAll(WORD_RE)]
+    .filter((m) => Number(m[1]) >= 1 && Number(m[1]) <= 24)
+    .map((m) => m[2]);
+  ok(words.length === 24, 'vault: リカバリーキー 24 語を画面から拾えた (実際 ' + words.length + ')');
+  const mnemonic = words.join(' ');
+
+  await page.locator('input[type="checkbox"]').check();
+  await page.getByRole('button', { name: /記録完了/ }).click();
+  await page.waitForSelector('.sidebar', { timeout: 30000 });
+
+  // ── パスワードを変更する ──
+  await page.goto(FILE + '#settings', { waitUntil: 'domcontentloaded' });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('input[placeholder="現在のパスワード"]', { timeout: 30000 });
+  await page.locator('input[placeholder="現在のパスワード"]').fill(PASS);
+  await page.locator('input[placeholder^="新しいパスワード ("]').first().fill(PW2);
+  await page.locator('input[placeholder="新しいパスワード (確認)"]').fill(PW2);
+  await page.getByRole('button', { name: 'パスワードを変更' }).click();
+  await page.waitForFunction(
+    () => (document.body.textContent ?? '').includes('パスワードを変更しました'),
+    undefined,
+    { timeout: 30000 },
+  );
+  ok(true, 'vault: パスワードを変更できた');
+
+  // ── 新パスワードで開く / 旧パスワードでは開かない ──
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForFunction(
+    () => (document.body.textContent ?? '').includes('パスワードが違います'),
+    undefined,
+    { timeout: 30000 },
+  );
+  ok(true, 'vault: 旧パスワードでは開かない');
+  await page.locator('input[type="password"]').first().fill(PW2);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('.sidebar', { timeout: 30000 });
+  ok(true, 'vault: 新パスワードで開く');
+
+  // ── ★ 控えた 24 語で復旧できる (変更前に控えたもの) ──
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await page.getByRole('button', { name: /パスワードを忘れた場合/ }).click();
+  await page.waitForSelector('textarea', { timeout: 15000 });
+  await page.locator('textarea').fill(mnemonic);
+  const recPw = page.locator('input[type="password"]');
+  await recPw.nth(0).fill(PW3);
+  await recPw.nth(1).fill(PW3);
+  await page.getByRole('button', { name: '復元してロック解除' }).click();
+  // **成否のどちらかが出るまで待つ。** `.sidebar` だけを待つと、復旧が壊れた
+  // ときに 30 秒のタイムアウトになり「何が起きたか」が読めない失敗になる
+  // (対照実験で実際にそうなった)。画面が出す拒否の文言も見て、
+  // どちらが起きたかを名指しする。
+  const recovered = await page
+    .waitForFunction(
+      () => {
+        if (document.querySelector('.sidebar')) return 'ok';
+        const t = document.body.textContent ?? '';
+        if (t.includes('リカバリーキーが違います')) return 'rejected';
+        return false;
+      },
+      undefined,
+      { timeout: 30000 },
+    )
+    .then((h) => h.jsonValue())
+    .catch(() => 'timeout');
+  ok(
+    recovered === 'ok',
+    `★ vault: パスワード変更後も、控えた 24 語で復旧できる (実際 ${recovered})`,
+  );
+
+  ok(errs.length === 0, 'vault: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/*
+ * **施錠は同じ保管庫を開いた他のタブへ届くか** —— 2 枚のタブを実機で開いて測る。
+ *
+ * 2026-09-06 の実測。設定ページの「Vault を今すぐロック」は
+ *
+ *   1. 施錠の門 (`src/renderer/security/lockWorkspace.ts`) を迂回して
+ *      鍵を直に落としており、
+ *   2. 見た目は**そのページの局所状態**を立てるだけで **ロック画面は出ず**、
+ *   3. 鍵は JS 文脈ごとなので **他のタブは生きた鍵を持ったまま**残った。
+ *
+ * 画面の文面は「**席を離れる前に**押すと…即座に遮断します」。つまり
+ * 席を離れた直後こそが空白で、隣のタブへ切り替えれば資格情報は全部読める
+ * (他のタブの自動施錠が落ちるのは hidden 5 分 / 放置 15 分の後)。
+ *
+ * 単体検査は BroadcastChannel を線の上で見ているが、**2 つの文書の間で
+ * 本当に届くかは実物でしか分からない** (`file://` は不透明オリジンなので、
+ * 届かない可能性が有った —— 実測では届く)。ここで見るのは 3 点:
+ *
+ *   - タブ A で押すと **A 自身がロック画面へ**差し替わる (局所の文言で済まさない)
+ *   - **タブ B もロック画面へ**差し替わる (押していないタブ)
+ *   - 対照: 施錠する前は **両方とも解錠**の見た目である
+ */
+async function crossTabLockSuite(browser) {
+  console.log('--- 施錠は他のタブにも届く (2 枚のタブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const errs = [];
+
+  // ── タブ A: 初回セットアップまで ──
+  const a = await ctx.newPage();
+  collectErrors(a, errs);
+  await a.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await a.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+  const pwA = a.locator('input[type="password"]');
+  await pwA.nth(0).fill(PASS);
+  await pwA.nth(1).fill(PASS);
+  await a.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+  await a.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+  await a.locator('input[type="checkbox"]').check();
+  await a.getByRole('button', { name: /記録完了/ }).click();
+  await a.waitForSelector('.sidebar', { timeout: 30000 });
+
+  // ── タブ B: 同じ保管庫を、同じパスワードで別に解錠する ──
+  const b = await ctx.newPage();
+  collectErrors(b, errs);
+  await b.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await b.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await b.locator('input[type="password"]').first().fill(PASS);
+  await b.getByRole('button', { name: 'ロック解除' }).click();
+  await b.waitForSelector('.sidebar', { timeout: 30000 });
+
+  const locked = async (page) => {
+    const t = await page.locator('body').innerText();
+    return /ロック解除/.test(t);
+  };
+
+  // ── 対照: 施錠する前は両方とも解錠の見た目 ──
+  ok((await locked(a)) === false, '対照: 施錠前のタブ A は解錠の見た目');
+  ok((await locked(b)) === false, '対照: 施錠前のタブ B は解錠の見た目');
+
+  // ── タブ A で「🔒 ロックする」を押す ──
+  await a.goto(FILE + '#settings', { waitUntil: 'domcontentloaded' });
+  await a.waitForSelector('text=Vault を今すぐロック', { timeout: 30000 });
+  await a.getByRole('button', { name: /ロックする/ }).click();
+
+  const aLocked = await a
+    .waitForFunction(() => /ロック解除/.test(document.body.textContent ?? ''), undefined, {
+      timeout: 15000,
+    })
+    .then(() => true)
+    .catch(() => false);
+  ok(aLocked, '★ 施錠: 押したタブ A がロック画面へ差し替わる (局所の文言で済ませない)');
+
+  const bLocked = await b
+    .waitForFunction(() => /ロック解除/.test(document.body.textContent ?? ''), undefined, {
+      timeout: 15000,
+    })
+    .then(() => true)
+    .catch(() => false);
+  ok(bLocked, '★ 施錠: 押していないタブ B もロック画面へ差し替わる (他のタブへ届く)');
+
+  ok(errs.length === 0, 'crossTabLock: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/*
+ * **別のタブの書き込みは、開いたままの画面に届き、古い欄の保存はそれを黙って消さない**
+ * (2026-09-27 · パス 499) —— 2 枚のタブを実機で開いて測る。
+ *
+ * 直す前の実測 (同じ `file://` の HTML を 2 枚):
+ *
+ *   - タブ A が足した銘柄は、開いたままのタブ B の一覧に **再読込まで出ない** (保管層には在る)
+ *   - タブ B が開いていた編集の欄で名前だけ直して保存すると、その間にタブ A が直した評価額
+ *     (300,000 → 500,000) が **300,000 に戻る**。どちらの画面も何も言わない (lost update)
+ *   - タブ A が記録した 7,777,777 円の売上を、開いたままのタブ B の経営サマリーと
+ *     金融機関等提出用の書面は **含まない**
+ *
+ * 単体検査は BroadcastChannel を線の上で見ているが、**2 つの文書の間で本当に届き、
+ * 画面が読み直すか**は実物でしか分からない (`file://` は不透明オリジン)。
+ */
+async function crossTabDataSuite(browser) {
+  console.log('--- 別のタブの書き込みが届き、古い欄の保存は断る (2 枚のタブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const errs = [];
+  const a = await ctx.newPage();
+  collectErrors(a, errs);
+  await a.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(a);
+  const b = await ctx.newPage();
+  collectErrors(b, errs);
+  await b.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await b.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await b.locator('input[type="password"]').first().fill(PASS);
+  await b.getByRole('button', { name: 'ロック解除' }).click();
+  await b.waitForSelector('.sidebar', { timeout: 30000 });
+
+  /** 画面の文にそれが現れるまで待つ (現れなければ false —— 落とすのは ok() の役目)。 */
+  const appears = (page, text, ms = 15000) =>
+    page
+      .waitForFunction((t) => (document.body.textContent ?? '').includes(t), text, { timeout: ms })
+      .then(() => true)
+      .catch(() => false);
+
+  // ── ① タブ A が足した銘柄が、開いたままのタブ B に届く ──
+  await gotoService(a, '#mutual-funds', 'text=銘柄を追加');
+  await gotoService(b, '#mutual-funds', 'text=銘柄を追加');
+  await a.getByPlaceholder('例: ニッセイ外国株式').fill('CT499ファンド');
+  await a.getByPlaceholder('空欄=自動計算').fill('300000');
+  await a.getByRole('button', { name: '＋ 銘柄を追加' }).click();
+  await a.waitForSelector('tbody tr:has-text("CT499ファンド")', { timeout: 15000 });
+  ok(await appears(b, 'CT499ファンド'), '★ 表示: タブ A が足した銘柄が、開いたままのタブ B の一覧に届く (再読込しない)');
+
+  // ── ② B が編集の欄を開いた後に、A が評価額を直す ──
+  const rowIn = (page) => page.locator('tbody tr', { hasText: 'CT499ファンド' }).first();
+  await rowIn(b).getByRole('button', { name: '編集', exact: true }).click();
+  await b.waitForSelector('text=銘柄を編集中', { timeout: 10000 });
+  await rowIn(a).getByRole('button', { name: '編集', exact: true }).click();
+  await a.waitForSelector('text=銘柄を編集中', { timeout: 10000 });
+  await a.getByPlaceholder('空欄=自動計算').fill('500000');
+  await a.getByRole('button', { name: '保存 (自動反映)' }).click();
+  ok(await appears(a, '500,000'), '対照: タブ A の保存は通る (評価額 500,000)');
+  ok(await appears(b, '500,000'), '★ 表示: タブ A の書き換えが、タブ B の一覧に届く');
+
+  // ── ③ B が (古い欄のまま) 名前だけ直して保存 → 書かずに断る ──
+  await b.getByPlaceholder('例: ニッセイ外国株式').fill('CT499ファンド改');
+  await b.getByRole('button', { name: '保存 (自動反映)' }).click();
+  ok(
+    await appears(b, '編集を始めた後に別の画面で書き換えられています'),
+    '★ 保存: 欄を開いた後に書き換えられた行へ、古い欄の保存は書かずに断る',
+  );
+  ok(
+    (await b.getByPlaceholder('例: ニッセイ外国株式').inputValue()) === 'CT499ファンド改',
+    '★ 保存: 断っても入力は残る',
+  );
+  // A の画面 (保管層の今の中身) は 500,000 のまま、名前も元のまま。
+  const aRow = ((await rowIn(a).textContent()) ?? '').replace(/\s+/g, ' ');
+  ok(aRow.includes('500,000') && !aRow.includes('CT499ファンド改'), '★ 保存: タブ A の 500,000 は古い欄の 300,000 に戻らない');
+
+  // ── ④ B がもう一度押す → 知ったうえで上書きする ──
+  await b.getByRole('button', { name: '保存 (自動反映)' }).click();
+  ok(await appears(a, 'CT499ファンド改'), '★ 2 度目: 断りを読んだうえでもう一度押せば上書きでき、タブ A に届く');
+
+  // ── ⑤ A が記録した売上が、開いたままの B の経営サマリーに届く ──
+  await gotoService(b, '#overview', 'text=金融機関等提出用の書式で表示');
+  await gotoService(a, '#sales', 'input[placeholder="YYYY-MM-DD"]');
+  await a.getByPlaceholder('YYYY-MM-DD').fill('2026-09-01');
+  await a.getByPlaceholder('売上金額').fill('7777777');
+  await a.getByPlaceholder('注文件数').fill('3');
+  await a.getByRole('button', { name: '追加', exact: true }).click();
+  await a.waitForSelector('tbody tr:has-text("7,777,777")', { timeout: 15000 });
+  ok(await appears(b, '7,777,777'), '★ 表示: タブ A の売上が、開いたままのタブ B の経営サマリーに届く');
+
+  // ── ⑥ 同じ行の錠はタブをまたぐ —— B が錠を持つ間、A の保存は同じ名前の錠を待つ ──
+  // `updateIfUnchanged` は比べてから書くまでを行ごとの鎖に入れ、鎖は Web Locks
+  // (`servicehub.record.<id>`) で囲まれる (store.ts の crossTabLocked)。その錠が本当に
+  // 2 枚のタブで同じ物かは jsdom では測れない (錠も窓も無い) —— docs/ARCHITECTURE.md が
+  // 2026-09-06 から「実機のタブ 2 枚はここでは試していない」と書いていた当のことである。
+  // 錠を外す (鎖をこのタブの中だけにする)・名前をタブごとに変える、のどちらでも
+  // A の要求は B の錠の待ち行列に現れないので、この 2 つの ok が鳴る。
+  // 2 枚とも先に一覧へ移しておく —— `gotoService` は再読込するので、錠を持った後に B を
+  // 動かすと錠ごと消える。
+  await gotoService(b, '#mutual-funds', 'text=銘柄を追加');
+  await gotoService(a, '#mutual-funds', 'text=銘柄を追加');
+  const fundId = await b.evaluate(
+    () =>
+      new Promise((resolve, reject) => {
+        const open = indexedDB.open('business-hub-data');
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result;
+          const req = db
+            .transaction('records', 'readonly')
+            .objectStore('records')
+            .index('collection')
+            .getAll('mutualfund-holdings');
+          req.onsuccess = () => {
+            db.close();
+            resolve(req.result.length === 1 ? req.result[0].id : null);
+          };
+          req.onerror = () => reject(req.error);
+        };
+      }),
+  );
+  const lockName = 'servicehub.record.' + fundId;
+  await b.evaluate((name) => {
+    window.__e2eHeld = new Promise((release) => {
+      window.__e2eRelease = release;
+    });
+    window.__e2eEntered = false;
+    void navigator.locks.request(name, async () => {
+      window.__e2eEntered = true;
+      await window.__e2eHeld;
+    });
+  }, lockName);
+  await b.waitForFunction(() => window.__e2eEntered === true, null, { timeout: 5000 });
+  const rowNow = a.locator('tbody tr', { hasText: 'CT499ファンド改' }).first();
+  await rowNow.getByRole('button', { name: '編集', exact: true }).click();
+  await a.waitForSelector('text=銘柄を編集中', { timeout: 10000 });
+  await a.getByPlaceholder('例: ニッセイ外国株式').fill('CT499ファンド錠');
+  await a.getByRole('button', { name: '保存 (自動反映)' }).click();
+  /** B から見た待ち行列に、A の要求 (同じ名前) が現れるまで。 */
+  let waitingFromA = false;
+  for (let i = 0; i < 100 && !waitingFromA; i++) {
+    const pending = await b.evaluate(async () => (await navigator.locks.query()).pending.map((l) => l.name));
+    waitingFromA = fundId !== null && pending.includes(lockName);
+    if (!waitingFromA) await b.waitForTimeout(100);
+  }
+  const aText = (await a.textContent('tbody')) ?? '';
+  const bText = (await b.textContent('tbody')) ?? '';
+  ok(
+    waitingFromA && !aText.includes('CT499ファンド錠') && !bText.includes('CT499ファンド錠'),
+    '★ 錠: タブ B が同じ行の錠を持つ間、タブ A の保存はその錠を待つ (錠は 2 枚のタブで同じ物・待つ間は書かない)',
+  );
+  await b.evaluate(() => window.__e2eRelease());
+  ok(
+    (await appears(a, 'CT499ファンド錠')) && (await appears(b, 'CT499ファンド錠')),
+    '★ 錠: 放すと、待っていたタブ A の保存が届く (タブ B の一覧にも出る)',
+  );
+
+  ok(errs.length === 0, 'crossTabData: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/**
+ * **最新の 1 件を採用する設定の欄は、保存値で開き、1 欄の保存で他の欄を戻さない** (2026-09-28 · パス 500)。
+ *
+ * 直す前の実測 (同じ `file://` の HTML): 経営サマリーの水耕栽培の欄は `useState(保存値 ?? 既定値)` で開き、
+ * 保存値は IndexedDB から後で届くので **5 回開いて 5 回とも欄は既定値**だった。販売単価だけ直して保存すると
+ * **保存していた 4 欄 (床面積・段数・人件費・地代家賃) が既定値へ黙って戻った** (画面は「保存しました」)。
+ * 経営ハイライトのしきい値は読みの届く順で割れ、5 回のうち 2 回が既定値だった。
+ *
+ * 単体検査 (`latestFormOnScreen.test.ts`) は「保管層が答える前」を門で作る —— **実際の IndexedDB の答えが
+ * どれだけ遅れて届くか**と、2 つの文書の間で知らせが届いて触っていない欄が付いていくかは実物でしか
+ * 分からない。欄は**現れた瞬間に読む** (直す前は、現れた瞬間の値が既定値だった)。
+ */
+async function latestFormSuite(browser) {
+  console.log('--- 最新を採用する欄は保存値で開き、1 欄の保存で他の欄を戻さない (2 枚のタブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const errs = [];
+  const a = await ctx.newPage();
+  collectErrors(a, errs);
+  await a.goto(FILE + '#sales', { waitUntil: 'domcontentloaded' });
+  await setupVault(a);
+
+  const F = (label) => `input[aria-label="${label}"]`;
+  const SAVE = '保存して経営サマリーへ反映';
+  const SAVED_TEXT = '保存しました。経営サマリーに反映されています。';
+  const REFUSED = 'この欄を開いた後に別の画面で保存し直されています';
+  const SAVED = {
+    '床面積 (m²)': '555',
+    '棚の段数': '7',
+    '販売単価 (円/株)': '222',
+    '人件費 (円/月)': '1234567',
+    '地代家賃 (円/月)': '99999',
+  };
+  const LABELS = Object.keys(SAVED);
+  /** 5 欄の今の値 (欄が無ければ null)。 */
+  const valuesOf = (page) =>
+    page.evaluate(
+      (labels) => Object.fromEntries(labels.map((l) => [l, document.querySelector(`input[aria-label="${l}"]`)?.value ?? null])),
+      LABELS,
+    );
+  /** 画面の文にそれが現れるまで待つ (現れなければ false —— 落とすのは ok() の役目)。 */
+  const appears = (page, text, ms = 15000) =>
+    page
+      .waitForFunction((t) => (document.body.textContent ?? '').includes(t), text, { timeout: ms })
+      .then(() => true)
+      .catch(() => false);
+  /** その欄がその値になるまで待つ (なれなければ false)。 */
+  const becomes = (page, label, value, ms = 15000) =>
+    page
+      .waitForFunction(([l, v]) => document.querySelector(`input[aria-label="${l}"]`)?.value === v, [label, value], { timeout: ms })
+      .then(() => true)
+      .catch(() => false);
+  const saveIn = async (page) => {
+    await page.getByRole('button', { name: SAVE }).click();
+    return appears(page, SAVED_TEXT);
+  };
+
+  // しきい値の欄は記録が在るときだけ出る —— 売上を 1 件入れておく。
+  await a.waitForSelector('input[placeholder="YYYY-MM-DD"]', { timeout: 30000 });
+  await a.getByPlaceholder('YYYY-MM-DD').fill('2026-09-01');
+  await a.getByPlaceholder('売上金額').fill('500000');
+  await a.getByPlaceholder('注文件数').fill('2');
+  await a.getByRole('button', { name: '追加', exact: true }).click();
+  await a.waitForSelector('tbody tr:has-text("500,000")', { timeout: 15000 });
+
+  await gotoService(a, '#overview', F('床面積 (m²)'));
+  for (const [label, v] of Object.entries(SAVED)) await a.fill(F(label), v);
+  ok(await saveIn(a), '対照: 水耕栽培の 5 欄を直して保存できる');
+
+  // ── ① 開き直すたびに保存値で開く (欄が現れた瞬間に読む) ──
+  let savedOpens = 0;
+  const seen = [];
+  for (let i = 0; i < 3; i++) {
+    await gotoService(a, '#overview', F('床面積 (m²)'));
+    const v = await valuesOf(a);
+    seen.push(v['床面積 (m²)']);
+    if (LABELS.every((l) => v[l] === SAVED[l])) savedOpens++;
+  }
+  ok(
+    savedOpens === 3,
+    `★ 開く: 開き直すたびに保存した 5 欄で開く (3 回中 ${savedOpens} 回・床面積 ${seen.join(' / ')} —— 直す前は 5 回とも既定値)`,
+  );
+
+  // ── ② 1 欄だけ直して保存しても、他の 4 欄は保存値のまま ──
+  await a.fill(F('販売単価 (円/株)'), '300');
+  ok(await saveIn(a), '対照: 販売単価だけ直して保存できる');
+  await gotoService(a, '#overview', F('床面積 (m²)'));
+  const after = await valuesOf(a);
+  const expectedAfter = { ...SAVED, '販売単価 (円/株)': '300' };
+  ok(
+    LABELS.every((l) => after[l] === expectedAfter[l]),
+    '★ 保存: 販売単価だけ直して保存しても、他の 4 欄は保存値のまま (実際 ' + JSON.stringify(after) + ' —— 直す前は 4 欄が既定値へ戻った)',
+  );
+
+  // ── ③ しきい値の欄も保存値で開く (直す前は 5 回のうち 2 回既定値) ──
+  const LABOR = 'input[data-threshold="laborShareWarnPct"]';
+  await a.fill(LABOR, '61');
+  await a.locator('div:has(> label > input[data-threshold]) > button', { hasText: '保存' }).click();
+  ok(await appears(a, '保存しました。'), '対照: しきい値 (労働分配率 61%) を保存できる');
+  let thresholdOpens = 0;
+  const seenLabor = [];
+  for (let i = 0; i < 3; i++) {
+    await gotoService(a, '#overview', LABOR);
+    const v = await a.inputValue(LABOR);
+    seenLabor.push(v);
+    if (v === '61') thresholdOpens++;
+  }
+  ok(thresholdOpens === 3, `★ 開く: しきい値の欄も開き直すたびに保存値で開く (3 回中 ${thresholdOpens} 回・${seenLabor.join(' / ')})`);
+
+  // ── ④ 触っていない欄は、別のタブの保存に付いていく ──
+  const b = await ctx.newPage();
+  collectErrors(b, errs);
+  await gotoService(b, '#overview', F('床面積 (m²)'));
+  await gotoService(a, '#overview', F('床面積 (m²)'));
+  await a.fill(F('人件費 (円/月)'), '2000000');
+  ok(await saveIn(a), '対照: タブ A が人件費を保存できる');
+  ok(await becomes(b, '人件費 (円/月)', '2000000'), '★ 付いていく: 触っていないタブ B の欄が、タブ A の保存に付いていく (再読込しない)');
+
+  // ── ⑤ B が欄を触った後に A が保存 → B の古い欄の保存は書かずに断る ──
+  await b.fill(F('販売単価 (円/株)'), '444');
+  await a.fill(F('地代家賃 (円/月)'), '88888');
+  ok(await saveIn(a), '対照: タブ A が地代家賃を保存できる');
+  await b.getByRole('button', { name: SAVE }).click();
+  ok(await appears(b, REFUSED), '★ 断る: 欄を触った後に別のタブが保存していたら、古い欄の保存は書かずに断る');
+  ok((await b.inputValue(F('販売単価 (円/株)'))) === '444', '★ 断る: 断っても入力は残る');
+  await gotoService(a, '#overview', F('地代家賃 (円/月)'));
+  ok(
+    (await a.inputValue(F('地代家賃 (円/月)'))) === '88888',
+    '★ 断る: タブ A の保存 (地代家賃 88,888) は古い欄の値 (99,999) で覆われない',
+  );
+
+  // ── ⑥ 断りを読んだうえでもう一度押せば上書きでき、触っていないタブ A に届く ──
+  await b.getByRole('button', { name: SAVE }).click();
+  ok(await becomes(a, '販売単価 (円/株)', '444'), '★ 2 度目: もう一度押せば上書きでき、タブ A の欄に届く');
+
+  ok(errs.length === 0, 'latestForm: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/*
+ * 保管領域が「消えうる」ことを、実機の画面が正しく名乗るか。
+ *
+ * ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の領域になる
+ * (実測 2026-08-25: `persisted()` も `persist()` も false)。この状態では
+ * 空き容量の都合や長期の無操作でブラウザが立ち退かせうるが、**控えた 24 語
+ * では戻せない** —— フレーズは保管庫を*開ける*ための物で、立ち退きでは
+ * 暗号化されたトークンごと消えるため、開ける対象が残らない。
+ *
+ * ## 対照を節の中に入れてある
+ *
+ * 「best-effort のとき警告が出る」だけを見ると、**常に警告を出す実装**でも
+ * 通り、**常に best-effort を返す実装**でも通ってしまう。そこで 2 つの
+ * 文脈を走らせ、**値と表示が連動する**ことを見る:
+ *
+ *   A. 既定 (実際の環境)        → durability=best-effort / 警告が**出る**
+ *   B. persisted() を true に偽装 → durability=persistent  / 警告が**出ない**
+ *
+ * A だけなら「常に警告」で通り、B だけなら「常に沈黙」で通る。両方あって
+ * はじめて「問い合わせた値で出し分けている」と言える。
+ */
+/**
+ * **預かった資格情報が、保存された姿で読めないこと。**
+ *
+ * これはこのアプリの中核の主張である。単体検査は `vault.ts` の暗号化・復号を
+ * 留めているが、**実際にブラウザへ残る物**を見てはいない。保存の経路が
+ * 1 つ増えた日 (下書き・キャッシュ・ログ) に、同じトークンが別の場所へ
+ * 平文で落ちても、単体検査は全部緑で通る。
+ *
+ * ## 不在の主張には、陽性対照を添える
+ *
+ * 「平文が見つからない」は、探し方が壊れていても同じ結果になる。直列化が
+ * 変わって中身が文字列に出なくなれば、**どんな漏れも見つからなくなる**。
+ * だから同じ探し方で**植えた物が見つかること**を、同じ検査の中で確かめる。
+ * これが無い「見つかりませんでした」は、報せであって合格ではない。
+ */
+/**
+ * **CSP が「書いてある」ではなく「効いている」こと。**
+ *
+ * `lint:artifact-csp` は出荷 HTML の meta の**文面**を見る。だが文面が
+ * 正しくてもブラウザが受け取らない形はある —— meta が最初のスクリプトより
+ * 後ろに在る、2 枚目の CSP が先に効く、といった配置の問題は文面からは
+ * 分からない。実物のページで**注入が実際に落ちるか**を見る。
+ *
+ * ## 計測の道具を測らないこと (2026-08-26 に踏んだ)
+ *
+ * `page.evaluate` は CDP 経由なので **CSP を迂回する**。実測:
+ *
+ * ```
+ *   script-src 'none' のページで evaluate から動的コード生成を呼ぶ → 2 (通る)
+ *   同じページで DOM 経由のインライン注入                          → 落ちる
+ *   ページ自身の <script> から同じ生成 (unsafe-eval 無し)          → EvalError
+ * ```
+ *
+ * つまり `evaluate` の中で直に `eval` を試すと**アプリではなく道具を測る**。
+ * ここで見るのは DOM 経由の注入 (これは CSP に服する) だけにし、
+ * eval については文面の検査 (`lint:artifact-csp`) に任せる。
+ */
+/**
+ * **預けた資格情報が、どこへ・どの形で出ていくか。**
+ *
+ * `lint:network-targets` は送り先が変数の通信を台帳で管理し、
+ * `lint:credential-use` は読み手のいない資格情報を落とす。どちらも**ソースを
+ * 読む**検査で、「実際に飛ぶ要求」は見ていない。トークンが URL のクエリへ
+ * 回った日も、宛先が 1 つ増えた日も、両方とも緑のまま通る。
+ *
+ * ここでは**すべての外向き要求を捕まえて実際には出さず**、宛先・ヘッダ・
+ * 本文を観測する。捕まえてから落とすので、偽のトークンが本当に第三者へ
+ * 飛ぶことはない。
+ *
+ * `noBeaconSuite` は「開いただけで出ていかない」を見る。こちらは
+ * 「操作したときに、宣言どおりの 1 か所へだけ、宣言どおりの形で出る」。
+ */
+/**
+ * **利用者の Worker を通すとき、封筒に何が載るか。**
+ *
+ * CORS で直接叩けない連携は利用者の Cloudflare Worker へ POST し、本当の
+ * 宛先・ヘッダ・本文を JSON の「封筒」に入れて渡す。ここで確かめるのは:
+ *
+ *   - 第三者へ**直接**行かないこと (行けば Worker を挟む意味が消える)
+ *   - 共有秘密が **URL でなくヘッダ**に載ること (URL は中間のログに残る)
+ *   - 第三者の API キーが外側の URL に出ないこと
+ *
+ * 逆に、**封筒の本文には載る**。それは仕様であって欠陥ではない —— Worker が
+ * 中継するには本当の宛先と鍵が要る。だからこのアプリは画面で
+ * 「プロキシの運用者からも見える」と明記している (thirdPartyDisclosure suite が
+ * その文面を留めている)。**載ることも検査に書く** —— 将来 URL 側へ移したら、
+ * ここが鳴る。
+ *
+ * ## 符号化で空振りしないこと (2026-08-26 に踏んだ)
+ *
+ * 封筒の中の宛先は `probe-user%40example.com` と percent-encode されている。
+ * 生の文字列で探すと「本文に無い」と出て、**在るのに無いと言う**。
+ * 復号してから探す。バイト列のときと同じ形の間違いである。
+ */
+async function proxyEnvelopeSuite(browser) {
+  console.log('--- プロキシの封筒に何が載るか ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const EMAIL = 'probe-user@example.com';
+  const HIBPKEY = 'E2E-HIBP-PROBE-NOT-REAL-1234';
+  const PROXY_URL = 'https://proxy.example.com/relay';
+  const PROXY_SECRET = 'E2E-PROXY-SECRET-NOT-REAL-9876';
+
+  const seen = [];
+  await page.route('**/*', async (route) => {
+    const r = route.request();
+    const u = r.url();
+    if (u.startsWith('file://') || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
+    seen.push({ url: u, headers: r.headers(), body: r.postData() ?? '' });
+    return route.abort();
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await gotoService(page, '#settings', 'text=BYO プロキシ');
+
+  const urlBox = page.locator('input[placeholder="https://my-worker.example.com/proxy"]');
+  /*
+   * **index を先に控えない。** ボタンを押すとその欄は 保存/キャンセル へ
+   * 変わり集合が縮むので、`nth(i)` は別のボタンを指す (実際に空振りした)。
+   * 毎回「先頭」を押す —— 押した物は集合から消えるので必ず進む。
+   */
+  for (let i = 0; i < 15 && (await urlBox.count()) === 0; i++) {
+    const setBtns = page.getByRole('button', { name: /^(設定する|変更)$/ });
+    if ((await setBtns.count()) === 0) break;
+    await setBtns.first().click().catch(() => {});
+    await page.waitForTimeout(350);
+  }
+  ok((await urlBox.count()) > 0, 'proxyEnvelope: プロキシの入力欄を開ける');
+  await urlBox.first().fill(PROXY_URL);
+  const secBox = page.locator('input[placeholder^="共有秘密"]');
+  if ((await secBox.count()) > 0) await secBox.first().fill(PROXY_SECRET);
+
+  /*
+   * **同名のボタンを名前だけで押さない。** 「保存」は 4 つ在り、先頭を押すと
+   * 別の欄を保存してしまう (最初そうして、プロキシは未設定のままだった)。
+   * 入力欄から DOM を遡って、同じ入れ物の中の「保存」を押す。
+   */
+  const savedAt = await page.evaluate(() => {
+    const input = document.querySelector('input[placeholder="https://my-worker.example.com/proxy"]');
+    if (input === null) return 'no-input';
+    let node = input;
+    for (let i = 0; i < 8 && node !== null; i++) {
+      node = node.parentElement;
+      if (node === null) break;
+      const btn = Array.from(node.querySelectorAll('button')).find((b) => (b.textContent ?? '').trim() === '保存');
+      if (btn !== undefined) {
+        btn.click();
+        return 'depth' + String(i);
+      }
+    }
+    return 'not-found';
+  });
+  ok(savedAt.startsWith('depth'), `proxyEnvelope: プロキシ欄の保存を押せた (${savedAt})`);
+  await page.waitForTimeout(1200);
+
+  await page.evaluate(async (k) => {
+    await window.serviceHub.setToken('security', JSON.stringify({ hibp: k, vt: 'E2E-VT-PROBE-NOT-REAL' }));
+  }, HIBPKEY);
+
+  const before = seen.length;
+  await page.evaluate(async (e) => {
+    const r = await window.serviceHub.invoke('security', 'check-email-breach', { email: e });
+    return JSON.stringify(r);
+  }, EMAIL);
+  const sent = seen.slice(before);
+
+  ok(sent.length === 1, `★ proxyEnvelope: 飛ぶ要求は 1 件だけ (実際 ${sent.length})`);
+  const hosts = [...new Set(sent.map((x) => new URL(x.url).host))];
+  ok(hosts.join(',') === 'proxy.example.com', `★ proxyEnvelope: 宛先はプロキシだけ (実際 ${hosts.join(',') || 'なし'})`);
+  ok(!hosts.includes('haveibeenpwned.com'), '★ proxyEnvelope: 第三者へ直接は行かない');
+
+  ok(!sent.some((x) => x.url.includes(PROXY_SECRET)), '★ proxyEnvelope: 共有秘密が URL に出ない');
+  ok(
+    sent.some((x) => Object.entries(x.headers).some(([k, v]) => /x-proxy-auth/i.test(k) && String(v).includes(PROXY_SECRET))),
+    '★ proxyEnvelope: 共有秘密は x-proxy-auth ヘッダに載る',
+  );
+  ok(!sent.some((x) => x.url.includes(HIBPKEY)), '★ proxyEnvelope: 第三者の API キーが外側の URL に出ない');
+  ok(!sent.some((x) => x.url.includes(EMAIL)), '★ proxyEnvelope: 入力したメールが外側の URL に出ない');
+
+  /*
+   * **載ることも書く。** 封筒の本文には宛先も鍵も入る —— Worker が中継する
+   * ために要るので仕様である。将来 URL 側へ移したら上の 2 行が鳴り、
+   * 本文から消えたらこの 2 行が鳴る。どちらへ動いても気付ける。
+   */
+  const decode = (t) => {
+    try {
+      return decodeURIComponent(t);
+    } catch {
+      return t;
+    }
+  };
+  ok(
+    sent.some((x) => decode(x.body).includes(EMAIL)),
+    '★ proxyEnvelope: メールは封筒の本文に載る (運用者から見える。画面で開示済み)',
+  );
+  ok(sent.some((x) => x.body.includes(HIBPKEY)), '★ proxyEnvelope: API キーも封筒の本文に載る (同上)');
+
+  ok(sent.length > 0, '★ proxyEnvelope 対照: 捕捉が効いている');
+  const unexpected = errs.filter((e) => !/Failed to fetch|ERR_FAILED|ERR_ABORTED|net::/i.test(e));
+  ok(unexpected.length === 0, `proxyEnvelope: 遮断由来を除くページエラー 0 (実際 ${unexpected.length})`);
+  await ctx.close();
+}
+
+async function credentialEgressSuite(browser) {
+  console.log('--- 資格情報がどこへ出ていくか ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  // **資格情報の形にしない。** `ghp_` 接頭辞つきの長い文字列は
+  // lint:forbidden の「本物に見える資格情報の直書き」に当たる (実際に鳴った)。
+  // ここで要るのは「探せる一意な文字列」だけで、本物らしさは要らない。
+  // 綴りを分割して規則をすり抜けるのは、規則を空にするのと同じなので採らない。
+  const TOKEN = 'E2E-EGRESS-PROBE-NOT-A-REAL-TOKEN-9a8b7c';
+  const seen = [];
+  await page.route('**/*', async (route) => {
+    const r = route.request();
+    const u = r.url();
+    if (u.startsWith('file://') || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
+    seen.push({ method: r.method(), url: u, headers: r.headers(), body: r.postData() ?? '' });
+    return route.abort();
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  ok(seen.length === 0, `★ egress: 起動〜保管庫作成で外向き要求 0 (実際 ${seen.length})`);
+
+  await page.evaluate(async (t) => {
+    await window.serviceHub.setToken('github', t);
+  }, TOKEN);
+  ok(seen.length === 0, `★ egress: トークンを預けても外向き要求 0 (実際 ${seen.length})`);
+
+  /*
+   * **戻り値を捨てない。** `invoke` は失敗を例外ではなく戻り値で返すので、
+   * 捨てると失敗が成功に見える (lint:forbidden がこれを見ている。実際に鳴った)。
+   * ここでは遮断しているので失敗するのが正しく、**失敗として返ること自体**も
+   * 確かめる価値がある —— 通信が切れたときに成功を装わないこと。
+   */
+  const outcome = await page.evaluate(async () => {
+    const r = await window.serviceHub.invoke('github', 'create-issue', {
+      owner: 'o',
+      repo: 'r',
+      title: 't',
+      body: 'b',
+    });
+    return JSON.stringify(r);
+  });
+  ok(/"ok"\s*:\s*false/.test(outcome), `★ egress: 通信が切れたら失敗として返る (成功を装わない) — ${outcome.slice(0, 80)}`);
+
+  ok(seen.length === 1, `★ egress: 操作で飛ぶ要求は 1 件だけ (実際 ${seen.length})`);
+  const req = seen[0];
+  ok(req !== undefined && new URL(req.url).host === 'api.github.com', `★ egress: 宛先は api.github.com (実際 ${req === undefined ? 'なし' : new URL(req.url).host})`);
+  ok(req !== undefined && req.method === 'POST', `egress: メソッドは POST (実際 ${req?.method})`);
+
+  ok(!seen.some((x) => x.url.includes(TOKEN)), '★ egress: トークンが URL に出ない');
+  ok(!seen.some((x) => x.body.includes(TOKEN)), '★ egress: トークンが本文に出ない');
+  const carriers = seen
+    .flatMap((x) => Object.entries(x.headers))
+    .filter(([, v]) => String(v).includes(TOKEN))
+    .map(([k]) => k.toLowerCase())
+    .sort();
+  ok(
+    carriers.join(',') === 'authorization',
+    `★ egress: トークンを載せるヘッダは authorization だけ (実際 ${carriers.join(',') || 'なし'})`,
+  );
+
+  /*
+   * **プロキシが要る連携は、未設定なら「出さずに」止まること。**
+   *
+   * CORS で直接叩けない SaaS (Notion / Atlassian / Cloudflare / HIBP /
+   * VirusTotal …) は利用者の Worker を通す。未設定のまま実行したときに
+   * 「とりあえず直接投げてみる」実装だと、**鍵と入力が第三者へ出てから**
+   * CORS で失敗する —— ブラウザから見れば失敗でも、送信は済んでいる。
+   *
+   * 実測 (2026-08-26): 未設定で `check-email-breach` を呼ぶと外向き要求は
+   * 0 件で、理由つきの not_configured が返る。送る前に止まっている。
+   */
+  /*
+   * **鍵を先に入れる。** 入れないと「鍵が未設定」で手前が止まり、
+   * プロキシの関門まで到達しない —— 最初そう書いて、通った理由が
+   * 意図と違っていた (メッセージを読んで気付いた)。関門を測るなら、
+   * その手前を全部通してから叩く。
+   */
+  const beforeProxyless = seen.length;
+  const proxyless = await page.evaluate(async () => {
+    await window.serviceHub.setToken(
+      'security',
+      JSON.stringify({ hibp: 'E2E-HIBP-PROBE-NOT-REAL', vt: 'E2E-VT-PROBE-NOT-REAL' }),
+    );
+    const r = await window.serviceHub.invoke('security', 'check-email-breach', {
+      email: 'probe-user@example.com',
+    });
+    return JSON.stringify(r);
+  });
+  ok(
+    seen.length === beforeProxyless,
+    `★ egress: プロキシ未設定なら第三者へ 1 件も出さない (実際 ${seen.length - beforeProxyless} 件)`,
+  );
+  ok(
+    /"code"\s*:\s*"not_configured"/.test(proxyless),
+    `★ egress: 送らずに理由つきで止まる — ${proxyless.slice(0, 90)}`,
+  );
+
+  /*
+   * **陽性対照。** 上の「出ない」は、捕捉が効いていなければ全部成立する。
+   * 1 件でも捕まえていることを見て初めて意味を持つ。
+   */
+  ok(seen.length > 0, '★ egress 対照: 捕捉が効いている (要求を実際に観測できた)');
+
+  /*
+   * **こちらが遮断したことによる失敗だけは数えない。** 要求を abort している
+   * ので、アプリ側は当然「取得に失敗」を報告する —— それはこの検査が
+   * 作った状況であって、アプリの欠陥ではない。ただし**それ以外は数える**
+   * (全部無視すると、この行は何も言わなくなる)。
+   */
+  const unexpected = errs.filter((e) => !/Failed to fetch|ERR_FAILED|ERR_ABORTED|net::/i.test(e));
+  ok(
+    unexpected.length === 0,
+    `egress: 遮断由来を除くページエラー 0 (実際 ${unexpected.length} / 全 ${errs.length})`,
+  );
+  await ctx.close();
+}
+
+async function cspEnforcedSuite(browser) {
+  console.log('--- CSP が実際に効いているか ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const refusals = [];
+  page.on('console', (m) => {
+    if (/Content Security Policy|Refused to/i.test(m.text())) refusals.push(m.text());
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+
+  const inline = await page.evaluate(() => {
+    const w = window;
+    w.__cspProbeInline = false;
+    const s = document.createElement('script');
+    s.textContent = 'window.__cspProbeInline = true;';
+    document.head.appendChild(s);
+    return w.__cspProbeInline === true;
+  });
+  ok(inline === false, '★ csp: 注入したインラインスクリプトが走らない');
+
+  const remote = await page.evaluate(
+    async () =>
+      await new Promise((res) => {
+        const s = document.createElement('script');
+        s.src = 'https://example.com/probe.js';
+        s.onload = () => res('loaded');
+        s.onerror = () => res('blocked');
+        document.head.appendChild(s);
+        setTimeout(() => res('timeout'), 4000);
+      }),
+  );
+  /*
+   * **「読み込まれなかった」では CSP を測れない。** `file://` から
+   * `https://` は元々届かないので、CSP を外しても同じ結果になる
+   * (2026-08-26 の対照で実際にそうだった —— CSP を消しても この行だけ通った)。
+   * 見るのは**拒否の理由**のほう。
+   */
+  ok(
+    remote !== 'loaded' && refusals.some((r) => /probe\.js|Refused to load the script/i.test(r)),
+    `★ csp: 遠隔スクリプトが CSP 違反として拒否される (実際 ${remote} / 拒否 ${refusals.length} 件)`,
+  );
+
+  ok(
+    refusals.some((r) => /inline script/i.test(r)),
+    '★ csp: ブラウザが実際に CSP 違反として拒否している (文面だけでなく)',
+  );
+  // **`|| true` を書かない。** 一度そう書いて、常に真になる空の検査を作った
+  // (この suite が捕まえようとしている形そのもの)。数えるだけなら console.log
+  // にすればよく、ok() に渡すのは落ちうる条件だけにする。
+  ok(refusals.length >= 2, `★ csp: 違反 2 種 (inline / remote) が拒否として記録される (実際 ${refusals.length})`);
+
+  /*
+   * **陽性対照。** CSP が無いページでは同じ注入が通ること —— これが無いと
+   * 「注入が走らなかった」が、注入の書き方を間違えただけでも成立する。
+   */
+  const bare = await ctx.newPage();
+  await bare.setContent('<html><body>control</body></html>');
+  const bareInline = await bare.evaluate(() => {
+    const w = window;
+    w.__cspProbeInline = false;
+    const s = document.createElement('script');
+    s.textContent = 'window.__cspProbeInline = true;';
+    document.head.appendChild(s);
+    return w.__cspProbeInline === true;
+  });
+  ok(bareInline === true, '★ csp 対照: CSP の無いページでは同じ注入が通る (注入の書き方が正しい証拠)');
+
+  await ctx.close();
+}
+
+async function vaultOpacitySuite(browser) {
+  console.log('--- 保存された資格情報が読めないこと ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const SECRET = 'E2E-SECRET-TOKEN-0d0a1b2c3d4e5f-DO-NOT-LEAK';
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  // アプリ自身の経路で預ける。
+  const saved = await page.evaluate(async (s) => {
+    const hub = window.serviceHub;
+    if (hub === undefined || typeof hub.setToken !== 'function') return 'no-bridge';
+    await hub.setToken('github', s);
+    return 'ok';
+  }, SECRET);
+  ok(saved === 'ok', 'vaultOpacity: アプリの経路でトークンを預けられる');
+
+  const listed = await page.evaluate(async () => (await window.serviceHub.listConfigured()).join(','));
+  ok(listed.includes('github'), `vaultOpacity: 預けたものが設定済みとして見える (${listed})`);
+
+  /**
+   * 全 IndexedDB を素で舐めて 1 本の文字列にする。
+   *
+   * **バイト列は文字へ開いてから足す。** `JSON.stringify(new Uint8Array(...))` は
+   * `{"0":69,"1":50,…}` になるので、平文をバイトで保存されると
+   * **文字列として一致しない**。2026-08-26 の対照で実際にこれを踏んだ ——
+   * 暗号化をやめて平文をバイトで書き込んでも「平文が無い」は通り、
+   * 鳴ったのは暗号文の長さを見る検査だけだった。
+   * 探し方が届いていない不在の主張は、何も言っていないのと同じである。
+   */
+  const dumpIdb = () =>
+    page.evaluate(async () => {
+      const dec = new TextDecoder('utf-8', { fatal: false });
+      const open = (v) => {
+        if (ArrayBuffer.isView(v)) return dec.decode(new Uint8Array(v.buffer, v.byteOffset, v.byteLength));
+        if (v instanceof ArrayBuffer) return dec.decode(new Uint8Array(v));
+        return null;
+      };
+      const walk = (v, sink) => {
+        const asText = open(v);
+        if (asText !== null) {
+          sink.push(asText);
+          return;
+        }
+        if (Array.isArray(v)) {
+          for (const x of v) walk(x, sink);
+          return;
+        }
+        if (v !== null && typeof v === 'object') {
+          for (const x of Object.values(v)) walk(x, sink);
+          return;
+        }
+        if (typeof v === 'string') sink.push(v);
+      };
+      let all = '';
+      const names = (await indexedDB.databases()).map((d) => d.name).filter(Boolean);
+      for (const name of names) {
+        const db = await new Promise((res) => {
+          const r = indexedDB.open(name);
+          r.onsuccess = () => res(r.result);
+        });
+        for (const st of Array.from(db.objectStoreNames)) {
+          const rows = await new Promise((res) => {
+            const tx = db.transaction(st, 'readonly');
+            const q = tx.objectStore(st).getAll();
+            q.onsuccess = () => res(q.result);
+            q.onerror = () => res([]);
+          });
+          const sink = [];
+          walk(rows, sink);
+          all += JSON.stringify(rows) + '\u0000' + sink.join('\u0000');
+        }
+        db.close();
+      }
+      return all;
+    });
+  const dumpLs = () => page.evaluate(() => JSON.stringify(Object.fromEntries(Object.entries(localStorage))));
+  const dumpSs = () => page.evaluate(() => JSON.stringify(Object.fromEntries(Object.entries(sessionStorage))));
+
+  const idb = await dumpIdb();
+  const ls = await dumpLs();
+  const ss = await dumpSs();
+  ok(!idb.includes(SECRET), '★ vaultOpacity: IndexedDB に平文のトークンが無い');
+  ok(!ls.includes(SECRET), '★ vaultOpacity: localStorage に平文のトークンが無い');
+  ok(!ss.includes(SECRET), '★ vaultOpacity: sessionStorage に平文のトークンが無い');
+
+  // 残っている姿が「IV + 暗号文」であること (中身が読めないだけでなく、形も確かめる)。
+  const shape = await page.evaluate(async () => {
+    const db = await new Promise((res) => {
+      const r = indexedDB.open('business-hub-vault');
+      r.onsuccess = () => res(r.result);
+    });
+    const rows = await new Promise((res) => {
+      const tx = db.transaction('tokens', 'readonly');
+      const q = tx.objectStore('tokens').getAll();
+      q.onsuccess = () => res(q.result);
+      q.onerror = () => res([]);
+    });
+    db.close();
+    const r = rows[0] ?? {};
+    return { keys: Object.keys(r).sort().join(','), ivLen: r.iv?.byteLength ?? -1, ctLen: r.ciphertext?.byteLength ?? -1 };
+  });
+  ok(shape.ivLen === 12, `★ vaultOpacity: IV は 12 バイト (実際 ${shape.ivLen})`);
+  ok(shape.ctLen >= SECRET.length + 16, `vaultOpacity: 暗号文は平文 + GCM タグ以上 (実際 ${shape.ctLen})`);
+  ok(shape.keys === 'ciphertext,iv,v', `vaultOpacity: 残るのは iv/ciphertext/v だけ (実際 ${shape.keys})`);
+
+  /*
+   * **順序が意味を持つ。** 下の陽性対照は保存層へ平文を植えるので、
+   * それを先にやると「施錠中も平文が無い」が自分の植えた物を拾って落ちる
+   * (2026-08-26 に実際に踏んだ)。**無いことを測ってから、在るときに
+   * 当たることを測る。**
+   */
+  /*
+   * **施錠された状態の不変条件。**
+   *
+   * 派生鍵はメモリだけに持ち、`extractable: false` で作る —— という約束は
+   * 単体検査が留めている。だが「**再読み込みしたら本当に開かないのか**」は
+   * 保存層まで含めた話で、鍵がどこかへ写っていれば黙って開く。
+   *
+   * ここは**在ることの検査**にしてある (ロック画面が出る / 残る)。
+   * 無いことの検査と違い、守りが消えれば必ず鳴る。
+   */
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const lockShown = await page
+    .waitForSelector('text=ロック解除', { timeout: 20000 })
+    .then(() => true)
+    .catch(() => false);
+  ok(lockShown, '★ vaultOpacity: 再読み込みすると施錠されている (鍵が保存層へ写っていない)');
+
+  ok(!(await dumpLs()).includes(SECRET), '★ vaultOpacity: 施錠中も localStorage に平文が無い');
+  ok(!(await dumpIdb()).includes(SECRET), '★ vaultOpacity: 施錠中も IndexedDB に平文が無い');
+
+  await page.locator('input[type="password"]').first().fill('WRONG-PASSWORD-xxxx');
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForTimeout(1500);
+  ok((await page.locator('text=ロック解除').count()) > 0, '★ vaultOpacity: 誤ったパスワードでは開かない');
+
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  const opened = await page
+    .waitForSelector('.sidebar', { timeout: 20000 })
+    .then(() => true)
+    .catch(() => false);
+  ok(opened, 'vaultOpacity: 正しいパスワードで開く');
+  const after = await page.evaluate(async () => (await window.serviceHub.listConfigured()).join(','));
+  ok(after.includes('github'), `★ vaultOpacity: 解錠後も預けたものが残っている (${after})`);
+
+  // ---- 陽性対照 ---- 同じ探し方が「本当に在るとき」に当たるか。
+  await page.evaluate((s) => localStorage.setItem('__e2e_probe__', s), SECRET);
+  ok((await dumpLs()).includes(SECRET), '★ vaultOpacity 対照: localStorage へ植えたら見つかる');
+  await page.evaluate(async (s) => {
+    const db = await new Promise((res) => {
+      const r = indexedDB.open('business-hub-data');
+      r.onsuccess = () => res(r.result);
+    });
+    const st = Array.from(db.objectStoreNames)[0];
+    if (st !== undefined) {
+      await new Promise((res) => {
+        const tx = db.transaction(st, 'readwrite');
+        const store = tx.objectStore(st);
+        const rec = store.keyPath !== null ? { [String(store.keyPath)]: '__e2e_probe__', leak: s } : { leak: s };
+        const q = store.keyPath !== null ? store.put(rec) : store.put(rec, '__e2e_probe__');
+        q.onsuccess = () => res();
+        q.onerror = () => res();
+      });
+    }
+    db.close();
+  }, SECRET);
+  ok((await dumpIdb()).includes(SECRET), '★ vaultOpacity 対照: IndexedDB へ文字列で植えたら見つかる');
+
+  /*
+   * **バイト列で植える対照。** 上の文字列の対照だけでは、探し方が
+   * 「文字列しか見ない」状態でも通ってしまう —— 実際そうだった。
+   * 保管庫が平文をバイトで書けば、こちらの形になる。
+   */
+  await page.evaluate(async (s) => {
+    const db = await new Promise((res) => {
+      const r = indexedDB.open('business-hub-data');
+      r.onsuccess = () => res(r.result);
+    });
+    const st = Array.from(db.objectStoreNames)[0];
+    if (st !== undefined) {
+      await new Promise((res) => {
+        const tx = db.transaction(st, 'readwrite');
+        const store = tx.objectStore(st);
+        const bytes = new TextEncoder().encode(s);
+        const rec = store.keyPath !== null ? { [String(store.keyPath)]: '__e2e_probe_bytes__', leak: bytes } : { leak: bytes };
+        const q = store.keyPath !== null ? store.put(rec) : store.put(rec, '__e2e_probe_bytes__');
+        q.onsuccess = () => res();
+        q.onerror = () => res();
+      });
+    }
+    db.close();
+  }, SECRET);
+  ok(
+    (await dumpIdb()).includes(SECRET),
+    '★ vaultOpacity 対照: IndexedDB へ**バイト列で**植えても見つかる (探し方が文字列だけを見ていないこと)',
+  );
+
+  ok(errs.length === 0, `vaultOpacity: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+async function storageDurabilitySuite(browser) {
+  console.log('--- 保管領域が消えうることを名乗る ---');
+
+  // 保護状態の欄が非同期に埋まるまで待つ (「確認中…」の間に読むと空振りする)。
+  const waitProtection = (page) =>
+    page.waitForFunction(
+      () => {
+        const t = document.body.textContent ?? '';
+        return (
+          t.includes('トークンは暗号化されています') ||
+          t.includes('トークンを暗号化できません') ||
+          t.includes('保護状態を取得できませんでした')
+        );
+      },
+      undefined,
+      { timeout: 30000 },
+    );
+
+  // ── A. 既定の環境 ──
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  const sp = await page.evaluate(() => window.serviceHub.storageProtection());
+  ok(
+    ['file', 'persistent', 'best-effort'].includes(sp.durability),
+    `durability: 3 値のどれかを名乗る (実際 ${JSON.stringify(sp.durability)})`,
+  );
+  // ブラウザ版に `file` は無い —— あれは Electron の userData のファイル。
+  ok(sp.durability !== 'file', `durability: ブラウザ版で file を名乗らない (実際 ${sp.durability})`);
+  ok(sp.encrypted === true, `durability: 暗号化の欄とは別に立っている (encrypted=${sp.encrypted})`);
+
+  // 実際に**問い合わせて**いるか —— ブラウザ自身の答えと突き合わせる。
+  const persisted = await page.evaluate(async () => {
+    try {
+      return await navigator.storage.persisted();
+    } catch {
+      return 'unavailable';
+    }
+  });
+  ok(
+    persisted === 'unavailable'
+      ? sp.durability === 'best-effort'
+      : sp.durability === (persisted ? 'persistent' : 'best-effort'),
+    `durability: ブラウザの persisted() と一致する (persisted=${persisted} / durability=${sp.durability})`,
+  );
+
+  await gotoService(page, '#settings', 'text=保存時の保護状態');
+  await waitProtection(page);
+  const body = await page.locator('body').innerText();
+  const warned = body.includes('消えうる');
+  ok(
+    warned === (sp.durability === 'best-effort'),
+    `★ 表示: durability の値と警告の有無が一致する (durability=${sp.durability} / 警告=${warned})`,
+  );
+  // パス 135: 節はトークン以外の保存物の状態も言う —— ブラウザ版は気分の記録・人材育成・チームレーダーを
+  // 保管庫の外 (localStorage) に平文で置くので、そう言う。
+  ok(
+    body.includes('ブラウザの localStorage に平文で保存されています') && body.includes('気分の記録') && body.includes('チームレーダー'),
+    'settings: ★ 保護状態の節は、気分の記録・人材育成・チームレーダーが保管庫の外 (localStorage・平文) だと言う',
+  );
+  if (sp.durability === 'best-effort') {
+    ok(body.includes('24 語では戻せません'), '表示: 24 語では戻せないことを書いている');
+    ok(body.includes('生成元の保存領域ごと'), '表示: 消えるのは保管庫だけでないと書いている');
+    // **何が戻って何が戻らないかを、両方向とも出す。** 片側しか出ない表は
+    // 「全部戻せる」または「全部諦めろ」に読めて、どちらも行動を誤らせる。
+    ok(body.includes('戻せます'), '表示: 戻せる物を名指ししている (業務レコード)');
+    ok(body.includes('戻せません'), '表示: 戻せない物を名指ししている (API キー)');
+    ok(body.includes('登録し直す'), '表示: 戻せない物のその後を書いている (再登録)');
+    /*
+     * **退行の番人。** 最初の実装は「トークンごと失われます」の直後に
+     * 「バックアップを書き出してください」と書いており、**書き出せば
+     * トークンも戻る**と読めた。実際にはバックアップは業務レコードだけで、
+     * API キーは構造的に入らない (`BACKUP_EXCLUSIONS` の 1 番目)。
+     * **守られたつもりで失う**のがいちばん悪いので、この文言に戻ったら鳴らす。
+     */
+    ok(
+      !body.includes('バックアップを書き出してください'),
+      '★ 表示: 「バックアップを書き出してください」と言い切らない (トークンは戻らない)',
+    );
+  }
+  /*
+   * **同じ話を、利用者が居る場所でしているか。**
+   *
+   * 「暗号化されているのはトークンだけ」「立ち退きで全部消える」は
+   * 監査文書には書いたが、書類を置く人が見るのは**ライブラリの画面**である。
+   * 設定画面まで読みに行く前提の開示は、開示していないのとあまり変わらない。
+   */
+  await gotoService(page, '#library', 'text=50 MB / 100 件');
+  const lib = await page.locator('body').innerText();
+  ok(lib.includes('暗号化されません'), 'ライブラリ: 書類が暗号化されないと画面で言っている');
+  ok(lib.includes('ここのファイルは入りません'), 'ライブラリ: バックアップに入らないと画面で言っている');
+  // アプリ自身の自動削除 (50 MB / 100 件) と、ブラウザの立ち退きは**別の消え方**。
+  // 片方だけ書くと、もう片方に備えられない。
+  ok(lib.includes('50 MB / 100 件'), 'ライブラリ: アプリ側の自動削除の上限を言っている');
+  ok(lib.includes('まとめて'), 'ライブラリ: ブラウザ側の立ち退き (全部消える) を別に言っている');
+
+  ok(errs.length === 0, `durability: ページエラー 0 (実際 ${errs.length})`);
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+
+  // ── B. 対照: persisted() が true を返す環境を作る ──
+  // `addInitScript` は毎回の遷移の前に走るので、リロードを挟む gotoService でも効く。
+  const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await ctx2.addInitScript(() => {
+    try {
+      Object.defineProperty(navigator.storage, 'persisted', {
+        value: async () => true,
+        configurable: true,
+      });
+    } catch {
+      /* 偽装できない環境ではそのまま (下の検査が実際の値で落ちて気づける) */
+    }
+  });
+  const page2 = await ctx2.newPage();
+  const errs2 = [];
+  collectErrors(page2, errs2);
+
+  await page2.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page2);
+  const sp2 = await page2.evaluate(() => window.serviceHub.storageProtection());
+  ok(
+    sp2.durability === 'persistent',
+    `★ 対照: persisted() が true なら persistent を名乗る (実際 ${sp2.durability})`,
+  );
+
+  await gotoService(page2, '#settings', 'text=保存時の保護状態');
+  await waitProtection(page2);
+  const body2 = await page2.locator('body').innerText();
+  ok(
+    !body2.includes('消えうる'),
+    '★ 対照: 消えない領域では立ち退きの警告を出さない (常に警告する実装をここで落とす)',
+  );
+  // 警告が消えても、保護状態の欄そのものは出ている (節ごと落ちたのを
+  // 「警告が無い」と読み違えないため)。
+  ok(
+    body2.includes('保存先:'),
+    '対照: 保護状態の欄自体は出ている (節ごと消えたのを「警告なし」と読まない)',
+  );
+  ok(errs2.length === 0, `対照: ページエラー 0 (実際 ${errs2.length})`);
+  if (errs2.length > 0) errs2.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx2.close();
+}
+
+/*
+ * セキュリティ診断が、**たどり着き方で変わらない**こと。
+ *
+ * 2026-08-25 の実測 —— 同じ端末・同じ設定なのに:
+ *
+ * ```
+ *   アプリ内で移動して開く  → 自動ロック ✅  スコア 10
+ *   直接ロードして解錠      → 自動ロック ⚠   スコア  0
+ * ```
+ *
+ * 原因は**読む時刻**だった。自動ロックは `App` の効果 (解錠後) で始まるが、
+ * `SecurityPage` は `useMemo(..., [])` で**初回描画中**に読む ——
+ * あらゆる効果より前で、React は子の効果を親より先に走らせるので、
+ * どの経路でも「まだ始まっていない」しか見えない…はずが、アプリ内移動では
+ * **親の効果が既に走り終えている**ので見える。悪いほうを出すのは
+ * **ブックマークや再読み込みの経路**だった。
+ *
+ * 「読む関数がある」ことと「正しい時刻に読む」ことは別である。
+ * ここで留めるのは**経路によらず同じ答えを出す**という性質そのもの
+ * ——「✅ が出る」だけを見ると、両方 ⚠ の実装でも通ってしまう。
+ */
+async function securityPostureSuite(browser) {
+  console.log('--- 診断が、たどり着き方で変わらない ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const readReport = async () => {
+    await page.waitForFunction(
+      () => (document.body.textContent ?? '').includes('セキュリティ・グレード'),
+      undefined,
+      { timeout: 30000 },
+    );
+    const t = await page.locator('body').innerText();
+    const i = t.indexOf('データベース・セキュリティ診断');
+    const block = t.slice(i, i + 900);
+    const score = /スコア\s*(\d+)\s*\/\s*100/.exec(block);
+    const autolock = /自動ロック[^\n]*/.exec(block);
+    const master = /マスターパスワード設定[^\n]*/.exec(block);
+    return {
+      score: score === null ? null : Number(score[1]),
+      autolock: autolock === null ? '' : autolock[0],
+      master: master === null ? '' : master[0],
+      block,
+    };
+  };
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  // ── 経路 A: アプリ内で移動 (親の効果は既に走り終えている) ──
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'security' })),
+  );
+  const a = await readReport();
+
+  // ── 経路 B: 直接ロードして解錠 (画面が親の効果より先に描かれる) ──
+  await gotoService(page, '#security', 'text=セキュリティ・グレード');
+  const b = await readReport();
+
+  ok(
+    a.score !== null && b.score !== null,
+    `診断: 両経路でスコアが読めた (A=${a.score} / B=${b.score})`,
+  );
+  ok(
+    a.score === b.score,
+    `★ 診断: たどり着き方でスコアが変わらない (アプリ内移動 ${a.score} / 直接ロード ${b.score})`,
+  );
+  ok(
+    a.autolock === b.autolock,
+    `★ 診断: たどり着き方で自動ロックの札が変わらない (A「${a.autolock}」/ B「${b.autolock}」)`,
+  );
+
+  // **「同じ」だけでは足りない。** 両方 ⚠ の実装でも「同じ」は成り立つ。
+  // 実際に動いている物が ✅ で出ていることまで見る。
+  ok(b.autolock.includes('✅'), `診断: 自動ロックは実際に動いているので ✅ (実際「${b.autolock}」)`);
+  ok(
+    b.master.includes('✅'),
+    `★ 診断: マスターパスワードは設定済みなので ✅ (保管庫を作らないとここへ来られない) — 実際「${b.master}」`,
+  );
+
+  // 従えない助言を出していないか (レコード暗号化を有効にする画面は無い)。
+  ok(
+    !b.block.includes('設定でレコード暗号化を有効化し'),
+    '★ 診断: 存在しない設定へ誘導していない (レコード暗号化の有効化画面は未配線)',
+  );
+
+  /*
+   * **直せないものを、直せることとして並べない。**
+   *
+   * 7 観点のうち 5 つはこの版に仕組みが無く (重み 75)、重み降順の一覧では
+   * 上を占めていた。今できる 2 件は下に埋まる。分けて出すこと自体を留める。
+   */
+  ok(
+    b.block.includes('この版に無い保護'),
+    '★ 診断: 直せない項目を別枠にしている (混ぜると一覧ごと信じなくなる)',
+  );
+  ok(
+    b.block.includes('設定を変えても直せません'),
+    '診断: 直せないことを明言している',
+  );
+  // **グレードの意味が読めること。** 到達しうる最大が 100 未満なら、
+  // 満点を取れない理由は利用者の側に無い。それを書かずに D だけ見せない。
+  ok(
+    b.block.includes('この版で到達しうる最大'),
+    '★ 診断: 到達しうる最大点を示している (D の意味が読める)',
+  );
+  // 「クラウド」と名乗らせる —— 手で書き出したバックアップを数えていないのに
+  // 「バックアップ鮮度」と書くと、毎日書き出している人にも「未実施」と告げる。
+  ok(
+    b.block.includes('クラウドバックアップ鮮度'),
+    '診断: バックアップ鮮度が「クラウド」の話だと名乗っている',
+  );
+
+  ok(errs.length === 0, `診断: ページエラー 0 (実際 ${errs.length})`);
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/*
+ * 第三者へ送る機能が、**送ると言ってから送る**こと。
+ *
+ * ## なぜ節を立てるか (2026-08-25)
+ *
+ * セキュリティ画面には 3 つ並んでいる:
+ *
+ *   パスワード強度チェッカー … 「この端末内だけで評価し、外部に送信しません」
+ *   メール漏洩チェック (HIBP) … 入力したアドレスを第三者へ送る
+ *   URL スキャン (VirusTotal) … 入力した URL を第三者へ送る
+ *
+ * VirusTotal の節は説明を**入力欄より前**に置いてある (送信は取り消せない
+ * から、という理由がコードに書いてある)。**HIBP には何も無かった。**
+ * すぐ上が「送信しません」と約束しているので、黙っていると
+ * **その約束がページ全体に及ぶと読まれる**。
+ *
+ * ## もう 1 つ、門が開かなかった
+ *
+ * ブラウザ版の `fetchSnapshot('security')` は `not_implemented` を返して
+ * いたので、`keysConfigured` は同梱スナップショットの false から**永久に
+ * 動かなかった**。利用者は画面の言うとおり鍵を保存し (**保存は成功する**)、
+ * それでもボタンは押せない。送信側は shim に実装済みだったので、
+ * **動く機能が、開かない門の向こうに在った**。
+ */
+async function thirdPartyDisclosureSuite(browser) {
+  console.log('--- 第三者へ送る前に、送ると言う ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  // 鍵を入れる前は閉じている (門が最初から開いていたら、開くことを測れない)。
+  const before = await page.evaluate(() => window.serviceHub.fetchSnapshot('security'));
+  ok(
+    before.ok === true && before.data.keysConfigured.hibp === false,
+    `第三者送信: 鍵を入れる前は未設定と返る (実際 ${JSON.stringify(before).slice(0, 90)})`,
+  );
+
+  const saved = await page.evaluate(() =>
+    window.serviceHub.setToken('security', '{"hibp":"stub-key","vt":"stub-key"}'),
+  );
+  ok(saved.ok === true, '第三者送信: 鍵を保存できた');
+
+  const after = await page.evaluate(() => window.serviceHub.fetchSnapshot('security'));
+  ok(
+    after.ok === true && after.data.keysConfigured.hibp === true && after.data.keysConfigured.vt === true,
+    `★ 第三者送信: 鍵を保存すると門が開く (実際 ${JSON.stringify(after.data?.keysConfigured)})`,
+  );
+
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'security' })),
+  );
+  await page.waitForSelector('text=メール漏洩チェック', { timeout: 30000 });
+  // 画面はスナップショット由来で描かれるので、実データを取り直させる。
+  const refresh = page.getByRole('button', { name: '更新' });
+  if ((await refresh.count()) > 0) {
+    await refresh.first().click();
+    await page.waitForTimeout(1500);
+  }
+
+  const check = page.getByRole('button', { name: 'チェック' });
+  const enabled = (await check.count()) > 0 && (await check.first().isEnabled());
+  ok(enabled, '★ 第三者送信: 鍵を保存すると HIBP の欄が実際に開ける (以前は永久に disabled だった)');
+  if (enabled) await check.first().click();
+  const scan = page.getByRole('button', { name: 'スキャン' });
+  if ((await scan.count()) > 0 && (await scan.first().isEnabled())) await scan.first().click();
+  await page.waitForTimeout(800);
+
+  const t = await page.locator('body').innerText();
+  ok(t.includes('第三者のサービス) へ送信されます'), '★ HIBP: 第三者へ送ると書いている');
+  ok(t.includes('端末内で完結しません'), '★ HIBP: 上の「送信しません」と違うと明言している');
+  ok(
+    t.includes('他の VirusTotal 利用者が検索できる状態'),
+    'VirusTotal: 送信先で残ることを書いている',
+  );
+  // 経路に居るのは相手だけではない —— ブラウザ版はプロキシを通る。
+  ok(
+    t.split('プロキシ (Cloudflare Worker) を経由').length - 1 >= 2,
+    `★ 両方: プロキシの運用者からも見えると書いている (実際 ${t.split('プロキシ (Cloudflare Worker) を経由').length - 1} 箇所)`,
+  );
+
+  /*
+   * **経路の持ち主が誰かを言う。**
+   *
+   * BYO プロキシの欄は自由入力の URL で、他人の Worker を入れても止まらない
+   * (どの URL が「あなたの物」かは判定できないので、止めようも無い)。
+   * `fetchViaProxy` は呼び出し側のヘッダをそのまま封筒へ載せるため、
+   * **`Authorization: Bearer <トークン>` が Worker の運用者に見える**。
+   *
+   * 画面には「共有秘密を空欄にすると誰でも中継できます」= **他人があなたの
+   * Worker を使う**側だけが書いてあった。**あなたが他人の Worker を使う**側は
+   * 帯域ではなく資格情報を失うので明らかに重い。判定できない以上、
+   * **言うことが唯一の対策**になる。
+   */
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'settings' })),
+  );
+  await page.waitForSelector('text=BYO プロキシ', { timeout: 30000 });
+  const st = await page.locator('body').innerText();
+  ok(
+    st.includes('あなたが管理している Worker だけ'),
+    '★ プロキシ: 自分の Worker だけを入れるよう言っている',
+  );
+  ok(
+    st.includes('Authorization ヘッダ) がそのまま乗ります'),
+    '★ プロキシ: 何が渡るのか (トークン) を名指ししている',
+  );
+  /*
+   * 逆向き (他人が自分の Worker を使う) の説明は**入力欄を開かないと出ない**
+   * ので、ここでは見ない —— 字面は `storageClaims.test.ts` が既に留めている。
+   * (最初はここでも見ようとして落ちた。折りたたんだ本文に無いのが理由で、
+   *  検査のほうが誤っていた。同じ画面に「設定する」が 4 つあるのも罠。)
+   */
+
+  ok(errs.length === 0, `第三者送信: ページエラー 0 (実際 ${errs.length})`);
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+async function businessComparisonSuite(browser) {
+  console.log('--- 事業間比較に自分の事業を足す ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  await page.goto(FILE + '#overview', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-manual-data]', { timeout: 30000 });
+
+  // 同梱分がサンプルと明示されている (実績と混同させない)。**ラベルで見る** —
+  // 本文全体で探すと、説明文に書いた「(サンプル)」の語に当たって素通りする。
+  await page.waitForSelector('[data-bar-row]', { timeout: 30000 });
+  const barLabelsBefore = await page.locator('[data-bar-row]').evaluateAll((els) =>
+    els.map((e) => e.getAttribute('data-bar-row') ?? ''),
+  );
+  ok(
+    barLabelsBefore.every((l) => l.endsWith('(サンプル)')),
+    `同梱の 10 件はすべて「(サンプル)」付き — 実際 ${JSON.stringify(barLabelsBefore.slice(0, 2))}`,
+  );
+
+  // 事業を金額つきで登録する。
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  await page.fill('[data-business-units] input[aria-label="事業名"]', '自社EC');
+  await page.fill('[data-business-units] input[aria-label="月次の売上高"]', '2000000');
+  await page.fill('[data-business-units] input[aria-label="月次の変動費"]', '800000');
+  await page.fill('[data-business-units] input[aria-label="月次の固定費"]', '400000');
+  await page.click('[data-business-units] button:has-text("事業を追加")');
+  await page.waitForSelector('[data-business-unit]', { timeout: 15000 });
+
+  ok(
+    ((await page.textContent('[data-business-amounts]')) ?? '').includes('2,000,000'),
+    '一覧に月次の売上が出る',
+  );
+
+  // 比較グラフの対象事業に自分の事業が入る。**この select に限定する** —
+  // ページ上には数値を紐づける用の事業ドロップダウンもあり、そちらは
+  // 売上の無い事業も載るのが正しいので、混ぜて数えると判定にならない。
+  const unitOptions = await page.locator('[data-financial-unit-select] option').allTextContents();
+  ok(unitOptions.includes('自社EC'), `比較の対象に自分の事業が入る — 実際 ${JSON.stringify(unitOptions.slice(0, 3))}`);
+  ok(unitOptions[0] === '自社EC', '自分の事業がサンプルより先に並ぶ (既定の選択になる)');
+
+  // 棒グラフの行として描かれていること。**行のラベルで見る** — 本文全体で
+  // 探すと、入力欄自身が出している事業名に当たって素通りする。
+  const barLabels = await page.locator('[data-bar-row]').evaluateAll((els) =>
+    els.map((e) => e.getAttribute('data-bar-row') ?? ''),
+  );
+  ok(barLabels.includes('自社EC'), `比較グラフの行に自分の事業が出る — 実際 ${JSON.stringify(barLabels.slice(0, 2))}`);
+  // 2,000,000 − 800,000 − 400,000 = 800,000 → 利益率 40.0%。
+  const ecRow = (await page.textContent('[data-bar-row="自社EC"]')) ?? '';
+  ok(ecRow.includes('40'), `入力から導いた利益率が行に出る (期待 40%) — 実際 "${ecRow.trim()}"`);
+
+  // 売上なしの事業は比較に出さない (未入力を 0% として並べない)。
+  await page.fill('[data-business-units] input[aria-label="事業名"]', '名前だけ事業');
+  await page.click('[data-business-units] button:has-text("事業を追加")');
+  await page.waitForTimeout(300);
+  const unitOptionsAfter = await page.locator('[data-financial-unit-select] option').allTextContents();
+  ok(!unitOptionsAfter.includes('名前だけ事業'), '売上の無い事業は比較に出さない (未入力を 0% として並べない)');
+  const barLabelsAfter = await page.locator('[data-bar-row]').evaluateAll((els) =>
+    els.map((e) => e.getAttribute('data-bar-row') ?? ''),
+  );
+  ok(!barLabelsAfter.includes('名前だけ事業'), '売上の無い事業は棒グラフにも出さない');
+  const tagOptions = await page.locator('[data-manual-data] select option').allTextContents();
+  ok(tagOptions.includes('名前だけ事業'), '売上が無くても数値の紐づけ先としては使える');
+
+  // 連結（合算）は出所を混ぜない。棒グラフは 1 本ずつラベルが付くので実績と
+  // サンプルを並べてよいが、連結は 1 つの数に潰れる — 混ぜた合計はどちらの
+  // 会社の数でもない。合算した集合を見出しに書いているかを実物で確かめる。
+  const consolidateLabel = (await page.textContent('label:has-text("連結")')) ?? '';
+  ok(consolidateLabel.includes('自分の事業 1 件'),
+    `連結は実績だけを足すと明示する — 実際 "${consolidateLabel.trim()}"`);
+  ok(!consolidateLabel.includes('全事業合算'), '「全事業合算」と称して出所を伏せない');
+
+  await page.click('label:has-text("連結") input[type="checkbox"]');
+  await page.waitForTimeout(200);
+
+  // 連結の損益計算書から「売上高」の行の金額そのものを読む。
+  // 本文全体で数字を探すと、単体表示の年商やサンプルの数字に当たって
+  // 素通りする — 行を特定して値を取る。
+  const consolidatedRevenue = await page.evaluate(() => {
+    for (const tr of Array.from(document.querySelectorAll('tr'))) {
+      const cells = tr.querySelectorAll('td');
+      if (cells.length >= 2 && (cells[0].textContent ?? '').trim() === '売上高') {
+        return (cells[1].textContent ?? '').replace(/[^0-9]/g, '');
+      }
+    }
+    return null;
+  });
+  // 実績は自社EC 1 件だけ。月商 200 万 → 年商 2,400 万。
+  // サンプル 10 件を足していればこの値には絶対にならない。
+  ok(consolidatedRevenue === '24000000',
+    `連結の売上高が実績 1 件ぶんと一致する (期待 24000000) — 実際 ${consolidatedRevenue}`);
+
+  ok(errs.length === 0, `事業間比較: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+
+/**
+ * 人材育成 —— **入力から判定までが実際に繋がっているか**。
+ *
+ * 単体検査は判定 (`src/shared/talent.ts`) と口 (`ACTIONS`) をそれぞれ留めて
+ * いるが、**画面で入力した値がその口へ届いているか**は誰も見ていない。
+ * `save-state` は一度「口も検査も揃っているのに画面から呼べない」状態で
+ * 出荷しかけた (2026-08-28)。ここが繋がっていることは実物でしか確かめられない。
+ *
+ * ブラウザ版なので保存先は localStorage で、判定は web-shim が
+ * shared の同じ関数を呼ぶ。デスクトップ版は同じ口が
+ * `~/.local/business-hub/talent.json` へ書く。
+ */
+async function talentSuite(browser) {
+  console.log('\n=== talent (人材育成: 入力 → 保存 → 判定) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/talent', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=5つの企業組織病', { timeout: 30000 });
+
+  // --- 定義表は取得の成否に関わらず出る (snapshot が shared の実物を指す) ---
+  ok(await page.locator('text=職務定義の刷り込み誤認').count() > 0,
+    'talent: 5つの病が出る');
+  ok(await page.locator('text=うそをついてごまかす').count() > 0,
+    'talent: 10ヶ条が出る');
+  ok(await page.locator('text=しくみをつくるスキル').count() > 0,
+    'talent: 4つの STEP が出る');
+  // 出典の強さが**画面に出ている**こと。読み解きと確認済みを混ぜて配らない。
+  ok(await page.locator('text=定義確認済み').count() > 0,
+    'talent: 出典の札が出る (定義確認済み)');
+  ok(await page.locator('text=第三者の解説で確認').count() > 0,
+    'talent: 出典の札が段で分かれている (第三者)');
+
+  // --- 登用判定: 1 つでも該当したら不可 ---
+  await page.getByRole('button', { name: '登用可否を判定' }).click();
+  await page.waitForSelector('text=該当なし', { timeout: 15000 });
+  ok(await page.locator('text=リーダーとして登用できます').count() > 0,
+    'talent: 該当ゼロなら登用できる');
+
+  await page.locator('label', { hasText: 'うそをついてごまかす' }).locator('input[type="checkbox"]').check();
+  await page.getByRole('button', { name: '登用可否を判定' }).click();
+  await page.waitForSelector('text=リーダーには据えず', { timeout: 15000 });
+  ok(await page.locator('text=1 件該当').count() > 0,
+    'talent: ★ 1 つでも該当したら不可 (閾値を置かない)');
+
+  // --- 入力 → 保存 → 判定 ---
+  // 2 部署が同じ病を挙げる = 仕組みの問題、という判定が出るところまで通す。
+  await page.getByRole('button', { name: '部署の申告を追加' }).click();
+  await page.getByLabel('申告 1 の部署名').fill('営業');
+  /*
+   * **待つのは「打った値が制御された input に入ったこと」** (2026-09-22 · パス 397)。
+   *
+   * ここはそれまで
+   * `page.locator('div').filter({ hasText: /^営業$/ }).first()
+   *    .waitFor({ state: 'attached' }).catch(() => {})`
+   * だった。`営業` は `<input>` の**値**で、この時点でその文字を textContent に
+   * 持つ `div` は 1 つも無いので、この locator は**永久に 0 件**である。
+   * `.catch(() => {})` が時間切れを飲み、しかも次の行に主張が無いので、
+   * 実体は **30 秒ちょうどの sleep** だった —— 実測 **30,004 ms / 制限 30,000 ms**
+   * (FULL) ・**30,002 ms** (LITE) で、**毎回**ぴったり上限まで待っていた。
+   * `npm run audit:e2e-wait-margin` の母集団を Locator まで広げたその日に、
+   * **制限の 50% 以上を使う唯一の待ち**として出た (他はすべて 12.3% 以下)。
+   *
+   * 直しは法則 `wait-for-condition-not-ticks` のとおり**条件で待つ**。
+   * 飲み込みもやめる —— 飲んでよいのは**直後に絶対の主張が在る**ときだけで
+   * (同じファイルの theme の 1 件はその形)、ここには無かった。
+   */
+  await page.waitForFunction(
+    () => document.querySelector('input[aria-label="申告 1 の部署名"]')?.value === '営業',
+    undefined,
+    { timeout: 15000 },
+  );
+  const firstCard = page.locator('input[aria-label="申告 1 の部署名"]').locator('xpath=../..');
+  await firstCard.locator('label', { hasText: '職務定義の刷り込み誤認' }).locator('input').check();
+
+  await page.getByRole('button', { name: '部署の申告を追加' }).click();
+  await page.getByLabel('申告 2 の部署名').fill('開発');
+  const secondCard = page.locator('input[aria-label="申告 2 の部署名"]').locator('xpath=../..');
+  await secondCard.locator('label', { hasText: '職務定義の刷り込み誤認' }).locator('input').check();
+
+  // 施策 40% だけ入れる → 不足 60% が出るはず。
+  await page.getByRole('button', { name: '施策を追加' }).click();
+  await page.getByLabel('施策 1 の名前').fill('広告の入れ替え');
+  await page.getByLabel('施策 1 の達成確率 (%)').fill('40');
+
+  // STEP1 に 9 年 → 滞留として挙がるはず (目安 5 年を超えている)。
+  await page.getByRole('button', { name: 'メンバーを追加' }).click();
+  await page.getByLabel('メンバー 1 の氏名').fill('山田');
+  await page.getByLabel('メンバー 1 の滞留年数').fill('9');
+
+  await page.getByRole('button', { name: '入力を保存して判定し直す' }).first().click();
+  await page.waitForSelector('text=保存しました', { timeout: 20000 });
+  ok(true, 'talent: 保存が成功する (口が画面から呼べている)');
+
+  // 保存された値から**判定し直された**結果が出ること。
+  await page.waitForSelector('text=仕組みの問題と判定', { timeout: 20000 });
+  const systemicLine = await page.locator('text=仕組みの問題と判定').first().innerText();
+  ok(systemicLine.includes('職務定義の刷り込み誤認'),
+    `talent: ★ 2 部署で重なった病が「仕組みの問題」と判定される — 実際 ${JSON.stringify(systemicLine)}`);
+
+  const shortfall = await page.evaluate(() => {
+    const els = [...document.querySelectorAll('div')];
+    const hit = els.find((e) => e.textContent?.trim() === '不足（この分の施策を足す）');
+    return hit?.previousElementSibling?.textContent?.trim() ?? null;
+  });
+  ok(shortfall === '60%', `talent: ★ 施策 40% なら不足 60% と出る — 実際 ${shortfall}`);
+
+  ok(await page.locator('text=STEP1 に習得目安を超えて滞留').count() > 0,
+    'talent: ★ STEP1 に 9 年の滞留が挙がる');
+
+  // --- 保存先が localStorage の台帳どおりであること ---
+  const stored = await page.evaluate(() => localStorage.getItem('servicehub.talent.state.v1'));
+  ok(stored !== null && stored.includes('営業'),
+    'talent: 台帳に載せた鍵 (servicehub.talent.state.v1) へ保存されている');
+
+  // 壊れた保存値: 空を表示しつつ、そう言う (パス 121 までは黙って空で続けた)。この画面は開いた直後に読む。
+  await page.evaluate(() => localStorage.setItem('servicehub.talent.state.v1', '{壊れた'));
+  await gotoService(page, '#/talent', 'text=5つの企業組織病');
+  await page.waitForSelector('text=保存した人材育成の状態を読めませんでした', { timeout: 20000 });
+  ok(true, 'talent: ★ 読めない保存値は空を表示しつつ、注記が理由を言う');
+
+  ok(errs.length === 0, `talent: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+/**
+ * 数値パラメータ (2026-09-03) — 設定画面で上書きした値が**別の画面の計算と文言**に
+ * 効くことを実機で見る。単体は hook / 画面 / 配線を fake-indexeddb で通しているが、
+ * 束ねた standalone.html で 設定 → 遷移 (リロード) → 保存先から読み直し → 反映 の
+ * 経路が切れていないかは実機でしか分からない。既定 (対照) → 上書き → 既定に戻す の順。
+ */
+/**
+ * チームレーダー —— **保存した物が画面へ戻ってくるか** (2026-09-09 · パス 118)。
+ *
+ * talent が 2026-08-28 に捕まった形 (「口も検査も揃っているのに画面から呼べない」) が隣に
+ * 残っていた: ブラウザ版の \`save-state\` は検証せず \`teamradar.state\` へ書き、その鍵を読む所が
+ * 無く、画面は「保存しました」の直後に \`refresh()\` して赤いバッジ (「ブラウザ版では live fetch を
+ * 行いません」) を出していた。単体検査は shared の判定と shim の往復を留めるが、**画面の
+ * 保存ボタンからその往復が繋がっているか**は実物でしか確かめられない。
+ */
+async function teamRadarSuite(browser) {
+  console.log('\n=== teamRadar (チームレーダー: 追加 → 保存 → 取得し直し) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/teamradar', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=保存 / エクスポート', { timeout: 30000 });
+
+  // 見本は 3 人。1 人足すと「メンバー4」が出来る。
+  await page.getByRole('button', { name: 'メンバーを追加' }).click();
+  // 欄の値は DOM の property で見る (React は attribute を同期しない版がある)。
+  const hasMemberInput = () =>
+    page.locator('input[type="text"]').evaluateAll((els) => els.some((e) => e.value === 'メンバー4'));
+  ok(await hasMemberInput(), 'teamRadar: 追加したメンバーが欄に出る');
+
+  await page.getByRole('button', { name: 'チーム情報を保存' }).click();
+  await page.waitForSelector('text=保存しました', { timeout: 20000 });
+  ok(true, 'teamRadar: 保存が成功する (口が画面から呼べている)');
+
+  // 保存の直後に refresh() が走る。ブラウザ版の fetchSnapshot に枝が無かった頃は、ここで
+  // 「ブラウザ版では live fetch を行いません」の赤いバッジが「保存しました」と並んでいた。
+  await page.waitForTimeout(500);
+  ok(await page.locator('text=ブラウザ版では live fetch を行いません').count() === 0,
+    'teamRadar: ★ 保存の直後の取得し直しが not_implemented に落ちない');
+  ok(await hasMemberInput(),
+    'teamRadar: ★ 取得し直した後も追加したメンバーが残る (保存した物が戻ってくる)');
+
+  // 保存先が台帳の鍵で、fetchSnapshot がそれを読んでいること (shim の往復)。
+  const roundTrip = await page.evaluate(async () => {
+    const stored = localStorage.getItem('teamradar.state');
+    const snap = await window.serviceHub.fetchSnapshot('teamradar');
+    return {
+      stored: stored !== null && stored.includes('メンバー4'),
+      ok: snap.ok,
+      names: snap.ok ? snap.data.members.map((m) => m.name) : [],
+    };
+  });
+  ok(roundTrip.stored, 'teamRadar: 台帳に載せた鍵 (teamradar.state) へ保存されている');
+  ok(roundTrip.ok && roundTrip.names.includes('メンバー4'),
+    `teamRadar: ★ fetchSnapshot が保存した状態を返す — 実際 ${JSON.stringify(roundTrip.names)}`);
+
+  // 判定はデスクトップ版と同じ物を通る: 形の合わない保存は断り、鍵は汚さない。
+  const refused = await page.evaluate(async () => {
+    const before = localStorage.getItem('teamradar.state');
+    const r = await window.serviceHub.invoke('teamradar', 'save-state', {
+      department: '開発部',
+      evaluatedAt: '2026-09-09',
+      members: [{ id: 'x', name: 'X', scores: [1, 2, 3] }],
+    });
+    return { ok: r.ok, message: r.ok ? '' : r.message, untouched: localStorage.getItem('teamradar.state') === before };
+  });
+  ok(!refused.ok && /length 5/.test(refused.message) && refused.untouched,
+    `teamRadar: ★ 形の合わない保存は断り、保存先を汚さない — 実際 ${JSON.stringify(refused)}`);
+
+  // 保存した物は利用者の物 —— バッジが「同梱データ」と言わない (パス 120 までは常に isMock: true だった)。
+  const afterSave = (await page.locator('body').textContent()) ?? '';
+  ok(!afterSave.includes('同梱データ') && afterSave.includes('ローカル'),
+    'teamRadar: ★ 保存した状態のバッジは「ローカル」(「同梱データ」ではない)');
+
+  // 壊れた保存値: 見本を表示しつつ、そう言う (黙って見本の 3 人に化けない)。
+  await page.evaluate(() => localStorage.setItem('teamradar.state', '{壊れた'));
+  await gotoService(page, '#/teamradar', 'text=保存 / エクスポート');
+  // 保存先を読むのは「更新」(マウント時の自動取得は資格情報のあるサービスだけ)。
+  await page.getByRole('button', { name: '更新' }).click();
+  await page.waitForSelector('text=保存したチームの状態を読めませんでした', { timeout: 20000 });
+  const afterCorrupt = (await page.locator('body').textContent()) ?? '';
+  ok(afterCorrupt.includes('同梱データ'), 'teamRadar: ★ 読めなかったときのバッジは「同梱データ」で、注記が理由を言う');
+
+  /*
+   * **読めない保存値を取り直しても、端末の編集内容を見本で上書きしない** (パス 335)。
+   *
+   * 画面は「`data` が変わったら状態を揃える」効果と「状態が変わったら下書きを書く」効果を
+   * 持つ。前者に「取ってきた物が利用者の保存した物か」の判定が無かったので、保存値が
+   * 読めないときに返る**同梱の見本 3 人**が下書きへ流れ、利用者が何も押していなくても
+   * 端末の編集内容が消えていた。ここまでの手順でメンバー4 は利用者が足した人なので、
+   * 見本で上書きされればその名前は下書きから消える —— それを針にする。
+   *
+   * この 1 件は **2026-09 の e2e の揺れの原因でもあった**: 上書きは `data` が landed した
+   * 後の passive effect で起き、その効果が走る前に下の `page.evaluate` が下書きを書くと、
+   * 直後に見本で潰されて次の段の `[data-skill-radar-omitted]` が永遠に出ない。
+   * 負荷が高いほど順序が入れ替わるので、連鎖で回したときだけ落ちていた。
+   */
+  const draftAfterCorrupt = await page.evaluate(
+    () => localStorage.getItem('servicehub.teamradar.draft.v1') ?? '',
+  );
+  ok(draftAfterCorrupt.includes('メンバー4'),
+    'teamRadar: ★ 読めない保存値を取り直しても、端末の編集内容が見本で上書きされない');
+  ok(afterCorrupt.includes('この端末に残っていた編集中の内容は、そのままにしています'),
+    'teamRadar: ★ 注記は、残した物を残したと言う');
+  ok(!afterCorrupt.includes('見本を表示しています'),
+    'teamRadar: ★ 下書きが在るのに「見本を表示しています」と言わない');
+
+  /*
+   * **未評価の軸が在る人を、図が中心に描かない** (パス 190)。
+   *
+   * 評点の入力は 1-5 の range なので画面から 0 は書けない —— 0 が入る道は下書きで、
+   * `sanitizeRadarDraft` の `finiteOrZero` が数でない値を 0 に倒す。実機で同じ道を通す。
+   */
+  await page.evaluate(() => {
+    localStorage.removeItem('teamradar.state');
+    localStorage.setItem('servicehub.teamradar.draft.v1', JSON.stringify({
+      title: 'T',
+      axes: ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'],
+      department: '開発部',
+      evaluatedAt: '2026-09-12',
+      members: [
+        { id: 'ok', name: 'E2E描ける人', scores: [5, 4, 3, 2, 1] },
+        { id: 'ng', name: 'E2E描けない人', scores: [5, 4, 'x', 2, 1] },
+      ],
+    }));
+  });
+  await gotoService(page, '#/teamradar', 'text=保存 / エクスポート');
+  await page.waitForSelector('[data-skill-radar-omitted]', { timeout: 20000 });
+  const omitted = (await page.locator('[data-skill-radar-omitted]').textContent()) ?? '';
+  ok(omitted.includes('1 名を図に描いていません'),
+    'teamRadar: ★ 描かなかった人の件数を言う');
+  ok(omitted.includes('E2E描けない人') && omitted.includes('プレゼン力'),
+    `teamRadar: ★ 誰のどの軸が欠けているかを言う — 実際 ${omitted.slice(0, 80)}`);
+  // 図には描ける人の多角形が 1 つだけ (中心に落ちた頂点が無い)
+  const polygons = await page.locator('svg').first().locator('polygon').evaluateAll(
+    (els) => els.filter((e) => e.getAttribute('fill') !== 'none').map((e) => e.getAttribute('points') ?? ''),
+  );
+  ok(polygons.length === 1, `teamRadar: ★ 未評価が在る人の多角形は描かない — 実際 ${polygons.length} 個`);
+  ok(!polygons.some((p) => p.includes('260.0,268.0')),
+    'teamRadar: ★ 中心 (260.0,268.0) に落ちた頂点が無い');
+  await page.evaluate(() => localStorage.removeItem('servicehub.teamradar.draft.v1'));
+
+  ok(errs.length === 0, `teamRadar: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+
+/**
+ * **合計に同梱の見本が混ざっていることを、実機の画面が言う** (パス 187)。
+ *
+ * jsdom では 3 画面すべてで確かめてあるが、断りは**出荷する 1 枚の HTML の中で
+ * 出る**必要がある (画面がタイルを刷る側と同じ節に置いたので、束ね方が変われば
+ * 消えうる)。ここは「見本だけ」の既定の状態と、自分の行を 1 件足した後を見る。
+ */
+async function demoMixSuite(browser) {
+  console.log('\n=== demoMix (合計に見本が混ざっていることの断り · パス 187) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  const body = async () => (await page.locator('body').textContent()) ?? '';
+
+  // --- 不動産: 既定は見本 4 件だけ ---
+  await page.goto(FILE + '#/real-estate', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-portfolio-demo-mix]', { timeout: 30000 });
+  let note = (await page.locator('[data-portfolio-demo-mix]').textContent()) ?? '';
+  ok(note.includes('同梱の見本 4 件を表示しています'), 'demoMix: ★ 不動産 — 見本だけなら「見本を表示している」と言う');
+  ok(!note.includes('見本を除くと'), 'demoMix: 自分の物件が 0 件なら「見本を除くと ¥0」は言わない');
+
+  // 自分の物件を 1 件足すと、自分の分の数字を述べる (合計は消えない)。
+  await page.getByPlaceholder('例: 福岡市アパート').fill('E2E自分の物件');
+  await page.getByPlaceholder('100000').first().fill('90000');
+  await page.getByPlaceholder('12000000').fill('20000000');
+  await page.getByRole('button', { name: '＋ 物件を追加' }).click();
+  await page.waitForFunction(
+    () => (document.querySelector('[data-portfolio-demo-mix]')?.textContent ?? '').includes('自分の物件は 1 件'),
+    undefined,
+    { timeout: 20000 },
+  );
+  note = (await page.locator('[data-portfolio-demo-mix]').textContent()) ?? '';
+  ok(note.includes('同梱の見本 4 件が含まれています'), 'demoMix: ★ 不動産 — 合計に見本が混ざっていると言う');
+  ok(note.includes('¥90,000'), 'demoMix: ★ 不動産 — 自分の家賃収入 (¥90,000) を述べる');
+  // 見本 4 件の家賃は ¥823,000 なので、自分の ¥90,000 を足した合計は ¥913,000。
+  ok((await body()).includes('¥913,000'), 'demoMix: 合計の側は消していない (家賃 ¥913,000)');
+  // 後片付け (表のセルから消えるまで待つ)。
+  await page.locator('button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(
+    () => !Array.from(document.querySelectorAll('td')).some((td) => td.textContent.includes('E2E自分の物件')),
+    undefined,
+    { timeout: 15000 },
+  );
+
+  // --- 投資信託: 見出しの断りと、実質コストの元本の断り ---
+  await page.goto(FILE + '#/mutual-funds', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('[data-fund-demo-mix]', { timeout: 30000 });
+  note = (await page.locator('[data-fund-demo-mix]').textContent()) ?? '';
+  ok(note.includes('同梱の見本 4 銘柄を表示しています'), 'demoMix: ★ 投信 — 見本だけなら「見本を表示している」と言う');
+  ok(await page.locator('[data-fund-cost-user-only]').count() === 0, 'demoMix: 自分の銘柄が 0 件なら元本の断りは出ない');
+  ok((await body()).includes('を元本とし'), 'demoMix: 対照 — 元本の説明そのものは在る (節が消えたのではない)');
+
+  // --- 士業: 見出しの「連携 N 名 / 顧問料」の出所 ---
+  await page.goto(FILE + '#/tax-accountant', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('[data-shigyo-demo-mix]', { timeout: 30000 });
+  note = (await page.locator('[data-shigyo-demo-mix]').textContent()) ?? '';
+  ok(note.includes('月次顧問料 ¥33,000 は同梱の見本です'), 'demoMix: ★ 士業 — 顧問料が見本の値だと言う');
+
+  ok(errs.length === 0, `demoMix: コンソールエラー 0 件 (${errs.join(' | ')})`);
+  await ctx.close();
+}
+
+async function paperAccountSuite(browser) {
+  console.log('\n=== paperAccount (1 度も約定していない口座の損益 · パス 189) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/stocks', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-paper-account-note]', { timeout: 30000 });
+
+  // ブラウザ版はペーパートレードを行わない —— 口座の注記と帯がそれを言う。
+  const note = (await page.locator('[data-paper-account-note]').textContent()) ?? '';
+  ok(
+    note.includes('ブラウザ版はペーパートレードを行いません'),
+    'paperAccount: ★ 口座の注記がブラウザ版の事実を述べる',
+  );
+  const scope = (await page.locator('[data-simulation-scope]').textContent()) ?? '';
+  ok(
+    scope.includes('ペーパートレードは行いません'),
+    'paperAccount: ★ 帯が「ペーパートレードのみ稼働中」と名乗らない',
+  );
+  ok(
+    !scope.includes('ペーパートレードのみ稼働中'),
+    'paperAccount: 帯の古い文面 (デスクトップ用) が残っていない',
+  );
+
+  // 損益タイルは「—」と理由を刷る (「+￥0」ではない)。
+  const body = (await page.locator('body').textContent()) ?? '';
+  ok(
+    body.includes('取引 0 件 — 損益は算定できません'),
+    'paperAccount: ★ 損益タイルが算定できない理由を刷る',
+  );
+  ok(!body.includes('+￥0'), 'paperAccount: ★ 「+￥0」を刷らない');
+  ok(body.includes('まだ 1 件もありません'), 'paperAccount: 取引履歴 0 件を成績に見せない');
+  // 対照 —— 金額の欄そのものは消していない
+  ok(body.includes('￥1,000,000'), 'paperAccount: 対照 — 現在資産・初期入金は出ている');
+
+  // 絞り込みが空になる理由を言う (同梱データではシグナルが 1 度も出ない)。
+  await page.getByRole('button', { name: '買い' }).first().click();
+  await page.waitForSelector('[data-watchlist-filter-empty]', { timeout: 15000 });
+  const empty = (await page.locator('[data-watchlist-filter-empty]').textContent()) ?? '';
+  ok(
+    empty.includes('登録されている銘柄はありません') || empty.includes('「買い」の銘柄はありません'),
+    `paperAccount: ★ 絞り込みが空の理由を述べる (${empty})`,
+  );
+  ok(empty !== '該当する銘柄はありません', 'paperAccount: 古い一言に戻っていない');
+
+  // 壊れた保存値: 空を表示しつつ、そう言う (黙って「初期状態（登録なし）」に化けない・パス 309)。
+  // チームレーダー (パス 120) と同じ形 —— 保存先を読むのは「更新」。
+  await page.evaluate(() => localStorage.setItem('stocks.watchlist', '{壊れた'));
+  await page.getByRole('button', { name: '更新' }).click();
+  await page.waitForSelector('[data-watchlist-stored-note]', { timeout: 20000 });
+  const storedNote = (await page.locator('[data-watchlist-stored-note]').textContent()) ?? '';
+  ok(
+    storedNote.includes('保存したウォッチリストを読めませんでした (JSON として読めません)'),
+    `paperAccount: ★ 壊れた保存値を「読めなかった」と言う — 実際 ${storedNote.slice(0, 80)}`,
+  );
+  ok(storedNote.includes('元の保存値は戻りません'), 'paperAccount: ★ 登録・解除で上書きされることを先に言う');
+  // 対照 —— 保存値を退けると注記は消える (「読めなかった」が固定文でないこと)。
+  await page.evaluate(() => localStorage.removeItem('stocks.watchlist'));
+  await page.getByRole('button', { name: '更新' }).click();
+  await page.waitForSelector('[data-watchlist-stored-note]', { state: 'detached', timeout: 20000 });
+  ok(
+    (await page.locator('[data-watchlist-stored-note]').count()) === 0,
+    'paperAccount: 対照 — 保存値が無ければ注記は出ない',
+  );
+
+  ok(errs.length === 0, `paperAccount: コンソールエラー 0 件 (${errs.join(' | ')})`);
+  await ctx.close();
+}
+
+async function serviceAdviceSuite(browser) {
+  console.log('\n=== serviceAdvice (改善提案: 画面の数字から規則で組む・ブラウザ版でも返る) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/real-estate', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
+  const body = async () => (await page.locator('body').textContent()) ?? '';
+
+  // 1. 既定 (見本 4 物件): 提案が返り、赤い失敗が出ない。パス 118 までのブラウザ版は
+  //    action_not_found (「AI 提案の取得に失敗」) だった。
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForSelector('text=根拠:', { timeout: 20000 });
+  let t = await body();
+  ok(!t.includes('提案の取得に失敗'), 'serviceAdvice: ★ ブラウザ版で提案が返る (action_not_found ではない)');
+  ok(t.includes('空室 1 件の解消') && t.includes('大阪市ワンルーム (¥72,000/月)'), 'serviceAdvice: 空室は画面の行 (大阪) を名指しする');
+  ok(t.includes('4 物件 (同梱の見本 4 件を含む)'), 'serviceAdvice: 根拠が件数と見本の混在を言う');
+  ok(t.includes('低利回り物件の見直し: 渋谷区マンション 1LDK'), 'serviceAdvice: 低利回りは表の最低 (渋谷 4.8%) を名指しする');
+
+  // 2. 空室の物件を足すと、提案は**その物件**について語る (見本の数字を写した固定文ではない)。
+  await page.getByPlaceholder('例: 福岡市アパート').fill('E2E空室物件');
+  await page.getByPlaceholder('100000').first().fill('100000');
+  await page.getByPlaceholder('12000000').fill('12000000');
+  await page.locator('label', { hasText: '入居中' }).locator('input[type="checkbox"]').first().uncheck();
+  await page.getByRole('button', { name: '＋ 物件を追加' }).click();
+  await page.waitForSelector('text=E2E空室物件', { timeout: 15000 });
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('空室 2 件の解消'), undefined, { timeout: 20000 });
+  t = await body();
+  ok(t.includes('E2E空室物件 (¥100,000/月)'), 'serviceAdvice: ★ 足した物件が提案に出る (固定文ではない)');
+  ok(t.includes('5 物件 (同梱の見本 4 件を含む)'), 'serviceAdvice: 根拠の件数が 5 に動く');
+  // 後片付け (利用者行だけに「削除」が在る)。提案の文にも物件名が残るので、表のセルだけを見る。
+  await page.locator('button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(
+    () => !Array.from(document.querySelectorAll('td')).some((td) => td.textContent.includes('E2E空室物件')),
+    undefined,
+    { timeout: 15000 },
+  );
+
+  // 3. 投資信託: 集中度と評価損益率が画面のタイルと同じ数字で出る。
+  await gotoService(page, '#mutual-funds', 'text=保有銘柄');
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForSelector('text=根拠:', { timeout: 20000 });
+  t = await body();
+  ok(t.includes('分散の状況') && t.includes('39.3%'), 'serviceAdvice: 投資信託の集中度が画面の評価額から出る (S&P500 39.3%)');
+  ok(t.includes('含み益 14.8%'), 'serviceAdvice: 評価損益率はタイルと同じ 14.8%');
+  ok(!t.includes('提案の取得に失敗'), 'serviceAdvice: 投資信託でも失敗しない');
+
+  // 4. **記録と提案は互いの結果を消さない** (2026-09-13 · パス 192)。
+  //    直す前は 1 つの `result` を共有していたので、記録の確認が出た後に提案を押すと
+  //    確認が消え、提案の後に記録すると提案が消えた (どちらも成功しているのに片方だけ)。
+  //    jsdom でも留めてあるが、実機の 1 枚の画面で「両方同時に見える」ことを見る。
+  await gotoService(page, '#/real-estate', 'text=ポートフォリオ KPI');
+  await page.getByPlaceholder('メモ (例: 売上記録 / 修繕費発生)').fill('E2E 業務メモ');
+  await page.getByRole('button', { name: 'メモを記録' }).click();
+  await page.waitForSelector('[data-record-feedback]', { timeout: 20000 });
+  ok(true, 'serviceAdvice: メモの記録に確認が出る');
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForSelector('text=根拠:', { timeout: 20000 });
+  ok(
+    (await page.locator('[data-record-feedback]').count()) === 1,
+    'serviceAdvice: ★ 提案を押しても記録の確認が残る (後の操作が前の結果を消さない)',
+  );
+  t = await body();
+  ok(t.includes('受け付けました') && t.includes('根拠:'), 'serviceAdvice: ★ 記録の確認と提案が同時に見える');
+
+  // 5. **飛行中に隣のボタンを押しても、記録ボタンは押せる状態に戻らない** (パス 192)。
+  //    直す前は `phase` を共有していたので、提案を押した瞬間に記録ボタンが復帰し、
+  //    同じメモで record-entry が 2 回飛んだ。ここは実機の disabled を見る。
+  await page.getByPlaceholder('メモ (例: 売上記録 / 修繕費発生)').fill('E2E 二重送信');
+  const recBtn = page.getByRole('button', { name: 'メモを記録' });
+  ok(!(await recBtn.isDisabled()), 'serviceAdvice: 入力済みなら記録ボタンは押せる');
+  await recBtn.click();
+  await page.waitForSelector('[data-record-feedback]', { timeout: 20000 });
+  // 空になった欄では押せない (関門とは別の守り) —— 二重送信の口が閉じていること。
+  ok(
+    await page.getByRole('button', { name: 'メモを記録' }).isDisabled(),
+    'serviceAdvice: ★ 送信後は欄が空になり記録ボタンが押せない',
+  );
+
+  ok(errs.length === 0, `serviceAdvice: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+/**
+ * **外へ送る本文の欄 —— ブラウザが本当に黙って切るのか** (2026-09-12 · パス 172)。
+ *
+ * jsdom は `maxLength` を**属性として持つだけ**で値の代入には当てない (実測:
+ * `maxLength=10` の欄に 25 字を代入できた)。だから「貼り付けが黙って切られる」は
+ * **実機でしか測れない**。ここは 3 つを実物の Chromium で見る:
+ *
+ * 1. **仕組みの標本** —— `maxlength` を持つ欄に長い文字列を流すと、ブラウザが切る。
+ *    (これが直す前の 7 画面で起きていたこと。切れたことは画面に出ない。)
+ * 2. 直した後の本文の欄は**切らない** —— 天井を超えた全文がそのまま残る。
+ * 3. 超えている間は**断りが出て、送るボタンが押せない**。
+ */
+async function writeCeilingSuite(browser) {
+  console.log('\n=== writeCeiling (外へ送る本文: 切らずに断る) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/notion', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=Teamspaces', { timeout: 30000 });
+
+  // --- 1. 仕組みの標本: `maxlength` を持つ欄はブラウザが黙って切る ---
+  // 実物のエンジンで確かめる (これが直す前に 7 画面で起きていたこと)。
+  await page.evaluate(() => {
+    const t = document.createElement('textarea');
+    t.setAttribute('maxlength', '5');
+    t.setAttribute('data-e2e-cut-sample', '');
+    document.body.appendChild(t);
+  });
+  await page.locator('[data-e2e-cut-sample]').fill('0123456789');
+  const cut = await page.locator('[data-e2e-cut-sample]').inputValue();
+  ok(cut.length === 5,
+    `writeCeiling: ★ 標本 — maxlength の欄はブラウザが黙って切る (10 字 → ${cut.length} 字)`);
+  await page.evaluate(() => { document.querySelector('[data-e2e-cut-sample]')?.remove(); });
+
+  // --- 2. 本文の欄は切らない ---
+  const MAX = 20000; // 台帳 MAX_WRITE_TEXT_CHARS。画面の断り文がこの数を刷るので下で照合する。
+  await page.getByRole('button', { name: 'ページを作成' }).click();
+  await page.waitForSelector('textarea', { timeout: 15000 });
+  const body = page.locator('textarea').first();
+  await body.fill('あ'.repeat(MAX + 1));
+  const kept = await body.inputValue();
+  ok(kept.length === MAX + 1,
+    `writeCeiling: ★ 本文は切られない (${MAX + 1} 字を入れて ${kept.length} 字)`);
+
+  // --- 3. 超えている間は断りが出て、押せない ---
+  await page.waitForSelector('[data-ceiling-notice]', { timeout: 15000 });
+  const notice = (await page.locator('[data-ceiling-notice]').innerText()).replace(/\s+/g, ' ');
+  ok(notice.includes(`${MAX} 字までです`),
+    'writeCeiling: ★ 断りが天井の字数を述べる');
+  ok(notice.includes(`いま ${MAX + 1} 字あり、1 字超えています`),
+    'writeCeiling: ★ 断りが今の字数と超過分を述べる');
+  ok(notice.includes('この状態では送りません'),
+    'writeCeiling: ★ 断りが「送っていない」ことを述べる');
+
+  await page.getByPlaceholder('親ページ ID (インテグレーションに共有済みの)').fill('p-1');
+  await page.getByPlaceholder('ページタイトル').fill('議事録');
+  const create = page.getByRole('button', { name: '作成', exact: true });
+  ok(await create.isDisabled(),
+    'writeCeiling: ★ 超えている間は「作成」が押せない (必須欄は埋まっている)');
+
+  // --- 天井ちょうどまで縮めると、断りが消えて押せる ---
+  await body.fill('い'.repeat(MAX));
+  await page.waitForSelector('[data-ceiling-notice]', { state: 'detached', timeout: 15000 });
+  ok(await page.locator('[data-ceiling-notice]').count() === 0,
+    'writeCeiling: ★ 天井ちょうどなら断りが消える');
+  ok(!(await create.isDisabled()),
+    'writeCeiling: ★ 天井ちょうどなら押せる');
+
+  ok(errs.length === 0, `writeCeiling: コンソールエラー 0 件 (${errs.slice(0, 2).join(' / ')})`);
+  await ctx.close();
+}
+
+/**
+ * **AI へ送る欄も、貼り付けを黙って切らない** (2026-09-12 · パス 175)。
+ *
+ * `writeCeiling` (外部サービスへ**書く**本文・パス 172) と同じ形が、**AI へ送る**欄にも
+ * 8 つ残っていた —— パス 112 / 114 が両ビルドの handler に「切らずに断る」を置いたのに、
+ * 画面が `maxLength` を持っていたので、その断りには 1 度も到達していなかった。
+ * 仕組みの標本 (maxlength の欄はブラウザが黙って切る) は `writeCeiling` が持っている。
+ * ここが見るのは **AI の欄で実際にどうなるか**、と **Enter の迂回経路**である
+ * (`onKeyDown` は `disabled` を見ないので、押せなくするだけでは送れてしまう ——
+ *  この経路は実機のキー入力でしか確かめられない)。
+ */
+async function aiCeilingSuite(browser) {
+  console.log('\n=== aiCeiling (AI へ送る欄: 切らずに断る・Enter も断る) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  // --- 経営アドバイザーの質問 (天井 1,000 字 = 台帳 MAX_ADVISOR_QUESTION_CHARS) ---
+  const MAX = 1000;
+  await page.goto(FILE + '#business', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=AI 経営アドバイザー', { timeout: 30000 });
+
+  const box = page.getByPlaceholder('例: 来期に最も注力すべき事業を 3 つ');
+  await box.fill('あ'.repeat(MAX + 1));
+  const kept = await box.inputValue();
+  ok(kept.length === MAX + 1,
+    `aiCeiling: ★ 質問は切られない (${MAX + 1} 字を入れて ${kept.length} 字)`);
+
+  await page.waitForSelector('[data-ceiling-notice="質問"]', { timeout: 15000 });
+  const notice = (await page.locator('[data-ceiling-notice="質問"]').innerText()).replace(/\s+/g, ' ');
+  ok(notice.includes(`いま ${MAX + 1} 字あり、1 字超えています`),
+    `aiCeiling: ★ 断りが今の字数と超過分を述べる — 実際 ${JSON.stringify(notice.slice(0, 60))}`);
+  ok(notice.includes('この状態では送りません'),
+    'aiCeiling: ★ 断りが「送っていない」ことを述べる');
+
+  const ask = page.getByRole('button', { name: 'AI に聞く' });
+  ok(await ask.isDisabled(), 'aiCeiling: ★ 超えている間は「AI に聞く」が押せない');
+
+  // --- Enter の迂回経路 (`disabled` を見ない道) ---
+  ok(await page.locator('[data-advisor-error]').count() === 0,
+    'aiCeiling: 対照 — 押す前は助言の断り欄が出ていない');
+  await box.press('Enter');
+  await page.waitForSelector('[data-advisor-error]', { timeout: 15000 });
+  const err = (await page.locator('[data-advisor-error]').innerText()).replace(/\s+/g, ' ');
+  ok(err.includes('1 字超えています') && err.includes('送りません'),
+    `aiCeiling: ★ Enter でも断る (欄の注記ではなく助言欄が言う) — 実際 ${JSON.stringify(err.slice(0, 60))}`);
+
+  // --- 天井ちょうどまで縮めると通る ---
+  await box.fill('い'.repeat(MAX));
+  await page.waitForSelector('[data-ceiling-notice="質問"]', { state: 'detached', timeout: 15000 });
+  ok(!(await ask.isDisabled()), 'aiCeiling: ★ 天井ちょうどなら押せる');
+
+  // --- 別の家系 (アシスタント本体・天井 8,000 字) でも同じ ---
+  await gotoService(page, '#assistant', 'input[aria-label="アシスタントへの入力"]');
+  const chat = page.locator('input[aria-label="アシスタントへの入力"]');
+  await chat.fill('あ'.repeat(8001));
+  const chatKept = await chat.inputValue();
+  ok(chatKept.length === 8001,
+    `aiCeiling: ★ アシスタントの入力も切られない (8001 字を入れて ${chatKept.length} 字)`);
+  await page.waitForSelector('[data-ceiling-notice="入力"]', { timeout: 15000 });
+  ok(await page.getByRole('button', { name: '送信' }).isDisabled(),
+    'aiCeiling: ★ アシスタントも超えている間は送れない');
+
+  ok(errs.length === 0, `aiCeiling: コンソールエラー 0 件 (${errs.slice(0, 2).join(' / ')})`);
+  await ctx.close();
+}
+
+/**
+ * ベストアンサー 3 (2026-09-26 · パス 482)。
+ *
+ * 単体検査は送り手を注入して走らせ、jsdom で画面を描く。ここで見るのは**出荷物の中で**
+ * 繋がっていること —— 選択肢・送る前に回数を名乗る断り・**実物の shim の `assistant/chat` が
+ * 鍵の無いとき理由を言って断る** (投げない・待たせない —— 仕事が「作成中」のまま詰まると、
+ * 以後のベスト3 を全部断ることになる)・結果の見出しが 1 度だけ出てどの質問への答えかを言う・
+ * 終わったら進み具合も上部バーの印も消える。鍵は入れないので AI には 1 度も届かない
+ * (実機の e2e は AI を持たない)。
+ */
+async function best3Suite(browser) {
+  console.log('\n=== best3 (ベストアンサー 3: 選ぶ → 回数を名乗る → 送る → 見出しが 1 度だけ) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/assistant', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  const input = page.locator('input[aria-label="アシスタントへの入力"]');
+  await input.waitFor({ timeout: 30000 });
+
+  await page.locator('select[aria-label="AI エージェントを選択"]').selectOption('__best3__');
+  await page.waitForSelector('[data-best3-plan]', { timeout: 15000 });
+  const plan = (await page.locator('[data-best3-plan]').innerText()).replace(/\s+/g, ' ');
+  // 鍵を入れていないので「設定済みの AI がありません」の側 (上の断りの「外へは出ません」と揃う)。
+  ok(/回答者 \d+ 人/.test(plan) && plan.includes('設定済みの AI がありません') && plan.includes('外へは出ません'),
+    `best3: ★ 送る前に人数を名乗り、AI が未設定なら外へ出ないと言う — 実際 ${JSON.stringify(plan.slice(0, 80))}`);
+  const planBox = await page.locator('[data-best3-plan]').boundingBox();
+  const inputBox = await input.boundingBox();
+  ok(planBox !== null && inputBox !== null && planBox.y < inputBox.y,
+    'best3: ★ 回数の断りは入力欄より上 (押してから知る形にしない)');
+
+  const Q = 'インボイス制度の登録について教えて';
+  await input.fill(Q);
+  await input.press('Enter');
+  await page.waitForFunction(() => (document.body.textContent ?? '').includes('🏆 ベスト3 ——'), null, { timeout: 30000 });
+  const text = (await page.locator('body').textContent()) ?? '';
+  ok(text.split('🏆 ベスト3 ——').length - 1 === 1, 'best3: ★ 見出しは 1 度だけ');
+  ok(text.includes(`「${Q}」`), 'best3: ★ 見出しがどの質問への答えかを言う');
+  ok(text.includes('応答できなかった回答者') && text.includes('AI プロバイダが未設定です'),
+    'best3: ★ 鍵が無いとき、回答者ごとに理由を言って断る (投げない・待たせない)');
+  ok(text.includes('示せるのは 0 件'), 'best3: ★ 3 件に満たない理由を言う');
+  ok(await page.locator('[data-best3-progress]').count() === 0, 'best3: 終わったら進み具合は消える');
+  ok(await page.locator('[data-best3-indicator]').count() === 0, 'best3: 受け取った後は上部バーの印も消える');
+  ok(errs.length === 0, `best3: コンソールエラー 0 件 (${errs.slice(0, 2).join(' / ')})`);
+  await ctx.close();
+}
+
+/**
+ * 水耕栽培の運転管理 (2026-09-13 · パス 194)。
+ *
+ * **測定を記録 → 判定 → 今日やること** が実ブラウザで繋がっていることを押して確かめる。
+ * 単体検査は純粋関数を留めているが、「入力欄 → 保存 → 判定 → 作業リスト」が
+ * **配線されている**ことは組み上げないと分からない (「口はあるが繋がっていない」を
+ * 作らないため)。
+ */
+async function hydroponicsSuite(browser) {
+  console.log('\n=== hydroponics (水耕栽培の運転管理: 測定 → 判定 → 今日やること) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1100 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/hydroponics', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=今日やること', { timeout: 30000 });
+  const body = async () => (await page.locator('body').textContent()) ?? '';
+
+  // 1. 何も記録していない状態は「全部正常」ではなく「まだ分からない」と言う。
+  let t = await body();
+  ok(
+    (await page.locator('[data-hydroponics-no-readings]').count()) === 1,
+    'hydroponics: ★ 記録が無いとき「まだ分からない」と言う (緑にしない)',
+  );
+  ok(t.includes('測定を記録する'), 'hydroponics: 記録が無いとき「測定を記録する」が作業に出る');
+  ok(!t.includes('今日やることはありません'), 'hydroponics: ★ 未測定を「やることなし」と言わない');
+
+  // 2. 根拠の断り (目標域は目安) が出ている。
+  ok(
+    (await page.locator('[data-hydroponics-basis]').count()) === 1,
+    'hydroponics: 目標域が目安であることを断る',
+  );
+
+  // 3. 台帳が取得できている (fetcher → 画面)。
+  ok(
+    (await page.locator('[data-hydroponics-ledger]').count()) === 8,
+    'hydroponics: 測定項目の台帳 8 行が fetcher から届く',
+  );
+
+  /*
+   * 3b. **「更新」がブラウザ版でも返る** —— web-shim の `fetchSnapshot` に枝が
+   * 無ければ `err('not_implemented', …)` になる (パス 118 の形)。押して確かめる。
+   *
+   * **ここは 2026-09-13 のパス 194 で書き直した。** 元は
+   * `!t.includes('not_implemented') && !t.includes('未対応')` だったが、
+   * 画面に出るのは**エラーコードではなく文面** ('ブラウザ版では live fetch を
+   * 行いません。…') なので、**枝を消しても通る空の検査**だった (実測: 枝を
+   * 消してビルドし直しても 23 件すべて緑)。CLAUDE.md の
+   * 「不在を主張する検査には標本を添える / 肯定形で書けるほうが安全」。
+   *
+   * 肯定形で書く —— 取得に成功すると `StatusBar` のバッジは
+   * `describeOrigin('local', 'live')` の **緑の「ローカル」**になる。
+   * 失敗すると同じ 1 枠が**「エラー」**に変わる (バッジは 1 枠しか無い)。
+   * だから「緑のローカルが在る」は、枝が無ければ必ず鳴る。
+   */
+  await page.getByRole('button', { name: '更新' }).first().click();
+  await page.waitForFunction(
+    () => !document.body.textContent.includes('更新中…'),
+    undefined,
+    { timeout: 20000 },
+  );
+  t = await body();
+  ok(
+    (await page.locator('.badge.ok', { hasText: 'ローカル' }).count()) >= 1,
+    'hydroponics: ★ 更新後のバッジが緑の「ローカル」(web-shim に枝が在る)',
+  );
+  ok(
+    !t.includes('ブラウザ版では live fetch を行いません'),
+    'hydroponics: ★ 「ブラウザ版では live fetch を行いません」が出ていない (実際の文面で見る)',
+  );
+  ok(
+    (await page.locator('[data-hydroponics-ledger]').count()) === 8,
+    'hydroponics: ★ 更新後も台帳は 8 行 (同じ関数を通っている)',
+  );
+
+  // 4. **範囲外の EC を記録する** → 判定が「低い」になり、作業に「上げる」が出る。
+  await page.locator('[data-hydroponics-input="ec"]').fill('0.4');
+  await page.locator('[data-hydroponics-input="ph"]').fill('6.0');
+  await page.locator('[data-hydroponics-save="reading"]').click();
+  await page.waitForSelector('[data-hydroponics-ok="reading"]', { timeout: 20000 });
+  await page.waitForSelector('[data-hydroponics-task="adjust:ec"]', { timeout: 20000 });
+  t = await body();
+  ok(true, 'hydroponics: ★ 測定を記録すると判定と作業が出る (配線されている)');
+  ok(t.includes('養液 ECを上げる'), 'hydroponics: EC が下限未満なら「上げる」');
+  // **量は出せない** (タンク容量も原液の上昇率も未入力)。足りない物を名指しする。
+  //
+  // **作業行そのものを見る** —— 「量は出せません」は設定の節の**説明文**にも
+  // 出てくるので、body 全体を見ると (今日の付け方がどうであれ)常に真になる。
+  const ecRow = async () =>
+    (await page.locator('[data-hydroponics-task="adjust:ec"]').textContent()) ?? '';
+  let row0 = await ecRow();
+  ok(row0.includes('量は出せません'), 'hydroponics: ★ 設備が未入力なら量を出さない');
+  ok(row0.includes('養液タンクの容量'), 'hydroponics: ★ 足りない物を名指しする');
+
+  // 5. **測っていない項目は「未測定」で、緑にならない。**
+  const unmeasured = await page.locator('[data-hydroponics-field="co2Ppm"]').textContent();
+  ok(
+    (unmeasured ?? '').includes('未測定'),
+    `hydroponics: ★ 空欄の項目は「未測定」(適正ではない) — 実際 "${String(unmeasured).replace(/\s+/g, ' ').slice(0, 60)}"`,
+  );
+  ok(
+    (await page.locator('[data-hydroponics-task="measure:co2Ppm"]').count()) === 1,
+    'hydroponics: ★ 未測定の項目は作業リストに出る (画面から消えない)',
+  );
+
+  // 6. **読めない値は保存する前に断る。**
+  await page.locator('[data-hydroponics-input="ph"]').fill('99');
+  await page.locator('[data-hydroponics-save="reading"]').click();
+  await page.waitForSelector('[data-hydroponics-error="reading"]', { timeout: 20000 });
+  const err = await page.locator('[data-hydroponics-error="reading"]').textContent();
+  ok((err ?? '').includes('範囲'), `hydroponics: ★ pH 99 を断る — 実際 "${String(err).slice(0, 50)}"`);
+
+  // 7. **設備を入れると量が出る** (断りが消え、mL が出る)。
+  await page.locator('[data-hydroponics-edit-control]').click();
+  // 2026-09-21 (パス 373): 欄は `GuardedNumber` になったので、印は**欄の外枠**に付く
+  // (⛔ の文言と一緒に描くため)。中の `input` を掴む。
+  await page.waitForSelector('[data-hydroponics-control-field="tankLiters"] input', { timeout: 15000 });
+  await page.locator('[data-hydroponics-control-field="tankLiters"] input').fill('1000');
+  await page.locator('[data-hydroponics-control-field="stockEcRisePerMlPerL"] input').fill('0.01');
+  await page.locator('[data-hydroponics-save="control"]').click();
+  await page.waitForSelector('[data-hydroponics-ok="control"]', { timeout: 20000 });
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector('[data-hydroponics-task="adjust:ec"]');
+      return el !== null && (el.textContent ?? '').includes('原液を約');
+    },
+    undefined,
+    { timeout: 20000 },
+  );
+  row0 = await ecRow();
+  ok(row0.includes('原液を約'), 'hydroponics: ★ 設備を入れると原液の mL が出る (設定が判定に届く)');
+  ok(
+    !row0.includes('量は出せません'),
+    'hydroponics: ★ 断りが消える (同じ行で両方言わない)',
+  );
+
+  // 8. **ロットを足すと工程の日程が出る** (播種 → 定植 → 収穫)。
+  await page.locator('[data-hydroponics-input="batch-id"]').fill('E2Eロット');
+  await page.locator('[data-hydroponics-input="batch-panels"]').fill('10');
+  await page.locator('[data-hydroponics-input="batch-sow"]').fill('2026-01-05');
+  await page.locator('[data-hydroponics-save="batch"]').click();
+  await page.waitForSelector('[data-hydroponics-batch="E2Eロット"]', { timeout: 20000 });
+  const row = await page.locator('[data-hydroponics-batch="E2Eロット"]').textContent();
+  // リーフレタス: 育苗 24 日 → 2026-01-29、定植後 10 日 → 2026-02-08。
+  ok(
+    (row ?? '').includes('2026-01-29') && (row ?? '').includes('2026-02-08'),
+    `hydroponics: ★ 播種日から定植・収穫の予定が出る — 実際 "${String(row).replace(/\s+/g, ' ').slice(0, 90)}"`,
+  );
+  t = await body();
+  // 状態は「育苗中」なので、過ぎているのは**定植予定日** (2026-01-29)。
+  // 収穮の作業は「定植済み」のロットにしか出ない —— 工程を飛ばさないことを留める。
+  ok(
+    (await page.locator('[data-hydroponics-task="batch:E2Eロット:transplant"]').count()) === 1,
+    'hydroponics: ★ 予定を過ぎた育苗中のロットは「定植する」が出る',
+  );
+  ok(
+    (await page.locator('[data-hydroponics-task="batch:E2Eロット:solution-change"]').count()) === 1,
+    'hydroponics: ★ 周期を過ぎた養液交換も作業に出る',
+  );
+  ok(
+    !t.includes('収穫する'),
+    'hydroponics: ★ 育苗中のロットに「収穫する」と言わない (工程を飛ばさない)',
+  );
+
+  // 9. **同じロット名は断る** (重複を黙って作らない)。
+  await page.locator('[data-hydroponics-input="batch-id"]').fill('E2Eロット');
+  await page.locator('[data-hydroponics-input="batch-panels"]').fill('5');
+  await page.locator('[data-hydroponics-save="batch"]').click();
+  await page.waitForSelector('[data-hydroponics-error="batch"]', { timeout: 20000 });
+  ok(true, 'hydroponics: ★ 同じロット名を断る');
+
+  // 10. 後片付け —— 削除できる (保存した物は消せる道が要る)。
+  await page.locator('[data-hydroponics-remove-batch="E2Eロット"]').click();
+  await page.waitForFunction(
+    () => document.querySelectorAll('[data-hydroponics-batch]').length === 0,
+    undefined,
+    { timeout: 20000 },
+  );
+  ok(true, 'hydroponics: ★ ロットを削除できる');
+
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(realErrs.length === 0, `hydroponics: コンソールエラー 0 件 (${realErrs.length})`);
+  if (realErrs.length) console.log(realErrs.join('\n'));
+  await ctx.close();
+}
+
+async function parameterSuite(browser) {
+  console.log('\n=== parameters (数値パラメータ: 設定 → 別画面へ反映 → 既定に戻す) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  const NOTE = 'text=公共交通機関の非課税限度は月';
+  const ID = 'payroll.commutePublicTransportCap';
+  const LABEL = '通勤手当 (公共交通機関) の非課税限度 / 月';
+
+  // 対照: 既定 (15 万円) で分けている。
+  await page.goto(FILE + '#team', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector(NOTE, { timeout: 30000 });
+  const before = await page.locator(NOTE).first().innerText();
+  ok(/[¥￥]150,000/.test(before), `team: 対照 — 既定の限度 15 万円が文言に出る — 実際 ${JSON.stringify(before)}`);
+
+  // 設定画面で上書き。
+  await gotoService(page, '#settings', '[data-parameters]');
+  const row = page.locator(`[data-parameter="${ID}"]`);
+  ok((await row.count()) === 1, `設定: 台帳の行が出る (${ID})`);
+  ok((await row.getAttribute('data-overridden')) === 'false', '設定: 最初は上書きなし');
+  await page.getByLabel(LABEL, { exact: true }).fill('100000');
+  await page.getByRole('button', { name: `${LABEL} を保存` }).click();
+  await page.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'true', ID, { timeout: 15000 });
+  ok(true, '設定: 保存すると上書き中になる');
+  const count = await page.locator('[data-overridden-count]').innerText();
+  ok(count.startsWith('上書き 1 /'), `設定: 見出しの件数が 1 になる — 実際 ${JSON.stringify(count)}`);
+
+  // 別画面 (リロード = 保存先から読み直し) に効く。
+  await gotoService(page, '#team', NOTE);
+  // ★ 見出しが出た時点では、まだ保管層が答えていない (2026-09-28 · パス 500) —— 最初の描画は既定の限度
+  // (15 万円) で描かれ、上書きは IndexedDB の読みが返ってから届く。パス 500 の e2e:lite で、ここで読んだ
+  // 2 件が 15 万円を読んで落ちた (3 件目の「超過 6 万円」は届いた後に読んで通った —— 同じ画面が同じ
+  // 問いに 2 通り答える瞬間を読んでいた)。**上書きが届くのを待ってから読む**。届かなければ下の ok() が
+  // 実際の文言を刷って落ちる (待ちの時間切れは飲むが、直後に絶対の主張が在る —— パス 397)。
+  await page
+    .waitForFunction(() => /公共交通機関の非課税限度は月 [¥￥]100,000/.test(document.body.innerText), undefined, { timeout: 15000 })
+    .catch(() => {});
+  const after = await page.locator(NOTE).first().innerText();
+  ok(/[¥￥]100,000/.test(after), `team: ★ 上書きした限度 10 万円が文言に出る — 実際 ${JSON.stringify(after)}`);
+  const stat = await page.locator('text=公共交通: 非課税').first().locator('xpath=..').innerText();
+  ok(/[¥￥]100,000/.test(stat), `team: ★ 非課税分が 10 万円で切れる (入力 16 万円) — 実際 ${JSON.stringify(stat)}`);
+  const taxable = await page.locator('text=公共交通: 課税(超過)').first().locator('xpath=..').innerText();
+  ok(/[¥￥]60,000/.test(taxable), `team: ★ 超過分が 6 万円になる — 実際 ${JSON.stringify(taxable)}`);
+
+  // 既定に戻す —— **別のタブで**戻し、開いたままのこのタブの画面が 15 万円へ付いていくのを見る (パス 500)。
+  // 2026-09-28 まで、ここは同じタブで再読込してから読んでいた。再読込した画面は保管層が答える前に既定の
+  // 限度 (15 万円) で描かれるので、**「戻った 15 万円」と「まだ読めていない 15 万円」を見分けられず**、
+  // 画面が保管層の答え (戻した値) を映さなくても、答える前に読めば通った (上の 2 件が実際に答える前を
+  // 読んで落ちた —— 同じ窓はここにも在った。戻す保存そのものは、設定の行の `data-overridden` を待つ所が
+  // 見ている)。今は、上書き (10 万円) が届いた画面を開いたまま別のタブで戻す —— 画面が 15 万円に
+  // なるのは、戻す保存が保管層へ届き、その知らせ (パス 499) でこの画面が読み直したときだけである。
+  const other = await ctx.newPage();
+  collectErrors(other, errs);
+  await gotoService(other, '#settings', '[data-parameters]');
+  // 描画直後は保存先 (IndexedDB) の読み込み前で「上書きなし」に見える瞬間がある — 読み込みを待つ。
+  await other.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'true', ID, { timeout: 15000 });
+  ok(true, '設定: 読み直しても上書きが残っている');
+  await other.getByRole('button', { name: `${LABEL} を既定に戻す` }).click();
+  await other.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'false', ID, { timeout: 15000 });
+  await page
+    .waitForFunction(() => /公共交通機関の非課税限度は月 [¥￥]150,000/.test(document.body.innerText), undefined, { timeout: 15000 })
+    .catch(() => {});
+  const restored = await page.locator(NOTE).first().innerText();
+  ok(/[¥￥]150,000/.test(restored), `team: ★ 別のタブで既定に戻すと、開いたままの画面も 15 万円に戻る — 実際 ${JSON.stringify(restored)}`);
+
+  ok(errs.length === 0, `parameters: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+/** ハードリセットは保管庫だけでなく全媒体を消す (2026-09-09 · パス 136)。前の人の事業が、次の人には見えない。 */
+/**
+ * 配色の設定 (パス 317): 何も選んでいなければ OS がダークでもライト・選ぶと即座に効いて端末に残り、
+ * 再読込では解錠の前 (ロック画面) から効く・「OS に合わせる」は OS の切り替えに追随し、ライトを
+ * 選び直せば追随しない。単体 (jsdom) では matchMedia の代役しか置けないので、実ブラウザの
+ * `emulateMedia` で見る。地の色は `getComputedStyle` の実測で比べる (属性だけでは CSS が
+ * 効いていない退行を見られない)。
+ */
+async function themeSuite(browser) {
+  console.log('--- 配色の設定 (ライト / ダーク / OS に合わせる) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: 'dark' });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.goto(FILE + '#settings', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-theme-section]', { timeout: 30000 });
+  const attr = () => page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const stored = () => page.evaluate(() => localStorage.getItem('servicehub.theme'));
+  const note = () => page.locator('[data-theme-note]').innerText();
+  ok((await attr()) === 'light', `theme: ★ 何も選んでいなければ OS がダークでもライト (実際 ${await attr()})`);
+  const lightBg = await bodyBg();
+  const themeColor = () => page.evaluate(() => document.querySelector('meta[name="theme-color"]')?.getAttribute('content'));
+  const cssBg = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
+  // PWA の theme-color (GitHub Pages の配布物だけが持つ meta) が配色に追随するか —— 単一 HTML には無いので足して見る (パス 318)。
+  // 初期値は注入 (inject-pwa) が書くのと同じ**ライトの --bg の実値**。2026-09-26 まで `#fff7fa` を書き写しており、
+  // 既定のデザインを替えた日にこの suite だけが古びた (色は検査へ写さず、出荷した stylesheet から読む)。
+  const lightCssBg = await cssBg();
+  await page.evaluate((c) => {
+    const m = document.createElement('meta');
+    m.setAttribute('name', 'theme-color');
+    m.setAttribute('content', c);
+    document.head.appendChild(m);
+  }, lightCssBg);
+
+  await page.locator('[data-theme-choice="dark"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'dark', undefined, { timeout: 5000 });
+  const darkBg = await bodyBg();
+  ok(darkBg !== lightBg, `theme: ★ ダークを選ぶと地の色が実際に変わる (${lightBg} → ${darkBg})`);
+  ok((await themeColor()) === (await cssBg()) && (await themeColor()) !== lightCssBg, `theme: ★ PWA の theme-color が stylesheet の --bg の実値に追随する (実際 ${await themeColor()} / --bg ${await cssBg()})`);
+  ok((await stored()) === 'dark', 'theme: 選択は servicehub.theme に残る');
+  ok((await note()).includes('ダークで表示しています'), 'theme: 注記が「ダークで表示しています」と言う');
+
+  // 再読込: 解錠の前 (ロック画面) から効いている —— main.tsx が描画より先に適用する。
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  ok((await attr()) === 'dark', `theme: ★ 再読込しても解錠の前からダーク (実際 ${await attr()})`);
+  ok((await bodyBg()) === darkBg, 'theme: 再読込後の地の色も同じダーク');
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('[data-theme-section]', { timeout: 30000 });
+  ok((await page.locator('[data-theme-choice="dark"]').getAttribute('aria-pressed')) === 'true', 'theme: 設定画面はダークが選ばれた状態で開く');
+
+  // OS に合わせる → OS の切り替えに追随する。
+  await page.locator('[data-theme-choice="system"]').click();
+  await page.waitForFunction(() => localStorage.getItem('servicehub.theme') === 'system', undefined, { timeout: 5000 });
+  ok((await attr()) === 'dark', 'theme: 「OS に合わせる」は OS がダークならダーク');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page
+    .waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'light', undefined, { timeout: 5000 })
+    .catch(() => {});
+  ok((await attr()) === 'light', `theme: ★ OS をライトへ切り替えると追随する (実際 ${await attr()})`);
+  ok((await note()).includes('OS の設定に合わせてライト'), 'theme: 注記も追随する');
+
+  // ライトを選び直せば追随しない (対照: 上では追随した)。
+  await page.locator('[data-theme-choice="light"]').click();
+  await page.waitForFunction(() => localStorage.getItem('servicehub.theme') === 'light', undefined, { timeout: 5000 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.waitForTimeout(300);
+  ok((await attr()) === 'light', `theme: ★ ライトを選んだ後は OS がダークになっても追随しない (実際 ${await attr()})`);
+  await page.evaluate(() => {
+    const m = document.createElement('meta');
+    m.setAttribute('name', 'theme-color');
+    m.setAttribute('content', '#000000');
+    document.head.appendChild(m);
+  });
+  await page.locator('[data-theme-choice="dark"]').click();
+  await page.locator('[data-theme-choice="light"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'light', undefined, { timeout: 5000 });
+  ok((await themeColor()) === lightCssBg, `theme: ライトへ戻すと theme-color もライトの --bg (実際 ${await themeColor()} / ライトの --bg ${lightCssBg})`);
+  ok(errs.length === 0, `theme: ページエラー 0 (実際 ${JSON.stringify(errs)})`);
+  await ctx.close();
+}
+
+/**
+ * デザインの選択 (すっきり / かわいい · 2026-09-26) と 3 列の構成。
+ *
+ * 広い画面 (1200px 以上) の「すっきり」ではコンシェルジュがサイドバーと画面の間の**列**になり、
+ * それ以外 (かわいい・狭い画面) は右下の 🤖 から開く浮いた窓になる。判定は JS の 1 か所
+ * (`chatDock.ts`) で、CSS は `.chat-docked` の有無だけを見る。jsdom (`chatDock.test.ts`) は
+ * matchMedia の代役と描いた木までしか見られないので、ここでは実ブラウザでしか測れない物を見る:
+ *   - 列が**実際に横へ並ぶか** (座標)・畳むと画面の列が広がるか
+ *   - 窓の幅を変えたら**追随するか** (`useSyncExternalStore` の購読が生きているか)
+ *   - 4 枚のトークン表の**特異性と重なり順** —— 地の色 (`--bg`) は (0,3,0) の「かわいい × ダーク」が
+ *     持つので順序に依らない。**順序が効くのは、すっきりのダークが持ち、かわいいのダークが持たない名前**
+ *     (実測 2 つ: `--user-bubble-bg` / `--composer-bg` —— かわいいのライトでは別名 `var(…)` なので
+ *     かわいいのダークに書く必要が無い)。そこでは同じ特異性 (0,2,0) の「すっきりのダーク」と
+ *     「かわいいのライト」がぶつかり、**後ろに在る方が勝つ**。期待値は**出荷した stylesheet の規則
+ *     そのもの**から読む (色を検査へ書き写さない —— theme suite が `#fff7fa` を写していて、既定を
+ *     替えた日に古びた当の形)
+ *   - スマホでは下から出るシートになり、開いている間は 🤖 が入力欄と重ならないこと
+ */
+async function designSuite(browser) {
+  console.log('--- デザイン (すっきり / かわいい) と 3 列の構成 ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  const design = () => page.evaluate(() => document.documentElement.getAttribute('data-design'));
+  const box = (sel) => page.locator(sel).first().boundingBox();
+  const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const cssVar = (name) => page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), name);
+  /** 出荷した stylesheet の中で、その selector の表が宣言する値 (期待値を検査へ書き写さない)。 */
+  const tableValue = (selector, name) =>
+    page.evaluate(
+      ([sel, n]) => {
+        for (const sheet of document.styleSheets) {
+          let rules;
+          try {
+            rules = sheet.cssRules;
+          } catch {
+            continue;
+          }
+          for (const r of rules) if (r.selectorText === sel) return r.style.getPropertyValue(n).trim();
+        }
+        return null;
+      },
+      [selector, name],
+    );
+
+  // 1. 既定は「すっきり」、1280px では サイドバー | チャット | 画面 の 3 列
+  ok((await design()) === 'clean', `design: ★ 何も選んでいなければ「すっきり」 (実際 ${await design()})`);
+  await page.waitForSelector('.chat-column [data-concierge]', { timeout: 10000 });
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: ★ 3 列のときは右下の 🤖 を出さない (チャットの入口は 1 つ)');
+  const sb = await box('.sidebar');
+  const col = await box('.chat-column');
+  const main = await box('.main');
+  ok(
+    sb !== null && col !== null && main !== null && sb.x + sb.width <= col.x + 1 && col.x + col.width <= main.x + 1,
+    `design: ★ 実際に サイドバー | チャット | 画面 の順に横へ並ぶ (${JSON.stringify([sb, col, main].map((b) => b && [Math.round(b.x), Math.round(b.width)]))})`,
+  );
+  ok(main !== null && main.width >= 560, `design: 画面の列は ${Math.round(main?.width ?? 0)}px (≥ 560px —— チャット欄に押し潰されない)`);
+  ok(await noHScroll(page), 'design: 3 列でも横スクロールなし');
+
+  // 2. 列の欄から送ると、列の中で会話が進む
+  await page.locator('.chat-column input[aria-label="チャット入力"]').fill('何ができる？');
+  await page.locator('.chat-column').getByRole('button', { name: 'コンシェルジュへ送る' }).click();
+  await page.waitForSelector('.chat-column [data-concierge-role="bot"]', { timeout: 10000 });
+  ok(
+    (await page.locator('.chat-column [data-concierge-role="user"]').first().innerText()).includes('何ができる'),
+    'design: ★ 列の欄から送ると、列の中に利用者の発言と応答が並ぶ',
+  );
+
+  // 3. トップバーの「💬 チャット」で畳む / 戻す
+  const toggle = page.locator('.chat-toggle');
+  ok((await toggle.getAttribute('aria-expanded')) === 'true', 'design: トップバーの「💬 チャット」は開いた状態を名乗る (aria-expanded)');
+  await toggle.click();
+  await page.waitForFunction(() => !document.querySelector('.chat-column'), undefined, { timeout: 5000 });
+  const wide = await box('.main');
+  ok(
+    wide !== null && main !== null && wide.width > main.width + 300,
+    `design: ★ 畳むと画面の列が広がる (${Math.round(main?.width ?? 0)} → ${Math.round(wide?.width ?? 0)}px)`,
+  );
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: 畳んでも右下の 🤖 は出さない (戻す口はトップバーの 1 つ)');
+  await toggle.click();
+  await page.waitForSelector('.chat-column [data-concierge-role="user"]', { timeout: 5000 });
+  ok(true, 'design: ★ もう 1 度押すと列が戻り、さっきの会話も残っている');
+
+  // 4. 窓の幅に追随する: 1024px では浮いた窓 (🤖)、1280px へ戻すと列
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.waitForSelector('.concierge-fab', { timeout: 5000 });
+  ok((await page.locator('.chat-column').count()) === 0, 'design: ★ 1024px に狭めると列は消え、右下の 🤖 に戻る (窓の幅に追随)');
+  ok((await page.locator('.chat-toggle').count()) === 0, 'design: 狭い画面ではトップバーの「💬 チャット」も出さない');
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.waitForSelector('.chat-column', { timeout: 5000 });
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: 1280px へ戻すと列に戻る');
+
+  // 5. 設定で「かわいい」へ
+  await gotoService(page, '#settings', '[data-design-section]');
+  const cleanBg = await bodyBg();
+  const cleanCssBg = await cssVar('--bg');
+  const cleanRadius = await cssVar('--radius-button');
+  // PWA の theme-color (配布物だけが持つ meta) —— 注入は既定のライトの --bg を書く。単一 HTML には無いので同じ値で足す。
+  await page.evaluate((c) => {
+    const m = document.createElement('meta');
+    m.setAttribute('name', 'theme-color');
+    m.setAttribute('content', c);
+    document.head.appendChild(m);
+  }, cleanCssBg);
+  const themeColor = () => page.evaluate(() => document.querySelector('meta[name="theme-color"]')?.getAttribute('content'));
+  await page.locator('[data-design-choice="cute"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-design') === 'cute', undefined, { timeout: 5000 });
+  ok((await bodyBg()) !== cleanBg, `design: ★ 「かわいい」を選ぶと地の色が実際に変わる (${cleanBg} → ${await bodyBg()})`);
+  ok(
+    (await themeColor()) === (await cssVar('--bg')) && (await themeColor()) !== cleanCssBg,
+    `design: ★ PWA の theme-color もデザインに追随する (実際 ${await themeColor()} / --bg ${await cssVar('--bg')})`,
+  );
+  ok(
+    cleanRadius === '8px' && (await cssVar('--radius-button')) === (await tableValue(':root[data-design="cute"]', '--radius-button')),
+    `design: 形のトークンも入れ替わる (ボタンの角 ${cleanRadius} → ${await cssVar('--radius-button')})`,
+  );
+  await page.waitForSelector('.concierge-fab', { timeout: 5000 });
+  ok((await page.locator('.chat-column').count()) === 0, 'design: ★ 「かわいい」では 1280px でも列にせず右下の 🤖 から開く');
+  ok((await page.evaluate(() => localStorage.getItem('servicehub.design'))) === 'cute', 'design: 選択は servicehub.design に残る');
+
+  // 6. 再読込: 解錠の前 (ロック画面) から効いている —— main.tsx が描画より先に適用する
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  ok((await design()) === 'cute', `design: ★ 再読込しても解錠の前から「かわいい」 (実際 ${await design()})`);
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForSelector('[data-design-section]', { timeout: 30000 });
+  ok((await page.locator('[data-design-choice="cute"]').getAttribute('aria-pressed')) === 'true', 'design: 設定画面は「かわいい」が選ばれた状態で開く');
+
+  // 7. 4 枚の表の重なり順: かわいい × ダーク の地はかわいいのダーク (すっきりのダークではない)
+  await page.locator('[data-theme-choice="dark"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'dark', undefined, { timeout: 5000 });
+  const cuteDarkBg = await tableValue(':root[data-design="cute"][data-theme="dark"]', '--bg');
+  const cleanDarkBg = await tableValue(':root[data-theme="dark"]', '--bg');
+  ok(
+    cuteDarkBg !== null && cleanDarkBg !== null && cuteDarkBg !== cleanDarkBg && (await cssVar('--bg')) === cuteDarkBg,
+    `design: ★ かわいい × ダークの地はかわいいのダークの表から来る (実際 ${await cssVar('--bg')} / かわいい ${cuteDarkBg} / すっきり ${cleanDarkBg})`,
+  );
+  ok(
+    (await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme)) === 'dark',
+    'design: ★ かわいい × ダークでもフォームの部品はダーク (color-scheme をダークの表が言い直す)',
+  );
+  // 順序が効く名前: すっきりのダークが持ち、かわいいのダークが持たない。かわいい × ダークでは
+  // かわいいのライトの宣言 (別名) を**この場の変数で解いた値**になるはず —— すっきりのダークの値が
+  // 出たら、表の順序が逆 (同じ特異性で後ろの「すっきりのダーク」が勝った)。
+  const orderSensitive = await page.evaluate(() => {
+    const rule = (sel) => {
+      for (const sheet of document.styleSheets) {
+        let rules;
+        try {
+          rules = sheet.cssRules;
+        } catch {
+          continue;
+        }
+        for (const r of rules) if (r.selectorText === sel) return r.style;
+      }
+      return null;
+    };
+    const cleanDark = rule(':root[data-theme="dark"]');
+    const cuteDark = rule(':root[data-design="cute"][data-theme="dark"]');
+    const cuteLight = rule(':root[data-design="cute"]');
+    if (!cleanDark || !cuteDark || !cuteLight) return null;
+    const out = [];
+    for (let i = 0; i < cleanDark.length; i++) {
+      const n = cleanDark[i];
+      if (!n.startsWith('--') || cuteDark.getPropertyValue(n) !== '') continue;
+      const probe = document.createElement('div');
+      document.body.appendChild(probe);
+      probe.style.setProperty('--probe', cuteLight.getPropertyValue(n));
+      const want = getComputedStyle(probe).getPropertyValue('--probe').trim();
+      probe.remove();
+      out.push({ n, got: getComputedStyle(document.documentElement).getPropertyValue(n).trim(), want, cleanDark: cleanDark.getPropertyValue(n).trim() });
+    }
+    return out;
+  });
+  ok(
+    orderSensitive !== null && orderSensitive.length >= 1 && orderSensitive.every((t) => t.got === t.want && t.got !== t.cleanDark),
+    `design: ★ 表の順序が効く名前 (${(orderSensitive ?? []).map((t) => t.n).join(' / ')}) は、かわいい × ダークでかわいいの宣言から来る (${JSON.stringify(orderSensitive)})`,
+  );
+
+  // 8. すっきりへ戻す: 地はすっきりのダーク、列が戻る
+  await page.locator('[data-design-choice="clean"]').click();
+  await page.waitForFunction(() => document.documentElement.getAttribute('data-design') === 'clean', undefined, { timeout: 5000 });
+  ok((await cssVar('--bg')) === cleanDarkBg, `design: すっきり × ダークの地はすっきりのダーク (実際 ${await cssVar('--bg')})`);
+  await page.waitForSelector('.chat-column', { timeout: 5000 });
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: ★ すっきりへ戻すと、再読込なしで 3 列に戻る');
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(realErrs.length === 0, `design: console エラーゼロ (${JSON.stringify(realErrs).slice(0, 200)})`);
+  await ctx.close();
+
+  // 9. スマホ: 下から出るシート (幅いっぱい・下端に接する)・開いている間は 🤖 を隠す
+  const pctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+  const ppage = await pctx.newPage();
+  const perrs = [];
+  collectErrors(ppage, perrs);
+  await ppage.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await ppage.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await setupVault(ppage);
+  ok((await ppage.locator('.chat-column').count()) === 0, 'design: スマホでは列にしない');
+  await ppage.locator('.concierge-fab').tap();
+  await ppage.waitForSelector('.concierge.floating', { timeout: 5000 });
+  const sheet = await ppage.locator('.concierge.floating').boundingBox();
+  ok(
+    sheet !== null && Math.abs(sheet.x) <= 1 && Math.abs(sheet.width - 412) <= 1 && Math.abs(sheet.y + sheet.height - 915) <= 1,
+    `design: ★ スマホでは下から出るシート (幅いっぱい・下端に接する: ${JSON.stringify(sheet && [Math.round(sheet.x), Math.round(sheet.width), Math.round(sheet.y + sheet.height)])})`,
+  );
+  ok(!(await ppage.locator('.concierge-fab').isVisible()), 'design: シートを開いている間は 🤖 が隠れて送信ボタンと重ならない');
+  // 見出しの ✕ を押す (右下の 🤖 はシートを開いている間は隠れている)。名前は 🤖 の「チャットを閉じる」と分けてある。
+  await ppage.getByRole('button', { name: 'コンシェルジュを閉じる', exact: true }).tap();
+  await ppage.waitForFunction(() => !document.querySelector('.concierge.floating'), undefined, { timeout: 5000 });
+  ok(await ppage.locator('.concierge-fab').isVisible(), 'design: ✕ で閉じると 🤖 が戻る');
+  ok(await noHScroll(ppage), 'design: スマホで横スクロールなし');
+  const prealErrs = perrs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(prealErrs.length === 0, `design: スマホで console エラーゼロ (${JSON.stringify(prealErrs).slice(0, 200)})`);
+  await pctx.close();
+}
+
+/**
+ * **文字色 × 地の色の対比** (2026-10-02 · パス 503)。実機 (Chromium) で**描画済みの色**を、
+ * 4 配色 (すっきり / かわいい × ライト / ダーク) × サイドバーの全画面 (+ 初回の設定画面 + ロック画面) で測り、
+ * WCAG 2.x AA (通常の字 4.5:1・大きい字 3:1) を割る文字が 0 件であることを見る。
+ *
+ * ## 2 層のうち、ここは「描く側が実際に作った対」を見る
+ *
+ * トークン表の対は `themeContrast.test.ts` が Node で見る (「そう描けば読める」)。ところが実測 (パス 503・約 8.9 万の文字要素) では、
+ * **表の対は合っていても、画面が別の対を作っていた**: 塗り (`--accent` / `--gradient`) の上に地の字 (`--text`) を載せる・
+ * 意味色の塗りの上に固定の白を載せる・配色に追随しない面 (濃紺の盤・白い板・村の景色) の上にトークンの字を載せる・
+ * 不透明度で薄めた字・ライトでしか合わない固定色。**どれも表を見ても出てこない**ので、描画済みの色を測る。
+ *
+ * 測定器は `scripts/lib/contrast.cjs` の 1 つ (写しを作らない)。SVG の字は**下に描かれた図形の塗り**で測る
+ * (円グラフの扇・濃紺の下地の `<rect>` —— 先祖の `background` は図形を知らない)。
+ *
+ * ## 測っていない物 (正直に)
+ *
+ * 無効化された部品 (WCAG が対象外とする)・地が画像の字 (`unknown` として数えるだけ)・ホバー / フォーカスなど操作の途中の状態・
+ * モーダルや開く前の折りたたみの中・canvas に描いた字・**字ではない物の 3:1 (図形・枠線・アイコン —— WCAG 1.4.11)**・
+ * プランで鍵のかかった表示 (この製品のビルドでは社内ライセンスで常に開く)。
+ */
+async function contrastSuite(browser) {
+  console.log('--- 文字色の対比 (4 配色 × 全画面 · WCAG 2.x AA) ---');
+  const { sweepExpression, violationsOf, groupViolations } = require('../lib/contrast.cjs');
+  const expr = sweepExpression();
+  const CONFIGS = [
+    { name: 'すっきり × ライト', design: 'clean', theme: 'light' },
+    { name: 'すっきり × ダーク', design: 'clean', theme: 'dark' },
+    { name: 'かわいい × ライト', design: 'cute', theme: 'light' },
+    { name: 'かわいい × ダーク', design: 'cute', theme: 'dark' },
+  ];
+  /** 描き終わるまで待つ: DOM の要素数が 3 回続けて同じ (最大 3 秒)。固定の待ちではなく状態で待つ。 */
+  const settled = (page) =>
+    page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          let last = -1;
+          let same = 0;
+          const t0 = performance.now();
+          const tick = () => {
+            const n = document.body.querySelectorAll('*').length;
+            same = n === last ? same + 1 : 0;
+            last = n;
+            if (same >= 2 || performance.now() - t0 > 3000) resolve(n);
+            else setTimeout(tick, 60);
+          };
+          tick();
+        }),
+    );
+  const tag = (rows, label) => rows.map((r) => ({ ...r, page: label }));
+  const bgs = [];
+  let controlsDone = false;
+
+  for (const cfg of CONFIGS) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    await page.addInitScript(
+      ([theme, design]) => {
+        localStorage.setItem('servicehub.plan', 'enterprise');
+        localStorage.setItem('servicehub.theme', theme);
+        localStorage.setItem('servicehub.design', design);
+      },
+      [cfg.theme, cfg.design],
+    );
+    // 動きは測定の邪魔 (アニメーションの途中の色を測らない)
+    const still = () => page.addStyleTag({ content: '*{animation:none!important;transition:none!important;caret-color:transparent!important}' });
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+    await still();
+    const rows = tag(await page.evaluate(expr), '(初回の設定画面)');
+    await setupVault(page);
+    await still();
+
+    // 配色が本当に切り替わっている (さもないと同じ配色を 4 回測って「4 配色とも緑」になる)
+    const applied = await page.evaluate(() => ({
+      design: document.documentElement.getAttribute('data-design'),
+      theme: document.documentElement.getAttribute('data-theme') ?? 'light',
+      scheme: getComputedStyle(document.documentElement).colorScheme,
+      bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+    }));
+    bgs.push(applied.bg);
+    ok(
+      applied.design === cfg.design && applied.theme === cfg.theme && applied.scheme.includes('dark') === (cfg.theme === 'dark'),
+      `contrast[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(applied)})`,
+    );
+
+    // 測定器そのものの対照 (1 度だけ): 割る字を割ると測り、読める字は割らず、SVG の字は下の図形で測る
+    if (!controlsDone) {
+      controlsDone = true;
+      await page.evaluate(() => {
+        const host = document.createElement('div');
+        host.id = '__contrast_probe';
+        host.style.position = 'fixed';
+        host.style.left = '0';
+        host.style.top = '0';
+        host.style.zIndex = '2147483647';
+        host.style.background = '#ffffff';
+        host.style.padding = '8px';
+        const mk = (text, fg, bg) => {
+          const e = document.createElement('span');
+          e.textContent = text;
+          e.style.display = 'block';
+          e.style.fontSize = '14px';
+          e.style.color = fg;
+          e.style.background = bg;
+          host.appendChild(e);
+        };
+        mk('PROBE-low', '#777777', '#808080');
+        mk('PROBE-high', '#000000', '#ffffff');
+        mk('PROBE-grad', '#808080', 'linear-gradient(90deg, #ffffff, #000000)');
+        const NS = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('viewBox', '0 0 200 60');
+        svg.setAttribute('width', '400');
+        svg.setAttribute('height', '120');
+        const rect = document.createElementNS(NS, 'rect');
+        rect.setAttribute('width', '200');
+        rect.setAttribute('height', '60');
+        rect.setAttribute('fill', '#0f1117');
+        svg.appendChild(rect);
+        const t = (y, fill, text) => {
+          const e = document.createElementNS(NS, 'text');
+          e.setAttribute('x', '8');
+          e.setAttribute('y', String(y));
+          e.setAttribute('font-size', '8');
+          e.setAttribute('fill', fill);
+          e.textContent = text;
+          svg.appendChild(e);
+        };
+        t(20, '#e6e8ec', 'PROBE-svg-light');
+        t(45, '#0f1117', 'PROBE-svg-dark');
+        host.appendChild(svg);
+        document.body.appendChild(host);
+      });
+      const probe = await page.evaluate(expr);
+      await page.evaluate(() => document.getElementById('__contrast_probe')?.remove());
+      const get = (t) => probe.find((r) => r.text === t);
+      const low = get('PROBE-low');
+      const high = get('PROBE-high');
+      const grad = get('PROBE-grad');
+      const svgLight = get('PROBE-svg-light');
+      const svgDark = get('PROBE-svg-dark');
+      ok(
+        low !== undefined && low.ratio < 2 && violationsOf([low]).length === 1,
+        `contrast: 対照 ★ 灰の字 (#777 × #808080) は基準を割ったと測る (実際 ${low?.ratio})`,
+      );
+      ok(
+        high !== undefined && high.ratio > 20 && violationsOf([high]).length === 0,
+        `contrast: 対照 黒い字 × 白は割らない (実際 ${high?.ratio})`,
+      );
+      // グラデーションの地は**全部の停止点**で測って最悪を取る (灰 #808080 は白の端で 3.95:1・黒の端では 5.32:1 —— 片方しか見ないと通る)
+      ok(
+        grad !== undefined && grad.ratio < 4.5 && grad.bg === '#ffffff' && violationsOf([grad]).length === 1,
+        `contrast: 対照 ★ グラデーションの地は最悪の停止点で測る (白の端 3.95:1 と黒の端 5.32:1 のうち ${grad?.ratio} / 地 ${grad?.bg})`,
+      );
+      ok(
+        svgLight !== undefined &&
+          svgDark !== undefined &&
+          svgLight.ratio > 10 &&
+          violationsOf([svgLight]).length === 0 &&
+          svgDark.ratio < 1.5 &&
+          violationsOf([svgDark]).length === 1,
+        `contrast: 対照 ★ SVG の字は下の図形の塗りで測る (濃紺の下地の明るい字 ${svgLight?.ratio} は読め・同じ色の字 ${svgDark?.ratio} は割る。先祖の背景だけ見ると前者を ${svgLight?.bg} と誤る)`,
+      );
+    }
+
+    // サイドバーの全画面。既定で畳まれている分類 (士業連携・分析・外部連携) も、実際の見出しを押して全部開く
+    // (開いていない分類の画面は DOM に無く、一覧が 20 件で止まる —— 初回の実行で実際にそうなった)。重複は落とす。
+    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
+      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
+    }
+    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
+    for (const id of ids) {
+      await page.locator(`.sidebar-item[data-service-id="${id}"]`).first().click();
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      rows.push(...tag(await page.evaluate(expr), id));
+    }
+
+    // ロック画面 (再読込 — 保管庫は作ってあるので解錠の画面が出る)
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+    await still();
+    rows.push(...tag(await page.evaluate(expr), '(ロック画面)'));
+    await ctx.close();
+
+    const perPage = new Map();
+    for (const r of rows) perPage.set(r.page, (perPage.get(r.page) ?? 0) + 1);
+    const empty = ids.filter((id) => (perPage.get(id) ?? 0) === 0);
+    ok(
+      ids.length >= 60 && empty.length === 0 && rows.length >= ids.length * 50,
+      `contrast[${cfg.name}]: 全 ${ids.length} 画面 + 初回 + ロック画面で文字を測れた (${rows.length} 要素${empty.length ? ` · 文字が 0 の画面: ${empty.join(',')}` : ''})`,
+    );
+    const flagged = violationsOf(rows);
+    const unknown = rows.filter((r) => r.unknown).length;
+    const summary = groupViolations(rows)
+      .slice(0, 8)
+      .map((g) => `${g.ratio}:1 ${g.k} 「${g.sample}」×${g.pages.size}画面`)
+      .join(' / ');
+    ok(
+      flagged.length === 0,
+      `contrast[${cfg.name}]: ★ 描画済みの文字は WCAG 2.x AA (通常 4.5:1・大きい字 3:1) を割らない (測った ${rows.length} 要素${unknown ? ` · 地が画像で測れない ${unknown}` : ''}${flagged.length ? ` · 割った ${flagged.length} 要素: ${summary}` : ''})`,
+    );
+  }
+  ok(new Set(bgs).size === 4, `contrast: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
+}
+
+/**
+ * **操作子の見え方と届き方** (2026-10-03 · パス 504)。実機 (Chromium) で**描画済みの状態**を、
+ * 4 配色 (すっきり / かわいい × ライト / ダーク) × サイドバーの全画面 (+ 初回の設定画面 + ロック画面) と、スマホ幅 2 配色で測り、
+ * WCAG 2.x AA の次の 5 つを割る操作子が 0 件であることを見る:
+ *
+ *   入力欄の輪郭 3:1 (1.4.11) / キーボードの焦点の輪 (2px 以上・3:1・焦点で見えること — 1.4.11・2.4.7) /
+ *   押せる大きさ 24×24px (間隔の例外つき — 2.5.8) / キーボードで届く (2.1.1) / 名前 (4.1.2・ブラウザの AX 木)
+ *
+ * ## 2 層のうち、ここは「描く側が実際に作った枠と輪」を見る
+ *
+ * トークン表の対は `themeNonTextContrast.test.ts`・TSX の枠の色は `controlsCensus.test.ts` (構文木) が見る。
+ * ところが実測 (パス 504) では、**入力欄の枠は 758 欄のうち 752 欄が 3:1 に届かず、枠を決めていたのは CSS ではなく
+ * 画面の style の直書き 64 か所**だった。表を直しても 1 欄も変わらないので、描いた結果を測る。
+ *
+ * 測定器は `scripts/lib/controls.cjs` の 1 つ (写しを作らない)。**測定器そのものの対照**は `about:blank` へ置いた
+ * 探り用の要素で確かめる (薄い枠・輪の無いボタン・ホバーでだけ現れる物・孤立した 10px の目標・ポインタでしか押せない div・名前の無いボタン)。
+ *
+ * ## 測っていない物 (正直に)
+ *
+ * ポインタを載せた入力欄の枠 (サイドバーの検索 1 欄・CSS の `input:hover` を代表させる) だけは測る。それ以外の
+ * ホバー / 押している最中の状態・開く前の折りたたみとモーダルの中・canvas・チャートの線や記号の 3:1 (図形そのものの対比)・
+ * 状態を色だけで伝える物 (1.4.1)・無効化された部品・`<button>` の枠 (字が部品だと示す)は測っていない。
+ */
+async function controlsSuite(browser) {
+  console.log('--- 操作子の見え方と届き方 (4 配色 × 全画面 + スマホ · WCAG 2.x AA) ---');
+  const L = require('../lib/controls.cjs');
+  const expr = L.controlsExpression({ focusSample: 40 });
+  const C = L.controlMath();
+  const CONFIGS = [
+    { name: 'すっきり × ライト', design: 'clean', theme: 'light', ax: true },
+    { name: 'すっきり × ダーク', design: 'clean', theme: 'dark' },
+    { name: 'かわいい × ライト', design: 'cute', theme: 'light' },
+    { name: 'かわいい × ダーク', design: 'cute', theme: 'dark' },
+  ];
+  /** 描き終わるまで待つ: DOM の要素数が 3 回続けて同じ (最大 3 秒)。固定の待ちではなく状態で待つ。 */
+  const settled = (page) =>
+    page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          let last = -1;
+          let same = 0;
+          const t0 = performance.now();
+          const tick = () => {
+            const n = document.body.querySelectorAll('*').length;
+            same = n === last ? same + 1 : 0;
+            last = n;
+            if (same >= 2 || performance.now() - t0 > 3000) resolve(n);
+            else setTimeout(tick, 60);
+          };
+          tick();
+        }),
+    );
+  const STILL = '*{animation:none!important;transition:none!important;caret-color:transparent!important}';
+  /** 1 画面を測る。キーボードの様式にしてから (Tab → Shift+Tab) 測る —— さもないと `:focus-visible` が一致せず、輪の規則が掛からない。 */
+  const measure = async (page, label, withAx) => {
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Shift+Tab');
+    const r = await page.evaluate(expr);
+    const tagAll = (rows) => rows.map((x) => ({ ...x, page: label }));
+    const out = {
+      fields: tagAll(r.fields),
+      focus: tagAll(r.focus),
+      targets: tagAll(r.targets),
+      mouseOnly: tagAll(r.mouseOnly),
+      sliders: tagAll(r.sliders),
+      ax: null,
+    };
+    if (withAx) out.ax = await L.axUnnamedControls(page);
+    return out;
+  };
+  const merge = (acc, part) => {
+    for (const k of ['fields', 'focus', 'targets', 'mouseOnly', 'sliders']) acc[k].push(...part[k]);
+    if (part.ax) {
+      acc.ax.total += part.ax.total;
+      acc.ax.rows.push(...part.ax.rows.map((x) => ({ ...x, page: part.fields[0]?.page ?? '' })));
+    }
+  };
+  const emptyAcc = () => ({ fields: [], focus: [], targets: [], mouseOnly: [], sliders: [], ax: { total: 0, rows: [] } });
+
+  /** 画面の一覧 (サイドバーの項目)。畳まれた分類は実際の見出しを押して全部開く。スマホではドロワーを開いて読み、Esc で閉じる。 */
+  const screenIds = async (page, phone) => {
+    if (phone) {
+      const t = page.locator('button.menu-btn').first();
+      if ((await t.count()) > 0) await t.click();
+    }
+    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
+      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
+    }
+    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
+    if (phone) await page.keyboard.press('Escape');
+    return ids;
+  };
+
+  /** 全画面を測る。 */
+  const sweep = async (cfg, viewport, phone) => {
+    const ctx = await browser.newContext(phone ? { viewport, hasTouch: true } : { viewport });
+    const page = await ctx.newPage();
+    await page.addInitScript(
+      ([theme, design]) => {
+        localStorage.setItem('servicehub.plan', 'enterprise');
+        localStorage.setItem('servicehub.theme', theme);
+        localStorage.setItem('servicehub.design', design);
+      },
+      [cfg.theme, cfg.design],
+    );
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+    await page.addStyleTag({ content: STILL });
+    const acc = emptyAcc();
+    merge(acc, await measure(page, '(初回の設定画面)', cfg.ax === true));
+    await setupVault(page);
+    await page.addStyleTag({ content: STILL });
+    const applied = await page.evaluate(() => ({
+      design: document.documentElement.getAttribute('data-design'),
+      theme: document.documentElement.getAttribute('data-theme') ?? 'light',
+      bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+    }));
+    // ポインタを載せた入力欄の枠 (CSS の `input:hover`)。載せた瞬間に輪郭が地へ溶けない (WCAG 1.4.11)。
+    // パス 504 の最初の直しは、既定の枠を 3:1 以上にしたまま、ホバーの枠を薄い `--list-hover-border` (1.5〜2.3:1) に残し、
+    // 載せた瞬間に既定より**弱く**なった (手で気付いた) —— 状態の規則は静止画を測っても出てこない。
+    let hovered = null;
+    if (!phone) {
+      const search = page.locator('.sidebar-search-input').first();
+      if ((await search.count()) > 0) {
+        await search.hover();
+        const r = await page.evaluate(expr);
+        hovered = r.fields.find((f) => f.sig.includes('sidebar-search-input')) ?? null;
+        await page.mouse.move(0, 0);
+      }
+    }
+    const ids = await screenIds(page, phone);
+    for (const id of ids) {
+      await page.evaluate((i) => {
+        location.hash = i;
+      }, id);
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      merge(acc, await measure(page, id, cfg.ax === true));
+    }
+    let drawer = null;
+    if (phone) {
+      // **開いたドロワーも 1 度測る** (2026-10-07 · パス 506 の直後に測って足した)。パス 506 で閉じたドロワーは `inert` になり、
+      // 測定器の `present()` も inert の下を「無い」と数えるので、上の画面ごとの測定にはドロワーの 74 項目が入らない ——
+      // 閉じている間は焦点を取れないのが正しい (`opened` suite が留める)。だが開けば描かれる物なので、開いた状態で測る
+      // (法則 119 `opened-state-measured-where-drawn`)。項目は画面を跨いで同じなので 1 回でよい。
+      // 実測 (2026-10-07・この段が無い形): スマホの焦点の母集団は 681・AX の名前の母集団は 2,940 で、desktop と同じ床
+      // (800 / 10,000) が**正しく鳴った** —— 床を下げるのではなく、測る物を戻してから床を分けた (下の assertSweep の opts)。
+      const menu = page.locator('button.menu-btn').first();
+      await menu.click();
+      await page.waitForSelector('.app.nav-open', { timeout: 10000 });
+      await settled(page);
+      drawer = await measure(page, '(開いたドロワー)', cfg.ax === true);
+      merge(acc, drawer);
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+    }
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+    await page.addStyleTag({ content: STILL });
+    merge(acc, await measure(page, '(ロック画面)', cfg.ax === true));
+    await ctx.close();
+    return { acc, ids, applied, hovered, drawer };
+  };
+
+  /** 「何が・どの値で」を畳んだ要約 (落ちたとき、同じ原因の行を 1 つにして先頭 6 件を読めるように)。 */
+  const summarize = (rows, keyOf, show) =>
+    L.groupBy(rows, keyOf)
+      .slice(0, 6)
+      .map((g) => `${show(g.sample)} ${g.sample.sig}×${g.n}行/${g.pages.size}画面`)
+      .join(' / ');
+
+  const assertSweep = (label, { acc, ids, hovered, drawer }, opts) => {
+    const fieldV = L.fieldViolations(acc.fields, C);
+    const sliderV = L.sliderViolations(acc.sliders, C);
+    const focusV = L.focusViolations(acc.focus);
+    const targetV = L.targetViolations(acc.targets);
+    const focused = acc.focus.filter((r) => r.focused);
+    ok(
+      ids.length >= 60 && acc.fields.length >= opts.minFields && focused.length >= opts.minFocus,
+      `controls[${label}]: 全 ${ids.length} 画面 + 初回 + ロック画面で測れた (入力欄 ${acc.fields.length}・焦点を取った操作子 ${focused.length}/${acc.focus.length}・押せる大きさの対象 ${acc.targets.length}・スライダー ${acc.sliders.length})`,
+    );
+    if (opts.drawer) {
+      // 開いたドロワーの項目が母集団に入っていること (閉じたドロワーは inert なので、この段が消えると 74 項目が黙って測定から外れる)。
+      const dFocus = drawer === null ? 0 : drawer.focus.filter((r) => r.focused).length;
+      ok(
+        drawer !== null && dFocus >= opts.minDrawerFocus,
+        `controls[${label}]: ★ 開いたドロワー (inert が外れた 74 項目) も測った (焦点を取った操作子 ${dFocus} (sig 単位)・24px 未満の目標 ${drawer === null ? 0 : drawer.targets.length}・入力欄 ${drawer === null ? 0 : drawer.fields.length})`,
+      );
+    }
+    ok(
+      fieldV.length === 0,
+      `controls[${label}]: ★ 描画済みの入力欄の輪郭は 3:1 以上 (WCAG 1.4.11) (測った ${acc.fields.length} 欄${fieldV.length ? ` · 割った ${fieldV.length} 欄: ${summarize(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''})`,
+    );
+    if (opts.hover) {
+      ok(
+        hovered !== null && L.fieldViolations([hovered], C).length === 0,
+        `controls[${label}]: ★ ポインタを載せた入力欄 (サイドバーの検索) の枠も 3:1 以上 —— 載せて既定より薄くならない (載せた枠 ${hovered ? `${hovered.border}:1` : '欄が見つからない'})`,
+      );
+    }
+    ok(
+      sliderV.length === 0 && acc.sliders.every((r) => r.readable),
+      `controls[${label}]: ★ スライダーのつまみは下の地と溝に 3:1 以上 (測った ${acc.sliders.length} 本${sliderV.length ? ` · 割った ${sliderV.length}: ${summarize(sliderV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${acc.sliders.some((r) => !r.readable) ? ' · つまみの規則を読めなかった行あり' : ''})`,
+    );
+    ok(
+      focusV.length === 0,
+      `controls[${label}]: ★ キーボードの焦点の輪は幅 2px 以上・下の地に 3:1 以上で、焦点を取って見える (WCAG 2.4.7・1.4.11) (測った ${focused.length} 件${focusV.length ? ` · 割った ${focusV.length}: ${summarize(focusV, (r) => `${r.sig}|${r.best}|${r.reveals}`, (r) => `${r.best}:1${r.reveals === false ? ' (焦点で現れない)' : ''}`)}` : ''})`,
+    );
+    ok(
+      targetV.length === 0,
+      `controls[${label}]: ★ 押せる大きさ 24×24px (間隔の例外つき・WCAG 2.5.8) を割る目標が無い (24px 未満の目標 ${acc.targets.length} 件${targetV.length ? ` · 割った ${targetV.length}: ${summarize(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
+    );
+    ok(
+      acc.mouseOnly.length === 0,
+      `controls[${label}]: ★ ポインタでしか押せない操作子が無い (WCAG 2.1.1)${acc.mouseOnly.length ? ` · ${acc.mouseOnly.length} 件: ${summarize(acc.mouseOnly, (r) => `${r.sig}|${r.why}`, (r) => r.why)}` : ''}`,
+    );
+    if (opts.ax) {
+      ok(
+        acc.ax.total >= opts.minNamed && acc.ax.rows.length === 0,
+        `controls[${label}]: ★ 操作子はすべて名前を持つ (ブラウザの AX 木・WCAG 4.1.2) (測った ${acc.ax.total} 件${acc.ax.rows.length ? ` · 名前が空 ${acc.ax.rows.length} 件: ${summarize(acc.ax.rows, (r) => `${r.role}|${r.html.slice(0, 60)}`, (r) => `${r.role} ${r.html.slice(0, 70)}`)}` : ''})`,
+      );
+    }
+  };
+
+  const bgs = [];
+  for (const cfg of CONFIGS) {
+    const r = await sweep(cfg, { width: 1280, height: 900 }, false);
+    bgs.push(r.applied.bg);
+    ok(
+      r.applied.design === cfg.design && r.applied.theme === cfg.theme,
+      `controls[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(r.applied)})`,
+    );
+    assertSweep(cfg.name, r, { minFields: 450, minFocus: 800, ax: cfg.ax === true, minNamed: 10000, hover: true });
+  }
+  ok(new Set(bgs).size === 4, `controls: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
+
+  // スマホ幅 (ドロワー・縦積み・先頭へ戻る・media 規則で変わる目標の大きさ)。明るい配色と暗い配色を 1 つずつ
+  for (const cfg of [CONFIGS[0], CONFIGS[3]]) {
+    const r = await sweep({ ...cfg, ax: cfg === CONFIGS[0] }, { width: 412, height: 915 }, true);
+    // 床はスマホ幅の実測から別に置く (desktop の床を写すと、閉じたドロワーが inert になった日に鳴る —— 2026-10-07 に実際に鳴った)。
+    // 実測 (2026-10-07 · 開いたドロワーを測る段を足した後): すっきり × ライト = 入力欄 515・焦点 689 (sig 単位)・24px 未満の目標 896・
+    // AX の名前 3,106・開いたドロワー = 焦点 8 (74 項目は同じ sig なので 1 つに畳まれる) / 入力欄 2 / 24px 未満 0 —— かわいい × ダーク = 515・689・878・
+    // ドロワー 8 / 2 / 0。段が無い形は焦点 681・名前 2,940 で、desktop の床 (800 / 10,000) を割った。床は実測の 63〜80%。
+    assertSweep(`スマホ · ${cfg.name}`, r, { minFields: 450, minFocus: 500, ax: cfg === CONFIGS[0], minNamed: 2500, drawer: true, minDrawerFocus: 5 });
+  }
+
+  // ---- 測定器そのものの対照 (about:blank の探り) ----
+  const pctx = await browser.newContext({ viewport: { width: 800, height: 600 } });
+  const pp = await pctx.newPage();
+  await pp.goto('about:blank');
+  await pp.addStyleTag({
+    content: [
+      'body{margin:0;background:#ffffff;font:14px sans-serif}',
+      '[data-probe="focus-ring"]:focus-visible{outline:3px solid #000000;outline-offset:2px}',
+      '[data-probe="focus-thin"]:focus-visible{outline:1px solid #000000;outline-offset:2px}',
+      '[data-probe="focus-pale"]:focus-visible{outline:3px solid #cccccc;outline-offset:2px}',
+      '[data-probe="focus-none"]:focus-visible{outline:none}',
+      '[data-probe="focus-hover-only"]{opacity:0}',
+      '[data-probe="focus-hover-only"]:hover{opacity:1}',
+      '[data-probe="focus-hover-only"]:focus-visible{outline:3px solid #000000;outline-offset:2px}',
+      '[data-probe="focus-reveal"]{opacity:0}',
+      '[data-probe="focus-reveal"]:hover,[data-probe="focus-reveal"]:focus-visible{opacity:1;outline:3px solid #000000;outline-offset:2px}',
+    ].join('\n'),
+  });
+  await pp.evaluate(() => {
+    const host = document.createElement('div');
+    host.style.cssText = 'position:relative;width:780px;height:560px';
+    const add = (tag, probe, attrs = {}, style = '', text = '') => {
+      const e = document.createElement(tag);
+      e.setAttribute('data-probe', probe);
+      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+      if (style) e.style.cssText = style;
+      if (text) e.textContent = text;
+      host.appendChild(e);
+      return e;
+    };
+    const row = (y) => `position:absolute;left:10px;top:${y}px;`;
+    // 入力欄の輪郭
+    add('input', 'field-pale', { type: 'text', 'aria-label': 'a' }, row(10) + 'width:120px;border:1px solid #e5e5e5;background:#fff');
+    add('input', 'field-ok', { type: 'text', 'aria-label': 'b' }, row(44) + 'width:120px;border:1px solid #767676;background:#fff');
+    add('input', 'field-fill', { type: 'text', 'aria-label': 'c' }, row(78) + 'width:120px;border:0;background:#767676');
+    add('input', 'field-borderless', { type: 'text', 'aria-label': 'd' }, row(112) + 'width:120px;border:0;background:#ffffff');
+    const w = add('div', 'wrap', {}, row(146) + 'width:160px;height:30px;border:1px solid #767676');
+    const inner = document.createElement('input');
+    inner.setAttribute('data-probe', 'field-in-wrapper');
+    inner.setAttribute('aria-label', 'e');
+    inner.style.cssText = 'position:absolute;left:4px;top:3px;width:100px;height:22px;border:0;background:#ffffff';
+    w.appendChild(inner);
+    // 焦点の輪
+    add('button', 'focus-ring', {}, row(10) + 'left:220px', 'ring');
+    add('button', 'focus-thin', {}, row(44) + 'left:220px', 'thin');
+    add('button', 'focus-pale', {}, row(78) + 'left:220px', 'pale');
+    add('button', 'focus-none', {}, row(112) + 'left:220px', 'none');
+    add('button', 'focus-hover-only', {}, row(146) + 'left:220px', 'hov');
+    add('button', 'focus-reveal', {}, row(180) + 'left:220px', 'rev');
+    // 押せる大きさ: 10px の目標が隣り合う (間隔の例外を満たさない)・孤立した 10px (満たす)・24px (小さくない)
+    add('button', 'tiny-a', { 'aria-label': 'ta' }, row(300) + 'left:420px;width:10px;height:10px;padding:0');
+    add('button', 'tiny-b', { 'aria-label': 'tb' }, row(300) + 'left:432px;width:10px;height:10px;padding:0');
+    add('button', 'tiny-alone', { 'aria-label': 'tc' }, row(450) + 'left:600px;width:10px;height:10px;padding:0');
+    add('button', 'target-24', { 'aria-label': 'td' }, row(300) + 'left:520px;width:24px;height:24px;padding:0');
+    // ポインタでしか押せない物
+    add('div', 'mouse-only', {}, row(380) + 'left:220px;cursor:pointer', 'click me');
+    add('div', 'role-no-tabindex', { role: 'button' }, row(410) + 'left:220px', 'role');
+    add('div', 'keyboard-ok', { role: 'button', tabindex: '0' }, row(440) + 'left:220px;cursor:pointer', 'ok');
+    // 名前
+    add('button', 'unnamed', {}, row(520) + 'left:420px;width:20px;height:20px');
+    add('button', 'named', { 'aria-label': 'named' }, row(520) + 'left:480px;width:20px;height:20px');
+    document.body.appendChild(host);
+  });
+  await pp.keyboard.press('Tab');
+  await pp.keyboard.press('Shift+Tab');
+  const probe = await pp.evaluate(L.controlsExpression({ focusSample: 500 }));
+  const ax = await L.axUnnamedControls(pp);
+  const rowOf = (rows, name) => rows.find((r) => r.html.includes(`data-probe="${name}"`));
+  const fld = (n) => rowOf(probe.fields, n);
+  ok(
+    fld('field-pale') !== undefined && L.fieldViolations([fld('field-pale')], C).length === 1,
+    `controls: 対照 ★ 薄い枠 (#e5e5e5 × 白) の入力欄は 3:1 を割ったと測る (実際 ${fld('field-pale')?.best}:1)`,
+  );
+  ok(
+    fld('field-ok') !== undefined && L.fieldViolations([fld('field-ok')], C).length === 0 && fld('field-ok').best > 4,
+    `controls: 対照 濃い枠 (#767676 × 白 = 4.54:1) は割らない (実際 ${fld('field-ok')?.best}:1)`,
+  );
+  ok(
+    fld('field-fill') !== undefined && L.fieldViolations([fld('field-fill')], C).length === 0,
+    `controls: 対照 枠が無くても、地との塗りの差が 3:1 以上なら輪郭は見える (実際 塗り ${fld('field-fill')?.fill}:1)`,
+  );
+  ok(
+    fld('field-borderless') !== undefined && L.fieldViolations([fld('field-borderless')], C).length === 1,
+    `controls: 対照 ★ 枠も塗りの差も無い入力欄は割ったと測る (実際 ${fld('field-borderless')?.best}:1)`,
+  );
+  ok(
+    fld('field-in-wrapper') !== undefined && fld('field-in-wrapper').via === 'wrapper' && L.fieldViolations([fld('field-in-wrapper')], C).length === 0,
+    `controls: 対照 欄に枠が無くても、ぴったり囲む箱が 3:1 の枠を持てば箱の輪郭で見える (via ${fld('field-in-wrapper')?.via} · ${fld('field-in-wrapper')?.best}:1)`,
+  );
+  const foc = (n) => rowOf(probe.focus, n);
+  ok(
+    foc('focus-ring')?.focused === true && foc('focus-ring').ok === true && foc('focus-ring').best > 15,
+    `controls: 対照 幅 3px・黒の輪は適合 (焦点 ${foc('focus-ring')?.focused} · 輪 ${foc('focus-ring')?.best}:1)`,
+  );
+  ok(
+    ['focus-none', 'focus-thin', 'focus-pale'].every((n) => foc(n)?.focused === true && foc(n).ok === false && L.focusViolations([foc(n)]).length === 1),
+    `controls: 対照 ★ 輪を消した物・幅 1px の輪・薄い輪 (#ccc = 1.6:1) は割ったと測る (消した ${foc('focus-none')?.ok} · 1px ${foc('focus-thin')?.ok} ${foc('focus-thin')?.bestAny}:1 · 薄い ${foc('focus-pale')?.ok} ${foc('focus-pale')?.best}:1)`,
+  );
+  ok(
+    foc('focus-hover-only')?.focused === true &&
+      foc('focus-hover-only').ringOk === true &&
+      foc('focus-hover-only').reveals === false &&
+      foc('focus-hover-only').ok === false,
+    `controls: 対照 ★ ホバーでだけ現れる物は、輪が在っても焦点で見えなければ割ったと測る (輪 ${foc('focus-hover-only')?.ringOk} · 焦点後の不透明度 ${foc('focus-hover-only')?.opacityAfter})`,
+  );
+  ok(
+    foc('focus-reveal')?.focused === true && foc('focus-reveal').reveals === true && foc('focus-reveal').ok === true,
+    `controls: 対照 焦点でも現れる (opacity が戻る) 物は適合 (焦点後の不透明度 ${foc('focus-reveal')?.opacityAfter})`,
+  );
+  const tgt = (n) => rowOf(probe.targets, n);
+  ok(
+    tgt('tiny-a') !== undefined && tgt('tiny-b') !== undefined && L.targetViolations([tgt('tiny-a'), tgt('tiny-b')]).length === 2,
+    `controls: 対照 ★ 10px の目標が 2px 隔てて並ぶと、間隔の例外を満たさず割ったと測る (${tgt('tiny-a')?.w}×${tgt('tiny-a')?.h}・隣と近い)`,
+  );
+  ok(
+    tgt('tiny-alone') !== undefined && tgt('tiny-alone').spacingOk === true && L.targetViolations([tgt('tiny-alone')]).length === 0,
+    `controls: 対照 孤立した 10px の目標は間隔の例外で適合 (周りに目標が無い)`,
+  );
+  ok(tgt('target-24') === undefined, `controls: 対照 24×24px の目標は「小さい」に数えない`);
+  const mo = (n) => rowOf(probe.mouseOnly, n);
+  ok(
+    mo('mouse-only')?.why === 'pointer-without-focus' && mo('role-no-tabindex')?.why === 'role-without-tabindex' && mo('keyboard-ok') === undefined,
+    `controls: 対照 ★ ポインタでしか押せない div・tabindex の無い role=button は割ったと測り、role=button + tabindex=0 は割らない (${mo('mouse-only')?.why} / ${mo('role-no-tabindex')?.why} / ${mo('keyboard-ok')?.why ?? '適合'})`,
+  );
+  ok(
+    ax.rows.some((r) => r.html.includes('data-probe="unnamed"')) && !ax.rows.some((r) => r.html.includes('data-probe="named"')),
+    `controls: 対照 ★ ブラウザの AX 木で名前が空のボタンを拾い、aria-label のあるボタンは拾わない (名前が空 ${ax.rows.length} 件)`,
+  );
+  await pctx.close();
+}
+
+/**
+ * **開いた窓とスマホ幅** (2026-10-07 · パス 506)。パス 503 / 504 は**閉じた・静止した・1280px** の画面しか測っていない。
+ * ここは「開く前の物」を開いて測る —— `<details>` と手入力パネルを開いた全画面 (4 配色)・浮いたコンシェルジュ
+ * (窓・提案チップ・確認の alertdialog・キーボードの道)・スマホ (412×915) のドロワーとシート・スマホ幅の全画面の字 (4 配色)。
+ *
+ * 直す前の実測 (2026-10-07 · 10-03 の出荷物):
+ * - details / 手入力パネルを開いた所: 4 配色 × 1,408 行 → 割る字 0・欄 0 (閉じたときから何も増えない —— 対照として残す)。
+ * - 浮いた窓の提案チップ: **23px** (WCAG 2.5.8 を割る) が 4 配色すべて。
+ * - 浮いた窓: 開いても焦点は 🤖 のまま・窓は DOM で 🤖 より**前**なので Tab が窓を飛ばす・Esc で閉じない・✕ で閉じると焦点は body。
+ *   要望の消去の alertdialog も同じ (焦点は運ばれず・Esc は効かない)。
+ * - スマホのドロワー: 閉じている間も焦点を取れ (☰ から Shift+Tab で見えない 74 項目へ入る)・開いている間は暗幕の後ろの本文へ Tab で逃げる。
+ * - スマホ幅の字: かわいい × ライトで **30 画面 212 要素** (3.84〜4.48:1)・かわいい × ダークで 10 画面 16 要素 —— 原因は
+ *   `@media (max-width: 768px)` の `.main { background: transparent }` (本文の字が殻の光輪の上に直に載る)。
+ *
+ * 測定器: 字は `contrast.cjs`・操作子は `controls.cjs` (パス 503 / 504 と同じ 1 つ)。`controls.cjs` の `present()` は `inert` の下を
+ * 「無い」と数える (閉じたドロワーの 74 項目を焦点の母集団に入れない) —— その対照は末尾の about:blank の探り。
+ * 待ちは状態で取る (描き終わり・`.app.nav-open`・窓の有無)。固定の待ちは持たない。
+ */
+async function openedSuite(browser) {
+  console.log('--- 開いた窓とスマホ幅 (details / 手入力 / 浮いた窓 / ドロワー / 412px · 4 配色 · WCAG 2.x AA + APG dialog) ---');
+  const { sweepExpression, violationsOf } = require('../lib/contrast.cjs');
+  const L = require('../lib/controls.cjs');
+  const C = L.controlMath();
+  const textExpr = sweepExpression();
+  const ctlExpr = L.controlsExpression({ focusSample: 24 });
+  const CONFIGS = [
+    { name: 'すっきり × ライト', design: 'clean', theme: 'light' },
+    { name: 'すっきり × ダーク', design: 'clean', theme: 'dark' },
+    { name: 'かわいい × ライト', design: 'cute', theme: 'light' },
+    { name: 'かわいい × ダーク', design: 'cute', theme: 'dark' },
+  ];
+  const STILL = '*{animation:none!important;transition:none!important;caret-color:transparent!important}';
+  /** 描き終わるまで待つ: DOM の要素数が 3 回続けて同じ (最大 3 秒)。 */
+  const settled = (page) =>
+    page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          let last = -1;
+          let same = 0;
+          const t0 = performance.now();
+          const tick = () => {
+            const n = document.body.querySelectorAll('*').length;
+            same = n === last ? same + 1 : 0;
+            last = n;
+            if (same >= 2 || performance.now() - t0 > 3000) resolve(n);
+            else setTimeout(tick, 60);
+          };
+          tick();
+        }),
+    );
+  /** 要望を 1 件置いておく (「📥 要望」で alertdialog が出る条件)。 */
+  const REQUEST = { text: '経費精算の機能を作ってほしい', at: '2026-10-07T00:00:00.000Z' };
+  const init = (page, cfg) =>
+    page.addInitScript(
+      ([theme, design, req]) => {
+        localStorage.setItem('servicehub.plan', 'enterprise');
+        localStorage.setItem('servicehub.theme', theme);
+        localStorage.setItem('servicehub.design', design);
+        localStorage.setItem('chatbot-requests', JSON.stringify([req]));
+      },
+      [cfg.theme, cfg.design, REQUEST],
+    );
+  /** キーボードの様式にする (Tab → Shift+Tab) —— さもないと `:focus-visible` が一致せず、輪の規則が掛からない。 */
+  const modality = async (page) => {
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Shift+Tab');
+  };
+  const screenIds = async (page, phone) => {
+    if (phone) {
+      const t = page.locator('button.menu-btn').first();
+      if ((await t.count()) > 0) await t.click();
+    }
+    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
+      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
+    }
+    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
+    if (phone) await page.keyboard.press('Escape');
+    return ids;
+  };
+  const tag = (rows, label) => rows.map((r) => ({ ...r, page: label }));
+  const textSummary = (rows) => {
+    const g = new Map();
+    for (const r of rows) {
+      const k = `${r.key}|${r.fg}|${r.bg}|${r.ratio}`;
+      const e = g.get(k) || { r, n: 0, pages: new Set() };
+      e.n += 1;
+      e.pages.add(r.page);
+      g.set(k, e);
+    }
+    return [...g.values()]
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 6)
+      .map((e) => `${e.r.key} ${e.r.fg}/${e.r.bg} ${e.r.ratio}:1×${e.n}行/${e.pages.size}画面`)
+      .join(' / ');
+  };
+  const ctlSummary = (rows, keyOf, show) =>
+    L.groupBy(rows, keyOf)
+      .slice(0, 6)
+      .map((g) => `${show(g.sample)} ${g.sample.sig}×${g.n}行/${g.pages.size}画面`)
+      .join(' / ');
+  /** いま焦点を持つ物 (何が・どこの中か)。 */
+  const active = (page) =>
+    page.evaluate(() => {
+      const a = document.activeElement;
+      if (!a || a === document.body) return { body: true };
+      return {
+        body: false,
+        tag: a.tagName.toLowerCase(),
+        cls: String(a.className || ''),
+        label: a.getAttribute('aria-label'),
+        text: (a.textContent || '').trim().slice(0, 20),
+        inDialog: !!a.closest('[role="dialog"]'),
+        inAlert: !!a.closest('[role="alertdialog"]'),
+        inSidebar: !!a.closest('.sidebar'),
+        inMain: !!a.closest('.main'),
+      };
+    });
+  const inertOf = (page) =>
+    page.evaluate(() => ({
+      sidebar: document.querySelector('.sidebar')?.hasAttribute('inert') ?? null,
+      main: document.querySelector('.main')?.hasAttribute('inert') ?? null,
+    }));
+  /** その画面の「開く前の物」を全部開く: `<details>` と手入力パネル (aria-expanded=false のボタン)。 */
+  const openAll = (page) =>
+    page.evaluate(() => {
+      const o = { details: 0, manual: 0 };
+      for (const d of document.querySelectorAll('details:not([open])')) {
+        d.open = true;
+        o.details += 1;
+      }
+      for (const b of document.querySelectorAll('[data-manual-data] button[aria-expanded="false"]')) {
+        b.click();
+        o.manual += 1;
+      }
+      return o;
+    });
+  const emptyAcc = () => ({ screens: 0, opened: { details: 0, manual: 0 }, text: [], fields: [], focus: [], targets: [], mouseOnly: [], sliders: [] });
+  const measureInto = async (acc, page, label) => {
+    await modality(page);
+    acc.text.push(...tag(await page.evaluate(textExpr), label));
+    const r = await page.evaluate(ctlExpr);
+    for (const k of ['fields', 'focus', 'targets', 'mouseOnly', 'sliders']) acc[k].push(...tag(r[k], label));
+  };
+  /** 字と操作子の 6 つの主張 (1 つの溜まりに対して)。 */
+  const assertAcc = (label, acc, minScreens, minText) => {
+    const textV = violationsOf(acc.text);
+    const fieldV = L.fieldViolations(acc.fields, C);
+    const sliderV = L.sliderViolations(acc.sliders, C);
+    const focusV = L.focusViolations(acc.focus);
+    const targetV = L.targetViolations(acc.targets);
+    const focused = acc.focus.filter((r) => r.focused).length;
+    ok(
+      acc.screens >= minScreens && acc.text.length >= minText,
+      `opened[${label}]: 測れた (画面 ${acc.screens}・開いた details ${acc.opened.details} + 手入力パネル ${acc.opened.manual}・字 ${acc.text.length} 行・欄 ${acc.fields.length}・焦点を取った ${focused}・目標 ${acc.targets.length})`,
+    );
+    ok(
+      textV.length === 0,
+      `opened[${label}]: ★ 字は 4.5:1 (大きい字 3:1) 以上 (WCAG 1.4.3)${textV.length ? ` · 割った ${textV.length} 行: ${textSummary(textV)}` : ''}`,
+    );
+    ok(
+      fieldV.length === 0 && sliderV.length === 0,
+      `opened[${label}]: ★ 入力欄の輪郭とつまみは 3:1 以上 (1.4.11) (欄 ${acc.fields.length}・つまみ ${acc.sliders.length}${fieldV.length + sliderV.length ? ` · 割った ${fieldV.length + sliderV.length}: ${ctlSummary([...fieldV, ...sliderV], (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''})`,
+    );
+    ok(
+      focusV.length === 0,
+      `opened[${label}]: ★ 焦点の輪は幅 2px 以上・3:1 以上で、焦点を取って見える (2.4.7・1.4.11) (測った ${focused}${focusV.length ? ` · 割った ${focusV.length}: ${ctlSummary(focusV, (r) => `${r.sig}|${r.best}|${r.reveals}`, (r) => `${r.best}:1${r.reveals === false ? ' (焦点で現れない)' : ''}`)}` : ''})`,
+    );
+    ok(
+      targetV.length === 0,
+      `opened[${label}]: ★ 押せる大きさ 24×24px (間隔の例外つき・2.5.8) を割る目標が無い (24px 未満 ${acc.targets.length}${targetV.length ? ` · 割った ${targetV.length}: ${ctlSummary(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
+    );
+    ok(
+      acc.mouseOnly.length === 0,
+      `opened[${label}]: ★ ポインタでしか押せない操作子が無い (2.1.1)${acc.mouseOnly.length ? ` · ${acc.mouseOnly.length}: ${ctlSummary(acc.mouseOnly, (r) => `${r.sig}|${r.why}`, (r) => r.why)}` : ''}`,
+    );
+  };
+
+  /**
+   * 浮いた窓 (スマホではシート) のキーボードの道と、開いた画面の字・操作子。9 つの主張。
+   * 入口 (🤖) → 開く → 焦点は入力欄 → 窓は 🤖 の後ろ → Shift+Tab は窓の中 → 1 往復の吹き出し → 字と操作子 →
+   * 「📥 要望」→ alertdialog の焦点は「残す」→ Esc で戻る (窓は残る) → Esc で窓が閉じて焦点は 🤖。
+   */
+  const floatingChecks = async (page, label) => {
+    const fab = page.locator('.concierge-fab').first();
+    ok((await fab.count()) === 1 && (await fab.isVisible()), `opened[${label}]: 🤖 (浮いた窓の入口) が見える`);
+    await fab.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[data-concierge="floating"]', { timeout: 10000 });
+    await settled(page);
+    const a1 = await active(page);
+    ok(a1.cls.includes('concierge-input'), `opened[${label}]: ★ 開いたら焦点は入力欄へ (APG dialog) (${JSON.stringify(a1)})`);
+    const info = await page.evaluate(() => {
+      const d = document.querySelector('[role="dialog"]');
+      const f = document.querySelector('.concierge-fab');
+      return {
+        role: d ? d.getAttribute('role') : null,
+        label: d ? d.getAttribute('aria-label') : null,
+        fabBefore: !!(d && f && f.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING),
+      };
+    });
+    ok(
+      info.role === 'dialog' && !!info.label && info.fabBefore,
+      `opened[${label}]: ★ 窓は role=dialog で名前を持ち、🤖 の後ろに描かれる (Tab の順が窓の中へ入る) (${JSON.stringify(info)})`,
+    );
+    await page.keyboard.press('Shift+Tab');
+    const a2 = await active(page);
+    ok(a2.inDialog === true, `opened[${label}]: ★ 入力欄から Shift+Tab しても窓の中 (${JSON.stringify(a2)})`);
+    // 提案チップは開いた直後 (挨拶の提案) に測る —— 返事の後はその返事の提案に入れ替わる (無いこともある)
+    const chips = await page.evaluate(() => [...document.querySelectorAll('.concierge-chips button')].map((b) => Math.round(b.getBoundingClientRect().height)));
+    ok(chips.length >= 2 && chips.every((h) => h >= 24), `opened[${label}]: ★ 提案チップは高さ 24px 以上 (WCAG 2.5.8) (実測 ${JSON.stringify(chips)})`);
+    // 1 往復 (利用者の吹き出しと bot の吹き出しも字の母集団に入れる)
+    await page.locator('.concierge-input').first().fill('売上集計を開いて');
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[data-concierge-role="bot"]', { timeout: 10000 });
+    await settled(page);
+    const acc = emptyAcc();
+    acc.screens = 1;
+    await measureInto(acc, page, `${label} · 窓`);
+    const textV = violationsOf(acc.text);
+    const fieldV = L.fieldViolations(acc.fields, C);
+    const focusV = L.focusViolations(acc.focus);
+    const targetV = L.targetViolations(acc.targets);
+    ok(
+      textV.length === 0 && fieldV.length === 0 && focusV.length === 0 && targetV.length === 0,
+      `opened[${label}]: ★ 窓を開いて 1 往復した画面の字・欄・焦点・目標が基準を割らない (字 ${acc.text.length} 行・欄 ${acc.fields.length}・目標 ${acc.targets.length}${textV.length ? ` · 字 ${textSummary(textV)}` : ''}${fieldV.length ? ` · 欄 ${ctlSummary(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${focusV.length ? ` · 焦点 ${ctlSummary(focusV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${targetV.length ? ` · 目標 ${ctlSummary(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
+    );
+    // 確認 (alertdialog): 📥 要望 → 焦点は取り消す側「残す」→ Esc = 残す → 焦点は 📥 へ・窓は残る
+    const exportBtn = page.getByRole('button', { name: '要望リストをエクスポート' });
+    await exportBtn.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[role="alertdialog"]', { timeout: 10000 });
+    const a3 = await active(page);
+    ok(a3.inAlert === true && a3.text === '残す', `opened[${label}]: ★ 確認 (alertdialog) が出たら焦点は取り消す側「残す」へ (${JSON.stringify(a3)})`);
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('[role="alertdialog"]'), undefined, { timeout: 5000 });
+    const a4 = await active(page);
+    const stillOpen = (await page.locator('[data-concierge="floating"]').count()) === 1;
+    ok(
+      stillOpen && a4.label === '要望リストをエクスポート',
+      `opened[${label}]: ★ 確認の Esc は取り消しで、焦点は押した「📥 要望」へ戻り、窓は閉じない (${JSON.stringify(a4)} 窓 ${stillOpen})`,
+    );
+    // 書き込みの確認 (パス 507): 引用と #channel を持つ発話は実物の経路で実行確認 (alertdialog) に届き、
+    // 送る欄と値を操作子より前に並べる。Esc は取り消しで、焦点は入力欄へ戻る (押していないので外へは何も出ない)
+    await page.locator('.concierge-input').first().fill('Slack の #general に「テスト」を送って');
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[role="alertdialog"][aria-label="実行確認"]', { timeout: 10000 });
+    const a6 = await active(page);
+    ok(a6.inAlert === true && a6.text === 'やめる', `opened[${label}]: ★ 引用と #channel を持つ書き込みの発話は実行確認に届き、焦点は取り消す側「やめる」へ (${JSON.stringify(a6)})`);
+    const preview = await page.evaluate(() => {
+      const d = document.querySelector('[role="alertdialog"][aria-label="実行確認"]');
+      const ul = d ? d.querySelector('[data-write-preview]') : null;
+      const btn = d ? d.querySelector('button') : null;
+      return {
+        rows: ul ? [...ul.querySelectorAll('li')].map((li) => (li.textContent || '').trim()) : null,
+        beforeButtons: !!(ul && btn && ul.compareDocumentPosition(btn) & Node.DOCUMENT_POSITION_FOLLOWING),
+      };
+    });
+    ok(
+      !!preview.rows && preview.rows.length === 2 && preview.rows[0].includes('channel') && preview.rows[0].includes('#general')
+        && preview.rows[1].includes('text') && preview.rows[1].includes('テスト') && preview.beforeButtons,
+      `opened[${label}]: ★ 確認は送る欄と値 (channel / text) を操作子より前に並べる (${JSON.stringify(preview)})`,
+    );
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('[role="alertdialog"]'), undefined, { timeout: 5000 });
+    const a7 = await active(page);
+    ok(a7.cls.includes('concierge-input'), `opened[${label}]: ★ 書き込みの確認の Esc は取り消しで、焦点は入力欄へ戻る (${JSON.stringify(a7)})`);
+    await page.locator('.concierge-input').first().focus();
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('[data-concierge="floating"]'), undefined, { timeout: 5000 });
+    const a5 = await active(page);
+    ok(a5.cls.includes('concierge-fab'), `opened[${label}]: ★ Esc で窓が閉じ、焦点は 🤖 へ戻る (${JSON.stringify(a5)})`);
+  };
+
+  // ---- 1. デスクトップ 1280: details / 手入力パネルを開いた全画面 + 浮いた窓 (4 配色) ----
+  const bgs = [];
+  for (const cfg of CONFIGS) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    page.on('download', (d) => d.cancel().catch(() => {}));
+    await init(page, cfg);
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await setupVault(page);
+    await page.addStyleTag({ content: STILL });
+    const applied = await page.evaluate(() => ({
+      design: document.documentElement.getAttribute('data-design'),
+      theme: document.documentElement.getAttribute('data-theme') ?? 'light',
+      bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+    }));
+    bgs.push(applied.bg);
+    ok(applied.design === cfg.design && applied.theme === cfg.theme, `opened[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(applied)})`);
+    const acc = emptyAcc();
+    const ids = await screenIds(page, false);
+    for (const id of ids) {
+      await page.evaluate((i) => {
+        location.hash = i;
+      }, id);
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      const o = await openAll(page);
+      if (o.details + o.manual === 0) continue;
+      await settled(page);
+      acc.screens += 1;
+      acc.opened.details += o.details;
+      acc.opened.manual += o.manual;
+      await measureInto(acc, page, id);
+    }
+    assertAcc(`${cfg.name} · 開いた画面`, acc, 40, 10000);
+    // 浮いた窓 (すっきりは 1280 で列になるので 1100 にして浮かせる)
+    await page.evaluate(() => {
+      location.hash = 'home';
+    });
+    await page.waitForSelector('.sidebar-item[data-service-id="home"][aria-current="page"]', { timeout: 15000 });
+    if (cfg.design === 'clean') await page.setViewportSize({ width: 1100, height: 900 });
+    await settled(page);
+    await floatingChecks(page, cfg.name);
+    await ctx.close();
+  }
+  ok(new Set(bgs).size === 4, `opened: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
+
+  // ---- 2. スマホ 412×915: ドロワーのキーボードの道・シート・全画面の字 (4 配色) ----
+  for (const cfg of CONFIGS) {
+    const label = `スマホ · ${cfg.name}`;
+    const ctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+    const page = await ctx.newPage();
+    page.on('download', (d) => d.cancel().catch(() => {}));
+    await init(page, cfg);
+    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await setupVault(page);
+    await page.addStyleTag({ content: STILL });
+    await settled(page);
+    const closed = await inertOf(page);
+    ok(closed.sidebar === true && closed.main === false, `opened[${label}]: ★ 閉じたドロワーは inert (画面の外へ滑らせた 74 項目が焦点を取らない) (${JSON.stringify(closed)})`);
+    const menu = page.locator('button.menu-btn').first();
+    await menu.focus();
+    await page.keyboard.press('Shift+Tab');
+    const back = await active(page);
+    ok(back.inSidebar !== true, `opened[${label}]: ★ ☰ から Shift+Tab しても閉じたドロワーへ入らない (${JSON.stringify(back)})`);
+    await menu.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('.app.nav-open', { timeout: 10000 });
+    await settled(page);
+    const a1 = await active(page);
+    const opened = await inertOf(page);
+    ok(
+      a1.cls.includes('drawer-close') && opened.main === true && opened.sidebar === false,
+      `opened[${label}]: ★ 開いたら焦点は ✕ へ・暗幕の後ろの本文は inert (${JSON.stringify(a1)} ${JSON.stringify(opened)})`,
+    );
+    let behind = null;
+    for (let i = 0; i < 90 && behind === null; i++) {
+      await page.keyboard.press('Tab');
+      const a = await active(page);
+      if (a.inMain === true) behind = { step: i + 1, a };
+    }
+    ok(behind === null, `opened[${label}]: ★ 開いている間、Tab は暗幕の後ろの本文へ出ない (90 回)${behind ? ` · ${behind.step} 回目で ${JSON.stringify(behind.a)}` : ''}`);
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
+    const a2 = await active(page);
+    const after = await inertOf(page);
+    ok(
+      a2.cls.includes('menu-btn') && after.sidebar === true && after.main === false,
+      `opened[${label}]: ★ Esc で閉じると焦点は ☰ へ戻り、本文の inert は外れてドロワーが inert に戻る (${JSON.stringify(a2)} ${JSON.stringify(after)})`,
+    );
+    await floatingChecks(page, label);
+    // 全画面の字 (スマホ幅の地は `.main` の `--panel` —— `transparent` だと光輪の上に字が載る)
+    const acc = { screens: 0, text: [] };
+    const ids = await screenIds(page, true);
+    for (const id of ids) {
+      await page.evaluate((i) => {
+        location.hash = i;
+      }, id);
+      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await settled(page);
+      acc.screens += 1;
+      acc.text.push(...tag(await page.evaluate(textExpr), id));
+    }
+    const textV = violationsOf(acc.text);
+    ok(acc.screens >= 60 && acc.text.length >= 8000, `opened[${label}]: 全画面の字を測れた (画面 ${acc.screens}・字 ${acc.text.length} 行)`);
+    ok(
+      textV.length === 0,
+      `opened[${label}]: ★ スマホ幅の全画面の字は 4.5:1 (大きい字 3:1) 以上 (WCAG 1.4.3)${textV.length ? ` · 割った ${textV.length} 行 / ${new Set(textV.map((r) => r.page)).size} 画面: ${textSummary(textV)}` : ''}`,
+    );
+    await ctx.close();
+  }
+
+  // ---- 3. 測定器そのものの対照 (about:blank): inert の下は「無い」と数える ----
+  const pctx = await browser.newContext({ viewport: { width: 800, height: 600 } });
+  const pp = await pctx.newPage();
+  await pp.goto('about:blank');
+  await pp.addStyleTag({ content: 'body{margin:0;background:#ffffff;font:14px sans-serif}' });
+  await pp.evaluate(() => {
+    const host = document.createElement('div');
+    host.style.cssText = 'position:relative;width:780px;height:560px';
+    const add = (parent, probe, style) => {
+      const b = document.createElement('button');
+      b.setAttribute('data-probe', probe);
+      b.setAttribute('aria-label', probe);
+      b.style.cssText = style;
+      b.textContent = '·';
+      parent.appendChild(b);
+    };
+    const box = document.createElement('div');
+    box.setAttribute('inert', '');
+    box.style.cssText = 'position:absolute;left:10px;top:10px';
+    add(box, 'inside-inert', 'width:10px;height:10px;padding:0');
+    host.appendChild(box);
+    add(host, 'outside-a', 'position:absolute;left:10px;top:200px;width:10px;height:10px;padding:0');
+    add(host, 'outside-b', 'position:absolute;left:22px;top:200px;width:10px;height:10px;padding:0');
+    document.body.appendChild(host);
+  });
+  await modality(pp);
+  const probe = await pp.evaluate(L.controlsExpression({ focusSample: 50 }));
+  const has = (rows, name) => rows.some((r) => r.html.includes(`data-probe="${name}"`));
+  ok(
+    !has(probe.targets, 'inside-inert') && !has(probe.focus, 'inside-inert'),
+    `opened: 対照 ★ inert の下の操作子は「無い」と数える (閉じたドロワーの項目を母集団に入れない) (目標 ${probe.targets.length}・焦点 ${probe.focus.length})`,
+  );
+  ok(
+    has(probe.targets, 'outside-a') && has(probe.focus, 'outside-a') && L.targetViolations(probe.targets.filter((r) => r.html.includes('data-probe="outside-'))).length === 2,
+    'opened: 対照 inert の外の 10px の目標 2 つは数えて、間隔の例外を満たさず割ったと測る (針は生きている)',
+  );
+  await pctx.close();
+}
+
+async function hardResetSuite(browser) {
+  console.log('--- ハードリセットは保管庫だけでなく全媒体を消す (パス 136) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.goto(FILE + '#overview', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  // 前の人の状態: 料金プラン (手入力欄の前提)・隣人の鍵 (別のアプリの物 —— file:// は生成元を共有しうる)・
+  // 気分の記録・会話履歴 (localStorage)・PKCE の種 (sessionStorage)。addInitScript は再読込のたびに
+  // 書き直すので使わない (消えたかどうかを見る検査が空になる)。
+  await page.evaluate(() => {
+    localStorage.setItem('servicehub.plan', 'enterprise');
+    localStorage.setItem('other-app.keep', '1');
+    localStorage.setItem('emotions.store', JSON.stringify({ v: 1, entries: [{ date: '2026-09-09', score: 2, note: 'e2e-secret-note' }] }));
+    localStorage.setItem('chatbot-history', JSON.stringify([{ role: 'user', content: 'e2e-secret-chat' }]));
+    sessionStorage.setItem('pkce.verifier', 'e2e-secret-verifier');
+  });
+  // 前の人の業務レコード (IndexedDB business-hub-data): 事業を 1 件、画面から足す
+  await gotoService(page, '#overview', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  await page.fill('input[aria-label="事業名"]', '前の人の事業');
+  await page.fill('input[aria-label="開始時期"]', '2024-04');
+  await page.click('button:has-text("事業を追加")');
+  await page.waitForSelector('[data-business-unit]', { timeout: 30000 });
+  ok((await page.locator('[data-business-unit]').count()) === 1, 'hardReset: 前の人の事業が 1 件保存されている (消す前)');
+
+  // ── ハードリセット ──
+  await gotoService(page, '#settings', 'text=すべてのデータを削除');
+  const explain = await page.locator('body').innerText();
+  ok(
+    explain.includes('業務レコード') && explain.includes('消えない物'),
+    'hardReset: ★ 説明が消す物 (業務レコード …) と消えない物を言う',
+  );
+  await page.getByRole('button', { name: 'すべてのデータを削除…' }).click();
+  await page.locator('input[placeholder="DELETE"]').fill('DELETE');
+  await page.getByRole('button', { name: '確定して削除' }).click();
+  const firstTime = await page
+    .waitForSelector('text=はじめてのご利用', { timeout: 30000 })
+    .then(() => true)
+    .catch(() => false);
+  ok(firstTime, 'hardReset: 実行後は最初のセットアップ画面 (保管庫が消えた)');
+  const left = await page.evaluate(() => ({
+    emotions: localStorage.getItem('emotions.store'),
+    chat: localStorage.getItem('chatbot-history'),
+    plan: localStorage.getItem('servicehub.plan'),
+    verifier: sessionStorage.getItem('pkce.verifier'),
+    neighbour: localStorage.getItem('other-app.keep'),
+  }));
+  ok(
+    left.emotions === null && left.chat === null && left.verifier === null,
+    `hardReset: ★ 気分の記録・会話履歴・PKCE の種が消えた (実際 ${JSON.stringify(left)})`,
+  );
+  ok(left.plan === null, 'hardReset: ★ 料金プランの選択 (servicehub.plan) も消えた');
+  ok(left.neighbour === '1', 'hardReset: ★ 隣人の鍵 (other-app.keep) は消さない');
+  if (!firstTime) {
+    ok(false, 'hardReset: 最初のセットアップ画面が出ないので、次の人の検査は行えない');
+    await ctx.close();
+    return;
+  }
+
+  // ── 次の人: 新しい保管庫を作っても、前の人の事業は見えない ──
+  await setupVault(page);
+  await page.evaluate(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await gotoService(page, '#overview', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  const units = await page.locator('[data-business-unit]').count();
+  const afterText = await page.locator('body').innerText();
+  ok(
+    units === 0 && !afterText.includes('前の人の事業'),
+    `hardReset: ★ 次の人には前の人の事業が見えない (事業 ${units} 件)`,
+  );
+  ok(errs.length === 0, `hardReset: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+/**
+ * **待ちの余裕を測る** (`SERVICE_HUB_E2E_WAIT_MARGIN=<path>` のときだけ)。
+ *
+ * ## なぜ「再現」ではなく「余裕」を測るのか
+ *
+ * 2026-09-22 (パス 393) に `e2e` (FULL) が**連鎖の中で 1 度だけ** `TimeoutError` で
+ * 落ちた。単独で再走すると 455 件 ❌ 0 で、忠実な条件 (`perf → e2e → e2e:lite` を
+ * 続けて) でも **2 反復とも再現しなかった** (パス 395 / 396)。
+ * 反復で捕まえるのは費用が高く (1 回 ≒ 15 分)、外れたときに**何も分からない**。
+ *
+ * 時間切れは「いちばん余裕の無い待ち」から順に起きる。だから**落ちるのを待つ代わりに、
+ * 待ちごとの実測 ÷ 制限を測る** —— 12 秒かかる 15 秒の待ちが在れば、それが容疑者で
+ * あり、直しは「制限を上げる」か「遅い原因を直す」のどちらかに決まる。
+ * どの待ちも制限の数 % しか使っていないなら、**時間切れの原因は待ちの側ではない**と
+ * 言える (起動・ハング・別プロセスの奪い合いなど)。**どちらに転んでも結論が出る。**
+ *
+ * 母集団は**明示の待ちだけではない** (下の `WATCHED` にその理由)。
+ *
+ * 既定では**何もしない** —— 計測は page の 6 つのメソッドを包むので、常時有効に
+ * すると全 suite の実行にわずかな費用が乗るし、落ちたときの stack に包みが挟まる。
+ */
+/** いま走っている suite の名前 (待ちの余裕の記録を suite に帰属させるため)。 */
+let CURRENT_SUITE = '(boot)';
+
+function installWaitMarginRecorder(browser) {
+  const out = process.env.SERVICE_HUB_E2E_WAIT_MARGIN;
+  if (!out) return;
+  const rows = [];
+  const flush = () => {
+    try {
+      fs.writeFileSync(out, `${JSON.stringify(rows)}\n`);
+    } catch {
+      /* 計測の失敗で e2e を落とさない */
+    }
+  };
+  process.on('exit', flush);
+  // **既定の制限も記録する** (呼び手が省略したときは Playwright の既定 30000 が
+  // 効くので —— この runner は `setDefaultTimeout` を呼んでいない —— その数を
+  // 書いておかないと割合が計算できない)。
+  const DEFAULT_TIMEOUT_MS = 30000;
+  // 明示の待ちだけでは母集団が足りない。**`goto` / `click` / `fill` も時間切れを
+  // 投げる** —— Playwright はこの 3 つでも要素 (や読み込み) を自動で待ち、
+  // どれも既定 30 秒である。実測 (2026-09-22) で runner は
+  // `page.goto` 36 / `page.click` 18 / `page.fill` 14 か所を持ち、しかも
+  // **11 MB の file:// を読ませる `goto` は、奪い合いの下でいちばん遅くなりうる
+  // 操作**である。明示の待ちだけを測って「余裕は十分」と言うと、
+  // いちばん重い容疑者を母集団から外したことになる。
+  const WATCHED = ['waitForSelector', 'waitForFunction', 'waitForURL', 'goto', 'click', 'fill'];
+  /**
+   * **Locator の側も測る** —— ここを外すと母集団の半分以上が映らない。
+   *
+   * 実測 (2026-09-22 · この runner): `.click(` は **135 か所のうち 117 が
+   * `page.` 以外**で、ほぼ全部が `page.getByRole(…).click()` /
+   * `page.locator(…).first().click()` の形である (`.fill(` も 121 / 107)。
+   * Locator の action は**要素が操作可能になるまで自動で待ち**、既定は
+   * 30 秒 —— つまり「要素が出てこない」で時間切れになる本命がここに居る。
+   * page のメソッドだけ包んで「余裕は十分」と言うと、**数えなかった 220 の
+   * 操作について何も言っていない**ことになる (パス 334 / 368 と同じ形)。
+   *
+   * 包み方は Proxy で、**連鎖したら包み直す** (`.first()` / `.filter()` /
+   * `.locator()` / `.getByRole()` は新しい Locator を返す)。Locator かどうかは
+   * 名前ではなく**形** (`click` と `first` を関数として持つ) で見分ける ——
+   * 版が上がって名前が増えても追随する。
+   */
+  const LOC_FACTORIES = ['locator', 'getByRole', 'getByLabel', 'getByPlaceholder', 'getByText', 'getByTestId', 'getByTitle', 'getByAltText'];
+  // 自動で待つ Locator のメソッド。`count()` / `isVisible()` / `allTextContents()` /
+  // `evaluateAll()` は**待たない**ので入れない (入れると「0 ms の待ち」が母集団を
+  // 薄めて、割合の分母が意味を失う)。`evaluate()` は要素を待つので入れる ——
+  // 実物にも 5 か所在る (`shell` の算出スタイルの確認)。
+  // 一致は `shared/__tests__/e2eWaitMargin.test.ts` が**両方向**に留める。
+  const LOC_WAITS = new Set([
+    'click', 'dblclick', 'fill', 'check', 'uncheck', 'press', 'pressSequentially', 'type', 'hover',
+    'selectOption', 'selectText', 'setInputFiles', 'tap', 'focus', 'blur', 'dragTo',
+    'waitFor', 'scrollIntoViewIfNeeded', 'evaluate',
+    'textContent', 'innerText', 'innerHTML', 'inputValue', 'getAttribute', 'isChecked', 'isEnabled',
+    'isDisabled', 'isEditable', 'boundingBox', 'screenshot',
+  ]);
+  const looksLikeLocator = (v) => v !== null && typeof v === 'object'
+    && typeof v.click === 'function' && typeof v.first === 'function';
+  const timed = (fn, self, label) => async (...args) => {
+    const opts = args.find((a) => a && typeof a === 'object' && 'timeout' in a);
+    const limit = opts && typeof opts.timeout === 'number' ? opts.timeout : DEFAULT_TIMEOUT_MS;
+    const started = Date.now();
+    try {
+      return await fn.apply(self, args);
+    } finally {
+      rows.push({ suite: CURRENT_SUITE, what: label, ms: Date.now() - started, limit });
+    }
+  };
+  const wrapLocator = (loc, label) => new Proxy(loc, {
+    get(target, prop) {
+      const v = target[prop];
+      if (typeof v !== 'function') return v;
+      if (LOC_WAITS.has(prop)) return timed(v, target, `${String(prop)}@${label}`);
+      return (...args) => {
+        const r = v.apply(target, args);
+        // 連鎖は包み直す。**戻り値が Locator かを形で見る** ——
+        // `count()` は Promise を返すので通り抜ける (Promise に click は無い)。
+        return looksLikeLocator(r) ? wrapLocator(r, `${label}>${String(prop)}${args.length > 0 && typeof args[0] !== 'object' ? `(${String(args[0]).slice(0, 40)})` : ''}`) : r;
+      };
+    },
+  });
+  const wrap = (page) => {
+    for (const method of WATCHED) {
+      const orig = page[method];
+      if (typeof orig !== 'function') continue;
+      page[method] = async (...args) => {
+        const opts = args.find((a) => a && typeof a === 'object' && 'timeout' in a);
+        const limit = opts && typeof opts.timeout === 'number' ? opts.timeout : DEFAULT_TIMEOUT_MS;
+        const started = Date.now();
+        try {
+          return await orig.apply(page, args);
+        } finally {
+          const ms = Date.now() - started;
+          // 待った物の見分けは第 1 引数の綴り (関数なら 'fn')。長い式は切る。
+          // `goto` の引数は 11 MB の絶対パスなので**末尾の名前だけ**にする
+          // (`file:///…/standalone.html` が 1 行を埋めると表が読めない)。
+          const raw = typeof args[0] === 'string' ? args[0] : 'fn';
+          const what = `${method}:${method === 'goto' ? raw.split('/').pop() : raw.slice(0, 80)}`;
+          rows.push({ suite: CURRENT_SUITE, what, ms, limit });
+        }
+      };
+    }
+    for (const factory of LOC_FACTORIES) {
+      const orig = page[factory];
+      if (typeof orig !== 'function') continue;
+      page[factory] = (...args) => {
+        const loc = orig.apply(page, args);
+        const arg0 = typeof args[0] === 'string' ? args[0].slice(0, 50) : String(args[0] ?? '');
+        return looksLikeLocator(loc) ? wrapLocator(loc, `${factory}(${arg0})`) : loc;
+      };
+    }
+    return page;
+  };
+  const origNewContext = browser.newContext.bind(browser);
+  browser.newContext = async (...a) => {
+    const ctx = await origNewContext(...a);
+    const origNewPage = ctx.newPage.bind(ctx);
+    ctx.newPage = async (...b) => wrap(await origNewPage(...b));
+    return ctx;
+  };
+}
+
+(async () => {
+  console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
+  const browser = await pw.chromium.launch({
+    ...(EXEC ? { executablePath: EXEC } : {}),
+    args: ['--no-sandbox'],
+  });
+  installWaitMarginRecorder(browser);
+  // `SERVICE_HUB_E2E_ONLY=dataOrigin,manualData` で一部だけ流す。
+  // 目的は対照実験 — 「本体を壊したらこの検査が実際に落ちるのか」を確かめる時、
+  // 全 suite (数分) を回さずに済む。既定 (未設定) は全 suite。
+  const only = (process.env.SERVICE_HUB_E2E_ONLY ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+  // 知らない名前は**落とす**。2026-09-05 に `kessanTaxSuite` (正しくは kessanTax) と書いて
+  // 1 つも走らないまま「ALL E2E CHECKS PASSED」が出た —— 空振りを合格と読む穴。
+  /**
+   * **suite ごとの床** (2026-09-17 · パス 303)。
+   *
+   * それまで床は「合計 0 件」だけだった。suite の中の `ok()` は `for` の中や
+   * `if (frame) { … }` の中に在るので、対象の一覧が空になる・分岐が閉じるだけで
+   * **その suite の検査が黙って減り、合計は緑のまま**になる (2026-09-05 の
+   * 「知らない suite 名で 0 件走って PASSED」の、1 段下の同じ穴)。
+   *
+   * **表に書くのは実測値ただ 1 つで、床は導く** (2026-09-20 · パス 346)。
+   * それまで表は「床」と「`// 実測 N`」の 2 つを手書きで持っており、実測すると
+   * **3 つの文がずれていた**:
+   *
+   *   - `paperAccount` の注記 10 に対し実物 **13** —— その床 8 は実測の **62%**
+   *     (意図は 85%)。5 件減っても鳴らない状態だった
+   *   - `theme` の床 10 は注記 14 に対して **71%** (規則どおりなら 11)
+   *   - この docblock 自身の「実測 (合計 395 件) の 85%」 —— 実際の根拠は
+   *     注記の合計 **452** で、`MIN_TOTAL_CHECKS` 384 はその **85.0%** だった。
+   *     数は保たれていたのに、**その数が何の 85% なのかを述べた文だけが古びていた**
+   *
+   * 今は `floorOf()` が実測値から床を計算するので、2 つがずれる形が無い。
+   * 検査を減らす変更をしたら**実測値を下げる** (床は自動で追随する)。
+   * 増やす分は急がなくてよい —— 床は「減っていないこと」しか言わない。
+   * 名前の一覧はこの表から導く (`SUITES`) ので、表に無い suite は呼べない。
+   *
+   * 形と算術は `src/shared/__tests__/e2eSuiteFloors.test.ts` が毎回の npm test で見る
+   * (ブラウザを起こさずに読める部分だけ —— 実測値が実物と合っているかは、
+   * 全 suite を回した後にこの runner 自身が注意書きとして印字する)。
+   */
+  /** 床 = 実測の 85% (切り捨て・最低 1)。**規則はここ 1 か所だけ。** */
+  const floorOf = (measured) => Math.max(1, Math.floor(measured * 0.85));
+  const SUITE_TABLE = [
+    // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
+    ['desktop', desktopSuite, 62],
+    ['manualData', manualDataSuite, 19],
+    ['dataOrigin', dataOriginSuite, 9],
+    ['credential', credentialSuite, 8],
+    ['businessComparison', businessComparisonSuite, 13],
+    ['kessanTax', kessanTaxSuite, 34],
+    ['frameGuard', frameGuardSuite, 7],
+    ['noBeacon', noBeaconSuite, 11],
+    ['vaultPassword', vaultPasswordSuite, 6],
+    ['credentialEgress', credentialEgressSuite, 13],
+    ['proxyEnvelope', proxyEnvelopeSuite, 13],
+    ['cspEnforced', cspEnforcedSuite, 5],
+    ['vaultOpacity', vaultOpacitySuite, 18],
+    ['crossTabLock', crossTabLockSuite, 5],
+    // パス 499: 別のタブの書き込みが開いたままの画面に届き、古い欄の保存は断る
+    ['crossTabData', crossTabDataSuite, 11],
+    // パス 500: 最新を採用する欄は保存値で開き、1 欄の保存で他の欄を戻さない・古い欄の保存は断る
+    ['latestForm', latestFormSuite, 14],
+    ['storageDurability', storageDurabilitySuite, 21],
+    ['hardReset', hardResetSuite, 8],
+    ['securityPosture', securityPostureSuite, 11],
+    ['thirdPartyDisclosure', thirdPartyDisclosureSuite, 11],
+    ['realtime', realtimeSuite, 7],
+    ['phone', phoneSuite, 10],
+    ['talent', talentSuite, 14],
+    ['teamRadar', teamRadarSuite, 17],
+    ['demoMix', demoMixSuite, 10],
+    ['paperAccount', paperAccountSuite, 13],
+    ['serviceAdvice', serviceAdviceSuite, 15],
+    ['hydroponics', hydroponicsSuite, 24],
+    ['parameters', parameterSuite, 11],
+    ['writeCeiling', writeCeilingSuite, 9],
+    ['aiCeiling', aiCeilingSuite, 10],
+    ['best3', best3Suite, 9],
+    ['theme', themeSuite, 14],
+    ['design', designSuite, 32],
+    // パス 503: 文字色の対比 (WCAG 2.x AA) を実機で 4 配色 × 全画面。実測値は初回の実行で確かめる
+    ['contrast', contrastSuite, 17],
+    // パス 504: 操作子の輪郭・焦点の輪・押せる大きさ・キーボード・名前を実機で 4 配色 × 全画面 + スマホ。実測値は初回の実行で確かめる
+    // 2026-10-07 (パス 506 の直後): スマホ 2 配色に「開いたドロワーも測った」の床を足して 61 → 63
+    ['controls', controlsSuite, 63],
+    // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
+    ['opened', openedSuite, 155],
+    ['tablet', tabletSuite, 2],
+    ['shell', shellSuite, 27],
+  ];
+  const SUITES = SUITE_TABLE.map(([name]) => name);
+  /**
+   * 全 suite を回したときの合計の床。一部だけ回すときは掛けない。
+   * **表の実測値の合計から導く** —— 手書きだった頃は「実測 395 の約 88%」と
+   * 書いてあり、実際の根拠 (注記合計 452 の 85.0%) と二重にずれていた (パス 346)。
+   */
+  const MIN_TOTAL_CHECKS = floorOf(SUITE_TABLE.reduce((n, [, , measured]) => n + measured, 0));
+  const unknown = only.filter((n) => !SUITES.includes(n));
+  if (unknown.length > 0) {
+    console.error(`❌ SERVICE_HUB_E2E_ONLY に知らない suite: ${unknown.join(', ')} (使える名前: ${SUITES.join(', ')})`);
+    await browser.close();
+    process.exit(1);
+  }
+  const run = (name) => {
+    if (!SUITES.includes(name)) throw new Error(`suite '${name}' が SUITES に無い — 登録漏れ`);
+    return only.length === 0 || only.includes(name);
+  };
+  if (only.length > 0) console.log(`(SERVICE_HUB_E2E_ONLY=${only.join(',')})`);
+  /** 実測値が古びている suite (走った数 ≠ 表の値)。全 suite を回したときだけ印字する。 */
+  const stale = [];
+  for (const [name, suite, measured] of SUITE_TABLE) {
+    if (!run(name)) continue;
+    const floor = floorOf(measured);
+    const before = checks;
+    CURRENT_SUITE = name;
+    await suite(browser);
+    const ran = checks - before;
+    console.log(`  (${name}: ${ran} 件)`);
+    if (ran !== measured) stale.push(`${name}: 表 ${measured} → 実物 ${ran}`);
+    if (ran < floor) {
+      // 検査そのものは通っていても、走った数が床を割れば落とす —— 「減ったのに緑」を受け取らない。
+      failures.push(`${name}: 走った検査 ${ran} 件 < 床 ${floor} 件 (suite が黙って縮んだ。減らす変更なら SUITE_TABLE の実測値を読んで下げる)`);
+      console.log(`  ❌ ${name}: 走った検査 ${ran} 件 < 床 ${floor} 件`);
+    }
+  }
+  /*
+   * **表の実測値が実物とずれていたら言う** (2026-09-20 · パス 346)。落とさない ——
+   * 検査を増やした直後は必ずずれるし、床は「減っていないこと」しか言わないので
+   * 増えた側は危険ではない。だが黙っていると `paperAccount` のように
+   * **床が意図の 62% まで緩んだまま 1 か月気付かれない**。数えられる物は言う。
+   */
+  if (only.length === 0 && stale.length > 0) {
+    console.log(`\n⚠ SUITE_TABLE の実測値が古い suite が ${stale.length} 件 (床が意図より緩みます):`);
+    for (const line of stale) console.log(`    ${line}`);
+  }
+  await browser.close();
+  if (failures.length > 0) {
+    console.log(`\nFAILED: ${failures.length} 件`);
+    process.exit(1);
+  }
+  if (checks === 0) {
+    // 走らなかった検査は「合格」ではない (対照が鳴らないのと同じ)。
+    console.error('\n❌ 検査が 1 件も走っていません (suite の選択か、検査の配線が壊れています)');
+    process.exit(1);
+  }
+  if (only.length === 0 && checks < MIN_TOTAL_CHECKS) {
+    console.error(`\n❌ 走った検査が ${checks} 件で、全 suite の床 ${MIN_TOTAL_CHECKS} 件を割っています (検査の配線が黙って減った)`);
+    process.exit(1);
+  }
+  console.log(`\nALL E2E CHECKS PASSED (${checks} 件)`);
+})().catch((e) => {
+  console.error('FATAL:', e);
+  process.exit(1);
+});

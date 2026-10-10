@@ -1,0 +1,1418 @@
+/**
+ * 資金調達レーダー (Funding Radar) の純粋関数コア。
+ *
+ * 補助金 / 助成金 / 融資 / 日本政策金融公庫 / 給付金 / クラウドファンディング
+ * といった資金調達の実績・予定を集計し、4 種のチャート (レーダー / 折れ線 /
+ * 円 / 棒) 用のデータを生成する。会計ソフト連携 (MoneyForward 等) からの
+ * 月次キャッシュフローと、任意の株式投資 (stocks) のポートフォリオ評価額も
+ * 取り込んで「資金全体像」を可視化する。
+ *
+ * **重要 — 本機能は概算の可視化であり、財務助言・採択可否の保証ではありません。**
+ * 補助金等の採択・融資審査は各実施機関の判断によります。金額・要件・締切は
+ * 必ず公式情報 (各省庁 / 日本政策金融公庫 / J-Net21 等) で確認してください。
+ *
+ * UI から切り離して単体テスト可能にするため、集計はすべてここに集約する。
+ */
+
+// 消費税の標準税率は税計算モジュールの定数が唯一の出所 (台帳
+// `tax.consumptionStandardRate` の既定値もこれを参照している)。ここで
+// リテラルを書き写すと、法定値が 2 か所に分かれて片方だけ古くなる。
+import { nonNeg } from './num';
+import { CONSUMPTION_TAX_STANDARD } from './taxCalc';
+
+// --- 資金調達の種別 ----------------------------------------------------
+
+/** 資金調達手段の種別。レーダーチャートの 6 軸に対応する。 */
+export type FundingKind =
+  | 'subsidy' // 補助金 (経産省・中小企業庁等。原則後払い・返済不要)
+  | 'grant' // 助成金 (厚労省等。要件を満たせば受給・返済不要)
+  | 'loan' // 融資 (民間金融機関等)
+  | 'jfc' // 日本政策金融公庫
+  | 'benefit' // 給付金 (持続化給付金等の公的給付)
+  | 'crowdfunding'; // クラウドファンディング
+
+/** レーダーチャートの軸ラベル (種別と同順)。 */
+export const FUNDING_KINDS: readonly FundingKind[] = [
+  'subsidy',
+  'grant',
+  'loan',
+  'jfc',
+  'benefit',
+  'crowdfunding',
+];
+
+/**
+ * その資金が課税対象 (益金 / 事業収入に算入) かを返す。
+ *
+ * - 補助金・助成金・給付金: 原則「益金 (事業所得の収入)」として**課税対象**。
+ *   ※ 国庫補助金等には圧縮記帳の特例 (課税繰延) があるが、ここでは概算のため
+ *   特例なしの保守的見積りとする。
+ * - 購入型クラウドファンディング: 実質は前受 (売上) なので**課税対象**。
+ * - 融資・日本政策金融公庫: 借入金 (負債) であり**非課税**。
+ *
+ * 本判定は概算であり、実際の課税関係 (圧縮記帳・寄附型/株式型CFの別・消費税)
+ * は税理士・国税庁の公式情報で確認すること。
+ */
+export function isTaxableFunding(kind: FundingKind): boolean {
+  switch (kind) {
+    case 'subsidy':
+    case 'grant':
+    case 'benefit':
+    case 'crowdfunding':
+      return true;
+    case 'loan':
+    case 'jfc':
+      return false;
+    // 全 FundingKind を case で網羅済み。default は TS の never チェックで型上到達不能。
+    // Stryker disable next-line ConditionalExpression,BlockStatement
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+/** 消費税の区分。 */
+export type ConsumptionTaxTreatment =
+  | 'taxable' // 課税売上 (対価性あり。購入型クラウドファンディング)
+  | 'tax-exempt' // 不課税 (対価性なし。補助金・助成金・給付金)
+  | 'non-taxable'; // 課税対象外 (融資・公庫の借入金)
+
+/**
+ * 資金の消費税の区分を返す。
+ *
+ * - 補助金・助成金・給付金: 対価性がなく**不課税** (消費税は課されない)。
+ * - 購入型クラウドファンディング: リターン (商品・サービス) の対価なので
+ *   **課税売上** (消費税の申告納付義務が生じうる)。
+ * - 融資・公庫: 借入金で課税対象外。
+ *
+ * ※ 補助金は不課税だが、その資金で課税仕入れを行うと「特定収入に係る仕入税額
+ * 控除の調整」が必要になる場合がある (概算では未反映)。寄附型/株式型CFは課税
+ * 関係が異なるため、確定申告は税理士・国税庁で確認すること。
+ */
+export function consumptionTaxTreatment(kind: FundingKind): ConsumptionTaxTreatment {
+  switch (kind) {
+    case 'subsidy':
+    case 'grant':
+    case 'benefit':
+      return 'tax-exempt';
+    case 'crowdfunding':
+      return 'taxable';
+    case 'loan':
+    case 'jfc':
+      return 'non-taxable';
+    // 全 FundingKind を網羅済み。default は never チェックで型上到達不能。
+    // Stryker disable next-line ConditionalExpression,BlockStatement
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+// --- 消費税: 特定収入に係る仕入税額控除の調整 ------------------------------
+
+/**
+ * その資金が消費税法上の**特定収入**に該当するかを返す。
+ *
+ * 特定収入とは「対価性のない収入」のうち、補助金・助成金・給付金・寄附金等で
+ * 課税仕入れ等に充てられるもの。本則課税 (簡易課税でない) の事業者で、
+ * 特定収入割合が 5% を超えると仕入税額控除の調整が必要になる
+ * (消費税法 §60④, 消令 §75)。
+ *
+ * - 補助金・助成金・給付金: 不課税かつ対価性なし → **特定収入**。
+ * - 購入型クラウドファンディング: 対価性のある課税売上 → 特定収入ではない。
+ * - 融資・公庫: 借入金 (元本) で、そもそも収入 (益金) ではない → 特定収入ではない
+ *   (法令上も借入金は特定収入から除外されている)。
+ *
+ * ※ 補助金等でも、人件費など課税仕入れに充てられない使途が明らかなものは
+ * 特定収入から除かれる場合がある (概算では区分しない保守的判定)。
+ */
+export function isSpecifiedIncome(kind: FundingKind): boolean {
+  return consumptionTaxTreatment(kind) === 'tax-exempt';
+}
+
+/**
+ * 特定収入割合の調整が不要となる基準値 (5%)。特定収入割合がこの値**以下**
+ * なら調整なし。超える場合に仕入税額控除の調整が生じる (消令 §75④)。
+ */
+export const SPECIFIED_INCOME_THRESHOLD = 0.05;
+
+/** 特定収入に係る仕入税額控除の調整 (概算) の結果。 */
+export interface SpecifiedIncomeAdjustment {
+  /** 確定済みの特定収入 (補助金・助成金・給付金) の合計額。 */
+  readonly specifiedIncome: number;
+  /** 分母となる総収入 (課税売上 + 免税・非課税売上 + 特定収入) の概算。 */
+  readonly totalIncome: number;
+  /** 特定収入割合 = 特定収入 ÷ 総収入 (0..1)。総収入 0 なら 0。 */
+  readonly specifiedIncomeRatio: number;
+  /** 特定収入割合が 5% を超え、仕入税額控除の調整が必要か。 */
+  readonly adjustmentRequired: boolean;
+  /**
+   * 控除できなくなる仕入税額の概算 (円)。本則課税・課税売上割合95%以上・
+   * 使途不特定を前提に `課税仕入れに係る消費税額 × 調整割合` で算出する。
+   * 調整割合は特定収入のうち課税仕入れに充てた分の割合 (概算では特定収入割合)。
+   * 調整不要 (割合 ≤ 5% / 簡易課税) のときは 0。
+   */
+  readonly nonDeductibleInputTax: number;
+  /** 簡易課税かどうか (簡易課税では本調整は不要)。 */
+  readonly simplified: boolean;
+}
+
+/**
+ * 補助金等 (特定収入) を受け取った本則課税事業者の「特定収入に係る仕入税額
+ * 控除の調整」を概算する純粋関数。
+ *
+ * 本則課税の事業者は、特定収入 (補助金・助成金・給付金等) を財源に課税仕入れを
+ * 行うと、その分の仕入税額控除が制限される。特定収入割合が 5% を超える場合に、
+ * 課税仕入れに係る消費税額のうち特定収入で賄った割合を控除対象から除外する。
+ *
+ * モデル (概算): 簡易課税でなく、特定収入割合 > 5% のとき
+ *   調整割合 = 特定収入割合 (使途が課税仕入れに充てられたと仮定する保守的近似)
+ *   控除対象外仕入税額 = 課税仕入れに係る消費税額 × 調整割合
+ * 簡易課税、または特定収入割合 ≤ 5% のときは調整なし (0)。
+ *
+ * **重要 — 本算出は概算であり税務助言ではありません。** 実際の調整は使途特定/
+ * 不特定の区分、課税売上割合 95% 未満の按分、調整割合の按分計算等で大きく
+ * 変わります。確定申告は税理士・国税庁で確認してください。
+ *
+ * @param items 資金調達案件 (確定分の特定収入を集計する)
+ * @param options.otherIncome 補助金等以外の総収入 (課税売上＋免税・非課税売上)
+ *   の概算。割合の分母に加える。既定 0。
+ * @param options.taxableInputTax 当期の課税仕入れに係る消費税額 (仕入控除税額)
+ *   の概算。控除対象外額の算定に使う。既定 0。
+ * @param options.simplified 簡易課税かどうか (true なら調整は常に不要)。既定 false。
+ */
+export function specifiedIncomeAdjustment(
+  items: readonly FundingItem[],
+  options: {
+    readonly otherIncome?: number;
+    readonly taxableInputTax?: number;
+    readonly simplified?: boolean;
+  } = {},
+): SpecifiedIncomeAdjustment {
+  const otherIncome = nonNeg(options.otherIncome ?? 0);
+  const taxableInputTax = nonNeg(options.taxableInputTax ?? 0);
+  const simplified = options.simplified ?? false;
+  let specifiedIncome = 0;
+  for (const it of items) {
+    if (!isSecured(it.status)) continue;
+    if (isSpecifiedIncome(it.kind)) specifiedIncome += nonNeg(it.amount);
+  }
+  const totalIncome = specifiedIncome + otherIncome;
+  const specifiedIncomeRatio = totalIncome > 0 ? specifiedIncome / totalIncome : 0;
+  // 簡易課税では本調整は不要。本則課税かつ割合が 5% 超のときだけ調整する。
+  const adjustmentRequired = !simplified && specifiedIncomeRatio > SPECIFIED_INCOME_THRESHOLD;
+  const nonDeductibleInputTax = adjustmentRequired
+    ? Math.round(taxableInputTax * specifiedIncomeRatio)
+    : 0;
+  return {
+    specifiedIncome,
+    totalIncome,
+    specifiedIncomeRatio: Math.round(specifiedIncomeRatio * 10000) / 10000,
+    adjustmentRequired,
+    nonDeductibleInputTax,
+    simplified,
+  };
+}
+
+/** 種別の日本語ラベル。 */
+export function fundingKindLabel(kind: FundingKind): string {
+  switch (kind) {
+    case 'subsidy':
+      return '補助金';
+    case 'grant':
+      return '助成金';
+    case 'loan':
+      return '融資';
+    case 'jfc':
+      return '日本政策金融公庫';
+    case 'benefit':
+      return '給付金';
+    case 'crowdfunding':
+      return 'クラウドファンディング';
+    // Stryker disable next-line ConditionalExpression,BlockStatement
+    default: {
+      // 網羅性チェック (到達不能)。
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+/** 資金調達案件のステータス。 */
+export type FundingStatus =
+  | 'received' // 入金済み
+  | 'approved' // 採択・承認済み (未入金)
+  | 'applied' // 申請中
+  | 'planned'; // 予定・検討中
+
+// --- 資金調達案件 ------------------------------------------------------
+
+/** 1 件の資金調達案件。金額は円 (整数)。 */
+export interface FundingItem {
+  readonly id: string;
+  readonly kind: FundingKind;
+  readonly name: string;
+  /** 申請・予定額 (円)。 */
+  readonly amount: number;
+  readonly status: FundingStatus;
+  /** 入金予定 / 実績の年月 (YYYY-MM)。集計の時系列キーに使う。 */
+  readonly month: string;
+  /** 返済が必要か (融資・公庫は true、補助金・助成金・給付金・CFは原則 false)。 */
+  readonly repayable: boolean;
+  /**
+   * 国庫補助金等で固定資産を取得し**圧縮記帳の特例**を適用するか (任意)。
+   * 適用すると、その年度は補助金収入 (益金) と同額の圧縮損が相殺され、
+   * 当年度は実質非課税となる (課税は減価償却を通じて将来へ繰延)。
+   * 課税対象 (subsidy/grant 等) かつ本フラグが true のとき、当年度の
+   * 課税見込みから除外する。融資・公庫など非課税資金では無視される。
+   */
+  readonly compressedEntry?: boolean;
+  /**
+   * 融資・公庫の返済条件 (任意)。月次の純資金繰りに元利返済 (キャッシュ
+   * アウト) を反映するために使う。返済不要の資金 (補助金等) では無視。
+   */
+  readonly repayment?: RepaymentTerms;
+  /**
+   * 採択・実行の確率 (0..1, 任意)。期待値シナリオ (`expectedScenario`) で
+   * パイプライン案件を加重するために使う。未指定なら `defaultProbability`
+   * (ステータスから推定) を用いる。確定 (received/approved) は実質 1.0。
+   */
+  readonly probability?: number;
+}
+
+/** 融資の返済条件。元利均等返済を前提とする。 */
+export interface RepaymentTerms {
+  /** 年利 (0..1)。例: 0.02 = 年2%。0 で無利息。 */
+  readonly annualRate: number;
+  /** 返済回数 (月数)。1 以上。元金均等返済の回数 (据置期間は含まない)。 */
+  readonly months: number;
+  /** 返済開始の年月 (YYYY-MM)。据置期間がある場合は入金月より後を指定。 */
+  readonly startMonth: string;
+  /**
+   * 据置期間 (月数, 任意)。日本政策金融公庫等でよくある「据置期間中は
+   * 利息のみ支払い、その後元金を `months` 回で元利均等返済」を表す。
+   * 据置中は元金返済 0・利息のみのキャッシュアウトとなる。既定 0 (据置なし)。
+   * 据置は `startMonth` から始まり、元金返済はその後に開始する。
+   */
+  readonly gracePeriodMonths?: number;
+  /**
+   * 返済方式 (任意)。既定 `'equal-payment'` (元利均等: 毎月返済額一定)。
+   * `'equal-principal'` (元金均等: 毎月の元金返済額が一定で、利息が逓減する
+   * ため返済額は前半ほど大きい)。日本政策金融公庫等で選択できる。
+   */
+  readonly method?: RepaymentMethod;
+  /**
+   * 据置期間中の利息の計上方法 (任意)。既定 `'simple'`。
+   * - `'simple'`: 据置中の利息を**都度支払う** (元金は据置開始時の元本のまま、
+   *   据置中の各月に利息のみのキャッシュアウトが発生する)。
+   * - `'compound'`: 据置中の利息を**元本に組み入れる (資本化 / 複利)**。据置中の
+   *   キャッシュアウト (支払) は 0 になり、未払利息が毎月元本へ加算されて複利で
+   *   増える。据置終了後は「膨らんだ元本」を `months` 回で返済するため、返済額・
+   *   総支払利息・amortizationSchedule が `'simple'` より大きくなる。
+   *
+   * 据置期間 (`gracePeriodMonths`) が 0 のときは効果がない。
+   */
+  readonly graceInterestHandling?: GraceInterestHandling;
+}
+
+/** 返済方式。元利均等 (equal-payment) / 元金均等 (equal-principal)。 */
+export type RepaymentMethod = 'equal-payment' | 'equal-principal';
+
+/**
+ * 据置期間中の利息の計上方法。
+ * `'simple'` = 都度支払い (利息のみキャッシュアウト)、
+ * `'compound'` = 元本へ資本化 (複利)。
+ */
+export type GraceInterestHandling = 'simple' | 'compound';
+
+// --- 集計結果 ----------------------------------------------------------
+
+/** 種別ごとの集計 (円グラフ・レーダー用)。 */
+export interface FundingByKind {
+  readonly kind: FundingKind;
+  readonly label: string;
+  /** 確定額 (received + approved)。 */
+  readonly secured: number;
+  /** 申請中・予定を含む合計。 */
+  readonly pipeline: number;
+  readonly count: number;
+}
+
+/** 月次の資金フロー (折れ線・棒グラフ用)。 */
+export interface FundingMonthly {
+  readonly month: string;
+  /** その月に入金が見込まれる資金調達額 (確定ベース・税引前)。 */
+  readonly funding: number;
+  /**
+   * その月の資金調達額の税引後の手残り目安。課税対象資金 (補助金・助成金・
+   * 給付金・購入型CF) には実効税率を課し、非課税 (融資・公庫) と圧縮記帳
+   * 適用分はそのまま。`funding − 当月課税対象額 × 実効税率`。
+   */
+  readonly fundingAfterTax: number;
+  /** その月の融資・公庫の元利返済額 (キャッシュアウト。返済条件がなければ 0)。 */
+  readonly repayment: number;
+  /** その月の支払利息 (返済額の内訳。損金算入される)。 */
+  readonly interest: number;
+  /** その月の利息による節税効果 (支払利息 × 実効税率)。 */
+  readonly interestTaxShield: number;
+  /**
+   * その月の純資金繰り (ネットキャッシュフロー)。
+   * `税引後手残り + 営業CF − 返済額 + 利息の節税効果`。資金ショートの
+   * 早期把握に使う。
+   */
+  readonly netCashflow: number;
+  /** 会計ソフト連携の営業キャッシュフロー (任意。未連携なら 0)。 */
+  readonly operatingCashflow: number;
+  /**
+   * その月の営業CF が**会計連携から実際に得られたか** (2026-09-12 · パス 182)。
+   *
+   * `operatingCashflow: number` では**未取得と実測ゼロが同じ 0** になる。
+   * 返済予定は借入期間ぶん将来へ伸びるのに実績CF は過去しか無いので、
+   * 比率 (DSCR) を作るときこの区別が無いと「営業CF 0 ÷ 返済額」= 0 という
+   * **測っていない月の答え**が混ざる (下の `debtServiceMetrics` の経緯)。
+   *
+   * 会計連携の Map に**その月の鍵が在るか** (`has`) で決まる ——
+   * 連携していて net 0 だった月は `true` (実測ゼロ)。姉妹モジュール
+   * `renderer/data/cashflowDebtService.ts` が同じ区別を `has` で持つ。
+   */
+  readonly operatingCashflowKnown: boolean;
+  /** 株式ポートフォリオ評価額 (任意。未連携なら 0)。 */
+  readonly portfolioValue: number;
+}
+
+/** 全体サマリー。 */
+export interface FundingSummary {
+  /** 返済不要資金 (補助金・助成金・給付金・CF) の確定合計。 */
+  readonly nonRepayableSecured: number;
+  /** 返済必要資金 (融資・公庫) の確定合計。 */
+  readonly repayableSecured: number;
+  /** 確定総額。 */
+  readonly totalSecured: number;
+  /** パイプライン総額 (申請中・予定込み)。 */
+  readonly totalPipeline: number;
+  /**
+   * 当年度の課税対象の確定額 (補助金・助成金・給付金・CF)。
+   * 圧縮記帳を適用する案件 (`compressedEntry`) は当年度課税が繰延されるため
+   * **除外**する。
+   */
+  readonly taxableSecured: number;
+  /**
+   * 圧縮記帳により当年度課税を繰り延べた確定額。将来 (減価償却を通じて)
+   * 課税される見込みの金額の目安。
+   */
+  readonly deferredSecured: number;
+  /**
+   * 概算の手残り額 (税引後)。課税対象資金には実効税率を課し、非課税資金
+   * (融資・公庫) と圧縮記帳適用分はそのまま。
+   * `totalSecured − taxableSecured × 実効税率`。
+   */
+  readonly afterTaxSecured: number;
+  /** 消費税が不課税の確定額 (補助金・助成金・給付金)。 */
+  readonly consumptionTaxExemptSecured: number;
+  /** 消費税が課税売上の確定額 (購入型クラウドファンディング)。 */
+  readonly consumptionTaxableSecured: number;
+  /** 課税売上に対する消費税相当額の概算 (`課税売上 × 消費税率 / (1+税率)` の内税ベース)。 */
+  readonly consumptionTaxEstimate: number;
+  /** 案件数。 */
+  readonly count: number;
+}
+
+/** 案件が確定 (入金済み or 採択済み) か。 */
+function isSecured(status: FundingStatus): boolean {
+  return status === 'received' || status === 'approved';
+}
+
+/**
+ * 種別ごとに集計する。円グラフ・レーダーチャートの両方で使う。
+ * 返り値は `FUNDING_KINDS` の順序に固定 (軸の安定化)。
+ */
+export function aggregateByKind(items: readonly FundingItem[]): FundingByKind[] {
+  return FUNDING_KINDS.map((kind) => {
+    const ofKind = items.filter((it) => it.kind === kind);
+    const secured = ofKind
+      .filter((it) => isSecured(it.status))
+      .reduce((s, it) => s + nonNeg(it.amount), 0);
+    const pipeline = ofKind.reduce((s, it) => s + nonNeg(it.amount), 0);
+    return {
+      kind,
+      label: fundingKindLabel(kind),
+      secured,
+      pipeline,
+      count: ofKind.length,
+    };
+  });
+}
+
+/** 資金調達の多様化 (種別集中度) 指標。 */
+export interface FundingDiversification {
+  /** 確定額が 0 超の種別数。 */
+  readonly kindsPresent: number;
+  /** ハーフィンダール・ハーシュマン指数 (Σ シェア², 0..1; 1 = 1 種に集中)。 */
+  readonly hhi: number;
+  /** 実効的な調達元数 = 1 ÷ HHI (分散の目安)。 */
+  readonly effectiveSources: number;
+  /** 最大シェアの種別 (確定額ベース)。種別が無ければ null。 */
+  readonly topKind: FundingKind | null;
+  /** 最大シェアの種別の比率 (%)。 */
+  readonly topSharePct: number;
+  /** 多様化スコア (0..100, 高いほど分散) = (1 − HHI) × 100。 */
+  readonly score: number;
+}
+
+/**
+ * 確定額 (secured) の種別構成から多様化スコアを計算する。
+ *
+ * 1 種類に偏るほど集中 (HHI→1, スコア→0)、種別が均等に分散するほど多様
+ * (HHI→0, スコア→100)。確定額の合計が 0 のときは算定不能 (null)。資金調達が
+ * 特定の種別に依存していないか (補助金頼み・融資頼み等) の構造リスクを見る。
+ */
+export function fundingDiversification(
+  byKind: readonly FundingByKind[],
+): FundingDiversification | null {
+  const present = byKind.filter((k) => k.secured > 0);
+  const total = present.reduce((s, k) => s + k.secured, 0);
+  if (total <= 0) return null;
+  let hhi = 0;
+  let topKind: FundingKind | null = null;
+  let topShare = 0;
+  for (const k of present) {
+    const share = k.secured / total;
+    hhi += share * share;
+    if (share > topShare) {
+      topShare = share;
+      topKind = k.kind;
+    }
+  }
+  return {
+    kindsPresent: present.length,
+    hhi: Math.round(hhi * 1000) / 1000,
+    effectiveSources: Math.round((1 / hhi) * 10) / 10,
+    topKind,
+    topSharePct: Math.round(topShare * 1000) / 10,
+    score: Math.round((1 - hhi) * 100),
+  };
+}
+
+/** 借入の期間構成 (短期/長期)。 */
+export interface FundingTermStructure {
+  /** 短期借入 (返済 12 か月以内) の確定額。 */
+  readonly shortTermSecured: number;
+  /** 長期借入 (返済 12 か月超) の確定額。 */
+  readonly longTermSecured: number;
+  /** 確定済みの借入 (返済条件あり) 合計。 */
+  readonly totalDebt: number;
+  /** 長期借入比率 (%) = 長期 ÷ 総借入。借入が無ければ null。高いほど返済が安定的。 */
+  readonly longTermRatioPct: number | null;
+}
+
+/**
+ * 確定済みの借入 (返済条件あり) を返済月数で短期 (≤12か月) / 長期 (>12か月) に
+ * 分け、長期比率を出す。長期比率が高いほど短期の借換リスクが小さく安定的。
+ * 返済条件の無い案件 (補助金等) は対象外。
+ */
+export function fundingTermStructure(items: readonly FundingItem[]): FundingTermStructure {
+  let shortTerm = 0;
+  let longTerm = 0;
+  for (const it of items) {
+    if (!it.repayable || !it.repayment) continue;
+    if (!isSecured(it.status)) continue;
+    const amt = nonNeg(it.amount);
+    if (it.repayment.months <= 12) shortTerm += amt;
+    else longTerm += amt;
+  }
+  const totalDebt = shortTerm + longTerm;
+  return {
+    shortTermSecured: shortTerm,
+    longTermSecured: longTerm,
+    totalDebt,
+    longTermRatioPct: totalDebt > 0 ? Math.round((longTerm / totalDebt) * 1000) / 10 : null,
+  };
+}
+
+/**
+ * レーダーチャートのスコア (0..max) を返す。各軸 = 種別の確定額を、
+ * 全種別中の最大確定額で正規化した相対値 (0..max)。最大が 0 のときは全 0。
+ */
+export function radarScores(
+  byKind: readonly FundingByKind[],
+  max = 5,
+): number[] {
+  const peak = byKind.reduce((m, b) => Math.max(m, b.secured), 0);
+  if (peak <= 0) return byKind.map(() => 0);
+  return byKind.map((b) => Math.round((b.secured / peak) * max * 100) / 100);
+}
+
+/** 補助金等の課税を見込んだ概算の実効税率の既定値 (法人実効税率の目安 約30%)。 */
+export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
+
+/** 実効税率を [0,1] にクランプする (負値は 0、1 超は 1)。 */
+function clampRate(rate: number): number {
+  // Math.min(1, Math.max(0, rate)) は `rate > 0 ? Math.min(1, rate) : 0` と同値で、
+  // rate===0 で一致する `>`↔`>=` の equivalent mutant を排除する。
+  return Math.min(1, nonNeg(rate));
+}
+
+/** 年月文字列 (YYYY-MM) に nMonths を足した年月を返す。 */
+export function addMonths(month: string, n: number): string {
+  const parts = month.split('-');
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  // 0-indexed month算で繰り上げ。
+  const total = y * 12 + (m - 1) + n;
+  const ny = Math.floor(total / 12);
+  const nm = (total % 12) + 1;
+  return `${ny}-${String(nm).padStart(2, '0')}`;
+}
+
+/**
+ * 元利均等返済の毎月返済額を返す (円)。
+ *
+ * 月利 i = annualRate/12 のとき、返済額 = P × i / (1 − (1+i)^-n)。
+ * 無利息 (rate=0) は単純に P/n。元本・回数が非正なら 0。
+ */
+export function monthlyPayment(rawPrincipal: number, rawRate: number, rawMonths: number): number {
+  // 非有限は関門を素通りする (`NaN <= 0` も `NaN > 0` も false)。入口で 1 度だけ
+  // 倒し、**以降は消毒した値だけを使う** —— パス 203。生の仮引数を下で読むと
+  // 「関門は消毒した値・計算は生の値」という 2 通りの読み方になる (`kpi.ts` で
+  // 同じ形を直したばかり)。
+  const principal = nonNeg(rawPrincipal);
+  const months = nonNeg(rawMonths);
+  const annualRate = nonNeg(rawRate);
+  // principal<=0→<0 は principal===0 が下流で 0 を返すため等価。ConditionalExpression(false) は
+  // months=0 で /0=Infinity になり monthlyPayment(…,0) テストで撃墜可 (手動変異で確認済) だが、
+  // 内部呼出しが多い本関数では Stryker perTest が直接テストを当該 mutant に帰属できない盲点。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  if (principal <= 0 || months <= 0) return 0;
+  const i = annualRate / 12;
+  if (i <= 0) return Math.round(principal / months);
+  const factor = Math.pow(1 + i, -months);
+  return Math.round((principal * i) / (1 - factor));
+}
+
+/** 元利均等返済の 1 回分 (元金・利息の内訳)。 */
+export interface AmortizationEntry {
+  readonly month: string;
+  readonly payment: number;
+  /** 元金充当分。 */
+  readonly principal: number;
+  /** 利息分 (損金算入され節税効果を生む)。 */
+  readonly interest: number;
+  /** その回返済後の残高。 */
+  readonly remaining: number;
+}
+
+/**
+ * 返済の償却スケジュール (各回の元金・利息内訳) を返す。
+ *
+ * 元利均等 (`equal-payment`): 各回の返済額が一定。利息 = 残高 × 月利、
+ * 元金 = 返済額 − 利息。最終回は端数を残高に合わせて完済する。
+ * 元金均等 (`equal-principal`): 各回の元金返済額が一定 (元本/回数)。利息は
+ * 残高に応じ逓減するため返済額は前半ほど大きい。最終回で端数を調整。
+ *
+ * @param gracePeriodMonths 据置期間 (月数, 任意)。`startMonth` から据置期間が
+ *   始まり、元金返済はその後に `months` 回で行う。
+ * @param method 返済方式 (既定 `'equal-payment'`)。
+ * @param graceInterestHandling 据置中の利息の計上方法 (既定 `'simple'`)。
+ *   - `'simple'`: 据置中は元金 0・利息のみのキャッシュアウト (利息を都度支払う)。
+ *   - `'compound'`: 据置中の利息を元本に組み入れる (複利)。据置中の支払は 0、
+ *     未払利息を毎月元本に加算し、据置終了後は膨らんだ元本を `months` 回で返済する。
+ */
+export function amortizationSchedule(
+  rawPrincipal: number,
+  rawAnnualRate: number,
+  rawMonths: number,
+  startMonth: string,
+  rawGracePeriodMonths = 0,
+  // 既定値を別文字列にしても `method === 'equal-principal'` 判定では非 equal-principal=
+  // equal-payment 挙動で同一のため equivalent。
+  // Stryker disable next-line StringLiteral
+  method: RepaymentMethod = 'equal-payment',
+  // 既定値を別文字列にしても `handling === 'compound'` 判定では非 compound = simple 挙動で
+  // 同一のため equivalent。
+  // Stryker disable next-line StringLiteral
+  graceInterestHandling: GraceInterestHandling = 'simple',
+): AmortizationEntry[] {
+  // 入口で 1 度だけ消毒する。実測では `amortizationSchedule(NaN, 0.02, 12, …)` と
+  // `(1e7, NaN, 12, …)` が **12 か月ぶんすべて NaN の返済予定表**を返していた
+  // (`months` が非有限のときだけは空ループで [] になっていた)。
+  const principal = nonNeg(rawPrincipal);
+  const annualRate = nonNeg(rawAnnualRate);
+  const months = nonNeg(rawMonths);
+  const gracePeriodMonths = nonNeg(rawGracePeriodMonths);
+  // months<=0→<0 は months=0 が空ループで [] を返すため等価。ConditionalExpression(false) は
+  // principal=0 で零詰めスケジュールを生み amort(0,…) テストで撃墜可 (手動確認済) だが、内部
+  // 呼出しが多く Stryker perTest が直接テストを帰属できない盲点。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  if (principal <= 0 || months <= 0) return [];
+  // Math.max(0, …) は `x > 0 ? x : 0` と同値 (x===0 一致) で `>`↔`>=`・三項の等価変異を排除。
+  const i = Math.max(0, annualRate / 12);
+  const grace = Math.max(0, Math.floor(gracePeriodMonths));
+  const compound = graceInterestHandling === 'compound';
+  const out: AmortizationEntry[] = [];
+  let remaining = principal;
+  // 据置期間。
+  for (let g = 0; g < grace; g++) {
+    const accrued = Math.round(remaining * i);
+    if (compound) {
+      // 複利: 利息を支払わず元本に資本化する。当月のキャッシュアウト・損金算入利息は 0。
+      // 膨らんだ元本は据置終了後の返済期間で大きな利息として顕在化する。
+      remaining = remaining + accrued;
+      out.push({ month: addMonths(startMonth, g), payment: 0, principal: 0, interest: 0, remaining });
+    } else {
+      // 単利 (都度支払い): 元金は減らず、利息のみ支払う。
+      out.push({ month: addMonths(startMonth, g), payment: accrued, principal: 0, interest: accrued, remaining });
+    }
+  }
+  // 元金返済期間: 据置終了後 (資本化後) の残高を完済する。
+  // 元利均等の返済額・元金均等の毎月元金は、据置で膨らんだ後の残高を基準に算出する。
+  const amortPrincipal = remaining;
+  const pay = monthlyPayment(amortPrincipal, annualRate, months);
+  const levelPrincipal = Math.round(amortPrincipal / months);
+  for (let k = 0; k < months; k++) {
+    const interest = Math.round(remaining * i);
+    const isLast = k === months - 1;
+    // 元金充当分: 方式で分岐。最終回は残高を完済しきる。
+    let principalPart =
+      isLast ? remaining
+      : method === 'equal-principal' ? levelPrincipal
+      : pay - interest;
+    // 防御的キャップ: equal-payment/equal-principal とも principalPart>remaining は端数設計上
+    // 発生しない (広域探索で到達ケース無し)。最終回は isLast 枝で remaining を完済する。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
+    if (principalPart > remaining) principalPart = remaining;
+    const payment = principalPart + interest;
+    remaining = Math.max(0, remaining - principalPart);
+    out.push({ month: addMonths(startMonth, grace + k), payment, principal: principalPart, interest, remaining });
+  }
+  return out;
+}
+
+/**
+ * `FundingItem` の返済条件 (`RepaymentTerms`) から償却スケジュールを構築する。
+ * 据置期間・返済方式・据置中の利息計上方法をすべて `amortizationSchedule` に
+ * 透過する単一窓口 (3 つの集計関数が同じ条件展開を共有するため)。
+ * 返済条件が無い場合は空配列。
+ */
+function scheduleForItem(item: FundingItem): AmortizationEntry[] {
+  if (!item.repayment) return [];
+  const { annualRate, months, startMonth, gracePeriodMonths, method, graceInterestHandling } = item.repayment;
+  return amortizationSchedule(
+    nonNeg(item.amount),
+    annualRate,
+    months,
+    startMonth,
+    gracePeriodMonths,
+    method,
+    graceInterestHandling,
+  );
+}
+
+/**
+ * 融資案件の月別返済額 (キャッシュアウト) を Map<YYYY-MM, number> で返す。
+ * 返済不要・返済条件なしの案件は対象外。確定 (received/approved) のみ計上。
+ * 返済条件 (`repayment`) の有無は `scheduleForItem` が空配列で吸収する。
+ */
+export function repaymentSchedule(items: readonly FundingItem[]): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const it of items) {
+    if (!it.repayable) continue;
+    if (!isSecured(it.status)) continue;
+    for (const e of scheduleForItem(it)) {
+      out.set(e.month, (out.get(e.month) ?? 0) + e.payment);
+    }
+  }
+  return out;
+}
+
+/**
+ * 融資案件の月別の支払利息を Map<YYYY-MM, number> で返す。
+ * 支払利息は損金算入されるため、月次の節税効果 (利息 × 実効税率) の算定に使う。
+ * 返済条件 (`repayment`) の有無は `scheduleForItem` が空配列で吸収する。
+ */
+export function interestSchedule(items: readonly FundingItem[]): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const it of items) {
+    if (!it.repayable) continue;
+    if (!isSecured(it.status)) continue;
+    for (const e of scheduleForItem(it)) {
+      if (e.interest > 0) out.set(e.month, (out.get(e.month) ?? 0) + e.interest);
+    }
+  }
+  return out;
+}
+
+/**
+ * 月次サマリーを生成する (折れ線・棒グラフ用)。
+ *
+ * 資金調達は確定案件の月別入金見込み (税引前) と税引後手残り、
+ * operatingCashflow は会計ソフト連携の月次営業 CF、portfolioValue は株式連携の
+ * 評価額。後者 2 つは任意連携なので引数の Map が無ければ 0 とする。
+ * 返り値は月の昇順。
+ *
+ * @param options.effectiveTaxRate 税引後手残りの計算に使う実効税率 (0..1)。
+ *   既定 `DEFAULT_EFFECTIVE_TAX_RATE`。
+ */
+export function monthlyFlow(
+  items: readonly FundingItem[],
+  options: {
+    readonly accountingCashflow?: ReadonlyMap<string, number>;
+    readonly portfolioByMonth?: ReadonlyMap<string, number>;
+    readonly effectiveTaxRate?: number;
+  } = {},
+): FundingMonthly[] {
+  const rate = clampRate(options.effectiveTaxRate ?? DEFAULT_EFFECTIVE_TAX_RATE);
+  const repayments = repaymentSchedule(items);
+  const interests = interestSchedule(items);
+  const months = new Set<string>();
+  for (const it of items) months.add(it.month);
+  for (const m of options.accountingCashflow?.keys() ?? []) months.add(m);
+  for (const m of options.portfolioByMonth?.keys() ?? []) months.add(m);
+  // 返済が入金月より後に伸びることがあるため、返済月も対象に含める。
+  for (const m of repayments.keys()) months.add(m);
+
+  return [...months]
+    // 月キーは Set 由来で distinct。localeCompare で昇順にして 3 項比較子の等価変異を排除。
+    .sort((a, b) => a.localeCompare(b))
+    .map((month) => {
+      const securedOfMonth = items.filter((it) => it.month === month && isSecured(it.status));
+      const funding = securedOfMonth.reduce((s, it) => s + nonNeg(it.amount), 0);
+      // 当月の課税対象額 (圧縮記帳適用分は当年度課税が繰延されるため除外)。
+      const taxable = securedOfMonth
+        .filter((it) => isTaxableFunding(it.kind) && !it.compressedEntry)
+        .reduce((s, it) => s + nonNeg(it.amount), 0);
+      const fundingAfterTax = Math.round(funding - taxable * rate);
+      const repayment = repayments.get(month) ?? 0;
+      const interest = interests.get(month) ?? 0;
+      // 支払利息は損金算入され税負担を減らす (実効税率分の節税効果)。
+      const interestTaxShield = Math.round(interest * rate);
+      const operatingCashflow = options.accountingCashflow?.get(month) ?? 0;
+      // 未取得と実測ゼロを分ける印。`get` の値では区別できないので `has` で見る。
+      const operatingCashflowKnown = options.accountingCashflow?.has(month) ?? false;
+      return {
+        month,
+        funding,
+        fundingAfterTax,
+        repayment,
+        interest,
+        interestTaxShield,
+        netCashflow: fundingAfterTax + operatingCashflow - repayment + interestTaxShield,
+        operatingCashflow,
+        operatingCashflowKnown,
+        portfolioValue: options.portfolioByMonth?.get(month) ?? 0,
+      };
+    });
+}
+
+/** 累計キャッシュ残高 (ランウェイ) の 1 行。 */
+export interface CashRunwayRow {
+  readonly month: string;
+  /** その月の純資金繰り (monthlyFlow の netCashflow)。 */
+  readonly netCashflow: number;
+  /** その月末の累計キャッシュ残高 (期首残高 + 各月の純資金繰りの累積)。 */
+  readonly balance: number;
+}
+
+/** ランウェイ分析の結果。 */
+export interface CashRunway {
+  readonly rows: readonly CashRunwayRow[];
+  /** 期首 (最初の月の前) のキャッシュ残高。 */
+  readonly openingBalance: number;
+  /** 期間中の最低残高。 */
+  readonly minBalance: number;
+  /**
+   * 残高が初めてマイナスになる月 (資金ショート月)。発生しなければ null。
+   * 「この月までに追加調達か支出抑制が必要」という警告に使う。
+   */
+  readonly shortfallMonth: string | null;
+}
+
+/**
+ * 月次の純資金繰りを期首残高から積み上げ、累計キャッシュ残高とランウェイ
+ * (資金が尽きる月) を算出する。
+ *
+ * @param monthly `monthlyFlow` の結果 (月の昇順)
+ * @param openingBalance 期首のキャッシュ残高 (円)。既定 0。
+ */
+export function cashRunway(
+  monthly: readonly FundingMonthly[],
+  openingBalance = 0,
+): CashRunway {
+  let balance = openingBalance;
+  // 最低残高は月末残高 (rows) の最小値。月が無ければ期首残高とする。
+  let minBalance = openingBalance;
+  let seenRow = false;
+  let shortfallMonth: string | null = null;
+  const rows: CashRunwayRow[] = monthly.map((m) => {
+    balance += m.netCashflow;
+    // minBalance は全残高の最小値。`<`↔`<=` は等しい残高で更新先が同値になり結果不変 (equivalent)。
+    // Stryker disable next-line EqualityOperator
+    if (!seenRow || balance < minBalance) {
+      minBalance = balance;
+      seenRow = true;
+    }
+    if (shortfallMonth === null && balance < 0) shortfallMonth = m.month;
+    return { month: m.month, netCashflow: m.netCashflow, balance };
+  });
+  return { rows, openingBalance, minBalance, shortfallMonth };
+}
+
+/** 楽観 / 期待 / 悲観 の 3 シナリオの累計キャッシュ残高。 */
+export interface ScenarioRunways {
+  /** 楽観: パイプライン案件を全採択と仮定。 */
+  readonly optimistic: CashRunway;
+  /** 期待: パイプラインを採択確率で加重。 */
+  readonly expected: CashRunway;
+  /** 悲観: 採択確率を割引係数でさらに引き下げ。 */
+  readonly pessimistic: CashRunway;
+}
+
+/**
+ * パイプライン (申請中・予定) 案件の入金を採択確率で加重し、楽観 / 期待 /
+ * 悲観の 3 シナリオの累計キャッシュ残高を返す。
+ *
+ * パイプライン案件は金額をシナリオ係数で加重したうえで確定扱い (approved) に
+ * 昇格させ、既存の `monthlyFlow` → `cashRunway` に流す。シナリオ間の差は
+ * 入金見込みのみに現れるよう、パイプライン案件の返済条件は除外する
+ * (確定済み融資の返済は全シナリオ共通で計上される)。
+ *
+ * 係数: 楽観 = 1.0、期待 = 採択確率、悲観 = 採択確率 × `pessimisticDiscount`
+ * (既定 0.5)。確定案件は全シナリオで不変。
+ */
+export function scenarioRunways(
+  items: readonly FundingItem[],
+  options: {
+    readonly openingBalance?: number;
+    readonly effectiveTaxRate?: number;
+    readonly accountingCashflow?: ReadonlyMap<string, number>;
+    readonly portfolioByMonth?: ReadonlyMap<string, number>;
+    readonly pessimisticDiscount?: number;
+  } = {},
+): ScenarioRunways {
+  const discount = clampRate(options.pessimisticDiscount ?? 0.5);
+  const flowOpts = {
+    effectiveTaxRate: options.effectiveTaxRate,
+    accountingCashflow: options.accountingCashflow,
+    portfolioByMonth: options.portfolioByMonth,
+  };
+  const run = (weightOf: (it: FundingItem) => number): CashRunway => {
+    const synth = items.map((it) => {
+      if (isSecured(it.status)) return it;
+      // パイプライン: 金額を係数で加重し確定扱いに昇格。返済条件は外す。
+      const { repayment: _repayment, ...rest } = it;
+      void _repayment;
+      return { ...rest, status: 'approved' as const, amount: Math.round(nonNeg(it.amount) * weightOf(it)) };
+    });
+    return cashRunway(monthlyFlow(synth, flowOpts), options.openingBalance ?? 0);
+  };
+  return {
+    optimistic: run(() => 1),
+    expected: run((it) => effectiveProbability(it)),
+    pessimistic: run((it) => effectiveProbability(it) * discount),
+  };
+}
+
+/**
+ * 全体サマリーを計算する。
+ *
+ * @param items 資金調達案件
+ * @param effectiveTaxRate 課税対象資金に課す実効税率 (0..1)。既定 0.3。
+ *   補助金・助成金・給付金・購入型CF は益金算入で課税対象、融資・公庫は
+ *   借入金で非課税。圧縮記帳 (`compressedEntry`) 適用分は当年度課税を繰延。
+ *   手残り = 確定総額 − 当年度課税対象確定額 × 実効税率。
+ * @param consumptionTaxRate 消費税率 (0..1)。既定 `CONSUMPTION_TAX_STANDARD`
+ *   (消費税法の標準税率)。購入型CF は課税売上の
+ *   ため、内税ベースの消費税相当額を概算する。
+ */
+export function summarize(
+  items: readonly FundingItem[],
+  effectiveTaxRate: number = DEFAULT_EFFECTIVE_TAX_RATE,
+  consumptionTaxRate: number = CONSUMPTION_TAX_STANDARD,
+): FundingSummary {
+  const rate = clampRate(effectiveTaxRate);
+  const consRate = clampRate(consumptionTaxRate);
+  let nonRepayableSecured = 0;
+  let repayableSecured = 0;
+  let totalPipeline = 0;
+  let taxableSecured = 0;
+  let deferredSecured = 0;
+  let consumptionTaxExemptSecured = 0;
+  let consumptionTaxableSecured = 0;
+  for (const it of items) {
+    const amt = nonNeg(it.amount);
+    totalPipeline += amt;
+    if (isSecured(it.status)) {
+      if (it.repayable) repayableSecured += amt;
+      else nonRepayableSecured += amt;
+      if (isTaxableFunding(it.kind)) {
+        // 圧縮記帳を適用する案件は当年度課税が繰延される。
+        if (it.compressedEntry) deferredSecured += amt;
+        else taxableSecured += amt;
+      }
+      const treatment = consumptionTaxTreatment(it.kind);
+      if (treatment === 'tax-exempt') consumptionTaxExemptSecured += amt;
+      else if (treatment === 'taxable') consumptionTaxableSecured += amt;
+    }
+  }
+  const totalSecured = nonRepayableSecured + repayableSecured;
+  // 課税売上は内税とみなし、消費税相当 = 額 × 率 / (1 + 率)。
+  const consumptionTaxEstimate = Math.round((consumptionTaxableSecured * consRate) / (1 + consRate));
+  return {
+    nonRepayableSecured,
+    repayableSecured,
+    totalSecured,
+    totalPipeline,
+    taxableSecured,
+    deferredSecured,
+    afterTaxSecured: Math.round(totalSecured - taxableSecured * rate),
+    consumptionTaxExemptSecured,
+    consumptionTaxableSecured,
+    consumptionTaxEstimate,
+    count: items.length,
+  };
+}
+
+// --- 資金調達の質スコア -----------------------------------------------
+
+/**
+ * 資金調達の質スコア。
+ *
+ * **3 欄とも「確定した調達が無ければ `null`」** —— 比率は確定総額で割る量なので、
+ * 分母が 0 なら値が無い。0 でも 1 でもない。
+ *
+ * 2026-09-09 まで、分母 0 のときは比率を **1.0** に倒していた。実装コメントは
+ * それを「中立」と呼んでいたが、**同じファイルの型の doc は「1.0 が最良」と
+ * 書いていた** —— 0..1 を 0..100 点へ写す指標で 1.0 は中立ではなく満点である。
+ * 結果、**1 円も確定していない事業者の画面に「資金調達 質スコア 100 / 100」**が
+ * 出ていた (申請中の案件が在れば「確定総額 ¥0 / パイプライン ¥1,100万 /
+ * 質スコア 100 点」が同じタイル群に並ぶ)。
+ */
+export interface FundingQualityScore {
+  /** 返済不要資金の比率 (返済不要 / 確定総額)。1.0 が最良。確定 0 なら `null`。 */
+  readonly nonRepayableRatio: number | null;
+  /** 税引後実質調達額の比率 (税引後手残り / 確定総額)。確定 0 なら `null`。 */
+  readonly afterTaxRatio: number | null;
+  /** 総合スコア (0..100)。返済不要比率と税引後比率の加重平均。確定 0 なら `null`。 */
+  readonly compositeScore: number | null;
+  /**
+   * 算定できなかった理由の文面 (算定できていれば `null`)。
+   *
+   * **画面はこの 1 本を読む** —— 文面を画面側に書くと、規則が 2 か所に分かれる
+   * (パス 62・63)。
+   */
+  readonly unavailableNote: string | null;
+}
+
+/**
+ * 確定した調達が無く、質スコアを算定できないときの断り書き。
+ *
+ * **export しているのは同梱データ (`snapshot.ts`) が同じ 1 本を読むため。**
+ * 見本に文面を写すと、直した側だけが新しくなる (パス 62)。
+ */
+export const NO_SECURED_FUNDING_NOTE =
+  '確定した調達がまだ無いため、資金調達の質スコアは算定していません（返済不要比率・税引後比率はいずれも確定総額で割る指標です）。申請中・予定の案件はパイプライン総額に出ています。';
+
+/**
+ * 資金調達の「質」を 0..100 のスコアで評価する。
+ *
+ * 返済不要資金 (補助金等) の比率と、税負担を考慮した実質調達額の比率を
+ * 加重平均する。**確定総額が 0 のときは算定せず `null` を返す** ——
+ * 「まだ何も確定していない」は「質が最高」でも「質が最低」でもない。
+ *
+ * @param summary `summarize` の結果
+ * @param weights [返済不要比率の重み, 税引後比率の重み] (既定 [0.4, 0.6])
+ */
+export function fundingQualityScore(
+  summary: FundingSummary,
+  weights: readonly [number, number] = [0.4, 0.6],
+): FundingQualityScore {
+  const total = summary.totalSecured;
+  // **割れないので算定しない。** 1.0 に倒すと満点になる (この関数の直上の doc)。
+  if (total <= 0) {
+    return {
+      nonRepayableRatio: null,
+      afterTaxRatio: null,
+      compositeScore: null,
+      unavailableNote: NO_SECURED_FUNDING_NOTE,
+    };
+  }
+  const nonRepayableRatio = clampRate(summary.nonRepayableSecured / total);
+  const afterTaxRatio = clampRate(summary.afterTaxSecured / total);
+  const [wNon, wTax] = weights;
+  const wSum = wNon + wTax;
+  // 重みの合計が 0 なのは呼び出し側の指定の誤りで、値の欠落ではない。
+  // ここも「割れない」なので算定しない (0 点という判定を作らない)。
+  const weighted = wSum > 0 ? (nonRepayableRatio * wNon + afterTaxRatio * wTax) / wSum : null;
+  return {
+    nonRepayableRatio,
+    afterTaxRatio,
+    compositeScore: weighted === null ? null : Math.round(Math.min(1, Math.max(0, weighted)) * 100),
+    unavailableNote: weighted === null ? '重みの合計が 0 のため、総合スコアは算定していません。' : null,
+  };
+}
+
+// --- 返済余力指標 (DSCR) -----------------------------------------------
+
+/** 返済余力指標 (Debt Service Coverage Ratio 系)。 */
+export interface DebtServiceMetrics {
+  /**
+   * 期間中の返済額合計 (元利)。**返済予定の全期間**を含む (突合の有無に関わらず)。
+   *
+   * DSCR の分母では**ない** —— 分母は突合できた月だけの `coveredRepayment`。
+   * こちらは「返済すべき借入が在るか」(節を出すかの判定) と総額の表示に使う。
+   */
+  readonly totalRepayment: number;
+  /**
+   * DSCR の分子 = **突合できた月**の営業キャッシュフロー合計。
+   *
+   * 「突合できた月」= 返済があり、かつ会計連携にその月の月次CF が在る月。
+   */
+  readonly coveredOperatingCashflow: number;
+  /** DSCR の分母 = **突合できた月**の返済額合計。 */
+  readonly coveredRepayment: number;
+  /**
+   * 全体の返済カバー率 = 営業CF合計 ÷ 返済額合計。1.0 以上で返済余力あり。
+   * **返済が無いときは `null` = 算定不能。**
+   *
+   * 2026-09-08 まで 0 に倒しており、**この doc 自身が「返済が無いときは 0
+   * (指標として意味を持たない)」と書いていた** —— 意味を持たないと述べてから
+   * 数を返していた。DSCR 0 は「営業CFが返済を 1 円も賄えない」という**最悪の
+   * 読み**だが、返済が無いのは「返済すべき借入が無い」= 該当なしである。
+   *
+   * **規準は姉妹モジュールに在った** —— `renderer/data/cashflowDebtService.ts` は
+   * 同じ量を `overallDscr: totalRepay > 0 ? round2(totalCf / totalRepay) : null` で
+   * 返し、経営サマリーは「—」を刷って色も付けず、金融機関等提出用の書面も
+   * そちらを読む。**同じ量の双子で、片方だけが 0 に倒れていた。**
+   *
+   * ## 分子が無い月も対象外 (2026-09-12 · パス 182)
+   *
+   * 上の 2026-09-08 の修正 (パス 60) は**分母**だけを直し、姉妹モジュールが
+   * 2026-09-07 (パス 45) に直した**分子**の側を写していなかった ——
+   * 返済予定は借入期間ぶん将来へ伸びるのに、会計連携の月次CF は過去しか無い。
+   * 将来の各月を「営業CF 0」として割ると DSCR 0 = 返済不足月になる。
+   *
+   * 実測 (2026-09-12、この app 同梱の見本データ: 融資 1,000万 60回 + 公庫 600万 84回
+   * 据置6か月・会計連携は 2026-01..06 の 6 か月・返済月は 93 か月):
+   *
+   * | | 全月を対象にする (直す前) | 突合できた月だけ |
+   * | --- | ---: | ---: |
+   * | 返済余力 (DSCR) | **0.53** | 9.03 |
+   * | 最悪月のカバー率 | **0.00** | 8.00 |
+   * | カバー率 1.0 未満の月 | **89 か月** | 0 / 4 か月 |
+   *
+   * **同じ会社の同じデータで、経営サマリーは DSCR 9.03 (返済余力十分)、
+   * 資金調達レーダーは 0.53 と赤い警告 (⚠️ 営業CFが返済を下回っています) を出す。**
+   * 画面 2 枚が同時に矛盾した診断を表示し、警告する側が誤っていた。
+   *
+   * 欠陥は 2 つ重なっていた —— 分母に未取得の月を入れる一方で、**分子には
+   * 返済の無い月の営業CF まで足していた** (0.53 の分子は全 95 か月の 891 万で、
+   * 返済月だけなら 636 万)。方向が逆なので互いを部分的に打ち消しており、
+   * 全体 DSCR 0.53 と最悪月 0.00 が同じ行に並んでいた。両方を「突合できた月」に
+   * 揃えた結果、全体と月次が同じ母集団を見るようになった
+   * (返済の無い月を分子から外す件は `debtServiceMetrics` の検査に対照つきで在る)。
+   *
+   * 警告の側には `&& live.accountingLinked` という関門が掛かっていた ——
+   * 書いた者は未連携を意識していたのに、**関門を値ではなく警告に掛けた**ので
+   * 数字そのもの (0.53 / 0.00 / 89 か月) はそのまま測定値として刷られていた
+   * (パス 57 と同じ形)。値が `null` を持つなら、関門は値が持つ。
+   */
+  readonly overallDscr: number | null;
+  /**
+   * 返済がある月のうち、カバー率 (営業CF ÷ 返済額) の最小値 (ボトルネック月)。
+   * **返済がある月が 1 つも無ければ `null`。**
+   *
+   * 実装は `Infinity` で始めて最小値を採る —— つまり「無い」の印は**既に在った**。
+   * 2026-09-08 まではそれを 0 に倒していた (印を作ってから捨てる形)。
+   */
+  readonly worstMonthDscr: number | null;
+  /** カバー率がしきい値 (既定 1.0) を下回った月数 (**突合できた月のうち**)。 */
+  readonly shortfallMonths: number;
+  /** 評価対象 = 返済があり、かつ会計連携に月次CF が在る月数 (`shortfallMonths` の分母)。 */
+  readonly coveredMonths: number;
+  /**
+   * 返済予定はあるが**会計連携に月次CF が無い**ため突合できなかった月数。
+   *
+   * 返済予定は借入期間ぶん先まで伸びるのに実績CF は過去しか無いので、通常この数は
+   * 大きい。**0 でない限り、上の DSCR 3 つは「突合できた月について」の数字である**
+   * ことを画面が述べる —— 黙って狭めると、4 か月の突合が 93 か月の借入についての
+   * 主張に読める。
+   */
+  readonly unmatchedMonths: number;
+}
+
+/**
+ * 月次フローから返済余力指標 (DSCR) を計算する。
+ *
+ * **突合できた月だけ**を評価する = 返済があり (分母)、かつ会計連携にその月の
+ * 月次CF が在る (分子) 月。返済が 0 の月は分母にできず、`operatingCashflowKnown`
+ * が `false` の月は**分子が無い** (未取得を 0 とは読まない)。突合できた月が
+ * 1 つも無ければ DSCR は `null` —— 0 を並べた答えを作らない。
+ *
+ * 経緯と実測は `DebtServiceMetrics.overallDscr` の doc。
+ *
+ * @param monthly `monthlyFlow` の結果
+ * @param threshold 不足と判定するカバー率のしきい値 (既定 1.0)
+ */
+export function debtServiceMetrics(
+  monthly: readonly FundingMonthly[],
+  threshold = 1,
+): DebtServiceMetrics {
+  let totalRepayment = 0;
+  let coveredOperatingCashflow = 0;
+  let coveredRepayment = 0;
+  let worstMonthDscr = Infinity;
+  let shortfallMonths = 0;
+  let coveredMonths = 0;
+  let unmatchedMonths = 0;
+  for (const m of monthly) {
+    totalRepayment += m.repayment;
+    if (m.repayment <= 0) continue;
+    // 分子が無い月は測れない。**実測ゼロ (連携に載っていて net 0) は対象に残る。**
+    if (!m.operatingCashflowKnown) {
+      unmatchedMonths += 1;
+      continue;
+    }
+    coveredMonths += 1;
+    coveredOperatingCashflow += m.operatingCashflow;
+    coveredRepayment += m.repayment;
+    const dscr = m.operatingCashflow / m.repayment;
+    // worstMonthDscr は最小値。`<`↔`<=` は等値で更新先が同値になり結果不変 (equivalent)。
+    // Stryker disable next-line EqualityOperator
+    if (dscr < worstMonthDscr) worstMonthDscr = dscr;
+    if (dscr < threshold) shortfallMonths += 1;
+  }
+  return {
+    totalRepayment,
+    coveredOperatingCashflow,
+    coveredRepayment,
+    // coveredMonths>0 の月は返済>0 のみ → coveredRepayment は必ず正。
+    // 分母が 0 になる道は coveredMonths===0 の側だけなので、そちらで null を返す。
+    overallDscr: coveredMonths > 0 ? coveredOperatingCashflow / coveredRepayment : null,
+    worstMonthDscr: coveredMonths > 0 ? worstMonthDscr : null,
+    shortfallMonths,
+    coveredMonths,
+    unmatchedMonths,
+  };
+}
+
+// --- 実効調達コスト率 -------------------------------------------------
+
+/**
+ * 融資 1 件の総支払利息を返す (確定・返済条件ありの融資のみ; それ以外は 0)。
+ * 返済条件 (`repayment`) の有無は `scheduleForItem` が空配列で吸収する。
+ */
+export function totalInterestOf(item: FundingItem): number {
+  if (!item.repayable) return 0;
+  if (!isSecured(item.status)) return 0;
+  return scheduleForItem(item).reduce((s, e) => s + e.interest, 0);
+}
+
+/**
+ * 融資 1 件の実効調達コスト率を返す = 総支払利息 ÷ 借入額。
+ * 返済不要・無利息・借入額0 は 0。返済期間全体での総コスト率 (年率ではない)。
+ */
+export function effectiveFundingCostRate(item: FundingItem): number {
+  const principal = nonNeg(item.amount);
+  if (principal <= 0) return 0;
+  return totalInterestOf(item) / principal;
+}
+
+/** 資金調達コストの集計。 */
+export interface FundingCostMetrics {
+  /** 確定融資の借入額合計。 */
+  readonly totalLoanPrincipal: number;
+  /** 確定融資の総支払利息合計。 */
+  readonly totalInterest: number;
+  /** 借入額で加重平均した実効調達コスト率 (= 総利息 ÷ 借入額合計)。 */
+  readonly weightedCostRate: number;
+  /** 自己負担比率 = 返済必要額 ÷ 確定総額 (0..1)。返済不要資金が多いほど低い。 */
+  readonly selfFundingRatio: number;
+}
+
+/**
+ * 資金調達全体のコスト指標を計算する。
+ *
+ * 確定 (received/approved) の融資のみを対象に、借入額合計・総支払利息・
+ * 加重平均コスト率を出す。自己負担比率は確定総額に対する返済必要額の割合。
+ *
+ * @param items 資金調達案件
+ * @param summary `summarize` の結果 (自己負担比率の算定に使う)
+ */
+export function fundingCostMetrics(
+  items: readonly FundingItem[],
+  summary: FundingSummary,
+): FundingCostMetrics {
+  let totalLoanPrincipal = 0;
+  let totalInterest = 0;
+  for (const it of items) {
+    if (!it.repayable || !it.repayment || !isSecured(it.status)) continue;
+    const principal = nonNeg(it.amount);
+    // principal===0 の案件を continue せず加算しても totalLoanPrincipal/totalInterest に 0 を
+    // 足すだけで結果不変のため、このガードを外す変異は equivalent。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
+    if (principal <= 0) continue;
+    totalLoanPrincipal += principal;
+    totalInterest += totalInterestOf(it);
+  }
+  const weightedCostRate = totalLoanPrincipal > 0 ? totalInterest / totalLoanPrincipal : 0;
+  // 守りの本体 (負の総額を 0 にする・`> 0` → `true` の変異体) は検査が値で留める
+  // (`fundingSelfFundingRatioGuard.test.ts`)。`>` → `>=` だけは 0 の境目で両側が 0 になる等価変異。
+  // Stryker disable next-line EqualityOperator: totalSecured === 0 のとき repayableSecured / 0 は NaN / ±Infinity で、clampRate (= nonNeg) が非有限を 0 へ落とすので分岐の 0 と同じ答えになる (等価)
+  const selfFundingRatio = summary.totalSecured > 0
+    ? clampRate(summary.repayableSecured / summary.totalSecured)
+    : 0;
+  return { totalLoanPrincipal, totalInterest, weightedCostRate, selfFundingRatio };
+}
+
+// --- 期待値シナリオ (採択確率による加重) -------------------------------
+
+/**
+ * 案件のステータス・種別から採択/実行確率の既定値を推定する (0..1)。
+ *
+ * - received / approved: 確定済みなので 1.0。
+ * - applied (申請中): 種別ごとの一般的な採択率の目安。
+ *   補助金は競争的で低め、助成金は要件充足型で高め、融資/公庫は審査次第、
+ *   給付金は要件型で高め、CF は達成率の目安。
+ * - planned (検討中): 申請中の半分程度に割り引く。
+ *
+ * これは概算の目安であり、実際の採択率は公募回・事業内容で大きく変動する。
+ */
+export function defaultProbability(item: FundingItem): number {
+  if (isSecured(item.status)) return 1;
+  const base = appliedBaseRate(item.kind);
+  // 検討中は申請中より不確実なので割り引く。
+  return item.status === 'planned' ? Math.round(base * 0.5 * 100) / 100 : base;
+}
+
+/** 申請中ステータスの種別別の一般的な採択率の目安。 */
+function appliedBaseRate(kind: FundingKind): number {
+  switch (kind) {
+    case 'subsidy':
+      return 0.5; // 競争的補助金 (採択率は公募で変動)
+    case 'grant':
+      return 0.8; // 要件充足型の助成金
+    case 'benefit':
+      return 0.9; // 要件型の給付金
+    case 'loan':
+      return 0.7; // 民間融資の審査
+    case 'jfc':
+      return 0.75; // 公庫の審査
+    case 'crowdfunding':
+      return 0.5; // CF の達成率の目安
+    // Stryker disable next-line ConditionalExpression,BlockStatement
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+/** 案件の有効確率 (明示指定があればそれを [0,1] にクランプ、なければ既定値)。 */
+export function effectiveProbability(item: FundingItem): number {
+  if (item.probability === undefined) return defaultProbability(item);
+  return clampRate(item.probability);
+}
+
+/** 期待値シナリオの結果。 */
+export interface ExpectedScenario {
+  /** 確定済みの調達額 (確率 1.0)。 */
+  readonly securedTotal: number;
+  /** パイプライン (申請中・予定) の単純合計 (確率 1.0 と仮定した楽観値)。 */
+  readonly pipelineTotal: number;
+  /** パイプラインを採択確率で加重した期待額。 */
+  readonly expectedPipeline: number;
+  /** 確定額 + 期待パイプライン (現実的な調達見込み)。 */
+  readonly expectedTotal: number;
+}
+
+/**
+ * パイプライン案件を採択確率で加重した期待調達額を算出する。
+ *
+ * 確定 (received/approved) は確率 1.0、申請中・予定は `effectiveProbability`
+ * (明示指定 or ステータス×種別の既定値) で加重する。楽観値 (全採択) と
+ * 期待値の差で、計画の不確実性を把握できる。
+ */
+export function expectedScenario(items: readonly FundingItem[]): ExpectedScenario {
+  let securedTotal = 0;
+  let pipelineTotal = 0;
+  let expectedPipeline = 0;
+  for (const it of items) {
+    const amt = nonNeg(it.amount);
+    if (isSecured(it.status)) {
+      securedTotal += amt;
+    } else {
+      pipelineTotal += amt;
+      expectedPipeline += Math.round(amt * effectiveProbability(it));
+    }
+  }
+  return {
+    securedTotal,
+    pipelineTotal,
+    expectedPipeline,
+    expectedTotal: securedTotal + expectedPipeline,
+  };
+}
+
+// --- 棒グラフ用: 種別別の確定 vs パイプライン -------------------------
+
+export interface FundingBar {
+  readonly label: string;
+  readonly secured: number;
+  readonly pipeline: number;
+}
+
+/** 棒グラフ用データ (種別ごとの確定額とパイプライン額)。 */
+export function barData(byKind: readonly FundingByKind[]): FundingBar[] {
+  return byKind.map((b) => ({
+    label: b.label,
+    secured: b.secured,
+    pipeline: b.pipeline,
+  }));
+}
+
+// --- 任意連携の出どころ (2026-09-15 · パス 265) --------------------------
+
+/**
+ * **「連携している」と「見本の数字が入っている」は別の事実である。**
+ *
+ * `accountingLinked` / `stocksLinked` の意味は「この控えが会計/株式のデータを
+ * 持っているか」で、**どこから来たかは含まない**。デスクトップの
+ * `fetchFundingSnapshot` は Phase 6 の実 API 差込みまで `MOCK_ACCOUNTING` /
+ * `MOCK_PORTFOLIO` を必ず渡すので、両方が常に真になる —— 何も繋いでいない
+ * 利用者が「更新」を押すと、画面は
+ *
+ *     会計ソフト連携: ✅ 連携中 ／ 株式投資連携: ✅ 連携中
+ *     凡例: 営業CF (会計・実績12か月)
+ *
+ * を刷っていた (`isMock: true` を立てたまま)。同梱の見本を**実績**と名乗る形は
+ * パス 119 / 187 で 2 度直した家系で、ここは 3 つ目である。
+ *
+ * 2026-09-15 まで画面の型は `typeof SNAPSHOT.funding` (= `as const` のリテラル)
+ * だったので `accountingLinked` は `false` に狭まり、**「✅ 連携中」の枝は
+ * 型の上で死んでいた** —— どの検査もそこを通れなかった (パス 79 の家系)。
+ */
+export type FundingLinkSource = 'linked' | 'sample' | 'none';
+
+/**
+ * @param hasData 会計/株式のデータがこの控えに入っているか
+ * @param isMock  控えが自分を同梱の見本だと名乗っているか
+ */
+export function fundingLinkSource(hasData: boolean, isMock: boolean): FundingLinkSource {
+  if (!hasData) return 'none';
+  return isMock ? 'sample' : 'linked';
+}
+
+/** 画面が刷る 1 行。`none` は任意連携かどうかで語尾が変わるので引数で分ける。 */
+export function fundingLinkLabel(source: FundingLinkSource, optional = false): string {
+  if (source === 'linked') return '✅ 連携中';
+  if (source === 'sample') return '⚠️ 同梱の見本 (未連携)';
+  return optional ? '— 未連携 (任意)' : '— 未連携';
+}
+
+/** 折れ線グラフの凡例。見本の月を「実績」と呼ばない。 */
+export function accountingCfSeriesLabel(source: FundingLinkSource, months: number): string {
+  return source === 'sample'
+    ? `営業CF (同梱の見本${months}か月)`
+    : `営業CF (会計・実績${months}か月)`;
+}

@@ -1,0 +1,543 @@
+// 軽量・自己完結のランディングページを生成する (GitHub Pages のルート用)。
+//
+// フル版 standalone.html (~800KB + 初回マスターパスワードのロック画面) を匿名
+// 訪問者にいきなり出すと第一印象が重い。そこでルート `/` には「概要 + サービス
+// 一覧 + フル版への導線」だけの高速な単一 HTML を置き、フル版は `/app.html` に同梱する。
+//
+// データは src/renderer/services.ts (サイドバーの単一の真実) から抽出するため、
+// サービスを増減してもランディングが自動追従しドリフトしない。parse 漏れは
+// 自己検証 (カード数 = エントリ数 / 外部参照 0) でビルド失敗にする。
+//
+// 出力: dist/landing.html  (pages.yml が _site/index.html へコピー)
+//       dist/og.svg        (OGP フォールバック)
+
+const fs = require('node:fs');
+const path = require('node:path');
+const zlib = require('node:zlib');
+const { jsonForScript } = require('./lib/json-for-script.cjs');
+
+const ROOT = path.join(__dirname, '..');
+const SERVICES_TS = path.join(ROOT, 'src/renderer/services.ts');
+const OUT = path.join(ROOT, 'dist/landing.html');
+
+const SITE_URL = 'https://hiroto1977.github.io/-/';
+const REPO_URL = 'https://github.com/hiroto1977/-';
+const OG_IMAGE = SITE_URL + 'og.png';
+
+/**
+ * ランディングの既定の下地 —— **1 か所で持つ** (2026-09-21 · パス 363)。
+ *
+ * この色は 2 か所に要る: 母体 (スマホのアドレスバー) へ伝える `<meta name="theme-color">` と、
+ * 頁自身の `:root { --bg }`。2026-09-21 まで `#0f1117` を**2 度書いて**おり、片方を直しても
+ * もう片方は黙ったままだった —— アプリ側の同じ決定は `styles.css` の `--bg` 1 つを
+ * `windowPrefs.test.ts` / `theme.test.ts` が縛っているのに、ここだけ写しのままだった。
+ *
+ * `inject-pwa` はこの頁が自分の theme-color を名乗っているのを見て**何も足さない**
+ * (足していた頃は 1 つの文書に 2 つの答えが載っていた)。
+ */
+const LANDING_BG = '#0f1117';
+const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。';
+
+// サイドバー (services.ts の CATEGORY_LABEL) と同じ並び。services.ts に新カテゴリを
+// 足したらここにも追加する — 忘れると selfCheck の unknown-category 検査が落とす。
+const CATEGORY_LABEL = { featured: 'おすすめ', professionals: '士業連携', tools: '分析・ツール', integrations: '外部サービス連携' };
+const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'];
+
+/**
+ * services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。
+ *
+ * ## なぜ 1 本の正規表現をやめたか (2026-09-12 · パス 162)
+ *
+ * 元の実装は 1 本の長い正規表現で
+ * `id → label → icon → description → page → … → category` が**連続**していることを
+ * 要求していた。欄の間に注記を 1 行挟む・`category:` を `description:` より前に書く
+ * ——それだけで**その項だけが黙って落ち**、カードが 1 枚消えたランディングが出る。
+ *
+ * 実際に **4 度**起きている (2026-07 に 2 度・2026-08-28・2026-09-12)。落ちるのは
+ * `selfCheck` / `landingServiceParse.test.ts` の**件数の差**で、
+ * 「72 parsed but 73 entries」しか言わないので**どの項が落ちたかは人が目で探す**。
+ *
+ * 直した形: 配列を**項ごとの塊に分け、欄は 1 つずつ読む**。
+ *
+ * - 欄の順序に依らない (どう並べても読める)
+ * - 欄の間・項の間の注記に依らない (引用符を見ながらコメントを落とす)
+ * - 読めない項は**行番号と id を名指しして**投げる (件数の差ではなく場所を言う)
+ *
+ * 件数の突き合わせ (`countEntries`) は**別の数え方のまま残す** ——
+ * 同じ走査で両方を出すと、突き合わせが「自分と自分の一致」になって何も守らない。
+ */
+function parseServices() {
+  return parseServicesFromText(fs.readFileSync(SERVICES_TS, 'utf8'));
+}
+
+/** 文字列から抽出する本体 (検査が対照を当てられるよう、ファイル読み込みと分けてある)。 */
+function parseServicesFromText(source) {
+  const array = servicesArrayText(source);
+  const out = [];
+  const problems = [];
+  for (const entry of splitEntries(array.text)) {
+    const body = stripCommentsOutsideStrings(entry.text);
+    const rec = {};
+    for (const field of ['id', 'label', 'icon', 'description', 'category']) {
+      rec[field] = readQuotedField(body, field);
+    }
+    rec.page = readIdentifierField(body, 'page');
+    const missing = ['id', 'label', 'icon', 'description', 'page', 'category'].filter(
+      (f) => rec[f] === null,
+    );
+    if (missing.length > 0) {
+      const line = lineNumberAt(source, array.offset + entry.offset);
+      problems.push(`services.ts:${line} の項 (${rec.id ?? 'id 不明'}) に ${missing.join(' / ')} が無い`);
+      continue;
+    }
+    out.push({ id: rec.id, label: rec.label, icon: rec.icon, description: rec.description, category: rec.category });
+  }
+  if (problems.length > 0) {
+    throw new Error(`SERVICES の項を読み切れません:\n  ${problems.join('\n  ')}`);
+  }
+  if (out.length === 0) throw new Error('no services parsed from services.ts');
+  return out;
+}
+
+/**
+ * `export const SERVICES` の配列リテラルの中身 (角括弧の内側) と、その開始位置。
+ *
+ * 型注釈の `ServiceDefinition[]` を数えないよう、`=` の後の `[` から始める
+ * (最初はそこを踏んで中身が空になった)。
+ */
+function servicesArrayText(source) {
+  const decl = source.indexOf('export const SERVICES');
+  if (decl < 0) throw new Error('services.ts に export const SERVICES がありません');
+  const eq = source.indexOf('=', decl);
+  const open = eq < 0 ? -1 : source.indexOf('[', eq);
+  if (open < 0) throw new Error('SERVICES の配列リテラルが見つかりません');
+  let depth = 0;
+  for (let i = open; i < source.length; i += 1) {
+    const skipped = skipStringOrComment(source, i);
+    if (skipped !== null) {
+      i = skipped;
+      continue;
+    }
+    if (source[i] === '[') depth += 1;
+    else if (source[i] === ']') {
+      depth -= 1;
+      if (depth === 0) return { text: source.slice(open + 1, i), offset: open + 1 };
+    }
+  }
+  throw new Error('SERVICES の配列リテラルが閉じていません');
+}
+
+/** 配列の中身を、深さ 1 の `{ … }` ごとに分ける (中身の位置も返す)。 */
+function splitEntries(arrayText) {
+  const entries = [];
+  let depth = 0;
+  let start = -1;
+  for (let i = 0; i < arrayText.length; i += 1) {
+    const skipped = skipStringOrComment(arrayText, i);
+    if (skipped !== null) {
+      i = skipped;
+      continue;
+    }
+    if (arrayText[i] === '{') {
+      if (depth === 0) start = i;
+      depth += 1;
+    } else if (arrayText[i] === '}') {
+      depth -= 1;
+      if (depth === 0 && start >= 0) {
+        entries.push({ text: arrayText.slice(start, i + 1), offset: start });
+        start = -1;
+      }
+    }
+  }
+  return entries;
+}
+
+/**
+ * `src[i]` が文字列・コメントの開始なら、その**末尾の位置**を返す (でなければ null)。
+ * 文字列の中の `//` を落とさない・コメントの中の引用符で崩れない、の両方をここが持つ。
+ */
+function skipStringOrComment(src, i) {
+  const c = src[i];
+  if (c === "'" || c === '"' || c === '`') {
+    for (let j = i + 1; j < src.length; j += 1) {
+      if (src[j] === '\\') {
+        j += 1;
+        continue;
+      }
+      if (src[j] === c) return j;
+    }
+    return src.length;
+  }
+  if (c === '/' && src[i + 1] === '*') {
+    const end = src.indexOf('*/', i + 2);
+    return end < 0 ? src.length : end + 1;
+  }
+  if (c === '/' && src[i + 1] === '/') {
+    const end = src.indexOf('\n', i);
+    return end < 0 ? src.length : end - 1;
+  }
+  return null;
+}
+
+/** 文字列の外側のコメントだけを空白に落とす (行数は変えない)。 */
+function stripCommentsOutsideStrings(src) {
+  let out = '';
+  for (let i = 0; i < src.length; i += 1) {
+    const skipped = skipStringOrComment(src, i);
+    if (skipped === null) {
+      out += src[i];
+      continue;
+    }
+    const chunk = src.slice(i, skipped + 1);
+    // 文字列はそのまま残す。コメントは改行だけ残して空白に倒す。
+    out += /^['"`]/.test(chunk) ? chunk : chunk.replace(/[^\n]/g, ' ');
+    i = skipped;
+  }
+  return out;
+}
+
+/** `name: '…'` を読む (無ければ null)。項の中で**どこに在っても**読める。 */
+function readQuotedField(body, name) {
+  const m = new RegExp(`(?:^|[\\s{,])${name}:\\s*'([^']*)'`).exec(body);
+  return m === null ? null : m[1];
+}
+
+/** `name: Identifier` を読む (`page: SkillsPage` のような値。無ければ null)。 */
+function readIdentifierField(body, name) {
+  const m = new RegExp(`(?:^|[\\s{,])${name}:\\s*([A-Za-z_$][\\w$]*)`).exec(body);
+  return m === null ? null : m[1];
+}
+
+/** 位置 `index` の 1 始まりの行番号 (人が services.ts を開ける形で言うため)。 */
+function lineNumberAt(source, index) {
+  let line = 1;
+  for (let i = 0; i < index && i < source.length; i += 1) {
+    if (source[i] === '\n') line += 1;
+  }
+  return line;
+}
+
+/** SERVICES 配列の category: 出現数 (parse 漏れ検知の基準)。 */
+function countEntries() {
+  const text = fs.readFileSync(SERVICES_TS, 'utf8');
+  const cats = CATEGORY_ORDER.join('|');
+  return (text.match(new RegExp(`^\\s*category:\\s*'(?:${cats})'`, 'gm')) || []).length;
+}
+
+/** src 配下の *.test.ts の静的 it( 件数。 */
+/**
+ * 変異検査の**対象モジュール数**を `stryker.config.json` から数える。
+ *
+ * ## なぜ数えるか (2026-08-25)
+ *
+ * この頁は「**100% Mutation スコア**」とだけ出していた。数そのものは
+ * `docs/ARCHITECTURE.md` の記録 (total / covered とも 100.00%) と合っており
+ * **嘘ではない**。だが **100% が何の 100% なのか**が書いていなかった。
+ *
+ * 実測: `mutate` に載っているのは **244 本**で、`lint:forbidden` が走査する
+ * ランタイム資産は **485 本**。つまり測っているのは約半分で、
+ * どれを測るかは `lint:mutation-scope` が台帳 (`MUST_MEASURE` /
+ * `KNOWN_UNMEASURED`) で管理している —— **範囲が有ることは承知の設計**である。
+ *
+ * このリポジトリは同じ理屈を既に別の場所で書いている ——
+ * 「範囲を書かない『保存時暗号化 ✓』は、利用者に『全部暗号化されている』と
+ * 読ませる」。公開する品質の主張にも同じ基準を当てる。
+ *
+ * 数は設定から採る (書き写すと、今日 manifest で見つけたのと同じ形で古くなる)。
+ */
+function countMutatedModules() {
+  const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'stryker.config.json'), 'utf8'));
+  const pats = Array.isArray(cfg.mutate) ? cfg.mutate : [];
+  // 除外パターン (`!...`) は数えない。実体は明示列挙なので glob 展開は要らない。
+  return pats.filter((p) => typeof p === 'string' && !p.startsWith('!')).length;
+}
+
+function countTests() {
+  let total = 0;
+  const walk = (dir) => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walk(full);
+      else if (/\.test\.ts$/.test(e.name)) total += (fs.readFileSync(full, 'utf8').match(/^\s*it\(/gm) || []).length;
+    }
+  };
+  walk(path.join(ROOT, 'src'));
+  return total;
+}
+
+const esc = (s) =>
+  String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    // `'` も落とす。**2 つのスクリプトだけ抜けていた** (2026-08-23 実測)。
+    // 今の出力は属性を全部 `"` で括っているので実害は無いが、`escape.ts` は
+    // 「落とす文字は揃えてある」と書いており、その主張が事実でなかった。
+    // 揃っていない状態を残すと、次に `'` で括る人が踏む。
+    .replace(/'/g, '&#39;');
+
+/*
+ * **公開した成果物のうち、入口から辿れないものを作らない。** (2026-09-26 / パス 480)
+ *
+ * `pages.yml` は 3 つのアプリ HTML を publish する: `app.html` (フル版) /
+ * `standalone.html` (同じ物の別名) / `lite.html` (学術コーパス非搭載の軽量版)。
+ * そして同じ workflow が軽量版を publish する理由をこう書いている ——
+ * 「スマホ用ライト版: /lite.html (10MB のフル版はスマホ回線で開けないため)」。
+ *
+ * ところがこのランディングは**公開サイトの根**でありながら、2026-09-26 の実測で
+ * `lite` の言及が **0 件**、`href` は **81 件のうち 76 件が `app.html`**
+ * (見出しの 2 つ + 74 枚のカード) だった。スマホから来た利用者には
+ * 「開けない」と自分で書いた版しか差し出していなかった。
+ *
+ * gzip の実測 (2026-09-26・GitHub Pages が実際に転送する形):
+ *
+ *   app.html   4,056,514 B      lite.html   982,003 B      (4.13 倍)
+ *
+ * 起動の実測 (perf ゲートの記録): フル版 DCL 413 ms / heap 36.9 MB ↔
+ * 軽量版 DCL 153 ms / heap 10.3 MB。
+ *
+ * ★ **大きさは測れたときだけ名乗る。** この builder は `build:web` / `build:web:lite`
+ * と独立に走れるので (手元で `npm run build:landing` だけを叩ける)、成果物が
+ * 無いこともある。そこで**古い数を書き写さず**、読めた時だけ 1 文を足す ——
+ * 「入っていない」と「読めなかった」を混ぜないのと同じ規律である。
+ */
+function transferBytes(rel) {
+  try {
+    const buf = fs.readFileSync(path.join(ROOT, rel));
+    // gzip は GitHub Pages が text/html に実際に掛ける形。生の byte 数ではなく
+    // 利用者が払う転送量を名乗る (level は既定で、Pages の設定を再現はしない)。
+    return zlib.gzipSync(buf).length;
+  } catch {
+    return null;
+  }
+}
+
+function megabytes(bytes) {
+  // 10^6 で割る (ブラウザのダウンロード表示と同じ読み方)。
+  return (bytes / 1e6).toFixed(2);
+}
+
+/**
+ * 2 つの版の違いを 1 文で述べ、転送量は**測れたときだけ**続ける。
+ * 違いは `vite.config.ts` の LITE 分岐 (`VERIFIED_CONCEPTS = []`) ただ 1 つで、
+ * それ以外のナレッジ (コンプライアンス / 補助金 / 相談窓口 / 経済史) は両版に載る。
+ */
+function buildChoiceNote(total) {
+  const base =
+    `\u{1F4F1} 軽量版は学術コーパス (AI アシスタントが根拠に引く学術概念) を積んでいません。`
+    + `その 1 点を除き ${total} サービスはフル版と同じで、実機の E2E も両版に同じ件数を通しています。`;
+  const full = transferBytes('dist/standalone.html');
+  const lite = transferBytes('dist/standalone-lite.html');
+  if (full === null || lite === null) return base;
+  return base + ` 転送量の実測 (gzip): 軽量版 ${megabytes(lite)} MB / フル版 ${megabytes(full)} MB。`;
+}
+
+function faviconDataUri() {
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">` +
+    `<rect width="32" height="32" rx="7" fill="#4f7cff"/>` +
+    `<text x="16" y="22" font-size="18" font-family="sans-serif" font-weight="bold" fill="#fff" text-anchor="middle">S</text></svg>`;
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+function buildOgSvg(count) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f1117"/><stop offset="1" stop-color="#1a2238"/></linearGradient></defs>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <rect x="64" y="80" width="64" height="64" rx="14" fill="#4f7cff"/>
+  <text x="96" y="126" font-size="36" font-family="sans-serif" font-weight="bold" fill="#fff" text-anchor="middle">S</text>
+  <text x="148" y="128" font-size="34" font-family="sans-serif" font-weight="700" fill="#99a0ad">SERVICE HUB</text>
+  <text x="64" y="300" font-size="84" font-family="sans-serif" font-weight="800" fill="#e6e8ee">業務を、ひとつの画面に。</text>
+  <text x="64" y="380" font-size="34" font-family="sans-serif" fill="#99a0ad">${count} サービス · Electron + ブラウザ単体 HTML</text>
+  <text x="64" y="540" font-size="28" font-family="sans-serif" fill="#4f7cff">hiroto1977.github.io/-</text>
+</svg>`;
+}
+
+function buildHtml(services, tests) {
+  const mutated = countMutatedModules();
+  const byCat = (c) => services.filter((s) => s.category === c);
+  const counts = Object.fromEntries(CATEGORY_ORDER.map((c) => [c, byCat(c).length]));
+  const total = services.length;
+  const description = `${total} のサービス${DESC}`;
+  // `<` escaped so a future value containing `</script>` can't terminate the
+  // JSON-LD block early (see scripts/lib/json-for-script.cjs).
+  const jsonLd = jsonForScript({
+    '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'Service Hub',
+    applicationCategory: 'BusinessApplication', operatingSystem: 'Web, Windows, macOS, Linux',
+    description, url: SITE_URL, offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },
+  });
+  // 各カードはフル版の該当サービスへのディープリンク (#<id>)。タップで直接開く。
+  const card = (s) => `
+        <a class="card" href="./app.html#${esc(s.id)}"><span class="chip" aria-hidden="true">${esc(s.icon)}</span>
+          <div class="card-body"><h3>${esc(s.label)}</h3><p>${esc(s.description)}</p></div></a>`;
+  const section = (c) => `
+      <section class="cat" aria-labelledby="cat-${c}">
+        <h2 id="cat-${c}">${esc(CATEGORY_LABEL[c])} <span class="count">${counts[c]}</span></h2>
+        <div class="grid">${byCat(c).map(card).join('')}</div></section>`;
+  const year = new Date().getFullYear();
+  return `<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- **公開版は inject-pwa 適用後の姿**なので、そちらに合わせて書く。
+     inject-pwa は manifest / apple-touch-icon / SW 登録スクリプトを足すため
+     manifest-src・img-src 'self'・worker-src が要る (注入前の姿だけを見て
+     決めたら、注入後に 2 件の CSP 違反が出た — 実測 2026-08-25)。
+     script-src は SW スニペットの sha256 を追記する口でもある。ハッシュが
+     1 つでも入ると仕様上 'unsafe-inline' は無視されるので、公開版では
+     「SW スニペットだけが動く」状態になる。ここに script-src が無いと
+     inject-pwa は「許可できない」と言って落ちる (これも実測済み)。 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; worker-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service Hub — 業務支援ダッシュボード</title>
+<meta name="description" content="${esc(description)}">
+<meta name="robots" content="index,follow">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="${LANDING_BG}">
+<link rel="canonical" href="${SITE_URL}">
+<link rel="icon" href="${faviconDataUri()}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Service Hub">
+<meta property="og:title" content="Service Hub — 業務支援ダッシュボード">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:url" content="${SITE_URL}">
+<meta property="og:image" content="${OG_IMAGE}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Service Hub — 業務支援ダッシュボード">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${OG_IMAGE}">
+<script type="application/ld+json">${jsonLd}</script>
+<style>
+  :root{--bg:${LANDING_BG};--elev:#171a22;--elev2:#1e222c;--border:#2a2f3a;--text:#e6e8ee;--mute:#99a0ad;--accent:#4f7cff;--radius:12px;--maxw:1100px}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+  .skip-link{position:absolute;left:8px;top:-48px;background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;font-weight:700;z-index:100;transition:top .15s}.skip-link:focus{top:8px}
+  header.hero{background:radial-gradient(1200px 400px at 50% -100px,rgba(79,124,255,.18),transparent 70%);padding:72px 0 48px;text-align:center;border-bottom:1px solid var(--border)}
+  .logo{font-size:13px;letter-spacing:3px;color:var(--mute);text-transform:uppercase;font-weight:700}
+  h1{font-size:clamp(34px,6vw,56px);margin:12px 0 8px;line-height:1.1}
+  .tagline{color:var(--mute);font-size:clamp(15px,2.5vw,19px);max-width:680px;margin:0 auto 28px}
+  .cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .build-note{max-width:620px;margin:16px auto 0;font-size:12.5px;line-height:1.7;color:var(--mute)}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:15px;border:1px solid transparent;cursor:pointer}
+  .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{filter:brightness(1.08)}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}.btn-ghost:hover{background:var(--elev)}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:-28px auto 0;position:relative}
+  .metric{background:var(--elev);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;text-align:center}
+  .metric .num{font-size:28px;font-weight:800;color:#fff}.metric .lbl{font-size:12px;color:var(--mute);margin-top:2px}
+  main{padding:48px 0 24px}.cat{margin-bottom:40px}
+  .cat h2{font-size:20px;margin:0 0 16px;display:flex;align-items:center;gap:10px}
+  .cat h2 .count{font-size:12px;font-weight:700;color:var(--mute);background:var(--elev2);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .card{display:flex;gap:12px;background:var(--elev);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:border-color .15s,transform .15s;color:var(--text);text-decoration:none}
+  .card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .chip{flex:0 0 auto;width:40px;height:40px;display:grid;place-items:center;background:var(--elev2);border:1px solid var(--border);border-radius:10px;font-weight:800;font-size:13px;color:var(--accent);letter-spacing:.5px}
+  .card-body h3{margin:0 0 3px;font-size:15px}.card-body p{margin:0;font-size:12.5px;color:var(--mute)}
+  .features{background:var(--elev);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:40px 0}
+  .features h2{text-align:center;font-size:22px;margin:0 0 24px}
+  .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .feat h3{font-size:15px;margin:0 0 4px}.feat p{font-size:13px;color:var(--mute);margin:0}
+  footer{padding:32px 0 48px;text-align:center;color:var(--mute);font-size:13px}footer a{margin:0 8px}.note{font-size:11.5px;opacity:.8;margin-top:12px}
+  @media(max-width:640px){.metrics{grid-template-columns:repeat(2,1fr)}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へスキップ</a>
+  <header class="hero"><div class="wrap">
+    <div class="logo">Service Hub</div>
+    <h1>業務を、ひとつの画面に。</h1>
+    <p class="tagline">${esc(total)} のサービス（SaaS 連携・分析ツール・士業・税務試算・業務操作）を統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。</p>
+    <nav class="cta" aria-label="主要アクション">
+      <a class="btn btn-primary" href="./app.html">▶ フル版をブラウザで開く</a>
+      <a class="btn btn-ghost" href="./lite.html">📱 軽量版を開く</a>
+      <a class="btn btn-ghost" href="${REPO_URL}" target="_blank" rel="noopener">GitHub で見る</a>
+    </nav>
+    <p class="note build-note">${buildChoiceNote(total)}</p>
+  </div></header>
+  <div class="wrap"><div class="metrics">
+    <div class="metric"><div class="num">${total}</div><div class="lbl">サービス</div></div>
+    <div class="metric"><div class="num">${tests}</div><div class="lbl">ユニットテスト</div></div>
+    <div class="metric"><div class="num">100%</div><div class="lbl">Mutation スコア (対象 ${mutated} モジュール)</div></div>
+    <div class="metric"><div class="num">2</div><div class="lbl">実行形態</div></div>
+  </div></div>
+  <main class="wrap" id="main">
+${CATEGORY_ORDER.map(section).join('')}
+  </main>
+  <div class="features"><div class="wrap"><h2>仕組み</h2><div class="fgrid">
+    <div class="feat"><h3>🔐 Credential Vault</h3><p>API トークンを AES-GCM-256 + PBKDF2 (60 万回) で暗号化保管。鍵はメモリのみ・非抽出。</p></div>
+    <div class="feat"><h3>💴 税・財務エンジン</h3><p>所得税・法人税・消費税・相続税ほか約34の純計算モジュールで概算を即時試算。</p></div>
+    <div class="feat"><h3>🔍 横断検索</h3><p>⌘/Ctrl-K で全サービスを関連度ランキング検索。最近使った/お気に入りも。</p></div>
+    <div class="feat"><h3>🗂 In-app Library</h3><p>生成物 (HTML/MD/SVG/PNG) を IndexedDB に保管。プレビュー・再 DL・Canva 送信。</p></div>
+    <div class="feat"><h3>🌐 BYO Proxy</h3><p>CORS ブロックされる API を自前 Cloudflare Worker 経由で取得 (SSRF ガード付き)。</p></div>
+    <div class="feat"><h3>🖥 2 形態 1 コード</h3><p>同一コードから Electron デスクトップとブラウザ単体 HTML を生成。</p></div>
+  </div></div></div>
+  <footer><div class="wrap">
+    <nav aria-label="フッターリンク"><a href="./app.html">フル版を開く</a> · <a href="./lite.html">軽量版を開く</a> · <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></nav>
+    <p class="note">※ 各サービスの数値は説明用のスナップショットです。実データはフル版でトークンを設定すると取得できます。税・財務は概算であり税務/財務助言ではありません。</p>
+    <p class="note">© ${year} Service Hub</p>
+  </div></footer>
+</body>
+</html>
+`;
+}
+
+function selfCheck(html, services, entryCount) {
+  const unknown = [...new Set(services.map((s) => s.category))].filter((c) => !CATEGORY_ORDER.includes(c));
+  if (unknown.length > 0) {
+    throw new Error(`unknown categor(y/ies) in services.ts: ${unknown.join(', ')} — CATEGORY_LABEL / CATEGORY_ORDER に追加してください`);
+  }
+  if (services.length !== entryCount) {
+    // 2 つの数え方は**別の走査**である (パス 162 でもそこは崩していない):
+    //   parseServices  … 配列を項の塊に分け、欄を 1 つずつ読む
+    //   countEntries   … 行頭の `category: '…'` を数える
+    // 食い違ったら、どちらの走査が届いていないかを人が見る必要があるので、両方の数え方を書く。
+    throw new Error(
+      `parse mismatch: 項として読めたのは ${services.length} 件、行頭の category: は ${entryCount} 件`
+        + ` (読めた id: ${services.map((s) => s.id).join(', ')})`
+        + ' — 1 行で書いた項は countEntries が数えず、注記の中の category: は parseServices が数えない',
+    );
+  }
+  const cards = (html.match(/class="card"/g) || []).length;
+  if (cards !== services.length) throw new Error(`card count ${cards} != services ${services.length}`);
+  const external = (html.match(/src=["']https?:|<link[^>]+rel=["']stylesheet/gi) || []).length;
+  if (external > 0) throw new Error(`landing must be self-contained but has ${external} external ref(s)`);
+  // **publish した版は入口から辿れる** (パス 480)。`pages.yml` は `lite.html` を
+  // スマホ回線のために publish しているのに、2026-09-26 までこのランディングは
+  // その名前を 1 度も出しておらず (実測 0 件)、唯一の入口がフル版だった。
+  // ここは「消えたら落ちる」ための床で、母集団そのもの (pages.yml が publish する
+  // アプリ HTML の全件) は `mobileEntryPointReachable.test.ts` が両方向で持つ。
+  for (const target of ['./app.html', './lite.html']) {
+    const links = (html.match(new RegExp(`href="${target.replace('.', '\\.')}"`, 'g')) || []).length;
+    if (links < 2) {
+      throw new Error(
+        `landing links to ${target} ${links} time(s) — 見出しとフッターの 2 か所で名乗ること`
+          + ' (publish した版のうち入口から辿れない物を作らない · パス 480)',
+      );
+    }
+  }
+}
+
+function main() {
+  const services = parseServices();
+  const entryCount = countEntries();
+  const tests = countTests();
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+  const html = buildHtml(services, tests);
+  selfCheck(html, services, entryCount);
+  fs.writeFileSync(OUT, html);
+  fs.writeFileSync(path.join(ROOT, 'dist/og.svg'), buildOgSvg(services.length));
+  console.log(`Wrote ${OUT} (${(html.length / 1024).toFixed(1)} KB) — ${services.length} services, ${tests} tests`);
+}
+
+// 読み込むだけで dist/ へ書き出していたので、外から証人を立てられなかった。
+// (build-knowledge-vault.cjs と同じ形。2026-08-28 に両方へ番をつけた。)
+// `buildHtml` / `selfCheck` / `buildChoiceNote` も出す (パス 480) —— 公開した版が入口から
+// 辿れるかは**組んだ HTML を見ないと言えない**。ソースを grep すると「href の綴りが在る」
+// しか分からず、注記の中の言及でも満たされる (法則 mention-vs-declaration)。
+module.exports = { parseServices, parseServicesFromText, countEntries, buildHtml, selfCheck, buildChoiceNote };
+
+if (require.main === module) main();

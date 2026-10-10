@@ -3,19 +3,23 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-## サービス一覧 (22)
+## サービス一覧 (76)
 
 | カテゴリ | サービス |
 |---|---|
-| **おすすめ** (常時表示) | ホーム / 事業ダッシュボード / チームレーダー / Canva テンプレート / ライブラリ / 設定 |
-| **分析・ツール** | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks |
-| **外部 SaaS 連携** | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva |
+| **おすすめ** (常時表示, 12) | ホーム / 事業ダッシュボード / チームレーダー / テンプレート / ライブラリ / 設定 / 売上集計 / チーム管理 / 経営サマリー / AI アシスタント / AIの村 / 書類スタジオ |
+| **士業連携** (8) | 税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士 — 各ページに「担当領域 (事業仕分け)」ナビ |
+| **分析・ツール** (21) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 / 資金調達レーダー / コネクター / Linux / コンプライアンス / Obsidian / Docker / 可視化 / 人材育成 / 水耕栽培 |
+| **外部サービス連携** (33) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / BASE / NETSEA / スーパーデリバリー / TopSeller / A8.net / AIブログくん / マネーフォワード / Amazon / Amazon アソシエイト / YouTube / ココナラ / TikTok / freee 会計 / Cursor |
+
+ほかに Uber Eats / 出前館 (サイドバー非表示 — 事業ダッシュボードのフードデリバリー欄へ統合) を含め全 76 サービス。
 
 ## 2 通りの動かし方
 
 ### 1. ブラウザだけで動かす (最速・インストール不要)
 
-`dist/standalone.html` (376 KB の単一ファイル) をブラウザでダブルクリックするだけ。
+`dist/standalone.html` (単一ファイル・実測 約 11 MB) をブラウザでダブルクリックするだけ。
+学術コーパスを外した軽量版 `npm run build:web:lite` (約 2.7 MB) もあります。
 Node.js も Electron も不要、Chrome / Edge / Safari / Firefox どこでも動きます。
 
 ```bash
@@ -41,7 +45,7 @@ npm run build          # tsc -b + vite build + electron-builder で
 
 ```bash
 npm run typecheck         # tsc -b --noEmit
-npm test                  # vitest run (1113 件)
+npm test                  # vitest run (2243 件)
 npm run lint              # ESLint v9
 npm run lint:imports      # main/preload/renderer の境界チェック
 npm run lint:forbidden    # 禁止パターン (nodeIntegration: true など) 検出
@@ -49,7 +53,7 @@ npm run lint:test-coverage # 全サービスに test + action がある確認
 npm run lint:docs         # cross-doc 一貫性
 npm run verify:arch       # docs/ARCHITECTURE.md の file:line 参照 + 6 ライブメトリクス
 npm run mutate            # Stryker mutation testing (30 modules, 100%)
-npm run smoke             # xvfb + Electron で 22 ページ smoke screenshot
+npm run smoke             # xvfb + Electron で 61 ページ smoke screenshot
 ```
 
 CI: `.github/workflows/ci.yml` が typecheck + test + build:renderer を push/PR 毎に実行。
@@ -63,15 +67,15 @@ src/main/              ← Electron main process
   main.ts                IPC handlers (11)
   secrets.ts             OS Keychain / safeStorage トークン保管
   oauth.ts               PKCE OAuth (Google)
-  clients/               22 sub-clients (各 service の REST fetcher + actions)
+  clients/               63 sub-clients (各 service の REST fetcher + actions)
 src/preload/           ← contextBridge bridge
   preload.ts             window.serviceHub を公開
 src/renderer/          ← React app
   App.tsx                サイドバー (カテゴリ 3 段折りたたみ)
-  pages/                 22 個のサービスページ
+  pages/                 63 個のサービスページ
   components/            StatusBar / DataList / ExportActions
   hooks/useServiceData   snapshot ↔ live fetch
-  data/snapshot.ts       全 22 サービスの bundled 静的データ
+  data/snapshot.ts       全 63 サービスの bundled 静的データ
 ```
 
 ### ブラウザ版の追加レイヤー
@@ -105,29 +109,33 @@ scripts/
   `extractable: false` でメモリのみ保持。
 - **Auto-lock**: タブが hidden 5 分超 / 操作 idle 15 分でロック。
 - **CORS-blocked API** (Notion / Atlassian / Cloudflare): ユーザー自前の
-  Cloudflare Worker 経由。docs/PROXY_EXAMPLE.md に 30 行リファレンス実装。
+  Cloudflare Worker 経由。docs/PROXY_EXAMPLE.md にリファレンス実装 (アローリスト +
+  DoH による解決後 IP 再検査 + リダイレクト各ホップ再検査)。
 - **OAuth**: file:// 環境では out-of-band paste、hosted では popup callback。
 - **CSP**: standalone HTML は `'unsafe-inline'` (file:// 動作のため)。
   hosted 版は `sha256` ハッシュベース推奨。
 
 ## 品質ゲート
 
-すべて CI で実行:
+CI (`.github/workflows/ci.yml`) は PR と `main` への push のたびに、`npm run typecheck`・
+`npm test` (+ `src/main/**` のカバレッジ)・`npm run verify:all` の **37 ゲート**・
+`npm run build:web` を走らせる (ゲート数は `verify:arch` が `package.json` と突き合わせる)。
+件数 (検査の数・サービス数・参照の数) は [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の
+TL;DR が live metric として持つ —— ここに写すと必ず古びる。
+この節は少なくとも 2026-08-31 から 2026-09-27 まで
+「unit tests 2243」「63 services」「lint:forbidden 8 patterns」「mutation 100.00% (30 modules)」と
+書いたままで、どの数も誰も検算していなかった。
 
-| ゲート | 状態 |
-|---|---|
-| typecheck (`tsc -b`) | 100% pass |
-| unit tests (`vitest`) | 1113 / 1113 ✅ |
-| eslint | 0 errors |
-| lint:imports | 246 imports, 全境界 OK |
-| lint:forbidden | 8 patterns scanned, 全 clean |
-| lint:test-coverage | 22 services, 全 test 存在 |
-| verify:arch | 170 file:line refs + 6 metrics 一致 |
-| mutation (Stryker) | **100.00%** (30 modules) |
+変異検査 (Stryker) は **PR では走らない** —— `mutation.yml` が週次 (全件) と `main` への push
+(変わったファイルだけ) で走る。[docs/QUALITY.md](docs/QUALITY.md) に載っている点数は
+**2026-09-01 の報告**の物で、**今のコードを測った物ではない** —— 作り直しの状況は
+[docs/REMAINING_WORK.md](docs/REMAINING_WORK.md) の「パス 494」、運用は
+[docs/QUALITY_WORKFLOW.md](docs/QUALITY_WORKFLOW.md)。
 
 ## ドキュメント
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 全体設計 + 22 services 認証マトリクス
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 全体設計 + 認証マトリクス + ライブメトリクス
+- [docs/BUSINESS_PLATFORM.md](docs/BUSINESS_PLATFORM.md) — 事業プラットフォーム層 (プラン/売上/KPI/チーム/経営サマリー)
 - [docs/DESIGN_BLUEPRINT.md](docs/DESIGN_BLUEPRINT.md) — 設計図 (16 セクション)
 - [docs/BROWSER_REDESIGN.md](docs/BROWSER_REDESIGN.md) — ブラウザネイティブ再設計
 - [docs/PROXY_EXAMPLE.md](docs/PROXY_EXAMPLE.md) — Cloudflare Worker サンプル
