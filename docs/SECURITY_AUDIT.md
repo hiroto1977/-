@@ -5,6 +5,22 @@
 
 ## サマリ
 
+### 依存の勧告の更新 (2026-10-10) — 本番依存 0 件 / 開発依存 8 件 (すべて electron-builder 系)
+
+`npm audit` の結果を 13 件から 8 件へ減らした (high 4 → 0・moderate 9 → 8)。
+本番依存 (`--omit=dev`) は 2026-10-10 時点で **0 件**のまま。
+
+| 対象 | 勧告 | 対応 |
+|---|---|---|
+| `brace-expansion` 5.0.9 (`@stryker-mutator/core` → `minimatch`) | high ×3 (CPU DoS / スタック枯渇) | `npm update minimatch brace-expansion` で 5.0.12 へ (semver 範囲内・lockfile のみ) |
+| `fast-uri` / `http-cache-semantics` / `source-map-js` / `undici` (推移的) | high / moderate | `npm audit fix` で lockfile の解決版を上げた (semver 範囲内) |
+| `electron-builder` 26.x・`app-builder-lib`・`dmg-builder`・`@electron/get`・`global-agent`・`roarr`・`sprintf-js` | moderate | **未対応**。修正版は `electron-builder` 27 系 (27.0.0-alpha.2 まで範囲に含まれる) で、メジャー更新かつ alpha のため梱包の挙動を確かめずには上げない。`sprintf-js` は修正版が無い (1.1.3 が最新) |
+
+床 (`SECURITY_FLOORS`) は `npm run audit:floors` で 4 件とも今日の勧告を通さないことを確かめ、
+`checkedOn` を 2026-10-10 に据え直した。
+
+次の手: `electron-builder` を 27 系へ上げる作業 (梱包の検証を含む) を別に切る。
+
 ### 第2ラウンド (2026-07-25) — 全件修正済み
 
 Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS・ビルド時
