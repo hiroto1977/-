@@ -173,6 +173,14 @@ const RECIPES = [
     recipe: emptyArray('scripts/lint-secrets.cjs', 'const ALLOWED = ['),
   },
   {
+    gate: 'lint:malware',
+    kind: 'ledger-inline',
+    cmd: 'node scripts/lint-malware.cjs',
+    expect: 'rings',
+    why: '解析の台帳 ACCEPTED。空にすると、実物に在る 8 件の正当な一致 (esbuild の取得スクリプト・固定のコマンドを走らせるゲート群・テストの new Function) が「台帳に無い一致」として鳴る (件数の双方向)',
+    recipe: emptyArray('scripts/lint-malware.cjs', 'const ACCEPTED = ['),
+  },
+  {
     gate: 'lint:network-targets',
     kind: 'source-tree',
     cmd: 'node scripts/lint-network-targets.cjs',

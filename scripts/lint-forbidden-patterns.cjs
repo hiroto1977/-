@@ -865,6 +865,10 @@ const KNOWN_SUPPRESSIONS = [
   // `git ls-files` に聞く (固定の引数・シェルを経由しない `execFileSync`)。
   // 無視の規則を書き写すと母集団が走るたびに変わるので、git の答えを使う。1 件は呼び出し。
   'child_process exec/spawn :: scripts/lint-secrets.cjs :: 1',
+  // 悪意のあるコードの形を探す門 (`lint:malware`・パス 510)。`git ls-files` を配列渡しで読む
+  // (`execFileSync`・シェルを経由しない)。合計 5 件 (注記と見本の綴りを含む) のうち実行は 3 か所。
+  // 実行の綴りの台帳は `lint-malware.cjs` の ACCEPTED が件数で縛る。
+  'child_process exec/spawn :: scripts/lint-malware.cjs :: 5 (code 3)',
   // 固定回数の待ちへの依存を**振る舞いで**測る定期点検の道具 (パス 369)。
   // 周回数を 0 に書き換えた検査を `npx vitest run <ファイル…>` で実際に走らせる ——
   // 「その回数に依っているか」は走らせないと答えが出ないので、

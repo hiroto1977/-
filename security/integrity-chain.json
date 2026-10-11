@@ -2382,15 +2382,23 @@
       "leafCount": 99,
       "note": "update 20-gates.mdc,ci.yml",
       "hash": "f0bb5da64c524124bcd6444213753c0017068069efba6cae76d008bcf928ba92"
+    },
+    {
+      "index": 285,
+      "prevHash": "f0bb5da64c524124bcd6444213753c0017068069efba6cae76d008bcf928ba92",
+      "merkleRoot": "bd9e494a1a7fadfd13cd74b30fe690a51f8ed40ca4e459c6ce96f9757fc6f028",
+      "leafCount": 99,
+      "note": "update 20-gates.mdc,ci.yml",
+      "hash": "450ca89b19bbcc9fc06d991fd93c33f2f8ad33a86bddf7b1d8a5b783dc52e17e"
     }
   ],
   "tipManifest": {
     ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
     ".cursor/rules/00-project.mdc": "44a587314329017bbc7f83033ca3c9bcafbfc1fbdcac0776f9ba66685bc49092",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
-    ".cursor/rules/20-gates.mdc": "f31a254fdc8fa71b4b9e3b93321dc7a81429bcfe6796187277ba00b6df6d889a",
+    ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
-    ".github/workflows/ci.yml": "2cfdee38dbb2115dca7a48e5209a706e907bed2aab9385f91bb455044ec710c9",
+    ".github/workflows/ci.yml": "e0b3a7022d056df56f09911c49ea2c6b4e055f7a484e03d2d98cfd9eb5634a66",
     ".github/workflows/pages.yml": "02c826156e8b095f0fdf3d8774263bf0c4d778cc9543f9d5de954b9a14b7d85a",
     ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
     "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
