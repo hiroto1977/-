@@ -103,6 +103,40 @@ GitHub Issues / PR ベースで運用。
 `shell.openExternal` 経由でユーザブラウザに開かれる URL は別管理 — 各サービスタブの
 「開く」ボタン経由のみ、http(s) のみ許可。
 
+## 継続監視 (2026-10-11 · パス 509)
+
+「侵入される前に検知し、解析し、対策し続ける」ために、リポジトリが自分で回している門と
+予定実行を一覧にする。**どれも端末や利用者のアカウントは見ていない** —— 見られるのは
+このリポジトリの中身 (コード・依存・workflow・資格情報の混入) だけである。
+
+| 層 | 何を検知するか | いつ | 結果の行き先 | 対策 |
+|---|---|---|---|---|
+| 資格情報の混入 (`lint:secrets`) | 追跡ファイルに発行元の接頭辞を持つ鍵の形 (GitHub / AWS / Slack / Anthropic / OpenAI / Google / Stripe / PEM) | 全 PR・push (ci.yml と verify:all) | 赤 = 取り込まれない | 台帳 `ALLOWED` に無い一致は落ちる。見本だけが台帳に載る (件数と理由つき・双方向) |
+| 危険な API・難読化 (`lint:forbidden`) | eval・innerHTML・nodeIntegration 等 | 全 PR | 赤 | 修正 |
+| workflow の守り (`lint:workflow-security`) | 権限の既定・第三者 action の可動タグ・pull_request_target・`${{ }}` の埋め込み | 全 PR | 赤 | 修正 |
+| 依存の勧告 (`dependency-audit`) | `npm audit` (全体と本番) と、床 (`SECURITY_FLOORS`) を勧告データベースに当てた結果 | **毎日** 07:00 JST | 常設 Issue 1 つ (要対応 0 件なら閉じる) | 人が直す。床は `npm run audit:floors` で測り直す |
+| 依存の更新 (`.github/dependabot.yml`) | 版の更新と、リポジトリ設定で有効にした場合のセキュリティ更新 | 毎週 (通常の更新) | 更新 PR (グループ化・上限 5 本) | PR が CI を通す = 検証は既存の門 |
+| 変異検査 (`mutation.yml`) | 検査が本当に守っているか | 週次 + 触ったファイル | Actions の失敗 | 検査を足す |
+
+## 人が GitHub の設定で有効にする物 (リポジトリの外では設定できない)
+
+これは **リポジトリの設定** で、コードでは有効にできない。確かめる場所は Settings → Code security。
+
+1. **Secret scanning** と **Push protection** —— 鍵を push の時点で止める。`lint:secrets` は
+   追跡ファイルの**今の内容**しか見ない。履歴に残った鍵は GitHub 側の走査が見る。
+2. **Dependabot alerts** と **Dependabot security updates** —— `dependabot.yml` は通常の更新だけを
+   決める。脆弱な版を直す PR は、この設定を有効にしないと作られない。
+3. **Code scanning (CodeQL)** —— 公開リポジトリでも有効化できる。ワークフローを足すと SHA 固定の
+   action が要るので、設定から有効にする方が安全。
+
+## 正直に言う: 侵入を事前に止めることはできない物
+
+- **端末・利用者のアカウントへの侵入**は、このリポジトリからは見えない。EDR・SIEM・
+  ブラウザ側の監視の仕事で、アプリの範囲外である。
+- **勧告は公開後に出る**。毎日の確認は「公開から最大 1 日で気付く」であって、「公開前に止める」ではない。
+- **履歴の中の鍵**は `lint:secrets` の対象外 (今の内容だけを見る)。履歴は上の 1. の GitHub 側の走査か、
+  `git log -p` の手動の点検で見る。
+
 ## 残課題（roadmap）
 
 1. **パスフレーズベース暗号化** — keychain 非利用環境でも本物の AES 暗号化

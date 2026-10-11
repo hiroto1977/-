@@ -861,6 +861,10 @@ const KNOWN_SUPPRESSIONS = [
   // なので、プロセスを作らずには成り立たない。渡す引数は台帳 (`SECURITY_FLOORS`) の
   // パッケージ名と版だけで、シェルを経由しない (`execFileSync`)。
   'child_process exec/spawn :: scripts/audit-floors.cjs :: 1',
+  // 資格情報の形を追跡ファイルから探す門 (`lint:secrets`・パス 509)。母集団は
+  // `git ls-files` に聞く (固定の引数・シェルを経由しない `execFileSync`)。
+  // 無視の規則を書き写すと母集団が走るたびに変わるので、git の答えを使う。1 件は呼び出し。
+  'child_process exec/spawn :: scripts/lint-secrets.cjs :: 1',
   // 固定回数の待ちへの依存を**振る舞いで**測る定期点検の道具 (パス 369)。
   // 周回数を 0 に書き換えた検査を `npx vitest run <ファイル…>` で実際に走らせる ——
   // 「その回数に依っているか」は走らせないと答えが出ないので、

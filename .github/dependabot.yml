@@ -1,0 +1,52 @@
+# 依存の更新を自動で PR にする (2026-10-11 · パス 509)。
+#
+# ここで決めるのは「何を、どれだけの量で、どの頻度で PR にするか」だけ。
+# **セキュリティ更新 (脆弱な版を直す PR) はこの file とは別の設定** —— リポジトリの
+# Settings → Code security で "Dependabot security updates" を有効にしないと、勧告が
+# 出ても PR は作られない。この file を置いただけでは有効にならない (docs/SECURITY.md)。
+#
+# 量を抑える理由: 1 件ずつの PR が毎週何十本も来ると、CI の枠と人の注意が先に尽きる。
+# そこで npm は同じ系統をまとめ (groups)、上限を置く。
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '22:00'
+      timezone: UTC
+    open-pull-requests-limit: 5
+    groups:
+      # 開発ツールの小さな更新は 1 本にまとめる (Stryker / vitest / eslint の系統が毎回揃って動く)
+      dev-minor-and-patch:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+      production-minor-and-patch:
+        dependency-type: production
+        update-types:
+          - minor
+          - patch
+    # メジャー更新は 1 本ずつ見る (梱包・API の変更を伴いうる。electron と electron-builder は手で追う)
+    ignore:
+      - dependency-name: electron
+        update-types:
+          - version-update:semver-major
+      - dependency-name: electron-builder
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '22:00'
+      timezone: UTC
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        patterns:
+          - '*'

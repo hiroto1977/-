@@ -1533,7 +1533,7 @@ npm run lint:shared-judgement # 「述語は共有したが、no と言われた
                            #   **これも分母であって欠陥の一覧ではない** —— 対称な物・
                            #   意図した非対称・本物の欠陥 (パス 246 の vaultToken) が
                            #   混ざる。読んでいない物に「対称だろう」とは書かない
-npm run verify:all         # typecheck + all of the above + eslint (37 ゲート)
+npm run verify:all         # typecheck + all of the above + eslint (38 ゲート)
                            #   **`npm test` は含まない。** CI は両方走らせるので、
                            #   push 前は `npm test && npm run verify:all` の両方を回すこと
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
@@ -1550,7 +1550,7 @@ npm run knowledge:md       # docs/ACADEMIC_KNOWLEDGE.md の概念表を academic
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 37 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 38 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in

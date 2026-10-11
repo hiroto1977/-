@@ -118,7 +118,7 @@ scripts/
 ## 品質ゲート
 
 CI (`.github/workflows/ci.yml`) は PR と `main` への push のたびに、`npm run typecheck`・
-`npm test` (+ `src/main/**` のカバレッジ)・`npm run verify:all` の **37 ゲート**・
+`npm test` (+ `src/main/**` のカバレッジ)・`npm run verify:all` の **38 ゲート**・
 `npm run build:web` を走らせる (ゲート数は `verify:arch` が `package.json` と突き合わせる)。
 件数 (検査の数・サービス数・参照の数) は [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の
 TL;DR が live metric として持つ —— ここに写すと必ず古びる。
