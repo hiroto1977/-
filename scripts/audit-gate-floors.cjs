@@ -165,6 +165,14 @@ const RECIPES = [
     recipe: { rmdir: '.github/workflows' },
   },
   {
+    gate: 'lint:secrets',
+    kind: 'ledger-inline',
+    cmd: 'node scripts/lint-secrets.cjs',
+    expect: 'rings',
+    why: '資格情報の形の見本の台帳 ALLOWED。空にすると、実物に在る 48 件の見本が「台帳に無い一致」として鳴る (床は台帳の件数の双方向)',
+    recipe: emptyArray('scripts/lint-secrets.cjs', 'const ALLOWED = ['),
+  },
+  {
     gate: 'lint:network-targets',
     kind: 'source-tree',
     cmd: 'node scripts/lint-network-targets.cjs',

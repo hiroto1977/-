@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { readOriginalSource } from './originalSource';
 
 /*
  * `lint:secrets` (scripts/lint-secrets.cjs) の台帳と、それが実物の追跡ファイルに効いていることを留める。
@@ -20,8 +20,11 @@ const gate = req('../../../scripts/lint-secrets.cjs') as {
   ledgerProblems: (counts: Map<string, number>, ledger?: readonly unknown[]) => string[];
 };
 
+/** 作業の途中の印。台帳の理由に残っていたら落とす (不在の主張。標本は下の it が持つ)。 */
+const PLACEHOLDER_WORDS = /TODO|FIXME|あとで/;
+
 const REPO_ROOT = path.resolve(__dirname, '../../..');
-const read = (f: string) => readFileSync(path.join(REPO_ROOT, f), 'utf8');
+const read = (f: string) => readOriginalSource(path.join(REPO_ROOT, f));
 
 describe('lint:secrets の規則と台帳', () => {
   it('規則の id は一意で、どれも説明 (what) を持つ', () => {
@@ -31,9 +34,10 @@ describe('lint:secrets の規則と台帳', () => {
   });
 
   it('台帳の理由はどれも空でなく、作業の途中の印 (TODO) を含まない', () => {
+    expect(PLACEHOLDER_WORDS.test('あとで直す TODO'), '規則が禁じたい文面に当たる (標本)').toBe(true);
     for (const row of gate.ALLOWED) {
       expect(row.reason.trim().length).toBeGreaterThanOrEqual(10);
-      expect(row.reason).not.toMatch(/TODO|FIXME|あとで/);
+      expect(row.reason).not.toMatch(PLACEHOLDER_WORDS);
     }
   });
 

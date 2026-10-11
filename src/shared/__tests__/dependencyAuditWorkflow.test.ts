@@ -58,8 +58,8 @@ describe('週次の依存監査は、予定 → スクリプト → 報告 → I
     expect(PKG.scripts['audit:floors']).toContain('scripts/audit-floors.cjs');
   });
 
-  it('★ 週 1 回の予定と手動起動の両方を持つ', () => {
-    expect(WF).toMatch(/schedule:\s*\n\s*- cron: '0 \d+ \* \* \d'/);
+  it('★ 毎日の予定と手動起動の両方を持つ (2026-10-11 · パス 509 で週次から毎日へ)', () => {
+    expect(WF).toMatch(/schedule:\s*\n\s*- cron: '0 \d+ \* \* \*'/);
     expect(WF).toContain('workflow_dispatch');
   });
 
