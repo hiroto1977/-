@@ -29,7 +29,7 @@
  *
  * IndexedDB の読み書きは `store.exportAll()` / `store.importAll()`。
  */
-import { isImportableRecord, type StoredRecord } from './store';
+import { importableRecordGate, type StoredRecord } from './store';
 import { parseTimestamp } from '../../shared/isoDate';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
 import { MIN_PASSWORD_LENGTH, meetsPasswordPolicy } from '../security/vault';
@@ -308,12 +308,14 @@ export function planRestore(
   incoming: readonly StoredRecord[],
   mode: RestoreMode,
   exportedAt: string | null,
+  /** 封緘済みを受けてよいか —— `importAll` と同じ答え (`RecordStore.acceptsSealedRecords()`)。パス 511。 */
+  acceptSealed: boolean,
 ): RestorePlan {
   const local = new Map<string, number>();
   for (const r of existing) local.set(r.id, r.updatedAt);
   // **入るのはこれだけ。** 関門は `importAll` と同じ 1 つ (`isImportableRecord`) ——
   // 2 つ書くと、数える側と実行する側が割れる (パス 432)。
-  const usable = incoming.filter(isImportableRecord);
+  const usable = incoming.filter(importableRecordGate(acceptSealed));
   const fileIds = new Set<string>();
   for (const rec of incoming) fileIds.add(rec.id);
   const usableIds = new Set<string>();

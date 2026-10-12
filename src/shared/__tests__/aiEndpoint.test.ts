@@ -23,18 +23,29 @@ function baseOf(raw: string, opts: AiEndpointOptions = withKey): string {
 
 describe('isLoopbackHostname', () => {
   it('ローカルを指す名前と IP を通す', () => {
-    for (const h of ['localhost', 'LOCALHOST', 'ip6-localhost', 'ip6-loopback', '127.0.0.1', '127.1.2.3']) {
+    for (const h of ['localhost', 'LOCALHOST', '127.0.0.1', '127.1.2.3']) {
       expect(isLoopbackHostname(h), h).toBe(true);
     }
   });
 
-  it('URL が付ける角括弧と末尾ドットを落としてから判定する', () => {
+  it('★ OS が loopback へ解決するとは限らない名前は通さない (threat: T-009)', () => {
+    // 実測 (AI 監査・パス 511): dns.lookup('ip6-localhost') / ('ip6-loopback') / ('localhost.') は
+    // ENOTFOUND で網の DNS へ出る —— 鍵を載せた平文 http がそこで答えた誰かへ渡る。
+    for (const h of ['ip6-localhost', 'ip6-loopback', 'localhost.', 'LOCALHOST.']) {
+      expect(isLoopbackHostname(h), h).toBe(false);
+    }
+    expect(normalizeAiBaseUrl('http://ip6-localhost:1234', withKey)).toEqual({ ok: false, reason: 'insecure-remote' });
+    expect(normalizeAiBaseUrl('http://localhost.:1234', withKey)).toEqual({ ok: false, reason: 'insecure-remote' });
+    // 標本が的に当たる: 同じ形の localhost ちょうどは通る。
+    expect(normalizeAiBaseUrl('http://localhost:1234', withKey).ok).toBe(true);
+  });
+
+  it('URL が付ける角括弧を落としてから判定する (末尾ドットは落とさない —— 下の T-009)', () => {
     // `new URL('http://[::1]/').hostname` は '[::1]'、
     // `new URL('http://localhost./').hostname` は 'localhost.' を返す。
     expect(isLoopbackHostname('[::1]')).toBe(true);
     expect(isLoopbackHostname('::1')).toBe(true);
     expect(isLoopbackHostname('0:0:0:0:0:0:0:1')).toBe(true);
-    expect(isLoopbackHostname('localhost.')).toBe(true);
     expect(isLoopbackHostname('[0:0:0:0:0:0:0:1]')).toBe(true);
   });
 

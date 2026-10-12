@@ -90,7 +90,13 @@ export function BackupPanel() {
       // 何が足され・上書きされ・残り・消えるかを**書く前に**数える (パス 129)。
       // 封筒 (id / updatedAt) は封緘済みでも平文なので exportAll で読める。
       const store = getRecordStore();
-      const plan = planRestore(await store.exportAll(), parsed.records, replace ? 'replace' : 'merge', parsed.exportedAt);
+      const plan = planRestore(
+        await store.exportAll(),
+        parsed.records,
+        replace ? 'replace' : 'merge',
+        parsed.exportedAt,
+        store.acceptsSealedRecords(),
+      );
       // 置換は元に戻せない。確認は「何件消えるか」を言う —— 一文だけの確認は何も言っていないのと同じ。
       // (2026-09-09 まで確認は読む**前**にあった —— 何も知らない時点の確認だった。)
       // **取り込める記録が 1 件も無い置換は、訊く前に断る** (2026-09-23 · パス 432)。

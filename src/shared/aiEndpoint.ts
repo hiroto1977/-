@@ -69,11 +69,28 @@ export interface AiEndpointOptions {
  * 残す（`localhost.` がそのまま来る）ので、両方を落としてから比べる。
  */
 export function isLoopbackHostname(hostname: string): boolean {
+  /*
+   * **名前で許すのは `localhost` ちょうどだけ (2026-10-12 · パス 511 · threat: T-009)。**
+   *
+   * この判定は**許す側** (鍵を載せた平文 http を通す・プロキシへの平文 http を通す) に
+   * 使われる。2026-10-11 までは `localhost.` (末尾ドット) / `ip6-localhost` /
+   * `ip6-loopback` も loopback として通していたが、AI 監査 (パス 511) が実測した ——
+   * この 3 つは **OS が loopback へ解決するとは限らない名前**である:
+   *
+   *   dns.lookup: localhost → 127.0.0.1 ; localhost. → ENOTFOUND ;
+   *               ip6-localhost → ENOTFOUND ; ip6-loopback → ENOTFOUND
+   *
+   * `ip6-*` は Debian / Ubuntu の `/etc/hosts` にしか無く、macOS / Windows では網の DNS
+   * (Windows は LLMNR / NBT-NS —— 同じ LAN の誰でも答えられる) へ問い合わせる。glibc の
+   * files は末尾ドットの `localhost.` に当たらない。つまり鍵が**平文で、答えた誰か**へ渡る。
+   *
+   * 塞ぐ側 (`privateTarget.ts` / `ollama.ts`) は広く取るのが正しく、そちらは変えない ——
+   * **許す側は狭く、塞ぐ側は広く**。
+   */
   const host = hostname.toLowerCase();
-  const bracketless = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
-  const bare = bracketless.endsWith('.') ? bracketless.slice(0, -1) : bracketless;
+  const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
 
-  if (bare === 'localhost' || bare === 'ip6-localhost' || bare === 'ip6-loopback') return true;
+  if (bare === 'localhost') return true;
   if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true;
 
   const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);

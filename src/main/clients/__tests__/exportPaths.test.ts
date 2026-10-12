@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import os from 'node:os';
 import { promises as fs } from 'node:fs';
-import { exportRoot, isSafeExportPath, writeExportFile, repairExportPermissions } from '../exportPaths';
+import { exportRoot, exportWriteRoot, isSafeExportPath, writeExportFile, repairExportPermissions } from '../exportPaths';
 
 // 2026-07 security audit: every renderer-supplied export path must land inside
 // ~/.local/business-hub. Before this module the four per-service copies of the
@@ -32,7 +32,30 @@ describe('isSafeExportPath', () => {
   it('accepts files inside the export root at any depth', () => {
     expect(isSafeExportPath(inRoot('data/dashboard.html'), HOME, '.html')).toBe(true);
     expect(isSafeExportPath(inRoot('data/templates/card.svg'), HOME, '.svg')).toBe(true);
-    expect(isSafeExportPath(inRoot('a/b/c/deep.md'), HOME, '.md')).toBe(true);
+    expect(isSafeExportPath(inRoot('data/a/b/c/deep.md'), HOME, '.md')).toBe(true);
+  });
+
+  /*
+   * **状態ファイルの木へは書き出せない (2026-10-12 · パス 511 · threat: T-002)。**
+   *
+   * `~/.local/business-hub/` 直下には状態ファイルと、保存の途中に作る固定名の
+   * `*.json.tmp` が住む。書き出しがそこを通すと、`mkdir -p` が
+   * `state.json.tmp` という名のディレクトリを作り、以後の保存が永久に
+   * `EISDIR` で失敗した (AI 監査で再現)。書き出しは `data/` の下だけ。
+   */
+  it('★ 状態ファイルの木 (data/ の外) へは書き出せない (threat: T-002)', () => {
+    for (const rel of [
+      'state.json.tmp/x.svg',
+      'team-radar.json.tmp/x.svg',
+      'talent.json/x.svg',
+      'x.html',
+      'other/deep.md',
+    ]) {
+      expect(isSafeExportPath(inRoot(rel), HOME, path.extname(rel)), rel).toBe(false);
+    }
+    // 標本が的に当たる: 同じ名前でも data/ の下なら通る。
+    expect(isSafeExportPath(inRoot('data/state.json.tmp/x.svg'), HOME, '.svg')).toBe(true);
+    expect(exportWriteRoot(HOME)).toBe(path.join(ROOT, 'data'));
   });
 
   it('rejects paths elsewhere under $HOME (the capability this closes)', () => {
@@ -58,24 +81,24 @@ describe('isSafeExportPath', () => {
   });
 
   it('requires the exact extension', () => {
-    expect(isSafeExportPath(inRoot('x.html'), HOME, '.md')).toBe(false);
-    expect(isSafeExportPath(inRoot('x.svg'), HOME, '.html')).toBe(false);
-    expect(isSafeExportPath(inRoot('x.html.exe'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(inRoot('data/x.html'), HOME, '.md')).toBe(false);
+    expect(isSafeExportPath(inRoot('data/x.svg'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(inRoot('data/x.html.exe'), HOME, '.html')).toBe(false);
   });
 
   it('rejects control characters, empties, non-strings and oversize paths', () => {
-    expect(isSafeExportPath(inRoot('a\0b.html'), HOME, '.html')).toBe(false);
-    expect(isSafeExportPath(inRoot('a\nb.html'), HOME, '.html')).toBe(false);
-    expect(isSafeExportPath(inRoot('a\rb.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(inRoot('data/a\0b.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(inRoot('data/a\nb.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(inRoot('data/a\rb.html'), HOME, '.html')).toBe(false);
     expect(isSafeExportPath('', HOME, '.html')).toBe(false);
     expect(isSafeExportPath(undefined as unknown as string, HOME, '.html')).toBe(false);
-    expect(isSafeExportPath(inRoot('a'.repeat(1100) + '.html'), HOME, '.html')).toBe(false);
+    expect(isSafeExportPath(inRoot('data/a'.repeat(1100) + '.html'), HOME, '.html')).toBe(false);
   });
 
   it('長さの上限はちょうど 1024 文字まで', () => {
     // 上限がどちら側に付いているか (1024 を含むのか外すのか) を固定する。
     // 実装は `> 1024` で弾くので、1024 ちょうどは通る。
-    const prefix = `${ROOT}${path.sep}`;
+    const prefix = `${ROOT}${path.sep}data${path.sep}`;
     const ext = '.html';
     const fill = 1024 - prefix.length - ext.length;
     const exact = `${prefix}${'a'.repeat(fill)}${ext}`;
@@ -114,7 +137,7 @@ describe('writeExportFile — 書き出しの権限', () => {
    */
   const mkHome = async (): Promise<string> => {
     const home = await fs.mkdtemp(path.join(os.tmpdir(), 'export-mode-'));
-    await fs.mkdir(exportRoot(home), { recursive: true });
+    await fs.mkdir(exportWriteRoot(home), { recursive: true });
     return home;
   };
   const modeOf = async (p: string): Promise<string> =>
@@ -122,7 +145,7 @@ describe('writeExportFile — 書き出しの権限', () => {
 
   it('★ 新しく書き出したファイルは 0600', async () => {
     const home = await mkHome();
-    const f = path.join(exportRoot(home), 'dash.html');
+    const f = path.join(exportWriteRoot(home), 'dash.html');
     await writeExportFile(f, '<html>売上 1,234,567 円</html>', home);
     expect(await modeOf(f)).toBe('600');
   });
@@ -135,7 +158,7 @@ describe('writeExportFile — 書き出しの権限', () => {
    */
   it('★ 既に 0644 で在るファイルも、書き直すと 0600 になる', async () => {
     const home = await mkHome();
-    const f = path.join(exportRoot(home), 'dash.html');
+    const f = path.join(exportWriteRoot(home), 'dash.html');
     await fs.writeFile(f, 'old', 'utf8');
     await fs.chmod(f, 0o644);
     expect(await modeOf(f)).toBe('644');
@@ -146,7 +169,7 @@ describe('writeExportFile — 書き出しの権限', () => {
 
   it('中身は書けている (権限だけ直して書き損ねない)', async () => {
     const home = await mkHome();
-    const f = path.join(exportRoot(home), 'dash.md');
+    const f = path.join(exportWriteRoot(home), 'dash.md');
     await writeExportFile(f, '# 売上\n1,234,567 円\n', home);
     expect(await fs.readFile(f, 'utf8')).toBe('# 売上\n1,234,567 円\n');
   });

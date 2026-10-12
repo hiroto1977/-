@@ -68,6 +68,8 @@ const LEDGER: readonly Row[] = [
     why: 'パス 291: 端点の関門。shell へ渡すのは解析後の値' },
   { file: 'src/main/oauth.ts', needle: "new URL(reqUrl, 'http://127.0.0.1')", kind: 'internal',
     why: 'loopback の要求行を解くための再解析 (基準は定数)' },
+  { file: 'src/renderer/data/chatbotOllama.ts', needle: 'const host = new URL(base).hostname;', kind: 'display',
+    why: '検め済みの Ollama の基底 URL から、送り先として名乗るホストだけを取り出す (送り先そのものは parseOllamaEndpoint が決める・T-010)' },
   { file: 'src/renderer/network/proxy.ts', needle: 'parsed = new URL(targetUrl)', kind: 'predicate',
     why: '送り先が private / reserved かを判定するだけ' },
   { file: 'src/renderer/oauth/callbackPaste.ts', needle: 'parsed = new URL(trimmed)', kind: 'predicate',
@@ -213,7 +215,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 27 行が 28 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 28 行が 29 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -221,10 +223,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 6, pin: 4, internal: 4, display: 2 });
-    expect(LEDGER).toHaveLength(27);
+    }).toEqual({ 'value-gate': 11, predicate: 6, pin: 4, internal: 4, display: 3 });
+    expect(LEDGER).toHaveLength(28);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(28);
+    expect(SITES).toHaveLength(29);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });

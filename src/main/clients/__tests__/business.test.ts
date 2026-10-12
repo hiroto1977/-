@@ -1524,7 +1524,7 @@ describe('exportBusinessDashboardImpl', () => {
   });
 
   it('uses a custom path when provided and safe', async () => {
-    const safePath = path.join(os.homedir(), '.local', 'business-hub', 'custom.html');
+    const safePath = path.join(os.homedir(), '.local', 'business-hub', 'data', 'custom.html');
     let written = '';
     const result = await exportBusinessDashboardImpl(
       { token: '', payload: { path: safePath } },
@@ -1695,7 +1695,7 @@ describe('exportBusinessDashboardMdImpl', () => {
   });
 
   it('uses a custom safe path when provided', async () => {
-    const p = path.join(os.homedir(), '.local', 'business-hub', 'custom.md');
+    const p = path.join(os.homedir(), '.local', 'business-hub', 'data', 'custom.md');
     let writtenPath = '';
     const result = await exportBusinessDashboardMdImpl(
       { token: '', payload: { path: p } },

@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (400 行)
+## 2. Cloudflare Worker 実装 (412 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -102,9 +102,23 @@ const MAX_REDIRECTS = 3;
 // Worker が先に落ちる限り一度も効かない。**読む所で切る。**
 const MAX_UPSTREAM_BYTES = 10 * 1024 * 1024;
 
-// ホストが変わるリダイレクトでは持ち越さないヘッダー。allowlist 内に留まる
-// としても、Notion のトークンを別ホストへ渡す必要は無い (横展開の防止)。
-const CREDENTIAL_HEADERS = /^(authorization|cookie|proxy-authorization|x-proxy-auth)$/i;
+// ホストが変わるリダイレクトで**持ち越してよい**ヘッダー (許可リスト)。allowlist 内に
+// 留まるとしても、あるサービスの鍵を別ホストへ渡す必要は無い (横展開の防止)。
+//
+// 2026-10-12 (パス 511) まで、ここは**落とす**名前の表 (authorization / cookie /
+// proxy-authorization / x-proxy-auth) だった。ところが鍵のヘッダー名はサービスごとに違い、
+// アプリは HIBP の鍵を `hibp-api-key`、VirusTotal の鍵を `x-apikey` で送る —— AI 監査
+// (パス 511) が実物の Worker を走らせて再現した: HIBP が別ホストへ 302 を返すと、
+// `Authorization` は落ちるのに `hibp-api-key` は**次のホストへそのまま届いた**。
+// 落とす名前を並べる形は 1 つ漏れれば漏れる。**持ち越す名前を並べる。**
+const CROSS_ORIGIN_SAFE_HEADERS = /^(accept|accept-language|content-type|user-agent)$/i;
+
+/** ホストが変わる転送で持ち越すヘッダーだけを残す (資格情報は名前を問わず落ちる)。 */
+function crossOriginHeaders(headers) {
+  return Object.fromEntries(
+    Object.entries(headers).filter(([k]) => CROSS_ORIGIN_SAFE_HEADERS.test(k)),
+  );
+}
 
 export default {
   async fetch(request) {
@@ -191,10 +205,8 @@ export default {
         // **平文へ落ちるのに `Authorization` を持ち越していた**。上の `denyReason` が
         // 平文を拒むようになったので今は先に落ちるが、資格情報を持ち越さない条件は
         // 「同じ scheme・同じ host・同じ port」= origin が正しい (多層防御)。
-        // クロス origin なので資格情報を落とす。
-        headers = Object.fromEntries(
-          Object.entries(headers).filter(([k]) => !CREDENTIAL_HEADERS.test(k)),
-        );
+        // クロス origin なので、持ち越してよいヘッダーだけを残す。
+        headers = crossOriginHeaders(headers);
       }
       // 301/302/303 の POST は GET に落として body を捨てる (fetch 仕様と同じ)。
       // 307/308 はメソッドと body を保持する。

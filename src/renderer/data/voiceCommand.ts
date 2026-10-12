@@ -386,11 +386,8 @@ export function quotedSpan(raw: string): string | null {
  */
 const CHANNEL_BOUNDARIES = ['に', 'へ', 'で', 'と', 'を', '送', '投稿'] as const;
 
-/** `#general` / `＃一般` → `#general` / `#一般` (Slack は名前に `#` を付けた形を受ける)。 */
-export function channelToken(raw: string): string | null {
-  const m = /#([\p{L}\p{N}_-]+)/u.exec(raw.normalize('NFKC'));
-  if (m === null) return null;
-  let name = m[1]!;
+function channelName(found: string): string {
+  let name = found;
   for (const b of CHANNEL_BOUNDARIES) {
     const at = name.indexOf(b, 1);
     if (at !== -1) name = name.slice(0, at);
@@ -399,34 +396,87 @@ export function channelToken(raw: string): string | null {
   return `#${name}`;
 }
 
+/** `#general` / `＃一般` → `#general` / `#一般` (Slack は名前に `#` を付けた形を受ける)。 */
+export function channelToken(raw: string): string | null {
+  const m = /#([\p{L}\p{N}_-]+)/u.exec(raw.normalize('NFKC'));
+  return m === null ? null : channelName(m[1]!);
+}
+
+/** 発話に現れるチャンネル名をすべて (重複は 1 つに)。 */
+export function channelTokens(raw: string): readonly string[] {
+  const names = [...raw.normalize('NFKC').matchAll(/#([\p{L}\p{N}_-]+)/gu)].map((m) => channelName(m[1]!));
+  return [...new Set(names)];
+}
+
+/**
+ * 引用の**中身**を空白で潰した発話 (2026-10-12 · パス 511 · threat: T-006)。
+ *
+ * 送り先 (`#channel` / `owner/repo`) は**引用の外**から読む。引用の中は送る本文
+ * (他人の文の転送であることが多い) で、AI 監査 (パス 511) が再現した ——
+ * `slackで「#incident 対応中です」を #general に送って` は送り先を `#incident` と取り、
+ * `githubで「foo/bar が落ちる」を hiroto/app の issue にして` は `foo/bar` へ起票しようとした。
+ * 確認は本当の送り先を見せるが、**本文が送り先を決めてよい理由は無い**。
+ * 長さを保つ (文字ごとに空白へ) ので、引用の外の位置は変わらない。
+ */
+export function outsideQuotes(raw: string): string {
+  let out = raw;
+  for (const [open, close] of QUOTE_PAIRS) {
+    let from = 0;
+    for (;;) {
+      const i = out.indexOf(open, from);
+      if (i === -1) break;
+      const end = out.indexOf(close, i + 1);
+      if (end === -1) break;
+      out = out.slice(0, i + 1) + ' '.repeat(end - i - 1) + out.slice(end);
+      from = end + 1;
+    }
+  }
+  return out;
+}
+
 /**
  * `owner/repo`。`github.com/owner/repo` の形を先に見る (そうしないと `github.com` が owner に
  * なる)。素の `owner/repo` は、owner が字を 1 つは含む物だけ —— `10/08` のような日付を
  * 組として取らないため。
  */
 export function ownerRepoToken(raw: string): { readonly owner: string; readonly repo: string } | null {
+  return ownerRepoTokens(raw)[0] ?? null;
+}
+
+/** 発話に現れる `owner/repo` をすべて (同じ組は 1 つに)。`github.com/…` の形が在ればそれだけを見る。 */
+export function ownerRepoTokens(raw: string): readonly { readonly owner: string; readonly repo: string }[] {
   const s = raw.normalize('NFKC');
-  const url = /github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)/.exec(s);
-  if (url !== null) return { owner: url[1]!, repo: url[2]! };
-  for (const m of s.matchAll(/(?<![A-Za-z0-9_./-])([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)/g)) {
-    if (/[A-Za-z]/.test(m[1]!)) return { owner: m[1]!, repo: m[2]! };
-  }
-  return null;
+  const urls = [...s.matchAll(/github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)/g)];
+  const found =
+    urls.length > 0
+      ? urls.map((m) => ({ owner: m[1]!, repo: m[2]! }))
+      : [...s.matchAll(/(?<![A-Za-z0-9_./-])([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)/g)]
+          .filter((m) => /[A-Za-z]/.test(m[1]!))
+          .map((m) => ({ owner: m[1]!, repo: m[2]! }));
+  const seen = new Set<string>();
+  return found.filter((t) => {
+    const key = `${t.owner}/${t.repo}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 /** action ごとに、取り出せる欄を集める。取れた物だけを持つ (1 つも無ければ `undefined`)。 */
 export function extractWriteParams(raw: string, action: string): Readonly<Record<string, string>> | undefined {
   const out: Record<string, string> = {};
   const quoted = quotedSpan(raw);
+  // 送り先は引用の外からだけ読み、2 つ以上なら取らない (= 必須欄が欠けて断られる)。
+  const outside = outsideQuotes(raw);
   if (action === 'send-message') {
-    const channel = channelToken(raw);
-    if (channel !== null) out.channel = channel;
+    const channels = channelTokens(outside);
+    if (channels.length === 1) out.channel = channels[0]!;
     if (quoted !== null) out.text = quoted;
   } else if (action === 'create-issue') {
-    const or = ownerRepoToken(raw);
-    if (or !== null) {
-      out.owner = or.owner;
-      out.repo = or.repo;
+    const repos = ownerRepoTokens(outside);
+    if (repos.length === 1) {
+      out.owner = repos[0]!.owner;
+      out.repo = repos[0]!.repo;
     }
     if (quoted !== null) out.title = quoted;
   } else if (action === 'record-entry') {

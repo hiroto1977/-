@@ -2390,6 +2390,14 @@
       "leafCount": 99,
       "note": "update 20-gates.mdc,ci.yml",
       "hash": "450ca89b19bbcc9fc06d991fd93c33f2f8ad33a86bddf7b1d8a5b783dc52e17e"
+    },
+    {
+      "index": 286,
+      "prevHash": "450ca89b19bbcc9fc06d991fd93c33f2f8ad33a86bddf7b1d8a5b783dc52e17e",
+      "merkleRoot": "0298e0b15870a0e7ccebca37e9bf8198b39c691d455272cf320f523ff7419eb7",
+      "leafCount": 99,
+      "note": "update PROXY_EXAMPLE.md,exportPaths.ts,secrets.ts,aiEndpoint.ts",
+      "hash": "a8b54204a8afec47c771f02aa2317173e1ceeaa0f2607f85d6014fcca9303d7f"
     }
   ],
   "tipManifest": {
@@ -2403,7 +2411,7 @@
     ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
     "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
-    "docs/PROXY_EXAMPLE.md": "9971ffa50e821c7625480f9912433c1f031ee8ea22c2584410040f1758ca583a",
+    "docs/PROXY_EXAMPLE.md": "d3850b6f80b19cb3b095b199e4e714c23291a7843c2804bed0693ce87fe3bd68",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
@@ -2430,12 +2438,12 @@
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "67cdcd22a997861524bba6d591e3770169f341f59dd3947379f5a55348cb7a02",
     "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
-    "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
+    "src/main/clients/exportPaths.ts": "b9eeed9443c3c56cf0ecd56e04dade92e4c44e9fd62640dd0b13edeaf495c8b3",
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "77ff225a6871efbaddbfd00c7488120f882e9ddfd37d8a751664254985de8bb2",
     "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
     "src/main/oauth.ts": "9c54fb2625d6fcac9a63f6e86728cd3dc9b873007d00b283ed6e5bf0b51d1c53",
-    "src/main/secrets.ts": "5d0cee28734cd431264cf61e2636ffb0762a782bf1a211b37f113e80d9651b83",
+    "src/main/secrets.ts": "b28664391bad52ead2674f0c2910cbb574a0a5405a37221c4e0260243b673609",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
@@ -2463,7 +2471,7 @@
     "src/shared/ai/chat.ts": "9f226eb4ab625c9445b5e13c8ec6fab8b109048fd0776b041f9016088d3f7cf8",
     "src/shared/ai/credentials.ts": "2f0ff1a2f26ddd5aec1ab9beb682e53c898716e720bdcfb72a255945d2e12315",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
-    "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
+    "src/shared/aiEndpoint.ts": "806a29d8421e3757132f00ae81b2bac51c43d1d11f70939f52b5acb4160694e6",
     "src/shared/assistantLimits.ts": "5df97a39c2f9efc93ce067816de4eb3f3d8bd07cfe209e49660346ca7ba4f235",
     "src/shared/atlassianSite.ts": "e3898d643e76b22877cf0990090a61dc249bc3ccd2058ff3166e13bafea7b931",
     "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",

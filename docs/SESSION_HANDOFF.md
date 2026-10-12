@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-12) — パス 511: AI による脅威の狩り (捕縛・解析・対策・回帰・記録) と攻撃の型ごとの守りの表
+
+- 手順書 `docs/THREAT_HUNT.md`・台帳 `security/threat-ledger.json`・機械 `src/shared/__tests__/threatLedger.test.ts`・`.github/CODEOWNERS`。
+- 1 回目の狩りで本物 9 件 (T-001〜T-010・T-004 欠番・どれも low) を直し、`threat: T-xxx` の印つきの回帰検査で留めた。詳細は `docs/REMAINING_WORK.md` の「パス 511」と `docs/SECURITY.md` の「攻撃の型ごとの守り」。
+- **確立したパターン** —— 直した穴には回帰検査の題名と印を台帳に書く (台帳と検査は双方向に突き合わされる)。守りの無い型は `gaps` に書き、空欄で通さない。
+- 残り: `huntBacklog` 4 件・GitHub の「Require review from Code Owners」を人が有効にする・定期の狩りを予約するかは利用者が決める。
+
 ## 直近の作業 (2026-10-11) — パス 509: 侵入の検知・解析・対策を、リポジトリの中で回す仕組み (資格情報の門・毎日の勧告・Dependabot)
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 509」と `docs/SECURITY.md` の「継続監視」。
