@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 284
+- ブロック数: 290
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `2e6fb38e53186448cd707191eaaf263c5ece8d61e1f79d3be6866f9f5013ff4f`
-- 保護対象: 99 ファイル
+- 末尾(tip)ハッシュ: `3c5fcd1b99119fe1cba7066b1b9c46d80f33bfc4d3f01cedf912cee0bd02ef16`
+- 保護対象: 102 ファイル
 
 ## ブロック
 
@@ -297,9 +297,18 @@
 | 281 | `02483f41c2081db5` | `16047100ecc8c35f` | `0aa0cf1cbfbf22ea` | update imageUrlGate.ts |
 | 282 | `a280c65785bb8da9` | `0aa0cf1cbfbf22ea` | `ac3fc45beec2049e` | update LockScreen.tsx |
 | 283 | `0fa78a55c06d42df` | `ac3fc45beec2049e` | `2e6fb38e53186448` | update settings.json |
+| 284 | `a579013b4297536f` | `2e6fb38e53186448` | `f0bb5da64c524124` | update 20-gates.mdc,ci.yml |
+| 285 | `bd9e494a1a7fadfd` | `f0bb5da64c524124` | `450ca89b19bbcc9f` | update 20-gates.mdc,ci.yml |
+| 286 | `0298e0b15870a0e7` | `450ca89b19bbcc9f` | `a8b54204a8afec47` | update PROXY_EXAMPLE.md,exportPaths.ts,secrets.ts,aiEndpoint.ts |
+| 287 | `1a32b87ad28e8187` | `a8b54204a8afec47` | `6515b2c0501af05a` | update lint-artifact-csp.cjs |
+| 288 | `1e132492fc4f6c94` | `6515b2c0501af05a` | `133a8673fafa41de` | update exportPaths.ts,shellOpenGate.ts,scanTarget.ts |
+| 289 | `7066b935fbe555e6` | `133a8673fafa41de` | `3c5fcd1b99119fe1` | update auditor.md,mechanic.md,scout.md,integrity-chain.cjs |
 
 ## 保護対象ファイル
 
+- `.claude/agents/auditor.md`
+- `.claude/agents/mechanic.md`
+- `.claude/agents/scout.md`
 - `.claude/settings.json`
 - `.cursor/rules/00-project.mdc`
 - `.cursor/rules/10-boundaries.mdc`

@@ -179,6 +179,36 @@ function looksSecretName(name: string): boolean {
  * 許可の拡大ではない。だから統合してはいけない側ではなく、
  * 広く取ってよい側に居る。
  */
+/**
+ * IPv6 に埋め込まれた IPv4 を点記法で返す (無ければ null)。
+ *
+ * `new URL()` は `::ffff:169.254.169.254` を `::ffff:a9fe:a9fe` へ正規化する (実測) ので、
+ * 点記法ではなく **16 進の 2 組**で来る。3 つの形を見る:
+ *   - IPv4-mapped (`::ffff:…`) と NAT64 の既知接頭辞 (`64:ff9b::…`) —— 末尾 32 bit が v4
+ *   - 6to4 (`2002:WWXX:YYZZ::/16`) —— 2002 の直後の 2 組が v4
+ * どれも v4 を取り出して `looksInternalHostname` の v4 判定へ渡す (2026-10-13 · パス 513)。
+ */
+function embeddedIpv4FromV6(v6: string): string | null {
+  const toV4 = (hiHex: string, loHex: string): string => {
+    const hi = Number.parseInt(hiHex, 16);
+    const lo = Number.parseInt(loHex, 16);
+    return `${hi >> 8}.${hi & 0xff}.${lo >> 8}.${lo & 0xff}`;
+  };
+  const mapped = /^(?:::ffff:|64:ff9b::)(.+)$/.exec(v6);
+  if (mapped !== null) {
+    const tail = mapped[1]!;
+    const dotted = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(tail);
+    if (dotted !== null) return `${dotted[1]}.${dotted[2]}.${dotted[3]}.${dotted[4]}`;
+    const hex = /^([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(tail);
+    if (hex !== null) return toV4(hex[1]!, hex[2]!);
+    return null;
+  }
+  // 6to4: 2002::/16 の全域が v4 を bits 16-48 に埋め込む。
+  const sixToFour = /^2002:([0-9a-f]{1,4}):([0-9a-f]{1,4})(?::|$)/.exec(v6);
+  if (sixToFour !== null) return toV4(sixToFour[1]!, sixToFour[2]!);
+  return null;
+}
+
 export function looksInternalHostname(hostname: string): boolean {
   const h = hostname.toLowerCase().replace(/\.$/, '');
   if (h === '') return false;
@@ -186,6 +216,9 @@ export function looksInternalHostname(hostname: string): boolean {
   if (h.startsWith('[') && h.endsWith(']')) {
     const v6 = h.slice(1, -1);
     if (v6 === '::1' || v6 === '::') return true;
+    // IPv4-mapped / NAT64 / 6to4 に埋め込まれた内部の v4 (クラウドのメタデータを含む)。
+    const inner = embeddedIpv4FromV6(v6);
+    if (inner !== null && looksInternalHostname(inner)) return true;
     // fc00::/7 (ULA) と fe80::/10 (リンクローカル)。
     return /^f[cd][0-9a-f]{0,2}:/.test(v6) || /^fe[89ab][0-9a-f]?:/.test(v6);
   }

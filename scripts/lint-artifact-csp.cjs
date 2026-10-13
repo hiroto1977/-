@@ -38,6 +38,58 @@
  */
 
 const fs = require('node:fs');
+const { cspHash, inlineScriptSources, scriptEndIndex, isExecutableScriptTag } = require('./inline-html.cjs');
+
+/*
+ * **CSP の meta より前に何が在るか** (2026-10-13 · パス 512 · threat: T-011)。
+ *
+ * meta で配る CSP は**それが構文解析された所から**効く。meta より前の
+ * `<script>` は CSP の外で走る —— 実 chromium で実測: 出荷物の CSP meta の
+ * **前**へ未ピン留めの `<script>window.__pwn=1</script>` を置くと `__pwn === 1`、
+ * **後**へ置くと `undefined` (ブロック)。この門は 2026-10-12 まで値だけを見ており、
+ * **前に置いた形も後に置いた形も ✅ を返した**。
+ *
+ * 前に置いてよいのは、何も走らせず何も読み込まない物だけ:
+ * 文書型・`<html>`・`<head>`・`<meta>`・`<title>`。`<base>` は base-uri の外で
+ * 相対 URL を書き換え、`<link>` / `<style>` は読み込み (style の url()) を始める。
+ */
+const BEFORE_CSP_OK = new Set(['!doctype', 'html', 'head', 'meta', 'title']);
+
+/** 最初の CSP meta より前に開く要素のうち、置いてはいけない物の名前。CSP が無ければ []。 */
+function elementsBeforeCsp(html) {
+  let at = -1;
+  for (const m of html.matchAll(/<meta\b[^>]*>/gi)) {
+    if (/http-equiv\s*=\s*(["'])\s*Content-Security-Policy\s*\1/i.test(m[0])) {
+      at = m.index;
+      break;
+    }
+  }
+  if (at === -1) return [];
+  const prefix = html.slice(0, at).replace(/<!--[\s\S]*?-->/g, '');
+  const out = [];
+  for (const m of prefix.matchAll(/<(!?[a-zA-Z][\w-]*)/g)) {
+    const name = m[1].toLowerCase();
+    if (!BEFORE_CSP_OK.has(name)) out.push(name);
+  }
+  return out;
+}
+
+/** 実行される `<script>` のうち src を持つ物の数 (inline の走査と同じ切り方で数える)。 */
+function externalScriptCount(html) {
+  let n = 0;
+  let i = 0;
+  for (;;) {
+    const open = html.indexOf('<script', i);
+    if (open === -1) return n;
+    const tagEnd = html.indexOf('>', open);
+    if (tagEnd === -1) return n;
+    const close = scriptEndIndex(html, tagEnd);
+    if (close === -1) return n;
+    const tag = html.slice(open, tagEnd + 1);
+    if (/\ssrc\s*=/i.test(tag) && isExecutableScriptTag(tag)) n += 1;
+    i = close + '</script>'.length;
+  }
+}
 
 /*
  * `<meta http-equiv="Content-Security-Policy" content="…">` の content。無ければ null。
@@ -109,6 +161,14 @@ function evaluate(profile, html, label) {
   }
   const d = directives(csp);
 
+  const early = elementsBeforeCsp(html);
+  if (early.length > 0) {
+    at(
+      `CSP の meta より前に ${early.map((n) => `<${n}>`).join(' ')} があります — ` +
+        'meta より前の要素は CSP が効く前に走る・読み込む (threat: T-011)。meta を <head> の先頭へ',
+    );
+  }
+
   // どのプロファイルでも許さない。ハッシュでは無効化できない唯一の穴。
   if (csp.includes("'unsafe-eval'")) at("'unsafe-eval' が入っています");
 
@@ -121,6 +181,20 @@ function evaluate(profile, html, label) {
         "script-src がハッシュで固定されていません — " +
           "'unsafe-inline' に戻すと、アプリは動いたまま注入された <script> も動きます",
       );
+    }
+    /*
+     * **ハッシュで固定していても、どの script を固定しているかは別の問い**
+     * (パス 512)。ビルドの側 (`assertPinnedScripts`) は自分が書いた物を見るが、
+     * その後に足された script はここでしか見えない。未ピン留めの inline script は
+     * ブラウザが止めるので実害は「動かない」側だが、**この門が固定を名乗るなら、
+     * 固定されていない物が在るときに緑を返さない**。外から読む script は
+     * ハッシュの外なので、在れば鳴らす (出荷物は 0 件)。
+     */
+    if (script !== undefined) {
+      const unpinned = inlineScriptSources(html).filter((src) => !script.includes(cspHash(src)));
+      if (unpinned.length > 0) at(`inline の <script> ${unpinned.length} 本が script-src に固定されていません`);
+      const external = externalScriptCount(html);
+      if (external > 0) at(`外から読む <script src> が ${external} 本あります — 単一 HTML は inline だけ`);
     }
     /*
      * 2026-08-26 に足した 2 つ。**出荷物はどちらも既に正しい値を持っていたが、
@@ -185,6 +259,7 @@ function selfTest() {
   const swap = (from, to) => APP_OK.replace(from, to);
   const cases = [
     ['app: 実物と同じ形は通る', 'app', APP_OK, 0],
+    ['app: 固定された inline script は通る', 'app', APP_OK.replace("'sha256-AAAA'", cspHash('ok()')) + '<script>ok()</script>', 0],
     // **これが本題** —— アプリは動いたまま注入も通る形。
     ['app: ハッシュを外すと鳴る', 'app', swap("script-src 'sha256-AAAA'", "script-src 'self' 'unsafe-inline'"), 1],
     ['app: script-src ごと消すと鳴る', 'app', swap("script-src 'sha256-AAAA'; ", ''), 1],
@@ -217,6 +292,14 @@ function selfTest() {
     ['none: CSP が付いたら鳴る', 'none', APP_OK, 1],
     ['app: CSP が 2 枚あれば鳴る (1 枚目しか読めないため)', 'app', APP_OK + APP_OK, 1],
     ['none: 2 枚でも「付いた」の 1 件だけ (枚数の話は別プロファイル)', 'none', APP_OK + APP_OK, 1],
+    // パス 512 (threat: T-011): meta より前の要素・固定されていない script。
+    ['app: meta より前の <script> は鳴る (CSP の外で走る)', 'app', '<head><script>x()</script>' + APP_OK, 2],
+    ['app: meta より前の <base> / <link> は鳴る', 'app', '<head><base href="https://e.example/"><link rel="stylesheet" href="x.css">' + APP_OK, 1],
+    ['app: meta より前の charset / viewport / title は通る', 'app', '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="w"><title>t</title><!-- <script> -->' + APP_OK, 0],
+    ['app: 固定されていない inline script は鳴る', 'app', APP_OK + '<script>evil()</script>', 1],
+    ['app: 外から読む script は鳴る', 'app', APP_OK + '<script src="https://cdn.example/x.js"></script>', 1],
+    ['app: データの script (ld+json) は数えない', 'app', APP_OK + '<script type="application/ld+json">{}</script>', 0],
+    ['document: meta より前の <script> は鳴る', 'document', '<script>fetch("https://e.example")</script><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'unsafe-inline\';">', 1],
     // 抽出そのもの (属性の順序・引用符が変わっても拾えること)。
     [
       'app: 属性の順序が逆でも拾う',
@@ -303,4 +386,4 @@ function main(argv) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { evaluate, extractCsp, cspMetas, directives };
+module.exports = { evaluate, extractCsp, cspMetas, directives, elementsBeforeCsp };

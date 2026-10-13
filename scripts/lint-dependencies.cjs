@@ -81,7 +81,16 @@ const MIN_PACKAGES = 400;
 const LIFECYCLE_KEYS = [
   'preinstall', 'install', 'postinstall',
   'prepare', 'prepublish', 'prepublishOnly', 'prepack', 'postpack',
+  // build系の自動発火フック (今日 0 件)。`npm run build` のたびに prebuild → build →
+  // postbuild の順で走り、release.yml の梱包ステップ (`npm run build`) は署名鍵
+  // (CSC_LINK / CSC_KEY_PASSWORD / Apple 資格情報 / GH_TOKEN) を env に持つ。install
+  // フックと違い `npm ci` では発火しないので ci.yml (build:web だけ) では一度も走らず、
+  // release タグを切った瞬間にだけ走る —— PR の CI は緑のまま通る (T-016)。
+  'prebuild', 'postbuild',
 ];
+
+/** `npm run build` のたびに自動発火するフック (install 時ではなく build 時)。 */
+const BUILD_LIFECYCLE_HOOKS = new Set(['prebuild', 'postbuild']);
 
 /**
  * **このリポジトリ自身のインストール時コード。今日は 0 件。**
@@ -116,9 +125,11 @@ function checkOwnLifecycle(pkg, ledger = OWN_INSTALL_SCRIPTS, keys = LIFECYCLE_K
   const present = keys.filter((k) => Object.hasOwn(scripts, k));
   for (const k of present) {
     if (!Object.hasOwn(ledger, k)) {
+      const when = BUILD_LIFECYCLE_HOOKS.has(k)
+        ? 'npm run build のたびに自動で走ります (release.yml の梱包ジョブは署名鍵を env に持つ)'
+        : 'npm ci のたびに走ります (CI・release.yml の梱包ジョブ・全員の手元)';
       problems.push(
-        `package.json の "${k}" は npm ci のたびに走ります (CI・release.yml の梱包ジョブ・全員の手元) — ` +
-          '理由を添えて OWN_INSTALL_SCRIPTS へ',
+        `package.json の "${k}" は ${when} — 理由を添えて OWN_INSTALL_SCRIPTS へ`,
       );
       continue;
     }

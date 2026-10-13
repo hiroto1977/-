@@ -2,7 +2,7 @@ import { chmodSync, existsSync, mkdirSync, rmSync, statSync, symlinkSync, writeF
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { assertExportTargetContained, exportRoot, isSafeExportPath, writeExportFile } from '../clients/exportPaths';
+import { assertExportTargetContained, exportWriteRoot, isSafeExportPath, writeExportFile } from '../clients/exportPaths';
 
 /*
  * 書き出しの封じ込めを、**symlink まで含めて**留める。
@@ -22,15 +22,15 @@ beforeEach(() => {
   base = join(tmpdir(), `export-containment-${process.pid}-${Math.floor(performance.now() * 1000)}`);
   home = join(base, 'home');
   outside = join(base, 'outside');
-  mkdirSync(exportRoot(home), { recursive: true });
+  mkdirSync(exportWriteRoot(home), { recursive: true });
   mkdirSync(outside, { recursive: true });
 });
 afterEach(() => rmSync(base, { recursive: true, force: true }));
 
 describe('書き出しの封じ込め — symlink', () => {
   it('★ 根の中の symlink を経由して外へ書けない', async () => {
-    symlinkSync(outside, join(exportRoot(home), 'link'));
-    const target = join(exportRoot(home), 'link', 'pwned.svg');
+    symlinkSync(outside, join(exportWriteRoot(home), 'link'));
+    const target = join(exportWriteRoot(home), 'link', 'pwned.svg');
 
     // 字面の検査は通ってしまう —— これがこの検査の存在理由。
     expect(isSafeExportPath(target, home, '.svg')).toBe(true);
@@ -42,9 +42,9 @@ describe('書き出しの封じ込め — symlink', () => {
   it('★ 書き出し先そのものが symlink なら拒否する (指す先へ書かない)', async () => {
     const victim = join(outside, 'victim.svg');
     writeFileSync(victim, 'original');
-    symlinkSync(victim, join(exportRoot(home), 'alias.svg'));
+    symlinkSync(victim, join(exportWriteRoot(home), 'alias.svg'));
 
-    await expect(writeExportFile(join(exportRoot(home), 'alias.svg'), '<svg/>', home)).rejects.toThrow();
+    await expect(writeExportFile(join(exportWriteRoot(home), 'alias.svg'), '<svg/>', home)).rejects.toThrow();
     // 読むのは**その場で作った一時ファイル**なので原文の助けは要らない
     // (`readOriginalSource` は repo の原文を読む道具。一時の道に使うと的が外れる)。
     expect(require('node:fs').readFileSync(victim, 'utf8')).toBe('original');
@@ -55,20 +55,20 @@ describe('書き出しの封じ込め — symlink', () => {
   });
 
   it('陰性: 根の直下へは書ける (この検査が全部を拒否していないこと)', async () => {
-    const target = join(exportRoot(home), 'ok.svg');
+    const target = join(exportWriteRoot(home), 'ok.svg');
     await writeExportFile(target, '<svg/>', home);
     expect(existsSync(target)).toBe(true);
   });
 
   it('陰性: 根の中の実ディレクトリへも書ける', async () => {
-    mkdirSync(join(exportRoot(home), 'sub'), { recursive: true });
-    const target = join(exportRoot(home), 'sub', 'ok.svg');
+    mkdirSync(join(exportWriteRoot(home), 'sub'), { recursive: true });
+    const target = join(exportWriteRoot(home), 'sub', 'ok.svg');
     await writeExportFile(target, '<svg/>', home);
     expect(existsSync(target)).toBe(true);
   });
 
   it('陰性: 根と紛らわしい兄弟ディレクトリは拒否する', async () => {
-    const sibling = `${exportRoot(home)}-evil`;
+    const sibling = `${exportWriteRoot(home)}-evil`;
     mkdirSync(sibling, { recursive: true });
     await expect(assertExportTargetContained(join(sibling, 'x.svg'), home)).rejects.toThrow();
   });
@@ -95,9 +95,9 @@ describe('書き出しの封じ込め — 断った理由を見分ける', () =>
   it('★ 先が symlink なら「symlink です」で断る (別の門)', async () => {
     const victim = join(outside, 'v.svg');
     writeFileSync(victim, 'original');
-    symlinkSync(victim, join(exportRoot(home), 'alias2.svg'));
+    symlinkSync(victim, join(exportWriteRoot(home), 'alias2.svg'));
     await expect(
-      assertExportTargetContained(join(exportRoot(home), 'alias2.svg'), home),
+      assertExportTargetContained(join(exportWriteRoot(home), 'alias2.svg'), home),
     ).rejects.toThrow(/書き出し先が symlink です/);
   });
 
@@ -110,9 +110,9 @@ describe('書き出しの封じ込め — 断った理由を見分ける', () =>
    * (根がまだ無い) で書き出しが常に「領域の外」と言って失敗する。
    */
   it('★ 根がまだ無くても、封じ込めの判定は通す (realpath の退避)', async () => {
-    rmSync(exportRoot(home), { recursive: true, force: true });
+    rmSync(exportWriteRoot(home), { recursive: true, force: true });
     await expect(
-      assertExportTargetContained(join(exportRoot(home), 'first.svg'), home),
+      assertExportTargetContained(join(exportWriteRoot(home), 'first.svg'), home),
     ).resolves.toBeUndefined();
   });
 });
@@ -127,14 +127,14 @@ describe('書き出しの封じ込め — 断った理由を見分ける', () =>
  */
 describe('書き出しの権限', () => {
   it('★ 書き出したファイルは 0600 (他人から読めない)', async () => {
-    const target = join(exportRoot(home), 'perm.svg');
+    const target = join(exportWriteRoot(home), 'perm.svg');
     await writeExportFile(target, '<svg/>', home);
     const mode = statSync(target).mode & 0o777;
     expect(mode.toString(8)).toBe('600');
   });
 
   it('★ 既に緩い権限で存在していても 0600 へ戻す', async () => {
-    const target = join(exportRoot(home), 'loose.svg');
+    const target = join(exportWriteRoot(home), 'loose.svg');
     writeFileSync(target, 'old', { mode: 0o644 });
     chmodSync(target, 0o644); // umask に依らず確実に緩めておく
     await writeExportFile(target, '<svg/>', home);

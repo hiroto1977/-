@@ -35,6 +35,7 @@ import {
 } from '../data/assistantContext';
 import { externalTextOnOneLine, parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
 import { replyTo } from '../data/chatbot';
+import { detectCrisis, detectHarmToOthers } from '../data/counseling';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
@@ -588,6 +589,15 @@ export function AssistantPage() {
     setMessages(history.slice(-HISTORY_MAX));
     setBusy(true);
     try {
+      // 危機・他害の語は、オンラインでもモデルへ送らず、決定論で確証済みの窓口を先に出す。
+      // コンシェルジュ (chatbot.replyTo) と同じ安全思想 (counseling.ts): 危機は最優先・無条件で
+      // 判定し、モデル出力に委ねない。replyOffline → replyTo が buildCounselReply を返し、
+      // SUPPORT_RESOURCES (いのちの電話 / 119・110 ほか) を本文へ展開する。旗艦 AI 画面だけが
+      // オンライン経路でこのネットを迂回し、窓口を出すかどうかがモデル出力に依っていた (パス 514)。
+      if (detectCrisis(text) || detectHarmToOthers(text)) {
+        replyOffline(text);
+        return;
+      }
       const hub = window.serviceHub;
       if (!hub) {
         replyOffline(text);

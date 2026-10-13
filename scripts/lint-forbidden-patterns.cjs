@@ -29,6 +29,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { stripComments } = require('./lib/strip-non-code.cjs');
+const { gitLsFilesOrNull } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -861,6 +862,14 @@ const KNOWN_SUPPRESSIONS = [
   // なので、プロセスを作らずには成り立たない。渡す引数は台帳 (`SECURITY_FLOORS`) の
   // パッケージ名と版だけで、シェルを経由しない (`execFileSync`)。
   'child_process exec/spawn :: scripts/audit-floors.cjs :: 1',
+  // 資格情報の形を追跡ファイルから探す門 (`lint:secrets`・パス 509)。母集団は
+  // `git ls-files` に聞く (固定の引数・シェルを経由しない `execFileSync`)。
+  // 無視の規則を書き写すと母集団が走るたびに変わるので、git の答えを使う。1 件は呼び出し。
+  'child_process exec/spawn :: scripts/lint-secrets.cjs :: 1',
+  // 悪意のあるコードの形を探す門 (`lint:malware`・パス 510)。`git ls-files` を配列渡しで読む
+  // (`execFileSync`・シェルを経由しない)。合計 5 件 (注記と見本の綴りを含む) のうち実行は 3 か所。
+  // 実行の綴りの台帳は `lint-malware.cjs` の ACCEPTED が件数で縛る。
+  'child_process exec/spawn :: scripts/lint-malware.cjs :: 5 (code 3)',
   // 固定回数の待ちへの依存を**振る舞いで**測る定期点検の道具 (パス 369)。
   // 周回数を 0 に書き換えた検査を `npx vitest run <ファイル…>` で実際に走らせる ——
   // 「その回数に依っているか」は走らせないと答えが出ないので、
@@ -1088,6 +1097,30 @@ const SCAN_FILES = ['vite.config.ts', 'vitest.config.ts', 'vitest.audit.config.t
 const MUST_SCAN = ['assets/sw.js', ...SCAN_FILES];
 
 /**
+ * **追跡された、リポジトリ直下 (depth 0) の実行コード** (2026-10-13 · T-016)。
+ *
+ * パス 347 は直下の設定 3 本を `SCAN_FILES` に名指しで足したが、**固定リスト**なので
+ * 新しく足した直下の `.cjs` (例: `postbuild.cjs`) はどの根にも SCAN_FILES にも入らず
+ * 走査から外れた。`package.json` に `postbuild` を 1 行足せば `npm run build`
+ * (release.yml の梱包ステップ・署名鍵を env に持つ) のたびにそれが自動で走る ——
+ * child_process の census も forbidden パターンも**どの門も見ない**まま release の
+ * 署名証明書まで届いた。母集団を固定リストから **git ls-files に聞く動的な一覧**へ変える
+ * (lint:network-targets③ が既に git ls-files 全体で直下を含むのと同じ形)。
+ * git が無い環境では既知の `SCAN_FILES` へ落ちる (黙って 0 件にはしない)。
+ */
+function rootCodeFiles(tracked = gitLsFilesOrNull(REPO_ROOT), { requireExists = true } = {}) {
+  const rels =
+    tracked === null
+      ? SCAN_FILES
+      : tracked.filter((rel) => !rel.includes('/') && /\.(?:cjs|mjs|js|ts|tsx)$/.test(rel));
+  return rels.filter(
+    (rel) =>
+      (!requireExists || fs.existsSync(path.join(REPO_ROOT, rel))) &&
+      !EXCLUDE_PATTERNS.some((re) => re.test(rel)),
+  );
+}
+
+/**
  * 実物の木を走査して根ごとの本数を返す (自己検査の標本用)。
  * 本体と同じ `walk` を通すので、除外規則を変えたらこちらも一緒に動く。
  */
@@ -1111,13 +1144,10 @@ function realVisited() {
       seen.add(rel);
     });
   }
-  // 根に属さない単体のファイル (パス 347)。**本体の main() と同じ物を歩く** ——
-  // 片方だけに足すと、self-test が「走査した」と言うのに本体は見ていない形になる。
-  for (const rel of SCAN_FILES) {
-    if (!fs.existsSync(path.join(REPO_ROOT, rel))) continue;
-    if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
-    seen.add(rel);
-  }
+  // 根に属さない、追跡された直下の実行コード (パス 347 → 514)。**本体の main() と同じ
+  // rootCodeFiles() を歩く** —— 片方だけに足すと、self-test が「走査した」と言うのに
+  // 本体は見ていない形になる。
+  for (const rel of rootCodeFiles()) seen.add(rel);
   return seen;
 }
 
@@ -1147,6 +1177,25 @@ function missingMustScan(visited, must = MUST_SCAN) {
     );
 }
 
+/**
+ * walk が本文を走査する拡張子。`.mjs` は Node の ESM の実行コードなので含む
+ * (2026-10-13 · パス 515 · T-016 の家系)。
+ *
+ * **なぜ `.mjs` が要るか (実測)**: 直す前の walk 正規表現は `.mjs` を含まず、
+ * `scripts/ci/x.mjs` に `require('node:child_process')` 相当を書いても
+ * `lint:forbidden` は exit 0 だった (同じ中身を `.cjs` にすると child_process
+ * census が exit 1 で捕まえる —— 差は拡張子だけ)。これは既知 gap
+ * 「純粋な child_process + curl は forbidden の census が重なって塞ぐ」が頼る
+ * まさにその census の母集団に `.mjs` が入っていない穴。malware の
+ * `isScannedPath` は元から `.mjs` を含むので、2 つの supply-chain 検出器が
+ * `.mjs` について対称になる (`rootConfigScanned.test.ts` が両方向で留める)。
+ * 追跡された `.mjs` は今日 0 件 (latent) だが、`.mjs` は正当な ESM 拡張子で、
+ * `scripts/` が足せば workflow / package.json の script から発火しうる。
+ */
+function isWalkedSourceName(name) {
+  return /\.(ts|tsx|cjs|mjs|js|jsx|html)$/.test(name);
+}
+
 function walk(dir, hit) {
   let entries;
   try {
@@ -1161,7 +1210,7 @@ function walk(dir, hit) {
     if (entry.isDirectory()) {
       walk(full, hit);
     } else if (entry.isFile()) {
-      if (/\.(ts|tsx|cjs|js|jsx|html)$/.test(entry.name)) {
+      if (isWalkedSourceName(entry.name)) {
         hit(full, rel);
       }
     }
@@ -1619,14 +1668,12 @@ function main() {
     walk(path.join(REPO_ROOT, root.dir), scan);
     perRoot[root.dir] = filesScanned - before;
   }
-  // 根に属さない単体のファイル (リポジトリ直下の設定。上の SCAN_FILES を参照)。
+  // 根に属さない、追跡された直下の実行コード (rootCodeFiles が git に聞く —— 固定リストでない。
+  // 新しく足した直下の .cjs も必ず走査する。T-016)。
   {
     const before = filesScanned;
-    for (const rel of SCAN_FILES) {
-      const full = path.join(REPO_ROOT, rel);
-      if (!fs.existsSync(full)) continue;
-      if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
-      scan(full, rel);
+    for (const rel of rootCodeFiles()) {
+      scan(path.join(REPO_ROOT, rel), rel);
     }
     perRoot['(直下)'] = filesScanned - before;
   }
@@ -1706,6 +1753,8 @@ module.exports = {
   // 走査の生存 —— 外側の証人 (`forbiddenPatternWitness.test.ts`) が読む。
   SCAN_ROOTS,
   MUST_SCAN,
+  rootCodeFiles,
+  isWalkedSourceName,
   rootShortfalls,
   missingMustScan,
   realRootCounts,

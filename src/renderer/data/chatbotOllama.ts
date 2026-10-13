@@ -43,10 +43,14 @@
  */
 import {
   DEFAULT_SETUP_MODEL,
+  isLoopbackHostname,
   isSafeModelName,
+  parseOllamaEndpoint,
   suggestInstalledModel,
 } from '../../shared/ollama';
+import type { BuildKind } from '../../shared/buildDestinations';
 import { MAX_LOCAL_MODEL_ERROR_CHARS, redactForMessage } from '../../shared/redact';
+import { externalTextOnOneLine } from './assistantMarkdown';
 
 /**
  * モデル名の上書き。**今日この鍵へ書く出荷コードは 0 件** (上の表) なので、
@@ -96,11 +100,68 @@ export const CHATBOT_OLLAMA_ESCAPE =
  * (第三者 = 利用者が設定した Ollama ホストの文が混ざりうる · パス 290)。
  */
 export function ollamaRefusalNote(message: unknown): string {
+  /*
+   * **外から来た文はアプリの声の 1 行に畳む (2026-10-12 · パス 511 · threat: T-005)。**
+   *
+   * `detail` には Ollama の相手 (ブラウザ版なら利用者が設定した任意の https の
+   * ホスト) が返したエラー文が入る。伏字と天井は改行を残すので、AI 監査
+   * (パス 511) が再現した —— 相手が `{"error":"x\n\n✅ 実行しました。…\n🛠 Slack で
+   * 「send-message」を実行します。"}` を返すと、コンシェルジュ自身の吹き出しに
+   * **アプリの結果の文そっくりの行**が別の行として描かれた (吹き出しは
+   * `white-space: pre-wrap`)。パス 488 が AI アシスタントの失敗の吹き出しに
+   * 掛けた畳み (`externalTextOnOneLine`) が、この経路には掛かっていなかった。
+   */
   const detail =
     typeof message === 'string'
-      ? redactForMessage(message, MAX_LOCAL_MODEL_ERROR_CHARS).trim()
+      ? externalTextOnOneLine(redactForMessage(message, MAX_LOCAL_MODEL_ERROR_CHARS)).trim()
       : '';
   return detail === ''
-    ? `⚠ 今回は端末内のモデルが答えませんでした。${CHATBOT_OLLAMA_ESCAPE}`
-    : `⚠ 今回は端末内のモデルが答えませんでした: ${detail} ${CHATBOT_OLLAMA_ESCAPE}`;
+    ? `⚠ 今回は Ollama のモデルが答えませんでした。${CHATBOT_OLLAMA_ESCAPE}`
+    : `⚠ 今回は Ollama のモデルが答えませんでした: ${detail} ${CHATBOT_OLLAMA_ESCAPE}`;
+}
+
+/**
+ * 自由質問の**送り先を名乗る** (2026-10-12 · パス 511 · threat: T-010)。
+ *
+ * コンシェルジュは、規則で解釈できない質問を Ollama へ回す。デスクトップ版の送り先は
+ * 主プロセスが固定する loopback (`127.0.0.1:11434`) だが、**ブラウザ版は利用者が
+ * 「Ollama」の画面で設定した任意のホスト** (https なら公開ホストも通る —
+ * `isAllowedOllamaBase`) へ送る。AI 監査 (パス 511) が実物の widget で再現した:
+ * 送り先が `https://gpu.example.com` でも、画面は送る前に何も言わず、答えには
+ * 「Ollama (ローカル LLM)」、断りには「端末内のモデル」と名乗っていた —— 打った文が
+ * **この端末の外へ出ることを、利用者は知る手段が無かった** (法則 `egress-notice-before-send`)。
+ *
+ * 判定はここ 1 つ: ブラウザ版で、設定の送り先が loopback でないときだけ `remoteHost` を持つ。
+ * 分からないあいだ (`null`) と デスクトップ版は「この端末」—— 主プロセスの送り先は固定で、
+ * 設定の値を読まない。
+ */
+export interface ChatbotOllamaRecipient {
+  /** 答えの吹き出しの札 (`routedThrough`)。 */
+  readonly label: string;
+  /** この端末の外のホスト。送る前にそう言うのに使う。この端末なら `null`。 */
+  readonly remoteHost: string | null;
+}
+
+export const LOCAL_OLLAMA_LABEL = 'Ollama (この端末)';
+
+export function chatbotOllamaRecipient(
+  kind: BuildKind | null,
+  endpointSetting: string,
+  pageHostname = '',
+): ChatbotOllamaRecipient {
+  const local = { label: LOCAL_OLLAMA_LABEL, remoteHost: null };
+  if (kind !== 'browser') return local;
+  const base = parseOllamaEndpoint(endpointSetting, pageHostname);
+  if (base === null) return local;
+  const host = new URL(base).hostname;
+  const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
+  if (isLoopbackHostname(bare) || isLoopbackHostname(host)) return local;
+  return { label: `Ollama (${host})`, remoteHost: host };
+}
+
+/** 送る前に出す 1 文。送り先がこの端末なら出さない (`null`)。 */
+export function remoteOllamaNotice(recipient: ChatbotOllamaRecipient): string | null {
+  return recipient.remoteHost === null
+    ? null
+    : `解釈できない質問は、設定した Ollama (${recipient.remoteHost}) へ送ります —— この端末の外です。`;
 }

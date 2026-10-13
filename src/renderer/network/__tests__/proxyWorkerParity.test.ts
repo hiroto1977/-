@@ -568,6 +568,10 @@ describe('配る Worker の関数の母集団 (パス 349)', () => {
     isRedirect: { run: true, why: 'アプリ側の REDIRECT_STATUSES と同じ集合であること。写して比べると比べているのが写しになる (パス 349)。' },
     timingSafeEqualStr: { run: true, why: 'アプリ側の constantTimeEquals と同じ答えを返すこと。孤立サロゲートで割れた前例が在る (パス 331・パス 349)。' },
     json: { run: true, why: '断りの応答を組む唯一の口。Access-Control-Allow-Origin と Content-Type がここだけで決まる (パス 349)。' },
+    crossOriginHeaders: {
+      run: true,
+      why: 'ホストが変わる転送で持ち越すヘッダーを決める唯一の口。HIBP / VirusTotal の鍵 (hibp-api-key / x-apikey) が落ちることを走らせて確かめる (パス 511 · threat: T-008)。',
+    },
     'fetch (default export)': {
       run: false,
       why: '走らせるには Workers の実行環境を丸ごと模すことになり、模型が正しいことを別に確かめる必要が出る。ハンドラが持つ 3 つの判断 (資格情報を落とす条件・転送の再検査・上限超過の扱い) は切り出した関数の側で測り、条件の綴りは下の字面の検査が留める。',
@@ -593,6 +597,32 @@ describe('配る Worker の関数の母集団 (パス 349)', () => {
     expect(declaredFunctions('function a() {}\nasync function b() {}')).toEqual(['a', 'b']);
     expect(declaredFunctions('  async fetch(request) {')).toEqual(['fetch (default export)']);
     expect(declaredFunctions('const c = () => {};')).toEqual([]);
+  });
+
+  it('★ ホストが変わる転送は鍵のヘッダーを名前を問わず落とす (threat: T-008)', async () => {
+    const file = join(dir, 'workerCrossOrigin.mjs');
+    writeFileSync(
+      file,
+      `${extractFunction(md, 'crossOriginHeaders')}\nconst CROSS_ORIGIN_SAFE_HEADERS = ${/const CROSS_ORIGIN_SAFE_HEADERS = (\/[^\n]+\/i);/.exec(md)![1]};\nexport { crossOriginHeaders };\n`,
+    );
+    const { crossOriginHeaders } = (await import(pathToFileURL(file).href)) as {
+      crossOriginHeaders: (h: Record<string, string>) => Record<string, string>;
+    };
+    const kept = crossOriginHeaders({
+      Authorization: 'Bearer SECRET-BEARER',
+      'hibp-api-key': 'SECRET-HIBP',
+      'x-apikey': 'SECRET-VT',
+      Cookie: 'sid=1',
+      'x-proxy-auth': 'SECRET-PROXY',
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    });
+    // 標本が的に当たる: 鍵は 5 つ在り、AI 監査が漏れを再現したのは hibp-api-key と x-apikey。
+    expect(Object.keys(kept).sort()).toEqual(['Accept', 'Content-Type']);
+    expect(JSON.stringify(kept)).not.toContain('SECRET');
+    // ハンドラが実際にこの口を通る (落とす名前の表へ戻っていない)。
+    const handler = md.slice(md.indexOf('async fetch(request)'), md.indexOf('function isRedirect'));
+    expect(handler).toContain('headers = crossOriginHeaders(headers);');
   });
 
   it('★ isRedirect は アプリ側の REDIRECT_STATUSES と同じ集合', async () => {

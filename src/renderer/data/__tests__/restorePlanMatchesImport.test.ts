@@ -39,7 +39,7 @@ import {
   unusableBackupRefusal,
 } from '../backup';
 import { COLLECTION_SHAPES } from '../collectionShapes';
-import { getRecordStore, isImportableRecord, type StoredRecord } from '../store';
+import { getRecordStore, importableRecordGate, isImportableRecord, type StoredRecord } from '../store';
 import { SALES_COLLECTION } from '../sales';
 import { BALANCE_SHEET_COLLECTION } from '../balanceSheet';
 import { FAMILIES, malformedRow } from '../../__tests__/malformedRows';
@@ -82,7 +82,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
     // 床: 走査が死んで「0 件だから一致」にならない (23 collection × 4 家系の大半は拒める)。
     expect(refused.length).toBeGreaterThanOrEqual(40);
 
-    const plan = planRestore(await store.exportAll(), incoming, 'replace', null);
+    const plan = planRestore(await store.exportAll(), incoming, 'replace', null, false);
     expect(plan.incoming).toBe(incoming.length);
     expect(plan.dropped).toBe(refused.length);
     expect(plan.toImport.map((r) => r.id)).toEqual(['good']);
@@ -96,8 +96,26 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
   it('床: 壊した行は実際に関門が拒み、正しい行は通る (針が的に当たる)', () => {
     expect(isImportableRecord(rec('good', SALES_COLLECTION, goodSale(1)))).toBe(true);
     expect(isImportableRecord(rec('bs', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET))).toBe(false);
-    // 封緘済みは中身を見られないので通す (暗号化バックアップを丸ごと落とさないため)。
-    expect(isImportableRecord(rec('sealed', BALANCE_SHEET_COLLECTION, { __enc: { iv: 'x', ct: 'y' } }))).toBe(true);
+    // 封緘済みは、開ける鍵が在る端末でだけ通す (パス 511 · threat: T-007)。
+    // 平文の端末では開けない記録でしかなく、1 件で collection ごと画面から消す毒になる。
+    const sealed = rec('sealed', BALANCE_SHEET_COLLECTION, { __enc: { iv: 'x', ct: 'y' } });
+    expect(isImportableRecord(sealed)).toBe(false);
+    expect(importableRecordGate(false)(sealed)).toBe(false);
+    expect(importableRecordGate(true)(sealed)).toBe(true);
+  });
+
+  it('★ 平文の端末は偽の封緘済みを復元しない —— 1 件で collection が読めなくなる形を作らない (threat: T-007)', async () => {
+    const store = getRecordStore();
+    await store.insert(SALES_COLLECTION, goodSale(1));
+    expect(store.acceptsSealedRecords()).toBe(false);
+    const poison = rec('evil-1', SALES_COLLECTION, { __enc: { iv: 'AAAA', ct: 'AAAA' } });
+    const plan = planRestore(await store.exportAll(), [poison], 'merge', null, store.acceptsSealedRecords());
+    // 計画は取り込めない 1 件と数え、利用者に言える (計画と実行は同じ関門)。
+    expect(plan.dropped).toBe(1);
+    expect(plan.toImport).toEqual([]);
+    expect(await store.importAll([poison])).toBe(0);
+    // 既存の記録はそのまま読める。
+    expect((await store.list(SALES_COLLECTION)).length).toBe(1);
   });
 
   it('★ 同じ id の控えが形式不正なら、置換で「消える」と数える', () => {
@@ -105,7 +123,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
       [{ id: 'bs-1', updatedAt: 100 }],
       [rec('bs-1', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200)],
       'replace',
-      null,
+      null, false,
     );
     // 直す前はこの 1 件が overwritten (= バックアップの中身になる) に数えられていた。
     expect(plan.overwritten).toBe(0);
@@ -119,7 +137,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
       [{ id: 'bs-1', updatedAt: 100 }],
       [rec('bs-1', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200)],
       'merge',
-      null,
+      null, false,
     );
     expect(plan.unusableLocal).toBe(1);
     expect(plan.lost).toBe(0);
@@ -130,7 +148,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
       [{ id: 'mine', updatedAt: 100 }],
       [rec('b1', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET), rec('b2', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET)],
       'replace',
-      null,
+      null, false,
     );
     const refusal = unusableBackupRefusal(plan);
     expect(refusal).toContain('2 件すべてが形式不正');
@@ -142,11 +160,11 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
   it('対照: 1 件でも入るなら断らない / マージは断らない', () => {
     const local = [{ id: 'mine', updatedAt: 100 }];
     const mixed = [rec('g', SALES_COLLECTION, goodSale(1)), rec('b', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET)];
-    expect(unusableBackupRefusal(planRestore(local, mixed, 'replace', null))).toBeNull();
+    expect(unusableBackupRefusal(planRestore(local, mixed, 'replace', null, false))).toBeNull();
     const allBad = [rec('b', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET)];
-    expect(unusableBackupRefusal(planRestore(local, allBad, 'merge', null))).toBeNull();
+    expect(unusableBackupRefusal(planRestore(local, allBad, 'merge', null, false))).toBeNull();
     // 形式不正が 0 件なら断る理由が無い (空のファイルを置換に使うのは今までどおり通す)。
-    expect(unusableBackupRefusal(planRestore(local, [], 'replace', null))).toBeNull();
+    expect(unusableBackupRefusal(planRestore(local, [], 'replace', null, false))).toBeNull();
   });
 
   it('★ 一部が落ちる置換では、確認文が取り込めない件数と消える理由を述べる', () => {
@@ -157,7 +175,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
         rec('shared', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200),
       ],
       'replace',
-      null,
+      null, false,
     );
     const message = replaceRestoreConfirmMessage(plan);
     expect(message).toContain('（うち 1 件は形式が不正で取り込めません）');
@@ -172,7 +190,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
       [{ id: 'mine', updatedAt: 100 }],
       [rec('g', SALES_COLLECTION, goodSale(1))],
       'replace',
-      null,
+      null, false,
     );
     expect(plan.dropped).toBe(0);
     expect(plan.unusableLocal).toBe(0);
@@ -188,7 +206,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
       [{ id: 'shared', updatedAt: 100 }],
       [rec('g', SALES_COLLECTION, goodSale(1)), rec('shared', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200)],
       'replace',
-      null,
+      null, false,
     );
     expect(replaceRestoreConfirmMessage(dirty)).toContain('形式が不正で取り込めません');
     expect(replaceRestoreConfirmMessage(dirty)).toContain('形式不正で入れ替えられない');

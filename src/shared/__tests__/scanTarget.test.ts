@@ -199,6 +199,13 @@ describe('社内・手元のホストは、送る前に伝える', () => {
     ['IPv6 ULA', 'https://[fd00::5]/x'],
     // **クラウドのメタデータ。** 送ると「資格情報の口を触っている」こと自体が残る。
     ['リンクローカル (クラウドのメタデータ)', 'https://169.254.169.254/latest/meta-data/iam/security-credentials/'],
+    // IPv4-mapped / NAT64 / 6to4 に内部の v4 を埋めた形 (パス 513)。new URL が 16 進へ
+    // 正規化するので、点記法ではなく組で来る。メタデータの口を一番取りこぼしてはいけない。
+    ['IPv4-mapped の 127/8', 'https://[::ffff:127.0.0.1]/debug'],
+    ['IPv4-mapped の 10/8', 'https://[::ffff:10.0.0.1]/wiki'],
+    ['IPv4-mapped のメタデータ', 'https://[::ffff:169.254.169.254]/latest/meta-data/'],
+    ['NAT64 のメタデータ', 'https://[64:ff9b::169.254.169.254]/latest/meta-data/'],
+    ['6to4 の 127/8', 'https://[2002:7f00:0001::]/debug'],
   ])('%s は警告が出る (%j)', (_label, url) => {
     expect(describeScanUrlRisk(url)).toMatch(/社内・手元のホスト/);
   });
@@ -220,6 +227,9 @@ describe('社内・手元のホストは、送る前に伝える', () => {
     // 192.168/16 だけが私用。192/8 全体を社内扱いすると、ここが鳴る。
     ['192.168 の 1 つ外', 'https://192.169.0.1/'],
     ['192.167 側', 'https://192.167.255.254/'],
+    // 埋め込みの v4 が公開なら鳴らさない (網が広がりすぎていないこと · パス 513)。
+    ['IPv4-mapped の公開 v4', 'https://[::ffff:93.184.216.34]/'],
+    ['6to4 の公開 v4', 'https://[2002:5db8:d822::]/'],
   ])('%s は警告を出さない (%j)', (_label, url) => {
     expect(describeScanUrlRisk(url)).toBeNull();
   });
@@ -237,6 +247,19 @@ describe('社内・手元のホストは、送る前に伝える', () => {
   it('末尾ドットでも社内と分かる (FQDN 形)', () => {
     expect(looksInternalHostname('buildserver.')).toBe(true);
     expect(looksInternalHostname('wiki.corp.local.')).toBe(true);
+  });
+
+  // new URL は `::ffff:169.254.169.254` を `[::ffff:a9fe:a9fe]` へ正規化するので、
+  // 旧い版は 16 進の組を社内と見抜けず、クラウドのメタデータの口を一番取りこぼしていた。
+  it('IPv4-mapped / NAT64 / 6to4 に埋めた内部アドレスも社内と分かる (threat: T-013)', () => {
+    // new URL が hostname に入れる 16 進の形 (点記法は正規化で hex になる)。
+    expect(looksInternalHostname('[::ffff:a9fe:a9fe]')).toBe(true); // 169.254.169.254
+    expect(looksInternalHostname('[::ffff:7f00:1]')).toBe(true); // 127.0.0.1
+    expect(looksInternalHostname('[64:ff9b::a9fe:a9fe]')).toBe(true); // NAT64 の 169.254.169.254
+    expect(looksInternalHostname('[2002:7f00:1::]')).toBe(true); // 6to4 の 127.0.0.1
+    // 埋め込みの v4 が公開なら社内扱いしない (網が広がりすぎていないこと)。
+    expect(looksInternalHostname('[::ffff:5db8:d822]')).toBe(false); // 93.184.216.34
+    expect(looksInternalHostname('[2002:5db8:d822::]')).toBe(false);
   });
 
   it('大文字でも判定できる', () => {

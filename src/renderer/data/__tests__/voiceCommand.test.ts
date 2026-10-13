@@ -945,3 +945,31 @@ describe('extractWriteParams — 必須欄を生の発話から取り出す (パ
     expect('params' in degraded).toBe(false);
   });
 });
+
+describe('extractWriteParams — 送り先は引用の外から読む (パス 511 · threat: T-006)', () => {
+  it('★ 引用の中の #channel を送り先にしない', () => {
+    expect(extractWriteParams('slackで「#incident 対応中です」を #general に送って', 'send-message')).toEqual({
+      channel: '#general',
+      text: '#incident 対応中です',
+    });
+  });
+
+  it('★ 引用の中の owner/repo を起票先にしない', () => {
+    expect(extractWriteParams('githubで「foo/bar が落ちる」を hiroto/app の issue にして', 'create-issue')).toEqual({
+      owner: 'hiroto',
+      repo: 'app',
+      title: 'foo/bar が落ちる',
+    });
+  });
+
+  it('★ 引用の外に送り先が 2 つあれば取らない (どちらか決められない → 必須欄が欠けて断られる)', () => {
+    expect(extractWriteParams('slack の #a と #b に「x」と送って', 'send-message')).toEqual({ text: 'x' });
+    expect(extractWriteParams('a/b と c/d に「x」で issue', 'create-issue')).toEqual({ title: 'x' });
+  });
+
+  it('送り先が引用の中にしか無ければ取らない (本文が送り先を決めない)', () => {
+    expect(extractWriteParams('slackで「#general に送るべき文」を送って', 'send-message')).toEqual({
+      text: '#general に送るべき文',
+    });
+  });
+});

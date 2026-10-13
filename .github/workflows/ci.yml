@@ -63,6 +63,8 @@ jobs:
       - run: npm run verify:arch
       - run: npm run lint:forbidden
       - run: npm run lint:workflow-security
+      - run: npm run lint:secrets
+      - run: npm run lint:malware
       - run: npm run lint:network-targets
       - run: npm run lint:url-encoding
       - run: npm run lint:regex

@@ -157,6 +157,8 @@ export interface RecordStore {
    *  identity cipher (plaintext). After switching to an encrypting cipher,
    *  call `reencryptAll()` to convert existing plaintext records. */
   configureCipher(cipher: RecordCipher): void;
+  /** 封緘済みの記録を復元で受けてよいか (= 平文の素通しではない cipher が在る)。パス 511。 */
+  acceptsSealedRecords(): boolean;
   /** Re-write every record so its payload is sealed under the **current**
    *  cipher. `from` is the cipher used to read existing payloads (defaults to
    *  the current cipher); pass the old cipher when switching keys or turning
@@ -383,6 +385,10 @@ class IndexedDBRecordStore implements RecordStore {
       if (this.perId.get(id) === settled) this.perId.delete(id);
     });
     return started;
+  }
+
+  acceptsSealedRecords(): boolean {
+    return this.cipher !== IDENTITY_CIPHER;
   }
 
   configureCipher(cipher: RecordCipher): void {
@@ -842,7 +848,7 @@ class IndexedDBRecordStore implements RecordStore {
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
     // 関門は `isImportableRecord` **ただ 1 つ** —— 復元の計画 (`planRestore`) が
     // 「何件入るか」を数えるのに同じ判定を要るため (パス 432)。捨てた件数は呼び出し側が利用者に言う。
-    const valid = records.filter(isImportableRecord);
+    const valid = records.filter(importableRecordGate(this.acceptsSealedRecords()));
     const prepared = await Promise.all(
       valid.map(async (rec) =>
         isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
@@ -944,8 +950,30 @@ function isValidStoredRecord(v: unknown): v is StoredRecord {
  * 暗号化バックアップが丸ごと復元できなくなる。
  */
 export function isImportableRecord(v: unknown): v is StoredRecord {
-  if (!isValidStoredRecord(v)) return false;
-  return isSealedData(v.data) || hasCollectionShape(v.collection, v.data);
+  return importableRecordGate(false)(v);
+}
+
+/**
+ * **封緘済みは、開ける鍵が在るときだけ受ける (2026-10-12 · パス 511 · threat: T-007)。**
+ *
+ * 2026-10-11 まで封緘済み (`{ __enc: { iv, ct } }`) は**どの端末でも**封筒だけで通していた。
+ * AI 監査 (パス 511) が再現した —— 平文の端末 (記録の暗号化を有効にする道は出荷物に無い) に
+ * 偽の封緘済みの記録を 1 件持つバックアップを復元させると、`list()` がその 1 件の復号で投げ、
+ * **その collection の記録が全部画面から消えた** (再読込でも消えたまま・`clearCollection` も投げ・
+ * 点検パネルは collection 名しか出さないので消す行が無い・以後のバックアップに毒が写る)。
+ * 既定のマージ復元は確認を求めないので、配られた「テンプレートのバックアップ」1 つで起きる。
+ *
+ * 開けない封緘済みは、この端末では**読めない記録**でしかない。だから受ける条件は
+ * 「今の cipher が平文の素通し (`IDENTITY_CIPHER`) ではないこと」—— `importAll` は
+ * `this.cipher` から、計画 (`planRestore`) は `RecordStore.acceptsSealedRecords()` から
+ * 同じ答えを得る (2 つ書くと割れる —— パス 432)。断った件数は `dropped` に数えて利用者に言う。
+ */
+export function importableRecordGate(acceptSealed: boolean): (v: unknown) => v is StoredRecord {
+  return (v: unknown): v is StoredRecord => {
+    if (!isValidStoredRecord(v)) return false;
+    if (isSealedData(v.data)) return acceptSealed;
+    return hasCollectionShape(v.collection, v.data);
+  };
 }
 
 let singleton: RecordStore | null = null;

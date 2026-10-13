@@ -146,10 +146,37 @@ async function readStore(): Promise<Record<string, string>> {
   return {};
 }
 
+/**
+ * **書いた物を自分の読み口が断る形を作らない (2026-10-12 · パス 511)。**
+ *
+ * 読み口 (`readStore`) は `MAX_STORE_SIZE` を超えるファイルを断るのに、書き口は
+ * 大きさを見ていなかった。1 件ずつは入口の天井 (`MAX_TOKEN_INPUT_CHARS` 65,536 字)
+ * を通る値でも、**積み重ねると天井を越える** —— 実測 (AI 監査・パス 511): Latin-1 の
+ * 65,536 字を 6 サービスへ保存すると 1,048,733 B になり、以後は**全サービスの読み・
+ * 書き・消去が塞がった** (`.prev` も同じ大きさなので控えも効かない)。逃げ口は
+ * 「すべてのデータを削除」だけだった。パス 259 は 1 件の巨大な TokenSet を断ったが、
+ * 積み重ねの側は残っていた。
+ *
+ * **書く前に、書く物の大きさで断る** —— 断れば既存の資格情報は 1 つも動かない。
+ */
+export class SecretsStoreFullError extends Error {
+  constructor(bytes: number) {
+    super(
+      `保管ファイルの上限 (${MAX_STORE_SIZE} バイト) を超えるため保存しませんでした ` +
+        `(保存すると ${bytes} バイト)。既存の資格情報はそのままです。` +
+        `長すぎる値を貼っていないか確かめてください。`,
+    );
+    this.name = 'SecretsStoreFullError';
+  }
+}
+
 async function writeStore(store: Record<string, string>): Promise<void> {
+  const text = JSON.stringify(store);
+  const bytes = Buffer.byteLength(text, 'utf8');
+  if (bytes > MAX_STORE_SIZE) throw new SecretsStoreFullError(bytes);
   // Durable atomic write: temp + fsync + rename + dir fsync, then a `.prev` copy
   // of the same content so a later loss/corruption of the primary is recoverable.
-  await atomicWriteFile(secretsPath(), JSON.stringify(store), { mode: 0o600, keepBackup: true });
+  await atomicWriteFile(secretsPath(), text, { mode: 0o600, keepBackup: true });
 }
 
 let fallbackWarned = false;

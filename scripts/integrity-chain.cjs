@@ -385,6 +385,22 @@ const PROTECTED = [
   '.cursor/rules/10-boundaries.mdc',
   '.cursor/rules/20-gates.mdc',
   '.cursor/rules/30-conventions.mdc',
+  // 2026-10-13 (パス 515 · T-017) に足した。**特権サブエージェントへ注入される指示書。**
+  // パス 505 (2026-10-07) で足した 3 本で、Claude Code が deep/standard/light の
+  // 仕事を委ねるときに**その system プロンプト本文をそのまま注入**する。`auditor` と
+  // `mechanic` は `model: inherit` (主セッションの最強モデル) で Edit/Write/Bash を継ぐ ——
+  // 本文に「監査中に裏口を書き、報告に載せない」と 1 行足されたマージ済み PR が在ると、
+  // 次の deep の狩りで spawn された監査役がその前提から動きうる。`.cursor/rules/*.mdc` と
+  // `.claude/settings.json` は守られているのに、これだけが保護の外に在った**非対称**。
+  //
+  // パス 372 の母集団走査 (`.cursor/rules/*.mdc` + `CLAUDE.md`) は 505 より前なので
+  // 構造的に漏れていた。`taskTierPolicy.test.ts` は frontmatter (name/model/effort) と
+  // scout の tools を双方向で pin するが、**本文は 1 文字も pin しない**。鎖が見るのは
+  // 本文そのものが変わったこと —— CODEOWNERS 被覆は threatLedger.test.ts の T-003 が
+  // 「PROTECTED は全部 CODEOWNERS が覆う」で自動で要求する。安定資産: 全履歴で各 1 コミット。
+  '.claude/agents/auditor.md',
+  '.claude/agents/mechanic.md',
+  '.claude/agents/scout.md',
 
   // --- 2026-08-22: 保護対象が import している側 (下の checkProtectedClosure) ---
   //

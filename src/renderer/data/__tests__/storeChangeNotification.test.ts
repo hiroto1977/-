@@ -142,6 +142,12 @@ const LEDGER: readonly Row[] = [
     run: async (s) => { s.configureCipher({ encrypt: async (d) => d, decrypt: async (d) => d }); },
   },
   {
+    name: 'acceptsSealedRecords',
+    kind: 'silent',
+    why: '問いに答えるだけ (今の cipher で封緘済みを開けるか)。保管されている行は 1 件も動かない (パス 511)。',
+    run: async (s) => { s.acceptsSealedRecords(); },
+  },
+  {
     name: 'list',
     kind: 'silent',
     why: '読みだけ。ここで知らせると、知らせを受けた hook がまた list を呼んで止まらなくなる。',

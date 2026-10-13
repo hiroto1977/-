@@ -36,8 +36,12 @@ import { MAX_OLLAMA_PROMPT_CHARS, type OllamaSnapshot } from '../../shared/ollam
 import {
   CHATBOT_MODEL_KEY,
   chatbotOllamaModel,
+  chatbotOllamaRecipient,
   ollamaRefusalNote,
+  remoteOllamaNotice,
 } from '../data/chatbotOllama';
+import { useBuildKind } from '../hooks/useBuildKind';
+import { loadEndpointSetting } from '../network/ollamaWeb';
 import { CeilingNotice } from './CeilingNotice';
 import { useDialogFocus } from './useDialogFocus';
 import { charsOverCeiling } from '../../shared/inputCeiling';
@@ -339,8 +343,15 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
-  /* 貼り付けを黙って切らない (パス 175)。解釈できない入力は端末内のモデルへ回る (`tryOllama`)。 */
+  /* 貼り付けを黙って切らない (パス 175)。解釈できない入力は Ollama へ回る (`tryOllama`)。 */
   const inputOver = charsOverCeiling(input, MAX_OLLAMA_PROMPT_CHARS);
+  /* 自由質問の送り先を名乗る (パス 511 · threat: T-010) —— ブラウザ版で設定の送り先がこの端末の外なら、送る前に言う。 */
+  const buildKind = useBuildKind();
+  const ollamaRecipient = useMemo(
+    () => chatbotOllamaRecipient(buildKind, loadEndpointSetting(), typeof location === 'undefined' ? '' : location.hostname),
+    [buildKind],
+  );
+  const ollamaEgressNote = remoteOllamaNotice(ollamaRecipient);
   const [busy, setBusy] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
   /** 書き出した直後の「端末からも消すか」の問い (書き出した行)。`null` なら出さない。 */
@@ -439,7 +450,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       const llm = await tryOllama(text);
       setBusy(false);
       if (llm !== null && 'reply' in llm) {
-        append({ role: 'bot', text: `🧠 ${llm.reply}`, routedThrough: 'Ollama (ローカル LLM)' });
+        append({ role: 'bot', text: `🧠 ${llm.reply}`, routedThrough: ollamaRecipient.label });
         return;
       }
       // 試して断られたなら、そう言う。橋が無い (`null`) ときは定型文が正しい
@@ -634,6 +645,11 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       </div>
 
       <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
+      {ollamaEgressNote !== null && (
+        <p className="concierge-egress" role="note" data-ollama-egress>
+          {ollamaEgressNote}
+        </p>
+      )}
       <form
         className="concierge-form"
         onSubmit={(e) => {

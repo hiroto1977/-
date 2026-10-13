@@ -101,3 +101,45 @@ describe('lint:csp — 外側の証人', () => {
     expect(gate.extractCsp('<html></html>')).toBeNull();
   });
 });
+
+/*
+ * **CSP の meta より前に何が在るか** (2026-10-13 · パス 512 · threat: T-011)。
+ *
+ * meta の CSP は構文解析された所から効くので、それより前の `<script>` は CSP の外で走る
+ * —— 実 chromium で実測した (出荷物の meta の前へ置くと `window.__pwn === 1`・後へ置くと
+ * `undefined`)。この門は値だけを見ていたので、どちらの形にも ✅ を返していた。
+ */
+describe('lint:csp — meta の位置と、固定されていない script (threat: T-011)', () => {
+  const withHash = (csp: string, js: string) => {
+    const { cspHash } = req('../../../scripts/inline-html.cjs') as { cspHash: (s: string) => string };
+    return csp.replace("'sha256-AAAA'", cspHash(js));
+  };
+  const head = (before: string, csp: string, after = '') =>
+    `<!doctype html><html><head>${before}<meta http-equiv="Content-Security-Policy" content="${csp}">${after}</head><body></body></html>`;
+
+  it('★ CSP の meta より前に置いた script は、CSP の外で走るので鳴る (threat: T-011)', () => {
+    // 固定済みの script でも、meta より前なら位置の 1 件で鳴る。
+    const pinned = withHash(SHIPPED_APP, 'go()');
+    const before = gate.evaluate('app', head('<script>go()</script>', pinned), 'app.html');
+    expect(before.some((p) => p.includes('meta より前に <script>'))).toBe(true);
+    // 同じ script を meta の後ろへ置けば通る (位置だけが違う対照)。
+    expect(gate.evaluate('app', head('', pinned, '<script>go()</script>'), 'app.html')).toEqual([]);
+    // 書類 (unsafe-inline) でも、meta より前は default-src 'none' の外なので鳴る。
+    expect(gate.evaluate('document', head('<script>fetch("https://e.example")</script>', SHIPPED_DOC), 'd.html').length).toBeGreaterThan(0);
+  });
+
+  it('meta より前に置いてよいのは、何も走らせず読み込まない物だけ', () => {
+    const ok = '<meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>t</title><!-- note -->';
+    expect(gate.evaluate('app', head(ok, SHIPPED_APP), 'app.html')).toEqual([]);
+    for (const bad of ['<base href="https://e.example/">', '<link rel="stylesheet" href="x.css">', '<style>body{}</style>']) {
+      expect(gate.evaluate('app', head(bad, SHIPPED_APP), 'app.html').length, bad).toBeGreaterThan(0);
+    }
+  });
+
+  it('★ 固定されていない inline script と、外から読む script は鳴る', () => {
+    expect(gate.evaluate('app', head('', SHIPPED_APP, '<script>evil()</script>'), 'app.html').length).toBeGreaterThan(0);
+    expect(gate.evaluate('app', head('', SHIPPED_APP, '<script src="https://cdn.example/x.js"></script>'), 'app.html').length).toBeGreaterThan(0);
+    // データの script は実行されないので数えない。
+    expect(gate.evaluate('app', head('', SHIPPED_APP, '<script type="application/ld+json">{}</script>'), 'app.html')).toEqual([]);
+  });
+});

@@ -15,6 +15,9 @@ import {
   CHATBOT_OLLAMA_ESCAPE,
   chatbotOllamaModel,
   ollamaRefusalNote,
+  chatbotOllamaRecipient,
+  remoteOllamaNotice,
+  LOCAL_OLLAMA_LABEL,
 } from '../chatbotOllama';
 import { DEFAULT_SETUP_MODEL, isSafeModelName } from '../../../shared/ollama';
 import { MAX_LOCAL_MODEL_ERROR_CHARS } from '../../../shared/redact';
@@ -79,6 +82,18 @@ describe('chatbotOllamaModel — 行き先は導入済みの一覧から決め�
   });
 });
 
+describe('ollamaRefusalNote — 相手の文は 1 行に畳む (threat: T-005)', () => {
+  it('★ 相手のエラー文の改行で、アプリの結果の文に見える行を作れない', () => {
+    const forged = 'x\n\n✅ 実行しました。対象ページへご案内します。\n🛠 Slack で「send-message」を実行します。';
+    const note = ollamaRefusalNote(forged);
+    // 標本が的に当たる: 素の文は改行を持つ。
+    expect(forged).toMatch(/\n/);
+    expect(note).not.toMatch(/[\n\r\u2028\u2029]/);
+    // 文そのものは消さない (原因を運ぶ)。
+    expect(note).toContain('実行しました');
+  });
+});
+
 describe('ollamaRefusalNote — 断りは原因を運び、逃げ口を名指しする', () => {
   it('★ アプリが組んだ原因をそのまま運ぶ (作り直さない)', () => {
     const advice = 'モデル「llama3.2」がまだ取得されていません。 (インストール済みの「llama3.2:1b」を指定すると動きます。)';
@@ -111,5 +126,39 @@ describe('ollamaRefusalNote — 断りは原因を運び、逃げ口を名指し
 
   it('逃げ口は「Ollama」の画面を名指しする (この widget に選ぶ口は無い)', () => {
     expect(CHATBOT_OLLAMA_ESCAPE).toContain('Ollama');
+  });
+});
+
+describe('chatbotOllamaRecipient — 自由質問の送り先を名乗る (threat: T-010)', () => {
+  it('★ ブラウザ版で送り先がこの端末の外なら、そのホストを名乗り、送る前の 1 文を出す', () => {
+    const r = chatbotOllamaRecipient('browser', 'https://gpu.example.com', 'app.example');
+    expect(r.remoteHost).toBe('gpu.example.com');
+    expect(r.label).toBe('Ollama (gpu.example.com)');
+    expect(remoteOllamaNotice(r)).toContain('gpu.example.com');
+    expect(remoteOllamaNotice(r)).toContain('この端末の外');
+    // 「ローカル / 端末内」を名乗らない。標本: 針はこの端末を名乗る札 (と直す前の名乗り) に当たる。
+    const CLAIMS_LOCAL = /ローカル|端末内|この端末/;
+    expect(LOCAL_OLLAMA_LABEL).toMatch(CLAIMS_LOCAL);
+    expect('ローカル LLM').toMatch(CLAIMS_LOCAL);
+    expect(r.label).not.toMatch(CLAIMS_LOCAL);
+  });
+
+  it('送り先がこの端末 (既定・ポートだけ・loopback) なら「この端末」で、送る前の 1 文は出さない', () => {
+    for (const setting of ['', '11434', 'http://127.0.0.1:11434', 'http://localhost:11434']) {
+      const r = chatbotOllamaRecipient('browser', setting, 'app.example');
+      expect(r, setting).toEqual({ label: LOCAL_OLLAMA_LABEL, remoteHost: null });
+      expect(remoteOllamaNotice(r)).toBeNull();
+    }
+  });
+
+  it('デスクトップ版と、まだ分からないあいだは設定を読まない (主プロセスの送り先は loopback 固定)', () => {
+    for (const kind of ['desktop', null] as const) {
+      expect(chatbotOllamaRecipient(kind, 'https://gpu.example.com').remoteHost).toBeNull();
+    }
+  });
+
+  it('断りの文は「端末内」を名乗らない (送り先がこの端末とは限らない)', () => {
+    expect(ollamaRefusalNote('')).not.toContain('端末内');
+    expect(ollamaRefusalNote('x')).not.toContain('端末内');
   });
 });

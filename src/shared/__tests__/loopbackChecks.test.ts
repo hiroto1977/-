@@ -20,7 +20,8 @@ import { isLoopbackHost as oauthHost } from '../../main/oauth';
  *
  *   shared/aiEndpoint.ts  isLoopbackHostname
  *       問い: 平文 http を許してよいローカル相手か
- *       広い: 127.0.0.0/8 全体 / 末尾ドット / ip6-localhost / 展開形 ::1
+ *       広い: 127.0.0.0/8 全体 / 展開形 ::1 (名前は `localhost` ちょうどだけ —— パス 511 で
+ *       末尾ドットと ip6-* を外した。許す側なので、OS が loopback へ解決するとは限らない名前は通さない)
  *       (proxyEndpoint.ts はこれを import して使う —— あちらのコメントが
  *        「判定そのものを borrow して書き写さない」と言っている相手はこれ)
  *
@@ -41,10 +42,6 @@ describe('ループバック判定は 3 つあり、意図的に違う', () => {
   const WIDE_ONLY: [string, string][] = [
     ['127.0.0.0/8 の別アドレス', '127.0.0.2'],
     ['127.0.0.0/8 の端', '127.255.255.254'],
-    ['末尾ドット', 'localhost.'],
-    ['末尾ドット (IPv4)', '127.0.0.1.'],
-    ['別名 (ip6-localhost)', 'ip6-localhost'],
-    ['別名 (ip6-loopback)', 'ip6-loopback'],
     ['展開形の IPv6', '0:0:0:0:0:0:0:1'],
   ];
 
@@ -60,6 +57,13 @@ describe('ループバック判定は 3 つあり、意図的に違う', () => {
     expect(wide(host)).toBe(true);
     expect(ollama(host)).toBe(true);
     expect(oauthHost(host)).toBe(true);
+  });
+
+  /** 解決が揺れる名前は 3 つとも弾く (パス 511 · threat: T-009)。 */
+  it.each(['localhost.', '127.0.0.1.', 'ip6-localhost', 'ip6-loopback'])('%s は 3 つとも弾く (解決が OS 次第の名前)', (host) => {
+    expect(wide(host)).toBe(false);
+    expect(ollama(host)).toBe(false);
+    expect(oauthHost(host)).toBe(false);
   });
 
   /** 3 つとも弾く形。ここが落ちたら、どれかが穴を開けている。 */

@@ -14,7 +14,7 @@
  * with zero functional loss.
  *
  * Rules enforced here:
- *   - resolved path must sit strictly under `~/.local/business-hub/`
+ *   - resolved path must sit strictly under `~/.local/business-hub/data/` (`exportWriteRoot`; パス 511)
  *   - extension must match exactly (`.html` / `.md` / `.svg` — never executable)
  *   - no NUL / CR / LF (header- and shell-injection hygiene)
  *   - length cap 1024 (pathological inputs)
@@ -181,7 +181,7 @@ export async function assertExportTargetContained(
   home: string = os.homedir(),
 ): Promise<void> {
   const resolved = path.resolve(filePath);
-  const lexicalRoot = exportRoot(home);
+  const lexicalRoot = exportWriteRoot(home);
   // 根がまだ無ければ辿る先も無い。字面の根で比べる (書き込み自体は失敗する)。
   const realRoot = await fs.realpath(lexicalRoot).catch(() => lexicalRoot);
   const dir = path.dirname(resolved);
@@ -220,6 +220,37 @@ export function exportRoot(home: string = os.homedir()): string {
 }
 
 /**
+ * **書き出しを書いてよい木。** `exportRoot` の下の `data/` だけ (2026-10-12 · パス 511)。
+ *
+ * `exportRoot` (`~/.local/business-hub/`) の直下には**状態ファイル**が住む
+ * (`state.json` / `team-radar.json` / `talent.json` と、保存の途中に作る固定名の
+ * `*.json.tmp`)。書き出しの門がその木全体を許していたので、AI 監査 (パス 511) が
+ * 再現した —— 乗っ取られたレンダラーが `~/.local/business-hub/state.json.tmp/x.svg`
+ * を書き出し先に渡すと、書き出しの `mkdir -p` が **`state.json.tmp` という名の
+ * ディレクトリ**を作り、以後の銘柄の保存は永久に `EISDIR` で失敗した
+ * (`team-radar.json.tmp` も同じ)。「すべてのデータを削除」もそのディレクトリを
+ * 消さず `allDeleted: true` と報告した。
+ *
+ * 書き出しの既定の置き場はどれも `data/` の下 (`templates` / `teamradar` /
+ * `business` / `stocks` —— 実測 4 つとも) で、**画面が任意のパスを送る所は無い**。
+ * だから書き込みの門を `data/` へ狭めても失う機能は無く、状態ファイルの木は
+ * 書き出しから触れなくなる。
+ *
+ * 権限の修復 (`repairExportPermissions`) は今までどおり `exportRoot` を見る ——
+ * 状態ファイルの権限も直す仕事を持つため。
+ *
+ * **開く門 (`shellOpenGate`) も `exportWriteRoot` (`data/`) を見る** (2026-10-13 · パス 513)。
+ * 旧い版のこの注記は「開く門は拡張子の許可リストが状態ファイル (`.json`) を通さない」と
+ * 書いていたが **偽だった** —— `SHELL_OPEN_EXTS` は `.json` を含む (`data/` に出す
+ * 書き出しが `.json` のため) ので、木全体を根にしていた開く門は
+ * `openPath('~/.local/business-hub/state.json')` を通していた。開く門を `data/` へ
+ * 狭めて、状態ファイルの木を開く側からも触れなくした (詳細は `shellOpenGate.ts`)。
+ */
+export function exportWriteRoot(home: string = os.homedir()): string {
+  return path.join(exportRoot(home), 'data');
+}
+
+/**
  * True when `filePath` is a legal export target with the given extension.
  * `home` stays a parameter (not `os.homedir()`) so tests can point it at a
  * temp dir, matching the pre-existing guard signatures.
@@ -237,7 +268,7 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
   const resolved = path.resolve(filePath);
-  const root = exportRoot(home);
+  const root = exportWriteRoot(home);
   // Strict containment: the root itself is a directory, never a file target.
   return resolved.startsWith(root + path.sep);
 }

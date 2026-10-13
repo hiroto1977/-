@@ -7,6 +7,56 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-13) — パス 515: 狩りの 5 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 515」。監査役 (read-only・high) の報告は main-ipc / renderer / ai / network = 0 件 (measured-healthy)、supply-chain = 新規 LOW 1 件 + latent な観察 2 件。**再現で確かめると 2 件が本物**だった (3 つ目 `__tests__` 除外は意図的・テストは秘密 env 無しで走るので直さず記録のみ)。
+- **直した 2 件**:
+  - **T-017 (供給網・low)** —— 特権サブエージェントの指示書 `.claude/agents/{auditor,mechanic,scout}.md` が無防備だった。実測: 同種の常時注入指示書 `.cursor/rules/*.mdc` (4 本) と `.claude/settings.json` は **CODEOWNERS・整合性チェーンの PROTECTED・`agentInstructionFiles.test.ts` の POLICY** の 3 つすべてに在るのに、agents は 3 つとも**無かった**。これらはパス 505 (2026-10-07) で足した指示書で、Claude Code が deep/standard/light を委ねるとき**本文を system プロンプトとして注入**する。`auditor`/`mechanic` は `model: inherit` (最強モデル) で Edit/Write/Bash を継ぐので、本文に 1 行注入したマージ済み PR が次の狩りの監査役を steer しうる (ローカル限定・署名鍵には届かない)。パス 372 が .cursor を守った母集団走査 (`.cursor/rules` + `CLAUDE.md`) は 505 より前なので構造的に漏れていた。`taskTierPolicy.test.ts` は frontmatter を双方向で pin するが**本文は見ない**。直し: 3 本を PROTECTED・CODEOWNERS・POLICY (chain) へ足した —— **CODEOWNERS 被覆は `threatLedger.test.ts` の T-003 検査 (PROTECTED は全部 CODEOWNERS が覆う) が自動で要求する**。回帰 `agentInstructionFiles.test.ts` (T-017)。
+  - **T-018 (供給網・low)** —— `lint:forbidden` のディレクトリ走査 (walk) が `.mjs` を母集団から落とし、`scripts/` や `src/` 配下の ESM の実行コードが child_process census を素通りした。実測 (2026-10-13・直す前): `scripts/ci/x.mjs` に `child_process`+`curl $(env)` を書くと `lint:forbidden` は **exit 0** (Scanned 656・probe.mjs は走査されず)。**同じ中身を `.cjs` にすると exit 1** (child_process census が捕まえる) —— 差は拡張子だけ。既知 gap『純粋な child_process + curl は forbidden の census が重なって塞ぐ』が頼るまさにその census の穴 (T-016 の家系の走査母集団の死角)。malware の `isScannedPath` は元から `.mjs` を含むが規則が狭いので両門を素通りした。追跡 `.mjs` は今日 0 件 (latent)。直し: walk の拡張子を `isWalkedSourceName` (pure・export) に切り出し `.mjs` を足した (malware と `.mjs` について対称)。直した後は同じ `.mjs` で exit 1。回帰 `rootConfigScanned.test.ts` (T-018)。
+- **確立したパターン** —— **常時注入される特権指示書は、追加された時点で同じ 3 つの守り (チェーン・CODEOWNERS・POLICY 台帳) に載せる** (パス 372 の母集団走査が後発の `.claude/agents/` を構造的に漏らした)。**supply-chain 検出器の走査母集団は拡張子で揃える** (forbidden の walk と malware の `isScannedPath` が `.mjs` でずれていた・T-016 の家系)。
+- **0 件の 4 面** (main-ipc / renderer / ai / network) は実測の健全を各監査役が報告 (IPC 引数検証・XSS/danger sinks・書き込み確認の経路・SSRF/egress の門)。clearedBacklog は増やしていない。
+- 出荷コードは 1 行も触っていない (変更は門 script 2 本・検査 2 本・CODEOWNERS・チェーン・台帳・docs のみ) ので**出荷物は byte 不変**。整合性チェーン block **#289** (agents 3 本 + integrity-chain.cjs)。脅威は T-017 / T-018 を追加 (件数 15 → 17・T-004 欠番)。
+
+## 直近の作業 (2026-10-13) — パス 514: 狩りの 4 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 514」。監査役 (read-only・high) の報告は network / main-ipc / renderer = 0 件、ai = 1 件、supply-chain = 1 件。**再現で確かめると 2 件とも本物**だった。
+- **直した 2 件**:
+  - **T-016 (供給網・medium)** —— リポジトリ直下の新規 `.cjs` + `package.json` の `postbuild` で、`release.yml` の署名鍵を持つ Build ステップに任意コードを通せた。実測 (2026-10-13・直す前): 直下に `child_process`+`curl` の `postbuild.cjs` を置き `"postbuild"` を 1 行足すと `lint:malware` / `lint:forbidden` / `lint:network-targets` / `lint:deps` の **4 門すべて exit 0**。`npm run build` は prebuild→build→postbuild を自動で走らせ、Build の env は `CSC_LINK / CSC_KEY_PASSWORD / Apple 資格情報 / GH_TOKEN`。ci.yml は `build:web` だけなので PR の CI は緑のまま、release タグを切った瞬間にだけ発火。**3 門を直した**: ① `lint:malware` の `trackedFiles`/`isScannedPath` と ② `lint:forbidden` の `rootCodeFiles` が**追跡された直下の実行コード** (`.cjs/.mjs/.js/.ts/.tsx`) を走査する (`lint:network-targets③` が既に git ls-files 全体で直下を含むのと同じ形。巨大なデータ JSON は外す) ③ `lint:deps` 規則 8 の `LIFECYCLE_KEYS` が `prebuild/postbuild` を覆う (今日 0 件・文面は build 時の発火と署名鍵を名乗る)。直した後は同じ再現で `lint:forbidden` (child_process census) と `lint:deps` (postbuild 配線) が exit 1。回帰は `installTimeCodeGuarded.test.ts` (T-016) + `malwareGate.test.ts` + `rootConfigScanned.test.ts`。
+  - **AI の危機バイパス (安全ネットの欠陥・攻撃ではないので脅威台帳には載せない)** —— `AssistantPage.send()` がオンライン時に危機判定を一切通さず `hub.invoke('assistant','chat')` へ直行し、確証済みの相談窓口 (`counseling.SUPPORT_RESOURCES` —— いのちの電話 / 119・110) を出すかどうかがモデル出力に依っていた。コンシェルジュ (`chatbot.replyTo`) は危機を最優先・無条件で判定して LLM へ届かせない非対称。直し: `send()` の冒頭で `detectCrisis || detectHarmToOthers` を判定し、該当すれば `replyOffline` (決定論で窓口を先に出す) へ回してモデルへ送らない。回帰 `assistantCrisisDeterministic.test.ts` (対照で直しを戻すと落ちることを確認)。
+- **0 件の 3 面** (network / main-ipc / renderer) は実測の健全理由を `clearedBacklog` に記録 (theme.bg/fg の非対称は `image` 経由で既に可能 = 能力を増やさない hardening なので見送り・`scanTarget.looksInternalHostname` の網の狭さは advisory で止める門ではない)。
+- **確立したパターン** —— **悪意コードの検出器は追跡された直下の実行コードも走査する** (`SCAN_ROOTS` はディレクトリの一覧なので直下はどの根にも入らない。固定リストでなく git ls-files に聞く)。**build系の自動発火フック (prebuild/postbuild) も install フックと同じ台帳で覆う** (release の署名鍵を持つ Build で走る)。**旗艦の画面も、安全ネット (危機対応) をコンシェルジュと同じく決定論で持つ**。
+- 整合性チェーンは触っていない (変更した 3 門と AssistantPage は保護対象ではない・block 289 のまま)。`huntBacklog` は空のまま。脅威は T-016 を追加 (件数 14 → 15・T-004 欠番)・clearedBacklog 5 → 7。
+
+## 直近の作業 (2026-10-13) — パス 513: 狩りの 3 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 513」。監査役 (read-only・high) の報告は 5 面とも「生きた欠陥 0」。**再現で確かめると門の完成度の穴 2 件と確認できた hardening 3 件が本物**だった。
+- **直した 5 件** (threat 台帳 T-012〜T-015 + R1):
+  - **T-014 (供給網)** `lint:malware` の install フック検出がインタプリタのインライン実行 (`node -e` / `python3 -c` / `npx`) を見逃していた (curl|sh の字面に現れない一次手口)。
+  - **T-015 (供給網)** `lint:malware` / `lint:secrets` に**走査本数の床が無く**、母集団を大きく狭めても exit 0 (malware → 121 件 / secrets は knowledge-vault を落として 1874 件)。台帳は一致の無い塊の narrowing に盲目。純関数 `floorProblem` (1000 / 5000)。
+  - **T-012 (main-ipc)** 開く門 `shellOpenGate` の既定の根が `exportRoot` 木全体で、`.json` を許すため `state.json` を OS で開かせられた。既定を `exportWriteRoot` (`data/`) へ。`exportPaths.ts` の偽の注記も直した。
+  - **T-013 (network)** VirusTotal へ送る前の社内ホスト警告が IPv4-mapped / NAT64 / 6to4 (クラウドのメタデータ endpoint を含む) を見逃していた。`embeddedIpv4FromV6` で埋め込みの v4 を取り出す。
+  - **R1 (供給網)** CODEOWNERS に `/scripts/` を足し、39 の門の執行コードに所有者レビューを要求 (T-003 の延長)。
+- **健全だった 1 件 (ai)** —— コンシェルジュの Ollama 返答の fold は不要 (素のテキスト・`parseMarkdown` を通らない・fold すると UX 退行)。台帳 `clearedBacklog` に測った結果。
+- **確立したパターン** —— **`git ls-files` 直のゲートの母集団の床は `floorProblem` (純関数)**。walk-vs-git の `reportTrackedCrossCheck` はこの形には tautological / false-positive なので使わない。
+- 整合性チェーン block **#288** (shellOpenGate / scanTarget / exportPaths)。`huntBacklog` は空のまま。法則 `count-has-floor` (⑧) / `shell-open-gate` を延長。
+
+## 直近の作業 (2026-10-13) — パス 512: 狩りの 2 回目。残り 4 件を確かめ、CSP meta より前の script (T-011) を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 512」。本物は T-011 (配る HTML の CSP meta より前の `<script>` は CSP の外で走る) 1 件で、`lint:csp` に位置・固定・外部 script の 3 規則を足した。残り 3 件は実測で健全 (台帳の `clearedBacklog`)。
+- `huntBacklog` は空になった。次の狩りは `docs/THREAT_HUNT.md` の 5 面を回し直す。
+
+## 直近の作業 (2026-10-12) — パス 511: AI による脅威の狩り (捕縛・解析・対策・回帰・記録) と攻撃の型ごとの守りの表
+
+- 手順書 `docs/THREAT_HUNT.md`・台帳 `security/threat-ledger.json`・機械 `src/shared/__tests__/threatLedger.test.ts`・`.github/CODEOWNERS`。
+- 1 回目の狩りで本物 9 件 (T-001〜T-010・T-004 欠番・どれも low) を直し、`threat: T-xxx` の印つきの回帰検査で留めた。詳細は `docs/REMAINING_WORK.md` の「パス 511」と `docs/SECURITY.md` の「攻撃の型ごとの守り」。
+- **確立したパターン** —— 直した穴には回帰検査の題名と印を台帳に書く (台帳と検査は双方向に突き合わされる)。守りの無い型は `gaps` に書き、空欄で通さない。
+- 残り: `huntBacklog` 4 件・GitHub の「Require review from Code Owners」を人が有効にする・定期の狩りを予約するかは利用者が決める。
+
+## 直近の作業 (2026-10-11) — パス 509: 侵入の検知・解析・対策を、リポジトリの中で回す仕組み (資格情報の門・毎日の勧告・Dependabot)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 509」と `docs/SECURITY.md` の「継続監視」。
+- 残り: GitHub の設定 (Secret scanning・push protection・Dependabot security updates・CodeQL) は人が有効にする。
+
 ## 直近の作業 (2026-10-09) — パス 508: 引用の無い本文の扱い —— 音声・チャットの書き込みで、チャンネル名が後ろの言葉を飲む欠陥を直し、断りを利用者が直せる文にする
 
 - **見つけた物** —— 「Slackの#generalに「こんにちは」を送って」の channel が `#generalに` になっていた (助詞を名前に含めた)。確認はその値を見せるので、誤った宛先を承認する形だった。

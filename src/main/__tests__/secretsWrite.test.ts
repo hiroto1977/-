@@ -837,3 +837,43 @@ describe('setOAuthTokens — 書く前に見る (ハンドラを経由しない�
     expect(await m.getOAuthTokens('gmail')).toEqual(tokens);
   });
 });
+
+// ---------------------------------------------------------------------------
+// 積み重ねで読み口の天井を越えない (2026-10-12 · パス 511 · threat: T-001)
+// ---------------------------------------------------------------------------
+
+/**
+ * AI 監査 (パス 511) が再現した攻撃: 入口の天井 (65,536 字) を 1 件ずつ通る値を
+ * 6 サービスへ保存すると、保管ファイルが読み口の天井 (1 MiB) を越え、
+ * **全サービスの読み・書き・消去が塞がった**。書く前に大きさで断る。
+ */
+describe('setToken — 積み重ねで保管庫を塞がない (threat: T-001)', () => {
+  const BIG = 'é'.repeat(65536);
+  const SERVICES = ['notion', 'slack', 'atlassian', 'canva', 'wordpress', 'cloudflare', 'drive'] as const;
+
+  it('★ 天井を越える保存は断り、既存の資格情報は読めて消せるまま', async () => {
+    const m = await secretsModule();
+    await m.setToken('github', 'ghp_REAL_1');
+
+    let refused = 0;
+    for (const id of SERVICES) {
+      try {
+        await m.setToken(id, BIG);
+      } catch (e) {
+        expect(String((e as Error).message)).toMatch(/上限 .* を超えるため保存しませんでした/);
+        refused += 1;
+      }
+    }
+    // 標本が的に当たる: 少なくとも 1 件は天井に当たって断られる。
+    expect(refused).toBeGreaterThan(0);
+
+    const stat = await fs.stat(storePath());
+    expect(stat.size).toBeLessThanOrEqual(1024 * 1024);
+
+    const m2 = await restartSecretsModule();
+    expect(await m2.getToken('github')).toBe('ghp_REAL_1');
+    await expect(m2.listConfiguredServices()).resolves.toContain('github');
+    await expect(m2.clearToken('github')).resolves.toBeUndefined();
+    await expect(m2.setToken('github', 'ghp_NEW')).resolves.toBeUndefined();
+  });
+});
