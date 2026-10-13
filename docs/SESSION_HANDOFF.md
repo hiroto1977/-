@@ -15,7 +15,7 @@
   - **AI の危機バイパス (安全ネットの欠陥・攻撃ではないので脅威台帳には載せない)** —— `AssistantPage.send()` がオンライン時に危機判定を一切通さず `hub.invoke('assistant','chat')` へ直行し、確証済みの相談窓口 (`counseling.SUPPORT_RESOURCES` —— いのちの電話 / 119・110) を出すかどうかがモデル出力に依っていた。コンシェルジュ (`chatbot.replyTo`) は危機を最優先・無条件で判定して LLM へ届かせない非対称。直し: `send()` の冒頭で `detectCrisis || detectHarmToOthers` を判定し、該当すれば `replyOffline` (決定論で窓口を先に出す) へ回してモデルへ送らない。回帰 `assistantCrisisDeterministic.test.ts` (対照で直しを戻すと落ちることを確認)。
 - **0 件の 3 面** (network / main-ipc / renderer) は実測の健全理由を `clearedBacklog` に記録 (theme.bg/fg の非対称は `image` 経由で既に可能 = 能力を増やさない hardening なので見送り・`scanTarget.looksInternalHostname` の網の狭さは advisory で止める門ではない)。
 - **確立したパターン** —— **悪意コードの検出器は追跡された直下の実行コードも走査する** (`SCAN_ROOTS` はディレクトリの一覧なので直下はどの根にも入らない。固定リストでなく git ls-files に聞く)。**build系の自動発火フック (prebuild/postbuild) も install フックと同じ台帳で覆う** (release の署名鍵を持つ Build で走る)。**旗艦の画面も、安全ネット (危機対応) をコンシェルジュと同じく決定論で持つ**。
-- 整合性チェーンは触っていない (変更した 3 門と AssistantPage は保護対象ではない・block 289 のまま)。`huntBacklog` は空のまま。脅威 15→16・clearedBacklog 5→7。
+- 整合性チェーンは触っていない (変更した 3 門と AssistantPage は保護対象ではない・block 289 のまま)。`huntBacklog` は空のまま。脅威は T-016 を追加 (件数 14 → 15・T-004 欠番)・clearedBacklog 5 → 7。
 
 ## 直近の作業 (2026-10-13) — パス 513: 狩りの 3 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
 
