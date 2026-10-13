@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 290
+- ブロック数: 291
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `3c5fcd1b99119fe1cba7066b1b9c46d80f33bfc4d3f01cedf912cee0bd02ef16`
-- 保護対象: 102 ファイル
+- 末尾(tip)ハッシュ: `88d8f13849038fa6f0e20e02383cb4e1ab8ed99bd28e16cbec2303c868bf6ff9`
+- 保護対象: 103 ファイル
 
 ## ブロック
 
@@ -303,6 +303,7 @@
 | 287 | `1a32b87ad28e8187` | `a8b54204a8afec47` | `6515b2c0501af05a` | update lint-artifact-csp.cjs |
 | 288 | `1e132492fc4f6c94` | `6515b2c0501af05a` | `133a8673fafa41de` | update exportPaths.ts,shellOpenGate.ts,scanTarget.ts |
 | 289 | `7066b935fbe555e6` | `133a8673fafa41de` | `3c5fcd1b99119fe1` | update auditor.md,mechanic.md,scout.md,integrity-chain.cjs |
+| 290 | `7b421cf6e9b21a78` | `3c5fcd1b99119fe1` | `88d8f13849038fa6` | update ServiceHubを開く.bat,integrity-chain.cjs,redact.ts |
 
 ## 保護対象ファイル
 
@@ -323,6 +324,7 @@
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
 - `eslint.config.js`
+- `launcher/ServiceHubを開く.bat`
 - `scripts/build-landing.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`

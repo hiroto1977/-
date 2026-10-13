@@ -19,6 +19,7 @@
     "docs/SECURITY_CHAIN.md",
     "electron-builder.json",
     "eslint.config.js",
+    "launcher/ServiceHubを開く.bat",
     "scripts/build-landing.cjs",
     "scripts/checksum-release.cjs",
     "scripts/inject-pwa.cjs",
@@ -2425,6 +2426,14 @@
       "leafCount": 102,
       "note": "update auditor.md,mechanic.md,scout.md,integrity-chain.cjs",
       "hash": "3c5fcd1b99119fe1cba7066b1b9c46d80f33bfc4d3f01cedf912cee0bd02ef16"
+    },
+    {
+      "index": 290,
+      "prevHash": "3c5fcd1b99119fe1cba7066b1b9c46d80f33bfc4d3f01cedf912cee0bd02ef16",
+      "merkleRoot": "7b421cf6e9b21a7839d802bcc4626a54ee0d7e771a483d1e05de1523a09bf286",
+      "leafCount": 103,
+      "note": "update ServiceHubを開く.bat,integrity-chain.cjs,redact.ts",
+      "hash": "88d8f13849038fa6f0e20e02383cb4e1ab8ed99bd28e16cbec2303c868bf6ff9"
     }
   ],
   "tipManifest": {
@@ -2445,11 +2454,12 @@
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
+    "launcher/ServiceHubを開く.bat": "83d4b252a777556d3830acc7e226cd009fea006bb3c47fb677ab57ecaeb9da82",
     "scripts/build-landing.cjs": "e711ee615dc7322011470de0cdc5f5241014808d665c7e3b35232db71ae65e19",
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "d29e1ff0ea0b475943a06ea57240d8fb26989e9eee8496db87a63e1fbd8699fa",
+    "scripts/integrity-chain.cjs": "67833da142b98e6e6064da51261687abdf610bfbb400e7ef1d3e5ada26d8e4b8",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
@@ -2519,7 +2529,7 @@
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/privateTarget.ts": "2a7f4b178d82653c596b8cf92f5a18ccb5fc73b5c898dee3b66583be53ed47c1",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
-    "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",
+    "src/shared/redact.ts": "8ba67cdcaaad3dbf3dc2304ef805b3d6896eca320bb1e8032e15341595abc2b6",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
     "src/shared/scanTarget.ts": "24b39dcf07ab1e892632ef35266bd30b37e9244bb668b7b077c9e6a9bed1584b",
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",

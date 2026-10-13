@@ -301,6 +301,21 @@ const PROTECTED = [
   // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
   // 応答を返せる。保護対象として最も効く部類なのに漏れていた。
   'assets/sw.js',
+  // 2026-10-13 (パス 516 · T-019) に足した。**配る実行可能ランチャー。**
+  // `launcher/ServiceHubを開く.bat` は Windows 利用者が**ダブルクリックして** standalone.html を
+  // 開くために在る (ファイル自身がそう設計されている)。実行可能コードなのに、全コード走査門
+  // (`lint:malware` / `lint:forbidden` はトップレベル dir の固定 allowlist = src|scripts|
+  // orchestration|build|assets でしか走査せず `launcher/` を見ない・`.bat` はどの `SCAN_EXTS`/
+  // `isWalkedSourceName` にも無い) の母集団からも、改竄検知からも、CODEOWNERS からも漏れていた
+  // (T-016/T-018 と同じ走査母集団の死角の家系)。実測 (2026-10-13・直す前): この .bat に
+  // `powershell … iwr <url> -OutFile … ; Start-Process …` の download-and-exec を 1 行足すと
+  // `lint:malware`/`lint:forbidden`/`lint:shell`/`lint:charset` が **4 門すべて exit 0**。
+  // .bat は Windows シェルなので forbidden (JS の形) も shell (bash の形) の規則も当てはまらず、
+  // 無理に走査門へ入れても PowerShell は捕まらない —— **正しい機構は「黙った編集を可視化 +
+  // 所有者レビュー必須」** (assets/sw.js や配る maker と同じ・CODEOWNERS 被覆は T-003 検査が
+  // 自動で要求)。将来のランチャー (任意 dir・.bat/.cmd/.ps1/.vbs/.command) は
+  // `launcherExecutablesGuarded.test.ts` が「全部チェーン保護対象」で機械的に強制する。
+  'launcher/ServiceHubを開く.bat',
   // 2026-09-26 (パス 480) に足した。**公開サイトの根を組み立てる script。**
   // `pages.yml` は `dist/landing.html` を `_site/index.html` として publish するので、
   // ここが出す HTML が **`https://<owner>.github.io/<repo>/` を開いた人が最初に見る物**

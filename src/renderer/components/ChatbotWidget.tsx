@@ -40,6 +40,7 @@ import {
   ollamaRefusalNote,
   remoteOllamaNotice,
 } from '../data/chatbotOllama';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { loadEndpointSetting } from '../network/ollamaWeb';
 import { CeilingNotice } from './CeilingNotice';
@@ -414,7 +415,16 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
     // 保存したことにしてしまう (2026-08 監査)。
     const classified = classifyActionResult(res);
     if (classified.verdict === 'failed') {
-      append({ role: 'bot', text: `⚠ 実行に失敗しました: ${classified.message}` });
+      // 失敗の文は第三者 (SaaS の応答・乗っ取られた proxy) の本文を運びうる。
+      // 吹き出し (`.concierge-msg`) は `white-space: pre-wrap` なので、改行を
+      // 1 つ持ち込めば `✅ 実行しました…` のような**アプリの結果そっくりの行**を
+      // 別の行として描ける (パス 511 / T-005 が Ollama 経路で、パス 488 が
+      // AI アシスタントの失敗の吹き出しで塞いだ当の形)。**同じ吹き出し**の
+      // Ollama エラー経路 (`chatbotOllama.ts`) は `externalTextOnOneLine` で
+      // 折っているのに、この invoke 失敗の経路だけが折っていなかった。
+      // 伏字と長さ切りは choke point (`err()` / `safeErrorMessage`) が既に
+      // 掛けているので、ここは**折るだけ** (threat: T-020)。
+      append({ role: 'bot', text: `⚠ 実行に失敗しました: ${externalTextOnOneLine(classified.message)}` });
       return;
     }
     append({

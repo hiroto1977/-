@@ -358,6 +358,11 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     { service: 'skills', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'business', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'teamradar', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    // Cursor の Admin API キーは `key_` + 16 進 (types.test.ts が Cursor 風の
+    // TOKEN に使っている形)。発行元が分かる接頭辞を持つので裸でも伏せられる
+    // (パス 516 · T-021 —— それまで `header-only` に `'H'.repeat(40)` という
+    // 実形でない標本で置かれ、裸の `key_…` の反射が素通りする穴を隠していた)。
+    { service: 'cursor', issuer: 'Cursor Admin API キー (key_ + 16 進)', carrier: 'prefix', sample: 'key_9f2c1a8e4b7d6c5f0a3e' },
     // ここから下は接頭辞を主張しない (控えめな側)。標本は「長い英数字」で、
     // 裸では伏せられないこと・名前が付けば伏せられることの両方を測る。
     { service: 'cloudflare', issuer: 'Cloudflare API トークン (40 字)', carrier: 'header-only', sample: 'B'.repeat(40) },
@@ -366,7 +371,6 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     { service: 'canva', issuer: 'Canva OAuth', carrier: 'header-only', sample: 'E'.repeat(48) },
     { service: 'base', issuer: 'BASE OAuth', carrier: 'header-only', sample: 'F'.repeat(43) },
     { service: 'freee', issuer: 'freee OAuth', carrier: 'header-only', sample: 'G'.repeat(50) },
-    { service: 'cursor', issuer: 'Cursor API キー', carrier: 'header-only', sample: 'H'.repeat(40) },
     { service: 'stocks', issuer: '市場データ API キー', carrier: 'header-only', sample: 'J'.repeat(32) },
   ];
 
@@ -426,6 +430,40 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     const unknown = `zz_unknown_issuer_${FILL}`;
     const out = redactSecrets(`upstream said: invalid credential ${unknown} please retry`);
     expect(out).toContain(unknown);
+  });
+
+  /*
+   * **Cursor の Admin API キー (`key_` + 16 進) の裸の反射** (パス 516 · T-021)。
+   *
+   * 乗っ取られた / 設定を誤った BYO proxy が、転送された Cursor の鍵を
+   * **ヘッダ名を伴わない素の形**でエラー本文に反射すると、`fetchViaProxy` の
+   * `!proxyRes.ok` 枝 (`proxy.ts`) がそれを `redactForMessage` に通して画面と
+   * バグ報告に出す。直す前 (実測): `Bearer key_…` と `{"authorization":…}` は
+   * 伏せるのに、`{"error":"Invalid API key: key_…"}` は素通りした。
+   * `key_` は散文に現れる接頭辞なので、本体を 16 進に絞って散文を巻き込まない。
+   */
+  describe('Cursor の key_ (16 進) は裸でも伏せる (T-021)', () => {
+    const CURSOR_KEY = 'key_9f2c1a8e4b7d6c5f0a3e';
+
+    it('★ JSON のエラー本文に裸で反射された Cursor の鍵を伏せる (threat: T-021)', () => {
+      const reflected = `{"error":"Invalid API key: ${CURSOR_KEY}, please retry"}`;
+      const out = redactSecrets(reflected);
+      expect(out, '裸の key_ が素通りしている (乗っ取られた proxy の反射)').not.toContain(CURSOR_KEY);
+      expect(out).toContain('key_[REDACTED]');
+      // 原因 (何の鍵が不正だったか) は読めるまま —— 鍵の値だけを消す。
+      expect(out).toContain('Invalid API key');
+    });
+
+    it('★ 散文の key_ は巻き込まない (規則が広すぎない・対照)', () => {
+      for (const prose of [
+        'the key_press_handler_function fired',
+        'primary_key_constraint_name violated',
+        'press the key_down arrow repeatedly',
+        'a foreign_key_9f2c1a8e4b7d6c5f0a3e reference', // `_` 直後なので \b が立たない
+      ]) {
+        expect(redactSecrets(prose), `散文を伏せている: ${prose}`).toBe(prose);
+      }
+    });
   });
 
   /*

@@ -211,6 +211,32 @@ export function redactSecrets(input: string): string {
         '$1[REDACTED]',
       )
       /*
+       * **Cursor の Admin API キー (`key_` + 16 進)。** (2026-10-13 · パス 516 · threat: T-021)
+       *
+       * `cursor` は `credentialUse.ts` で `fetch` (資格情報を預かる) で、
+       * `api/cursor.ts` が `Authorization: Bearer <token>` で送る。鍵の形は
+       * `types.test.ts` が `key_9f2c1a8e4b7d6c5f0a3e` を Cursor 風の TOKEN として
+       * 使っている (16 進) —— 発行元が分かる**接頭辞を持つ**形である。
+       *
+       * ところが `redactionCoverage.test.ts` の census は cursor を
+       * `header-only` に置き、標本を**実形でない** `'H'.repeat(40)` (接頭辞なし)
+       * にしていたので、「裸では伏せられなくて正しい」と主張して**穴を隠して
+       * いた**。実測 (直す前・実物の `redactSecrets`): `Bearer key_…` と
+       * `{"authorization":"Bearer key_…"}` は伏せるのに、JSON のエラー本文に
+       * **裸で**反射された `{"error":"Invalid API key: key_…"}` は素通りした。
+       * 乗っ取られた / 設定を誤った BYO proxy (`redact.ts` 冒頭が名指しする脅威)
+       * がこの形で反射すると、伏字を通り抜けて画面とバグ報告に出る
+       * (T-008 / パス 231 / 289 と同じ害 —— 発行元が分かる接頭辞を持つのに
+       * 裸で伏せていなかった)。
+       *
+       * **本体を 16 進に絞る** —— `key_` は `sk-ant-` / `ghp_` と違い散文に
+       * 現れる接頭辞 (`key_press_handler` / `primary_key_constraint`) なので、
+       * 上の `[A-Za-z0-9_-]` の一括規則に混ぜると散文を巻き込む。実物の鍵は
+       * 16 進なので `[0-9a-f]{16,}` に限れば、英単語の続く `key_` は当たらない
+       * (実測で `key_press_handler` ほか 9 形の散文が素通りすることを確認した)。
+       */
+      .replace(/\bkey_[0-9a-f]{16,}/g, 'key_[REDACTED]')
+      /*
        * **2026-09-14 (パス 231): 25 形のうち 14 形が裸で素通りしていた。**
        *
        * 2026-08-29 は「5 形が抜けていた」を直したが、抜けを**数える道**は

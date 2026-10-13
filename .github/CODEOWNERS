@@ -30,6 +30,7 @@
 /docs/SECURITY_CHAIN.md @hiroto1977
 /electron-builder.json @hiroto1977
 /eslint.config.js @hiroto1977
+/launcher/ServiceHubを開く.bat @hiroto1977
 /scripts/build-landing.cjs @hiroto1977
 /scripts/checksum-release.cjs @hiroto1977
 /scripts/inject-pwa.cjs @hiroto1977

