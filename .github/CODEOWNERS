@@ -1,0 +1,116 @@
+# 所有者のレビューを要求する物 (2026-10-12 · パス 511 · threat: T-003)。
+#
+# 整合性チェーン (scripts/integrity-chain.cjs の PROTECTED) は署名を持たないので、マージされた PR は
+# 保護対象とチェーンを一緒に書き換えられる。ここに同じ一覧を載せ、変更に所有者のレビューを要求する。
+# 効かせるには GitHub の設定 (Branch protection → Require review from Code Owners) を有効にする。
+# 一覧は src/shared/__tests__/threatLedger.test.ts が PROTECTED と双方向に突き合わせる。
+
+/.github/ @hiroto1977
+/security/ @hiroto1977
+# scripts/ の木全体 (2026-10-13 · パス 513 · threat: T-003 の延長)。
+# 39 の門の執行コード (lint:malware / lint:secrets / lint:forbidden / lint:workflow-security /
+# lint:charset / lint:shell / verify-architecture ほか) はここに住む。門の script は頻繁に
+# 動くので整合性チェーンの保護対象 (安定資産) には入れないが、マージされた PR で門を黙って
+# 骨抜きにされない (= 供給網/執行層の守りが外されない) よう、木全体に所有者のレビューを要求する。
+# ディレクトリ指定なので下の個別の scripts/*.cjs 行 (保護対象) と重なるが、両方向の検査は
+# 独立に見るので矛盾しない。
+/scripts/ @hiroto1977
+/scripts/integrity-chain.cjs @hiroto1977
+/.claude/settings.json @hiroto1977
+/.claude/agents/auditor.md @hiroto1977
+/.claude/agents/mechanic.md @hiroto1977
+/.claude/agents/scout.md @hiroto1977
+/.cursor/rules/00-project.mdc @hiroto1977
+/.cursor/rules/10-boundaries.mdc @hiroto1977
+/.cursor/rules/20-gates.mdc @hiroto1977
+/.cursor/rules/30-conventions.mdc @hiroto1977
+/assets/manifest.webmanifest @hiroto1977
+/assets/sw.js @hiroto1977
+/docs/PROXY_EXAMPLE.md @hiroto1977
+/docs/SECURITY_CHAIN.md @hiroto1977
+/electron-builder.json @hiroto1977
+/eslint.config.js @hiroto1977
+/scripts/build-landing.cjs @hiroto1977
+/scripts/checksum-release.cjs @hiroto1977
+/scripts/inject-pwa.cjs @hiroto1977
+/scripts/inline-html.cjs @hiroto1977
+/scripts/lib/artifact-freshness.cjs @hiroto1977
+/scripts/lib/json-for-script.cjs @hiroto1977
+/scripts/lib/population-floor.cjs @hiroto1977
+/scripts/lib/tracked-cross-check.cjs @hiroto1977
+/scripts/lint-artifact-csp.cjs @hiroto1977
+/scripts/lint-sample-data.cjs @hiroto1977
+/scripts/make-autoinstall.sh @hiroto1977
+/scripts/make-live-usb.sh @hiroto1977
+/scripts/migrate.sh @hiroto1977
+/scripts/public-host-guard.cjs @hiroto1977
+/scripts/safe-vault-write.cjs @hiroto1977
+/scripts/security-audit.sh @hiroto1977
+/scripts/setup-linux.sh @hiroto1977
+/scripts/setup-obsidian-docker.sh @hiroto1977
+/scripts/smoke-app.cjs @hiroto1977
+/scripts/verify-release-artifacts.cjs @hiroto1977
+/src/main/atomicWrite.ts @hiroto1977
+/src/main/clients/assistant.ts @hiroto1977
+/src/main/clients/exportPaths.ts @hiroto1977
+/src/main/clients/types.ts @hiroto1977
+/src/main/eraseAll.ts @hiroto1977
+/src/main/main.ts @hiroto1977
+/src/main/oauth.ts @hiroto1977
+/src/main/secrets.ts @hiroto1977
+/src/main/shellOpenGate.ts @hiroto1977
+/src/main/stateFile.ts @hiroto1977
+/src/main/windowPrefs.ts @hiroto1977
+/src/preload/preload.ts @hiroto1977
+/src/renderer/data/assistantMarkdown.ts @hiroto1977
+/src/renderer/data/localWrite.ts @hiroto1977
+/src/renderer/data/recordCipher.ts @hiroto1977
+/src/renderer/fs/fsa.ts @hiroto1977
+/src/renderer/keyIntent.ts @hiroto1977
+/src/renderer/network/liveRead.ts @hiroto1977
+/src/renderer/network/proxy.ts @hiroto1977
+/src/renderer/oauth/pkce.ts @hiroto1977
+/src/renderer/oauth/pkceSession.ts @hiroto1977
+/src/renderer/security/LockScreen.tsx @hiroto1977
+/src/renderer/security/autoLock.ts @hiroto1977
+/src/renderer/security/bip39-wordlist.ts @hiroto1977
+/src/renderer/security/dataCrypto.ts @hiroto1977
+/src/renderer/security/frameGuard.ts @hiroto1977
+/src/renderer/security/lockWorkspace.ts @hiroto1977
+/src/renderer/security/mnemonic.ts @hiroto1977
+/src/renderer/security/vault.ts @hiroto1977
+/src/renderer/security/webCrypto.ts @hiroto1977
+/src/renderer/security/webauthn.ts @hiroto1977
+/src/shared/advisorQuestionLimits.ts @hiroto1977
+/src/shared/ai/chat.ts @hiroto1977
+/src/shared/ai/credentials.ts @hiroto1977
+/src/shared/ai/providers.ts @hiroto1977
+/src/shared/aiEndpoint.ts @hiroto1977
+/src/shared/assistantLimits.ts @hiroto1977
+/src/shared/atlassianSite.ts @hiroto1977
+/src/shared/constantTimeEquals.ts @hiroto1977
+/src/shared/controlChars.ts @hiroto1977
+/src/shared/cryptoParams.ts @hiroto1977
+/src/shared/eraseReport.ts @hiroto1977
+/src/shared/escape.ts @hiroto1977
+/src/shared/externalUrlGate.ts @hiroto1977
+/src/shared/headerValue.ts @hiroto1977
+/src/shared/httpLimits.ts @hiroto1977
+/src/shared/imageUrlGate.ts @hiroto1977
+/src/shared/inputCeiling.ts @hiroto1977
+/src/shared/isoDate.ts @hiroto1977
+/src/shared/localDate.ts @hiroto1977
+/src/shared/ollama.ts @hiroto1977
+/src/shared/privateTarget.ts @hiroto1977
+/src/shared/proxyEndpoint.ts @hiroto1977
+/src/shared/redact.ts @hiroto1977
+/src/shared/safeFilename.ts @hiroto1977
+/src/shared/scanTarget.ts @hiroto1977
+/src/shared/tokenInput.ts @hiroto1977
+/src/shared/tokenResponse.ts @hiroto1977
+/src/shared/vaultToken.ts @hiroto1977
+/src/shared/versionOrder.ts @hiroto1977
+/src/shared/writeFieldLimits.ts @hiroto1977
+/vite.config.ts @hiroto1977
+/vitest.audit.config.ts @hiroto1977
+/vitest.config.ts @hiroto1977

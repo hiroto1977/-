@@ -1,0 +1,10 @@
+// deviceStoreWritePolicy.test.ts の対照用の標本。**台帳に無いレコード書き込み**と、
+// **報せずに捨てる呼び出し**を 1 つずつ持つ。拡張子が .txt なのは、走査
+// (src/renderer/**/*.ts(x)) に自分で引っかからないため —— 引っかかると本物の
+// 違反として鳴ってしまう。
+async function saveSomething(row: Record<string, unknown>): Promise<void> {
+  await getRecordStore().insert('sales-entries', row);
+}
+function onClickAdd(): void {
+  void add();
+}

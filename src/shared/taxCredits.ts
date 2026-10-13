@@ -1,0 +1,601 @@
+/**
+ * 税額控除エンジン (所得控除の後、算出税額から直接差し引く控除)。
+ *
+ * **重要 — これは概算試算であり、正確な税額計算・税務助言ではありません。**
+ * 住宅ローン控除・配当控除・寄附金税額控除 (ふるさと納税の住民税分) など
+ * 主要な税額控除を国税庁の一般的なルールで概算します。適用要件・居住年・
+ * 借入区分・年度改正・自治体差は完全には反映しません。確定申告は税理士 /
+ * 国税庁の公式ツールで確定してください。
+ *
+ * 税額控除は「所得控除」(課税所得を減らす) とは異なり、算出された税額そのもの
+ * から差し引く点に注意 (節税インパクトが大きい)。
+ */
+
+import { yen, nonNeg } from './num';
+
+/** 円未満を四捨五入。 */
+
+// --- 住宅ローン控除 (住宅借入金等特別控除) -------------------------------
+//
+// 国税庁 No.1211-1 ほか。年末借入残高 × 控除率を所得税から控除し、控除しきれ
+// ない分は住民税から一定上限まで控除する。控除率・上限・期間は居住年と住宅の
+// 環境性能区分で異なるため、ここでは「控除率」と「年末残高上限」を引数化した
+// 汎用モデルとする (令和4年以降の標準的な 0.7% を既定)。
+
+/** 住宅の環境性能区分 (令和4年以降の新築・買取再販の借入限度額に影響)。 */
+export type HousingPerformance =
+  | 'zeh' // ZEH 水準省エネ住宅
+  | 'standard' // 省エネ基準適合住宅
+  | 'long-life' // 認定長期優良・低炭素住宅
+  | 'non-standard' // その他 (一般・非適合)
+  | 'used'; // 中古 (既存住宅)
+
+/**
+ * 性能区分の表示名。**上限の額はここに書かない** (2026-09-22 · パス 401) ——
+ * 画面は `resolveMortgageParams(居住年, 区分).balanceCap` から導く。
+ * 手で書いていた頃、`non-standard` は**どの年でも「〜3,000万」**と名乗っており、
+ * 実物は 2024 年以降の居住で **0** (対象外) だった。
+ *
+ * 型の上で全区分を要求する (`HousingPerformance` に 6 つ目が増えたら落ちる)。
+ */
+export const HOUSING_PERFORMANCE_LABELS: readonly (readonly [HousingPerformance, string])[] = [
+  ['long-life', '認定長期優良・低炭素'],
+  ['zeh', 'ZEH水準省エネ'],
+  ['standard', '省エネ基準適合'],
+  ['non-standard', 'その他/非適合'],
+  ['used', '中古住宅'],
+];
+
+/** 居住年と性能区分から住宅ローン控除の「控除率」「年末残高上限」を解決する。
+ *
+ * 国税庁 No.1211 系。令和4-7年居住の新築は性能区分で借入限度額が異なる。
+ * 令和2-3年は控除率1.0%、それ以前はさらに別 (本表は概算・代表値)。
+ * @param residenceYear 西暦の居住開始年 (2020〜2025 を想定)
+ */
+export function resolveMortgageParams(
+  residenceYear: number,
+  performance: HousingPerformance,
+): { readonly rate: number; readonly balanceCap: number } {
+  // 令和2-3年 (2020-2021) は控除率 1.0%。
+  if (residenceYear <= 2021) {
+    return { rate: 0.01, balanceCap: performance === 'used' ? 20_000_000 : 40_000_000 };
+  }
+  // 令和4年以降 (2022-) は控除率 0.7%。借入限度額は性能区分で変動。
+  const cap: Record<HousingPerformance, number> = {
+    'long-life': 50_000_000,
+    zeh: 45_000_000,
+    standard: 40_000_000,
+    'non-standard': residenceYear >= 2024 ? 0 : 30_000_000, // 2024- は省エネ非適合の新築は対象外
+    used: 30_000_000,
+  };
+  return { rate: 0.007, balanceCap: cap[performance] };
+}
+
+/** 住宅ローン控除の控除期間 (年)。新築・買取再販は13年、中古 (既存住宅) は10年。 */
+export function mortgageDeductionPeriod(performance: HousingPerformance): number {
+  return performance === 'used' ? 10 : 13;
+}
+
+/** 控除期間の判定結果。 */
+export interface MortgagePeriodStatus {
+  /** 控除期間の年数 (新築13年 / 中古10年)。 */
+  readonly maxYears: number;
+  /** 居住開始から現在までの経過年 (居住初年を1年目とする)。 */
+  readonly yearsElapsed: number;
+  /** 残りの控除年数 (0 以上)。 */
+  readonly yearsRemaining: number;
+  /** 現在年が控除期間内か。 */
+  readonly withinPeriod: boolean;
+}
+
+/**
+ * 居住開始年・現在年・性能区分から控除期間の状態を判定する。
+ *
+ * 居住初年を 1 年目と数える (例: 2022年居住開始・2034年は13年目=最終年)。
+ * 控除期間を過ぎた年は控除を受けられない (国税庁 No.1211/1212)。
+ *
+ * @param residenceYear 居住開始年 (西暦)
+ * @param currentYear 判定対象の年 (西暦)
+ * @param performance 住宅の性能区分 (中古かどうかで期間が変わる)
+ */
+export function mortgagePeriodStatus(
+  residenceYear: number,
+  currentYear: number,
+  performance: HousingPerformance,
+): MortgagePeriodStatus {
+  const maxYears = mortgageDeductionPeriod(performance);
+  const yearsElapsed = currentYear - residenceYear + 1;
+  const withinPeriod = yearsElapsed >= 1 && yearsElapsed <= maxYears;
+  // 残り控除年数 (当年含む)。居住前は全期間、控除期間後は 0。
+  let yearsRemaining: number;
+  // Stryker disable next-line EqualityOperator: <1 と <=1 は yearsElapsed=1 で同値 (等価変異)。
+  if (yearsElapsed < 1) yearsRemaining = maxYears; // まだ居住前: 全期間が残る
+  else if (yearsElapsed > maxYears) yearsRemaining = 0; // 控除期間終了
+  else yearsRemaining = maxYears - yearsElapsed + 1; // 期間中: 当年を含む残年数
+  return { maxYears, yearsElapsed, yearsRemaining, withinPeriod };
+}
+
+/** 住宅ローン控除の入力。 */
+export interface MortgageCreditInput {
+  /** 年末借入残高 (円)。 */
+  readonly yearEndBalance: number;
+  /** 控除率 (既定 0.7% = 0.007)。 */
+  readonly rate?: number;
+  /** 借入残高の上限 (住宅区分による。既定 3,000 万円)。 */
+  readonly balanceCap?: number;
+  /** 所得税の算出税額 (この範囲までしか所得税からは引けない)。 */
+  readonly incomeTaxBeforeCredit: number;
+  /**
+   * **所得税の**課税総所得金額等 (課税総所得金額 + 課税退職所得金額 + 課税山林所得金額)。
+   * 住民税からの控除上限はこの額の 5% (または 7%) で決まる (地方税法附則第5条の4の2)。
+   *
+   * ★ **住民税の課税所得ではない** (2026-09-27 · パス 493)。この欄は 2026-09 まで
+   * `taxableIncomeForResident` という名前で、画面はその名前どおり住民税の課税所得
+   * (`taxableIncomeForResidentTax`) を渡していた。住民税の所得控除は所得税より小さい
+   * (基礎 43 万 vs 48 万・配偶者 33 万 vs 38 万・生命保険 7 万 vs 12 万 ほか) ので、
+   * 住民税の課税所得は所得税より大きく、上限が効く所得帯では**住民税からの控除額を
+   * 多く見せていた** (実測: 基礎控除の差 5 万円だけでも 2,500 円)。名前を法の言葉へ
+   * 合わせ、渡す値が一目で分かるようにした。
+   */
+  readonly taxableIncomeForIncomeTax: number;
+  /**
+   * 合計所得金額 (円, 任意)。指定すると、2,000 万円を超える年は住宅ローン控除を
+   * 適用しない (国税庁 No.1211 の所得要件)。未指定なら所得制限を判定しない。
+   */
+  readonly totalIncome?: number;
+  /**
+   * 控除期間外フラグ (任意)。`true` のとき控除期間 (新築13年/中古10年) を
+   * 過ぎているため控除しない。`mortgagePeriodStatus().withinPeriod` の否定を渡す。
+   */
+  readonly outsidePeriod?: boolean;
+}
+
+/** 住宅ローン控除の所得制限 (合計所得金額の上限, 円)。 */
+export const MORTGAGE_INCOME_LIMIT = 20_000_000;
+
+/** 住宅ローン控除の結果 (所得税分・住民税分・控除しきれなかった額)。 */
+export interface MortgageCreditResult {
+  /** 控除可能額の総額 (残高×率)。 */
+  readonly creditable: number;
+  /** 所得税から控除される額。 */
+  readonly fromIncomeTax: number;
+  /** 住民税から控除される額 (上限あり)。 */
+  readonly fromResidentTax: number;
+  /** どちらからも控除しきれず切り捨てられた額。 */
+  readonly unused: number;
+}
+
+/** 住民税からの住宅ローン控除上限 (令和の標準: 所得税の課税総所得金額等×5%、最大 97,500 円)。 */
+export const MORTGAGE_RESIDENT_CAP_RATE = 0.05;
+export const MORTGAGE_RESIDENT_CAP_MAX = 97_500;
+
+/**
+ * **特定取得の上限** —— 平成26年4月〜令和3年12月に居住を開始し、その取得が特定取得
+ * (消費税 8%・10% が掛かった取得) または特別特定取得である場合、住民税からの控除上限は
+ * 所得税の課税総所得金額等の **7%・最大 136,500 円** (地方税法附則第5条の4の2)。
+ *
+ * ★ 2026-09-27 (パス 493) まで、この画面は居住年 2020 / 2021 を選べるのに上限を
+ * 5% / 97,500 円のまま計算しており、その年の住民税からの控除額を**少なく見せていた**
+ * (実測: 課税総所得 200 万・所得税から引ききれない額 30 万で 97,500 円 → 法は 136,500 円)。
+ */
+export const MORTGAGE_RESIDENT_CAP_RATE_SPECIFIED = 0.07;
+export const MORTGAGE_RESIDENT_CAP_MAX_SPECIFIED = 136_500;
+/**
+ * 特定取得の上限が掛かる居住年 (年単位)。法は平成26年**4月**からなので、2014 年に
+ * 居住した人は 1〜3 月なら標準・4 月以降なら特定取得で、年だけでは決まらない ——
+ * **控除を多く見せない側**へ倒して 2015 年からにしている (画面が選ばせる年は 2020 年以降)。
+ */
+export const MORTGAGE_RESIDENT_CAP_SPECIFIED_FIRST_YEAR = 2015;
+export const MORTGAGE_RESIDENT_CAP_SPECIFIED_LAST_YEAR = 2021;
+
+/** 住宅ローン控除の所得要件と住民税側の上限。省略すると上の定数。台帳から上書きできる。 */
+export interface MortgageCreditParams {
+  readonly incomeLimit: number;
+  readonly residentCapRate: number;
+  readonly residentCapMax: number;
+}
+
+export const DEFAULT_MORTGAGE_CREDIT_PARAMS: MortgageCreditParams = {
+  incomeLimit: MORTGAGE_INCOME_LIMIT,
+  residentCapRate: MORTGAGE_RESIDENT_CAP_RATE,
+  residentCapMax: MORTGAGE_RESIDENT_CAP_MAX,
+};
+
+/**
+ * **その居住年・取得の住民税側の上限を乗せた引数** (2026-09-27 · パス 493)。
+ *
+ * 台帳 (`finance` の住宅ローン控除の 3 項目) が持つのは標準 (令和4年以降の居住) の値で、
+ * 特定取得の上限は居住年で決まる経過措置の表なので台帳の外に置く (`resolveMortgageParams`
+ * の控除率・借入限度額と同じ扱い)。所得の上限 (`incomeLimit`) は居住年に依らないので
+ * 台帳の値をそのまま運ぶ。
+ *
+ * **中古 (`used`) は標準の側へ倒す** —— 個人間の売買には消費税が掛からず特定取得に
+ * 当たらないのが既定である。事業者から買った中古 (買取再販) は特定取得なので 7% に
+ * なるが、この画面はその区別を持たないので、**控除を多く見せない側**を採る。
+ */
+export function mortgageCreditParamsFor(
+  residenceYear: number,
+  performance: HousingPerformance,
+  base: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): MortgageCreditParams {
+  const specified =
+    residenceYear >= MORTGAGE_RESIDENT_CAP_SPECIFIED_FIRST_YEAR &&
+    residenceYear <= MORTGAGE_RESIDENT_CAP_SPECIFIED_LAST_YEAR &&
+    performance !== 'used';
+  return specified
+    ? { ...base, residentCapRate: MORTGAGE_RESIDENT_CAP_RATE_SPECIFIED, residentCapMax: MORTGAGE_RESIDENT_CAP_MAX_SPECIFIED }
+    : base;
+}
+
+/**
+ * 住宅ローン控除を計算する。
+ * - 控除可能額 = min(年末残高, 残高上限) × 控除率
+ * - まず所得税から控除、引ききれない分を住民税から (課税所得×5%・最大97,500円) 控除
+ */
+export function calcMortgageCredit(
+  input: MortgageCreditInput,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): MortgageCreditResult {
+  // 合計所得金額が 2,000 万円を超える年は住宅ローン控除の適用なし (国税庁 No.1211)。
+  // Stryker disable next-line ConditionalExpression: フルスイートは kill するが
+  // perTest カバレッジが帰属を取りこぼすため抑制 (両分岐は上の2テストで検証済)。
+  if (input.totalIncome !== undefined && input.totalIncome > p.incomeLimit) {
+    return { creditable: 0, fromIncomeTax: 0, fromResidentTax: 0, unused: 0 };
+  }
+  // 控除期間 (新築13年/中古10年) を過ぎた年は控除なし。
+  if (input.outsidePeriod) {
+    return { creditable: 0, fromIncomeTax: 0, fromResidentTax: 0, unused: 0 };
+  }
+  const rate = input.rate ?? 0.007;
+  const cap = input.balanceCap ?? 30_000_000;
+  const balance = nonNeg(input.yearEndBalance);
+  const creditable = yen(Math.min(balance, cap) * rate);
+
+  const fromIncomeTax = Math.min(creditable, nonNeg(input.incomeTaxBeforeCredit));
+  const remaining = creditable - fromIncomeTax;
+
+  const residentCap = Math.min(
+    p.residentCapMax,
+    yen(nonNeg(input.taxableIncomeForIncomeTax) * p.residentCapRate),
+  );
+  const fromResidentTax = Math.min(remaining, residentCap);
+  const unused = remaining - fromResidentTax;
+
+  return { creditable, fromIncomeTax, fromResidentTax, unused };
+}
+
+/**
+ * **住宅ローン控除が「¥0」になる原因を 1 か所で選ぶ** (2026-09-22 · パス 401)。
+ *
+ * ## なぜ要るのか (実測)
+ *
+ * 画面は `住宅ローン (所得税 ¥0 / 住民税 ¥0)` と刷るだけで、**理由を 1 文も
+ * 出していなかった**。ところが ¥0 になる道は **5 つ**あり、意味も直す手も違う ——
+ * 実測 (2026-09-22 · 残高 3,000 万・性能区分は各行のとおり):
+ *
+ * | 原因 | 実測 | 読み手にとっての意味 |
+ * | --- | --- | --- |
+ * | 合計所得 > 2,000 万 | `creditable: 0` | **その年は対象外** (国税庁 No.1211) |
+ * | 控除期間外 (新築13年 / 中古10年) | `creditable: 0` | **終わった** |
+ * | 2024 年以降の居住 × 省エネ基準非適合 | `balanceCap: 0` → `creditable: 0` | **対象外** (住宅の性能の事実・設定では変わらない) |
+ * | 年末残高 0 | 画面が入力ごと渡さない | **未入力** |
+ * | **差し引く税額が無い** | **`creditable: 210,000` / `unused: 210,000`** | **算定できているが引けない** |
+ *
+ * ★ **最後の 1 行がいちばん重い** —— アプリは 210,000 円の控除額を**算定してから
+ * 全額を `unused` として捨て**、画面には ¥0 だけが出ていた。利用者は「自分には
+ * 適用されない」と読むが、実際は「控除額は在るが差し引く税額が無い」である。
+ *
+ * ★ **そして画面の但し書きは 5 つのうち 4 つで読み手を誤った方へ導いていた** ——
+ * 「住宅ローン控除は居住年・住宅性能区分で控除率/上限が変わります (上のセレクタで選択)」
+ * は*セレクタを動かせ*と読めるが、所得制限・期間外・残高未入力・税額不足は
+ * どれもセレクタでは変わらない。
+ *
+ * ## 順序は {@link calcMortgageCredit} の枝と同じにする
+ *
+ * 別の順序で並べると「計算が使った理由」と「画面が述べる理由」が食い違う
+ * (パス 388 が経営サマリーで直した「原因を取り違えた断り」と同じ形)。
+ * 一致は `mortgageCreditReason.test.ts` が**両方向**で留める ——
+ * `null` ⟺ 画面に出る 2 つの額の合計が 0 でない。
+ */
+export type NoMortgageCreditCause =
+  | 'no-balance'
+  | 'income-over-limit'
+  | 'outside-period'
+  | 'not-energy-compliant'
+  | 'no-tax-to-offset';
+
+/**
+ * 画面に出る控除額が 0 になる原因。0 でなければ `null`。
+ *
+ * `input` が `null` は「年末残高が入っていないので計算にかけていない」= `no-balance`
+ * (画面が `mortgage` を渡さない形。`calcAllTaxCredits` と同じ扱い)。
+ */
+export function noMortgageCreditCause(
+  input: MortgageCreditInput | null,
+  result: MortgageCreditResult | null,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): NoMortgageCreditCause | null {
+  if (input === null || result === null) return 'no-balance';
+  if (nonNeg(input.yearEndBalance) === 0) return 'no-balance';
+  // 以下 3 つは calcMortgageCredit の早期 return と**同じ順序**。
+  // 合計所得金額が無いとき (`undefined`) は所得制限を判定しない = 上限を超えない。
+  // 「無い側は −∞」で持つので `!== undefined` の枝が要らない (`undefined > n` も偽になるので、
+  // 枝を残すと「外しても答えが変わらない」等価な変異体が 1 つ増えるだけだった · パス 502)。
+  if ((input.totalIncome ?? Number.NEGATIVE_INFINITY) > p.incomeLimit) return 'income-over-limit';
+  if (input.outsidePeriod === true) return 'outside-period';
+  // 借入限度額が**ちょうど 0** のとき (2024 年以降の省エネ基準非適合の新築)。未指定は既定の額で 0 ではない。
+  // 以前は `(balanceCap ?? 30_000_000) === 0` と既定の額を写していたが、`=== 0` の答えは既定の額に依らない。
+  if (input.balanceCap === 0) return 'not-energy-compliant';
+  // ここまで来て画面の額が 0 なら、引く先の税額が無い (creditable は在る)。
+  if (result.fromIncomeTax + result.fromResidentTax === 0) return 'no-tax-to-offset';
+  return null;
+}
+
+/**
+ * その原因を利用者へ述べる 1 文。**逃げ口が在るものは名指しし、無いものは無いと言う**
+ * (法則 `escape-hatch-stays-open`)。
+ *
+ * `creditable` は `no-tax-to-offset` のときだけ使う —— 「算定はできている」ことを
+ * 額で示さないと、利用者は「適用されない」と読む。
+ */
+export function noMortgageCreditNote(
+  cause: NoMortgageCreditCause,
+  creditable: number,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): string {
+  switch (cause) {
+    case 'no-balance':
+      return '住宅ローンの年末残高が未入力のため、住宅ローン控除は算定していません。';
+    case 'income-over-limit':
+      return `合計所得金額が ${yen(p.incomeLimit) / 10_000} 万円を超える年は住宅ローン控除の適用がありません（国税庁 No.1211）。居住年・住宅性能区分を変えても適用されません。`;
+    case 'outside-period':
+      return '控除期間（新築13年・中古10年）を過ぎているため、住宅ローン控除はありません。居住年・住宅性能区分を変えても適用されません。';
+    case 'not-energy-compliant':
+      return '2024年以降に居住を開始した新築で省エネ基準に適合しないものは、住宅ローン控除の対象外です（借入限度額 0・国税庁 No.1211-1）。適合する区分であれば限度額が付きます。';
+    case 'no-tax-to-offset':
+      return `住宅ローン控除の額は ${yen(creditable).toLocaleString('ja-JP')} 円と算定できていますが、差し引く所得税・住民税が無いため控除額は 0 円です（控除しきれない分は繰り越せません）。`;
+  }
+}
+
+/**
+ * **一部しか引けなかったときの 1 文** (2026-09-27 · パス 493)。
+ *
+ * 画面に出る額が 0 でないのに、算定額の一部が `unused` として捨てられている場合がある
+ * (所得税から引ききれず、住民税の上限も超えた分)。直す前の画面は 2 つの額だけを刷り、
+ * 捨てた額を 1 文も言わなかった —— 利用者は「算定額が全部効いた」と読む。
+ * 実測 (残高 3,000 万・額面 300 万): 算定額 210,000 円のうち 101,000 円が捨てられていた。
+ *
+ * **0 円になる場合はここでは言わない** —— そちらは {@link noMortgageCreditNote} が
+ * 原因ごとに述べる (同じ事実を 2 つの文で言わない)。
+ */
+export function mortgageUnusedNote(
+  result: MortgageCreditResult,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): string | null {
+  if (!(result.unused > 0)) return null;
+  if (result.fromIncomeTax + result.fromResidentTax === 0) return null;
+  const pct = Math.round(p.residentCapRate * 1000) / 10;
+  return (
+    `住宅ローン控除の算定額 ${yen(result.creditable).toLocaleString('ja-JP')} 円のうち ` +
+    `${yen(result.unused).toLocaleString('ja-JP')} 円は控除できません。所得税から引ききれない分を住民税から差し引けるのは、` +
+    `所得税の課税総所得金額等の ${pct}%（最大 ${yen(p.residentCapMax).toLocaleString('ja-JP')} 円）までで、控除しきれない分は翌年へ繰り越せません。`
+  );
+}
+
+// --- 配当控除 -------------------------------------------------------------
+//
+// 国税庁 No.1250。総合課税を選択した国内株式の配当について、課税総所得金額が
+// 1,000 万円以下の部分は所得税10%・住民税2.8%、超える部分は所得税5%・住民税1.4%
+// を配当所得に乗じて税額控除する (証券投資信託等は率が異なるが、ここでは
+// 株式配当の標準率を用いる)。
+
+/** 配当の種類 (配当控除率が異なる)。
+ *  - stock: 国内株式の配当 (標準率)。
+ *  - mutual-fund: 証券投資信託の収益分配金 (外貨建等以外、株式の半分の率)。
+ *  - foreign-mutual-fund: 外貨建等証券投資信託 (さらに半分)。 */
+export type DividendKind = 'stock' | 'mutual-fund' | 'foreign-mutual-fund';
+
+export interface DividendCreditInput {
+  /** 配当所得 (総合課税を選択した配当の金額)。 */
+  readonly dividendIncome: number;
+  /** 課税総所得金額 (配当を含む)。1,000 万円の判定に使う。 */
+  readonly taxableTotalIncome: number;
+  /** 配当の種類 (既定 'stock')。 */
+  readonly kind?: DividendKind;
+}
+
+export interface DividendCreditResult {
+  readonly incomeTax: number;
+  readonly residentTax: number;
+}
+
+/** 配当種類ごとの控除率 (高率: 課税所得1000万以下部分 / 低率: 超過部分)。
+ *  国税庁 No.1250 の率体系: 投信は株式の1/2、外貨建等はさらに1/2。 */
+const DIVIDEND_RATES: Record<DividendKind, {
+  highIncome: number; lowIncome: number; highResident: number; lowResident: number;
+}> = {
+  stock: { highIncome: 0.1, lowIncome: 0.05, highResident: 0.028, lowResident: 0.014 },
+  'mutual-fund': { highIncome: 0.05, lowIncome: 0.025, highResident: 0.014, lowResident: 0.007 },
+  'foreign-mutual-fund': { highIncome: 0.025, lowIncome: 0.0125, highResident: 0.007, lowResident: 0.0035 },
+};
+
+/** 配当控除を計算する (種類別の率)。 */
+export function calcDividendCredit(input: DividendCreditInput): DividendCreditResult {
+  const dividend = nonNeg(input.dividendIncome);
+  // Stryker disable next-line ConditionalExpression: 早期returnを外しても dividend=0 は計算経路で {0,0} となり同値 (等価変異)。
+  if (dividend === 0) return { incomeTax: 0, residentTax: 0 };
+  const total = nonNeg(input.taxableTotalIncome);
+  const THRESHOLD = 10_000_000;
+  const r = DIVIDEND_RATES[input.kind ?? 'stock'];
+
+  // 課税総所得のうち 1,000 万円を超える部分に対応する配当を低率、以下を高率で。
+  // 配当は課税所得の「最上部」に積まれていると考え、超過部分から低率を適用。
+  const over = Math.max(0, total - THRESHOLD);
+  const dividendAtLowRate = Math.min(dividend, over);
+  const dividendAtHighRate = dividend - dividendAtLowRate;
+
+  const incomeTax = yen(dividendAtHighRate * r.highIncome + dividendAtLowRate * r.lowIncome);
+  const residentTax = yen(dividendAtHighRate * r.highResident + dividendAtLowRate * r.lowResident);
+  return { incomeTax, residentTax };
+}
+
+// --- 税額控除の集計 -------------------------------------------------------
+
+/** 税額控除の入力 (該当しなければ未指定)。 */
+export interface TaxCreditInput {
+  readonly mortgage?: MortgageCreditInput;
+  readonly dividend?: DividendCreditInput;
+  /** ふるさと納税等の住民税税額控除 (calcFurusatoResidentCredit の結果)。 */
+  readonly furusatoResidentCredit?: number;
+  /** その他の所得税の税額控除 (政党等寄附金特別控除など、直接指定)。 */
+  readonly otherIncomeTaxCredit?: number;
+}
+
+/** 税額控除の内訳と合計。 */
+export interface TaxCreditBreakdown {
+  readonly mortgageIncomeTax: number;
+  readonly mortgageResidentTax: number;
+  readonly dividendIncomeTax: number;
+  readonly dividendResidentTax: number;
+  readonly furusatoResidentTax: number;
+  readonly otherIncomeTax: number;
+  /** 所得税から控除する合計。 */
+  readonly totalIncomeTax: number;
+  /** 住民税から控除する合計。 */
+  readonly totalResidentTax: number;
+}
+
+/** すべての税額控除を集計する。 */
+export function calcAllTaxCredits(
+  input: TaxCreditInput,
+  mortgageParams: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): TaxCreditBreakdown {
+  const mortgage = input.mortgage ? calcMortgageCredit(input.mortgage, mortgageParams) : null;
+  const dividend = input.dividend ? calcDividendCredit(input.dividend) : null;
+
+  const mortgageIncomeTax = mortgage ? mortgage.fromIncomeTax : 0;
+  const mortgageResidentTax = mortgage ? mortgage.fromResidentTax : 0;
+  const dividendIncomeTax = dividend ? dividend.incomeTax : 0;
+  const dividendResidentTax = dividend ? dividend.residentTax : 0;
+  const furusatoResidentTax = Math.max(0, input.furusatoResidentCredit ?? 0);
+  const otherIncomeTax = Math.max(0, input.otherIncomeTaxCredit ?? 0);
+
+  return {
+    mortgageIncomeTax,
+    mortgageResidentTax,
+    dividendIncomeTax,
+    dividendResidentTax,
+    furusatoResidentTax,
+    otherIncomeTax,
+    totalIncomeTax: mortgageIncomeTax + dividendIncomeTax + otherIncomeTax,
+    totalResidentTax: mortgageResidentTax + dividendResidentTax + furusatoResidentTax,
+  };
+}
+
+/** 算出税額に税額控除を適用する (0 未満にはならない)。
+ *  ※ 復興特別所得税の順序を考慮しない簡易版 (所得税に直接適用)。 */
+export function applyTaxCredits(
+  incomeTaxBeforeCredit: number,
+  residentTaxBeforeCredit: number,
+  credits: TaxCreditBreakdown,
+  residentPerCapita = 5_000,
+): { readonly incomeTax: number; readonly residentTax: number } {
+  const incomeTax = Math.max(0, incomeTaxBeforeCredit - credits.totalIncomeTax);
+  // 住民税は均等割 (per-capita) を下回らない。
+  const residentTax = Math.max(
+    residentPerCapita,
+    residentTaxBeforeCredit - credits.totalResidentTax,
+  );
+  return { incomeTax, residentTax };
+}
+
+/**
+ * 復興特別所得税の順序を正しく扱った税額控除の適用。
+ *
+ * 住宅ローン控除・配当控除等の所得税の税額控除は、**復興特別所得税を乗じる前**
+ * の「基準所得税額」から差し引き、その残額に 2.1% を乗じて最終所得税額とする
+ * (確定申告書 B の流れ)。住民税は所得割の算出税額から税額控除を引く。
+ *
+ * @param baseIncomeTax 基準所得税額 (復興税前)
+ * @param residentTaxBeforeCredit 住民税 (均等割込み・税額控除前)
+ * @param surtaxRate 復興特別所得税率 (通常 0.021)
+ */
+export function applyTaxCreditsWithSurtax(
+  baseIncomeTax: number,
+  residentTaxBeforeCredit: number,
+  credits: TaxCreditBreakdown,
+  surtaxRate: number,
+  residentPerCapita = 5_000,
+): { readonly incomeTax: number; readonly residentTax: number } {
+  const baseAfterCredit = Math.max(0, baseIncomeTax - credits.totalIncomeTax);
+  const incomeTax = Math.round(baseAfterCredit * (1 + surtaxRate));
+  const residentTax = Math.max(
+    residentPerCapita,
+    residentTaxBeforeCredit - credits.totalResidentTax,
+  );
+  return { incomeTax, residentTax };
+}
+
+// --- 住民税の配当割・株式等譲渡所得割控除 -------------------------------
+//
+// 上場株式の配当・譲渡益を住民税で総合課税 or 申告分離申告した場合、源泉徴収
+// 済みの住民税 (配当割・株式等譲渡所得割、いずれも5%) を所得割から控除する。
+// これは住民税のみの控除で、所得税には影響しない (地方税法)。
+
+/** 住民税の配当割・株式等譲渡所得割の源泉徴収率 (5%)。 */
+export const RESIDENT_LEVY_WITHHOLDING_RATE = 0.05;
+
+/**
+ * 配当割控除を計算する (住民税のみ)。
+ * 上場株式配当を申告した場合、源泉徴収済みの住民税5%を所得割から控除する。
+ *
+ * @param declaredDividend 申告した配当所得 (円)
+ * @param withheldRate 源泉徴収率 (既定 5%)
+ */
+export function calcDividendLevyCredit(
+  declaredDividend: number,
+  withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
+): number {
+  return yen(nonNeg(declaredDividend) * withheldRate);
+}
+
+/**
+ * 株式等譲渡所得割控除を計算する (住民税のみ)。
+ * 上場株式等の譲渡益で源泉徴収済みの住民税5%を所得割から控除する。
+ *
+ * @param capitalGain 株式等譲渡所得 (円)。損失 (負) は0。
+ * @param withheldRate 源泉徴収率 (既定 5%)
+ */
+export function calcCapitalGainsLevyCredit(
+  capitalGain: number,
+  withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
+): number {
+  return yen(nonNeg(capitalGain) * withheldRate);
+}
+
+// --- 一般寄附金税額控除 (住民税・ふるさと納税以外) ----------------------
+
+/** 一般寄附金の寄附先区分。 */
+export type GeneralDonationKind = 'prefectural' | 'municipal' | 'both';
+
+/** 一般寄附金税額控除の自己負担額 (円)。 */
+export const GENERAL_DONATION_THRESHOLD = 2_000;
+
+/**
+ * 一般寄附金税額控除を計算する (住民税のみ・ふるさと納税以外)。
+ * 都道府県指定 = 4%、市区町村指定 = 6%、両方指定 = 10% を
+ * (寄附額 − 2,000円) に乗じて所得割から控除する (地方税法)。
+ *
+ * @param donation 寄附額 (円)
+ * @param kind 寄附先区分 (既定 'both')
+ */
+export function calcGeneralDonationCredit(
+  donation: number,
+  kind: GeneralDonationKind = 'both',
+): number {
+  const amount = nonNeg(donation);
+  // Stryker disable next-line EqualityOperator: <= と < は amount=2000 で同値 (控除0、連続)。
+  if (amount <= GENERAL_DONATION_THRESHOLD) return 0;
+  const rate = kind === 'both' ? 0.1 : kind === 'municipal' ? 0.06 : 0.04;
+  return yen((amount - GENERAL_DONATION_THRESHOLD) * rate);
+}

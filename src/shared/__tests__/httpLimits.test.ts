@@ -1,0 +1,558 @@
+import { describe, expect, it, vi } from 'vitest';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  declaredLengthExceeds,
+  isOverCap,
+  readBodyWithCap,
+  withBodyDeadline,
+  withTimeout,
+  egressInit,
+  isRedirectResponse,
+  redirectRefusal,
+  REDIRECT_STATUSES,
+} from '../httpLimits';
+import { rereadModule } from './rereadModule';
+
+/*
+ * 外部からの応答に置く 2 つの守り —— **打ち切り**と**応答サイズ**。
+ *
+ * 2026-08-22 まで経路ごとにばらばらで、`clients/types.ts` の `jsonFetch`
+ * (SaaS 74 本すべてが通る口) にはどちらも無かった。判定をここ 1 つに寄せた
+ * ので、検査もここに置く。
+ */
+
+/** body を持つ本物に近い Response。 */
+function streamed(text: string, headers: Record<string, string> = {}): Response {
+  return new Response(new TextEncoder().encode(text), { status: 200, headers });
+}
+
+describe('readBodyWithCap — 上限を超えたら読むのをやめる', () => {
+  it('上限内の本文はそのまま返す', async () => {
+    expect(await readBodyWithCap(streamed('{"a":1}'), 1000, 'x')).toBe('{"a":1}');
+  });
+
+  it('上限ちょうどは通す (境界)', async () => {
+    const body = 'a'.repeat(64);
+    expect(await readBodyWithCap(streamed(body), 64, 'x')).toBe(body);
+  });
+
+  it('上限 +1 は落とす (境界)', async () => {
+    await expect(readBodyWithCap(streamed('a'.repeat(65)), 64, 'x')).rejects.toThrow(/too large/);
+  });
+
+  it('文言に呼び出し側の名前が入る', async () => {
+    await expect(readBodyWithCap(streamed('a'.repeat(65)), 64, 'github')).rejects.toThrow(/^github/);
+  });
+
+  it('超えた時点で読むのをやめる (残りを読み切らない)', async () => {
+    let pulled = 0;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulled += 1;
+        if (pulled > 50) {
+          controller.close();
+          return;
+        }
+        controller.enqueue(new Uint8Array(100));
+      },
+    });
+    const res = new Response(body, { status: 200 });
+    await expect(readBodyWithCap(res, 250, 'x')).rejects.toThrow(/too large/);
+    // 250 バイト = 3 チャンク目で超える。50 チャンク全部は読んでいない。
+    expect(pulled).toBeLessThan(10);
+  });
+
+  /*
+   * body を持たない実行環境 (素朴な fetch モック) では `text()` に落ちる。
+   * **そこでも判定は同じ** —— モックのときだけ緩い規則にはしない。
+   */
+  it('body の無い応答でも上限は効く', async () => {
+    const res = { text: async () => 'a'.repeat(65) } as unknown as Response;
+    await expect(readBodyWithCap(res, 64, 'x')).rejects.toThrow(/too large/);
+  });
+
+  it('body の無い応答でも上限内なら通る', async () => {
+    const res = { text: async () => 'ok' } as unknown as Response;
+    expect(await readBodyWithCap(res, 64, 'x')).toBe('ok');
+  });
+
+  it('UTF-8 は byte 単位で数える (文字数ではない)', async () => {
+    // 「あ」は UTF-8 で 3 バイト。3 文字 = 9 バイト。
+    await expect(readBodyWithCap(streamed('あああ'), 8, 'x')).rejects.toThrow(/too large/);
+    expect(await readBodyWithCap(streamed('あああ'), 9, 'x')).toBe('あああ');
+  });
+});
+
+describe('declaredLengthExceeds — 読む前の先手の門', () => {
+  it('宣言が上限を超えていれば、その値を返す', () => {
+    expect(declaredLengthExceeds(streamed('x', { 'content-length': '999' }), 100)).toBe(999);
+  });
+
+  it('上限以下なら null', () => {
+    expect(declaredLengthExceeds(streamed('x', { 'content-length': '50' }), 100)).toBeNull();
+  });
+
+  it('ヘッダーが無ければ null (byte 単位の門に委ねる)', () => {
+    expect(declaredLengthExceeds(streamed('x'), 100)).toBeNull();
+  });
+
+  /*
+   * `Content-Length: -1` は有限かつ上限以下なので、素直に書くとすり抜ける。
+   * **`> 0` を要求している**ことをここで留める。
+   */
+  it.each([['負値', '-1'], ['ゼロ', '0'], ['数でない', 'abc'], ['空', '']])(
+    '壊れた宣言 (%s) は無視する',
+    (_label, v) => {
+      expect(declaredLengthExceeds(streamed('x', { 'content-length': v }), 100)).toBeNull();
+    },
+  );
+
+  it('headers を持たない応答でも落ちない', () => {
+    expect(declaredLengthExceeds({} as Response, 100)).toBeNull();
+  });
+
+  /*
+   * `headers` は在るが `get` が無い形。素朴な fetch モックに実在するので、
+   * `?.get?.()` の 2 つ目の `?.` はここで要る。
+   */
+  it('headers はあるが get を持たない応答でも落ちない', () => {
+    expect(declaredLengthExceeds({ headers: {} } as unknown as Response, 100)).toBeNull();
+  });
+});
+
+/*
+ * **注記でしか結ばれていない対は、必ずほどける。**
+ *
+ * `declaredLengthExceeds` の注記は「必ず `readBodyWithCap` と併用する」と
+ * 書いてあった。実際に併用していたのは 7 か所のうち 2 か所だけで、残り 5 か所
+ * (`main/clients/types.ts` / `shared/ai/chat.ts` / `main/oauth.ts` ほか) は
+ * byte 単位の門しか通していなかった —— 守りは成立するが、**書いてある規則が
+ * 守られていない**。2026-08-31 に先手の門を `readBodyWithCap` の中へ畳んで、
+ * 呼び出し側が忘れられない形にした。
+ *
+ * ここは畳んだ結果を留める。**中身は嘘 ('x' の 1 バイト) にしてある** ——
+ * 本文を読んでしまえば通る大きさなので、鳴るなら宣言だけを見た証拠になる。
+ */
+describe('readBodyWithCap — 先手の門も通る (宣言長)', () => {
+  it('★ 宣言が上限を超えていれば、本文を読まずに落とす', async () => {
+    // 実物は 1 バイト。宣言だけが 999。
+    await expect(
+      readBodyWithCap(streamed('x', { 'content-length': '999' }), 100, 'svc'),
+    ).rejects.toThrow('svc response too large (999 > 100 bytes)');
+  });
+
+  it('★ 正しい宣言なら素通りする (対照 — 何でも落とすようになっていない)', async () => {
+    expect(await readBodyWithCap(streamed('x', { 'content-length': '1' }), 100, 'svc')).toBe('x');
+  });
+
+  it('★ 壊れた宣言は先手の門で使わず、byte 単位の門へ委ねる', async () => {
+    // `content-length: -1` は有限かつ上限以下ですり抜けるが、実物 65 バイトが
+    // 上限 64 を超えるので byte 側で落ちる。
+    //
+    // **どちらの門が鳴ったかは文言で見分けられる。** 先手の門は宣言された値を
+    // そのまま書く (`(999 > 100 bytes)`) が、byte 側は読むのをやめた時点で
+    // 総量を知らないので `(>64 bytes)` としか書けない。ここが後者であることが、
+    // 壊れた宣言を先手の門が使わなかった証拠になる。
+    await expect(
+      readBodyWithCap(streamed('a'.repeat(65), { 'content-length': '-1' }), 64, 'svc'),
+    ).rejects.toThrow('svc response too large (>64 bytes)');
+  });
+
+  it('★ 上限超過の判定は isOverCap が拾える形のまま', async () => {
+    const e = await readBodyWithCap(
+      streamed('x', { 'content-length': '999' }),
+      100,
+      'svc',
+    ).catch((x: unknown) => x);
+    expect(isOverCap(e)).toBe(true);
+  });
+});
+
+describe('withTimeout — 打ち切り', () => {
+  it('間に合えば結果を返す', async () => {
+    expect(await withTimeout(1000, null, async () => 'ok')).toBe('ok');
+  });
+
+  it('時間を過ぎたら signal が abort する', async () => {
+    const aborted = await withTimeout(10, null, async (signal) => {
+      await new Promise<void>((r) => {
+        signal.addEventListener('abort', () => r());
+      });
+      return signal.aborted;
+    });
+    expect(aborted).toBe(true);
+  });
+
+  it('終わったら timer を片付ける (残らない)', async () => {
+    const clear = vi.spyOn(globalThis, 'clearTimeout');
+    try {
+      await withTimeout(10_000, null, async () => 'ok');
+      expect(clear).toHaveBeenCalled();
+    } finally {
+      clear.mockRestore();
+    }
+  });
+
+  it('失敗しても timer を片付ける', async () => {
+    const clear = vi.spyOn(globalThis, 'clearTimeout');
+    try {
+      await expect(
+        withTimeout(10_000, null, async () => {
+          throw new Error('boom');
+        }),
+      ).rejects.toThrow('boom');
+      expect(clear).toHaveBeenCalled();
+    } finally {
+      clear.mockRestore();
+    }
+  });
+
+  /*
+   * **上位の打ち切りを殺さない。** 自前の timeout を足したせいで呼び出し側の
+   * signal が効かなくなると、「守りを足したら別の守りが消えた」形になる。
+   */
+  it('呼び出し側の signal も効く (合成する)', async () => {
+    const caller = new AbortController();
+    const p = withTimeout(60_000, caller.signal, async (signal) => {
+      await new Promise<void>((r) => {
+        signal.addEventListener('abort', () => r());
+      });
+      return signal.aborted;
+    });
+    caller.abort();
+    expect(await p).toBe(true);
+  });
+});
+
+/*
+ * 既定値は**モジュール定数**なので、静的 import のまま比べても変異体が
+ * 届かない (覆われた static 変異体)。`rereadModule` (対象だけを読み直す —— パス 495) で
+ * 毎回読み直し、値そのものを字面で留める。
+ */
+describe('既定値', () => {
+  it('応答サイズの上限は 10MiB ちょうど', async () => {
+    const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
+    expect(m.MAX_HTTP_RESPONSE_BYTES).toBe(10485760);
+  });
+
+  it('待ち時間の既定は 30 秒 (ollama.ts に揃えた値)', async () => {
+    const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
+    expect(m.DEFAULT_HTTP_TIMEOUT_MS).toBe(30000);
+  });
+
+  /*
+   * **読み直す検査は、対象の直下の値を全部主張する** (`rereadModule` の docblock · 法則 109)。
+   * 上の 2 件だけだと、同じモジュールの残りの 3 つ (Ollama の応答上限・生成の締切・転送の
+   * 状態の集合) の変異体は、この検査だけで走って生き残る —— 静的 import の側は読み込み時の値を
+   * 見るので変異体に届かない (GitHub の全掃引で 3 件: 上限の掛け算 2 通りと集合を空にする形)。
+   */
+  it('★ Ollama の応答上限は 2 MiB ちょうど・生成の締切は 120 秒・転送の状態は 5 つだけ', async () => {
+    const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
+    expect(m.MAX_OLLAMA_RESPONSE_BYTES).toBe(2097152);
+    expect(m.OLLAMA_CHAT_TIMEOUT_MS).toBe(120000);
+    expect([...m.REDIRECT_STATUSES].sort((a, b) => a - b)).toEqual([301, 302, 303, 307, 308]);
+  });
+
+  it('静的 import 側とも一致している (2 つの読み方でずれない)', () => {
+    expect(MAX_HTTP_RESPONSE_BYTES).toBe(10485760);
+    expect(DEFAULT_HTTP_TIMEOUT_MS).toBe(30000);
+  });
+});
+
+
+/**
+ * **`withTimeout` は `Response` を返させない。**
+ *
+ * `fetch` はヘッダを受け取った時点で解決するので、`fn` が `Response` を
+ * 返してきたということは本文がまだ読まれていないということで、`finally` が
+ * 唯一の abort 源を落とした後に本文が読まれる —— 打ち切りが本文に掛からない。
+ *
+ * この検査は `clients/__tests__/types.test.ts` にも在るが、**変異検査を
+ * `--mutate src/shared/httpLimits.ts` で絞ると、そちらのテストが変異体に
+ * 帰属されず「生存」と誤報される** (記録済みの罠)。測定を正直にするために、
+ * 守っている当のファイルの隣にも置く。
+ */
+describe('withTimeout は Response を返させない', () => {
+  it('★ fn が Response を返したら投げる', async () => {
+    await expect(withTimeout(1000, null, async () => new Response('x', { status: 200 })))
+      .rejects.toThrow(/Response を返しています/);
+  });
+
+  it('★ 文言が「本文を読み終えるまで入れる」と案内している', async () => {
+    await expect(withTimeout(1000, null, async () => new Response('x', { status: 200 })))
+      .rejects.toThrow(/本文を使い終えるところまで/);
+  });
+
+  it('Response でない値はそのまま通す (締めすぎていない)', async () => {
+    expect(await withTimeout(1000, null, async () => ({ status: 200 }))).toEqual({ status: 200 });
+    expect(await withTimeout(1000, null, async () => 'text')).toBe('text');
+    expect(await withTimeout(1000, null, async () => null)).toBe(null);
+  });
+});
+
+/**
+ * **`withBodyDeadline` —— `Response` を返さねばならない経路のための締切。**
+ *
+ * `withTimeout` は `fn` が解決した時点で timer を落とす。それは「本文を
+ * 使い終えるところまで `fn` の中に入っている」ことが前提で、`Response` を
+ * 外へ返す経路 (ブラウザ版の `Transport` / `timedFetch` / `timedFetchAi`) には
+ * 使えない。こちらは **timer を落とさない**ので、応答が済んでいれば abort は
+ * 何にも当たらず、本文がまだ流れていれば stream が壊れる。
+ *
+ * 2026-08-29: この関数を足したとき**検査を 1 つも書いていなかった**。
+ * 変異検査が「abort の呼び出しを消しても誰も気付かない」と報告して分かった。
+ */
+describe('withBodyDeadline — 本文を読み終えるまで締切を生かす', () => {
+  /** ヘッダは返るが本文が終わらない応答。実物 (undici) は abort で本文を error させる。 */
+  const stallingFetch = () =>
+    async (_url: string, init?: RequestInit): Promise<Response> => {
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode('{'));
+          init?.signal?.addEventListener('abort', () => {
+            controller.error(new DOMException('The operation was aborted.', 'AbortError'));
+          });
+        },
+      });
+      return new Response(body, { status: 200 });
+    };
+
+  it('★ 応答が返った後でも、本文の読み取りが締切で切られる', async () => {
+    const f = stallingFetch();
+    const res = await withBodyDeadline(20, null, (signal) => f('https://example.com', { signal }));
+    // ここで既に `withBodyDeadline` は解決している (= timer を落としていたら効かない)
+    await expect(readBodyWithCap(res, 1024, 'demo')).rejects.toThrow(/aborted/i);
+  }, 5000);
+
+  it('★ 締切の中で読み終えれば普通に返る (締めすぎていない)', async () => {
+    const f = async (_u: string, init?: RequestInit): Promise<Response> => {
+      void init;
+      return new Response('{"ok":true}', { status: 200 });
+    };
+    const res = await withBodyDeadline(5000, null, (signal) => f('https://example.com', { signal }));
+    expect(await readBodyWithCap(res, 1024, 'demo')).toBe('{"ok":true}');
+  });
+
+  it('★ 呼び出し側の signal と合成する (上位の打ち切りを殺さない)', async () => {
+    const caller = new AbortController();
+    const f = stallingFetch();
+    const res = await withBodyDeadline(60_000, caller.signal, (signal) =>
+      f('https://example.com', { signal }),
+    );
+    const reading = readBodyWithCap(res, 1024, 'demo');
+    caller.abort();
+    await expect(reading).rejects.toThrow(/aborted/i);
+  }, 5000);
+
+  it('呼び出し側の signal を渡さなくても自前の締切は効く', async () => {
+    const f = stallingFetch();
+    const res = await withBodyDeadline(20, undefined, (signal) =>
+      f('https://example.com', { signal }),
+    );
+    await expect(readBodyWithCap(res, 1024, 'demo')).rejects.toThrow(/aborted/i);
+  }, 5000);
+
+  /*
+   * **`unref?.()` の `?.` はブラウザで効く。**
+   *
+   * Node の `setTimeout` は `Timeout` オブジェクト (= `unref` を持つ) を返すが、
+   * ブラウザは**数値**を返す。`?.` を外すと `(5).unref()` で TypeError になり、
+   * ブラウザ版のプロキシ経路 (`Transport` / `timedFetch`) が全部落ちる。
+   * Node の実行環境では差が出ないので、**ブラウザの形を作って当てる**。
+   */
+  it('★ timer が数値で返る環境 (ブラウザ) でも落ちない', async () => {
+    const real = globalThis.setTimeout;
+    let cleared: unknown = null;
+    // ブラウザの形: setTimeout は数値を返す
+    (globalThis as { setTimeout: unknown }).setTimeout = ((fn: () => void, ms: number) => {
+      void fn;
+      void ms;
+      return 12345;
+    }) as unknown as typeof globalThis.setTimeout;
+    try {
+      const res = await withBodyDeadline(1000, null, async () => new Response('x', { status: 200 }));
+      cleared = res.status;
+    } finally {
+      globalThis.setTimeout = real;
+    }
+    expect(cleared).toBe(200);
+  });
+
+  it('fetch へ signal を必ず渡す', async () => {
+    let seen: AbortSignal | null = null;
+    await withBodyDeadline(1000, null, async (signal) => {
+      seen = signal;
+      return new Response(null, { status: 204 }); // 204 は本文を持てない
+    });
+    expect(seen).toBeInstanceOf(AbortSignal);
+  });
+});
+
+/**
+ * **`isOverCap` は「上限超過」だけを真にする。**
+ *
+ * 呼び出し側にはこれを独自の文言・種別へ翻訳する経路が在る
+ * (`clients/ollama.ts` の `FetchError`、`network/ollamaWeb.ts` の
+ * `kind: 'too-large'`)。最初そこを `catch {}` と一括りに書いたので、
+ * **打ち切りも接続断も「大きすぎます」になっていた** —— 利用者を
+ * 的外れな対処へ導く文言である。
+ *
+ * ## 標本は**書かずに、起こして採る**
+ *
+ * ここで文字列を手で書くと、留まるのは「`readBodyWithCap` の文言は
+ * こうだったはず」という**こちらの記憶**であって、実装ではない。記憶が
+ * ずれた日に検査も一緒にずれる —— 本 PR で 3 度踏んだ形なので、
+ * 実際に上限を超えさせて**投げられた例外そのもの**を材料にする。
+ * 文言を直した日に、ここが鳴って翻訳側の見落としを教える。
+ */
+describe('isOverCap — 上限超過とそれ以外を分ける', () => {
+  /** 実際に上限を超えさせて、投げられた例外を採る。 */
+  async function thrownBy(res: Response): Promise<unknown> {
+    try {
+      await readBodyWithCap(res, 4, 'ollama');
+      return null;
+    } catch (e) {
+      return e;
+    }
+  }
+
+  it('★ stream 経路の上限超過を真と判定する (文言を書かずに起こして採る)', async () => {
+    const e = await thrownBy(new Response('0123456789'));
+    expect(e).toBeInstanceOf(Error);
+    expect(isOverCap(e)).toBe(true);
+  });
+
+  it('★ body なし (素朴なモック) の経路でも真と判定する', async () => {
+    const mock = { text: () => Promise.resolve('0123456789') } as unknown as Response;
+    const e = await thrownBy(mock);
+    expect(e).toBeInstanceOf(Error);
+    expect(isOverCap(e)).toBe(true);
+  });
+
+  it('★ 上限以内なら投げない (対照: 何でも真になっていない)', async () => {
+    expect(await thrownBy(new Response('abc'))).toBeNull();
+  });
+
+  it('★ 打ち切り・接続断は偽 (これを真にすると文言が的外れになる)', () => {
+    expect(isOverCap(new DOMException('aborted', 'AbortError'))).toBe(false);
+    expect(isOverCap(new TypeError('fetch failed'))).toBe(false);
+    expect(isOverCap(new Error('ollama response too small'))).toBe(false);
+  });
+
+  it('Error でない物は偽', () => {
+    expect(isOverCap('ollama response too large')).toBe(false);
+    expect(isOverCap(null)).toBe(false);
+    expect(isOverCap(undefined)).toBe(false);
+  });
+});
+
+/*
+ * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
+ *
+ * 送り先の関門 (`lint:network-targets` / §3.3 / 各 endpoint の検証) は
+ * **最初の 1 ホップ**しか見ない。`fetch` の既定 `redirect: 'follow'` だと、
+ * 相手の `302 Location:` 1 つで検査していない先へ取りに行く。規則は
+ * `httpLimits.ts` に 1 つ、呼び出し側 12 か所は `egressRedirectCensus.test.ts`。
+ */
+describe('egressInit / isRedirectResponse / redirectRefusal — 転送に追随しない (パス 301)', () => {
+  it('★ egressInit は redirect: manual を重ね、他の欄は変えない', () => {
+    const signal = new AbortController().signal;
+    const out = egressInit({ method: 'POST', headers: { a: 'b' }, signal });
+    expect(out.redirect).toBe('manual');
+    expect(out.method).toBe('POST');
+    expect(out.headers).toEqual({ a: 'b' });
+    expect(out.signal).toBe(signal);
+  });
+
+  it('★ egressInit は手書きの redirect を上書きする (follow を持ち込ませない)', () => {
+    expect(egressInit({ redirect: 'follow' } as RequestInit).redirect).toBe('manual');
+  });
+
+  /*
+   * パス 304: `mode: 'no-cors'` だけは 'follow' を明示する。Fetch 標準の main fetch は
+   * 「no-cors で redirect が follow でなければ network error」で、chromium の実測は
+   * `TypeError: Failed to fetch`。undici は CORS を実装しないので同じ呼び出しが 200 で
+   * 通る —— だから**ブラウザの規則を写した fetch** を標本にして、この検査が undici の
+   * 寛容さに乗って緑にならないようにする。
+   */
+  it('★ mode: no-cors だけは follow を明示する (no-cors + manual はブラウザで network error)', () => {
+    const out = egressInit({ mode: 'no-cors', cache: 'no-store' });
+    expect(out.redirect).toBe('follow');
+    expect(out.mode).toBe('no-cors');
+    expect(out.cache).toBe('no-store');
+  });
+
+  it.each(['cors', 'same-origin', undefined] as const)('★ mode=%s は manual のまま (例外は no-cors の 1 形だけ)', (mode) => {
+    expect(egressInit(mode === undefined ? {} : { mode }).redirect).toBe('manual');
+  });
+
+  it('★ 針の標本 — ブラウザの規則を写した fetch は no-cors + manual を落とし、egressInit の出力は通す', async () => {
+    const browserLike = async (_url: string, init: RequestInit): Promise<Response> => {
+      if (init.mode === 'no-cors' && (init.redirect ?? 'follow') !== 'follow') throw new TypeError('Failed to fetch');
+      return new Response(null, { status: 204 });
+    };
+    const url = 'http://127.0.0.1:11434/api/version';
+    // 標本: 写した規則は本当に落とす (これが無いと、この検査は寛容な fetch でも通る)
+    await expect(browserLike(url, { mode: 'no-cors', redirect: 'manual' })).rejects.toThrow('Failed to fetch');
+    await expect(browserLike(url, egressInit({ mode: 'no-cors' }))).resolves.toBeInstanceOf(Response);
+    await expect(browserLike(url, egressInit({}))).resolves.toBeInstanceOf(Response);
+  });
+
+  it.each([301, 302, 303, 307, 308])('★ %s は転送', (status) => {
+    expect(isRedirectResponse(new Response(null, { status, headers: { location: 'https://x.example/' } }))).toBe(true);
+    expect(REDIRECT_STATUSES.has(status)).toBe(true);
+  });
+
+  it.each([200, 201, 204, 300, 304, 400, 404, 500])('対照 — %s は転送ではない', (status) => {
+    // `new Response` は 2xx / 4xx / 5xx しか許さないので、3xx は同じ形の値で置く。
+    const res =
+      status >= 200 && status <= 599 && ![300, 304].includes(status)
+        ? new Response(null, { status })
+        : ({ status, type: 'default', headers: new Headers() } as unknown as Response);
+    expect(isRedirectResponse(res)).toBe(false);
+    expect(REDIRECT_STATUSES.has(status)).toBe(false);
+  });
+
+  it('★ ブラウザの opaqueredirect (status 0・ヘッダ無し) も転送', () => {
+    const opaque = { type: 'opaqueredirect', status: 0, headers: new Headers() } as unknown as Response;
+    expect(isRedirectResponse(opaque)).toBe(true);
+    // 行き先は見えないので、文は行き先を述べない
+    const msg = redirectRefusal(opaque, 'https://proxy.example/relay', 'proxy');
+    expect(msg).toContain('proxy が別の場所へ転送しようとしました');
+    expect(msg).not.toMatch(/別の場所 \(/);
+  });
+
+  it('★ 断り文は Location のホストだけを述べる (パス・クエリ・認証情報は載せない)', () => {
+    const res = {
+      type: 'default',
+      status: 302,
+      headers: new Headers({ location: 'https://user:pass@evil.example/steal?token=sk-abc' }),
+    } as unknown as Response;
+    const msg = redirectRefusal(res, 'https://api.example.com/v1/x', 'github');
+    expect(msg).toContain('github が別の場所 (evil.example) へ転送しようとしました');
+    expect(msg).not.toContain('sk-abc');
+    expect(msg).not.toContain('/steal');
+    expect(msg).not.toContain('user:pass');
+  });
+
+  it('★ 相対 Location は要求 URL で解く', () => {
+    const res = {
+      type: 'default',
+      status: 301,
+      headers: new Headers({ location: '/moved' }),
+    } as unknown as Response;
+    expect(redirectRefusal(res, 'https://api.github.com/repos/a/b/issues', 'github')).toContain(
+      '(api.github.com)',
+    );
+  });
+
+  it('Location が無い・解けない転送は行き先を述べない', () => {
+    const none = { type: 'default', status: 302, headers: new Headers() } as unknown as Response;
+    expect(redirectRefusal(none, 'https://a.example/', 'x')).toBe(
+      'x が別の場所へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)',
+    );
+    const broken = { type: 'default', status: 302, headers: new Headers({ location: 'http://[' }) } as unknown as Response;
+    expect(redirectRefusal(broken, 'not a url', 'x')).not.toMatch(/別の場所 \(/);
+  });
+});

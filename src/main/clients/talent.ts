@@ -1,0 +1,196 @@
+import { readStateFile } from '../stateFile';
+import { promises as fs } from 'node:fs';
+import { clampToCeiling } from '../../shared/inputCeiling';
+import os from 'node:os';
+import path from 'node:path';
+import {
+  buildTalentSnapshot,
+  judgeLeaderFitness,
+  readStoredTalent,
+  sanitizeTalentState,
+  talentProvenance,
+  type JudgeResult,
+  type StoredTalent,
+  type TalentSnapshot,
+  type TalentState,
+  MAX_LEADER_CANDIDATE_CHARS,
+} from '../../shared/talent';
+import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionData } from '../../shared/actionData';
+
+export type { JudgeResult } from '../../shared/talent';
+import { atomicWriteFile } from '../atomicWrite';
+import { atRestUnreadableReason, sealJsonDocument, unsealJsonDocument } from '../atRest';
+
+// 判定と定義表は shared にある。ここは I/O (状態の保存・取得) と
+// action の口だけを持つ。**同じ判定を二度書かない。**
+export * from '../../shared/talent';
+
+/**
+ * 人材育成 — 組織の診断と育成設計を「判定できる形」にしたサービス。
+ *
+ * 北の達人コーポレーション代表取締役社長 木下勝寿氏が公開している枠組み
+ * (著書『チームX』『時間最短化、成果最大化の法則』および YouTube
+ * 「北の達人チャンネル」) を、読み物ではなく**計算できる判定**として
+ * 実装している。画面で眺めるだけの手引きは運用に載らないので、
+ * 判定の本体はすべて純粋関数にしてここへ置く。
+ *
+ * 実装した判定は 4 つ:
+ *
+ *   1. `diagnoseOrg`        — 5つの企業組織病。**複数の部署で同じ病が挙がったら
+ *                             個人ではなく仕組みの問題**、という切り分けを機械化する。
+ *   2. `achievementGap`     — 達成確率100%キープの法則。施策の達成確率を合計し、
+ *                             100% に足りない分を返す。「気合いで頑張ります」を潰す。
+ *   3. `judgeLeaderFitness` — 登用判定。10ヶ条に **1つでも**該当したらリーダーには
+ *                             据えない (能力ではなく姿勢の項目しかないのが要点)。
+ *   4. `reviewLadder`       — 育成ロードマップ。STEP1 の滞留を検出する。
+ *
+ * ネットワークは使わない (`LOCAL_SERVICES`)。状態は teamradar と同じく
+ * `~/.local/business-hub/` 配下へ 0600 で置き、中身は OS のキーチェーンで封緘する
+ * (`main/atRest.ts`・パス 133 —— 部署名と氏名を含むので、`secrets.json` / 感情ログと同じ約束)。
+ *
+ * ## 出典の扱い
+ *
+ * 各定義は `source` を持ち、**確認済み (`confirmed`) か、名称のみ確認で
+ * 語釈が当方の読み解き (`gloss`) か**を型で持つ。曖昧なまま社内基準として
+ * 配られると困るので、区別を落とせない形にしてある。
+ */
+
+// --- 状態の保存 --------------------------------------------------------
+
+export function defaultStatePath(): string {
+  return path.join(os.homedir(), '.local', 'business-hub', 'talent.json');
+}
+
+export interface StateDeps {
+  readFile?: (p: string) => Promise<string>;
+  /** 読む前の大きさの門 (`stateFile.ts`)。省くと注入の読み手では後門だけ。 */
+  stat?: (p: string) => Promise<{ size: number }>;
+  writeFile?: (p: string, c: string) => Promise<void>;
+  mkdir?: (p: string) => Promise<void>;
+  statePath?: () => string;
+}
+
+/**
+ * 保存された状態を読む —— 「まだ無い」(ENOENT) と「読めなかった」(権限・I/O・壊れた中身) を分ける
+ * (パス 121)。それまでは「初回起動と壊れたファイルを区別しても画面ですることが同じ」として空で
+ * 返していた —— 同じではない: 壊れたファイルでは利用者の申告・施策・メンバーが消えており、次の
+ * 保存で空に上書きされる。読めた後の判定は shared (`readStoredTalent`) が持つ。
+ */
+export async function loadTalentState(deps: StateDeps = {}): Promise<StoredTalent> {
+  const p = (deps.statePath ?? defaultStatePath)();
+  // 大きさの門と 3 状態の読みは `stateFile.ts` の 1 つ (パス 313)。
+  const file = await readStateFile(p, { readFile: deps.readFile, stat: deps.stat });
+  if (file.kind !== 'read') return file;
+  // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
+  // 画面は「空の状態を表示 / このまま保存すると上書き」と言う (パス 121 の注記がそのまま出口になる)。
+  const opened = unsealJsonDocument(file.text);
+  if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
+  return readStoredTalent(opened.json);
+}
+
+/**
+ * 状態を保存する。**`atomicWriteFile` を通す** (`secrets.ts` / 感情ログと同じ)。
+ *
+ * 2026-09-06 まで、ここは**本体を直接**書いていた:
+ *
+ * ```ts
+ *   await fs.writeFile(q, c, { mode: 0o600 });
+ *   await fs.chmod(q, 0o600);       // mode は新規作成のときしか効かないので締め直す
+ * ```
+ *
+ * 権限の側は `chmod` で閉じていたが、**書き込みの途中で落ちる**side は開いていた。
+ * `fs.writeFile` は本体を切り詰めてから書くので、その間に電源が落ちる・
+ * `SIGKILL` される・容量が尽きると、**中途半端な JSON が本体として残る**。
+ * 読み側 `loadTalentState` は (2026-09-09 のパス 121 まで) 壊れた JSON を catch して
+ * `EMPTY_TALENT_STATE` を返す設計だったので、そのとき利用者に起きることは「**組織病の
+ * 申告・施策・メンバーの STEP が全部消えている**」であり、しかも**何も表示されなかった**
+ * (初回起動と区別しない、という読み側の判断と組み合わさっていた。今は「読めなかった」と言う)。
+ * 実際に全部消えた事例が `TalentPage.tsx` の注記に残っている。
+ *
+ * `atomicWriteFile` は一意な tmp に書いて fsync し、`rename` で被せて
+ * ディレクトリも fsync する。落ちても本体は**前の内容のまま**で、
+ * 0600 は tmp を作る時点で決まるので `chmod` の追い打ちも要らない。
+ *
+ * 同じ userData に置く 4 つの状態ファイルのうち、ここだけが原子的でなかった
+ * (`secrets.json` と感情ログは `atomicWriteFile`、`team-radar.json` と
+ * `state.json` は tmp+rename)。検査は `main/__tests__/stateWritePolicy.test.ts`。
+ */
+export async function saveTalentState(state: TalentState, deps: StateDeps = {}): Promise<TalentState> {
+  const p = (deps.statePath ?? defaultStatePath)();
+  const mkdir = deps.mkdir ?? ((q: string) => fs.mkdir(q, { recursive: true }).then(() => undefined));
+  const write = deps.writeFile ?? ((q: string, c: string) => atomicWriteFile(q, c, { mode: 0o600 }));
+  const clean = sanitizeTalentState(state);
+  await mkdir(path.dirname(p));
+  // 封緘して書く (パス 133): 部署名・氏名を含むので、secrets.json / 感情ログと同じ約束 (main/atRest.ts) を通す。
+  await write(p, sealJsonDocument(JSON.stringify(clean)));
+  return clean;
+}
+
+// --- スナップショット --------------------------------------------------
+
+export interface SnapshotDeps {
+  loadState?: (deps?: StateDeps) => Promise<StoredTalent>;
+}
+
+export async function fetchTalentSnapshotImpl(
+  _ctx: FetchContext,
+  deps: SnapshotDeps = {},
+): Promise<TalentSnapshot> {
+  // 読んだ結果を状態と由来に分ける (ブラウザ版の枝と同じ関数)。見本は無い —— 空か、利用者の物か、読めなかったか。
+  const { state, provenance } = talentProvenance(await (deps.loadState ?? loadTalentState)());
+  return buildTalentSnapshot(state, provenance);
+}
+
+export async function fetchTalentSnapshot(ctx: FetchContext): Promise<TalentSnapshot> {
+  return fetchTalentSnapshotImpl(ctx);
+}
+
+// --- 書き込み側 --------------------------------------------------------
+
+export interface SaveStateDeps extends StateDeps {
+  save?: (s: TalentState, d?: StateDeps) => Promise<TalentState>;
+}
+
+export async function saveTalentStateImpl(
+  ctx: ActionContext,
+  deps: SaveStateDeps = {},
+): Promise<TalentState> {
+  return (deps.save ?? saveTalentState)(sanitizeTalentState(ctx.payload), deps);
+}
+
+async function saveStateAction(ctx: ActionContext): Promise<ActionData<'talent/save-state'>> {
+  return saveTalentStateImpl(ctx);
+}
+
+// `JudgeResult` は shared/talent.ts (パス 117 —— 台帳 `talent/judge-leader` と画面が同じ物を読む)。
+
+/**
+ * `judge-leader` が renderer から受け取る形。
+ *
+ * **型は宣言するが信用しない** —— `unknown` で受けて下で選り分ける。
+ * 名前を付けてあるのは `docs/ARCHITECTURE.md` §3.2 の payload 表と
+ * `verify:arch` が突き合わせる先を作るため (2026-09-01)。
+ */
+interface JudgeLeaderPayload {
+  flagged?: unknown;
+  candidate?: unknown;
+}
+
+export async function judgeLeaderImpl(ctx: ActionContext): Promise<JudgeResult> {
+  const { flagged: raw, candidate: name } = ctx.payload as unknown as JudgeLeaderPayload;
+  const flagged = Array.isArray(raw) ? raw.filter((f): f is string => typeof f === 'string') : [];
+  return {
+    fitness: judgeLeaderFitness(flagged),
+    candidate: typeof name === 'string' ? clampToCeiling(name, MAX_LEADER_CANDIDATE_CHARS) : '',
+  };
+}
+
+async function judgeLeaderAction(ctx: ActionContext): Promise<ActionData<'talent/judge-leader'>> {
+  return judgeLeaderImpl(ctx);
+}
+
+export const ACTIONS: ActionMap = {
+  'save-state': saveStateAction,
+  'judge-leader': judgeLeaderAction,
+};

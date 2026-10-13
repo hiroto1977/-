@@ -1,0 +1,50 @@
+---
+collection: academic
+id: bizlaw-choice-of-law
+category: "business-law"
+category_ja: "ビジネス法務"
+title: "準拠法——複数の法域に関わる紛争にいずれの法を適用するか"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/business-law
+  - knowledge/verified
+aliases:
+  - "準拠法——複数の法域に関わる紛争にいずれの法を適用するか"
+---
+
+# 準拠法——複数の法域に関わる紛争にいずれの法を適用するか
+
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+準拠法（choice of law）の問題は、複数の法域（国や州）に関わりを持つ法的紛争において、いずれの法域の実体法を適用すべきかを決定する、国際私法（抵触法、conflict of laws）の中心的な課題である。グローバル化した現代では、異なる国に所在する当事者の間の契約、外国で発生した不法行為、複数の国にまたがる財産など、複数の法域と接点を持つ法律関係が日常的に生じる。こうした渉外的な紛争では、関係する各法域の法の内容が異なりうるため、どの法を適用するかによって結論が変わる。準拠法の問題は、この「どの法を適用するか」を決める。準拠法を決定する主要な方法は二つある。第一は、当事者自身による選択である。とりわけ契約においては、当事者が、契約から生じる紛争を規律する法を、あらかじめ契約の中で明示的に選ぶ「準拠法条項（choice of law clause）」を置くことが広く行われる。当事者がどの法を適用するかを合意できるという「当事者自治（party autonomy）」の原則は、現代の国際取引法で広く尊重されている。当事者は、自らの取引に最も適した、あるいは中立的で予測可能な法を選ぶことで、紛争解決の不確実性を減らせる。第二は、当事者の選択がない場合に、裁判所が抵触法の規則に従って準拠法を決定する方法である。各国・各法域は、どのような場合にどの法を適用するかを定める抵触法の規則を持っている。たとえば、契約については「最も密接な関連を持つ法（closest and most real connection）」を、不法行為については「不法行為地の法（lex loci delicti）」を、不動産については「物の所在地の法（lex situs）」を適用するといった規則である。準拠法の問題は、どの国の裁判所が事件を審理するかという「裁判管轄（jurisdiction）」の問題や、外国で下された判決を承認・執行するかという問題とは区別される。同じ事件について、ある国の裁判所が、別の国の法を準拠法として適用することもありうる。準拠法を含む抵触法の体系は、ジョセフ・ストーリーが『抵触法注解』で英米法における基礎を築き、フリードリヒ・カール・フォン・サヴィニーが大陸法において体系化し、ブレイナード・カリーの「政府利益分析」など現代的な方法論へと発展した。準拠法は、欧州連合のローマⅠ規則（契約）やローマⅡ規則（不法行為）、アメリカの第二次抵触法リステイトメントといった枠組みによって規律されている。準拠法の決定は、渉外的な法律関係において、当事者の予測可能性を確保し、適切な法の適用を通じて公正な解決を図る、国際私法の根幹をなす問題である。
+
+## 提唱者・初出
+ジョセフ・ストーリー ／ フリードリヒ・カール・フォン・サヴィニー ／ ブレイナード・カリー ／ アルバート・ダイシー
+
+## 出典
+- [Cornell LII Wex: Choice of law — conflict of laws, party autonomy, closest connection, lex loci, vs jurisdiction](https://www.law.cornell.edu/wex/choice_of_law) `リファレンス`
+- [Wikipedia: Choice of law — private international law, choice of law clause, Rome I/II, Restatement (Second)](https://en.wikipedia.org/wiki/Choice_of_law) `リファレンス`
+
+## 関連概念
+- [[bizlaw-lex-loci-delicti|不法行為地法主義（Lex Loci Delicti）]] — 語彙が近い
+- [[bizlaw-private-international-law|国際私法（法の適用に関する通則法）]] — 同じ思想家
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 同じ思想家
+- [[bizlaw-choice-of-law-conflict|準拠法選択と抵触規則（コンフリクト・オブ・ローズ）]] — 同じ思想家
+- [[bizlaw-equity-of-redemption|受戻権——抵当債務者が弁済により担保財産を取り戻す衡平法上の権利]] — 同じ思想家
+- [[bizlaw-fair-use-doctrine|フェアユース（公正利用）——著作権の例外と四つの判断要素]] — 同じ思想家
+- [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同じ思想家
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同じ思想家
+- [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同じ思想家
+- [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

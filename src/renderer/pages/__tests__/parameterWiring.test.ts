@@ -1,0 +1,924 @@
+/** @vitest-environment jsdom */
+/**
+ * 数値パラメータの**配線**の検査 — 「設定できるのに効かない」を止める。
+ *
+ * 台帳 (`shared/parameters.ts`) に載せた値ごとに、上書きを実物の record store
+ * (fake-indexeddb) へ置いてから画面を描き、**画面の数字・文言が動く**ことを見る。
+ * 既定のままの描画を対照に置く (上書きが効かなければ対照と同じ文になって落ちる)。
+ */
+import 'fake-indexeddb/auto';
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { Fragment, act, createElement, type ComponentType, type ReactElement } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { SERVICES } from '../../services';
+import { navigateTo } from '../../navigate';
+import { TeamPage } from '../TeamPage';
+import { RealEstatePage } from '../RealEstatePage';
+import { TaxPage } from '../TaxPage';
+import { EmotionsPage } from '../EmotionsPage';
+import { DocstudioPage } from '../DocstudioPage';
+import { MutualFundsPage } from '../MutualFundsPage';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { PARAMETER_OVERRIDES_COLLECTION, useParameters } from '../../data/parameterOverrides';
+import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
+import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
+import {
+  HYDROPONICS_COLLECTION,
+  HYDROPONICS_DEFAULTS,
+  economicsFromSetup,
+  type HydroponicsSetup,
+} from '../../data/hydroponicsSetup';
+import { DEFAULT_CROP_LIST } from '../../../shared/hydroponicCrops';
+import { publicTransportCommute } from '../../../shared/payroll';
+import { calcIncomeTax, calcNetSalary, calcResidentTax } from '../../../shared/taxCalc';
+import { DEFAULT_SOCIAL_INSURANCE_RATES, calcSocialInsurance } from '../../../shared/taxSocialInsurance';
+import { calcFixedAssetTaxTotal } from '../../../shared/taxFixedAsset';
+import { calcCapitalGainsTax, DEFAULT_CAPITAL_GAINS_PARAMS } from '../../../shared/taxCapitalGains';
+import { compareBusinessTaxMethods, DEFAULT_BUSINESS_CONSUMPTION_PARAMS } from '../../../shared/taxConsumptionBusiness';
+import { jpy } from '../../../shared/formatters';
+import type { ParameterOverrides } from '../../../shared/parameters';
+import { adviseService } from '../../../shared/serviceAdvisor';
+import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
+
+beforeAll(() => {
+  (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
+    getVersion: () => Promise.resolve('0.1.0-web'),
+    listConfigured: () => Promise.resolve([]),
+    fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
+    invoke: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
+    openExternal: () => Promise.resolve(),
+    oauthSupported: () => Promise.resolve(false),
+    setToken: () => Promise.resolve(),
+    clearToken: () => Promise.resolve(),
+  };
+});
+
+let container: HTMLDivElement;
+let root: Root | null = null;
+
+/**
+ * `seed()` が置いた上書きの件数。`mount()` の錠がこれを使う。
+ *
+ * **数を持ち回るのは、錠を「主張そのもの」にしないため**である (パス 379)。
+ * 上書きが届いたかは「画面がその数字を出したか」でも分かるが、それは
+ * この検査が確かめたい当のことなので、待ちに使うと**待ちが主張を飲み込む**。
+ * 件数は主張の外に在る独立な印である。
+ */
+let seededCount = 0;
+
+async function seed(overrides: ParameterOverrides): Promise<void> {
+  await getRecordStore().insert(PARAMETER_OVERRIDES_COLLECTION, { values: { ...overrides } });
+  seededCount = Object.keys(overrides).length;
+}
+
+/**
+ * **上書きが画面に届いたことを DOM に出す観測子。**
+ *
+ * `useParameters()` は `useCollection` の購読なので、保管層から届くまでは
+ * `overrides` が空である。観測子は検査対象の画面と**同じ root** に並べて描くので、
+ * 購読が 1 度の通知で両方を起こし、React が 1 つの commit にまとめる ——
+ * つまり**観測子が件数を出した時点で、画面の側も同じ上書きを持っている**。
+ *
+ * 文字は出さない (属性だけ) ので `text()` や枠の走査には 1 字も混ざらない。
+ */
+function ParamProbe(): ReactElement {
+  const p = useParameters();
+  return createElement('span', {
+    'data-params-probe': p.loading ? 'loading' : String(Object.keys(p.overrides).length),
+  });
+}
+
+/**
+ * 画面を描き、**置いた上書きが届くまで**条件で待つ
+ * (法則 `wait-for-condition-not-ticks`)。
+ *
+ * 2026-09-21 (パス 385) まで固定回数 (6 周) で待っており、周回数を 0 にすると
+ * **14 件が落ちた**。落ち方は 2 通りで、**どちらも「上書きが届く前に測った」**:
+ *
+ * - 画面が既定値のまま刷る (`expected '¥150,000' to be '¥100,000'`)。
+ * - 上書きで初めて現れる枠がまだ無い (`stat "固定資産税 (2%)" not found`)。
+ *
+ * ★ **押す操作が絡む 2 件は「押した後に待つ」では直らない** ——
+ * 「改善提案」は押した瞬間の有効値で payload を組む一度きりの計算なので、
+ * 既定値で走り切ったあとに待っても文言は変わらない
+ * (0 周では実際に `waitForText` が 5 秒で時間切れになった)。
+ * **待つ場所は押す前**である。
+ */
+async function mount(page: ComponentType): Promise<void> {
+  root = createRoot(container);
+  await act(async () => {
+    root!.render(createElement(Fragment, null, createElement(page), createElement(ParamProbe)));
+  });
+  const probe = (): string | null =>
+    container.querySelector('[data-params-probe]')?.getAttribute('data-params-probe') ?? null;
+  // ★ **生きた値は catch で読む。** 最初はこれを label の中に書いたが、label は
+  // 呼び出しの時点で組まれる template なので、**描いた直後の値 (`"loading"`) を
+  // 「いま」として刷った** —— 落ちた理由を読む人が、5 秒後ではなく 0 秒の姿を見る。
+  // (パス 382 の e2e が ❌ の隣に期待値を刷っていたのと同じ形。`waitForText` は
+  // 最初からこの形で書かれている。)
+  try {
+    await settleUntil(() => probe() === String(seededCount), `上書き ${seededCount} 件が画面に届く`);
+  } catch (e) {
+    throw new Error(
+      `${e instanceof Error ? e.message : String(e)} 観測子の値: ${JSON.stringify(probe())}`,
+    );
+  }
+}
+
+async function unmount(): Promise<void> {
+  if (root) {
+    await act(async () => {
+      root!.unmount();
+    });
+    root = null;
+  }
+}
+
+const text = () => container.textContent ?? '';
+
+/** React の onChange を発火させる (native setter を通さないと React が拾わない)。 */
+function changeInput(input: HTMLInputElement, value: string): void {
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+  if (!setter) throw new Error('HTMLInputElement value setter not found');
+  setter.call(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+/**
+ * `<label>文言<input/></label>` の形の欄に入れる (税ページ ③ の入力欄)。同じ文言の
+ * ラベルが ② にもある (そちらは input を子に持たない) ので、input を内包する物を選ぶ。
+ */
+async function typeIntoLabeled(labelText: string, value: string): Promise<void> {
+  const label = Array.from(container.querySelectorAll('label')).find(
+    (l) => l.textContent?.startsWith(labelText) && l.querySelector('input') !== null,
+  );
+  const input = label?.querySelector('input');
+  if (!input) throw new Error(`labeled input "${labelText}" not found`);
+  await act(async () => {
+    changeInput(input, value);
+  });
+}
+
+/** ラベル → 値 の 2 段の枠 (Stat / Tile / stat) を読む。 */
+function statValue(label: string): string {
+  // 値の枠は要素を子に持たない — 見出しだけ同じ注記の div (<strong> を含む) を掴まないため。
+  // ラベルは枠の**最初の節点**でもある (Stat は <div><div>ラベル</div><div>値</div></div>)。
+  // 前に文字がある枠は掴まない —— 「✅ 最も納付が少ない方式: <strong>2割特例</strong>」の枠は
+  // 2026-09-10 (パス 141) に 3割特例の行が増えて注記が 2 番目の子になり、Stat と同じ形になった。
+  const tile = Array.from(container.querySelectorAll('div')).find(
+    (d) =>
+      d.firstElementChild?.textContent === label &&
+      d.firstChild === d.firstElementChild &&
+      d.children.length >= 2 &&
+      d.children[1]!.children.length === 0,
+  );
+  if (!tile) throw new Error(`stat "${label}" not found`);
+  return tile.children[1]!.textContent ?? '';
+}
+
+function tile(label: string): HTMLElement {
+  const el = Array.from(container.querySelectorAll('div')).find(
+    (d) => d.firstElementChild?.textContent === label && d.children.length >= 2,
+  );
+  if (!el) throw new Error(`tile "${label}" not found`);
+  return el;
+}
+
+beforeEach(async () => {
+  seededCount = 0;
+  _resetRecordStoreForTests();
+  _resetCollectionSubscribersForTests();
+  await new Promise<void>((resolve) => {
+    const req = indexedDB.deleteDatabase('business-hub-data');
+    req.onsuccess = () => resolve();
+    req.onerror = () => resolve();
+    req.onblocked = () => resolve();
+  });
+  container = document.createElement('div');
+  document.body.appendChild(container);
+});
+
+afterEach(async () => {
+  await unmount();
+  document.body.removeChild(container);
+});
+
+// --- 水耕栽培 (経営サマリー) ------------------------------------------------
+
+const OverviewPage = SERVICES.find((s) => s.id === 'overview')!.page;
+
+/** 低カリウムとして扱い、実測 100 mg/100g、切替 4 日で保存した設定。 */
+const LOW_K_SETUP: HydroponicsSetup = {
+  ...HYDROPONICS_DEFAULTS,
+  lowPotassium: true,
+  measuredPotassiumMgPer100g: 100,
+  switchDaysBeforeHarvest: 4,
+};
+
+describe('水耕栽培 — 台帳の値が試算と文言に効く', () => {
+  it('対照: 既定のままなら 7〜10 日・学会の上限・既定の日産', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, LOW_K_SETUP);
+    await mount(OverviewPage);
+    await waitForText(text, '収穫前 7〜10 日に');
+    expect(text()).toContain('目安は 7〜10 日です'); // 4 日は範囲外
+    await waitForText(text, 'G3b で 2,000 mg/日以下、G4 で 1,500 mg/日以下、G5 で 1,500 mg/日以下');
+    await waitForText(text, '（日本腎臓学会）');
+    expect(statValue('G3b の方が食べられる量')).toBe('400 g'); // 2,000 × 20% ÷ 100 × 100
+    expect(statValue('G4 の方が食べられる量')).toBe('300 g');
+    const expected = economicsFromSetup(LOW_K_SETUP, DEFAULT_CROP_LIST)!;
+    await waitForText(text, `日産 ${expected.production.shippedPlantsPerDay.toLocaleString('ja-JP')} 株`);
+  });
+
+  it('切替の目安・CKD の上限・稼働日数とパネル面積の上書きが画面に出る', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, LOW_K_SETUP);
+    await seed({
+      'hydroponics.lowKSwitchDaysMin': 3,
+      'hydroponics.lowKSwitchDaysMax': 5,
+      'hydroponics.ckdPotassiumLimitG3b': 1000,
+      'hydroponics.ckdPotassiumLimitG4': 800,
+      'hydroponics.ckdPotassiumLimitG5': 600,
+      'hydroponics.daysPerYear': 100,
+      'hydroponics.panelAreaSqm': 1,
+    });
+    await mount(OverviewPage);
+    await waitForText(text, '収穫前 3〜5 日に');
+    expect(text()).toContain('目安 3〜5 日の範囲内'); // 4 日が範囲内になった
+    await waitForText(text, 'G3b で 1,000 mg/日以下、G4 で 800 mg/日以下、G5 で 600 mg/日以下');
+    await waitForText(text, '設定画面で上書きした値');
+    expect(text()).not.toContain('（日本腎臓学会）');
+    expect(statValue('G3b の方が食べられる量')).toBe('200 g'); // 1,000 × 20% ÷ 100 × 100
+    expect(statValue('G4 の方が食べられる量')).toBe('160 g');
+    const expected = economicsFromSetup(LOW_K_SETUP, DEFAULT_CROP_LIST, { panelAreaSqm: 1, daysPerYear: 100 })!;
+    const control = economicsFromSetup(LOW_K_SETUP, DEFAULT_CROP_LIST)!;
+    expect(expected.production.shippedPlantsPerDay).not.toBe(control.production.shippedPlantsPerDay);
+    await waitForText(text, `日産 ${expected.production.shippedPlantsPerDay.toLocaleString('ja-JP')} 株`);
+    expect(text()).not.toContain(`日産 ${control.production.shippedPlantsPerDay.toLocaleString('ja-JP')} 株`);
+  });
+
+  it('比較基準と換算係数の上書きが削減率と食塩相当量に効く', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, { ...LOW_K_SETUP, measuredSodiumMgPer100g: 500 });
+    await seed({ 'hydroponics.referenceLettucePotassiumMg': 400, 'hydroponics.saltEquivalentFactor': 2 });
+    await mount(OverviewPage);
+    // 通常品 400 比 −75%、食塩相当量 500 × 2 ÷ 1000 = 1.00 g。
+    expect(tile('実測カリウム').textContent).toContain('通常品 400 mg/100g 比 −75.0%');
+    expect(statValue('食塩相当量')).toBe('1.00 g/100g');
+  });
+});
+
+// --- 給与 (チーム) -----------------------------------------------------------
+
+describe('給与 — 通勤手当の非課税限度', () => {
+  it('対照: 既定の 15 万円で分ける', async () => {
+    await mount(TeamPage);
+    const pt = publicTransportCommute(160_000);
+    expect(statValue('公共交通: 非課税')).toBe(jpy(pt.nonTaxable));
+    expect(statValue('公共交通: 課税(超過)')).toBe(jpy(pt.taxable));
+    await waitForText(text, `公共交通機関の非課税限度は月 ${jpy(150_000)}`);
+  });
+
+  it('上書きした限度で分け、文言もその額を言う', async () => {
+    await seed({ 'payroll.commutePublicTransportCap': 100_000 });
+    await mount(TeamPage);
+    expect(statValue('公共交通: 非課税')).toBe(jpy(100_000));
+    expect(statValue('公共交通: 課税(超過)')).toBe(jpy(60_000));
+    await waitForText(text, `公共交通機関の非課税限度は月 ${jpy(100_000)}`);
+    expect(text()).not.toContain(`月 ${jpy(150_000)}`);
+  });
+});
+
+// --- 不動産 (DSCR) ------------------------------------------------------------
+
+const GREEN = 'var(--success)';
+const RED = 'var(--danger)';
+
+describe('不動産 — DSCR の判定しきい値', () => {
+  it('対照: 既定 (1.0 / 1.2) では初期値の DSCR 0.88 は危険水域 (赤)', async () => {
+    await mount(RealEstatePage);
+    expect(statValue('DSCR')).toBe('0.88');
+    await waitForText(text, '1.0 未満は危険水域');
+    await waitForText(text, '1.2 以上が目安');
+    expect((tile('DSCR').children[1] as HTMLElement).style.color).toBe(RED);
+  });
+
+  it('しきい値を下げれば同じ 0.88 が健全 (緑) になり、文言もその値を言う', async () => {
+    await seed({ 'realEstate.dscrDangerThreshold': 0.5, 'realEstate.dscrCautionThreshold': 0.8 });
+    await mount(RealEstatePage);
+    expect(statValue('DSCR')).toBe('0.88');
+    await waitForText(text, '0.5 未満は危険水域');
+    await waitForText(text, '0.8 以上が目安');
+    expect((tile('DSCR').children[1] as HTMLElement).style.color).toBe(GREEN);
+  });
+});
+
+// --- 改善提案 (不動産投資 / 投資信託の業務操作パネル) ------------------------------
+
+/**
+ * 画面の「改善提案」ボタンは `serviceHub.invoke(id, 'advise', <画面の集計>)` を呼ぶ。
+ * ここでは invoke を**ブラウザ版の枝と同じ関数** (`shared/serviceAdvisor.ts` の
+ * `adviseService`) へ流し、画面が組んだ payload (しきい値を含む) がそのまま提案の
+ * 文言に効くことを見る。既定の描画を対照に置く。
+ */
+const FAILING_INVOKE = () => Promise.resolve({ ok: false, code: 'x', message: 'x' });
+type Hub = { invoke: (svc: string, act: string, payload: Record<string, unknown>) => Promise<unknown> };
+const hub = (): Hub => (globalThis as unknown as { serviceHub: Hub }).serviceHub;
+
+async function clickButton(label: string): Promise<void> {
+  const button = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label));
+  if (!button) throw new Error(`button "${label}" not found`);
+  // **押すだけ。** 押した結果を待つのは呼び手 (パス 378) —— この画面の「改善提案」は
+  // 押した瞬間の有効値で payload を組むので、**待つべきは押す前** (`mount` の錠) である。
+  await act(async () => {
+    button.click();
+  });
+}
+
+describe('改善提案 — 台帳のしきい値が、画面が渡す payload を通って提案の文言に効く', () => {
+  beforeEach(() => {
+    hub().invoke = (svc, act, payload) => {
+      if (act === 'advise' && isRecordEntryServiceId(svc)) {
+        const r = adviseService(svc, payload);
+        return Promise.resolve(r.ok ? { ok: true, data: r.data } : { ok: false, code: 'action_failed', message: r.message });
+      }
+      return FAILING_INVOKE();
+    };
+  });
+  afterEach(() => {
+    hub().invoke = FAILING_INVOKE;
+  });
+
+  it('対照: 不動産の既定は差 1.0 pt で、渋谷 (4.8% / 平均 6.2%) を低利回りと名指しする', async () => {
+    await mount(RealEstatePage);
+    await clickButton('改善提案');
+    await waitForText(text, '根拠: 4 物件 (同梱の見本 4 件を含む)・月次 CF ¥243,000・平均表面利回り 6.2%・入居率 75%');
+    await waitForText(text, '低利回り物件の見直し: 渋谷区マンション 1LDK');
+    await waitForText(text, '(差のしきい値 1.0 pt)');
+    expect(text()).not.toContain('提案の取得に失敗');
+  });
+
+  it('差を 3 pt に上げれば同じ画面が「ばらつきは小さい」と言い、文言もその値を言う', async () => {
+    await seed({ 'advisor.yieldGapPt': 3 });
+    await mount(RealEstatePage);
+    await clickButton('改善提案');
+    await waitForText(text, '利回りのばらつきは小さい');
+    await waitForText(text, 'しきい値 3.0 pt 未満');
+    expect(text()).not.toContain('低利回り物件の見直し');
+  });
+
+  it('対照: 投資信託の既定は 50% で、S&P500 (39.3%) は集中ではない', async () => {
+    await mount(MutualFundsPage);
+    await clickButton('改善提案');
+    await waitForText(text, '根拠: 4 銘柄 (同梱の見本 4 件を含む)・評価額 ¥8,240,140・評価損益率 14.8%');
+    await waitForText(text, '分散の状況');
+    await waitForText(text, '(しきい値 50.0% 未満)');
+  });
+
+  it('比率を 30% に下げれば同じ画面が「集中リスク」と言い、文言もその値を言う', async () => {
+    await seed({ 'advisor.concentrationShare': 0.3 });
+    await mount(MutualFundsPage);
+    await clickButton('改善提案');
+    await waitForText(text, '集中リスク: eMAXIS Slim 米国株式 (S&P500)');
+    await waitForText(text, '(しきい値 30.0%)');
+    expect(text()).not.toContain('分散の状況');
+  });
+});
+
+// --- 税 (消費税率) -------------------------------------------------------------
+
+describe('税 — 消費税率', () => {
+  it('対照: 既定は 10% / 8%', async () => {
+    await mount(TaxPage);
+    await waitForText(text, '消費税 (10%)');
+    await waitForText(text, '軽減税率 (8%)');
+  });
+
+  it('対照: 所得税・住民税・手取りの既定 (復興税 2.1% / 所得割 10% / 均等割 5,000 / 社保概算 15%)', async () => {
+    await mount(TaxPage);
+    expect(statValue('所得税 (速算表 + 復興税2.1%)')).toBe(jpy(calcIncomeTax(5_000_000)));
+    expect(statValue('住民税 (所得割10% + 均等割)')).toBe(jpy(calcResidentTax(5_000_000)));
+    await waitForText(text, '均等割5,000円の内訳');
+    await waitForText(text, '(約15%)');
+    expect(statValue('手取り (年)')).toBe(jpy(calcNetSalary(6_000_000).takeHome));
+    await waitForText(text, `厚生年金 ${jpy(calcSocialInsurance(6_000_000).pension)}`);
+  });
+
+  it('復興税・住民税の自治体の値・社保概算率・厚生年金料率の上書きが計算と文言に出る', async () => {
+    await seed({
+      'incomeTax.reconstructionSurtaxRate': 0,
+      'residentTax.incomeRate': 0.05,
+      'residentTax.perCapita': 6_000,
+      'incomeTax.socialInsuranceEstimateRate': 0.2,
+      'socialInsurance.pensionRate': 0.1,
+    });
+    await mount(TaxPage);
+    expect(statValue('所得税 (速算表 + 復興税0%)')).toBe(jpy(calcIncomeTax(5_000_000, 0)));
+    expect(statValue('住民税 (所得割5% + 均等割)')).toBe(jpy(calcResidentTax(5_000_000, { incomeRate: 0.05, perCapita: 6_000 })));
+    await waitForText(text, `均等割は設定 › 数値パラメータ の値 ${jpy(6_000)}`);
+    expect(text()).not.toContain('均等割5,000円の内訳');
+    await waitForText(text, '(約20%)');
+    const net = calcNetSalary(6_000_000, undefined, {
+      socialInsuranceRate: 0.2,
+      surtaxRate: 0,
+      resident: { incomeRate: 0.05, perCapita: 6_000 },
+    });
+    expect(net.takeHome).not.toBe(calcNetSalary(6_000_000).takeHome);
+    expect(statValue('手取り (年)')).toBe(jpy(net.takeHome));
+    const si = calcSocialInsurance(6_000_000, false, { ...DEFAULT_SOCIAL_INSURANCE_RATES, pensionRate: 0.1 });
+    expect(si.pension).not.toBe(calcSocialInsurance(6_000_000).pension);
+    await waitForText(text, `厚生年金 ${jpy(si.pension)}`);
+  });
+
+  it('所得控除・税額控除: 人的控除差の底が調整控除に、配当割の源泉率が控除額と文言に効く', async () => {
+    // 調整控除は課税所得 200 万以下で min(人的控除差, 課税所得) × 5%。既定の年収 600 万では
+    // 課税所得が 200 万を超えて下限 2,500 円に張り付き、差を変えても動かない — 年収 300 万にして見る。
+    await mount(TaxPage);
+    await typeIntoLabeled('額面年収 (円)', '3000000');
+    const residentByDefault = statValue('住民税 (税額控除後)');
+    await waitForText(text, '(配当×5%)');
+    await waitForText(text, '小規模企業共済 (年・上限¥840,000)');
+    await unmount();
+
+    await seed({ 'deduction.basicHumanDeductionDiff': 100_000, 'credit.residentLevyWithholdingRate': 0.1, 'deduction.smallBizMutualAnnualCap': 900_000 });
+    await mount(TaxPage);
+    await typeIntoLabeled('額面年収 (円)', '3000000');
+    // 差が 5 万 → 10 万で調整控除が 2,500 → 5,000 円になり、住民税がその分減る。
+    const toNumber = (s: string) => Number(s.replace(/[^0-9-]/g, ''));
+    expect(toNumber(statValue('住民税 (税額控除後)'))).toBe(toNumber(residentByDefault) - 2_500);
+    await waitForText(text, '(配当×10%)');
+    expect(text()).toContain(`配当割控除 約${jpy(100_000)}`); // 配当 100 万 × 10%
+    await waitForText(text, '小規模企業共済 (年・上限¥900,000)');
+  });
+
+  it('不動産・登記・印紙・譲渡: 対照 (既定の率・免税点・特例)', async () => {
+    await mount(TaxPage);
+    const fa = calcFixedAssetTaxTotal({ assessedValue: 30_000_000, areaSqm: 200, dwellings: 1 });
+    expect(statValue('固定資産税 (1.4%)')).toBe(jpy(fa.fixedAssetTax));
+    expect(statValue('都市計画税 (0.3%)')).toBe(jpy(fa.cityPlanningTax));
+    await waitForText(text, '本則4%、土地・住宅は軽減3%');
+    expect(statValue('適用税率')).toBe('3.0%');
+    expect(statValue('適用税率 (本則)')).toBe('2.0%');
+    expect(statValue('登録免許税')).toBe(jpy(400_000)); // 2,000 万 × 2%
+    await waitForText(text, '概算取得費5%');
+    await waitForText(text, '居住用財産 (¥30,000,000控除+軽減税率)');
+    const cg = calcCapitalGainsTax(50_000_000, 30_000_000, 2_000_000, 'real-estate-long');
+    expect(statValue('所得税 (譲渡所得)')).toBe(jpy(cg.incomeTax));
+  });
+
+  it('不動産・登記・印紙・譲渡: 率・免税点・特例・付加率の上書きが計算と文言に出る', async () => {
+    await seed({
+      'fixedAsset.standardRate': 0.02,
+      'fixedAsset.cityPlanningRate': 0.002,
+      'acquisition.reducedRate': 0.02,
+      'registration.rateTransferSale': 0.015,
+      'stamp.continuousBasicContractDuty': 5_000,
+      'capitalGains.estimatedAcquisitionCostRate': 0.1,
+      'capitalGains.residentialSpecialDeduction': 10_000_000,
+      'incomeTax.reconstructionSurtaxRate': 0,
+    });
+    await mount(TaxPage);
+    const fa = calcFixedAssetTaxTotal({ assessedValue: 30_000_000, areaSqm: 200, dwellings: 1, fixedRate: 0.02, cityPlanningRate: 0.002 });
+    expect(statValue('固定資産税 (2%)')).toBe(jpy(fa.fixedAssetTax));
+    expect(statValue('都市計画税 (0.2%)')).toBe(jpy(fa.cityPlanningTax));
+    await waitForText(text, '本則4%、土地・住宅は軽減2%');
+    expect(statValue('適用税率')).toBe('2.0%');
+    expect(statValue('適用税率 (本則)')).toBe('1.5%');
+    expect(statValue('登録免許税')).toBe(jpy(300_000)); // 2,000 万 × 1.5%
+    await waitForText(text, '概算取得費10%');
+    await waitForText(text, '居住用財産 (¥10,000,000控除+軽減税率)');
+    // 付加率 0 は譲渡所得の所得税にも効く (所得税の項と共有)。
+    const cg = calcCapitalGainsTax(50_000_000, 30_000_000, 2_000_000, 'real-estate-long', { ...DEFAULT_CAPITAL_GAINS_PARAMS, surtaxRate: 0 });
+    expect(cg.incomeTax).not.toBe(calcCapitalGainsTax(50_000_000, 30_000_000, 2_000_000, 'real-estate-long').incomeTax);
+    expect(statValue('所得税 (譲渡所得)')).toBe(jpy(cg.incomeTax));
+    // 印紙税: 第 7 号文書に切り替えると一律額が台帳の値になる。
+    const select = Array.from(container.querySelectorAll('select')).find((el) =>
+      Array.from(el.options).some((o) => o.value === 'continuousBasicContract'),
+    );
+    if (!select) throw new Error('stamp document select not found');
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value')?.set;
+      setter?.call(select, 'continuousBasicContract');
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await settleUntil(() => statValue('印紙税額') === jpy(5_000), '印紙税額が 5,000 円になる');
+  });
+
+  it('事業者の消費税: 税率・2 割特例・3 割特例の割合・境目の上書きが ⑩ の 4 方式と文言に出る', async () => {
+    await mount(TaxPage);
+    const control = compareBusinessTaxMethods(
+      [{ type: 'service', sales: { standard: 8_000_000, reduced: 0 } }],
+      { standard: 3_000_000, reduced: 0 },
+    );
+    expect(statValue('2割特例')).toBe(jpy(control.twentyPercent));
+    expect(statValue('3割特例')).toBe(jpy(control.thirtyPercent));
+    await waitForText(text, '納付税額 = 売上税額 × 30%');
+    await waitForText(text, '簡易課税は基準期間の課税売上¥50,000,000以下');
+    await waitForText(text, '課税売上が¥10,000,000以下です');
+    await unmount();
+
+    await seed({
+      'tax.consumptionStandardRate': 0.12,
+      'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.thirtyPercentRate': 0.45,
+      'consumptionBusiness.exemptionThreshold': 20_000_000,
+      'consumptionBusiness.simplifiedEligibilityThreshold': 60_000_000,
+    });
+    await mount(TaxPage);
+    const p = {
+      ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+      rates: { standard: 0.12, reduced: 0.08 },
+      twentyPercentRate: 0.3,
+      thirtyPercentRate: 0.45,
+      exemptionThreshold: 20_000_000,
+      simplifiedEligibilityThreshold: 60_000_000,
+    };
+    const seeded = compareBusinessTaxMethods(
+      [{ type: 'service', sales: { standard: 8_000_000, reduced: 0 } }],
+      { standard: 3_000_000, reduced: 0 },
+      p,
+    );
+    expect(seeded.twentyPercent).not.toBe(control.twentyPercent);
+    expect(statValue('2割特例')).toBe(jpy(seeded.twentyPercent));
+    // 3 割特例の割合 (パス 141) も同じ項から届く —— 額と、⑩ の説明文の「売上税額 × 45%」。
+    expect(seeded.thirtyPercent).not.toBe(control.thirtyPercent);
+    expect(statValue('3割特例')).toBe(jpy(seeded.thirtyPercent));
+    await waitForText(text, '納付税額 = 売上税額 × 45%');
+    expect(text()).not.toContain('納付税額 = 売上税額 × 30%');
+    expect(statValue('本則課税')).toBe(jpy(seeded.standard));
+    await waitForText(text, '簡易課税は基準期間の課税売上¥60,000,000以下');
+    await waitForText(text, '課税売上が¥20,000,000以下です');
+  });
+
+  /**
+   * ⑩-3 の全額控除の要件は**台帳に載っているのに、ここで留められていなかった**。
+   * 2026-09-06 の実測では、判定 (`canDeductFully`) は上書きされた値で行いながら、
+   * 説明文と ⚠ 警告は**モジュールの既定定数を刷っていた** —— 割合の境目を 90% に
+   * した利用者に、90% で発火した警告が「割合 95% 未満」と言う状態。
+   */
+  it('消費税 (事業者): 全額控除の要件の上書きが ⑩-3 の文言と判定の両方に出る', async () => {
+    await mount(TaxPage);
+    await waitForText(text, '課税売上割合 95% 以上');
+    await waitForText(text, '課税売上高 ¥500,000,000 以下');
+    await unmount();
+
+    await seed({
+      'consumptionBusiness.fullCreditRatioThreshold': 0.6,
+      'consumptionBusiness.fullCreditSalesThreshold': 300_000_000,
+    });
+    await mount(TaxPage);
+    await waitForText(text, '課税売上割合 60% 以上');
+    await waitForText(text, '課税売上高 ¥300,000,000 以下');
+    // 既定の入力 (課税 800 万 + 免税 0 / 非課税 200 万) の割合は 80% —— 既定の 95% では
+    // 満たさないが、60% に緩めると**満たす**。文言だけでなく判定も動く。
+    await waitForText(text, '全額控除の要件を満たします');
+    expect(text()).not.toContain('全額控除の要件を満たしません');
+  });
+
+  it('年金・一時所得・ふるさと納税・貿易: 上書きが計算と文言に出る', async () => {
+    await mount(TaxPage);
+    expect(statValue('課税所得への算入額 (×1/2)')).toBe(jpy(250_000)); // (300 万 − 200 万 − 50 万) ÷ 2
+    expect(statValue('公的年金等控除')).toBe(jpy(1_100_000));
+    await waitForText(text, '自己負担¥2,000');
+    await waitForText(text, '寄附先5自治体以内');
+    await waitForText(text, '国税 7.8% (軽減 6.24%)');
+    await waitForText(text, '¥10,000以下の輸入');
+    await unmount();
+
+    await seed({
+      'casual.specialDeduction': 300_000,
+      'pension.deductionMinOver65': 1_200_000,
+      'furusato.selfPay': 3_000,
+      'furusato.oneStopMaxMunicipalities': 3,
+      'trade.nationalStandardRate': 0.1,
+      'trade.smallValueLimit': 20_000,
+      'trade.personalUseFactor': 0.5,
+    });
+    await mount(TaxPage);
+    expect(statValue('課税所得への算入額 (×1/2)')).toBe(jpy(350_000)); // (300 万 − 200 万 − 30 万) ÷ 2
+    await waitForText(text, '特別控除¥300,000');
+    expect(statValue('公的年金等控除')).toBe(jpy(1_200_000));
+    await waitForText(text, '最低¥1,200,000');
+    await waitForText(text, '自己負担¥3,000');
+    await waitForText(text, '寄附先3自治体以内');
+    await waitForText(text, '国税 10% (軽減 6.24%)');
+    await waitForText(text, '小売価格の50%で計算');
+    await waitForText(text, '¥20,000以下の輸入');
+  });
+
+  it('上書きした率で計算し、% の表示も動く', async () => {
+    await seed({ 'tax.consumptionStandardRate': 0.12, 'tax.consumptionReducedRate': 0.05 });
+    await mount(TaxPage);
+    await waitForText(text, '消費税 (12%)');
+    await waitForText(text, '軽減税率 (5%)');
+    expect(text()).not.toContain('消費税 (10%)');
+    // 軽減にすると 5% の表示に切り替わる。
+    const box = Array.from(container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')).find((el) =>
+      el.parentElement?.textContent?.includes('軽減税率'),
+    );
+    if (!box) throw new Error('軽減税率 checkbox not found');
+    await act(async () => {
+      box.click();
+    });
+    await waitForText(text, '消費税 (5%)');
+  });
+});
+
+// --- 敷地計画 (建築基準法) と水循環 (排水基準) — 不動産ページ -----------------
+
+describe('敷地計画 (建築基準法) と水循環 (排水基準) — 台帳の値が試算と文言に効く', () => {
+  it('対照: 既定の勾配 1.5・乗数 6/10・角地 +10・12m 未満・基準 120/16・地下水 10', async () => {
+    await mount(RealEstatePage);
+    // 初期値 (道路 6 m・後退 1.5 m・その他・高さ 12.1 m): 限度 = (6 + 3) × 1.5。
+    expect(statValue('道路斜線の高さ限度')).toBe('13.5 m');
+    await waitForText(text, '商業系ほか (6/10)');
+    await waitForText(text, '角地 (+10%)');
+    await waitForText(text, '前面道路 12m 未満');
+    // 濃縮廃液の初期値 (全窒素 400 mg/L) ÷ 地下水基準 10。
+    expect(statValue('地下水基準比 (硝酸性N)')).toBe('40倍');
+    await waitForText(text, '全窒素 120mg/L・全りん 16mg/L');
+  });
+
+  it('勾配・乗数・緩和・幅員の上限・排水基準の上書きが数字と文言に出る', async () => {
+    await seed({
+      'zoning.roadSlopeOther': 2,
+      'zoning.roadFarMultiplierOther': 50,
+      'zoning.cornerLotBonusPct': 15,
+      'zoning.roadFarWidthThresholdM': 15,
+      'effluent.groundwaterNitrateNMgL': 20,
+      'effluent.tnUniformMgL': 200,
+    });
+    await mount(RealEstatePage);
+    expect(statValue('道路斜線の高さ限度')).toBe('18 m'); // (6 + 3) × 2
+    await waitForText(text, '商業系ほか (5/10)');
+    expect(text()).not.toContain('商業系ほか (6/10)');
+    await waitForText(text, '角地 (+15%)');
+    await waitForText(text, '前面道路 15m 未満');
+    expect(statValue('地下水基準比 (硝酸性N)')).toBe('20倍');
+    await waitForText(text, '全窒素 200mg/L・全りん 16mg/L');
+  });
+});
+
+// --- 財務診断 (経営サマリーの財務分析) ----------------------------------------
+
+describe('財務診断 — 台帳の下限と水準が経営サマリーの格付けと総合スコアに効く', () => {
+  const summary = () => /([SABCD])総合 (\d+)\/100/.exec(text());
+
+  it('対照: 既定では格付けと総合スコアが出る (全軸 0 点ではない)', async () => {
+    await mount(OverviewPage);
+    const m = summary();
+    expect(m).not.toBeNull();
+    expect(Number(m![2])).toBeGreaterThan(0);
+  });
+
+  it('格付けの下限を全部 100 にすると D になる', async () => {
+    await seed({ 'financeHealth.gradeSMin': 100, 'financeHealth.gradeAMin': 100, 'financeHealth.gradeBMin': 100, 'financeHealth.gradeCMin': 100 });
+    await mount(OverviewPage);
+    expect(summary()![1]).toBe('D');
+  });
+
+  it('格付けの下限を全部 0 にすると S になる', async () => {
+    await seed({ 'financeHealth.gradeSMin': 0, 'financeHealth.gradeAMin': 0, 'financeHealth.gradeBMin': 0, 'financeHealth.gradeCMin': 0 });
+    await mount(OverviewPage);
+    expect(summary()![1]).toBe('S');
+  });
+
+  it('レーダーの水準で全 15 軸を 0 点にすると総合 0 / D になる', async () => {
+    // 0 点の水準を範囲の上端の手前、100 点を上端に置く: 実測値はどれも上端に届かないので全軸 0 点。
+    await seed({
+      'financeHealth.equityRatioBad': 999,
+      'financeHealth.equityRatioGood': 1_000,
+      'financeHealth.currentRatioBad': 999,
+      'financeHealth.currentRatioGood': 1_000,
+      'financeHealth.fixedLongTermFitBad': 999,
+      'financeHealth.fixedLongTermFitGood': 1_000,
+      'financeHealth.debtToMonthlySalesBad': 1_199,
+      'financeHealth.debtToMonthlySalesGood': 1_200,
+      'financeHealth.debtRepaymentYearsBad': 999,
+      'financeHealth.debtRepaymentYearsGood': 1_000,
+      'financeHealth.operatingMarginBad': 999,
+      'financeHealth.operatingMarginGood': 1_000,
+      'financeHealth.ordinaryMarginBad': 999,
+      'financeHealth.ordinaryMarginGood': 1_000,
+      'financeHealth.netMarginBad': 999,
+      'financeHealth.netMarginGood': 1_000,
+      'financeHealth.laborShareBad': 999,
+      'financeHealth.laborShareGood': 1_000,
+      'financeHealth.ebitdaMarginBad': 999,
+      'financeHealth.ebitdaMarginGood': 1_000,
+      'financeHealth.receivablesTurnoverBad': 9_999,
+      'financeHealth.receivablesTurnoverGood': 10_000,
+      'financeHealth.inventoryTurnoverBad': 9_999,
+      'financeHealth.inventoryTurnoverGood': 10_000,
+      'financeHealth.cccBad': 3_649,
+      'financeHealth.cccGood': 3_650,
+      'financeHealth.roaBad': 999,
+      'financeHealth.roaGood': 1_000,
+      'financeHealth.roeBad': 999,
+      'financeHealth.roeGood': 1_000,
+    });
+    await mount(OverviewPage);
+    const m = summary();
+    expect(m![2]).toBe('0');
+    expect(m![1]).toBe('D');
+  });
+});
+
+// --- 消費税 (申告・納付) と配当 — 税ページ ⑩ / ⑧ ----------------------------
+
+describe('消費税の申告・納付と配当 — 台帳の値が試算と文言に効く', () => {
+  it('対照: 既定の国税 78%・境目 48 万・源泉 15% (+2.1%) + 5%', async () => {
+    await mount(TaxPage);
+    await typeIntoLabeled('前課税期間の確定消費税額', '500000');
+    // 課税ベース 500 万 × 10% = 50 万 → 国税 39 万 / 地方 11 万。前期 50 万は 48 万超なので年 1 回。
+    await waitForText(text, `（国税 ${jpy(390_000)} ／ 地方 ${jpy(110_000)}）`);
+    await waitForText(text, '中間納付 1 回');
+    await waitForText(text, '48万円超 400万円以下 — 年1回');
+    // 配当 100 万: 源泉の所得税 15.315% = 153,150 円。
+    await waitForText(text, '源泉徴収20.315%');
+    await waitForText(text, `所得税 ${jpy(153_150)}`);
+  });
+
+  it('国税分の割合・中間申告の境目・源泉の所得税率の上書きが数字と文言に出る', async () => {
+    await seed({
+      'consumptionSchedule.nationalShare': 0.8,
+      'consumptionSchedule.interimTier1': 600_000,
+      'dividend.withholdingIncomeRate': 0.2,
+    });
+    await mount(TaxPage);
+    await typeIntoLabeled('前課税期間の確定消費税額', '500000');
+    await waitForText(text, `（国税 ${jpy(400_000)} ／ 地方 ${jpy(100_000)}）`);
+    await waitForText(text, '中間納付 なし');
+    expect(text()).not.toContain('48万円超 400万円以下');
+    // 20% × 1.021 + 5% = 25.42%、所得税 204,200 円。
+    await waitForText(text, '源泉徴収25.42%');
+    await waitForText(text, `所得税 ${jpy(204_200)}`);
+    expect(text()).not.toContain('源泉徴収20.315%');
+  });
+});
+
+// --- 感情ログ — 寄り添いカウンセリングの見立て ---------------------------------
+
+describe('感情ログ — 台帳のしきい値が見立ての文言に効く', () => {
+  // 10 日: 5 が 5 日、2 が 5 日。「会議」は 3 回。
+  const moods = [5, 5, 5, 5, 5, 2, 2, 2, 2, 2].map((score, i) => ({
+    date: `2026-08-${String(i + 1).padStart(2, '0')}`,
+    score,
+    note: i === 0 || i === 5 || i === 7 ? '会議 が長い' : '',
+  }));
+  // 画面は「設定済み」のサービスだけ起動時に取りに行くので、listConfigured にも名乗らせる。
+  const hub = () => (globalThis as unknown as { serviceHub: { fetchSnapshot: unknown; listConfigured: unknown } }).serviceHub;
+  let originalFetch: unknown;
+  let originalConfigured: unknown;
+
+  beforeEach(() => {
+    originalFetch = hub().fetchSnapshot;
+    originalConfigured = hub().listConfigured;
+    hub().listConfigured = () => Promise.resolve(['emotions']);
+    hub().fetchSnapshot = (id: string) =>
+      Promise.resolve(id === 'emotions' ? { ok: true, data: { moods, analyses: [], keyConfigured: false } } : { ok: false, code: 'x', message: 'x' });
+  });
+  afterEach(() => {
+    hub().fetchSnapshot = originalFetch;
+    hub().listConfigured = originalConfigured;
+  });
+
+  it('対照: 既定では下向き・連続して低調 5 日・よく出る言葉「会議」', async () => {
+    await mount(EmotionsPage);
+    await waitForText(text, '傾向 下向き ↘');
+    await waitForText(text, '連続して低調 5 日');
+    await waitForText(text, 'よく出る言葉: 会議');
+  });
+
+  it('ヒステリシス・低調の上限・出現回数の上書きで見立てが変わる', async () => {
+    await seed({ 'emotion.trendHysteresis': 4, 'emotion.lowScore': 1, 'emotion.triggerMinCount': 5, 'emotion.recentWindow': 3 });
+    await mount(EmotionsPage);
+    await waitForText(text, '傾向 横ばい →');
+    expect(text()).not.toContain('連続して低調');
+    expect(text()).not.toContain('よく出る言葉');
+  });
+});
+
+// --- 貯蓄・資産形成 -------------------------------------------------------
+//
+// 緊急予備資金の月数は「会社員 3〜6 / 自営 6〜12 か月」と幅のある参考値で、
+// この画面 (投資信託) の**目標額と充足率の分母**になる。2026-09-06 まで 6 が
+// 4 か所 (関数の既定値 2・呼び出し 2) にリテラルで散っており、自営業者向けの
+// 目安 (6〜12) に合わせる手段が無かった。
+describe('savings.emergencyFundMonths — 緊急予備資金の月数', () => {
+  // 生活費 300,000 円 / 手元現金 900,000 円 は画面の初期値。
+  it('対照: 既定は生活費 6 か月分 (充足率 50%)', async () => {
+    await mount(MutualFundsPage);
+    expect(statValue('緊急予備資金 (生活費6か月)')).toBe(jpy(1_800_000));
+    expect(statValue('予備資金 充足率')).toBe('50%');
+    await waitForText(text, '生活費の6か月分');
+  });
+
+  it('12 か月に上書きすると目標額・充足率・文言が動く', async () => {
+    await seed({ 'savings.emergencyFundMonths': 12 });
+    await mount(MutualFundsPage);
+    expect(statValue('緊急予備資金 (生活費12か月)')).toBe(jpy(3_600_000));
+    expect(statValue('予備資金 充足率')).toBe('25%');
+    await waitForText(text, '生活費の12か月分');
+  });
+});
+
+// --- 相手に渡す書面の消費税率 (書類スタジオ) ------------------------------------
+
+/*
+ * **台帳で税率を変えたら、相手に渡す書面の税率も変わること。** (2026-09-07)
+ *
+ * `tax.consumptionStandardRate` は `kind: 'law'` の上書きできる項目 —— 法改正の日に
+ * 変えるための欄である。ところが 2026-09-07 まで、上書きに従うのは税ページだけで、
+ * 書類スタジオの書面は**別の 2 通り**で税を出していた:
+ *
+ *   - 見積書 / 発注書 / 注文請書 / 納品書 … 画面の中の `subtotal * 0.1` と
+ *     「消費税（10%）」の直書き (同じページの請求書とは別の計算・別の端数処理)
+ *   - 請求書 / 支払通知書 … `invoiceTax.ts` の既定率 (台帳の受け口が無かった)
+ *
+ * つまり率を 12% にしても、**相手に渡す紙だけが 10% のまま**だった。
+ */
+describe('書類スタジオの書面 — 台帳の消費税率が紙に効く', () => {
+  /** 書式を開いて金額 1 を入れる。 */
+  async function openMitsumori(amount: string): Promise<void> {
+    navigateTo('docstudio', { doc: 'mitsumori' });
+    await mount(DocstudioPage);
+    await typeIntoLabeled('金額1（税抜）', amount);
+  }
+
+  it('対照: 既定では 10% で刷り、50 万円に 5 万円', async () => {
+    await openMitsumori('500000');
+    await waitForText(text, '消費税（10%）');
+    await waitForText(text, '50,000 円');
+    await unmount();
+  });
+
+  it('★ 上書きすると書面の率も税額も動く', async () => {
+    await seed({ 'tax.consumptionStandardRate': 0.12 });
+    await openMitsumori('500000');
+    await waitForText(text, '消費税（12%）');
+    await waitForText(text, '60,000 円');
+    expect(text()).not.toContain('消費税（10%）');
+    await unmount();
+  });
+
+  it('★ 適格請求書 (別の表) も同じ台帳に従う', async () => {
+    await seed({ 'tax.consumptionStandardRate': 0.12 });
+    navigateTo('docstudio', { doc: 'invoice' });
+    await mount(DocstudioPage);
+    await typeIntoLabeled('品目1 品名', 'Web サイト保守');
+    await typeIntoLabeled('品目1 単価（税抜・円）', '500000');
+    await waitForText(text, '12%');
+    await waitForText(text, '60,000');
+    await unmount();
+  });
+});
+
+// --- 経営サマリー (貸借対照表の古さ) ------------------------------------------
+
+/**
+ * 基準日が実績よりどれだけ古ければ「別の期」と見なすか。台帳の値が**所見に効く**。
+ * 経緯は `src/shared/balanceSheetFreshness.ts` (7 年古い貸借対照表でも
+ * 2026-09-07 まで所見が 1 件も出なかった)。
+ */
+async function seedOverviewWithBs(asOf: string): Promise<void> {
+  const store = getRecordStore();
+  for (const period of ['2026-06', '2026-07', '2026-08']) {
+    await store.insert(KPI_ACTUALS_COLLECTION, {
+      period, unit: '全社', revenue: 4_000_000, cogs: 1_600_000, advertising: 0, sga: 1_200_000, depreciation: 0,
+    });
+  }
+  await store.insert(BALANCE_SHEET_COLLECTION, {
+    asOf, currentAssets: 6_000_000, cash: 3_000_000, inventory: 1_000_000, accountsReceivable: 2_000_000,
+    fixedAssets: 4_000_000, currentLiabilities: 2_000_000, accountsPayable: 1_500_000,
+    fixedLiabilities: 3_000_000, netIncome: 600_000,
+  });
+}
+
+describe('経営サマリー — 貸借対照表を「別の期」と見なす古さ', () => {
+  it('対照: 既定 (12 か月) では 13 か月古い基準日が所見に出る', async () => {
+    await seedOverviewWithBs('2025-07-31'); // 対象期間の最終月 2026-08 より 13 か月古い
+    await mount(OverviewPage);
+    await waitForText(text, '13 か月古く');
+    await waitForText(text, '総資産回転率');
+  });
+
+  it('対照: 既定では 12 か月ちょうどは所見に出ない', async () => {
+    await seedOverviewWithBs('2025-08-31'); // ちょうど 12 か月
+    await mount(OverviewPage);
+    expect(text()).not.toContain('か月古く');
+  });
+
+  it('★ しきい値を 6 か月へ下げると、同じ 12 か月が所見に出る (上書きが効く)', async () => {
+    await seed({ 'overview.balanceSheetStaleAfterMonths': 6 });
+    await seedOverviewWithBs('2025-08-31');
+    await mount(OverviewPage);
+    await waitForText(text, '12 か月古く');
+  });
+
+  it('★ しきい値を 24 か月へ上げると、13 か月古い基準日は所見に出ない', async () => {
+    await seed({ 'overview.balanceSheetStaleAfterMonths': 24 });
+    await seedOverviewWithBs('2025-07-31');
+    await mount(OverviewPage);
+    expect(text()).not.toContain('か月古く');
+  });
+});

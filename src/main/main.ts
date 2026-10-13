@@ -1,7 +1,8 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
 import path from 'node:path';
 import {
   clearToken,
+  getStorageProtection,
   getValidToken,
   listConfiguredServices,
   setOAuthTokens,
@@ -9,15 +10,31 @@ import {
 } from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
+import { repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
-import { redactSecrets } from './clients/types';
-
-/** All IPC handlers feed user-supplied strings as map keys. Use this
- *  before indexing to defeat prototype-pollution lookups like
- *  __proto__ / constructor. */
-function safeErrorMessage(err: unknown): string {
-  return redactSecrets(err instanceof Error ? err.message : String(err));
-}
+import { checkTokenInput } from '../shared/tokenInput';
+import type { OsOpResult, TokenSaveResult } from '../preload/preload';
+import { safeErrorMessage } from './clients/types';
+import { externalUrlOrNull } from '../shared/externalUrlGate';
+import { shellTargetOrNull } from './shellOpenGate';
+import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  egressInit,
+  isRedirectResponse,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+} from '../shared/httpLimits';
+import { eraseDesktopData } from './eraseAll';
+import {
+  DEFAULT_WINDOW_PREFS,
+  isBackgroundColor,
+  isWindowScheme,
+  readWindowPrefs,
+  writeWindowPrefs,
+  type WindowPrefs,
+} from './windowPrefs';
+import type { DesktopEraseReport } from '../shared/eraseReport';
 
 const isDev = !app.isPackaged;
 
@@ -30,6 +47,17 @@ function iconPath(): string {
   return path.join(__dirname, '..', 'build', 'icon.png');
 }
 
+/**
+ * 窓の下地色と配色 (パス 318)。起動時に userData から読み、renderer が `app:setColorScheme` で伝えてくるたびに
+ * 更新する。`createWindow` はこれを読むので、`activate` で作り直す窓も同じ色になる。
+ */
+let windowPrefs: WindowPrefs = DEFAULT_WINDOW_PREFS;
+
+/** Electron 自身の配色 (ダイアログ・スクロールバー) も選んだ側へ。mock が nativeTheme を持たない検査では飛ばす。 */
+function applyNativeTheme(scheme: WindowPrefs['scheme']): void {
+  if (nativeTheme) nativeTheme.themeSource = scheme;
+}
+
 function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
@@ -37,42 +65,154 @@ function createWindow(): BrowserWindow {
     minWidth: 960,
     minHeight: 600,
     title: 'Service Hub',
-    backgroundColor: '#0f1117',
+    // 保存した配色の下地で塗る (パス 318)。既定は styles.css の --bg (ライト) と同じ値 (windowPrefs.test.ts が照合)。
+    backgroundColor: windowPrefs.background,
     icon: iconPath(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      /*
+       * **Electron の既定は `true`。** 綴り検査が要る場面がこのアプリに無い
+       * のに、hunspell の辞書は Google がホストする CDN から取りに行く
+       * 設計なので、既定のままだと「打ち始めたら外へ出る」経路を 1 本
+       * 抱えることになる。ブラウザ版には e2e の `noBeacon` 節で
+       * 「開いただけで外へ出ていかない」を留めてあるが、**デスクトップ版に
+       * 同じ主張は無かった**。
+       *
+       * **正直に書く**: 2026-08-25 に実測した範囲では、`<textarea
+       * spellcheck="true">` へ実キーイベントで綴り誤りを 56 文字打ち込み
+       * 6 秒待っても、`session.webRequest` から見える取得は **0 件**だった。
+       * ただし Chromium の部品更新系の取得は `webRequest` を通らないことが
+       * あるので、**「起きない」ことを測り切れてはいない**。
+       *
+       * 日本語の入力は hunspell の対象外で、英字で打つのは URL と資格情報
+       * ばかり —— 綴り検査が付いても波線が出るだけで役に立たない。
+       * **得るものが無く、閉じ切れない経路が 1 本残る**ので切る。
+       */
+      spellcheck: false,
     },
   });
 
+  /**
+   * レンダラーへ許すブラウザ権限。**Electron の既定は「全部承認」である。**
+   *
+   * Electron の security checklist #5 —— ハンドラを置かない限り、
+   * `session` は権限要求を自動で承認する。この窓が読むのは同梱した
+   * `dist/index.html` だけで、遷移も `will-navigate` で止めてあるが、
+   * **万一レンダラーへ任意コードが入った場合に、マイク・カメラ・位置情報が
+   * 確認なしで開くかどうか**はここで決まる。既定のままだと開く。
+   *
+   * 許すのはクリップボードの 2 つだけ:
+   *
+   * - `clipboard-read` —— `LockScreen.tsx` が**復元フレーズを 30 秒後に
+   *   消す**ために使う。「まだ自分がコピーした値のままか」を読んでから
+   *   空にするので、読めないと**消せずに残る**。security のための読み取り。
+   * - `clipboard-sanitized-write` —— 上の消去と、各画面のコピーボタン。
+   *
+   * それ以外 (media / geolocation / notifications / midi / display-capture /
+   * hid / serial / usb / idle-detection / window-management …) は**全部拒否**。
+   * このアプリはどれも使っていない (実測: `getUserMedia` 0 件・
+   * `geolocation` 0 件・`new Notification` 0 件)。`SpeechRecognition` は
+   * ブラウザ版だけで動くもので、Electron には実装が無い。
+   *
+   * **その「使っていない」は `shared/__tests__/permissionJustification.test.ts` が
+   * 走査で測る。** (2026-09-11 · パス 148) 許可表そのものは `mainWindow.test.ts` が
+   * 留めているが、**拒む根拠**の側はこの散文だけが持っていた —— 誰かが
+   * `getUserMedia` を足すと Electron では黙って動かなくなり (許可表は変わらない)、
+   * この実測は嘘になるのに何も鳴らない、という形だった。いまは両方向に鳴る:
+   * API を足せば走査が落ち、許可表を広げれば `mainWindow.test.ts` が落ちる。
+   */
+  const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
+    'clipboard-read',
+    'clipboard-sanitized-write',
+  ]);
+  /**
+   * 判定は**ここ 1 つ**。要求側 (`setPermissionRequestHandler`) と
+   * 問い合わせ側 (`setPermissionCheckHandler`) の 2 つの口があり、
+   * 両方が同じ答えを返さないと `navigator.permissions.query()` が
+   * 「granted」と言った権限を実際の要求が拒否する (逆もある)。
+   * 同じ判断を 2 度書かない —— `externalUrlGate.ts` の扉と同じ理由。
+   */
+  const permissionAllowed = (permission: string): boolean => ALLOWED_PERMISSIONS.has(permission);
+  /*
+   * **綴り検査は session 側でも切る。**
+   *
+   * `webPreferences.spellcheck: false` は **webContents ごと**の設定で、
+   * `session.isSpellCheckerEnabled()` には現れない (実測: 未設定でも
+   * `spellcheck: false` でも `true` を返す)。**片方だけでは「切れている」
+   * ことを外から確かめられない。** session 側も切ると観測可能になり、
+   * 窓を増やしたときの取りこぼしも無くなる。
+   *
+   * 最初は webPreferences だけ入れて「効いていない」と読み違えかけた ——
+   * **見ていた物が、設定した物と違っていた。**
+   */
+  win.webContents.session.setSpellCheckerEnabled(false);
+
+  win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
+    callback(permissionAllowed(permission));
+  });
+  win.webContents.session.setPermissionCheckHandler((_wc, permission) => permissionAllowed(permission));
+
   win.webContents.setWindowOpenHandler(({ url }) => {
-    // Same http(s) allowlist as the IPC handler. Anything else (file:,
-    // javascript:, OS schemes) is silently dropped.
-    try {
-      const u = new URL(url);
-      if (u.protocol === 'http:' || u.protocol === 'https:') {
-        shell.openExternal(u.toString());
-      }
-    } catch {
-      // ignore non-URL strings
-    }
+    // IPC の扉と**同じ関門**を通す。以前ここは手書きの http(s) 判定で、
+    // 関門の許可表を締めてもこちらだけ古い規則のまま開いた
+    // (対照実験は externalUrlGate.ts の頭に記録)。
+    const target = externalUrlOrNull(url);
+    if (target !== null) shell.openExternal(target);
     return { action: 'deny' };
   });
 
   // Block all in-app navigation away from the loaded renderer; this
   // includes the renderer trying to navigate via window.location.
-  win.webContents.on('will-navigate', (event, navigationUrl) => {
+  //
+  // The Vite HMR exemption is gated on dev: in a packaged build nothing of ours
+  // listens on 5173, so leaving it open only let a compromised renderer aim the
+  // main window at whatever local process happened to hold that port
+  // (2026-07 audit). `will-redirect` gets the same treatment — otherwise a 3xx
+  // during an allowed navigation would land somewhere unvetted.
+  /**
+   * 解析できなかった URL を**空文字**にする。`origin` は絶対に空文字にならない
+   * ので、「読めた」と「読めなかった」が値の上で混ざらない。
+   *
+   * 制御の流れ (try/catch から抜けたか) で表していた頃は、catch の中身を空に
+   * しても暗黙の `undefined` が返り、呼び出し側からは `false` と見分けが
+   * 付かなかった — **守りを外しても誰も気付けない形**だった。読めなかったことを
+   * 値で表すと、下の `target !== ''` がそれを見て落とせる。
+   */
+  const originOrEmpty = (url: string): string => {
     try {
-      const u = new URL(navigationUrl);
-      // Allow Vite HMR navigation only.
-      if (u.host === 'localhost:5173' || u.host === '127.0.0.1:5173') return;
+      return new URL(url).origin;
     } catch {
-      // fall through
+      return '';
     }
+  };
+  /**
+   * 実際に読み込んだ開発サーバの **origin** (scheme + host + port) とだけ
+   * 突き合わせる。
+   *
+   * 2026-08-22 の点検まで `u.host === 'localhost:5173'` で見ていたが、`host` に
+   * **スキームは入らない**。`https://localhost:5173/` も `ftp://localhost:5173/`
+   * も同じ host なので素通りしていた — 「そのポートを握った別のプロセスへ窓を
+   * 向けられないようにする」というこの例外の目的が、平文 http の相手にしか
+   * 効いていなかった。ポートの決め打ちも外した (5173 が埋まると Vite は次の
+   * 空き番へずれるので、通すべき本物を止めて通すべきでない相手を通しうる)。
+   */
+  const allowNavigation = (navigationUrl: string): boolean => {
+    const devServer = process.env.VITE_DEV_SERVER_URL;
+    if (!isDev || !devServer) return false;
+    const target = originOrEmpty(navigationUrl);
+    // 空文字どうしを「一致」と読まない。開発サーバの URL 自体が壊れていると、
+    // 同じく壊れた遷移先が「同じ origin」に見えて通ってしまう。
+    return target !== '' && target === originOrEmpty(devServer);
+  };
+  const guardNavigation = (event: { preventDefault: () => void }, navigationUrl: string): void => {
+    if (allowNavigation(navigationUrl)) return;
     event.preventDefault();
-  });
+  };
+  win.webContents.on('will-navigate', guardNavigation);
+  win.webContents.on('will-redirect', guardNavigation);
 
   if (isDev && process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
@@ -84,8 +224,23 @@ function createWindow(): BrowserWindow {
   return win;
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // 窓を作る前に配色を読む (パス 318) —— 読めなければ既定のライトで、renderer が起動後に伝え直す。
+  windowPrefs = await readWindowPrefs();
+  applyNativeTheme(windowPrefs.scheme);
   createWindow();
+
+  /*
+   * 既に書き出されているファイルの緩い権限を一度だけ均す。
+   *
+   * `writeExportFile` は書くたびに 0600 へ直すが、**書き出しは「一度作って
+   * それきり」になりうる**ので、それだけでは既存の 0644 が永遠に残る
+   * (状態ファイルは保存のたびに書き換わるので、あちらは次の書き込みで足りる)。
+   *
+   * 窓を出してから走らせる —— 起動を待たせる価値のある処理ではない。
+   * 失敗しても起動は続ける (権限を直せないことは、アプリが使えない理由にならない)。
+   */
+  void repairExportPermissions().catch(() => undefined);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -97,61 +252,213 @@ app.on('window-all-closed', () => {
 });
 
 ipcMain.handle('app:getVersion', () => app.getVersion());
-ipcMain.handle('app:openExternal', async (_e, url: string) => {
-  // Defense-in-depth: the renderer is sandboxed and contextIsolated,
-  // but the IPC channel accepts any string. Restrict to http(s) to
-  // block javascript:, data:, file:, and custom-scheme URI handlers
-  // that could escalate (e.g. ssh:// on macOS, ms-windows-store://
-  // on Windows).
-  if (typeof url !== 'string') return;
-  let parsed: URL;
+
+/**
+ * 更新の有無を調べる。**取得もインストールもしない。**
+ *
+ * 署名と公証が入るまで自動更新は入れない (署名の無い配布物を自動で取得して
+ * 実行する経路は、トークンを持つこのアプリでは新しいコード実行の入口になる)。
+ * ここでやるのは公開されている最新版の版番号を読むことだけで、
+ * ダウンロードは利用者がリリースページを開いて行う。
+ *
+ * 送り先は定数。応答は `parseLatestRelease` が形と URL のホストまで確かめる
+ * ので、応答を差し替えられても任意の URL を案内先にはできない。
+ */
+ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
+  const current = app.getVersion();
   try {
-    parsed = new URL(url);
+    const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', egressInit({
+      headers: { accept: 'application/vnd.github+json' },
+      /*
+       * **締切も共有の値。** (2026-09-15 · パス 282)
+       *
+       * ここは今日まで `AbortSignal.timeout(10_000)` という**裸の数**で、
+       * ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は
+       * `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた —— **同じ問いに 3 倍違う締切**。
+       * しかも 3 行下の注記は 2026-08-31 に**本文の上限**の食い違いを直したときのもので、
+       * そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで
+       * 判断が変わる理由が無い」と書いてある。**その直しは 1 行手前で止まり、
+       * 同じ関数の中に同じ形の食い違いを 2 週間残していた。**
+       *
+       * 害の向き: 遅い回線で先に諦めるのは**デスクトップ版**で、そちらは
+       * 「新しい版が出た」を受けて実際に更新できる側である (ブラウザ版は自分自身を
+       * 更新できない —— `web-shim.ts` の注記がそう述べている)。答えを要る方が
+       * 3 倍早く「判定不能」に倒れていた。
+       *
+       * 実測 (パス 282): `src/**` の締切はすべて名前のある定数を読んでおり、
+       * **裸の数はこの 1 行だけだった**。`shared/__tests__/deadlineCensus.test.ts` が
+       * 母集団を走査して留める (`httpLimits` の判定が「手で選んだ 3 経路だけ」と
+       * 自分で認めていた穴がここに在った)。
+       */
+      signal: AbortSignal.timeout(DEFAULT_HTTP_TIMEOUT_MS),
+    }));
+    // 転送には追随しない (規則は httpLimits.ts)。案内先は固定なので、転送されたら「判定不能」。
+    if (isRedirectResponse(res) || !res.ok) return evaluateUpdate(current, null);
+    // 本文は上限つきで読む。ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate`)
+    // は `readCappedText` を通しているのに、**こちらだけ `res.json()` の
+    // 素通しだった** (2026-08-31)。宛先は定数で https だが、同じ問いに答えが
+    // 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い。
+    return evaluateUpdate(
+      current,
+        // Stryker disable next-line StringLiteral: この標識はエラー本文にしか
+      // 現れず、上限超過も含めて**すべての失敗を下の catch が「判定不能」へ
+      // 寄せる** (更新確認の失敗でアプリが使えなくならないため)。空文字に
+      // しても観測できる差が無い (等価変異)。
+      parseLatestRelease(JSON.parse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'update'))),
+    );
   } catch {
-    return;
+    // 通信できない・応答が JSON でない等はすべて「判定不能」に寄せる。
+    // 更新の確認が失敗してアプリが使えなくなる理由は無い。
+    return evaluateUpdate(current, null);
   }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return;
-  await shell.openExternal(parsed.toString());
+});
+ipcMain.handle('app:openExternal', async (_e, url: unknown) => {
+  // Defense-in-depth: the renderer is sandboxed and contextIsolated,
+  // but the IPC channel accepts any value. 関門は `externalUrlGate.ts` に
+  // 1 つだけ置く —— 新窓ハンドラも同じものを通る。
+  const target = externalUrlOrNull(url);
+  if (target === null) return;
+  // `shell` は OS 側が開けないと **reject する** (既定ブラウザ未設定、
+  // Linux で xdg-open が無い等)。この口の約束は `Promise<void>` で、
+  // レンダラー側に受け皿が無い —— reject をそのまま返すと呼び出し元で
+  // 未処理の rejection になる。握り潰さず、main の記録には残す
+  // (`secrets.ts` と同じ扱い。GUI 利用者には見えないが、不具合報告の
+  // ログには出る)。
+  try {
+    await shell.openExternal(target);
+  } catch (e) {
+    console.error(`[openExternal] OS が URL を開けませんでした: ${safeErrorMessage(e)}`);
+  }
 });
 
-ipcMain.handle('app:revealInFolder', (_e, filePath: unknown) => {
+// 開く側の関門は `shellOpenGate.ts` に 1 つだけ置く (書き出し側の
+// `exportPaths.ts` と対になる)。ここに直接書いていた頃はテストが一本も無かった。
+const REJECTED_PATH_MESSAGE =
+  '指定されたパスは開けません。書き出し先の外にあるか、対応していない拡張子です。';
+
+ipcMain.handle('app:revealInFolder', async (_e, filePath: unknown): Promise<OsOpResult> => {
   // Reveal a saved file in the OS file manager (Finder / Explorer / Nautilus).
-  // Only accept paths under the user's home directory — the renderer should
-  // only ever pass paths it just wrote via an export action, which already
-  // path-traversal-guard to ~/.local/business-hub/**, but we re-check here
-  // as defense-in-depth.
-  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return;
-  if (/[\0\r\n]/.test(filePath)) return;
-  const resolved = require('node:path').resolve(filePath);
-  const home = require('node:path').resolve(require('node:os').homedir());
-  if (!resolved.startsWith(home + require('node:path').sep)) return;
-  shell.showItemInFolder(resolved);
+  // 弾いた時・失敗した時は理由を返す。黙って `undefined` を返すと、呼び出し側は
+  // 握り潰すしかなく「押しても何も起きない」画面になる。
+  try {
+    const target = await shellTargetOrNull(filePath);
+    if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
+    shell.showItemInFolder(target);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
+  }
 });
 
-ipcMain.handle('app:openPath', async (_e, filePath: unknown) => {
+ipcMain.handle('app:openPath', async (_e, filePath: unknown): Promise<OsOpResult> => {
   // Open a file with the OS default application (SVG → image viewer,
-  // HTML → browser, MD → text editor, etc.). Same path-traversal guard
-  // as revealInFolder above. Returns empty string on success or an error
-  // string on failure (Electron's shell.openPath contract).
-  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return;
-  if (/[\0\r\n]/.test(filePath)) return;
-  const resolved = require('node:path').resolve(filePath);
-  const home = require('node:path').resolve(require('node:os').homedir());
-  if (!resolved.startsWith(home + require('node:path').sep)) return;
-  await shell.openPath(resolved);
+  // HTML → browser, MD → text editor, etc.). Same gate as revealInFolder.
+  //
+  // `shell.openPath` は成功で空文字、失敗でエラー文字列を返す契約。監査前は
+  // その戻り値を捨てていたため (契約はこのコメントに書いてあった)、関連付けの
+  // 無いファイル種別などで開けなくても呼び出し側には成功と見えていた。
+  try {
+    const target = await shellTargetOrNull(filePath);
+    if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
+    const failure = await shell.openPath(target);
+    return failure === '' ? { ok: true } : { ok: false, message: failure };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
+  }
 });
 
-ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown) => {
-  if (!isServiceId(serviceId) || typeof token !== 'string') return;
-  const trimmed = token.trim();
-  if (trimmed.length === 0 || trimmed.length > 65536) return;
-  await setToken(serviceId, trimmed);
+// 弾いた理由を **返す**。以前は `return;` で黙って捨てており、renderer からは
+// 保存できた場合と区別が付かなかった (上限超えの貼り付けが「保存した」ように
+// 見えていた)。規則は shared/tokenInput.ts に 1 つだけ置く。
+ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Promise<TokenSaveResult> => {
+  if (!isServiceId(serviceId)) {
+    return { ok: false, code: 'invalid_service', message: 'unknown service id' };
+  }
+  const checked = checkTokenInput(token);
+  if (!checked.ok) {
+    return { ok: false, code: 'invalid_token', message: checked.message };
+  }
+  try {
+    await setToken(serviceId, checked.value);
+  } catch (e) {
+    // **ここも伏字の合流点を通す。** 13 本のハンドラのうち、生の `e.message` を
+    // 返していたのはここだけだった —— しかも**資格情報が生きている唯一の
+    // ハンドラ**である。今日の `setToken` は fs エラー (userData のパスが載る)
+    // しか投げないが、片側だけ関門の外に居る状態を残さない。
+    // `safeErrorMessage` は伏字に加えて長さも切る。
+    //
+    // **この「13 本のうち」という数え方は足りなかった (2026-08-23)。**
+    // ハンドラの `message` 欄は数えたが、**ハンドラが返す*データの中*に載る
+    // 文言**を数えていない。実測すると 2 経路が関門の外に居た:
+    //   action:invoke  → assistant.chatAll の `answers[].error`
+    //   fetch:snapshot → ollama スナップショットの `warnings[]`
+    // どちらも `sk-ant-...` を含む例外を**逐語で** renderer へ渡していた。
+    // 数える単位は「ハンドラ」ではなく **「外へ出る値に載る文言」**である。
+    // `main/__tests__/rendererBoundMessages.test.ts` が実測で留めている。
+    return { ok: false, code: 'write_failed', message: safeErrorMessage(e) };
+  }
+  return { ok: true };
 });
-ipcMain.handle('secrets:clear', async (_e, serviceId: unknown) => {
-  if (!isServiceId(serviceId)) return;
-  await clearToken(serviceId);
+ipcMain.handle('secrets:clear', async (_e, serviceId: unknown): Promise<OsOpResult> => {
+  if (!isServiceId(serviceId)) return { ok: false, message: 'unknown service id' };
+  // 削除の失敗を黙ると「消したつもりの資格情報が残っている」状態になる。
+  try {
+    await clearToken(serviceId);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
+  }
 });
 ipcMain.handle('secrets:list', () => listConfiguredServices());
+// Read-only report of at-rest protection. Returns no secret material — only
+// whether the OS keychain is usable, how many values are still `plain:`, and the
+// file path — so the UI can warn the user instead of degrading silently.
+ipcMain.handle('secrets:protection', () => getStorageProtection());
+
+/**
+ * デスクトップ版の「すべてのデータを削除」(2026-09-09 · パス 137)。トークン (secrets.json と控え)・状態ファイル
+ * (気分の記録・人材育成・チームレーダー・ウォッチリスト) と書き込みの残骸、renderer の保存領域を消し、
+ * **全部消えた時だけ**再起動する (パス 20 の規則)。残った物はファイルごとの報告で画面が名指しする。
+ * 再起動は返してから —— 画面が「再起動します」を出せる。
+ */
+const RELAUNCH_DELAY_MS = 300;
+function scheduleRelaunch(): void {
+  setTimeout(() => {
+    app.relaunch();
+    app.exit(0);
+  }, RELAUNCH_DELAY_MS);
+}
+ipcMain.handle('app:eraseAll', async (): Promise<DesktopEraseReport> => {
+  try {
+    const report = await eraseDesktopData();
+    if (report.allDeleted) scheduleRelaunch();
+    return report;
+  } catch (e) {
+    // eraseDesktopData は投げない設計だが、IPC を reject させない (lint:ipc-handlers) —— 画面が用意していない経路に落とさない。
+    return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: safeErrorMessage(e) };
+  }
+});
+
+/**
+ * 配色の追随 (パス 318)。renderer が解いた scheme と stylesheet の `--bg` の実値を受け取り、今ある窓の下地と
+ * Electron 自身の配色を変え、次回の起動のために userData に残す。値は形で絞る (`light` / `dark` と `#rrggbb` だけ)。
+ * 保存に失敗しても窓の色はもう変わっている —— 戻り値で言い、reject しない (lint:ipc-handlers)。
+ */
+ipcMain.handle('app:setColorScheme', async (_e, scheme: unknown, background: unknown): Promise<OsOpResult> => {
+  if (!isWindowScheme(scheme) || !isBackgroundColor(background)) {
+    return { ok: false, message: '配色の値が不正です (light / dark と #rrggbb だけを受け取ります)' };
+  }
+  const prefs: WindowPrefs = { scheme, background: background.toLowerCase() };
+  try {
+    windowPrefs = prefs;
+    applyNativeTheme(prefs.scheme);
+    for (const win of BrowserWindow.getAllWindows()) win.setBackgroundColor(prefs.background);
+    await writeWindowPrefs(prefs);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: safeErrorMessage(e) };
+  }
+});
 
 ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   if (!isServiceId(serviceId)) {
@@ -168,15 +475,28 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   // LOCAL_SERVICES (e.g. 'skills', 'security') read primarily from disk
   // and must work without a saved token. We still pass any saved token
   // through — security uses it for opt-in HIBP/VT enrichment.
+  // 資格情報の読み出しは try の**中**で行う。以前は外にあったため、
+  // `safeStorage.decryptString` が壊れた値で throw すると IPC ハンドラごと
+  // reject し、renderer 側 (`useServiceData`) は「読込中…」のまま止まっていた。
   let token = '';
-  if (LOCAL_SERVICES.has(serviceId)) {
-    token = (await getValidToken(serviceId)) ?? '';
-  } else {
-    const t = await getValidToken(serviceId);
-    if (!t) {
-      return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+  try {
+    const read = await getValidToken(serviceId);
+    if (!read.ok) {
+      // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
+      // ただし「保存済みだが復号できない」「保管ファイルが読めない」場合は
+      // ローカルでも黙らない —— どちらも**未設定ではない**ので、
+      // 「トークン未設定」と案内すると利用者は鍵を貼り直そうとする。
+      if (read.reason !== 'absent') {
+        return { ok: false, code: 'not_configured', message: read.message };
+      }
+      if (!LOCAL_SERVICES.has(serviceId)) {
+        return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+      }
+    } else {
+      token = read.token;
     }
-    token = t;
+  } catch (err) {
+    return { ok: false, code: 'fetch_failed', message: safeErrorMessage(err) };
   }
   try {
     const data = await fetcher({ token });
@@ -206,9 +526,45 @@ ipcMain.handle(
         message: `${serviceId} に action "${action}" は登録されていません`,
       };
     }
-    const token = await getValidToken(serviceId);
-    if (!token) {
-      return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+    // fetch:snapshot と同じ理由で try の中に入れる。
+    /*
+     * **`LOCAL_SERVICES` の action はトークン無しで通す** (2026-09-15 · パス 267)。
+     *
+     * ここは 2026-09-15 まで**全サービスに**有効なトークンを要求しており、
+     * 資格情報の要らない 15 サービス (実測) の action が**デスクトップ版では
+     * 1 度も呼ばれなかった** —— 実測すると
+     * `{ok: false, code: 'not_configured', message: 'トークン未設定'}` を返し、
+     * action 関数の呼び出し回数は 0 だった。同じ入口の `fetch:snapshot` は
+     * 30 行上で `LOCAL_SERVICES` を見ており (資格情報なしでも動くので
+     * 読めないことは異常ではない)、**書き込み側だけがその規則を持っていなかった。**
+     *
+     * 効いていたのは「AI 改善提案」(不動産 / 投資信託 / Uber Eats / 出前館 ——
+     * パス 119 が両ビルドへ通した物)・チームレーダーの `save-state` (パス 118 が
+     * ブラウザ版で直した物の裏返し)・人材育成の 2 つ・感情ログの `analyze-text`・
+     * Ollama の `chat`・株式の 5 つ・経営の `advise`・書類スタジオ・テンプレート・
+     * Skills・Security・アシスタント。ブラウザ版 (`web-shim`) はトークンを
+     * 要求しないので**同じボタンが動いていた** —— ビルド間の非対称である。
+     *
+     * 断る条件は `fetch:snapshot` と 1 文字も変えない: **`absent` 以外は
+     * ローカルでも断る** (「保存済みだが復号できない」「保管ファイルが読めない」は
+     * *未設定ではない*ので、「トークン未設定」と案内すると鍵を貼り直させてしまう)。
+     */
+    let token = '';
+    try {
+      const read = await getValidToken(serviceId);
+      if (!read.ok) {
+        // 未設定だけが「トークン未設定」。復号できない・保管ファイルが読めないは理由を出す。
+        if (read.reason !== 'absent') {
+          return { ok: false, code: 'not_configured', message: read.message };
+        }
+        if (!LOCAL_SERVICES.has(serviceId)) {
+          return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+        }
+      } else {
+        token = read.token;
+      }
+    } catch (err) {
+      return { ok: false, code: 'action_failed', message: safeErrorMessage(err) };
     }
     // Validate payload is a plain object, not an array / primitive / null
     const safePayload =
@@ -228,12 +584,25 @@ ipcMain.handle('oauth:isSupported', (_e, serviceId: unknown) =>
   isServiceId(serviceId) ? isOAuthSupported(serviceId) : false,
 );
 
-ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown) => {
+// ランタイム クライアント ID の妥当性 (英数・ドット・ハイフン・アンダースコア、8〜200 文字)。
+// Entra の GUID / Google の *.apps.googleusercontent.com の双方を許容しつつ、
+// 制御文字・空白などの混入を IPC 境界で拒否する。
+const CLIENT_ID_RE = /^[A-Za-z0-9._-]{8,200}$/;
+
+ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverride?: unknown) => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_supported', message: 'unknown service id' };
   }
-  const config = Object.hasOwn(OAUTH_CONFIGS, serviceId)
+  const baseConfig = Object.hasOwn(OAUTH_CONFIGS, serviceId)
     ? OAUTH_CONFIGS[serviceId as ServiceId]
+    : undefined;
+  // 環境変数未設定でも、UI から渡されたクライアント ID で実行できる (アプリ内かんたん接続)。
+  const override =
+    typeof clientIdOverride === 'string' && CLIENT_ID_RE.test(clientIdOverride.trim())
+      ? clientIdOverride.trim()
+      : '';
+  const config = baseConfig
+    ? { ...baseConfig, clientId: override || baseConfig.clientId }
     : undefined;
   if (!config || !config.clientId) {
     return {

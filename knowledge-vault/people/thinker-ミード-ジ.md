@@ -1,0 +1,33 @@
+---
+title: "ジョージ・ハーバート・ミード"
+type: thinker
+person_key: "ミード|ジ"
+concept_count: 11
+tags:
+  - person
+  - index
+---
+
+# ジョージ・ハーバート・ミード
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **11 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（11件）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — アブソープション・アプローチ（absorptionapproach）は、シドニー・アレクサンダーが1952年に提示した…
+- [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 関税同盟の理論は、ジェイコブ・ヴァイナーが1950年の著書で体系化した地域経済統合の厚生分析枠組みである。
+- [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 開放経済のマクロ経済学において、支出転換政策（為替切り下げ・関税等）は国内財と外国財の間で支出の方向を切り替え、支出削…
+- [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]] — ミードの内外均衡葛藤（Meadeconflict）は、ジェームズ・ミードが1951年の著書で分析した開放経済の政策問題…
+- [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — リチャード・リプシーとケルビン・ランカスターが1956年に定式化した「次善の理論（theoryofthesecondb…
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — スワン・ダイアグラム（Swandiagram）は、トレヴァー・スワンが1963年に発表した開放経済の政策分析のための図…
+- [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — ティンバーゲンの定理（Tinbergenrule）は、ヤン・ティンバーゲンが1952年の著書で定式化したマクロ経済政策…
+- [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]] — 経常収支（currentaccountbalance）は，一国の商品・サービス・所得・移転の対外取引の収支であり，国際…
+- [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]] — ジェイコブ・ヴァイナーが1950年に提示した貿易創出（tradecreation）と貿易転換（tradediversi…
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 自己確証理論（self-verificationtheory）は、社会心理学者ウィリアム・B・スワンが1983年に提唱…
+- [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 鏡に映った自己（looking-glassself）は、社会学者チャールズ・ホートン・クーリーが1902年の著作『人間…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

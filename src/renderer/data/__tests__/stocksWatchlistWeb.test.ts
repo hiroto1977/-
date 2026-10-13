@@ -1,0 +1,346 @@
+/** @vitest-environment jsdom */
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  STOCKS_WATCHLIST_KEY,
+  isSafeSymbol,
+  loadWatchlistSymbols,
+  registerSymbol,
+  unregisterSymbol,
+  buildWatchlistItem,
+  buildStocksSnapshot,
+  mockCandles,
+  readWatchlist,
+} from '../stocksWatchlistWeb';
+import { rereadModule } from '../../../shared/__tests__/rereadModule';
+
+beforeEach(() => {
+  localStorage.clear();
+});
+
+describe('STOCKS_WATCHLIST_KEY', () => {
+  it('is the stable localStorage key', () => {
+    expect(STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist');
+  });
+});
+
+describe('isSafeSymbol', () => {
+  it('accepts JP / US / index symbols', () => {
+    expect(isSafeSymbol('AAPL')).toBe(true);
+    expect(isSafeSymbol('7203.T')).toBe(true);
+    expect(isSafeSymbol('^N225')).toBe(true);
+  });
+  it('rejects empty, too long, unsafe, or non-string', () => {
+    expect(isSafeSymbol('')).toBe(false);
+    expect(isSafeSymbol('A'.repeat(17))).toBe(false);
+    expect(isSafeSymbol('AA PL')).toBe(false);
+    expect(isSafeSymbol('rm -rf')).toBe(false);
+    expect(isSafeSymbol(123)).toBe(false);
+    expect(isSafeSymbol(null)).toBe(false);
+  });
+  it('accepts exactly 16 chars (upper length boundary)', () => {
+    expect(isSafeSymbol('A'.repeat(16))).toBe(true);
+  });
+});
+
+describe('registerSymbol', () => {
+  it('adds a new symbol (uppercased) and persists it', () => {
+    const r = registerSymbol('aapl');
+    expect(r.added).toBe(true);
+    expect(r.symbol).toBe('AAPL');
+    expect(r.watchlist).toEqual(['AAPL']);
+    expect(loadWatchlistSymbols()).toEqual(['AAPL']);
+    expect(JSON.parse(localStorage.getItem(STOCKS_WATCHLIST_KEY)!)).toEqual(['AAPL']);
+  });
+
+  it('is idempotent for an already-registered symbol', () => {
+    registerSymbol('AAPL');
+    const again = registerSymbol('aapl');
+    expect(again.added).toBe(false);
+    expect(again.watchlist).toEqual(['AAPL']);
+    expect(loadWatchlistSymbols()).toEqual(['AAPL']);
+  });
+
+  it('keeps multiple symbols in insertion order', () => {
+    registerSymbol('AAPL');
+    registerSymbol('7203.T');
+    const r = registerSymbol('^N225');
+    expect(r.watchlist).toEqual(['AAPL', '7203.T', '^N225']);
+  });
+
+  it('throws on an invalid symbol', () => {
+    expect(() => registerSymbol('bad symbol')).toThrow(/symbol must be/);
+    expect(loadWatchlistSymbols()).toEqual([]);
+  });
+
+  it('reports the added vs already-present message with the running count', () => {
+    expect(registerSymbol('AAPL').message).toBe('AAPL をウォッチリストに追加しました (計 1 件)');
+    expect(registerSymbol('AAPL').message).toBe('AAPL は既にウォッチリストにあります (計 1 件)');
+    expect(registerSymbol('MSFT').message).toBe('MSFT をウォッチリストに追加しました (計 2 件)');
+  });
+});
+
+describe('unregisterSymbol', () => {
+  it('removes a registered symbol', () => {
+    registerSymbol('AAPL');
+    registerSymbol('MSFT');
+    const r = unregisterSymbol('aapl');
+    expect(r.removed).toBe(true);
+    expect(r.watchlist).toEqual(['MSFT']);
+    expect(loadWatchlistSymbols()).toEqual(['MSFT']);
+  });
+
+  it('reports removed=false for an absent symbol', () => {
+    registerSymbol('AAPL');
+    const r = unregisterSymbol('TSLA');
+    expect(r.removed).toBe(false);
+    expect(r.watchlist).toEqual(['AAPL']);
+  });
+
+  it('throws on an invalid symbol', () => {
+    expect(() => unregisterSymbol('x'.repeat(20))).toThrow(/symbol must be/);
+  });
+
+  it('reports the removed vs absent message with the running count', () => {
+    registerSymbol('AAPL');
+    registerSymbol('MSFT');
+    expect(unregisterSymbol('AAPL').message).toBe('AAPL をウォッチリストから削除しました (計 1 件)');
+    expect(unregisterSymbol('AAPL').message).toBe('AAPL はウォッチリストにありません');
+  });
+});
+
+describe('loadWatchlistSymbols', () => {
+  it('returns [] when nothing is stored', () => {
+    expect(loadWatchlistSymbols()).toEqual([]);
+  });
+  it('★ 壊れた JSON: readWatchlist は理由つきで「読めなかった」、助言側の loadWatchlistSymbols だけが空に倒す (パス 309)', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, '{not json');
+    expect(readWatchlist()).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
+    expect(loadWatchlistSymbols()).toEqual([]);
+  });
+  it('readWatchlist: 保存が無ければ「まだ無い」、保存した物は落とした件数つき', () => {
+    expect(readWatchlist()).toEqual({ kind: 'none' });
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(['AAPL', 42]));
+    expect(readWatchlist()).toEqual({ kind: 'saved', symbols: ['AAPL'], dropped: 1 });
+  });
+  it('filters out unsafe entries and dedupes (uppercased)', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(['aapl', 'AAPL', 'bad sym', 42]));
+    expect(loadWatchlistSymbols()).toEqual(['AAPL']);
+  });
+  it('returns [] when the stored value is valid JSON but not an array (number)', () => {
+    // `if (!Array.isArray(parsed)) return []` の [] を ["Stryker..."] にする mutant を kill。
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(42));
+    expect(loadWatchlistSymbols()).toEqual([]);
+  });
+  it('returns [] for a stored JSON string (iterable but not an array)', () => {
+    // 文字列は for...of で 1 文字ずつ反復できてしまうため、Array.isArray ガードを外す
+    // mutant は 'AAPL' を ['A','P','L'] に展開する → ガードが効くことを確認して kill。
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify('AAPL'));
+    expect(loadWatchlistSymbols()).toEqual([]);
+  });
+});
+
+describe('buildStocksSnapshot — 保存先から何が読めたか (パス 309)', () => {
+  it('保存が無い: 空の一覧・stored=none・注記なし', () => {
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist).toEqual([]);
+    expect(snap.stored).toBe('none');
+    expect(snap.storedNote).toBeNull();
+  });
+
+  it('★ 壊れた保存値: 空の一覧を返しつつ「読めなかった」と言う (パス 309 までは黙って空で続け、次の登録が上書きした)', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, '{壊れた');
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist).toEqual([]);
+    expect(snap.stored).toBe('unreadable');
+    expect(snap.storedNote).toBe(
+      '保存したウォッチリストを読めませんでした (JSON として読めません)。一覧は空です。'
+        + 'このまま銘柄を登録・解除すると空の一覧を基に上書きされ、元の保存値は戻りません。',
+    );
+  });
+
+  it('★ 読み込みで落とした要素が在れば件数を言う', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(['AAPL', 'bad sym', 42]));
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL']);
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toBe(
+      '保存したウォッチリストのうち 2 件は銘柄コードとして読めず、読み込みで落としました。このまま登録・解除すると、これらは失われます。',
+    );
+  });
+
+  it('登録すると保存され、注記は消える (往復)', () => {
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, '{壊れた');
+    registerSymbol('aapl');
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL']);
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toBeNull();
+  });
+});
+
+describe('readWatchlist — Web Storage そのものが読みを拒む環境 (パス 89 / 309)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+  /** jsdom の `getItem` は実体ではなく `Storage.prototype` に在る。 */
+  function denyRead(thrown: unknown): void {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw thrown;
+    });
+  }
+
+  it('★ Error を投げる保存先: 「読めなかった」として例外の message を理由に運ぶ (「まだ無い」に畳まない)', () => {
+    denyRead(new Error('blocked by policy'));
+    expect(readWatchlist()).toEqual({ kind: 'unreadable', reason: 'blocked by policy' });
+  });
+
+  it('Error でない物を投げる保存先: 文字列にして理由へ運ぶ', () => {
+    denyRead('storage is gone');
+    expect(readWatchlist()).toEqual({ kind: 'unreadable', reason: 'storage is gone' });
+  });
+
+  it('★ 助言の側 (loadWatchlistSymbols) は空へ倒し、画面の側 (buildStocksSnapshot) は理由つきで「読めなかった」と言う', () => {
+    denyRead(new Error('blocked by policy'));
+    expect(loadWatchlistSymbols()).toEqual([]);
+    const snap = buildStocksSnapshot(Date.UTC(2026, 0, 31));
+    expect(snap.watchlist).toEqual([]);
+    expect(snap.stored).toBe('unreadable');
+    expect(snap.storedNote).toBe(
+      '保存したウォッチリストを読めませんでした (blocked by policy)。一覧は空です。'
+        + 'このまま銘柄を登録・解除すると空の一覧を基に上書きされ、元の保存値は戻りません。',
+    );
+  });
+});
+
+describe('mockCandles', () => {
+  const NOW = Date.UTC(2026, 0, 31);
+  it('is deterministic for the same symbol + now', () => {
+    expect(mockCandles('AAPL', NOW)).toEqual(mockCandles('AAPL', NOW));
+  });
+  it('differs across symbols', () => {
+    expect(mockCandles('AAPL', NOW)).not.toEqual(mockCandles('MSFT', NOW));
+  });
+  it('produces 30 valid candles (high >= low, positive prices, dated)', () => {
+    const candles = mockCandles('7203.T', NOW);
+    expect(candles).toHaveLength(30);
+    for (const c of candles) {
+      expect(c.high).toBeGreaterThanOrEqual(c.low);
+      expect(c.close).toBeGreaterThan(0);
+      expect(c.volume).toBeGreaterThan(0);
+      expect(c.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+    expect(candles[candles.length - 1]!.date).toBe('2026-01-31');
+  });
+  it('matches a golden 3-candle series (pins seed, PRNG, OHLCV formulas)', () => {
+    expect(mockCandles('AAPL', NOW, 3)).toEqual([
+      { date: '2026-01-29', open: 920, high: 923.85, low: 911.62, close: 922.46, volume: 515433 },
+      { date: '2026-01-30', open: 922.46, high: 930.1, low: 909.59, close: 912.15, volume: 205335 },
+      { date: '2026-01-31', open: 912.15, high: 912.51, low: 895.44, close: 904.03, volume: 269705 },
+    ]);
+  });
+  it('spans the date range and clamps periods to a positive integer', () => {
+    const c30 = mockCandles('AAPL', NOW, 30);
+    expect(c30[0]!.date).toBe('2026-01-02'); // now − 29 日
+    expect(c30[29]!.date).toBe('2026-01-31');
+    expect(mockCandles('AAPL', NOW, 0)).toHaveLength(1); // Math.max(1, …)
+    expect(mockCandles('AAPL', NOW, 2.9)).toHaveLength(2); // Math.floor
+  });
+});
+
+describe('now が Date の範囲外・非有限のとき (isoDaysAgo の床 —— 投げずに日付だけが空になる)', () => {
+  const NOW = Date.UTC(2026, 0, 31);
+  it('★ mockCandles: 日付は全部空文字で、価格は now に依らない', () => {
+    const good = mockCandles('AAPL', NOW, 3).map((c) => c.close);
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, 1e20]) {
+      const candles = mockCandles('AAPL', bad, 3);
+      expect(candles.map((c) => c.date)).toEqual(['', '', '']);
+      expect(candles.map((c) => c.close)).toEqual(good);
+    }
+  });
+  it('buildWatchlistItem のシグナルの日付も空文字 (最後のローソク足の日付をそのまま運ぶ)', () => {
+    expect(buildWatchlistItem('AAPL', Number.NaN).signal.date).toBe('');
+    expect(buildWatchlistItem('AAPL', NOW).signal.date).toBe('2026-01-31');
+  });
+});
+
+describe('buildWatchlistItem', () => {
+  const NOW = Date.UTC(2026, 0, 31);
+  it('derives latest/previous close and a signal from the candles', () => {
+    const item = buildWatchlistItem('AAPL', NOW);
+    const candles = mockCandles('AAPL', NOW);
+    expect(item.symbol).toBe('AAPL');
+    expect(item.label).toBe('AAPL');
+    expect(item.latestClose).toBe(candles[candles.length - 1]!.close);
+    expect(item.previousClose).toBe(candles[candles.length - 2]!.close);
+    expect(['buy', 'sell', 'hold']).toContain(item.signal.action);
+    expect(item.signal.strategy).toBe('browser-mock');
+    expect(item.candles).toHaveLength(30);
+  });
+  it('maps changePct to buy/sell/hold at the ±1% thresholds', () => {
+    // 決定論的なモックの changePct: AAPL=-1.75(sell) / INTC=+1.45(buy) / META=-1.0(境界=hold)
+    const sell = buildWatchlistItem('AAPL', NOW);
+    expect([sell.changePct, sell.signal.action]).toEqual([-1.75, 'sell']);
+    const buy = buildWatchlistItem('INTC', NOW);
+    expect([buy.changePct, buy.signal.action]).toEqual([1.45, 'buy']);
+    const hold = buildWatchlistItem('META', NOW);
+    expect([hold.changePct, hold.signal.action]).toEqual([-1, 'hold']); // -1 は < -1 でないため hold
+    expect(sell.signal.confidence).toBe(0.5);
+    expect(sell.signal.reason).toMatch(/モックデータ/);
+  });
+  it('holds at exactly changePct === ±1 (both thresholds are strict, not >=/<=)', () => {
+    // 決定論的モックで AOF の changePct はちょうど +1、META はちょうど -1。
+    // `changePct > 1` を `>= 1` にする mutant は AOF を 'buy' に、`< -1` を `<= -1` に
+    // する mutant は META を 'sell' にしてしまうため、両境界が 'hold' であることで kill。
+    const buyEdge = buildWatchlistItem('AOF', NOW);
+    expect(buyEdge.changePct).toBe(1);
+    expect(buyEdge.signal.action).toBe('hold');
+    const sellEdge = buildWatchlistItem('META', NOW);
+    expect(sellEdge.changePct).toBe(-1);
+    expect(sellEdge.signal.action).toBe('hold');
+  });
+});
+
+describe('buildStocksSnapshot', () => {
+  const NOW = Date.UTC(2026, 0, 31);
+  it('returns an empty watchlist when none registered', () => {
+    const snap = buildStocksSnapshot(NOW);
+    expect(snap.watchlist).toEqual([]);
+    expect(snap.isMock).toBe(true);
+    expect(snap.portfolio.cash).toBe(1_000_000);
+  });
+  it('builds one watchlist item per registered symbol', () => {
+    registerSymbol('AAPL');
+    registerSymbol('7203.T');
+    const snap = buildStocksSnapshot(NOW);
+    expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL', '7203.T']);
+    expect(snap.watchlist[0]!.candles).toHaveLength(30);
+  });
+  it('★ fetchedAt は now の ISO 文字列で、Date の範囲外・非有限の now なら空文字 (投げない)', () => {
+    expect(buildStocksSnapshot(Date.UTC(2026, 0, 31, 12, 34, 56, 789)).fetchedAt).toBe('2026-01-31T12:34:56.789Z');
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, 8_640_000_000_000_001]) {
+      expect(buildStocksSnapshot(bad).fetchedAt).toBe('');
+    }
+  });
+  it('seeds the portfolio with an empty history array', () => {
+    // history: [] を ["Stryker was here"] にする ArrayDeclaration mutant を kill。
+    expect(buildStocksSnapshot(NOW).portfolio.history).toEqual([]);
+  });
+});
+
+/*
+ * **保管の鍵は、読み直さないと測れない。**
+ *
+ * 上の `expect(STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist')` は正しい主張だが、
+ * モジュール本体で一度だけ評価される定数なので、静的 import では変異が効く前に
+ * 評価が済む (実測 2026-08-31: 生存)。空文字になれば**保存先が変わり**、
+ * 既存のウォッチリストは読めなくなる。
+ */
+describe('保管の鍵 —— 読み直して問う', () => {
+  it('★ 鍵は "stocks.watchlist" で、実際にその下へ書く', async () => {
+    const m = await rereadModule<typeof import('../stocksWatchlistWeb')>(import.meta.url, '../stocksWatchlistWeb');
+    expect(m.STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist');
+    localStorage.clear();
+    m.registerSymbol('AAPL');
+    expect(localStorage.getItem('stocks.watchlist')).toContain('AAPL');
+  });
+});

@@ -1,0 +1,171 @@
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+
+/**
+ * 作業ファイルと控えの名前 —— **作る側 (ここ) と消す側 (`eraseAll.ts`) で 1 つだけ持つ** (パス 493d)。
+ *
+ * 書き込みの作業ファイルは `<target>.tmp-<pid>-<時刻>-<乱数>`、控えは `<target>.prev` で、
+ * ハードリセット (`eraseFileAndLitter`) は**この 2 つの綴りで探して消す**。2026-09-27 まで
+ * 消す側は同じ綴りを自分で書き写しており (`${path.basename(target)}.tmp-` と `${target}.prev`)、
+ * ここの綴りを変えた日 (例えば作業ファイルを `.part-` に) は消す側が 1 件も見つけられず、
+ * **トークンを含む書きかけの残骸が「すべてのデータを削除」の後もディスクに残る**形だった。
+ * 消す側の検査も同じ綴りを手で書いて残骸を作っていたので、両方が緑のまま食い違えた
+ * (綴りが 3 か所目として `secrets.ts` の控えの読みにも在った)。
+ *
+ * ★ **綴りそのものを変えてはいけない理由がもう 1 つ在る** —— 作る側と消す側を揃えて
+ * 変えても、**旧い版が書いた残骸は旧い綴りのまま**ディスクに残っている。変えるなら
+ * 消す側は旧い綴りも探す必要がある (検査が綴りを値で留めているのはそのため)。
+ */
+export const ATOMIC_TMP_INFIX = '.tmp-';
+export const BACKUP_SUFFIX = '.prev';
+
+/** 控えの置き場所。 */
+export function backupPathOf(target: string): string {
+  return `${target}${BACKUP_SUFFIX}`;
+}
+
+/** 作業ファイルの名前 —— `<target>.tmp-<pid>-<時刻>-<乱数>` (一意)。 */
+export function atomicTmpPathOf(target: string): string {
+  // tmp 名は rename 後に消える一意な作業ファイル名で、外部から観測されない (.slice の有無は
+  // 衝突確率にしか影響せず結果不変)。
+  // Stryker disable next-line MethodExpression
+  return `${target}${ATOMIC_TMP_INFIX}${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+/** ディレクトリの 1 項目 `name` が、`target` の書き込みの残骸 (作業ファイル) か。 */
+export function isAtomicLitterOf(target: string, name: string): boolean {
+  return name.startsWith(`${path.basename(target)}${ATOMIC_TMP_INFIX}`);
+}
+
+/**
+ * Durable atomic file write. Stronger than plain `writeFile + rename`:
+ *
+ *   1. write to a unique temp sibling, **fsync** its contents to disk,
+ *   2. atomically `rename` temp → target,
+ *   3. **fsync the directory** so the rename itself is durable,
+ *   4. (optional) write a `.prev` copy of **the content just written** (same path: temp → rename),
+ *   5. on any error, remove the temp file (no leaked `.tmp-*` litter).
+ *
+ * **控えは「最後に書けた内容」であって「直前の内容」ではない** (2026-09-09 · パス 134)。それまで
+ * 控えは rename の前に本体を複製していた = 直前の内容。すると**消した・入れ替えた資格情報が控えに
+ * 残り**、本体が消える・壊れると `readFileWithBackup` がそれを本体として戻していた —— 「消したはず
+ * のトークンの復活」。控えが要るのは本体を**後から**失ったときで、そのとき戻したいのは最後に書けた
+ * 内容である (rename は原子的なので、書き込みの途中で落ちても本体は前の内容のまま —— 直前の内容の
+ * 控えが役に立つ場面は無かった)。
+ *
+ * Steps 1 & 4 close the window where a power loss / `SIGKILL` after rename
+ * could otherwise leave a zero-length or stale file on some filesystems.
+ * Directory fsync is best-effort (not permitted on every platform).
+ *
+ * Electron-free and dependency-free so it is unit-testable against a real
+ * temp directory under Node.
+ */
+export async function atomicWriteFile(
+  target: string,
+  data: string | Uint8Array,
+  opts: { mode?: number; keepBackup?: boolean } = {},
+): Promise<void> {
+  const dir = path.dirname(target);
+  await fs.mkdir(dir, { recursive: true });
+
+  const tmp = atomicTmpPathOf(target);
+  /*
+   * `'wx'` (O_EXCL) —— **既に在るなら開かない**。`'w'` だと 2 つのことが起きうる:
+   *
+   *   1. 同じ名前が既に在れば**黙って切り詰めて**上書きする。tmp 名は
+   *      pid + 時刻 + 乱数なので衝突はまず無いが、起きたときの壊れ方が
+   *      「片方の書き込みが消える」= 気付けない形になる。
+   *   2. その名前が**シンボリックリンクだったら辿る**。置き場が userData
+   *      配下 (他人が書けない) なので踏めないが、踏めない理由が
+   *      「置き場の権限」だけなのは薄い。
+   *
+   * O_EXCL にすると、どちらも「開けずに失敗する」に倒れる。呼び出し側から
+   * 見て失敗は失敗のままで、正常時の振る舞いは変わらない。
+   */
+  const fh = await fs.open(tmp, 'wx', opts.mode ?? 0o600);
+  // **open より後ろだけを try で囲う。** 下の catch は tmp を消すので、
+  // open が失敗した場合まで含めると「自分が作っていないファイルを消す」
+  // ことになる (O_EXCL は「先客が居る」ときにこそ失敗する)。
+  try {
+    // fh.close はハンドル解放 (リソース後始末)。内容は直前の sync で永続化済みのため、close を
+    // 省いても rename/読取の観測結果は変わらない (try/finally の BlockStatement 変異は equivalent)。
+    // Stryker disable BlockStatement
+    try {
+      await fh.writeFile(data);
+      await fh.sync(); // flush file contents before the rename
+    } finally {
+      await fh.close();
+    }
+    // Stryker restore BlockStatement
+
+    await fs.rename(tmp, target);
+    await fsyncDir(dir); // make the rename durable
+  } catch (err) {
+    // この catch は **open に成功した後**にしか来ないので、tmp は必ず自分が
+    // 作ったものである (open を try の外へ出したのはそのため)。rm は常に成功し、
+    // force:true↔false / {} は結果不変 (存在しない場合も .catch で吸収) →
+    // ObjectLiteral/BooleanLiteral 変異は equivalent。
+    // Stryker disable next-line ObjectLiteral,BooleanLiteral
+    await fs.rm(tmp, { force: true }).catch(() => {});
+    throw err;
+  }
+
+  // 控え (パス 134): **書いたばかりの内容**を `.prev` へ、本体と同じ経路 (一意な tmp → rename) で置く。
+  // 同じ経路なので mode は必ず効き (2026-08-23 の「控えが 644 のまま」の窓は経路ごと消えた)、古い控えは
+  // 丸ごと置き換わる —— 直前の内容は 1 バイトも残らない。書けなければ**投げる**: 古い控えを黙って残すと、
+  // 呼び出し側が「消した」と信じた物がまだディスクに在ることになる (本体は既に新しい内容で、投げても壊れない)。
+  if (opts.keepBackup) await atomicWriteFile(backupPathOf(target), data, { mode: opts.mode });
+}
+
+/** fsync a directory entry so a preceding rename is persisted. Not supported
+ *  on every platform (e.g. Windows throws EPERM/EISDIR) — failures are
+ *  swallowed since the rename itself already happened. */
+// ディレクトリ fsync はクラッシュ/電源断耐久のための best-effort。単体テストでは観測不能
+// (ファイル内容に影響せず、dir fsync 非対応プラットフォームでは元から no-op、open(dir) は
+// 通常成功するので dh は定義済み)。関数本体ごと observable な差を生まないため一括無効化する。
+/* Stryker disable all */
+async function fsyncDir(dir: string): Promise<void> {
+  let dh: Awaited<ReturnType<typeof fs.open>> | undefined;
+  try {
+    dh = await fs.open(dir, 'r');
+    await dh.sync();
+  } catch {
+    // platform doesn't allow directory fsync — best-effort
+  } finally {
+    if (dh) await dh.close().catch(() => {});
+  }
+}
+/* Stryker restore all */
+
+/**
+ * 読む前の大きさの門 (パス 326)。`stat` が答えられなければ**読まない** ——
+ * 読める保証が無い物を上限なしで開かないため。
+ *
+ * 門そのものは `stateFile.ts` の `readStateFile` と同じ形 (stat → 上限 → 読む) だが、
+ * あちらは 3 状態を返す状態ファイル専用の入口で、こちらは控え (`.prev`) へ倒れる
+ * 読みの中に在る必要がある —— **控えへ倒れる枝は呼び出し側から見えない**ので、
+ * 呼び出し側に門を置くと片方しか掛からない (実際そうなっていた・下記)。
+ */
+async function readIfWithinCap(path: string, maxBytes: number): Promise<string | null> {
+  const st = await fs.stat(path).catch(() => null);
+  if (st === null || st.size > maxBytes) return null;
+  return await fs.readFile(path, 'utf8').catch(() => null);
+}
+
+/**
+ * Read a file, falling back to its `.prev` copy (= the content last written
+ * successfully, see above) if the primary is missing or unreadable. Returns
+ * `null` only when neither exists. Use together with
+ * `atomicWriteFile(..., { keepBackup: true })`.
+ *
+ * **`maxBytes` は必須** (パス 326)。それまで、この関数は上限を持たず、
+ * `secrets.ts` は**本体にだけ** `stat` の門を掛けていた —— 本体が消えていれば
+ * `readFileWithBackup` は素通りで `.prev` を丸ごと読み、`JSON.parse` まで進んだ。
+ * 門は「自分が書いた物は大きくならない」という前提**ではなく**、別のプロセス・
+ * ディスクの壊れ・同期ソフトが膨らませた場合に備えて在る (パス 313 の理由と同じ)
+ * ので、控えにも同じだけ要る。上限を超える / `stat` できない側は無かったものとして
+ * 次の候補へ倒れる (呼び出し側の「読めなかった」の扱いは変えない)。
+ */
+export async function readFileWithBackup(target: string, maxBytes: number): Promise<string | null> {
+  return (await readIfWithinCap(target, maxBytes)) ?? (await readIfWithinCap(backupPathOf(target), maxBytes));
+}
