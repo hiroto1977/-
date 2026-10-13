@@ -28,7 +28,7 @@
 
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { exportRoot } from './clients/exportPaths';
+import { exportWriteRoot } from './clients/exportPaths';
 
 /**
  * OS に開かせてよい拡張子。**実行され得るものは一つも入れない。**
@@ -54,10 +54,20 @@ export const MAX_SHELL_PATH_LENGTH = 1024;
  *
  * `root` を引数にしているのは、テストから一時ディレクトリを指せるようにするため
  * (`exportPaths.ts` の `home` 引数と同じ考え方)。
+ *
+ * 既定の根は **`exportWriteRoot()` (`data/`)** で、`exportRoot()` の木全体ではない
+ * (2026-10-13 · パス 513)。`exportRoot` 直下には状態ファイル (`state.json` /
+ * `team-radar.json` / `talent.json`) が住み、拡張子の許可リストは `.json` を**通す**
+ * (`data/` に出す KPI などの書き出しが `.json` のため)。根を木全体にしたままだと、
+ * 乗っ取られたレンダラーが `openPath('~/.local/business-hub/state.json')` を呼べて、
+ * 状態ファイルを OS の既定アプリで開かせられた —— 書き出しの門 (`exportWriteRoot`) を
+ * `data/` へ狭めたのに、開く門だけが木全体を見ていた非対称だった。画面が開く・表示する
+ * のは書き出した成果物 (`ExportActions` / `HomePage` が渡す `path`・すべて `data/` の下)
+ * だけなので、`data/` へ狭めても失う機能は無い。
  */
 export async function shellTargetOrNull(
   filePath: unknown,
-  root: string = exportRoot(),
+  root: string = exportWriteRoot(),
 ): Promise<string | null> {
   // 空文字も別に見ていたが、`path.resolve('')` は作業ディレクトリになり、
   // それは書き出し先そのものか外側にしかならない — どちらも下の閉じ込め

@@ -34,6 +34,34 @@ const { execFileSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 
+/**
+ * 走査する本数の床 (2026-10-13 · パス 513 · F2)。
+ *
+ * この門の母集団は追跡ファイル全部 (`trackedFiles()` に濾しは無い)。台帳 (ALLOWED) は
+ * **一致した件数**しか見ないので、**一致を 1 つも持たない大きな塊を落としても
+ * 件数は変わらず exit 0** になる —— 実測 (2026-10-13 · 隔離した写し):
+ *   `trackedFiles` を `!f.startsWith('knowledge-vault/')` で濾す (6,087 本を落とす)
+ *   → `✅ 追跡ファイル 1874 件を走査` exit 0 (資格情報の形が 1 つも無い塊なので台帳は満たされたまま)。
+ *
+ * 床はこの「一致の無い塊を大きく落とす」編集を、台帳に依らず捕まえる。実測の母集団は
+ * 9,276 本。床 5,000 は silent-pass の 1,874 本の上・実測の 54% の余裕を残す。
+ * ★ `knowledge-vault/` (6,087 本 · 生成物) を追跡から外すのは正当な変更になりうるが、
+ *   そのときは「資格情報の走査対象が 66% 減った」ことなので**割って気付かせる**のが正しい
+ *   —— 意図した変更なら床を意識して下げること (実測に張り付けた値ではなく、
+ *   silent-pass の上に置いた床である)。
+ */
+const MIN_SCANNED = 5000;
+
+/** 走査本数が床を割っていたら断りの文、満たしていれば null (純関数 —— self-test が当てる)。 */
+function floorProblem(scanned) {
+  if (scanned >= MIN_SCANNED) return null;
+  return (
+    `走査した本数 ${scanned} が床 ${MIN_SCANNED} を下回りました —— 母集団が狭まっています `
+    + '(trackedFiles の濾しを疑ってください)。一致の無い塊を落としても台帳は満たされたままなので、'
+    + '「0 件だから健全」を避けるため fail closed で落とします。'
+  );
+}
+
 /** 高信頼の形だけを置く。接頭辞と長さが固定のもの。 */
 const PATTERNS = [
   { id: 'github-token', re: /\bgh[pousr]_[A-Za-z0-9]{36,255}\b/g, what: 'GitHub の個人・アプリ・更新トークン' },
@@ -176,6 +204,11 @@ function selfTest() {
   check('台帳: 増えたら鳴る', ledgerProblems(new Map([['a.ts::github-token', 2]]), [{ path: 'a.ts', id: 'github-token', count: 1, reason: '見本として在る文字列の説明' }]).length === 1);
   check('台帳: 台帳に無い一致は鳴る', ledgerProblems(new Map([['b.ts::aws-access-key', 1]]), []).length === 1);
   check('台帳: 理由が空なら鳴る', ledgerProblems(new Map(), [{ path: 'a.ts', id: 'x', count: 0, reason: '' }]).length === 1);
+  // F2 (パス 513): 母集団が大きく狭まったら鳴る床 (一致の無い塊を落としても台帳は満たされるため)。
+  check('床: 実測どおりなら問題は無い', floorProblem(9276) === null);
+  check('床: 床ちょうどは通す', floorProblem(MIN_SCANNED) === null);
+  check('床: 狭まった母集団 (1874 本) は鳴る', floorProblem(1874) !== null);
+  check('床: 0 件は鳴る (「無いので健全」を避ける)', floorProblem(0) !== null);
   console.log(bad === 0 ? '✅ self-test 全件一致' : `❌ self-test ${bad} 件不一致`);
   return bad === 0 ? 0 : 1;
 }
@@ -189,16 +222,18 @@ function main() {
     return 1;
   }
   const problems = ledgerProblems(scan.counts);
-  if (problems.length === 0) {
+  const floor = floorProblem(scan.scanned);
+  if (problems.length === 0 && !floor) {
     console.log(`✅ 追跡ファイル ${scan.scanned} 件を走査: 資格情報の形の一致は台帳どおり (${[...scan.counts.values()].reduce((a, b) => a + b, 0)} 件)`);
     return 0;
   }
+  if (floor) console.error(`❌ ${floor}`);
   for (const p of problems) console.error(`❌ ${p}`);
   for (const d of scan.details.slice(0, 20)) console.error(`   ${d.file}:${d.line} ${d.id} ${d.shape}`);
   return 1;
 }
 
-module.exports = { PATTERNS, ALLOWED, scanText, scanTree, ledgerProblems, isText };
+module.exports = { PATTERNS, ALLOWED, scanText, scanTree, ledgerProblems, isText, MIN_SCANNED, floorProblem, trackedFiles };
 
 if (require.main === module) {
   if (process.argv.includes('--self-test')) process.exit(selfTest());

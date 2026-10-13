@@ -236,9 +236,15 @@ export function exportRoot(home: string = os.homedir()): string {
  * だから書き込みの門を `data/` へ狭めても失う機能は無く、状態ファイルの木は
  * 書き出しから触れなくなる。
  *
- * 権限の修復 (`repairExportPermissions`) と開く門 (`shellOpenGate`) は今までどおり
- * `exportRoot` を見る —— 修復は状態ファイルの権限も直す仕事を持ち、開く門は
- * 拡張子の許可リストが状態ファイル (`.json`) を通さない。
+ * 権限の修復 (`repairExportPermissions`) は今までどおり `exportRoot` を見る ——
+ * 状態ファイルの権限も直す仕事を持つため。
+ *
+ * **開く門 (`shellOpenGate`) も `exportWriteRoot` (`data/`) を見る** (2026-10-13 · パス 513)。
+ * 旧い版のこの注記は「開く門は拡張子の許可リストが状態ファイル (`.json`) を通さない」と
+ * 書いていたが **偽だった** —— `SHELL_OPEN_EXTS` は `.json` を含む (`data/` に出す
+ * 書き出しが `.json` のため) ので、木全体を根にしていた開く門は
+ * `openPath('~/.local/business-hub/state.json')` を通していた。開く門を `data/` へ
+ * 狭めて、状態ファイルの木を開く側からも触れなくした (詳細は `shellOpenGate.ts`)。
  */
 export function exportWriteRoot(home: string = os.homedir()): string {
   return path.join(exportRoot(home), 'data');

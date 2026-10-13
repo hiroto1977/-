@@ -317,8 +317,15 @@ export const LAWS: readonly Law[] = [
       + ' ★ **鳴らす機構は 3 語ではなく 10 語あった** (`shared-floor` / `cross-check` / `tracked-cross-check` / `compared-count` / `doc-metrics` /'
       + ' `named-scan` / `side-effect-floor` / `ledger-bidirectional` / `generated-artifact` / `not-thinnable`) —— 最後の 1 つは**機構ではなく報せ**である'
       + ' (母集団が名指しの一覧なのでこの道具では落とせない。「落とせなかった」を「床が在る」と読まないために語彙に持つ)。'
-      + ' 直した後の実測は **73 組すべて台帳どおり (25 ゲート・食い違い 0)**。',
-    provenance: ['パターン 0-a-7', 'パス 467 (読めない台帳が「空」として緑になり、37 ゲート全部が素通りした)', 'パス 468 (母集団を空にして測ると、33 ゲートのうち 5 本が exit 0 だった)', 'パス 469 (床は 0 件にしか当たらない —— .tsx が消えても 5 本が exit 0 だった)', 'パス 470 (git ls-files の 2 本は一部の死を 1 度も測られておらず、フォールバックが詰め直していた)', 'パス 471 (走査が 1% 死んでも木を歩く 6 本すべてが緑 —— 道具の keep が逆数しか表せず、半分より小さい損失は 1 度も測られていなかった)', 'パス 472 (測った母集団が 8 本で、実際は 25 本 —— 残り 17 本のうち 9 本が 1% の損失で黙り、vault:check は 0 件比べて「7402 ファイル同期」と刷った)'],
+      + ' 直した後の実測は **73 組すべて台帳どおり (25 ゲート・食い違い 0)**。'
+      + ' ⑧ **`lint:malware` / `lint:secrets` にそもそも床が無かった —— 母集団を大きく狭めても exit 0 だった (2026-10-13 · パス 513 · T-015)。**'
+      + ' この 2 本は `git ls-files` + インラインの濾しで、台帳 (`ACCEPTED` / `ALLOWED`) は**一致した件数**しか見ない。'
+      + ' malware を `/^(scripts|orchestration)\\//` に狭めると「対象 121 件」で exit 0 (src 1,700 本超が黙って落ちる —— 台帳は src/ に項目を持たないので鳴らない)、'
+      + ' secrets で `knowledge-vault/` (6,087 本・一致なし) を落とすと「1874 件」で exit 0 (一致が変わらないので台帳は満たされたまま)。'
+      + ' **台帳はどこに項目を持つかに依り、一致の無い塊を落とす narrowing には盲目**だった。走査本数の床 (malware 1000 / secrets 5000・どちらも silent-pass の上、実測の 54〜57% 余裕) を純関数 `floorProblem` で置き、'
+      + ' self-test と外側の証人 (`malwareGate` / `secretScanGate`) が「狭まった母集団は鳴る / 実測では鳴らない」を対照で留める。'
+      + ' ★ **両ゲートとも、ledger-独立の床で初めて narrowing が捕まる** —— ledger は一致の無い塊には黙るので、床が無ければ「資格情報・マルウェアの走査対象が 80% 減った」は 1 度も鳴らなかった。',
+    provenance: ['パターン 0-a-7', 'パス 467 (読めない台帳が「空」として緑になり、37 ゲート全部が素通りした)', 'パス 468 (母集団を空にして測ると、33 ゲートのうち 5 本が exit 0 だった)', 'パス 469 (床は 0 件にしか当たらない —— .tsx が消えても 5 本が exit 0 だった)', 'パス 470 (git ls-files の 2 本は一部の死を 1 度も測られておらず、フォールバックが詰め直していた)', 'パス 471 (走査が 1% 死んでも木を歩く 6 本すべてが緑 —— 道具の keep が逆数しか表せず、半分より小さい損失は 1 度も測られていなかった)', 'パス 472 (測った母集団が 8 本で、実際は 25 本 —— 残り 17 本のうち 9 本が 1% の損失で黙り、vault:check は 0 件比べて「7402 ファイル同期」と刷った)', 'パス 513 (lint:malware / lint:secrets に床が無く、台帳は一致の無い塊の narrowing に盲目だった · T-015)'],
     enforcedBy: [
       gate('lint:test-coverage'),
       test(T.shared('e2eSuiteFloors')),
@@ -342,6 +349,10 @@ export const LAWS: readonly Law[] = [
       gate('lint:shell'),
       gate('lint:repo-size'),
       test(T.shared('trackedPopulationWitness')),
+      gate('lint:malware'),
+      gate('lint:secrets'),
+      test(T.shared('malwareGate')),
+      test(T.shared('secretScanGate')),
     ],
   },
   {
@@ -748,9 +759,13 @@ export const LAWS: readonly Law[] = [
     id: 'shell-open-gate',
     family: 'boundary',
     name: 'OS の「開く」は書き出し根の内側 + 拡張子 allowlist',
-    statement: 'realpath で symlink を辿ってから閉じ込めを見る。字面の閉じ込めは symlink を見ない。',
-    provenance: ['ARCHITECTURE §1.4 app:openPath', 'パス 0-a-2'],
-    enforcedBy: [test(T.main('exportSymlinkContainment')), test(T.main('shellOpenCallSites')), chain],
+    statement: 'realpath で symlink を辿ってから閉じ込めを見る。字面の閉じ込めは symlink を見ない。'
+      + ' **開く根は書き出し根より広くしない (2026-10-13 · パス 513 · T-012)** —— 開く門の既定の根が `exportRoot` 木全体で、'
+      + ' 許可拡張子に `.json` を含むため、乗っ取られたレンダラーが `openPath(\'~/.local/business-hub/state.json\')` で状態ファイルを OS の既定アプリに開かせられた。'
+      + ' 書き出しの門は 2026-10 に `exportWriteRoot` (`data/`) へ狭めてあったのに、開く門だけが木全体を見ていた非対称 (入口が出口より緩い)。'
+      + ' 既定を `exportWriteRoot` へ揃えた (画面が開くのは `data/` の下の成果物だけ)。`exportPaths.ts` の「開く門は `.json` を通さない」という注記も偽だった —— 測ってから書く。',
+    provenance: ['ARCHITECTURE §1.4 app:openPath', 'パス 0-a-2', 'パス 513 (T-012)'],
+    enforcedBy: [test(T.main('exportSymlinkContainment')), test(T.main('shellOpenCallSites')), test(T.main('shellOpenGate')), chain],
   },
   {
     id: 'redirects-refused',

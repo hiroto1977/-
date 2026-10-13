@@ -129,6 +129,26 @@
           "enforcedBy": [
             "npm:lint:csp"
           ]
+        },
+        {
+          "what": "install フックの一次手口の検出 (取得・シェル・インタプリタのインライン実行・復号)",
+          "enforcedBy": [
+            "npm:lint:malware"
+          ]
+        },
+        {
+          "what": "資格情報・マルウェアの走査の母集団の床 (大きく狭めたら鳴る)",
+          "enforcedBy": [
+            "npm:lint:malware",
+            "npm:lint:secrets"
+          ]
+        },
+        {
+          "what": "CODEOWNERS が門の執行コード (scripts/ 全体) に所有者レビューを要求する",
+          "enforcedBy": [
+            ".github/CODEOWNERS",
+            "src/shared/__tests__/threatLedger.test.ts"
+          ]
         }
       ],
       "gaps": [
@@ -227,6 +247,12 @@
           "enforcedBy": [
             "src/shared/redact.ts",
             "npm:lint:secrets"
+          ]
+        },
+        {
+          "what": "URL を外部スキャンへ送る前の社内・手元ホストの警告 (IPv4-mapped / NAT64 / 6to4 も見る)",
+          "enforcedBy": [
+            "src/shared/scanTarget.ts"
           ]
         }
       ],
@@ -385,6 +411,66 @@
         "file": "src/shared/__tests__/artifactCspWitness.test.ts",
         "test": "★ CSP の meta より前に置いた script は、CSP の外で走るので鳴る (threat: T-011)"
       }
+    },
+    {
+      "id": "T-012",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 513 (main-ipc)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "low",
+      "title": "開く門 (shellOpenGate) の既定の根が exportRoot 木全体で、許可拡張子に .json を含むため、状態ファイル (state.json ほか) を OS の既定アプリに開かせられた",
+      "status": "fixed",
+      "fix": "既定の根を exportWriteRoot (data/) へ狭めた。書き出しの門は 2026-10 に data/ へ狭めてあったのに、開く門だけが木全体を見ていた非対称。画面が開く・表示するのは data/ の下の成果物だけなので失う機能は無い。exportPaths.ts の「開く門は .json を通さない」という注記も偽だった (SHELL_OPEN_EXTS は .json を含む) ので直した。",
+      "regression": {
+        "file": "src/main/__tests__/shellOpenGate.test.ts",
+        "test": "exportRoot 直下の state.json は、根が exportWriteRoot なら弾く (threat: T-012)"
+      }
+    },
+    {
+      "id": "T-013",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 513 (network)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "URL を VirusTotal に送る前の「社内・手元のホスト」警告が、IPv4-mapped / NAT64 / 6to4 に埋めた内部アドレス (クラウドのメタデータ endpoint を含む) を見逃していた",
+      "status": "fixed",
+      "fix": "new URL は ::ffff:169.254.169.254 を [::ffff:a9fe:a9fe] へ正規化するので、looksInternalHostname は 16 進の組を社内と見抜けなかった。embeddedIpv4FromV6 が埋め込みの v4 を取り出して v4 判定へ渡す。止める門ではなく送る前の警告 (advisory) だが、その仕事はまさに「内部に見える宛先を警告する」こと。公開の埋め込み v4 は警告しない (網が広がりすぎない)。",
+      "regression": {
+        "file": "src/shared/__tests__/scanTarget.test.ts",
+        "test": "IPv4-mapped / NAT64 / 6to4 に埋めた内部アドレスも社内と分かる (threat: T-013)"
+      }
+    },
+    {
+      "id": "T-014",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 513 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:malware の install フック検出が、インタプリタのインライン実行 (node -e / python3 -c / npx) を見逃していた —— curl|sh の字面に現れない一次手口",
+      "status": "fixed",
+      "fix": "install フックの本文は `node <path>.js` しか .js として辿らないので、取得・シェルの字面に加えて node -e / --eval / -p、python3/ruby/perl/php/deno の -e/-c/eval/run、npx を行ごとに見る。ファイルを指す普通のインタプリタ実行 (python3 scripts/build.py) は偽陽性にしない。",
+      "regression": {
+        "file": "src/shared/__tests__/malwareGate.test.ts",
+        "test": "インストール時のインタプリタのインライン実行 (node -e / python3 -c / npx) を捕まえる (threat: T-014)"
+      }
+    },
+    {
+      "id": "T-015",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 513 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:malware / lint:secrets の走査の母集団を大きく狭めても exit 0 になった (床が無い) —— 台帳はどこに項目を持つかに依り、一致の無い塊を落とすと黙って通る",
+      "status": "fixed",
+      "fix": "実測: malware を /^(scripts|orchestration)\\// に狭めると「対象 121 件」で通り (src 1,700 本超が黙って落ちる)、secrets で knowledge-vault/ (6,087 本・一致なし) を落とすと「1874 件」で通った。両門に走査本数の床 (malware 1000 / secrets 5000・どちらも silent-pass の上、実測の 54〜57% 余裕) を置き、純関数 floorProblem を self-test と外側の証人 (malwareGate / secretScanGate) が当てる。",
+      "regression": {
+        "file": "src/shared/__tests__/malwareGate.test.ts",
+        "test": "狭まった母集団は鳴る (床が実際に何かを守っている) (threat: T-015)"
+      }
     }
   ],
   "huntBacklog": [],
@@ -407,6 +493,11 @@
     {
       "item": "監査が『いくつかの門が見落とす物』と要約した中身",
       "finding": "元の報告が途中で切れた分は、上の 3 項目の実測で置き換えた (成果物・symlink・inline-html)。残る未測定は supply-chain の gaps に在るもの (CODEOWNERS の有効化・actions/* の可動タグ・依存の中身) で、どれも台帳に明示済み。",
+      "checkedOn": "2026-10-13"
+    },
+    {
+      "item": "ブラウザ版コンシェルジュが Ollama の返答を externalTextOnOneLine で 1 行に畳むべきか (ai)",
+      "finding": "返答は {m.text} の素のテキストで parseMarkdown を通らない (pass 489)。.concierge-msg は white-space: pre-wrap なので改行は見えるが、それは普通のチャット出力で、route の札 (🪪) は別の styled div。markdown / HTML / アプリ構造を注入できないので構造の偽装は無い。1 行に畳むと正当な複数行の回答 (コード・箇条書き) を潰すので UX の退行になる。穴なし、fold しない。",
       "checkedOn": "2026-10-13"
     }
   ]

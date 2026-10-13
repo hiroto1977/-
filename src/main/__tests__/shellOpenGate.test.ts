@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { shellTargetOrNull, SHELL_OPEN_EXTS, MAX_SHELL_PATH_LENGTH } from '../shellOpenGate';
+import { exportRoot, exportWriteRoot } from '../clients/exportPaths';
 import { rereadModule } from '../../shared/__tests__/rereadModule';
 
 /*
@@ -192,6 +193,41 @@ describe('shellTargetOrNull — 入力の形', () => {
     for (const ch of ['\r', '\n']) {
       expect(await shellTargetOrNull(path.join(root, `ok${ch}evil.md`), root)).toBeNull();
     }
+  });
+});
+
+/*
+ * 既定の根は data/ (2026-10-13 · パス 513)。
+ *
+ * `exportRoot` 直下には状態ファイル (`state.json` ほか) が住み、拡張子の許可リストは
+ * `.json` を通す。既定の根を木全体にしていた頃は、乗っ取られたレンダラーが
+ * `openPath('~/.local/business-hub/state.json')` で状態ファイルを OS の既定アプリに
+ * 開かせられた。既定を `exportWriteRoot` (`data/`) へ狭めて、状態ファイルを開く側から
+ * 外した。ここは実物の home の下に書けないので、根を明示して layout を作って確かめる。
+ */
+describe('既定の根は exportWriteRoot (状態ファイルを開く側から外す)', () => {
+  it('exportRoot 直下の state.json は、根が exportWriteRoot なら弾く (threat: T-012)', async () => {
+    const home = outside; // mkdtemp した一時の home
+    await fs.mkdir(exportWriteRoot(home), { recursive: true });
+    // realpath で比べるので根も実体に直す (symlink された tmpdir への保険)。
+    const [erootReal, ewriteReal] = [await fs.realpath(exportRoot(home)), await fs.realpath(exportWriteRoot(home))];
+    const stateFile = path.join(erootReal, 'state.json');
+    await fs.writeFile(stateFile, '{}', 'utf8');
+    const real = await fs.realpath(stateFile);
+    // 旧い既定 (exportRoot 木全体) なら通っていた。
+    expect(await shellTargetOrNull(real, erootReal)).toBe(real);
+    // 新しい既定 (data/) では弾く。
+    expect(await shellTargetOrNull(real, ewriteReal)).toBeNull();
+  });
+
+  it('data/ の下の .json は引き続き通す (正当な書き出しを失わない)', async () => {
+    const home = outside;
+    const ewriteReal = await fs.realpath(await fs.mkdir(exportWriteRoot(home), { recursive: true }).then(() => exportWriteRoot(home)));
+    const dataFile = path.join(ewriteReal, 'stocks', 'snapshot.json');
+    await fs.mkdir(path.dirname(dataFile), { recursive: true });
+    await fs.writeFile(dataFile, '{}', 'utf8');
+    const real = await fs.realpath(dataFile);
+    expect(await shellTargetOrNull(real, ewriteReal)).toBe(real);
   });
 });
 

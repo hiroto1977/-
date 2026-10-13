@@ -7,6 +7,14 @@
 
 /.github/ @hiroto1977
 /security/ @hiroto1977
+# scripts/ の木全体 (2026-10-13 · パス 513 · threat: T-003 の延長)。
+# 39 の門の執行コード (lint:malware / lint:secrets / lint:forbidden / lint:workflow-security /
+# lint:charset / lint:shell / verify-architecture ほか) はここに住む。門の script は頻繁に
+# 動くので整合性チェーンの保護対象 (安定資産) には入れないが、マージされた PR で門を黙って
+# 骨抜きにされない (= 供給網/執行層の守りが外されない) よう、木全体に所有者のレビューを要求する。
+# ディレクトリ指定なので下の個別の scripts/*.cjs 行 (保護対象) と重なるが、両方向の検査は
+# 独立に見るので矛盾しない。
+/scripts/ @hiroto1977
 /scripts/integrity-chain.cjs @hiroto1977
 /.claude/settings.json @hiroto1977
 /.cursor/rules/00-project.mdc @hiroto1977

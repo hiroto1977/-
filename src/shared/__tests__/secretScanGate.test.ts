@@ -18,6 +18,9 @@ const gate = req('../../../scripts/lint-secrets.cjs') as {
   scanText: (text: string) => { id: string; line: number; shape: string }[];
   scanTree: (files?: string[]) => { counts: Map<string, number>; scanned: number };
   ledgerProblems: (counts: Map<string, number>, ledger?: readonly unknown[]) => string[];
+  MIN_SCANNED: number;
+  floorProblem: (scanned: number) => string | null;
+  trackedFiles: () => string[];
 };
 
 /** 作業の途中の印。台帳の理由に残っていたら落とす (不在の主張。標本は下の it が持つ)。 */
@@ -58,6 +61,27 @@ describe('lint:secrets の規則と台帳', () => {
     const hit = gate.scanText('const t = "' + 'gh' + 'p_' + 'b'.repeat(36) + '";')[0]!;
     expect(hit.shape).toMatch(/^ghp_…\(\d+ 字\)$/);
     expect(hit.shape).not.toContain('b'.repeat(8));
+  });
+});
+
+describe('lint:secrets の走査の床 (F2 · パス 513)', () => {
+  // 台帳 (ALLOWED) は一致した件数しか見ないので、一致を 1 つも持たない大きな塊を
+  // 落としても件数は変わらず exit 0 になる —— 実測 (2026-10-13): knowledge-vault/
+  // (6,087 本・一致なし) を落とすと「追跡ファイル 1874 件」で通った。床がそれを捕まえる。
+  it('床は意味のある正の値 (0 に潰す編集を捕まえる)', () => {
+    expect(gate.MIN_SCANNED).toBeGreaterThanOrEqual(2000);
+  });
+
+  it('実物の母集団は床の上にある (今日この門は通る)', () => {
+    expect(gate.trackedFiles().length).toBeGreaterThanOrEqual(gate.MIN_SCANNED);
+  }, 60_000);
+
+  it('狭まった母集団は鳴る (床が実際に何かを守っている) (threat: T-015)', () => {
+    // 実測の silent-pass は 1874 本 (knowledge-vault を落とした形)。
+    expect(gate.floorProblem(1874)).not.toBeNull();
+    expect(gate.floorProblem(0)).not.toBeNull();
+    // 実測どおりの本数では鳴らない (正しい日に落ちる門にしない)。
+    expect(gate.floorProblem(9276)).toBeNull();
   });
 });
 

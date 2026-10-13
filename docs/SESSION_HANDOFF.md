@@ -7,6 +7,19 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-13) — パス 513: 狩りの 3 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 513」。監査役 (read-only・high) の報告は 5 面とも「生きた欠陥 0」。**再現で確かめると門の完成度の穴 2 件と確認できた hardening 3 件が本物**だった。
+- **直した 5 件** (threat 台帳 T-012〜T-015 + R1):
+  - **T-014 (供給網)** `lint:malware` の install フック検出がインタプリタのインライン実行 (`node -e` / `python3 -c` / `npx`) を見逃していた (curl|sh の字面に現れない一次手口)。
+  - **T-015 (供給網)** `lint:malware` / `lint:secrets` に**走査本数の床が無く**、母集団を大きく狭めても exit 0 (malware → 121 件 / secrets は knowledge-vault を落として 1874 件)。台帳は一致の無い塊の narrowing に盲目。純関数 `floorProblem` (1000 / 5000)。
+  - **T-012 (main-ipc)** 開く門 `shellOpenGate` の既定の根が `exportRoot` 木全体で、`.json` を許すため `state.json` を OS で開かせられた。既定を `exportWriteRoot` (`data/`) へ。`exportPaths.ts` の偽の注記も直した。
+  - **T-013 (network)** VirusTotal へ送る前の社内ホスト警告が IPv4-mapped / NAT64 / 6to4 (クラウドのメタデータ endpoint を含む) を見逃していた。`embeddedIpv4FromV6` で埋め込みの v4 を取り出す。
+  - **R1 (供給網)** CODEOWNERS に `/scripts/` を足し、39 の門の執行コードに所有者レビューを要求 (T-003 の延長)。
+- **健全だった 1 件 (ai)** —— コンシェルジュの Ollama 返答の fold は不要 (素のテキスト・`parseMarkdown` を通らない・fold すると UX 退行)。台帳 `clearedBacklog` に測った結果。
+- **確立したパターン** —— **`git ls-files` 直のゲートの母集団の床は `floorProblem` (純関数)**。walk-vs-git の `reportTrackedCrossCheck` はこの形には tautological / false-positive なので使わない。
+- 整合性チェーン block **#288** (shellOpenGate / scanTarget / exportPaths)。`huntBacklog` は空のまま。法則 `count-has-floor` (⑧) / `shell-open-gate` を延長。
+
 ## 直近の作業 (2026-10-13) — パス 512: 狩りの 2 回目。残り 4 件を確かめ、CSP meta より前の script (T-011) を直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 512」。本物は T-011 (配る HTML の CSP meta より前の `<script>` は CSP の外で走る) 1 件で、`lint:csp` に位置・固定・外部 script の 3 規則を足した。残り 3 件は実測で健全 (台帳の `clearedBacklog`)。

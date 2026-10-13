@@ -2406,6 +2406,14 @@
       "leafCount": 99,
       "note": "update lint-artifact-csp.cjs",
       "hash": "6515b2c0501af05a6d58532d354a47350b478ccecf62c2cf7ad47af250800ff1"
+    },
+    {
+      "index": 288,
+      "prevHash": "6515b2c0501af05a6d58532d354a47350b478ccecf62c2cf7ad47af250800ff1",
+      "merkleRoot": "1e132492fc4f6c9402c89cf3a9c4bcf3304f250a12893071a671de23c404d4ef",
+      "leafCount": 99,
+      "note": "update exportPaths.ts,shellOpenGate.ts,scanTarget.ts",
+      "hash": "133a8673fafa41def1775da33b2ed0bbb70dec5563e4006dd62761d78562bd7b"
     }
   ],
   "tipManifest": {
@@ -2446,13 +2454,13 @@
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "67cdcd22a997861524bba6d591e3770169f341f59dd3947379f5a55348cb7a02",
     "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
-    "src/main/clients/exportPaths.ts": "b9eeed9443c3c56cf0ecd56e04dade92e4c44e9fd62640dd0b13edeaf495c8b3",
+    "src/main/clients/exportPaths.ts": "295074748492e106137927598c15a030043a7a7294dc806cab51888b880e5199",
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "77ff225a6871efbaddbfd00c7488120f882e9ddfd37d8a751664254985de8bb2",
     "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
     "src/main/oauth.ts": "9c54fb2625d6fcac9a63f6e86728cd3dc9b873007d00b283ed6e5bf0b51d1c53",
     "src/main/secrets.ts": "b28664391bad52ead2674f0c2910cbb574a0a5405a37221c4e0260243b673609",
-    "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
+    "src/main/shellOpenGate.ts": "5192de0eb0a48f4eebedd17fa73df4ec5722f41f7290db5194eb58e2bdb28732",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
@@ -2499,7 +2507,7 @@
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0b09641c7249613f6f09433d2e304e76a6ea65395b517229964c0937100e4ffd",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
-    "src/shared/scanTarget.ts": "069eaceb80e1d0a87e45d6fb61eb18bcf7acd9558ae58be49793c2f025500b69",
+    "src/shared/scanTarget.ts": "24b39dcf07ab1e892632ef35266bd30b37e9244bb668b7b077c9e6a9bed1584b",
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",

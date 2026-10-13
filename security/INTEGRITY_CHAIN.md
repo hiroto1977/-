@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 288
+- ブロック数: 289
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `6515b2c0501af05a6d58532d354a47350b478ccecf62c2cf7ad47af250800ff1`
+- 末尾(tip)ハッシュ: `133a8673fafa41def1775da33b2ed0bbb70dec5563e4006dd62761d78562bd7b`
 - 保護対象: 99 ファイル
 
 ## ブロック
@@ -301,6 +301,7 @@
 | 285 | `bd9e494a1a7fadfd` | `f0bb5da64c524124` | `450ca89b19bbcc9f` | update 20-gates.mdc,ci.yml |
 | 286 | `0298e0b15870a0e7` | `450ca89b19bbcc9f` | `a8b54204a8afec47` | update PROXY_EXAMPLE.md,exportPaths.ts,secrets.ts,aiEndpoint.ts |
 | 287 | `1a32b87ad28e8187` | `a8b54204a8afec47` | `6515b2c0501af05a` | update lint-artifact-csp.cjs |
+| 288 | `1e132492fc4f6c94` | `6515b2c0501af05a` | `133a8673fafa41de` | update exportPaths.ts,shellOpenGate.ts,scanTarget.ts |
 
 ## 保護対象ファイル
 

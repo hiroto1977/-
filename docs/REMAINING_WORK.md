@@ -1,5 +1,43 @@
 # Service Hub — 残りの作業手順書
 
+## パス 513 (狩りの 3 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・high) に並行で走らせ、**指摘を自分で再現してから**直した。
+監査役の報告は 5 面とも「生きた欠陥 0」。再現で確かめると、**門の完成度の穴 2 件 (F1 / F2) と、確認できた 3 件の hardening** が本物だった。
+**ai の 1 件は再現したら欠陥ではなかった** (fold すると UX が退行する) ので直さず、測った結果を台帳の `clearedBacklog` に書いた。
+
+- **T-014 (直した · 供給網 · F1)** —— `lint:malware` の install フック検出が、インタプリタのインライン実行 (`node -e` / `node --eval` / `python3 -c` / `npx`) を見逃していた。
+  これは `curl | sh` の字面に現れない**最も典型的な一次手口**で、フックの本文は `node <path>.js` しか `.js` として辿らないので字面に当たらない。
+  行ごとに `node -e/--eval/-p`・`python3/ruby/perl/php/deno` の `-e/-c/eval/run`・`npx` を見る。ファイルを指す普通の実行 (`python3 scripts/build.py`) は偽陽性にしない。
+  self-test +5 件・回帰 `malwareGate.test.ts`「インストール時のインタプリタのインライン実行 … (threat: T-014)」。
+- **T-015 (直した · 供給網 · F2)** —— `lint:malware` / `lint:secrets` に**走査本数の床が無く**、母集団を大きく狭めても exit 0 だった。
+  実測 (隔離した写し): malware を `/^(scripts|orchestration)\//` に狭めると「対象 121 件」で通り (src 1,700 本超が黙って落ちる)、
+  secrets で `knowledge-vault/` (6,087 本・一致なし) を落とすと「1874 件」で通った。**台帳は一致した件数しか見ない**ので、一致の無い塊の narrowing に盲目。
+  両門に純関数 `floorProblem` (malware 1000 / secrets 5000・silent-pass の上、実測の 54〜57% 余裕) を置き、self-test と外側の証人 (`malwareGate` / `secretScanGate`) が対照で留める。
+  ★ **walk-vs-git の `reportTrackedCrossCheck` は使わない** —— この 2 本は `git ls-files` 直なので、同じ定数の criteria では tautological、text/deleted 除外で false-positive になる。床が正しい層。
+- **T-012 (直した · main-ipc · LotL)** —— 開く門 `shellOpenGate` の既定の根が `exportRoot` 木全体で、許可拡張子に `.json` を含むため、
+  乗っ取られたレンダラーが `openPath('~/.local/business-hub/state.json')` で状態ファイルを OS の既定アプリに開かせられた。
+  書き出しの門は 2026-10 に `exportWriteRoot` (`data/`) へ狭めてあったのに、開く門だけが木全体を見ていた非対称。既定を `exportWriteRoot` へ揃えた
+  (画面が開くのは `data/` の下の成果物だけ · `ExportActions` / `HomePage` が渡す `path`)。`exportPaths.ts` の「開く門は `.json` を通さない」という注記も**偽だった**ので直した。
+  回帰 `shellOpenGate.test.ts`「exportRoot 直下の state.json は … 弾く (threat: T-012)」。法則 `shell-open-gate` を延長。
+- **T-013 (直した · network · egress)** —— URL を VirusTotal に送る前の「社内・手元のホスト」警告が、IPv4-mapped / NAT64 / 6to4 に埋めた内部アドレスを見逃していた。
+  `new URL` は `::ffff:169.254.169.254` を `[::ffff:a9fe:a9fe]` へ正規化するので、`looksInternalHostname` は 16 進の組を社内と見抜けず、**クラウドのメタデータ endpoint を一番取りこぼしていた**。
+  `embeddedIpv4FromV6` が埋め込みの v4 を取り出して v4 判定へ渡す。止める門ではなく送る前の advisory だが、その仕事はまさに「内部に見える宛先を警告する」こと。公開の埋め込み v4 は警告しない (網が広がりすぎない)。
+  回帰 `scanTarget.test.ts`「IPv4-mapped / NAT64 / 6to4 に埋めた内部アドレスも社内と分かる (threat: T-013)」+ it.each に 5 行。
+- **R1 (直した · 供給網 · T-003 の延長)** —— CODEOWNERS に `/scripts/ @hiroto1977` を足した。39 の門の執行コード (lint:malware / lint:secrets / lint:forbidden / …) は `scripts/` に住むが、
+  頻繁に動くので整合性チェーンの保護対象 (安定資産) には入れない。マージされた PR で門を黙って骨抜きにされないよう、木全体に所有者レビューを要求する。
+  CODEOWNERS の検査 (`threatLedger.test.ts`): ディレクトリ指定は実在すればよく、個別の `scripts/*.cjs` 行 (保護対象) と重なるが双方向の検査は独立に見るので矛盾しない。
+- **健全だった 1 件 (clearedBacklog · ai)** —— ブラウザ版コンシェルジュの Ollama 返答を `externalTextOnOneLine` で 1 行に畳むべきか。
+  再現すると欠陥ではなかった: 返答は `{m.text}` の**素のテキスト**で `parseMarkdown` を通らない (pass 489)。`white-space: pre-wrap` なので改行は見えるが、それは普通のチャット出力で、
+  route の札 (🪪) は**別の styled div**。markdown / HTML / アプリ構造を注入できないので構造の偽装は無い。1 行に畳むと正当な複数行の回答 (コード・箇条書き) を潰すので **UX の退行**になる。穴なし、fold しない。
+
+脅威台帳 (`security/threat-ledger.json`): threats 10 → **14**・clearedBacklog 4 → **5**・supply-chain の守り 7 → 10・ssrf の守り 5 → 6。
+触った保護対象 (shellOpenGate.ts / scanTarget.ts / exportPaths.ts) で整合性チェーン block **#288** を採掘。法則 `count-has-floor` (⑧) と `shell-open-gate` を延長。
+
+**全件検証 (最終コード)**: `typecheck` 緑・`npm test` **1054 ファイル / 21320 件**・`verify:all` exit 0 (39 ゲート・`verify:arch` の unit test count を 17611 → **17621**)・`chain:verify` 緑 (block #288)。
+**出荷物 (scanTarget.ts は両ビルドが読む) が動いたので実機も回した**: 計測 FULL **11,875,019 B** / LITE **3,287,643 B**・`perf` OK (LITE DCL 291 ms / heap 9.7 MB・FULL DCL 780 ms / heap 36.4 MB)・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`smoke:app` OK (実物のデスクトップアプリが起動し生き続けた —— 主プロセスの shellOpenGate / exportPaths を触ったため)。
+★ **1 度 CI 相当で捕まえた**: `lint:network-targets` が F1 の self-test の見本 (`node -e "fetch(x+…)"`) を scripts/ の網の口として拾った —— 規則は `node -e` の**形**で当たり本文は何でもよいので、見本から通信の字面を外した (本物の欠陥ではなく見本の作り方)。
+
 ## パス 512 (狩りの 2 回目 —— 残り 4 件を自分で確かめ、1 件を直す) (2026-10-13)
 
 パス 511 の `huntBacklog` 4 件 (供給網の監査が途中で切れて確かめられなかった物) を自分で再現・測定した。
