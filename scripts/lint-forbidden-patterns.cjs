@@ -1177,6 +1177,25 @@ function missingMustScan(visited, must = MUST_SCAN) {
     );
 }
 
+/**
+ * walk が本文を走査する拡張子。`.mjs` は Node の ESM の実行コードなので含む
+ * (2026-10-13 · パス 515 · T-016 の家系)。
+ *
+ * **なぜ `.mjs` が要るか (実測)**: 直す前の walk 正規表現は `.mjs` を含まず、
+ * `scripts/ci/x.mjs` に `require('node:child_process')` 相当を書いても
+ * `lint:forbidden` は exit 0 だった (同じ中身を `.cjs` にすると child_process
+ * census が exit 1 で捕まえる —— 差は拡張子だけ)。これは既知 gap
+ * 「純粋な child_process + curl は forbidden の census が重なって塞ぐ」が頼る
+ * まさにその census の母集団に `.mjs` が入っていない穴。malware の
+ * `isScannedPath` は元から `.mjs` を含むので、2 つの supply-chain 検出器が
+ * `.mjs` について対称になる (`rootConfigScanned.test.ts` が両方向で留める)。
+ * 追跡された `.mjs` は今日 0 件 (latent) だが、`.mjs` は正当な ESM 拡張子で、
+ * `scripts/` が足せば workflow / package.json の script から発火しうる。
+ */
+function isWalkedSourceName(name) {
+  return /\.(ts|tsx|cjs|mjs|js|jsx|html)$/.test(name);
+}
+
 function walk(dir, hit) {
   let entries;
   try {
@@ -1191,7 +1210,7 @@ function walk(dir, hit) {
     if (entry.isDirectory()) {
       walk(full, hit);
     } else if (entry.isFile()) {
-      if (/\.(ts|tsx|cjs|js|jsx|html)$/.test(entry.name)) {
+      if (isWalkedSourceName(entry.name)) {
         hit(full, rel);
       }
     }
@@ -1735,6 +1754,7 @@ module.exports = {
   SCAN_ROOTS,
   MUST_SCAN,
   rootCodeFiles,
+  isWalkedSourceName,
   rootShortfalls,
   missingMustScan,
   realRootCounts,

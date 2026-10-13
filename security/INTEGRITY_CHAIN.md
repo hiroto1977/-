@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 289
+- ブロック数: 290
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `133a8673fafa41def1775da33b2ed0bbb70dec5563e4006dd62761d78562bd7b`
-- 保護対象: 99 ファイル
+- 末尾(tip)ハッシュ: `3c5fcd1b99119fe1cba7066b1b9c46d80f33bfc4d3f01cedf912cee0bd02ef16`
+- 保護対象: 102 ファイル
 
 ## ブロック
 
@@ -302,9 +302,13 @@
 | 286 | `0298e0b15870a0e7` | `450ca89b19bbcc9f` | `a8b54204a8afec47` | update PROXY_EXAMPLE.md,exportPaths.ts,secrets.ts,aiEndpoint.ts |
 | 287 | `1a32b87ad28e8187` | `a8b54204a8afec47` | `6515b2c0501af05a` | update lint-artifact-csp.cjs |
 | 288 | `1e132492fc4f6c94` | `6515b2c0501af05a` | `133a8673fafa41de` | update exportPaths.ts,shellOpenGate.ts,scanTarget.ts |
+| 289 | `7066b935fbe555e6` | `133a8673fafa41de` | `3c5fcd1b99119fe1` | update auditor.md,mechanic.md,scout.md,integrity-chain.cjs |
 
 ## 保護対象ファイル
 
+- `.claude/agents/auditor.md`
+- `.claude/agents/mechanic.md`
+- `.claude/agents/scout.md`
 - `.claude/settings.json`
 - `.cursor/rules/00-project.mdc`
 - `.cursor/rules/10-boundaries.mdc`

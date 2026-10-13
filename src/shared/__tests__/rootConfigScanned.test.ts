@@ -32,6 +32,11 @@ const forbidden = req('../../../scripts/lint-forbidden-patterns.cjs') as {
   MUST_SCAN: string[];
   SCAN_ROOTS: { dir: string; min: number }[];
   rootCodeFiles: (tracked?: string[] | null, opts?: { requireExists?: boolean }) => string[];
+  isWalkedSourceName: (name: string) => boolean;
+};
+
+const malware = req('../../../scripts/lint-malware.cjs') as {
+  isScannedPath: (f: string) => boolean;
 };
 
 /** 追跡されている「リポジトリ直下のコード」を git から数える。 */
@@ -90,6 +95,28 @@ describe('リポジトリ直下の設定 (パス 347 → 514)', () => {
     expect(got).not.toContain('a/b.cjs');
     expect(got).not.toContain('package-lock.json');
     expect(got).not.toContain('tsconfig.json');
+  });
+
+  it('★ walk は .mjs を走査する —— ESM の実行コードが child_process census に入る (threat: T-018)', () => {
+    // 直す前: walk の正規表現が `.mjs` を含まず、scripts/ci/x.mjs に child_process を
+    // 書いても exit 0 (同じ中身の .cjs は exit 1)。既知 gap が頼る census の穴。
+    expect(forbidden.isWalkedSourceName('x.mjs'), '.mjs が走査されない').toBe(true);
+    // 兄弟の拡張子も通る (回帰で狭めない)。
+    for (const ext of ['ts', 'tsx', 'cjs', 'js', 'jsx', 'html']) {
+      expect(forbidden.isWalkedSourceName(`x.${ext}`), ext).toBe(true);
+    }
+    // 対照: コードでない物・主張していない拡張子は走査しない (網が広がりすぎない)。
+    for (const name of ['README.md', 'data.json', 'style.css', 'x.mts', 'x.txt']) {
+      expect(forbidden.isWalkedSourceName(name), name).toBe(false);
+    }
+  });
+
+  it('★ forbidden と malware が .mjs について対称 (2 つの supply-chain 検出器がずれない)', () => {
+    // malware の isScannedPath は元から .mjs を含む。forbidden の walk が外していたので
+    // 「malware は走査するが forbidden は見ない」非対称だった。両方が見ることを留める。
+    expect(forbidden.isWalkedSourceName('scripts/ci/x.mjs'.split('/').pop()!)).toBe(true);
+    expect(malware.isScannedPath('scripts/ci/x.mjs')).toBe(true);
+    expect(malware.isScannedPath('x.mjs')).toBe(true); // 直下も
   });
 
   it('★ git が無い環境では既知の SCAN_FILES へ落ちる (黙って 0 件にしない)', () => {

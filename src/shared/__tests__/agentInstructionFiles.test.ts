@@ -40,6 +40,17 @@ import { readOriginalDirEntries, readOriginalSource } from './originalSource';
 
 const REPO = join(__dirname, '..', '..', '..');
 
+/**
+ * 2026-10-13 (パス 515 · T-017): `.claude/agents/*.md` を母集団へ足した。
+ * パス 505 (2026-10-07) で足した特権サブエージェントの指示書で、Claude Code が
+ * deep/standard/light の仕事を委ねるとき**その system プロンプト本文を注入**する。
+ * `auditor` / `mechanic` は `model: inherit` (主セッションの最強モデル) で
+ * Edit/Write/Bash を継ぐ。`.cursor/rules/*.mdc` と `.claude/settings.json` は
+ * 守られているのに、**505 がパス 372 の母集団走査 (`.cursor/rules` + `CLAUDE.md`)
+ * より後だったので構造的に漏れていた**。policy は `chain` —— 本文そのものが
+ * 変わったことを鎖が見る (CODEOWNERS 被覆は threatLedger.test.ts の T-003 が
+ * 「PROTECTED は全部 CODEOWNERS が覆う」で自動で要求する)。
+ */
 /** 指示書と、その古びを誰が見るか。 */
 const POLICY: Readonly<Record<string, 'chain' | 'live-metrics'>> = {
   'CLAUDE.md': 'live-metrics',
@@ -47,14 +58,20 @@ const POLICY: Readonly<Record<string, 'chain' | 'live-metrics'>> = {
   '.cursor/rules/10-boundaries.mdc': 'chain',
   '.cursor/rules/20-gates.mdc': 'chain',
   '.cursor/rules/30-conventions.mdc': 'chain',
+  '.claude/agents/auditor.md': 'chain',
+  '.claude/agents/mechanic.md': 'chain',
+  '.claude/agents/scout.md': 'chain',
 };
 
-/** 母集団は走査で導く (`.cursor/rules/*.mdc` + `CLAUDE.md`)。 */
+/** 母集団は走査で導く (`.cursor/rules/*.mdc` + `.claude/agents/*.md` + `CLAUDE.md`)。 */
 function population(): string[] {
   const rules = readOriginalDirEntries(join(REPO, '.cursor/rules'))
     .filter((e) => !e.isDirectory() && e.name.endsWith('.mdc'))
     .map((e) => `.cursor/rules/${e.name}`);
-  return ['CLAUDE.md', ...rules].sort();
+  const agents = readOriginalDirEntries(join(REPO, '.claude/agents'))
+    .filter((e) => !e.isDirectory() && e.name.endsWith('.md'))
+    .map((e) => `.claude/agents/${e.name}`);
+  return ['CLAUDE.md', ...rules, ...agents].sort();
 }
 
 const chain = readOriginalSource(join(REPO, 'scripts/integrity-chain.cjs'));
@@ -115,6 +132,21 @@ describe('エージェントへ注入される指示書は機械が見ている 
     );
     expect(always.length, 'alwaysApply の走査が死んでいる').toBeGreaterThanOrEqual(2);
     expect(always.filter((f) => !Object.hasOwn(POLICY, f)), '常時注入なのに台帳に無い').toEqual([]);
+  });
+
+  it('★ 特権サブエージェントの指示書 (.claude/agents/*.md) は整合性チェーンで守る (threat: T-017)', () => {
+    // 直す前: `.cursor/rules/*.mdc` と `.claude/settings.json` は守られているのに、
+    // パス 505 で後から足した agents だけが CODEOWNERS にも PROTECTED にも台帳にも無かった。
+    // `taskTierPolicy.test.ts` は frontmatter (name/model/effort/scout tools) を pin するが本文は見ない。
+    const agents = population().filter((f) => f.startsWith('.claude/agents/'));
+    expect(agents.length, 'agents の走査が死んでいる').toBeGreaterThanOrEqual(3);
+    for (const f of agents) {
+      expect(POLICY[f], `${f} が台帳に無い`).toBe('chain');
+      expect(chain, `${f} が PROTECTED にない`).toContain(`'${f}',`);
+    }
+    // auditor / mechanic は model: inherit (最強モデル) で Edit/Write/Bash を継ぐ特権エージェント。
+    expect(agents).toContain('.claude/agents/auditor.md');
+    expect(agents).toContain('.claude/agents/mechanic.md');
   });
 
 });

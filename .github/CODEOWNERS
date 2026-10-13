@@ -17,6 +17,9 @@
 /scripts/ @hiroto1977
 /scripts/integrity-chain.cjs @hiroto1977
 /.claude/settings.json @hiroto1977
+/.claude/agents/auditor.md @hiroto1977
+/.claude/agents/mechanic.md @hiroto1977
+/.claude/agents/scout.md @hiroto1977
 /.cursor/rules/00-project.mdc @hiroto1977
 /.cursor/rules/10-boundaries.mdc @hiroto1977
 /.cursor/rules/20-gates.mdc @hiroto1977

@@ -7,6 +7,16 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-13) — パス 515: 狩りの 5 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 515」。監査役 (read-only・high) の報告は main-ipc / renderer / ai / network = 0 件 (measured-healthy)、supply-chain = 新規 LOW 1 件 + latent な観察 2 件。**再現で確かめると 2 件が本物**だった (3 つ目 `__tests__` 除外は意図的・テストは秘密 env 無しで走るので直さず記録のみ)。
+- **直した 2 件**:
+  - **T-017 (供給網・low)** —— 特権サブエージェントの指示書 `.claude/agents/{auditor,mechanic,scout}.md` が無防備だった。実測: 同種の常時注入指示書 `.cursor/rules/*.mdc` (4 本) と `.claude/settings.json` は **CODEOWNERS・整合性チェーンの PROTECTED・`agentInstructionFiles.test.ts` の POLICY** の 3 つすべてに在るのに、agents は 3 つとも**無かった**。これらはパス 505 (2026-10-07) で足した指示書で、Claude Code が deep/standard/light を委ねるとき**本文を system プロンプトとして注入**する。`auditor`/`mechanic` は `model: inherit` (最強モデル) で Edit/Write/Bash を継ぐので、本文に 1 行注入したマージ済み PR が次の狩りの監査役を steer しうる (ローカル限定・署名鍵には届かない)。パス 372 が .cursor を守った母集団走査 (`.cursor/rules` + `CLAUDE.md`) は 505 より前なので構造的に漏れていた。`taskTierPolicy.test.ts` は frontmatter を双方向で pin するが**本文は見ない**。直し: 3 本を PROTECTED・CODEOWNERS・POLICY (chain) へ足した —— **CODEOWNERS 被覆は `threatLedger.test.ts` の T-003 検査 (PROTECTED は全部 CODEOWNERS が覆う) が自動で要求する**。回帰 `agentInstructionFiles.test.ts` (T-017)。
+  - **T-018 (供給網・low)** —— `lint:forbidden` のディレクトリ走査 (walk) が `.mjs` を母集団から落とし、`scripts/` や `src/` 配下の ESM の実行コードが child_process census を素通りした。実測 (2026-10-13・直す前): `scripts/ci/x.mjs` に `child_process`+`curl $(env)` を書くと `lint:forbidden` は **exit 0** (Scanned 656・probe.mjs は走査されず)。**同じ中身を `.cjs` にすると exit 1** (child_process census が捕まえる) —— 差は拡張子だけ。既知 gap『純粋な child_process + curl は forbidden の census が重なって塞ぐ』が頼るまさにその census の穴 (T-016 の家系の走査母集団の死角)。malware の `isScannedPath` は元から `.mjs` を含むが規則が狭いので両門を素通りした。追跡 `.mjs` は今日 0 件 (latent)。直し: walk の拡張子を `isWalkedSourceName` (pure・export) に切り出し `.mjs` を足した (malware と `.mjs` について対称)。直した後は同じ `.mjs` で exit 1。回帰 `rootConfigScanned.test.ts` (T-018)。
+- **確立したパターン** —— **常時注入される特権指示書は、追加された時点で同じ 3 つの守り (チェーン・CODEOWNERS・POLICY 台帳) に載せる** (パス 372 の母集団走査が後発の `.claude/agents/` を構造的に漏らした)。**supply-chain 検出器の走査母集団は拡張子で揃える** (forbidden の walk と malware の `isScannedPath` が `.mjs` でずれていた・T-016 の家系)。
+- **0 件の 4 面** (main-ipc / renderer / ai / network) は実測の健全を各監査役が報告 (IPC 引数検証・XSS/danger sinks・書き込み確認の経路・SSRF/egress の門)。clearedBacklog は増やしていない。
+- 出荷コードは 1 行も触っていない (変更は門 script 2 本・検査 2 本・CODEOWNERS・チェーン・台帳・docs のみ) ので**出荷物は byte 不変**。整合性チェーン block **#289** (agents 3 本 + integrity-chain.cjs)。脅威は T-017 / T-018 を追加 (件数 15 → 17・T-004 欠番)。
+
 ## 直近の作業 (2026-10-13) — パス 514: 狩りの 4 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 514」。監査役 (read-only・high) の報告は network / main-ipc / renderer = 0 件、ai = 1 件、supply-chain = 1 件。**再現で確かめると 2 件とも本物**だった。

