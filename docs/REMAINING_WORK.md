@@ -1,5 +1,23 @@
 # Service Hub — 残りの作業手順書
 
+## パス 512 (狩りの 2 回目 —— 残り 4 件を自分で確かめ、1 件を直す) (2026-10-13)
+
+パス 511 の `huntBacklog` 4 件 (供給網の監査が途中で切れて確かめられなかった物) を自分で再現・測定した。
+**本物は 1 件 (T-011)**、残り 3 件は実測で健全 (台帳の `clearedBacklog` に測った結果と日付を書いた)。
+
+- **T-011 (直した)** —— 配る HTML の CSP meta より**前**に置いた `<script>` は CSP の外で走る。実 chromium で実測:
+  出荷物の CSP meta の前へ `<script>window.__pwn=1</script>` を置くと `__pwn === 1`、後へ置くと `undefined`。
+  `lint:csp` (`lint-artifact-csp.cjs`) は CSP の**値**だけを見ており、位置も固定漏れの inline script も外部 script も ✅ を返した。
+  3 規則を足した: ① meta より前に開いてよいのは何も走らせず読み込まない物だけ (doctype / html / head / meta / title) ②
+  inline の実行 script はすべて `script-src` にハッシュ固定 ③ 外から読む `<script src>` は 0 本。
+  回帰検査 `artifactCspWitness.test.ts` (+3 件) と対照 (位置の規則を `if (false && …)` へ → 2 件落ちる・復帰で md5 一致)。法則 `csp-meta-position-and-pinning`。
+- **健全だった 3 件 (clearedBacklog)** —— ① 変異検査の成果物: `mutation.yml` の push は `branches: [main]` だけで PR から走らず、
+  download-artifact は同じ run の自分の job が上げた物しか集めない (artifact は run スコープ)。② symlink: `src/renderer` 下に
+  `../../hidden/payload.ts` への symlink を置いて実測 —— `lint:malware` が decoded-code-exec と exec-with-network で、
+  `lint:network-targets` が src の内・外の両方で落ちた (symlink は走査を外さず、むしろ両端で捕まる)。③ npm キャッシュの改竄:
+  `npm ci` は integrity 不一致の tarball を再取得しようとして `ENOTCACHED` で落ちる (改竄した tarball は実行されない)。
+- **残り** —— 台帳の `huntBacklog` は空。次の狩りは `docs/THREAT_HUNT.md` の 5 面を回し直す (供給網の報告が途中で切れた分の再走を含む)。
+
 ## パス 511 (AI による脅威の狩り —— 捕縛・解析・対策・回帰・記録を 1 つの輪にし、攻撃の型ごとに守りを表にする) (2026-10-12)
 
 依頼は「人が見つけられない穴を AI が見つけ、侵入する物と侵入後に害を与える物を捕縛・解析・対策までセットで行い、

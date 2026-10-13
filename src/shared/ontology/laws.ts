@@ -2016,6 +2016,26 @@ export const LAWS: readonly Law[] = [
       harness('e2e:lite'),
     ],
   },
+  {
+    id: 'csp-meta-position-and-pinning',
+    family: 'surface',
+    name: '配る HTML の CSP は、値だけでなく meta の位置と、固定している script が全部かを見る —— meta より前の script は CSP の外で走る',
+    statement:
+      'meta の `Content-Security-Policy` は**構文解析された所から**効くので、meta より前に開く `<script>` は CSP の外で走る。'
+      + '実 chromium で実測 (2026-10-13 · パス 512): 出荷物の CSP meta の**前**へ `<script>window.__pwn=1</script>` を置くと `__pwn === 1`、'
+      + '**後**へ置くと `undefined` (ブロック)。`lint:csp` (`lint-artifact-csp.cjs`) は 2026-10-12 まで CSP の**値**だけを見ており、前に置いた形も'
+      + '固定漏れの inline script も外部 script も ✅ を返した。規則を 3 つ足した: ① meta より前に開いてよいのは何も走らせず読み込まない物だけ '
+      + '(doctype / html / head / meta / title。`<base>` は base-uri の外で相対 URL を書き換え、`<link>` / `<style>` は読み込みを始める) '
+      + '② inline の実行 script はすべて `script-src` にハッシュ固定 (ビルド側 `assertPinnedScripts` は自分が書いた物を見るが、後から足された物はここでしか見えない) '
+      + '③ 外から読む `<script src>` は 0 本 (単一 HTML は inline だけ)。未ピン留めの inline script はブラウザが止めるので実害は「動かない」側だが、'
+      + '**固定を名乗る門が、固定されていない物が在るときに緑を返さない**。供給網の狩り (パス 512) の backlog 項目「inline-html を通して門をすり抜けるコードを差し込めるか」の答え。',
+    provenance: ['2026-10-13 (パス 512)'],
+    enforcedBy: [
+      gate('lint:csp'),
+      test(T.shared('artifactCspWitness')),
+      test(T.shared('threatLedger')),
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

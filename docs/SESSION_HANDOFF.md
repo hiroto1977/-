@@ -7,6 +7,11 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-13) — パス 512: 狩りの 2 回目。残り 4 件を確かめ、CSP meta より前の script (T-011) を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 512」。本物は T-011 (配る HTML の CSP meta より前の `<script>` は CSP の外で走る) 1 件で、`lint:csp` に位置・固定・外部 script の 3 規則を足した。残り 3 件は実測で健全 (台帳の `clearedBacklog`)。
+- `huntBacklog` は空になった。次の狩りは `docs/THREAT_HUNT.md` の 5 面を回し直す。
+
 ## 直近の作業 (2026-10-12) — パス 511: AI による脅威の狩り (捕縛・解析・対策・回帰・記録) と攻撃の型ごとの守りの表
 
 - 手順書 `docs/THREAT_HUNT.md`・台帳 `security/threat-ledger.json`・機械 `src/shared/__tests__/threatLedger.test.ts`・`.github/CODEOWNERS`。

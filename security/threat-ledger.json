@@ -1,29 +1,80 @@
 {
   "version": 1,
   "purpose": "確認した攻撃を 1 件ずつ、修正と『攻撃を再現する回帰検査』つきで残す台帳。攻撃の型ごとに、どの門・検査が守るかと、守りの無い穴も書く。検査は src/shared/__tests__/threatLedger.test.ts が双方向に留める。手順は docs/THREAT_HUNT.md。",
-  "surfaces": ["main-ipc", "renderer", "network", "ai", "supply-chain"],
+  "surfaces": [
+    "main-ipc",
+    "renderer",
+    "network",
+    "ai",
+    "supply-chain"
+  ],
   "classes": [
     {
       "id": "ai-automated-attack",
       "name": "AI 駆動型の自動化攻撃",
       "howItReachesThisApp": "攻撃側の AI がアプリの穴を人より速く探して突く。",
       "defenses": [
-        { "what": "こちらも AI で先に探す (5 面の監査・手順書)", "enforcedBy": ["docs/THREAT_HUNT.md"] },
-        { "what": "見つけた穴は攻撃を再現する回帰検査で留める (台帳)", "enforcedBy": ["security/threat-ledger.json", "src/shared/__tests__/threatLedger.test.ts"] },
-        { "what": "全 PR に 39 の門", "enforcedBy": ["npm:verify:all"] },
-        { "what": "依存の勧告を毎日確認", "enforcedBy": [".github/workflows/dependency-audit.yml"] }
+        {
+          "what": "こちらも AI で先に探す (5 面の監査・手順書)",
+          "enforcedBy": [
+            "docs/THREAT_HUNT.md"
+          ]
+        },
+        {
+          "what": "見つけた穴は攻撃を再現する回帰検査で留める (台帳)",
+          "enforcedBy": [
+            "security/threat-ledger.json",
+            "src/shared/__tests__/threatLedger.test.ts"
+          ]
+        },
+        {
+          "what": "全 PR に 39 の門",
+          "enforcedBy": [
+            "npm:verify:all"
+          ]
+        },
+        {
+          "what": "依存の勧告を毎日確認",
+          "enforcedBy": [
+            ".github/workflows/dependency-audit.yml"
+          ]
+        }
       ],
-      "gaps": ["AI 監査は人が起動する。定期実行は利用料が掛かるので利用者の判断 (docs/THREAT_HUNT.md の『回す頻度』)。"]
+      "gaps": [
+        "AI 監査は人が起動する。定期実行は利用料が掛かるので利用者の判断 (docs/THREAT_HUNT.md の『回す頻度』)。"
+      ]
     },
     {
       "id": "ai-phishing",
       "name": "生成 AI による巧妙なフィッシング / 間接プロンプトインジェクション",
       "howItReachesThisApp": "本物そっくりのメール・Slack・予定・第三者の応答から、偽リンクや偽の指示へ誘導する。AI が読む文に命令を混ぜる。",
       "defenses": [
-        { "what": "外部リンクは http(s) だけ・利用者情報なし・解析した URL を開く", "enforcedBy": ["src/shared/externalUrlGate.ts"] },
-        { "what": "書き込みは送る欄と値を見せて確認してから (AI の出力から書き込みは起こさない)", "enforcedBy": ["src/shared/voiceWriteRequirements.ts", "src/renderer/data/voiceCommand.ts"] },
-        { "what": "第三者の文はアプリの声の 1 行に畳む (偽の見出し・偽の結果の行を作らせない)", "enforcedBy": ["src/renderer/data/assistantMarkdown.ts", "src/renderer/data/chatbotOllama.ts"] },
-        { "what": "AI へ送る前に送り先を名乗る", "enforcedBy": ["src/renderer/pages/__tests__/aiEgressDisclosed.test.ts"] }
+        {
+          "what": "外部リンクは http(s) だけ・利用者情報なし・解析した URL を開く",
+          "enforcedBy": [
+            "src/shared/externalUrlGate.ts"
+          ]
+        },
+        {
+          "what": "書き込みは送る欄と値を見せて確認してから (AI の出力から書き込みは起こさない)",
+          "enforcedBy": [
+            "src/shared/voiceWriteRequirements.ts",
+            "src/renderer/data/voiceCommand.ts"
+          ]
+        },
+        {
+          "what": "第三者の文はアプリの声の 1 行に畳む (偽の見出し・偽の結果の行を作らせない)",
+          "enforcedBy": [
+            "src/renderer/data/assistantMarkdown.ts",
+            "src/renderer/data/chatbotOllama.ts"
+          ]
+        },
+        {
+          "what": "AI へ送る前に送り先を名乗る",
+          "enforcedBy": [
+            "src/renderer/pages/__tests__/aiEgressDisclosed.test.ts"
+          ]
+        }
       ],
       "gaps": [
         "リンクの表示文字と行き先の食い違い・似た文字 (IDN) のドメインへの警告はまだ無い。",
@@ -36,12 +87,49 @@
       "name": "サプライチェーン攻撃",
       "howItReachesThisApp": "npm 依存・GitHub Action・MCP サーバ・マージされた PR の乗っ取り。",
       "defenses": [
-        { "what": "依存の台帳・lockfile の integrity・インストール時コード", "enforcedBy": ["npm:lint:deps"] },
-        { "what": "悪意のあるコードの形 (復号の実行・環境変数の送出・難読化)", "enforcedBy": ["npm:lint:malware"] },
-        { "what": "workflow の権限・第三者 action の SHA 固定", "enforcedBy": ["npm:lint:workflow-security"] },
-        { "what": "MCP サーバと hook の台帳", "enforcedBy": ["npm:lint:mcp-servers"] },
-        { "what": "依存の更新 PR", "enforcedBy": [".github/dependabot.yml"] },
-        { "what": "保護対象の変更を見える化 (整合性チェーン) + 所有者のレビューを要求 (CODEOWNERS)", "enforcedBy": ["npm:chain:verify", ".github/CODEOWNERS"] }
+        {
+          "what": "依存の台帳・lockfile の integrity・インストール時コード",
+          "enforcedBy": [
+            "npm:lint:deps"
+          ]
+        },
+        {
+          "what": "悪意のあるコードの形 (復号の実行・環境変数の送出・難読化)",
+          "enforcedBy": [
+            "npm:lint:malware"
+          ]
+        },
+        {
+          "what": "workflow の権限・第三者 action の SHA 固定",
+          "enforcedBy": [
+            "npm:lint:workflow-security"
+          ]
+        },
+        {
+          "what": "MCP サーバと hook の台帳",
+          "enforcedBy": [
+            "npm:lint:mcp-servers"
+          ]
+        },
+        {
+          "what": "依存の更新 PR",
+          "enforcedBy": [
+            ".github/dependabot.yml"
+          ]
+        },
+        {
+          "what": "保護対象の変更を見える化 (整合性チェーン) + 所有者のレビューを要求 (CODEOWNERS)",
+          "enforcedBy": [
+            "npm:chain:verify",
+            ".github/CODEOWNERS"
+          ]
+        },
+        {
+          "what": "配る HTML の CSP: meta の位置・inline script のハッシュ固定・外部 script の不在",
+          "enforcedBy": [
+            "npm:lint:csp"
+          ]
+        }
       ],
       "gaps": [
         "整合性チェーンは署名を持たない —— マージされた PR は保護対象とチェーンを一緒に書き換えられる (T-003)。CODEOWNERS が効くのは GitHub の設定で『Code Owners のレビュー必須』を有効にしたときだけ。",
@@ -54,96 +142,272 @@
       "name": "二重・三重脅迫型ランサムウェア",
       "howItReachesThisApp": "端末上のデータを暗号化・持ち出し・公開すると脅す。",
       "defenses": [
-        { "what": "資格情報は暗号化して保存 (ブラウザ版: AES-GCM・鍵は記憶だけ / デスクトップ版: OS のキーチェーン)", "enforcedBy": ["src/renderer/security/vault.ts", "src/main/secrets.ts"] },
-        { "what": "暗号化バックアップと復元の関門 (毒の記録で collection を消させない)", "enforcedBy": ["src/renderer/data/backup.ts", "src/renderer/data/store.ts"] },
-        { "what": "保護対象の改竄の検知", "enforcedBy": ["npm:chain:verify"] }
+        {
+          "what": "資格情報は暗号化して保存 (ブラウザ版: AES-GCM・鍵は記憶だけ / デスクトップ版: OS のキーチェーン)",
+          "enforcedBy": [
+            "src/renderer/security/vault.ts",
+            "src/main/secrets.ts"
+          ]
+        },
+        {
+          "what": "暗号化バックアップと復元の関門 (毒の記録で collection を消させない)",
+          "enforcedBy": [
+            "src/renderer/data/backup.ts",
+            "src/renderer/data/store.ts"
+          ]
+        },
+        {
+          "what": "保護対象の改竄の検知",
+          "enforcedBy": [
+            "npm:chain:verify"
+          ]
+        }
       ],
-      "gaps": ["端末そのものへの侵入・ディスクの暗号化・DDoS はアプリの範囲外 (EDR・ネットワーク側の仕事)。"]
+      "gaps": [
+        "端末そのものへの侵入・ディスクの暗号化・DDoS はアプリの範囲外 (EDR・ネットワーク側の仕事)。"
+      ]
     },
     {
       "id": "living-off-the-land",
       "name": "Living off the Land (環境寄生型攻撃)",
       "howItReachesThisApp": "アプリ経由で PowerShell・.bat・.lnk など OS の正規ツールを起動させる。",
       "defenses": [
-        { "what": "OS で開くファイルは拡張子の許可リストと書き出しの木の中だけ", "enforcedBy": ["src/main/shellOpenGate.ts", "src/main/clients/exportPaths.ts"] },
-        { "what": "子プロセスの台帳 (シェルを起動する所は理由つきで数える)", "enforcedBy": ["npm:lint:forbidden", "npm:lint:malware"] }
+        {
+          "what": "OS で開くファイルは拡張子の許可リストと書き出しの木の中だけ",
+          "enforcedBy": [
+            "src/main/shellOpenGate.ts",
+            "src/main/clients/exportPaths.ts"
+          ]
+        },
+        {
+          "what": "子プロセスの台帳 (シェルを起動する所は理由つきで数える)",
+          "enforcedBy": [
+            "npm:lint:forbidden",
+            "npm:lint:malware"
+          ]
+        }
       ],
-      "gaps": ["アプリの外で起動される正規ツールは見えない。"]
+      "gaps": [
+        "アプリの外で起動される正規ツールは見えない。"
+      ]
     },
     {
       "id": "ssrf-and-credential-egress",
       "name": "資格情報の漏出・SSRF",
       "howItReachesThisApp": "保存した URL・転送・応答を使って、鍵を別のホストへ送らせる / 内部の網へ届かせる。",
       "defenses": [
-        { "what": "送り先が変数の通信の台帳", "enforcedBy": ["npm:lint:network-targets"] },
-        { "what": "私設・予約レンジを塞ぐ / 転送に追随しない / 本文の上限", "enforcedBy": ["src/shared/privateTarget.ts", "src/shared/httpLimits.ts"] },
-        { "what": "平文 http は loopback だけ (鍵を載せるとき)", "enforcedBy": ["src/shared/aiEndpoint.ts", "src/shared/proxyEndpoint.ts"] },
-        { "what": "配る Worker の転送は持ち越すヘッダーを許可リストで", "enforcedBy": ["docs/PROXY_EXAMPLE.md"] },
-        { "what": "画面へ出す文の伏字 / 資格情報の混入の門", "enforcedBy": ["src/shared/redact.ts", "npm:lint:secrets"] }
+        {
+          "what": "送り先が変数の通信の台帳",
+          "enforcedBy": [
+            "npm:lint:network-targets"
+          ]
+        },
+        {
+          "what": "私設・予約レンジを塞ぐ / 転送に追随しない / 本文の上限",
+          "enforcedBy": [
+            "src/shared/privateTarget.ts",
+            "src/shared/httpLimits.ts"
+          ]
+        },
+        {
+          "what": "平文 http は loopback だけ (鍵を載せるとき)",
+          "enforcedBy": [
+            "src/shared/aiEndpoint.ts",
+            "src/shared/proxyEndpoint.ts"
+          ]
+        },
+        {
+          "what": "配る Worker の転送は持ち越すヘッダーを許可リストで",
+          "enforcedBy": [
+            "docs/PROXY_EXAMPLE.md"
+          ]
+        },
+        {
+          "what": "画面へ出す文の伏字 / 資格情報の混入の門",
+          "enforcedBy": [
+            "src/shared/redact.ts",
+            "npm:lint:secrets"
+          ]
+        }
       ],
-      "gaps": ["公開の名前が私設 IP へ解決する形 (DNS rebinding) はクライアント側では見えない (Worker は DoH で見る)。"]
+      "gaps": [
+        "公開の名前が私設 IP へ解決する形 (DNS rebinding) はクライアント側では見えない (Worker は DoH で見る)。"
+      ]
     }
   ],
   "threats": [
     {
-      "id": "T-001", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "main-ipc", "class": "ransomware-extortion", "severity": "low",
+      "id": "T-001",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "low",
       "title": "資格情報の保管ファイルを積み重ねで読み口の天井 (1 MiB) を越えさせ、全サービスの資格情報を読めなく・消せなくする",
-      "status": "fixed", "fix": "書く前に書く物の大きさで断る (src/main/secrets.ts の writeStore)。",
-      "regression": { "file": "src/main/__tests__/secretsWrite.test.ts", "test": "★ 天井を越える保存は断り、既存の資格情報は読めて消せるまま" }
+      "status": "fixed",
+      "fix": "書く前に書く物の大きさで断る (src/main/secrets.ts の writeStore)。",
+      "regression": {
+        "file": "src/main/__tests__/secretsWrite.test.ts",
+        "test": "★ 天井を越える保存は断り、既存の資格情報は読めて消せるまま"
+      }
     },
     {
-      "id": "T-002", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "main-ipc", "class": "living-off-the-land", "severity": "low",
+      "id": "T-002",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "low",
       "title": "書き出し先に状態ファイルの固定名の一時ファイルを含むパスを渡し、ディレクトリを作らせて以後の保存を永久に失敗させる",
-      "status": "fixed", "fix": "書き出しは ~/.local/business-hub/data/ の下だけ (exportWriteRoot)。",
-      "regression": { "file": "src/main/clients/__tests__/exportPaths.test.ts", "test": "★ 状態ファイルの木 (data/ の外) へは書き出せない (threat: T-002)" }
+      "status": "fixed",
+      "fix": "書き出しは ~/.local/business-hub/data/ の下だけ (exportWriteRoot)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/exportPaths.test.ts",
+        "test": "★ 状態ファイルの木 (data/ の外) へは書き出せない (threat: T-002)"
+      }
     },
     {
-      "id": "T-003", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "supply-chain", "class": "supply-chain", "severity": "low",
+      "id": "T-003",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
       "title": "整合性チェーンは署名を持たないので、マージされた PR は保護対象とチェーンを一緒に書き換えて chain:verify を通せる",
-      "status": "mitigated", "fix": "保護対象 (チェーンの PROTECTED と同じ一覧) を .github/CODEOWNERS へ載せ、所有者のレビューを要求する。効かせるには GitHub の設定で Code Owners のレビュー必須を有効にする (コードからは有効にできない)。",
-      "regression": { "file": "src/shared/__tests__/threatLedger.test.ts", "test": "★ CODEOWNERS は整合性チェーンの保護対象をすべて覆う (threat: T-003)" }
+      "status": "mitigated",
+      "fix": "保護対象 (チェーンの PROTECTED と同じ一覧) を .github/CODEOWNERS へ載せ、所有者のレビューを要求する。効かせるには GitHub の設定で Code Owners のレビュー必須を有効にする (コードからは有効にできない)。",
+      "regression": {
+        "file": "src/shared/__tests__/threatLedger.test.ts",
+        "test": "★ CODEOWNERS は整合性チェーンの保護対象をすべて覆う (threat: T-003)"
+      }
     },
     {
-      "id": "T-005", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "ai", "class": "ai-phishing", "severity": "low",
+      "id": "T-005",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
       "title": "Ollama の相手のエラー文の改行で、コンシェルジュ自身の吹き出しにアプリの結果の文そっくりの行を描かせる",
-      "status": "fixed", "fix": "断りの詳細を externalTextOnOneLine で 1 行に畳む (src/renderer/data/chatbotOllama.ts)。",
-      "regression": { "file": "src/renderer/data/__tests__/chatbotOllamaModel.test.ts", "test": "★ 相手のエラー文の改行で、アプリの結果の文に見える行を作れない" }
+      "status": "fixed",
+      "fix": "断りの詳細を externalTextOnOneLine で 1 行に畳む (src/renderer/data/chatbotOllama.ts)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/chatbotOllamaModel.test.ts",
+        "test": "★ 相手のエラー文の改行で、アプリの結果の文に見える行を作れない"
+      }
     },
     {
-      "id": "T-006", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "ai", "class": "ai-phishing", "severity": "low",
+      "id": "T-006",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
       "title": "音声コマンドの送り先 (#channel / owner/repo) を、転送する本文 (引用の中) から決めさせる",
-      "status": "fixed", "fix": "送り先は引用の外からだけ読み、2 つ以上なら取らない (src/renderer/data/voiceCommand.ts)。",
-      "regression": { "file": "src/renderer/data/__tests__/voiceCommand.test.ts", "test": "★ 引用の中の #channel を送り先にしない" }
+      "status": "fixed",
+      "fix": "送り先は引用の外からだけ読み、2 つ以上なら取らない (src/renderer/data/voiceCommand.ts)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/voiceCommand.test.ts",
+        "test": "★ 引用の中の #channel を送り先にしない"
+      }
     },
     {
-      "id": "T-007", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "renderer", "class": "ransomware-extortion", "severity": "low",
+      "id": "T-007",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "low",
       "title": "偽の封緘済みの記録を 1 件持つバックアップを復元させ、collection の記録を全部画面から消す (再読込でも消えたまま・毒が以後のバックアップへ写る)",
-      "status": "fixed", "fix": "封緘済みは開ける鍵が在る端末でだけ受ける (importableRecordGate / acceptsSealedRecords)。計画と実行は同じ関門。",
-      "regression": { "file": "src/renderer/data/__tests__/restorePlanMatchesImport.test.ts", "test": "★ 平文の端末は偽の封緘済みを復元しない —— 1 件で collection が読めなくなる形を作らない (threat: T-007)" }
+      "status": "fixed",
+      "fix": "封緘済みは開ける鍵が在る端末でだけ受ける (importableRecordGate / acceptsSealedRecords)。計画と実行は同じ関門。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/restorePlanMatchesImport.test.ts",
+        "test": "★ 平文の端末は偽の封緘済みを復元しない —— 1 件で collection が読めなくなる形を作らない (threat: T-007)"
+      }
     },
     {
-      "id": "T-008", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "network", "class": "ssrf-and-credential-egress", "severity": "low",
+      "id": "T-008",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
       "title": "配る Worker がホストの変わる転送で hibp-api-key / x-apikey を次のホストへ持ち越す",
-      "status": "fixed", "fix": "持ち越すヘッダーを許可リスト (accept / accept-language / content-type / user-agent) にする (docs/PROXY_EXAMPLE.md の crossOriginHeaders)。",
-      "regression": { "file": "src/renderer/network/__tests__/proxyWorkerParity.test.ts", "test": "★ ホストが変わる転送は鍵のヘッダーを名前を問わず落とす (threat: T-008)" }
+      "status": "fixed",
+      "fix": "持ち越すヘッダーを許可リスト (accept / accept-language / content-type / user-agent) にする (docs/PROXY_EXAMPLE.md の crossOriginHeaders)。",
+      "regression": {
+        "file": "src/renderer/network/__tests__/proxyWorkerParity.test.ts",
+        "test": "★ ホストが変わる転送は鍵のヘッダーを名前を問わず落とす (threat: T-008)"
+      }
     },
     {
-      "id": "T-009", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "network", "class": "ssrf-and-credential-egress", "severity": "low",
+      "id": "T-009",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
       "title": "ip6-localhost / ip6-loopback / localhost. を loopback とみなし、鍵を載せた平文 http を網の DNS が答えた相手へ送る",
-      "status": "fixed", "fix": "許す側の判定は localhost ちょうどと loopback の IP だけ (src/shared/aiEndpoint.ts)。",
-      "regression": { "file": "src/shared/__tests__/aiEndpoint.test.ts", "test": "★ OS が loopback へ解決するとは限らない名前は通さない (threat: T-009)" }
+      "status": "fixed",
+      "fix": "許す側の判定は localhost ちょうどと loopback の IP だけ (src/shared/aiEndpoint.ts)。",
+      "regression": {
+        "file": "src/shared/__tests__/aiEndpoint.test.ts",
+        "test": "★ OS が loopback へ解決するとは限らない名前は通さない (threat: T-009)"
+      }
     },
     {
-      "id": "T-010", "found": "2026-10-12", "foundBy": "ai-hunt", "surface": "ai", "class": "ai-phishing", "severity": "low",
+      "id": "T-010",
+      "found": "2026-10-12",
+      "foundBy": "ai-hunt",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
       "title": "ブラウザ版のコンシェルジュが自由質問を端末の外の Ollama へ送りながら『ローカル LLM』『端末内のモデル』と名乗り、送る前に何も言わない",
-      "status": "fixed", "fix": "送り先がこの端末の外なら送る前にホストを名乗り、札も送り先のホストにする (chatbotOllamaRecipient / remoteOllamaNotice)。",
-      "regression": { "file": "src/renderer/data/__tests__/chatbotOllamaModel.test.ts", "test": "★ ブラウザ版で送り先がこの端末の外なら、そのホストを名乗り、送る前の 1 文を出す" }
+      "status": "fixed",
+      "fix": "送り先がこの端末の外なら送る前にホストを名乗り、札も送り先のホストにする (chatbotOllamaRecipient / remoteOllamaNotice)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/chatbotOllamaModel.test.ts",
+        "test": "★ ブラウザ版で送り先がこの端末の外なら、そのホストを名乗り、送る前の 1 文を出す"
+      }
+    },
+    {
+      "id": "T-011",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 512 (supply-chain backlog item 3)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "status": "fixed",
+      "title": "配る HTML の CSP meta より前に置いた <script> は CSP の外で走る。lint:artifact-csp は値だけを見て、位置も固定漏れも見ていなかった",
+      "fix": "scripts/lint-artifact-csp.cjs が ① CSP meta より前に開く要素は doctype/html/head/meta/title だけ ② inline の script はすべて script-src にハッシュ固定 ③ 外から読む script は 0 本 を見る (実 chromium で meta の前の <script> が window.__pwn=1 で走ることを確認)",
+      "regression": {
+        "file": "src/shared/__tests__/artifactCspWitness.test.ts",
+        "test": "★ CSP の meta より前に置いた script は、CSP の外で走るので鳴る (threat: T-011)"
+      }
     }
   ],
-  "huntBacklog": [
-    { "surface": "supply-chain", "item": "変異検査の塊 (matrix) の間で受け渡す成果物を PR が汚せるか", "why": "2026-10-12 の監査が手前で打ち切られ、確かめていない。" },
-    { "surface": "supply-chain", "item": "PR が門の走査範囲の下へ置く symlink で、門が範囲の外のファイルを読むか / 走査を外れるか", "why": "2026-10-12 の監査が分類器に止められ、この項目まで届かなかった。" },
-    { "surface": "supply-chain", "item": "scripts/inline-html.cjs を通して出荷 HTML に CSP と門をすり抜けるコードを差し込めるか", "why": "2026-10-12 の監査が分類器に止められ、この項目まで届かなかった。" },
-    { "surface": "supply-chain", "item": "監査が『いくつかの門が見落とす物』と要約した中身", "why": "報告が途中で切れ、詳細が失われた。監査を回し直す。" }
+  "huntBacklog": [],
+  "clearedBacklog": [
+    {
+      "item": "変異検査の塊 (matrix) の間で受け渡す成果物を PR が汚せるか",
+      "finding": "mutation.yml の push トリガは branches: [main] だけなので PR からは走らない。走るのは main への push で、そこは保護対象のレビュー後。download-artifact はパターン名で集めるが、各塊の報告は同じ run の自分の job が upload した物しか集まらない (artifact は run スコープ)。穴なし。",
+      "checkedOn": "2026-10-13"
+    },
+    {
+      "item": "PR が門の走査範囲の下へ置く symlink で、門が範囲の外のファイルを読むか / 走査を外れるか",
+      "finding": "src/renderer 下に ../../hidden/payload.ts への symlink を置いて実測: lint:malware が decoded-code-exec と exec-with-network で落ち (exit 1)、lint:network-targets も src の内・外の両方で落ちた (exit 1)。symlink は走査を外さず、むしろ両端 (src 内のリンクと範囲外の実体) で捕まる。穴なし。",
+      "checkedOn": "2026-10-13"
+    },
+    {
+      "item": "scripts/inline-html.cjs を通して出荷 HTML に CSP と門をすり抜けるコードを差し込めるか",
+      "finding": "T-011 として実在。meta より前の <script> は CSP の外で走り、門は位置も固定漏れも見ていなかった。lint:artifact-csp に位置・固定・外部 script の 3 規則を足して閉じた。",
+      "checkedOn": "2026-10-13"
+    },
+    {
+      "item": "監査が『いくつかの門が見落とす物』と要約した中身",
+      "finding": "元の報告が途中で切れた分は、上の 3 項目の実測で置き換えた (成果物・symlink・inline-html)。残る未測定は supply-chain の gaps に在るもの (CODEOWNERS の有効化・actions/* の可動タグ・依存の中身) で、どれも台帳に明示済み。",
+      "checkedOn": "2026-10-13"
+    }
   ]
 }

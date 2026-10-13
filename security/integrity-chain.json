@@ -2398,6 +2398,14 @@
       "leafCount": 99,
       "note": "update PROXY_EXAMPLE.md,exportPaths.ts,secrets.ts,aiEndpoint.ts",
       "hash": "a8b54204a8afec47c771f02aa2317173e1ceeaa0f2607f85d6014fcca9303d7f"
+    },
+    {
+      "index": 287,
+      "prevHash": "a8b54204a8afec47c771f02aa2317173e1ceeaa0f2607f85d6014fcca9303d7f",
+      "merkleRoot": "1a32b87ad28e81876e5b43625e5c55c7e445c9a9845061ee50d93cae15baf1c6",
+      "leafCount": 99,
+      "note": "update lint-artifact-csp.cjs",
+      "hash": "6515b2c0501af05a6d58532d354a47350b478ccecf62c2cf7ad47af250800ff1"
     }
   ],
   "tipManifest": {
@@ -2424,7 +2432,7 @@
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
     "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
-    "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
+    "scripts/lint-artifact-csp.cjs": "0909be86c33bd6aa8deaa5706e1dc7e1663bca42b314a9d127faf3cf6521a081",
     "scripts/lint-sample-data.cjs": "55f548e97d05e03f409ccbb2f87c3ecceb1d66e4851d24f2100dedd7670f15ed",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",

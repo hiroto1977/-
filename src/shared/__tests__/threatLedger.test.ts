@@ -45,6 +45,7 @@ interface Ledger {
   }[];
   threats: Threat[];
   huntBacklog: { surface: string; item: string; why: string }[];
+  clearedBacklog?: { item: string; finding: string; checkedOn: string }[];
 }
 
 const ledger = JSON.parse(read('security/threat-ledger.json')) as Ledger;
@@ -162,6 +163,15 @@ describe('攻撃の型ごとの防御表', () => {
       expect(b.item.length).toBeGreaterThan(10);
       expect(b.why.length).toBeGreaterThan(15);
       expect(b.why, '省略した理由は書かない').not.toMatch(SHORTHAND);
+    }
+  });
+
+  it('片付いた狩り (clearedBacklog) は、測った結果と日付を持つ', () => {
+    for (const c of ledger.clearedBacklog ?? []) {
+      expect(c.item.length).toBeGreaterThan(10);
+      expect(c.finding.length, c.item).toBeGreaterThan(20);
+      expect(c.finding, c.item).not.toMatch(SHORTHAND);
+      expect(c.checkedOn, c.item).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     }
   });
 });
