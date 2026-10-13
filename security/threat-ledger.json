@@ -149,10 +149,19 @@
             ".github/CODEOWNERS",
             "src/shared/__tests__/threatLedger.test.ts"
           ]
+        },
+        {
+          "what": "悪意コードの検出器 (lint:malware / lint:forbidden) は追跡された直下の実行コードも走査し、build系の自動発火フック (prebuild / postbuild) も lint:deps が覆う",
+          "enforcedBy": [
+            "npm:lint:malware",
+            "npm:lint:forbidden",
+            "npm:lint:deps"
+          ]
         }
       ],
       "gaps": [
         "整合性チェーンは署名を持たない —— マージされた PR は保護対象とチェーンを一緒に書き換えられる (T-003)。CODEOWNERS が効くのは GitHub の設定で『Code Owners のレビュー必須』を有効にしたときだけ。",
+        "純粋な child_process + curl (Node の fetch / process.env を使わないシェル経由の送出) は lint:malware の規則では捕まらない —— lint:forbidden の child_process census と、直下の走査・build フックの台帳が重なって塞ぐが、規則そのものの網羅ではない (T-016 の実測)。",
         "GitHub 自身の action (actions/*) は可動タグで参照している (第三者の action は SHA 固定)。",
         "依存の中身すべては読めない。"
       ]
@@ -471,6 +480,21 @@
         "file": "src/shared/__tests__/malwareGate.test.ts",
         "test": "狭まった母集団は鳴る (床が実際に何かを守っている) (threat: T-015)"
       }
+    },
+    {
+      "id": "T-016",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 514 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "リポジトリ直下の新規 .cjs + package.json の postbuild で、release.yml の署名鍵を持つ Build ステップに任意コードを通せた —— 悪意コードの検出器 2 門に直下の走査死角、lint:deps 規則 8 に build系フックの死角",
+      "status": "fixed",
+      "fix": "実測 (2026-10-13): 直下に child_process+curl の postbuild.cjs を置き package.json に postbuild を 1 行足すと、lint:malware / lint:forbidden / lint:network-targets / lint:deps の 4 門すべて exit 0 だった (lint:malware/lint:forbidden は /^(src|scripts|orchestration)\\// だけを走査し直下を見ない・lint:network-targets は fetch 一族のみで child_process/curl は対象外・lint:deps 規則 8 の LIFECYCLE_KEYS に prebuild/postbuild が無い)。npm run build は prebuild→build→postbuild を自動で走らせ、release.yml の Build は CSC_LINK / CSC_KEY_PASSWORD / Apple 資格情報 / GH_TOKEN を env に持つ。ci.yml は build:web だけなので PR の CI は緑のまま、release タグを切った瞬間にだけ発火。3 門を直した: ① lint:malware の trackedFiles / isScannedPath と ② lint:forbidden の rootCodeFiles が追跡された直下の実行コード (.cjs/.mjs/.js/.ts/.tsx) を走査する (lint:network-targets③ が既に git ls-files 全体で直下を含むのと同じ形。巨大なデータ JSON は外す) ③ lint:deps 規則 8 の LIFECYCLE_KEYS が prebuild/postbuild を覆う (今日 0 件・文面は build 時の発火と署名鍵を名乗る)。直した後は同じ再現で lint:forbidden (child_process census) と lint:deps (postbuild 配線) が exit 1。",
+      "regression": {
+        "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
+        "test": "★ LIFECYCLE_KEYS は prebuild / postbuild を見る (threat: T-016)"
+      }
     }
   ],
   "huntBacklog": [],
@@ -498,6 +522,16 @@
     {
       "item": "ブラウザ版コンシェルジュが Ollama の返答を externalTextOnOneLine で 1 行に畳むべきか (ai)",
       "finding": "返答は {m.text} の素のテキストで parseMarkdown を通らない (pass 489)。.concierge-msg は white-space: pre-wrap なので改行は見えるが、それは普通のチャット出力で、route の札 (🪪) は別の styled div。markdown / HTML / アプリ構造を注入できないので構造の偽装は無い。1 行に畳むと正当な複数行の回答 (コード・箇条書き) を潰すので UX の退行になる。穴なし、fold しない。",
+      "checkedOn": "2026-10-13"
+    },
+    {
+      "item": "AssistantPage の theme.bg / theme.fg が素で background: / color: へ入る (theme.image は safeCssUrl を通るのに) —— url() でビーコン GET を飛ばせるか (renderer・パス 514)",
+      "finding": "新規の到達可能な実害ではない、と測って判断。bg=url() でビーコン GET が飛ぶとしても、門を通る image 経由で既に同じことが可能 —— safeCssUrl は safeImageSrc を呼び (safeRemoteImageSrc ではない) 利用者自身の値として任意 https を意図的に通す (パス 300)。CSP も img-src 'self' data: https: で https 全体を許す。bg は image に無い能力を 1 つも足さない。fg → CSS 変数は color: でしか消費されず color: url() は無効値で落ちる。assistant-theme へ url() を書き込むスクリプト経路は無い (CSP script-src 'self'・UI の色入力は #rrggbb のみ)。到達は手で直した JSON・同一オリジンの別コード・拡張だけで、repo が一貫して『罠の除去』(low) として扱う側。能力を増やさない一貫性のための hardening なので、投機的 hardening を足さない方針に従い見送り。",
+      "checkedOn": "2026-10-13"
+    },
+    {
+      "item": "scanTarget.looksInternalHostname が privateTarget.ts より網が狭い (v6 の 64:ff9b:1::/48・fec0::/10・v4 の 198.18/15・TEST-NET を見ない) (network・パス 514)",
+      "finding": "欠陥ではない、と測って判断。looksInternalHostname は VirusTotal へ送る前の advisory (警告) であって止める門ではなく (関数自身が『止めない』と宣言・T-013 と同じ家系)、実際に SSRF を塞ぐのは privateTarget.ts の isPrivateOrReservedTarget で、そちらは数値表記 (decimal/octal/hex) と v6 遷移プレフィックス (IPv4-mapped / NAT64 / 6to4 ほか) を網羅済み。警告が 1 つ出ないことは資格情報の流出ではない。直近の T-008〜T-013 が network をちょうど掃いた直後で、構築できた再現はすべて既存の門 (egressRedirectCensus / responseBodyCapCensus / privateTarget.test.ts / redactionCoverage / proxyWorkerParity) か台帳 T-008/T-009/T-013 で閉じている。",
       "checkedOn": "2026-10-13"
     }
   ]

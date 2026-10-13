@@ -7,6 +7,16 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-13) — パス 514: 狩りの 4 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 514」。監査役 (read-only・high) の報告は network / main-ipc / renderer = 0 件、ai = 1 件、supply-chain = 1 件。**再現で確かめると 2 件とも本物**だった。
+- **直した 2 件**:
+  - **T-016 (供給網・medium)** —— リポジトリ直下の新規 `.cjs` + `package.json` の `postbuild` で、`release.yml` の署名鍵を持つ Build ステップに任意コードを通せた。実測 (2026-10-13・直す前): 直下に `child_process`+`curl` の `postbuild.cjs` を置き `"postbuild"` を 1 行足すと `lint:malware` / `lint:forbidden` / `lint:network-targets` / `lint:deps` の **4 門すべて exit 0**。`npm run build` は prebuild→build→postbuild を自動で走らせ、Build の env は `CSC_LINK / CSC_KEY_PASSWORD / Apple 資格情報 / GH_TOKEN`。ci.yml は `build:web` だけなので PR の CI は緑のまま、release タグを切った瞬間にだけ発火。**3 門を直した**: ① `lint:malware` の `trackedFiles`/`isScannedPath` と ② `lint:forbidden` の `rootCodeFiles` が**追跡された直下の実行コード** (`.cjs/.mjs/.js/.ts/.tsx`) を走査する (`lint:network-targets③` が既に git ls-files 全体で直下を含むのと同じ形。巨大なデータ JSON は外す) ③ `lint:deps` 規則 8 の `LIFECYCLE_KEYS` が `prebuild/postbuild` を覆う (今日 0 件・文面は build 時の発火と署名鍵を名乗る)。直した後は同じ再現で `lint:forbidden` (child_process census) と `lint:deps` (postbuild 配線) が exit 1。回帰は `installTimeCodeGuarded.test.ts` (T-016) + `malwareGate.test.ts` + `rootConfigScanned.test.ts`。
+  - **AI の危機バイパス (安全ネットの欠陥・攻撃ではないので脅威台帳には載せない)** —— `AssistantPage.send()` がオンライン時に危機判定を一切通さず `hub.invoke('assistant','chat')` へ直行し、確証済みの相談窓口 (`counseling.SUPPORT_RESOURCES` —— いのちの電話 / 119・110) を出すかどうかがモデル出力に依っていた。コンシェルジュ (`chatbot.replyTo`) は危機を最優先・無条件で判定して LLM へ届かせない非対称。直し: `send()` の冒頭で `detectCrisis || detectHarmToOthers` を判定し、該当すれば `replyOffline` (決定論で窓口を先に出す) へ回してモデルへ送らない。回帰 `assistantCrisisDeterministic.test.ts` (対照で直しを戻すと落ちることを確認)。
+- **0 件の 3 面** (network / main-ipc / renderer) は実測の健全理由を `clearedBacklog` に記録 (theme.bg/fg の非対称は `image` 経由で既に可能 = 能力を増やさない hardening なので見送り・`scanTarget.looksInternalHostname` の網の狭さは advisory で止める門ではない)。
+- **確立したパターン** —— **悪意コードの検出器は追跡された直下の実行コードも走査する** (`SCAN_ROOTS` はディレクトリの一覧なので直下はどの根にも入らない。固定リストでなく git ls-files に聞く)。**build系の自動発火フック (prebuild/postbuild) も install フックと同じ台帳で覆う** (release の署名鍵を持つ Build で走る)。**旗艦の画面も、安全ネット (危機対応) をコンシェルジュと同じく決定論で持つ**。
+- 整合性チェーンは触っていない (変更した 3 門と AssistantPage は保護対象ではない・block 289 のまま)。`huntBacklog` は空のまま。脅威 15→16・clearedBacklog 5→7。
+
 ## 直近の作業 (2026-10-13) — パス 513: 狩りの 3 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 513」。監査役 (read-only・high) の報告は 5 面とも「生きた欠陥 0」。**再現で確かめると門の完成度の穴 2 件と確認できた hardening 3 件が本物**だった。

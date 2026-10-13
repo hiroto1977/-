@@ -29,6 +29,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { stripComments } = require('./lib/strip-non-code.cjs');
+const { gitLsFilesOrNull } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -1096,6 +1097,30 @@ const SCAN_FILES = ['vite.config.ts', 'vitest.config.ts', 'vitest.audit.config.t
 const MUST_SCAN = ['assets/sw.js', ...SCAN_FILES];
 
 /**
+ * **追跡された、リポジトリ直下 (depth 0) の実行コード** (2026-10-13 · T-016)。
+ *
+ * パス 347 は直下の設定 3 本を `SCAN_FILES` に名指しで足したが、**固定リスト**なので
+ * 新しく足した直下の `.cjs` (例: `postbuild.cjs`) はどの根にも SCAN_FILES にも入らず
+ * 走査から外れた。`package.json` に `postbuild` を 1 行足せば `npm run build`
+ * (release.yml の梱包ステップ・署名鍵を env に持つ) のたびにそれが自動で走る ——
+ * child_process の census も forbidden パターンも**どの門も見ない**まま release の
+ * 署名証明書まで届いた。母集団を固定リストから **git ls-files に聞く動的な一覧**へ変える
+ * (lint:network-targets③ が既に git ls-files 全体で直下を含むのと同じ形)。
+ * git が無い環境では既知の `SCAN_FILES` へ落ちる (黙って 0 件にはしない)。
+ */
+function rootCodeFiles(tracked = gitLsFilesOrNull(REPO_ROOT), { requireExists = true } = {}) {
+  const rels =
+    tracked === null
+      ? SCAN_FILES
+      : tracked.filter((rel) => !rel.includes('/') && /\.(?:cjs|mjs|js|ts|tsx)$/.test(rel));
+  return rels.filter(
+    (rel) =>
+      (!requireExists || fs.existsSync(path.join(REPO_ROOT, rel))) &&
+      !EXCLUDE_PATTERNS.some((re) => re.test(rel)),
+  );
+}
+
+/**
  * 実物の木を走査して根ごとの本数を返す (自己検査の標本用)。
  * 本体と同じ `walk` を通すので、除外規則を変えたらこちらも一緒に動く。
  */
@@ -1119,13 +1144,10 @@ function realVisited() {
       seen.add(rel);
     });
   }
-  // 根に属さない単体のファイル (パス 347)。**本体の main() と同じ物を歩く** ——
-  // 片方だけに足すと、self-test が「走査した」と言うのに本体は見ていない形になる。
-  for (const rel of SCAN_FILES) {
-    if (!fs.existsSync(path.join(REPO_ROOT, rel))) continue;
-    if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
-    seen.add(rel);
-  }
+  // 根に属さない、追跡された直下の実行コード (パス 347 → 514)。**本体の main() と同じ
+  // rootCodeFiles() を歩く** —— 片方だけに足すと、self-test が「走査した」と言うのに
+  // 本体は見ていない形になる。
+  for (const rel of rootCodeFiles()) seen.add(rel);
   return seen;
 }
 
@@ -1627,14 +1649,12 @@ function main() {
     walk(path.join(REPO_ROOT, root.dir), scan);
     perRoot[root.dir] = filesScanned - before;
   }
-  // 根に属さない単体のファイル (リポジトリ直下の設定。上の SCAN_FILES を参照)。
+  // 根に属さない、追跡された直下の実行コード (rootCodeFiles が git に聞く —— 固定リストでない。
+  // 新しく足した直下の .cjs も必ず走査する。T-016)。
   {
     const before = filesScanned;
-    for (const rel of SCAN_FILES) {
-      const full = path.join(REPO_ROOT, rel);
-      if (!fs.existsSync(full)) continue;
-      if (EXCLUDE_PATTERNS.some((re) => re.test(rel))) continue;
-      scan(full, rel);
+    for (const rel of rootCodeFiles()) {
+      scan(path.join(REPO_ROOT, rel), rel);
     }
     perRoot['(直下)'] = filesScanned - before;
   }
@@ -1714,6 +1734,7 @@ module.exports = {
   // 走査の生存 —— 外側の証人 (`forbiddenPatternWitness.test.ts`) が読む。
   SCAN_ROOTS,
   MUST_SCAN,
+  rootCodeFiles,
   rootShortfalls,
   missingMustScan,
   realRootCounts,

