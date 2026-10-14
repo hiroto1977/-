@@ -171,7 +171,7 @@ jobs:
           node scripts/lint-sample-data.cjs --artifact dist/index.html dist/assets/*.js
 
       - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           # タグ push なら ref_name がタグ。手動起動なら入力値を使い、タグが
           # 無ければこのランの SHA に新規作成される。

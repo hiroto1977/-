@@ -139,3 +139,37 @@ export function escapeMarkdownInline(input: string): string {
 export function escapeMarkdownText(input: string): string {
   return input.replace(/</g, '&lt;');
 }
+
+/**
+ * **見えない字** —— 制御 (Cc)・書式 (Cf: 双方向制御・ZWSP・BOM ほか)・行 / 段落区切り (Zl / Zp)。
+ * 画面の 1 行に素で置くと、うしろに在るアプリの文の見え方を入れ替えうる (U+202E は
+ * Trojan Source と同じ仕組み)。`lint:charset` の `INVISIBLE_RANGES` が原文について
+ * 鳴らす当の字で、ここは**実行時に第三者の文を画面へ出す側**の規則である。
+ */
+export const INVISIBLE_UNITS = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+
+/** 1 字を UTF-16 の単位ごとに `\uXXXX` へ (JSON が C0 を逃がすのと同じ綴り)。 */
+export function escapeUnits(c: string): string {
+  return c
+    .split('')
+    .map((unit) => `\\u${unit.charCodeAt(0).toString(16).padStart(4, '0')}`)
+    .join('');
+}
+
+/**
+ * **利用者へ「これを送る」と見せる文から、見えない字を見える綴りへ逃がす** (2026-10-14 · パス 519 ·
+ * threat: T-034)。
+ *
+ * 書き込みの確認 (`voiceWritePreview`) は送る欄と値を並べるが、値に U+202E (右から左へ) が
+ * 1 字在るだけで、**それ以後の字が画面では逆順に見える** —— 実測: 「送金を中止\u202Eを承認 →
+ * 口座 999 へ送金」は、送る物は字面どおりなのに、確認には「送金を中止」のあとが
+ * 裏返って読める。見せた物と送る物が違えば、確認は確認ではない。
+ *
+ * 逃がすのは見える形 (`\u202E`) で、文そのものは消さない —— パス 487 が `quoteModelText` に
+ * 置いた判断と同じ (チャットの Markdown は逃がしの記法を持たない)。あちらの
+ * `assistantMarkdown.ts` が持っていた同じ関数をここへ出して、renderer はこれを読む
+ * (法則 `center-then-count-callers`)。
+ */
+export function escapeInvisibleUnits(text: string): string {
+  return text.replace(INVISIBLE_UNITS, escapeUnits);
+}

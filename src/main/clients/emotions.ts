@@ -21,11 +21,11 @@
  */
 
 import { readStateFile } from '../stateFile';
-import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+import { countChars } from '../../shared/inputCeiling';
 import { app } from 'electron';
 import {
   MAX_ANALYSES,
-  MAX_ANALYSIS_EXCERPT_CHARS,
+  analysisExcerpt,
   MAX_ANALYZE_TEXT_CHARS,
   MAX_MOODS,
   MAX_MOOD_NOTE_CHARS,
@@ -357,7 +357,7 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   const entry: AnalysisEntry = {
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: Date.now(),
-    excerpt: (source ? `[${source}] ` : '') + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS),
+    excerpt: analysisExcerpt(source, text),
     ...normalized,
   };
 

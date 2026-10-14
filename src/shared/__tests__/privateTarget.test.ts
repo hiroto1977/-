@@ -95,3 +95,38 @@ describe('privateTarget — SIIT の変換形は内側 (threat: T-030)', () => {
     expect(fromShared(new URL('http://[::ffff:0:8.8.8.8]/')), '8.8.8.8').toBe(false);
   });
 });
+
+/**
+ * **ラベルが 1 つだけの名前は、内部 TLD に載っていなくても内側** (threat: T-033 · パス 519)。
+ *
+ * 2026-10-14 まで遮断していたのは `INTERNAL_TLDS` の 7 語だけで、`printer` / `nas` /
+ * `router` は公開と判定されていた。生きた消費者は `safeRemoteImageSrc` —— 第三者 API の
+ * 応答 (`avatar_url` / `thumbnail`) が `http://printer/` を指すと、利用者のブラウザが
+ * LAN の名前へ GET を飛ばし、load / error で在否が漏れる (パス 300 が閉じたつもりの経路)。
+ * BYO プロキシの側は Worker の完全一致の許可リストが先に断るので今日は届かない。
+ */
+describe('privateTarget — 単一ラベルの名前は内側 (threat: T-033)', () => {
+  it.each([
+    ['http://printer/', 'LAN のプリンタ'],
+    ['http://nas/', 'LAN の NAS'],
+    ['http://router/', '家庭用ルータ'],
+    ['http://example/', '内部 TLD に無い単一ラベル'],
+    ['http://xn--wgv71a119e/', 'IDN の単一ラベル'],
+  ])('★ %s (%s) は 2 つの入口とも遮断する (threat: T-033)', (url) => {
+    expect(fromShared(new URL(url)), url).toBe(true);
+    expect(fromProxy(new URL(url)), url).toBe(true);
+  });
+
+  it('★ 生きた消費者: 第三者の画像 URL が単一ラベルを指せば取りに行かない (threat: T-033)', async () => {
+    const { safeRemoteImageSrc } = await import('../imageUrlGate');
+    expect(safeRemoteImageSrc('http://printer/avatar.png')).toBeUndefined();
+    // 対照: 公開のホストはそのまま通る (関門が画像を全部落としているのではない)
+    expect(safeRemoteImageSrc('https://cdn.example.com/avatar.png')).toBe('https://cdn.example.com/avatar.png');
+  });
+
+  it('★ 対照: 2 ラベル以上の公開名と公開の IPv6 リテラルは過遮断しない', () => {
+    for (const url of ['https://example.com/', 'https://api.github.com/', 'http://[2606:4700::1111]/', 'http://1.0.0.1/']) {
+      expect(fromShared(new URL(url)), url).toBe(false);
+    }
+  });
+});

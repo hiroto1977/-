@@ -2450,6 +2450,22 @@
       "leafCount": 103,
       "note": "update secrets.ts,privateTarget.ts",
       "hash": "133a7f40885c6a856c8b4a4add7eb1a308a139fa1603f40c26d150d32742c926"
+    },
+    {
+      "index": 293,
+      "prevHash": "133a7f40885c6a856c8b4a4add7eb1a308a139fa1603f40c26d150d32742c926",
+      "merkleRoot": "6df193b418f5dbd1635b3fc7baddb0b3e059a49933bb74a2431e601dba298e3f",
+      "leafCount": 103,
+      "note": "update release.yml,assistantMarkdown.ts,escape.ts,privateTarget.ts",
+      "hash": "bc89375c50238d87a2d13726779f5bbeee6893e2f1db1e7ed4a5e699c6242af6"
+    },
+    {
+      "index": 294,
+      "prevHash": "bc89375c50238d87a2d13726779f5bbeee6893e2f1db1e7ed4a5e699c6242af6",
+      "merkleRoot": "28b2751607e56c7ab5d685daa0c537327759d2af33f27e61221309bc615da3e9",
+      "leafCount": 103,
+      "note": "update escape.ts",
+      "hash": "f96d82d8d5819d3d6ecc3db88eed78b40b8e5a681d32379e6cbddc0277ae1abb"
     }
   ],
   "tipManifest": {
@@ -2463,7 +2479,7 @@
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
     ".github/workflows/ci.yml": "e0b3a7022d056df56f09911c49ea2c6b4e055f7a484e03d2d98cfd9eb5634a66",
     ".github/workflows/pages.yml": "02c826156e8b095f0fdf3d8774263bf0c4d778cc9543f9d5de954b9a14b7d85a",
-    ".github/workflows/release.yml": "c1e4f18db1fc46e9638d2793419130afba9e088c2d38adb7d1431b8525a8a6d6",
+    ".github/workflows/release.yml": "f45983869a5f7f457af7d7223a6dc04269f10650e557e22517ca0c13540d68ef",
     "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
     "docs/PROXY_EXAMPLE.md": "d3850b6f80b19cb3b095b199e4e714c23291a7843c2804bed0693ce87fe3bd68",
@@ -2504,7 +2520,7 @@
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
-    "src/renderer/data/assistantMarkdown.ts": "2daf8c0c846e4bb6adb387c386b30c964e3d1e42a33bf6d3f6bdbff19681c998",
+    "src/renderer/data/assistantMarkdown.ts": "a3a2d232703461ad47f9b582744393f179310ed8ba5b701a816e3eeca6c96937",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
     "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",
     "src/renderer/fs/fsa.ts": "d38f695c737809da99791ab61051dca1718c8827277a293e197e2f3ff4271054",
@@ -2534,7 +2550,7 @@
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "e5c196eed641330430fb0725daf9dc28cfd38fc624ce5e46baca635ed9b8590e",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
-    "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
+    "src/shared/escape.ts": "a32093920e45dda144eb2beb0e026c6390597e1b6d1a2515c4f50900a8042aa6",
     "src/shared/externalUrlGate.ts": "b103b6fdf04b058a0cae9be3bed2ad035758463dee7b1ed6cc9da778540475ce",
     "src/shared/headerValue.ts": "e1b3156dde741ff415b769a6a40a7630e7da580f29737005cf2583bda4512b82",
     "src/shared/httpLimits.ts": "a376deeac169463b4b2d781fd2174d4231ca566e9c31c78f47997a7bb8f073a4",
@@ -2543,7 +2559,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
-    "src/shared/privateTarget.ts": "52a29607dceb9b096e893c6788d72518649ed7328d64e1ea0106329ddbda0a87",
+    "src/shared/privateTarget.ts": "a3164b12eced1dec0d06a39a92564f11ea4a73fe1a97ad005730d2e582387789",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "8ba67cdcaaad3dbf3dc2304ef805b3d6896eca320bb1e8032e15341595abc2b6",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",

@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 293
+- ブロック数: 295
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `133a7f40885c6a856c8b4a4add7eb1a308a139fa1603f40c26d150d32742c926`
+- 末尾(tip)ハッシュ: `f96d82d8d5819d3d6ecc3db88eed78b40b8e5a681d32379e6cbddc0277ae1abb`
 - 保護対象: 103 ファイル
 
 ## ブロック
@@ -306,6 +306,8 @@
 | 290 | `7b421cf6e9b21a78` | `3c5fcd1b99119fe1` | `88d8f13849038fa6` | update ServiceHubを開く.bat,integrity-chain.cjs,redact.ts |
 | 291 | `658892ce56be1ce6` | `88d8f13849038fa6` | `37a1ecfea7c01b33` | update eraseAll.ts |
 | 292 | `4a32c27ccb855757` | `37a1ecfea7c01b33` | `133a7f40885c6a85` | update secrets.ts,privateTarget.ts |
+| 293 | `6df193b418f5dbd1` | `133a7f40885c6a85` | `bc89375c50238d87` | update release.yml,assistantMarkdown.ts,escape.ts,privateTarget.ts |
+| 294 | `28b2751607e56c7a` | `bc89375c50238d87` | `f96d82d8d5819d3d` | update escape.ts |
 
 ## 保護対象ファイル
 

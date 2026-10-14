@@ -1,4 +1,6 @@
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 /*
@@ -15,6 +17,7 @@ import { describe, expect, it } from 'vitest';
 const req = createRequire(import.meta.url);
 const gate = req('../../../scripts/lint-workflow-security.cjs') as {
   check: (list: { name: string; text: string }[], allow?: Record<string, unknown>) => { file: string; why: string }[];
+  UNPINNED_ALLOW: Record<string, unknown>;
 };
 
 const wf = (text: string) => gate.check([{ name: 'x.yml', text }], {});
@@ -68,5 +71,37 @@ describe('lint:workflow-security — 外側の証人', () => {
     const p = wf('jobs:\n  a:\n    steps:\n      - run: echo hi\n');
     expect(p[0]?.file).toBe('x.yml');
     expect((p[0]?.why ?? '').length).toBeGreaterThan(10);
+  });
+});
+
+/*
+ * **実物の release.yml は、公開する action を SHA で固定している** (threat: T-035 · パス 519)。
+ *
+ * 2026-08-22 から 2026-10-14 まで `softprops/action-gh-release@v2` は可動タグのまま台帳に
+ * 載っていた (理由は「このセッションから SHA を解決できない」)。台帳は門を通すので、
+ * その間この action の持ち主がタグを動かせば、**署名鍵と GH_TOKEN を持つジョブ**が
+ * 動かされた先のコードを走らせた。`git ls-remote --tags` (git プロキシは公開リポジトリを
+ * 通す) で `refs/tags/v2` を解決し、`refs/tags/v2.6.2` と同じコミットであることを
+ * 確かめて固定した。門は「SHA か台帳か」しか見ないので、**台帳へ戻す退行**はここだけが鳴る。
+ */
+describe('release.yml の公開 action は SHA 固定 (threat: T-035)', () => {
+  const releaseYml = readFileSync(path.resolve(__dirname, '../../../.github/workflows/release.yml'), 'utf8');
+
+  it('★ softprops/action-gh-release は 40 桁の SHA で固定され、可動タグではない (threat: T-035)', () => {
+    const uses = releaseYml.split('\n').filter((l) => /^\s*-?\s*uses:\s*softprops\/action-gh-release@/.test(l));
+    expect(uses).toHaveLength(1);
+    expect(uses[0]).toMatch(/action-gh-release@[0-9a-f]{40}\b/);
+    expect(uses[0]).not.toMatch(/action-gh-release@v\d/);
+  });
+
+  it('★ 未固定の台帳は空 —— 台帳へ戻して門を通す形を留める (threat: T-035)', () => {
+    expect(Object.keys(gate.UNPINNED_ALLOW)).toEqual([]);
+  });
+
+  it('対照: 実物の release.yml を可動タグへ戻すと門が鳴る (台帳が空なので免除されない)', () => {
+    const reverted = releaseYml.replace(/action-gh-release@[0-9a-f]{40}[^\n]*/, 'action-gh-release@v2');
+    const problems = gate.check([{ name: 'release.yml', text: reverted }], gate.UNPINNED_ALLOW);
+    expect(problems.some((p) => p.why.includes('softprops/action-gh-release@v2'))).toBe(true);
+    expect(gate.check([{ name: 'release.yml', text: releaseYml }], gate.UNPINNED_ALLOW)).toHaveLength(0);
   });
 });

@@ -42,21 +42,12 @@ const WF_DIR = path.join(REPO_ROOT, '.github', 'workflows');
  * 消せない理由と、消し方を書くこと。
  */
 const UNPINNED_ALLOW = {
-  'softprops/action-gh-release@v2': {
-    workflow: 'release.yml',
-    why:
-      'このセッションからは SHA を解決できない。**当てずっぽうの SHA を書くと ' +
-      'リリースが壊れる**ので、タグのまま残して台帳に載せた。' +
-      ' 2026-08-22 に 3 通り試して全部塞がっていることを確認済み: ' +
-      '(1) GitHub MCP —— セッションのリポジトリ範囲が hiroto1977/- に限られる、' +
-      '(2) curl で api.github.com —— プロキシが 403 で「Use add_repo to request ' +
-      'access」と返す、(3) WebFetch —— 同じく 403。' +
-      ' **同じ 3 つを試し直さないこと。** 解決には人手 (または範囲を広げた ' +
-      'セッション) が要る。',
-    howToFix:
-      'gh api repos/softprops/action-gh-release/git/ref/tags/v2 --jq .object.sha ' +
-      'で取得し、`softprops/action-gh-release@<sha> # v2` に置き換えてこの項目を消す',
-  },
+  // 2026-10-14 (パス 519) に空になった。唯一の項目 `softprops/action-gh-release@v2` は
+  // `git ls-remote --tags` (git プロキシは公開リポジトリを通す —— 台帳が「塞がっている」と
+  // 書いた 3 通りは GitHub の REST だけだった) で `refs/tags/v2` を解決し、軽量タグが
+  // `refs/tags/v2.6.2` と同じコミットを指すことを確かめてから SHA で固定した
+  // (`release.yml` の `# v2.6.2` の注記がそのタグ)。**空の台帳は床ではない** —— 次に
+  // タグ固定の action が入れば下の検査が鳴り、台帳へ載せるには理由と消し方が要る。
 };
 
 /** シェルへ展開されると注入になりうる文脈値 (利用者が中身を書ける)。 */

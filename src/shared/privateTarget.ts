@@ -141,6 +141,15 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   // 2-label IETF reserved zone (RFC 8375): `*.home.arpa`.
   if (bare === 'home.arpa' || bare.endsWith('.home.arpa')) return true;
 
+  // ラベルが 1 つだけの名前は、上の INTERNAL_TLDS に**無くても**遮断する (threat: T-033)。
+  // 上の注記が述べる理由 (単一ラベルは検索ドメインの補完で解決する・公開 API を
+  // 単一ラベル名で呼ぶことは無い) は `printer` / `nas` / `router` にも等しく当てはまるのに、
+  // 2026-10-14 まで遮断していたのは INTERNAL_TLDS に載る 7 語だけだった。実測: 第三者の
+  // 応答の `avatar_url` が `http://printer/` を指すと `safeRemoteImageSrc` が通し、利用者の
+  // ブラウザが LAN の名前へ GET を飛ばしていた (パス 300 が閉じたつもりの経路)。
+  // `:` を含む物は IPv6 リテラルなので下の判定へ渡す (`[2606:4700::1111]` を過遮断しない)。
+  if (!bare.includes('.') && !bare.includes(':')) return true;
+
   // IPv4 literal check.
   //
   // Stryker disable next-line Regex

@@ -1,4 +1,4 @@
-import { countChars } from './inputCeiling';
+import { clampToCeiling, countChars } from './inputCeiling';
 /**
  * `emotions` の action が受け取る入力の上限 —— **両ビルドで 1 つだけ持つ。**
  *
@@ -89,6 +89,25 @@ export const MAX_ANALYSES = 50;
  * (保存したレコードに残るので、後から見分けが付かない)。
  */
 export const MAX_ANALYSIS_EXCERPT_CHARS = 80;
+
+/**
+ * 履歴に残す抜粋 —— `[出所] 本文の先頭` を**両ビルドで同じ形**に組む (2026-10-14 · パス 519 ·
+ * threat: T-037)。
+ *
+ * 2026-10-14 まで、本文は 80 字で切るのに**出所 (`source`) は型も長さも見ていなかった**。
+ * 出所は画面が置く札 (「Gmail Inbox」「Slack #general」) で、`action:invoke` の payload から
+ * 来る —— 乗っ取られたレンダラーが 10 MB の出所を 1 度渡すと、抜粋がそのまま保存され、
+ * 次の読みが状態ファイルの天井 (`MAX_STATE_FILE_BYTES` 16 MiB) で「読めない」になる
+ * (以後 `clear-history` まで記録できない。パス 511 の `EISDIR` と同じ、1 度の呼び出しで
+ * 保存先を潰す形)。文字列でない出所は `[object Object]` と刷っていた。
+ *
+ * 出所の天井は抜粋と同じ 80 字 —— 札はどれも 20 字未満なので正当な値は 1 字も切られない。
+ * 文字列でない出所は無いものとして扱う (型から始める · `displayField` と同じ判断)。
+ */
+export function analysisExcerpt(source: unknown, text: string): string {
+  const tag = typeof source === 'string' && source !== '' ? `[${clampToCeiling(source, MAX_ANALYSIS_EXCERPT_CHARS)}] ` : '';
+  return tag + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS);
+}
 
 /*
  * ## 一覧から本文を組む所の天井 (2026-09-12 · パス 156)

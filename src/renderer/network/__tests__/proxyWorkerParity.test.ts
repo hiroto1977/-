@@ -265,6 +265,8 @@ const PUBLIC_NAMES_SAMPLE = [
  * 留めておく** —— 黙って揃えると、どちらかの役割が消えたのに気付けない。
  */
 const BY_DESIGN_DIFFERENT = [
+  'printer', // 単一ラベル (T-033): client は名前で落とし、CI の関門は解決後の IP で見る
+  'nas',
   'metadata.google.internal',
   'x.metadata.cloud.google.com',
   'printer.local',

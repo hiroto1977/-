@@ -1187,3 +1187,37 @@ describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で
     expect(snap.moods).toEqual([]);
   });
 });
+
+describe('analyze-text の出所 (source) は型と長さを見る (threat: T-037)', () => {
+  const okBody = { scores: { joy: 0.9 }, sentiment: 'positive', dominant: 'joy' };
+  const reply = () =>
+    vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(okBody) }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+
+  it('★ 10 MB の出所を渡しても、保存される抜粋は天井 (80 字 × 2 + 札) に収まる (threat: T-037)', async () => {
+    const huge = 'x'.repeat(10 * 1024 * 1024);
+    const entry = (await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: reply(), payload: { text: 'あ', source: huge } })) as {
+      excerpt: string;
+    };
+    expect(entry.excerpt.length).toBeLessThan(200);
+    expect(entry.excerpt.startsWith('[' + 'x'.repeat(80) + '] ')).toBe(true);
+  });
+
+  it('★ 文字列でない出所は札を付けない (`[object Object]` を刷らない) (threat: T-037)', async () => {
+    const entry = (await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: reply(), payload: { text: 'あ', source: { a: 1 } } })) as {
+      excerpt: string;
+    };
+    expect(entry.excerpt).toBe('あ');
+  });
+
+  it('対照: 正当な札はそのまま', async () => {
+    const entry = (await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: reply(), payload: { text: 'あ', source: 'Gmail Inbox' } })) as {
+      excerpt: string;
+    };
+    expect(entry.excerpt).toBe('[Gmail Inbox] あ');
+  });
+});

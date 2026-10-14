@@ -55,6 +55,7 @@
  */
 
 import { displayField } from './apiResponse';
+import { escapeInvisibleUnits } from './escape';
 import { countChars } from './inputCeiling';
 import { MAX_RECORD_NOTE_CHARS } from './recordEntryLimits';
 import {
@@ -198,7 +199,10 @@ export function voiceWritePreview(
   for (const field of Object.keys(req.fields)) {
     const v = params?.[field];
     if (v === undefined) continue;
-    rows.push({ field, value: displayField(v, MAX_VOICE_PREVIEW_CHARS), truncated: countChars(v) > MAX_VOICE_PREVIEW_CHARS });
+    // 見えない字は見える綴りへ (threat: T-034)。U+202E が 1 字在るだけで、確認に並ぶ値は
+    // それ以後が裏返って読め、**見せた物と送る物が違う**確認になる。送る値は変えない
+    // (逃がすのは見せる側だけ)。天井で切ってから逃がすので、逃がした綴りは切られない。
+    rows.push({ field, value: escapeInvisibleUnits(displayField(v, MAX_VOICE_PREVIEW_CHARS)), truncated: countChars(v) > MAX_VOICE_PREVIEW_CHARS });
   }
   return rows;
 }

