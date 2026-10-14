@@ -857,8 +857,21 @@ class IndexedDBRecordStore implements RecordStore {
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
       const store = tx.objectStore(STORE);
-      if (opts?.replace) store.clear();
-      for (const rec of prepared) store.put(rec); // put = upsert by id
+      // **置換も挿入も 1 つの取引で、途中で投げたら取引ごと中断する** (2026-10-14 · パス 521 ·
+      // threat: T-044)。`put()` は structured clone を**同期で**行い、深さが約 1 万を超える
+      // 値では `RangeError` を投げる (chromium / fake-indexeddb で実測)。2026-10-13 まで
+      // その例外は `for` を抜けて `txDone` を呼ばずに上へ飛び、取引は**自動 commit** された ——
+      // `replace: true` なら `clear()` だけが commit され、**利用者の記録は全部消えて
+      // 控えからは 1 件も入らない**。深さの門 (`isValidStoredRecord`) が先に落とすので
+      // 今日この行へ届く道は無いが、門と取引は別の層なので、投げた瞬間に `abort()` して
+      // 「書いていない」を保つ。
+      try {
+        if (opts?.replace) store.clear();
+        for (const rec of prepared) store.put(rec); // put = upsert by id
+      } catch (e) {
+        tx.abort();
+        throw e;
+      }
       await txDone(tx);
     });
     // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
@@ -933,8 +946,42 @@ function isValidStoredRecord(v: unknown): v is StoredRecord {
     // `Date` の範囲の外で、表示の側 (`parseTimestamp`) は読めないと断る。境界は 1 つ。
     isTimestampMs(r.createdAt) &&
     isTimestampMs(r.updatedAt) &&
-    isPlainJsonObject(r.data)
+    isPlainJsonObject(r.data) &&
+    // **深さにも天井** (2026-10-14 · パス 521 · threat: T-044) —— `put()` の structured
+    // clone は深さ約 1 万で `RangeError` を投げる。形の表 (`collectionShapes.ts`) は
+    // 知らない collection の中身を見ないので、ここで見なければ復元の計画は「入る」と
+    // 数えて書き込みで投げる (計画と実行が割れる —— パス 432 の形)。
+    withinRecordDepth(r.data)
   );
+}
+
+/**
+ * 復元で受ける記録の `data` の深さの天井 (2026-10-14 · パス 521 · threat: T-044)。
+ *
+ * 実物の記録の形 (`collectionShapes.ts`) は最深でも 3 段 (`hydroponics-setup` の
+ * `crops[].*`) なので 32 は**正当な値を 1 つも切らない**。IndexedDB の structured clone が
+ * 投げるのは約 10,000 段 (chromium・fake-indexeddb とも実測) で、そこまで許すと
+ * 復元の計画 (`planRestore`) が「入る」と数えた行を実行が投げる。
+ */
+export const MAX_RECORD_DEPTH = 32;
+
+/**
+ * `data` の入れ子が `MAX_RECORD_DEPTH` 以内か。**再帰ではなく明示の stack で歩く** ——
+ * 深さ 1 万の値に再帰で当たると、門そのものが呼び出しの深さで投げる。
+ * 深さは「中身を持つ器 (物・配列) の段数」で、`{}` は 1・`{a:{}}` は 2。
+ */
+export function withinRecordDepth(data: unknown, max: number = MAX_RECORD_DEPTH): boolean {
+  const stack: Array<{ v: unknown; d: number }> = [{ v: data, d: 1 }];
+  while (stack.length > 0) {
+    const { v, d } = stack.pop()!;
+    if (typeof v !== 'object' || v === null) continue;
+    if (d > max) return false;
+    const values = Array.isArray(v) ? v : Object.values(v as Record<string, unknown>);
+    for (const child of values) {
+      if (typeof child === 'object' && child !== null) stack.push({ v: child, d: d + 1 });
+    }
+  }
+  return true;
 }
 
 /**

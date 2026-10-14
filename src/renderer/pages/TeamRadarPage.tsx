@@ -32,6 +32,7 @@ import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinat
 import { useBuildKind } from '../hooks/useBuildKind';
 import { omittedRadarNote, planRadarPlot } from '../../shared/radarPlot';
 import { axisPoint, colorFor } from '../../shared/teamRadarSvg';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
@@ -333,7 +334,7 @@ export function TeamRadarPage() {
      */
     if (draftUnreadable !== null) return;
     const r = saveDraft({ title, axes, department, evaluatedAt, members });
-    setSaveError(r.ok ? undefined : r.message);
+    setSaveError(r.ok ? undefined : externalTextOnOneLine(r.message));
   }, [title, axes, department, evaluatedAt, members, draftUnreadable]);
 
   // 評価 × ケア支援: スキルスコア + 気分から 1on1 支援レポートを組み立てる。
@@ -431,7 +432,7 @@ export function TeamRadarPage() {
         setSaveMsg('保存しました');
         refresh();
       } else {
-        setSaveMsg('保存失敗: ' + r.message);
+        setSaveMsg('保存失敗: ' + externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setSaveMsg('保存失敗: ' + (e instanceof Error ? e.message : String(e)));
@@ -465,7 +466,7 @@ export function TeamRadarPage() {
       if (r.ok) {
         setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
-        setExportMsg('エクスポート失敗: ' + r.message);
+        setExportMsg('エクスポート失敗: ' + externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setExportMsg('エクスポート失敗: ' + (e instanceof Error ? e.message : String(e)));

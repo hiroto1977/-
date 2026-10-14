@@ -17,6 +17,7 @@ import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /** 欄の形は共有の 1 つを使う (画面で写すと、欄が増えたとき画面だけ古くなる)。 */
 type TemplateParams = TemplateSvgParams;
@@ -128,7 +129,7 @@ export function TemplatesPage() {
       if (r.ok) {
         setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
-        setMsg('エクスポート失敗: ' + r.message);
+        setMsg('エクスポート失敗: ' + externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setMsg('エクスポート失敗: ' + (e instanceof Error ? e.message : String(e)));

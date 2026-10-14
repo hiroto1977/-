@@ -866,6 +866,66 @@
         "file": "src/main/__tests__/keychainBackend.test.ts",
         "test": "★ Linux の basic_text (ハードコードされた鍵) は isEncryptionAvailable が true でも false (threat: T-041)"
       }
+    },
+    {
+      "id": "T-042",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 521 (main-ipc 監査役の指摘を自分で再現した)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "low",
+      "title": "isSafeExportPath は書き出し先の親ディレクトリを深さを問わず通していたので、既定のファイル名 (data/state.json など) をディレクトリとして作らせ、その下へ .svg / .json を置けた —— 以後そのファイルを開く読み手が EISDIR で失敗する",
+      "status": "fixed",
+      "fix": "src/main/clients/exportPaths.ts の exportParentDirs(home) が許す親を書き出しの根と templates/ の 2 つに固定し、isSafeExportPath は path.dirname(resolved) がそのどちらかであることを要求する (閉じ込めの判定は残す)。exportSymlinkContainment の検査は templates/ を symlink にする形へ。対照: 親の固定を外す → ★ 1 件。",
+      "regression": {
+        "file": "src/main/clients/__tests__/exportPaths.test.ts",
+        "test": "★ 親が固定の 2 つでない書き出し先は断る —— 既定名をディレクトリに化けさせない (threat: T-042)"
+      }
+    },
+    {
+      "id": "T-043",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 521 (supply-chain 監査役の指摘を自分で再現した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "release.yml の梱包ステップは npm run build を走らせ、その script は tsc && vite build && electron-builder の綴りで、package.json の build 鍵 (electron-builder は electron-builder.json より先に読む) もどのゲートも見ていなかった —— どちらか 1 行で署名鍵を env に持つジョブの実行内容が替わる",
+      "status": "fixed",
+      "fix": "gateScriptsPinned.test.ts (T-040 の隣) が build script の綴りを完全一致で、package.json に build 鍵が無いことを Object.hasOwn で、app-builder-lib の読み順の証拠を実物の node_modules から、release.yml の Build ステップが build だけを --publish never で走らせることを留める。対照: build script を替える / build 鍵を足す → ★ 各 1 件。",
+      "regression": {
+        "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+        "test": "★ scripts.build は固定の綴り (release が署名鍵で走らせる唯一の script) (threat: T-043)"
+      }
+    },
+    {
+      "id": "T-044",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 521 (renderer 監査役の指摘を実機 chromium と fake-indexeddb で再現した)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "importAll({replace:true}) は clear() と put() を 1 つの取引に並べていたが put() の structured clone は深さ約 1 万の入れ子で同期に投げ、投げると txDone に届かず取引が自動 commit されて clear() だけが残る —— 配られたバックアップ 1 つで利用者の記録が全部消え、復元の計画は深さを見ないのでその記録を「入る」と数えていた",
+      "status": "fixed",
+      "fix": "src/renderer/data/store.ts: isValidStoredRecord が data の深さを MAX_RECORD_DEPTH (32・明示 stack で歩く) で切る (計画 planRestore も同じ門を読む)。importAll は put が投げたら tx.abort() してから投げ直す (置換の clear も巻き戻る)。対照: abort を外す → ★ 取引の 1 件 / 深さの門を外す → ★ 門の 1 件。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/importAllAtomic.test.ts",
+        "test": "★ put が途中で投げても、置換復元は既存の記録を 1 件も消さず、良い行も入れない (threat: T-044)"
+      }
+    },
+    {
+      "id": "T-045",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 521 (ai 監査役の VoiceCommandBar の探りを自分で走らせて再現した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "serviceHub.invoke の失敗本文 (第三者の API / 互換 API / プロキシの文) を画面へ出す出口 50 か所 (30 ファイル) が externalTextOnOneLine を通しておらず、改行・双方向制御 (U+202E)・不可視字が role=alert の失敗欄にそのまま届いた (T-005 / T-020 / T-025 はチャット・村・ベスト3 の経路だけを畳んでいた)",
+      "status": "fixed",
+      "fix": "50 か所すべてを externalTextOnOneLine(…) で包み (VoiceCommandBar の catch の err.message も)、invokeMessageFoldCensus.test.ts が pages / components の全 .tsx をコメントを落として走査し、素の (r|res|classified).message の出現は理由つきの台帳 2 行だけであることを双方向に留める。voiceErrorFold.test.ts が実物の経路で .voice-error に生の改行・U+202E・U+200B が出ないことを見る。対照: VoiceCommandBar の畳みを外す → ★ 2 件 (census + jsdom) / GmailPage の 1 か所を外す → ★ census 1 件。",
+      "regression": {
+        "file": "src/renderer/components/__tests__/voiceErrorFold.test.ts",
+        "test": "★ invoke の失敗本文は改行・双方向制御・不可視字を落として .voice-error に出る (threat: T-045)"
+      }
     }
   ],
   "huntBacklog": [
@@ -908,6 +968,26 @@
       "surface": "main-ipc",
       "item": "MAIN-2 app:eraseAll に同意トークンが無い",
       "why": "監査役の報告の指摘。設定画面の「すべてのデータを削除」は利用者の操作だが、renderer が乗っ取られれば呼べる。確認ダイアログは renderer 側にしか無い。設計の判断 (同意の形) を伴うため未確認。"
+    },
+    {
+      "surface": "network",
+      "item": "N-1 Shopify の Discord webhook URL が断りの文で伏せられない",
+      "why": "2026-10-14 に測った: webhook URL (https://discord.com/api/webhooks/<id>/<token>) は path に秘密を持つが redact.ts の規則 (ヘッダ名・JSON 項目名・クエリ引数・接頭辞) のどれにも当たらない。届く道は shopify/notify-discord の失敗本文に相手が URL を反射したときだけで、今日その本文は displayField の天井を通る。伏せる規則を足すなら「discord.com/api/webhooks/ の後ろ」を 1 形として。"
+    },
+    {
+      "surface": "network",
+      "item": "N-2 配る Worker の isBlockedIp が SIIT 形 (::ffff:0:a.b.c.d · RFC 6052 §2.1) を見ない",
+      "why": "2026-10-14 に測った: docs/PROXY_EXAMPLE.md の isBlockedIp は ::ffff:a.b.c.d (IPv4-mapped) は落とすが ::ffff:0:a.b.c.d は通す。アプリ側 privateTarget.ts は同じ形を落とすので両者が割れている。Cloudflare Workers は fetch で IP リテラルの上流をそもそも許さない (実測は手元では取れない) ので危険度は低いが、パリティ検査 (proxyWorkerParity) の標本に足して揃える。"
+    },
+    {
+      "surface": "network",
+      "item": "N-3 *.localdomain / *.internal の名前解決がプライベート帯へ向く形は判定していない",
+      "why": "2026-10-14 に測った: isPrivateOrReservedTarget はホスト名の綴り (localhost / *.local / IP リテラル) を見るので、DNS がプライベート帯へ解く任意の名前は通る。解決後の IP を見るには main の fetch に lookup hook が要り、ブラウザ版からは構造的に見えない。この環境では DNS を操れず測れていない。"
+    },
+    {
+      "surface": "network",
+      "item": "N-5 encodeURIComponent した動的部分に `..` が来ると WHATWG URL が path を畳む",
+      "why": "2026-10-14 に測った: encodeURIComponent('..') は '..' のまま (予約でない) なので https://host/a/../b は new URL で https://host/b になる。今日の動的部分 (Drive のファイル ID / Jira の issue key / Slack の domain) はどれも入口の正規表現が `.` を含まないか別の関門で落とすので届かない。関門の無い新しい補間が 1 つ増えた日に開く形なので、lint:url-encoding の標本として残す。"
     }
   ],
   "clearedBacklog": [

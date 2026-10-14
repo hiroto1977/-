@@ -12,6 +12,7 @@ import { skillOptionText, unrunnableSkillsNote } from '../../shared/skillIdentit
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, localReadUnavailableNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -60,7 +61,7 @@ export function SkillsPage() {
     if (res.ok) {
       setResult({ kind: 'ok', message: res.data.text || '(空応答)' });
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

@@ -15,6 +15,7 @@ import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotio
 import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import { CeilingNotice } from '../components/CeilingNotice';
 import type { ActionData } from '../../shared/actionData';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -250,7 +251,7 @@ export function EmotionsPage() {
       setMoodNoteOverflow(0);
       refresh();
     } else {
-      setMoodMsg(res.message);
+      setMoodMsg(externalTextOnOneLine(res.message));
     }
   };
 
@@ -273,7 +274,7 @@ export function EmotionsPage() {
       setText('');
       refresh();
     } else {
-      setAnalyzeErr(res.message);
+      setAnalyzeErr(externalTextOnOneLine(res.message));
     }
   };
 

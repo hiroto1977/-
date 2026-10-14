@@ -445,7 +445,7 @@ export function AssistantPage() {
       // 言い、入力欄まで空にしていた** (打ち直しになる)。
       const res = await hub.setToken('assistant', JSON.stringify(creds));
       if (!res.ok) {
-        setCredsMessage(`保存できませんでした: ${res.message}`);
+        setCredsMessage(`保存できませんでした: ${externalTextOnOneLine(res.message)}`);
         return; // 入力は残す
       }
       // 何が鍵を握っているかで文面を選ぶ (`data/credentialSaveMessage.ts`)。
@@ -494,7 +494,7 @@ export function AssistantPage() {
     try {
       const res = await hub.clearToken('assistant');
       if (!res.ok) {
-        setCredsMessage(`削除できませんでした: ${res.message}`);
+        setCredsMessage(`削除できませんでした: ${externalTextOnOneLine(res.message)}`);
         return;
       }
       setCredsMessage(deletedCredentialMessage());
@@ -626,7 +626,7 @@ export function AssistantPage() {
           });
           return r.ok
             ? { ok: true, text: r.data.text, provider: r.data.provider, model: r.data.model }
-            : { ok: false, message: r.message };
+            : { ok: false, message: externalTextOnOneLine(r.message) };
         };
         const started = startBestJob(
           { question: text, ragQuery, turns, catalog: serviceCatalog, providerIds: ids },

@@ -232,6 +232,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/__tests__/inlineColorCensus.test.ts',
   'src/renderer/__tests__/inputCapLiterals.test.ts',
   'src/renderer/__tests__/invokeFailureSurfaced.test.ts',
+  'src/renderer/__tests__/invokeMessageFoldCensus.test.ts',
   'src/renderer/__tests__/keyIntentCensus.test.ts',
   'src/renderer/__tests__/latestAdoptionCensus.test.ts',
   'src/renderer/__tests__/markdownExportCensus.test.ts',

@@ -251,6 +251,27 @@ export function exportWriteRoot(home: string = os.homedir()): string {
 }
 
 /**
+ * **書き出し先の親として許すディレクトリ** (2026-10-14 · パス 521 · threat: T-042)。
+ *
+ * `data/` 直下 (business / stocks / teamradar の既定) と `data/templates/` (テンプレートの既定)
+ * の **2 つだけ**。4 つの書き出しは書く前に `mkdir -p (親)` を呼ぶので、親を任意の深さで
+ * 許すと**レンダラーが選んだ中間要素が実在のディレクトリになる**。T-002 はその先が状態
+ * ファイル (`state.json.tmp`) だったので `data/` へ狭めたが、根は残っていた —— AI 監査
+ * (パス 521) が再現: `data/business-dashboard.html/x.html` を渡すと `mkdir -p` が
+ * **書き出し自身の既定ファイル名**のディレクトリを作り、以後その書き出し (画面は `path` を
+ * 送らないので常に既定名) は永久に `EISDIR` で失敗する。`data/team-radar.svg/x.svg` も同じ。
+ * 「すべてのデータを削除」は書き出し (`data/`) を消さない方針なので、そこからも直らない。
+ *
+ * 親を固定の 2 つに限れば `mkdir -p` が作れる物もその 2 つだけになる。画面はどれも `path` を
+ * 送らない (実測 4 つとも) ので失う機能は無い。`data/templates` 自身をファイルにする道も無い
+ * (拡張子が要る)。
+ */
+export function exportParentDirs(home: string = os.homedir()): readonly string[] {
+  const root = exportWriteRoot(home);
+  return [root, path.join(root, 'templates')];
+}
+
+/**
  * True when `filePath` is a legal export target with the given extension.
  * `home` stays a parameter (not `os.homedir()`) so tests can point it at a
  * temp dir, matching the pre-existing guard signatures.
@@ -268,7 +289,7 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
   const resolved = path.resolve(filePath);
-  const root = exportWriteRoot(home);
-  // Strict containment: the root itself is a directory, never a file target.
-  return resolved.startsWith(root + path.sep);
+  // threat: T-042 —— 親は固定の 2 つだけ。`startsWith(root + sep)` の「任意の深さ」は
+  // mkdir -p に中間要素を作らせる (根そのものがファイル目標になることも、ここで同時に弾く)。
+  return exportParentDirs(home).includes(path.dirname(resolved));
 }

@@ -8,6 +8,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 
 export function GithubPage() {
@@ -46,7 +47,7 @@ export function GithubPage() {
       setTitle('');
       setBody('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

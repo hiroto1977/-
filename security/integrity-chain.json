@@ -2475,6 +2475,14 @@
       "leafCount": 104,
       "note": "update pages.yml,release.yml,integrity-chain.cjs,keychainBackend.ts,secrets.ts",
       "hash": "53c0f4d8d674fcfa2d8efdca98c6fbe06a756cc269bdca23f142e5669bab165d"
+    },
+    {
+      "index": 296,
+      "prevHash": "53c0f4d8d674fcfa2d8efdca98c6fbe06a756cc269bdca23f142e5669bab165d",
+      "merkleRoot": "447bd4561f9d05cf093bcdcf3152700ee11cef4a670657cbb8d5fe5f0f6fc26a",
+      "leafCount": 104,
+      "note": "update exportPaths.ts",
+      "hash": "18b777696ed924878b716a3fc661c4436805dfdc33f5adb8317fd2a3b6c3a4db"
     }
   ],
   "tipManifest": {
@@ -2519,7 +2527,7 @@
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "67cdcd22a997861524bba6d591e3770169f341f59dd3947379f5a55348cb7a02",
     "src/main/clients/assistant.ts": "11481ef4ccad0ead8c3eb538c3e4d0cc39b9c2c558b897784f7487a871b32f63",
-    "src/main/clients/exportPaths.ts": "295074748492e106137927598c15a030043a7a7294dc806cab51888b880e5199",
+    "src/main/clients/exportPaths.ts": "0c84c1107303cb624be80bd0183b1e91ab3e92853b8d22a3d2364ec180575464",
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "e4b81e9e4489d03a9ca87089976596c7dc091d575884cf9390500568721ac14a",
     "src/main/keychainBackend.ts": "a9ac8c957100cc6aaa332973638fe4c6057daf017e022eb50fb134ce44ce5b93",

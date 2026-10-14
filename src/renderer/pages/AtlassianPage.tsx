@@ -9,6 +9,7 @@ import { ATLASSIAN_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
 import { jiraBrowseUrl } from '../../shared/atlassianLinks';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -61,7 +62,7 @@ export function AtlassianPage() {
       setSummary('');
       setDescription('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

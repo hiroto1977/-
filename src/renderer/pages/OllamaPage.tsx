@@ -29,6 +29,7 @@ import {
 import type { ActionData } from '../../shared/actionData';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -90,7 +91,7 @@ export function OllamaPage() {
     if (res.ok) {
       setReply({ text: res.data.reply, durationMs: res.data.durationMs });
     } else {
-      setErrMsg(res.message);
+      setErrMsg(externalTextOnOneLine(res.message));
     }
   };
 

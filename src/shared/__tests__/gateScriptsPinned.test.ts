@@ -78,3 +78,48 @@ describe('verify:all の門の本体は scripts/ を指す (threat: T-040)', () 
     expect(owners).toMatch(/^\/scripts\/ @[\w-]+$/m);
   });
 });
+
+/*
+ * **署名鍵の下で走る `build` の本体と、builder の設定の在り処** (threat: T-043 · パス 521)。
+ *
+ * `release.yml` の Build ステップは `npm run build -- --publish never` を `CSC_LINK` /
+ * `CSC_KEY_PASSWORD` / `APPLE_*` の env で走らせる。T-040 が留めたのは `verify:all` の門と
+ * `test` だけで、**`build` の本体は誰も読んでいなかった** —— `package.json` は CODEOWNERS にも
+ * 鎖にも無いので、`"build": "tsc -b && vite build && electron-builder && node -e …"` と足す PR は
+ * 所有者のレビュー無しで入り、署名鍵を持つ環境で任意のシェルが走る (`lint:deps` の規則 8 は
+ * `prebuild` / `postbuild` の自動発火フックしか見ず、`lint:malware` の母集団に `package.json` は
+ * 無い —— AI 監査の再現で 4 門とも exit 0)。
+ *
+ * もう 1 つ: electron-builder は設定を **`package.json` の `build` キーから先に**読む
+ * (`app-builder-lib/out/util/config/load.js` —— `packageMetadata["build"]` が在れば
+ * `electron-builder.json` を**読まない**・実測)。鎖と CODEOWNERS で守った `electron-builder.json`
+ * (`electronFuses` の `runAsNode: false` ほか) は、`package.json` に `"build": {…}` を足すだけで
+ * **ハッシュが合ったまま死ぬ**。だから `build` キーが無いことも同じ検査で留める。
+ */
+describe('署名ビルドの本体と builder 設定の在り処 (threat: T-043)', () => {
+  const pkgAll = JSON.parse(readOriginalSource(path.join(ROOT, 'package.json'))) as Record<string, unknown>;
+
+  it('★ scripts.build は固定の綴り (release が署名鍵で走らせる唯一の script) (threat: T-043)', () => {
+    expect(scripts['build']).toMatch(/^tsc -b && vite build && electron-builder$/);
+    // 標本: 末尾に 1 手足した綴りは通らない。
+    expect('tsc -b && vite build && electron-builder && node -e "1"').not.toMatch(/^tsc -b && vite build && electron-builder$/);
+  });
+
+  it('★ package.json に build キーが無い —— electron-builder.json (鎖の保護対象) が唯一の設定 (threat: T-043)', () => {
+    expect(Object.hasOwn(pkgAll, 'build')).toBe(false);
+    expect(existsSync(path.join(ROOT, 'electron-builder.json'))).toBe(true);
+    // 根拠 (実測): app-builder-lib は package.json の `build` を先に読み、在れば設定ファイルを探さない。
+    const load = readOriginalSource(path.join(ROOT, 'node_modules/app-builder-lib/out/util/config/load.js'));
+    expect(load).toMatch(/packageMetadata\[request\.packageKey\]/);
+    expect(load).toMatch(/data == null \? findAndReadConfig\(request\)/);
+  });
+
+  it('release.yml が署名鍵の env で走らせる npm script は build だけ', () => {
+    const rel = readOriginalSource(path.join(ROOT, '.github/workflows/release.yml'));
+    const start = rel.indexOf('- name: Build');
+    const buildStep = rel.slice(start, rel.indexOf('CSC_LINK', start));
+    const runs = [...buildStep.matchAll(/npm run ([\w:-]+)/g)].map((m) => m[1]);
+    expect(new Set(runs)).toEqual(new Set(['build']));
+    expect(buildStep).toMatch(/--publish never/);
+  });
+});
