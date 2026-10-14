@@ -1,5 +1,25 @@
 # Service Hub — 残りの作業手順書
 
+## パス 518 (狩りの 8 回目 —— 5 面の監査役の指摘を再現し、本物だけ直す) (2026-10-14)
+
+監査役 5 面の報告を自分で再現してから直した (報告は権威を持たない)。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。
+
+- **T-028 (main-ipc · ransomware-extortion · medium)**: 読めない会話履歴 (emotions) で部分消去 (気分だけ・解析だけ) をすると、読めないファイルを空として書き直し残りの記録を消していた。部分消去は `EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL` で断り、ファイルを 1 バイトも変えない。すべて消す (kind: all) は従来どおり。
+- **T-029 (ai · ai-phishing · medium)**: 村 (`VillagePage`) で危機の文を打つと、端末内の相談窓口を出した後に AI を呼び、返答で窓口を上書きしていた。危機・他者への危害の判定を AI の条件より前に置き、条件に `!crisisOrHarm` を足す (旗艦の AI 画面は pass 514 で済み)。
+- **T-030 (network · ssrf · low)**: private 判定が RFC 2765 の変換形 `::ffff:0:a.b.c.d` を公開と判定していた (`[::ffff:0:127.0.0.1]` と IMDS の綴りが通った · 実測)。到達性は OS のスタックに依るため未測定 (判定の穴の修正)。
+- **T-031 (main-ipc · living-off-the-land · medium)**: OAuth 更新は書き込みの直列化の外で走るため、更新の途中で削除した資格情報を応答が書き戻して復活させた (実測: 更新中の `clearToken` → 応答後に store に残る)。書き戻しを `saveRefreshedIfUnchanged` (保存値が更新の開始時と同じ時だけ書く) に替えた。
+- **T-032 (network · accepted)**: Ollama の到達確認 (`no-cors`) の転送追随は受容。`follow` でないと Chromium が到達確認そのものを失敗させるため (理由は台帳)。
+- **C1 (renderer · huntBacklog)**: `file://` の生成元共有で、同じブラウザの別ディレクトリの HTML が standalone の localStorage と IDB を読めることを headless Chromium で独立に再現 (`LS=SENTINEL-123 IDB={id:sales-1,amount:12345}`)。Chrome / Edge は同系統・Firefox / Safari は未測定。設計判断が要るため未修正 (保存の暗号化 / 保存をやめる / 利用者への明示)。C2–C5 と未確認の監査候補は huntBacklog に残した。
+- **監査候補の扱い**: 残りは台帳の `huntBacklog` に「未確認」として残した (SUP-1..6・MAIN-1/2/5..8・AI 2..5・NET-3)。
+
+**整合性チェーン**: `secrets.ts` / `privateTarget.ts` は保護対象 → block #292。
+
+**CI の赤と直し (2 回)**: ① `verify:arch` が `secrets.ts` の行ずれ (図の参照 487→510 / 516→539) と件数 (17668→17675) で 4 件落ちた → `95080f9bb` で直した。② 全件 `npm test` の唯一の失敗 (`commentStripperCensus`: 新しい `villageCrisisNoAi.test.ts` が注記除去を import していた) → `cd18195a6` で MIGRATED へ加えた。`cd18195a6` の CI は `ci (typecheck + verify + lint + test + build)` が success (2026-10-14 02:32 完了)。
+
+**検証 (`cd18195a6`)**: typecheck exit 0 / `npm run verify:all` exit 0 / 全件 `npm test` は同じ木で 1 失敗 (上記で修正) / e2e・e2e:lite は 758 件 ALL PASSED (`e2e.yml` の順序: FULL を退避→LITE→戻す) / e2e:ollama ALL PASSED / perf OK (LITE DCL 275 ms・heap 9.7 MB · FULL DCL 770 ms・heap 36.4 MB)。
+
+**検証の注意 (正直に)**: 1 回目の実機は LITE の build が `dist/` を消して FULL の e2e が落ちた (`e2e.yml` の退避を私が省いた)。組み直して全件を回し直した。PR #806 の本文は未更新。
+
 ## パス 517 (狩りの 7 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・inherit/high) に並行で走らせ、**各指摘を自分で再現してから**本物だけ直した。監査役の報告は権威を持たない (permission laundering 禁止) —— esbuild で束ねて実行・ゲート関数の直接呼び・本物の fs の tmpdir・母集団の実測で 1 件ずつ確かめた。**6 件が本物**。F6 (コンシェルジュの成功返答の偽装) は再現の結果 clearedBacklog #4 と同一 (2026-10-13 に「穴なし・fold しない」と測定済み) だったので再 backlog せず。
