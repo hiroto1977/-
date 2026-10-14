@@ -17,7 +17,7 @@
 
 **ゲートが捕まえた物 (設計どおり)**: ① `lint:charset` —— 私が heredoc で書いた検査と docblock に**生の U+202E が 12 か所**入っていた (`\u202E` と書いたつもりが実体で入った)。Trojan Source を逃がす当の検査が Trojan Source の字を素で持っていた —— 門が鳴って `\uXXXX` の綴りへ直した ② `threatLedger` —— 台帳の回帰検査の題名に `\u202e` を書くと、ソースの綴り (`\\u202e`) と JSON の綴りが一致しない。題名から逆スラッシュを外した ③ `verify:arch` —— ユニット数 17675 → **17695** (予想せず門に訊いた)。
 
-**検証**: typecheck exit 0 / `npm run verify:all` exit 0 / `chain:verify` 緑 (block #294) / 全件 `npm test` と実機は [[519-MEASURED]]。
+**検証**: typecheck exit 0 / `npm run verify:all` exit 0 / `chain:verify` 緑 (block #294) / 全件 `npm test` と実機は 全件 `npm test` は 1 度目に **3 失敗 / 21,426 緑** (census 3 本 —— T-033 の検査の動的 import・emotions の天井の読み方・`.gitignore` の生の読み) → 直して `c201548ae`。その木の CI `ci (typecheck + verify + lint + test + build)` は **success** (2026-10-14 08:3x)。実機 (`e2e.yml` の順序・最終コード `c201548ae`): FULL **11,875,465 B** (md5 `11e10428…`) / LITE **3,288,089 B** (md5 `c09e0d66…`) —— パス 518 の 11,875,116 / 3,287,740 から**両方 +349 B** (逃がしの関数 1 つ・確認の呼び出し・抜粋の関数 · docblock は最小化で落ちる)。`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` ALL PASSED・`perf` OK (LITE DCL 175 ms / heap 9.7 MB・FULL DCL 537 ms / heap 36.2 MB)。。
 
 ## パス 518 (狩りの 8 回目 —— 5 面の監査役の指摘を再現し、本物だけ直す) (2026-10-14)
 
