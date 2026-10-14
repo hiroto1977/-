@@ -142,6 +142,9 @@ export const EMOTIONS_UNREADABLE_NO_KEYCHAIN =
   '気分の記録は OS のキーチェーンで封緘されていますが、この環境ではキーチェーンが使えないため読めません。「履歴を消去」で作り直せます。';
 export const EMOTIONS_UNREADABLE_CORRUPT =
   '保存された気分の記録を復号できません (値が壊れているか、保存時と別の鍵が使われています)。「履歴を消去」で作り直せます。';
+/** 読めないファイルへ部分消去を求めたときの断り (ファイルは変えない · threat: T-028)。 */
+export const EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL =
+  '保存された記録が読めないため、気分と解析を別々には消せません。すべて消す (kind: "all") ときだけ、読めないファイルを作り直せます。';
 
 /**
  * 保存形 → 中身。封緘済み (`{ v: 2, sealed }`) は開けてから、2026-09-09 までの平文はそのまま読む
@@ -379,10 +382,14 @@ interface ClearHistoryPayload {
 async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
   const { kind } = ctx.payload as unknown as ClearHistoryPayload;
   // 読めない記録 (鍵違い・壊れた封緘) も消せる —— ここが唯一の出口なので、読めないことで塞がない。
+  // ただし**全消去 (`all`) だけ**。ファイルは気分と解析が 1 つの封緘に入っており、読めないとき
+  // 部分だけ消す (`moods` / 未指定) と、消さないはずの解析まで空で書き戻して黙って失う
+  // (threat: T-028 · パス 518)。部分消去は断り、ファイルは 1 バイトも変えない。
   let store: EmotionsStore;
   try {
     store = await readStore();
   } catch {
+    if (kind !== 'all') throw new Error(EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL);
     store = { moods: [], analyses: [] };
   }
   const before = { moods: store.moods.length, analyses: store.analyses.length };

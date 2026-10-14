@@ -322,6 +322,18 @@ function extractMappedV4(bare: string): string | null {
   // intended single-group form 0.0.0.0. We therefore try the more
   // specific (longer-prefix) shapes first.
 
+  // (0) SIIT translated form (RFC 2765 §2.1): ::ffff:0:HHHH:HHHH. URL keeps it
+  //     as-is (`[::ffff:0:127.0.0.1]` → `[::ffff:0:7f00:1]`), so the two-group
+  //     mapped regex below does not match it. Measured (threat T-030): it passed
+  //     as public, so the loopback and IMDS addresses could be reached through it.
+  //     Checked before (1) — (1) would read `0:7f00:1` as three groups and skip.
+  // Stryker disable next-line Regex
+  const siit = /^::ffff:0:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+  if (siit) {
+    const hi = parseInt(siit[1]!, 16);
+    const lo = parseInt(siit[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
   // (1) Canonical IPv4-mapped two-group: ::ffff:HHHH:HHHH
   //     URL normalizes `::ffff:127.0.0.1` to this form.
   // Stryker disable next-line Regex

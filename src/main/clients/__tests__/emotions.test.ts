@@ -1158,6 +1158,26 @@ describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で
     await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('キーチェーンが使えないため読めません');
   });
 
+  /*
+   * **読めないファイルの部分消去は断る** (2026-10-13 · パス 518 · threat: T-028)。
+   * 気分と解析は 1 つの封緘に入っており、読めないとき `moods` だけ消すと、消さないはずの
+   * 解析まで空で書き戻して黙って失う。実測 (直す前): 壊れた封緘に kind:'moods' を送ると
+   * ファイルが `{moods:[],analyses:[]}` の封緘に置き換わり、読めなかった解析が消えた。
+   * 直した後は断り、ファイルのバイト列は 1 つも変えない。全消去 (all) だけが通る。
+   */
+  it.each([['moods'], [undefined]])(
+    '★ 読めないファイルへの部分消去 (kind: %s) は断り、ファイルを 1 バイトも変えない (threat: T-028)',
+    async (kind) => {
+      const corrupt = { v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') };
+      await seed(corrupt);
+      const before = await fs.readFile(storeFile(), 'utf8');
+      await expect(
+        ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: kind === undefined ? {} : { kind } }),
+      ).rejects.toThrow('すべて消す');
+      expect(await fs.readFile(storeFile(), 'utf8'), '部分消去がファイルを書き換えた (解析が黙って消える)').toBe(before);
+    },
+  );
+
   it('「履歴を消去」は読めないファイルでも通り、空の封緘に置き換える (唯一の出口を塞がない)', async () => {
     await seed({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') });
     const before = await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'all' } });

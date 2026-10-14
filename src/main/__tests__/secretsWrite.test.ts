@@ -877,3 +877,47 @@ describe('setToken — 積み重ねで保管庫を塞がない (threat: T-001)',
     await expect(m2.setToken('github', 'ghp_NEW')).resolves.toBeUndefined();
   });
 });
+
+/*
+ * **更新の途中で消した資格情報は、更新の応答が後から届いても戻らない** (threat: T-031 · パス 518)。
+ *
+ * `getValidToken` は期限が近いと refresh を走らせ、応答が届いたら `setOAuthTokens` で
+ * 書き戻していた。その間に利用者が `clearToken` で消すと、書き戻しが消した値を
+ * 新しい TokenSet として復活させる (実測 2026-10-14: 消した後の store に github が残った)。
+ */
+describe('OAuth 更新の途中の削除 (threat: T-031)', () => {
+  it('★ 更新の途中で消した資格情報は、更新の応答が届いても復活しない (threat: T-031)', async () => {
+    const { setOAuthTokens, getValidToken, clearToken } = await secretsModule();
+    await setOAuthTokens('github', {
+      accessToken: 'at-old',
+      refreshToken: 'rt-old',
+      expiresAt: Date.now() + 1_000, // 期限が近い → refresh が走る
+    });
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    refreshImpl = async () => {
+      await gate;
+      return { accessToken: 'at-new', refreshToken: 'rt-new', expiresAt: Date.now() + 3_600_000 };
+    };
+    const pending = getValidToken('github');
+    await vi.waitFor(() => expect(refreshCalls).toBe(1));
+    await clearToken('github'); // 利用者が更新の途中で削除する
+    release();
+    await pending;
+    expect(await readRawStore(), '削除が更新の書き戻しで打ち消された').not.toHaveProperty('github');
+  });
+
+  it('★ 対照: 更新の途中で削除していなければ、応答は従来どおり保存される (threat: T-031)', async () => {
+    const { setOAuthTokens, getValidToken } = await secretsModule();
+    await setOAuthTokens('github', {
+      accessToken: 'at-old',
+      refreshToken: 'rt-old',
+      expiresAt: Date.now() + 1_000,
+    });
+    refreshImpl = async () => ({ accessToken: 'at-new', refreshToken: 'rt-new', expiresAt: Date.now() + 3_600_000 });
+    await expect(getValidToken('github')).resolves.toEqual({ ok: true, token: 'at-new' });
+    expect(refreshCalls).toBe(1);
+    const stored = await (await secretsModule()).getOAuthTokens('github');
+    expect(stored?.accessToken).toBe('at-new');
+  });
+});

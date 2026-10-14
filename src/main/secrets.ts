@@ -484,6 +484,29 @@ export async function setOAuthTokens(serviceId: ServiceId, tokens: TokenSet): Pr
   await setToken(serviceId, check.serialized);
 }
 
+/**
+ * 更新の応答を書き戻す —— **保存値が更新の開始時 (`before`) と同じ時だけ**。
+ *
+ * 更新は `withWriteLock` の外で走るので、応答が届くまでの間に `clearToken` や
+ * `setToken` が保存値を変えうる。無条件に `setOAuthTokens` すると、消した資格情報を
+ * 古い応答で復活させる (threat: T-031 · 実測 2026-10-14)。比べるのは書き込みの
+ * 直列化の中なので、比較と書き込みの間に別の書き込みは入らない。
+ */
+async function saveRefreshedIfUnchanged(serviceId: ServiceId, before: string, fresh: TokenSet): Promise<void> {
+  const check = checkTokenSetForStorage(fresh);
+  if (!check.ok) throw new Error(check.message);
+  await withWriteLock(async () => {
+    const store = await readStoreForWrite();
+    const value = Object.hasOwn(store, serviceId) ? store[serviceId] : undefined;
+    const now = value === undefined ? null : decode(value);
+    // 消された・差し替えられた後の応答は書かない。読めない今の値も「同じ」とは言えないので書かない。
+    if (now === null || !now.ok || now.token !== before) return;
+    const upgraded = await upgradePlainValues(store);
+    upgraded[serviceId] = encode(check.serialized);
+    await writeStore(upgraded);
+  });
+}
+
 export async function getOAuthTokens(serviceId: ServiceId): Promise<TokenSet | null> {
   // 未設定 (`null`) も `String(null)` → `'null'` → `null` となり `isTokenSet` が
   // 落とす。手前でもう一度確かめると、どちらを通っても同じという枝が増えるだけ。
@@ -561,7 +584,9 @@ export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRe
     const refreshPromise = (async () => {
       try {
         const fresh = await refresh(config, tokens);
-        await setOAuthTokens(serviceId, fresh);
+        // 更新の応答は、保存値が更新の開始時と同じ時だけ書き戻す (threat: T-031)。
+        // 途中で利用者が消した・別の値へ差し替えた資格情報を、古い応答で復活させない。
+        await saveRefreshedIfUnchanged(serviceId, raw, fresh);
         return fresh.accessToken;
       } catch {
         // refresh failed (revoked / network) — fall through to the stale

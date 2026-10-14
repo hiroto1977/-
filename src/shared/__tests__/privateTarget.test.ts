@@ -71,3 +71,27 @@ describe('privateTarget — 判定は 1 つ (パス 300)', () => {
     }
   });
 });
+
+/**
+ * **RFC 2765 (SIIT) の変換形 `::ffff:0:a.b.c.d` を内側と判定する** (threat: T-030 · パス 518)。
+ *
+ * URL は `[::ffff:0:127.0.0.1]` を `[::ffff:0:7f00:1]` へ正規化して残す。二組の
+ * IPv4-mapped の綴りだけを見ていた判定はこの形を外側と判定し、ループバックと
+ * クラウドのメタデータ (169.254.169.254) へ届く道を通していた (実測 2026-10-14)。
+ */
+describe('privateTarget — SIIT の変換形は内側 (threat: T-030)', () => {
+  it.each([
+    ['http://[::ffff:0:127.0.0.1]/', 'loopback'],
+    ['http://[::ffff:0:7f00:1]/', 'loopback (正規化後)'],
+    ['http://[::ffff:0:169.254.169.254]/', 'IMDS'],
+    ['http://[::ffff:0:a9fe:a9fe]/', 'IMDS (正規化後)'],
+    ['http://[::ffff:0:10.0.0.5]/', 'RFC 1918'],
+  ])('★ %s (%s) は遮断する (threat: T-030)', (url) => {
+    expect(fromShared(new URL(url)), url).toBe(true);
+    expect(fromProxy(new URL(url)), url).toBe(true);
+  });
+
+  it('★ 対照: 公開の SIIT 形は通す (遮断が広すぎない)', () => {
+    expect(fromShared(new URL('http://[::ffff:0:8.8.8.8]/')), '8.8.8.8').toBe(false);
+  });
+});

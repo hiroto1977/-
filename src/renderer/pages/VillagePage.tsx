@@ -35,6 +35,7 @@ import {
 } from '../data/villageLayout';
 import { buildOrgIndex, routeTopicScored, type RawOrg, type RawTeam, type OrgIndex } from '../data/chatOrg';
 import { replyTo, type ChatContext } from '../data/chatbot';
+import { detectCrisis, detectHarmToOthers } from '../data/counseling';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { SERVICES } from '../services';
@@ -272,7 +273,14 @@ export function VillagePage() {
     speak(reply.text);
 
     const hub = window.serviceHub;
-    if (aiOn && hub && reply.kind !== 'action') {
+    /*
+     * **危機の文は AI へ送らない** (threat: T-029 · パス 518)。`replyTo` は危機を最優先で
+     * 判定し、確認済みの相談窓口 (いのちの電話 / 119・110) を吹き出しに出す。ここで AI を
+     * 呼ぶと、その窓口の吹き出しを**モデルの返答で上書き**し、心の不調の文が端末の外へ出る。
+     * 旗艦の AI 画面 (AssistantPage) は pass 514 で同じ判定を入れている —— 村も同じ網で塞ぐ。
+     */
+    const crisisOrHarm = detectCrisis(text) || detectHarmToOthers(text);
+    if (aiOn && hub && reply.kind !== 'action' && !crisisOrHarm) {
       /*
        * **マイクは欄を通らない** (パス 175)。footer の欄は超過を述べて押せなくできるが、
        * `startSpeechRecognition` の `onTranscript` はここへ直に来るので、`disabled` が効かない。

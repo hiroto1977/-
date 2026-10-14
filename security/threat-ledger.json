@@ -660,9 +660,196 @@
         "file": "src/shared/__tests__/networkTargetWitness.test.ts",
         "test": "★ 陽性 (threat: T-027): %s を拾う"
       }
+    },
+    {
+      "id": "T-028",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 518 (main-ipc)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "保存された会話 (emotions) が読めないとき、部分消去 (気分だけ・解析だけ) が読めないファイルを空として書き直し、残りの記録を黙って消していた",
+      "status": "fixed",
+      "fix": "clearHistory は readStore が投げると、kind が all のときだけ空の器で作り直していた。kind: moods / undefined の部分消去でも同じ空の器を書き、もう一方の記録 (解析) を既に読めない状態のまま消していた (読めないファイルの中身は消えた後に戻らない)。直し: 部分消去は読めないときに EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL で断り、ファイルを 1 バイトも変えない。すべて消す (kind: all) のときだけ従来どおり作り直す。実測の control: 断りを外すと部分消去のテスト 2 件が落ちる。",
+      "regression": {
+        "file": "src/main/clients/__tests__/emotions.test.ts",
+        "test": "★ 読めないファイルへの部分消去 (kind: %s) は断り、ファイルを 1 バイトも変えない (threat: T-028)"
+      }
+    },
+    {
+      "id": "T-029",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 518 (renderer)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "村 (AIの村) で危機の文を打つと、端末内の相談窓口が AI の返答で置き換わり、本文が AI へ送られていた",
+      "status": "fixed",
+      "fix": "VillagePage.handleUtterance は、detectCrisis / detectHarmToOthers で窓口の吹き出しを出した後も、reply.kind が action でなければ assistant/chat を呼び、res.data.text で同じ吹き出しを上書きしていた。危機の文 (「もう死にたい」) が端末の外へ出て、窓口はモデルの返答に変わる。旗艦の AI 画面 (AssistantPage) は pass 514 で同じ判定を入れている。直し: 危機・他者への危害の判定を AI の条件より前に置き、条件に !crisisOrHarm を足す。回帰検査は判定の述語・import・invoke より前の位置・AI の条件を実物のソースで留める。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/villageCrisisNoAi.test.ts",
+        "test": "★ AI の invoke は危機の判定の後ろに在り、その判定を条件に含む (threat: T-029)"
+      }
+    },
+    {
+      "id": "T-030",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (network)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "private 判定が RFC 2765 (SIIT) の変換形 ::ffff:0:a.b.c.d を外側と判定し、ループバックと IMDS の綴りが内側の検査を抜けた",
+      "status": "fixed",
+      "fix": "extractMappedV4 は ::ffff:HHHH:HHHH (二組) と ::ffff:HHHH (一組) と ::HHHH:HHHH だけを見ていた。URL は [::ffff:0:127.0.0.1] を [::ffff:0:7f00:1] へ正規化して残すため、三組の SIIT 形は二組の正規表現に当たらず外側 (公開) と判定されていた (実測 2026-10-14: [::ffff:0:127.0.0.1] と [::ffff:0:a9fe:a9fe] の判定が false)。直し: (0) ::ffff:0:HHHH:HHHH を (1) より前に置き、同じ変換で IPv4 を組む。到達性は OS のスタックに依る (Linux は既定で SIIT 変換を持たない) ため、到達は未測定 —— 判定の穴としての修正であって、実害の再現ではない。回帰検査は 5 件の内側形と 1 件の外側対照を実物の URL で。対照 (block を外す) で 5 件が落ちることを確認、復元は md5 で一致。",
+      "regression": {
+        "file": "src/shared/__tests__/privateTarget.test.ts",
+        "test": "★ %s (%s) は遮断する (threat: T-030)"
+      }
+    },
+    {
+      "id": "T-031",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (main-ipc)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "OAuth の更新が途中で動くと、利用者が削除した資格情報を更新の応答が書き戻して復活させた",
+      "status": "fixed",
+      "fix": "getValidToken の更新は withWriteLock の外で走るため、応答が届くまでに clearToken / setToken が保存値を変えうる。従来は応答を無条件に setOAuthTokens で書き戻していたので、消した資格情報が古い応答で復活した (実測 2026-10-14: 更新の途中で clearToken → 応答の後に store に github が残った)。直し: 書き戻しを saveRefreshedIfUnchanged に替え、書き込みの直列化の中で保存値が更新の開始時と同じときだけ書く (消された・差し替えられた・読めない今の値には書かない)。判定は setToken と同じ床 (checkTokenSetForStorage) を通る。対照 (従来の書き戻しへ戻す) で回帰検査が落ち、戻すと通る。",
+      "regression": {
+        "file": "src/main/__tests__/secretsWrite.test.ts",
+        "test": "★ 更新の途中で消した資格情報は、更新の応答が届いても復活しない (threat: T-031)"
+      }
+    },
+    {
+      "id": "T-032",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 519 (network)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "Ollama の到達確認 (no-cors) が転送に追随し、設定された宛先から先の内側のホストへ資格情報なしの GET が 1 本届く",
+      "status": "accepted",
+      "reason": "no-cors の要求は資格情報を載せられず、応答も opaque で読めない。追随しないと (redirect: manual) Chromium は TypeError を投げ、到達確認そのものが全ての宛先で失敗する (httpLimits.ts の注記が 2026-09-17 に実測)。残るのは利用者が設定した宛先からの 1 本の盲目な GET と、到達の有無が時間と成否で漏れる点だけ。宛先の設定は localStorage にあり、同じ端末の別 HTML から書けるため (huntBacklog の C1 を参照) 根は別の穴にある。ここは到達確認を残す判断として受容する。"
     }
   ],
-  "huntBacklog": [],
+  "huntBacklog": [
+    {
+      "surface": "renderer",
+      "item": "C1 file:// の生成元共有: 同じブラウザの別ディレクトリの HTML が standalone の localStorage と IndexedDB を読める",
+      "why": "2026-10-14 に headless Chromium で再現 (2 つの file:// を別ディレクトリに置き、一方の localStorage と IDB business-hub-data を他方が読んだ: LS=SENTINEL-123 IDB={id:sales-1,amount:12345})。Chrome / Edge は同系統で確認、Firefox・Safari は未測定。設計判断が要る (file:// で文書ごとに分けられない) ため未修正。候補: 保存値の暗号化を既定にする / 保存をやめる / 利用者へ「信頼できない HTML を同じブラウザで開かない」を明示する。"
+    },
+    {
+      "surface": "network",
+      "item": "C1 の連鎖: 別の HTML が proxy 設定 (IDB business-hub-preferences) を攻撃者のホストへ書き換え、CORS で BYO プロキシを通る SaaS の Bearer が攻撃者へ届く",
+      "why": "コードは整合する (proxy.ts の読みと、envelope に headers = Authorization を入れて POST する経路・proxyEndpoint.ts が任意の公開 https を許す) が、end-to-end は未実行。再現は C1 の後に、プロキシの URL 欄を書き換えた状態で SaaS 書き込みを 1 度押して送り先を見る。直すなら proxy 設定を保管庫 (暗号化) へ移すか、送り先の変更を利用者に確認させる。"
+    },
+    {
+      "surface": "renderer",
+      "item": "C2 平文の業務データ: 既定の暗号化が恒等で、enableEncryption の呼び出し元は 0 件 (store.ts)",
+      "why": "売上・CRM (士業の相談記録を含む)・気分の記録が IDB と localStorage に平文で残る (C1 の別 HTML から読める)。store.ts の既定は恒等暗号。暗号化の UI が無いので利用者は選べない。設計の変更 (鍵をどこに置くか・保管庫との関係) を伴うため未修正。"
+    },
+    {
+      "surface": "renderer",
+      "item": "C3 保管庫の封筒の書き換え: 別の HTML が vault の meta / master-wrap を置き換えると、解錠できなくなる (控えの 24 語でも戻せない場合は全トークン喪失)",
+      "why": "コードを読んだだけで実行していない (vault.ts の meta と master-wrap は同じ IDB に平文で在る)。確度は中。改ざんは検出されるが、解錠の失敗を「パスワードが違う」と区別できるかは未確認。C1 の穴の上の帰結なので、C1 の設計判断と一緒に扱う。"
+    },
+    {
+      "surface": "renderer",
+      "item": "C4 AI の送り先を localStorage で差し替える: servicehub.ollama.endpoint に任意の https を書くと、コンシェルジュの自由質問が攻撃者のホストへ送られる",
+      "why": "ollamaWeb.ts:69 が localStorage から読み、isAllowedOllamaBase が任意の https を許す。コードを読んだだけで実行していない。C1 と同じ根 (同じ生成元の別文書が書ける)。送る前の名乗り (T-010) は出るが、利用者がそれを疑う理由は無い。"
+    },
+    {
+      "surface": "renderer",
+      "item": "C5 配布 HTML の CSP が https: 全体へ通信と画像を許す (connect-src https: / img-src https:)",
+      "why": "注入点は見つからなかった (dangerouslySetInnerHTML / innerHTML / document.write / srcDoc は renderer と shared に 0 件)。防御の多層化の候補。CSP を狭めると、利用者が設定する Ollama・BYO プロキシ・第三者のアバター画像が止まるため、影響範囲を測ってから決める。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-1 cloudflare の create-dns-record / purge-cache に主プロセス側の同意が無い",
+      "why": "監査役の報告の指摘。レンダラーが乗っ取られた場合の範囲 (本番 DNS の書き換え) は重いが、同意を足すと利用者の操作を減らす設計判断になる。未確認 (再現していない)。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-2 app:eraseAll に同意トークンが無い",
+      "why": "監査役の報告の指摘。設定画面の「すべてのデータを削除」は利用者の操作だが、renderer が乗っ取られれば呼べる。確認ダイアログは renderer 側にしか無い。設計の判断 (同意の形) を伴うため未確認。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-5 exportPaths が解決後のパスを検めるが、書くのは生のパス",
+      "why": "監査役の報告の指摘。呼び手は書き込み前に mkdir している。再現していない。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-6 shellOpenGate が .html と .svg を開けるようにしている",
+      "why": "監査役の報告の指摘。OS の既定アプリで開く経路。拡張子の許可表の判断なので、どの型を許すかの決定を伴う。未確認。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-7 IPC の送信元 (sender) の検査が無い (多層防御)",
+      "why": "監査役の報告の指摘。preload の bridge 以外からの呼び出しを見分ける手段が要る。未確認。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-8 isEncryptionAvailable の結果を OS のキーチェーン名として表示している",
+      "why": "監査役の報告の指摘。表示の正確さの問題で、守りの穴ではない可能性が高い。未確認。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SUP-1 package.json の script 本体の所有者が CODEOWNERS と整合性チェーンに無い",
+      "why": "監査役の報告の指摘。script の本体は lint:deps が lifecycle を見るが、通常の script の変更は CODEOWNERS の対象外。確認済み (package.json は CODEOWNERS にも PROTECTED にも無い)。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SUP-2 stryker の break 閾値と tsconfig の include の所有者が無い",
+      "why": "監査役の報告の指摘。閾値を下げる変更が、所有者レビューなしで通る。確認は未実施。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SUP-3 softprops/action-gh-release@v2 が release.yml の contents:write のジョブで、タグ固定されていない",
+      "why": "監査役の報告の指摘。lint:workflow-security は第三者 action の SHA 固定を要求するはずなので、門がなぜ見逃したかの確認が要る。未確認。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SUP-4 GH_TOKEN が release.yml の Build ステップに渡り、同じ行の近くに CSC_LINK がある",
+      "why": "grep で位置は確認した。ビルドが GH_TOKEN を使うかどうかと、梱包の依存が読めるかは未確認。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SUP-5 .claude/settings.local.json と .mcp.json が gitignore されていない",
+      "why": "git check-ignore が exit 1 (確認済み)。Claude Code が自動で読む設定が、誤って追跡される恐れ。実害は未確認。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SUP-6 pages.yml の OIDC と pages の write 権限がジョブ全体に付いている",
+      "why": "監査役の報告の指摘。ステップ単位の権限への分割で閉じられるが、未確認。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI 2 voiceWritePreview の表示が displayField で、U+202E などの制御文字を逃がさない",
+      "why": "監査役の報告の指摘 (src/shared/voiceWriteRequirements.ts:201)。確認の画面に出る値が双方向制御で読めなくなる可能性。未確認。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI 3 「実行して」の死んだチップが LLM へ回る (src/renderer/data/chatbot.ts:266)",
+      "why": "監査役の報告の指摘。利用者の意図と違う経路へ送られるが、送信先は同じ AI。未確認。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI 4 Gmail の件名が注入され、感情解析の結果が永続化される (GmailPage.tsx:137 / emotions.ts)",
+      "why": "監査役の報告の指摘。第三者の文が保存される経路。未確認。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI 5 開発パイプラインの残り (scripts/orchestrate.cjs:353-358)",
+      "why": "監査役の報告の指摘。開発用の経路で利用者には届きにくい。未確認。"
+    },
+    {
+      "surface": "network",
+      "item": "NET-3 privateTarget の単一ラベル名と家庭用ルータ名が遮断されない",
+      "why": "監査役の報告の指摘 (privateTarget.ts:133-142)。現行の判定は単一ラベルを遮断しているので、報告の範囲を再確認してから判断する。未確認。"
+    }
+  ],
   "clearedBacklog": [
     {
       "item": "変異検査の塊 (matrix) の間で受け渡す成果物を PR が汚せるか",

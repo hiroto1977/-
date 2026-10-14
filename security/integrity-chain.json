@@ -2442,6 +2442,14 @@
       "leafCount": 103,
       "note": "update eraseAll.ts",
       "hash": "37a1ecfea7c01b33f64cb8615b0b6219756d62b77bbced653c9bcc218ba03664"
+    },
+    {
+      "index": 292,
+      "prevHash": "37a1ecfea7c01b33f64cb8615b0b6219756d62b77bbced653c9bcc218ba03664",
+      "merkleRoot": "4a32c27ccb8557573d0d4eb40215c50316ca7bf622ad2ad76935bb57c28402e2",
+      "leafCount": 103,
+      "note": "update secrets.ts,privateTarget.ts",
+      "hash": "133a7f40885c6a856c8b4a4add7eb1a308a139fa1603f40c26d150d32742c926"
     }
   ],
   "tipManifest": {
@@ -2491,7 +2499,7 @@
     "src/main/eraseAll.ts": "e4b81e9e4489d03a9ca87089976596c7dc091d575884cf9390500568721ac14a",
     "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
     "src/main/oauth.ts": "9c54fb2625d6fcac9a63f6e86728cd3dc9b873007d00b283ed6e5bf0b51d1c53",
-    "src/main/secrets.ts": "b28664391bad52ead2674f0c2910cbb574a0a5405a37221c4e0260243b673609",
+    "src/main/secrets.ts": "82d64f03179513472e6df9c55f719ac3ef1defcecf544edf9d2c30cb978193b0",
     "src/main/shellOpenGate.ts": "5192de0eb0a48f4eebedd17fa73df4ec5722f41f7290db5194eb58e2bdb28732",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
@@ -2535,7 +2543,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
-    "src/shared/privateTarget.ts": "2a7f4b178d82653c596b8cf92f5a18ccb5fc73b5c898dee3b66583be53ed47c1",
+    "src/shared/privateTarget.ts": "52a29607dceb9b096e893c6788d72518649ed7328d64e1ea0106329ddbda0a87",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "8ba67cdcaaad3dbf3dc2304ef805b3d6896eca320bb1e8032e15341595abc2b6",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",

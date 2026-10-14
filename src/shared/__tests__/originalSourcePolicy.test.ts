@@ -283,8 +283,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '一時ディレクトリを歩き (readdir)、そこへ書いた状態ファイル (封緘済み talent.json) を 2 度読み戻す。どれも repo のファイルではない。**件数は 2026-09-25 (パス 462) に 1 → 3 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 71 行 (68〜139 行) を食っており、3 件のうち 2 件が台帳に載っていなかった',
   },
   'src/main/clients/__tests__/emotions.test.ts': {
-    count: 10,
-    why: '一時 userData の service-hub-emotions.json (封緘済み) を読み戻す。repo のファイルではない',
+    count: 12,
+    why: '一時 userData の service-hub-emotions.json (封緘済み) を読み戻す。repo のファイルではない。T-028 の検査は、断られた部分消去がファイルを 1 バイトも変えないことを読み戻して比べる (threat: T-028)',
   },
   'src/main/clients/__tests__/exportPaths.test.ts': {
     count: 1,
