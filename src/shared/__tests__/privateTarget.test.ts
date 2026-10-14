@@ -17,6 +17,7 @@
  *      標本として並べる。
  */
 import { describe, expect, it } from 'vitest';
+import { safeRemoteImageSrc } from '../imageUrlGate';
 import * as path from 'node:path';
 import { createRequire } from 'node:module';
 import { isPrivateOrReservedTarget as fromShared } from '../privateTarget';
@@ -117,8 +118,7 @@ describe('privateTarget — 単一ラベルの名前は内側 (threat: T-033)', 
     expect(fromProxy(new URL(url)), url).toBe(true);
   });
 
-  it('★ 生きた消費者: 第三者の画像 URL が単一ラベルを指せば取りに行かない (threat: T-033)', async () => {
-    const { safeRemoteImageSrc } = await import('../imageUrlGate');
+  it('★ 生きた消費者: 第三者の画像 URL が単一ラベルを指せば取りに行かない (threat: T-033)', () => {
     expect(safeRemoteImageSrc('http://printer/avatar.png')).toBeUndefined();
     // 対照: 公開のホストはそのまま通る (関門が画像を全部落としているのではない)
     expect(safeRemoteImageSrc('https://cdn.example.com/avatar.png')).toBe('https://cdn.example.com/avatar.png');

@@ -1,5 +1,4 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -33,8 +32,11 @@ describe('端末固有の Claude Code 設定は追跡しない (threat: T-036)',
   });
 
   it('対照: 針が実物に当たる —— .gitignore の行を消すと check-ignore は exit 1 で落ちる', () => {
-    const ignore = readFileSync(path.join(ROOT, '.gitignore'), 'utf8');
-    for (const f of LOCAL_ONLY) expect(ignore.split('\n')).toContain(f);
+    // 無視している規則は .gitignore のその名前の行 (`-v` が `.gitignore:<行>:<規則>` を名乗る)。
+    for (const f of LOCAL_ONLY) {
+      const out = execFileSync('git', ['check-ignore', '-v', f], { cwd: ROOT, encoding: 'utf8' });
+      expect(out).toMatch(new RegExp(`^\\.gitignore:\\d+:${f.replace(/\./g, '\\.')}\\t`));
+    }
     // 無視されない名前には exit 1 で投げる (同じ呼び方で「無視されている」を主張しているので、この向きが要る)。
     expect(() => execFileSync('git', ['check-ignore', '-v', '.claude/settings.json'], { cwd: ROOT, encoding: 'utf8', stdio: 'pipe' })).toThrow();
   });
