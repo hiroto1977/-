@@ -259,6 +259,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/pages/__tests__/namedControlExists.test.ts',
   'src/renderer/pages/__tests__/oneNumberOneSource.test.ts',
   'src/renderer/pages/__tests__/thirdPartyFieldCeiling.test.ts',
+  'src/renderer/pages/__tests__/villageAiErrorFold.test.ts',
   'src/shared/__tests__/absenceSampleCensus.test.ts',
   'src/shared/__tests__/advisorArrayBounds.test.ts',
   'src/shared/__tests__/advisorQuestionParity.test.ts',

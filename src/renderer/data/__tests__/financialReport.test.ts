@@ -356,7 +356,10 @@ describe('財務レポートの表題は利用者の事業名を無害化する 
     // 表題は 1 行のまま; 改行は空白へ畳まれ `## 承認済み` は独立した見出しにならない。
     expect(lines[0]).toContain('# 財務分析レポート — X');
     expect(lines[0]).not.toContain('\n');
-    expect(md).not.toMatch(/^## 承認済み$/m);
+    const FAKE_HEADING = /^## 承認済み$/m;
+    expect(md, '偽の見出しが独立した行として立っている').not.toMatch(FAKE_HEADING);
+    // 針が禁じたい文面に当たることを同じ it で確かめる (無害化しなければこう載る)。
+    expect('前文\n## 承認済み\n本文', '針が偽の見出しに当たらない (死んでいる)').toMatch(FAKE_HEADING);
   });
 
   it('★ `|` と末尾 `\\` も無害化する (表の桁ずれ・区切りの打ち消しを防ぐ)', () => {

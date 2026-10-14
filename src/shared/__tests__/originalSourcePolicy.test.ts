@@ -267,8 +267,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: 'mkdtemp で作った一時ディレクトリに atomicWriteFile が書いた物 (本体と .prev) を読み戻す。repo のファイルではない',
   },
   'src/main/__tests__/eraseAll.test.ts': {
-    count: 2,
-    why: 'mkdtemp で作った一時ディレクトリを readdir し、keepBackup が書いた本体と控えが在ること・消去の後に何も残らないことを見る (パス 493d)。repo のファイルではない',
+    count: 3,
+    why: 'mkdtemp で作った一時ディレクトリを readdir し、keepBackup が書いた本体と控えが在ること・消去の後に何も残らないことを見る (パス 493d)。加えて T-023 (パス 517) が、ディレクトリに化けた目標とその中へ植えたファイルが recursive rm で消えたことを statSync で読み戻す。どれも repo のファイルではない',
   },
   'src/main/__tests__/secretsUnreadableWrite.test.ts': {
     count: 4,

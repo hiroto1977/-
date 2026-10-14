@@ -50,6 +50,9 @@ import { describeDesktopEraseReport } from '../../shared/eraseReport';
 
 let dir = '';
 
+/** `eraseAll.ts` の内部型と同形 (そちらは export していない)。 */
+type FileIo = Pick<typeof fs, 'rm' | 'readdir'>;
+
 async function exists(p: string): Promise<boolean> {
   try {
     await fs.stat(p);
@@ -135,25 +138,37 @@ describe('eraseFileAndLitter — 本体・控え・残骸', () => {
     expect(await exists(litter)).toBe(false);
   });
 
-  it('★ 本体がディレクトリで消せなければ failed', async () => {
+  // ★ rm が本物のエラー (EACCES 等) で失敗すれば failed —— 「消えた」と言うのは消えたときだけ
+  // (パス 20)。ディレクトリに化けた目標は T-023 で recursive rm が消すので、failed を起こすのは
+  // 権限エラー等の本物の失敗。io を注入して起こす (ディレクトリで failed を作る旧い形は T-023 の
+  // describe が『化けても deleted』を留めるので、ここは別の失敗要因で『嘘をつかない』を留める)。
+  const eaccesFor = (bad: string): FileIo => ({
+    rm: (async (p: string) => {
+      if (p === bad) throw Object.assign(new Error('EACCES'), { code: 'EACCES' });
+    }) as FileIo['rm'],
+    readdir: (async () => [] as string[]) as unknown as FileIo['readdir'],
+  });
+
+  it('★ 本体の rm が本物のエラーで失敗すれば failed', async () => {
     const target = path.join(dir, 'dir.json');
-    await fs.mkdir(target);
-    expect(await eraseFileAndLitter(target)).toBe('failed');
+    expect(await eraseFileAndLitter(target, eaccesFor(target))).toBe('failed');
   });
 
   it('★ 本体は消えても控えが消せなければ failed (控えは本体と同じ中身 — パス 134)', async () => {
     const target = path.join(dir, 'b.json');
-    await fs.writeFile(target, '{}');
-    await fs.mkdir(backupPathOf(target));
-    expect(await eraseFileAndLitter(target)).toBe('failed');
-    expect(await exists(target)).toBe(false);
+    expect(await eraseFileAndLitter(target, eaccesFor(backupPathOf(target)))).toBe('failed');
   });
 
   it('★ 残骸が消せなくても failed', async () => {
     const target = path.join(dir, 'c.json');
-    await fs.writeFile(target, '{}');
-    await fs.mkdir(atomicTmpPathOf(target));
-    expect(await eraseFileAndLitter(target)).toBe('failed');
+    const litter = atomicTmpPathOf(target);
+    const io: FileIo = {
+      rm: (async (p: string) => {
+        if (p === litter) throw Object.assign(new Error('EACCES'), { code: 'EACCES' });
+      }) as FileIo['rm'],
+      readdir: (async (d: string) => (d === dir ? [path.basename(litter)] : [])) as unknown as FileIo['readdir'],
+    };
+    expect(await eraseFileAndLitter(target, io)).toBe('failed');
   });
 
   it('置き場所のディレクトリが無ければ missing (残骸の走査も無い)', async () => {
@@ -180,9 +195,17 @@ describe('eraseDesktopData — ファイル + renderer の保存領域', () => {
   it('★ 消せないファイルが在れば allDeleted は偽で、文面がパスを名指しする (他は消す)', async () => {
     const stuck = path.join(dir, 'stuck.json');
     const fine = path.join(dir, 'fine.json');
-    await fs.mkdir(stuck);
     await fs.writeFile(fine, '{}');
-    const report = await eraseDesktopData({ targets: [stuck, fine] });
+    // stuck の本体 rm だけ本物のエラーで失敗させ、他 (fine・控え・残骸の走査) は実 fs に委ねる。
+    // ディレクトリで failed を作る旧い形は T-023 が recursive rm で消すので、io 注入で起こす。
+    const io: FileIo = {
+      rm: (async (p: string, opts?: unknown) => {
+        if (p === stuck) throw Object.assign(new Error('EACCES'), { code: 'EACCES' });
+        return fs.rm(p, opts as Parameters<typeof fs.rm>[1]);
+      }) as FileIo['rm'],
+      readdir: ((d: string) => fs.readdir(d)) as unknown as FileIo['readdir'],
+    };
+    const report = await eraseDesktopData({ targets: [stuck, fine], io });
     expect(report.files[stuck]).toBe('failed');
     expect(report.files[fine]).toBe('deleted');
     expect(report.allDeleted).toBe(false);
