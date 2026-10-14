@@ -11,7 +11,7 @@
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 520」。直したのは T-038 (`release.yml` の Build から使わない `GH_TOKEN` を外す) / T-039 (`pages.yml` を build + deploy に分け、書く権限は deploy だけ —— 門に `JOB_PERMISSIONS_ALLOW` の台帳と parser を足した) / T-040 (`verify:all` の門の本体が `scripts/` の実在する `.cjs` を指すことを留める) / T-041 (Linux の `basic_text` を「OS キーチェーン」と名乗らない —— `src/main/keychainBackend.ts` の `realKeychainAvailable` を書く側と名乗る側が通す・読む側は通さない) の 4 件。MAIN-6 / MAIN-7 / SUP-2 / AI 3 / AI 5 は測って欠陥ではなかった (clearedBacklog)。
 - **確立したパターン** —— **門が文面で呼ぶ台帳は、実在しなければ「一律に落とす門」である**: `lint:workflow-security` は 2026-08-26 から `JOB_PERMISSIONS_ALLOW` を名指ししながら持っておらず、正しい形 (job を分ける) を取れないので `pages.yml` は広い方へ逃げていた。**`isEncryptionAvailable` は「API が使えるか」であって「鍵が守られているか」ではない** —— Linux の `basic_text` は true を返す。名乗る側は `getSelectedStorageBackend` まで訊く。**書く側・名乗る側と読む側は別の述語を通してよい** (既存の値を消して見せないため)。
-- 次に読む人へ: 残る backlog は 8 件 (`huntBacklog`) で、どれも設計判断 (C1〜C5 / MAIN-1 / MAIN-2 / C1 の連鎖) —— 利用者に確認すること。全件 `npm test` は census 1 本を直して緑 (21,496 件)・`verify:all` exit 0・出荷物は両方ともパス 519 と byte / md5 同一なので実機は回していない。CI の結果は 520-CI。PR #806 の本文は更新済み。
+- 次に読む人へ: 残る backlog は 8 件 (`huntBacklog`) で、どれも設計判断 (C1〜C5 / MAIN-1 / MAIN-2 / C1 の連鎖) —— 利用者に確認すること。全件 `npm test` は census 1 本を直して緑 (21,496 件)・`verify:all` exit 0・出荷物は両方ともパス 519 と byte / md5 同一なので実機は回していない。`b6fea55f7` の CI は success。PR #806 の本文は更新済み。
 
 ## 直近の作業 (2026-10-14) — パス 519: 狩りの 9 回目。backlog の未確認 7 件を自分で測り、本物の 5 件を直す
 
