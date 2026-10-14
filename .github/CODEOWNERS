@@ -16,6 +16,7 @@
 # 独立に見るので矛盾しない。
 /scripts/ @hiroto1977
 /scripts/integrity-chain.cjs @hiroto1977
+/src/main/keychainBackend.ts @hiroto1977
 /.claude/settings.json @hiroto1977
 /.claude/agents/auditor.md @hiroto1977
 /.claude/agents/mechanic.md @hiroto1977

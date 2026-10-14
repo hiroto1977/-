@@ -9,6 +9,7 @@
   "mutate": [
     "src/main/atRest.ts",
     "src/main/atomicWrite.ts",
+    "src/main/keychainBackend.ts",
     "src/main/clients/assistant.ts",
     "src/main/clients/atlassian.ts",
     "src/main/clients/base.ts",

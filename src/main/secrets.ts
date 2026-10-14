@@ -8,6 +8,7 @@ import {
   brokenStoredCredentialMessage, checkTokenSetForStorage, hasUsableAccessToken,
 } from '../shared/vaultToken';
 import { atomicWriteFile, backupPathOf, readFileWithBackup } from './atomicWrite';
+import { realKeychainAvailable } from './keychainBackend';
 
 const FILE_NAME = 'service-hub-secrets.json';
 /*
@@ -182,7 +183,8 @@ async function writeStore(store: Record<string, string>): Promise<void> {
 let fallbackWarned = false;
 
 function encode(value: string): string {
-  if (safeStorage.isEncryptionAvailable()) {
+  // threat: T-041 —— 書く側は「本当のキーチェーンか」を訊く (Linux の basic_text は plain: へ倒す)。
+  if (realKeychainAvailable()) {
     return safeStorage.encryptString(value).toString('base64');
   }
   if (!fallbackWarned) {
@@ -282,7 +284,7 @@ function decode(value: string): StoredTokenRead {
  *  一つも無かった** (どちらの呼び出し側も直後に書き込むため)。返り値に残すと、
  *  誰も観測しない値を組み立てる分岐が 3 つ増えるだけなので落とした。 */
 async function upgradePlainValues(store: Record<string, string>): Promise<Record<string, string>> {
-  if (!safeStorage.isEncryptionAvailable()) return store;
+  if (!realKeychainAvailable()) return store; // threat: T-041 —— basic_text へは「昇格」しない
   const upgraded: Record<string, string> = {};
   for (const [k, v] of Object.entries(store)) {
     if (v.startsWith('plain:')) {
@@ -438,7 +440,7 @@ export interface StorageProtection {
  */
 export async function getStorageProtection(): Promise<StorageProtection> {
   const store = await readStore();
-  const available = safeStorage.isEncryptionAvailable();
+  const available = realKeychainAvailable(); // threat: T-041 —— basic_text を os-keychain と名乗らない
   return {
     encrypted: available,
     plainCount: Object.values(store).filter((v) => v.startsWith('plain:')).length,

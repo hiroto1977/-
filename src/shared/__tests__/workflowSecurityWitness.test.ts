@@ -9,18 +9,20 @@ import { describe, expect, it } from 'vitest';
  * ワークフローはコード署名の鍵と Apple の資格情報を持ち、**利用者がダウンロード
  * するインストーラを公開する**場所である。門が黙ればそこが開く。
  *
- * **台帳は必ず空で渡す (`check(list, {})`)。** 既定は実物の台帳なので、
+ * **台帳は必ず空で渡す (`check(list, {}, {})` —— 未固定の台帳と job 権限の台帳の 2 つ)。** 既定は実物の台帳なので、
  * 合成標本を流すと「台帳に載っているものが使われていない」が毎回鳴り、
  * どの規則で鳴ったのか読めなくなる (2026-08-26 に実際に読み違えかけた。
  * 同じ罠を `lint:mcp-servers` でも踏んでいる)。
  */
 const req = createRequire(import.meta.url);
 const gate = req('../../../scripts/lint-workflow-security.cjs') as {
-  check: (list: { name: string; text: string }[], allow?: Record<string, unknown>) => { file: string; why: string }[];
+  check: (list: { name: string; text: string }[], allow?: Record<string, unknown>, jobAllow?: Record<string, unknown>) => { file: string; why: string }[];
+  jobPermissionBlocks: (text: string) => { job: string; line: number; scopes: string[] }[];
   UNPINNED_ALLOW: Record<string, unknown>;
+  JOB_PERMISSIONS_ALLOW: Record<string, Record<string, { scopes: string[]; why: string }>>;
 };
 
-const wf = (text: string) => gate.check([{ name: 'x.yml', text }], {});
+const wf = (text: string) => gate.check([{ name: 'x.yml', text }], {}, {});
 const SHA = 'a'.repeat(40);
 const BASE = 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n';
 
@@ -100,8 +102,94 @@ describe('release.yml の公開 action は SHA 固定 (threat: T-035)', () => {
 
   it('対照: 実物の release.yml を可動タグへ戻すと門が鳴る (台帳が空なので免除されない)', () => {
     const reverted = releaseYml.replace(/action-gh-release@[0-9a-f]{40}[^\n]*/, 'action-gh-release@v2');
-    const problems = gate.check([{ name: 'release.yml', text: reverted }], gate.UNPINNED_ALLOW);
+    const problems = gate.check([{ name: 'release.yml', text: reverted }], gate.UNPINNED_ALLOW, {});
     expect(problems.some((p) => p.why.includes('softprops/action-gh-release@v2'))).toBe(true);
-    expect(gate.check([{ name: 'release.yml', text: releaseYml }], gate.UNPINNED_ALLOW)).toHaveLength(0);
+    expect(gate.check([{ name: 'release.yml', text: releaseYml }], gate.UNPINNED_ALLOW, {})).toHaveLength(0);
+  });
+});
+
+/*
+ * **release.yml の組み立てステップは GITHUB_TOKEN を受け取らない** (threat: T-038 · パス 520)。
+ *
+ * 2026-10-14 まで `Build` の env に `GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}` が在ったが、
+ * `electron-builder --publish never` はそれを読まない (publish は後ろの `action-gh-release` が
+ * 自分の `token` で行う)。同じ env の隣には署名鍵 (`CSC_LINK` / `CSC_KEY_PASSWORD`) が並び、
+ * 依存の postinstall と builder のプラグインがそこで走る —— 使われない `contents: write` の
+ * トークンを任意コードの環境へ渡していた。門は「権限」と「固定」しか見ないので、戻す退行はここだけが鳴る。
+ */
+describe('release.yml の組み立ては GITHUB_TOKEN を環境に持たない (threat: T-038)', () => {
+  const releaseYml = readFileSync(path.resolve(__dirname, '../../../.github/workflows/release.yml'), 'utf8');
+
+  it('★ Build ステップの env に GH_TOKEN / GITHUB_TOKEN が無い (threat: T-038)', () => {
+    const lines = releaseYml.split('\n');
+    const withToken = lines.filter((l) => /GH_TOKEN|secrets\.GITHUB_TOKEN/.test(l));
+    expect(withToken).toEqual([]);
+    // 標本: 針は直す前の綴りに当たる。
+    expect(['          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}'].filter((l) => /GH_TOKEN|secrets\.GITHUB_TOKEN/.test(l))).toHaveLength(1);
+  });
+
+  it('公開は action-gh-release が自分の token で行う (組み立てに渡す理由が無い)', () => {
+    expect(releaseYml).toMatch(/action-gh-release@[0-9a-f]{40}/);
+    expect(releaseYml).toMatch(/--publish never/);
+  });
+});
+
+/*
+ * **pages.yml は組み立てと公開を別の job に分け、書く権限は公開の job だけが持つ**
+ * (threat: T-039 · パス 520)。
+ *
+ * 2026-10-14 まで `pages: write` / `id-token: write` はワークフロー全体に付いており、
+ * `npm ci` と builder 7 本が公開の権限 (checkout が `.git/config` に残す GITHUB_TOKEN) と
+ * OIDC の発行権の下で走っていた。門 (`lint:workflow-security`) は job 単位の `permissions:` を
+ * 台帳 `JOB_PERMISSIONS_ALLOW` と双方向に突き合わせる —— ここはその台帳が**実物の形**を
+ * 指していることと、戻す退行が鳴ることを見る。
+ */
+describe('pages.yml の書く権限は公開の job だけ (threat: T-039)', () => {
+  const pagesYml = readFileSync(path.resolve(__dirname, '../../../.github/workflows/pages.yml'), 'utf8');
+  // 注記は落とす (トップレベルの注記が直す前の形を説明しており、綴りが在る)。
+  const top = pagesYml.slice(0, pagesYml.indexOf('\njobs:')).split('\n').filter((l) => !/^\s*#/.test(l)).join('\n');
+
+  it('★ トップレベルは contents: read だけ (threat: T-039)', () => {
+    expect(top).toMatch(/^permissions:\n {2}contents: read\n/m);
+    expect(top).not.toMatch(/pages: write|id-token: write/);
+  });
+
+  it('★ job 単位の permissions は deploy の 2 つだけで、台帳と一致する (threat: T-039)', () => {
+    expect(gate.jobPermissionBlocks(pagesYml)).toEqual([
+      { job: 'deploy', line: expect.any(Number), scopes: ['pages: write', 'id-token: write'] },
+    ]);
+    expect(gate.JOB_PERMISSIONS_ALLOW).toEqual({
+      'pages.yml': { deploy: { scopes: ['pages: write', 'id-token: write'], why: expect.any(String) } },
+    });
+  });
+
+  it('★ deploy は build の成果物だけを受け取り、任意コードを走らせない (threat: T-039)', () => {
+    const deploy = pagesYml.slice(pagesYml.indexOf('\n  deploy:'));
+    expect(deploy).toMatch(/needs: build/);
+    expect(deploy).not.toMatch(/run:|npm |actions\/checkout|actions\/setup-node/);
+    expect(deploy).toMatch(/uses: actions\/deploy-pages@v\d+/);
+    const build = pagesYml.slice(pagesYml.indexOf('\n  build:'), pagesYml.indexOf('\n  deploy:'));
+    expect(build).toMatch(/npm ci/);
+    expect(build).not.toMatch(/permissions:|deploy-pages/);
+    expect(build).toMatch(/upload-pages-artifact/);
+  });
+
+  it('実物の pages.yml は門を通る', () => {
+    expect(gate.check([{ name: 'pages.yml', text: pagesYml }], gate.UNPINNED_ALLOW, gate.JOB_PERMISSIONS_ALLOW)).toEqual([]);
+  });
+
+  it('対照: 書く権限をトップレベルへ戻す (直す前の形) と門が鳴る', () => {
+    const reverted = pagesYml
+      .replace('permissions:\n  contents: read\n', 'permissions:\n  contents: read\n  pages: write\n  id-token: write\n')
+      .replace('    permissions:\n      pages: write\n      id-token: write\n', '');
+    const problems = gate.check([{ name: 'pages.yml', text: reverted }], gate.UNPINNED_ALLOW, gate.JOB_PERMISSIONS_ALLOW);
+    expect(problems.map((p) => p.file)).toEqual(['(台帳)']);
+  });
+
+  it('対照: deploy に contents: write を足すと scope の食い違いで鳴る', () => {
+    const widened = pagesYml.replace('      id-token: write\n', '      id-token: write\n      contents: write\n');
+    const problems = gate.check([{ name: 'pages.yml', text: widened }], gate.UNPINNED_ALLOW, gate.JOB_PERMISSIONS_ALLOW);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]?.why).toContain('contents: write');
   });
 });

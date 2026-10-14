@@ -13,21 +13,23 @@ on:
     branches: [main]
   workflow_dispatch: # 手動実行も可
 
+# トップレベルは読むだけ (2026-10-14 · パス 520 · threat: T-039)。
+# `pages: write` / `id-token: write` は下の deploy ジョブだけが持つ —— 2026-10-14 まで
+# ワークフロー全体に付いていたので、`npm ci` と組み立て (依存の postinstall・vite の
+# プラグイン・builder 7 本) が**公開の権限を持つ GITHUB_TOKEN** (checkout が .git/config に
+# 残す) と OIDC の発行権の下で走っていた。乗っ取られた依存 1 つが公開サイトを差し替え、
+# この repo を信頼する OIDC の先 (在れば) へ入れた。組み立ては読むだけの権限で行い、
+# 出来た成果物だけを deploy ジョブへ渡す (GitHub の starter workflow と同じ形)。
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -108,5 +110,20 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
+  # 公開だけを持つジョブ。成果物は上の build が検査を当ててから upload した物で、
+  # ここでは `npm ci` もコードの組み立ても走らない (権限と危ない操作を同じ場所に、
+  # 権限と任意コードを別の場所に)。job 単位の permissions は lint:workflow-security の
+  # JOB_PERMISSIONS_ALLOW に理由つきで載っている (双方向)。
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4

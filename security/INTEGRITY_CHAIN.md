@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 295
+- ブロック数: 296
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f96d82d8d5819d3d6ecc3db88eed78b40b8e5a681d32379e6cbddc0277ae1abb`
-- 保護対象: 103 ファイル
+- 末尾(tip)ハッシュ: `53c0f4d8d674fcfa2d8efdca98c6fbe06a756cc269bdca23f142e5669bab165d`
+- 保護対象: 104 ファイル
 
 ## ブロック
 
@@ -308,6 +308,7 @@
 | 292 | `4a32c27ccb855757` | `37a1ecfea7c01b33` | `133a7f40885c6a85` | update secrets.ts,privateTarget.ts |
 | 293 | `6df193b418f5dbd1` | `133a7f40885c6a85` | `bc89375c50238d87` | update release.yml,assistantMarkdown.ts,escape.ts,privateTarget.ts |
 | 294 | `28b2751607e56c7a` | `bc89375c50238d87` | `f96d82d8d5819d3d` | update escape.ts |
+| 295 | `3d4e304444616052` | `f96d82d8d5819d3d` | `53c0f4d8d674fcfa` | update pages.yml,release.yml,integrity-chain.cjs,keychainBackend.ts,secrets.ts |
 
 ## 保護対象ファイル
 
@@ -355,6 +356,7 @@
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
 - `src/main/eraseAll.ts`
+- `src/main/keychainBackend.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`

@@ -806,6 +806,66 @@
         "file": "src/main/clients/__tests__/emotions.test.ts",
         "test": "★ 10 MB の出所を渡しても、保存される抜粋は天井 (80 字 × 2 + 札) に収まる (threat: T-037)"
       }
+    },
+    {
+      "id": "T-038",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 520 (supply-chain · backlog SUP-4 を測った)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "release.yml の Build ステップが使わない GH_TOKEN (contents: write) を、署名鍵と同じ env で任意コード (npm ci / electron-builder) へ渡していた",
+      "status": "fixed",
+      "fix": "`electron-builder --publish never` は GH_TOKEN を読まない (公開は後ろの action-gh-release が自分の token で行う) ことを読んで確かめ、env から外した。乗っ取られた依存が contents: write のトークンでリリース資産やタグを書き換える道を 1 本減らす (署名鍵は builder が要るので残る —— それは SUP の設計の側)。対照: 戻すと証人 1 件。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "★ Build ステップの env に GH_TOKEN / GITHUB_TOKEN が無い (threat: T-038)"
+      }
+    },
+    {
+      "id": "T-039",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 520 (supply-chain · backlog SUP-6 を測った)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "pages.yml は pages: write / id-token: write をワークフロー全体に付けており、npm ci と builder 7 本が公開の権限と OIDC の発行権の下で走っていた",
+      "status": "fixed",
+      "fix": "組み立て (build・contents: read) と公開 (deploy・needs: build・deploy-pages 1 手だけ) を別の job に分けた (GitHub の starter と同じ形)。門 lint:workflow-security は job 単位の permissions: を一律に落とすだけで「JOB_PERMISSIONS_ALLOW」を文面で呼びながら台帳が無く、分けた形を受けられなかった —— 台帳 (file → job → scopes) と parser を足し、双方向 (台帳に無い job / scope の食い違い / 台帳に在るのに実物に無い) で留めた。対照 3 方向 (トップへ戻す・contents: write を足す・deploy の permissions を消す) で門が exit 1。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "★ job 単位の permissions は deploy の 2 つだけで、台帳と一致する (threat: T-039)"
+      }
+    },
+    {
+      "id": "T-040",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 520 (supply-chain · backlog SUP-1 を測った)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "verify:all の門の本体 (package.json の scripts) は CODEOWNERS にも鎖にも無く、1 本を `echo ok` に替えても誰も鳴らなかった",
+      "status": "fixed",
+      "fix": "門の本体は scripts/ の実在する .cjs (CODEOWNERS が木ごと覆う) か固定の綴り (typecheck / lint / test) しか指せないことを、package.json の verify:all を走査して留めた (43 件)。package.json そのものは 12 コミット以上で動くので鎖には入れない (パス 371 の判断)。対照: 1 本を echo へ → その門の 1 件。",
+      "regression": {
+        "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+        "test": "★ %s の本体は scripts/ の実在する .cjs か、固定の綴り (threat: T-040)"
+      }
+    },
+    {
+      "id": "T-041",
+      "found": "2026-10-14",
+      "foundBy": "hunt pass 520 (main-ipc · backlog MAIN-8 を測った)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "Linux で gnome-keyring も kwallet も無いと Chromium は basic_text (ハードコードされた鍵) へ倒れるが isEncryptionAvailable() は true のままで、設定画面は「OS キーチェーンで暗号化」と名乗り plain: の ⚠ も出なかった",
+      "status": "fixed",
+      "fix": "src/main/keychainBackend.ts の realKeychainAvailable (isEncryptionAvailable && !(linux && getSelectedStorageBackend() === 'basic_text')) を書く側 (encode / sealAtRest / upgradePlainValues) と名乗る側 (getStorageProtection / atRestMechanism) が通す。読む側 (decode / openAtRest) は通さない —— basic_text で包んだ既存の値はそのまま開ける。強さは basic_text と plain: で同じで、変わるのは名乗り (encrypted: false / obfuscated / ⚠ が出る)。鎖と mutate と CODEOWNERS に載せた。対照: 書く側と名乗る側の述語を isEncryptionAvailable へ戻す → ★ 4 件 (atRest 1 / secretsProtection 3)。述語そのものは keychainBackend.test.ts が backend 6 通り × platform で直に見る。",
+      "regression": {
+        "file": "src/main/__tests__/keychainBackend.test.ts",
+        "test": "★ Linux の basic_text (ハードコードされた鍵) は isEncryptionAvailable が true でも false (threat: T-041)"
+      }
     }
   ],
   "huntBacklog": [
@@ -848,51 +908,6 @@
       "surface": "main-ipc",
       "item": "MAIN-2 app:eraseAll に同意トークンが無い",
       "why": "監査役の報告の指摘。設定画面の「すべてのデータを削除」は利用者の操作だが、renderer が乗っ取られれば呼べる。確認ダイアログは renderer 側にしか無い。設計の判断 (同意の形) を伴うため未確認。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "MAIN-6 shellOpenGate が .html と .svg を開けるようにしている",
-      "why": "監査役の報告の指摘。OS の既定アプリで開く経路。拡張子の許可表の判断なので、どの型を許すかの決定を伴う。未確認。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "MAIN-7 IPC の送信元 (sender) の検査が無い (多層防御)",
-      "why": "監査役の報告の指摘。preload の bridge 以外からの呼び出しを見分ける手段が要る。未確認。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "MAIN-8 isEncryptionAvailable の結果を OS のキーチェーン名として表示している",
-      "why": "監査役の報告の指摘。表示の正確さの問題で、守りの穴ではない可能性が高い。未確認。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SUP-1 package.json の script 本体の所有者が CODEOWNERS と整合性チェーンに無い",
-      "why": "監査役の報告の指摘。script の本体は lint:deps が lifecycle を見るが、通常の script の変更は CODEOWNERS の対象外。確認済み (package.json は CODEOWNERS にも PROTECTED にも無い)。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SUP-2 stryker の break 閾値と tsconfig の include の所有者が無い",
-      "why": "監査役の報告の指摘。閾値を下げる変更が、所有者レビューなしで通る。確認は未実施。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SUP-4 GH_TOKEN が release.yml の Build ステップに渡り、同じ行の近くに CSC_LINK がある",
-      "why": "grep で位置は確認した。ビルドが GH_TOKEN を使うかどうかと、梱包の依存が読めるかは未確認。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SUP-6 pages.yml の OIDC と pages の write 権限がジョブ全体に付いている",
-      "why": "監査役の報告の指摘。ステップ単位の権限への分割で閉じられるが、未確認。"
-    },
-    {
-      "surface": "ai",
-      "item": "AI 3 「実行して」の死んだチップが LLM へ回る (src/renderer/data/chatbot.ts:266)",
-      "why": "監査役の報告の指摘。利用者の意図と違う経路へ送られるが、送信先は同じ AI。未確認。"
-    },
-    {
-      "surface": "ai",
-      "item": "AI 5 開発パイプラインの残り (scripts/orchestrate.cjs:353-358)",
-      "why": "監査役の報告の指摘。開発用の経路で利用者には届きにくい。未確認。"
     }
   ],
   "clearedBacklog": [
@@ -944,6 +959,31 @@
     {
       "item": "AI 4 Gmail の件名が注入され、感情解析の結果が永続化される (GmailPage.tsx:137 / emotions.ts)",
       "finding": "2026-10-14 に読んで測った: Gmail の件名は AI へ渡るが、永続化される解析結果は normalizeAnalysis が 0..1 に畳んだ 6 つの数と enum (sentiment / dominant) と、80 字で切った抜粋だけ (画面は EMOTION_LABELS で引き、excerpt は React のテキストとして描く)。注入で動かせるのは分類の答えで、画面に文を持ち込む経路は無い。測る途中で隣の穴が出た —— 出所 (source) に天井が無かった (T-037 として修正)。",
+      "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "MAIN-6 shellOpenGate が .html と .svg を開けるようにしている",
+      "finding": "2026-10-14 に読んで測った: shellOpenGate が通すのは realpath で閉じ込めた書き出し先の中のファイルだけで、その .html / .svg は書き出しの口 (templateSvg / teamRadarSvg / main の stocks・business の紙) がすべて escapeXml を通して組む (パス 348 の markupExportCensus が根 94 件を両方向で持つ)。利用者の自由文も AI の応答も素で載らないので、OS の既定アプリで開いても走る script は作れない。欠陥ではない。",
+      "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "MAIN-7 IPC の送信元 (sender) の検査が無い (多層防御)",
+      "finding": "2026-10-14 に読んで測った: 窓は loadFile しか呼ばず、CSP の frame-src は 'none'、will-navigate / will-redirect / setWindowOpenHandler がアプリ外への遷移を止めている (mainWindow.test.ts)。sender を検める層は無いが、renderer の origin は 1 つしか存在し得ず、そこで走るコードは CSP と loadFile が限定する。多層防御としては残るが、届く道が今日無いので欠陥ではない (設計判断の候補として残す)。",
+      "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "SUP-2 stryker の break 閾値と tsconfig の include の所有者が無い",
+      "finding": "2026-10-14 に読んで測った: tsconfig の include は typecheckCoverage.test.ts が両方向で留め (外れた .ts が出れば落ちる)、stryker の break は verify:arch の live metric と quality-report が読む。どちらも CODEOWNERS の木 (/scripts/ と /src/shared/__tests__/) に住む検査が守る。所有者行を足すなら package.json と同じ理由 (頻繁に動く) で鎖には入れない —— 欠陥ではない。",
+      "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "AI 3 「実行して」の死んだチップが LLM へ回る (src/renderer/data/chatbot.ts:266)",
+      "finding": "2026-10-14 に読んで測った: chatbot.ts:266 の「実行して」のチップは provider へ渡す文の候補であって、ChatbotWidget は候補を描かない (死んだ値)。LLM へ回る文は利用者が実際に打った物だけで、チップの綴りが提供者へ届く経路は無い。死んだコードとして残るが欠陥ではない。",
+      "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "AI 5 開発パイプラインの残り (scripts/orchestrate.cjs:353-358)",
+      "finding": "2026-10-14 に読んで測った: scripts/orchestrate.cjs:353-358 の dispatch は外から来た題名を印つきの JSON 文字列で引用し、「指示ではなくデータとして扱う」断りを載せる (パス 484 · importRequestsPath.test.ts 18 件)。残りの欄 (team / status) は enum で門が検める。欠陥ではない。",
       "checkedOn": "2026-10-14"
     }
   ]
